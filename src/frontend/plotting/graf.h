@@ -3,13 +3,22 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef GRAF_H_INCLUDED
-#define GRAF_H_INCLUDED
+#ifndef _GRAF_H
+#define _GRAF_H
 
-int gr_init(double *xlims, double *ylims, char *xname, char *plotname, char *hcopy, 
-	 int nplots, double xdelta, double ydelta, GRIDTYPE gridtype, PLOTTYPE plottype, 
-	 char *xlabel, char *ylabel, int xtype, int ytype, char *pname, char *commandline);
-void gr_point(struct dvec *dv, double newx, double newy, double oldx, double oldy, int np);
+int gr_init(double *xlims, double *ylims,
+	    char *xname, char *plotname,
+	    char *hcopy, 
+	    int nplots,
+	    double xdelta, double ydelta,
+	    GRIDTYPE gridtype,
+	    PLOTTYPE plottype, 
+	    char *xlabel, char *ylabel,
+	    int xtype, int ytype,
+	    char *pname, char *commandline);
+void gr_point(struct dvec *dv,
+	      double newx, double newy,
+	      double oldx, double oldy, int np);
 void gr_start(struct dvec *dv);
 void gr_relinestyle(GRAPH *graph);
 void drawlegend(GRAPH *graph, int plotno, struct dvec *dv);
@@ -24,7 +33,5 @@ void reset_trace(void);
 void gr_iplot(struct plot *plot);
 void gr_end_iplot(void);
 double * readtics(char *string);
-
-
 
 #endif

@@ -11,16 +11,18 @@ Author: 1988 Jeffrey M. Hsu
 
 
 #include "ngspice.h"
-#include "cpdefs.h"     /* for VT_ */
+#include "cpdefs.h"		/* for VT_ */
 #include "cpextern.h"
-#include "plot.h"
-#include "ftedebug.h"       /* for iplot */
-#include "dvec.h"        /* for struct dvec */
-#include "ftedefs.h"        /* for FTEextern.h and IPOINT{MIN,MAX} */
+#include <plot.h>
+#include "ftedebug.h"		/* for iplot */
+#include <dvec.h>		/* for struct dvec */
+#include "ftedefs.h"		/* for FTEextern.h and IPOINT{MIN,MAX} */
 #include "fteinput.h"
 #include "ftegraph.h"
 #include "ftedbgra.h"
 #include "ftedev.h"
+#include <terminal.h>
+
 #include "graf.h"
 
 
@@ -85,18 +87,17 @@ extern void Input (REQUEST *request, RESPONSE *response);
 extern int DestroyGraph (int id);
 
 int
-gr_init(double *xlims, double *ylims, char *xname, char *plotname, char *hcopy, int nplots, double xdelta, double ydelta, GRIDTYPE gridtype, PLOTTYPE plottype, char *xlabel, char *ylabel, int xtype, int ytype, char *pname, char *commandline)
-                                        /* The size of the screen. */
-                                        /* What to label things. */
-	                                /* The raster file. */
-                                        /* How many plots there will be. */
-                                        /* Line increments for the scale. */
-                                        /* The grid type */
-                                        /*  and the plot type. */
-                                        /* Labels for axes. */
-                                        /* The types of the data graphed. */
-                    
-                                        /* For xi_zoomdata() */
+gr_init(double *xlims, double *ylims, /* The size of the screen. */
+	char *xname, char *plotname, /* What to label things. */
+	char *hcopy,		/* The raster file. */
+	int nplots,		/* How many plots there will be. */
+	double xdelta, double ydelta, /* Line increments for the scale. */
+	GRIDTYPE gridtype,	/* The grid type */
+	PLOTTYPE plottype,	/*  and the plot type. */
+	char *xlabel, char *ylabel, /* Labels for axes. */
+	int xtype, int ytype,	/* The types of the data graphed. */
+	char *pname,
+	char *commandline)	/* For xi_zoomdata() */
 {
 
     GRAPH *graph;
@@ -141,24 +142,10 @@ gr_init(double *xlims, double *ylims, char *xname, char *plotname, char *hcopy, 
     } else
 	graph->ticdata = NULL;
 
-    /* set slow flag to stop between each plot and prompt the
-        user for a return
-       This is used mainly for graphics terminals w/o windows.
-    */
-/*
-    if (incremental)
-      slow = FALSE;
-    else
-      (void) cp_getvar("slowplot", VT_BOOL, (char *) &slow);
-*/
-
     if (!xlims || !ylims) {
       internalerror("gr_init:  no range specified");
       return(FALSE);
     }
-
-    /* indicate some graphics going on */
-/*  gr_gmode = TRUE; */
 
     /* save upper and lower limits */
     graph->data.xmin = xlims[0];
@@ -254,7 +241,10 @@ gr_init(double *xlims, double *ylims, char *xname, char *plotname, char *hcopy, 
  *
  */
 void
-gr_point(struct dvec *dv, double newx, double newy, double oldx, double oldy, int np)
+gr_point(struct dvec *dv,
+	 double newx, double newy,
+	 double oldx, double oldy,
+	 int np)
 {
     int oldtox, oldtoy;     /* value before clipping */
 
@@ -266,7 +256,7 @@ gr_point(struct dvec *dv, double newx, double newy, double oldx, double oldy, in
     DatatoScreen(currentgraph, oldx, oldy, &fromx, &fromy);
     DatatoScreen(currentgraph, newx, newy, &tox, &toy);
 
-/* note: we do not particularly want to clip here */
+    /* note: we do not particularly want to clip here */
     oldtox = tox; oldtoy = toy;
     if (!currentgraph->grid.circular) {
       if (clip_line(&fromx, &fromy, &tox, &toy,
@@ -296,8 +286,8 @@ gr_point(struct dvec *dv, double newx, double newy, double oldx, double oldy, in
       double	*tics;
       case PLOT_LIN:
 
-    /* If it's a linear plot, ignore first point since we don't want
-        to connect with oldx and oldy. */
+	/* If it's a linear plot, ignore first point since we don't
+	   want to connect with oldx and oldy. */
 	if (np)
 	    DrawLine(fromx, fromy, tox, toy);
 	if ((tics = (double *) currentgraph->ticdata)) {
@@ -334,10 +324,6 @@ gr_point(struct dvec *dv, double newx, double newy, double oldx, double oldy, in
         pointc[1] = '\0';
         Text(pointc, (int) (tox - currentgraph->fontwidth / 2),
             (int) (toy - currentgraph->fontheight / 2));
-        /* gr_redraw will redraw this w/o our having to save it */
-        /* SaveText(currentgraph, pointc,
-            (int) (tox - currentgraph->fontwidth / 2),
-            (int) (toy - currentgraph->fontheight / 2)); */
       default:
         break;
     }
@@ -352,8 +338,7 @@ gr_start_internal(struct dvec *dv, bool copyvec)
     char *s;
 
     /* Do something special with poles and zeros.  Poles are 'x's, and
-     * zeros are 'o's.
-     */
+     * zeros are 'o's.  */
     s = ft_typenames(dv->v_type);
         if (eq(s, "pole")) {
                 dv->v_linestyle = 'x';
@@ -414,7 +399,7 @@ gr_start(struct dvec *dv)
 }
 
 /* make sure the linestyles in this graph don't exceed the number of
-    linestyles available in the current display device */
+   linestyles available in the current display device */
 void
 gr_relinestyle(GRAPH *graph)
 {
@@ -483,13 +468,14 @@ gr_pmsg(char *text)
 	fprintf(cp_err, "%s", text);
     else
 	
-	if (currentgraph->grid.xlabel)		/* MW. grid.xlabel may be NULL */
-	Text(text, currentgraph->viewport.width
-		- (strlen(currentgraph->grid.xlabel) + 3)
-		* currentgraph->fontwidth,
-		currentgraph->absolute.height - currentgraph->fontheight);
-	
-	else fprintf(cp_err, " %s \n", text);
+	/* MW. grid.xlabel may be NULL */
+	if (currentgraph->grid.xlabel)
+	    Text(text, currentgraph->viewport.width
+		 - (strlen(currentgraph->grid.xlabel) + 3)
+		 * currentgraph->fontwidth,
+		 currentgraph->absolute.height - currentgraph->fontheight);
+	else
+	    fprintf(cp_err, " %s \n", text);
 	
     Update();
     (void) getchar();
@@ -528,16 +514,16 @@ gr_resize(GRAPH *graph)
       k->y = (k->y - graph->viewportyoff) * scaley + graph->viewportyoff;
     }
 
-    /* X also generates an expose after a resize
-    This is handled in X10 by not redrawing on resizes and waiting for
-    the expose event to redraw.  In X11, the expose routine tries to
-    be clever and only redraws the region specified in an expose
-    event, which does not cover the entire region of the plot if the
-    resize was from a small window to a larger window.  So in order
-    to keep the clever X11 expose event handling, we have the X11
-    resize routine pull out expose events for that window, and we
-    redraw on resize also.
-    */
+    /* X also generates an expose after a resize.
+
+       This is handled in X10 by not redrawing on resizes and waiting
+       for the expose event to redraw.  In X11, the expose routine
+       tries to be clever and only redraws the region specified in an
+       expose event, which does not cover the entire region of the
+       plot if the resize was from a small window to a larger window.
+       So in order to keep the clever X11 expose event handling, we
+       have the X11 resize routine pull out expose events for that
+       window, and we redraw on resize also.  */
 #ifdef X_DISPLAY_MISSING
     gr_redraw(graph);
 #endif
@@ -625,16 +611,21 @@ gr_restoretext(GRAPH *graph)
 
 }
 
-/* Do some incremental plotting. 3 cases -- first, if length < IPOINTMIN, don't
- * do anything. Second, if length = IPOINTMIN, plot what we have so far. Third,
- * if length > IPOINTMIN, plot the last points and resize if needed.
+/* Do some incremental plotting. There are 3 cases:
+ *
+ * First, if length < IPOINTMIN, don't do anything.
+ *
+ * Second, if length = IPOINTMIN, plot what we have so far.
+ *
+ * Third, if length > IPOINTMIN, plot the last points and resize if
+ * needed.
+ *
  * Note we don't check for pole / zero because they are of length 1.
- */
-
-/* note: there is a problem with multiple iplots that use the same vector,
-    namely, that vector has the same color throughout.  This is another
-    reason why we need to pull color and linestyle out of dvec XXX
-    Or maybe even something more drastic ?? */
+ *
+ * FIXME: there is a problem with multiple iplots that use the same
+ * vector, namely, that vector has the same color throughout.  This is
+ * another reason why we need to pull color and linestyle out of dvec
+ * XXX Or maybe even something more drastic ?? */
 
 extern bool resumption;
 
@@ -665,8 +656,7 @@ iplot(struct plot *pl, int id)
     if (len < IPOINTMIN) {
         /* Nothing yet */
         return(0);
-    } else if (len == IPOINTMIN || !id
-	    /* || (len > IPOINTMIN && resumption) */) {
+    } else if (len == IPOINTMIN || !id) {
 	resumption = FALSE;
         /* Draw the grid for the first time, and plot everything. */
         lims = ft_minmax(xs, TRUE);
@@ -697,16 +687,10 @@ iplot(struct plot *pl, int id)
                 yt = 0;
                 break;
             }
-/*
-        (void) gr_init((double *) NULL, (double *) NULL, xs->v_name, 
-            pl->pl_title, (char *) NULL, j, xdelta, ydelta,
-            GRID_LIN, plottype, xs->v_name, yl, xs->v_type, yt,
-            commandline, plotname);
-*/
-/* note: have command options for iplot to specify xdelta, etc.
-    So don't need static variables hack.
-    Assume default values for now.
-*/
+
+	/* note: have command options for iplot to specify xdelta,
+	   etc.  So don't need static variables hack.  Assume default
+	   values for now.  */
 	sprintf(commandline, "iplot %s", xs->v_name);
 
         (void) gr_init(xlims, ylims, xs->v_name,
@@ -812,10 +796,8 @@ iplot(struct plot *pl, int id)
             gr_resize(currentgraph);
             gr_redraw(currentgraph);
         } else {
-            /* Just connect the last two points. This won't
-             * be done with curve interpolation, so it might
-             * look funny.
-             */
+            /* Just connect the last two points. This won't be done
+             * with curve interpolation, so it might look funny.  */
             for (v = pl->pl_dvecs; v; v = v->v_next)
                 if (v->v_flags & VF_PLOT) {
                     gr_point(v, 
@@ -990,12 +972,12 @@ gr_iplot(struct plot *plot)
 
 }
 
-/*
- *  This gets called after iplotting is done.  We clear out the db_graphid
- *  fields.  Copy the dvecs, which we referenced by reference, so
- *  DestroyGraph gets to free its own copy.  Note:  This is a clear
- *  case for separating the linestyle and color fields from dvec.
- */
+/* This gets called after iplotting is done.  We clear out the
+ * db_graphid fields.  Copy the dvecs, which we referenced by
+ * reference, so DestroyGraph gets to free its own copy.
+ *
+ * Note: This is a clear case for separating the linestyle and color
+ * fields from dvec.  */
 
 void
 gr_end_iplot(void)
@@ -1080,4 +1062,3 @@ readtics(char *string)
         *ticsk = HUGE;
         return(tics);
 }
-
