@@ -1,6 +1,13 @@
+2000-07-09  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* devlist.c, devlist.h, test_devlist.c: Removed.  This idea is not
+	yet ready to be implemented.  The dependency of the analysis code
+	on CKThead for storing the device parameters at the same index as
+	the device model in the DEVices variable caused trouble.
+
 2000-07-08  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* devlist.c, test-devlist: Additional checks revealed a bug,
+	* devlist.c, test_devlist.c: Additional checks revealed a bug,
 	first_device() and next_device() should now do what they are
 	supposed to do.
 
