@@ -40,3 +40,10 @@ three only slighty differing implementations
 
 Separate frontend commands from supporting code.  Command files
 start with com_*.   Arno is working on this.
+
+Move src/devices/disto into src/maths/partialderiv.  Partial
+derivatives are math functions and should be classified under that
+directory.
+
+Refactor src/circuit/inp2dot.c so that the parser calls subroutines
+for each possible dotcard.

@@ -1,3 +1,10 @@
+2000-05-25  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/circuit/sperror.c: Reworked, now much simpler.
+
+	* src/include/inpdefs.h, src/include/sperror.h: Removed redundancy
+	in the definition of function prototypes.
+
 2000-05-06  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/include/fte*: Broken header files into smaller pieces.  This
