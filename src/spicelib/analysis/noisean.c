@@ -169,7 +169,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	   "Noise Spectral Density Curves - (V^2 or A^2)/Hz",
 	   freqUid,IF_REAL,666,data->namelist,666,
 	   &(data->NplotPtr));
-	/*saj*/	
+	/*saj*/
     }
 
     switch (job->NstpType) {

@@ -88,7 +88,7 @@ com_let(wordlist *wl)
     /* sanity check */
     if (eq(p, "all") ||strchr(p, '@')) {
         fprintf(cp_err, "Error: bad variable name %s\n", p);
-	tfree(p);
+        tfree(p);
         return;
     }
 
@@ -104,7 +104,7 @@ com_let(wordlist *wl)
     if (!t) {
 	fprintf(cp_err, "Error: Can't evaluate %s\n", rhs);
         free_pnode(nn);
-	tfree(p);
+        tfree(p);
         return;
     }
 

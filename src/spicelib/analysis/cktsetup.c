@@ -25,6 +25,7 @@ Author: 1985 Thomas L. Quarles
 
 extern SPICEdev **DEVices;
 
+
 int
 CKTsetup(CKTcircuit *ckt)
 {

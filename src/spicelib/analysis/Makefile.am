@@ -97,7 +97,7 @@ libckt_a_SOURCES = \
 		traninit.c	\
 		transetp.c	\
 		cluster.c	\
-		ckt.h
+		ckt.h  
 
 
 INCLUDES =  -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices

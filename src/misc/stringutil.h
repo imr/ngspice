@@ -25,7 +25,7 @@ char * rindex(register char *s,register char c );
 
 #ifndef HAVE_BCOPY
 
-void bcopy(const void  *from, void *to, size_t num);
+void bcopy(const void *from, void *to, size_t num);
 void bzero(void *ptr, size_t num);
 
 #endif /* HAVE_BCOPY */

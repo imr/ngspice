@@ -27,7 +27,6 @@ Modified: 2000 AlansFixes
 /* gtri - end - wbk - add includes */
 #endif
 
-
 /* ARGSUSED */
 int
 CKTsetOpt(void *ckt, void *anal, int opt, IFvalue *val)
@@ -195,7 +194,7 @@ CKTsetOpt(void *ckt, void *anal, int opt, IFvalue *val)
         }
         break;
 #endif
-/* gtri - end - wbk - add new options */	
+/* gtri - end - wbk - add new options */
     default:
         return(-1);
     }

@@ -20,6 +20,7 @@ Author: 1985 Thomas L. Quarles
 
 extern SPICEdev **DEVices;
 
+
 int
 CKTtrunc(CKTcircuit *ckt, double *timeStep)
 {

@@ -235,10 +235,10 @@ get_r_paren(char **s)
 
 #ifndef bcopy
 void
-bcopy(const void *vfrom,  void *vto,  size_t num)
+bcopy(const void *vfrom, void *vto, size_t num)
 {
-    register const char *from = vfrom;
-    register char *to = vto;
+    register const char *from=vfrom;
+    register char *to=vto;
     while (num-- > 0)
         *to++ = *from++;
     return;
@@ -248,7 +248,7 @@ bcopy(const void *vfrom,  void *vto,  size_t num)
 #ifndef bzero
 /* can't declare void here, because we've already used it in this file */
 /* and haven't declared it void before the use */
-void 
+void
 bzero(void *vptr, size_t num)
 {
     register char *ptr=vptr;

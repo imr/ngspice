@@ -120,7 +120,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	    if(error) return(error);
 	    CKTdump(ckt,(double)0,acPlot);
 	    (*(SPfrontEnd->OUTendPlot))(acPlot);
-	    acPlot=NULL;
+	    acPlot = NULL;
 	}
 
 #ifdef D_DBG_BLOCKTIMES
@@ -541,7 +541,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
         if(error) return(error);
 	}
 	(*(SPfrontEnd->OUTendPlot))(acPlot);
-	acPlot=NULL;
+	acPlot = NULL;
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
@@ -560,7 +560,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	error = CKTacDump(ckt,ckt->CKTrhsOld[0],acPlot);
 	}
 	(*(SPfrontEnd->OUTendPlot))(acPlot);
-	acPlot=NULL;
+	acPlot = NULL;
       
 	} else {
 
@@ -583,7 +583,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	    if(error) return(error);
 	    }
 	(*(SPfrontEnd->OUTendPlot))(acPlot);
-	acPlot=NULL;
+	acPlot = NULL;
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
@@ -604,7 +604,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	    if(error) return(error);
 	    }
 	(*(SPfrontEnd->OUTendPlot))(acPlot);
-	acPlot=NULL;
+	acPlot = NULL;
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
@@ -625,7 +625,7 @@ time1 = (*(SPfrontEnd->IFseconds))();
 	    if(error) return(error);
 	    }
 	(*(SPfrontEnd->OUTendPlot))(acPlot);
-	acPlot=NULL;
+	acPlot = NULL;
 
     }
 FREE(job->r1H1ptr);

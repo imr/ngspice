@@ -17,6 +17,8 @@ Author: 1985 Thomas L. Quarles
 
 extern SPICEdev **DEVices;
 
+
+
 /* ARGSUSED */
 int
 CKTmodAsk(void *ckt, void *modfast, int which, IFvalue *value, IFvalue *selector)

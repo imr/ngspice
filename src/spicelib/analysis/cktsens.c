@@ -35,6 +35,7 @@ static double inc_freq(double freq, int type, double step_size);
 
 extern SPICEdev **DEVices;
 
+
 /*
  *	Procedure:
  *

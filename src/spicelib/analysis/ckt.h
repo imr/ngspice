@@ -90,7 +90,7 @@ int DCOaskQuest( CKTcircuit *, void *, int , IFvalue *);
 int DCOsetParm( CKTcircuit  *, void *, int , IFvalue *);
 int DCTaskQuest( CKTcircuit *, void *, int , IFvalue *);
 int DCTsetParm( CKTcircuit  *, void *, int , IFvalue *);
-int DCop( CKTcircuit *, int);
+int DCop( CKTcircuit *, int );
 int DCtrCurv( CKTcircuit *, int );
 int DCtran( CKTcircuit *, int );
 int DISTOan(CKTcircuit *, int);

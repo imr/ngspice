@@ -14,6 +14,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 extern SPICEdev **DEVices;
 
+
 int
 CKTpzLoad(CKTcircuit *ckt, SPcomplex *s)
 {

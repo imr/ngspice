@@ -75,7 +75,7 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 	  
 	  /* gtri - end - wbk - 10/23/90 */
 #endif
-
+	  
 	case 'R':
 	    /* Rname <node> <node> [<val>][<mname>][w=<val>][l=<val>] */
 	    INP2R(ckt, tab, current);

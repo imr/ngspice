@@ -11,7 +11,8 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #include <stdio.h>
 
 extern SPICEdev **DEVices;
-                /* XXX */
+
+	/* XXX */
 extern char	*Sfilter;
 
 sgen *

@@ -83,7 +83,7 @@ CKTload(CKTcircuit *ckt)
 #endif /* PARALLEL_ARCH */
         }
     }
-    
+
    /* gtri - add - wbk - 11/26/90 - reset the MIF init flags */
 #ifdef XSPICE
     /* init is set by CKTinit and should be true only for first load call */
@@ -107,7 +107,8 @@ CKTload(CKTcircuit *ckt)
     }
 #endif
     /* gtri - end - Put resistors to ground at all nodes */
-        
+
+
     if(ckt->CKTmode & MODEDC) {
         /* consider doing nodeset & ic assignments */
         if(ckt->CKTmode & (MODEINITJCT | MODEINITFIX)) {

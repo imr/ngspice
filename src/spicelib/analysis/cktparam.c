@@ -18,6 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 extern SPICEdev **DEVices;
 
+
 /* ARGSUSED */
 int
 CKTparam(void *ckt, void *fast, int param, IFvalue *val, IFvalue *selector)

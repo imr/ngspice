@@ -284,9 +284,10 @@ if_run(char *t, char *what, wordlist *args, char *tab)
 /* -- A bug fix suggested by Cecil Aswell (aswell@netcom.com) to let */
 /* -- the interactive analysis commands get the current temperature */
 /* -- and other options. */
-/*dw Hiermit wird auf der Eingabezeile mit "run" die letzte Simulation
-  wiederholt, sowie die letzte gültige Temperatur genutzt. (Warum die
-  in defOpt drin steht, steht in den Sternen!) */    
+
+/* dw With this the last simulation will be repeated on the input line, and the 
+last valid temperature is used. (Why is theÂ  temperature is within defOpt?!) 
+*/    
     if( eq(what,"run") ) {
         ft_curckt->ci_curTask = ft_curckt->ci_defTask;
         ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;
@@ -305,7 +306,7 @@ if_run(char *t, char *what, wordlist *args, char *tab)
         ||(eq(what, "sens")) 
         ||(eq(what,"tf"))
         ||(eq(what, "run"))  )  {
-/*dw Nutzung der letzten gültigen Temperatur, z.B. nach "set temp" s.o. */
+/*dw Nutzung der letzten gÃ¼ltigen Temperatur, z.B. nach "set temp" s.o. */
         ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;	
         if ((err = (*(ft_sim->doAnalyses))(ckt, 1, ft_curckt->ci_curTask))!=OK){
             ft_sperror(err, "doAnalyses");

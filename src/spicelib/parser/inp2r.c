@@ -79,8 +79,8 @@ void INP2R(void *ckt, INPtables * tab, card * current)
 		type = thismodel->INPmodType;
 	    }
 	} else {
-	    /* It is not a model */
 	    tfree(model);
+	    /* It is not a model */
 	    line = saveline;	/* go back */
 	    type = mytype;
 	    if (!tab->defRmod) {	/* create default R model */
@@ -92,6 +92,7 @@ void INP2R(void *ckt, INPtables * tab, card * current)
 	}
 	IFC(newInstance, (ckt, mdfast, &fast, name));
     } else {
+	tfree(model);
 	/* The token is null and a default model will be created */
 	type = mytype;
 	if (!tab->defRmod) {

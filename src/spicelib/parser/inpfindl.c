@@ -20,9 +20,9 @@ char *INPfindLev(char *line, int *level)
 {
     char *where;
 
-   /*
-    * where = line;
-    */
+    /*
+     *where = line;
+     */
 
     where = strstr(line, "level");
 
