@@ -54,7 +54,10 @@ ACan(CKTcircuit *ckt, int restart)
                     ((ACAN*)ckt->CKTcurJob)->ACstartFreq)/
                     (((ACAN*)ckt->CKTcurJob)->ACnumberSteps-1);
 	    else
-		((ACAN*)ckt->CKTcurJob)->ACfreqDelta = HUGE;
+		/* Patch from: Richard McRoberts
+		 * This patch is for a rather pathological case:
+		 * a linear step with only one point */
+		((ACAN*)ckt->CKTcurJob)->ACfreqDelta = 0; 
             break;
         default:
             return(E_BADPARM);
