@@ -14,7 +14,6 @@ Modified: 2000 AlansFixes
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "iferrmsg.h"
 #include "inpdefs.h"
 #include "inp.h"
@@ -175,6 +174,8 @@ int INPgetNetTok(char **line, char **token, int gobble)
 	if (*point == '=')
 	    break;
 	if (*point == ',')
+	    break;
+	if (*point == ')')
 	    break;
     }
 
