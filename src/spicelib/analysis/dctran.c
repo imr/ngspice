@@ -126,6 +126,7 @@ DCtran(CKTcircuit *ckt,
 		(void*)ckt->CKTcurJob,
                 ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,
                 IF_REAL,&(((TRANan*)ckt->CKTcurJob)->TRANplot));
+	tfree(nameList);
         if(error) return(error);
 
         ckt->CKTtime = 0;

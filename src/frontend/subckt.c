@@ -332,14 +332,14 @@ doit(struct line *deck)
         gotone = FALSE;
         for (c = deck, lc = NULL; c; ) {
 	   if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
-		char *tofree;
+		char *tofree, *tofree2;
 	        gotone = TRUE;
                 t = tofree = s = copy(c->li_line);       /*  s & t hold copy of component line  */
 
 		/*  make scname point to first non-whitepace chars after refdes invocation
 		 * e.g. if invocation is Xreference, *scname = reference
 		 */
-                scname = gettok(&s);            
+                tofree2 = scname = gettok(&s);            
                 scname += strlen(invoke);   
                 while ((*scname == ' ') || (*scname == '\t') ||
                         (*scname == ':'))
@@ -398,6 +398,7 @@ doit(struct line *deck)
 		 */
                 if (!translate(lcc, s, t, scname, subname))
 		    error = 1;
+		tfree(subname);
 
                 /* Now splice the decks together. */
                 if (lc)
@@ -410,6 +411,7 @@ doit(struct line *deck)
                 c = lcc->li_next;
                 lc = lcc;
 		tfree(tofree);
+		tfree(tofree2);
             } 	  /* if (ciprefix(invoke, c->li_line)) . . . */
 	   else {
                 lc = c;
@@ -481,19 +483,20 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
     struct line *c;
     char *buffer, *next_name, dev_type, *name, *s, *t, ch, *nametofree;
     int nnodes, i, dim;
-
+    int rtn=0;
+    
     /* settrans builds the table holding the translated netnames.  */
     i = settrans(formal, actual, subname);
     if (i < 0) {
 	fprintf(stderr,
 	"Too few parameters for subcircuit type \"%s\" (instance: x%s)\n",
 		subname, scname);
-	return 0;
+	goto quit;
     } else if (i > 0) {
 	fprintf(stderr,
 	"Too many parameters for subcircuit type \"%s\" (instance: x%s)\n",
 		subname, scname);
-	return 0;
+	goto quit;
     }
 
     /* now iterate through the .subckt deck and translate the cards. */
@@ -627,7 +630,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 
 
 	  s = c->li_line;       /* s now holds the SPICE line */
-	  name = gettok(&s);    /* name points to the refdes  */
+	  t = name = gettok(&s);    /* name points to the refdes  */
 	  if (!name)
 	    continue;
 	  if (!*name) {
@@ -650,6 +653,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 			   name);
 	  else
 	    (void) sprintf(buffer, "%c:%s ", ch, scname);    /* F:subcircuitname */
+	  tfree(t);
 	  
 
 /* Next iterate over all nodes (netnames) found and translate them. */
@@ -660,7 +664,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    if (name == NULL) {
 	      fprintf(cp_err, "Error: too few nodes: %s\n",
 		      c->li_line);
-	      return 0;
+	      goto quit;
 	    }
 	      
 	    /* call gettrans and see if netname was used in the invocation */
@@ -675,6 +679,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	      (void) sprintf(buffer + strlen(buffer),
 			     "%s:%s ", scname, name);
 	    }
+	    tfree(name);
 	  }  /* while (nnodes-- . . . . */
   
 
@@ -694,7 +699,8 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	      if( get_l_paren(&s) == 1 ) {   
 		fprintf(cp_err, "Error: no left paren after POLY %s\n",
 			c->li_line);
-		return 0;
+		tfree(next_name);
+		goto quit;
 	      }
 
 	      nametofree = gettok_noparens(&s);
@@ -705,7 +711,8 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	      if( get_r_paren(&s) == 1 ) {   
 		fprintf(cp_err, "Error: no right paren after POLY %s\n",
 			c->li_line);
-		return 0;
+		tfree(next_name);
+		goto quit;
 	      }
 
 	      /* Write POLY(dim) into buffer */
@@ -716,28 +723,22 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	  } /* if ( (strcmp(next_name, "POLY") == 0) . . .  */
 	  else
 	    dim = 1;    /* only one controlling source . . . */
+	  tfree(next_name);
 
 /* Now translate the controlling source/nodes */
 	  nnodes = dim * numdevs(c->li_line);     
 	  while (nnodes-- > 0) {
-	    name = gettok(&s);   /* name points to the returned token  */
+	    nametofree = name = gettok(&s);   /* name points to the returned token  */
 	    if (name == NULL) {
 	      fprintf(cp_err, "Error: too few devs: %s\n",
 		      c->li_line);
-	      return 0;
+	      goto quit;
 	    }
 
 	    if ( (dev_type == 'f') ||
 		 (dev_type == 'F') ||
 		 (dev_type == 'h') ||
 		 (dev_type == 'H') ) {   
-
-	      /*
-		if ( (strcmp(&dev_type, "f") == 0) ||
-		(strcmp(&dev_type, "F") == 0) ||
-		(strcmp(&dev_type, "h") == 0) ||
-		(strcmp(&dev_type, "H") == 0) ) {  
-	      */
 
 	      /* Handle voltage source name */
 
@@ -775,6 +776,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 		/* From netname and Urefdes creates Urefdes:netname */
 	      }
 	    }
+	    tfree(nametofree);
 	  }      /* while (nnodes--. . . . */
 	  
 /* Now write out remainder of line (polynomial coeffs) */
@@ -819,7 +821,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    if (name == NULL) {
 	      fprintf(cp_err, "Error: too few nodes: %s\n",
 		      c->li_line);
-	      return 0;
+	      goto quit;
 	    }
 	      
 	    /* call gettrans and see if netname was used in the invocation */
@@ -847,7 +849,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    if (name == NULL) {
 	      fprintf(cp_err, "Error: too few devs: %s\n",
 		      c->li_line);
-	      return 0;
+	      goto quit;
 	    }
 	    ch = *name;
 	    name++;
@@ -885,7 +887,15 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 
         tfree(buffer);
     }  /* for (c = deck . . . . */
-    return 1;
+    rtn = 1;
+quit:
+    for (i = 0; ; i++) {
+	if(!table[i].t_old && !table[i].t_new)
+	    break;
+	FREE(table[i].t_old);
+	FREE(table[i].t_new);
+    }
+    return rtn;
 }
 
 
@@ -1007,6 +1017,8 @@ settrans(char *formal, char *actual, char *subname)
 {
     int i;
 
+    bzero(table,sizeof(*table));
+    
     for (i = 0; ; i++) {
         table[i].t_old = gettok(&formal);
         table[i].t_new = gettok(&actual);
@@ -1217,6 +1229,7 @@ modtranslate(struct line *deck, char *subname)
             buffer = tmalloc(strlen(name) + strlen(t) +
                     strlen(subname) + 4);
             (void) sprintf(buffer, "%s ",name);    /* at this point, buffer = ".model " */
+	    tfree(name);
             name = gettok(&t);                     /* name now holds model name */
             wlsub = alloc(struct wordlist);
             wlsub->wl_next = submod;
@@ -1269,10 +1282,13 @@ devmodtranslate(struct line *deck, char *subname)
         case 'c':
             name = gettok(&t);
             (void) sprintf(buffer,"%s ",name);
+	    tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
 
             if (*t) {
                 name = gettok(&t);
@@ -1287,6 +1303,7 @@ devmodtranslate(struct line *deck, char *subname)
                 }
                 if (!found)
 		    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+		tfree(name);
             }
 
             found = FALSE;
@@ -1303,6 +1320,7 @@ devmodtranslate(struct line *deck, char *subname)
                 }
                 if (!found)
 		    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+		tfree(name);
             }
 
             (void) strcat(buffer, t);
@@ -1313,10 +1331,13 @@ devmodtranslate(struct line *deck, char *subname)
 	case 'd':
             name = gettok(&t);
             (void) sprintf(buffer,"%s ",name);
+	    tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
             name = gettok(&t);
 
             /* Now, is this a subcircuit model? */
@@ -1331,6 +1352,7 @@ devmodtranslate(struct line *deck, char *subname)
 
             if (!found)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
             (void) strcat(buffer, t);
             tfree(s->li_line);
             s->li_line = buffer;
@@ -1372,14 +1394,19 @@ devmodtranslate(struct line *deck, char *subname)
 	case 'm':
             name = gettok(&t);
             (void) sprintf(buffer,"%s ",name);
+	    tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
             name = gettok(&t);
 
             /* Now, is this a subcircuit model? */
@@ -1397,17 +1424,22 @@ devmodtranslate(struct line *deck, char *subname)
             (void) strcat(buffer, t);
             tfree(s->li_line);
             s->li_line = buffer;
+	    tfree(name);
             break;
 
 	case 'q':
             name = gettok(&t);
             (void) sprintf(buffer,"%s ",name);
+	    tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
             name = gettok(&t);
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
             name = gettok(&t);
 
             /* Now, is this a subcircuit model? */
@@ -1421,6 +1453,7 @@ devmodtranslate(struct line *deck, char *subname)
             }
             if (!found)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	    tfree(name);
 
             found = FALSE;
             if (*t) {
@@ -1436,6 +1469,7 @@ devmodtranslate(struct line *deck, char *subname)
                 }
                 if (!found)
 		    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+		tfree(name);
             }
 
             (void) strcat(buffer, t);

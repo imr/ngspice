@@ -640,7 +640,8 @@ bool
 vec_eq(struct dvec *v1, struct dvec *v2)
 {
     char *s1, *s2;
-
+    bool rtn;
+    
     if (v1->v_plot != v2->v_plot)
         return (FALSE);
     
@@ -648,9 +649,13 @@ vec_eq(struct dvec *v1, struct dvec *v2)
     s2 = vec_basename(v2);
 
     if (cieq(s1, s2))
-        return (TRUE);
+        rtn = TRUE;
     else
-        return (FALSE);
+        rtn = FALSE;
+
+    tfree(s1);
+    tfree(s2);
+    return rtn;
 }
 
 /* Return the name of the vector with the plot prefix stripped off.  This

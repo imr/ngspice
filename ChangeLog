@@ -1,5 +1,11 @@
 2003-07-17 Stefan Jones <stefan.jones@multigig.com>
 
+	* src/frontend/{subckt.c,vectors.c} 
+	src/spicelib/analysis/dctran.c 
+	src/spicelib/parser/inperror.c 
+	src/xspice/idn/idndig.c src/xspice/mif/mif_inp2.c :
+	More memory leak fixes
+
 	* configure.in src/xspice/xspice.c :
 	Fix compile problems with garbage collector
 

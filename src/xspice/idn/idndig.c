@@ -39,14 +39,11 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
-#include <stdio.h>
+#include "ngspice.h"
 
 #include "cm.h"
 
 #include "evtudn.h"
-
-void *tmalloc(size_t);
-
  
 /* ************************************************************************ */
 
@@ -146,7 +143,7 @@ void idn_digital_resolve(int num_struct,
 
     /* Cast the input void pointers to pointers of the digital type */
     dig_struct = evt_struct;
-    dig_struct_array = evt_struct_array;
+    dig_struct_array = (Digital_t   **)evt_struct_array;
 
     /* Copy the first member of the array directly to the output */
     dig_struct->state = dig_struct_array[0]->state;

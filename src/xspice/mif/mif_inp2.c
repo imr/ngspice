@@ -188,6 +188,7 @@ card         *current;  /* the card we are to parse                     */
     /* and return a pointer to its structure in 'thismodel'        */
 
     current->error = MIFgetMod(ckt, model, &thismodel, tab);
+    tfree(name);
 
     if(current->error) {
         return;
