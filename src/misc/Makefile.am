@@ -3,6 +3,7 @@
 noinst_LIBRARIES = libmisc.a
 
 libmisc_a_SOURCES = \
+		@GETOPTSRC@ 	\
 		alloc.c		\
 		alloc.h		\
 		dup2.c		\
@@ -23,7 +24,7 @@ libmisc_a_SOURCES = \
 		tilde.h		\
 		misc_time.c	\
 		misc_time.h	\
-		wlist.c
+		wlist.c	
 
 
 

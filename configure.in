@@ -171,8 +171,12 @@ AC_CHECK_LIB(gc,GC_malloc,AC_DEFINE(HAVE_LIBGC) LIBS="$LIBS -lgc")
 
 AC_MSG_RESULT(Checking for the asprintf function:)
 dnl Check for the asprintf function:
-AC_CHECK_FUNCS(asprintf)
+AC_CHECK_FUNC(asprintf)
 
+AC_MSG_RESULT(Checking for getopt:)
+dnl Check for getopt function and if not found uses a local copy:
+AC_CHECK_FUNC(getopt, GETOPTSRC="", GETOPTSRC= "getopt.h getopt.c getopt1.c")
+AC_SUBST(GETOPTSRC)
 
 # Expand the prefix variable (this is really annoying!)
 if eval "test x$prefix = xNONE"; then
