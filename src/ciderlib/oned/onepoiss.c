@@ -10,7 +10,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "onedev.h"
 #include "onedext.h"
 #include "oneddefs.h"
-#include "spMatrix.h"
+#include "spmatrix.h"
 
 /* Functions to setup and solve the 1D poisson equation. */
 

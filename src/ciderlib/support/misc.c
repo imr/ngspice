@@ -12,7 +12,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "numglobs.h"
 #include "numenum.h"
-#include "spMatrix.h"
+#include "spmatrix.h"
 
 
 /* Used in Solution Projection Calculations */

@@ -8,7 +8,7 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "numenum.h"
 #include "onedev.h"
 #include "onemesh.h"
-#include "spMatrix.h"
+#include "spmatrix.h"
 #include "onedext.h"
 #include "oneddefs.h"
 

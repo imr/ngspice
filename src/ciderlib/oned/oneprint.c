@@ -11,7 +11,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 #include "onemesh.h"
 #include "onedev.h"
 #include "carddefs.h"
-#include "spMatrix.h"
+#include "spmatrix.h"
 #include "onedext.h"
 #include "oneddefs.h"
 

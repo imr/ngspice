@@ -12,7 +12,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "onedev.h"
 #include "onemesh.h"
 #include "complex.h"
-#include "spMatrix.h"
+#include "spmatrix.h"
 #include "ifsim.h"
 
 #include "onedext.h"

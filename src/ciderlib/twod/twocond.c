@@ -11,7 +11,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "twomesh.h"
 #include "twodev.h"
 #include "bool.h"
-#include "spMatrix.h"
+#include "spmatrix.h"
 #include "twoddefs.h"
 #include "twodext.h"
 

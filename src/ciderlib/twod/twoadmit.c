@@ -12,7 +12,7 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "twodev.h"
 #include "twomesh.h"
 #include "complex.h"
-#include "spMatrix.h"
+#include "spmatrix.h"
 #include "bool.h"
 #include "macros.h"
 #include "ifsim.h"

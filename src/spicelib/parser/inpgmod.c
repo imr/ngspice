@@ -242,7 +242,7 @@ INPparseNumMod( ckt, model, tab, errMessage )
 	        cardType = lastType;
                 while (*line == '+') line++;	/* Skip leading '+'s */
 	    } else {
-	        tmp = (char *)xmalloc((55)*sizeof(char));
+	        tmp = (char *)tmalloc((55)*sizeof(char));
 		(void) sprintf(tmp,
 		    "Error on card %d : illegal continuation \'+\' - ignored",
 		    cardNum);
@@ -275,7 +275,7 @@ INPparseNumMod( ckt, model, tab, errMessage )
 			cardType = E_MISSING;
 		    } else {
 		        /* Error */
-		        tmp =(char *)xmalloc((55+strlen(cardName))*sizeof(char));
+		        tmp =(char *)tmalloc((55+strlen(cardName))*sizeof(char));
 			(void) sprintf(tmp,
 			    "Error on card %d : unrecognized name (%s) - ignored",
 			    cardNum, cardName );
@@ -298,14 +298,14 @@ INPparseNumMod( ckt, model, tab, errMessage )
 		    idx = INPfindParm(parm, info->cardParms, info->numParms);
 		    if (idx == E_MISSING) {
 			/* parm not found */
-                        tmp = (char *)xmalloc((60+strlen(parm)) * sizeof(char));
+                        tmp = (char *)tmalloc((60+strlen(parm)) * sizeof(char));
                         (void)sprintf(tmp,
                             "Error on card %d : unrecognized parameter (%s) - ignored",
 			    cardNum, parm);
                         err = INPerrCat(err, tmp);
 		    } else if (idx == E_AMBIGUOUS) {
 			/* parm ambiguous */
-                        tmp = (char *)xmalloc((58+strlen(parm)) * sizeof(char));
+                        tmp = (char *)tmalloc((58+strlen(parm)) * sizeof(char));
                         (void)sprintf(tmp,
                             "Error on card %d : ambiguous parameter (%s) - ignored",
 			    cardNum, parm);
@@ -318,7 +318,7 @@ INPparseNumMod( ckt, model, tab, errMessage )
 			      == IF_FLAG) {
 			    value->iValue = 0;
 			  } else {
-                            tmp =(char *)xmalloc((63+strlen(parm))*sizeof(char));
+                            tmp =(char *)tmalloc((63+strlen(parm))*sizeof(char));
                             (void)sprintf(tmp,
                               "Error on card %d : non-boolean parameter (%s) - \'^\' ignored",
 			      cardNum, parm);

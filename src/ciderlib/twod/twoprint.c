@@ -11,7 +11,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 #include "twomesh.h"
 #include "twodev.h"
 #include "carddefs.h"
-#include "spMatrix.h"
+#include "spmatrix.h"
 #include "bool.h"
 #include "twoddefs.h"
 #include "twodext.h"
