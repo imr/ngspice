@@ -171,6 +171,11 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 	    INP2B(ckt, tab, current);
 	    break;
 
+        case '.':   /* .<something> Many possibilities */
+            if (INP2dot(ckt,tab,current,task,gnode))
+		return;
+            break;
+
 	case 0:
 	    break;
 

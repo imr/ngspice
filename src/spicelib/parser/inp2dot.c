@@ -12,54 +12,6 @@ Modified: 2000 AlansFixes
 #include "fteext.h"
 #include "inp.h"
 
-static int
-dot_nodeset(char *line, void *ckt, INPtables *tab, card *current,
-	    void *task, void *gnode)
-{
-    int which;			/* which analysis we are performing */
-    int error;			/* error code temporary */
-    char *name;			/* the resistor's name */
-    void *node1;		/* the first node's node pointer */
-    IFvalue ptemp;		/* a value structure to package resistance into */
-    IFparm *prm;		/* pointer to parameter to search through array */
-
-    /* .nodeset */
-    which = -1;
-    for (prm = ft_sim->nodeParms;
-	 prm < ft_sim->nodeParms + ft_sim->numNodeParms; prm++) {
-	if (strcmp(prm->keyword, "nodeset") == 0) {
-	    which = prm->id;
-	    break;
-	}
-    }
-    if (which == -1) {
-	LITERR("nodeset unknown to simulator. \n");
-	return (0);
-    }
-    for (;;) {
-	int length;
-
-	/* loop until we run out of data */
-	INPgetTok(&line, &name, 1);
-	/* check to see if in the form V(xxx) and grab the xxx */
-	if (*name == (char) NULL)
-	    break;		/* end of line */
-	length = strlen(name);
-	if ((*name == 'V' || *(name) == 'v') && (length == 1)) {
-	    /* looks like V - must be V(xx) - get xx now */
-	    INPgetTok(&line, &name, 1);
-	    INPtermInsert(ckt, &name, tab, &node1);
-	    ptemp.rValue = INPevaluate(&line, &error, 1);
-	    IFC(setNodeParm, (ckt, node1, which, &ptemp, (IFvalue *) NULL));
-	    continue;
-	}
-	LITERR(" Error: .nodeset syntax error.\n");
-	break;
-    }
-    return (0);
-}
-
-
 
 static int
 dot_noise(char *line, void *ckt, INPtables *tab, card *current,
@@ -232,54 +184,6 @@ dot_disto(char *line, void *ckt, INPtables *tab, card *current,
 	GCA(INPapName, (ckt, which, foo, "f2overf1", parm));
     }
     return (0);
-}
-
-
-static int
-dot_ic(char *line, void *ckt, INPtables *tab, card *current,
-       void *task, void *gnode, void *foo)
-{
-    int which;			/* which analysis we are performing */
-    int error;			/* error code temporary */
-    IFvalue ptemp;		/* a value structure to package resistance into */
-    IFparm *prm;		/* pointer to parameter to search through array */
-    void *node1;		/* the first node's node pointer */
-
-    /* .ic */
-    which = -1;
-    for (prm = ft_sim->nodeParms;
-	 prm < ft_sim->nodeParms + ft_sim->numNodeParms; prm++) {
-	if (strcmp(prm->keyword, "ic") == 0) {
-	    which = prm->id;
-	    break;
-	}
-    }
-    if (which == -1) {
-	LITERR("ic unknown to simulator. \n");
-	return (0);
-    }
-    for (;;) {
-	/* loop until we run out of data */
-	int length;
-	char *name;		/* the resistor's name */
-
-	INPgetTok(&line, &name, 1);
-	/* check to see if in the form V(xxx) and grab the xxx */
-	if (*name == 0)
-	    break;		/* end of line */
-	length = strlen(name);
-	if ((*name == 'V' || *(name) == 'v') && (length == 1)) {
-	    /* looks like V - must be V(xx) - get xx now */
-	    INPgetTok(&line, &name, 1);
-	    INPtermInsert(ckt, &name, tab, &node1);
-	    ptemp.rValue = INPevaluate(&line, &error, 1);
-	    IFC(setNodeParm, (ckt, node1, which, &ptemp, (IFvalue *) NULL));
-	    continue;
-	}
-	LITERR(" Error: .ic syntax error.\n");
-	break;
-    }
-    return 0;
 }
 
 

@@ -1,6 +1,14 @@
+2000-09-09  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* inp2dot.c: Removed unused static functions dot_ic and
+	dot_nodeset.
+
+	* inppas2.c: Added back parsing for dotlines.
+
 2000-09-02  Paolo Nenzi <p.nenzi@ieee.org>
-     * Patched with code sent by Alan Gillespie. See more on top
-       level ChangeLog.
+	
+ 	* Patched with code sent by Alan Gillespie. See more on top level
+	ChangeLog.
 
 2000-07-07  Arno W. Peters  <A.W.Peters@ieee.org>
 
