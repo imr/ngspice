@@ -4,7 +4,6 @@ Author: 1989 Takayasu Sakurai
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "mos6defs.h"
@@ -12,11 +11,8 @@ Author: 1989 Takayasu Sakurai
 #include "suffix.h"
 
 int
-MOS6mAsk(ckt,inModel,param,value)
-    CKTcircuit	*ckt;
-    GENmodel *inModel;
-    int param;
-    IFvalue *value;
+MOS6mAsk(CKTcircuit *ckt, GENmodel *inModel, int param,
+         IFvalue *value)
 {
     MOS6model *model = (MOS6model *)inModel;
     switch(param) {

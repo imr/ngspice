@@ -4,7 +4,6 @@ Author: 1989 Takayasu Sakurai
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "ifsim.h"
 #include "mos6defs.h"
@@ -13,6 +12,7 @@ Author: 1989 Takayasu Sakurai
 IFparm MOS6pTable[] = { /* parameters */ 
  IOPU("l",            MOS6_L,          IF_REAL   , "Length"),
  IOPU("w",            MOS6_W,          IF_REAL   , "Width"),
+ IOPU("m",            MOS6_M,          IF_REAL   , "Parallel Multiplier"),
  IOPU("ad",           MOS6_AD,         IF_REAL   , "Drain area"),
  IOPU("as",           MOS6_AS,         IF_REAL   , "Source area"),
  IOPU("pd",           MOS6_PD,         IF_REAL   , "Drain perimeter"),
@@ -35,6 +35,7 @@ IFparm MOS6pTable[] = { /* parameters */
  IOPAU("icvgs",        MOS6_IC_VGS,     IF_REAL   , "Initial G-S voltage"),
  IOPAU("icvbs",        MOS6_IC_VBS,     IF_REAL   , "Initial B-S voltage"),
  IOPU("temp",         MOS6_TEMP,       IF_REAL,    "Instance temperature"),
+ IOPU("dtemp",        MOS6_DTEMP,      IF_REAL,    "Instance temperature difference"),
  IP( "ic",           MOS6_IC,  IF_REALVEC, "Vector of D-S, G-S, B-S voltages"),
  IP( "sens_l", MOS6_L_SENS, IF_FLAG, "flag to request sensitivity WRT length"),
  IP( "sens_w", MOS6_W_SENS, IF_FLAG, "flag to request sensitivity WRT width"),

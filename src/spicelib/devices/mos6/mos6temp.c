@@ -4,7 +4,6 @@ Author: 1989 Takayasu Sakurai
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mos6defs.h"
 #include "const.h"
@@ -12,9 +11,7 @@ Author: 1989 Takayasu Sakurai
 #include "suffix.h"
 
 int
-MOS6temp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS6temp(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS6model *model = (MOS6model *)inModel;
     MOS6instance *here;
@@ -123,11 +120,15 @@ MOS6temp(inModel,ckt)
             double arg;     /* 1 - fc */
             double sarg;    /* (1-fc) ^^ (-mj) */
             double sargsw;  /* (1-fc) ^^ (-mjsw) */
-	    if (here->MOS6owner != ARCHme) continue;
+	    
+            if (here->MOS6owner != ARCHme) continue;
 
             /* perform the parameter defaulting */
+            if(!here->MOS6dtempGiven) {
+                here->MOS6dtemp = 0.0;
+            }
             if(!here->MOS6tempGiven) {
-                here->MOS6temp = ckt->CKTtemp;
+                here->MOS6temp = ckt->CKTtemp + here->MOS6dtemp;
             }
             vt = here->MOS6temp * CONSTKoverQ;
             ratio = here->MOS6temp/model->MOS6tnom;

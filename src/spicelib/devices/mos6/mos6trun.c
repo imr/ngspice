@@ -6,7 +6,6 @@ Author: 1989 Takayasu Sakurai
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mos6defs.h"
 #include "sperror.h"
@@ -14,10 +13,7 @@ Author: 1989 Takayasu Sakurai
 
 
 int
-MOS6trunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+MOS6trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
     MOS6model *model = (MOS6model *)inModel;
     MOS6instance *here;

@@ -6,14 +6,12 @@ Author: 1989 Takayasu Sakurai
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mos6defs.h"
 #include "suffix.h"
 
 
 void
-MOS6destroy(inModel)
-    GENmodel **inModel;
+MOS6destroy(GENmodel **inModel)
 {
     MOS6model **model = (MOS6model**)inModel;
     MOS6instance *here;

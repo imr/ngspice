@@ -9,7 +9,6 @@ Modified: 2000 AlansFixes
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "mos6defs.h"
@@ -17,11 +16,8 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 int
-MOS6setup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
+          int *states)
 {
     MOS6model *model = (MOS6model *)inModel;
     MOS6instance *here;
@@ -142,6 +138,9 @@ MOS6setup(matrix,inModel,ckt,states)
             if(!here->MOS6vonGiven) {
                 here->MOS6von = 0;
             }
+            if(!here->MOS6mGiven) {
+                here->MOS6m = 1;
+            }
 
 
             /* allocate a chunk of the state vector */
@@ -224,9 +223,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-MOS6unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS6unsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS6model *model;
     MOS6instance *here;

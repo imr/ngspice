@@ -6,7 +6,6 @@ Author: 1989 Takayasu Sakurai
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mos6defs.h"
 #include "sperror.h"
@@ -14,9 +13,7 @@ Author: 1989 Takayasu Sakurai
 
 
 int
-MOS6getic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS6getic(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS6model *model = (MOS6model *)inModel;
     MOS6instance *here;

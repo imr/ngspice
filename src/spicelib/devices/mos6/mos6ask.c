@@ -5,7 +5,6 @@ Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "cktdefs.h"
@@ -16,12 +15,8 @@ Modified: 2000 AlansFixes
 
 /*ARGSUSED*/
 int
-MOS6ask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+MOS6ask(CKTcircuit *ckt, GENinstance *inst, int which,
+        IFvalue *value, IFvalue *select)
 {
     MOS6instance *here = (MOS6instance*)inst;
     double vr;
@@ -32,37 +27,52 @@ MOS6ask(ckt,inst,which,value,select)
     static char *msg = "Current and power not available for ac analysis";
     switch(which) {
         case MOS6_TEMP:
-            value->rValue = here->MOS6temp-CONSTCtoK;
+            value->rValue = here->MOS6temp - CONSTCtoK;
+            return(OK);
+        case MOS6_DTEMP:
+            value->rValue = here->MOS6dtemp;
             return(OK);
         case MOS6_CGS:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgs);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CGD:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgd);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_L:
             value->rValue = here->MOS6l;
                 return(OK);
         case MOS6_W:
             value->rValue = here->MOS6w;
+            value->rValue *= here->MOS6m;
+                return(OK);
+        case MOS6_M:
+            value->rValue = here->MOS6m;
                 return(OK);
         case MOS6_AS:
             value->rValue = here->MOS6sourceArea;
+            value->rValue *= here->MOS6m;
                 return(OK);
         case MOS6_AD:
             value->rValue = here->MOS6drainArea;
+            value->rValue *= here->MOS6m;
                 return(OK);
         case MOS6_PS:
             value->rValue = here->MOS6sourcePerimiter;
+            value->rValue *= here->MOS6m;
                 return(OK);
         case MOS6_PD:
             value->rValue = here->MOS6drainPerimiter;
+            value->rValue *= here->MOS6m;
                 return(OK);
         case MOS6_NRS:
             value->rValue = here->MOS6sourceSquares;
+            value->rValue *= here->MOS6m;
                 return(OK);
         case MOS6_NRD:
             value->rValue = here->MOS6drainSquares;
+            value->rValue *= here->MOS6m;
                 return(OK);
         case MOS6_OFF:
             value->rValue = here->MOS6off;
@@ -96,21 +106,25 @@ MOS6ask(ckt,inst,which,value,select)
             return(OK);
         case MOS6_SOURCECONDUCT:
             value->rValue = here->MOS6sourceConductance;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_DRAINCONDUCT:
             value->rValue = here->MOS6drainConductance;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_SOURCERESIST:
 	    if (here->MOS6sNodePrime != here->MOS6sNode)
 		value->rValue = 1.0 / here->MOS6sourceConductance;
 	    else
 		value->rValue = 0.0;
+            value->rValue /= here->MOS6m;
             return(OK);
         case MOS6_DRAINRESIST:
 	    if (here->MOS6dNodePrime != here->MOS6dNode)
 		value->rValue = 1.0 / here->MOS6drainConductance;
 	    else
 		value->rValue = 0.0;
+            value->rValue /= here->MOS6m;
             return(OK);
         case MOS6_VON:
             value->rValue = here->MOS6von;
@@ -126,45 +140,59 @@ MOS6ask(ckt,inst,which,value,select)
             return(OK);
         case MOS6_CD:
             value->rValue = here->MOS6cd;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CBS:
             value->rValue = here->MOS6cbs;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CBD:
             value->rValue = here->MOS6cbd;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_GMBS:
             value->rValue = here->MOS6gmbs;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_GM:
             value->rValue = here->MOS6gm;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_GDS:
             value->rValue = here->MOS6gds;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_GBD:
             value->rValue = here->MOS6gbd;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_GBS:
             value->rValue = here->MOS6gbs;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CAPBD:
             value->rValue = here->MOS6capbd;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CAPBS:
             value->rValue = here->MOS6capbs;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CAPZEROBIASBD:
             value->rValue = here->MOS6Cbd;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CAPZEROBIASBDSW:
             value->rValue = here->MOS6Cbdsw;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CAPZEROBIASBS:
             value->rValue = here->MOS6Cbs;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CAPZEROBIASBSSW:
             value->rValue = here->MOS6Cbssw;
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_VBD:
             value->rValue = *(ckt->CKTstate0 + here->MOS6vbd);
@@ -183,24 +211,30 @@ MOS6ask(ckt,inst,which,value,select)
             /* add overlap capacitance */
             value->rValue += (here->sMOS6modPtr->MOS6gateSourceOverlapCapFactor)
                              * (here->MOS6w);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_QGS:
             value->rValue = *(ckt->CKTstate0 + here->MOS6qgs);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CQGS:
             value->rValue = *(ckt->CKTstate0 + here->MOS6cqgs);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CAPGD:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgd);
             /* add overlap capacitance */
             value->rValue += (here->sMOS6modPtr->MOS6gateSourceOverlapCapFactor)
                              * (here->MOS6w);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_QGD:
             value->rValue = *(ckt->CKTstate0 + here->MOS6qgd);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CQGD:
             value->rValue = *(ckt->CKTstate0 + here->MOS6cqgd);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CAPGB:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgb);
@@ -208,24 +242,31 @@ MOS6ask(ckt,inst,which,value,select)
             value->rValue += (here->sMOS6modPtr->MOS6gateBulkOverlapCapFactor)
                              * (here->MOS6l
                                 -2*(here->sMOS6modPtr->MOS6latDiff));
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_QGB:
             value->rValue = *(ckt->CKTstate0 + here->MOS6qgb);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CQGB:
             value->rValue = *(ckt->CKTstate0 + here->MOS6cqgb);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_QBD:
             value->rValue = *(ckt->CKTstate0 + here->MOS6qbd);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CQBD:
             value->rValue = *(ckt->CKTstate0 + here->MOS6cqbd);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_QBS:
             value->rValue = *(ckt->CKTstate0 + here->MOS6qbs);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CQBS:
             value->rValue = *(ckt->CKTstate0 + here->MOS6cqbs);
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_L_SENS_DC:
             if(ckt->CKTsenInfo && here->MOS6sens_l){
@@ -353,6 +394,7 @@ MOS6ask(ckt,inst,which,value,select)
                 value->rValue = here->MOS6cbd + here->MOS6cbs - *(ckt->CKTstate0
                         + here->MOS6cqgb);
             }
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CG :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
@@ -370,6 +412,7 @@ MOS6ask(ckt,inst,which,value,select)
                         *(ckt->CKTstate0 + here->MOS6cqgd) + *(ckt->CKTstate0 + 
                         here->MOS6cqgs);
             }
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_CS :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
@@ -388,6 +431,7 @@ MOS6ask(ckt,inst,which,value,select)
                             *(ckt->CKTstate0 + here->MOS6cqgs);
                 }
             }
+            value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
@@ -420,6 +464,7 @@ MOS6ask(ckt,inst,which,value,select)
                 }
                 value->rValue += temp * *(ckt->CKTrhsOld + here->MOS6sNode);
             }
+            value->rValue *= here->MOS6m;
             return(OK);
         default:
             return(E_BADPARM);

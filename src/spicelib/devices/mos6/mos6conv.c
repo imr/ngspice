@@ -4,16 +4,13 @@ Author: 1989 Takayasu Sakurai
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mos6defs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-MOS6convTest(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS6convTest(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS6model *model = (MOS6model*)inModel;
     MOS6instance *here;

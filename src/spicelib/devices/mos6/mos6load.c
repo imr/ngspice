@@ -5,7 +5,6 @@ Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "mos6defs.h"
@@ -15,9 +14,7 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 int
-MOS6load(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS6load(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
@@ -79,6 +76,8 @@ MOS6load(inModel,ckt)
     double tempv;
     int error;
     int SenCond;
+
+    int m;
 
 
     /*  loop through all the MOS6 device models */
@@ -877,6 +876,9 @@ bypass:
             /*
              *  load current vector
              */
+
+            m = here->MOS6m;
+
             ceqbs = model->MOS6type * 
                     (here->MOS6cbs-(here->MOS6gbs)*vbs);
             ceqbd = model->MOS6type * 
@@ -893,44 +895,44 @@ bypass:
                         here->MOS6gm*vgd-here->MOS6gmbs*vbd);
             }
             *(ckt->CKTrhs + here->MOS6gNode) -= 
-                (model->MOS6type * (ceqgs + ceqgb + ceqgd));
+                m * (model->MOS6type * (ceqgs + ceqgb + ceqgd));
             *(ckt->CKTrhs + here->MOS6bNode) -=
-                (ceqbs + ceqbd - model->MOS6type * ceqgb);
+                m * (ceqbs + ceqbd - model->MOS6type * ceqgb);
             *(ckt->CKTrhs + here->MOS6dNodePrime) +=
-                    (ceqbd - cdreq + model->MOS6type * ceqgd);
+                m * (ceqbd - cdreq + model->MOS6type * ceqgd);
             *(ckt->CKTrhs + here->MOS6sNodePrime) += 
-                    cdreq + ceqbs + model->MOS6type * ceqgs;
+                m * (cdreq + ceqbs + model->MOS6type * ceqgs);
             /*
              *  load y matrix
              */
 
-            *(here->MOS6DdPtr) += (here->MOS6drainConductance);
-            *(here->MOS6GgPtr) += ((gcgd+gcgs+gcgb));
-            *(here->MOS6SsPtr) += (here->MOS6sourceConductance);
-            *(here->MOS6BbPtr) += (here->MOS6gbd+here->MOS6gbs+gcgb);
+            *(here->MOS6DdPtr) += m * (here->MOS6drainConductance);
+            *(here->MOS6GgPtr) += m * ((gcgd+gcgs+gcgb));
+            *(here->MOS6SsPtr) += m * (here->MOS6sourceConductance);
+            *(here->MOS6BbPtr) += m * (here->MOS6gbd+here->MOS6gbs+gcgb);
             *(here->MOS6DPdpPtr) += 
-                    (here->MOS6drainConductance+here->MOS6gds+
+                    m * (here->MOS6drainConductance+here->MOS6gds+
                     here->MOS6gbd+xrev*(here->MOS6gm+here->MOS6gmbs)+gcgd);
             *(here->MOS6SPspPtr) += 
-                    (here->MOS6sourceConductance+here->MOS6gds+
+                    m * (here->MOS6sourceConductance+here->MOS6gds+
                     here->MOS6gbs+xnrm*(here->MOS6gm+here->MOS6gmbs)+gcgs);
-            *(here->MOS6DdpPtr) += (-here->MOS6drainConductance);
-            *(here->MOS6GbPtr) -= gcgb;
-            *(here->MOS6GdpPtr) -= gcgd;
-            *(here->MOS6GspPtr) -= gcgs;
-            *(here->MOS6SspPtr) += (-here->MOS6sourceConductance);
-            *(here->MOS6BgPtr) -= gcgb;
-            *(here->MOS6BdpPtr) -= here->MOS6gbd;
-            *(here->MOS6BspPtr) -= here->MOS6gbs;
-            *(here->MOS6DPdPtr) += (-here->MOS6drainConductance);
-            *(here->MOS6DPgPtr) += ((xnrm-xrev)*here->MOS6gm-gcgd);
-            *(here->MOS6DPbPtr) += (-here->MOS6gbd+(xnrm-xrev)*here->MOS6gmbs);
-            *(here->MOS6DPspPtr) += (-here->MOS6gds-xnrm*
+            *(here->MOS6DdpPtr) += m * (-here->MOS6drainConductance);
+            *(here->MOS6GbPtr) -= m * gcgb;
+            *(here->MOS6GdpPtr) -= m * gcgd;
+            *(here->MOS6GspPtr) -= m * gcgs;
+            *(here->MOS6SspPtr) += m * (-here->MOS6sourceConductance);
+            *(here->MOS6BgPtr) -= m * gcgb;
+            *(here->MOS6BdpPtr) -= m * (here->MOS6gbd);
+            *(here->MOS6BspPtr) -= m * (here->MOS6gbs);
+            *(here->MOS6DPdPtr) += m * (-here->MOS6drainConductance);
+            *(here->MOS6DPgPtr) += m * ((xnrm-xrev)*here->MOS6gm-gcgd);
+            *(here->MOS6DPbPtr) += m * (-here->MOS6gbd+(xnrm-xrev)*here->MOS6gmbs);
+            *(here->MOS6DPspPtr) += m * (-here->MOS6gds-xnrm*
                     (here->MOS6gm+here->MOS6gmbs));
-            *(here->MOS6SPgPtr) += (-(xnrm-xrev)*here->MOS6gm-gcgs);
-            *(here->MOS6SPsPtr) += (-here->MOS6sourceConductance);
-            *(here->MOS6SPbPtr) += (-here->MOS6gbs-(xnrm-xrev)*here->MOS6gmbs);
-            *(here->MOS6SPdpPtr) += (-here->MOS6gds-xrev*
+            *(here->MOS6SPgPtr) += m * (-(xnrm-xrev)*here->MOS6gm-gcgs);
+            *(here->MOS6SPsPtr) += m * (-here->MOS6sourceConductance);
+            *(here->MOS6SPbPtr) += m * (-here->MOS6gbs-(xnrm-xrev)*here->MOS6gmbs);
+            *(here->MOS6SPdpPtr) += m * (-here->MOS6gds-xrev*
                     (here->MOS6gm+here->MOS6gmbs));
         }
     }

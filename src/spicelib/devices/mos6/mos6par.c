@@ -6,7 +6,6 @@ Author: 1989 Takayasu Sakurai
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "mos6defs.h"
@@ -16,17 +15,17 @@ Author: 1989 Takayasu Sakurai
 
 /* ARGSUSED */
 int
-MOS6param(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+MOS6param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MOS6instance *here = (MOS6instance *)inst;
     switch(param) {
         case MOS6_TEMP:
             here->MOS6temp = value->rValue+CONSTCtoK;
             here->MOS6tempGiven = TRUE;
+            break;
+        case MOS6_DTEMP:
+            here->MOS6dtemp = value->rValue;
+            here->MOS6dtempGiven = TRUE;
             break;
         case MOS6_W:
             here->MOS6w = value->rValue;
@@ -35,6 +34,10 @@ MOS6param(param,value,inst,select)
         case MOS6_L:
             here->MOS6l = value->rValue;
             here->MOS6lGiven = TRUE;
+            break;
+        case MOS6_M:
+            here->MOS6m = value->rValue;
+            here->MOS6mGiven = TRUE;
             break;
         case MOS6_AS:
             here->MOS6sourceArea = value->rValue;

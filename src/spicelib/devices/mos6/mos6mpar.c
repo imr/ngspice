@@ -6,7 +6,6 @@ Author: 1989 Takayasu Sakurai
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "mos6defs.h"
@@ -15,10 +14,7 @@ Author: 1989 Takayasu Sakurai
 
 
 int
-MOS6mParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+MOS6mParam(int param, IFvalue *value, GENmodel *inModel)
 {
     MOS6model *model = (MOS6model *)inModel;
     switch(param) {

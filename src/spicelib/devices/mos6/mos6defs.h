@@ -31,6 +31,7 @@ typedef struct sMOS6instance {
 
     double MOS6l;   /* the length of the channel region */
     double MOS6w;   /* the width of the channel region */
+    double MOS6m;   /* the parallel multiplier */
     double MOS6drainArea;   /* the area of the drain diffusion */
     double MOS6sourceArea;  /* the area of the source diffusion */
     double MOS6drainSquares;    /* the length of the drain in squares */
@@ -40,6 +41,7 @@ typedef struct sMOS6instance {
     double MOS6sourceConductance;   /*conductance of source(or 0):set in setup*/
     double MOS6drainConductance;    /*conductance of drain(or 0):set in setup*/
     double MOS6temp;    /* operating temperature of this instance */
+    double MOS6dtemp;   /* instance temperature difference from circuit */
 
     double MOS6tKv;         /* temperature corrected drain linear cond. factor*/
     double MOS6tKc;         /* temperature corrected saturation cur. factor*/
@@ -89,8 +91,10 @@ typedef struct sMOS6instance {
 
     unsigned MOS6off:1;  /* non-zero to indicate device is off for dc analysis*/
     unsigned MOS6tempGiven :1;  /* instance temperature specified */
+    unsigned MOS6dtempGiven :1;
     unsigned MOS6lGiven :1;
     unsigned MOS6wGiven :1;
+    unsigned MOS6mGiven :1;
     unsigned MOS6drainAreaGiven :1;
     unsigned MOS6sourceAreaGiven    :1;
     unsigned MOS6drainSquaresGiven  :1;
@@ -353,6 +357,8 @@ typedef struct sMOS6model {       /* model structure for a resistor */
 #define MOS6_CS 18
 #define MOS6_POWER 19
 #define MOS6_TEMP 20
+#define MOS6_DTEMP 21
+#define MOS6_M 22
 
 /* model paramerers */
 #define MOS6_MOD_VTO 101
