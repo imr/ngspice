@@ -102,7 +102,7 @@ cp_printword(s)
 */
 
 bool
-cp_getvar(char *n, int t, char *r)
+cp_getvar(char *n, int t, void *r)
 {
     return (FALSE);
 }

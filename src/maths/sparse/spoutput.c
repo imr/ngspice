@@ -137,7 +137,9 @@ spPrint(void *eMatrix, int PrintReordered, int Data, int Header)
     int  J = 0;
     int I, Row, Col, Size, Top;
     int StartCol = 1, StopCol, Columns, ElementCount = 0;
-    double  Magnitude, SmallestDiag, SmallestElement;
+    double  Magnitude; 
+    double  SmallestDiag = 0; 
+    double  SmallestElement = 0;
     double  LargestElement = 0.0, LargestDiag = 0.0;
     ElementPtr  pElement, *pImagElements;
     int  *PrintOrdToIntRowMap, *PrintOrdToIntColMap;

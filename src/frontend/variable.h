@@ -48,7 +48,7 @@ wordlist * cp_varwl(struct variable *var);
 void cp_vset(char *varname, char type, char *value);
 struct variable * cp_setparse(wordlist *wl);
 void cp_remvar(char *varname);
-bool cp_getvar(char *name, int type, char *retval);
+bool cp_getvar(char *name, int type, void *retval);
 wordlist * cp_variablesubst(wordlist *wlist);
 wordlist * vareval(char *string);
 void cp_vprint(void);

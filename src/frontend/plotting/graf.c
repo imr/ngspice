@@ -23,7 +23,7 @@ Author: 1988 Jeffrey M. Hsu
 #include "ftedev.h"
 #include <terminal.h>
 #include <variable.h>
-
+#include "../terminal.h"
 #include "graf.h"
 
 

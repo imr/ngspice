@@ -167,7 +167,7 @@ extern void cp_vprint(void);
 extern void com_set(wordlist *wl);
 extern void com_unset(wordlist *wl);
 extern void com_shift(wordlist *wl);
-extern bool cp_getvar(char *name, int type, char *retval);
+extern bool cp_getvar(char *name, int type, void *retval);
 
 /* cpinterface.c etc -- stuff CP needs from FTE */
 

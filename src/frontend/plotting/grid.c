@@ -229,7 +229,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
     int mag, mag2, mag3;
     double hmt, lmt, dst;
     int nsp;
-    double tenpowmag, tenpowmag2, step, spacing;
+    double tenpowmag = 0.0, tenpowmag2, step, spacing;
     bool onedec = FALSE;
     int margin;
     int max;
@@ -1111,7 +1111,7 @@ drawsmithgrid(GRAPH *graph)
 {
     double mx, my, tenpowmag, d, dphi[CMAX], minrad, maxrad, rnorm[CMAX];
     double pixperunit;
-    int mag, i, j, k;
+    int mag, i = 0, j = 0, k;
     double ir[CMAX], rr[CMAX], ki[CMAX], kr[CMAX], ks[CMAX];
     int xoff, yoff, zheight;
     int basemag, plen;
@@ -1405,7 +1405,7 @@ static double
 cliparc(double cx, double cy, double rad, double start, double end, int iclipx, int iclipy, int icliprad, int flag)
 {
     double clipx, clipy, cliprad;
-    double sclip, eclip;
+    double sclip = 0.0, eclip = 0.0;
     double x, y, tx, ty, dist;
     double alpha, theta, phi, a1, a2, d, l;
     bool in;

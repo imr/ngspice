@@ -48,7 +48,8 @@ clip_line(int *pX1, int *pY1, int *pX2, int *pY2, int l, int b, int r, int t)
     int y1 = *pY1;
     int x2 = *pX2;
     int y2 = *pY2;
-    int x,y,c,c1,c2;
+    int x = 0, y = 0;
+    int c,c1,c2;
 
     CODE(x1,y1,c1)
     CODE(x2,y2,c2)

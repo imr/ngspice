@@ -62,7 +62,7 @@ hlp_read(fplace *place)
     wordlist *wl, *end = NULL;
     int i, fchanges;
     char *s;
-    bool mof;
+    bool mof = FALSE;
 
     if (!place)
 	return 0;

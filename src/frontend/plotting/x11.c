@@ -369,13 +369,13 @@ X11_NewViewport(GRAPH *graph)
 						   viewargs,
 						   XtNumber(viewargs));
 	XtAddEventHandler(DEVDEP(graph).view, ButtonPressMask, FALSE,
-			  handlebuttonev, graph);
+			  (XtEventHandler) handlebuttonev, graph);
 	XtAddEventHandler(DEVDEP(graph).view, KeyPressMask, FALSE,
-			  handlekeypressed, graph);
+			 (XtEventHandler) handlekeypressed, graph);
 	XtAddEventHandler(DEVDEP(graph).view, StructureNotifyMask, FALSE,
-			  resize, graph);
+			 (XtEventHandler) resize, graph);
 	XtAddEventHandler(DEVDEP(graph).view, ExposureMask, FALSE,
-	        redraw, graph);
+	        (XtEventHandler) redraw, graph);
 
 	/* set up button box */
 	XtSetArg(bboxargs[1], XtNfromHoriz, DEVDEP(graph).view);
@@ -388,14 +388,14 @@ X11_NewViewport(GRAPH *graph)
 	DEVDEP(graph).buttons[0] = XtCreateManagedWidget("quit",
 	    commandWidgetClass, DEVDEP(graph).buttonbox,
 	    buttonargs, 1);
-	XtAddCallback(DEVDEP(graph).buttons[0], XtNcallback, killwin, graph);
+	XtAddCallback(DEVDEP(graph).buttons[0], XtNcallback, (XtCallbackProc) killwin, graph);
 
 	XtSetArg(buttonargs[0], XtNlabel, "hardcopy");
 	XtSetArg(bboxargs[1], XtNfromVert, DEVDEP(graph).buttons[0]);
 	DEVDEP(graph).buttons[1] = XtCreateManagedWidget("hardcopy",
 	    commandWidgetClass, DEVDEP(graph).buttonbox,
 	    buttonargs, 1);
-	XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, hardcopy, graph);
+	XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, (XtCallbackProc) hardcopy, graph);
 
 	/* set up fonts */
 	if (!cp_getvar("font", VT_STRING, fontname)) {

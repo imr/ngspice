@@ -19,6 +19,8 @@ static unsigned int Debug = 0;
 */
 #endif
 
+extern void zaddeq(double *a, int *amag, double x, int xmag, double y, int ymag);
+
 extern	int CKTpzTrapped;
 double	NIpzK;
 int	NIpzK_mag;
@@ -215,7 +217,7 @@ NIpzSym2(PZtrial **set, PZtrial *new)
     int		tmag;
     int		error;
     int		disc_mag;
-    int		new_mag;
+    int		new_mag = 0;
 
     error = OK;
 

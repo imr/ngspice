@@ -33,8 +33,8 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     register int i, j, l;
     double *scratch, *result, *gridbuf, *mm;
     register double *xdata, *ydata;
-    bool rot, increasing;
-    double dx, dy, lx = 0, ly = 0;
+    bool rot, increasing = FALSE;
+    double dx = 0.0, dy = 0.0, lx = 0.0, ly = 0.0;
     int	dir;
 
     /* if already started, use saved degree */

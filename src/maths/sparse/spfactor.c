@@ -1709,9 +1709,13 @@ int Step;
     long  MinMarkowitzProduct, *pMarkowitzProduct;
     int  I;
     ElementPtr  pDiag;
-    int  NumberOfTies, Size = Matrix->Size;
+    int  NumberOfTies = 0;
+    int  Size = Matrix->Size;
+    
     ElementPtr  ChosenPivot;
-    RealNumber  Magnitude, Ratio, RatioOfAccepted, LargestInCol;
+    RealNumber  Magnitude, Ratio; 
+    RealNumber  RatioOfAccepted = 0;
+    RealNumber  LargestInCol;
     RealNumber  FindBiggestInColExclude();
 
     /* Begin `SearchDiagonal'. */
@@ -1838,10 +1842,13 @@ int Step;
 {
     int  I, Size = Matrix->Size;
     ElementPtr  pElement;
-    int  NumberOfTies;
+    int  NumberOfTies = 0;
     long  Product, MinMarkowitzProduct;
-    ElementPtr  ChosenPivot, pLargestElement;
-    RealNumber  Magnitude, LargestElementMag, Ratio, RatioOfAccepted, LargestInCol;
+    ElementPtr  ChosenPivot;
+    ElementPtr  pLargestElement = NULL;
+    RealNumber  Magnitude, LargestElementMag, Ratio;
+    RealNumber  RatioOfAccepted = 0;
+    RealNumber  LargestInCol;
     RealNumber  FindLargestInCol();
 
     /* Begin `SearchEntireMatrix'. */
