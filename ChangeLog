@@ -1,3 +1,34 @@
+2003-08-06  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* Another big commit: Stefan Jones has worked on the xspice
+	  part and added some fix from Vera Albrecht. Tclspice 0.2.13
+	  Changelog (applicable parts) follows:
+	  
+	  2003-08-01 Stefan Jones <stefan.jones@multigig.com>
+   
+   		* src/xspice/mif/mif_inp2.c:
+   		Reverted to version 1.1.2.2 so POLY and codemodels work
+    
+   		* src/Makefile.am:
+   		Fixed libspice.so dependancies
+   
+  
+  		* src/frontend/{com_let.c,device.c,evaluate.c}:
+  		more memory leak fixes by Vera Albrecht <albrecht@danalyse.de>
+  
+  		* configure.in src/xspice/icm/* src/xspice/lib/*.cm 
+  		src/xspice/Makefile.am :
+  		Added some easy to use makefiles for codemodels and reordered
+  		Removed binary files
+  		Added icm to build list
+  
+  		* src/xspice/icm/{analog,digital,xtradev,xtraevt}:
+  		added the codemodels from xspice in the same
+  		structure as spiceopus
+  	
+  		* src/frontend/misccoms.c src/spinit src/conf.c configure.in:
+  		updated email address for bug reports and package version.
+	
 2003-07-25  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/main.c: Studied Vera's main.d and introduced changes
