@@ -4,7 +4,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "bsim1def.h"
 #include "suffix.h"
@@ -12,6 +11,7 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 IFparm B1pTable[] = { /* parameters */
  IOP( "l",   BSIM1_L,      IF_REAL   , "Length"),
  IOP( "w",   BSIM1_W,      IF_REAL   , "Width"),
+ IOP( "m",   BSIM1_M,      IF_REAL   , "Parallel Multiplier"), 
  IOP( "ad",  BSIM1_AD,     IF_REAL   , "Drain area"),
  IOP( "as",  BSIM1_AS,     IF_REAL   , "Source area"),
  IOP( "pd",  BSIM1_PD,     IF_REAL   , "Drain perimeter"),
@@ -124,6 +124,8 @@ IFparm B1mPTable[] = { /* model parameters */
        "Default width of source drain diffusion in um"),
  IOP( "dell",  BSIM1_MOD_DELLENGTH, IF_REAL,
        "Length reduction of source drain diffusion"),
+ IOP("kf",     BSIM1_MOD_KF,    IF_REAL ,"Flicker noise coefficient"),
+ IOP("af",     BSIM1_MOD_AF,    IF_REAL ,"Flicker noise exponent"),
  IP( "nmos",  BSIM1_MOD_NMOS,      IF_FLAG, "Flag to indicate NMOS"),
  IP( "pmos",  BSIM1_MOD_PMOS,      IF_FLAG, "Flag to indicate PMOS"),
 };

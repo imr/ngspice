@@ -4,7 +4,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bsim1def.h"
 #include "trandefs.h"
@@ -16,36 +15,14 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
  * using the B1 (Berkeley Short-Channel IGFET Model) Equations.
  */
 void
-B1evaluate(vds,vbs,vgs,here,model,gmPointer,gdsPointer,gmbsPointer,
-        qgPointer,qbPointer,qdPointer,cggbPointer,cgdbPointer,cgsbPointer,
-        cbgbPointer,cbdbPointer,cbsbPointer,cdgbPointer,cddbPointer,
-        cdsbPointer,cdrainPointer,vonPointer,vdsatPointer,ckt)
-
-    CKTcircuit  *ckt;
-    B1model   *model;
-    B1instance *here;
-    double vds;
-    double vbs;
-    double vgs;
-    double *gmPointer;
-    double *gdsPointer;
-    double *gmbsPointer;
-    double *qgPointer;
-    double *qbPointer;
-    double *qdPointer;
-    double *cggbPointer;
-    double *cgdbPointer;
-    double *cgsbPointer;
-    double *cbgbPointer;
-    double *cbdbPointer;
-    double *cbsbPointer;
-    double *cdgbPointer;
-    double *cddbPointer;
-    double *cdsbPointer;
-    double *cdrainPointer;
-    double *vonPointer;
-    double *vdsatPointer;
-
+B1evaluate(double vds, double vbs, double vgs, B1instance *here, B1model *model,
+           double *gmPointer,     double *gdsPointer,  double *gmbsPointer,
+           double *qgPointer,     double *qbPointer,   double *qdPointer,
+           double *cggbPointer,   double *cgdbPointer, double *cgsbPointer,
+           double *cbgbPointer,   double *cbdbPointer, double *cbsbPointer,
+           double *cdgbPointer,   double *cddbPointer, double *cdsbPointer,
+           double *cdrainPointer, double *vonPointer,  double *vdsatPointer,
+           CKTcircuit  *ckt)
  {
     double gm;
     double gds;

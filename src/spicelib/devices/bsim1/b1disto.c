@@ -5,7 +5,6 @@ Modified: AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bsim1def.h"
 #include "sperror.h"
@@ -13,11 +12,7 @@ Modified: AlansFixes
 #include "suffix.h"
 
 int
-B1disto(mode,genmodel,ckt)
- GENmodel *genmodel;
- CKTcircuit *ckt;
- int mode;
-
+B1disto(int mode, GENmodel *genmodel, CKTcircuit *ckt)
 /* assuming here that ckt->CKTomega has been initialised to 
  * the correct value
  */

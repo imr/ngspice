@@ -4,7 +4,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "bsim1def.h"
@@ -14,13 +13,10 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 /* ARGSUSED */
 int
-B1temp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+B1temp(GENmodel *inModel, CKTcircuit *ckt)
         /* load the B1 device structure with those pointers needed later 
          * for fast matrix loading 
          */
-
 {
     B1model *model = (B1model*) inModel;
     B1instance *here;
@@ -49,6 +45,7 @@ B1temp(inModel,ckt)
         /* loop through all the instances of the model */
         for (here = model->B1instances; here != NULL ;
                 here=here->B1nextInstance) {
+
 	    if (here->B1owner != ARCHme) continue;
 
             if( (EffChanLength = here->B1l - model->B1deltaL *1e-6 )<=0) { 

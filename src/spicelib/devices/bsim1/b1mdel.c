@@ -6,18 +6,13 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "bsim1def.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-B1mDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
-
+B1mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     B1model **model = (B1model**)inModel;
     B1model *modfast = (B1model*)kill;

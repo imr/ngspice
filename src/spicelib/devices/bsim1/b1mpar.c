@@ -6,7 +6,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "bsim1def.h"
 #include "ifsim.h"
 #include "sperror.h"
@@ -14,10 +13,7 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 
 int
-B1mParam(param,value,inMod)
-    int param;
-    IFvalue *value;
-    GENmodel *inMod;
+B1mParam(int param, IFvalue *value, GENmodel *inMod)
 {
     B1model *mod = (B1model*)inMod;
     switch(param) {
@@ -328,6 +324,14 @@ B1mParam(param,value,inMod)
         case  BSIM1_MOD_DELLENGTH :
             mod->B1deltaLength = value->rValue;
             mod->B1deltaLengthGiven = TRUE;
+            break;
+        case  BSIM1_MOD_AF :
+            mod->B1fNexp = value->rValue;
+            mod->B1fNexpGiven = TRUE;
+            break;
+        case  BSIM1_MOD_KF :
+            mod->B1fNcoef = value->rValue;
+            mod->B1fNcoefGiven = TRUE;
             break;
         case  BSIM1_MOD_NMOS  :
             if(value->iValue) {

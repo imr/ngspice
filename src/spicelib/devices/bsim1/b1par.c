@@ -6,7 +6,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "bsim1def.h"
 #include "sperror.h"
@@ -15,11 +14,8 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 /* ARGSUSED */
 int
-B1param(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+B1param(int param, IFvalue *value, GENinstance *inst, 
+        IFvalue *select)
 {
     B1instance *here = (B1instance*)inst;
     switch(param) {
@@ -30,6 +26,10 @@ B1param(param,value,inst,select)
         case BSIM1_L:
             here->B1l = value->rValue;
             here->B1lGiven = TRUE;
+            break;
+        case BSIM1_M:
+            here->B1m = value->rValue;
+            here->B1mGiven = TRUE;
             break;
         case BSIM1_AS:
             here->B1sourceArea = value->rValue;

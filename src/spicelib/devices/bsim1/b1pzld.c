@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "complex.h"
 #include "sperror.h"
@@ -15,10 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-B1pzLoad(inModel,ckt,s)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    SPcomplex *s;
+B1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     B1model *model = (B1model*)inModel;
     B1instance *here;
@@ -54,6 +50,8 @@ B1pzLoad(inModel,ckt,s)
     double cddb;
     double cdgb;
     double cdsb;
+
+    double m;
 
     for( ; model != NULL; model = model->B1nextModel) {
         for(here = model->B1instances; here!= NULL;
@@ -106,56 +104,57 @@ B1pzLoad(inModel,ckt,s)
             xcbdb = (cbdb - capbd ) ;
             xcbsb = (cbsb - capbs ) ;
 
+            m = here->B1m;
 
-            *(here->B1GgPtr   ) += xcggb * s->real;
-            *(here->B1GgPtr +1) += xcggb * s->imag;
-            *(here->B1BbPtr   ) += (-xcbgb-xcbdb-xcbsb) * s->real;
-            *(here->B1BbPtr +1) += (-xcbgb-xcbdb-xcbsb) * s->imag;
-            *(here->B1DPdpPtr   ) += xcddb * s->real;
-            *(here->B1DPdpPtr +1) += xcddb * s->imag;
-            *(here->B1SPspPtr   ) += xcssb * s->real;
-            *(here->B1SPspPtr +1) += xcssb * s->imag;
-            *(here->B1GbPtr   ) += (-xcggb-xcgdb-xcgsb) * s->real;
-            *(here->B1GbPtr +1) += (-xcggb-xcgdb-xcgsb) * s->imag;
-            *(here->B1GdpPtr   ) += xcgdb * s->real;
-            *(here->B1GdpPtr +1) += xcgdb * s->imag;
-            *(here->B1GspPtr   ) += xcgsb * s->real;
-            *(here->B1GspPtr +1) += xcgsb * s->imag;
-            *(here->B1BgPtr   ) += xcbgb * s->real;
-            *(here->B1BgPtr +1) += xcbgb * s->imag;
-            *(here->B1BdpPtr   ) += xcbdb * s->real;
-            *(here->B1BdpPtr +1) += xcbdb * s->imag;
-            *(here->B1BspPtr   ) += xcbsb * s->real;
-            *(here->B1BspPtr +1) += xcbsb * s->imag;
-            *(here->B1DPgPtr   ) += xcdgb * s->real;
-            *(here->B1DPgPtr +1) += xcdgb * s->imag;
-            *(here->B1DPbPtr   ) += (-xcdgb-xcddb-xcdsb) * s->real;
-            *(here->B1DPbPtr +1) += (-xcdgb-xcddb-xcdsb) * s->imag;
-            *(here->B1DPspPtr   ) += xcdsb * s->real;
-            *(here->B1DPspPtr +1) += xcdsb * s->imag;
-            *(here->B1SPgPtr   ) += xcsgb * s->real;
-            *(here->B1SPgPtr +1) += xcsgb * s->imag;
-            *(here->B1SPbPtr   ) += (-xcsgb-xcsdb-xcssb) * s->real;
-            *(here->B1SPbPtr +1) += (-xcsgb-xcsdb-xcssb) * s->imag;
-            *(here->B1SPdpPtr   ) += xcsdb * s->real;
-            *(here->B1SPdpPtr +1) += xcsdb * s->imag;
-            *(here->B1DdPtr) += gdpr;
-            *(here->B1SsPtr) += gspr;
-            *(here->B1BbPtr) += gbd+gbs;
-            *(here->B1DPdpPtr) += gdpr+gds+gbd+xrev*(gm+gmbs);
-            *(here->B1SPspPtr) += gspr+gds+gbs+xnrm*(gm+gmbs);
-            *(here->B1DdpPtr) -= gdpr;
-            *(here->B1SspPtr) -= gspr;
-            *(here->B1BdpPtr) -= gbd;
-            *(here->B1BspPtr) -= gbs;
-            *(here->B1DPdPtr) -= gdpr;
-            *(here->B1DPgPtr) += (xnrm-xrev)*gm;
-            *(here->B1DPbPtr) += -gbd+(xnrm-xrev)*gmbs;
-            *(here->B1DPspPtr) += -gds-xnrm*(gm+gmbs);
-            *(here->B1SPgPtr) += -(xnrm-xrev)*gm;
-            *(here->B1SPsPtr) -= gspr;
-            *(here->B1SPbPtr) += -gbs-(xnrm-xrev)*gmbs;
-            *(here->B1SPdpPtr) += -gds-xrev*(gm+gmbs);
+            *(here->B1GgPtr   ) +=   m * (xcggb * s->real);
+            *(here->B1GgPtr +1) +=   m * (xcggb * s->imag);
+            *(here->B1BbPtr   ) +=   m * ((-xcbgb-xcbdb-xcbsb) * s->real);
+            *(here->B1BbPtr +1) +=   m * ((-xcbgb-xcbdb-xcbsb) * s->imag);
+            *(here->B1DPdpPtr   ) += m * (xcddb * s->real);
+            *(here->B1DPdpPtr +1) += m * (xcddb * s->imag);
+            *(here->B1SPspPtr   ) += m * (xcssb * s->real);
+            *(here->B1SPspPtr +1) += m * (xcssb * s->imag);
+            *(here->B1GbPtr   ) +=   m * ((-xcggb-xcgdb-xcgsb) * s->real);
+            *(here->B1GbPtr +1) +=   m * ((-xcggb-xcgdb-xcgsb) * s->imag);
+            *(here->B1GdpPtr   ) +=  m * (xcgdb * s->real);
+            *(here->B1GdpPtr +1) +=  m * (xcgdb * s->imag);
+            *(here->B1GspPtr   ) +=  m * (xcgsb * s->real);
+            *(here->B1GspPtr +1) +=  m * (xcgsb * s->imag);
+            *(here->B1BgPtr   ) +=   m * (xcbgb * s->real);
+            *(here->B1BgPtr +1) +=   m * (xcbgb * s->imag);
+            *(here->B1BdpPtr   ) +=  m * (xcbdb * s->real);
+            *(here->B1BdpPtr +1) +=  m * (xcbdb * s->imag);
+            *(here->B1BspPtr   ) +=  m * (xcbsb * s->real);
+            *(here->B1BspPtr +1) +=  m * (xcbsb * s->imag);
+            *(here->B1DPgPtr   ) +=  m * (xcdgb * s->real);
+            *(here->B1DPgPtr +1) +=  m * (xcdgb * s->imag);
+            *(here->B1DPbPtr   ) +=  m * ((-xcdgb-xcddb-xcdsb) * s->real);
+            *(here->B1DPbPtr +1) +=  m * ((-xcdgb-xcddb-xcdsb) * s->imag);
+            *(here->B1DPspPtr   ) += m * (xcdsb * s->real);
+            *(here->B1DPspPtr +1) += m * (xcdsb * s->imag);
+            *(here->B1SPgPtr   ) +=  m * (xcsgb * s->real);
+            *(here->B1SPgPtr +1) +=  m * (xcsgb * s->imag);
+            *(here->B1SPbPtr   ) +=  m * ((-xcsgb-xcsdb-xcssb) * s->real);
+            *(here->B1SPbPtr +1) +=  m * ((-xcsgb-xcsdb-xcssb) * s->imag);
+            *(here->B1SPdpPtr   ) += m * (xcsdb * s->real);
+            *(here->B1SPdpPtr +1) += m * (xcsdb * s->imag);
+            *(here->B1DdPtr) +=      m * (gdpr);
+            *(here->B1SsPtr) +=      m * (gspr);
+            *(here->B1BbPtr) +=      m * (gbd+gbs);
+            *(here->B1DPdpPtr) +=    m * (gdpr+gds+gbd+xrev*(gm+gmbs));
+            *(here->B1SPspPtr) +=    m * (gspr+gds+gbs+xnrm*(gm+gmbs));
+            *(here->B1DdpPtr) -=     m * (gdpr);
+            *(here->B1SspPtr) -=     m * (gspr);
+            *(here->B1BdpPtr) -=     m * (gbd);
+            *(here->B1BspPtr) -=     m * (gbs);
+            *(here->B1DPdPtr) -=     m * (gdpr);
+            *(here->B1DPgPtr) +=     m * ((xnrm-xrev)*gm);
+            *(here->B1DPbPtr) +=     m * (-gbd+(xnrm-xrev)*gmbs);
+            *(here->B1DPspPtr) +=    m * (-gds-xnrm*(gm+gmbs));
+            *(here->B1SPgPtr) +=     m * (-(xnrm-xrev)*gm);
+            *(here->B1SPsPtr) -=     m * (gspr);
+            *(here->B1SPbPtr) +=     m * (-gbs-(xnrm-xrev)*gmbs);
+            *(here->B1SPdpPtr) +=    m * (-gds-xrev*(gm+gmbs));
 
         }
     }

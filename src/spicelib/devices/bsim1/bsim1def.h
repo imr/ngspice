@@ -10,6 +10,7 @@ Author: 1985      Hong June Park, Thomas L. Quarles
 #include "gendefs.h"
 #include "cktdefs.h"
 #include "complex.h"
+#include "noisedef.h"
 
     /* declarations for B1 MOSFETs */
 
@@ -34,7 +35,8 @@ typedef struct sBSIM1instance {
     int B1sNodePrime; /* number of the internal source node of the mosfet */
 
     double B1l;   /* the length of the channel region */
-    double B1w;   /* the width of the channel region */
+    double B1w;   /* the width of the channel region  */ 
+    double B1m;   /* the parallel multiplier          */
     double B1drainArea;   /* the area of the drain diffusion */
     double B1sourceArea;  /* the area of the source diffusion */
     double B1drainSquares;    /* the length of the drain in squares */
@@ -82,6 +84,7 @@ typedef struct sBSIM1instance {
     unsigned B1channelChargePartitionFlag :1;
     unsigned B1lGiven :1;
     unsigned B1wGiven :1;
+    unsigned B1mGiven :1;
     unsigned B1drainAreaGiven :1;
     unsigned B1sourceAreaGiven    :1;
     unsigned B1drainSquaresGiven  :1;
@@ -148,6 +151,22 @@ typedef struct sBSIM1instance {
 #else /* NODISTO */
 	double *B1dCoeffs;
 #endif /* NODISTO */
+/* indices to the array of BSIM1 noise sources */
+
+#define B1RDNOIZ       0
+#define B1RSNOIZ       1
+#define B1IDNOIZ       2
+#define B1FLNOIZ 3
+#define B1TOTNOIZ    4
+
+#define B1NSRCS     5     /* the number of BSIM1 noise sources */
+
+#ifndef NONOISE
+    double B1nVar[NSTATVARS][B1NSRCS];
+#else /* NONOISE */
+	double **B1nVar;
+#endif /* NONOISE */
+
 
 } B1instance ;
 
@@ -385,6 +404,10 @@ typedef struct sBSIM1model {       /* model structure for a resistor */
     double B1defaultWidth;
     double B1deltaLength;
 
+    double B1fNcoef;
+    double B1fNexp;
+
+
 
     unsigned  B1vfb0Given   :1;
     unsigned  B1vfbLGiven   :1;
@@ -463,6 +486,10 @@ typedef struct sBSIM1model {       /* model structure for a resistor */
     unsigned  B1unitLengthSidewallJctCapGiven   :1;
     unsigned  B1defaultWidthGiven   :1;
     unsigned  B1deltaLengthGiven   :1;
+    
+    unsigned  B1fNcoefGiven :1;
+    unsigned  B1fNexpGiven :1;
+
     unsigned  B1typeGiven   :1;
 
 } B1model;
@@ -488,6 +515,7 @@ typedef struct sBSIM1model {       /* model structure for a resistor */
 #define BSIM1_IC_VDS 11
 #define BSIM1_IC_VGS 12
 #define BSIM1_IC 13
+#define BSIM1_M 14
 
 /* model parameters */
 #define BSIM1_MOD_VFB0 101
@@ -570,6 +598,9 @@ typedef struct sBSIM1model {       /* model structure for a resistor */
 #define BSIM1_MOD_NMOS 178
 #define BSIM1_MOD_PMOS 179
 
+#define BSIM1_MOD_KF 180
+#define BSIM1_MOD_AF 181
+
 /* device questions */
 #define BSIM1_DNODE              201
 #define BSIM1_GNODE              202
@@ -616,13 +647,9 @@ typedef struct sBSIM1model {       /* model structure for a resistor */
 
 #include "bsim1ext.h"
 
-#ifdef __STDC__
 extern void B1evaluate(double,double,double,B1instance*,B1model*,
 	double*,double*,double*, double*, double*, double*, double*,
 	double*, double*, double*, double*, double*, double*, double*,
 	double*, double*, double*, double*, CKTcircuit*);
-#else /* stdc */
-extern void B1evaluate();
-#endif /* stdc */
 
 #endif /*B1*/

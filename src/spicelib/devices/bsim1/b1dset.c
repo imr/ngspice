@@ -4,7 +4,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bsim1def.h"
 #include "trandefs.h"
@@ -15,11 +14,7 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 #include "devdefs.h"
 
 int
-B1dSetup(inModel,ckt)
-
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-
+B1dSetup(GENmodel *inModel, CKTcircuit *ckt)
 {
   B1model* model = (B1model*)inModel;
   B1instance *here;
@@ -135,13 +130,14 @@ B1dSetup(inModel,ckt)
     /* loop through all the instances of the model */
     for (here = model->B1instances; here != NULL ;
 	 here=here->B1nextInstance) {
-      if (here->B1owner != ARCHme) continue;
+      
+if (here->B1owner != ARCHme) continue;
         
       EffectiveLength=here->B1l - model->B1deltaL * 1.e-6;/* m */
-      DrainArea = here->B1drainArea;
-      SourceArea = here->B1sourceArea;
-      DrainPerimeter = here->B1drainPerimeter;
-      SourcePerimeter = here->B1sourcePerimeter;
+      DrainArea = here->B1m * here->B1drainArea;
+      SourceArea = here->B1m * here->B1sourceArea;
+      DrainPerimeter = here->B1m * here->B1drainPerimeter;
+      SourcePerimeter = here->B1m * here->B1sourcePerimeter;
       if( (DrainSatCurrent=DrainArea*model->B1jctSatCurDensity) 
 	  < 1e-15){
 	DrainSatCurrent = 1.0e-15;
@@ -150,8 +146,8 @@ B1dSetup(inModel,ckt)
 	  <1.0e-15){
 	SourceSatCurrent = 1.0e-15;
       }
-      GateSourceOverlapCap = model->B1gateSourceOverlapCap *here->B1w;
-      GateDrainOverlapCap = model->B1gateDrainOverlapCap * here->B1w;
+      GateSourceOverlapCap = model->B1gateSourceOverlapCap * here->B1w * here->B1m;
+      GateDrainOverlapCap = model->B1gateDrainOverlapCap * here->B1w * here-> B1m;
       GateBulkOverlapCap = model->B1gateBulkOverlapCap *EffectiveLength;
       vt0 = model->B1type * here->B1vt0;
 
@@ -194,7 +190,7 @@ B1dSetup(inModel,ckt)
 	lgbd2 = lgbd3 = 0.0;
       } else {
 	evbd = exp(vbd/CONSTvt0);
-	lgbd1 = DrainSatCurrent*evbd/CONSTvt0 +ckt->CKTgmin;
+	lgbd1 = DrainSatCurrent*evbd/CONSTvt0 + ckt->CKTgmin;
 	lgbd2 = (lgbd1 - ckt->CKTgmin)/(CONSTvt0*2);
 	lgbd3 = lgbd2/(CONSTvt0*3);
       }
@@ -545,7 +541,7 @@ B1dSetup(inModel,ckt)
 
 	WLCox = model->B1Cox * 
 	  (here->B1l - model->B1deltaL * 1.e-6) * 
-	  (here->B1w - model->B1deltaW * 1.e-6) * 1.e4;   /* F */
+	  ((here->B1w - model->B1deltaW * 1.e-6) * here->B1m) * 1.e4;   /* F */
 
 	if( ! ChargeComputationNeeded )  {  
 	  qg  = 0;

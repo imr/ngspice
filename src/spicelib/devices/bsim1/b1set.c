@@ -4,7 +4,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "bsim1def.h"
@@ -13,11 +12,8 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 #include "suffix.h"
 
 int
-B1setup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+B1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, 
+        int *states)
         /* load the B1 device structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -266,6 +262,12 @@ B1setup(matrix,inModel,ckt,states)
         if( ! model->B1deltaLengthGiven) {
             model->B1deltaLength = 0.0;
         }
+        if( ! model->B1fNcoefGiven) {
+            model->B1fNcoef = 0.0;
+        }
+        if( ! model->B1fNexpGiven) {
+            model->B1fNexp = 1.0;
+        }
 
         /* loop through all the instances of the model */
         for (here = model->B1instances; here != NULL ;
@@ -320,7 +322,10 @@ B1setup(matrix,inModel,ckt,states)
             if(!here->B1wGiven) {
                 here->B1w = 5e-6;
             }
-
+            if(!here->B1mGiven) {
+                here->B1m = 1.0;
+            }
+            
             /* process drain series resistance */
             if( (model->B1sheetResistance != 0) && 
                     (here->B1drainSquares != 0.0 ) &&
@@ -398,9 +403,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }  
 
 int
-B1unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+B1unsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     B1model *model;
     B1instance *here;
