@@ -34,7 +34,9 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
 	    ind1 = here->MUTind1->INDinduct;
 	    ind2 = here->MUTind2->INDinduct;
 	    
-	    
+	    /*           _______
+	 * M = k * \/l1 * l2 
+	 */
             here->MUTfactor = here->MUTcoupling * sqrt(ind1 * ind2); 
 		     
 	}

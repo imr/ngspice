@@ -18,7 +18,8 @@ IFparm INDpTable[] = { /* parameters */
  IOPZ( "dtemp",     IND_DTEMP,    IF_REAL,
        "Instance temperature difference with the rest of the circuit"),
  IOPU( "m",         IND_M,        IF_REAL, "Multiplication Factor"),
- IOPU( "scale",     IND_SCALE,    IF_REAL, "Scale factor"),	
+ IOPU( "scale",     IND_SCALE,    IF_REAL, "Scale factor"),
+ IOP(  "nt",        IND_NT,       IF_REAL, "Number of turns"), 	
  OP(   "flux",      IND_FLUX,     IF_REAL, "Flux through inductor"),
  OP(   "v",         IND_VOLT,     IF_REAL, "Terminal voltage of inductor"),
  OPR(  "volt",      IND_VOLT,     IF_REAL, ""),
@@ -42,8 +43,9 @@ IFparm INDmPTable[] = { /* model parameters */
  IOPXU( "tnom",   IND_MOD_TNOM,     IF_REAL,"Parameter measurement temperature"),
  IOPA(  "csect",  IND_MOD_CSECT,    IF_REAL,"Inductor cross section"),
  IOPA(  "length", IND_MOD_LENGTH,   IF_REAL,"Inductor length"),
- IOPA(  "n",      IND_MOD_N,        IF_REAL,"Number of turns"),
+ IOPA(  "nt",     IND_MOD_NT,       IF_REAL,"Model number of turns"),
  IOPA(  "mu",     IND_MOD_MU,       IF_REAL,"Relative magnetic permeability"),
+ OPU(   "sind",   IND_MOD_SIND,     IF_REAL,"Specific model inductance"),
  IP(    "l",      IND_MOD_L,        IF_FLAG,"Inductor model")
 };
 

@@ -46,7 +46,10 @@ INDask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case IND_SCALE:    
             value->rValue = here->INDscale;
-            return(OK);	    	    	       
+            return(OK);	   
+	case IND_NT:    
+            value->rValue = here->INDnt;
+            return(OK);	        	    	       
         case IND_CURRENT :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
                 errMsg = MALLOC(strlen(msg)+1);

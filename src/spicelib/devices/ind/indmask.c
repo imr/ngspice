@@ -38,8 +38,8 @@ INDmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case IND_MOD_LENGTH:
             value->rValue = here->INDlength;
             return(OK);
-        case IND_MOD_N:
-            value->rValue = here->INDn;
+        case IND_MOD_NT:
+            value->rValue = here->INDmodNt;
             return(OK);
         case IND_MOD_MU:
             value->rValue = here->INDmu;

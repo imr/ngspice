@@ -44,10 +44,14 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
              
 	     if (!here->INDscaleGiven) here->INDscale = 1.0;
              if (!here->INDmGiven)     here->INDm     = 1.0;  
+	     if (!here->INDntGiven)    here->INDnt    = 0.0; 
 	     
-	     if (!here->INDindGiven)  /* No instance inductance given */
-                 here->INDinduct = model->INDmInd; 
-
+	     if (!here->INDindGiven) { /* No instance inductance given */
+	         if (here->INDntGiven)
+                     here->INDinduct = model->INDspecInd * here->INDnt * here->INDnt;
+		 else
+		     here->INDinduct = model->INDmInd;     
+ }
 	    difference = (here->INDtemp + here->INDdtemp) - model->INDtnom;
 	    
 	    factor = 1.0 + (model->INDtempCoeff1)*difference +

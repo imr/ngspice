@@ -36,6 +36,7 @@ typedef struct sINDinstance {
     double INDtemp;      /* Instance operating temperature */
     double INDdtemp;     /* Delta temp. of instance */
     double INDscale;     /* Scale factor */
+    double INDnt;        /* Number of turns */
     double INDinitCond; /* initial inductor voltage if specified */
 
     double *INDposIbrptr;    /* pointer to sparse matrix diagonal at 
@@ -55,6 +56,7 @@ typedef struct sINDinstance {
     unsigned INDtempGiven  : 1;   /* flag to indicate operating temp. given */
     unsigned INDdtempGiven : 1;   /* flag to indicate delta temp. given */
     unsigned INDscaleGiven : 1;   /* flag to indicate scale factor given */
+    unsigned INDntGiven    : 1;   /* flag to indicate number of turns given */
     int  INDsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
 
@@ -82,15 +84,16 @@ typedef struct sINDmodel {       /* model structure for an inductor */
     double INDtempCoeff1;  /* first temperature coefficient */
     double INDtempCoeff2;  /* second  temperature coefficient */
     double INDcsect;       /* Cross section of inductor */
-    double INDlength;      /* Length of inductor */
-    double INDn;           /* Number of turns */
+    double INDlength;      /* Mean length of magnetic path */
+    double INDmodNt;       /* Model number of turns */
     double INDmu;          /* Relative magnetic permeability */
+    double INDspecInd;     /* Specific (one turn) inductance */
     unsigned INDtnomGiven  : 1; /* flag to indicate nominal temp was given */ 
     unsigned INDtc1Given   : 1; /* flag to indicate tc1 was specified */
     unsigned INDtc2Given   : 1; /* flag to indicate tc2 was specified */
     unsigned INDcsectGiven : 1; /* flag to indicate cross section given */
     unsigned INDlengthGiven: 1; /* flag to indicate length given */
-    unsigned INDnGiven     : 1; /* flag to indicate n. of turns given */
+    unsigned INDmodNtGiven : 1; /* flag to indicate mod. n. of turns given */
     unsigned INDmuGiven    : 1; /* flag to indicate mu_r given */
     unsigned INDmIndGiven  : 1;   /* flag to indicate model inductance given */
 } INDmodel;
@@ -151,6 +154,7 @@ typedef struct sMUTmodel {       /* model structure for a mutual inductor */
 #define IND_TEMP 9
 #define IND_DTEMP 10
 #define IND_SCALE 11
+#define IND_NT 12
 
 /* model parameters */
 #define IND_MOD_IND    100
@@ -159,9 +163,10 @@ typedef struct sMUTmodel {       /* model structure for a mutual inductor */
 #define IND_MOD_TNOM   103
 #define IND_MOD_CSECT  104
 #define IND_MOD_LENGTH 105
-#define IND_MOD_N      106
+#define IND_MOD_NT     106
 #define IND_MOD_MU     107
-#define IND_MOD_L      108
+#define IND_MOD_SIND   108
+#define IND_MOD_L      109
 
 /* device questions */
 #define IND_QUEST_SENS_REAL      201

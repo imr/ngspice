@@ -41,9 +41,9 @@ INDmParam(int param, IFvalue *value, GENmodel *inModel)
             mod->INDlength = value->rValue;
             mod->INDlengthGiven = TRUE;
             break;
-        case IND_MOD_N :
-            mod->INDn = value->rValue;
-            mod->INDnGiven = TRUE;
+        case IND_MOD_NT :
+            mod->INDmodNt = value->rValue;
+            mod->INDmodNtGiven = TRUE;
             break;
         case IND_MOD_MU:
             mod->INDmu = value->rValue;
