@@ -118,7 +118,7 @@ com_compose(wordlist *wl)
     bool realflag = TRUE;
     int dims[MAXDIMS];
     struct dvec *result, *vecs = NULL, *v, *lv = NULL;
-    struct pnode *pn, *first_pn;
+    struct pnode *pn, *first_pn=NULL;
     bool reverse = FALSE;
 
     resname = cp_unquote(wl->wl_word);

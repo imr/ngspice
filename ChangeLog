@@ -1,3 +1,8 @@
+2003-07-16 Vera Albrecht <albrecht@danalyse.de>
+
+	* frontend/{device.c,parse.c,vectors.c,com_compose.c} :
+	More memory leaks closed in utility commands and functions.
+
 2003-07-16 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/frontend/{com_compose.c,cpitf.c,device.c,subckt.c,vectors.c}

@@ -27,6 +27,7 @@ static struct pnode * mkunode(int op, struct pnode *arg);
 static struct pnode * mkfnode(char *func, struct pnode *arg);
 static struct pnode * mknnode(double number);
 static struct pnode * mksnode(char *string);
+static void   print_elem(struct element *elem); /* va: for debugging */
 
 
 static int lasttoken = END, lasttype;
@@ -115,7 +116,8 @@ checkvalid(struct pnode *pn)
 /* Everything else is a string or a number. Quoted strings are kept in 
  * the form "string", and the lexer strips off the quotes...
  */
-
+/* va: the structure returned is static, e_string is a copy 
+       (in case of e_token==VALUE,e_type==STRING) */
 static struct element *
 lexer(void)
 {
@@ -496,6 +498,19 @@ parse(void)
                     goto err;
                 if (!(pn = mkfnode(stack[sp].e_string, lpn)))
                     return (NULL);
+                /* va: avoid memory leakage: 
+                   in case of variablenames (i.e. i(vd)) mkfnode makes in 
+                   reality a snode, the old lpn (and its plotless vector) is 
+                   then a memory leak */
+                if (pn->pn_func==NULL && pn->pn_value!=NULL) /* a snode */
+                {
+                   if (lpn->pn_value && lpn->pn_value->v_plot==NULL)
+                   {
+                       tfree(lpn->pn_value->v_name);
+                       tfree(lpn->pn_value);
+                   }
+                   free_pnode(lpn);
+                }
             } else { /* node op node */
                 lpn = makepnode(&stack[sp]);
                 rpn = makepnode(&stack[st]);
@@ -541,6 +556,28 @@ makepnode(struct element *elem)
             return (NULL);
     }   
 }
+
+static void print_elem(struct element *elem)
+{
+    printf("e_token = %d", elem->e_token); 
+    if (elem->e_token == VALUE) {
+        printf(", e_type  = %d", elem->e_type); 
+        switch (elem->e_type) {
+            case STRING:
+                printf(", e_string = %s(%p)", elem->e_string,elem->e_string); 
+                break; 
+            case NUM:
+                printf(", e_double = %g", elem->e_double); break; 
+            case PNODE:
+                printf(", e_pnode  = %p", elem->e_pnode);  break; 
+            default:
+                break;
+        }
+    }   
+    printf("\n");
+}
+
+
 
 /* Some auxiliary functions for building the parse tree. */
 
@@ -810,6 +847,12 @@ mksnode(char *string)
         end = nv;
     }
     p->pn_value = newv;
+    
+    /* va: tfree v in case of @xxx[par], because vec_get created a new vec and
+       nobody will free it elsewhere */
+    if (v && v->v_name && *v->v_name=='@' && isreal(v) && v->v_realdata) {
+    	vec_free(v);
+    }
     return (p);
 }
 
@@ -822,9 +865,14 @@ free_pnode(struct pnode *t)
     free_pnode(t->pn_left);
     free_pnode(t->pn_right);
     free_pnode(t->pn_next);
-    tfree(t->pn_name);
-    if(t->pn_value)
-        vec_free(t->pn_value);
+    tfree(t->pn_name); /* va: it is a copy() of original string, can be free'd */
+    /* va: tfree struct func, allocated within parser */
+    if (t->pn_func!=NULL) {
+    	tfree(t->pn_func->fu_name); /* va: name is a copy of original string */
+    	tfree(t->pn_func);    	    /* va: t->pn_func->fu_func must not tfree'd */
+    }
+    if (t->pn_value)
+        vec_free(t->pn_value); /* patch by Stefan Jones */
     tfree(t);
 }
 

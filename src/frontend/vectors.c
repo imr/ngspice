@@ -354,11 +354,9 @@ vec_get(char *word)
         d = newv;
         if (!d) {
             fprintf(cp_err, 
-            "Error: plot wildcard (name %s) matches nothing\n",
+                    "Error: plot wildcard (name %s) matches nothing\n",
                     word);
-                    
-            	/* MW. I don't want core leaks here */
-            tfree(wd);
+            tfree(wd); /* MW. I don't want core leaks here */
             return (NULL);
         }
     }
@@ -367,13 +365,12 @@ vec_get(char *word)
         /* This is a special quantity... */
         if (ft_nutmeg) {
             fprintf(cp_err,
-        "Error: circuit parameters only available with spice\n");
-        
-	    tfree(wd); 	/* MW. Memory leak fixed again */       		
-            return (FALSE);
+                    "Error: circuit parameters only available with spice\n");
+            tfree(wd); 	/* MW. Memory leak fixed again */       		
+            return (NULL); /* va: use NULL */
         }
         
-	whole=copy(word);
+        whole=copy(word);
         name = ++word;        
         for (param = name; *param && (*param != '['); param++)
             ;		
@@ -411,10 +408,11 @@ vec_get(char *word)
         d->v_length = 1;
         *d->v_realdata = vv->va_real;
         
+        tfree(vv->va_name);
+        tfree(vv); /* va: tfree vv->va_name and vv (avoid memory leakages) */
         tfree(wd);	
         vec_new(d);
 	tfree(whole);
-	tfree(wd);
         return (d);
     }
 
@@ -517,9 +515,11 @@ plot_alloc(char *name)
     } while (tp);
     pl->pl_typename = copy(buf);
     cp_addkword(CT_PLOT, buf);
+    /* va: create a new, empty keyword tree for class CT_VECTOR, s=old tree */
     s = cp_kwswitch(CT_VECTOR, (char *) NULL);
     cp_addkword(CT_VECTOR, "all");
     pl->pl_ccom = cp_kwswitch(CT_VECTOR, s);
+    /* va: keyword tree is old tree again, new tree is linked to pl->pl_ccom */
     return (pl);
 }
 
@@ -692,6 +692,8 @@ vec_basename(struct dvec *v)
 
 /* Make a plot the current one.  This gets called by cp_usrset() when one
  * does a 'set curplot = name'.
+ * va: ATTENTION: has unlinked old keyword-class-tree from keywords[CT_VECTOR] 
+ *                (potentially memory leak)
  */
 
 void
@@ -715,8 +717,15 @@ plot_setcur(char *name)
         fprintf(cp_err, "Error: no such plot named %s\n", name);
         return;
     }
+/* va: we skip cp_kwswitch, because it confuses the keyword-tree management for 
+ *     repeated op-commands. When however cp_kwswitch is necessary for other 
+ *     reasons, we should hold the original keyword table pointer in an 
+ *     permanent variable, since it will lost here, and can never tfree'd.
     if (plot_cur)
+    {
         plot_cur->pl_ccom = cp_kwswitch(CT_VECTOR, pl->pl_ccom);
+    }
+*/
     plot_cur = pl;
     return;
 }
