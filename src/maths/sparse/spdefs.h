@@ -259,7 +259,7 @@
 /* A new calloc */
 #ifndef HAVE_LIBGC
 #define CALLOC(ptr,type,number)                    	     \
-{ ptr = (type *) calloc(type, number); 		             \
+{ ptr = (type *) calloc(number, sizeof(type)); 		             \
 }
 #else /* HAVE_LIBCG */
 #define CALLOC(ptr,type,number)                         	\
