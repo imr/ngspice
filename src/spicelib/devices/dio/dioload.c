@@ -188,8 +188,8 @@ next1:      if (vd >= -3*vte) {
                 cd = -csat*evrev+ckt->CKTgmin*vd;
                 gd=csat*evrev/vte + ckt->CKTgmin;
             }
-            if( ((ckt->CKTmode & (MODETRAN | MODEAC | MODEINITSMSIG)) || 
-		 (ckt->CKTmode & MODETRANOP)) && (ckt->CKTmode & MODEUIC) ) {
+            if ((ckt->CKTmode & (MODETRAN | MODEAC | MODEINITSMSIG)) || 
+		     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
 	      /*
 	       *   charge storage elements
 	       */
