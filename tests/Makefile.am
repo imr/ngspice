@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = resistance filters polezero
+SUBDIRS = resistance filters polezero bsim3soipd
 
 TESTS = \
 	diffpair.cir		\
