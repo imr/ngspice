@@ -7,7 +7,7 @@ EXTRA_DIST = FAQ acconfig.h autogen.sh NOTES contrib BUGS
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 			config.h.in config.sub configure install-sh \
 			missing mkinstalldirs stamp-h.in ltconfig \
-			ltmain.sh
+			ltmain.sh depcomp
 
 mrproper: maintainer-clean
 	rm -f `find . -type f -name "*~" -print`
