@@ -1,17 +1,19 @@
-/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
+/**** BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b4.c of BSIM4.2.1.
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b4.c of BSIM4.4.0.
  * Author: 2000 Weidong Liu
- * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Jin He, Kanyu Cao, Mohan Dunga, Mansun Chan, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
- *
+ * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
+ * Modified by Xuemei Xi, 11/15/2002.
+ * Modified by Xuemei Xi, 05/09/2003.
+ * Modified by Xuemei Xi, 03/04/2004.
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "bsim4def.h"
 #include "suffix.h"
@@ -19,7 +21,11 @@
 IFparm BSIM4pTable[] = { /* parameters */
 IOP( "l",   BSIM4_L,      IF_REAL   , "Length"),
 IOP( "w",   BSIM4_W,      IF_REAL   , "Width"),
+IOP( "m",   BSIM4_M,      IF_REAL   , "Separate Parallel multiplier"),
 IOP( "nf",  BSIM4_NF,     IF_REAL   , "Number of fingers"),
+IOP( "sa",  BSIM4_SA,     IF_REAL   , "distance between  OD edge to poly of one side "),
+IOP( "sb",  BSIM4_SB,     IF_REAL   , "distance between  OD edge to poly of the other side"),
+IOP( "sd",  BSIM4_SD,     IF_REAL   , "distance between neighbour fingers"),
 IOP( "min",  BSIM4_MIN,   IF_INTEGER , "Minimize either D or S"),
 IOP( "ad",  BSIM4_AD,     IF_REAL   , "Drain area"),
 IOP( "as",  BSIM4_AS,     IF_REAL   , "Source area"),
@@ -33,7 +39,6 @@ IOP( "rbsb", BSIM4_RBSB,  IF_REAL   , "Body resistance"),
 IOP( "rbpb", BSIM4_RBPB,  IF_REAL   , "Body resistance"),
 IOP( "rbps", BSIM4_RBPS,  IF_REAL   , "Body resistance"),
 IOP( "rbpd", BSIM4_RBPD,  IF_REAL   , "Body resistance"),
-
 IOP( "trnqsmod", BSIM4_TRNQSMOD, IF_INTEGER, "Transient NQS model selector"),
 IOP( "acnqsmod", BSIM4_ACNQSMOD, IF_INTEGER, "AC NQS model selector"),
 IOP( "rbodymod", BSIM4_RBODYMOD, IF_INTEGER, "Distributed body R model selector"),
@@ -49,6 +54,8 @@ OP( "vth",          BSIM4_VON,        IF_REAL,    "Vth"),
 OP( "id",           BSIM4_CD,         IF_REAL,    "Ids"),
 OP( "ibd",          BSIM4_CBD,        IF_REAL,    "Ibd"),
 OP( "ibs",          BSIM4_CBS,        IF_REAL,    "Ibs"),
+OP( "gbd",          BSIM4_GBD,        IF_REAL,    "gbd"),
+OP( "gbs",          BSIM4_GBS,        IF_REAL,    "gbs"),
 OP( "isub",         BSIM4_CSUB,       IF_REAL,    "Isub"),
 OP( "igidl",        BSIM4_IGIDL,      IF_REAL,    "Igidl"),
 OP( "igisl",        BSIM4_IGISL,      IF_REAL,    "Igisl"),
@@ -100,6 +107,7 @@ IOP( "fnoimod", BSIM4_MOD_FNOIMOD, IF_INTEGER, "Flicker noise model selector"),
 IOP( "tnoimod", BSIM4_MOD_TNOIMOD, IF_INTEGER, "Thermal noise model selector"),
 IOP( "igcmod", BSIM4_MOD_IGCMOD, IF_INTEGER, "Gate-to-channel Ig model selector"),
 IOP( "igbmod", BSIM4_MOD_IGBMOD, IF_INTEGER, "Gate-to-body Ig model selector"),
+IOP( "tempmod", BSIM4_MOD_TEMPMOD, IF_INTEGER, "Temperature model selector"),
 IOP( "paramchk", BSIM4_MOD_PARAMCHK, IF_INTEGER, "Model parameter checking selector"),
 IOP( "binunit", BSIM4_MOD_BINUNIT, IF_INTEGER, "Bin  unit  selector"),
 IOP( "version", BSIM4_MOD_VERSION, IF_STRING, "parameter for model version"),
@@ -251,6 +259,12 @@ IOP( "rshg", BSIM4_MOD_RSHG, IF_REAL, "Gate sheet resistance"),
 IOP( "ngcon", BSIM4_MOD_NGCON, IF_REAL, "Number of gate contacts"),
 IOP( "xrcrg1",  BSIM4_MOD_XRCRG1, IF_REAL, "First fitting parameter the bias-dependent Rg"),
 IOP( "xrcrg2",  BSIM4_MOD_XRCRG2, IF_REAL, "Second fitting parameter the bias-dependent Rg"),
+IOP( "lambda",  BSIM4_MOD_LAMBDA, IF_REAL, " Velocity overshoot parameter"),
+IOP( "vtl",      BSIM4_MOD_VTL,     IF_REAL, " thermal velocity"),
+IOP( "lc",     BSIM4_MOD_LC,     IF_REAL, " back scattering parameter"),
+IOP( "xn",     BSIM4_MOD_XN,     IF_REAL, " back scattering parameter"),
+IOP( "vfbsdoff",     BSIM4_MOD_VFBSDOFF,     IF_REAL, "S/D flatband voltage offset"),
+IOP( "lintnoi", BSIM4_MOD_LINTNOI, IF_REAL, "lint offset for noise calculation"),
 IOP( "lint", BSIM4_MOD_LINT, IF_REAL, "Length reduction parameter"),
 IOP( "ll",   BSIM4_MOD_LL, IF_REAL, "Length reduction parameter"),
 IOP( "llc",  BSIM4_MOD_LLC, IF_REAL, "Length reduction parameter for CV"),
@@ -331,6 +345,31 @@ IOP( "xjbvd", BSIM4_MOD_XJBVD, IF_REAL, "Fitting parameter for drain diode break
 IOP( "xjbvs", BSIM4_MOD_XJBVS, IF_REAL, "Fitting parameter for source diode breakdown current"),
 IOP( "bvd", BSIM4_MOD_BVD, IF_REAL, "Drain diode breakdown voltage"),
 IOP( "bvs", BSIM4_MOD_BVS, IF_REAL, "Source diode breakdown voltage"),
+
+IOP( "jtss", BSIM4_MOD_JTSS, IF_REAL, "Source bottom trap-assisted saturation current density"),
+IOP( "jtsd", BSIM4_MOD_JTSD, IF_REAL, "Drain bottom trap-assisted saturation current density"),
+IOP( "jtssws", BSIM4_MOD_JTSSWS, IF_REAL, "Source STI sidewall trap-assisted saturation current density"),
+IOP( "jtsswd", BSIM4_MOD_JTSSWD, IF_REAL, "Drain STI sidewall trap-assisted saturation current density"),
+IOP( "jtsswgs", BSIM4_MOD_JTSSWGS, IF_REAL, "Source gate-edge sidewall trap-assisted saturation current density"),
+IOP( "jtsswgd", BSIM4_MOD_JTSSWGD, IF_REAL, "Drain gate-edge sidewall trap-assisted saturation current density"),
+IOP( "njts", BSIM4_MOD_NJTS, IF_REAL, "Non-ideality factor for bottom junction"),
+IOP( "njtssw", BSIM4_MOD_NJTSSW, IF_REAL, "Non-ideality factor for STI sidewall junction"),
+IOP( "njtsswg", BSIM4_MOD_NJTSSWG, IF_REAL, "Non-ideality factor for gate-edge sidewall junction"),
+IOP( "xtss", BSIM4_MOD_XTSS, IF_REAL, "Power dependence of JTSS on temperature"),
+IOP( "xtsd", BSIM4_MOD_XTSD, IF_REAL, "Power dependence of JTSD on temperature"),
+IOP( "xtssws", BSIM4_MOD_XTSSWS, IF_REAL, "Power dependence of JTSSWS on temperature"),
+IOP( "xtsswd", BSIM4_MOD_XTSSWD, IF_REAL, "Power dependence of JTSSWD on temperature"),
+IOP( "xtsswgs", BSIM4_MOD_XTSSWGS, IF_REAL, "Power dependence of JTSSWGS on temperature"),
+IOP( "xtsswgd", BSIM4_MOD_XTSSWGD, IF_REAL, "Power dependence of JTSSWGD on temperature"),
+IOP( "tnjts", BSIM4_MOD_TNJTS, IF_REAL, "Temperature coefficient for NJTS"),
+IOP( "tnjtssw", BSIM4_MOD_TNJTSSW, IF_REAL, "Temperature coefficient for NJTSSW"),
+IOP( "tnjtsswg", BSIM4_MOD_TNJTSSWG, IF_REAL, "Temperature coefficient for NJTSSWG"),
+IOP( "vtss", BSIM4_MOD_VTSS, IF_REAL, "Source bottom trap-assisted voltage dependent parameter"),
+IOP( "vtsd", BSIM4_MOD_VTSD, IF_REAL, "Drain bottom trap-assisted voltage dependent parameter"),
+IOP( "vtssws", BSIM4_MOD_VTSSWS, IF_REAL, "Source STI sidewall trap-assisted voltage dependent parameter"),
+IOP( "vtsswd", BSIM4_MOD_VTSSWD, IF_REAL, "Drain STI sidewall trap-assisted voltage dependent parameter"),
+IOP( "vtsswgs", BSIM4_MOD_VTSSWGS, IF_REAL, "Source gate-edge sidewall trap-assisted voltage dependent parameter"),
+IOP( "vtsswgd", BSIM4_MOD_VTSSWGD, IF_REAL, "Drain gate-edge sidewall trap-assisted voltage dependent parameter"),
 
 IOP( "gbmin", BSIM4_MOD_GBMIN, IF_REAL, "Minimum body conductance"),
 IOP( "rbdb", BSIM4_MOD_RBDB, IF_REAL, "Resistance between bNode and dbNode"),
@@ -462,7 +501,12 @@ IOP( "lnoff", BSIM4_MOD_LNOFF, IF_REAL, "Length dependence of noff"),
 IOP( "lvoffcv", BSIM4_MOD_LVOFFCV, IF_REAL, "Length dependence of voffcv"),
 IOP( "lxrcrg1",  BSIM4_MOD_LXRCRG1, IF_REAL, "Length dependence of xrcrg1"),
 IOP( "lxrcrg2",  BSIM4_MOD_LXRCRG2, IF_REAL, "Length dependence of xrcrg2"),
-IOP( "leu",  BSIM4_MOD_LEU, IF_REAL, "Length dependence of eu"),
+IOP( "llambda",  BSIM4_MOD_LLAMBDA, IF_REAL, "Length dependence of lambda"),
+IOP( "lvtl",      BSIM4_MOD_LVTL,     IF_REAL, " Length dependence of vtl"),
+IOP( "lxn",     BSIM4_MOD_LXN,    IF_REAL, " Length dependence of xn"),
+IOP( "leu",  BSIM4_MOD_LEU, IF_REAL, " Length dependence of eu"),
+IOP( "lvfbsdoff",     BSIM4_MOD_LVFBSDOFF,     IF_REAL, "Length dependence of vfbsdoff"),
+
 IOP( "wcdsc",  BSIM4_MOD_WCDSC, IF_REAL, "Width dependence of cdsc"),
 IOP( "wcdscb", BSIM4_MOD_WCDSCB, IF_REAL, "Width dependence of cdscb"),  
 IOP( "wcdscd", BSIM4_MOD_WCDSCD, IF_REAL, "Width dependence of cdscd"),  
@@ -585,7 +629,11 @@ IOP( "wnoff", BSIM4_MOD_WNOFF, IF_REAL, "Width dependence of noff"),
 IOP( "wvoffcv", BSIM4_MOD_WVOFFCV, IF_REAL, "Width dependence of voffcv"),
 IOP( "wxrcrg1",  BSIM4_MOD_WXRCRG1, IF_REAL, "Width dependence of xrcrg1"),
 IOP( "wxrcrg2",  BSIM4_MOD_WXRCRG2, IF_REAL, "Width dependence of xrcrg2"),
+IOP( "wlambda",  BSIM4_MOD_WLAMBDA, IF_REAL, "Width dependence of lambda"),
+IOP( "wvtl",      BSIM4_MOD_WVTL,     IF_REAL, "Width dependence of vtl"),
+IOP( "wxn",     BSIM4_MOD_WXN,    IF_REAL, "Width dependence of xn"),
 IOP( "weu",  BSIM4_MOD_WEU, IF_REAL, "Width dependence of eu"),
+IOP( "wvfbsdoff",     BSIM4_MOD_WVFBSDOFF,     IF_REAL, "Width dependence of vfbsdoff"),
 
 IOP( "pcdsc",  BSIM4_MOD_PCDSC, IF_REAL, "Cross-term dependence of cdsc"),
 IOP( "pcdscb", BSIM4_MOD_PCDSCB, IF_REAL, "Cross-term dependence of cdscb"), 
@@ -709,13 +757,43 @@ IOP( "pnoff", BSIM4_MOD_PNOFF, IF_REAL, "Cross-term dependence of noff"),
 IOP( "pvoffcv", BSIM4_MOD_PVOFFCV, IF_REAL, "Cross-term dependence of voffcv"),
 IOP( "pxrcrg1",  BSIM4_MOD_PXRCRG1, IF_REAL, "Cross-term dependence of xrcrg1"),
 IOP( "pxrcrg2",  BSIM4_MOD_PXRCRG2, IF_REAL, "Cross-term dependence of xrcrg2"),
+IOP( "plambda",  BSIM4_MOD_PLAMBDA, IF_REAL, "Cross-term dependence of lambda"),
+IOP( "pvtl",      BSIM4_MOD_PVTL,     IF_REAL, "Cross-term dependence of vtl"),
+IOP( "pxn",     BSIM4_MOD_PXN,    IF_REAL, "Cross-term dependence of xn"),
 IOP( "peu",  BSIM4_MOD_PEU, IF_REAL, "Cross-term dependence of eu"),
+IOP( "pvfbsdoff",     BSIM4_MOD_PVFBSDOFF,     IF_REAL, "Cross-term dependence of vfbsdoff"),
+
+/* stress effect*/
+IOP( "saref", BSIM4_MOD_SAREF, IF_REAL, "Reference distance between OD edge to poly of one side"),
+IOP( "sbref", BSIM4_MOD_SBREF, IF_REAL, "Reference distance between OD edge to poly of the other side"),
+IOP( "wlod", BSIM4_MOD_WLOD, IF_REAL, "Width parameter for stress effect"),
+IOP( "ku0", BSIM4_MOD_KU0, IF_REAL, "Mobility degradation/enhancement coefficient for LOD"),
+IOP( "kvsat", BSIM4_MOD_KVSAT, IF_REAL, "Saturation velocity degradation/enhancement parameter for LOD"),
+IOP( "kvth0", BSIM4_MOD_KVTH0, IF_REAL, "Threshold degradation/enhancement parameter for LOD"),
+IOP( "tku0", BSIM4_MOD_TKU0, IF_REAL, "Temperature coefficient of KU0"),
+IOP( "llodku0",  BSIM4_MOD_LLODKU0, IF_REAL, "Length parameter for u0 LOD effect"),
+IOP( "wlodku0",  BSIM4_MOD_WLODKU0, IF_REAL, "Width parameter for u0 LOD effect"),
+IOP( "llodvth",  BSIM4_MOD_LLODVTH, IF_REAL, "Length parameter for vth LOD effect"),
+IOP( "wlodvth",  BSIM4_MOD_WLODVTH, IF_REAL, "Width parameter for vth LOD effect"),
+IOP( "lku0", BSIM4_MOD_LKU0, IF_REAL, "Length dependence of ku0"),
+IOP( "wku0", BSIM4_MOD_WKU0, IF_REAL, "Width dependence of ku0"),
+IOP( "pku0", BSIM4_MOD_PKU0, IF_REAL, "Cross-term dependence of ku0"),
+IOP( "lkvth0", BSIM4_MOD_LKVTH0, IF_REAL, "Length dependence of kvth0"),
+IOP( "wkvth0", BSIM4_MOD_WKVTH0, IF_REAL, "Width dependence of kvth0"),
+IOP( "pkvth0", BSIM4_MOD_PKVTH0, IF_REAL, "Cross-term dependence of kvth0"),
+IOP( "stk2", BSIM4_MOD_STK2, IF_REAL, "K2 shift factor related to stress effect on vth"),
+IOP( "lodk2", BSIM4_MOD_LODK2, IF_REAL, "K2 shift modification factor for stress effect"),
+IOP( "steta0", BSIM4_MOD_STETA0, IF_REAL, "eta0 shift factor related to stress effect on vth"),
+IOP( "lodeta0", BSIM4_MOD_LODETA0, IF_REAL, "eta0 shift modification factor for stress effect"),
+
 
 IOP( "noia", BSIM4_MOD_NOIA, IF_REAL, "Flicker noise parameter"),
 IOP( "noib", BSIM4_MOD_NOIB, IF_REAL, "Flicker noise parameter"),
 IOP( "noic", BSIM4_MOD_NOIC, IF_REAL, "Flicker noise parameter"),
 IOP( "tnoia", BSIM4_MOD_TNOIA, IF_REAL, "Thermal noise parameter"),
 IOP( "tnoib", BSIM4_MOD_TNOIB, IF_REAL, "Thermal noise parameter"),
+IOP( "rnoia", BSIM4_MOD_RNOIA, IF_REAL, "Thermal noise coefficient"),
+IOP( "rnoib", BSIM4_MOD_RNOIB, IF_REAL, "Thermal noise coefficient"),
 IOP( "ntnoi", BSIM4_MOD_NTNOI, IF_REAL, "Thermal noise parameter"),
 IOP( "em", BSIM4_MOD_EM, IF_REAL, "Flicker noise parameter"),
 IOP( "ef", BSIM4_MOD_EF, IF_REAL, "Flicker noise frequency exponent"),
@@ -739,6 +817,3 @@ int	BSIM4pTSize = NUMELEMS(BSIM4pTable);
 int	BSIM4mPTSize = NUMELEMS(BSIM4mPTable);
 int	BSIM4iSize = sizeof(BSIM4instance);
 int	BSIM4mSize = sizeof(BSIM4model);
-
-
-

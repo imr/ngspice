@@ -1,23 +1,14 @@
-/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
+/**** BSIM4.4.0 Released by Xuemei(Jane) Xi 03/04/2004 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b4geo.c of BSIM4.2.1.
+ * Copyright 2003 Regents of the University of California. All rights reserved.
+ * File: b4geo.c of BSIM4.4.0.
  * Author: 2000 Weidong Liu
- * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Jin He, Kanyu Cao, Mohan Dunga, Mansun Chan, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
-
-int BSIM4RdsEndIso(double Weffcj, double Rsh, double DMCG, double DMCI,
-                   double DMDG, double nuEnd, int rgeo, int Type,
-                   double *Rend);
-int BSIM4RdsEndSha(double Weffcj, double Rsh, double DMCG, double DMCI,
-                   double DMDG, double nuEnd, int rgeo, int Type,
-                   double *Rend);
 
 /*
  * WDLiu:
@@ -25,6 +16,11 @@ int BSIM4RdsEndSha(double Weffcj, double Rsh, double DMCG, double DMCI,
  * parasitics for BSIM4, which calculates Ps, Pd, As, Ad, and Rs and  Rd
  * for multi-fingers and varous GEO and RGEO options.
  */
+
+int
+BSIM4RdsEndIso(double, double, double, double, double, double, int, int, double *);
+int
+BSIM4RdsEndSha(double, double, double, double, double, double, int, int, double *);
 
 int
 BSIM4NumFingerDiff(nf, minSD, nuIntD, nuEndD, nuIntS, nuEndS)
@@ -161,7 +157,7 @@ int geo, rgeo, minSD, Type;
 double nf, Weffcj, Rsh, DMCG, DMCI, DMDG;
 double *Rtot;
 {
-double Rint = 0.0, Rend = 0.0;
+double Rint, Rend = 0.0;
 double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
 
         if (geo < 9) /* since geo = 9 and 10 only happen when nf = even */

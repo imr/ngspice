@@ -1,18 +1,21 @@
-/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
+/**** BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b4par.c of BSIM4.2.1.
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b4par.c of BSIM4.4.0.
  * Author: 2000 Weidong Liu
- * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Jin He, Kanyu Cao, Mohan Dunga, Mansun Chan, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ * Modified by Xuemei Xi, 04/06/2001.
+ * Modified by Xuemei Xi, 11/15/2002.
+ * Modified by Xuemei Xi, 05/09/2003.
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "bsim4def.h"
 #include "sperror.h"
+#include "suffix.h"
 
 int
 BSIM4param(param,value,inst,select)
@@ -30,6 +33,10 @@ IFvalue *select;
         case BSIM4_L:
             here->BSIM4l = value->rValue;
             here->BSIM4lGiven = TRUE;
+            break;
+        case BSIM4_M:
+            here->BSIM4m = value->rValue;
+            here->BSIM4mGiven = TRUE;
             break;
         case BSIM4_NF:
             here->BSIM4nf = value->rValue;
@@ -65,6 +72,18 @@ IFvalue *select;
             break;
         case BSIM4_OFF:
             here->BSIM4off = value->iValue;
+            break;
+        case BSIM4_SA:
+            here->BSIM4sa = value->rValue;
+            here->BSIM4saGiven = TRUE;
+            break;
+        case BSIM4_SB:
+            here->BSIM4sb = value->rValue;
+            here->BSIM4sbGiven = TRUE;
+            break;
+        case BSIM4_SD:
+            here->BSIM4sd = value->rValue;
+            here->BSIM4sdGiven = TRUE;
             break;
         case BSIM4_RBSB:
             here->BSIM4rbsb = value->rValue;

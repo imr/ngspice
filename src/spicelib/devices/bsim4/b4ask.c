@@ -1,24 +1,23 @@
-/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
+/**** BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b4ask.c of BSIM4.2.1.
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b4ask.c of BSIM4.4.0.
  * Author: 2000 Weidong Liu
- * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Jin He, Kanyu Cao, Mohan Dunga, Mansun Chan, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
- *
+ * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
+ * Modified by Xuemei Xi, 05/09/2003.
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "ifsim.h"
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "bsim4def.h"
 #include "sperror.h"
-
+#include "suffix.h"
 
 int
 BSIM4ask(ckt,inst,which,value,select)
@@ -36,6 +35,9 @@ BSIM4instance *here = (BSIM4instance*)inst;
             return(OK);
         case BSIM4_W:
             value->rValue = here->BSIM4w;
+            return(OK);
+        case BSIM4_M:
+            value->rValue = here->BSIM4m;
             return(OK);
         case BSIM4_NF:
             value->rValue = here->BSIM4nf;
@@ -63,6 +65,15 @@ BSIM4instance *here = (BSIM4instance*)inst;
             return(OK);
         case BSIM4_OFF:
             value->rValue = here->BSIM4off;
+            return(OK);
+        case BSIM4_SA:
+            value->rValue = here->BSIM4sa ;
+            return(OK);
+        case BSIM4_SB:
+            value->rValue = here->BSIM4sb ;
+            return(OK);
+        case BSIM4_SD:
+            value->rValue = here->BSIM4sd ;
             return(OK);
         case BSIM4_RBSB:
             value->rValue = here->BSIM4rbsb;
@@ -205,26 +216,38 @@ BSIM4instance *here = (BSIM4instance*)inst;
         case BSIM4_GBS:
             value->rValue = here->BSIM4gbs; 
             return(OK);
-        case BSIM4_QB:
+/*        case BSIM4_QB:
             value->rValue = *(ckt->CKTstate0 + here->BSIM4qb); 
-            return(OK); 
+            return(OK); */
         case BSIM4_CQB:
             value->rValue = *(ckt->CKTstate0 + here->BSIM4cqb); 
             return(OK);
-        case BSIM4_QG:
+/*        case BSIM4_QG:
             value->rValue = *(ckt->CKTstate0 + here->BSIM4qg); 
-            return(OK);
+            return(OK); */
         case BSIM4_CQG:
             value->rValue = *(ckt->CKTstate0 + here->BSIM4cqg); 
             return(OK);
-        case BSIM4_QD:
+/*        case BSIM4_QD:
             value->rValue = *(ckt->CKTstate0 + here->BSIM4qd); 
-            return(OK); 
+            return(OK); */
         case BSIM4_CQD:
             value->rValue = *(ckt->CKTstate0 + here->BSIM4cqd); 
             return(OK);
-        case BSIM4_QS:
+/*        case BSIM4_QS:
             value->rValue = *(ckt->CKTstate0 + here->BSIM4qs); 
+            return(OK); */
+        case BSIM4_QB:
+            value->rValue = here->BSIM4qbulk; 
+            return(OK); 
+        case BSIM4_QG:
+            value->rValue = here->BSIM4qgate; 
+            return(OK); 
+        case BSIM4_QS:
+            value->rValue = here->BSIM4qsrc; 
+            return(OK); 
+        case BSIM4_QD:
+            value->rValue = here->BSIM4qdrn; 
             return(OK); 
         case BSIM4_CGGB:
             value->rValue = here->BSIM4cggb; 
