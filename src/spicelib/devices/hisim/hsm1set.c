@@ -28,7 +28,7 @@ HSM1setup(register SMPmatrix *matrix, register GENmodel *inModel,
   int error;
   CKTnode *tmp;
   
-  CKTnode *tmpNode[1];
+  CKTnode *tmpNode;
   IFuid tmpName;
   
   /*  loop through all the HSM1 device models */
@@ -344,10 +344,10 @@ HSM1setup(register SMPmatrix *matrix, register GENmodel *inModel,
 	here->HSM1dNodePrime = tmp->number;
 		
 	if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }
@@ -365,10 +365,10 @@ HSM1setup(register SMPmatrix *matrix, register GENmodel *inModel,
 	  here->HSM1sNodePrime = tmp->number;	  
 	  	  
 	  if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }

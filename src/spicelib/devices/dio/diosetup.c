@@ -129,17 +129,17 @@ matrixpointers:
                 here->DIOposPrimeNode = here->DIOposNode;
             } else if(here->DIOposPrimeNode == 0) {
             	
-            	CKTnode *tmpNode[1];
+            	CKTnode *tmpNode;
                IFuid tmpName;
             	
                 error = CKTmkVolt(ckt,&tmp,here->DIOname,"internal");
                 if(error) return(error);
                 here->DIOposPrimeNode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }

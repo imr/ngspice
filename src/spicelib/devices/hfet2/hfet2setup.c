@@ -123,7 +123,7 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
     for (here = model->HFET2instances; here != NULL; 
          here=here->HFET2nextInstance) {
       
-      CKTnode *tmpNode[1];
+      CKTnode *tmpNode;
       IFuid tmpName;
 
       if (here->HFET2owner != ARCHme) goto matrixpointers;
@@ -145,10 +145,10 @@ matrixpointers:
         here->HFET2sourcePrimeNode = tmp->number;
         
         if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }
@@ -162,10 +162,10 @@ matrixpointers:
         here->HFET2drainPrimeNode = tmp->number;
         
         if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }

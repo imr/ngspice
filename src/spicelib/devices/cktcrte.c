@@ -18,7 +18,7 @@ Author: 1985 Thomas L. Quarles
 int
 CKTcrtElt(void *ckt, void *inModPtr, void **inInstPtr, IFuid name)
 {
-  GENinstance *instPtr[1] = {NULL};             /* instPtr points to the data struct for per-instance data */
+  GENinstance *instPtr = NULL;             /* instPtr points to the data struct for per-instance data */
   GENmodel *modPtr = (GENmodel*)inModPtr;  /* modPtr points to the data struct for per-model data */
 
     SPICEdev **DEVices;
@@ -32,11 +32,11 @@ CKTcrtElt(void *ckt, void *inModPtr, void **inInstPtr, IFuid name)
 
     type = ((GENmodel*)modPtr)->GENmodType; 
 
-    error = CKTfndDev(ckt, &type, (void**)instPtr, name, inModPtr,
+    error = CKTfndDev(ckt, &type, (void**)&instPtr, name, inModPtr,
 		      (char *)NULL );
     if (error == OK) { 
         if (inInstPtr)
-	    *inInstPtr=(void *)instPtr[0];
+	    *inInstPtr=(void *)instPtr;
         return E_EXISTS;
     } else if (error != E_NODEV)
 	return error;
@@ -46,20 +46,20 @@ CKTcrtElt(void *ckt, void *inModPtr, void **inInstPtr, IFuid name)
     printf("In CKTcrtElt, about to tmalloc new model, type = %d. . . \n", type);
 #endif
 
-    instPtr[0] = (GENinstance *) tmalloc(*DEVices[type]->DEVinstSize);
-    if (instPtr[0] == (GENinstance *)NULL)
+    instPtr = (GENinstance *) tmalloc(*DEVices[type]->DEVinstSize);
+    if (instPtr == (GENinstance *)NULL)
 	return E_NOMEM;
 
-    instPtr[0]->GENname = name;
+    instPtr->GENname = name;
 
-    instPtr[0]->GENmodPtr = modPtr; 
+    instPtr->GENmodPtr = modPtr; 
 
-    instPtr[0]->GENnextInstance = modPtr->GENinstances; 
+    instPtr->GENnextInstance = modPtr->GENinstances; 
 
-    modPtr->GENinstances = instPtr[0];
+    modPtr->GENinstances = instPtr;
 
     if(inInstPtr != NULL)
-	*inInstPtr = (void *)instPtr[0];
+	*inInstPtr = (void *)instPtr;
 
     return OK;
 }

@@ -29,7 +29,7 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
             
 /*
  * Paolo Nenzi 2003
- *  The following lines are needed if I will move the defualting code
+ *  The following lines are needed if I will move the defaulting code
  *  from REStemp to RESsetup, as in other (more recent ?) spice devices
  *  	
  * if (here->RESowner != ARCHme)

@@ -493,13 +493,13 @@ B2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                if(error) return(error);
                 here->B2dNodePrime = tmp->number;
                  if (ckt->CKTcopyNodesets) {
-		     CKTnode *tmpNode[1];
+		     CKTnode *tmpNode;
 		     IFuid tmpName;
             
-		     if (CKTinst2Node(ckt,here,1,(void **)tmpNode,&tmpName)==OK) {
-			 if (tmpNode[0]->nsGiven) {
-			     tmp->nodeset=tmpNode[0]->nodeset; 
-			     tmp->nsGiven=tmpNode[0]->nsGiven; 
+		     if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+			 if (tmpNode->nsGiven) {
+			     tmp->nodeset=tmpNode->nodeset; 
+			     tmp->nsGiven=tmpNode->nsGiven; 
 			 }
 		     }
 		 }
@@ -517,13 +517,13 @@ B2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 			return(error);
                     here->B2sNodePrime = tmp->number;
                     if (ckt->CKTcopyNodesets) {
-			CKTnode *tmpNode[1];
+			CKTnode *tmpNode;
 			IFuid tmpName;
 			
-			if (CKTinst2Node(ckt,here,3,(void **)tmpNode,&tmpName)==OK) {
-			    if (tmpNode[0]->nsGiven) {
-				tmp->nodeset=tmpNode[0]->nodeset; 
-				tmp->nsGiven=tmpNode[0]->nsGiven; 
+			if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+			    if (tmpNode->nsGiven) {
+				tmp->nodeset=tmpNode->nodeset; 
+				tmp->nsGiven=tmpNode->nsGiven; 
 			    }
                   }
                 }

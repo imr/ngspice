@@ -254,13 +254,13 @@ matrixpointers:
 
 /* XXX: Applied AlansFixes  */               
                  if (ckt->CKTcopyNodesets) {
-		    CKTnode *tmpNode[1];
+		    CKTnode *tmpNode;
 		    IFuid tmpName;
 
-                  if (CKTinst2Node(ckt,here,3,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }
@@ -275,13 +275,13 @@ matrixpointers:
                 here->HFETAdrainPrimeNode = tmp->number;
        
                 if (ckt->CKTcopyNodesets) {
-		    CKTnode *tmpNode[1];
+		    CKTnode *tmpNode;
 		    IFuid tmpName;
 
-                  if (CKTinst2Node(ckt,here,1,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }
@@ -296,13 +296,13 @@ matrixpointers:
                 here->HFETAgatePrimeNode = tmp->number;
          
                 if (ckt->CKTcopyNodesets) {
-		    CKTnode *tmpNode[1];
+		    CKTnode *tmpNode;
 		    IFuid tmpName;
 
-                  if (CKTinst2Node(ckt,here,2,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+                  if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }     
@@ -316,13 +316,13 @@ matrixpointers:
                 here->HFETAdrainPrmPrmNode = tmp->number;
          
                 if (ckt->CKTcopyNodesets) {
-		    CKTnode *tmpNode[1];
+		    CKTnode *tmpNode;
 		    IFuid tmpName;
 
-                  if (CKTinst2Node(ckt,here,1,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }
@@ -337,13 +337,13 @@ matrixpointers:
                 here->HFETAsourcePrmPrmNode = tmp->number;
       
                 if (ckt->CKTcopyNodesets) {
-		    CKTnode *tmpNode[1];
+		    CKTnode *tmpNode;
 		    IFuid tmpName;
 
-                  if (CKTinst2Node(ckt,here,3,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }

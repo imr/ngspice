@@ -42,7 +42,7 @@ CKTnode *tmp;
 double tmp1, tmp2;
 double nfb0, Cboxt;
 
-CKTnode *tmpNode[1];
+CKTnode *tmpNode;
 IFuid tmpName;
 
 
@@ -937,10 +937,10 @@ IFuid tmpName;
                 if(error) return(error);
                 here->B3SOIDDdNodePrime = tmp->number;
 		if (ckt->CKTcopyNodesets) {
-		  if (CKTinst2Node(ckt,here,1,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+		  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }
@@ -959,10 +959,10 @@ IFuid tmpName;
                 here->B3SOIDDsNodePrime = tmp->number;
 		
 		 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,(void**)tmpNode,&tmpName)==OK) {
-                     if (tmpNode[0]->nsGiven) {
-                       tmp->nodeset=tmpNode[0]->nodeset; 
-                       tmp->nsGiven=tmpNode[0]->nsGiven; 
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
                 }
