@@ -380,7 +380,7 @@ typedef struct sIFsimulator {
     int ((*deleteModel)(void*,void*));         
                                     /* delete a model from the circuit*/
 
-    int ((*newTask)(void*,void**,IFuid));             
+    int ((*newTask)(void*,void**,IFuid, void**)); /*CDHW*/             
                                     /* create a new task */
     int ((*newAnalysis)(void*,int,IFuid,void**,void*));         
                                     /* create new analysis within a task */

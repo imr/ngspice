@@ -12,6 +12,39 @@ Modified: 2000 AlansFixes
  * that includes ngspice.header files.
  */
 
+/*CDHW Notes:
+
+I have never really understood the way Berkeley intended the six pointers
+to default values (ci_defOpt/Task  ci_specOpt/Task ci_curOpt/Task) to work,
+as there only see to be two data blocks to point at, or I've missed something
+clever elsewhere.
+
+Anyway, in the original 3f4 the interactive command 'set temp = 10'
+set temp for its current task and clobbered the default values as a side
+effect. When an interactive is run it created specTask using the spice
+application default values, not the circuit defaults affected
+by 'set temp = 10'.
+
+The fix involves two changes
+
+  1. Make 'set temp = 10' change the values in the 'default' block, not whatever
+     the 'current' pointer happens to be pointing at (which is usually the
+     default block except when one interactive is run immediately 
+after another).
+
+  2. Hack CKTnewTask() so that it looks to see whether it is creating 
+a 'special'
+     task, in which case it copies the values from 
+ft_curckt->ci_defTask providing
+     everything looks sane, otherwise it uses the hard-coded 
+'application defaults'.
+
+These are fairly minor changes, and as they don't change the data structures
+they should be fairly 'safe'. However, ...
+
+
+CDHW*/
+
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "tskdefs.h" /* Is really needed ? */
@@ -70,17 +103,27 @@ if_inpdeck(struct line *deck, INPtables **tab)
         return (NULL);
     }
 
+/*CDHW Create a task DDD with a new UID. ci_defTask will point to it CDHW*/
+
     err = IFnewUid(ckt,&taskUid,(IFuid)NULL,"default",UID_TASK,(void**)NULL);
     if(err) {
         ft_sperror(err,"newUid");
         return(NULL);
     }
-
-    err = (*(ft_sim->newTask))(ckt,(void**)&(ft_curckt->ci_defTask),taskUid);
+#if (0)
+       err = 
+     (*(ft_sim->newTask))(ckt,(void**)&(ft_curckt->ci_defTask),taskUid);
+#else /*CDHW*/
+       err = 
+       (*(ft_sim->newTask))(ckt,(void**)&(ft_curckt->ci_defTask),taskUid,
+       (void**)NULL);
+#endif
     if(err) {
         ft_sperror(err,"newTask");
         return(NULL);
     }
+
+/*CDHW which options available for this simulator? CDHW*/
 
     for(j=0;j<ft_sim->numAnalyses;j++) {
         if(strcmp(ft_sim->analyses[j]->name,"options")==0) {
@@ -100,12 +143,16 @@ if_inpdeck(struct line *deck, INPtables **tab)
         err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,optUid,
                 (void**)&(ft_curckt->ci_defOpt),
                 (void*)ft_curckt->ci_defTask);
+		
+/*CDHW ci_defTask and ci_defOpt point to parameters DDD CDHW*/		
+		
         if(err) {
             ft_sperror(err,"createOptions");
             return(NULL);
         }
 
         ft_curckt->ci_curOpt  = ft_curckt->ci_defOpt;
+/*CDHW ci_curOpt and ci_defOpt point to DDD CDHW*/
     }
 
     ft_curckt->ci_curTask = ft_curckt->ci_defTask;
@@ -157,6 +204,7 @@ if_run(char *t, char *what, wordlist *args, char *tab)
     
     
     /* First parse the line... */
+    /*CDHW Look for an interactive task CDHW*/
     if (eq(what, "tran") 
     || eq(what, "ac") 
     || eq(what, "dc")
@@ -176,29 +224,43 @@ if_run(char *t, char *what, wordlist *args, char *tab)
         deck.li_linenum = 0;
         deck.li_line = buf;
         
+/*CDHW Delete any previous special task CDHW*/	
+
         if(ft_curckt->ci_specTask) {
+	   if (ft_curckt->ci_specTask == ft_curckt->ci_defTask) { /*CDHW*/
+              printf("Oh dear...something bad has happened to the options.\n");
+            }
             err=(*(ft_sim->deleteTask))(ft_curckt->ci_ckt,
                     ft_curckt->ci_specTask);
             if(err) {
                 ft_sperror(err,"deleteTask");
                 return(2);
             }
+	    ft_curckt->ci_specTask = ft_curckt->ci_specOpt = NULL; /*CDHW*/
         }
+       /*CDHW Create an interactive task AAA with a new UID.  
+ci_specTask will point to it CDHW*/
+	
         err = IFnewUid(ft_curckt->ci_ckt,&specUid,(IFuid)NULL,"special",
                 UID_TASK,(void**)NULL);
         if(err) {
             ft_sperror(err,"newUid");
             return(2);
         }
-        err = (*(ft_sim->newTask))(ft_curckt->ci_ckt,
+#if (0)
+        err = (*(ft_sim->newTask))(ft_curckt->ci_ckt, 
                 (void**)&(ft_curckt->ci_specTask),specUid);
-        
-        
+#else /*CDHW*/
+        err = (*(ft_sim->newTask))(ft_curckt->ci_ckt, 
+                 (void**)&(ft_curckt->ci_specTask),
+                 specUid,(void**)&(ft_curckt->ci_defTask));
+#endif        
         if(err) {
             ft_sperror(err,"newTask");
             return(2);
         }
-        
+
+/*CDHW which options available for this simulator? CDHW*/   
         
         for(j=0;j<ft_sim->numAnalyses;j++) {
             if(strcmp(ft_sim->analyses[j]->name,"options")==0) {
@@ -206,7 +268,7 @@ if_run(char *t, char *what, wordlist *args, char *tab)
                 break;
             }
         } 
-        if(which != -1) {
+        if(which != -1) { /*CDHW options are available CDHW*/
             err = IFnewUid(ft_curckt->ci_ckt,&optUid,(IFuid)NULL,"options",
                     UID_ANALYSIS,(void**)NULL);
             if(err) {
@@ -216,61 +278,23 @@ if_run(char *t, char *what, wordlist *args, char *tab)
             err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,optUid,
                     (void**)&(ft_curckt->ci_specOpt),
                     (void*)ft_curckt->ci_specTask);
+		    
+/*CDHW 'options' ci_specOpt points to AAA in this case CDHW*/		    
+		    
             if(err) {
                 ft_sperror(err,"createOptions");
                 return(2);
             }
-		ft_curckt->ci_curOpt  = ft_curckt->ci_specOpt;
-		
-		/* This is a very dirty hack but it is the only one I
-		   was able to find without intervening on all the code
-		   It will be changed in the future. */
-		
-		((TSKtask *)(ft_curckt->ci_specOpt))->TSKtemp            = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKtemp;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKnomTemp         = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKnomTemp;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKgmin            = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKgmin;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKgshunt          = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKgshunt;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKabstol          = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKabstol;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKreltol          = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKreltol;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKchgtol          = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKchgtol;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKvoltTol         = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKvoltTol;
-#ifdef NEWTRUNC
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKlteReltol       = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKlteReltol;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKlteAbstol       = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKlteAbstol;
-#endif          
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKtrtol           = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKtrtol;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKbypass          = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKbypass;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKtranMaxIter     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKtranMaxIter;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdcMaxIter       = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdcMaxIter;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdcTrcvMaxIter   = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdcTrcvMaxIter;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKintegrateMethod = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKintegrateMethod;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKmaxOrder        = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKmaxOrder;
-          
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKnumSrcSteps     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKnumSrcSteps;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKnumGminSteps    = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKnumGminSteps;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKgminFactor      = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKgminFactor;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKpivotAbsTol     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKpivotAbsTol;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKpivotRelTol     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKpivotRelTol;
-          
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdefaultMosM     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdefaultMosM;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdefaultMosL     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdefaultMosL;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdefaultMosW     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdefaultMosW;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdefaultMosAD    = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdefaultMosAD;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdefaultMosAS    = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdefaultMosAS;
-          
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKnoOpIter        = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKnoOpIter;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKtryToCompact    = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKtryToCompact;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKbadMos3         = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKbadMos3;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKkeepOpInfo      = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKkeepOpInfo;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKcopyNodesets    = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKcopyNodesets;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKnodeDamping     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKnodeDamping;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKabsDv           = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKabsDv;
-          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKrelDv           = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKrelDv;
-         
+	    
+            ft_curckt->ci_curOpt  = ft_curckt->ci_specOpt;
+
+/*CDHW ci_specTask ci_specOpt and ci_curOpt all point to AAA CDHW*/		
         
-        }
+	}
+	
         ft_curckt->ci_curTask = ft_curckt->ci_specTask;
-   
+
+/*CDHW ci_curTask and ci_specTask point to the interactive task AAA CDHW*/  
         
       INPpas2(ckt, (card *) &deck, (INPtables *)tab, ft_curckt->ci_specTask);
         
@@ -280,14 +304,12 @@ if_run(char *t, char *what, wordlist *args, char *tab)
         }
     }
 
-/* -- *** BUG! ****/
-/* -- A bug fix suggested by Cecil Aswell (aswell@netcom.com) to let */
-/* -- the interactive analysis commands get the current temperature */
-/* -- and other options. */
-
-/* dw With this the last simulation will be repeated on the input line, and the 
-last valid temperature is used. (Why is the  temperature is within defOpt?!) 
-*/    
+     /*CDHW
+     ** if the task is to 'run' the deck, change ci_curTask and     
+     ** ci_curOpt to point to DDD
+     ** created by if_inpdeck(), otherwise they point to AAA.
+     CDHW*/
+    
     if( eq(what,"run") ) {
         ft_curckt->ci_curTask = ft_curckt->ci_defTask;
         ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;
@@ -306,7 +328,9 @@ last valid temperature is used. (Why is the  temperature is within defOpt?!)
         ||(eq(what, "sens")) 
         ||(eq(what,"tf"))
         ||(eq(what, "run"))  )  {
-/*dw Nutzung der letzten gültigen Temperatur, z.B. nach "set temp" s.o. */
+	
+/*CDHW Run the analysis pointed to by ci_curTask CDHW*/
+
         ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;	
         if ((err = (*(ft_sim->doAnalyses))(ckt, 1, ft_curckt->ci_curTask))!=OK){
             ft_sperror(err, "doAnalyses");
@@ -455,11 +479,19 @@ if_option(void *ckt, char *name, int type, char *value)
 	return 1;
     }
 
-    if ((err = (*(ft_sim->setAnalysisParm))(cc, (void *)ft_curckt->ci_curOpt,
-            ft_sim->analyses[which]->analysisParms[i].id, &pval,
-            (IFvalue *)NULL)) != OK)
-        ft_sperror(err, "setAnalysisParm(options)");
-    return 1;
+#if (0)
+     if ((err = (*(ft_sim->setAnalysisParm))(cc, (void *)ft_curckt->ci_curOpt,
+             ft_sim->analyses[which]->analysisParms[i].id, &pval,
+             (IFvalue *)NULL)) != OK)
+         ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
+#else /*CDHW*/
+     if ((err = (*(ft_sim->setAnalysisParm))(cc, (void *)ft_curckt->ci_defOpt,
+             ft_sim->analyses[which]->analysisParms[i].id, &pval,
+             (IFvalue *)NULL)) != OK)
+         ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
+     return 1;
+#endif
+
 badtype:
     fprintf(cp_err, "Error: bad type given for option %s --\n", name);
     fprintf(cp_err, "\ttype given was ");

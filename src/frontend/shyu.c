@@ -69,7 +69,8 @@ if_sens_run(char *t, wordlist *args, INPtables *tab)
         }
     }
     err = (*(ft_sim->newTask))(ft_curckt->ci_ckt,
-	    (void **) &(ft_curckt->ci_specTask),"special");
+	    (void **) &(ft_curckt->ci_specTask),"special",
+	    (void**)&(ft_curckt->ci_defTask));
     if(err) {
         ft_sperror(err,"newTask");
         return(0); /* temporary */

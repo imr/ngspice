@@ -1,3 +1,9 @@
+2004-01-21  Paolo Nenzi <p-nenzi@ieee.org>
+
+	*   src/include/ifsim.h, src/frontend/spiceif.c, src/frontend/shyu.c,
+	    src/spicelib/cktntask.c: Applied the options patch made by
+	    Charles Williams <C.D.H.Williams@exeter.ac.uk>
+
 2004-01-20  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/maths/ni/*: Cleaned up code removing unnecessary includes.
