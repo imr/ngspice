@@ -1,0 +1,86 @@
+/*
+ * cidersupt.h
+ * 
+ * CIDER support library header
+ */
+ 
+#ifndef _CIDERSUPT_H
+#define _CIDERSUPT_H
+
+
+/* externals for database.c */
+extern struct plot* DBread( char *);
+extern double *DBgetData( struct plot *, char *, int );
+extern void DBfree( struct plot *);
+
+/* externals for devprint.c */
+extern void printVoltages(FILE *, char *, char *, int, 
+                          int, double, double, double, 
+	                      double, double, double );
+
+/* externals for geominfo.c */
+extern void printCoordInfo(CoordInfo *);
+extern void killCoordInfo(CoordInfo *);
+extern void ONEprintDomainInfo(DomainInfo *);
+extern void TWOprintDomainInfo(DomainInfo *);
+extern void killDomainInfo(DomainInfo *);
+extern void ONEprintBoundaryInfo(BoundaryInfo *);
+extern void TWOprintBoundaryInfo(BoundaryInfo *);
+extern void killBoundaryInfo(BoundaryInfo *);
+extern void TWOprintElectrodeInfo(ElectrodeInfo *);
+extern void killElectrodeInfo(ElectrodeInfo *);
+
+/* externals for globals.c */
+extern void GLOBcomputeGlobals(GLOBvalues *, double);
+extern void GLOBputGlobals(GLOBvalues *);
+extern void GLOBgetGlobals(GLOBvalues *);
+extern void GLOBprnGlobals(FILE *, GLOBvalues *);
+
+/* externals for integset.c */
+extern void computeIntegCoeff(int, int, double *, double *);
+extern void computePredCoeff(int, int, double *, double *);
+
+/* externals for integuse.c */
+extern double integrate(double **, TranInfo *, int );
+extern double predict(double **, TranInfo *, int );
+extern double computeLTECoeff( TranInfo * );
+extern double integrateLin(double **, TranInfo *, int );
+
+/* externals for logfile.c */
+extern void LOGmakeEntry(char *, char * );
+
+/* externals for mater.c */
+extern void  MATLdefaults(MaterialInfo * );
+extern void  MATLtempDep(MaterialInfo *, double );
+extern void  printMaterialInfo(MaterialInfo * );
+
+/* externals for mobil.c */
+extern void MOBdefaults(MaterialInfo *, int, int, int, int );
+extern void MOBtempDep (MaterialInfo *, double );
+extern void MOBconcDep (MaterialInfo *, double, double *, double *);
+extern void MOBfieldDep (MaterialInfo *, int, double, double *, double * );
+
+/* externals for recomb.c */
+extern void recomb (double, double, double, double, double, double, 
+                    double, double *, double *, double * );
+
+/* externals for suprem.c */
+extern void readAsciiData( char *, int, DOPtable ** );
+extern void readSupremData( char *, int, int, DOPtable ** );
+
+/* externals for suprmitf.c */
+extern void SUPbinRead( char *, float *, float *, int *, int * );
+extern void SUPascRead( char *, float *, float *, int *, int * );
+
+
+
+
+/* externals for misc.c */
+extern double guessNewConc(double , double );
+extern double lookup(double **, double );
+extern BOOLEAN hasSORConverged(double *, double *, int);
+extern BOOLEAN foundError(int );
+
+
+
+#endif
