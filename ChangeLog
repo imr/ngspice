@@ -1,3 +1,11 @@
+2004-07-05  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/frontend/resource.c: added __APPLE__ for mac osx support as in
+	    patch sent by Khairulmizam Samsudin <kmbs@hotmail.com>
+	
+	*   src/spicelib/parser/inpdomod.c: fixed some typos as in patch
+	    sent by Khairulmizam Samsudin <kmbs@hotmail.com>
+	    
 2004-06-22  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/spicelib/devices/vbic: Vbic code updated. Thanks to Dietmar 

@@ -406,7 +406,7 @@ baseaddr(void)
 	if (getenv("SPICE_NO_DATASEG_CHECK"))
 		return 0;
 
-#if defined(__CYGWIN__) || defined(HAS_WINDOWS)
+#if defined(__CYGWIN__) || defined(HAS_WINDOWS) || defined(__APPLE__)
 	return 0;
 #endif
 

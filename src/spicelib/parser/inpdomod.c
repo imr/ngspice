@@ -135,14 +135,14 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
         		type = INPtypelook("MESA");
         		if (type < 0)
         		{
-        			err = INPmkTemp("Device type MES2 not availabe\n");
+        			err = INPmkTemp("Device type MESA not availabe\n");
         		}
         		break;
 			case 3:
         		type = INPtypelook("MESA");
         		if (type < 0)
         		{
-        			err = INPmkTemp("Device type MES2 not availabe\n");
+        			err = INPmkTemp("Device type MESA not availabe\n");
         		}
         		break;
         	case 4:
@@ -168,7 +168,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
         		break;
 
         	default:
-        		err = INPmkTemp("only mesfet device level 1  and hfet level 5-6 supported\n");
+        		err = INPmkTemp("only mesfet device level 1-4 and hfet level 5-6 supported\n");
         		break;
         }
 	INPmakeMod(modname, type, image);
