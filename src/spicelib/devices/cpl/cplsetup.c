@@ -31,7 +31,6 @@ Author: 1992 Charles Hough
 
 #define MAX_DEG 8
 #define epsilon 1.0e-88
-#define ABS(x) ((x) >= 0 ? (x) : (-(x)))
 #define MAX_STRING 128
 
 static  double  ZY[MAX_DIM][MAX_DIM]; 

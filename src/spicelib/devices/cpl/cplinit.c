@@ -57,7 +57,7 @@ SPICEdev CPLinfo = {
   DEVsetic       : NULL,
   DEVask         : NULL,
   DEVmodAsk      : NULL,
-  DEVpzload      : NULL,
+  DEVpzLoad      : NULL,
   DEVconvTest    : NULL,
   DEVsenSetup    : NULL,
   DEVsenLoad     : NULL,
