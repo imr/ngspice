@@ -1,3 +1,16 @@
 Makefile.in
 Makefile
 ngspice.info*
+ngspice.ps
+ngspice.vrs
+ngspice.fns
+ngspice.toc
+ngspice.pg
+ngspice.ky
+ngspice.tp
+ngspice.vr
+ngspice.fn
+ngspice.cp
+ngspice.aux
+ngspice.dvi
+ngspice.log
