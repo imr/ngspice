@@ -1,3 +1,8 @@
+2003-07-17 Stefan Jones <stefan.jones@multigig.com>
+
+	* configure.in src/xspice/xspice.c :
+	Fix compile problems with garbage collector
+
 2003-07-17 Steven Borley <sjb@salix.demon.co.uk>
 
 	* src/frontend/resource.c src/frontend/parser/complete.c

@@ -292,9 +292,12 @@ AC_CHECK_HEADERS(float.h limits.h values.h)
 dnl Check for a few mathematical functions:
 AC_CHECK_FUNCS(erfc logb scalb scalbn asinh acosh atanh)
 
+if test "$TCL_PACKAGE_PATH" = ""
+then
 AC_MSG_RESULT(Checking for the presence of the Garbage Collector:)
 dnl Check for the garbage collector:
 AC_CHECK_LIB(gc,GC_malloc,AC_DEFINE(HAVE_LIBGC) LIBS="$LIBS -lgc")
+fi
 
 dnl Check for the asprintf function:
 AC_CHECK_FUNCS(asprintf)

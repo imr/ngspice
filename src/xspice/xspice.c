@@ -8,8 +8,9 @@
 void *tcalloc(size_t a, size_t b){
   return tmalloc(a*b);
 }
-int MIFunsetup(GENmodel *model, CKTcircuit *ckt){
-  return 0;
+
+static void *empty(void){
+  return NULL;
 }
 
 struct coreInfo_t  coreInfo =
@@ -18,7 +19,7 @@ struct coreInfo_t  coreInfo =
   MIFgetMod,
   MIFgetValue,
   MIFsetup,
-  MIFunsetup,
+  (int (*)(GENmodel *, CKTcircuit *))empty,
   MIFload,
   MIFmParam,
   MIFask,
@@ -57,14 +58,24 @@ struct coreInfo_t  coreInfo =
   cm_complex_subtract,
   cm_complex_multiply,
   cm_complex_divide,
-  NULL,
-  NULL,
-  NULL,
+  (FILE *(*)(void))empty,
+  (FILE *(*)(void))empty,
+  (FILE *(*)(void))empty,
+#ifndef HAVE_LIBGC
   tmalloc,
   tcalloc,
   trealloc,
   txfree,
-  tmalloc,
-  trealloc,
-  txfree
+  (char *(*)(int))tmalloc,
+  (char *(*)(char *,int))trealloc,
+  (void (*)(char *))txfree
+#else
+  GC_malloc,
+  tcalloc,
+  GC_realloc,
+  (void (*)(void *))empty,
+  (char *(*)(int))GC_malloc,
+  (char *(*)(char *,int))GC_realloc,
+  (void (*)(char *))empty      
+#endif
 };
