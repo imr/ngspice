@@ -1,3 +1,152 @@
+2001-02-07  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* outitf.c: From a message Alan sento to the mailing list:
+	---------- Forwarded message ----------
+	Date: Tue, 6 Feb 2001 11:11:56 -0000 
+	From: "Gillespie, Alan" <Alan.Gillespie@analog.com>
+	Reply-To: ng-spice-devel@ieee.ing.uniroma1.it
+	To: "Ng-Spice-Devel (E-mail)" <ng-spice-devel@ieee.ing.uniroma1.it>
+	Subject: [ng-spice-devel] Reference variable update in interactive mode
+
+
+	I've tweaked outitf.c so that the reference variable value
+	is updated to the screen in interactive mode. I forgot to
+	save the old version first, though, so I couldn't do a diff,
+	so I'm just attaching the whole new outitf.c file. Also, I've
+	updated the documentation as follows :-
+
+
+
+	Modifications to "outitf.c"
+	---------------------------
+
+	A number of modifications have been applied to outitf.c in 
+	order to achieve the following "improvements" :-
+
+	    1) Spice3, by default, saved all node voltages, including 
+	       nodes internal to the devices. These extra nodes add 
+	       dramatically to the amount of data saved, but don't add 
+	       significantly to the useful information about the circuit. 
+	       So, instead of saving these nodes, a "hack" has been 
+	       introduced which checks a new spice option, and either 
+	       discards the internal node, or saves some device currents 
+	       instead.
+
+	   2) During long simulations, spice would sit "staring back 
+	      blankly", giving no clue as to how well the simulation 
+	      was, or wasn't, proceeding. In order to give a little 
+	      more feedback, another "hack", in the data writing routine, 
+	      writes the value of the reference variable to the error 
+	      stream, which is usually the screen. In order to minimize 
+	      the CPU time "wasted" doing this, the routine will only 
+	      reprint the value if more than a quarter of a second since 
+	      the last screen update. The result is that this feedback 
+	      adds no significant extra time to performance of the 
+	      simulation.
+
+	  3) The original file writing routines used to write each data 
+	     value to the file individually. A buffering scheme was added, 
+	     which collects each row of data in a buffer, and the writes 
+	     the whole buffer in one call. This gave a significant 
+	     performance improvement (up to 20%) on HPUX, with all currents 
+	     saved in large circuits, although there was no significant 
+	     difference on Windows 95. The improvement has not been 
+	     measured on Linux.
+
+	  4) A check was added to make sure the file write was successful. 
+	     Spice3 could easily fill the hard disk, but would continue to 
+	     churn away, producing no more useful data. Now it will exit 
+	     gracefully. I can't remember why I thought this was important, 
+	     but at least it means that a PC with power management will be 
+	     able to power down after  a long overnight simulation has 
+	     ceased to produce any more useful data.
+
+     Changes 
+     -------
+	The routine beginPlot is called at the beginning of the simulation 
+	to select which nodes and variables will be saved. The first 
+	modification is at the point where it checks the "save" list. This 
+	is the list of tokens attached to the .save lines read from the 
+	spice source file. The routine now checks for "allv" and "alli" 
+	as well as "all". "allv" is treated as a synonym for "all". If 
+	"all" or "allv" is found, then a saveall flag is set, and if "alli"
+	is found then a new savealli flag is set.
+
+	Next, the addDataDesc routine is called for every variable to be 
+	saved. This is done by stepping through an array called dataNames[]. 
+	I'm not quite sure where this array comes from, but it was quite 
+	easy to add an if statement to stop it calling addDataDesc if 
+	dataNames[i] points to a string containing any of the following -
+
+	     #internal
+	     #source
+	     #drain
+	     #collector
+	     #emitter
+	     #base
+
+	That seems to catch all the internal device nodes.
+	The next addition is a new pass through the dataNames[] array 
+	specifically looking for those strings. (This pass is only performed
+	if the savealli flag has been set). When one of the strings is found,
+	a bunch of if-then-else statements creates a corresponding string 
+	which is submitted to the add addSpecialDesc routine. This saves the 
+	relevant device current. Note that since mosfets have only two 
+	internal nodes, but four terminal currents, and bipolars have three 
+	internal nodes and four terminal currents, some internal nodes have 
+	to save more than one terminal current.
+
+	This last change is a clumsy hack, and only works if the devices in 
+	question actually have internal nodes. Resistors and capacitors, for 
+	instance, never have internal nodes, and so their terminal currents 
+	will not cannot be saved with the .save alli card. Also, any bipolar,
+	mosfet or diodes with zero valued parasitic resistances (rd, rs, rc, 
+	rb, re) will not be allocated internal nodes, and so their terminal
+	currents will not be saved by this hack, either.
+
+	Further down outitf.c, the OUTpData routine is called whenever a 
+	new row of data is ready to be written to file. Near the top of this,
+	the reference variable is written to file separately from the rest of
+	the variables. This is a convenient point for a couple of statements 
+	which check the elapsed time since the last update, and write the 
+	reference value to stderr if it's time. Slightly further down the 
+	routine is the section for writing data to a "plot", i.e. retaining 
+	it in memory. A similar statement or two writes the reference value 
+	to the screen for this case, i.e. interactive mode. At the end of the 
+	OUTpData routine, a new check has been added to see if there was an 
+	error writing to the rawfile. If so, the shouldstop flag is set to 
+	TRUE, and the simulation will abort.
+
+	Scanning down outitf.c, the next modification is in the fileInit 
+	routine. The first statement initialises the lastclock variable. 
+	This is used later when deciding if it's time to write the reference
+	value to the screen.
+
+	Next, the fileInit_pass2 routine writes the name strings to the start
+	of the rawfile. At the end of this routine there is now a statement 
+	which checks if this will be a binary rawfile, and if so, it allocates
+	a row buffer of the correct length.
+
+	The fileStartPoint routine seems to be called before each row of data
+	is written, and so this is a convenient point to reset the buffer 
+	pointer to zero.
+
+	The fileAddRealValue and fileAddComplexValue routines now simply write
+	the relevant values to the buffer, and increment the buffer pointer. 
+	Previously they called the fwrite library routine to actually write 
+	the data. If the rawfile is not a binary one, however, they just write
+	the text as before.
+
+	The fileEndPoint routine was previously empty. Now it actually calls 
+	fwrite to write the whole buffer to the file (if it's a binary file).
+
+	Finally the fileEnd routine prints the total number of data points to
+	the screen, and de-allocates the row buffer (if it was a binary 
+	rawfile). 
+
+	Congratulations to whoever put these dummy routines in in the first
+	place, since that allowed the buffering to be added very easily.
+	
 2001-01-23  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* subckt.c: added some code (very, very experimental)

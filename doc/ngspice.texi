@@ -5037,8 +5037,8 @@ loaded.  Currently valid resources are:
  General Form:
 
 @example
-     save [all | output ...]
-     .save [all | output ...]
+     save [all | allv | alli | output ...]
+     .save [all | allv | alli | output ...]
 @end example
 
 
@@ -5049,11 +5049,16 @@ node is traced or plotted (see below) it is also saved.  For backward
 compatibility, if there are no save commands given, all outputs are
 saved.
 
-When the keyword "all" appears in the save command, all default values
-(node voltages and voltage source currents) are saved in addition to any
-other values listed.
+When the keyword "all" or the keyword "allv", appears in the save command, 
+all node voltages, voltage source currents and inductor currents are saved 
+in addition to any other values listed. If the keyword "alli" appears in 
+the save command, all devices currents are saved.
 
-
+Note: the current implementation saves only the currents of devices which
+      have internal nodes, i.e. MOSFETs with non zero RD and RS; BJTs with
+      non-zero RC, RB and RE; DIODEs with non-zero RS; etc. Resistor and
+      capacitor currents are not saved with this option. These deficiencies
+      will be addressed in a later revision. 
 
 @node  Sens, Set, Save, Commands
 @subsection  Sens*:  Run a sensitivity analysis
