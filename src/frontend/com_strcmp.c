@@ -1,7 +1,11 @@
+#include <config.h>
+#include <ngspice.h>
+
 #include <bool.h>
 #include <wordlist.h>
 
 #include "com_strcmp.h"
+#include "quote.h"
 #include "variable.h"
 
 

@@ -13,6 +13,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ftedefs.h"
 
 #include "circuits.h"
+#include "quote.h"
 #include "resource.h"
 #include "variable.h"
 

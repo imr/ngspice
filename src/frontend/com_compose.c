@@ -9,6 +9,7 @@
 #include <fteext.h>
 #include <cpextern.h>
 
+#include "quote.h"
 #include "com_compose.h"
 #include "completion.h"
 

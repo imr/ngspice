@@ -15,10 +15,12 @@ libfte_a_SOURCES = \
 	com_asciiplot.h \
 	com_cdump.c	\
 	com_cdump.h	\
+	com_chdir.c	\
 	com_compose.c	\
 	com_compose.h	\
 	com_display.c	\
 	com_display.h	\
+	com_echo.c	\
 	com_ghelp.c	\
 	com_ghelp.h	\
 	com_hardcopy.c	\
@@ -31,9 +33,11 @@ libfte_a_SOURCES = \
 	com_let.h	\
 	com_plot.c	\
 	com_plot.h	\
+	com_rehash.c	\
 	com_set.c	\
 	com_setscale.c	\
 	com_setscale.h	\
+	com_shell.c	\
 	com_shift.c	\
 	com_strcmp.c	\
 	com_strcmp.h	\
@@ -48,7 +52,10 @@ libfte_a_SOURCES = \
 	hcomp.h		\
 	init.c		\
 	init.h		\
+	quote.c		\
+	quote.h		\
 	streams.h	\
+	streams.c	\
 	terminal.c	\
 	terminal.h	\
 	variable.c	\

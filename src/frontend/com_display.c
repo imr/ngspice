@@ -5,6 +5,7 @@
 #include <cpextern.h>
 
 #include "com_display.h"
+#include "quote.h"
 #include "variable.h"
 #include "plotting/plotting.h"
 #include "plotting/pvec.h"

@@ -11,8 +11,9 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 #include "ftedefs.h"
 #include "fteparse.h"
 #include "dvec.h"
-#include "newcoms.h"
 
+#include "newcoms.h"
+#include "quote.h"
 
 /*
  *	reshape v(1) vxx#branch [10]

@@ -17,9 +17,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <inpdefs.h>
 
 #include "circuits.h"
-#include "variable.h"
-#include "streams.h"
 #include "com_history.h"
+#include "quote.h"
+#include "streams.h"
+#include "variable.h"
 
 
 bool cp_noglob = TRUE;

@@ -1,6 +1,8 @@
 #ifndef _TERMINAL_H
 #define _TERMINAL_H
 
+extern bool out_isatty;
+
 void out_init(void);
 void outbufputc(void);
 void promptreturn(void);

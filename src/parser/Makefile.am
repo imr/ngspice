@@ -17,13 +17,9 @@ libparser_a_SOURCES = \
 		lexical.h	\
 		numparse.c	\
 		numparse.h	\
-		quote.c		\
-		quote.h		\
 		std.c		\
 		unixcom.c	\
 		unixcom.h	\
-		var2.c		\
-		var2.h		\
 		wlist.c		\
 		wlist.h	
 

@@ -38,6 +38,10 @@ struct xxx {
 
 
 extern struct variable *variables;
+extern bool cp_noglob;
+extern bool cp_nonomatch;
+extern bool cp_noclobber;
+extern bool cp_ignoreeof;
 
 // extern struct variable *variables;
 wordlist * cp_varwl(struct variable *var);

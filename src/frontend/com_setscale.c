@@ -1,15 +1,17 @@
 #include <ngspice.h>
+#include <bool.h>
 #include <dvec.h>
-#include <cpextern.h>
 
-#include "vectors.h"
 #include "com_setscale.h"
+#include "quote.h"
+#include "streams.h"
+#include "vectors.h"
 #include "plotting/plotting.h"
 #include "plotting/pvec.h"
 
+
 /* Set the default scale to the named vector.  If no vector named,
- * find and print the default scale.
- */
+ * find and print the default scale.  */
 void
 com_setscale(wordlist *wl)
 {

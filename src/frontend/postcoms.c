@@ -14,8 +14,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <sim.h>
 #include <plot.h>
 
-#include "postcoms.h"
 #include "completion.h"
+#include "postcoms.h"
+#include "quote.h"
 #include "variable.h"
 
 /* static declarations */

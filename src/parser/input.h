@@ -7,7 +7,8 @@
 #define INPUT_H_INCLUDED
 
 
-void Input(REQUEST *request, RESPONSE *response);
+int inchar(FILE *fp);
+int input(FILE *fp);
 
 
 #endif
