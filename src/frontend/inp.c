@@ -438,17 +438,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
              * the case before we do this but after we deal with the
              * commands.  */
             if (!cp_getvar("nosubckt", VT_BOOL, (char *) &nosubckts))
-<<<<<<< inp.c
                 if((deck->li_next = inp_subcktexpand(deck->li_next)) == NULL){
 					line_free(realdeck,TRUE);
 					line_free(deck->li_actual, TRUE);
 			return;
 		}
 	    line_free(deck->li_actual,FALSE); /* SJB - free memory used by old li_actual (if any) */
-=======
-                deck->li_next = inp_subcktexpand(deck->li_next);
-	    line_free(deck->li_actual,FALSE); /* SJB - free memory used by old li_actual (if any) */
->>>>>>> 1.7
             deck->li_actual = realdeck;
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
         }
