@@ -280,7 +280,7 @@ AC_CACHE_CHECK([for va_copy], ac_cv_c_va_copy,
    ],
    [ac_cv_c_va_copy="yes"],
    [ac_cv_c_va_copy="no"])
-)
+ )
 if test "$ac_cv_c_va_copy" = "yes"
 then 
     AC_DEFINE(HAVE_VA_COPY, 1, [Define if we have va_copy])
@@ -293,7 +293,7 @@ AC_CACHE_CHECK([for __va_copy], ac_cv_c___va_copy,
    ],
    [ac_cv_c___va_copy="yes"],
    [ac_cv_c___va_copy="no"])
-)
+ )
 if test "$ac_cv_c___va_copy" = "yes"
 then
     AC_DEFINE(HAVE___VA_COPY, 1, [Define if we have __va_copy])
@@ -418,7 +418,7 @@ if test "$enable_xspice" = "yes"; then
 else
     XSPCIEDIR=""
     XSPICELIB1=""
-    XSPICELIB2=""	
+    XSPICELIB2=""
 fi
 AC_SUBST(XSPICEDIR)
 AC_SUBST(XSPICELIB1)
@@ -508,6 +508,7 @@ doc/Makefile			\
 man/Makefile			\
 man/man1/Makefile		\
 src/Makefile			\
+src/spinit			\
 src/spicelib/Makefile		\
 src/spicelib/analysis/Makefile	\
 src/spicelib/devices/Makefile		\
@@ -532,7 +533,7 @@ src/spicelib/devices/ccvs/Makefile	\
 src/spicelib/devices/csw/Makefile	\
 src/spicelib/devices/cpl/Makefile       \
 src/spicelib/devices/dio/Makefile	\
-dnl src/spicelib/devices/ekv/Makefile	\
+dnl            src/spicelib/devices/ekv/Makefile	\
 src/spicelib/devices/ind/Makefile	\
 src/spicelib/devices/isrc/Makefile	\
 src/spicelib/devices/hfet1/Makefile	\
@@ -554,6 +555,7 @@ src/spicelib/devices/sw/Makefile	\
 src/spicelib/devices/tra/Makefile	\
 src/spicelib/devices/txl/Makefile       \
 src/spicelib/devices/urc/Makefile	\
+src/spicelib/devices/vbic/Makefile      \
 src/spicelib/devices/vccs/Makefile	\
 src/spicelib/devices/vcvs/Makefile	\
 src/spicelib/devices/vsrc/Makefile	\

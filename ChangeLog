@@ -1,5 +1,8 @@
 2004-01-10  Paolo Nenzi <p.nenzi@ieee.org>
 
+	*  src/spinit, arc/spinit.in, configure.in: parametrized spinit paths
+	   for codemodel devices.
+
 	*  src/Makefile.am, src/ngspice.idx: removed ngspice.idx
 	   and make it auto-generated and installed (Stefan Jones).
 
