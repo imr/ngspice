@@ -1,4 +1,13 @@
-2003.4.10  Stuart Brorson <sdb@cloud9.net>
+2003-05-02  Stuart Brorson <SDB@cloud9.net>
+ 	*  Major changes in subckt.c to handle POLY attributes in
+ 	dependent sources.  Added new case to switch in "translate" to
+ 	handle E, F, G, H sources.  Many other fixes.
+ 	
+ 	*  Moved location of call to ENHtranslate_poly in inp.c.  This was
+ 	necessary to correctly process POLY attributes and the associated
+ 	netlists and voltage sources.
+ 
+2003-04-10  Stuart Brorson <sdb@cloud9.net>
 	* modified inp_readall (inpcom.c) to ignore blank 
 	  lines terminated by \r\n *and * \n.  This fixes problems
 	  associated with importing files from Windozeland.

@@ -85,12 +85,14 @@ defaulted later by MIFsetup().  The function returns NULL when
 successful, and an error string on failure.
 */
 
+/*  char *MIFgetMod(ckt,name,model,tab) */   /*  former buggy calling method  */
 
-char *MIFgetMod(ckt,name,model,tab)
-    void   *ckt;           /* The circuit structure */
-    char      *name;          /* The name of the model to look for */
-    INPmodel  **model;        /* The model found/created */
-    INPtables *tab;           /* Table of model info from first pass */
+char *MIFgetMod( 
+    void   *ckt,           /* The circuit structure */
+    char      *name,          /* The name of the model to look for */
+    INPmodel  **model,        /* The model found/created */
+    INPtables *tab           /* Table of model info from first pass */
+    )
 {
     INPmodel *modtmp;
     IFvalue * val;
@@ -111,6 +113,10 @@ char *MIFgetMod(ckt,name,model,tab)
 
     /* locate the named model in the modtab list */
 
+#ifdef TRACE
+    /* SDB debug statement */
+    printf("In MIFgetMod, model name = %s . . .\n", name);
+#endif
 
     /* maschmann : remove : from name */
 
@@ -119,6 +125,11 @@ char *MIFgetMod(ckt,name,model,tab)
     if((pos=strstr(name,":"))!=NULL) *pos=0;   */
 
     for (modtmp = modtab; modtmp != NULL; modtmp = ((modtmp)->INPnextModel)) {
+
+#ifdef TRACE
+      /* SDB debug statement */
+      printf("In MIFgetMod, checking model against stored model = %s . . .\n", (modtmp)->INPmodName );
+#endif
 
         if (strcmp((modtmp)->INPmodName,name) == 0) {
 
@@ -131,7 +142,12 @@ char *MIFgetMod(ckt,name,model,tab)
             if(modtmp->INPmodType<0) {
                 /* illegal device type, so can't handle */
                 *model = NULL;
-                err = (char *)tmalloc((35+strlen(name)) * sizeof(char));
+
+		/* fixed by SDB -- magic number is 39, not 35.  
+		 * Also needed parens to correctly compute # of bytes to malloc
+		 */
+                err = (char *)tmalloc( (39+strlen(name)) * sizeof(char) ); 
+
                 sprintf(err, "MIF: Unknown device type for model %s \n",name);
                 return(err);
             }
@@ -233,3 +249,4 @@ char *MIFgetMod(ckt,name,model,tab)
 
     return(err);
 }
+

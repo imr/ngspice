@@ -110,12 +110,8 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
     ft_curckt->ci_curTask = ft_curckt->ci_defTask;
     
-    /*  Debug statement */
-    /*    printf("In if_inpdeck, about to call INPpas1. . . \n"); */
     INPpas1((void *) ckt, (card *) deck->li_next,(INPtables *)*tab);
 
-    /*  Debug statement */
-    /*    printf("In if_inpdeck, about to call INPpas2. . . \n"); */
     INPpas2((void *) ckt, (card *) deck->li_next,
             (INPtables *) *tab,ft_curckt->ci_defTask);
     INPkillMods();

@@ -117,8 +117,12 @@ int INPgetTok(char **line, char **token, int gobble)
 	    continue;
 	break;
     }
-    /* debug statement */
+
+#ifdef TRACE
+    /* SDB debug statement */
     /* printf("found generic token (%s) and rest of line (%s)\n", *token, *line); */
+#endif
+
     return (OK);
 }
 
@@ -198,8 +202,12 @@ int INPgetNetTok(char **line, char **token, int gobble)
 	    continue;
 	break;
     }
-    /* debug statement */
+
+#ifdef TRACE
+    /* SDB debug statement */
     /* printf("found netname token (%s) and rest of line (%s)\n", *token, *line); */
+#endif
+
     return (OK);
 }
 
@@ -313,7 +321,11 @@ int INPgetUTok(char **line, char **token, int gobble)
 	break;
     }
     *line = point;
-    /* debug statement */
+
+#ifdef TRACE
+    /* SDB debug statement */
     /*  printf("found refdes token (%s) and rest of line (%s)\n",*token,*line);  */
+#endif
+
     return (OK);
 }

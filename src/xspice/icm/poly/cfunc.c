@@ -94,6 +94,8 @@ void icm_poly (Mif_Private_t *private)
 
     double      *acgains;     /* Static variable holding AC gains for AC analysis */
 
+    /* debug statement */
+    printf("In icm_poly!!! . . . .\n");
 
     /* Get number of input values */
 

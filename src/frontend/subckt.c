@@ -4,10 +4,38 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified: 2000 AlansFixes
 **********/
 
+/*------------------------------------------------------------------------------
+ * re-written by SDB during 4.2003 to enable SPICE2 POLY statements to be processed
+ * properly.  This is particularly important for dependent sources, whose argument
+ * list changes when POLY is used.
+ * Major changes include:
+ * -- Added lots of comments which (hopefully) elucidate the steps taken
+ *    by the program during its processing.
+ * -- Re-wrote translate, which does the processing of each card.
+ * Please direct comments/questions/complaints to Stuart Brorson:
+ * mailto:sdb@cloud9.net
+ *-----------------------------------------------------------------------------*/
+
 /*
  * Expand subcircuits. This is very spice-dependent. Bug fixes by Norbert 
  * Jeske on 10/5/85.
  */
+
+/*======================================================================*
+ * Expand all subcircuits in the deck. This handles imbedded .subckt
+ * definitions. The variables substart, subend, and subinvoke can be used
+ * to redefine the controls used. The syntax is invariant though.
+ * NOTE: the deck must be passed without the title line.
+ * What we do is as follows: first make one pass through the circuit
+ * and collect all of the subcircuits. Then, whenever a line that starts
+ * with 'x' is found, copy the subcircuit associated with that name and
+ * splice it in. A few of the problems: the nodes in the spliced-in
+ * stuff must be unique, so when we copy it, append "subcktname:" to
+ * each node. If we are in a nested subcircuit, use foo:bar:...:node.
+ * Then we have to systematically change all references to the renamed
+ * nodes. On top of that, we have to know how many args BJT's have,
+ * so we have to keep track of model names.
+ *======================================================================*/
 
 #include "ngspice.h"
 #include "cpdefs.h"
@@ -23,7 +51,8 @@ Modified: 2000 AlansFixes
 #include "subckt.h"
 #include "variable.h"
 
-/* static declarations */
+
+/* ----- static declarations ----- */
 static struct line * doit(struct line *deck);
 static int translate(struct line *deck, char *formal, char *actual, char *scname, 
 		     char *subname);
@@ -35,30 +64,29 @@ static int  numdevs(char *s);
 static bool modtranslate(struct line *deck, char *subname);
 static void devmodtranslate(struct line *deck, char *subname);
 
+/*---------------------------------------------------------------------
+ * table is used in settrans and gettrans -- it holds the netnames used 
+ * in the .subckt definition (t_old), and in the subcircuit invocation
+ * (t_new)
+ *--------------------------------------------------------------------*/
+static struct tab {
+    char *t_old;
+    char *t_new;
+} table[512];   /* That had better be enough. */
 
 
+/*---------------------------------------------------------------------
+ *  subs is the linked list which holds the .subckt definitions 
+ *  found during processing. 
+ *--------------------------------------------------------------------*/
 struct subs {
-    char *su_name;      /* The name. */
-    char *su_args;      /* The arguments, space seperated. */
+    char *su_name;          /* The .subckt name. */
+    char *su_args;          /* The .subckt arguments, space seperated. */
     int su_numargs;
-    struct line *su_def;    /* The deck that is to be substituted. */
+    struct line *su_def;    /* Pointer to the .subckt definition. */
     struct subs *su_next;
 } ;
 
-/* Expand all subcircuits in the deck. This handles imbedded .subckt
- * definitions. The variables substart, subend, and subinvoke can be used
- * to redefine the controls used. The syntax is invariant though.
- * NOTE: the deck must be passed without the title line.
- * What we do is as follows: first make one pass through the circuit
- * and collect all of the subcircuits. Then, whenever a line that starts
- * with 'x' is found, copy the subcircuit associated with that name and
- * splice it in. A few of the problems: the nodes in the spliced-in
- * stuff must be unique, so when we copy it, append "subcktname:" to
- * each node. If we are in a nested subcircuit, use foo:bar:...:node.
- * Then we have to systematically change all references to the renamed
- * nodes. On top of that, we have to know how many args BJT's have,
- * so we have to keep track of model names.
- */
 
 static wordlist *modnames, *submod;
 static struct subs *subs = NULL;
@@ -66,6 +94,22 @@ static bool nobjthack = FALSE;
 
 static char start[32], sbend[32], invoke[32], model[32];
 
+/*-------------------------------------------------------------------*/
+/* inp_subcktexpand is the top level function which translates       */
+/* .subckts into mainlined code.   Note that there are two things    */
+/* we need to do:  1. Find all .subckt definitions & stick them      */
+/* into a list.  2. Find all subcircuit invocations (refdes X)       */
+/* and replace them with the .subckt definition stored earlier.      */
+/*                                                                   */
+/* The algorithm is as follows:                                      */
+/* 1.  Define some aliases for .subckt, .ends, etc.                  */
+/* 2.  Clean up parens around netnames                               */
+/* 3.  Call doit, which does the actual translation.                 */
+/* 4.  Check the results & return.                                   */
+/* inp_subcktexpand takes as argument a pointer to deck, and         */
+/* it returns a pointer to the same deck after the new subcircuits   */
+/* are spliced in.                                                   */
+/*-------------------------------------------------------------------*/
 struct line *
 inp_subcktexpand(struct line *deck)
 {
@@ -87,38 +131,40 @@ inp_subcktexpand(struct line *deck)
     /* Let's do a few cleanup things first... Get rid of ( ) around node
      * lists...
      */
-    for (c = deck; c; c = c->li_next) {
-        if (prefix(start, c->li_line)) {
-            for (s = c->li_line; *s && (*s != '('); s++)
-                ;
-            if (*s) {
-                while (s[0] && (s[1] != ')')) {
-                    s[0] = s[1];
-                    s++;
-                }
-                while (s[1]) {
-                    s[0] = s[2];
-                    s++;
-                }
-            }
-        } else {
-            for (s = c->li_line; *s && !isspace(*s); s++)
-                ;
-            while (isspace(*s))
-                s++;
-            if (*s == '(') {
-                while (s[0] && (s[1] != ')')) {
-                    s[0] = s[1];
-                    s++;
-                }
-                while (s[1]) {
-                    s[0] = s[2];
-                    s++;
-                }
-            }
-        }
-    }
+    for (c = deck; c; c = c->li_next) {    /* iterate on lines in deck */
+      if (prefix(start, c->li_line)) {   /* if we find .subckt . . . */
+	for (s = c->li_line; *s && (*s != '('); s++)    /* Iterate charwise along line until ( is found */
+	  ;
+	if (*s) {
+	  while (s[0] && (s[1] != ')')) {
+	    s[0] = s[1];
+	    s++;
+	  }
+	  while (s[1]) {
+	    s[0] = s[2];
+	    s++;
+	  }
+	}  /* if (*s)  . . . */
+      } else {
+	for (s = c->li_line; *s && !isspace(*s); s++)    /* Iterate charwise along line until space is found */
+	  ;
+	while (isspace(*s))
+	  s++;
+	if (*s == '(') {
+	  while (s[0] && (s[1] != ')')) {
+	    s[0] = s[1];
+	    s++;
+	  }
+	  while (s[1]) {
+	    s[0] = s[2];
+	    s++;
+	  } /* while */
+	} /* if (*s == '(' . . . */
+      }
+    }   /*  for (c = deck . . . */
     
+
+    /* doit does the actual splicing in of the .subckt . . .  */
     ll = doit(deck);
 
    /* Now check to see if there are still subckt instances undefined... */
@@ -129,16 +175,26 @@ inp_subcktexpand(struct line *deck)
 	    return NULL;
 	}
 
-    return (ll);
+    return (ll);  /* return the spliced deck.  */
 }
 
-#define MAXNEST 21
 
+#define MAXNEST 21
+/*-------------------------------------------------------------------*/
+/*  doit does the actual substitution of .subckts.                   */
+/*  It takes two passes:  the first extracts .subckts                */
+/*  and sticks pointer to them into the linked list sss.  It does    */
+/*  the extraction recursively.  Then, it look for subcircuit        */
+/*  invocations and substitutes the stored .subckt into              */
+/*  the main circuit file.                                           */
+/*  It takes as argument a pointer to the deck, and returns a        */
+/*  pointer to the deck after the subcircuit has been spliced in.    */
+/*-------------------------------------------------------------------*/
 static struct line *
 doit(struct line *deck)
 {
     struct line *c, *last, *lc, *lcc;
-    struct subs *sss = (struct subs *) NULL, *ks;
+    struct subs *sss = (struct subs *) NULL, *ks;   /*  *sss and *ks temporarily hold decks to substitute  */
     char *s, *t, *scname, *subname;
     int nest, numpasses = MAXNEST, i;
     bool gotone;
@@ -153,51 +209,68 @@ doit(struct line *deck)
     subs = NULL;
     submod = NULL;
 
-    /* Extract all the .subckts */
-    for (last = deck, lc = NULL; last; ) {
-        if (prefix(sbend, last->li_line)) {
+    /* First pass: xtract all the .subckts and stick pointers to them into sss.  */
+    for (last = deck, lc = NULL;  last;  ) {
+        if (prefix(sbend, last->li_line)) {         /* if line == .ends  */
             fprintf(cp_err, "Error: misplaced %s line: %s\n", sbend,
                     last->li_line);
             return (NULL);
-        } else if (prefix(start, last->li_line)) {
-            if (last->li_next == NULL) {
+        } 
+	else if (prefix(start, last->li_line)) {    /* if line == .subckt  */
+	    if (last->li_next == NULL) {            /* first check that next line is non null */
                 fprintf(cp_err, "Error: no %s line.\n", sbend);
                 return (NULL);
             }
-            lcc = NULL;
+            lcc = NULL;                           
             wl_free(submod);
             submod = NULL;
             gotone = FALSE;
-            for (nest = 0, c = last->li_next; c; c = c->li_next) {
-                if (prefix(sbend, c->li_line)) {
+
+	    /* Here we loop through the deck looking for .subckt and .ends cards.
+	     * At the end of this section, last will point to the location of the
+	     * .subckt card, and lcc will point to the location of the .ends card.
+	     */
+            for (nest = 0, c = last->li_next;  c;  c = c->li_next) {
+	       if (prefix(sbend, c->li_line)) { /* found a .ends */ 
                     if (!nest)
-                        break;
+		        break;   /* nest = 0 means we have balanced .subckt and .ends  */
                     else {
-                        nest--;
-			lcc = c;
-                        continue;
+		        nest--;    /* decrement nesting, and assign lcc to the current card */
+			lcc = c;   /* (lcc points to the position of the .ends)             */
+                        continue;  /* then continue looping                                 */
                     }
-                } else if (prefix(start, c->li_line))
+	        } else if (prefix(start, c->li_line))  /* if .subckt, increment nesting */
                     nest++;
-		lcc = c;
-            }
-            if (!c) {
+	        lcc = c;     /* lcc points to current pos of c  */
+            } /* for (nest = 0 . . . */
+
+	    /* Check to see if we have looped through remainder of deck without finding .ends */
+            if (!c) {       
                 fprintf(cp_err, "Error: no %s line.\n", sbend);
-                return (NULL);
+                return (NULL);  
             }
+
+
             sss = alloc(struct subs);
-	    if (!lcc)
+	    if (!lcc)               /* if lcc is null, then no .ends was found.  */
 		lcc = last;
-            lcc->li_next = NULL;
+            lcc->li_next = NULL;    /* shouldn't we free some memory here????? */
+
+	    /* At this point, last points to the .subckt card, and lcc points to the .ends card */
+
+	    /*  what does this do!??!?!  */
             if (lc)
                 lc->li_next = c->li_next;
             else
                 deck = c->li_next;
-            sss->su_def = last->li_next;
-            s = last->li_line;
+
+	    /*  Now put the .subckt definition found into sss  */
+            sss->su_def = last->li_next;  
+            s = last->li_line;    
             (void) gettok(&s);
             sss->su_name = gettok(&s);
             sss->su_args = copy(s);
+	    /* count the number of args in the .subckt line */
             for (sss->su_numargs = 0, i = 0; s[i]; ) {
                 while (isspace(s[i]))
                     i++;
@@ -207,26 +280,40 @@ doit(struct line *deck)
                         i++;
                 }
             }
-            sss->su_next = subs;
-            subs = sss;
+            sss->su_next = subs;   
+            subs = sss;            /* Now that sss is built, assign it to subs */
             last = c->li_next;
             lcc = subs->su_def;
-        } else {
-            lc = last;
+
+        } 
+	else {  /*  line is neither .ends nor .subckt.  */
+	  /* make lc point to this card, and advance last to next card. */
+            lc = last;    
             last = last->li_next;
         }
-    }
+    } /* for (last = deck . . . .  */
 
-    if (!sss)
+
+    /* At this point, sss holds the .subckt definition found, subs holds
+     * all .subckt defs found, including this one,
+     * last points to the NULL at the end of the deck,
+     * lc points to the last non-.subckt or .ends card, 
+     * and lcc points to the .ends card 
+     */
+
+    if (!sss)            /* if sss == FALSE, we have found no subckts.  Just return.  */
         return (deck);
 
-    /* Expand sub-subcircuits. */
-    for (ks = sss = subs; sss; sss = sss->su_next)
+    /* Otherwise, expand sub-subcircuits recursively. */
+    for (ks = sss = subs; sss; sss = sss->su_next)  /* iterate through the list of subcircuits */
         if (!(sss->su_def = doit(sss->su_def)))
             return (NULL);
-    subs = ks;
+    subs = ks;  /* ks has held pointer to start of subcircuits list. */
     
-    /* Get all the model names so we can deal with BJT's. */
+
+    /* Get all the model names so we can deal with BJT's. 
+    *  Stick all the model names into the doubly-linked wordlist wl.
+    */
     for (c = deck; c; c = c->li_next)
         if (prefix(model, c->li_line)) {
             s = c->li_line;
@@ -236,22 +323,30 @@ doit(struct line *deck)
             if (modnames)
                 modnames->wl_prev = wl;
             modnames = wl;
-            wl->wl_word = gettok(&s);
+            wl->wl_word = gettok(&s);  /* wl->wl_word now holds name of model */
         }
 
     error = 0;
-    /* Now do the replacements. */
-    do {
+    /* Second pass: do the replacements. */
+    do {                    /*  while (!error && numpasses-- && gotone)  */
         gotone = FALSE;
         for (c = deck, lc = NULL; c; ) {
-            if (ciprefix(invoke, c->li_line)) {
+	   if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
                 gotone = TRUE;
-                t = s = copy(c->li_line);
-                scname = gettok(&s);
-                scname += strlen(invoke);
+                t = s = copy(c->li_line);       /*  s & t hold copy of component line  */
+
+		/*  make scname point to first non-whitepace chars after refdes invocation
+		 * e.g. if invocation is Xreference, *scname = reference
+		 */
+                scname = gettok(&s);            
+                scname += strlen(invoke);   
                 while ((*scname == ' ') || (*scname == '\t') ||
                         (*scname == ':'))
                     scname++;
+
+		/*  Now set s to point to last non-space chars in line (i.e.
+		 *   the name of the model invoked  
+		 */
                 while(*s)
                     s++;
                 s--;
@@ -260,30 +355,46 @@ doit(struct line *deck)
                 while ((*s != ' ') && (*s != '\t'))
                     s--;
                 s++;
-                for (sss = subs; sss; sss = sss->su_next)
+
+		/* iterate through .subckt list and look for .subckt name invoked */
+                for (sss = subs; sss; sss = sss->su_next)  
                     if (eq(sss->su_name, s))
                         break;
-                /* Don't complain -- this might be an
-                 * instance of a subckt that is defined above.
+
+
+		/* At this point, sss points to the .subckt invoked, 
+		 * and scname points to the netnames
+		 * involved.
+		 */
+
+
+                /* If no .subckt is found, don't complain -- this might be an
+                 * instance of a subckt that is defined above at higher level.
                  */
                 if (!sss) {
                     lc = c;
                     c = c->li_next;
                     continue;
                 }
+
                 /* Now we have to replace this line with the
                  * macro definition.
                  */
-                subname = copy(sss->su_name);
-                lcc = inp_deckcopy(sss->su_def);
+                subname = copy(sss->su_name);  
 
-                /* Change the names of the models... */
-                if (modtranslate(lcc, scname))
+		/*  make lcc point to a copy of the .subckt definition  */
+                lcc = inp_deckcopy(sss->su_def);  
+
+                /* Change the names of .models found in .subckts . . .  */
+                if (modtranslate(lcc, scname))   
                     devmodtranslate(lcc, scname);
 
                 s = sss->su_args;
-                (void) gettok(&t); /* Throw out the name. */
+                (void) gettok(&t);  /* Throw out the subcircuit refdes */
 
+		/* now invoke translate, which handles the remainder of the
+		 * translation.
+		 */
                 if (!translate(lcc, s, t, scname, subname))
 		    error = 1;
 
@@ -297,12 +408,14 @@ doit(struct line *deck)
                 lcc->li_next = c->li_next;
                 c = lcc->li_next;
                 lc = lcc;
-            } else {
+            } 	  /* if (ciprefix(invoke, c->li_line)) . . . */
+	   else {
                 lc = c;
                 c = c->li_next;
             }
         }
     } while (!error && numpasses-- && gotone);
+
 
     if (!numpasses) {
         fprintf(cp_err, "Error: infinite subckt recursion\n");
@@ -320,8 +433,11 @@ doit(struct line *deck)
     return (deck);
 }
 
-/* Copy a deck, including the actual lines. */
 
+
+/*-------------------------------------------------------------------*/
+/* Copy a deck, including the actual lines.                          */
+/*-------------------------------------------------------------------*/
 struct line *
 inp_deckcopy(struct line *deck)
 {
@@ -343,28 +459,28 @@ inp_deckcopy(struct line *deck)
     return (nd);
 }
 
-/* Translate all of the device names and node names in the deck. They are
+/*------------------------------------------------------------------------------------------*
+ * Translate all of the device names and node names in the .subckt deck. They are
  * pre-pended with subname:, unless they are in the formal list, in which case
  * they are replaced with the corresponding entry in the actual list.
  * The one special case is node 0 -- this is always ground and we don't
  * touch it.
- */
-
+ *
+ * Variable name meanings:
+ * *deck = pointer to subcircuit definition (lcc) (struct line)
+ * formal = copy of the .subckt definition line (e.g. ".subckt subcircuitname 1 2 3") (string)
+ * actual = copy of the .subcircuit invocation line (e.g. "Xexample 4 5 6 subcircuitname") (string)
+ * scname = refdes (- first letter) used at invocation (e.g. "example") (string)
+ * subname = copy of the subcircuit name 
+ *-------------------------------------------------------------------------------------------*/
 static int
 translate(struct line *deck, char *formal, char *actual, char *scname, char *subname)
 {
     struct line *c;
-    char *buffer, *name, *s, *t, ch;
-    int nnodes, i;
+    char *buffer, *next_name, dev_type, *name, *s, *t, ch;
+    int nnodes, i, dim;
 
-#ifdef XSPICE
-    /* gtri - add - wbk - 10/23/90 - add new local variables */
-    
-    char    *next_name;     /* for look-ahead during tokenizing */
-    
-    /* gtri - end - wbk - 10/23/90 */
-#endif
-
+    /* settrans builds the table holding the translated netnames.  */
     i = settrans(formal, actual, subname);
     if (i < 0) {
 	fprintf(stderr,
@@ -378,16 +494,30 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	return 0;
     }
 
-    for (c = deck; c; c = c->li_next) {
-        /* Rename the device. */
-        switch (*c->li_line) {
+    /* now iterate through the .subckt deck and translate the cards. */
+    for (c = deck; c; c = c->li_next) {  
+
+#ifdef TRACE
+      /* SDB debug statement */
+      printf("\nIn translate, examining line %s \n", c->li_line);
+#endif
+
+      
+      dev_type = *(c->li_line);   
+
+      /* Rename the device. */
+        switch (dev_type) {
         case '\0':
         case '*':
         case '.':
-            /* Nothing any good here. */
-            continue;
+            /* Just a pointer to the line into s and then break */
+	  buffer = tmalloc(2000);    /* XXXXX */
+	  s = c->li_line;
+	  break;
+
 
 #ifdef XSPICE
+/*===================  case A  ====================*/
 /* gtri - add - wbk - 10/23/90 - process A devices specially */
 /* since they have a more involved and variable length node syntax */
 	    
@@ -396,7 +526,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	  
             /* translate the instance name according to normal rules */
 
-            buffer = tmalloc(10000);     /* XXXXX */
+            buffer = tmalloc(2000);     /* XXXXX */
 
             s = c->li_line;
             name = MIFgettok(&s);
@@ -477,81 +607,289 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             /* after switch statement                           */
 
             s = "";
-
             break;
 
 /* gtri - end - wbk - 10/23/90 */
 #endif
 
-        default:
-                s = c->li_line;
-            name = gettok(&s);
-	    if (!name)
-		continue;
-	    if (!*name) {
-		tfree(name);
-		continue;
-	    }
-            ch = *name;
-            buffer = tmalloc(10000);    /* XXXXX */
-            name++;
-            if (*name == ':')
-            name++;
-            if (*name)
-                (void) sprintf(buffer, "%c:%s:%s ", ch, scname,
-                    name);
-            else
-                (void) sprintf(buffer, "%c:%s ", ch, scname);
+/*================   case E, F, G, H  ================*/
+/* This section handles controlled sources and allows for SPICE2 POLY attributes.
+ * This is a new section, added by SDB to handle POLYs in sources.  Significant
+ * changes were made in here.
+ * 4.21.2003 -- SDB.  mailto:sdb@cloud9.net
+ */
+	case 'E': case 'e':
+	case 'F': case 'f':
+	case 'G': case 'g':
+	case 'H': case 'h':
 
-            nnodes = numnodes(c->li_line);
-            while (nnodes-- > 0) {
-            name = gettok(&s);
-            if (name == NULL) {
-                fprintf(cp_err, "Error: too few nodes: %s\n",
-                        c->li_line);
-                return 0;
-            }
-            t = gettrans(name);
-            if (t)
-                (void) sprintf(buffer + strlen(buffer), "%s ",
-                        t);
-            else
-                (void) sprintf(buffer + strlen(buffer),
-                        "%s:%s ", scname, name);
-            }    
-            nnodes = numdevs(c->li_line);
-            while (nnodes-- > 0) {
-            name = gettok(&s);
-            if (name == NULL) {
-                fprintf(cp_err, "Error: too few devs: %s\n",
-                        c->li_line);
-                return 0;
-            }
-            ch = *name;
-            name++;
-            if (*name == ':')
-                name++;
-            if (*name)
-                (void) sprintf(buffer + strlen(buffer),
-                        "%c:%s:%s ", ch, scname, name);
-            else
-                (void) sprintf(buffer + strlen(buffer),
-                        "%c:%s ", ch, scname);
-            }
-            /* Now scan through the line for v(something) and
-             * i(something)...
-             */
-            finishLine(buffer + strlen(buffer), s, scname);
-            s = "";
-        }
-            (void) strcat(buffer, s);
+
+	  s = c->li_line;       /* s now holds the SPICE line */
+	  name = gettok(&s);    /* name points to the refdes  */
+	  if (!name)
+	    continue;
+	  if (!*name) {
+	    tfree(name);
+	    continue;
+	  }
+	  
+/* Here's where we translate the refdes to e.g. F:subcircuitname:57
+ * and stick the translated name into buffer.
+ */
+	  ch = *name;           /* ch identifies the type of component */
+	  buffer = tmalloc(2000);    /* XXXXX */
+	  name++;
+	  if (*name == ':')
+	    name++;             /* now name point to the rest of the refdes */
+	                           
+
+	  if (*name)
+	    (void) sprintf(buffer, "%c:%s:%s ", ch, scname,  /* F:subcircuitname:refdesname */
+			   name);
+	  else
+	    (void) sprintf(buffer, "%c:%s ", ch, scname);    /* F:subcircuitname */
+	  
+
+/* Next iterate over all nodes (netnames) found and translate them. */
+	  nnodes = numnodes(c->li_line);
+	  
+	  while (nnodes-- > 0) {
+	    name = gettok(&s);
+	    if (name == NULL) {
+	      fprintf(cp_err, "Error: too few nodes: %s\n",
+		      c->li_line);
+	      return 0;
+	    }
+	      
+	    /* call gettrans and see if netname was used in the invocation */
+	    t = gettrans(name);     
+	      
+	    if (t) {   /* the netname was used during the invocation; print it into the buffer */
+	      (void) sprintf(buffer + strlen(buffer), "%s ", t);
+	    }
+	    else {    /* net netname was not used during the invocation; place a 
+		       * translated name into the buffer.
+		       */
+	      (void) sprintf(buffer + strlen(buffer),
+			     "%s:%s ", scname, name);
+	    }
+	  }  /* while (nnodes-- . . . . */
+  
+
+/*  Next we handle the POLY (if any) */
+	  /* get next token */
+	  t = s;
+	  next_name = (char *)gettok_noparens(&t);
+	  if ( (strcmp(next_name, "POLY") == 0) ||
+	       (strcmp(next_name, "poly") == 0)) {         /* found POLY . . . . */
+
+#ifdef TRACE
+	      /* SDB debug statement */
+	      printf("In translate, looking at e, f, g, h found poly\n");
+#endif
+
+	      /* move pointer ahead of paren */
+	      if( get_l_paren(&s) == 1 ) {   
+		fprintf(cp_err, "Error: no left paren after POLY %s\n",
+			c->li_line);
+		return 0;
+	      }
+
+	      dim = (int *) atoi( (char *)gettok_noparens(&s) );  /* convert returned string to int */
+
+	      /* move pointer ahead of ) */
+	      if( get_r_paren(&s) == 1 ) {   
+		fprintf(cp_err, "Error: no right paren after POLY %s\n",
+			c->li_line);
+		return 0;
+	      }
+
+	      /* Write POLY(dim) into buffer */
+	      (void) sprintf(buffer + strlen(buffer),
+			     "POLY( %d ) ", dim);
+	      
+
+	  } /* if ( (strcmp(next_name, "POLY") == 0) . . .  */
+	  else
+	    dim = 1;    /* only one controlling source . . . */
+
+/* Now translate the controlling source/nodes */
+	  nnodes = dim * numdevs(c->li_line);     
+	  while (nnodes-- > 0) {
+	    name = gettok(&s);   /* name points to the returned token  */
+	    if (name == NULL) {
+	      fprintf(cp_err, "Error: too few devs: %s\n",
+		      c->li_line);
+	      return 0;
+	    }
+
+	    if ( (dev_type == 'f') ||
+		 (dev_type == 'F') ||
+		 (dev_type == 'h') ||
+		 (dev_type == 'H') ) {   
+
+	      /*
+		if ( (strcmp(&dev_type, "f") == 0) ||
+		(strcmp(&dev_type, "F") == 0) ||
+		(strcmp(&dev_type, "h") == 0) ||
+		(strcmp(&dev_type, "H") == 0) ) {  
+	      */
+
+	      /* Handle voltage source name */
+
+#ifdef TRACE 
+	      /* SDB debug statement */
+	      printf("In translate, found type f or h\n");
+#endif
+
+	      ch = *name;         /*  ch is the first char of the token.  */
+	      name++;
+	      if (*name == ':')
+		name++;           /* name now points to the remainder of the token */
+	      (void) sprintf(buffer + strlen(buffer),
+			     "%c:%s:%s ", ch, scname, name);  
+	      /* From Vsense and Urefdes creates V:Urefdes:sense */
+	    }
+	    else {                              /* Handle netname */
+
+#ifdef TRACE 
+	      /* SDB debug statement */
+	      printf("In translate, found type e or g\n");
+#endif
+
+	      /* call gettrans and see if netname was used in the invocation */
+	      t = gettrans(name);
+	      
+	      if (t) {   /* the netname was used during the invocation; print it into the buffer */
+		(void) sprintf(buffer + strlen(buffer), "%s ", t);
+	      }
+	      else {    /* net netname was not used during the invocation; place a 
+			 * translated name into the buffer.
+			 */
+		(void) sprintf(buffer + strlen(buffer),
+			       "%s:%s ", scname, name);
+		/* From netname and Urefdes creates Urefdes:netname */
+	      }
+	    }
+	  }      /* while (nnodes--. . . . */
+	  
+/* Now write out remainder of line (polynomial coeffs) */
+	  finishLine(buffer + strlen(buffer), s, scname);
+	  s = "";
+	  break;
+
+
+/*=================   Default case  ===================*/
+        default:            /* this section handles ordinary components */
+	  s = c->li_line;
+	  name = gettok(&s);
+	  if (!name)
+	    continue;
+	  if (!*name) {
+	    tfree(name);
+	    continue;
+	  }
+
+/* Here's where we translate the refdes to e.g. R:subcircuitname:57
+ * and stick the translated name into buffer.
+ */
+	  ch = *name;
+	  buffer = tmalloc(2000);    /* XXXXX */
+	  name++;
+	  if (*name == ':')
+	    name++;
+
+	  if (*name)
+	    (void) sprintf(buffer, "%c:%s:%s ", ch, scname,
+			   name);
+	  else
+	    (void) sprintf(buffer, "%c:%s ", ch, scname);
+	  
+
+
+/* Next iterate over all nodes (netnames) found and translate them. */
+	  nnodes = numnodes(c->li_line);
+	  
+	  while (nnodes-- > 0) {
+	    name = gettok(&s);
+	    if (name == NULL) {
+	      fprintf(cp_err, "Error: too few nodes: %s\n",
+		      c->li_line);
+	      return 0;
+	    }
+	      
+	    /* call gettrans and see if netname was used in the invocation */
+	    t = gettrans(name);
+	      
+	    if (t) {   /* the netname was used during the invocation; print it into the buffer */
+	      (void) sprintf(buffer + strlen(buffer), "%s ", t);
+	    }
+	    else {    /* net netname was not used during the invocation; place a 
+		       * translated name into the buffer.
+		       */
+	      (void) sprintf(buffer + strlen(buffer),
+			     "%s:%s ", scname, name);
+	    }
+	  }  /* while (nnodes-- . . . . */
+  
+/* Now translate any devices (i.e. controlling sources).  
+ * This may be supurfluous because we handle dependent
+ * source devices above . . . .
+ */
+	  nnodes = numdevs(c->li_line);     
+	  while (nnodes-- > 0) {
+	    name = gettok(&s);
+	    if (name == NULL) {
+	      fprintf(cp_err, "Error: too few devs: %s\n",
+		      c->li_line);
+	      return 0;
+	    }
+	    ch = *name;
+	    name++;
+	    if (*name == ':')
+	      name++;
+	    
+	    if (*name)
+	      (void) sprintf(buffer + strlen(buffer),
+			     "%c:%s:%s ", ch, scname, name);
+	    else
+	      (void) sprintf(buffer + strlen(buffer),
+			     "%c:%s ", ch, scname);
+	    
+	  } /* while (nnodes--. . . . */
+	    
+	    
+/* Now we finish off the line.  For most components (R, C, etc),
+ * this involves adding the component value to the buffer.
+ * We also scan through the line for v(something) and
+ * i(something)...
+ */
+	    finishLine(buffer + strlen(buffer), s, scname);
+	    s = "";
+
+	} /* switch(c->li_line . . . . */
+
+	(void) strcat(buffer, s);
         tfree(c->li_line);
         c->li_line = copy(buffer);
+
+#ifdef TRACE 
+	/* SDB debug statement */
+	printf("In translate, translated line = %s \n", c->li_line);
+#endif
+
         tfree(buffer);
-    }
+    }  /* for (c = deck . . . . */
     return 1;
 }
 
+
+
+/*-------------------------------------------------------------------*
+ * finishLine now doesn't handle current or voltage sources.
+ * Therefore, it just writes out the final netnames, if required.
+ * Changes made by SDB on 4.29.2003.
+ *-------------------------------------------------------------------*/
 static void
 finishLine(char *dst, char *src, char *scname)
 {
@@ -600,10 +938,10 @@ finishLine(char *dst, char *src, char *scname)
         if (s) {
             while (*s)
                 *dst++ = *s++;
-        } else {
+        } 
+	else {    /* just a normal netname . . . . */
 	    /*
-	     * i(vname) -> i(v:subckt:name)
-	     * i(v:other:name) -> i(v:subckt:other:name)
+	     * 
 	     */
 	    if (buf[0] == 'v' || buf[0] == 'V') {
 		*dst++ = buf[0];
@@ -648,11 +986,17 @@ finishLine(char *dst, char *src, char *scname)
     return;
 }
 
-static struct tab {
-    char *t_old;
-    char *t_new;
-} table[512];   /* That had better be enough. */
-
+/*------------------------------------------------------------------------------*
+ * settrans builds the table which holds the old and new netnames.  
+ * it also compares the number of nets present in the .subckt definition against
+ * the number of nets present in the subcircuit invocation.  It returns 0 if they
+ * match, otherwise, it returns an error.
+ *
+ * Variable definitions:
+ * formal = copy of the .subckt definition line (e.g. ".subckt subcircuitname 1 2 3") (string)
+ * actual = copy of the .subcircuit invocation line (e.g. "Xexample 4 5 6 subcircuitname") (string)
+ * subname = copy of the subcircuit name 
+ *------------------------------------------------------------------------------*/
 static int
 settrans(char *formal, char *actual, char *subname)
 {
@@ -674,6 +1018,11 @@ settrans(char *formal, char *actual, char *subname)
     return 0;
 }
 
+
+/*------------------------------------------------------------------------------*
+ * gettrans returns the name of the top level net if it is in the list,
+ * otherwise it returns NULL.
+ *------------------------------------------------------------------------------*/
 static char *
 gettrans(char *name)
 {
@@ -694,6 +1043,8 @@ gettrans(char *name)
     return (NULL);
 }
 
+/*-------------------------------------------------------------------*/
+/*-------------------------------------------------------------------*/
 static int
 numnodes(char *name)
 {
@@ -702,7 +1053,6 @@ numnodes(char *name)
 /* nodes even if they know how many there are.  Modify the callers  */
 /* instead.                                                         */
 /* gtri - end - wbk - 10/23/90 */
-
     char c;
     struct subs *sss;
     char *s, *t, buf[4 * BSIZE_SP];
@@ -734,6 +1084,7 @@ numnodes(char *name)
         }
         return (sss->su_numargs);
     }
+
     n = inp_numnodes(c);
     
     /* Added this code for variable number of nodes on BSIM3SOI devices  */
@@ -744,75 +1095,101 @@ numnodes(char *name)
     
     /* I hope that works, this code is very very untested */
     
-	if (c=='m') {		/* IF this is a mos */
+	if (c=='m') {		     /* IF this is a mos */
 		
-		i = 0;
+	        i = 0;
 		s = buf;
 		gotit = 0;
-		t = gettok(&s);	/* Skip component name */
+		t = gettok(&s);	     /* Skip component name */
 		while ((i < n) && (*s) && !gotit) {
-			t = gettok(&s);
-    			for (wl = modnames; wl; wl = wl->wl_next)
-     		   if (eq(t, wl->wl_word)) 
-     		   	gotit = 1;
-     		i++;
-		}
+		  t = gettok(&s);
+		  for (wl = modnames; wl; wl = wl->wl_next)
+		    if (eq(t, wl->wl_word)) 
+		      gotit = 1;
+		  i++;
+		} /* while . . . . */
 		
-	/* Note: node checks must be done on #_of_node-1 because the */
-	/* "while" cicle increments the counter even when a model is */
-	/* recognized. This code may be better!                      */
+		/* Note: node checks must be done on #_of_node-1 because the */
+		/* "while" cicle increments the counter even when a model is */
+		/* recognized. This code may be better!                      */
 	 		
-     if (i < 5) {
-     	fprintf(cp_err, "Error: too few nodes for MOS: %s\n", name);
-     	return(0);
-    		}
-    	return(i-1); /* compesate the unnecessary inrement in the while cicle */
-    	}
+		if (i < 5) {
+		  fprintf(cp_err, "Error: too few nodes for MOS: %s\n", name);
+		  return(0);
+		}
+		return(i-1); /* compesate the unnecessary inrement in the while cicle */
+    	} /* if (c=='m' . . .  */
     
     
     if (nobjthack || (c != 'q'))
         return (n);
+
     for (s = buf, i = 0; *s && (i < 4); i++)
         (void) gettok(&s);
+
     if (i == 3)
         return (3);
+
     else if (i < 4) {
         fprintf(cp_err, "Error: too few nodes for BJT: %s\n", name);
         return (0);
     }
+
     /* Now, is this a model? */
     t = gettok(&s);
     for (wl = modnames; wl; wl = wl->wl_next)
-        if (eq(t, wl->wl_word))
-            return (3);
+      if (eq(t, wl->wl_word))
+	  return (3);
     return (4);
 }
 
+
+/*-------------------------------------------------------------------*
+ *  This function returns the number of controlling voltage sources
+ *  (for F, H) or controlling nodes (for G, E)  attached to a dependent 
+ *  source.
+ *-------------------------------------------------------------------*/
 static int 
 numdevs(char *s)
 {
 
-    while (*s && isspace(*s))
-	s++;
-    switch (*s) {
-        case 'K':
-        case 'k':
-        return (2);
+  while (*s && isspace(*s))
+    s++;
+  switch (*s) {
+    case 'K':
+    case 'k':
+      return (2);
     
-        case 'F':
-        case 'f':
-        case 'H':
-        case 'h':
+      /* two nodes per voltage controlled source */
+    case 'G':
+    case 'g':
+    case 'E':
+    case 'e':
+      return(2);
+
+      /* one source per current controlled source */
+    case 'F':
+    case 'f':
+    case 'H':
+    case 'h':
    /* 2 lines here added to fix w bug, NCF 1/31/95 */
-        case 'W':
-        case 'w':     
-        return (1);
+    case 'W':
+    case 'w':     
+      return (1);
     
         default:
         return (0);
     }
 }
 
+/*----------------------------------------------------------------------*
+ *  modtranslate --  translates .model liness found in subckt definitions.
+ *  Calling arguments are:
+ *  *deck = pointer to the .subckt definition (linked list)
+ *  *subname = pointer to the subcircuit name used at the subcircuit invocation (string)
+ *  Modtranslate returns TRUE if it translated a model name, FALSE
+ *  otherwise.
+ *----------------------------------------------------------------------*/
 static bool
 modtranslate(struct line *deck, char *subname)
 {
@@ -823,23 +1200,23 @@ modtranslate(struct line *deck, char *subname)
 
     (void) strcpy(model, ".model");
     gotone = FALSE;
-    for (c = deck; c; c = c->li_next) {
+    for (c = deck; c; c = c->li_next) {       /* iterate through model def . . . */
         if (prefix(model, c->li_line)) {
             gotone = TRUE;
             t = c->li_line;
-            name = gettok(&t);
+            name = gettok(&t);     /* at this point, name = .model */
             buffer = tmalloc(strlen(name) + strlen(t) +
                     strlen(subname) + 4);
-            (void) sprintf(buffer, "%s ",name);
-            name = gettok(&t);
+            (void) sprintf(buffer, "%s ",name);    /* at this point, buffer = ".model " */
+            name = gettok(&t);                     /* name now holds model name */
             wlsub = alloc(struct wordlist);
             wlsub->wl_next = submod;
             if (submod)
                 submod->wl_prev = wlsub;
             submod = wlsub;
             wlsub->wl_word = name;
-            (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                    subname, name);
+            (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
+                    subname, name);                 /* buffer = "model subname:modelname " */
             (void) strcat(buffer, t);
             tfree(c->li_line);
             c->li_line = buffer;
@@ -856,6 +1233,11 @@ modtranslate(struct line *deck, char *subname)
     return(gotone);
 }
 
+
+/*-------------------------------------------------------------------*
+ *  Devmodtranslate translates ??????
+ *  
+ *-------------------------------------------------------------------*/
 static void
 devmodtranslate(struct line *deck, char *subname)
 {
@@ -1060,11 +1442,13 @@ devmodtranslate(struct line *deck, char *subname)
     return;
 }
 
-/* This is a spice-dependent thing.  It should probably go somewhere
+/*----------------------------------------------------------------------*
+ * inp_numnodes returns the number of nodes (netnames) attached to the
+ * component.  
+ * This is a spice-dependent thing.  It should probably go somewhere
  * else, but...  Note that we pretend that dependent sources and mutual
  * inductors have more nodes than they really do...
- */
-
+ *----------------------------------------------------------------------*/
 int
 inp_numnodes(char c)
 {
@@ -1081,9 +1465,9 @@ inp_numnodes(char c)
         case 'b': return (2);
         case 'c': return (2);
         case 'd': return (2);
-        case 'e': return (4);
+        case 'e': return (2); /* changed from 4 to 2 by SDB on 4.22.2003 to enable POLY */
         case 'f': return (2);
-        case 'g': return (4);
+        case 'g': return (2); /* changed from 4 to 2 by SDB on 4.22.2003 to enable POLY */
         case 'h': return (2);
         case 'i': return (2);
         case 'j': return (3);
@@ -1106,4 +1490,11 @@ inp_numnodes(char c)
             return (2);
     }
 }
+
+
+
+
+
+
+
 

@@ -5,6 +5,7 @@
    Author: 1985 Wayne A. Christopher
 
    The main routine for ngspice */
+
 #include <ngspice.h>
 
 #include <stdio.h>
@@ -324,6 +325,22 @@ main(int argc, char **argv)
     bool qflag = FALSE;
     FILE *fp;
     FILE *circuit_file;
+
+
+
+#ifdef TRACE
+    /* this is used to detect memory leaks during debugging */
+    /* added by SDB during debug . . . . */
+    /* mtrace();  */
+#endif
+
+#ifdef TRACE
+    /* this is also used for memory leak plugging . . . */
+    /* added by SDB during debug . . . . */
+    /*     mwDoFlush(1);  */
+#endif
+
+
 
 
     /* MFB tends to jump to 0 on errors.  This tends to catch it. */

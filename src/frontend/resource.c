@@ -326,6 +326,7 @@ baseaddr(void)
 	if (getenv("SPICE_NO_DATASEG_CHECK"))
 		return 0;
 
+
 	low = 0;
 	high = (char *) ((unsigned long) sbrk(0) & ~((1 << LOG2_PAGESIZE) - 1));
 

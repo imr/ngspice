@@ -29,6 +29,11 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
     void *gnode;
     int error;			/* used by the macros defined above */
 
+#ifdef TRACE
+    /* SDB debug statement */
+    printf("Entered INPpas2 . . . .\n");
+#endif
+
     error = INPgetTok(&groundname, &gname, 1);
     if (error)
 	data->error =
@@ -44,6 +49,11 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 		      ("can't insert internal ground node in symbol table!\n"));
 
     for (current = data; current != NULL; current = current->nextcard) {
+
+#ifdef TRACE
+      /* SDB debug statement */
+      printf("In INPpas2, examining card %s . . .\n", current->line);
+#endif
 
 	c = *(current->line);
 	c = islower(c) ? toupper(c) : c;

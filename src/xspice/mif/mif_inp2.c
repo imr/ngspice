@@ -158,6 +158,10 @@ card         *current;  /* the card we are to parse                     */
     Mif_Status_t     status;         /* return status */
     Mif_Token_Type_t next_token_type; /* the type of the next token */
 
+#ifdef TRACE
+    /* SDB debug statement */
+    printf("In MIF_INP2A, line to process = %s . . . \n", current->line);
+#endif
 
     /* get the line text from the card struct */
 
@@ -168,7 +172,6 @@ card         *current;  /* the card we are to parse                     */
 
     name = MIFgettok(&line);
     INPinsert(&name, tab);
-
 
     /* locate the last token on the line and put it into "model" */
 
@@ -189,6 +192,13 @@ card         *current;  /* the card we are to parse                     */
     if(current->error) {
         return;
     }
+
+#ifdef TRACE
+    /* SDB debug statement */
+    printf("In MIF_INP2A, after tokenizing, name = %s, model = %s\n",
+	   name, model);
+#endif
+
 
 
     /* get the integer index into the DEVices data array for this  */
@@ -883,3 +893,12 @@ MIFget_port(
     *status = MIF_OK;
     return;
 }
+
+
+
+
+
+
+
+
+

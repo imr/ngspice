@@ -1,3 +1,9 @@
+05/05/2003:
+	* Added latest patch from Stuart Brorson <sdb@cloud9.net>, 
+		http://www.brorson.com/gEDA/ngspice/ngspice.html ;
+		Spice POLY works
+		Fixes XSPICE integration bugs
+		Comments in parser code and debug printfs
 14/04/2003:
 	* loadsnap / savesnap commands added
 	* Improved spice Tcl GUI

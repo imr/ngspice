@@ -174,8 +174,10 @@ inp_readall(FILE *fp, struct line **data)
     while ((buffer = readline(fp))) {
 #endif
 
-      /* debug statement */
-      /*      printf ("in inp_readall, just read %s . . .\n", buffer); */
+#ifdef TRACE
+      /* SDB debug statement */
+      printf ("in inp_readall, just read %s . . .\n", buffer); 
+#endif
 
     /* OK -- now we have loaded the next line into 'buffer'.  Process it. */
         /* If input line is blank, ignore it & continue looping.  */
@@ -199,8 +201,9 @@ inp_readall(FILE *fp, struct line **data)
             fprintf(cp_err, "Warning: premature EOF\n");
         }
         *s = '\0';      /* Zap the newline. */
-        if ( s > buffer && s[-1] == '\r') /* Zap the carriage return under windows */
-            s[-1] = '\0';
+
+	if(*(s-1) == '\r') /* Zop the carriage return under windows */
+	  *(s-1) = '\0';
 
 	/* now handle .include statements */
         if (ciprefix(".include", buffer)) {
@@ -304,8 +307,10 @@ inp_readall(FILE *fp, struct line **data)
 	for (s = working->li_line; (c = *s) && c <= ' '; s++)
 		;
 
-	/* debug statement */
-	/*	printf("Now processing linked list, at s = %s . . . \n", s); */
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In inp_readall, processing linked list element s = %s . . . \n", s); 
+#endif
 
         switch (c) {
 	    case '#':

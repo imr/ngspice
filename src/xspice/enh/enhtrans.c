@@ -65,13 +65,10 @@ NON-STANDARD FEATURES
 
 static int needs_translating(char *card);
 static int count_tokens(char *card);
-static char *translate(char  *orig_card, char  **inst_card,
+static char *two2three_translate(char  *orig_card, char  **inst_card,
     char  **mod_card);
 static int get_poly_dimension(char *card);
 
-// added as a quick bug fix, a lot of standard models have a linear poly(1) which
-// fails in this code, Kevin Aylward April 15th 2000
-char * (*FPConvertSpicePoly1ToBsource)(char *card); // this is so I can use the MFC class libary 
 /*
 ENHtranslate_poly()
 
@@ -79,7 +76,14 @@ Translate all 2G6 style polynomial controlled sources in the deck
 to new polynomial controlled source code model syntax.
 */
 
-
+/*---------------------------------------------------------------------*/
+/*  ENHtranslate_poly takes (a pointer to) the SPICE deck as argument. */
+/*  It loops through the deck, and translates all POLY statements      */
+/*  in dependent sources into a .model conformant with the needs of    */
+/*  XSPICE.  It splices the new statements in the deck, and comments   */
+/*  out the old dependent  source.                                     */
+/*  It returns (a pointer to) the processed deck.                      */
+/*---------------------------------------------------------------------*/
 struct line * ENHtranslate_poly(
    struct   line  *deck)          /* Linked list of lines in input deck */
 {
@@ -91,65 +95,65 @@ struct line * ENHtranslate_poly(
    int poly_dimension;
    char *buff;
 
-
    /* Iterate through each card in the deck and translate as needed */
    for(d = deck; d; d = d->li_next) 
    {
 
-      /* If doesn't need to be translated, continue to next card */
-		if(! needs_translating(d->li_line))
-         continue;
+#ifdef TRACE
+     /* SDB debug statement */
+     printf("In ENHtranslate_poly, now examining card %s . . . \n", d->li_line);
+#endif
 
-//	Start added as a quick fix to a xspice translation bug in poly(1) code
-//  Kevin Aylward April 15th 2000, fuck knows where it is
-		poly_dimension = get_poly_dimension(d->li_line);
+     /* If doesn't need to be translated, continue to next card */
+     if(! needs_translating(d->li_line)) {
 
-		if(poly_dimension == 1)// 
-		{
-			buff = (FPConvertSpicePoly1ToBsource)(d->li_line);
+#ifdef TRACE
+       /* SDB debug statement */
+       /* printf("Card doesn't need translating.  Continuing . . . .\n"); */
+#endif
 
-			if(buff)
-			{
-				FREE(d->li_line);
+       continue;
+     }
 
-				d->li_line = buff;
-			}
+#ifdef TRACE
+     /* SDB debug statement */
+     printf("Found a card to translate . . . .\n");
+#endif
 
-			continue;
-		}
-//	End added as a quick fix to a xspice translation bug in poly(1) code
-//  Kevin Aylward April 15th 2000
-
-
-      /* Create two new line structs and splice into deck */
+/* Create two new line structs and splice into deck */
 /*      l1 = alloc(line);  */  /* jgroves */
 /*      l2 = alloc(line);  */  /* jgroves */
-      l1 = alloc(struct line);
-      l2 = alloc(struct line);
-      l2->li_next = d->li_next;
-      l1->li_next = l2;
-      d->li_next  = l1;
+     l1 = alloc(struct line);
+     l2 = alloc(struct line);
+     l2->li_next = d->li_next;
+     l1->li_next = l2;
+     d->li_next  = l1;
+     
+     /* Create the translated cards */
+     d->li_error = two2three_translate(d->li_line, &(l1->li_line), &(l2->li_line));
+     
+     /* Comment out the original line */
+     card = (void *) MALLOC(strlen(d->li_line) + 2);
+     strcpy(card,"*");
+     strcat(card, d->li_line);
+     d->li_line = card;
 
-      /* Create the translated cards */
-      d->li_error = translate(d->li_line, &(l1->li_line), &(l2->li_line));
+#ifdef TRACE
+     /* SDB debug statement */
+     printf("In ENHtranslate_poly, translated card = %s . . . \n", card);
+#endif     
 
-      /* Comment out the original line */
-      card = (void *) MALLOC(strlen(d->li_line) + 2);
-      strcpy(card,"*");
-      strcat(card, d->li_line);
-      d->li_line = card;
-
-      /* Advance deck pointer to last line added */
-      d = l2;
+     /* Advance deck pointer to last line added */
+     d = l2;
    }
-
+   
    /* Return head of deck */
    return(deck);
 
 } /* ENHtranslate_poly */
 
 
-
+/*---------------------------------------------------------------------*/
 /*
 needs_translating()
 
@@ -160,8 +164,13 @@ a simple linear dependent source.  Otherwise return false.
 
 
 static int needs_translating(
-   char *card)                /* the card text to check */
+    char *card)           /* the card text to check */
 {
+
+#ifdef TRACE
+  /* SDB debug statement */
+  /* printf("In needs_translating, examining card %s . . . \n", card); */
+#endif
 
    switch(*card) {
 
@@ -187,14 +196,12 @@ static int needs_translating(
 
 
 
-
+/*---------------------------------------------------------------------*/
 /*
 count_tokens()
 
 Count and return the number of tokens on the card.
 */
-
-
 static int count_tokens(
    char *card)           /* the card text on which to count tokens */
 {
@@ -210,13 +217,19 @@ static int count_tokens(
 
 
 
+
+/*--------------------------------------------------------------------*/
 /*
-translate()
+two2three_translate()
 
 Do the syntax translation of the 2G6 source to the new code model syntax.
+
+Renamed by SDB to eliminate clash with translate fcn defined in subckt.c
+4.17.2003 -- SDB
+
 */
 
-static char *translate(
+static char *two2three_translate(
    char  *orig_card,    /* the original untranslated card */
    char  **inst_card,   /* the instance card created by the translation */
    char  **mod_card)    /* the model card created by the translation */
@@ -241,6 +254,11 @@ static char *translate(
    char  *card;
 
 
+#ifdef TRACE
+   /* SDB debug statement */
+   printf("In two2three_translate, card to translate = %s . . .\n", orig_card);
+#endif
+
    /* Get the first character into local storage for checking type */
    type = *orig_card;
 
@@ -249,12 +267,16 @@ static char *translate(
 
    /* Determine the dimension of the poly source */
    dim = get_poly_dimension(orig_card);
-   if(dim <= 0)
+   if(dim <= 0) {
+      printf("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
       return("ERROR - Argument to poly() is not an integer\n");
+   }
 
    /* Compute number of input connections based on type and dimension */
    switch(type) {
+   case 'E':
    case 'e':
+   case 'G':
    case 'g':
       num_conns = 2 * dim;
       break;
@@ -318,7 +340,8 @@ static char *translate(
    strcpy(*inst_card, "a$poly$");
    sprintf(*inst_card + strlen(*inst_card), "%s ", name);
 
-   if((type == 'e') || (type == 'g'))
+   if((type == 'e') || (type == 'g') ||
+      (type == 'E') || (type == 'G'))
       sprintf(*inst_card + strlen(*inst_card), "%%vd [ ");
    else
       sprintf(*inst_card + strlen(*inst_card), "%%vnam [ ");
@@ -328,7 +351,8 @@ static char *translate(
 
    sprintf(*inst_card + strlen(*inst_card), "] ");
 
-   if((type == 'e') || (type == 'h'))
+   if((type == 'e') || (type == 'h') ||
+      (type == 'E') || (type == 'H'))
       sprintf(*inst_card + strlen(*inst_card), "%%vd ");
    else
       sprintf(*inst_card + strlen(*inst_card), "%%id ");
@@ -344,6 +368,10 @@ static char *translate(
       sprintf(*mod_card + strlen(*mod_card), "%s ", coef[i]);
    sprintf(*mod_card + strlen(*mod_card), "]");
 
+#ifdef TRACE
+   /* SDB debug statement */
+   printf("In two2three_translate, translated statements:\n%s \n%s \n", *inst_card, *mod_card);
+#endif
 
    /* Free the temporary space */
    FREE(name);
@@ -352,30 +380,26 @@ static char *translate(
    for(i = 0; i < 2; i++)
    {
       FREE(out_conn[i]);
-
-	  out_conn[i] = NULL;
-	}
+      out_conn[i] = NULL;
+   }
 
    FREE(out_conn);
-
    out_conn = NULL;
 
    for(i = 0; i < num_conns; i++)
    {
       FREE(in_conn[i]);
-
-	  in_conn[i] = NULL;
-	}
+      in_conn[i] = NULL;
+   }
 
    FREE(in_conn);
-
    in_conn = NULL;
 
    for(i = 0; i < num_coefs; i++)
    {
-      FREE(coef[i]);
-	  coef[i] = NULL;
-	}
+     FREE(coef[i]);
+     coef[i] = NULL;
+   }
 
    FREE(coef);
 
@@ -384,9 +408,11 @@ static char *translate(
    /* Return NULL to indicate no error */
    return(NULL);
 
-} /* translate */
+} /* two2three_translate */
 
 
+
+/*--------------------------------------------------------------------*/
 /*
 get_poly_dimension()
 

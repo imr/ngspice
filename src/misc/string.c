@@ -159,6 +159,76 @@ gettok(char **s)
     return (copy(buf));
 }
 
+/*-------------------------------------------------------------------------*
+ * gettok_noparens was added by SDB on 4.21.2003.
+ * It acts like gettok, except that it stops parsing when it hits a paren
+ * (i.e. it treats parens like whitespace).  It is used in translate (subckt.c)
+ * while looking for the POLY token.
+ *-------------------------------------------------------------------------*/
+char *
+gettok_noparens(char **s)
+{
+    char buf[BSIZE_SP];
+    int i = 0;
+    char c;
+
+    while (isspace(**s))
+        (*s)++;
+    if (!**s)
+        return (NULL);
+    while ((c = **s) && !isspace(c) && 
+	   ( **s != '(' ) && ( **s != ')' )  )  {
+        buf[i++] = *(*s)++;
+    }
+    buf[i] = '\0';
+    while (isspace(**s))
+        (*s)++;
+    return (copy(buf));
+}
+
+/*-------------------------------------------------------------------------*
+ * get_l_paren iterates the pointer forward in a string until it hits
+ * the position after the next left paren "(".  It returns 0 if it found a left 
+ * paren, and 1 if no left paren is found.
+ *-------------------------------------------------------------------------*/
+int
+get_l_paren(char **s)
+{
+    while (**s && ( **s != '(' ) )
+        (*s)++;
+    if (!**s)
+        return (1);
+    
+    (*s)++;
+
+    if (!**s)
+        return (1);
+    else
+        return 0;
+}
+
+
+/*-------------------------------------------------------------------------*
+ * get_r_paren iterates the pointer forward in a string until it hits
+ * the position after the next right paren ")".  It returns 0 if it found a right 
+ * paren, and 1 if no right paren is found.
+ *-------------------------------------------------------------------------*/
+int
+get_r_paren(char **s)
+{
+    while (**s && ( **s != ')' ) )
+        (*s)++;
+    if (!**s)
+        return (1);
+
+    (*s)++;
+
+    if (!**s)
+        return (1);
+    else 
+        return 0;
+}
+
 
 
 #ifndef HAVE_BCOPY

@@ -1,3 +1,23 @@
+2003-05-02  Stuart Brorson  <sdb@cloud9.net>
+ 
+ 	*  Added #define TRACE to main.c for use in debugging.  Added lots
+ 	of printf's in the code which are turned on by defining TRACE.
+ 	This is used to help figure out what the program is doing at each
+ 	step . . . . .
+ 	
+ 	*  Added lots of comments all over the source tree.  This should
+ 	help explain what the prog is doing for future hackers.
+ 	
+ 	*  Fixed parser to allow POLY attributes in dependent sources
+ 	(major changes  in src/frontend/subckt.c, as well as move location
+ 	of call to ENHtranslate_poly in src/frontend/inp.c)
+ 	
+ 	*  Fixed bug in device init files (src/spicelib/devices/*init.c)
+ 	so that Deviceinfo structures operated with XSPICE.
+ 
+ 	*  Fixed nasty malloc problem in src/xspice/mif/mifgetmod.c which
+ 	casuedfrequent segfaults (when compiled with XSPICE).
+ 	
 2003-04-14 Stefan Jones <stefan.jones@multigig.com>
 
    * configure.in: Made Tcl disable-shared and print info at end of configure

@@ -83,6 +83,12 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
 	}
 	mdfast = tab->defQmod;
     }
+
+#ifdef TRACE
+    /* ---  SDB debug statement --- */
+    printf ("In INP2Q, just about to dive into newInstance\n");
+#endif
+
     IFC(newInstance, (ckt, mdfast, &fast, name));
     IFC(bindNode, (ckt, fast, 1, node1));
     IFC(bindNode, (ckt, fast, 2, node2));

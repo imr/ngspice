@@ -71,7 +71,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	int		(*fn)( );
 	static int	is_dc;
 	int		k, j, n;
-	int		num_vars, branch_eq;
+	int		num_vars, branch_eq=0;
 	char		*sen_data=NULL;
 	char		namebuf[513];
 	IFuid		*output_names, freq_name;
@@ -601,7 +601,7 @@ inc_freq(double freq, int type, double step_size)
 double
 next_freq(int type, double freq, double stepsize)
 {
-	double	s;
+	double	s=0;
 
 	switch (type) {
 	case SENS_DC:

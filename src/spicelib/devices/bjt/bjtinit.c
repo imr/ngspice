@@ -7,23 +7,39 @@
 #include "bjtinit.h"
 
 
-SPICEdev BJTinfo = {
+SPICEdev BJTinfo = {                  /* description from struct IFdevice  */  
     {
-	"BJT",
-        "Bipolar Junction Transistor",
+      "BJT",                          /*  char *name               */
+      "Bipolar Junction Transistor",  /*  char *description        */
+      
+      &BJTnSize,                      /*  int *terms               */
+      &BJTnSize,                      /*  int *numNames            */
+      BJTnames,                       /*  char **termnames         */
+      
+      &BJTpTSize,                     /*  int *numInstanceparms    */
+      BJTpTable,                      /*  IFparm *instanceParms    */
+      
+      &BJTmPTSize,                    /*  int *numModelparms       */
+      BJTmPTable,                     /*  IFparm *modelParms       */
 
-        &BJTnSize,
-        &BJTnSize,
-        BJTnames,
+#ifdef XSPICE
+/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
+        NULL,  /* This is a SPICE device, it has no MIF info data */
 
-        &BJTpTSize,
-        BJTpTable,
+        0,     /* This is a SPICE device, it has no MIF info data */
+        NULL,  /* This is a SPICE device, it has no MIF info data */
 
-        &BJTmPTSize,
-        BJTmPTable,
-	DEV_DEFAULT
+        0,     /* This is a SPICE device, it has no MIF info data */
+        NULL,  /* This is a SPICE device, it has no MIF info data */
+
+        0,     /* This is a SPICE device, it has no MIF info data */
+        NULL,  /* This is a SPICE device, it has no MIF info data */
+/*---------------------------  End of SDB fix   -------------------------*/
+#endif
+
+      DEV_DEFAULT                     /*  int flags                */
     },
-
+    
     DEVparam      : BJTparam,
     DEVmodParam   : BJTmParam,
     DEVload       : BJTload,

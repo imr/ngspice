@@ -19,6 +19,22 @@ SPICEdev B3SOIFDinfo = {
 
         &B3SOIFDmPTSize,
         B3SOIFDmPTable,
+
+#ifdef XSPICE
+/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
+        NULL,  /* This is a SPICE device, it has no MIF info data */
+
+        0,     /* This is a SPICE device, it has no MIF info data */
+        NULL,  /* This is a SPICE device, it has no MIF info data */
+
+        0,     /* This is a SPICE device, it has no MIF info data */
+        NULL,  /* This is a SPICE device, it has no MIF info data */
+
+        0,     /* This is a SPICE device, it has no MIF info data */
+        NULL,  /* This is a SPICE device, it has no MIF info data */
+/*---------------------------  End of SDB fix   -------------------------*/
+#endif
+
 	DEV_DEFAULT}
 	,
 

@@ -32,6 +32,12 @@ int INPmakeMod(char *token, int type, card * line)
 
     /*  Model name was not already in model table.  Therefore stick 
 	it in the model table. Then reutrn.  */
+
+#ifdef TRACE
+    /* debug statement */
+    printf("In INPmakeMod, about to insert new model name = %s . . .\n", token);
+#endif
+
     *i = (INPmodel *) MALLOC(sizeof(INPmodel));
     if (*i == NULL)
 	return (E_NOMEM); 

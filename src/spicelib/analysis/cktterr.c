@@ -20,7 +20,7 @@ CKTterr(int qcap, CKTcircuit *ckt, double *timeStep)
     double del;
     double diff[8];
     double deltmp[8];
-    double factor;
+    double factor=0;
     int i;
     int j;
     static double gearCoeff[] = {

@@ -39,6 +39,11 @@ INPpas3(void *ckt, card *data, INPtables *tab, void *task,
     int length;			/* length of a name */
     void *node1;		/* the first node's node pointer */
 
+#ifdef TRACE
+    /* SDB debug statement */
+    printf("In INPpas3 . . . \n");
+#endif
+
     for(current = data; current != NULL; current = current->nextcard) {
 	line = current->line;
 	INPgetTok(&line,&token,1);

@@ -28,8 +28,10 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 
     line = image->line;
     
-    /* debug statement */
-    /*    printf("In INPdomodel, examining line %s . . . \n", line); */
+#ifdef TRACE
+    /* SDB debug statement */
+    printf("In INPdomodel, examining line %s . . . \n", line); 
+#endif
 
     INPgetTok(&line, &modname, 1);	/* throw away '.model' */
     INPgetTok(&line, &modname, 1);      /* get model name */
@@ -471,6 +473,21 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
     } 
 
 
+    /*  type poly added by SDB  . . . */
+#ifdef XSPICE
+    /*  --------  Check if model is a poly (specific to xspice) --------- */
+    else if (strcmp(typename, "poly") == 0) {
+	type = INPtypelook("POLY");
+	if (type < 0) {
+	    err =
+		INPmkTemp
+		("Device type POLY not available in this binary\n");
+	}
+	INPmakeMod(modname, type, image);
+    } 
+#endif
+
+
     /*  --------  Default action  --------- */
     else {
 #ifndef XSPICE
@@ -478,18 +495,35 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
       err = (char *) MALLOC(35 + strlen(typename));
       (void) sprintf(err, "unknown model type %s - ignored\n", typename);
 #else
+
       /* gtri - modify - wbk - 10/23/90 - modify to look for code models */
-      
-      /* add new code */
-      
+
+#ifdef TRACE
+      /* SDB debug statement */
+      printf("In INPdomodel, found unknown model type, typename = %s . . .\n", typename); 
+#endif
+
       /* look for this model type and put it in the table of models */
       type = INPtypelook(typename);
       if(type < 0) {
 	err = (char *) MALLOC(35 + strlen(typename));
 	sprintf(err,"Unknown model type %s - ignored\n",typename);
+
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In INPdomodel, ignoring unknown model typ typename = %s . . .\n", typename); 
+#endif
+
       }
-      else
+      else {
+
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In INPdomodel, adding model typename = %s to model list. . .\n", typename); 
+#endif
+
 	INPmakeMod(modname,type,image);
+      }
       
       /* gtri - end - wbk - 10/23/90 */
 #endif
