@@ -1,6 +1,6 @@
-Mesfet subthreshold characteristics
+Mesfet level 1 subthreshold characteristics
 
-Vds 1 0
+Vds 1 0 dc 0.1
 vids 1 2 dc 0
 Vgs 3 0 dc 0
 
@@ -8,10 +8,9 @@ z1 2 3 0 mesmod area=1.4
 
 .model mesmod nmf level=1 rd=46 rs=46 vt0=-1.3
 + lambda=0.03 alpha=3 beta=1.4e-3
-* z1 2 3 0 lev2 l=1u w=20u
-* .model lev2 nmf level=2 d=0.12u mu=0.23 vs=1.8e5
-*+ m=3.3 vto=-1.3 eta=1.82 lambda=0.044 sigma0=0.09
-*+ vsigma=0.1 vsigmat=0.9 rdi=46 rsi=46 delta=5
-*+ nd=2.1e23
+
+.dc vgs -3 0 0.05
+.print DC vids#branch
+
 
 .end
