@@ -10,7 +10,6 @@ Modified: 2001 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "acdefs.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"
@@ -18,6 +17,7 @@ Modified: 2001 AlansFixes
 #include "sperror.h"
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
+#include "src/maths/ni/niniter.h" /* va, NInzIter */
 
 extern int CKTnoise( CKTcircuit *, int, int, Ndata * );
 
@@ -25,7 +25,10 @@ extern int CKTnoise( CKTcircuit *, int, int, Ndata * );
 int
 NOISEan (CKTcircuit *ckt, int restart)
 {
-    Ndata *data;
+    static Ndata *data; /* va, must be static, for continuation of 
+                         * interrupted(Ctrl-C), longer lasting noise 
+			 * analysis 
+			 */
     double realVal;
     double imagVal;
     int error;
@@ -74,7 +77,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	}
     }
 
-    if ( (job->NsavFstp == 0) || restart) {
+    if ( (job->NsavFstp == 0.0) || restart) { /* va, NsavFstp is double */
 	switch (job->NstpType) {
 
 
