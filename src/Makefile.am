@@ -92,7 +92,7 @@ ngspice_LDADD = \
 	spicelib/parser/libinp.a \
 	maths/deriv/libderiv.a \
 	maths/cmaths/libcmaths.a \
-	maths/misc/libmathsmisc.a	\
+	@CIDERMATHDIR@
 	maths/poly/libpoly.a \
 	maths/ni/libni.a \
 	maths/sparse/libsparse.a \

@@ -403,12 +403,18 @@ dnl Add CIDER enhacements to ngspice.
 if test "$enable_cider" = "yes"; then
      AC_MSG_RESULT(CIDER features enabled)
      AC_DEFINE(CIDER)
+     
      CIDERDIR="ciderlib"
+     
      CIDERSIM="	$CIDERDIR/twod/libcidertwod.a     \
 		$CIDERDIR/oned/libcideroned.a     \
 		$CIDERDIR/input/libciderinput.a   \
 		$CIDERDIR/support/libcidersuprt.a \ "
-            
+     
+     CIDERMATH="misc"
+     
+     CIDERMATHDIR="maths/misc/libmathmisc.a"
+     
      NUMDEV="	spicelib/devices/nbjt/libnbjt.a   \
 		spicelib/devices/nbjt2/libnbjt2.a \
 		spicelib/devices/numd/libnumd.a   \
@@ -425,6 +431,8 @@ CIDERSCRIPTS="devload devaxis ciderinit"
 else
    CIDERLIB=""
    CIDERSIM=""
+   CIDERMATH=""
+   CIDERMATHDIR=""
    NUMDEV=""
    NUMDEVDIR=""
    CIDERSCRIPTS=""
