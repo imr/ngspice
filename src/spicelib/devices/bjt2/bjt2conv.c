@@ -34,7 +34,9 @@ BJT2convTest(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model != NULL; model = model->BJT2nextModel) {
         for(here=model->BJT2instances;here!=NULL;here = here->BJT2nextInstance){
-            vbe=model->BJT2type*(
+            if (here->BJT2owner != ARCHme) continue;
+	    
+	    vbe=model->BJT2type*(
                     *(ckt->CKTrhsOld+here->BJT2basePrimeNode)-
                     *(ckt->CKTrhsOld+here->BJT2emitPrimeNode));
             vbc=model->BJT2type*(

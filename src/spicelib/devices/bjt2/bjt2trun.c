@@ -27,6 +27,8 @@ BJT2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
     for( ; model != NULL; model = model->BJT2nextModel) {
         for(here=model->BJT2instances;here!=NULL;here = here->BJT2nextInstance){
+            if (here->BJT2owner != ARCHme) continue;
+
             CKTterr(here->BJT2qbe,ckt,timeStep);
             CKTterr(here->BJT2qbc,ckt,timeStep);
             CKTterr(here->BJT2qsub,ckt,timeStep);

@@ -37,9 +37,11 @@ typedef struct sBJT2instance {
                              * or collector prime depending on whether        *
                              * the device is VERTICAL or LATERAL              */
     double BJT2area; /* area factor for the bjt2 */
+    double BJTm;        /* parallel multiplier */
     double BJT2icVBE;    /* initial condition voltage B-E*/
     double BJT2icVCE;    /* initial condition voltage C-E*/
     double BJT2temp;     /* instance temperature */
+    double BJTdtemp;     /* instance delta temperature from circuit */
     double BJT2tSatCur;  /* temperature adjusted saturation current */
     double BJT2tSubSatCur; /* temperature adjusted subst. saturation current */
     double BJT2tEmitterConduct;   /* emitter conductance */
@@ -117,7 +119,9 @@ typedef struct sBJT2instance {
 
     unsigned BJT2off :1;   /* 'off' flag for bjt2 */
     unsigned BJT2tempGiven   :1; /* temperature given  for bjt2 instance*/
+    unsigned BJT2dtempGiven  :1; /* temperature given  for bjt2 instance*/    
     unsigned BJT2areaGiven   :1; /* flag to indicate area was specified */
+    unsigned BJT2mGiven      :1; /* flag to indicate m parameter specified */
     unsigned BJT2icVBEGiven  :1; /* flag to indicate VBE init. cond. given */
     unsigned BJT2icVCEGiven  :1; /* flag to indicate VCE init. cond. given */
     unsigned BJT2senPertFlag :1; /* indictes whether the the parameter of
@@ -453,6 +457,8 @@ typedef struct sBJT2model {          /* model structure for a bjt2 */
 #define BJT2_IC 5
 #define BJT2_AREA_SENS 6
 #define BJT2_TEMP 7
+#define BJT2_DTEMP 8
+#define BJT2_M 9
 
 /* model parameters */
 #define BJT2_MOD_NPN 101

@@ -41,9 +41,15 @@ BJT2ask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value,
         case BJT2_TEMP:
             value->rValue = here->BJT2temp - CONSTCtoK;
             return(OK);
+	case BJT2_DTEMP:
+            value->rValue = here->BJT2dtemp;
+            return(OK);    
         case BJT2_AREA:
             value->rValue = here->BJT2area;
             return(OK);
+	case BJT2_M:
+            value->rValue = here->BJT2m;
+            return(OK);    
         case BJT2_OFF:
             value->iValue = here->BJT2off;
             return(OK);

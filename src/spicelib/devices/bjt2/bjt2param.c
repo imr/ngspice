@@ -30,10 +30,18 @@ BJT2param(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             here->BJT2area = value->rValue;
             here->BJT2areaGiven = TRUE;
             break;
+        case BJT2_M:
+            here->BJT2m = value->rValue;
+            here->BJT2mGiven = TRUE;
+            break;	    
         case BJT2_TEMP:
-            here->BJT2temp = value->rValue+CONSTCtoK;
+            here->BJT2temp = value->rValue + CONSTCtoK;
             here->BJT2tempGiven = TRUE;
             break;
+        case BJT2_DTEMP:
+            here->BJT2dtemp = value->rValue;
+            here->BJT2dtempGiven = TRUE;
+            break;	    
         case BJT2_OFF:
             here->BJT2off = value->iValue;
             break;

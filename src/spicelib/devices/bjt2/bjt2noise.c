@@ -53,6 +53,8 @@ BJT2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
     for (model=firstModel; model != NULL; model=model->BJT2nextModel) {
 	for (inst=model->BJT2instances; inst != NULL; inst=inst->BJT2nextInstance) {
+	     if (inst->BJT2owner != ARCHme) continue;
+	    
 	    switch (operation) {
 
 	    case N_OPEN:

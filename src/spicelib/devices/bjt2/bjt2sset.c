@@ -35,6 +35,7 @@ BJT2sSetup(SENstruct *info, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->BJT2instances; here != NULL ;
                 here=here->BJT2nextInstance) {
+            if (here->BJT2owner != ARCHme) continue;
 
             if(here->BJT2senParmNo){
                 here->BJT2senParmNo = ++(info->SENparms);

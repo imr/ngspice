@@ -178,6 +178,10 @@ BJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             CKTnode *tmpNode;
             IFuid tmpName;
 
+            if (here->BJT2owner != ARCHme)
+                goto matrixpointers;
+
+
             if(!here->BJT2areaGiven) {
                 here->BJT2area = 1;
             }

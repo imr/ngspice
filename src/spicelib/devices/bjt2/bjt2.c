@@ -19,6 +19,7 @@ IFparm BJT2pTable[] = { /* parameters */
  IOPAU("icvbe",  BJT2_IC_VBE,         IF_REAL, "Initial B-E voltage"),
  IOPAU("icvce",  BJT2_IC_VCE,         IF_REAL, "Initial C-E voltage"),
  IOPU("area",    BJT2_AREA,           IF_REAL,    "Area factor"),
+ IOPU("m",       BJT_M,              IF_REAL,   "Parallel Multiplier"),
  IP("ic",       BJT2_IC,             IF_REALVEC, "Initial condition vector"),
  IP("sens_area",BJT2_AREA_SENS,IF_FLAG, "flag to request sensitivity WRT area"),
  OPU("colnode",  BJT2_QUEST_COLNODE,  IF_INTEGER, "Number of collector node"),
@@ -68,7 +69,8 @@ IFparm BJT2pTable[] = { /* parameters */
  OPU("sens_mag", BJT2_QUEST_SENS_MAG, IF_REAL,   "sensitivity of ac magnitude"),
  OPU("sens_ph",   BJT2_QUEST_SENS_PH,   IF_REAL,    "sensitivity of ac phase"),
  OPU("sens_cplx", BJT2_QUEST_SENS_CPLX, IF_COMPLEX, "ac sensitivity"),
- IOPU("temp",     BJT2_TEMP,            IF_REAL,    "instance temperature")
+ IOPU("temp",     BJT2_TEMP,            IF_REAL,    "instance temperature"),
+ IOPU("dtemp",    BJT_DTEMP,           IF_REAL,    "instance temperature delta from circuit")
 };
 
 IFparm BJT2mPTable[] = { /* model parameters */

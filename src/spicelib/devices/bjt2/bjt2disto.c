@@ -58,8 +58,8 @@ for( ; model != NULL; model = model->BJT2nextModel ) {
 
   /* loop through all the instances of the model */
   for (here = model->BJT2instances; here != NULL ;
- here=here->BJT2nextInstance) {
-
+       here=here->BJT2nextInstance) {
+     if (here->BJT2owner != ARCHme) continue;
 
 
     /* getting Volterra kernels */

@@ -47,7 +47,7 @@ BJT2sUpdate(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->BJT2instances; here != NULL ;
                 here=here->BJT2nextInstance) {
-
+            if (here->BJT2owner != ARCHme) continue;
 
             sxpbe = 0;
             sxpbc = 0;

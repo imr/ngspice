@@ -31,7 +31,9 @@ BJT2getic(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model ; model = model->BJT2nextModel) {
         for(here = model->BJT2instances; here ; here = here->BJT2nextInstance) {
-            if(!here->BJT2icVBEGiven) {
+            if (here->BJT2owner != ARCHme) continue;  
+	    
+	    if(!here->BJT2icVBEGiven) {
                 here->BJT2icVBE = 
                         *(ckt->CKTrhs + here->BJT2baseNode) - 
                         *(ckt->CKTrhs + here->BJT2emitNode);

@@ -36,7 +36,7 @@ BJT2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     for( ; model != NULL; model = model->BJT2nextModel) {
         for( here = model->BJT2instances; here!= NULL; 
                 here = here->BJT2nextInstance) {
-            
+           if (here->BJT2owner != ARCHme) continue;
 
             gcpr=model->BJT2collectorResist * here->BJT2area;
             gepr=model->BJT2emitterResist * here->BJT2area;
