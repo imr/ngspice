@@ -1,6 +1,6 @@
 *Model Card for BSIMPD2.0
 * Lmin= .2 Lmax= .8 Wmin= 2.8 Wmax= 2.8
-.Model P1  PMOS Level= 10 
+.Model P1  PMOS Level= 57 
 +TNOM = 27        TOX = 4.5E-09    TSI = .0000001   TBOX = 8E-08            
 +MOBMOD = 2       CAPMOD = 2       SHMOD = 0       
 +WINT = 0         LINT = -2E-08    
