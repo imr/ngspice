@@ -13,8 +13,6 @@ proc Loadspice { version dir } {
  
     package require tclreadline
 
-    package require Tclx   ;# for bsearch
-
     set suffix [info sharedlibextension]
 
     set library spice${suffix}
