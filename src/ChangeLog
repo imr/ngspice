@@ -1,5 +1,11 @@
 2000-07-20  Arno W. Peters  <A.W.Peters@ieee.org>
 
+	* src/hlp/*: moved these files into src/frontend/help.  The files
+	in this directory implement the help system for the frontend.
+
+	* configure.in, src/Makefile.am, src/frontend/Makefile.am: Files
+	affected by the move.
+
 	* src/circuit/*: moved these files into src/devices/parser.  The
 	files in this directory take a model line from the input file and
 	add the corresponding element to the representation of

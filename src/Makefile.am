@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = misc maths analysis circuit frontend hlp parser devices include
+SUBDIRS = misc maths analysis frontend parser devices include
 
 bin_PROGRAMS =  ngspice nutmeg help sconvert proc2mod multidec makeidx
 
@@ -60,7 +60,7 @@ ngspice_LDADD = \
 	analysis/libckt.a \
 	devices/libdev.a \
 	parser/libparser.a \
-	hlp/libhlp.a \
+	frontend/help/libhlp.a \
 	devices/parser/libinp.a \
 	maths/deriv/libderiv.a \
 	maths/cmaths/libcmaths.a \
@@ -85,7 +85,7 @@ nutmeg_LDADD = \
 	frontend/libfte.a \
 	frontend/plotting/libplotting.a \
 	parser/libparser.a \
-	hlp/libhlp.a \
+	frontend/help/libhlp.a \
 	maths/cmaths/libcmaths.a \
 	maths/poly/libpoly.a \
 	misc/libmisc.a 
@@ -97,7 +97,7 @@ nutmeg_LDADD = \
 help_SOURCES = help.c
 
 help_LDADD =  \
-	hlp/libhlp.a \
+	frontend/hlp/libhlp.a \
 	parser/libparser.a \
 	frontend/libfte.a \
 	misc/libmisc.a 

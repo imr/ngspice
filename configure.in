@@ -232,7 +232,7 @@ src/devices/vsrc/Makefile	\
 src/devices/parser/Makefile	\
 src/frontend/Makefile		\
 src/frontend/plotting/Makefile	\
-src/hlp/Makefile		\
+src/frontend/help/Makefile	\
 src/include/Makefile		\
 src/maths/Makefile		\
 src/maths/cmaths/Makefile	\

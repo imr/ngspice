@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = plotting
+SUBDIRS = plotting help
 
 noinst_LIBRARIES = libfte.a
 
