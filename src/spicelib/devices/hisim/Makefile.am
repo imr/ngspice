@@ -1,9 +1,9 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libhsm1.a
+noinst_LIBRARIES = libhisim.a
 
-libhsm1_la_SOURCES = 	hsm1.c		\ 
-			hsm1acld.c	\ 
+libhisim_a_SOURCES = 	hsm1.c		\
+			hsm1acld.c	\
 			hsm1ask.c 	\
 			hsm1cvtest.c 	\
 			hsm1del.c 	\
