@@ -3,13 +3,10 @@ proc Loadspice { version dir } {
 
     package require BLT
  
-    package require tclreadline
-
     set suffix [info sharedlibextension]
 
     set library spice${suffix}
-    
-   
+
     global tcl_platform
     if { $tcl_platform(platform) == "unix" } {
         set library [file join $dir lib${library}]
@@ -76,7 +73,7 @@ proc Loadspice { version dir } {
     }
 
     proc spice_init_gui { spicefile } {
-	source [ file join "%LIB_DIR%/spice/tclspice_source.tcl" ]
+	source "%LIB_DIR%/spice/tclspice_source.tcl"
 	#source "/usr/local/lib/spice/tclspice_source.tcl"              ;#- only load procs when gui needed 
 	spicewish::init_gui $spicefile
     }

@@ -13,7 +13,8 @@ namespace eval spicewish {
     #------------------------------------------------
     # nutmeg extensions  (eqivalent functions to nutmeg)
     # (requires  readline, 
-    
+
+    package require tclreadline
     package require Tclx
     
     #toplevel counters
