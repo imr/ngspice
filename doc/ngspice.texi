@@ -3542,7 +3542,7 @@ conditions.
  General form:
 
 @example
-  DXXXXXXX n+ n- mname <area=val> <pj=val> <off> <ic=vd> <temp=val> 
+  DXXXXXXX n+ n- mname <area=val> <m=val> <pj=val> <off> <ic=vd> <temp=val> 
   +                    <dtemp=val>
 @end example
 
@@ -4030,7 +4030,8 @@ $$
  General form:
 
 @example
-  QXXXXXXX NC NB NE <NS> MNAME <AREA> <OFF> <IC=VBE, VCE> <TEMP=T>
+  QXXXXXXX nc nb ne <ns> mname <area=val> <areac=val> <areab=val> 
+  + <m=val> <off> <ic=vbe, vce> <temp=val> <dtemp=val>
 @end example
 
 
@@ -4043,18 +4044,22 @@ $$
 
 
 
-NC, NB, and NE are the collector, base, and emitter nodes, respectively.
-NS is the (optional) substrate node.  If unspecified, ground is used.
-MNAME is the model name, AREA is the area factor, and OFF indicates an
-(optional) initial condition on the device for the dc analysis.  If the
-area factor is omitted, a value of 1.0 is assumed.  The (optional)
-initial condition specification using IC=VBE, VCE is intended for use
-with the UIC option on the .TRAN control line, when a transient analysis
-is desired starting from other than the quiescent operating point.  See
-the .IC control line description for a better way to set transient
-initial conditions.  The (optional) TEMP value is the temperature at
-which this device is to operate, and overrides the temperature
-specification on the .OPTION control line.
+@option{nc}, @option{nb}, and @option{ne} are the collector, base, and 
+emitter nodes, respectively. @option{ns} is the (optional) substrate 
+node.If unspecified, ground is used.  @option{mname} is the model name,  
+@option{area}, @option{areab}, @option{areac} are the area factors, and
+@option{off} indicates an (optional) initial condition on the device 
+for the dc analysis.  If the area factor is omitted, a value of 1.0 is 
+assumed.  The (optional) initial condition specification using  
+@option{ic=vbe, vce} is intended for use with the  @option{uic}
+@command{.tran} control line, when a transient analysis is desired 
+starting from other than the quiescent operating point.  See the 
+@command{.ic} control line description for a better way to set 
+transient initial conditions.  The (optional) @option{temp} value is 
+the temperature at which this device is to operate, and overrides the 
+temperature specification on the @command{.option} control line. Using 
+@option{dtemp} option you can specify instance's temperature relative 
+to the circuit temperature.
 
 
 
@@ -4062,7 +4067,19 @@ specification on the .OPTION control line.
 @node  BJT Models (NPN/PNP), Junction Field-Effect Transistors (JFETs), Bipolar Junction Transistors (BJTs), Transistors and Diodes
 @subsection  BJT Models (NPN/PNP)
 
+NGSPICE provides two BJT device models. The @option{level} specifies the 
+model to be used:
 
+@itemize @bullet
+@item level=1 : This is the original spice BJT model, and it is the 
+                default model if the @option{level} keyword is not
+		specified on the @command{.model} line.
+@item level=2 : This is a modified version of the original spice 
+                BJT that models both vertical and lateral devices and
+		includes temperature corrections of collector,
+		emitter and base resistors.
+@end itemize		 
+				
 The bipolar junction transistor model in NGSPICE is an adaptation of the
 integral charge control model of Gummel and Poon.  This modified
 Gummel-Poon model extends the original model to include several effects
@@ -4073,90 +4090,138 @@ to be more easily understood by the program user, and to reflect better
 both physical and circuit design thinking.
 
 
-The dc model is defined by the parameters IS, BF, NF, ISE, IKF, and NE
-which determine the forward current gain characteristics, IS, BR, NR,
-ISC, IKR, and NC which determine the reverse current gain
-characteristics, and VAF and VAR which determine the output conductance
-for forward and reverse regions.  Three ohmic resistances RB, RC, and RE
-are included, where RB can be high current dependent.  Base charge
-storage is modeled by forward and reverse transit times, TF and TR, the
-forward transit time TF being bias dependent if desired, and nonlinear
-depletion layer capacitances which are determined by CJE, VJE, and MJE
-for the B-E junction , CJC, VJC, and MJC for the B-C junction and CJS,
-VJS, and MJS for the C-S (Collector-Substrate) junction.  The
-temperature dependence of the saturation current, IS, is determined by
-the energy-gap, EG, and the saturation current temperature exponent,
-XTI.  Additionally base current temperature dependence is modeled by the
-beta temperature exponent XTB in the new model.  The values specified
-are assumed to have been measured at the temperature TNOM, which can be
-specified on the .OPTIONS control line or overridden by a specification
-on the .MODEL line.
+The dc model is defined by the parameters @option{IS}, @option{BF}, 
+@option{NF}, @option{ISE}, @option{IKF}, amd @option{NE} which determine 
+the forward current gain characteristics, @option{IS}, @option{BR}, 
+@option{NR}, @option{ISC}, @option{IKR}, and @option{NC} which determine 
+the reverse current gain characteristics, and @option{VAF} and @option{VAR} 
+which determine the output conductance for forward and reverse regions.  
+Level 2 model includes substrate staturation current @option{ISS}.
+
+Three ohmic resistances @option{RB}, @option{RC}, and @option{RE}
+are included, where @option{RB} can be high current dependent.  Base charge
+storage is modeled by forward and reverse transit times, @option{TF} and 
+@option{TR}, the forward transit time @option{TF} being bias dependent if 
+desired, and nonlinear depletion layer capacitances which are determined by 
+@option{CJE}, @option{VJE}, and @option{NJE} for the B-E junction, @option{CJC},
+@option{VJC}, and @option{NJC} for the B-C junction and @option{CJS},
+@option{VJS}, and @option{MJS} for the C-S (Collector-Substrate) junction.
+Level 2 model defines a substrate capacitance that will be connected to 
+device's base or collector, to model lateral or vertical devices.
+
+The temperature dependence of the saturation currents, @option{IS} and  
+@option{ISS} (for level 2 model), is determined by the energy-gap, 
+@option{EG}, and the saturation current temperature exponent, @option{XTI}.  
+Additionally base current temperature dependence is modeled by the beta 
+temperature exponent @option{XTB} in the new model.  The values specified 
+are assumed to have been measured at the temperature @option{TNOM}, which 
+can be specified on the @command{.options} control line or overridden by 
+a specification on the @command{.model} line.
 
 The BJT parameters used in the modified Gummel-Poon model are listed
 below.  The parameter names used in earlier versions of SPICE2 are still
 accepted.
 
-Modified Gummel-Poon BJT Parameters.
+Modified Gummel-Poon BJT Parameters:
 
-@multitable @columnfractions .1 .45 .15 .15 .15 .1
-@item name @tab parameter @tab units @tab default @tab example @tab area
-@item IS @tab transport saturation current @tab A @tab 1.0e-16 @tab
-1.0e-15 @tab *
-@item BF @tab ideal maximum forward beta @tab - @tab 100 @tab 100
-@item NF @tab forward current emission coefficient @tab - @tab 1.0 @tab 1
-@item VAF @tab forward Early voltage @tab V @tab infinite @tab 200
-@item IKF @tab corner for forward beta current roll-off @tab A @tab
-infinite @tab 0.01 @tab *
-@item ISE @tab B-E leakage saturation current @tab A @tab 0 @tab 1.0e-13 
-@tab *
-@item NE @tab B-E leakage emission coefficient @tab - @tab 1.5 @tab 2
-@item BR @tab ideal maximum reverse beta @tab - @tab 1 @tab 0.1
-@item NR @tab reverse current emission coefficient @tab - @tab 1
-@tab 1
-@item VAR @tab reverse Early voltage @tab V @tab infinite @tab 200
-@item IKR @tab corner for reverse beta high current roll-off
-       @tab A @tab infinite @tab 0.01 @tab *
-@item ISC @tab B-C leakage saturation current @tab A @tab 0 @tab 1.0e-13 
-@tab *
-@item NC @tab B-C leakage emission coefficient @tab - @tab 2 @tab 1.5
-@item RB @tab zero bias base resistance @tab Z @tab 0 @tab 100 @tab *
-@item IRB @tab current where base resistance falls halfway to its min
-value @tab A @tab infinite @tab 0.1 @tab *
-@item RBM @tab minimum base resistance at high currents @tab Z @tab RB
-10 @tab *
-@item RE @tab emitter resistance @tab Z @tab 0 @tab 1 @tab *
-@item RC @tab collector resistance @tab Z @tab 0 @tab 10 @tab *
-@item CJE @tab B-E zero-bias depletion capacitance @tab F @tab 0 @tab
-2pF @tab *
-@item VJE @tab B-E built-in potential @tab V @tab 0.75 @tab 0.6
-@item MJE @tab B-E junction exponential factor @tab - @tab 0.33 @tab 0.33
-@item TF @tab ideal forward transit time @tab sec @tab 0 @tab 0.1ns
-@item XTF @tab coefficient for bias dependence of TF @tab - @tab 0
-@item VTF @tab voltage describing VBC dependence of TF @tab V @tab infinite
-@item ITF @tab high-current parameter for effect on TF @tab A @tab 0
-@tab *
-@item PTF @tab excess phase at freq=1.0/(TF*2PI) Hz @tab deg @tab 0
-@item CJC @tab B-C zero-bias depletion capacitance @tab F @tab 0 @tab
-2pF @tab *
-@item VJC @tab B-C built-in potential @tab V @tab 0.75 @tab 0.5
-@item MJC @tab B-C junction exponential factor @tab - @tab 0.33 @tab 0.5
-@item XCJC @tab fraction of B-C depletion capacitance connected to
+@multitable @columnfractions .1 .40 .10 .15 .15 .1
+@item name   @tab parameter @tab units @tab default @tab example @tab scale factor
+@item SUBS   @tab substrate connection: 1 for 
+                  vertical geometry, -1 for
+		  lateral geometry.            
+		  (level 2 only)               @tab 1 @tab  
+                                               @tab 1.0e-15 @tab 
+@item IS     @tab transport saturation current @tab A @tab 1.0e-16 
+                                               @tab 1.0e-15 @tab area
+@item ISS    @tab reverse saturation current, 
+             substrate-to-collector for 
+	     vertical device or 
+	     substrate-to-base for lateral
+	     (level 2 only)                    @tab A @tab 1.0e-16
+	                                       @tab 1.0e-15 @tab area 
+		  
+@item BF     @tab ideal maximum forward beta   @tab - @tab 100 @tab 100
+@item NF     @tab forward current emission 
+                  coefficient                  @tab - @tab 1.0 @tab 1
+@item VAF    @tab forward Early voltage        @tab V @tab infinite @tab 200
+@item IKF    @tab corner for forward beta 
+                  current roll-off             @tab A @tab infinite 
+		                               @tab 0.01 @tab area
+@item ISE    @tab B-E leakage saturation current @tab A @tab 0 @tab 1.0e-13 
+             @tab area
+@item NE     @tab B-E leakage emission coefficient @tab - @tab 1.5 @tab 2
+@item BR     @tab ideal maximum reverse beta @tab - @tab 1 @tab 0.1
+@item NR     @tab reverse current emission coefficient @tab - @tab 1
+             @tab 1
+@item VAR    @tab reverse Early voltage @tab V @tab infinite @tab 200
+@item IKR    @tab corner for reverse beta high current roll-off
+             @tab A @tab infinite @tab 0.01 @tab area
+@item ISC    @tab B-C leakage saturation current
+                  (area is "areab" for vertical
+		   devices and "areac" for lateral) @tab A @tab 0 
+             @tab 1.0e-13  @tab  area
+
+@item NC     @tab B-C leakage emission coefficient @tab - @tab 2 @tab 1.5
+@item RB     @tab zero bias base resistance @tab Z @tab 0 @tab 100 @tab area
+@item IRB    @tab current where base 
+                  resistance falls halfway 
+		  to its min value @tab A @tab infinite @tab 0.1 @tab area
+@item RBM    @tab minimum base resistance at high currents @tab Z 
+                                                @tab RB 10 @tab area
+@item RE     @tab emitter resistance @tab Z @tab 0 @tab 1 @tab area
+@item RC     @tab collector resistance @tab Z @tab 0 @tab 10 @tab area
+@item CJE    @tab B-E zero-bias depletion capacitance @tab F @tab 0 
+                                                @tab 2pF @tab area
+@item VJE    @tab B-E built-in potential @tab V @tab 0.75 @tab 0.6
+@item MJE    @tab B-E junction exponential factor @tab - @tab 0.33 @tab 0.33
+@item TF     @tab ideal forward transit time @tab sec @tab 0 @tab 0.1ns
+@item XTF    @tab coefficient for bias dependence of TF @tab - @tab 0
+@item VTF    @tab voltage describing VBC dependence of TF @tab V @tab infinite
+@item ITF    @tab high-current parameter for effect on TF @tab A 
+                                               @tab 0 @tab - @tab area
+@item PTF    @tab excess phase at freq=1.0/(TF*2PI) Hz @tab deg @tab 0
+@item CJC    @tab B-C zero-bias depletion capacitance 
+                  (area is "areab" for vertical
+		   devices and "areac" for lateral) @tab F @tab 0 
+                                               @tab 2pF @tab area
+@item VJC    @tab B-C built-in potential @tab V @tab 0.75 @tab 0.5
+@item MJC    @tab B-C junction exponential factor @tab - @tab 0.33 @tab 0.5
+@item XCJC   @tab fraction of B-C depletion capacitance connected to
 internal base node @tab - @tab 1
-@item TR @tab ideal reverse transit time @tab sec @tab 0 @tab 10ns
-@item CJS @tab zero-bias collector-substrate capacitance @tab F @tab 0
-@tab 2pF @tab *
-@item VJS @tab substrate junction built-in potential @tab V @tab 0.75
-@item MJS @tab substrate junction exponential factor @tab - @tab 0 @tab 0.5
-@item XTB @tab forward and reverse beta temperature exponent @tab - @tab 
+@item TR     @tab ideal reverse transit time @tab sec @tab 0 @tab 10ns
+@item CJS    @tab zero-bias collector-substrate capacitance 
+                  (area is "areac" for vertical devices and
+		   "areab" for lateral)     @tab F @tab 0
+                                            @tab 2pF @tab area
+@item VJS    @tab substrate junction built-in potential @tab V @tab 0.75
+@item MJS    @tab substrate junction exponential factor @tab - @tab 0 @tab 0.5
+@item XTB    @tab forward and reverse beta temperature exponent @tab - @tab 
 0
-@item EG @tab energy gap for temperature effect on IS @tab eV @tab 1.11
-@item XTI @tab temperature exponent for effect on IS @tab - @tab 3
-@item KF @tab flicker-noise coefficient @tab - @tab 0
-@item AF @tab flicker-noise exponent @tab - @tab 1
-@item FC @tab coefficient for forward-bias depletion capacitance formula
-         @tab - @tab 0.5 @tab o
-@item TNOM @tab Parameter measurement temperature @tab °C @tab 27 @tab 50
+@item EG     @tab energy gap for temperature effect on IS @tab eV @tab 1.11
+@item XTI    @tab temperature exponent for effect on IS @tab - @tab 3
+@item KF     @tab flicker-noise coefficient @tab - @tab 0
+@item AF     @tab flicker-noise exponent @tab - @tab 1
+@item FC     @tab coefficient for forward-bias depletion capacitance formula
+             @tab - @tab 0.5 @tab o
+@item TNOM   @tab Parameter measurement temperature @tab °C @tab 27 @tab 50
+@item TRE1   @tab 1st order temperature coefficient for RE
+                  (level 2 only) @tab 1/°C @tab 0.0 @tab 1e-3
+@item TRE2   @tab 2nd order temperature coefficient for RE 
+                  (level 2 only) @tab 1/°C^2 @tab 0.0 @tab 1e-5
+@item TRC1   @tab 1st order temperature coefficient for RC 
+                  (level 2 only )@tab 1/°C @tab 0.0 @tab 1e-3
+@item TRC2   @tab 2nd order temperature coefficient for RC 
+                  (level 2 only) @tab 1/°C^2 @tab 0.0 @tab 1e-5
+@item TRB1   @tab 1st order temperature coefficient for RB 
+                  (level 2 only) @tab 1/°C @tab 0.0 @tab 1e-3
+@item TRB2   @tab 2nd order temperature coefficient for RB
+                  (level 2 only) @tab 1/°C^2 @tab 0.0 @tab 1e-5
+@item TRB1   @tab 1st order temperature coefficient for RBM 
+                  (level 2 only) @tab 1/°C @tab TRB1 @tab 1e-3
+@item TRB2   @tab 2nd order temperature coefficient for RBM 
+                  (level 2 only) @tab 1/°C^2 @tab TRB2 @tab 1e-5
 @end multitable
+
 
 
 
