@@ -281,7 +281,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		if (type < 0) {
 		err =
 		    INPmkTemp
-		    ("Placeholder for EKV model: look at http://.... for info on EKV\n");
+		    ("Placeholder for EKV model: look at http://legwww.epfl.ch for info on EKV\n");
 	    }
 	    break;    
 	case 49:
