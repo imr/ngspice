@@ -1,0 +1,89 @@
+! downgrad.txt,   Use with  'washprog.c'
+! opcodes: x=exclusion, m=macro, w=wordsubst  s= general subst
+! Macros to keep: Cconst Hi Lo Str Strbig Use ...?
+
+w Proc void
+w Begin {
+w EndProc ;}
+w Func ""
+w EndFunc ;}
+w If "if ("
+w Then ") {"
+w Else ";} else {"
+w ElsIf ";} else if ("
+w EndIf ;}
+w While "while ("
+w Do   ") {"
+w Done ;}
+w Repeat "do {"
+w Until ";} while ( !("
+w EndRep ));
+w For "for ("
+w Switch "switch ("
+w CaseOne ") { case"
+w Case "; break; } case"
+w AndCase ":; case"
+w Is :{
+w Default "; break;} default: {"
+w EndSw   ";break;} }"
+
+m Const(1,2)  "const short 1 = 2;"
+
+m Record(1) "typedef struct _t1 {"
+m RecPtr(1) "typedef struct _t1 *"
+m EndRec(1) "} 1;"
+m Addr(1) &1
+
+w False 0
+w True 1
+w Not !
+w And &&
+w Or ||
+w Div /
+w Mod %
+
+w Shl <<
+w Shr >>
+w AND &
+w OR  |
+w XOR \^
+w NOT ~
+w AT  *
+
+m Inc(1) 1++
+m Dec(1) 1--
+w Null NULL
+w Void void
+m Table(1)     "[1]= {"
+w EndTab       };
+
+m chr(1) (char)(1)
+m Zero(1) (!(1))
+m NotZ(1) (1)
+
+w Pointer "void *"
+w Pfile   "FILE *"
+
+w Char  "unsigned char"
+w Byte  "unsigned char"
+w Bool  "unsigned char"
+w Word  "unsigned short"
+w Pchar "char *"
+
+w Intern static
+w Extern extern
+m Tarray(1,2,3)     "typedef 2 1[3];"
+m Tarray\2(1,2,3,4)  "typedef 2 1[3][4];"
+m Darray(1,2,3)     "2 1[3];"
+
+!m Cconst(1,2)    "typedef enum {1 = 2} _n1;"
+!m Str(1,2)       "char 2[1+03]={00,00,(char)1}"  
+!m Strbig(1,2)    "char 2[1+04]={00, (char)Hi(1), (char)Lo(1)}"
+
+w Aconst(1,2,3)  "2 1[3] ={"
+w EndAco         "};"
+m Sini(1)        "sini(1,sizeof(1)-04)"
+m New(1)         "(1 *)new(sizeof(1))"
+m Dispose(1)     "dispose((void *)1)"
+m NewArr(1,2)    "(1 *)new(sizeof(1)*2)"
+
