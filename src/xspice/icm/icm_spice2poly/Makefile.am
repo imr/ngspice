@@ -6,7 +6,7 @@
 #
 
 # Edit this to point to cmpp in your installation.
-CMPPDIR = /usr/local/opus/bin
+CMPPDIR = $(top_srcdir)/src/xspice/cmpp
 
 ##------ automake definitions below. ------
 ##

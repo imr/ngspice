@@ -13,8 +13,8 @@ EXTRA_DIST = README modpath.lst udnpath.lst spice2poly.cm dlmain.c
 
 
 # Edit these to point to your Opus installation
-CMPPDIR = /usr/local/opus/bin
-OPUS_INCLUDE_DIR = /usr/local/opus/lib/spice/include
+CMPPDIR = $(top_srcdir)/src/xspice/cmpp
+OPUS_INCLUDE_DIR = $(top_srcdir)/src/include
 
 
 ##------ automake definitions below. ------
