@@ -48,6 +48,6 @@ DIST_SUBDIRS = 	bsim1	\
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
-	README
+	README bin
 
 MAINTAINERCLEANFILES = Makefile.in
