@@ -1,0 +1,43 @@
+This code is essentially XGraph release 11.4, with some modifications
+which were made for use by the NCSA Relativity group.
+These modifications were made by Paul Walker, and he should be
+contacted at the below address if you have any problems/questions
+regarding these features.
+
+1.	Animation.  XGraph will now do a *very* crude animation of
+	your data sets.  It occasionally has problems with refreshes
+	and will consequently run your animation three of four times.
+	Consider this an undocumented feature!  You can adjust the
+	speed of the animation with the -dl option.  I find "2" works
+	well on a sparc displaying on MacX, "5" on a sparc on its
+	own display, and "10" on an SGI or RS6K on its own display.
+	Remeber, this animation is not being advertised as anything
+	other than very crude, so if you are looking for production
+	quality video, turn elsewhere.  We find it useful as it will
+	quickly generate animation which shows time evolution. 
+
+2.	Differentation.  You can press the "Derivative" button to
+	see the first and second derivatives of your data set.  The
+	method is a standard centered difference.  You cannot display
+	higher than second derivatives.  Animation, zooming, etc...
+	work in each of the derivative windows.  Endpoints are found
+	linearly interpolating inner values to ends, so pay them
+	little heed!
+
+3.	New Color Map.  We couldn't differentiate the colors once we
+	got past yellow, so we created a new color map.  If you don't
+	like it, look in init.c for the variable "defColors" and 
+	comment out the new one, replacing it with the commented
+	old one.  Of course, you are free to insert your own choices
+	here also ... Just use standard X color names. 
+
+
+These modifications were made by Paul Walker, and distributed with the
+Original author's consent.  See Copyright.h for information about
+distribution and ownership of these changes.  Contact Paul Walker at
+
+Paul Walker
+NCSA
+605 E. Springfield Ave
+Champaign IL 61820
+pwalker@ncsa.uiuc.edu

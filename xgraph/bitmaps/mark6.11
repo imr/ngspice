@@ -1,0 +1,6 @@
+#define mark6_width 8
+#define mark6_height 8
+#define mark6_x_hot 3
+#define mark6_y_hot 3
+static char mark6_bits[] = {
+   0x00, 0x1c, 0x14, 0x1c, 0x14, 0x1c, 0x00, 0x00};

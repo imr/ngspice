@@ -1,0 +1,26 @@
+
+xgraph 12.1
+<http://www-mash.cs.berkeley.edu/vint/xgraph>
+
+distributed by the VINT project
+<http://netweb.usc.edu/vint/>
+
+
+Welcome to the VINT release of xgraph.
+Xgraph is an X-Windows application that includes:
+
+  - interactive plotting and graphing, by David Harrison of UC Berkeley
+  - animation and deritives, added by Paul Walker of NCSA
+  - portability and bug fixes, by the VINT project
+
+
+See the file "INSTALL" for installation instructions.
+
+If you have installation problems or questions, check:
+
+	<http://www-mash.cs.berkeley.edu/ns/ns-problems.html#xgraph>
+
+BEFORE posting to the mailing list.  Mailing list info can be found at
+the xgraph web page.
+
+

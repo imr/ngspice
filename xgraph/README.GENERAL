@@ -1,0 +1,74 @@
+
+This directory contains source for the X11 version of xgraph,  a
+two-dimensional data plotting program.  Those familar with the X10
+version of this program will find that is completely compatible.
+However,  there are a few important notes and changes you should
+be aware of:
+
+1. The program was developed and tested on X11 release 3 on a
+   color VAXstation GPX and on a color DECstation 3100.  It should
+   work on most other servers without change but has not been tested
+   on these other configurations.  If you have problems,  please send
+   a note to:
+
+	davidh@ic.Berkeley.EDU
+	        or
+	...!ucbvax!ucbcad!davidh
+
+2. This version includes an improved hardcopy facility.  
+   An additional option, "Include in Document", has been added since
+   the first X11 release.  A new output type, Idraw, has also been
+   added.  See the manual page for details about the hardcopy dialog.
+
+3. There are several changes to the input format for xgraph.  However,
+   the new format is compatible with the old and there should be no
+   problem running xgraph with old data sets.  The new form allows
+   discontinuous data in data sets (using the "move" operator),
+   parameter specification using a format similar to that found in the
+   ~/.Xdefaults file, and comments.  See the manual page for details.
+
+4. In some cases,  xgraph uses dashed lines to distinguish different
+   data sets.  Some servers are notoriously slow at rendering dashed
+   lines.  Be prepared for a significantly reduced performance on
+   those servers.
+
+5. Xgraph now uses software clipping to clip data to its display
+   windows.  This means you should be able to zoom in much farther
+   on large data sets than was possible under the X10 version.
+
+6. Xgraph used to use some rather sophisticated heuristics to handle
+   visuals and colormaps.  Due to complaints, I have removed these
+   heuristics.  Xgraph will display on whatever screen is specified in
+   the DISPLAY environment variable or on the command line.
+
+7. I plan to add full ICCCM support when X11 release 4 becomes
+   available.  In the meantime, the program should work under most
+   window mangers (it is somewhat conformant already).
+
+8. As a follow-on to (7),  note that the operation of the program
+   is heavily influenced by your choice of window managers.  Focus
+   based window managers (like dxwm from Digital) will require you
+   to set focus in the text input slots of the hardcopy dialog box.
+
+9. Many people have sent me notes about the state of code of xgraph.
+   Xgraph was constructed initially as a challenge from another
+   programmer here at Berkeley.  The first version of the program was
+   written in an afternoon.  Since then, the program has "evolved"
+   quite dramatically.  Since this is not my primary work, I generally
+   tacked on features quickly as the need became apparent.  Some day,
+   I would truely like to rewrite it.  Until then, please bear with
+   me.
+
+10. Since xgraph has become quite popular,  those in positions of power
+   have recommended I add the standard UC Berkeley copyright notice
+   to this software.  See copyright.h for details.
+
+11. Many people have sent me suggestions and comments.  Some have
+   written new code or sent patches to fix problems.  I greately 
+   appreciate these contributions.  Special thanks go to Beorn Johnson 
+   and Alan Kramer for the idraw output code.
+
+			David Harrison
+			UC Berkeley Electronics Research Lab
+			(davidh@ic.Berkeley.EDU, ...!ucbvax!ucbcad!davidh)
+

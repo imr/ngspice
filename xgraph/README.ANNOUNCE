@@ -1,0 +1,84 @@
+
+A new version of xgraph is now available.  Xgraph is a popular
+two-dimensional plotting program that accepts data in a form similar
+to the unix program graph and displays line graphs, scatter plots, or
+bar charts on an X11 display.  These graphs are fully annotated with a
+title, axis numbering and labels, and a legend.  Zooming in on regions
+of a graph is supported.  The program can automatically generate
+hardcopy output to Postscript printers and HPGL plotters.  A new
+option allows xgraph output to be directly pasted into idraw for
+further annotation.
+
+This program is NOT a widget.  It is a stand-alone program written at
+the Xlib level and should run on any machine with a reasonable
+implementation of X11 release 3 or later.  The source for the program
+is available through anonymous ftp to shambhala.Berkeley.EDU
+(128.32.132.54):
+
+	% ftp shambhala.Berkeley.EDU
+	Name: anonymous
+	Password: <anything non-null>
+	ftp> cd pub
+	ftp> binary
+	ftp> get xgraph-11.tar.Z
+	ftp> quit
+	% uncompress xgraph-11.tar.Z
+	% tar xf xgraph-11.tar
+
+This will create a directory called xgraph-11.  In that directory
+you will find a file called README.INSTALL that contains directions
+for building the program.  I plan to submit the sources to the
+moderator of comp.sources.x after I have tested the program under X11
+release 4 (meaning a few weeks after the X Consortium releases the
+distribution).
+
+Those who do not have ftp access can obtain the source for xgraph
+using a mail archive system I have installed on dent.Berkeley.EDU
+(courtesy of Brian Reid at Digital).  An example is given below:
+
+	To: ucbvax!dent!archive-server
+	Subject: send programs xgraph.shar.01 xgraph.shar.02
+
+	send programs xgraph.shar.03 xgraph.shar.04 xgraph.shar.05
+	send programs xgraph.shar.06 xgraph.shar.07 xgraph.shar.08
+
+The archive server will send you these files as time and load permits.
+They are standard shell archives and can be unpacked by running them
+through /bin/sh (in order).  If you would like to know more about the
+mail server, send a message with a subject of "help".  I am afraid I
+am no mail wizard so I cannot help you determine a path to dent.
+
+For those familar with xgraph, the most important changes are
+summarized below:
+
+- A new data reader has been written that allows discontinuous data in
+  each data set.  Also, nearly all of the display options for xgraph
+  can be set in the data file.  The reader is also more forgiving
+  about blank lines and excess white space.
+
+- A new option has been added to the Postscript hardcopy facility to
+  allow xgraph output to be included in other documents using psfig.
+  As mentioned above, xgraph output can be imported into idraw for
+  further annotation if necessary.
+
+- I received lots of complaints about the way xgraph obtains fonts and
+  visuals.  The new xgraph uses a much simpler scheme to obtain these
+  resources and has fall back code to insure it will run in almost any
+  situation.
+
+- Options handling has been cleaned up substantially.  Xgraph options
+  can now be specified as X resources (~/.Xdefaults), in the data
+  file, or on the command line.
+
+- Drawing is somewhat faster on some servers due to a better choice of
+  initial defaults.
+
+Please send all bug reports, questions, comments or suggestions to
+the electronic address below.
+
+			David Harrison
+			UC Berkeley Electronics Research Lab
+			(davidh@ic.Berkeley.EDU, ...!ucbvax!ucbcad!davidh)
+
+
+

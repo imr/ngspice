@@ -1,0 +1,6 @@
+#define mark4_width 8
+#define mark4_height 8
+#define mark4_x_hot 3
+#define mark4_y_hot 3
+static char mark4_bits[] = {
+   0x00, 0x22, 0x14, 0x08, 0x14, 0x22, 0x00, 0x00};

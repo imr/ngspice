@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = doc src man tests
+SUBDIRS = @XGRAPHDIR@ doc src man tests
 
 EXTRA_DIST = FAQ acconfig.h autogen.sh NOTES  BUGS AUTHORS ChangeLog \
 		DEVICES NEWS README

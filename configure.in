@@ -116,11 +116,19 @@ dnl --enable-numparams: define NUMPARAMS in the code. This is for .param support
 AC_ARG_ENABLE(numparam,
     [  --enable-numparam       Enable numparams library support, experimental *not in standard distribution*])
 
+dnl --enable-xgraph:   Compile the xgraph plotting program. Default is "no".
+dnl Xgraph is a plotitng package for X11 once very popular.
+AC_ARG_ENABLE(xgraph,
+  [  --enable-xgraph           Enable xgraph compilation.])
+ 
 dnl --with-readline:  Includes GNU readline support into CLI.  Default is "no".
 dnl Including readline into ngspice is a violation of GPL license. It's use
 dnl is discouraged.
 AC_ARG_WITH(readline,
   [  --with-readline[=yes/no]   Enable GNU readline support for CLI.  Default=no.])
+
+
+
 
 dnl Enable maintainer commands only if requested
 AM_MAINTAINER_MODE
@@ -394,6 +402,16 @@ if test "$enable_pzdebug" = "yes"; then
         AC_MSG_RESULT(WARNING: Pole/Zero analysis debug is enabled)	
 fi
 
+if test "$enable_xgraph" = "yes"; then
+    AC_MSG_RESULT(Xgraph compilation enabled.)
+    AC_CONFIG_SUBDIRS(xgraph)
+    XGRAPHDIR="xgraph"
+else
+    XGRAPHDIR=""
+fi        
+
+AC_SUBST(XGRAPHDIR)
+
 if test "$enable_ekv" = "yes"; then
     AC_MSG_RESULT(Model EKV included)
     AC_DEFINE(HAVE_EKV)
@@ -502,9 +520,11 @@ AC_SUBST(NUMPARAMDIR)
 AC_SUBST(NUMPARAMLIB)
 
 dnl  ----  Option to include GNU readline support in ngspice CLI  ----
-if test "$with_readline" != "yes"; then
+dnl  ----  Default: disabled.                                     ----
+dnl  ----  Hope to see in the future readline replacement.        ----
+
+if test "$with_readline" = "yes"; then
     AC_MSG_RESULT(GNU readline disabled.)
-    
 else 
     AC_MSG_RESULT(Checking for readline:)
     AC_CHECK_HEADERS([readline/readline.h readline/history.h], 
@@ -512,8 +532,10 @@ else
                      [AC_MSG_ERROR(Couldn't find GNU readline headers.)]) 
     AC_CHECK_LIB(readline, readline, 
                      [LIBS="$LIBS -lreadline"],
-                     [AC_MSG_ERROR(Couldn't find readline libraries.)])  
+                     [AC_MSG_ERROR(Couldn't find readline libraries.)])	       
 fi
+
+
 
 AC_OUTPUT(			\
 Makefile			\

@@ -1,0 +1,389 @@
+.TH XGRAPH 1 "December, 1989"
+.SH NAME
+xgraph \- Draw a graph on an X11 Display
+.SH SYNOPSIS
+.B xgraph
+[ options ] [[-geometry |=]WxH+X+Y ] [ -display host:display.screen ] [ file ... ]
+.SH DESCRIPTION
+The 
+.I xgraph
+program draws a graph on an X display given data read from either
+data files or from standard input if no files are specified.
+It can display up to 64 independent data sets using different colors
+and/or line styles for each set.
+It annotates the graph with a title,  axis labels,  grid lines or tick
+marks, grid labels,  
+and a legend.
+There are options to control the appearance of most components of
+the graph.
+.PP
+The input format is similar to
+.I graph(1G)
+but differs slightly.
+The data consists of a number of
+.I "data sets."
+Data sets are separated by a blank line.
+A new data set is also
+assumed at the start of each input file.
+A data set consists of an ordered list of points of the form "{directive} X Y".
+The directive is either "draw" or "move" and can be omitted.
+If the directive is "draw", a line will be drawn between the previous
+point and the current point (if a line graph is chosen).
+Specifying a "move" directive tells xgraph not to draw a line between
+the points.
+If the directive is omitted, "draw" is assumed for all points in
+a data set except the 
+first point where "move" is assumed.
+The "move" directive is used most often to allow discontinuous data
+in a data set.
+The name of a data set can be specified by 
+enclosing the name in double quotes on a line by itself in the
+body of the data set.  The trailing double quote is optional.
+Overall graphing options for the graph can be specified in data
+files by writing lines of the form "<option>: <value>".  The
+option names are the same as those used for specifying X 
+resources (see below). The option and value must be separated by at
+bleast one space.
+An example input file with three data sets is shown below.  Note
+that set three is not named, set two has discontinuous data,
+and the title of the graph is specified near the top of the file.
+.sp 1
+.nf
+TitleText: Sample Data
+0.5 7.8
+1.0 6.2
+"set one
+1.5 8.9
+
+"set two"
+-3.4 1.4e-3
+-2.0 1.9e-2
+move -1.0 2.0e-2
+-0.65 2.2e-4
+
+2.2 12.8
+2.4 -3.3
+2.6 -32.2
+2.8 -10.3
+.fi
+.PP
+After
+.I xgraph
+has read the data,  it will create a new window to graphically
+display the data.
+The interface used to specify the size and location of this window depends
+on the window manager currently in use.
+Refer to the reference manual of the window manager for details.
+.PP
+Once the window has been opened,  all of the data sets will be displayed
+graphically (subject to the options explained below) with a legend in 
+the upper right corner of the screen.
+To zoom in on a portion of the graph,  depress a mouse button in
+the window and sweep out a region.
+.I xgraph
+will then open a new window looking at just that portion of the graph.
+.I xgraph
+also presents three control buttons in the upper left corner of
+each window:
+.I Close,
+.I Hardcopy,
+and
+.I About.
+Windows are closed by depressing a mouse button while the mouse
+cursor is inside the
+.I Close
+button.  Typing EOF (control-D) in a window also closes that window.
+Depressing a mouse button while the mouse cursor is in the
+.I Hardcopy
+button causes a dialog to appear asking about hardcopy (printout)
+options.  These options are described below:
+.IP "Output Device"
+Specifies the type of the output device (e.g. "HPGL", "Postscript", etc).
+An output device is chosen by depressing the mouse inside its name.
+The default values of other fields will change when you select a
+different output device.
+.IP "Disposition"
+Specifies whether the output should go directly to a device
+or to a file.  Again,  the default values of other fields will change
+when you select a different disposition.
+.IP "File or Device Name"
+If the disposition is "To Device",  this field specifies the device
+name.
+A device name is the same as the name given for the -P command
+of lpr(1).
+If the disposition is "To File",  this field specifies the name
+of the output file.
+.IP "Maximum Dimension"
+This specifies the maximum size of the plot on the hardcopy
+device in centimeters.
+.I xgraph
+takes in account the aspect ratio of the plot on the screen
+and will scale the plot so that the longer side of the plot
+is no more than the value of this parameter.
+If the device supports it,  the plot may also be rotated on the page
+based on the value of the maximum dimension.
+.IP "Include in Document"
+If selected, this option causes
+.I xgraph
+to produce harcopy output that is suitable for inclusion in other
+larger documents.
+As an example,  when this option is selected the Postscript output 
+produced by xgraph will have a bounding box suitable for use with
+psfig.
+.IP "Title Font Family"
+This field specifies the name of a font to use when drawing
+the graph title.  Suitable defaults are initially chosen for
+any given hardcopy device.
+The value of this field is hardware specific -- refer to
+the device reference manual for details.
+.IP "Title Font Size"
+This field specifies the desired size of the title fonts in points
+(1/72 of an inch).  
+If the device supports scalable fonts,  the
+font will be scaled to this size.
+.IP "Axis Font Family and Axis Font Size"
+These fields are like
+.I "Title Font Family"
+and
+.I "Title Font Size"
+except they specify values for the font
+.I xgraph
+uses to draw axis labels, and legend descriptions.
+.IP "Control Buttons"
+After specifing the parameters for the plot,  the "Ok" button causes
+.I xgraph
+to produce a hardcopy.
+Pressing the "Cancel" button will abort the hardcopy operation.
+Depressing the
+.I About
+button causes Xgraph to display a window containing the version of
+the program and an electronic mailing address for the author
+for comments and suggestions.
+.PP
+.I xgraph
+accepts a large number of options most of which can be specified
+either on the command line, in the user's .Xdefaults or .Xresources file, 
+or in the data files themselves.
+A list of these options is given below.  The command line
+option is specified first with its X default or data file name (if any) 
+in parenthesis afterward.
+The format of the option in the X defaults file is "program.option: value"
+where program is the program name (xgraph) and the option name is the
+one specified below.
+Option specifications in the data file are similar to the X defaults file
+specification except the program name is omitted.
+.TP
+.B  \-geometry WxH+X+Y or \=WxH+X+Y (Geometry)
+Specifies the initial size and location of the xgraph window.
+.TP
+.B  \-<digit> <name>
+These options specify the data set name for the corresponding data set.
+The digit should be in the range '0' to '63'.
+This name will be used in the legend.
+.TP
+.B  \-bar (BarGraph)
+Specifies that vertical bars should be drawn from the data points to
+a base point which can be specified with -brb.  Usually,  the -nl
+flag is used with this option.  The point itself is located at
+the center of the bar.
+.TP
+.B  \-bof (BarGraph)
+Offset the bars for additional datasets by the specified amount.
+.TP 
+.B  \-device <name>
+Set the output device for xgraph. The default is 'X'; other valid
+devices are 'ps', 'hpgl', 'idraw' and tgif.
+.TP
+.B  \-o <filename> \-O <filename>
+Set the output file name for postscript, hpgl and idraw devices.
+Files created with -O can be used other documents, and files generated
+with -o can be printed directly.
+.TP
+.B  \-P<printername>
+Set the printer name for postscript or hpgl devices. This and the -o or -O
+option are mutually exclusive.
+.TP 
+.B \-stk
+Stack elements coming from different datasets, instead of plotting them
+from the same baseline. Datasets must match exactly.
+.TP 
+.B \-fitx
+Translate and scale the x data from all datasets to fit [0..1].
+.B \-fity
+Translate and scale the y data from all datasets to fit [0..1].
+.TP
+.B \-scale <factor>
+Output scale factor for postscript, hpgl and idraw devices. The default
+is 1.0, and 0.5 will generate a 50% reduced plot.
+.TP
+.B \-fmtx <printf-format> \-fmty <printf-format>
+Use the format specified to generate the legents for the x or y axis.
+.TP
+.B  \-bb (BoundBox)
+Draw a bounding box around the data region.  This is very useful
+if you prefer to see tick marks rather than grid lines (see -tk).
+.TP
+.B  \-bd <color> (Border)
+This specifies the border color of the
+.I xgraph
+window.
+.TP
+.B  \-bg <color> (Background)
+Background color of the
+.I xgraph
+window.
+.TP
+.B  \-brb <base> (BarBase)
+This specifies the base for a bar graph.  By default,  the base is zero.
+.TP
+.B  \-brw <width> (BarWidth)
+This specifies the width of bars in a bar graph.  The amount is specified
+in the user's units.  By default,  a bar one pixel wide is drawn.
+.TP
+.B  \-bw <size> (BorderSize)
+Border width (in pixels) of the
+.I xgraph
+window.
+.TP
+.B  \-db (Debug)
+Causes xgraph to run in synchronous mode and prints out the values
+of all known defaults.
+.TP
+.B  \-fg <color> (Foreground)
+Foreground color.  This color is used to draw all text and the normal
+grid lines in the window.
+.TP
+.B  \-gw (GridSize)
+Width,  in pixels,  of normal grid lines.
+.TP
+.B  \-gs (GridStyle)
+Line style pattern of normal grid lines.
+.TP
+.B  \-lf <fontname> (LabelFont)
+Label font.  All axis labels and grid labels are drawn using this font.
+A font name may be specified exactly (e.g. "9x15" or 
+"-*-courier-bold-r-normal-*-140-*") or in an abbreviated form: <family>-<size>.
+The family is the family name (like helvetica) and the size is the font
+size in points (like 12).  The default for this parameter is "helvetica-12".
+.TP
+.B  \-lnx (LogX)
+Specifies a logarithmic X axis.  Grid labels represent powers of ten.
+.TP
+.B  \-lny (LogY)
+Specifies a logarithmic Y axis.  Grid labels represent powers of ten.
+.TP
+.B  \-lw width (LineWidth)
+Specifies the width of the data lines in pixels.  The default is zero.
+.TP
+.B  \-lx <xl,xh> (XLowLimit, XHighLimit)
+This option limits the range of the X axis to the specified
+interval.  This (along with -ly) can be used to "zoom in" on a particularly
+interesting portion of a larger graph.
+.TP
+.B  \-ly <yl,yh> (YLowLimit, YHighLimit)
+This option limits the range of the Y axis to the specified
+interval.
+.TP
+.B  \-m (Markers)
+Mark each data point with a distinctive marker.
+There are eight distinctive markers used by xgraph.
+These markers are assigned uniquely to each different line style on
+black and white machines and varies with each color on color machines.
+.TP
+.B  \-M (StyleMarkers)
+Similar to -m but markers are assigned uniquely to each eight consecutive
+data sets (this corresponds to each different line style on color machines).
+.TP
+.B  \-nl (NoLines)
+Turn off drawing lines.  When used with -m, -M, -p, or -P this can be used to
+produce scatter plots.  When used with -bar,  it can be used to
+produce standard bar graphs.
+.TP
+.B  \-ng (NoLegend)
+Turn off drawing Legends. Can be used to increase the drawing area.
+.TP
+.B  \-p (PixelMarkers)
+Marks each data point with a small marker (pixel sized).  This is
+usually used with the -nl option for scatter plots.
+.TP
+.B  \-P (LargePixels)
+Similar to -p but marks each pixel with a large dot.
+.TP
+.B  \-rv (ReverseVideo)
+Reverse video.  On black and white displays,  this will invert
+the foreground and background colors.  
+The behaviour on color displays is undefined.
+.TP
+.B  \-t <string> (TitleText)
+Title of the plot.  This string is centered at the top of the graph.
+.TP
+.B  \-tf <fontname> (TitleFont)
+Title font.  This is the name of the font to use for the graph title.
+A font name may be specified exactly (e.g. "9x15" or 
+"-*-courier-bold-r-normal-*-140-*") or in an abbreviated form: <family>-<size>.
+The family is the family name (like helvetica) and the size is the font
+size in points (like 12).  The default for this parameter is "helvetica-18".
+.TP
+.B  \-tk (Ticks)
+This option causes
+.I xgraph
+to draw tick marks rather than full grid lines.  The -bb option
+is also useful when viewing graphs with tick marks only.
+.TP
+.B  \-tkax (Tick Axis)
+When tick marks are enabled, plot the axes.
+.TP
+.B  \-x <unitname> (XUnitText)
+This is the unit name for the X axis.  Its default is "X".
+.TP
+.B  \-y <unitname> (YUnitText)
+This is the unit name for the Y axis.  Its default is "Y".
+.TP
+.B  \-zg <color> (ZeroColor)
+This is the color used to draw the zero grid line.
+.TP
+.B  \-zw <width> (ZeroWidth)
+This is the width of the zero grid line in pixels.
+.PP
+Some options can only be specified in the X defaults file or in the
+data files.  These options are described below:
+.TP
+.B <digit>.Color
+Specifies the color for a data set.  Eight independent colors can
+be specified.  Thus,  the digit should be between '0' and '7'.
+If there are more than eight data sets,  the colors
+will repeat but with a new line style (see below).
+.TP
+.B <digit>.Style
+Specifies the line style for a data set.  A string of ones
+and zeros specifies the pattern used for the line style.
+Eight independent line styles can be specified.  Thus,  the
+digit should be between '0' and '7'.  If there are more
+than eight data sets,  these styles will be reused.  On color
+workstations,  one line style is used for each of eight colors.
+Thus,  64 unique data sets can be displayed.
+.TP
+.B Device
+The default output form presented in the hardcopy dialog (i.e. "Postscript",
+"HPGL", etc).
+.TP
+.B Disposition
+The default setting of whether output goes directly to a device or to a file.  
+This must be one of the strings "To File" or "To Device".
+.TP
+.B FileOrDev
+The default file name or device string in the hardcopy dialog.
+.TP
+.B ZeroWidth
+Width,  in pixels,  of the zero grid line.
+.TP
+.B ZeroStyle
+Line style pattern of the zero grid line.
+.SH AUTHOR
+David Harrison
+University of California
+.SH BUGS
+.br
+- Zooming in on bar graphs doesn't work right.
+.br
+- There is no way to produce hardcopy without running xgraph interactively.

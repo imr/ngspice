@@ -1,0 +1,6 @@
+#define mark8_width 8
+#define mark8_height 8
+#define mark8_x_hot 3
+#define mark8_y_hot 3
+static char mark8_bits[] = {
+   0x00, 0x3e, 0x1c, 0x08, 0x1c, 0x3e, 0x00, 0x00};

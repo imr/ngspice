@@ -1,0 +1,6 @@
+#define mark3_width 8
+#define mark3_height 8
+#define mark3_x_hot 3
+#define mark3_y_hot 3
+static char mark3_bits[] = {
+   0x00, 0x1c, 0x36, 0x22, 0x36, 0x1c, 0x00, 0x00};

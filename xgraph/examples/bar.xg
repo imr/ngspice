@@ -1,0 +1,21 @@
+TitleText: Sample Bar Graph
+BarGraph: true
+BarBase: 0.0
+BarWidth: 0.25
+NoLines: true
+YUnitText: Widgets/Year
+XUnitText: Year
+"Frobs"
+79.75 5.6
+80.75 8.3
+81.75 2.2
+
+"Blobs"
+80 8.0
+81 6.4
+82 1.2
+
+"Zygotes"
+80.25 9.1
+81.25 10.8
+82.25 8.3

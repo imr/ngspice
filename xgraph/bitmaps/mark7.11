@@ -1,0 +1,6 @@
+#define mark7_width 8
+#define mark7_height 8
+#define mark7_x_hot 3
+#define mark7_y_hot 3
+static char mark7_bits[] = {
+   0x00, 0x1c, 0x2a, 0x36, 0x2a, 0x1c, 0x00, 0x00};

@@ -1,0 +1,79 @@
+
+This file contains instructions for building the X11 version of xgraph.
+When unpacked,  the source is distributed in three directories:
+
+	xgraph-11		Source for the program
+	xgraph-11/bitmaps	Bitmaps used for cursors and markers
+	xgraph-11/examples	Sample data for trying out the program
+
+First, you should examine the file hard_devices.c.  This file lists
+the default hardcopy parameters for each hardcopy output device.  Some
+of these defaults are site-specific and should be taylored to your
+site.  For example, at our site, the default HPGL plotter is called
+"paper" and the default Postscript printer is called "lps40".  You can
+change these names in this file.  See hard_devices.h for a description
+of the initialization fields.
+
+If you do not like the default values for xgraph options, you can
+change these by editing the default values as listed on the third page
+in xgraph.c.  Remember that changing these values changes the default
+behaviour for everyone running the program.  Personal preference
+should be left for specification in the user's Xresources or Xdefaults
+file.
+
+An Imakefile is provided for compiling the program in an X11 release 3
+source tree.  If you have such a source tree, type the following in
+the xgraph-11 directory:
+
+	% make TOP=<source-tree-top>
+
+where <source-tree-top> is the top level directory of the X11 release
+3 source tree.  If you don't have an X11 source tree but you have all
+of the X libraries and include files installed in "standard
+locations", type the following the in the xgraph-11 directory:
+
+	% make -f Makefile.std
+
+Either of these commands will produce an executable xgraph in the
+xgraph-11 directory.  If you are installing the program in an X11
+source tree, you can use the following to install the program and
+manual page in the proper locations:
+
+	% make TOP=<source-tree-top> install
+	% make TOP=<source-tree-top> install.man
+
+You might want to try these commands with the "-n" option once to make
+sure the program and manual page are installed in the proper
+directories.  If they aren't, you may want to change the DESTDIR
+variable and try again.  If you really need to change the Makefile
+options, you can generate a new Makefile from the Imakefile using
+imake as provided on the X11 release tape.
+
+Several example data sets are provided in the xgraph-11/examples
+directory.  Try the following to check out xgraph:
+
+	% xgraph examples/xgtest.xg
+
+This should produce a graph with a series of parabolic curves.
+
+Other documentation files are included.  A summary of these
+files is given below:
+
+README.ANNOUNCE		Message submitted to comp.windows.x announcing
+			the program and how to obtain it.
+
+README.GENERAL		Important notes about differences and quirks
+			of the program.
+
+README.HARDCOPY		Documenation for writing your own hardcopy
+			driver library.
+
+README.INSTALL		This file.
+
+xgraph.man		Xgraph manual page.
+
+			David Harrison
+			UC Berkeley Electronics Research Lab
+			(davidh@ic.Berkeley.EDU, ...!ucbvax!ucbcad!davidh)
+
+
