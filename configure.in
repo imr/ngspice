@@ -463,9 +463,8 @@ fi
 
 dnl --with-readline : the user wants to use readline library
 AC_ARG_WITH(readline,
-    [  --with-readline   Use the readline package: SEE README],
+    [  --with-readline   Use the readline library. WARNING: breaks GPL license],
     AC_MSG_RESULT(Checking for readline library:)
- Check for the readline library:
     AC_CHECK_LIB(readline, readline, AC_DEFINE(HAVE_GNUREADLINE) LIBS="$LIBS -lreadline")
 )
 

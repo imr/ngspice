@@ -42,7 +42,7 @@ char cp_til = '~';
  * globbing in them. Sort after the second phase but not the first...
  */
 
-/* MW. Now only tilde is supportef, {}*? don't work */
+/* MW. Now only tilde is supported, {}*? don't work */
 
 wordlist *
 cp_doglob(wordlist *wlist)
@@ -72,8 +72,11 @@ cp_tildexpand(char *string)
 {
     char	*result;
 
+#ifdef HAVE_READLINE
+    result = tildexpand(string);
+#else
     result = tilde_expand(string);
-
+#endif
     if (!result) {
 	if (cp_nonomatch) {
 	    return copy(string);

@@ -134,8 +134,11 @@ extern int scannum(char *str);
 extern int ciprefix(register char *p, register char *s);
 extern int cieq(register char *p, register char *s);
 extern void strtolower(char *str);
+#ifdef HAVE_GNUREADLINE
+extern char *tildexpand(char *string);
+#else
 extern char *tilde_expand(char *string);
-
+#endif
 extern char *smktemp(char *id);
 
 extern char *copy(char *str);

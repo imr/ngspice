@@ -15,6 +15,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "hcomp.h"
 #include "variable.h"
 
+#ifdef HAVE_GNUREADLINE
+#include <readline/readline.h>
+#include <readline/history.h>
+
+extern int gnu_history_lines;
+extern char gnu_history_file[];
+#endif
 
 static void byemesg(void);
 
@@ -79,9 +86,14 @@ com_quit(wordlist *wl)
             byemesg();
     } else
         byemesg();
-
+#ifdef HAVE_GNUREADLINE
+    /* Added GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
+    if (cp_interactive && (cp_maxhistlength > 0)) {
+	stifle_history(cp_maxhistlength);
+	write_history(gnu_history_file);
+    }
+#endif /* HAVE_GNUREADLINE */
     exit(EXIT_NORMAL);
-
 }
 
 

@@ -43,6 +43,14 @@
 #include <pwd.h>
 #endif
 
+#ifdef HAVE_GNUREADLINE
+/* Added GNU Readline Support 11/3/97 -- Andrew Veliath <veliaa@rpi.edu> */
+/* from spice3f4 patch to ng-spice. jmr */
+#include <readline/readline.h>
+#include <readline/history.h>
+#include "fteinput.h"
+#endif
+
 #ifndef HAVE_GETRUSAGE
 #ifdef HAVE_FTIME
 #include <sys/timeb.h>
@@ -63,6 +71,11 @@ static bool ft_batchmode = FALSE;
 bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. */
 bool ft_setflag = FALSE;    /* Don't abort after an interrupt. */
 char *ft_rawfile = "rawspice.raw";
+
+#ifdef HAVE_GNUREADLINE
+char gnu_history_file[512];
+static char *application_name;
+#endif
 
 bool oflag = FALSE;         /* Output über redefinierte Funktionen */
 FILE *flogp;  // hvogt 15.12.2001
@@ -309,6 +322,89 @@ shutdown(int exitval)
     exit (exitval);
 }
 
+#ifdef HAVE_GNUREADLINE
+/* Adapted ../lib/cp/lexical.c:prompt() for GNU Readline -- Andrew Veliath <veliaa@rpi.edu> */
+static char *
+prompt()
+{
+    static char pbuf[128];
+    char *p = pbuf, *s;
+
+    if (cp_interactive == FALSE)
+        return;
+    if (cp_promptstring == NULL)
+        s = "-> ";
+    else
+        s = cp_promptstring;
+    if (cp_altprompt)
+        s = cp_altprompt;
+    while (*s) {
+        switch (strip(*s)) {
+	case '!':
+	    p += sprintf(p, "%d", where_history() + 1);
+	    break;
+	case '\\':
+	    if (*(s + 1)) 
+		p += sprintf(p, "%c", strip(*++s));
+	default:
+	    *p = strip(*s); ++p;
+	    break;
+        }
+        s++;
+    }
+    *p = 0;
+    return pbuf;
+}
+
+/* Process device events in Readline's hook since there is no where
+   else to do it now - AV */
+int rl_event_func()
+{
+    static REQUEST reqst = { checkup_option, 0 };
+    Input(&reqst, NULL);
+    return 0;
+}
+
+/* Added GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
+void app_rl_readlines()
+{
+    char *line, *expanded_line;
+
+    strcpy(gnu_history_file, getenv("HOME"));
+    strcat(gnu_history_file, "/.");
+    strcat(gnu_history_file, application_name);
+    strcat(gnu_history_file, "_history");
+
+    using_history();
+    read_history(gnu_history_file);
+
+    rl_readline_name = application_name;
+    rl_instream = cp_in;
+    rl_outstream = cp_out;
+    rl_event_hook = rl_event_func;
+	
+    while (1) {
+	history_set_pos(history_length);
+	line = readline(prompt());
+	if (line && *line) {
+	    int s = history_expand(line, &expanded_line);
+		    
+	    if (s == 2) {
+		fprintf(stderr, "-> %s\n", expanded_line);
+	    } else if (s == -1) {
+		fprintf(stderr, "readline: %s\n", expanded_line);
+	    } else {
+		cp_evloop(expanded_line);
+		add_history(expanded_line);
+	    }
+	    free(expanded_line);
+	}
+	if (line) free(line);
+    }
+    /* History gets written in ../fte/misccoms.c com_quit */
+}
+#endif /* HAVE_GNUREADLINE */
+
 void
 show_help(void)
 {
@@ -423,6 +519,13 @@ main(int argc, char **argv)
     }
     started = TRUE;
 
+#ifdef HAVE_GNUREADLINE
+    if (!(application_name = strrchr(argv[0],'/')))
+        application_name = argv[0];
+    else
+        ++application_name;
+#endif
+    
 #ifdef PARALLEL_ARCH
     PBEGIN_(argc, argv);
     ARCHme = NODEID_();
@@ -617,7 +720,11 @@ main(int argc, char **argv)
  
     /* Set up signal handling */
     if (!ft_batchmode) {
+
+#ifndef HAVE_GNUREADLINE
         signal(SIGINT, ft_sigintr);
+#endif
+
         signal(SIGFPE, sigfloat);
 #if defined(SIGTSTP) // && !defined(__MINGW32__)
         signal(SIGTSTP, sigstop);
@@ -788,7 +895,11 @@ evl:
     } else {
         (void) setjmp(jbuf);
         cp_interactive = TRUE;
+#ifdef HAVE_GNUREADLINE
+	app_rl_readlines();
+#else	
 	while (cp_evloop((char *) NULL) == 1) ;
+#endif /* ifelse HAVE_GNUREADLINE */	
     }
 
 #else  /* ~ SIMULATOR */
@@ -806,7 +917,11 @@ evl:
     /* Nutmeg "main" */
     (void) setjmp(jbuf);
     cp_interactive = TRUE;
+#ifdef HAVE_GNUREADLINE
+    app_rl_readlines();
+#else    
     while (cp_evloop((char *) NULL) == 1) ;
+#endif /* ifelse HAVE_GNUREADLINE */
 
 #endif /* ~ SIMULATOR */
 

@@ -788,12 +788,15 @@ zoomin(GRAPH *graph)
 	        graph->commandline, fx0, fx1, fy0, fy1);
 	}
 
+/* don't use the following if using GNU Readline - AV */
+#ifndef HAVE_GNUREADLINE
 	/* hack for Gordon Jacobs */
 	/* add to history list if plothistory is set */
 	if (cp_getvar("plothistory", VT_BOOL, (char *) &dummy)) {
 	  wl = cp_parse(buf);
 	  (void) cp_addhistent(cp_event++, wl);
 	}
+#endif /* HAVE_GNUREADLINE */
 
 	(void) cp_evloop(buf);
 

@@ -32,6 +32,8 @@ extern jmp_buf jbuf;
 
 extern pid_t getpid (void);
 
+/* not using SIGINT with GNU Readline - AV */
+#ifndef HAVE_GNUREADLINE
 RETSIGTYPE
 ft_sigintr(void)
 {
@@ -55,7 +57,7 @@ ft_sigintr(void)
     cp_resetcontrol();
     longjmp(jbuf, 1);
 }
-
+#endif /* !HAVE_GNUREADLINE */
 
 RETSIGTYPE
 sigfloat(int sig, int code)

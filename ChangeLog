@@ -1,3 +1,21 @@
+2003-08-14  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* configure.in, src/main.c, src/misc/tilde.c, src/misc/tilde.h,
+	  src/frontend/com_history.c, src/frontend/misccoms.h,
+	  src/frontend/signal_handler.c, src/frontend/plotting/x11.c,
+	  src/frontend/parser/glob.c, src/include/ngspice.h:
+	  
+	  Added Andrew Veliath patch fo readline support. Using
+	  readline with ngspice IS A VIOLATION OF GPL LICENSE, you
+	  have been warned. The final decision is up to you. The
+	  patch has been applied in the perspective of changing
+	  readline library with libedit. Libedit aims to be a
+	  replacement of readline and is covered by BSD license.
+	  Libedit is available at the URL: libedit.sourceforge.net.
+	  
+	  Readline code has been extrapolated from a patch available
+	  on  http://www.btae.mam.gov.tr/~genc/ngspice/. 
+	  
 2003-08-11  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* doc/ngspice.texi: updated documentation. Still incomplete
