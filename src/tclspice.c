@@ -517,7 +517,7 @@ static int _thread_stop(){
 #endif
     }
     if(!fl_exited) {
-      fprintf(stderr,"couldn't stop tclspice\n");
+      fprintf(stderr,"Couldn't stop tclspice\n");
       return TCL_ERROR;
     }
 #ifdef HAVE_LIBPTHREAD
@@ -527,10 +527,16 @@ static int _thread_stop(){
     ft_intrpt = FALSE;
     return TCL_OK;
   }else {
-    fprintf(stderr,"spice not running\n");
+    fprintf(stderr,"Spice not running\n");
   }
   return TCL_OK;
 }
+
+void sighandler_tclspice(int num) {
+	if(fl_running) _thread_stop();
+	return;
+}
+
 #endif /*THREADS*/
 
 static int _run(int argc,char **argv){
@@ -1325,11 +1331,11 @@ int blt_plot(struct dvec *y,struct dvec *x){
   char buf[1024];
     
   /* A bug in these functions? , crashes if used so make vectors in Tcl
-     Blt_CreateVector(spice_interp,"spice::X_Data",1,&X_Data);
-     Blt_CreateVector(spice_interp,"spice::Y_Data",1,&Y_Data);
+     Blt_CreateVector(spice_interp,"::spice::X_Data",1,&X_Data);
+     Blt_CreateVector(spice_interp,"::spice::Y_Data",1,&Y_Data);
   */
-  Blt_GetVector(spice_interp,"spice::X_Data",&X_Data);
-  Blt_GetVector(spice_interp,"spice::Y_Data",&Y_Data);
+  Blt_GetVector(spice_interp,"::spice::X_Data",&X_Data);
+  Blt_GetVector(spice_interp,"::spice::Y_Data",&Y_Data);
 
   if(!X_Data || !Y_Data) {
     fprintf(stderr,"Error: Blt vector X_Data or Y_Data not created\n");
@@ -2018,6 +2024,9 @@ bot:
     /* init the mutex */
 #ifdef HAVE_LIBPTHREAD
     pthread_mutex_init(&triggerMutex,NULL);
+#endif
+#ifdef THREADS
+	signal(SIGINT,sighandler_tclspice);
 #endif
 	
     /*register functions*/

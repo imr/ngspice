@@ -1,3 +1,8 @@
+2004-07-20 Stefan Jones <stefan.jones@multigig.com>
+
+	* src/tclspice.c:
+	blt_plot() - look for BLT vectors ::spice::[XY]_Data
+	
 2004-07-19 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/tclspice.c:
