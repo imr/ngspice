@@ -47,7 +47,7 @@
 #include "com_plot.h"
 #include "com_setscale.h"
 #include "com_xgraph.h"
-
+#include "fourier.h"
 
 /* FIXME: Integrate spcp_coms and nutcp_coms into one variable. */
 

@@ -31,12 +31,15 @@ static int CKTfour(int ndata, int numFreq, double *thd, double *Time, double *Va
 
 #define DEF_FOURGRIDSIZE 200
 
+
 /* CKTfour(ndata,numFreq,thd,Time,Value,FundFreq,Freq,Mag,Phase,nMag,nPhase)
  *         len   10      ?   inp  inp   inp      out  out out   out  out
  */
 
-void
-com_fourier(wordlist *wl)
+/* FIXME: This function leaks memory due to non local exit bypassing
+   freeing of memory at the end of the function. */
+int
+fourier(wordlist *wl, struct plot *current_plot)
 {
     struct dvec *time, *vec;
     struct pnode *names, *first_name;
@@ -49,11 +52,14 @@ com_fourier(wordlist *wl)
     char xbuf[20];
     int shift;
 
+    if (!current_plot)
+	return 1;
+
     sprintf(xbuf, "%1.1e", 0.0);
     shift = strlen(xbuf) - 7;
-    if (!plot_cur || !plot_cur->pl_scale) {
+    if (!current_plot || !current_plot->pl_scale) {
         fprintf(cp_err, "Error: no vectors loaded.\n");
-        return;
+        return 1;
     }
 
     if ((!cp_getvar("nfreqs", VT_NUM, (char *) &nfreqs)) || (nfreqs < 1))
@@ -65,15 +71,15 @@ com_fourier(wordlist *wl)
             (fourgridsize < 1))
         fourgridsize = DEF_FOURGRIDSIZE;
 
-    time = plot_cur->pl_scale;
+    time = current_plot->pl_scale;
     if (!isreal(time)) {
         fprintf(cp_err, "Error: fourier needs real time scale\n");
-        return;
+        return 1;
     }
     s = wl->wl_word;
     if (!(ff = ft_numparse(&s, FALSE)) || (*ff <= 0.0)) {
         fprintf(cp_err, "Error: bad fund freq %s\n", wl->wl_word);
-        return;
+        return 1;
     }
     fundfreq = *ff;
 
@@ -114,8 +120,8 @@ com_fourier(wordlist *wl)
                 d = 1 / fundfreq;   /* The wavelength... */
                 if (dp[1] - dp[0] < d) {
                     fprintf(cp_err, 
-                "Error: wavelength longer than time span\n");
-                    return;
+			    "Error: wavelength longer than time span\n");
+                    return 1;
                 } else if (dp[1] - dp[0] > d) {
                     dp[0] = dp[1] - d;
                 }
@@ -131,7 +137,7 @@ com_fourier(wordlist *wl)
                         polydegree)) {
                     fprintf(cp_err, 
                         "Error: can't interpolate\n");
-                    return;
+                    return 1;
                 }
                 timescale = grid;
             } else {
@@ -145,7 +151,7 @@ com_fourier(wordlist *wl)
                     nphase);
             if (err != OK) {
                 ft_sperror(err, "fourier");
-                return;
+                return 1;
             }
 
             fprintf(cp_out, "Fourier analysis for %s:\n", 
@@ -185,8 +191,17 @@ com_fourier(wordlist *wl)
     tfree(phase);
     tfree(nmag);
     tfree(nphase);
-    return;
+    return 0;
 }
+
+
+void
+com_fourier(wordlist *wl)
+{
+    fourier(wl, plot_cur);
+}
+
+
 
 static char *
 pn(double num)
@@ -198,50 +213,54 @@ pn(double num)
         i = 6;
 
     if (num < 0.0)
-        (void) sprintf(buf, "%.*g", i - 1, num);
+        sprintf(buf, "%.*g", i - 1, num);
     else
-        (void) sprintf(buf, "%.*g", i, num);
+        sprintf(buf, "%.*g", i, num);
     return (copy(buf));
 }
 
-/*
- * CKTfour() - perform fourier analysis of an output vector.
- *  Due to the construction of the program which places all the
- *  output data in the post-processor, the fourier analysis can not
- *  be done directly.  This function allows the post processor to
- *  hand back vectors of time and data values to have the fourier analysis
- *  performed on them.
+
+/* CKTfour() - perform fourier analysis of an output vector.
  *
- */
-
-
+ * Due to the construction of the program which places all the output
+ * data in the post-processor, the fourier analysis can not be done
+ * directly.  This function allows the post processor to hand back
+ * vectors of time and data values to have the fourier analysis
+ * performed on them.  */
 static int
-CKTfour(int ndata, int numFreq, double *thd, double *Time, double *Value, double FundFreq, double *Freq, double *Mag, double *Phase, double *nMag, double *nPhase)
-                /* number of entries in the Time and Value arrays */
-                    /* number of harmonics to calculate */
-                    /* total harmonic distortion (percent) to be returned */
-                    /* times at which the voltage/current values were measured*/
-                    /* voltage or current vector whose transform is desired */
-                        /* the fundamental frequency of the analysis */
-                    /* the frequency value of the various harmonics */
-                    /* the Magnitude of the fourier transform */
-                    /* the Phase of the fourier transform */
-                    /* the normalized magnitude of the transform: nMag(fund)=1*/
-                    /* the normalized phase of the transform: Nphase(fund)=0 */
-    /* note we can consider these as a set of arrays:  The sizes are:
-     *  Time[ndata], Value[ndata]
-     *  Freq[numFreq],Mag[numfreq],Phase[numfreq],nMag[numfreq],nPhase[numfreq]
+CKTfour(int ndata,		/* number of entries in the Time and
+                                   Value arrays */
+	int numFreq,		/* number of harmonics to calculate */
+	double *thd,		/* total harmonic distortion (percent)
+                                   to be returned */
+	double *Time,		/* times at which the voltage/current
+                                   values were measured*/
+	double *Value,		/* voltage or current vector whose
+                                   transform is desired */
+	double FundFreq,	/* the fundamental frequency of the
+                                   analysis */
+	double *Freq,		/* the frequency value of the various
+                                   harmonics */
+	double *Mag,		/* the Magnitude of the fourier
+                                   transform */
+	double *Phase,		/* the Phase of the fourier transform */
+	double *nMag,		/* the normalized magnitude of the
+                                   transform: nMag(fund)=1*/
+	double *nPhase)		/* the normalized phase of the
+                                   transform: Nphase(fund)=0 */
+{
+    /* Note: we can consider these as a set of arrays.  The sizes are:
+     * Time[ndata], Value[ndata], Freq[numFreq], Mag[numfreq],
+     * Phase[numfreq], nMag[numfreq], nPhase[numfreq]
+     *
      * The arrays must all be allocated by the caller.
      * The Time and Value array must be reasonably distributed over at
      * least one full period of the fundamental Frequency for the
      * fourier transform to be useful.  The function will take the
      * last period of the frequency as data for the transform.
-     */
-
-{
-/* we are assuming that the caller has provided exactly one period
- * of the fundamental frequency.
- */
+     *
+     * We are assuming that the caller has provided exactly one period
+     * of the fundamental frequency.  */
     int i;
     int j;
     double tmp;

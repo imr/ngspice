@@ -7,7 +7,6 @@
 #define FOURIER_H_INCLUDED
 
 void com_fourier(wordlist *wl);
-
-
+int fourier(wordlist *wl, struct plot *current);
 
 #endif

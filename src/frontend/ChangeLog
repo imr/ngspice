@@ -1,5 +1,12 @@
 2000-09-09  Arno W. Peters  <A.W.Peters@ieee.org>
 
+	* commands.c: Use fourier.h.
+
+	* dotcards.c: Update to prevent segfault.
+
+	* fourier.c, fourier.h: com_fourier is now calling fourier(), a
+	function with more parameters.
+
 	* dotcards.c: Added assertions to guard a double indirection, now
 	ngspice will bomb out on an assertion instead of a segfault.
 

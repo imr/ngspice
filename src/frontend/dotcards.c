@@ -20,18 +20,34 @@ Modified: 2000 AlansFixes
 #include "circuits.h"
 #include "dotcards.h"
 #include "variable.h"
-
+#include "fourier.h"
 
 /* Extract all the .save lines */
 
 static void fixdotplot(wordlist *wl);
 static void fixdotprint(wordlist *wl);
 static char * fixem(char *string);
-static bool setcplot(char *name);
 static wordlist * gettoks(char *s);
 
 
 extern void com_save2 (wordlist *wl, char *name);
+
+
+
+static struct plot *
+setcplot(char *name)
+{
+    struct plot *pl;
+
+    for (pl = plot_list; pl; pl = pl->pl_next) {
+        if (ciprefix(name, pl->pl_typename)) {
+            return pl;
+        }
+    }
+    return NULL;
+}
+
+
 
 void
 ft_dotsaves(void)
@@ -157,7 +173,9 @@ ft_cktcoms(bool terse)
 
     if (!ft_curckt)
 	return 1;
-    if (!ft_curckt->ci_commands && !setcplot("op"))
+
+    plot_cur = setcplot("op");
+    if (!ft_curckt->ci_commands && !plot_cur)
         goto nocmds;
     coms = ft_curckt->ci_commands;
     cp_interactive = FALSE;
@@ -168,41 +186,43 @@ ft_cktcoms(bool terse)
 	    fprintf(cp_err, ".options: no listing, rawfile was generated.\n");
 	else
 	    inp_list(cp_out, ft_curckt->ci_deck, ft_curckt->ci_options,
-                LS_DECK);
+		     LS_DECK);
     }
 
     /* If there was a .op line, then we have to do the .op output. */
-    assert(plot_cur != NULL);
-    assert(plot_cur->pl_dvecs != NULL);
-    if (setcplot("op") && (plot_cur->pl_dvecs->v_realdata!=NULL)) {
-	if (terse) {
-	    fprintf(cp_out, "OP information in rawfile.\n");
-	} else {
-	    fprintf(cp_out, "\t%-30s%15s\n", "Node", "Voltage");
-            fprintf(cp_out, "\t%-30s%15s\n", "----", "-------");
-	    fprintf(cp_out, "\t----\t-------\n");
-	    for (v = plot_cur->pl_dvecs; v; v = v->v_next) {
-		if (!isreal(v)) {
-		    fprintf(cp_err, 
-		"Internal error: op vector %s not real\n",
-			    v->v_name);
-		    continue;
+    plot_cur = setcplot("op");
+    if (plot_cur != NULL) {
+	assert(plot_cur->pl_dvecs != NULL);
+	if (plot_cur->pl_dvecs->v_realdata!=NULL) {
+	    if (terse) {
+		fprintf(cp_out, "OP information in rawfile.\n");
+	    } else {
+		fprintf(cp_out, "\t%-30s%15s\n", "Node", "Voltage");
+		fprintf(cp_out, "\t%-30s%15s\n", "----", "-------");
+		fprintf(cp_out, "\t----\t-------\n");
+		for (v = plot_cur->pl_dvecs; v; v = v->v_next) {
+		    if (!isreal(v)) {
+			fprintf(cp_err, 
+				"Internal error: op vector %s not real\n",
+				v->v_name);
+			continue;
+		    }
+		    if ((v->v_type == SV_VOLTAGE) && (*(v->v_name)!='@'))
+			fprintf(cp_out, "\t%-30s%15s\n", v->v_name,
+				printnum(v->v_realdata[0]));
 		}
-		if ((v->v_type == SV_VOLTAGE) && (*(v->v_name)!='@'))
-		    fprintf(cp_out, "\t%-30s%15s\n", v->v_name,
-			printnum(v->v_realdata[0]));
-	    }
-	    fprintf(cp_out, "\n\tSource\tCurrent\n");
-	    fprintf(cp_out, "\t------\t-------\n\n");
-	    for (v = plot_cur->pl_dvecs; v; v = v->v_next)
-		if (v->v_type == SV_CURRENT)
-		    fprintf(cp_out, "\t%-30s%15s\n", v->v_name,
-		    printnum(v->v_realdata[0]));
-	         fprintf(cp_out, "\n");
+		fprintf(cp_out, "\n\tSource\tCurrent\n");
+		fprintf(cp_out, "\t------\t-------\n\n");
+		for (v = plot_cur->pl_dvecs; v; v = v->v_next)
+		    if (v->v_type == SV_CURRENT)
+			fprintf(cp_out, "\t%-30s%15s\n", v->v_name,
+				printnum(v->v_realdata[0]));
+		fprintf(cp_out, "\n");
 
-	    if (!ft_nomod)
-		com_showmod(&all);
-	    com_show(&all);
+		if (!ft_nomod)
+		    com_showmod(&all);
+		com_show(&all);
+	    }
 	}
     }
 
@@ -264,7 +284,7 @@ ft_cktcoms(bool terse)
 		}
                 if (!found)
                     fprintf(cp_err, "Error: .print: no %s analysis found.\n",
-			plottype);
+			    plottype);
             }
         } else if (eq(command->wl_word, ".plot")) {
             if (terse) {
@@ -298,22 +318,27 @@ ft_cktcoms(bool terse)
             if (terse) {
                 fprintf(cp_out, 
 			".fourier line ignored since rawfile was produced.\n");
-            } else if (setcplot("tran")) {
-		com_fourier(command->wl_next);
-		fprintf(cp_out, "\n\n");
-	    } else
-		fprintf(cp_err,
-			"No transient data available for fourier analysis");
+	    } else {
+		int err;
+
+		plot_cur = setcplot("tran");
+		err = fourier(command->wl_next, plot_cur);
+		if (!err)
+		    fprintf(cp_out, "\n\n");
+		else
+		    fprintf(cp_err, "No transient data available for "
+			    "fourier analysis");
+	    }
         } else if (!eq(command->wl_word, ".save")
-		&& !eq(command->wl_word, ".op")
-		&& !eq(command->wl_word, ".tf"))
+		   && !eq(command->wl_word, ".op")
+		   && !eq(command->wl_word, ".tf"))
 	{
             goto bad;
 	}
         coms = coms->wl_next;
     }
 
-nocmds:
+ nocmds:
     /* Now the node table */
     if (ft_nodesprint)
         ;
@@ -335,7 +360,7 @@ nocmds:
     putc('\n', cp_out);
     return 0;
 
-bad:
+ bad:
     fprintf(cp_err, "Internal Error: ft_cktcoms: bad commands\n");
     return 1;
 }
@@ -471,22 +496,6 @@ fixem(char *string)
         string = copy(buf);
     }
     return (string);
-}
-
-/* Don't bother with ccom strangeness here. */
-
-static bool
-setcplot(char *name)
-{
-    struct plot *pl;
-
-    for (pl = plot_list; pl; pl = pl->pl_next) {
-        if (ciprefix(name, pl->pl_typename)) {
-            plot_cur = pl;
-            return (TRUE);
-        }
-    }
-    return (FALSE);
 }
 
 static wordlist *
