@@ -1,3 +1,9 @@
+2004-09-01  Paolo Nenzi <p.nenzi@ieee.org>
+	
+	*   src/conf.c: Modified bug reports address. Now it points to a
+	    mailing list dedicated to bug reports.
+	    
+
 2004-08-29  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/fronted/aspice.c: Added a define for FreeBSD (from 

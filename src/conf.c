@@ -5,7 +5,7 @@
 #include "conf.h"
 
 char	Spice_Version[] = VERSION;
-char	Spice_Notice[] = "Please submit bug-reports to: ngspice-devel@lists.sourceforge.net";
+char	Spice_Notice[] = "Please submit bug-reports to: ngspice-bugs@lists.sourceforge.net";
 char	Spice_Build_Date[] = NGSPICEBUILDDATE;
 /*
 char	*Spice_Exec_Dir	= "/spice_win/bin";
@@ -23,7 +23,7 @@ int	AsciiRawFile	= 0;
 #endif
 
 
-char	*Bug_Addr	= "ngspice-devel@lists.sourceforge.net";
+char	*Bug_Addr	= "ngspice-bugs@lists.sourceforge.net";
 char	*Spice_Host	= "";
 char	*Spiced_Log	= "";
 
