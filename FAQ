@@ -1,10 +1,10 @@
-  Ngspice F.A.Q.Version 1.0
-  Maintened by Paolo Nenzi <p.nenzi@ieee.org>
-  Last update: 05/12/2001
+  Ngspice F.A.Q.Version 1.2
+  Maintained by Paolo Nenzi <p.nenzi@ieee.org>
+  Last update: 02-11-2003
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
-  ______________________________________________________________________
+  __________________________________________________________________________
 
   Table of Contents
 
@@ -33,7 +33,8 @@
   3. SOLUTIONS TO COMMON MISCELLANEOUS PROBLEMS
      3.1 What systems are supported?
      3.2 I get errors when I try to compile the source code, why?
-     3.3 This document didn't answer my question. Where else can I look for an answer?
+     3.3 This document didn't answer my question. Where else can I look for
+         an answer?
 
   4. ADMINISTRATIVE INFORMATION AND ACKNOWLEDGEMENTS
      4.1 Feedback
@@ -44,23 +45,24 @@
 
   ______________________________________________________________________
 
-  11..  IINNTTRROODDUUCCTTIIOONN AANNDD GGEENNEERRAALL IINNFFOORRMMAATTIIOONN
+  1.  INTRODUCTION AND GENERAL INFORMATION
 
 
 
-  11..11..  WWhhaatt iiss nnggssppiiccee??
+ 1.1 What is ngspice ?
 
   Ngspice is the name of a project and of a program in the project.
-  Spice is the famous circuit simulator developed by the CAD Group of
-  the University of California at Berkeley (UCB). The NG prefix has a
-  lot of meanings: Next Generation, New Good, etc. Choose or invent the
-  one you prefer. The ngspice project aims to improve the capabilities
-  of the Spice3 circuit simulator. The heart of the project is the
-  ngspice program, a circuit simulator derived from spice3f5.
+  The idea behind the project is to improve the capabilities of the
+  Spice 3f5 circuit simulator. Spice is the most famous circuit 
+  simulator, developed at the University of California at Berkeley 
+  (UCB), by "a cast of thousand". The NG prefix has a lot of meanings: 
+  Next Generation, New Good, etc. Choose or invent the one you prefer. 
+  The heart of the project is the ngspice program, a circuit simulator 
+  derived from spice3f5.
 
 
-  11..22..  WWhhyy rreessuurrrreeccttiinngg BBeerrkkeelleeyy''ss SSppiiccee??
-
+ 1.2 Why resurrecting Berkeley's Spice?
+  
   Berkeley's Spice can be considered the father of most circuit
   simulators available today. It is an old but still good piece of
   software, it may not be the fastest or the most reliable but it's
@@ -72,119 +74,129 @@
   "social" side, spice3 it's well introduced in the academic
   environment.
 
+ 
+ 1.3 What is the project's goal?
 
-  11..33..  WWhhaatt iiss tthhee pprroojjeecctt''ss ggooaall??
-
-
-  The final goal of ngspice project is to develop a reliable, fast and
-  friendly circuit simulator for mixed signal/mixed level simulation.
-  Easy isn't it? ;-).
-
-
-  11..44..  WWhhaatt yyoouu aarree ggooiinngg ttoo ddoo??
-
-
-  We are going to develop a circuit simulation program. The line of
-  development follows two parallel paths:
-
-  1. EEnnhhaanncceemmeennttss aanndd bbuugg--ffiixxiinngg ooff tthhee oorriiggiinnaall ssppiiccee33ff55 ccooddee..
-
-  2. DDeevveellppppmmeenntt ooff aa nneeww GGPPLL''eedd ssiimmuullaattoorr..
-
-     The first phat will lead to a better spice3f5 and nothing more than
-     this, while the second one will bring us a new simulator,
-     compatible with its father but more expandable and presumably
-     faster and numerically stronger.
-
-  There is another project in ngspice: the development of one or more
-  frontend to the new simulator. One of the key issues of our project is
-  to let users design the front end they want, using the widget set and
-  the language they prefer. For this reason ngspice differs a lot from
-  spice3f5: in ngspice there is a clear distinction between the front
-  end and the back end. In ngspice the front end takes care of the
-  interaction with the user.  It is  back-end's task to maintain the
-  object database, to exchange data with the simulator, etc.
-
-  There are various improvements we are planning, some follows:
-
-  1. TThhee ffrraammeewwoorrkk ((oorr GGrraapphhiicc UUsseerr IInntteerrffaaccee)):: Spice is (and should
-     continue to be) a command line or a text tool, but this makes very
-     difficult to design large circuits. To overcome this difficulty, a
-     schematic entry tool and a waveform viewer tools are needed.
-     Nevertheless, there are other tools that can be useful: a parts
-     database, an editor which higlights the syntax, a symbol editor,
-     etc. Most of these program already exists in the open source world,
-     so they need only to be integrated in a common EDA environment.
-
-  2. DDooccuummeennttaattiioonn:: Commercial simulators have very good manuals with
-     tutorials, models equations explained, example of use, suggestions,
-     etc. This line of development has the task of providing the final
-     spice user with an ordered and comprehensive set of information on
-     the program and its features. The documentation should be useful
-     for the student as well as for the circuit professional.
-
-  3. IImmpprroovveemmeennttss ttoo tthhee SSppiiccee ccooddee:: This is the hard part. The target
-     of this direction is to make ngspice a commercial grade simulator.
-     This means improving it's speed, its numerical strenght, include
-     the latest models available and some other important features:
-
-     +o  Numerical Algorithms:
-
-        +o  More stable algorithms for integration (as Runge-Kutta
-           Methods (?) ).
-
-        +o  Better convergence in Operating Point Calculation adding a
-           modified version of Fixed-Point Homotopy to the Newton-
-           Raphson algorithm,
-
-     +o  Devices:
-
-        +o  Behavioral device: enhance the B device of spice3 to accepts
-           IF THEN ELSE conditions, and digital keywords like DELAY,
-           HIGHV, LOWV, etc. to simulate simple digital macromodels.
-
-        +o  Dynamically Loadable Devices: reduce the memory occupied by
-           the simulator by using shared object code for devices. Each
-           device is a .so library that is inserted only if the circuit
-           contains an element modeled by the device. If we are
-           simulating CMOS, we do not need BJT or SOI (in most of the
-           situations).
-
-        +o  Code Level Modeling: let users write their devices in C and
-           use them in the simulator.
-
-        +o  Improving device: include additional parameters to some
-           devices as HDIF, LDIF, etc.
-
-     +o  New types of analysis, oriented to circuits syntesis and
-        optimization:
-
-        +o  Network analysis: given four nodes, extract z,y,s and the
-           other double bipole paramters.
-
-        +o  Monte Carlo analysis: statistical simulation based on device
-           tolerances.
-
-        +o  Worst Case analysis: find the worst case of operation of a
-           given circuit based on device parameters tolerances.
-
-        +o  Parametric analysis: repeat an analysis when one or more
-           parameters assumes different values.
-
-     +o  Faster handling of sparse matrices.
-
-     +o  Possibility to mesure circuit pameters, like the delay between
-        two nodes, etc.
-
-     +o  Whatever else can be judged useful.
+  The project goal evolved during project development, at first the
+  final goal was to develop a reliable, fast and friendly circuit 
+  simulator for mixed signal/mixed level simulation. During 
+  development it become apparent that to reach the goal a complete
+  rewrite of spice was needed. Since it was almost absurd to rewrite
+  Spice and since a new simulator was already under development:
+  ACS (Al's Circuit Simulator), now GNUCap (GNU Circuit Analyis
+  package), the goal of nspice became less utopical: merge
+  spice, xspice and cider into a mixed-signal/mixed-level simulator
+  that can be used as a reliable engine. 
 
 
-  11..55..  LLeeggaall iissssuueess
+1.4 What you are going to do?  
 
-  The improved spice3f5 will be relased under the original Berkeley's
-  lincese. The new simulator will be released as GPL. Make ngspice a GPL
-  program, allow us to link a lot of good code laying on the net and
-  obviously contribute to the GPL community.
+  We are going to develop a mixed-signal/mixed-level circuit simulation
+  program integrating three different spice based simulators:
+  Spice, Xspice and Cider.
+  
+  Xspice is a mixed-signal circuit simulator developed by GTRI (Georgia 
+  Tech Research Institute) at Georgia Institute of Technology. Xspice
+  was originally developed as an extension over Spice3c1. Xspice
+  introduces code modeling and a digital simulator into ngspice.
+  The "home site" of Xspice is: 
+  
+           http://users.ece.gatech.edu/~mrichard/Xspice/
+  
+  Cider is a mixed-level circuit and device simulator based on Spice3f5
+  that couples a device simulator (DSIM) to Spice. More information can
+  be found at:
+  
+        http://www-cad.eecs.berkeley.edu/Software/cider.html 
+  
+  The merging process is done in parallel with bug fixing and improvement
+  of the three simulators. The improvements are concentrated into 6
+  directives:
+  
+  
+  + Compact models:  the improvements in compact models will address
+    mainly the implementation of additional effects not available
+    in the original code. Device specific improvements are documented
+    on ngspice's documentation and in the DEVICE file in project's
+    tarball.
+    Improvements that affects all devices already implemented are:
+    "dtemp" option to set instance's temperature relative to the circuit 
+    one, "m" parallel multiplier to simulate an arbitrary number of
+    instances of the same kind connected in parallel.
+    
+    Planned improvements are the development of a dynamic loading
+    mechanism for compact models, to avoid loading in memory devices
+    that are not needed, and SOAR (Safe Operating ARea) checks to 
+    identify situations in which devices are used out of their
+    safety areas.  
+  
+  
+  + Simulator's analyses: this is a low priority area. Planned improvements
+    include the implementation of parametric analyses, to analyse the
+    behavior of the circuit as a parameter changes. Parameter sweep,
+    Monte Carlo and Worst Case fall in this category. Network analysis
+    (double bipole parameters extraction) is another planned improvement.       
+    
+  
+  + Numerical analysis code: the improvements within the numerical code
+    must be done with extreme care. Planned improvements are, the 
+    replacement of the Sparse library with the latest code Kenneth Kundert
+    has released, available at:
+
+               http://sourceforge.net/projects/sparse
+   
+   Other planned improvements, but with very low priority, includes the
+   use SuperLU library as possible Sparse library replacement (the 
+   library is available at http://crd.lbl.gov/~xiaoye/SuperLU) and the
+   introduction of continuation metohds to aid DC convergence. 
+  
+  
+  + Spice language: The language used to input the circuit to the simulator
+    has been extended and now allows the user to input parametric values
+    for components (the numparam library). This is an experimental feature 
+    that will be improved in the future. Planned improvements includes the
+    support for loading more than one circuit, netlist manipulation via
+    command line (adding and removing instances) and the implementation
+    of a command history using the libedit library, available at:
+     
+                 http://sourceforge.net/projects/libedit
+    
+  
+  + Frontend: The design of a new spice frontend has not been successful
+    and now is orphaned, since the is no interests and many free and
+    commercial frontends are available. There is no planned improvement
+    here.
+    
+  
+  + Documentation: Commercial simulators have very good manuals with
+    tutorials, models equations explained, example of use, suggestions,
+    etc. Spice came with little documentation. The Spice3f manual, 
+    available on the Internet will be constantly improved during
+    ngspice development and integrated with the documentation 
+    accompanying Xspice and Cider. This is a very time consuming task
+    and probably the documentation will always be left slightly 
+    behind.
+   
+
+
+  1.5 Legal issues
+
+  Ngspice merges three different simulators: spice and cider are covered
+  with the "old" BSD license, Xspice by its own license. The ngspice 
+  license will be then the BSD license. 
+  
+  Since the "old" BSD license is not compatible with the GPL library
+  it is not possible to link the ngspice with GPL'ed code, as is
+  written in:
+  
+             http://www.gnu.org/philosophy/bsd.html
+   
+  The group developing ngspice has written to Berkeley's copyright holders
+  asking to change the license to the new BSD, which has the 
+  incompatibility removed, but without success. Ngspice will probably
+  never be relased under the GPL license.
+  
+  
 
 
   11..66..  WWhhaatt mmaaiilliinngg lliissttss eexxiisstt ffoorr nnggssppiiccee??
