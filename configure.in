@@ -214,7 +214,6 @@ src/devices/ccvs/Makefile	\
 src/devices/csw/Makefile	\
 src/devices/devsup/Makefile	\
 src/devices/dio/Makefile	\
-src/devices/disto/Makefile	\
 src/devices/ind/Makefile	\
 src/devices/isrc/Makefile	\
 src/devices/jfet/Makefile	\
@@ -239,6 +238,7 @@ src/include/Makefile		\
 src/maths/Makefile		\
 src/maths/cmaths/Makefile	\
 src/maths/ni/Makefile		\
+src/maths/partialderiv/Makefile \
 src/maths/poly/Makefile		\
 src/maths/sparse/Makefile	\
 src/misc/Makefile		\

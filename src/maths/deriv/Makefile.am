@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libdisto.la
+noinst_LIBRARIES = libderiv.a
 
-libdisto_la_SOURCES = 		\
+libderiv_a_SOURCES = 		\
 		atander.c	\
 		cosderiv.c	\
 		cubeder.c	\

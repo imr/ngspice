@@ -7,7 +7,7 @@
  * This file will eventually replace spice.h and lots of other 
  * files in src/include
  */
-
+#define _GNU_SOURCE
 
 #include <config.h>
 #include <math.h>

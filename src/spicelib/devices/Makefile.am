@@ -15,7 +15,6 @@ SUBDIRS = \
 	csw	\
 	devsup	\
 	dio	\
-	disto	\
 	ind	\
 	isrc	\
 	jfet	\

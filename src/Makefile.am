@@ -74,6 +74,7 @@ ngspice_LDADD = \
 	parser/libparser.a \
 	hlp/libhlp.a \
 	circuit/libinp.a \
+	maths/deriv/libderiv.a \
 	maths/cmaths/libcmaths.a \
 	maths/poly/libpoly.a \
 	maths/ni/libni.a \
