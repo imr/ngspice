@@ -1,11 +1,11 @@
 ## Process this file with automake to produce Makefile.in
 
 SUBDIRS = @XGRAPHDIR@ doc src man tests
-DIST_SUBDIRS = xgraph doc src man tests examples
+DIST_SUBDIRS = xgraph doc src man tests
 
 EXTRA_DIST = FAQ acconfig.h autogen.sh Stuarts_Poly_Notes  \
 		ANALYSES BUGS AUTHORS ChangeLog \
-		DEVICES NEWS README contrib patches
+		DEVICES NEWS README contrib patches examples
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 			config.h.in config.sub configure install-sh \
@@ -15,6 +15,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 dist-hook:
 	rm -rf `find $(distdir)/contrib -name CVS`
 	rm -rf `find $(distdir)/patches -name CVS`
+	rm -rf `find $(distdir)/examples -name CVS`
 
 mrproper: maintainer-clean
 	rm -f `find . -type f -name "*~" -print`
