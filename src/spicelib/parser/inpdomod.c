@@ -4,7 +4,6 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "iferrmsg.h"
 #include "inpdefs.h"
 #include "inp.h"
@@ -466,6 +465,18 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	}
 	INPmakeMod(modname, type, image);
     } 
+
+    /*  --------  Check if model is an ind --------- */
+    else if (strcmp(typename, "l") == 0) {
+	type = INPtypelook("Inductor");
+	if (type < 0) {
+	    err =
+		INPmkTemp
+		("Device type Inductor not available in this binary\n");
+	}
+	INPmakeMod(modname, type, image);
+    }    
+    
     
     /*  --------  Check if model is a switch --------- */
     else if (strcmp(typename, "sw") == 0) {
