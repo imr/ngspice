@@ -73,9 +73,10 @@ proc Loadspice { version dir } {
     }
 
     proc spice_init_gui { spicefile } {
-	source "%LIB_DIR%/spice/tclspice_source.tcl"
-	#source "/usr/local/lib/spice/tclspice_source.tcl"              ;#- only load procs when gui needed 
-	spicewish::init_gui $spicefile
+		if { ! [ winfo exists .controls ] } {
+           source "%LIB_DIR%/spice/tclspice_source.tcl"              ;#- only load procs when gui needed
+		}
+		spicewish::init_gui $spicefile
     }
     
 }

@@ -1,3 +1,8 @@
+2003-06-19  Adrian Dawe <a.dawe@multigig.com>
+
+	*  Much improved spice wish interface; graph includes zooming, 
+	 measurements, many clean-ups, screenshots, and trace comparasons.
+
 2003-05-02  Stuart Brorson  <sdb@cloud9.net>
  
  	*  Added #define TRACE to main.c for use in debugging.  Added lots
