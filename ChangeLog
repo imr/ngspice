@@ -1,3 +1,14 @@
+2005-04-04  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/frontend/subckt.c: Applied patch from Steven Borley
+	    <steven.borley@diode.demon.co.uk> that fixes a bug in model
+	    name translation that shows in nested subckts reported by
+	    Hitoshi Tanaka <HDA01055@nifty.com> (for which he sent a patch that
+	    was supersed by Steven's one).
+	    
+	*   configure.in: As Stuart Brorson suggested now the garbage collector
+	    library is compiled only on explicit request by the user.     
+
 2005-03-20  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/spicelib/analysis/cktntask.c: The default poarallel
