@@ -1803,10 +1803,13 @@ The function "u" is the unit step function, with a value of one for
 arguments greater than one and a value of zero for arguments less than
 zero.  The function "uramp" is the integral of the unit step: for an
 input x, the value is zero if x is less than zero, or if x is greater
-than zero the value is x.  These two functions are useful in sythesizing
-piece-wise non-linear functions, though convergence may be adversely
-affected.
+than zero the value is x. The function "u2" returns a value of zero for
+arguments less than zero, one for arguments greater than one and assumes
+the value of the argument between these limits .These three functions are 
+useful in sythesizing piece-wise non-linear functions, though convergence 
+may be adversely affected.
 
+Note: "u2" function has been introduced in rework-11.
 
 The following standard operators are defined:
 
