@@ -16,8 +16,38 @@
 /*              Header files for C functions                          */
 /**********************************************************************/
 
-/* Copied from main.c in ngspice*/
 #include <ngspice.h>
+#include <tcl.h>
+
+/*Use Tcl threads if on W32 without pthreads*/
+#ifndef HAVE_LIBPTHREAD
+
+#ifdef __MINGW32__
+
+#define mutex_lock(a) Tcl_MutexLock(a)
+#define mutex_unlock(a) Tcl_MutexUnlock(a)
+#define thread_self() Tcl_GetCurrentThread()
+typedef Tcl_Mutex mutexType;
+typedef Tcl_ThreadId threadId_t;
+#define TCL_THREADS
+#define THREADS
+
+#endif
+
+#else
+
+#include <pthread.h>
+#define mutex_lock(a) pthread_mutex_lock(a)
+#define mutex_unlock(a) pthread_mutex_unlock(a)
+#define thread_self() pthread_self()
+typedef pthread_mutex_t mutexType;
+typedef pthread_t threadId_t;
+#define THREADS
+
+#endif
+
+
+/* Copied from main.c in ngspice*/
 #include <stdio.h>
 #ifdef HAVE_STRING_H
 #include <string.h>
@@ -26,7 +56,9 @@
     #include <stdarg.h>
     #include <windef.h>
     #include <winbase.h>  /* Sleep */
-    #define  srandom(a) srand(a) /* srandom */
+	#ifndef srandom
+	    #define  srandom(a) srand(a) /* srandom */
+	#endif
 #else
     #include <unistd.h> /* usleep */
 #endif /* __MINGW32__ */
@@ -61,7 +93,6 @@ extern sigjmp_buf jbuf;
 /*Included for the module to access data*/
 #include <dvec.h>
 #include <plot.h>
-#include <tcl.h>
 
 #ifdef __CYGWIN__
 #undef WIN32
@@ -83,11 +114,6 @@ extern sigjmp_buf jbuf;
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#ifdef HAVE_LIBPTHREAD
-/* run spicein background */
-#include <pthread.h>
-#endif
-
 #include <stdarg.h>     /* for va_copy() */
 
 extern IFfrontEnd nutmeginfo;
@@ -99,8 +125,8 @@ extern int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 /*For blt spice to use*/
 typedef struct {
   char *name;
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_t mutex;/*lock for this vector*/
+#ifdef THREADS
+  mutexType mutex;/*lock for this vector*/
 #endif
   double *data;/* vector data*/
   int size;/*data it can store*/
@@ -222,8 +248,8 @@ void blt_init(void *run) {
 void blt_add(int index,double value){ 
   vector *v;
   v = &vectors[index];
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_lock(&vectors[index].mutex);
+#ifdef THREADS
+  mutex_lock(&vectors[index].mutex);
 #endif
   if(!(v->length < v->size)){
     v->size += 100;
@@ -231,16 +257,16 @@ void blt_add(int index,double value){
   }
   v->data[v->length] = value;
   v->length ++;
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_unlock(&vectors[index].mutex);
+#ifdef THREADS
+  mutex_unlock(&vectors[index].mutex);
 #endif
   return;
 }
   
 /* Locks the vector data to stop conflicts*/
 void blt_lockvec(int index){
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_lock(&vectors[index].mutex);
+#ifdef THREADS
+  mutex_lock(&vectors[index].mutex);
 #endif
   return;
 }
@@ -253,8 +279,8 @@ void blt_relink(int index,void *tmp){
   vectors[index].data = v->v_realdata;
   vectors[index].length = v->v_length;
   vectors[index].size = v->v_length;/*silly spice doesn't use v_rlength*/
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_unlock(&vectors[index].mutex);
+#ifdef THREADS
+  mutex_unlock(&vectors[index].mutex);
 #endif
   return;
 }
@@ -288,12 +314,12 @@ static int lastVector TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   }
 
   for(i=0;i < blt_vnum;i++){
-#ifdef HAVE_LIBPTHREAD
-    pthread_mutex_lock(&vectors[i].mutex);
+#ifdef THREADS
+    mutex_lock(&vectors[i].mutex);
 #endif
     V[i] = vectors[i].data[vectors[i].length-1];
-#ifdef HAVE_LIBPTHREAD
-    pthread_mutex_unlock(&vectors[i].mutex);
+#ifdef THREADS
+    mutex_unlock(&vectors[i].mutex);
 #endif
   }
   Blt_ResetVector(vec,V,blt_vnum,
@@ -327,8 +353,8 @@ static int get_value TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 
   j = atoi(argv[2]);
   
-#ifdef HAVE_LIBPTHREAD
-    pthread_mutex_lock(&vectors[vindex].mutex);
+#ifdef THREADS
+    mutex_lock(&vectors[vindex].mutex);
 #endif
 
 	if(j < 0 || j >= vectors[vindex].length) {
@@ -338,8 +364,8 @@ static int get_value TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 		val =  vectors[vindex].data[j];
 	}
 	
-#ifdef HAVE_LIBPTHREAD
-    pthread_mutex_unlock(&vectors[vindex].mutex);
+#ifdef THREADS
+    mutex_unlock(&vectors[vindex].mutex);
 #endif
 
 	if(i) {
@@ -390,8 +416,8 @@ static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   if(argc == 5)
     end   = atoi(argv[4]);
   if(vectors[j].length) {
-#ifdef HAVE_LIBPTHREAD
-    pthread_mutex_lock(&vectors[j].mutex);
+#ifdef THREADS
+    mutex_lock(&vectors[j].mutex);
 #endif
       
     len = vectors[j].length;
@@ -411,8 +437,8 @@ static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
     Blt_ResetVector(vec,(vectors[j].data + start),len,
 		    len,TCL_VOLATILE);
     
-#ifdef HAVE_LIBPTHREAD
-    pthread_mutex_unlock(&vectors[j].mutex);
+#ifdef THREADS
+    mutex_unlock(&vectors[j].mutex);
 #endif
   }
   return TCL_OK;
@@ -423,18 +449,19 @@ static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 /*     Main spice command executions and thread control           */
 /*****************************************************************/
 
-#ifdef HAVE_LIBPTHREAD
-static pthread_t tid, bgtid=(pthread_t)0;
+#ifdef THREADS
+static threadId_t tid, bgtid=(threadId_t)0;
+
 static bool fl_running = FALSE;
 static bool fl_exited = TRUE;
 
 
 static void *_thread_run(void *string){
   fl_exited = FALSE;
-  bgtid = pthread_self();
+  bgtid = thread_self();
   cp_evloop((char *)string);
   FREE(string);
-  bgtid = (pthread_t)0;
+  bgtid = (threadId_t)0;
   fl_exited = TRUE;
   return 0;
 }
@@ -456,7 +483,11 @@ static int _thread_stop(){
       fprintf(stderr,"couldn't stop tclspice\n");
       return TCL_ERROR;
     }
+#ifdef HAVE_LIBPTHREAD
     pthread_join(tid, NULL);
+#else
+    Tcl_JoinThread(tid,NULL);
+#endif
     fl_running = FALSE;
     ft_intrpt = FALSE;
     return TCL_OK;
@@ -465,13 +496,13 @@ static int _thread_stop(){
   }
   return TCL_OK;
 }
-#endif /*HAVE_LIBPTHREAD*/
+#endif /*THREADS*/
 
 static int _run(int argc,char **argv){
   char buf[1024] = "";
   int i;
   sighandler oldHandler;
-#ifdef HAVE_LIBPTHREAD
+#ifdef THREADS
   char *string;
   bool fl_bg = FALSE;
   /* run task in background if preceeded by "bg"*/
@@ -495,13 +526,18 @@ static int _run(int argc,char **argv){
     strcat(buf," ");
   }
    
-#ifdef HAVE_LIBPTHREAD
+#ifdef THREADS
   /* run in the background */
   if(fl_bg){
     if(fl_running) _thread_stop();
     fl_running =TRUE;
     string = copy(buf);/*as buf gets freed fairly quickly*/
+#ifdef HAVE_LIBPTHREAD
     pthread_create(&tid,NULL,_thread_run,(void *)string);
+#else
+    Tcl_CreateThread(&tid,(Tcl_ThreadCreateProc *)_thread_run,string,
+        TCL_THREAD_STACK_DEFAULT,TCL_THREAD_JOINABLE);
+#endif
   } else 
     /* halt (pause) a bg run */
     if(!strcmp(argv[0],"halt")){
@@ -531,7 +567,7 @@ static int _run(int argc,char **argv){
       }
 #else
   cp_evloop(buf);
-#endif /*HAVE_LIBPTHREAD*/
+#endif /*THREADS*/
   signal(SIGINT,oldHandler);
   return TCL_OK;
 }
@@ -554,7 +590,7 @@ static int _spice_dispatch TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   return _run(argc-1,(char **)&argv[1]);
 }
 
-#ifdef HAVE_LIBPTHREAD
+#ifdef THREADS
 /*Checks if spice is runnuing in the background */
 static int running TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   Tcl_SetObjResult(interp,Tcl_NewIntObj((long) (fl_running && !fl_exited)));
@@ -1199,8 +1235,8 @@ struct triggerEvent {
 struct triggerEvent *eventQueue;
 struct triggerEvent *eventQueueEnd;
 
-#ifdef HAVE_LIBPTHREAD
-pthread_mutex_t triggerMutex;
+#ifdef THREADS
+mutexType triggerMutex;
 #endif
 
 struct watch {
@@ -1263,8 +1299,8 @@ int triggerEventHandler(Tcl_Event *evPtr, int flags) {
 	static char buf[512];
 	int rtn=TCL_OK;
 	Tcl_Preserve((ClientData)spice_interp);
-#ifdef HAVE_LIBPTHREAD
-	pthread_mutex_lock(&triggerMutex);
+#ifdef THREADS
+	mutex_lock(&triggerMutex);
 #endif
 	while(eventQueue) {
 		struct triggerEvent *event = eventQueue;
@@ -1281,8 +1317,8 @@ int triggerEventHandler(Tcl_Event *evPtr, int flags) {
 	}
 	eventQueueEnd = NULL;
 quit:
-#ifdef HAVE_LIBPTHREAD
-	pthread_mutex_unlock(&triggerMutex);
+#ifdef THREADS
+  mutex_unlock(&triggerMutex);
 #endif
 	Tcl_ResetResult(spice_interp);
 	Tcl_Release((ClientData)spice_interp);
@@ -1302,8 +1338,8 @@ void triggerEventSetup(ClientData clientData,int flags) {
 }
 
 void triggerEventCheck(ClientData clientData,int flags) {
-#ifdef HAVE_LIBPTHREAD
-	pthread_mutex_lock(&triggerMutex);
+#ifdef THREADS
+	mutex_lock(&triggerMutex);
 #endif
 	if(eventQueue) {
 		Tcl_Event *tclEvent;
@@ -1311,8 +1347,8 @@ void triggerEventCheck(ClientData clientData,int flags) {
 		tclEvent->proc = triggerEventHandler;
 		Tcl_QueueEvent(tclEvent,TCL_QUEUE_TAIL);
 	}
-#ifdef HAVE_LIBPTHREAD
-	pthread_mutex_unlock(&triggerMutex);
+#ifdef THREADS
+	mutex_unlock(&triggerMutex);
 #endif	
 }
 
@@ -1320,16 +1356,16 @@ int Tcl_ExecutePerLoop() {
 
   struct watch *current;
   
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_lock(&vectors[0].mutex);
-  pthread_mutex_lock(&triggerMutex);
+#ifdef THREADS
+  mutex_lock(&vectors[0].mutex);
+  mutex_lock(&triggerMutex);
 #endif
 
   for(current=watches;current;current = current->next) {
     vector *v;
     v = &vectors[current->vector];
-#ifdef HAVE_LIBPTHREAD
-    pthread_mutex_lock(&v->mutex);
+#ifdef THREADS
+    mutex_lock(&v->mutex);
 #endif
 
     if((current->type > 0 && current->state && v->data[v->length-1] > current->Vmax) ||
@@ -1371,8 +1407,8 @@ int Tcl_ExecutePerLoop() {
 	current->oT = vectors[0].data[vectors[0].length-1];
 	current->oV = v->data[v->length-1];
 	
-#ifdef HAVE_LIBPTHREAD
-    pthread_mutex_unlock(&v->mutex);
+#ifdef THREADS
+    mutex_unlock(&v->mutex);
 #endif
   }
  
@@ -1380,16 +1416,16 @@ int Tcl_ExecutePerLoop() {
 	  stepCallbackPending=1;
   }
   
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_unlock(&triggerMutex);
+#ifdef THREADS
+  mutex_unlock(&triggerMutex);
   
-  pthread_mutex_unlock(&vectors[0].mutex);
+  mutex_unlock(&vectors[0].mutex);
 
-  if(triggerCallback && eventQueue && bgtid != pthread_self()) {
+  if(triggerCallback && eventQueue && bgtid != thread_self()) {
 	triggerEventHandler(NULL,0);
   }
 
-  if(stepCallback && stepCallbackPending && bgtid != pthread_self()) {
+  if(stepCallback && stepCallbackPending && bgtid != thread_self()) {
 	stepEventHandler(NULL,0);
   }
 #else
@@ -1406,8 +1442,8 @@ int Tcl_ExecutePerLoop() {
 }
 
 static int resetTriggers() {
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_lock(&triggerMutex);
+#ifdef THREADS
+  mutex_lock(&triggerMutex);
 #endif
   
   while(watches) {
@@ -1424,8 +1460,8 @@ static int resetTriggers() {
   
   eventQueueEnd = NULL;
   
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_unlock(&triggerMutex);
+#ifdef THREADS
+  mutex_unlock(&triggerMutex);
 #endif
   return 0;
 }
@@ -1552,8 +1588,8 @@ static int registerTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   Vmax = atof(argv[3]);
   Vavg = (Vmin + Vmax) / 2 ;
   
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_lock(&triggerMutex);
+#ifdef THREADS
+  mutex_lock(&triggerMutex);
 #endif
   
   for(tmp = watches;tmp != NULL;tmp=tmp->next) {
@@ -1597,8 +1633,8 @@ static int registerTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
 
   }
   
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_unlock(&triggerMutex);
+#ifdef THREADS
+  mutex_unlock(&triggerMutex);
 #endif
   
   return TCL_OK;
@@ -1632,8 +1668,8 @@ static int unregisterTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   else
     type = 1;
 
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_lock(&triggerMutex);
+#ifdef THREADS
+  mutex_lock(&triggerMutex);
 #endif
   
   cut = &watches;
@@ -1650,8 +1686,8 @@ static int unregisterTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
       tmp = tmp->next;
     }
   
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_unlock(&triggerMutex);
+#ifdef THREADS
+  mutex_unlock(&triggerMutex);
 #endif
   
   if(tmp == NULL) {
@@ -1677,8 +1713,8 @@ static int popTriggerEvent TCL_CMDPROCARGS(clientData,interp,argc,argv){
     struct triggerEvent *popedEvent;
     Tcl_Obj *list;
 
-#ifdef HAVE_LIBPTHREAD
-    pthread_mutex_lock(&triggerMutex);
+#ifdef THREADS
+    mutex_lock(&triggerMutex);
 #endif
 
     popedEvent = eventQueue;
@@ -1705,8 +1741,8 @@ static int popTriggerEvent TCL_CMDPROCARGS(clientData,interp,argc,argv){
 
     FREE(popedEvent);
     
-#ifdef HAVE_LIBPTHREAD
-    pthread_mutex_unlock(&triggerMutex);
+#ifdef THREADS
+    mutex_unlock(&triggerMutex);
 #endif
   }
   
@@ -1724,15 +1760,15 @@ static int listTriggers TCL_CMDPROCARGS(clientData,interp,argc,argv){
   
   list = Tcl_NewListObj(0,NULL);
 
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_lock(&triggerMutex);
+#ifdef THREADS
+  mutex_lock(&triggerMutex);
 #endif
-  
+   
   for(tmp=watches;tmp;tmp=tmp->next)
     Tcl_ListObjAppendElement(interp,list,Tcl_NewStringObj(vectors[tmp->vector].name,strlen(vectors[tmp->vector].name)));
 
-#ifdef HAVE_LIBPTHREAD
-  pthread_mutex_unlock(&triggerMutex);
+#ifdef THREADS
+  mutex_unlock(&triggerMutex);
 #endif
   
   Tcl_SetObjResult(interp,list);
@@ -1884,7 +1920,7 @@ bot:
     Tcl_CreateCommand(interp, TCLSPICE_prefix "listTriggers", listTriggers, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 
   	Tcl_CreateCommand(interp, TCLSPICE_prefix "registerStepCallback", registerTriggerCallback, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-#ifdef HAVE_LIBPTHREAD
+#ifdef THREADS
 	Tcl_CreateCommand(interp, TCLSPICE_prefix "bg", _tcl_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "halt", _tcl_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "running", running, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
@@ -1928,8 +1964,8 @@ int tcl_vfprintf(FILE *f, const char *fmt, va_list args_in)
   int i, nchars, result, escapes = 0;
 
   if((fileno(f) !=  STDOUT_FILENO && fileno(f) != STDERR_FILENO)
-#ifdef HAVE_LIBPTHREAD
-     || ( fl_running && bgtid == pthread_self())
+#ifdef THREADS
+     || ( fl_running && bgtid == thread_self())
 #endif
 	)
       return vfprintf(f,fmt,args_in);
@@ -2028,8 +2064,8 @@ void tcl_stdflush(FILE *f)
   static char stdstr[] = "flush stdxxx";
   char *stdptr = stdstr + 9;
   
-#ifdef HAVE_LIBPTHREAD
-  if ( fl_running && bgtid == pthread_self())
+#ifdef THREADS
+  if ( fl_running && bgtid == thread_self())
       return;
 #endif
   

@@ -1,6 +1,9 @@
 2004-06-04 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/tclspice.c:
+	Cleaned up thread code so can use Tcl_Threads instead on W32
+	
+	* src/tclspice.c:
 	Do not register more than one identical trigger
 	Return voltage triggered at also
 	Add name tag (optional) for all triggers
