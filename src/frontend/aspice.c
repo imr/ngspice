@@ -178,6 +178,8 @@ sigchild(void)
 
 #if defined(__NetBSD__) || defined(SOLARIS)
     pid_t status;
+#elif defined(__FreeBSD__)
+    int status;    
 #else
     union wait status;
 #endif
