@@ -10,6 +10,7 @@ TESTS_ENVIRONMENT = $(SHELL) check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
 	README			\
+	check.sh		\
 	$(TESTS)		\
 	$(TESTS:.cir=.out)
 
