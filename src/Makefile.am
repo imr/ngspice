@@ -97,7 +97,7 @@ nutmeg_LDADD = \
 help_SOURCES = help.c
 
 help_LDADD =  \
-	frontend/hlp/libhlp.a \
+	frontend/help/libhlp.a \
 	frontend/parser/libparser.a \
 	frontend/libfte.a \
 	misc/libmisc.a 
