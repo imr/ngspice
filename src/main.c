@@ -75,11 +75,6 @@ bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. TRUE = we've b
 bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt. */
 char *ft_rawfile = "rawspice.raw";
 
-#ifdef HAVE_GNUREADLINE
-char gnu_history_file[512];
-static char *application_name;
-#endif
-
 bool oflag = FALSE;         /* Output über redefinierte Funktionen */
 FILE *flogp;  // hvogt 15.12.2001
 
@@ -323,7 +318,7 @@ int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 
 /* -------------------------------------------------------------------------- */
 /* Shutdown gracefully. */
-int 
+static int 
 shutdown(int exitval)
 {
     cleanvars();
@@ -348,7 +343,7 @@ prompt()
     char *p = pbuf, *s;
 
     if (cp_interactive == FALSE)
-        return;
+        return NULL;	/* NULL means no prompt */
     if (cp_promptstring == NULL)
         s = "-> ";
     else

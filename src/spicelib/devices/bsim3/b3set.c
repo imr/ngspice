@@ -910,10 +910,12 @@ IFuid tmpName;
             if (!here->BSIM3drainPerimeterGiven)
                 here->BSIM3drainPerimeter = 0.0;
             if (!here->BSIM3drainSquaresGiven)
+			{
                 if (model->BSIM3acmMod == 0)
                   here->BSIM3drainSquares = 1.0;
                 else
                   here->BSIM3drainSquares = 0.0;
+			}
             if (!here->BSIM3icVBSGiven)
                 here->BSIM3icVBS = 0.0;
             if (!here->BSIM3icVDSGiven)
@@ -927,10 +929,12 @@ IFuid tmpName;
             if (!here->BSIM3sourcePerimeterGiven)
                 here->BSIM3sourcePerimeter = 0.0;
             if (!here->BSIM3sourceSquaresGiven)
+			{
                 if (model->BSIM3acmMod == 0)
                   here->BSIM3sourceSquares = 1.0;
                 else
                   here->BSIM3sourceSquares = 0.0;
+			}
             if (!here->BSIM3wGiven)
                 here->BSIM3w = 5.0e-6;
             if (!here->BSIM3nqsModGiven)

@@ -178,7 +178,7 @@ sigchild(void)
 
 #if defined(__NetBSD__) || defined(SOLARIS)
     pid_t status;
-#elif defined(__FreeBSD__)
+#elif defined(__FreeBSD__) || defined(__APPLE__)
     int status;    
 #else
     union wait status;

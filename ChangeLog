@@ -1,3 +1,32 @@
+2005-03-17  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/main.c: Applied patch sent by Steven Borley
+	    <steven.borley@diode.demon.co.uk> that removed the duplicate
+	    declaration application_name and gnu_history_file, removed the
+	    "static" keyword in shutdown() and set NULL as return value in
+	    function prompt() when non prompt is passed to readline().
+	    
+	*   src/ngspice.txt: Applied patch sent by Steven Borley 
+	    <steven.borley@diode.demon.co.uk> that fixed a few arrors that 
+	    corrputed text output.
+	    
+	*   configure.in:   Applied patch sent by Steven Borley 
+	    <steven.borley@diode.demon.co.uk> that fixes compiler warnings
+	    on MAC OSX (related to the linking order of X libraries). The 
+	    remaining changes fix errors in spelling. 
+	    
+	*   tests/bin/check.sh: Applied patch sent by Steven Borley 
+	    <steven.borley@diode.demon.co.uk> that added support for Mac OSX
+	    and a default case for not (yet) supported architectures.
+	    
+	*   src/frontend/aspice.c: Applied patch sent by Steven Borley 
+	    <steven.borley@diode.demon.co.uk> that fixedscompiler warning on 
+	    Mac OSX in definition of "status".
+	    
+	*   src/spicelib/devices/bsim3/b3set.c: Applied patch sent by Steven 
+	    Borley <steven.borley@diode.demon.co.uk> that remove the compiler
+	    warnings about ambiguos "else".         
+
 2005-03-13  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   tests/bin/check.sh: Changed the previous check script with the one

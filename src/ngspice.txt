@@ -4908,6 +4908,7 @@ TEXT: H any input file is considered a title line and not parsed
 TEXT: H but  kept  as the name of the circuit.  The exception to
 TEXT: H this rule is the file ._s_p_i_c_e_i_n_i_t.  Thus, a  Spice3  com-
 TEXT: H mand script must begin with a blank line and then with a
+TEXT: H .control line.  Also, any line beginning with the char-
 TEXT: H acters  *#  is considered a control line.  This makes it
 TEXT: H possible to imbed commands in Spice3  input  files  that
 TEXT: H are ignored by earlier versions of Spice2
@@ -5604,26 +5605,28 @@ TEXT: H
 TEXT: H      There are several set variables that  Spice3  uses  but
 TEXT: H Nutmeg does not. They are:
 TEXT: H
-TEXT: H  editor            The editor to use for the edit command.
-TEXT: H  modelcard         The name of  the  model  card  (normally
-TEXT: H                    May.in -432u
-TEXT: H                    noaskquit         Do not check to make sure that there are
-TEXT: H                                      no  circuits  suspended and no plots un-
-TEXT: H                                      saved.  Normally Spice3 warns  the  user
-TEXT: H                                      when  he  tries  to  quit if this is the
-TEXT: H                                      case.
-TEXT: H                    nobjthack         Assume that BJTs have 4 nodes.
-TEXT: H                    noparse           Don't attempt to parse input files  when
-TEXT: H                                      they are read in (useful for debugging).
-TEXT: H                                      Of course, they cannot be  run  if  they
-TEXT: H                                      are not parsed.
-TEXT: H                    nosubckt          Don't expand subcircuits.
-TEXT: H                    renumber          Renumber input lines when an input  file
-TEXT: H                                      has .include's.
-TEXT: H                    subend            The card to  end  subcircuits  (normally
-TEXT: H                    subinvoke         The prefix to invoke  subcircuits  (nor-
-TEXT: H                                      mally x).
-TEXT: H                    substart          The card to begin subcircuits  (normally
+TEXT: H editor            The editor to use for the edit command.
+TEXT: H modelcard         The name of  the  model  card  (normally
+TEXT: H                   .model).
+TEXT: H noaskquit         Do not check to make sure that there are
+TEXT: H                   no  circuits  suspended and no plots un-
+TEXT: H                   saved.  Normally Spice3 warns  the  user
+TEXT: H                   when  he  tries  to  quit if this is the
+TEXT: H                   case.
+TEXT: H nobjthack         Assume that BJTs have 4 nodes.
+TEXT: H noparse           Don't attempt to parse input files  when
+TEXT: H                   they are read in (useful for debugging).
+TEXT: H                   Of course, they cannot be  run  if  they
+TEXT: H                   are not parsed.
+TEXT: H nosubckt          Don't expand subcircuits.
+TEXT: H renumber          Renumber input lines when an input  file
+TEXT: H                   has .include's.
+TEXT: H subend            The card to  end  subcircuits  (normally
+TEXT: H                   .ends).
+TEXT: H subinvoke         The prefix to invoke  subcircuits  (nor-
+TEXT: H                   mally x).
+TEXT: H substart          The card to begin subcircuits  (normally
+TEXT: H                   .subckt).
 TEXT: H
 TEXT: H
 

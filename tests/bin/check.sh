@@ -8,7 +8,7 @@ FILTER="Note|Circuit|Trying|Reference|Date|Doing|---|v-sweep|time|Error|Warning|
 testname=`basename $TEST .cir`
 testdir=`dirname $TEST`
 
-HOST_TYPE=`/bin/uname -srvm`
+HOST_TYPE=`uname -srvm`
 
 case $HOST_TYPE in
     MINGW32*)
@@ -23,7 +23,7 @@ case $HOST_TYPE in
       sed -e 's/e-000/e+000/g' $testname.test | sed 's/e-0/e-/g' | sed 's/e+0/e+/g' > $testname.test_tmp
       mv $testname.test_tmp $testname.test
       ;;
-    Linux*)
+    Linux*|Darwin*)
       $SPICE --batch $testdir/$testname.cir >$testname.test &&\
       egrep -v $FILTER $testname.test > $testname.test_tmp &&\
       egrep -v $FILTER $testdir/$testname.out > $testname.out_tmp
@@ -42,6 +42,11 @@ case $HOST_TYPE in
           exit 0
       fi
       rm -f $testname.test_tmp $testname.out_tmp
+      ;;
+    *)
+      echo Unknown system type!
+      echo $HOST_TYPE
+      echo ./tests/bin/checks.sh may need updating for your system
       ;;
 esac
 
