@@ -185,8 +185,8 @@ ACan(CKTcircuit *ckt, int restart)
 	/* fix resume? saj*/
 	error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
 		(void*)ckt->CKTcurJob,
-                ckt->CKTcurJob->JOBname,freqUid,IF_REAL,numNames,nameList,
-                IF_COMPLEX,&acPlot);
+                ckt->CKTcurJob->JOBname,freqUid,IF_REAL,666,nameList,
+                666,&acPlot);
 	/* saj*/
     }
     switch(((ACAN*)ckt->CKTcurJob)->ACstepType) {

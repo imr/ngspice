@@ -1,5 +1,10 @@
 2004-05-03 Stefan Jones <stefan.jones@multigig.com>
 
+	* src/spicelib/analysis/acan.c:
+	So resume works for ac analysis
+
+2004-05-03 Stefan Jones <stefan.jones@multigig.com>
+
 	* src/spicelib/parser/inp2dot.c:
 	Fix .noise statements by reverting Brorson's INPgetNetTok lines
 
