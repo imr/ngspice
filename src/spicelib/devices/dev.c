@@ -35,7 +35,7 @@
 
 #include "dev.h"
 
-#define DEVICES_USED "asrc bjt bsim1 bsim2 bsim3 bsim3v2 bsim3v1 bsim4 bsim3soipd bsim3soifd cap cccs ccvs csw dio ind isrc jfet ltra mes mos1 mos2 mos3 mos6 res sw tra urc vccs vcvs vsrc"
+#define DEVICES_USED "asrc bjt bsim1 bsim2 bsim3 bsim3v2 bsim3v1 bsim4 bsim3soipd bsim3soifd bsim3soidd cap cccs ccvs csw dio ind isrc jfet ltra mes mos1 mos2 mos3 mos6 res sw tra urc vccs vcvs vsrc"
 
 /*
  * Analyses
@@ -63,6 +63,7 @@
 #include "bsim4/bsim4itf.h"
 #include "bsim3soi_pd/b3soipditf.h"
 #include "bsim3soi_fd/b3soifditf.h"
+#include "bsim3soi_dd/b3soidditf.h"
 #include "cap/capitf.h"
 #include "cccs/cccsitf.h"
 #include "ccvs/ccvsitf.h"
@@ -87,7 +88,7 @@
 #include "vsrc/vsrcitf.h"
 
 
-#define DEVNUM 33
+#define DEVNUM 34
 
 SPICEdev *DEVices[DEVNUM];
 
@@ -107,29 +108,30 @@ spice_init_devices(void)
     DEVices[ 8] = get_bsim4_info();
     DEVices[ 9] = get_b3soipd_info();
     DEVices[10] = get_b3soifd_info();
-    DEVices[11] = get_cap_info();
-    DEVices[12] = get_cccs_info();
-    DEVices[13] = get_ccvs_info();
-    DEVices[14] = get_csw_info();
-    DEVices[15] = get_dio_info();
-    DEVices[16] = get_ind_info();
-    DEVices[17] = get_mut_info();
-    DEVices[18] = get_isrc_info();
-    DEVices[19] = get_jfet_info();
-    DEVices[20] = get_jfet2_info();
-    DEVices[21] = get_ltra_info();
-    DEVices[22] = get_mes_info();
-    DEVices[23] = get_mos1_info();
-    DEVices[24] = get_mos2_info();
-    DEVices[25] = get_mos3_info();
-    DEVices[26] = get_mos6_info();
-    DEVices[27] = get_res_info();
-    DEVices[28] = get_sw_info();
-    DEVices[29] = get_tra_info();
-    DEVices[30] = get_vccs_info();
-    DEVices[31] = get_vcvs_info();
-    DEVices[32] = get_vsrc_info();
-    assert(33 == DEVNUM);
+    DEVices[11] = get_b3soidd_info();
+    DEVices[12] = get_cap_info();
+    DEVices[13] = get_cccs_info();
+    DEVices[14] = get_ccvs_info();
+    DEVices[15] = get_csw_info();
+    DEVices[16] = get_dio_info();
+    DEVices[17] = get_ind_info();
+    DEVices[18] = get_mut_info();
+    DEVices[19] = get_isrc_info();
+    DEVices[20] = get_jfet_info();
+    DEVices[21] = get_jfet2_info();
+    DEVices[22] = get_ltra_info();
+    DEVices[23] = get_mes_info();
+    DEVices[24] = get_mos1_info();
+    DEVices[25] = get_mos2_info();
+    DEVices[26] = get_mos3_info();
+    DEVices[27] = get_mos6_info();
+    DEVices[28] = get_res_info();
+    DEVices[29] = get_sw_info();
+    DEVices[30] = get_tra_info();
+    DEVices[31] = get_vccs_info();
+    DEVices[32] = get_vcvs_info();
+    DEVices[33] = get_vsrc_info();
+    assert(34 == DEVNUM);
 }
 
 

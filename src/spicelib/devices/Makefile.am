@@ -11,6 +11,7 @@ SUBDIRS = \
 	bsim3v2 \
 	bsim3soi_pd	\
 	bsim3soi_fd	\
+	bsim3soi_dd	\
 	cap	\
 	cccs	\
 	ccvs	\

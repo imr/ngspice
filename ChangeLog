@@ -1,3 +1,18 @@
+2001-01-21  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* bsim3soi_dd/*: BSIM3SOI (DD) support added as level 11. Added tests in 
+	  tests directory (tests/bsim3soidd/*).
+
+	* ???: Integrated patch form Alan Gillespie <Alan.Gillespie@analog.com>
+	to revert the spice raw format to the spice3 original. 
+
+	* configure.in: corrected a bug that broke the on line help system.
+	Help system now works again but its text is a little bit outdated.
+
+	* ???: all binaries now have ng prependend, so ngspice can be installed
+	with other spice flavours.
+	
+	
 2000-10-18  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* Makefile.am: Changes for notes dir -> NOTES file conversion.

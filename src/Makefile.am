@@ -2,7 +2,7 @@
 
 SUBDIRS = misc maths frontend spicelib include
 
-bin_PROGRAMS =  ngspice nutmeg help sconvert proc2mod multidec makeidx
+bin_PROGRAMS =  ngspice ngnutmeg nghelp ngsconvert ngproc2mod ngmultidec makeidx
 
 EXTRA_DIST = ngspice.txt ngspice.idx
 
@@ -10,6 +10,9 @@ helpdatadir = $(pkgdatadir)/helpdir
 
 helpdata_DATA = ngspice.idx ngspice.txt
 
+initdatadir = $(pkgdatadir)/scripts
+
+initdata_DATA = spinit setplot spectrum
 
 
 DYNAMIC_DEVICELIBS = 			\
@@ -24,6 +27,7 @@ DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/cap/libcap.la		\
 	spicelib/devices/bsim3soi_pd/libbsim3soipd.la	\
 	spicelib/devices/bsim3soi_fd/libbsim3soifd.la   \
+	spicelib/devices/bsim3soi_dd/libbsim3soidd.la	\
 	spicelib/devices/cccs/libcccs.la		\
 	spicelib/devices/ccvs/libccvs.la		\
 	spicelib/devices/ccvs/libccvs.la		\
@@ -77,13 +81,13 @@ spice.o: main.c
 
 ## nutmeg:
 
-nutmeg_SOURCES = \
+ngnutmeg_SOURCES = \
 	main.c \
 	conf.c \
 	conf.h \
-	nutmeg.c
+	ngnutmeg.c
 
-nutmeg_LDADD = \
+ngnutmeg_LDADD = \
 	frontend/libfte.a \
 	frontend/plotting/libplotting.a \
 	frontend/parser/libparser.a \
@@ -96,9 +100,9 @@ nutmeg_LDADD = \
 
 ## help:
 
-help_SOURCES = help.c
+nghelp_SOURCES = nghelp.c
 
-help_LDADD =  \
+nghelp_LDADD =  \
 	frontend/help/libhlp.a \
 	frontend/parser/libparser.a \
 	frontend/libfte.a \
@@ -107,11 +111,11 @@ help_LDADD =  \
 
 ## sconvert:
 
-sconvert_SOURCES =  sconvert.c
+ngsconvert_SOURCES =  ngsconvert.c
 
 
 
-sconvert_LDADD =  \
+ngsconvert_LDADD =  \
 	frontend/libfte.a \
 	frontend/parser/libparser.a \
 	misc/libmisc.a 
@@ -119,9 +123,9 @@ sconvert_LDADD =  \
 
 ## proc2mod:
 
-proc2mod_SOURCES = proc2mod.c
+ngproc2mod_SOURCES = ngproc2mod.c
 
-proc2mod_LDADD =  \
+ngproc2mod_LDADD =  \
 	frontend/parser/libparser.a \
 	spicelib/parser/libinp.a \
 	misc/libmisc.a 
@@ -130,9 +134,9 @@ proc2mod_LDADD =  \
 
 ## multidec:
 
-multidec_SOURCES = multidec.c
+ngmultidec_SOURCES = ngmultidec.c
 
-multidec_LDADD =  \
+ngmultidec_LDADD =  \
 	maths/sparse/libsparse.a \
 	misc/libmisc.a 
 

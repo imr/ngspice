@@ -156,7 +156,7 @@ sgen_next(sgen **xsg)
 
 			i = sg->dev;
 
-			if (i > DEVmaxnum)
+			if (i >= DEVmaxnum) /* PN: Segafult if not = */
 				done = 1;
 			sg->first_model = sg->next_model = sg->devlist[i];
 

@@ -179,4 +179,11 @@ BSIM3SOI_PD - SOI model (partially depleted devices)
       hierarchy. Test circuits come from the bsim3soi
       web site at: 
       http://www-device.eecs.berkeley.edu/~bsimsoi
-      
+
+BSIM3SOI_DD - SOI Model (dynamic depletion model)
+     Initial Release Ver: 2.1. TO BE TESTED.
+     DD model has been integrated as level= 11
+     There is a bsim3soidd directory under the
+     test hierarchy. Test circuits come from bsim3soi
+     web site at:
+     http://www-device.eecs.berkeley.edu/~bsimsoi

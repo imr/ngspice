@@ -5,7 +5,7 @@ dnl Create a configuration header
 AM_CONFIG_HEADER(config.h)
 
 dnl Initialize automake stuff
-AM_INIT_AUTOMAKE(ng-spice-rework,13)
+AM_INIT_AUTOMAKE(ng-spice-rework,14)
 
 
 dnl --enable-ansi : try to force --ansi option to the compiler
@@ -173,7 +173,7 @@ else
 fi
 
 AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo $dprefix/bin`" )
-AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice`" )
+AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice-rework`" )
 AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE, "`date`" )
 
 
@@ -216,6 +216,7 @@ src/spicelib/devices/bsim4/Makefile	\
 src/spicelib/devices/bsim3v2/Makefile	\
 src/spicelib/devices/bsim3soi_pd/Makefile \
 src/spicelib/devices/bsim3soi_fd/Makefile \
+src/spicelib/devices/bsim3soi_dd/Makefile \
 src/spicelib/devices/cap/Makefile	\
 src/spicelib/devices/cccs/Makefile	\
 src/spicelib/devices/ccvs/Makefile	\
@@ -256,5 +257,6 @@ tests/filters/Makefile		\
 tests/polezero/Makefile		\
 tests/resistance/Makefile	\
 tests/bsim3soipd/Makefile	\
-tests/bsim3soifd/Makefile	
+tests/bsim3soifd/Makefile	\
+tests/bsim3soidd/Makefile	
 )
