@@ -1,3 +1,10 @@
+2004-08-16  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/frontend/{device.c, gens.c}: Committed Vera Albrecht's patch
+	    to the "show command" I closed on 2004-08-13. Vera's patch is 
+	    better.
+
+
 2004-08-15  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   configure.in, src/spinit.in: Added a variable in configure.in
