@@ -1451,6 +1451,8 @@ devmodtranslate(struct line *deck, char *subname)
 
 	switch (c) {
 
+#ifdef XSPICE
+
         case 'a':
           /*  Code for codemodels (dev prefix "A") added by SDB on 6.10.2004.
            *  The algorithm is simple.  We don't know how many nodes or sources are attached,
@@ -1518,6 +1520,8 @@ devmodtranslate(struct line *deck, char *subname)
          tfree(s->li_line);
          s->li_line = buffer;
          break;
+
+#endif /* XSPICE */
 	
         case 'r':
         case 'c':
