@@ -13,7 +13,7 @@ AM_INIT_AUTOMAKE(ng-spice-rework,15pre1)
 
 dnl --enable-ftedebug : enable frontend debug macros
 AC_ARG_ENABLE(ftedebug,
-    [  --enable-ftedebug        Enable ngspice frontend debug])
+    [  --enable-ftedebug       Enable ngspice frontend debug])
     
 dnl --enable-ansi : try to force --ansi option to the compiler
 AC_ARG_ENABLE(ansi,
@@ -37,8 +37,7 @@ AC_ARG_ENABLE(nosqrt,
  
 dnl --enable-bypass : define BYPASS for the code
 AC_ARG_ENABLE(nobypass,
-    [  --enable-nobypass       Don't bypass recalculations of slowly changing 
-                  variables])
+    [  --enable-nobypass       Don't bypass recalculations of slowly changing variables])
 
 dnl --enable-capbypass : define CAPBYPASS for the code
 AC_ARG_ENABLE(capbypass,
@@ -94,11 +93,11 @@ AC_ARG_ENABLE(xspice,
 
 dnl --enable-cider: define CIDER in the code. This is for CIDER support
 AC_ARG_ENABLE(cider,
-    [  --enable-cider         Enable CIDER enchancements, experimental *not in standard distribution*])
+    [  --enable-cider          Enable CIDER enchancements, experimental *not in standard distribution*])
 
 dnl --enable-cluster: define CLUSTER in the code. This is for tcl support
 AC_ARG_ENABLE(cluster,
-    [  --enable-cluster     Enable cluster support, experimental *not in standard distribution*])
+    [  --enable-cluster        Enable cluster support, experimental *not in standard distribution*])
 
 dnl Enable maintainer commands only if requested
 AM_MAINTAINER_MODE
@@ -169,7 +168,7 @@ case $with_windows in
 		AC_DEFINE(X_DISPLAY_MISSING)
 		AC_MSG_RESULT(No X display!)
 		CFLAGS="$CFLAGS -mwindows";;
-	*)
+	* )
  
 
 dnl Checks for X11 header files and libraries - X11 support can be disabled
@@ -264,7 +263,7 @@ AC_CACHE_CHECK([for va_copy], ac_cv_c_va_copy,
    ],
    [ac_cv_c_va_copy="yes"],
    [ac_cv_c_va_copy="no"])
- )
+)
 if test "$ac_cv_c_va_copy" = "yes"
 then 
     AC_DEFINE(HAVE_VA_COPY, 1, [Define if we have va_copy])
@@ -277,7 +276,7 @@ AC_CACHE_CHECK([for __va_copy], ac_cv_c___va_copy,
    ],
    [ac_cv_c___va_copy="yes"],
    [ac_cv_c___va_copy="no"])
- )
+)
 if test "$ac_cv_c___va_copy" = "yes"
 then
     AC_DEFINE(HAVE___VA_COPY, 1, [Define if we have __va_copy])
@@ -402,26 +401,26 @@ AC_SUBST(XSPICELIB2)
 
 dnl Add CIDER enhacements to ngspice.
 if test "$enable_cider" = "yes"; then
-    AC_MSG_RESULT(CIDER features enabled)
-    AC_DEFINE(CIDER)
-    CIDERDIR="ciderlib"
-    CIDERSIM="	$CIDERDIR/twod/libcidertwod.a		\
-		$CIDERDIR/oned/libcideroned.a		\
-		$CIDERDIR/input/libciderinput.a		\
-		$CIDERDIR/support/libcidersuprt.a	\"
+     AC_MSG_RESULT(CIDER features enabled)
+     AC_DEFINE(CIDER)
+     CIDERDIR="ciderlib"
+     CIDERSIM="	$CIDERDIR/twod/libcidertwod.a     \
+		$CIDERDIR/oned/libcideroned.a     \
+		$CIDERDIR/input/libciderinput.a   \
+		$CIDERDIR/support/libcidersuprt.a \ "
             
-    NUMDEV="	spicelib/devices/nbjt/libnbjt.a   \
+     NUMDEV="	spicelib/devices/nbjt/libnbjt.a   \
 		spicelib/devices/nbjt2/libnbjt2.a \
 		spicelib/devices/numd/libnumd.a   \
 		spicelib/devices/numd2/libnumd2.a \
 		spicelib/devices/numos/libnumos.a"
-   NUMDEVDIR="  nbjt	\
-   		nbjt2	\
-		numd	\
-		numd2	\
+     NUMDEVDIR="  nbjt \
+   		nbjt2 \
+		numd  \
+		numd2 \
 		numos"
 		   
-   CIDERSCRIPTS="devload devaxis ciderinit"
+CIDERSCRIPTS="devload devaxis ciderinit"
    
 else
    CIDERLIB=""
@@ -443,12 +442,13 @@ if test "$enable_cluster" = "yes"; then
    LIBS="$LIBS -lpthread"   
 fi
 
+
 dnl --with-readline : the user wants to use readline library
 AC_ARG_WITH(readline,
     [  --with-readline   Use the readline package: SEE README],
     AC_MSG_RESULT(Checking for readline library:)
-dnl Check for the readline library:
-    AC_CHECK_LIB(readline,readline, AC_DEFINE(HAVE_GNUREADLINE) LIBS="$LIBS -lreadline")
+ Check for the readline library:
+    AC_CHECK_LIB(readline, readline, AC_DEFINE(HAVE_GNUREADLINE) LIBS="$LIBS -lreadline")
 )
 
 
@@ -470,7 +470,6 @@ src/spicelib/devices/bsim3v0/Makefile	\
 src/spicelib/devices/bsim3v1/Makefile	\
 src/spicelib/devices/bsim3v1a/Makefile	\
 src/spicelib/devices/bsim3v1s/Makefile	\
-src/spicelib/devices/bsim3v2/Makefile	\
 src/spicelib/devices/bsim3/Makefile	\
 src/spicelib/devices/bsim4/Makefile	\
 src/spicelib/devices/bsim3soi/Makefile	\
@@ -532,7 +531,6 @@ src/maths/ni/Makefile		\
 src/maths/deriv/Makefile	\
 src/maths/poly/Makefile		\
 src/maths/sparse/Makefile	\
-src/maths/sparse/tests/Makefile	\
 src/misc/Makefile		\
 src/xspice/Makefile		\
 src/xspice/cm/Makefile		\
