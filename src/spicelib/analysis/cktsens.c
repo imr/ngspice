@@ -72,7 +72,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	static int	is_dc;
 	int		k, j, n;
 	int		num_vars, branch_eq=0;
-	char		*sen_data[1] = {NULL};
+	char		*sen_data=NULL;
 	char		namebuf[513];
 	IFuid		*output_names, freq_name;
 	int		bypass;
@@ -187,7 +187,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		error = (*SPfrontEnd->OUTpBeginPlot)((void *) ckt,
 			(void *) ckt->CKTcurJob,
 			ckt->CKTcurJob->JOBname, freq_name, IF_REAL, num_vars,
-			output_names, type, (void **)sen_data);
+			output_names, type, (void **) &sen_data);
 		if (error)
 			return error;
 
@@ -199,7 +199,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			output_values = NULL;
 			output_cvalues = NEWN(IFcomplex, num_vars);
 			if (sen_info->step_type != SENS_LINEAR)
-			    (*(SPfrontEnd->OUTattributes))((void *)sen_data[0],
+			    (*(SPfrontEnd->OUTattributes))((void *)sen_data,
 				    NULL, OUT_SCALE_LOG, NULL);
 
 		}
@@ -562,13 +562,13 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 		value.rValue = freq;
 		
-		(*(SPfrontEnd->OUTpData))(sen_data[0], &value, &nvalue);
+		(*(SPfrontEnd->OUTpData))(sen_data, &value, &nvalue);
 
 		freq = inc_freq(freq, sen_info->step_type, step_size);
 
 	}
 
-	(*SPfrontEnd->OUTendPlot)((void *) sen_data[0]);
+	(*SPfrontEnd->OUTendPlot)((void *) sen_data);
 
 	if (is_dc) {
 		FREE(output_values);	/* XXX free various vectors */

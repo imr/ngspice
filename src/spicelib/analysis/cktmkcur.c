@@ -24,16 +24,16 @@ CKTmkCur(CKTcircuit *ckt, CKTnode **node, IFuid basename, char *suffix)
     IFuid uid;
     int error;
     CKTnode *mynode;
-    CKTnode *checknode[1];
+    CKTnode *checknode;
 
     error = CKTmkNode(ckt,&mynode);
     if(error) return(error);
-    checknode[0] = mynode;
+    checknode = mynode;
     error = (*(SPfrontEnd->IFnewUid))((void *)ckt,&uid,basename,
-            suffix,UID_SIGNAL,(void**)checknode);
+            suffix,UID_SIGNAL,(void**)&checknode);
     if(error) {
         FREE(mynode);
-        if(node) *node = checknode[0];
+        if(node) *node = checknode;
         return(error);
     }
     mynode->name = uid;
