@@ -1,3 +1,11 @@
+2004-06-22 Adrian Dawe <adrian.dawe@multigig.com>
+
+	* src/spicewish:
+	Sorry noticed a bug
+	could you add:
+	set ::spicewish_mode "standalone"
+	to line 107 (at the end of load proc)
+
 2004-06-22 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/frontend/com_dl.c:
