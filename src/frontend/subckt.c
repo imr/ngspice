@@ -52,6 +52,26 @@ Modified: 2000 AlansFixes
 #include "variable.h"
 
 
+#ifdef NUMPARAMS
+#define  NUPADECKCOPY 0
+#define  NUPASUBSTART 1
+#define  NUPASUBDONE  2
+#define  NUPAEVALDONE 3
+extern char * nupa_copy(char *s, int linenum);
+extern int    nupa_eval(char *s, int linenum);
+extern int    nupa_signal(int sig, char *info); 
+static char NumParams='y';
+static char DoGarbage='n';
+
+#else
+#define nupa_copy(x,y)   copy(x)
+#define nupa_eval(x,y)    1
+#define nupa_signal(x,y)  1
+static char NumParams='n';
+static char DoGarbage='n';
+#endif
+
+
 /* ----- static declarations ----- */
 static struct line * doit(struct line *deck);
 static int translate(struct line *deck, char *formal, char *actual, char *scname, 
@@ -115,6 +135,9 @@ inp_subcktexpand(struct line *deck)
 {
     struct line *ll, *c;
     char *s;
+#ifdef NUMPARAMS
+    int ok;
+#endif
 
     if(!cp_getvar("substart", VT_STRING, start))
         (void) strcpy(start, ".subckt");
@@ -128,6 +151,18 @@ inp_subcktexpand(struct line *deck)
         (void) strcpy(model, ".model");
     (void) cp_getvar("nobjthack", VT_BOOL, (char *) &nobjthack);
 
+#ifdef NUMPARAMS
+    /*  deck has .control sections already removed, but not comments */
+    if ( NumParams == 'y' ) {
+      ok = nupa_signal( NUPADECKCOPY, NULL);  
+      c=deck;
+      while ( c != NULL) {  /* first Numparam pass */ 
+        c->li_line = nupa_copy(c->li_line, c->li_linenum);
+        c= c->li_next;
+      }
+    } 
+#endif
+    
     /* Let's do a few cleanup things first... Get rid of ( ) around node
      * lists...
      */
@@ -174,7 +209,19 @@ inp_subcktexpand(struct line *deck)
 		    c->li_line);
 	    return NULL;
 	}
-
+	
+#ifdef NUMPARAM
+   if ( NumParams == 'y' ) {
+      /* the NUMPARAM final line translation pass */
+      ok= ok && nupa_signal(NUPASUBDONE, NULL); 
+      c= ll;
+      while (c != NULL) {
+        ok= ok && nupa_eval( c->li_line, c->li_linenum);
+        c= c->li_next;
+      }
+      ok= ok && nupa_signal(NUPAEVALDONE, NULL);
+    }
+#endif
     return (ll);  /* return the spliced deck.  */
 }
 
@@ -194,6 +241,9 @@ static struct line *
 doit(struct line *deck)
 {
     struct line *c, *last, *lc, *lcc;
+#ifdef NUMPARAMS
+    struct line *savenext;
+#endif    
     struct subs *sss = (struct subs *) NULL, *ks;   /*  *sss and *ks temporarily hold decks to substitute  */
     char *s, *t, *scname, *subname;
     int nest, numpasses = MAXNEST, i;
@@ -254,6 +304,9 @@ doit(struct line *deck)
             sss = alloc(struct subs);
 	    if (!lcc)               /* if lcc is null, then no .ends was found.  */
 		lcc = last;
+#ifdef NUMPARAMS
+            if ( NumParams != 'y' )
+#endif	     		
             lcc->li_next = NULL;    /* shouldn't we free some memory here????? */
 
 	    /* At this point, last points to the .subckt card, and lcc points to the .ends card */
@@ -284,8 +337,12 @@ doit(struct line *deck)
             subs = sss;            /* Now that sss is built, assign it to subs */
             last = c->li_next;
             lcc = subs->su_def;
-
-        } 
+	    
+#ifdef NUMPARAMS
+/*gp */     c->li_next = NULL;  /* Numparam needs line c */ 
+            c->li_line[0] = '*'; /* comment it out */
+#endif        
+	} 
 	else {  /*  line is neither .ends nor .subckt.  */
 	  /* make lc point to this card, and advance last to next card. */
             lc = last;    
@@ -401,13 +458,31 @@ doit(struct line *deck)
 		tfree(subname);
 
                 /* Now splice the decks together. */
+#ifdef NUMPARAMS
+		savenext =  c->li_next;
+                if ( NumParams != 'y') {
+                  /* old style: c will drop a dangling pointer: memory leak  */
+               if (lc)
+                    lc->li_next = lcc;
+                  else
+                    deck = lcc;
+                } else {
+                  /* ifdef NUMPARAMS, keep the invoke line as a comment  */
+    		  c->li_next = lcc;
+		  c->li_line[0] = '*'; /* comment it out */
+		}
+#else
                 if (lc)
                     lc->li_next = lcc;
                 else
                     deck = lcc;
+#endif
                 while (lcc->li_next != NULL)
                     lcc = lcc->li_next;
                 lcc->li_next = c->li_next;
+#ifdef NUMPARAMS
+                lcc->li_next = savenext;
+#endif				
                 c = lcc->li_next;
                 lc = lcc;
 		tfree(tofree);
