@@ -1,0 +1,23 @@
+*** This is a sample spice/cider initialization file.
+alias pl print line
+alias pc print col
+alias ds display
+alias hi history
+alias li listing
+alias p plot
+alias pr print
+alias q quit
+alias bye quit
+alias exit quit
+alias so source
+alias ld load
+alias xg xgraph tmp
+alias sp setplot
+alias dl devload
+alias dx devaxis
+set width = 80 height = 24 nosort noaskquit nobreak
+set xbrushheight = 3 xbrushwidth = 3
+set unixcom
+set hcopydevtype = postscript
+set pointstyle = markers
+set term = vt100

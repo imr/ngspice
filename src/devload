@@ -1,0 +1,21 @@
+* initialize a device plot
+.control
+begin
+  unset devfile
+  if $argc = 1
+    set devfile = $argv[1]
+    load $devfile
+    strcmp flag "$?&y" "1"
+    if ($flag = 0)
+      let yaxis = y[0]
+      transpose all
+      let xaxis = x[0]
+      transpose all
+      setscale yaxis
+    end
+  else
+    echo "usage: devload <filename>"
+  end
+
+  unset devfile flag
+end

@@ -1,0 +1,69 @@
+* initialize a device plot
+.control
+begin
+  unset axis
+  if $argc = 1
+    set axis = $argv[1]
+    strcmp flag $axis "x"
+    if ($flag = 0)
+      echo "setting axis to x"
+      strcmp flag "$?&devaxis" "0"
+      if ($flag = 0)
+	strcmp flag "$?&xaxis" "0"
+	if ($flag = 0)
+	  echo "Error: no x axis present"
+	else
+	  transpose all
+	  setscale xaxis
+	  let devaxis = 1
+	end
+      else
+	strcmp flag "$&devaxis" "-1"
+	if ($flag = 0)
+	  strcmp flag "$?&xaxis" "0"
+	  if ($flag = 0)
+	    echo "Error: no x axis present"
+	  else
+	    transpose all
+	    setscale xaxis
+	    let devaxis = 1
+	  end
+	end
+      end
+    else
+      strcmp flag $axis "y"
+      if ($flag = 0)
+	echo "setting axis to y"
+	strcmp flag "$?&devaxis" "0"
+	if ($flag = 0)
+	  strcmp flag "$?&yaxis" "0"
+	  if ($flag = 0)
+	    echo "Error: no y axis present"
+	  else
+	    setscale yaxis
+	    let devaxis = -1
+	  end
+	else
+	  strcmp flag "$&devaxis" "1"
+	  if ($flag = 0)
+	    strcmp flag "$?&yaxis" "0"
+	    if ($flag = 0)
+	      echo "Error: no y axis present"
+	    else
+	      transpose all
+	      setscale yaxis
+	      let devaxis = -1
+	    end
+	  end
+	end
+      else
+	echo "Error: unknown axis" $axis
+	echo "usage: devaxis <x|y>"
+      end
+    end
+  else
+    echo "usage: devaxis <x|y>"
+  end
+
+  unset axis flag
+end
