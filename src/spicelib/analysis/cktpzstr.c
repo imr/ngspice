@@ -304,10 +304,10 @@ PZeval(int strat, PZtrial **set, PZtrial **new_trial_p)
 		new_trial->s.real = (set[1]->s.real + set[2]->s.real) / 2.0;
 	    }
 	} else if (CKTpzTrapped == 3) {
-	    if ((new_trial->s.real <= set[0]->s.real
-		 || new_trial->s.real == set[1]->s.real)
-		&& (new_trial->s.imag == set[1]->s.imag
-		    || new_trial->s.real >= set[2]->s.real)) {
+	    if (new_trial->s.real <= set[0]->s.real
+		|| new_trial->s.real == set[1]->s.real
+		&& new_trial->s.imag == set[1]->s.imag
+		|| new_trial->s.real >= set[2]->s.real) {
 #ifdef PZDEBUG
 		DEBUG(1)
 		    fprintf(stderr,
@@ -481,7 +481,7 @@ int CKTpzStrat(PZtrial **set)
 		    /*  minima in magnitude */
 		    /* Search for exact mag. minima, look for complex pair */
 		    suggestion = SYM;
-		} else if ((a_mag > b_mag || a_mag == b_mag)
+		} else if (a_mag > b_mag || a_mag == b_mag
 			   && fabs(a) > fabs(b))
 		    suggestion = SPLIT_LEFT;
 		else
@@ -556,8 +556,8 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 
 	    C_SUBEQ(diff_frac,p->s,new_trial->s);
 
-	    if ((diff_frac.real < 0.0
-		 || diff_frac.real == 0.0) && diff_frac.imag < 0.0) {
+	    if (diff_frac.real < 0.0
+		|| diff_frac.real == 0.0 && diff_frac.imag < 0.0) {
 		prev = p;
 		if (p->flags & ISAMINIMA)
 		    base = p;
@@ -705,7 +705,7 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 	    }
 	}
 
-	if ((error == E_SINGULAR || new_trial->f_raw.real == 0.0)
+	if (error == E_SINGULAR || new_trial->f_raw.real == 0.0
 	    && new_trial->f_raw.imag == 0.0) {
 	    new_trial->f_raw.real = 0.0;
 	    new_trial->f_raw.imag = 0.0;
@@ -941,8 +941,8 @@ CKTpzUpdateSet(PZtrial **set, PZtrial *new)
 	set[0] = new;
 	this_move = FAR_LEFT;
     } else if (new->s.real < set[1]->s.real) {
-	if ((!CKTpzTrapped || new->mag_def < set[1]->mag_def
-	     || new->mag_def == set[1]->mag_def)
+	if (!CKTpzTrapped || new->mag_def < set[1]->mag_def
+	    || new->mag_def == set[1]->mag_def
 	    && fabs(new->f_def.real) < fabs(set[1]->f_def.real)) {
 		/* Really should check signs, not just compare fabs( ) */
 	    set[2] = set[1];	/* XXX = set[2]->prev :: possible opt */
@@ -953,8 +953,8 @@ CKTpzUpdateSet(PZtrial **set, PZtrial *new)
 	    this_move = NEAR_LEFT;
 	}
     } else if (new->s.real < set[2]->s.real) {
-	if ((!CKTpzTrapped || new->mag_def < set[1]->mag_def
-	     || new->mag_def == set[1]->mag_def)
+	if (!CKTpzTrapped || new->mag_def < set[1]->mag_def
+	    || new->mag_def == set[1]->mag_def
 	    && fabs(new->f_def.real) < fabs(set[1]->f_def.real)) {
 		/* Really should check signs, not just compare fabs( ) */
 	    set[0] = set[1];

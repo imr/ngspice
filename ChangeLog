@@ -1,3 +1,9 @@
+2000-07-28  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* tests/polezero/*.out: Changed the content of these files because
+	the bug that caused the incorrect pole-zero results have been
+	traced to src/spicelib/analysis/cktpzstr.c.
+
 2000-07-05  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/devices/dev.c: Added first_device() and next_device() to

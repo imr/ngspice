@@ -1,3 +1,11 @@
+2000-07-28  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* cktpzstr.c: Reversed a patch that went in between ng-spice-0.2
+	and ng-spice-0.3 that eliminated the following warnings: 'suggest
+	parentheses around && within ||'.  The parenthesis were not placed
+	correctly, leading to incorrect behaviour of the pole-zero
+	analysis.
+
 2000-05-22  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* cktpzstr.c, cktsens.c: Applied Widlok patches.
