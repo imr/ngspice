@@ -168,4 +168,9 @@ BSIM3SOI_FD - SOI model (fully depleted devices)
       NOT YET IMPLEMENTED.
 
 BSIM3SOI_PD - SOI model (partially depleted devices)
-      NOT YET IMPLEMENTED.
+      Initial Release Ver: 2.2.1. TO BE TESTED
+      There is a bsim3soipd directory under the test
+      hierarchy. The tests come from the bsim3soi
+      web site at: 
+      http://www-device.eecs.berkeley.edu/~bsim3soi
+      

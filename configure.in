@@ -173,7 +173,7 @@ else
 fi
 
 AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo $dprefix/bin`" )
-AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice-rework`" )
+AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice`" )
 AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE, "`date`" )
 
 
@@ -214,6 +214,7 @@ src/spicelib/devices/bsim3v1/Makefile	\
 src/spicelib/devices/bsim3/Makefile	\
 src/spicelib/devices/bsim4/Makefile	\
 src/spicelib/devices/bsim3v2/Makefile	\
+src/spicelib/devices/bsim3soi_pd/Makefile \
 src/spicelib/devices/cap/Makefile	\
 src/spicelib/devices/cccs/Makefile	\
 src/spicelib/devices/ccvs/Makefile	\

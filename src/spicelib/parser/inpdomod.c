@@ -156,11 +156,11 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    }
 	    break;
 	case 9:
-	    type = INPtypelook("BSIMsoi");
+	    type = INPtypelook("B3SOIPD");
 	    if (type < 0) {
 		err =
 		    INPmkTemp
-		    ("Device type BSIMsoi not available in this binary\n");
+		    ("Device type B3SOIPD not available in this binary\n");
 	    }
 	    break;
 	case 14:

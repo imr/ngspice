@@ -1,0 +1,18 @@
+*model = BSIMSOI
+*Berkeley Spice Compatibility 
+*
+* SOI NMOSFET, floating body simulation
+
+vd d 0 dc 0.05
+vs s 0 dc 0
+ve e 0 dc 0
+vg g 0 dc 3
+
+m1 d g s e n1 w=10u l=0.25u
+
+.option gmin=1e-25 itl1=500
+.dc vg 0 1.5 0.01 ve -4 4 1
+.include nmospd.mod
+
+* For PD, the command '.include nmosfd.mod ' should
+* be replaced with '.include nmospd.mod'.
