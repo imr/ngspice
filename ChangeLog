@@ -1,3 +1,10 @@
+2004-06-22  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/spicelib/devices/vbic: Vbic code updated. Thanks to Dietmar 
+	    Warning (warning@danalyse.de )now we have the four terminal 
+	    version of the VBIC model. The old three terminal version has 
+	    been discarded.
+
 2004-06-21  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/frontend/subckt.c: patch from Stuart Brorson

@@ -35,6 +35,7 @@ VBICtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
             CKTterr(here->VBICqbep,ckt,timeStep);
             CKTterr(here->VBICqbeo,ckt,timeStep);
             CKTterr(here->VBICqbco,ckt,timeStep);
+            CKTterr(here->VBICqbcp,ckt,timeStep);
         }
     }
     return(OK);

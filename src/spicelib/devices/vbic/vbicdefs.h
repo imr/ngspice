@@ -29,12 +29,14 @@ typedef struct sVBICinstance {
     int VBICcollNode;   /* number of collector node of vbic */
     int VBICbaseNode;   /* number of base node of vbic */
     int VBICemitNode;   /* number of emitter node of vbic */
+    int VBICsubsNode;   /* number of substrate node of vbic */
     int VBICcollCXNode; /* number of internal collector node of vbic */
     int VBICcollCINode; /* number of internal collector node of vbic */
     int VBICbaseBXNode; /* number of internal base node of vbic */
     int VBICbaseBINode; /* number of internal base node of vbic */
     int VBICemitEINode; /* number of internal emitter node of vbic */
     int VBICbaseBPNode; /* number of internal base node of vbic */
+    int VBICsubsSINode; /* number of internal substrate node */
 
     double VBICarea;     /* area factor for the vbic */
     double VBICicVBE;    /* initial condition voltage B-E*/
@@ -85,6 +87,8 @@ typedef struct sVBICinstance {
                              * (base,base) */
     double *VBICemitEmitPtr; /* pointer to sparse matrix at
                              * (emitter,emitter) */
+    double *VBICsubsSubsPtr;   /* pointer to sparse matrix at
+                             * (substrate,substrate) */
     double *VBICcollCXCollCXPtr; /* pointer to sparse matrix at
                              * (collector prime,collector prime) */
     double *VBICcollCICollCIPtr; /* pointer to sparse matrix at
@@ -97,6 +101,8 @@ typedef struct sVBICinstance {
                              * (collector prime,collector prime) */
     double *VBICemitEIEmitEIPtr;   /* pointer to sparse matrix at
                              * (emitter prime,emitter prime) */
+    double *VBICsubsSISubsSIPtr;    /* pointer to sparse matrix at
+                             * (substrate prime, substrate prime) */
 
     double *VBICbaseEmitPtr; /* pointer to sparse matrix at
                              * (base,emit) */
@@ -112,6 +118,8 @@ typedef struct sVBICinstance {
                              * (base,base prime) */
     double *VBICemitEmitEIPtr;    /* pointer to sparse matrix at
                              * (emitter,emitter prime) */
+    double *VBICsubsSubsSIPtr;    /* pointer to sparse matrix at
+                             * (substrate, Substrate connection) */
     double *VBICcollCXCollCIPtr;    /* pointer to sparse matrix at
                              * (collector prime,base prime) */
     double *VBICcollCXBaseBXPtr;    /* pointer to sparse matrix at
@@ -130,7 +138,11 @@ typedef struct sVBICinstance {
                              * (base primt,emitter prime) */
     double *VBICbaseBXBaseBPPtr;   /* pointer to sparse matrix at
                              * (base primt,emitter prime) */
+    double *VBICbaseBXSubsSIPtr;   /* pointer to sparse matrix at
+                             * (base primt,emitter prime) */
     double *VBICbaseBIEmitEIPtr;   /* pointer to sparse matrix at
+                             * (base primt,emitter prime) */
+    double *VBICbaseBPSubsSIPtr;   /* pointer to sparse matrix at
                              * (base primt,emitter prime) */
 
     double *VBICcollCXCollPtr;  /* pointer to sparse matrix at
@@ -139,6 +151,8 @@ typedef struct sVBICinstance {
                              * (base prime,base ) */
     double *VBICemitEIEmitPtr;    /* pointer to sparse matrix at
                              * (emitter prime,emitter) */
+    double *VBICsubsSISubsPtr;    /* pointer to sparse matrix at
+                             * (Substrate connection, substrate) */
     double *VBICcollCICollCXPtr;    /* pointer to sparse matrix at
                              * (collector prime,base prime) */
     double *VBICbaseBICollCXPtr;    /* pointer to sparse matrix at
@@ -153,16 +167,24 @@ typedef struct sVBICinstance {
                              * (emitter prime,collector prime) */
     double *VBICbaseBPCollCIPtr;   /* pointer to sparse matrix at
                              * (base primt,emitter prime) */
+    double *VBICsubsSICollCIPtr;   /* pointer to sparse matrix at
+                             * (substrate,collector prime) */
     double *VBICbaseBIBaseBXPtr;   /* pointer to sparse matrix at
                              * (base primt,emitter prime) */
     double *VBICemitEIBaseBXPtr;   /* pointer to sparse matrix at
                              * (emitter prime,base prime) */
     double *VBICbaseBPBaseBXPtr;   /* pointer to sparse matrix at
                              * (base primt,emitter prime) */
+    double *VBICsubsSIBaseBXPtr;   /* pointer to sparse matrix at
+                             * (substrate,substrate) */
     double *VBICemitEIBaseBIPtr;   /* pointer to sparse matrix at
                              * (emitter prime,base prime) */
     double *VBICbaseBPBaseBIPtr;   /* pointer to sparse matrix at
                              * (base primt,emitter prime) */
+    double *VBICsubsSIBaseBIPtr;   /* pointer to sparse matrix at
+                             * (substrate,base prime) */
+    double *VBICsubsSIBaseBPPtr;   /* pointer to sparse matrix at
+                             * (substrate,substrate) */
 
     unsigned VBICareaGiven   :1; /* flag to indicate area was specified */
     unsigned VBICoff         :1; /* 'off' flag for vbic */
@@ -181,6 +203,7 @@ typedef struct sVBICinstance {
     double VBICcapbc;
     double VBICcapbcx;
     double VBICcapbep;
+    double VBICcapbcp;
     double *VBICsens;
 
 #define VBICsenGpi VBICsens /* stores the perturbed values of gpi */
@@ -208,9 +231,11 @@ typedef struct sVBICinstance {
 #define VBICIBEPNOIZ     8
 #define VBICFLBENOIZ     9
 #define VBICFLBEPNOIZ   10
-#define VBICTOTNOIZ     11
+#define VBICRSNOIZ      11
+#define VBICICCPNOIZ    12
+#define VBICTOTNOIZ     13
 
-#define VBICNSRCS       12     /* the number of VBIC noise sources */
+#define VBICNSRCS       14     /* the number of VBIC noise sources */
 
 #ifndef NONOISE
       double VBICnVar[NSTATVARS][VBICNSRCS];
@@ -228,9 +253,10 @@ typedef struct sVBICinstance {
 #define VBICvbci VBICstate+2
 #define VBICvbcx VBICstate+3
 #define VBICvbep VBICstate+4
-#define VBICvrci VBICstate+6
-#define VBICvrbi VBICstate+7
-#define VBICvrbp VBICstate+8
+#define VBICvrci VBICstate+5
+#define VBICvrbi VBICstate+6
+#define VBICvrbp VBICstate+7
+#define VBICvbcp VBICstate+8
 
 #define VBICibe VBICstate+9
 #define VBICibe_Vbei VBICstate+10
@@ -294,15 +320,26 @@ typedef struct sVBICinstance {
 #define VBICcqbco VBICstate+52
 #define VBICgqbco VBICstate+53
 
-#define VBICnumStates 54
+#define VBICibcp VBICstate+54
+#define VBICibcp_Vbcp VBICstate+55
 
-#define VBICsensxpbe VBICstate+54 /* charge sensitivities and their
-                   derivatives. +55 for the derivatives -
+#define VBICiccp VBICstate+56
+#define VBICiccp_Vbep VBICstate+57
+#define VBICiccp_Vbci VBICstate+58
+#define VBICiccp_Vbcp VBICstate+59
+
+#define VBICqbcp VBICstate+60
+#define VBICcqbcp VBICstate+61
+
+#define VBICnumStates 62
+
+#define VBICsensxpbe VBICstate+64 /* charge sensitivities and their
+                   derivatives. +65 for the derivatives -
                    pointer to the beginning of the array */
-#define VBICsensxpbex VBICstate+56
-#define VBICsensxpbc VBICstate+58
-#define VBICsensxpbcx VBICstate+60
-#define VBICsensxpbep VBICstate+62
+#define VBICsensxpbex VBICstate+66
+#define VBICsensxpbc VBICstate+68
+#define VBICsensxpbcx VBICstate+70
+#define VBICsensxpbep VBICstate+72
 
 #define VBICnumSenStates 10
 
@@ -430,6 +467,7 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     double VBICcollectorConduct; /* collector conductance */
     double VBICbaseConduct;      /* base conductance */
     double VBICemitterConduct;   /* emitter conductance */
+    double VBICsubstrateConduct; /* substrate conductance */
 
     unsigned VBICtnomGiven : 1;
     unsigned VBICextCollResistGiven : 1;
@@ -674,52 +712,58 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
 #define VBIC_QUEST_COLLNODE       212
 #define VBIC_QUEST_BASENODE       213
 #define VBIC_QUEST_EMITNODE       214
+#define VBIC_QUEST_SUBSNODE       215
 #define VBIC_QUEST_COLLCXNODE     216
 #define VBIC_QUEST_COLLCINODE     217
 #define VBIC_QUEST_BASEBXNODE     218
 #define VBIC_QUEST_BASEBINODE     219
 #define VBIC_QUEST_BASEBPNODE     220
 #define VBIC_QUEST_EMITEINODE     221
+#define VBIC_QUEST_SUBSSINODE     222
 #define VBIC_QUEST_VBE            223
 #define VBIC_QUEST_VBC            224
 #define VBIC_QUEST_CC             225
 #define VBIC_QUEST_CB             226
 #define VBIC_QUEST_CE             227
-#define VBIC_QUEST_GM             228
-#define VBIC_QUEST_GO             229
-#define VBIC_QUEST_GPI            230
-#define VBIC_QUEST_GMU            231
-#define VBIC_QUEST_GX             232
-#define VBIC_QUEST_QBE            233
-#define VBIC_QUEST_CQBE           234
-#define VBIC_QUEST_QBC            235
-#define VBIC_QUEST_CQBC           236
-#define VBIC_QUEST_QSUB           237
-#define VBIC_QUEST_CQSUB          238
-#define VBIC_QUEST_QBX            239
-#define VBIC_QUEST_CQBX           240
-#define VBIC_QUEST_CEXBC          241
-#define VBIC_QUEST_GEQCB          242
-#define VBIC_QUEST_GCSUB          243
-#define VBIC_QUEST_GDSUB          244
-#define VBIC_QUEST_GEQBX          245
-#define VBIC_QUEST_CBE            246
-#define VBIC_QUEST_CBEX           247
-#define VBIC_QUEST_CBC            248
-#define VBIC_QUEST_CBCX           249
-#define VBIC_QUEST_SENS_REAL      250
-#define VBIC_QUEST_SENS_IMAG      251
-#define VBIC_QUEST_SENS_MAG       252
-#define VBIC_QUEST_SENS_PH        253
-#define VBIC_QUEST_SENS_CPLX      254
-#define VBIC_QUEST_SENS_DC        255
-#define VBIC_QUEST_POWER          256
+#define VBIC_QUEST_CS             228
+#define VBIC_QUEST_GM             229
+#define VBIC_QUEST_GO             230
+#define VBIC_QUEST_GPI            231
+#define VBIC_QUEST_GMU            232
+#define VBIC_QUEST_GX             233
+#define VBIC_QUEST_QBE            234
+#define VBIC_QUEST_CQBE           235
+#define VBIC_QUEST_QBC            236
+#define VBIC_QUEST_CQBC           237
+#define VBIC_QUEST_QBX            238
+#define VBIC_QUEST_CQBX           239
+#define VBIC_QUEST_QBCP           240
+#define VBIC_QUEST_CQBCP          241
+#define VBIC_QUEST_CEXBC          242
+#define VBIC_QUEST_GEQCB          243
+#define VBIC_QUEST_GCSUB          244
+#define VBIC_QUEST_GDSUB          245
+#define VBIC_QUEST_GEQBX          246
+#define VBIC_QUEST_CBE            247
+#define VBIC_QUEST_CBEX           248
+#define VBIC_QUEST_CBC            249
+#define VBIC_QUEST_CBCX           250
+#define VBIC_QUEST_CBEP           251
+#define VBIC_QUEST_CBCP           252
+#define VBIC_QUEST_SENS_REAL      253
+#define VBIC_QUEST_SENS_IMAG      254
+#define VBIC_QUEST_SENS_MAG       255
+#define VBIC_QUEST_SENS_PH        256
+#define VBIC_QUEST_SENS_CPLX      257
+#define VBIC_QUEST_SENS_DC        258
+#define VBIC_QUEST_POWER          259
 
 /* model questions */
 #define VBIC_MOD_COLLCONDUCT           301
 #define VBIC_MOD_BASECONDUCT           302
 #define VBIC_MOD_EMITTERCONDUCT        303
-#define VBIC_MOD_TYPE                  304
+#define VBIC_MOD_SUBSTRATECONDUCT      304
+#define VBIC_MOD_TYPE                  305
 
 #include "vbicext.h"
 #endif /*VBIC*/

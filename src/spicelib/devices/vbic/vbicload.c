@@ -28,17 +28,19 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     VBICmodel *model = (VBICmodel*)inModel;
     VBICinstance *here;
     double p[108]
-    ,Vbei,Vbex,Vbci,Vbep,Vrcx,Vbcx
-    ,Vrci,Vrbx,Vrbi,Vre,Vrbp,Vbe,Vbc
-    ,Ibe,Ibe_Vbei,Ibex,Ibex_Vbex,Itzf,Itzf_Vbei,Itzf_Vbci
-    ,Itzr,Itzr_Vbci,Itzr_Vbei,Ibc,Ibc_Vbci,Ibc_Vbei,Ibep
-    ,Ibep_Vbep,Ircx,Ircx_Vrcx,Irci,Irci_Vrci,Irci_Vbci,Irci_Vbcx
-    ,Irbx,Irbx_Vrbx,Irbi,Irbi_Vrbi,Irbi_Vbei,Irbi_Vbci,Ire
-    ,Ire_Vre,Irbp,Irbp_Vrbp,Irbp_Vbep,Irbp_Vbci,Qbe,Qbe_Vbei
-    ,Qbe_Vbci,Qbex,Qbex_Vbex,Qbc,Qbc_Vbci,Qbcx,Qbcx_Vbcx
-    ,Qbep,Qbep_Vbep,Qbep_Vbci,Qbeo,Qbeo_Vbe,Qbco,Qbco_Vbc,SCALE;
+    ,Vbei,Vbex,Vbci,Vbep,Vbcp,Vrcx
+    ,Vbcx,Vrci,Vrbx,Vrbi,Vre,Vrbp,Vrs
+    ,Vbe,Vbc,Ibe,Ibe_Vbei,Ibex,Ibex_Vbex,Itzf
+    ,Itzf_Vbei,Itzf_Vbci,Itzr,Itzr_Vbci,Itzr_Vbei,Ibc,Ibc_Vbci
+    ,Ibc_Vbei,Ibep,Ibep_Vbep,Ircx,Ircx_Vrcx,Irci,Irci_Vrci
+    ,Irci_Vbci,Irci_Vbcx,Irbx,Irbx_Vrbx,Irbi,Irbi_Vrbi,Irbi_Vbei
+    ,Irbi_Vbci,Ire,Ire_Vre,Irbp,Irbp_Vrbp,Irbp_Vbep,Irbp_Vbci
+    ,Qbe,Qbe_Vbei,Qbe_Vbci,Qbex,Qbex_Vbex,Qbc,Qbc_Vbci
+    ,Qbcx,Qbcx_Vbcx,Qbep,Qbep_Vbep,Qbep_Vbci,Qbeo,Qbeo_Vbe
+    ,Qbco,Qbco_Vbc,Ibcp,Ibcp_Vbcp,Iccp,Iccp_Vbep,Iccp_Vbci
+    ,Iccp_Vbcp,Irs,Irs_Vrs,Qbcp,Qbcp_Vbcp,SCALE;
     int iret;
-    int vbic_3T_it_cf_fj(double *
+    int vbic_4T_it_cf_fj(double *
         ,double *,double *,double *,double *,double *,double *
         ,double *,double *,double *,double *,double *,double *, double *
         ,double *,double *,double *,double *,double *,double *, double *
@@ -47,7 +49,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
         ,double *,double *,double *,double *,double *,double *, double *
         ,double *,double *,double *,double *,double *,double *, double *
         ,double *,double *,double *,double *,double *,double *, double *
-        ,double *,double *,double *,double *,double *,double *, double *, double *);
+        ,double *,double *,double *,double *,double *,double *, double *
+        ,double *,double *,double *,double *,double *,double *, double *
+        ,double *,double *,double *,double *,double *,double *);
     double vce, xfact;
     double vt;
     double delvbei;
@@ -58,6 +62,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     double delvrci;
     double delvrbi;
     double delvrbp;
+    double delvbcp;
     double ibehat;
     double ibexhat;
     double itzfhat;
@@ -67,9 +72,11 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     double ircihat;
     double irbihat;
     double irbphat;
+    double ibcphat;
+    double iccphat;
     double ceq, geq, rhs_current;
     int icheck;
-    int ichk1, ichk2, ichk3, ichk4;
+    int ichk1, ichk2, ichk3, ichk4, ichk5;
     int error;
     int SenCond=0;
     double gqbeo, cqbeo, gqbco, cqbco, gbcx, cbcx;
@@ -244,6 +251,10 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     Vre = model->VBICtype*(
                         *(ckt->CKTrhsOp+here->VBICemitNode)-
                         *(ckt->CKTrhsOp+here->VBICemitEINode));
+                    Vbcp = *(ckt->CKTstate1 + here->VBICvbcp);
+                    Vrs = model->VBICtype*(
+                        *(ckt->CKTrhsOp+here->VBICsubsNode)-
+                        *(ckt->CKTrhsOp+here->VBICsubsSINode));
                 }
                 else{
                     Vbei = *(ckt->CKTstate0 + here->VBICvbei);
@@ -254,6 +265,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     Vrci = *(ckt->CKTstate0 + here->VBICvrci);
                     Vrbi = *(ckt->CKTstate0 + here->VBICvrbi);
                     Vrbp = *(ckt->CKTstate0 + here->VBICvrbp);
+                    Vbcp = *(ckt->CKTstate0 + here->VBICvbcp);
                     if((ckt->CKTsenInfo->SENmode == DCSEN)||
                         (ckt->CKTsenInfo->SENmode == TRANSEN)){
                         Vbe = model->VBICtype*(
@@ -271,6 +283,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         Vre = model->VBICtype*(
                             *(ckt->CKTrhsOld+here->VBICemitNode)-
                             *(ckt->CKTrhsOld+here->VBICemitEINode));
+                        Vrs = model->VBICtype*(
+                            *(ckt->CKTrhsOld+here->VBICsubsNode)-
+                            *(ckt->CKTrhsOld+here->VBICsubsSINode));
                     }
                     if(ckt->CKTsenInfo->SENmode == ACSEN){
                         Vbe = model->VBICtype*(
@@ -288,6 +303,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         Vre = model->VBICtype*(
                             *(ckt->CKTrhsOp+here->VBICemitNode)-
                             *(ckt->CKTrhsOp+here->VBICemitEINode));
+                        Vrs = model->VBICtype*(
+                            *(ckt->CKTrhsOp+here->VBICsubsNode)-
+                            *(ckt->CKTrhsOp+here->VBICsubsSINode));
                     }
                 }
                 goto next1;
@@ -321,6 +339,10 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 Vre = model->VBICtype*(
                     *(ckt->CKTrhsOld+here->VBICemitNode)-
                     *(ckt->CKTrhsOld+here->VBICemitEINode));
+                Vbcp = *(ckt->CKTstate0 + here->VBICvbcp);
+                Vrs = model->VBICtype*(
+                    *(ckt->CKTrhsOld+here->VBICsubsNode)-
+                    *(ckt->CKTrhsOld+here->VBICsubsSINode));
             } else if(ckt->CKTmode & MODEINITTRAN) {
                 Vbe = model->VBICtype*(
                     *(ckt->CKTrhsOld+here->VBICbaseNode)-
@@ -345,6 +367,10 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 Vre = model->VBICtype*(
                     *(ckt->CKTrhsOld+here->VBICemitNode)-
                     *(ckt->CKTrhsOld+here->VBICemitEINode));
+                Vbcp = *(ckt->CKTstate1 + here->VBICvbcp);
+                Vrs = model->VBICtype*(
+                    *(ckt->CKTrhsOld+here->VBICsubsNode)-
+                    *(ckt->CKTrhsOld+here->VBICsubsSINode));
                 if( (ckt->CKTmode & MODETRAN) && (ckt->CKTmode & MODEUIC) ) {
                     Vbc = model->VBICtype * (here->VBICicVBE-here->VBICicVCE);
                 }
@@ -355,23 +381,24 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 vce=model->VBICtype*here->VBICicVCE;
                 Vbc=Vbe-vce;
                 Vbci=Vbcx=Vbc;
-                Vbep=0.0;
+                Vbep=Vbcp=0.0;
                 Vrci=Vrbi=Vrbp=0.0;
-                Vrcx=Vrbx=Vre=0.0;
+                Vrcx=Vrbx=Vre=Vrs=0.0;
             } else if((ckt->CKTmode & MODEINITJCT) && (here->VBICoff==0)) {
                 Vbe=Vbei=Vbex=model->VBICtype*here->VBICtVcrit;
                 Vbc=Vbci=Vbcx=Vbep=0.0;
+                Vbcp=Vbc-Vbe;
                 Vrci=Vrbi=Vrbp=0.0;
-                Vrcx=Vrbx=Vre=0.0;
+                Vrcx=Vrbx=Vre=Vrs=0.0;
             } else if((ckt->CKTmode & MODEINITJCT) ||
                     ( (ckt->CKTmode & MODEINITFIX) && (here->VBICoff!=0))) {
                 Vbe=0.0;
                 Vbei=Vbex=Vbe;
                 Vbc=0.0;
                 Vbci=Vbcx=Vbc;
-                Vbep=0.0;
+                Vbep=Vbcp=0.0;
                 Vrci=Vrbi=Vrbp=0.0;
-                Vrcx=Vrbx=Vre=0.0;
+                Vrcx=Vrbx=Vre=Vrs=0.0;
             } else {
 #ifndef PREDICTOR
                 if(ckt->CKTmode & MODEINITPRED) {
@@ -392,6 +419,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                             xfact * *(ckt->CKTstate2 + here->VBICvrbi);
                     Vrbp = (1+xfact) * *(ckt->CKTstate1 + here->VBICvrbp)-
                             xfact * *(ckt->CKTstate2 + here->VBICvrbp);
+                    Vbcp = (1+xfact) * *(ckt->CKTstate1 + here->VBICvbcp)-
+                            xfact * *(ckt->CKTstate2 + here->VBICvbcp);
                     *(ckt->CKTstate0 + here->VBICvbei) = 
                             *(ckt->CKTstate1 + here->VBICvbei);
                     *(ckt->CKTstate0 + here->VBICvbex) = 
@@ -408,6 +437,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->VBICvrbi);
                     *(ckt->CKTstate0 + here->VBICvrbp) = 
                             *(ckt->CKTstate1 + here->VBICvrbp);
+                    *(ckt->CKTstate0 + here->VBICvbcp) = 
+                            *(ckt->CKTstate1 + here->VBICvbcp);
                     *(ckt->CKTstate0 + here->VBICibe) = 
                             *(ckt->CKTstate1 + here->VBICibe);
                     *(ckt->CKTstate0 + here->VBICibe_Vbei) = 
@@ -462,6 +493,18 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->VBICirbp_Vbep);
                     *(ckt->CKTstate0 + here->VBICirbp_Vbci) = 
                             *(ckt->CKTstate1 + here->VBICirbp_Vbci);
+                    *(ckt->CKTstate0 + here->VBICibcp) = 
+                            *(ckt->CKTstate1 + here->VBICibcp);
+                    *(ckt->CKTstate0 + here->VBICibcp_Vbcp) = 
+                            *(ckt->CKTstate1 + here->VBICibcp_Vbcp);
+                    *(ckt->CKTstate0 + here->VBICiccp) = 
+                            *(ckt->CKTstate1 + here->VBICiccp);
+                    *(ckt->CKTstate0 + here->VBICiccp_Vbep) = 
+                            *(ckt->CKTstate1 + here->VBICiccp_Vbep);
+                    *(ckt->CKTstate0 + here->VBICiccp_Vbci) = 
+                            *(ckt->CKTstate1 + here->VBICiccp_Vbci);
+                    *(ckt->CKTstate0 + here->VBICiccp_Vbcp) = 
+                            *(ckt->CKTstate1 + here->VBICiccp_Vbcp);
                 } else {
 #endif /* PREDICTOR */
                     /*
@@ -491,6 +534,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     Vrbp = model->VBICtype*(
                         *(ckt->CKTrhsOld+here->VBICbaseBPNode)-
                         *(ckt->CKTrhsOld+here->VBICcollCXNode));
+                    Vbcp = model->VBICtype*(
+                        *(ckt->CKTrhsOld+here->VBICsubsSINode)-
+                        *(ckt->CKTrhsOld+here->VBICbaseBPNode));
 #ifndef PREDICTOR
                 }
 #endif /* PREDICTOR */
@@ -502,6 +548,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 delvrci = Vrci - *(ckt->CKTstate0 + here->VBICvrci);
                 delvrbi = Vrbi - *(ckt->CKTstate0 + here->VBICvrbi);
                 delvrbp = Vrbp - *(ckt->CKTstate0 + here->VBICvrbp);
+                delvbcp = Vbcp - *(ckt->CKTstate0 + here->VBICvbcp);
                 Vbe = model->VBICtype*(
                     *(ckt->CKTrhsOld+here->VBICbaseNode)-
                     *(ckt->CKTrhsOld+here->VBICemitNode));
@@ -517,6 +564,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 Vre = model->VBICtype*(
                     *(ckt->CKTrhsOld+here->VBICemitNode)-
                     *(ckt->CKTrhsOld+here->VBICemitEINode));
+                Vrs = model->VBICtype*(
+                    *(ckt->CKTrhsOld+here->VBICsubsNode)-
+                    *(ckt->CKTrhsOld+here->VBICsubsSINode));
 
                 ibehat = *(ckt->CKTstate0 + here->VBICibe) + 
                          *(ckt->CKTstate0 + here->VBICibe_Vbei)*delvbei;
@@ -536,6 +586,10 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                          *(ckt->CKTstate0 + here->VBICirbi_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICirbi_Vbci)*delvbci;
                 irbphat = *(ckt->CKTstate0 + here->VBICirbp) + *(ckt->CKTstate0 + here->VBICirbp_Vrbp)*delvrbp +
                          *(ckt->CKTstate0 + here->VBICirbp_Vbep)*delvbep + *(ckt->CKTstate0 + here->VBICirbp_Vbci)*delvbci;
+                ibcphat = *(ckt->CKTstate0 + here->VBICibcp) + 
+                         *(ckt->CKTstate0 + here->VBICibcp_Vbcp)*delvbcp;
+                iccphat = *(ckt->CKTstate0 + here->VBICiccp) + *(ckt->CKTstate0 + here->VBICiccp_Vbep)*delvbep + 
+                         *(ckt->CKTstate0 + here->VBICiccp_Vbci)*delvbci + *(ckt->CKTstate0 + here->VBICiccp_Vbcp)*delvbcp;
                 /*
                  *    bypass if solution has not changed
                  */
@@ -568,6 +622,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                             ckt->CKTvoltTol) )
                     if( (fabs(delvrbp) < ckt->CKTreltol*MAX(fabs(Vrbp),
                             fabs(*(ckt->CKTstate0 + here->VBICvrbp)))+
+                            ckt->CKTvoltTol) )
+                    if( (fabs(delvbcp) < ckt->CKTreltol*MAX(fabs(Vbcp),
+                            fabs(*(ckt->CKTstate0 + here->VBICvbcp)))+
                             ckt->CKTvoltTol) )
                     if( (fabs(ibehat-*(ckt->CKTstate0 + here->VBICibe)) < 
                             ckt->CKTreltol* MAX(fabs(ibehat),
@@ -604,6 +661,14 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     if( (fabs(irbphat-*(ckt->CKTstate0 + here->VBICirbp)) < 
                             ckt->CKTreltol* MAX(fabs(irbphat),
                             fabs(*(ckt->CKTstate0 + here->VBICirbp)))+
+                            ckt->CKTabstol) )
+                    if( (fabs(ibcphat-*(ckt->CKTstate0 + here->VBICibcp)) < 
+                            ckt->CKTreltol* MAX(fabs(ibcphat),
+                            fabs(*(ckt->CKTstate0 + here->VBICibcp)))+
+                            ckt->CKTabstol) )
+                    if( (fabs(iccphat-*(ckt->CKTstate0 + here->VBICiccp)) < 
+                            ckt->CKTreltol* MAX(fabs(iccphat),
+                            fabs(*(ckt->CKTstate0 + here->VBICiccp)))+
                             ckt->CKTabstol) ) {
                     /*
                      * bypassing....
@@ -616,6 +681,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     Vrci = *(ckt->CKTstate0 + here->VBICvrci);
                     Vrbi = *(ckt->CKTstate0 + here->VBICvrbi);
                     Vrbp = *(ckt->CKTstate0 + here->VBICvrbp);
+                    Vbcp = *(ckt->CKTstate0 + here->VBICvbcp);
                     Ibe       = *(ckt->CKTstate0 + here->VBICibe);
                     Ibe_Vbei  = *(ckt->CKTstate0 + here->VBICibe_Vbei);
                     Ibex      = *(ckt->CKTstate0 + here->VBICibex);
@@ -645,6 +711,12 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     Irbp_Vbci = *(ckt->CKTstate0 + here->VBICirbp_Vbci);
                     gqbeo     = *(ckt->CKTstate0 + here->VBICgqbeo);
                     gqbco     = *(ckt->CKTstate0 + here->VBICgqbco);
+                    Ibcp      = *(ckt->CKTstate0 + here->VBICibcp);
+                    Ibcp_Vbcp = *(ckt->CKTstate0 + here->VBICibcp_Vbcp);
+                    Iccp      = *(ckt->CKTstate0 + here->VBICiccp);
+                    Iccp_Vbep = *(ckt->CKTstate0 + here->VBICiccp_Vbep);
+                    Iccp_Vbci = *(ckt->CKTstate0 + here->VBICiccp_Vbci);
+                    Iccp_Vbcp = *(ckt->CKTstate0 + here->VBICiccp_Vbcp);
                     goto load;
                 }
                 /*
@@ -661,22 +733,26 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         here->VBICtVcrit,&ichk3);
                 Vbep = DEVpnjlim(Vbep,*(ckt->CKTstate0 + here->VBICvbep),vt,
                         here->VBICtVcrit,&ichk4);
-                if ((ichk1 == 1) || (ichk2 == 1) || (ichk3 == 1) || (ichk4 == 1)) icheck=1;
+                Vbcp = DEVpnjlim(Vbcp,*(ckt->CKTstate0 + here->VBICvbcp),vt,
+                        here->VBICtVcrit,&ichk5);
+                if ((ichk1 == 1) || (ichk2 == 1) || (ichk3 == 1) || (ichk4 == 1) || (ichk5 == 1)) icheck=1;
             }
             /*
              *   determine dc current and derivitives
              */
 next1:      
-            iret = vbic_3T_it_cf_fj(p
-	    ,&Vbei,&Vbex,&Vbci,&Vbep,&Vrcx,&Vbcx
-	    ,&Vrci,&Vrbx,&Vrbi,&Vre,&Vrbp,&Vbe,&Vbc
-	    ,&Ibe,&Ibe_Vbei,&Ibex,&Ibex_Vbex,&Itzf,&Itzf_Vbei,&Itzf_Vbci
-	    ,&Itzr,&Itzr_Vbci,&Itzr_Vbei,&Ibc,&Ibc_Vbci,&Ibc_Vbei,&Ibep
-	    ,&Ibep_Vbep,&Ircx,&Ircx_Vrcx,&Irci,&Irci_Vrci,&Irci_Vbci,&Irci_Vbcx
-	    ,&Irbx,&Irbx_Vrbx,&Irbi,&Irbi_Vrbi,&Irbi_Vbei,&Irbi_Vbci,&Ire
-	    ,&Ire_Vre,&Irbp,&Irbp_Vrbp,&Irbp_Vbep,&Irbp_Vbci,&Qbe,&Qbe_Vbei
-	    ,&Qbe_Vbci,&Qbex,&Qbex_Vbex,&Qbc,&Qbc_Vbci,&Qbcx,&Qbcx_Vbcx
-	    ,&Qbep,&Qbep_Vbep,&Qbep_Vbci,&Qbeo,&Qbeo_Vbe,&Qbco,&Qbco_Vbc,&SCALE);
+            iret = vbic_4T_it_cf_fj(p
+            ,&Vbei,&Vbex,&Vbci,&Vbep,&Vbcp,&Vrcx
+            ,&Vbcx,&Vrci,&Vrbx,&Vrbi,&Vre,&Vrbp,&Vrs
+            ,&Vbe,&Vbc,&Ibe,&Ibe_Vbei,&Ibex,&Ibex_Vbex,&Itzf
+            ,&Itzf_Vbei,&Itzf_Vbci,&Itzr,&Itzr_Vbci,&Itzr_Vbei,&Ibc,&Ibc_Vbci
+            ,&Ibc_Vbei,&Ibep,&Ibep_Vbep,&Ircx,&Ircx_Vrcx,&Irci,&Irci_Vrci
+            ,&Irci_Vbci,&Irci_Vbcx,&Irbx,&Irbx_Vrbx,&Irbi,&Irbi_Vrbi,&Irbi_Vbei
+            ,&Irbi_Vbci,&Ire,&Ire_Vre,&Irbp,&Irbp_Vrbp,&Irbp_Vbep,&Irbp_Vbci
+            ,&Qbe,&Qbe_Vbei,&Qbe_Vbci,&Qbex,&Qbex_Vbex,&Qbc,&Qbc_Vbci
+            ,&Qbcx,&Qbcx_Vbcx,&Qbep,&Qbep_Vbep,&Qbep_Vbci,&Qbeo,&Qbeo_Vbe
+            ,&Qbco,&Qbco_Vbc,&Ibcp,&Ibcp_Vbcp,&Iccp,&Iccp_Vbep,&Iccp_Vbci
+            ,&Iccp_Vbcp,&Irs,&Irs_Vrs,&Qbcp,&Qbcp_Vbcp,&SCALE);
           
             Ibe += ckt->CKTgmin*Vbei;
             Ibe_Vbei += ckt->CKTgmin;
@@ -690,6 +766,8 @@ next1:
             Irci_Vrci += ckt->CKTgmin;
             Irci_Vbci += ckt->CKTgmin;
             Irci_Vbcx += ckt->CKTgmin;
+            Ibcp += ckt->CKTgmin*Vbcp;
+            Ibcp_Vbcp += ckt->CKTgmin;
 
             if( (ckt->CKTmode & (MODETRAN | MODEAC)) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) ||
@@ -702,12 +780,14 @@ next1:
                 *(ckt->CKTstate0 + here->VBICqbep) = Qbep;
                 *(ckt->CKTstate0 + here->VBICqbeo) = Qbeo;
                 *(ckt->CKTstate0 + here->VBICqbco) = Qbco;
+                *(ckt->CKTstate0 + here->VBICqbcp) = Qbcp;
 
                 here->VBICcapbe = Qbe_Vbei;
                 here->VBICcapbex = Qbex_Vbex;
                 here->VBICcapbc = Qbc_Vbci;
                 here->VBICcapbcx = Qbcx_Vbcx;
                 here->VBICcapbep = Qbep_Vbep;
+                here->VBICcapbcp = Qbcp_Vbcp;
 
                 /*
                  *   store small-signal parameters
@@ -716,7 +796,7 @@ next1:
                         (!(ckt->CKTmode & MODEUIC)) ) {
                     if(ckt->CKTmode & MODEINITSMSIG) {
                         *(ckt->CKTstate0 + here->VBICcqbe)  = Qbe_Vbei;
-                        *(ckt->CKTstate0 + here->VBICcqbeci)  = Qbe_Vbci;
+                        *(ckt->CKTstate0 + here->VBICcqbeci) = Qbe_Vbci;
                         *(ckt->CKTstate0 + here->VBICcqbex) = Qbex_Vbex;
                         *(ckt->CKTstate0 + here->VBICcqbc)  = Qbc_Vbci;
                         *(ckt->CKTstate0 + here->VBICcqbcx) = Qbcx_Vbcx;
@@ -724,6 +804,7 @@ next1:
                         *(ckt->CKTstate0 + here->VBICcqbepci) = Qbep_Vbci;
                         *(ckt->CKTstate0 + here->VBICcqbeo) = Qbeo_Vbe;
                         *(ckt->CKTstate0 + here->VBICcqbco) = Qbco_Vbc;
+                        *(ckt->CKTstate0 + here->VBICcqbcp) = Qbcp_Vbcp;
                         if(SenCond) {
                             *(ckt->CKTstate0 + here->VBICibe)       = Ibe;
                             *(ckt->CKTstate0 + here->VBICibe_Vbei)  = Ibe_Vbei;
@@ -752,8 +833,14 @@ next1:
                             *(ckt->CKTstate0 + here->VBICirbp_Vrbp) = Irbp_Vrbp;
                             *(ckt->CKTstate0 + here->VBICirbp_Vbep) = Irbp_Vbep;
                             *(ckt->CKTstate0 + here->VBICirbp_Vbci) = Irbp_Vbci;
-                            *(ckt->CKTstate0 + here->VBICgqbeo)  = gqbeo;
-                            *(ckt->CKTstate0 + here->VBICgqbco)  = gqbco;
+                            *(ckt->CKTstate0 + here->VBICgqbeo)     = gqbeo;
+                            *(ckt->CKTstate0 + here->VBICgqbco)     = gqbco;
+                            *(ckt->CKTstate0 + here->VBICibcp)      = Ibcp;
+                            *(ckt->CKTstate0 + here->VBICibcp_Vbcp) = Ibcp_Vbcp;
+                            *(ckt->CKTstate0 + here->VBICiccp)      = Iccp;
+                            *(ckt->CKTstate0 + here->VBICiccp_Vbep) = Iccp_Vbep;
+                            *(ckt->CKTstate0 + here->VBICiccp_Vbci) = Iccp_Vbci;
+                            *(ckt->CKTstate0 + here->VBICiccp_Vbcp) = Iccp_Vbcp;
                         }
 #ifdef SENSDEBUG
                         printf("storing small signal parameters for op\n");
@@ -780,6 +867,8 @@ next1:
                         *(ckt->CKTstate0 + here->VBICirci) = Irci;
                         *(ckt->CKTstate0 + here->VBICirbi) = Irbi;
                         *(ckt->CKTstate0 + here->VBICirbp) = Irbp;
+                        *(ckt->CKTstate0 + here->VBICibcp) = Ibcp;
+                        *(ckt->CKTstate0 + here->VBICiccp) = Iccp;
                         continue;
                     }
 
@@ -798,6 +887,8 @@ next1:
                                 *(ckt->CKTstate0 + here->VBICqbeo) ;
                         *(ckt->CKTstate1 + here->VBICqbco) =
                                 *(ckt->CKTstate0 + here->VBICqbco) ;
+                        *(ckt->CKTstate1 + here->VBICqbcp) =
+                                *(ckt->CKTstate0 + here->VBICqbcp) ;
                     }
                     error = NIintegrate(ckt,&geq,&ceq,Qbe_Vbei,here->VBICqbe);
                     if(error) return(error);
@@ -824,6 +915,11 @@ next1:
                     Ibep_Vbep = Ibep_Vbep + geq;
                     Ibep = Ibep + *(ckt->CKTstate0 + here->VBICcqbep);
 
+                    error = NIintegrate(ckt,&geq,&ceq,Qbcp_Vbcp,here->VBICqbcp);
+                    if(error) return(error);
+                    Ibcp_Vbcp = Ibcp_Vbcp + geq;
+                    Ibcp = Ibcp + *(ckt->CKTstate0 + here->VBICcqbcp);
+
                     if(ckt->CKTmode & MODEINITTRAN) {
                         *(ckt->CKTstate1 + here->VBICcqbe) =
                                 *(ckt->CKTstate0 + here->VBICcqbe);
@@ -835,6 +931,8 @@ next1:
                                 *(ckt->CKTstate0 + here->VBICcqbcx);
                         *(ckt->CKTstate1 + here->VBICcqbep) =
                                 *(ckt->CKTstate0 + here->VBICcqbep);
+                        *(ckt->CKTstate1 + here->VBICcqbcp) =
+                                *(ckt->CKTstate0 + here->VBICcqbcp);
                     }
                 }
             }
@@ -875,6 +973,7 @@ next2:
             *(ckt->CKTstate0 + here->VBICvrci) = Vrci;
             *(ckt->CKTstate0 + here->VBICvrbi) = Vrbi;
             *(ckt->CKTstate0 + here->VBICvrbp) = Vrbp;
+            *(ckt->CKTstate0 + here->VBICvbcp) = Vbcp;
             *(ckt->CKTstate0 + here->VBICibe)       = Ibe;
             *(ckt->CKTstate0 + here->VBICibe_Vbei)  = Ibe_Vbei;
             *(ckt->CKTstate0 + here->VBICibex)      = Ibex;
@@ -904,6 +1003,12 @@ next2:
             *(ckt->CKTstate0 + here->VBICirbp_Vbci) = Irbp_Vbci;
             *(ckt->CKTstate0 + here->VBICgqbeo)     = gqbeo;
             *(ckt->CKTstate0 + here->VBICgqbco)     = gqbco;
+            *(ckt->CKTstate0 + here->VBICibcp)      = Ibcp;
+            *(ckt->CKTstate0 + here->VBICibcp_Vbcp) = Ibcp_Vbcp;
+            *(ckt->CKTstate0 + here->VBICiccp)      = Iccp;
+            *(ckt->CKTstate0 + here->VBICiccp_Vbep) = Iccp_Vbep;
+            *(ckt->CKTstate0 + here->VBICiccp_Vbci) = Iccp_Vbci;
+            *(ckt->CKTstate0 + here->VBICiccp_Vbcp) = Iccp_Vbcp;
 
             /* Do not load the Jacobian and the rhs if
                perturbation is being carried out */
@@ -1087,6 +1192,41 @@ c           Stamp element: Irbp
             *(here->VBICcollCXBaseBPPtr) +=  Irbp_Vbep;
             *(here->VBICcollCXBaseBIPtr) += -Irbp_Vbci;
             *(here->VBICcollCXCollCIPtr) +=  Irbp_Vbci;
+/*
+c           Stamp element: Ibcp
+*/
+            rhs_current = model->VBICtype * (Ibcp - Ibcp_Vbcp*Vbcp);
+            *(ckt->CKTrhs + here->VBICsubsSINode) += -rhs_current;
+            *(here->VBICsubsSISubsSIPtr) +=  Ibcp_Vbcp;
+            *(here->VBICsubsSIBaseBPPtr) += -Ibcp_Vbcp;
+            *(ckt->CKTrhs + here->VBICbaseBPNode) +=  rhs_current;
+            *(here->VBICbaseBPSubsSIPtr) += -Ibcp_Vbcp;
+            *(here->VBICbaseBPBaseBPPtr) +=  Ibcp_Vbcp;
+/*
+c           Stamp element: Iccp
+*/
+            rhs_current = model->VBICtype * (Iccp - Iccp_Vbep*Vbep - Iccp_Vbci*Vbci - Iccp_Vbcp*Vbcp);
+            *(ckt->CKTrhs + here->VBICbaseBXNode) += -rhs_current;
+            *(here->VBICbaseBXBaseBXPtr) +=  Iccp_Vbep;
+            *(here->VBICbaseBXBaseBPPtr) += -Iccp_Vbep;
+            *(here->VBICbaseBXBaseBIPtr) +=  Iccp_Vbci;
+            *(here->VBICbaseBXCollCIPtr) += -Iccp_Vbci;
+            *(here->VBICbaseBXSubsSIPtr) +=  Iccp_Vbcp;
+            *(here->VBICbaseBXBaseBPPtr) += -Iccp_Vbcp;
+            *(ckt->CKTrhs + here->VBICsubsSINode) +=  rhs_current;
+            *(here->VBICsubsSIBaseBXPtr) += -Iccp_Vbep;
+            *(here->VBICsubsSIBaseBPPtr) +=  Iccp_Vbep;
+            *(here->VBICsubsSIBaseBIPtr) += -Iccp_Vbci;
+            *(here->VBICsubsSICollCIPtr) +=  Iccp_Vbci;
+            *(here->VBICsubsSISubsSIPtr) += -Iccp_Vbcp;
+            *(here->VBICsubsSIBaseBPPtr) +=  Iccp_Vbcp;
+/*
+c           Stamp element: Irs
+*/
+            *(here->VBICsubsSubsPtr) +=  Irs_Vrs;
+            *(here->VBICsubsSISubsSIPtr) +=  Irs_Vrs;
+            *(here->VBICsubsSISubsPtr) += -Irs_Vrs;
+            *(here->VBICsubsSubsSIPtr) += -Irs_Vrs;
 
         }
 
@@ -1094,26 +1234,30 @@ c           Stamp element: Irbp
     return(OK);
 }
 
-int vbic_3T_it_cf_fj(p
-	,Vbei,Vbex,Vbci,Vbep,Vrcx,Vbcx
-	,Vrci,Vrbx,Vrbi,Vre,Vrbp,Vbe,Vbc
-	,Ibe,Ibe_Vbei,Ibex,Ibex_Vbex,Itzf,Itzf_Vbei,Itzf_Vbci
-	,Itzr,Itzr_Vbci,Itzr_Vbei,Ibc,Ibc_Vbci,Ibc_Vbei,Ibep
-	,Ibep_Vbep,Ircx,Ircx_Vrcx,Irci,Irci_Vrci,Irci_Vbci,Irci_Vbcx
-	,Irbx,Irbx_Vrbx,Irbi,Irbi_Vrbi,Irbi_Vbei,Irbi_Vbci,Ire
-	,Ire_Vre,Irbp,Irbp_Vrbp,Irbp_Vbep,Irbp_Vbci,Qbe,Qbe_Vbei
-	,Qbe_Vbci,Qbex,Qbex_Vbex,Qbc,Qbc_Vbci,Qbcx,Qbcx_Vbcx
-	,Qbep,Qbep_Vbep,Qbep_Vbci,Qbeo,Qbeo_Vbe,Qbco,Qbco_Vbc,SCALE)
+int vbic_4T_it_cf_fj(p
+	,Vbei,Vbex,Vbci,Vbep,Vbcp,Vrcx
+	,Vbcx,Vrci,Vrbx,Vrbi,Vre,Vrbp,Vrs
+	,Vbe,Vbc,Ibe,Ibe_Vbei,Ibex,Ibex_Vbex,Itzf
+	,Itzf_Vbei,Itzf_Vbci,Itzr,Itzr_Vbci,Itzr_Vbei,Ibc,Ibc_Vbci
+	,Ibc_Vbei,Ibep,Ibep_Vbep,Ircx,Ircx_Vrcx,Irci,Irci_Vrci
+	,Irci_Vbci,Irci_Vbcx,Irbx,Irbx_Vrbx,Irbi,Irbi_Vrbi,Irbi_Vbei
+	,Irbi_Vbci,Ire,Ire_Vre,Irbp,Irbp_Vrbp,Irbp_Vbep,Irbp_Vbci
+	,Qbe,Qbe_Vbei,Qbe_Vbci,Qbex,Qbex_Vbex,Qbc,Qbc_Vbci
+	,Qbcx,Qbcx_Vbcx,Qbep,Qbep_Vbep,Qbep_Vbci,Qbeo,Qbeo_Vbe
+	,Qbco,Qbco_Vbc,Ibcp,Ibcp_Vbcp,Iccp,Iccp_Vbep,Iccp_Vbci
+	,Iccp_Vbcp,Irs,Irs_Vrs,Qbcp,Qbcp_Vbcp,SCALE)
 double *p
-	,*Vbei,*Vbex,*Vbci,*Vbep,*Vrcx,*Vbcx
-	,*Vrci,*Vrbx,*Vrbi,*Vre,*Vrbp,*Vbe,*Vbc
-	,*Ibe,*Ibe_Vbei,*Ibex,*Ibex_Vbex,*Itzf,*Itzf_Vbei,*Itzf_Vbci
-	,*Itzr,*Itzr_Vbci,*Itzr_Vbei,*Ibc,*Ibc_Vbci,*Ibc_Vbei,*Ibep
-	,*Ibep_Vbep,*Ircx,*Ircx_Vrcx,*Irci,*Irci_Vrci,*Irci_Vbci,*Irci_Vbcx
-	,*Irbx,*Irbx_Vrbx,*Irbi,*Irbi_Vrbi,*Irbi_Vbei,*Irbi_Vbci,*Ire
-	,*Ire_Vre,*Irbp,*Irbp_Vrbp,*Irbp_Vbep,*Irbp_Vbci,*Qbe,*Qbe_Vbei
-	,*Qbe_Vbci,*Qbex,*Qbex_Vbex,*Qbc,*Qbc_Vbci,*Qbcx,*Qbcx_Vbcx
-	,*Qbep,*Qbep_Vbep,*Qbep_Vbci,*Qbeo,*Qbeo_Vbe,*Qbco,*Qbco_Vbc,*SCALE;
+	,*Vbei,*Vbex,*Vbci,*Vbep,*Vbcp,*Vrcx
+	,*Vbcx,*Vrci,*Vrbx,*Vrbi,*Vre,*Vrbp,*Vrs
+	,*Vbe,*Vbc,*Ibe,*Ibe_Vbei,*Ibex,*Ibex_Vbex,*Itzf
+	,*Itzf_Vbei,*Itzf_Vbci,*Itzr,*Itzr_Vbci,*Itzr_Vbei,*Ibc,*Ibc_Vbci
+	,*Ibc_Vbei,*Ibep,*Ibep_Vbep,*Ircx,*Ircx_Vrcx,*Irci,*Irci_Vrci
+	,*Irci_Vbci,*Irci_Vbcx,*Irbx,*Irbx_Vrbx,*Irbi,*Irbi_Vrbi,*Irbi_Vbei
+	,*Irbi_Vbci,*Ire,*Ire_Vre,*Irbp,*Irbp_Vrbp,*Irbp_Vbep,*Irbp_Vbci
+	,*Qbe,*Qbe_Vbei,*Qbe_Vbci,*Qbex,*Qbex_Vbex,*Qbc,*Qbc_Vbci
+	,*Qbcx,*Qbcx_Vbcx,*Qbep,*Qbep_Vbep,*Qbep_Vbci,*Qbeo,*Qbeo_Vbe
+	,*Qbco,*Qbco_Vbc,*Ibcp,*Ibcp_Vbcp,*Iccp,*Iccp_Vbep,*Iccp_Vbci
+	,*Iccp_Vbcp,*Irs,*Irs_Vrs,*Qbcp,*Qbcp_Vbcp,*SCALE;
 {
 double	Vtv,IVEF,IVER,IIKF,IIKR,IIKP,IVO;
 double	IHRCF,IVTF,IITF,slTF,dv0,dvh,dvh_Vbei;
@@ -1131,6 +1275,8 @@ double	cl_Vbci,ql,ql_Vbci,ql_vl,ql_cl,qdbc_ql,dv_Vbci;
 double	mv_Vbci,qdbc_vl,dvh_Vbep,qlo_Vbep,qhi_Vbep,xvar1_Vbep,xvar3_Vbep;
 double	qdbep,qdbep_qlo,qdbep_Vbep,qdbep_qhi,vn_Vbep,vnl_Vbep,vl_Vbep;
 double	sel_Vbep,cl_Vbep,ql_Vbep,qdbep_ql,dv_Vbep,mv_Vbep,qdbep_vl;
+double	dvh_Vbcp,qlo_Vbcp,qhi_Vbcp,xvar1_Vbcp,xvar3_Vbcp,qdbcp,qdbcp_qlo;
+double	qdbcp_Vbcp,qdbcp_Vbep,qdbcp_qhi,dv_Vbcp,mv_Vbcp,vl_Vbcp,qdbcp_vl;
 double	argi,argi_Vbei,expi,expi_argi,expi_Vbei,Ifi,Ifi_expi;
 double	Ifi_Vbei,argi_Vbci,expi_Vbci,Iri,Iri_expi,Iri_Vbci,q1z;
 double	q1z_qdbe,q1z_Vbei,q1z_qdbc,q1z_Vbci,q1,q1_q1z,q1_Vbei;
@@ -1140,21 +1286,23 @@ double	qb_q1,qb_Vbei,qb_Vbci,qb_xvar4,xvar2_xvar1,xvar2_Vbei,xvar2_Vbci;
 double	qb_xvar2,Itzr_Iri,Itzr_qb,Itzf_Ifi,Itzf_qb,argi_Vbep,expi_Vbep;
 double	argx,argx_Vbci,expx,expx_argx,expx_Vbci,Ifp,Ifp_expi;
 double	Ifp_Vbep,Ifp_expx,Ifp_Vbci,q2p,q2p_Ifp,q2p_Vbep,q2p_Vbci;
-double	qbp,qbp_q2p,qbp_Vbep,qbp_Vbci,argn,argn_Vbei,expn;
-double	expn_argn,expn_Vbei,argx_Vbei,expx_Vbei,Ibe_expi,Ibe_expn,Ibe_expx;
-double	argi_Vbex,expi_Vbex,argn_Vbex,expn_Vbex,argx_Vbex,expx_Vbex,Ibex_expi;
-double	Ibex_expn,Ibex_expx,argn_Vbci,expn_Vbci,Ibcj,Ibcj_expi,Ibcj_Vbci;
-double	Ibcj_expn,argn_Vbep,expn_Vbep,Ibep_expi,Ibep_expn,xvar3_vl,avalf;
-double	avalf_vl,avalf_Vbci,avalf_xvar4,Igc,Igc_Itzf,Igc_Vbei,Igc_Vbci;
-double	Igc_Itzr,Igc_Ibcj,Igc_avalf,Ibc_Ibcj,Ibc_Igc,argx_Vbcx,expx_Vbcx;
-double	Kbci,Kbci_expi,Kbci_Vbci,Kbcx,Kbcx_expx,Kbcx_Vbcx,rKp1;
-double	rKp1_Kbci,rKp1_Vbci,rKp1_Kbcx,rKp1_Vbcx,xvar1_rKp1,xvar1_Vbcx,Iohm;
-double	Iohm_Vrci,Iohm_Kbci,Iohm_Vbci,Iohm_Kbcx,Iohm_Vbcx,Iohm_xvar1,derf;
-double	derf_Iohm,derf_Vrci,derf_Vbci,derf_Vbcx,Irci_Iohm,Irci_derf,Irbi_qb;
-double	Irbp_qbp,sgIf,rIf,rIf_Ifi,rIf_Vbei,mIf,mIf_rIf;
-double	mIf_Vbei,tff,tff_q1,tff_Vbei,tff_Vbci,tff_xvar2,tff_mIf;
-double	Qbe_qdbe,Qbe_tff,Qbe_Ifi,Qbe_qb,Qbex_qdbex,Qbc_qdbc,Qbc_Iri;
-double	Qbc_Kbci,Qbcx_Kbcx,Qbep_qdbep,Qbep_Ifp;
+double	qbp,qbp_q2p,qbp_Vbep,qbp_Vbci,argi_Vbcp,expi_Vbcp,Irp;
+double	Irp_expi,Irp_Vbcp,Iccp_Ifp,Iccp_Irp,Iccp_qbp,argn,argn_Vbei;
+double	expn,expn_argn,expn_Vbei,argx_Vbei,expx_Vbei,Ibe_expi,Ibe_expn;
+double	Ibe_expx,argi_Vbex,expi_Vbex,argn_Vbex,expn_Vbex,argx_Vbex,expx_Vbex;
+double	Ibex_expi,Ibex_expn,Ibex_expx,argn_Vbci,expn_Vbci,Ibcj,Ibcj_expi;
+double	Ibcj_Vbci,Ibcj_expn,argn_Vbep,expn_Vbep,Ibep_expi,Ibep_expn,xvar3_vl;
+double	avalf,avalf_vl,avalf_Vbci,avalf_xvar4,Igc,Igc_Itzf,Igc_Vbei;
+double	Igc_Vbci,Igc_Itzr,Igc_Ibcj,Igc_avalf,Ibc_Ibcj,Ibc_Igc,argx_Vbcx;
+double	expx_Vbcx,Kbci,Kbci_expi,Kbci_Vbci,Kbcx,Kbcx_expx,Kbcx_Vbcx;
+double	rKp1,rKp1_Kbci,rKp1_Vbci,rKp1_Kbcx,rKp1_Vbcx,xvar1_rKp1,xvar1_Vbcx;
+double	Iohm,Iohm_Vrci,Iohm_Kbci,Iohm_Vbci,Iohm_Kbcx,Iohm_Vbcx,Iohm_xvar1;
+double	derf,derf_Iohm,derf_Vrci,derf_Vbci,derf_Vbcx,Irci_Iohm,Irci_derf;
+double	Irbi_qb,Irbp_qbp,argn_Vbcp,expn_Vbcp,Ibcp_expi,Ibcp_expn,sgIf;
+double	rIf,rIf_Ifi,rIf_Vbei,mIf,mIf_rIf,mIf_Vbei,tff;
+double	tff_q1,tff_Vbei,tff_Vbci,tff_xvar2,tff_mIf,Qbe_qdbe,Qbe_tff;
+double	Qbe_Ifi,Qbe_qb,Qbex_qdbex,Qbc_qdbc,Qbc_Iri,Qbc_Kbci,Qbcx_Kbcx;
+double	Qbep_qdbep,Qbep_Ifp,Qbcp_qdbcp;
 
 /*	Function and derivative code */
 
@@ -1599,6 +1747,87 @@ double	Qbc_Kbci,Qbcx_Kbcx,Qbep_qdbep,Qbep_Ifp;
 			qdbep_Vbep=qdbep_Vbep+qdbep_vl*vl_Vbep;
 		}
 	}
+	if(p[27]>0.0){
+		dv0=-p[28]*p[14];
+		if(p[30]<=0.0){
+			dvh=(*Vbcp)+dv0;
+			dvh_Vbcp=1.0;
+			if(dvh>0.0){
+				xvar1=(1.0-p[14]);
+				xvar2=(-1.0-p[29]);
+				pwq=pow(xvar1,xvar2);
+				qlo=p[28]*(1.0-pwq*(1.0-p[14])*(1.0-p[14]))/(1.0-p[29]);
+				qlo_Vbep=0.0;
+				qlo_Vbcp=0.0;
+				qhi=dvh*(1.0-p[14]+0.5*p[29]*dvh/p[28])*pwq;
+				qhi_dvh=(0.5*dvh*p[29]/p[28]-p[14]+1.0)*pwq+0.5*dvh*p[29]*pwq/p[28];
+				qhi_Vbep=0.0;
+				qhi_Vbcp=qhi_dvh*dvh_Vbcp;
+			}else{
+				xvar1=(1.0-(*Vbcp)/p[28]);
+				xvar1_Vbcp=-1.0/p[28];
+				xvar2=(1.0-p[29]);
+				xvar3=pow(xvar1,xvar2);
+				xvar3_xvar1=xvar3*xvar2/xvar1;
+				xvar3_Vbcp=xvar3_xvar1*xvar1_Vbcp;
+				qlo=p[28]*(1.0-xvar3)/(1.0-p[29]);
+				qlo_xvar3=-p[28]/(1.0-p[29]);
+				qlo_Vbep=0.0;
+				qlo_Vbcp=qlo_xvar3*xvar3_Vbcp;
+				qhi=0.0;
+				qhi_Vbep=0.0;
+				qhi_Vbcp=0.0;
+			}
+			qdbcp=qlo+qhi;
+			qdbcp_qlo=1.0;
+			qdbcp_qhi=1.0;
+			qdbcp_Vbcp=qdbcp_qlo*qlo_Vbcp;
+			qdbcp_Vbep=qdbcp_qlo*qlo_Vbep;
+			qdbcp_Vbep=qdbcp_Vbep+qdbcp_qhi*qhi_Vbep;
+			qdbcp_Vbcp=qdbcp_Vbcp+qdbcp_qhi*qhi_Vbcp;
+		}else{
+			mv0=sqrt(dv0*dv0+4.0*p[30]*p[30]);
+			vl0=-0.5*(dv0+mv0);
+			xvar1=(1.0-vl0/p[28]);
+			xvar2=(1.0-p[29]);
+			xvar3=pow(xvar1,xvar2);
+			q0=-p[28]*xvar3/(1.0-p[29]);
+			dv=(*Vbcp)+dv0;
+			dv_Vbcp=1.0;
+			mv=sqrt(dv*dv+4.0*p[30]*p[30]);
+			mv_dv=dv/sqrt((dv*dv)+4.0*(p[30]*p[30]));
+			mv_Vbcp=mv_dv*dv_Vbcp;
+			vl=0.5*(dv-mv)-dv0;
+			vl_dv=0.5;
+			vl_mv=-0.5;
+			vl_Vbcp=vl_dv*dv_Vbcp;
+			vl_Vbcp=vl_Vbcp+vl_mv*mv_Vbcp;
+			xvar1=(1.0-vl/p[28]);
+			xvar1_vl=-1.0/p[28];
+			xvar1_Vbcp=xvar1_vl*vl_Vbcp;
+			xvar2=(1.0-p[29]);
+			xvar3=pow(xvar1,xvar2);
+			xvar3_xvar1=xvar3*xvar2/xvar1;
+			xvar3_Vbcp=xvar3_xvar1*xvar1_Vbcp;
+			qlo=-p[28]*xvar3/(1.0-p[29]);
+			qlo_xvar3=-p[28]/(1.0-p[29]);
+			qlo_Vbep=0.0;
+			qlo_Vbcp=qlo_xvar3*xvar3_Vbcp;
+			xvar1=(1.0-p[14]);
+			xvar2=(-p[29]);
+			xvar3=pow(xvar1,xvar2);
+			qdbcp=qlo+xvar3*((*Vbcp)-vl+vl0)-q0;
+			qdbcp_qlo=1.0;
+			qdbcp_Vbcp=xvar3;
+			qdbcp_vl=-xvar3;
+			qdbcp_Vbcp=qdbcp_Vbcp+qdbcp_qlo*qlo_Vbcp;
+			qdbcp_Vbep=qdbcp_qlo*qlo_Vbep;
+			qdbcp_Vbcp=qdbcp_Vbcp+qdbcp_vl*vl_Vbcp;
+		}
+	}else{
+		qdbcp=0.0;
+		qdbcp_Vbcp=0.0;
+	}
 	argi=(*Vbei)/(p[12]*Vtv);
 	argi_Vbei=1.0/(p[12]*Vtv);
 	expi=exp(argi);
@@ -1706,6 +1935,23 @@ double	Qbc_Kbci,Qbcx_Kbcx,Qbep_qdbep,Qbep_Ifp;
 		qbp_q2p=1.0/sqrt(4.0*q2p+1.0);
 		qbp_Vbep=qbp_q2p*q2p_Vbep;
 		qbp_Vbci=qbp_q2p*q2p_Vbci;
+		argi=(*Vbcp)/(p[44]*Vtv);
+		argi_Vbcp=1.0/(p[44]*Vtv);
+		expi=exp(argi);
+		expi_argi=expi;
+		expi_Vbcp=expi_argi*argi_Vbcp;
+		Irp=p[42]*(expi-1.0);
+		Irp_expi=p[42];
+		Irp_Vbcp=Irp_expi*expi_Vbcp;
+		(*Iccp)=(Ifp-Irp)/qbp;
+		Iccp_Ifp=1.0/qbp;
+		Iccp_Irp=-1.0/qbp;
+		Iccp_qbp=-(Ifp-Irp)/(qbp*qbp);
+		*Iccp_Vbep=Iccp_Ifp*Ifp_Vbep;
+		*Iccp_Vbci=Iccp_Ifp*Ifp_Vbci;
+		*Iccp_Vbcp=Iccp_Irp*Irp_Vbcp;
+		*Iccp_Vbep=(*Iccp_Vbep)+Iccp_qbp*qbp_Vbep;
+		*Iccp_Vbci=(*Iccp_Vbci)+Iccp_qbp*qbp_Vbci;
 	}else{
 		Ifp=0.0;
 		Ifp_Vbep=0.0;
@@ -1713,6 +1959,10 @@ double	Qbc_Kbci,Qbcx_Kbcx,Qbep_qdbep,Qbep_Ifp;
 		qbp=1.0;
 		qbp_Vbep=0.0;
 		qbp_Vbci=0.0;
+		(*Iccp)=0.0;
+		*Iccp_Vbep=0.0;
+		*Iccp_Vbci=0.0;
+		*Iccp_Vbcp=0.0;
 	}
 	if(p[32]==1.0){
 		argi=(*Vbei)/(p[33]*Vtv);
@@ -2018,6 +2268,33 @@ double	Qbc_Kbci,Qbcx_Kbcx,Qbep_qdbep,Qbep_Ifp;
 		*Irbp_Vbep=0.0;
 		*Irbp_Vbci=0.0;
 	}
+	if((p[47]>0.0)||(p[49]>0.0)){
+		argi=(*Vbcp)/(p[48]*Vtv);
+		argi_Vbcp=1.0/(p[48]*Vtv);
+		expi=exp(argi);
+		expi_argi=expi;
+		expi_Vbcp=expi_argi*argi_Vbcp;
+		argn=(*Vbcp)/(p[50]*Vtv);
+		argn_Vbcp=1.0/(p[50]*Vtv);
+		expn=exp(argn);
+		expn_argn=expn;
+		expn_Vbcp=expn_argn*argn_Vbcp;
+		(*Ibcp)=p[47]*(expi-1.0)+p[49]*(expn-1.0);
+		Ibcp_expi=p[47];
+		Ibcp_expn=p[49];
+		*Ibcp_Vbcp=Ibcp_expi*expi_Vbcp;
+		*Ibcp_Vbcp=(*Ibcp_Vbcp)+Ibcp_expn*expn_Vbcp;
+	}else{
+		(*Ibcp)=0.0;
+		*Ibcp_Vbcp=0.0;
+	}
+	if(p[9]>0.0){
+		(*Irs)=(*Vrs)/p[9];
+		*Irs_Vrs=1.0/p[9];
+	}else{
+		(*Irs)=0.0;
+		*Irs_Vrs=0.0;
+	}
 	if(Ifi>0.0){
 		sgIf=1.0;
 	}else{
@@ -2072,6 +2349,10 @@ double	Qbc_Kbci,Qbcx_Kbcx,Qbep_qdbep,Qbep_Ifp;
 	*Qbep_Vbep=Qbep_qdbep*qdbep_Vbep;
 	*Qbep_Vbep=(*Qbep_Vbep)+Qbep_Ifp*Ifp_Vbep;
 	*Qbep_Vbci=Qbep_Ifp*Ifp_Vbci;
+	(*Qbcp)=p[27]*qdbcp+p[87]*(*Vbcp);
+	Qbcp_qdbcp=p[27];
+	*Qbcp_Vbcp=p[87];
+	*Qbcp_Vbcp=(*Qbcp_Vbcp)+Qbcp_qdbcp*qdbcp_Vbcp;
 	(*Qbeo)=(*Vbe)*p[15];
 	*Qbeo_Vbe=p[15];
 	(*Qbco)=(*Vbc)*p[20];
@@ -2129,6 +2410,16 @@ double	Qbc_Kbci,Qbcx_Kbcx,Qbep_qdbep,Qbep_Ifp;
 		*Qbeo_Vbe=(*SCALE)*(*Qbeo_Vbe);
 		*Qbco=(*SCALE)*(*Qbco);
 		*Qbco_Vbc=(*SCALE)*(*Qbco_Vbc);
+		*Ibcp=(*SCALE)*(*Ibcp);
+		*Ibcp_Vbcp=(*SCALE)*(*Ibcp_Vbcp);
+		*Iccp=(*SCALE)*(*Iccp);
+		*Iccp_Vbep=(*SCALE)*(*Iccp_Vbep);
+		*Iccp_Vbci=(*SCALE)*(*Iccp_Vbci);
+		*Iccp_Vbcp=(*SCALE)*(*Iccp_Vbcp);
+		*Irs=(*SCALE)*(*Irs);
+		*Irs_Vrs=(*SCALE)*(*Irs_Vrs);
+		*Qbcp=(*SCALE)*(*Qbcp);
+		*Qbcp_Vbcp=(*SCALE)*(*Qbcp_Vbcp);
 	}
 	return(0);
 }

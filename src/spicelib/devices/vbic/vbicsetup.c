@@ -434,6 +434,21 @@ matrixpointers:
                   }
                 }
             }
+            if(model->VBICsubstrateResist == 0) {
+                here->VBICsubsSINode = here->VBICsubsNode;
+            } else if(here->VBICsubsSINode == 0) {
+                error = CKTmkVolt(ckt,&tmp,here->VBICname, "substrate");
+                if(error) return(error);
+                here->VBICsubsSINode = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,4,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+            }
 
             error = CKTmkVolt(ckt, &tmp, here->VBICname, "collCI");
             if(error) return(error);
@@ -447,6 +462,10 @@ matrixpointers:
             if(error) return(error);
             here->VBICbaseBINode = tmp->number;  
 
+            error = CKTmkVolt(ckt, &tmp, here->VBICname, "subsSI");
+            if(error) return(error);
+            here->VBICsubsSINode = tmp->number;  
+
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
@@ -455,12 +474,14 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             TSTALLOC(VBICcollCollPtr,VBICcollNode,VBICcollNode)
             TSTALLOC(VBICbaseBasePtr,VBICbaseNode,VBICbaseNode)
             TSTALLOC(VBICemitEmitPtr,VBICemitNode,VBICemitNode)
+            TSTALLOC(VBICsubsSubsPtr,VBICsubsNode,VBICsubsNode)
             TSTALLOC(VBICcollCXCollCXPtr,VBICcollCXNode,VBICcollCXNode)
             TSTALLOC(VBICcollCICollCIPtr,VBICcollCINode,VBICcollCINode)
             TSTALLOC(VBICbaseBXBaseBXPtr,VBICbaseBXNode,VBICbaseBXNode)
             TSTALLOC(VBICbaseBIBaseBIPtr,VBICbaseBINode,VBICbaseBINode)
             TSTALLOC(VBICemitEIEmitEIPtr,VBICemitEINode,VBICemitEINode)
             TSTALLOC(VBICbaseBPBaseBPPtr,VBICbaseBPNode,VBICbaseBPNode)
+            TSTALLOC(VBICsubsSISubsSIPtr,VBICsubsSINode,VBICsubsSINode)
 
             TSTALLOC(VBICbaseEmitPtr,VBICbaseNode,VBICemitNode)
             TSTALLOC(VBICemitBasePtr,VBICemitNode,VBICbaseNode)
@@ -469,6 +490,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             TSTALLOC(VBICcollCollCXPtr,VBICcollNode,VBICcollCXNode)
             TSTALLOC(VBICbaseBaseBXPtr,VBICbaseNode,VBICbaseBXNode)
             TSTALLOC(VBICemitEmitEIPtr,VBICemitNode,VBICemitEINode)
+            TSTALLOC(VBICsubsSubsSIPtr,VBICsubsNode,VBICsubsSINode)
             TSTALLOC(VBICcollCXCollCIPtr,VBICcollCXNode,VBICcollCINode)
             TSTALLOC(VBICcollCXBaseBXPtr,VBICcollCXNode,VBICbaseBXNode)
             TSTALLOC(VBICcollCXBaseBIPtr,VBICcollCXNode,VBICbaseBINode)
@@ -478,11 +500,14 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             TSTALLOC(VBICbaseBXBaseBIPtr,VBICbaseBXNode,VBICbaseBINode)
             TSTALLOC(VBICbaseBXEmitEIPtr,VBICbaseBXNode,VBICemitEINode)
             TSTALLOC(VBICbaseBXBaseBPPtr,VBICbaseBXNode,VBICbaseBPNode)
+            TSTALLOC(VBICbaseBXSubsSIPtr,VBICbaseBXNode,VBICsubsSINode)
             TSTALLOC(VBICbaseBIEmitEIPtr,VBICbaseBINode,VBICemitEINode)
+            TSTALLOC(VBICbaseBPSubsSIPtr,VBICbaseBPNode,VBICsubsSINode)
 
             TSTALLOC(VBICcollCXCollPtr,VBICcollCXNode,VBICcollNode)
             TSTALLOC(VBICbaseBXBasePtr,VBICbaseBXNode,VBICbaseNode)
             TSTALLOC(VBICemitEIEmitPtr,VBICemitEINode,VBICemitNode)
+            TSTALLOC(VBICsubsSISubsPtr,VBICsubsSINode,VBICsubsNode)
             TSTALLOC(VBICcollCICollCXPtr,VBICcollCINode,VBICcollCXNode)
             TSTALLOC(VBICbaseBICollCXPtr,VBICbaseBINode,VBICcollCXNode)
             TSTALLOC(VBICbaseBPCollCXPtr,VBICbaseBPNode,VBICcollCXNode)
@@ -493,8 +518,12 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             TSTALLOC(VBICbaseBIBaseBXPtr,VBICbaseBINode,VBICbaseBXNode)
             TSTALLOC(VBICemitEIBaseBXPtr,VBICemitEINode,VBICbaseBXNode)
             TSTALLOC(VBICbaseBPBaseBXPtr,VBICbaseBPNode,VBICbaseBXNode)
+            TSTALLOC(VBICsubsSIBaseBXPtr,VBICsubsSINode,VBICbaseBXNode)
             TSTALLOC(VBICemitEIBaseBIPtr,VBICemitEINode,VBICbaseBINode)
             TSTALLOC(VBICbaseBPBaseBIPtr,VBICbaseBPNode,VBICbaseBINode)
+            TSTALLOC(VBICsubsSICollCIPtr,VBICsubsSINode,VBICcollCINode)
+            TSTALLOC(VBICsubsSIBaseBIPtr,VBICsubsSINode,VBICbaseBINode)
+            TSTALLOC(VBICsubsSIBaseBPPtr,VBICsubsSINode,VBICbaseBPNode)
 
         }
     }
@@ -550,6 +579,12 @@ VBICunsetup(inModel,ckt)
 	    {
 		CKTdltNNum(ckt, here->VBICemitEINode);
 		here->VBICemitEINode = 0;
+	    }
+	    if (here->VBICsubsSINode
+		    && here->VBICsubsSINode != here->VBICsubsNode)
+	    {
+		CKTdltNNum(ckt, here->VBICsubsSINode);
+		here->VBICsubsSINode = 0;
 	    }
 	}
     }

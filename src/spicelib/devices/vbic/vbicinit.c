@@ -10,7 +10,7 @@
 SPICEdev VBICinfo = {
     {
 	"VBIC",
-        "Vertical Bipolar Inter-Company Model (3-terminal)",
+        "Vertical Bipolar Inter-Company Model",
 
         &VBICnSize,
         &VBICnSize,

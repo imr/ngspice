@@ -23,7 +23,7 @@ VBICmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
 
     switch(which) {
         case VBIC_MOD_TNOM:
-            value->rValue = here->VBICtnom-CONSTCtoK;
+            value->rValue = here->VBICtnom;
             return(OK);
         case VBIC_MOD_RCX:
             value->rValue = here->VBICextCollResist;

@@ -24,7 +24,7 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
     VBICmodel *model = (VBICmodel *)inModel;
     VBICinstance *here;
     double p[108], pnom[108], TAMB;
-    int iret, vbic_3T_it_cf_t(double *, double *, double *);
+    int iret, vbic_4T_it_cf_t(double *, double *, double *);
     double vt;
 
     /*  loop through all the bipolar models */
@@ -47,11 +47,17 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
         } else {
           model->VBICemitterConduct = 0.0;
         }
+        if(model->VBICsubstrateResistGiven && model->VBICsubstrateResist != 0.0) {
+          model->VBICsubstrateConduct = 1.0 / model->VBICsubstrateResist;
+        } else {
+          model->VBICsubstrateConduct = 0.0;
+        }
 
         /* loop through all the instances of the model */
         for (here = model->VBICinstances; here != NULL ;
                 here=here->VBICnextInstance) {
-             if (here->VBICowner != ARCHme) continue;
+ 
+            if (here->VBICowner != ARCHme) continue;
 
             if(!here->VBICtempGiven) here->VBICtemp = ckt->CKTtemp;
 
@@ -168,7 +174,7 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
             pnom[106] = model->VBICrevVersion;
             pnom[107] = model->VBICrefVersion;
             
-            iret = vbic_3T_it_cf_t(p,pnom,&TAMB);
+            iret = vbic_4T_it_cf_t(p,pnom,&TAMB);
             
             here->VBICttnom = p[0];
             here->VBICtextCollResist = p[1];
@@ -213,7 +219,7 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
     return(OK);
 }
 
-int vbic_3T_it_cf_t(p,pnom,TAMB)
+int vbic_4T_it_cf_t(p,pnom,TAMB)
 double *p, *pnom, *TAMB;
 {
         double Tini, Tdev, Vtv, rT, dT, xvar1;

@@ -41,6 +41,7 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case VBIC_MOD_RCX:
             mods->VBICextCollResist = value->rValue;
+            if (mods->VBICextCollResist < 0.1) mods->VBICextCollResist = 0.1;
             mods->VBICextCollResistGiven = TRUE;
             break;
         case VBIC_MOD_RCI:
@@ -62,6 +63,7 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case VBIC_MOD_RBX:
             mods->VBICextBaseResist = value->rValue;
+            if (mods->VBICextBaseResist < 0.1) mods->VBICextBaseResist = 0.1;
             mods->VBICextBaseResistGiven = TRUE;
             break;
         case VBIC_MOD_RBI:
@@ -71,10 +73,12 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case VBIC_MOD_RE:
             mods->VBICemitterResist = value->rValue;
+            if (mods->VBICemitterResist < 0.1) mods->VBICemitterResist = 0.1;
             mods->VBICemitterResistGiven = TRUE;
             break;
         case VBIC_MOD_RS:
             mods->VBICsubstrateResist = value->rValue;
+            if (mods->VBICsubstrateResist < 0.1) mods->VBICsubstrateResist = 0.1;
             mods->VBICsubstrateResistGiven = TRUE;
             break;
         case VBIC_MOD_RBP:

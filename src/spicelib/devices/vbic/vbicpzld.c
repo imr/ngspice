@@ -26,9 +26,11 @@ VBICpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     ,Itzf_Vbei,Itzf_Vbci,Itzr_Vbci,Itzr_Vbei,Ibc_Vbci
     ,Ibc_Vbei,Ibep_Vbep,Ircx_Vrcx,Irci_Vrci
     ,Irci_Vbci,Irci_Vbcx,Irbx_Vrbx,Irbi_Vrbi,Irbi_Vbei
-    ,Irbi_Vbci,Ire_Vre,Irbp_Vrbp,Irbp_Vbep,Irbp_Vbci;
+    ,Irbi_Vbci,Ire_Vre,Irbp_Vrbp,Irbp_Vbep,Irbp_Vbci
+    ,Ibcp_Vbcp,Iccp_Vbep,Irs_Vrs,Iccp_Vbci,Iccp_Vbcp;
     double XQbe_Vbei, XQbe_Vbci, XQbex_Vbex, XQbc_Vbci,
-           XQbcx_Vbcx, XQbep_Vbep, XQbep_Vbci;
+           XQbcx_Vbcx, XQbep_Vbep, XQbep_Vbci,
+           XQbcp_Vbcp;
 
     /*  loop through all the models */
     for( ; model != NULL; model = model->VBICnextModel) {
@@ -36,12 +38,14 @@ VBICpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         /* loop through all the instances of the model */
         for( here = model->VBICinstances; here!= NULL; 
                 here = here->VBICnextInstance) {
+
             if (here->VBICowner != ARCHme) continue;
 
      
-            Ircx_Vrcx = 1.0 / model->VBICextCollResist * here->VBICarea * here->VBICm;
-            Irbx_Vrbx = 1.0 / model->VBICextBaseResist * here->VBICarea * here->VBICm;
-            Ire_Vre = 1.0 / model->VBICemitterResist * here->VBICarea * here->VBICm;
+            Ircx_Vrcx = 1.0 / here->VBICtextCollResist * here->VBICarea * here->VBICm;
+            Irbx_Vrbx = 1.0 / here->VBICtextBaseResist * here->VBICarea * here->VBICm;
+            Ire_Vre = 1.0 / here->VBICtemitterResist * here->VBICarea * here->VBICm;
+            Irs_Vrs = 1.0 / here->VBICtsubstrateResist * here->VBICarea * here->VBICm;
 
             Ibe_Vbei  = *(ckt->CKTstate0 + here->VBICibe_Vbei);
             Ibex_Vbex = *(ckt->CKTstate0 + here->VBICibex_Vbex);
@@ -61,6 +65,10 @@ VBICpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             Irbp_Vrbp = *(ckt->CKTstate0 + here->VBICirbp_Vrbp);
             Irbp_Vbep = *(ckt->CKTstate0 + here->VBICirbp_Vbep);
             Irbp_Vbci = *(ckt->CKTstate0 + here->VBICirbp_Vbci);
+            Ibcp_Vbcp = *(ckt->CKTstate0 + here->VBICibcp_Vbcp);
+            Iccp_Vbep = *(ckt->CKTstate0 + here->VBICiccp_Vbep);
+            Iccp_Vbci = *(ckt->CKTstate0 + here->VBICiccp_Vbci);
+            Iccp_Vbcp = *(ckt->CKTstate0 + here->VBICiccp_Vbcp);
 
 /*
 c           The real part
@@ -186,6 +194,35 @@ c           Stamp element: Irbp
             *(here->VBICcollCXBaseBIPtr) += -Irbp_Vbci;
             *(here->VBICcollCXCollCIPtr) +=  Irbp_Vbci;
 /*
+c           Stamp element: Ibcp
+*/
+            *(here->VBICsubsSISubsSIPtr) +=  Ibcp_Vbcp;
+            *(here->VBICsubsSIBaseBPPtr) += -Ibcp_Vbcp;
+            *(here->VBICbaseBPSubsSIPtr) += -Ibcp_Vbcp;
+            *(here->VBICbaseBPBaseBPPtr) +=  Ibcp_Vbcp;
+/*
+c           Stamp element: Iccp
+*/
+            *(here->VBICbaseBXBaseBXPtr) +=  Iccp_Vbep;
+            *(here->VBICbaseBXBaseBPPtr) += -Iccp_Vbep;
+            *(here->VBICbaseBXBaseBIPtr) +=  Iccp_Vbci;
+            *(here->VBICbaseBXCollCIPtr) += -Iccp_Vbci;
+            *(here->VBICbaseBXSubsSIPtr) +=  Iccp_Vbcp;
+            *(here->VBICbaseBXBaseBPPtr) += -Iccp_Vbcp;
+            *(here->VBICsubsSIBaseBXPtr) += -Iccp_Vbep;
+            *(here->VBICsubsSIBaseBPPtr) +=  Iccp_Vbep;
+            *(here->VBICsubsSIBaseBIPtr) += -Iccp_Vbci;
+            *(here->VBICsubsSICollCIPtr) +=  Iccp_Vbci;
+            *(here->VBICsubsSISubsSIPtr) += -Iccp_Vbcp;
+            *(here->VBICsubsSIBaseBPPtr) +=  Iccp_Vbcp;
+/*
+c           Stamp element: Irs
+*/
+            *(here->VBICsubsSubsPtr) +=  Irs_Vrs;
+            *(here->VBICsubsSISubsSIPtr) +=  Irs_Vrs;
+            *(here->VBICsubsSISubsPtr) += -Irs_Vrs;
+            *(here->VBICsubsSubsSIPtr) += -Irs_Vrs;
+/*
 c           The complex part
 */
             XQbe_Vbei  = *(ckt->CKTstate0 + here->VBICcqbe);
@@ -195,77 +232,89 @@ c           The complex part
             XQbcx_Vbcx = *(ckt->CKTstate0 + here->VBICcqbcx);
             XQbep_Vbep = *(ckt->CKTstate0 + here->VBICcqbep);
             XQbep_Vbci = *(ckt->CKTstate0 + here->VBICcqbepci);
+            XQbcp_Vbcp = *(ckt->CKTstate0 + here->VBICcqbcp) * ckt->CKTomega;
 /*
 c	Stamp element: Qbe
 */
-            *(here->VBICbaseBIBaseBIPtr)     +=  (XQbe_Vbei * (s->real));
-	    *(here->VBICbaseBIBaseBIPtr + 1) +=  (XQbe_Vbei * (s->imag));
-            *(here->VBICbaseBIEmitEIPtr)     +=  (-XQbe_Vbei * (s->real));
-	    *(here->VBICbaseBIEmitEIPtr + 1) +=  (-XQbe_Vbei * (s->imag));
-	    *(here->VBICbaseBIBaseBIPtr)     +=  (XQbe_Vbci * (s->real));
-	    *(here->VBICbaseBIBaseBIPtr + 1) +=  (XQbe_Vbci * (s->imag));
-	    *(here->VBICbaseBICollCIPtr)     +=  (-XQbe_Vbci * (s->real));
-	    *(here->VBICbaseBICollCIPtr + 1) +=  (-XQbe_Vbci * (s->imag));
-	    *(here->VBICemitEIBaseBIPtr)     +=  (-XQbe_Vbei * (s->real));
-	    *(here->VBICemitEIBaseBIPtr + 1) +=  (-XQbe_Vbei * (s->imag));
-	    *(here->VBICemitEIEmitEIPtr)     +=  (XQbe_Vbei * (s->real));
-	    *(here->VBICemitEIEmitEIPtr + 1) +=  (XQbe_Vbei * (s->imag));
-	    *(here->VBICemitEIBaseBIPtr)     +=  (-XQbe_Vbci * (s->real));
-	    *(here->VBICemitEIBaseBIPtr + 1) +=  (-XQbe_Vbci * (s->imag));
-	    *(here->VBICemitEICollCIPtr)     +=  (XQbe_Vbci * (s->real));
-	    *(here->VBICemitEICollCIPtr + 1) +=  (XQbe_Vbci * (s->imag));
+            *(here->VBICbaseBIBaseBIPtr)     +=  XQbe_Vbei * (s->real);
+	    *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbe_Vbei * (s->imag);
+            *(here->VBICbaseBIEmitEIPtr)     += -XQbe_Vbei * (s->real);
+	    *(here->VBICbaseBIEmitEIPtr + 1) += -XQbe_Vbei * (s->imag);
+	    *(here->VBICbaseBIBaseBIPtr)     +=  XQbe_Vbci * (s->real);
+	    *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbe_Vbci * (s->imag);
+	    *(here->VBICbaseBICollCIPtr)     += -XQbe_Vbci * (s->real);
+	    *(here->VBICbaseBICollCIPtr + 1) += -XQbe_Vbci * (s->imag);
+	    *(here->VBICemitEIBaseBIPtr)     += -XQbe_Vbei * (s->real);
+	    *(here->VBICemitEIBaseBIPtr + 1) += -XQbe_Vbei * (s->imag);
+	    *(here->VBICemitEIEmitEIPtr)     +=  XQbe_Vbei * (s->real);
+	    *(here->VBICemitEIEmitEIPtr + 1) +=  XQbe_Vbei * (s->imag);
+	    *(here->VBICemitEIBaseBIPtr)     += -XQbe_Vbci * (s->real);
+	    *(here->VBICemitEIBaseBIPtr + 1) += -XQbe_Vbci * (s->imag);
+	    *(here->VBICemitEICollCIPtr)     +=  XQbe_Vbci * (s->real);
+	    *(here->VBICemitEICollCIPtr + 1) +=  XQbe_Vbci * (s->imag);
 /*
 c	Stamp element: Qbex
 */
-	    *(here->VBICbaseBXBaseBXPtr)     +=  (XQbex_Vbex * (s->real));
-	    *(here->VBICbaseBXBaseBXPtr + 1) +=  (XQbex_Vbex * (s->imag));
-	    *(here->VBICbaseBXEmitEIPtr)     +=  (-XQbex_Vbex * (s->real));
-	    *(here->VBICbaseBXEmitEIPtr + 1) +=  (-XQbex_Vbex * (s->imag));
-	    *(here->VBICemitEIBaseBXPtr)     +=  (-XQbex_Vbex * (s->real));
-	    *(here->VBICemitEIBaseBXPtr + 1) +=  (-XQbex_Vbex * (s->imag));
-	    *(here->VBICemitEIEmitEIPtr )    +=  (XQbex_Vbex * (s->real));
-	    *(here->VBICemitEIEmitEIPtr + 1) +=  (XQbex_Vbex * (s->imag));
+	    *(here->VBICbaseBXBaseBXPtr)     +=  XQbex_Vbex * (s->real);
+	    *(here->VBICbaseBXBaseBXPtr + 1) +=  XQbex_Vbex * (s->imag);
+	    *(here->VBICbaseBXEmitEIPtr)     += -XQbex_Vbex * (s->real);
+	    *(here->VBICbaseBXEmitEIPtr + 1) += -XQbex_Vbex * (s->imag);
+	    *(here->VBICemitEIBaseBXPtr)     += -XQbex_Vbex * (s->real);
+	    *(here->VBICemitEIBaseBXPtr + 1) += -XQbex_Vbex * (s->imag);
+	    *(here->VBICemitEIEmitEIPtr )    +=  XQbex_Vbex * (s->real);
+	    *(here->VBICemitEIEmitEIPtr + 1) +=  XQbex_Vbex * (s->imag);
 /*
 c	Stamp element: Qbc
 */
-	    *(here->VBICbaseBIBaseBIPtr)     +=  (XQbc_Vbci * (s->real));
-	    *(here->VBICbaseBIBaseBIPtr + 1) +=  (XQbc_Vbci * (s->imag));
-	    *(here->VBICbaseBICollCIPtr)     +=  (-XQbc_Vbci * (s->real));
-	    *(here->VBICbaseBICollCIPtr + 1) +=  (-XQbc_Vbci * (s->imag));
-	    *(here->VBICcollCIBaseBIPtr)     +=  (-XQbc_Vbci * (s->real));
-	    *(here->VBICcollCIBaseBIPtr + 1) +=  (-XQbc_Vbci * (s->imag));
-	    *(here->VBICcollCICollCIPtr)     +=  (XQbc_Vbci * (s->real));
-	    *(here->VBICcollCICollCIPtr + 1) +=  (XQbc_Vbci * (s->imag));
+	    *(here->VBICbaseBIBaseBIPtr)     +=  XQbc_Vbci * (s->real);
+	    *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbc_Vbci * (s->imag);
+	    *(here->VBICbaseBICollCIPtr)     += -XQbc_Vbci * (s->real);
+	    *(here->VBICbaseBICollCIPtr + 1) += -XQbc_Vbci * (s->imag);
+	    *(here->VBICcollCIBaseBIPtr)     += -XQbc_Vbci * (s->real);
+	    *(here->VBICcollCIBaseBIPtr + 1) += -XQbc_Vbci * (s->imag);
+	    *(here->VBICcollCICollCIPtr)     +=  XQbc_Vbci * (s->real);
+	    *(here->VBICcollCICollCIPtr + 1) +=  XQbc_Vbci * (s->imag);
 /*
 c	Stamp element: Qbcx
 */
-	    *(here->VBICbaseBIBaseBIPtr)     +=  (XQbcx_Vbcx * (s->real));
-	    *(here->VBICbaseBIBaseBIPtr + 1) +=  (XQbcx_Vbcx * (s->imag));
-	    *(here->VBICbaseBICollCXPtr)     +=  (-XQbcx_Vbcx * (s->real));
-	    *(here->VBICbaseBICollCXPtr + 1) +=  (-XQbcx_Vbcx * (s->imag));
-	    *(here->VBICcollCXBaseBIPtr)     +=  (-XQbcx_Vbcx * (s->real));
-	    *(here->VBICcollCXBaseBIPtr + 1) +=  (-XQbcx_Vbcx * (s->imag));
-	    *(here->VBICcollCXCollCXPtr)     +=  (XQbcx_Vbcx * (s->real));
-	    *(here->VBICcollCXCollCXPtr + 1) +=  (XQbcx_Vbcx * (s->imag));
+	    *(here->VBICbaseBIBaseBIPtr)     +=  XQbcx_Vbcx * (s->real);
+	    *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbcx_Vbcx * (s->imag);
+	    *(here->VBICbaseBICollCXPtr)     += -XQbcx_Vbcx * (s->real);
+	    *(here->VBICbaseBICollCXPtr + 1) += -XQbcx_Vbcx * (s->imag);
+	    *(here->VBICcollCXBaseBIPtr)     += -XQbcx_Vbcx * (s->real);
+	    *(here->VBICcollCXBaseBIPtr + 1) += -XQbcx_Vbcx * (s->imag);
+	    *(here->VBICcollCXCollCXPtr)     +=  XQbcx_Vbcx * (s->real);
+	    *(here->VBICcollCXCollCXPtr + 1) +=  XQbcx_Vbcx * (s->imag);
 /*
 c	Stamp element: Qbep
 */
-	    *(here->VBICbaseBXBaseBXPtr)     +=  (XQbep_Vbep * (s->real));
-	    *(here->VBICbaseBXBaseBXPtr + 1) +=  (XQbep_Vbep * (s->imag));
-	    *(here->VBICbaseBXBaseBPPtr)     +=  (-XQbep_Vbep * (s->real));
-	    *(here->VBICbaseBXBaseBPPtr + 1) +=  (-XQbep_Vbep * (s->imag));
-	    *(here->VBICbaseBXBaseBIPtr)     +=  (XQbep_Vbci * (s->real));
-	    *(here->VBICbaseBXBaseBIPtr + 1) +=  (XQbep_Vbci * (s->imag));
-	    *(here->VBICbaseBXCollCIPtr)     +=  (-XQbep_Vbci * (s->real));
-	    *(here->VBICbaseBXCollCIPtr + 1) +=  (-XQbep_Vbci * (s->imag));
-	    *(here->VBICbaseBPBaseBXPtr)     +=  (-XQbep_Vbep * (s->real));
-	    *(here->VBICbaseBPBaseBXPtr + 1) +=  (-XQbep_Vbep * (s->imag));
-	    *(here->VBICbaseBPBaseBPPtr)     +=  (XQbep_Vbep * (s->real));
-	    *(here->VBICbaseBPBaseBPPtr + 1) +=  (XQbep_Vbep * (s->imag));
-	    *(here->VBICbaseBPBaseBIPtr)     +=  (-XQbep_Vbci * (s->real));
-	    *(here->VBICbaseBPBaseBIPtr + 1) +=  (-XQbep_Vbci * (s->imag));
-	    *(here->VBICbaseBPCollCIPtr)     +=  (XQbep_Vbci * (s->real));
-	    *(here->VBICbaseBPCollCIPtr + 1) +=  (XQbep_Vbci * (s->imag));
+	    *(here->VBICbaseBXBaseBXPtr)     +=  XQbep_Vbep * (s->real);
+	    *(here->VBICbaseBXBaseBXPtr + 1) +=  XQbep_Vbep * (s->imag);
+	    *(here->VBICbaseBXBaseBPPtr)     += -XQbep_Vbep * (s->real);
+	    *(here->VBICbaseBXBaseBPPtr + 1) += -XQbep_Vbep * (s->imag);
+	    *(here->VBICbaseBXBaseBIPtr)     +=  XQbep_Vbci * (s->real);
+	    *(here->VBICbaseBXBaseBIPtr + 1) +=  XQbep_Vbci * (s->imag);
+	    *(here->VBICbaseBXCollCIPtr)     += -XQbep_Vbci * (s->real);
+	    *(here->VBICbaseBXCollCIPtr + 1) += -XQbep_Vbci * (s->imag);
+	    *(here->VBICbaseBPBaseBXPtr)     += -XQbep_Vbep * (s->real);
+	    *(here->VBICbaseBPBaseBXPtr + 1) += -XQbep_Vbep * (s->imag);
+	    *(here->VBICbaseBPBaseBPPtr)     +=  XQbep_Vbep * (s->real);
+	    *(here->VBICbaseBPBaseBPPtr + 1) +=  XQbep_Vbep * (s->imag);
+	    *(here->VBICbaseBPBaseBIPtr)     += -XQbep_Vbci * (s->real);
+	    *(here->VBICbaseBPBaseBIPtr + 1) += -XQbep_Vbci * (s->imag);
+	    *(here->VBICbaseBPCollCIPtr)     +=  XQbep_Vbci * (s->real);
+	    *(here->VBICbaseBPCollCIPtr + 1) +=  XQbep_Vbci * (s->imag);
+/*
+c	Stamp element: Qbcp
+*/
+            *(here->VBICsubsSISubsSIPtr)     +=  XQbcp_Vbcp;
+            *(here->VBICsubsSISubsSIPtr + 1) +=  XQbcp_Vbcp;
+            *(here->VBICsubsSIBaseBPPtr)     += -XQbcp_Vbcp;
+            *(here->VBICsubsSIBaseBPPtr + 1) += -XQbcp_Vbcp;
+            *(here->VBICbaseBPSubsSIPtr)     += -XQbcp_Vbcp;
+            *(here->VBICbaseBPSubsSIPtr + 1) += -XQbcp_Vbcp;
+            *(here->VBICbaseBPBaseBPPtr)     +=  XQbcp_Vbcp;
+            *(here->VBICbaseBPBaseBPPtr + 1) +=  XQbcp_Vbcp;
 
         }
     }

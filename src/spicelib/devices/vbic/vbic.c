@@ -28,17 +28,20 @@ IFparm VBICpTable[] = { /* parameters */
  OPU("collnode", VBIC_QUEST_COLLNODE, IF_INTEGER, "Number of collector node"),
  OPU("basenode", VBIC_QUEST_BASENODE, IF_INTEGER, "Number of base node"),
  OPU("emitnode", VBIC_QUEST_EMITNODE, IF_INTEGER, "Number of emitter node"),
+ OPU("subsnode", VBIC_QUEST_SUBSNODE, IF_INTEGER, "Number of substrate node"),
  OPU("collCXnode",VBIC_QUEST_COLLCXNODE,IF_INTEGER, "Internal collector node"),
  OPU("collCInode",VBIC_QUEST_COLLCINODE,IF_INTEGER, "Internal collector node"),
  OPU("baseBXnode",VBIC_QUEST_BASEBXNODE,IF_INTEGER, "Internal base node"),
  OPU("baseBInode",VBIC_QUEST_BASEBINODE,IF_INTEGER, "Internal base node"),
  OPU("baseBPnode",VBIC_QUEST_BASEBPNODE,IF_INTEGER, "Internal base node"),
  OPU("emitEInode",VBIC_QUEST_EMITEINODE,IF_INTEGER, "Internal emitter node"),
+ OPU("subsSInode",VBIC_QUEST_SUBSSINODE,IF_INTEGER, "Internal substrate node"),
  OP("vbe",   VBIC_QUEST_VBE,  IF_REAL, "B-E voltage"),
  OP("vbc",   VBIC_QUEST_VBC,  IF_REAL, "B-C voltage"),
  OP("ic",    VBIC_QUEST_CC,   IF_REAL, "Collector current"),
  OP("ib",    VBIC_QUEST_CB,   IF_REAL, "Base current"),
  OP("ie",    VBIC_QUEST_CE,   IF_REAL, "Emitter current"),
+ OP("is",    VBIC_QUEST_CS,   IF_REAL, "Substrate current"),
  OP("gm",    VBIC_QUEST_GM,   IF_REAL, "Small signal transconductance dIc/dVbe"),
  OP("go",    VBIC_QUEST_GO,   IF_REAL, "Small signal output conductance dIc/dVbc"),
  OP("gpi",   VBIC_QUEST_GPI,  IF_REAL, "Small signal input conductance dIb/dVbe"),
@@ -48,6 +51,8 @@ IFparm VBICpTable[] = { /* parameters */
  OP("cbex",  VBIC_QUEST_CBEX, IF_REAL, "External base to emitter capacitance"),
  OP("cbc",   VBIC_QUEST_CBC,  IF_REAL, "Internal base to collector capacitance"),
  OP("cbcx",  VBIC_QUEST_CBCX, IF_REAL, "External Base to collector capacitance"),
+ OP("cbep",  VBIC_QUEST_CBEP, IF_REAL, "Parasitic Base to emitter capacitance"),
+ OP("cbcp",  VBIC_QUEST_CBCP, IF_REAL, "Parasitic Base to collector capacitance"),
  OP("p",     VBIC_QUEST_POWER,IF_REAL, "Power dissipation"),
  OPU("geqcb",VBIC_QUEST_GEQCB,IF_REAL, "Internal C-B-base cap. equiv. cond."),
  OPU("geqbx",VBIC_QUEST_GEQBX,IF_REAL, "External C-B-base cap. equiv. cond."),
@@ -176,7 +181,7 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOP("ebbe",  VBIC_MOD_EBBE,  IF_REAL, "exp(-VBBE/(NBBE*Vtv))"),
  IOP("dtemp", VBIC_MOD_DTEMP, IF_REAL, "Locale Temperature difference"),
  IOP("vers",  VBIC_MOD_VERS,  IF_REAL, "Revision Version"),
- IOP("vref",  VBIC_MOD_VREF,  IF_REAL, "Reference Version"),
+ IOP("vref",  VBIC_MOD_VREF,  IF_REAL, "Reference Version")
 };
 
 char *VBICnames[] = {

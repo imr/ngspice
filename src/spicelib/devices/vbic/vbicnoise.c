@@ -51,9 +51,11 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
         "_rbp",             /* noise due to rbp */
         "_ic",              /* noise due to ic */
         "_ib",              /* noise due to ib */
-        "_ibep",            /* noise due to ib */
-        "_1overfbe",        /* flicker (1/f) noise */
-        "_1overfbep",       /* flicker (1/f) noise */
+        "_ibep",            /* noise due to ibep */
+        "_1overfbe",        /* flicker (1/f) noise ibe */
+        "_1overfbep",       /* flicker (1/f) noise ibep */
+        "_rs",              /* noise due to rs */
+        "_iccp",            /* noise due to iccp */
         ""                  /* total transistor noise */
     };
 
@@ -147,6 +149,10 @@ if (!data->namelist) return(E_NOMEM);
                                  ckt,THERMNOISE,inst->VBICemitEINode,inst->VBICemitNode,
                                  *(ckt->CKTstate0 + inst->VBICirbp_Vrbp));
 
+                    NevalSrc(&noizDens[VBICRSNOIZ],&lnNdens[VBICRSNOIZ],
+                                 ckt,THERMNOISE,inst->VBICsubsSINode,inst->VBICsubsNode,
+                                 model->VBICsubstrateConduct * inst->VBICarea * inst->VBICm);
+
 
                     NevalSrc(&noizDens[VBICICNOIZ],&lnNdens[VBICICNOIZ],
                                  ckt,SHOTNOISE,inst->VBICcollCINode, inst->VBICemitEINode,
@@ -159,6 +165,10 @@ if (!data->namelist) return(E_NOMEM);
                     NevalSrc(&noizDens[VBICIBEPNOIZ],&lnNdens[VBICIBEPNOIZ],
                                  ckt,SHOTNOISE,inst->VBICbaseBXNode, inst->VBICbaseBPNode,
                                  *(ckt->CKTstate0 + inst->VBICibep));
+
+                    NevalSrc(&noizDens[VBICICCPNOIZ],&lnNdens[VBICICCPNOIZ],
+                                 ckt,SHOTNOISE,inst->VBICbaseBXNode, inst->VBICsubsSINode,
+                                 *(ckt->CKTstate0 + inst->VBICiccp));
 
 
                     NevalSrc(&noizDens[VBICFLBENOIZ],(double*)NULL,ckt,
