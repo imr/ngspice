@@ -38,10 +38,20 @@ BJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(model->BJT2type != NPN && model->BJT2type != PNP) {
             model->BJT2type = NPN;
         }
+#ifndef GEOMETRY_COMPAT
         if(!model->BJT2subsGiven ||
            (model->BJT2subs != VERTICAL && model->BJT2subs != LATERAL)) {
             model->BJT2subs = VERTICAL;
         }
+#else
+        if(!model->BJT2subsGiven ||
+           (model->BJT2subs != VERTICAL && model->BJT2subs != LATERAL)) {
+            if (model->BJT2type = NPN) 
+	        model->BJT2subs = VERTICAL;  /* Vertical for NPN */
+		else
+		model->BJT2subs = LATERAL;   /* Lateral for PNP */
+        }	
+#endif
         if(!model->BJT2satCurGiven) {
             model->BJT2satCur = 1e-16;
         }
