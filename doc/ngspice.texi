@@ -1917,7 +1917,7 @@ corrected for temperature.  The parameters available are:
 @item TNOM   @tab parameter measurement temperature
                             @tab °C @tab 27 @tab 50
 @item KF     @tab  flicker noise coefficient 
-                            @tab - @tab 0.0 @tab 5e-15 
+                            @tab - @tab 0.0 @tab 1e-25 
 @item AF     @tab  flicker noise exponent 
                             @tab - @tab 0.0 @tab 1.0
 @end multitable
@@ -1934,14 +1934,14 @@ $$
 @end tex
 @ifnottex
 @example
-                           L -  SHORT
-                Rnom = RSH ----------
-                           W - NARROW
+                           l -  SHORT
+                Rnom = rsh ----------
+                           w - NARROW
 @end example
 @end ifnottex
 
 @option{DEFW} is used to supply a default value for @option{w} if one is 
-not specified for the device.  If either @option{RSH} or @option{L} is not 
+not specified for the device.  If either @option{rsh} or @option{l} is not 
 specified, then the standard default resistance value of 1k Ohm is used.  
 @option{TNOM} is used to override the circuit-wide value given on the 
 @command{.options} control line where the parameters of this model have 
@@ -1967,9 +1967,48 @@ where $R({\rm TNOM}) = R_{nom} \vert R_{acnom}$.
 
 In the above formula, "T" represents the instance temperature, which can be
 explicitly using the @option{temp} keyword or os calculated using the 
-circuit temperature and and @option{dtemp}, if present.
+circuit temperature and @option{dtemp}, if present.
 
 If both @option{temp} and @option{dtemp} are specified, the latter is ignored.
+
+Ngspice improves spice's resistors noise model, adding flicker noise (1/f) to
+it and the @option{noisy} keyword to simulate noiseless resistors. The thermal
+noise in resistors is modeled according to the equation: 
+
+@tex
+$$
+    \bar{i^2_R} = {{4kT} \over R} \Delta f
+$$
+@end tex
+@ifnottex
+@example
+                         
+                         ___ 
+			  2  4 k T 
+			 i = ----- df
+			  r    R
+@end example
+@end ifnottex   
+
+where "k" is the Boltzmann's constant, and "T" the instance temperature.
+
+Flicker noise model is:
+
+@tex
+$$
+    \bar{i^2_{Rfn}} = {{\rm KF} I^{\rm AF}_R \over f} \Delta f
+$$
+@end tex
+@ifnottex
+@example
+                         
+                          ____        AF
+			   2     KF Ir  
+			  i   = ------- df
+			   Rfn     f 
+@end example
+@end ifnottex   
+    
 
 A small list of sheet resistances (in Ohm/[]) for conductors is shown below.
 The table represents typical values for MOS processes in the 0.5 - 1 um 
