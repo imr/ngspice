@@ -204,7 +204,15 @@ MOS1  - Level 1 MOS model
       Ver:    N/A
       Class:  M
       Level:  1
-      Status: TO BE TESTED
+      Status: 
+      
+      This is the so-called Schichman-Hodges model. 
+      
+      Enhancements over the original model:
+      
+      - Parallel multiplier
+      - Temperature difference from circuit temperature
+      
 
 MOS2  - Level 2 MOS model
       Initial Release.
