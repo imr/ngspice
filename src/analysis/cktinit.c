@@ -15,8 +15,8 @@ int
 CKTinit(void **ckt)
                  /* new circuit to create */
 {
-    register int i;
-    register CKTcircuit *sckt;
+    int i;
+    CKTcircuit *sckt;
 
     sckt = (CKTcircuit *)( *ckt = (char *)MALLOC(sizeof(CKTcircuit)) );
     if(sckt == NULL) return(E_NOMEM);

@@ -18,12 +18,12 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTacDump(register CKTcircuit *ckt, double freq, void *plot)
+CKTacDump(CKTcircuit *ckt, double freq, void *plot)
 {
-    register double *rhsold;
-    register double *irhsold;
-    register int i;
-    register IFcomplex *data;
+    double *rhsold;
+    double *irhsold;
+    int i;
+    IFcomplex *data;
     IFvalue freqData;
     IFvalue valueData;
 

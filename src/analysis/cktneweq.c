@@ -23,7 +23,7 @@ int
 CKTnewEq(void *inCkt, void **node, IFuid name)
 {
     CKTnode *mynode;
-    register CKTcircuit *ckt = (CKTcircuit *)inCkt;
+    CKTcircuit *ckt = (CKTcircuit *)inCkt;
     int error;
 
     error = CKTmkNode(ckt,&mynode);

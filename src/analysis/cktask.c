@@ -20,7 +20,7 @@ extern SPICEdev *DEVices[];
 int
 CKTask(void *ckt, void *fast, int which, IFvalue *value, IFvalue *selector)
 {
-    register int type = ((GENinstance *)fast)->GENmodPtr->GENmodType;
+    int type = ((GENinstance *)fast)->GENmodPtr->GENmodType;
     int error;
 #ifdef PARALLEL_ARCH
     long msgtype, length;

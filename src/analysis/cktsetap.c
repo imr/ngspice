@@ -18,7 +18,7 @@ extern SPICEanalysis *analInfo[];
 int
 CKTsetAnalPm(void *ckt, void *analPtr, int parm, IFvalue *value, IFvalue *selector)
 {
-    register int type = ((JOB *)analPtr)->JOBtype;
+    int type = ((JOB *)analPtr)->JOBtype;
     if((analInfo[type]->setParm)==NULL) return(E_BADPARM);
     return( (*(analInfo[type]->setParm))(ckt,analPtr,parm,value) );
 }

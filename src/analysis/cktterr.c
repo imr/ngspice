@@ -12,7 +12,7 @@ Author: 1985 Thomas L. Quarles
 #define ccap (qcap+1)
 
 void
-CKTterr(register int qcap, register CKTcircuit *ckt, register double *timeStep)
+CKTterr(int qcap, CKTcircuit *ckt, double *timeStep)
 { 
     double volttol;
     double chargetol;
@@ -21,8 +21,8 @@ CKTterr(register int qcap, register CKTcircuit *ckt, register double *timeStep)
     double diff[8];
     double deltmp[8];
     double factor;
-    register int i;
-    register int j;
+    int i;
+    int j;
     static double gearCoeff[] = {
         .5,
         .2222222222,

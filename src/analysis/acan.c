@@ -225,11 +225,11 @@ endsweep:
 
 
 int
-CKTacLoad(register CKTcircuit *ckt)
+CKTacLoad(CKTcircuit *ckt)
 {
     extern SPICEdev *DEVices[];
-    register int i;
-    register int size;
+    int i;
+    int size;
     int error;
 #ifdef PARALLEL_ARCH
     long type = MT_ACLOAD, length = 1;

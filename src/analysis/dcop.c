@@ -13,7 +13,7 @@ Author: 1985 Thomas L. Quarles
 int
 DCop(CKTcircuit *ckt)
 {
-    int CKTload(register CKTcircuit *ckt);
+    int CKTload(CKTcircuit *ckt);
     int converged;
     int error;
     IFuid *nameList;

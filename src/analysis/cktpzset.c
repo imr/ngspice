@@ -17,7 +17,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 
 int
-CKTpzSetup(register CKTcircuit *ckt, int type)
+CKTpzSetup(CKTcircuit *ckt, int type)
 {
     extern SPICEdev *DEVices[];
     PZAN *pzan = (PZAN *) ckt->CKTcurJob;

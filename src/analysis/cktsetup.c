@@ -26,12 +26,12 @@ Author: 1985 Thomas L. Quarles
 extern SPICEdev *DEVices[];
 
 int
-CKTsetup(register CKTcircuit *ckt)
+CKTsetup(CKTcircuit *ckt)
 {
-    register int i;
+    int i;
     int error;
 
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     ckt->CKTnumStates=0;
 
 #ifdef WANT_SENSE2

@@ -21,7 +21,7 @@ Author: 1985 Thomas L. Quarles
 int
 CKTfndNode(void *ckt, void **node, IFuid name)
 {
-    register CKTnode *here;
+    CKTnode *here;
 
     for (here = ((CKTcircuit *)ckt)->CKTnodes; here; here = here->next)  {
         if(here->name == name) {

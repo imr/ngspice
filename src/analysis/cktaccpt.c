@@ -18,11 +18,11 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTaccept(register CKTcircuit *ckt)
+CKTaccept(CKTcircuit *ckt)
 {
     extern SPICEdev *DEVices[];
 
-    register int i;
+    int i;
     int error;
 
     for (i=0;i<DEVmaxnum;i++) {

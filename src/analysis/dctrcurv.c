@@ -21,7 +21,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                 
                 /* forced restart flag */
 {
-    register TRCV* cv = (TRCV*)ckt->CKTcurJob; /* Where we get the job to do */ 
+    TRCV* cv = (TRCV*)ckt->CKTcurJob; /* Where we get the job to do */ 
     int i;
     double *temp;
     int converged;
@@ -68,8 +68,9 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     for(i=0;i<=cv->TRCVnestLevel;i++) {
         if(rcode >= 0) {
             /* resistances are in this version, so use them */
-            register RESinstance *here;
-            register RESmodel *model;
+            RESinstance *here;
+            RESmodel *model;
+
             for(model = (RESmodel *)ckt->CKThead[rcode];model != NULL;
                     model=model->RESnextModel){
                 for(here=model->RESinstances;here!=NULL;
@@ -89,8 +90,9 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         }
         if(vcode >= 0) {
             /* voltage sources are in this version, so use them */
-            register VSRCinstance *here;
-            register VSRCmodel *model;
+            VSRCinstance *here;
+            VSRCmodel *model;
+
             for(model = (VSRCmodel *)ckt->CKThead[vcode];model != NULL;
                     model=model->VSRCnextModel){
                 for(here=model->VSRCinstances;here!=NULL;
@@ -109,8 +111,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         }
         if(icode >= 0 ) {
             /* current sources are in this version, so use them */
-            register ISRCinstance *here;
-            register ISRCmodel *model;
+            ISRCinstance *here;
+            ISRCmodel *model;
 
             for(model= (ISRCmodel *)ckt->CKThead[icode];model != NULL;
                     model=model->ISRCnextModel){

@@ -21,7 +21,7 @@ Author: 1985 Thomas L. Quarles
 CKTnode *
 CKTnum2nod(CKTcircuit *ckt, int node)
 {
-    register CKTnode *here;
+    CKTnode *here;
 
     for (here = ((CKTcircuit *)ckt)->CKTnodes; here; here = here->next)  {
         if(here->number == node) {

@@ -24,7 +24,7 @@ int
 CKTfndAnal(void *ckt, int *analIndex, void **anal, IFuid name, void *inTask, IFuid taskName)
 {
     TSKtask *task = (TSKtask *)inTask;
-    register JOB *here;
+    JOB *here;
 
     for (here = ((TSKtask *)task)->jobs;here;here = here->JOBnextJob) {
         if(strcmp(here->JOBname,name)==0) {

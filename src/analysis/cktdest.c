@@ -24,10 +24,10 @@ extern SPICEdev *DEVices[];
 int
 CKTdestroy(void *inCkt)
 {
-    register CKTcircuit *ckt = (CKTcircuit *)inCkt;
-    register int i;
-    register CKTnode *node;
-    register CKTnode *nnode;
+    CKTcircuit *ckt = (CKTcircuit *)inCkt;
+    int i;
+    CKTnode *node;
+    CKTnode *nnode;
 
 
 #ifdef WANT_SENSE2

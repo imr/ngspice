@@ -18,9 +18,9 @@ Author: 1985 Thomas L. Quarles
 
 
 IFuid
-CKTnodName(CKTcircuit *ckt, register int nodenum)
+CKTnodName(CKTcircuit *ckt, int nodenum)
 {
-    register CKTnode *here;
+    CKTnode *here;
 
     for(here = ckt->CKTnodes;here; here = here->next) {
         if(here->number == nodenum) { 

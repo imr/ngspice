@@ -18,10 +18,10 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTsetBreak(register CKTcircuit *ckt, double time)
+CKTsetBreak(CKTcircuit *ckt, double time)
 {
     double *tmp;
-    register int i,j;
+    int i,j;
 
     if(ckt->CKTtime > time) {
         (*(SPfrontEnd->IFerror))(ERR_PANIC,"breakpoint in the past - HELP!",

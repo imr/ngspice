@@ -17,7 +17,8 @@ Author: 1985 Thomas L. Quarles
 int
 CKTnewTask(void *ckt, void **taskPtr, IFuid taskName)
 {
-    register TSKtask *tsk;
+    TSKtask *tsk;
+
     *taskPtr = (void *)MALLOC(sizeof(TSKtask));
     if(*taskPtr==NULL) return(E_NOMEM);
     tsk = *(TSKtask **)taskPtr;

@@ -22,10 +22,10 @@ Author: 1985 Thomas L. Quarles
 extern SPICEdev *DEVices[];
 
 int
-CKTtemp(register CKTcircuit *ckt)
+CKTtemp(CKTcircuit *ckt)
 {
     int error;
-    register int i;
+    int i;
 
     ckt->CKTvt = CONSTKoverQ * ckt->CKTtemp;
 

@@ -22,7 +22,7 @@ extern SPICEdev *DEVices[];
 int
 CKTparam(void *ckt, void *fast, int param, IFvalue *val, IFvalue *selector)
 {
-    register int type;
+    int type;
     GENinstance *myfast = (GENinstance *)fast;
     type = myfast->GENmodPtr->GENmodType;
     if(((*DEVices[type]).DEVparam)) {

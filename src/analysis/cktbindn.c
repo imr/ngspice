@@ -24,7 +24,7 @@ int
 CKTbindNode(void *ckt, void *fast, int term, void *node)
 {
     int mappednode;
-    register int type = ((GENinstance *)fast)->GENmodPtr->GENmodType;
+    int type = ((GENinstance *)fast)->GENmodPtr->GENmodType;
 
     mappednode = ((CKTnode *)node)->number;
 

@@ -26,7 +26,7 @@ int
 CKTinst2Node(void *ckt, void *instPtr, int terminal, void **node, IFuid *nodeName)
 {
     int nodenum;
-    register int type;
+    int type;
     CKTnode *here;
 
     type = ((GENinstance *)instPtr)->GENmodPtr->GENmodType;

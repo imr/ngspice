@@ -22,11 +22,11 @@ Author: 1985 Thomas L. Quarles
 static int ZeroNoncurRow(SMPmatrix *matrix, CKTnode *nodes, int rownum);
 
 int
-CKTload(register CKTcircuit *ckt)
+CKTload(CKTcircuit *ckt)
 {
     extern SPICEdev *DEVices[];
-    register int i;
-    register int size;
+    int i;
+    int size;
     double startTime;
     CKTnode *node;
     int error;

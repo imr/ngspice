@@ -17,10 +17,10 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTclrBreak(register CKTcircuit *ckt)
+CKTclrBreak(CKTcircuit *ckt)
 {
     double *tmp;
-    register int j;
+    int j;
 
     if(ckt->CKTbreakSize >2) {
         tmp = (double *)MALLOC((ckt->CKTbreakSize-1)*sizeof(double));

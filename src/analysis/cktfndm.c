@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 int
 CKTfndMod(void *ckt, int *type, void **modfast, IFuid modname)
 {
-    register GENmodel *mods;
+    GENmodel *mods;
 
     if(modfast != NULL && *(GENmodel **)modfast != NULL) {
         /* already have  modfast, so nothing to do */

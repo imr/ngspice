@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 int 
 DCTsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
 {
-    register TRCV* cv= (TRCV*)anal;
+    TRCV* cv= (TRCV*)anal;
     switch(which) {
 
     case DCT_START1:

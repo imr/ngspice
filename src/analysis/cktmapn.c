@@ -22,7 +22,7 @@ Author: 1985 Thomas L. Quarles
 int
 CKTmapNode(void *ckt, void **node, IFuid name)
 {
-    register CKTnode *here;
+    CKTnode *here;
     int error;
     IFuid uid;
     CKTnode *mynode;

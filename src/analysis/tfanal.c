@@ -28,7 +28,7 @@ TFanal(CKTcircuit *ckt, int restart)
     IFvalue refval;     /* structure for 'reference' value (not used here) */
     int error;
     int converged;
-    register int i;
+    int i;
     void *plotptr;   /* pointer to out plot */
     void *ptr = NULL;
     IFuid uids[3];

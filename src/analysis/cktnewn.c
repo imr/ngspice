@@ -23,7 +23,7 @@ Author: 1985 Thomas L. Quarles
 int
 CKTnewNode(void *inCkt, void **node, IFuid name)
 {
-    register CKTcircuit *ckt = (CKTcircuit *)inCkt;
+    CKTcircuit *ckt = (CKTcircuit *)inCkt;
     if(!(ckt->CKTnodes)) { /*  starting the list - allocate both ground and 1 */
         ckt->CKTnodes = (CKTnode *) MALLOC(sizeof(CKTnode));
         if(ckt->CKTnodes == (CKTnode *)NULL) return(E_NOMEM);

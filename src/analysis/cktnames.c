@@ -17,10 +17,10 @@ Author: 1988 Thomas L. Quarles
 
 
 int
-CKTnames(register CKTcircuit *ckt, int *numNames, register IFuid **nameList)
+CKTnames(CKTcircuit *ckt, int *numNames, IFuid **nameList)
 {
-    register CKTnode *here;
-    register int i;
+    CKTnode *here;
+    int i;
     *numNames = ckt->CKTmaxEqNum-1;
     *nameList = (IFuid *)MALLOC(*numNames * sizeof(IFuid ));
     if ((*nameList) == (IFuid *)NULL) return(E_NOMEM);
@@ -35,7 +35,7 @@ int
 CKTdnames(CKTcircuit *ckt)
 {
     CKTnode *here;
-    register int i;
+    int i;
 
     i=0;
     for (here = ckt->CKTnodes->next; here; here = here->next)  {

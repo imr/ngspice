@@ -23,7 +23,7 @@ Author: 1985 Thomas L. Quarles
 int
 CKTsetOpt(void *ckt, void *anal, int opt, IFvalue *val)
 {
-    register TSKtask *task = (TSKtask *)anal;
+    TSKtask *task = (TSKtask *)anal;
 
     switch(opt) {
         

@@ -21,7 +21,7 @@ extern SPICEdev *DEVices[];
 int
 CKTmodParam(void *ckt, void *modfast, int param, IFvalue *val, IFvalue *selector)
 {
-    register int type = ((GENmodel *)modfast)->GENmodType;
+    int type = ((GENmodel *)modfast)->GENmodType;
 
     if (((*DEVices[type]).DEVmodParam)) {
         return(((*((*DEVices[type]).DEVmodParam)) (param,val,

@@ -19,11 +19,11 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTfndBranch(register CKTcircuit *ckt, IFuid name)
+CKTfndBranch(CKTcircuit *ckt, IFuid name)
 {
     extern SPICEdev *DEVices[];
 
-    register int i;
+    int i;
     int j;
 
     for (i=0;i<DEVmaxnum;i++) {

@@ -20,11 +20,11 @@ Author: 1988 Jaijeet S Roychowdhury
 
 
 int
-CKTdisto (register CKTcircuit *ckt, int mode)
+CKTdisto (CKTcircuit *ckt, int mode)
 {
     extern SPICEdev *DEVices[];
-    register DISTOAN* cv = (DISTOAN*) (ckt->CKTcurJob);
-    register int i;
+    DISTOAN* cv = (DISTOAN*) (ckt->CKTcurJob);
+    int i;
     int error=0;
     int size;
 
@@ -88,8 +88,8 @@ CKTdisto (register CKTcircuit *ckt, int mode)
 
         if(vcode >= 0) {
             /* voltage sources are in this version, so use them */
-            register VSRCinstance *here;
-            register VSRCmodel *model;
+            VSRCinstance *here;
+            VSRCmodel *model;
             for(model = (VSRCmodel *)ckt->CKThead[vcode];model != NULL;
                     model=model->VSRCnextModel){
                 for(here=model->VSRCinstances;here!=NULL;
@@ -123,8 +123,8 @@ if (((here->VSRCdF1given) && (mode == D_RHSF1)) ||
         }
         if(icode >= 0 ) {
             /* current sources are in this version, so use them */
-            register ISRCinstance *here;
-            register ISRCmodel *model;
+            ISRCinstance *here;
+            ISRCmodel *model;
 
             for(model= (ISRCmodel *)ckt->CKThead[icode];model != NULL;
                     model=model->ISRCnextModel){

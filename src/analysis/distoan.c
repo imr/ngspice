@@ -39,7 +39,7 @@ DstorAlloc(double ***header, int size)
 extern int CKTdisto(CKTcircuit*, int);
 extern int DkerProc(int,double*,double*,int,DISTOan*);
 #else
-extern int CKTdisto(register CKTcircuit *ckt, int mode);
+extern int CKTdisto(CKTcircuit *ckt, int mode);
 extern int DkerProc(int type, double *rPtr, double *iPtr, int size, DISTOAN *job);
 #endif
 
@@ -59,7 +59,7 @@ DISTOan(CKTcircuit *ckt, int restart)
     IFuid *nameList;
     IFuid freqUid;
     void *acPlot;
-    register DISTOAN* job = (DISTOAN *) (ckt->CKTcurJob);
+    DISTOAN* job = (DISTOAN *) (ckt->CKTcurJob);
     static char *nof2src = "No source with f2 distortion input";
 #ifdef DISTODEBUG
     double time,time1;

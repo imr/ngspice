@@ -20,7 +20,7 @@ Author: 1985 Thomas L. Quarles
 int
 CKTground(void *inCkt, void **node, IFuid name)
 {
-    register CKTcircuit *ckt = (CKTcircuit *)inCkt;
+    CKTcircuit *ckt = (CKTcircuit *)inCkt;
 
     if(ckt->CKTnodes) {
         if(ckt->CKTnodes->name) {

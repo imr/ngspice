@@ -14,9 +14,9 @@ Author: 1985 Thomas L. Quarles
 int
 CKTfndDev(void *Ckt, int *type, void **fast, IFuid name, void *modfast, IFuid modname)
 {
-    register CKTcircuit *ckt=(CKTcircuit *)Ckt;
-    register GENinstance *here;
-    register GENmodel *mods;
+    CKTcircuit *ckt=(CKTcircuit *)Ckt;
+    GENinstance *here;
+    GENmodel *mods;
 
     if((GENinstance **)fast != (GENinstance **)NULL && 
             *(GENinstance **)fast != (GENinstance *)NULL) {

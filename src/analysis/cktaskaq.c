@@ -18,7 +18,7 @@ extern SPICEanalysis *analInfo[];
 int
 CKTaskAnalQ(void *ckt, void *analPtr, int parm, IFvalue *value, IFvalue *selector)
 {
-    register int type = ((JOB *)analPtr)->JOBtype;
+    int type = ((JOB *)analPtr)->JOBtype;
 
     if((analInfo[type]->askQuest) == NULL) return(E_BADPARM);
     return( (*(analInfo[type]->askQuest))((CKTcircuit*)ckt,analPtr,parm,value));

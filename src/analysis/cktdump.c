@@ -17,7 +17,7 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-CKTdump(register CKTcircuit *ckt, double ref, void *plot)
+CKTdump(CKTcircuit *ckt, double ref, void *plot)
 {
     IFvalue refData;
     IFvalue valData;

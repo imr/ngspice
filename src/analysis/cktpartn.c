@@ -21,11 +21,11 @@ Author: 1992 David A. Gates, UC Berkeley CADgroup
 extern SPICEdev *DEVices[];
 
 int
-CKTpartition(register CKTcircuit *ckt)
+CKTpartition(CKTcircuit *ckt)
 {
-    register int i, instNum = 0;
-    register GENmodel *model;
-    register GENinstance *inst;
+    int i, instNum = 0;
+    GENmodel *model;
+    GENinstance *inst;
 
     for (i=0;i<DEVmaxnum;i++) {
         if ( (ckt->CKThead[i] != NULL) ) {

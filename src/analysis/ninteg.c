@@ -24,7 +24,7 @@ Author: 1987 Gary W. Ng
 
 
 double
-Nintegrate (double noizDens, double lnNdens, double lnNlstDens, register Ndata *data)
+Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data)
 {
     double exponent;
     double a;

@@ -1,13 +1,10 @@
 /* Patch to noisean.c by Richard D. McRoberts.
  * Patched with modifications from Weidong Lu (2000)
- * There is a strange #ifdef near the end of the file.
  */
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Gary W. Ng
 **********/
-
-#define INT_NOISE /* Inserted to compile the ifdef'd code */
 
 #include "ngspice.h"
 #include <stdio.h>
@@ -22,7 +19,7 @@ Author: 1987 Gary W. Ng
 int
 NOISEan (CKTcircuit *ckt, int restart)
 {
-    register Ndata *data;
+    Ndata *data;
     double realVal;
     double imagVal;
     int error;
@@ -30,12 +27,11 @@ NOISEan (CKTcircuit *ckt, int restart)
     int negOutNode;
     int code;
     int step;
-    /* register CKTnode *node;  WL but not used ???? */
     IFuid freqUid;
     void *inst;  /* PN fixes incompatible pointer type warning */
     double freqTol; /* tolerence parameter for finding final frequency; hack */
 
-    register NOISEAN *job = (NOISEAN*) (ckt->CKTcurJob);
+    NOISEAN *job = (NOISEAN*) (ckt->CKTcurJob);
     static char *noacinput =    "noise input source has no AC value";
 
     posOutNode = ((CKTnode*) (job->output))->number;
@@ -258,7 +254,6 @@ NOISEan (CKTcircuit *ckt, int restart)
     error = CKTnoise(ckt,N_DENS,N_CLOSE,data);
     if (error) return(error);
 
-#ifdef INT_NOISE                  /* WL */
     data->numPlots = 0;
     data->outNumber = 0;
 
@@ -278,7 +273,6 @@ NOISEan (CKTcircuit *ckt, int restart)
 	error = CKTnoise(ckt,INT_NOIZ,N_CLOSE,data);
 	if (error) return(error);
     }
-#endif
 
     FREE(data);
     return(OK);

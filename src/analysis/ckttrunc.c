@@ -21,10 +21,10 @@ Author: 1985 Thomas L. Quarles
 extern SPICEdev *DEVices[];
 
 int
-CKTtrunc(register CKTcircuit *ckt, double *timeStep)
+CKTtrunc(CKTcircuit *ckt, double *timeStep)
 {
 #ifndef NEWTRUNC
-    register int i;
+    int i;
     double timetemp;
 #ifdef PARALLEL_ARCH
     long type = MT_TRUNC, length = 1;
@@ -66,8 +66,8 @@ CKTtrunc(register CKTcircuit *ckt, double *timeStep)
     ckt->CKTstat->STATtranTruncTime += SPfrontEnd->IFseconds() - startTime;
     return(OK);
 #else /* NEWTRUNC */
-    register int i;
-    register CKTnode *node;
+    int i;
+    CKTnode *node;
     double timetemp;
     double tmp;
     double diff;

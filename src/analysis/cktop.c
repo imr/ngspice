@@ -104,10 +104,10 @@ CKTop(CKTcircuit *ckt, long int firstmode, long int continuemode, int iterlim)
  */
 
 int
-CKTconvTest(register CKTcircuit *ckt)
+CKTconvTest(CKTcircuit *ckt)
 {
     extern SPICEdev *DEVices[];
-    register int i;
+    int i;
     int error = OK;
 #ifdef PARALLEL_ARCH
     int ibuf[2];
