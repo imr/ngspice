@@ -1,3 +1,28 @@
+2004-08-10 Adrian Dawe <adrian.dawe@multigig.com>
+
+	* src/measure.tcl
+	src/nodeDialog.tcl
+	src/pkgIndex.tcl.in
+	src/spicepp.pl.in
+	src/spicewish
+	src/spicewish.tcl
+	src/tclspice.c
+	src/viewer.tcl
+	src/frontend/Makefile.am
+	src/frontend/com_measure.c
+	src/frontend/com_measure.h
+	src/frontend/commands.c
+	src/include/cktdefs.h
+	src/spicelib/devices/Makefile.am
+	src/spicelib/devices/cktcrte.c
+	src/spicelib/devices/cktfinddev.c
+	src/spicelib/devices/cktinit.c
+	src/spicelib/devices/names.c
+	src/spicelib/devices/names.h:
+	Added hash table for circuit elements
+	Update TCL gui
+	Added measure command
+
 2004-08-04 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/tclspice.c:

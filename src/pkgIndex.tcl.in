@@ -72,7 +72,7 @@ proc Loadspice { version dir } {
 	puts "DefineLinestyle $linestyleid $mask"
     }
 
-    proc spice_init_gui { fileName {gui 0} {batchMode 0}} {
+    proc spice_init_gui { fileName {gui 0} {batchMode 0} {rawFileName ""}} {
 
 	# source tclcode
 	if {[info procs spicewish::plot] == ""} {
@@ -94,8 +94,11 @@ proc Loadspice { version dir } {
                                 spice::source $fileName
 
                                 if {$batchMode} {
-                                        spice::run
-                                        spice::write out.raw
+					spice::run
+					if {$rawFileName != ""} {
+					      spice::set filetype=binary
+  	                                      spice::write $rawFileName
+					}
                                         exit
                                 }
                         }

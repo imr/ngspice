@@ -48,6 +48,7 @@
 #include "com_setscale.h"
 #include "com_xgraph.h"
 #include "com_state.h"
+#include "com_measure.h"
 #include "fourier.h"
 
 #ifdef EXPERIMENTAL_CODE
@@ -116,6 +117,10 @@ struct comm spcp_coms[] = {
       { 041000, 041000, 041000, 041000 }, E_BEGINNING | E_HASPLOTS, 1, LOTS,
       arg_plot,
       "expr ... [vs expr] [xl xlo xhi] [yl ylo yhi] : Plot things." },
+    { "measure", com_measure, FALSE, FALSE, TRUE,
+      { 041000, 041000, 041000, 041000 }, E_BEGINNING | E_HASPLOTS, 1, LOTS,
+      arg_plot,
+      "measure..." },
     { "plot", com_bltplot, FALSE, FALSE, TRUE,
       { 041000, 041000, 041000, 041000 }, E_BEGINNING | E_HASPLOTS, 1, LOTS,
       arg_plot,

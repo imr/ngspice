@@ -6,6 +6,7 @@ namespace eval nodeDialog {
 	variable selection
 	variable selected "const"
 	variable selectionCnt
+	variable vecFilter ""
 
 	proc create { } {
 		variable w
@@ -21,7 +22,6 @@ namespace eval nodeDialog {
 		wm title $w "Vectors"
 
 		# Plot names
-		#pack [frame $w.plots] -fill x
 		frame $w.plots
 		pack [listbox $w.plots.lst -height 4 \
 			-width 50 \
@@ -34,7 +34,6 @@ namespace eval nodeDialog {
 			] -fill y -side right
 
 		# vector names
-		#pack [frame $w.nodes] -fill both -expand 1
 		frame $w.nodes
 		pack [blt::hierbox $w.nodes.hb -hideroot 1 \
 			-yscrollcommand {.nodeSelect.nodes.sx set} \
@@ -46,8 +45,14 @@ namespace eval nodeDialog {
 			-command {.nodeSelect.nodes.hb yview} \
 			] -fill y -side right
 
+		# vector Filter
+		frame $w.filter
+		pack [label $w.filter.l -text "Filter:"] -side left
+		pack [entry $w.filter.e \
+			-textvariable spicewish::nodeDialog::vecFilter \
+			] -side left -expand 1 -fill x
+
 		# control frame
-		#pack [frame $w.fcont] -fill x
 		frame $w.fcont
 		pack [label $w.fcont.lselected -text "Selected: "] -side left
                 pack [button $w.fcont.bNodeCnt -textvariable spicewish::nodeDialog::selectionCnt \
@@ -62,9 +67,10 @@ namespace eval nodeDialog {
                 blt::table $w \
                         0,0 $w.plots -fill x \
                         1,0 $w.nodes -fill both \
-                        2,0 $w.fcont -fill x
+			2,0 $w.filter -fill x\
+                        3,0 $w.fcont -fill x
 
-		blt::table configure $w r0 r2 -resize none
+		blt::table configure $w r0 r2 r3 -resize none
 
 		# bindings
 		$w.nodes.hb bind all <Button-1> {
@@ -72,7 +78,7 @@ namespace eval nodeDialog {
 			set index [$hierbox_path index current]
 			set nodeName [$hierbox_path entry cget $index -label]
 			set plotTypeName [spice::plot_typename [.nodeSelect.plots.lst curselection]]
-			set listPos [lsearch $::spicewish::nodeDialog::selection($plotTypeName) $nodeName]
+			set listPos [lsearch $::spicewish::nodeDialog::selection($plotTypeName) [spicewish::viewer::evaluate $nodeName]]
 
 			if { [ $hierbox_path entry cget $index -labelcolor] == "black"} {
 				$hierbox_path entry configure $index -labelcolor "blue"
@@ -85,9 +91,7 @@ namespace eval nodeDialog {
 				$hierbox_path entry configure $index -labelcolor "black"
 				$hierbox_path configure -selectforeground black
 
-                               	set spicewish::nodeDialog::selection($plotTypeName) [lreplace $::spicewish::nodeDialog::selection($plotTypeName) $listPos $listPos]
-                               
-	
+                               	set spicewish::nodeDialog::selection($plotTypeName) [lreplace $::spicewish::nodeDialog::selection($plotTypeName) $listPos $listPos]      	
 		   	}   
 			set spicewish::nodeDialog::selectionCnt [llength $::spicewish::nodeDialog::selection($plotTypeName)]
 		}
@@ -100,6 +104,7 @@ namespace eval nodeDialog {
 		bind $w.nodes.hb <Button-5> [list %W yview scroll 5 units]
 		bind $w.nodes.hb <Button-4> [list %W yview scroll -5 units]
 
+		bind $w.filter.e <KeyPress-Return> { spicewish::nodeDialog::Update }
 		wm protocol $w WM_TAKE_FOCUS { spicewish::nodeDialog::Update }
 	
 		Update
@@ -112,7 +117,6 @@ namespace eval nodeDialog {
 		set plotTypeName [spice::plot_typename $plotNum]
 
 		if {$selection($plotTypeName) == ""} {return}
-
 		eval "spicewish::viewer::oplot $plotTypeName $selection($plotTypeName)"
 	}
 
@@ -190,19 +194,32 @@ namespace eval nodeDialog {
 	
 	proc populateTree { index } {
 		
+		variable vecFilter
+
 		set w ".nodeSelect.nodes.hb"
 		$w delete 0
 		
 		set defaultScale [spice::plot_defaultscale $index]
 		
-		foreach node [spice::plot_variables $index] {
-			set text ": [spicewish::vectors::type $index $node], real, [spice::plot_datapoints $index]"
-			if {$node == $defaultScale} {
+		set data [spice::plot_variablesInfo $index]
+		set data [lsort -dictionary $data]	
+	
+		for {set i 0} {$i < [llength $data]} {incr i} {
+			set v_data [lindex $data $i]
+			set v_name [lindex $v_data 0]
+			set v_type [lindex $v_data 1]
+			set v_length [lindex $v_data 2]
+			
+			if {(![string match $vecFilter $v_name]) && ($vecFilter != "")} { continue }
+
+			set text ": $v_type, real, $v_length"
+			if {$v_name == $defaultScale} {
 				set text "$text \[default scale\]"
 			}
 
-			$w insert -at 0 end $node -labelfont {times 9} -text $text -labelcolor "black"
+			$w insert -at 0 end $v_name -labelfont {times 9} -text $text -labelcolor "black"
 		}
+	
 		loadSelection
 	}
 	

@@ -313,5 +313,89 @@ namespace eval meas_markers {
 		bind $w <Key-F2> { spicewish::meas_markers::riseTime %W.g %x %y }
                 bind $w <Key-F3> { spicewish::meas_markers::propDelay %W.g %x %y}
 	}
+}
 
+
+
+
+namespace eval motionMeasure {
+
+	variable measInfo
+
+	proc create { graph } {
+		eval "bind $graph <ButtonPress-1> { [namespace current]::SetMeasPoint %W %x %y }"
+		eval "bind $graph <ButtonRelease-1> { [namespace current]::removeMarker %W }"
+	}
+
+	proc InitVars { graph } {
+		variable measInfo
+		set measInfo($graph,A,x) {}
+		set measInfo($graph,A,y) {}
+		set measInfo($graph,B,x) {}
+		set measInfo($graph,B,y) {}
+		set measInfo($graph,corner) A
+	}
+
+	proc removeMarker { graph } {
+		variable measInfo
+	        bind $graph <Motion> {}
+        	$graph marker delete "zoomOutlineV"
+	        $graph marker delete "zoomOutlineH"
+	}
+
+	proc SetMeasPoint { graph x y } {
+	        variable measInfo
+
+	        if { ![info exists measInfo($graph,corner)] } {
+	                InitVars $graph
+	        }
+	        GetCoords $graph $x $y $measInfo($graph,corner)
+	
+	        eval "bind $graph <Motion> { [namespace current]::GetCoords %W %x %y B; [namespace current]::Box %W }"
+	}
+
+	proc GetCoords { graph x y index } {
+		variable measInfo
+		if { [$graph cget -invertxy] } {
+			set measInfo($graph,$index,x) $y
+			set measInfo($graph,$index,y) $x
+		
+		} else {
+			set measInfo($graph,$index,x) $x
+			set measInfo($graph,$index,y) $y
+    		}
+	}
+
+	proc Box { graph } {
+		variable measInfo
+		if { $measInfo($graph,A,x) > $measInfo($graph,B,x) } {
+      			set x1 [$graph xaxis invtransform $measInfo($graph,B,x)]
+			set y1 [$graph yaxis invtransform $measInfo($graph,B,y)]
+			set x2 [$graph xaxis invtransform $measInfo($graph,A,x)]
+			set y2 [$graph yaxis invtransform $measInfo($graph,A,y)]
+		} else {
+			set x1 [$graph xaxis invtransform $measInfo($graph,A,x)]
+			set y1 [$graph yaxis invtransform $measInfo($graph,A,y)]
+			set x2 [$graph xaxis invtransform $measInfo($graph,B,x)]
+			set y2 [$graph yaxis invtransform $measInfo($graph,B,y)]
+		}
+		set coords { $x1 $y1 $x2 $y1 $x2 $y2 $x1 $y2 $x1 $y1 }
+		if { [$graph marker exists "zoomOutlineV"] } {
+			$graph marker configure "zoomOutlineV" -coords "$x1 $y1 $x1 $y2"
+			$graph marker configure "zoomOutlineH" -coords "$x1 $y2 $x2 $y2"
+		} else {
+			set X [lindex [$graph xaxis use] 0]
+			set Y [lindex [$graph yaxis use] 0]
+
+		        $graph marker create line -coords "$x1 $y1 $x1 $y2" -name "zoomOutlineV" -linewidth 2
+		        $graph marker create line -coords "$x1 $y2 $x2 $y2" -name "zoomOutlineH" -linewidth 2
+  		}
+
+		set ::spicewish::viewer::meas_x1($graph) $x1
+		set ::spicewish::viewer::meas_y1($graph) $y1
+		set ::spicewish::viewer::meas_x2($graph) $x2
+		set ::spicewish::viewer::meas_y2($graph) $y2
+		set ::spicewish::viewer::meas_dx($graph) [expr $x2 - $x1]
+		set ::spicewish::viewer::meas_dy($graph) [expr $y2 - $y1]
+	}
 }

@@ -11,8 +11,9 @@ Author: 1985 Thomas L. Quarles
 #include <config.h>
 #include <devdefs.h>
 #include <sperror.h>
-
+#include <cktdefs.h>
 #include "dev.h"
+#include "names.h"
 
 int
 CKTcrtElt(void *ckt, void *inModPtr, void **inInstPtr, IFuid name)
@@ -59,6 +60,12 @@ CKTcrtElt(void *ckt, void *inModPtr, void **inInstPtr, IFuid name)
 
     if(inInstPtr != NULL)
 	*inInstPtr = (void *)instPtr;
+
+    
+    {
+      names_t *np= ((CKTcircuit *)ckt)->element_lookup_table;
+      names_add(np,instPtr,(char*)(name));
+    }
 
     return OK;
 }

@@ -258,6 +258,10 @@ typedef struct {
 #endif
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 
+
+  void *element_lookup_table; /* names_t * maps strings to pointers to GENELEMENTS */ 
+  
+
 } CKTcircuit;
 
 /* Now function prottypes */

@@ -76,6 +76,7 @@ typedef pthread_t threadId_t;
 #include <frontend/outitf.h>
 #include <memory.h>
 
+#include <frontend/com_measure.h>
 
 #ifndef HAVE_GETRUSAGE
 #ifdef HAVE_FTIME
@@ -667,6 +668,39 @@ static int plot_variables TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   }
   return TCL_OK;
 }
+
+static int plot_variablesInfo TCL_CMDPROCARGS(clientData,interp,argc,argv){
+
+  struct plot *pl;
+  int plot;
+  struct dvec *v;
+  char buf[256];
+  char *name; 
+  int length;
+
+  if (argc != 2) {
+    Tcl_SetResult(interp, "Wrong # args. spice::plot_variablesInfo plot",TCL_STATIC);
+    return TCL_ERROR;
+  }
+
+  plot = atoi(argv[1]);
+
+  if(!(pl = get_plot(plot))){
+    Tcl_SetResult(interp,"Bad plot given",TCL_STATIC);
+    return TCL_ERROR;
+  }
+
+  Tcl_ResetResult(interp);
+  for(v = pl->pl_dvecs;v;v = v->v_next){
+	name = v->v_name;
+	length = v->v_length;
+
+	sprintf(buf,"{%s %s %i} ",name, ft_typenames(v->v_type), length);
+        Tcl_AppendResult(interp, (char *)buf, TCL_STATIC);
+  }
+  return TCL_OK;
+}
+
  
 /*returns the value of a variable */
 static int plot_get_value TCL_CMDPROCARGS(clientData,interp,argc,argv) {
@@ -1947,6 +1981,29 @@ static int listTriggers TCL_CMDPROCARGS(clientData,interp,argc,argv){
   return TCL_OK;
 }
 
+static int tmeasure TCL_CMDPROCARGS(clientData,interp,argc,argv){
+
+  wordlist *wl= NULL;
+  float mvalue;
+
+  if (argc <= 2) {
+    Tcl_SetResult(interp, "Wrong # args. spice::listTriggers",TCL_STATIC);
+    return TCL_ERROR;
+  }
+
+  wl =wl_build(argv);
+
+  mvalue = get_measure(wl);
+
+  printf(" %e \n", mvalue);
+
+  Tcl_ResetResult(spice_interp);
+
+  Tcl_SetObjResult(interp,Tcl_NewDoubleObj((double) mvalue));
+    
+  return TCL_OK;
+}
+
 
 /*******************************************************/
 /*  Initialise spice and setup native methods          */
@@ -2080,6 +2137,7 @@ bot:
     Tcl_CreateCommand(interp, TCLSPICE_prefix "delta", delta, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "maxstep", maxstep, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_variables", plot_variables, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_variablesInfo", plot_variablesInfo, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_get_value", plot_get_value, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_datapoints", plot_datapoints, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_title", plot_title, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
@@ -2103,6 +2161,8 @@ bot:
     Tcl_CreateCommand(interp, TCLSPICE_prefix "halt", _tcl_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "running", running, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 #endif
+
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "tmeasure", tmeasure, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 
 	Tcl_CreateCommand(interp, TCLSPICE_prefix "registerStepCallback", registerStepCallback, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 	

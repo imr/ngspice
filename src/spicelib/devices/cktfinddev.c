@@ -6,7 +6,7 @@ Author: 1985 Thomas L. Quarles
 #include <config.h>
 #include <cktdefs.h>
 #include <sperror.h>
-
+#include "names.h"
 
 int
 CKTfndDev(void *Ckt, int *type, void **fast, IFuid name, void *modfast, IFuid modname)
@@ -23,6 +23,30 @@ CKTfndDev(void *Ckt, int *type, void **fast, IFuid name, void *modfast, IFuid mo
 	    *type = (*((GENinstance**)fast))->GENmodPtr->GENmodType;
         return(OK);
     }
+
+    /* LOG(N) lookup code: Conrad Ziesler */
+    {
+      GENinstance *p;
+      names_t *np= ((CKTcircuit *)Ckt)->element_lookup_table;
+      p= names_check(np,(char*)(name));
+      if(p!=NULL)
+	{
+	  if (modname == (char *)NULL || p->GENmodPtr->GENmodName == modname) {
+
+	    if (p->GENname == name) {
+	      if (fast != 0)
+		*(GENinstance **)fast = p;
+	      if(modfast) if (type)
+		*type = p->GENmodPtr->GENmodType; 
+	      return OK;
+	    }
+	    
+	  }
+	}
+      return E_NODEV;
+    }
+
+
 
     if(modfast) {
         /* have model, just need device */

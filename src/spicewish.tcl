@@ -20,7 +20,13 @@ namespace eval spicewish {
 			spicewish::nodeDialog::create
 			return
 		}
-		eval spicewish::viewer::plot $args
+
+		set l ""
+		foreach p $args {
+			set  l "$l\\\"[spicewish::viewer::evaluate $p]\\\" "
+		}
+		#eval spice::bltplot $l
+		eval spice::bltplot $args
         }
 
 	proc gui { } {
@@ -106,7 +112,7 @@ proc spice_gr_Plot { args } {
 	set yType  [lindex $args 4]
 	set yUnits [lindex $args 5]
 	set viewerCnt [lindex $args 6]	
-	
+		
 	set plotNum [spicewish::vectors::get_plotNum [spice::getplot]]
 
 	if {$spicewish::viewer::vecUpdate_flag} {

@@ -56,8 +56,14 @@ namespace eval viewer {
 		blt::table configure $w r0 r2 c0 c2 r3 -resize none	
 
 		# graph settings
-		Blt_ZoomStack $w.g 
-		Blt_Crosshairs $w.g 
+		Blt_Crosshairs $w.g
+		if {0} {
+			Blt_ZoomStack $w.g 
+		} else {
+			blt::ZoomStack $w.g "ButtonPress-3" "ButtonPress-2"
+			blt::ZoomStack $w.g "ButtonPress-3" "Shift-ButtonPress-3"
+		}
+		
 		$w.g grid on
 		$w.g axis configure x -command { spicewish::viewer::axis_callback } -subdivisions 2
 
@@ -68,6 +74,8 @@ namespace eval viewer {
 
 		eval "wm protocol $w WM_DELETE_WINDOW {spicewish::viewer::Destroy $w}"
 
+		bind $w <KeyPress-u> { spicewish::viewer::Update }
+		
 		incr viewCnt
 		return [expr $viewCnt -1]
 	}
@@ -120,17 +128,25 @@ namespace eval viewer {
 		pack [ label $w_meas.x1 -text "x1 :" -background "grey"  ] -side right
 		bind  $w_meas.x1v <ButtonPress-1> { regexp  {(.[0-9A-z]+)} %W w; puts "x1 :  $::spicewish::viewer::meas_x1($w.g)"}
 
- 		# cursor motion bindings 
-		bind $w.g <Motion> {
-			if { $::zoomInfo(%W,B,x) != "" } { 
-	   			set ::spicewish::viewer::meas_x2(%W)  [%W xaxis invtransform $::zoomInfo(%W,B,x)]
-				set ::spicewish::viewer::meas_y2(%W)  [%W yaxis invtransform $::zoomInfo(%W,B,y)]
-				set ::spicewish::viewer::meas_x1(%W)  [%W xaxis invtransform $::zoomInfo(%W,A,x)]
-				set ::spicewish::viewer::meas_y1(%W)  [%W yaxis invtransform $::zoomInfo(%W,A,y)]
-				set ::spicewish::viewer::meas_dx(%W)  [expr ($::spicewish::viewer::meas_x2(%W) - $::spicewish::viewer::meas_x1(%W))]
-				set ::spicewish::viewer::meas_dy(%W)  [expr ($::spicewish::viewer::meas_y2(%W) - $::spicewish::viewer::meas_y1(%W))]
-			}
-    		}  
+		if {1} { 
+			catch {::spicewish::motionMeasure::create $w.g}
+
+		} else {
+
+	 		# cursor motion bindings 
+			bind $w.g <Motion> {
+				if { $::zoomInfo(%W,B,x) != "" } { 
+		   			set ::spicewish::viewer::meas_x2(%W)  [%W xaxis invtransform $::zoomInfo(%W,B,x)]
+					set ::spicewish::viewer::meas_y2(%W)  [%W yaxis invtransform $::zoomInfo(%W,B,y)]
+					set ::spicewish::viewer::meas_x1(%W)  [%W xaxis invtransform $::zoomInfo(%W,A,x)]
+					set ::spicewish::viewer::meas_y1(%W)  [%W yaxis invtransform $::zoomInfo(%W,A,y)]
+					set ::spicewish::viewer::meas_dx(%W)  [expr ($::spicewish::viewer::meas_x2(%W) - $::spicewish::viewer::meas_x1(%W))]
+					set ::spicewish::viewer::meas_dy(%W)  [expr ($::spicewish::viewer::meas_y2(%W) - $::spicewish::viewer::meas_y1(%W))]
+				}
+	    		}  
+		}
+
+
 	}
 
 	proc names { } {
@@ -142,7 +158,6 @@ namespace eval viewer {
 	proc plot { args } { 
 
 		if {$args == ""} {return}
-
 		spice::bltplot $args
 	}
 
@@ -154,7 +169,11 @@ namespace eval viewer {
 
 		spice::setplot $plotTypeName
 
-		spice::bltplot $args
+		set l ""
+                foreach p $args {
+                        set  l "$l\\\"[spicewish::viewer::evaluate $p]\\\" "
+                }
+                eval spice::bltplot $l
 
 		spice::setplot $currentPlotType
 	}
@@ -353,7 +372,7 @@ namespace eval viewer {
 				spice::setplot $view_plotName($index)
 
 				::spice::X_Data set ""
-				spice::bltplot $trace
+				spice::bltplot [evaluate $trace]
 
 				eval $\{::$view_plotName($index):v:$trace\} set \"::spice::Y_Data\"
 
@@ -378,6 +397,25 @@ namespace eval viewer {
 
 		destroy $w
 	}
+
+	proc evaluate { list } {
+
+	        foreach char "\[ \]" {
+	                set repList ""
+	                for {set i 0} {$i < [string length $list]} {incr i} {
+	                        if {[string range $list $i $i] == $char} {
+	                                lappend repList $i
+	                        }
+	                }
+	                set cnt 0
+	                foreach index $repList {
+	                        set list [string replace $list [expr $index + $cnt] [expr $index + $cnt] "\\$char"]
+	                        incr cnt
+	                }
+	        }
+	
+	        return $list
+	}
 }
 
 namespace eval vectors {
@@ -396,7 +434,7 @@ namespace eval vectors {
 			return $name
 		} else {
 			::spice::Y_Data set ""
-                       	uplevel #0 ::spice::bltplot $name
+                       	uplevel #0 ::spice::bltplot [spicewish::viewer::evaluate $name]
 
                        	if {[::spice::Y_Data length] != 0} {
                                	return $name

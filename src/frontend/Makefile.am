@@ -39,6 +39,8 @@ libfte_a_SOURCES = \
 	com_dl.h	\
 	com_plot.c	\
 	com_plot.h	\
+	com_measure.c	\
+	com_measure.h	\
 	com_rehash.c	\
 	com_set.c	\
 	com_set.h	\

@@ -639,7 +639,7 @@ sub change_models {
 
 
 sub change_instances {
-    local($i,$model,$l,$w,$p,$ad,$as,$pd,$ps);
+    local($i,$model,$l,$w,$p,$m,$ad,$as,$pd,$ps);
     for ($i=0;$i<@deck;$i++) {
 	$_ = $deck[$i];
 	if(/^m\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+(\S+)/) {
@@ -677,6 +677,10 @@ sub change_instances {
 	    next;	    
 	  model_found:
 	    #W & L mangling and acm stuff
+	    #Get m
+	    if($deck[$i] =~ s/(.*)\bm\s*=\s*([0-9]+)\b(.*)/$1$3/){
+		$m = $2;}else {$m = 1;}
+	    
 	    #get and remove pd, ps, ad, as
 	    if($deck[$i] =~ s/(.*)\bpd\s*=\s*(\S+)\b(.*)/$1$3/){
 		$pd = &unit($2);
@@ -699,7 +703,7 @@ sub change_instances {
 	    }else{ $ad = 0;}
 	    
 	    #Calculate Leff and Weff
-	    $w = ($w * $$model{"wmlt"} + $$model{"xw"});
+	    $w = $m * ($w * $$model{"wmlt"} + $$model{"xw"});
 	    $l = $l * $$model{"lmlt"} + $$model{"xl"};
 
 	    #Now do the ACM stuff......
@@ -709,10 +713,10 @@ sub change_instances {
 	    #calculated using hspice methods..
 	    if( $$model{"acm"} == 0){
 		#pg 869, 19-33
-		$ad = $ad * $$model{"wmlt"} * $$model{"wmlt"};
-		$as = $as * $$model{"wmlt"} * $$model{"wmlt"};
-		$pd = $pd * $$model{"wmlt"};
-		$ps = $ps * $$model{"wmlt"}; 
+		$ad = $m * $ad * $$model{"wmlt"} * $$model{"wmlt"};
+		$as = $m * $as * $$model{"wmlt"} * $$model{"wmlt"};
+		$pd = $m * $pd * $$model{"wmlt"};
+		$ps = $m * $ps * $$model{"wmlt"}; 
 		
 	    }
 
@@ -725,23 +729,23 @@ sub change_instances {
 	    elsif( $$model{"acm"} == 2){
 		#pg 874, 19-39
 		if($ad){
-		    $ad = $ad * $$model{"wmlt"} * $$model{"wmlt"};
+		    $ad = $ad * $m * $$model{"wmlt"} * $$model{"wmlt"};
 		}else {
 		    $ad = 2 * $$model{"hdif"} * $w;}
 		
 		if($as){
-		    $as = $as * $$model{"wmlt"} * $$model{"wmlt"};
+		    $as = $m * $as * $$model{"wmlt"} * $$model{"wmlt"};
 		}else{
 		    $as = 2 * $$model{"hdif"} * $w;}
 		
 		if($pd){
-		    $pd = $pd * $$model{"wmlt"};
+		    $pd = $m * $pd * $$model{"wmlt"};
 		}else {
 		    $pd = 4 *  $$model{"hdif"} + 2 * $w;
 		}
 		
 		if($ps){
-		    $ps = $ps * $$model{"wmlt"};
+		    $ps = $m * $ps * $$model{"wmlt"};
 		}else{
 		    $ps = 4 * $$model{"hdif"} + 2 * $w;
 		}
@@ -750,7 +754,7 @@ sub change_instances {
 	    elsif( $$model{"acm"} == 3){
 		#pg 879, 19-43
 		if($ad){
-		    $ad = $ad * $$model{"wmlt"} * $$model{"wmlt"};}
+		    $ad = $m * $ad * $$model{"wmlt"} * $$model{"wmlt"};}
 		elsif($$model{"geo"} == 0 || $$model{"geo"} == 2){
 		    $ad = 2 * $$model{"hdif"} * $w;
 		}else{
@@ -758,7 +762,7 @@ sub change_instances {
 		}
 
 		if($as){
-		    $as = $as * $$model{"wmlt"} * $$model{"wmlt"};}
+		    $as = $m * $as * $$model{"wmlt"} * $$model{"wmlt"};}
 		elsif($$model{"geo"} == 0 || $$model{"geo"} == 1){
 		    $as = 2 * $$model{"hdif"} * $w;
 		}else{
@@ -766,7 +770,7 @@ sub change_instances {
 		}
 
 		if($pd){
-		    $pd = $pd * $$model{"wmlt"};}
+		    $pd = $m * $pd * $$model{"wmlt"};}
 		elsif($$model{"geo"} == 0 || $$model{"geo"} == 2){
 		    $pd = 4 * $$model{"hdif"} + $w;
 		}else{
@@ -774,7 +778,7 @@ sub change_instances {
 		}
 
 		if($ps){
-		    $ps = $ps * $$model{"wmlt"};}
+		    $ps = $m * $ps * $$model{"wmlt"};}
 		elsif($$model{"geo"} == 0 || $$model{"geo"} == 1){
 		    $ps = 4 * $$model{"hdif"} + $w;
 		}else{

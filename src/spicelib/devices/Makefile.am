@@ -60,7 +60,8 @@ libdev_a_SOURCES = 	\
 	cktbindnode.c	\
 	cktcrte.c	\
 	cktfinddev.c	\
-	cktinit.c
+	cktinit.c       \
+	names.c
 
 INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 

@@ -1,8 +1,8 @@
-#
+#!/bin/sh
 # 22/6/04 -ad
 
 # the next line starts SpiceWish interactively with the given file name  \
-exec wish  "$0" "$@"
+exec wish "$0" "$@"
 
 package require spice
 package require tclreadline
@@ -41,6 +41,7 @@ proc run_spicepp { fileName } {
 
 proc spicewish_load { argv argc } { 
 	set fileName ""
+	set rawFileName ""
 	set mode_batch 0
 	set mode_spicePP 0
 
@@ -57,7 +58,8 @@ proc spicewish_load { argv argc } {
 		               		break
 	            		}
 				-h - -help   { spicewish_usage }
-		                -b           { set ::mode_batch 1 }
+		                -b           { set mode_batch 1 }
+				-r 	     { set rawFileName $val; incr i}
 				-version     { spice::version; exit }
 		                -pp          { set mode_spicePP 1 }
 				default { spicewish_usage }
@@ -68,7 +70,7 @@ proc spicewish_load { argv argc } {
 	}
 
 	if {$fileName == "" } { 
-		spice_init_gui "" 0 $mode_batch
+		spice_init_gui "" 0 $mode_batch $rawFileName
 		return
 	}
 
@@ -78,7 +80,7 @@ proc spicewish_load { argv argc } {
 		set fileName [ run_spicepp $fileName ]
 	}
 		
-	spice_init_gui $fileName 0 $mode_batch
+	spice_init_gui $fileName 0 $mode_batch $rawFileName
 }
 
 proc Tclreadline { } {

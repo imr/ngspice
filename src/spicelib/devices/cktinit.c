@@ -14,6 +14,7 @@ Modifed: 2000 AlansFixes
 #include <fteext.h>
 #include <ifsim.h>
 #include <dev.h>
+#include "names.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - 11/26/90 - add include for MIF global data */
@@ -31,6 +32,7 @@ CKTinit(void **ckt)		/* new circuit to create */
     sckt = (CKTcircuit *)(*ckt);
     if (sckt == NULL)
 	return(E_NOMEM);
+    sckt->element_lookup_table=names_new();
 /* gtri - begin - dynamically allocate the array of model lists */
 /* CKThead used to be statically sized in CKTdefs.h, but has been changed */
 /* to a ** pointer */
