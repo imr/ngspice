@@ -1,14 +1,12 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = TransImpedanceAmp	\
-	bsim1			\
+SUBDIRS = bsim1			\
 	bsim2			\
 	bsim3			\
 	bsim3soidd		\
 	bsim3soifd		\
 	bsim3soipd		\
 	bsim4			\
-	@CIDERTESTS@ 		\
 	filters			\
 	general			\
 	hfet			\
@@ -18,8 +16,9 @@ SUBDIRS = TransImpedanceAmp	\
 	mesa			\
 	mos6			\
 	polezero		\
-	proc2mod		\
 	resistance		\
+	sensitivity		\
+	transient		\
 	transmission		\
 	vbic
 		
@@ -40,24 +39,15 @@ DIST_SUBDIRS = 	bsim1	\
 	mesa		\
 	mos6		\
 	polezero	\
-	proc2mod	\
 	resistance	\
-	TransImpedanceAmp	\
+	sensitivity	\
+	transient	\
 	transmission	\
-	vbic		\
-	cider
+	vbic
 
-TESTS = \
-	diffpair.cir		\
-	fourbitadder.cir
-
-TESTS_ENVIRONMENT = $(SHELL) $(srcdir)/check.sh $(top_builddir)/src/ngspice
+TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
-	README			\
-	check.sh		\
-	maketest.sh		\
-	$(TESTS)		\
-	$(TESTS:.cir=.out)
+	README
 
 MAINTAINERCLEANFILES = Makefile.in
