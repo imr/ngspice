@@ -197,8 +197,8 @@ doc/Makefile			\
 man/Makefile			\
 man/man1/Makefile		\
 src/Makefile			\
-src/analysis/Makefile		\
 src/devices/Makefile		\
+src/devices/analysis/Makefile	\
 src/devices/asrc/Makefile	\
 src/devices/bjt/Makefile	\
 src/devices/bsim1/Makefile	\

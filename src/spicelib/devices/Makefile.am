@@ -31,6 +31,7 @@ SUBDIRS = \
 	vccs	\
 	vcvs	\
 	vsrc	\
+	analysis \
 	parser
 
 lib_LIBRARIES = libdev.a

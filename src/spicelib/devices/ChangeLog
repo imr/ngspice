@@ -1,3 +1,7 @@
+2000-07-21  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* README: Updated.
+
 2000-07-10  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* asrc/asrcinit.c, asrc/asrcitf.h, bjt/bjtinit.c, bjt/bjtitf.h,

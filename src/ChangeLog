@@ -1,3 +1,18 @@
+2000-07-21  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/analysis/*: Moved these files into src/devices/analysis.
+	The files in this directory implement the analysis and simulation
+	for electrical circuits.
+
+	This is the final step to separating the Spice sources into a
+	library part and a frontend part.  Now, the devices subdirectory
+	has to be renamed to spicelib and the devices that are now
+	scattered in that directory should be moved into a new devices
+	directory.
+
+	* configure.in, src/Makefile.am, src/devices/Makefile.am: Files
+	affected by the move.
+	
 2000-07-20  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/hlp/*: moved these files into src/frontend/help.  The files

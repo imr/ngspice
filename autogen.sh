@@ -2,8 +2,8 @@
 # Run this to generate all the initial makefiles, etc.
 
 PROJECT=ng-spice
-TEST_TYPE=-d
-FILE=src/circuit
+TEST_TYPE=-f
+FILE=DEVICES
 
 DIE=0
 
