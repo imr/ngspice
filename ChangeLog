@@ -1,3 +1,10 @@
+2003-11-22  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/bsim2/*: Added "m" 
+	  parameter and noise routine. 
+	
+	* DEVICES: Updated file with bsim2 changes.  
+
 2003-11-21  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/spicelib/devices/bsim1/*: Added "m" 

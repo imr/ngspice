@@ -145,6 +145,7 @@ BJT   - Bipolar Junction Transistor
 	
 	- Parallel Multiplier
 	- Temperature difference from circuit temperature
+	- Different area parameters for collector, base and emitter
 
 BJT2  - Bipolar Junction Trasistor
 	Initial Release.
@@ -162,6 +163,7 @@ BJT2  - Bipolar Junction Trasistor
 	- Temperature correction on rc,rb,re
 	- Parallel Multiplier
 	- Temperature difference from circuit temperature
+	- Different area parameters for collector, base and emitter
       
 
 ***************************************************************************
@@ -273,7 +275,7 @@ BSIM1 - BSIM model level 1
       BUGS:
       
       Distortion analysis probably does not 
-      works with "parallel" devices. Equations
+      work with "parallel" devices. Equations
       are too intricate to deal with. Any one
       has ideas on the subject ?
 
@@ -283,7 +285,12 @@ BSIM2 - BSIM model level 2
       Ver:    N/A
       Class:  M
       Level:  5
-      Status: TO BE TESTED 
+      Status: 
+      
+      Enhancements over the original model:
+      
+      - Parallel multiplier
+      - Noise analysis
 
 
 BSIM3 - BSIM model level 3
