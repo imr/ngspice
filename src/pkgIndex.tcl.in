@@ -79,7 +79,8 @@ proc Loadspice { version dir } {
 		spicewish::init_gui $spicefile
     }
     
-	set ::spice_version $version
+    set ::spice_version $version
+    set ::spice_library $dir
 }
 
 proc q { } { exit }
@@ -87,9 +88,6 @@ proc q { } { exit }
 
 set version "%VERSION%"
 set libdir  "%LIB_DIR%"
-
-#set version "0.2.7"
-#set libdir  "/usr/local/lib"
 
 package ifneeded spice $version [list Loadspice $version $libdir]
 

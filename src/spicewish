@@ -1,52 +1,114 @@
-#!/bin/sh
+#
+# 22/6/04 -ad
 
 # the next line starts SpiceWish interactively with the given file name  \
 exec wish  "$0" "$@"
 
+
+namespace eval spicewish {
+
+	# load tclspice
+	package require spice
+	
+	proc usage { } {
+		puts "usage: spicewish \[options ...\] \[inputfile ...\]"
+		puts " -b        Run in batch mode."
+		puts " -pp       Execute spicePP on given file."
+		puts " -version  Display version number."
+		puts ""
+		exit
+	}
+	
+	proc version { } {
+		puts " $::spice_version\n"
+		exit
+	}
+
+	proc run_spicepp { fileName } {
+
+		# load tcl code to run spicePP (perl)
+		source [file join $::spice_library "spice/spicepp.tcl"]
+
+		puts ""
+		# check if file contains Hspice statemenst
+		if {[spicepp::checkHSpiceFormat $fileName]} {
+
+		        set ppFileName  [spicepp::convert $fileName]
+		        if {$ppFileName == ""} {
+			
+				puts "spicepp: Error translating file '$fileName'."
+		                exit
+		        }
+			puts "spicewish: sourcing '$ppFileName'." 
+			return $ppFileName
+		} else {
+			puts "spicepp: '$fileName' contains no Hspice statements."
+			puts "spicewish: sourcing '$fileName'." 
+			return $fileName
+		}
+	}
+
+	proc load { argv argc } { 
+		set fileName ""
+		set mode_batch 0
+		set mode_spicePP 0
+
+		for {set i 0} {$i < $argc} {incr i} {
+			set arg [lindex $argv $i]
+
+			if {[string match {-*} $arg]} {
+				set val [lindex $argv [expr $i + 1]]
+          
+		           	switch -glob -- $arg {
+			                -- - -argv      {
+				   	set argv [concat -- [lrange $argv $i end]]
+		                    	set argc [llength $argv]
+		                 	break
+	              		  }
+				-h - -help   { usage }
+		                -b           { set mode_batch 1 }
+				-version     { version }
+		                -pp          { set mode_spicePP 1 }
+				default { usage }
+		            }
+		        } elseif {[file isfile $arg]} {
+		            set fileName $arg
+		        }
+		}
+
+		if {$fileName == "" } { usage }
+
+		if {$mode_spicePP} {
+			set fileName [ run_spicepp $fileName ]
+		}
+
+		if { [ file extension $fileName ] == ".tcl" } {
+			    source $fileName
+		} else {
+			spice_init_gui $fileName
+		
+			if {$mode_batch} { 
+				# remove control widget
+				wm  withdraw .
+			}
+		}
+	}
+
+	proc tclreadline { } {
+		# readline with prompt set to "tclspice > "
+		if {$::tcl_interactive} {
+			package require tclreadline
+			proc ::tclreadline::prompt1 { } { return "tclspice > " }
+			::tclreadline::Loop
+		}
+	}
+}
+
 set ::tcl_interactive 1
 
-if { [ llength $argv ] != 1 } {  
-     puts " usage: spicewish filename.cir \n"
-     wm withdraw .  
-     exit
-} else {
-    set fileName $argv
-} 
+spicewish::load $argv $argc
 
+namespace import -force spice::*
+namespace import -force spicewish::*
 
-# check file exists
-if {![ file exists $fileName ]} { 
-    puts " file '${fileName}' doesn't exists \n"
-    exit
-} 
-
-if { [ file extension $fileName ] == ".tcl" } {
-    source $fileName
-    
-} else {
-    package require spice
-    spice_init_gui $fileName
-
-    # import the spice namespace
-    namespace import spice::*
-
-    # import the spicewish namespace
-    namespace import -force spicewish::*
-
-    set ::spicewish_mode "standalone"
-}
-
-
-
-
-# readline with prompt set to "tclspice > "
-if {$tcl_interactive} {
-  package require tclreadline
-  proc ::tclreadline::prompt1 { } { return "tclspice > " }
-
-
-  ::tclreadline::Loop
-}
-
-
-
+spicewish::tclreadline

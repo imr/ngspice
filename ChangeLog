@@ -1,3 +1,14 @@
+2004-06-22 Stefan Jones <stefan.jones@multigig.com>
+
+	* configure.in:
+	Change to version 17
+
+2004-06-22 Adrian Dawe <adrian.dawe@multigig.com>
+
+	* src/pkgIndex.tcl.in  src/spicepp.pl  src/spicepp.tcl  src/spicewish 
+	src/Makefile.am:
+	Added spicepp integration and spicewish command line options.
+
 2004-06-10 Stefan Jones <stefan.jones@multigig.com>
 
 	* include/ngspice.h:

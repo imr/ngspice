@@ -195,6 +195,8 @@ install-tclspice: ${TCL_FILES}
 	$(mkinstalldirs) $(DESTDIR)$(TCL_PKG_PATH)/spice
 	$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(TCL_PKG_PATH)/spice
 	$(INSTALL_DATA) tclspice_source.tcl $(DESTDIR)$(TCL_PKG_PATH)/spice
+	$(INSTALL_DATA) spicepp.tcl $(DESTDIR)$(TCL_PKG_PATH)/spice
+	$(INSTALL_PROGRAM) spicepp.pl $(DESTDIR)$(TCL_PKG_PATH)/spice
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	$(INSTALL_PROGRAM) spicewish $(DESTDIR)$(bindir)
 
