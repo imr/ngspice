@@ -17,13 +17,13 @@ Author: 1988 Jaijeet S Roychowdhury
 int
 MOS3dSetup(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
     double Beta;
     double DrainSatCur;
     double EffectiveLength;

@@ -30,12 +30,12 @@ BJTnoise (mode, operation, genmodel, ckt, data, OnDens)
     int mode;
     int operation;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     BJTmodel *firstModel = (BJTmodel *) genmodel;
-    register BJTmodel *model;
-    register BJTinstance *inst;
+    BJTmodel *model;
+    BJTinstance *inst;
     char name[N_MXVLNTH];
     double tempOnoise;
     double tempInoise;

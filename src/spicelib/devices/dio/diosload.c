@@ -23,8 +23,8 @@ DIOsLoad(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
-    register DIOinstance *here;
+    DIOmodel *model = (DIOmodel*)inModel;
+    DIOinstance *here;
     int    iparmno;
     int    error;
     int    i;

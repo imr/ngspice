@@ -17,13 +17,13 @@ Author: 1989 Takayasu Sakurai
 
 int
 MOS6setup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     int *states;
 {
-    register MOS6model *model = (MOS6model *)inModel;
-    register MOS6instance *here;
+    MOS6model *model = (MOS6model *)inModel;
+    MOS6instance *here;
     int error;
     CKTnode *tmp;
 

@@ -19,10 +19,10 @@ File: b3v1cvtest.c
 int
 BSIM3V1convTest(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM3V1model *model = (BSIM3V1model*)inModel;
-register BSIM3V1instance *here;
+BSIM3V1model *model = (BSIM3V1model*)inModel;
+BSIM3V1instance *here;
 double delvbd, delvbs, delvds, delvgd, delvgs, vbd, vbs, vds;
 double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
 

@@ -18,8 +18,8 @@ TRAacLoad(inModel,ckt)
          * sparse matrix previously provided 
          */
 {
-    register TRAmodel *model = (TRAmodel *)inModel;
-    register TRAinstance *here;
+    TRAmodel *model = (TRAmodel *)inModel;
+    TRAinstance *here;
     double real;
     double imag;
 

@@ -20,8 +20,8 @@ LTRAtemp(inModel, ckt)
  * pre-process parameters for later use
  */
 {
-  register LTRAmodel *model = (LTRAmodel *) inModel;
-  register LTRAinstance *here;
+  LTRAmodel *model = (LTRAmodel *) inModel;
+  LTRAinstance *here;
 
   /* loop through all the transmission line models */
   for (; model != NULL; model = model->LTRAnextModel) {

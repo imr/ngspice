@@ -20,11 +20,11 @@ Author: 1985 Thomas L. Quarles
 
 int
 VCCSsSetup(info,inModel)
-    register SENstruct *info;
+    SENstruct *info;
     GENmodel *inModel;
 {
-    register VCCSmodel *model = (VCCSmodel *)inModel;
-    register VCCSinstance *here;
+    VCCSmodel *model = (VCCSmodel *)inModel;
+    VCCSinstance *here;
 
     /*  loop through all the current source models */
     for( ; model != NULL; model = model->VCCSnextModel ) {

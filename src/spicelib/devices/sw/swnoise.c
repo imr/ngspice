@@ -30,12 +30,12 @@ SWnoise (mode, operation, genmodel, ckt, data, OnDens)
     int operation;
     GENmodel *genmodel;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     SWmodel *firstModel = (SWmodel *) genmodel;
-    register SWmodel *model;
-    register SWinstance *inst;
+    SWmodel *model;
+    SWinstance *inst;
     char name[N_MXVLNTH];
     double tempOutNoise;
     double tempInNoise;

@@ -17,16 +17,16 @@ Author: 1985 Thomas L. Quarles
 /* ARGSUSED */
 int
 TRAsetup(matrix,inModel,ckt,state)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     int *state;
         /* load the transmission line structure with those pointers needed later
          * for fast matrix loading 
          */
 {
-    register TRAmodel *model = (TRAmodel *)inModel;
-    register TRAinstance *here;
+    TRAmodel *model = (TRAmodel *)inModel;
+    TRAinstance *here;
     int error;
     CKTnode *tmp;
 

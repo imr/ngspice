@@ -18,16 +18,16 @@ Author: 1985 Thomas L. Quarles
 int
 INDload(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register INDmodel *model = (INDmodel*)inModel;
-    register INDinstance *here;
+    INDmodel *model = (INDmodel*)inModel;
+    INDinstance *here;
     double veq;
     double req;
     int error;
 #ifdef MUTUAL
-    register MUTinstance *muthere;
-    register MUTmodel *mutmodel;
+    MUTinstance *muthere;
+    MUTmodel *mutmodel;
     int ktype;
     int itype;
 #endif

@@ -18,10 +18,10 @@ Author: 1985 Thomas L. Quarles
 void
 INDsPrint(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-    register INDmodel *model = (INDmodel*)inModel;
-    register INDinstance *here;
+    INDmodel *model = (INDmodel*)inModel;
+    INDinstance *here;
 
     printf("INDUCTORS----------\n");
     /*  loop through all the inductor models */

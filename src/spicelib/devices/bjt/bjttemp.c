@@ -23,8 +23,8 @@ BJTtemp(inModel,ckt)
          */
 
 {
-    register BJTmodel *model = (BJTmodel *)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel *)inModel;
+    BJTinstance *here;
     double xfc;
     double vt;
     double ratlog;

@@ -14,14 +14,14 @@ Author: 1985 Gordon Jacobs
 int
 CSWload(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 
         /* actually load the current values into the 
          * sparse matrix previously provided 
          */
 {
-    register CSWmodel *model = (CSWmodel*)inModel;
-    register CSWinstance *here;
+    CSWmodel *model = (CSWmodel*)inModel;
+    CSWinstance *here;
     double g_now;
     double i_ctrl;
     double previous_state; 

@@ -14,13 +14,13 @@ Author: 1985 Thomas L. Quarles
 int
 VSRCload(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current voltage value into the 
          * sparse matrix previously provided 
          */
 {
-    register VSRCmodel *model = (VSRCmodel *)inModel;
-    register VSRCinstance *here;
+    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCinstance *here;
     double time;
 
     /*  loop through all the voltage source models */
@@ -175,7 +175,7 @@ VSRCload(inModel,ckt)
                 break;
 
                 case PWL: {
-                    register int i;
+                    int i;
                     double foo;
                     if(time < *(here->VSRCcoeffs)) {
                         foo = *(here->VSRCcoeffs + 1) ;

@@ -16,10 +16,10 @@ Author: 1985 Thomas L. Quarles
 int
 INDsUpdate(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register INDmodel *model = (INDmodel*)inModel;
-    register INDinstance *here;
+    INDmodel *model = (INDmodel*)inModel;
+    INDinstance *here;
     double   cind; 
     double sxp;
     double  s1;
@@ -30,8 +30,8 @@ INDsUpdate(inModel,ckt)
     double  dummy2;
     SENstruct *info;
 #ifdef MUTUAL
-    register MUTinstance *muthere;
-    register MUTmodel *mutmodel;
+    MUTinstance *muthere;
+    MUTmodel *mutmodel;
     double sxp1;
     double sxp2;
     double   cind1,cind2;

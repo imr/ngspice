@@ -22,7 +22,7 @@ Author: 1985 Thomas L. Quarles
 
 int
 BJTsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
@@ -31,8 +31,8 @@ BJTsetup(matrix,inModel,ckt,states)
          */
 
 {
-    register BJTmodel *model = (BJTmodel*)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel*)inModel;
+    BJTinstance *here;
     int error;
     CKTnode *tmp;
 

@@ -19,8 +19,8 @@ VSRCtemp(inModel,ckt)
         /* Pre-process voltage source parameters 
          */
 {
-    register VSRCmodel *model = (VSRCmodel *)inModel;
-    register VSRCinstance *here;
+    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCinstance *here;
     double radians;
 
     /*  loop through all the voltage source models */

@@ -16,11 +16,11 @@ Author: 1985 Thomas L. Quarles
 int
 JFETtrunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     double *timeStep;
 {
-    register JFETmodel *model = (JFETmodel*)inModel;
-    register JFETinstance *here;
+    JFETmodel *model = (JFETmodel*)inModel;
+    JFETinstance *here;
 
     for( ; model != NULL; model = model->JFETnextModel) {
         for(here=model->JFETinstances;here!=NULL;here = here->JFETnextInstance){

@@ -16,11 +16,11 @@ File: b3pzld.c
 int
 BSIM3pzLoad(inModel,ckt,s)
 GENmodel *inModel;
-register CKTcircuit *ckt;
-register SPcomplex *s;
+CKTcircuit *ckt;
+SPcomplex *s;
 {
-register BSIM3model *model = (BSIM3model*)inModel;
-register BSIM3instance *here;
+BSIM3model *model = (BSIM3model*)inModel;
+BSIM3instance *here;
 double xcggb, xcgdb, xcgsb, xcgbb, xcbgb, xcbdb, xcbsb, xcbbb;
 double xcdgb, xcddb, xcdsb, xcdbb, xcsgb, xcsdb, xcssb, xcsbb;
 double gdpr, gspr, gds, gbd, gbs, capbd, capbs, FwdSum, RevSum, Gm, Gmbs;

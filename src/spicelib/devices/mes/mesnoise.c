@@ -29,12 +29,12 @@ MESnoise (mode, operation, genmodel, ckt, data, OnDens)
     int operation;
     GENmodel *genmodel;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     MESmodel *firstModel = (MESmodel *) genmodel;
-    register MESmodel *model;
-    register MESinstance *inst;
+    MESmodel *model;
+    MESinstance *inst;
     char name[N_MXVLNTH];
     double tempOnoise;
     double tempInoise;

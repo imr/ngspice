@@ -14,7 +14,7 @@ Author:  1988 Jaijeet S Roychowdhury
 int
 DIOdisto(mode,genmodel,ckt)
  GENmodel *genmodel;
- register CKTcircuit *ckt;
+ CKTcircuit *ckt;
  int mode;
 
 /* assuming here that ckt->CKTomega has been initialised to 
@@ -32,7 +32,7 @@ DIOdisto(mode,genmodel,ckt)
  double r2h11x,i2h11x;
  double r2h1m2x,i2h1m2x;
  double temp, itemp;
- register DIOinstance *here;
+ DIOinstance *here;
 
 if (mode == D_SETUP)
  return(DIOdSetup(model,ckt));

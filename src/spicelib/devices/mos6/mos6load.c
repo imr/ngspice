@@ -16,13 +16,13 @@ Author: 1989 Takayasu Sakurai
 int
 MOS6load(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
 {
-    register MOS6model *model = (MOS6model *) inModel;
-    register MOS6instance *here;
+    MOS6model *model = (MOS6model *) inModel;
+    MOS6instance *here;
     double betac;
     double DrainSatCur;
     double EffectiveLength;
@@ -75,23 +75,10 @@ MOS6load(inModel,ckt)
     double capgd;   /* total gate-drain capacitance */
     double capgb;   /* total gate-bulk capacitance */
     int Check;
-#ifndef NOBYPASS
     double tempv;
-#endif /*NOBYPASS*/
     int error;
-#ifdef CAPBYPASS
-    int senflag;
-#endif /* CAPBYPASS */ 
     int SenCond;
 
-
-#ifdef CAPBYPASS
-    senflag = 0;
-    if(ckt->CKTsenInfo && ckt->CKTsenInfo->SENstatus == PERTURBATION &&
-        (ckt->CKTsenInfo->SENmode & (ACSEN | TRANSEN))) {
-        senflag = 1;
-    }
-#endif /* CAPBYPASS */ 
 
     /*  loop through all the MOS6 device models */
     for( ; model != NULL; model = model->MOS6nextModel ) {
@@ -118,10 +105,6 @@ MOS6load(inModel,ckt)
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mospta");
-asm("mospta:");
-#endif /*DETAILPROF*/
 
             /* first, we compute a few useful values - these could be
              * pre-computed, but for historical reasons are still done
@@ -278,11 +261,6 @@ asm("mospta:");
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptb");
-asm("mosptb:");
-#endif /*DETAILPROF*/
-#ifndef NOBYPASS
                 /* now lets see if we can bypass (ugh) */
                 /* the following mess should be one if statement, but
                  * many compilers can't handle it all at once, so it
@@ -342,15 +320,10 @@ asm("mosptb:");
                     }
                     goto bypass;
                 }
-#endif /*NOBYPASS*/
 /*
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptc");
-asm("mosptc:");
-#endif /*DETAILPROF*/
                 /* ok - bypass is out, do it the hard way */
 
                 von = model->MOS6type * here->MOS6von;
@@ -392,10 +365,6 @@ asm("mosptc:");
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptd");
-asm("mosptd:");
-#endif /*DETAILPROF*/
             } else {
 
                 /* ok - not one of the simple cases, so we have to
@@ -423,10 +392,6 @@ asm("mosptd:");
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mospte");
-asm("mospte:");
-#endif /*DETAILPROF*/
 
             /*
              * now all the preliminaries are over - we can start doing the
@@ -475,10 +440,6 @@ next1:      if(vbs <= 0) {
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptf");
-asm("mosptf:");
-#endif /*DETAILPROF*/
             {
             /*
              *     this block of code evaluates the drain current and its 
@@ -573,10 +534,6 @@ asm("mosptf:");
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptg");
-asm("mosptg:");
-#endif /*DETAILPROF*/
 
             /* now deal with n vs p polarity */
 
@@ -603,17 +560,9 @@ asm("mosptg:");
                  *
                  *.. bulk-drain and bulk-source depletion capacitances
                  */
-#ifdef CAPBYPASS
-                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
-                        fabs(delvbs) >= ckt->CKTreltol * MAX(fabs(vbs),
-                        fabs(*(ckt->CKTstate0+here->MOS6vbs)))+
-                        ckt->CKTvoltTol)|| senflag)
-#endif /*CAPBYPASS*/
                 {
                     /* can't bypass the diode capacitance calculations */
-#ifdef CAPZEROBYPASS
                     if(here->MOS6Cbs != 0 || here->MOS6Cbssw != 0 ) {
-#endif /*CAPZEROBYPASS*/
                     if (vbs < here->MOS6tDepCap){
                         arg=1-vbs/here->MOS6tBulkPot;
                         /*
@@ -665,24 +614,14 @@ asm("mosptg:");
                                 vbs*(here->MOS6f2s+vbs*(here->MOS6f3s/2));
                         here->MOS6capbs=here->MOS6f2s+here->MOS6f3s*vbs;
                     }
-#ifdef CAPZEROBYPASS
                     } else {
                         *(ckt->CKTstate0 + here->MOS6qbs) = 0;
                         here->MOS6capbs=0;
                     }
-#endif /*CAPZEROBYPASS*/
                 }
-#ifdef CAPBYPASS
-                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
-                        fabs(delvbd) >= ckt->CKTreltol * MAX(fabs(vbd),
-                        fabs(*(ckt->CKTstate0+here->MOS6vbd)))+
-                        ckt->CKTvoltTol)|| senflag)
-#endif /*CAPBYPASS*/
                     /* can't bypass the diode capacitance calculations */
                 {
-#ifdef CAPZEROBYPASS
                     if(here->MOS6Cbd != 0 || here->MOS6Cbdsw != 0 ) {
-#endif /*CAPZEROBYPASS*/
                     if (vbd < here->MOS6tDepCap) {
                         arg=1-vbd/here->MOS6tBulkPot;
                         /*
@@ -729,21 +668,15 @@ asm("mosptg:");
                                 vbd * (here->MOS6f2d + vbd * here->MOS6f3d/2);
                         here->MOS6capbd=here->MOS6f2d + vbd * here->MOS6f3d;
                     }
-#ifdef CAPZEROBYPASS
                 } else {
                     *(ckt->CKTstate0 + here->MOS6qbd) = 0;
                     here->MOS6capbd = 0;
                 }
-#endif /*CAPZEROBYPASS*/
                 }
 /*
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mospth");
-asm("mospth:");
-#endif /*DETAILPROF*/
 
                 if(SenCond && (ckt->CKTsenInfo->SENmode==TRANSEN)) goto next2;
 
@@ -776,10 +709,6 @@ asm("mospth:");
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mospti");
-asm("mospti:");
-#endif /*DETAILPROF*/
 
             if(SenCond) goto next2;
 
@@ -792,33 +721,12 @@ asm("mospti:");
                 if (Check == 1) {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
-#ifndef NEWCONV
-                } else {
-                    tol=ckt->CKTreltol*MAX(fabs(cdhat),
-                            fabs(here->MOS6cd))+ckt->CKTabstol;
-                    if (fabs(cdhat-here->MOS6cd) >= tol) { 
-                        ckt->CKTnoncon++;
-			ckt->CKTtroubleElt = (GENinstance *) here;
-                    } else {
-                        tol=ckt->CKTreltol*MAX(fabs(cbhat),
-                                fabs(here->MOS6cbs+here->MOS6cbd))+
-                                ckt->CKTabstol;
-                        if (fabs(cbhat-(here->MOS6cbs+here->MOS6cbd)) > tol) {
-                            ckt->CKTnoncon++;
-			    ckt->CKTtroubleElt = (GENinstance *) here;
-                        }
-                    }
-#endif /*NEWCONV*/
                 }
             }
 /*
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptj");
-asm("mosptj:");
-#endif /*DETAILPROF*/
 
             /* save things away for next time */
 
@@ -831,10 +739,6 @@ next2:      *(ckt->CKTstate0 + here->MOS6vbs) = vbs;
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptk");
-asm("mosptk:");
-#endif /*DETAILPROF*/
             /*
              *     meyer's capacitor model
              */
@@ -892,10 +796,6 @@ asm("mosptk:");
 
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptl");
-asm("mosptl:");
-#endif /*DETAILPROF*/
                 /*
                  *     store small-signal parameters (for meyer's model)
                  *  all parameters already stored, so done...

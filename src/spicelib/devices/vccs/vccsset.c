@@ -21,13 +21,13 @@ Author: 1985 Thomas L. Quarles
 /*ARGSUSED*/
 int
 VCCSsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
 {
-    register VCCSmodel *model = (VCCSmodel *)inModel;
-    register VCCSinstance *here;
+    VCCSmodel *model = (VCCSmodel *)inModel;
+    VCCSinstance *here;
 
     /*  loop through all the current source models */
     for( ; model != NULL; model = model->VCCSnextModel ) {

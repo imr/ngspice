@@ -18,13 +18,13 @@ Author: 1985 Thomas L. Quarles
 /*ARGSUSED*/
 int
 VCVSsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     int *states;
 {
-    register VCVSmodel *model = (VCVSmodel *)inModel;
-    register VCVSinstance *here;
+    VCVSmodel *model = (VCVSmodel *)inModel;
+    VCVSinstance *here;
     int error;
     CKTnode *tmp;
 

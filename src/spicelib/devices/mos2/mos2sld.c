@@ -20,8 +20,8 @@ MOS2sLoad(inModel,ckt)
 GENmodel *inModel;
 CKTcircuit *ckt;
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
     double   SaveState[44];
     int    save_mode;
     int    i;

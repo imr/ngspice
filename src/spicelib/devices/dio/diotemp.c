@@ -16,9 +16,9 @@ Author: 1985 Thomas L. Quarles
 int
 DIOtemp(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
+    DIOmodel *model = (DIOmodel*)inModel;
     double xfc;
     double vte;
     double cbv;
@@ -27,8 +27,8 @@ DIOtemp(inModel,ckt)
     double tol;
     double vt;
     double vtnom;
-    register DIOinstance *here;
-    register int iter;
+    DIOinstance *here;
+    int iter;
     char *emsg;
 
     /*  loop through all the diode models */

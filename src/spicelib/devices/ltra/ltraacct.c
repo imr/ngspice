@@ -12,11 +12,11 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 int
 LTRAaccept(ckt, inModel)
-  register CKTcircuit *ckt;
+  CKTcircuit *ckt;
   GENmodel *inModel;
 {
-  register LTRAmodel *model = (LTRAmodel *) inModel;
-  register LTRAinstance *here;
+  LTRAmodel *model = (LTRAmodel *) inModel;
+  LTRAinstance *here;
   double v1, v2, v3, v4;
   double v5, v6, d1, d2, d3, d4;
   int tmp_test;

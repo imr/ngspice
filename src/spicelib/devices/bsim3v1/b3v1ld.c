@@ -31,10 +31,10 @@ Modified by Mansun Chan  (1995)
 int
 BSIM3V1load(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM3V1model *model = (BSIM3V1model*)inModel;
-register BSIM3V1instance *here;
+BSIM3V1model *model = (BSIM3V1model*)inModel;
+BSIM3V1instance *here;
 double SourceSatCurrent, DrainSatCurrent;
 double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
 double cdrain, cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
@@ -225,7 +225,6 @@ for (; model != NULL; model = model->BSIM3V1nextModel)
                cbhat = here->BSIM3V1cbs + here->BSIM3V1cbd + here->BSIM3V1gbd
                      * delvbd + here->BSIM3V1gbs * delvbs;
 
-#ifndef NOBYPASS
            /* following should be one big if connected by && all over
             * the place, but some C compilers can't handle that, so
             * we split it up here to let them digest it in stages
@@ -270,7 +269,6 @@ for (; model != NULL; model = model->BSIM3V1nextModel)
                    }
                }
 
-#endif /*NOBYPASS*/
                von = here->BSIM3V1von;
                if (*(ckt->CKTstate0 + here->BSIM3V1vds) >= 0.0)
 	       {   vgs = DEVfetlim(vgs, *(ckt->CKTstate0+here->BSIM3V1vgs), von);
@@ -2028,24 +2026,6 @@ finished: /* returning Values to Calling Routine */
           if ((here->BSIM3V1off == 0) || (!(ckt->CKTmode & MODEINITFIX)))
 	  {   if (Check == 1)
 	      {   ckt->CKTnoncon++;
-#ifndef NEWCONV
-              } 
-	      else
-	      {   tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(here->BSIM3V1cd))
-		      + ckt->CKTabstol;
-                  if (fabs(cdhat - here->BSIM3V1cd) >= tol)
-		  {   ckt->CKTnoncon++;
-                  }
-		  else
-		  {   tol = ckt->CKTreltol * MAX(fabs(cbhat), 
-			    fabs(here->BSIM3V1cbs + here->BSIM3V1cbd)) 
-			    + ckt->CKTabstol;
-                      if (fabs(cbhat - (here->BSIM3V1cbs + here->BSIM3V1cbd)) 
-			  > tol)
-		      {   ckt->CKTnoncon++;
-                      }
-                  }
-#endif /* NEWCONV */
               }
           }
           *(ckt->CKTstate0 + here->BSIM3V1vbs) = vbs;

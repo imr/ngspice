@@ -33,8 +33,8 @@ BSIM3V2temp(inModel,ckt)
 GENmodel *inModel;
 CKTcircuit *ckt;
 {
-register BSIM3V2model *model = (BSIM3V2model*) inModel;
-register BSIM3V2instance *here;
+BSIM3V2model *model = (BSIM3V2model*) inModel;
+BSIM3V2instance *here;
 struct BSIM3V2SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;

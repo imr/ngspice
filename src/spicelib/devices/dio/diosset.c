@@ -20,11 +20,11 @@ Author: 1985 Thomas L. Quarles
 
 int
 DIOsSetup(info,inModel)
-    register SENstruct *info;
+    SENstruct *info;
     GENmodel *inModel;
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
-    register DIOinstance *here;
+    DIOmodel *model = (DIOmodel*)inModel;
+    DIOinstance *here;
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = model->DIOnextModel ) {

@@ -14,7 +14,7 @@ Author: 1988 Jaijeet S Roychowdhury
 int
 MESdisto(mode,genmodel,ckt)
  GENmodel *genmodel;
- register CKTcircuit *ckt;
+ CKTcircuit *ckt;
  int mode;
 
 /* assuming here that ckt->CKTomega has been initialised to 
@@ -35,7 +35,7 @@ MESdisto(mode,genmodel,ckt)
  double r2h1m2x,i2h1m2x;
  double r2h1m2y,i2h1m2y;
  double temp, itemp;
- register MESinstance *here;
+ MESinstance *here;
 
 if (mode == D_SETUP)
  return(MESdSetup(model,ckt));

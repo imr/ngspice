@@ -32,10 +32,10 @@ File: b3ld.c          1/3/92
 int
 BSIM3V2load(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM3V2model *model = (BSIM3V2model*)inModel;
-register BSIM3V2instance *here;
+BSIM3V2model *model = (BSIM3V2model*)inModel;
+BSIM3V2instance *here;
 double SourceSatCurrent, DrainSatCurrent;
 double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
 double cdrain, cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
@@ -247,7 +247,6 @@ for (; model != NULL; model = model->BSIM3V2nextModel)
                          + here->BSIM3V2gbds * delvds;
                }
 
-#ifndef NOBYPASS
            /* following should be one big if connected by && all over
             * the place, but some C compilers can't handle that, so
             * we split it up here to let them digest it in stages
@@ -292,7 +291,6 @@ for (; model != NULL; model = model->BSIM3V2nextModel)
                    }
                }
 
-#endif /*NOBYPASS*/
                von = here->BSIM3V2von;
                if (*(ckt->CKTstate0 + here->BSIM3V2vds) >= 0.0)
 	       {   vgs = DEVfetlim(vgs, *(ckt->CKTstate0+here->BSIM3V2vgs), von);
@@ -2291,32 +2289,9 @@ finished:
           /*
            *  check convergence
            */
-          if ((here->BSIM3V2off == 0) || (!(ckt->CKTmode & MODEINITFIX)))
-	  {   if (Check == 1)
-	      {   ckt->CKTnoncon++;
-#ifndef NEWCONV
-              } 
-	      else
-              {   if (here->BSIM3V2mode >= 0)
-                  {   Idtot = here->BSIM3V2cd + here->BSIM3V2csub - here->BSIM3V2cbd;
-                  }
-                  else
-                  {   Idtot = here->BSIM3V2cd - here->BSIM3V2cbd;
-                  }
-                  tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(Idtot))
-                      + ckt->CKTabstol;
-                  if (fabs(cdhat - Idtot) >= tol)
-                  {   ckt->CKTnoncon++;
-                  }
-                  else
-                  {   Ibtot = here->BSIM3V2cbs + here->BSIM3V2cbd - here->BSIM3V2csub;
-                      tol = ckt->CKTreltol * MAX(fabs(cbhat), fabs(Ibtot))
-                          + ckt->CKTabstol;
-                      if (fabs(cbhat - Ibtot)) > tol)
-		      {   ckt->CKTnoncon++;
-                      }
-                  }
-#endif /* NEWCONV */
+          if ((here->BSIM3V2off == 0) || (!(ckt->CKTmode & MODEINITFIX))) {
+	      if (Check == 1) {
+		  ckt->CKTnoncon++;
               }
           }
           *(ckt->CKTstate0 + here->BSIM3V2vbs) = vbs;

@@ -19,10 +19,10 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 int
 JFET2acLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register JFET2model *model = (JFET2model*)inModel;
-    register JFET2instance *here;
+    JFET2model *model = (JFET2model*)inModel;
+    JFET2instance *here;
     double gdpr;
     double gspr;
     double gm;

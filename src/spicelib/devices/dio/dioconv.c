@@ -20,8 +20,8 @@ DIOconvTest(inModel,ckt)
         /* Check the devices for convergence
          */
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
-    register DIOinstance *here;
+    DIOmodel *model = (DIOmodel*)inModel;
+    DIOinstance *here;
     double delvd,vd,cdhat,cd;
     double tol;
     /*  loop through all the diode models */

@@ -14,17 +14,17 @@ Author: 1988 Min-Chie Jeng, Hong J. Park, Thomas L. Quarles
 
 int
 B2setup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
-    register GENmodel *inModel;
-    register CKTcircuit *ckt;
+    SMPmatrix *matrix;
+    GENmodel *inModel;
+    CKTcircuit *ckt;
     int *states;
         /* load the B2 device structure with those pointers needed later 
          * for fast matrix loading 
          */
 
 {
-    register B2model *model = (B2model*)inModel;
-    register B2instance *here;
+    B2model *model = (B2model*)inModel;
+    B2instance *here;
     int error;
     CKTnode *tmp;
 

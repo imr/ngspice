@@ -21,12 +21,12 @@ Author: 1985 Thomas L. Quarles
 int
 BJTtrunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     double *timeStep;
 
 {
-    register BJTmodel *model = (BJTmodel*)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel*)inModel;
+    BJTinstance *here;
 
     for( ; model != NULL; model = model->BJTnextModel) {
         for(here=model->BJTinstances;here!=NULL;here = here->BJTnextInstance){

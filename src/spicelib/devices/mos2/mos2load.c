@@ -22,13 +22,13 @@ static double sig2[4] = {1.0,  1.0,-1.0, -1.0};
 int
 MOS2load(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
     int error;
     double Beta;
     double DrainSatCur;
@@ -82,26 +82,8 @@ MOS2load(inModel,ckt)
     int xnrm;
     int xrev;
     int Check;
-#ifndef NOBYPASS
     double tempv;
-#endif /*NOBYPASS*/
-#ifdef CAPBYPASS
-    int senflag;
-#endif /* CAPBYPASS */
     int SenCond=0;
-
-#ifdef CAPBYPASS
-    senflag = 0;
-    if(ckt->CKTsenInfo){
-        if(ckt->CKTsenInfo->SENstatus == PERTURBATION){
-            if((ckt->CKTsenInfo->SENmode == ACSEN)||
-                (ckt->CKTsenInfo->SENmode == TRANSEN)){
-                senflag = 1;
-            }
-        }
-    }
-#endif /* CAPBYPASS */
-
 
     /*  loop through all the MOS2 device models */
     for( ; model != NULL; model = model->MOS2nextModel ) {
@@ -272,7 +254,6 @@ MOS2load(inModel,ckt)
                  * can't handle it in one piece, so it is broken up
                  * into several stages here
                  */
-#ifndef NOBYPASS
                 tempv = MAX(fabs(cbhat),fabs(here->MOS2cbs+here->MOS2cbd))+
                         ckt->CKTabstol;
                 if((!(ckt->CKTmode & (MODEINITPRED|MODEINITTRAN|MODEINITSMSIG)
@@ -325,7 +306,6 @@ MOS2load(inModel,ckt)
                     }
                     goto bypass;
                 }
-#endif /*NOBYPASS*/
                 /* ok - bypass is out, do it the hard way */
 
                 von = model->MOS2type * here->MOS2von;
@@ -1018,17 +998,9 @@ doneval:
                  *
                  *.. bulk-drain and bulk-source depletion capacitances
                  */
-#ifdef CAPBYPASS
-                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
-                        fabs(delvbs) >= ckt->CKTreltol * MAX(fabs(vbs),
-                        fabs(*(ckt->CKTstate0+here->MOS2vbs)))+
-                        ckt->CKTvoltTol)|| senflag)
-#endif /*CAPBYPASS*/
                 {
                     /* can't bypass the diode capacitance calculations */
-#ifdef CAPZEROBYPASS
                     if(here->MOS2Cbs != 0 || here->MOS2Cbssw != 0) {
-#endif /*CAPZEROBYPASS*/
                     if (vbs < here->MOS2tDepCap){
                         arg=1-vbs/here->MOS2tBulkPot;
                         /*
@@ -1080,24 +1052,14 @@ doneval:
                                 vbs*(here->MOS2f2s+vbs*(here->MOS2f3s/2));
                         here->MOS2capbs=here->MOS2f2s+here->MOS2f3s*vbs;
                     }
-#ifdef CAPZEROBYPASS
                     } else {
                         *(ckt->CKTstate0 + here->MOS2qbs) = 0;
                         here->MOS2capbs=0;
                     }
-#endif /*CAPZEROBYPASS*/
                 }
-#ifdef CAPBYPASS
-                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
-                        fabs(delvbd) >= ckt->CKTreltol * MAX(fabs(vbd),
-                        fabs(*(ckt->CKTstate0+here->MOS2vbd)))+
-                        ckt->CKTvoltTol)|| senflag)
-#endif /*CAPBYPASS*/
                     /* can't bypass the diode capacitance calculations */
                 {
-#ifdef CAPZEROBYPASS
                     if(here->MOS2Cbd != 0 || here->MOS2Cbdsw != 0 ) {
-#endif /*CAPZEROBYPASS*/
                     if (vbd < here->MOS2tDepCap) {
                         arg=1-vbd/here->MOS2tBulkPot;
                         /*
@@ -1144,12 +1106,10 @@ doneval:
                                 vbd * (here->MOS2f2d + vbd * here->MOS2f3d/2);
                         here->MOS2capbd=here->MOS2f2d + vbd * here->MOS2f3d;
                     }
-#ifdef CAPZEROBYPASS
                 } else {
                     *(ckt->CKTstate0 + here->MOS2qbd) = 0;
                     here->MOS2capbd = 0;
                 }
-#endif /*CAPZEROBYPASS*/
                 }
                 if(SenCond && (ckt->CKTsenInfo->SENmode==TRANSEN)) goto next2;
 
@@ -1188,33 +1148,6 @@ doneval:
                 if (Check == 1) {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
-#ifndef NEWCONV
-#ifdef STEPDEBUG
-                    printf("MOS2: %s limiting noncon\n",here->MOS2name);
-#endif /* STEPDEBUG */
-                } else {
-                    tol=ckt->CKTreltol*MAX(fabs(cdhat),fabs(here->MOS2cd))+
-                            ckt->CKTabstol;
-                    if (fabs(cdhat-here->MOS2cd) >= tol) { 
-                        ckt->CKTnoncon++;
-			ckt->CKTtroubleElt = (GENinstance *) here;
-#ifdef STEPDEBUG
-                        printf("MOS2: %s cd noncon cd=%g, cdhat=%g, mode=%d\n",
-                                here->MOS2name,here->MOS2cd,cdhat,
-                                here->MOS2mode);
-#endif /* STEPDEBUG */
-                    } else {
-                        tol=ckt->CKTreltol*
-        MAX(fabs(cbhat),fabs(here->MOS2cbs+here->MOS2cbd))+ ckt->CKTabstol;
-                        if (fabs(cbhat-(here->MOS2cbs+here->MOS2cbd)) > tol) {
-                            ckt->CKTnoncon++;
-			    ckt->CKTtroubleElt = (GENinstance *) here;
-#ifdef STEPDEBUG
-                            printf("MOS2: %s cb noncon\n",here->MOS2name);
-#endif /* STEPDEBUG */
-                        }
-                    }
-#endif /* NEWCONV */
                 }
             }
 next2:      *(ckt->CKTstate0 + here->MOS2vbs) = vbs;
@@ -1309,9 +1242,7 @@ next2:      *(ckt->CKTstate0 + here->MOS2vbs) = vbs;
                 }
 #endif /* PREDICTOR */
             }
-#ifndef NOBYPASS
 bypass:
-#endif /* NOBYPASS */
 
             if(SenCond) continue;
 

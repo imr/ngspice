@@ -20,7 +20,7 @@ MOS2mParam(param,value,inModel)
     IFvalue *value;
     GENmodel *inModel;
 {
-    register MOS2model *model = (MOS2model *)inModel;
+    MOS2model *model = (MOS2model *)inModel;
     switch(param) {
         case MOS2_MOD_TNOM:
             model->MOS2tnom = value->rValue+CONSTCtoK;

@@ -23,8 +23,8 @@ Author: 1988 Jaijeet S Roychowdhury
 int
 BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
 {
-    register BJTmodel *model = (BJTmodel*)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel*)inModel;
+    BJTinstance *here;
     double arg;
     double c2;
     double c4;

@@ -22,13 +22,13 @@ int
 BJTload(inModel,ckt)
 
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current resistance value into the 
          * sparse matrix previously provided 
          */
 {
-    register BJTmodel *model = (BJTmodel*)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel*)inModel;
+    BJTinstance *here;
     double arg1;
     double arg2;
     double arg3;
@@ -313,7 +313,7 @@ BJTload(inModel,ckt)
                 cbhat= *(ckt->CKTstate0 + here->BJTcb)+ *(ckt->CKTstate0 + 
                         here->BJTgpi)*delvbe+ *(ckt->CKTstate0 + here->BJTgmu)*
                         delvbc;
-#ifndef NOBYPASS
+
                 /*
                  *    bypass if solution has not changed
                  */
@@ -354,7 +354,7 @@ BJTload(inModel,ckt)
                     geqbx = *(ckt->CKTstate0 + here->BJTgeqbx);
                     goto load;
                 }
-#endif /*NOBYPASS*/
+
                 /*
                  *   limit nonlinear branch voltages
                  */
@@ -652,21 +652,6 @@ next1:      vtn=vt*model->BJTemissionCoeffF;
                 if (icheck == 1) {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
-#ifndef NEWCONV
-                } else {
-                    tol=ckt->CKTreltol*MAX(fabs(cchat),fabs(cc))+ckt->CKTabstol;
-                    if (fabs(cchat-cc) > tol) {
-                        ckt->CKTnoncon++;
-			ckt->CKTtroubleElt = (GENinstance *) here;
-                    } else {
-                        tol=ckt->CKTreltol*MAX(fabs(cbhat),fabs(cb))+
-                            ckt->CKTabstol;
-                        if (fabs(cbhat-cb) > tol) {
-                            ckt->CKTnoncon++;
-			    ckt->CKTtroubleElt = (GENinstance *) here;
-                        }
-                    }
-#endif /* NEWCONV */
                 }
             }
 

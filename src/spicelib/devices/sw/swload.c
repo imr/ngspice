@@ -14,13 +14,13 @@ Author: 1985 Gordon Jacobs
 int
 SWload(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current values into the 
          * sparse matrix previously provided 
          */
 {
-    register SWmodel *model = (SWmodel *) inModel;
-    register SWinstance *here;
+    SWmodel *model = (SWmodel *) inModel;
+    SWinstance *here;
     double g_now;
     double v_ctrl;
     double previous_state; 

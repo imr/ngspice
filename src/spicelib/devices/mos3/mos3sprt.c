@@ -18,10 +18,10 @@ Author: 1985 Thomas L. Quarles
 void
 MOS3sPrint(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
 
     printf("LEVEL 1 MOSFETS-----------------\n");
     /*  loop through all the MOS3 models */

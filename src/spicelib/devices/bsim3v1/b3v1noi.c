@@ -97,11 +97,11 @@ BSIM3V1noise (mode, operation, inModel, ckt, data, OnDens)
 int mode, operation;
 GENmodel *inModel;
 CKTcircuit *ckt;
-register Ndata *data;
+Ndata *data;
 double *OnDens;
 {
-register BSIM3V1model *model = (BSIM3V1model *)inModel;
-register BSIM3V1instance *here;
+BSIM3V1model *model = (BSIM3V1model *)inModel;
+BSIM3V1instance *here;
 struct bsim3v1SizeDependParam *pParam;
 char name[N_MXVLNTH];
 double tempOnoise;

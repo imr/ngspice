@@ -26,13 +26,13 @@ File: b3v1set.c
 
 int
 BSIM3V1setup(matrix,inModel,ckt,states)
-register SMPmatrix *matrix;
-register GENmodel *inModel;
-register CKTcircuit *ckt;
+SMPmatrix *matrix;
+GENmodel *inModel;
+CKTcircuit *ckt;
 int *states;
 {
-register BSIM3V1model *model = (BSIM3V1model*)inModel;
-register BSIM3V1instance *here;
+BSIM3V1model *model = (BSIM3V1model*)inModel;
+BSIM3V1instance *here;
 int error;
 CKTnode *tmp;
 

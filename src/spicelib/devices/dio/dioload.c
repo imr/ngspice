@@ -21,8 +21,8 @@ DIOload(inModel,ckt)
          * sparse matrix previously provided 
          */
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
-    register DIOinstance *here;
+    DIOmodel *model = (DIOmodel*)inModel;
+    DIOinstance *here;
     double arg;
     double capd;
     double cd;
@@ -136,7 +136,6 @@ DIOload(inModel,ckt)
                 /*  
                  *   bypass if solution has not changed
                  */
-#ifndef NOBYPASS
                 if ((!(ckt->CKTmode & MODEINITPRED)) && (ckt->CKTbypass)) {
                     tol=ckt->CKTvoltTol + ckt->CKTreltol*
                         MAX(fabs(vd),fabs(*(ckt->CKTstate0 +here->DIOvoltage)));
@@ -153,7 +152,7 @@ DIOload(inModel,ckt)
                         }
                     }
                 }
-#endif /* NOBYPASS */
+
                 /*
                  *   limit new junction voltage
                  */
@@ -272,15 +271,6 @@ next1:      if (vd >= -3*vte) {
                 if (Check == 1)  {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
-#ifndef NEWCONV
-                } else {
-                    tol=ckt->CKTreltol*
-                            MAX(fabs(cdhat),fabs(cd))+ckt->CKTabstol;
-                    if (fabs(cdhat-cd) > tol) {
-                        ckt->CKTnoncon++;
-			ckt->CKTtroubleElt = (GENinstance *) here;
-                    }
-#endif /* NEWCONV */
                 }
             }
 next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;

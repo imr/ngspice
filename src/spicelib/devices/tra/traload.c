@@ -23,11 +23,11 @@ TRAload(inModel,ckt)
          * sparse matrix previously provided 
          */
 {
-    register TRAmodel *model = (TRAmodel *)inModel;
-    register TRAinstance *here;
+    TRAmodel *model = (TRAmodel *)inModel;
+    TRAinstance *here;
     double t1,t2,t3;
     double f1,f2,f3;
-    register int i;
+    int i;
 
     /*  loop through all the transmission line models */
     for( ; model != NULL; model = model->TRAnextModel ) {

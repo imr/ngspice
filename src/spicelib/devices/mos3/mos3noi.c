@@ -29,12 +29,12 @@ MOS3noise (mode, operation, genmodel, ckt, data, OnDens)
     int operation;
     GENmodel *genmodel;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     MOS3model *firstModel = (MOS3model *) genmodel;
-    register MOS3model *model;
-    register MOS3instance *inst;
+    MOS3model *model;
+    MOS3instance *inst;
     char name[N_MXVLNTH];
     double tempOnoise;
     double tempInoise;

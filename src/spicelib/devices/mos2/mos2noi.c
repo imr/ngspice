@@ -29,12 +29,12 @@ MOS2noise (mode, operation, genmodel, ckt, data, OnDens)
     int operation;
     GENmodel *genmodel;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     MOS2model *firstModel = (MOS2model *) genmodel;
-    register MOS2model *model;
-    register MOS2instance *inst;
+    MOS2model *model;
+    MOS2instance *inst;
     char name[N_MXVLNTH];
     double tempOnoise;
     double tempInoise;

@@ -23,8 +23,8 @@ VCCSsLoad(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-    register VCCSmodel *model = (VCCSmodel *)inModel;
-    register VCCSinstance *here;
+    VCCSmodel *model = (VCCSmodel *)inModel;
+    VCCSinstance *here;
     double  vc;
 
     /*  loop through all the source models */

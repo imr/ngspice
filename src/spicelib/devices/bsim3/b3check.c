@@ -18,8 +18,8 @@ File: b3check.c
 
 int
 BSIM3checkModel(model, here, ckt)
-register BSIM3model *model;
-register BSIM3instance *here;
+BSIM3model *model;
+BSIM3instance *here;
 CKTcircuit *ckt;
 {
 struct bsim3SizeDependParam *pParam;

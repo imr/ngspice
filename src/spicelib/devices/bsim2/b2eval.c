@@ -19,9 +19,9 @@ void
 B2evaluate(Vds,Vbs,Vgs,here,model,gm,gds,gmb,qg,qb,qd,cgg,cgd,cgs,
         cbg,cbd,cbs,cdg,cdd,cds,Ids,von,vdsat,ckt)
 
-    register CKTcircuit  *ckt;
-    register B2model   *model;
-    register B2instance *here;
+    CKTcircuit  *ckt;
+    B2model   *model;
+    B2instance *here;
     double Vds,Vbs,Vgs;
     double *gm,*gds,*gmb,*qg,*qb,*qd,*cgg,*cgd,*cgs,*cbg;
     double *cbd,*cbs,*cdg,*cdd,*cds,*Ids,*von,*vdsat;

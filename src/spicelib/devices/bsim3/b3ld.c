@@ -32,10 +32,10 @@ File: b3ld.c
 int
 BSIM3load(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM3model *model = (BSIM3model*)inModel;
-register BSIM3instance *here;
+BSIM3model *model = (BSIM3model*)inModel;
+BSIM3instance *here;
 double SourceSatCurrent, DrainSatCurrent;
 double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
 double cdrain, cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
@@ -242,7 +242,6 @@ for (; model != NULL; model = model->BSIM3nextModel)
                          + here->BSIM3gbds * delvds;
                }
 
-#ifndef NOBYPASS
            /* following should be one big if connected by && all over
             * the place, but some C compilers can't handle that, so
             * we split it up here to let them digest it in stages
@@ -287,7 +286,6 @@ for (; model != NULL; model = model->BSIM3nextModel)
                    }
                }
 
-#endif /*NOBYPASS*/
                von = here->BSIM3von;
                if (*(ckt->CKTstate0 + here->BSIM3vds) >= 0.0)
 	       {   vgs = DEVfetlim(vgs, *(ckt->CKTstate0+here->BSIM3vgs), von);
@@ -2296,29 +2294,6 @@ finished:
           if ((here->BSIM3off == 0) || (!(ckt->CKTmode & MODEINITFIX)))
 	  {   if (Check == 1)
 	      {   ckt->CKTnoncon++;
-#ifndef NEWCONV
-              } 
-	      else
-              {   if (here->BSIM3mode >= 0)
-                  {   Idtot = here->BSIM3cd + here->BSIM3csub - here->BSIM3cbd;
-                  }
-                  else
-                  {   Idtot = here->BSIM3cd - here->BSIM3cbd;
-                  }
-                  tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(Idtot))
-                      + ckt->CKTabstol;
-                  if (fabs(cdhat - Idtot) >= tol)
-                  {   ckt->CKTnoncon++;
-                  }
-                  else
-                  {   Ibtot = here->BSIM3cbs + here->BSIM3cbd - here->BSIM3csub;
-                      tol = ckt->CKTreltol * MAX(fabs(cbhat), fabs(Ibtot))
-                          + ckt->CKTabstol;
-                      if (fabs(cbhat - Ibtot)) > tol)
-		      {   ckt->CKTnoncon++;
-                      }
-                  }
-#endif /* NEWCONV */
               }
           }
           *(ckt->CKTstate0 + here->BSIM3vbs) = vbs;

@@ -14,13 +14,13 @@ Author: 1985 Thomas L. Quarles
 void
 MOS2sPrint(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* Pretty print the sensitivity info for all the MOS2 
          * devices  in the circuit.
          */
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
 
     printf("LEVEL 1 MOSFETS-----------------\n");
     /*  loop through all the MOS2 models */

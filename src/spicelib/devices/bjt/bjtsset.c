@@ -20,11 +20,11 @@ Author: 1985 Thomas L. Quarles
 
 int
 BJTsSetup(info,inModel)
-    register SENstruct *info;
+    SENstruct *info;
     GENmodel *inModel;
 {
-    register BJTmodel *model = (BJTmodel*)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel*)inModel;
+    BJTinstance *here;
 
 #ifdef STEPDEBUG
     printf(" BJTsensetup \n");

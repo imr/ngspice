@@ -16,10 +16,10 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 int
 B2acLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register B2model *model = (B2model*)inModel;
-    register B2instance *here;
+    B2model *model = (B2model*)inModel;
+    B2instance *here;
     int xnrm;
     int xrev;
     double gdpr;

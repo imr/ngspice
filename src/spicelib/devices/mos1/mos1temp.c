@@ -14,10 +14,10 @@ Author: 1985 Thomas L. Quarles
 int
 MOS1temp(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS1model *model = (MOS1model *)inModel;
-    register MOS1instance *here;
+    MOS1model *model = (MOS1model *)inModel;
+    MOS1instance *here;
 
     double egfet,egfet1;
     double fact1,fact2;

@@ -13,7 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 int
 INDsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
@@ -21,8 +21,8 @@ INDsetup(matrix,inModel,ckt,states)
          * for fast matrix loading 
          */
 {
-    register INDmodel *model = (INDmodel*)inModel;
-    register INDinstance *here;
+    INDmodel *model = (INDmodel*)inModel;
+    INDinstance *here;
     int error;
     CKTnode *tmp;
 

@@ -23,13 +23,13 @@ static double sig2[4] = {1.0,  1.0,-1.0, -1.0};
 int
 MOS2dSetup(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
     double Beta;
     double DrainSatCur;
     double EffectiveLength;

@@ -13,10 +13,10 @@ Author: 1985 Thomas L. Quarles
 int
 MOS2convTest(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
     double delvbs;
     double delvbd;
     double delvgs;

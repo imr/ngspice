@@ -17,10 +17,10 @@ Author: 1985 Thomas L. Quarles
 int
 MOS3temp(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
     double wkfngs;
     double wkfng;
     double fermig;

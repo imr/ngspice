@@ -22,8 +22,8 @@ JFETdSetup(inModel,ckt)
          * sparse matrix previously provided 
          */
 {
-    register JFETmodel *model = (JFETmodel*)inModel;
-    register JFETinstance *here;
+    JFETmodel *model = (JFETmodel*)inModel;
+    JFETinstance *here;
     double beta;
     double betap;
     double lcapgd1;

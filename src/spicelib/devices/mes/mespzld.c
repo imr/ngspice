@@ -17,11 +17,11 @@ Author: 1985 S. Hwang
 int
 MESpzLoad(inModel,ckt,s)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     SPcomplex *s;
 {
-    register MESmodel *model = (MESmodel*)inModel;
-    register MESinstance *here;
+    MESmodel *model = (MESmodel*)inModel;
+    MESinstance *here;
     double gdpr;
     double gspr;
     double gm;

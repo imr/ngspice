@@ -18,10 +18,10 @@ Author: 1985 Thomas L. Quarles
 int
 INDsLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register INDmodel *model = (INDmodel*)inModel;
-    register  INDinstance *here;
+    INDmodel *model = (INDmodel*)inModel;
+     INDinstance *here;
     int       iparmno;
     double    cind;
     double    Osxp;
@@ -30,8 +30,8 @@ INDsLoad(inModel,ckt)
     SENstruct *info;
 
 #ifdef MUTUAL
-    register MUTinstance *muthere;
-    register MUTmodel *mutmodel;
+    MUTinstance *muthere;
+    MUTmodel *mutmodel;
     double   cind1;
     double   cind2;
     double   rootl1;

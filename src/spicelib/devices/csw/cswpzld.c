@@ -18,7 +18,7 @@ Author: 1985 Gordon Jacobs
 int
 CSWpzLoad(inModel,ckt,s)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     SPcomplex *s;
 
         /* load the current values into the 
@@ -26,8 +26,8 @@ CSWpzLoad(inModel,ckt,s)
          * during AC analysis
          */
 {
-    register CSWmodel *model = (CSWmodel*)inModel;
-    register CSWinstance *here;
+    CSWmodel *model = (CSWmodel*)inModel;
+    CSWinstance *here;
     double g_now;
     int current_state;
 

@@ -17,11 +17,11 @@ Author: 1985 Thomas L. Quarles
 int
 MOS1pzLoad(inModel,ckt,s)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     SPcomplex *s;
 {
-    register MOS1model *model = (MOS1model*)inModel;
-    register MOS1instance *here;
+    MOS1model *model = (MOS1model*)inModel;
+    MOS1instance *here;
     int xnrm;
     int xrev;
     double xgs;

@@ -27,8 +27,8 @@ JFET2load(inModel,ckt)
          * sparse matrix previously provided 
          */
 {
-    register JFET2model *model = (JFET2model*)inModel;
-    register JFET2instance *here;
+    JFET2model *model = (JFET2model*)inModel;
+    JFET2instance *here;
     double capgd;
     double capgs;
     double cd;
@@ -271,15 +271,11 @@ JFET2load(inModel,ckt)
              *  check convergence 
              */
             if( (!(ckt->CKTmode & MODEINITFIX)) | (!(ckt->CKTmode & MODEUIC))) {
-                if( (icheck == 1)
-#ifndef NEWCONV
-/* XXX */
-#endif /*NEWCONV*/
-                        || (fabs(cghat-cg) >= ckt->CKTreltol*
-                            MAX(fabs(cghat),fabs(cg))+ckt->CKTabstol) ||
-                        (fabs(cdhat-cd) > ckt->CKTreltol*
-                            MAX(fabs(cdhat),fabs(cd))+ckt->CKTabstol) 
-                        ) {
+                if((icheck == 1) ||
+		   (fabs(cghat-cg) >= ckt->CKTreltol*
+		    MAX(fabs(cghat),fabs(cg))+ckt->CKTabstol) ||
+		   (fabs(cdhat-cd) > ckt->CKTreltol*
+		    MAX(fabs(cdhat),fabs(cd))+ckt->CKTabstol)) {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
                 }

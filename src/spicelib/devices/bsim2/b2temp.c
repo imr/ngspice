@@ -22,9 +22,9 @@ B2temp(inModel,ckt)
          */
 
 {
-    register B2model *model = (B2model*) inModel;
-    register B2instance *here;
-    register struct bsim2SizeDependParam *pSizeDependParamKnot, *pLastKnot;
+    B2model *model = (B2model*) inModel;
+    B2instance *here;
+    struct bsim2SizeDependParam *pSizeDependParamKnot, *pLastKnot;
     double  EffectiveLength;
     double EffectiveWidth;
     double CoxWoverL, Inv_L, Inv_W, tmp;

@@ -16,11 +16,11 @@ File: b3v2trunc.c
 int
 BSIM3V2trunc(inModel,ckt,timeStep)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 double *timeStep;
 {
-register BSIM3V2model *model = (BSIM3V2model*)inModel;
-register BSIM3V2instance *here;
+BSIM3V2model *model = (BSIM3V2model*)inModel;
+BSIM3V2instance *here;
 
 #ifdef STEPDEBUG
     double debugtemp;

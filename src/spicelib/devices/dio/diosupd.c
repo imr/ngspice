@@ -19,10 +19,10 @@ Author: 1985 Thomas L. Quarles
 int
 DIOsUpdate(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
-    register DIOinstance *here;
+    DIOmodel *model = (DIOmodel*)inModel;
+    DIOinstance *here;
     int      iparmno;
     double   sposprm;
     double   sneg;

@@ -16,10 +16,10 @@ Author: 1985 S. Hwang
 int
 MESacLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MESmodel *model = (MESmodel*)inModel;
-    register MESinstance *here;
+    MESmodel *model = (MESmodel*)inModel;
+    MESinstance *here;
     double gdpr;
     double gspr;
     double gm;

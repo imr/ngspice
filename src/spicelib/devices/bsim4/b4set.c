@@ -27,13 +27,13 @@
 
 int
 BSIM4setup(matrix,inModel,ckt,states)
-register SMPmatrix *matrix;
-register GENmodel *inModel;
-register CKTcircuit *ckt;
+SMPmatrix *matrix;
+GENmodel *inModel;
+CKTcircuit *ckt;
 int *states;
 {
-register BSIM4model *model = (BSIM4model*)inModel;
-register BSIM4instance *here;
+BSIM4model *model = (BSIM4model*)inModel;
+BSIM4instance *here;
 int error;
 CKTnode *tmp;
 

@@ -19,10 +19,10 @@ Author: 1985 Thomas L. Quarles
 int
 CAPsUpdate(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register CAPmodel *model = (CAPmodel*)inModel;
-    register CAPinstance *here;
+    CAPmodel *model = (CAPmodel*)inModel;
+    CAPinstance *here;
     int      iparmno; 
     double   s1; 
     double   s2; 

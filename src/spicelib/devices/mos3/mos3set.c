@@ -17,17 +17,17 @@ Author: 1985 Thomas L. Quarles
 
 int
 MOS3setup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     int *states;
         /* load the MOS3 device structure with those pointers needed later 
          * for fast matrix loading 
          */
 
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
     int error;
     CKTnode *tmp;
 

@@ -17,7 +17,7 @@ Author: 1988 Jaijeet S Roychowdhury
  * the correct value
  */
 int
-BJTdisto(int mode, GENmodel *genmodel, register CKTcircuit *ckt)
+BJTdisto(int mode, GENmodel *genmodel, CKTcircuit *ckt)
 {
     BJTmodel *model = (BJTmodel *) genmodel;
     DISTOAN* job = (DISTOAN*) ckt->CKTcurJob;
@@ -39,7 +39,7 @@ BJTdisto(int mode, GENmodel *genmodel, register CKTcircuit *ckt)
     double r2h1m2y,i2h1m2y;
     double r2h1m2z, i2h1m2z;
     double temp, itemp;
-    register BJTinstance *here;
+    BJTinstance *here;
 #ifdef DISTODEBUG
     double time;
 #endif

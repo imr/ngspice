@@ -22,8 +22,8 @@ URCsetup(matrix,inModel,ckt,state)
         /* create the resistors/capacitors used to model the URC
          */
 {
-    register URCmodel *model = (URCmodel *)inModel;
-    register URCinstance *here;
+    URCmodel *model = (URCmodel *)inModel;
+    URCinstance *here;
     int rtype;
     int ctype;
     int dtype;

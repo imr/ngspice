@@ -15,8 +15,8 @@ ASRCconvTest( inModel, ckt)
 GENmodel *inModel;
 CKTcircuit *ckt;
 {
-    register ASRCmodel *model = (ASRCmodel *)inModel;
-    register ASRCinstance *here;
+    ASRCmodel *model = (ASRCmodel *)inModel;
+    ASRCinstance *here;
     int i, node_num, branch;
     double diff;
     double prev;

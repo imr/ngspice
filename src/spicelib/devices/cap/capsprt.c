@@ -21,10 +21,10 @@ Author: 1985 Thomas L. Quarles
 void
 CAPsPrint(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register CAPmodel *model = (CAPmodel*)inModel;
-    register CAPinstance *here;
+    CAPmodel *model = (CAPmodel*)inModel;
+    CAPinstance *here;
 
     printf("CAPACITORS-----------------\n");
     /*  loop through all the capacitor models */

@@ -26,7 +26,7 @@ B2mosCap(ckt,vgd,vgs,vgb,
         gcbsbPointer,gcdgbPointer,gcddbPointer,gcdsbPointer,
         gcsgbPointer,gcsdbPointer,gcssbPointer,qGatePointer,qBulkPointer,
         qDrainPointer,qSourcePointer)
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     double vgd;
     double vgs;
     double vgb;

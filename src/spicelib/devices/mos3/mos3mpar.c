@@ -20,7 +20,7 @@ MOS3mParam(param,value,inModel)
     IFvalue *value;
     GENmodel *inModel;
 {
-    register MOS3model *model = (MOS3model *)inModel;
+    MOS3model *model = (MOS3model *)inModel;
     switch(param) {
         case MOS3_MOD_VTO:
             model->MOS3vt0 = value->rValue;

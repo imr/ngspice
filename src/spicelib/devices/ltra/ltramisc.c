@@ -855,7 +855,7 @@ LTRAstraightLineCheck(x1, y1, x2, y2, x3, y3, reltol, abstol)
 
 double
 LTRAlteCalculate(ckt, genmodel, geninstance, curtime)
-  register CKTcircuit *ckt;
+  CKTcircuit *ckt;
   GENmodel *genmodel;
   GENinstance *geninstance;
   double curtime;
@@ -1427,8 +1427,8 @@ LTRAlteCalculate(ckt, genmodel, geninstance, curtime)
  */
 
 /*
- * double LTRAlteCalculate(ckt,model,instance,curtime) register CKTcircuit *ckt;
- * register LTRAmodel *model; register LTRAinstance *instance; double
+ * double LTRAlteCalculate(ckt,model,instance,curtime) CKTcircuit *ckt;
+ * LTRAmodel *model; register LTRAinstance *instance; double
  * curtime;
  * 
  * { double *h1dashTcoeffs, h1dashTfirstCoeff; double *h2Tcoeffs, h2TfirstCoeff;

@@ -14,13 +14,13 @@ Author:  1988 Jaijeet S Roychowdhury
 int
 DIOdSetup(model,ckt)
 
-register DIOmodel *model;
+DIOmodel *model;
 CKTcircuit *ckt;
 /* actually load the current resistance value into the 
          * sparse matrix previously provided 
          */
 {
-	register DIOinstance *here;
+	DIOinstance *here;
 	double arg;
 	double csat;    /* area-scaled saturation current */
 	double czero;

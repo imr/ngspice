@@ -16,12 +16,12 @@ Author: 1985 Thomas L. Quarles
 int
 TRAtrunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     double *timeStep;
 
 {
-    register TRAmodel *model = (TRAmodel *)inModel;
-    register TRAinstance *here;
+    TRAmodel *model = (TRAmodel *)inModel;
+    TRAinstance *here;
     double v1,v2,v3,v4;
     double v5,v6,d1,d2,d3,d4;
     double tmp;

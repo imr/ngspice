@@ -17,8 +17,8 @@ ISRCtemp(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-    register ISRCmodel *model = (ISRCmodel*)inModel;
-    register ISRCinstance *here;
+    ISRCmodel *model = (ISRCmodel*)inModel;
+    ISRCinstance *here;
     double radians;
 
     for( ; model != NULL; model = model->ISRCnextModel ) {

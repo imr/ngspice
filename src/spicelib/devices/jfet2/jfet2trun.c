@@ -20,11 +20,11 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 int
 JFET2trunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     double *timeStep;
 {
-    register JFET2model *model = (JFET2model*)inModel;
-    register JFET2instance *here;
+    JFET2model *model = (JFET2model*)inModel;
+    JFET2instance *here;
 
     for( ; model != NULL; model = model->JFET2nextModel) {
         for(here=model->JFET2instances;here!=NULL;here = here->JFET2nextInstance){

@@ -19,7 +19,7 @@ URCmParam(param,value,inModel)
     IFvalue *value;
     GENmodel *inModel;
 {
-    register URCmodel *model = (URCmodel *)inModel;
+    URCmodel *model = (URCmodel *)inModel;
     switch(param) {
         case URC_MOD_K:
             model->URCk = value->rValue;

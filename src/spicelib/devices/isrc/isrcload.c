@@ -14,13 +14,13 @@ Author: 1985 Thomas L. Quarles
 int
 ISRCload(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current current value into the 
          * sparse matrix previously provided 
          */
 {
-    register ISRCmodel *model = (ISRCmodel*)inModel;
-    register ISRCinstance *here;
+    ISRCmodel *model = (ISRCmodel*)inModel;
+    ISRCinstance *here;
     double value;
     double time;
 
@@ -160,7 +160,7 @@ ISRCload(inModel,ckt)
                     value = here->ISRCdcValue * ckt->CKTsrcFact;
                     break;
                 case PWL: {
-                    register int i;
+                    int i;
                     if(time< *(here->ISRCcoeffs)) {
                         value = *(here->ISRCcoeffs + 1) ;
                         break;

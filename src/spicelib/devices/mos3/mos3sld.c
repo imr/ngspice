@@ -20,8 +20,8 @@ MOS3sLoad(inModel,ckt)
 GENmodel *inModel;
 CKTcircuit *ckt;
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
     double   SaveState[44];
     int    save_mode;
     int    i;

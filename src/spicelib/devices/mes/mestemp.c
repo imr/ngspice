@@ -21,7 +21,7 @@ MEStemp(inModel,ckt)
          * for fast matrix loading 
          */
 {
-    register MESmodel *model = (MESmodel*)inModel;
+    MESmodel *model = (MESmodel*)inModel;
     double xfc, temp;
 
     /*  loop through all the diode models */

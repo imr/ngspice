@@ -18,7 +18,7 @@ MOS2mAsk(ckt,inModel,param,value)
     int param;
     IFvalue *value;
 {
-    register MOS2model *model = (MOS2model *)inModel;
+    MOS2model *model = (MOS2model *)inModel;
     switch(param) {
         case MOS2_MOD_TNOM:
             value->rValue = model->MOS2tnom - CONSTCtoK;

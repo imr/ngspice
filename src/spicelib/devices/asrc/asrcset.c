@@ -17,17 +17,17 @@ Author: 1987 Kanwar Jit Singh
 /*ARGSUSED*/
 int
 ASRCsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     int *states;
         /* load the voltage source structure with those 
      * pointers needed later for fast matrix loading 
          */
 
 {
-    register ASRCinstance *here;
-    register ASRCmodel *model = (ASRCmodel*)inModel;
+    ASRCinstance *here;
+    ASRCmodel *model = (ASRCmodel*)inModel;
     int error, i, j;
     int v_first;
     CKTnode *tmp;

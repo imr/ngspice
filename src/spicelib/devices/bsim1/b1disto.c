@@ -14,7 +14,7 @@ Author: 1988 Jaijeet S Roychowdhury
 int
 B1disto(mode,genmodel,ckt)
  GENmodel *genmodel;
- register CKTcircuit *ckt;
+ CKTcircuit *ckt;
  int mode;
 
 /* assuming here that ckt->CKTomega has been initialised to 
@@ -40,7 +40,7 @@ B1disto(mode,genmodel,ckt)
  double r2h1m2y,i2h1m2y;
  double r2h1m2z, i2h1m2z;
  double temp, itemp;
- register B1instance *here;
+ B1instance *here;
 
 if (mode == D_SETUP)
  return(B1dSetup(model,ckt));

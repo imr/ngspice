@@ -17,12 +17,12 @@ Author: 1987 Kanwar Jit Singh
 
 int
 ASRCfindBr(ckt,inputModel,name)
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     GENmodel *inputModel;
-    register IFuid name;
+    IFuid name;
 {
-    register ASRCinstance *here;
-    register ASRCmodel *model = (ASRCmodel*)inputModel;
+    ASRCinstance *here;
+    ASRCmodel *model = (ASRCmodel*)inputModel;
     int error;
     CKTnode *tmp;
 

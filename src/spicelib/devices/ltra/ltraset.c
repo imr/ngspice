@@ -13,17 +13,17 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 int
 LTRAsetup(matrix, inModel, ckt, state)
-  register SMPmatrix *matrix;
+  SMPmatrix *matrix;
   GENmodel *inModel;
-  register CKTcircuit *ckt;
+  CKTcircuit *ckt;
   int *state;
 /*
  * load the transmission line structure with those pointers needed later for
  * fast matrix loading
  */
 {
-  register LTRAmodel *model = (LTRAmodel *) inModel;
-  register LTRAinstance *here;
+  LTRAmodel *model = (LTRAmodel *) inModel;
+  LTRAinstance *here;
   int error;
   CKTnode *tmp;
 

@@ -30,12 +30,12 @@ CSWnoise (mode, operation, genmodel, ckt, data, OnDens)
     int operation;
     GENmodel *genmodel;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     CSWmodel *firstModel = (CSWmodel *) genmodel;
-    register CSWmodel *model;
-    register CSWinstance *inst;
+    CSWmodel *model;
+    CSWinstance *inst;
     char name[N_MXVLNTH];
     double tempOutNoise;
     double tempInNoise;

@@ -16,13 +16,13 @@ Author: 1985 Thomas L. Quarles
 int
 MOS3load(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
     double Beta;
     double DrainSatCur;
     double EffectiveLength;
@@ -74,27 +74,16 @@ MOS3load(inModel,ckt)
     double capgd;   /* total gate-drain capacitance */
     double capgb;   /* total gate-bulk capacitance */
     int Check;
-#ifndef NOBYPASS
     double tempv;
-#endif /*NOBYPASS*/
     int error;
-#ifdef CAPBYPASS
-    int senflag;
-#endif /* CAPBYPASS */
     int SenCond;
     double vt;  /* vt at instance temperature */
 
 
-#ifdef CAPBYPASS
-    senflag = 0;
-#endif /* CAPBYPASS */
     if(ckt->CKTsenInfo){
         if(ckt->CKTsenInfo->SENstatus == PERTURBATION) {
             if((ckt->CKTsenInfo->SENmode == ACSEN)||
                 (ckt->CKTsenInfo->SENmode == TRANSEN)){
-#ifdef CAPBYPASS
-                senflag = 1;
-#endif /* CAPBYPASS */
             }
             goto next;
         }
@@ -122,10 +111,6 @@ next:
 
             }
             SenCond = ckt->CKTsenInfo && here->MOS3senPertFlag;
-#ifdef DETAILPROF
-asm("   .globl mos3pta");
-asm("mos3pta:");
-#endif /* DETAILPROF */
 
             /* first, we compute a few useful values - these could be
              * pre-computed, but for historical reasons are still done
@@ -192,10 +177,6 @@ asm("mos3pta:");
                 goto next1;
             }
 
-#ifdef DETAILPROF
-asm("   .globl mos3ptax");
-asm("mos3ptax:");
-#endif /* DETAILPROF */
 
             /* 
              * ok - now to do the start-up operations
@@ -250,10 +231,6 @@ asm("mos3ptax:");
 #endif /*PREDICTOR*/
 
                 /* now some common crunching for some more useful quantities */
-#ifdef DETAILPROF
-asm("   .globl mos3ptay");
-asm("mos3ptay:");
-#endif /* DETAILPROF */
 
                 vbd=vbs-vds;
                 vgd=vgs-vds;
@@ -288,11 +265,6 @@ asm("mos3ptay:");
                     here->MOS3gbd * delvbd +
                     here->MOS3gbs * delvbs ;
 
-#ifdef DETAILPROF
-asm("   .globl mos3ptb");
-asm("mos3ptb:");
-#endif /* DETAILPROF */
-#ifndef NOBYPASS
                 /* now lets see if we can bypass (ugh) */
                 /* the following mess should be one if statement, but
                  * many compilers can't handle it all at once, so it
@@ -346,12 +318,7 @@ asm("mos3ptb:");
                     }
                     goto bypass;
                 }
-#endif /*NOBYPASS*/
 
-#ifdef DETAILPROF
-asm("   .globl mos3ptc");
-asm("mos3ptc:");
-#endif /* DETAILPROF */
                 /* ok - bypass is out, do it the hard way */
 
                 von = model->MOS3type * here->MOS3von;
@@ -392,10 +359,6 @@ asm("mos3ptc:");
 
             } else {
 
-#ifdef DETAILPROF
-asm("   .globl mos3ptd");
-asm("mos3ptd:");
-#endif /* DETAILPROF */
                 /* ok - not one of the simple cases, so we have to
                  * look at all of the possibilities for why we were
                  * called.  We still just initialize the three voltages
@@ -418,10 +381,6 @@ asm("mos3ptd:");
                 } 
             }
 
-#ifdef DETAILPROF
-asm("   .globl mos3pte");
-asm("mos3pte:");
-#endif /* DETAILPROF */
             /*
              * now all the preliminaries are over - we can start doing the
              * real work
@@ -466,10 +425,6 @@ next1:      if(vbs <= 0) {
                 here->MOS3mode = -1;
             }
 
-#ifdef DETAILPROF
-asm("   .globl mos3ptf");
-asm("mos3ptf:");
-#endif /* DETAILPROF */
             {
             /*
              * subroutine moseq3(vds,vbs,vgs,gm,gds,gmbs,
@@ -880,10 +835,6 @@ innerline1000:;
              */
             }
 
-#ifdef DETAILPROF
-asm("   .globl mos3ptg");
-asm("mos3ptg:");
-#endif /* DETAILPROF */
 
             /* now deal with n vs p polarity */
 
@@ -910,17 +861,9 @@ asm("mos3ptg:");
                  *
                  *.. bulk-drain and bulk-source depletion capacitances
                  */
-#ifdef CAPBYPASS
-                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
-                        fabs(delvbs) >= ckt->CKTreltol * MAX(fabs(vbs),
-                        fabs(*(ckt->CKTstate0+here->MOS3vbs)))+
-                        ckt->CKTvoltTol)|| senflag )
-#endif /*CAPBYPASS*/
                 {
                     /* can't bypass the diode capacitance calculations */
-#ifdef CAPZEROBYPASS
                     if(here->MOS3Cbs != 0 || here->MOS3Cbssw != 0 ) {
-#endif /*CAPZEROBYPASS*/
                     if (vbs < here->MOS3tDepCap){
                         arg=1-vbs/here->MOS3tBulkPot;
                         /*
@@ -972,24 +915,14 @@ asm("mos3ptg:");
                                 vbs*(here->MOS3f2s+vbs*(here->MOS3f3s/2));
                         here->MOS3capbs=here->MOS3f2s+here->MOS3f3s*vbs;
                     }
-#ifdef CAPZEROBYPASS
                     } else {
                         *(ckt->CKTstate0 + here->MOS3qbs) = 0;
                         here->MOS3capbs=0;
                     }
-#endif /*CAPZEROBYPASS*/
                 }
-#ifdef CAPBYPASS
-                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
-                        fabs(delvbd) >= ckt->CKTreltol * MAX(fabs(vbd),
-                        fabs(*(ckt->CKTstate0+here->MOS3vbd)))+
-                        ckt->CKTvoltTol)|| senflag )
-#endif /*CAPBYPASS*/
                     /* can't bypass the diode capacitance calculations */
                 {
-#ifdef CAPZEROBYPASS
                     if(here->MOS3Cbd != 0 || here->MOS3Cbdsw != 0 ) {
-#endif /*CAPZEROBYPASS*/
                     if (vbd < here->MOS3tDepCap) {
                         arg=1-vbd/here->MOS3tBulkPot;
                         /*
@@ -1036,17 +969,11 @@ asm("mos3ptg:");
                                 vbd * (here->MOS3f2d + vbd * here->MOS3f3d/2);
                         here->MOS3capbd=here->MOS3f2d + vbd * here->MOS3f3d;
                     }
-#ifdef CAPZEROBYPASS
                 } else {
                     *(ckt->CKTstate0 + here->MOS3qbd) = 0;
                     here->MOS3capbd = 0;
                 }
-#endif /*CAPZEROBYPASS*/
                 }
-#ifdef DETAILPROF
-asm("   .globl mos3pth");
-asm("mos3pth:");
-#endif /* DETAILPROF */
                 if(SenCond && (ckt->CKTsenInfo->SENmode==TRANSEN)) goto next2;
 
                 if ( ckt->CKTmode & MODETRAN ) {
@@ -1074,10 +1001,6 @@ asm("mos3pth:");
                     here->MOS3cbs += *(ckt->CKTstate0 + here->MOS3cqbs);
                 }
             }
-#ifdef DETAILPROF
-asm("   .globl mos3pti");
-asm("mos3pti:");
-#endif /* DETAILPROF */
             if(SenCond) goto next2;
 
             /*
@@ -1088,30 +1011,9 @@ asm("mos3pti:");
                 if (Check == 1) {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
-#ifndef NEWCONV
-                } else {
-                    tol=ckt->CKTreltol*MAX(fabs(cdhat),
-                            fabs(here->MOS3cd))+ckt->CKTabstol;
-                    if (fabs(cdhat-here->MOS3cd) >= tol) { 
-                        ckt->CKTnoncon++;
-			ckt->CKTtroubleElt = (GENinstance *) here;
-                    } else {
-                        tol=ckt->CKTreltol*MAX(fabs(cbhat),
-                                fabs(here->MOS3cbs+here->MOS3cbd))+
-                            ckt->CKTabstol;
-                        if (fabs(cbhat-(here->MOS3cbs+here->MOS3cbd)) > tol) {
-                            ckt->CKTnoncon++;
-			    ckt->CKTtroubleElt = (GENinstance *) here;
-                        }
-                    }
-#endif /* NEWCONV */
                 }
             }
 
-#ifdef DETAILPROF
-asm("   .globl mos3ptj");
-asm("mos3ptj:");
-#endif /* DETAILPROF */
 
             /* save things away for next time */
 
@@ -1120,10 +1022,6 @@ next2:      *(ckt->CKTstate0 + here->MOS3vbs) = vbs;
             *(ckt->CKTstate0 + here->MOS3vgs) = vgs;
             *(ckt->CKTstate0 + here->MOS3vds) = vds;
 
-#ifdef DETAILPROF
-asm("   .globl mos3ptk");
-asm("mos3ptk:");
-#endif /* DETAILPROF */
 
             /*
              *     meyer's capacitor model
@@ -1179,10 +1077,6 @@ asm("mos3ptk:");
                     here->MOS3cgb = capgb;
                 }
 
-#ifdef DETAILPROF
-asm("   .globl mos3ptl");
-asm("mos3ptl:");
-#endif /* DETAILPROF */
                 /*
                  *     store small-signal parameters (for meyer's model)
                  *  all parameters already stored, so done...
@@ -1226,10 +1120,6 @@ asm("mos3ptl:");
             }
 bypass:
             if(SenCond) continue;
-#ifdef DETAILPROF
-asm("   .globl mos3ptm");
-asm("mos3ptm:");
-#endif /* DETAILPROF */
 
             if ( (ckt->CKTmode & (MODEINITTRAN)) || 
                     (! (ckt->CKTmode & (MODETRAN)) )  ) {
@@ -1268,10 +1158,6 @@ asm("mos3ptm:");
              *     store charge storage info for meyer's cap in lx table
              */
 
-#ifdef DETAILPROF
-asm("   .globl mos3ptn");
-asm("mos3ptn:");
-#endif /* DETAILPROF */
             /*
              *  load current vector
              */

@@ -22,8 +22,8 @@ VCVSsAcLoad(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-    register VCVSmodel *model = (VCVSmodel *)inModel;
-    register VCVSinstance *here;
+    VCVSmodel *model = (VCVSmodel *)inModel;
+    VCVSinstance *here;
     double   vc;
     double   ivc;
 

@@ -16,10 +16,10 @@ Author: 1985 Thomas L. Quarles
 int
 JFETacLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register JFETmodel *model = (JFETmodel*)inModel;
-    register JFETinstance *here;
+    JFETmodel *model = (JFETmodel*)inModel;
+    JFETinstance *here;
     double gdpr;
     double gspr;
     double gm;

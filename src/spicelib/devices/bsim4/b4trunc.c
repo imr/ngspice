@@ -18,11 +18,11 @@
 int
 BSIM4trunc(inModel,ckt,timeStep)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 double *timeStep;
 {
-register BSIM4model *model = (BSIM4model*)inModel;
-register BSIM4instance *here;
+BSIM4model *model = (BSIM4model*)inModel;
+BSIM4instance *here;
 
 #ifdef STEPDEBUG
     double debugtemp;

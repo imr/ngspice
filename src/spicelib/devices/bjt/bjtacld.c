@@ -18,12 +18,12 @@ Author: 1985 Thomas L. Quarles
 
 int
 BJTacLoad(inModel,ckt)
-    register GENmodel *inModel;
+    GENmodel *inModel;
     CKTcircuit *ckt;
 
 {
-    register BJTinstance *here;
-    register BJTmodel *model = (BJTmodel*)inModel;
+    BJTinstance *here;
+    BJTmodel *model = (BJTmodel*)inModel;
     double gcpr;
     double gepr;
     double gpi;

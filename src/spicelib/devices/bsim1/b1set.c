@@ -14,17 +14,17 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 int
 B1setup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
-    register GENmodel *inModel;
-    register CKTcircuit *ckt;
+    SMPmatrix *matrix;
+    GENmodel *inModel;
+    CKTcircuit *ckt;
     int *states;
         /* load the B1 device structure with those pointers needed later 
          * for fast matrix loading 
          */
 
 {
-    register B1model *model = (B1model*)inModel;
-    register B1instance *here;
+    B1model *model = (B1model*)inModel;
+    B1instance *here;
     int error;
     CKTnode *tmp;
 

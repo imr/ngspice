@@ -16,10 +16,10 @@ Author: 1985 Thomas L. Quarles
 int
 MOS3acLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
     int xnrm;
     int xrev;
     double EffectiveLength;

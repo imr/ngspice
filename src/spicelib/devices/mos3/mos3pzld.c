@@ -17,11 +17,11 @@ Author: 1985 Thomas L. Quarles
 int
 MOS3pzLoad(inModel,ckt,s)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     SPcomplex *s;
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
     int xnrm;
     int xrev;
     double xgs;

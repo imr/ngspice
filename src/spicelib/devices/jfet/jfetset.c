@@ -17,7 +17,7 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 
 int
 JFETsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
@@ -25,8 +25,8 @@ JFETsetup(matrix,inModel,ckt,states)
          * for fast matrix loading 
          */
 {
-    register JFETmodel *model = (JFETmodel*)inModel;
-    register JFETinstance *here;
+    JFETmodel *model = (JFETmodel*)inModel;
+    JFETinstance *here;
     int error;
     CKTnode *tmp;
 

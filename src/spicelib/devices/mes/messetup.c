@@ -14,7 +14,7 @@ Author: 1985 S. Hwang
 
 int
 MESsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
@@ -22,8 +22,8 @@ MESsetup(matrix,inModel,ckt,states)
          * for fast matrix loading 
          */
 {
-    register MESmodel *model = (MESmodel*)inModel;
-    register MESinstance *here;
+    MESmodel *model = (MESmodel*)inModel;
+    MESinstance *here;
     int error;
     CKTnode *tmp;
 

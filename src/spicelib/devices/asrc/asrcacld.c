@@ -25,8 +25,8 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
      * been precomputed and stored with the instance model.
      */
 
-    register ASRCmodel *model = (ASRCmodel*)inModel;
-    register ASRCinstance *here;
+    ASRCmodel *model = (ASRCmodel*)inModel;
+    ASRCinstance *here;
     int i, v_first, j;
     double *derivs;
     double rhs;

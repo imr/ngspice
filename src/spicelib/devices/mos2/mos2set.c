@@ -14,16 +14,16 @@ Author: 1985 Thomas L. Quarles
 
 int
 MOS2setup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     int *states;
         /* load the MOS2 device structure with those pointers needed later 
          * for fast matrix loading 
          */
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
     int error;
     CKTnode *tmp;
 

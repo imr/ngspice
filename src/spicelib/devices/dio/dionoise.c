@@ -30,12 +30,12 @@ DIOnoise (mode, operation, genmodel, ckt, data, OnDens)
     int operation;
     GENmodel *genmodel;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     DIOmodel *firstModel = (DIOmodel *) genmodel;
-    register DIOmodel *model;
-    register DIOinstance *inst;
+    DIOmodel *model;
+    DIOinstance *inst;
     char name[N_MXVLNTH];
     double tempOnoise;
     double tempInoise;

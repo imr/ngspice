@@ -29,12 +29,12 @@ JFETnoise (mode, operation, genmodel, ckt, data, OnDens)
     int operation;
     GENmodel *genmodel;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     JFETmodel *firstModel = (JFETmodel *) genmodel;
-    register JFETmodel *model;
-    register JFETinstance *inst;
+    JFETmodel *model;
+    JFETinstance *inst;
     char name[N_MXVLNTH];
     double tempOnoise;
     double tempInoise;

@@ -16,13 +16,13 @@ Author: 1988 Jaijeet S Roychowdhury
 int
 MOS1dSetup(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
 {
-    register MOS1model *model = (MOS1model *) inModel;
-    register MOS1instance *here;
+    MOS1model *model = (MOS1model *) inModel;
+    MOS1instance *here;
     double Beta;
     double DrainSatCur;
     double EffectiveLength;
@@ -80,9 +80,6 @@ MOS1dSetup(inModel,ckt)
     double lcapbd2;
     double lcapbd3;
     double gmbds;
-#ifndef NOBYPASS
-#endif /*NOBYPASS*/
-
 
 
     /*  loop through all the MOS1 device models */
