@@ -16,7 +16,7 @@ static void dgen_next(dgen **dgx);
 
 
 void
-wl_forall(wordlist *wl, int (*fn) (/* ??? */), char *data)
+wl_forall(wordlist *wl, void (*fn) (/* ??? */), void *data)
 {
 	while (wl) {
 		(*fn)(wl, data);
@@ -56,7 +56,7 @@ dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
 }
 
 int
-dgen_for_n(dgen *dg, int n, int (*fn) (/* ??? */), char *data, int subindex)
+dgen_for_n(dgen *dg, int n, int (*fn) (/* ??? */), void *data, int subindex)
 {
 	dgen	dgx, *dgxp;
 	int	dnum, i, j, k;

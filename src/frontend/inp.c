@@ -252,8 +252,8 @@ void
 inp_spsource(FILE *fp, bool comfile, char *filename)
 {
     struct line *deck, *dd, *ld;
-    struct line *realdeck, *options;
-    char *tt, name[BSIZE_SP], *s, *t;
+    struct line *realdeck, *options = NULL;
+    char *tt = NULL, name[BSIZE_SP], *s, *t;
     bool nosubckts, commands = FALSE;
     wordlist *wl = NULL, *end = NULL, *wl_first = NULL;
     wordlist *controls = NULL;

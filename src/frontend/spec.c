@@ -25,7 +25,7 @@ com_spec(wordlist *wl)
     int     fpts, i, j, k, tlen, ngood;
     bool    trace;
     char    *s;
-    struct dvec  *f, *vlist, *lv, *vec;
+    struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *names, *first_name;
 
     if (!plot_cur || !plot_cur->pl_scale) {

@@ -27,7 +27,7 @@ Modified: 2000 AlansFixes
 #include <fcntl.h>
 #include <time.h>
 #include "cktdefs.h"
-
+#include <inpdefs.h>
 
 extern void gr_end_iplot(void);
 extern char *spice_analysis_get_name(int index);
@@ -114,9 +114,9 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
 {
     runDesc *run;
     struct save_info *saves;
-    bool *savesused;
+    bool *savesused = NULL;
     int numsaves;
-    int i, j, depind;
+    int i, j, depind = 0;
     char namebuf[BSIZE_SP], parambuf[BSIZE_SP], depbuf[BSIZE_SP];
     char *ch, tmpname[BSIZE_SP];
     bool saveall  = TRUE;
@@ -149,9 +149,9 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
         savesused = (bool *) tmalloc(sizeof (bool) * numsaves);
         saveall = FALSE;
         for (i = 0; i < numsaves; i++) {
-            if (saves[i].analysis && !cieq(saves[i].analysis, an_name)) {
+            if (saves[i].analysis && !cieq((char *)saves[i].analysis, an_name)) {
 		/* ignore this one this time around */
-		savesused[i] = TRUE;
+		savesused[i] = TRUE; 
 		continue;
 	    }
 
@@ -323,8 +323,11 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
         tfree(savesused);
     }
 
-    if (numNames && (run->numData == 1 && run->refIndex != -1
-          || run->numData == 0 && run->refIndex == -1))
+    if (numNames && 
+       (run->numData == 1 
+     && run->refIndex != -1
+     || run->numData == 0 
+     && run->refIndex == -1))
     {
 	fprintf(cp_err, "Error: no data saved for %s; analysis not run\n",
 		spice_analysis_get_description(((JOB *) analysisPtr)->JOBtype));

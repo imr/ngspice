@@ -191,7 +191,7 @@ all_show(wordlist *wl, int mode)
 		else if (!params)
 		    param_forall(dg, DGEN_DEFPARAMS);
 		if (params)
-		    wl_forall(params, listparam, dg);
+		    wl_forall(params, (void *)listparam, (void *)dg);
 		printf("\n");
 
 	    } else if (ft_sim->devices[dg->dev_type_no]->numModelParms) {
@@ -213,7 +213,7 @@ all_show(wordlist *wl, int mode)
 		else if (!params)
 		    param_forall(dg, DGEN_DEFPARAMS);
 		if (params)
-		    wl_forall(params, listparam, dg);
+		    wl_forall(params, (void *) listparam, (void *)dg);
 		printf("\n");
 	    }
 	}
@@ -328,7 +328,7 @@ listparam(wordlist *p, dgen *dg)
 		   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
 		else
 		   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
-		k = dgen_for_n(dg, count, printvals, plist + i, j);
+		k = dgen_for_n(dg, count, printvals, (void *)(plist + i), j);
 		printf("\n");
 		j += 1;
 	    } while (k > 0);

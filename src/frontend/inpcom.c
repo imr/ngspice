@@ -111,7 +111,7 @@ inp_pathopen(char *name, char *mode)
 void
 inp_readall(FILE *fp, struct line **data)
 {
-    struct line *end = NULL, *cc, *prev = NULL, *working, *newcard;
+    struct line *end = NULL, *cc = NULL, *prev = NULL, *working, *newcard;
     char *buffer, *s, *t, c,*copys;
     int line = 1;
     FILE *newfp;

@@ -341,7 +341,7 @@ cp_setparse(wordlist *wl)
             continue;
         }
 
-        ss = cp_unquote(val);
+        copyval = ss = cp_unquote(val);
         td = ft_numparse(&ss, FALSE);
         vv = alloc(struct variable);
         vv->va_name = copy(name);
@@ -355,7 +355,7 @@ cp_setparse(wordlist *wl)
             vv->va_type = VT_STRING;
             vv->va_string = copy(val);
         }
-        tfree(ss);/*DG: avoid cp_unquote memory leak */
+        tfree(copyval);/*DG: must free ss any way to avoid cp_unquote memory leak */
     }
     return (vars);
 }

@@ -179,7 +179,7 @@ sigchild(void)
 void
 ft_checkkids(void)
 {
-    struct proc *p, *lp;
+    struct proc *p = NULL, *lp = NULL;
     char buf[BSIZE_SP];
     FILE *fp;
     int pid;

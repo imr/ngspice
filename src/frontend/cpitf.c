@@ -243,7 +243,7 @@ ft_cpinit(void)
 /* Decide whether a condition is TRUE or not. */
 
 bool
-cp_isTRUE(wordlist *wl)
+cp_istrue(wordlist *wl)
 {
     int i;
     struct dvec *v;

@@ -14,7 +14,7 @@ Author: 1987 Jeffrey M. Hsu
 #include <fteext.h>
 
 #include "arg.h"
-
+#include "variable.h"
 
 static void common(char *string, struct wordlist *wl, struct comm *command);
 

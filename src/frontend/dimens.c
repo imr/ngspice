@@ -15,14 +15,15 @@ Author: 1992 David A. Gates, U. C. Berkeley CAD Group
 /*
  * Create a string of the form "12,1,10".
  */
-char *
-dimstring(int *data, int length)
+void
+dimstring(int *data, int length, char *retstring)
 {
     int i;
     char buf[BSIZE_SP];
+    
 
     if (!data || length < 1)
-	return NULL;
+	retstring = "";
 
     buf[0] = '\0';
     for (i=0; i < length; i++) {
@@ -30,26 +31,27 @@ dimstring(int *data, int length)
 	    (i < length - 1) ? "," : "");
     }
     /* XXX Should I return a copy instead? */
-    return(buf);
+    /* qui ci devo fare una copia */
+    strcpy(retstring, buf);
 }
 
 /*
  * Create a string of the form "[12][1][10]".
  */
-char *
-indexstring(int *data, int length)
+void
+indexstring(int *data, int length, char *retstring)
 {
     int i;
     char buf[BSIZE_SP];
 
     if (!data || length < 1)
-	return NULL;
+	retstring = "";
 
     buf[0] = '\0';
     for (i=0; i < length; i++) {
 	sprintf(buf + strlen(buf), "[%d]",  data[i]);
     }
-    return(buf);
+    strcpy(retstring, buf);
 }
 
 /*

@@ -8,7 +8,7 @@
 void
 pvec(struct dvec *d)
 {
-    char buf[BSIZE_SP], buf2[BSIZE_SP];
+    char buf[BSIZE_SP], buf2[BSIZE_SP], buf3[BSIZE_SP];
 
     sprintf(buf, "    %-20s: %s, %s, %d long",
 	    d->v_name,
@@ -72,7 +72,8 @@ pvec(struct dvec *d)
         strcat(buf, buf2);
     }
     if (d->v_numdims > 1) {
-	sprintf(buf2, ", dims = [%s]", dimstring(d->v_dims, d->v_numdims));
+    	dimstring(d->v_dims, d->v_numdims, buf3);
+	sprintf(buf2, ", dims = [%s]", buf3);
         strcat(buf, buf2);
     }
     if (d->v_plot->pl_scale == d) {

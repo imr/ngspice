@@ -96,6 +96,7 @@ int INPgetTok(char**,char**,int);
 void INPgetTree(char**,INPparseTree**,void*,INPtables*);
 IFvalue * INPgetValue(void*,char**,int,INPtables*);
 int INPgndInsert(void*,char**,INPtables*,void**);
+int INPinsertNofree(char **token, INPtables *tab);
 int INPinsert(char**,INPtables*);
 int INPretrieve(char**,INPtables*);
 int INPremove(char*,INPtables*);

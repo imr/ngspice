@@ -15,7 +15,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 /* static declarations */
 static void gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny);
-static void gen_Input(REQUEST *request, RESPONSE *response);
+static int gen_Input(REQUEST *request, RESPONSE *response);
 static int nop(void);
 static int nodev(void);
 
@@ -51,7 +51,7 @@ DISPDEVICE device[] = {
     nop, nop, nop, nop, nop,
     nop, nop, nop,
     nop, nop, nop, gen_Input,
-    nop,},
+    (void *)nop,},
 
 #ifndef X_DISPLAY_MISSING
     {"X11", 0, 0, 1024, 864, 0, 0, X11_Init, X11_NewViewport,
@@ -82,7 +82,7 @@ DISPDEVICE device[] = {
     nodev, nodev, nodev, nodev, nodev,
     nodev, nodev, nodev,
     nodev, nodev, nodev, gen_Input,
-    nodev,},
+    (void *)nodev,},
 
 };
 
@@ -282,7 +282,7 @@ void Input(REQUEST *request, RESPONSE *response)
 
 }
 
-static void
+static int
 gen_Input(REQUEST *request, RESPONSE *response)
 {
 
@@ -297,6 +297,7 @@ gen_Input(REQUEST *request, RESPONSE *response)
 	    response->option = error_option;
         break;
     }
+return 0;
 }
 
 /* no operation, do nothing */

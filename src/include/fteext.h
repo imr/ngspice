@@ -528,9 +528,9 @@ extern void com_clearplot();
 extern void com_reshape();
 
 /* dimens.c */
-extern char *dimstring();
+extern void dimstring();
 extern int atodims();
-extern char *indexstring();
+extern void indexstring();
 extern int incindex( );
 
 #endif /* FTEext_h */

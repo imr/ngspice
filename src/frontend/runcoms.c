@@ -151,7 +151,7 @@ com_noise(wordlist *wl)
 static int
 dosim(char *what, wordlist *wl)
 {
-    wordlist *ww;
+    wordlist *ww = NULL;
     bool dofile = FALSE;
     char buf[BSIZE_SP];
     struct circ *ct;
@@ -252,13 +252,14 @@ dosim(char *what, wordlist *wl)
 	} else
 	    ft_curckt->ci_inprogress = FALSE;
     }
-    if (rawfileFp)
+    if (rawfileFp){
       if (ftell(rawfileFp)==0) {
 	    (void) fclose(rawfileFp);
             (void) remove(wl->wl_word);
         } else {
 	    (void) fclose(rawfileFp);
-        };
+        }
+    }
     ft_curckt->ci_runonce = TRUE;
     ft_setflag = FALSE;
     return err;

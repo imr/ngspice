@@ -434,7 +434,8 @@ fixdotprint(wordlist *wl)
 static char *
 fixem(char *string)
 {
-    char buf[BSIZE_SP], *s, *t, *ss = string;
+    char buf[BSIZE_SP], *s, *t;
+    char *ss = string;          /* Get rid of ss ? */
 
     if (ciprefix("v(", string) &&strchr(string, ',')) {
         for (s = string; *s && (*s != ','); s++)

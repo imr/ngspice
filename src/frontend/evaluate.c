@@ -43,7 +43,7 @@ sig_matherr(void)
 struct dvec *
 ft_evaluate(struct pnode *node)
 {
-    struct dvec *d;
+    struct dvec *d = NULL;
 
     if (!node)
         return (NULL);
@@ -91,9 +91,9 @@ doop(char what,
      struct pnode *arg2)
 {
     struct dvec *v1, *v2, *res;
-    complex *c1, *c2, lc;
-    double *d1, *d2, ld;
-    int length, i;
+    complex *c1 = NULL, *c2 = NULL , lc;
+    double *d1 = NULL, *d2 = NULL, ld;
+    int length = 0, i;
     void *data;
     bool free1 = FALSE, free2 = FALSE, relflag = FALSE;
 
