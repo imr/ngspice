@@ -10,7 +10,6 @@ libckt_a_SOURCES = \
 		cktacdum.c	\
 		cktaskaq.c	\
 		cktasknq.c	\
-		cktbindn.c	\
 		cktbkdum.c	\
 		cktclrbk.c	\
 		cktdelt.c	\
