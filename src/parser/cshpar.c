@@ -96,7 +96,7 @@ cp_parse(char *string)
     pwlist(wlist, "After history substitution");
     if (cp_didhsubst) {
         wl_print(wlist, stdout);
-        (void) putc('\n', stdout);
+        putc('\n', stdout);
     }
 
     /* Add the word list to the history. */
@@ -281,30 +281,30 @@ error:  wl_free(wl);
     return (NULL);
 }
 
-/* Reset the cp_* FILE pointers to the standard ones.  This is tricky, since
- * if we are sourcing a command file, and io has been redirected from inside
- * the file, we have to reset it back to what it was for the source, not for
- * the top level.  That way if you type "foo > bar" where foo is a script,
- * and it has redirections of its own inside of it, none of the output from
- * foo will get sent to stdout...
- */
+/* Reset the cp_* FILE pointers to the standard ones.  This is tricky,
+ * since if we are sourcing a command file, and io has been redirected
+ * from inside the file, we have to reset it back to what it was for
+ * the source, not for the top level.  That way if you type "foo >
+ * bar" where foo is a script, and it has redirections of its own
+ * inside of it, none of the output from foo will get sent to
+ * stdout...  */
 
 void
 cp_ioreset(void)
 {
     if (cp_in != cp_curin) {
         if (cp_in)
-            (void) fclose(cp_in);
+            fclose(cp_in);
         cp_in = cp_curin;
     }
     if (cp_out != cp_curout) {
         if (cp_out)
-            (void) fclose(cp_out);
+            fclose(cp_out);
         cp_out = cp_curout;
     }
     if (cp_err != cp_curerr) {
         if (cp_err)
-            (void) fclose(cp_err);
+            fclose(cp_err);
         cp_err = cp_curerr;
     }
 
@@ -344,11 +344,11 @@ com_shell(wordlist *wl)
         if (pid == 0) {
             fixdescriptors();
 	    if (wl == NULL) {
-		(void) execl(shell, shell, 0);
+		execl(shell, shell, 0);
 		_exit(99);
 	    } else {
 		com = wl_flatten(wl);
-		(void) execl("/bin/sh", "sh", "-c", com, 0);
+		execl("/bin/sh", "sh", "-c", com, 0);
 	    }
         } else {
 	    /* XXX Better have all these signals */
@@ -359,17 +359,17 @@ com_shell(wordlist *wl)
             do {
                 r = wait((union wait *) NULL);
             } while ((r != pid) && pid != -1);
-	    (void) signal(SIGINT, (SIGNAL_FUNCTION) svint);
-	    (void) signal(SIGQUIT, (SIGNAL_FUNCTION) svquit);
-	    (void) signal(SIGTSTP, (SIGNAL_FUNCTION) svtstp);
+	    signal(SIGINT, (SIGNAL_FUNCTION) svint);
+	    signal(SIGQUIT, (SIGNAL_FUNCTION) svquit);
+	    signal(SIGTSTP, (SIGNAL_FUNCTION) svtstp);
         }
 #else
     /* Easier to forget about changing the io descriptors. */
     if (wl) {
         com = wl_flatten(wl);
-        (void) system(com);
+        system(com);
     } else
-        (void) system(shell);
+        system(shell);
 #endif
 
     return;
@@ -382,11 +382,11 @@ void
 fixdescriptors(void)
 {
     if (cp_in != stdin)
-        (void) dup2(fileno(cp_in), fileno(stdin));
+        dup2(fileno(cp_in), fileno(stdin));
     if (cp_out != stdout)
-        (void) dup2(fileno(cp_out), fileno(stdout));
+        dup2(fileno(cp_out), fileno(stdout));
     if (cp_err != stderr)
-        (void) dup2(fileno(cp_err), fileno(stderr));
+        dup2(fileno(cp_err), fileno(stderr));
     return;
 }
 
@@ -447,7 +447,8 @@ com_chdir(wordlist *wl)
 	tfree(s);
 
 #ifdef HAVE_GETCWD
- if ((s = (char *)getcwd(localbuf, sizeof(localbuf))))
+    s = getcwd(localbuf, sizeof(localbuf));
+    if (s)
 	    printf("Current directory: %s\n", s);
     else
 	    fprintf(cp_err, "Can't get current working directory.\n");

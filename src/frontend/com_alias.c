@@ -3,17 +3,53 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
-/*
- * Do alias substitution.
- */
+/* Do alias substitution.  */
 
 #include "ngspice.h"
 #include "cpdefs.h"
-#include "alias.h"
-
-static wordlist *asubst(wordlist *wlist);
+#include "com_alias.h"
 
 struct alias *cp_aliases = NULL;
+
+
+
+/* Return NULL if no alias was found. We can get away with just
+ * calling cp_histsubst now because the line will have gone onto the
+ * history list by now and cp_histsubst will look in the right place.  */
+static wordlist *
+asubst(wordlist *wlist)
+{
+    struct alias *al;
+    wordlist *wl, *w = NULL;
+    char *word;
+
+    word = wlist->wl_word;
+    if (*word == '\\') {
+        wlist->wl_word++;
+        return (NULL);
+    }
+    for (al = cp_aliases; al; al = al->al_next)
+        if (eq(word, al->al_name))
+            break;
+    if (!al)
+        return (NULL);
+    wl = cp_histsubst(wl_copy(al->al_text));
+
+    if (cp_didhsubst) {
+        /* Make sure that we have an up-to-date last history entry. */
+        wl_free(cp_lastone->hi_wlist);
+        cp_lastone->hi_wlist = wl_copy(wl);
+    } else {
+        /* If it had no history args, then append the rest of the wl */
+        for (w = wl; w->wl_next; w = w->wl_next);
+        w->wl_next = wl_copy(wlist->wl_next);
+        if (w->wl_next)
+            w->wl_next->wl_prev = w;
+    }
+    return (wl);
+}
+
+
 
 wordlist *
 cp_doalias(wordlist *wlist)
@@ -26,11 +62,10 @@ cp_doalias(wordlist *wlist)
         wlist = wlist->wl_next;
     wlist->wl_prev = NULL;
 
-    /* The alias process is going to modify the "last" line typed,
-     * so save a copy of what it really is and restore it after
-     * aliasing is done. We have to do tricky things do get around
-     * the problems with ; ...
-     */
+    /* The alias process is going to modify the "last" line typed, so
+     * save a copy of what it really is and restore it after aliasing
+     * is done. We have to do tricky things do get around the problems
+     * with ; ...  */
     realw = wl_copy(cp_lastone->hi_wlist);
     comm = wlist;
     do {
@@ -85,46 +120,8 @@ cp_doalias(wordlist *wlist)
     return (wlist);
 }
 
-/* Return NULL if no alias was found. We can get away with just calling
- * cp_histsubst now because the line will have gone onto the history list
- * by now and cp_histsubst will look in the right place.
- */
-
-static wordlist *
-asubst(wordlist *wlist)
-{
-    struct alias *al;
-    wordlist *wl, *w = NULL;
-    char *word;
-
-    word = wlist->wl_word;
-    if (*word == '\\') {
-        wlist->wl_word++;
-        return (NULL);
-    }
-    for (al = cp_aliases; al; al = al->al_next)
-        if (eq(word, al->al_name))
-            break;
-    if (!al)
-        return (NULL);
-    wl = cp_histsubst(wl_copy(al->al_text));
-
-    if (cp_didhsubst) {
-        /* Make sure that we have an up-to-date last history entry. */
-        wl_free(cp_lastone->hi_wlist);
-        cp_lastone->hi_wlist = wl_copy(wl);
-    } else {
-        /* If it had no history args, then append the rest of the wl */
-        for (w = wl; w->wl_next; w = w->wl_next);
-        w->wl_next = wl_copy(wlist->wl_next);
-        if (w->wl_next)
-            w->wl_next->wl_prev = w;
-    }
-    return (wl);
-}
 
 /* If we use this, aliases will be in alphabetical order. */
-
 void
 cp_setalias(char *word, wordlist *wlist)
 {
@@ -164,10 +161,9 @@ cp_setalias(char *word, wordlist *wlist)
     al->al_name = copy(word);
     al->al_text = wl_copy(wlist);
     cp_striplist(al->al_text);
-    /* We can afford to not worry about the bits, because before
-     * the keyword lookup is done the alias is evaluated. 
-     * Make everything file completion, just in case...
-     */
+    /* We can afford to not worry about the bits, because before the
+     * keyword lookup is done the alias is evaluated.  Make everything
+     * file completion, just in case...  */
     cp_addcomm(word, (long) 1, (long) 1, (long) 1, (long) 1);
     /* printf("word %s, next = %s, prev = %s...\n", al->al_name, 
             al->al_next ? al->al_next->al_name : "(none)",

@@ -9,6 +9,8 @@ libfte_a_SOURCES = \
 	commands.h	\
 	com_ahelp.c	\
 	com_ahelp.h	\
+	com_alias.c	\
+	com_alias.h	\
 	com_asciiplot.c \
 	com_asciiplot.h \
 	com_cdump.c	\

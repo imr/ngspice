@@ -3,26 +3,18 @@
 noinst_LIBRARIES = libparser.a
 
 libparser_a_SOURCES = \
-		alias.c		\
-		alias.h		\
 		backq.c		\
 		backq.h		\
 		complete.c	\
 		complete.h	\
 		cshpar.c	\
 		cshpar.h	\
-		front.c		\
-		front.h		\
 		glob.c		\
 		glob.h		\
-		history.c	\
-		history.h	\
 		input.c		\
 		input.h		\
 		lexical.c	\
 		lexical.h	\
-		modify.c	\
-		modify.h	\
 		numparse.c	\
 		numparse.h	\
 		quote.c		\
@@ -30,8 +22,6 @@ libparser_a_SOURCES = \
 		std.c		\
 		unixcom.c	\
 		unixcom.h	\
-		variable.c	\
-		variable.h	\
 		var2.c		\
 		var2.h		\
 		wlist.c		\
