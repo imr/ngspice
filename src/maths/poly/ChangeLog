@@ -1,0 +1,5 @@
+2000-10-13  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* polyfit.c: Input matrix got overwritten too soon, leading to NaN
+	results for Fourier Analysis.  Fix due to Daniele Gordini.
+
