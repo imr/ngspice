@@ -1,0 +1,16 @@
+Parameter defaults
+*
+* This circuit contains a code model with
+* parameters of various types, which are all defaulted,
+* and prints the default values.
+*
+.op
+*
+r1 1 0 1k
+r2 2 0 1k
+r3 1 2 1k
+*
+a1 [1 2] mod
+.model mod print_param_types 
+*
+.end

@@ -1,0 +1,41 @@
+Spice Opus / XSpice code model support.
+--------------------------------------
+
+Use configure flag --enable-xspice to compile the support in,
+when you run the ./configure script.
+This creates a new command, "codemodel", which you can 
+use to load a codemodel. 
+
+Some codemodels are included in the xspice/lib directory 
+with some examples in xspice/examples, compiled for linux glibc.
+
+Make sure the the library dir, xspice/lib, is in your LD_LIBRARY_PATH 
+enviromental variable, otherwise the libs will not be found! 
+
+To create codemodels go to http://www.fe.uni-lj.si/spice/welcome.html
+and download their trial version of spice opus for the codemodel toolkit!
+
+TODO:
+	Intergrate the ipc stuff from XSpice.
+	Create ng-spice capacity to create codemodels (a perl script)
+	Ngspice crashes when you try to plot a digital node
+
+Stefan Jones 
+	19/2/2002
+
+-----------------------------------------
+SPICE2 POLY codemodel support.
+
+SPICE2 POLY attributes are now available for controlled sources.  To
+use POLY attributes, configure tclspice/ngspice with the
+--enable-xspice flag set as described above.  After compilation of
+ngspice, cd into $(top_srcdir)/src/xspice/icm and read the README file
+there for instructions about how to get POLY support.  (Hint: you have
+to download some stuff from http://www.fe.uni-lj.si/ and edit the
+Makefiles before you can do "make && make install" of the codemodel
+stuff.)  
+
+Please direct questions/comments/complaints to mailto:sdb@cloud9.net.
+
+6.22.2003 -- SDB.
+
