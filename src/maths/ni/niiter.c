@@ -14,7 +14,6 @@ Modified: 2001 AlansFixes
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "trandefs.h"
 #include "cktdefs.h"
 #include "smpdefs.h"
@@ -25,7 +24,7 @@ Modified: 2001 AlansFixes
 /* NIiter() - return value is non-zero for convergence failure */
 
 int
-NIiter(register CKTcircuit *ckt, int maxIter)
+NIiter(CKTcircuit *ckt, int maxIter)
 {
     int iterno;
     int ipass;

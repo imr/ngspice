@@ -13,7 +13,6 @@ Author: 1985 Thomas L. Quarles
 
 #include "ngspice.h"
 #include "cktdefs.h"
-#include <stdio.h>
 #include "sperror.h"
 #include "smpdefs.h"
 #include "niinit.h"

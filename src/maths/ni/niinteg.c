@@ -9,7 +9,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "sperror.h"
 #include "niinteg.h"
@@ -17,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 #define ccap qcap+1
 
 int
-NIintegrate(register CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
+NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
 {
     static char *ordmsg = "Illegal integration order";
     static char *methodmsg = "Unknown integration method";

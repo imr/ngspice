@@ -13,7 +13,6 @@ Author: 1985 Thomas L. Quarles
 
 #include "ngspice.h"
 #include "cktdefs.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "sperror.h"
 #include "nisenre.h"
@@ -23,9 +22,9 @@ Author: 1985 Thomas L. Quarles
 (type *) MALLOC((size)*sizeof(type))) == NULL) return(E_NOMEM);
 
 int
-NIsenReinit(register CKTcircuit *ckt)
+NIsenReinit(CKTcircuit *ckt)
 {
-    register int size;
+    int size;
     int senparms;
     int i;
 

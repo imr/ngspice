@@ -15,7 +15,6 @@ Modified 1999 Emmanuel Rouat
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "trandefs.h"
 #include "cktdefs.h"
 #include "sperror.h"
@@ -23,7 +22,7 @@ Modified 1999 Emmanuel Rouat
 
 
 int
-NIacIter(register CKTcircuit *ckt)
+NIacIter(CKTcircuit *ckt)
 {
     int error;
     int ignore;

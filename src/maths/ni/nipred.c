@@ -13,7 +13,6 @@ Author: 1985 Thomas L. Quarles
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "trandefs.h"
 #include "cktdefs.h"
 #include "sperror.h"
@@ -23,13 +22,13 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef PREDICTOR
 int
-NIpred(register CKTcircuit * ckt)
+NIpred(CKTcircuit * ckt)
     
 {
     int i;
     double *temp;
     int size;
-    register CKTnode *node;
+    CKTnode *node;
 
     /* for our prediction, we have:
      *  ckt->CKTrhs[] is the current solution

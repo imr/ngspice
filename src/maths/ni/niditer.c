@@ -13,7 +13,6 @@ Author: 1988 Jaijeet S. Roychowdhury
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "trandefs.h"
 #include "cktdefs.h"
 #include "sperror.h"
@@ -21,7 +20,7 @@ Author: 1988 Jaijeet S. Roychowdhury
 
 
 int
-NIdIter(register CKTcircuit *ckt)
+NIdIter(CKTcircuit *ckt)
 {
     int error;
     int ignore;

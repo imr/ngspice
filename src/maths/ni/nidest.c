@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-NIdestroy(register CKTcircuit *ckt)
+NIdestroy(CKTcircuit *ckt)
 {
     if (ckt->CKTmatrix)
 	SMPdestroy(ckt->CKTmatrix);

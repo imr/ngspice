@@ -1,3 +1,7 @@
+2004-01-20  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/maths/ni/*: Cleaned up code removing unnecessary includes.
+
 2004-01-15  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/spicelib/devices/{cccs,ccvs,vccs,vcvs}/*: cleaned up the code.

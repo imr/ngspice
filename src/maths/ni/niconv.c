@@ -11,18 +11,17 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "smpdefs.h"
 #include "niconv.h"
 
 
 int
-NIconvTest(register CKTcircuit *ckt)
+NIconvTest(CKTcircuit *ckt)
 {
-    register int i; /* generic loop variable */
-    register int size;  /* size of the matrix */
-    register CKTnode *node; /* current matrix entry */
+    int i; /* generic loop variable */
+    int size;  /* size of the matrix */
+    CKTnode *node; /* current matrix entry */
     double old;
     double new;
     double tol;
