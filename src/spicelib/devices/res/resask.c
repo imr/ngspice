@@ -45,6 +45,9 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case RES_WIDTH:
             value->rValue = fast->RESwidth;
+	    return(OK);
+	case RES_SCALE:
+	    value->rValue = fast->RESscale;
             return(OK);
 	case RES_M:
 	    value->rValue = fast->RESm;
