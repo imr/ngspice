@@ -1,3 +1,7 @@
+2004-01-26  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   tests/cider: Added example files for cider simulator.
+
 2004-01-25  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   configure.in, acconfig.h: Added configure options for the

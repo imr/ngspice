@@ -1,0 +1,74 @@
+Motorola MECL III ECL gate
+*.dc vin -2.0 0 0.02
+.tran 0.2ns 20ns
+vee 22 0 -6.0
+vin 1 0 pulse -0.8 -1.8 0.2ns 0.2ns 0.2ns 10ns 20ns
+rs 1 2 50
+q1 4 2 6 qmod area = 100p
+q2 4 3 6 qmod area = 100p
+q3 5 7 6 qmod area = 100p
+q4 0 8 7 qmod area = 100p
+
+d1 8 9 dmod
+d2 9 10 dmod
+
+rp1 3 22 50k
+rc1 0 4 100
+rc2 0 5 112
+re 6 22 380
+r1 7 22 2k
+r2 0 8 350
+r3 10 22 1958
+
+q5 0 5 11 qmod area = 100p
+q6 0 4 12 qmod area = 100p
+
+rp2 11 22 560
+rp3 12 22 560
+
+q7 13 12 15 qmod area = 100p
+q8 14 16 15 qmod area = 100p
+
+re2 15 22 380
+rc3 0 13 100
+rc4 0 14 112
+
+q9 0 17 16 qmod area = 100p
+
+r4 16 22 2k
+r5 0 17 350
+d3 17 18 dmod
+d4 18 19 dmod
+r6 19 22 1958
+
+q10 0 14 20 qmod area = 100p
+q11 0 13 21 qmod area = 100p
+
+rp4 20 22 560
+rp5 21 22 560
+
+.model dmod d rs=40 tt=0.1ns cjo=0.9pf n=1 is=1e-14 eg=1.11 vj=0.8 m=0.5
+
+.model qmod nbjt level=1
++ x.mesh node=1  loc=0.0
++ x.mesh node=10 loc=0.9
++ x.mesh node=20 loc=1.1
++ x.mesh node=30 loc=1.4
++ x.mesh node=40 loc=1.6
++ x.mesh node=61 loc=3.0
++ region num=1 material=1
++ material num=1 silicon nbgnn=1e17 nbgnp=1e17
++ mobility material=1 concmod=sg fieldmod=sg
++ mobility material=1 elec major
++ mobility material=1 elec minor
++ mobility material=1 hole major
++ mobility material=1 hole minor
++ doping unif n.type conc=1e17 x.l=0.0 x.h=1.0
++ doping unif p.type conc=1e16 x.l=0.0 x.h=1.5
++ doping unif n.type conc=1e15 x.l=0.0 x.h=3.0
++ models bgnw srh conctau auger concmob fieldmob
++ options base.length=1.0 base.depth=1.25
+
+.options acct bypass=1
+.print tran v(12) v(21)
+.end

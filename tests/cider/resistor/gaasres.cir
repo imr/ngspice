@@ -1,0 +1,30 @@
+Gallium Arsenide Resistor
+
+* This transient simulation demonstrates the effects of velocity overshoot
+* and velocity saturation at high lateral electric fields.
+* Do not try to do DC analysis of this resistor. It will not converge
+* because of the peculiar characteristics of the GaAs velocity-field
+* relation.  In some cases, problems can arise in transient simulation
+* as well.
+
+VPP 1 0 1v PWL 0s 0.0v 10s 1v
+VNN 2 0 0.0v 
+D1 1 2 M_RES AREA=1
+
+.MODEL M_RES numd level=1
++ options resistor defa=1p
++ x.mesh loc=0.0 num=1
++ x.mesh loc=1.0 num=101
++ domain   num=1 material=1
++ material num=1 gaas
++ doping unif n.type conc=2.5e16
++ models fieldmob srh auger conctau
++ method ac=direct
+
+*.OP
+*.DC VPP 0.0v 10.01v 0.1v
+.TRAN 1s 10.001s 0s 0.1s
+.PRINT I(VPP)
+
+.OPTION ACCT BYPASS=1
+.END

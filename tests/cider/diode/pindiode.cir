@@ -1,0 +1,42 @@
+TWO-DIMENSIONAL PIN-DIODE CIRCUIT
+
+VIN 1 0 0.0v (PWL 0ns 0.8v 1ns -50.0v)
+L1  1 2 0.5uH
+VD  2 3 0.0v
+D1  3 0 M_PIN AREA=200 IC.FILE="OP.0.d1"
+VRC 2 4 0.0v
+R1  4 5 100
+C1  5 0 1.0nF
+
+.MODEL M_PIN NUMD LEVEL=2
++ options defw=1000u
++ x.mesh n=1 l=0.0
++ x.mesh n=2 l=0.2
++ x.mesh n=4 l=0.4
++ x.mesh n=8 l=0.6
++ x.mesh n=13 l=1.0
++
++ y.mesh n=1 l=0.0
++ y.mesh n=9 l=4.0
++ y.mesh n=24 l=10.0
++ y.mesh n=29 l=15.0
++ y.mesh n=34 l=20.0
++
++ domain num=1 material=1
++ material num=1 silicon tn=20ns tp=20ns
++
++ electrode num=1 x.l=0.6 x.h=1.0 y.h=0.0
++ electrode num=2 y.l=20.0
++
++ doping gauss p.type conc=1.0e20 char.len=1.076 x.l=0.75 x.h=1.1 y.h=0.0
++ + lat.rotate ratio=0.1
++ doping unif  n.type conc=1.0e14
++ doping gauss n.type conc=1.0e20 char.len=1.614 x.l=-0.1 x.h=1.1 y.l=20.0
++
++ models bgn srh auger conctau concmob fieldmob
+
+.OPTION ACCT BYPASS=1
+.TRAN 1NS 100NS
+.PRINT TRAN v(3) I(VIN)
+
+.END

@@ -1,0 +1,16 @@
+PZ Analysis of a Common Emitter Amplifier
+
+Vcc 1 0 5v
+Vee 2 0 0v
+
+Vin 3 0 0.7838 AC 1
+RS  3 4 1K
+Q1  5 4 2 M_NPN AREA=4 SAVE
+RL  1 5 2.5k
+CL  5 0 0.1pF
+
+.INCLUDE pebjt.lib
+
+.PZ 3 0 5 0 vol pz
+
+.END

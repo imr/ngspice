@@ -1,0 +1,57 @@
+MOS charge pump
+
+vin 4 0 dc 0v pulse 0 5 15ns 5ns 5ns 50ns 100ns
+vdd 5 6 dc 0v pulse 0 5 25ns 5ns 5ns 50ns 100ns
+vbb 0 7 dc 0v pulse 0 5  0ns 5ns 5ns 50ns 100ns
+rd 6 2 10k
+m1 5 4 3 7 mmod w=100um
+vs 3 2 0
+vc 2 1 0
+c2 1 0 10pf
+
+.ic v(3)=1.0
+.tran 2ns 200ns
+.options acct bypass=1
+.print tran v(1) v(2)
+
+.model mmod numos
++ x.mesh n=1 l=0
++ x.mesh n=3 l=0.4
++ x.mesh n=7 l=0.6
++ x.mesh n=15 l=1.4
++ x.mesh n=19 l=1.6
++ x.mesh n=21 l=2.0
++
++ y.mesh n=1 l=0
++ y.mesh n=4 l=0.015
++ y.mesh n=8 l=0.05
++ y.mesh n=12 l=0.25
++ y.mesh n=14 l=0.35
++ y.mesh n=17 l=0.5
++ y.mesh n=21 l=1.0
++
++ region num=1 material=1 y.l=0.015
++ material num=1 silicon
++ mobility material=1 concmod=sg fieldmod=sg
++ mobility material=1 elec major
++ mobility material=1 elec minor
++ mobility material=1 hole major
++ mobility material=1 hole minor
++
++ region num=2 material=2 y.h=0.015 x.l=0.5 x.h=1.5
++ material num=2 oxide
++
++ elec num=1 ix.l=18 ix.h=21   iy.l=4  iy.h=4
++ elec num=2 ix.l=5  ix.h=17   iy.l=1  iy.h=1
++ elec num=3 ix.l=1  ix.h=4    iy.l=4  iy.h=4
++ elec num=4 ix.l=1  ix.h=21   iy.l=21 iy.h=21
++
++ doping unif n.type conc=1e18   x.l=0.0 x.h=0.5 y.l=0.015 y.h=0.25
++ doping unif n.type conc=1e18   x.l=1.5 x.h=2.0 y.l=0.015 y.h=0.25
++ doping unif p.type conc=1e15   x.l=0.0 x.h=2.0 y.l=0.015 y.h=1.0
++ doping unif p.type conc=1.3e17 x.l=0.5 x.h=1.5 y.l=0.015 y.h=0.05
++
++ models concmob fieldmob
++ method onec
+
+.end
