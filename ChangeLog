@@ -1,3 +1,22 @@
+2004-09-05  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/spicelib/devices/jfet/jfet.c: model type (njf or pjf) was
+	    defined as input/output parameter. Now is an input-only parameter,
+	    as in other models.
+	    
+	*   tests/jfet/jfet_vds-vgs.out: Corrected the output after the change
+	    in jfet.c. With the old code the number associated to njf or pjf
+	    (meaningless) changed each run of ngspice and caused the check
+	    process to fail.
+	    
+	*   src/spicelib/devices/mesa/mesa.c: model type was reported
+	    incorrectly. Declared parameter vt0 as "redundant", since it has
+	    the same meaning of vto.
+	
+	*   tests/mesa/mesa11.out: changed test file output accordind to
+	    changes in mesa.c. Now model type ic correct.        
+	     
+
 2004-09-01  Paolo Nenzi <p.nenzi@ieee.org>
 	
 	*   src/conf.c: Modified bug reports address. Now it points to a
