@@ -1,0 +1,12 @@
+###########
+# Copyright 2000 Holger Vogt.  All rights reserved.
+###########
+
+CFILES		= windisp.c winprint.c 
+
+COBJS		= windisp.o winprint.o 
+
+LIBRARY		= wdisp
+LIB_TARGET	= $(OBJLIB_DIR)/$(LIBRARY).a
+windisp.o: windisp.c
+winprint.o: winprint.c
