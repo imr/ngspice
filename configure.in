@@ -9,7 +9,7 @@ dnl Create a configuration header
 AM_CONFIG_HEADER(config.h)
 
 dnl Initialize automake stuff
-AM_INIT_AUTOMAKE(ng-spice-rework,15pre3)
+AM_INIT_AUTOMAKE(ng-spice-rework,15)
 
     
 dnl --enable-ansi : try to force --ansi option to the compiler

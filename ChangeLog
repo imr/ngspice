@@ -1,3 +1,7 @@
+2004-01-28  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   configure.in: changed version to rework15.
+
 2004-01-27  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   configure.in: changed version to rework15-pre3 and other
