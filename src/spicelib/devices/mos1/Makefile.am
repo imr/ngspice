@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libmos1.la
+noinst_LIBRARIES = libmos1.a
 
-libmos1_la_SOURCES = 		\
+libmos1_a_SOURCES = 		\
 	mos1.c		\
 	mos1acld.c	\
 	mos1ask.c	\

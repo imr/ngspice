@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libvsrc.la
+noinst_LIBRARIES = libvsrc.a
 
-libvsrc_la_SOURCES = 	\
+libvsrc_a_SOURCES = 	\
 	vsrc.c		\
 	vsrcacct.c	\
 	vsrcacld.c	\

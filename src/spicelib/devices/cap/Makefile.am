@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libcap.la
+noinst_LIBRARIES = libcap.a
 
-libcap_la_SOURCES = 	\
+libcap_a_SOURCES = 	\
 	cap.c		\
 	capacld.c	\
 	capask.c	\

@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libmesa.la
+noinst_LIBRARIES = libmesa.a
 
-libmesa_la_SOURCES = 	\
+libmesa_a_SOURCES = 	\
 	mesa.c		\
 	mesaacl.c	\
 	mesaask.c	\

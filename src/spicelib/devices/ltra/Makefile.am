@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libltra.la
+noinst_LIBRARIES = libltra.a
 
-libltra_la_SOURCES = 		\
+libltra_a_SOURCES = 		\
 	ltra.c		\
 	ltraacct.c	\
 	ltraacld.c	\

@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libcccs.la
+noinst_LIBRARIES = libcccs.a
 
-libcccs_la_SOURCES = 		\
+libcccs_a_SOURCES = 		\
 	cccs.c		\
 	cccsask.c	\
 	cccsdefs.h	\

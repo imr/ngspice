@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libsoi3.la
+noinst_LIBRARIES = libsoi3.a
 
-libsoi3_la_SOURCES = 	\
+libsoi3_a_SOURCES = 	\
 	soi3.c		\
 	soi3acld.c	\
 	soi3ask.c	\

@@ -1,4 +1,9 @@
- 2003-06-22  Stuart Brorson  <sdb@cloud9.net>
+2003-04-14 Stefan Jones <stefan.jones@multigig.com>
+
+	* Make all the devices in src/spicelib/devices be built as
+	archives not shared libraries, and don't install them
+
+2003-06-22  Stuart Brorson  <sdb@cloud9.net>
  
  	*  Finally got SPICE2 POLY stuff working.  This involved lots of changes
  	in src/xspice/mif and src/xspice/enh.  Particular changes were made in:

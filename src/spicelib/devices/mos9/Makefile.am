@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libmos9.la
+noinst_LIBRARIES = libmos9.a
 
-libmos9_la_SOURCES = 	\
+libmos9_a_SOURCES = 	\
 	mos9.c		\
 	mos9acld.c	\
 	mos9ask.c	\

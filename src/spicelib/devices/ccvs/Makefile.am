@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libccvs.la
+noinst_LIBRARIES = libccvs.a
 
-libccvs_la_SOURCES = 		\
+libccvs_a_SOURCES = 		\
 	ccvs.c		\
 	ccvsask.c	\
 	ccvsdefs.h	\
