@@ -1,40 +1,58 @@
 @c This file will be processed with texinfo.
 
-SPICE was originally written at The University of Berkeley (USA).
-Since then, there have been many people working on the software.
+Spice was originally written at The University of California at Berkeley (USA).
+Since then, there have been many people working on the software, most of them
+releasing patches to the original code through the Internet. 
+
 The following people have contributed in some way:
+Cecil Aswell <aswell@@netcom.com>,
 Giles C. Billingsley,
 Mansun Chan,
 Wayne A. Christopher,
+Al Davis <aldavis@@ieee.org>,
 Glao S. Dezai <dezai@@hotbot.com>,
+Jon Engelbert <jon@@beigebag.com>,
 Daniele Foci <d.foci@@ieee.ing.uniroma1.it>,
 Noah Friedman <friedman@@prep.ai.mit.edu>,
+Alan Gillespie <Alan.Gillespie@@analog.com>,
 David A. Gates,
-Alan Gillespie <alan.gillespie@@analog.com>,
 JianHui Huang,
 Jeffrey M. Hsu,
-S. Hwang,
+S. Hwang,86
 Chris Inbody <cinbody@@cowtown.net>,
 Gordon M. Jacobs,
 Min-Chie Jeng,
+Stefan Jones <stefan.jones@@multigig.com>,
+Beorn Johnson <beorn@@eecs.berkeley.edu>,
 Kenneth H. Keller,
 Mathew Lew,
+Robert Lindsell <robertl@@research.canon.com.au>,
 Weidong Liu,
-Richard D. McRoberts,
+Kartikeya Mayaram,
+Richard D. McRoberts <rdm@@csn.net>,
 Manfred Metzger <ManfredMetzger@@gmx.de>,  
-Paolo Nenzi <pnenzi@@ieee.ing.uniroma1.it>,
+Paolo Nenzi <pnenzi@@ieee.org>,
 Gary W. Ng,
 Hong June Park,
 Arno Peters <A.W.Peters@@ieee.org>,
 Serban-Mihai Popescu <serbanp@@ix.netcom.com>,
 Thomas L. Quarles,
 Emmanuel Rouat <emmanuel.rouat@@wanadoo.fr>,
+Jean-Marc Routure <routoure@@greyc.ismra.fr>,
 Jaijeet S. Roychowdhury,
 Takayasu Sakurai,
+AMAKAWA Shuhei <sa264@@cam.ac.uk>,
 Kanwar Jit Singh,
-Andrew Tuckey <Tuckey@@ieee.org>
+Steve Tell <tell@@cs.unc.edu>
+Andrew Tuckey <Tuckey@@ieee.org>,
+Charles D.H. Williams <C.D.H.Williams@@exeter.ac.uk>,
+Holger Vogt <holger.vogt@@uni-duisburg.de>,
 Michael Widlok <widlok@@uci.agh.edu.pl>,
+Antony Wilson <wilsona@@earthlink.net>,
 and many others...
-
-If you feel you should be on this list, write to
-<ngspice-user@lists.sourceforge.net>.
+Quite a long list, isn't it ?
+ 
+Well, if someone helped in the development and has 
+not been inserted in this list, it is entirely my (Paolo Nenzi) fault.  
+If you feel you should be on this list,  write to <pnenzi@@ieee.org>.
+Do not be shy, I would like to make a list as complete as possible.

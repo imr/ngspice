@@ -1,3 +1,64 @@
+2003-08-11  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* doc/ngspice.texi: updated documentation. Still incomplete
+	  but on the way...
+
+	* main.c, ngnutmeg.c, ngspice.c, frontend/resource.c,
+	  include/bool.h, include/cktdefs.h, include/complex.h,
+	  include/defines.h, include/devdefs.h, include/macros.h,
+	  include/ngspice.h, maths/cmaths/cmath1.c, 
+	  maths/cmaths/test_cx_ph.c, maths/ni/nidest.c,  
+	  maths/ni/nipred.h, maths/ni/nireinit.c, misc/misc_time.c,
+	  misc/string.c, misc/stringutil.h, spicelib/analysis/cktdltn.c,
+	  spicelib/analysis/cktdojob.c, spicelib/analysis/cktdump.c,
+	  spicelib/analysis/cktload.c, spicelib/analysis/cktmknod.c,
+	  spicelib/analysis/cktntask.c, spicelib/analysis/cktpzstr.c,
+	  spicelib/analysis/cktsens.c, spicelib/analysis/cktsetup.c,
+	  spicelib/analysis/cktsgen.c, spicelib/analysis/cktsopt.c,
+	  spicelib/parser/inp2d.c, spicelib/parser/inp2m.c,
+	  spicelib/parser/inp2q.c, spicelib/parser/inpdomod.c,
+	  spicelib/parser/inpgmod.c:
+	  
+	  Updated code for CIDER integration.
+
+	
+        * src/spicelib/devices/bsim3v2: removed because the V3.2 code
+	  is now in bsim3 directory.
+       
+        * src/spicelib/devices: various enhancements on models. Mainly
+	  code cleaning (removed spurios #include <stdio.h>). Added 
+	  parallel multiplier on some device and corrected implementation
+	  of cpl an txl devices.
+
+        *  bdrydefs.h, carddefs.h, ciderinp.h, cidersupt.h, contdefs.h,
+	   domndefs.h, dopdefs.h, elctdefs.h, gendev.h, lsort.h, 
+	   material.h,  matldefs.h, meshdefs.h, meshext.h, methdefs.h,
+	   mobdefs.h, modldefs.h, numcards.h, numconst.h, numenum.h,
+	   numgen.h, numglobs.h, onedev.h, onemesh.h, optndefs.h,
+	   outpdefs.h, profile.h, twodev.h, twomesh.h:
+	   new include files imported with CIDER.
+
+	
+	* src/ciderlib/*, src/maths/misc, src/spicelib/devices/nbjt,
+	  src/spicelib/devices/nbjt2, src/spicelib/devices/numd,
+	  src/spicelib/devices/numd2, src/spicelib/devices/numos:
+	  
+	  Added CIDER simulator routines, support math fnctions and
+	  numerical devices.
+	
+	* src/spicelib/devices/bsim3soi: added bsim3soi v3.x model
+	
+	* src/spicelib/devices/bsim3v0: added version 3.0 of
+	  bsim model.
+	
+	* src/spicelib/devices/bsim3v1a: version 3.1 of bsim model.
+	  This model has been hacked by Alan Gillespie.
+	
+	* src/spicelib/devices/bsim3v1s: version 3.1 of bsim model.
+	  This model has been hacked by Serban Popescu.
+	
+	* src/spicelib/devices/hisim: added hisim model.       
+		  
 2003-08-06  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* Another big commit: Stefan Jones has worked on the xspice

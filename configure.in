@@ -1,4 +1,8 @@
-dnl Process this file with autoconf to produce a configure script.
+dnl configure.in script for ngspice
+dnl
+dnl This file is part of ngspice.
+dnl
+dnl (Process this file with autoconf to produce a configure script.)
 AC_INIT(src/main.c)
 
 dnl Create a configuration header
@@ -23,41 +27,79 @@ dnl --enable-checker : add --with-checker-debug  option to the compiler
 AC_ARG_ENABLE(checker,
     [  --enable-checkergcc     Option for compilation with checkergcc])
 
+dnl --enable-gc : Enable Boehm-Weiser Conservative Garbage Collector
+AC_ARG_ENABLE(checker,
+    [  --enable-gc             Use Boehm-Weiser Conservative Garbage Collector ])
+ 
+dnl --enable-nosqrt : define NOSQRT for the code
+AC_ARG_ENABLE(nosqrt,
+    [  --enable-nosqrt         Use always log/exp for nonlinear capacitances])
+ 
 dnl --enable-bypass : define BYPASS for the code
 AC_ARG_ENABLE(nobypass,
-    [  --enable-nobypass       Don't bypass recalculations of slowly changing variables])
+    [  --enable-nobypass       Don't bypass recalculations of slowly changing 
+                  variables])
 
+dnl --enable-capbypass : define CAPBYPASS for the code
+AC_ARG_ENABLE(capbypass,
+    [  --enable-capbypass      Bypass calculation of cbd/cbs in the mosfets if 
+                          the vbs/vbd voltages are unchanged])
+
+dnl --enable-capzerobypass : define CAPZEROBYPASS for the code
+AC_ARG_ENABLE(capzerobypass,
+    [  --enable-capzerobypass  Bypass all the cbd/cbs calculations if Czero is zero])
+ 
+dnl --enable-nodelimiting : define NODELIMITING for the code
+AC_ARG_ENABLE(nodelimiting,
+    [  --enable-nodelimiting   Experimental damping scheme])
+ 
 dnl --enable-predictor : define PREDICTOR for the code
 AC_ARG_ENABLE(predictor,
-    [  --enable-predictor      Enables a predictor method for convergence])
+    [  --enable-predictor      Enable a predictor method for convergence])
 
-dnl --enable-sense2 : define HAVE_SENSE2 for the code
+dnl --enable-newtrunc : define NEWTRUNC for the code
+AC_ARG_ENABLE(newtrunc,
+    [  --enable-newtrunc       Enable the newtrunc option])
+
+dnl --enable-sense2 : define WANT_SENSE2 for the code
 AC_ARG_ENABLE(sense2,
     [  --enable-sense2         Use spice2 sensitivity analysis])
 
+dnl --enable-sensdebug : define SENSDEBUG for the code
+AC_ARG_ENABLE(sensedebug,
+    [  --enable-sensdebug      Debug sensitivity code]) 
+    
+dnl --enable-stepdebug : define STEPDEBUG for the code
+AC_ARG_ENABLE(stepdebug,
+    [  --enable-stepdebug      Unkown debug option])     
+
 dnl --enable-intnoise : define INT_NOISE for the code
 AC_ARG_ENABLE(intnoise,
-    [  --enable-intnoise       Enables noise integration in noise analysis])
+    [  --enable-intnoise       Enable noise integration in noise analysis])
 
 dnl --enable-smoketest : a smoketest
 AC_ARG_ENABLE(smoketest,
-    [  --enable-smoketest      Enables smoketest compile])
+    [  --enable-smoketest      Enable smoketest compile])
 
 dnl --enable-experimental : define EXPERIMENTAL_CODE for the code
 AC_ARG_ENABLE(experimental,
-    [  --enable-experimental   Enables some experimental code])
+    [  --enable-experimental   Enable some experimental code])
 
 dnl --enable-ekv: define HAVE_EKV in the code. This is for EKV model support
 AC_ARG_ENABLE(ekv,
-    [  --enable-ekv            Enables ekv model *not in standard distribution*])
+    [  --enable-ekv            Enable ekv model *not in standard distribution*])
 
 dnl --enable-xspice: define XSPICE in the code. This is for xspice support
 AC_ARG_ENABLE(xspice,
-    [  --enable-xspice         Enables XSpice enchancements, experimental *not in standard distribution*])
+    [  --enable-xspice         Enable XSpice enchancements, experimental *not in standard distribution*])
+
+dnl --enable-cider: define CIDER in the code. This is for CIDER support
+AC_ARG_ENABLE(cider,
+    [  --enable-cider         Enable CIDER enchancements, experimental *not in standard distribution*])
 
 dnl --enable-cluster: define CLUSTER in the code. This is for tcl support
 AC_ARG_ENABLE(cluster,
-    [  --enable-cluster     Enables cluster support, experimental *not in standard distribution*])
+    [  --enable-cluster     Enable cluster support, experimental *not in standard distribution*])
 
 dnl Enable maintainer commands only if requested
 AM_MAINTAINER_MODE
@@ -281,10 +323,26 @@ if test "$enable_nobypass" = "yes"; then
 	AC_DEFINE(NOBYPASS)
 	AC_MSG_RESULT(NOBYPASS option enabled)	
 fi
+ if test "$enable_capbypass" = "yes"; then
+        AC_DEFINE(CAPBYPASS)
+        AC_MSG_RESULT(CAPBYPASS option enabled)	
+fi 
+ if test "$enable_capzerobypass" = "yes"; then
+        AC_DEFINE(CAPZEROBYPASS)
+        AC_MSG_RESULT(CAPZEROBYPASS option enabled)	
+fi
+if test "$enable_nodelimiting" = "yes"; then
+        AC_DEFINE(NODELIMITING)
+        AC_MSG_RESULT(NODELIMITING option enabled)	
+fi 
 if test "$enable_predictor" = "yes"; then
 	AC_DEFINE(PREDICTOR)
 	AC_MSG_RESULT(PREDICTOR algorithm enabled)	
 fi
+if test "$enable_newtrunc" = "yes"; then
+        AC_DEFINE(NEWTRUNC)
+        AC_MSG_RESULT(New truncation error calculation enabled)
+fi 
 if test "$enable_intnoise" = "yes"; then
 	AC_DEFINE(INT_NOISE)
 	AC_MSG_RESULT(Noise integration enabled)
@@ -298,13 +356,20 @@ if test "$enable_ftedebug" = "yes"; then
 	AC_DEFINE(FTEDEBUG)
 	AC_MSG_RESULT(WARNING: Frontend debug is enabled)	
 fi
-
+if test "$enable_sensdebug" = "yes"; then
+        AC_DEFINE(SENSDEBUG)
+        AC_MSG_RESULT(WARNING: Sensitivity code debug is enabled)	
+fi
+if test "$enable_stepdebug" = "yes"; then
+        AC_DEFINE(STEPDEBUG)
+        AC_MSG_RESULT(WARNING: STEPDEBUG debug is enabled)	
+fi
 
 if test "$enable_ekv" = "yes"; then
     AC_MSG_RESULT(Model EKV included)
     AC_DEFINE(HAVE_EKV)
     EKVDIR="ekv"
-    EKVLIB="spicelib/devices/ekv/libekv.la"
+    EKVLIB="spicelib/devices/ekv/libekv.a"
 else
     EKVDIR=""
     EKVLIB=""	
@@ -336,6 +401,41 @@ AC_SUBST(XSPICEDIR)
 AC_SUBST(XSPICELIB1)
 AC_SUBST(XSPICELIB2)
 
+dnl Add CIDER enhacements to ngspice.
+if test "$enable_cider" = "yes"; then
+    AC_MSG_RESULT(CIDER features enabled)
+    AC_DEFINE(CIDER)
+    CIDERDIR="ciderlib"
+    CIDERSIM="	$CIDERDIR/twod/libcidertwod.a		\
+		$CIDERDIR/oned/libcideroned.a		\
+		$CIDERDIR/input/libciderinput.a		\
+		$CIDERDIR/support/libcidersuprt.a	\"
+            
+    NUMDEV="	spicelib/devices/nbjt/libnbjt.a   \
+		spicelib/devices/nbjt2/libnbjt2.a \
+		spicelib/devices/numd/libnumd.a   \
+		spicelib/devices/numd2/libnumd2.a \
+		spicelib/devices/numos/libnumos.a"
+   NUMDEVDIR="  nbjt	\
+   		nbjt2	\
+		numd	\
+		numd2	\
+		numos"
+		   
+   CIDERSCRIPTS="devload devaxis ciderinit"
+   
+else
+
+   CIDERLIB=""
+   CIDERSIM=""
+   NUMDEV=""
+   NUMDEVDIR=""
+   CIDERSCRIPTS=""
+fi
+AC_SUBST(CIDERDIR)
+AC_SUBST(CIDERSIM)
+AC_SUBST(NUMDEV) 
+
 dnl Cluster option
 if test "$enable_cluster" = "yes"; then
    AC_MSG_RESULT(Cluster version is being compiled)
@@ -366,10 +466,14 @@ src/spicelib/devices/bjt/Makefile	\
 src/spicelib/devices/bjt2/Makefile	\
 src/spicelib/devices/bsim1/Makefile	\
 src/spicelib/devices/bsim2/Makefile	\
+src/spicelib/devices/bsim3v0/Makefile	\
 src/spicelib/devices/bsim3v1/Makefile	\
+src/spicelib/devices/bsim3v1a/Makefile	\
+src/spicelib/devices/bsim3v1s/Makefile	\
+src/spicelib/devices/bsim3v2/Makefile	\
 src/spicelib/devices/bsim3/Makefile	\
 src/spicelib/devices/bsim4/Makefile	\
-src/spicelib/devices/bsim3v2/Makefile	\
+src/spicelib/devices/bsim3soi/Makefile	\
 src/spicelib/devices/bsim3soi_pd/Makefile \
 src/spicelib/devices/bsim3soi_fd/Makefile \
 src/spicelib/devices/bsim3soi_dd/Makefile \
@@ -384,6 +488,7 @@ src/spicelib/devices/ind/Makefile	\
 src/spicelib/devices/isrc/Makefile	\
 src/spicelib/devices/hfet1/Makefile	\
 src/spicelib/devices/hfet2/Makefile	\
+src/spicelib/devices/hisim/Makefile	\
 src/spicelib/devices/jfet/Makefile	\
 src/spicelib/devices/jfet2/Makefile	\
 src/spicelib/devices/ltra/Makefile	\
@@ -403,7 +508,17 @@ src/spicelib/devices/urc/Makefile	\
 src/spicelib/devices/vccs/Makefile	\
 src/spicelib/devices/vcvs/Makefile	\
 src/spicelib/devices/vsrc/Makefile	\
-src/spicelib/parser/Makefile	\
+src/spicelib/devices/nbjt/Makefile	\
+src/spicelib/devices/nbjt2/Makefile	\
+src/spicelib/devices/numd/Makefile	\
+src/spicelib/devices/numd2/Makefile	\
+src/spicelib/devices/numos/Makefile	\
+src/spicelib/parser/Makefile		\
+src/ciderlib/Makefile			\
+src/ciderlib/input/Makefile		\
+src/ciderlib/support/Makefile		\
+src/ciderlib/oned/Makefile		\
+src/ciderlib/twod/Makefile		\
 src/frontend/Makefile		\
 src/frontend/help/Makefile	\
 src/frontend/parser/Makefile	\
@@ -412,10 +527,12 @@ src/frontend/wdisp/Makefile	\
 src/include/Makefile		\
 src/maths/Makefile		\
 src/maths/cmaths/Makefile	\
+src/maths/misc/Makefile		\
 src/maths/ni/Makefile		\
 src/maths/deriv/Makefile	\
 src/maths/poly/Makefile		\
 src/maths/sparse/Makefile	\
+src/maths/sparse/tests/Makefile	\
 src/misc/Makefile		\
 src/xspice/Makefile		\
 src/xspice/cm/Makefile		\
