@@ -9,6 +9,6 @@ TESTS_ENVIRONMENT = $(SHELL) $(srcdir)/../check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
 	$(TESTS)		\
-	$(TESTS:.sh=.out)
+	$(TESTS:.cir=.out)
 
 MAINTAINERCLEANFILES = Makefile.in
