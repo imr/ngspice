@@ -1,3 +1,9 @@
+2003-09-24  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/analysis/dctrcurv.c: Fixed resistance sweep. First
+	point is now correct. A call to CKTtemp was needed in the first
+	point.
+
 2003-09-20  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/spicelib/devices/res/*, src/spicelib/analysis/nevalsrc.c,
@@ -10,7 +16,7 @@
 
 2003-09-18  Paolo Nenzi <p.nenzi@ieee.org>
 	
-	* src/spicelib/analysis/dctrcv.c: Corrected temperature sweep.
+	* src/spicelib/analysis/dctrcurv.c: Corrected temperature sweep.
 	  Initial temp was the circuit temperature and not the start
 	  value in the input line. There was a missing call to CKTtemp().
 

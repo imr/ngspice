@@ -87,6 +87,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                         cv->TRCVvType[i]  = rcode;
                         here->RESresist   = cv->TRCVvStart[i];
                         here->RESresGiven = 1;
+			CKTtemp(ckt);
                         goto found;
                     }
                 }
