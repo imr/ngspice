@@ -89,10 +89,10 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
        epsi           1.08411e-10
         cas                     1
         cbs                     1
-       type            1076316916
-         gd          2.50927e-312
-         gs          2.50927e-312
-      vcrit          2.50927e-312
+       type             137401874
+         gd                     1
+         gs                     1
+      vcrit                     1
 
  MESA: GaAs MESFET model
      device                    z1
@@ -100,10 +100,12 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
         off                     0
           l                 1e-06
           w                 2e-05
+          m                     1
       icvds                     0
       icvgs                     0
-         td                300.15
-         ts                300.15
+         td                    27
+         ts                    27
+      dtemp                     0
       dnode                     2
       gnode                     3
       snode                     0
