@@ -168,6 +168,17 @@ CCVS	- Current Controlled Voltage Source
 	Original spice model.
       
 ISRC	- Independent Current Source
+	Initial Release.
+	Ver:	N/A
+	Class:	I
+	Level:	1 (and only)
+	Status:	
+	
+	This is the original spice device improved by Alan Gillespie
+	with the following features:
+	
+	- Source ramping
+	- Check for non-monotonic series in PWL
 	
       
 VCCS	- Voltage Controlled Current Source
@@ -189,7 +200,17 @@ VCVS	- Voltage Controlled Voltage Source
 	Original spice model.
 
 VSRC	- Independent Voltage Source
-      Initial Release
+	Initial Release.
+	Ver:	N/A
+	Class:	V
+	Level:	1 (and only)
+	Status:
+	
+	This is the original spice device improved by Alan Gillespie
+	with the following features:
+	
+	- Source ramping
+	- Check for non-monotonic series in PWL
 
                      
 ***************************************************************************
@@ -271,6 +292,18 @@ BJT2	- Bipolar Junction Transistor
 	- Temperature difference from circuit temperature
 	- Different area parameters for collector, base and emitter
       
+VBIC	- Bipolar Junction Transistor
+	Initial Release.
+	Ver: 	N/A
+	Class:	Q
+	Level:	4 
+	Status:
+
+        This is the VBIC model. Colin mcAndrews ert al.
+	Spice 3 porting Dietmar Warning
+	only 3 terminals 
+	no xcess pahse 
+	no other
 
 ***************************************************************************
 *****************************    FET Devices    ***************************

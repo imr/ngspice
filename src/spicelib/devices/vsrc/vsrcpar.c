@@ -7,7 +7,6 @@ Modified: 2000 AlansFixes
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "vsrcdefs.h"
 #include "ifsim.h"
 #include "sperror.h"
@@ -16,11 +15,7 @@ Modified: 2000 AlansFixes
 
 /* ARGSUSED */
 int
-VSRCparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     int i;
     VSRCinstance *here = (VSRCinstance *)inst;

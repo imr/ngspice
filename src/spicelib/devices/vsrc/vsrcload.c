@@ -5,7 +5,6 @@ Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "vsrcdefs.h"
 #include "trandefs.h"
@@ -13,9 +12,7 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 int
-VSRCload(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+VSRCload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current voltage value into the 
          * sparse matrix previously provided 
          */

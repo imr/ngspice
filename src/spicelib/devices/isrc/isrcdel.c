@@ -6,17 +6,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "isrcdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-ISRCdelete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
+ISRCdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
     ISRCmodel *model = (ISRCmodel*)inModel;
     ISRCinstance **fast = (ISRCinstance**)inst;

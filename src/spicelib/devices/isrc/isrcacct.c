@@ -4,7 +4,6 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "isrcdefs.h"
 #include "trandefs.h"
@@ -12,9 +11,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-ISRCaccept(ckt,inModel)
-    CKTcircuit *ckt;
-    GENmodel *inModel;
+ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
         /* set up the breakpoint table.  */
 {
     ISRCmodel *model = (ISRCmodel*)inModel;

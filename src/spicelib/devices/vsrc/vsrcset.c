@@ -4,7 +4,6 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "vsrcdefs.h"
@@ -13,11 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-VSRCsetup(matrix,inModel,ckt,state)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *state;
+VSRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
         /* load the voltage source structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -56,9 +51,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-VSRCunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+VSRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     VSRCmodel *model;
     VSRCinstance *here;

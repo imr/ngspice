@@ -4,7 +4,6 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "vsrcdefs.h"
 #include "trandefs.h"
@@ -12,9 +11,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-VSRCaccept(ckt,inModel)
-    CKTcircuit *ckt;
-    GENmodel *inModel;
+VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
         /* set up the breakpoint table.
          */
 {

@@ -7,7 +7,6 @@ Modified: 2000 AlansFixes
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "isrcdefs.h"
 #include "sperror.h"
@@ -16,11 +15,7 @@ Modified: 2000 AlansFixes
 
 /* ARGSUSED */
 int
-ISRCparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
 	
 int i;	

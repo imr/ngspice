@@ -11,7 +11,6 @@ Author: 1988 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -22,12 +21,7 @@ Author: 1988 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-ISRCask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
     ISRCinstance *here = (ISRCinstance*)inst;
     static char *msg = "Current and power not available in ac analysis";

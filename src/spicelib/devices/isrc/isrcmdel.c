@@ -6,17 +6,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "isrcdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-ISRCmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+ISRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     ISRCmodel **model = (ISRCmodel**)inModel;
     ISRCmodel *modfast = (ISRCmodel*)kill;

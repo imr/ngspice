@@ -4,7 +4,6 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "complex.h"
 #include "sperror.h"
@@ -13,10 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-VSRCpzLoad(inModel,ckt,s)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    SPcomplex *s;
+VSRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     VSRCmodel *model = (VSRCmodel *)inModel;
     VSRCinstance *here;

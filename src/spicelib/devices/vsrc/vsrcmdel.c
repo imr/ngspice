@@ -6,17 +6,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "vsrcdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-VSRCmDelete(inModel,modname,fast)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *fast;
+VSRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *fast)
 {
     VSRCmodel **model = (VSRCmodel **)inModel;
     VSRCmodel *modfast = (VSRCmodel *)fast;

@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "vsrcdefs.h"
 #include "sperror.h"
@@ -14,9 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-VSRCacLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+VSRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     VSRCmodel *model = (VSRCmodel *)inModel;
     VSRCinstance *here;

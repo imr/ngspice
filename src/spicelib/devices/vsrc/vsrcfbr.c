@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "vsrcdefs.h"
 #include "sperror.h"
@@ -14,10 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-VSRCfindBr(ckt,inModel,name)
-    CKTcircuit *ckt;
-    GENmodel *inModel;
-    IFuid name;
+VSRCfindBr(CKTcircuit *ckt, GENmodel *inModel, IFuid name)
 {
     VSRCmodel *model = (VSRCmodel *)inModel;
     VSRCinstance *here;

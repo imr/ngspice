@@ -3,7 +3,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#ifdef __STDC__
 extern int VSRCacLoad(GENmodel*,CKTcircuit*);
 extern int VSRCaccept(CKTcircuit*,GENmodel *);
 extern int VSRCask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
@@ -19,20 +18,3 @@ extern int VSRCsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCunsetup(GENmodel*,CKTcircuit*);
 extern int VSRCpzSetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCtemp(GENmodel*,CKTcircuit*);
-#else /* stdc */
-extern int VSRCacLoad();
-extern int VSRCaccept();
-extern int VSRCask();
-extern int VSRCdelete();
-extern void VSRCdestroy();
-extern int VSRCfindBr();
-extern int VSRCload();
-extern int VSRCmAsk();
-extern int VSRCmDelete();
-extern int VSRCparam();
-extern int VSRCpzLoad();
-extern int VSRCsetup();
-extern int VSRCunsetup();
-extern int VSRCpzSetup();
-extern int VSRCtemp();
-#endif /* stdc */

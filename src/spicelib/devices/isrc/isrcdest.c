@@ -6,14 +6,12 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "isrcdefs.h"
 #include "suffix.h"
 
 
 void
-ISRCdestroy(inModel)
-    GENmodel **inModel;
+ISRCdestroy(GENmodel **inModel)
 {
     ISRCmodel **model = (ISRCmodel**)inModel;
     ISRCinstance *here;

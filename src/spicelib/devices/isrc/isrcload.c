@@ -5,7 +5,6 @@ Modified: 2000 Alansfixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "isrcdefs.h"
 #include "trandefs.h"
@@ -13,9 +12,7 @@ Modified: 2000 Alansfixes
 #include "suffix.h"
 
 int
-ISRCload(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+ISRCload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current current value into the 
          * sparse matrix previously provided 
          */

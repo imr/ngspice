@@ -1,5 +1,10 @@
 2004-01-26  Paolo Nenzi <p.nenzi@ieee.org>
 
+	*   DEVICES: updated isrc an vsrc status
+
+	*   src/spicelib/devices{isrc,vsrc}: Cleaned up code
+	    
+
 	*   tests/cider: Added example files for cider simulator.
 
 2004-01-25  Paolo Nenzi <p.nenzi@ieee.org>

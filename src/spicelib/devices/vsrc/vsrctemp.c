@@ -4,7 +4,6 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "vsrcdefs.h"
@@ -13,9 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-VSRCtemp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* Pre-process voltage source parameters 
          */
 {

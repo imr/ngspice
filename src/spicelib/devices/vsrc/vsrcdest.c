@@ -6,14 +6,12 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "vsrcdefs.h"
 #include "suffix.h"
 
 
 void
-VSRCdestroy(inModel)
-    GENmodel **inModel;
+VSRCdestroy(GENmodel **inModel)
 {
     VSRCmodel **model = (VSRCmodel**)inModel;
     VSRCinstance *here;

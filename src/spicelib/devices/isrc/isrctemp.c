@@ -4,7 +4,6 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "isrcdefs.h"
@@ -13,9 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 /*ARGSUSED*/
 int
-ISRCtemp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
 {
     ISRCmodel *model = (ISRCmodel*)inModel;
     ISRCinstance *here;
