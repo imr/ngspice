@@ -1,3 +1,23 @@
+2005-02-28  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   DEVICES: Updated (again) changing BSIM4 level from 60 to 14 since
+	    older model revisions are not yet in ngspice. This is consistent
+	    with model developers: newer models are compatible with older ones.
+	    
+	*   src/spicelib/devices/bsim4/: updated to revision 4.4.0 with "m"
+	    parallel multiplier enhancements. Thanks to Mick Tooher
+	    <micktooher@yahoo.com> and Dietmar Warning <warning@danalyse.de> for
+	    this update.
+	
+	*   tests/bsim4/: updated test files for bsim4 4.4.0. The old files have
+	    been replaced with new ones coming from BSIM4 site.  There are new
+	    tests: (*_gedl*) and ro_17.cir.         
+
+2005-02-25  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   DEVICES: Dietmar Warning (warning@danalyse.de) provided me an
+	    updated and corrected version of this file.
+
 2005-02-08  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/frontend/subckt.c: modified the file with the one supplied by

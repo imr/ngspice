@@ -359,7 +359,7 @@ JFET2   - Junction Field Effect Transistor  (PS model)
         Dir:    devices/jfet2
         Status:
 
-        This is the Parker Skellern model.
+        This is the Parker Skellern model for MESFETs.
 
         Web Site:
         http://www.elec.mq.edu.au/cnerf/models/psmodel/
@@ -374,13 +374,23 @@ JFET2   - Junction Field Effect Transistor  (PS model)
 ***************************    HFET devices     ***************************
 ***************************************************************************
 
-HFET    - HFET Level 1 (MacSpice3f4)
+   Added code from macspice3f4 HFET1&2 and MESA model 
+   Original note:
+     Added device calls for Mesfet models and HFET models
+     provided by Trond Ytterdal as of Nov 98 
+
+HFET1   - Heterostructure Field Effect Transistor Level 1
         Initial Release.
         Ver:    N/A
         Class:  Z
         Level:  5
-        Dir:    devices/hfet
+        Dir:    devices/hfet1
         Status:
+
+        This is the Heterostructure Field Effect Transistor model from:
+        K. Lee, M. Shur, T. A. Fjeldly and T. Ytterdal
+        "Semiconductor Device Modeling in VLSI", 
+        1993, Prentice Hall, New Jersey
 
         Enhancements over the original model:
 
@@ -389,13 +399,15 @@ HFET    - HFET Level 1 (MacSpice3f4)
         - Added pole-zero analysis
 
 
-HFET2   - HFET Level 2 (MacSpice3f4)
+HFET2   - Heterostructure Field Effect Transistor Level 2
         Initial Release.
         Ver:    N/A
         Class:  Z
         Level:  6
         Dir:    devices/hfet2
         Status:
+
+        Simplified version of hfet1
 
         Enhancements over the original model:
 
@@ -408,7 +420,7 @@ HFET2   - HFET Level 2 (MacSpice3f4)
 ***************************     MES devices     ***************************
 ***************************************************************************
 
-MES     - MESfet model
+MES     - MESFET model
         Initial Release.
         Ver:    N/A
         Class:  Z
@@ -416,13 +428,20 @@ MES     - MESfet model
         Dir:    devices/mes
         Status:
 
+        This is the original spice3 MESFET model (Statz).
+
         Enhancements over the original model:
 
         - Parallel multiplier
         - Alan Gillespie junction diodes implementation
 
 
-MESA    - MESA model (MacSpice3f4)
+   Added code from macspice3f4 HFET1&2 and MESA model 
+   Original note:
+     Added device calls for Mesfet models and HFET models
+     provided by Trond Ytterdal as of Nov 98 
+
+MESA    - MESFET model (MacSpice3f4)
         Initial Release.
         Ver:    N/A
         Class:  Z
@@ -618,9 +637,9 @@ BSIM3 - BSIM model level 3
 
 BSIM4   - BSIM model level 4 (0.18 um)
         Initial Release.
-        Ver:    4.2.1 (Updated in rework 14)
+        Ver:    4.4.0
         Class:  M
-        Level:  60
+        Level:  14
         Dir:    devices/bsim4
         Status: TO BE TESTED
 
@@ -630,7 +649,7 @@ BSIM4   - BSIM model level 4 (0.18 um)
         Web site:
         http://www-device.eecs.berkeley.edu/~bsim3/bsim4.html
 
-        *) Rework 14: Updated to 4.21 YET UNTESTED.
+        Updated to 4.4.0 YET UNTESTED.
 
 
 HiSIM   - Hiroshima-university STARC IGFET Model
