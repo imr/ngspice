@@ -74,6 +74,11 @@ typedef struct sINPmodel{
     void *INPmodfast;   /* high speed pointer to model for access */
 } INPmodel;
 
+
+/*  global input model table.  */
+extern INPmodel *modtab;
+
+
 /* listing types - used for debug listings */
 #define LOGICAL 1
 #define PHYSICAL 2

@@ -18,7 +18,6 @@ initdata_DATA = spinit setplot spectrum
 DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/asrc/libasrc.la		\
 	spicelib/devices/bjt/libbjt.la		\
-##	spicelib/devices/bjt2/libbjt2.la		\
 	spicelib/devices/bsim1/libbsim1.la	\
 	spicelib/devices/bsim2/libbsim2.la	\
 	spicelib/devices/bsim3/libbsim3.la	\
@@ -59,6 +58,15 @@ DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/vccs/libvccs.la		\
 	spicelib/devices/vcvs/libvcvs.la		\
 	spicelib/devices/vsrc/libvsrc.la
+
+
+
+## ----- Note that I moved this stuff to here because it was causing automake
+##       to choke when it was in the DYNAMIC_DEVICELIBS list above -----
+## This lib deleted from DYNAMIC_DEVICELIBS by sdb 'cause there's no source for it.
+##	spicelib/devices/bjt2/libbjt2.la		\
+## poly added to dynamic libs by SDB on 6.1.2003
+##	xspice/icm/poly/libpoly.la
 
 ## Build ngspice first:
 

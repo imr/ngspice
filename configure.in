@@ -207,6 +207,8 @@ dnl Checks for programs
 
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
+AC_PROG_LIBTOOL
+
 
 
 dnl Checks for X11 header files and libraries - X11 support can be disabled
@@ -363,6 +365,7 @@ fi
 AC_SUBST(EKVDIR)
 AC_SUBST(EKVLIB)
 
+dnl Add new code models to the build by pointing to them here.
 if test "$enable_xspice" = "yes"; then
     AC_MSG_RESULT(X-Spice features included)
     AC_DEFINE(XSPICE)
@@ -412,7 +415,7 @@ src/spicelib/analysis/Makefile	\
 src/spicelib/devices/Makefile		\
 src/spicelib/devices/asrc/Makefile	\
 src/spicelib/devices/bjt/Makefile	\
-src/spicelib/devices/bjt2/Makefile	\
+dnl           src/spicelib/devices/bjt2/Makefile	\
 src/spicelib/devices/bsim1/Makefile	\
 src/spicelib/devices/bsim2/Makefile	\
 src/spicelib/devices/bsim3v1/Makefile	\
@@ -428,7 +431,7 @@ src/spicelib/devices/ccvs/Makefile	\
 src/spicelib/devices/csw/Makefile	\
 src/spicelib/devices/cpl/Makefile       \
 src/spicelib/devices/dio/Makefile	\
-src/spicelib/devices/ekv/Makefile	\
+dnl            src/spicelib/devices/ekv/Makefile	\
 src/spicelib/devices/ind/Makefile	\
 src/spicelib/devices/isrc/Makefile	\
 src/spicelib/devices/hfet1/Makefile	\
@@ -467,6 +470,8 @@ src/maths/sparse/Makefile	\
 src/misc/Makefile		\
 src/xspice/Makefile		\
 src/xspice/cm/Makefile		\
+src/xspice/icm/Makefile		\
+src/xspice/icm/icm_spice2poly/Makefile		\
 src/xspice/mif/Makefile		\
 src/xspice/evt/Makefile		\
 src/xspice/enh/Makefile		\
@@ -480,7 +485,8 @@ tests/bsim3soipd/Makefile	\
 tests/bsim3soifd/Makefile	\
 tests/bsim3soidd/Makefile	\
 tests/bsim4/Makefile		\
-tests/mesa/Makefile
+tests/mesa/Makefile		\
+tests/TransImpedanceAmp/Makefile
 )
 
 dnl Printout Tcl option

@@ -1,3 +1,31 @@
+SPICE 2 POLY CODEMODEL
+
+SPICE2 POLY attributes are now available for controlled sources.  To
+use POLY attributes, configure tclspice/ngspice with the
+--enable-xspice flag set as described above.  After compilation of
+ngspice, cd into $(top_srcdir)/src/xspice/icm and read the README file
+there for instructions about how to get POLY support.  (Hint: you have
+to download some stuff from http://www.fe.uni-lj.si/ and edit the
+Makefiles before you can do "make && make install" of the codemodel
+stuff.)
+
+-- SDB 6.22.2003.
+
+--------------------------------------------------------------------
+COMPILING XSPICE CHANGES
+
+The dependencies in the Makefile don't seem to work when you are
+compiling changes in the xspice stuff.  Obviously, the best thing to
+do is fix Makefile.am, but since I am not an expert at this, I have
+been using the following workaround when making:
+
+touch src/main.c && make && make install
+
+I recommend you also do this if you hack anything under src/xspice.
+
+-- SDB 6.19.2003.
+
+---------------------------------------------------------------------
 DEBUGGING SPICE
 
 To avoid a segmentation fault in the initial run, use the following

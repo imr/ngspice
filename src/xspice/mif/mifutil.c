@@ -62,6 +62,8 @@ is advanced to the following token and the token from the input
 string is copied to malloced storage and a pointer to that storage
 is returned.  The original input string is undisturbed.
 
+MIFgettok treats ( and ) like whitespace.
+
 */
 
 char  *MIFgettok(char **s)
@@ -140,8 +142,8 @@ char  *MIFgettok(char **s)
         (*s)++;
 
     /* make a copy using only the space needed by the string length */
-
-    ret_str = copy(buf);
+    /* Changed from copy to MIFcopy by SDB on 6.22.2003             */
+    ret_str = MIFcopy(buf);
     FREE(buf);
 
     return(ret_str);

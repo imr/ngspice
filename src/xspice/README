@@ -22,3 +22,20 @@ TODO:
 
 Stefan Jones 
 	19/2/2002
+
+-----------------------------------------
+SPICE2 POLY codemodel support.
+
+SPICE2 POLY attributes are now available for controlled sources.  To
+use POLY attributes, configure tclspice/ngspice with the
+--enable-xspice flag set as described above.  After compilation of
+ngspice, cd into $(top_srcdir)/src/xspice/icm and read the README file
+there for instructions about how to get POLY support.  (Hint: you have
+to download some stuff from http://www.fe.uni-lj.si/ and edit the
+Makefiles before you can do "make && make install" of the codemodel
+stuff.)  
+
+Please direct questions/comments/complaints to mailto:sdb@cloud9.net.
+
+6.22.2003 -- SDB.
+

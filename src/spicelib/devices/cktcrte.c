@@ -42,7 +42,7 @@ CKTcrtElt(void *ckt, void *inModPtr, void **inInstPtr, IFuid name)
 
 #ifdef TRACE
     /*------  SDB debug statement  -------*/
-    printf("about to tmalloc, type = %d. . . \n", type);
+    printf("In CKTcrtElt, about to tmalloc new model, type = %d. . . \n", type);
 #endif
 
     instPtr = (GENinstance *) tmalloc(*DEVices[type]->DEVinstSize);

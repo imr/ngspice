@@ -195,8 +195,8 @@ card         *current;  /* the card we are to parse                     */
 
 #ifdef TRACE
     /* SDB debug statement */
-    printf("In MIF_INP2A, after tokenizing, name = %s, model = %s\n",
-	   name, model);
+    printf("In MIF_INP2A, about to get ports on line %s\n",
+	   current->line);
 #endif
 
 
@@ -231,19 +231,20 @@ card         *current;  /* the card we are to parse                     */
     /* and reading the first token following  */
 
     line = current->line;
-    MIFgettok(&line);
-    next_token = MIFget_token(&line,&next_token_type);
+    MIFgettok(&line); /* read instance name again . . . .*/
 
-
-    /* loop through the fixed number of connections expected */
-
+    /******* loop through the fixed number of connections expected *******/
     for(i = 0; i < DEVices[type]->DEVpublic.num_conn; i++) {
 
         /* there better be at least one more token besides the model name */
         if(*line == '\0') {
-            LITERR("Missing connections on A device");
+            LITERR("Encountered end of line before all connections were found in model.");
             return;
         }
+
+	/* now get next token, should be a % after this statement */
+	next_token = MIFget_token(&line,&next_token_type);
+
 
         /* prepare a pointer for fast access to info about this connection */
         conn_info = &(DEVices[type]->DEVpublic.conn[i]);
@@ -251,6 +252,34 @@ card         *current;  /* the card we are to parse                     */
         /* get the default port type for this connection */
         def_port_type = conn_info->default_port_type;
         def_port_type_str = conn_info->default_type;
+
+
+	/*  Now get real info about connection type (instead of default info) */
+	if(next_token_type == MIF_PERCENT_TOK) {  /*  next_token_type should be a %  */
+	  
+	  /* get the port type identifier and check it for validity */
+	  next_token = MIFget_token(&line,&next_token_type);
+	  MIFget_port_type(ckt,
+			   tab,
+			   current,
+			   &line,
+			   &next_token,
+			   &next_token_type,
+			   &def_port_type,
+			   &def_port_type_str,
+			   conn_info,
+			   &status);
+	  if(status == MIF_ERROR)
+	    return;
+	}
+	else {
+            LITERR("Non percent token encountered when expecting MIF_PERCENT_TOK");
+            return;
+        }
+
+
+	/* At this point, next_token should hold the token *after* the port type
+	   identified (%v, %id, etc). */
 
         /* set analog and event_driven flags on instance and model */
         if((def_port_type == MIF_DIGITAL) || (def_port_type == MIF_USER_DEFINED)) {
@@ -262,8 +291,8 @@ card         *current;  /* the card we are to parse                     */
             mdfast->analog = MIF_TRUE;
         }
 
-        /* check for a null connection and continue to next connection if found */
 
+        /* check for a null connection and continue to next connection if found */
         if(next_token_type == MIF_NULL_TOK) {
 
             /* make sure null is allowed */
@@ -285,9 +314,12 @@ card         *current;  /* the card we are to parse                     */
             fast->conn[i]->is_null = MIF_FALSE;
         }
 
-        /* process connection as appropriate for scalar or array */
 
+
+        /* =====  process connection as appropriate for scalar or array  ====== */
         if(! conn_info->is_array) {     /* a scalar connection - the simpler case */
+
+	  /*  At this point, next_token should hold the first netname in the port netlist.  */
 
             /* do a couple of error checks */
             if(next_token_type == MIF_LARRAY_TOK) {
@@ -315,44 +347,27 @@ card         *current;  /* the card we are to parse                     */
                         0,                  /* port index for scalar connection */
                         &status);
 
+	    /* upon leaving MIFget_port, we should be *ready* to read a % with the next
+	       get_token */
+
             if(status == MIF_ERROR)
                 return;
 
             fast->conn[i]->size = 1;
         }
-        else {  /* the connection is an array - much to be done ... */
+        else {  /* ====== the connection is an array - much to be done ... ====== */
 
-            /* get the leading port type for the array if any */
-            /* it will distribute across all ports inside the braces */
-            /* overriding the default type in the interface spec */
-
-            if(next_token_type == MIF_PERCENT_TOK) {
-
-                /* get the port type identifier and check it for validity */
-                next_token = MIFget_token(&line,&next_token_type);
-                MIFget_port_type(ckt,
-                                 tab,
-                                 current,
-                                 &line,
-                                 &next_token,
-                                 &next_token_type,
-                                 &def_port_type,
-                                 &def_port_type_str,
-                                 conn_info,
-                                 &status);
-                if(status == MIF_ERROR)
-                    return;
-            }
+	    /* At this point, the next_token should be a [ */
 
             /* check for required leading array delim character and eat it if found */
             if(next_token_type != MIF_LARRAY_TOK) {
                 LITERR("Missing [, an array connection was expected");
                 return;
             }
-            else
+            else  /* eat the [  */
                 next_token = MIFget_token(&line,&next_token_type);
 
-            /* get and process ports until ] is encountered */
+            /*------ get and process ports until ] is encountered ------*/
 
             for(j = 0;
                 (next_token_type != MIF_RARRAY_TOK) &&
@@ -386,16 +401,24 @@ card         *current;  /* the card we are to parse                     */
 
                 if(status == MIF_ERROR)
                     return;
-            }
+            } /*------ end of for loop until ] is encountered ------*/
+
+	    /*  At this point, next_token should hold the next token after the 
+		port netnames.  This token should be a ].  */
 
             /* make sure we exited because the end of the array connection */
-            /* was reached.  If so, eat the closing array delimiter            */
+            /* was reached.  If so, eat the closing array delimiter ]      */
             if(*line == '\0') {
                 LITERR("Missing ] in array connection");
                 return;
             }
-            else
-                next_token = MIFget_token(&line,&next_token_type);
+
+	    /*    else {
+	     * next_token = MIFget_token(&line,&next_token_type);
+	     * }
+	     */
+
+	    /*  At this point, the next time we get_token, we should get a %  */
 
             /* record the number of ports found for this connection */
             if(j < 1) {
@@ -404,12 +427,13 @@ card         *current;  /* the card we are to parse                     */
             }
             fast->conn[i]->size = j;
 
-        }  /* array connection processing */
+        }  /* ======  array connection processing   ====== */
 
         /* be careful about putting stuff here, there is a 'continue' used */
         /* in the processing of NULL connections above                     */
 
-    } /* for number of connections */
+
+    } /******* for number of connections *******/
 
 
     /* *********************** */
@@ -418,8 +442,12 @@ card         *current;  /* the card we are to parse                     */
 
     /* check for too many connections */
 
-    if(*line != '\0') {
-        LITERR("Too many connections");
+    /* At this point, we should have eaten all the net connections.  At 
+       this point, line should hold only the remainder of the model line (i.e.
+       the model name). */
+
+    if(strcmp(line,name) != 0) {
+        LITERR("Too many connections -- expecting model name but encountered other tokens.");
         return;
     }
 
@@ -586,7 +614,17 @@ static void  MIFinit_inst(
 /*
 MIFget_port_type
 
-This function gets the port type identifier and checks it for validity.
+This function gets the port type identifier and checks it for validity.  It also
+replaces false default information in conn_info with the real info based upon
+the discovered port type string.
+
+When we call it, we expect that the next token type (sent from above) 
+should be the port type (MIF_STRING_TOK type).  That is, we should be sitting right
+on the def of the port type (i.e. %vnam, %vd, %id, etc.)  Note that the parser
+should have stripped the % already.
+
+Upon return, this fcn should leave next_token holding the token *after* the
+port type (i.e. the thing after vnam, v, vd, id, etc).  
 */
 
 
@@ -643,8 +681,20 @@ MIFget_port_type(
         LITERR("Port type is invalid");
         *status = MIF_ERROR;
     }
-    else
+    else {
+
+      /* Fix by SDB so that the netlist parser uses the actual nature
+	 of the port instead of the default state to decide if it is an array.  */
+      if ( (*port_type == MIF_DIFF_VOLTAGE) ||
+	   (*port_type == MIF_DIFF_CURRENT) ||
+	   (*port_type == MIF_DIFF_CONDUCTANCE) ||
+	   (*port_type == MIF_DIFF_RESISTANCE) ) {
+	conn_info->is_array = 1;
+      }
+
         *status = MIF_OK;
+    }
+
 }
 
 
@@ -658,6 +708,13 @@ MIFget_port
 
 This function processes a port being parsed, either single ended,
 or both connections of a differential.
+
+When we call this fcn, next_token should be the *first* netname in the port 
+net list.  Depending upon the type of port, this fcn should eat the appropriate
+number of net tokens.
+
+When we leave this fcn, next_token should hold the next token after the last 
+netname processed.
 */
 
 
@@ -687,27 +744,6 @@ MIFget_port(
 
 	char            *node;
 
-    /* get the leading port type if any */
-
-    if(*next_token_type == MIF_PERCENT_TOK) {
-
-        /* get the port type identifier and check it for validity */
-        *next_token = MIFget_token(line, next_token_type);
-        MIFget_port_type(ckt,
-                         tab,
-                         current,
-                         line,
-                         next_token,
-                         next_token_type,
-                         &def_port_type,
-                         &def_port_type_str,
-                         conn_info,
-                         status);
-
-        if(*status == MIF_ERROR) {
-            return;
-        }
-    }
 
     /* allocate space in the instance data struct for this port */
     if(port_num == 0) {

@@ -1,0 +1,49 @@
+This directory holds a codemodel which enables ngspice to handle SPICE
+2 POLY attributes on controlled sources.  In short, when a SPICE 2
+netlist is read in, any controlled sources with POLY attributes are
+translated into codemodel devices with an associated .model which
+invokes spice2poly to evaluate the polynomial.  
+
+To use this model, you need to do the following:
+
+1.  Compile the rest of ngspice/tclspice in the usual way from the
+base directory.
+
+2.  Download and install SPICE Opus (available from
+http://www.fe.uni-lj.si/ ).  From this you need the program cmpp, as
+well as some of the include files. 
+
+3.  Edit the Makefile in this directory and make the variable CMPPDIR
+point to the base location of your Opus installation.
+
+4.  Edit the Makefile in the directory above (..) and make the
+variable CMPDIR point to the base location of your Opus installation.  
+
+5.  Do "make" in the directory above (..).  The makefiles are set up
+to do all the necessary stuff to turn the spice2poly sources into a
+shared object named spice2poly.cm which you can load into ngspice.
+(Alternatively, you can do "make codemodels" from $(top_srcdir); I
+have included codemodels as a target which cd's into the directory
+below and does "make".)
+
+6.  Read the codemodel into ngspice in the following way:
+
+ngspice 1 -> codemodel /usr/local/src/tclspice-0.2.10/src/xspice/icm/spice2poly.cm
+
+(Of course, you should point to the location where *you* built
+spice2poly.cm!)  You might want to put this invocation into your
+spinit file (which usually lives in $(top_srcdir)/src/).
+
+7.  Then read in your SPICE netlist.  SPICE 2 POLY attributes in
+controlled sources will be translated into .models invoking the
+spice2poly codemodel.  You should be able to run ngspice and simulate
+in the usual way!
+
+----------------------------------------------------------------------
+Please send any comments/questions/bug reports to:
+
+Stuart Brorson
+sdb@cloud9.net
+
+-- SDB 6.19.2003
+

@@ -77,8 +77,11 @@ typedef struct {
 } Mif_Info_t;
 
 
+/* These are defined in mif.c */
+extern int MIFiSize;
+extern int MIFmSize;
+
 
 extern Mif_Info_t  g_mif_info;
-
 
 #endif  /* MIF */

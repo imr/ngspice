@@ -62,7 +62,6 @@ NON-STANDARD FEATURES
 
 
 /*=== FUNCTION PROTOTYPES ===*/
-
 static int needs_translating(char *card);
 static int count_tokens(char *card);
 static char *two2three_translate(char  *orig_card, char  **inst_card,
@@ -92,8 +91,6 @@ struct line * ENHtranslate_poly(
    struct   line  *l2;
 
    char  *card;
-   int poly_dimension;
-   char *buff;
 
    /* Iterate through each card in the deck and translate as needed */
    for(d = deck; d; d = d->li_next) 
@@ -174,15 +171,15 @@ static int needs_translating(
 
    switch(*card) {
 
-   case 'e':
-   case 'g':
+   case 'e': case 'E':
+   case 'g': case 'G':
       if(count_tokens(card) <=6)
          return(0);
       else
          return(1);
 
-   case 'f':
-   case 'h':
+   case 'f': case 'F':
+   case 'h': case 'H':
       if(count_tokens(card) <= 5)
          return(0);
       else
@@ -217,17 +214,57 @@ static int count_tokens(
 
 
 
+/********************************************************************/
+/*====================================================================
 
-/*--------------------------------------------------------------------*/
-/*
 two2three_translate()
 
-Do the syntax translation of the 2G6 source to the new code model syntax.
+Do the syntax translation of the 2G6 source to the new code model 
+syntax.  The translation proceeds according to the template below.
 
-Renamed by SDB to eliminate clash with translate fcn defined in subckt.c
-4.17.2003 -- SDB
+--------------------------------------------
+VCVS:
+ename N+ N- POLY(dim) NC+ NC- P0 P1 P2 . . .
+N+ N- = outputs
+NC+ NC- = inputs
 
-*/
+aname %vd[NC+ NC-] %vd[N+ N-] pname
+.model pname spice2poly(coef=P0 P1 P2 . . . )
+%vd[NC+ NC-] = inputs
+%vd[N+ N-] = outputs
+--------------------------------------------
+CCCS
+fname N+ N- POLY(dim) Vname P0 P1 P2 . . .
+N+ N- = outputs
+Vname = input voltage source (measures current)
+
+aname %vnam[Vname] %id[N+ N-] pname
+.model pname spice2poly(coef=P0 P1 P2 . . . )
+%vnam[Vname] = input
+%id[N+ N-] = output
+--------------------------------------------
+VCCS
+gname N+ N- POLY(dim) NC+ NC- P0 P1 P2 , , ,
+N+ N- = outputs
+NC+ NC- = inputs
+
+aname %vd[NC+ NC-] %id[N+ N-] pname
+.model pname spice2poly(coef=P0 P1 P2 . . . )
+%vd[NC+ NC-] = inputs
+%id[N+ N-] = outputs
+--------------------------------------------
+CCVS
+hname N+ N- POLY(dim) Vname P0 P1 P2 . . .
+N+ N- = outputs
+Vname = input voltage source (measures current)
+
+aname %vnam[Vname] %vd[N+ N-] pname
+.model pname spice2poly(coef=P0 P1 P2 . . . )
+%vnam[Vname] = input
+%vd[N+ N-] = output
+
+====================================================================*/
+/********************************************************************/
 
 static char *two2three_translate(
    char  *orig_card,    /* the original untranslated card */
@@ -246,6 +283,7 @@ static char *two2three_translate(
 
    char  type;
 
+   char  *tok;
    char  *name;
    char  **out_conn;
    char  **in_conn;
@@ -259,20 +297,22 @@ static char *two2three_translate(
    printf("In two2three_translate, card to translate = %s . . .\n", orig_card);
 #endif
 
-   /* Get the first character into local storage for checking type */
+   /* Put the first character into local storage for checking type */
    type = *orig_card;
 
    /* Count the number of tokens for use in parsing */
    num_tokens = count_tokens(orig_card);
 
    /* Determine the dimension of the poly source */
+   /* Note that get_poly_dimension returns 0 for "no poly", -1 for 
+      invalid dimensiion, otherwise returns numeric value of POLY */
    dim = get_poly_dimension(orig_card);
-   if(dim <= 0) {
+   if(dim == -1) {
       printf("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
       return("ERROR - Argument to poly() is not an integer\n");
    }
 
-   /* Compute number of input connections based on type and dimension */
+   /* Compute number of output connections based on type and dimension */
    switch(type) {
    case 'E':
    case 'e':
@@ -286,10 +326,16 @@ static char *two2three_translate(
    }
 
    /* Compute number of coefficients.  Return error if less than one. */
-   if(dim == 1)
-      num_coefs = num_tokens - num_conns - 3;
+   if(dim == 0)
+     num_coefs = num_tokens - num_conns - 3;  /* no POLY token */
    else
-      num_coefs = num_tokens - num_conns - 5;
+     num_coefs = num_tokens - num_conns - 5;  /* POLY token present */
+
+#ifdef TRACE
+   /* SDB debug statement */
+   printf("In two2three_translate, num_tokens=%d, num_conns=%d, num_coefs=%d . . .\n", num_tokens, num_conns, num_coefs);
+#endif
+
 
    if(num_coefs < 1)
       return("ERROR - Number of connections differs from poly dimension\n");
@@ -300,18 +346,30 @@ static char *two2three_translate(
    card = orig_card;
    name = MIFgettok(&card);
 
+   /* Get output connections (2 netnames) */
    out_conn = (void *) MALLOC(2 * sizeof(char *));
    for(i = 0; i < 2; i++)
       out_conn[i] = MIFgettok(&card);
 
-   if(dim > 1)
-      for(i = 0; i < 2; i++)
-         txfree(MIFgettok(&card));
+   /* check for POLY, and ignore it if present */
+   if (dim >  0) { 
 
+#ifdef TRACE
+     /* SDB debug statement */
+     printf("In two2three_translate, found poly!!!  dim = %d \n", dim);
+#endif
+
+     tok = MIFgettok(&card); /* read and discard POLY */
+     tok = MIFgettok(&card); /* read and discard dimension */
+   }
+
+
+   /* Get input connections (2 netnames per dimension) */
    in_conn = (void *) MALLOC(num_conns * sizeof(char *));
    for(i = 0; i < num_conns; i++)
       in_conn[i] = MIFgettok(&card);
 
+   /* The remainder of the line are the poly coeffs. */
    coef = (void *) MALLOC(num_coefs * sizeof(char *));
    for(i = 0; i < num_coefs; i++)
       coef[i] = MIFgettok(&card);
@@ -320,14 +378,14 @@ static char *two2three_translate(
    /* Allow a fair amount of extra space for connection types, etc. */
    /* to be safe... */
 
-   inst_card_len = 50;
+   inst_card_len = 70;
    inst_card_len += 2 * (strlen(name) + 1);
    for(i = 0; i < 2; i++)
       inst_card_len += strlen(out_conn[i]) + 1;
    for(i = 0; i < num_conns; i++)
       inst_card_len += strlen(in_conn[i]) + 1;
 
-   mod_card_len = 50;
+   mod_card_len = 70;
    mod_card_len += strlen(name) + 1;
    for(i = 0; i < num_coefs; i++)
       mod_card_len += strlen(coef[i]) + 1;
@@ -340,6 +398,7 @@ static char *two2three_translate(
    strcpy(*inst_card, "a$poly$");
    sprintf(*inst_card + strlen(*inst_card), "%s ", name);
 
+   /* Write input nets/sources */
    if((type == 'e') || (type == 'g') ||
       (type == 'E') || (type == 'G'))
       sprintf(*inst_card + strlen(*inst_card), "%%vd [ ");
@@ -351,19 +410,26 @@ static char *two2three_translate(
 
    sprintf(*inst_card + strlen(*inst_card), "] ");
 
+
+   /* Write output nets */
    if((type == 'e') || (type == 'h') ||
       (type == 'E') || (type == 'H'))
-      sprintf(*inst_card + strlen(*inst_card), "%%vd ");
+      sprintf(*inst_card + strlen(*inst_card), "%%vd [ ");
    else
-      sprintf(*inst_card + strlen(*inst_card), "%%id ");
+      sprintf(*inst_card + strlen(*inst_card), "%%id [ ");
 
    for(i = 0; i < 2; i++)
       sprintf(*inst_card + strlen(*inst_card), "%s ", out_conn[i]);
 
+   sprintf(*inst_card + strlen(*inst_card), "] ");
+
+
+   /* Write model name */   
    sprintf(*inst_card + strlen(*inst_card), "a$poly$%s", name);
 
 
-   sprintf(*mod_card, ".model a$poly$%s poly coef = [ ", name);
+   /* Now create model card */
+   sprintf(*mod_card, ".model a$poly$%s spice2poly coef = [ ", name);
    for(i = 0; i < num_coefs; i++)
       sprintf(*mod_card + strlen(*mod_card), "%s ", coef[i]);
    sprintf(*mod_card + strlen(*mod_card), "]");
@@ -417,9 +483,11 @@ static char *two2three_translate(
 get_poly_dimension()
 
 Get the poly source dimension from the token immediately following
-the 'poly' if any.  If 'poly' is not present, return 1.  If poly is
-present and token following is a valid integer, return it.  Else
-return 0.
+the 'poly' if any.  Return values changed by SDB on 5.23.2003 to be:
+If "poly" is not present, return 0.
+If the dimension token following "poly" is invalid, return -1.
+Otherwise, return the integer dimension.
+Note that the dimension may only be 1 or 2.  Is this correct SPICE?
 */
 
 
@@ -429,7 +497,7 @@ static int get_poly_dimension(
 
    int   i;
    int   dim;
-   char  *tok;
+   char  *local_tok;
 
 
    /* Skip over name and output connections */
@@ -437,27 +505,32 @@ static int get_poly_dimension(
       txfree(MIFgettok(&card));
 
    /* Check the next token to see if it is "poly" */
-   /* If not, return a dimension of 1             */
-   tok = MIFgettok(&card);
-   if(strcmp(tok, "poly")) 
+   /* If not, return  0                           */
+   local_tok = MIFgettok(&card);
+   if( strcmp(local_tok, "poly") &&
+       strcmp(local_tok, "POLY") )   /* check that local_tok is *not* poly */
    {
-      FREE(tok);
-
-	  tok = NULL;
-
-      return(1);
+      FREE(local_tok);
+      local_tok = NULL;
+      return(0);
    }
 
-   FREE(tok);
+   FREE(local_tok);
 
    /* Must have been "poly", so next line must be a number */
    /* Try to convert it.  If successful, return the number */
-   /* else, return 0 to indicate an error...               */
-   tok = MIFgettok(&card);
-   dim = atoi(tok);
-   FREE(tok);
+   /* else, return -1 to indicate an error...               */
+   local_tok = MIFgettok(&card);
+   dim = atoi(local_tok);
+   FREE(local_tok);
 
+   /*  This is stupid, but it works. . . . */
+   if ( (dim == 0) || (dim == 1) || (dim == 2) ) {
    return(dim);
+   } 
+   else {
+     return(-1);
+   }
 
 } /* get_poly_dimension */
 

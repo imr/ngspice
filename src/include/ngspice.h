@@ -3,15 +3,6 @@
  * 1999 E. Rouat
  ************/
 
-/*  Uncomment this to get trace of program operation for 
- *  debugging
- */
-/* #define TRACE */
-
-/*  This was also added by SDB to aid in
- *  debugging.  Remove when finished.
- */
-
 /* #include "memwatch.h"
  #define MEMWATCH */
 

@@ -3,7 +3,6 @@
 SUBDIRS = \
 	asrc	\
 	bjt	\
-##	bjt2	\
 	bsim1	\
 	bsim2	\
 	bsim3	\
@@ -44,6 +43,11 @@ SUBDIRS = \
 	vcvs	\
 	vsrc
 
+##  This line move to here 'cause it was causing automake to choke 
+##  when it was in the list of subdirs
+##	bjt2	\
+
+
 noinst_LIBRARIES = libdev.a
 
 libdev_a_SOURCES = 	\
@@ -58,6 +62,6 @@ libdev_a_SOURCES = 	\
 	cktfinddev.c	\
 	cktinit.c
 
-INCLUDES = -I$(top_srcdir)/src/include
+INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 
 MAINTAINERCLEANFILES = Makefile.in

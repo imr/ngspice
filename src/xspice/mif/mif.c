@@ -39,10 +39,8 @@ NON-STANDARD FEATURES
 
 #include "mif.h"
 
-/* jgroves   */
-
-int MIFiSize = sizeof(MIFinstance);  /* jgroves  */
-int MIFmSize = sizeof(MIFmodel);     /* jgroves  */
+int MIFiSize = sizeof(MIFinstance);  
+int MIFmSize = sizeof(MIFmodel); 
 
 
 /* Allocate global used to pass info on analysis type, etc. from */

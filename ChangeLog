@@ -1,3 +1,31 @@
+ 2003-06-22  Stuart Brorson  <sdb@cloud9.net>
+ 
+ 	*  Finally got SPICE2 POLY stuff working.  This involved lots of changes
+ 	in src/xspice/mif and src/xspice/enh.  Particular changes were made in:
+ 	   --  MIF_INP2A: re-arranged logic to fix parsing problems.
+ 	   --  two2three_translate: fixed some stupid pointer problems.
+ 	   --  etc.
+ 
+ 	*  Revamped src/xspice/icm/ and src/xspice/icm/icm_spice2poly
+ 	directories to enable build of POLY codemodel.  Makefiles were
+ 	fixed, and some stuff was added to enable cmpp (from SPICE Opus)
+ 	to build the codemodel precursors correctly.  (Note that you need
+ 	to download and install SPICE Opus to rebuild the codemodel
+ 	stuff.  See  src/xspice/icm/README for more details.)
+ 
+ 	*  Hacked Makefile.am's for much of the directory hierarchy, particularly
+ 	for src/xspice/icm and src/xspice/icm/icm_spice2poly to build the POLY
+ 	codemodel correctly.  Note that top level make still doesn't detect 
+ 	changes in the xspice hierarchy; read the NOTES file for a workaround.
+ 
+ 	*  Added a SPICE netlist incorporating vendor models with SPICE2
+ 	POLYs in tests/TransImpedanceAmp/.  Running this model
+ 	successfully demonstrates that you have built the XSpice POLY
+ 	codemodel correctly and that life is good . . . .
+ 
+ 	*  Moved #define TRACE out of src/ngspice.h and made it a compiler
+ 	option (-DTRACE) invoked in src/Makefile when making spice.o.
+ 	
 2003-06-19  Adrian Dawe <a.dawe@multigig.com>
 
 	*  Much improved spice wish interface; graph includes zooming, 

@@ -64,7 +64,8 @@ NON-STANDARD FEATURES
 
 #include "suffix.h"
 
-
+/*  This is the table of all models known to the program.  */
+/*  It is now defined in inpdefs.h  6.19.2003 -- SDB.      */
 extern INPmodel *modtab;
 
 extern SPICEdev **DEVices;        /* info about all device types */
@@ -111,20 +112,29 @@ char *MIFgetMod(
     MIFmodel          *mdfast;
     /* Mif_Param_Info_t  *param_info;*/
 
-    /* locate the named model in the modtab list */
+
+    /* ===========  First locate the named model in the modtab list ================= */
 
 #ifdef TRACE
     /* SDB debug statement */
-    printf("In MIFgetMod, model name = %s . . .\n", name);
+    printf("In MIFgetMod, looking for model name = %s . . .\n", name);
 #endif
 
-    /* maschmann : remove : from name */
+    /* maschmann : remove : from name
+     *    char *pos;
+     * if((pos=strstr(name,":"))!=NULL) *pos=0;   
+     */
 
-    /*    char *pos;
+    /*------------------------------------
+   for (i = &modtab; *i != (INPmodel *) NULL; i = &((*i)->INPnextModel)) {
+        if (strcmp((*i)->INPmodName, token) == 0) {
+            return (OK);
+        }
+    }
+    --------------------------*/
 
-    if((pos=strstr(name,":"))!=NULL) *pos=0;   */
-
-    for (modtmp = modtab; modtmp != NULL; modtmp = ((modtmp)->INPnextModel)) {
+    /* loop through modtable looking for this model (*name) */
+    for (modtmp = modtab; modtmp != NULL; modtmp = ((modtmp)->INPnextModel) ) {
 
 #ifdef TRACE
       /* SDB debug statement */
@@ -133,13 +143,16 @@ char *MIFgetMod(
 
         if (strcmp((modtmp)->INPmodName,name) == 0) {
 
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In MIFgetMod, found model!!!\n");
+#endif
 
-
-            /* found the model in question - now instantiate if necessary */
-            /* and return an appropriate pointer to it */
+	/* ========= found the model in question - now instantiate if necessary ========== */
+	/* ==============    and return an appropriate pointer to it ===================== */
 
             /* make sure the type is valid before proceeding */
-            if(modtmp->INPmodType<0) {
+	if( (modtmp)->INPmodType < 0) {
                 /* illegal device type, so can't handle */
                 *model = NULL;
 
@@ -213,7 +226,7 @@ char *MIFgetMod(
 						//err has not been allocated, but free() in INPerrCat()
 
 						// This did not allocate enough memory you wanker, K.A. replaced 5 March 2000
-//						temp = (char *)tmalloc((40+strlen(parm)) * sizeof(char));
+		// temp = (char *)tmalloc((40+strlen(parm)) * sizeof(char));
 						temp = (char *)tmalloc((42+strlen(parm)) * sizeof(char));// K.A. replaced 5 March 2000
 
 						sprintf(temp, "MIF: unrecognized parameter (%s) - ignored\n", parm);

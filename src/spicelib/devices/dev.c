@@ -289,7 +289,7 @@ void load_alldevs(void){
 }
 #endif
 
-
+/*--------------------   XSPICE additions below  ----------------------*/
 #ifdef XSPICE
 #include <mif.h>
 #include <cm.h>
@@ -298,8 +298,18 @@ void load_alldevs(void){
 #include <cktdefs.h> /*for DEVmaxnum*/
 
 static void relink() {
-  ft_sim->numDevices = num_devices();
-  DEVmaxnum = num_devices();
+  /*  added by SDB; DEVmaxnum is an external int defined in cktdefs.h  */
+  extern int DEVmaxnum;
+
+/*
+ * This replacement done by SDB on 6.11.2003
+ *
+ * ft_sim->numDevices = num_devices();
+ * DEVmaxnum = num_devices();
+ */
+  ft_sim->numDevices = DEVNUM;
+  DEVmaxnum = DEVNUM;
+
   ft_sim->devices = devices_ptr();
   return;
 }
@@ -311,6 +321,10 @@ int add_device(int n, SPICEdev **devs, int flag){
   for(i = 0; i < n;i++){
     /*debug*/printf("Added device: %s\n",devs[i]->DEVpublic.name);
     DEVices[DEVNUM+i] = devs[i];
+
+    /* added by SDB on 6.20.2003 */
+    DEVices[DEVNUM+i]->DEVinstSize = &MIFiSize;
+
     DEVicesfl[DEVNUM+i] = flag;
   }
   DEVNUM += n;
@@ -407,4 +421,6 @@ int load_opus(char *name){
 
   return 0;
 }
+
 #endif
+/*--------------------   end of XSPICE additions  ----------------------*/

@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = resistance filters polezero bsim3soipd bsim3soifd bsim3soidd bsim4 mesa
+SUBDIRS = resistance filters polezero bsim3soipd bsim3soifd bsim3soidd bsim4 mesa TransImpedanceAmp
 
 TESTS = \
 	diffpair.cir		\

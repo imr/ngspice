@@ -476,7 +476,8 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
     /*  type poly added by SDB  . . . */
 #ifdef XSPICE
     /*  --------  Check if model is a poly (specific to xspice) --------- */
-    else if (strcmp(typename, "poly") == 0) {
+    else if ( (strcmp(typename, "poly") == 0) ||
+	      (strcmp(typename, "POLY") == 0) ) {
 	type = INPtypelook("POLY");
 	if (type < 0) {
 	    err =
@@ -519,7 +520,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 
 #ifdef TRACE
 	/* SDB debug statement */
-	printf("In INPdomodel, adding model typename = %s to model list. . .\n", typename); 
+	printf("In INPdomodel, adding unknown model typename = %s to model list. . .\n", typename); 
 #endif
 
 	INPmakeMod(modname,type,image);
