@@ -1075,6 +1075,28 @@ int sp_Tk_Update(void) {
 /*           The Blt method for plotting                */
 /********************************************************/
 
+static void dvecToBlt(Blt_Vector *Data, struct dvec *x) {
+  if(x->v_flags & VF_REAL) {
+    Blt_ResetVector (Data, x->v_realdata ,x->v_length, 
+                    x->v_length, TCL_VOLATILE);
+  } else {
+    double *data;
+    int i;
+
+    data = tmalloc(x->v_length * sizeof(double));
+
+    for(i=0;i<x->v_length;i++) {
+      data[i] = realpart(&x->v_compdata[i]);
+    }
+
+    Blt_ResetVector (Data, data, x->v_length, x->v_length, TCL_VOLATILE);
+
+    tfree(data);
+  }
+  
+  return;
+}
+
 int blt_plot(struct dvec *y,struct dvec *x){
   Blt_Vector *X_Data=NULL, *Y_Data=NULL;
   char buf[1024];
@@ -1091,16 +1113,9 @@ int blt_plot(struct dvec *y,struct dvec *x){
     return 1;
   }
 
-  Blt_ResetVector (Y_Data, y->v_realdata ,y->v_length, y->v_length, TCL_VOLATILE);
-
-  if (x) {
-    Blt_ResetVector (X_Data, x->v_realdata, x->v_length, x->v_length, TCL_VOLATILE);
-  } else {
-    x = y;
-    /*TODO: handle complex data properly */
-    Blt_ResetVector (X_Data, y->v_realdata, y->v_length,  y->v_length, TCL_VOLATILE);
-  }
-
+  dvecToBlt(X_Data,x);
+  dvecToBlt(Y_Data,y);
+  
   sprintf(buf,"spice_gr_Plot %s %s %s %s %s %s",
 	  x->v_name, ft_typenames(x->v_type), ft_typabbrev(x->v_type),
 	  y->v_name, ft_typenames(y->v_type), ft_typabbrev(y->v_type));
@@ -1588,7 +1603,7 @@ int tcl_vfprintf(FILE *f, const char *fmt, va_list args_in)
   char *outptr, *bigstr = NULL, *finalstr = NULL;
   int i, nchars, result, escapes = 0;
 
-  if((f != stdout && f != stderr)
+  if((fileno(f) !=  STDOUT_FILENO && fileno(f) != STDERR_FILENO)
 #ifdef HAVE_LIBPTHREAD
      || ( fl_running && bgtid == pthread_self())
 #endif

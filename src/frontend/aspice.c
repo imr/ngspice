@@ -176,7 +176,7 @@ sigchild(void)
  * whether the exit was normal or not.
  */
 
-#if defined(__NetBSD__)
+#if defined(__NetBSD__) || defined(SOLARIS)
     pid_t status;
 #else
     union wait status;

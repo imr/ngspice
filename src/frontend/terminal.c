@@ -342,12 +342,12 @@ void term_home(void) {}
 void term_cleol(void) {}
 void tcap_init(void) {}
 
-void out_send(char *string) {tcl_printf(string);}
+void out_send(char *string) {fprintf(cp_out,string);}
 
 void
 out_printf(char *fmt, char *s1, char *s2, char *s3, char *s4, char *s5, 
 		char *s6, char *s7, char *s8, char *s9, char *s10) {
-	tcl_printf(fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+	fprintf(cp_out,fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
 }
 
 #endif /* TCL_MODULE */

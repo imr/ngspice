@@ -1,3 +1,20 @@
+2003-08-28 Stefan Jones <stefan.jones@multigig.com>
+	
+	* src/spicelib/parser/inpgtok.c:
+	Fix reading in ')' tokens at the end of a node list
+
+	* src/xspice/ipc/ipc.c:
+	Remove linux specific includes which are not needed
+
+	* src/tclspice.c:
+	Add quick support for plotting complex vectors
+
+	* src/frontend/aspice.c:
+	Add ifdef for SOLARIS
+
+	* src/frontend/terminal.[ch] src/tclspice.c:
+	Fix output redirection with tclspice
+
 2003-08-21 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/frontend/define.c:
