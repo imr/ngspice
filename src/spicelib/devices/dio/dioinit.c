@@ -72,6 +72,7 @@ SPICEdev DIOinfo = {
 #ifdef CIDER
     DEVdump       : NULL,
     DEVacct       : NULL,
+#endif    
     DEVinstSize   : &DIOiSize,
     DEVmodSize    : &DIOmSize
 };
