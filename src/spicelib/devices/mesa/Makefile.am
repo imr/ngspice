@@ -19,6 +19,7 @@ libmesa_a_SOURCES = 	\
 	mesamdel.c	\
 	mesamparam.c	\
 	mesaparam.c	\
+	mesapzl.c	\
 	mesasetup.c	\
 	mesatemp.c	\
 	mesatrunc.c

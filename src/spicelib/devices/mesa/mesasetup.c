@@ -5,7 +5,6 @@ Modified: 2001 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "mesadefs.h"
@@ -15,18 +14,14 @@ Modified: 2001 AlansFixes
 
 
 int
-MESAsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
-    register GENmodel *inModel;
-    register CKTcircuit *ckt;
-    int *states;
+MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* load the diode structure with those pointers needed later 
          * for fast matrix loading 
          */
 {
-    register MESAmodel *model = (MESAmodel*)inModel;
-    register MESAinstance *here;
+    MESAmodel *model = (MESAmodel*)inModel;
+    MESAinstance *here;
     int error;
     CKTnode *tmp;
 
@@ -217,23 +212,32 @@ MESAsetup(matrix,inModel,ckt,states)
         /* loop through all the instances of the model */
         for (here = model->MESAinstances; here != NULL ;
                 here=here->MESAnextInstance) {
-            
+            if (here->MESAowner != ARCHme) goto matrixpointers;
+         
             if(!here->MESAlengthGiven) {
                 here->MESAlength = 1e-6;
             }
             if(!here->MESAwidthGiven) {
                 here->MESAwidth = 20e-6;
             }
+            if(!here->MESAmGiven) {
+                here->MESAm = 1.0;
+            }
+            if(!here->MESAdtempGiven) {
+                here->MESAdtemp = 0.0;
+            }
             if(!here->MESAtdGiven) {
-                here->MESAtd = ckt->CKTtemp;
+                here->MESAtd = ckt->CKTtemp + here->MESAdtemp;
             }
             if(!here->MESAtsGiven) {
-                here->MESAts = ckt->CKTtemp;
+                here->MESAts = ckt->CKTtemp + here->MESAdtemp;
             }
+
 
             here->MESAstate = *states;
             *states += 20;
 
+matrixpointers:
             if(model->MESAsourceResist != 0 && here->MESAsourcePrimeNode==0) {
                 error = CKTmkVolt(ckt,&tmp,here->MESAname,"source");
                 if(error) return(error);
@@ -264,7 +268,7 @@ MESAsetup(matrix,inModel,ckt,states)
 		    CKTnode *tmpNode;
 		    IFuid tmpName;
 
-                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
                        tmp->nsGiven=tmpNode->nsGiven; 
@@ -284,7 +288,7 @@ MESAsetup(matrix,inModel,ckt,states)
 		    CKTnode *tmpNode;
 		    IFuid tmpName;
 
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                  if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
                        tmp->nsGiven=tmpNode->nsGiven; 
@@ -307,7 +311,7 @@ MESAsetup(matrix,inModel,ckt,states)
 		    CKTnode *tmpNode;
 		    IFuid tmpName;
 
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
                        tmp->nsGiven=tmpNode->nsGiven; 
@@ -379,9 +383,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 
 
 int
-MESAunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MESAunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     MESAmodel *model;
     MESAinstance *here;
@@ -404,12 +406,24 @@ MESAunsetup(inModel,ckt)
                 CKTdltNNum(ckt, here->MESAsourcePrimeNode);
                 here->MESAsourcePrimeNode = 0;
             }
-        	if (here->MESAgatePrimeNode
-        			&& here->MESAgatePrimeNode != here->MESAgateNode)
-        	{
-        		CKTdltNNum(ckt, here->MESAgatePrimeNode);
-        		here->MESAgatePrimeNode = 0;
-        	}
+            if (here->MESAgatePrimeNode
+                    && here->MESAgatePrimeNode != here->MESAgateNode)
+            {
+                CKTdltNNum(ckt, here->MESAgatePrimeNode);
+                here->MESAgatePrimeNode = 0;
+            }          
+            if (here->MESAsourcePrmPrmNode
+                    && here->MESAsourcePrmPrmNode != here->MESAsourcePrimeNode)
+            {
+                CKTdltNNum(ckt, here->MESAsourcePrmPrmNode);
+                here->MESAsourcePrmPrmNode = 0;
+            }
+            if (here->MESAdrainPrmPrmNode
+                    && here->MESAdrainPrmPrmNode != here->MESAdrainPrimeNode)
+            {
+                CKTdltNNum(ckt, here->MESAdrainPrmPrmNode);
+                here->MESAdrainPrmPrmNode = 0;
+            }
         
         }
     }

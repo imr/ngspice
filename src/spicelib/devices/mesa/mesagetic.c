@@ -4,7 +4,6 @@ Author: Trond Ytterdal
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mesadefs.h"
 #include "sperror.h"
@@ -12,9 +11,7 @@ Author: Trond Ytterdal
 
 
 int
-MESAgetic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MESAgetic(GENmodel *inModel, CKTcircuit *ckt)
 {
     MESAmodel *model = (MESAmodel*)inModel;
     MESAinstance *here;
@@ -25,6 +22,8 @@ MESAgetic(inModel,ckt)
 
     for( ; model ; model = model->MESAnextModel) {
         for(here = model->MESAinstances; here ; here = here->MESAnextInstance) {
+            if (here->MESAowner != ARCHme) continue;
+
             if(!here->MESAicVDSGiven) {
                 here->MESAicVDS = 
                         *(ckt->CKTrhs + here->MESAdrainNode) - 

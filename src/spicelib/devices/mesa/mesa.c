@@ -4,7 +4,6 @@ Author: Trond Ytterdal
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "devdefs.h"
 #include "mesadefs.h"
@@ -15,10 +14,12 @@ IFparm MESApTable[] = { /* parameters */
  OP("off",       MESA_OFF,            IF_FLAG   ,"Device initially off"),
  IOP("l",        MESA_LENGTH,         IF_REAL   ,"Length of device"),
  IOP("w",        MESA_WIDTH,          IF_REAL   ,"Width of device"),
+ IOP("m",        MESA_M,              IF_REAL   ,"Parallel Multiplier"),
  IOP("icvds",    MESA_IC_VDS,         IF_REAL   ,"Initial D-S voltage"),
  IOP("icvgs",    MESA_IC_VGS,         IF_REAL   ,"Initial G-S voltage"),
  IOP("td",       MESA_TD,             IF_REAL   ,"Instance drain temperature"),
  IOP("ts",       MESA_TS,             IF_REAL   ,"Instance source temperature"),
+ IOP("dtemp",    MESA_DTEMP,          IF_REAL   ,"Instance temperature difference"),
  OP("dnode",     MESA_DRAINNODE,      IF_INTEGER,"Number of drain node"),
  OP("gnode",     MESA_GATENODE,       IF_INTEGER,"Number of gate node"),
  OP("snode",     MESA_SOURCENODE,     IF_INTEGER,"Number of source node"),

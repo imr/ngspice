@@ -11,7 +11,7 @@ Author: Trond Ytterdal
 
 
 int
-MESAacLoad(GENmodel *inModel, CKTcircuit *ckt)
+MESApzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     MESAmodel *model = (MESAmodel*)inModel;
     MESAinstance *here;
@@ -54,9 +54,9 @@ MESAacLoad(GENmodel *inModel, CKTcircuit *ckt)
             ggspp=*(ckt->CKTstate0 + here->MESAggspp);
             ggdpp=*(ckt->CKTstate0 + here->MESAggdpp);
             ggs= *(ckt->CKTstate0 + here->MESAggs) ;
-            xgs= *(ckt->CKTstate0 + here->MESAqgs) * ckt->CKTomega ;
+            xgs= *(ckt->CKTstate0 + here->MESAqgs) ;
             ggd= *(ckt->CKTstate0 + here->MESAggd) ;
-            xgd= *(ckt->CKTstate0 + here->MESAqgd) * ckt->CKTomega ;
+            xgd= *(ckt->CKTstate0 + here->MESAqgd) ;
             
             m = here->MESAm;
 
@@ -88,13 +88,20 @@ MESAacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->MESAdrainPrmPrmDrainPrimePtr)      -= m * (here->MESAtGf);
             *(here->MESAgatePrimeDrainPrmPrmPtr)       -= m * (ggdpp);
             *(here->MESAdrainPrmPrmGatePrimePtr)       -= m * (ggdpp);
-            *(here->MESAsourcePrmPrmSourcePrmPrmPtr+1) += m * (xgs);
-            *(here->MESAdrainPrmPrmDrainPrmPrmPtr+1)   += m * (xgd);
-            *(here->MESAgatePrimeGatePrimePtr+1)       += m * (xgd+xgs);
-            *(here->MESAgatePrimeDrainPrmPrmPtr+1)     -= m * (xgd);
-            *(here->MESAdrainPrmPrmGatePrimePtr+1)     -= m * (xgd);
-            *(here->MESAgatePrimeSourcePrmPrmPtr+1)    -= m * (xgs);
-            *(here->MESAsourcePrmPrmGatePrimePtr+1)    -= m * (xgs);
+	    *(here->MESAsourcePrmPrmSourcePrmPrmPtr)   += m * (xgs * s->real);
+            *(here->MESAsourcePrmPrmSourcePrmPrmPtr+1) += m * (xgs * s->imag);
+	    *(here->MESAdrainPrmPrmDrainPrmPrmPtr)     += m * (xgd * s->real);
+            *(here->MESAdrainPrmPrmDrainPrmPrmPtr+1)   += m * (xgd * s->imag);
+	    *(here->MESAgatePrimeGatePrimePtr)         += m * ((xgd+xgs) * s->real);
+            *(here->MESAgatePrimeGatePrimePtr+1)       += m * ((xgd+xgs) * s->imag);
+	    *(here->MESAgatePrimeDrainPrmPrmPtr)       -= m * (xgd * s->real);
+            *(here->MESAgatePrimeDrainPrmPrmPtr+1)     -= m * (xgd * s->imag);
+	    *(here->MESAdrainPrmPrmGatePrimePtr)       -= m * (xgd * s->real);
+            *(here->MESAdrainPrmPrmGatePrimePtr+1)     -= m * (xgd * s->imag);
+	    *(here->MESAgatePrimeSourcePrmPrmPtr)      -= m * (xgs * s->real);
+            *(here->MESAgatePrimeSourcePrmPrmPtr+1)    -= m * (xgs * s->imag);
+	    *(here->MESAsourcePrmPrmGatePrimePtr)      -= m * (xgs * s->real);
+            *(here->MESAsourcePrmPrmGatePrimePtr+1)    -= m * (xgs * s->imag);
         }
     }
     return(OK);

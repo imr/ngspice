@@ -57,7 +57,7 @@ SPICEdev MESAinfo = {
     DEVsetic      : MESAgetic,
     DEVask        : MESAask,
     DEVmodAsk     : MESAmAsk,
-    DEVpzLoad     : NULL,
+    DEVpzLoad     : MESApzLoad,
     DEVconvTest   : NULL,
     DEVsenSetup   : NULL,
     DEVsenLoad    : NULL,

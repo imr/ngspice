@@ -4,14 +4,12 @@ Author: Trond Ytterdal
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mesadefs.h"
 #include "suffix.h"
 
 
 void
-MESAdestroy(inModel)
-    GENmodel **inModel;
+MESAdestroy(GENmodel **inModel)
 {
     MESAmodel **model = (MESAmodel**)inModel;
     MESAinstance *here;

@@ -4,7 +4,6 @@ Author: Trond Ytterdal
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "mesadefs.h"
@@ -14,11 +13,7 @@ Author: Trond Ytterdal
 
 /* ARGSUSED */
 int
-MESAparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+MESAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MESAinstance *here = (MESAinstance*)inst;
     switch(param) {
@@ -30,6 +25,11 @@ MESAparam(param,value,inst,select)
             here->MESAwidth = value->rValue;
             here->MESAwidthGiven = TRUE;
             break;
+        case MESA_M:
+            here->MESAm = value->rValue;
+            here->MESAmGiven = TRUE;
+            break;
+
         case MESA_IC_VDS:
             here->MESAicVDS = value->rValue;
             here->MESAicVDSGiven = TRUE;
@@ -61,6 +61,10 @@ MESAparam(param,value,inst,select)
         case MESA_TS:
             here->MESAts = value->rValue+CONSTCtoK;
             here->MESAtsGiven = TRUE;
+            break;
+        case MESA_DTEMP:
+            here->MESAdtemp = value->rValue;
+            here->MESAdtempGiven = TRUE;
             break;
         default:
             return(E_BADPARM);

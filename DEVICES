@@ -207,7 +207,7 @@ JFET2 - Junction Field Effect Transistor  (PS model)
 ***************************    HFET devices     ***************************
 ***************************************************************************
            
-HFET  - HFET Level 1 (Ytterdal)
+HFET  - HFET Level 1 (MacSpice3f4)
         Initial Release.
 	Ver: 	N/A
 	Class:	Z
@@ -222,7 +222,7 @@ HFET  - HFET Level 1 (Ytterdal)
 	- Added pole-zero analysis
 
      
-HFET2 - HFET Level 2 (Ytterdal)
+HFET2 - HFET Level 2 (MacSpice3f4)
         Initial Release.
 	Ver: 	N/A
 	Class:	Z
@@ -253,8 +253,21 @@ MES   - MESfet model
 	- Parallel multiplier
 	- Alan Gillespie junction diodes implementation
       
-MESA  - MESA model
-      Initial release. TO BE TESTED
+MESA  - MESA model (MacSpice3f4)
+        Initial Release.
+	Ver: 	N/A
+	Class:	Z
+	Level:	2,3,4 
+	Status:
+	
+	This is a multilevel model. It contains code for mesa levels
+	2,3 and 4
+	
+	Enhancements over the original model:
+	
+	- Parallel multiplier
+	- Instance temperature as difference from circuit temperature
+	- Added pole-zero analysis
 		 
 ***************************************************************************
 ****************************    MOS devices    ****************************

@@ -4,7 +4,6 @@ Author: Trond Ytterdal
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "cktdefs.h"
 #include "mesadefs.h"
@@ -35,10 +34,7 @@ static void mesa3(MESAmodel*, MESAinstance*, double, double, double,
 void Pause(void);
 
 int
-MESAload(inModel,ckt)
-    GENmodel *inModel;
-    //register CKTcircuit *ckt;
-    CKTcircuit *ckt;
+MESAload(GENmodel *inModel, CKTcircuit *ckt)
 {
     MESAmodel *model = (MESAmodel*)inModel;
     MESAinstance *here;
@@ -95,12 +91,15 @@ MESAload(inModel,ckt)
     int ichk1;
     int error;
 
+    double m;
+
     /*  loop through all the models */
     for( ; model != NULL; model = model->MESAnextModel ) {
 
         /* loop through all the instances of the model */
         for (here = model->MESAinstances; here != NULL ;
                 here=here->MESAnextInstance) {
+            if (here->MESAowner != ARCHme) continue;
 
             /*
              *  dc model parameters 
@@ -418,51 +417,54 @@ MESAload(inModel,ckt)
              *    load current vector
              */
 load:
+
+            m = here->MESAm;
+
             ccorr = model->MESAag*(cgs-cgd);
             ceqgd = cgd + cgdpp - ggd*vgd - ggdpp*vgdpp;
             ceqgs = cgs + cgspp - ggs*vgs - ggspp*vgspp;
             cdreq=((cd+cgd+cgdpp)-gds*vds-gm*vgs);
-            *(ckt->CKTrhs + here->MESAgatePrimeNode) += (-ceqgs-ceqgd);
+            *(ckt->CKTrhs + here->MESAgatePrimeNode) += m * (-ceqgs-ceqgd);
             ceqgd = (cgd-ggd*vgd);
-            *(ckt->CKTrhs + here->MESAdrainPrimeNode) += (-cdreq+ceqgd+ccorr);
+            *(ckt->CKTrhs + here->MESAdrainPrimeNode) += m * (-cdreq+ceqgd+ccorr);
             ceqgd = (cgdpp-ggdpp*vgdpp);
             *(ckt->CKTrhs + here->MESAdrainPrmPrmNode) += ceqgd;
             ceqgs = (cgs-ggs*vgs);
-            *(ckt->CKTrhs + here->MESAsourcePrimeNode) += (cdreq+ceqgs-ccorr);
+            *(ckt->CKTrhs + here->MESAsourcePrimeNode) += m * (cdreq+ceqgs-ccorr);
             ceqgs = (cgspp-ggspp*vgspp);
             *(ckt->CKTrhs + here->MESAsourcePrmPrmNode) += ceqgs;
 
             /*
              *    load y matrix 
              */
-            *(here->MESAdrainDrainPtr) += here->MESAdrainConduct;
-            *(here->MESAsourceSourcePtr) += here->MESAsourceConduct;
-            *(here->MESAgateGatePtr) += here->MESAgateConduct;
-            *(here->MESAsourcePrmPrmSourcePrmPrmPtr) += (here->MESAtGi+ggspp);
-            *(here->MESAdrainPrmPrmDrainPrmPrmPtr) += (here->MESAtGf+ggdpp);
-            *(here->MESAgatePrimeGatePrimePtr) += (ggd+ggs+here->MESAgateConduct+ggspp+ggdpp);
-            *(here->MESAdrainPrimeDrainPrimePtr) += (gds+ggd+here->MESAdrainConduct+here->MESAtGf);
-            *(here->MESAsourcePrimeSourcePrimePtr) += (gds+gm+ggs+here->MESAsourceConduct+here->MESAtGi);
-            *(here->MESAdrainDrainPrimePtr) -= here->MESAdrainConduct;
-            *(here->MESAdrainPrimeDrainPtr) -= here->MESAdrainConduct;
-            *(here->MESAsourceSourcePrimePtr) -= here->MESAsourceConduct;
-            *(here->MESAsourcePrimeSourcePtr) -= here->MESAsourceConduct;
-            *(here->MESAgateGatePrimePtr) -= here->MESAgateConduct;
-            *(here->MESAgatePrimeGatePtr) -= here->MESAgateConduct;
-            *(here->MESAgatePrimeDrainPrimePtr) -= ggd;
-            *(here->MESAgatePrimeSourcePrimePtr) -= ggs;
-            *(here->MESAdrainPrimeGatePrimePtr) += (gm-ggd);
-            *(here->MESAdrainPrimeSourcePrimePtr) += (-gds-gm);
-            *(here->MESAsourcePrimeGatePrimePtr) += (-ggs-gm);
-            *(here->MESAsourcePrimeDrainPrimePtr) -= gds;
-            *(here->MESAsourcePrimeSourcePrmPrmPtr) -= here->MESAtGi;
-            *(here->MESAsourcePrmPrmSourcePrimePtr) -= here->MESAtGi;
-            *(here->MESAgatePrimeSourcePrmPrmPtr) -= ggspp;
-            *(here->MESAsourcePrmPrmGatePrimePtr) -= ggspp;
-            *(here->MESAdrainPrimeDrainPrmPrmPtr) -= here->MESAtGf;
-            *(here->MESAdrainPrmPrmDrainPrimePtr) -= here->MESAtGf;
-            *(here->MESAgatePrimeDrainPrmPrmPtr) -= ggdpp;
-            *(here->MESAdrainPrmPrmGatePrimePtr) -= ggdpp;
+            *(here->MESAdrainDrainPtr)               += m * (here->MESAdrainConduct);
+            *(here->MESAsourceSourcePtr)             += m * (here->MESAsourceConduct);
+            *(here->MESAgateGatePtr)                 += m * (here->MESAgateConduct);
+            *(here->MESAsourcePrmPrmSourcePrmPrmPtr) += m * (here->MESAtGi+ggspp);
+            *(here->MESAdrainPrmPrmDrainPrmPrmPtr)   += m * (here->MESAtGf+ggdpp);
+            *(here->MESAgatePrimeGatePrimePtr)       += m * (ggd+ggs+here->MESAgateConduct+ggspp+ggdpp);
+            *(here->MESAdrainPrimeDrainPrimePtr)     += m * (gds+ggd+here->MESAdrainConduct+here->MESAtGf);
+            *(here->MESAsourcePrimeSourcePrimePtr)   += m * (gds+gm+ggs+here->MESAsourceConduct+here->MESAtGi);
+            *(here->MESAdrainDrainPrimePtr)          -= m * (here->MESAdrainConduct);
+            *(here->MESAdrainPrimeDrainPtr)          -= m * (here->MESAdrainConduct);
+            *(here->MESAsourceSourcePrimePtr)        -= m * (here->MESAsourceConduct);
+            *(here->MESAsourcePrimeSourcePtr)        -= m * (here->MESAsourceConduct);
+            *(here->MESAgateGatePrimePtr)            -= m * (here->MESAgateConduct);
+            *(here->MESAgatePrimeGatePtr)            -= m * (here->MESAgateConduct);
+            *(here->MESAgatePrimeDrainPrimePtr)      -= m * (ggd);
+            *(here->MESAgatePrimeSourcePrimePtr)     -= m * (ggs);
+            *(here->MESAdrainPrimeGatePrimePtr)      += m * (gm-ggd);
+            *(here->MESAdrainPrimeSourcePrimePtr)    += m * (-gds-gm);
+            *(here->MESAsourcePrimeGatePrimePtr)     += m * (-ggs-gm);
+            *(here->MESAsourcePrimeDrainPrimePtr)    -= m * (gds);
+            *(here->MESAsourcePrimeSourcePrmPrmPtr)  -= m * (here->MESAtGi);
+            *(here->MESAsourcePrmPrmSourcePrimePtr)  -= m * (here->MESAtGi);
+            *(here->MESAgatePrimeSourcePrmPrmPtr)    -= m * (ggspp);
+            *(here->MESAsourcePrmPrmGatePrimePtr)    -= m * (ggspp);
+            *(here->MESAdrainPrimeDrainPrmPrmPtr)    -= m * (here->MESAtGf);
+            *(here->MESAdrainPrmPrmDrainPrimePtr)    -= m * (here->MESAtGf);
+            *(here->MESAgatePrimeDrainPrmPrmPtr)     -= m * (ggdpp);
+            *(here->MESAdrainPrmPrmGatePrimePtr)     -= m * (ggdpp);
         }
     }
     return(OK);

@@ -4,7 +4,6 @@ Author: Trond Ytterdal
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "mesadefs.h"
@@ -13,10 +12,7 @@ Author: Trond Ytterdal
 
 
 int
-MESAmParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+MESAmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     MESAmodel *model = (MESAmodel*)inModel;
     switch(param) {

@@ -34,11 +34,13 @@ typedef struct sMESAinstance {
     int MESAsourcePrmPrmNode;
     int MESAdrainPrmPrmNode;
     double MESAlength;    /* length of MESAfet */
-    double MESAwidth;    /* width of MESAfet */
-    double MESAicVDS;   /* initial condition voltage D-S*/
-    double MESAicVGS;   /* initial condition voltage G-S*/
-    double MESAtd;      /* drain temperature */
-    double MESAts;      /* source temperature */
+    double MESAwidth;     /* width of MESAfet */
+    double MESAm;         /* Parallel Multiplier */
+    double MESAicVDS;     /* initial condition voltage D-S*/
+    double MESAicVGS;     /* initial condition voltage G-S*/
+    double MESAtd;        /* drain temperature */
+    double MESAts;        /* source temperature */
+    double MESAdtemp;     /* Instance temperature difference */
     double MESAtVto;
     double MESAtLambda;
     double MESAtLambdahf;
@@ -110,11 +112,13 @@ typedef struct sMESAinstance {
 
     int MESAoff;
     unsigned MESAlengthGiven : 1;
-    unsigned MESAwidthGiven : 1;
-    unsigned MESAicVDSGiven : 1;
-    unsigned MESAicVGSGiven : 1;
-    unsigned MESAtdGiven : 1;
-    unsigned MESAtsGiven : 1;
+    unsigned MESAwidthGiven  : 1;
+    unsigned MESAmGiven      : 1;
+    unsigned MESAicVDSGiven  : 1;
+    unsigned MESAicVGSGiven  : 1;
+    unsigned MESAtdGiven     : 1;
+    unsigned MESAtsGiven     : 1;
+    unsigned MESAdtempGiven  : 1;
 
 int MESAmode;
     
@@ -368,6 +372,8 @@ typedef struct sMESAmodel {       /* model structure for a MESAfet */
 #define MESA_OFF      8
 #define MESA_CS       9
 #define MESA_POWER   10
+#define MESA_DTEMP   11
+#define MESA_M       12   
 
 /* model parameters */
 #define MESA_MOD_VTO      101

@@ -7,17 +7,13 @@ Imported into mesa model: 2001 Paolo Nenzi
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mesadefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-MESAdelete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
+MESAdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
     MESAmodel *model = (MESAmodel*)inModel;
     MESAinstance **fast = (MESAinstance**)inst;

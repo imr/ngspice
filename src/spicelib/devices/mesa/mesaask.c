@@ -7,7 +7,6 @@ Imported into MESA model: 2001 Paolo Nenzi
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -18,12 +17,7 @@ Imported into MESA model: 2001 Paolo Nenzi
 
 /* ARGSUSED */
 int
-MESAask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+MESAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
     MESAinstance *here = (MESAinstance*)inst;
     static char *msg = "Current and power not available in ac analysis";
@@ -33,6 +27,10 @@ MESAask(ckt,inst,which,value,select)
             return (OK);
         case MESA_WIDTH:
             value->rValue = here->MESAwidth;
+            value->rValue *= here->MESAm;
+            return (OK); 
+        case MESA_M:
+            value->rValue = here->MESAm;
             return (OK); 
         case MESA_IC_VDS:
             value->rValue = here->MESAicVDS;
@@ -44,11 +42,14 @@ MESAask(ckt,inst,which,value,select)
             value->iValue = here->MESAoff;
             return (OK);
         case MESA_TD:
-            value->rValue = here->MESAtd;
+            value->rValue = here->MESAtd - CONSTCtoK;
             return (OK);    
         case MESA_TS:
-            value->rValue = here->MESAts;
-            return (OK);    
+            value->rValue = here->MESAts - CONSTCtoK;
+            return (OK);
+        case MESA_DTEMP:
+            value->rValue = here->MESAdtemp;
+            return (OK);
         case MESA_DRAINNODE:
             value->iValue = here->MESAdrainNode;
             return (OK);
@@ -75,36 +76,47 @@ MESAask(ckt,inst,which,value,select)
             return (OK);
         case MESA_CG:
             value->rValue = *(ckt->CKTstate0 + here->MESAcg);
+            value->rValue *= here->MESAm;
             return (OK);
         case MESA_CD:
             value->rValue = *(ckt->CKTstate0 + here->MESAcd);
+            value->rValue *= here->MESAm;
             return (OK);
         case MESA_CGD:
             value->rValue = *(ckt->CKTstate0 + here->MESAcgd);
+            value->rValue *= here->MESAm;
             return (OK);
         case MESA_GM:
             value->rValue = *(ckt->CKTstate0 + here->MESAgm);
+            value->rValue *= here->MESAm;
             return (OK);
         case MESA_GDS:
             value->rValue = *(ckt->CKTstate0 + here->MESAgds);
+            value->rValue *= here->MESAm;
             return (OK);
         case MESA_GGS:
             value->rValue = *(ckt->CKTstate0 + here->MESAggs);
+            value->rValue *= here->MESAm;
             return (OK);
         case MESA_GGD:
             value->rValue = *(ckt->CKTstate0 + here->MESAggd);
+            value->rValue *= here->MESAm;
             return (OK);
         case MESA_QGS:
             value->rValue = *(ckt->CKTstate0 + here->MESAqgs);
+            value->rValue *= here->MESAm;
             return (OK);
         case MESA_CQGS:
             value->rValue = *(ckt->CKTstate0 + here->MESAcqgs);
+            value->rValue *= here->MESAm;
             return (OK);
         case MESA_QGD:
             value->rValue = *(ckt->CKTstate0 + here->MESAqgd);
+            value->rValue *= here->MESAm;
             return (OK);
         case MESA_CQGD:
             value->rValue = *(ckt->CKTstate0 + here->MESAcqgd);
+            value->rValue *= here->MESAm;
             return (OK);
         case MESA_CS :
              if (ckt->CKTcurrentAnalysis & DOING_AC) {
@@ -115,6 +127,7 @@ MESAask(ckt,inst,which,value,select)
              } else {
                  value->rValue = -*(ckt->CKTstate0 + here->MESAcd);
                  value->rValue -= *(ckt->CKTstate0 + here->MESAcg);
+                 value->rValue *= here->MESAm;
              }
              return(OK);
         case MESA_POWER :
@@ -131,6 +144,7 @@ MESAask(ckt,inst,which,value,select)
                  value->rValue -= (*(ckt->CKTstate0+here->MESAcd) +
                          *(ckt->CKTstate0 + here->MESAcg)) *
                          *(ckt->CKTrhsOld + here->MESAsourceNode);
+                 value->rValue *= here->MESAm;
              }
              return(OK);
         default:

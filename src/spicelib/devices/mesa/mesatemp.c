@@ -4,7 +4,6 @@ Author: Trond Ytterdal
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "mesadefs.h"
@@ -16,13 +15,11 @@ Author: Trond Ytterdal
 #define EPSILONGAAS (12.244*8.85418e-12)
 
 int
-MESAtemp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MESAtemp(GENmodel *inModel, CKTcircuit *ckt)
 {
 
-  register MESAmodel *model = (MESAmodel*)inModel;
-  register MESAinstance *here;
+  MESAmodel *model = (MESAmodel*)inModel;
+  MESAinstance *here;
   double temp;
   double vt;
   double d;
@@ -45,6 +42,9 @@ MESAtemp(inModel,ckt)
     
     for (here = model->MESAinstances; here != NULL ;
               here=here->MESAnextInstance) {
+
+       if (here->MESAowner != ARCHme) continue;
+
       vt                = CONSTKoverQ * here->MESAts;
       if(model->MESAmu1 == 0 && model->MESAmu2 == 0)
         here->MESAtMu = model->MESAmu*pow(here->MESAts/

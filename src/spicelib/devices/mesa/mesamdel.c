@@ -7,17 +7,13 @@ Author: 1985 S. Hwang
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mesadefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-MESAmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+MESAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     MESAmodel **model = (MESAmodel**)inModel;
     MESAmodel *modfast = (MESAmodel*)kill;

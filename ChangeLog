@@ -1,8 +1,13 @@
 2003-12-31  Paolo Nenzi <p.nenzi@ieee.org>
 
+        *  src/spicelib/devices/mesa/*: Added parallel multiplier and "dtemp",
+	   pole-zero analysis and parallel code switches.
+
 	*  src/spicelib/devices/mes/*: Added parallel multiplier.
 	
 	*  tests/mes, tests/mes/subth.cir: added test netlist for mes devices.
+
+	*  DEVICES: updated documentation including MES and MESA changes.
 
 2003-12-30  Paolo Nenzi <p.nenzi@ieee.org>
 

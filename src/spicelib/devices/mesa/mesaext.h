@@ -3,7 +3,6 @@ Copyright 1993: T. Ytterdal, K. Lee, M. Shur and T. A. Fjeldly. All rights reser
 Author: Trond Ytterdal
 **********/
 
-#ifdef __STDC__
 extern int MESAacLoad(GENmodel*,CKTcircuit*);
 extern int MESAask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int MESAdelete(GENmodel*,IFuid,GENinstance**);
@@ -14,24 +13,8 @@ extern int MESAmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
 extern int MESAmDelete(GENmodel**,IFuid,GENmodel*);
 extern int MESAmParam(int,IFvalue*,GENmodel*);
 extern int MESAparam(int,IFvalue*,GENinstance*,IFvalue*);
+extern int MESApzLoad(GENmodel*,CKTcircuit*, SPcomplex*);
 extern int MESAsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int MESAtemp(GENmodel*,CKTcircuit*);
 extern int MESAtrunc(GENmodel*,CKTcircuit*,double*);
 extern int MESAunsetup(GENmodel*,CKTcircuit*);
-
-#else /*stdc*/
-extern int MESAacLoad();
-extern int MESAask();
-extern int MESAdelete();
-extern void MESAdestroy();
-extern int MESAgetic();
-extern int MESAload();
-extern int MESAmAsk();
-extern int MESAmDelete();
-extern int MESAmParam();
-extern int MESAparam();
-extern int MESAsetup();
-extern int MESAtemp();
-extern int MESAtrunc();
-extern int MESAunsetup();
-#endif
