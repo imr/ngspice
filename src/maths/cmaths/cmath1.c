@@ -24,6 +24,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cmath.h"
 #include "cmath1.h"
 
+#ifdef HAS_WINDOWS
+#define fp_r_i_n_t_f fprintf
+#endif
 
 /* This flag determines whether degrees or radians are used. The radtodeg
  * and degtorad macros are no-ops if this is FALSE.

@@ -63,12 +63,15 @@ DYNAMIC_DEVICELIBS = 			\
 ngspice_SOURCES = \
 	conf.c \
 	conf.h \
-	ngspice.c
+	ngspice.c 
 
 ngspice_LDADD = \
+	@WINMAIN@ \
 	spice.o \
 	frontend/libfte.a \
+	frontend/wdisp/libwindisp.a \
 	frontend/plotting/libplotting.a \
+	spicelib/devices/dev.o \
 	$(DYNAMIC_DEVICELIBS) \
 	spicelib/analysis/libckt.a \
 	spicelib/devices/libdev.a \
@@ -83,7 +86,10 @@ ngspice_LDADD = \
 	misc/libmisc.a	
 
 
-spice.o: main.c 
+winmain.o: winmain.c
+		$(COMPILE) -DSIMULATOR -o winmain.o  -c $(srcdir)/winmain.c
+
+spice.o: main.c
 		$(COMPILE) -DSIMULATOR -o spice.o  -c $(srcdir)/main.c
 
 ## nutmeg:
@@ -95,7 +101,9 @@ ngnutmeg_SOURCES = \
 	ngnutmeg.c
 
 ngnutmeg_LDADD = \
+	@WINMAIN@ \
 	frontend/libfte.a \
+	frontend/wdisp/libwindisp.a \
 	frontend/plotting/libplotting.a \
 	frontend/parser/libparser.a \
 	frontend/help/libhlp.a \

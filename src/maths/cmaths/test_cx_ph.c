@@ -6,6 +6,7 @@
 #include <memory.h>
 #include <dvec.h>
 #include <complex.h>
+#include <defines.h>
 
 #include "cmath.h"
 #include "cmath1.h"

@@ -1,4 +1,16 @@
-2001-12-14  Paolo Nenzi <p.nenzi@iee.org>
+2002-01-03  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* wdisp: added an entire directory containing windows frontend code
+	  (Holger Vogt patch). Files in wdsip: ftegraf.h, makedefs, Makefile.am,
+	   windisp.c and winprint.c.
+	
+	* Makefile.am: Windows code compilation rules added to makefile.
+	
+	* display.c, outitf.c, rawfile.c, resource.c, runcoms.c: added 
+	  defines for Windows (Holger Vogt patch).
+
+
+2001-12-14  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* control.c, control.h, com_cdump.c, com_cdump.h, variable.c, variable.h:
 	  Patched the code with the one contributed by Charles Williams. The patches
@@ -6,7 +18,7 @@
 	
 2001-11-25  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* circuits.h: transfered definition of sstructire 'circ' to ftedefs.h
+	* circuits.h: transfered definition of structure 'circ' to ftedefs.h
 
 2001-02-07  Paolo Nenzi <p.nenzi@ieee.org>
 

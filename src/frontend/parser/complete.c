@@ -35,8 +35,10 @@ Modified: 1999 Paolo Nenzi
 #include <pwd.h>
 #endif
 
+#ifndef __MINGW32__
 	/* MW. We also need ioctl.h here I think */
 #include <sys/ioctl.h>
+#endif
 
 /* Be sure the ioctls get included in the following */
 #ifdef HAVE_SGTTY_H
@@ -413,10 +415,6 @@ cp_ccon(bool on)
 #  else
 #    ifdef HAVE_TERMIOS_H
 
-#      ifdef __NetBSD__
-#        define TCGETS
-#        define TCSETS
-#      endif
 
 #      define TERM_GET TCGETS
 #      define TERM_SET TCSETS
@@ -426,7 +424,7 @@ cp_ccon(bool on)
 #    endif
 #  endif
 
-#  if defined(TERM_GET) || defined(__NetBSD__)
+#ifdef TERM_GET
     static bool ison = FALSE;
 
     if (cp_nocc || !cp_interactive || (ison == on))
@@ -434,7 +432,7 @@ cp_ccon(bool on)
     ison = on;
 
     if (ison == TRUE) {
-#ifdef __NetBSD__
+#if HAVE_TCGETATTR
 	tcgetattr(fileno(cp_in),&OS_Buf);
 #else
 	(void) ioctl(fileno(cp_in), TERM_GET, (char *) &OS_Buf);
@@ -443,13 +441,13 @@ cp_ccon(bool on)
 	sbuf.c_cc[VEOF] = 0;
 	sbuf.c_cc[VEOL] = ESCAPE;
 	sbuf.c_cc[VEOL2] = CNTRL_D;
-#ifdef __NetBSD__
+#if HAVE_TCSETATTR
 	tcsetattr(fileno(cp_in),TCSANOW,&sbuf);
 #else
 	(void) ioctl(fileno(cp_in), TERM_SET, (char *) &sbuf);
 #endif
     } else {
-#ifdef __NetBSD__
+#ifdef HAVE_TCSETATTR
 	tcsetattr(fileno(cp_in),TCSANOW,&OS_Buf);
 #else
 	(void) ioctl(fileno(cp_in), TERM_SET, (char *) &OS_Buf);

@@ -1,3 +1,10 @@
+2002-01-03 Paolo Nenzi <p.nenzi@ieee.org>
+
+	* Added some code that adds new functionalities if 
+	  ngspice is compiled for Windows (Holger Vogt patch)
+	  I think that the new code interactively displays the
+	  percent done of the analysis.
+
 2001-01-23 Paolo Nenzi <p.nenzi@ieee.org>
 
 	* noisean.c: patched the code with the new one

@@ -13,6 +13,12 @@ Modified: 2000  AlansFixes
 #include <trandefs.h>
 #include <sperror.h>
 
+
+#ifdef HAS_WINDOWS    /* hvogt 10.03.99, nach W. Mues */
+void SetAnalyse( char * Analyse, int Percent);
+#endif
+
+
 int
 DCtran(CKTcircuit *ckt,
        int restart)		/* forced restart flag */
@@ -328,6 +334,9 @@ resume:
             (void)printf("limited by Tmax\n");
         }
     }
+#endif
+#ifdef HAS_WINDOWS
+	 SetAnalyse( "tran", (int)((ckt->CKTtime * 100) / ckt->CKTfinalTime));
 #endif
     ckt->CKTdelta = 
             MIN(ckt->CKTdelta,ckt->CKTmaxStep);

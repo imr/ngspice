@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = plotting help parser
+SUBDIRS = plotting help parser wdisp
 
 noinst_LIBRARIES = libfte.a
 

@@ -23,7 +23,9 @@
 #include <spicelib/devices/dev.h>
 #include <spicelib/analysis/analysis.h>
 #include <misc/ivars.h>
+#if !defined(__CYGWIN__)
 #include <misc/getopt.h>
+#endif
 #include <frontend/resource.h>
 #include <frontend/variable.h>
 
@@ -45,6 +47,9 @@ static bool ft_batchmode = FALSE;
 bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. */
 bool ft_setflag = FALSE;    /* Don't abort after an interrupt. */
 char *ft_rawfile = "rawspice.raw";
+
+bool oflag = FALSE;         /* Output über redefinierte Funktionen */
+FILE *flogp;  // hvogt 15.12.2001
 
 /* Frontend and circuit options */
 IFsimulator *ft_sim = NULL;
@@ -240,7 +245,11 @@ append_to_stream(FILE *dest, FILE *source)
 }
 
 int
+#ifdef HAS_WINDOWS
+xmain(int argc, char **argv)
+#else
 main(int argc, char **argv)
+#endif
 {
     int c;
     int		err;
@@ -318,7 +327,8 @@ main(int argc, char **argv)
 #ifdef MALLOCTRACE
     mallocTraceInit("malloc.out");
 #endif
-#ifdef HAVE_ISATTY
+
+#if defined (HAVE_ISATTY) && !defined(HAS_WINDOWS)
     istty = (bool) isatty(fileno(stdin));
 #endif
 
@@ -398,10 +408,22 @@ main(int argc, char **argv)
 #else
 		sprintf (buf, "%s", optarg);
 #endif
-		if (!(freopen (buf, "w", stdout))) {
+/*		if (!(freopen (buf, "w", stdout))) {
 		    perror (buf);
 		    shutdown (EXIT_BAD);
 		}
+*/		
+//    *** Log-File öffnen *******
+                if (!(flogp = fopen(buf, "w"))) {
+                      perror(buf);
+                      shutdown(EXIT_BAD);                    
+                }
+//    ***************************
+                com_version(NULL);  // hvogt 11.11.2001
+                fprintf(stdout, "\nBatch mode\n\n");
+                fprintf(stdout, "Simulation output goes to rawfile: %s\n\n", ft_rawfile);
+                fprintf(stdout, "Comments and warnigs go to log-file: %s\n", buf);
+                oflag = TRUE;		
 	    }
 	    break;
 
@@ -473,7 +495,7 @@ main(int argc, char **argv)
     if (!ft_batchmode) {
         signal(SIGINT, ft_sigintr);
         signal(SIGFPE, sigfloat);
-#ifdef SIGTSTP
+#if defined(SIGTSTP) // && !defined(__MINGW32__)
         signal(SIGTSTP, sigstop);
 #endif
     }

@@ -22,8 +22,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <pwd.h>
 #endif
 
+#ifndef __MINGW32__
 	/* MW. Linux has TIOCSTI, so we include all headers here */
 #include <sys/ioctl.h>
+#endif
 
 #ifdef HAVE_SGTTY_H
 #include <sys/types.h>

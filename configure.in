@@ -1,6 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/main.c)
 
+dnl Keep old autoconf version, procedure is not compatible to new 2.5.2
+AC_PREREQ(2.13)
+
 dnl Create a configuration header
 AM_CONFIG_HEADER(config.h)
 
@@ -57,6 +60,7 @@ AM_MAINTAINER_MODE
 dnl Work on compiler options according to system:
 dnl Set default CFLAG - only use -Wall if we have gcc
 
+
 AC_PROG_CC
 
 if test "x$GCC" = "xyes"; then
@@ -106,6 +110,22 @@ AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 
 
+dnl --with-windows : the user wants to use generate the MS WINDOWS executable
+AC_ARG_WITH(windows,
+    [  --with-windows   MS WINDOWS executable],
+dnl set HAS_WINDOWS flag:
+    AC_DEFINE(HAS_WINDOWS)
+)
+
+
+case $with_windows in
+
+	yes )
+		AC_DEFINE(X_DISPLAY_MISSING)
+		AC_MSG_RESULT(No X display!)
+		CFLAGS="$CFLAGS -mwindows";;
+	*) 
+
 dnl Checks for X11 header files and libraries - X11 support can be disabled
 dnl by passing the '--without-x' option to configure:
 
@@ -117,16 +137,18 @@ AC_PATH_XTRA
 dnl Checks for X libraries - if X11 wasn't found then don't make following
 dnl tests and compile without X11 support - otherwise, check if the following
 dnl libraries are present (error if they are not)
-
+dnl In CYGWIN library ordering has to be changed. Is this compatible to LINUX?
+dnl XShmAttach is a struct in CYGWIN, not a function
 
 if test ! "$no_x" = "yes" ; then
-	X_LIBS="$X_LIBS -lX11 -lXt"
-	AC_CHECK_LIB(Xext, XShmAttach,X_LIBS="$X_LIBS -lXext",AC_MSG_ERROR(Couldn't find Xext librairies), $X_LIBS $X_EXTRA_LIBS)
-	AC_CHECK_LIB(Xmu,main,X_LIBS="$X_LIBS -lXmu",AC_MSG_ERROR(Couldn't find Xmu librairies), $X_LIBS $X_EXTRA_LIBS)
 	AC_CHECK_LIB(Xaw,main,X_LIBS="$X_LIBS -lXaw",AC_MSG_ERROR(Couldn't find Xaw librairies),$X_LIBS  $X_EXTRA_LIBS)
+	X_LIBS="$X_LIBS -lXt"
+	AC_CHECK_LIB(Xmu,main,X_LIBS="$X_LIBS -lXmu",AC_MSG_ERROR(Couldn't find Xmu librairies), $X_LIBS $X_EXTRA_LIBS)
+	AC_CHECK_LIB(Xext,main,X_LIBS="$X_LIBS -lXext",AC_MSG_ERROR(Couldn't find Xext librairies), $X_LIBS $X_EXTRA_LIBS)
+	X_LIBS="$X_LIBS -lX11 -lXpm"
+fi  ;;
 
-
-fi
+esac
 
 dnl Check for a few typdefs:
 AC_TYPE_PID_T
@@ -135,8 +157,8 @@ AC_TYPE_SIGNAL
 dnl Check for a few libraries and headers:
 
 dnl Look for ncurses first, then termcap
-AC_SEARCH_LIBS(tputs,ncurses termcap,AC_DEFINE(HAVE_TERMCAP),
-               AC_MSG_ERROR(Found neither ncurses or termcap))
+#AC_SEARCH_LIBS(tputs,ncurses termcap,AC_DEFINE(HAVE_TERMCAP),
+#               AC_MSG_ERROR(Found neither ncurses or termcap))
 
 
 AC_HEADER_DIRENT
@@ -149,13 +171,20 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_CHECK_FUNCS(localtime)
-AC_CHECK_FUNCS(gettimeofday time ftime , break)
-AC_CHECK_FUNCS(getrusage utimes, break)
-AC_CHECK_FUNCS(getrlimit ulimit, break)
+
+case $host_os in
+  *cygwin* )
+	AC_CHECK_FUNCS(ftime)
+   AC_DEFINE(HAVE__MEMAVL) ;;
+  * )
+	AC_CHECK_FUNCS(gettimeofday time ftime , break)
+	AC_CHECK_FUNCS(getrusage utimes, break)
+	AC_CHECK_FUNCS(getrlimit ulimit, break) ;;
+esac
 
 dnl Look for termios first (posix)
 AC_CHECK_HEADERS(termios.h termio.h sgtty.h , break)
-AC_CHECK_FUNCS(isatty)
+AC_CHECK_FUNCS(isatty tcgetattr tcsetattr)
 
 dnl Check for a few functions:
 AC_FUNC_VFORK
@@ -177,8 +206,11 @@ dnl Check for the garbage collector:
 AC_CHECK_LIB(gc,GC_malloc,AC_DEFINE(HAVE_LIBGC) LIBS="$LIBS -lgc")
 
 dnl Check for the asprintf function:
-AC_CHECK_FUNCS(asprintf)
+AC_CHECK_FUNCS(asprintf,,AC_CHECK_LIB(iberty,asprintf,AC_DEFINE(HAVE_ASPRINTF) LIBS="$LIBS -liberty"))
 
+
+# AC_CHECK_FUNC(getopt_long, getopt_long=true)
+# AM_CONDITIONAL(HAVE_GETOPT_LONG, test "$getopt_long" = "true")
 
 # Expand the prefix variable (this is really annoying!)
 if eval "test x$prefix = xNONE"; then
@@ -187,10 +219,22 @@ else
  dprefix=$prefix
 fi
 
+
 AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo $dprefix/bin`" )
 AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice-rework`" )
 AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE, "`date`" )
 
+dnl  with the MS WINDOWS executable we suggest /spice_win/bin as *.exe-path
+if test "$with_windows" = "yes"; then
+dnl redefine the path for WINDOWS:
+    AC_MSG_RESULT(WINDOWS cide enabled)
+    AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo /spice_win/bin`" )
+    AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo /spice_win/lib`" )
+    WINMAIN = "winmain.o"
+else
+    WINMAIN =""
+fi
+AC_SUBST(WINMAIN)
 
 # Recapitulate settings:
 AC_MSG_RESULT(Settings which were chosen:)
@@ -297,6 +341,7 @@ src/frontend/Makefile		\
 src/frontend/help/Makefile	\
 src/frontend/parser/Makefile	\
 src/frontend/plotting/Makefile	\
+src/frontend/wdisp/Makefile	\
 src/include/Makefile		\
 src/maths/Makefile		\
 src/maths/cmaths/Makefile	\
@@ -312,6 +357,6 @@ tests/resistance/Makefile	\
 tests/bsim3soipd/Makefile	\
 tests/bsim3soifd/Makefile	\
 tests/bsim3soidd/Makefile	\
-tests/bsim4/Makefile		\
+tests/bsim4/Makefile  	\
 tests/mesa/Makefile
 )

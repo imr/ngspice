@@ -14,7 +14,7 @@ libcmaths_a_SOURCES = \
 		cmath4.h
 
 noinst_PROGRAMS = test_cx_mag test_cx_j test_cx_ph
-
+ 
 test_cx_ph_SOURCES = \
 		test_cx_ph.c
 
@@ -37,6 +37,7 @@ test_cx_j_LDADD = \
 		../../misc/libmisc.a
 
 TESTS = test_cx_mag test_cx_j test_cx_ph
+
 
 INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/maths/poly
 

@@ -1,3 +1,12 @@
+2002-01-03 Paolo Nenzi <p.nenzi@ieee.org>
+
+	* bsim3v1/b3v1noi.c, bsim3v2/b3v2noi.c: Both models had a
+	  function called StrongInversionNoiseEval(). They were renamed
+	  BSIM3V1StrongInversionNoiseEval() and  
+	  BSIM3V2StrongInversionNoiseEval(). (Holger Vogt)
+	
+	* dev.c: support for ieee754 floating point. (Holger Vogt patch)
+
 2000-08-28  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* asrc/asrcset.c, bjt/bjtsetup.c, bsim1/b1set.c, bsim2/b2set.c,

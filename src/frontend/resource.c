@@ -17,24 +17,47 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "resource.h"
 #include "variable.h"
 
+#ifdef HAVE__MEMAVL
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 /* static declarations */
 static void printres(char *name);
 static RETSIGTYPE fault(void);
 static void * baseaddr(void);
 
+#ifdef HAVE__MEMAVL
+size_t mem_avail;
 
+size_t _memavl(void)
+{
+	MEMORYSTATUS ms;
+	DWORD sum;
+	ms.dwLength = sizeof(MEMORYSTATUS);
+	GlobalMemoryStatus( &ms);
+	sum = ms.dwAvailPhys + ms.dwAvailPageFile;
+	return (size_t) sum;
+}
+
+#else
 
 char *startdata;
 char *enddata;
 
-
+#endif
 
 void
 init_rlimits(void)
 {
-
+#  ifdef HAVE__MEMAVL   // hvogt
+    mem_avail = _memavl( );
+#  else
     startdata = (char *) baseaddr( );
     enddata = sbrk(0);
+#  endif
+//    startdata = (char *) baseaddr( );
+//    enddata = sbrk(0);
 
 }
 
@@ -88,9 +111,18 @@ void
 ft_ckspace(void)
 {
     long usage, limit;
+
+    
+#ifdef HAVE__MEMAVL
+         size_t mem_avail_now;
+         
+         mem_avail_now = _memavl( );
+         usage = mem_avail - mem_avail_now;
+         limit = mem_avail;    
+#else
+
     static long old_usage = 0;
     char *hi;
-
 
 #    ifdef HAVE_GETRLIMIT
 
@@ -102,12 +134,15 @@ ft_ckspace(void)
 
 #    else
 
+
+
     /* SYSVRLIMIT */
     limit = ulimit(3, 0L) - (enddata - startdata);
 
 #    endif
     hi=sbrk(0);
     usage = (long) (hi - enddata); 
+
 
 
     if (limit < 0)
@@ -117,6 +152,8 @@ ft_ckspace(void)
 	return;
 
     old_usage = usage;
+
+#endif
 
     if (usage > limit * 0.9) {
         fprintf(cp_err, "Warning - approaching max data size: ");
@@ -162,7 +199,7 @@ printres(char *name)
 	int sec, msec;
 	ftime(&timenow);
 	timediff(&timenow, &timebegin, &total, &totalu);
-	totalu /= 1000;
+//	totalu /= 1000;  hvogt
 	cpu_elapsed = "elapsed";
 #      else
 #        define NO_RUDATA
@@ -191,10 +228,10 @@ printres(char *name)
 		lastusec -= 1000;
 		lastsec += 1;
 	    }
-
+#ifndef HAVE__MEMAVL
 	    fprintf(cp_out, "%s time since last call: %lu.%03lu seconds.\n",
 		cpu_elapsed, lastsec, lastusec);
-
+#endif
 	    lastsec = total;
 	    lastusec = totalu;
 	}
@@ -212,6 +249,17 @@ printres(char *name)
 
     if (!name || eq(name, "space")) {
 	long usage = 0, limit = 0;
+	
+    
+#ifdef HAVE__MEMAVL
+         size_t mem_avail_now;
+         
+         mem_avail_now = _memavl( );
+         usage = mem_avail - mem_avail_now;
+         limit = mem_avail;    
+#else
+	
+	
 #ifdef ipsc
 	NXINFO cur = nxinfo, start = nxinfo_snap;
 
@@ -236,8 +284,18 @@ printres(char *name)
 #    endif
 #  endif
 #endif
+#endif
+#ifdef HAVE__MEMAVL
+        if (usage > 1000000)
+             fprintf(cp_out, "Current dynamic memory usage = %8.6f MB,\n", usage/1000000.);
+        else     
+             fprintf(cp_out, "Current dynamic memory usage = %5.3f kB,\n", usage/1000.);
+
+        fprintf(cp_out, "Dynamic memory limit = %8.6f MB.\n", limit/1000000.);
+#else        
         fprintf(cp_out, "Current dynamic memory usage = %ld,\n", usage);
         fprintf(cp_out, "Dynamic memory limit = %ld.\n", limit);
+#endif
         yy = TRUE;
     }
 
@@ -320,6 +378,10 @@ baseaddr(void)
 
 	if (getenv("SPICE_NO_DATASEG_CHECK"))
 		return 0;
+
+#if defined(__CYGWIN__) || defined(HAS_WINDOWS)
+	return 0;
+#endif
 
 	low = 0;
 	high = (char *) ((unsigned long) sbrk(0) & ~((1 << LOG2_PAGESIZE) - 1));

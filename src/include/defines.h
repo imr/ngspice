@@ -65,6 +65,18 @@
 #define REFTEMP 300.15 /* 27 degrees C */
 
 
+#ifdef __MINGW32__
+#define DIR_PATHSEP	"\\"
+#define DIR_TERM	'\\'
+#define DIR_CWD		"."
+
+#define TEMPFORMAT	"%s%d.tmp"
+/*
+#define SYSTEM_PLOT5LPR	"lpr -P%s -g %s"
+#define SYSTEM_PSLPR	"lpr -P%s %s"
+#define SYSTEM_MAIL	"Mail -s \"%s (%s) Bug Report\" %s"
+*/
+#else
 
 #define DIR_PATHSEP	"/"
 #define DIR_TERM	'/'
@@ -75,6 +87,7 @@
 #define SYSTEM_PSLPR	"lpr -P%s %s"
 #define SYSTEM_MAIL	"Mail -s \"%s (%s) Bug Report\" %s"
 
+#endif
 
 /*
  *  #define-s that are always on
@@ -102,7 +115,7 @@
 #define TRUE 1
 #define FALSE 0
 
-
+/*
 
 #define DIR_PATHSEP	"/"
 #define DIR_TERM	'/'
@@ -113,7 +126,7 @@
 #define SYSTEM_PSLPR	"lpr -P%s %s"
 #define SYSTEM_MAIL	"Mail -s \"%s (%s) Bug Report\" %s"
 
-
+*/
 
 
 

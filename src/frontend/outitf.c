@@ -524,6 +524,7 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
     variable just the same  */
 
         currclock = clock();
+#ifndef HAS_WINDOWS
         if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
           if (run->isComplex) {
               fprintf(stderr, " Reference value : % 12.5e\r",
@@ -534,7 +535,7 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
           }
           lastclock = currclock;
         }
-
+#endif
         for (i = 0; i < run->numData; i++) {
             if (run->data[i].outIndex == -1) {
                 if (run->data[i].type == IF_REAL)

@@ -1,3 +1,7 @@
+2002-01-03  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* graf.c: Added code to support Windows (Holger Vogt patch).
+
 2000-10-10  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* graf.c: Removed need to press return after resizing the plot

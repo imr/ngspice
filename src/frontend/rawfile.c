@@ -24,6 +24,12 @@ int raw_prec = -1;        /* How many sigfigs to use, default 15 (max).  */
 
 #define DEFPREC 15
 
+#ifdef HAS_WINDOWS
+#undef fscanf             /* redo I/O from WINMAIN.C here
+                          otherwise reading ASCII will not work */
+#endif
+
+
 /* Write a raw file.  We write everything in the plot pointed to. */
 
 void
@@ -56,10 +62,33 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     else
         prec = DEFPREC;
 
+#ifdef __MINGW32__
+// -Binärdatei binär schreiben-  hvogt 15.03.2000 ---------------------
+    if (binary) {
+        if (!(fp = fopen(name, app ? "ab" : "wb"))) {
+            perror(name);
+            return;
+        }
+        fprintf(cp_out,"binary raw file\n");
+    }
+    else  {
+        if (!(fp = fopen(name, app ? "a" : "w"))) {
+            perror(name);
+            return;
+        }
+        fprintf(cp_out,"ASCII raw file\n");
+    }
+// --------------------------------------------------------------------
+
+#else
+
+
     if (!(fp = fopen(name, app ? "a" : "w"))) {
         perror(name);
         return;
     }
+
+#endif
 
     numdims = nvars = length = 0;
     for (v = pl->pl_dvecs; v; v = v->v_next) {
@@ -138,7 +167,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
         if (v->v_gridtype)
             fprintf(fp, " grid=%d", v->v_gridtype);
         if (v->v_plottype)
-            fprintf(fp, " plot=%d", v->v_gridtype);
+            fprintf(fp, " plot=%d", v->v_plottype);
 	/* Only write dims if they are different from default. */
 	writedims = FALSE;
 	if (v->v_numdims != numdims) {
@@ -253,11 +282,34 @@ raw_read(char *name)
     struct variable *vv;
     wordlist *wl, *nwl;
     FILE *fp, *lastin, *lastout, *lasterr;
+    bool binary = TRUE;
 
     if (!(fp = fopen(name, "r"))) {
         perror(name);
         return (NULL);
     }
+
+#ifdef __MINGW32__
+// Test, ob Datei wirklich ASCII, sonst binär annehmen  hvogt 15.3.2000
+    while (fgets(buf, BSIZE_SP, fp)) {
+        if (ciprefix("values:", buf)) {
+        	binary = FALSE;
+        	rewind(fp);                // zurückspulen
+                fprintf(cp_err, "\nASCII raw file\n");
+        	break;
+        }
+    }
+
+    if (binary) {
+        (void) fclose(fp);
+        if (!(fp = fopen(name, "rb"))) {
+            perror(name);
+            return (NULL);
+            }
+            fprintf(cp_err, "\nbinary raw file\n");
+        }
+//--------------------------------------------------------
+#endif
 
     /* Since we call cp_evloop() from here, we have to do this junk. */
     lastin = cp_curin;

@@ -11,6 +11,10 @@ Modified 2001: AlansFixes
 #include "devdefs.h"
 #include "sperror.h"
 
+#ifdef HAS_WINDOWS
+void SetAnalyse( char * Analyse, int Percent);
+#endif
+
 
 int
 ACan(CKTcircuit *ckt, int restart)
@@ -196,10 +200,36 @@ ACan(CKTcircuit *ckt, int restart)
         switch(((ACAN*)ckt->CKTcurJob)->ACstepType) {
         case DECADE:
         case OCTAVE:
+
+// neu eingefügt 14.12.2001  
+#ifdef HAS_WINDOWS
+			 {
+				 double endfreq   = ((ACAN*)ckt->CKTcurJob)->ACstopFreq;
+				 double startfreq = ((ACAN*)ckt->CKTcurJob)->ACstartFreq;
+				 double step      = ((ACAN*)ckt->CKTcurJob)->ACfreqDelta;
+				 endfreq   = log(endfreq);
+				 if (startfreq == 0.0)
+                	startfreq = 1e-12;
+				 startfreq = log(startfreq);
+
+				 if (freq > 0.0)
+					 SetAnalyse( "ac", (log(freq)-startfreq) * 100.0 / (endfreq-startfreq));
+			 }
+#endif
+
             freq *= ((ACAN*)ckt->CKTcurJob)->ACfreqDelta;
             if(((ACAN*)ckt->CKTcurJob)->ACfreqDelta==1) goto endsweep;
             break;
         case LINEAR:
+
+#ifdef HAS_WINDOWS
+			 {
+				 double endfreq   = ((ACAN*)ckt->CKTcurJob)->ACstopFreq;
+				 double startfreq = ((ACAN*)ckt->CKTcurJob)->ACstartFreq;
+				 SetAnalyse( "ac", (freq - startfreq)* 100.0 / (endfreq-startfreq));
+			 }
+#endif
+
             freq += ((ACAN*)ckt->CKTcurJob)->ACfreqDelta;
             if(((ACAN*)ckt->CKTcurJob)->ACfreqDelta==0) goto endsweep;
             break;

@@ -103,6 +103,14 @@ struct timeb timebegin;
 #include <time.h>
 #endif
 
+// added for CYGWIN
+#ifndef HUGE
+#define HUGE HUGE_VAL
+#endif
+
+#ifdef HAS_WINDOWS
+#include "wstdio.h"
+#endif
 
 extern char *gettok(char **s);
 extern void appendc(char *s, char c);

@@ -1,3 +1,19 @@
+2002-01-03  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* acconfig.h: added define needed for Windows and some aesthetic
+	  rework (from Holger Vogt patch).
+	
+	* configure.in: added macros to handle windows related 
+	  issues (Holger patch and me).
+	
+	* INSTALL: added documentation on ngspice compilation under
+	  Windows (Holger Vogt patch).
+	
+	* Makefile.am: added Windows compilation code (Holger Vogt patch and
+	  me).
+	
+	 
+
 2001-12-05  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
 	* configure.in: removed (unnecessary) macros to handle GNU getopt

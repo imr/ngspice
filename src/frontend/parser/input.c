@@ -24,6 +24,7 @@ inchar(FILE *fp)
 {
 
     char c;
+#ifndef HAS_WINDOWS    
     int i;
 
     if (cp_interactive && !cp_nocc) {
@@ -38,6 +39,7 @@ inchar(FILE *fp)
       } else
         return ((int) c);
     } else
+#endif    
     c = getc(fp);
     return ((int) c);
 }

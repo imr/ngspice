@@ -214,12 +214,33 @@ dosim(char *what, wordlist *wl)
 #endif /* PARALLEL_ARCH */
         if (!*wl->wl_word)
 	    rawfileFp = stdout;
+#ifdef __MINGW32__
+// ask if binary or ASCII, open file with w or wb   hvogt 15.3.2000
+        else if (ascii) { 
+            if(!(rawfileFp = fopen(wl->wl_word, "w"))) {
+                perror(wl->wl_word);
+                ft_setflag = FALSE;
+                return 1;
+            }
+            fprintf(cp_out,"ASCII raw file\n");
+        }    
+        else if (!ascii) { 
+            if(!(rawfileFp = fopen(wl->wl_word, "wb"))) {
+                perror(wl->wl_word);
+                ft_setflag = FALSE;
+                return 1;
+            }
+            fprintf(cp_out,"binary raw file\n");
+        }
+//-------------------------------------------------------------------------
+#else	    
         else if (!(rawfileFp = fopen(wl->wl_word, "w"))) {
         	setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
             perror(wl->wl_word);
             ft_setflag = FALSE;
             return 1;
         }
+#endif /* __MINGW32__ */
         rawfileBinary = !ascii;
 #ifdef PARALLEL_ARCH
       } else {

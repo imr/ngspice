@@ -1,3 +1,15 @@
+2002-01-03  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* wstdio.h: Standard input/output for Windows (Holger Vogt patch).
+	
+	* complex.h: _complex redefined as _complex1 to avoid conflict with
+	  MINGW32 Paolo Nenzi <p.nenzi@ieee.org>
+	
+	* defines.h: added defines for Windows (Holger Vogt patch).
+	
+	* ngspice.h: added wstdio.h inclusion if compiling for Windows
+	  (Holger Vogt patch).
+
 2001-12-14  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* cpextern.h: Modification needed for patches sent by 

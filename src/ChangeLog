@@ -1,3 +1,16 @@
+2002-01-03  Paolo Nenzi  <p.nenzi@ieee.org>
+
+	* main.c: Some code additions for Windows support (Holger Vogt patch).
+	
+	* maths/cmaths/Makefile.am: reintegrated test code removed from 
+	   Holger Vogt patch (this may cause trouble under Windows).
+	  
+	* maths/cmaths/cmath1.c, maths/cmaths/test_cx_ph.c: small changes to 
+	  support Windows (Holger Vogt patch).
+	  
+	* winmain.c: added file for Windows port (Holger Vogt).
+	
+
 2001-12-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
 	* maths/cmaths/Makefile.am (noinst_PROGRAMS): test programs

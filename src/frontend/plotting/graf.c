@@ -153,6 +153,16 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     graph->data.xmax = xlims[1];
     graph->data.ymin = ylims[0];
     graph->data.ymax = ylims[1];
+/* get title into plot window */
+#ifdef HAS_WINDOWS
+    if (!pname)
+	pname = "(unknown)";
+    if (!plotname)
+	plotname = "(unknown)";
+    comb_title = tmalloc(strlen(plotname) + strlen(pname) + 3);
+    sprintf(comb_title, "%s: %s", pname, plotname);
+    graph->plotname = comb_title;
+#endif
 
     /* note: have enum here or some better convention */
     if (NewViewport(graph) == 1) {
@@ -199,7 +209,7 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
             graph->grid.ylabel = "imag";
         }
     }
-
+#ifndef HAS_WINDOWS
     if (!pname)
 	pname = "(unknown)";
     if (!plotname)
@@ -207,7 +217,7 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     comb_title = tmalloc(strlen(plotname) + strlen(pname) + 3);
     sprintf(comb_title, "%s: %s", pname, plotname);
     graph->plotname = comb_title;
-
+#endif
     gr_resize_internal(graph);
     gr_redrawgrid(graph);
 

@@ -32,8 +32,14 @@
 /* Undefine HAVE_EKV since it is not included in the standard distribution */
 #undef HAVE_EKV
 
-/* Define if we have GNU readline */   
+/* Undefine HAVE_GNUREADLINE */   
 #undef HAVE_GNUREADLINE
 
 /* We do not want spurios debug info into non-developer code */
 #undef FTEDEBUG
+
+/* Generate MS WINDOWS executable */
+#undef HAS_WINDOWS
+
+/* get system memory and time */
+#undef HAVE__MEMAVL

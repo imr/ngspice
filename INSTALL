@@ -151,3 +151,52 @@ operates.
      script, and exit.
 
 `configure' also accepts some other, not widely useful, options.
+
+
+
+NGSPICE COMPILATION UNDER WINDOWS OS
+====================================
+
+
+make ngspice with CYGWIN and external MINGW32
+
+according to http://www.geocrawler.com/lists/3/SourceForge/6013/0/7321042/
+
+
+$ cd ng-spice-rework-14
+$ export PATH="/cygdrive/g/gcc_mingw/bin:$PATH"
+$ autoconf
+$ rm config.cache
+$ ./configure --with-windows --prefix="/cygdrive/g/gcc_mingw/bin"
+$ make clean
+$ make 2> make.err
+
+$ cp config.h config_ming.h
+
+ngspice.exe is o.k.,but make tests does not work (cannot direct console
+output into file). Needs to add .save "what" "where.test" to every input 
+(*.cir) file. Also all given output files have to be adapted to WINDOWS (CR/LF 
+instead of only LF at each line ending) for allowing proper comparison.
+
+
+
+make ngspice with CYGWIN and internal MINGW32 (use config.h made above)
+
+$ cd ng-spice-rework-14
+$ rm config.cache
+$ export CFLAGS="-mno-cygwin -g -O2"
+$ export LDFLAGS="-L/lib/mingw"
+$ export CPPFLAGS="-I/usr/include/mingw"
+$ ./configure --with-windows
+$ cp config_ming.h config.h
+$ make clean
+$ make 2> make.err
+
+./configure does not work correctly: It finds headers and libs which are not 
+really available in the -mno-cygwin port of MINGW32. Therefore config.h is 
+not o.k.
+
+ToDo: find appropriate presets for variables ?
+      rewrite tests for headers and libs (search exclusively in mingw
+      directories)
+

@@ -31,6 +31,17 @@ extern int  X11_Init(void), X11_NewViewport(GRAPH *graph), X11_Close(void), X11_
 #endif
 
 
+#ifdef HAS_WINDOWS	/* Grafik-IO über MS Windows */
+extern int WIN_Init(), WIN_NewViewport(), WIN_Close(), WIN_Clear(),
+		WIN_DrawLine(), WIN_Arc(), WIN_Text(), WIN_DefineColor(),
+		WIN_DefineLinestyle(), WIN_SetLinestyle(), WIN_SetColor(),
+		WIN_Update(), WIN_DiagramReady();
+
+extern int WPRINT_Init(), WPRINT_NewViewport(), WPRINT_Close(), WPRINT_Clear(),
+		WPRINT_DrawLine(), WPRINT_Arc(), WPRINT_Text(), WPRINT_DefineColor(),
+		WPRINT_DefineLinestyle(), WPRINT_SetLinestyle(), WPRINT_SetColor(),
+		WPRINT_Update(), WPRINT_DiagramReady();
+#endif
 
 
 
@@ -62,6 +73,24 @@ DISPDEVICE device[] = {
     gen_DatatoScreen,},
 #endif
 
+#ifdef HAS_WINDOWS	/* Grafik-IO über MS Windows */
+	{"Windows", 0, 0, 1000, 1000, 0, 0, WIN_Init, WIN_NewViewport,
+	 WIN_Close, WIN_Clear,
+	 WIN_DrawLine, WIN_Arc, WIN_Text, WIN_DefineColor, WIN_DefineLinestyle,
+	 WIN_SetLinestyle, WIN_SetColor, WIN_Update,
+	 nodev, nodev, nodev, gen_Input,
+	 gen_DatatoScreen, WIN_DiagramReady},
+
+	// Achtung: Namen "WinPrint" nicht ändern!
+	{"WinPrint", 0, 0, 1000, 1000, 0, 0, WPRINT_Init, WPRINT_NewViewport,
+	 WPRINT_Close, WPRINT_Clear,
+	 WPRINT_DrawLine, WPRINT_Arc, WPRINT_Text, WPRINT_DefineColor, WPRINT_DefineLinestyle,
+	 WPRINT_SetLinestyle, WPRINT_SetColor, WPRINT_Update,
+	 nodev, nodev, nodev, nodev,
+	 gen_DatatoScreen, WPRINT_DiagramReady},
+
+#endif
+
 
     {"plot5", 0, 0, 1000, 1000, 0, 0, Plt5_Init, Plt5_NewViewport,
     Plt5_Close, Plt5_Clear,
@@ -87,6 +116,7 @@ DISPDEVICE device[] = {
 };
 
 DISPDEVICE *dispdev = device + NUMELEMS(device) - 1;
+// DISPDEVICE *dispdev = device ;  /* GCC257 stuertzt hier ab */
 
 #define XtNumber(arr)       (sizeof(arr) / sizeof(arr[0]))
 
@@ -135,6 +165,11 @@ DevInit(void)
 #endif
 
 
+#ifdef HAS_WINDOWS
+	 if (!dispdev) {
+      dispdev = FindDev("Windows");
+    }
+#endif
 
     if (!dispdev) {
 	externalerror(
