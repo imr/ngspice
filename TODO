@@ -62,3 +62,5 @@ src/maths/sparse.
 
 Add tests for all functions in the polynomial library in
 src/maths/poly.
+
+Add more circuit tests into the tests directory.
