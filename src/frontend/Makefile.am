@@ -15,9 +15,8 @@ libfte_a_SOURCES = \
 	com_let.h	\
 	com_setscale.c	\
 	com_setscale.h	\
+	completion.h	\
 	\
-	agraf.c		\
-	agraf.h		\
 	arg.c		\
 	arg.h		\
 	aspice.c	\
@@ -28,8 +27,6 @@ libfte_a_SOURCES = \
 	breakp2.h	\
 	circuits.c	\
 	circuits.h	\
-	clip.c		\
-	clip.h		\
 	cpitf.c		\
 	cpitf.h		\
 	debugcom.c	\
@@ -56,12 +53,8 @@ libfte_a_SOURCES = \
 	fourier.h	\
 	gens.c		\
 	gens.h		\
-	graf.c		\
-	graf.h		\
 	graphdb.c	\
 	graphdb.h	\
-	grid.c		\
-	grid.h		\
 	inp.c		\
 	inp.h		\
 	inpcom.c	\

@@ -36,18 +36,19 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     char *line1, *line2, c, cb;
     double xrange[2], yrange[2], x1, x2, yy1, y2, x, y;
     int mag, hmt, lmt, dst, spacing, nsp, ypt, upper, lower, curline;
-    double tenpowmag, diff, *values;
+    double tenpowmag, diff;
+    double *values = NULL;
     struct dvec *v;
     int margin = MARGIN_BASE;
     int omargin;
-    register int i, j, k;
+    int i, j, k;
     int shift;
 
 
     /* ANSI C does not specify how many digits are in an exponent for %c
      * We assumed it was 2.  If it's more, shift starting position over.
      */
-    (void) sprintf(buf, "%1.1e", 0.0);		/* expect 0.0e+00 */
+    sprintf(buf, "%1.1e", 0.0);		/* expect 0.0e+00 */
     shift = strlen(buf) - 7;
     margin += shift;
 
@@ -331,4 +332,3 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
         tfree(values);
     return;
 }
-
