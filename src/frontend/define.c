@@ -337,15 +337,11 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
         } else
             return (tree);
     } else if (tree->pn_func) {
-        struct func *func;
-
-        func = alloc(struct func);
-        func->fu_name = copy(tree->pn_func->fu_name);
-        func->fu_func = tree->pn_func->fu_func;
 
         pn = alloc(struct pnode);
         pn->pn_value = NULL;
-        pn->pn_func = func;
+	/* pn_func are pointers to a global static struct */
+        pn->pn_func = tree->pn_func;
         pn->pn_op = NULL;
         pn->pn_left = trcopy(tree->pn_left, args, nn);
         pn->pn_right = NULL;
