@@ -2769,24 +2769,6 @@ fprintf(stderr, "Bypass for %s...\n", here->B3SOIFDname);
 		      {   ckt->CKTnoncon++;
 if (here->B3SOIFDdebugMod > 2)
    fprintf(fpdebug, "Check is on, noncon=%d\n", ckt->CKTnoncon++);
-#ifndef NEWCONV
-		      } 
-		      else
-		      {   tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(here->B3SOIFDcd))
-			      + ckt->CKTabstol;
-			  if (fabs(cdhat - here->B3SOIFDcd) >= tol)
-			  {   ckt->CKTnoncon++;
-			  }
-			  else
-			  {   tol = ckt->CKTreltol * MAX(fabs(cbhat), 
-				    fabs(here->B3SOIFDcbs + here->B3SOIFDcbd)) 
-				    + ckt->CKTabstol;
-			      if (fabs(cbhat - (here->B3SOIFDcbs + here->B3SOIFDcbd)) 
-				  > tol)
-			      {   ckt->CKTnoncon++;
-			      }
-			  }
-#endif /* NEWCONV */
 		      }
 		  }
 
