@@ -36,7 +36,9 @@ typedef struct sBJT2instance {
                             /* Substrate connection is either base prime      *
                              * or collector prime depending on whether        *
                              * the device is VERTICAL or LATERAL              */
-    double BJT2area; /* area factor for the bjt2 */
+    double BJT2area;     /* (emitter) area factor for the bjt2 */
+    double BJT2areab;    /* base area factor for the bjt2 */
+    double BJT2areac;    /* collector area factor for the bjt2 */
     double BJT2m;        /* parallel multiplier */
     double BJT2icVBE;    /* initial condition voltage B-E*/
     double BJT2icVCE;    /* initial condition voltage C-E*/
@@ -118,13 +120,15 @@ typedef struct sBJT2instance {
                              * (collector prime,base) */
 
     unsigned BJT2off :1;   /* 'off' flag for bjt2 */
-    unsigned BJT2tempGiven   :1; /* temperature given  for bjt2 instance*/
-    unsigned BJT2dtempGiven  :1; /* temperature given  for bjt2 instance*/    
-    unsigned BJT2areaGiven   :1; /* flag to indicate area was specified */
-    unsigned BJT2mGiven      :1; /* flag to indicate m parameter specified */
-    unsigned BJT2icVBEGiven  :1; /* flag to indicate VBE init. cond. given */
-    unsigned BJT2icVCEGiven  :1; /* flag to indicate VCE init. cond. given */
-    unsigned BJT2senPertFlag :1; /* indictes whether the the parameter of
+    unsigned BJT2tempGiven    :1; /* temperature given  for bjt2 instance*/
+    unsigned BJT2dtempGiven   :1; /* temperature given  for bjt2 instance*/    
+    unsigned BJT2areaGiven    :1; /* flag to indicate (emitter) area was specified */
+    unsigned BJT2areabGiven   :1; /* flag to indicate base area was specified */
+    unsigned BJT2areacGiven   :1; /* flag to indicate collector area was specified */
+    unsigned BJT2mGiven       :1; /* flag to indicate m parameter specified */
+    unsigned BJT2icVBEGiven   :1; /* flag to indicate VBE init. cond. given */
+    unsigned BJT2icVCEGiven   :1; /* flag to indicate VCE init. cond. given */
+    unsigned BJT2senPertFlag  :1; /* indictes whether the the parameter of
                         the particular instance is to be perturbed */
 
     int  BJT2senParmNo;   /* parameter # for sensitivity use;
@@ -442,7 +446,11 @@ typedef struct sBJT2model {          /* model structure for a bjt2 */
 #define PNP -1
 #endif /*NPN*/
 
-
+/* 
+ *  BJT2 defaults to vertical for both NPN and
+ *  PNP devices. It is possible to alter this
+ *  behavior defining the GEOMETRY_COMPAT macro. 
+ */
 #ifndef VERTICAL
 #define VERTICAL 1
 #define LATERAL -1
@@ -459,6 +467,8 @@ typedef struct sBJT2model {          /* model structure for a bjt2 */
 #define BJT2_TEMP 7
 #define BJT2_DTEMP 8
 #define BJT2_M 9
+#define BJT2_AREAB 10
+#define BJT2_AREAC 11
 
 /* model parameters */
 #define BJT2_MOD_NPN 101

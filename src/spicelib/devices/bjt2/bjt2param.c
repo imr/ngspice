@@ -30,6 +30,14 @@ BJT2param(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             here->BJT2area = value->rValue;
             here->BJT2areaGiven = TRUE;
             break;
+        case BJT2_AREAB:
+            here->BJT2areab = value->rValue;
+            here->BJT2areabGiven = TRUE;
+            break;   
+        case BJT2_AREAC:
+            here->BJT2areac = value->rValue;
+            here->BJT2areacGiven = TRUE;
+            break;         
         case BJT2_M:
             here->BJT2m = value->rValue;
             here->BJT2mGiven = TRUE;

@@ -195,7 +195,13 @@ BJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if(!here->BJT2areaGiven) {
                 here->BJT2area = 1;
             }
-            
+            if(!here->BJT2areabGiven) {
+                here->BJT2areab = here->BJT2area;
+            }
+            if(!here->BJT2areacGiven) {
+                here->BJT2areac = here->BJT2area;
+            }
+
 	    if(!here->BJT2mGiven) {
                 here->BJT2m = 1.0;
             }

@@ -80,7 +80,7 @@ BJT2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                                            +   (-xcmu+xgm) * (s->real));
             *(here->BJT2colPrimeBasePrimePtr + 1) +=   m * ((-xcmu+xgm)
                                                 * (s->imag));
-            *(here->BJT2colPrimeEmitPrimePtr) +=   m *b((-gm-go)
+            *(here->BJT2colPrimeEmitPrimePtr) +=   m *((-gm-go)
                                              + (-xgm) * (s->real));
             *(here->BJT2colPrimeEmitPrimePtr + 1) +=   m * ((-xgm) *
                                                   (s->imag));

@@ -175,8 +175,13 @@ BJT2load(GENmodel *inModel, CKTcircuit *ckt)
             c2=here->BJT2tBEleakCur*here->BJT2area;
             vte=model->BJT2leakBEemissionCoeff*vt;
             oikr=model->BJT2invRollOffR/here->BJT2area;
-            c4=here->BJT2tBCleakCur*here->BJT2area;
-            vtc=model->BJT2leakBCemissionCoeff*vt;
+	    
+	    if (model->BJT2subs == VERTICAL)
+                c4=here->BJT2tBCleakCur * here->BJT2areab;
+            else
+	        c4=here->BJT2tBCleakCur * here->BJT2areac;
+	    
+	    vtc=model->BJT2leakBCemissionCoeff*vt;
             td=model->BJT2excessPhaseFactor;
             xjrb=model->BJT2baseCurrentHalfResist*here->BJT2area;
 
@@ -525,14 +530,24 @@ next1:      vtn=vt*model->BJT2emissionCoeffF;
                 pe=here->BJT2tBEpot;
                 xme=model->BJT2junctionExpBE;
                 cdis=model->BJT2baseFractionBCcap;
-                ctot=here->BJT2tBCcap*here->BJT2area;
-                czbc=ctot*cdis;
+		
+		if (model->BJT2subs == VERTICAL)
+		    ctot=here->BJT2tBCcap*here->BJT2areab;
+		else    
+                    ctot=here->BJT2tBCcap*here->BJT2areac;
+		    
+		czbc=ctot*cdis;
                 czbx=ctot-czbc;
                 pc=here->BJT2tBCpot;
                 xmc=model->BJT2junctionExpBC;
                 fcpe=here->BJT2tDepCap;
-                czsub=here->BJT2tSubcap*here->BJT2area;
-                ps=here->BJT2tSubpot;
+		
+		if (model->BJT2subs == VERTICAL)
+                    czsub=here->BJT2tSubcap*here->BJT2areac;
+                else
+		    czsub=here->BJT2tSubcap*here->BJT2areab;
+		    
+		ps=here->BJT2tSubpot;
                 xms=model->BJT2exponentialSubstrate;
                 xtf=model->BJT2transitTimeBiasCoeffF;
                 ovtf=model->BJT2transitTimeVBCFactor;

@@ -162,8 +162,14 @@ for( ; model != NULL; model = model->BJT2nextModel ) {
             c2=here->BJT2tBEleakCur*here->BJT2area * here->BJT2m;
             vte=model->BJT2leakBEemissionCoeff*vt;
             oikr=model->BJT2invRollOffR/(here->BJT2area * here->BJT2m);
-            c4=here->BJT2tBCleakCur*here->BJT2area * here->BJT2m;
-            vtc=model->BJT2leakBCemissionCoeff*vt;
+	
+            c4=here->BJT2tBCleakCur * here->BJT2m;
+            if (model->BJT2subs == VERTICAL)
+	       c4 *= here->BJT2areab;
+	    else
+	       c4 *= here->BJT2areac; /* lateral transistor */
+	       
+	    vtc=model->BJT2leakBCemissionCoeff*vt;
             xjrb=model->BJT2baseCurrentHalfResist*here->BJT2area * here->BJT2m;
 
 
@@ -485,14 +491,28 @@ d_ibb.d3_r3 = 6.0*gbb3;
                 pe=here->BJT2tBEpot;
                 xme=model->BJT2junctionExpBE;
                 cdis=model->BJT2baseFractionBCcap;
-                ctot=here->BJT2tBCcap*here->BJT2area * here->BJT2m;
-                czbc=ctot*cdis;
+		
+                ctot=here->BJT2tBCcap * here->BJT2m;
+                
+		if (model->BJT2subs == VERTICAL)
+		    ctot *= here->BJT2areab;
+		else
+		    ctot *= here->BJT2areac;
+		        
+		czbc=ctot*cdis;
                 czbx=ctot-czbc;
                 pc=here->BJT2tBCpot;
                 xmc=model->BJT2junctionExpBC;
                 fcpe=here->BJT2tDepCap;
-                czcs=model->BJT2capSub*here->BJT2area * here->BJT2m; /* PN */
-                ps=model->BJT2potentialSubstrate;
+		
+                czcs=model->BJT2capSub * here->BJT2m; /* PN */
+                
+		if (model->BJT2subs == VERTICAL)
+		    czcs *= here->BJT2areac;
+		else
+		    czcs *= here->BJT2areab;
+		        
+		ps=model->BJT2potentialSubstrate;
                 xms=model->BJT2exponentialSubstrate;
                 xtf=model->BJT2transitTimeBiasCoeffF;
                 ovtf=model->BJT2transitTimeVBCFactor;

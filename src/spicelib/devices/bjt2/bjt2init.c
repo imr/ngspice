@@ -10,7 +10,7 @@
 SPICEdev BJT2info = {
     {
 	"BJT2",
-        "Bipolar Junction Transistor (AG)",
+        "Bipolar Junction Transistor Level 2",
 
         &BJT2nSize,
         &BJT2nSize,

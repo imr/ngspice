@@ -24,7 +24,9 @@ IFparm BJT2pTable[] = { /* parameters */
  IOPU("off",     BJT2_OFF,            IF_FLAG,    "Device initially off"),
  IOPAU("icvbe",  BJT2_IC_VBE,         IF_REAL, "Initial B-E voltage"),
  IOPAU("icvce",  BJT2_IC_VCE,         IF_REAL, "Initial C-E voltage"),
- IOPU("area",    BJT2_AREA,           IF_REAL,    "Area factor"),
+ IOPU("area",    BJT2_AREA,           IF_REAL,    "(Emitter) Area factor"),
+ IOPU("areab",   BJT2_AREAB,          IF_REAL,    "Base area factor"),
+ IOPU("areac",   BJT2_AREAC,          IF_REAL,    "Collector area factor"), 
  IOPU("m",       BJT2_M,              IF_REAL,   "Parallel Multiplier"),
  IP("ic",       BJT2_IC,             IF_REALVEC, "Initial condition vector"),
  IP("sens_area",BJT2_AREA_SENS,IF_FLAG, "flag to request sensitivity WRT area"),
@@ -105,7 +107,7 @@ IFparm BJT2mPTable[] = { /* model parameters */
  IOP("isc",  BJT2_MOD_ISC,  IF_REAL, "B-C leakage saturation current"),
 #ifdef BJT2_COMPAT 
  IOP("c4",   BJT2_MOD_C4,   IF_REAL, "Obsolete parameter name"),
-#ifdef SPICE2COMPAT  
+#endif
  IOP("nc",   BJT2_MOD_NC,   IF_REAL, "B-C leakage emission coefficient"),
  IOP("rb",   BJT2_MOD_RB,   IF_REAL, "Zero bias base resistance"),
  IOP("irb",  BJT2_MOD_IRB,  IF_REAL, "Current for base resistance=(rb+rbm)/2"),

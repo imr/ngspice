@@ -47,6 +47,12 @@ BJT2ask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value,
         case BJT2_AREA:
             value->rValue = here->BJT2area;
             return(OK);
+        case BJT2_AREAB:
+            value->rValue = here->BJT2areab;
+            return(OK);
+        case BJT2_AREAC:
+            value->rValue = here->BJT2areac;
+            return(OK);      	    
 	case BJT2_M:
             value->rValue = here->BJT2m;
             return(OK);    
