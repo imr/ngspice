@@ -129,7 +129,7 @@ URC	- Uniform distributed RC line
 	Level:	1 (and only)
 	Status:	
 	
-	Original spcice model.
+	Original spice model.
 	
 	- Does not implement parallel code switches
 
@@ -138,25 +138,57 @@ URC	- Uniform distributed RC line
 ****************************    V/I Sources   *****************************
 ***************************************************************************
 
-ASRC  - Arbitrary Source
-      Initial Release
+ASRC	- Arbitrary Source
+	Initial Release.
+	Ver:	N/A
+	Class:	B
+	Level:	1 (and only)
+	Status:	
+	
+	The arbitrary source code has been corrected with the patch
+	available on the Internet. There is still an issue to fix, the
+	current of current-controlled generators.
 
-CCCS  - Current Controlled Current Source
-      Initial Release
+CCCS  	- Current Controlled Current Source
+	Initial Release.
+	Ver:	N/A
+	Class:	F
+	Level:	1 (and only)
+	Status:	
+	
+	Original spice model.
 
-CCVS  - Current Controlled Voltage Source
-      Initial Release
+CCVS	- Current Controlled Voltage Source
+	Initial Release.
+	Ver:	N/A
+	Class:	H
+	Level:	1 (and only)
+	Status:	
+	
+	Original spice model.
       
-ISRC  - Independent Current Source
-      Initial Release
+ISRC	- Independent Current Source
+	
       
-VCCS  - Voltage Controlled Current Source
-      Initial Release
+VCCS	- Voltage Controlled Current Source
+	Initial Release.
+	Ver:	N/A
+	Class:	G
+	Level:	1 (and only)
+	Status:	
+	
+	Original spice model.
 
-VCVS  - Voltage Controlled Voltage Source
-      Initial Release
+VCVS	- Voltage Controlled Voltage Source
+	Initial Release.
+	Ver:	N/A
+	Class:	E
+	Level:	1 (and only)
+	Status:	
+	
+	Original spice model.
 
-VSRC  - Independent Voltage Source
+VSRC	- Independent Voltage Source
       Initial Release
 
                      
@@ -164,11 +196,24 @@ VSRC  - Independent Voltage Source
 ****************************      Switches     ****************************
 ***************************************************************************
 		     
-CSW - Current controlled switch
-      Initial release
+CSW 	- Current controlled switch
+	Initial Release.
+	Ver: 	N/A
+	Class:	W
+	Level:	1 (and only) 
+	Status: 
+	
+	This model comes from Jon Engelbert
+	
 
-SW  - Voltage controlled switch		     
-      Initial release		   
+SW	- Voltage controlled switch		     
+      	Initial release
+	Ver: 	N/A
+	Class:	S
+	Level:	1 (and only) 
+	Status:		
+	
+	This model comes from Jon Engelbert   
 		   
 		     
 ***************************************************************************

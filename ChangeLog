@@ -1,3 +1,12 @@
+2004-01-15  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/spicelib/devices/{cccs,ccvs,vccs,vcvs}/*: cleaned up the code.
+
+	*   src/spicelib/devices/csw/*, src/spicelib/devices/sw/*: cleaned
+	    up the code.
+	    
+	*   DEVICES: updated switches status.    
+
 2004-01-14  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/spicelib/devices/txl/*: Added TXLunsetup function to allow
