@@ -6,7 +6,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bsim2def.h"
 #include "sperror.h"
@@ -14,10 +13,7 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 
 int
-B2getic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-
+B2getic(GENmodel *inModel, CKTcircuit *ckt)
 {
 
     B2model *model = (B2model*)inModel;

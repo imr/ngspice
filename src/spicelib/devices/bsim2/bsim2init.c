@@ -66,7 +66,7 @@ SPICEdev B2info = {
     DEVsenPrint   : NULL,
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,
-    DEVnoise      : NULL,
+    DEVnoise      : B2noise,
 #ifdef CIDER
     DEVdump       : NULL,
     DEVacct       : NULL,

@@ -4,18 +4,13 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bsim2def.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-B2trunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
-
+B2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
     B2model *model = (B2model*)inModel;
     B2instance *here;

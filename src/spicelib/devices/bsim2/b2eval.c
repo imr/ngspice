@@ -4,7 +4,6 @@ Author: 1988 Min-Chie Jeng, Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bsim2def.h"
 #include "trandefs.h"
@@ -16,15 +15,11 @@ Author: 1988 Min-Chie Jeng, Hong J. Park, Thomas L. Quarles
  * using the B2 (Berkeley Short-Channel IGFET Model) Equations.
  */
 void
-B2evaluate(Vds,Vbs,Vgs,here,model,gm,gds,gmb,qg,qb,qd,cgg,cgd,cgs,
-        cbg,cbd,cbs,cdg,cdd,cds,Ids,von,vdsat,ckt)
-
-    CKTcircuit  *ckt;
-    B2model   *model;
-    B2instance *here;
-    double Vds,Vbs,Vgs;
-    double *gm,*gds,*gmb,*qg,*qb,*qd,*cgg,*cgd,*cgs,*cbg;
-    double *cbd,*cbs,*cdg,*cdd,*cds,*Ids,*von,*vdsat;
+B2evaluate(double Vds, double Vbs, double Vgs, B2instance *here, B2model *model,
+           double *gm, double *gds, double *gmb, double *qg, double *qb, double *qd,
+           double *cgg,double *cgd,double *cgs, double *cbg, double *cbd, double *cbs,
+           double *cdg, double *cdd, double *cds, double *Ids, double *von, 
+           double *vdsat, CKTcircuit *ckt)
  {
     double Vth, Vdsat;
     double Phisb, T1s, Eta, Gg, Aa, Inv_Aa, U1, U1s, Vc, Kk, SqrtKk;

@@ -4,7 +4,6 @@ Author: 1988 Min-Chie Jeng, Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "bsim2def.h"
 #include "suffix.h"
@@ -12,6 +11,7 @@ Author: 1988 Min-Chie Jeng, Hong J. Park, Thomas L. Quarles
 IFparm B2pTable[] = { /* parameters */
  IOP( "l",   BSIM2_L,      IF_REAL   , "Length"),
  IOP( "w",   BSIM2_W,      IF_REAL   , "Width"),
+ IOP( "m",   BSIM2_M,      IF_REAL   , "Parallel Multiplier"),
  IOP( "ad",  BSIM2_AD,     IF_REAL   , "Drain area"),
  IOP( "as",  BSIM2_AS,     IF_REAL   , "Source area"),
  IOP( "pd",  BSIM2_PD,     IF_REAL   , "Drain perimeter"),
@@ -192,6 +192,8 @@ IFparm B2mPTable[] = { /* model parameters */
        "Default width of source drain diffusion in um"),
  IOP( "dell",  BSIM2_MOD_DELLENGTH, IF_REAL,
        "Length reduction of source drain diffusion"),
+ IOP("kf",     BSIM2_MOD_KF,    IF_REAL ,"Flicker noise coefficient"),
+ IOP("af",     BSIM2_MOD_AF,    IF_REAL ,"Flicker noise exponent"),
  IP( "nmos",  BSIM2_MOD_NMOS,      IF_FLAG,
        "Flag to indicate NMOS"),
  IP( "pmos",  BSIM2_MOD_PMOS,      IF_FLAG,

@@ -6,15 +6,12 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "bsim2def.h"
 #include "suffix.h"
 
 
 void
-B2destroy(inModel)
-    GENmodel **inModel;
-
+B2destroy(GENmodel **inModel)
 {
 
     B2model **model = (B2model**)inModel;

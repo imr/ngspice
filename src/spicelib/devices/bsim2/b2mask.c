@@ -6,7 +6,6 @@ Author: 1988 Hong J. Park
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "cktdefs.h"
 #include "devdefs.h"
@@ -17,11 +16,7 @@ Author: 1988 Hong J. Park
 
 /*ARGSUSED*/
 int
-B2mAsk(ckt,inst,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inst;
-    int which;
-    IFvalue *value;
+B2mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     B2model *model = (B2model *)inst;
         switch(which) {
@@ -423,6 +418,12 @@ B2mAsk(ckt,inst,which,value)
             return(OK);
         case BSIM2_MOD_DELLENGTH:
             value->rValue = model->B2deltaLength; 
+            return(OK);
+        case BSIM2_MOD_AF:
+            value->rValue = model->B2fNexp; 
+            return(OK);
+        case BSIM2_MOD_KF:
+            value->rValue = model->B2fNcoef; 
             return(OK);
         default:
             return(E_BADPARM);

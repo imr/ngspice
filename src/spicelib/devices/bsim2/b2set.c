@@ -4,7 +4,6 @@ Author: 1988 Min-Chie Jeng, Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "bsim2def.h"
@@ -13,11 +12,7 @@ Author: 1988 Min-Chie Jeng, Hong J. Park, Thomas L. Quarles
 #include "suffix.h"
 
 int
-B2setup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+B2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the B2 device structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -486,7 +481,10 @@ B2setup(matrix,inModel,ckt,states)
             if(!here->B2wGiven) {
                 here->B2w = 5e-6;
             }
-                   
+            if(!here->B2mGiven) {
+                here->B2m = 1.0;
+            }
+       
             /* process drain series resistance */
             if( (model->B2sheetResistance != 0) && 
                     (here->B2drainSquares != 0.0 ) &&

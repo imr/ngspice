@@ -32,6 +32,7 @@ typedef struct sBSIM2instance {
 
     double B2l;   /* the length of the channel region */
     double B2w;   /* the width of the channel region */
+    double B2m;   /* the parallel multiplier */
     double B2drainArea;   /* the area of the drain diffusion */
     double B2sourceArea;  /* the area of the source diffusion */
     double B2drainSquares;    /* the length of the drain in squares */
@@ -54,6 +55,7 @@ typedef struct sBSIM2instance {
 
     unsigned B2lGiven :1;
     unsigned B2wGiven :1;
+    unsigned B2mGiven :1;
     unsigned B2drainAreaGiven :1;
     unsigned B2sourceAreaGiven    :1;
     unsigned B2drainSquaresGiven  :1;
@@ -114,6 +116,20 @@ typedef struct sBSIM2instance {
                                      * (source prime node,bulk node) */
     double *B2SPdpPtr;    /* pointer to sparse matrix element at
                                      * (source prime node,drain prime node) */
+
+#define B2RDNOIZ       0
+#define B2RSNOIZ       1
+#define B2IDNOIZ       2
+#define B2FLNOIZ       3
+#define B2TOTNOIZ      4
+
+#define B2NSRCS        5     /* the number of BSIM2 noise sources */
+
+#ifndef NONOISE
+    double B2nVar[NSTATVARS][B2NSRCS];
+#else /* NONOISE */
+	double **B2nVar;
+#endif /* NONOISE */
 
 #define B2vbd B2states+ 0
 #define B2vbs B2states+ 1
@@ -368,7 +384,10 @@ typedef struct sBSIM2model {       	/* model structure for a resistor */
     double B2unitAreaJctCap;
     double B2unitLengthSidewallJctCap;
     double B2defaultWidth;
-    double B2deltaLength;
+    double B2deltaLength; 
+    double B2fNcoef;
+    double B2fNexp;
+
 
     struct bsim2SizeDependParam  *pSizeDependParamKnot;
 
@@ -507,6 +526,8 @@ typedef struct sBSIM2model {       	/* model structure for a resistor */
     unsigned  B2unitLengthSidewallJctCapGiven   :1;
     unsigned  B2defaultWidthGiven   :1;
     unsigned  B2deltaLengthGiven   :1;
+    unsigned  B2fNcoefGiven :1;
+    unsigned  B2fNexpGiven :1;
     unsigned  B2typeGiven   :1;
 
 } B2model;
@@ -532,6 +553,7 @@ typedef struct sBSIM2model {       	/* model structure for a resistor */
 #define BSIM2_IC_VDS 11
 #define BSIM2_IC_VGS 12
 #define BSIM2_IC 13
+#define BSIM2_M 14
 
 /* model parameters */
 #define BSIM2_MOD_VFB0 101
@@ -670,6 +692,9 @@ typedef struct sBSIM2model {       	/* model structure for a resistor */
 #define BSIM2_MOD_NMOS 234
 #define BSIM2_MOD_PMOS 235
 
+#define BSIM2_MOD_KF 236
+#define BSIM2_MOD_AF 237
+
 /* device questions */
 #define BSIM2_DNODE              241
 #define BSIM2_GNODE              242
@@ -716,14 +741,11 @@ typedef struct sBSIM2model {       	/* model structure for a resistor */
 
 #include "bsim2ext.h"
 
-#ifdef __STDC__
 extern void B2evaluate(double,double,double,B2instance*,B2model*,
         double*,double*,double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, CKTcircuit*);
-#else /* stdc */
-extern void B2evaluate();
-#endif /* stdc */
+
 
 #endif /*B2*/
 

@@ -6,7 +6,6 @@ Author: 1988 Min-Chie Jeng, Hong J. Park, Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "bsim2def.h"
 #include "ifsim.h"
 #include "sperror.h"
@@ -14,10 +13,7 @@ Author: 1988 Min-Chie Jeng, Hong J. Park, Thomas L. Quarles
 
 
 int
-B2mParam(param,value,inMod)
-    int param;
-    IFvalue *value;
-    GENmodel *inMod;
+B2mParam(int param, IFvalue *value, GENmodel *inMod)
 {
     B2model *mod = (B2model*)inMod;
     switch(param) {
@@ -552,6 +548,14 @@ B2mParam(param,value,inMod)
         case  BSIM2_MOD_DELLENGTH :
             mod->B2deltaLength = value->rValue;
             mod->B2deltaLengthGiven = TRUE;
+            break;
+        case  BSIM2_MOD_AF :
+            mod->B2fNexp = value->rValue;
+            mod->B2fNexpGiven = TRUE;
+            break;
+        case  BSIM2_MOD_KF :
+            mod->B2fNcoef = value->rValue;
+            mod->B2fNcoefGiven = TRUE;
             break;
         case  BSIM2_MOD_NMOS  :
             if(value->iValue) {

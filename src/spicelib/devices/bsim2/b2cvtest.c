@@ -4,7 +4,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bsim2def.h"
 #include "trandefs.h"
@@ -14,10 +13,7 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 #include "suffix.h"
 
 int
-B2convTest(inModel,ckt)
-
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+B2convTest(GENmodel *inModel, CKTcircuit *ckt)
 
         /* actually load the current value into the 
          * sparse matrix previously provided 

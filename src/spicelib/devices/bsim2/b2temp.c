@@ -4,7 +4,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "bsim2def.h"
@@ -14,9 +13,7 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 /* ARGSUSED */
 int
-B2temp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+B2temp(GENmodel *inModel, CKTcircuit *ckt)
         /* load the B2 device structure with those pointers needed later 
          * for fast matrix loading 
          */

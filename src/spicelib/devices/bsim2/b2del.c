@@ -6,7 +6,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "bsim2def.h"
 #include "sperror.h"
 #include "gendefs.h"
@@ -14,11 +13,7 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 
 int
-B2delete(inModel,name,inInst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inInst;
-
+B2delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 {
 
     B2instance **fast = (B2instance**)inInst;

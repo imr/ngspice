@@ -4,7 +4,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bsim2def.h"
 #include "trandefs.h"
@@ -14,10 +13,7 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 #include "suffix.h"
 
 int
-B2load(inModel,ckt)
-
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+B2load(GENmodel *inModel, CKTcircuit *ckt)
 
         /* actually load the current value into the 
          * sparse matrix previously provided 
@@ -123,8 +119,12 @@ B2load(inModel,ckt)
     double vt0;
     double args[7];
     int    ByPass;
+#ifndef NOBYPASS    
     double tempv;
+#endif /*NOBYPASS*/    
     int error;
+
+    double m;
 
 
     /*  loop through all the B2 device models */
@@ -278,6 +278,7 @@ B2load(inModel,ckt)
                     *(ckt->CKTstate0 + here->B2gbd) * delvbd +
                     *(ckt->CKTstate0 + here->B2gbs) * delvbs ;
 
+#ifndef NOBYPASS
                     /* now lets see if we can bypass (ugh) */
 
                 /* following should be one big if connected by && all over
@@ -341,6 +342,7 @@ B2load(inModel,ckt)
                         goto line850;
                     }
                 }
+#endif /*NOBYPASS*/
 
                 von = model->B2type * here->B2von;
                 if(*(ckt->CKTstate0 + here->B2vds) >=0) {
@@ -653,6 +655,8 @@ line860:
              *  load current vector
              */
 line900:
+
+            m = here->B2m;
    
             ceqbs = model->B2type * (cbs-(gbs-ckt->CKTgmin)*vbs);
             ceqbd = model->B2type * (cbd-(gbd-ckt->CKTgmin)*vbd);
@@ -670,41 +674,41 @@ line900:
                 cdreq = -(model->B2type)*(cdrain+gds*vds-gm*vgd-gmbs*vbd);
             }
 
-            *(ckt->CKTrhs + here->B2gNode) -= ceqqg;
-            *(ckt->CKTrhs + here->B2bNode) -=(ceqbs+ceqbd+ceqqb);
+            *(ckt->CKTrhs + here->B2gNode) -= m * (ceqqg);
+            *(ckt->CKTrhs + here->B2bNode) -= m * (ceqbs+ceqbd+ceqqb);
             *(ckt->CKTrhs + here->B2dNodePrime) +=
-                    (ceqbd-cdreq-ceqqd);
+                    m * (ceqbd-cdreq-ceqqd);
             *(ckt->CKTrhs + here->B2sNodePrime) += 
-                    (cdreq+ceqbs+ceqqg+ceqqb+ceqqd);
+                    m * (cdreq+ceqbs+ceqqg+ceqqb+ceqqd);
 
             /*
              *  load y matrix
              */
 
-            *(here->B2DdPtr) += (here->B2drainConductance);
-            *(here->B2GgPtr) += (gcggb);
-            *(here->B2SsPtr) += (here->B2sourceConductance);
-            *(here->B2BbPtr) += (gbd+gbs-gcbgb-gcbdb-gcbsb);
+            *(here->B2DdPtr) += m * (here->B2drainConductance);
+            *(here->B2GgPtr) += m * (gcggb);
+            *(here->B2SsPtr) += m * (here->B2sourceConductance);
+            *(here->B2BbPtr) += m * (gbd+gbs-gcbgb-gcbdb-gcbsb);
             *(here->B2DPdpPtr) += 
-                (here->B2drainConductance+gds+gbd+xrev*(gm+gmbs)+gcddb);
+                m * (here->B2drainConductance+gds+gbd+xrev*(gm+gmbs)+gcddb);
             *(here->B2SPspPtr) += 
-                (here->B2sourceConductance+gds+gbs+xnrm*(gm+gmbs)+gcssb);
-            *(here->B2DdpPtr) += (-here->B2drainConductance);
-            *(here->B2GbPtr) += (-gcggb-gcgdb-gcgsb);
-            *(here->B2GdpPtr) += (gcgdb);
-            *(here->B2GspPtr) += (gcgsb);
-            *(here->B2SspPtr) += (-here->B2sourceConductance);
-            *(here->B2BgPtr) += (gcbgb);
-            *(here->B2BdpPtr) += (-gbd+gcbdb);
-            *(here->B2BspPtr) += (-gbs+gcbsb);
-            *(here->B2DPdPtr) += (-here->B2drainConductance);
-            *(here->B2DPgPtr) += ((xnrm-xrev)*gm+gcdgb);
-            *(here->B2DPbPtr) += (-gbd+(xnrm-xrev)*gmbs-gcdgb-gcddb-gcdsb);
-            *(here->B2DPspPtr) += (-gds-xnrm*(gm+gmbs)+gcdsb);
-            *(here->B2SPgPtr) += (-(xnrm-xrev)*gm+gcsgb);
-            *(here->B2SPsPtr) += (-here->B2sourceConductance);
-            *(here->B2SPbPtr) += (-gbs-(xnrm-xrev)*gmbs-gcsgb-gcsdb-gcssb);
-            *(here->B2SPdpPtr) += (-gds-xrev*(gm+gmbs)+gcsdb);
+                m * (here->B2sourceConductance+gds+gbs+xnrm*(gm+gmbs)+gcssb);
+            *(here->B2DdpPtr) += m * (-here->B2drainConductance);
+            *(here->B2GbPtr) += m * (-gcggb-gcgdb-gcgsb);
+            *(here->B2GdpPtr) += m * (gcgdb);
+            *(here->B2GspPtr) += m * (gcgsb);
+            *(here->B2SspPtr) += m * (-here->B2sourceConductance);
+            *(here->B2BgPtr) += m * (gcbgb);
+            *(here->B2BdpPtr) += m * (-gbd+gcbdb);
+            *(here->B2BspPtr) += m * (-gbs+gcbsb);
+            *(here->B2DPdPtr) += m * (-here->B2drainConductance);
+            *(here->B2DPgPtr) += m * ((xnrm-xrev)*gm+gcdgb);
+            *(here->B2DPbPtr) += m * (-gbd+(xnrm-xrev)*gmbs-gcdgb-gcddb-gcdsb);
+            *(here->B2DPspPtr) += m * (-gds-xnrm*(gm+gmbs)+gcdsb);
+            *(here->B2SPgPtr) += m * (-(xnrm-xrev)*gm+gcsgb);
+            *(here->B2SPsPtr) += m * (-here->B2sourceConductance);
+            *(here->B2SPbPtr) += m * (-gbs-(xnrm-xrev)*gmbs-gcsgb-gcsdb-gcssb);
+            *(here->B2SPdpPtr) += m * (-gds-xrev*(gm+gmbs)+gcsdb);
 
 
 line1000:  ;
