@@ -303,13 +303,6 @@ doit(struct line *deck)
         return (NULL);
     }
 
-    /* Now check to see if there are still subckt instances undefined... */
-    for (c = deck; c; c = c->li_next)
-	if (ciprefix(invoke, c->li_line)) {
-	    fprintf(cp_err, "Error: unknown subckt: %s\n",
-		    c->li_line);
-	    error = 1;
-	}
 
     if (error)
 	return NULL;	/* error message already reported; should free( ) */
