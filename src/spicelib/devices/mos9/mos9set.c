@@ -5,7 +5,6 @@ Modified: Alan Gillespie
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "mos9defs.h"
@@ -17,11 +16,7 @@ Modified: Alan Gillespie
 #define EPSSIL (11.7 * 8.854214871e-12)
 
 int
-MOS9setup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+MOS9setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the MOS9 device structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -152,10 +147,11 @@ MOS9setup(matrix,inModel,ckt,states)
             CKTnode *tmpNode;
             IFuid tmpName;
 
-            /* allocate a chunk of the state vector */
-            here->MOS9states = *states;
-            *states += MOS9NUMSTATES;
-
+            if (here->MOS9owner == ARCHme) {
+                /* allocate a chunk of the state vector */
+                here->MOS9states = *states;
+                *states += MOS9NUMSTATES;
+            }
             if(!here->MOS9drainAreaGiven) {
                 here->MOS9drainArea = ckt->CKTdefaultMosAD;
             }
@@ -263,9 +259,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-MOS9unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS9unsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS9model *model;
     MOS9instance *here;

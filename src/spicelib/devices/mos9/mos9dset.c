@@ -5,7 +5,6 @@ Modified: Alan Gillespie
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "mos9defs.h"
@@ -16,15 +15,13 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 int
-MOS9dSetup(inModel,ckt)
-    GENmodel *inModel;
-    register CKTcircuit *ckt;
+MOS9dSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
 {
-    register MOS9model *model = (MOS9model *)inModel;
-    register MOS9instance *here;
+    MOS9model *model = (MOS9model *)inModel;
+    MOS9instance *here;
     double Beta;
     double DrainSatCur;
     double EffectiveLength;
@@ -69,6 +66,7 @@ next: for( ; model != NULL; model = model->MOS9nextModel ) {
         /* loop through all the instances of the model */
         for (here = model->MOS9instances; here != NULL ;
                 here=here->MOS9nextInstance) {
+            if (here->MOS9owner != ARCHme) continue;
 
             vt = CONSTKoverQ * here->MOS9temp;
 

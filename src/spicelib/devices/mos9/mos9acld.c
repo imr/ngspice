@@ -7,7 +7,6 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mos9defs.h"
 #include "sperror.h"
@@ -15,9 +14,7 @@ Modified: Alan Gillespie
 
 
 int
-MOS9acLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS9acLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS9model *model = (MOS9model *)inModel;
     MOS9instance *here;
@@ -40,7 +37,8 @@ MOS9acLoad(inModel,ckt)
     for( ; model != NULL; model = model->MOS9nextModel) {
         for(here = model->MOS9instances; here!= NULL;
                 here = here->MOS9nextInstance) {
-        
+        if (here->MOS9owner != ARCHme) continue;
+
             if (here->MOS9mode < 0) {
                 xnrm=0;
                 xrev=1;

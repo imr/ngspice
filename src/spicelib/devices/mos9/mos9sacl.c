@@ -2,6 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Alan Gillespie
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 /* actually load the current ac sensitivity 
@@ -9,7 +11,6 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "const.h"
@@ -18,9 +19,7 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 int
-MOS9sAcLoad(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+MOS9sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS9model *model = (MOS9model *)inModel;
     MOS9instance *here;
@@ -133,6 +132,7 @@ CKTcircuit *ckt;
     for( ; model != NULL; model = model->MOS9nextModel) {
         for(here = model->MOS9instances; here!= NULL;
                 here = here->MOS9nextInstance) {
+            if (here->MOS9owner != ARCHme) continue;
 
             /* save the unperturbed values in the state vector */
             for(i=0; i <= 16; i++)

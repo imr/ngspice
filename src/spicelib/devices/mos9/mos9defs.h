@@ -43,6 +43,7 @@ typedef struct sMOS9instance {
     double MOS9sourceConductance;   /*conductance of source(or 0):set in setup*/
     double MOS9drainConductance;    /*conductance of drain(or 0):set in setup*/
     double MOS9temp;    /* operating temperature of this instance */
+    double MOS9dtemp;   /* instance temperature difference */
 
     double MOS9tTransconductance;   /* temperature corrected transconductance*/
     double MOS9tSurfMob;            /* temperature corrected surface mobility */
@@ -91,6 +92,7 @@ typedef struct sMOS9instance {
 
     unsigned MOS9off :1;/* non-zero to indicate device is off for dc analysis*/
     unsigned MOS9tempGiven :1;  /* instance temperature specified */
+    unsigned MOS9dtempGiven :1; /* instance temperature difference specified*/
 
     unsigned MOS9mGiven :1;
 
@@ -498,7 +500,8 @@ typedef struct sMOS9model {       /* model structure for a resistor */
 #define MOS9_TEMP               77
 #define MOS9_SOURCERESIST       78
 #define MOS9_DRAINRESIST        79
-#define MOS9_M 80
+#define MOS9_M                  80
+#define MOS9_DTEMP              81
 
 /* model parameters */
 #define MOS9_MOD_VTO 101
@@ -558,3 +561,4 @@ typedef struct sMOS9model {       /* model structure for a resistor */
 #include "mos9ext.h"
 
 #endif /*MOS9*/
+

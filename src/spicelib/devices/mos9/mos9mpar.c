@@ -7,7 +7,6 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "mos9defs.h"
@@ -16,10 +15,7 @@ Modified: Alan Gillespie
 
 
 int
-MOS9mParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+MOS9mParam(int param, IFvalue *value, GENmodel *inModel)
 {
     register MOS9model *model = (MOS9model *)inModel;
     switch(param) {

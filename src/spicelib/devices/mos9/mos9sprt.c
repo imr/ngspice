@@ -2,6 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Alan Gillespie
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
     /* Pretty print the sensitivity info for all the MOS9 
@@ -9,7 +11,6 @@ Modified: Alan Gillespie
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "mos9defs.h"
@@ -17,14 +18,12 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 void
-MOS9sPrint(inModel,ckt)
-    GENmodel *inModel;
-    register CKTcircuit *ckt;
+MOS9sPrint(GENmodel *inModel, CKTcircuit *ckt)
 {
-    register MOS9model *model = (MOS9model *)inModel;
-    register MOS9instance *here;
+    MOS9model *model = (MOS9model *)inModel;
+    MOS9instance *here;
 
-    printf("LEVEL 3 MOSFETS (AG) -----------------\n");
+    printf("LEVEL 9 MOSFETS (AG) -----------------\n");
     /*  loop through all the MOS9 models */
     for( ; model != NULL; model = model->MOS9nextModel ) {
 
@@ -33,6 +32,7 @@ MOS9sPrint(inModel,ckt)
         /* loop through all the instances of the model */
         for (here = model->MOS9instances; here != NULL ;
                 here=here->MOS9nextInstance) {
+            if (here->MOS9owner != ARCHme) continue;
 
             printf("    Instance name:%s\n",here->MOS9name);
             printf("      Drain, Gate , Source nodes: %s, %s ,%s\n",

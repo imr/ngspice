@@ -7,17 +7,13 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mos9defs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-MOS9delete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
+MOS9delete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
     MOS9model *model = (MOS9model *)inModel;
     MOS9instance **fast = (MOS9instance **)inst;

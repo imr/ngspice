@@ -2,9 +2,10 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Alan Gillespie
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
-#include <stdio.h>
 #include "ngspice.h"
 #include "smpdefs.h"
 #include "cktdefs.h"
@@ -13,9 +14,7 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 int
-MOS9sUpdate(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+MOS9sUpdate(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS9model *model = (MOS9model *)inModel;
     MOS9instance *here;
@@ -56,6 +55,7 @@ CKTcircuit *ckt;
         /* loop through all the instances of the model */
         for (here = model->MOS9instances; here != NULL ;
                 here=here->MOS9nextInstance) {
+            if (here->MOS9owner != ARCHme) continue;
 
 
 #ifdef SENSDEBUG

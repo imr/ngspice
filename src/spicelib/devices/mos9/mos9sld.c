@@ -2,6 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Alan Gillespie
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 /* actually load the current sensitivity 
@@ -9,7 +11,6 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "mos9defs.h"
@@ -17,9 +18,7 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 int
-MOS9sLoad(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+MOS9sLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS9model *model = (MOS9model *)inModel;
     MOS9instance *here;
@@ -101,7 +100,7 @@ CKTcircuit *ckt;
         /* loop through all the instances of the model */
         for (here = model->MOS9instances; here != NULL ;
                 here=here->MOS9nextInstance) {
-
+            if (here->MOS9owner != ARCHme) continue;
 
 #ifdef SENSDEBUG
             printf("senload instance name %s\n",here->MOS9name);

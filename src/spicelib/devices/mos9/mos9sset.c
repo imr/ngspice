@@ -2,6 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Alan Gillespie
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
     /* loop through all the devices and 
@@ -9,7 +11,6 @@ Modified: Alan Gillespie
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "mos9defs.h"
@@ -17,9 +18,7 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 int
-MOS9sSetup(info,inModel)
-    SENstruct *info;
-    GENmodel *inModel;
+MOS9sSetup(SENstruct *info, GENmodel *inModel)
 {
     MOS9model *model = (MOS9model *)inModel;
     MOS9instance *here;
@@ -30,6 +29,7 @@ MOS9sSetup(info,inModel)
         /* loop through all the instances of the model */
         for (here = model->MOS9instances; here != NULL ;
                 here=here->MOS9nextInstance) {
+            if (here->MOS9owner != ARCHme) continue;
 
 
             if(here->MOS9senParmNo){

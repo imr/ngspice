@@ -5,7 +5,6 @@ Modified: Alan Gillespie
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mos9defs.h"
 #include "sperror.h"
@@ -22,6 +21,8 @@ MOS9trunc(inModel,ckt,timeStep)
 
     for( ; model != NULL; model = model->MOS9nextModel) {
         for(here=model->MOS9instances;here!=NULL;here = here->MOS9nextInstance){
+            if (here->MOS9owner != ARCHme) continue;
+
             CKTterr(here->MOS9qgs,ckt,timeStep);
             CKTterr(here->MOS9qgd,ckt,timeStep);
             CKTterr(here->MOS9qgb,ckt,timeStep);

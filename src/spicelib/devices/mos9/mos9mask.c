@@ -7,7 +7,6 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "cktdefs.h"
@@ -19,11 +18,7 @@ Modified: Alan Gillespie
 
 /*ARGSUSED*/
 int
-MOS9mAsk(ckt,inst,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inst;
-    int which;
-    IFvalue *value;
+MOS9mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     MOS9model *here = (MOS9model *)inst;
     switch(which) {

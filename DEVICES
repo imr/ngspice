@@ -262,7 +262,11 @@ MOS9  - Level 9 MOS model
       Ver:    N/A
       Class:  M
       Level:  9
-      Status: TO BE TESTED
+      Status: 
+
+      Enhancements over the original model:
+      
+      - Temperature difference from circuit temperature
 
 
 BSIM1 - BSIM model level 1

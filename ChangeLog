@@ -1,5 +1,12 @@
 2003-12-08  Paolo Nenzi <p.nenzi@ieee.org>
 
+	* src/spicelib/devices/mos9/*: Added 
+          "dtemp" parameters.
+
+        * DEVICES: Updated MOS9 status. 
+
+2003-12-08  Paolo Nenzi <p.nenzi@ieee.org>
+
 	* src/spicelib/devices/mos6/*: Added "m"
           "dtemp" parameters.
 

@@ -5,7 +5,6 @@ Modified: Alan Gillespie
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "ifsim.h"
 #include "mos9defs.h"
@@ -39,6 +38,7 @@ IFparm MOS9pTable[] = { /* parameters */
  IOPAU("icvbs",       MOS9_IC_VBS,  IF_REAL   , "Initial B-S voltage"),
  IOPU("ic",     MOS9_IC,      IF_REALVEC, "Vector of D-S, G-S, B-S voltages"),
  IOPU("temp",      MOS9_TEMP,    IF_REAL   , "Instance operating temperature"),
+ IOPU("dtemp",      MOS9_DTEMP,    IF_REAL   , "Instance operating temperature difference"),
  IP("sens_l",  MOS9_L_SENS, IF_FLAG, "flag to request sensitivity WRT length"),
  IP("sens_w",  MOS9_W_SENS, IF_FLAG, "flag to request sensitivity WRT width"),
  OPU("dnode",     MOS9_DNODE,   IF_INTEGER, "Number of drain node"),

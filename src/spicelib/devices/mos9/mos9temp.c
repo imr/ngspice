@@ -5,7 +5,6 @@ Modified: Alan Gillespie
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mos9defs.h"
 #include "const.h"
@@ -16,9 +15,7 @@ Modified: Alan Gillespie
 #define EPSSIL (11.7 * 8.854214871e-12)
 
 int
-MOS9temp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS9temp(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS9model *model = (MOS9model *)inModel;
     MOS9instance *here;
@@ -127,11 +124,16 @@ MOS9temp(inModel,ckt)
             double arg;     /* 1 - fc */
             double sarg;    /* (1-fc) ^^ (-mj) */
             double sargsw;  /* (1-fc) ^^ (-mjsw) */
+            if (here->MOS9owner != ARCHme) continue;
 
             /* perform the parameter defaulting */
 
+             if(!here->MOS9dtempGiven) {
+                here->MOS9dtemp = 0.0;
+            }
+
             if(!here->MOS9tempGiven) {
-                here->MOS9temp = ckt->CKTtemp;
+                here->MOS9temp = ckt->CKTtemp + here->MOS9dtemp;
             }
             vt = here->MOS9temp * CONSTKoverQ;
             ratio = here->MOS9temp/model->MOS9tnom;

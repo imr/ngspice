@@ -7,7 +7,6 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "mos9defs.h"
@@ -17,11 +16,8 @@ Modified: Alan Gillespie
 
 /* ARGSUSED */
 int
-MOS9param(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+MOS9param(int param, IFvalue *value, GENinstance *inst,
+          IFvalue *select)
 {
     MOS9instance *here = (MOS9instance *)inst;
     switch(param) {
@@ -80,6 +76,10 @@ MOS9param(param,value,inst,select)
         case MOS9_TEMP:
             here->MOS9temp = value->rValue+CONSTCtoK;
             here->MOS9tempGiven = TRUE;
+            break;
+        case MOS9_DTEMP:
+            here->MOS9dtemp = value->rValue;
+            here->MOS9dtempGiven = TRUE;
             break;
         case MOS9_IC:
             switch(value->v.numValue){

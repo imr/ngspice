@@ -5,7 +5,6 @@ Modified: Alan Gillespie
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "mos9defs.h"
@@ -15,9 +14,7 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 int
-MOS9load(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS9load(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
@@ -77,7 +74,9 @@ MOS9load(inModel,ckt)
     double capgd;   /* total gate-drain capacitance */
     double capgb;   /* total gate-bulk capacitance */
     int Check;
+#ifndef NOBYPASS      
     double tempv;
+#endif /*NOBYPASS*/    
     int error;
 #ifdef CAPBYPASS
     int senflag;
@@ -108,6 +107,7 @@ next:
         /* loop through all the instances of the model */
         for (here = model->MOS9instances; here != NULL ;
                 here=here->MOS9nextInstance) {
+            if (here->MOS9owner != ARCHme) continue;
 
             vt = CONSTKoverQ * here->MOS9temp;
             Check=1;
@@ -122,10 +122,6 @@ next:
 
             }
             SenCond = ckt->CKTsenInfo && here->MOS9senPertFlag;
-#ifdef DETAILPROF
-asm("   .globl mos9pta");
-asm("mos9pta:");
-#endif /* DETAILPROF */
 
             /* first, we compute a few useful values - these could be
              * pre-computed, but for historical reasons are still done
@@ -198,10 +194,6 @@ asm("mos9pta:");
                 goto next1;
             }
 
-#ifdef DETAILPROF
-asm("   .globl mos9ptax");
-asm("mos9ptax:");
-#endif /* DETAILPROF */
 
             /* 
              * ok - now to do the start-up operations
@@ -256,10 +248,6 @@ asm("mos9ptax:");
 #endif /*PREDICTOR*/
 
                 /* now some common crunching for some more useful quantities */
-#ifdef DETAILPROF
-asm("   .globl mos9ptay");
-asm("mos9ptay:");
-#endif /* DETAILPROF */
 
                 vbd=vbs-vds;
                 vgd=vgs-vds;
@@ -293,11 +281,7 @@ asm("mos9ptay:");
                     here->MOS9cbd +
                     here->MOS9gbd * delvbd +
                     here->MOS9gbs * delvbs ;
-
-#ifdef DETAILPROF
-asm("   .globl mos9ptb");
-asm("mos9ptb:");
-#endif /* DETAILPROF */
+#ifndef NOBYPASS
                 /* now lets see if we can bypass (ugh) */
                 /* the following mess should be one if statement, but
                  * many compilers can't handle it all at once, so it
@@ -351,11 +335,7 @@ asm("mos9ptb:");
                     }
                     goto bypass;
                 }
-
-#ifdef DETAILPROF
-asm("   .globl mos9ptc");
-asm("mos9ptc:");
-#endif /* DETAILPROF */
+#endif /*NOBYPASS*/
                 /* ok - bypass is out, do it the hard way */
 
                 von = model->MOS9type * here->MOS9von;
@@ -396,10 +376,6 @@ asm("mos9ptc:");
 
             } else {
 
-#ifdef DETAILPROF
-asm("   .globl mos9ptd");
-asm("mos9ptd:");
-#endif /* DETAILPROF */
                 /* ok - not one of the simple cases, so we have to
                  * look at all of the possibilities for why we were
                  * called.  We still just initialize the three voltages
@@ -422,10 +398,6 @@ asm("mos9ptd:");
                 } 
             }
 
-#ifdef DETAILPROF
-asm("   .globl mos9pte");
-asm("mos9pte:");
-#endif /* DETAILPROF */
             /*
              * now all the preliminaries are over - we can start doing the
              * real work
@@ -474,10 +446,6 @@ next1:      if(vbs <= -3*vt) {
                 here->MOS9mode = -1;
             }
 
-#ifdef DETAILPROF
-asm("   .globl mos9ptf");
-asm("mos9ptf:");
-#endif /* DETAILPROF */
             {
             /*
              * subroutine moseq3(vds,vbs,vgs,gm,gds,gmbs,
@@ -913,10 +881,6 @@ innerline1000:;
              */
             }
 
-#ifdef DETAILPROF
-asm("   .globl mos9ptg");
-asm("mos9ptg:");
-#endif /* DETAILPROF */
 
             /* now deal with n vs p polarity */
 
@@ -1076,10 +1040,7 @@ asm("mos9ptg:");
                 }
 #endif /*CAPZEROBYPASS*/
                 }
-#ifdef DETAILPROF
-asm("   .globl mos9pth");
-asm("mos9pth:");
-#endif /* DETAILPROF */
+
                 if(SenCond && (ckt->CKTsenInfo->SENmode==TRANSEN)) goto next2;
 
                 if ( ckt->CKTmode & MODETRAN ) {
@@ -1107,10 +1068,7 @@ asm("mos9pth:");
                     here->MOS9cbs += *(ckt->CKTstate0 + here->MOS9cqbs);
                 }
             }
-#ifdef DETAILPROF
-asm("   .globl mos9pti");
-asm("mos9pti:");
-#endif /* DETAILPROF */
+
             if(SenCond) goto next2;
 
             /*
@@ -1124,10 +1082,7 @@ asm("mos9pti:");
                 }
             }
 
-#ifdef DETAILPROF
-asm("   .globl mos9ptj");
-asm("mos9ptj:");
-#endif /* DETAILPROF */
+
 
             /* save things away for next time */
 
@@ -1136,10 +1091,7 @@ next2:      *(ckt->CKTstate0 + here->MOS9vbs) = vbs;
             *(ckt->CKTstate0 + here->MOS9vgs) = vgs;
             *(ckt->CKTstate0 + here->MOS9vds) = vds;
 
-#ifdef DETAILPROF
-asm("   .globl mos9ptk");
-asm("mos9ptk:");
-#endif /* DETAILPROF */
+
 
             /*
              *     meyer's capacitor model
@@ -1195,10 +1147,7 @@ asm("mos9ptk:");
                     here->MOS9cgb = capgb;
                 }
 
-#ifdef DETAILPROF
-asm("   .globl mos9ptl");
-asm("mos9ptl:");
-#endif /* DETAILPROF */
+
                 /*
                  *     store small-signal parameters (for meyer's model)
                  *  all parameters already stored, so done...
@@ -1242,10 +1191,7 @@ asm("mos9ptl:");
             }
 bypass:
             if(SenCond) continue;
-#ifdef DETAILPROF
-asm("   .globl mos9ptm");
-asm("mos9ptm:");
-#endif /* DETAILPROF */
+
 
             if ( (ckt->CKTmode & (MODEINITTRAN)) || 
                     (! (ckt->CKTmode & (MODETRAN)) )  ) {
@@ -1284,10 +1230,7 @@ asm("mos9ptm:");
              *     store charge storage info for meyer's cap in lx table
              */
 
-#ifdef DETAILPROF
-asm("   .globl mos9ptn");
-asm("mos9ptn:");
-#endif /* DETAILPROF */
+
             /*
              *  load current vector
              */

@@ -5,7 +5,6 @@ Modified: Alan Gillespie
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mos9defs.h"
 #include "sperror.h"
@@ -55,8 +54,9 @@ for( ; model != NULL; model = model->MOS9nextModel ) {
 
   /* loop through all the instances of the model */
   for (here = model->MOS9instances; here != NULL ;
- here=here->MOS9nextInstance) {
+            here=here->MOS9nextInstance) {
 
+    if (here->MOS9owner != ARCHme) continue;
 
 
     /* loading starts here */

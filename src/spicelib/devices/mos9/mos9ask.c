@@ -5,7 +5,6 @@ Modified: Alan Gillespie
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "cktdefs.h"
@@ -16,12 +15,8 @@ Modified: Alan Gillespie
 
 /*ARGSUSED*/
 int
-MOS9ask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+MOS9ask(CKTcircuit *ckt, GENinstance *inst, int which, 
+        IFvalue *value, IFvalue *select)
 {
     MOS9instance *here = (MOS9instance *)inst;
     double vr;

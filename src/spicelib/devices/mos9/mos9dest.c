@@ -7,14 +7,12 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mos9defs.h"
 #include "suffix.h"
 
 
 void
-MOS9destroy(inModel)
-    GENmodel **inModel;
+MOS9destroy(GENmodel **inModel)
 {
     MOS9model **model = (MOS9model **)inModel;
     MOS9instance *here;

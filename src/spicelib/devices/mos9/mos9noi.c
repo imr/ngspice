@@ -5,7 +5,6 @@ Modified: Alan Gillespie
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mos9defs.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"
@@ -25,13 +24,8 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 int
-MOS9noise (mode, operation, genmodel, ckt, data, OnDens)
-    int mode;
-    int operation;
-    GENmodel *genmodel;
-    CKTcircuit *ckt;
-    Ndata *data;
-    double *OnDens;
+MOS9noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
+           Ndata *data, double *OnDens)
 {
     MOS9model *firstModel = (MOS9model *) genmodel;
     MOS9model *model;
@@ -56,6 +50,8 @@ MOS9noise (mode, operation, genmodel, ckt, data, OnDens)
 
     for (model=firstModel; model != NULL; model=model->MOS9nextModel) {
 	for (inst=model->MOS9instances; inst != NULL; inst=inst->MOS9nextInstance) {
+           if (inst->MOS9owner != ARCHme) continue;
+
 	    switch (operation) {
 
 	    case N_OPEN:
