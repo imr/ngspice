@@ -7,14 +7,22 @@ noinst_LIBRARIES = libfte.a
 libfte_a_SOURCES = \
 	commands.c	\
 	commands.h	\
+	com_asciiplot.c \
+	com_asciiplot.h \
 	com_compose.c	\
 	com_compose.h	\
 	com_display.c	\
 	com_display.h	\
+	com_hardcopy.c	\
+	com_hardcopy.h	\
 	com_let.c	\
 	com_let.h	\
+	com_plot.c	\
+	com_plot.h	\
 	com_setscale.c	\
 	com_setscale.h	\
+	com_xgraph.c	\
+	com_xgraph.h	\
 	completion.h	\
 	\
 	arg.c		\

@@ -1,258 +1,227 @@
-/**********
-Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
-**********/
-
-/*
- * Plotting routines
- */
-
 #include <ngspice.h>
-#include <fteinput.h>
-#include <ftedbgra.h>
+#include <bool.h>
+#include <wordlist.h>
+#include <graph.h>
 #include <cpdefs.h>
-#include <plot.h>
-#include <fteparse.h>
-#include <fteext.h>
+#include <pnode.h>
 #include <sim.h>
+#include <fteext.h>
 
-#include "doplot.h"
-
-#include "plotting/agraf.h"
-#include "plotting/graf.h"
-
-
-extern double *ft_SMITHminmax(struct dvec *v, bool yval);
-extern void ft_xgraph(double *xlims, double *ylims, char *filename, char *title, char *xlabel, char *ylabel, GRIDTYPE gridtype, PLOTTYPE plottype, struct dvec *vecs);
-
-static bool sameflag;
-
-static bool plotit(wordlist *wl, char *hcopy, char *devname);
-static double * getlims(wordlist *wl, char *name, int number);
-static char * getword(wordlist *wl, char *name);
-static bool getflag(wordlist *wl, char *name);
-static void xtend(struct dvec *v, int length);
-static void compress(struct dvec *d, double *xcomp, double *xind);
-
-
-
-
-/* asciiplot file name ... [xlimit] xhi xlo] [vs xname] */
-
-
-extern void Input (REQUEST *request, RESPONSE *response);
-extern int DevSwitch (char *devname);
-extern int NewViewport (GRAPH *pgraph);
-extern void gr_resize (GRAPH *graph);
-extern void gr_redraw (GRAPH *graph);
-extern int DestroyGraph (int id);
-extern int unlink (const char *);
-
-void
-com_asciiplot(wordlist *wl)
-{
-    (void) plotit(wl, (char *) NULL, "lpr");
-    return;
-}
-
-/* xgraph file plotargs
- */
-
-void
-com_xgraph(wordlist *wl)
-{
-    char *fname;
-    bool tempf = FALSE;
-
-    if (wl) {
-        fname = wl->wl_word;
-        wl = wl->wl_next;
-    }
-    if (!wl) {
-	return;
-    }
-    if (cieq(fname, "temp") || cieq(fname, "tmp")) {
-        fname = smktemp("xg");
-        tempf = TRUE;
-    }
-
-    (void) plotit(wl, fname, "xgraph");
-
-/* Leave temp file sitting around so xgraph can grab it from background.
-    if (tempf)
-        (void) unlink(fname);
-*/
-
-
-    return;
-}
-
-/* hardcopy file plotargs, or 'hardcopy file' -- with no other args this
- * prompts the user for a window to dump to a plot file. XXX no it doesn't.
- */
-
-void
-com_hardcopy(wordlist *wl)
-{
-    char *buf2, *prompt(FILE *fp);
-    wordlist *process(wordlist *wlist);
-    char *fname;
-    char buf[BSIZE_SP], device[BSIZE_SP];
-    bool tempf = FALSE;
-    char *devtype;
-    char format[513];
-    int	printed;
-    int hc_button;
-    int foundit;
-
-    if (!cp_getvar("hcopydev", VT_STRING, device))
-        *device = '\0';
-
-    if (wl) {
-	hc_button = 0;
-        fname = wl->wl_word;
-        wl = wl->wl_next;
-    } else {
-	hc_button = 1;
-        fname = smktemp("hc");
-        tempf = TRUE;
-    }
-
-    if (!cp_getvar("hcopydevtype", VT_STRING, buf)) {
-        devtype = "plot5";
-    } else {
-        devtype = buf;
-    }
-
-/* enable screen plot selection for these display types */
-
-    foundit = 0;
-
-#ifndef X_DISPLAY_MISSING
-    if (!wl && hc_button) {
-
-        REQUEST request;
-        RESPONSE response;
-        GRAPH *tempgraph;
-        
-        request.option = click_option;
-        Input(&request, &response);
-
-        if (response.option == error_option) return;
-
-	if (response.reply.graph) {
-
-	    if (DevSwitch(devtype)) return;
-	    tempgraph = CopyGraph(response.reply.graph);
-	    tempgraph->devdep = fname;
-	    if (NewViewport(tempgraph)) {
-	      DevSwitch(NULL);
-	      return;
-	    }
-	    gr_resize(tempgraph);
-	    gr_redraw(tempgraph);
-	    DestroyGraph(tempgraph->graphid);
-	    DevSwitch(NULL);
-	    foundit = 1;
-	}
-    }
-
-#endif
-
-
-    if (!foundit) {
-
-	if (!wl) {
-	    outmenuprompt("which variable ? ");
-	    if ((buf2 = prompt(cp_in)) == (char *) -1)	/* XXXX Sick */
-		return;
-	    wl = alloc(struct wordlist);
-	    wl->wl_word = buf2;
-	    wl->wl_next = NULL;
-	    wl = process(wl);
-	}
-
-
-
-	if (DevSwitch(devtype)) return;
-
-	if (!wl || !plotit(wl, fname, (char *) NULL)) {
-	    printf("com_hardcopy: graph not defined\n");
-	    DevSwitch(NULL);    /* remember to switch back */
-	    return;
-	}
-
-	DevSwitch(NULL);
-
-    }
-
-    printed = 0;
-
-
-    if (*device) {
-#ifdef SYSTEM_PLOT5LPR
-      if (!strcmp(devtype, "plot5") || !strcmp(devtype, "MFB")) {
-	if (!cp_getvar("lprplot5", VT_STRING, format))
-		strcpy(format, SYSTEM_PLOT5LPR);
-        (void) sprintf(buf, format, device, fname);
-        fprintf(cp_out, "Printing %s on the %s printer.\n", fname, device);
-        (void) system(buf);
-	printed = 1;
-      }
-#endif
-#ifdef SYSTEM_PSLPR
-      if (!printed && !strcmp(devtype, "postscript")) {
-        /* note: check if that was a postscript printer XXX */
-	if (!cp_getvar("lprps", VT_STRING, format))
-		strcpy(format, SYSTEM_PSLPR);
-        (void) sprintf(buf, format, device, fname);
-        fprintf(cp_out, "Printing %s on the %s printer.\n", fname, device);
-        (void) system(buf);
-	printed = 1;
-      }
-#endif
-    }
-
-    if (!printed) {
-      if (!strcmp(devtype, "plot5")) {
-        fprintf(cp_out,
-	    "The file \"%s\" may be printed with the Unix \"plot\" command,\n",
-                fname);
-        fprintf(cp_out,
-	    "\tor by using the '-g' flag to the Unix lpr command.\n");
-      } else if (!strcmp(devtype, "postscript")) {
-        fprintf(cp_out,
-	    "The file \"%s\" may be printed on a postscript printer.\n",
-	    fname);
-      } else if (!strcmp(devtype, "MFB")) {
-	fprintf(cp_out,
-		"The file \"%s\" may be printed on a MFB device.\n",
-		fname);
-      }
-    }
-
-    if (tempf && *device)
-        (void) unlink(fname);
-
-    return;
-}
-
-/* plot name ... [xl[imit]] xlo xhi] [yl[imit ylo yhi] [vs xname] */
-
-void
-com_plot(wordlist *wl)
-{
-    (void) plotit(wl, (char *) NULL, (char *) NULL);
-    return;
-}
-
-/* The common routine for all plotting commands. This does hardcopy
- * and graphics plotting.
- */
+#include "plotit.h"
+#include "agraf.h"
+#include "xgraph.h"
+#include "graf.h"
 
 static wordlist *wl_root;
+static bool sameflag;
 
+
+
+/* This routine gets parameters from the command line, which are of
+ * the form "name number ..." It returns a pointer to the parameter
+ * values.  */
+static double *
+getlims(wordlist *wl, char *name, int number)
+{
+    double *d, *td;
+    wordlist *beg, *wk;
+    char *ss;
+    int n;
+
+    for (beg = wl; beg; beg = beg->wl_next) {
+        if (eq(beg->wl_word, name)) {
+            if (beg == wl) {
+                fprintf(cp_err,
+			"Syntax error: looking for plot parameters \"%s\".\n",
+			name);
+                return (NULL);
+            }
+            wk = beg;
+            if (number) {
+                d = (double *) tmalloc(sizeof (double) *
+                        number);
+                for (n = 0; n < number; n++) {
+                    wk = wk->wl_next;
+                    if (!wk) {
+                        fprintf(cp_err,
+                            "Syntax error: not enough parameters for \"%s\".\n",
+			    name);
+                        return (NULL);
+                    }
+                    ss = wk->wl_word;
+                    td = ft_numparse(&ss, FALSE);
+                    if (td == NULL)
+                        goto bad;
+                    d[n] = *td;
+                }
+            } else
+                /* Minor hack... */
+                d = (double  *) 1;
+
+            if (beg->wl_prev)
+                beg->wl_prev->wl_next = wk->wl_next;
+            if (wk->wl_next) {
+                wk->wl_next->wl_prev = beg->wl_prev;
+                wk->wl_next = NULL;
+            }
+	    if (beg != wl_root)
+		wl_free(beg);
+            return (d);
+        }
+    }
+    return (NULL);
+bad:
+    fprintf(cp_err, "Syntax error: bad parameters for \"%s\".\n", name);
+    return (NULL);
+}
+
+
+
+/* Extend a data vector to length by replicating the last element, or
+ * truncate it if it is too long.  */
+static void
+xtend(struct dvec *v, int length)
+{
+    int i;
+    complex c, *oc;
+    double d, *od;
+
+    if (v->v_length == length)
+        return;
+    if (v->v_length > length) {
+        v->v_length = length;
+        return;
+    }
+    if (isreal(v)) {
+        od = v->v_realdata;
+        v->v_realdata = (double *) tmalloc(length * sizeof (double));
+        for (i = 0; i < v->v_length; i++)
+            v->v_realdata[i] = od[i];
+        d = od[--i];
+        while (i < length)
+            v->v_realdata[i++] = d;
+        tfree(od);
+    } else {
+        oc = v->v_compdata;
+        v->v_compdata = (complex *) tmalloc(length * sizeof (complex));
+        for (i = 0; i < v->v_length; i++) {
+            realpart(&v->v_compdata[i]) = realpart(&oc[i]);
+            imagpart(&v->v_compdata[i]) = imagpart(&oc[i]);
+        }
+        realpart(&c) = realpart(&oc[--i]);
+        imagpart(&c) = imagpart(&oc[i]);
+        while (i < length) {
+            realpart(&v->v_compdata[i]) = realpart(&c);
+            imagpart(&v->v_compdata[i++]) = imagpart(&c);
+        tfree(oc);
+        }
+    }
+    v->v_length = length;
+    return;
+}
+
+
+/* Collapse every *xcomp elements into one, and use only the elements
+ * between xind[0] and xind[1].
+ */
+
+static void
+compress(struct dvec *d, double *xcomp, double *xind)
+{
+    int cfac, ihi, ilo, newlen, i;
+    int sz = isreal(d) ? sizeof (double) : sizeof (complex);
+    double *dd;
+    complex *cc;
+
+    if (xind) {
+        ilo = (int) xind[0];
+        ihi = (int) xind[1];
+        if ((ilo <= ihi) && (ilo > 0) && (ilo < d->v_length) &&
+                (ihi > 1) && (ihi <= d->v_length)) {
+            newlen = ihi - ilo;
+            dd = (double *) tmalloc(newlen * sz);
+            cc = (complex *) dd;
+            if (isreal(d)) {
+                bcopy((char *) (d->v_realdata + ilo),
+                        (char *) dd, newlen * sz);
+                tfree(d->v_realdata);
+                d->v_realdata = dd;
+            } else {
+                bcopy((char *) (d->v_compdata + ilo),
+                        (char *) cc, newlen * sz);
+                tfree(d->v_compdata);
+                d->v_compdata = cc;
+            }
+            d->v_length = newlen;
+        }
+    }
+
+    if (xcomp) {
+        cfac = (int) *xcomp;
+        if ((cfac > 1) && (cfac < d->v_length)) {
+            for (i = 0; i * cfac < d->v_length; i++)
+                if (isreal(d))
+                    d->v_realdata[i] = 
+                            d->v_realdata[i * cfac];
+                else
+                    d->v_compdata[i] = 
+                            d->v_compdata[i * cfac];
+            d->v_length = i;
+        }
+    }
+    return;
+}
+
+
+/* Check for and remove a one-word keyword. */
 static bool
+getflag(wordlist *wl, char *name)
+{
+    while (wl) {
+        if (eq(wl->wl_word, name)) {
+            if (wl->wl_prev)
+                wl->wl_prev->wl_next = wl->wl_next;
+            if (wl->wl_next)
+                wl->wl_next->wl_prev = wl->wl_prev;
+            return (TRUE);
+        }
+        wl = wl->wl_next;
+    }
+    return (FALSE);
+}
+
+
+/* Return a parameter of the form "xlabel foo" */
+static char *
+getword(wordlist *wl, char *name)
+{
+    wordlist *beg;
+    char *s;
+
+    for (beg = wl; beg; beg = beg->wl_next) {
+        if (eq(beg->wl_word, name)) {
+            if ((beg == wl) || !beg->wl_next) {
+                fprintf(cp_err,
+			"Syntax error: looking for plot keyword at \"%s\".\n",
+			name);
+                return (NULL);
+            }
+            s = copy(beg->wl_next->wl_word);
+            beg->wl_prev->wl_next = beg->wl_next->wl_next;
+            if (beg->wl_next->wl_next)
+                beg->wl_next->wl_next->wl_prev = beg->wl_prev;
+            beg->wl_next->wl_next = NULL;
+            wl_free(beg);
+            return (s);
+        }
+    }
+    return (NULL);
+}
+
+
+/* The common routine for all plotting commands. This does hardcopy
+ * and graphics plotting.  */
+bool
 plotit(wordlist *wl, char *hcopy, char *devname)
 {
     /* All these things are static so that "samep" will work. */
@@ -993,203 +962,3 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     return (TRUE);
 }
 
-/* This routine gets parameters from the command line, which are of the
- * form "name number ..." It returns a pointer to the parameter values.
- */
-
-static double *
-getlims(wordlist *wl, char *name, int number)
-{
-    double *d, *td;
-    wordlist *beg, *wk;
-    char *ss;
-    int n;
-
-    for (beg = wl; beg; beg = beg->wl_next) {
-        if (eq(beg->wl_word, name)) {
-            if (beg == wl) {
-                fprintf(cp_err,
-			"Syntax error: looking for plot parameters \"%s\".\n",
-			name);
-                return (NULL);
-            }
-            wk = beg;
-            if (number) {
-                d = (double *) tmalloc(sizeof (double) *
-                        number);
-                for (n = 0; n < number; n++) {
-                    wk = wk->wl_next;
-                    if (!wk) {
-                        fprintf(cp_err,
-                            "Syntax error: not enough parameters for \"%s\".\n",
-			    name);
-                        return (NULL);
-                    }
-                    ss = wk->wl_word;
-                    td = ft_numparse(&ss, FALSE);
-                    if (td == NULL)
-                        goto bad;
-                    d[n] = *td;
-                }
-            } else
-                /* Minor hack... */
-                d = (double  *) 1;
-
-            if (beg->wl_prev)
-                beg->wl_prev->wl_next = wk->wl_next;
-            if (wk->wl_next) {
-                wk->wl_next->wl_prev = beg->wl_prev;
-                wk->wl_next = NULL;
-            }
-	    if (beg != wl_root)
-		wl_free(beg);
-            return (d);
-        }
-    }
-    return (NULL);
-bad:
-    fprintf(cp_err, "Syntax error: bad parameters for \"%s\".\n", name);
-    return (NULL);
-}
-
-/* Return a parameter of the form "xlabel foo" */
-
-static char *
-getword(wordlist *wl, char *name)
-{
-    wordlist *beg;
-    char *s;
-
-    for (beg = wl; beg; beg = beg->wl_next) {
-        if (eq(beg->wl_word, name)) {
-            if ((beg == wl) || !beg->wl_next) {
-                fprintf(cp_err,
-			"Syntax error: looking for plot keyword at \"%s\".\n",
-			name);
-                return (NULL);
-            }
-            s = copy(beg->wl_next->wl_word);
-            beg->wl_prev->wl_next = beg->wl_next->wl_next;
-            if (beg->wl_next->wl_next)
-                beg->wl_next->wl_next->wl_prev = beg->wl_prev;
-            beg->wl_next->wl_next = NULL;
-            wl_free(beg);
-            return (s);
-        }
-    }
-    return (NULL);
-}
-
-/* Check for and remove a one-word keyword. */
-
-static bool
-getflag(wordlist *wl, char *name)
-{
-    while (wl) {
-        if (eq(wl->wl_word, name)) {
-            if (wl->wl_prev)
-                wl->wl_prev->wl_next = wl->wl_next;
-            if (wl->wl_next)
-                wl->wl_next->wl_prev = wl->wl_prev;
-            return (TRUE);
-        }
-        wl = wl->wl_next;
-    }
-    return (FALSE);
-}
-
-/* Extend a data vector to length by replicating the
- * last element, or truncate it if it is too long.
- */
-
-static void
-xtend(struct dvec *v, int length)
-{
-    int i;
-    complex c, *oc;
-    double d, *od;
-
-    if (v->v_length == length)
-        return;
-    if (v->v_length > length) {
-        v->v_length = length;
-        return;
-    }
-    if (isreal(v)) {
-        od = v->v_realdata;
-        v->v_realdata = (double *) tmalloc(length * sizeof (double));
-        for (i = 0; i < v->v_length; i++)
-            v->v_realdata[i] = od[i];
-        d = od[--i];
-        while (i < length)
-            v->v_realdata[i++] = d;
-        tfree(od);
-    } else {
-        oc = v->v_compdata;
-        v->v_compdata = (complex *) tmalloc(length * sizeof (complex));
-        for (i = 0; i < v->v_length; i++) {
-            realpart(&v->v_compdata[i]) = realpart(&oc[i]);
-            imagpart(&v->v_compdata[i]) = imagpart(&oc[i]);
-        }
-        realpart(&c) = realpart(&oc[--i]);
-        imagpart(&c) = imagpart(&oc[i]);
-        while (i < length) {
-            realpart(&v->v_compdata[i]) = realpart(&c);
-            imagpart(&v->v_compdata[i++]) = imagpart(&c);
-        tfree(oc);
-        }
-    }
-    v->v_length = length;
-    return;
-}
-
-/* Collapse every *xcomp elements into one, and use only the elements
- * between xind[0] and xind[1].
- */
-
-static void
-compress(struct dvec *d, double *xcomp, double *xind)
-{
-    int cfac, ihi, ilo, newlen, i;
-    int sz = isreal(d) ? sizeof (double) : sizeof (complex);
-    double *dd;
-    complex *cc;
-
-    if (xind) {
-        ilo = (int) xind[0];
-        ihi = (int) xind[1];
-        if ((ilo <= ihi) && (ilo > 0) && (ilo < d->v_length) &&
-                (ihi > 1) && (ihi <= d->v_length)) {
-            newlen = ihi - ilo;
-            dd = (double *) tmalloc(newlen * sz);
-            cc = (complex *) dd;
-            if (isreal(d)) {
-                bcopy((char *) (d->v_realdata + ilo),
-                        (char *) dd, newlen * sz);
-                tfree(d->v_realdata);
-                d->v_realdata = dd;
-            } else {
-                bcopy((char *) (d->v_compdata + ilo),
-                        (char *) cc, newlen * sz);
-                tfree(d->v_compdata);
-                d->v_compdata = cc;
-            }
-            d->v_length = newlen;
-        }
-    }
-
-    if (xcomp) {
-        cfac = (int) *xcomp;
-        if ((cfac > 1) && (cfac < d->v_length)) {
-            for (i = 0; i * cfac < d->v_length; i++)
-                if (isreal(d))
-                    d->v_realdata[i] = 
-                            d->v_realdata[i * cfac];
-                else
-                    d->v_compdata[i] = 
-                            d->v_compdata[i * cfac];
-            d->v_length = i;
-        }
-    }
-    return;
-}

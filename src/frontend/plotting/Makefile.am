@@ -19,6 +19,8 @@ libplotting_a_SOURCES = \
 	plot5.h		\
 	plotcurv.c	\
 	plotcurv.h	\
+	plotit.c	\
+	plotit.h	\
 	x11.c		\
 	x11.h		\
 	xgraph.c	\

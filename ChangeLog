@@ -1,3 +1,15 @@
+2000-06-16  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/frontend/doplot.c: Refactored into the following files:
+	src/frontend/com_asciiplot.c src/frontend/com_asciiplot.h
+	src/frontend/com_hardcopy.c src/frontend/com_hardcopy.h
+	src/frontend/com_plot.c src/frontend/com_plot.h
+	src/frontend/com_xgraph.c src/frontend/com_xgraph.h
+	src/frontend/plotting/plotit.c src/frontend/plotting/plotit.h
+
+	* src/frontend/Makefile.am src/frontend/plotting/Makefile.am:
+	Updated to match the new files.
+
 2000-06-15  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/frontend/graphdb.c, src/frontend/graphdb.c,
