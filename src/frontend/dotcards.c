@@ -182,7 +182,7 @@ ft_cktcoms(bool terse)
 
     /* Listing */
     if (ft_listprint) {
-	if (FALSE)
+	if (terse)
 	    fprintf(cp_err, ".options: no listing, rawfile was generated.\n");
 	else
 	    inp_list(cp_out, ft_curckt->ci_deck, ft_curckt->ci_options,
