@@ -1,5 +1,13 @@
 2003-09-25  Paolo Nenzi <p.nenzi@ieee.org>
 
+	* src/spicelib/devices/bsim3/*: Added new multirevision bsim3 code sent
+	by Dietmar Warning. This model implements bsim 3v3.2 up to 3v3.2.4 and
+	has enahnced with ACM.
+	
+	* DEVICES: updated bsim3 status. 
+
+2003-09-25  Paolo Nenzi <p.nenzi@ieee.org>
+
 	* src/spicelib/devices/cap/*, src/spicelib/parser/inp2c.c,
 	  src/include/defines.h, src/include/const.h: enhanced
 	  capacitor model. Added temperature dependence, model capacitance
