@@ -1,6 +1,6 @@
-  Ngspice F.A.Q.Version 1.2
+  Ngspice F.A.Q.Version 1.4
   Maintained by Paolo Nenzi <p.nenzi@ieee.org>
-  Last update: 02-11-2003
+  Last update: 27-01-2004
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -51,13 +51,28 @@
 
  1.1 What is ngspice?
 
-  Ngspice is the name of a project and of a program in the project.  The idea behind the project is to improve the capabilities of the
-  Spice 3f5 circuit simulator. Spice is the most famous circuit 
-  simulator, developed at the University of California at Berkeley 
-  (UCB), by "a cast of thousand" (as they say). The NG prefix has lot 
-  of meanings: Next Generation, New Good, etc. Choose or invent the one
-  you prefer. The heart of the project is the ngspice program, a circuit 
-  simulator derived from spice3f5.
+  Ngspice is a mixed-level/mixed-signal circuit simulator based on three 
+  open source software packages: Spice3f5, Cider1b1 and Xspice: 
+  
+  - Spice3 is the most famous and used circuit simulator. It was 
+    developed University of California at Berkeley (UCB), by "a cast of 
+    thousand" (as they say).
+  
+  - Cider is a mixed-level simulator that already includes Spice3f5 and 
+    adds a device simulator to it: DSIM. Cider couples the circuit level 
+    simulator to the device simulator to provide greater simulation 
+    accuracy (at the expense of greater simulation time). Critical 
+    devices can be described with technology parameters (numerical 
+    models) and non critical ones with the original spice's compact 
+    models.
+
+  - Xspice is an extension to Spice3 that provides code modeling support 
+    and simulation of digital components through an embedded event 
+    driven algorithm.
+
+  The NG prefix has lot of meanings: Next Generation, New Good, etc. 
+  Choose or invent the one you prefer. The heart of the project is the 
+  ngspice program.
 
 
  1.2 Why resurrecting Berkeley's Spice?
@@ -291,28 +306,29 @@
 
   The latest version released is: 
   
-  * ngspice-rework-14 (released on 10/12/2001)
+  * ngspice-rework-15 (released on 10/12/2001)
   
-  The development vesrion is:
+  The development version is:
   
-  * ngspice-rework-15pre1 (in CVS)
+  * ngspice-rework-15pre3 (released on 28/01/2004)
 
 
  2.2.  What are the latest features in the current release?
 
   New features:
 
-  +  New functions for vectors: vecmax (find max element in a vector),
-     vecmin (find minimum element in a vector), vecd (differentiate a
-     vector).
 
-  +  BSIM 4 and support EKV models.
+    + Improved bipolar devices (Diode and bjt)
+    + Improved BSIM3 and BSIM4
+    + VBIC and HiSIM compact models
+    + Cider and Xspice inclusion
+    + More flexibility in net names
+    + Parameter substitution in netlist
 
   Bug fixes:
 
-  +  Some memory leaks closed.
-
-  +  Error reporting more verbose
+    + Many memory leaks closed
+    + Control language works as expected
 
 
  2.3.  What does it looks like?
