@@ -43,7 +43,7 @@ int CKTfndTask( void *, void **, IFuid  );
 int CKTground( void *, void **, IFuid );
 int CKTic( CKTcircuit *);
 int CKTinit( void **);
-int CKTinst2Node( void *, void *, int , void **, IFuid *);
+int CKTinst2Node( void *, void *, int , CKTnode **, IFuid *);
 int CKTlinkEq(CKTcircuit*,CKTnode*);
 int CKTload( CKTcircuit *);
 int CKTmapNode( void *, void **, IFuid );

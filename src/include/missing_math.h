@@ -19,3 +19,7 @@ extern double logb(double);
 extern double scalb(double, int);
 #endif
 #endif
+
+#ifndef HAVE_ISNAN
+extern int isnan(double);
+#endif

@@ -22,7 +22,7 @@ Author: 1985 Thomas L. Quarles
 extern SPICEdev **DEVices;
 
 int
-CKTinst2Node(void *ckt, void *instPtr, int terminal, void **node, IFuid *nodeName)
+CKTinst2Node(void *ckt, void *instPtr, int terminal, CKTnode **node, IFuid *nodeName)
 {
     int nodenum;
     int type;

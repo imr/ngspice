@@ -66,9 +66,10 @@ struct st_devsenlist {
 	ModSenList	*first;
 };
 
-extern int SENSask( );
-extern int SENSsetParam( );
-extern int sens_sens( );
+/* va, with prototypes */
+extern int SENSask(CKTcircuit *,void *,int ,IFvalue *);
+extern int SENSsetParam(CKTcircuit *,void *,int ,IFvalue *);
+extern int sens_sens(CKTcircuit *,int);
 
 #define	SENS_POS			2
 #define	SENS_NEG			3

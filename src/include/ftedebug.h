@@ -3,6 +3,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
+#ifndef FTEDEBUG_H
+#define FTEDEBUG_H
+
 /*
  *
  * Stuff for debugging a spice run. Debugging information will be printed
@@ -46,3 +49,4 @@ struct dbcomm {
     struct dbcomm *db_next; /* List of active debugging commands. */
 } ;
 
+#endif /* FTEDEBUG_H */

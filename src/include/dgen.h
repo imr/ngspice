@@ -1,3 +1,6 @@
+#ifndef DGEN_H
+#define DGEN_H
+
 typedef struct st_dgen dgen;
 
 struct st_dgen {
@@ -24,3 +27,5 @@ struct st_dgen {
 #define	DGEN_ALLPARAMS	0x002
 
 extern	dgen	*dgen_init( );
+
+#endif /* DGEN_H */

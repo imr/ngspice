@@ -30,7 +30,6 @@ extern int DEVmaxnum;	/* Not sure if still used */
 #include "noisedef.h"
 
 
-
 typedef struct sCKTnode {
     IFuid name;
     int type;
@@ -57,7 +56,6 @@ typedef struct sCKTnode {
 
 
 typedef struct {
-
 
 /* gtri - begin - wbk - change declaration to allow dynamic sizing */
 
@@ -300,7 +298,7 @@ extern int CKTfndTask( void *, void **, IFuid  );
 extern int CKTground( void *, void **, IFuid );
 extern int CKTic( CKTcircuit *);
 extern int CKTinit( void **);
-extern int CKTinst2Node( void *, void *, int , void **, IFuid *);
+extern int CKTinst2Node( void *, void *, int , CKTnode **, IFuid *);
 extern int CKTlinkEq(CKTcircuit*,CKTnode*);
 extern int CKTload( CKTcircuit *);
 extern int CKTmapNode( void *, void **, IFuid );
@@ -349,7 +347,7 @@ extern int DCOaskQuest( CKTcircuit *, void *, int , IFvalue *);
 extern int DCOsetParm( CKTcircuit  *, void *, int , IFvalue *);
 extern int DCTaskQuest( CKTcircuit *, void *, int , IFvalue *);
 extern int DCTsetParm( CKTcircuit  *, void *, int , IFvalue *);
-extern int DCop( CKTcircuit *, int ); /* va: int avoids "init from incompatible pointer type" */ 
+extern int DCop( CKTcircuit *ckt, int notused); /* va: notused avoids "init from incompatible pointer type" */
 extern int DCtrCurv( CKTcircuit *, int );
 extern int DCtran( CKTcircuit *, int );
 extern int DISTOan(CKTcircuit *, int);
@@ -370,6 +368,8 @@ extern int TFsetParm( CKTcircuit *, void *, int , IFvalue *);
 extern int TRANaskQuest( CKTcircuit *, void *, int , IFvalue *);
 extern int TRANsetParm( CKTcircuit *, void *, int , IFvalue *);
 extern int TRANinit(CKTcircuit *, JOB *);
+extern int NaskQuest(CKTcircuit *, void *, int, IFvalue *);
+extern int NsetParm(CKTcircuit *, void *, int, IFvalue *);
 extern int NIacIter( CKTcircuit * );
 extern int NIcomCof( CKTcircuit * ); 
 extern int NIconvTest(CKTcircuit * );

@@ -121,7 +121,4 @@ typedef struct {
                                /* (see MAXVLENGTH in FTE/writedata.c) */
 
 
-
-extern int NsetParm();
-extern int NaskQuest();
 #endif /*NOISEDEFS*/
