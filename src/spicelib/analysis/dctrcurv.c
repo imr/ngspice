@@ -5,7 +5,6 @@ Modified: 1999 Paolo Nenzi
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
@@ -88,7 +87,6 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                         cv->TRCVvType[i]  = rcode;
                         here->RESresist   = cv->TRCVvStart[i];
                         here->RESresGiven = 1;
-                        printf("** Resistor sweep is highly alpha code\n**Results may not be accurate.\n");
                         goto found;
                     }
                 }
@@ -142,7 +140,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             cv->TRCVvSave[i]=ckt->CKTtemp; /* Saves the old circuit temperature */
             cv->TRCVvType[i]=TEMP_CODE;    /* Set the sweep type code */
             ckt->CKTtemp = cv->TRCVvStart[i] + CONSTCtoK; /* Set the new circuit temp */
-            printf("Temperature sweep is alpha code\nresults may not be accurate\n");
+	    CKTtemp(ckt);
             goto found;
         }
 	
@@ -158,22 +156,32 @@ found:;
     error = CKTnames(ckt,&numNames,&nameList);
     if(error) return(error);
     
+    
         if (cv->TRCVvType[i]==vcode)
-    	(*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+    	   (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
             "v-sweep", UID_OTHER, (void **)NULL);
-    else if (cv->TRCVvType[i]==icode)
-    	(*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
-            "i-sweep", UID_OTHER, (void **)NULL);
-    else if (cv->TRCVvType[i]==TEMP_CODE)
-    	(*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
-            "temp-sweep", UID_OTHER, (void **)NULL);
-    /* PN Resistance Sweep */	    
-    else if (cv->TRCVvType[i]==rcode)
-    	(*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
-            "res-sweep", UID_OTHER, (void **)NULL);
-    else
-    	(*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
-            "?-sweep", UID_OTHER, (void **)NULL);	    
+        
+	else {
+	      if (cv->TRCVvType[i]==icode)
+    	         (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+                 "i-sweep", UID_OTHER, (void **)NULL);
+                     
+                 else {
+		       if (cv->TRCVvType[i]==TEMP_CODE)
+    	                  (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+                          "temp-sweep", UID_OTHER, (void **)NULL);
+	    
+                           else {
+			         if (cv->TRCVvType[i]==rcode)
+    	                            (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+                                    "res-sweep", UID_OTHER, (void **)NULL);
+                                
+				    else
+    	                                  (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+                                          "?-sweep", UID_OTHER, (void **)NULL);	    
+                           } /* icode */
+                 } /* TEMP_CODE */
+        } /* rcode*/
     
     error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
 	(void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
@@ -218,8 +226,7 @@ resume:
 	} else if(cv->TRCVvType[i]==rcode) { /* resistance */
             if((((RESinstance*)(cv->TRCVvElt[i]))->RESresist)*
                     SIGN(1.,cv->TRCVvStep[i]) -
-                    SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] >
-		    0.5 * fabs(cv->TRCVvStep[i]))
+                    SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] >		    0.5 * fabs(cv->TRCVvStep[i]))
                 { 
                     i++ ; 
                     firstTime=1;

@@ -1,3 +1,9 @@
+2003-09-18  Paolo Nenzi <p.nenzi@ieee.org>
+	
+	* src/spicelib/frontend/dctrcv.c: Corrected temperature sweep.
+	  Initial temp was the circuit temperature and not the start
+	  value in the input line. There was a missing call to CKTtemp().
+
 2003-08-24  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/maths/sparse/, src/include/complex.h: Added a function
