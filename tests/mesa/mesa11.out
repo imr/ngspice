@@ -24,7 +24,7 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
  MESA models (GaAs MESFET model)
       model                mesmod
 
-        vt0                 -1.26
+       type                   pmf
         vto                 -1.26
      lambda                 0.045
    lambdahf                 0.045
@@ -89,7 +89,6 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
        epsi           1.08411e-10
         cas                     1
         cbs                     1
-       type             137401874
          gd                     1
          gs                     1
       vcrit                     1

@@ -45,7 +45,8 @@ IFparm MESApTable[] = { /* parameters */
 };
 
 IFparm MESAmPTable[] = { /* model parameters */
- IOP( "vt0",    MESA_MOD_VTO,    IF_REAL,"Pinch-off voltage"),
+ OP( "type",    MESA_MOD_TYPE,   IF_STRING,"N-type or P-type MESfet model"),
+ IOPR( "vt0",    MESA_MOD_VTO,    IF_REAL,"Pinch-off voltage"),
  IOP( "vto",    MESA_MOD_VTO,    IF_REAL,"Pinch-off voltage"),
  IOP( "lambda", MESA_MOD_LAMBDA, IF_REAL,"Output conductance parameter"),
  IOP( "lambdahf",MESA_MOD_LAMBDAHF, IF_REAL,"Output conductance parameter at high frequencies"),
@@ -110,7 +111,6 @@ IFparm MESAmPTable[] = { /* model parameters */
  IOP( "epsi",   MESA_MOD_EPSI,   IF_REAL,""), 
  IOP( "cas",    MESA_MOD_CAS,    IF_REAL,""),
  IOP( "cbs",    MESA_MOD_CBS,    IF_REAL,""),
- OP( "type",    MESA_MOD_TYPE,   IF_FLAG,"N-type or P-type MESfet model"),
  IP( "pmf",	 MESA_MOD_PMF,	   IF_FLAG,"P type MESfet model"), 
  IP( "nmf",     MESA_MOD_NMF,    IF_FLAG,"N type MESfet model"),
  OP( "gd",      MESA_MOD_DRAINCONDUCT,   IF_REAL,"Drain conductance"),
