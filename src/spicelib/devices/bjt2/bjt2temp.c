@@ -134,8 +134,13 @@ BJT2temp(GENmodel *inModel, CKTcircuit *ckt)
                 here=here->BJT2nextInstance) {
             if (here->BJT2owner != ARCHme) continue;
 		
-            if(!here->BJT2tempGiven) here->BJT2temp = ckt->CKTtemp + here->BJT2dtemp;
-            vt = here->BJT2temp * CONSTKoverQ;
+	    if(!here->BJT2dtempGiven) 
+	       here->BJT2dtemp = 0.0;
+	       	
+            if(!here->BJT2tempGiven) 
+	       here->BJT2temp = ckt->CKTtemp + here->BJT2dtemp;
+            
+	    vt = here->BJT2temp * CONSTKoverQ;
             fact2 = here->BJT2temp/REFTEMP;
             egfet = 1.16-(7.02e-4*here->BJT2temp*here->BJT2temp)/
                     (here->BJT2temp+1108);
