@@ -8,6 +8,7 @@
 #include "com_help.h"
 #include "variable.h"
 #include "streams.h"
+#include "cpextern.h"
 
 void
 com_ghelp(wordlist *wl)

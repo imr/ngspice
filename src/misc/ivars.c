@@ -4,6 +4,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 
 #include "ngspice.h"
 #include "ivars.h"
+#include <stdlib.h>
 #include <stdio.h>
 
 char *Spice_Path;
@@ -37,7 +38,9 @@ mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
 void
 ivars(void)
 {
-
+	
+    char *temp;
+	
     env_overr(&Spice_Exec_Dir, "SPICE_EXEC_DIR");
     env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR");
 
@@ -50,7 +53,10 @@ ivars(void)
     env_overr(&Spice_Host, "SPICE_HOST");
     env_overr(&Bug_Addr, "SPICE_BUGADDR");
     env_overr(&Def_Editor, "SPICE_EDITOR");
-    env_overr(&AsciiRawFile, "SPICE_ASCIIRAWFILE");
+    env_overr(&temp, "SPICE_ASCIIRAWFILE");
+    
+    AsciiRawFile = atoi(temp);
+    
 }
 
 void

@@ -171,7 +171,7 @@ extern bool cp_getvar(char *name, int type, void *retval);
 
 /* cpinterface.c etc -- stuff CP needs from FTE */
 
-extern bool cp_istrue();
+extern bool cp_istrue(wordlist *wl);
 extern bool cp_oddcomm();
 extern void cp_doquit();
 extern void cp_periodic();

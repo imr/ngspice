@@ -9,6 +9,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
  * can be written for every possible machine...
  */
 #include <config.h>
+#include <term.h>
 
 #ifdef HAVE_SGTTY_H
 #include <sgtty.h>

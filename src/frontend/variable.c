@@ -15,6 +15,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <cpdefs.h>
 #include <memory.h>
 #include <inpdefs.h>
+#include <fteext.h>
 
 #include "circuits.h"
 #include "com_history.h"
@@ -390,9 +391,12 @@ cp_remvar(char *varname)
         cp_nonomatch = FALSE;
     else if (eq(varname, "noclobber"))
         cp_noclobber = FALSE;
-    else if (eq(varname, "prompt"))
+    else if (eq(varname, "prompt")){
        /* cp_promptstring = ""; Memory leak here the last allocated reference wil be lost*/
-       if(cp_promptstring)strcpy(cp_promptstring,"");/*DG avoid memory leak*/
+       if(cp_promptstring) {
+       	strcpy(cp_promptstring,"");/*DG avoid memory leak*/
+       	}
+       	}
     else if (eq(varname, "cpdebug"))
         cp_debug = FALSE;
     else if (eq(varname, "ignoreeof"))

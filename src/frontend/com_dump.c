@@ -3,10 +3,10 @@
 #include <bool.h>
 #include <wordlist.h>
 #include <inpdefs.h>
-
 #include "circuits.h"
 #include "com_dump.h"
 #include "streams.h"
+#include "fteext.h"
 
 
 void

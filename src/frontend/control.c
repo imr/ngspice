@@ -11,6 +11,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "control.h"
 #include "com_cdump.h"
 #include "variable.h"
+#include "fteext.h"
+
 
 /* Return values from doblock().  I am assuming that nobody will use
  * these characters in a string.  */
@@ -184,7 +186,7 @@ docommand(wordlist *wlist)
             nargs++;
         if (command->co_stringargs) {
             lcom = wl_flatten(wlist->wl_next);
-            (*command->co_func) (lcom);
+            (*command->co_func) ((void *)(lcom));
         } else {
             if (nargs < command->co_minargs) {
 		if (command->co_argfn) {
@@ -242,7 +244,7 @@ doblock(struct control *bl, int *num)
 
     switch (bl->co_type) {
     case CO_WHILE:
-        while (bl->co_cond && cp_isTRUE(bl->co_cond)) {
+        while (bl->co_cond && cp_istrue(bl->co_cond)) {
             for (ch = bl->co_children; ch; ch = cn) {
                 cn = ch->co_next;
                 i = doblock(ch, &nn);
@@ -310,7 +312,7 @@ doblock(struct control *bl, int *num)
                         return (i);
                 }
             }
-        } while (bl->co_cond && cp_isTRUE(bl->co_cond));
+        } while (bl->co_cond && cp_istrue(bl->co_cond));
         break;
 
     case CO_REPEAT:
@@ -353,7 +355,7 @@ doblock(struct control *bl, int *num)
         break;
 
     case CO_IF:
-        if (bl->co_cond && cp_isTRUE(bl->co_cond)) {
+        if (bl->co_cond && cp_istrue(bl->co_cond)) {
             for (ch = bl->co_children; ch; ch = cn) {
                 cn = ch->co_next;
                 i = doblock(ch, &nn);

@@ -266,7 +266,7 @@ ft_substdef(char *name, struct pnode *args)
     struct udfunc *udf;
     struct pnode *tp;
     char *s;
-    int arity = 0, rarity;
+    int arity = 0, rarity = 0;
     bool found = FALSE;
 
     if (args)
