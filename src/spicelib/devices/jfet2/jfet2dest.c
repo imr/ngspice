@@ -10,14 +10,12 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "jfet2defs.h"
 #include "suffix.h"
 
 
 void
-JFET2destroy(inModel)
-    GENmodel **inModel;
+JFET2destroy(GENmodel **inModel)
 {
     JFET2model **model = (JFET2model**)inModel;
     JFET2instance *here;

@@ -9,7 +9,6 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "cktdefs.h"
@@ -21,12 +20,8 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 
 /*ARGSUSED*/
 int
-JFET2ask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+JFET2ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
+         IFvalue *select)
 {
     JFET2instance *here = (JFET2instance*)inst;
     static char *msg = "Current and power not available for ac analysis";
@@ -34,8 +29,15 @@ JFET2ask(ckt,inst,which,value,select)
         case JFET2_TEMP:
             value->rValue = here->JFET2temp-CONSTCtoK;
             return(OK);
+        case JFET2_DTEMP:
+            value->rValue = here->JFET2dtemp;
+            return(OK);
         case JFET2_AREA:
             value->rValue = here->JFET2area;
+            value->rValue *=here->JFET2m;
+            return(OK);
+        case JFET2_M:
+            value->rValue = here->JFET2m;
             return(OK);
         case JFET2_IC_VDS:
             value->rValue = here->JFET2icVDS;
@@ -69,36 +71,47 @@ JFET2ask(ckt,inst,which,value,select)
             return(OK);
         case JFET2_CG:
             value->rValue = *(ckt->CKTstate0 + here->JFET2cg);
+            value->rValue *=here->JFET2m;
             return(OK);
         case JFET2_CD:
             value->rValue = *(ckt->CKTstate0 + here->JFET2cd);
+            value->rValue *=here->JFET2m;
             return(OK);
         case JFET2_CGD:
             value->rValue = *(ckt->CKTstate0 + here->JFET2cgd);
+            value->rValue *=here->JFET2m;
             return(OK);
         case JFET2_GM:
             value->rValue = *(ckt->CKTstate0 + here->JFET2gm);
+            value->rValue *=here->JFET2m;
             return(OK);
         case JFET2_GDS:
             value->rValue = *(ckt->CKTstate0 + here->JFET2gds);
+            value->rValue *=here->JFET2m;
             return(OK);
         case JFET2_GGS:
             value->rValue = *(ckt->CKTstate0 + here->JFET2ggs);
+            value->rValue *=here->JFET2m;
             return(OK);
         case JFET2_GGD:
             value->rValue = *(ckt->CKTstate0 + here->JFET2ggd);
+            value->rValue *=here->JFET2m;
             return(OK);
         case JFET2_QGS:
             value->rValue = *(ckt->CKTstate0 + here->JFET2qgs);
+            value->rValue *=here->JFET2m;
             return(OK);
         case JFET2_CQGS:
             value->rValue = *(ckt->CKTstate0 + here->JFET2cqgs);
+            value->rValue *=here->JFET2m;
             return(OK);
         case JFET2_QGD:
             value->rValue = *(ckt->CKTstate0 + here->JFET2qgd);
+            value->rValue *=here->JFET2m;
             return(OK);
         case JFET2_CQGD:
             value->rValue = *(ckt->CKTstate0 + here->JFET2cqgd);
+            value->rValue *=here->JFET2m;
             return(OK);
         case JFET2_VTRAP:
             value->rValue = *(ckt->CKTstate0 + here->JFET2vtrap);
@@ -115,6 +128,7 @@ JFET2ask(ckt,inst,which,value,select)
             } else {
                 value->rValue = -*(ckt->CKTstate0 + here->JFET2cd);
                 value->rValue -= *(ckt->CKTstate0 + here->JFET2cg);
+                value->rValue *=here->JFET2m;
             }
             return(OK);
         case JFET2_POWER :
@@ -131,6 +145,8 @@ JFET2ask(ckt,inst,which,value,select)
                 value->rValue -= (*(ckt->CKTstate0 + here->JFET2cd) +
                         *(ckt->CKTstate0 + here->JFET2cg)) *
                 *(ckt->CKTrhsOld + here->JFET2sourceNode);
+               
+                value->rValue *=here->JFET2m;
             }
             return(OK);
         default:

@@ -1,3 +1,11 @@
+2003-12-27  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/jfet2/*: Added parallel multiplier and "dtemp"
+	  parameter. Added Alan's CopyNodeSet, and inserted a missing
+	  instruction in JFET2temp (for parallel code).
+	
+	* DEVICES: Updated documentation for JFET2 model
+	  
 2003-12-26  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/spicelib/devices/jfet/*: Added parallel multiplier and

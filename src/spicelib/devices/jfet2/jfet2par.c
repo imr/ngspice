@@ -10,7 +10,6 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "jfet2defs.h"
@@ -20,11 +19,7 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 
 /* ARGSUSED */
 int
-JFET2param(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+JFET2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     JFET2instance *here = (JFET2instance *)inst;
     switch(param) {
@@ -32,9 +27,17 @@ JFET2param(param,value,inst,select)
             here->JFET2temp = value->rValue+CONSTCtoK;
             here->JFET2tempGiven = TRUE;
             break;
+        case JFET2_DTEMP:
+            here->JFET2temp = value->rValue;
+            here->JFET2tempGiven = TRUE;
+            break;
         case JFET2_AREA:
             here->JFET2area = value->rValue;
             here->JFET2areaGiven = TRUE;
+            break;
+         case JFET2_M:
+            here->JFET2m = value->rValue;
+            here->JFET2mGiven = TRUE;
             break;
         case JFET2_IC_VDS:
             here->JFET2icVDS = value->rValue;

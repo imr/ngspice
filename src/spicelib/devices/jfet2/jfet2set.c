@@ -9,7 +9,6 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "jfet2defs.h"
@@ -18,11 +17,7 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 #include "suffix.h"
 
 int
-JFET2setup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+JFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the diode structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -50,6 +45,11 @@ JFET2setup(matrix,inModel,ckt,states)
             if(!here->JFET2areaGiven) {
                 here->JFET2area = 1;
             }
+  
+            if(!here->JFET2mGiven) {
+                here->JFET2m = 1;
+            }
+
             here->JFET2state = *states;
             *states += JFET2_STATE_COUNT + 1;
 
@@ -58,6 +58,19 @@ matrixpointers2:
                 error = CKTmkVolt(ckt,&tmp,here->JFET2name,"source");
                 if(error) return(error);
                 here->JFET2sourcePrimeNode = tmp->number;
+
+                if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+            
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+
             } else {
                 here->JFET2sourcePrimeNode = here->JFET2sourceNode;
             }
@@ -65,6 +78,19 @@ matrixpointers2:
                 error = CKTmkVolt(ckt,&tmp,here->JFET2name,"drain");
                 if(error) return(error);
                 here->JFET2drainPrimeNode = tmp->number;
+
+                if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->JFET2drainPrimeNode = here->JFET2drainNode;
             }
@@ -102,9 +128,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-JFET2unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+JFET2unsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     JFET2model *model;
     JFET2instance *here;

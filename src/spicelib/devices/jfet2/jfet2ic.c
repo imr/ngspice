@@ -10,7 +10,6 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "jfet2defs.h"
 #include "sperror.h"
@@ -18,9 +17,7 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 
 
 int
-JFET2getic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+JFET2getic(GENmodel *inModel, CKTcircuit *ckt)
 {
     JFET2model *model = (JFET2model*)inModel;
     JFET2instance *here;

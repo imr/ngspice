@@ -9,7 +9,6 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "jfet2defs.h"
@@ -18,10 +17,7 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 
 
 int
-JFET2mParam(param,value,inModels)
-    int param;
-    IFvalue *value;
-    GENmodel *inModels;
+JFET2mParam(int param, IFvalue *value, GENmodel *inModels)
 {
     JFET2model *model = (JFET2model*)inModels;
     switch(param) {

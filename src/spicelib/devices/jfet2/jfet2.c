@@ -10,7 +10,6 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "devdefs.h"
 #include "jfet2defs.h"
@@ -20,9 +19,11 @@ IFparm JFET2pTable[] = { /* device parameters */
  IOPU("off",         JFET2_OFF,            IF_FLAG,   "Device initially off"),
  IOPAU("ic",         JFET2_IC,             IF_REALVEC,"Initial VDS,VGS vector"),
  IOPU("area",        JFET2_AREA,           IF_REAL,   "Area factor"),
+ IOPU("m",           JFET2_M,              IF_REAL,   "Parallel Multiplier"),
  IOPAU("ic-vds",     JFET2_IC_VDS,         IF_REAL,   "Initial D-S voltage"),
  IOPAU("ic-vgs",     JFET2_IC_VGS,         IF_REAL,   "Initial G-S volrage"),
  IOPU("temp",        JFET2_TEMP,           IF_REAL,   "Instance temperature"),
+ IOPU("dtemp",       JFET2_DTEMP,          IF_REAL,   "Instance temperature difference"),
  OPU("drain-node",   JFET2_DRAINNODE,      IF_INTEGER,"Number of drain node"),
  OPU("gate-node",    JFET2_GATENODE,       IF_INTEGER,"Number of gate node"),
  OPU("source-node",  JFET2_SOURCENODE,     IF_INTEGER,"Number of source node"),

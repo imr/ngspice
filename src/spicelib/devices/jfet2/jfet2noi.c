@@ -8,7 +8,6 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "jfet2defs.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"
@@ -28,13 +27,7 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 int
-JFET2noise (mode, operation, genmodel, ckt, data, OnDens)
-    int mode;
-    int operation;
-    GENmodel *genmodel;
-    CKTcircuit *ckt;
-    Ndata *data;
-    double *OnDens;
+JFET2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, double *OnDens)
 {
     JFET2model *firstModel = (JFET2model *) genmodel;
     JFET2model *model;
@@ -123,21 +116,22 @@ if (!data->namelist) return(E_NOMEM);
 		case N_DENS:
 		    NevalSrc(&noizDens[JFET2RDNOIZ],&lnNdens[JFET2RDNOIZ],
 				 ckt,THERMNOISE,inst->JFET2drainPrimeNode,inst->JFET2drainNode,
-				 model->JFET2drainConduct * inst->JFET2area);
+				 model->JFET2drainConduct * inst->JFET2area * inst->JFET2m);
 
 		    NevalSrc(&noizDens[JFET2RSNOIZ],&lnNdens[JFET2RSNOIZ],
 				 ckt,THERMNOISE,inst->JFET2sourcePrimeNode,
-				 inst->JFET2sourceNode,model->JFET2sourceConduct*inst->JFET2area);
+				 inst->JFET2sourceNode,model->JFET2sourceConduct
+                                 * inst->JFET2area * inst->JFET2m);
 
 		    NevalSrc(&noizDens[JFET2IDNOIZ],&lnNdens[JFET2IDNOIZ],
 				 ckt,THERMNOISE,inst->JFET2drainPrimeNode,
 				 inst->JFET2sourcePrimeNode,
-				 (2.0/3.0 * fabs(*(ckt->CKTstate0 + inst->JFET2gm))));
+				 (2.0/3.0 * inst->JFET2m * fabs(*(ckt->CKTstate0 + inst->JFET2gm))));
 
 		    NevalSrc(&noizDens[JFET2FLNOIZ],(double*)NULL,ckt,
 				 N_GAIN,inst->JFET2drainPrimeNode,
 				 inst->JFET2sourcePrimeNode, (double)0.0);
-		    noizDens[JFET2FLNOIZ] *= model->JFET2fNcoef * 
+		    noizDens[JFET2FLNOIZ] *= inst->JFET2m * model->JFET2fNcoef * 
 				 exp(model->JFET2fNexp *
 				 log(MAX(fabs(*(ckt->CKTstate0 + inst->JFET2cd)),N_MINLOG))) /
 				 data->freq;

@@ -11,7 +11,6 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "cktdefs.h"
@@ -23,11 +22,7 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 
 /*ARGSUSED*/
 int
-JFET2mAsk(ckt,inModel,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inModel;
-    int which;
-    IFvalue *value;
+JFET2mAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     JFET2model *model = (JFET2model*)inModel;
     switch(which) {

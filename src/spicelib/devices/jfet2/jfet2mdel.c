@@ -10,17 +10,13 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "jfet2defs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-JFET2mDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+JFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     JFET2model **model = (JFET2model**)inModel;
     JFET2model *modfast = (JFET2model*)kill;

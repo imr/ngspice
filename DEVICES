@@ -185,8 +185,23 @@ JFET  - Junction Field Effect transistor
 	- Parallel multiplier
 	- Instance temperature as difference for circuit temperature
         
-JFET2 - Jfet PS model
-      Initial release. TO BE TESTED
+JFET2 - Junction Field Effect Transistor  (PS model)
+        Initial Release.
+	Ver: 	N/A
+	Class:	J
+	Level:	2 
+	Status:
+	
+	This is the Parker Skellern model.
+	
+	Web Site:
+	http://www.elec.mq.edu.au/cnerf/models/psmodel/
+	
+	Enhancements over the original model:
+	
+	- Parallel multiplier
+	- Instance temperature as difference for circuit temperature
+
 
 ***************************************************************************
 ***************************    HFET devices     ***************************

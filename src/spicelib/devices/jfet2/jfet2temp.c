@@ -11,7 +11,6 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "jfet2defs.h"
@@ -21,9 +20,7 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 #include "suffix.h"
 
 int
-JFET2temp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+JFET2temp(GENmodel *inModel, CKTcircuit *ckt)
         /* Pre-process the model parameters after a possible change
          */
 {
@@ -83,9 +80,17 @@ JFET2temp(inModel,ckt)
         /* loop through all the instances of the model */
         for (here = model->JFET2instances; here != NULL ;
                 here=here->JFET2nextInstance) {
-            if(!(here->JFET2tempGiven)) {
-                here->JFET2temp = ckt->CKTtemp;
+            
+            if (here->JFET2owner != ARCHme) continue;
+
+            if(!(here->JFET2dtempGiven)) {
+                here->JFET2dtemp = 0.0;
             }
+
+            if(!(here->JFET2tempGiven)) {
+                here->JFET2temp = ckt->CKTtemp + here->JFET2dtemp;
+            }
+
             vt = here->JFET2temp * CONSTKoverQ;
             fact2 = here->JFET2temp/REFTEMP;
             ratio1 = here->JFET2temp/model->JFET2tnom -1;
