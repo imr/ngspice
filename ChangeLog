@@ -1,3 +1,14 @@
+2004-08-13  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/frontend/device.c: "show" command leaked 28 bytes for each
+	    group of words since an allocated pointer in line 33 of gens.c
+	    was never freed. It is not possible to free allocated memory 
+	    using that pointer since it is used and its value altered. I
+	    used "listdg" copying original pointer value to it and freeing
+	    memory using "listdg" instead. There were sone "tfree" that 
+	    caused problems for incorrect inputs, I have removed them and  
+	    tested against some bad syntax. Results shows no leaks. 
+
 2004-08-09  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   Updated and corrected test files in "tests" directory. Added

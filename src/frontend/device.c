@@ -60,7 +60,7 @@ all_show(wordlist *wl, int mode)
     wordlist	*params, *nextgroup, *thisgroup;
     wordlist	*prev, *next, *w;
     int		screen_width;
-    dgen	*dg, *listdg;
+    dgen	*dg, *listdg = NULL;
     int		instances;
     int		i, j, n;
     int		param_flag, dev_flag;
@@ -124,12 +124,16 @@ all_show(wordlist *wl, int mode)
 			else
 				thisgroup = next;
 		}
+		/*
 		tfree(w->wl_word);
 		tfree(w);
+		*/
 		w = NULL;
 	    } else if (eq(w->wl_word, ":")) {
+	    /*
 		tfree(w->wl_word);
 		tfree(w);
+		*/
 		w = NULL;
 		if (!params) {
 		    params = next;
@@ -145,8 +149,10 @@ all_show(wordlist *wl, int mode)
 		}
 	    } else if (eq(w->wl_word, ";") || eq(w->wl_word, ",")) {
 		    nextgroup = next;
+		    /*
 		    tfree(w->wl_word);
 		    tfree(w);
+		    */
 		    w = NULL;
 		    if (prev)
 			prev->wl_next = NULL;
@@ -217,7 +223,12 @@ all_show(wordlist *wl, int mode)
 		printf("\n");
 	    }
 	}
-
+	/* Paolo Nenzi 2004:
+	 * This tfree is necessary to free memory allocated by NEW in 
+	 * dgen_init. It is not possible to free dg since it is casted 
+	 * to NULL from dgen_next and is lost.
+	 */ 
+	tfree(listdg);
 	wl = nextgroup;
 
     } while (wl);
