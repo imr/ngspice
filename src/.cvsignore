@@ -1,0 +1,11 @@
+Makefile.in
+Makefile
+.deps
+.libs
+help
+sconvert
+proc2mod
+multidec
+makeidx
+ngspice
+nutmeg

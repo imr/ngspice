@@ -1,5 +1,8 @@
 2000-05-01  Arno W. Peters  <A.W.Peters@ieee.org>
 
+	* Added .cvsignore files to prevent CVS from marking generated
+	files as unknown.
+
 	* src/devices/Makefile.am, src/devices/dev.c, src/devices/dev.h,
 	src/Makefile.am, src/ngspice.c, src/main.c: Refactored devices
 	initialization code into the devices dir.
