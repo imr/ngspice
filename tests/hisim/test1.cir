@@ -1,0 +1,161 @@
+HISIM1 Test nch W=10u L=1u
+.options temp=25
+*
+vds 1 0 dc 0.05
+vgs 2 0 dc 3
+vbs 3 0 dc 0
+m1  1 2 0 3 nmos w=10e-6 l=1e-6 m=1.0
+* nrd=0.01 nrs=0.01 ad=20e-12 as=20e-12 pd=24e-6 ps=24e-6
+*
+*.dc vgs 0 3 0.05 vbs 0 -5 -1.0
+.dc vds 0 5 0.05 vgs 1 5 1.0
+*
+*.print dc i(vds)
+*
+**** HiSIM1.2 ****
+.MODEL NMOS NMOS
++ LEVEL = 17
++ VERSION = 120
++ TOX = 2.480n
++ XLD = 6.66134E-23
++ XWD = 0.000
++ XQY= 12n
++ XPOLYD = 0.000
++ TPOLY = 0.000
++ NSUBC = 2.00000E+17
++ VFBC = -957.6m
++ LP = 42.81n
++ NSUBP = 1.76421E+18
++ SCP1 = 11.57
++ SCP2 = 88.82f
++ SCP3 = 57.76n
++ PARL1 = 1.000
++ PARL2 = 49.79n
++ SC1 = 8.010
++ SC2 = 3.748
++ SC3 = 57.15n
++ WFC = 0.000
++ W0 = 0.000
++ QME1 = 42.00p
++ QME2 = 3.300
++ QME3 = 300.0p
++ PGD1 = 10.00m
++ PGD2 = 1.000
++ PGD3 = 800.0m
++ RS = 80.00u
++ RD = 80.00u
++ RPOCK1 = 170.9
++ RPOCK2 = 222.0e-18
++ RPOCP1 = 3.0
++ RPOCP2 = 2.6
++ BGTMP1 = 90.25u
++ BGTMP2 = -2.006u
++ VMAX = 4.912MEG
++ MUECB0 = 1.000K
++ MUECB1 = 239.3
++ MUEPH0 = 250.0m
++ MUEPH1 = 12.41K
++ MUEPH2 = 0.000
++ MUETMP = 1.711
++ MUESR0 = 2.000
++ MUESR1 = 2.41276E+15
++ NDEP = 1.000
++ NINV = 500.0m
++ NINVD = 1.000n
++ BB = 2.000
++ VOVER = 33.11m
++ VOVERP = 266.7m
++ CLM1 = 700.0m
++ CLM2 = 2.0
++ CLM3 = 1.000
++ SUB1 = 0.000
++ SUB2 = 0.000
++ SUB3 = 0.000
++ GIDL1 = 0.000
++ GIDL2 = 0.000
++ GIDL3 = 0.000
++ GLEAK1 = 0.000
++ GLEAK2 = 0.000
++ GLEAK3 = 0.000
++ VZADD0 = 10.00m
++ PZADD0 = 5.000m
++ NFALP = 0.000
++ NFTRP = 0.000
++ CIT = 0.000
++ EF = 2.000K
++ PTHROU = 0.01
++ CORSRD=1.000
+*** HiSIM1.2 ***
+.MODEL PMOS PMOS
++ LEVEL = 17
++ VERSION = 120
++ TOX = 2.480n
++ XLD = 6.66134E-22
++ XWD = 1.000n
++ XQY = 12.0n
++ XPOLYD = 0.000
++ TPOLY = 0.000
++ NSUBC = 6.24678E+17
++ VFBC = -1.030
++ LP = 35.02n
++ NSUBP = 2.51308E+18
++ SCP1 = 44.41f
++ SCP2 = 6.791
++ SCP3 = 16.42p
++ PARL1 = 1.000
++ PARL2 = 98.72n
++ SC1 = 941.2m
++ SC2 = 50.06m
++ SC3 = 5.558n
++ WFC = 0.000
++ W0 = 0.000
++ QME1 = 0.000
++ QME2 = 0.000
++ QME3 = 0.000
++ PGD1 = 10.00m
++ PGD2 = 1.000
++ PGD3 = 0.800
++ RS = 80.00u
++ RD = 80.00u
++ RPOCK1 = 9.0m
++ RPOCK2 = 200.0m
++ RPOCP1 = 1.000
++ RPOCP2 = 0.500
++ BGTMP1 = 90.25u
++ BGTMP2 = -848.1n
++ VMAX = 5.000MEG
++ MUECB0 = 372.8
++ MUECB1 = 1.000
++ MUEPH0 = 300.0m
++ MUEPH1 = 10.52K
++ MUEPH2 = 0.0
++ MUETMP = 1.566
++ MUESR0 = 1.000
++ MUESR1 = 166.2e6
++ NDEP = 1.000
++ NINV = 500.0m
++ NINVD = 10.00m
++ BB = 2.000
++ VOVER = 70.6m
++ VOVERP = 187.3m
++ CLM1 = 700.0m
++ CLM2 = 2.0
++ CLM3 = 100.0m
++ SUB1 = 0.000
++ SUB2 = 0.000
++ SUB3 = 0.000
++ GIDL1 = 50.00m
++ GIDL2 = 1.000MEG
++ GIDL3 = 336.9m
++ GLEAK1 = 1.000MEG
++ GLEAK2 = 19.30MEG
++ GLEAK3 = 292.5m
++ VZADD0 = 10.00m
++ PZADD0 = 5.000m
++ NFALP = 91.94e-18
++ NFTRP = 13.03e+9
++ CIT = 4.44e-21
++ EF = 2.000K
++ PTHROU = 0.01
++ CORSRD = 1.0
+.end
