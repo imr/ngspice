@@ -6,6 +6,10 @@ Author: 1988 Thomas L. Quarles
 #include "ngspice.h"
 #include <stdio.h>
 
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include <wordlist.h>
 #include <bool.h>
 #include <inpdefs.h>
@@ -26,9 +30,29 @@ IFnewUid(void *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
     int error;
 
     if (olduid) {
+#ifdef HAVE_ASPRINTF    	
 	asprintf(&newname, "%s#%s", (char *) olduid, suffix);
+#else /* ~ HAVE_ASPRINTF */
+      if ( (newname = (char *) malloc(strlen((char *) olduid) +
+				      strlen(suffix) + strlen("#\0"))) 
+	   == NULL){
+	fprintf(stderr,"malloc failed\n");
+	exit(1);
+      }
+      sprintf(newname, "%s#%s", (char *) olduid, suffix);
+#endif /* HAVE_ASPRINTF */
+    
     } else {
+    	
+#ifdef HAVE_ASPRINTF    	
 	asprintf(&newname, "%s", suffix);
+#else /* ~ HAVE_ASPRINTF */
+      if ( (newname = (char *) malloc(strlen(suffix) + 1 )) == NULL){
+	fprintf(stderr,"malloc failed\n");
+	exit(1);
+      }
+      sprintf(newname, "%s", suffix);
+#endif /* HAVE_ASPRINTF */ 
     }
 
     switch (type) {

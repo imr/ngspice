@@ -4,6 +4,11 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 
 #include "ngspice.h"
 #include "ivars.h"
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif /* HAVE_STRING_H */
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -29,10 +34,31 @@ mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
 
     /* Override by environment variables */
     buffer = getenv(env_var);
+
+#ifdef HAVE_ASPRINTF
     if (buffer)
 	asprintf(p, "%s", buffer);
     else
 	asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir);
+#else /* ~ HAVE_ASPRINTF */
+    if (buffer){
+	if ( (*p = (char *) malloc(strlen(buffer)+1)) == NULL){
+		fprintf(stderr,"malloc failed\n");
+		exit(1);
+	}
+	sprintf(*p,"%s",buffer);
+	/* asprintf(p, "%s", buffer); */
+    }
+    else{
+	if ( (*p = (char *) malloc(strlen(path_prefix) + 
+			strlen(DIR_PATHSEP) + strlen(var_dir) + 1)) == NULL){
+		fprintf(stderr,"malloc failed\n");
+		exit(1);
+	}
+	sprintf(*p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir); 
+	/* asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir); */
+    }
+#endif /* HAVE_ASPRINTF */
 }
 
 void
