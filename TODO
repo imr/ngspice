@@ -47,12 +47,9 @@ Move src/devices/disto into src/maths/partialderiv.  Partial
 derivatives are math functions and should be classified under that
 directory.
 
-Refactor src/circuit/inp2dot.c so that the parser calls subroutines
-for each possible dotcard. [PARTIAL]
-
 
 Testability
-===========
+-----------
 
 Add tests for all functions in the complex library in
 src/maths/cmaths.
@@ -64,3 +61,17 @@ Add tests for all functions in the polynomial library in
 src/maths/poly.
 
 Add more circuit tests into the tests directory.
+
+
+Documentation
+-------------
+
+Update ARCHITECTURE to contain a high level overview of spice.
+
+Convert ngspice.texi further to texinfo format.
+
+Distribute devices documentation into the devices tree.  This makes it
+easier for developers to update documentation in concert with code.
+
+Update manual pages for spice and nutmeg.  Perhaps generate them with
+c2man or some other documentation generation utility.

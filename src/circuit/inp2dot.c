@@ -413,28 +413,316 @@ dot_dc(char *line, void *ckt, INPtables *tab, card *current,
 }
 
 
-/* FIXME: INP2dot(): factor out all analysises. */
+static int
+dot_tf(char *line, void *ckt, INPtables *tab, card *current,
+       void *task, void *gnode, void *foo)
+{
+    char *name;			/* the resistor's name */
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    int which;			/* which analysis we are performing */
+    int i;			/* generic loop variable */
+    char *nname1;		/* the first node's name */
+    char *nname2;		/* the second node's name */
+    void *node1;		/* the first node's node pointer */
+    void *node2;		/* the second node's node pointer */
+
+    /* .tf v( node1, node2 ) src */
+    /* .tf vsrc2             src */
+    which = -1;
+    for (i = 0; i < ft_sim->numAnalyses; i++) {
+	if (strcmp(ft_sim->analyses[i]->name, "TF") == 0) {
+	    which = i;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("Transfer Function analysis unsupported.\n");
+	return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Transfer Function", &foo, task));
+    INPgetTok(&line, &name, 0);
+    /* name is now either V or I or a serious error */
+    if (*name == 'v' && strlen(name) == 1) {
+	if (*line != '(' ) {
+	    /* error, bad input format */
+	}
+	INPgetTok(&line, &nname1, 0);
+	INPtermInsert(ckt, &nname1, tab, &node1);
+	ptemp.nValue = (IFnode) node1;
+	GCA(INPapName, (ckt, which, foo, "outpos", &ptemp));
+	if (*line != ')') {
+	    INPgetTok(&line, &nname2, 1);
+	    INPtermInsert(ckt, &nname2, tab, &node2);
+	    ptemp.nValue = (IFnode) node2;
+	    GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
+	    ptemp.sValue =
+		(char *) MALLOC(sizeof(char) *
+				(5 + strlen(nname1) + strlen(nname2)));
+	    (void) sprintf(ptemp.sValue, "V(%s,%s)", nname1, nname2);
+	    GCA(INPapName, (ckt, which, foo, "outname", &ptemp));
+	} else {
+	    ptemp.nValue = (IFnode) gnode;
+	    GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
+	    ptemp.sValue =
+		(char *) MALLOC(sizeof(char) * (4 + strlen(nname1)));
+	    (void) sprintf(ptemp.sValue, "V(%s)", nname1);
+	    GCA(INPapName, (ckt, which, foo, "outname", &ptemp));
+	}
+    } else if (*name == 'i' && strlen(name) == 1) {
+	INPgetTok(&line, &name, 1);
+	INPinsert(&name, tab);
+	ptemp.uValue = name;
+	GCA(INPapName, (ckt, which, foo, "outsrc", &ptemp));
+    } else {
+	LITERR("Syntax error: voltage or current expected.\n");
+	return 0;
+    }
+    INPgetTok(&line, &name, 1);
+    INPinsert(&name, tab);
+    ptemp.uValue = name;
+    GCA(INPapName, (ckt, which, foo, "insrc", &ptemp));
+    return (0);
+}
+
+
+static int
+dot_tran(char *line, void *ckt, INPtables *tab, card *current,
+	 void *task, void *gnode, void *foo)
+{
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    int which;			/* which analysis we are performing */
+    int i;			/* generic loop variable */
+    double dtemp;		/* random double precision temporary */
+    char *word;			/* something to stick a word of input into */
+
+    /* .tran Tstep Tstop <Tstart <Tmax> > <UIC> */
+    which = -1;
+    for (i = 0; i < ft_sim->numAnalyses; i++) {
+	if (strcmp(ft_sim->analyses[i]->name, "TRAN") == 0) {
+	    which = i;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("Transient analysis unsupported.\n");
+	return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Transient Analysis", &foo, task));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* Tstep */
+    GCA(INPapName, (ckt, which, foo, "tstep", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* Tstop */
+    GCA(INPapName, (ckt, which, foo, "tstop", parm));
+    if (*line) {
+	dtemp = INPevaluate(&line, &error, 1);	/* tstart? */
+	if (error == 0) {
+	    ptemp.rValue = dtemp;
+	    GCA(INPapName, (ckt, which, foo, "tstart", &ptemp));
+	    dtemp = INPevaluate(&line, &error, 1);	/* tmax? */
+	    if (error == 0) {
+		ptemp.rValue = dtemp;
+		GCA(INPapName, (ckt, which, foo, "tmax", &ptemp));
+	    }
+	}
+    }
+    if (*line) {
+	INPgetTok(&line, &word, 1);	/* uic? */
+	if (strcmp(word, "uic") == 0) {
+	    ptemp.iValue = 1;
+	    GCA(INPapName, (ckt, which, foo, "uic", &ptemp));
+	} else {
+	    LITERR(" Error: unknown parameter on .tran - ignored\n");
+	}
+    }
+    return (0);
+}
+
+
+static int
+dot_sens(char *line, void *ckt, INPtables *tab, card *current,
+	 void *task, void *gnode, void *foo)
+{
+    char *name;			/* the resistor's name */
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    int which;			/* which analysis we are performing */
+    int i;			/* generic loop variable */
+    char *nname1;		/* the first node's name */
+    char *nname2;		/* the second node's name */
+    void *node1;		/* the first node's node pointer */
+    void *node2;		/* the second node's node pointer */
+    char *steptype;		/* ac analysis, type of stepping function */
+
+    which = -1;			/* Bug fix from Glao Dezai */
+    for (i = 0; i < ft_sim->numAnalyses; i++) {
+	if (strcmp(ft_sim->analyses[i]->name, "SENS") == 0) {
+	    which = i;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("Sensitivity unsupported.\n");
+	return (0);
+    }
+
+    IFC(newAnalysis, (ckt, which, "Sensitivity Analysis", &foo, task));
+
+    /* Format is:
+     *      .sens <output>
+     *      + [ac [dec|lin|oct] <pts> <low freq> <high freq> | dc ]
+     */
+    /* Get the output voltage or current */
+    INPgetTok(&line, &name, 0);
+    /* name is now either V or I or a serious error */
+    if (*name == 'v' && strlen(name) == 1) {
+	if (*line != '(') {
+	    LITERR("Syntax error: '(' expected after 'v'\n");
+	    return 0;
+	}
+	INPgetTok(&line, &nname1, 0);
+	INPtermInsert(ckt, &nname1, tab, &node1);
+	ptemp.nValue = (IFnode) node1;
+	GCA(INPapName, (ckt, which, foo, "outpos", &ptemp))
+
+	    if (*line != ')') {
+		INPgetTok(&line, &nname2, 1);
+		INPtermInsert(ckt, &nname2, tab, &node2);
+		ptemp.nValue = (IFnode) node2;
+		GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
+		ptemp.sValue = (char *)
+		    MALLOC(sizeof(char) *
+			   (5 + strlen(nname1) + strlen(nname2)));
+		(void) sprintf(ptemp.sValue, "V(%s,%s)", nname1, nname2);
+		GCA(INPapName, (ckt, which, foo, "outname", &ptemp));
+	    } else {
+		ptemp.nValue = (IFnode) gnode;
+		GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
+		ptemp.sValue =
+		    (char *) MALLOC(sizeof(char) * (4 + strlen(nname1)));
+		(void) sprintf(ptemp.sValue, "V(%s)", nname1);
+		GCA(INPapName, (ckt, which, foo, "outname", &ptemp));
+	    }
+    } else if (*name == 'i' && strlen(name) == 1) {
+	INPgetTok(&line, &name, 1);
+	INPinsert(&name, tab);
+	ptemp.uValue = name;
+	GCA(INPapName, (ckt, which, foo, "outsrc", &ptemp));
+    } else {
+	LITERR("Syntax error: voltage or current expected.\n");
+	return 0;
+    }
+
+    INPgetTok(&line, &name, 1);
+    if (name && !strcmp(name, "pct")) {
+	ptemp.iValue = 1;
+	GCA(INPapName, (ckt, which, foo, "pct", &ptemp))
+	    INPgetTok(&line, &name, 1);
+    }
+    if (name && !strcmp(name, "ac")) {
+	INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
+	ptemp.iValue = 1;
+	GCA(INPapName, (ckt, which, foo, steptype, &ptemp));
+	parm = INPgetValue(ckt, &line, IF_INTEGER, tab); /* number of points */
+	GCA(INPapName, (ckt, which, foo, "numsteps", parm));
+	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* fstart */
+	GCA(INPapName, (ckt, which, foo, "start", parm));
+	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* fstop */
+	GCA(INPapName, (ckt, which, foo, "stop", parm));
+	return (0);
+    } else if (name && *name && strcmp(name, "dc")) {
+	/* Bad flag */
+	LITERR("Syntax error: 'ac' or 'dc' expected.\n");
+	return 0;
+    }
+    return (0);
+}
+
+
+#ifdef WANT_SENSE2
+static int
+dot_sens2(char *line, void *ckt, INPtables *tab, card *current,
+	  void *task, void *gnode, void *foo)
+{
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    int which;			/* which analysis we are performing */
+    int i;			/* generic loop variable */
+    char *token;		/* a token from the line */
+
+    /* .sens {AC} {DC} {TRAN} [dev=nnn parm=nnn]* */
+    which = -1;
+    for (i = 0; i < ft_sim->numAnalyses; i++) {
+	if (strcmp(ft_sim->analyses[i]->name, "SENS2") == 0) {
+	    which = i;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("Sensitivity-2 analysis unsupported\n");
+	return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Sensitivity-2 Analysis", &foo, task));
+    while (*line) {
+	/* read the entire line */
+	INPgetTok(&line, &token, 1);
+	for (i = 0; i < ft_sim->analyses[which]->numParms; i++) {
+	    /* find the parameter */
+	    if (0 == strcmp(token,
+			    ft_sim->analyses[which]->analysisParms[i].keyword)) {
+		/* found it, analysis which, parameter i */
+		if (ft_sim->analyses[which]->analysisParms[i].dataType & IF_FLAG) {
+		    /* one of the keywords! */
+		    ptemp.iValue = 1;
+		    error =
+			(*(ft_sim->setAnalysisParm)) (ckt, foo,
+						      ft_sim->analyses[which]->analysisParms[i].id,
+						      &ptemp,
+						      (IFvalue *) NULL);
+		    if (error)
+			current->error =
+			    INPerrCat(current->error, INPerror(error));
+		} else {
+		    parm =
+			INPgetValue(ckt, &line,
+				    ft_sim->analyses[which]->analysisParms[i].dataType, tab);
+		    error =
+			(*(ft_sim->setAnalysisParm)) (ckt, foo,
+						      ft_sim->
+						      analyses
+						      [which]->analysisParms
+						      [i].id, parm,
+						      (IFvalue *)
+						      NULL);
+		    if (error)
+			current->error =
+			    INPerrCat(current->error, INPerror(error));
+
+		}
+		break;
+	    }
+	}
+	if (i == ft_sim->analyses[which]->numParms) {
+	    /* didn't find it! */
+	    LITERR(" Error: unknown parameter on .sens-ignored \n");
+	}
+    }
+    return (0);
+}
+#endif
+
+
+
 int
 INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 {
 
     /* .<something> Many possibilities */
-
-    char *name;			/* the resistor's name */
-    char *nname1;		/* the first node's name */
-    char *nname2;		/* the second node's name */
-    void *node1;		/* the first node's node pointer */
-    void *node2;		/* the second node's node pointer */
-    int error;			/* error code temporary */
-    IFvalue ptemp;		/* a value structure to package resistance into */
-    IFvalue *parm;		/* a pointer to a value struct for function returns */
     char *token;		/* a token from the line */
-    int which;			/* which analysis we are performing */
-    int i;			/* generic loop variable */
-    void *foo;			/* pointer to analysis */
-    char *steptype;		/* ac analysis, type of stepping function */
-    double dtemp;		/* random double precision temporary */
-    char *word;			/* something to stick a word of input into */
+    void *foo = NULL;		/* pointer to analysis */
     /* the part of the current line left to parse */
     char *line = current->line;
 
@@ -476,102 +764,9 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
     } else if ((strcmp(token, ".dc") == 0)) {
 	return dot_dc(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".tf") == 0)) {
-	/* .tf v( node1, node2 ) src */
-	/* .tf vsrc2             src */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-	    if (strcmp(ft_sim->analyses[i]->name, "TF") == 0) {
-		which = i;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("Transfer Function analysis unsupported.\n");
-	    return (0);
-	}
-	IFC(newAnalysis, (ckt, which, "Transfer Function", &foo, task))
-	    INPgetTok(&line, &name, 0);
-	/* name is now either V or I or a serious error */
-	if (*name == 'v' && strlen(name) == 1) {
-	    if (*line != '(' /* match) */ ) {
-		/* error, bad input format */
-	    }
-	    INPgetTok(&line, &nname1, 0);
-	    INPtermInsert(ckt, &nname1, tab, &node1);
-	    ptemp.nValue = (IFnode) node1;
-	    GCA(INPapName, (ckt, which, foo, "outpos", &ptemp))
-		if (*line != /* match ( */ ')') {
-		INPgetTok(&line, &nname2, 1);
-		INPtermInsert(ckt, &nname2, tab, &node2);
-		ptemp.nValue = (IFnode) node2;
-		GCA(INPapName, (ckt, which, foo, "outneg", &ptemp))
-		    ptemp.sValue = (char *)
-		    MALLOC(sizeof(char) *
-			   (5 + strlen(nname1) + strlen(nname2)));
-		(void) sprintf(ptemp.sValue, "V(%s,%s)", nname1, nname2);
-		GCA(INPapName, (ckt, which, foo, "outname", &ptemp))
-	    } else {
-		ptemp.nValue = (IFnode) gnode;
-		GCA(INPapName, (ckt, which, foo, "outneg", &ptemp))
-		    ptemp.sValue =
-		    (char *) MALLOC(sizeof(char) * (4 + strlen(nname1)));
-		(void) sprintf(ptemp.sValue, "V(%s)", nname1);
-		GCA(INPapName, (ckt, which, foo, "outname", &ptemp))
-	    }
-	} else if (*name == 'i' && strlen(name) == 1) {
-	    INPgetTok(&line, &name, 1);
-	    INPinsert(&name, tab);
-	    ptemp.uValue = name;
-	    GCA(INPapName, (ckt, which, foo, "outsrc", &ptemp))
-	} else {
-	    LITERR("Syntax error: voltage or current expected.\n");
-	    return 0;
-	}
-	INPgetTok(&line, &name, 1);
-	INPinsert(&name, tab);
-	ptemp.uValue = name;
-	GCA(INPapName, (ckt, which, foo, "insrc", &ptemp))
-	    return (0);
+	return dot_tf(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".tran") == 0)) {
-	/* .tran Tstep Tstop <Tstart <Tmax> > <UIC> */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-	    if (strcmp(ft_sim->analyses[i]->name, "TRAN") == 0) {
-		which = i;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("Transient analysis unsupported.\n");
-	    return (0);
-	}
-	IFC(newAnalysis, (ckt, which, "Transient Analysis", &foo, task))
-	    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* Tstep */
-	GCA(INPapName, (ckt, which, foo, "tstep", parm))
-	    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* Tstop */
-	GCA(INPapName, (ckt, which, foo, "tstop", parm))
-	    if (*line) {
-	    dtemp = INPevaluate(&line, &error, 1);	/* tstart? */
-	    if (error == 0) {
-		ptemp.rValue = dtemp;
-		GCA(INPapName, (ckt, which, foo, "tstart", &ptemp))
-		    dtemp = INPevaluate(&line, &error, 1);	/* tmax? */
-		if (error == 0) {
-		    ptemp.rValue = dtemp;
-		    GCA(INPapName, (ckt, which, foo, "tmax", &ptemp))
-		}
-	    }
-	}
-	if (*line) {
-	    INPgetTok(&line, &word, 1);	/* uic? */
-	    if (strcmp(word, "uic") == 0) {
-		ptemp.iValue = 1;
-		GCA(INPapName, (ckt, which, foo, "uic", &ptemp))
-	    } else {
-		LITERR(" Error: unknown parameter on .tran - ignored\n");
-	    }
-	}
-	return (0);
+	return dot_tran(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".subckt") == 0) ||
 	       (strcmp(token, ".ends") == 0)) {
 	/* not yet implemented - warn & ignore */
@@ -582,150 +777,11 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 	/* not allowed to pay attention to additional input - return */
 	return (1);
     } else if (strcmp(token, ".sens") == 0) {
-	which = -1;		/* Bug fix from Glao Dezai */
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-	    if (strcmp(ft_sim->analyses[i]->name, "SENS") == 0) {
-		which = i;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("Sensitivity unsupported.\n");
-	    return (0);
-	}
-
-	IFC(newAnalysis, (ckt, which, "Sensitivity Analysis", &foo, task));
-
-	/* Format is:
-	 *      .sens <output>
-	 *      + [ac [dec|lin|oct] <pts> <low freq> <high freq> | dc ]
-	 */
-	/* Get the output voltage or current */
-	INPgetTok(&line, &name, 0);
-	/* name is now either V or I or a serious error */
-	if (*name == 'v' && strlen(name) == 1) {
-	    if (*line != '(' /* match) */ ) {
-		LITERR("Syntax error: '(' expected after 'v'\n");
-		return 0;
-	    }
-	    INPgetTok(&line, &nname1, 0);
-	    INPtermInsert(ckt, &nname1, tab, &node1);
-	    ptemp.nValue = (IFnode) node1;
-	    GCA(INPapName, (ckt, which, foo, "outpos", &ptemp))
-
-		if (*line != /* match ( */ ')') {
-		INPgetTok(&line, &nname2, 1);
-		INPtermInsert(ckt, &nname2, tab, &node2);
-		ptemp.nValue = (IFnode) node2;
-		GCA(INPapName, (ckt, which, foo, "outneg", &ptemp))
-		    ptemp.sValue = (char *)
-		    MALLOC(sizeof(char) *
-			   (5 + strlen(nname1) + strlen(nname2)));
-		(void) sprintf(ptemp.sValue, "V(%s,%s)", nname1, nname2);
-		GCA(INPapName, (ckt, which, foo, "outname", &ptemp))
-	    } else {
-		ptemp.nValue = (IFnode) gnode;
-		GCA(INPapName, (ckt, which, foo, "outneg", &ptemp))
-		    ptemp.sValue =
-		    (char *) MALLOC(sizeof(char) * (4 + strlen(nname1)));
-		(void) sprintf(ptemp.sValue, "V(%s)", nname1);
-		GCA(INPapName, (ckt, which, foo, "outname", &ptemp))
-	    }
-	} else if (*name == 'i' && strlen(name) == 1) {
-	    INPgetTok(&line, &name, 1);
-	    INPinsert(&name, tab);
-	    ptemp.uValue = name;
-	    GCA(INPapName, (ckt, which, foo, "outsrc", &ptemp))
-	} else {
-	    LITERR("Syntax error: voltage or current expected.\n");
-		return 0;
-	}
-
-	INPgetTok(&line, &name, 1);
-	if (name && !strcmp(name, "pct")) {
-	    ptemp.iValue = 1;
-	    GCA(INPapName, (ckt, which, foo, "pct", &ptemp))
-		INPgetTok(&line, &name, 1);
-	}
-	if (name && !strcmp(name, "ac")) {
-	    INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
-	    ptemp.iValue = 1;
-	    GCA(INPapName, (ckt, which, foo, steptype, &ptemp))
-		parm = INPgetValue(ckt, &line, IF_INTEGER, tab);	/* number of points */
-	    GCA(INPapName, (ckt, which, foo, "numsteps", parm))
-		parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
-	    GCA(INPapName, (ckt, which, foo, "start", parm))
-		parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
-	    GCA(INPapName, (ckt, which, foo, "stop", parm))
-		return (0);
-	} else if (name && *name && strcmp(name, "dc")) {
-	    /* Bad flag */
-	    LITERR("Syntax error: 'ac' or 'dc' expected.\n");
-	    return 0;
-	}
-	return (0);
+	return dot_sens(line, ckt, tab, current, task, gnode, foo);
     }
 #ifdef WANT_SENSE2
     else if ((strcmp(token, ".sens2") == 0)) {
-	/* .sens {AC} {DC} {TRAN} [dev=nnn parm=nnn]* */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-	    if (strcmp(ft_sim->analyses[i]->name, "SENS2") == 0) {
-		which = i;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("Sensitivity-2 analysis unsupported\n");
-	    return (0);
-	}
-	IFC(newAnalysis,
-	    (ckt, which, "Sensitivity-2 Analysis", &foo, task)) while (*line) {	/* read the entire line */
-	    INPgetTok(&line, &token, 1);
-	    for (i = 0; i < ft_sim->analyses[which]->numParms; i++) {
-		/* find the parameter */
-		if (0 == strcmp(token,
-				ft_sim->analyses[which]->
-				analysisParms[i].keyword)) {
-		    /* found it, analysis which, parameter i */
-		    if (ft_sim->analyses[which]->
-			analysisParms[i].dataType & IF_FLAG) {
-			/* one of the keywords! */
-			ptemp.iValue = 1;
-			error = (*(ft_sim->setAnalysisParm)) (
-			    ckt, foo,
-			    ft_sim->analyses[which]->analysisParms[i].id,
-			    &ptemp, (IFvalue *) NULL);
-			if (error)
-			    current->error =
-				INPerrCat(current->error, INPerror(error));
-		    } else {
-			parm =
-			    INPgetValue(ckt, &line,
-					ft_sim->analyses[which]->
-					analysisParms[i].dataType, tab);
-			error =
-			    (*(ft_sim->setAnalysisParm)) (ckt, foo,
-							  ft_sim->
-							  analyses
-							  [which]->analysisParms
-							  [i].id, parm,
-							  (IFvalue *)
-							  NULL);
-			if (error)
-			    current->error =
-				INPerrCat(current->error, INPerror(error));
-
-		    }
-		    break;
-		}
-	    }
-	    if (i == ft_sim->analyses[which]->numParms) {
-		/* didn't find it! */
-		LITERR(" Error: unknown parameter on .sens-ignored \n");
-	    }
-	}
-	return (0);
+	return dot_sens2(line, ckt, tab, current, task, gnode, foo);
     }
 #endif
     else if ((strcmp(token, ".probe") == 0)) {
