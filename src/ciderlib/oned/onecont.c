@@ -8,7 +8,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "numenum.h"
 #include "onemesh.h"
 #include "onedev.h"
-#include "spMatrix.h"
+#include "spmatrix.h"
 #include "macros.h"
 #include "onedext.h"
 #include "oneddefs.h"
