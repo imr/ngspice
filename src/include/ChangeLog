@@ -1,6 +1,6 @@
-2000-05-21  Paolo Nenzi <p.nenzi@ieee.org>
+2000-05-22  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* Makefile.am : removed reference to fteconst.h
+	* inpptree.h: Applied Widlok patch (u2 function).
 
 1999-11-30  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 

@@ -92,6 +92,9 @@ typedef struct INPparseNode {
 #define PTF_SGN		18
 #define PTF_USTEP	19
 #define PTF_URAMP	20
+/* MW. PTF_CIF - next function */
+#define PTF_USTEP2	21
+
 
 /* The following things are used by the parser -- these are the token types the
  * lexer returns.
@@ -155,6 +158,8 @@ extern double PTsqrt();
 extern double PTtan();
 extern double PTtanh();
 extern double PTustep();
+/* MW. PTcif declaration */
+extern double PTustep2();
 extern double PTuramp();
 extern double PTuminus();
 
