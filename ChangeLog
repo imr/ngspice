@@ -1,3 +1,9 @@
+2004-08-14  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/main.c: The code for -o option contained an error that
+	    prevented the correct operation of output redirection. The
+	    masking #ifdef has been changed to #ifndef. 
+
 2004-08-13  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/frontend/device.c: "show" command leaked 28 bytes for each
