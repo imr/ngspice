@@ -30,7 +30,7 @@ Author: Jim Groves
 
 
 
-#include "spice.h"
+#include "ngspice.h"
 #include "cpdefs.h"
 #include "graph.h"
 #include "ftedbgra.h"

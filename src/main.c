@@ -30,7 +30,7 @@
 #include <misc/getopt.h>
 #include <frontend/resource.h>
 #include <frontend/variable.h>
-#include "frontend/display.h" /* va */
+//#include "frontend/display.h" /* va */
 
 /* saj xspice headers */
 #ifdef XSPICE
@@ -60,7 +60,7 @@ bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. */
 bool ft_setflag = FALSE;    /* Don't abort after an interrupt. */
 char *ft_rawfile = "rawspice.raw";
 
-bool oflag = FALSE;         /* Output über redefinierte Funktionen */
+bool oflag = FALSE;         /* Output Ã¼ber redefinierte Funktionen */
 FILE *flogp;  // hvogt 15.12.2001
 
 /* Frontend and circuit options */
@@ -480,7 +480,7 @@ main(int argc, char **argv)
 		    shutdown (EXIT_BAD);
 		}
 #endif		
-//    *** Log-File öffnen *******
+//    *** Log-File Ã¶ffnen *******
                 if (!(flogp = fopen(buf, "w"))) {
                       perror(buf);
                       shutdown(EXIT_BAD);                    

@@ -17,6 +17,7 @@ Modified 2001: AlansFixes
 #include "evtproto.h"
 #include "ipctiein.h"
 /* gtri - end - wbk */
+#endif
 
 #ifdef HAS_WINDOWS
 void SetAnalyse( char * Analyse, int Percent);

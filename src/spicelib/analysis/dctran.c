@@ -28,6 +28,7 @@ Modified: 2000  AlansFixes
 
 #ifdef CLUSTER
 #include "cluster.h"
+#endif
 
 #ifdef HAS_WINDOWS    /* hvogt 10.03.99, nach W. Mues */
 void SetAnalyse( char * Analyse, int Percent);

@@ -7,7 +7,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Routines for dealing with the vector database.
  */
 
-#include <spice.h>
+#include <ngspice.h>
 #include <cpdefs.h>
 #include <ftedefs.h>
 #include <dvec.h>

@@ -57,7 +57,6 @@ static bool getSpecial(dataDesc *desc, runDesc *run, IFvalue *val);
 static void freeRun(runDesc *run);
 
 
-
 #define DOUBLE_PRECISION    15
 
 
@@ -78,8 +77,7 @@ extern bool ft_getOutReq (FILE **fpp, struct plot **plotp, bool *binp, char *nam
 int
 OUTpBeginPlot(void *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
 {
-    char *name;
-    
+    char *name;    
 #ifdef PARALLEL_ARCH
 if (ARCHme != 0) return(OK);
 #endif /* PARALLEL_ARCH */
@@ -121,8 +119,7 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
     char *ch, tmpname[BSIZE_SP];
     bool saveall  = TRUE;
     bool savealli = FALSE;
-    char *an_name;
-   
+    char *an_name;   
     /*to resume a run saj
     *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
     */
@@ -133,6 +130,7 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
       
     } else {
     /*end saj*/
+    
     /* Check to see if we want to print informational data. */
     if (cp_getvar("printinfo", VT_BOOL, (char *) &printinfo))
 	fprintf(cp_err, "(debug printing enabled)\n");
@@ -355,7 +353,7 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
 	if (refName)
 	    run->runPlot->pl_ndims = 1;
     }
-
+   }
     return (OK);
 }
 
@@ -1098,7 +1096,9 @@ OUTstopnow(void)
 static struct mesg {
         char *string;
         long flag;
-} msgs[] = {
+} 
+
+msgs[] = {
         { "Warning", ERR_WARNING } ,
         { "Fatal error", ERR_FATAL } ,
         { "Panic", ERR_PANIC } ,
