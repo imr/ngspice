@@ -331,7 +331,7 @@ BJT2load(GENmodel *inModel, CKTcircuit *ckt)
                 cbhat= *(ckt->CKTstate0 + here->BJT2cb)+ *(ckt->CKTstate0 + 
                         here->BJT2gpi)*delvbe+ *(ckt->CKTstate0 + here->BJT2gmu)*
                         delvbc;
-
+#ifndef NOBYPASS
                 /*
                  *    bypass if solution has not changed
                  */
@@ -375,7 +375,7 @@ BJT2load(GENmodel *inModel, CKTcircuit *ckt)
                     cdsub = *(ckt->CKTstate0 + here->BJT2cdsub);
                     goto load;
                 }
-
+#endif /*NOBYPASS*/
                 /*
                  *   limit nonlinear branch voltages
                  */

@@ -119,7 +119,9 @@ B1load(GENmodel *inModel, CKTcircuit *ckt)
     double vt0 = 0.0;
     double args[8];
     int    ByPass = 0;
+#ifndef NOBYPASS
     double tempv = 0.0;
+#endif /*NOBYPASS*/
     int error = 0;
 
     double m; /* parallel multiplier */
@@ -275,6 +277,7 @@ B1load(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTstate0 + here->B1gbd) * delvbd +
                     *(ckt->CKTstate0 + here->B1gbs) * delvbs ;
 
+#ifndef NOBYPASS
                     /* now lets see if we can bypass (ugh) */
 
                 /* following should be one big if connected by && all over
@@ -338,6 +341,7 @@ B1load(GENmodel *inModel, CKTcircuit *ckt)
                         goto line850;
                     }
                 }
+#endif /*NOBYPASS*/
 
                 von = model->B1type * here->B1von;
                 if(*(ckt->CKTstate0 + here->B1vds) >=0) {
