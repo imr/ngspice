@@ -41,8 +41,8 @@ BJT2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 	   
 	   m = here->BJT2m;
 
-            gcpr=model->BJT2collectorResist * here->BJT2area;
-            gepr=model->BJT2emitterResist * here->BJT2area;
+            gcpr=model->BJT2collectorConduct * here->BJT2area;
+            gepr=model->BJT2emitterConduct * here->BJT2area;
             gpi= *(ckt->CKTstate0 + here->BJT2gpi);
             gmu= *(ckt->CKTstate0 + here->BJT2gmu);
             gm= *(ckt->CKTstate0 + here->BJT2gm);
