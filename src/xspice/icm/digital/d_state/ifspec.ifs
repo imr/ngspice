@@ -1,0 +1,130 @@
+/* $Id$ */
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 1991
+Georgia Tech Research Corporation, Atlanta, Ga. 30332
+All Rights Reserved
+
+AUTHORS                      
+
+    30 Sept 1991     Jeffrey P. Murray
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    digital d_state (state machine) code model.
+
+===============================================================================*/
+
+ 
+NAME_TABLE:
+
+
+C_Function_Name:       cm_d_state
+Spice_Model_Name:      d_state
+Description:           "digital state machine"
+
+
+PORT_TABLE:
+
+
+Port_Name:           in             clk
+Description:         "input"        "clock"
+Direction:           in             in
+Default_Type:        d              d
+Allowed_Types:       [d]            [d]
+Vector:               yes            no
+Vector_Bounds:        -              -
+Null_Allowed:        yes            no
+
+
+PORT_TABLE:
+
+
+Port_Name:           reset          out
+Description:         "reset"        "output"
+Direction:           in             out
+Default_Type:        d              d
+Allowed_Types:       [d]            [d]
+Vector:               no             yes
+Vector_Bounds:        -              [1 -]
+Null_Allowed:        yes            no
+
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     clk_delay           reset_delay
+Description:        "delay from CLK"    "delay from reset"
+Data_Type:          real                real
+Default_Value:      1.0e-9              1.0e-9
+Limits:             -                   -          
+Vector:              no                  no
+Vector_Bounds:       -                   -           
+Null_Allowed:       yes                 yes       
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     state_file
+Description:        "state transition specification file name"  
+Data_Type:          string 
+Default_Value:      "state.txt"                       
+Limits:             -                                  
+Vector:              no                              
+Vector_Bounds:       -                                
+Null_Allowed:       no                          
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     reset_state
+Description:        "default state on RESET & at DC"  
+Data_Type:          int 
+Default_Value:      0                       
+Limits:             -                                  
+Vector:              no                              
+Vector_Bounds:       -                                
+Null_Allowed:       no                          
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     input_load
+Description:        "input loading capacitance (F)"  
+Data_Type:          real 
+Default_Value:      1.0e-12                       
+Limits:             -                                  
+Vector:              no                              
+Vector_Bounds:       -                                
+Null_Allowed:       no                          
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     clk_load
+Description:        "clock loading capacitance (F)"  
+Data_Type:          real 
+Default_Value:      1.0e-12                       
+Limits:             -                                  
+Vector:              no                              
+Vector_Bounds:       -                                
+Null_Allowed:       no                          
+PARAMETER_TABLE:
+
+
+Parameter_Name:     reset_load
+Description:        "reset loading capacitance (F)"  
+Data_Type:          real 
+Default_Value:      1.0e-12                       
+Limits:             -                                  
+Vector:              no                              
+Vector_Bounds:       -                                
+Null_Allowed:       no                          
+

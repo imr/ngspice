@@ -24,4 +24,4 @@ CMPP = $(TOPDIR)$(top_builddir)/src/xspice/cmpp/cmpp
 LDFLAGS = -shared
 
 # The codemodels to make
-CMDIRS = spice2poly
+CMDIRS = spice2poly digital analog xtradev xtraevt

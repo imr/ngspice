@@ -17,6 +17,10 @@
 	Added some easy to use makefiles for codemodels and reordered
 	Removed binary files
 	Added icm to build list
+
+	* src/xspice/icm/{analog,digital,xtradev,xtraevt}:
+	added the codemodels from xspice in the same
+	structure as spiceopus
 	
 	
 2003-07-18 Vera Albrecht <albrecht@danalyse.de>

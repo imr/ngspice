@@ -1,0 +1,65 @@
+/* $Id$ */
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 1991
+Georgia Tech Research Corporation, Atlanta, Ga. 30332
+All Rights Reserved
+
+AUTHORS                      
+
+    30 Sept 1991     Jeffrey P. Murray
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    digital d_source code model.
+
+===============================================================================*/
+ 
+NAME_TABLE:
+
+
+C_Function_Name:       cm_d_source
+Spice_Model_Name:      d_source
+Description:           "digital signal source"
+
+
+PORT_TABLE:
+
+
+Port_Name:           out
+Description:         "output"
+Direction:           out
+Default_Type:        d
+Allowed_Types:       [d]
+Vector:               yes
+Vector_Bounds:        -     
+Null_Allowed:        no 
+
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     input_file
+Description:        "digital input vector filename"  
+Data_Type:          string 
+Default_Value:      "source.txt"                       
+Limits:             -                                  
+Vector:              no                              
+Vector_Bounds:       -                                
+Null_Allowed:       no                          
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     input_load
+Description:        "input loading capacitance (F)"  
+Data_Type:          real 
+Default_Value:      1.0e-12                       
+Limits:             -                                  
+Vector:              no                              
+Vector_Bounds:       -                                
+Null_Allowed:       no                          

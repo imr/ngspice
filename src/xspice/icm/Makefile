@@ -6,9 +6,10 @@ include $(TOPDIR)makedefs
 
 DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
 
--include .deps/ifspec.P 
--include .deps/cfunc.P 
--include .deps/cm.P 
+-include .deps/ifspec.P
+-include .deps/cfunc.P
+-include .deps/udnfunc.P
+-include .deps/cm.P
 -include .deps/dlmain.P
 
 UPMAKE = make -f $(TOPDIR)../Makefile TOPDIR=$(TOPDIR)../
@@ -18,12 +19,16 @@ MAKE = make -f $(TOPDIR)Makefile TOPDIR=$(TOPDIR)
 COMPILE = $(CC) $(INCLUDES) $(CFLAGS)
 
 all: 
-	@for x in $(CMDIRS) ; do \
-	( cd $$x && $(UPMAKE) $$x-mods ) ; done
+	@amf=$$2; for x in $(CMDIRS) ; do \
+	( cd $$x && $(UPMAKE) $$x-mods ) \
+	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
 
 clean:
-	@for x in $(CMDIRS) ; do \
-	( cd $$x && $(UPMAKE) $$x-mods-clean ) ; done
+	@amf=$$2; for x in $(CMDIRS) ; do \
+	( cd $$x && $(UPMAKE) $$x-mods-clean ) \
+	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
 	-rm -rf .deps
 
 ifspec.c: ifspec.ifs
@@ -44,21 +49,35 @@ objects.inc cmextrn.h cminfo.h udnextrn.h udninfo.h: modpath.lst  udnpath.lst
 dlmain.o: cmextrn.h cminfo.h udnextrn.h udninfo.h
 
 %.cm: dlmain.o objects.inc
-	@echo $@: objects.inc dlmain.o \\ > .deps/cm.P ; \
-	for x in `cat udnpath.lst` `cat modpath.lst ` ; do \
-	echo $$x/cfunc.o $$x/ifspec.o \\ >> .deps/cm.P ; done ; \
-	echo "" >> .deps/cm.P
-	$(COMPILE) $(LDFLAGS) -o $@ `cat objects.inc ` dlmain.o
+	@echo $@: objects.inc dlmain.o \\ > .deps/cm.P
+	@for x in `cat modpath.lst` ; do \
+	echo $$x/cfunc.o $$x/ifspec.o \\ >> .deps/cm.P ; done
+	@for x in `cat udnpath.lst` ; do \
+	echo $$x/udnfunc.o \\ >> .deps/cm.P ; done
+	@echo "" >> .deps/cm.P
+	$(COMPILE) $(LDFLAGS) -o $@ `awk '{ print $$1 }' objects.inc` dlmain.o
 
 %-mods: modpath.lst udnpath.lst
-	@for x in `cat udnpath.lst` `cat modpath.lst ` ; do \
-	( cd $$x && $(UPMAKE) objs ) ; done
+	@amf=$$2; for x in `cat modpath.lst` ; do \
+	( cd $$x && $(UPMAKE) objs ) \
+	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
+	@amf=$$2; for x in `cat udnpath.lst` ; do \
+	( cd $$x && $(UPMAKE) uobjs ) \
+	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
 	@target=`echo $@ | sed s/-mods//`; $(MAKE) $$target.cm
 
 %-mods-clean:
-	@target=`echo $@ | sed s/-mods-clean//` && rm -f $$target.cm && \
-	for x in `cat udnpath.lst` `cat modpath.lst ` ; do \
-	( cd $$x && $(UPMAKE) objs-clean ) ; done
+	@target=`echo $@ | sed s/-mods-clean//` && rm -f $$target.cm
+	@amf=$$2; for x in `cat modpath.lst` ; do \
+	( cd $$x && $(UPMAKE) objs-clean ) \
+	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
+	@amf=$$2; for x in `cat udnpath.lst` ; do \
+	( cd $$x && $(UPMAKE) uobjs-clean ) \
+	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
 	-rm -f cmextrn.h cminfo.h objects.inc udnextrn.h udninfo.h \
 	dlmain.c dlmain.o
 	-rm -rf .deps
@@ -68,6 +87,12 @@ objs: ifspec.o cfunc.o
 
 objs-clean:
 	-rm -f cfunc.c ifspec.c cfunc.o ifspec.o
+	-rm -rf .deps
+
+uobjs: udnfunc.o
+
+uobjs-clean:
+	-rm -f udnfunc.o
 	-rm -rf .deps
 
 %.o: %.c

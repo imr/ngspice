@@ -1,0 +1,117 @@
+/* $Id$ */
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 1991
+Georgia Tech Research Corporation, Atlanta, Ga. 30332
+All Rights Reserved
+
+AUTHORS                      
+
+    20 Mar 1991     Harry Li
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    analog oneshot code model.
+
+===============================================================================*/
+ 
+NAME_TABLE:
+
+
+C_Function_Name:       cm_oneshot
+Spice_Model_Name:      oneshot 
+Description:           "one-shot"
+
+
+PORT_TABLE:
+
+Port_Name:             clk                  cntl_in         
+Description:           "clock input"        "input"      
+Direction:             in                   in 
+Default_Type:          v                    v
+Allowed_Types:         [v,vd,vnam,i,id]     [v,vnam,vd,i,id] 
+Vector:                 no                   no
+Vector_Bounds:          -                    -  
+Null_Allowed:          no                   yes 
+
+PORT_TABLE:
+
+Port_Name:             clear                out 
+Description:           "clear signal"       "output"
+Direction:             in                   out 
+Default_Type:          v                    v
+Allowed_Types:         [v,vd,vnam,i,id]     [v,vd,i,id] 
+Vector:                 no                   no
+Vector_Bounds:          -                    - 
+Null_Allowed:          yes                  no
+
+PARAMETER_TABLE:
+
+Parameter_Name:     cntl_array              pw_array 
+Description:        "control in array"      "pulse width array"
+Data_Type:          real                    real   
+Default_Value:      0.0                     1.0e-6   
+Limits:             -                       [0 -]       
+Vector:              yes                     yes     
+Vector_Bounds:       [2 -]                   [2 -] 
+Null_Allowed:       no                      no     
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     clk_trig                pos_edge_trig
+Description:        "clock trigger value"   "pos/neg edge trigger switch"
+Data_Type:          real                    boolean 
+Default_Value:      0.5                     TRUE 
+Limits:             -                       -       
+Vector:              no                      no 
+Vector_Bounds:       -                       - 
+Null_Allowed:       no                      no     
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     out_low                 out_high
+Description:        "output low value"      "output high value"
+Data_Type:          real                    real 
+Default_Value:      0.0                     1.0 
+Limits:              -       	            -       
+Vector:              no                      no     
+Vector_Bounds:       -                       -      
+Null_Allowed:       yes                     yes    
+
+PARAMETER_TABLE:
+
+Parameter_Name:     rise_time
+Description:        "output rise time"          
+Data_Type:          real 
+Default_Value:      1.0e-9 
+Limits:             -     
+Vector:              no   
+Vector_Bounds:       -   
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     rise_delay                      fall_delay 
+Description:        "output delay from trigger"     "output delay from pw"          
+Data_Type:          real                            real 
+Default_Value:      1.0e-9                          1.0e-9 
+Limits:             -                               -
+Vector:              no                              no 
+Vector_Bounds:       -                               - 
+Null_Allowed:       yes                             yes 
+
+PARAMETER_TABLE:
+
+Parameter_Name:     fall_time                   retrig
+Description:        "output rise time"          "retrigger switch" 
+Data_Type:          real                        boolean
+Default_Value:      1.0e-9                      FALSE
+Limits:             -                           -
+Vector:              no                          no 
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                         yes
+
