@@ -1,7 +1,11 @@
 mosmem - mos memory cell
 .width in=72
 .opt abstol=1u
-.opt acct list node
+
+.opt list node
+* The original line is below
+*.opt acct list node
+
 .tran 20ns 2us
 vdd 9 0 dc 5
 vs 7 0 pulse(2 0 520ns 20ns 20ns 500ns 2000ns)

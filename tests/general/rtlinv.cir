@@ -1,6 +1,10 @@
 rtlinv ckt - cascaded rtl inverters
 .width in=72
-.opt acct list node lvlcod=2
+
+.opt  list node lvlcod=2
+* The original line is below
+*.opt acct list node lvlcod=2
+
 .dc vin 0.0 2.5 0.025
 .tran 2ns 200ns
 vcc 6 0 5

@@ -1,5 +1,9 @@
 mosamp - mos amplifier - transient
-.options acct abstol=10n  vntol=10n
+
+* The original options line (removed acct)
+* .options acct abstol=10n  vntol=10n
+
+.options  abstol=10n  vntol=10n
 .tran 0.1us 10us
 m1  15 15  1 32 m w=88.9u  l=25.4u
 m2   1  1  2 32 m w=12.7u  l=266.7u

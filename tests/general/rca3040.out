@@ -1,1 +1,5 @@
-To be done
+
+Circuit: rca3040 ckt - rca 3040 wideband amplifier
+
+Warning -- Level not specified on line "bf=80 rb=100 ccs=2pf tf=0.3ns tr=6ns cje=3pf  cjc=2pf va 50"
+Using level 1.

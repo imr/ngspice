@@ -1,6 +1,10 @@
 schmitt ckt - ecl compatible schmitt trigger
 .width in=72
-.opt acct list node lvlcod=2
+
+.opt list node lvlcod=2
+* The original line is below
+*.opt acct list node lvlcod=2
+
 .tran 10ns 1000ns
 vin 1 0 pulse(-1.6 -1.2 10ns 400ns 400ns 100ns 10000ns)
 vee 8 0 -5
