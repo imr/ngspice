@@ -20,6 +20,8 @@ libfte_a_SOURCES = \
 	com_compose.h	\
 	com_display.c	\
 	com_display.h	\
+	com_dump.c	\
+	com_dump.h	\
 	com_echo.c	\
 	com_ghelp.c	\
 	com_ghelp.h	\
