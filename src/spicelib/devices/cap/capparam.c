@@ -21,6 +21,8 @@ CAPparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     switch(param) {
         case CAP_CAP:
             here->CAPcapac = value->rValue;
+	    if (!here->CAPmGiven) 
+	        here->CAPm = 1.0;
             here->CAPcapGiven = TRUE;
             break;
         case CAP_IC:
