@@ -1,6 +1,8 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 /* actually load the current ac sensitivity 
@@ -16,9 +18,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-MOS3sAcLoad(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+MOS3sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS3model *model = (MOS3model *)inModel;
     MOS3instance *here;

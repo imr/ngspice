@@ -2,6 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
     /* Pretty print the sensitivity info for all the MOS3 
@@ -16,9 +18,7 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 void
-MOS3sPrint(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS3sPrint(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS3model *model = (MOS3model *)inModel;
     MOS3instance *here;

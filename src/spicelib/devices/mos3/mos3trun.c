@@ -10,10 +10,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-MOS3trunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+MOS3trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
     MOS3model *model = (MOS3model *)inModel;
     MOS3instance *here;

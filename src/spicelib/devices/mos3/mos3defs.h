@@ -43,6 +43,7 @@ typedef struct sMOS3instance {
     double MOS3sourceConductance;   /*conductance of source(or 0):set in setup*/
     double MOS3drainConductance;    /*conductance of drain(or 0):set in setup*/
     double MOS3temp;    /* operating temperature of this instance */
+    double MOS3dtemp;    /* temperature difference for this instance */
 
     double MOS3tTransconductance;   /* temperature corrected transconductance*/
     double MOS3tSurfMob;            /* temperature corrected surface mobility */
@@ -91,7 +92,8 @@ typedef struct sMOS3instance {
 
     unsigned MOS3off :1;/* non-zero to indicate device is off for dc analysis*/
     unsigned MOS3tempGiven :1;  /* instance temperature specified */
-     unsigned MOS3mGiven :1;
+    unsigned MOS3dtempGiven :1;  /* instance temperature difference specified */
+    unsigned MOS3mGiven :1;
     unsigned MOS3lGiven :1;
     unsigned MOS3wGiven :1;
     unsigned MOS3drainAreaGiven :1;
@@ -496,7 +498,8 @@ typedef struct sMOS3model {       /* model structure for a resistor */
 #define MOS3_TEMP               77
 #define MOS3_SOURCERESIST       78
 #define MOS3_DRAINRESIST        79
-#define MOS3_M 80
+#define MOS3_M                  80
+#define MOS3_DTEMP              81
 
 /* model parameters */
 #define MOS3_MOD_VTO 101

@@ -16,11 +16,7 @@ Modified: 2000 AlansFixes
 
 /* ARGSUSED */
 int
-MOS3param(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+MOS3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MOS3instance *here = (MOS3instance *)inst;
     switch(param) {
@@ -79,6 +75,10 @@ MOS3param(param,value,inst,select)
         case MOS3_TEMP:
             here->MOS3temp = value->rValue+CONSTCtoK;
             here->MOS3tempGiven = TRUE;
+            break;
+        case MOS3_DTEMP:
+            here->MOS3dtemp = value->rValue;
+            here->MOS3dtempGiven = TRUE;
             break;
         case MOS3_IC:
             switch(value->v.numValue){

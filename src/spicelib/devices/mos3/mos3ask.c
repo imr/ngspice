@@ -15,12 +15,8 @@ Modified: 2000 AlansFixes
 
 /*ARGSUSED*/
 int
-MOS3ask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+MOS3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
+        IFvalue *select)
 {
     MOS3instance *here = (MOS3instance *)inst;
     double vr;
@@ -32,6 +28,9 @@ MOS3ask(ckt,inst,which,value,select)
     switch(which) {
         case MOS3_TEMP:
             value->rValue = here->MOS3temp-CONSTCtoK;
+            return(OK);
+        case MOS3_DTEMP:
+            value->rValue = here->MOS3dtemp;
             return(OK);
         case MOS3_CGS:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgs);

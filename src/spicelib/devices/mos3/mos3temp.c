@@ -15,9 +15,7 @@ Modified: 2000 AlansFixes
 #define EPSSIL (11.7 * 8.854214871e-12)
 
 int
-MOS3temp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS3temp(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS3model *model = (MOS3model *)inModel;
     MOS3instance *here;
@@ -126,8 +124,12 @@ MOS3temp(inModel,ckt)
 
             /* perform the parameter defaulting */
 
+             if(!here->MOS3dtempGiven) {
+                here->MOS3dtemp = 0.0;
+            }
+
             if(!here->MOS3tempGiven) {
-                here->MOS3temp = ckt->CKTtemp;
+                here->MOS3temp = ckt->CKTtemp + here->MOS3dtemp;
             }
             vt = here->MOS3temp * CONSTKoverQ;
             ratio = here->MOS3temp/model->MOS3tnom;

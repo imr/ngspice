@@ -15,9 +15,7 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 int
-MOS3dSetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS3dSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */

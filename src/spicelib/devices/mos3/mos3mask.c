@@ -18,11 +18,7 @@ Modified: 2000 AlansFixes
 
 /*ARGSUSED*/
 int
-MOS3mAsk(ckt,inst,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inst;
-    int which;
-    IFvalue *value;
+MOS3mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     MOS3model *here = (MOS3model *)inst;
     switch(which) {

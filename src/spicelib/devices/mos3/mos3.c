@@ -37,6 +37,7 @@ IFparm MOS3pTable[] = { /* parameters */
  IOPAU("icvbs",       MOS3_IC_VBS,  IF_REAL   , "Initial B-S voltage"),
  IOPU("ic",     MOS3_IC,      IF_REALVEC, "Vector of D-S, G-S, B-S voltages"),
  IOPU("temp",      MOS3_TEMP,    IF_REAL   , "Instance operating temperature"),
+  IOPU("dtemp",      MOS3_DTEMP,    IF_REAL   , "Instance temperature difference"),
  IP("sens_l",  MOS3_L_SENS, IF_FLAG, "flag to request sensitivity WRT length"),
  IP("sens_w",  MOS3_W_SENS, IF_FLAG, "flag to request sensitivity WRT width"),
  OPU("dnode",     MOS3_DNODE,   IF_INTEGER, "Number of drain node"),

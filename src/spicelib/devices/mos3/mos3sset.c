@@ -1,6 +1,8 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
     /* loop through all the devices and 
@@ -15,9 +17,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-MOS3sSetup(info,inModel)
-    SENstruct *info;
-    GENmodel *inModel;
+MOS3sSetup(SENstruct *info, GENmodel *inModel)
 {
     MOS3model *model = (MOS3model *)inModel;
     MOS3instance *here;

@@ -4,7 +4,6 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 **********/
 
-#ifdef __STDC__
 extern int MOS3acLoad(GENmodel*,CKTcircuit*);
 extern int MOS3ask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int MOS3convTest(GENmodel *,CKTcircuit *);
@@ -29,28 +28,3 @@ extern int MOS3trunc(GENmodel*,CKTcircuit*,double*);
 extern int MOS3disto(int,GENmodel*,CKTcircuit*);
 extern int MOS3noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int MOS3dSetup(GENmodel*,CKTcircuit*);
-#else /* stdc */
-extern int MOS3acLoad();
-extern int MOS3ask();
-extern int MOS3convTest();
-extern int MOS3delete();
-extern void MOS3destroy();
-extern int MOS3getic();
-extern int MOS3load();
-extern int MOS3mAsk();
-extern int MOS3mDelete();
-extern int MOS3mParam();
-extern int MOS3param();
-extern int MOS3pzLoad();
-extern int MOS3sAcLoad();
-extern int MOS3sLoad();
-extern void MOS3sPrint();
-extern int MOS3sSetup();
-extern int MOS3sUpdate();
-extern int MOS3setup();
-extern int MOS3unsetup();
-extern int MOS3temp();
-extern int MOS3trunc();
-extern int MOS3disto();
-extern int MOS3noise();
-#endif /* stdc */

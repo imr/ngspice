@@ -1,6 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1985 Thomas L. Quarlesù
+Author: 1985 Thomas L. QuarlesÃ¹
 Modified: 2000 AlansFixes
 **********/
 
@@ -16,11 +16,7 @@ Modified: 2000 AlansFixes
 #define EPSSIL (11.7 * 8.854214871e-12)
 
 int
-MOS3setup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the MOS3 device structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -264,9 +260,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-MOS3unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS3unsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS3model *model;
     MOS3instance *here;

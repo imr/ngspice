@@ -15,10 +15,7 @@ Modified: 2000 AlansFixes
 
 
 int
-MOS3mParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+MOS3mParam(int param, IFvalue *value, GENmodel *inModel)
 {
     MOS3model *model = (MOS3model *)inModel;
     switch(param) {

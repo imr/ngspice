@@ -15,10 +15,7 @@ Modified: 2000 AlansFixes
 
 
 int
-MOS3pzLoad(inModel,ckt,s)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    SPcomplex *s;
+MOS3pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     MOS3model *model = (MOS3model *)inModel;
     MOS3instance *here;

@@ -12,10 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-MOS3delete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
+MOS3delete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
     MOS3model *model = (MOS3model *)inModel;
     MOS3instance **fast = (MOS3instance **)inst;
