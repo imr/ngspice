@@ -10,756 +10,740 @@ This file is useful in writing ngspice documentation.
 *************************  Linear devices  ********************************
 ***************************************************************************
  
-CAP	- Capacitor
-	Initial Release.
-	Ver: 	N/A
-	Class:	C
-	Level:	1 (and only)
-	Dir:    devices/cap
-	Status:
- 	
-	Enhancements over the original model:
- 	
-	- Parallel Multiplier
-	- Temperature difference from circuit temperature
-	- Preliminary technology scaling support
-	- Model capacitance
-	- Cj calculation based on relative dielectric constant
-	  and insulator thickness 
+CAP     - Capacitor
+        Initial Release.
+        Ver:    N/A
+        Class:  C
+        Level:  1 (and only)
+        Dir:    devices/cap
+        Status:
+        
+        Enhancements over the original model:
+        
+        - Parallel Multiplier
+        - Temperature difference from circuit temperature
+        - Preliminary technology scaling support
+        - Model capacitance
+        - Cj calculation based on relative dielectric constant
+          and insulator thickness 
  
-IND 	- Inductor
-	Initial Release.
-	Ver: 	N/A
-	Class:	L
-	Level:	1 (and only)
-	Dir:    devices/ind
-	Status:
- 	
-	Enhancements over the original model:
- 	
-	- Parallel Multiplier
-	- Temperature difference from circuit temperature
-	- Preliminary technology scaling support
-	- Model inductance
-	- Inductance calculation for toroids or solenoids
-	  on the model line. 
+IND     - Inductor
+        Initial Release.
+        Ver:    N/A
+        Class:  L
+        Level:  1 (and only)
+        Dir:    devices/ind
+        Status:
+        
+        Enhancements over the original model:
+        
+        - Parallel Multiplier
+        - Temperature difference from circuit temperature
+        - Preliminary technology scaling support
+        - Model inductance
+        - Inductance calculation for toroids or solenoids
+          on the model line. 
  
-RES	- Simple linear resistor
-	Initial Release.
-	Ver:	N/A
-	Class:	R
-	Level:	1 (and only)
-	Dir:    devices/res
-	Status:	
- 		
-	Enhancements over the original model:
- 	
-	- Parallel Multiplier
-	- Different value for ac analysis
-	- Temperature difference from circuit temperature
-	- Noiseless resistor
-	- Flicker noise
-	- Preliminary technology scaling support
+RES     - Simple linear resistor
+        Initial Release.
+        Ver:    N/A
+        Class:  R
+        Level:  1 (and only)
+        Dir:    devices/res
+        Status: 
+                
+        Enhancements over the original model:
+        
+        - Parallel Multiplier
+        - Different value for ac analysis
+        - Temperature difference from circuit temperature
+        - Noiseless resistor
+        - Flicker noise
+        - Preliminary technology scaling support
        
  
 ***************************************************************************
 ********************* Distributed elements ********************************
 ***************************************************************************
  
-CPL	- Simple Coupled Multiconductor Lines (Kspice)
-	Initial Release.
-	Ver:	N/A
-	Class:	P
-	Level:	1 (and only)
-	Dir:    devices/cpl
-	Status:	
- 		
-	This model comes from swec and kspice. It is not documented, if
-	you have kspice docs, can you write a short description
-	of its use ?
- 	
- 	- Does not implement parallel code switches
- 	- Probably a lot of memory leaks
- 	
-	Enhancements over the original model:
- 	
-	- Better integrated into ngspice adding CPLask, CPLmAsk and
-	CPLunsetup functions
- 	
- 	
-LTRA	- Lossy Transmission line
-	Initial Release.
-	Ver:	N/A
- 	Class:	O
-	Level:	1 (and only)
-	Dir:    devices/ltra
-	Status:	
- 		
-	Original spice model.
- 	
-	- Does not implement parallel code switches
- 	     
-TRA	- Transmission line
-	Initial Release.
-	Ver:	N/A
-	Class:	T
-	Level:	1 (and only)
-	Dir:    devices/tra
-	Status:	
- 	
-	Original spice model.
- 	
-	- Does not implement parallel code switches
+CPL     - Simple Coupled Multiconductor Lines (Kspice)
+        Initial Release.
+        Ver:    N/A
+        Class:  P
+        Level:  1 (and only)
+        Dir:    devices/cpl
+        Status: 
+                
+        This model comes from swec and kspice. It is not documented, if
+        you have kspice docs, can you write a short description
+        of its use ?
+        
+        - Does not implement parallel code switches
+        - Probably a lot of memory leaks
+        
+        Enhancements over the original model:
+        
+        - Better integrated into ngspice adding CPLask, CPLmAsk and
+        CPLunsetup functions
+        
+        
+LTRA    - Lossy Transmission line
+        Initial Release.
+        Ver:    N/A
+        Class:  O
+        Level:  1 (and only)
+        Dir:    devices/ltra
+        Status: 
+                
+        Original spice model.
+        
+        - Does not implement parallel code switches
+             
+TRA     - Transmission line
+        Initial Release.
+        Ver:    N/A
+        Class:  T
+        Level:  1 (and only)
+        Dir:    devices/tra
+        Status: 
+        
+        Original spice model.
+        
+        - Does not implement parallel code switches
  
-TXL	- Simple Lossy Transmission Line (Kspice)
-	Initial Release.
-	Ver:	N/A
-	Class:	Y
-	Level:	1 (and only)
-	Dir:    devices/txl
-	Status:	
- 	
-	This model comes from kspice. It is not documented, if
-	you have kspice docs, can you write a short description
-	of its use ?
- 	
-	There is some code left out from compilation:
-	TXLaccept and TXLfindBr. Any ideas ?
- 	
-	- Does not implement parallel code switches
+TXL     - Simple Lossy Transmission Line (Kspice)
+        Initial Release.
+        Ver:    N/A
+        Class:  Y
+        Level:  1 (and only)
+        Dir:    devices/txl
+        Status: 
+        
+        This model comes from kspice. It is not documented, if
+        you have kspice docs, can you write a short description
+        of its use ?
+        
+        There is some code left out from compilation:
+        TXLaccept and TXLfindBr. Any ideas ?
+        
+        - Does not implement parallel code switches
  
  
-URC	- Uniform distributed RC line
- 	Initial Release.
-	Ver:	N/A
-	Class:	U
-	Level:	1 (and only)
-	Dir:    devices/urc
-	Status:	
- 	
-	Original spice model.
- 	
-	- Does not implement parallel code switches
+URC     - Uniform distributed RC line
+        Initial Release.
+        Ver:    N/A
+        Class:  U
+        Level:  1 (and only)
+        Dir:    devices/urc
+        Status: 
+        
+        Original spice model.
+        
+        - Does not implement parallel code switches
  
  
 ***************************************************************************
 ****************************    V/I Sources   *****************************
 ***************************************************************************
  
-ASRC	- Arbitrary Source
-	Initial Release.
-	Ver:	N/A
-	Class:	B
-	Level:	1 (and only)
-	Dir:    devices/asrc
-	Status:	
- 	
-	The arbitrary source code has been corrected with the patch
-	available on the Internet. There is still an issue to fix, the
-	current of current-controlled generators.
+ASRC    - Arbitrary Source
+        Initial Release.
+        Ver:    N/A
+        Class:  B
+        Level:  1 (and only)
+        Dir:    devices/asrc
+        Status: 
+        
+        The arbitrary source code has been corrected with the patch
+        available on the Internet. There is still an issue to fix, the
+        current of current-controlled generators.
  
-CCCS	- Current Controlled Current Source
-	Initial Release.
-	Ver:	N/A
-	Class:	F
-	Level:	1 (and only)
-	Dir:    devices/cccs
-	Status:	
- 	
-	Original spice model.
+CCCS    - Current Controlled Current Source
+        Initial Release.
+        Ver:    N/A
+        Class:  F
+        Level:  1 (and only)
+        Dir:    devices/cccs
+        Status: 
+        
+        Original spice model.
  
-CCVS	- Current Controlled Voltage Source
-	Initial Release.
-	Ver:	N/A
-	Class:	H
- 	Level:	1 (and only)
-	Dir:    devices/ccvs
-	Status:	
- 	
-	Original spice model.
+CCVS    - Current Controlled Voltage Source
+        Initial Release.
+        Ver:    N/A
+        Class:  H
+        Level:  1 (and only)
+        Dir:    devices/ccvs
+        Status: 
+        
+        Original spice model.
        
-ISRC	- Independent Current Source
-	Initial Release.
-	Ver:	N/A
-	Class:	I
-	Level:	1 (and only)
-	Dir:    devices/isrc
-	Status:	
- 	
-	This is the original spice device improved by Alan Gillespie
-	with the following features:
- 	
-	- Source ramping
-	- Check for non-monotonic series in PWL
- 	
+ISRC    - Independent Current Source
+        Initial Release.
+        Ver:    N/A
+        Class:  I
+        Level:  1 (and only)
+        Dir:    devices/isrc
+        Status: 
+        
+        This is the original spice device improved by Alan Gillespie
+        with the following features:
+        
+        - Source ramping
+        - Check for non-monotonic series in PWL
+        
        
-VCCS	- Voltage Controlled Current Source
-	Initial Release.
-	Ver:	N/A
-	Class:	G
-	Level:	1 (and only)
-	Dir:    devices/vccs
-	Status:	
- 	
-	Original spice model.
+VCCS    - Voltage Controlled Current Source
+        Initial Release.
+        Ver:    N/A
+        Class:  G
+        Level:  1 (and only)
+        Dir:    devices/vccs
+        Status: 
+        
+        Original spice model.
  
-VCVS	- Voltage Controlled Voltage Source
-	Initial Release.
-	Ver:	N/A
-	Class:	E
-	Level:	1 (and only)
-	Dir:    devices/vcvs
-	Status:	
- 	
-	Original spice model.
+VCVS    - Voltage Controlled Voltage Source
+        Initial Release.
+        Ver:    N/A
+        Class:  E
+        Level:  1 (and only)
+        Dir:    devices/vcvs
+        Status: 
+        
+        Original spice model.
  
-VSRC	- Independent Voltage Source
-	Initial Release.
-	Ver:	N/A
-	Class:	V
-	Level:	1 (and only)
-	Dir:    devices/vsrc
-	Status:
- 	
-	This is the original spice device improved by Alan Gillespie
-	with the following features:
- 	
-	- Source ramping
-	- Check for non-monotonic series in PWL
+VSRC    - Independent Voltage Source
+        Initial Release.
+        Ver:    N/A
+        Class:  V
+        Level:  1 (and only)
+        Dir:    devices/vsrc
+        Status:
+        
+        This is the original spice device improved by Alan Gillespie
+        with the following features:
+        
+        - Source ramping
+        - Check for non-monotonic series in PWL
  
                       
 ***************************************************************************
 ****************************      Switches     ****************************
 ***************************************************************************
- 		     
-CSW	- Current controlled switch
-	Initial Release.
-	Ver: 	N/A
-	Class:	W
-	Level:	1 (and only) 
-	Dir:    devices/csw
-	Status: 
- 	
-	This model comes from Jon Engelbert
- 	
+                     
+CSW     - Current controlled switch
+        Initial Release.
+        Ver:    N/A
+        Class:  W
+        Level:  1 (and only) 
+        Dir:    devices/csw
+        Status: 
+        
+        This model comes from Jon Engelbert
+        
  
-SW	- Voltage controlled switch		     
-	Initial release
-	Ver: 	N/A
-	Class:	S
-	Level:	1 (and only) 
-	Dir:    devices/sw
-	Status:		
- 	
-	This model comes from Jon Engelbert   
- 		   
- 		     
+SW      - Voltage controlled switch                  
+        Initial release
+        Ver:    N/A
+        Class:  S
+        Level:  1 (and only) 
+        Dir:    devices/sw
+        Status:         
+        
+        This model comes from Jon Engelbert   
+                   
+                     
 ***************************************************************************
 ****************************      Diodes       ****************************      
 ***************************************************************************
  
-DIO	- Junction Diode
-	Initial Release.
-	Ver: 	N/A
-	Class:	D
-	Level:	1 (and only) 
-	Dir:    devices/dio
-	Status: 
- 	
-	Enhancements over the original model:
- 	
-	- Parallel Multiplier
-	- Temperature difference from circuit temperature
-	- Forward and reverse knee currents
-	- Periphery (sidewall) effects
-	- Temperature correction of some parameters
+DIO     - Junction Diode
+        Initial Release.
+        Ver:    N/A
+        Class:  D
+        Level:  1 (and only) 
+        Dir:    devices/dio
+        Status: 
+        
+        Enhancements over the original model:
+        
+        - Parallel Multiplier
+        - Temperature difference from circuit temperature
+        - Forward and reverse knee currents
+        - Periphery (sidewall) effects
+        - Temperature correction of some parameters
  
                       
 ***************************************************************************
 *************************     Bipolar Devices     *************************
 ***************************************************************************
        
-BJT	- Bipolar Junction Transistor
-	Initial Release.
-	Ver: 	N/A
-	Class:	Q
-	Level:	1 
-	Dir:    devices/bjt
-	Status: 
- 	
-	Enhancements over the original model:
- 	
-	- Parallel Multiplier
-	- Temperature difference from circuit temperature
-	- Different area parameters for collector, base and emitter
+BJT     - Bipolar Junction Transistor
+        Initial Release.
+        Ver:    N/A
+        Class:  Q
+        Level:  1 
+        Dir:    devices/bjt
+        Status: 
+        
+        Enhancements over the original model:
+        
+        - Parallel Multiplier
+        - Temperature difference from circuit temperature
+        - Different area parameters for collector, base and emitter
  
-BJT2	- Bipolar Junction Transistor
-	Initial Release.
-	Ver: 	N/A
-	Class:	Q
-	Level:	2 
-	Dir:    devices/bjt2
-	Status:
- 	
-	This is the BJT model written by Alan Gillespie to support lateral
-	devices. The model has been hacked by Dietmar Warning fixing some bugs
-	and adding some features (temp. correction on resistors).
- 	
-	Enhancements over the original model:
- 	
-	- Temperature correction on rc,rb,re
- 	- Parallel Multiplier
-	- Temperature difference from circuit temperature
-	- Different area parameters for collector, base and emitter
+BJT2    - Bipolar Junction Transistor
+        Initial Release.
+        Ver:    N/A
+        Class:  Q
+        Level:  2 
+        Dir:    devices/bjt2
+        Status:
+        
+        This is the BJT model written by Alan Gillespie to support lateral
+        devices. The model has been hacked by Dietmar Warning fixing some bugs
+        and adding some features (temp. correction on resistors).
+        
+        Enhancements over the original model:
+        
+        - Temperature correction on rc,rb,re
+        - Parallel Multiplier
+        - Temperature difference from circuit temperature
+        - Different area parameters for collector, base and emitter
        
-VBIC	- Bipolar Junction Transistor
-	Initial Release.
-	Ver: 	N/A
-	Class:	Q
-	Level:	4 
-	Dir:    devices/vbic
-	Status:
+VBIC    - Bipolar Junction Transistor
+        Initial Release.
+        Ver:    N/A
+        Class:  Q
+        Level:  4 
+        Dir:    devices/vbic
+        Status:
  
- 	This is the Vertical Bipolar InterCompany model.
-	The author of VBIC is Colin McAndrew <mcandrew@ieee.org
-	Spice3 Implementation: Dietmar Warning DAnalyse GmbH 
-	                       <warning@danalyse.de
-	Web Site:
-	http://www.designers-guide.com/VBIC/index.html
- 	
-	Notes: This is the 4 terminals model, without excess phase
-	and thermal network.
- 	
+        This is the Vertical Bipolar InterCompany model.
+        The author of VBIC is Colin McAndrew mcandrew@ieee.org
+        Spice3 Implementation: Dietmar Warning DAnalyse GmbH 
+                               warning@danalyse.de
+        Web Site:
+        http://www.designers-guide.com/VBIC/index.html
+        
+        Notes: This is the 4 terminals model, without excess phase
+        and thermal network.
+        
  
 ***************************************************************************
 *****************************    FET Devices    ***************************
 ***************************************************************************
- 		     
-JFET	- Junction Field Effect transistor
-	Initial Release.
-	Ver: 	N/A
-	Class:	J
- 	Level:	1 
-	Dir:    devices/jfet
-	Status:
- 	
-	This is the original spice JFET model.
- 	
-	Enhancements over the original model:
- 	
-	- Alan Gillespie's modified diode model
-	- Parallel multiplier
-	- Instance temperature as difference for circuit temperature
+                     
+JFET    - Junction Field Effect transistor
+        Initial Release.
+        Ver:    N/A
+        Class:  J
+        Level:  1 
+        Dir:    devices/jfet
+        Status:
+        
+        This is the original spice JFET model.
+        
+        Enhancements over the original model:
+        
+        - Alan Gillespie's modified diode model
+        - Parallel multiplier
+        - Instance temperature as difference for circuit temperature
          
-JFET2	- Junction Field Effect Transistor  (PS model)
-	Initial Release.
-	Ver: 	N/A
-	Class:	J
-	Level:	2 
-	Dir:    devices/jfet2
-	Status:
- 	
-	This is the Parker Skellern model.
- 	
-	Web Site:
-	http://www.elec.mq.edu.au/cnerf/models/psmodel/
- 	
-	Enhancements over the original model:
- 	
-	- Parallel multiplier
-	- Instance temperature as difference for circuit temperature
+JFET2   - Junction Field Effect Transistor  (PS model)
+        Initial Release.
+        Ver:    N/A
+        Class:  J
+        Level:  2 
+        Dir:    devices/jfet2
+        Status:
+        
+        This is the Parker Skellern model.
+        
+        Web Site:
+        http://www.elec.mq.edu.au/cnerf/models/psmodel/
+        
+        Enhancements over the original model:
+        
+        - Parallel multiplier
+        - Instance temperature as difference for circuit temperature
  
  
 ***************************************************************************
 ***************************    HFET devices     ***************************
 ***************************************************************************
             
-HFET	- HFET Level 1 (MacSpice3f4)
-	Initial Release.
-	Ver: 	N/A
-	Class:	Z
-	Level:	5 
-	Dir:    devices/hfet
-	Status:
- 	
-	Enhancements over the original model:
- 	
-	- Parallel multiplier
-	- Instance temperature as difference for circuit temperature
-	- Added pole-zero analysis
+HFET    - HFET Level 1 (MacSpice3f4)
+        Initial Release.
+        Ver:    N/A
+        Class:  Z
+        Level:  5 
+        Dir:    devices/hfet
+        Status:
+        
+        Enhancements over the original model:
+        
+        - Parallel multiplier
+        - Instance temperature as difference for circuit temperature
+        - Added pole-zero analysis
  
       
-HFET2 	- HFET Level 2 (MacSpice3f4)
-	Initial Release.
-	Ver: 	N/A
-	Class:	Z
-	Level:	6 
-	Dir:    devices/hfet2
-	Status:
- 	
-	Enhancements over the original model:
- 	
-	- Parallel multiplier
-	- Instance temperature as difference for circuit temperature
-	- Added pole-zero analysis
-	
+HFET2   - HFET Level 2 (MacSpice3f4)
+        Initial Release.
+        Ver:    N/A
+        Class:  Z
+        Level:  6 
+        Dir:    devices/hfet2
+        Status:
+        
+        Enhancements over the original model:
+        
+        - Parallel multiplier
+        - Instance temperature as difference for circuit temperature
+        - Added pole-zero analysis
+        
  
 ***************************************************************************
 ***************************     MES devices     ***************************
 ***************************************************************************
- 		
-MES	- MESfet model
-	Initial Release.
-	Ver: 	N/A
-	Class:	Z
-	Level:	1 
-	Dir:    devices/mes
-	Status:
- 	
-	Enhancements over the original model:
- 	
-	- Parallel multiplier
-	- Alan Gillespie junction diodes implementation
+                
+MES     - MESfet model
+        Initial Release.
+        Ver:    N/A
+        Class:  Z
+        Level:  1 
+        Dir:    devices/mes
+        Status:
+        
+        Enhancements over the original model:
+        
+        - Parallel multiplier
+        - Alan Gillespie junction diodes implementation
        
 
-MESA	- MESA model (MacSpice3f4)
-	Initial Release.
-	Ver: 	N/A
-	Class:	Z
-	Level:	2,3,4 
-	Dir:    devices/mesa
-	Status:
- 	
-	This is a multilevel model. It contains code for mesa levels
-	2,3 and 4
- 	
-	Enhancements over the original model:
- 	
-	- Parallel multiplier
-	- Instance temperature as difference from circuit temperature
-	- Added pole-zero analysis
+MESA    - MESA model (MacSpice3f4)
+        Initial Release.
+        Ver:    N/A
+        Class:  Z
+        Level:  2,3,4 
+        Dir:    devices/mesa
+        Status:
+        
+        This is a multilevel model. It contains code for mesa levels
+        2,3 and 4
+        
+        Enhancements over the original model:
+        
+        - Parallel multiplier
+        - Instance temperature as difference from circuit temperature
+        - Added pole-zero analysis
  
- 		 
+                 
 ***************************************************************************
 ****************************    MOS devices    ****************************
 ***************************************************************************
   
-MOS1	- Level 1 MOS model
-	Initial Release.
-	Ver:    N/A
-	Class:  M
-	Level:  1
-	Dir:    devices/mos1
-	Status: 
+MOS1    - Level 1 MOS model
+        Initial Release.
+        Ver:    N/A
+        Class:  M
+        Level:  1
+        Dir:    devices/mos1
+        Status: 
          
-	This is the so-called Schichman-Hodges model. 
+        This is the so-called Schichman-Hodges model. 
          
-	Enhancements over the original model:
+        Enhancements over the original model:
          
-	- Parallel multiplier
-	- Temperature difference from circuit temperature
+        - Parallel multiplier
+        - Temperature difference from circuit temperature
        
  
-MOS2	- Level 2 MOS model
-	Initial Release.
-	Ver:    N/A
-	Class:  M
-	Level:  2
-	Dir:    devices/mos2
-	Status: 
+MOS2    - Level 2 MOS model
+        Initial Release.
+        Ver:    N/A
+        Class:  M
+        Level:  2
+        Dir:    devices/mos2
+        Status: 
          
-	This is the so-called  Grove-Frohman model. 
+        This is the so-called  Grove-Frohman model. 
          
-	Enhancements over the original model:
+        Enhancements over the original model:
          
-	- Parallel multiplier
-	- Temperature difference from circuit temperature
+        - Parallel multiplier
+        - Temperature difference from circuit temperature
  
  
-MOS3	- Level 3 MOS model
-	Initial Release.
-	Ver:    N/A
-	Class:  M
-	Level:  3
-	Dir:    devices/mos3
-	Status:  
+MOS3    - Level 3 MOS model
+        Initial Release.
+        Ver:    N/A
+        Class:  M
+        Level:  3
+        Dir:    devices/mos3
+        Status:  
          
-	Enhancements over the original model:
+        Enhancements over the original model:
          
-	- Parallel multiplier
-	- Temperature difference from circuit temperature
+        - Parallel multiplier
+        - Temperature difference from circuit temperature
        
  
-MOS6	- Level 6 MOS model
-	Initial Release.
-	Ver:    N/A
-	Class:  M
-	Level:  6
-	Dir:    devices/mos6
-	Status: 
+MOS6    - Level 6 MOS model
+        Initial Release.
+        Ver:    N/A
+        Class:  M
+        Level:  6
+        Dir:    devices/mos6
+        Status: 
          
-	Enhancements over the original model:
+        Enhancements over the original model:
          
-	- Parallel multiplier
-	- Temperature difference from circuit temperature
+        - Parallel multiplier
+        - Temperature difference from circuit temperature
  
  
-MOS9	- Level 9 MOS model
-	Initial Release.
-	Ver:    N/A
-	Class:  M
-	Level:  9
-	Dir:    devices/mos9
-	Status: 
+MOS9    - Level 9 MOS model
+        Initial Release.
+        Ver:    N/A
+        Class:  M
+        Level:  9
+        Dir:    devices/mos9
+        Status: 
          
-	Enhancements over the original model:
+        Enhancements over the original model:
          
-	- Temperature difference from circuit temperature
+        - Temperature difference from circuit temperature
  
  
-BSIM1	- BSIM model level 1
-	Initial Release.
-	Ver:    N/A
-	Class:  M
-	Level:  4
-	Dir:    devices/bsim1
-	Status: 
+BSIM1   - BSIM model level 1
+        Initial Release.
+        Ver:    N/A
+        Class:  M
+        Level:  4
+        Dir:    devices/bsim1
+        Status: 
          
          Enhancements over the original model:
          
          - Parallel multiplier
          - Noise analysis
          
-	BUGS:
-	Distortion analysis probably does not 
-	work with "parallel" devices. Equations
-	are too intricate to deal with. Any one
-	has ideas on the subject ?
+        BUGS:
+        Distortion analysis probably does not 
+        work with "parallel" devices. Equations
+        are too intricate to deal with. Any one
+        has ideas on the subject ?
  
  
-BSIM2 	- BSIM model level 2
-	Initial Release.
-	Ver:    N/A
-	Class:  M
-	Level:  5
-	Dir:    devices/bsim2
-	Status: 
+BSIM2   - BSIM model level 2
+        Initial Release.
+        Ver:    N/A
+        Class:  M
+        Level:  5
+        Dir:    devices/bsim2
+        Status: 
          
-	Enhancements over the original model:
+        Enhancements over the original model:
          
-	- Parallel multiplier
-	- Noise analysis
+        - Parallel multiplier
+        - Noise analysis
  
  
 BSIM3v0 - BSIM model level 3
-	Initial Release.
-	Ver:    3.0
-	Class:  M
-	Level:  47
-	Dir:    devices/bsim3v0
-	Status: TO BE TESTED AND IMPROVED
+        Initial Release.
+        Ver:    3.0
+        Class:  M
+        Level:  47
+        Dir:    devices/bsim3v0
+        Status: TO BE TESTED AND IMPROVED
          
  
 BSIM3v1 - BSIM model level 3
-	Initial Release.
-	Ver:    3.1
-	Class:  M
-	Level:  48
-	Dir:    devices/bsim3v1a
-	Status: TO BE TESTED AND IMPROVED
+        Initial Release.
+        Ver:    3.0
+        Class:  M
+        Level:  48
+        Dir:    devices/bsim3v1a
+        Status: TO BE TESTED AND IMPROVED
          
-	This is the BSIM3v3.1 model modified by Alan Gillespie. 
+        This is the BSIM3v3.0 model modified by Alan Gillespie. 
  
  
-BSIM3v1	- BSIM model level 3
-	Initial Release.
-	Ver:    3.1
-	Class:  M
-	Level:  49
-	Dir:    devices/bsim3v1s
-	Status: TO BE TESTED AND IMPROVED
+BSIM3v1 - BSIM model level 3
+        Initial Release.
+        Ver:    3.1
+        Class:  M
+        Level:  49
+        Dir:    devices/bsim3v1s
+        Status: TO BE TESTED AND IMPROVED
          
-	This is the BSIM3v3.1 model modified by Serban Popescu. 
-	This is level 49 model. It is an implementation that supports 
-	"HDIF" and "M" parameters.
+        This is the BSIM3v3.1 model modified by Serban Popescu. 
+        This is level 49 model. It is an implementation that supports 
+        "HDIF" and "M" parameters.
          
- 
-BSIM3v2 - BSIM model level 3
-	Initial Relese.
-	Ver:    3.2
-	Class:  M
-	Level:  50
-	Dir:    devices/bsim3v2
-	Status: TO BE TESTED
- 
-	This is the BSIM3v3.2 model. It is included only for compatibility
-	with existing netlists and parameters files. As always, tests
-	are availabe on the Berkeley's device group site.
-         
-	Web site:
-	http://www-device.eecs.berkeley.edu/~bsim3
- 
  
 BSIM3 - BSIM model level 3
-	Initial Release.
-	Ver:    3.2.4
-	Class:  M
-	Level:  53
-	Dir:    devices/bsim3
-	Status: TO BE TESTED 
+        Initial Release.
+        Ver:    3.2.4
+        Class:  M
+        Level:  8
+        Dir:    devices/bsim3
+        Status: TO BE TESTED 
          
-	This is the BSIM3v3.2.4 model from Berkeley device group.  
-	You can find some test netlists with results for this model
-	on its web site.
+        This is the BSIM3v3.2.4 model from Berkeley device group.  
+        You can find some test netlists with results for this model
+        on its web site.
          
-	Web site:
-	http://www-device.eecs.berkeley.edu/~bsim3
+        Web site:
+        http://www-device.eecs.berkeley.edu/~bsim3
          
-	Enhancements over the original model:
- 	
-	- Parallel Multiplier
-	- ACM Area Calculation Method
-	- Multirevision code (supports all 3v3.2 minor revisions)
-	- NodesetFix  
+        Enhancements over the original model:
+        
+        - Parallel Multiplier
+        - ACM Area Calculation Method
+        - Multirevision code (supports all 3v3.2 minor revisions)
+        - NodesetFix  
  
 
-BSIM4	- BSIM model level 4 (0.18 um)
-	Initial Release. 
-	Ver:    4.2.1 (Updated in rework 14)
-	Class:  M
-	Level:  60
-	Dir:    devices/bsim4
-	Status: TO BE TESTED
+BSIM4   - BSIM model level 4 (0.18 um)
+        Initial Release. 
+        Ver:    4.2.1 (Updated in rework 14)
+        Class:  M
+        Level:  60
+        Dir:    devices/bsim4
+        Status: TO BE TESTED
          
-	This is the BSIM4 device model from Berkeley Device Group.
-	Test are available on its web site.
+        This is the BSIM4 device model from Berkeley Device Group.
+        Test are available on its web site.
          
-	Web site:
-	http://www-device.eecs.berkeley.edu/~bsim3/bsim4.html
+        Web site:
+        http://www-device.eecs.berkeley.edu/~bsim3/bsim4.html
        
-	*) Rework 14: Updated to 4.21 YET UNTESTED.
- 	 
+        *) Rework 14: Updated to 4.21 YET UNTESTED.
+         
  
-HiSIM	- Hiroshima-university STARC IGFET Model
-	Initial Release.
-	Ver:	1.2.0
-	Class:	M
-	Level:	64
-	Dir:    devices/hisim
-	Status:
- 	
-	This is the HiSIM model available from Hiroshima University
-	(Ultra-Small Device Engineering Laboratory)
- 	
-	Web site:
-	http://home.hiroshima-u.ac.jp/usdl/HiSIM.shtml
-	http://www.starc.or.jp/kaihatu/pdgr/hisim/index.html
- 	
-	Enhancements over the original model:
- 	
-	- Parallel Multiplier
-	- NodesetFix
+HiSIM   - Hiroshima-university STARC IGFET Model
+        Initial Release.
+        Ver:    1.2.0
+        Class:  M
+        Level:  64
+        Dir:    devices/hisim
+        Status:
+        
+        This is the HiSIM model available from Hiroshima University
+        (Ultra-Small Device Engineering Laboratory)
+        
+        Web site:
+        http://home.hiroshima-u.ac.jp/usdl/HiSIM.shtml
+        http://www.starc.or.jp/kaihatu/pdgr/hisim/index.html
+        
+        Enhancements over the original model:
+        
+        - Parallel Multiplier
+        - NodesetFix
  
- 	
-***************************************************************************	 
+        
+***************************************************************************      
 *****************************    SOI Devices   ****************************
 ***************************************************************************
  
-BSIM3SOI_FD 	- SOI model (fully depleted devices)
-		Initial Release.
-		Ver:    2.1. 
-		Class:  M
-		Level:  55
-		Dir:    devices/bsim3soi_fd
-		Status: TO BE TESTED.
+BSIM3SOI_FD     - SOI model (fully depleted devices)
+                Initial Release.
+                Ver:    2.1 
+                Class:  M
+                Level:  55
+                Dir:    devices/bsim3soi_fd
+                Status: TO BE TESTED.
          
-		FD model has been integrated.
-		There is a bsim3soifd directory under the test
-		hierarchy. Test circuits come from the bsim3soi
+                FD model has been integrated.
+                There is a bsim3soifd directory under the test
+                hierarchy. Test circuits come from the bsim3soi
          
-		Web site at:
-		http://www-device.eecs.berkeley.edu/~bsimsoi
+                Web site at:
+                http://www-device.eecs.berkeley.edu/~bsimsoi
          
-		*) rework-14: removed #ifndef NEWCONV code.
+                *) rework-14: removed #ifndef NEWCONV code.
           
 
-BSIM3SOI_DD 	- SOI Model (dynamic depletion model)
-         	Initial Release. 
-		Ver:    2.1
-		Class:  M
-		Level:  56
-		Dir:    devices/bsim3soi_dd
-		Status: TO BE TESTED.
+BSIM3SOI_DD     - SOI Model (dynamic depletion model)
+                Initial Release. 
+                Ver:    2.1
+                Class:  M
+                Level:  56
+                Dir:    devices/bsim3soi_dd
+                Status: TO BE TESTED.
         
-		There is a bsim3soidd directory under the
-		test hierarchy. Test circuits come from bsim3soi
+                There is a bsim3soidd directory under the
+                test hierarchy. Test circuits come from bsim3soi
         
-		Web site at:
-		http://www-device.eecs.berkeley.edu/~bsimsoi
+                Web site at:
+                http://www-device.eecs.berkeley.edu/~bsimsoi
         
-		*) rework-14: removed #ifndef NEWCONV code.
+                *) rework-14: removed #ifndef NEWCONV code.
  
 
-BSIM3SOI_PD	- SOI model (partially depleted devices)
-		Initial Release.
-		Ver:    2.2.1
-		Class:  M
-		Level:  57 
-		Dir:    devices/bsim3soi_pd
-		Status: TO BE TESTED.
+BSIM3SOI_PD     - SOI model (partially depleted devices)
+                Initial Release.
+                Ver:    2.2.1
+                Class:  M
+                Level:  57 
+                Dir:    devices/bsim3soi_pd
+                Status: TO BE TESTED.
          
-		PD model has been integrated. 
-		There is a bsim3soipd directory under the test
-		hierarchy. Test circuits come from the bsim3soi
+                PD model has been integrated. 
+                There is a bsim3soipd directory under the test
+                hierarchy. Test circuits come from the bsim3soi
          
-		Web site at: 
-		http://www-device.eecs.berkeley.edu/~bsimsoi
+                Web site at: 
+                http://www-device.eecs.berkeley.edu/~bsimsoi
          
-		*) rework-14: removed #ifndef NEWCONV code.
+                *) rework-14: removed #ifndef NEWCONV code.
  
 
-BSIMSOI		 - SOI model (partially/full depleted devices)
-		Initial Release.
-		Ver:    3.0
-		Class:  M
-		Level:  58
-		Dir:    devices/bsim3soi
-		Status: TO BE TESTED.
+BSIMSOI          - SOI model (partially/full depleted devices)
+                Initial Release.
+                Ver:    3.0
+                Class:  M
+                Level:  58
+                Dir:    devices/bsim3soi
+                Status: TO BE TESTED.
          
-		This is the newer version from Berkeley. 
-		Usable for partially/full depleted devices.
+                This is the newer version from Berkeley. 
+                Usable for partially/full depleted devices.
          
-		Web site at: 
-		http://www-device.eecs.berkeley.edu/~bsimsoi
+                Web site at: 
+                http://www-device.eecs.berkeley.edu/~bsimsoi
  
  
-SOI3 		- STAG SOI3 Model
-		Initial Release. 
-		Ver:    2.6
-		Class:  M
-		Level:  62
-		Dir:    devices/soi3
-		Status: TO BE TESTED
+SOI3            - STAG SOI3 Model
+                Initial Release. 
+                Ver:    2.6
+                Class:  M
+                Level:  62
+                Dir:    devices/soi3
+                Status: TO BE TESTED
          
-		Web site at:
-		http://www.micro.ecs.soton.ac.uk/stag/
+                Web site at:
+                http://www.micro.ecs.soton.ac.uk/stag/
         
 
 ***************************************************************************
 **************** Other devices not released as source code ****************
 ***************************************************************************
  
-EKV	- EKV model
-	Initial Release. 
-	Ver:    2.6
-	Class:  M
-	Level:  44
-	Dir:    devices/ekv
-	Status: TO BE TESTED
+EKV     - EKV model
+        Initial Release. 
+        Ver:    2.6
+        Class:  M
+        Level:  44
+        Dir:    devices/ekv
+        Status: TO BE TESTED
          
-	Note: This model is not released in source code.
-	You have to obtain the source code from the address below.
+        Note: This model is not released in source code.
+        You have to obtain the source code from the address below.
          
-	Web site at:
-	http://legwww.epfl.ch/ekv/
+        Web site at:
+        http://legwww.epfl.ch/ekv/
              
