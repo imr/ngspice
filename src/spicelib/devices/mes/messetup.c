@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 S. Hwang
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -81,6 +82,9 @@ MESsetup(matrix,inModel,ckt,states)
                 here=here->MESnextInstance) {
 	    if (here->MESowner != ARCHme) goto matrixpointers;
             
+            CKTnode *tmpNode;
+            IFuid tmpName;
+            
             if(!here->MESareaGiven) {
                 here->MESarea = 1;
             }
@@ -92,6 +96,16 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->MESname,"source");
                 if(error) return(error);
                 here->MESsourcePrimeNode = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->MESsourcePrimeNode = here->MESsourceNode;
             }
@@ -99,6 +113,16 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->MESname,"drain");
                 if(error) return(error);
                 here->MESdrainPrimeNode = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->MESdrainPrimeNode = here->MESdrainNode;
             }

@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
-Modified: 1999 Paolo Nenzi
+Modified: 1999 Paolo Nenzi - 2000 AlansFixes
 **********/
 
 /*
@@ -49,12 +49,19 @@ extern bool ft_bpcheck();
 extern void com_delete();
 extern void com_iplot();
 extern void com_save();
+extern void com_save2(wordlist *, char *); /* AlansFixes */
 extern void com_step();
 extern void com_stop();
 extern void com_sttus();
 extern void com_trce();
 extern void ft_trquery();
 extern void dbfree( );
+
+
+/* breakp2.c */
+
+extern int ft_getSaves(struct save_info **); /* AlanFixes */
+
 
 /* circuits.c */
 
@@ -180,6 +187,10 @@ extern void fatal();
 extern void fperror();
 extern void ft_sperror();
 extern char ErrorMessage[];
+extern int internalerror(char *); 
+extern int externalerror(char *); 
+
+
 
 /* evaluate.c */
 
@@ -309,6 +320,7 @@ extern void com_ghelp();
 extern void com_help();
 extern void com_quit();
 extern void com_version();
+extern int  hcomp();
 extern void com_where();
 
 /* numparse.c */
@@ -337,14 +349,14 @@ extern int cp_userset();
 extern struct func ft_funcs[];
 extern struct func func_not;
 extern struct func func_uminus;
-struct pnode * ft_getpnames(wordlist *wl, bool check);
+struct struct pnode * ft_getpnames(wordlist *wl, bool check);
 extern void free_pnode();
 
 /* plotcurve.c */
-
-int ft_findpoint(double pt, double *lims, int maxp, int minp, bool islog);
-double * ft_minmax(struct dvec *v, bool real);
-void ft_graf(struct dvec *v, struct dvec *xs, bool nostart);
+/* AlansFixes */
+extern int ft_findpoint(double pt, double *lims, int maxp, int minp, bool islog);
+extern double * ft_minmax(struct dvec *v, bool real);
+extern void ft_graf(struct dvec *v, struct dvec *xs, bool nostart);
 
 /* plotinterface.c */
 
@@ -374,9 +386,8 @@ extern void com_setscale();
 extern void com_transpose();
 
 /* rawfile.c */
-
 extern int raw_prec;
-void raw_write(char *name, struct plot *pl, bool app, bool binary);
+extern void raw_write(char *name, struct plot *pl, bool app, bool binary);
 extern struct plot *raw_read();
 
 /* resource.c */
@@ -401,6 +412,8 @@ extern void com_scirc();
 extern void com_disto();
 extern void com_noise();
 extern int ft_dorun();
+
+extern bool ft_getOutReq(FILE **, struct plot **, bool *, char *, char *);
 
 /* spice.c & nutmeg.c */
 

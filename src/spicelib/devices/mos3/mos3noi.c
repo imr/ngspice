@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Gary W. Ng
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -135,7 +136,8 @@ if (!data->namelist) return(E_NOMEM);
 		    noizDens[MOS3FLNOIZ] *= model->MOS3fNcoef * 
 				 exp(model->MOS3fNexp *
 				 log(MAX(fabs(inst->MOS3cd),N_MINLOG))) /
-				 (data->freq * inst->MOS3w * 
+				 (data->freq *
+				 (inst->MOS3w - 2*model->MOS3widthNarrow) *
 				 (inst->MOS3l - 2*model->MOS3latDiff) *
 				 model->MOS3oxideCapFactor * model->MOS3oxideCapFactor);
 		    lnNdens[MOS3FLNOIZ] = 

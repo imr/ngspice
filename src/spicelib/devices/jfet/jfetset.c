@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 	Laboratory for Communication Science Engineering
 	Sydney University Department of Electrical Engineering, Australia
@@ -95,6 +96,9 @@ JFETsetup(matrix,inModel,ckt,states)
                 here=here->JFETnextInstance) {
 	    if (here->JFETowner != ARCHme) goto matrixpointers;
             
+            CKTnode *tmpNode;
+            IFuid tmpName;
+            
             if(!here->JFETareaGiven) {
                 here->JFETarea = 1;
             }
@@ -106,6 +110,16 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->JFETname,"source");
                 if(error) return(error);
                 here->JFETsourcePrimeNode = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->JFETsourcePrimeNode = here->JFETsourceNode;
             }
@@ -113,6 +127,16 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->JFETname,"drain");
                 if(error) return(error);
                 here->JFETdrainPrimeNode = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->JFETdrainPrimeNode = here->JFETdrainNode;
             }

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Mathew Lew and Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -34,14 +35,17 @@ MOS2ask(ckt,inst,which,value,select)
             value->rValue = here->MOS2temp-CONSTCtoK;
             return(OK);
         case MOS2_CGS:
-            value->rValue = *(ckt->CKTstate0 + here->MOS2capgs);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgs);
             return(OK);
         case MOS2_CGD:
-            value->rValue = *(ckt->CKTstate0 + here->MOS2capgd);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgd);
+            return(OK);
+        case MOS2_M:
+            value->rValue = here->MOS2m;
             return(OK);
         case MOS2_L:
             value->rValue = here->MOS2l;
-                return(OK);
+            return(OK);
         case MOS2_W:
             value->rValue = here->MOS2w;
                 return(OK);
@@ -178,7 +182,11 @@ MOS2ask(ckt,inst,which,value,select)
             value->rValue = *(ckt->CKTstate0 + here->MOS2vds);
             return(OK);
         case MOS2_CAPGS:
-            value->rValue = *(ckt->CKTstate0 + here->MOS2capgs);
+             value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgs);
+/* add overlap capacitance */
+            value->rValue += (here->MOS2modPtr->MOS2gateSourceOverlapCapFactor)
+                             * here->MOS2m
+                             * (here->MOS2w);
             return(OK);
         case MOS2_QGS:
             value->rValue = *(ckt->CKTstate0 + here->MOS2qgs);
@@ -187,7 +195,11 @@ MOS2ask(ckt,inst,which,value,select)
             value->rValue = *(ckt->CKTstate0 + here->MOS2cqgs);
             return(OK);
         case MOS2_CAPGD:
-            value->rValue = *(ckt->CKTstate0 + here->MOS2capgd);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgd);
+/* add overlap capacitance */
+            value->rValue += (here->MOS2modPtr->MOS2gateSourceOverlapCapFactor)
+                             * here->MOS2m
+                             * (here->MOS2w);
             return(OK);
         case MOS2_QGD:
             value->rValue = *(ckt->CKTstate0 + here->MOS2qgd);
@@ -196,7 +208,12 @@ MOS2ask(ckt,inst,which,value,select)
             value->rValue = *(ckt->CKTstate0 + here->MOS2cqgd);
             return(OK);
         case MOS2_CAPGB:
-            value->rValue = *(ckt->CKTstate0 + here->MOS2capgb);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgb);
+/* add overlap capacitance */
+            value->rValue += (here->MOS2modPtr->MOS2gateBulkOverlapCapFactor)
+                             * here->MOS2m
+                             * (here->MOS2l
+                                -2*(here->MOS2modPtr->MOS2latDiff));
             return(OK);
         case MOS2_QGB:
             value->rValue = *(ckt->CKTstate0 + here->MOS2qgb);

@@ -2,6 +2,7 @@
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
 Author: 1997-1999 Weidong Liu.
+Modified: 2000 AlansFixes
 File: b3acld.c
 **********/
 
@@ -259,76 +260,79 @@ double ScalingFactor = 1.0e-9;
               xcbdb = (cbdb - capbd ) * omega;
               xcbsb = (cbsb - capbs ) * omega;
 
-              *(here->BSIM3GgPtr +1) += xcggb;
+              
+              m = here->BSIM3m;
+
+              *(here->BSIM3GgPtr +1) += m * xcggb;
               *(here->BSIM3BbPtr +1) -= xcbgb + xcbdb + xcbsb;
-              *(here->BSIM3DPdpPtr +1) += xcddb;
-              *(here->BSIM3SPspPtr +1) += xcssb;
+              *(here->BSIM3DPdpPtr +1) += m * xcddb;
+              *(here->BSIM3SPspPtr +1) += m * xcssb;
               *(here->BSIM3GbPtr +1) -= xcggb + xcgdb + xcgsb;
-              *(here->BSIM3GdpPtr +1) += xcgdb;
-              *(here->BSIM3GspPtr +1) += xcgsb;
-              *(here->BSIM3BgPtr +1) += xcbgb;
-              *(here->BSIM3BdpPtr +1) += xcbdb;
-              *(here->BSIM3BspPtr +1) += xcbsb;
-              *(here->BSIM3DPgPtr +1) += xcdgb;
+              *(here->BSIM3GdpPtr +1) += m * xcgdb;
+              *(here->BSIM3GspPtr +1) += m * xcgsb;
+              *(here->BSIM3BgPtr +1) += m * xcbgb;
+              *(here->BSIM3BdpPtr +1) += m * xcbdb;
+              *(here->BSIM3BspPtr +1) += m * xcbsb;
+              *(here->BSIM3DPgPtr +1) += m * xcdgb;
               *(here->BSIM3DPbPtr +1) -= xcdgb + xcddb + xcdsb;
-              *(here->BSIM3DPspPtr +1) += xcdsb;
-              *(here->BSIM3SPgPtr +1) += xcsgb;
+              *(here->BSIM3DPspPtr +1) += m * xcdsb;
+              *(here->BSIM3SPgPtr +1) += m * xcsgb;
               *(here->BSIM3SPbPtr +1) -= xcsgb + xcsdb + xcssb;
-              *(here->BSIM3SPdpPtr +1) += xcsdb;
+              *(here->BSIM3SPdpPtr +1) += m * xcsdb;
 
-              *(here->BSIM3DdPtr) += gdpr;
-              *(here->BSIM3SsPtr) += gspr;
-              *(here->BSIM3BbPtr) += gbd + gbs - here->BSIM3gbbs;
-              *(here->BSIM3DPdpPtr) += gdpr + gds + gbd + RevSum 
-                                    + dxpart * xgtd + T1 * ddxpart_dVd + gbdpdp;
-              *(here->BSIM3SPspPtr) += gspr + gds + gbs + FwdSum 
-                                    + sxpart * xgts + T1 * dsxpart_dVs + gbspsp;
+              *(here->BSIM3DdPtr) += m * gdpr;
+              *(here->BSIM3SsPtr) += m * gspr;
+              *(here->BSIM3BbPtr) += m * (gbd + gbs - here->BSIM3gbbs);
+              *(here->BSIM3DPdpPtr) += m * (gdpr + gds + gbd + RevSum 
+                                    +dxpart * xgtd + T1 * ddxpart_dVd + gbdpdp);
+              *(here->BSIM3SPspPtr) += m * (gspr + gds + gbs + FwdSum 
+                                    +sxpart * xgts + T1 * dsxpart_dVs + gbspsp);
 
-              *(here->BSIM3DdpPtr) -= gdpr;
-              *(here->BSIM3SspPtr) -= gspr;
+              *(here->BSIM3DdpPtr) -= m * gdpr;
+              *(here->BSIM3SspPtr) -= m * gspr;
 
-              *(here->BSIM3BgPtr) -= here->BSIM3gbgs;
-              *(here->BSIM3BdpPtr) -= gbd - gbbdp;
-              *(here->BSIM3BspPtr) -= gbs - gbbsp;
+              *(here->BSIM3BgPtr) -= m * here->BSIM3gbgs;
+              *(here->BSIM3BdpPtr) -= m * (gbd - gbbdp);
+              *(here->BSIM3BspPtr) -= m * (gbs - gbbsp);
 
-              *(here->BSIM3DPdPtr) -= gdpr;
-              *(here->BSIM3DPgPtr) += Gm + dxpart * xgtg + T1 * ddxpart_dVg
-				   + gbdpg;
-              *(here->BSIM3DPbPtr) -= gbd - Gmbs - dxpart * xgtb
-				   - T1 * ddxpart_dVb - gbdpb;
-              *(here->BSIM3DPspPtr) -= gds + FwdSum - dxpart * xgts 
-				    - T1 * ddxpart_dVs - gbdpsp;
+              *(here->BSIM3DPdPtr) -= m * gdpr;
+              *(here->BSIM3DPgPtr) += m * (Gm + dxpart * xgtg + T1 * ddxpart_dVg
+				   + gbdpg);
+              *(here->BSIM3DPbPtr) -= m * (gbd - Gmbs - dxpart * xgtb
+				   - T1 * ddxpart_dVb - gbdpb);
+              *(here->BSIM3DPspPtr) -= m * (gds + FwdSum - dxpart * xgts 
+				    - T1 * ddxpart_dVs - gbdpsp);
 
-              *(here->BSIM3SPgPtr) -= Gm - sxpart * xgtg - T1 * dsxpart_dVg
-				   - gbspg;
-              *(here->BSIM3SPsPtr) -= gspr;
-              *(here->BSIM3SPbPtr) -= gbs + Gmbs - sxpart * xgtb
-				   - T1 * dsxpart_dVb - gbspb;
-              *(here->BSIM3SPdpPtr) -= gds + RevSum - sxpart * xgtd 
-				    - T1 * dsxpart_dVd - gbspdp;
+              *(here->BSIM3SPgPtr) -= m * (Gm - sxpart * xgtg - T1 * dsxpart_dVg
+				   - gbspg);
+              *(here->BSIM3SPsPtr) -= m * gspr;
+              *(here->BSIM3SPbPtr) -= m * (gbs + Gmbs - sxpart * xgtb
+				   - T1 * dsxpart_dVb - gbspb);
+              *(here->BSIM3SPdpPtr) -= m * (gds + RevSum - sxpart * xgtd 
+				    - T1 * dsxpart_dVd - gbspdp);
 
-              *(here->BSIM3GgPtr) -= xgtg;
-              *(here->BSIM3GbPtr) -= xgtb;
-              *(here->BSIM3GdpPtr) -= xgtd;
-              *(here->BSIM3GspPtr) -= xgts;
+              *(here->BSIM3GgPtr) -= m * xgtg;
+              *(here->BSIM3GbPtr) -= m * xgtb;
+              *(here->BSIM3GdpPtr) -= m * xgtd;
+              *(here->BSIM3GspPtr) -= m * xgts;
 
               if (here->BSIM3nqsMod)
-              {   *(here->BSIM3QqPtr +1) += omega * ScalingFactor;
-                  *(here->BSIM3QgPtr +1) -= xcqgb;
-                  *(here->BSIM3QdpPtr +1) -= xcqdb;
-                  *(here->BSIM3QspPtr +1) -= xcqsb;
-                  *(here->BSIM3QbPtr +1) -= xcqbb;
+              {   *(here->BSIM3QqPtr +1) += m * (omega * ScalingFactor);
+                  *(here->BSIM3QgPtr +1) -= m * xcqgb;
+                  *(here->BSIM3QdpPtr +1) -= m * xcqdb;
+                  *(here->BSIM3QspPtr +1) -= m * xcqsb;
+                  *(here->BSIM3QbPtr +1) -= m * xcqbb;
 
-                  *(here->BSIM3QqPtr) += here->BSIM3gtau;
+                  *(here->BSIM3QqPtr) += m * here->BSIM3gtau;
 
-                  *(here->BSIM3DPqPtr) += dxpart * here->BSIM3gtau;
-                  *(here->BSIM3SPqPtr) += sxpart * here->BSIM3gtau;
-                  *(here->BSIM3GqPtr) -=  here->BSIM3gtau;
+                  *(here->BSIM3DPqPtr) += m * (dxpart * here->BSIM3gtau);
+                  *(here->BSIM3SPqPtr) += m * (sxpart * here->BSIM3gtau);
+                  *(here->BSIM3GqPtr) -=  m * here->BSIM3gtau;
 
-                  *(here->BSIM3QgPtr) +=  xgtg;
-                  *(here->BSIM3QdpPtr) += xgtd;
-                  *(here->BSIM3QspPtr) += xgts;
-                  *(here->BSIM3QbPtr) += xgtb;
+                  *(here->BSIM3QgPtr) +=  m * xgtg;
+                  *(here->BSIM3QdpPtr) += m * xgtd;
+                  *(here->BSIM3QspPtr) += m * xgts;
+                  *(here->BSIM3QbPtr) += m * xgtb;
               }
         }
     }

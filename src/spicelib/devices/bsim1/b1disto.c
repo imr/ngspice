@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
+Modified: AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -43,7 +44,7 @@ B1disto(mode,genmodel,ckt)
  B1instance *here;
 
 if (mode == D_SETUP)
- return(B1dSetup(model,ckt));
+ return(B1dSetup((GENmodel *)model,ckt));
 
 if ((mode == D_TWOF1) || (mode == D_THRF1) || 
  (mode == D_F1PF2) || (mode == D_F1MF2) ||

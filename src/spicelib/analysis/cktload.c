@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFIxes
 **********/
 /*
  */
@@ -76,10 +77,12 @@ CKTload(CKTcircuit *ckt)
 		    if (ZeroNoncurRow(ckt->CKTmatrix, ckt->CKTnodes,
 			node->number))
 		    {
-			*(ckt->CKTrhs+node->number) = 1.0e10 * node->nodeset;
+			*(ckt->CKTrhs+node->number) = 1.0e10 * node->nodeset *
+		                               ckt->CKTsrcFact;
 			*(node->ptr) = 1e10;
 		    } else {
-			*(ckt->CKTrhs+node->number) = node->nodeset;
+			*(ckt->CKTrhs+node->number) = node->nodeset *                    
+			                          ckt->CKTsrcFact;
 			*(node->ptr) = 1;
 		    }
 		    /* DAG: Original CIDER fix. If above fix doesn't work,
@@ -98,10 +101,17 @@ CKTload(CKTcircuit *ckt)
 		    if (ZeroNoncurRow(ckt->CKTmatrix, ckt->CKTnodes,
 			node->number))
 		    {
-			*(ckt->CKTrhs+node->number) += 1.0e10 * node->ic;
+		     /* Original code: 
+			  *(ckt->CKTrhs+node->number) += 1.0e10 * node->ic;
+		    */
+		    *(ckt->CKTrhs+node->number) = 1.0e10 * node->ic *
+                                        ckt->CKTsrcFact; /* AlansFixes */
 			*(node->ptr) += 1.0e10;
 		    } else {
-			*(ckt->CKTrhs+node->number) = node->ic;
+	      	/* Original code: 
+			  *(ckt->CKTrhs+node->number) = node->ic;
+			*/
+			*(ckt->CKTrhs+node->number) = node->ic*ckt->CKTsrcFact; /* AlansFixes */
 			*(node->ptr) = 1;
 		    }
 		    /* DAG: Original CIDER fix. If above fix doesn't work,

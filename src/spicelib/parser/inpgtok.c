@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
     /* get input token from 'line', 
@@ -58,10 +59,12 @@ int INPgetTok(char **line, char **token, int gobble)
 	if (*point == ',')
 	    break;
 	/* This is not complex enough to catch all errors, but it will get the "good" parses */
-	if (*point == '+' && (signstate == 1 || signstate == 3))
-	    break;
-	if (*point == '-' && (signstate == 1 || signstate == 3))
-	    break;
+	if ((*point == '+') || (*point == '-')){
+		/* Treat '+' signs same as '-' signs */
+		if (signstate == 1 || signstate == 3) break;
+		signstate += 1;
+		continue;
+		}
 	if (*point == '*')
 	    break;
 	if (*point == '/')

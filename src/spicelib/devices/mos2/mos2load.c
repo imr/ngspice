@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 alansFixes
 **********/
 
 #include "ngspice.h"
@@ -108,26 +109,28 @@ MOS2load(inModel,ckt)
             }
 
             EffectiveLength=here->MOS2l - 2*model->MOS2latDiff;
+            
             if( (here->MOS2tSatCurDens == 0) || 
                     (here->MOS2drainArea == 0) ||
                     (here->MOS2sourceArea == 0)) {
-                DrainSatCur = here->MOS2tSatCur;
-                SourceSatCur = here->MOS2tSatCur;
+                DrainSatCur = here->MOS2m * here->MOS2tSatCur;
+                SourceSatCur = here->MOS2m * here->MOS2tSatCur;
             } else {
-                DrainSatCur = here->MOS2tSatCurDens * 
+                DrainSatCur = here->MOS2m * here->MOS2tSatCurDens * 
                         here->MOS2drainArea;
-                SourceSatCur = here->MOS2tSatCurDens * 
+                SourceSatCur = here->MOS2m * here->MOS2tSatCurDens * 
                         here->MOS2sourceArea;
             }
             GateSourceOverlapCap = model->MOS2gateSourceOverlapCapFactor * 
-                    here->MOS2w;
+                    here->MOS2m * here->MOS2w;
             GateDrainOverlapCap = model->MOS2gateDrainOverlapCapFactor * 
-                    here->MOS2w;
+                    here->MOS2m * here->MOS2w;
             GateBulkOverlapCap = model->MOS2gateBulkOverlapCapFactor * 
-                    EffectiveLength;
-            Beta = here->MOS2tTransconductance * here->MOS2w/EffectiveLength;
+                    here->MOS2m * EffectiveLength;
+            Beta = here->MOS2tTransconductance * here->MOS2w *
+                    here->MOS2m/EffectiveLength;
             OxideCap = model->MOS2oxideCapFactor * EffectiveLength * 
-                    here->MOS2w;
+                    here->MOS2m * here->MOS2w;
 
 
             if(SenCond){
@@ -374,24 +377,23 @@ MOS2load(inModel,ckt)
              * correspoinding derivative (conductance).
              */
 
-next1:      if(vbs <= 0) {
-                here->MOS2gbs = SourceSatCur/vt;
-                here->MOS2cbs = here->MOS2gbs*vbs;
-                here->MOS2gbs += ckt->CKTgmin;
+next1:      if(vbs <= -3*vt) {
+                here->MOS2gbs = ckt->CKTgmin;
+                here->MOS2cbs = here->MOS2gbs*vbs-SourceSatCur;
             } else {
-                evbs = exp(vbs/vt);
+                evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
                 here->MOS2gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
-                here->MOS2cbs = SourceSatCur * (evbs-1);
+                here->MOS2cbs = SourceSatCur*(evbs-1) + ckt->CKTgmin*vbs;
             }
-            if(vbd <= 0) {
-                here->MOS2gbd = DrainSatCur/vt;
-                here->MOS2cbd = here->MOS2gbd *vbd;
-                here->MOS2gbd += ckt->CKTgmin;
+            if(vbd <= -3*vt) {
+                here->MOS2gbd = ckt->CKTgmin;
+                here->MOS2cbd = here->MOS2gbd*vbd-DrainSatCur;
             } else {
-                evbd = exp(vbd/vt);
-                here->MOS2gbd = DrainSatCur*evbd/vt +ckt->CKTgmin;
-                here->MOS2cbd = DrainSatCur *(evbd-1);
+                evbd = exp(MIN(MAX_EXP_ARG,vbd/vt));
+                here->MOS2gbd = DrainSatCur*evbd/vt + ckt->CKTgmin;
+                here->MOS2cbd = DrainSatCur*(evbd-1) + ckt->CKTgmin*vbd;
             }
+            
             if(vds >= 0) {
                 /* normal mode */
                 here->MOS2mode = 1;
@@ -561,7 +563,7 @@ next1:      if(vbs <= 0) {
                 dsrgdb = -0.5*sarg*tmp;
                 d2sdb2 = -dsrgdb*tmp;
             }
-            if ((lvds-lvbs) >= 0) {
+            if ((lvbs-lvds) <= 0) {
                 barg = sqrt(phiMinVbs+lvds);
                 dbrgdb = -0.5/barg;
                 d2bdb2 = 0.5*dbrgdb/(phiMinVbs+lvds);
@@ -642,14 +644,17 @@ next1:      if(vbs <= 0) {
                 cfs = CHARGE*model->MOS2fastSurfaceStateDensity*
                     1e4 /*(cm**2/m**2)*/;
                 cdonco = -(gamasd*dsrgdb+dgddvb*sarg)+factor;
-                xn = 1.0+cfs/OxideCap*here->MOS2w*EffectiveLength+cdonco;
+                
+                xn = 1.0+cfs/OxideCap*here->MOS2m*
+                      here->MOS2w*EffectiveLength+cdonco;
+                
                 tmp = vt*xn;
                 von = von+tmp;
                 argg = 1.0/tmp;
                 vgst = lvgs-von;
             } else {
                 vgst = lvgs-von;
-                if (lvgs <= von) {
+                if (lvgs <= vbin) {
                     /*
                      *  cutoff region
                      */
@@ -899,6 +904,13 @@ line610:
                 goto line1050;
             }
 
+            if (model->MOS2fastSurfaceStateDensity != 0 && OxideCap != 0) {
+                if (lvgs > von) goto line900;
+            } else {
+                if (lvgs > vbin) goto line900;
+                goto doneval;
+            }
+            
             if (lvgs > von) goto line900;
             /*
              *  subthreshold region
@@ -1285,9 +1297,9 @@ bypass:
              *  load current vector
              */
             ceqbs = model->MOS2type * 
-                    (here->MOS2cbs-(here->MOS2gbs-ckt->CKTgmin)*vbs);
+                    (here->MOS2cbs-(here->MOS2gbs)*vbs);
             ceqbd = model->MOS2type * 
-                    (here->MOS2cbd-(here->MOS2gbd-ckt->CKTgmin)*vbd);
+                    (here->MOS2cbd-(here->MOS2gbd)*vbd);
             if (here->MOS2mode >= 0) {
                 xnrm=1;
                 xrev=0;

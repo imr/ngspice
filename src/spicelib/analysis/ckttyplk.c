@@ -4,7 +4,7 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 /*  look up the 'type' in the device description struct and return the
- *  appropriatestrchr for the device found, or -1 for not found 
+ *  appropriate strchr for the device found, or -1 for not found 
  */
 
 #include "ngspice.h"

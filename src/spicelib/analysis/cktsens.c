@@ -1,5 +1,6 @@
 /**********
 Copyright 1991 Regents of the University of California.  All rights reserved.
+Modified: 2000 AlanFixes
 **********/
 
 #include "ngspice.h"
@@ -549,7 +550,9 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			nvalue.v.vec.cVec = output_cvalues;
 
 		value.rValue = freq;
-		OUTpData(sen_data, &value, &nvalue);
+		
+		(*(SPfrontEnd->OUTpData))(sen_data, &value, &nvalue);
+
 		freq = inc_freq(freq, sen_info->step_type, step_size);
 
 	}

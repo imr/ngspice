@@ -20,7 +20,8 @@ libsw_la_SOURCES = 	\
 	swnoise.c	\
 	swparam.c	\
 	swpzload.c	\
-	swsetup.c
+	swsetup.c	\
+	swtrunc.c 
 
 
 

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 /* 
@@ -149,6 +150,9 @@ BJTsetup(matrix,inModel,ckt,states)
         for (here = model->BJTinstances; here != NULL ;
                 here=here->BJTnextInstance) {
 	    if (here->BJTowner != ARCHme) goto matrixpointers;
+	    
+	       CKTnode *tmpNode;
+            IFuid tmpName;
             
             if(!here->BJTareaGiven) {
                 here->BJTarea = 1;
@@ -166,6 +170,18 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->BJTname,"collector");
                 if(error) return(error);
                 here->BJTcolPrimeNode = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+/*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
+                       fprintf(stderr, "                 to %s\n", tmp->name);
+                       fprintf(stderr, "              value %g\n",
+                                                                tmp->nodeset);*/
+                     }
+                  }
+                }
             }
             if(model->BJTbaseResist == 0) {
                 here->BJTbasePrimeNode = here->BJTbaseNode;
@@ -173,6 +189,18 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->BJTname, "base");
                 if(error) return(error);
                 here->BJTbasePrimeNode = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+/*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
+                       fprintf(stderr, "                 to %s\n", tmp->name);
+                       fprintf(stderr, "              value %g\n",
+                                                                tmp->nodeset);*/
+                     }
+                  }
+                }
             }
             if(model->BJTemitterResist == 0) {
                 here->BJTemitPrimeNode = here->BJTemitNode;
@@ -180,6 +208,19 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->BJTname, "emitter");
                 if(error) return(error);
                 here->BJTemitPrimeNode = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+/*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
+                       fprintf(stderr, "                 to %s\n", tmp->name);
+                       fprintf(stderr, "              value %g\n",
+                                                                tmp->nodeset);*/
+                     }
+                  }
+                }
+                
             }
 
 /* macro to make elements with built in test for out of memory */

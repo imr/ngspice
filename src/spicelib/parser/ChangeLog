@@ -1,3 +1,7 @@
+2000-09-02  Paolo Nenzi <p.nenzi@ieee.org>
+     * Patched with code sent by Alan Gillespie. See more on top
+       level ChangeLog.
+
 2000-07-07  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* circuit/inp2b.c, circuit/inp2c.c, circuit/inp2d.c,

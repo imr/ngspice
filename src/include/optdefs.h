@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #ifndef OPT
@@ -103,5 +104,16 @@ typedef struct {
 #define OPT_SYNCTIME 58
 #define OPT_TRANSYNC 59
 #define OPT_ACSYNC 60
+
+/* AlansFixes: It is not possible to use the same numbers of the
+   original Alan code. The following options are all AlansFixes */
+    
+#define OPT_GSHUNT       61  /* Original: 48 */
+#define OPT_DEFM         62  /* Original: 46 */
+#define OPT_GMINFACT     63  /* Original: 47 */
+#define OPT_COPYNODESETS 64  /* Original: 49 (NodesetFix) */
+#define OPT_NODEDAMPING  65  /* Original: 50 (Node_Damping) */
+#define OPT_ABSDV        66  /* Original: 51 (Node_Damping) */ 
+#define OPT_RELDV        67  /* Original: 52 (Node_Damping) */
 
 #endif /*OPT*/

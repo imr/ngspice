@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+Modified: 2000 AlansFixes
 **********/
 
 /*
@@ -92,6 +93,15 @@ if_inpdeck(struct line *deck, INPtables **tab)
     INPpas2((void *) ckt, (card *) deck->li_next,
             (INPtables *) *tab,ft_curckt->ci_defTask);
     INPkillMods();
+
+/*  INPpas2 has been modified to ignore .NODESET and .IC cards. These are
+ *  left till INPpas3 so that we can check for nodeset/ic of non-existant
+ *  nodes.
+ */
+
+    INPpas3((GENERIC *) ckt, (card *) deck->li_next,
+            (INPtables *) *tab,ft_curckt->ci_defTask);
+
     return (ckt);
 }
 

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1990 Jaijeet S. Roychowdhury
+Modified: 2000 AlansFixes
 **********/
 
 #ifdef __STDC__
@@ -18,6 +19,8 @@ extern int LTRAsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int LTRAunsetup(GENmodel*,CKTcircuit*);
 extern int LTRAtemp(GENmodel*,CKTcircuit*);
 extern int LTRAtrunc(GENmodel*,CKTcircuit*,double*);
+
+extern int LTRAlinInterp(double,double,double,double*,double*);
 
 extern int LTRAquadInterp(double,double,double,double,double*,double*,double*);
 /*

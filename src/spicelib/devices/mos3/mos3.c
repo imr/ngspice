@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -11,6 +12,7 @@ Author: 1987 Thomas L. Quarles
 #include "suffix.h"
 
 IFparm MOS3pTable[] = { /* parameters */ 
+ IOPU("m",         MOS3_M,       IF_REAL   , "Multiplier"),
  IOPU("l",         MOS3_L,       IF_REAL   , "Length"),
  IOPU("w",         MOS3_W,       IF_REAL   , "Width"),
  IOPU("ad",        MOS3_AD,      IF_REAL   , "Drain area"),
@@ -131,6 +133,11 @@ IFparm MOS3mPTable[] = { /* model parameters */
  IOPU("js",    MOS3_MOD_JS,    IF_REAL   ,"Bulk jct. sat. current density"),
  IOP("tox",   MOS3_MOD_TOX,   IF_REAL   ,"Oxide thickness"),
  IOP("ld",    MOS3_MOD_LD,    IF_REAL   ,"Lateral diffusion"),
+  IOP("xl",    MOS3_MOD_XL,    IF_REAL   ,"Length mask adjustment"),
+ IOP("wd",    MOS3_MOD_WD,    IF_REAL   ,"Width Narrowing (Diffusion)"),
+ IOP("xw",    MOS3_MOD_XW,    IF_REAL   ,"Width mask adjustment"),
+ IOPU("delvto",   MOS3_MOD_DELVTO,   IF_REAL   ,"Threshold voltage Adjust"),
+ IOPR("delvt0",   MOS3_MOD_DELVTO,   IF_REAL   ,"Threshold voltage Adjust"),
  IOP("u0",    MOS3_MOD_U0,    IF_REAL   ,"Surface mobility"),
  IOPR("uo",    MOS3_MOD_U0,    IF_REAL   ,"Surface mobility"),
  IOP("fc",    MOS3_MOD_FC,    IF_REAL   ,"Forward bias jct. fit parm."),

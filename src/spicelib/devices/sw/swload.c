@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon Jacobs
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -47,6 +48,8 @@ SWload(inModel,ckt)
                     current_state = 0.0;
                 }
 
+                *(ckt->CKTstate0 + (here->SWstate+1)) = 0;
+
             } else if (ckt->CKTmode & (MODEINITSMSIG)) {
 
                 previous_state = *(ckt->CKTstate0 + here->SWstate);
@@ -68,7 +71,9 @@ SWload(inModel,ckt)
                 } else {
                     current_state = previous_state;
                 }
-
+                
+                *(ckt->CKTstate0 + (here->SWstate+1)) = v_ctrl;
+                
                 if(current_state != previous_state) {
                     ckt->CKTnoncon++;       /* ensure one more iteration */
 		    ckt->CKTtroubleElt = (GENinstance *) here;
@@ -95,7 +100,9 @@ SWload(inModel,ckt)
                 } else {
                     *(ckt->CKTstate0 + here->SWstate) = 1.0;
                 }
-
+                
+                *(ckt->CKTstate0 + (here->SWstate+1)) = v_ctrl;
+                
             }
 
             g_now = current_state?(model->SWonConduct):(model->SWoffConduct);

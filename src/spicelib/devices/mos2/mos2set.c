@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -124,7 +125,10 @@ MOS2setup(matrix,inModel,ckt,states)
         /* loop through all the instances of the model */
         for (here = model->MOS2instances; here != NULL ;
                 here=here->MOS2nextInstance) {
-
+         
+         CKTnode *tmpNode;
+         IFuid tmpName;
+            
 	    if (here->MOS2owner == ARCHme) {
 		/* allocate a chunk of the state vector */
 		here->MOS2states = *states;
@@ -165,6 +169,16 @@ MOS2setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->MOS2name,"internal#drain");
                 if(error) return(error);
                 here->MOS2dNodePrime = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->MOS2dNodePrime = here->MOS2dNode;
             }
@@ -176,6 +190,16 @@ MOS2setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->MOS2name,"internal#source");
                 if(error) return(error);
                 here->MOS2sNodePrime = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->MOS2sNodePrime = here->MOS2sNode;
             }

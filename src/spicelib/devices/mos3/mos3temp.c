@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -36,6 +37,7 @@ MOS3temp(inModel,ckt)
     double arg1;
     double capfact;
     double gmanew,gmaold;
+    double ni_temp, nifact;
     /* loop through all the mosfet models */
     for( ; model != NULL; model = model->MOS3nextModel) {
         
@@ -49,7 +51,10 @@ MOS3temp(inModel,ckt)
                 (model->MOS3tnom+1108);
         arg1 = -egfet1/(kt1+kt1)+1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
         pbfact1 = -2*vtnom *(1.5*log(fact1)+CHARGE*arg1);
-
+        nifact=(model->MOS3tnom/300)*sqrt(model->MOS3tnom/300);
+        nifact*=exp(0.5*egfet1*((1/(double)300)-(1/model->MOS3tnom))/
+                                                 CONSTKoverQ);
+        ni_temp=1.45e16*nifact;
 
         model->MOS3oxideCapFactor = 3.9 * 8.854214871e-12/
                 model->MOS3oxideThickness;
@@ -59,11 +64,11 @@ MOS3temp(inModel,ckt)
                     model->MOS3oxideCapFactor * 1e-4;
         }
         if(model->MOS3substrateDopingGiven) {
-            if(model->MOS3substrateDoping*1e6 /*(cm**3/m**3)*/ >1.45e16) {
+            if(model->MOS3substrateDoping*1e6 /*(cm**3/m**3)*/ >ni_temp) {
                 if(!model->MOS3phiGiven) {
                     model->MOS3phi = 2*vtnom*
                             log(model->MOS3substrateDoping*
-                            1e6/*(cm**3/m**3)*//1.45e16);
+                           1e6/*(cm**3/m**3)*//ni_temp);
                     model->MOS3phi = MAX(.1,model->MOS3phi);
                 }
                 fermis = model->MOS3type * .5 * model->MOS3phi;
@@ -134,7 +139,9 @@ MOS3temp(inModel,ckt)
             arg = -egfet/(kt+kt)+1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
             pbfact = -2*vt *(1.5*log(fact2)+CHARGE*arg);
 
-
+            if(!here->MOS3mGiven) {
+                here->MOS3m = ckt->CKTdefaultMosM;
+            }
             if(!here->MOS3lGiven) {
                 here->MOS3l = ckt->CKTdefaultMosL;
             }
@@ -146,14 +153,17 @@ MOS3temp(inModel,ckt)
             }
             if(model->MOS3drainResistanceGiven) {
                 if(model->MOS3drainResistance != 0) {
-                    here->MOS3drainConductance = 1/model->MOS3drainResistance;
+                   here->MOS3drainConductance = here->MOS3m /
+                                     model->MOS3drainResistance;
                 } else {
                     here->MOS3drainConductance = 0;
                 }
             } else if (model->MOS3sheetResistanceGiven) {
-                if(model->MOS3sheetResistance != 0) {
+                if ((model->MOS3sheetResistance != 0) &&
+                                              (here->MOS3drainSquares != 0)) {
                     here->MOS3drainConductance = 
-                        1/(model->MOS3sheetResistance*here->MOS3drainSquares);
+                       here->MOS3m /
+                          (model->MOS3sheetResistance*here->MOS3drainSquares);
                 } else {
                     here->MOS3drainConductance = 0;
                 }
@@ -162,14 +172,17 @@ MOS3temp(inModel,ckt)
             }
             if(model->MOS3sourceResistanceGiven) {
                 if(model->MOS3sourceResistance != 0) {
-                    here->MOS3sourceConductance = 1/model->MOS3sourceResistance;
+                    here->MOS3sourceConductance = here->MOS3m /
+                                                    model->MOS3sourceResistance;
                 } else {
                     here->MOS3sourceConductance = 0;
                 }
             } else if (model->MOS3sheetResistanceGiven) {
-                if(model->MOS3sheetResistance != 0) {
+                if ((model->MOS3sheetResistance != 0) &&
+                                   (here->MOS3sourceSquares != 0)) {
                     here->MOS3sourceConductance = 
-                        1/(model->MOS3sheetResistance*here->MOS3sourceSquares);
+                       here->MOS3m /
+                          (model->MOS3sheetResistance*here->MOS3sourceSquares);
                 } else {
                     here->MOS3sourceConductance = 0;
                 }
@@ -177,11 +190,20 @@ MOS3temp(inModel,ckt)
                 here->MOS3sourceConductance = 0;
             }
 
-            if(here->MOS3l - 2 * model->MOS3latDiff <=0) {
+            if(here->MOS3l - 2 * model->MOS3latDiff +
+                                 model->MOS3lengthAdjust <1e-6) {
                 (*(SPfrontEnd->IFerror))(ERR_FATAL,
                         "%s: effective channel length less than zero",
                         &(here->MOS3name));
-                return(E_BADPARM);
+                return(E_PARMVAL);
+            }
+
+            if(here->MOS3w - 2 * model->MOS3widthNarrow +
+                                 model->MOS3widthAdjust <1e-6) {
+                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                        "%s: effective channel width less than zero",
+                        &(here->MOS3name));
+                return(E_PARMVAL);
             }
 
             ratio4 = ratio * sqrt(ratio);
@@ -189,7 +211,8 @@ MOS3temp(inModel,ckt)
             here->MOS3tSurfMob = model->MOS3surfaceMobility/ratio4;
             phio= (model->MOS3phi-pbfact1)/fact1;
             here->MOS3tPhi = fact2 * phio + pbfact;
-            here->MOS3tVbi = 
+            here->MOS3tVbi =
+                    model->MOS3delvt0 + 
                     model->MOS3vt0 - model->MOS3type * 
                         (model->MOS3gamma* sqrt(model->MOS3phi))
                     +.5*(egfet1-egfet) 
@@ -226,26 +249,29 @@ MOS3temp(inModel,ckt)
                     (here->MOS3drainArea == 0) ||
                     (here->MOS3sourceArea == 0) ) {
                 here->MOS3sourceVcrit = here->MOS3drainVcrit =
-                        vt*log(vt/(CONSTroot2*model->MOS3jctSatCur));
+                       vt*log(vt/(CONSTroot2*here->MOS3m*here->MOS3tSatCur));
             } else {
                 here->MOS3drainVcrit =
                         vt * log( vt / (CONSTroot2 *
-                        model->MOS3jctSatCurDensity * here->MOS3drainArea));
+                        here->MOS3m *
+                        here->MOS3tSatCurDens * here->MOS3drainArea));
                 here->MOS3sourceVcrit =
                         vt * log( vt / (CONSTroot2 *
-                        model->MOS3jctSatCurDensity * here->MOS3sourceArea));
+                        here->MOS3m *
+                        here->MOS3tSatCurDens * here->MOS3sourceArea));
             }
             if(model->MOS3capBDGiven) {
-                czbd = here->MOS3tCbd;
+                czbd = here->MOS3tCbd * here->MOS3m;
             } else {
                 if(model->MOS3bulkCapFactorGiven) {
-                    czbd=here->MOS3tCj*here->MOS3drainArea;
+                    czbd=here->MOS3tCj*here->MOS3drainArea * here->MOS3m;
                 } else {
                     czbd=0;
                 }
             }
             if(model->MOS3sideWallCapFactorGiven) {
-                czbdsw= here->MOS3tCjsw * here->MOS3drainPerimiter;
+                czbdsw= here->MOS3tCjsw * here->MOS3drainPerimiter *
+                         here->MOS3m;
             } else {
                 czbdsw=0;
             }
@@ -260,27 +286,28 @@ MOS3temp(inModel,ckt)
                         (1+model->MOS3bulkJctSideGradingCoeff))*
                         sargsw/arg;
             here->MOS3f3d = czbd * model->MOS3bulkJctBotGradingCoeff * sarg/arg/
-                        model->MOS3bulkJctPotential
+                        here->MOS3tBulkPot
                     + czbdsw * model->MOS3bulkJctSideGradingCoeff * sargsw/arg /
-                        model->MOS3bulkJctPotential;
-            here->MOS3f4d = czbd*model->MOS3bulkJctPotential*(1-arg*sarg)/
+                        here->MOS3tBulkPot;
+            here->MOS3f4d = czbd*here->MOS3tBulkPot*(1-arg*sarg)/
                         (1-model->MOS3bulkJctBotGradingCoeff)
-                    + czbdsw*model->MOS3bulkJctPotential*(1-arg*sargsw)/
+                    + czbdsw*here->MOS3tBulkPot*(1-arg*sargsw)/
                         (1-model->MOS3bulkJctSideGradingCoeff)
                     -here->MOS3f3d/2*
                         (here->MOS3tDepCap*here->MOS3tDepCap)
                     -here->MOS3tDepCap * here->MOS3f2d;
             if(model->MOS3capBSGiven) {
-                czbs=here->MOS3tCbs;
+                czbs = here->MOS3tCbs * here->MOS3m;
             } else {
                 if(model->MOS3bulkCapFactorGiven) {
-                    czbs=here->MOS3tCj*here->MOS3sourceArea;
+                    czbs=here->MOS3tCj*here->MOS3sourceArea * here->MOS3m;
                 } else {
                     czbs=0;
                 }
             }
             if(model->MOS3sideWallCapFactorGiven) {
-                czbssw = here->MOS3tCjsw * here->MOS3sourcePerimiter;
+                czbssw = here->MOS3tCjsw * here->MOS3sourcePerimiter *
+                      here->MOS3m;
             } else {
                 czbssw=0;
             }
@@ -295,16 +322,16 @@ MOS3temp(inModel,ckt)
                         (1+model->MOS3bulkJctSideGradingCoeff))*
                         sargsw/arg;
             here->MOS3f3s = czbs * model->MOS3bulkJctBotGradingCoeff * sarg/arg/
-                        model->MOS3bulkJctPotential
+                       here->MOS3tBulkPot
                     + czbssw * model->MOS3bulkJctSideGradingCoeff * sargsw/arg /
-                        model->MOS3bulkJctPotential;
-            here->MOS3f4s = czbs*model->MOS3bulkJctPotential*(1-arg*sarg)/
+                        here->MOS3tBulkPot;
+            here->MOS3f4s = czbs*here->MOS3tBulkPot*(1-arg*sarg)/
                         (1-model->MOS3bulkJctBotGradingCoeff)
-                    + czbssw*model->MOS3bulkJctPotential*(1-arg*sargsw)/
+                    + czbssw*here->MOS3tBulkPot*(1-arg*sargsw)/
                         (1-model->MOS3bulkJctSideGradingCoeff)
                     -here->MOS3f3s/2*
-                        (here->MOS3tBulkPot*here->MOS3tBulkPot)
-                    -here->MOS3tBulkPot * here->MOS3f2s;
+                      (here->MOS3tDepCap*here->MOS3tDepCap)
+                    -here->MOS3tDepCap * here->MOS3f2s;
         }
     }
     return(OK);

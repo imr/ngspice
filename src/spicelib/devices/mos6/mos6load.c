@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1989 Takayasu Sakurai
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -407,23 +408,21 @@ MOS6load(inModel,ckt)
              *   here we just evaluate the ideal diode current and the
              *   corresponding derivative (conductance).
              */
-next1:      if(vbs <= 0) {
-                here->MOS6gbs = SourceSatCur/vt;
-                here->MOS6cbs = here->MOS6gbs*vbs;
-                here->MOS6gbs += ckt->CKTgmin;
+next1:      if(vbs <= -3*vt) {
+                here->MOS6gbs = ckt->CKTgmin;
+                here->MOS6cbs = here->MOS6gbs*vbs-SourceSatCur;
             } else {
                 evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
                 here->MOS6gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
-                here->MOS6cbs = SourceSatCur * (evbs-1);
+                here->MOS6cbs = SourceSatCur*(evbs-1) + ckt->CKTgmin*vbs;
             }
-            if(vbd <= 0) {
-                here->MOS6gbd = DrainSatCur/vt;
-                here->MOS6cbd = here->MOS6gbd *vbd;
-                here->MOS6gbd += ckt->CKTgmin;
+            if(vbd <= -3*vt) {
+                here->MOS6gbd = ckt->CKTgmin;
+                here->MOS6cbd = here->MOS6gbd*vbd-DrainSatCur;
             } else {
                 evbd = exp(MIN(MAX_EXP_ARG,vbd/vt));
-                here->MOS6gbd = DrainSatCur*evbd/vt +ckt->CKTgmin;
-                here->MOS6cbd = DrainSatCur *(evbd-1);
+                here->MOS6gbd = DrainSatCur*evbd/vt + ckt->CKTgmin;
+                here->MOS6cbd = DrainSatCur*(evbd-1) + ckt->CKTgmin*vbd;
             }
 
             /* now to determine whether the user was able to correctly
@@ -469,10 +468,8 @@ next1:      if(vbs <= 0) {
                 }
 		vdshere = vds * here->MOS6mode;
                 von=(here->MOS6tVbi*model->MOS6type)+model->MOS6gamma*sarg
-		    - model->MOS6gamma1 * vbsvbd;
-#if 0
+		    - model->MOS6gamma1 * vbsvbd
 		    - model->MOS6sigma  * vdshere;
-#endif
                 vgon = (here->MOS6mode==1?vgs:vgd) - von;
 
                 if (vgon <= 0) {
@@ -881,9 +878,9 @@ bypass:
              *  load current vector
              */
             ceqbs = model->MOS6type * 
-                    (here->MOS6cbs-(here->MOS6gbs-ckt->CKTgmin)*vbs);
+                    (here->MOS6cbs-(here->MOS6gbs)*vbs);
             ceqbd = model->MOS6type * 
-                    (here->MOS6cbd-(here->MOS6gbd-ckt->CKTgmin)*vbd);
+                    (here->MOS6cbd-(here->MOS6gbd)*vbd);
             if (here->MOS6mode >= 0) {
                 xnrm=1;
                 xrev=0;

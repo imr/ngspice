@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -36,6 +37,7 @@ MOS3pzLoad(inModel,ckt,s)
     double GateDrainOverlapCap;
     double GateSourceOverlapCap;
     double EffectiveLength;
+    double EffectiveWidth;
 
     for( ; model != NULL; model = model->MOS3nextModel) {
         for(here = model->MOS3instances; here!= NULL;
@@ -52,13 +54,16 @@ MOS3pzLoad(inModel,ckt,s)
             /*
              *     meyer's model parameters
              */
-            EffectiveLength=here->MOS3l - 2*model->MOS3latDiff;
+            EffectiveWidth=here->MOS3w-2*model->MOS3widthNarrow+
+                                    model->MOS3widthAdjust;
+            EffectiveLength=here->MOS3l - 2*model->MOS3latDiff+
+                                    model->MOS3lengthAdjust;
             GateSourceOverlapCap = model->MOS3gateSourceOverlapCapFactor * 
-                    here->MOS3w;
+                    here->MOS3m * EffectiveWidth;
             GateDrainOverlapCap = model->MOS3gateDrainOverlapCapFactor * 
-                    here->MOS3w;
+                    here->MOS3m * EffectiveWidth;
             GateBulkOverlapCap = model->MOS3gateBulkOverlapCapFactor * 
-                    EffectiveLength;
+                    here->MOS3m * EffectiveLength;
             capgs = ( 2* *(ckt->CKTstate0+here->MOS3capgs)+ 
                       GateSourceOverlapCap );
             capgd = ( 2* *(ckt->CKTstate0+here->MOS3capgd)+ 

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -106,6 +107,22 @@ MOS3mParam(param,value,inModel)
             model->MOS3latDiff = value->rValue;
             model->MOS3latDiffGiven = TRUE;
             break;
+        case MOS3_MOD_XL:
+            model->MOS3lengthAdjust = value->rValue;
+            model->MOS3lengthAdjustGiven = TRUE;
+            break;
+        case MOS3_MOD_WD:
+            model->MOS3widthNarrow = value->rValue;
+            model->MOS3widthNarrowGiven = TRUE;
+            break;
+        case MOS3_MOD_XW:
+            model->MOS3widthAdjust = value->rValue;
+            model->MOS3widthAdjustGiven = TRUE;
+            break;
+        case MOS3_MOD_DELVTO:
+            model->MOS3delvt0 = value->rValue;
+            model->MOS3delvt0Given = TRUE;
+            break;    
         case MOS3_MOD_U0:
             model->MOS3surfaceMobility = value->rValue;
             model->MOS3surfaceMobilityGiven = TRUE;

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
     /* load the MOS1 device structure with those pointers needed later 
@@ -104,6 +105,9 @@ MOS1setup(matrix,inModel,ckt,states)
 		}
 	    }
 
+            CKTnode *tmpNode;
+            IFuid tmpName;
+
             if(!here->MOS1drainPerimiterGiven) {
                 here->MOS1drainPerimiter = 0;
             }
@@ -139,6 +143,16 @@ MOS1setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->MOS1name,"drain");
                 if(error) return(error);
                 here->MOS1dNodePrime = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->MOS1dNodePrime = here->MOS1dNode;
             }
@@ -150,6 +164,16 @@ MOS1setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->MOS1name,"source");
                 if(error) return(error);
                 here->MOS1sNodePrime = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->MOS1sNodePrime = here->MOS1sNode;
             }

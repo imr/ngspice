@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
+Modified: 2000  AlansFixes
 **********/
 
 /*
@@ -128,6 +129,7 @@ extern bool out_isatty;
 extern void out_init();
 #ifndef out_printf
 /* don't want to declare it if we have #define'ed it */
+
 extern void out_printf();
 #endif
 extern void out_send();

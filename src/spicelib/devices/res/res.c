@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 - Paolo Nenzi
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -35,6 +36,7 @@ IFparm RESpTable[] = { /* parameters */
 IFparm RESmPTable[] = { /* model parameters */
  IOPQ( "rsh",    RES_MOD_RSH,      IF_REAL,"Sheet resistance"),
  IOPZ( "narrow", RES_MOD_NARROW,   IF_REAL,"Narrowing of resistor"),
+ IOPZ( "short",  RES_MOD_SHORT,    IF_REAL,"Shortening of resistor"),
  IOPQ( "tc1",    RES_MOD_TC1,      IF_REAL,"First order temp. coefficient"),
  IOPQO( "tc2",    RES_MOD_TC2,      IF_REAL,"Second order temp. coefficient"),
  IOPX( "defw",   RES_MOD_DEFWIDTH, IF_REAL,"Default device width"),

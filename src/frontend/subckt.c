@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Modified: 2000 AlansFixes
 **********/
 
 /*
@@ -113,6 +114,14 @@ inp_subcktexpand(struct line *deck)
     }
     
     ll = doit(deck);
+
+   /* Now check to see if there are still subckt instances undefined... */
+    if (ll!=NULL) for (c = ll; c; c = c->li_next)
+	if (ciprefix(invoke, c->li_line)) {
+	    fprintf(cp_err, "Error: unknown subckt: %s\n",
+		    c->li_line);
+	    return NULL;
+	}
 
     return (ll);
 }

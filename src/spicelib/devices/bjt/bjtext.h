@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AnalsFixes
 **********/
 
 #ifdef __STDC__
@@ -27,6 +28,9 @@ extern int BJTtemp(GENmodel*,CKTcircuit*);
 extern int BJTtrunc(GENmodel*,CKTcircuit*,double*);
 extern int BJTdisto(int,GENmodel*,CKTcircuit*);
 extern int BJTnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+
+extern int BJTdSetup(GENmodel*, register CKTcircuit*);
+
 #else /* stdc */
 extern int BJTacLoad();
 extern int BJTask();

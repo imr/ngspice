@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon M. Jacobs
+Modified: 2000 AlansFixes
 **********/
 
 #ifndef CSW
@@ -54,7 +55,7 @@ typedef struct sCSWinstance {
 
 #define CSW_ON_CONDUCTANCE 1.0   /* default on conductance = 1 mho */
 #define CSW_OFF_CONDUCTANCE ckt->CKTgmin   /* default off conductance */
-#define CSW_NUM_STATES 1   
+#define CSW_NUM_STATES 2   
 
 typedef struct sCSWmodel {      /* model structure for a switch */
     int CSWmodType; /* type index of this device type */

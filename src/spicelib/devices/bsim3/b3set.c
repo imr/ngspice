@@ -2,6 +2,8 @@
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
 Author: 1997-1999 Weidong Liu.
+
+Modified: 2000 AlansFixes
 File: b3set.c
 **********/
 
@@ -848,6 +850,10 @@ CKTnode *tmp;
 	{   
 	    if (here->BSIM3owner == ARCHme) {
 	    /* allocate a chunk of the state vector */
+            
+            CKTnode *tmpNode;
+            IFuid tmpName;
+            
             here->BSIM3states = *states;
             *states += BSIM3numStates;
 	    }
@@ -877,7 +883,10 @@ CKTnode *tmp;
                 here->BSIM3w = 5.0e-6;
             if (!here->BSIM3nqsModGiven)
                 here->BSIM3nqsMod = 0;
-                    
+            
+            if (!here->BSIM3mGiven)
+                here->BSIM3m = 1;
+                        
             /* process drain series resistance */
             if ((model->BSIM3sheetResistance > 0.0) && 
                 (here->BSIM3drainSquares > 0.0 ) &&
@@ -885,6 +894,14 @@ CKTnode *tmp;
 	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"drain");
                 if(error) return(error);
                 here->BSIM3dNodePrime = tmp->number;
+                 if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             }
 	    else
 	    {   here->BSIM3dNodePrime = here->BSIM3dNode;
@@ -897,6 +914,14 @@ CKTnode *tmp;
 	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"source");
                 if(error) return(error);
                 here->BSIM3sNodePrime = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             }
 	    else 
 	    {   here->BSIM3sNodePrime = here->BSIM3sNode;

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -28,6 +29,10 @@ MOS2param(param,value,inst,select)
             here->MOS2temp = value->rValue+CONSTCtoK;
             here->MOS2tempGiven = TRUE;
             break;
+        case MOS2_M:
+            here->MOS2m = value->rValue;
+            here->MOS2mGiven = TRUE;
+            break;   
         case MOS2_W:
             here->MOS2w = value->rValue;
             here->MOS2wGiven = TRUE;

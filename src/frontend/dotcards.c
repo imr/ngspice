@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+Modified: 2000 AlansFixes
 **********/
 
 /*
@@ -154,19 +155,14 @@ ft_cktcoms(bool terse)
 
     if (!ft_curckt)
 	return 1;
-    if (!ft_curckt->ci_commands)
+    if (!ft_curckt->ci_commands && !setcplot("op"))
         goto nocmds;
     coms = ft_curckt->ci_commands;
     cp_interactive = FALSE;
 
-    /* Circuit name */
-    fprintf(cp_out, "Circuit: %s\nDate: %s\n\n", ft_curckt->ci_name,
-            datestring());
-    fprintf(cp_out, "\n");
-
     /* Listing */
     if (ft_listprint) {
-	if (terse)
+	if (FALSE)
 	    fprintf(cp_err, ".options: no listing, rawfile was generated.\n");
 	else
 	    inp_list(cp_out, ft_curckt->ci_deck, ft_curckt->ci_options,
@@ -174,12 +170,12 @@ ft_cktcoms(bool terse)
     }
 
     /* If there was a .op line, then we have to do the .op output. */
-    if (setcplot("op")) {
-	if (terse) {
+    if (setcplot("op") && (plot_cur->pl_dvecs->v_realdata!=NULL)) {
+	if (FALSE) {
 	    fprintf(cp_out, "OP information in rawfile.\n");
 	} else {
-	    fprintf(cp_out, "\nOperating point information:\n\n");
-	    fprintf(cp_out, "\tNode\tVoltage\n");
+	    fprintf(cp_out, "\t%-30s%15s\n", "Node", "Voltage");
+            fprintf(cp_out, "\t%-30s%15s\n", "----", "-------");
 	    fprintf(cp_out, "\t----\t-------\n");
 	    for (v = plot_cur->pl_dvecs; v; v = v->v_next) {
 		if (!isreal(v)) {
@@ -188,17 +184,17 @@ ft_cktcoms(bool terse)
 			    v->v_name);
 		    continue;
 		}
-		if (v->v_type == SV_VOLTAGE)
-		    fprintf(cp_out, "\t%s\t%s\n", v->v_name,
+		if ((v->v_type == SV_VOLTAGE) && (*(v->v_name)!='@'))
+		    fprintf(cp_out, "\t%-30s%15s\n", v->v_name,
 			printnum(v->v_realdata[0]));
 	    }
 	    fprintf(cp_out, "\n\tSource\tCurrent\n");
 	    fprintf(cp_out, "\t------\t-------\n\n");
 	    for (v = plot_cur->pl_dvecs; v; v = v->v_next)
 		if (v->v_type == SV_CURRENT)
-		    fprintf(cp_out, "\t%s\t%s\n", v->v_name,
-			printnum(v->v_realdata[0]));
-	    fprintf(cp_out, "\n");
+		    fprintf(cp_out, "\t%-30s%15s\n", v->v_name,
+		    printnum(v->v_realdata[0]));
+	         fprintf(cp_out, "\n");
 
 	    if (!ft_nomod)
 		com_showmod(&all);
@@ -320,7 +316,7 @@ nocmds:
     
     /* The options */
     if (ft_optsprint) {
-        fprintf(cp_err, "Options:\n\n");
+        fprintf(cp_out, "Options:\n\n");
         cp_vprint();
         (void) putc('\n', cp_out);
     }

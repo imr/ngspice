@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -22,7 +23,7 @@ MOS2sPrint(inModel,ckt)
     MOS2model *model = (MOS2model *)inModel;
     MOS2instance *here;
 
-    printf("LEVEL 1 MOSFETS-----------------\n");
+    printf("LEVEL 2 MOSFETS-----------------\n");
     /*  loop through all the MOS2 models */
     for( ; model != NULL; model = model->MOS2nextModel ) {
 
@@ -38,6 +39,8 @@ MOS2sPrint(inModel,ckt)
             CKTnodName(ckt,here->MOS2dNode),CKTnodName(ckt,here->MOS2gNode),
             CKTnodName(ckt,here->MOS2sNode));
 
+            printf("  Multiplier: %g ",here->MOS2m);
+            printf(here->MOS2mGiven ? "(specified)\n" : "(default)\n"); 
             printf("      Length: %g ",here->MOS2l);
             printf(here->MOS2lGiven ? "(specified)\n" : "(default)\n");
             printf("      Width: %g ",here->MOS2w);

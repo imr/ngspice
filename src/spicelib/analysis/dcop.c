@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000  AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -31,7 +32,42 @@ DCop(CKTcircuit *ckt)
             (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
             (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
             ckt->CKTdcMaxIter);
-    if(converged != 0) return(converged);
+     if(converged != 0) {
+
+           CKTnode *node;
+           double new, old, tol;
+           int i=1;
+
+           fprintf(stdout,"\nDC solution failed -\n\n");
+           fprintf(stdout,"Last Node Voltages\n");
+           fprintf(stdout,"------------------\n\n");
+           fprintf(stdout,"%-30s %20s %20s\n", "Node", "Last Voltage",
+                                                              "Previous Iter");
+           fprintf(stdout,"%-30s %20s %20s\n", "----", "------------",
+                                                              "-------------");
+           for(node=ckt->CKTnodes->next;node;node=node->next) {
+             if (strstr(node->name, "#branch") || !strstr(node->name, "#")) {
+               new =  *((ckt->CKTrhsOld) + i ) ;
+               old =  *((ckt->CKTrhs) + i ) ;
+               fprintf(stdout,"%-30s %20g %20g", node->name, new, old);
+               if(node->type == 3) {
+                   tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
+                           ckt->CKTvoltTol;
+               } else {
+                   tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
+                           ckt->CKTabstol;
+               }
+               if (fabs(new-old) >tol ) {
+                    fprintf(stdout," *");
+               }
+               fprintf(stdout,"\n");
+             };
+             i++;
+           };
+           fprintf(stdout,"\n");
+	   (*(SPfrontEnd->OUTendPlot))(plot);
+	   return(converged);
+	 };
 
     ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
 
@@ -57,7 +93,11 @@ DCop(CKTcircuit *ckt)
     }
 #endif
     converged = CKTload(ckt);
-    CKTdump(ckt,(double)0,plot);
+    if(converged == 0) {
+	   CKTdump(ckt,(double)0,plot);
+         } else {
+           fprintf(stderr,"error: circuit reload failed.\n");
+         };
     (*(SPfrontEnd->OUTendPlot))(plot);
     return(converged);
 }

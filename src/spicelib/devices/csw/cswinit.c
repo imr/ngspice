@@ -1,3 +1,5 @@
+/* Modified: 2000 AlansFixes */
+
 #include <config.h>
 
 #include <devdefs.h>
@@ -31,7 +33,7 @@ SPICEdev CSWinfo = {
     DEVunsetup    : NULL,
     DEVpzSetup    : CSWsetup,
     DEVtemperature: NULL,
-    DEVtrunc      : NULL,
+    DEVtrunc      :CSWtrunc,
     DEVfindBranch : NULL,
     DEVacLoad     : CSWacLoad,
     DEVaccept     : NULL,

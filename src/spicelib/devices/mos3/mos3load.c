@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -26,6 +27,7 @@ MOS3load(inModel,ckt)
     double Beta;
     double DrainSatCur;
     double EffectiveLength;
+    double EffectiveWidth;
     double GateBulkOverlapCap;
     double GateDrainOverlapCap;
     double GateSourceOverlapCap;
@@ -117,28 +119,33 @@ next:
              * here.  They may be moved at the expense of instance size
              */
 
-            EffectiveLength=here->MOS3l - 2*model->MOS3latDiff;
-            if( (here->MOS3tSatCurDens == 0) || 
+            EffectiveWidth=here->MOS3w-2*model->MOS3widthNarrow+
+                                    model->MOS3widthAdjust;
+            EffectiveLength=here->MOS3l - 2*model->MOS3latDiff+
+                                    model->MOS3lengthAdjust;
+           
+           if( (here->MOS3tSatCurDens == 0) || 
                     (here->MOS3drainArea == 0) ||
                     (here->MOS3sourceArea == 0)) {
-                DrainSatCur = here->MOS3tSatCur;
-                SourceSatCur = here->MOS3tSatCur;
+                DrainSatCur = here->MOS3m * here->MOS3tSatCur;
+                SourceSatCur = here->MOS3m * here->MOS3tSatCur;
             } else {
-                DrainSatCur = here->MOS3tSatCurDens * 
+                DrainSatCur = here->MOS3m * here->MOS3tSatCurDens * 
                         here->MOS3drainArea;
-                SourceSatCur = here->MOS3tSatCurDens * 
+                SourceSatCur = here->MOS3m * here->MOS3tSatCurDens * 
                         here->MOS3sourceArea;
             }
             GateSourceOverlapCap = model->MOS3gateSourceOverlapCapFactor * 
-                    here->MOS3w;
+                    here->MOS3m * EffectiveWidth;
             GateDrainOverlapCap = model->MOS3gateDrainOverlapCapFactor * 
-                    here->MOS3w;
+                    here->MOS3m * EffectiveWidth;
             GateBulkOverlapCap = model->MOS3gateBulkOverlapCapFactor * 
-                    EffectiveLength;
-            Beta = here->MOS3tTransconductance * here->MOS3w/EffectiveLength;
+                    here->MOS3m * EffectiveLength;
+            Beta = here->MOS3tTransconductance *
+                    here->MOS3m * EffectiveWidth/EffectiveLength;
             OxideCap = model->MOS3oxideCapFactor * EffectiveLength * 
-                    here->MOS3w;
-
+                    here->MOS3m * EffectiveWidth; 
+           
             if(SenCond){
 #ifdef SENSDEBUG
                 printf("MOS3senPertFlag = ON \n");
@@ -395,23 +402,26 @@ next:
              *   here we just evaluate the ideal diode current and the
              *   corresponding derivative (conductance).
              */
-next1:      if(vbs <= 0) {
-                here->MOS3gbs = SourceSatCur/vt;
-                here->MOS3cbs = here->MOS3gbs*vbs;
-                here->MOS3gbs += ckt->CKTgmin;
+
+next1:      if(vbs <= -3*vt) {
+                arg=3*vt/(vbs*CONSTe);
+                arg = arg * arg * arg;
+                here->MOS3cbs = -SourceSatCur*(1+arg)+ckt->CKTgmin*vbs;
+                here->MOS3gbs = SourceSatCur*3*arg/vbs+ckt->CKTgmin;
             } else {
                 evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
                 here->MOS3gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
-                here->MOS3cbs = SourceSatCur * (evbs-1);
+                here->MOS3cbs = SourceSatCur*(evbs-1) + ckt->CKTgmin*vbs;
             }
-            if(vbd <= 0) {
-                here->MOS3gbd = DrainSatCur/vt;
-                here->MOS3cbd = here->MOS3gbd *vbd;
-                here->MOS3gbd += ckt->CKTgmin;
+            if(vbd <= -3*vt) {
+                arg=3*vt/(vbd*CONSTe);
+                arg = arg * arg * arg;
+                here->MOS3cbd = -DrainSatCur*(1+arg)+ckt->CKTgmin*vbd;
+                here->MOS3gbd = DrainSatCur*3*arg/vbd+ckt->CKTgmin;
             } else {
                 evbd = exp(MIN(MAX_EXP_ARG,vbd/vt));
-                here->MOS3gbd = DrainSatCur*evbd/vt +ckt->CKTgmin;
-                here->MOS3cbd = DrainSatCur *(evbd-1);
+                here->MOS3gbd = DrainSatCur*evbd/vt + ckt->CKTgmin;
+                here->MOS3cbd = DrainSatCur*(evbd-1) + ckt->CKTgmin*vbd;
             }
 
             /* now to determine whether the user was able to correctly
@@ -600,12 +610,12 @@ next1:      if(vbs <= 0) {
              */
             gammas = model->MOS3gamma*fshort;
             fbodys = 0.5*gammas/(sqphbs+sqphbs);
-            fbody = fbodys+model->MOS3narrowFactor/here->MOS3w;
+            fbody = fbodys+model->MOS3narrowFactor/EffectiveWidth;
             onfbdy = 1.0/(1.0+fbody);
             dfbdvb = -fbodys*dsqdvb/sqphbs+fbodys*dfsdvb/fshort;
-            qbonco =gammas*sqphbs+model->MOS3narrowFactor*phibs/here->MOS3w;
+            qbonco =gammas*sqphbs+model->MOS3narrowFactor*phibs/EffectiveWidth;
             dqbdvb = gammas*dsqdvb+model->MOS3gamma*dfsdvb*sqphbs-
-                model->MOS3narrowFactor/here->MOS3w;
+                model->MOS3narrowFactor/EffectiveWidth;
             /*
              *.....static feedback effect
              */
@@ -622,7 +632,8 @@ next1:      if(vbs <= 0) {
             von = vth;
             if ( model->MOS3fastSurfaceStateDensity != 0.0 ) {
                 csonco = CHARGE*model->MOS3fastSurfaceStateDensity * 
-                    1e4 /*(cm**2/m**2)*/ *EffectiveLength*here->MOS3w/OxideCap;
+                    1e4 /*(cm**2/m**2)*/ *EffectiveLength*EffectiveWidth *
+                    here->MOS3m/OxideCap;
                 cdonco = qbonco/(phibs+phibs);
                 xn = 1.0+csonco+cdonco;
                 von = vth+vt*xn;
@@ -685,7 +696,8 @@ next1:      if(vbs <= 0) {
              */
             cdnorm = cdo*vdsx;
             here->MOS3gm = vdsx;
-            here->MOS3gds = vgsx-vth-(1.0+fbody+dvtdvd)*vdsx;
+            if ((here->MOS3mode*vds) > vdsat) here->MOS3gds = -dvtdvd*vdsx;
+            else here->MOS3gds = vgsx-vth-(1.0+fbody+dvtdvd)*vdsx;
             here->MOS3gmbs = dcodvb*vdsx;
             /* 
              *.....drain current without velocity saturation effect
@@ -695,16 +707,17 @@ next1:      if(vbs <= 0) {
             cdrain = Beta*cdnorm;
             here->MOS3gm = Beta*here->MOS3gm+dfgdvg*cd1;
             here->MOS3gds = Beta*here->MOS3gds+dfgdvd*cd1;
-            here->MOS3gmbs = Beta*here->MOS3gmbs;
+            here->MOS3gmbs = Beta*here->MOS3gmbs+dfgdvb*cd1;
             /*
              *.....velocity saturation factor
              */
-            if ( model->MOS3maxDriftVel != 0.0 ) {
+            if ( model->MOS3maxDriftVel > 0.0 ) {
                 fdrain = 1.0/(1.0+vdsx*onvdsc);
                 fd2 = fdrain*fdrain;
                 arga = fd2*vdsx*onvdsc*onfg;
                 dfddvg = -dfgdvg*arga;
-                dfddvd = -dfgdvd*arga-fd2*onvdsc;
+                if ((here->MOS3mode*vds) > vdsat) dfddvd = -dfgdvd*arga;
+                else dfddvd = -dfgdvd*arga-fd2*onvdsc;
                 dfddvb = -dfgdvb*arga;
                 /*
                  *.....drain current
@@ -718,7 +731,24 @@ next1:      if(vbs <= 0) {
             /*
              *.....channel length modulation
              */
-            if ( (here->MOS3mode*vds) <= vdsat ) goto line700;
+            
+            if ( (here->MOS3mode*vds) <= vdsat ) {
+              if ( (model->MOS3maxDriftVel > 0.0) ||
+                   (model->MOS3alpha == 0.0) ||
+	           (ckt->CKTbadMos3)                         ) goto line700;
+              else {
+                arga = (here->MOS3mode*vds)/vdsat;
+                delxl = sqrt(model->MOS3kappa*model->MOS3alpha*vdsat/8);
+                dldvd = 4*delxl*arga*arga*arga/vdsat;
+                arga *= arga;
+                arga *= arga;
+                delxl *= arga;
+                ddldvg = 0.0;
+                ddldvd = -dldvd;
+                ddldvb = 0.0;
+                goto line520;
+              };
+            
             if ( model->MOS3maxDriftVel <= 0.0 ) goto line510;
             if (model->MOS3alpha == 0.0) goto line700;
             cdsat = cdrain;
@@ -757,9 +787,15 @@ next1:      if(vbs <= 0) {
             ddldvb = dldem*demdvb;
             goto line520;
 line510:
-            delxl = sqrt(model->MOS3kappa*((here->MOS3mode*vds)-vdsat)*
-                model->MOS3alpha);
-            dldvd = 0.5*delxl/((here->MOS3mode*vds)-vdsat);
+           if (ckt->CKTbadMos3) {
+              delxl = sqrt(model->MOS3kappa*((here->MOS3mode*vds)-vdsat)*
+                  model->MOS3alpha);
+              dldvd = 0.5*delxl/((here->MOS3mode*vds)-vdsat);
+            } else {
+               delxl = sqrt(model->MOS3kappa*model->MOS3alpha*
+                                 ((here->MOS3mode*vds)-vdsat+(vdsat/8)));
+               dldvd =  0.5*delxl/((here->MOS3mode*vds)-vdsat+(vdsat/8));
+            };
             ddldvg = 0.0;
             ddldvd = -dldvd;
             ddldvb = 0.0;
@@ -782,14 +818,19 @@ line520:
              */
             dlonxl = delxl*oneoverxl;
             xlfact = 1.0/(1.0-dlonxl);
+            
+            cd1 = cdrain;
             cdrain = cdrain*xlfact;
             diddl = cdrain/(EffectiveLength-delxl);
             here->MOS3gm = here->MOS3gm*xlfact+diddl*ddldvg;
-            gds0 = here->MOS3gds*xlfact+diddl*ddldvd;
             here->MOS3gmbs = here->MOS3gmbs*xlfact+diddl*ddldvb;
+            gds0 = diddl*ddldvd;
             here->MOS3gm = here->MOS3gm+gds0*dvsdvg;
             here->MOS3gmbs = here->MOS3gmbs+gds0*dvsdvb;
-            here->MOS3gds = gds0*dvsdvd+diddl*dldvd;
+            here->MOS3gds = here->MOS3gds*xlfact+diddl*dldvd+gds0*dvsdvd;
+/*          here->MOS3gds = (here->MOS3gds*xlfact)+gds0*dvsdvd-
+                    (cd1*ddldvd/(EffectiveLength*(1-2*dlonxl+dlonxl*dlonxl)));*/
+            
             /*
              *.....finish strong inversion case
              */
@@ -1162,9 +1203,9 @@ bypass:
              *  load current vector
              */
             ceqbs = model->MOS3type * 
-                    (here->MOS3cbs-(here->MOS3gbs-ckt->CKTgmin)*vbs);
+                    (here->MOS3cbs-(here->MOS3gbs)*vbs);
             ceqbd = model->MOS3type * 
-                    (here->MOS3cbd-(here->MOS3gbd-ckt->CKTgmin)*vbd);
+                    (here->MOS3cbd-(here->MOS3gbd)*vbd);
             if (here->MOS3mode >= 0) {
                 xnrm=1;
                 xrev=0;

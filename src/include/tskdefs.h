@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -45,8 +46,10 @@ typedef struct {
     double TSKlteAbstol;
 #endif /* NEWTRUNC */
     double TSKgmin;
+    double TSKgshunt;   /* shunt conductance (CKTdiagGmin) */
     double TSKdelmin;
     double TSKtrtol;
+    double TSKdefaultMosM;
     double TSKdefaultMosL;
     double TSKdefaultMosW;
     double TSKdefaultMosAD;
@@ -56,6 +59,11 @@ typedef struct {
     unsigned int TSKtryToCompact:1; /* flag for LTRA lines */
     unsigned int TSKbadMos3:1; /* flag for MOS3 models */
     unsigned int TSKkeepOpInfo:1; /* flag for small signal analyses */
+    unsigned int TSKcopyNodesets:1; /* flag for nodeset copy */
+    unsigned int TSKnodeDamping:1;  /* flag for node damping */
+    double TSKabsDv;                 /* abs limit for iter-iter voltage change */
+    double TSKrelDv;                 /* rel limit for iter-iter voltage change */
+
 }TSKtask;
 
 #endif /*TSK*/

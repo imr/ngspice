@@ -18,3 +18,4 @@ struct s_sgen {
 
 extern sgen *sgen_init( );
 extern int sgen_next( );
+extern int sgen_setp(sgen*, CKTcircuit*, IFvalue* ); /* AlansFixes */

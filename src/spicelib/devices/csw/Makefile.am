@@ -20,7 +20,8 @@ libcsw_la_SOURCES = 		\
 	cswnoise.c	\
 	cswparam.c	\
 	cswpzld.c	\
-	cswsetup.c
+	cswsetup.c \
+	cswtrunc.c 
 
 
 

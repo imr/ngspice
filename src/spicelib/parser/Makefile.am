@@ -31,6 +31,7 @@ libinp_a_SOURCES = \
 		inpapnam.c	\
 		inpcfix.c	\
 		inpdomod.c	\
+		inpdoopt.c \
 		inpdpar.c	\
 		inperrc.c	\
 		inperror.c	\
@@ -50,6 +51,8 @@ libinp_a_SOURCES = \
 		inppas1.h	\
 		inppas2.c	\
 		inppas2.h	\
+		inppas3.c \
+		inppas3.h \
 		inppname.c	\
 		inpptree.c	\
 		inpsymt.c	\

@@ -2,6 +2,7 @@
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
 Author: 1997-1999 Weidong Liu.
+Modified: 2000 AlansFixes
 File: b3par.c
 **********/
 
@@ -29,6 +30,10 @@ IFvalue *select;
             here->BSIM3l = value->rValue;
             here->BSIM3lGiven = TRUE;
             break;
+        case BSIM3_M:
+            here->BSIM3m = value->rValue;
+            here->BSIM3mGiven = TRUE;
+            break;    
         case BSIM3_AS:
             here->BSIM3sourceArea = value->rValue;
             here->BSIM3sourceAreaGiven = TRUE;

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -27,6 +28,7 @@ MOS3dSetup(inModel,ckt)
     double Beta;
     double DrainSatCur;
     double EffectiveLength;
+    double EffectiveWidth;
     double GateBulkOverlapCap;
     double GateDrainOverlapCap;
     double GateSourceOverlapCap;
@@ -76,29 +78,32 @@ MOS3dSetup(inModel,ckt)
              * here.  They may be moved at the expense of instance size
              */
 
-            EffectiveLength=here->MOS3l - 2*model->MOS3latDiff;
+            EffectiveWidth=here->MOS3w-2*model->MOS3widthNarrow+
+                                    model->MOS3widthAdjust;
+            EffectiveLength=here->MOS3l - 2*model->MOS3latDiff+
+                                    model->MOS3lengthAdjust;
+            
             if( (here->MOS3tSatCurDens == 0) || 
                     (here->MOS3drainArea == 0) ||
                     (here->MOS3sourceArea == 0)) {
-                DrainSatCur = here->MOS3tSatCur;
-                SourceSatCur = here->MOS3tSatCur;
+                DrainSatCur = here->MOS3m * here->MOS3tSatCur;
+                SourceSatCur = here->MOS3m * here->MOS3tSatCur;
             } else {
                 DrainSatCur = here->MOS3tSatCurDens * 
-                        here->MOS3drainArea;
+                        here->MOS3m * here->MOS3drainArea;
                 SourceSatCur = here->MOS3tSatCurDens * 
-                        here->MOS3sourceArea;
+                        here->MOS3m * here->MOS3sourceArea;
             }
             GateSourceOverlapCap = model->MOS3gateSourceOverlapCapFactor * 
-                    here->MOS3w;
+                    here->MOS3m * EffectiveWidth;
             GateDrainOverlapCap = model->MOS3gateDrainOverlapCapFactor * 
-                    here->MOS3w;
+                    here->MOS3m * EffectiveWidth;
             GateBulkOverlapCap = model->MOS3gateBulkOverlapCapFactor * 
-                    EffectiveLength;
-            Beta = here->MOS3tTransconductance * here->MOS3w/EffectiveLength;
+                    here->MOS3m * EffectiveLength;
+            Beta = here->MOS3tTransconductance * here->MOS3m *
+                    EffectiveWidth/EffectiveLength;
             OxideCap = model->MOS3oxideCapFactor * EffectiveLength * 
-                    here->MOS3w;
-
-
+                    here->MOS3m * EffectiveWidth;
 
             /* 
              * ok - now to do the start-up operations
@@ -381,7 +386,7 @@ d_p.d3_pqr = 0.0;
             fbodys = 0.5*gammas/(sqphbs+sqphbs);
 	    DivDeriv(&d_fbodys,&d_gammas,&d_sqphbs);
 	    TimesDeriv(&d_fbodys,&d_fbodys,0.25);
-            fbody = fbodys+model->MOS3narrowFactor/here->MOS3w;
+            fbody = fbodys+model->MOS3narrowFactor/EffectiveWidth;
 	    EqualDeriv(&d_fbody,&d_fbodys);
 	    d_fbody.value += fbody - fbodys;
 
@@ -389,9 +394,10 @@ d_p.d3_pqr = 0.0;
 	    EqualDeriv(&d_onfbdy,&d_fbody);
 	    d_onfbdy.value += 1.0;
 	    InvDeriv(&d_onfbdy,&d_onfbdy);
-            qbonco =gammas*sqphbs+model->MOS3narrowFactor*phibs/here->MOS3w;
+            qbonco =gammas*sqphbs+model->MOS3narrowFactor*phibs/EffectiveWidth;
 	    EqualDeriv(&d_dummy,&d_phibs);
-	    TimesDeriv(&d_dummy,&d_dummy,model->MOS3narrowFactor*here->MOS3w);
+	    TimesDeriv(&d_dummy,&d_dummy,model->
+                             MOS3narrowFactor*EffectiveWidth);
 	    MultDeriv(&d_qbonco,&d_gammas,&d_sqphbs);
 	    PlusDeriv(&d_qbonco,&d_qbonco,&d_dummy);
             /*
@@ -412,7 +418,8 @@ d_p.d3_pqr = 0.0;
 	    EqualDeriv(&d_von,&d_vth);
             if ( model->MOS3fastSurfaceStateDensity != 0.0 ) {
                 csonco = CHARGE*model->MOS3fastSurfaceStateDensity * 
-                    1e4 /*(cm**2/m**2)*/ *EffectiveLength*here->MOS3w/OxideCap;/*const*/
+                    1e4 /*(cm**2/m**2)*/ *EffectiveLength*EffectiveWidth *
+                    here->MOS3m/OxideCap; /*const*/
                 cdonco = 0.5*qbonco/phibs;
 		DivDeriv(&d_cdonco,&d_qbonco,&d_phibs);
 		TimesDeriv(&d_cdonco,&d_cdonco,0.5);

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
     /* perform the temperature update to the diode */
@@ -111,7 +112,10 @@ DIOtemp(inModel,ckt)
                     here->DIOtJctPot;
             /* and Vcrit */
             vte=model->DIOemissionCoeff*vt;
-            here->DIOtVcrit=vte*log(vte/(CONSTroot2*here->DIOtSatCur));
+            
+            here->DIOtVcrit=vte*
+                          log(vte/(CONSTroot2*here->DIOtSatCur*here->DIOarea));
+            
             /* and now to copute the breakdown voltage, again, using
              * temperature adjusted basic parameters */
             if (model->DIObreakdownVoltageGiven){
@@ -121,12 +125,12 @@ DIOtemp(inModel,ckt)
                     emsg = MALLOC(100);
                     if(emsg == (char *)NULL) return(E_NOMEM);
                     (void)sprintf(emsg,
-            "%%s: breakdown current increased to %g to resolve incompatability",
+            "%%s: breakdown current increased to %g to resolve",
                             cbv);
                     (*(SPfrontEnd->IFerror))(ERR_WARNING,emsg,&(here->DIOname));
                     FREE(emsg);
                     (*(SPfrontEnd->IFerror))(ERR_WARNING,
-                            "with specified saturation current",(IFuid*)NULL);
+              "incompatibility with specified saturation current",(IFuid*)NULL);
                     xbv=model->DIObreakdownVoltage;
                 } else {
                     tol=ckt->CKTreltol*cbv;

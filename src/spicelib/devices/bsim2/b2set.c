@@ -494,6 +494,14 @@ B2setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->B2name,"drain");
                 if(error) return(error);
                 here->B2dNodePrime = tmp->number;
+                 if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             } else {
                     here->B2dNodePrime = here->B2dNode;
             }
@@ -506,6 +514,14 @@ B2setup(matrix,inModel,ckt,states)
                     error = CKTmkVolt(ckt,&tmp,here->B2name,"source");
                     if(error) return(error);
                     here->B2sNodePrime = tmp->number;
+                    if (ckt->CKTcopyNodesets) {
+                     if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
                 }
             } else  {
                 here->B2sNodePrime = here->B2sNode;

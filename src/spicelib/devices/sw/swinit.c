@@ -1,3 +1,4 @@
+/* Modified: Alansfixes */
 #include <config.h>
 
 #include <devdefs.h>
@@ -31,7 +32,7 @@ SPICEdev SWinfo = {
     DEVunsetup    : NULL,
     DEVpzSetup    : SWsetup,
     DEVtemperature: NULL,
-    DEVtrunc      : NULL,
+    DEVtrunc      : SWtrunc,
     DEVfindBranch : NULL,
     DEVacLoad     : SWacLoad,   
     DEVaccept     : NULL,

@@ -271,6 +271,9 @@ B1setup(matrix,inModel,ckt,states)
         for (here = model->B1instances; here != NULL ;
                 here=here->B1nextInstance) {
 
+        CKTnode *tmpNode;
+        IFuid tmpName;
+
 	    if (here->B1owner == ARCHme) {
 		/* allocate a chunk of the state vector */
 		here->B1states = *states;
@@ -325,6 +328,14 @@ B1setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->B1name,"drain");
                 if(error) return(error);
                 here->B1dNodePrime = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             } else {
                     here->B1dNodePrime = here->B1dNode;
             }
@@ -337,6 +348,14 @@ B1setup(matrix,inModel,ckt,states)
                     error = CKTmkVolt(ckt,&tmp,here->B1name,"source");
                     if(error) return(error);
                     here->B1sNodePrime = tmp->number;
+                    if (ckt->CKTcopyNodesets) {
+                     if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
                 }
             } else  {
                 here->B1sNodePrime = here->B1sNode;

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon Jacobs
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -47,6 +48,9 @@ CSWload(inModel,ckt)
                     *(ckt->CKTstate0 + here->CSWstate) = 0.0;
                     current_state = 0.0;
                 }
+                
+                *(ckt->CKTstate0 + (here->CSWstate+1)) = 0;
+                
             } else if (ckt->CKTmode & (MODEINITSMSIG)) {
 
                 previous_state = *(ckt->CKTstate0 + here->CSWstate);
@@ -69,6 +73,8 @@ CSWload(inModel,ckt)
                 else {
                     current_state = previous_state;
                 }
+
+                *(ckt->CKTstate0 + (here->CSWstate+1)) = i_ctrl;
 
                 if(current_state != previous_state) {
                     ckt->CKTnoncon++;    /* ensure one more iteration */
@@ -95,6 +101,8 @@ CSWload(inModel,ckt)
                 } else {
                     *(ckt->CKTstate0 + here->CSWstate) = 1.0;
                 }
+
+                *(ckt->CKTstate0 + (here->CSWstate+1)) = i_ctrl;
 
             }
 

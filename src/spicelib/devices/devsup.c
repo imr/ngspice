@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 /* support routines for device models */
@@ -47,18 +48,32 @@ DEVpnjlim(double vnew,
 
     if((vnew > vcrit) && (fabs(vnew - vold) > (vt + vt))) {
         if(vold > 0) {
-            arg = 1 + (vnew - vold) / vt;
+            arg = (vnew - vold) / vt;
             if(arg > 0) {
-                vnew = vold + vt * log(arg);
+                vnew = vold + vt * (2+log(arg-2));
             } else {
-                vnew = vcrit;
+                vnew = vold - vt * (2+log(2-arg));
             }
         } else {
             vnew = vt *log(vnew/vt);
         }
         *icheck = 1;
     } else {
-        *icheck = 0;
+       if (vnew < 0) {
+           if (vold > 0) {
+               arg = -1*vold-1;
+           } else {
+               arg = 2*vold-1;
+           }
+           if (vnew < arg) {
+              vnew = arg;
+              *icheck = 1;
+           } else {
+              *icheck = 0;
+           };
+        } else {
+           *icheck = 0;
+        }
     }
     return(vnew);
 }
@@ -76,7 +91,7 @@ DEVfetlim(double vnew,
     double vtemp;
 
     vtsthi = fabs(2*(vold-vto))+2;
-    vtstlo = vtsthi/2 +2;
+    vtstlo = fabs(vold-vto)*1;
     vtox = vto + 3.5;
     delv = vnew-vold;
 

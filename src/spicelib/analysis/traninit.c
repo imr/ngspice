@@ -1,5 +1,6 @@
 /**********
 Copyright 1991 Regents of the University of California.  All rights reserved.
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -39,12 +40,12 @@ int TRANinit(CKTcircuit	*ckt, JOB *job)
 #else
 /* The original spice code */
  if(ckt->CKTmaxStep == 0) {
-	ckt->CKTmaxStep = (ckt->CKTfinalTime-ckt->CKTinitTime)/50;
+	ckt->CKTmaxStep = (ckt->CKTfinalTime-ckt->CKTinitTime)/100;
     }
 #endif
    
     
-    ckt->CKTdelmin = 1e-9*ckt->CKTmaxStep;	/* XXX */
+    ckt->CKTdelmin = 1e-11*ckt->CKTmaxStep;	/* XXX */
     ckt->CKTmode = ((TRANan*)job)->TRANmode;
 
     return OK;

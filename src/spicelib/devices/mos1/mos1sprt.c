@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 /* Pretty print the sensitivity info for all 
@@ -41,7 +42,10 @@ CKTcircuit *ckt;
             printf("      Drain, Gate , Source nodes: %s, %s ,%s\n",
             CKTnodName(ckt,here->MOS1dNode),CKTnodName(ckt,here->MOS1gNode),
             CKTnodName(ckt,here->MOS1sNode));
-
+            
+            printf("  Multiplier: %g ",here->MOS1m);
+            printf(here->MOS1mGiven ? "(specified)\n" : "(default)\n");
+            
             printf("      Length: %g ",here->MOS1l);
             printf(here->MOS1lGiven ? "(specified)\n" : "(default)\n");
             printf("      Width: %g ",here->MOS1w);

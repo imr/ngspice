@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 Alansfixes
 **********/
 
 #include "ngspice.h"
@@ -187,6 +188,7 @@ ISRCload(inModel,ckt)
                 }
             }
 loadDone:
+            if (ckt->CKTmode & MODETRANOP) value *= ckt->CKTsrcFact;
             *(ckt->CKTrhs + (here->ISRCposNode)) += value;
             *(ckt->CKTrhs + (here->ISRCnegNode)) -= value;
         }

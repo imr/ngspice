@@ -91,26 +91,28 @@ MOS1dSetup(inModel,ckt)
 
             vt = CONSTKoverQ * here->MOS1temp;
             EffectiveLength=here->MOS1l - 2*model->MOS1latDiff;
-            if( (here->MOS1tSatCurDens == 0) || 
+            
+             if( (here->MOS1tSatCurDens == 0) || 
                     (here->MOS1drainArea == 0) ||
                     (here->MOS1sourceArea == 0)) {
-                DrainSatCur = here->MOS1tSatCur;
-                SourceSatCur = here->MOS1tSatCur;
+                DrainSatCur = here->MOS1m * here->MOS1tSatCur;
+                SourceSatCur = here->MOS1m * here->MOS1tSatCur;
             } else {
                 DrainSatCur = here->MOS1tSatCurDens * 
-                        here->MOS1drainArea;
+                        here->MOS1m * here->MOS1drainArea;
                 SourceSatCur = here->MOS1tSatCurDens * 
-                        here->MOS1sourceArea;
+                        here->MOS1m * here->MOS1sourceArea;
             }
             GateSourceOverlapCap = model->MOS1gateSourceOverlapCapFactor * 
-                    here->MOS1w;
+                    here->MOS1m * here->MOS1w;
             GateDrainOverlapCap = model->MOS1gateDrainOverlapCapFactor * 
-                    here->MOS1w;
+                    here->MOS1m * here->MOS1w;
             GateBulkOverlapCap = model->MOS1gateBulkOverlapCapFactor * 
-                    EffectiveLength;
-            Beta = here->MOS1tTransconductance * here->MOS1w/EffectiveLength;
+                    here->MOS1m * EffectiveLength;
+            Beta = here->MOS1tTransconductance * here->MOS1m *
+                    here->MOS1w/EffectiveLength;
             OxideCap = model->MOS1oxideCapFactor * EffectiveLength * 
-                    here->MOS1w;
+                    here->MOS1m * here->MOS1w;
 
                     vbs = model->MOS1type * ( 
                         *(ckt->CKTrhsOld+here->MOS1bNode) -

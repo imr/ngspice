@@ -86,7 +86,7 @@ typedef struct SPICEdev {
 } SPICEdev;  /* instance of structure for each possible type of device */
 
 
-/* IOP( )	Input/output parameter
+/* IOP( )		Input/output parameter
  * IOPP( )	IO parameter which the principle value of a device (used
  *			for naming output variables in sensetivity)
  * IOPA( )	IO parameter significant for time-varying (non-dc) analyses

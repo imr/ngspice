@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
     /*
@@ -33,6 +34,9 @@ CKTsetOpt(void *ckt, void *anal, int opt, IFvalue *val)
     case OPT_GMIN:
         task->TSKgmin = val->rValue;
         break;
+     case OPT_GSHUNT:
+        task->TSKgshunt = val->rValue;
+        break;    
     case OPT_RELTOL:
         task->TSKreltol = val->rValue;
         break;
@@ -79,6 +83,12 @@ CKTsetOpt(void *ckt, void *anal, int opt, IFvalue *val)
     case OPT_GMINSTEPS:
         task->TSKnumGminSteps = val->iValue;
         break;
+    case OPT_GMINFACT:
+        task->TSKgminFactor = val->rValue;
+        break;
+    case OPT_DEFM:
+        task->TSKdefaultMosM = val->rValue;
+        break;
     case OPT_DEFL:
         task->TSKdefaultMosL = val->rValue;
         break;
@@ -119,6 +129,18 @@ CKTsetOpt(void *ckt, void *anal, int opt, IFvalue *val)
     case OPT_KEEPOPINFO:
 	task->TSKkeepOpInfo = val->iValue;
 	break;
+    case OPT_COPYNODESETS:
+ 	task->TSKcopyNodesets = val->iValue;
+	break;	
+    case OPT_NODEDAMPING:
+	task->TSKnodeDamping = val->iValue;
+	break;
+    case OPT_ABSDV:
+	task->TSKabsDv = val->rValue;
+	break;
+    case OPT_RELDV:
+	task->TSKrelDv = val->rValue;
+	break;	
     default:
         return(-1);
     }
@@ -127,6 +149,7 @@ CKTsetOpt(void *ckt, void *anal, int opt, IFvalue *val)
 static IFparm OPTtbl[] = {
  { "noopiter", OPT_NOOPITER,IF_SET|IF_FLAG,"Go directly to gmin stepping" },
  { "gmin", OPT_GMIN,IF_SET|IF_REAL,"Minimum conductance" },
+ { "gshunt", OPT_GSHUNT,IF_SET|IF_REAL,"Shunt conductance" },
  { "reltol", OPT_RELTOL,IF_SET|IF_REAL ,"Relative error tolerence"},
  { "abstol", OPT_ABSTOL,IF_SET|IF_REAL,"Absolute error tolerence" },
  { "vntol", OPT_VNTOL,IF_SET|IF_REAL,"Voltage error tolerence" },
@@ -144,6 +167,7 @@ static IFparm OPTtbl[] = {
  { "itl6", OPT_SRCSTEPS, IF_SET|IF_INTEGER,"number of source steps"},
  { "srcsteps", OPT_SRCSTEPS, IF_SET|IF_INTEGER,"number of source steps"},
  { "gminsteps", OPT_GMINSTEPS, IF_SET|IF_INTEGER,"number of Gmin steps"},
+  { "gminfactor", OPT_GMINFACT, IF_SET|IF_REAL,"factor per Gmin step"},
  { "acct", 0, IF_FLAG ,"Print accounting"},
  { "list", 0, IF_FLAG, "Print a listing" },
  { "nomod", 0, IF_FLAG, "Don't print a model summary" },
@@ -159,6 +183,7 @@ static IFparm OPTtbl[] = {
  { "lvltim", 0, IF_INTEGER,"Type of timestep control" },
  { "method", OPT_METHOD, IF_SET|IF_STRING,"Integration method" },
  { "maxord", OPT_MAXORD, IF_SET|IF_INTEGER,"Maximum integration order" },
+ { "defm", OPT_DEFM,IF_SET|IF_REAL,"Default MOSfet Multiplier" },
  { "defl", OPT_DEFL,IF_SET|IF_REAL,"Default MOSfet length" },
  { "defw", OPT_DEFW,IF_SET|IF_REAL,"Default MOSfet width" },
  { "minbreak", OPT_MINBREAK,IF_SET|IF_REAL,"Minimum time between breakpoints" },
@@ -201,7 +226,15 @@ static IFparm OPTtbl[] = {
  { "badmos3", OPT_BADMOS3, IF_SET|IF_FLAG,
 	 "use old mos3 model (discontinuous with respect to kappa)" },
  { "keepopinfo", OPT_KEEPOPINFO, IF_SET|IF_FLAG,
-	 "Record operating point for each small-signal analysis" }
+	 "Record operating point for each small-signal analysis" },
+ { "copynodesets", OPT_COPYNODESETS, IF_SET|IF_FLAG,
+      "Copy nodesets from device terminals to internal nodes" },
+ { "nodedamping", OPT_NODEDAMPING, IF_SET|IF_FLAG,
+	 "Limit iter-iter change in node voltages" },
+ { "absdv", OPT_ABSDV, IF_SET|IF_REAL,
+	 "Maximum absolute iter-iter node voltage change" },
+ { "reldv", OPT_RELDV, IF_SET|IF_REAL,
+	 "Maximum relative iter-iter node voltage change" }
 };
 
 int OPTcount = sizeof(OPTtbl)/sizeof(IFparm);

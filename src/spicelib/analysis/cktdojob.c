@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -47,6 +48,7 @@ CKTdoJob(void *inCkt, int reset, void *inTask)
     ckt->CKTtranMaxIter  = task->TSKtranMaxIter;
     ckt->CKTnumSrcSteps  = task->TSKnumSrcSteps;
     ckt->CKTnumGminSteps  = task->TSKnumGminSteps;
+    ckt->CKTgminFactor  = task->TSKgminFactor;
     ckt->CKTminBreak  = task->TSKminBreak;
     ckt->CKTabstol  = task->TSKabstol;
     ckt->CKTpivotAbsTol  = task->TSKpivotAbsTol;
@@ -55,8 +57,10 @@ CKTdoJob(void *inCkt, int reset, void *inTask)
     ckt->CKTchgtol  = task->TSKchgtol;
     ckt->CKTvoltTol  = task->TSKvoltTol;
     ckt->CKTgmin  = task->TSKgmin;
+    ckt->CKTgshunt  = task->TSKgshunt;
     ckt->CKTdelmin  = task->TSKdelmin;
     ckt->CKTtrtol  = task->TSKtrtol;
+    ckt->CKTdefaultMosM  = task->TSKdefaultMosM;
     ckt->CKTdefaultMosL  = task->TSKdefaultMosL;
     ckt->CKTdefaultMosW  = task->TSKdefaultMosW;
     ckt->CKTdefaultMosAD  = task->TSKdefaultMosAD;
@@ -66,6 +70,10 @@ CKTdoJob(void *inCkt, int reset, void *inTask)
     ckt->CKTtryToCompact = task->TSKtryToCompact;
     ckt->CKTbadMos3 = task->TSKbadMos3;
     ckt->CKTkeepOpInfo = task->TSKkeepOpInfo;
+    ckt->CKTcopyNodesets = task->TSKcopyNodesets;
+    ckt->CKTnodeDamping = task->TSKnodeDamping;
+    ckt->CKTabsDv = task->TSKabsDv;
+    ckt->CKTrelDv = task->TSKrelDv;
     ckt->CKTtroubleNode  = 0;
     ckt->CKTtroubleElt  = NULL;
 #ifdef NEWTRUNC

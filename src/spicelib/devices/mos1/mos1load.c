@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -111,26 +112,29 @@ MOS1load(inModel,ckt)
              */
 
             EffectiveLength=here->MOS1l - 2*model->MOS1latDiff;
+            
             if( (here->MOS1tSatCurDens == 0) || 
-		(here->MOS1drainArea == 0) ||
-		(here->MOS1sourceArea == 0)) {
-                DrainSatCur = here->MOS1tSatCur;
-                SourceSatCur = here->MOS1tSatCur;
+                    (here->MOS1drainArea == 0) ||
+                    (here->MOS1sourceArea == 0)) {
+                DrainSatCur = here->MOS1m * here->MOS1tSatCur;
+                SourceSatCur = here->MOS1m * here->MOS1tSatCur;
             } else {
                 DrainSatCur = here->MOS1tSatCurDens * 
-		    here->MOS1drainArea;
+                        here->MOS1m * here->MOS1drainArea;
                 SourceSatCur = here->MOS1tSatCurDens * 
-		    here->MOS1sourceArea;
+                        here->MOS1m * here->MOS1sourceArea;
             }
             GateSourceOverlapCap = model->MOS1gateSourceOverlapCapFactor * 
-		here->MOS1w;
+                    here->MOS1m * here->MOS1w;
             GateDrainOverlapCap = model->MOS1gateDrainOverlapCapFactor * 
-		here->MOS1w;
+                    here->MOS1m * here->MOS1w;
             GateBulkOverlapCap = model->MOS1gateBulkOverlapCapFactor * 
-		EffectiveLength;
-            Beta = here->MOS1tTransconductance * here->MOS1w/EffectiveLength;
+                    here->MOS1m * EffectiveLength;
+            Beta = here->MOS1tTransconductance * here->MOS1m *
+                    here->MOS1w/EffectiveLength;
             OxideCap = model->MOS1oxideCapFactor * EffectiveLength * 
-		here->MOS1w;
+                    here->MOS1m * here->MOS1w;
+           
             /* 
              * ok - now to do the start-up operations
              *
@@ -412,25 +416,22 @@ MOS1load(inModel,ckt)
              *   here we just evaluate the ideal diode current and the
              *   corresponding derivative (conductance).
              */
-	next1:      if(vbs <= 0) {
-	    here->MOS1gbs = SourceSatCur/vt;
-	    here->MOS1cbs = here->MOS1gbs*vbs;
-	    here->MOS1gbs += ckt->CKTgmin;
-	} else {
-	    evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
-	    here->MOS1gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
-	    here->MOS1cbs = SourceSatCur * (evbs-1);
-	}
-            if(vbd <= 0) {
-                here->MOS1gbd = DrainSatCur/vt;
-                here->MOS1cbd = here->MOS1gbd *vbd;
-                here->MOS1gbd += ckt->CKTgmin;
+next1:      if(vbs <= -3*vt) {
+                here->MOS1gbs = ckt->CKTgmin;
+                here->MOS1cbs = here->MOS1gbs*vbs-SourceSatCur;
+            } else {
+                evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
+                here->MOS1gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
+                here->MOS1cbs = SourceSatCur*(evbs-1) + ckt->CKTgmin*vbs;
+            }
+            if(vbd <= -3*vt) {
+                here->MOS1gbd = ckt->CKTgmin;
+                here->MOS1cbd = here->MOS1gbd*vbd-DrainSatCur;
             } else {
                 evbd = exp(MIN(MAX_EXP_ARG,vbd/vt));
-                here->MOS1gbd = DrainSatCur*evbd/vt +ckt->CKTgmin;
-                here->MOS1cbd = DrainSatCur *(evbd-1);
+                here->MOS1gbd = DrainSatCur*evbd/vt + ckt->CKTgmin;
+                here->MOS1cbd = DrainSatCur*(evbd-1) + ckt->CKTgmin*vbd;
             }
-
             /* now to determine whether the user was able to correctly
              * identify the source and drain of his device
              */
@@ -861,9 +862,9 @@ MOS1load(inModel,ckt)
              *  load current vector
              */
             ceqbs = model->MOS1type * 
-		(here->MOS1cbs-(here->MOS1gbs-ckt->CKTgmin)*vbs);
+		(here->MOS1cbs-(here->MOS1gbs)*vbs);
             ceqbd = model->MOS1type * 
-		(here->MOS1cbd-(here->MOS1gbd-ckt->CKTgmin)*vbd);
+		(here->MOS1cbd-(here->MOS1gbd)*vbd);
             if (here->MOS1mode >= 0) {
                 xnrm=1;
                 xrev=0;

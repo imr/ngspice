@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #ifndef INP
@@ -103,6 +104,7 @@ int INPmakeMod(char*,int,card*);
 char *INPmkTemp(char*);
 void INPpas1(void*,card*,INPtables*);
 void INPpas2(void*,card*,INPtables*,void *);
+void INPpas3(void*,card*,INPtables*,void *); 
 int INPpName(char*,IFvalue*,void*,int,void*);
 int INPtermInsert(void*,char**,INPtables*,void**);
 int INPmkTerm(void*,char**,INPtables*,void**);

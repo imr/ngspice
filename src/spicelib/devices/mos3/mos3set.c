@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1985 Thomas L. Quarles
+Author: 1985 Thomas L. Quarlesù
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -41,6 +42,18 @@ MOS3setup(matrix,inModel,ckt,states)
         if(!model->MOS3latDiffGiven) {
             model->MOS3latDiff = 0;
         }
+        if(!model->MOS3lengthAdjustGiven) {
+            model->MOS3lengthAdjust = 0;
+        }
+        if(!model->MOS3widthNarrowGiven) {
+            model->MOS3widthNarrow = 0;
+        }
+        if(!model->MOS3widthAdjustGiven) {
+            model->MOS3widthAdjust = 0;
+        }
+        if(!model->MOS3delvt0Given) {
+            model->MOS3delvt0 = 0;
+        } 
         if(!model->MOS3jctSatCurDensityGiven) {
             model->MOS3jctSatCurDensity = 0;
         }
@@ -136,6 +149,9 @@ MOS3setup(matrix,inModel,ckt,states)
         for (here = model->MOS3instances; here != NULL ;
                 here=here->MOS3nextInstance) {
 
+         CKTnode *tmpNode;
+         IFuid tmpName;
+            
 	    if (here->MOS3owner == ARCHme) {
 		/* allocate a chunk of the state vector */
 		here->MOS3states = *states;
@@ -183,6 +199,14 @@ MOS3setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->MOS3name,"internal#drain");
                 if(error) return(error);
                 here->MOS3dNodePrime = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             } else {
                 here->MOS3dNodePrime = here->MOS3dNode;
             }
@@ -194,6 +218,14 @@ MOS3setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->MOS3name,"internal#source");
                 if(error) return(error);
                 here->MOS3sNodePrime = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             } else {
                 here->MOS3sNodePrime = here->MOS3sNode;
             }

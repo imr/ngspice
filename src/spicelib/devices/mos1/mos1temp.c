@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -137,6 +138,9 @@ MOS1temp(inModel,ckt)
             if(!here->MOS1drainAreaGiven) {
                 here->MOS1drainArea = ckt->CKTdefaultMosAD;
             }
+            if(!here->MOS1mGiven) {
+                here->MOS1m = ckt->CKTdefaultMosM;
+            }
             if(!here->MOS1lGiven) {
                 here->MOS1l = ckt->CKTdefaultMosL;
             }
@@ -193,27 +197,30 @@ MOS1temp(inModel,ckt)
                     (here->MOS1drainArea == 0) ||
                     (here->MOS1sourceArea == 0) ) {
                 here->MOS1sourceVcrit = here->MOS1drainVcrit =
-                        vt*log(vt/(CONSTroot2*here->MOS1tSatCur));
+                       vt*log(vt/(CONSTroot2*here->MOS1m*here->MOS1tSatCur));
             } else {
                 here->MOS1drainVcrit =
                         vt * log( vt / (CONSTroot2 *
+                        here->MOS1m *
                         here->MOS1tSatCurDens * here->MOS1drainArea));
                 here->MOS1sourceVcrit =
                         vt * log( vt / (CONSTroot2 *
+                        here->MOS1m *
                         here->MOS1tSatCurDens * here->MOS1sourceArea));
             }
 
             if(model->MOS1capBDGiven) {
-                czbd = here->MOS1tCbd;
+                czbd = here->MOS1tCbd * here->MOS1m;
             } else {
-                if(model->MOS1bulkCapFactorGiven) {
-                    czbd=here->MOS1tCj*here->MOS1drainArea;
+                if(model->MOS1bulkCapFactorGiven) {  
+                    czbd=here->MOS1tCj*here->MOS1m*here->MOS1drainArea;
                 } else {
                     czbd=0;
                 }
             }
             if(model->MOS1sideWallCapFactorGiven) {
-                czbdsw= here->MOS1tCjsw * here->MOS1drainPerimiter;
+                czbdsw= here->MOS1tCjsw * here->MOS1drainPerimiter *
+                     here->MOS1m;
             } else {
                 czbdsw=0;
             }
@@ -239,16 +246,17 @@ MOS1temp(inModel,ckt)
                         (here->MOS1tDepCap*here->MOS1tDepCap)
                     -here->MOS1tDepCap * here->MOS1f2d;
             if(model->MOS1capBSGiven) {
-                czbs=here->MOS1tCbs;
+                czbs=here->MOS1tCbs * here->MOS1m;
             } else {
                 if(model->MOS1bulkCapFactorGiven) {
-                    czbs=here->MOS1tCj*here->MOS1sourceArea;
+                   czbs=here->MOS1tCj*here->MOS1sourceArea * here->MOS1m;
                 } else {
                     czbs=0;
                 }
             }
             if(model->MOS1sideWallCapFactorGiven) {
-                czbssw = here->MOS1tCjsw * here->MOS1sourcePerimiter;
+                czbssw = here->MOS1tCjsw * here->MOS1sourcePerimiter *
+                          here->MOS1m;
             } else {
                 czbssw=0;
             }
@@ -277,14 +285,16 @@ MOS1temp(inModel,ckt)
 
             if(model->MOS1drainResistanceGiven) {
                 if(model->MOS1drainResistance != 0) {
-                    here->MOS1drainConductance = 1/model->MOS1drainResistance;
+                   here->MOS1drainConductance = here->MOS1m /
+                                      model->MOS1drainResistance;
                 } else {
                     here->MOS1drainConductance = 0;
                 }
             } else if (model->MOS1sheetResistanceGiven) {
                 if(model->MOS1sheetResistance != 0) {
                     here->MOS1drainConductance = 
-                        1/(model->MOS1sheetResistance*here->MOS1drainSquares);
+                       here->MOS1m /
+                          (model->MOS1sheetResistance*here->MOS1drainSquares);
                 } else {
                     here->MOS1drainConductance = 0;
                 }
@@ -293,14 +303,18 @@ MOS1temp(inModel,ckt)
             }
             if(model->MOS1sourceResistanceGiven) {
                 if(model->MOS1sourceResistance != 0) {
-                    here->MOS1sourceConductance = 1/model->MOS1sourceResistance;
+                   here->MOS1sourceConductance = here->MOS1m /
+                                         model->MOS1sourceResistance;
                 } else {
                     here->MOS1sourceConductance = 0;
                 }
             } else if (model->MOS1sheetResistanceGiven) {
-                if(model->MOS1sheetResistance != 0) {
+                if ((model->MOS1sheetResistance != 0) &&
+                                   (here->MOS1sourceSquares != 0)) {
+#else
                     here->MOS1sourceConductance = 
-                        1/(model->MOS1sheetResistance*here->MOS1sourceSquares);
+                        here->MOS1m /
+                          (model->MOS1sheetResistance*here->MOS1sourceSquares);
                 } else {
                     here->MOS1sourceConductance = 0;
                 }

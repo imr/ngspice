@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1989 Takayasu Sakurai
+Modified: 2000 AlansFixes
 **********/
 
     /* load the MOS6 device structure with those pointers needed later 
@@ -117,6 +118,9 @@ MOS6setup(matrix,inModel,ckt,states)
                 here=here->MOS6nextInstance) {
 	    if (here->MOS6owner != ARCHme) goto matrixpointers;
 
+            CKTnode *tmpNode;
+            IFuid tmpName;
+            
             if(!here->MOS6drainPerimiterGiven) {
                 here->MOS6drainPerimiter = 0;
             }
@@ -155,6 +159,14 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->MOS6name,"drain");
                 if(error) return(error);
                 here->MOS6dNodePrime = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             } else {
                 here->MOS6dNodePrime = here->MOS6dNode;
             }
@@ -166,6 +178,14 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->MOS6name,"source");
                 if(error) return(error);
                 here->MOS6sNodePrime = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             } else {
                 here->MOS6sNodePrime = here->MOS6sNode;
             }

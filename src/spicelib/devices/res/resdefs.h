@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #ifndef RES
@@ -81,12 +82,14 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     double RESsheetRes;     /* sheet resistance of devices in ohms/square */
     double RESdefWidth;     /* default width of a resistor */
     double RESnarrow;       /* amount by which device is narrower than drawn */
+    double RESshort;        /* amount by which device is shorter than drawn */
     unsigned REStnomGiven: 1;   /* flag to indicate nominal temp. was given */
     unsigned REStc1Given : 1;   /* flag to indicate tc1 was specified */
     unsigned REStc2Given : 1;   /* flag to indicate tc2 was specified */
     unsigned RESsheetResGiven   :1; /* flag to indicate sheet resistance given*/
     unsigned RESdefWidthGiven   :1; /* flag to indicate default width given */
     unsigned RESnarrowGiven     :1; /* flag to indicate narrow effect given */
+    unsigned RESshortGiven      :1; /* flag to indicate short effect given */
 } RESmodel;
 
 /* device parameters */
@@ -113,6 +116,7 @@ typedef struct sRESmodel {       /* model structure for a resistor */
 #define RES_MOD_NARROW 105
 #define RES_MOD_R 106
 #define RES_MOD_TNOM 107
+#define RES_MOD_SHORT 108
 
 /* device questions */
 #define RES_QUEST_SENS_REAL      201

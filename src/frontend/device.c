@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
+Modified: 2000 AlansFixes
 **********/
 
 /*
@@ -76,7 +77,7 @@ all_show(wordlist *wl, int mode)
 
     if (!cp_getvar("width", VT_NUM, (char *) &screen_width))
 	    screen_width = DEF_WIDTH;
-    count = screen_width / 11 - 1;
+   count = (screen_width - LEFT_WIDTH) / (DEV_WIDTH + 1);
 
     n = 0;
     do {
@@ -168,7 +169,7 @@ all_show(wordlist *wl, int mode)
 
 		i = 0;
 		do {
-			printf(" device   ");
+		printf("%*s", LEFT_WIDTH, "device");
 			j = dgen_for_n(dg, count, printstr, "n", i);
 			i += 1;
 			printf("\n");
@@ -177,7 +178,7 @@ all_show(wordlist *wl, int mode)
 		if (ft_sim->devices[dg->dev_type_no]->numModelParms) {
 			i = 0;
 			do {
-				printf(" model    ");
+			printf("%*s", LEFT_WIDTH, "model");
 				j = dgen_for_n(dg, count, printstr, "m", i);
 				i += 1;
 				printf("\n");
@@ -200,7 +201,7 @@ all_show(wordlist *wl, int mode)
 		n += 1;
 		i = 0;
 		do {
-			printf(" model    ");
+		printf("%*s", LEFT_WIDTH, "model");
 			j = dgen_for_n(dg, count, printstr, "m", i);
 			i += 1;
 			printf("\n");
@@ -236,16 +237,16 @@ printstr(dgen *dg, char *name)
 {
     if (*name == 'n') {
 	if (dg->instance)
-	    printf(" %9.9s", dg->instance->GENname);
+	   printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, dg->instance->GENname);
 	else
-	    printf(" <???????>");
+	   printf(" %*s", DEV_WIDTH, "<???????>");
     } else if (*name == 'm') {
 	if (dg->model)
-	    printf(" %9.9s", dg->model->GENmodName);
+	   printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, dg->model->GENmodName);
 	else
-	    printf(" <???????>");
+	    printf(" %*s", DEV_WIDTH, "<???????>");
     } else
-	printf("  <error> ");
+	printf(" %*s", DEV_WIDTH, "<error>");
 
     return 0;
 }
@@ -278,9 +279,10 @@ param_forall(dgen *dg, int flags)
 		j = 0;
 		do {
 			if (!j)
-			    printf("%10.10s", plist[i].keyword);
+			   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH,
+                                           plist[i].keyword);
 			else
-			    printf("          ");
+			   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
 			k = dgen_for_n(dg, count, printvals,
 				(char *) (plist + i), j);
 			printf("\n");
@@ -323,9 +325,9 @@ listparam(wordlist *p, dgen *dg)
 	    j = 0;
 	    do {
 		if (!j)
-		    printf("%10.10s", p->wl_word);
+		   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
 		else
-		    printf("          ");
+		   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
 		k = dgen_for_n(dg, count, printvals, plist + i, j);
 		printf("\n");
 		j += 1;
@@ -334,9 +336,9 @@ listparam(wordlist *p, dgen *dg)
 	    j = 0;
 	    do {
 		if (!j)
-		    printf("%10.10s", p->wl_word);
+		   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
 		else
-		    printf("          ");
+		   printf("%*s", LEFT_WIDTH, " ");
 		k = dgen_for_n(dg, count, bogus1, 0, j);
 		printf("\n");
 		j += 1;
@@ -346,9 +348,9 @@ listparam(wordlist *p, dgen *dg)
 	j = 0;
 	do {
 	    if (!j)
-		printf("%10.10s", p->wl_word);
+		printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
 	    else
-		printf("          ");
+		printf("%*s", LEFT_WIDTH, " ");
 	    k = dgen_for_n(dg, count, bogus2, 0, j);
 	    printf("\n");
 	    j += 1;
@@ -358,13 +360,13 @@ listparam(wordlist *p, dgen *dg)
 
 int bogus1(dgen *dg)
 {
-    printf(" ---------");
+   printf(" %*s", DEV_WIDTH, "---------");
     return 0;
 }
 
 int bogus2(dgen *dg)
 {
-    printf(" ?????????");
+    printf(" %*s", DEV_WIDTH, "?????????");
     return 0;
 }
 
@@ -400,54 +402,54 @@ printvals(dgen *dg, IFparm *p, int i)
     if (p->dataType & IF_VECTOR) {
 	switch ((p->dataType & IF_VARTYPES) & ~IF_VECTOR) {
 	    case IF_FLAG:
-		    printf(" % 9d", val.v.vec.iVec[i]);
+		    printf(" % *d", DEV_WIDTH, val.v.vec.iVec[i]);
 		    break;
 	    case IF_INTEGER:
-		    printf(" % 9d", val.v.vec.iVec[i]);
+		    printf(" % *d", DEV_WIDTH, val.v.vec.iVec[i]);
 		    break;
 	    case IF_REAL:
-		    printf(" % 9.3g", val.v.vec.rVec[i]);
+		    printf(" % *.6g", DEV_WIDTH, val.v.vec.rVec[i]);
 		    break;
 	    case IF_COMPLEX:
 		    if (!(i % 2))
-			    printf(" % 9.3g", val.v.vec.cVec[i / 2].real);
+			   printf(" % *.6g", DEV_WIDTH, val.v.vec.cVec[i / 2].real);
 		    else
-			    printf(" % 9.3g", val.v.vec.cVec[i / 2].imag);
+			   printf(" % *.6g", DEV_WIDTH, val.v.vec.cVec[i / 2].imag);
 		    break;
 	    case IF_STRING:
-		    printf(" %9.9s", val.v.vec.sVec[i]);
+		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, val.v.vec.sVec[i]);
 		    break;
 	    case IF_INSTANCE:
-		    printf(" %9.9s", val.v.vec.uVec[i]);
+		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, val.v.vec.uVec[i]);
 		    break;
 	    default:
-		    printf(" ******** ");
+		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, " ******** ");
 	}
     } else {
 	switch ((p->dataType & IF_VARTYPES) & ~IF_VECTOR) {
 	    case IF_FLAG:
-		    printf(" % 9d", val.iValue);
+		    printf(" % *d", DEV_WIDTH, val.iValue);
 		    break;
 	    case IF_INTEGER:
-		    printf(" % 9d", val.iValue);
+		    printf(" % *d", DEV_WIDTH, val.iValue);
 		    break;
 	    case IF_REAL:
-		    printf(" % 9.3g", val.rValue);
+		    printf(" % *.6g", DEV_WIDTH, val.rValue);
 		    break;
 	    case IF_COMPLEX:
 		    if (i % 2)
-			    printf(" % 9.3g", val.cValue.real);
+			   printf(" % *.6g", DEV_WIDTH, val.cValue.real);
 		    else
-			    printf(" % 9.3g", val.cValue.imag);
+			   printf(" % *.6g", DEV_WIDTH, val.cValue.imag);
 		    break;
 	    case IF_STRING:
-		    printf(" %9.9s", val.sValue);
+		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, val.sValue);
 		    break;
 	    case IF_INSTANCE:
-		    printf(" %9.9s ", val.uValue);
+		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, val.uValue);
 		    break;
 	    default:
-		    printf(" ******** ");
+		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, " ******** ");
 	}
     }
 

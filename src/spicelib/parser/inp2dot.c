@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -742,7 +743,7 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
     } else if ((strcmp(token, ".op") == 0)) {
 	return dot_op(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".nodeset") == 0)) {
-	return dot_nodeset(line, ckt, tab, current, task, gnode);
+	 return(0);
     } else if ((strcmp(token, ".disto") == 0)) {
 	return dot_disto(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".noise") == 0)) {
@@ -754,7 +755,7 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 	LITERR("Use fourier command to obtain fourier analysis\n");
 	return (0);
     } else if ((strcmp(token, ".ic") == 0)) {
-	return dot_ic(line, ckt, tab, current, task, gnode, foo);
+	return (0);
     } else if ((strcmp(token, ".ac") == 0)) {
 	return dot_ac(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".pz") == 0)) {

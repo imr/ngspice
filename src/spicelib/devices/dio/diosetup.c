@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 /* load the diode structure with those pointers needed later 
@@ -86,9 +87,21 @@ matrixpointers:
             if(model->DIOresist == 0) {
                 here->DIOposPrimeNode = here->DIOposNode;
             } else if(here->DIOposPrimeNode == 0) {
+            	
+            	CKTnode *tmpNode;
+               IFuid tmpName;
+            	
                 error = CKTmkVolt(ckt,&tmp,here->DIOname,"internal");
                 if(error) return(error);
                 here->DIOposPrimeNode = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             }
 
 /* macro to make elements with built in test for out of memory */

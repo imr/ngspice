@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 1985 Thomas L. Quarles
  * Modified 1999 Paolo Nenzi - Removed non STDC definitions
+ * Modified 2000 AlansFixes
  */
 #ifndef CKT
 #define CKT "CKTdefs.h $Revision$  on $Date$ "
@@ -173,6 +174,7 @@ typedef struct {
     double CKTlteAbstol;
 #endif /* NEWTRUNC */
   double CKTgmin;         /* Parallel Conductance --- */
+  double CKTgshunt;       
   double CKTdelmin;       /* ??? */
   double CKTtrtol;        /* ??? */
   double CKTfinalTime;    /* ??? */
@@ -184,7 +186,9 @@ typedef struct {
   double CKTdiagGmin;     /* ??? */
   int CKTnumSrcSteps;     /* ??? */
   int CKTnumGminSteps;    /* ??? */
+  double CKTgminFactor;   
   int CKTnoncon;          /* ??? */
+  double CKTdefaultMosM;  
   double CKTdefaultMosL;  /* Default Channel Lenght of MOS devices */
   double CKTdefaultMosW;  /* Default Channel Width of MOS devics */
   double CKTdefaultMosAD; /* Default Drain Area of MOS */
@@ -211,6 +215,7 @@ typedef struct {
 				   lines */
   unsigned int CKTbadMos3:1; /* Use old, unfixed MOS3 equations */
   unsigned int CKTkeepOpInfo:1; /* flag for small signal analyses */
+  unsigned int CKTcopyNodesets:1; /* NodesetFIX */
   int CKTtroubleNode;		/* Non-convergent node number */
   GENinstance *CKTtroubleElt;	/* Non-convergent device instance */
 
@@ -289,7 +294,7 @@ extern int CKTsetBreak( CKTcircuit *, double );
 extern int CKTsetNodPm( void *, void *, int , IFvalue *, IFvalue *);
 extern int CKTsetOpt( void *, void *, int , IFvalue *);
 extern int CKTsetup( CKTcircuit *);
-extern int CKTunsetup(CKTcircuit *ckt); 
+extern int CKTunsetup(CKTcircuit *); 
 extern int CKTtemp( CKTcircuit *);
 extern char *CKTtrouble(void *, char *);
 extern void CKTterr( int , CKTcircuit *, double *);
@@ -333,6 +338,8 @@ extern int NIpzSym(PZtrial **, PZtrial *);
 extern int NIpzSym2(PZtrial **, PZtrial *);
 extern int NIreinit( CKTcircuit *);
 extern int NIsenReinit( CKTcircuit *);
+extern int NIdIter (CKTcircuit *);             
+extern int NInzIter (CKTcircuit *, int, int ); 
 extern IFfrontEnd *SPfrontEnd;
 
 #endif /*CKT*/

@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified Apr 2000 - Paolo Nenzi 
+Modified: 2000 AlanSfixes
 **********/
 
 #include "ngspice.h"
@@ -36,6 +37,7 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
         if(!model->REStc1Given) model->REStempCoeff1    = 0;
         if(!model->REStc2Given) model->REStempCoeff2    = 0;
         if(!model->RESnarrowGiven) model->RESnarrow     = 0;
+        if(!model->RESshortGiven) model->RESshort = 0;
 
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
@@ -52,7 +54,7 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
                 if(model->RESsheetResGiven && (model->RESsheetRes != 0) &&
                         (here->RESlength != 0)) {
                     here->RESresist = model->RESsheetRes * (here->RESlength -
-                        model->RESnarrow) / (here->RESwidth - model->RESnarrow);
+                        model->RESshort) / (here->RESwidth - model->RESnarrow);
                 } else {
                     (*(SPfrontEnd->IFerror))(ERR_WARNING,
                             "%s: resistance=0, set to 1000",&(here->RESname));

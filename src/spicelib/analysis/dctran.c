@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000  AlansFixes
 **********/
 
 /* subroutine to do DC TRANSIENT analysis    
@@ -44,12 +45,13 @@ DCtran(CKTcircuit *ckt,
     double maxstepsize=0.0;
 
     int ltra_num;
+    CKTnode *node;
 #ifdef PARALLEL_ARCH
     long type = MT_TRANAN, length = 1;
 #endif /* PARALLEL_ARCH */
 
     if(restart || ckt->CKTtime == 0) {
-        delta=MIN(ckt->CKTfinalTime/50,ckt->CKTstep)/10;
+        delta=MIN(ckt->CKTfinalTime/100,ckt->CKTstep)/10;
 
 	/* begin LTRA code addition */
 	if (ckt->CKTtimePoints != NULL)
@@ -96,6 +98,52 @@ DCtran(CKTcircuit *ckt,
                 (ckt->CKTmode & MODEUIC)|MODETRANOP| MODEINITJCT,
                 (ckt->CKTmode & MODEUIC)|MODETRANOP| MODEINITFLOAT,
                 ckt->CKTdcMaxIter);
+                
+         if(converged != 0) {
+
+           CKTnode *node;
+           double new, old, tol;
+           int i=1;
+
+           fprintf(stdout,"\nTransient solution failed -\n\n");
+           fprintf(stdout,"Last Node Voltages\n");
+           fprintf(stdout,"------------------\n\n");
+           fprintf(stdout,"%-30s %20s %20s\n", "Node", "Last Voltage",
+                                                              "Previous Iter");
+           fprintf(stdout,"%-30s %20s %20s\n", "----", "------------",
+                                                              "-------------");
+           for(node=ckt->CKTnodes->next;node;node=node->next) {
+             if (strstr(node->name, "#branch") || !strstr(node->name, "#")) {
+               new =  *((ckt->CKTrhsOld) + i ) ;
+               old =  *((ckt->CKTrhs) + i ) ;
+               fprintf(stdout,"%-30s %20g %20g", node->name, new, old);
+               if(node->type == 3) {
+                   tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
+                           ckt->CKTvoltTol;
+               } else {
+                   tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
+                           ckt->CKTabstol;
+               }
+               if (fabs(new-old) >tol ) {
+                    fprintf(stdout," *");
+               }
+               fprintf(stdout,"\n");
+             };
+             i++;
+           }
+        } else {
+           fprintf(stdout,"\nInitial Transient Solution\n");
+           fprintf(stdout,"--------------------------\n\n");
+           fprintf(stdout,"%-30s %15s\n", "Node", "Voltage");
+           fprintf(stdout,"%-30s %15s\n", "----", "-------");
+           for(node=ckt->CKTnodes->next;node;node=node->next) {
+               if (strstr(node->name, "#branch") || !strstr(node->name, "#"))
+                 fprintf(stdout,"%-30s %15g\n", node->name,
+                                             *(ckt->CKTrhsOld+node->number));
+           };
+        };
+        fprintf(stdout,"\n");
+        fflush(stdout);
         if(converged != 0) return(converged);
         ckt->CKTstat->STATtimePts ++;
         ckt->CKTorder=1;
@@ -198,7 +246,8 @@ nextTime:
  */
 
 #ifdef STEPDEBUG
-    printf("accepted at %g\n",ckt->CKTtime);
+   printf("Delta %g accepted at time %g\n",ckt->CKTdelta,ckt->CKTtime);
+   fflush(stdout);
 #endif /* STEPDEBUG */
     ckt->CKTstat->STATaccepted ++;
     ckt->CKTbreak=0;
@@ -317,7 +366,8 @@ resume:
         ckt->CKTsaveDelta = ckt->CKTdelta;
         ckt->CKTdelta = *(ckt->CKTbreaks) - ckt->CKTtime;
 #ifdef STEPDEBUG
-        (void)printf("delta cut to hit breakpoint\n");
+        (void)printf("delta cut to %g to hit breakpoint\n",ckt->CKTdelta);
+        fflush(stdout);
 #endif
         ckt->CKTbreak = 1; /* why? the current pt. is not a bkpt. */
     }
@@ -363,7 +413,8 @@ resume:
             ckt->CKTstat->STATrejected ++;
             ckt->CKTdelta = ckt->CKTdelta/8;
 #ifdef STEPDEBUG
-            (void)printf("delta cut for non-convergence\n");
+           (void)printf("delta cut to %g for non-convergance\n",ckt->CKTdelta);
+            fflush(stdout);
 #endif
             if(firsttime) {
                 ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITTRAN;
@@ -437,8 +488,10 @@ resume:
                 /* time point OK  - 630*/
                 ckt->CKTdelta = new;
 #ifdef STEPDEBUG
-                (void)printf(
-                    "delta set to truncation error result:point accepted\n");
+               (void)printf(
+                  "delta set to truncation error result: %g. Point accepted\n",
+                  ckt->CKTdelta);
+                fflush(stdout);
 #endif
 #ifdef WANT_SENSE2
                 if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN)){

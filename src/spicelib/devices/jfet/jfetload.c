@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 	Laboratory for Communication Science Engineering
 	Sydney University Department of Electrical Engineering, Australia
@@ -74,6 +75,8 @@ JFETload(inModel,ckt)
     int icheck;
     int ichk1;
     int error;
+    
+    double arg, vt_temp;
 
     /*  loop through all the models */
     for( ; model != NULL; model = model->JFETnextModel ) {
@@ -219,22 +222,30 @@ JFETload(inModel,ckt)
              *   determine dc current and derivatives 
              */
             vds=vgs-vgd;
-            if (vgs <= -5*here->JFETtemp*CONSTKoverQ) {
-                ggs = -csat/vgs+ckt->CKTgmin;
-                cg = ggs*vgs;
+            
+            vt_temp=here->JFETtemp*CONSTKoverQ;
+            if (vgs < -3*vt_temp) {
+                arg=3*vt_temp/(vgs*CONSTe);
+                arg = arg * arg * arg;
+                cg = -csat*(1+arg)+ckt->CKTgmin*vgs;
+                ggs = csat*3*arg/vgs+ckt->CKTgmin;
             } else {
-                evgs = exp(vgs/(here->JFETtemp*CONSTKoverQ));
-                ggs = csat*evgs/(here->JFETtemp*CONSTKoverQ)+ckt->CKTgmin;
+                evgs = exp(vgs/vt_temp);
+                ggs = csat*evgs/vt_temp+ckt->CKTgmin;
                 cg = csat*(evgs-1)+ckt->CKTgmin*vgs;
             }
-            if (vgd <= -5*(here->JFETtemp*CONSTKoverQ)) {
-                ggd = -csat/vgd+ckt->CKTgmin;
-                cgd = ggd*vgd;
+            
+            if (vgd < -3*vt_temp) {
+                arg=3*vt_temp/(vgd*CONSTe);
+                arg = arg * arg * arg;
+                cgd = -csat*(1+arg)+ckt->CKTgmin*vgd;
+                ggd = csat*3*arg/vgd+ckt->CKTgmin;
             } else {
-                evgd = exp(vgd/(here->JFETtemp*CONSTKoverQ));
-                ggd = csat*evgd/(here->JFETtemp*CONSTKoverQ)+ckt->CKTgmin;
+                evgd = exp(vgd/vt_temp);
+                ggd = csat*evgd/vt_temp+ckt->CKTgmin;
                 cgd = csat*(evgd-1)+ckt->CKTgmin*vgd;
             }
+            
             cg = cg+cgd;
 
 	    /* Modification for Sydney University JFET model */

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1989 Takayasu Sakurai
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -34,10 +35,10 @@ MOS6ask(ckt,inst,which,value,select)
             value->rValue = here->MOS6temp-CONSTCtoK;
             return(OK);
         case MOS6_CGS:
-            value->rValue = *(ckt->CKTstate0 + here->MOS6capgs);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgs);
             return(OK);
         case MOS6_CGD:
-            value->rValue = *(ckt->CKTstate0 + here->MOS6capgd);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgd);
             return(OK);
         case MOS6_L:
             value->rValue = here->MOS6l;
@@ -178,7 +179,10 @@ MOS6ask(ckt,inst,which,value,select)
             value->rValue = *(ckt->CKTstate0 + here->MOS6vds);
             return(OK);
         case MOS6_CAPGS:
-            value->rValue = *(ckt->CKTstate0 + here->MOS6capgs);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgs);
+            /* add overlap capacitance */
+            value->rValue += (here->sMOS6modPtr->MOS6gateSourceOverlapCapFactor)
+                             * (here->MOS6w);
             return(OK);
         case MOS6_QGS:
             value->rValue = *(ckt->CKTstate0 + here->MOS6qgs);
@@ -187,7 +191,10 @@ MOS6ask(ckt,inst,which,value,select)
             value->rValue = *(ckt->CKTstate0 + here->MOS6cqgs);
             return(OK);
         case MOS6_CAPGD:
-            value->rValue = *(ckt->CKTstate0 + here->MOS6capgd);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgd);
+            /* add overlap capacitance */
+            value->rValue += (here->sMOS6modPtr->MOS6gateSourceOverlapCapFactor)
+                             * (here->MOS6w);
             return(OK);
         case MOS6_QGD:
             value->rValue = *(ckt->CKTstate0 + here->MOS6qgd);
@@ -196,7 +203,11 @@ MOS6ask(ckt,inst,which,value,select)
             value->rValue = *(ckt->CKTstate0 + here->MOS6cqgd);
             return(OK);
         case MOS6_CAPGB:
-            value->rValue = *(ckt->CKTstate0 + here->MOS6capgb);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgb);
+            /* add overlap capacitance */
+            value->rValue += (here->sMOS6modPtr->MOS6gateBulkOverlapCapFactor)
+                             * (here->MOS6l
+                                -2*(here->sMOS6modPtr->MOS6latDiff));
             return(OK);
         case MOS6_QGB:
             value->rValue = *(ckt->CKTstate0 + here->MOS6qgb);

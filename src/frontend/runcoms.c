@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+Modified: 2000 AlansFixes
 **********/
 
 /*
@@ -34,6 +35,8 @@ extern struct dbcomm *dbs;
 
 FILE *rawfileFp;
 bool rawfileBinary;
+#define RAWBUF_SIZE 32768
+char rawfileBuf[RAWBUF_SIZE];
 
 void
 com_scirc(wordlist *wl)
@@ -212,6 +215,7 @@ dosim(char *what, wordlist *wl)
         if (!*wl->wl_word)
 	    rawfileFp = stdout;
         else if (!(rawfileFp = fopen(wl->wl_word, "w"))) {
+        	setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
             perror(wl->wl_word);
             ft_setflag = FALSE;
             return 1;
@@ -249,7 +253,12 @@ dosim(char *what, wordlist *wl)
 	    ft_curckt->ci_inprogress = FALSE;
     }
     if (rawfileFp)
-	(void) fclose(rawfileFp);
+      if (ftell(rawfileFp)==0) {
+	    (void) fclose(rawfileFp);
+            (void) remove(wl->wl_word);
+        } else {
+	    (void) fclose(rawfileFp);
+        };
     ft_curckt->ci_runonce = TRUE;
     ft_setflag = FALSE;
     return err;
@@ -284,6 +293,14 @@ bool
 ft_getOutReq(FILE **fpp, struct plot **plotp, bool *binp, char *name, char *title)
 {
     /*struct plot *pl;*/
+#ifndef BATCH
+struct plot *pl;
+
+    if ( (strcmp(name, "Operating Point")==0) ||
+         (strcmp(name, "AC Operating Point")==0) ) {
+        return (false);
+    };
+#endif
 
     if (rawfileFp) {
         *fpp = rawfileFp;
