@@ -47,8 +47,11 @@
 /* Define if we have GNU readline */   
 #undef HAVE_GNUREADLINE
 
-/* We do not want spurios debug info into non-developer code */
+/* Define if you want to debug frontend */
 #undef FTEDEBUG
+
+/* Define if you want to debug ngspice shell */
+#undef CPDEBUG
 
 /* Define if you want to debug pole-zero analysis */
 #undef PZDEBUG
@@ -73,6 +76,9 @@
  
 /* Spice cluster support */
 #undef CLUSTER
+
+/* Spice .param support */
+#undef NUMPARAMS
 
 /* Generate MS WINDOWS executable */
 #undef HAS_WINDOWS

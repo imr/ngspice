@@ -87,6 +87,7 @@ ngspice_LDADD = \
 	spicelib/devices/libdev.a \
 	@XSPICELIB2@		  \
 	frontend/parser/libparser.a \
+	@NUMPARAMLIB@           \
 	frontend/help/libhlp.a \
 	spicelib/parser/libinp.a \
 	@CIDERSIM@		\
@@ -119,6 +120,7 @@ ngnutmeg_LDADD = \
 	frontend/wdisp/libwindisp.a \
 	frontend/plotting/libplotting.a \
 	frontend/parser/libparser.a \
+	@NUMPARAMLIB@		\
 	frontend/help/libhlp.a \
 	maths/cmaths/libcmaths.a \
 	maths/poly/libpoly.a \
