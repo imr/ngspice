@@ -31,7 +31,7 @@ INPdoOpts(ckt,anal,optCard,tab)
     int error;
     int i;
     int which;
-    IFanalysis *prm;
+    IFanalysis *prm = NULL;
 
     which = -1;
     i=0;

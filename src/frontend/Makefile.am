@@ -33,6 +33,8 @@ libfte_a_SOURCES = \
 	com_history.h	\
 	com_let.c	\
 	com_let.h	\
+	com_option.c	\
+	com_option.h	\
 	com_plot.c	\
 	com_plot.h	\
 	com_rehash.c	\

@@ -21,7 +21,7 @@ void INP2R(void *ckt, INPtables * tab, card * current)
 /* Rname <node> <node> [<val>][<mname>][w=<val>][l=<val>][ac=<val>] */
 
     int mytype;			/* the type we determine resistors are */
-    int type;			/* the type the model says it is */
+    int type = 0;			/* the type the model says it is */
     char *line;			/* the part of the current line left to parse */
     char *saveline;		/* ... just in case we need to go back... */
     char *name;			/* the resistor's name */

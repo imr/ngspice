@@ -16,12 +16,12 @@ int ciprefix(register char *p, register char *s);
 void strtolower(char *str);
 char * gettok(char **s);
 
-#ifndef HAVE_INDEX
+#if !defined(HAVE_INDEX) && !defined(HAVE_STRCHR)
 
 char * index(register char *s, register char c);
 char * rindex(register char *s,register char c );
 
-#endif /* HAVE_INDEX */
+#endif /* !defined(HAVE_INDEX) && !defined(HAVE_STRCHR) */
 
 #ifndef HAVE_BCOPY
 

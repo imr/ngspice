@@ -165,6 +165,8 @@ extern struct variable *cp_setparse(wordlist *wl);
 /* var2.c */
 extern void cp_vprint(void);
 extern void com_set(wordlist *wl);
+extern void com_option(wordlist *wl);
+extern void com_state(wordlist *wl);
 extern void com_unset(wordlist *wl);
 extern void com_shift(wordlist *wl);
 extern bool cp_getvar(char *name, int type, void *retval);

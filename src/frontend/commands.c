@@ -47,7 +47,12 @@
 #include "com_plot.h"
 #include "com_setscale.h"
 #include "com_xgraph.h"
+#include "com_state.h"
 #include "fourier.h"
+
+#ifdef EXPERIMENTAL_CODE
+#include "com_option.h"
+#endif
 
 /* FIXME: Integrate spcp_coms and nutcp_coms into one variable. */
 
@@ -66,11 +71,20 @@ struct comm spcp_coms[] = {
     { "define", com_define, FALSE, FALSE, TRUE,
       { 010000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
       (void (*)()) NULL,
-      "[[func (args)] stuff] : Define a user-definable function." } ,
+      "[[func (args)] stuff] : Define a user-definable function." } ,    
     { "set", com_set, FALSE, FALSE, TRUE,
       { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
       arg_set,
       "[option] [option = value] ... : Set a variable." } ,
+
+#ifdef EXPERIMENTAL_CODE
+/* PN support for altering options in interactive mode */    
+    { "option", com_option, FALSE, TRUE, TRUE,
+      { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
+      arg_set,
+      "[option] [option = value] ... : Set a simulator option." } ,
+#endif    
+    
     { "alias", com_alias, FALSE, FALSE, FALSE,
       { 02, 04, 04, 04 }, E_ADVANCED, 0, LOTS,
       (void (*)()) NULL,
@@ -435,6 +449,15 @@ struct comm nutcp_coms[] = {
       { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
       arg_set,
       "[option] [option = value] ... : Set a variable." } ,
+
+#ifdef EXPERIMENTAL_CODE
+/* PN support for altering options in interactive mode */    
+    { "option", com_option, FALSE, TRUE, TRUE,
+      { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
+      arg_set,
+      "[option] [option = value] ... : Set a simulator option." } ,
+#endif    
+     
     { "alias", com_alias, FALSE, FALSE, FALSE,
       { 02, 04, 04, 04 }, E_ADVANCED, 0, LOTS,
       (void (*)()) NULL,

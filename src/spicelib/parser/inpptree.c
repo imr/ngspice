@@ -153,7 +153,7 @@ INPgetTree(char **line, INPparseTree ** pt, void *ckt, INPtables * tab)
 
 static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 {
-    INPparseNode *arg1, *arg2, *newp;
+    INPparseNode *arg1 = NULL, *arg2, *newp;
 
 /* printf("differentiating: "); printTree(p); printf(" wrt var %d\n", varnum);*/
 
