@@ -16,6 +16,7 @@ Author: 1985 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
+/* MW. this is never called - look at inp2dot.c
 void
 INPdoOpts(void *ckt, void *anal, card *optCard, INPtables *tab)
 {
@@ -44,7 +45,7 @@ INPdoOpts(void *ckt, void *anal, card *optCard, INPtables *tab)
         return;
     }
     line = optCard->line;
-    INPgetTok(&line,&token,1);    /* throw away '.option' */
+    INPgetTok(&line,&token,1);    * throw away '.option' *
     while (*line) {
         INPgetTok(&line,&token,1);
         for(i=0;i<prm->numParms;i++) {
@@ -80,3 +81,4 @@ INPdoOpts(void *ckt, void *anal, card *optCard, INPtables *tab)
         }
     }
 }
+*/

@@ -448,14 +448,18 @@ char *word;     /* something to stick a word of input into */
         /* not allowed to pay attention to additional input - return */
         return(1);
         /*NOTREACHED*/
+/* MW. .options is handled before - this is not needed    
     } else if ( (strcmp(token,".options")==0) ||
             (strcmp(token,".option")==0) ||
             (strcmp(token,".opt")==0) ){
-        /* .option - specify program options - rather complicated */
-        /* use a subroutine to handle all of them to keep this */
-        /* subroutine managable */
+        * .option - specify program options - rather complicated /
+        * use a subroutine to handle all of them to keep this /
+        * subroutine managable /
         INPdoOpts(ckt,ft_curckt->ci_curOpt,current,tab);
         return(0);
+INPdoOpts is never called (I hope) */
+
+
     } else if (strcmp(token, ".sens") == 0) {
       which = -1; /* Bug fix from Glao Dezai */
         for(i=0;i<ft_sim->numAnalyses;i++) {

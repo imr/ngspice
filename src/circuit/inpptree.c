@@ -77,7 +77,9 @@ static struct func {
     { "tanh",   PTF_TANH,   PTtanh } ,
     { "u",   	PTF_USTEP,  PTustep } ,
     { "uramp",  PTF_URAMP,  PTuramp } ,
-    { "-",      PTF_UMINUS, PTuminus }
+    { "-",      PTF_UMINUS, PTuminus },
+    /* MW. cif function added */
+    { "u2",	PTF_USTEP2, PTustep2}
 } ;
 
 #define NUM_FUNCS (sizeof (funcs) / sizeof (struct func))
@@ -329,6 +331,11 @@ PTdifferentiate(INPparseNode *p, int varnum)
 	    arg1 = mkf(PTF_USTEP, p->left);
             break;
 
+/* MW. PTF_CIF for new cif function */
+	case PTF_USTEP2:
+	    arg1 = mkcon((double) 0.0);
+	    break;
+	    
         case PTF_UMINUS:    /* - 1 ; like a constant (was 0 !) */
             arg1 = mkcon((double) - 1.0);
             break;
@@ -896,6 +903,10 @@ PTlexer(char **line)
     char *sbuf, *s;
 
     sbuf = *line;
+#ifdef notdef
+    printf("entering lexer, sbuf = '%s', lastoken = %d, lasttype = %d\n", 
+        sbuf, lasttoken, lasttype);
+#endif
     while ((*sbuf == ' ') || (*sbuf == '\t') || (*sbuf == '='))
         sbuf++;
 
@@ -987,7 +998,7 @@ PTlexer(char **line)
     return (&el);
 }
 
-#if 0
+#ifdef notdef
 
 /* Debugging stuff. */
 

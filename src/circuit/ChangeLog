@@ -1,8 +1,10 @@
-2000-05-21  Paolo Nenzi <p.nenzi@ieee.org>
+2000-05-22  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* inp2r.c: Modified ac parameter parsing code to conform to
-	           spice parameter parsing format
-
+	* inp2dot.c: Applied Widlok patch.
+	* inpdoopt.c: Applied Widolok patch:commented the entire function, 
+	              seems obsolete.
+	* inpptree.c, ptfuncs.c: Applied Widlok patch. Now there is a
+	                         new step function called u2.
 2000-04-04  Paolo Nenzi <p.nenzi@ieee.org>
     
 	* inpfindl.c: Modified the file for BSIM4 and future extensions to
