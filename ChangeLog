@@ -2,6 +2,7 @@
 
 	* src/tclspice.c:
 	blt_plot() - look for BLT vectors ::spice::[XY]_Data
+	Make callback return plot index also
 	
 2004-07-19 Stefan Jones <stefan.jones@multigig.com>
 

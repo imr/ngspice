@@ -1326,7 +1326,8 @@ static void dvecToBlt(Blt_Vector *Data, struct dvec *x) {
   return;
 }
 
-int blt_plot(struct dvec *y,struct dvec *x){
+int blt_plot(struct dvec *y,struct dvec *x,int new){
+  static int ctr=-1;
   Blt_Vector *X_Data=NULL, *Y_Data=NULL;
   char buf[1024];
     
@@ -1345,9 +1346,11 @@ int blt_plot(struct dvec *y,struct dvec *x){
   dvecToBlt(X_Data,x);
   dvecToBlt(Y_Data,y);
   
-  sprintf(buf,"spice_gr_Plot %s %s %s %s %s %s",
+  if(new) ctr++;
+  
+  sprintf(buf,"spice_gr_Plot %s %s %s %s %s %s %d",
 	  x->v_name, ft_typenames(x->v_type), ft_typabbrev(x->v_type),
-	  y->v_name, ft_typenames(y->v_type), ft_typabbrev(y->v_type));
+	  y->v_name, ft_typenames(y->v_type), ft_typabbrev(y->v_type),ctr);
 
   if(Tcl_Eval(spice_interp,buf) != TCL_OK) {
     Tcl_ResetResult(spice_interp);

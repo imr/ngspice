@@ -956,7 +956,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     if (devname && eq(devname, "blt")) {
       /* Just send the pairs to Tcl/Tk */
       for (d = vecs; d; d = d->v_link2) {
-	blt_plot(d, oneval ? (struct dvec *) NULL : d->v_scale);
+	blt_plot(d, oneval ? (struct dvec *) NULL : d->v_scale,(d==vecs?1:0));
       }
       rtn = TRUE;
       goto quit;

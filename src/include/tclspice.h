@@ -28,6 +28,6 @@ extern int  sp_Tk_Update(void);
 
 /* The blt callback method */
 #include <dvec.h>
-extern int blt_plot(struct dvec *y,struct dvec *x);
+extern int blt_plot(struct dvec *y,struct dvec *x,int new);
 
 #endif
