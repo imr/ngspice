@@ -86,60 +86,79 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
             return(OK);
         case BJT_QUEST_CC:
             value->rValue = *(ckt->CKTstate0 + here->BJTcc);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_CB:
             value->rValue = *(ckt->CKTstate0 + here->BJTcb);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_GPI:
             value->rValue = *(ckt->CKTstate0 + here->BJTgpi);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_GMU:
             value->rValue = *(ckt->CKTstate0 + here->BJTgmu);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_GM:
             value->rValue = *(ckt->CKTstate0 + here->BJTgm);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_GO:
             value->rValue = *(ckt->CKTstate0 + here->BJTgo);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_QBE:
             value->rValue = *(ckt->CKTstate0 + here->BJTqbe);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_CQBE:
             value->rValue = *(ckt->CKTstate0 + here->BJTcqbe);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_QBC:
             value->rValue = *(ckt->CKTstate0 + here->BJTqbc);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_CQBC:
             value->rValue = *(ckt->CKTstate0 + here->BJTcqbc);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_QCS:
             value->rValue = *(ckt->CKTstate0 + here->BJTqcs);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_CQCS:
             value->rValue = *(ckt->CKTstate0 + here->BJTcqcs);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_QBX:
             value->rValue = *(ckt->CKTstate0 + here->BJTqbx);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_CQBX:
             value->rValue = *(ckt->CKTstate0 + here->BJTcqbx);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_GX:
             value->rValue = *(ckt->CKTstate0 + here->BJTgx);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_CEXBC:
             value->rValue = *(ckt->CKTstate0 + here->BJTcexbc);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_GEQCB:
             value->rValue = *(ckt->CKTstate0 + here->BJTgeqcb);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_GCCS:
             value->rValue = *(ckt->CKTstate0 + here->BJTgccs);
+	    value->rValue *= here->BJTm;
             return(OK);
         case BJT_QUEST_GEQBX:
             value->rValue = *(ckt->CKTstate0 + here->BJTgeqbx);
+	    value->rValue *= here->BJTm;
             return(OK);
     case BJT_QUEST_SENS_DC:
         if(ckt->CKTsenInfo){
@@ -256,18 +275,23 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
                 value->rValue += tmp * *(ckt->CKTrhsOld + 
                         here->BJTemitNode);
             }
+	    value->rValue *= here->BJTm;
             return(OK);
 	case BJT_QUEST_CPI:
 	    value->rValue = here->BJTcapbe;
+	    value->rValue *= here->BJTm;
             return(OK);
 	case BJT_QUEST_CMU:
 	    value->rValue = here->BJTcapbc;
+	    value->rValue *= here->BJTm;
             return(OK);
 	case BJT_QUEST_CBX:
 	    value->rValue = here->BJTcapbx;
+	    value->rValue *= here->BJTm;
             return(OK);
 	case BJT_QUEST_CCS:
 	    value->rValue = here->BJTcapcs;
+	    value->rValue *= here->BJTm;
             return(OK);
         default:
             return(E_BADPARM);
