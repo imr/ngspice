@@ -8,7 +8,7 @@ TESTS = \
 	pzt.cir			\
 	simplepz.cir
 
-TESTS_ENVIRONMENT = $(SHELL) $(srcdir)/../check.sh $(top_builddir)/src/ngspice
+TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
 	$(TESTS)		\

@@ -21,10 +21,17 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
  Capacitor models (Fixed capacitor)
       model                     C
 
+        cap                     0
          cj                     0
        cjsw                     0
        defw                 1e-05
+       defl                     0
      narrow                     0
+      short                     0
+        tc1                     0
+        tc2                     0
+         di                     0
+      thick                     0
 
  Resistor models (Simple linear resistor)
       model                     R
@@ -35,11 +42,14 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
         tc1                     0
         tc2                     0
        defw                 1e-05
+         kf                     0
+         af                     0
 
  Capacitor: Fixed capacitor
      device                    c2                    c1
       model                     C                     C
 capacitance                 1e-06                 1e-06
+      dtemp                     0                     0
           i                     0                     0
           p                     0                     0
 
@@ -47,7 +57,9 @@ capacitance                 1e-06                 1e-06
      device                    r4                    r3
       model                     R                     R
  resistance                  1000                  1000
-         ac                     0                     0
+         ac                  1000                  1000
+      dtemp                     0                     0
+      noisy                     1                     1
           i                     0                     0
           p                     0                     0
 
