@@ -1115,10 +1115,14 @@ alter(PZtrial *new, PZtrial *nearto, double abstol, double reltol)
     double	p1, p2;
 
 #ifdef PZDEBUG
-    DEBUG(1) fprintf(stderr, "ALTER from: %.30g %.30g\n",
-	new->s.real, new->s.imag);
-    DEBUG(1) fprintf(stderr, "nt->next %g\n", nearto->prev->s.real);
-    DEBUG(1) fprintf(stderr, "nt->next %g\n", nearto->next->s.real);
+    DEBUG(1) {
+	fprintf(stderr, "ALTER from: %.30g %.30g\n",
+		new->s.real, new->s.imag);
+	if (nearto->prev)
+	    fprintf(stderr, "nt->prev %g\n", nearto->prev->s.real);
+	if (nearto->next)
+	    fprintf(stderr, "nt->next %g\n", nearto->next->s.real);
+    }
 #endif
 
     if (CKTpzTrapped != 2) {
