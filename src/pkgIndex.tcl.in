@@ -2145,10 +2145,10 @@ proc ResetZoom { graph } {
 
 #--------------------
 
-option add *zoomTitle.font	  -*-helvetica-medium-R-*-*-18-*-*-*-*-*-*-* 
-option add *zoomTitle.shadow	  yellow4
-option add *zoomTitle.foreground  yellow1
-option add *zoomTitle.coords	  "-Inf Inf"
+#option add *zoomTitle.font	  -*-helvetica-medium-R-*-*-18-*-*-*-*-*-*-* 
+#option add *zoomTitle.shadow	  yellow4
+#option add *zoomTitle.foreground  yellow1
+#option add *zoomTitle.coords	  "-Inf Inf"
 
 #--------------------
 proc ZoomTitleNext { graph } {
@@ -2216,10 +2216,10 @@ proc SetZoomPoint { graph x y } {
 
 #--------------------
 
-option add *zoomOutline.dashes		4	
-option add *zoomTitle.anchor		nw
-option add *zoomOutline.lineWidth	2
-option add *zoomOutline.xor		yes
+#option add *zoomOutline.dashes		4	
+#option add *zoomTitle.anchor		nw
+#option add *zoomOutline.lineWidth	2
+#option add *zoomOutline.xor		yes
 
 #--------------------
 proc MarchingAnts { graph offset } {
