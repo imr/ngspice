@@ -95,15 +95,14 @@
  */
 
 #include <config.h>
-#include <ngspice.h>
 
 #include <assert.h>
 #include <stdio.h>
 
 #include <spmatrix.h>
+#include "spdefs.h"
 #include <smpdefs.h>
 
-#include "spdefs.h"
 
 
 static void LoadGmin(SMPmatrix *eMatrix, double Gmin);

@@ -10,8 +10,9 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000  AlansFixes
 **********/
 
-#include "complex.h"
 #include <stdio.h>
+#include <math.h>
+#include <complex.h>
 
 int SMPaddElt( SMPmatrix *, int , int , double );
 double * SMPmakeElt( SMPmatrix * , int , int );

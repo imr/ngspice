@@ -38,13 +38,15 @@
  *  IMPORTS
  */
 
-#include <ngspice.h>
 #include <stdio.h>
+#include "complex.h"
 
 #undef  ABORT
 #undef  MALLOC
 #undef  FREE
 #undef  REALLOC
+#undef  CMPLX_MULT
+#undef  CMPLX_RECIPROCAL
 
 
 
@@ -58,9 +60,13 @@
 
 /* Begin macros. */
 
+/* Boolean data type */
+#define  BOOLEAN        int
 #define  NO             0
 #define  YES            1
-
+#define  NOT            !
+#define  AND            &&
+#define  OR             ||
 
 #define  SPARSE_ID      0x772773        /* Arbitrary (is Sparse on phone). */
 #define  IS_SPARSE(matrix)      ((matrix) != NULL &&            \
@@ -248,6 +254,20 @@
                  (from_a).Imag * (from_b).Real;         \
 }
 
+/* Complex reciprocation:  to = 1.0 / den */
+#define CMPLX_RECIPROCAL(to,den)                                        \
+{   RealNumber  r_;                                                     \
+    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
+        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
+    {   r_ = (den).Imag / (den).Real;                                   \
+        (to).Imag = -r_*((to).Real = 1.0/((den).Real + r_*(den).Imag)); \
+    }                                                                   \
+    else                                                                \
+    {   r_ = (den).Real / (den).Imag;                                   \
+        (to).Real = -r_*((to).Imag = -1.0/((den).Imag + r_*(den).Real));\
+    }                                                                   \
+}
+
 
 #define ALLOC(type,number)  ((type *)tmalloc((unsigned)(sizeof(type)*(number))))
 #define REALLOC(ptr,type,number)  \
@@ -267,9 +287,7 @@
 }
 #endif
 
-#include "complex.h"
-
-
+#include "defines.h"
 
 
 /*

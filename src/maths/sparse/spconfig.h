@@ -378,7 +378,7 @@
  *  Grab from Spice include files
  */
 
-#include "ngspice.h"
+// #include "ngspice.h"
 #define  MACHINE_RESOLUTION      DBL_EPSILON
 #define  LARGEST_REAL            DBL_MAX
 #define  SMALLEST_REAL           DBL_MIN
