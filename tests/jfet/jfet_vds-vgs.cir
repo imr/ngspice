@@ -9,5 +9,5 @@ VG 1 0 -2
 *
 .op
 .dc VD 0 25 1 VG -3 0 1
-*.print DC I(VD)
+.print DC I(VD)
 .END
