@@ -96,5 +96,5 @@ libckt_a_SOURCES = \
 		ckt.h
 
 
-INCLUDES =  -I$(top_srcdir)/src/include -I$(top_srcdir)/src/devices
+INCLUDES =  -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 MAINTAINERCLEANFILES = Makefile.in

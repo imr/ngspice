@@ -19,7 +19,7 @@
 #include <iferrmsg.h>
 #include <ftedefs.h>
 #include <devdefs.h>
-#include <devices/dev.h>
+#include <spicelib/devices/dev.h>
 #include <misc/ivars.h>
 #include <frontend/resource.h>
 #include <frontend/variable.h>

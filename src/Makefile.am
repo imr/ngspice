@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = misc maths frontend devices include
+SUBDIRS = misc maths frontend spicelib include
 
 bin_PROGRAMS =  ngspice nutmeg help sconvert proc2mod multidec makeidx
 
@@ -13,37 +13,37 @@ helpdata_DATA = ngspice.idx ngspice.txt
 
 
 DYNAMIC_DEVICELIBS = 			\
-	devices/asrc/libasrc.la		\
-	devices/bjt/libbjt.la		\
-	devices/bsim1/libbsim1.la	\
-	devices/bsim2/libbsim2.la	\
-	devices/bsim3/libbsim3.la	\
-	devices/bsim3v1/libbsim3v1.la	\
-	devices/bsim3v2/libbsim3v2.la	\
-	devices/bsim4/libbsim4.la	\
-	devices/cap/libcap.la		\
-	devices/cccs/libcccs.la		\
-	devices/ccvs/libccvs.la		\
-	devices/ccvs/libccvs.la		\
-	devices/csw/libcsw.la		\
-	devices/dio/libdio.la		\
-	devices/ind/libind.la		\
-	devices/isrc/libisrc.la		\
-	devices/jfet/libjfet.la		\
-	devices/jfet2/libjfet2.la	\
-	devices/ltra/libltra.la		\
-	devices/mes/libmes.la		\
-	devices/mos1/libmos1.la		\
-	devices/mos2/libmos2.la		\
-	devices/mos3/libmos3.la		\
-	devices/mos6/libmos6.la		\
-	devices/res/libres.la		\
-	devices/sw/libsw.la		\
-	devices/tra/libtra.la		\
-	devices/urc/liburc.la		\
-	devices/vccs/libvccs.la		\
-	devices/vcvs/libvcvs.la		\
-	devices/vsrc/libvsrc.la
+	spicelib/devices/asrc/libasrc.la		\
+	spicelib/devices/bjt/libbjt.la		\
+	spicelib/devices/bsim1/libbsim1.la	\
+	spicelib/devices/bsim2/libbsim2.la	\
+	spicelib/devices/bsim3/libbsim3.la	\
+	spicelib/devices/bsim3v1/libbsim3v1.la	\
+	spicelib/devices/bsim3v2/libbsim3v2.la	\
+	spicelib/devices/bsim4/libbsim4.la	\
+	spicelib/devices/cap/libcap.la		\
+	spicelib/devices/cccs/libcccs.la		\
+	spicelib/devices/ccvs/libccvs.la		\
+	spicelib/devices/ccvs/libccvs.la		\
+	spicelib/devices/csw/libcsw.la		\
+	spicelib/devices/dio/libdio.la		\
+	spicelib/devices/ind/libind.la		\
+	spicelib/devices/isrc/libisrc.la		\
+	spicelib/devices/jfet/libjfet.la		\
+	spicelib/devices/jfet2/libjfet2.la	\
+	spicelib/devices/ltra/libltra.la		\
+	spicelib/devices/mes/libmes.la		\
+	spicelib/devices/mos1/libmos1.la		\
+	spicelib/devices/mos2/libmos2.la		\
+	spicelib/devices/mos3/libmos3.la		\
+	spicelib/devices/mos6/libmos6.la		\
+	spicelib/devices/res/libres.la		\
+	spicelib/devices/sw/libsw.la		\
+	spicelib/devices/tra/libtra.la		\
+	spicelib/devices/urc/liburc.la		\
+	spicelib/devices/vccs/libvccs.la		\
+	spicelib/devices/vcvs/libvcvs.la		\
+	spicelib/devices/vsrc/libvsrc.la
 
 ## Build ngspice first:
 
@@ -57,11 +57,11 @@ ngspice_LDADD = \
 	frontend/libfte.a \
 	frontend/plotting/libplotting.a \
 	$(DYNAMIC_DEVICELIBS) \
-	devices/analysis/libckt.a \
-	devices/libdev.a \
+	spicelib/devices/analysis/libckt.a \
+	spicelib/devices/libdev.a \
 	frontend/parser/libparser.a \
 	frontend/help/libhlp.a \
-	devices/parser/libinp.a \
+	spicelib/devices/parser/libinp.a \
 	maths/deriv/libderiv.a \
 	maths/cmaths/libcmaths.a \
 	maths/poly/libpoly.a \
@@ -150,7 +150,7 @@ all:
 ## General Includes and libraries:
 
 
-INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/devices @X_CFLAGS@
+INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices @X_CFLAGS@
 
 LIBS = @LIBS@ @X_LIBS@ @X_PRE_LIBS@ @X_EXTRA_LIBS@
 
