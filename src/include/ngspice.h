@@ -183,6 +183,9 @@ extern int tcl_fprintf(FILE *f, const char *format, ...);
 #undef fprintf
 #define fprintf tcl_fprintf
 
+#undef perror
+#define perror(string) fprintf(stderr,"%s: %s\n",string,sys_errlist[errno])
+
 #endif
 
 #ifdef __MINGW32__

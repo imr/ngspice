@@ -1,5 +1,8 @@
 2004-06-10 Stefan Jones <stefan.jones@multigig.com>
 
+	* include/ngspice.h:
+	Print perror to the Tk console
+	
 	* src/tclspice.c:
 	test for FILE in tcl_printf being stdout/stderr
 	Could be more than one fd for stdout/stderr
