@@ -1,3 +1,13 @@
+2003-12-24  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/maths/cmaths/cmath4.c: Applied
+	Vera Albrecht patch to enable interpolate
+	function.
+	
+	* src/frontend/{come_let.c, control.c, evaluate.c, outitf.c, parse.c},
+	  src/frontend/parser/lexical.c: Applied Vera Albrecht patch that
+	  fixes ngspice bugs in its control language (c shell). 
+
 2003-12-08  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/spicelib/devices/mos9/*: Added 

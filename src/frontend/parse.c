@@ -27,7 +27,9 @@ static struct pnode * mkunode(int op, struct pnode *arg);
 static struct pnode * mkfnode(char *func, struct pnode *arg);
 static struct pnode * mknnode(double number);
 static struct pnode * mksnode(char *string);
-void   print_elem(struct element *elem); /* va: for debugging */
+static void   print_elem(struct element *elem); /* va: for debugging */
+static char * get_token_name(int e_token); /* va, for debugging */
+
 
 static int lasttoken = END, lasttype;
 static char *sbuf;
@@ -339,12 +341,13 @@ lexer(void)
             /* It is bad how we have to recognise '[' -- sometimes
              * it is part of a word, when it defines a parameter
              * name, and otherwise it isn't.
+	     * va, ']' too
              */
 	    atsign = 0;
             for (s = el.e_string; *s && !index(specials, *s); s++, sbuf++) {
                 if (*s == '@')
 		    atsign = 1;
-                else if (*s == '[' && !atsign)
+                else if (!atsign && ( *s == '[' || *s == ']' ) )
                     break;
 	    }
             if (*s)
@@ -401,46 +404,49 @@ static char prectable[23][23] = {
 } ;
 
 /* Return an expr. */
-
 static struct pnode *
 parse(void)
 {
     struct element stack[STACKSIZE];
-    char *stringStack[STACKSIZE];
-    int sp = 0, st, i, fsp = 0;
+    int sp = 0, st, i, spmax=0; /* va: spmax = maximal used stack */
     struct element *top, *next;
     struct pnode *pn, *lpn, *rpn;
     char rel;
+    char * parse_string=sbuf; /* va, duplicate sbuf's pointer for error message only, no tfree */
 
     stack[0].e_token = END;
     next = lexer();
-    if(next->e_token == VALUE && next->e_type == STRING)
-	stringStack[fsp++] = next->e_string;
 
     while ((sp > 1) || (next->e_token != END)) {
         /* Find the top-most terminal. */
+        /* va: no stack understepping, because stack[0].e_token==END */
         i = sp;
         do {
             top = &stack[i--];
-        } while (top->e_token == VALUE);
+        } while (top->e_token == VALUE && i>=0); /* va: do not understep stack */
+        if (top->e_token == VALUE) {
+            fprintf(cp_err, "Error: in parse.c(parse) stack understep.\n");
+            return (NULL);
+        }
+//for (i=0; i<=sp; i++) print_elem(stack+i); printf("next: "); print_elem(next); printf("\n"); 
+
         rel = prectable[top->e_token][next->e_token];
         switch (rel) {
             case L:
             case E:
-          /* Push the token read. */
-          if (sp == (STACKSIZE - 1) || fsp == (STACKSIZE-1)) {	    
+            /* Push the token read. */
+            if (sp == (STACKSIZE - 1)) {
                 fprintf(cp_err, "Error: stack overflow\n");
                 return (NULL);
             }
             bcopy((char *) next, (char *) &stack[++sp],
                     sizeof (struct element));
+            if (spmax<sp) spmax=sp; /* va: maximal used stack increased */
             next = lexer();
-	    if(next->e_token == VALUE && next->e_type == STRING)
-		stringStack[fsp++] = next->e_string;	    
             continue;
 
             case R:
-            fprintf(cp_err, "Syntax error: parsing expression.\n");
+            fprintf(cp_err, "Syntax error: parsing expression '%s'.\n", parse_string);
             return (NULL);
 
             case G:
@@ -449,6 +455,7 @@ parse(void)
              * reduce, then try and do some stuff. When scanning
              * back for a <, ignore VALUES.
              */
+
             st = sp;
             if (stack[sp].e_token == VALUE)
                 sp--;
@@ -509,7 +516,7 @@ parse(void)
                        tfree(lpn->pn_value);
                    }
                    free_pnode(lpn);
-                }		    		    
+                }
             } else { /* node op node */
                 lpn = makepnode(&stack[sp]);
                 rpn = makepnode(&stack[st]);
@@ -518,6 +525,15 @@ parse(void)
                 pn = mkbnode(stack[sp + 1].e_token, 
                     lpn, rpn);
             }
+            /* va: avoid memory leakage: tfree all old strings on stack,
+                   copied up to now within lexer */
+            for (i=sp; i<=spmax; i++) {
+                if (stack[i].e_token==VALUE && stack[i].e_type==STRING) {
+                    tfree(stack[i].e_string);
+                }
+            }
+            spmax=sp; /* up to there stack is now clean */
+
             stack[sp].e_token = VALUE;
             stack[sp].e_type = PNODE;
             stack[sp].e_pnode = pn;
@@ -525,12 +541,22 @@ parse(void)
         }
     }
     pn = makepnode(&stack[1]);
-    for(i=0;i<fsp;i++)
-	tfree(stringStack[i]);    
+
+    /* va: avoid memory leakage: tfree all remaining strings,
+       copied within lexer */
+    for (i=0; i<=spmax; i++) {
+        if (stack[i].e_token == VALUE && stack[i].e_type == STRING) {
+            tfree(stack[i].e_string);
+        }
+    }
+    if (next->e_token == VALUE && next->e_type == STRING) {
+        tfree(next->e_string);
+    }
+
     if (pn)
         return (pn);
 err:
-    fprintf(cp_err, "Syntax error: expression not understood.\n");
+    fprintf(cp_err, "Syntax error: expression not understood '%s'.\n", parse_string);
     return (NULL);
 }
 
@@ -556,9 +582,39 @@ makepnode(struct element *elem)
     }   
 }
 
-void print_elem(struct element *elem)
+static char * get_token_name(int e_token)
 {
-    printf("e_token = %d", elem->e_token); 
+  /* see include/fteparse.h */
+    switch (e_token) {
+    case   0: return "END   ";
+    case   1: return "PLUS  ";
+    case   2: return "MINUS ";
+    case   3: return "TIMES ";
+    case   4: return "MOD   ";
+    case   5: return "DIVIDE";
+    case   6: return "POWER ";
+    case   7: return "UMINUS";
+    case   8: return "LPAREN";
+    case   9: return "RPAREN";
+    case  10: return "COMMA ";
+    case  11: return "VALUE ";
+    case  12: return "EQ    ";
+    case  13: return "GT    ";
+    case  14: return "LT    ";
+    case  15: return "GE    ";
+    case  16: return "LE    ";
+    case  17: return "NE    ";
+    case  18: return "AND   ";
+    case  19: return "OR    ";
+    case  20: return "NOT   ";
+    case  21: return "INDX  ";
+    case  22: return "RANGE ";
+    default : return "UNKNOWN";
+    }
+}
+static void print_elem(struct element *elem)
+{
+    printf("e_token = %d(%s)", elem->e_token, get_token_name(elem->e_token)); 
     if (elem->e_token == VALUE) {
         printf(", e_type  = %d", elem->e_type); 
         switch (elem->e_type) {
@@ -575,6 +631,7 @@ void print_elem(struct element *elem)
     }   
     printf("\n");
 }
+
 
 
 /* Some auxiliary functions for building the parse tree. */
@@ -643,11 +700,14 @@ struct func ft_funcs[] = {
         { "vecmin", cx_min } ,
         { "vecmax", cx_max } ,
         { "vecd", cx_d } ,
-#if 0
+#define INTERPOLATE 1 /* va, enable interpolate */
+#if INTERPOLATE
+	/* va, deactivate function prototype testing for this 2 functions, only. Gives a warning. */
+#define INTERPOL_FUNC (void *(*)())
 	/* These functions have been temporarily been disabled.  See
            their definitions for the reason. */
-        { "interpolate",cx_interpolate } ,
-        { "deriv",  cx_deriv } ,
+        { "interpolate",INTERPOL_FUNC cx_interpolate } ,
+        { "deriv",      INTERPOL_FUNC cx_deriv } ,
 #endif
         { "v",      NULL } ,
         { NULL,     NULL }
@@ -850,7 +910,7 @@ mksnode(char *string)
        nobody will free it elsewhere */
     if (v && v->v_name && *v->v_name=='@' && isreal(v) && v->v_realdata) {
     	vec_free(v);
-    }   
+    }
     return (p);
 }
 
@@ -863,9 +923,9 @@ free_pnode(struct pnode *t)
     free_pnode(t->pn_left);
     free_pnode(t->pn_right);
     free_pnode(t->pn_next);
-     tfree(t->pn_name);
+    tfree(t->pn_name); /* va: it is a copy() of original string, can be free'd */
     if (t->pn_value)
-        vec_free(t->pn_value);
+        vec_free(t->pn_value); /* patch by Stefan Jones */
     tfree(t);
 }
 

@@ -40,8 +40,8 @@ sig_matherr(void)
 
 /* Note that ft_evaluate will return NULL on invalid expressions. */
 /* va: NOTE: ft_evaluate returns a new vector for expressions (func, op, ...)
-   and an existing vector (node->pn_value) when node->pn_value != NULL. 
-   For garbage collection caller must vec_free() expression-vector. */
+       and an existing vector (node->pn_value) when node->pn_value != NULL. 
+       For garbage collection caller must vec_free() expression-vector. */
 struct dvec *
 ft_evaluate(struct pnode *node)
 {
@@ -57,21 +57,22 @@ ft_evaluate(struct pnode *node)
         if (node->pn_op->op_arity == 1)
             d = (struct dvec *)
                 ((*node->pn_op->op_func) (node->pn_left));
-        else if (node->pn_op->op_arity == 2)
+        else if (node->pn_op->op_arity == 2) {
             d = (struct dvec *) ((*node->pn_op->op_func)
                 (node->pn_left, node->pn_right));
+        }
     } else {
         fprintf(cp_err, "ft_evaluate: Internal Error: bad node\n");
         d = NULL;
     }
 
-    if (d == NULL) {
+    if (d==NULL) {
 	return NULL;
     }
 
     if (node->pn_name && !ft_evdb && d && !d->v_link2) {
-        if(d->v_name)
-            tfree(d->v_name);
+        if (d->v_name) 
+            tfree(d->v_name); /* patch by Stefan Jones */
         d->v_name = copy(node->pn_name);
     }
 
@@ -295,7 +296,7 @@ doop(char what,
             tfree(c2);
         }
     }
-
+    
     /* va: garbage collection */
     if (arg1->pn_value==NULL && v1!=NULL) vec_free(v1);
     if (arg2->pn_value==NULL && v2!=NULL) vec_free(v2);
@@ -498,10 +499,10 @@ op_range(struct pnode *arg1, struct pnode *arg2)
      */
 
     vec_new(res);
- 
+
     /* va: garbage collection */
     if (arg1->pn_value==NULL && v!=NULL) vec_free(v);
-    if (arg1->pn_value==NULL && ind!=NULL) vec_free(ind);    
+    if (arg1->pn_value==NULL && ind!=NULL) vec_free(ind);
     return (res);
 }
 
@@ -651,10 +652,10 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
      */
 
     vec_new(res);
- 
+
     /* va: garbage collection */
     if (arg1->pn_value==NULL && v!=NULL) vec_free(v);
-    if (arg1->pn_value==NULL && ind!=NULL) vec_free(ind);    
+    if (arg1->pn_value==NULL && ind!=NULL) vec_free(ind);
     return (res);
 }
 
@@ -706,7 +707,8 @@ apply_func(struct func *func, struct pnode *arg)
         }
         (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
 
-#if 0
+#define INTERPOLATE 1 /* va, enable interpolate */
+#if INTERPOLATE
 	/* FIXME: The call to (*func->fu_func) has too many arguments;
            hence the compiler quits.  How to circumvent this (without
            losing function prototypes)?  For now, these functions have
@@ -714,13 +716,11 @@ apply_func(struct func *func, struct pnode *arg)
         if (eq(func->fu_name, "interpolate")
             || eq(func->fu_name, "deriv"))       /* Ack */
 	{
-            data = ((*func->fu_func) ((isreal(v) ?
-				       (void *) v->v_realdata :
-				       (void *) v->v_compdata),
-				      (short) (isreal(v) ? VF_REAL :
-					       VF_COMPLEX),
-				      v->v_length, &len, &type,
-				      v->v_plot, plot_cur, v->v_dims[0]));
+	    void *(*f)()=func->fu_func; /* va, a type cast, which loses function prototypes, a warning */
+            data = ((*f) ((isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata),
+		          (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
+		          v->v_length, &len, &type,
+		          v->v_plot, plot_cur, v->v_dims[0]));
         } else {
 #endif
             data = ((*func->fu_func) ((isreal(v) ? (void *)
@@ -729,7 +729,7 @@ apply_func(struct func *func, struct pnode *arg)
 				      (short) (isreal(v) ? VF_REAL :
 					       VF_COMPLEX),
 				      v->v_length, &len, &type));
-#if 0
+#if INTERPOLATE
 	}
 #endif
         /* Back to normal */

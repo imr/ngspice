@@ -22,7 +22,7 @@ com_let(wordlist *wl)
     struct pnode *nn;
     struct dvec *n, *t;
     int i, cube;
-    int depth;
+    int j, depth;
     int newvec;
     char *rhs;
 
@@ -63,7 +63,7 @@ com_let(wordlist *wl)
 	    }
 
 	    if (depth != 0 || !*q) {
-		printf("syntax error specifyingstrchr\n");
+		printf("syntax error specifying index\n");
 		tfree(p);
 		return;
 	    }
@@ -74,6 +74,31 @@ com_let(wordlist *wl)
 		need_open = 0;
 	    if (*q)
 	        *q++ = 0;
+
+	    /* evaluate expression between s and q */
+	    /* va, indexing */
+	    fake_wl.wl_word = s;
+	    nn = ft_getpnames(&fake_wl, TRUE);
+	    t = ft_evaluate(nn);
+
+	    if (!isreal(t) || t->v_link2 || t->v_length != 1 || !t->v_realdata)
+	    {
+		fprintf(cp_err, "Error: index is not a scalar.\n");
+		goto quit;
+	    }
+	    j = (int)floor(t->v_realdata[0]+0.5); /* ignore sanity checks for now, va, which checks? */
+
+	    if (j < 0) {
+		printf("negative index (%d) is not allowed\n", j);
+		goto quit;
+	    }
+
+	    indices[numdims++] = j;
+
+	    /* va: garbage collection for t, if pnode nn is no simple value */
+	    if (nn!=NULL && nn->pn_value==NULL && t!=NULL) vec_free(t);
+	    free_pnode(nn); /* frees also t, if pnode nn is simple value */
+
 	    for (s = q; *s && isspace(*s); s++)
 		;
 	}
@@ -148,8 +173,8 @@ com_let(wordlist *wl)
 	vec_new(n);
     }
 
-    /* fix-up dimensions */
-    if (n->v_numdims < 1) {
+    /* fix-up dimensions; va, also for v_dims */
+    if (n->v_numdims < 1 || n->v_dims[0]==0 ) {
 	n->v_numdims = 1;
 	n->v_dims[0] = n->v_length;
     }
@@ -204,7 +229,7 @@ com_let(wordlist *wl)
 
 quit:
     /* va: garbage collection for t, if pnode nn is no simple value */
-    if (nn->pn_value==NULL && t!=NULL) vec_free(t);
+    if (nn!=NULL && nn->pn_value==NULL && t!=NULL) vec_free(t);
     free_pnode(nn); /* frees also t, if pnode nn is simple value */
     tfree(p);
     return;

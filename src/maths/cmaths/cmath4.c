@@ -28,6 +28,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cmath.h"
 #include "cmath4.h"
 
+#include "../../frontend/variable.h" /* for VT_NUM in cx_interpolate */
+
 void *
 cx_and(void *data1, void *data2, short int datatype1, short int datatype2, int length)
 {
@@ -128,7 +130,8 @@ cx_not(void *data, short int type, int length, int *newlength, short int *newtyp
     return ((void *) d);
 }
 
-#if 0
+#define INTERPOLATE 1 /* va, enable interpolate */
+#if INTERPOLATE
 /* These functions have been temporarily disabled.  They contain code
    only found in the frontend and their prototype does not conform to
    the prototypes found for other complex functions.  They will not be
@@ -284,7 +287,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
 		ft_polyderiv(r_coefs, degree);
 
 		/* for loop gets the beginning part */
-		for (j = k; j <= i + degree / 2; j++) {
+		for (j = k; j <= i - degree / 2; j++) {
 		    x = scale[j + base];
 		    c_outdata[j + base].cx_real =
 			ft_peval(x, r_coefs, degree - 1);

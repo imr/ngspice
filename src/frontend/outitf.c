@@ -77,21 +77,22 @@ extern bool ft_getOutReq (FILE **fpp, struct plot **plotp, bool *binp, char *nam
 int
 OUTpBeginPlot(void *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
 {
-    char *name;    
+  char *name;   
+
 #ifdef PARALLEL_ARCH
 if (ARCHme != 0) return(OK);
 #endif /* PARALLEL_ARCH */
 
 
-    if (ft_curckt->ci_ckt == circuitPtr)
-      name = ft_curckt->ci_name;
-    else
-      name = "circuit name";
-
-    return (beginPlot(analysisPtr, circuitPtr, name,
-            (char *) analName, (char *) refName, refType, numNames,
-            (char **) dataNames, dataType, FALSE,
-            (runDesc **) plotPtr));
+ if (ft_curckt->ci_ckt == circuitPtr)
+   name = ft_curckt->ci_name;
+ else
+   name = "circuit name";
+ 
+ return (beginPlot(analysisPtr, circuitPtr, name,
+		   (char *) analName, (char *) refName, refType, numNames,
+		   (char **) dataNames, dataType, FALSE,
+		   (runDesc **) plotPtr));
 }
 
 int
@@ -119,7 +120,7 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
     char *ch, tmpname[BSIZE_SP];
     bool saveall  = TRUE;
     bool savealli = FALSE;
-    char *an_name;   
+    char *an_name;
     /*to resume a run saj
     *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
     */
@@ -130,7 +131,7 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
       
     } else {
     /*end saj*/
-    
+
     /* Check to see if we want to print informational data. */
     if (cp_getvar("printinfo", VT_BOOL, (char *) &printinfo))
 	fprintf(cp_err, "(debug printing enabled)\n");
@@ -533,10 +534,10 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #ifndef HAS_WINDOWS
         if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
           if (run->isComplex) {
-              fprintf(stderr, " Reference value : % 12.5e\r",
+              fprintf(stderr, " Reference value : % 12.5e\n",
                             refValue->cValue.real);
           } else {
-              fprintf(stderr, " Reference value : % 12.5e\r",
+              fprintf(stderr, " Reference value : % 12.5e\n",
                             refValue->rValue);
           }
           lastclock = currclock;
@@ -544,33 +545,33 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #endif
         for (i = 0; i < run->numData; i++) {
             if (run->data[i].outIndex == -1) {
-                if (run->data[i].type == IF_REAL)
-                    plotAddRealValue(&run->data[i],
-                            refValue->rValue);
-                else if (run->data[i].type == IF_COMPLEX)
-                    plotAddComplexValue(&run->data[i],
-                            refValue->cValue);
+	      if (run->data[i].type == IF_REAL)
+		plotAddRealValue(&run->data[i],
+				 refValue->rValue);
+	      else if (run->data[i].type == IF_COMPLEX)
+		plotAddComplexValue(&run->data[i],
+				    refValue->cValue);
             } else if (run->data[i].regular) {
-                if (run->data[i].type == IF_REAL)
-                    plotAddRealValue(&run->data[i],
-                        valuePtr->v.vec.rVec
-                        [run->data[i].outIndex]);
-                else if (run->data[i].type == IF_COMPLEX)
-                    plotAddComplexValue(&run->data[i],
-                        valuePtr->v.vec.cVec
-                        [run->data[i].outIndex]);
+	      if (run->data[i].type == IF_REAL)
+		plotAddRealValue(&run->data[i],
+				 valuePtr->v.vec.rVec
+				 [run->data[i].outIndex]);
+	      else if (run->data[i].type == IF_COMPLEX)
+		plotAddComplexValue(&run->data[i],
+				    valuePtr->v.vec.cVec
+				    [run->data[i].outIndex]);
             } else {
-                /* should pre-check instance */
-                if (!getSpecial(&run->data[i], run, &val))
-                    continue;
-                if (run->data[i].type == IF_REAL)
-                    plotAddRealValue(&run->data[i],
-                            val.rValue);
-                else if (run->data[i].type == IF_COMPLEX)
-                    plotAddComplexValue(&run->data[i],
+	      /* should pre-check instance */
+	      if (!getSpecial(&run->data[i], run, &val))
+		continue;
+	      if (run->data[i].type == IF_REAL)
+		plotAddRealValue(&run->data[i],
+				 val.rValue);
+	      else if (run->data[i].type == IF_COMPLEX)
+		plotAddComplexValue(&run->data[i],
                             val.cValue);
-                else 
-                    fprintf(stderr, "OUTpData: unsupported data type\n");
+	      else 
+		fprintf(stderr, "OUTpData: unsupported data type\n");
             }
         }
         gr_iplot(run->runPlot);
@@ -934,6 +935,7 @@ plotAddRealValue(dataDesc *desc, double value)
       v->v_compdata[v->v_length].cx_imag = (double) 0;
     }
     v->v_length++;
+    v->v_dims[0]=v->v_length; /* va, must be updated */
 
     return;
 }
@@ -948,6 +950,7 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
     v->v_compdata[v->v_length].cx_real = value.real;
     v->v_compdata[v->v_length].cx_imag = value.imag;
     v->v_length++;
+    v->v_dims[0]=v->v_length; /* va, must be updated */
 
     return;
 }
@@ -1096,9 +1099,7 @@ OUTstopnow(void)
 static struct mesg {
         char *string;
         long flag;
-} 
-
-msgs[] = {
+} msgs[] = {
         { "Warning", ERR_WARNING } ,
         { "Fatal error", ERR_FATAL } ,
         { "Panic", ERR_PANIC } ,

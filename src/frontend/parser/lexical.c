@@ -22,7 +22,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <pwd.h>
 #endif
 
-#ifndef __MINGW32__
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
 	/* MW. Linux has TIOCSTI, so we include all headers here */
 #include <sys/ioctl.h>
 #endif
@@ -66,7 +66,7 @@ static int numeofs = 0;
 /* Return a list of words, with backslash quoting and '' quoting done.
  * Strings en(void) closed in "" or `` are made single words and returned,
  * but with the "" or `` still present. For the \ and '' cases, the
- * 8th bit is turned on (as in csh) to prevent them from being recogized,
+ * 8th bit is turned on (as in csh) to prevent them from being recognized,
  * and stripped off once all processing is done. We also have to deal with
  * command, filename, and keyword completion here.
  * If string is non-NULL, then use it instead of the fp. Escape and EOF
@@ -280,22 +280,33 @@ gotchar:
                 cp_ccom(wlist, buf, TRUE);
                 wl_free(wlist);
                 goto nloop;
-            } /* Else fall through */
+            } goto ldefault; /* else continue with default ... */
 	case ',':
 	    if (paren < 1 && i > 0) {
 		newword;
 		break;
-	    }
-	    case ';':  /*CDHW semicolon inside parentheses is part of expression CDHW*/
-		    if (paren > 0) {
-		    buf[i++]=c;
-			break;
-		    }
+	    } goto ldefault; 
+	case ';':  /*CDHW semicolon inside parentheses is part of expression CDHW*/
+	    if (paren > 0) {
+	        buf[i++]=c;
+		break;
+	    } goto ldefault; 
+	case '&':  /* va: $&name is one word */
+	    if (i==1 && buf[i-1]=='$' && c=='&') {
+	        buf[i++]=c;
+	        break;
+	    } goto ldefault; /* else continue with default ... */
+	case '<':
+	case '>':  /* va: <=, >= are unbreakable words */
+	    if (i==0 && *string=='=') {
+	        buf[i++]=c;
+	        break;
+	    } goto ldefault; /* else continue with default ... */
 	default:
             /* We have to remember the special case $<
              * here
              */
-            if ((cp_chars[c] & CPC_BRL) && (i > 0)) {
+ldefault:   if ((cp_chars[c] & CPC_BRL) && (i > 0)) {
                 if ((c != '<') || (buf[i - 1] != '$')) {
                     newword;
                 }
