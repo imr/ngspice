@@ -28,3 +28,9 @@
 
 /* Define if we want noise integration code */
 #undef INT_NOISE
+
+/* Undefine HAVE_EKV since it is not included in the standard distribution */
+#undef HAVE_EKV
+
+/* Undefine HAVE_GNUREADLINE */   
+#undef HAVE_GNUREADLINE

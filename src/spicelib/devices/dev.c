@@ -35,7 +35,10 @@
 
 #include "dev.h"
 
-#define DEVICES_USED "asrc bjt bjt2 bsim1 bsim2 bsim3 bsim3v2 bsim3v1 bsim4 bsim3soipd bsim3soifd bsim3soidd cap cccs ccvs csw dio hfet hfet2 ind isrc jfet ltra mes mesa mos1 mos2 mos3 mos6 mos9 res soi3 sw tra urc vccs vcvs vsrc"
+#define DEVICES_USED "asrc bjt bjt2 bsim1 bsim2 bsim3 bsim3v2 bsim3v1 bsim4 bsim3soipd bsim3soifd   \
+                      bsim3soidd cap cccs ccvs csw dio hfet hfet2 ind isrc jfet ltra mes mesa mos1  \
+                      mos2 mos3 mos6 mos9 res soi3 sw tra urc vccs vcvs vsrc (ekv)" 
+                      
 
 /*
  * Analyses
@@ -93,8 +96,15 @@
 #include "vcvs/vcvsitf.h"
 #include "vsrc/vsrcitf.h"
 
+#ifdef HAVE_EKV
+#include "ekv/ekvitf.h"
+#define DEVNUM 41
+
+#else
 
 #define DEVNUM 40
+#endif
+
 
 SPICEdev *DEVices[DEVNUM];
 
@@ -144,7 +154,12 @@ spice_init_devices(void)
     DEVices[37] = get_vccs_info();
     DEVices[38] = get_vcvs_info();
     DEVices[39] = get_vsrc_info();
+#ifdef HAVE_EKV
+    DEVices[40] = get_ekv_info();
+    assert(41 == DEVNUM);
+#else
     assert(40 == DEVNUM);
+#endif
 }
 
 

@@ -18,6 +18,7 @@ SUBDIRS = \
 	ccvs	\
 	csw	\
 	dio	\
+	@EKVDIR@	\
 	ind	\
 	isrc	\
 	hfet1	\

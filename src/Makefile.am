@@ -34,6 +34,7 @@ DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/ccvs/libccvs.la		\
 	spicelib/devices/csw/libcsw.la		\
 	spicelib/devices/dio/libdio.la		\
+	@EKVLIB@				\
 	spicelib/devices/ind/libind.la		\
 	spicelib/devices/isrc/libisrc.la		\
 	spicelib/devices/hfet1/libhfet.la		\
