@@ -190,23 +190,7 @@ if_run(char *t, char *what, wordlist *args, char *tab)
                 ft_sperror(err,"createOptions");
                 return(2);
             }
-<<<<<<< spiceif.c
-            
-/* -- *** BUG! ****/
-/* -- Inherit the default simulation settings taken from the */
-/* -- .option line.                                          */
 
-=======
-            
-/* -- *** BUG! ****/
-/* -- Inherit the default simulation settings taken from the */
-/* -- .option line.                                          */
-
-/*            memcpy(&ft_curckt->ci_specOpt->TSKtemp,
-                   &ft_curckt->ci_defOpt->TSKtemp,
-                   sizeof(TSKtask) - offsetof(TSKtask, TSKtemp));
-*/
->>>>>>> 1.7
             ft_curckt->ci_curOpt  = ft_curckt->ci_specOpt;
 
         }
