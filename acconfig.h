@@ -34,3 +34,6 @@
 
 /* Undefine HAVE_GNUREADLINE */   
 #undef HAVE_GNUREADLINE
+
+/* Define if we don't have GETOPT in the library */
+#undef HAVE_GETOPT

@@ -1,3 +1,7 @@
+2001-11-25  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am: adapted for new GNU getopt handling by autoconf
+
 2000-07-18  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* Makefile.am: Added wlist.c.
