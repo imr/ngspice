@@ -9,7 +9,7 @@ extern void txfree(void *ptr);
 #define tfree(x) (txfree(x), x = 0)
 
 #else
-#include <gc.h>
+#include <gc/gc.h>
 
 #define tmalloc(m) GC_malloc(m)
 #define trealloc(m,n) GC_realloc((m),(n))
