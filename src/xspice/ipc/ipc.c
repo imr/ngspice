@@ -71,9 +71,7 @@ SUMMARY
 #ifndef NDEBUG
 #include <stdio.h>
 #endif
-#include <sys/file.h>   /* Specific to BSD - Use sys/fcntl.h for sys5 */
 #include <fcntl.h>
-#include <sys/io.h>
 #include <unistd.h>
 
 #include <assert.h>

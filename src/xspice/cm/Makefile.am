@@ -8,7 +8,8 @@ libcmxsp_a_SOURCES = \
 cm.c       \
 cmevt.c    \
 cmmeters.c \
-cmutil.c 
+cmutil.c \
+cmexport.c
 
 
 

@@ -400,28 +400,41 @@ static char *two2three_translate(
 
    /* Write input nets/sources */
    if((type == 'e') || (type == 'g') ||
-      (type == 'E') || (type == 'G'))
-      sprintf(*inst_card + strlen(*inst_card), "%%vd [ ");
-   else
-      sprintf(*inst_card + strlen(*inst_card), "%%vnam [ ");
+      (type == 'E') || (type == 'G')) {  /* These input port types are vector & need a [. */
+     if (dim > 1) {
+       sprintf(*inst_card + strlen(*inst_card), "%%vd [ ");
+     } 
+     else {
+       sprintf(*inst_card + strlen(*inst_card), "%%vd [ ");  /* need something different? */
+     }
+   }
+   else                                  /* This input port type is scalar */
+     sprintf(*inst_card + strlen(*inst_card), "%%vnam [ ");
+
 
    for(i = 0; i < num_conns; i++)
       sprintf(*inst_card + strlen(*inst_card), "%s ", in_conn[i]);
 
-   sprintf(*inst_card + strlen(*inst_card), "] ");
+
+   if (dim > 1) {
+     sprintf(*inst_card + strlen(*inst_card), "] ");
+   }
+   else {
+     sprintf(*inst_card + strlen(*inst_card), "] ");  /* need something different? */
+   }
 
 
    /* Write output nets */
    if((type == 'e') || (type == 'h') ||
       (type == 'E') || (type == 'H'))
-      sprintf(*inst_card + strlen(*inst_card), "%%vd [ ");
+      sprintf(*inst_card + strlen(*inst_card), "%%vd ( ");
    else
-      sprintf(*inst_card + strlen(*inst_card), "%%id [ ");
+      sprintf(*inst_card + strlen(*inst_card), "%%id ( ");
 
    for(i = 0; i < 2; i++)
       sprintf(*inst_card + strlen(*inst_card), "%s ", out_conn[i]);
 
-   sprintf(*inst_card + strlen(*inst_card), "] ");
+   sprintf(*inst_card + strlen(*inst_card), ") ");
 
 
    /* Write model name */   
