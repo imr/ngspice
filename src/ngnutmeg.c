@@ -23,7 +23,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "suffix.h"
 
 IFsimulator SIMinfo = {
-    "nutmeg",       /* my name */
+    "ngnutmeg",       /* my name */
     "data analysis and manipulation program",  /* more about me */
     Spice_Version,         /* my version */
     NULL,       /* newCircuit function */
@@ -62,3 +62,12 @@ IFsimulator SIMinfo = {
     0,
     NULL,
 };
+
+#ifdef CIDER
+/* An ugly hack */
+void
+NDEVacct(void *ckt, FILE *file)
+{
+fprintf(file, "Ouch, you have called NDEV from ngnutmeg\n");
+}
+#endif

@@ -17,6 +17,22 @@ typedef struct _complex1 complex;
 #define realpart(cval)  ((struct _complex1 *) (cval))->cx_real
 #define imagpart(cval)  ((struct _complex1 *) (cval))->cx_imag
 
+#ifdef CIDER
+/* From Cider numcomplex.h 
+   pn:leave it here until I decide what to do about 
+struct mosAdmittances {
+    complex yIdVdb;
+    complex yIdVsb;
+    complex yIdVgb;
+    complex yIsVdb;
+    complex yIsVsb;
+    complex yIsVgb;
+    complex yIgVdb;
+    complex yIgVsb;
+    complex yIgVgb;
+   }; 
+   */
+#endif
 
 /*
  *  Each expects two arguments for each complex number - a real and an
@@ -270,6 +286,11 @@ typedef  struct
 /* Macro function that returns the approx absolute value of a complex
    number. */
 #define  ELEMENT_MAG(ptr)   (ABS((ptr)->Real) + ABS((ptr)->Imag))
+ 
+#define  CMPLX_ASSIGN_VALUE(cnum, vReal, vImag)		\
+{   (cnum).Real = vReal;	\
+    (cnum).Imag = vImag;	\
+}         
 
 /* Complex assignment statements. */
 #define  CMPLX_ASSIGN(to,from)  \
@@ -288,10 +309,19 @@ typedef  struct
 {   (to).Real = -(from).Real;                   \
     (to).Imag = (from).Imag;                    \
 }
+
 #define  CMPLX_CONJ(a)  (a).Imag = -(a).Imag
+
+#define  CONJUGATE(a)	(a).Imag = -(a).Imag
+
 #define  CMPLX_NEGATE(a)        \
 {   (a).Real = -(a).Real;       \
     (a).Imag = -(a).Imag;       \
+}
+
+#define  CMPLX_NEGATE_SELF(cnum)	\
+{   (cnum).real = -(cnum).Real;	\
+    (cnum).imag = -(cnum).Imag;	\
 }
 
 /* Macro that returns the approx magnitude (L-1 norm) of a complex number. */
@@ -307,6 +337,11 @@ typedef  struct
 #define  CMPLX_ADD(to,from_a,from_b)            \
 {   (to).Real = (from_a).Real + (from_b).Real;  \
     (to).Imag = (from_a).Imag + (from_b).Imag;  \
+}
+
+/* Macro function that performs addition of a complex and a scalar. */
+#define  CMPLX_ADD_SELF_SCALAR(cnum, scalar)      \
+{   (cnum).Real += scalar;   \
 }
 
 /* Macro function that performs complex subtraction. */
@@ -326,11 +361,38 @@ typedef  struct
 {   (to).Real -= (from).Real;           \
     (to).Imag -= (from).Imag;           \
 }
-
+ 
 /* Macro function that multiplies a complex number by a scalar. */
 #define  SCLR_MULT(to,sclr,cmplx)       \
 {   (to).Real = (sclr) * (cmplx).Real;  \
     (to).Imag = (sclr) * (cmplx).Imag;  \
+}
+
+/* Macro function that multiply-assigns a complex number by a scalar. */
+#define  SCLR_MULT_ASSIGN(to,sclr)      \
+{   (to).Real *= (sclr);                \
+    (to).Imag *= (sclr);                \
+}
+
+/* Macro function that multiplies two complex numbers. */
+#define  CMPLX_MULT(to,from_a,from_b)           \
+{   (to).real = (from_a).Real * (from_b).Real - \
+                (from_a).Imag * (from_b).Imag;  \
+    (to).imag = (from_a).Real * (from_b).Imag + \
+                (from_a).Imag * (from_b).Real;  \
+}
+ 
+/* Macro function that multiplies a complex number and a scalar. */
+#define  CMPLX_MULT_SCALAR(to,from, scalar)      \
+{   (to).Real = (from).Real * scalar;   \
+    (to).Imag = (from).Imag * scalar;   \
+}
+ 
+/* Macro function that implements *= for a complex and a scalar number. */
+ 
+#define  CMPLX_MULT_SELF_SCALAR(cnum, scalar)      \
+{   (cnum).Real *= scalar;   \
+    (cnum).Imag *= scalar;   \
 }
 
 /* Macro function that multiply-assigns a complex number by a scalar. */

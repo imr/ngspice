@@ -168,6 +168,9 @@ ft_ckspace(void)
 static void
 printres(char *name)
 {
+#ifdef CIDER
+    char *paramname = NULL;
+#endif    
     bool yy = FALSE;
     static long lastsec = 0, lastusec = 0;
     struct variable *v;
@@ -314,11 +317,24 @@ printres(char *name)
 
     /* Now get all the spice resource stuff. */
     if (ft_curckt && ft_curckt->ci_ckt) {
+
+#ifdef CIDER
+/* begin cider integration */	
+  if (!name || eq(name, "circuit") || eq(name, "task")) {
+		paramname = NULL;
+     } else {
+     	paramname = name;
+     }
+ 	v = if_getstat(ft_curckt->ci_ckt, paramname);
+         if (paramname && v) {                     
+/* end cider integration */
+#else /* ~CIDER */     
 	if (name && eq(name, "task"))
 	    v = if_getstat(ft_curckt->ci_ckt, NULL);
 	else
 	    v = if_getstat(ft_curckt->ci_ckt, name);
         if (name && v) {
+#endif	
             fprintf(cp_out, "%s = ", v->va_name);
             wl_print(cp_varwl(v), cp_out);
             (void) putc('\n', cp_out);
@@ -333,6 +349,17 @@ printres(char *name)
             }
             yy = TRUE;
         }
+
+#ifdef CIDER
+        /* begin cider integration */
+        /* Now print out interesting stuff about numerical devices. */
+	    if (!name || eq(name, "devices")) {
+	       (void) NDEVacct(ft_curckt->ci_ckt, cp_out);
+	        yy = TRUE;
+	} 
+	/* end cider integration */
+#endif
+
     }
 
     if (!yy) {

@@ -7,7 +7,6 @@ Modified: 2000 AlansFixes
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "tskdefs.h"
 #include "ifsim.h"
 #include "cktdefs.h"

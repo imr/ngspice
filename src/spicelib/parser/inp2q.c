@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Thomas L. Quarles
+Modified: 2001 Paolo Nenzi (Cider Integration)
 **********/
 
 #include "ngspice.h"
@@ -66,8 +67,13 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     INPinsert(&model, tab);
     current->error = INPgetMod(ckt, model, &thismodel, tab);
     if (thismodel != NULL) {
-	if(thismodel->INPmodType != INPtypelook("BJT") &&
-           thismodel->INPmodType != INPtypelook("BJT2")) {
+	if((thismodel->INPmodType != INPtypelook("BJT"))
+           && (thismodel->INPmodType != INPtypelook("BJT2"))
+#ifdef CIDER
+           && (thismodel->INPmodType != INPtypelook("NBJT"))
+           && (thismodel->INPmodType != INPtypelook("NBJT2"))
+#endif
+         ) {
             LITERR("incorrect model type")
             return;
         }
@@ -96,7 +102,15 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     IFC(bindNode, (ckt, fast, 4, node4));
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
     if (waslead) {
+#ifdef CIDER
+    if( type == INPtypelook("NBJT2") ) {
+            LITERR(" error:  no unlabelled parameter permitted on NBJT2\n")
+ 	} else {
+#endif
 	ptemp.rValue = leadval;
 	GCA(INPpName, ("area", &ptemp, ckt, type, fast));
     }
+#ifdef CIDER
+   }
+#endif   
 }

@@ -255,55 +255,71 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	case  9:
 	    type = INPtypelook("Mos9");
          if(type < 0) {
-          err = INPmkTemp(
-              "Device type MOS9 not available in this binary\n");
+          err = INPmkTemp
+                ("Device type MOS9 not available in this binary\n");
         }
         break;
 	case 10:
-	    type = INPtypelook("B3SOIPD");
+	    type = INPtypelook("B3SOI");
 	    if (type < 0) {
 		err =
 		    INPmkTemp
-		    ("Device type B3SOIPD not available in this binary\n");
+		    ("Device type B3SOI V3.0 not available in this binary\n");
 	    }
 	    break;
-	case 11:
-	    type = INPtypelook("B3SOIFD");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Device type B3SOIFD not available in this binary\n");
-	    }
-	    break;
-	case 12:
-	    type = INPtypelook("B3SOIDD");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Device type B3SOIDD not available in this binary\n");
-	    }
-	    break;        
 	case 14:
 	    type = INPtypelook("BSIM4");
 	    if (type < 0) {
 		err =
 		    INPmkTemp
-		    ("Device type BSIM4 not available in this binary\n");}
+		    ("Device type BSIM4 not available in this binary\n");
+	    }
 	    break;
 	case 15:
 	    type = INPtypelook("BSIM5");
 	    if (type < 0) {
 		err =
 		    INPmkTemp
-		    ("Placeholder: Device type BSIM5 not available in this binary\n");
+		    ("Device type BSIM5 not available in this binary\n");
 	    }
-	    break;
+	    break;        
 	case 16:
 	    type = INPtypelook("BSIM6");
 	    if (type < 0) {
 		err =
 		    INPmkTemp
-		    ("Placeholder: Device type BSIM6 not available in this binary\n");
+		    ("Device type BSIM6 not available in this binary\n");}
+	    break;
+	case 17:
+	    type = INPtypelook("HiSIM1");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Placeholder: Device type HiSIM1 not available in this binary\n");
+	    }
+	    break;
+	case 29:
+	    type = INPtypelook("B3SOIPD");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Placeholder: Device type B3SOIPD not available in this binary\n");
+	    }
+	    break;
+        case 30:
+	    type = INPtypelook("B3SOIFD");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Placeholder: Device type B3SOIFD not available in this binary\n");
+	    }
+	    break;
+        case 31:
+	    type = INPtypelook("B3SOIDD");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Placeholder: Device type B3SOIDD not available in this binary\n");
 	    }
 	    break;
 	case 44:
@@ -315,21 +331,37 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    }
 	    break;    
 	case 49:
-	    type = INPtypelook("BSIM3V1");
+	    type = INPtypelook("BSIM3v1S");
 	    if (type < 0) {
 		err =
 		    INPmkTemp
-		    ("Device type BSIM3V1 not available in this binary\n");
+		    ("Device type BSIM3v1S not available in this binary\n");
 	    }
 	    break;
 	case 50:
-	    type = INPtypelook("BSIM3V2");
+	    type = INPtypelook("BSIM3v1");
 	    if (type < 0) {
 		err =
 		    INPmkTemp
-		    ("Device type BSIM3V2 not available in this binary\n");
+		    ("Device type BSIM3v1 not available in this binary\n");
+	    }
+	    break;
+	case 51:
+	    type = INPtypelook("BSIM3v1A");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Device type BSIM3v1A not available in this binary\n");
 	    }
 	    break;	    
+	case 52:
+	    type = INPtypelook("BSIM3v0");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Device type BSIM3v0 not available in this binary\n");
+	    }
+	    break;
 	case 60:
 	    type = INPtypelook("SOI");
 	    if (type < 0) {
@@ -467,6 +499,62 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	}
 	INPmakeMod(modname, type, image);
     } 
+
+#ifdef CIDER     
+    else if(strcmp(typename,"numd") == 0) {
+         err = INPfindLev(line,&lev);
+    switch( lev ) {
+    case 1:
+    default:
+        type = INPtypelook("NUMD");
+        if(type < 0) {
+           err = 
+           INPmkTemp
+           ("Device type NUMD not available in this binary\n");
+         }
+        break;
+    case 2:
+        type = INPtypelook("NUMD2");
+        if(type < 0) {
+           err = 
+           INPmkTemp
+           ("Device type NUMD2 not available in this binary\n");
+        }
+        break;
+	}
+    INPmakeMod(modname,type,image);
+    } else if(strcmp(typename,"nbjt") == 0) {
+        err = INPfindLev(line,&lev);
+    switch( lev ) {
+    case 1:
+    default:
+        type = INPtypelook("NBJT");
+        if(type < 0) {
+           err = 
+           INPmkTemp
+           ("Device type NBJT not available in this binary\n");
+        }
+        break;
+    case 2:
+        type = INPtypelook("NBJT2");
+        if(type < 0) {
+           err = 
+           INPmkTemp
+           ("Device type NBJT2 not available in this binary\n");
+        }
+        break;
+     }
+     INPmakeMod(modname,type,image);
+    } else if(strcmp(typename,"numos") == 0) {
+        type = INPtypelook("NUMOS");
+        if(type < 0) {
+            err = 
+            INPmkTemp
+            ("Device type NUMOS not available in this binary\n");
+         }
+        INPmakeMod(modname,type,image);
+    } 
+#endif /* CIDER */
 
     /*  type poly added by SDB  . . . */
 #ifdef XSPICE

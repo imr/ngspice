@@ -8,12 +8,17 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #include "cktdefs.h"
 #include "ifsim.h"
 #include "sensgen.h"
-#include <stdio.h>
 
 extern SPICEdev **DEVices;
 
 	/* XXX */
 extern char	*Sfilter;
+
+int set_model(sgen *);
+int set_param(sgen *);
+int set_inst(sgen *);
+int set_dev(sgen *);
+extern int sens_getp(sgen *, CKTcircuit *, IFvalue *);
 
 sgen *
 sgen_init(CKTcircuit *ckt, int is_dc)

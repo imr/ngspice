@@ -315,8 +315,8 @@ cx_exp(void *data, short int type, int length, int *newlength, short int *newtyp
 void *
 cx_sqrt(void *data, short int type, int length, int *newlength, short int *newtype)
 {
-    double *d;
-    complex *c;
+    double *d = NULL;
+    complex *c = NULL;
     double *dd = (double *) data;
     complex *cc = (complex *) data;
     int i, cres = (type == VF_REAL) ? 0 : 1;

@@ -25,6 +25,8 @@
 #include "memory.h"
 #include "defines.h"
 #include "macros.h"
+#include "bool.h"
+#include "complex.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -110,7 +112,7 @@ struct timeb timebegin;
     #endif /* va: no index, but strchr */
 #endif
 
-#ifdef HAS_TIME_
+#ifdef HAS_TIME_H
 #include <time.h>
 #endif
 
@@ -166,5 +168,18 @@ extern char *Lib_Path;
 
 extern int ARCHme;	/* My logical process number */
 extern int ARCHsize;	/* Total number of processes */
+
+#ifdef CIDER
+/* Definitions of globals for Machine Accuracy Limits 
+ * Imported from cider
+*/
+
+extern double BMin;          /* lower limit for B(x) */
+extern double BMax;          /* upper limit for B(x) */
+extern double ExpLim;        /* limit for exponential */
+extern double Accuracy;      /* accuracy of the machine */
+extern double Acc, MuLim, MutLim;
+#endif /* CIDER */ 
+
 
 #endif /* NGSPICE_H_INCLUDED */

@@ -1,10 +1,11 @@
 ## Process this file with automake to produce Makefile.in
+## PN: remember to add CIDERSCRIPTS
 
-SUBDIRS = misc maths frontend spicelib include @XSPICEDIR@
+SUBDIRS = misc maths frontend spicelib include @XSPICEDIR@ @CIDERDIR@
 
 bin_PROGRAMS =  ngspice ngnutmeg nghelp ngsconvert ngproc2mod ngmultidec makeidx
 
-EXTRA_DIST = ngspice.txt ngspice.idx spinit setplot spectrum
+EXTRA_DIST = ngspice.txt ngspice.idx spinit setplot spectrum @CIDERSCRIPTS@
 
 helpdatadir = $(pkgdatadir)/helpdir
 
@@ -12,19 +13,23 @@ helpdata_DATA = ngspice.idx ngspice.txt
 
 initdatadir = $(pkgdatadir)/scripts
 
-initdata_DATA = spinit setplot spectrum
+initdata_DATA = spinit setplot spectrum @CIDERSCRIPTS@
 
 
 DYNAMIC_DEVICELIBS = 					\
 	spicelib/devices/asrc/libasrc.a			\
 	spicelib/devices/bjt/libbjt.a			\
+	spicelib/devices/bjt2/libbjt2.a			\
 	spicelib/devices/bsim1/libbsim1.a		\
 	spicelib/devices/bsim2/libbsim2.a		\
 	spicelib/devices/bsim3/libbsim3.a		\
+	spicelib/devices/bsim3v0/libbsim3v0.a		\
 	spicelib/devices/bsim3v1/libbsim3v1.a		\
-	spicelib/devices/bsim3v2/libbsim3v2.a		\
+	spicelib/devices/bsim3v1s/libbsim3v1s.a		\
+	spicelib/devices/bsim3v1a/libbsim3v1a.a		\
 	spicelib/devices/bsim4/libbsim4.a		\
 	spicelib/devices/cap/libcap.a			\
+	spicelib/devices/libbsim3soi.a			\
 	spicelib/devices/bsim3soi_pd/libbsim3soipd.a	\
 	spicelib/devices/bsim3soi_fd/libbsim3soifd.a   	\
 	spicelib/devices/bsim3soi_dd/libbsim3soidd.a	\
@@ -39,6 +44,7 @@ DYNAMIC_DEVICELIBS = 					\
 	spicelib/devices/isrc/libisrc.a			\
 	spicelib/devices/hfet1/libhfet.a		\
 	spicelib/devices/hfet2/libhfet2.a		\
+	spicelib/devices/hisim/libhisim.a		\
 	spicelib/devices/jfet/libjfet.a			\
 	spicelib/devices/jfet2/libjfet2.a		\
 	spicelib/devices/ltra/libltra.a			\
@@ -57,17 +63,10 @@ DYNAMIC_DEVICELIBS = 					\
 	spicelib/devices/urc/liburc.a			\
 	spicelib/devices/vccs/libvccs.a			\
 	spicelib/devices/vcvs/libvcvs.a			\
-	spicelib/devices/vsrc/libvsrc.a
-
-
-
-## ----- Note that I moved this stuff to here because it was causing automake
-##       to choke when it was in the DYNAMIC_DEVICELIBS list above -----
-## This lib deleted from DYNAMIC_DEVICELIBS by sdb 'cause there's no source for it.
-##	spicelib/devices/bjt2/libbjt2.a		\
-## poly added to dynamic libs by SDB on 6.1.2003
-##	xspice/icm/poly/libpoly.a
-
+	spicelib/devices/vsrc/libvsrc.a			\
+	@NUMDEV@
+	
+	
 ## Build ngspice first:
 
 ngspice_SOURCES = \
@@ -88,10 +87,12 @@ ngspice_LDADD = \
 	spicelib/devices/libdev.a \
 	@XSPICELIB2@		  \
 	frontend/parser/libparser.a \
+	@CIDERSIM@
 	frontend/help/libhlp.a \
 	spicelib/parser/libinp.a \
 	maths/deriv/libderiv.a \
 	maths/cmaths/libcmaths.a \
+	maths/misc/libmathsmisc.a	\
 	maths/poly/libpoly.a \
 	maths/ni/libni.a \
 	maths/sparse/libsparse.a \

@@ -8,7 +8,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 #include <config.h>
 #include "ngspice.h"
-#include <stdio.h>
 #include <string.h>
 #include "misc_time.h"
 
@@ -90,7 +89,10 @@ void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
 #endif
 #endif
 
-/* How many seconds have elapsed in running time. */
+/* 
+ * How many seconds have elapsed in running time. 
+ * This is the routine called in IFseconds 
+ */
 
 double
 seconds(void)

@@ -16,6 +16,13 @@ int ciprefix(register char *p, register char *s);
 void strtolower(char *str);
 char * gettok(char **s);
 
+#ifdef CIDER
+/* cider integration */ 
+
+int cinprefix(register char *p, register char *s, register int n);
+int cimatch(register char *p, register char *s); 
+#endif
+
 #if !defined(HAVE_INDEX) && !defined(HAVE_STRCHR)
 
 char * index(register char *s, register char c);

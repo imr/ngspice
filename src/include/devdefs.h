@@ -22,6 +22,19 @@ void DEVqmeyer(double,double,double,double,double,double*,double*,double*,
         double,double);
 double DEVpred(CKTcircuit*,int);
 
+#ifdef CIDER
+/* Cider integration */
+double limitResistorVoltage( double, double, int * );
+double limitJunctionVoltage( double, double, int * );
+double limitVbe( double, double, int * );
+double limitVce( double, double, int * );
+double limitVgb( double, double, int * );
+#endif
+ 
+ 
+
+
+
 typedef struct SPICEdev {
     IFdevice DEVpublic;
 
@@ -80,6 +93,13 @@ typedef struct SPICEdev {
     	/* procedure to do distortion operations */
     int (*DEVnoise)(int, int, GENmodel*,CKTcircuit*, Ndata *, double *);
 	/* noise routine */
+#ifdef CIDER 	
+    void (*DEVdump)(GENmodel *, CKTcircuit *);
+    void (*DEVacct)(GENmodel *, CKTcircuit *, FILE *);
+        /* routines to report device internals
+         * now used only by cider numerical devices
+         */
+#endif
     int *DEVinstSize;    /* size of an instance */
     int *DEVmodSize;     /* size of a model */
 

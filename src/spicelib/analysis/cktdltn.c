@@ -6,7 +6,6 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "ifsim.h"
 #include "sperror.h"

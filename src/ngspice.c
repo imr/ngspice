@@ -13,8 +13,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #define CONFIG
 
 
-
-#include <stdio.h>
 #include "devdefs.h"
 #include "noisedef.h"
 #include "suffix.h"

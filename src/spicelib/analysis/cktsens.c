@@ -221,8 +221,18 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	/* The unknown vector of node voltages overwrites rhs */
 	E = ckt->CKTrhs;
 	iE = ckt->CKTirhs;
-	ckt->CKTrhsOld = E;
-	ckt->CKTirhsOld = iE;
+ 	
+	/* The following two lines assigned a pointer to another shadowing
+	 * the previous definition and creating trouble when xfree() in 
+	 * NIdestroy tried to deallocate a non malloc'ed pointer 	 
+	 *
+ 	 * Original code:
+	 * ckt->CKTrhsOld = E;
+	 * ckt->CKTirhsOld = iE;
+         */
+
+        *ckt->CKTrhsOld = *E;
+	*ckt->CKTirhsOld = *iE;
 	Y = ckt->CKTmatrix;
 #ifdef ASDEBUG
 	DEBUG(1) {

@@ -8,7 +8,7 @@
 
 #ifdef PREDICTOR
 
-intNIpred(register CKTcircuit * ckt);
+int NIpred(register CKTcircuit * ckt);
 
 #endif /* PREDICTOR */
 

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Thomas L. Quarles
+Modified: 2001 Paolo Nenzi (Cider Integration)
 **********/
 
 #include "ngspice.h"
@@ -89,13 +90,14 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	      INPgetMod (ckt, model, &thismodel, tab);	/*  get pointer to the model  */
 	      if (thismodel != NULL)
 		{
-		  if ((thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
+		  if ((thismodel->INPmodType != INPtypelook ("B3SOI"))   &&
+                      (thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
 		      (thismodel->INPmodType != INPtypelook ("B3SOIFD")) &&
 		      (thismodel->INPmodType != INPtypelook ("B3SOIDD"))
 		      )
 		    {
 		      /*  if model is not variable node B3SOIPD/FD/DD model, error!  */
-		      LITERR ("only level 9-10 B3SOI(PD | FD | DD) can have 7 nodes") return;
+		      LITERR ("only level 9, 29-31 B3SOI(PD | FD | DD) can have 7 nodes") return;
 		    }
 		  else
 		    {		/*  if looking at B3SOIPD/FD/DD model, allocate the 7th node  */
@@ -113,14 +115,15 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	    }
 	  else
 	    {			/*  7th token is a model - only have 6 terminal device  */
-	      if ((thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
+	      if ((thismodel->INPmodType != INPtypelook ("B3SOI"))   &&
+                  (thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
 	          (thismodel->INPmodType != INPtypelook ("B3SOIFD")) &&
 	          (thismodel->INPmodType != INPtypelook ("B3SOIDD")) &&
 	          (thismodel->INPmodType != INPtypelook ("SOI3"))
 	          )
 		{
 		  /*  if model is not variable node B3SOIPD/FD/DD or STAG model, error!  */
-		  LITERR ("only level 9-10 B3SOI(PD | FD | DD) and STAG (SOI3) can have 6 nodes") return;
+		  LITERR ("only level 9, 29-31 B3SOI(PD | FD | DD) and STAG (SOI3) can have 6 nodes") return;
 		}
 	      else
 		{		/*  if looking at B3SOIPD/FD/DD or STAG (SOI3) model, allocate the 6th node  */
@@ -132,14 +135,15 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	}
       else
 	{			/*  6th token is a model - only have 5 terminal device  */
-	  if ((thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
+	  if ((thismodel->INPmodType != INPtypelook ("B3SOI"))   &&
+              (thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
 	      (thismodel->INPmodType != INPtypelook ("B3SOIFD")) &&
 	      (thismodel->INPmodType != INPtypelook ("B3SOIDD")) &&
 	      (thismodel->INPmodType != INPtypelook ("SOI3"))
 	      )
 	    {
 	      /*  if model is not variable node B3SOIPD/FD/DD  model, error!  */
-	      LITERR ("only level 9-10 B3SOI(PD | FD | DD) and STAG (SOI3) can have 5 nodes") return;
+	      LITERR ("only level 9, 29-31 B3SOI(PD | FD | DD) and STAG (SOI3) can have 5 nodes") return;
 	    }
 	  else
 	    {			/*  if looking at B3SOIPD/FD/DD or STAG (SOI3) model, allocate the 5th node  */
@@ -171,16 +175,23 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	  && thismodel->INPmodType != INPtypelook ("BSIM1")
 	  && thismodel->INPmodType != INPtypelook ("BSIM2")
 	  && thismodel->INPmodType != INPtypelook ("BSIM3")
+          && thismodel->INPmodType != INPtypelook ("B3SOI")
 	  && thismodel->INPmodType != INPtypelook ("B3SOIPD")
 	  && thismodel->INPmodType != INPtypelook ("B3SOIFD")
 	  && thismodel->INPmodType != INPtypelook ("B3SOIDD")
 	  && thismodel->INPmodType != INPtypelook ("BSIM4")
-	  && thismodel->INPmodType != INPtypelook ("BSIM3V1")
-	  && thismodel->INPmodType != INPtypelook ("BSIM3V2")
+          && thismodel->INPmodType != INPtypelook ("BSIM3v0")
+ 	  && thismodel->INPmodType != INPtypelook ("BSIM3v1")
+	  && thismodel->INPmodType != INPtypelook ("BSIM3v1S")
+ 	  && thismodel->INPmodType != INPtypelook ("BSIM3v1A")
 	  && thismodel->INPmodType != INPtypelook ("SOI3")
+#ifdef CIDER
+          && thismodel->INPmodType != INPtypelook ("NUMOS")
+#endif
 #ifdef HAVE_EKV	  
 	  && thismodel->INPmodType != INPtypelook ("EKV")
 #endif	
+          && thismodel->INPmodType != INPtypelook ("HiSIM1")
 	  )
 	{
 	  LITERR ("incorrect model type");
@@ -211,7 +222,8 @@ INP2M (void *ckt, INPtables * tab, card * current)
   IFC (bindNode, (ckt, fast, 3, node3));
   IFC (bindNode, (ckt, fast, 4, node4));
   /*use type not thismodel->INPmodType as it might not exist!*/
-  if ((type == INPtypelook ("B3SOIPD")) ||
+  if ((type == INPtypelook ("B3SOI"))   ||
+      (type == INPtypelook ("B3SOIPD")) ||
       (type == INPtypelook ("B3SOIFD")) ||
       (type == INPtypelook ("B3SOIDD")) ||
       (type == INPtypelook ("SOI3")))

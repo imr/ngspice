@@ -11,7 +11,6 @@ Modified: 2000 AlansFixes
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "optdefs.h"
 #include "tskdefs.h"

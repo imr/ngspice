@@ -6,7 +6,6 @@ Modified: 2000 AlansFixes
 
 #include "ngspice.h"
 #include "cktdefs.h"
-#include <stdio.h>
 #include "sperror.h"
 #include "trandefs.h"
 

@@ -97,7 +97,7 @@
 
 #define HAS_ASCII
 #define HAS_TTY_
-#define HAS_TIME_
+#define HAS_TIME_H
 #define HAS_RLIMIT_
 
 

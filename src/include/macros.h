@@ -14,6 +14,8 @@
 
 #define	NUMELEMS(ARRAY)	(sizeof(ARRAY)/sizeof(*ARRAY))
 
+/* String macros */
+
 #define eq(a,b)  (!strcmp((a), (b)))
 #define eqc(a,b)  (cieq((a), (b)))
 #define isalphanum(c)   (isalpha(c) || isdigit(c))
@@ -22,10 +24,17 @@
         ((c) <= 'F')) ? ((c) - 'A' + 10) : 0)))
 
 
+/* Mathematical macros */
+
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define ABS(a)    ((a) < 0.0 ? -(a) : (a))
+#define SGN(a)    ((a) < 0.0 ? -(1.0) : (1.0))
 #define SIGN(a,b) ( b >= 0 ? (a >= 0 ? a : - a) : (a >= 0 ? - a : a))
-
+#define  SWAP(type, a, b)   {type swapx; swapx = a; a = b; b = swapx;}
+ 
+ 
+#define NIL(type) ((type *)0) 
 #define ABORT() fflush(stderr);fflush(stdout);abort();
 
 #define ERROR(CODE,MESSAGE)	{			      \
@@ -60,4 +69,15 @@
 #define DEBUGMSG(testargs) 
 #endif
 
+/* Macro that queries the system to find the process time. */
+ 
+#define ELAPSED_TIME( time )				\
+{   struct tms {int user, sys, cuser, csys;} buffer;	\
+ 							\
+    times(&buffer);					\
+    time = buffer.user / 60.0;				\
+}
+ 
+ 
+ 
 #endif /* _MACROS_H_ */

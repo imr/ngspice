@@ -49,6 +49,10 @@
 #endif
 #endif
 
+#ifdef CIDER
+#include "numenum.h"
+#endif 
+
 extern void DevInit(void);
 
 /* Main options */
@@ -72,9 +76,56 @@ IFsimulator *ft_sim = NULL;
 int ARCHme;
 int ARCHsize;
 
+#ifdef CIDER
+/* Globals definitions for Machine Accuracy Limits
+ * (needed by CIDER)
+ */   
+double BMin;                /* lower limit for B(x) */
+double BMax;                /* upper limit for B(x) */
+double ExpLim;              /* limit for exponential */
+double Accuracy;            /* accuracy of the machine */
+double Acc, MuLim, MutLim;
+#endif
+
 char *errRtn;
 char *errMsg;
 char *cp_program;
+
+#ifdef CIDER
+/* Global debug flags from CIDER, soon they will become
+ * spice variables :)
+ */ 
+BOOLEAN ONEacDebug   = FALSE;
+BOOLEAN ONEdcDebug   = TRUE;
+BOOLEAN ONEtranDebug = TRUE;
+BOOLEAN ONEjacDebug  = FALSE;
+ 
+BOOLEAN TWOacDebug   = FALSE;
+BOOLEAN TWOdcDebug   = TRUE;
+BOOLEAN TWOtranDebug = TRUE;
+BOOLEAN TWOjacDebug  = FALSE; 
+ 
+/* CIDER Global Variable Declarations */
+ 
+char *LogFileName = "cider.log"; /* This will go somewhere else */
+  
+int BandGapNarrowing;
+int TempDepMobility, ConcDepMobility, FieldDepMobility, TransDepMobility;
+int SurfaceMobility, MatchingMobility, MobDeriv;
+int CCScattering;
+int Srh, Auger, ConcDepLifetime, AvalancheGen;
+int FreezeOut = FALSE;
+int OneCarrier;
+ 
+int MaxIterations = 100;
+int AcAnalysisMethod = DIRECT;
+ 
+double Temp, RelTemp, Vt;
+double RefPsi;/* potential at Infinity */
+double EpsNorm, VNorm, NNorm, LNorm, TNorm, JNorm, GNorm, ENorm;
+ 
+ /* end cider globals */
+#endif /* CIDER */
 
 struct variable *(*if_getparam)( );
 
@@ -225,6 +276,12 @@ int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
     SIMinfo.analyses = (IFanalysis **)spice_analysis_ptr(); /* va: we recast, because we use 
                                                              * only the public part 
 							     */
+							
+#ifdef CIDER
+/* Evaluates limits of machine accuracy for CIDER */
+    evalAccLimits();
+#endif /* CIDER */  
+   						     
 #endif /* SIMULATOR */
 
     SPfrontEnd = frontEnd;

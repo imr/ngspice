@@ -10,7 +10,6 @@ Author: 1985 Thomas L. Quarles
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "nidest.h"
 
@@ -20,7 +19,7 @@ NIdestroy(register CKTcircuit *ckt)
 {
     if (ckt->CKTmatrix)
 	SMPdestroy(ckt->CKTmatrix);
-    ckt->CKTmatrix = 0;
+    ckt->CKTmatrix = NULL;
     if(ckt->CKTrhs)         FREE(ckt->CKTrhs);
     if(ckt->CKTrhsOld)      FREE(ckt->CKTrhsOld);
     if(ckt->CKTrhsSpare)    FREE(ckt->CKTrhsSpare);
