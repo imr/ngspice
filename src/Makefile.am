@@ -173,7 +173,7 @@ CLEANFILES = pkgIndex.tcl libspice.so
 
 TCL_PKG_PATH = @TCL_PACKAGE_PATH@
 
-TCLSPICE_VERSION = 0.2.8
+TCLSPICE_VERSION = 0.2.9
 
 TCL_FILES = libspice.so pkgIndex.tcl
 
