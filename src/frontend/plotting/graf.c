@@ -296,9 +296,11 @@ gr_point(struct dvec *dv,
 		if (*tics == (double) np) {
 		    Text("x", (int) (tox - currentgraph->fontwidth / 2),
 			(int) (toy - currentgraph->fontheight / 2));
-		    SaveText(currentgraph, "x",
+		/* gr_redraw will redraw this w/o our having to save it
+                   Guenther Roehrich 22-Jan-99 */
+		/*    SaveText(currentgraph, "x",
 			(int) (tox - currentgraph->fontwidth / 2),
-			(int) (toy - currentgraph->fontheight / 2));
+			(int) (toy - currentgraph->fontheight / 2)); */
 		    break;
 		}
 	    }
@@ -308,9 +310,11 @@ gr_point(struct dvec *dv,
 	    /* Draw an 'x' */
 	    Text("x", (int) (tox - currentgraph->fontwidth / 2),
 		(int) (toy - currentgraph->fontheight / 2));
-	    SaveText(currentgraph, "x",
+	 /* gr_redraw will redraw this w/o our having to save it
+                  Guenther Roehrich 22-Jan-99 */ 
+	  /*  SaveText(currentgraph, "x",
 		(int) (tox - currentgraph->fontwidth / 2),
-		(int) (toy - currentgraph->fontheight / 2));
+		(int) (toy - currentgraph->fontheight / 2)); */
 	}
         break;
       case PLOT_COMB:

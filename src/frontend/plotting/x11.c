@@ -155,7 +155,10 @@ X11_Init(void)
 	/* "invert" works better than "xor" for B&W */
 
 	/* xor gc should be a function of the pixels that are written on */
-	gcvalues.function = GXxor;
+	/* gcvalues.function = GXxor; */
+	/* this patch makes lines visible on true color displays
+        Guenther Roehrich 22-Jan-99 */
+ 	gcvalues.function = GXinvert;
 	gcvalues.line_width = 1;
 	gcvalues.foreground = 1;
 	gcvalues.background = 0;
