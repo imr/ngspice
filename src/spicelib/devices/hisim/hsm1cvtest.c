@@ -77,7 +77,7 @@ HSM1convTest(GENmodel *inModel, register CKTcircuit *ckt)
 /* gtri - begin - wbk - report conv prob */
                 if(ckt->enh->conv_debug.report_conv_probs) {
                     ENHreport_conv_prob(ENH_ANALOG_INSTANCE,
-                                        (char *) here->MOS1name,
+                                        (char *) here->HSM11name,
                                         "");
                 }
 /* gtri - end - wbk - report conv prob */	

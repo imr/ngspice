@@ -150,7 +150,7 @@ HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 	    I = here->HSM1_gm + here->HSM1_gds + here->HSM1_gmbs;
 	    I *= (I < 0.0) ? -1.0 : 1.0;
 	    I *= 2.0/3.0;
-	    I *=  here->HSM1_m; /* PN */	    
+	    I *=  here->HSM1_m; /* PN */    
 	    NevalSrc(&noizDens[HSM1IDNOIZ], &lnNdens[HSM1IDNOIZ], 
 		     ckt, THERMNOISE, 
 		     here->HSM1dNodePrime, here->HSM1sNodePrime, I);
@@ -161,7 +161,7 @@ HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 	      / (here->HSM1_weff * here->HSM1_leff);
 	    I *= (I < 0.0) ? -1.0 : 1.0;
 	    I *= here->HSM1_mu;
-	    I *=  here->HSM1_m; /* PN */	    
+	    I *=  here->HSM1_m; /* PN */  
 	    NevalSrc(&noizDens[HSM1IDNOIZ], &lnNdens[HSM1IDNOIZ], 
 		     ckt, THERMNOISE, 
 		     here->HSM1dNodePrime, here->HSM1sNodePrime, I);
