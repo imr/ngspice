@@ -34,7 +34,7 @@ Installation:
 			
 	The install commands are:
 		From the root directory of the source:
-		./configure --enable-tcl --enable-experimental --disable-shared
+		./configure --with-tcl --enable-experimental --enable-xspice
 		make tcl
 	    And as root:
 		make install-tcl

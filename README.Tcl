@@ -37,7 +37,7 @@ and based upon the NG-Spice source code base with many improvements
 
         $ tar -zxf tclspice0.2.??.tar.gz
         $ cd tclspice
-        $ ./configure --enable-tcl --enable-experimental --enable-xspice
+        $ ./configure --with-tcl --enable-experimental --enable-xspice
         $ make tcl
         $ make install-tcl
 
