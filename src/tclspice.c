@@ -326,15 +326,17 @@ static int spicetoblt(ClientData clientData, Tcl_Interp *interp,
 /*     Main spice command executions and thread control           */
 /*****************************************************************/
 
-static pthread_t tid;
+static pthread_t tid, bgtid=(pthread_t)0;
 static bool fl_running = FALSE;
 static bool fl_exited = TRUE;
 
 
 static void *_thread_run(void *string){
   fl_exited = FALSE;
+  bgtid = pthread_self();
   cp_evloop((char *)string);
   FREE(string);
+  bgtid = (pthread_t)0;
   fl_exited = TRUE;
   return 0;
 }
@@ -1360,8 +1362,9 @@ int tcl_vfprintf(FILE *f, const char *fmt, va_list args_in)
   char *outptr, *bigstr = NULL, *finalstr = NULL;
   int i, nchars, result, escapes = 0;
 
-  if(f != stdout && f != stderr)
-    vfprintf(f,fmt,args_in);
+  if((f != stdout && f != stderr) || 
+     ( fl_running && bgtid == pthread_self()) )
+      return vfprintf(f,fmt,args_in);
 
   strcpy (outstr + 19, (f == stderr) ? "err \"" : "out \"");
   outptr = outstr;
@@ -1456,6 +1459,9 @@ void tcl_stdflush(FILE *f)
   Tcl_SavedResult state;
   static char stdstr[] = "flush stdxxx";
   char *stdptr = stdstr + 9;
+  
+  if ( fl_running && bgtid == pthread_self())
+      return;
   
   Tcl_SaveResult(spice_interp, &state);
   strcpy(stdptr, (f == stderr) ? "err" : "out");

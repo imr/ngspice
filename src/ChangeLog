@@ -1,3 +1,8 @@
+2003-06-25  Stefan Jones    <stefan.jones@multigig.com>
+
+	* tclspice.c :
+	Fix printing while running a background thread, seen eg. in Magic-7.2
+
 2001-12-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
 	* maths/cmaths/Makefile.am (noinst_PROGRAMS): test programs
