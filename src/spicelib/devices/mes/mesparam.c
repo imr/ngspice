@@ -6,7 +6,6 @@ Author: 1985 S. Hwang
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "mesdefs.h"
 #include "sperror.h"
@@ -15,17 +14,17 @@ Author: 1985 S. Hwang
 
 /* ARGSUSED */
 int
-MESparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+MESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MESinstance *here = (MESinstance*)inst;
     switch(param) {
         case MES_AREA:
             here->MESarea = value->rValue;
             here->MESareaGiven = TRUE;
+            break;
+        case MES_M:
+            here->MESm = value->rValue;
+            here->MESmGiven = TRUE;
             break;
         case MES_IC_VDS:
             here->MESicVDS = value->rValue;

@@ -6,7 +6,6 @@ Author: 1985 S. Hwang
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mesdefs.h"
 #include "sperror.h"
@@ -14,10 +13,7 @@ Author: 1985 S. Hwang
 
 
 int
-MEStrunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+MEStrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
     MESmodel *model = (MESmodel*)inModel;
     MESinstance *here;

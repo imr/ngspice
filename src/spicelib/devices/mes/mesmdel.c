@@ -6,17 +6,13 @@ Author: 1985 S. Hwang
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mesdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-MESmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+MESmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     MESmodel **model = (MESmodel**)inModel;
     MESmodel *modfast = (MESmodel*)kill;

@@ -1,6 +1,12 @@
+2003-12-31  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*  src/spicelib/devices/mes/*: Added parallel multiplier.
+	
+	*  tests/mes, tests/mes/subth.cir: added test netlist for mes devices.
+
 2003-12-30  Paolo Nenzi <p.nenzi@ieee.org>
 
-        * src/spicelibe/devices/hfet2/*: Added parallel multipler and "dtemp"
+        * src/spicelibe/devices/hfet2/*: Added parallel multiplier and "dtemp"
 	  parameters. Added pole-zero analysis and parallel code switches. 
 	
 	* src/spicelib/devices/jfet/jfetpzld.c: gspr and gdpr were initialized

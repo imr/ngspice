@@ -6,7 +6,6 @@ Author: 1987 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -17,18 +16,14 @@ Author: 1987 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-MESask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+MESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
     MESinstance *here = (MESinstance*)inst;
     static char *msg = "Current and power not available in ac analysis";
     switch(which) {
         case MES_AREA:
             value->rValue = here->MESarea;
+            value->rValue *= here->MESm;
             return (OK);
         case MES_IC_VDS:
             value->rValue = here->MESicVDS;
@@ -59,36 +54,47 @@ MESask(ckt,inst,which,value,select)
             return (OK);
         case MES_CG:
             value->rValue = *(ckt->CKTstate0 + here->MEScg);
+            value->rValue *= here->MESm;
             return (OK);
         case MES_CD:
             value->rValue = *(ckt->CKTstate0 + here->MEScd);
+            value->rValue *= here->MESm;
             return (OK);
         case MES_CGD:
             value->rValue = *(ckt->CKTstate0 + here->MEScgd);
+            value->rValue *= here->MESm;
             return (OK);
         case MES_GM:
             value->rValue = *(ckt->CKTstate0 + here->MESgm);
+            value->rValue *= here->MESm;
             return (OK);
         case MES_GDS:
             value->rValue = *(ckt->CKTstate0 + here->MESgds);
+            value->rValue *= here->MESm;
             return (OK);
         case MES_GGS:
             value->rValue = *(ckt->CKTstate0 + here->MESggs);
+            value->rValue *= here->MESm;
             return (OK);
         case MES_GGD:
             value->rValue = *(ckt->CKTstate0 + here->MESggd);
+            value->rValue *= here->MESm;
             return (OK);
         case MES_QGS:
             value->rValue = *(ckt->CKTstate0 + here->MESqgs);
+            value->rValue *= here->MESm;
             return (OK);
         case MES_CQGS:
             value->rValue = *(ckt->CKTstate0 + here->MEScqgs);
+            value->rValue *= here->MESm;
             return (OK);
         case MES_QGD:
             value->rValue = *(ckt->CKTstate0 + here->MESqgd);
+            value->rValue *= here->MESm;
             return (OK);
         case MES_CQGD:
             value->rValue = *(ckt->CKTstate0 + here->MEScqgd);
+            value->rValue *= here->MESm;
             return (OK);
         case MES_CS :
              if (ckt->CKTcurrentAnalysis & DOING_AC) {
@@ -99,6 +105,7 @@ MESask(ckt,inst,which,value,select)
              } else {
                  value->rValue = -*(ckt->CKTstate0 + here->MEScd);
                  value->rValue -= *(ckt->CKTstate0 + here->MEScg);
+                 value->rValue *= here->MESm;
              }
              return(OK);
         case MES_POWER :
@@ -115,6 +122,7 @@ MESask(ckt,inst,which,value,select)
                  value->rValue -= (*(ckt->CKTstate0+here->MEScd) +
                          *(ckt->CKTstate0 + here->MEScg)) *
                          *(ckt->CKTrhsOld + here->MESsourceNode);
+                 value->rValue *= here->MESm;
              }
              return(OK);
         default:

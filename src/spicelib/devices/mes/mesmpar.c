@@ -6,7 +6,6 @@ Author: 1985 S. Hwang
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "mesdefs.h"
 #include "sperror.h"
@@ -14,10 +13,7 @@ Author: 1985 S. Hwang
 
 
 int
-MESmParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+MESmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     MESmodel *model = (MESmodel*)inModel;
     switch(param) {

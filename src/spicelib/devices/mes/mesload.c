@@ -5,7 +5,6 @@ Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "cktdefs.h"
 #include "mesdefs.h"
@@ -15,17 +14,12 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 /* forward declaraction of our helper function */
-#ifdef __STDC__
+
 static double qggnew(double,double,double,double,double,double,double,
     double*,double*);
-#else /* stdc */
-static double qggnew();
-#endif /* stdc */
 
 int
-MESload(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MESload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the 
          * sparse matrix previously provided 
          */
@@ -85,6 +79,8 @@ MESload(inModel,ckt)
     int icheck;
     int ichk1;
     int error;
+
+    double m;
 
     /*  loop through all the models */
     for( ; model != NULL; model = model->MESnextModel ) {
@@ -429,32 +425,35 @@ MESload(inModel,ckt)
              *    load current vector
              */
 load:
+
+            m = here->MESm;
+
             ceqgd=model->MEStype*(cgd-ggd*vgd);
             ceqgs=model->MEStype*((cg-cgd)-ggs*vgs);
             cdreq=model->MEStype*((cd+cgd)-gds*vds-gm*vgs);
-            *(ckt->CKTrhs + here->MESgateNode) += (-ceqgs-ceqgd);
+            *(ckt->CKTrhs + here->MESgateNode) += m * (-ceqgs-ceqgd);
             *(ckt->CKTrhs + here->MESdrainPrimeNode) +=
-                    (-cdreq+ceqgd);
+                    m * (-cdreq+ceqgd);
             *(ckt->CKTrhs + here->MESsourcePrimeNode) +=
-                    (cdreq+ceqgs);
+                    m * (cdreq+ceqgs);
             /*
              *    load y matrix 
              */
-            *(here->MESdrainDrainPrimePtr) += (-gdpr);
-            *(here->MESgateDrainPrimePtr) += (-ggd);
-            *(here->MESgateSourcePrimePtr) += (-ggs);
-            *(here->MESsourceSourcePrimePtr) += (-gspr);
-            *(here->MESdrainPrimeDrainPtr) += (-gdpr);
-            *(here->MESdrainPrimeGatePtr) += (gm-ggd);
-            *(here->MESdrainPrimeSourcePrimePtr) += (-gds-gm);
-            *(here->MESsourcePrimeGatePtr) += (-ggs-gm);
-            *(here->MESsourcePrimeSourcePtr) += (-gspr);
-            *(here->MESsourcePrimeDrainPrimePtr) += (-gds);
-            *(here->MESdrainDrainPtr) += (gdpr);
-            *(here->MESgateGatePtr) += (ggd+ggs);
-            *(here->MESsourceSourcePtr) += (gspr);
-            *(here->MESdrainPrimeDrainPrimePtr) += (gdpr+gds+ggd);
-            *(here->MESsourcePrimeSourcePrimePtr) += (gspr+gds+gm+ggs);
+            *(here->MESdrainDrainPrimePtr)        += m * (-gdpr);
+            *(here->MESgateDrainPrimePtr)         += m * (-ggd);
+            *(here->MESgateSourcePrimePtr)        += m * (-ggs);
+            *(here->MESsourceSourcePrimePtr)      += m * (-gspr);
+            *(here->MESdrainPrimeDrainPtr)        += m * (-gdpr);
+            *(here->MESdrainPrimeGatePtr)         += m * (gm-ggd);
+            *(here->MESdrainPrimeSourcePrimePtr)  += m * (-gds-gm);
+            *(here->MESsourcePrimeGatePtr)        += m * (-ggs-gm);
+            *(here->MESsourcePrimeSourcePtr)      += m * (-gspr);
+            *(here->MESsourcePrimeDrainPrimePtr)  += m * (-gds);
+            *(here->MESdrainDrainPtr)             += m * (gdpr);
+            *(here->MESgateGatePtr)               += m * (ggd+ggs);
+            *(here->MESsourceSourcePtr)           += m * (gspr);
+            *(here->MESdrainPrimeDrainPrimePtr)   += m * (gdpr+gds+ggd);
+            *(here->MESsourcePrimeSourcePrimePtr) += m * (gspr+gds+gm+ggs);
         }
     }
     return(OK);

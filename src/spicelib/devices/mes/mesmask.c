@@ -6,7 +6,6 @@ Author: 1987 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -17,11 +16,7 @@ Author: 1987 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-MESmAsk(ckt,inst,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inst;
-    int which;
-    IFvalue *value;
+MESmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     MESmodel *here = (MESmodel*)inst;
     switch(which) {

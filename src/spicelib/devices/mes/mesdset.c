@@ -4,7 +4,6 @@ Author: 1988 Jaijeet Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "cktdefs.h"
 #include "mesdefs.h"
@@ -14,9 +13,7 @@ Author: 1988 Jaijeet Roychowdhury
 #include "suffix.h"
 
 int
-MESdSetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MESdSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the 
          * sparse matrix previously provided 
          */
@@ -68,10 +65,10 @@ MESdSetup(inModel,ckt)
             /*
              *  dc model parameters 
              */
-            beta = model->MESbeta * here->MESarea;
-            gdpr = model->MESdrainConduct * here->MESarea;
-            gspr = model->MESsourceConduct * here->MESarea;
-            csat = model->MESgateSatCurrent * here->MESarea;
+            beta = model->MESbeta * here->MESm * here->MESarea;
+            gdpr = model->MESdrainConduct * here->MESm * here->MESarea;
+            gspr = model->MESsourceConduct * here->MESm * here->MESarea;
+            csat = model->MESgateSatCurrent * here->MESm * here->MESarea;
             vcrit = model->MESvcrit;
             vto = model->MESthreshold;
             /*
@@ -229,8 +226,8 @@ d_p.d3_pqr = 0.0;
                  *    charge storage elements 
                  */
 { /* code block */
-czgs = model->MEScapGS * here->MESarea;
-czgd = model->MEScapGD * here->MESarea;
+czgs = model->MEScapGS * here->MESm * here->MESarea;
+czgd = model->MEScapGD * here->MESm * here->MESarea;
 phib = model->MESgatePotential;
 vcap = 1 / model->MESalpha;
 

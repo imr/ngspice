@@ -5,7 +5,6 @@ Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "mesdefs.h"
@@ -14,11 +13,7 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 int
-MESsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+MESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the diode structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -83,7 +78,10 @@ MESsetup(matrix,inModel,ckt,states)
 	    if (here->MESowner != ARCHme) goto matrixpointers;
             
             if(!here->MESareaGiven) {
-                here->MESarea = 1;
+                here->MESarea = 1.0;
+            }
+            if(!here->MESmGiven) {
+                here->MESm = 1.0;
             }
             here->MESstate = *states;
             *states += MESnumStates;
@@ -163,9 +161,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-MESunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MESunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     MESmodel *model;
     MESinstance *here;

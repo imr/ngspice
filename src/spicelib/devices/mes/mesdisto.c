@@ -4,7 +4,6 @@ Author: 1988 Jaijeet S Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mesdefs.h"
 #include "sperror.h"
@@ -12,11 +11,7 @@ Author: 1988 Jaijeet S Roychowdhury
 #include "suffix.h"
 
 int
-MESdisto(mode,genmodel,ckt)
- GENmodel *genmodel;
- CKTcircuit *ckt;
- int mode;
-
+MESdisto(int mode,GENmodel *genmodel, CKTcircuit *ckt)
 /* assuming here that ckt->CKTomega has been initialised to 
  * the correct value
  */

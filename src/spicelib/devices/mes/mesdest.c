@@ -6,14 +6,12 @@ Author: 1985 S. Hwang
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mesdefs.h"
 #include "suffix.h"
 
 
 void
-MESdestroy(inModel)
-    GENmodel **inModel;
+MESdestroy(GENmodel **inModel)
 {
     MESmodel **model = (MESmodel**)inModel;
     MESinstance *here;

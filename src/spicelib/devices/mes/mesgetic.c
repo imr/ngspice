@@ -6,7 +6,6 @@ Author: 1985 S. Hwang
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mesdefs.h"
 #include "sperror.h"
@@ -14,9 +13,7 @@ Author: 1985 S. Hwang
 
 
 int
-MESgetic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MESgetic(GENmodel *inModel, CKTcircuit *ckt)
 {
     MESmodel *model = (MESmodel*)inModel;
     MESinstance *here;

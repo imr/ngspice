@@ -6,7 +6,6 @@ Author: 1985 S. Hwang
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mesdefs.h"
 #include "sperror.h"
@@ -14,9 +13,7 @@ Author: 1985 S. Hwang
 
 
 int
-MESacLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MESacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     MESmodel *model = (MESmodel*)inModel;
     MESinstance *here;
@@ -29,11 +26,15 @@ MESacLoad(inModel,ckt)
     double ggd;
     double xgd;
 
+    double m;
+
     for( ; model != NULL; model = model->MESnextModel ) {
         
         for( here = model->MESinstances; here != NULL; 
                 here = here->MESnextInstance) {
 	    if (here->MESowner != ARCHme) continue;
+
+            m = here->MESm;
 
             gdpr=model->MESdrainConduct * here->MESarea;
             gspr=model->MESsourceConduct * here->MESarea;
@@ -43,28 +44,28 @@ MESacLoad(inModel,ckt)
             xgs= *(ckt->CKTstate0 + here->MESqgs) * ckt->CKTomega ;
             ggd= *(ckt->CKTstate0 + here->MESggd) ;
             xgd= *(ckt->CKTstate0 + here->MESqgd) * ckt->CKTomega ;
-            *(here->MESdrainDrainPtr ) += gdpr;
-            *(here->MESgateGatePtr ) += ggd+ggs;
-            *(here->MESgateGatePtr +1) += xgd+xgs;
-            *(here->MESsourceSourcePtr ) += gspr;
-            *(here->MESdrainPrimeDrainPrimePtr ) += gdpr+gds+ggd;
-            *(here->MESdrainPrimeDrainPrimePtr +1) += xgd;
-            *(here->MESsourcePrimeSourcePrimePtr ) += gspr+gds+gm+ggs;
-            *(here->MESsourcePrimeSourcePrimePtr +1) += xgs;
-            *(here->MESdrainDrainPrimePtr ) -= gdpr;
-            *(here->MESgateDrainPrimePtr ) -= ggd;
-            *(here->MESgateDrainPrimePtr +1) -= xgd;
-            *(here->MESgateSourcePrimePtr ) -= ggs;
-            *(here->MESgateSourcePrimePtr +1) -= xgs;
-            *(here->MESsourceSourcePrimePtr ) -= gspr;
-            *(here->MESdrainPrimeDrainPtr ) -= gdpr;
-            *(here->MESdrainPrimeGatePtr ) += (-ggd+gm);
-            *(here->MESdrainPrimeGatePtr +1) -= xgd;
-            *(here->MESdrainPrimeSourcePrimePtr ) += (-gds-gm);
-            *(here->MESsourcePrimeGatePtr ) += (-ggs-gm);
-            *(here->MESsourcePrimeGatePtr +1) -= xgs;
-            *(here->MESsourcePrimeSourcePtr ) -= gspr;
-            *(here->MESsourcePrimeDrainPrimePtr ) -= gds;
+            *(here->MESdrainDrainPtr )               += m * (gdpr);
+            *(here->MESgateGatePtr )                 += m * (ggd+ggs);
+            *(here->MESgateGatePtr +1)               += m * (xgd+xgs);
+            *(here->MESsourceSourcePtr )             += m * (gspr);
+            *(here->MESdrainPrimeDrainPrimePtr )     += m * (gdpr+gds+ggd);
+            *(here->MESdrainPrimeDrainPrimePtr +1)   += m * (xgd);
+            *(here->MESsourcePrimeSourcePrimePtr )   += m * (gspr+gds+gm+ggs);
+            *(here->MESsourcePrimeSourcePrimePtr +1) += m * (xgs);
+            *(here->MESdrainDrainPrimePtr )          -= m * (gdpr);
+            *(here->MESgateDrainPrimePtr )           -= m * (ggd);
+            *(here->MESgateDrainPrimePtr +1)         -= m * (xgd);
+            *(here->MESgateSourcePrimePtr )          -= m * (ggs);
+            *(here->MESgateSourcePrimePtr +1)        -= m * (xgs);
+            *(here->MESsourceSourcePrimePtr )        -= m * (gspr);
+            *(here->MESdrainPrimeDrainPtr )          -= m * (gdpr);
+            *(here->MESdrainPrimeGatePtr )           += m * (-ggd+gm);
+            *(here->MESdrainPrimeGatePtr +1)         -= m * (xgd);
+            *(here->MESdrainPrimeSourcePrimePtr )    += m * (-gds-gm);
+            *(here->MESsourcePrimeGatePtr )          += m * (-ggs-gm);
+            *(here->MESsourcePrimeGatePtr +1)        -= m * (xgs);
+            *(here->MESsourcePrimeSourcePtr )        -= m * (gspr);
+            *(here->MESsourcePrimeDrainPrimePtr )    -= m * (gds);
 
         }
     }

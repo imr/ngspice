@@ -241,7 +241,17 @@ HFET2 - HFET Level 2 (Ytterdal)
 ***************************************************************************
 		
 MES   - MESfet model
-      Initial release
+        Initial Release.
+	Ver: 	N/A
+	Class:	Z
+	Level:	1 
+	Status:
+	
+	
+	Enhancements over the original model:
+	
+	- Parallel multiplier
+	- Alan Gillespie junction diodes implementation
       
 MESA  - MESA model
       Initial release. TO BE TESTED

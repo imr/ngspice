@@ -4,7 +4,6 @@ Author: 1985 S. Hwang
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "mesdefs.h"
@@ -14,10 +13,8 @@ Author: 1985 S. Hwang
 
 /* ARGSUSED */
 int
-MEStemp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-        /* load the diode structure with those pointers needed later 
+MEStemp(GENmodel *inModel, CKTcircuit *ckt)
+        /* load the mes structure with those pointers needed later 
          * for fast matrix loading 
          */
 {

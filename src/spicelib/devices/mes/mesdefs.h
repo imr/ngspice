@@ -33,6 +33,7 @@ typedef struct sMESinstance {
     int MESsourcePrimeNode;    /* number of internal source node of mesfet */
 
     double MESarea;    /* area factor for the mesfet */
+    double MESm;       /* Parallel multiplier */
     double MESicVDS;   /* initial condition voltage D-S*/
     double MESicVGS;   /* initial condition voltage G-S*/
     double *MESdrainDrainPrimePtr; /* pointer to sparse matrix at 
@@ -67,7 +68,8 @@ typedef struct sMESinstance {
                                              * (source prime,source prime) */
 
     int MESoff;   /* 'off' flag for mesfet */
-    unsigned MESareaGiven : 1;   /* flag to indicate area was specified */
+    unsigned MESareaGiven  : 1;   /* flag to indicate area was specified */
+    unsigned MESmGiven     : 1;   /* flag to indicate multiplier specified*/
     unsigned MESicVDSGiven : 1;   /* initial condition given flag for V D-S*/
     unsigned MESicVGSGiven : 1;   /* initial condition given flag for V G-S*/
 
@@ -224,6 +226,7 @@ typedef struct sMESmodel {       /* model structure for a mesfet */
 #define MES_OFF 5
 #define MES_CS 6
 #define MES_POWER 7
+#define MES_M 8
 
 /* model parameters */
 #define MES_MOD_VTO 101

@@ -4,7 +4,6 @@ Author: 1987 Gary W. Ng
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mesdefs.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"
@@ -24,13 +23,8 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 int
-MESnoise (mode, operation, genmodel, ckt, data, OnDens)
-    int mode;
-    int operation;
-    GENmodel *genmodel;
-    CKTcircuit *ckt;
-    Ndata *data;
-    double *OnDens;
+MESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data,
+          double *OnDens)
 {
     MESmodel *firstModel = (MESmodel *) genmodel;
     MESmodel *model;
@@ -122,21 +116,21 @@ if (!data->namelist) return(E_NOMEM);
 		case N_DENS:
 		    NevalSrc(&noizDens[MESRDNOIZ],&lnNdens[MESRDNOIZ],
 				 ckt,THERMNOISE,inst->MESdrainPrimeNode,inst->MESdrainNode,
-				 model->MESdrainConduct * inst->MESarea);
+				 model->MESdrainConduct * inst->MESarea * inst->MESm);
 
 		    NevalSrc(&noizDens[MESRSNOIZ],&lnNdens[MESRSNOIZ],
 				 ckt,THERMNOISE,inst->MESsourcePrimeNode,inst->MESsourceNode,
-				 model->MESsourceConduct * inst->MESarea);
+				 model->MESsourceConduct * inst->MESarea * inst->MESm);
 
 		    NevalSrc(&noizDens[MESIDNOIZ],&lnNdens[MESIDNOIZ],
 				 ckt,THERMNOISE,inst->MESdrainPrimeNode,
 				 inst->MESsourcePrimeNode,
-                                 (2.0/3.0 * fabs(*(ckt->CKTstate0 + inst->MESgm))));
+                                 (2.0/3.0 * inst->MESm * fabs(*(ckt->CKTstate0 + inst->MESgm))));
 
 		    NevalSrc(&noizDens[MESFLNOIZ],(double*)NULL,ckt,
 				 N_GAIN,inst->MESdrainPrimeNode, inst->MESsourcePrimeNode,
 				 (double)0.0);
-		    noizDens[MESFLNOIZ] *= model->MESfNcoef * 
+		    noizDens[MESFLNOIZ] *= inst->MESm * model->MESfNcoef * 
 				 exp(model->MESfNexp *
 				 log(MAX(fabs(*(ckt->CKTstate0 + inst->MEScd)),N_MINLOG))) /
 				 data->freq;
