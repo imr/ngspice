@@ -23,7 +23,7 @@ IFparm BJTpTable[] = { /* parameters */
  IOPU("off",     BJT_OFF,            IF_FLAG,    "Device initially off"),
  IOPAU("icvbe",  BJT_IC_VBE,         IF_REAL, "Initial B-E voltage"),
  IOPAU("icvce",  BJT_IC_VCE,         IF_REAL, "Initial C-E voltage"),
- IOPU("area",    BJT_AREA,           IF_REAL,    "(Emitter )Area factor"),
+ IOPU("area",    BJT_AREA,           IF_REAL,    "(Emitter) Area factor"),
  IOPU("areab",   BJT_AREAB,          IF_REAL,    "Base area factor"),
  IOPU("areac",   BJT_AREAC,          IF_REAL,    "Collector area factor"), 
  IOPU("m",       BJT_M,              IF_REAL,   "Parallel Multiplier"),
