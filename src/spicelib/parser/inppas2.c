@@ -10,6 +10,12 @@ Author: 1985 Thomas L. Quarles
 
 #include "inppas2.h"
 
+#ifdef XSPICE
+/* gtri - add - wbk - 11/9/90 - include function prototypes */
+#include "mifproto.h"
+/* gtri - end - wbk - 11/9/90 */
+#endif
+
 /* pass 2 - Scan through the lines.  ".model" cards have processed in
  *  pass1 and are ignored here.  */
 
@@ -22,6 +28,11 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
     char *gname;
     void *gnode;
     int error;			/* used by the macros defined above */
+
+#ifdef TRACE
+    /* SDB debug statement */
+    printf("Entered INPpas2 . . . .\n");
+#endif
 
     error = INPgetTok(&groundname, &gname, 1);
     if (error)
@@ -39,6 +50,11 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 
     for (current = data; current != NULL; current = current->nextcard) {
 
+#ifdef TRACE
+      /* SDB debug statement */
+      printf("In INPpas2, examining card %s . . .\n", current->line);
+#endif
+
 	c = *(current->line);
 	c = islower(c) ? toupper(c) : c;
 
@@ -49,6 +65,16 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 	case '\t':
 	    /* blank line (tab leading) */
 	    break;
+
+#ifdef XSPICE
+	    /* gtri - add - wbk - 10/23/90 - add case for 'A' devices */
+	    
+        case 'A':   /* Aname <cm connections> <mname> */
+	  MIF_INP2A(ckt,tab,current);
+	  break;
+	  
+	  /* gtri - end - wbk - 10/23/90 */
+#endif
 
 	case 'R':
 	    /* Rname <node> <node> [<val>][<mname>][w=<val>][l=<val>] */
@@ -156,6 +182,18 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 	    INP2U(ckt, tab, current);
 	    break;
 
+	/* Kspice addition - saj */
+	case 'P': 
+	    /* Pname <dimension> <node> ...... */
+	    /* R=<vector> L=<matrix> G=<vector> C=<matrix> l=<val> */
+	    INP2P(ckt, tab,current);
+	    break;
+	case 'Y':   
+	    /* Yname <node> <node> R=<val> L=<val> G=<val> C=<val> l=<val> */
+	    INP2Y(ckt, tab,current);
+	    break;
+	/* end Kspice */
+			
 	case 'K':
 	    /* Kname Lname Lname <val> */
 	    INP2K(ckt, tab, current);

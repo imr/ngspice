@@ -40,21 +40,15 @@ mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
 	asprintf(p, "%s", buffer);
     else
 	asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir);
-#else /* ~ HAVE_ASPRINTF */
+#else /* ~ HAVE_ASPRINTF */ /* va: we use tmalloc */
     if (buffer){
-	if ( (*p = (char *) malloc(strlen(buffer)+1)) == NULL){
-		fprintf(stderr,"malloc failed\n");
-		exit(1);
-	}
+	*p = (char *) tmalloc(strlen(buffer)+1);
 	sprintf(*p,"%s",buffer);
 	/* asprintf(p, "%s", buffer); */
     }
     else{
-	if ( (*p = (char *) malloc(strlen(path_prefix) + 
-			strlen(DIR_PATHSEP) + strlen(var_dir) + 1)) == NULL){
-		fprintf(stderr,"malloc failed\n");
-		exit(1);
-	}
+	*p = (char *) tmalloc(strlen(path_prefix) + 
+			strlen(DIR_PATHSEP) + strlen(var_dir) + 1);	
 	sprintf(*p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir); 
 	/* asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir); */
     }
@@ -89,9 +83,9 @@ ivars(void)
 void
 cleanvars(void)
 {
-    free(News_File);
-    free(Default_MFB_Cap);
-    free(Help_Path);
-    free(Lib_Path);
-    free(Spice_Path);
+    tfree(News_File);
+    tfree(Default_MFB_Cap);
+    tfree(Help_Path);
+    tfree(Lib_Path);
+    tfree(Spice_Path);
 }

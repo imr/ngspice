@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 
 
-extern SPICEdev *DEVices[];
+extern SPICEdev **DEVices;
 
 /* ARGSUSED */
 int

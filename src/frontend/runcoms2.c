@@ -20,6 +20,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 extern FILE *rawfileFp;
 extern bool rawfileBinary;
+/*rawfile output saj*/
+extern char *last_used_rawfile;
+#define RAWBUF_SIZE 32768
+char rawfileBuf[RAWBUF_SIZE];
+/*end saj*/
 extern struct dbcomm *dbs;
 
 /* Continue a simulation. If there is non in progress, this is the
@@ -42,6 +47,22 @@ com_resume(wordlist *wl)
 {
     struct dbcomm *db;
     int err;
+    
+    /*rawfile output saj*/
+    bool dofile = FALSE;
+    char buf[BSIZE_SP];
+    bool ascii = AsciiRawFile;
+    /*end saj*/
+
+    /*saj fix segment*/
+    if (!ft_curckt) {
+      fprintf(cp_err, "Error: there aren't any circuits loaded.\n");
+        return;
+    } else if (ft_curckt->ci_ckt == NULL) { /* Set noparse? */
+      fprintf(cp_err, "Error: circuit not parsed.\n");
+      return;
+    }
+    /*saj*/
 
     if (ft_curckt->ci_inprogress == FALSE) {
         fprintf(cp_err, "Note: run starting\n");
@@ -51,13 +72,70 @@ com_resume(wordlist *wl)
     ft_curckt->ci_inprogress = TRUE;
     ft_setflag = TRUE;
 
+
+
     reset_trace( );
     for ( db = dbs, resumption = FALSE; db; db = db->db_next )
 	if( db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL ) {
 		resumption = TRUE;
 	}
+
+    /*rawfile output saj*/
+    if (last_used_rawfile)
+      dofile = TRUE;
+    
+    if (cp_getvar("filetype", VT_STRING, buf)) {
+      if (eq(buf, "binary"))
+	ascii = FALSE;
+      else if (eq(buf, "ascii"))
+	    ascii = TRUE;
+      else
+	fprintf(cp_err,
+		"Warning: strange file type \"%s\" (using \"ascii\")\n",
+		buf);
+    }
+    
+    if (dofile) {
+#ifdef PARALLEL_ARCH
+      if (ARCHme == 0) {
+#endif /* PARALLEL_ARCH */
+        if (!last_used_rawfile)
+	  rawfileFp = stdout;
+        else if (!(rawfileFp = fopen(last_used_rawfile, "a"))) {
+	  setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
+	  perror(last_used_rawfile);
+	  ft_setflag = FALSE;
+	  return;
+        }
+        rawfileBinary = !ascii;
+#ifdef PARALLEL_ARCH
+      } else {
+        rawfileFp = NULL;
+      }
+#endif /* PARALLEL_ARCH */
+    } else {
+      rawfileFp = NULL;
+    }
+    
+
+
+
+    /*end saj*/
+
     err = if_run(ft_curckt->ci_ckt, "resume", (wordlist *) NULL,
-            ft_curckt->ci_symtab);
+            ft_curckt->ci_symtab); 
+
+    /*close rawfile saj*/
+    if (rawfileFp){
+      if (ftell(rawfileFp)==0) {
+	(void) fclose(rawfileFp);
+	(void) remove(last_used_rawfile);
+      } else {
+	(void) fclose(rawfileFp);
+      }
+    }
+    /*end saj*/
+
     if (err == 1) {
         /* The circuit was interrupted somewhere. */
 

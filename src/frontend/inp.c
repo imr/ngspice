@@ -26,6 +26,12 @@ Author: 1985 Wayne A. Christopher
 #include "completion.h"
 #include "variable.h"
 
+#ifdef XSPICE
+/* gtri - add - 12/12/90 - wbk - include new stuff */
+#include "ipctiein.h"
+#include "enh.h"
+/* gtri - end - 12/12/90 */
+#endif
 
 /* static declarations */
 static char * upper(register char *string);
@@ -44,7 +50,7 @@ com_listing(wordlist *wl)
     bool expand = FALSE;
     char *s;
 
-    if (ft_curckt) {
+    if (ft_curckt) {  /* if there is a current circuit . . . .  */
         while (wl) {
             s = wl->wl_word;
             switch (*s) {
@@ -111,6 +117,13 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
     bool renumber;
     bool useout = (file == cp_out);
     int i = 1;
+/* gtri - wbk - 03/07/91 - Don't use 'more' type output if ipc enabled */
+#ifdef XSPICE
+    if(g_ipc.enabled) {
+        useout = FALSE;
+    }
+#endif
+/* gtri - end - 03/07/91 */
 
     if (useout)
         out_init();
@@ -272,9 +285,15 @@ line_free(struct line * deck, bool recurse) {
 /* The routine to source a spice input deck. We read the deck in, take
  * out the front-end commands, and create a CKT structure. Also we
  * filter out the following cards: .save, .width, .four, .print, and
- * .plot, to perform after the run is over.  */
+ * .plot, to perform after the run is over. 
+ * Then, we run dodeck, which parses up the deck.             */
 void
 inp_spsource(FILE *fp, bool comfile, char *filename)
+     /* arguments:
+      *  *fp = pointer to the input file
+      *  comfile = whether it is a command file.  Values are TRUE/FALSE
+      *  *filename = 
+      */
 {
     struct line *deck, *dd, *ld;
     struct line *realdeck, *options = NULL;
@@ -285,8 +304,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     FILE *lastin, *lastout, *lasterr;
     char c;
 
+    /* read in the deck from a file */
     inp_readall(fp, &deck);
-    
+
+    /* if nothing came back from inp_readall, just close fp and return to caller */
     if (!deck) {	/* MW. We must close fp always when returning */
         fclose(fp);
         return;
@@ -341,8 +362,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
  /*         tfree(dd->li_line);
             tfree(dd); */
         }   
-    } else {
-        for (dd = deck->li_next; dd; dd = ld->li_next) {
+    } /* end if(comfile) */ 
+
+    else {    /* must be regular deck . . . . */
+      for (dd = deck->li_next; dd; dd = ld->li_next) {    /* loop through deck and handle control cards */
 	    for (s = dd->li_line; (c = *s) && c <= ' '; s++)
 		;
             if (c == '*' && (s != deck->li_line || s[1] != '#')) {
@@ -359,8 +382,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             if (ciprefix(".control", dd->li_line)) {
                 ld->li_next = dd->li_next;
 		line_free(dd,FALSE); /* SJB - free this line's memory */
+
  /*             tfree(dd->li_line);
                 tfree(dd); */
+
                 if (commands)
                     fprintf(cp_err,
 			    "Warning: redundant .control card\n");
@@ -369,8 +394,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             } else if (ciprefix(".endc", dd->li_line)) {
                 ld->li_next = dd->li_next;
 		line_free(dd,FALSE); /* SJB - free this line's memory */
+
 /*              tfree(dd->li_line);
                 tfree(dd); */
+
                 if (commands)
                     commands = FALSE;
                 else
@@ -429,33 +456,66 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 } else
                     ld = dd;
             }
-        }
-        if (deck->li_next) {
+      }  /* end for(dd=deck->li_next . . . .  */
+
+
+      /* we are done handling the control stuff.  Now process remainder of deck  */
+      if (deck->li_next) {
             /* There is something left after the controls. */
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
+
+	    /* Old location of ENHtranslate_poly.  This didn't work, because it
+	     * didn't handle models in .SUBCKTs correctly.  Moved to new location below
+	     * by SDB on 4.13.2003
+	     */
 
             /* Now expand subcircuit macros. Note that we have to fix
              * the case before we do this but after we deal with the
              * commands.  */
             if (!cp_getvar("nosubckt", VT_BOOL, (char *) &nosubckts))
-                if((deck->li_next = inp_subcktexpand(deck->li_next)) == NULL){
-					line_free(realdeck,TRUE);
-					line_free(deck->li_actual, TRUE);
-			return;
-		}
+                if( (deck->li_next = inp_subcktexpand(deck->li_next)) == NULL ){
+		      line_free(realdeck,TRUE);
+		      line_free(deck->li_actual, TRUE);
+		      return;
+		} /* done expanding subcircuit macros */
+
+
+	    /* Now handle translation of spice2c6 POLYs. */
+/* New location of ENHtranslate_poly.  This should handle .SUBCKTs better . . . .
+ * SDB 4.13.2003.   Comments? mailto:sdb@cloud9.net
+ */
+#ifdef XSPICE
+/* gtri - wbk - Translate all SPICE 2G6 polynomial type sources */
+            deck->li_next = ENHtranslate_poly(deck->li_next);
+/* gtri - end - Translate all SPICE 2G6 polynomial type sources */
+#endif
+
 	    line_free(deck->li_actual,FALSE); /* SJB - free memory used by old li_actual (if any) */
             deck->li_actual = realdeck;
-            inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
-        }
 
-        /* Now that the deck is loaded, do the commands */
-        if (controls) {
+	    /* now call inp_dodeck, which loads deck into ft_curckt -- the current circuit. */
+            inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
+
+      }     /*  if (deck->li_next) */
+
+
+#ifdef TRACE
+      /* SDB debug statement */
+      printf("In inp_spsource, done with dodeck.\n");
+#endif
+
+      /* Now that the deck is loaded, do the commands, if there are any */
+      if (controls) {
             for (end = wl = wl_reverse(controls); wl; wl = wl->wl_next)
                 cp_evloop(wl->wl_word);
 
             wl_free(end); 
-        }
+      }
     }
+
+    /*saj, to process save commands always, not just in batch mode 
+     *(breaks encapsulation of frountend and parsing commands slightly)*/
+    ft_dotsaves();
 
     /* Now reset everything.  Pop the control stack, and fix up the IO
      * as it was before the source.  */
@@ -472,9 +532,21 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
  * follows also. End is the list of commands we execute when the job
  * is finished: we only bother with this if we might be running in
  * batch mode, since it isn't much use otherwise.  */
+/*------------------------------------------------------------------
+ * It appears that inp_dodeck adds the circuit described by *deck
+ * to the current circuit (ft_curckt).  
+ *-----------------------------------------------------------------*/
 void
 inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
 	   struct line *options, char *filename)
+     /*fcn arguments:
+      *  *deck = the spice deck
+      *  *tt = the title of the deck
+      *  *end = pointer to the wordlist
+      *  reuse
+      *  *options
+      *  *filename
+      */
 {
     struct circ *ct;
     struct line *dd;
@@ -504,15 +576,39 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
         ft_curckt = ct = alloc(struct circ);
     }
     cp_getvar("noparse", VT_BOOL, (char *) &noparse);
+
+    /*----------------------------------------------------
+     * Now assuming that we wanna parse this deck, we call 
+     * if_inpdeck which takes the deck and returns a
+     * a pointer to the circuit ckt.
+     *---------------------------------------------------*/
     if (!noparse)
         ckt = if_inpdeck(deck, &tab);
     else
         ckt = NULL;
 
     out_init();
-    for (dd = deck; dd; dd = dd->li_next)
-        if (dd->li_error) {
-	    char *p, *q;
+    
+    /*----------------------------------------------------
+     * Now run throuh the deck and look to see if there are
+     * errors on any line.
+     *---------------------------------------------------*/
+    for (dd = deck; dd; dd = dd->li_next) {
+      
+#ifdef TRACE
+      /* SDB debug statement */
+      printf("In inp_dodeck, looking for errors and examining line %s . . . \n", dd->li_line); 
+#endif
+      
+      if (dd->li_error) {
+	char *p, *q;
+	
+#ifdef XSPICE
+	/* gtri - modify - 12/12/90 - wbk - add setting of ipc syntax error flag */
+	g_ipc.syntax_error = IPC_TRUE;
+#endif
+/* gtri - end - 12/12/90 */
+
 	    p = dd->li_error;
 	    do {
 		q =strchr(p, '\n');
@@ -529,7 +625,10 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
 		    *q++ = '\n';
 		p = q;
 	    } while (p && *p);
-	}
+        }  /* end  if (dd->li_error) */
+      
+    }   /* for (dd = deck; dd; dd = dd->li_next) */
+
 
     /* Add this circuit to the circuit list. If reuse is TRUE then use
      * the ft_curckt structure.  */
@@ -542,7 +641,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
         cp_kwswitch(CT_NODENAMES, ft_curckt->ci_nodes);
         ft_newcirc(ct);
 	/* Assign current circuit */
-        ft_curckt = ct;
+        ft_curckt = ct;   
     }
     ct->ci_name = tt;
     ct->ci_deck = deck;
@@ -551,7 +650,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
         ct->ci_origdeck = deck->li_actual;
     else
         ct->ci_origdeck = ct->ci_deck;
-    ct->ci_ckt = ckt;
+    ct->ci_ckt = ckt;             /* attach the input ckt to the list of circuits */
     ct->ci_symtab = tab;
     ct->ci_inprogress = FALSE;
     ct->ci_runonce = FALSE;
@@ -582,24 +681,24 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
 	    static int one = 1;
             switch (eev->va_type) {
                 case VT_BOOL:
-                if_option(ct->ci_ckt, eev->va_name, 
-                    eev->va_type, &one);
-                break;
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, &one);
+		  break;
                 case VT_NUM:
-                if_option(ct->ci_ckt, eev->va_name, 
-                    eev->va_type, (char *) &eev->va_num);
-                break;
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, (char *) &eev->va_num);
+		  break;
                 case VT_REAL:
-                if_option(ct->ci_ckt, eev->va_name, 
-                    eev->va_type, (char *) &eev->va_real);
-                break;
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, (char *) &eev->va_real);
+		  break;
                 case VT_STRING:
-                if_option(ct->ci_ckt, eev->va_name, 
-                    eev->va_type, eev->va_string);
-                break;
-	    }
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, eev->va_string);
+		  break;
+	    } /* switch  . . . */
         }
-    }
+    } /* if (!noparse)  . . . */
 
     cp_addkword(CT_CKTNAMES, tt);
     return;

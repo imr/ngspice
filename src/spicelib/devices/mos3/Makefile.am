@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libmos3.la
+noinst_LIBRARIES = libmos3.a
 
-libmos3_la_SOURCES = 	\
+libmos3_a_SOURCES = 	\
 	mos3.c		\
 	mos3acld.c	\
 	mos3ask.c	\

@@ -114,9 +114,9 @@ BJTload(inModel,ckt)
     double tr;
     double vbc;
     double vbe;
-    double vbx;
+    double vbx=0;
     double vce;
-    double vcs;
+    double vcs=0;
     double vt;
     double vtc;
     double vte;

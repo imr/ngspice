@@ -96,6 +96,7 @@ libckt_a_SOURCES = \
 		tranaskq.c	\
 		traninit.c	\
 		transetp.c	\
+		cluster.c	\		
 		ckt.h
 
 

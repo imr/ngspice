@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libmos6.la
+noinst_LIBRARIES = libmos6.a
 
-libmos6_la_SOURCES = 	\
+libmos6_a_SOURCES = 	\
 	mos6.c		\
 	mos6ask.c	\
 	mos6conv.c	\

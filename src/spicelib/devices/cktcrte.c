@@ -17,16 +17,19 @@ Author: 1985 Thomas L. Quarles
 int
 CKTcrtElt(void *ckt, void *inModPtr, void **inInstPtr, IFuid name)
 {
-    GENinstance *instPtr = NULL;
-    GENmodel *modPtr=(GENmodel*)inModPtr;
+  GENinstance *instPtr = NULL;             /* instPtr points to the data struct for per-instance data */
+  GENmodel *modPtr = (GENmodel*)inModPtr;  /* modPtr points to the data struct for per-model data */
+
     SPICEdev **DEVices;
     int error;
     int type;
 
     DEVices = devices();
-    if((GENmodel *)modPtr==(GENmodel*)NULL)
+
+    if( (GENmodel *)modPtr == (GENmodel*)NULL ) 
 	return E_NOMOD;
-    type = ((GENmodel*)modPtr)->GENmodType;
+
+    type = ((GENmodel*)modPtr)->GENmodType; 
 
     error = CKTfndDev(ckt, &type, (void**)&instPtr, name, inModPtr,
 		      (char *)NULL );
@@ -37,13 +40,21 @@ CKTcrtElt(void *ckt, void *inModPtr, void **inInstPtr, IFuid name)
     } else if (error != E_NODEV)
 	return error;
 
+#ifdef TRACE
+    /*------  SDB debug statement  -------*/
+    printf("In CKTcrtElt, about to tmalloc new model, type = %d. . . \n", type);
+#endif
+
     instPtr = (GENinstance *) tmalloc(*DEVices[type]->DEVinstSize);
     if (instPtr == (GENinstance *)NULL)
 	return E_NOMEM;
 
     instPtr->GENname = name;
-    instPtr->GENmodPtr = modPtr;
-    instPtr->GENnextInstance = modPtr->GENinstances;
+
+    instPtr->GENmodPtr = modPtr; 
+
+    instPtr->GENnextInstance = modPtr->GENinstances; 
+
     modPtr->GENinstances = instPtr;
 
     if(inInstPtr != NULL)

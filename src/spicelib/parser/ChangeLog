@@ -1,3 +1,8 @@
+2003.4.10 Stuart Brorson <sdb@cloud9.net>
+	* Cloned INPgetNetTok from INPgetTok in inpgtok.c
+	* Modified inpg2*.c to use INPgetNetTok for all netnames.
+	* Added explanatory comments to many files.
+	
 2000-10-12  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* inpeval.c: Bugfix for subcircuits contributed by Michael

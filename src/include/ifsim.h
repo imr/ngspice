@@ -6,6 +6,13 @@ Author: 1986 Thomas L. Quarles
 #ifndef IFSIMULATOR
 #define IFSIMULATOR
 
+/* gtri - add - wbk - 10/11/90 - for structs referenced in IFdevice */
+#ifdef XSPICE
+#include "mifparse.h"
+#include "mifcmdat.h"
+#endif
+/* gtri - end - wbk - 10/11/90 */
+
 
 /* 
  * structure:   IFparm
@@ -269,6 +276,21 @@ typedef struct sIFdevice {
     int *numModelParms;         /* number of model parameter descriptors */
     IFparm *modelParms;         /* array  of model parameter descriptors */
 
+/* gtri - modify - wbk - 10/11/90 - add entries to hold data required */
+/*                                  by new parser                     */
+#ifdef XSPICE
+    void ((*cm_func)(Mif_Private_t *));  /* pointer to code model function */
+
+    int num_conn;               /* number of code model connections */
+    Mif_Conn_Info_t  *conn;     /* array of connection info for mif parser */
+
+    int num_param;              /* number of parameters = numModelParms */
+    Mif_Param_Info_t *param;    /* array of parameter info for mif parser */
+
+    int num_inst_var;              /* number of instance vars = numInstanceParms */
+    Mif_Inst_Var_Info_t *inst_var; /* array of instance var info for mif parser */
+/* gtri - end - wbk - 10/11/90 */
+#endif
     int	flags;			/* DEV_ */
 
 } IFdevice;

@@ -122,7 +122,17 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
     bool saveall  = TRUE;
     bool savealli = FALSE;
     char *an_name;
-
+   
+    /*to resume a run saj
+    *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
+    */
+    if(dataType == 666 && numNames == 666){
+      run = *runp;
+      run->writeOut = ft_getOutReq(&run->fp, &run->runPlot, &run->binary,
+				   run->type, run->name);
+      
+    } else {
+    /*end saj*/
     /* Check to see if we want to print informational data. */
     if (cp_getvar("printinfo", VT_BOOL, (char *) &printinfo))
 	fprintf(cp_err, "(debug printing enabled)\n");
@@ -324,10 +334,8 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
     }
 
     if (numNames && 
-       (run->numData == 1 
-     && run->refIndex != -1
-     || run->numData == 0 
-     && run->refIndex == -1))
+       (  (run->numData == 1 && run->refIndex != -1)
+       || (run->numData == 0 && run->refIndex == -1)) ) /* va: suggested parentheses */
     {
 	fprintf(cp_err, "Error: no data saved for %s; analysis not run\n",
 		spice_analysis_get_description(((JOB *) analysisPtr)->JOBtype));

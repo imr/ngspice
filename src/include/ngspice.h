@@ -2,6 +2,12 @@
  * Main header file for ngspice
  * 1999 E. Rouat
  ************/
+#ifndef NGSPICE_H_INCLUDED /* va */
+#define NGSPICE_H_INCLUDED
+
+/* #include "memwatch.h"
+ #define MEMWATCH */
+
 
 /* 
  * This file will eventually replace spice.h and lots of other 
@@ -97,6 +103,11 @@ struct timeb timebegin;
 #ifdef HAVE_INDEX
 #   define strchr index
 #   define strrchr rindex
+#else /* va: no index, but strchr */
+    #ifdef HAVE_STRCHR
+        #define index  strchr
+        #define rindex strrchr
+    #endif /* va: no index, but strchr */
 #endif
 
 #ifdef HAS_TIME_
@@ -113,6 +124,9 @@ struct timeb timebegin;
 #endif
 
 extern char *gettok(char **s);
+extern char *gettok_noparens(char **s);
+extern int get_l_paren(char **s);
+extern int get_r_paren(char **s);
 extern void appendc(char *s, char c);
 extern int scannum(char *str);
 extern int ciprefix(register char *p, register char *s);
@@ -152,3 +166,5 @@ extern char *Lib_Path;
 
 extern int ARCHme;	/* My logical process number */
 extern int ARCHsize;	/* Total number of processes */
+
+#endif /* NGSPICE_H_INCLUDED */

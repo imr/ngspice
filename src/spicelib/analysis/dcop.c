@@ -12,20 +12,21 @@ Modified: 2000  AlansFixes
 
 
 int
-DCop(CKTcircuit *ckt)
+DCop(CKTcircuit *ckt, int notused)
 {
     int CKTload(CKTcircuit *ckt);
     int converged;
     int error;
-    IFuid *nameList;
+    IFuid *nameList; /* va: tmalloc'ed list */
     int numNames;
-    void *plot;
+    void *plot = NULL;
     
     error = CKTnames(ckt,&numNames,&nameList);
     if(error) return(error);
     error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
 	(void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
 	(IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&plot);
+    tfree(nameList); /* va: nameList not used any longer, it was a memory leak */
     if(error) return(error);
 
     converged = CKTop(ckt,

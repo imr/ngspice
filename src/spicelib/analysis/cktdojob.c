@@ -12,6 +12,13 @@ Modified: 2000 AlansFixes
 
 #include "analysis.h"
 
+#ifdef XSPICE
+/* gtri - add - wbk - 11/26/90 - add include for MIF and EVT global data */
+#include "mif.h"
+#include "evtproto.h"
+/* gtri - end - wbk - 11/26/90 */
+#endif
+
 extern SPICEanalysis *analInfo[];
 
 int
@@ -139,8 +146,19 @@ printf("Doing analysis at TEMP = %f and TNOM = %f\n",
 		    error = (*(analInfo[i]->an_init))(ckt, job);
 		if (!error && analInfo[i]->do_ic)
 		    error = CKTic(ckt);
-		if (!error)
+		if (!error){
+#ifdef XSPICE
+                  /* gtri - begin - 6/10/91 - wbk - Setup event-driven data */
+                  error = EVTsetup(ckt);
+                  if(error) {
+                    ckt->CKTstat->STATtotAnalTime +=
+                      (*(SPfrontEnd->IFseconds))()-startTime;
+                    return(error);
+                  }
+                  /* gtri - end - 6/10/91 - wbk - Setup event-driven data */
+#endif		
 		    error = (*(analInfo[i]->an_func))(ckt, reset);
+		}   
 		if (error)
 		    error2 = error;
 	    }

@@ -57,13 +57,13 @@ dot_noise(char *line, void *ckt, INPtables *tab, card *current,
 	length = strlen(name);
 	if (((*name == 'V') || (*name == 'v')) && (length == 1)) {
 
-	    INPgetTok(&line, &nname1, 0);
+	    INPgetNetTok(&line, &nname1, 0);
 	    INPtermInsert(ckt, &nname1, tab, &node1);
 	    ptemp.nValue = (IFnode) node1;
 	    GCA(INPapName, (ckt, which, foo, "output", &ptemp))
 
 		if (*line != ')') {
-		    INPgetTok(&line, &nname2, 1);
+		    INPgetNetTok(&line, &nname2, 1);
 		    INPtermInsert(ckt, &nname2, tab, &node2);
 		    ptemp.nValue = (IFnode) node2;
 		} else {
@@ -215,6 +215,7 @@ dot_ac(char *line, void *ckt, INPtables *tab, card *current,
     INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
     ptemp.iValue = 1;
     GCA(INPapName, (ckt, which, foo, steptype, &ptemp));
+    tfree(steptype);
     parm = INPgetValue(ckt, &line, IF_INTEGER, tab); /* number of points */
     GCA(INPapName, (ckt, which, foo, "numsteps", parm));
     parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
@@ -306,11 +307,11 @@ dot_dc(char *line, void *ckt, INPtables *tab, card *current,
 	INPinsert(&name, tab);
 	ptemp.uValue = name;
 	GCA(INPapName, (ckt, which, foo, "name2", &ptemp));
-	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstart1 */
+	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstart2 */
 	GCA(INPapName, (ckt, which, foo, "start2", parm));
-	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstop1 */
+	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstop2 */
 	GCA(INPapName, (ckt, which, foo, "stop2", parm));
-	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vinc1 */
+	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vinc2 */
 	GCA(INPapName, (ckt, which, foo, "step2", parm));
     }
     return 0;
@@ -351,12 +352,12 @@ dot_tf(char *line, void *ckt, INPtables *tab, card *current,
 	if (*line != '(' ) {
 	    /* error, bad input format */
 	}
-	INPgetTok(&line, &nname1, 0);
+	INPgetNetTok(&line, &nname1, 0);
 	INPtermInsert(ckt, &nname1, tab, &node1);
 	ptemp.nValue = (IFnode) node1;
 	GCA(INPapName, (ckt, which, foo, "outpos", &ptemp));
 	if (*line != ')') {
-	    INPgetTok(&line, &nname2, 1);
+	    INPgetNetTok(&line, &nname2, 1);
 	    INPtermInsert(ckt, &nname2, tab, &node2);
 	    ptemp.nValue = (IFnode) node2;
 	    GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
@@ -486,13 +487,13 @@ dot_sens(char *line, void *ckt, INPtables *tab, card *current,
 	    LITERR("Syntax error: '(' expected after 'v'\n");
 	    return 0;
 	}
-	INPgetTok(&line, &nname1, 0);
+	INPgetNetTok(&line, &nname1, 0);
 	INPtermInsert(ckt, &nname1, tab, &node1);
 	ptemp.nValue = (IFnode) node1;
 	GCA(INPapName, (ckt, which, foo, "outpos", &ptemp))
 
 	    if (*line != ')') {
-		INPgetTok(&line, &nname2, 1);
+		INPgetNetTok(&line, &nname2, 1);
 		INPtermInsert(ckt, &nname2, tab, &node2);
 		ptemp.nValue = (IFnode) node2;
 		GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
@@ -636,78 +637,93 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 {
 
     /* .<something> Many possibilities */
-    char *token;		/* a token from the line */
+    char *token;		/* a token from the line, tmalloc'ed */
     void *foo = NULL;		/* pointer to analysis */
     /* the part of the current line left to parse */
     char *line = current->line;
-
+    int rtn = 0;
+    
     INPgetTok(&line, &token, 1);
     if (strcmp(token, ".model") == 0) {
 	/* don't have to do anything, since models were all done in
 	 * pass 1 */
-	return (0);
+	goto quit;
     } else if ((strcmp(token, ".width") == 0) ||
 	       strcmp(token, ".print") == 0 || strcmp(token, ".plot") == 0) {
 	/* obsolete - ignore */
 	LITERR(" Warning: obsolete control card - ignored \n");
-	return (0);
+	goto quit;
     } else if ((strcmp(token, ".temp") == 0)) {
 	/* .temp temp1 temp2 temp3 temp4 ..... */
 	/* not yet implemented - warn & ignore */
 	LITERR(" Warning: .TEMP card obsolete - use .options TEMP and TNOM\n");
-	return (0);
+	goto quit;
     } else if ((strcmp(token, ".op") == 0)) {
-	return dot_op(line, ckt, tab, current, task, gnode, foo);
+	rtn = dot_op(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
     } else if ((strcmp(token, ".nodeset") == 0)) {
-	 return(0);
+	 goto quit;
     } else if ((strcmp(token, ".disto") == 0)) {
-	return dot_disto(line, ckt, tab, current, task, gnode, foo);
+	rtn = dot_disto(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
     } else if ((strcmp(token, ".noise") == 0)) {
-	return dot_noise(line, ckt, tab, current, task, gnode, foo);
+	rtn = dot_noise(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
     } else if ((strcmp(token, ".four") == 0)
 	       || (strcmp(token, ".fourier") == 0)) {
 	/* .four */
 	/* not implemented - warn & ignore */
 	LITERR("Use fourier command to obtain fourier analysis\n");
-	return (0);
+	goto quit;
     } else if ((strcmp(token, ".ic") == 0)) {
-	return (0);
+	goto quit;
     } else if ((strcmp(token, ".ac") == 0)) {
-	return dot_ac(line, ckt, tab, current, task, gnode, foo);
+	rtn = dot_ac(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
     } else if ((strcmp(token, ".pz") == 0)) {
-	return dot_pz(line, ckt, tab, current, task, gnode, foo);
+	rtn = dot_pz(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
     } else if ((strcmp(token, ".dc") == 0)) {
-	return dot_dc(line, ckt, tab, current, task, gnode, foo);
+	rtn = dot_dc(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
     } else if ((strcmp(token, ".tf") == 0)) {
-	return dot_tf(line, ckt, tab, current, task, gnode, foo);
+	rtn = dot_tf(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
     } else if ((strcmp(token, ".tran") == 0)) {
-	return dot_tran(line, ckt, tab, current, task, gnode, foo);
+	rtn = dot_tran(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
     } else if ((strcmp(token, ".subckt") == 0) ||
 	       (strcmp(token, ".ends") == 0)) {
 	/* not yet implemented - warn & ignore */
 	LITERR(" Warning: Subcircuits not yet implemented - ignored \n");
-	return (0);
+	goto quit;
     } else if ((strcmp(token, ".end") == 0)) {
 	/* .end - end of input */
 	/* not allowed to pay attention to additional input - return */
-	return (1);
+	rtn = 1;
+	goto quit;
     } else if (strcmp(token, ".sens") == 0) {
-	return dot_sens(line, ckt, tab, current, task, gnode, foo);
+	rtn = dot_sens(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
     }
 #ifdef WANT_SENSE2
     else if ((strcmp(token, ".sens2") == 0)) {
-	return dot_sens2(line, ckt, tab, current, task, gnode, foo);
+	rtn = dot_sens2(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
     }
 #endif
     else if ((strcmp(token, ".probe") == 0)) {
 	/* Maybe generate a "probe" format file in the future. */
-	return 0;
+	goto quit;
     }
     else if ((strcmp(token, ".options") == 0)||
             (strcmp(token,".option")==0) ||
             (strcmp(token,".opt")==0)) {
-     return dot_options(line, ckt, tab, current, task, gnode, foo);
+     rtn = dot_options(line, ckt, tab, current, task, gnode, foo);
+     goto quit;
     }
     LITERR(" unimplemented control card - error \n");
-    return (0);
+quit:
+    tfree(token);
+    return rtn;
 }

@@ -20,6 +20,12 @@ Modified: 2000 AlansFixes
 #include "runcoms.h"
 #include "variable.h"
 
+#ifdef XSPICE
+/* gtri - add - 12/12/90 - wbk - include ipc stuff */
+#include "ipctiein.h"
+/* gtri - end - 12/12/90 */
+#endif
+
 /* static declarations */
 static int dosim(char *what, wordlist *wl);
 
@@ -37,6 +43,9 @@ FILE *rawfileFp;
 bool rawfileBinary;
 #define RAWBUF_SIZE 32768
 char rawfileBuf[RAWBUF_SIZE];
+/*To tell resume the rawfile name saj*/
+char *last_used_rawfile = NULL;
+/*end saj */
 
 void
 com_scirc(wordlist *wl)
@@ -250,7 +259,16 @@ dosim(char *what, wordlist *wl)
     } else {
         rawfileFp = NULL;
     }
-
+    /*save rawfile name saj*/
+    if(last_used_rawfile) 
+       tfree(last_used_rawfile); /* va: we should allways use tfree */
+    if(rawfileFp){
+      last_used_rawfile = copy(wl->wl_word);
+    }else {
+      last_used_rawfile = NULL;
+    }
+    /*end saj*/
+    
     /* Spice calls wrd_init and wrd_end itself */
     ft_curckt->ci_inprogress = TRUE;
     if (eq(what,"sens2")) {
@@ -258,6 +276,13 @@ dosim(char *what, wordlist *wl)
         /* The circuit was interrupted somewhere. */
 
 	    fprintf(cp_err, "%s simulation interrupted\n", what);
+#ifdef XSPICE
+  /* gtri - add - 12/12/90 - wbk - record error and return errchk */
+        g_ipc.run_error = IPC_TRUE;
+        if(g_ipc.enabled)
+            ipc_send_errchk();
+        /* gtri - end - 12/12/90 */
+#endif	        
         } else
 	    ft_curckt->ci_inprogress = FALSE;
     } else {
@@ -265,6 +290,13 @@ dosim(char *what, wordlist *wl)
         if (err == 1) {
 	    /* The circuit was interrupted somewhere. */
 	    fprintf(cp_err, "%s simulation interrupted\n", what);
+#ifdef XSPICE
+    /* gtri - add - 12/12/90 - wbk - record error and return errchk */
+        g_ipc.run_error = IPC_TRUE;
+        if(g_ipc.enabled)
+            ipc_send_errchk();
+    /* gtri - end - 12/12/90 */
+#endif	    
 	    err = 0;
         } else if (err == 2) {
 	    fprintf(cp_err, "%s simulation(s) aborted\n", what);
@@ -283,6 +315,14 @@ dosim(char *what, wordlist *wl)
     }
     ft_curckt->ci_runonce = TRUE;
     ft_setflag = FALSE;
+
+    /* va: garbage collection: unlink first word (inserted here) and tfree it */
+    if (!dofile) {
+    	tfree(ww->wl_word);
+        if (wl)
+            wl->wl_prev = NULL;
+        tfree(ww);
+    }  
     return err;
 }
 

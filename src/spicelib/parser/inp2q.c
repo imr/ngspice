@@ -47,11 +47,11 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
-    INPgetTok(&line, &nname1, 1);
+    INPgetNetTok(&line, &nname1, 1);
     INPtermInsert(ckt, &nname1, tab, &node1);
-    INPgetTok(&line, &nname2, 1);
+    INPgetNetTok(&line, &nname2, 1);
     INPtermInsert(ckt, &nname2, tab, &node2);
-    INPgetTok(&line, &nname3, 1);
+    INPgetNetTok(&line, &nname3, 1);
     INPtermInsert(ckt, &nname3, tab, &node3);
     INPgetTok(&line, &model, 1);
     if (INPlookMod(model)) {
@@ -83,6 +83,12 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
 	}
 	mdfast = tab->defQmod;
     }
+    
+#ifdef TRACE
+    /* ---  SDB debug statement --- */
+    printf ("In INP2Q, just about to dive into newInstance\n");
+#endif
+    
     IFC(newInstance, (ckt, mdfast, &fast, name));
     IFC(bindNode, (ckt, fast, 1, node1));
     IFC(bindNode, (ckt, fast, 2, node2));

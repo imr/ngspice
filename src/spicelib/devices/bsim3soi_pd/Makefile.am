@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libbsim3soipd.la
+noinst_LIBRARIES = libbsim3soipd.a
 
-libbsim3soipd_la_SOURCES = 	\
+libbsim3soipd_a_SOURCES = 	\
 	b3soipd.c	\
 	b3soipdacld.c	\
 	b3soipdask.c	\

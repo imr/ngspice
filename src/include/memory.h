@@ -17,6 +17,8 @@ extern void txfree(void *ptr);
 #define txfree(m)
 #endif
 
+#include "../misc/stringutil.h" /* va: spice3 internally bzero */
+
 #define alloc(TYPE) ((TYPE *) tmalloc(sizeof(TYPE)))
 #define MALLOC(x) tmalloc((unsigned)(x))
 #define FREE(x) {if (x) {txfree((char *)(x));(x) = 0;}}

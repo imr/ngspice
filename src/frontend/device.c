@@ -235,16 +235,17 @@ all_show(wordlist *wl, int mode)
 int
 printstr(dgen *dg, char *name)
 {
+    /* va: ' ' is no flag for %s; \? avoids trigraph warning */
     if (*name == 'n') {
 	if (dg->instance)
-	   printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, dg->instance->GENname);
+	   printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, dg->instance->GENname);
 	else
-	   printf(" %*s", DEV_WIDTH, "<???????>");
+	   printf(" %*s", DEV_WIDTH, "<\?\?\?\?\?\?\?>");
     } else if (*name == 'm') {
 	if (dg->model)
-	   printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, dg->model->GENmodName);
+	   printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, dg->model->GENmodName);
 	else
-	    printf(" %*s", DEV_WIDTH, "<???????>");
+	   printf(" %*s", DEV_WIDTH, "<\?\?\?\?\?\?\?>");
     } else
 	printf(" %*s", DEV_WIDTH, "<error>");
 
@@ -400,6 +401,7 @@ printvals(dgen *dg, IFparm *p, int i)
     }
 
     if (p->dataType & IF_VECTOR) {
+        /* va: ' ' is no flag for %s */
 	switch ((p->dataType & IF_VARTYPES) & ~IF_VECTOR) {
 	    case IF_FLAG:
 		    printf(" % *d", DEV_WIDTH, val.v.vec.iVec[i]);
@@ -417,13 +419,13 @@ printvals(dgen *dg, IFparm *p, int i)
 			   printf(" % *.6g", DEV_WIDTH, val.v.vec.cVec[i / 2].imag);
 		    break;
 	    case IF_STRING:
-		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, val.v.vec.sVec[i]);
+		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, val.v.vec.sVec[i]);
 		    break;
 	    case IF_INSTANCE:
-		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, val.v.vec.uVec[i]);
+		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, val.v.vec.uVec[i]);
 		    break;
 	    default:
-		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, " ******** ");
+		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, " ******** ");
 	}
     } else {
 	switch ((p->dataType & IF_VARTYPES) & ~IF_VECTOR) {
@@ -443,13 +445,13 @@ printvals(dgen *dg, IFparm *p, int i)
 			   printf(" % *.6g", DEV_WIDTH, val.cValue.imag);
 		    break;
 	    case IF_STRING:
-		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, val.sValue);
+		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, val.sValue);
 		    break;
 	    case IF_INSTANCE:
-		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, val.uValue);
+		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, val.uValue);
 		    break;
 	    default:
-		    printf(" % *.*s", DEV_WIDTH, DEV_WIDTH, " ******** ");
+		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, " ******** ");
 	}
     }
 
@@ -575,6 +577,7 @@ com_alter_common(wordlist *wl, int do_model)
     char *param;
     struct dvec *dv;
     struct pnode *names;
+    char *hlp=NULL;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
@@ -637,7 +640,6 @@ com_alter_common(wordlist *wl, int do_model)
 	return;
     }
     dv = ft_evaluate(names);
-    free_pnode(names);
     if (!dv)
 	return;
     if (dv->v_length < 1) {
@@ -647,8 +649,9 @@ com_alter_common(wordlist *wl, int do_model)
 
     if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
 
-    /* Vector data (dv) should get garbage-collected. */
-
+    /* va: garbage collection for dv, if pnode names is no simple value */
+    if (names->pn_value==NULL && dv!=NULL) vec_free(dv);
+    free_pnode(names); /* free also dv, if pnode names is simple value */            
     return;
 }
 

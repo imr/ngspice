@@ -354,7 +354,7 @@ CKTop(CKTcircuit *ckt, long int firstmode, long int continuemode, int iterlim)
 int
 CKTconvTest(CKTcircuit *ckt)
 {
-    extern SPICEdev *DEVices[];
+    extern SPICEdev **DEVices;
     int i;
     int error = OK;
 #ifdef PARALLEL_ARCH

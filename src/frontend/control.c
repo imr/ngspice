@@ -50,7 +50,7 @@ int stackp = 0;
  
  /* Notes by CDHW:
  * This routine leaked like a sieve because each getcommand() created a
- * wordlist that was never freed becuase it might have been added into
+ * wordlist that was never freed because it might have been added into
  * the control structure. I've tackled this by making sure that everything
  * put into the cend[stackp] is a copy. This means that wlist can be
  * destroyed safely
@@ -372,6 +372,8 @@ doblock(struct control *bl, int *num)
         /*...CDHW*/
         while ((bl->co_timestodo > 0) ||
 	       (bl->co_timestodo == -1)) {
+	    if (bl->co_numtimes != -1)
+                bl->co_numtimes--;
             
             if (!bl->co_children) cp_periodic();  /*CDHW*/
 
@@ -569,7 +571,7 @@ getcommand(char *string)
     return (wlist);
 }
 
-
+/* va: TODO: free control structure(s) before overwriting (memory leakage) */
 int
 cp_evloop(char *string)
 {
@@ -616,7 +618,7 @@ cp_evloop(char *string)
 	 * CO_UNFILLED, the last line was the beginning of a block,
 	 * and this is the unfilled first statement.  
 	 */
-	 
+	/* va: TODO: free old structure and its content, before overwriting */ 	 
 	if (cend[stackp] && (cend[stackp]->co_type != CO_UNFILLED)) {
 	    cend[stackp]->co_next = alloc(struct control);
 	    ZERO(cend[stackp]->co_next, struct control);
@@ -641,8 +643,9 @@ cp_evloop(char *string)
 	    cend[stackp]->co_type = CO_DOWHILE;
 	    cend[stackp]->co_cond = wlist->wl_next;
 	    if (!cend[stackp]->co_cond) {
+	    	/* va: prevent misinterpretation as trigraph sequence with \-sign */	    
 		fprintf(stderr,
-			"Error: missing dowhile condition, '???' will be assumed.\n");
+			"Error: missing dowhile condition, '\?\?\?' will be assumed.\n");
 	    }
 	    newblock;
 	} else if (eq(wlist->wl_word, "repeat")) {
@@ -788,11 +791,11 @@ cp_evloop(char *string)
 		    break;
 		case BROKEN:
 		    fprintf(cp_err, 
-			    "Error: break not in loop (or too many break levels given)\n");
+			    "Error: break not in loop or too many break levels given\n");
 		    break;
 		case CONTINUED:
 		    fprintf(cp_err, 
-			    "Error: continue not in loop (or too many continue levels given)\n");
+			    "Error: continue not in loop or too many continue levels given\n");
 		    break;
 		default:
 		    x = findlabel(i, control[stackp]);
@@ -808,6 +811,7 @@ cp_evloop(char *string)
 	    return (1); /* The return value is irrelevant. */
     }
      wl_free(wlist); wlist = NULL;
+     return (0); /* va: which value? */
 }
 
 /* This blows away the control structures... */

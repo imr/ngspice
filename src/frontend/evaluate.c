@@ -39,14 +39,16 @@ sig_matherr(void)
 
 
 /* Note that ft_evaluate will return NULL on invalid expressions. */
-
+/* va: NOTE: ft_evaluate returns a new vector for expressions (func, op, ...)
+   and an existing vector (node->pn_value) when node->pn_value != NULL. 
+   For garbage collection caller must vec_free() expression-vector. */
 struct dvec *
 ft_evaluate(struct pnode *node)
 {
     struct dvec *d = NULL;
 
     if (!node)
-        return (NULL);
+        d = NULL;
     else if (node->pn_value)
         d = node->pn_value;
     else if (node->pn_func)
@@ -60,15 +62,18 @@ ft_evaluate(struct pnode *node)
                 (node->pn_left, node->pn_right));
     } else {
         fprintf(cp_err, "ft_evaluate: Internal Error: bad node\n");
-        return (NULL);
+        d = NULL;
     }
 
-    if (!d) {
+    if (d == NULL) {
 	return NULL;
     }
 
-    if (node->pn_name && !ft_evdb && d && !d->v_link2)
+    if (node->pn_name && !ft_evdb && d && !d->v_link2) {
+        if(d->v_name)
+            tfree(d->v_name);
         d->v_name = copy(node->pn_name);
+    }
 
     if (!d->v_length) {
         fprintf(cp_err, "Error: no such vector %s\n", d->v_name);
@@ -291,6 +296,9 @@ doop(char what,
         }
     }
 
+    /* va: garbage collection */
+    if (arg1->pn_value==NULL && v1!=NULL) vec_free(v1);
+    if (arg2->pn_value==NULL && v2!=NULL) vec_free(v2);
     return (res);
 }
 
@@ -490,6 +498,10 @@ op_range(struct pnode *arg1, struct pnode *arg2)
      */
 
     vec_new(res);
+ 
+    /* va: garbage collection */
+    if (arg1->pn_value==NULL && v!=NULL) vec_free(v);
+    if (arg1->pn_value==NULL && ind!=NULL) vec_free(ind);    
     return (res);
 }
 
@@ -639,6 +651,10 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
      */
 
     vec_new(res);
+ 
+    /* va: garbage collection */
+    if (arg1->pn_value==NULL && v!=NULL) vec_free(v);
+    if (arg1->pn_value==NULL && ind!=NULL) vec_free(ind);    
     return (res);
 }
 
@@ -765,6 +781,8 @@ apply_func(struct func *func, struct pnode *arg)
 	end = t;
     }
 
+    /* va: garbage collection */
+    if (arg->pn_value==NULL && v!=NULL) vec_free(v);
     return (newv);
 }
 

@@ -78,14 +78,15 @@ cp_unquote(char *string)
     char *s;
     int l;
     if (string) {
-	s = copy(string);
+	l = strlen(string);
+	s = MALLOC(l+1);
+	
+	if (*string == '"' && string[l-1] == '"') {
+	    strncpy(s,string+1,l-2);
+	    s[l-2] = '\0';
+	} else
+	    strcpy(s,string);
 
-	if (*s == '"')
-	    s++;
-
-	l = strlen(s) - 1;
-	if (s[l] == '"')
-	    s[l] = '\0';
 	return (s);
     } else
 	return 0;

@@ -21,7 +21,7 @@ Author: 1985 Thomas L. Quarles
 int
 CKTfndBranch(CKTcircuit *ckt, IFuid name)
 {
-    extern SPICEdev *DEVices[];
+    extern SPICEdev **DEVices;
 
     int i;
     int j;

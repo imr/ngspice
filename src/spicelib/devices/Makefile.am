@@ -3,7 +3,6 @@
 SUBDIRS = \
 	asrc	\
 	bjt	\
-##	bjt2	\
 	bsim1	\
 	bsim2	\
 	bsim3	\
@@ -16,6 +15,7 @@ SUBDIRS = \
 	cap	\
 	cccs	\
 	ccvs	\
+	cpl	\
 	csw	\
 	dio	\
 	@EKVDIR@	\
@@ -37,12 +37,18 @@ SUBDIRS = \
 	soi3	\
 	sw	\
 	tra	\
+	txl	\
 	urc	\
 	vccs	\
 	vcvs	\
 	vsrc
 
-lib_LIBRARIES = libdev.a
+##  This line move to here 'cause it was causing automake to choke 
+##  when it was in the list of subdirs
+##	bjt2	\
+
+
+noinst_LIBRARIES = libdev.a
 
 libdev_a_SOURCES = 	\
 	dev.c		\
@@ -56,6 +62,6 @@ libdev_a_SOURCES = 	\
 	cktfinddev.c	\
 	cktinit.c
 
-INCLUDES = -I$(top_srcdir)/src/include
+INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 
 MAINTAINERCLEANFILES = Makefile.in

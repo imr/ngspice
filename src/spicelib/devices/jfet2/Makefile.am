@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libjfet2.la
+noinst_LIBRARIES = libjfet2.a
 
-libjfet2_la_SOURCES = 	\
+libjfet2_a_SOURCES = 	\
 	jfet2.c		\
 	jfet2acld.c	\
 	jfet2ask.c	\

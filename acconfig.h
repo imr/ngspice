@@ -38,6 +38,12 @@
 /* We do not want spurios debug info into non-developer code */
 #undef FTEDEBUG
 
+/*The xspice enhancements*/
+#undef XSPICE
+
+/* Spice cluster support */
+#undef CLUSTER
+
 /* Generate MS WINDOWS executable */
 #undef HAS_WINDOWS
 

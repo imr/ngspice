@@ -1,3 +1,8 @@
+5.2.2003 -- Stuart Brorson <SDB@cloud9.net)
+	*  Added stuff to all deviceinit.c files to make deviceinfo
+	structure line up with the def of the structure when XSPICE is
+	enabled.  This fixed a major bug with XSPICE operation.
+
 2002-01-03 Paolo Nenzi <p.nenzi@ieee.org>
 
 	* bsim3v1/b3v1noi.c, bsim3v2/b3v2noi.c: Both models had a

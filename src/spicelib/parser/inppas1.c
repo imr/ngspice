@@ -29,6 +29,15 @@ void INPpas1(void *ckt, card * deck, INPtables * tab)
 
 	if (*thisline == '.') {
 	    if (strncmp(thisline, ".model", 6) == 0) {
+	      /* First check to see if model is multi-line.  If so,
+		 read in all lines & stick them into tab. */
+	      
+#ifdef TRACE
+	      /* SDB debug statement */
+      	      printf("In INPpas1, handling line = %s \n", thisline); 
+#endif
+
+	      /* Now invoke INPdomodel to stick model into model table. */
 		temp = INPdomodel(ckt, current, tab);
 		current->error = INPerrCat(current->error, temp);
 	    }

@@ -164,6 +164,12 @@ NOISEan (CKTcircuit *ckt, int restart)
 	job->NsavFstp = 0;
 	data->outNoiz = job->NsavOnoise;
 	data->inNoise = job->NsavInoise;
+	/* saj resume rawfile fix*/
+	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,(void *)(ckt->CKTcurJob),
+	   "Noise Spectral Density Curves - (V^2 or A^2)/Hz",
+	   freqUid,IF_REAL,666,data->namelist,666,
+	   &(data->NplotPtr));
+	/*saj*/	
     }
 
     switch (job->NstpType) {

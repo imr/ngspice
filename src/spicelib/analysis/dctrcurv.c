@@ -15,6 +15,8 @@ Modified: 1999 Paolo Nenzi
 #include "const.h"
 #include "sperror.h"
 
+#include <devdefs.h>
+extern SPICEdev **DEVices;
 
 int
 DCtrCurv(CKTcircuit *ckt, int restart) 
@@ -34,7 +36,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     IFuid *nameList;
     int numNames;
     int firstTime=1;
-    static void *plot;
+    static void *plot=NULL;
 
 #ifdef WANT_SENSE2
 #ifdef SENSDEBUG
@@ -52,6 +54,10 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     if(!restart && cv->TRCVnestState >= 0) {
         /* continuing */
         i = cv->TRCVnestState;
+	/* resume to work? saj*/
+	error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
+		      (void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
+	              varUid,IF_REAL,666,nameList, 666,&plot);	
         goto resume;
     }
     ckt->CKTtime = 0;
@@ -259,7 +265,11 @@ resume:
 		  1/(((RESinstance *)(cv->TRCVvElt[i]))->RESresist); 
                                                      /* Note: changing the resistance does nothing */
 		                                     /* changing the conductance 1/r instead */
-		RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 
+		DEVices[rcode]->DEVload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 		
+		
+		/*
+		 * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 
+		 */
 	     
 	     
 	     } /* else not possible */
@@ -357,7 +367,10 @@ nextstep:;
 	    /* This code should update resistance and conductance */    
 	    ((RESinstance*)(cv->TRCVvElt[i]))->RESconduct =
 	    1/(((RESinstance*)(cv->TRCVvElt[i]))->RESresist);
-            RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 
+            DEVices[rcode]->DEVload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 	    
+            /*
+	     * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt);
+	     */ 
 	}
 	/* PN Temp Sweep - serban */
         else if (cv->TRCVvType[i]==TEMP_CODE)
@@ -392,7 +405,11 @@ nextstep:;
 	    1/(((RESinstance*)(cv->TRCVvElt[i]))->RESresist);
 	    
             ((RESinstance*)(cv->TRCVvElt[i]))->RESresGiven = cv->TRCVgSave[i];
-	    RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 
+	    DEVices[rcode]->DEVload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 
+	    
+	    /*
+	     * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt);
+	     */ 
         }
 	 else if(cv->TRCVvType[i] == TEMP_CODE) {
             ckt->CKTtemp = cv->TRCVvSave[i];

@@ -11,6 +11,9 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
+#ifdef __MINGW32__
+#define  srandom(a) srand(a) /* srandom */
+#endif /* __MINGW32__ */
 #include <setjmp.h>
 #include <signal.h>
 
@@ -23,11 +26,17 @@
 #include <spicelib/devices/dev.h>
 #include <spicelib/analysis/analysis.h>
 #include <misc/ivars.h>
-#if !defined(__CYGWIN__)
 #include <misc/getopt.h>
-#endif
 #include <frontend/resource.h>
 #include <frontend/variable.h>
+#include "frontend/display.h" /* va */
+
+/* saj xspice headers */
+#ifdef XSPICE
+#include "ipctiein.h"
+#include "mif.h"
+#include "enh.h"
+#endif
 
 #ifdef HAVE_PWD_H
 #include <pwd.h>
@@ -38,6 +47,8 @@
 #include <sys/timeb.h>
 #endif
 #endif
+
+extern void DevInit(void);
 
 /* Main options */
 static bool ft_servermode = FALSE;
@@ -151,6 +162,40 @@ if_getstat(char *n, char *c)
     return (NULL);
 }
 
+#ifdef EXPERIMENTAL_CODE
+void com_loadsnap(wordlist *wl) { return; }
+void com_savesnap(wordlist *wl) { return; }
+#endif
+
+
+#ifdef XSPICE
+/* saj to get nutmeg to compile, not nice but necessary */
+Ipc_Tiein_t  g_ipc;
+Ipc_Status_t ipc_send_errchk(void ) {
+  Ipc_Status_t x=0;
+  return(x);
+}
+Ipc_Status_t ipc_get_line(char *str , int *len , Ipc_Wait_t wait ){
+  Ipc_Status_t x=0;
+  return(x);
+}
+struct line *ENHtranslate_poly(struct line *deck){
+  return(NULL);
+}
+int load_opus(char *name){
+  return(1);
+}
+char  *MIFgettok(char **s){
+  return(NULL);
+}
+void EVTprint(wordlist *wl){
+  return;
+}
+struct dvec *EVTfindvec(char *node){
+  return NULL;
+}
+#endif
+
 #endif /* SIMULATOR */
 
 char *hlp_filelist[] = { "ngspice", 0 };
@@ -173,7 +218,9 @@ int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
     SIMinfo.numDevices = DEVmaxnum = num_devices();
     SIMinfo.devices = devices_ptr();
     SIMinfo.numAnalyses = spice_num_analysis();
-    SIMinfo.analyses = spice_analysis_ptr();
+    SIMinfo.analyses = (IFanalysis **)spice_analysis_ptr(); /* va: we recast, because we use 
+                                                             * only the public part 
+							     */
 #endif /* SIMULATOR */
 
     SPfrontEnd = frontEnd;
@@ -227,11 +274,11 @@ show_version(void)
 {
     printf("%s compiled from %s revision %s\n"
 	   "Written originally by Berkeley University\n"
-	   "Currently maintained by the NG-Spice Project\n\n"
+	   "Currently maintained by the NGSpice Project\n\n"
 	   "Copyright (C) 1985-1996,"
 	   "  The Regents of the University of California\n"
 	   "Copyright (C) 1999-2000,"
-	   "  The NG-Spice Project\n", cp_program, PACKAGE, VERSION);
+	   "  The NGSpice Project\n", cp_program, PACKAGE, VERSION);
 }
 
 void
@@ -292,6 +339,17 @@ main(int argc, char **argv)
     FILE *fp;
     FILE *circuit_file;
 
+#ifdef TRACE
+    /* this is used to detect memory leaks during debugging */
+    /* added by SDB during debug . . . . */
+    /* mtrace();  */
+#endif
+
+#ifdef TRACE
+    /* this is also used for memory leak plugging . . . */
+    /* added by SDB during debug . . . . */
+    /*     mwDoFlush(1);  */
+#endif
 
     /* MFB tends to jump to 0 on errors.  This tends to catch it. */
     if (started) {
@@ -408,11 +466,12 @@ main(int argc, char **argv)
 #else
 		sprintf (buf, "%s", optarg);
 #endif
-/*		if (!(freopen (buf, "w", stdout))) {
+#ifdef HAS_WINDOWS
+		if (!(freopen (buf, "w", stdout))) {
 		    perror (buf);
 		    shutdown (EXIT_BAD);
 		}
-*/		
+#endif		
 //    *** Log-File öffnen *******
                 if (!(flogp = fopen(buf, "w"))) {
                       perror(buf);
@@ -422,7 +481,7 @@ main(int argc, char **argv)
                 com_version(NULL);  // hvogt 11.11.2001
                 fprintf(stdout, "\nBatch mode\n\n");
                 fprintf(stdout, "Simulation output goes to rawfile: %s\n\n", ft_rawfile);
-                fprintf(stdout, "Comments and warnigs go to log-file: %s\n", buf);
+                fprintf(stdout, "Comments and warnings go to log-file: %s\n", buf);
                 oflag = TRUE;		
 	    }
 	    break;
@@ -507,7 +566,9 @@ main(int argc, char **argv)
     signal(SIGBUS, sigbus);
 #endif
 #ifdef SIGSEGV
-    signal(SIGSEGV, sigsegv);
+/* Want core files!
+ *   signal(SIGSEGV, sigsegv);
+ */
 #endif
 #ifdef SIGSYS
     signal(SIGSYS, sig_sys);
@@ -525,14 +586,11 @@ main(int argc, char **argv)
 
             pw = getpwuid(getuid());
 
-#ifdef HAVE_ASPRINTF
-	    asprintf(&s, "%s/.spiceinit", pw->pw_dir);
-#else /* ~ HAVE_ASPRINTF */
 #define INITSTR "/.spiceinit"
-if ( (s=(char *) malloc(1 + strlen(pw->pw_dir)+strlen(INITSTR))) == NULL){
-	fprintf(stderr,"malloc failed\n");
-	exit(1);
-		}
+#ifdef HAVE_ASPRINTF
+	    asprintf(&s, "%s%s", pw->pw_dir,INITSTR);
+#else /* ~ HAVE_ASPRINTF */ /* va: we use tmalloc */
+      s=(char *) tmalloc(1 + strlen(pw->pw_dir)+strlen(INITSTR));
 		sprintf(s,"%s%s",pw->pw_dir,INITSTR);
 #endif /* HAVE_ASPRINTF */
 
@@ -648,7 +706,7 @@ evl:
          * save too much.  */
         cp_interactive = FALSE;
         if (rflag) {
-	    ft_dotsaves();
+	  /* saj done already in inp_spsource ft_dotsaves();*/	 
 	    error2 = ft_dorun(ft_rawfile);
 	    if (ft_cktcoms(TRUE) || error2)
 		shutdown(EXIT_BAD);

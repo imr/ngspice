@@ -9,7 +9,13 @@ Author: 1985 Thomas L. Quarles
 #include "inpdefs.h"
 #include "inp.h"
 
-
+/*--------------------------------------------------------------
+ * This fcn takes the model card & examines it.  Depending upon
+ * model type, it parses the model line, and then calls
+ * INPmakeMod to stick the model name into the model list.
+ * Note that multi-line models are handled in the calling fcn
+ * (INPpas1).
+ *-------------------------------------------------------------*/
 char *INPdomodel(void *ckt, card * image, INPtables * tab)
 {
 
@@ -21,10 +27,19 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
     char *line;
 
     line = image->line;
+    
+#ifdef TRACE
+    /* SDB debug statement */
+    printf("In INPdomodel, examining line %s . . . \n", line); 
+#endif    
+    
     INPgetTok(&line, &modname, 1);	/* throw away '.model' */
-    INPgetTok(&line, &modname, 1);
-    INPinsert(&modname, tab);
-    INPgetTok(&line, &typename, 1);
+    tfree(modname);
+    INPgetTok(&line, &modname, 1);      /* get model name */
+    INPinsert(&modname, tab);           /* stick model name into table */
+    INPgetTok(&line, &typename, 1);     /* get model type */
+    
+    /*  -----  Check if model is a BJT --------- */
     if ((strcmp(typename, "npn") == 0) || (strcmp(typename, "pnp") == 0)) {
 	err = INPfindLev(line,&lev);
 	switch(lev) {
@@ -50,7 +65,10 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 
 	}	
 	INPmakeMod(modname, type, image);
-    } else if (strcmp(typename, "d") == 0) {
+    } /* end if ((strcmp(typename, "npn") == 0) || (strcmp(typename, "pnp") == 0)) */
+
+    /*  --------  Check if model is a diode --------- */    
+    else if (strcmp(typename, "d") == 0) {
 	type = INPtypelook("Diode");
 	if (type < 0) {
 	    err =
@@ -58,7 +76,10 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		("Device type Diode not available in this binary\n");
 	}
 	INPmakeMod(modname, type, image);
-    } else if ((strcmp(typename, "njf") == 0)
+    } /*   else if (strcmp(typename, "d") == 0) {  */
+    
+    /*  --------  Check if model is a jfet --------- */
+    else if ((strcmp(typename, "njf") == 0)
 	       || (strcmp(typename, "pjf") == 0)) {
 	err = INPfindLev(line, &lev);
 	switch (lev) {
@@ -86,7 +107,10 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    break;
 	}
 	INPmakeMod(modname, type, image);
-    } else if ((strcmp(typename, "nmf")   == 0)
+    }  /*   end  else if ((strcmp(typename, "njf") == 0) */
+    
+    /*  --------  Check if model is a MES or an HFET --------- */
+    else if ((strcmp(typename, "nmf")   == 0)
 	       || (strcmp(typename, "pmf")   == 0)
 	       || (strcmp(typename, "nhfet") == 0)
 	       || (strcmp(typename, "phfet") == 0)) {
@@ -142,7 +166,10 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
         		break;
         }
 	INPmakeMod(modname, type, image);
-    } else if (strcmp(typename, "urc") == 0) {
+    } 
+    
+    /*  --------  Check if model is a Uniform Distrib. RC line --------- */
+    else if (strcmp(typename, "urc") == 0) {
 	type = INPtypelook("URC");
 	if (type < 0) {
 	    err =
@@ -150,7 +177,10 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		("Device type URC not available in this binary\n");
 	}
 	INPmakeMod(modname, type, image);
-    } else if ((strcmp(typename, "nmos") == 0)
+    } 
+    
+    /*  --------  Check if model is a MOSFET --------- */
+    else if ((strcmp(typename, "nmos") == 0)
 	       || (strcmp(typename, "pmos") == 0)
 	       || (strcmp(typename, "nsoi") == 0)
 	       || (strcmp(typename, "psoi") == 0)) {
@@ -332,7 +362,10 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    break;
 	}
 	INPmakeMod(modname, type, image);
-    } else if (strcmp(typename, "r") == 0) {
+    } 
+    
+    /*  --------  Check if model is a resistor --------- */
+    else if (strcmp(typename, "r") == 0) {
 	type = INPtypelook("Resistor");
 	if (type < 0) {
 	    err =
@@ -340,7 +373,59 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		("Device type Resistor not available in this binary\n");
 	}
 	INPmakeMod(modname, type, image);
-    } else if (strcmp(typename, "c") == 0) {
+    } 
+    
+    /*  --------  Check if model is a transmission line of some sort --------- */
+    else if(strcmp(typename,"txl") == 0) {
+      char *val;
+      double rval=0, lval=0;
+      INPgetTok(&line,&val,1);
+      while (*line != '\0') {
+	if (*val == 'R' || *val == 'r') {
+	  INPgetTok(&line,&val,1);
+	  rval = atof(val);
+	}
+	if ((strcmp(val,"L") == 0)  || (strcmp(val,"l") == 0)) {
+	  INPgetTok(&line,&val,1);
+	  lval = atof(val);
+	}
+	INPgetTok(&line,&val,1);
+      }
+      if(lval)
+	rval = rval/lval;
+      if (rval > 1.6e10) {
+	type = INPtypelook("TransLine");
+	INPmakeMod(modname,type,image);
+      }
+      if (rval > 1.6e9) {
+	type = INPtypelook("CplLines");
+	INPmakeMod(modname,type,image);
+      }
+      else {
+	type = INPtypelook("TransLine");
+	INPmakeMod(modname,type,image);
+      }
+      if(type < 0) {
+	err = INPmkTemp(
+			"Device type TransLine not available in this binary\n");
+      }
+      
+    } 
+
+    /*  --------  Check if model is a ???? --------- */
+    else if(strcmp(typename,"cpl") == 0) {
+      type = INPtypelook("CplLines");
+      if(type < 0) {
+	err = INPmkTemp(
+			"Device type CplLines not available in this binary\n");
+      }
+      INPmakeMod(modname,type,image);
+
+    } 
+    
+    
+    /*  --------  Check if model is a cap --------- */
+    else if (strcmp(typename, "c") == 0) {
 	type = INPtypelook("Capacitor");
 	if (type < 0) {
 	    err =
@@ -348,7 +433,10 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		("Device type Capacitor not available in this binary\n");
 	}
 	INPmakeMod(modname, type, image);
-    } else if (strcmp(typename, "sw") == 0) {
+    } 
+    
+    /*  --------  Check if model is a switch --------- */
+    else if (strcmp(typename, "sw") == 0) {
 	type = INPtypelook("Switch");
 	if (type < 0) {
 	    err =
@@ -356,7 +444,10 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		("Device type Switch not available in this binary\n");
 	}
 	INPmakeMod(modname, type, image);
-    } else if (strcmp(typename, "csw") == 0) {
+    } 
+    
+    /*  --------  Check if model is a Current Controlled Switch --------- */
+    else if (strcmp(typename, "csw") == 0) {
 	type = INPtypelook("CSwitch");
 	if (type < 0) {
 	    err =
@@ -364,7 +455,10 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		("Device type CSwitch not available in this binary\n");
 	}
 	INPmakeMod(modname, type, image);
-    } else if (strcmp(typename, "ltra") == 0) {
+    } 
+    
+    /*  --------  Check if model is a Lossy TransLine --------- */
+    else if (strcmp(typename, "ltra") == 0) {
 	type = INPtypelook("LTRA");
 	if (type < 0) {
 	    err =
@@ -372,10 +466,63 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		("Device type LTRA not available in this binary\n");
 	}
 	INPmakeMod(modname, type, image);
-    } else {
+    } 
+
+    /*  type poly added by SDB  . . . */
+#ifdef XSPICE
+    /*  --------  Check if model is a poly (specific to xspice) --------- */
+    else if ( (strcmp(typename, "poly") == 0) ||
+	      (strcmp(typename, "POLY") == 0) ) {
+	type = INPtypelook("POLY");
+	if (type < 0) {
+	    err =
+		INPmkTemp
+		("Device type POLY not available in this binary\n");
+	}
+	INPmakeMod(modname, type, image);
+    } 
+#endif    
+    
+    /*  --------  Default action  --------- */    
+    else {
+#ifndef XSPICE    
 	type = -1;
 	err = (char *) MALLOC(35 + strlen(typename));
 	(void) sprintf(err, "unknown model type %s - ignored\n", typename);
+#else	
+      /* gtri - modify - wbk - 10/23/90 - modify to look for code models */
+
+#ifdef TRACE
+      /* SDB debug statement */
+      printf("In INPdomodel, found unknown model type, typename = %s . . .\n", typename); 
+#endif
+
+      /* look for this model type and put it in the table of models */
+      type = INPtypelook(typename);
+      if(type < 0) {
+	err = (char *) MALLOC(35 + strlen(typename));
+	sprintf(err,"Unknown model type %s - ignored\n",typename);
+
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In INPdomodel, ignoring unknown model typ typename = %s . . .\n", typename); 
+#endif
+
+      }
+      else {
+
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In INPdomodel, adding unknown model typename = %s to model list. . .\n", typename); 
+#endif
+
+	INPmakeMod(modname,type,image);
+      }
+      
+      /* gtri - end - wbk - 10/23/90 */
+#endif
+      
     }
+    tfree(typename);
     return (err);
 }

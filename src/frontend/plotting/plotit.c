@@ -250,9 +250,12 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     struct dvec *v, *newv_scale;
     double *newdata, *newscale;
     double tstep, tstart, tstop, ttime;
+    
+    /* return value, error by default */
+    bool rtn = FALSE;
 
     if (!wl)
-	return FALSE;
+	goto quit1;
     wl_root = wl;
 
     /* First get the command line, without the limits. */
@@ -261,7 +264,9 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     (void) getlims(wwl, "xlimit", 2);
     (void) getlims(wwl, "yl", 2);
     (void) getlims(wwl, "ylimit", 2);
-    (void) sprintf(cline, "plot %s", wl_flatten(wwl));
+    pname = wl_flatten(wwl);
+    (void) sprintf(cline, "plot %s", pname);
+    tfree(pname);
 
     wl_free(wwl);
 
@@ -513,9 +518,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         nointerp = TRUE;
 
     wl = wl->wl_next;
+    tfree(tw);
     if (!wl) {
         fprintf(cp_err, "Error: no vectors given\n");
-        return (FALSE);
+        goto quit1;
     }
 
     wl->wl_prev = NULL;
@@ -531,7 +537,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
     names = ft_getpnames(wl, FALSE);
     if (names == NULL)
-        return (FALSE);
+        goto quit1;
 
     /* Now evaluate the names. */
     for (n = names, lv = NULL; n; n = n->pn_next) {
@@ -539,16 +545,16 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 eq(n->pn_value->v_name, "vs")) {
             if (!lv) {
                 fprintf(cp_err, "Error: misplaced vs arg\n");
-                return (FALSE);
+                goto quit;
             } else {
                 if (!(n = n->pn_next)) {
                     fprintf(cp_err,
                         "Error: missing vs arg\n");
-                    return (FALSE);
+                    goto quit;
                 }
                 dv = ft_evaluate(n);
                 if (!dv)
-                    return (FALSE);
+                    goto quit;
                 if (lastvs)
                     lv = lastvs->v_link2;
                 else
@@ -563,7 +569,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         }
         dv = ft_evaluate(n);
         if (!dv)
-            return (FALSE);
+            goto quit;
         if (!d)
             vecs = dv;
         else
@@ -572,7 +578,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             ;
         lv = dv;
     }
-    free_pnode(names);
+/*    free_pnode(names); pn:really should be commented out ? */ 
     d->v_link2 = NULL;
 
     /* Now check for 0-length vectors. */
@@ -580,7 +586,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         if (!d->v_length) {
             fprintf(cp_err, "Error: %s: no such vector\n",
                     d->v_name);
-            return (FALSE);
+            goto quit;
         }
     
     /* If there are higher dimensional vectors, transform them into a
@@ -655,7 +661,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 oneval ? 1 : 0) {
             fprintf(cp_err,
 "Error: plot must be either all pole-zero or contain no poles or zeros\n");
-            return (FALSE);
+            goto quit;
         }
     
     if ((gtype == GRID_POLAR) || (gtype == GRID_SMITH
@@ -837,13 +843,13 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             (gtype == GRID_LOGLOG))) {
         fprintf(cp_err, 
             "Error: X values must be > 0 for log scale\n");
-        return (FALSE);
+        goto quit;
     }
     if ((ylims[0] <= 0.0) && ((gtype == GRID_YLOG) ||
             (gtype == GRID_LOGLOG))) {
         fprintf(cp_err, 
             "Error: Y values must be > 0 for log scale\n");
-        return (FALSE);
+        goto quit;
     }
 
     /* Fix the plot limits for smith and polar grids. */
@@ -904,7 +910,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             newscale, newlen, 1)) {
             fprintf(cp_err,
                 "Error: can't interpolate %s\n", v->v_name);
-            return(FALSE);
+            goto quit;
             }
 
             tfree(v->v_realdata);
@@ -922,7 +928,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             ((gtype == GRID_XLOG) || (gtype == GRID_LOGLOG)),
             ((gtype == GRID_YLOG) || (gtype == GRID_LOGLOG)),
             nointerp);
-        return (TRUE);
+        rtn = TRUE;
+	goto quit;
     }
 
     /* See if there is one type we can give for the y scale... */
@@ -939,7 +946,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 	    xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
 	    ylabel ? ylabel : ft_typabbrev(j),
 	    gtype, ptype, vecs);
-	return (TRUE);
+	rtn = TRUE;
+	goto quit;
     }
     for (d = vecs, i = 0; d; d = d->v_link2)
         i++;
@@ -954,7 +962,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             title ? title : vecs->v_plot->pl_title, hcopy, i,
             xdelta ? *xdelta : 0.0, ydelta ? *ydelta : 0.0, gtype,
             ptype, xlabel, ylabel, xt, j, pname, cline))
-        return (FALSE);
+        goto quit;
 
     /* Now plot all the graphs. */
     for (d = vecs; d; d = d->v_link2)
@@ -962,6 +970,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
     gr_clean();
 
-    return (TRUE);
+    rtn = TRUE;
+quit:
+    free_pnode(names);
+quit1:
+    return rtn;
 }
 

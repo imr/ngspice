@@ -18,7 +18,10 @@ Author: 1992 David A. Gates, UC Berkeley CADgroup
 
 
 
-extern SPICEdev *DEVices[];
+extern SPICEdev **DEVices;
+#ifdef XSPICE
+extern int *DEVicesfl;
+#endif
 
 int
 CKTpartition(CKTcircuit *ckt)
@@ -28,7 +31,11 @@ CKTpartition(CKTcircuit *ckt)
     GENinstance *inst;
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( (ckt->CKThead[i] != NULL) ) {
+        if ( (ckt->CKThead[i] != NULL) 
+#ifdef XSPICE
+&& DEVicesfl[i] == 0
+#endif	
+	 ){
 	    for (model = ckt->CKThead[i]; model; model = model->GENnextModel) {
 		for (inst = model->GENinstances; inst;
 			inst = inst->GENnextInstance) {

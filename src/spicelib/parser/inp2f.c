@@ -26,10 +26,10 @@ void INP2F(void *ckt, INPtables * tab, card * current)
     int error;			/* error code temporary */
     void *fast;			/* pointer to the actual instance */
     IFvalue ptemp;		/* a value structure to package resistance into */
-    IFvalue *parm;		/* a pointer to a value structure to pick things up into */
+    IFvalue *parm;		/* pointer to a value structure for functions which return one */
     int waslead;		/* flag to indicate that funny unlabeled number was found */
     double leadval;		/* actual value of unlabeled number */
-    IFuid uid;			/* uid for default model */
+    IFuid uid;			/* uid of default model to be created */
 
     type = INPtypelook("CCCS");
     if (type < 0) {
@@ -39,23 +39,37 @@ void INP2F(void *ckt, INPtables * tab, card * current)
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
-    INPgetTok(&line, &nname1, 1);
+    INPgetNetTok(&line, &nname1, 1);
     INPtermInsert(ckt, &nname1, tab, &node1);
-    INPgetTok(&line, &nname2, 1);
+    INPgetNetTok(&line, &nname2, 1);
     INPtermInsert(ckt, &nname2, tab, &node2);
     if (!tab->defFmod) {
 	/* create default F model */
 	IFnewUid(ckt, &uid, (IFuid) NULL, "F", UID_MODEL, (void **) NULL);
 	IFC(newModel, (ckt, type, &(tab->defFmod), uid));
     }
+    
+    /* call newInstance with macro IFC */    
     IFC(newInstance, (ckt, tab->defFmod, &fast, name));
+    
+    /* call bindNode with macro IFC */    
     IFC(bindNode, (ckt, fast, 1, node1));
+    
+    /* call bindNode with macro IFC */    
     IFC(bindNode, (ckt, fast, 2, node2));
+    
     parm = INPgetValue(ckt, &line, IF_INSTANCE, tab);
+    
+    /* call INPpName with macro GCA */    
     GCA(INPpName, ("control", parm, ckt, type, fast));
+
+    /* call INPdevParse with macro PARSECALL */    
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+    
     if (waslead) {
 	ptemp.rValue = leadval;
+	
+	/* call INPpName with macro GCA */	
 	GCA(INPpName, ("gain", &ptemp, ckt, type, fast));
     }
 }

@@ -38,7 +38,7 @@ NIiter(register CKTcircuit *ckt, int maxIter)
 
 
     CKTnode *node; /* current matrix entry */
-    double diff, maxdiff, damp_factor, *OldCKTstate0;
+    double diff, maxdiff, damp_factor, *OldCKTstate0=NULL;
 
     iterno=0;
     ipass=0;
@@ -157,7 +157,10 @@ NIiter(register CKTcircuit *ckt, int maxIter)
                     return(error);
                 }
             } 
-
+	    /*moved it to here as if xspice is included then CKTload changes
+	      CKTnumStates the first time it is run */
+	    if(!OldCKTstate0)
+	      OldCKTstate0=(double *)MALLOC((ckt->CKTnumStates+1)*sizeof(double));    
 		  for(i=0;i<ckt->CKTnumStates;i++) {
                 *(OldCKTstate0+i) = *(ckt->CKTstate0+i);
             };

@@ -216,9 +216,20 @@ cp_vset(char *varname, char type, char *value)
 		v->va_next = ft_curckt->ci_vars;
 		ft_curckt->ci_vars = v;
 	    } else {
+                /* va: avoid memory leak within bcopy */
+                if (u->va_type==VT_STRING) tfree(u->va_string);
+                else if (u->va_type==VT_LIST) tfree(u->va_vlist);
+                u->va_V = v->va_V;
+                /* va_name is the same string */
+                u->va_type = v->va_type;
+                /* va_next left unchanged */
+                tfree(v->va_name);
+                tfree(v);
+/* va: old version with memory leaks	    
 		w = u->va_next;
 		bcopy(v, u, sizeof(*u));
 		u->va_next = w;
+*/		
 	    }
 	}
 	break;
@@ -241,13 +252,15 @@ cp_vset(char *varname, char type, char *value)
 struct variable *
 cp_setparse(wordlist *wl)
 {
-    char *name, *val, *copyval, *s, *ss;
+    char *name=NULL, *val, *copyval, *s, *ss;
     double *td;
     struct variable *listv = NULL, *vv, *lv = NULL;
     struct variable *vars = NULL;
     int balance;
 
     while (wl) {
+        if(name)
+            tfree(name);    
         name = cp_unquote(wl->wl_word);
         wl = wl->wl_next;
         if (((wl == NULL) || (*wl->wl_word != '=')) && 
@@ -330,6 +343,7 @@ cp_setparse(wordlist *wl)
             }
             if (balance && !wl) {
                 fprintf(cp_err, "Error: bad set form.\n");
+		tfree(name); /* va: cp_unquote memory leak: free name before exiting */
                 return (NULL);
             }
             
@@ -359,7 +373,10 @@ cp_setparse(wordlist *wl)
             vv->va_string = copy(val);
         }
         tfree(copyval);/*DG: must free ss any way to avoid cp_unquote memory leak */
+        tfree(name); /* va: cp_unquote memory leak: free name for every loop */    
     }
+    if(name)
+        tfree(name);
     return (vars);
 }
 

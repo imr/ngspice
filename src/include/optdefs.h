@@ -116,4 +116,18 @@ typedef struct {
 #define OPT_ABSDV        66  /* Original: 51 (Node_Damping) */ 
 #define OPT_RELDV        67  /* Original: 52 (Node_Damping) */
 
+#ifdef XSPICE
+/* gtri - begin - wbk - add new options */
+#define OPT_ENH_NOOPALTER           100
+#define OPT_ENH_RAMPTIME            101
+#define OPT_EVT_MAX_EVT_PASSES      102
+#define OPT_EVT_MAX_OP_ALTER        103
+#define OPT_ENH_CONV_LIMIT          104
+#define OPT_ENH_CONV_ABS_STEP       105
+#define OPT_ENH_CONV_STEP           106
+#define OPT_MIF_AUTO_PARTIAL        107
+#define OPT_ENH_RSHUNT              108
+/* gtri - end   - wbk - add new options */
+#endif
+
 #endif /*OPT*/

@@ -74,6 +74,11 @@ typedef struct sINPmodel{
     void *INPmodfast;   /* high speed pointer to model for access */
 } INPmodel;
 
+
+/*  global input model table.  */
+extern INPmodel *modtab;
+
+
 /* listing types - used for debug listings */
 #define LOGICAL 1
 #define PHYSICAL 2
@@ -93,6 +98,7 @@ double INPevaluate(char**,int*,int);
 char * INPfindLev(char*,int*);
 char * INPgetMod(void*,char*,INPmodel**,INPtables*);
 int INPgetTok(char**,char**,int);
+int INPgetNetTok(char**,char**,int);
 void INPgetTree(char**,INPparseTree**,void*,INPtables*);
 IFvalue * INPgetValue(void*,char**,int,INPtables*);
 int INPgndInsert(void*,char**,INPtables*,void**);
@@ -123,6 +129,7 @@ void INP2K(void*,INPtables*,card*);
 void INP2L(void*,INPtables*,card*);
 void INP2M(void*,INPtables*,card*);
 void INP2O(void*,INPtables*,card*);
+void INP2P(void*,INPtables*,card*);
 void INP2Q(void*,INPtables*,card*,void*);
 void INP2R(void*,INPtables*,card*);
 void INP2S(void*,INPtables*,card*);
@@ -130,6 +137,7 @@ void INP2T(void*,INPtables*,card*);
 void INP2U(void*,INPtables*,card*);
 void INP2V(void*,INPtables*,card*);
 void INP2W(void*,INPtables*,card*);
+void INP2Y(void*,INPtables*,card*);
 void INP2Z(void*,INPtables*,card*);
 int INP2dot(void*,INPtables*,card*,void*,void*);
 INPtables *INPtabInit(int);

@@ -25,6 +25,17 @@ Modified: 2000 AlansFixes
 #include "spiceif.h"
 #include "variable.h"
 
+#ifdef XSPICE
+/* gtri - add - wbk - 11/9/90 - include MIF function prototypes */
+#include "mifproto.h"
+/* gtri - end - wbk - 11/9/90 */
+
+/* gtri - evt - wbk - 5/20/91 - Add stuff for user-defined nodes */
+#include "evtproto.h"
+#include "evtudn.h"
+/* gtri - end - wbk - 5/20/91 - Add stuff for user-defined nodes */
+#endif
+
 /* static declarations */
 static struct variable * parmtovar(IFvalue *pv, IFparm *opt);
 static IFparm * parmlookup(IFdevice *dev, GENinstance **inptr, char *param, 
@@ -98,6 +109,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
     }
 
     ft_curckt->ci_curTask = ft_curckt->ci_defTask;
+    
     INPpas1((void *) ckt, (card *) deck->li_next,(INPtables *)*tab);
     INPpas2((void *) ckt, (card *) deck->li_next,
             (INPtables *) *tab,ft_curckt->ci_defTask);
@@ -110,6 +122,16 @@ if_inpdeck(struct line *deck, INPtables **tab)
     INPpas3((void *) ckt, (card *) deck->li_next,
             (INPtables *) *tab,ft_curckt->ci_defTask, ft_sim->nodeParms,
 	    ft_sim->numNodeParms);
+
+#ifdef XSPICE
+/* gtri - begin - wbk - 6/6/91 - Finish initialization of event driven structures */
+    err = EVTinit((void *) ckt);
+    if(err) {
+        ft_sperror(err,"EVTinit");
+        return(NULL);
+    }
+/* gtri - end - wbk - 6/6/91 - Finish initialization of event driven structures */
+#endif
 
     return (ckt);
 }
@@ -131,6 +153,7 @@ if_run(char *t, char *what, wordlist *args, char *tab)
     int j;
     int which = -1;
     IFuid specUid,optUid;
+    char *s;
     
     
     /* First parse the line... */
@@ -145,7 +168,9 @@ if_run(char *t, char *what, wordlist *args, char *tab)
     || eq(what,"tf")
     || eq(what, "noise")) 
     {
-        (void) sprintf(buf, ".%s", wl_flatten(args));
+    	s = wl_flatten(args); /* va: tfree char's tmalloc'ed in wl_flatten */
+        (void) sprintf(buf, ".%s", s);
+        tfree(s);      
         deck.li_next = deck.li_actual = NULL;
         deck.li_error = NULL;
         deck.li_linenum = 0;
@@ -259,7 +284,9 @@ if_run(char *t, char *what, wordlist *args, char *tab)
 /* -- A bug fix suggested by Cecil Aswell (aswell@netcom.com) to let */
 /* -- the interactive analysis commands get the current temperature */
 /* -- and other options. */
-    
+/*dw Hiermit wird auf der Eingabezeile mit "run" die letzte Simulation
+  wiederholt, sowie die letzte gültige Temperatur genutzt. (Warum die
+  in defOpt drin steht, steht in den Sternen!) */    
     if( eq(what,"run") ) {
         ft_curckt->ci_curTask = ft_curckt->ci_defTask;
         ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;
@@ -278,6 +305,8 @@ if_run(char *t, char *what, wordlist *args, char *tab)
         ||(eq(what, "sens")) 
         ||(eq(what,"tf"))
         ||(eq(what, "run"))  )  {
+/*dw Nutzung der letzten gültigen Temperatur, z.B. nach "set temp" s.o. */
+        ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;	
         if ((err = (*(ft_sim->doAnalyses))(ckt, 1, ft_curckt->ci_curTask))!=OK){
             ft_sperror(err, "doAnalyses");
             /* wrd_end(); */
@@ -938,3 +967,381 @@ if_getstat(void *ckt, char *name)
     }
 }
 
+#ifdef EXPERIMENTAL_CODE
+
+#include <cktdefs.h>
+#include <trandefs.h>
+
+/* arg0: circuit file, arg1: data file */
+void com_loadsnap(wordlist *wl) {
+  int error = 0;
+  FILE *file;
+  int tmpI, i, size;
+  CKTcircuit *my_ckt, *ckt;
+  
+  /*
+    Phesudo code:
+  
+    source(file_name);
+    This should setup all the device structs, voltage nodes, etc.
+
+    call cktsetup;
+    This is needed to setup vector mamory allocation for vectors and branch nodes
+  
+    load_binary_data(info);
+    Overwrite the allocated numbers, rhs etc, with saved data
+  */
+ 
+
+  if (ft_curckt) {
+    fprintf(cp_err, "Error: there is already a circuit loaded.\n");
+    return;
+  }
+  
+  /* source the circuit */
+  inp_source(wl->wl_word);
+  if (!ft_curckt) {
+    return;
+  }
+  
+  /* allocate all the vectors, with luck!  */
+  if (!error)
+    error = CKTsetup((CKTcircuit *)ft_curckt->ci_ckt);
+  if (!error)
+    error = CKTtemp((CKTcircuit *)ft_curckt->ci_ckt);
+  
+  if(error) {
+    fprintf(cp_err,"Some error in the CKT setup fncts!\n");
+    return;
+  }
+
+  /* so it resumes ... */
+  ft_curckt->ci_inprogress = TRUE;
+
+
+  /* now load the binary file */
+  
+    
+  ckt = (CKTcircuit *)ft_curckt->ci_ckt;
+
+  file = fopen(wl->wl_next->wl_word,"rb");
+    
+  if(!file) {
+    fprintf(cp_err, 
+	    "Error: Couldn't open \"%s\" for reading\n",
+	    wl->wl_next->wl_word);
+    return;
+  }
+    
+  fread(&tmpI,sizeof(int),1,file);
+  if(tmpI != sizeof(CKTcircuit) ) {
+    fprintf(cp_err,"loaded num: %d, expected num: %d\n",tmpI,sizeof(CKTcircuit));
+    fprintf(cp_err, 
+	    "Error: snapshot saved with different version of spice\n");
+    fclose(file);
+    return;
+  }
+    
+  my_ckt = (CKTcircuit *)tmalloc(sizeof(CKTcircuit));
+
+  fread(my_ckt,sizeof(CKTcircuit),1,file);
+
+#define _t(name) ckt->name = my_ckt->name
+#define _ta(name,size)\
+ do{ int __i; for(__i=0;__i<size;__i++) _t(name[__i]); } while(0)
+
+  _t(CKTtime);
+  _t(CKTdelta);
+  _ta(CKTdeltaOld,7);
+  _t(CKTtemp);
+  _t(CKTnomTemp);
+  _t(CKTvt);
+  _ta(CKTag,7);
+
+  _t(CKTorder);
+  _t(CKTmaxOrder);
+  _t(CKTintegrateMethod);
+
+  _t(CKTniState);
+
+  _t(CKTmaxEqNum);
+  _t(CKTcurrentAnalysis);
+
+  _t(CKTnumStates);
+  _t(CKTmode);
+
+  _t(CKTbypass);
+  _t(CKTdcMaxIter);
+  _t(CKTdcTrcvMaxIter);
+  _t(CKTtranMaxIter);
+  _t(CKTbreakSize);
+  _t(CKTbreak);
+  _t(CKTsaveDelta);
+  _t(CKTminBreak);
+  _t(CKTabstol);
+  _t(CKTpivotAbsTol);
+  _t(CKTpivotRelTol);
+  _t(CKTreltol);
+  _t(CKTchgtol);
+  _t(CKTvoltTol);
+
+  _t(CKTgmin);
+  _t(CKTgshunt);
+  _t(CKTdelmin);
+  _t(CKTtrtol);
+  _t(CKTfinalTime);
+  _t(CKTstep);
+  _t(CKTmaxStep);
+  _t(CKTinitTime);
+  _t(CKTomega);
+  _t(CKTsrcFact);
+  _t(CKTdiagGmin);
+  _t(CKTnumSrcSteps);
+  _t(CKTnumGminSteps);
+  _t(CKTgminFactor);
+  _t(CKTnoncon);
+  _t(CKTdefaultMosM);
+  _t(CKTdefaultMosL);
+  _t(CKTdefaultMosW);
+  _t(CKTdefaultMosAD);
+  _t(CKTdefaultMosAS);
+  _t(CKThadNodeset);
+  _t(CKTfixLimit);
+  _t(CKTnoOpIter);
+  _t(CKTisSetup);
+
+  _t(CKTtimeListSize);
+  _t(CKTtimeIndex);
+  _t(CKTsizeIncr);
+
+  _t(CKTtryToCompact);
+  _t(CKTbadMos3);
+  _t(CKTkeepOpInfo);
+  _t(CKTcopyNodesets);
+  _t(CKTnodeDamping);
+  _t(CKTabsDv);
+  _t(CKTrelDv);
+  _t(CKTtroubleNode);
+
+
+  /*     if(name) {\
+	 tfree(name);\
+	 name = NULL;\
+	 }\*/
+ 
+ 
+#undef _foo
+#define _foo(name,type,_size)\
+do {\
+    int __i;\
+    fread(&__i,sizeof(int),1,file);\
+    if(__i) {\
+      if(name)\
+	tfree(name);\
+      name = (type *)tmalloc(__i);\
+      fread(name,1,__i,file);\
+    } else {\
+      fprintf(cp_err, "size for vector " #name " is 0\n");\
+    }\
+    if((_size) != -1 && __i != (_size) * sizeof(type)) {\
+      fprintf(cp_err,"expected %d, but got %d for "#name"\n",(_size)*sizeof(type),__i);\
+    }\
+  } while(0)
+  
+    
+    for(i=0;i<=ckt->CKTmaxOrder+1;i++) {
+      _foo(ckt->CKTstates[i],double,ckt->CKTnumStates);
+    }
+ 
+    size = SMPmatSize(ckt->CKTmatrix) + 1;
+    _foo(ckt->CKTrhs, double,size);
+    _foo(ckt->CKTrhsOld, double,size);
+    _foo(ckt->CKTrhsSpare, double,size);
+    _foo(ckt->CKTirhs, double,size);	
+    _foo(ckt->CKTirhsOld, double,size);		
+    _foo(ckt->CKTirhsSpare, double,size);	
+    _foo(ckt->CKTrhsOp, double,size);		
+    _foo(ckt->CKTsenRhs, double,size);		    
+    _foo(ckt->CKTseniRhs, double,size);
+      
+    _foo(ckt->CKTtimePoints,double,-1);
+    _foo(ckt->CKTdeltaList,double,-1);
+
+    _foo(ckt->CKTbreaks,double,ckt->CKTbreakSize);
+    
+    _foo((TSKtask *)ft_curckt->ci_curTask,TSKtask,1);
+
+    /* To stop the Free */
+    ((TSKtask *)ft_curckt->ci_curTask)->TSKname = NULL;
+    ((TSKtask *)ft_curckt->ci_curTask)->jobs = NULL;
+
+    _foo(((TSKtask *)ft_curckt->ci_curTask)->TSKname,char,-1);
+    
+    _foo(((TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs),TRANan,1);
+    ((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname = NULL;
+    ckt->CKTcurJob = (JOB *)((TSKtask *)ft_curckt->ci_curTask)->jobs;
+    
+    _foo(((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname,char,-1);
+
+    ((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBnextJob = NULL;
+    
+    ((TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs)->TRANplot = NULL;
+
+    _foo(ckt->CKTstat,STATistics,1);
+
+    tfree(my_ckt);
+    fclose(file);
+    
+    /* Finally to resume the plot in some fashion */
+
+    /* a worked out version of this should be enough */
+    {
+      IFuid *nameList;
+      int numNames;
+      IFuid timeUid;
+ 
+      error = CKTnames(ckt,&numNames,&nameList);
+      if(error){
+	fprintf(cp_err,"error in CKTnames\n");
+	return;
+      }
+      (*(SPfrontEnd->IFnewUid))((void *)ckt,&timeUid,(IFuid)NULL,
+				"time", UID_OTHER, (void **)NULL);
+      error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
+	     (void*)ckt->CKTcurJob,
+	     ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,
+	     IF_REAL,&(((TRANan*)ckt->CKTcurJob)->TRANplot));
+      if(error) {
+	fprintf(cp_err,"error in CKTnames\n");
+	return;
+      }	
+    }
+    
+    
+    
+    return ;
+}
+
+void com_savesnap(wordlist *wl) {
+  FILE *file;
+  int i, size;
+  CKTcircuit *ckt;
+  TSKtask *task;
+  
+  if (!ft_curckt) {
+    fprintf(cp_err, "Error: there is no circuit loaded.\n");
+    return;
+  } else if (ft_curckt->ci_ckt == NULL) { /* Set noparse? */
+    fprintf(cp_err, "Error: circuit not parsed.\n");
+    return;
+  }
+
+  /* save the data */
+  
+  ckt = (CKTcircuit *)ft_curckt->ci_ckt;
+    
+  task = (TSKtask *)ft_curckt->ci_curTask;
+
+  if(task->jobs->JOBtype != 4) {
+    fprintf(cp_err,"Only saving of tran analysis is implemented\n");
+    return;
+  }
+  
+  file = fopen(wl->wl_word,"wb");
+ 
+  if(!file) {
+    fprintf(cp_err, 
+	    "Error: Couldn't open \"%s\" for writing\n",wl->wl_word);
+    return;
+  }
+
+#undef _foo
+#define _foo(name,type,num)\
+ do {\
+      int __i;\
+      if(name) {\
+	__i = (num) * sizeof(type); fwrite(&__i,sizeof(int),1,file);\
+	if((num))\
+	  fwrite(name,sizeof(type),(num),file);\
+      } else {\
+	__i = 0;\
+	fprintf(cp_err,#name " is NULL, zero written\n");\
+	fwrite(&__i,sizeof(int),1,file);\
+      }\
+    } while(0)
+    
+
+  _foo(ckt,CKTcircuit,1);
+
+  /* To save list
+       
+  double *(CKTstates[8]);
+  double *CKTrhs;		
+  double *CKTrhsOld;		                            
+  double *CKTrhsSpare;	
+  double *CKTirhs;		
+  double *CKTirhsOld;		
+  double *CKTirhsSpare;	
+  double *CKTrhsOp;		
+  double *CKTsenRhs;		    
+  double *CKTseniRhs;	       
+  double *CKTtimePoints;	 list of all accepted timepoints in
+  the current transient simulation 
+  double *CKTdeltaList;	 list of all timesteps in the
+  current transient simulation 
+
+  */
+    
+
+  for(i=0;i<=ckt->CKTmaxOrder+1;i++) {
+    _foo(ckt->CKTstates[i],double,ckt->CKTnumStates);
+  }
+    
+    
+      
+  size = SMPmatSize(ckt->CKTmatrix) + 1;
+      
+  _foo(ckt->CKTrhs,double,size);
+  _foo(ckt->CKTrhsOld,double,size);		                            
+  _foo(ckt->CKTrhsSpare,double,size);	
+  _foo(ckt->CKTirhs,double,size);		
+  _foo(ckt->CKTirhsOld,double,size);		
+  _foo(ckt->CKTirhsSpare,double,size);	
+  _foo(ckt->CKTrhsOp,double,size);		
+  _foo(ckt->CKTsenRhs,double,size);		    
+  _foo(ckt->CKTseniRhs,double,size);
+
+  _foo(ckt->CKTtimePoints,double,ckt->CKTtimeListSize);
+  _foo(ckt->CKTdeltaList,double,ckt->CKTtimeListSize);	       
+    
+  /* need to save the breakpoints, or something */
+
+  _foo(ckt->CKTbreaks,double,ckt->CKTbreakSize);
+
+
+  /* now save the TSK struct, ft_curckt->ci_curTask*/
+  
+  _foo(task,TSKtask,1);
+  _foo(task->TSKname,char,(strlen(task->TSKname)+1));
+
+  /* now save the JOB struct task->jobs */
+  /* lol, only allow one job, tough! */
+  /* Note that JOB is a base class, need to save actual type!! */
+  
+  _foo(task->jobs,TRANan,1);
+  
+  _foo(task->jobs->JOBname,char,(strlen(task->jobs->JOBname)+1));
+
+
+  /* Finally the stats */
+
+  _foo(ckt->CKTstat,STATistics,1);
+
+  
+  fclose(file);
+  
+  return;
+
+}
+
+#endif

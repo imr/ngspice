@@ -34,6 +34,24 @@
 #include <ifsim.h>
 
 #include "dev.h"
+#include "memory.h" /* to alloc, realloc devices*/
+
+#ifdef XSPICE
+/*saj headers for xspice*/
+#include <string.h> /* for strcpy, strcat*/
+#include <dlfcn.h> /* to load librarys*/
+#include "dllitf.h" /* the coreInfo Structure*/
+#include "evtudn.h" /*Use defined nodes */
+
+Evt_Udn_Info_t  **g_evt_udn_info = NULL;
+int g_evt_num_udn_types = 0;
+
+/*The digital node type */
+extern Evt_Udn_Info_t idn_digital_info;
+
+int add_udn(int,Evt_Udn_Info_t **);
+/*saj*/
+#endif
 
 #define DEVICES_USED "asrc bjt bjt2 bsim1 bsim2 bsim3 bsim3v2 bsim3v1 bsim4 bsim3soipd bsim3soifd   \
                       bsim3soidd cap cccs ccvs csw dio hfet hfet2 ind isrc jfet ltra mes mesa mos1  \
@@ -87,31 +105,65 @@
 #include "mos3/mos3itf.h"
 #include "mos6/mos6itf.h"
 #include "mos9/mos9itf.h"
+#include "cpl/cplitf.h"
 #include "res/resitf.h"
 #include "soi3/soi3itf.h"
 #include "sw/switf.h"
 #include "tra/traitf.h"
+#include "txl/txlitf.h"
 #include "urc/urcitf.h"
 #include "vccs/vccsitf.h"
 #include "vcvs/vcvsitf.h"
 #include "vsrc/vsrcitf.h"
-
+/*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
 #ifdef HAVE_EKV
 #include "ekv/ekvitf.h"
-#define DEVNUM 41
-
+#ifdef XSPICE
+static int DEVNUM = 43;
 #else
-
-#define DEVNUM 40
+#define DEVNUM 43
+#endif
+#else
+#ifdef XSPICE
+static int DEVNUM = 42;
+#else
+#define DEVNUM 42
+#endif
 #endif
 
+/*Make this dynamic for later attempt to make all devices dynamic*/
+SPICEdev **DEVices=NULL;
 
-SPICEdev *DEVices[DEVNUM];
+/*Flag to indicate that device type it is,
+ *0 = normal spice device
+ *1 = xspice device
+ */
+#ifdef XSPICE
+int *DEVicesfl=NULL;
+int DEVflag(int type){
+  if(type < DEVNUM && type >= 0)
+    return DEVicesfl[type];
+  else
+    return -1;
+}
+#endif
+
 
 
 void
 spice_init_devices(void)
 {
+#ifdef XSPICE
+  /*Initilise the structs and add digital node type */
+  g_evt_udn_info = (Evt_Udn_Info_t  **)MALLOC(sizeof(Evt_Udn_Info_t  *));
+  g_evt_num_udn_types = 1;
+  g_evt_udn_info[0] =  &idn_digital_info;
+
+  DEVicesfl = (int *)tmalloc(DEVNUM*sizeof(int));
+  /* tmalloc should automaticlly zero the array! */
+#endif
+
+    DEVices = (SPICEdev **)tmalloc(DEVNUM*sizeof(SPICEdev *));
     /* URC device MUST precede both resistors and capacitors */
     DEVices[ 0] = get_urc_info();
     DEVices[ 1] = get_asrc_info();
@@ -124,42 +176,46 @@ spice_init_devices(void)
     DEVices[ 7] = get_bsim3v1_info();
     DEVices[ 8] = get_bsim3v2_info();
     DEVices[ 9] = get_bsim4_info();
-    DEVices[10] = get_b3soipd_info();
-    DEVices[11] = get_b3soifd_info();
-    DEVices[12] = get_b3soidd_info();
+    DEVices[10] = get_bsim3soipd_info();
+    DEVices[11] = get_bsim3soifd_info();
+    DEVices[12] = get_bsim3soidd_info();
     DEVices[13] = get_cap_info();
     DEVices[14] = get_cccs_info();
     DEVices[15] = get_ccvs_info();
-    DEVices[16] = get_csw_info();
-    DEVices[17] = get_dio_info();
-    DEVices[18] = get_hfeta_info();
-    DEVices[19] = get_hfet2_info();
-    DEVices[20] = get_ind_info();
-    DEVices[21] = get_mut_info();
-    DEVices[22] = get_isrc_info();
-    DEVices[23] = get_jfet_info();
-    DEVices[24] = get_jfet2_info();
-    DEVices[25] = get_ltra_info();
-    DEVices[26] = get_mes_info();
-    DEVices[27] = get_mesa_info();
-    DEVices[28] = get_mos1_info();
-    DEVices[29] = get_mos2_info();
-    DEVices[30] = get_mos3_info();
-    DEVices[31] = get_mos6_info();
-    DEVices[32] = get_mos9_info();
-    DEVices[33] = get_res_info();
-    DEVices[34] = get_soi3_info();
-    DEVices[35] = get_sw_info();
-    DEVices[36] = get_tra_info();
-    DEVices[37] = get_vccs_info();
-    DEVices[38] = get_vcvs_info();
-    DEVices[39] = get_vsrc_info();
+    DEVices[16] = get_cpl_info();
+    DEVices[17] = get_csw_info();
+    DEVices[18] = get_dio_info();
+    DEVices[19] = get_hfeta_info();
+    DEVices[20] = get_hfet2_info();
+    DEVices[21] = get_ind_info();
+    DEVices[22] = get_mut_info();
+    DEVices[23] = get_isrc_info();
+    DEVices[24] = get_jfet_info();
+    DEVices[25] = get_jfet2_info();
+    DEVices[26] = get_ltra_info();
+    DEVices[27] = get_mes_info();
+    DEVices[28] = get_mesa_info();
+    DEVices[29] = get_mos1_info();
+    DEVices[30] = get_mos2_info();
+    DEVices[31] = get_mos3_info();
+    DEVices[32] = get_mos6_info();
+    DEVices[33] = get_mos9_info();
+    DEVices[34] = get_res_info();
+    DEVices[35] = get_soi3_info();
+    DEVices[36] = get_sw_info();
+    DEVices[37] = get_tra_info();
+    DEVices[38] = get_txl_info();
+    DEVices[39] = get_vccs_info();
+    DEVices[40] = get_vcvs_info();
+    DEVices[41] = get_vsrc_info();
+    
 #ifdef HAVE_EKV
-    DEVices[40] = get_ekv_info();
-    assert(41 == DEVNUM);
+    DEVices[42] = get_ekv_info();
+    assert(43 == DEVNUM);
 #else
-    assert(40 == DEVNUM);
+    assert(42 == DEVNUM);
 #endif
+return;
 }
 
 
@@ -183,6 +239,195 @@ devices(void)
     return DEVices;
 }
 
+#ifdef DEVLIB
+/*not yet usable*/
+#ifdef HAVE_EKV
+#define DEVICES_USED {"asrc", "bjt", "bjt2", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
+                      "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \
+                      "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "ekv" }
+#else
+#define DEVICES_USED {"asrc", "bjt", "bjt2", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
+                      "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \
+                      "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc"}
+#endif
+int load_dev(char *name) {
+  char *msg;
+  char libname[50];
+  void *lib;
+  SPICEdev *(*fetch)(void)=NULL;
+  SPICEdev *device;
+
+  strcpy(libname, "lib");
+  strcat(libname,name);
+  strcat(libname,".so");
+
+  lib = dlopen(libname,RTLD_NOW);
+  if(!lib){
+    msg = dlerror();
+    printf("%s\n", msg);
+    return 1;
+  }
+  
+  strcpy(libname, "get_");
+  strcat(libname,name);
+  strcat(libname,"_info");
+  fetch = dlsym(lib,libname);
+
+  if(!fetch){
+    msg = dlerror();
+    printf("%s\n", msg);
+    return 1;
+  }
+  device = fetch();
+  add_device(1,&device,0);
+  return 0;
+}
+
+void load_alldevs(void){
+  char *devs[] = DEVICES_USED;
+  int num = sizeof(devs)/sizeof(char *);
+  int i;
+  for(i=0; i< num;i++)
+    load_dev(devs[i]);
+  return;
+}
+#endif
+
+/*--------------------   XSPICE additions below  ----------------------*/
+#ifdef XSPICE
+#include <mif.h>
+#include <cm.h>
+#include <cpextern.h>
+#include <fteext.h> /*for ft_sim*/
+#include <cktdefs.h> /*for DEVmaxnum*/
+
+static void relink() {
+  /*  added by SDB; DEVmaxnum is an external int defined in cktdefs.h  */
+  extern int DEVmaxnum;
+
+/*
+ * This replacement done by SDB on 6.11.2003
+ *
+ * ft_sim->numDevices = num_devices();
+ * DEVmaxnum = num_devices();
+ */
+  ft_sim->numDevices = DEVNUM;
+  DEVmaxnum = DEVNUM;
+
+  ft_sim->devices = devices_ptr();
+  return;
+}
+
+int add_device(int n, SPICEdev **devs, int flag){
+  int i;
+  DEVices = (SPICEdev **)trealloc(DEVices,(DEVNUM+n)*sizeof(SPICEdev *));
+  DEVicesfl = (int *)trealloc(DEVicesfl,(DEVNUM+n)*sizeof(int));
+  for(i = 0; i < n;i++){
+    /*debug*/printf("Added device: %s\n",devs[i]->DEVpublic.name);
+    DEVices[DEVNUM+i] = devs[i];
+
+    /* added by SDB on 6.20.2003 */
+    DEVices[DEVNUM+i]->DEVinstSize = &MIFiSize;
+
+    DEVicesfl[DEVNUM+i] = flag;
+  }
+  DEVNUM += n;
+  relink();
+  return 0;
+}
+
+int add_udn(int n,Evt_Udn_Info_t **udns){
+  int i;
+  g_evt_udn_info = (Evt_Udn_Info_t  **)trealloc(g_evt_udn_info,(g_evt_num_udn_types+n)*sizeof(Evt_Udn_Info_t  *));
+  for(i = 0; i < n;i++){
+    /*debug*/printf("Added udn: %s\n",udns[i]->name);
+    g_evt_udn_info[g_evt_num_udn_types+i] = udns[i];
+  }
+  g_evt_num_udn_types += n;
+  return 0;
+}
+
+
+extern struct coreInfo_t  coreInfo;
+
+
+int load_opus(char *name){
+  void *lib;
+  char *msg;
+  int *num=NULL;
+  struct coreInfo_t **core;
+  SPICEdev **devs;
+  Evt_Udn_Info_t  **udns;
+  void *(*fetch)(void)=NULL;
+
+  lib = dlopen(name,RTLD_NOW);
+  if(!lib){
+    msg = dlerror();
+    printf("%s\n", msg);
+    return 1;
+  }
+  
+  fetch = dlsym(lib,"CMdevNum");
+  if(fetch){
+    num = (int *)(*fetch)();
+    printf("Got %u devices.\n",*num);
+    fetch = NULL;
+  }else{
+    msg = dlerror();
+    printf("%s\n", msg);
+    return 1;
+  }
+
+  fetch = dlsym(lib,"CMdevs");
+  if(fetch){
+    devs = (SPICEdev **)(*fetch)();
+    fetch = NULL;
+  }else{
+    msg = dlerror();
+    printf("%s\n", msg);
+    return 1;
+  }
+
+  fetch = dlsym(lib,"CMgetCoreItfPtr");
+  if(fetch){
+    core = (struct coreInfo_t **)(*fetch)();
+    *core = &coreInfo;
+    fetch = NULL;
+  }else{
+    msg = dlerror();
+    printf("%s\n", msg);
+    return 1;
+  }
+  add_device(*num,devs,1);
+
+  fetch = dlsym(lib,"CMudnNum");
+  if(fetch){
+    num = (int *)(*fetch)();
+    printf("Got %u udns.\n",*num);
+    fetch = NULL;
+  }else{
+    msg = dlerror();
+    printf("%s\n", msg);
+    return 1;
+  }
+
+  fetch = dlsym(lib,"CMudns");
+  if(fetch){
+    udns = (Evt_Udn_Info_t  **)(*fetch)();
+    fetch = NULL;
+  }else{
+    msg = dlerror();
+    printf("%s\n", msg);
+    return 1;
+  }
+
+  add_udn(*num,udns);
+
+  return 0;
+}
+
+#endif
+/*--------------------   end of XSPICE additions  ----------------------*/
 
 
 #ifdef __MINGW32__

@@ -18,6 +18,8 @@ libfte_a_SOURCES = \
 	com_chdir.c	\
 	com_compose.c	\
 	com_compose.h	\
+	com_dl.c	\
+	com_dl.h	\
 	com_display.c	\
 	com_display.h	\
 	com_dump.c	\
@@ -100,6 +102,7 @@ libfte_a_SOURCES = \
 	fourier.h	\
 	gens.c		\
 	gens.h		\
+	hpgl.c		\
 	inp.c		\
 	inp.h		\
 	inpcom.c	\

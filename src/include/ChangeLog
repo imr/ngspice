@@ -1,3 +1,6 @@
+2003.4.10  Stuart Brorson <sdb@cloud9.net>
+	* Added declaration for INPgetNetTok to inpdefs.h
+	
 2002-01-03  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* wstdio.h: Standard input/output for Windows (Holger Vogt patch).

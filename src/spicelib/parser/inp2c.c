@@ -44,9 +44,9 @@ void INP2C(void *ckt, INPtables * tab, card * current)
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
-    INPgetTok(&line, &nname1, 1);
+    INPgetNetTok(&line, &nname1, 1);
     INPtermInsert(ckt, &nname1, tab, &node1);
-    INPgetTok(&line, &nname2, 1);
+    INPgetNetTok(&line, &nname2, 1);
     INPtermInsert(ckt, &nname2, tab, &node2);
     val = INPevaluate(&line, &error, 1);
     if (error == 0) {		/* Looks like a number */

@@ -22,7 +22,7 @@ Author: 1988 Jaijeet S Roychowdhury
 int
 CKTdisto (CKTcircuit *ckt, int mode)
 {
-    extern SPICEdev *DEVices[];
+    extern SPICEdev **DEVices;
     DISTOAN* cv = (DISTOAN*) (ckt->CKTcurJob);
     int i;
     int error=0;

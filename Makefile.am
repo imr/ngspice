@@ -13,3 +13,6 @@ mrproper: maintainer-clean
 	rm -f `find . -type f -name "*~" -print`
 	rm -f `find . -type f -name "*.orig" -print`
 	rm -f `find . -type f -name "*.rej" -print`
+
+codemodels: 
+	cd src/xspice/icm && make

@@ -21,13 +21,13 @@ Author: 1985 Thomas L. Quarles
 int
 CKTmodCrt(void *ckt, int type, void **modfast, IFuid name)
 {
-    extern SPICEdev *DEVices[];
+    extern SPICEdev **DEVices;
     GENmodel *mymodfast = NULL;
     int error;
 
     error = CKTfndMod(ckt,&type,(void**)&mymodfast,name);
     if(error == E_NOMOD) {
-        mymodfast = (GENmodel *)MALLOC(*DEVices[type]->DEVmodSize);
+        mymodfast = (GENmodel *)MALLOC(*(DEVices[type]->DEVmodSize));
         if(mymodfast == (GENmodel *)NULL) return(E_NOMEM);
         mymodfast->GENmodType = type;
         mymodfast->GENmodName = name;

@@ -13,6 +13,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "inpdefs.h"
 
+/* This struct defines a linked list of lines from a SPICE file. */
 struct line {
     int li_linenum;
     char *li_line;

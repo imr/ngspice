@@ -47,8 +47,9 @@ pvec(struct dvec *d)
     case GRID_SMITHGRID:
         strcat(buf, ", grid = smithgrid (not xformed)");
         break;
-
-    default:
+	
+    default: /* va: GRID_NONE or GRID_LIN */
+        break;
     }
 
     switch (d->v_plottype) {
@@ -61,8 +62,10 @@ pvec(struct dvec *d)
         strcat(buf, ", plot = point");
         break;
 
-    default:
+    default:  /* va: PLOT_LIN, */
+        break;
     }
+    
     if (d->v_defcolor) {
         sprintf(buf2, ", color = %s", d->v_defcolor);
         strcat(buf, buf2);

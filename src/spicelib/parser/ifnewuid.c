@@ -22,6 +22,7 @@ Author: 1988 Thomas L. Quarles
 #include "inp.h"
 
 
+/* va: we should use tmalloc, whith also makes failure test */
 int
 IFnewUid(void *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
 	 void **nodedata)
@@ -32,25 +33,18 @@ IFnewUid(void *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
     if (olduid) {
 #ifdef HAVE_ASPRINTF    	
 	asprintf(&newname, "%s#%s", (char *) olduid, suffix);
-#else /* ~ HAVE_ASPRINTF */
-      if ( (newname = (char *) malloc(strlen((char *) olduid) +
-				      strlen(suffix) + 2)) /* 2 = strlen("#\0") */ 
-	   == NULL){
-	fprintf(stderr,"malloc failed\n");
-	exit(1);
-      }
+#else /* ~ HAVE_ASPRINTF */   
+      newname = (char *) tmalloc(strlen((char *) olduid) +
+				 strlen(suffix) + 2); /* 2 = strlen("#\0") */ 
       sprintf(newname, "%s#%s", (char *) olduid, suffix);
-#endif /* HAVE_ASPRINTF */
-    
+#endif /* HAVE_ASPRINTF */			 
+
     } else {
     	
 #ifdef HAVE_ASPRINTF    	
 	asprintf(&newname, "%s", suffix);
 #else /* ~ HAVE_ASPRINTF */
-      if ( (newname = (char *) malloc(strlen(suffix) + 2 )) == NULL){ 
-	fprintf(stderr,"malloc failed\n");
-	exit(1);
-      }
+      newname = (char *) tmalloc(strlen(suffix) + 1 );
       sprintf(newname, "%s", suffix);
 #endif /* HAVE_ASPRINTF */ 
     }

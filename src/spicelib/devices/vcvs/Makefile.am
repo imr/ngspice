@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libvcvs.la
+noinst_LIBRARIES = libvcvs.a
 
-libvcvs_la_SOURCES = 	\
+libvcvs_a_SOURCES = 	\
 	vcvs.c		\
 	vcvsask.c	\
 	vcvsdefs.h	\

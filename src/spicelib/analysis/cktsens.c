@@ -33,7 +33,7 @@ static int sens_temp(sgen *sg, CKTcircuit *ckt);
 static int count_steps(int type, double low, double high, int steps, double *stepsize);
 static double inc_freq(double freq, int type, double step_size);
 
-extern SPICEdev *DEVices[];
+extern SPICEdev **DEVices;
 
 /*
  *	Procedure:
@@ -70,8 +70,8 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	int		(*fn)( );
 	static int	is_dc;
 	int		k, j, n;
-	int		num_vars, branch_eq;
-	char		*sen_data;
+	int		num_vars, branch_eq=0;
+	char		*sen_data=NULL;
 	char		namebuf[513];
 	IFuid		*output_names, freq_name;
 	int		bypass;
@@ -600,7 +600,7 @@ inc_freq(double freq, int type, double step_size)
 double
 next_freq(int type, double freq, double stepsize)
 {
-	double	s;
+	double	s=0;
 
 	switch (type) {
 	case SENS_DC:

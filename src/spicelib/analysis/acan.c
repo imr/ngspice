@@ -11,6 +11,13 @@ Modified 2001: AlansFixes
 #include "devdefs.h"
 #include "sperror.h"
 
+#ifdef XSPICE
+/* gtri - add - wbk - 12/19/90 - Add headers */ 
+#include "mif.h"
+#include "evtproto.h"
+#include "ipctiein.h"
+/* gtri - end - wbk */
+
 #ifdef HAS_WINDOWS
 void SetAnalyse( char * Analyse, int Percent);
 #endif
@@ -30,10 +37,22 @@ ACan(CKTcircuit *ckt, int restart)
     double startTime;
     int error;
     int numNames;
-    IFuid *nameList;
+    IFuid *nameList;  /* va: tmalloc'ed list of names */
     IFuid freqUid;
-    static void *acPlot;
-    void *plot;
+    static void *acPlot = NULL;
+    void *plot = NULL;
+
+/* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
+#ifdef XSPICE
+    /* Tell the beginPlot routine what mode we're in */
+    g_ipc.anal_type = IPC_ANAL_AC;
+
+    /* Tell the code models what mode we're in */
+    g_mif_info.circuit.anal_type = MIF_DC;
+
+    g_mif_info.circuit.anal_init = MIF_TRUE;
+#endif
+/* gtri - end - wbk */
 
     if(((ACAN*)ckt->CKTcurJob)->ACsaveFreq == 0 || restart) { 
         /* start at beginning */
@@ -66,6 +85,30 @@ ACan(CKTcircuit *ckt, int restart)
         default:
             return(E_BADPARM);
         }
+#ifdef XSPICE
+/* gtri - begin - wbk - Call EVTop if event-driven instances exist */
+        if(ckt->evt->counts.num_insts == 0) {
+            /* If no event-driven instances, do what SPICE normally does */
+            error = CKTop(ckt,
+                (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+                (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+                ckt->CKTdcMaxIter);
+            if(error) return(error);
+        }
+        else {
+            /* Else, use new DCOP algorithm */
+            error = EVTop(ckt,
+                        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+                        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+                        ckt->CKTdcMaxIter,
+                        MIF_TRUE);
+            EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
+            EVTop_save(ckt, MIF_TRUE, 0.0);
+            if(error)
+                return(error);
+        }
+/* gtri - end - wbk - Call EVTop if event-driven instances exist */
+#else	
         error = CKTop(ckt,
                 (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
                 (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
@@ -75,7 +118,36 @@ ACan(CKTcircuit *ckt, int restart)
            CKTncDump(ckt);
            return(error);
         	} 
+#endif		
+		
+#ifdef XSPICE
+/* gtri - add - wbk - 12/19/90 - Add IPC stuff */
 
+        /* Send the operating point results for Mspice compatibility */
+        if(g_ipc.enabled) 
+		{
+            /* Call CKTnames to get names of nodes/branches used by BeginPlot */
+            /* Probably should free nameList after this block since called again... */
+            error = CKTnames(ckt,&numNames,&nameList);
+            if(error) return(error);
+
+            /* We have to do a beginPlot here since the data to return is */
+            /* different for the DCOP than it is for the AC analysis.  Moreover */
+            /* the begin plot has not even been done yet at this point... */
+            (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,(void*)ckt->CKTcurJob,
+                ckt->CKTcurJob->JOBname,(IFuid)NULL,IF_REAL,numNames,nameList,
+                IF_REAL,&acPlot);
+	    tfree(nameList);
+
+            ipc_send_dcop_prefix();
+            CKTdump(ckt,(double)0,acPlot);
+            ipc_send_dcop_suffix();
+
+            (*(SPfrontEnd->OUTendPlot))(acPlot);
+        }
+
+/* gtri - end - wbk */
+#endif
         ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
         error = CKTload(ckt);
         if(error) return(error);
@@ -91,6 +163,7 @@ ACan(CKTcircuit *ckt, int restart)
 	    if(error) return(error);
 	    CKTdump(ckt,(double)0,plot);
 	    (*(SPfrontEnd->OUTendPlot))(plot);
+	    plot = NULL;
 	}
 
         (*(SPfrontEnd->IFnewUid))((void *)ckt,&freqUid,(IFuid)NULL,
@@ -99,6 +172,7 @@ ACan(CKTcircuit *ckt, int restart)
 		(void*)ckt->CKTcurJob,
                 ckt->CKTcurJob->JOBname,freqUid,IF_REAL,numNames,nameList,
                 IF_COMPLEX,&acPlot);
+	tfree(nameList);		
 	if(error) return(error);
 
         if (((ACAN*)ckt->CKTcurJob)->ACstepType != LINEAR) {
@@ -110,7 +184,14 @@ ACan(CKTcircuit *ckt, int restart)
     } else {    /* continue previous analysis */
         freq = ((ACAN*)ckt->CKTcurJob)->ACsaveFreq;
         ((ACAN*)ckt->CKTcurJob)->ACsaveFreq = 0; /* clear the 'old' frequency */
+	/* fix resume? saj*/
+	error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
+		(void*)ckt->CKTcurJob,
+                ckt->CKTcurJob->JOBname,freqUid,IF_REAL,numNames,nameList,
+                IF_COMPLEX,&acPlot);
+	/* saj*/    
     }
+        
     switch(((ACAN*)ckt->CKTcurJob)->ACstepType) {
     case DECADE:
     case OCTAVE:
@@ -123,6 +204,15 @@ ACan(CKTcircuit *ckt, int restart)
     default:
         return(E_BADPARM);
     }
+
+/* gtri - add - wbk - 12/19/90 - Set anal_init and anal_type */
+#ifdef XSPICE
+    g_mif_info.circuit.anal_init = MIF_TRUE;
+
+    /* Tell the code models what mode we're in */
+    g_mif_info.circuit.anal_type = MIF_AC;
+#endif
+/* gtri - end - wbk */
 
     startTime  = SPfrontEnd->IFseconds();
     startdTime = ckt->CKTstat->STATdecompTime;
@@ -177,8 +267,20 @@ ACan(CKTcircuit *ckt, int restart)
             ckt->CKTsenInfo->SENmode = save1;
         }
 #endif
+/* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
+#ifdef XSPICE
+        if(g_ipc.enabled)
+            ipc_send_data_prefix(freq);
 
         error = CKTacDump(ckt,freq,acPlot);
+
+        if(g_ipc.enabled)
+            ipc_send_data_suffix();
+
+/* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
+#else
+        error = CKTacDump(ckt,freq,acPlot);
+#endif	
         if (error) {
 	    ckt->CKTcurrentAnalysis = DOING_AC;
 	    ckt->CKTstat->STATacTime += SPfrontEnd->IFseconds() - startTime;
@@ -239,6 +341,7 @@ ACan(CKTcircuit *ckt, int restart)
     }
 endsweep:
     (*(SPfrontEnd->OUTendPlot))(acPlot);
+    acPlot = NULL;
     ckt->CKTcurrentAnalysis = 0;
     ckt->CKTstat->STATacTime += SPfrontEnd->IFseconds() - startTime;
     ckt->CKTstat->STATacDecompTime += ckt->CKTstat->STATdecompTime -
@@ -265,7 +368,7 @@ endsweep:
 int
 CKTacLoad(CKTcircuit *ckt)
 {
-    extern SPICEdev *DEVices[];
+    extern SPICEdev **DEVices;
     int i;
     int size;
     int error;
@@ -292,6 +395,35 @@ CKTacLoad(CKTcircuit *ckt)
 #endif /* PARALLEL_ARCH */
         }
     }
+    
+#ifdef XSPICE
+   /* gtri - begin - Put resistors to ground at all nodes. */
+    /* Value of resistor is set by new "rshunt" option.     */
+
+    if(ckt->enh->rshunt_data.enabled) {
+       for(i = 0; i < ckt->enh->rshunt_data.num_nodes; i++) {
+          *(ckt->enh->rshunt_data.diag[i]) +=
+                               ckt->enh->rshunt_data.gshunt;
+       }
+    }
+
+    /* gtri - end - Put resistors to ground at all nodes */
+
+
+
+    /* gtri - add - wbk - 11/26/90 - reset the MIF init flags */
+
+    /* init is set by CKTinit and should be true only for first load call */
+    g_mif_info.circuit.init = MIF_FALSE;
+
+    /* anal_init is set by CKTdoJob and is true for first call */
+    /* of a particular analysis type */
+    g_mif_info.circuit.anal_init = MIF_FALSE;
+
+    /* gtri - end - wbk - 11/26/90 */
+#endif
+
+    
 #ifdef PARALLEL_ARCH
 combine:
     ckt->CKTstat->STATloadTime += SPfrontEnd->IFseconds() - startTime;

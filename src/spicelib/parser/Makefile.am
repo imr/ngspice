@@ -19,6 +19,7 @@ libinp_a_SOURCES = \
 		inp2l.c		\
 		inp2m.c		\
 		inp2o.c		\
+		inp2p.c		\
 		inp2q.c		\
 		inp2r.c		\
 		inp2s.c		\
@@ -26,6 +27,7 @@ libinp_a_SOURCES = \
 		inp2u.c		\
 		inp2v.c		\
 		inp2w.c		\
+		inp2y.c		\
 		inp2z.c		\
 		inpaname.c	\
 		inpapnam.c	\

@@ -19,13 +19,18 @@ Modified: 2000 AlansFixes
 #include "devdefs.h"
 #include "sperror.h"
 
+#ifdef XSPICE
+/* gtri - add - wbk - 11/26/90 - add include for MIF global data */
+#include "mif.h"
+/* gtri - end - wbk - 11/26/90 */
+#endif
 
 static int ZeroNoncurRow(SMPmatrix *matrix, CKTnode *nodes, int rownum);
 
 int
 CKTload(CKTcircuit *ckt)
 {
-    extern SPICEdev *DEVices[];
+    extern SPICEdev **DEVices;
     int i;
     int size;
     double startTime;
@@ -38,6 +43,16 @@ CKTload(CKTcircuit *ckt)
 #ifdef STEPDEBUG
     int noncon;
 #endif /* STEPDEBUG */
+
+#ifdef XSPICE
+  /* gtri - begin - Put resistors to ground at all nodes */
+    /*   SMPmatrix  *matrix; maschmann : deleted , because unused */
+
+    double gshunt;
+    int num_nodes;
+
+    /* gtri - begin - Put resistors to ground at all nodes */
+#endif
 
     startTime = (*(SPfrontEnd->IFseconds))();
     size = SMPmatSize(ckt->CKTmatrix);
@@ -68,6 +83,31 @@ CKTload(CKTcircuit *ckt)
 #endif /* PARALLEL_ARCH */
         }
     }
+    
+   /* gtri - add - wbk - 11/26/90 - reset the MIF init flags */
+#ifdef XSPICE
+    /* init is set by CKTinit and should be true only for first load call */
+    g_mif_info.circuit.init = MIF_FALSE;
+
+    /* anal_init is set by CKTdoJob and is true for first call */
+    /* of a particular analysis type */
+    g_mif_info.circuit.anal_init = MIF_FALSE;
+
+    /* gtri - end - wbk - 11/26/90 */
+
+    /* gtri - begin - Put resistors to ground at all nodes. */
+    /* Value of resistor is set by new "rshunt" option.     */
+
+    if(ckt->enh->rshunt_data.enabled) {
+       gshunt = ckt->enh->rshunt_data.gshunt;
+       num_nodes = ckt->enh->rshunt_data.num_nodes;
+       for(i = 0; i < num_nodes; i++) {
+          *(ckt->enh->rshunt_data.diag[i]) += gshunt;
+       }
+    }
+#endif
+    /* gtri - end - Put resistors to ground at all nodes */
+        
     if(ckt->CKTmode & MODEDC) {
         /* consider doing nodeset & ic assignments */
         if(ckt->CKTmode & (MODEINITJCT | MODEINITFIX)) {

@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = misc maths frontend spicelib include
+SUBDIRS = misc maths frontend spicelib include @XSPICEDIR@
 
 bin_PROGRAMS =  ngspice ngnutmeg nghelp ngsconvert ngproc2mod ngmultidec makeidx
 
@@ -18,7 +18,6 @@ initdata_DATA = spinit setplot spectrum
 DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/asrc/libasrc.la		\
 	spicelib/devices/bjt/libbjt.la		\
-##	spicelib/devices/bjt2/libbjt2.la		\
 	spicelib/devices/bsim1/libbsim1.la	\
 	spicelib/devices/bsim2/libbsim2.la	\
 	spicelib/devices/bsim3/libbsim3.la	\
@@ -32,6 +31,7 @@ DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/cccs/libcccs.la		\
 	spicelib/devices/ccvs/libccvs.la		\
 	spicelib/devices/ccvs/libccvs.la		\
+	spicelib/devices/cpl/libcpl.a		\
 	spicelib/devices/csw/libcsw.la		\
 	spicelib/devices/dio/libdio.la		\
 	@EKVLIB@				\
@@ -52,11 +52,21 @@ DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/res/libres.la		\
 	spicelib/devices/soi3/libsoi3.la	\
 	spicelib/devices/sw/libsw.la		\
+	spicelib/devices/txl/libtxl.a		\
 	spicelib/devices/tra/libtra.la		\
 	spicelib/devices/urc/liburc.la		\
 	spicelib/devices/vccs/libvccs.la		\
 	spicelib/devices/vcvs/libvcvs.la		\
 	spicelib/devices/vsrc/libvsrc.la
+
+
+## ----- Note that I moved this stuff to here because it was causing automake
+##       to choke when it was in the DYNAMIC_DEVICELIBS list above -----
+## This lib deleted from DYNAMIC_DEVICELIBS by sdb 'cause there's no source for it.
+##	spicelib/devices/bjt2/libbjt2.a		\
+## poly added to dynamic libs by SDB on 6.1.2003
+##	xspice/icm/poly/libpoly.a
+
 
 ## Build ngspice first:
 
@@ -71,10 +81,12 @@ ngspice_LDADD = \
 	frontend/libfte.a \
 	frontend/wdisp/libwindisp.a \
 	frontend/plotting/libplotting.a \
+	@XSPICELIB1@ \
 	spicelib/devices/dev.o \
 	$(DYNAMIC_DEVICELIBS) \
 	spicelib/analysis/libckt.a \
 	spicelib/devices/libdev.a \
+	@XSPICELIB2@		  \
 	frontend/parser/libparser.a \
 	frontend/help/libhlp.a \
 	spicelib/parser/libinp.a \

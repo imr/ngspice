@@ -13,7 +13,7 @@
 void
 com_set(wordlist *wl)
 {
-    struct variable *vars;
+    struct variable *vars, *oldvar;
     char *s;
 
     if (wl == NULL) {
@@ -44,8 +44,16 @@ com_set(wordlist *wl)
 	    s = (char *) NULL;
         }
         cp_vset(vars->va_name, vars->va_type, s);
+	oldvar = vars;
         vars = vars->va_next;
+	/* va: avoid memory leak: free oldvar carefully */
+        tfree(oldvar->va_name);
+        if (oldvar->va_type==VT_STRING) 
+            tfree(oldvar->va_string); /* copied in cp_vset */
+        /* don't free oldvar->va_list! This structure is used furthermore! */
+        tfree(oldvar);
     }
+	
     return;
 }
 

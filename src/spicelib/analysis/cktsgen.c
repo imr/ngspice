@@ -10,7 +10,8 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #include "sensgen.h"
 #include <stdio.h>
 
-extern SPICEdev *DEVices[];	/* XXX */
+extern SPICEdev **DEVices;
+                /* XXX */
 extern char	*Sfilter;
 
 sgen *

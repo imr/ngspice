@@ -20,18 +20,18 @@ Author: 1985 Thomas L. Quarles
 
 char *INPerror(int type)
 {
-    char *val;
+    const char *val;
     char *ebuf;
 
 /*CDHW Lots of things set errMsg but it is never used  so let's hack it in CDHW*/
     if ( errMsg ) {
-      val = errMsg; errMsg=NULL; }
+      val = errMsg; errMsg = NULL;}
     else
 /*CDHW end of hack CDHW*/
     val = SPerror(type);
 
     if (!val)
-	return (val);
+	return NULL;
 
 #ifdef HAVE_ASPRINTF
     if (errRtn)
@@ -40,20 +40,14 @@ char *INPerror(int type)
 	asprintf(&ebuf, "%s\n", val);
 #else /* ~ HAVE_ASPRINTF */
     if (errRtn){
-      if ( (ebuf = (char *) malloc(strlen(val) +
-				   strlen(errRtn) + 25)) == NULL){
-        fprintf(stderr,"malloc failed\n");
-        exit(1);
-      }
+      ebuf = (char *) tmalloc(strlen(val) + strlen(errRtn) + 25);
       sprintf(ebuf, "%s detected in routine \"%s\"\n", val, errRtn);
     }
     else{
-      if ( (ebuf = (char *) malloc(strlen(val) + 2)) == NULL){
-        fprintf(stderr,"malloc failed\n");
-        exit(1);
-      }
+      ebuf = (char *) tmalloc(strlen(val) + 2);
       sprintf(ebuf, "%s\n", val);
     }
 #endif /* HAVE_ASPRINTF */
+    FREE(errMsg); /* pn: really needed ? */
     return ebuf;
 }

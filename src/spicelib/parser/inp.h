@@ -32,6 +32,7 @@ void INP2K(void *ckt, INPtables *tab, card *current);
 void INP2L(void *ckt, INPtables *tab, card *current);
 void INP2M(void *ckt, INPtables *tab, card *current);
 void INP2O(void *ckt, INPtables *tab, card *current);
+void INP2P(void *ckt, INPtables *tab, card *current);
 void INP2Q(void *ckt, INPtables *tab, card *current, void *gnode);
 void INP2R(void *ckt, INPtables *tab, card *current);
 void INP2S(void *ckt, INPtables *tab, card *current);
@@ -39,6 +40,7 @@ void INP2T(void *ckt, INPtables *tab, card *current);
 void INP2U(void *ckt, INPtables *tab, card *current);
 void INP2V(void *ckt, INPtables *tab, card *current);
 void INP2W(void *ckt, INPtables *tab, card *current);
+void INP2Y(void *ckt, INPtables *tab, card *current);
 void INP2Z(void *ckt, INPtables *tab, card *current);
 int INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode);
 

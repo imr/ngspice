@@ -13,7 +13,11 @@ Author: 1985 Thomas L. Quarles
 
 extern INPmodel *modtab;
 
-
+/*-----------------------------------------------------------------
+ * This fcn accepts a pointer to the model name, and returns 1 if
+ * the model exists in the model table, and returns 0 if hte model
+ * doesn't exist in the model table.
+ *----------------------------------------------------------------*/
 int INPlookMod(char *name)
 {
     register INPmodel **i;

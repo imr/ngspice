@@ -1,9 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/main.c)
 
-dnl Keep old autoconf version, procedure is not compatible to new 2.5.2
-AC_PREREQ(2.13)
-
 dnl Create a configuration header
 AM_CONFIG_HEADER(config.h)
 
@@ -53,6 +50,14 @@ AC_ARG_ENABLE(experimental,
 dnl --enable-ekv: define HAVE_EKV in the code. This is for EKV model support
 AC_ARG_ENABLE(ekv,
     [  --enable-ekv            Enables ekv model *not in standard distribution*])
+
+dnl --enable-xspice: define XSPICE in the code. This is for xspice support
+AC_ARG_ENABLE(xspice,
+    [  --enable-xspice         Enables XSpice enchancements, experimental *not in standard distribution*])
+
+dnl --enable-cluster: define CLUSTER in the code. This is for tcl support
+AC_ARG_ENABLE(cluster,
+    [  --enable-cluster     Enables cluster support, experimental *not in standard distribution*])
 
 dnl Enable maintainer commands only if requested
 AM_MAINTAINER_MODE
@@ -108,7 +113,7 @@ dnl Checks for programs
 
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
-
+AC_PROG_LIBTOOL
 
 dnl --with-windows : the user wants to use generate the MS WINDOWS executable
 AC_ARG_WITH(windows,
@@ -123,7 +128,7 @@ case $with_windows in
 	yes )
 		AC_DEFINE(X_DISPLAY_MISSING)
 		AC_MSG_RESULT(No X display!)
-		CFLAGS="$CFLAGS -mwindows";;
+		CFLAGS="$CFLAGS -mwindows";
 	*) 
 
 dnl Checks for X11 header files and libraries - X11 support can be disabled
@@ -141,12 +146,13 @@ dnl In CYGWIN library ordering has to be changed. Is this compatible to LINUX?
 dnl XShmAttach is a struct in CYGWIN, not a function
 
 if test ! "$no_x" = "yes" ; then
-	AC_CHECK_LIB(Xaw,main,X_LIBS="$X_LIBS -lXaw",AC_MSG_ERROR(Couldn't find Xaw librairies),$X_LIBS  $X_EXTRA_LIBS)
-	X_LIBS="$X_LIBS -lXt"
+	X_LIBS="$X_LIBS -lX11 -lXt"
+	AC_CHECK_LIB(Xext, XShmAttach,X_LIBS="$X_LIBS -lXext",AC_MSG_ERROR(Couldn't find Xext librairies), $X_LIBS $X_EXTRA_LIBS)
 	AC_CHECK_LIB(Xmu,main,X_LIBS="$X_LIBS -lXmu",AC_MSG_ERROR(Couldn't find Xmu librairies), $X_LIBS $X_EXTRA_LIBS)
-	AC_CHECK_LIB(Xext,main,X_LIBS="$X_LIBS -lXext",AC_MSG_ERROR(Couldn't find Xext librairies), $X_LIBS $X_EXTRA_LIBS)
-	X_LIBS="$X_LIBS -lX11 -lXpm"
-fi  ;;
+	AC_CHECK_LIB(Xaw,main,X_LIBS="$X_LIBS -lXaw",AC_MSG_ERROR(Couldn't find Xaw librairies),$X_LIBS  $X_EXTRA_LIBS)
+
+
+fi
 
 esac
 
@@ -157,8 +163,8 @@ AC_TYPE_SIGNAL
 dnl Check for a few libraries and headers:
 
 dnl Look for ncurses first, then termcap
-#AC_SEARCH_LIBS(tputs,ncurses termcap,AC_DEFINE(HAVE_TERMCAP),
-#               AC_MSG_ERROR(Found neither ncurses or termcap))
+AC_SEARCH_LIBS(tputs,ncurses termcap,AC_DEFINE(HAVE_TERMCAP),
+               AC_MSG_ERROR(Found neither ncurses or termcap))
 
 
 AC_HEADER_DIRENT
@@ -175,11 +181,11 @@ AC_CHECK_FUNCS(localtime)
 case $host_os in
   *cygwin* )
 	AC_CHECK_FUNCS(ftime)
-   AC_DEFINE(HAVE__MEMAVL) ;;
+   AC_DEFINE(HAVE__MEMAVL) ;
   * )
 	AC_CHECK_FUNCS(gettimeofday time ftime , break)
 	AC_CHECK_FUNCS(getrusage utimes, break)
-	AC_CHECK_FUNCS(getrlimit ulimit, break) ;;
+	AC_CHECK_FUNCS(getrlimit ulimit, break) ;
 esac
 
 dnl Look for termios first (posix)
@@ -208,6 +214,33 @@ AC_CHECK_LIB(gc,GC_malloc,AC_DEFINE(HAVE_LIBGC) LIBS="$LIBS -lgc")
 dnl Check for the asprintf function:
 AC_CHECK_FUNCS(asprintf,,AC_CHECK_LIB(iberty,asprintf,AC_DEFINE(HAVE_ASPRINTF) LIBS="$LIBS -liberty"))
 
+dnl Check for va_copy
+AC_CACHE_CHECK([for va_copy], ac_cv_c_va_copy,
+ AC_TRY_LINK(
+   [#include <stdarg.h>],
+   [va_list ap1, ap2;
+    va_copy(ap1,ap2); 
+   ],
+   [ac_cv_c_va_copy="yes"],
+   [ac_cv_c_va_copy="no"])
+ )
+if test "$ac_cv_c_va_copy" = "yes"
+then 
+    AC_DEFINE(HAVE_VA_COPY, 1, [Define if we have va_copy])
+fi
+AC_CACHE_CHECK([for __va_copy], ac_cv_c___va_copy,
+ AC_TRY_LINK(   
+   [#include <stdarg.h>],
+   [va_list ap1, ap2;
+    __va_copy(ap1,ap2);
+   ],
+   [ac_cv_c___va_copy="yes"],
+   [ac_cv_c___va_copy="no"])
+ )
+if test "$ac_cv_c___va_copy" = "yes"
+then
+    AC_DEFINE(HAVE___VA_COPY, 1, [Define if we have __va_copy])
+fi
 
 # AC_CHECK_FUNC(getopt_long, getopt_long=true)
 # AM_CONDITIONAL(HAVE_GETOPT_LONG, test "$getopt_long" = "true")
@@ -277,6 +310,35 @@ fi
 AC_SUBST(EKVDIR)
 AC_SUBST(EKVLIB)
 
+dnl Add new code models to the build by pointing to them here.
+if test "$enable_xspice" = "yes"; then
+    AC_MSG_RESULT(X-Spice features included)
+    AC_DEFINE(XSPICE)
+    XSPICEDIR="xspice"
+    XSPICELIB1="$XSPICEDIR/xspice.o        \
+		$XSPICEDIR/mif/libmifxsp.a \
+	        $XSPICEDIR/cm/libcmxsp.a"
+    XSPICELIB2="$XSPICEDIR/evt/libevtxsp.a \
+                $XSPICEDIR/enh/libenhxsp.a \
+	        $XSPICEDIR/ipc/libipcxsp.a \
+		$XSPICEDIR/idn/libidnxsp.a \
+		-ldl"
+
+else
+    XSPCIEDIR=""
+    XSPICELIB1=""
+    XSPICELIB2=""	
+fi
+AC_SUBST(XSPICEDIR)
+AC_SUBST(XSPICELIB1)
+AC_SUBST(XSPICELIB2)
+
+dnl Cluster option
+if test "$enable_cluster" = "yes"; then
+   AC_MSG_RESULT(Cluster version is being compiled)
+   AC_DEFINE(CLUSTER)
+   LIBS="$LIBS -lpthread"   
+fi
 
 dnl --with-readline : the user wants to use readline library
 AC_ARG_WITH(readline,
@@ -312,6 +374,7 @@ src/spicelib/devices/cap/Makefile	\
 src/spicelib/devices/cccs/Makefile	\
 src/spicelib/devices/ccvs/Makefile	\
 src/spicelib/devices/csw/Makefile	\
+src/spicelib/devices/cpl/Makefile       \
 src/spicelib/devices/dio/Makefile	\
 src/spicelib/devices/ekv/Makefile	\
 src/spicelib/devices/ind/Makefile	\
@@ -332,6 +395,7 @@ src/spicelib/devices/res/Makefile	\
 src/spicelib/devices/soi3/Makefile	\
 src/spicelib/devices/sw/Makefile	\
 src/spicelib/devices/tra/Makefile	\
+src/spicelib/devices/txl/Makefile       \
 src/spicelib/devices/urc/Makefile	\
 src/spicelib/devices/vccs/Makefile	\
 src/spicelib/devices/vcvs/Makefile	\
@@ -350,6 +414,15 @@ src/maths/deriv/Makefile	\
 src/maths/poly/Makefile		\
 src/maths/sparse/Makefile	\
 src/misc/Makefile		\
+src/xspice/Makefile		\
+src/xspice/cm/Makefile		\
+src/xspice/icm/Makefile		\
+src/xspice/icm/icm_spice2poly/Makefile		\
+src/xspice/mif/Makefile		\
+src/xspice/evt/Makefile		\
+src/xspice/enh/Makefile		\
+src/xspice/ipc/Makefile		\
+src/xspice/idn/Makefile		\
 tests/Makefile			\
 tests/filters/Makefile		\
 tests/polezero/Makefile		\
@@ -357,6 +430,7 @@ tests/resistance/Makefile	\
 tests/bsim3soipd/Makefile	\
 tests/bsim3soifd/Makefile	\
 tests/bsim3soidd/Makefile	\
-tests/bsim4/Makefile  	\
-tests/mesa/Makefile
+tests/bsim4/Makefile		\
+tests/mesa/Makefile		\
+tests/TransImpedanceAmp/Makefile
 )

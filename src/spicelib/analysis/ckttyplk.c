@@ -13,7 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 
-extern SPICEdev *DEVices[];
+extern SPICEdev **DEVices;
 
 int
 CKTtypelook(char *type)

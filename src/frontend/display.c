@@ -55,6 +55,11 @@ extern int  PS_Init(void), PS_NewViewport(GRAPH *graph), PS_Close(void), PS_Clea
         PS_DefineLinestyle(), PS_SetLinestyle(int linestyleid), PS_SetColor(int colorid),
         PS_Update(void);
 
+extern int  GL_Init(void), GL_NewViewport(GRAPH *graph), GL_Close(void), GL_Clear(void),
+        GL_DrawLine(int x1, int y1, int x2, int y2), GL_Arc(int x0, int y0, int r, double theta1, double theta2), GL_Text(char *text, int x, int y),
+        GL_DefineLinestyle(), GL_SetLinestyle(int linestyleid), GL_SetColor(int colorid),
+        GL_Update(void);
+
 DISPDEVICE device[] = {
 
     {"error", 0, 0, 0, 0, 0, 0, nop, nop,
@@ -106,6 +111,13 @@ DISPDEVICE device[] = {
     nodev, nodev, nodev, nodev,
     gen_DatatoScreen,},
 
+    {"hpgl", 0, 0, 1000, 1000, 0, 0, GL_Init, GL_NewViewport,
+    GL_Close, GL_Clear,
+    GL_DrawLine, GL_Arc, GL_Text, nodev, nodev,
+    GL_SetLinestyle, GL_SetColor, GL_Update,
+    nodev, nodev, nodev, nodev,
+    gen_DatatoScreen,},
+
     {"printf", 0, 0, 24, 80, 0, 0, nodev, nodev,
     nodev, nodev,
     nodev, nodev, nodev, nodev, nodev,
@@ -142,8 +154,9 @@ DISPDEVICE *FindDev(char *name)
 void
 DevInit(void)
 {
-
-    char buf[128];
+#ifndef X_DISPLAY_MISSING
+    char buf[128];   /* va: used with NOT X_DISPLAY_MISSING only */
+#endif /* X_DISPLAY_MISSING */
 
 /* note: do better determination */
 
@@ -157,10 +170,7 @@ DevInit(void)
 #ifndef X_DISPLAY_MISSING
     /* determine display type */
     if (getenv("DISPLAY") || cp_getvar("display", VT_STRING, buf)) {
-
-#ifndef X_DISPLAY_MISSING
-      dispdev = FindDev("X11");
-#endif
+       dispdev = FindDev("X11");
     }
 #endif
 

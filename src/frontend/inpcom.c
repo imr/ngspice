@@ -25,14 +25,21 @@ Author: 1985 Wayne A. Christopher
 #include "inpcom.h"
 #include "variable.h"
 
+#ifdef XSPICE
+/* gtri - add - 12/12/90 - wbk - include new stuff */
+#include "ipctiein.h"
+#include "enh.h"
+/* gtri - end - 12/12/90 */
+#endif
 
-/*  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF'
- *  and returns a pointer to the resulting null terminated string.
- *  The '\n' if found, is included in the returned string.
- *  From: jason@ucbopal.BERKELEY.EDU (Jason Venner)
- *  Newsgroups: net.sources
- */
 
+/*-------------------------------------------------------------------------*
+ *  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF' *
+ *  and returns a pointer to the resulting null terminated string.         *
+ *  The '\n' if found, is included in the returned string.                 *
+ *  From: jason@ucbopal.BERKELEY.EDU (Jason Venner)                        *
+ *  Newsgroups: net.sources                                                *
+ *-------------------------------------------------------------------------*/
 #define STRGROW 256
 
 static char *
@@ -73,10 +80,11 @@ readline(FILE *fd)
     return (strptr);
 }
 
-/* Look up the variable sourcepath and try everything in the list in order
- * if the file isn't in . and it isn't an abs path name.
- */
 
+/*-------------------------------------------------------------------------*
+ * Look up the variable sourcepath and try everything in the list in order *
+ * if the file isn't in . and it isn't an abs path name.                   *
+ *-------------------------------------------------------------------------*/
 FILE *
 inp_pathopen(char *name, char *mode)
 {
@@ -111,43 +119,103 @@ inp_pathopen(char *name, char *mode)
     return (NULL);
 }
 
-/* Read the entire input file and return  a pointer to the first line of 
- * the linked list of 'card' records in data.
- */
 
+/*-------------------------------------------------------------------------
+ * Read the entire input file and return  a pointer to the first line of   
+ * the linked list of 'card' records in data.  The pointer is stored in
+ * *data.
+ *-------------------------------------------------------------------------*/
 void
 inp_readall(FILE *fp, struct line **data)
 {
     struct line *end = NULL, *cc = NULL, *prev = NULL, *working, *newcard;
-    char *buffer, *s, *t, c,*copys;
+    char *buffer, *s, *t, c;
+    /* segfault fix */
+    char *copys = NULL;
     int line = 1;
     FILE *newfp;
 
+/* gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled */
+#ifdef XSPICE
+    Ipc_Status_t    ipc_status;
+    char            ipc_buffer[1025];  /* Had better be big enough */
+    int             ipc_len;
+
+  /* First read in all lines & put them in the struct cc */
+    while (1) {
+
+        /* If IPC is not enabled, do equivalent of what SPICE did before */
+        if(! g_ipc.enabled) {
+            buffer = readline(fp);
+            if(! buffer)
+                break;
+        }
+        else {
+        /* else, get the line from the ipc channel. */
+        /* We assume that newlines are not sent by the client */
+        /* so we add them here */
+            ipc_status = ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
+            if(ipc_status == IPC_STATUS_END_OF_DECK) {
+                buffer = NULL;
+                break;
+            }
+            else if(ipc_status == IPC_STATUS_OK) {
+                buffer = (void *) MALLOC(strlen(ipc_buffer) + 3);
+                strcpy(buffer, ipc_buffer);
+                strcat(buffer, "\n");
+            }
+            else {  /* No good way to report this so just die */
+                exit(1);
+            }
+        }
+
+/* gtri - end - 12/12/90 */
+#else
     while ((buffer = readline(fp))) {
+ #endif
+
+#ifdef TRACE
+      /* SDB debug statement */
+      printf ("in inp_readall, just read %s . . .\n", buffer); 
+#endif
+
+    /* OK -- now we have loaded the next line into 'buffer'.  Process it. */
+        /* If input line is blank, ignore it & continue looping.  */
+	 if ( (strcmp(buffer,"\n") == 0)
+	      || (strcmp(buffer,"\r\n") == 0) ) {
+	    continue;
+        }
+   
         if (*buffer == '@') {
 	    tfree(buffer);		/* was allocated by readline() */
             break;
 	}
-        for (s = buffer; *s && (*s != '\n'); s++)
-            ;
+        /* loop through 'buffer' until end is reached.  Then test for
+	   premature end.  If premature end is reached, spew
+	   error and zap the line. */
+        for (s = buffer; *s && (*s != '\n'); s++);
         if (!*s) {
             fprintf(cp_err, "Warning: premature EOF\n");
         }
         *s = '\0';      /* Zap the newline. */
 
+	if(*(s-1) == '\r') /* Zop the carriage return under windows */
+	  *(s-1) = '\0';
+	
+	/* now handle .include statements */
         if (ciprefix(".include", buffer)) {
-            for (s = buffer; *s && !isspace(*s); s++)
+            for (s = buffer; *s && !isspace(*s); s++)/* advance past non-space chars */
                 ;
-            while (isspace(*s))
+            while (isspace(*s))  /* now advance past space chars */
                 s++;
-            if (!*s) {
+            if (!*s) {           /* if at end of line, error */
                 fprintf(cp_err,  "Error: .include filename missing\n");
 		tfree(buffer);		/* was allocated by readline() */
                 continue;
-            }
-            for (t = s; *t && !isspace(*t); t++)
+            }                           /* Now s points to first char after .include */
+            for (t = s; *t && !isspace(*t); t++)   /* now advance past non-space chars */
                 ;
-            *t = '\0';
+            *t = '\0';                             /* place \0 and end of file name in buffer */
 		
 	    if (*s == '~') {
 		copys = cp_tildexpand(s); /* allocates memory, but can also return NULL */
@@ -155,7 +223,8 @@ inp_readall(FILE *fp, struct line **data)
 		    s = copys;		/* reuse s, but remember, buffer still points to allocated memory */
 		}
 	    }
-				
+	    
+            /* open file specified by  .include statement */		
             if (!(newfp = inp_pathopen(s, "r"))) {
                 perror(s);
 		if(copys) {
@@ -169,17 +238,22 @@ inp_readall(FILE *fp, struct line **data)
 		tfree(copys);		/* allocated by the cp_tildexpand() above */
 	    }  
 	    
-            inp_readall(newfp, &newcard);
+            inp_readall(newfp, &newcard);  /* read stuff in include file into netlist */
             (void) fclose(newfp);
 
             /* Make the .include a comment */
             *buffer = '*';
-            if (end) {
-                end->li_next = alloc(struct line);
-                end = end->li_next;
+	    /* now check if this is the first pass (i.e. end points to null) */
+            if (end) {      /* end already exists */
+                end->li_next = alloc(struct line);  /* create next card */
+                end = end->li_next;                 /* make end point to next card */
             } else {
-                end = cc = alloc(struct line);
+                end = cc = alloc(struct line);      /* create the deck & end.  cc will
+						       point to beginning of deck, end to 
+						       the end */
             }
+	    
+	    /* now fill out rest of struct end. */
 	    end->li_next = NULL;
 	    end->li_error = NULL;
 	    end->li_actual = NULL;
@@ -193,14 +267,18 @@ inp_readall(FILE *fp, struct line **data)
 
             /* Fix the buffer up a bit. */
             (void) strncpy(buffer + 1, "end of:", 7);
-        }
+        }  /*  end of .include handling  */
 
-        if (end) {
-            end->li_next = alloc(struct line);
-            end = end->li_next;
-        } else {
-            end = cc = alloc(struct line);
+        /* now check if this is the first pass (i.e. end points to null) */
+        if (end) {                               /* end already exists */
+            end->li_next = alloc(struct line);   /* create next card */
+            end = end->li_next;                  /* point to next card */
+        } else {                                 /* End doesn't exist.  Create it. */
+            end = cc = alloc(struct line);       /* note that cc points to beginning
+						    of deck, end to the end */
         }
+	
+	/* now put buffer into li */	
         end->li_next = NULL;
         end->li_error = NULL;
         end->li_actual = NULL;
@@ -210,31 +288,44 @@ inp_readall(FILE *fp, struct line **data)
     if (!end) { /* No stuff here */
         *data = NULL;
         return;
-    }
+    }           /* end while ((buffer = readline(fp))) */
 
-    /* Now make logical lines. */
-    working = cc->li_next;      /* Skip title. */
+    /* This should be freed because we are done with it. */
+    /* tfree(buffer);  */
+
+
+  /* Now clean up li: remove comments & stitch together continuation lines. */
+    working = cc->li_next;      /* cc points to head of deck.  Start with the
+				   next card (skip title). */
+
 
     while (working) {
 	for (s = working->li_line; (c = *s) && c <= ' '; s++)
 		;
+
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In inp_readall, processing linked list element s = %s . . . \n", s); 
+#endif		
+		
         switch (c) {
             case '#':
             case '$':
             case '*':
             case '\0':
-		/*
-                prev = NULL;
-		*/
-                working = working->li_next;
+	    	/* this used to be commented out.  Why? */
+		/* prev = NULL; */
+                working = working->li_next; /* for these chars, go to next card */
                 break;
-            case '+':
+            case '+':  /* handle continuation */
                 if (!prev) {
                     working->li_error = copy(
 			    "Illegal continuation line: ignored.");
                     working = working->li_next;
                     break;
                 }
+		
+		/* create buffer and write last and current line into it. */
                 buffer = tmalloc(strlen(prev->li_line) + strlen(s) + 2);
                 (void) sprintf(buffer, "%s %s", prev->li_line, s + 1);
                 s = prev->li_line;
@@ -258,7 +349,7 @@ inp_readall(FILE *fp, struct line **data)
                 }
                 working = prev->li_next;
                 break;
-            default:
+            default:  /* regular one-line card */
                 prev = working;
                 working = working->li_next;
                 break;
@@ -270,6 +361,9 @@ inp_readall(FILE *fp, struct line **data)
 }
 
 
+/*-------------------------------------------------------------------------*
+ *                                                                         *
+ *-------------------------------------------------------------------------*/
 void
 inp_casefix(char *string)
 {

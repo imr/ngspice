@@ -31,6 +31,8 @@ INP2M (void *ckt, INPtables * tab, card * current)
   char *nname5;			/* the fifth node's name */
   char *nname6;			/* the sixt node's name */
   char *nname7;			/* the seventh node's name */
+  char *save;                   /* saj - used to save the posn of the start of 
+                                   the parameters if the model is a mosfet*/
   void *node1;			/* the first node's node pointer */
   void *node2;			/* the second node's node pointer */
   void *node3;			/* the third node's node pointer */
@@ -52,30 +54,32 @@ INP2M (void *ckt, INPtables * tab, card * current)
   line = current->line;
   INPgetTok (&line, &name, 1);
   INPinsert (&name, tab);
-  INPgetTok (&line, &nname1, 1);
+  INPgetNetTok (&line, &nname1, 1);
   INPtermInsert (ckt, &nname1, tab, &node1);
-  INPgetTok (&line, &nname2, 1);
+  INPgetNetTok (&line, &nname2, 1);
   INPtermInsert (ckt, &nname2, tab, &node2);
-  INPgetTok (&line, &nname3, 1);
+  INPgetNetTok (&line, &nname3, 1);
   INPtermInsert (ckt, &nname3, tab, &node3);
-  INPgetTok (&line, &nname4, 1);
+  INPgetNetTok (&line, &nname4, 1);
   INPtermInsert (ckt, &nname4, tab, &node4);
 
   /*  See if 5th token after device specification is a model name  */
 
-  INPgetTok (&line, &nname5, 1);	/*  get 5th token  */
+  INPgetNetTok (&line, &nname5, 1);	/*  get 5th token  */
+   save = line; /*saj - save the posn for later if 
+  	the default mosfet model is used */
   thismodel = (INPmodel *) NULL;
   INPgetMod (ckt, nname5, &thismodel, tab);
   if (thismodel == NULL)
     {				/*  5th token is not a model in the table  */
       nodeflag = 1;		/*  now specify a 5 node device  */
-      INPgetTok (&line, &nname6, 1);	/*  get next token  */
+      INPgetNetTok (&line, &nname6, 1);	/*  get next token  */
       thismodel = (INPmodel *) NULL;
       INPgetMod (ckt, nname6, &thismodel, tab);
       if (thismodel == NULL)
 	{			/*  6th token is not a model in the table  */
 	  nodeflag = 2;		/*  now specify a 6 node device  */
-	  INPgetTok (&line, &nname7, 1);	/*  get next token  */
+	  INPgetNetTok (&line, &nname7, 1);	/*  get next token  */
 	  thismodel = (INPmodel *) NULL;
 	  INPgetMod (ckt, nname7, &thismodel, tab);
 	  if (thismodel == NULL)
@@ -100,6 +104,12 @@ INP2M (void *ckt, INPtables * tab, card * current)
 		      INPtermInsert (ckt, &nname7, tab, &node7);
 		    }
 		}
+	      /*saj unbreak the default model creation*/
+	      else{
+		model = nname5;/*mosfet*/
+		line = save; /* reset the posn to what it sould be */
+	      	      }
+	      /*saj*/
 	    }
 	  else
 	    {			/*  7th token is a model - only have 6 terminal device  */
@@ -200,10 +210,11 @@ INP2M (void *ckt, INPtables * tab, card * current)
   IFC (bindNode, (ckt, fast, 2, node2));
   IFC (bindNode, (ckt, fast, 3, node3));
   IFC (bindNode, (ckt, fast, 4, node4));
-  if ((thismodel->INPmodType == INPtypelook ("B3SOIPD")) ||
-      (thismodel->INPmodType == INPtypelook ("B3SOIFD")) ||
-      (thismodel->INPmodType == INPtypelook ("B3SOIDD")) ||
-      (thismodel->INPmodType == INPtypelook ("SOI3")))
+  /*use type not thismodel->INPmodType as it might not exist!*/
+  if ((type == INPtypelook ("B3SOIPD")) ||
+      (type == INPtypelook ("B3SOIFD")) ||
+      (type == INPtypelook ("B3SOIDD")) ||
+      (type == INPtypelook ("SOI3")))
     {
       switch (nodeflag)
 	{

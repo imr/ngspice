@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LTLIBRARIES = libres.la
+noinst_LIBRARIES = libres.a
 
-libres_la_SOURCES = 		\
+libres_a_SOURCES = 		\
 	res.c		\
 	resask.c	\
 	resdefs.h	\

@@ -62,7 +62,7 @@ dgen_for_n(dgen *dg, int n, int (*fn) (/* ??? */), void *data, int subindex)
 	int	dnum, i, j, k;
 
 	dgxp = &dgx;
-	bcopy(dg, dgxp, sizeof(dgx));
+	bcopy((void *)dg, (void *)dgxp, sizeof(dgx)); /* va: compatible pointer types */
 
 	dnum = dgxp->dev_type_no;
 

@@ -1,4 +1,5 @@
 #include <cpdefs.h>
+#include <string.h>
 
 int
 hcomp(const void *a, const void *b)

@@ -56,6 +56,8 @@ int Size_Not_Found;
 	 {   model->BSIM3GatesidewallJctPotential = 0.1;
 	     fprintf(stderr, "Given pbswg is less than 0.1. Pbswg is set to 0.1.\n");
 	 }
+	 /* va: was memory leakage - free old node, (or better use again?) */
+	 FREE(model->pSizeDependParamKnot);	 
          model->pSizeDependParamKnot = NULL;
 	 pLastKnot = NULL;
 
@@ -788,6 +790,11 @@ int Size_Not_Found;
                                      * pParam->BSIM3sqrtPhi;
                   /* End of vfbzb */
               }
+	      else /* !Size_Not_Found */
+	      {
+	          /* va: pParam might be uninitialized, if !Size_Not_Found */
+	          pParam = here->pParam;
+	      }
 
               /* process source/drain series resistance */
               here->BSIM3drainConductance = model->BSIM3sheetResistance 

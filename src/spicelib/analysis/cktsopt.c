@@ -21,6 +21,13 @@ Modified: 2000 AlansFixes
 
 #include "analysis.h"
 
+#ifdef XSPICE
+/* gtri - begin - wbk - add includes */
+#include "mif.h"
+/* gtri - end - wbk - add includes */
+#endif
+
+
 /* ARGSUSED */
 int
 CKTsetOpt(void *ckt, void *anal, int opt, IFvalue *val)
@@ -142,12 +149,72 @@ CKTsetOpt(void *ckt, void *anal, int opt, IFvalue *val)
     case OPT_RELDV:
 	task->TSKrelDv = val->rValue;
 	break;	
+/* gtri - begin - wbk - add new options */
+#ifdef XSPICE
+    case OPT_EVT_MAX_OP_ALTER:
+        ((CKTcircuit *) ckt)->evt->limits.max_op_alternations = val->iValue;
+        break;
+
+    case OPT_EVT_MAX_EVT_PASSES:
+        ((CKTcircuit *) ckt)->evt->limits.max_event_passes = val->iValue;
+        break;
+
+    case OPT_ENH_NOOPALTER:
+        ((CKTcircuit *) ckt)->evt->options.op_alternate = MIF_FALSE;
+        break;
+
+    case OPT_ENH_RAMPTIME:
+        ((CKTcircuit *) ckt)->enh->ramp.ramptime = val->rValue;
+        break;
+
+    case OPT_ENH_CONV_LIMIT:
+        ((CKTcircuit *) ckt)->enh->conv_limit.enabled = MIF_TRUE;
+        break;
+
+    case OPT_ENH_CONV_STEP:
+        ((CKTcircuit *) ckt)->enh->conv_limit.step = val->rValue;
+        ((CKTcircuit *) ckt)->enh->conv_limit.enabled = MIF_TRUE;
+        break;
+
+    case OPT_ENH_CONV_ABS_STEP:
+        ((CKTcircuit *) ckt)->enh->conv_limit.abs_step = val->rValue;
+        ((CKTcircuit *) ckt)->enh->conv_limit.enabled = MIF_TRUE;
+        break;
+
+    case OPT_MIF_AUTO_PARTIAL:
+        g_mif_info.auto_partial.global = MIF_TRUE;
+        break;
+
+    case OPT_ENH_RSHUNT:
+        if(val->rValue > 1.0e-30) {
+          ((CKTcircuit *) ckt)->enh->rshunt_data.enabled = MIF_TRUE;
+          ((CKTcircuit *) ckt)->enh->rshunt_data.gshunt = 1.0 / val->rValue;
+        }
+        else {
+          printf("WARNING - Rshunt option too small.  Ignored.\n");
+        }
+        break;
+#endif
+/* gtri - end - wbk - add new options */	
     default:
         return(-1);
     }
     return(0);
 }
 static IFparm OPTtbl[] = {
+#ifdef XSPICE
+/* gtri - begin - wbk - add new options */
+ { "maxopalter", OPT_EVT_MAX_OP_ALTER, IF_SET|IF_INTEGER, "Maximum analog/event alternations in DCOP" },
+ { "maxevtiter", OPT_EVT_MAX_EVT_PASSES, IF_SET|IF_INTEGER, "Maximum event iterations at analysis point" },
+ { "noopalter", OPT_ENH_NOOPALTER, IF_SET|IF_FLAG, "Do not do analog/event alternation in DCOP" },
+ { "ramptime", OPT_ENH_RAMPTIME, IF_SET|IF_REAL, "Transient analysis supply ramping time" },
+ { "convlimit", OPT_ENH_CONV_LIMIT, IF_SET|IF_FLAG, "Enable convergence assistance on code models" },
+ { "convstep", OPT_ENH_CONV_STEP, IF_SET|IF_REAL, "Fractional step allowed by code model inputs between iterations" },
+ { "convabsstep", OPT_ENH_CONV_ABS_STEP, IF_SET|IF_REAL, "Absolute step allowed by code model inputs between iterations" },
+ { "autopartial", OPT_MIF_AUTO_PARTIAL, IF_SET|IF_FLAG, "Use auto-partial computation for all models" },
+ { "rshunt", OPT_ENH_RSHUNT, IF_SET|IF_REAL, "Shunt resistance from analog nodes to ground" },
+/* gtri - end   - wbk - add new options */
+#endif
  { "noopiter", OPT_NOOPITER,IF_SET|IF_FLAG,"Go directly to gmin stepping" },
  { "gmin", OPT_GMIN,IF_SET|IF_REAL,"Minimum conductance" },
  { "gshunt", OPT_GSHUNT,IF_SET|IF_REAL,"Shunt conductance" },

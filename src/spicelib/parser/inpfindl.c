@@ -20,7 +20,9 @@ char *INPfindLev(char *line, int *level)
 {
     char *where;
 
-    where = line;
+   /*
+    * where = line;
+    */
 
     where = strstr(line, "level");
 
@@ -58,7 +60,7 @@ char *INPfindLev(char *line, int *level)
 
     else {			/* no level on the line => default */
 	*level = 1;
-	printf("Level not specified: Using level 1.\n");
+	printf("Warning -- Level not specified on line \"%s\"\nUsing level 1.\n", line);
 	return ((char *) NULL);
     }
 

@@ -52,6 +52,16 @@
 
 #ifdef EXPERIMENTAL_CODE
 #include "com_option.h"
+void com_loadsnap(wordlist *wl);
+void com_savesnap(wordlist *wl);
+#endif
+
+#include "com_dl.h"
+
+#ifdef XSPICE
+/* gtri - begin - wbk - add include files */
+#include "evtproto.h"
+/* gtri - end - wbk - add include files */
 #endif
 
 /* FIXME: Integrate spcp_coms and nutcp_coms into one variable. */
@@ -83,6 +93,14 @@ struct comm spcp_coms[] = {
       { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
       arg_set,
       "[option] [option = value] ... : Set a simulator option." } ,
+    { "savesnap", com_savesnap, FALSE, FALSE, TRUE,
+      { 1, 040000, 040000, 040000 }, E_DEFHMASK, 1, 1,
+      (void (*)()) NULL,
+      "file : Save a snapshot." } ,
+    { "loadsnap", com_loadsnap, FALSE, FALSE, TRUE,
+      { 1, 040000, 040000, 040000 }, E_DEFHMASK, 2, 2,
+      (void (*)()) NULL,
+      "file : Load a snapshot." } ,
 #endif    
     
     { "alias", com_alias, FALSE, FALSE, FALSE,
@@ -149,6 +167,24 @@ struct comm spcp_coms[] = {
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
       arg_print,
       "[col] expr ... : Print vector values." } ,
+#ifdef XSPICE
+/* gtri - begin - wbk - add event print command */
+    { "eprint", EVTprint, FALSE, FALSE, TRUE,
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
+      (void (*)()) NULL,
+      "node node ... : Print event values." } ,
+/* gtri - end - wbk - add event print command */
+    { "codemodel", com_codemodel, FALSE, FALSE, TRUE,
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
+      (void (*)()) NULL,
+      "library library ... : Loads the opus librarys." } ,
+#endif
+#ifdef DEVLIB
+    { "use", com_use, FALSE, FALSE, TRUE,
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
+      (void (*)()) NULL,
+      "library library ... : Loads the device librarys." } ,
+#endif
     { "load", com_load, FALSE, FALSE, TRUE,
       { 1, 1, 1, 1 }, E_BEGINNING | E_NOPLOTS, 1, LOTS,
       arg_load,
