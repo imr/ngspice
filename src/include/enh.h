@@ -83,12 +83,24 @@ typedef struct {
     double           step;              /* Fractional step amount */
 } Enh_Conv_Limit_t;
 
+
+typedef struct {
+    Mif_Boolean_t    enabled;      /* True if rshunt option used */
+    double           gshunt;       /* 1.0 / rshunt */
+    int              num_nodes;    /* Number of nodes in matrix */
+    double           **diag;       /* Pointers to matrix diagonals */
+} Enh_Rshunt_t;
+
+
 typedef struct {
     Enh_Bkpt_t       breakpoint;   /* Data used by dynamic breakpoints */
     Enh_Ramp_t       ramp;         /* New options added to simulator */
     Enh_Conv_Debug_t conv_debug;   /* Convergence debug info dumping data */
     Enh_Conv_Limit_t conv_limit;   /* Convergence limiting info */
+    Enh_Rshunt_t     rshunt_data;  /* Shunt conductance from nodes to ground */
 } Enh_Ckt_Data_t;
+
+
 
 void ENHreport_conv_prob(Enh_Conv_Source_t type, char *name, char *msg);
 struct line *ENHtranslate_poly(struct line *deck);

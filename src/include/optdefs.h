@@ -126,6 +126,7 @@ typedef struct {
 #define OPT_ENH_CONV_ABS_STEP       105
 #define OPT_ENH_CONV_STEP           106
 #define OPT_MIF_AUTO_PARTIAL        107
+#define OPT_ENH_RSHUNT              108
 /* gtri - end   - wbk - add new options */
 #endif
 

@@ -184,6 +184,15 @@ CKTsetOpt(void *ckt, void *anal, int opt, IFvalue *val)
         g_mif_info.auto_partial.global = MIF_TRUE;
         break;
 
+    case OPT_ENH_RSHUNT:
+        if(val->rValue > 1.0e-30) {
+          ((CKTcircuit *) ckt)->enh->rshunt_data.enabled = MIF_TRUE;
+          ((CKTcircuit *) ckt)->enh->rshunt_data.gshunt = 1.0 / val->rValue;
+        }
+        else {
+          printf("WARNING - Rshunt option too small.  Ignored.\n");
+        }
+        break;
 #endif
 /* gtri - end - wbk - add new options */
     default:
@@ -202,6 +211,7 @@ static IFparm OPTtbl[] = {
  { "convstep", OPT_ENH_CONV_STEP, IF_SET|IF_REAL, "Fractional step allowed by code model inputs between iterations" },
  { "convabsstep", OPT_ENH_CONV_ABS_STEP, IF_SET|IF_REAL, "Absolute step allowed by code model inputs between iterations" },
  { "autopartial", OPT_MIF_AUTO_PARTIAL, IF_SET|IF_FLAG, "Use auto-partial computation for all models" },
+ { "rshunt", OPT_ENH_RSHUNT, IF_SET|IF_REAL, "Shunt resistance from analog nodes to ground" },
 /* gtri - end   - wbk - add new options */
 #endif
  { "noopiter", OPT_NOOPITER,IF_SET|IF_FLAG,"Go directly to gmin stepping" },

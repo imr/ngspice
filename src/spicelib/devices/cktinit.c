@@ -107,6 +107,7 @@ CKTinit(void **ckt)		/* new circuit to create */
     (sckt)->enh->conv_limit.enabled = MIF_TRUE;
     (sckt)->enh->conv_limit.step = 0.25;
     (sckt)->enh->conv_limit.abs_step = 0.1;
+    (sckt)->enh->rshunt_data.enabled = MIF_FALSE;
 
 /* gtri - end - wbk - allocate/initialize substructs */
 
