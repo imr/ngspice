@@ -77,6 +77,8 @@ static runDesc *cur_run = NULL;
 
 static vector *vectors = NULL;
 
+static int ownVectors = 0;
+
 /* save this each time called */
 static Tcl_Interp *spice_interp=NULL;
 #define save_interp() spice_interp = interp;
@@ -146,15 +148,14 @@ static int spice_data(ClientData clientData, Tcl_Interp *interp,
 static int resetTriggers();
 
 /*Creates and registers the blt vectors, used by spice*/
-void blt_init(void *tmp){
+void blt_init(void *run) {
   int i;
-  runDesc *run = cur_run;
   cur_run = NULL;
   /* reset varaibles and free*/
   if(vectors){
     resetTriggers();
     for(i = blt_vnum-1, blt_vnum = 0/*stops vector access*/;i >= 0;i--){
-      if(run->writeOut)
+      if(ownVectors)
 	FREE(vectors[i].data);
       FREE(vectors[i].name);
       pthread_mutex_destroy(&vectors[i].mutex);
@@ -164,7 +165,7 @@ void blt_init(void *tmp){
     
     
   /* initilise */
-  cur_run = (runDesc *)tmp;;
+  cur_run = (runDesc *)run;
   vectors = (vector *)MALLOC(cur_run->numData*sizeof(vector));
   for(i = 0;i < cur_run->numData;i++){
     vectors[i].name = copy((cur_run->data[i]).name);
@@ -173,6 +174,7 @@ void blt_init(void *tmp){
     vectors[i].size = 0;
     vectors[i].length = 0;
   }
+  ownVectors = cur_run->writeOut;
   blt_vnum = i;/*allows access to vectors*/
   return;
 }
