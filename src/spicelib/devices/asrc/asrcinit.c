@@ -39,7 +39,7 @@ SPICEdev ASRCinfo = {
     DEVmodDelete  : ASRCmDelete,
     DEVdelete     : ASRCdelete,
     DEVsetic      : NULL,
-    DEVask        : NULL,
+    DEVask        : ASRCask,
     DEVmodAsk     : NULL,
     DEVpzLoad     : ASRCpzLoad,
     DEVconvTest   : ASRCconvTest,

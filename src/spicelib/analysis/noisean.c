@@ -100,7 +100,13 @@ NOISEan (CKTcircuit *ckt, int restart)
 		ckt->CKTdcMaxIter);
 
 	if (error) return(error);
-        data = (Ndata*)MALLOC(sizeof(Ndata));
+
+	/* Patch to noisean.c by Richard D. McRoberts. */
+	ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
+     error = CKTload(ckt);
+     if(error) return(error);
+     
+     data = (Ndata*)MALLOC(sizeof(Ndata));
 	step = 0;
 	data->freq = job->NstartFreq;
 	data->outNoiz = 0.0;

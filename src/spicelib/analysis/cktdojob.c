@@ -84,6 +84,8 @@ CKTdoJob(void *inCkt, int reset, void *inTask)
     ckt->CKTlteAbstol = task->TSKlteAbstol;
 #endif /* NEWTRUNC */
 
+printf("Doing analysis at TEMP = %f and TNOM = %f\n", 
+        ckt->CKTtemp, ckt->CKTnomTemp);
     error = 0;
 
     if (reset) {
