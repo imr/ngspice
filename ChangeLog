@@ -1,4 +1,23 @@
+2000-10-17  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* TODO: Little updates.
+
 2000-10-14  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* acconfig.h, configure.in, src/frontend/inpcom.c,
+	src/include/complex.h src/include/macros.h, src/include/memory.h
+	src/include/ngspice.h, src/maths/cmaths/Makefile.am
+	src/maths/cmaths/cmath1.c, src/maths/cmaths/cmath2.c
+	src/maths/cmaths/cmath3.c, src/maths/cmaths/cmath4.c
+	src/maths/cmaths/test_cx_j.c, src/maths/cmaths/test_cx_mag.c
+	src/maths/cmaths/test_cx_ph.c, src/misc/alloc.c src/misc/alloc.h:
+	Added support for the Boehm-Weiser conservative garbage collector.
+
+	* NOTES, src/maths/cmaths/cmath.h: Added.
+
+	* notes/Linux.changes, notes/dbx, notes/internal, notes/mac_port
+	notes/porting, notes/spice2: Removed or incorporated into
+	NOTES.
 
 	* *: replaced malloc, realloc and free calls to use tmalloc,
 	trealloc and txfree.

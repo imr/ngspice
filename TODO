@@ -27,7 +27,8 @@ Remove smktemp() in favor of tmpfile() or other ANSI C equivalent;
 Note: different symantics!
 
 Write a asprintf() replacement for systems that don't have it
-available.
+available.  Also check how this function interacts with the garbage
+collector.
 
 Prefix all functions in the spice library with spice_*.
 
@@ -83,7 +84,14 @@ Verify C code device models by building equivalent netlists and
 comparing simulation results.  Equivalent netlists also help document
 the models currently in Spice.
 
-Add tests for all functions in the complex library in
+Use benchmarking suite to profile Spice.  Use gcov to measure coverage
+(and to find out where more tests are needed.)  Make profiling support
+a configure switch.
+
+Devise a way to compare outputs from different circuit simulators to
+verify the results of the simulations.
+
+Add small tests for all functions in the complex library in
 src/maths/cmaths.
 
 Add tests for all functions in the sparse matrix library in
@@ -96,9 +104,6 @@ Add tests for all functions in the derivative library in
 src/maths/deriv.
 
 Add more circuit tests into the tests directory.
-
-Use gcov to measure current test coverage (and to find out where more
-tests are needed.)  Make this a configure switch.
 
 
 Documentation
