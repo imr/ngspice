@@ -1,3 +1,12 @@
+2003-10-01  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/analysis/noisean.c: fixed an arror that caused segfault
+	  when resuming an halted long lasting noise analysis. The source fo
+	  this fix is Vera Albrecht <albrecht@danalyse.de>
+	  
+	* src/spicelib/devices/res/restemp.c: Changed default value for flicker
+	  noise exponent to 1.0 (was 0.0), as in others spice devices. 
+
 2003-09-27  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/spicelib/devices/ind/*, src/spicelib/parser/inp2l.c,
