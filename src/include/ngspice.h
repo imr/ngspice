@@ -152,3 +152,16 @@ extern char *Lib_Path;
 
 extern int ARCHme;	/* My logical process number */
 extern int ARCHsize;	/* Total number of processes */
+
+#ifdef TCL_MODULE
+
+extern int tcl_printf(const char *format, ...);
+extern int tcl_fprintf(FILE *f, const char *format, ...);
+
+#undef printf
+#define printf tcl_printf
+
+#undef fprintf
+#define fprintf tcl_fprintf
+
+#endif

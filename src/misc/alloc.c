@@ -29,7 +29,7 @@ tmalloc(size_t num)
   void *s;
 /*saj*/
 #ifdef TCL_MODULE
-  struct Tcl_Mutex *alloc;
+  Tcl_Mutex *alloc;
   alloc = Tcl_GetAllocMutex();
 #endif
   if (!num)
@@ -57,7 +57,7 @@ trealloc(void *ptr, size_t num)
   void *s;
 /*saj*/
 #ifdef TCL_MODULE
-  struct Tcl_Mutex *alloc;
+  Tcl_Mutex *alloc;
   alloc = Tcl_GetAllocMutex();
 #endif
   if (!num) {
@@ -142,7 +142,7 @@ txfree(void *ptr)
 {
 /*saj*/
 #ifdef TCL_MODULE
-  struct Tcl_Mutex *alloc;
+  Tcl_Mutex *alloc;
   alloc = Tcl_GetAllocMutex();
   Tcl_MutexLock(alloc);
 #endif

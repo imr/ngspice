@@ -57,6 +57,8 @@
 /* run spicein background */
 #include <pthread.h>
 
+#include <stdarg.h>     /* for va_copy() */
+
 extern IFfrontEnd nutmeginfo;
 
 extern struct comm spcp_coms[ ];
@@ -81,8 +83,11 @@ static int ownVectors = 0;
 
 /* save this each time called */
 static Tcl_Interp *spice_interp=NULL;
-#define save_interp() spice_interp = interp;
-
+#define save_interp() \
+do {\
+if ((spice_interp = Tcl_GetMaster(interp)) == NULL)\
+      spice_interp = interp;\
+} while(0)
 
 /****************************************************************************/
 /*                          BLT and data routines                           */
@@ -1243,6 +1248,8 @@ int Spice_Init(Tcl_Interp *interp) {
     
   Tcl_Eval(interp, "namespace eval " TCLSPICE_namespace " { }");
 
+  save_interp();
+
   {
     extern void DevInit();
     int i;
@@ -1322,4 +1329,136 @@ int Spice_Init(Tcl_Interp *interp) {
     Tcl_LinkVar(interp, TCLSPICE_prefix "blt_vnum", (char *)&blt_vnum, TCL_LINK_READ_ONLY|TCL_LINK_INT);
   }
   return TCL_OK;
+}
+
+/***************************************/
+/* printf wrappers to redirect to puts */
+/***************************************/
+
+/* Contributed by Tim Edwards (tim@stravinsky.jhuapl.edu), 2003 */
+
+/*----------------------------------------------------------------------*/
+/* Deal with systems which don't define va_copy().                      */
+/*----------------------------------------------------------------------*/
+
+#ifndef HAVE_VA_COPY
+#ifdef HAVE___VA_COPY
+#define va_copy(a, b) __va_copy(a, b)  
+#else
+#define va_copy(a, b) a = b
+#endif 
+#endif
+
+/*------------------------------------------------------*/
+/* Redefine the vfprintf() functions for use with tkcon */
+/*------------------------------------------------------*/
+
+int tcl_vfprintf(FILE *f, const char *fmt, va_list args_in)
+{
+  va_list args;
+  static char outstr[128] = "puts -nonewline std";
+  char *outptr, *bigstr = NULL, *finalstr = NULL;
+  int i, nchars, result, escapes = 0;
+
+  if(f != stdout && f != stderr)
+    vfprintf(f,fmt,args_in);
+
+  strcpy (outstr + 19, (f == stderr) ? "err \"" : "out \"");
+  outptr = outstr;
+
+  va_copy(args, args_in);
+  nchars = vsnprintf(outptr + 24, 102, fmt, args);
+  va_end(args);
+
+  if (nchars >= 102)
+    {
+      va_copy(args, args_in);
+      bigstr = Tcl_Alloc(nchars + 26);
+      strncpy(bigstr, outptr, 24);
+      outptr = bigstr;
+      vsnprintf(outptr + 24, nchars + 2, fmt, args);
+      va_end(args);
+    }
+  else if (nchars == -1) nchars = 126;
+
+  for (i = 24; *(outptr + i) != '\0'; i++) {
+    if (*(outptr + i) == '\"' || *(outptr + i) == '[' ||
+	*(outptr + i) == ']' || *(outptr + i) == '\\')
+      escapes++;
+  }
+
+  if (escapes > 0)
+    {
+      finalstr = Tcl_Alloc(nchars + escapes + 26);
+      strncpy(finalstr, outptr, 24);
+      escapes = 0;
+      for (i = 24; *(outptr + i) != '\0'; i++)
+        {
+	  if (*(outptr + i) == '\"' || *(outptr + i) == '[' ||
+	      *(outptr + i) == ']' || *(outptr + i) == '\\')
+            {
+	      *(finalstr + i + escapes) = '\\';
+	      escapes++;
+            }
+	  *(finalstr + i + escapes) = *(outptr + i);
+        }
+      outptr = finalstr;
+    }
+    
+  *(outptr + 24 + nchars + escapes) = '\"';
+  *(outptr + 25 + nchars + escapes) = '\0';
+
+  result = Tcl_Eval(spice_interp, outptr);
+
+  if (bigstr != NULL) Tcl_Free(bigstr);
+  if (finalstr != NULL) Tcl_Free(finalstr);
+  return nchars;
+}
+
+/*----------------------------------------------------------------------*/
+/* Reimplement fprintf() as a call to Tcl_Eval().                       */
+/*----------------------------------------------------------------------*/
+
+int tcl_fprintf(FILE *f, const char *format, ...)
+{
+  va_list ap;
+  int rtn;
+ 
+  va_start(ap, format);
+  rtn = tcl_vfprintf(f, format, ap);
+  va_end(ap);
+
+  return rtn;
+}
+
+/*----------------------------------------------------------------------*/
+/* Reimplement fprintf() as a call to Tcl_Eval().                       */
+/*----------------------------------------------------------------------*/
+
+int tcl_printf(const char *format, ...)
+{
+  va_list ap;
+  int rtn;
+  
+  va_start(ap, format);
+  rtn = tcl_vfprintf(stdout, format, ap);
+  va_end(ap);
+  
+  return rtn;
+}
+/*------------------------------------------------------*/
+/* Console output flushing which goes along with the    */
+/* routine tcl_vprintf() above.                         */
+/*------------------------------------------------------*/
+
+void tcl_stdflush(FILE *f)
+{     
+  Tcl_SavedResult state;
+  static char stdstr[] = "flush stdxxx";
+  char *stdptr = stdstr + 9;
+  
+  Tcl_SaveResult(spice_interp, &state);
+  strcpy(stdptr, (f == stderr) ? "err" : "out");
+  Tcl_Eval(spice_interp, stdstr);
+  Tcl_RestoreResult(spice_interp, &state);
 }

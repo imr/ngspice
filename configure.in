@@ -284,6 +284,33 @@ AC_CHECK_LIB(gc,GC_malloc,AC_DEFINE(HAVE_LIBGC) LIBS="$LIBS -lgc")
 dnl Check for the asprintf function:
 AC_CHECK_FUNCS(asprintf)
 
+dnl Check for va_copy
+AC_CACHE_CHECK([for va_copy], ac_cv_c_va_copy,
+ AC_TRY_LINK(
+   [#include <stdarg.h>],
+   [va_list ap1, ap2;
+    va_copy(ap1,ap2); 
+   ],
+   [ac_cv_c_va_copy="yes"],
+   [ac_cv_c_va_copy="no"])
+ )
+if test "$ac_cv_c_va_copy" = "yes"
+then 
+    AC_DEFINE(HAVE_VA_COPY, 1, [Define if we have va_copy])
+fi
+AC_CACHE_CHECK([for __va_copy], ac_cv_c___va_copy,
+ AC_TRY_LINK(   
+   [#include <stdarg.h>],
+   [va_list ap1, ap2;
+    __va_copy(ap1,ap2);
+   ],
+   [ac_cv_c___va_copy="yes"],
+   [ac_cv_c___va_copy="no"])
+ )
+if test "$ac_cv_c___va_copy" = "yes"
+then
+    AC_DEFINE(HAVE___VA_COPY, 1, [Define if we have __va_copy])
+fi
 
 # Expand the prefix variable (this is really annoying!)
 if eval "test x$prefix = xNONE"; then
