@@ -22,6 +22,7 @@ com_setscale(wordlist *wl)
 	if (wl) {
 	    s = cp_unquote(wl->wl_word);
 	    d = vec_get(s);
+            if(s) tfree(s);/*DG to avoid the cp_unquote memory leak */
 	    if (d == NULL)
 		fprintf(cp_err, "Error: no such vector as %s.\n", 
 			wl->wl_word);

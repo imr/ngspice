@@ -8,7 +8,7 @@
 
 void
 com_echo(wordlist *wlist)
-{
+{   char*copyword;
     bool nl = TRUE;
 
     if (wlist && eq(wlist->wl_word, "-n")) {
@@ -17,7 +17,10 @@ com_echo(wordlist *wlist)
     }
 
     while (wlist) {
-        fputs(cp_unquote(wlist->wl_word), cp_out);
+     /*   fputs(cp_unquote(wlist->wl_word), cp_out); very bad the string allocated by cp_unquote could not be freed: memory leak*/
+          copyword=cp_unquote(wlist->wl_word);
+          fputs(copyword, cp_out);
+          tfree(copyword);
         if (wlist->wl_next)
             fputs(" ", cp_out);
         wlist = wlist->wl_next;

@@ -40,12 +40,15 @@ com_unlet(wordlist *wl)
 void
 com_load(wordlist *wl)
 {
-
+char *copypath;
     if (!wl)
         ft_loadfile(ft_rawfile);
     else
         while (wl) {
-            ft_loadfile(cp_unquote(wl->wl_word));
+            /*ft_loadfile(cp_unquote(wl->wl_word)); DG: bad memory leak*/
+            copypath=cp_unquote(wl->wl_word);/*DG*/
+            ft_loadfile(copypath);
+            tfree(copypath);
             wl = wl->wl_next;
         }
 
@@ -140,9 +143,16 @@ com_print(wordlist *wl)
                     out_printf("%s = %s\n", buf,
                         printnum(*v->v_realdata));
                 } else {
+                 /*DG: memory leak here copy of the string returned by printnum will never be freed 
                     out_printf("%s = %s,%s\n", buf,
                         copy(printnum(realpart(v->v_compdata))),
                         copy(printnum(imagpart(v->v_compdata))));
+                   */
+                    out_printf("%s = %s,%s\n", buf,
+                        printnum(realpart(v->v_compdata)),
+                        printnum(imagpart(v->v_compdata)));
+                   
+
                 }
             } else {
                 out_printf("%s = (  ", buf);
@@ -160,9 +170,10 @@ com_print(wordlist *wl)
                         } else
                             out_send("\t");
                     } else {
+                        /*DG*/
                         (void) sprintf(buf, "%s,%s",
-                            copy(printnum(realpart(&v->v_compdata[i]))),
-                            copy(printnum(imagpart(&v->v_compdata[i]))));
+                            printnum(realpart(&v->v_compdata[i])),
+                            printnum(imagpart(&v->v_compdata[i])));
                         out_send(buf);
                         ll += strlen(buf);
                         ll = (ll + 7) / 8;
@@ -460,6 +471,7 @@ com_transpose(wordlist *wl)
     while (wl) {
         s = cp_unquote(wl->wl_word);
         d = vec_get(s);
+        tfree(s); /*DG: Avoid Memory Leak */
         if (d == NULL)
             fprintf(cp_err, "Error: no such vector as %s.\n", 
                 wl->wl_word);

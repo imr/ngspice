@@ -45,7 +45,7 @@ cp_redirect(wordlist *wl)
     bool gotinput = FALSE, gotoutput = FALSE, goterror = FALSE;
     bool app = FALSE, erralso = FALSE;
     wordlist *w, *bt, *nw;
-    char *s;
+    char *s,*copyword;
     FILE *tmpfp;
 
     w = wl->wl_next;    /* Don't consider empty commands. */
@@ -67,7 +67,11 @@ cp_redirect(wordlist *wl)
             if (*w->wl_word == cp_lt) {
                 /* Do reasonable stuff here... */
             } else {
-                tmpfp = fopen(cp_unquote(w->wl_word), "r");
+                /*tmpfp = fopen(cp_unquote(w->wl_word), "r"); DG very bad: memory leak the string allocated by cp_unquote is lost*/
+                copyword=cp_unquote(w->wl_word);/*DG*/
+                tmpfp = fopen(copyword, "r"); 
+                tfree(copyword);
+  
                 if (!tmpfp) {
                     perror(w->wl_word);
                     goto error;
@@ -133,6 +137,7 @@ cp_redirect(wordlist *wl)
                 tmpfp = fopen(s, "a");
             else
                 tmpfp = fopen(s, "w+");
+            tfree(s);/*DG cp_unquote memory leak*/
             if (!tmpfp) {
                 perror(w->wl_word);
                 goto error;

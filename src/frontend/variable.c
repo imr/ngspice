@@ -34,7 +34,7 @@ wordlist *
 cp_varwl(struct variable *var)
 {
     wordlist *wl = NULL, *w, *wx = NULL;
-    char buf[BSIZE_SP];
+    char buf[BSIZE_SP],*copystring;
     struct variable *vt;
 
     switch(var->va_type) {
@@ -50,7 +50,11 @@ cp_varwl(struct variable *var)
 	sprintf(buf, "%G", var->va_real);
 	break;
     case VT_STRING:
-	strcpy(buf, cp_unquote(var->va_string));
+	/*strcpy(buf, cp_unquote(var->va_string)); DG: memory leak here*/
+        copystring= cp_unquote(var->va_string);/*DG*/
+        strcpy(buf,copystring);
+        tfree(copystring);
+
 	break;
     case VT_LIST:   /* The tricky case. */
 	for (vt = var->va_vlist; vt; vt = vt->va_next) {
@@ -84,8 +88,11 @@ cp_vset(char *varname, char type, char *value)
     struct variable *v, *u, *w;
     int i;
     bool alreadythere = FALSE;
-
-    varname = cp_unquote(varname);
+    char* copyvarname;
+/*    varname = cp_unquote(varname); DG: Memory leak old varname is lost*/
+      copyvarname= cp_unquote(varname);
+      strcpy(varname,copyvarname);
+      tfree(copyvarname);
     w = NULL;
     for (v = variables; v; v = v->va_next) {
         if (eq(varname, v->va_name)) {
@@ -244,13 +251,15 @@ cp_setparse(wordlist *wl)
             vv->va_bool = TRUE;
             vv->va_next = vars;
             vars = vv;
+            tfree(name);/*DG: cp_unquote Memory leak*/
             continue;
         }
         if (wl && eq(wl->wl_word, "=")) {
             wl = wl->wl_next;
             if (wl == NULL) {
                 fprintf(cp_err, "Error: bad set form.\n");
-                return (NULL);
+             tfree(name);/*DG: cp_unquote Memory leak*/
+              return (NULL);
             }
             val = wl->wl_word;
             wl = wl->wl_next;
@@ -265,7 +274,8 @@ cp_setparse(wordlist *wl)
                     fprintf(cp_err,
                         "Error:  %s equals what?.\n",
                         name);
-                    return (NULL);
+                   tfree(name);/*DG: cp_unquote Memory leak: free name before exiting*/
+                   return (NULL);
                 } else {
                     val = wl->wl_word;
                     wl = wl->wl_next;
@@ -273,9 +283,13 @@ cp_setparse(wordlist *wl)
             }
         } else {
             fprintf(cp_err, "Error: bad set form.\n");
-            return (NULL);
+             tfree(name);/*DG: cp_unquote Memory leak: free name befor exiting */
+             return (NULL);
         }
-        val = cp_unquote(val);
+     /*   val = cp_unquote(val);  DG: bad   old val is lost*/ 
+          copyval=cp_unquote(val);/*DG*/
+          strcpy(val,copyval);
+          tfree(copyval);
         if (eq(val, "(")) { /* ) */
             /* The beginning of a list... We have to walk down the
              * list until we find a close paren... If there are nested
@@ -299,6 +313,7 @@ cp_setparse(wordlist *wl)
                     vv->va_type = VT_STRING;
                     vv->va_string = copy(ss);
                 }
+                 tfree(ss);/*DG: must free ss any way to avoid cp_unquote memory leak*/
                 if (listv) {
                     lv->va_next = vv;
                     lv = vv;
@@ -336,6 +351,7 @@ cp_setparse(wordlist *wl)
             vv->va_type = VT_STRING;
             vv->va_string = copy(val);
         }
+        tfree(ss);/*DG: avoid cp_unquote memory leak */
     }
     return (vars);
 }
@@ -372,7 +388,8 @@ cp_remvar(char *varname)
     else if (eq(varname, "noclobber"))
         cp_noclobber = FALSE;
     else if (eq(varname, "prompt"))
-        cp_promptstring = "";
+       /* cp_promptstring = ""; Memory leak here the last allocated reference wil be lost*/
+       if(cp_promptstring)strcpy(cp_promptstring,"");/*DG avoid memory leak*/
     else if (eq(varname, "cpdebug"))
         cp_debug = FALSE;
     else if (eq(varname, "ignoreeof"))
@@ -469,6 +486,7 @@ cp_getvar(char *name, int type, char *retval)
                 s = cp_unquote(v->va_string);
                 cp_wstrip(s);
                 (void) strcpy(retval, s);
+                tfree(s);/*DG*/
                 break;
             }
             case VT_LIST: { /* Funny case... */

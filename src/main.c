@@ -243,7 +243,7 @@ main(int argc, char **argv)
     int c;
     int		err;
     bool	gotone = FALSE;
-
+    char*       copystring;/*DG*/
 #ifdef SIMULATOR
     int error2;
 
@@ -517,7 +517,9 @@ main(int argc, char **argv)
 	com_version(NULL);
         DevInit( );
 	if (News_File && *News_File) {
-	    fp = fopen(cp_tildexpand(News_File), "r");
+            copystring=cp_tildexpand(News_File);/*DG  Memory leak */
+	    fp = fopen(copystring, "r");
+            tfree(copystring);
 	    if (fp) {
 		while (fgets(buf, BSIZE_SP, fp))
 		    fputs(buf, stdout);

@@ -87,7 +87,10 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
     int i=0; 
     int j, arg;
 
-    buf = cp_unquote(copy(buf));
+/*    buf = cp_unquote(copy(buf)); DG: ugly*/
+       s=cp_unquote(buf);/*DG*/
+       strcpy(buf,s);
+       tfree(s);
     cp_wstrip(buf);
     if (wlist->wl_next) {   /* Not the first word. */
         cc = getccom(wlist->wl_word);
@@ -194,7 +197,7 @@ static wordlist *
 ccfilec(char *buf)
 {
     DIR *wdir;
-    char *lcomp, *dir;
+    char *lcomp, *dir,*copydir;
     struct direct *de;
     wordlist *wl = NULL, *t;
     struct passwd *pw;
@@ -231,7 +234,10 @@ ccfilec(char *buf)
         *lcomp = '\0';
         lcomp++;
         if (*dir == cp_til) {
-            dir = cp_tildexpand(dir);
+             copydir=cp_tildexpand(dir);/*DG*/
+            /*dir = cp_tildexpand(dir); very bad the last reference is lost: memory leak*/
+            strcpy(dir,copydir);
+            tfree(copydir);
             if (dir == NULL)
                 return (NULL);
         }

@@ -85,6 +85,7 @@ settrace(wordlist *wl, int what, char *name)
             d->db_nodename1 = copy(s);
 /*          wrd_chtrace(s, TRUE, what); */
         }
+         tfree(s);/*DG avoid memoy leak */
         if (dbs) {
             for (td = dbs; td->db_next; td = td->db_next)
                 ;

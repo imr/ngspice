@@ -479,5 +479,6 @@ com_compose(wordlist *wl)
     result->v_dims[0] = length;
     vec_new(result);
     cp_addkword(CT_VECTOR, result->v_name);
+    tfree(resname);/*DG: resname has been copied so its remains allocated: memory leak One can remove this and not copy resname*/
     return;
 }

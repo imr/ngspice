@@ -23,7 +23,7 @@ ft_cpinit(void)
     wordlist *wl;
     wordlist wl1, wl2, wl3;
     bool found = FALSE, t = TRUE;
-    char buf[BSIZE_SP], **x, *s, *r;
+    char buf[BSIZE_SP], **x, *s, *r,*copys;
     struct comm *c;
     int i;
     FILE *fp;
@@ -206,7 +206,7 @@ ft_cpinit(void)
 
 	/* Now source the standard startup file. */
 	/* XXX strange */
-	for (s = cp_tildexpand(Lib_Path); s && *s; ) {
+	for (copys=s=cp_tildexpand(Lib_Path); s && *s; ) {/*DG*/
 	    while (isspace(*s))
 		s++;
 	    for (r = buf; *s && !isspace(*s); r++, s++)
@@ -236,7 +236,7 @@ ft_cpinit(void)
     }
 
     tcap_init( );
-
+    tfree(copys);/*DG Avoid memory leak*/
     return;
 }
 

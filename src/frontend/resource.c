@@ -58,13 +58,17 @@ init_time(void)
 void
 com_rusage(wordlist *wl)
 {
+char* copyword;
     /* Fill in the SPICE accounting structure... */
 
     if (wl && (eq(wl->wl_word, "everything") || eq(wl->wl_word, "all"))) {
         printres((char *) NULL);
     } else if (wl) {
         for (; wl; wl = wl->wl_next) {
-            printres(cp_unquote(wl->wl_word));
+         /*   printres(cp_unquote(wl->wl_word)); DG: bad, memory leak*/
+              copyword=cp_unquote(wl->wl_word);/*DG*/
+              printres(copyword);
+              tfree(copyword);                         
             if (wl->wl_next)
                 (void) putc('\n', cp_out);
         }

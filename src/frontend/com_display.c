@@ -41,6 +41,7 @@ com_display(wordlist *wl)
     while (wl) {
         s = cp_unquote(wl->wl_word);
         d = vec_get(s);
+        tfree(s);/*DG to avoid the cp_unquote memory leak */
         if (d == NULL)
             fprintf(cp_err, "Error: no such vector as %s.\n", 
                 wl->wl_word);

@@ -165,6 +165,7 @@ com_iplot(wordlist *wl)
             d->db_type = DB_IPLOT;
             d->db_nodename1 = copy(s);
         }
+        tfree(s);/*DG: avoid memory leak */
         d->db_also = currentdb;
         currentdb = d;
         wl = wl->wl_next;

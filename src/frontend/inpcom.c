@@ -112,7 +112,7 @@ void
 inp_readall(FILE *fp, struct line **data)
 {
     struct line *end = NULL, *cc, *prev = NULL, *working, *newcard;
-    char *buffer, *s, *t, c;
+    char *buffer, *s, *t, c,*copys;
     int line = 1;
     FILE *newfp;
 
@@ -140,7 +140,12 @@ inp_readall(FILE *fp, struct line **data)
                 ;
             *t = '\0';
             if (*s == '~')
-                s = cp_tildexpand(s);
+                {
+                copys=cp_tildexpand(s); /*DG*/
+                /*s = cp_tildexpand(s);  very bad the last reference is los: memory leak*/
+                strcpy(s,copys);
+                tfree(copys); 
+                }
             if (!(newfp = inp_pathopen(s, "r"))) {
                 perror(s);
                 continue;

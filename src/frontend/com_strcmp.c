@@ -21,7 +21,8 @@ com_strcmp(wordlist *wl)
     s2 = cp_unquote(wl->wl_next->wl_next->wl_word);
     
     i = strcmp(s1, s2);
-
+    tfree(s1);/*DG  cp_unquote memory leak*/
+    tfree(s2);
     cp_vset(var, VT_NUM, (char *) &i);
     return;
 }
