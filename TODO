@@ -31,7 +31,8 @@ most appealing.
 Refactorings
 ------------
 
-Make devices dynamically loadable (perhaps use framework from glib).
+Make devices dynamically loadable.  Perhaps use framework from glib
+(http://developer.gnome.org/doc/API/glib/index.html).
 
 Separate out circuit builder from the analysis code and put it in the
 devices directory (rename devices directory to simbuilder at some

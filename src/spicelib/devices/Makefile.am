@@ -40,7 +40,10 @@ libdev_a_SOURCES = 	\
 	devsup.c	\
 	cktaccept.c	\
 	cktaccept.h	\
+	cktask.c	\
+	cktbindnode.c	\
 	cktcrte.c	\
+	cktfinddev.c	\
 	cktinit.c
 
 INCLUDES = -I$(top_srcdir)/src/include

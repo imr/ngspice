@@ -8,7 +8,6 @@ libckt_a_SOURCES = \
 		acsetp.c	\
 		cktacct.c	\
 		cktacdum.c	\
-		cktask.c	\
 		cktaskaq.c	\
 		cktasknq.c	\
 		cktbindn.c	\
@@ -23,7 +22,6 @@ libckt_a_SOURCES = \
 		cktdojob.c	\
 		cktdump.c	\
 		cktfbran.c	\
-		cktfdev.c	\
 		cktfnda.c	\
 		cktfndm.c	\
 		cktfnode.c	\

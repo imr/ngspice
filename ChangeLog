@@ -1,3 +1,13 @@
+2000-06-19  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/analysis/cktask.c: moved to src/devices.
+	
+	* src/analysis/cktbindn.c: moved, renamed to
+	src/devices/cktbindnode.c.
+	
+	* src/analysis/cktfdev.c: moved, renamed to
+	src/devices/cktfinddev.c.
+
 2000-06-18  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* AUTHORS, doc/ngspice.texi: Included an acknowledgements
