@@ -11,38 +11,36 @@ Author: 1992 Charles Hough
 #include "sperror.h"
 #include "suffix.h"
 
-#include "../cap/capdefs.h"
-
-static int 		ReadTxL();
+static int 		ReadTxL(TXLinstance*, CKTcircuit*);
 /*static int 		multC();*/
-static int 		main_pade();
-static int 		mac();
+static int 		main_pade(double, double, double, double, double, TXLine*);
+static int 		mac(double, double, double*, double*, double*, double*, double*);
 /*static int 		divC();*/
-static int 		div_C();
-static int 		div3();
+static int 		div_C(double, double, double, double, double*, double*);
+static int 		div3(double, double, double, double, double*, double*);
 /*static double 	approx1();*/
 /*static double 	approx2();*/
-static int 		find_roots();
+static int 		find_roots(double, double, double, double*, double*, double*);
 /*static double 	f3();*/
 /*static double 	f2();*/
 /*static int 		expC();*/
 /*static double 	exp_approx1();*/
 /*static double 	exp_approx2();*/
-static int 		exp_pade();
+static int 		exp_pade(float, float, float, float, float, TXLine*);
 /*static int 		exp_div3();*/
-static int 		exp_find_roots();
-static double 	eval2();
-static int 		get_c();
-static int 		get_h3();
-static int 		Gaussian_Elimination2();
-static int 		Gaussian_Elimination1();
-static int 		pade();
-static int 		update_h1C_c();
-static void 	y_pade();
-static double 	root3();
-static NDnamePt insert_ND();
-static NODE 	*insert_node();
-static NODE 	*NEW_node();
+static int 		exp_find_roots(double, double, double, double*, double*, double* );
+static double		eval2(double, double, double, double);
+static int 		get_c(double, double, double, double, double, double, double, double*, double*);
+static int 		get_h3(TXLine*);
+static int 		Gaussian_Elimination2(int);
+static int 		Gaussian_Elimination1(int);
+static int 		pade(float);
+static int 		update_h1C_c(TXLine *);
+static void		y_pade(double, double, double, double, TXLine*);
+static double		root3(double, double, double, double);
+static NDnamePt 	insert_ND(char*, NDnamePt*);
+static NODE 		*insert_node(char*);
+static NODE 		*NEW_node(void);
 /*static VI_list_txl *new_vi_txl();*/
 
 NODE     		*node_tab = NULL;
@@ -131,9 +129,37 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(OK);
 }
 
+int
+TXLunsetup(GENmodel *inModel, CKTcircuit *ckt)
+{
+  TXLmodel *model;
+  TXLinstance *here;
+  
+  for (model = (TXLmodel *) inModel; model != NULL;
+      model = model->TXLnextModel) {
+    for (here = model->TXLinstances; here != NULL;
+        here = here->TXLnextInstance) {
+  
+          if (here->TXLibr1) {
+               CKTdltNNum(ckt, here->TXLibr1);
+               here->TXLibr1 = 0;
+          }
+
+          if (here->TXLibr2) {
+               CKTdltNNum(ckt, here->TXLibr2);
+               here->TXLibr2 = 0;
+          }
+
+    here->TXLdcGiven=0;
+
+    }
+  }
+  return OK;
+}
+
 /***
 static VI_list_txl
-*new_vi_txl()
+*new_vi_txl(void)
 {
 	VI_list_txl *q;
 
@@ -142,13 +168,12 @@ static VI_list_txl
 		pool_vi_txl = pool_vi_txl->pool;
 		return(q);
 	} else
-		return((VI_list_txl *) malloc (sizeof (VI_list_txl)));
+		return((VI_list_txl *) tmalloc (sizeof (VI_list_txl)));
 }
 ***/
 
-static int ReadTxL(tx, ckt)
-TXLinstance *tx;
-CKTcircuit *ckt;
+static int 
+ReadTxL(TXLinstance *tx, CKTcircuit *ckt)
 {
    double R, L, G, C, l;
    char *p, *n;
@@ -162,11 +187,11 @@ CKTcircuit *ckt;
    p = tx->in_node_name;
    n = tx->out_node_name;
 
-   line = (RLINE *) malloc(sizeof (RLINE));
-   er = (ERLINE *) malloc(sizeof (ERLINE));
-   et = (ETXLine *) malloc(sizeof (ETXLine));
-   t = (TXLine *) malloc(sizeof (TXLine));
-   t2 = (TXLine *) malloc(sizeof (TXLine));
+   line = (RLINE *) tmalloc(sizeof (RLINE));
+   er = (ERLINE *) tmalloc(sizeof (ERLINE));
+   et = (ETXLine *) tmalloc(sizeof (ETXLine));
+   t = (TXLine *) tmalloc(sizeof (TXLine));
+   t2 = (TXLine *) tmalloc(sizeof (TXLine));
    tx->txline = t;
    tx->txline2 = t2;
    t->newtp = 0;
@@ -182,14 +207,14 @@ CKTcircuit *ckt;
    nd->rlptr = er;
    er->rl = line;
    line->in_node = nd;
-   et = (ETXLine *) malloc(sizeof (ETXLine));
+   et = (ETXLine *) tmalloc(sizeof (ETXLine));
    nd = insert_node(n);
    et->link = nd->tptr;
    nd->tptr = et;
    et->line = t;
    t->out_node = nd;
    t2->out_node = nd;
-   er = (ERLINE *) malloc(sizeof (ERLINE));
+   er = (ERLINE *) tmalloc(sizeof (ERLINE));
    er->link = nd->rlptr;
    nd->rlptr = er;
    er->rl = line;
@@ -240,9 +265,8 @@ CKTcircuit *ckt;
  ****************************************************************/
 
 
-static int main_pade(R, L, G, C, l, h)
-   double R, L, G, C, l;
-   TXLine *h;
+static int 
+main_pade(double R, double L, double G, double C, double l, TXLine *h)
 {
    y_pade(R, L, G, C, h);
    h->ifImg = exp_pade(R, L, G, C, l, h);
@@ -253,9 +277,8 @@ static int main_pade(R, L, G, C, l, h)
    return(1);
 }
 
-static int div_C(ar, ai, br, bi, cr, ci)
-   double ar, ai, br, bi;
-   double *cr, *ci;
+static int 
+div_C(double ar, double ai, double br, double bi, double *cr, double *ci)
 {
    *cr = ar * br + ai * bi;
    *ci = - ar * bi + ai * br;
@@ -307,8 +330,8 @@ static int divC(ar, ai, br, bi, cr, ci)
 }
 ***/
 
-static int get_h3(h)
-   TXLine *h;
+static int 
+get_h3(TXLine *h)
 {
    double cc1, cc2, cc3, cc4, cc5, cc6;
    double xx1, xx2, xx3, xx4, xx5, xx6;
@@ -363,8 +386,8 @@ static int get_h3(h)
    return(1);
 }
 
-static int update_h1C_c(h)
-   TXLine *h;
+static int 
+update_h1C_c(TXLine *h)
 {
    int i;
    double d = 0;
@@ -388,8 +411,8 @@ static int update_h1C_c(h)
  ****************************************************************/
 
 
-static double eval2(a, b, c, x)
-   double a, b, c, x;
+static double 
+eval2(double a, double b, double c, double x)
 {
    return(a*x*x + b*x + c);
 }
@@ -415,9 +438,8 @@ static double approx2(st)
 }
 ***/
 
-static void y_pade(R, L, G, C, h)
-   double R, L, G, C;
-   TXLine *h;
+static void 
+y_pade(double R, double L, double G, double C, TXLine *h)
 {
 
    /* float RdL, GdC; */
@@ -472,11 +494,11 @@ static void y_pade(R, L, G, C, h)
 
 }
 
-static int Gaussian_Elimination1(dims)
-   int dims;
+static int 
+Gaussian_Elimination1(int dims)
 {
-   register int i, j, k, dim;
-   register double f;
+   int i, j, k, dim;
+   double f;
    int imax;
    double max;
 
@@ -519,9 +541,8 @@ static int Gaussian_Elimination1(dims)
    return(1);
 }
 
-static double root3(a1, a2, a3, x)
-   double x;
-   double a1, a2, a3;
+static double 
+root3(double a1, double a2, double a3, double x)
 {
    double t1, t2;
 
@@ -531,10 +552,8 @@ static double root3(a1, a2, a3, x)
    return(x - t1 / t2);
 }
 
-static int div3(a1, a2, a3, x, p1, p2)
-   double x;
-   double a1, a2, a3;
-   double *p1, *p2;
+static int 
+div3(double a1, double a2, double a3, double x, double *p1, double *p2)
 {
    *p1 = a1 + x;
    *p2 = - a3 / x;
@@ -551,8 +570,7 @@ static int div3(a1, a2, a3, x, p1, p2)
  ****************************************************************/
 
 /***
-static double f3(a, b, z)
-   double a, b, z;
+static double f3(double a, double b, double z)
 {
    double t4, t3, t2, t1;
    double t14, t13, t12, t11;
@@ -606,10 +624,9 @@ static double f2(a, b, z)
 }   
 ***/
 
-static int mac(at, bt, b1, b2, b3, b4, b5)
+static int 
+mac(double at, double bt, double *b1, double *b2, double *b3, double *b4, double *b5)
    /* float at, bt; */
-   double at, bt;
-   double *b1, *b2, *b3, *b4, *b5;
 {
    double a, b;
    double y1, y2, y3, y4, y5;
@@ -643,8 +660,7 @@ static int mac(at, bt, b1, b2, b3, b4, b5)
  ****************************************************/
 
 /***
-static double exp_approx1(st)
-   double st;
+static double exp_approx1(double st)
 {
    double s3, s2, s1;
 
@@ -657,9 +673,9 @@ static double exp_approx1(st)
 }
 ***/
 
-static int get_c(eq1, eq2, eq3, ep1, ep2, a, b, cr, ci)
-   double eq1, eq2, eq3, ep1, ep2, a, b;
-   double *cr, *ci;
+static int 
+get_c(double eq1, double eq2, double eq3, double ep1, double ep2, double a, double b, 
+      double *cr, double *ci)
 {
    double d, n;
 
@@ -676,8 +692,7 @@ static int get_c(eq1, eq2, eq3, ep1, ep2, a, b, cr, ci)
 }
 
 /***
-static double exp_approx2(st)
-   double st;
+static double exp_approx2(double st)
 {
    if (ifImg) 
       return(1.0 + ec1/(st - ex1) + 2.0*(ec2*(st-ex2)-ec3*ex3) /
@@ -687,9 +702,8 @@ static double exp_approx2(st)
 }
 ***/
 
-static int exp_pade(R, L, G, C, l, h)
-   float R, L, G, C, l;
-   TXLine *h;
+static int 
+exp_pade(float R, float L, float G, float C, float l, TXLine *h)
 {
   
    tau = sqrt((double) L*C);
@@ -767,8 +781,7 @@ static int exp_pade(R, L, G, C, l, h)
    return(ifImg);
 }
 
-static int pade(l)
-   float l;
+static int pade(float l)
 {
    int i, j;
    double a[6];
@@ -841,11 +854,11 @@ static int pade(l)
    return (1);
 }
 
-static int Gaussian_Elimination2(dims)
-   int dims;
+static int 
+Gaussian_Elimination2(int dims)
 {
-   register int i, j, k, dim;
-   register double f;
+   int i, j, k, dim;
+   double f;
    double max;
    int imax;
 
@@ -889,10 +902,9 @@ static int Gaussian_Elimination2(dims)
 }
 
 /***
-static int exp_div3(a1, a2, a3, x, p1, p2)
-   double x;
-   double a1, a2, a3;
-   double *p1, *p2;
+static int 
+exp_div3(double a1, double a2, double a3, double x, 
+         double *p1, double *p2)
    {
    *p1 = a1 + x;
    *p2 = - a3 / x;
@@ -904,9 +916,8 @@ static int exp_div3(a1, a2, a3, x, p1, p2)
 /***
  ***/
 
-static int exp_find_roots(a1, a2, a3, ex1, ex2, ex3)
-   double a1, a2, a3;
-   double *ex1, *ex2, *ex3;
+static int 
+exp_find_roots(double a1, double a2, double a3, double *ex1, double *ex2, double *ex3)
 {
    double x, t;
    double p, q;
@@ -982,15 +993,13 @@ static int exp_find_roots(a1, a2, a3, ex1, ex2, ex3)
    return(1);
 }
 static NDnamePt
-insert_ND(name, ndn)
-   char *name;
-   NDnamePt *ndn;
+insert_ND(char *name, NDnamePt *ndn)
 {
    int       cmp;
    NDnamePt  p;
 
    if (*ndn == NULL) {
-      p = *ndn = (NDnamePt) malloc(sizeof (NDname));
+      p = *ndn = (NDnamePt) tmalloc(sizeof (NDname));
       p->nd = NULL;
       p->right = p->left = NULL;
       strcpy(p->id, name);
@@ -1009,8 +1018,7 @@ insert_ND(name, ndn)
 
 
 static NODE 
-*insert_node(name)
-   char *name;
+*insert_node(char *name)
 {
    NDnamePt n;
    NODE    *p;
@@ -1028,11 +1036,11 @@ static NODE
 }
 
 static NODE
-*NEW_node()
+*NEW_node(void)
 {
    NODE *n;
 
-   n = (NODE *) malloc (sizeof (NODE));
+   n = (NODE *) tmalloc (sizeof (NODE));
    n->mptr = NULL;
    n->gptr = NULL;
    n->cptr = NULL;
@@ -1056,9 +1064,8 @@ static NODE
    return(n);
 }
 
-static int find_roots(a1, a2, a3, x1, x2, x3)
-   double a1, a2, a3;
-   double *x1, *x2, *x3;
+static int 
+find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
 {
    double x, t;
    double p, q;

@@ -12,16 +12,17 @@ Author: 1992 Charles Hough
 
 
 static double ratio[MAX_CP_TX_LINES];
-static int update_cnv_txl();
-static VI_list_txl *new_vi_txl();
-static void free_vi_txl();
-static int add_new_vi_txl();
-static int get_pvs_vi_txl();
-static int right_consts_txl();
-static int update_delayed_cnv_txl();
-static int multC();
-static int expC();
-static void copy_tx();
+static int update_cnv_txl(TXLine*, float);
+static VI_list_txl *new_vi_txl(void);
+static void free_vi_txl(VI_list_txl*);
+static int add_new_vi_txl(TXLinstance*, CKTcircuit*, int);
+static int get_pvs_vi_txl(int, int, TXLine*, double*, double*, double*, double*, double*, 
+                          double*, double*, double*);
+static int right_consts_txl(TXLine*, int, int, double, double, int, int, CKTcircuit*);
+static int update_delayed_cnv_txl(TXLine*, float);
+static int multC(double, double, double, double, double*, double*);
+static int expC(double, double, float, double*, double*);
+static void copy_tx(TXLine *, TXLine *);
 /*static char *message = "tau of txl line is larger than max time step";*/
 
 /*ARGSUSED*/
@@ -249,8 +250,8 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
     return(OK);
 }
 
-static void copy_tx(new, old)
-TXLine *new, *old;
+static void 
+copy_tx(TXLine *new, TXLine *old)
 {
 	int i;
 	VI_list_txl *temp;
@@ -298,14 +299,13 @@ TXLine *new, *old;
 }
 
 
-static int update_cnv_txl(tx, h)
-   TXLine *tx;
-   float h;
+static int 
+update_cnv_txl(TXLine *tx, float h)
 {
    int i;
 
    double ai, bi, ao, bo;
-   register double e, t;
+   double e, t;
 
    ai = tx->in_node->V;
    ao = tx->out_node->V;
@@ -313,7 +313,7 @@ static int update_cnv_txl(tx, h)
    bo = tx->out_node->dv;
 
    for (i = 0; i < 3; i++) {
-      register TERM *tm;
+      TERM *tm;
       tm = &(tx->h1_term[i]);
 
       e = tx->h1e[i];
@@ -330,7 +330,7 @@ static int update_cnv_txl(tx, h)
 
 
 static VI_list_txl
-*new_vi_txl()
+*new_vi_txl(void)
 {
    VI_list_txl *q;
 
@@ -339,22 +339,19 @@ static VI_list_txl
       pool_vi_txl = pool_vi_txl->pool;
       return(q);
    } else 
-      return((VI_list_txl *) malloc (sizeof (VI_list_txl)));
+      return((VI_list_txl *) tmalloc (sizeof (VI_list_txl)));
 }
 
 static void 
-free_vi_txl(q)
-   VI_list_txl *q;
+free_vi_txl(VI_list_txl *q)
 {
    q->pool = pool_vi_txl;
    pool_vi_txl = q;
 }
 
 
-static int add_new_vi_txl(here, ckt, time)
-TXLinstance *here;
-CKTcircuit *ckt;
-int time;
+static int 
+add_new_vi_txl(TXLinstance *here, CKTcircuit *ckt, int time)
 {
    VI_list_txl *vi;
    TXLine *tx, *tx2;
@@ -378,15 +375,13 @@ int time;
 }
 
 
-static int
-get_pvs_vi_txl(t1, t2, tx, v1_i, v2_i, i1_i, i2_i, v1_o, v2_o, i1_o, i2_o)
-   TXLine *tx;
-   int t1, t2;
-   double *v1_i, *v2_i, *i1_i, *i2_i, *v1_o, *v2_o, *i1_o, *i2_o;
+static int 
+get_pvs_vi_txl(int t1, int t2, TXLine *tx, double *v1_i, double *v2_i, double *i1_i, double *i2_i, 
+               double *v1_o, double *v2_o, double *i1_o, double *i2_o)
 {
    double ta, tb; 
-   register VI_list_txl *vi, *vi1;
-   register double f;
+   VI_list_txl *vi, *vi1;
+   double f;
    int ext = 0;
 
    ta = t1 - tx->taul;
@@ -465,21 +460,17 @@ get_pvs_vi_txl(t1, t2, tx, v1_i, v2_i, i1_i, i2_i, v1_o, v2_o, i1_o, i2_o)
 
 
 static int
-right_consts_txl(tx, t, time, h, h1, l1, l2, ckt)
-TXLine *tx;
-int t, time;
-double h, h1;  /***  h1 = 0.5 * h  ***/
-int l1, l2;
-CKTcircuit *ckt;
+right_consts_txl(TXLine *tx, int t, int time, double h, double h1, int l1, int l2, CKTcircuit *ckt)
+/***  h1 = 0.5 * h  ***/
 {
    int i;
-   register double ff=0.0, gg=0.0, e;
+   double ff=0.0, gg=0.0, e;
    double v1_i, v2_i, i1_i, i2_i;
    double v1_o, v2_o, i1_o, i2_o;
    int ext;
 
    if (! tx->lsl) {
-   register double ff1=0.0;
+   double ff1=0.0;
    for (i = 0; i < 3; i++) {
       tx->h1e[i] = e = exp((double) tx->h1_term[i].x * h);
       ff1 -= tx->h1_term[i].c * e;
@@ -500,7 +491,7 @@ CKTcircuit *ckt;
       double a, b, er, ei, a1, b1, a2, b2;
 
       for (i = 0; i < 4; i++) {
-     register TERM *tm;
+     TERM *tm;
      tm = &(tx->h3_term[i]);
      e =  exp((double) tm->x * h);
      tm->cnv_i = tm->cnv_i * e + h1 * tm->c * (v1_i * e + v2_i);
@@ -535,7 +526,7 @@ CKTcircuit *ckt;
       gg += tx->h3_term[4].cnv_i;
 
       {
-     register TERM *tm;
+     TERM *tm;
      tm = &(tx->h2_term[0]);
 
      e =  exp((double) tm->x * h);
@@ -566,7 +557,7 @@ CKTcircuit *ckt;
           2.0 * tx->h2_term[1].cnv_i;
    } else {
       for (i = 0; i < 6; i++) {
-     register TERM *tm;
+     TERM *tm;
      tm = &(tx->h3_term[i]);
 
      e =  exp((double) tm->x * h);
@@ -583,7 +574,7 @@ CKTcircuit *ckt;
       }
 
       for (i = 0; i < 3; i++) {
-     register TERM *tm;
+     TERM *tm;
      tm = &(tx->h2_term[i]);
 
      e =  exp((double) tm->x * h);
@@ -609,14 +600,12 @@ CKTcircuit *ckt;
 
 
 static int 
-update_delayed_cnv_txl(tx, h)
-   TXLine *tx;
-   float h;
+update_delayed_cnv_txl(TXLine *tx, float h)
 {
    float ratio;
-   register double f;
-   register VI_list_txl *vi;
-   register TERM *tms;
+   double f;
+   VI_list_txl *vi;
+   TERM *tms;
 
    h *= 0.5e-12;
    ratio = tx->ratio;
@@ -655,9 +644,8 @@ update_delayed_cnv_txl(tx, h)
    return(1);
 }
 
-static int expC(ar, ai, h, cr, ci)
-   double ar, ai, *cr, *ci;
-   float h;
+static int 
+expC(double ar, double ai, float h, double *cr, double *ci)
 {
    double e, cs, si;
 
@@ -670,9 +658,8 @@ static int expC(ar, ai, h, cr, ci)
    return(1);
 }
 
-static int multC(ar, ai, br, bi, cr, ci)
-   double ar, ai, br, bi;
-   double *cr, *ci;
+static int 
+multC(double ar, double ai, double br, double bi, double *cr, double *ci)
 {
 	register double tp;
 

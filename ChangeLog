@@ -1,3 +1,10 @@
+2004-01-14  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/spicelib/devices/txl/*: Added TXLunsetup function to allow
+	    for multiple simulations. 
+	
+	*   DEVICES: Updated txl status. 
+
 2004-01-11  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/spicelib/analysis/*: Removed redundant includes. File stdio.h

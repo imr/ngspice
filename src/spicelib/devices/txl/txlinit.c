@@ -49,7 +49,7 @@ SPICEdev TXLinfo = {
   DEVmodParam   : TXLmParam,
   DEVload       : TXLload,
   DEVsetup      : TXLsetup,
-  DEVunsetup    : NULL,
+  DEVunsetup    : TXLunsetup,
   DEVpzSetup    : NULL,
   DEVtemperature: NULL,
   DEVtrunc      : NULL,
