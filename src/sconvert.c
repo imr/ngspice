@@ -9,17 +9,19 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "ngspice.h"
 #include <stdio.h>
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "sim.h"
+
+#include <fteinput.h>
+#include <cpdefs.h>
+#include <ftedefs.h>
+#include <sim.h>
 #include "suffix.h"
 
-FILE *cp_in = 0;
-FILE *cp_out = 0;
-FILE *cp_err = 0;
-FILE *cp_curin = 0;
-FILE *cp_curout = 0;
-FILE *cp_curerr = 0;
+FILE *cp_in = NULL;
+FILE *cp_out = NULL;
+FILE *cp_err = NULL;
+FILE *cp_curin = NULL;
+FILE *cp_curout = NULL;
+FILE *cp_curerr = NULL;
 int cp_maxhistlength;
 bool cp_debug = FALSE;
 char cp_chars[128];
@@ -42,6 +44,24 @@ char out_pbuf[BSIZE_SP];
                         (nit), (fp)) != (nit)) { \
                     fprintf(cp_err, "Write error\n"); \
                     return; }
+
+
+void
+Input(REQUEST *request, RESPONSE *response)
+{
+    switch (request->option) {
+    case char_option:
+	response->reply.ch = inchar(request->fp);
+	response->option = request->option;
+	break;
+    default:
+	/* just ignore, since we don't want a million error messages */
+	response->option = error_option;
+	break;
+    }
+    return;
+}
+
 
 static char *
 fixdate(char *date)
