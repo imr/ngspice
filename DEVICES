@@ -2,8 +2,8 @@ DEVICES
 ---------------------------------------------------------------------------
 
 This file contains the status of devices available in ngspice. This file 
-will be updated every time the device pecific code is altered or changed. 
-This file it is useful in writing ngspice documentation.
+will be updated every time the device specific code is altered or changed. 
+This file is useful in writing ngspice documentation.
 
 
 ***************************************************************************
@@ -62,15 +62,41 @@ RES	- Simple linear resistor
 ***************************************************************************
 ********************* Distributed elements ********************************
 ***************************************************************************
-		     
-TRA  - Transmission line
-      Initial release
-     
-LTRA - Lossy Transmission line
-      Initial release
-     
-URC  - Uniform distributed RC line
-      Initial release		     
+
+CPL	- Simple Coupled Multiconductor Lines (Kspice)
+	Initial Release.
+	Ver:	N/A
+	Class:	P
+	Level:	1 (and only)
+	Status:	
+		
+	This model comes from kspice. It is not documented, if
+	you have kspice docs, can you write a short description
+	of its use ?
+	
+LTRA	- Lossy Transmission line
+	Initial release
+	     
+TRA	- Transmission line
+	Initial release
+
+TXL     - Simple Lossy Transmission Line (Kspice)
+	Initial Release.
+	Ver:	N/A
+	Class:	Y
+	Level:	1 (and only)
+	Status:	
+	
+	This model comes from kspice. It is not documented, if
+	you have kspice docs, can you write a short description
+	of its use ?
+	
+	There is some code left out from compilation:
+	TXLaccept and TXLfindBr. Any ideas ?
+
+
+URC	- Uniform distributed RC line
+	Initial release		     
 
 
 ***************************************************************************
@@ -114,7 +140,7 @@ SW  - Voltage controlled switch
 ****************************      Diodes       ****************************      
 ***************************************************************************
 
-DIO   - Junction Diode
+DIO	- Junction Diode
         Initial Release.
 	Ver: 	N/A
 	Class:	D
@@ -134,7 +160,7 @@ DIO   - Junction Diode
 *************************     Bipolar Devices     *************************
 ***************************************************************************
       
-BJT   - Bipolar Junction Transistor
+BJT	- Bipolar Junction Transistor
         Initial Release.
 	Ver: 	N/A
 	Class:	Q
@@ -147,7 +173,7 @@ BJT   - Bipolar Junction Transistor
 	- Temperature difference from circuit temperature
 	- Different area parameters for collector, base and emitter
 
-BJT2  - Bipolar Junction Trasistor
+BJT2	- Bipolar Junction Transistor
 	Initial Release.
 	Ver: 	N/A
 	Class:	Q
@@ -170,7 +196,7 @@ BJT2  - Bipolar Junction Trasistor
 *****************************    FET Devices    ***************************
 ***************************************************************************
 		     
-JFET  - Junction Field Effect transistor
+JFET	- Junction Field Effect transistor
         Initial Release.
 	Ver: 	N/A
 	Class:	J
@@ -185,7 +211,7 @@ JFET  - Junction Field Effect transistor
 	- Parallel multiplier
 	- Instance temperature as difference for circuit temperature
         
-JFET2 - Junction Field Effect Transistor  (PS model)
+JFET2	- Junction Field Effect Transistor  (PS model)
         Initial Release.
 	Ver: 	N/A
 	Class:	J

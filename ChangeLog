@@ -1,5 +1,16 @@
 2003-12-31  Paolo Nenzi <p.nenzi@ieee.org>
 
+        *  tests/transmission/{cpl*, txl*, ibm*}: Added test files for the
+	   kspice's cpl and txl devices. 
+	
+	*  src/spicelib/devices/cpl/*: Cleaned the cpl code.
+	
+	*  src/spicelib/devices/txl/*: Cleaned the txl code.
+	
+	*  src/frontend/subckt.c, src/spicelib/analysis/cktdojob.c,
+	   src/spicelib/analysis/dctran.c: added some txl an cpl specific
+	   code from kspice.
+
         *  src/spicelib/devices/mesa/*: Added parallel multiplier and "dtemp",
 	   pole-zero analysis and parallel code switches.
 
