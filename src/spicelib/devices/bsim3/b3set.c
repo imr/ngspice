@@ -756,9 +756,7 @@ IFuid tmpName;
 
         /* unit degree celcius */
         if (!model->BSIM3tnomGiven)  
-	    model->BSIM3tnom = ckt->CKTnomTemp; 
-        else
-            model->BSIM3tnom = model->BSIM3tnom + 273.15;    
+	    model->BSIM3tnom = ckt->CKTnomTemp;   
         if (!model->BSIM3LintGiven)  
            model->BSIM3Lint = 0.0;
         if (!model->BSIM3LlGiven)  
