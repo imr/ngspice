@@ -6,17 +6,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "tradefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-TRAmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+TRAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     TRAmodel **model = (TRAmodel **)inModel;
     TRAmodel *modfast = (TRAmodel *)kill;

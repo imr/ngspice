@@ -4,7 +4,6 @@ Author: 1987 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "urcdefs.h"
 #include "cktdefs.h"
@@ -14,11 +13,7 @@ Author: 1987 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-URCsetup(matrix,inModel,ckt,state)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *state;
+URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
         /* create the resistors/capacitors used to model the URC
          */
 {
@@ -280,9 +275,7 @@ URCsetup(matrix,inModel,ckt,state)
 }
 
 int
-URCunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     IFuid	varUid;
     int	error;

@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "tradefs.h"
@@ -16,9 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-TRAtemp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+TRAtemp(GENmodel *inModel, CKTcircuit *ckt)
         /*
          * pre-process parameters for later use
          */

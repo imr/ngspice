@@ -6,17 +6,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "tradefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-TRAdelete(inModel,name,kill)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **kill;
+TRAdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     TRAinstance **fast = (TRAinstance **)kill;
     TRAmodel *model = (TRAmodel *)inModel;

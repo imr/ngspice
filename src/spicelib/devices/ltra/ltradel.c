@@ -4,16 +4,12 @@ Author: 1990 Jaijeet S. Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ltradefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-LTRAdelete(inModel, name, kill)
-  GENmodel *inModel;
-  IFuid name;
-  GENinstance **kill;
+LTRAdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
   LTRAinstance **fast = (LTRAinstance **) kill;
   LTRAmodel *model = (LTRAmodel *) inModel;

@@ -4,17 +4,13 @@ Author: 1990 Jaijeet S. Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "ltradefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-LTRAtrunc(inModel, ckt, timeStep)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-  double *timeStep;
+LTRAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
 {
   LTRAmodel *model = (LTRAmodel *) inModel;

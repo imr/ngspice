@@ -4,7 +4,7 @@ Author: 1990 Jaijeet S. Roychowdhury
 Modified: 2000 AlansFixes
 **********/
 
-#ifdef __STDC__
+
 extern int LTRAaccept(CKTcircuit*,GENmodel*);
 extern int LTRAask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int LTRAacLoad(GENmodel*,CKTcircuit*);
@@ -44,43 +44,3 @@ extern double LTRAh3dashCoeffSetup(double*,int,double,double,double,double*,int,
 extern void LTRArcCoeffsSetup(double*,double*,double*,double*,double*,double*,int,double,double,double,double*,int,double);
 extern void LTRArlcCoeffsSetup(double*,double*,double*,double*,double*,double*,int,double,double,double,double,double*,int,double,int*);
 extern int LTRAstraightLineCheck(double,double,double,double,double,double,double,double);
-#else /* stdc */
-extern int LTRAaccept();
-extern int LTRAask();
-extern int LTRAacLoad();
-extern int LTRAdelete();
-extern void LTRAdestroy();
-extern int LTRAload();
-extern int LTRAmAsk();
-extern int LTRAmDelete();
-extern int LTRAparam();
-extern int LTRAmParam();
-extern int LTRAsetup();
-extern int LTRAunsetup();
-extern int LTRAtemp();
-extern int LTRAtrunc();
-
-extern int LTRAquadInterp();
-/*
-extern double LTRAcoeffSetup();
-extern double LTRAtCoeffSetup();
-extern double LTRAdivDiffs();
-*/
-extern double LTRArlcH1dashFunc();
-extern double LTRArlcH2Func();
-extern double LTRArlcH3dashFunc();
-extern double LTRArlcH1dashTwiceIntFunc();
-extern double LTRArlcH3dashIntFunc();
-extern double LTRArcH1dashTwiceIntFunc();
-extern double LTRArcH2TwiceIntFunc();
-extern double LTRArcH3dashTwiceIntFunc();
-extern double LTRAlteCalculate();
-/*
-extern double LTRAh1dashCoeffSetup();
-extern double LTRAh3dashCoeffSetup();
-*/
-extern void LTRArcCoeffsSetup();
-extern void LTRArlcCoeffsSetup();
-extern int LTRAstraightLineCheck();
-#endif /* stdc */
-

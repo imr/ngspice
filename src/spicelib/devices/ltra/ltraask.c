@@ -8,7 +8,6 @@ Author: 1990 Jaijeet S. Roychowdhury
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -18,12 +17,7 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 /* ARGSUSED */
 int
-LTRAask(ckt, inst, which, value, select)
-  CKTcircuit *ckt;
-  GENinstance *inst;
-  int which;
-  IFvalue *value;
-  IFvalue *select;
+LTRAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
   LTRAinstance *here = (LTRAinstance *) inst;
   int temp;

@@ -8,7 +8,6 @@ Author: 1990 Jaijeet S. Roychowdhury
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "ltradefs.h"
@@ -16,10 +15,7 @@ Author: 1990 Jaijeet S. Roychowdhury
 #include "suffix.h"
 
 int
-LTRAmParam(param, value, inModel)
-  int param;
-  IFvalue *value;
-  GENmodel *inModel;
+LTRAmParam(int param, IFvalue *value, GENmodel *inModel)
 {
   LTRAmodel *mods = (LTRAmodel *) inModel;
 

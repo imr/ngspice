@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "tradefs.h"
 #include "sperror.h"
@@ -14,10 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-TRAtrunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+TRAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
 {
     TRAmodel *model = (TRAmodel *)inModel;

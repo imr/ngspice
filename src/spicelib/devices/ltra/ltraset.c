@@ -4,7 +4,6 @@ Author: 1990 Jaijeet S. Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "ltradefs.h"
@@ -12,11 +11,7 @@ Author: 1990 Jaijeet S. Roychowdhury
 #include "suffix.h"
 
 int
-LTRAsetup(matrix, inModel, ckt, state)
-  SMPmatrix *matrix;
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-  int *state;
+LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 /*
  * load the transmission line structure with those pointers needed later for
  * fast matrix loading
@@ -223,9 +218,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-LTRAunsetup(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+LTRAunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
   LTRAmodel *model;
   LTRAinstance *here;

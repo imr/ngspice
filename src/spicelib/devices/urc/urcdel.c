@@ -6,17 +6,13 @@ Author: 1987 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "urcdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-URCdelete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
+URCdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
     URCmodel *model = (URCmodel *)inModel;
     URCinstance **fast = (URCinstance**)inst;

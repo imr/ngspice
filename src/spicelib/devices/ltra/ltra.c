@@ -10,7 +10,6 @@ Author: 1990 Jaijeet S. Roychowdhury
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "ifsim.h"
 #include "ltradefs.h"

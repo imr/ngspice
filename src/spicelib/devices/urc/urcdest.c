@@ -7,14 +7,12 @@ Author: 1987 Thomas L. Quarles
 
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "urcdefs.h"
 #include "suffix.h"
 
 
 void
-URCdestroy(inModel)
-    GENmodel **inModel;
+URCdestroy(GENmodel **inModel)
 {
     URCmodel **model = (URCmodel **)inModel;
     URCinstance *here;

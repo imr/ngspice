@@ -6,7 +6,6 @@ Author: 1987 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "urcdefs.h"
 #include "ifsim.h"
 #include "sperror.h"
@@ -14,10 +13,7 @@ Author: 1987 Thomas L. Quarles
 
 
 int
-URCmParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+URCmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     URCmodel *model = (URCmodel *)inModel;
     switch(param) {

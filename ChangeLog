@@ -1,5 +1,11 @@
 2003-12-31  Paolo Nenzi <p.nenzi@ieee.org>
 
+        *  src/spicelib/devices/tra/*: Cleaned code.
+	
+	*  src/spicelib/devices/ltra/*: Cleaned code.
+	
+	*  src/spicelib/devices/urc/*: Cleaned code.
+
         *  tests/transmission/{cpl*, txl*, ibm*}: Added test files for the
 	   kspice's cpl and txl devices. 
 	
@@ -18,7 +24,8 @@
 	
 	*  tests/mes, tests/mes/subth.cir: added test netlist for mes devices.
 
-	*  DEVICES: updated documentation including MES and MESA changes.
+	*  DEVICES: updated documentation including MES, MESA, CPL, TXL, TRA,
+	   LTRA and URC changes.
 
 2003-12-30  Paolo Nenzi <p.nenzi@ieee.org>
 

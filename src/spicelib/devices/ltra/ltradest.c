@@ -4,13 +4,11 @@ Author: 1990 Jaijeet S. Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ltradefs.h"
 #include "suffix.h"
 
 void
-LTRAdestroy(inModel)
-  GENmodel **inModel;
+LTRAdestroy(GENmodel **inModel)
 {
   LTRAmodel **model = (LTRAmodel **) inModel;
   LTRAinstance *here;

@@ -4,16 +4,13 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "tradefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-TRAacLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+TRAacLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current values into the 
          * sparse matrix previously provided 
          */

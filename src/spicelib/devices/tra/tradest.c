@@ -6,14 +6,12 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "tradefs.h"
 #include "suffix.h"
 
 
 void
-TRAdestroy(inModel)
-    GENmodel **inModel;
+TRAdestroy(GENmodel **inModel)
 {
     TRAmodel **model = (TRAmodel **)inModel;
     TRAinstance *here;

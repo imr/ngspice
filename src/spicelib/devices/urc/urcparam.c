@@ -6,7 +6,6 @@ Author: 1987 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "urcdefs.h"
 #include "sperror.h"
@@ -15,11 +14,7 @@ Author: 1987 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-URCparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+URCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     URCinstance *here = (URCinstance *)inst;
     switch(param) {

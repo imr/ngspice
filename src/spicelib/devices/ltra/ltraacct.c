@@ -4,16 +4,13 @@ Author: 1990 Jaijeet S. Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "ltradefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-LTRAaccept(ckt, inModel)
-  CKTcircuit *ckt;
-  GENmodel *inModel;
+LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
 {
   LTRAmodel *model = (LTRAmodel *) inModel;
   LTRAinstance *here;

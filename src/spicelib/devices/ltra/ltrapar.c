@@ -4,7 +4,6 @@ Author: 1990 Jaijeet S. Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ltradefs.h"
 #include "ifsim.h"
 #include "sperror.h"
@@ -13,11 +12,7 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 /* ARGSUSED */
 int
-LTRAparam(param, value, inst, select)
-  int param;
-  IFvalue *value;
-  GENinstance *inst;
-  IFvalue *select;
+LTRAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
   LTRAinstance *here = (LTRAinstance *) inst;
   switch (param) {
@@ -41,10 +36,13 @@ LTRAparam(param, value, inst, select)
     switch (value->v.numValue) {
     case 4:
       here->LTRAinitCur2 = *(value->v.vec.rVec + 3);
+      break;
     case 3:
       here->LTRAinitVolt2 = *(value->v.vec.rVec + 2);
+      break;
     case 2:
       here->LTRAinitCur1 = *(value->v.vec.rVec + 1);
+      break;
     case 1:
       here->LTRAinitVolt1 = *(value->v.vec.rVec);
       break;

@@ -4,7 +4,6 @@ Author: 1990 Jaijeet S. Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "ltradefs.h"
 #include "trandefs.h"
@@ -12,9 +11,7 @@ Author: 1990 Jaijeet S. Roychowdhury
 #include "suffix.h"
 
 int
-LTRAload(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+LTRAload(GENmodel *inModel, CKTcircuit *ckt)
 /*
  * load the appropriate values for the current timepoint into the sparse
  * matrix and the right-hand-side vector

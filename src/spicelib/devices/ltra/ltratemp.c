@@ -4,7 +4,6 @@ Author: 1990 Jaijeet S. Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "ltradefs.h"
@@ -13,9 +12,7 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 /* ARGSUSED */
 int
-LTRAtemp(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+LTRAtemp(GENmodel *inModel, CKTcircuit *ckt)
 /*
  * pre-process parameters for later use
  */

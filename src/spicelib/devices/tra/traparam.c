@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "tradefs.h"
 #include "ifsim.h"
 #include "sperror.h"
@@ -15,11 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-TRAparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+TRAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     TRAinstance *here = (TRAinstance *)inst;
     switch(param) {
@@ -67,10 +62,13 @@ TRAparam(param,value,inst,select)
             switch(value->v.numValue){
                 case 4:
                     here->TRAinitCur2 = *(value->v.vec.rVec+3);
+                    break;
                 case 3:
                     here->TRAinitVolt2 =  *(value->v.vec.rVec+2);
+                    break;
                 case 2:
                     here->TRAinitCur1 = *(value->v.vec.rVec+1);
+                    break;
                 case 1:
                     here->TRAinitVolt1 = *(value->v.vec.rVec);
                     break;

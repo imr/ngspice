@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "tradefs.h"
 #include "trandefs.h"
@@ -16,9 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 /*ARGSUSED*/
 int
-TRAload(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+TRAload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current values into the 
          * sparse matrix previously provided 
          */

@@ -74,11 +74,29 @@ CPL	- Simple Coupled Multiconductor Lines (Kspice)
 	you have kspice docs, can you write a short description
 	of its use ?
 	
+	- Does not implement parallel code switches
+	
 LTRA	- Lossy Transmission line
-	Initial release
+	Initial Release.
+	Ver:	N/A
+	Class:	O
+	Level:	1 (and only)
+	Status:	
+		
+	Original spice model.
+	
+	- Does not implement parallel code switches
 	     
 TRA	- Transmission line
-	Initial release
+	Initial Release.
+	Ver:	N/A
+	Class:	T
+	Level:	1 (and only)
+	Status:	
+	
+	Original spice model.
+	
+	- Does not implement parallel code switches
 
 TXL     - Simple Lossy Transmission Line (Kspice)
 	Initial Release.
@@ -93,10 +111,20 @@ TXL     - Simple Lossy Transmission Line (Kspice)
 	
 	There is some code left out from compilation:
 	TXLaccept and TXLfindBr. Any ideas ?
+	
+	- Does not implement parallel code switches
 
 
 URC	- Uniform distributed RC line
-	Initial release		     
+	Initial Release.
+	Ver:	N/A
+	Class:	U
+	Level:	1 (and only)
+	Status:	
+	
+	Original spcice model.
+	
+	- Does not implement parallel code switches
 
 
 ***************************************************************************

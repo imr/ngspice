@@ -11,7 +11,6 @@ Author: 1987 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -22,11 +21,7 @@ Author: 1987 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-URCmAsk(ckt,inst,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inst;
-    int which;
-    IFvalue *value;
+URCmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     URCmodel *here = (URCmodel *)inst;
     switch(which) {

@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "tradefs.h"
@@ -16,11 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-TRAsetup(matrix,inModel,ckt,state)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *state;
+TRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
         /* load the transmission line structure with those pointers needed later
          * for fast matrix loading 
          */
@@ -118,9 +113,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-TRAunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+TRAunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     TRAmodel *model;
     TRAinstance *here;

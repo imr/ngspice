@@ -8,7 +8,6 @@ Author: 1990 Jaijeet S. Roychowdhury
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "ltradefs.h"
@@ -16,11 +15,7 @@ Author: 1990 Jaijeet S. Roychowdhury
 #include "suffix.h"
 
 int
-LTRAmAsk(ckt, inModel, param, value)
-  CKTcircuit *ckt;
-  GENmodel *inModel;
-  int param;
-  IFvalue *value;
+LTRAmAsk(CKTcircuit *ckt, GENmodel *inModel, int param, IFvalue *value)
 {
   LTRAmodel *mods = (LTRAmodel *) inModel;
 
