@@ -400,16 +400,16 @@ MOS3load(GENmodel *inModel, CKTcircuit *ckt)
              *   corresponding derivative (conductance).
              */
 
-	next1:      if(vbs <= -3*vt) {
-	    arg=3*vt/(vbs*CONSTe);
-	    arg = arg * arg * arg;
-	    here->MOS3cbs = -SourceSatCur*(1+arg)+ckt->CKTgmin*vbs;
-	    here->MOS3gbs = SourceSatCur*3*arg/vbs+ckt->CKTgmin;
-	} else {
-	    evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
-	    here->MOS3gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
-	    here->MOS3cbs = SourceSatCur*(evbs-1) + ckt->CKTgmin*vbs;
-	}
+next1:      if(vbs <= -3*vt) {
+                arg=3*vt/(vbs*CONSTe);
+                arg = arg * arg * arg;
+                here->MOS3cbs = -SourceSatCur*(1+arg)+ckt->CKTgmin*vbs;
+                here->MOS3gbs = SourceSatCur*3*arg/vbs+ckt->CKTgmin;
+            } else {
+                evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
+                here->MOS3gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
+                here->MOS3cbs = SourceSatCur*(evbs-1) + ckt->CKTgmin*vbs;
+            }
             if(vbd <= -3*vt) {
                 arg=3*vt/(vbd*CONSTe);
                 arg = arg * arg * arg;
@@ -717,7 +717,7 @@ MOS3load(GENmodel *inModel, CKTcircuit *ckt)
 		if ( (here->MOS3mode*vds) <= vdsat ) {
 		    if ( (model->MOS3maxDriftVel > 0.0) ||
 			 (model->MOS3alpha == 0.0) ||
-			 (ckt->CKTbadMos3)                         ) goto line700;
+			 (ckt->CKTbadMos3)                    ) goto line700;
 		    else {
 			arga = (here->MOS3mode*vds)/vdsat;
 			delxl = sqrt(model->MOS3kappa*model->MOS3alpha*vdsat/8);
@@ -730,133 +730,134 @@ MOS3load(GENmodel *inModel, CKTcircuit *ckt)
 			ddldvb = 0.0;
 			goto line520;
 		    };
+		};
 			    
-		    if ( model->MOS3maxDriftVel <= 0.0 ) goto line510;
-		    if (model->MOS3alpha == 0.0) goto line700;
-		    cdsat = cdrain;
-		    gdsat = cdsat*(1.0-fdrain)*onvdsc;
-		    gdsat = MAX(1.0e-12,gdsat);
-		    gdoncd = gdsat/cdsat;
-		    gdonfd = gdsat/(1.0-fdrain);
-		    gdonfg = gdsat*onfg;
-		    dgdvg = gdoncd*here->MOS3gm-gdonfd*dfddvg+gdonfg*dfgdvg;
-		    dgdvd = gdoncd*here->MOS3gds-gdonfd*dfddvd+gdonfg*dfgdvd;
-		    dgdvb = gdoncd*here->MOS3gmbs-gdonfd*dfddvb+gdonfg*dfgdvb;
+		if ( model->MOS3maxDriftVel <= 0.0 ) goto line510;
+		if (model->MOS3alpha == 0.0) goto line700;
+		cdsat = cdrain;
+		gdsat = cdsat*(1.0-fdrain)*onvdsc;
+		gdsat = MAX(1.0e-12,gdsat);
+		gdoncd = gdsat/cdsat;
+		gdonfd = gdsat/(1.0-fdrain);
+		gdonfg = gdsat*onfg;
+		dgdvg = gdoncd*here->MOS3gm-gdonfd*dfddvg+gdonfg*dfgdvg;
+		dgdvd = gdoncd*here->MOS3gds-gdonfd*dfddvd+gdonfg*dfgdvd;
+		dgdvb = gdoncd*here->MOS3gmbs-gdonfd*dfddvb+gdonfg*dfgdvb;
 			    
-		    if (ckt->CKTbadMos3)
+		if (ckt->CKTbadMos3)
 			emax = cdsat*oneoverxl/gdsat;
-		    else
+		else
 			emax = model->MOS3kappa * cdsat*oneoverxl/gdsat;
-		    emoncd = emax/cdsat;
-		    emongd = emax/gdsat;
-		    demdvg = emoncd*here->MOS3gm-emongd*dgdvg;
-		    demdvd = emoncd*here->MOS3gds-emongd*dgdvd;
-		    demdvb = emoncd*here->MOS3gmbs-emongd*dgdvb;
+		emoncd = emax/cdsat;
+		emongd = emax/gdsat;
+		demdvg = emoncd*here->MOS3gm-emongd*dgdvg;
+		demdvd = emoncd*here->MOS3gds-emongd*dgdvd;
+		demdvb = emoncd*here->MOS3gmbs-emongd*dgdvb;
 			    
-		    arga = 0.5*emax*model->MOS3alpha;
-		    argc = model->MOS3kappa*model->MOS3alpha;
-		    argb = sqrt(arga*arga+argc*((here->MOS3mode*vds)-vdsat));
-		    delxl = argb-arga;
-		    if (argb != 0.0) {
+		arga = 0.5*emax*model->MOS3alpha;
+		argc = model->MOS3kappa*model->MOS3alpha;
+		argb = sqrt(arga*arga+argc*((here->MOS3mode*vds)-vdsat));
+		delxl = argb-arga;
+		if (argb != 0.0) {
 			dldvd = argc/(argb+argb);
 			dldem = 0.5*(arga/argb-1.0)*model->MOS3alpha;
-		    } else {
+		} else {
 			dldvd = 0.0;
 			dldem = 0.0;
-		    }
-		    ddldvg = dldem*demdvg;
-		    ddldvd = dldem*demdvd-dldvd;
-		    ddldvb = dldem*demdvb;
-		    goto line520;
-		line510:
-		    if (ckt->CKTbadMos3) {
-			delxl = sqrt(model->MOS3kappa*((here->MOS3mode*vds)-vdsat)*
-				     model->MOS3alpha);
-			dldvd = 0.5*delxl/((here->MOS3mode*vds)-vdsat);
-		    } else {
-			delxl = sqrt(model->MOS3kappa*model->MOS3alpha*
-				     ((here->MOS3mode*vds)-vdsat+(vdsat/8)));
-			dldvd =  0.5*delxl/((here->MOS3mode*vds)-vdsat+(vdsat/8));
-		    };
-		    ddldvg = 0.0;
-		    ddldvd = -dldvd;
-		    ddldvb = 0.0;
-		    /*
-		     *.....punch through approximation
-		     */
-		line520:
-		    if ( delxl > (0.5*EffectiveLength) ) {
-			delxl = EffectiveLength-(EffectiveLength*EffectiveLength/
-						 (4.0*delxl));
-			arga = 4.0*(EffectiveLength-delxl)*(EffectiveLength-delxl)/
-			    (EffectiveLength*EffectiveLength);
-			ddldvg = ddldvg*arga;
-			ddldvd = ddldvd*arga;
-			ddldvb = ddldvb*arga;
-			dldvd =  dldvd*arga;
-		    }
-		    /*
-		     *.....saturation region
-		     */
-		    dlonxl = delxl*oneoverxl;
-		    xlfact = 1.0/(1.0-dlonxl);
-			    
-		    cd1 = cdrain;
-		    cdrain = cdrain*xlfact;
-		    diddl = cdrain/(EffectiveLength-delxl);
-		    here->MOS3gm = here->MOS3gm*xlfact+diddl*ddldvg;
-		    here->MOS3gmbs = here->MOS3gmbs*xlfact+diddl*ddldvb;
-		    gds0 = diddl*ddldvd;
-		    here->MOS3gm = here->MOS3gm+gds0*dvsdvg;
-		    here->MOS3gmbs = here->MOS3gmbs+gds0*dvsdvb;
-		    here->MOS3gds = here->MOS3gds*xlfact+diddl*dldvd+gds0*dvsdvd;
-/*          here->MOS3gds = (here->MOS3gds*xlfact)+gds0*dvsdvd-
-	    (cd1*ddldvd/(EffectiveLength*(1-2*dlonxl+dlonxl*dlonxl)));*/
-			    
-		    /*
-		     *.....finish strong inversion case
-		     */
-		line700:
-		    if ( (here->MOS3mode==1?vgs:vgd) < von ) {
-			/*
-			 *.....weak inversion
-			 */
-			onxn = 1.0/xn;
-			ondvt = onxn/vt;
-			wfact = exp( ((here->MOS3mode==1?vgs:vgd)-von)*ondvt );
-			cdrain = cdrain*wfact;
-			gms = here->MOS3gm*wfact;
-			gmw = cdrain*ondvt;
-			here->MOS3gm = gmw;
-			if ((here->MOS3mode*vds) > vdsat) {
-			    here->MOS3gm = here->MOS3gm+gds0*dvsdvg*wfact;
-			}
-			here->MOS3gds = here->MOS3gds*wfact+(gms-gmw)*dvodvd;
-			here->MOS3gmbs = here->MOS3gmbs*wfact+(gms-gmw)*dvodvb-gmw*
-			    ((here->MOS3mode==1?vgs:vgd)-von)*onxn*dxndvb;
-		    }
-		    /*
-		     *.....charge computation
-		     */
-		    goto innerline1000;
-		    /*
-		     *.....special case of vds = 0.0d0
-		     */
-		line900:
-		    Beta = Beta*fgate;
-		    cdrain = 0.0;
-		    here->MOS3gm = 0.0;
-		    here->MOS3gds = Beta*(vgsx-vth);
-		    here->MOS3gmbs = 0.0;
-		    if ( (model->MOS3fastSurfaceStateDensity != 0.0) && 
-			 ((here->MOS3mode==1?vgs:vgd) < von) ) {
-			here->MOS3gds *=exp(((here->MOS3mode==1?vgs:vgd)-von)/(vt*xn));
-		    }
-		innerline1000:;
-		    /* 
-		     *.....done
-		     */
 		}
+		ddldvg = dldem*demdvg;
+		ddldvd = dldem*demdvd-dldvd;
+		ddldvb = dldem*demdvb;
+		goto line520;
+line510:
+		if (ckt->CKTbadMos3) {
+		  delxl = sqrt(model->MOS3kappa*((here->MOS3mode*vds)-vdsat)*
+				     model->MOS3alpha);
+		  dldvd = 0.5*delxl/((here->MOS3mode*vds)-vdsat);
+	       	} else {
+		  delxl = sqrt(model->MOS3kappa*model->MOS3alpha*
+				     ((here->MOS3mode*vds)-vdsat+(vdsat/8)));
+		  dldvd =  0.5*delxl/((here->MOS3mode*vds)-vdsat+(vdsat/8));
+	        };
+		ddldvg = 0.0;
+		ddldvd = -dldvd;
+		ddldvb = 0.0;
+		/*
+		 *.....punch through approximation
+		 */
+line520:
+		if ( delxl > (0.5*EffectiveLength) ) {
+		delxl = EffectiveLength-(EffectiveLength*EffectiveLength/
+						 (4.0*delxl));
+		arga = 4.0*(EffectiveLength-delxl)*(EffectiveLength-delxl)/
+			    (EffectiveLength*EffectiveLength);
+		ddldvg = ddldvg*arga;
+		ddldvd = ddldvd*arga;
+		ddldvb = ddldvb*arga;
+		dldvd =  dldvd*arga;
+		}
+		/*
+		 *.....saturation region
+		 */
+		dlonxl = delxl*oneoverxl;
+		xlfact = 1.0/(1.0-dlonxl);
+
+		cd1 = cdrain;
+		cdrain = cdrain*xlfact;
+		diddl = cdrain/(EffectiveLength-delxl);
+		here->MOS3gm = here->MOS3gm*xlfact+diddl*ddldvg;
+		here->MOS3gmbs = here->MOS3gmbs*xlfact+diddl*ddldvb;
+		gds0 = diddl*ddldvd;
+		here->MOS3gm = here->MOS3gm+gds0*dvsdvg;
+		here->MOS3gmbs = here->MOS3gmbs+gds0*dvsdvb;
+		here->MOS3gds = here->MOS3gds*xlfact+diddl*dldvd+gds0*dvsdvd;
+/*              here->MOS3gds = (here->MOS3gds*xlfact)+gds0*dvsdvd-
+	           (cd1*ddldvd/(EffectiveLength*(1-2*dlonxl+dlonxl*dlonxl)));*/
+			    
+		/*
+		 *.....finish strong inversion case
+		 */
+line700:
+		if ( (here->MOS3mode==1?vgs:vgd) < von ) {
+		/*
+		 *.....weak inversion
+		 */
+		onxn = 1.0/xn;
+		ondvt = onxn/vt;
+		wfact = exp( ((here->MOS3mode==1?vgs:vgd)-von)*ondvt );
+		cdrain = cdrain*wfact;
+		gms = here->MOS3gm*wfact;
+		gmw = cdrain*ondvt;
+		here->MOS3gm = gmw;
+		if ((here->MOS3mode*vds) > vdsat) {
+		    here->MOS3gm = here->MOS3gm+gds0*dvsdvg*wfact;
+		}
+		here->MOS3gds = here->MOS3gds*wfact+(gms-gmw)*dvodvd;
+		here->MOS3gmbs = here->MOS3gmbs*wfact+(gms-gmw)*dvodvb-gmw*
+			    ((here->MOS3mode==1?vgs:vgd)-von)*onxn*dxndvb;
+		}
+		/*
+		 *.....charge computation
+		 */
+		goto innerline1000;
+		/*
+		 *.....special case of vds = 0.0d0
+		 */
+line900:
+		Beta = Beta*fgate;
+		cdrain = 0.0;
+		here->MOS3gm = 0.0;
+		here->MOS3gds = Beta*(vgsx-vth);
+		here->MOS3gmbs = 0.0;
+		if ( (model->MOS3fastSurfaceStateDensity != 0.0) && 
+		           ((here->MOS3mode==1?vgs:vgd) < von) ) {
+		   here->MOS3gds *=exp(((here->MOS3mode==1?vgs:vgd)-von)/(vt*xn));
+		}
+innerline1000:;
+		/* 
+		 *.....done
+		 */
+	    }
 		    
 		    
 		/* now deal with n vs p polarity */
@@ -1239,7 +1240,6 @@ MOS3load(GENmodel *inModel, CKTcircuit *ckt)
 		*(here->MOS3SPdpPtr) += (-here->MOS3gds-
 					 xrev*(here->MOS3gm+here->MOS3gmbs));
 	    }
-	}
     }
     return(OK);
 }

@@ -91,7 +91,7 @@ DEVfetlim(double vnew,
     double vtemp;
 
     vtsthi = fabs(2*(vold-vto))+2;
-    vtstlo = fabs(vold-vto)*1;
+    vtstlo = fabs(vold-vto)+1;
     vtox = vto + 3.5;
     delv = vnew-vold;
 
@@ -251,7 +251,10 @@ DEVqmeyer(double vgs,		/* initial voltage gate-source */
     double vddif2;
     double vgst;
 
+#define MAGIC_VDS 0.025
+
     vgst = vgs-von;
+    vdsat = MAX(vdsat, MAGIC_VDS);
     if (vgst <= -phi) {
         *capgb = cox/2;
         *capgs = 0;
@@ -263,9 +266,19 @@ DEVqmeyer(double vgs,		/* initial voltage gate-source */
     } else if (vgst <= 0) {
         *capgb = -vgst*cox/(2*phi);
         *capgs = vgst*cox/(1.5*phi)+cox/3;
-        *capgd = 0;
+        vds = vgs-vgd;
+        if (vds>=vdsat) {
+           *capgd = 0;
+        } else {
+            vddif  = 2.0*vdsat-vds;
+            vddif1 = vdsat-vds/*-1.0e-12*/;
+            vddif2 = vddif*vddif;
+            *capgd = *capgs*(1.0-vdsat*vdsat/vddif2);
+            *capgs = *capgs*(1.0-vddif1*vddif1/vddif2);
+        }
     } else  {
         vds = vgs-vgd;
+        vdsat = MAX(vdsat, MAGIC_VDS);
         if (vdsat <= vds) {
             *capgs = cox/3;
             *capgd = 0;
