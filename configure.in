@@ -554,7 +554,7 @@ dnl  ----  Option to include GNU readline support in ngspice CLI  ----
 dnl  ----  Default: disabled.                                     ----
 dnl  ----  Hope to see in the future readline replacement.        ----
 
-if test "$with_readline" = "yes"; then
+if test "$with_readline" != "yes"; then
     AC_MSG_RESULT(GNU readline disabled.)
 else 
     AC_MSG_RESULT(Checking for readline:)
