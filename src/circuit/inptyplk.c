@@ -4,7 +4,7 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 /*  look up the 'type' in the device description struct and return the
- *  appropriatestrchr for the device found, or -1 for not found 
+ *  appropriate strchr for the device found, or -1 for not found 
  */
 
 #include "ngspice.h"
@@ -19,12 +19,12 @@ INPtypelook(char *type)
 {
 
     int i;
-    for(i=0;i<ft_sim->numDevices;i++) {
-        if(strcmp(type,(*(ft_sim->devices)[i]).name)==0) {
+    for(i = 0; i < ft_sim->numDevices; i++) {
+        if(strcmp(type, (*(ft_sim->devices)[i]).name) == 0) {
             /*found the device - return it */
-            return(i);
+            return i;
         }
     }
-    return(-1);
+    return -1;
 }
 

@@ -3,11 +3,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include "ngspice.h"
 #include <stdio.h>
-#include "inpdefs.h"
-#include "ifsim.h"
-#include "inp.h"
+
+#include <config.h>
+#include <ngspice.h>
+
+#include "inppas1.h"
 
 /*
  * The first pass of the circuit parser just looks for '.model' lines

@@ -3,17 +3,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include "ngspice.h"
-#include <ctype.h>
-#include "ifsim.h"
-#include "cpdefs.h"
-#include "fteext.h"
-#include "ftedefs.h"
-#include "inpdefs.h"
-#include "iferrmsg.h"
-#include "tskdefs.h"
-#include "inpmacs.h"
-#include "inp.h"
+#include <config.h>
+#include <ngspice.h>
+#include <iferrmsg.h>
+#include <inpmacs.h>
+
+#include "inppas2.h"
 
 /* pass 2 - Scan through the lines.  ".model" cards have processed
  *  in pass1 and are ignored here.

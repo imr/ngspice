@@ -48,7 +48,9 @@ libinp_a_SOURCES = \
 		inpmkmod.c	\
 		inpmktmp.c	\
 		inppas1.c	\
+		inppas1.h	\
 		inppas2.c	\
+		inppas2.h	\
 		inppname.c	\
 		inpptree.c	\
 		inpsymt.c	\
@@ -56,7 +58,6 @@ libinp_a_SOURCES = \
 		ptfuncs.c	\
 		sperror.c	\
 		inp.h
-
 
 
 INCLUDES = -I$(top_srcdir)/src/include
