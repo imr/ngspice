@@ -55,6 +55,7 @@ CKTnewTask(void *ckt, void **taskPtr, IFuid taskName, void **defPtr)
 	tsk->TSKgshunt = def->TSKgshunt;
         /* delmin */
         tsk->TSKtrtol = def->TSKtrtol;
+	tsk->TSKdefaultMosM = def->TSKdefaultMosM;
         tsk->TSKdefaultMosL = def->TSKdefaultMosL;
         tsk->TSKdefaultMosW = def->TSKdefaultMosW;
         tsk->TSKdefaultMosAD = def->TSKdefaultMosAD;
@@ -85,7 +86,17 @@ CKTnewTask(void *ckt, void **taskPtr, IFuid taskName, void **defPtr)
         tsk->TSKlteReltol = 1e-3;
         tsk->TSKlteAbstol = 1e-6;
 #endif /* NEWTRUNC */
+
+/* gtri - modify - 4/17/91 - wbk - Change trtol default */
+#ifdef XSPICE
+/* Lower default value of trtol to give more accuracy */
+/*    tsk->TSKtrtol = 7;  */
+    tsk->TSKtrtol = 1;
+/* gtri - modify - 4/17/91 - wbk - Change trtol default */
+#else
         tsk->TSKtrtol = 7;
+#endif /* XSPICE */
+
         tsk->TSKbypass = 0;
         tsk->TSKtranMaxIter = 10;
         tsk->TSKdcMaxIter = 100;

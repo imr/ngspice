@@ -1,3 +1,13 @@
+2005-03-20  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/spicelib/analysis/cktntask.c: The default poarallel
+	    multiplier (m=1) for  mosfet levels 1, 2, 3 and 9 was not set 
+	    in interactive analyses. Applied fix sent by Steven Borley 
+	    <steven.borley@diode.demon.co.uk>.
+	    
+	*   Changed value of trtol to 1 when xspice extensions are compiled
+	    (as in xspice source code).    
+
 2005-03-17  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/main.c: Applied patch sent by Steven Borley
