@@ -231,8 +231,9 @@ src/devices/vcvs/Makefile	\
 src/devices/vsrc/Makefile	\
 src/devices/parser/Makefile	\
 src/frontend/Makefile		\
-src/frontend/plotting/Makefile	\
 src/frontend/help/Makefile	\
+src/frontend/parser/Makefile	\
+src/frontend/plotting/Makefile	\
 src/include/Makefile		\
 src/maths/Makefile		\
 src/maths/cmaths/Makefile	\
@@ -241,7 +242,6 @@ src/maths/deriv/Makefile	\
 src/maths/poly/Makefile		\
 src/maths/sparse/Makefile	\
 src/misc/Makefile		\
-src/parser/Makefile		\
 tests/Makefile			\
 tests/filters/Makefile		\
 tests/polezero/Makefile		\
