@@ -171,8 +171,11 @@ TCL_PKG_PATH = @TCL_PACKAGE_PATH@
 
 TCLSPICE_VERSION = @VERSION@
 
-TCL_FILES = libspice.so pkgIndex.tcl measure_spice.pl  spicepp.pl \
-	tclspice_source.tcl spicepp.tcl
+TCL_SOURCE = controls.tcl measure.tcl spicepp.tcl \
+	engUnits.tcl nodeDialog.tcl spicewish.tcl viewer.tcl \
+	gnuplot.tcl readline.tcl pkgIndex.tcl
+
+TCL_FILES = libspice.so measure_spice.pl  spicepp.pl $(TCL_SOURCE)
 
 LIBSPICE_OBJS = tclspice.o
 
@@ -195,15 +198,16 @@ install-tcl-recursive:
 	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
 	done; 
 
-install-tclspice: ${TCL_FILES}
+install-tclspice: $(TCL_FILES)
 	$(mkinstalldirs) $(DESTDIR)$(TCL_PKG_PATH)
 	$(INSTALL_DATA) libspice.so $(DESTDIR)$(TCL_PKG_PATH)
 	$(mkinstalldirs) $(DESTDIR)$(TCL_PKG_PATH)/spice
-	$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(TCL_PKG_PATH)/spice
-	$(INSTALL_DATA) tclspice_source.tcl $(DESTDIR)$(TCL_PKG_PATH)/spice
-	$(INSTALL_DATA) spicepp.tcl $(DESTDIR)$(TCL_PKG_PATH)/spice
 	$(INSTALL_PROGRAM) spicepp.pl $(DESTDIR)$(TCL_PKG_PATH)/spice
 	$(INSTALL_PROGRAM) measure_spice.pl $(DESTDIR)$(TCL_PKG_PATH)/spice
+	@for f in $(TCL_SOURCE) ; do \
+	echo $(INSTALL_DATA) $$f $(DESTDIR)$(TCL_PKG_PATH)/spice; \
+	$(INSTALL_DATA) $$f $(DESTDIR)$(TCL_PKG_PATH)/spice; \
+	done
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	$(INSTALL_PROGRAM) spicewish $(DESTDIR)$(bindir)
 
@@ -225,4 +229,4 @@ tcl-recursive:
 	(cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) all) \
 	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
 	done;	
-	make ${TCL_FILES}
+	make $(TCL_FILES)

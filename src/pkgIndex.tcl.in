@@ -72,13 +72,47 @@ proc Loadspice { version dir } {
 	puts "DefineLinestyle $linestyleid $mask"
     }
 
-    proc spice_init_gui { spicefile } {
-		if { ! [ winfo exists .controls ] } {
-           source "%LIB_DIR%/spice/tclspice_source.tcl"              ;#- only load procs when gui needed
-		}
-		spicewish::init_gui $spicefile
+#    proc spice_init_gui { spicefile } {
+#		if { ! [ winfo exists .controls ] } {
+#           source "/usr/lib/spice/tclspice_source.tcl"              ;#- only load procs when gui needed
+#		}
+#		spicewish::init_gui $spicefile
+#    }
+
+    proc spice_init_gui { fileName {gui 0} {batchMode 0}} {
+
+	# source tclcode
+	if {[info procs spicewish::plot] == ""} {
+		source [file join "spice/spicewish.tcl"]
+	}	
+
+        if {!$batchMode} { spice::version }
+
+        if {$fileName != ""} {
+
+                switch [file extension $fileName] {
+                        ".tcl" {
+                                source $fileName
+                        }
+                        ".raw" {
+                                spice::load $fileName
+                        }
+                        default {
+                                spice::source $fileName
+
+                                if {$batchMode} {
+                                        spice::run
+                                        spice::write out.raw
+                                        exit
+                                }
+                        }
+                }
+        }
+        if {$gui == 0} {
+                wm withdraw .
+        }
     }
-    
+
     set ::spice_version $version
     set ::spice_library $dir
 }

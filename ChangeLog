@@ -1,3 +1,10 @@
+2004-07-19 Adrian Dawe <adrian.dawe@multigig.com>
+
+	* src/{Makefile.am,controls.tcl,engUnits.tcl,gnuplot.tcl,
+	measure.tcl,nodeDialog.tcl,pkgIndex.tcl.in,readline.tcl,
+	spicewish,spicewish.tcl,tclspice_source.tcl,viewer.tcl}:
+	New and much improved tclspice CLI
+
 2004-07-12 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/tclspice.c:

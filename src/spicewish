@@ -4,124 +4,126 @@
 # the next line starts SpiceWish interactively with the given file name  \
 exec wish  "$0" "$@"
 
-
-namespace eval spicewish {
-
-	# load tclspice
-	package require spice
+package require spice
+package require tclreadline
 	
-	proc usage { } {
-		puts "usage: spicewish \[options ...\] \[inputfile ...\]"
-		puts " -b        Run in batch mode."
-		puts " -pp       Execute spicePP on given file."
-		puts " -cm       load Xspice codemodel."
-		puts " -version  Display version number."
-		puts ""
-		exit
-	}
+proc spicewish_usage { } {
+	puts "usage: spicewish \[options ...\] \[inputfile ...\]"
+	puts " -b        Run in batch mode."
+	puts " -pp       Execute spicePP on given file."
+	puts " -version  Display version number."
+	puts ""
+	exit
+}
 	
-	proc version { } {
-		puts " $::spice_version\n"
-		exit
-	}
+proc run_spicepp { fileName } {
 
-	proc run_spicepp { fileName } {
+	# load tcl code to run spicePP (perl)
+	source [file join $::spice_library "spice/spicepp.tcl"]
 
-		# load tcl code to run spicePP (perl)
-		source [file join $::spice_library "spice/spicepp.tcl"]
+	puts ""
+	# check if file contains Hspice statemenst
+	if {[spicepp::checkHSpiceFormat $fileName]} {
 
-		puts ""
-		# check if file contains Hspice statemenst
-		if {[spicepp::checkHSpiceFormat $fileName]} {
-
-		        set ppFileName  [spicepp::convert $fileName]
-		        if {$ppFileName == ""} {
-			
-				puts "spicepp: Error translating file '$fileName'."
-		                exit
-		        }
-			puts "spicewish: sourcing '$ppFileName'." 
-			return $ppFileName
-		} else {
-			puts "spicepp: '$fileName' contains no Hspice statements."
-			puts "spicewish: sourcing '$fileName'." 
-			return $fileName
+		set ppFileName  [spicepp::convert $fileName]
+		if {$ppFileName == ""} {	
+			puts "spicepp: Error translating file '$fileName'."
+		       	exit
 		}
-	}
-
-	proc load { argv argc } { 
-		set fileName ""
-		set mode_batch 0
-		set mode_spicePP 0
-		set codeModels {}
-
-		for {set i 0} {$i < $argc} {incr i} {
-			set arg [lindex $argv $i]
-
-			if {[string match {-*} $arg]} {
-				set val [lindex $argv [expr $i + 1]]
-          
-		           	switch -glob -- $arg {
-			                -- - -argv      {
-				   	set argv [concat -- [lrange $argv $i end]]
-		                    	set argc [llength $argv]
-		                 	break
-	              		  }
-				-h - -help   { usage }
-		                -b           { set mode_batch 1 }
-				-version     { version }
-		                -pp          { set mode_spicePP 1 }
-				-cm	     {
-					set val [lindex $argv [incr i]]
-					lappend codeModels $val
-				}
-				default { usage }
-		            }
-		        } elseif {[file isfile $arg]} {
-		            set fileName $arg
-		        }
-		}
-
-		if {$fileName == "" } { usage }
-
-		if {[llength $codeModels] != 0} {
-			foreach codeModel $codeModels {
-				spice::codemodel $codeModel
-			}	
-		} 
-		
-		if {$mode_spicePP} {
-			set fileName [ run_spicepp $fileName ]
-		}
-
-		if { [ file extension $fileName ] == ".tcl" } {
-			    source $fileName
-		} else {
-			spice_init_gui $fileName
-		
-			if {$mode_batch} { 
-				# remove control widget
-				wm  withdraw .
-			}
-		}
-		set ::spicewish_mode "standalone"
-	}
-
-	proc tclreadline { } {
-		# readline with prompt set to "tclspice > "
-		if {$::tcl_interactive} {
-			package require tclreadline
-			proc ::tclreadline::prompt1 { } { return "tclspice > " }
-			::tclreadline::Loop
-		}
+		puts "spicewish: sourcing '$ppFileName'." 
+		return $ppFileName
+	} else {
+		puts "spicepp: '$fileName' contains no Hspice statements."
+		puts "spicewish: sourcing '$fileName'." 
+		return $fileName
 	}
 }
 
+proc spicewish_load { argv argc } { 
+	set fileName ""
+	set mode_batch 0
+	set mode_spicePP 0
+
+	for {set i 0} {$i < $argc} {incr i} {
+		set arg [lindex $argv $i]
+
+		if {[string match {-*} $arg]} {
+			set val [lindex $argv [expr $i + 1]]
+          
+		      	switch -glob -- $arg {
+			 	-- - -argv      {
+				   	set argv [concat -- [lrange $argv $i end]]
+		                  	set argc [llength $argv]
+		               		break
+	            		}
+				-h - -help   { spicewish_usage }
+		                -b           { set ::mode_batch 1 }
+				-version     { spice::version }
+		                -pp          { set mode_spicePP 1 }
+				default { spicewish_usage }
+		     	}
+		} else {
+		     	set fileName $arg
+		}
+	}
+
+	if {$fileName == "" } { 
+		spice_init_gui "" 0 $mode_batch
+		return
+	}
+
+	if {![file isfile $fileName]} { spicewish_usage }
+
+	if {$mode_spicePP} {
+		set fileName [ run_spicepp $fileName ]
+	}
+		
+	spice_init_gui $fileName 0 $mode_batch
+}
+
+proc Tclreadline { } {
+	# readline with prompt set to "tclspice > "
+	if {$::tcl_interactive} {
+		proc ::tclreadline::prompt1 { } { return "tclspice -> " }
+		
+		puts "tclspice ->"
+		puts "tclspice ->"
+		::tclreadline::Loop .tclspice-history			
+	}
+}
+	
+	
+proc spicewish_import_namespaces { } {
+
+	# spice::
+	namespace eval spice {
+		namespace export ac help save alias sens alter altermod setcirc asciiplot jobs setplot aspice setscale bg let settype linearize shell bug listing shift show cdump maxstep showmod compose newhelp noise spec cross oldhelp spice dc op spice_data define spice_header deftype state delete plot_datapoints status delta plot_date step plot_get_value stop diff plot_name strcmp display plot_nvars tf disto plot_title dowhile plot_variables tran dump print transpose echo pz tutorial edit quit unalias else rehash undefine end repeat unlet reset fourier reshape version spicetoblt resume where get_output rspice get_param write goto running xgraph hardcopy rusage steps_completed blt_vnum codemodel loadsnap savesnap
+	}
+
+	namespace import -force spice::*
+
+	# spicewish::
+	rename ::source ::tclSource
+	rename ::load ::tclLoad
+	
+	namespace eval spicewish {
+		set ::nameSpaceList [namespace export]
+	}	
+
+	namespace import -force spicewish::*
+	
+	foreach procName $::nameSpaceList {
+		tclreadline::readline add ${procName}
+	}
+
+	rename spicewish_import_namespaces ""
+}
+
+
 set ::tcl_interactive 1
+source [file join $::spice_library spice/spicewish.tcl]
 
-spicewish::load $argv $argc
+spicewish_import_namespaces
+spicewish_load $::argv $::argc
 
-namespace import -force spice::*
-namespace import -force spicewish::*
-
-spicewish::tclreadline
+Tclreadline
