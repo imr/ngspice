@@ -1,5 +1,9 @@
 ## Process this file with automake to produce Makefile.in
 
+## Not all file are compiled in since this device need some additional
+## work.
+## Sensitivity analysis not compiled in.
+
 noinst_LIBRARIES = libbjt2.a
 
 libbjt2_a_SOURCES = 	\
@@ -25,14 +29,9 @@ libbjt2_a_SOURCES = 	\
 	bjt2noise.c	\
 	bjt2param.c	\
 	bjt2pzld.c	\
-	bjt2sacl.c	\
 	bjt2setup.c	\
-	bjt2sload.c	\
-	bjt2sprt.c	\
-	bjt2sset.c	\
-	bjt2supd.c	\
 	bjt2temp.c	\
-	bjt2trunc.c
+	bjt2trun.c
 
 
 
