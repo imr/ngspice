@@ -6,18 +6,13 @@
 //
 // Author: Arpad Buermen
 ////////////////////////////////////////////////////////////////////////////// 
-#include "dlinfo.h"
 
+#include <inpdefs.h>
 #include <devdefs.h>
 #include <evtudn.h>
-#include "port.h"
-#include "misc.h"
+#include <dllitf.h>
 #include "cmextrn.h"
 #include "udnextrn.h"
-#include "dllitf.h"
-
-// This one is automatically set by the compiler
-char inf_Date[]=__DATE__;
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -55,43 +50,6 @@ struct coreInfo_t *coreitf;
 #define CM_EXPORT extern
 #endif
 
-int cmopusvers = 2;
-
-// This one checks the opus dynamic link version.
-CM_EXPORT void *CMsysvers() {
-	return (void *)&cmopusvers;
-}
-
-// This one returns the title
-CM_EXPORT void *CMtitle() {
-	return (void *)inf_Title;
-}
-
-// This one returns the version
-CM_EXPORT void *CMversion() {
-	return (void *)inf_Version;
-}
-
-// This one returns the date
-CM_EXPORT void *CMdate() {
-	return (void *)inf_Date;
-}
-
-// This one returns the description
-CM_EXPORT void *CMdescription() {
-	return (void *)inf_Description;
-}
-
-// This one returns the author
-CM_EXPORT void *CMauthor() {
-	return (void *)inf_Author;
-}
-
-// This one returns the copyright
-CM_EXPORT void *CMcopyright() {
-	return (void *)inf_Copyright;
-}
-
 // This one returns the device table
 CM_EXPORT void *CMdevs() {
 	return (void *)cmDEVices;
@@ -124,7 +82,7 @@ CM_EXPORT void *CMgetCoreItfPtr() {
 // pointers in coreitf structure.
 //////////////////////////////////////////////////////////////////////////////
 void MIF_INP2A(
-    GENERIC      *ckt,      /* circuit structure to put mod/inst structs in */
+    void      *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables    *tab,      /* symbol table for node names, etc.            */
     card         *current   /* the card we are to parse                     */
 	) {
@@ -132,8 +90,8 @@ void MIF_INP2A(
 }
 
 char * MIFgetMod(
-    GENERIC   *ckt,
-    char      **name,
+    void   *ckt,
+    char      *name,
     INPmodel  **model,
     INPtables *tab 
 	) {
@@ -141,7 +99,7 @@ char * MIFgetMod(
 }
 
 IFvalue * MIFgetValue(
-    GENERIC   *ckt,
+    void   *ckt,
     char      **line,
     int       type,
     INPtables *tab,
@@ -395,14 +353,30 @@ FILE * cm_stream_err(void) {
 	return (coreitf->dllitf_cm_stream_err)();
 }
 
-char * tmalloc_internal(size_t s, int clean, const char *f, int l, int sw) {
-	return (coreitf->dllitf_tmalloc)(s,clean,f,l,sw);
+void * malloc_pj(size_t s) {
+	return (coreitf->dllitf_malloc_pj)(s);
 }
 
-char * trealloc_internal(char *ptr, size_t s, const char *f, int l, int sw) {
-	return (coreitf->dllitf_trealloc)(ptr,s,f,l,sw);
+void * calloc_pj(size_t s1, size_t s2) {
+	return (coreitf->dllitf_calloc_pj)(s1,s2);
 }
 
-void tfree_internal(char *ptr, const char *f, int l, int sw) {
-	(coreitf->dllitf_tfree)(ptr,f,l,sw);
+void * realloc_pj(void *ptr, size_t s) {
+	return (coreitf->dllitf_realloc_pj)(ptr,s);
+}
+
+void free_pj(void *ptr) {
+	(coreitf->dllitf_free_pj)(ptr);
+}
+
+char * tmalloc(int s) {
+	return (coreitf->dllitf_tmalloc)(s);
+}
+
+char * trealloc(char *ptr, int s) {
+	return (coreitf->dllitf_trealloc)(ptr,s);
+}
+
+void txfree(char *ptr) {
+	(coreitf->dllitf_txfree)(ptr);
 }
