@@ -46,6 +46,15 @@ RESmParam(int param, IFvalue *value, GENmodel *inModel)
             model->RESshort = value->rValue;
             model->RESshortGiven = TRUE;
             break;    
+	case RES_MOD_KF:
+	    model->RESfNcoef = value->rValue;
+	    model->RESfNcoefGiven = TRUE;
+	    break;
+	case RES_MOD_AF:
+	    model->RESfNexp = value->rValue;
+	    model->RESfNexpGiven = TRUE;
+	    break;
+    
         case RES_MOD_R:
             /* just being reassured by user that this is a resistor model */
             /* no-op */

@@ -2,6 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 - Paolo Nenzi
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 #include "ngspice.h"
@@ -14,7 +16,8 @@ int
 RESsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current ac sensitivity info into the 
          * array previously provided 
-         */
+	 */
+	 
 {
     RESmodel *model = (RESmodel *)inModel;
     RESinstance *here;
@@ -36,8 +39,10 @@ RESsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTrhsOld+here->RESnegNode);
                 ivres = *(ckt->CKTirhsOld+here->RESposNode) -
                     *(ckt->CKTirhsOld+here->RESnegNode);
-                value = vres * here->RESconduct * here->RESconduct;
-                ivalue = ivres * here->RESconduct * here->RESconduct;
+                value = vres * here->RESacConduct * here->RESacConduct;
+		value = value * here->RESm * here->RESm;
+                ivalue = ivres * here->RESacConduct * here->RESacConduct;
+		ivalue = ivalue * here->RESm * here->RESm;
 
                 /* load the RHS matrix */
                 *(ckt->CKTsenInfo->SEN_RHS[here->RESposNode] + 

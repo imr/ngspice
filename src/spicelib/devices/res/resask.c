@@ -12,9 +12,14 @@ Modified: Apr 2000 - Paolo Nenzi
 #include "sperror.h"
 
 
+/* TODO : there are "double" value compared with 0 (eg: vm == 0)
+ *        Need to substitute this check with a suitable eps.
+ *        PN 2003
+ */ 
+
 int
 RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
-		IFvalue *select)
+       IFvalue *select)
 {
     RESinstance *fast = (RESinstance *)inst;
     double vr;
@@ -23,21 +28,29 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
     double si;
     double vm;
     static char *msg = "Current and power not available for ac analysis";
+    
     switch(which) {
         case RES_TEMP:
-            value->rValue = fast->REStemp-CONSTCtoK;
+            value->rValue = fast->REStemp - CONSTCtoK;
             return(OK);
+	case RES_DTEMP:
+            value->rValue = fast->RESdtemp;
+            return(OK);    
         case RES_CONDUCT:
             value->rValue = fast->RESconduct;
+	    value->rValue *= fast->RESm; 
             return(OK);
         case RES_RESIST:
             value->rValue = fast->RESresist;
+	    value->rValue /= fast->RESm; 
             return(OK);
 	case RES_ACCONDUCT:
 	    value->rValue = fast->RESacConduct;
+	    value->rValue *= fast->RESm; 
 	    return (OK);
 	case RES_ACRESIST:
 	    value->rValue = fast->RESacResist; 
+	    value->rValue /= fast->RESm; 
 	    return(OK);
         case RES_LENGTH:
             value->rValue = fast->RESlength;
@@ -51,6 +64,9 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
 	case RES_M:
 	    value->rValue = fast->RESm;
 	    return(OK);
+	case RES_NOISY:
+	    value->iValue = fast->RESnoisy;
+	    return(OK);    
         case RES_QUEST_SENS_DC:
             if(ckt->CKTsenInfo){
                 value->rValue = *(ckt->CKTsenInfo->SEN_Sap[select->iValue + 1]+
@@ -120,7 +136,8 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             } else {
                 value->rValue = (*(ckt->CKTrhsOld + fast->RESposNode) -  
                         *(ckt->CKTrhsOld + fast->RESnegNode))
-                        *fast->RESconduct;    
+                        *fast->RESconduct;
+		value->rValue *= fast->RESm;	    
             }
             return(OK);
         case RES_POWER:
@@ -135,6 +152,7 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
                         fast->RESconduct *  
                         (*(ckt->CKTrhsOld + fast->RESposNode) - 
                         *(ckt->CKTrhsOld + fast->RESnegNode));
+		value->rValue *= fast->RESm;	    	
             }
             return(OK);
         default:

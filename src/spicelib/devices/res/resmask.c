@@ -18,7 +18,9 @@ Modified: 2000 AlansFixes
 int 
 RESmodAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
+
     RESmodel *model = (RESmodel *)inModel;
+
     switch(which) {
         case RES_MOD_TNOM:
             value->rValue = model->REStnom-CONSTCtoK;
@@ -41,6 +43,18 @@ RESmodAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case RES_MOD_SHORT: 
             value->rValue = model->RESshort;
             return(OK);
+	case RES_MOD_KF:
+	    if (model->RESfNcoefGiven)
+	        value->rValue = model->RESfNcoef;
+	    else
+	        value->rValue = 0.0;
+	    return(OK);
+	case RES_MOD_AF: 
+	    if (model->RESfNexpGiven)
+	        value->rValue = model->RESfNexp;
+	    else
+	        value->rValue = 0.0;
+            return(OK);		    
         default:
             return(E_BADPARM);
     }

@@ -2,6 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Apr 2002 - Paolo Nenzi
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 /* Pretty print the sensitivity info for all 
@@ -29,6 +31,7 @@ RESsPrint(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
                 here=here->RESnextInstance) {
+	    
 	    if (here->RESowner != ARCHme) continue;
 
             printf("    Instance name:%s\n",here->RESname);

@@ -4,6 +4,7 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 extern int RESask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
+extern int RESconvTest(GENmodel*, CKTcircuit*);
 extern int RESdelete(GENmodel*,IFuid,GENinstance**);
 extern void RESdestroy(GENmodel**);
 extern int RESload(GENmodel*,CKTcircuit*);

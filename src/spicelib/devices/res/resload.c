@@ -16,19 +16,29 @@ int
 RESload(GENmodel *inModel, CKTcircuit *ckt)
 {
     RESmodel *model = (RESmodel *)inModel;
+    double m;
+    
 
+		
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {
 	RESinstance *here;
 
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
-	     here = here->RESnextInstance) {
+	     here = here->RESnextInstance) { 
+	     
+	     if (here->RESowner != ARCHme) continue;
             
-            *(here->RESposPosptr) += here->RESconduct;
-            *(here->RESnegNegptr) += here->RESconduct;
-            *(here->RESposNegptr) -= here->RESconduct;
-            *(here->RESnegPosptr) -= here->RESconduct;
+             here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) - 
+                                *(ckt->CKTrhsOld+here->RESnegNode)) * here->RESconduct;
+	            
+	     m = here->RESm; 
+	    
+             *(here->RESposPosptr) += m * here->RESconduct;
+             *(here->RESnegNegptr) += m * here->RESconduct;
+             *(here->RESposNegptr) -= m * here->RESconduct;
+             *(here->RESnegPosptr) -= m * here->RESconduct;
         }
     }
     return(OK);
@@ -41,6 +51,7 @@ int
 RESacload(GENmodel *inModel, CKTcircuit *ckt)
 {
     RESmodel *model = (RESmodel *)inModel;
+    double m;
 
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {
@@ -50,16 +61,20 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->RESinstances; here != NULL ;
 	     here = here->RESnextInstance) {
             
+	    if (here->RESowner != ARCHme) continue;
+	    
+	    m = here->RESm;
+	    
             if(here->RESacresGiven) {
-                *(here->RESposPosptr) += here->RESacConduct;
-                *(here->RESnegNegptr) += here->RESacConduct;
-                *(here->RESposNegptr) -= here->RESacConduct;
-                *(here->RESnegPosptr) -= here->RESacConduct;
+                *(here->RESposPosptr) += m * here->RESacConduct;
+                *(here->RESnegNegptr) += m * here->RESacConduct;
+                *(here->RESposNegptr) -= m * here->RESacConduct;
+                *(here->RESnegPosptr) -= m * here->RESacConduct;
             } else {
-                *(here->RESposPosptr) += here->RESconduct;
-                *(here->RESnegNegptr) += here->RESconduct;
-                *(here->RESposNegptr) -= here->RESconduct;
-                *(here->RESnegPosptr) -= here->RESconduct;
+                *(here->RESposPosptr) += m * here->RESconduct;
+                *(here->RESnegNegptr) += m * here->RESconduct;
+                *(here->RESposNegptr) -= m * here->RESconduct;
+                *(here->RESnegPosptr) -= m * here->RESconduct;
             }
         }
     }

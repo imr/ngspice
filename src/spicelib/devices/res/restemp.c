@@ -31,24 +31,37 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 
         /* Default Value Processing for Resistor Models */
         if(!model->REStnomGiven) model->REStnom         = ckt->CKTnomTemp;
-        if(!model->RESsheetResGiven) model->RESsheetRes = 0;
+        if(!model->RESsheetResGiven) model->RESsheetRes = 0.0;
         if(!model->RESdefWidthGiven) model->RESdefWidth = 10.e-6; /*M*/
-        if(!model->REStc1Given) model->REStempCoeff1    = 0;
-        if(!model->REStc2Given) model->REStempCoeff2    = 0;
-        if(!model->RESnarrowGiven) model->RESnarrow     = 0;
-        if(!model->RESshortGiven) model->RESshort = 0;
+        if(!model->REStc1Given) model->REStempCoeff1    = 0.0;
+        if(!model->REStc2Given) model->REStempCoeff2    = 0.0;
+        if(!model->RESnarrowGiven) model->RESnarrow     = 0.0;
+        if(!model->RESshortGiven) model->RESshort       = 0.0;
+	if(!model->RESfNcoefGiven) model->RESfNcoef     = 0.0;
+	if(!model->RESfNexpGiven) model->RESfNexp       = 0.0;
 
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
                 here=here->RESnextInstance) {
+	    
 	    if (here->RESowner != ARCHme) continue;
             
             /* Default Value Processing for Resistor Instance */
-            if(!here->REStempGiven)    here->REStemp   = ckt->CKTtemp;
-            if(!here->RESwidthGiven)   here->RESwidth  = model->RESdefWidth;
+            
+	    if(!here->REStempGiven) {   
+	       here->REStemp   = ckt->CKTtemp;
+	       if(!here->RESdtempGiven)   here->RESdtemp  = 0.0;
+	     } else { /* REStempGiven */
+	       here->RESdtemp = 0.0;
+	       if (here->RESdtempGiven)
+	           printf("%s: You specified instance temperature, dtemp ignored\n", here->RESname);
+	     }
+	    
+	    if(!here->RESwidthGiven)   here->RESwidth  = model->RESdefWidth;
             if(!here->RESlengthGiven)  here->RESlength = 0.0;
 	    if(!here->RESscaleGiven)   here->RESscale  = 1.0;
 	    if(!here->RESmGiven)       here->RESm      = 1.0;
+            if(!here->RESnoisyGiven)   here->RESnoisy  = 1;
             if(!here->RESresGiven)  {
                 if(model->RESsheetResGiven && (model->RESsheetRes != 0) &&
                         (here->RESlength != 0)) {
@@ -56,21 +69,26 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
                         model->RESshort) / (here->RESwidth - model->RESnarrow);
                 } else {
                     (*(SPfrontEnd->IFerror))(ERR_WARNING,
-                            "%s: resistance=0, set to 1000",&(here->RESname));
+                            "%s: resistance = 0 ohm, set to 1000 ohm",&(here->RESname));
                     here->RESresist=1000;
                 }
             }
 
-            difference = here->REStemp - model->REStnom;
-            factor = 1.0 + (model->REStempCoeff1)*difference + 
+            difference = (here->REStemp + here->RESdtemp) - model->REStnom;
+            
+	    factor = 1.0 + (model->REStempCoeff1)*difference + 
                     (model->REStempCoeff2)*difference*difference;
 
-            here -> RESconduct = here->RESm*(1.0/(here->RESresist * factor * here->RESscale));
-	    here -> RESacConduct = here -> RESconduct; /* default value  */
+            here -> RESconduct = (1.0/(here->RESresist * factor * here->RESscale));
+	    	    
 	    
 	    /* Paolo Nenzi:  AC value */
 	    if(here->RESacresGiven) 
-	       here->RESacConduct = here->RESm*(1.0/(here->RESacResist * factor * here->RESscale));
+	       here->RESacConduct = (1.0/(here->RESacResist * factor * here->RESscale));
+	    else {
+	       here -> RESacConduct = here -> RESconduct;
+	       here -> RESacResist = here -> RESresist;
+	   }   
         }
     }
     return(OK);

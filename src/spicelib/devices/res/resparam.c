@@ -17,9 +17,13 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     RESinstance *here = (RESinstance *)inst;
     switch(param) {
         case RES_TEMP:
-            here->REStemp = value->rValue+CONSTCtoK;
+            here->REStemp = value->rValue + CONSTCtoK;
             here->REStempGiven = TRUE;
             break;
+	case RES_DTEMP:
+            here->RESdtemp = value->rValue;
+            here->RESdtempGiven = TRUE;
+            break;   
         case RES_RESIST:
             here->RESresist = value->rValue;
             here->RESresGiven = TRUE;
@@ -47,6 +51,10 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 	    here->RESm = value->rValue;
 	    here->RESmGiven = TRUE;
             break;
+	case RES_NOISY: 
+	    here->RESnoisy = value->iValue;
+	    here->RESnoisyGiven = TRUE;
+	    break;     
         default:
             return(E_BADPARM);
     }

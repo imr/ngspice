@@ -2,6 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 - Paolo Nenzi
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 #include "ngspice.h"
@@ -26,6 +28,7 @@ RESsSetup(SENstruct *info, GENmodel *inModel)
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
             here=here->RESnextInstance) {
+	    
 	    if (here->RESowner != ARCHme) continue;
 
             if(here->RESsenParmNo){

@@ -21,6 +21,7 @@ RESpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     RESmodel *model = (RESmodel *)inModel;
     RESinstance *here;
+    double m;
 
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {
@@ -28,12 +29,15 @@ RESpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
                 here=here->RESnextInstance) {
+	    
 	    if (here->RESowner != ARCHme) continue;
             
-            *(here->RESposPosptr) += here->RESconduct;
-            *(here->RESnegNegptr) += here->RESconduct;
-            *(here->RESposNegptr) -= here->RESconduct;
-            *(here->RESnegPosptr) -= here->RESconduct;
+	    m = here->RESm;
+	    
+            *(here->RESposPosptr) += m * here->RESconduct;
+            *(here->RESnegNegptr) += m * here->RESconduct;
+            *(here->RESposNegptr) -= m * here->RESconduct;
+            *(here->RESnegPosptr) -= m * here->RESconduct;
         }
     }
     return(OK);
