@@ -700,15 +700,12 @@ struct func ft_funcs[] = {
         { "vecmin", cx_min } ,
         { "vecmax", cx_max } ,
         { "vecd", cx_d } ,
-#define INTERPOLATE 1 /* va, enable interpolate */
-#if INTERPOLATE
 	/* va, deactivate function prototype testing for this 2 functions, only. Gives a warning. */
 #define INTERPOL_FUNC (void *(*)())
 	/* These functions have been temporarily been disabled.  See
            their definitions for the reason. */
-        { "interpolate",INTERPOL_FUNC cx_interpolate } ,
-        { "deriv",      INTERPOL_FUNC cx_deriv } ,
-#endif
+        { "interpolate", INTERPOL_FUNC  cx_interpolate } ,
+        { "deriv",       INTERPOL_FUNC  cx_deriv } ,
         { "v",      NULL } ,
         { NULL,     NULL }
 } ;

@@ -130,12 +130,7 @@ cx_not(void *data, short int type, int length, int *newlength, short int *newtyp
     return ((void *) d);
 }
 
-#define INTERPOLATE 1 /* va, enable interpolate */
-#if INTERPOLATE
-/* These functions have been temporarily disabled.  They contain code
-   only found in the frontend and their prototype does not conform to
-   the prototypes found for other complex functions.  They will not be
-   re-enabled until these issues have been resolved. */
+
 
 /* This is a strange function. What we do is fit a polynomial to the
  * curve, of degree $polydegree, and then evaluate it at the points
@@ -371,4 +366,3 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
     }
 
 }
-#endif

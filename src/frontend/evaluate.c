@@ -707,8 +707,6 @@ apply_func(struct func *func, struct pnode *arg)
         }
         (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
 
-#define INTERPOLATE 1 /* va, enable interpolate */
-#if INTERPOLATE
 	/* FIXME: The call to (*func->fu_func) has too many arguments;
            hence the compiler quits.  How to circumvent this (without
            losing function prototypes)?  For now, these functions have
@@ -722,16 +720,13 @@ apply_func(struct func *func, struct pnode *arg)
 		          v->v_length, &len, &type,
 		          v->v_plot, plot_cur, v->v_dims[0]));
         } else {
-#endif
             data = ((*func->fu_func) ((isreal(v) ? (void *)
 				       v->v_realdata :
 				       (void *) v->v_compdata),
 				      (short) (isreal(v) ? VF_REAL :
 					       VF_COMPLEX),
 				      v->v_length, &len, &type));
-#if INTERPOLATE
 	}
-#endif
         /* Back to normal */
         (void) signal(SIGILL, SIG_DFL);
 
