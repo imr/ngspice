@@ -13,10 +13,10 @@ Author: 1989 Takayasu Sakurai
 int
 MOS6convTest(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS6model *model = (MOS6model*)inModel;
-    register MOS6instance *here;
+    MOS6model *model = (MOS6model*)inModel;
+    MOS6instance *here;
     double delvbs;
     double delvbd;
     double delvgs;

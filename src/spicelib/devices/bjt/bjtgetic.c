@@ -21,12 +21,12 @@ Author: 1985 Thomas L. Quarles
 int
 BJTgetic(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 
 {
 
     BJTmodel *model = (BJTmodel*)inModel;
-    register BJTinstance *here;
+    BJTinstance *here;
     /*
      * grab initial conditions out of rhs array.   User specified, so use
      * external nodes to get values

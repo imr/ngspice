@@ -1,8 +1,16 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/main.c)
+
 dnl Create a configuration header
 AM_CONFIG_HEADER(config.h)
 
+dnl Initialize automake stuff
+AM_INIT_AUTOMAKE(ng-spice-rework,14)
+
+dnl --enable-ftedebug : enable frontend debug macros
+AC_ARG_ENABLE(ftedebug,
+    [  --enable-ftedebug        Enable ngspice frontend debug])
+    
 dnl --enable-ansi : try to force --ansi option to the compiler
 AC_ARG_ENABLE(ansi,
     [  --enable-ansi           Force --ansi option for compilation])
@@ -27,13 +35,33 @@ dnl --enable-sense2 : define HAVE_SENSE2 for the code
 AC_ARG_ENABLE(sense2,
     [  --enable-sense2         Use spice2 sensitivity analysis])
 
+dnl --enable-intnoise : define INT_NOISE for the code
+AC_ARG_ENABLE(intnoise,
+    [  --enable-intnoise       Enables noise integration in noise analysis])
+
+dnl --enable-smoketest : a smoketest
+AC_ARG_ENABLE(smoketest,
+    [  --enable-smoketest      Enables smoketest compile])
+
 dnl --enable-experimental : define EXPERIMENTAL_CODE for the code
 AC_ARG_ENABLE(experimental,
     [  --enable-experimental   Enables some experimental code])
 
+dnl --enable-ekv: define HAVE_EKV in the code. This is for EKV model support
+AC_ARG_ENABLE(ekv,
+    [  --enable-ekv            Enables ekv model *not in standard distribution*])
 
-dnl Initialize automake stuff
-AM_INIT_AUTOMAKE(ng-spice-rework,10)
+dnl --enable-xspice: define XSPICE in the code. This is for xspice support
+AC_ARG_ENABLE(xspice,
+    [  --enable-xspice         Enables XSpice enchancements, experimental *not in standard distribution*])
+
+dnl --enable-tcl: define TCL_MODULE in the code. This is for tcl support
+AC_ARG_ENABLE(tcl,
+    [  --enable-tcl         Compiles the tcl module instead, experimental, see README in src/tcl/README])
+
+dnl --enable-cluster: define CLUSTER in the code. This is for tcl support
+AC_ARG_ENABLE(cluster,
+    [  --enable-cluster     Enables cluster support, experimental *not in standard distribution*])
 
 dnl Enable maintainer commands only if requested
 AM_MAINTAINER_MODE
@@ -52,6 +80,7 @@ if test "$enable_debug" = "no"; then
 	CFLAGS=" "
 fi
 
+
 dnl Not sure that this will work....
 if test "$with_checkergcc" = "yes"; then
         CC="checkergcc"
@@ -68,23 +97,19 @@ if test "$enable_ansi" = "yes"; then
 	fi	
 fi
 
-
+if test "$enable_smoketest" = "yes"; then
+dnl	CFLAGS="$CFLAGS -Werror"
+	CFLAGS="$CFLAGS -pedantic -W -Wmissing-prototypes"
+	CFLAGS="$CFLAGS -Wstrict-prototypes -Wtraditional"
+	CFLAGS="$CFLAGS -Wconversion -Wshadow -Wpointer-arith"
+	CFLAGS="$CFLAGS -Wcast-qual -Wcast-align -Wwrite-strings"
+	CFLAGS="$CFLAGS -Waggregate-return -fshort-enums -fno-common"
+	CFLAGS="$CFLAGS -Wnested-externs -Dinline= -g -O4"
+fi
 
 
 dnl Chech system we're on , and tune accordingly 
 AC_CANONICAL_HOST
-
-case "$host" in
-
-*bsd* )    CFLAGS="$CFLAGS";;
-*linux*)   CFLAGS="$CFLAGS";;
-*rs6000* ) CFLAGS="$CFLAGS";;
-*sgi* )    CFLAGS="$CFLAGS";;
-*sun* )    CFLAGS="$CFLAGS";;
-*ultrix* ) CFLAGS="$CFLAGS";;
-
-esac
-
 
 
 dnl Checks for programs
@@ -92,6 +117,99 @@ dnl Checks for programs
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 
+
+
+
+dnl
+dnl The tclSpice options
+dnl
+if test "$enable_tcl" = "yes"; then
+   AC_DEFINE(TCL_MODULE)
+   with_x=no
+
+
+  AC_MSG_CHECKING([for tclConfig.sh])
+  tcl_config_sh=""
+  if test "x$blt_with_tcl" != "x" ; then
+  for dir in \
+      $blt_with_tcl 
+  do
+    if test -r "$dir/tclConfig.sh" ; then
+      tcl_config_sh="$dir/tclConfig.sh"
+      break
+    elif test -r "$dir/lib/tclConfig.sh" ; then
+      tcl_config_sh="$dir/lib/tclConfig.sh"
+      break
+    elif test -r "$dir/unix/tclConfig.sh" ; then
+      tcl_config_sh="$dir/unix/tclConfig.sh"
+      break
+    fi
+  done
+else 
+  for dir in \
+   $prefix \
+   $exec_prefix 
+  do
+    if test -r "$dir/tclConfig.sh" ; then
+      tcl_config_sh="$dir/tclConfig.sh"
+      break
+    elif test -r "$dir/lib/tclConfig.sh" ; then
+      tcl_config_sh="$dir/lib/tclConfig.sh"
+      break
+    elif test -r "$dir/unix/tclConfig.sh" ; then
+      tcl_config_sh="$dir/unix/tclConfig.sh"
+      break
+    fi
+  done
+
+
+  if test "x$tcl_config_sh" = "x" ; then
+    for dir in \
+     `ls -dr /usr/local/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+     /usr/local/tcl \
+     /usr/local \
+     /usr
+    do
+      if test -r "$dir/tclConfig.sh" ; then
+	tcl_config_sh="$dir/tclConfig.sh"
+	break
+      elif test -r "$dir/lib/tclConfig.sh" ; then
+	tcl_config_sh="$dir/lib/tclConfig.sh"
+	break
+      fi
+    done
+  fi
+fi
+
+AC_MSG_RESULT([${tcl_config_sh}])
+
+if test "x$tcl_config_sh" = "x" ; then
+  echo "can't find Tcl configuration script \"tclConfig.sh\""
+  exit 1
+fi
+
+. $tcl_config_sh	
+
+AC_MSG_CHECKING(for TCL module BLT)
+rm -f conftest.tcl
+cat > conftest.tcl << EOF
+package require BLT;
+exit;
+EOF
+if (wish conftest.tcl; exit) 2>/dev/null; then
+   AC_MSG_RESULT(Found)
+else
+   AC_MSG_ERROR(Couldn't find BLT)
+fi
+rm -f conftest.tcl
+
+else
+  TCL_PACKAGE_PATH=""
+  TCL_BUILD_LIB_SPEC=""
+fi
+
+AC_SUBST(TCL_PACKAGE_PATH)
+AC_SUBST(TCL_BUILD_LIB_SPEC)
 
 dnl Checks for X11 header files and libraries - X11 support can be disabled
 dnl by passing the '--without-x' option to configure:
@@ -109,8 +227,9 @@ dnl libraries are present (error if they are not)
 if test ! "$no_x" = "yes" ; then
 	X_LIBS="$X_LIBS -lX11 -lXt"
 	AC_CHECK_LIB(Xext, XShmAttach,X_LIBS="$X_LIBS -lXext",AC_MSG_ERROR(Couldn't find Xext librairies), $X_LIBS $X_EXTRA_LIBS)
-	AC_CHECK_LIB(Xaw,main,X_LIBS="$X_LIBS -lXaw",AC_MSG_ERROR(Couldn't find Xaw librairies),$X_LIBS  $X_EXTRA_LIBS)
 	AC_CHECK_LIB(Xmu,main,X_LIBS="$X_LIBS -lXmu",AC_MSG_ERROR(Couldn't find Xmu librairies), $X_LIBS $X_EXTRA_LIBS)
+	AC_CHECK_LIB(Xaw,main,X_LIBS="$X_LIBS -lXaw",AC_MSG_ERROR(Couldn't find Xaw librairies),$X_LIBS  $X_EXTRA_LIBS)
+
 
 fi
 
@@ -126,7 +245,7 @@ AC_SEARCH_LIBS(tputs,ncurses termcap,AC_DEFINE(HAVE_TERMCAP),
 
 
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS(ctype.h unistd.h pwd.h fcntl.h)
+AC_CHECK_HEADERS(ctype.h unistd.h pwd.h fcntl.h string.h)
 AC_HEADER_SYS_WAIT
 AC_HEADER_STAT
 
@@ -158,6 +277,13 @@ AC_CHECK_HEADERS(float.h limits.h values.h)
 dnl Check for a few mathematical functions:
 AC_CHECK_FUNCS(erfc logb scalb scalbn asinh acosh atanh)
 
+AC_MSG_RESULT(Checking for the presence of the Garbage Collector:)
+dnl Check for the garbage collector:
+AC_CHECK_LIB(gc,GC_malloc,AC_DEFINE(HAVE_LIBGC) LIBS="$LIBS -lgc")
+
+dnl Check for the asprintf function:
+AC_CHECK_FUNCS(asprintf)
+
 
 # Expand the prefix variable (this is really annoying!)
 if eval "test x$prefix = xNONE"; then
@@ -167,7 +293,7 @@ else
 fi
 
 AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo $dprefix/bin`" )
-AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice`" )
+AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice-rework`" )
 AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE, "`date`" )
 
 
@@ -185,10 +311,74 @@ if test "$enable_predictor" = "yes"; then
 	AC_DEFINE(PREDICTOR)
 	AC_MSG_RESULT(PREDICTOR algorithm enabled)	
 fi
+if test "$enable_intnoise" = "yes"; then
+	AC_DEFINE(INT_NOISE)
+	AC_MSG_RESULT(Noise integration enabled)
+fi
 if test "$enable_experimental" = "yes"; then
 	AC_DEFINE(EXPERIMENTAL_CODE)
 	AC_MSG_RESULT(EXPERIMENTAL_CODE enabled)	
 fi
+
+if test "$enable_ftedebug" = "yes"; then
+	AC_DEFINE(FTEDEBUG)
+	AC_MSG_RESULT(WARNING: Frontend debug is enabled)	
+fi
+
+
+if test "$enable_ekv" = "yes"; then
+    AC_MSG_RESULT(Model EKV included)
+    AC_DEFINE(HAVE_EKV)
+    EKVDIR="ekv"
+    EKVLIB="spicelib/devices/ekv/libekv.la"
+else
+    EKVDIR=""
+    EKVLIB=""	
+fi
+AC_SUBST(EKVDIR)
+AC_SUBST(EKVLIB)
+
+if test "$enable_xspice" = "yes"; then
+    AC_MSG_RESULT(X-Spice features included)
+    AC_DEFINE(XSPICE)
+    XSPICEDIR="xspice"
+    XSPICELIB1="$XSPICEDIR/xspice.o        \
+		$XSPICEDIR/mif/libmifxsp.a \
+	        $XSPICEDIR/cm/libcmxsp.a"
+    XSPICELIB2="$XSPICEDIR/evt/libevtxsp.a \
+                $XSPICEDIR/enh/libenhxsp.a \
+	        $XSPICEDIR/ipc/libipcxsp.a \
+		$XSPICEDIR/idn/libidnxsp.a \
+		-ldl"
+
+else
+    XSPCIEDIR=""
+    XSPICELIB1=""
+    XSPICELIB2=""	
+fi
+AC_SUBST(XSPICEDIR)
+AC_SUBST(XSPICELIB1)
+AC_SUBST(XSPICELIB2)
+
+dnl Printout Tcl option
+if test "$enable_tcl" = "yes"; then
+   AC_MSG_RESULT(Tcl module being made, use "make tcl" and "make tcl_install", read README in src/tcl/README)
+fi
+
+dnl Cluster option
+if test "$enable_cluster" = "yes"; then
+   AC_MSG_RESULT(Cluster version is being compiled)
+   AC_DEFINE(CLUSTER)
+   LIBS="$LIBS -lpthread"   
+fi
+
+dnl --with-readline : the user wants to use readline library
+AC_ARG_WITH(readline,
+    [  --with-readline   Use the readline package: SEE README],
+    AC_MSG_RESULT(Checking for readline library:)
+dnl Check for the readline library:
+    AC_CHECK_LIB(readline,readline, AC_DEFINE(HAVE_GNUREADLINE) LIBS="$LIBS -lreadline")
+)
 
 
 AC_OUTPUT(			\
@@ -197,49 +387,78 @@ doc/Makefile			\
 man/Makefile			\
 man/man1/Makefile		\
 src/Makefile			\
-src/analysis/Makefile		\
-src/circuit/Makefile		\
-src/devices/Makefile		\
-src/devices/asrc/Makefile	\
-src/devices/bjt/Makefile	\
-src/devices/bsim1/Makefile	\
-src/devices/bsim2/Makefile	\
-src/devices/bsim3v1/Makefile	\
-src/devices/bsim3/Makefile	\
-src/devices/bsim4/Makefile	\
-src/devices/bsim3v2/Makefile	\
-src/devices/cap/Makefile	\
-src/devices/cccs/Makefile	\
-src/devices/ccvs/Makefile	\
-src/devices/csw/Makefile	\
-src/devices/devsup/Makefile	\
-src/devices/dio/Makefile	\
-src/devices/disto/Makefile	\
-src/devices/ind/Makefile	\
-src/devices/isrc/Makefile	\
-src/devices/jfet/Makefile	\
-src/devices/jfet2/Makefile	\
-src/devices/ltra/Makefile	\
-src/devices/mes/Makefile	\
-src/devices/mos1/Makefile	\
-src/devices/mos2/Makefile	\
-src/devices/mos3/Makefile	\
-src/devices/mos6/Makefile	\
-src/devices/res/Makefile	\
-src/devices/sw/Makefile		\
-src/devices/tra/Makefile	\
-src/devices/urc/Makefile	\
-src/devices/vccs/Makefile	\
-src/devices/vcvs/Makefile	\
-src/devices/vsrc/Makefile	\
+src/spicelib/Makefile		\
+src/spicelib/analysis/Makefile	\
+src/spicelib/devices/Makefile		\
+src/spicelib/devices/asrc/Makefile	\
+src/spicelib/devices/bjt/Makefile	\
+src/spicelib/devices/bjt2/Makefile	\
+src/spicelib/devices/bsim1/Makefile	\
+src/spicelib/devices/bsim2/Makefile	\
+src/spicelib/devices/bsim3v1/Makefile	\
+src/spicelib/devices/bsim3/Makefile	\
+src/spicelib/devices/bsim4/Makefile	\
+src/spicelib/devices/bsim3v2/Makefile	\
+src/spicelib/devices/bsim3soi_pd/Makefile \
+src/spicelib/devices/bsim3soi_fd/Makefile \
+src/spicelib/devices/bsim3soi_dd/Makefile \
+src/spicelib/devices/cap/Makefile	\
+src/spicelib/devices/cccs/Makefile	\
+src/spicelib/devices/ccvs/Makefile	\
+src/spicelib/devices/csw/Makefile	\
+src/spicelib/devices/cpl/Makefile       \
+src/spicelib/devices/dio/Makefile	\
+src/spicelib/devices/ekv/Makefile	\
+src/spicelib/devices/ind/Makefile	\
+src/spicelib/devices/isrc/Makefile	\
+src/spicelib/devices/hfet1/Makefile	\
+src/spicelib/devices/hfet2/Makefile	\
+src/spicelib/devices/jfet/Makefile	\
+src/spicelib/devices/jfet2/Makefile	\
+src/spicelib/devices/ltra/Makefile	\
+src/spicelib/devices/mes/Makefile	\
+src/spicelib/devices/mesa/Makefile      \
+src/spicelib/devices/mos1/Makefile	\
+src/spicelib/devices/mos2/Makefile	\
+src/spicelib/devices/mos3/Makefile	\
+src/spicelib/devices/mos6/Makefile	\
+src/spicelib/devices/mos9/Makefile	\
+src/spicelib/devices/res/Makefile	\
+src/spicelib/devices/soi3/Makefile	\
+src/spicelib/devices/sw/Makefile	\
+src/spicelib/devices/tra/Makefile	\
+src/spicelib/devices/txl/Makefile       \
+src/spicelib/devices/urc/Makefile	\
+src/spicelib/devices/vccs/Makefile	\
+src/spicelib/devices/vcvs/Makefile	\
+src/spicelib/devices/vsrc/Makefile	\
+src/spicelib/parser/Makefile	\
 src/frontend/Makefile		\
-src/hlp/Makefile		\
+src/frontend/help/Makefile	\
+src/frontend/parser/Makefile	\
+src/frontend/plotting/Makefile	\
 src/include/Makefile		\
 src/maths/Makefile		\
 src/maths/cmaths/Makefile	\
 src/maths/ni/Makefile		\
+src/maths/deriv/Makefile	\
+src/maths/poly/Makefile		\
 src/maths/sparse/Makefile	\
 src/misc/Makefile		\
-src/parser/Makefile		\
+src/xspice/Makefile		\
+src/xspice/cm/Makefile		\
+src/xspice/mif/Makefile		\
+src/xspice/evt/Makefile		\
+src/xspice/enh/Makefile		\
+src/xspice/ipc/Makefile		\
+src/xspice/idn/Makefile		\
 tests/Makefile			\
+tests/filters/Makefile		\
+tests/polezero/Makefile		\
+tests/resistance/Makefile	\
+tests/bsim3soipd/Makefile	\
+tests/bsim3soifd/Makefile	\
+tests/bsim3soidd/Makefile	\
+tests/bsim4/Makefile		\
+tests/mesa/Makefile
 )

@@ -3,36 +3,61 @@
 SUBDIRS = \
 	asrc	\
 	bjt	\
+##	bjt2	\
 	bsim1	\
 	bsim2	\
 	bsim3	\
 	bsim4	\
 	bsim3v1 \
 	bsim3v2 \
+	bsim3soi_pd	\
+	bsim3soi_fd	\
+	bsim3soi_dd	\
 	cap	\
 	cccs	\
 	ccvs	\
+	cpl	\
 	csw	\
-	devsup	\
 	dio	\
-	disto	\
+	@EKVDIR@	\
 	ind	\
 	isrc	\
+	hfet1	\
+	hfet2	\
 	jfet	\
 	jfet2	\
 	ltra	\
 	mes	\
+	mesa	\
 	mos1	\
 	mos2	\
 	mos3	\
 	mos6	\
+	mos9 	\
 	res	\
+	soi3	\
 	sw	\
 	tra	\
+	txl	\
 	urc	\
 	vccs	\
 	vcvs	\
 	vsrc
 
+noinst_LIBRARIES = libdev.a
+
+libdev_a_SOURCES = 	\
+	dev.c		\
+	dev.h		\
+	devsup.c	\
+	cktaccept.c	\
+	cktaccept.h	\
+	cktask.c	\
+	cktbindnode.c	\
+	cktcrte.c	\
+	cktfinddev.c	\
+	cktinit.c
+
+INCLUDES = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

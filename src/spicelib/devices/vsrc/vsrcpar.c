@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -21,6 +22,7 @@ VSRCparam(param,value,inst,select)
     GENinstance *inst;
     IFvalue *select;
 {
+    int i;
     VSRCinstance *here = (VSRCinstance *)inst;
     switch(param) {
         case VSRC_DC:
@@ -79,6 +81,15 @@ VSRCparam(param,value,inst,select)
             here->VSRCcoeffs = value->v.vec.rVec;
             here->VSRCfunctionOrder = value->v.numValue;
             here->VSRCcoeffsGiven = TRUE;
+            
+            for(i=0;i<(here->VSRCfunctionOrder/2)-1;i++) {
+                  if(*(here->VSRCcoeffs+2*(i+1))<=*(here->VSRCcoeffs+2*i)) {
+                     fprintf(stderr, "Warning : voltage source %s",
+                                                               here->VSRCname);
+                     fprintf(stderr, " has non-increasing PWL time points.\n");
+                  }
+            }
+            
             break;
         case VSRC_SFFM:
             here->VSRCfunctionType = SFFM;

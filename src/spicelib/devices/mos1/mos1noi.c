@@ -1,13 +1,13 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Gary W. Ng
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
 #include <stdio.h>
 #include "mos1defs.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "suffix.h"
@@ -30,12 +30,12 @@ MOS1noise (mode, operation, genmodel, ckt, data, OnDens)
     int operation;
     GENmodel *genmodel;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     MOS1model *firstModel = (MOS1model *) genmodel;
-    register MOS1model *model;
-    register MOS1instance *inst;
+    MOS1model *model;
+    MOS1instance *inst;
     char name[N_MXVLNTH];
     double coxSquared;
     double tempOnoise;
@@ -146,6 +146,7 @@ if (!data->namelist) return(E_NOMEM);
 				 exp(model->MOS1fNexp *
 				 log(MAX(fabs(inst->MOS1cd),N_MINLOG))) /
 				 (data->freq * inst->MOS1w * 
+				 inst->MOS1m *
 				 (inst->MOS1l - 2*model->MOS1latDiff) * coxSquared);
 		    lnNdens[MOS1FLNOIZ] = 
 				 log(MAX(noizDens[MOS1FLNOIZ],N_MINLOG));

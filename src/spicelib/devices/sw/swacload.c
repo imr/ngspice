@@ -16,14 +16,14 @@ Author: 1985 Gordon Jacobs
 int
 SWacLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* load the current values into the 
          * sparse matrix previously provided 
          * during AC analysis.
          */
 {
-    register SWmodel *model = (SWmodel *)inModel;
-    register SWinstance *here;
+    SWmodel *model = (SWmodel *)inModel;
+    SWinstance *here;
     double g_now;
     int current_state;
 

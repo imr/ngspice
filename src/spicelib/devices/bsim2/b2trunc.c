@@ -13,12 +13,12 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 int
 B2trunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     double *timeStep;
 
 {
-    register B2model *model = (B2model*)inModel;
-    register B2instance *here;
+    B2model *model = (B2model*)inModel;
+    B2instance *here;
 #ifdef STEPDEBUG
     double debugtemp;
 #endif /* STEPDEBUG */

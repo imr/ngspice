@@ -21,10 +21,10 @@ Author: 1985 Thomas L. Quarles
 void
 DIOsPrint(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
-    register DIOinstance *here;
+    DIOmodel *model = (DIOmodel*)inModel;
+    DIOinstance *here;
 
     printf("DIOS-----------------\n");
     /*  loop through all the diode models */

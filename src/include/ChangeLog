@@ -1,3 +1,26 @@
+2001-11-25  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* ftedefs.h: added definition of structure circ (taken from circuits.h)
+
+2000-09-09  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* fteext.h: Removed prototype for com_fourier().  Use
+	src/frontend/fourier.h for the proper prototype.
+
+2000-07-18  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* cpdefs.h: Moved quote() and strip() macro's to ...
+
+	* wordlist.h: ... here.  Also added ANSI C prototypes for all
+	functions that manipulate wordlists.
+
+	* defines.h: Removed CAPZEROBYPASS, NEWCONV and CAPBYPASS as they
+	are no longer used in the code.
+
+2000-05-22  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* inpptree.h: Applied Widlok patch (u2 function).
+
 1999-11-30  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
 	* ngspice.h: substitutes spice.h

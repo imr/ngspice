@@ -21,8 +21,8 @@ MESdSetup(inModel,ckt)
          * sparse matrix previously provided 
          */
 {
-    register MESmodel *model = (MESmodel*)inModel;
-    register MESinstance *here;
+    MESmodel *model = (MESmodel*)inModel;
+    MESinstance *here;
     double afact;
     double beta;
     double betap;

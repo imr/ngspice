@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 - Paolo Nenzi
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -42,6 +43,10 @@ RESmParam(int param, IFvalue *value, GENmodel *inModel)
             model->RESnarrow = value->rValue;
             model->RESnarrowGiven = TRUE;
             break;
+        case RES_MOD_SHORT:
+            model->RESshort = value->rValue;
+            model->RESshortGiven = TRUE;
+            break;    
         case RES_MOD_R:
             /* just being reassured by user that this is a resistor model */
             /* no-op */

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #ifndef MOS1
@@ -30,6 +31,8 @@ typedef struct sMOS1instance {
     int MOS1bNode;  /* number of the bulk node of the mosfet */
     int MOS1dNodePrime; /* number of the internal drain node of the mosfet */
     int MOS1sNodePrime; /* number of the internal source node of the mosfet */
+    
+    double MOS1m;   /* parallel device multiplier */
 
     double MOS1l;   /* the length of the channel region */
     double MOS1w;   /* the width of the channel region */
@@ -156,6 +159,7 @@ typedef struct sMOS1instance {
 
     unsigned MOS1off:1;  /* non-zero to indicate device is off for dc analysis*/
     unsigned MOS1tempGiven :1;  /* instance temperature specified */
+    unsigned MOS1mGiven :1;
     unsigned MOS1lGiven :1;
     unsigned MOS1wGiven :1;
     unsigned MOS1drainAreaGiven :1;
@@ -406,7 +410,7 @@ typedef struct sMOS1model {       /* model structure for a resistor */
 #define MOS1_CS 18
 #define MOS1_POWER 19
 #define MOS1_TEMP 20
-
+#define MOS1_M 21
 /* model paramerers */
 #define MOS1_MOD_VTO 101
 #define MOS1_MOD_KP 102

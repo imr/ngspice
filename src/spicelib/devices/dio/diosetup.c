@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 /* load the diode structure with those pointers needed later 
@@ -17,13 +18,13 @@ Author: 1985 Thomas L. Quarles
 
 int
 DIOsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
-    register DIOinstance *here;
+    DIOmodel *model = (DIOmodel*)inModel;
+    DIOinstance *here;
     int error;
     CKTnode *tmp;
 
@@ -86,9 +87,21 @@ matrixpointers:
             if(model->DIOresist == 0) {
                 here->DIOposPrimeNode = here->DIOposNode;
             } else if(here->DIOposPrimeNode == 0) {
+            	
+            	CKTnode *tmpNode;
+               IFuid tmpName;
+            	
                 error = CKTmkVolt(ckt,&tmp,here->DIOname,"internal");
                 if(error) return(error);
                 here->DIOposPrimeNode = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             }
 
 /* macro to make elements with built in test for out of memory */
@@ -114,7 +127,6 @@ DIOunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     DIOmodel *model;
     DIOinstance *here;
 
@@ -133,6 +145,5 @@ DIOunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

@@ -22,7 +22,7 @@ ASRCparam(param,value,fast,select)
     GENinstance *fast;
     IFvalue *select;
 {
-    register ASRCinstance *here = (ASRCinstance*)fast;
+    ASRCinstance *here = (ASRCinstance*)fast;
     switch(param) {
         case ASRC_VOLTAGE:
             here->ASRCtype = ASRC_VOLTAGE;

@@ -13,10 +13,10 @@ Author: 1985 Thomas L. Quarles
 int
 ISRCacLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register ISRCmodel *model = (ISRCmodel*)inModel;
-    register ISRCinstance *here;
+    ISRCmodel *model = (ISRCmodel*)inModel;
+    ISRCinstance *here;
 
     for( ; model != NULL; model = model->ISRCnextModel ) {
 

@@ -7,9 +7,16 @@
 #define CIRCUITS_H_INCLUDED
 
 
-void ft_setccirc(char *name);
+
+struct subcirc {
+    char *sc_name;  /* Whatever... */
+} ;
+
+
+extern struct circ *ft_curckt;  /* The default active circuit. */
+
+
 void ft_newcirc(struct circ *ckt);
-void ft_newsubcirc(struct subcirc *sckt);
 
 
 #endif

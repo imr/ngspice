@@ -19,10 +19,10 @@ Author: 1985 Thomas L. Quarles
 int
 BJTsUpdate(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register BJTmodel *model = (BJTmodel*)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel*)inModel;
+    BJTinstance *here;
     int    iparmno;
     double sb;
     double sbprm;

@@ -19,10 +19,10 @@ Author: 1985 Thomas L. Quarles
 int
 MOS2sAcLoad(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
     int xnrm;
     int xrev;
     double A0;

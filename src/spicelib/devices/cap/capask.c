@@ -56,7 +56,7 @@ CAPask(ckt,inst, which, value, select)
                 } else {
                     value->rValue = *(ckt->CKTstate0 + here->CAPccap);
                 }
-            }
+             } else value->rValue = *(ckt->CKTstate0 + here->CAPccap);
             return(OK);
         case CAP_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
@@ -74,7 +74,9 @@ CAPask(ckt,inst, which, value, select)
                             (*(ckt->CKTrhsOld + here->CAPposNode) - 
                             *(ckt->CKTrhsOld + here->CAPnegNode));
                 }
-            }
+            } else value->rValue = *(ckt->CKTstate0 + here->CAPccap) *
+                            (*(ckt->CKTrhsOld + here->CAPposNode) - 
+                            *(ckt->CKTrhsOld + here->CAPnegNode));
             return(OK);
         case CAP_QUEST_SENS_DC:
             if(ckt->CKTsenInfo){

@@ -23,8 +23,8 @@ CCVSsAcLoad(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-    register CCVSmodel *model = (CCVSmodel*)inModel;
-    register CCVSinstance *here;
+    CCVSmodel *model = (CCVSmodel*)inModel;
+    CCVSinstance *here;
     double   ic,i_ic;
 
     /*  loop through all the voltage source models */

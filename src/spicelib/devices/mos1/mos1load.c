@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -16,13 +17,13 @@ Author: 1985 Thomas L. Quarles
 int
 MOS1load(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
 {
-    register MOS1model *model = (MOS1model *) inModel;
-    register MOS1instance *here;
+    MOS1model *model = (MOS1model *) inModel;
+    MOS1instance *here;
     double Beta;
     double DrainSatCur;
     double EffectiveLength;
@@ -75,30 +76,17 @@ MOS1load(inModel,ckt)
     double capgd;   /* total gate-drain capacitance */
     double capgb;   /* total gate-bulk capacitance */
     int Check;
-#ifndef NOBYPASS
     double tempv;
-#endif /*NOBYPASS*/
     int error;
-#ifdef CAPBYPASS
-    int senflag;
-#endif /* CAPBYPASS */ 
     int SenCond;
 
-
-#ifdef CAPBYPASS
-    senflag = 0;
-    if(ckt->CKTsenInfo && ckt->CKTsenInfo->SENstatus == PERTURBATION &&
-        (ckt->CKTsenInfo->SENmode & (ACSEN | TRANSEN))) {
-        senflag = 1;
-    }
-#endif /* CAPBYPASS */ 
 
     /*  loop through all the MOS1 device models */
     for( ; model != NULL; model = model->MOS1nextModel ) {
 
         /* loop through all the instances of the model */
         for (here = model->MOS1instances; here != NULL ;
-                here=here->MOS1nextInstance) {
+	     here=here->MOS1nextInstance) {
 	    if (here->MOS1owner != ARCHme) continue;
 
             vt = CONSTKoverQ * here->MOS1temp;
@@ -109,19 +97,14 @@ MOS1load(inModel,ckt)
 #endif /* SENSDEBUG */
 
                 if((ckt->CKTsenInfo->SENstatus == PERTURBATION)&&
-                    (here->MOS1senPertFlag == OFF))continue;
+		   (here->MOS1senPertFlag == OFF))continue;
 
             }
             SenCond = ckt->CKTsenInfo && here->MOS1senPertFlag;
 
 /*
-
+  
 */
-
-#ifdef DETAILPROF
-asm("   .globl mospta");
-asm("mospta:");
-#endif /*DETAILPROF*/
 
             /* first, we compute a few useful values - these could be
              * pre-computed, but for historical reasons are still done
@@ -129,26 +112,29 @@ asm("mospta:");
              */
 
             EffectiveLength=here->MOS1l - 2*model->MOS1latDiff;
+            
             if( (here->MOS1tSatCurDens == 0) || 
                     (here->MOS1drainArea == 0) ||
                     (here->MOS1sourceArea == 0)) {
-                DrainSatCur = here->MOS1tSatCur;
-                SourceSatCur = here->MOS1tSatCur;
+                DrainSatCur = here->MOS1m * here->MOS1tSatCur;
+                SourceSatCur = here->MOS1m * here->MOS1tSatCur;
             } else {
                 DrainSatCur = here->MOS1tSatCurDens * 
-                        here->MOS1drainArea;
+                        here->MOS1m * here->MOS1drainArea;
                 SourceSatCur = here->MOS1tSatCurDens * 
-                        here->MOS1sourceArea;
+                        here->MOS1m * here->MOS1sourceArea;
             }
             GateSourceOverlapCap = model->MOS1gateSourceOverlapCapFactor * 
-                    here->MOS1w;
+                    here->MOS1m * here->MOS1w;
             GateDrainOverlapCap = model->MOS1gateDrainOverlapCapFactor * 
-                    here->MOS1w;
+                    here->MOS1m * here->MOS1w;
             GateBulkOverlapCap = model->MOS1gateBulkOverlapCapFactor * 
-                    EffectiveLength;
-            Beta = here->MOS1tTransconductance * here->MOS1w/EffectiveLength;
+                    here->MOS1m * EffectiveLength;
+            Beta = here->MOS1tTransconductance * here->MOS1m *
+                    here->MOS1w/EffectiveLength;
             OxideCap = model->MOS1oxideCapFactor * EffectiveLength * 
-                    here->MOS1w;
+                    here->MOS1m * here->MOS1w;
+           
             /* 
              * ok - now to do the start-up operations
              *
@@ -164,7 +150,7 @@ asm("mospta:");
                 printf("MOS1senPertFlag = ON \n");
 #endif /* SENSDEBUG */
                 if((ckt->CKTsenInfo->SENmode == TRANSEN) &&
-                (ckt->CKTmode & MODEINITTRAN)) {
+		   (ckt->CKTmode & MODEINITTRAN)) {
                     vgs = *(ckt->CKTstate1 + here->MOS1vgs);
                     vds = *(ckt->CKTstate1 + here->MOS1vds);
                     vbs = *(ckt->CKTstate1 + here->MOS1vbs);
@@ -199,8 +185,8 @@ asm("mospta:");
 
 
             if((ckt->CKTmode & (MODEINITFLOAT | MODEINITPRED | MODEINITSMSIG
-                    | MODEINITTRAN)) ||
-                    ( (ckt->CKTmode & MODEINITFIX) && (!here->MOS1off) )  ) {
+				| MODEINITTRAN)) ||
+	       ( (ckt->CKTmode & MODEINITFIX) && (!here->MOS1off) )  ) {
 #ifndef PREDICTOR
                 if(ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) {
 
@@ -208,20 +194,20 @@ asm("mospta:");
 
                     xfact=ckt->CKTdelta/ckt->CKTdeltaOld[1];
                     *(ckt->CKTstate0 + here->MOS1vbs) = 
-                            *(ckt->CKTstate1 + here->MOS1vbs);
+			*(ckt->CKTstate1 + here->MOS1vbs);
                     vbs = (1+xfact)* (*(ckt->CKTstate1 + here->MOS1vbs))
-                            -(xfact * (*(ckt->CKTstate2 + here->MOS1vbs)));
+			-(xfact * (*(ckt->CKTstate2 + here->MOS1vbs)));
                     *(ckt->CKTstate0 + here->MOS1vgs) = 
-                            *(ckt->CKTstate1 + here->MOS1vgs);
+			*(ckt->CKTstate1 + here->MOS1vgs);
                     vgs = (1+xfact)* (*(ckt->CKTstate1 + here->MOS1vgs))
-                            -(xfact * (*(ckt->CKTstate2 + here->MOS1vgs)));
+			-(xfact * (*(ckt->CKTstate2 + here->MOS1vgs)));
                     *(ckt->CKTstate0 + here->MOS1vds) = 
-                            *(ckt->CKTstate1 + here->MOS1vds);
+			*(ckt->CKTstate1 + here->MOS1vds);
                     vds = (1+xfact)* (*(ckt->CKTstate1 + here->MOS1vds))
-                            -(xfact * (*(ckt->CKTstate2 + here->MOS1vds)));
+			-(xfact * (*(ckt->CKTstate2 + here->MOS1vds)));
                     *(ckt->CKTstate0 + here->MOS1vbd) = 
-                            *(ckt->CKTstate0 + here->MOS1vbs)-
-                            *(ckt->CKTstate0 + here->MOS1vds);
+			*(ckt->CKTstate0 + here->MOS1vbs)-
+			*(ckt->CKTstate0 + here->MOS1vds);
                 } else {
 #endif /* PREDICTOR */
 
@@ -245,7 +231,7 @@ asm("mospta:");
                 vbd=vbs-vds;
                 vgd=vgs-vds;
                 vgdo = *(ckt->CKTstate0 + here->MOS1vgs) - 
-                        *(ckt->CKTstate0 + here->MOS1vds);
+		    *(ckt->CKTstate0 + here->MOS1vds);
                 delvbs = vbs - *(ckt->CKTstate0 + here->MOS1vbs);
                 delvbd = vbd - *(ckt->CKTstate0 + here->MOS1vbd);
                 delvgs = vgs - *(ckt->CKTstate0 + here->MOS1vgs);
@@ -265,7 +251,7 @@ asm("mospta:");
                     cdhat=
                         here->MOS1cd -
                         ( here->MOS1gbd -
-                        here->MOS1gmbs) * delvbd -
+			  here->MOS1gmbs) * delvbd -
                         here->MOS1gm * delvgd + 
                         here->MOS1gds * delvds ;
                 }
@@ -275,82 +261,79 @@ asm("mospta:");
                     here->MOS1gbd * delvbd +
                     here->MOS1gbs * delvbs ;
 /*
-
+  
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptb");
-asm("mosptb:");
-#endif /*DETAILPROF*/
-#ifndef NOBYPASS
                 /* now lets see if we can bypass (ugh) */
-                /* the following mess should be one if statement, but
-                 * many compilers can't handle it all at once, so it
-                 * is split into several successive if statements
-                 */
-                tempv = MAX(fabs(cbhat),fabs(here->MOS1cbs
-                        + here->MOS1cbd))+ckt->CKTabstol;
-                if((!(ckt->CKTmode & (MODEINITPRED|MODEINITTRAN|MODEINITSMSIG)
-                        )) && (ckt->CKTbypass) )
-                if ( (fabs(cbhat-(here->MOS1cbs + 
-                        here->MOS1cbd)) < ckt->CKTreltol * 
-                        tempv)) 
-                if( (fabs(delvbs) < (ckt->CKTreltol * MAX(fabs(vbs),
-                        fabs(*(ckt->CKTstate0+here->MOS1vbs)))+
-                        ckt->CKTvoltTol)))
-                if ( (fabs(delvbd) < (ckt->CKTreltol * MAX(fabs(vbd),
-                        fabs(*(ckt->CKTstate0+here->MOS1vbd)))+
-                        ckt->CKTvoltTol)) )
-                if( (fabs(delvgs) < (ckt->CKTreltol * MAX(fabs(vgs),
-                        fabs(*(ckt->CKTstate0+here->MOS1vgs)))+
-                        ckt->CKTvoltTol)))
-                if ( (fabs(delvds) < (ckt->CKTreltol * MAX(fabs(vds),
-                        fabs(*(ckt->CKTstate0+here->MOS1vds)))+
-                        ckt->CKTvoltTol)) )
-                if( (fabs(cdhat- here->MOS1cd) <
-                        ckt->CKTreltol * MAX(fabs(cdhat),fabs(
-                        here->MOS1cd)) + ckt->CKTabstol) ) {
+                tempv = (MAX(fabs(cbhat),
+			    fabs(here->MOS1cbs + here->MOS1cbd)) +
+			 ckt->CKTabstol);
+                if ((!(ckt->CKTmode &
+		       (MODEINITPRED|MODEINITTRAN|MODEINITSMSIG))) &&
+		    (ckt->CKTbypass) &&
+		    (fabs(cbhat-(here->MOS1cbs + 
+				 here->MOS1cbd)) < ckt->CKTreltol * tempv) &&
+		    (fabs(delvbs) < (ckt->CKTreltol *
+				     MAX(fabs(vbs),
+					 fabs( *(ckt->CKTstate0 +
+						 here->MOS1vbs))) +
+				     ckt->CKTvoltTol)) &&
+		    (fabs(delvbd) < (ckt->CKTreltol *
+				     MAX(fabs(vbd),
+					 fabs(*(ckt->CKTstate0 +
+						here->MOS1vbd))) +
+				     ckt->CKTvoltTol)) &&
+		    (fabs(delvgs) < (ckt->CKTreltol *
+				     MAX(fabs(vgs),
+					 fabs(*(ckt->CKTstate0 +
+						here->MOS1vgs)))+
+				     ckt->CKTvoltTol)) &&
+		    (fabs(delvds) < (ckt->CKTreltol *
+				     MAX(fabs(vds),
+					 fabs(*(ckt->CKTstate0 +
+						here->MOS1vds))) +
+				     ckt->CKTvoltTol)) &&
+		    (fabs(cdhat- here->MOS1cd) < (ckt->CKTreltol *
+						  MAX(fabs(cdhat),
+						      fabs(here->MOS1cd)) +
+						  ckt->CKTabstol))) {
 		  /* bypass code */
-                    /* nothing interesting has changed since last
-                     * iteration on this device, so we just
-                     * copy all the values computed last iteration out
-                     * and keep going
-                     */
-                    vbs = *(ckt->CKTstate0 + here->MOS1vbs);
-                    vbd = *(ckt->CKTstate0 + here->MOS1vbd);
-                    vgs = *(ckt->CKTstate0 + here->MOS1vgs);
-                    vds = *(ckt->CKTstate0 + here->MOS1vds);
-                    vgd = vgs - vds;
-                    vgb = vgs - vbs;
-                    cdrain = here->MOS1mode * (here->MOS1cd + here->MOS1cbd);
-                    if(ckt->CKTmode & (MODETRAN | MODETRANOP)) {
-                        capgs = ( *(ckt->CKTstate0+here->MOS1capgs)+ 
-                                  *(ckt->CKTstate1+here->MOS1capgs) +
-                                  GateSourceOverlapCap );
-                        capgd = ( *(ckt->CKTstate0+here->MOS1capgd)+ 
-                                  *(ckt->CKTstate1+here->MOS1capgd) +
-                                  GateDrainOverlapCap );
-                        capgb = ( *(ckt->CKTstate0+here->MOS1capgb)+ 
-                                  *(ckt->CKTstate1+here->MOS1capgb) +
-                                  GateBulkOverlapCap );
+		  /* nothing interesting has changed since last
+		   * iteration on this device, so we just
+		   * copy all the values computed last iteration out
+		   * and keep going
+		   */
+		  vbs = *(ckt->CKTstate0 + here->MOS1vbs);
+		  vbd = *(ckt->CKTstate0 + here->MOS1vbd);
+		  vgs = *(ckt->CKTstate0 + here->MOS1vgs);
+		  vds = *(ckt->CKTstate0 + here->MOS1vds);
+		  vgd = vgs - vds;
+		  vgb = vgs - vbs;
+		  cdrain = here->MOS1mode * (here->MOS1cd + here->MOS1cbd);
+		  if(ckt->CKTmode & (MODETRAN | MODETRANOP)) {
+		    capgs = ( *(ckt->CKTstate0+here->MOS1capgs)+ 
+			      *(ckt->CKTstate1+here->MOS1capgs) +
+			      GateSourceOverlapCap );
+		    capgd = ( *(ckt->CKTstate0+here->MOS1capgd)+ 
+			      *(ckt->CKTstate1+here->MOS1capgd) +
+			      GateDrainOverlapCap );
+		    capgb = ( *(ckt->CKTstate0+here->MOS1capgb)+ 
+			      *(ckt->CKTstate1+here->MOS1capgb) +
+			      GateBulkOverlapCap );
+		    
+		    if(ckt->CKTsenInfo){
+		      here->MOS1cgs = capgs;
+		      here->MOS1cgd = capgd;
+		      here->MOS1cgb = capgb;
+		    }
+		  }
+		  goto bypass;
+		}
 
-                        if(ckt->CKTsenInfo){
-                            here->MOS1cgs = capgs;
-                            here->MOS1cgd = capgd;
-                            here->MOS1cgb = capgb;
-                        }
-                    }
-                    goto bypass;
-                }
-#endif /*NOBYPASS*/
 /*
-
+  
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptc");
-asm("mosptc:");
-#endif /*DETAILPROF*/
                 /* ok - bypass is out, do it the hard way */
 
                 von = model->MOS1type * here->MOS1von;
@@ -365,7 +348,7 @@ asm("mosptc:");
 
                 if(*(ckt->CKTstate0 + here->MOS1vds) >=0) {
                     vgs = DEVfetlim(vgs,*(ckt->CKTstate0 + here->MOS1vgs)
-                            ,von);
+				    ,von);
                     vds = vgs - vgd;
                     vds = DEVlimvds(vds,*(ckt->CKTstate0 + here->MOS1vds));
                     vgd = vgs - vds;
@@ -374,28 +357,24 @@ asm("mosptc:");
                     vds = vgs - vgd;
                     if(!(ckt->CKTfixLimit)) {
                         vds = -DEVlimvds(-vds,-(*(ckt->CKTstate0 + 
-                                here->MOS1vds)));
+						  here->MOS1vds)));
                     }
                     vgs = vgd + vds;
                 }
                 if(vds >= 0) {
                     vbs = DEVpnjlim(vbs,*(ckt->CKTstate0 + here->MOS1vbs),
-                            vt,here->MOS1sourceVcrit,&Check);
+				    vt,here->MOS1sourceVcrit,&Check);
                     vbd = vbs-vds;
                 } else {
                     vbd = DEVpnjlim(vbd,*(ckt->CKTstate0 + here->MOS1vbd),
-                            vt,here->MOS1drainVcrit,&Check);
+				    vt,here->MOS1drainVcrit,&Check);
                     vbs = vbd + vds;
                 }
 #endif /*NODELIMITING*/
 /*
-
+  
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptd");
-asm("mosptd:");
-#endif /*DETAILPROF*/
             } else {
 
                 /* ok - not one of the simple cases, so we have to
@@ -408,9 +387,9 @@ asm("mosptd:");
                     vgs= model->MOS1type * here->MOS1icVGS;
                     vbs= model->MOS1type * here->MOS1icVBS;
                     if((vds==0) && (vgs==0) && (vbs==0) && 
-                            ((ckt->CKTmode & 
-                                (MODETRAN|MODEDCOP|MODEDCTRANCURVE)) ||
-                             (!(ckt->CKTmode & MODEUIC)))) {
+		       ((ckt->CKTmode & 
+			 (MODETRAN|MODEDCOP|MODEDCTRANCURVE)) ||
+			(!(ckt->CKTmode & MODEUIC)))) {
                         vbs = -1;
                         vgs = model->MOS1type * here->MOS1tVto;
                         vds = 0;
@@ -420,13 +399,8 @@ asm("mosptd:");
                 } 
             }
 /*
-
+  
 */
-
-#ifdef DETAILPROF
-asm("   .globl mospte");
-asm("mospte:");
-#endif /*DETAILPROF*/
 
             /*
              * now all the preliminaries are over - we can start doing the
@@ -442,25 +416,22 @@ asm("mospte:");
              *   here we just evaluate the ideal diode current and the
              *   corresponding derivative (conductance).
              */
-next1:      if(vbs <= 0) {
-                here->MOS1gbs = SourceSatCur/vt;
-                here->MOS1cbs = here->MOS1gbs*vbs;
-                here->MOS1gbs += ckt->CKTgmin;
+next1:      if(vbs <= -3*vt) {
+                here->MOS1gbs = ckt->CKTgmin;
+                here->MOS1cbs = here->MOS1gbs*vbs-SourceSatCur;
             } else {
                 evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
                 here->MOS1gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
-                here->MOS1cbs = SourceSatCur * (evbs-1);
+                here->MOS1cbs = SourceSatCur*(evbs-1) + ckt->CKTgmin*vbs;
             }
-            if(vbd <= 0) {
-                here->MOS1gbd = DrainSatCur/vt;
-                here->MOS1cbd = here->MOS1gbd *vbd;
-                here->MOS1gbd += ckt->CKTgmin;
+            if(vbd <= -3*vt) {
+                here->MOS1gbd = ckt->CKTgmin;
+                here->MOS1cbd = here->MOS1gbd*vbd-DrainSatCur;
             } else {
                 evbd = exp(MIN(MAX_EXP_ARG,vbd/vt));
-                here->MOS1gbd = DrainSatCur*evbd/vt +ckt->CKTgmin;
-                here->MOS1cbd = DrainSatCur *(evbd-1);
+                here->MOS1gbd = DrainSatCur*evbd/vt + ckt->CKTgmin;
+                here->MOS1cbd = DrainSatCur*(evbd-1) + ckt->CKTgmin*vbd;
             }
-
             /* now to determine whether the user was able to correctly
              * identify the source and drain of his device
              */
@@ -472,29 +443,25 @@ next1:      if(vbs <= 0) {
                 here->MOS1mode = -1;
             }
 /*
-
+  
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptf");
-asm("mosptf:");
-#endif /*DETAILPROF*/
             {
-            /*
-             *     this block of code evaluates the drain current and its 
-             *     derivatives using the shichman-hodges model and the 
-             *     charges associated with the gate, channel and bulk for 
-             *     mosfets
-             *
-             */
+		/*
+		 *     this block of code evaluates the drain current and its 
+		 *     derivatives using the shichman-hodges model and the 
+		 *     charges associated with the gate, channel and bulk for 
+		 *     mosfets
+		 *
+		 */
 
-            /* the following 4 variables are local to this code block until 
-             * it is obvious that they can be made global 
-             */
-            double arg;
-            double betap;
-            double sarg;
-            double vgst;
+		/* the following 4 variables are local to this code block until 
+		 * it is obvious that they can be made global 
+		 */
+		double arg;
+		double betap;
+		double sarg;
+		double vgst;
 
                 if ((here->MOS1mode==1?vbs:vbd) <= 0 ) {
                     sarg=sqrt(here->MOS1tPhi-(here->MOS1mode==1?vbs:vbd));
@@ -530,16 +497,16 @@ asm("mosptf:");
                         here->MOS1gds=model->MOS1lambda*Beta*vgst*vgst*.5;
                         here->MOS1gmbs=here->MOS1gm*arg;
                     } else {
-                    /*
-                     *     linear region
-                     */
+			/*
+			 *     linear region
+			 */
                         cdrain=betap*(vds*here->MOS1mode)*
                             (vgst-.5*(vds*here->MOS1mode));
                         here->MOS1gm=betap*(vds*here->MOS1mode);
                         here->MOS1gds=betap*(vgst-(vds*here->MOS1mode))+
-                                model->MOS1lambda*Beta*
-                                (vds*here->MOS1mode)*
-                                (vgst-.5*(vds*here->MOS1mode));
+			    model->MOS1lambda*Beta*
+			    (vds*here->MOS1mode)*
+			    (vgst-.5*(vds*here->MOS1mode));
                         here->MOS1gmbs=here->MOS1gm*arg;
                     }
                 }
@@ -548,13 +515,8 @@ asm("mosptf:");
                  */
             }
 /*
-
+  
 */
-
-#ifdef DETAILPROF
-asm("   .globl mosptg");
-asm("mosptg:");
-#endif /*DETAILPROF*/
 
             /* now deal with n vs p polarity */
 
@@ -581,152 +543,127 @@ asm("mosptg:");
                  *
                  *.. bulk-drain and bulk-source depletion capacitances
                  */
-#ifdef CAPBYPASS
-                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
-                        fabs(delvbs) >= ckt->CKTreltol * MAX(fabs(vbs),
-                        fabs(*(ckt->CKTstate0+here->MOS1vbs)))+
-                        ckt->CKTvoltTol)|| senflag)
-#endif /*CAPBYPASS*/
                 {
                     /* can't bypass the diode capacitance calculations */
-#ifdef CAPZEROBYPASS
                     if(here->MOS1Cbs != 0 || here->MOS1Cbssw != 0 ) {
-#endif /*CAPZEROBYPASS*/
-                    if (vbs < here->MOS1tDepCap){
-                        arg=1-vbs/here->MOS1tBulkPot;
-                        /*
-                         * the following block looks somewhat long and messy,
-                         * but since most users use the default grading
-                         * coefficients of .5, and sqrt is MUCH faster than an
-                         * exp(log()) we use this special case code to buy time.
-                         * (as much as 10% of total job time!)
-                         */
+			if (vbs < here->MOS1tDepCap){
+			    arg=1-vbs/here->MOS1tBulkPot;
+			    /*
+			     * the following block looks somewhat long and messy,
+			     * but since most users use the default grading
+			     * coefficients of .5, and sqrt is MUCH faster than an
+			     * exp(log()) we use this special case code to buy time.
+			     * (as much as 10% of total job time!)
+			     */
 #ifndef NOSQRT
-                        if(model->MOS1bulkJctBotGradingCoeff ==
-                                model->MOS1bulkJctSideGradingCoeff) {
-                            if(model->MOS1bulkJctBotGradingCoeff == .5) {
-                                sarg = sargsw = 1/sqrt(arg);
-                            } else {
-                                sarg = sargsw =
+			    if(model->MOS1bulkJctBotGradingCoeff ==
+			       model->MOS1bulkJctSideGradingCoeff) {
+				if(model->MOS1bulkJctBotGradingCoeff == .5) {
+				    sarg = sargsw = 1/sqrt(arg);
+				} else {
+				    sarg = sargsw =
                                         exp(-model->MOS1bulkJctBotGradingCoeff*
-                                        log(arg));
-                            }
-                        } else {
-                            if(model->MOS1bulkJctBotGradingCoeff == .5) {
-                                sarg = 1/sqrt(arg);
-                            } else {
+					    log(arg));
+				}
+			    } else {
+				if(model->MOS1bulkJctBotGradingCoeff == .5) {
+				    sarg = 1/sqrt(arg);
+				} else {
 #endif /*NOSQRT*/
-                                sarg = exp(-model->MOS1bulkJctBotGradingCoeff*
-                                        log(arg));
+				    sarg = exp(-model->MOS1bulkJctBotGradingCoeff*
+					       log(arg));
 #ifndef NOSQRT
-                            }
-                            if(model->MOS1bulkJctSideGradingCoeff == .5) {
-                                sargsw = 1/sqrt(arg);
-                            } else {
+				}
+				if(model->MOS1bulkJctSideGradingCoeff == .5) {
+				    sargsw = 1/sqrt(arg);
+				} else {
 #endif /*NOSQRT*/
-                                sargsw =exp(-model->MOS1bulkJctSideGradingCoeff*
-                                        log(arg));
+				    sargsw =exp(-model->MOS1bulkJctSideGradingCoeff*
+						log(arg));
 #ifndef NOSQRT
-                            }
-                        }
+				}
+			    }
 #endif /*NOSQRT*/
-                        *(ckt->CKTstate0 + here->MOS1qbs) =
-                            here->MOS1tBulkPot*(here->MOS1Cbs*
-                            (1-arg*sarg)/(1-model->MOS1bulkJctBotGradingCoeff)
-                            +here->MOS1Cbssw*
-                            (1-arg*sargsw)/
-                            (1-model->MOS1bulkJctSideGradingCoeff));
-                        here->MOS1capbs=here->MOS1Cbs*sarg+
+			    *(ckt->CKTstate0 + here->MOS1qbs) =
+				here->MOS1tBulkPot*(here->MOS1Cbs*
+						    (1-arg*sarg)/(1-model->MOS1bulkJctBotGradingCoeff)
+						    +here->MOS1Cbssw*
+						    (1-arg*sargsw)/
+						    (1-model->MOS1bulkJctSideGradingCoeff));
+			    here->MOS1capbs=here->MOS1Cbs*sarg+
                                 here->MOS1Cbssw*sargsw;
-                    } else {
-                        *(ckt->CKTstate0 + here->MOS1qbs) = here->MOS1f4s +
+			} else {
+			    *(ckt->CKTstate0 + here->MOS1qbs) = here->MOS1f4s +
                                 vbs*(here->MOS1f2s+vbs*(here->MOS1f3s/2));
-                        here->MOS1capbs=here->MOS1f2s+here->MOS1f3s*vbs;
-                    }
-#ifdef CAPZEROBYPASS
+			    here->MOS1capbs=here->MOS1f2s+here->MOS1f3s*vbs;
+			}
                     } else {
-                        *(ckt->CKTstate0 + here->MOS1qbs) = 0;
+			*(ckt->CKTstate0 + here->MOS1qbs) = 0;
                         here->MOS1capbs=0;
                     }
-#endif /*CAPZEROBYPASS*/
                 }
-#ifdef CAPBYPASS
-                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
-                        fabs(delvbd) >= ckt->CKTreltol * MAX(fabs(vbd),
-                        fabs(*(ckt->CKTstate0+here->MOS1vbd)))+
-                        ckt->CKTvoltTol)|| senflag)
-#endif /*CAPBYPASS*/
                     /* can't bypass the diode capacitance calculations */
                 {
-#ifdef CAPZEROBYPASS
                     if(here->MOS1Cbd != 0 || here->MOS1Cbdsw != 0 ) {
-#endif /*CAPZEROBYPASS*/
-                    if (vbd < here->MOS1tDepCap) {
-                        arg=1-vbd/here->MOS1tBulkPot;
-                        /*
-                         * the following block looks somewhat long and messy,
-                         * but since most users use the default grading
-                         * coefficients of .5, and sqrt is MUCH faster than an
-                         * exp(log()) we use this special case code to buy time.
-                         * (as much as 10% of total job time!)
-                         */
+			if (vbd < here->MOS1tDepCap) {
+			    arg=1-vbd/here->MOS1tBulkPot;
+			    /*
+			     * the following block looks somewhat long and messy,
+			     * but since most users use the default grading
+			     * coefficients of .5, and sqrt is MUCH faster than an
+			     * exp(log()) we use this special case code to buy time.
+			     * (as much as 10% of total job time!)
+			     */
 #ifndef NOSQRT
-                        if(model->MOS1bulkJctBotGradingCoeff == .5 &&
-                                model->MOS1bulkJctSideGradingCoeff == .5) {
-                            sarg = sargsw = 1/sqrt(arg);
-                        } else {
-                            if(model->MOS1bulkJctBotGradingCoeff == .5) {
-                                sarg = 1/sqrt(arg);
-                            } else {
+			    if(model->MOS1bulkJctBotGradingCoeff == .5 &&
+			       model->MOS1bulkJctSideGradingCoeff == .5) {
+				sarg = sargsw = 1/sqrt(arg);
+			    } else {
+				if(model->MOS1bulkJctBotGradingCoeff == .5) {
+				    sarg = 1/sqrt(arg);
+				} else {
 #endif /*NOSQRT*/
-                                sarg = exp(-model->MOS1bulkJctBotGradingCoeff*
-                                        log(arg));
+				    sarg = exp(-model->MOS1bulkJctBotGradingCoeff*
+					       log(arg));
 #ifndef NOSQRT
-                            }
-                            if(model->MOS1bulkJctSideGradingCoeff == .5) {
-                                sargsw = 1/sqrt(arg);
-                            } else {
+				}
+				if(model->MOS1bulkJctSideGradingCoeff == .5) {
+				    sargsw = 1/sqrt(arg);
+				} else {
 #endif /*NOSQRT*/
-                                sargsw =exp(-model->MOS1bulkJctSideGradingCoeff*
-                                        log(arg));
+				    sargsw =exp(-model->MOS1bulkJctSideGradingCoeff*
+						log(arg));
 #ifndef NOSQRT
-                            }
-                        }
+				}
+			    }
 #endif /*NOSQRT*/
-                        *(ckt->CKTstate0 + here->MOS1qbd) =
-                            here->MOS1tBulkPot*(here->MOS1Cbd*
-                            (1-arg*sarg)
-                            /(1-model->MOS1bulkJctBotGradingCoeff)
-                            +here->MOS1Cbdsw*
-                            (1-arg*sargsw)
-                            /(1-model->MOS1bulkJctSideGradingCoeff));
-                        here->MOS1capbd=here->MOS1Cbd*sarg+
+			    *(ckt->CKTstate0 + here->MOS1qbd) =
+				here->MOS1tBulkPot*(here->MOS1Cbd*
+						    (1-arg*sarg)
+						    /(1-model->MOS1bulkJctBotGradingCoeff)
+						    +here->MOS1Cbdsw*
+						    (1-arg*sargsw)
+						    /(1-model->MOS1bulkJctSideGradingCoeff));
+			    here->MOS1capbd=here->MOS1Cbd*sarg+
                                 here->MOS1Cbdsw*sargsw;
-                    } else {
-                        *(ckt->CKTstate0 + here->MOS1qbd) = here->MOS1f4d +
+			} else {
+			    *(ckt->CKTstate0 + here->MOS1qbd) = here->MOS1f4d +
                                 vbd * (here->MOS1f2d + vbd * here->MOS1f3d/2);
-                        here->MOS1capbd=here->MOS1f2d + vbd * here->MOS1f3d;
-                    }
-#ifdef CAPZEROBYPASS
-                } else {
-                    *(ckt->CKTstate0 + here->MOS1qbd) = 0;
-                    here->MOS1capbd = 0;
-                }
-#endif /*CAPZEROBYPASS*/
+			    here->MOS1capbd=here->MOS1f2d + vbd * here->MOS1f3d;
+			}
+		    } else {
+			*(ckt->CKTstate0 + here->MOS1qbd) = 0;
+			here->MOS1capbd = 0;
+		    }
                 }
 /*
-
+  
 */
-
-#ifdef DETAILPROF
-asm("   .globl mospth");
-asm("mospth:");
-#endif /*DETAILPROF*/
 
                 if(SenCond && (ckt->CKTsenInfo->SENmode==TRANSEN)) goto next2;
 
                 if ( (ckt->CKTmode & MODETRAN) || ( (ckt->CKTmode&MODEINITTRAN)
-						&& !(ckt->CKTmode&MODEUIC)) ) {
+						    && !(ckt->CKTmode&MODEUIC)) ) {
                     /* (above only excludes tranop, since we're only at this
                      * point if tran or tranop )
                      */
@@ -739,26 +676,21 @@ asm("mospth:");
                     /* integrate the capacitors and save results */
 
                     error = NIintegrate(ckt,&geq,&ceq,here->MOS1capbd,
-                            here->MOS1qbd);
+					here->MOS1qbd);
                     if(error) return(error);
                     here->MOS1gbd += geq;
                     here->MOS1cbd += *(ckt->CKTstate0 + here->MOS1cqbd);
                     here->MOS1cd -= *(ckt->CKTstate0 + here->MOS1cqbd);
                     error = NIintegrate(ckt,&geq,&ceq,here->MOS1capbs,
-                            here->MOS1qbs);
+					here->MOS1qbs);
                     if(error) return(error);
                     here->MOS1gbs += geq;
                     here->MOS1cbs += *(ckt->CKTstate0 + here->MOS1cqbs);
                 }
             }
 /*
-
+  
 */
-
-#ifdef DETAILPROF
-asm("   .globl mospti");
-asm("mospti:");
-#endif /*DETAILPROF*/
 
             if(SenCond) goto next2;
 
@@ -767,53 +699,27 @@ asm("mospti:");
              *  check convergence
              */
             if ( (here->MOS1off == 0)  || 
-                    (!(ckt->CKTmode & (MODEINITFIX|MODEINITSMSIG))) ){
+		 (!(ckt->CKTmode & (MODEINITFIX|MODEINITSMSIG))) ){
                 if (Check == 1) {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
-#ifndef NEWCONV
-                } else {
-                    tol=ckt->CKTreltol*MAX(fabs(cdhat),
-                            fabs(here->MOS1cd))+ckt->CKTabstol;
-                    if (fabs(cdhat-here->MOS1cd) >= tol) { 
-                        ckt->CKTnoncon++;
-			ckt->CKTtroubleElt = (GENinstance *) here;
-                    } else {
-                        tol=ckt->CKTreltol*MAX(fabs(cbhat),
-                                fabs(here->MOS1cbs+here->MOS1cbd))+
-                                ckt->CKTabstol;
-                        if (fabs(cbhat-(here->MOS1cbs+here->MOS1cbd)) > tol) {
-                            ckt->CKTnoncon++;
-			    ckt->CKTtroubleElt = (GENinstance *) here;
-                        }
-                    }
-#endif /*NEWCONV*/
                 }
             }
 /*
-
+  
 */
-
-#ifdef DETAILPROF
-asm("   .globl mosptj");
-asm("mosptj:");
-#endif /*DETAILPROF*/
 
             /* save things away for next time */
 
-next2:      *(ckt->CKTstate0 + here->MOS1vbs) = vbs;
+	next2:      *(ckt->CKTstate0 + here->MOS1vbs) = vbs;
             *(ckt->CKTstate0 + here->MOS1vbd) = vbd;
             *(ckt->CKTstate0 + here->MOS1vgs) = vgs;
             *(ckt->CKTstate0 + here->MOS1vds) = vds;
 
 /*
-
+  
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptk");
-asm("mosptk:");
-#endif /*DETAILPROF*/
             /*
              *     meyer's capacitor model
              */
@@ -830,27 +736,27 @@ asm("mosptk:");
                  */
                 if (here->MOS1mode > 0){
                     DEVqmeyer (vgs,vgd,vgb,von,vdsat,
-                        (ckt->CKTstate0 + here->MOS1capgs),
-                        (ckt->CKTstate0 + here->MOS1capgd),
-                        (ckt->CKTstate0 + here->MOS1capgb),
-                        here->MOS1tPhi,OxideCap);
+			       (ckt->CKTstate0 + here->MOS1capgs),
+			       (ckt->CKTstate0 + here->MOS1capgd),
+			       (ckt->CKTstate0 + here->MOS1capgb),
+			       here->MOS1tPhi,OxideCap);
                 } else {
                     DEVqmeyer (vgd,vgs,vgb,von,vdsat,
-                        (ckt->CKTstate0 + here->MOS1capgd),
-                        (ckt->CKTstate0 + here->MOS1capgs),
-                        (ckt->CKTstate0 + here->MOS1capgb),
-                        here->MOS1tPhi,OxideCap);
+			       (ckt->CKTstate0 + here->MOS1capgd),
+			       (ckt->CKTstate0 + here->MOS1capgs),
+			       (ckt->CKTstate0 + here->MOS1capgb),
+			       here->MOS1tPhi,OxideCap);
                 }
                 vgs1 = *(ckt->CKTstate1 + here->MOS1vgs);
                 vgd1 = vgs1 - *(ckt->CKTstate1 + here->MOS1vds);
                 vgb1 = vgs1 - *(ckt->CKTstate1 + here->MOS1vbs);
                 if(ckt->CKTmode & (MODETRANOP|MODEINITSMSIG)) {
                     capgs =  2 * *(ckt->CKTstate0+here->MOS1capgs)+ 
-                              GateSourceOverlapCap ;
+			GateSourceOverlapCap ;
                     capgd =  2 * *(ckt->CKTstate0+here->MOS1capgd)+ 
-                              GateDrainOverlapCap ;
+			GateDrainOverlapCap ;
                     capgb =  2 * *(ckt->CKTstate0+here->MOS1capgb)+ 
-                              GateBulkOverlapCap ;
+			GateBulkOverlapCap ;
                 } else {
                     capgs = ( *(ckt->CKTstate0+here->MOS1capgs)+ 
                               *(ckt->CKTstate1+here->MOS1capgs) +
@@ -868,20 +774,16 @@ asm("mosptk:");
                     here->MOS1cgb = capgb;
                 }
 /*
-
+  
 */
 
-#ifdef DETAILPROF
-asm("   .globl mosptl");
-asm("mosptl:");
-#endif /*DETAILPROF*/
                 /*
                  *     store small-signal parameters (for meyer's model)
                  *  all parameters already stored, so done...
                  */
                 if(SenCond){
                     if((ckt->CKTsenInfo->SENmode == DCSEN)||
-                            (ckt->CKTsenInfo->SENmode == ACSEN)){
+		       (ckt->CKTsenInfo->SENmode == ACSEN)){
                         continue;
                     }
                 }
@@ -916,11 +818,11 @@ asm("mosptl:");
                 }
 #endif /*PREDICTOR*/
             }
-bypass:
+	bypass:
             if(SenCond) continue;
 
             if ( (ckt->CKTmode & (MODEINITTRAN)) || 
-                    (! (ckt->CKTmode & (MODETRAN)) )  ) {
+		 (! (ckt->CKTmode & (MODETRAN)) )  ) {
                 /*
                  *  initialize to zero charge conductances 
                  *  and current
@@ -946,11 +848,11 @@ bypass:
                 error = NIintegrate(ckt,&gcgb,&ceqgb,capgb,here->MOS1qgb);
                 if(error) return(error);
                 ceqgs=ceqgs-gcgs*vgs+ckt->CKTag[0]* 
-                        *(ckt->CKTstate0 + here->MOS1qgs);
+		    *(ckt->CKTstate0 + here->MOS1qgs);
                 ceqgd=ceqgd-gcgd*vgd+ckt->CKTag[0]*
-                        *(ckt->CKTstate0 + here->MOS1qgd);
+		    *(ckt->CKTstate0 + here->MOS1qgd);
                 ceqgb=ceqgb-gcgb*vgb+ckt->CKTag[0]*
-                        *(ckt->CKTstate0 + here->MOS1qgb);
+		    *(ckt->CKTstate0 + here->MOS1qgb);
             }
             /*
              *     store charge storage info for meyer's cap in lx table
@@ -960,28 +862,28 @@ bypass:
              *  load current vector
              */
             ceqbs = model->MOS1type * 
-                    (here->MOS1cbs-(here->MOS1gbs-ckt->CKTgmin)*vbs);
+		(here->MOS1cbs-(here->MOS1gbs)*vbs);
             ceqbd = model->MOS1type * 
-                    (here->MOS1cbd-(here->MOS1gbd-ckt->CKTgmin)*vbd);
+		(here->MOS1cbd-(here->MOS1gbd)*vbd);
             if (here->MOS1mode >= 0) {
                 xnrm=1;
                 xrev=0;
                 cdreq=model->MOS1type*(cdrain-here->MOS1gds*vds-
-                        here->MOS1gm*vgs-here->MOS1gmbs*vbs);
+				       here->MOS1gm*vgs-here->MOS1gmbs*vbs);
             } else {
                 xnrm=0;
                 xrev=1;
                 cdreq = -(model->MOS1type)*(cdrain-here->MOS1gds*(-vds)-
-                        here->MOS1gm*vgd-here->MOS1gmbs*vbd);
+					    here->MOS1gm*vgd-here->MOS1gmbs*vbd);
             }
             *(ckt->CKTrhs + here->MOS1gNode) -= 
                 (model->MOS1type * (ceqgs + ceqgb + ceqgd));
             *(ckt->CKTrhs + here->MOS1bNode) -=
                 (ceqbs + ceqbd - model->MOS1type * ceqgb);
             *(ckt->CKTrhs + here->MOS1dNodePrime) +=
-                    (ceqbd - cdreq + model->MOS1type * ceqgd);
+		(ceqbd - cdreq + model->MOS1type * ceqgd);
             *(ckt->CKTrhs + here->MOS1sNodePrime) += 
-                    cdreq + ceqbs + model->MOS1type * ceqgs;
+		cdreq + ceqbs + model->MOS1type * ceqgs;
             /*
              *  load y matrix
              */
@@ -991,11 +893,11 @@ bypass:
             *(here->MOS1SsPtr) += (here->MOS1sourceConductance);
             *(here->MOS1BbPtr) += (here->MOS1gbd+here->MOS1gbs+gcgb);
             *(here->MOS1DPdpPtr) += 
-                    (here->MOS1drainConductance+here->MOS1gds+
-                    here->MOS1gbd+xrev*(here->MOS1gm+here->MOS1gmbs)+gcgd);
+		(here->MOS1drainConductance+here->MOS1gds+
+		 here->MOS1gbd+xrev*(here->MOS1gm+here->MOS1gmbs)+gcgd);
             *(here->MOS1SPspPtr) += 
-                    (here->MOS1sourceConductance+here->MOS1gds+
-                    here->MOS1gbs+xnrm*(here->MOS1gm+here->MOS1gmbs)+gcgs);
+		(here->MOS1sourceConductance+here->MOS1gds+
+		 here->MOS1gbs+xnrm*(here->MOS1gm+here->MOS1gmbs)+gcgs);
             *(here->MOS1DdpPtr) += (-here->MOS1drainConductance);
             *(here->MOS1GbPtr) -= gcgb;
             *(here->MOS1GdpPtr) -= gcgd;
@@ -1008,12 +910,12 @@ bypass:
             *(here->MOS1DPgPtr) += ((xnrm-xrev)*here->MOS1gm-gcgd);
             *(here->MOS1DPbPtr) += (-here->MOS1gbd+(xnrm-xrev)*here->MOS1gmbs);
             *(here->MOS1DPspPtr) += (-here->MOS1gds-xnrm*
-                    (here->MOS1gm+here->MOS1gmbs));
+				     (here->MOS1gm+here->MOS1gmbs));
             *(here->MOS1SPgPtr) += (-(xnrm-xrev)*here->MOS1gm-gcgs);
             *(here->MOS1SPsPtr) += (-here->MOS1sourceConductance);
             *(here->MOS1SPbPtr) += (-here->MOS1gbs-(xnrm-xrev)*here->MOS1gmbs);
             *(here->MOS1SPdpPtr) += (-here->MOS1gds-xrev*
-                    (here->MOS1gm+here->MOS1gmbs));
+				     (here->MOS1gm+here->MOS1gmbs));
         }
     }
     return(OK);

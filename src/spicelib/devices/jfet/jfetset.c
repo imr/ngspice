@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 	Laboratory for Communication Science Engineering
 	Sydney University Department of Electrical Engineering, Australia
@@ -17,7 +18,7 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 
 int
 JFETsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
@@ -25,8 +26,8 @@ JFETsetup(matrix,inModel,ckt,states)
          * for fast matrix loading 
          */
 {
-    register JFETmodel *model = (JFETmodel*)inModel;
-    register JFETinstance *here;
+    JFETmodel *model = (JFETmodel*)inModel;
+    JFETinstance *here;
     int error;
     CKTnode *tmp;
 
@@ -106,6 +107,19 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->JFETname,"source");
                 if(error) return(error);
                 here->JFETsourcePrimeNode = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+            
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->JFETsourcePrimeNode = here->JFETsourceNode;
             }
@@ -113,6 +127,19 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->JFETname,"drain");
                 if(error) return(error);
                 here->JFETdrainPrimeNode = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->JFETdrainPrimeNode = here->JFETdrainNode;
             }
@@ -154,7 +181,6 @@ JFETunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     JFETmodel *model;
     JFETinstance *here;
 
@@ -178,6 +204,5 @@ JFETunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

@@ -1,12 +1,12 @@
 \input texinfo   @c -*-texinfo-*-
 @c %**start of header
 @setfilename ngspice.info
-@settitle SPICE User Manual
+@settitle NGSPICE User Manual
 @setchapternewpage odd
 @c %**end of header
 
 @ifinfo
-This file documents SPICE.
+This file documents NGSPICE.
 
 Copyright 1996 The Regents of the University of California.
 
@@ -40,7 +40,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 @c  two methods of forming a title page.
 
 @titlepage
-@title SPICE User Manual
+@title NGSPICE User Manual
 @c @subtitle SUBTITLE-IF-ANY
 @c @subtitle SECOND-SUBTITLE
 @author 
@@ -80,7 +80,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 @end titlepage
 
 
-@node Top, Introduction, (dir), (dir)
+@node Top, Acknowledgements, (dir), (dir)
 
 @ifinfo
 This document describes ...
@@ -90,6 +90,7 @@ of the program named ...
 @end ifinfo
 
 @menu
+* Acknowledgements::
 * Introduction::                
 * Circuit Description::         
 * Circuit Elements and Models::  
@@ -106,11 +107,58 @@ of the program named ...
 @c @cindex Index entry for First Chapter
 
 
-@node    Introduction, Circuit Description, Top, Top
+@node    Acknowledgements, Introduction, Top, Top
+@comment node-name,     next,           previous, up
+@chapter Acknowledgements
+
+@c FIXME: Get this baby to work with make distcheck target.
+@c
+@c @include ../AUTHORS
+
+SPICE was originally written at The University of Berkeley (USA).
+Since then, there have been many people working on the software.
+The following people have contributed in some way:
+Giles C. Billingsley,
+Mansun Chan,
+Wayne A. Christopher,
+Glao S. Dezai <dezai@@hotbot.com>,
+Daniele Foci <d.foci@@ieee.ing.uniroma1.it>,
+Noah Friedman <friedman@@prep.ai.mit.edu>,
+David A. Gates,
+JianHui Huang,
+Jeffrey M. Hsu,
+S. Hwang,
+Chris Inbody <cinbody@@cowtown.net>,
+Gordon M. Jacobs,
+Min-Chie Jeng,
+Kenneth H. Keller,
+Mathew Lew,
+Weidong Liu,
+Richard D. McRoberts,
+Manfred Metzger <ManfredMetzger@@gmx.de>,  
+Paolo Nenzi <pnenzi@@ieee.ing.uniroma1.it>,
+Gary W. Ng,
+Hong June Park,
+Arno Peters <A.W.Peters@@ieee.org>,
+Serban-Mihai Popescu <serbanp@@ix.netcom.com>,
+Thomas L. Quarles,
+Emmanuel Rouat <emmanuel.rouat@@wanadoo.fr>,
+Jaijeet S. Roychowdhury,
+Takayasu Sakurai,
+Kanwar Jit Singh,
+Andrew Tuckey <Tuckey@@ieee.org>,
+Michael Widlok <widlok@@uci.agh.edu.pl>,
+and many others...
+
+If you feel you should be on this list, write to
+<ng-spice@@ieee.ing.uniroma1.it>.
+
+
+@node    Introduction, Circuit Description, Acknowledgements, Top
 @comment node-name,     next,           previous, up
 @chapter Introduction
 
-SPICE is a general-purpose circuit simulation program for nonlinear
+NGSPICE is a general-purpose circuit simulation program for nonlinear
 dc, nonlinear transient, and linear ac analyses.  Circuits may contain
 resistors, capacitors, inductors, mutual inductors, independent
 voltage and current sources, four types of dependent sources, lossless
@@ -118,12 +166,12 @@ and lossy transmission lines (two separate implementations), switches,
 uniform distributed RC lines, and the five most common semiconductor
 devices: diodes, BJTs, JFETs, MESFETs, and MOSFETs.
 
-The SPICE3 version is based directly on SPICE 2G.6.  While SPICE3 is
-being developed to include new features, it continues to support those
-capabilities and models which remain in extensive use in the SPICE2
-program.
+NGSPICE is a continuation of SPICE3, while SPICE3 version is based 
+directly on SPICE 2G.6.  While NGSPICE is being developed to include new 
+features, it continues to support those capabilities and models which 
+remain in extensive use in the SPICE2 program.
 
-SPICE has built-in models for the semiconductor devices, and the user
+NGSPICE has built-in models for the semiconductor devices, and the user
 need specify only the pertinent model parameter values.  The model for
 the BJT is based on the integral-charge model of Gummel and Poon;
 however, if the Gummel- Poon parameters are not specified, the model
@@ -166,7 +214,7 @@ effects, and chargecontrolled capacitances.
 @subsection DC Analysis
 
 
-The dc analysis portion of SPICE determines the dc operating point of
+The dc analysis portion of NGSPICE determines the dc operating point of
 the circuit with inductors shorted and capacitors opened.  The dc
 analysis options are specified on the .DC, .TF, and .OP control lines.
 A dc analysis is automatically performed prior to a transient analysis
@@ -185,7 +233,7 @@ each sequential source value.
 @subsection AC Small-Signal Analysis
 
 
-The ac small-signal portion of SPICE computes the ac output variables
+The ac small-signal portion of NGSPICE computes the ac output variables
 as a function of frequency.  The program first computes the dc
 operating point of the circuit and determines linearized, small-signal
 models for all of the nonlinear devices in the circuit.  The resultant
@@ -201,7 +249,7 @@ input.
 @node Transient Analysis, Pole-Zero Analysis, AC Small-Signal Analysis, Types of Analysis
 @subsection Transient Analysis
 
-The transient analysis portion of SPICE computes the transient output
+The transient analysis portion of NGSPICE computes the transient output
 variables as a function of time over a user-specified time interval.
 The initial conditions are automatically determined by a dc analysis.
 All sources which are not time dependent (for example, power supplies)
@@ -213,7 +261,7 @@ on a .TRAN control line.
 @subsection Pole-Zero Analysis
 
 
-The pole-zero analysis portion of SPICE computes the poles and/or
+The pole-zero analysis portion of NGSPICE computes the poles and/or
 zeros in the small-signal ac transfer function.  The program first
 computes the dc operating point and then determines the linearized,
 small-signal models for all the nonlinear devices in the circuit.
@@ -241,7 +289,7 @@ finds an excessive number of poles or zeros.
 @subsection Small-Signal Distortion Analysis
 
 
-The distortion analysis portion of SPICE computes steady-state
+The distortion analysis portion of NGSPICE computes steady-state
 harmonic and intermodulation products for small input signal
 magnitudes.  If signals of a single frequency are specified as the
 input to the circuit, the complex values of the second and third
@@ -264,9 +312,9 @@ calculations.
 @subsection Sensitivity Analysis
 
 
-Spice3 will calculate either the DC operating-point sensitivity or the
+Ngspice will calculate either the DC operating-point sensitivity or the
 AC small-signal sensitivity of an output variable with respect to all
-circuit variables, including model parameters.  Spice calculates the
+circuit variables, including model parameters.  ngspice calculates the
 difference in an output variable (either a node voltage or a branch
 current) by perturbing each parameter of each device independently.
 Since the method is a numerical approximation, the results may
@@ -281,7 +329,7 @@ usually a very large amount of data).
 @subsection Noise Analysis
 
 
-The noise analysis portion of SPICE does analysis device-generated
+The noise analysis portion of NGSPICE does analysis device-generated
 noise for the given circuit.  When provided with an input source and
 an output port, the analysis calculates the noise contributions of
 each device (and each noise generator within the device) to the output
@@ -301,7 +349,7 @@ stationary gaussian process.
 @node Analysis at Different Temperatures, Convergence, Types of Analysis, Introduction
 @section Analysis at Different Temperatures
 
-All input data for SPICE is assumed to have been measured at a nominal
+All input data for NGSPICE is assumed to have been measured at a nominal
 temperature of 27°C, which can be changed by use of the TNOM
 parameter on the .OPTION control line.  This value can further be
 overridden for any device which models temperature effects by
@@ -314,7 +362,7 @@ through the specification of a TEMP parameter on the instance.
 Temperature dependent support is provided for resistors, diodes,
 JFETs, BJTs, and level 1, 2, and 3 MOSFETs.  BSIM (levels 4 and 5)
 MOSFETs have an alternate temperature dependency scheme which adjusts
-all of the model parameters before input to SPICE.  For details of the
+all of the model parameters before input to NGSPICE.  For details of the
 BSIM temperature adjustment, see [6] and [7].
 
 
@@ -409,7 +457,7 @@ exponent, XTI, is usually 2.
 
 
 Temperature appears explicitly in the value of junction potential, U
-(in spice PHI), for all the device models.  The temperature dependence
+(in ngspice PHI), for all the device models.  The temperature dependence
 is determined by:
 
 @tex
@@ -498,7 +546,7 @@ The node voltages converge to within a tolerance of 0.1% or 1 microvolt
 
 @end enumerate
 
-Although the algorithm used in SPICE has been found to be very
+Although the algorithm used in NGSPICE has been found to be very
 reliable, in some cases it fails to converge to a solution.  When this
 failure occurs, the program terminates the job.
 
@@ -526,7 +574,7 @@ desired state.
 @node General Structure and Conventions, Basics, Circuit Description, Circuit Description
 @section General Structure and Conventions
 
-The circuit to be analyzed is described to SPICE by a set of element
+The circuit to be analyzed is described to NGSPICE by a set of element
 lines, which define the circuit topology and element values, and a set
 of control lines, which define the model parameters and the run
 controls.  The first line in the input file must be the title, and the
@@ -538,7 +586,7 @@ Each element in the circuit is specified by an element line that
 contains the element name, the circuit nodes to which the element is
 connected, and the values of the parameters that determine the
 electrical characteristics of the element.  The first letter of the
-element name specifies the element type.  The format for the SPICE
+element name specifies the element type.  The format for the NGSPICE
 element types is given in what follows.  The strings XXXXXXX, YYYYYYY,
 and ZZZZZZZ denote arbitrary alphanumeric strings.  For example, a
 resistor name must begin with the letter R and can contain one or more
@@ -549,7 +597,7 @@ section.
 Fields on a line are separated by one or more blanks, a comma, an
 equal ('=') sign, or a left or right parenthesis; extra spaces are
 ignored.  A line may be continued by entering a '+' (plus) in column 1
-of the following line; SPICE continues reading beginning with column
+of the following line; NGSPICE continues reading beginning with column
 2.
 
 A name field must begin with a letter (A through Z) and cannot contain
@@ -569,7 +617,7 @@ floating point number followed by one of the following scale factors:
  @math{@code{K} = 10^3}
  @math{@code{mil} = 25.4^-6}
  @math{@code{m} = 10^-3}
- @math{@code{u}  = @code{M} = 10^-6}
+ @math{@code{u} = 10^-6}
  @math{@code{n} = 10^-9}
  @math{@code{p} = 10^-12}
  @math{@code{f} = 10^-15}
@@ -582,7 +630,7 @@ $$
  \code{K} &= 10^3 \cr
  \code{mil} &= 25.4^{-6} \cr
  \code{m} &= 10^{-3} \cr
- \code{u} = \code{M} &= 10^{-6} \cr
+ \code{u} &= 10^{-6} \cr
  \code{n} &= 10^{-9} \cr
  \code{p} &= 10^{-12} \cr
  \code{f} &= 10^{-15} \cr}
@@ -597,9 +645,9 @@ M, MA, MSec, and MMhos all represent the same scale factor.  Note that
 number.
 
 Nodes names may be arbitrary character strings.  The datum (ground)
-node must be named '0'.  Note the difference in SPICE3 where the nodes
+node must be named '0'.  Note the difference in NGSPICE where the nodes
 are treated as character strings and not evaluated as numbers, thus
-'0' and '00' are distinct nodes in SPICE3 but not in SPICE2.  The
+'0' and '00' are distinct nodes in NGSPICE but not in SPICE2.  The
 circuit cannot contain a loop of voltage sources and/or inductors and
 cannot contain a cut-set of current sources and/or capacitors.  Each
 node in the circuit must have a dc path to ground.  Every node must
@@ -677,7 +725,7 @@ The "End" line must always be the last in the input
 The asterisk in the  first  column  indicates  that
  this  line  is  a  comment  line.   Comment lines may be
  placed anywhere in the circuit description.   Note  that
- SPICE3  also considers any line with leading white space
+ NGSPICE  also considers any line with leading white space
  to be a comment.
 
 
@@ -703,11 +751,11 @@ The asterisk in the  first  column  indicates  that
 
 Most simple circuit elements typically require only a few parameter
 values.  However, some devices (semiconductor devices in particular)
-that are included in SPICE require many parameter values.  Often, many
+that are included in NGSPICE require many parameter values.  Often, many
 devices in a circuit are defined by the same set of device model
 parameters.  For these reasons, a set of device model parameters is
 defined on a separate .MODEL line and assigned a unique model name.  The
-device element lines in SPICE then refer to the model name.
+device element lines in NGSPICE then refer to the model name.
 
 For these more complex device types, each device element line contains
 the device name, the nodes to which the device is connected, and the
@@ -794,7 +842,7 @@ next section along with the description of device element lines.
 @section Subcircuits
 
 
-A subcircuit that consists of SPICE elements can be defined and
+A subcircuit that consists of NGSPICE elements can be defined and
 referenced in a fashion similar to device models.  The subcircuit is
 defined in the input file by a grouping of element lines; the program
 then automatically inserts the group of elements wherever the subcircuit
@@ -887,7 +935,7 @@ are being made.
 @end example
 
 
-Subcircuits are used in SPICE by specifying pseudo-elements beginning
+Subcircuits are used in NGSPICE by specifying pseudo-elements beginning
 with the letter X, followed by the circuit nodes to be used in expanding
 the subcircuit.
 
@@ -913,10 +961,10 @@ the subcircuit.
 
 Frequently, portions of circuit descriptions will be reused in several
 input files, particularly with common models and subcircuits.  In any
-spice input file, the ".include" line may be used to copy some other
+ngspice input file, the ".include" line may be used to copy some other
 file as if that second file appeared in place of the ".include" line
 in the original file.  There is no restriction on the file name
-imposed by spice beyond those imposed by the local operating system.
+imposed by ngspice beyond those imposed by the local operating system.
 
 
 @node Circuit Elements and Models, Analyses and Output Control, Circuit Description, Top
@@ -929,7 +977,7 @@ etc.) is optional but indicate the presence of any delimiter.  Further,
 future implementations may require the punctuation as stated.  A
 consistent style adhering to the punctuation shown here makes the input
 easier to understand.  With respect to branch voltages and currents,
-SPICE uniformly uses the associated reference convention (current flows
+NGSPICE uniformly uses the associated reference convention (current flows
 in the direction of voltage drop).
 
 
@@ -963,7 +1011,7 @@ in the direction of voltage drop).
  General form:
 
 @example
-  RXXXXXXX N1 N2 VALUE
+  RXXXXXXX N1 N2 VALUE <ac=val> <m=val> <scale=val>
 @end example
 
 
@@ -972,14 +1020,27 @@ in the direction of voltage drop).
 @example
   R1 1 2 100
   RC1 12 17 1K
+  R2 5 7 1K ac=2K
+  RL 1 4 2K m=2
 @end example
 
 
 N1 and N2 are the two element nodes.  VALUE is the resistance (in ohms)
-and may be positive or negative but not zero.
+and may be positive or negative but not zero. It is possible to specify
+a different resistance value for ac calculations, using the "ac" 
+parameter. The value of ac resistance must not be zero. If you do not
+specify the "ac" parameter, it will be defaulted to VALUE.
 
+The "m" parameter is the "multiplication factor" and scale is the "scale"
+factor:
+                   Resistance = Resistance * Scale / M
+Setting m to "val" is like putting m equal resistance in parallel.
+The "scale" parameter let the designer to choose a different scale
+for elements. 
 
-
+Note: ac parameter can be considered "safe" since rework-11 
+      Scale parameter is not applied to l,w and other geometric
+      parameters. 
 
 @node  Semiconductor Resistors, Semiconductor Resistor Model (R), Resistors, Elementary Devices
 @subsection  Semiconductor Resistors
@@ -987,7 +1048,7 @@ and may be positive or negative but not zero.
  General form:
 
 @example
-  RXXXXXXX N1 N2 <VALUE> <MNAME> <L=LENGTH> <W=WIDTH> <TEMP=T>
+  RXXXXXXX N1 N2 <VALUE> <MNAME> <L=LENGTH> <W=WIDTH> <TEMP=T> m=<val> <ac=val> <scale>
 @end example
 
 
@@ -1163,11 +1224,19 @@ compute the capacitance from strictly geometric information.
 
 The capacitor has a capacitance computed as
 
+@tex
+$$
+  {\rm CAP} = {\rm CJ} ({\rm LENGTH} - {\rm NARROW})
+                       ({\rm WIDTH} - {\rm NARROW}) +
+              2 {\rm CJSW} ({\rm LENGTH} + {\rm WIDTH} - 2 {\rm NARROW})
+$$
+@end tex
+@ifnottex
 @example
-CAP = CJ (LENGTH - NARROW) (WIDTH - NARROW)
-      + 2 CJSW (LENGTH + WIDTH - 2 NARROW)
+  CAP = CJ (LENGTH - NARROW) (WIDTH - NARROW) +
+        2 CJSW (LENGTH + WIDTH - 2 NARROW)
 @end example
-
+@end ifnottex
 
 @node  Inductors, Coupled (Mutual) Inductors, Semiconductor Capacitor Model (C), Elementary Devices
 @subsection  Inductors
@@ -1262,7 +1331,7 @@ from the positive node, through the source, to the negative node.
 @subsection  Switch Model (SW/CSW)
 
 
-The switch model allows an almost ideal switch to be described in SPICE.
+The switch model allows an almost ideal switch to be described in NGSPICE.
 The switch is not quite ideal, in that the resistance can not change
 from 0 to infinity, but must always have a finite positive value.  By
 proper selection of the on and off resistances, they can be effectively
@@ -1305,7 +1374,7 @@ analysis should be decreased by using the .OPTIONS control line and
 specifying TRTOL to be less than the default value of 7.0.  When
 switches are placed around capacitors, then the option CHGTOL should
 also be reduced.  Suggested values for these two options are 1.0 and
-1e-16 respectively.  These changes inform SPICE3 to be more careful
+1e-16 respectively.  These changes inform NGSPICE to be more careful
 around the switch points so that no errors are made due to the rapid
 change in the circuit.
 
@@ -1353,7 +1422,7 @@ flow from the positive node, through the source, to the negative node.
 A current source of positive value forces current to flow out of the N+
 node, through the source, and into the N- node.  Voltage sources, in
 addition to being used for circuit excitation, are the 'ammeters' for
-SPICE, that is, zero valued voltage sources may be inserted into the
+NGSPICE, that is, zero valued voltage sources may be inserted into the
 circuit for the purpose of measuring current.  They of course have no
 effect on circuit operation since they represent short-circuits.
 
@@ -1520,15 +1589,15 @@ The shape of the waveform is described by the following table:
 
 @example
 time           value
-----------------------------------------------------------------------------
+---------------------------------------------------------------------
 0 to TD1      V1
-                              |     ------------|
-                                        TAU1
-                              |    -(t - TD1)   |                -(t - TD2)
-TD1 to TD2     V1 + (V2 - V1)  1 - e
-                              |    ----------|             |     ----------|
-                              |       TAU1   |             |        TAU2   |
-TD2 to TSTOP   V1 + (V2 - V1)   - e            + (V1 - V2)  1 - e
+                           |    -(t - TD1)|
+TD1 to TD2    V1 + (V2-V1).|1-e ----------|
+                           |       TAU1   |
+
+                           |    -(t - TD1)|           |   -(t - TD2)|
+TD2 to TSTOP  V1 + (V2-V1).|1-e ----------| + (V1-V2).|1-e ---------|
+                           |        TAU1  |           |       TAU2  |
 @end example
 
 
@@ -1597,7 +1666,6 @@ $$
 @end tex
 @ifnottex
 @example
-
                   |                            |
   V(t)=V  + V  sin 2 J FC t + MDI sin(2 J FS t)
         O    A    |                            |
@@ -1612,7 +1680,7 @@ $$
 @subsection  Linear Dependent Sources
 
 
-SPICE allows circuits to contain linear dependent sources characterized
+NGSPICE allows circuits to contain linear dependent sources characterized
 by any of the four equations
 
 @tex
@@ -1792,15 +1860,19 @@ The function "u" is the unit step function, with a value of one for
 arguments greater than one and a value of zero for arguments less than
 zero.  The function "uramp" is the integral of the unit step: for an
 input x, the value is zero if x is less than zero, or if x is greater
-than zero the value is x.  These two functions are useful in sythesizing
-piece-wise non-linear functions, though convergence may be adversely
-affected.
+than zero the value is x. The function "u2" returns a value of zero for
+arguments less than zero, one for arguments greater than one and assumes
+the value of the argument between these limits .These three functions are 
+useful in sythesizing piece-wise non-linear functions, though convergence 
+may be adversely affected.
 
+Note: "u2" function has been introduced in rework-11.
 
 The following standard operators are defined:
 
+
 @example
-+       -       *       /       @^{@ }      unary -
++       -       *       /       @{ @}      unary -
 @end example
 
 
@@ -2091,15 +2163,21 @@ junction capacitance equivalent to the capacitance replaced, and with a
 saturation current of ISPERL amps per meter of transmission line and an
 optional series resistance equivalent to RSPERL ohms per meter.
 
-@multitable @columnfractions .15 .4 .2 .1 .1
-@item name @tab parameter @tab units @tab default @tab example   area
-@item K @tab Propagation Constant @tab - @tab 2.0 @tab 1.2
-@item FMAX @tab Maximum Frequency of interest @tab Hz @tab 1.0G @tab 6.5Meg     
-@item RPERL @tab Resistance per unit length @tab Z/m @tab 1000 @tab 10 
-@item CPERL @tab Capacitance per unit length @tab F/m @tab 1.0e-15 @tab 1pF 
-@item ISPERL @tab Saturation Current per unit length @tab A/m @tab 0
-@tab - 
-@item RSPERL @tab Diode Resistance per unit length @tab Z/m @tab 0 @tab -         -
+@multitable @columnfractions .1 .45 .1 .15 .1 .1
+@item name   @tab parameter
+                        @tab units @tab default @tab example
+@item K      @tab Propagation Constant
+                        @tab - @tab 2.0 @tab 1.2
+@item FMAX   @tab Maximum Frequency of interest
+                        @tab Hz @tab 1.0G @tab 6.5Meg     
+@item RPERL  @tab Resistance per unit length
+                        @tab Z/m @tab 1000 @tab 10 
+@item CPERL  @tab Capacitance per unit length
+                        @tab F/m @tab 1.0e-15 @tab 1pF
+@item ISPERL @tab Saturation Current per unit length
+                        @tab A/m @tab 0 @tab - 
+@item RSPERL @tab Diode Resistance per unit length
+                        @tab Z/m @tab 0 @tab -
 @end multitable
 
 
@@ -2200,7 +2278,7 @@ exponential increase in the reverse diode current and is determined by
 the parameters BV and IBV (both of which are positive numbers).
 
 
-@multitable @columnfractions .1 .4 .2 .1 .1 .1
+@multitable @columnfractions .1 .45 .15 .15 .15 .1
 @item name @tab parameter @tab units @tab default @tab example @tab   area
 @item IS @tab saturation current @tab A @tab 1.0e-14 @tab 1.0e-14 @tab   *
 @item RS @tab ohmic resistance @tab Z @tab 0 @tab 10 @tab *
@@ -2220,7 +2298,6 @@ the parameters BV and IBV (both of which are positive numbers).
       @tab - @tab 0.5 @tab depletion capacitance formula
 @item BV @tab reverse breakdown voltage @tab V @tab infinite @tab 40.0
 @item IBV @tab current at breakdown voltage @tab A @tab 1.0e-3
- @tab o
 @item TNOM @tab parameter measurement temperature @tab C @tab 27 @tab 50
 @end multitable
 
@@ -2267,7 +2344,7 @@ specification on the .OPTION control line.
 @subsection  BJT Models (NPN/PNP)
 
 
-The bipolar junction transistor model in SPICE is an adaptation of the
+The bipolar junction transistor model in NGSPICE is an adaptation of the
 integral charge control model of Gummel and Poon.  This modified
 Gummel-Poon model extends the original model to include several effects
 at high bias levels.  The model automatically simplifies to the simpler
@@ -2302,7 +2379,7 @@ accepted.
 
 Modified Gummel-Poon BJT Parameters.
 
-@multitable @columnfractions .1 .4 .2 .1 .1 .1
+@multitable @columnfractions .1 .45 .15 .15 .15 .1
 @item name @tab parameter @tab units @tab default @tab example @tab area
 @item IS @tab transport saturation current @tab A @tab 1.0e-16 @tab
 1.0e-15 @tab *
@@ -2359,7 +2436,7 @@ internal base node @tab - @tab 1
 @item AF @tab flicker-noise exponent @tab - @tab 1
 @item FC @tab coefficient for forward-bias depletion capacitance formula
          @tab - @tab 0.5 @tab o
-@item TNOM @tab Parameter measurement temperature @tab C @tab 27 @tab 50
+@item TNOM @tab Parameter measurement temperature @tab °C @tab 27 @tab 50
 @end multitable
 
 
@@ -2413,7 +2490,7 @@ junction voltage and are defined by the parameters CGS, CGD, and PB.
 Note that in Spice3f and later, a fitting parameter B has been added.
 For details, see [9].
 
-@multitable @columnfractions .1 .4 .1 .1 .1 .1
+@multitable @columnfractions .1 .45 .15 .15 .15 .1
 @item name @tab parameter @tab units @tab default @tab example @tab area
 @item VTO @tab threshold voltage (@math{V_T0}) @tab V @tab -2.0 @tab -2.0
 @item BETA @tab transconductance parameter (B)
@@ -2493,7 +2570,7 @@ level 4 or 5 (BSIM) devices.
 @subsection  MOSFET Models (NMOS/PMOS)
 
 
-SPICE provides four MOSFET device models, which differ in the
+NGSPICE provides four MOSFET device models, which differ in the
 formulation of the I-V characteristic.  The variable LEVEL specifies the
 model to be used:
 
@@ -2527,7 +2604,7 @@ MOS6 (as described in [2])
 
 The dc characteristics of the level 1 through level 3 MOSFETs are
 defined by the device parameters VTO, KP, LAMBDA, PHI and GAMMA.  These
-parameters are computed by SPICE if process parameters (NSUB, TOX, ...)
+parameters are computed by NGSPICE if process parameters (NSUB, TOX, ...)
 are given, but userspecified values always override.  VTO is positive
 (negative) for enhancement mode and negative (positive) for depletion
 mode N-channel (P-channel) devices.  Charge storage is modeled by three
@@ -2562,91 +2639,105 @@ parameter has been detected (see [10]).  The supplied fix has been
 implemented in Spice3f2 and later.  Since this fix may affect parameter
 fitting, the option "BADMOS3" may be set to use the old implementation
 (see the section on simulation variables and the ".OPTIONS" line).
-SPICE level 1, 2, 3 and 6 parameters:
+NGSPICE level 1, 2, 3 and 6 parameters:
 
-@example
-name     parameter                               units   default           example
-
- 1    LEVEL    model index                             -       1
- 2    VTO      zero-bias threshold voltage (V  )       V       0.0               1.0
-                                             TO           2
- 3    KP       transconductance parameter              A/V     2.0e-5            3.1e-5
-                                                        1/2
- 4    GAMMA    bulk threshold parameter (\)            V       0.0               0.37
- 5    PHI      surface potential (U)                   V       0.6               0.65
- 6    LAMBDA   channel-length modulation
-               (MOS1 and MOS2 only) (L)                1/V     0.0               0.02
- 7    RD       drain ohmic resistance                  Z       0.0               1.0
- 8    RS       source ohmic resistance                 Z       0.0               1.0
- 9    CBD      zero-bias B-D junction capacitance      F       0.0               20fF
- 10   CBS      zero-bias B-S junction capacitance      F       0.0               20fF
- 11   IS       bulk junction saturation current (I )   A       1.0e-14           1.0e-15
-                                                  S
- 12   PB       bulk junction potential                 V       0.8               0.87
- 13   CGSO     gate-source overlap capacitance
-               per meter channel width                 F/m     0.0               4.0e-11
- 14   CGDO     gate-drain overlap capacitance
-               per meter channel width                 F/m     0.0               4.0e-11
- 15   CGBO     gate-bulk overlap capacitance
-               per meter channel length                F/m     0.0               2.0e-10
- 16   RSH      drain and source diffusion
-               sheet resistance                        Z/[]    0.0               10.0
- 17   CJ       zero-bias bulk junction bottom cap.
-                                                    2
-               per sq-meter of junction area           F/m     0.0               2.0e-4
- 18   MJ       bulk junction bottom grading coeff.     -       0.5               0.5
- 19   CJSW     zero-bias bulk junction sidewall cap.
-               per meter of junction perimeter         F/m     0.0               1.0e-9
- 20   MJSW     bulk junction sidewall grading coeff.   -       0.50(level1)
-                                                         0.33(level2, 3)
- 21   JS       bulk junction saturation current
-                                                    2
-               per sq-meter of junction area           A/m                       1.0e-8
- 22   TOX      oxide thickness                         meter   1.0e-7            1.0e-7
-                                                     3
- 23   NSUB     substrate doping                        1/cm    0.0               4.0e15
-                                                     2
- 24   NSS      surface state density                   1/cm    0.0               1.0e10
-                                                     2
- 25   NFS      fast surface state density              1/cm    0.0               1.0e10
-
- 26   TPG     type of gate material:                 -        1.0
-                  +1 opp. to substrate
-                  -1 same as substrate
-                   0  Al gate
- 27   XJ      metallurgical junction depth           meter    0.0       1M
- 28   LD      lateral diffusion                      meter    0.0       0.8M
-                                                       2
- 29   UO      surface mobility                       cm /Vs   600       700
- 30   UCRIT   critical field for mobility
-              degradation (MOS2 only)                V/cm     1.0e4     1.0e4
- 31   UEXP    critical field exponent in
-              mobility degradation (MOS2 only)       -        0.0       0.1
- 32   UTRA    transverse field coeff. (mobility)
-              (deleted for MOS2)                     -        0.0       0.3
- 33   VMAX    maximum drift velocity of carriers     m/s      0.0       5.0e4
- 34   NEFF    total channel-charge (fixed and
-              mobile) coefficient (MOS2 only)        -        1.0       5.0
- 35   KF      flicker noise coefficient              -        0.0       1.0e-26
- 36   AF      flicker noise exponent                 -        1.0       1.2
- 37   FC      coefficient for forward-bias
-              depletion capacitance formula          -        0.5
- 38   DELTA   width effect on threshold voltage
-              (MOS2 and MOS3)                        -        0.0       1.0
- 39   THETA   mobility modulation (MOS3 only)        1/V      0.0       0.1
- 40   ETA     static feedback (MOS3 only)            -        0.0       1.0
- 41   KAPPA   saturation field factor (MOS3 only)    -        0.2       0.5
-                                                     o
- 42   TNOM    parameter measurement temperature       C       27        50
-@end example
+@multitable @columnfractions .1 .45 .15 .15 .15
+@item name  @tab parameter
+                        @tab units @tab default @tab example
+@item LEVEL @tab model index
+                        @tab -     @tab 1
+@item VTO   @tab zero-bias threshold voltage (@math{V_T0})
+                        @tab V @tab 0.0 @tab 1.0
+@item KP    @tab transconductance parameter
+                        @tab @math{A/V^2} @tab 2.0e-5 @tab 3.1e-5
+@item GAMMA @tab bulk threshold parameter
+                        @tab @math{V^1/2} @tab 0.0 @tab 0.37
+@item PHI   @tab surface potential (U)
+                        @tab V @tab 0.6 @tab 0.65
+@item LAMBDA @tab channel-length modulation (MOS1 and MOS2 only) (L)
+                        @tab 1/V @tab 0.0 @tab 0.02
+@item RD    @tab drain ohmic resistance
+                        @tab Z @tab 0.0 @tab 1.0
+@item RS    @tab source ohmic resistance
+                        @tab Z @tab 0.0 @tab 1.0
+@item CBD   @tab zero-bias B-D junction capacitance
+                        @tab F @tab 0.0 @tab 20fF
+@item CBS   @tab zero-bias B-S junction capacitance
+                        @tab F @tab 0.0 @tab 20fF
+@item IS    @tab bulk junction saturation current (@math{I_S})
+                        @tab A @tab 1.0e-14 @tab 1.0e-15
+@item PB    @tab bulk junction potential
+                        @tab V @tab 0.8 @tab 0.87
+@item CGSO  @tab gate-source overlap capacitance per meter channel width
+                        @tab F/m @tab 0.0 @tab 4.0e-11
+@item CGDO  @tab gate-drain overlap capacitance per meter channel width
+                        @tab F/m @tab 0.0 @tab 4.0e-11
+@item CGBO  @tab gate-bulk overlap capacitance per meter channel length
+                        @tab F/m @tab 0.0 @tab 2.0e-10
+@item RSH   @tab drain and source diffusion sheet resistance
+                        @tab Z/[] @tab 0.0 @tab 10.0
+@item CJ    @tab zero-bias bulk junction bottom cap. per sq-meter of junction area
+                        @tab @math{F/m^2} @tab 0.0 @tab 2.0e-4
+@item MJ    @tab bulk junction bottom grading coeff.
+                        @tab - @tab 0.5 @tab 0.5
+@item CJSW  @tab zero-bias bulk junction sidewall cap. per meter of junction perimeter
+                        @tab F/m @tab 0.0 @tab 1.0e-9
+@item MJSW  @tab bulk junction sidewall grading coeff.
+                        @tab - @tab 0.50(level1), 0.33(level2, 3)
+@item JS    @tab bulk junction saturation current per sq-meter of junction area
+                        @tab @math{A/m^2} @tab 1.0e-8
+@item TOX   @tab oxide thickness
+                        @tab meter @tab 1.0e-7 @tab 1.0e-7
+@item NSUB  @tab substrate doping
+                        @tab @math{1/cm^3} @tab 0.0 @tab 4.0e15
+@item NSS   @tab surface state density
+                        @tab @math{1/cm^2} @tab 0.0 @tab 1.0e10
+@item NFS   @tab fast surface state density
+                        @tab @math{1/cm^2} @tab 0.0 @tab 1.0e10
+@item TPG   @tab type of gate material:
+                +1 opp. to substrate, -1 same as substrate, 0  Al gate
+                        @tab - @tab 1.0
+@item XJ    @tab metallurgical junction depth
+                        @tab meter @tab 0.0 @tab 1M
+@item LD    @tab lateral diffusion
+                        @tab meter @tab 0.0 @tab 0.8M
+@item UO    @tab surface mobility
+                        @tab @math{cm^2/Vs} @tab 600 @tab 700
+@item UCRIT @tab critical field for mobility degradation (MOS2 only)
+                        @tab V/cm @tab 1.0e4 @tab 1.0e4
+@item UEXP  @tab critical field exponent in mobility degradation (MOS2 only)
+                        @tab - @tab 0.0 @tab 0.1
+@item UTRA  @tab transverse field coeff. (mobility) (deleted for MOS2)
+                        @tab - @tab 0.0 @tab 0.3
+@item VMAX  @tab maximum drift velocity of carriers
+                        @tab m/s @tab 0.0 @tab 5.0e4
+@item NEFF  @tab total channel-charge (fixed and mobile) coefficient (MOS2 only)
+                        @tab - @tab 1.0 @tab 5.0
+@item KF    @tab flicker noise coefficient
+                        @tab - @tab 0.0 @tab 1.0e-26
+@item AF    @tab flicker noise exponent
+                        @tab - @tab 1.0 @tab 1.2
+@item FC    @tab coefficient for forward-bias depletion capacitance formula
+                        @tab - @tab 0.5
+@item DELTA @tab width effect on threshold voltage (MOS2 and MOS3)
+                        @tab - @tab 0.0 @tab 1.0
+@item THETA @tab mobility modulation (MOS3 only)
+                        @tab 1/V @tab 0.0 @tab 0.1
+@item ETA   @tab static feedback (MOS3 only)
+                        @tab - @tab 0.0 @tab 1.0
+@item KAPPA @tab saturation field factor (MOS3 only)
+                        @tab - @tab 0.2 @tab 0.5
+@item TNOM  @tab parameter measurement temperature
+                        @tab °C @tab 27 @tab 50
+@end multitable
 
 
 The level 4 and level 5 (BSIM1 and BSIM2) parameters are all values
 obtained from process characterization, and can be generated
 automatically.  J. Pierret [4] describes a means of generating a
-'process' file, and the program Proc2Mod provided with SPICE3 converts
+'process' file, and the program Proc2Mod provided with NGSPICE converts
 this file into a sequence of BSIM1 ".MODEL" lines suitable for inclusion
-in a SPICE input file.  Parameters marked below with an * in the l/w
+in a NGSPICE input file.  Parameters marked below with an * in the l/w
 column also have corresponding parameters with a length and width
 dependency.  For example, VFB is the basic parameter with units of
 Volts, and LVFB and WVFB also exist and have units of Volt-Mmeter The
@@ -2699,7 +2790,7 @@ $$
 
 
 
-Note that unlike the other models in SPICE, the BSIM model is designed
+Note that unlike the other models in NGSPICE, the BSIM model is designed
 for use with a process characterization system that provides all the
 parameters, thus there are no defaults for the parameters, and leaving
 one out is considered an error.  For an example set of parameters and
@@ -2707,7 +2798,7 @@ the format of a process file, see the SPICE2 implementation notes[3].
 
 For more information on BSIM2, see reference [5].
 
- SPICE BSIM (level 4) parameters.
+ NGSPICE BSIM (level 4) parameters.
 
 @example
  name    parameter                                                                 units      l/w
@@ -2886,8 +2977,8 @@ batch mode, the analyses specified by the control lines in the input
 file (e.g. ".ac", ".tran", etc.)  are immediately executed (unless
 ".control" lines exists; see the section on the interactive command
 interpretor).  If the -r rawfile option is given then all data generated
-is written to a Spice3 rawfile.  The rawfile may be read by either the
-interactive mode of Spice3 or by nutmeg; see the previous section for
+is written to a Ngspice rawfile.  The rawfile may be read by either the
+interactive mode of Ngspice or by nutmeg; see the previous section for
 details.  In this case, the .SAVE line (see below) may be used to record
 the value of internal device variables (see Appendix B).
 
@@ -2910,7 +3001,7 @@ meant for compatibility with Spice2.
 @section  Simulator Variables (.OPTIONS)
 
 
-Various parameters of the simulations available in Spice3 can be altered
+Various parameters of the simulations available in Ngspice can be altered
 to control the accuracy, speed, or default values for some devices.
 These parameters may be changed via the "set" command (described later
 in the section on the interactive front-end) or via the ".OPTIONS" line:
@@ -2933,7 +3024,7 @@ The options line allows the user to reset program control and user
 options for specific simulation purposes.  Additional options for Nutmeg
 may be specified as well and take effect when Nutmeg reads the input
 file.  Options specified to Nutmeg via the 'set' command are also passed
-on to SPICE3 as if specified on a .OPTIONS line.  See the following
+on to NGSPICE as if specified on a .OPTIONS line.  See the following
 section on the interactive command interpreter for the parameters which
 may be set with a .OPTIONS line and the format of the 'set' command.
 Any combination of the following options may be included, in any order.
@@ -2988,7 +3079,7 @@ resets the dc transfer curve iteration limit.  The default is 50.
 @item ITL3=x
 
 resets the lower transient analysis iteration limit.  the default value
-is 4.  (Note: not implemented in Spice3).
+is 4.  (Note: not implemented in Ngspice).
 
 @item ITL4=x
 
@@ -2998,7 +3089,7 @@ resets the transient analysis timepoint iteration limit.  the default is
 @item ITL5=x
 
 resets the transient analysis total iteration limit.  the default is
-5000.  Set ITL5=0 to omit this test.  (Note: not implemented in Spice3).
+5000.  Set ITL5=0 to omit this test.  (Note: not implemented in Ngspice).
 
 @item KEEPOPINFO
 
@@ -3008,7 +3099,7 @@ is large and you do not want to run a (redundant) ".OP" analysis.
 
 @item METHOD=name
 
-sets the numerical integration method used by SPICE.  Possible names are
+sets the numerical integration method used by NGSPICE.  Possible names are
 "Gear" or "trapezoidal" (or just "trap").  The default is trapezoidal.
 
 @item PIVREL=x
@@ -3044,7 +3135,7 @@ specification on any temperature dependent device model.
 @item TRTOL=x
 
 resets the transient error tolerance.  The default value is 7.0.  This
-parameter is an estimate of the factor by which SPICE overestimates the
+parameter is an estimate of the factor by which NGSPICE overestimates the
 actual truncation error.
 
 @item TRYTOCOMPACT
@@ -3176,7 +3267,7 @@ dc bias (initial transient) solution is computed before the transient
 analysis.  In this case, the node voltages specified on the .IC control
 line is forced to the desired initial values during the bias solution.
 During transient analysis, the constraint on these node voltages is
-removed.  This is the preferred method since it allows SPICE to compute
+removed.  This is the preferred method since it allows NGSPICE to compute
 a consistent dc solution.
 @end enumerate
 
@@ -3226,7 +3317,7 @@ DEC stands for decade variation, and ND is the number of points per
 decade.  OCT stands for octave variation, and NO is the number of points
 per octave.  LIN stands for linear variation, and NP is the number of
 points.  FSTART is the starting frequency, and FSTOP is the final
-frequency.  If this line is included in the input file, SPICE performs
+frequency.  If this line is included in the input file, NGSPICE performs
 an AC analysis of the circuit over the specified frequency range.  Note
 that in order for this analysis to be meaningful, at least one
 independent source must have been specified with an ac value.
@@ -3432,7 +3523,7 @@ A@math{^2} for integrated noise).
 @end example
 
 
-The inclusion of this line in an input file directs SPICE to determine
+The inclusion of this line in an input file directs NGSPICE to determine
 the dc operating point of the circuit with inductors shorted and
 capacitors opened.  Note: a DC analysis is automatically performed prior
 to a transient analysis to determine the transient initial conditions,
@@ -3542,10 +3633,10 @@ or per percent change of input).
 
 The TF line defines the small-signal output and input for the dc
 small-signal analysis.  OUTVAR is the smallsignal output variable and
-INSRC is the small-signal input source.  If this line is included, SPICE
+INSRC is the small-signal input source.  If this line is included, NGSPICE
 computes the dc small-signal value of the transfer function
 (output/input), input resistance, and output resistance.  For the first
-example, SPICE would compute the ratio of V(5, 3) to VIN, the
+example, NGSPICE would compute the ratio of V(5, 3) to VIN, the
 small-signal input resistance at VIN, and the smallsignal output
 resistance measured across nodes 5 and 3.
 
@@ -3579,15 +3670,15 @@ omitted, it is assumed to be zero.  The transient analysis always begins
 at time zero.  In the interval <zero, TSTART>, the circuit is analyzed
 (to reach a steady state), but no outputs are stored.  In the interval
 <TSTART, TSTOP>, the circuit is analyzed and outputs are stored.  TMAX
-is the maximum stepsize that SPICE uses; for default, the program
+is the maximum stepsize that NGSPICE uses; for default, the program
 chooses either TSTEP or (TSTOP-TSTART)/50.0, whichever is smaller.  TMAX
 is useful when one wishes to guarantee a computing interval which is
 smaller than the printer increment, TSTEP.
 
 UIC (use initial conditions) is an optional keyword which indicates that
-the user does not want SPICE to solve for the quiescent operating point
+the user does not want NGSPICE to solve for the quiescent operating point
 before beginning the transient analysis.  If this keyword is specified,
-SPICE uses the values specified using IC=... on the various elements as
+NGSPICE uses the values specified using IC=... on the various elements as
 the initial transient condition and proceeds with the analysis.  If the
 .IC control line has been specified, then the node voltages on the .IC
 line are used to compute the initial conditions for the devices.  Look
@@ -3626,8 +3717,8 @@ UIC is not specified.
 
 
 The vectors listed on the .SAVE line are recorded in the rawfile for use
-later with spice3 or nutmeg (nutmeg is just the data-analysis half of
-spice3, without the ability to simulate).  The standard vector names are
+later with ngspice or nutmeg (nutmeg is just the data-analysis half of
+ngspice, without the ability to simulate).  The standard vector names are
 accepted.  If no .SAVE line is given, then the default set of vectors
 are saved (node voltages and voltage source branch currents).  If .SAVE
 lines are given, only those vectors specified are saved.  For more
@@ -3662,7 +3753,7 @@ NOISE, or DISTO) for which the specified outputs are desired.  The form
 for voltage or current output variables is the same as given in the
 previous section for the print command; Spice2 restricts the output
 variable to the following forms (though this restriction is not enforced
-by Spice3):
+by Ngspice):
 
 
 @table @code
@@ -3757,7 +3848,7 @@ There is no limit on the number of .PLOT  lines  specified for each type of anal
 @end example
 
 
-The Four (or Fourier) line controls whether SPICE performs a Fourier
+The Four (or Fourier) line controls whether NGSPICE performs a Fourier
 analysis as a part of the transient analysis.  FREQ is the fundamental
 frequency, and OV1, desired.  The Fourier analysis is performed over the
 interval <TSTOP-period, TSTOP>, where TSTOP is the final time specified
@@ -3771,33 +3862,33 @@ set to period/100.0 (or less for very high-Q circuits).
 @node Interactive Interpreter, Bibliography, Analyses and Output Control, Top
 @chapter Interactive Interpreter
 
-Spice3 consists of a simulator and a front-end for data analysis and
+Ngspice consists of a simulator and a front-end for data analysis and
 plotting.  The front-end may be run as a separate "stand-alone" program
 under the name Nutmeg.
 
-Nutmeg will read in the "raw" data output file created by spice -r or
-with the write command in an interactive Spice3 session.  Nutmeg or
-interactive Spice3 can plot data from a simulation on a graphics
+Nutmeg will read in the "raw" data output file created by ngspice -r or
+with the write command in an interactive Ngspice session.  Nutmeg or
+interactive Ngspice can plot data from a simulation on a graphics
 terminal or a workstation display.  Most of the commands available in
-the interactive Spice3 front end are available in nutmeg; where this is
-not the case, Spice-only commands have been marked with an asterisk
+the interactive Ngspice front end are available in nutmeg; where this is
+not the case, ngspice-only commands have been marked with an asterisk
 ("*").  Note that the raw output file is different from the data that
 Spice2 writes to the standard output, which may also be produced by
-spice3 with the "-b" command line option.
+ngspice with the "-b" command line option.
 
-Spice and Nutmeg use the X Window System for plotting if they find the
+Ngspice and Nutmeg use the X Window System for plotting if they find the
 environment variable DISPLAY.  Otherwise, a graphics-terminal
 independent interface (MFB) is used.  If you are using X on a
 workstation, the DISPLAY variable should already be set; if you want to
 display graphics on a system different from the one you are running
-Spice3 or Nutmeg on, DISPLAY should be of the form "machine:0.0".  See
+Ngspice or Nutmeg on, DISPLAY should be of the form "machine:0.0".  See
 the appropriate documentation on the X Window Sytem for more details.
 
 
  Command Synopsis
 
 @example
-     spice [ -n ] [ -t term ] [ -r rawfile] [ -b ] [ -i ] [ input file ... ]
+     ngspice [ -n ] [ -t term ] [ -r rawfile] [ -b ] [ -i ] [ input file ... ]
 
      nutmeg [ - ] [ -n ] [ -t term ] [ datafile ... ]
 @end example
@@ -3815,7 +3906,7 @@ files are given.  Nutmeg only.
 
 @item -n (or -N)
 
-Don't try to source the file ".spiceinit" upon startup.  Normally spice
+Don't try to source the file ".spiceinit" upon startup.  Normally ngspice
 and nutmeg try to find the file in the current directory, and if it is
 not found then in the user's home directory.
 
@@ -3825,44 +3916,44 @@ The program is being run on a terminal with mfb name term.
 
 @item -b (or -B)
 
-Run in batch mode.  Spice3 reads the default input source (e.g.
+Run in batch mode.  Ngspice reads the default input source (e.g.
 keyboard) or reads the given input file and performs the analyses
 specified; output is either Spice2-like line-printer plots ("ascii
-plots") or a spice rawfile.  See the following section for details.
+plots") or a ngspice rawfile.  See the following section for details.
 Note that if the input source is not a terminal (e.g.  using the IO
-redirection notation of "<") Spice3 defaults to batch mode (-i
-overrides).  This option is valid for Spice3 only.
+redirection notation of "<") Ngspice defaults to batch mode (-i
+overrides).  This option is valid for Ngspice only.
 
 @item  -s (or -S)
 
 Run in server mode.  This is like batch mode, except that a temporary
 rawfile is used and then written to the standard output, preceded by a
 line with a single "@@", after the simulation is done.  This mode is used
-by the spice daemon.  This option is valid for Spice3 only.
+by the ngspice daemon.  This option is valid for Ngspice only.
 
 @item -i (or -I)
 
 Run in interactive mode.  This is useful if the standard input is not a
 terminal but interactive mode is desired.  Command completion is not
 available unless the standard input is a terminal, however.  This option
-is valid for Spice3 only.
+is valid for Ngspice only.
 
 @item -r rawfile (or -P rawfile)
 
 Use rawfile as the default file into which the results of the simulation
-are saved.  This option is valid for Spice3 only.
+are saved.  This option is valid for Ngspice only.
 
 @end table
 
-Further arguments to spice are taken to be Spice3 input files, which are
+Further arguments to ngspice are taken to be Ngspice input files, which are
 read and saved (if running in batch mode then they are run immediately).
-Spice3 accepts most Spice2 input file, and output ascii plots, fourier
+Ngspice accepts most Spice2 input file, and output ascii plots, fourier
 analyses, and node printouts as specified in .plot, .four, and .print
 cards.  If an out parameter is given on a .width card, the effect is the
-same as set width = ....  Since Spice3 ascii plots do not use multiple
+same as set width = ....  Since Ngspice ascii plots do not use multiple
 ranges, however, if vectors together on a .plot card have different
 ranges they are not provide as much information as they would in Spice2.
-The output of Spice3 is also much less verbose than Spice2, in that the
+The output of Ngspice is also much less verbose than Spice2, in that the
 only data printed is that requested by the above cards.
 
 For nutmeg, further arguments are taken to be data files in binary or
@@ -3883,7 +3974,7 @@ may contain any number of data sets from different analyses.
 @node Expressions, Command Interpretation, Interactive Interpreter, Interactive Interpreter
 @section Expressions, Functions, and Constants
 
-Spice and Nutmeg data is in the form of vectors: time, voltage, etc.
+Ngspice and Nutmeg data is in the form of vectors: time, voltage, etc.
 Each vector has a type, and vectors can be operated on and combined
 algebraicly in ways consistent with their types.  Vectors are normally
 created when a data file is read in (see the load command below), and
@@ -4034,9 +4125,9 @@ componant of that vector's scale.
 
 A vector may be either the name of a vector already defined or a
 floating-point number (a scalar).  A number may be written in any format
-acceptable to SPICE, such as 14.6Meg or -1.231e-4.  Note that you can
+acceptable to NGSPICE, such as 14.6Meg or -1.231e-4.  Note that you can
 either use scientific notation or one of the abbreviations like MEG or
-G, but not both.  As with SPICE, a number may have trailing alphabetic
+G, but not both.  As with NGSPICE, a number may have trailing alphabetic
 characters after it.
 
 The notation expr [num] denotes the num'th element of expr.  For
@@ -4064,7 +4155,7 @@ for instance.  Thus some (contrived) examples of expressions are:
 @end example
 
 
-Vector names in spice may have a name such as @@name[param], where name
+Vector names in ngspice may have a name such as @@name[param], where name
 is either the name of a device instance or model.  This denotes the
 value of the param parameter of the device or model.  See Appendix B for
 details of what parameters are available.  The value is a vector of
@@ -4135,9 +4226,9 @@ another, it must save its argv and argc since they are altered.  Also,
 command files may not be re-entrant since there are no local variables.
 (Of course, the procedures may explicitly manipulate a stack...) This
 way one can write scripts analogous to shell scripts for nutmeg and
-Spice3.
+Ngspice.
 
-Note that for the script to work with Spice3, it must begin with a blank
+Note that for the script to work with Ngspice, it must begin with a blank
 line (or whatever else, since it is thrown away) and then a line with
 .control on it.  This is an unfortunate result of the source command
 being used for both circuit input and command file execution.  Note also
@@ -4304,7 +4395,7 @@ because asciiplot uses a simple-minded linear interpolation.
 
 
 @node  Aspice, Bug, Asciiplot, Commands
-@subsection  Aspice: Asynchronous spice run
+@subsection  Aspice: Asynchronous ngspice run
 
  General Form:
 
@@ -4313,7 +4404,7 @@ because asciiplot uses a simple-minded linear interpolation.
 @end example
 
 
-Start a SPICE-3 run, and when it is finished load the resulting data.
+Start a NGSPICE run, and when it is finished load the resulting data.
 The raw data is kept in a temporary file.  If output-file is specified
 then the diagnostic output is directed into that file, otherwise it is
 thrown away.
@@ -4332,7 +4423,7 @@ thrown away.
 
 Send a bug report.  Please include a short summary of the problem, the
 version number and name of the operating system that you are running,
-the version of Spice that you are running, and the relevant spice input
+the version of ngspice that you are running, and the relevant ngspice input
 file.  (If you have defined BUGADDR, the mail is delivered to there.)
 
 
@@ -4491,7 +4582,7 @@ Echos the given text to the screen.
 @end example
 
 
-Print the current Spice3 input file into a file, call up the editor on
+Print the current Ngspice input file into a file, call up the editor on
 that file and allow the user to modify it, and then read it back in,
 replacing the original file.  If a filename is given, then edit that
 file and load it, making the circuit the current one.
@@ -4511,7 +4602,7 @@ file and load it, making the circuit the current one.
 Does a fourier analysis of each of the given values, using the first 10
 multiples of the fundamental frequency (or the first nfreqs, if that
 variable is set - see below).  The output is like that of the .four
-Spice3 line.  The values may be any valid expression.  The values are
+Ngspice line.  The values may be any valid expression.  The values are
 interpolated onto a fixed-space grid with the number of points given by
 the fourgridsize variable, or 200 if it is not set.  The interpolation
 is of degree polydegree if that variable is set, or 1.  If polydegree is
@@ -4537,7 +4628,7 @@ plot(1) program or lpr with the -g flag.
 
 
 @node  Help, History, Hardcopy, Commands
-@subsection  Help:  Print summaries of Spice3 commands
+@subsection  Help:  Print summaries of Ngspice commands
 
  General Form:
 
@@ -4564,7 +4655,7 @@ few major commands is printed.
 
 
 Print out the history, or the last number commands typed at the
-keyboard.  Note: in Spice3 version 3a7 and earlier, all commands
+keyboard.  Note: in Ngspice version 3a7 and earlier, all commands
 (including ones read from files) were saved.
 
 
@@ -4579,14 +4670,14 @@ keyboard.  Note: in Spice3 version 3a7 and earlier, all commands
 @end example
 
 
-Incrementally plot the values of the nodes while Spice3 runs.  The iplot
+Incrementally plot the values of the nodes while Ngspice runs.  The iplot
 command can be used with the where command to find trouble spots in a
 transient simulation.
 
 
 
 @node  Jobs, Let, Iplot, Commands
-@subsection  Jobs:  List active asynchronous spice runs
+@subsection  Jobs:  List active asynchronous ngspice runs
 
  General Form:
 
@@ -4595,7 +4686,7 @@ transient simulation.
 @end example
 
 
-Report on the asynchronous SPICE-3 jobs currently running.  Nutmeg
+Report on the asynchronous NGSPICE jobs currently running.  Nutmeg
 checks to see if the jobs are finished every time you execute a command.
 If it is done then the data is loaded and becomes available.
 
@@ -4636,7 +4727,7 @@ of tstep, tstart, and tstop in the currently active transient analysis.
 The currently loaded input file must include a transient analysis (a
 tran command may be run interactively before the last reset,
 alternately), and the current plot must be from this transient analysis.
-This command is needed because Spice3 doesn't output the results from a
+This command is needed because Ngspice doesn't output the results from a
 transient analysis in the same manner that Spice2 did.
 
 
@@ -4762,7 +4853,7 @@ first column unless the variable noprintscale is true.
 
 
 @node  Quit, Rehash, Print, Commands
-@subsection  Quit:  Leave Spice3 or Nutmeg
+@subsection  Quit:  Leave Ngspice or Nutmeg
 
  General Form:
 
@@ -4771,7 +4862,7 @@ first column unless the variable noprintscale is true.
 @end example
 
 
-Quit nutmeg or spice.
+Quit nutmeg or ngspice.
 
 
 
@@ -4848,7 +4939,7 @@ Resume a simulation after a stop or interruption (control-C).
 
 
 @node  Rspice, Run, Resume, Commands
-@subsection  Rspice:  Remote spice submission
+@subsection  Rspice:  Remote ngspice submission
 
  General Form:
 
@@ -4857,12 +4948,12 @@ Resume a simulation after a stop or interruption (control-C).
 @end example
 
 
-Runs a SPICE-3 remotely taking the input file as a SPICE-3 input file,
-or the current circuit if no argument is given.  Nutmeg or Spice3 waits
+Runs a NGSPICE remotely taking the input file as a NGSPICE input file,
+or the current circuit if no argument is given.  Nutmeg or Ngspice waits
 for the job to complete, and passes output from the remote job to the
 user's standard output.  When the job is finished the data is loaded in
 as with aspice.  If the variable rhost is set, nutmeg connects to this
-host instead of the default remote Spice3 server machine.  This command
+host instead of the default remote Ngspice server machine.  This command
 uses the "rsh" command and thereby requires authentication via a
 ".rhosts" file or other equivalent method.  Note that "rsh" refers to
 the "remote shell" program, which may be "remsh" on your system; to
@@ -4947,23 +5038,28 @@ loaded.  Currently valid resources are:
  General Form:
 
 @example
-     save [all | output ...]
-     .save [all | output ...]
+     save [all | allv | alli | output ...]
+     .save [all | allv | alli | output ...]
 @end example
 
 
 Save a set of outputs, discarding the rest.  If a node has been
 mentioned in a save command, it appears in the working plot after a run
-has completed, or in the rawfile if spice is run in batch mode.  If a
+has completed, or in the rawfile if ngspice is run in batch mode.  If a
 node is traced or plotted (see below) it is also saved.  For backward
 compatibility, if there are no save commands given, all outputs are
 saved.
 
-When the keyword "all" appears in the save command, all default values
-(node voltages and voltage source currents) are saved in addition to any
-other values listed.
+When the keyword "all" or the keyword "allv", appears in the save command, 
+all node voltages, voltage source currents and inductor currents are saved 
+in addition to any other values listed. If the keyword "alli" appears in 
+the save command, all devices currents are saved.
 
-
+Note: the current implementation saves only the currents of devices which
+      have internal nodes, i.e. MOSFETs with non zero RD and RS; BJTs with
+      non-zero RC, RB and RE; DIODEs with non-zero RS; etc. Resistor and
+      capacitor currents are not saved with this option. These deficiencies
+      will be addressed in a later revision. 
 
 @node  Sens, Set, Save, Commands
 @subsection  Sens*:  Run a sensitivity analysis
@@ -5043,7 +5139,7 @@ the setplot and display commands and are used by diff, below.)  If the
 vectors defined.
 
 Note that here the word "plot" refers to a group of vectors that are the
-result of one SPICE run.  When more than one file is loaded in, or more
+result of one NGSPICE run.  When more than one file is loaded in, or more
 than one plot is present in one file, nutmeg keeps them separate and
 only shows you the vectors in the current plot.
 
@@ -5147,7 +5243,7 @@ single letter specifying the device type letter, "letter:subckt:",
 
 
 @node  Source, Status, Showmod, Commands
-@subsection  Source:  Read a Spice3 input file
+@subsection  Source:  Read a Ngspice input file
 
  General Form:
 
@@ -5156,16 +5252,16 @@ single letter specifying the device type letter, "letter:subckt:",
 @end example
 
 
-For Spice3: Read the Spice3 input file file.  Nutmeg and Spice3 commands
+For Ngspice: Read the Ngspice input file file.  Nutmeg and Ngspice commands
 may be included in the file, and must be enclosed between the lines
 .control and .endc.  These commands are executed immediately after the
 circuit is loaded, so a control line of ac ...  works the same as the
 corresponding .ac card.  The first line in any input file is considered
 a title line and not parsed but kept as the name of the circuit.  The
-exception to this rule is the file .spiceinit.  Thus, a Spice3 command
+exception to this rule is the file .spiceinit.  Thus, a Ngspice command
 script must begin with a blank line and then with a acters *# is
 considered a control line.  This makes it possible to imbed commands in
-Spice3 input files that are ignored by earlier versions of Spice2
+Ngspice input files that are ignored by earlier versions of Spice2
 
 For Nutmeg: Reads commands from the file filename.  Lines beginning with
 the character * are considered comments and ignored.
@@ -5291,7 +5387,7 @@ for more details.
 
 
 This command transposes a multidimensional vector.  No analysis in
-Spice3 produces multidimensional vectors, although the DC transfer curve
+Ngspice produces multidimensional vectors, although the DC transfer curve
 may be run with two varying sources.  You must use the "reshape" command
 to reform the one-dimensional vectors into two dimensional vectors.  In
 addition, the default scale is incorrect for plotting.  You must plot
@@ -5301,11 +5397,11 @@ example (circuit to produce the tranfer characteristic of a MOS
 transistor):
 
 @example
-     spice3 > dc vgg 0 5 1 vdd 0 5 1
-     spice3 > plot i(vdd)
-     spice3 > reshape all [6,6]
-     spice3 > transpose i(vdd) v(drain)
-     spice3 > plot i(vdd) vs v(drain)[0]
+     ngspice > dc vgg 0 5 1 vdd 0 5 1
+     ngspice > plot i(vdd)
+     ngspice > reshape all [6,6]
+     ngspice > transpose i(vdd) v(drain)
+     ngspice > plot i(vdd) vs v(drain)[0]
 @end example
 
 
@@ -5352,7 +5448,7 @@ Clear the value of the specified variable(s) (word).
 
 
 @node  Version, Where, Unset, Commands
-@subsection  Version:  Print the version of Spice
+@subsection  Version:  Print the version of ngspice
 
  General Form:
 
@@ -5363,7 +5459,7 @@ Clear the value of the specified variable(s) (word).
 
 Print out the version of nutmeg that is running.  If there are
 arguments, it checks to make sure that the arguments match the current
-version of SPICE.  (This is mainly used as a Command: line in rawfiles.)
+version of NGSPICE.  (This is mainly used as a Command: line in rawfiles.)
 
 
 
@@ -5425,7 +5521,7 @@ expression list is all.
 @end example
 
 
-The spice3/nutmeg xgraph command plots data like the plot command but
+The ngspice/nutmeg xgraph command plots data like the plot command but
 via xgraph, a popular X11 plotting program.
 
 If file is either "temp" or "tmp" a temporary file is used to hold the
@@ -5602,9 +5698,9 @@ control structures may be examined with the debugging command cdump.
 @section  Variables
 
 
-The operation of both Nutmeg and Spice3 may be affected by setting
+The operation of both Nutmeg and Ngspice may be affected by setting
 variables with the "set" command.  In addition to the variables
-mentioned below, the set command in Spice3 also affect the behaviour of
+mentioned below, the set command in Ngspice also affect the behaviour of
 the simulator via the options previously described under the section on
 ".OPTIONS".
 
@@ -5711,7 +5807,7 @@ This is a printf(3s) style format string used to specify the command to
 use for sending plot(5)-style plots to a printer or plotter.  The first
 parameter sup plied is the printer name, the second parameter supplied
 is a file name con taining the plot.  Both parameters are strings.  It
-is trivial to cause Spice3 to abort by supplying a unreasonable format
+is trivial to cause Ngspice to abort by supplying a unreasonable format
 string.
 
 @item  lprps
@@ -5720,7 +5816,7 @@ This is a printf(3s) style format string used to specify the command to
 use for sending PostScript plots to a printer or plotter.  The first
 parameter supplied is the printer name, the second parame ter supplied
 is a file name containing the plot.  Both parameters are strings.  It is
-trivial to cause Spice3 to abort by supplying a unreasonable format
+trivial to cause Ngspice to abort by supplying a unreasonable format
 string.
 
 @item  nfreqs
@@ -5827,7 +5923,7 @@ Overrides the name used for generating rspice runs (default is
 
 @item rhost
 
-The machine to use for remote SPICE-3 runs, in stead of the default one
+The machine to use for remote NGSPICE runs, in stead of the default one
 (see the description of the rspice command, below).
 
 @item rprogram
@@ -5842,8 +5938,8 @@ before continuing.
 @item sourcepath
 
 A list of the directories to search when a source command is given.  The
-default is the current directory and the standard spice library
-(/usr/local/lib/spice, or whatever LIBPATH is #defined to in the Spice3
+default is the current directory and the standard ngspice library
+(/usr/local/lib/ngspice, or whatever LIBPATH is #defined to in the Ngspice
 source.
 
 @item spicepath
@@ -5881,7 +5977,7 @@ The width of the page for asciiplot and print col.
 @item x11lineararcs
 
 Some X11 implementations have poor arc drawing.  If you set this option,
-Spice3 will plot using an approximation to the curve using straight
+Ngspice will plot using an approximation to the curve using straight
 lines.
 
 @item xbrushheight
@@ -5899,7 +5995,7 @@ The plot may not look good if this is a variable-width font.
 
 @end vtable
 
-There are several set variables that Spice3 uses but Nutmeg does
+There are several set variables that Ngspice uses but Nutmeg does
 not. They are:
 
 @vtable @code
@@ -5915,7 +6011,7 @@ The name of the model card (normally
 @item noaskquit
 
 Do not check to make sure that there are no circuits suspended and no
-plots un saved.  Normally Spice3 warns the user when he tries to quit if
+plots un saved.  Normally Ngspice warns the user when he tries to quit if
 this is the case.
 
 @item nobjthack
@@ -5943,7 +6039,7 @@ begin subcircuits (normally
 
 @section  MISCELLANEOUS
 
-If there are subcircuits in the input file, Spice3 expands instances of
+If there are subcircuits in the input file, Ngspice expands instances of
 them.  A subcircuit is delimited by the cards .subckt and .ends, or
 whatever the value of the variables substart and subend is,
 respectively.  An instance of a subcircuit is created by specifying a
@@ -5964,7 +6060,7 @@ specifies instances of subcircuits, instead of 'x'.
 
 Nutmeg occasionally checks to see if it is getting close to running out
 of space, and warns the user if this is the case. (This is more likely
-to be useful with the SPICE front end.)
+to be useful with the NGSPICE front end.)
 
 C-shell type quoting with "" and '', and backquote substitution may be
 used.  Within single quotes, no further substitution (like history
@@ -6012,7 +6108,7 @@ You may type multiple commands on one line, separated by semicolons.
 
 If you want to use a different mfbcap file than the default (usually
 ~cad/lib/mfbcap), you have to set the environment variable SPICE_MFBCAP
-before you start nutmeg or spice.  The -m option and the mfbcap variable
+before you start nutmeg or ngspice.  The -m option and the mfbcap variable
 no longer work.
 
 If X is being used, the cursor may be positioned at any point on the
@@ -6082,7 +6178,7 @@ The hardcopy command is useless on VMS and other systems without the
 plot command, unless the user has a program that understands plot(5)
 format.
 
-Spice3 recognizes all the notations used in SPICE2 .plot cards, and
+Ngspice recognizes all the notations used in SPICE2 .plot cards, and
 translates vp(1) into ph(v(1)), and so forth.  However, if there are
 spaces in these names it won't work.  Hence v(1, 2) and (-.5, .5) aren't
 recognized.
@@ -6097,7 +6193,7 @@ you can set the variable "nobjthack" which forces BJTs to have 4 nodes
 The @@name[param] notation might not work with trace, iplot, etc.  yet.
 
 The first line of a command file (except for the .spiceinit file) should
-be a comment, otherwise SPICE may create an empty circuit.
+be a comment, otherwise NGSPICE may create an empty circuit.
 
 Files specified on the command line are read before .spiceinit is read.
 
@@ -6434,6 +6530,7 @@ and model, but are provided as a quick reference guide.
 
 @node Uniform RC line, Arbitrary Source, Model and Device Parameters, Model and Device Parameters
 @section URC:  Uniform R.C. line
+@example
  
  ------------------------------------------------------------
 |          URC - instance parameters (input-output)         |
@@ -6469,10 +6566,12 @@ and model, but are provided as a quick reference guide.
 | isperl            Saturation current per length           |
 | rsperl            Diode resistance per length             |
  ------------------------------------------------------------
+@end example
 
 
 @node Arbitrary Source, Bipolar Junction Transistor, Uniform RC line, Model and Device Parameters
 @section ASRC:  Arbitrary Source
+@example
  
  ------------------------------------------------------------
 |          ASRC - instance parameters (input-only)          |
@@ -6490,10 +6589,12 @@ and model, but are provided as a quick reference guide.
 | pos_node          Positive Node                           |
 | neg_node          Negative Node                           |
  ------------------------------------------------------------
+@end example
 
 @node Bipolar Junction Transistor, BSIM1 Berkeley Short Channel IGFET Model, Arbitrary Source, Model and Device Parameters
 @section BJT:  Bipolar Junction Transistor
- 
+ @example
+
  ------------------------------------------------------------
 |           BJT - instance parameters (input-only)          |
 |-----------------------------------------------------------+
@@ -6657,10 +6758,12 @@ and model, but are provided as a quick reference guide.
 | transtimevbcfact  Transit time VBC factor                 |
 | excessphasefactor Excess phase fact.                      |
  ------------------------------------------------------------
+@end example
 
 
 @node BSIM1 Berkeley Short Channel IGFET Model, BSIM2 Berkeley Short Channel IGFET Model, Bipolar Junction Transistor, Model and Device Parameters
 @section BSIM1:  Berkeley Short Channel IGFET Model
+@example
  
  ------------------------------------------------------------
 |          BSIM1 - instance parameters (input-only)         |
@@ -6701,7 +6804,7 @@ and model, but are provided as a quick reference guide.
 |          BSIM1 - model parameters (input-output)          |
 |-----------------------------------------------------------+
 | vfb               Flat band voltage                       |
-  lvfb              Length dependence of vfb
+|lvfb               Length dependence of vfb                |
 | wvfb              Width dependence of vfb                 |
 | phi               Strong inversion surface potential      |
  ------------------------------------------------------------
@@ -6725,7 +6828,7 @@ and model, but are provided as a quick reference guide.
 
  
  ---------------------------------------------------------------------
-|          BSIM1 - model input-output parameters - continued|
+|          BSIM1 - model input-output parameters - continued         |
 |--------------------------------------------------------------------+
 |wx2e           Width dependence of x2e                              |
 |x3e            VDS dependence of eta                                |
@@ -6808,10 +6911,12 @@ and model, but are provided as a quick reference guide.
 |wdf            Default width of source drain diffusion in um              |
 |dell           Length reduction of source drain diffusion                 |
  ---------------------------------------------------------------------------
+@end example
 
 
 @node BSIM2 Berkeley Short Channel IGFET Model, Fixed capacitor, BSIM1 Berkeley Short Channel IGFET Model, Model and Device Parameters
 @section BSIM2:  Berkeley Short Channel IGFET Model
+@example
  
  ------------------------------------------------------------
 |          BSIM2 - instance parameters (input-only)         |
@@ -6957,90 +7062,101 @@ and model, but are provided as a quick reference guide.
 | wu1d              Width depence of u1d                    |
 | n0                Subthreshold slope at VDS=0 VBS=0       |
 | ln0               Length dependence of n0                 |
-|                         continued                |
+|                         continued                         |
  ------------------------------------------------------------
 
  
- ------------------------------------------------------------------------
+ --------------------------------------------------------------
 |           BSIM2 - model input-output parameters - continued  |
-|-----------------------------------------------------------------------+
-|wn0            Width dependence of n0                                  |
-|nb             VBS dependence of n                                     |
-|lnb            Length dependence of nb                                 |
-|wnb            Width dependence of nb                                  |
- ------------------------------------------------------------------------
-|nd             VDS dependence of n                                     |
-|lnd            Length dependence of nd                                 |
-|wnd            Width dependence of nd                                  |
-|vof0           Threshold voltage offset AT VDS=0 VBS=0                 |
-|-----------------------------------------------------------------------+
-|lvof0          Length dependence of vof0                               |
-|wvof0          Width dependence of vof0                                |
-|vofb           VBS dependence of vof                                   |
-|lvofb          Length dependence of vofb                               |
- ------------------------------------------------------------------------
-|wvofb          Width dependence of vofb                                |
-|vofd           VDS dependence of vof                                   |
-|lvofd          Length dependence of vofd                               |
-|wvofd          Width dependence of vofd                                |
-|-----------------------------------------------------------------------+
-|ai0            Pre-factor of hot-electron effect.                      |
-|lai0           Length dependence of ai0                                |
-|wai0           Width dependence of ai0                                 |
-|aib            VBS dependence of ai                                    |
- ------------------------------------------------------------------------
-|laib           Length dependence of aib                                |
-|waib           Width dependence of aib                                 |
-|bi0            Exponential factor of hot-electron effect.              |
-|lbi0           Length dependence of bi0                                |
-|-----------------------------------------------------------------------+
-|wbi0           Width dependence of bi0                                 |
-|bib            VBS dependence of bi                                    |
-|lbib           Length dependence of bib                                |
-|wbib           Width dependence of bib                                 |
- ------------------------------------------------------------------------
-|vghigh         Upper bound of the cubic spline function.               |
-|lvghigh        Length dependence of vghigh                             |
-|wvghigh        Width dependence of vghigh                              |
-|vglow          Lower bound of the cubic spline function.               |
-|-----------------------------------------------------------------------+
-|lvglow         Length dependence of vglow                              |
-|wvglow         Width dependence of vglow                               |
-|tox            Gate oxide thickness in um                              |
-|temp           Temperature in degree Celcius                           |
- ------------------------------------------------------------------------
-|vdd            Maximum Vds                                             |
-|vgg            Maximum Vgs                                             |
-|vbb            Maximum Vbs                                             |
-|cgso           Gate source overlap capacitance per unit channel width(m)
-|-----------------------------------------------------------------------+
-|cgdo           Gate drain overlap capacitance per unit channel width(m)|
-|cgbo           Gate bulk overlap capacitance per unit channel length(m)|
-|xpart          Flag for channel charge partitioning                    |
+|--------------------------------------------------------------+
+|wn0            Width dependence of n0                         |
+|nb             VBS dependence of n                            |
+|lnb            Length dependence of nb                        |
+|wnb            Width dependence of nb                         |
+ --------------------------------------------------------------+
+|nd             VDS dependence of n                            |
+|lnd            Length dependence of nd                        |
+|wnd            Width dependence of nd                         |
+|vof0           Threshold voltage offset AT VDS=0 VBS=0        |
+|--------------------------------------------------------------+
+|lvof0          Length dependence of vof0                      |
+|wvof0          Width dependence of vof0                       |
+|vofb           VBS dependence of vof                          |
+|lvofb          Length dependence of vofb                      |
+ --------------------------------------------------------------+
+|wvofb          Width dependence of vofb                       |
+|vofd           VDS dependence of vof                          |
+|lvofd          Length dependence of vofd                      |
+|wvofd          Width dependence of vofd                       |
+|--------------------------------------------------------------+
+|ai0            Pre-factor of hot-electron effect.             |
+|lai0           Length dependence of ai0                       |
+|wai0           Width dependence of ai0                        |
+|aib            VBS dependence of ai                           |
+ --------------------------------------------------------------+
+|laib           Length dependence of aib                       |
+|waib           Width dependence of aib                        |
+|bi0            Exponential factor of hot-electron effect.     |
+|lbi0           Length dependence of bi0                       |
+|--------------------------------------------------------------+
+|wbi0           Width dependence of bi0                        |
+|bib            VBS dependence of bi                           |
+|lbib           Length dependence of bib                       |
+|wbib           Width dependence of bib                        |
+ --------------------------------------------------------------+
+|vghigh         Upper bound of the cubic spline function.      |
+|lvghigh        Length dependence of vghigh                    |
+|wvghigh        Width dependence of vghigh                     |
+|vglow          Lower bound of the cubic spline function.      |
+|--------------------------------------------------------------+
+|lvglow         Length dependence of vglow                     |
+|wvglow         Width dependence of vglow                      |
+|tox            Gate oxide thickness in um                     |
+|temp           Temperature in degree Celcius                  |
+ --------------------------------------------------------------+
+|vdd            Maximum Vds                                    |
+|vgg            Maximum Vgs                                    |
+|vbb            Maximum Vbs                                    |
+|cgso           Gate source overlap capacitance per unit       |
+|               channel width(m)                               |
+|--------------------------------------------------------------+
+|cgdo           Gate drain overlap capacitance                 |
+|               per unit channel width(m)                      |
+|cgbo           Gate bulk overlap capacitance                  |
+|               per unit channel length(m)                     |
+|xpart          Flag for channel charge partitioning           |
 |                               continued                      |
- ------------------------------------------------------------------------
+ ---------------------------------------------------------------
 
  
- ---------------------------------------------------------------------------
-|             BSIM2 - model input-output parameters - continued   |
-|--------------------------------------------------------------------------+
-|rsh            Source drain diffusion sheet resistance in ohm per square  |
-|js             Source drain junction saturation current per unit area     |
-|pb             Source drain junction built in potential                   |
- mj             Source drain bottom junction capacitance grading coefficient
-|                                                                          |
- ---------------------------------------------------------------------------
-|pbsw           Source drain side junction capacitance built in potential  |
-|mjsw           Source drain side junction capacitance grading coefficient |
-|cj             Source drain bottom junction capacitance per unit area     |
-|cjsw           Source drain side junction capacitance per unit area       |
-|wdf            Default width of source drain diffusion in um              |
-|dell           Length reduction of source drain diffusion                 |
- ---------------------------------------------------------------------------
+ ---------------------------------------------------------------
+|             BSIM2 - model input-output parameters            |
+|--------------------------------------------------------------+
+|rsh            Source drain diffusion sheet resistance        |
+|               in ohm per square                              |
+|js             Source drain junction saturation current       |
+|               per unit area                                  |
+|pb             Source drain junction built in potential       |
+|mj             Source drain bottom junction capacitance       |
+|               grading coefficient                            |
+ --------------------------------------------------------------+
+|pbsw           Source drain side junction capacitance         |
+|               built in potential                             |
+|mjsw           Source drain side junction capacitance         |
+|               grading coefficient                            |
+|cj             Source drain bottom junction capacitance       |
+|               per unit area                                  |
+|cjsw           Source drain side junction capacitance         |
+|               per unit area                                  |
+|wdf            Default width of source drain diffusion in um  |
+|dell           Length reduction of source drain diffusion     |
+ ---------------------------------------------------------------
+@end example
 
 
 @node Fixed capacitor, Current controlled current source, BSIM2 Berkeley Short Channel IGFET Model, Model and Device Parameters
 @section Capacitor:  Fixed capacitor
+@example
  
  ------------------------------------------------------------
 |       Capacitor - instance parameters (input-output)      |
@@ -7075,10 +7191,12 @@ and model, but are provided as a quick reference guide.
 | defw              Default width                           |
 | narrow            width correction factor                 |
  ------------------------------------------------------------
+@end example
 
 
 @node Current controlled current source, Linear current controlled current source, Fixed capacitor, Model and Device Parameters
 @section CCCS:  Current controlled current source
+@example
  
  ------------------------------------------------------------
 |         CCCS - instance parameters (input-output)         |
@@ -7097,10 +7215,12 @@ and model, but are provided as a quick reference guide.
 | v                 CCCS voltage at output                  |
 | p                 CCCS power                              |
  ------------------------------------------------------------
+@end example
 
 
 @node Linear current controlled current source, Current controlled ideal switch, Current controlled current source, Model and Device Parameters
 @section CCVS:  Linear current controlled current source
+@example
  
  ------------------------------------------------------------
 |         CCVS - instance parameters (input-output)         |
@@ -7119,11 +7239,13 @@ and model, but are provided as a quick reference guide.
 | v                 CCVS output voltage                     |
 | p                 CCVS power                              |
  ------------------------------------------------------------
+@end example
 
 
 
 @node Current controlled ideal switch, Junction Diode model, Linear current controlled current source, Model and Device Parameters
 @section CSwitch:  Current controlled ideal switch
+@example
  
  ------------------------------------------------------------
 |         CSwitch - instance parameters (input-only)        |
@@ -7167,10 +7289,12 @@ and model, but are provided as a quick reference guide.
 | gon               Closed conductance                      |
 | goff              Open conductance                        |
  ------------------------------------------------------------
+@end example
 
 
 @node Junction Diode model, Inductor, Current controlled ideal switch, Model and Device Parameters
 @section Diode:  Junction Diode model
+@example
  
  ------------------------------------------------------------
 |         Diode - instance parameters (input-output)        |
@@ -7234,10 +7358,12 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | cond              Ohmic conductance                       |
  ------------------------------------------------------------
+@end example
 
 
 @node Inductor, Mutual inductors, Junction Diode model, Model and Device Parameters
 @section Inductor:  Inductors
+@example
  
  ------------------------------------------------------------
 |       Inductor - instance parameters (input-output)       |
@@ -7258,10 +7384,12 @@ and model, but are provided as a quick reference guide.
  p              instantaneous power dissipated by the inductor
 |                                                            |
  -------------------------------------------------------------
+@end example
 
 
 @node Mutual inductors, Independent current source, Inductor, Model and Device Parameters
 @section mutual:  Mutual inductors
+@example
  
  ------------------------------------------------------------
 |        mutual - instance parameters (input-output)        |
@@ -7271,10 +7399,12 @@ and model, but are provided as a quick reference guide.
 | inductor1         First coupled inductor                  |
 | inductor2         Second coupled inductor                 |
  ------------------------------------------------------------
+@end example
 
 
 @node Independent current source, Junction Field effect transistor, Mutual inductors, Model and Device Parameters
 @section Isource:  Independent current source
+@example
  
  ------------------------------------------------------------
 |         Isource - instance parameters (input-only)        |
@@ -7316,10 +7446,12 @@ and model, but are provided as a quick reference guide.
 | v                 Voltage across the supply               |
 | p                 Power supplied by the source            |
  ------------------------------------------------------------
+@end example
 
 
 @node Junction Field effect transistor, Lossy transmission line, Independent current source, Model and Device Parameters
 @section JFET:  Junction Field effect transistor
+@example
  
  ------------------------------------------------------------
 |         JFET - instance parameters (input-output)         |
@@ -7377,7 +7509,7 @@ and model, but are provided as a quick reference guide.
 | rd                Drain ohmic resistance                  |
 | rs                Source ohmic resistance                 |
 | cgs               G-S junction capactance                 |
-|                         continued                |
+|                         continued                         |
  ------------------------------------------------------------
 
  
@@ -7403,10 +7535,12 @@ and model, but are provided as a quick reference guide.
 | gd                Drain conductance                       |
 | gs                Source conductance                      |
  ------------------------------------------------------------
+@end example
 
 
 @node Lossy transmission line, GaAs MESFET model, Junction Field effect transistor, Model and Device Parameters
 @section LTRA:  Lossy transmission line
+@example
  
  ------------------------------------------------------------
 |          LTRA - instance parameters (input-only)          |
@@ -7446,22 +7580,24 @@ and model, but are provided as a quick reference guide.
 |len             length of line                             |
 |nocontrol       No timestep control                        |
 |steplimit       always limit timestep to 0.8*(delay of line)
-|                         continued                |
+|                         continued                         |
  ------------------------------------------------------------
 
- -----------------------------------------------------------------------------------
-|                 LTRA - model input-output parameters - continued        |
-|----------------------------------------------------------------------------------+
-|nosteplimit    don't always limit timestep to 0.8*(delay of line)                 |
-|lininterp      use linear interpolation                                           |
-|quadinterp     use quadratic interpolation                                        |
-|mixedinterp    use linear interpolation if quadratic results look unacceptable    |
- -----------------------------------------------------------------------------------
-|truncnr        use N-R iterations for step calculation in LTRAtrunc               |
-|truncdontcut   don't limit timestep to keep impulse response calculation errors low
-|compactrel     special reltol for straight line checking                          |
-|compactabs     special abstol for straight line checking                          |
- -----------------------------------------------------------------------------------
+ ---------------------------------------------------------------------
+|                 LTRA - model input-output parameters - continued    |
+|---------------------------------------------------------------------+
+|nosteplimit    don't always limit timestep to 0.8*(delay of line)    |
+|lininterp      use linear interpolation                              |
+|quadinterp     use quadratic interpolation                           |
+|mixedinterp    use linear interpolation if quadratic results         |
+|               look unacceptable                                     | 
+ ---------------------------------------------------------------------
+|truncnr        use N-R iterations for step calculation in LTRAtrunc  |
+|truncdontcut   don't limit timestep to keep impulse response         |
+|               calculation errors low                                |
+|compactrel     special reltol for straight line checking             |
+|compactabs     special abstol for straight line checking             |
+ ---------------------------------------------------------------------
 
  
  ------------------------------------------------------------
@@ -7470,10 +7606,12 @@ and model, but are provided as a quick reference guide.
 | rel               Rel. rate of change of deriv. for bkpt  |
 | abs               Abs. rate of change of deriv. for bkpt  |
  ------------------------------------------------------------
+@end example
 
 
 @node GaAs MESFET model, Level 1 MOSfet model, Lossy transmission line, Model and Device Parameters
 @section MES:  GaAs MESFET model
+@example
  
  ------------------------------------------------------------
 |          MES - instance parameters (input-output)         |
@@ -7561,10 +7699,12 @@ and model, but are provided as a quick reference guide.
 | depl_cap          Depletion capacitance                   |
 | vcrit             Critical voltage                        |
  ------------------------------------------------------------
+@end example
 
 
 @node Level 1 MOSfet model, Level 2 MOSfet model, GaAs MESFET model, Model and Device Parameters
 @section Mos1:  Level 1 MOSfet model with  Meyer capacitance model
+@example
  
  ------------------------------------------------------------
 |          Mos1 - instance parameters (input-only)          |
@@ -7731,10 +7871,12 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | type              N-channel or P-channel MOS              |
  ------------------------------------------------------------
+@end example
 
 
 @node Level 2 MOSfet model, Level 3 MOSfet model, Level 1 MOSfet model, Model and Device Parameters
 @section Mos2:  Level 2 MOSfet model with Meyer capacitance model
+@example
  
  ------------------------------------------------------------
 |          Mos2 - instance parameters (input-only)          |
@@ -7906,10 +8048,12 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | type              N-channel or P-channel MOS              |
  ------------------------------------------------------------
+@end example
 
 
 @node Level 3 MOSfet model, Level 6 MOSfet model, Level 2 MOSfet model, Model and Device Parameters
 @section Mos3: Level 3 MOSfet model with Meyer capacitance model
+@example
 
  
  ------------------------------------------------------------
@@ -8084,10 +8228,12 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | type              N-channel or P-channel MOS              |
  ------------------------------------------------------------
+@end example
 
 
 @node Level 6 MOSfet model, Simple linear resistor, Level 3 MOSfet model, Model and Device Parameters
 @section Mos6: Level 6 MOSfet model with Meyer capacitance model
+@example
 
  
  ------------------------------------------------------------
@@ -8258,10 +8404,12 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | type              N-channel or P-channel MOS              |
  ------------------------------------------------------------
+@end example
 
 
 @node Simple linear resistor, Ideal voltage controlled switch, Level 6 MOSfet model, Model and Device Parameters
 @section Resistor:  Simple linear resistor
+@example
  
  ------------------------------------------------------------
 |       Resistor - instance parameters (input-output)       |
@@ -8298,10 +8446,12 @@ and model, but are provided as a quick reference guide.
 | defw              Default device width                    |
 | tnom              Parameter measurement temperature       |
  ------------------------------------------------------------
+@end example
 
 
 @node Ideal voltage controlled switch, Lossless transmission line, Simple linear resistor, Model and Device Parameters
 @section Switch:  Ideal voltage controlled switch
+@example
  
  ------------------------------------------------------------
 |         Switch - instance parameters (input-only)         |
@@ -8346,10 +8496,12 @@ and model, but are provided as a quick reference guide.
 | gon               Conductance when closed                 |
 | goff              Conductance when open                   |
  ------------------------------------------------------------
+@end example
 
 
 @node Lossless transmission line, Voltage controlled current source, Ideal voltage controlled switch, Model and Device Parameters
 @section Tranline:  Lossless transmission line
+@example
  
  ------------------------------------------------------------
 |        Tranline - instance parameters (input-only)        |
@@ -8386,10 +8538,12 @@ and model, but are provided as a quick reference guide.
 | neg_node2         Negative node of end 2 of t. line       |
 | delays            Delayed values of excitation            |
  ------------------------------------------------------------
+@end example
 
 
 @node Voltage controlled current source, Voltage controlled voltage source, Lossless transmission line, Model and Device Parameters
 @section VCCS:  Voltage controlled current source
+@example
  
  ------------------------------------------------------------
 |          VCCS - instance parameters (input-only)          |
@@ -8417,10 +8571,12 @@ and model, but are provided as a quick reference guide.
 | v                 Voltage across output                   |
 | p                 Power                                   |
  ------------------------------------------------------------
+@end example
 
 
 @node Voltage controlled voltage source, Independent voltage source, Voltage controlled current source, Model and Device Parameters
 @section VCVS:  Voltage controlled voltage source
+@example
  
  ------------------------------------------------------------
 |          VCVS - instance parameters (input-only)          |
@@ -8448,10 +8604,12 @@ and model, but are provided as a quick reference guide.
 | v                 Output voltage                          |
 | p                 Power                                   |
  ------------------------------------------------------------
+@end example
 
 
 @node Independent voltage source,  , Voltage controlled voltage source, Model and Device Parameters
 @section Vsource:  Independent voltage source
+@example
  
  ------------------------------------------------------------
 |         Vsource - instance parameters (input-only)        |
@@ -8492,5 +8650,6 @@ and model, but are provided as a quick reference guide.
 | i                 Voltage source current                  |
 | p                 Instantaneous power                     |
  ------------------------------------------------------------
+@end example
 
 @bye

@@ -1,10 +1,13 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
 
 /**********
- * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4temp.c of BSIM4.0.0.
- * Authors: Weidong Liu, Xiaodong Jin, Kanyu M. Cao, Chenming Hu.
+ * Copyright 2001 Regents of the University of California. All rights reserved.
+ * File: b4temp.c of BSIM4.2.1.
+ * Author: 2000 Weidong Liu
+ * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ * Modified by Xuemei Xi, 04/06/2001.
+ * Modified by Xuemei Xi, 10/05/2001.
  **********/
 
 #include "ngspice.h"
@@ -47,11 +50,11 @@ BSIM4temp(inModel,ckt)
 GENmodel *inModel;
 CKTcircuit *ckt;
 {
-register BSIM4model *model = (BSIM4model*) inModel;
-register BSIM4instance *here;
+BSIM4model *model = (BSIM4model*) inModel;
+BSIM4instance *here;
 struct bsim4SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni;
-double T0, T1, T2, T3, T4, T5, T8, T9, Ldrn, Wdrn;
+double T0, T1, T2, T3, T4, T5, T8, T9, Lnew, Wnew;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;
 double dumPs, dumPd, dumAs, dumAd, PowWeffWr;
 double DMCGeff, DMCIeff, DMDGeff;
@@ -184,46 +187,46 @@ int Size_Not_Found;
 	 delTemp = ckt->CKTtemp - model->BSIM4tnom;
 	 T0 = model->BSIM4tcj * delTemp;
 	 if (T0 >= -1.0)
-	 {   model->BSIM4SunitAreaJctCap *= 1.0 + T0;
-             model->BSIM4DunitAreaJctCap *= 1.0 + T0;
+	 {   model->BSIM4SunitAreaTempJctCap = model->BSIM4SunitAreaJctCap *(1.0 + T0); /*bug_fix -JX */
+             model->BSIM4DunitAreaTempJctCap = model->BSIM4DunitAreaJctCap *(1.0 + T0);
 	 }
 	 else
 	 {   if (model->BSIM4SunitAreaJctCap > 0.0)
-	     {   model->BSIM4SunitAreaJctCap = 0.0;
+	     {   model->BSIM4SunitAreaTempJctCap = 0.0;
 	         fprintf(stderr, "Temperature effect has caused cjs to be negative. Cjs is clamped to zero.\n");
              }
 	     if (model->BSIM4DunitAreaJctCap > 0.0)
-             {   model->BSIM4DunitAreaJctCap = 0.0;
+             {   model->BSIM4DunitAreaTempJctCap = 0.0;
                  fprintf(stderr, "Temperature effect has caused cjd to be negative. Cjd is clamped to zero.\n");
              }
 	 }
          T0 = model->BSIM4tcjsw * delTemp;
 	 if (T0 >= -1.0)
-	 {   model->BSIM4SunitLengthSidewallJctCap *= 1.0 + T0;
-             model->BSIM4DunitLengthSidewallJctCap *= 1.0 + T0;
+	 {   model->BSIM4SunitLengthSidewallTempJctCap = model->BSIM4SunitLengthSidewallJctCap *(1.0 + T0);
+             model->BSIM4DunitLengthSidewallTempJctCap = model->BSIM4DunitLengthSidewallJctCap *(1.0 + T0);
 	 }
 	 else
 	 {   if (model->BSIM4SunitLengthSidewallJctCap > 0.0)
-	     {   model->BSIM4SunitLengthSidewallJctCap = 0.0;
+	     {   model->BSIM4SunitLengthSidewallTempJctCap = 0.0;
 	         fprintf(stderr, "Temperature effect has caused cjsws to be negative. Cjsws is clamped to zero.\n");
 	     }
 	     if (model->BSIM4DunitLengthSidewallJctCap > 0.0)
-             {   model->BSIM4DunitLengthSidewallJctCap = 0.0;
+             {   model->BSIM4DunitLengthSidewallTempJctCap = 0.0;
                  fprintf(stderr, "Temperature effect has caused cjswd to be negative. Cjswd is clamped to zero.\n");
              }	
 	 }
          T0 = model->BSIM4tcjswg * delTemp;
 	 if (T0 >= -1.0)
-	 {   model->BSIM4SunitLengthGateSidewallJctCap *= 1.0 + T0;
-             model->BSIM4DunitLengthGateSidewallJctCap *= 1.0 + T0;
+	 {   model->BSIM4SunitLengthGateSidewallTempJctCap = model->BSIM4SunitLengthGateSidewallJctCap *(1.0 + T0);
+             model->BSIM4DunitLengthGateSidewallTempJctCap = model->BSIM4DunitLengthGateSidewallJctCap *(1.0 + T0);
 	 }
 	 else
 	 {   if (model->BSIM4SunitLengthGateSidewallJctCap > 0.0)
-	     {   model->BSIM4SunitLengthGateSidewallJctCap = 0.0;
+	     {   model->BSIM4SunitLengthGateSidewallTempJctCap = 0.0;
 	         fprintf(stderr, "Temperature effect has caused cjswgs to be negative. Cjswgs is clamped to zero.\n");
 	     }
 	     if (model->BSIM4DunitLengthGateSidewallJctCap > 0.0)
-             {   model->BSIM4DunitLengthGateSidewallJctCap = 0.0;
+             {   model->BSIM4DunitLengthGateSidewallTempJctCap = 0.0;
                  fprintf(stderr, "Temperature effect has caused cjswgd to be negative. Cjswgd is clamped to zero.\n");
              }
 	 }
@@ -326,6 +329,7 @@ int Size_Not_Found;
 		      && (here->BSIM4nf == pSizeDependParamKnot->NFinger))
                   {   Size_Not_Found = 0;
 		      here->pParam = pSizeDependParamKnot;
+		      pParam = here->pParam; /*bug-fix  */
 		  }
 		  else
 		  {   pLastKnot = pSizeDependParamKnot;
@@ -346,11 +350,11 @@ int Size_Not_Found;
                   pParam->Length = here->BSIM4l;
                   pParam->Width = here->BSIM4w;
 		  pParam->NFinger = here->BSIM4nf;
-                  Ldrn = here->BSIM4l;
-                  Wdrn = here->BSIM4w / here->BSIM4nf;
+                  Lnew = here->BSIM4l  + model->BSIM4xl ;
+                  Wnew = here->BSIM4w / here->BSIM4nf + model->BSIM4xw;
 		  
-                  T0 = pow(Ldrn, model->BSIM4Lln);
-                  T1 = pow(Wdrn, model->BSIM4Lwn);
+                  T0 = pow(Lnew, model->BSIM4Lln);
+                  T1 = pow(Wnew, model->BSIM4Lwn);
                   tmp1 = model->BSIM4Ll / T0 + model->BSIM4Lw / T1
                        + model->BSIM4Lwl / (T0 * T1);
                   pParam->BSIM4dl = model->BSIM4Lint + tmp1;
@@ -359,17 +363,17 @@ int Size_Not_Found;
                   pParam->BSIM4dlc = model->BSIM4dlc + tmp2;
                   pParam->BSIM4dlcig = model->BSIM4dlcig + tmp2;
 
-                  T2 = pow(Ldrn, model->BSIM4Wln);
-                  T3 = pow(Wdrn, model->BSIM4Wwn);
+                  T2 = pow(Lnew, model->BSIM4Wln);
+                  T3 = pow(Wnew, model->BSIM4Wwn);
                   tmp1 = model->BSIM4Wl / T2 + model->BSIM4Ww / T3
                        + model->BSIM4Wwl / (T2 * T3);
                   pParam->BSIM4dw = model->BSIM4Wint + tmp1;
                   tmp2 = model->BSIM4Wlc / T2 + model->BSIM4Wwc / T3
-                       + model->BSIM4Wwlc / (T2 * T3);
+                       + model->BSIM4Wwlc / (T2 * T3); 
                   pParam->BSIM4dwc = model->BSIM4dwc + tmp2;
                   pParam->BSIM4dwj = model->BSIM4dwj + tmp2;
 
-                  pParam->BSIM4leff = here->BSIM4l - 2.0 * pParam->BSIM4dl;
+                  pParam->BSIM4leff = Lnew - 2.0 * pParam->BSIM4dl;
                   if (pParam->BSIM4leff <= 0.0)
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM4modName;
@@ -380,8 +384,7 @@ int Size_Not_Found;
                       return(E_BADPARM);
                   }
 
-                  pParam->BSIM4weff = here->BSIM4w / here->BSIM4nf 
-				    - 2.0 * pParam->BSIM4dw;
+                  pParam->BSIM4weff = Wnew - 2.0 * pParam->BSIM4dw;
                   if (pParam->BSIM4weff <= 0.0)
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM4modName;
@@ -392,7 +395,7 @@ int Size_Not_Found;
                       return(E_BADPARM);
                   }
 
-                  pParam->BSIM4leffCV = here->BSIM4l - 2.0 * pParam->BSIM4dlc;
+                  pParam->BSIM4leffCV = Lnew - 2.0 * pParam->BSIM4dlc;
                   if (pParam->BSIM4leffCV <= 0.0)
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM4modName;
@@ -403,8 +406,7 @@ int Size_Not_Found;
                       return(E_BADPARM);
                   }
 
-                  pParam->BSIM4weffCV = here->BSIM4w / here->BSIM4nf
-				      - 2.0 * pParam->BSIM4dwc;
+                  pParam->BSIM4weffCV = Wnew - 2.0 * pParam->BSIM4dwc;
                   if (pParam->BSIM4weffCV <= 0.0)
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM4modName;
@@ -415,8 +417,7 @@ int Size_Not_Found;
                       return(E_BADPARM);
                   }
 
-                  pParam->BSIM4weffCJ = here->BSIM4w / here->BSIM4nf
-				      - 2.0 * pParam->BSIM4dwj;
+                  pParam->BSIM4weffCJ = Wnew - 2.0 * pParam->BSIM4dwj;
                   if (pParam->BSIM4weffCJ <= 0.0)
                   {   IFuid namarray[2];
                       namarray[0] = model->BSIM4modName;
@@ -1248,7 +1249,7 @@ int Size_Not_Found;
               here->BSIM4grgeltd = model->BSIM4rshg * (model->BSIM4xgw
                       + pParam->BSIM4weffCJ / 3.0 / model->BSIM4ngcon) /
                       (model->BSIM4ngcon * here->BSIM4nf *
-                      (here->BSIM4l - model->BSIM4xgl));
+                      (Lnew - model->BSIM4xgl));
               if (here->BSIM4grgeltd > 0.0)
                   here->BSIM4grgeltd = 1.0 / here->BSIM4grgeltd;
               else
@@ -1300,47 +1301,69 @@ int Size_Not_Found;
 				    &dumPs, &dumPd, &dumAs, &(here->BSIM4Adeff));
 
 	      /* Processing S/D resistance and conductance below */
-              if (here->BSIM4rgeoMod == 0)
-                  here->BSIM4sourceConductance = 0.0;
-              else if (here->BSIM4sourceSquaresGiven)
-		  here->BSIM4sourceConductance = model->BSIM4sheetResistance
+              if(here->BSIM4sNodePrime != here->BSIM4sNode)
+              {
+                 here->BSIM4sourceConductance = 0.0;
+                 if(here->BSIM4sourceSquaresGiven)
+                 {
+                    here->BSIM4sourceConductance = model->BSIM4sheetResistance
                                                * here->BSIM4sourceSquares;
-	      else	
-                  BSIM4RdseffGeo(here->BSIM4nf, here->BSIM4geoMod, here->BSIM4rgeoMod, here->BSIM4min,
-                                     pParam->BSIM4weffCJ, model->BSIM4sheetResistance,
-				     DMCGeff, DMCIeff, DMDGeff, 1, &(here->BSIM4sourceConductance));
+                 } else if (here->BSIM4rgeoMod > 0)
+                 {
+                    BSIM4RdseffGeo(here->BSIM4nf, here->BSIM4geoMod,
+                      here->BSIM4rgeoMod, here->BSIM4min,
+                      pParam->BSIM4weffCJ, model->BSIM4sheetResistance,
+                  DMCGeff, DMCIeff, DMDGeff, 1, &(here->BSIM4sourceConductance));
+                 } else
+                 {
+                    here->BSIM4sourceConductance = 0.0;
+                 }
 
-              if (here->BSIM4rgeoMod == 0)
-                  here->BSIM4drainConductance = 0.0;
-              else if (here->BSIM4drainSquaresGiven)
-                  here->BSIM4drainConductance = model->BSIM4sheetResistance
-                                              * here->BSIM4drainSquares;
-              else
-                  BSIM4RdseffGeo(here->BSIM4nf, here->BSIM4geoMod, here->BSIM4rgeoMod, here->BSIM4min,
-                                     pParam->BSIM4weffCJ, model->BSIM4sheetResistance, 
-				     DMCGeff, DMCIeff, DMDGeff, 0, &(here->BSIM4drainConductance));
-
-              if (here->BSIM4drainConductance > 0.0)
-                  here->BSIM4drainConductance = 1.0 / here->BSIM4drainConductance;
-	      else
-                  here->BSIM4drainConductance = 0.0;
-                  
-              if (here->BSIM4sourceConductance > 0.0) 
-                  here->BSIM4sourceConductance = 1.0 / here->BSIM4sourceConductance;
-	      else
+                 if (here->BSIM4sourceConductance > 0.0)
+                     here->BSIM4sourceConductance = 1.0
+                                            / here->BSIM4sourceConductance;
+                 else
+                 {
+                     here->BSIM4sourceConductance = 1.0e3; /* mho */
+                     printf ("Warning: Source conductance reset to 1.0e3 mho.\n");
+                 }
+              } else
+              {
                   here->BSIM4sourceConductance = 0.0;
+              }
 
+              if(here->BSIM4dNodePrime != here->BSIM4dNode)
+              {
+                 here->BSIM4drainConductance = 0.0;
+                 if(here->BSIM4drainSquaresGiven)
+                 {
+                    here->BSIM4drainConductance = model->BSIM4sheetResistance
+                                              * here->BSIM4drainSquares;
+                 } else if (here->BSIM4rgeoMod > 0)
+                 {
+                    BSIM4RdseffGeo(here->BSIM4nf, here->BSIM4geoMod,
+                      here->BSIM4rgeoMod, here->BSIM4min,
+                      pParam->BSIM4weffCJ, model->BSIM4sheetResistance,
+                  DMCGeff, DMCIeff, DMDGeff, 0, &(here->BSIM4drainConductance));
+                 } else
+                 {
+                    here->BSIM4drainConductance = 0.0;
+                 }
 
-	      if (((here->BSIM4rgeoMod != 0) || (model->BSIM4rdsMod != 0)
-                  || (model->BSIM4tnoiMod != 0)) && (here->BSIM4sourceConductance == 0.0))
-	      {   here->BSIM4sourceConductance = 1.0e3; /* mho */
-		  printf("Warning: Source conductance reset to 1.0e3 mho.\n");
-	      }
-              if (((here->BSIM4rgeoMod != 0) || (model->BSIM4rdsMod != 0)
-                  || (model->BSIM4tnoiMod != 0)) && (here->BSIM4drainConductance == 0.0))
-              {   here->BSIM4drainConductance = 1.0e3; /* mho */
-                  printf("Warning: Drain conductance reset to 1.0e3 mho.\n");
-              } /* End of Rsd processing */
+                 if (here->BSIM4drainConductance > 0.0)
+                     here->BSIM4drainConductance = 1.0
+                                           / here->BSIM4drainConductance;
+                 else
+                 {
+                     here->BSIM4drainConductance = 1.0e3; /* mho */
+                     printf ("Warning: Drain conductance reset to 1.0e3 mho.\n");
+                  }
+              } else
+              {
+                  here->BSIM4drainConductance = 0.0;
+              }
+           
+               /* End of Rsd processing */
 
 
               Nvtms = model->BSIM4vtm * model->BSIM4SjctEmissionCoeff;
@@ -1465,7 +1488,7 @@ int Size_Not_Found;
               {   IFuid namarray[2];
                   namarray[0] = model->BSIM4modName;
                   namarray[1] = here->BSIM4name;
-                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4.0.0 parameter checking for %s in model %s", namarray);
+                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4.2.1 parameter checking for %s in model %s", namarray);
                   return(E_BADPARM);
               }
          } /* End instance */

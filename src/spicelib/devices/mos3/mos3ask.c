@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Mathew Lew and Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -34,10 +35,13 @@ MOS3ask(ckt,inst,which,value,select)
             value->rValue = here->MOS3temp-CONSTCtoK;
             return(OK);
         case MOS3_CGS:
-            value->rValue = *(ckt->CKTstate0 + here->MOS3capgs);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgs);
             return(OK);
         case MOS3_CGD:
-            value->rValue = *(ckt->CKTstate0 + here->MOS3capgd);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgd);
+            return(OK);
+        case MOS3_M:
+            value->rValue = here->MOS3m;
             return(OK);
         case MOS3_L:
             value->rValue = here->MOS3l;
@@ -178,7 +182,13 @@ MOS3ask(ckt,inst,which,value,select)
             value->rValue = *(ckt->CKTstate0 + here->MOS3vds);
             return(OK);
         case MOS3_CAPGS:
-            value->rValue = *(ckt->CKTstate0 + here->MOS3capgs);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgs);
+/* add overlap capacitance */
+            value->rValue += (here->MOS3modPtr->MOS3gateSourceOverlapCapFactor)
+                             * here->MOS3m
+                             * (here->MOS3w
+                                +here->MOS3modPtr->MOS3widthAdjust
+                                -2*(here->MOS3modPtr->MOS3widthNarrow));
             return(OK);
         case MOS3_QGS:
             value->rValue = *(ckt->CKTstate0 + here->MOS3qgs);
@@ -187,7 +197,13 @@ MOS3ask(ckt,inst,which,value,select)
             value->rValue = *(ckt->CKTstate0 + here->MOS3cqgs);
             return(OK);
         case MOS3_CAPGD:
-            value->rValue = *(ckt->CKTstate0 + here->MOS3capgd);
+             value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgd);
+/* add overlap capacitance */
+            value->rValue += (here->MOS3modPtr->MOS3gateDrainOverlapCapFactor)
+                             * here->MOS3m
+                             * (here->MOS3w
+                                +here->MOS3modPtr->MOS3widthAdjust
+                                -2*(here->MOS3modPtr->MOS3widthNarrow));
             return(OK);
         case MOS3_QGD:
             value->rValue = *(ckt->CKTstate0 + here->MOS3qgd);
@@ -196,7 +212,13 @@ MOS3ask(ckt,inst,which,value,select)
             value->rValue = *(ckt->CKTstate0 + here->MOS3cqgd);
             return(OK);
         case MOS3_CAPGB:
-            value->rValue = *(ckt->CKTstate0 + here->MOS3capgb);
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgb);
+/* add overlap capacitance */
+            value->rValue += (here->MOS3modPtr->MOS3gateBulkOverlapCapFactor)
+                             * here->MOS3m
+                             * (here->MOS3l
+                                +here->MOS3modPtr->MOS3lengthAdjust
+                                -2*(here->MOS3modPtr->MOS3latDiff));
             return(OK);
         case MOS3_QGB:
             value->rValue = *(ckt->CKTstate0 + here->MOS3qgb);

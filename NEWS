@@ -1,16 +1,212 @@
+Ng-spice-rework-14
+============
+
+This is a major release in terms of bug-fixes. Some enhancements
+have been included: BSIM4 model and support for EKV model. The 
+source code for the latter must be obtained from EKV web site
+(see DEVICE for more info). To enable EKV support you have
+to obtain the code first and then use the configure switch
+"--enable-ekv". 
+
+The spice code contains an option to debug frontend code, now
+this is available in configure as "--enable-ftedebug".
+
+
+
+Ng-spice-rework-13
+============
+
+This is a major release in terms of fixes and enhancements.
+A garbage collector support has been added. If the configuration
+script detects that you have installed GC (Bohem-Weiser conservative 
+garbage collector), it will use it. Some memory leaks have been 
+fixed too.
+
+Enhancements to the code comes from Alan's contribute code, a 
+description of improvements follows (extracted form Alan's mail):
+
+Output File Format Changes -
+
+  Rawfile format changed to PSPICE Probe format (Usable with
+  Demo version of Microsim's Probe).
+  
+  (NOTE: Do not rely on this, we may revert to the old format 
+   in the next release). 
+
+  Text mode .OP results even though "rawfile" written.
+
+  Internal device nodes are not saved to "rawfile" (reduces
+  file size). Optionally, these internal nodes can be replaced
+  by device currents and saved.
+
+
+DC Convergence Enhancements -
+
+  "Source-Stepping" algorithm modified with a "Dynamic" step size.
+  After each successful step, the node voltages are saved, the
+  source-factor is increased by the step-factor, and the step-factor
+  is increased (for the next step). If the step fails, i.e. the
+  circuit does not converge, the source-factor is set to the value
+  from the previous successful step, the previously stored node
+  voltages are restored, the step-factor is reduced, the source
+  factor is increased by this smaller step-factor, and convergance
+  is attempted again.
+
+  Same thing done for "Gmin-stepping" algorithm.
+
+  "Gshunt" option added. This sets the "diagGmin" variable used in
+  the gmin-stepping algorithm to a non-zero value for the final
+  solution. (Normally this is set to zero for the final solution).
+  This helps for circuits with floating nodes (and for some others
+  too).
+
+  The Gmin implementation across the substrate diodes of MOS1, MOS2,
+  MOS3, MOS6 and BSIM3 devices, and across BJT base-emitter and
+  base-collector diodes, was incorrect. Correcting this dramatically
+  improved DC convergance. (I think this also effects BSIM1 and 2
+  but I haven't fixed them yet !)
+
+  The gm, gmb and gds calculations in the MOS3 model were all wrong.
+  The device equations were fixed, leading to much improved
+  convergance.
+
+  The Vcrit value used for diode voltage limiting was calculated
+  without taking into account the device area (and in some cases
+  without using the temperature corrected saturation current).
+  This could cause floating point overflows, especially in device
+  models designed to be scaled by a small area, e.g. 2u by 2u diodes
+  (area=4e-12). This is now fixed for Diode, BJT, MOS1, MOS2, and
+  MOS3 models.
+
+  The diode voltage limiting was modified to add negative voltage
+  limiting. Negative diode voltages are now limited to 3*Vdp-10,
+  where Vdp is the voltage from the previous iteration. If Vdp is
+  positive, then the voltage is limited to -10V. This prevents some
+  more floating point overflows. (Actually, I'm still playing with
+  the best values for this).
+
+  The Spice3 "fix" for the MOS3 gds discontinuity between the
+  linear and saturated regions only works if the VMAX parameter
+  is non-zero. A "tweak" has been added for the VMAX=0 case.
+
+
+Transient Convergance Enhancements -
+
+  Temperature correction of various diode capacitances was implemented
+  slightly incorrectly, leading to capacitance discontinuities in
+  simulations at temperatures other than nominal. This affected the
+  Diode and MOS3 models.
+
+  A mistake in the implementation of the MOS3 source-bulk capacitance
+  model resulted in a charge storage discontinuity. This has been fixed.
+
+  The level 2 MOSFET model seems to calculate Von and Vth values for
+  the threshold and subthreshold values respectively, but then uses
+  Vbin to calculate the Vdsat voltage used to find the drain current.
+  However, a jump statement uses Von to decide that the device is in
+  the "cutoff" region, which means that when this jump allows the
+  drain current to be calculated, Vdsat can already be well above
+  zero. This leads to a discontinuity of drain current with respect
+  to gate voltage. The code is now modified to use Vbin for the jump
+  decision. It looks like the code should actually use Vth as the
+  threshold voltage, but since PSPICE and HSPICE both follow the
+  original Berkeley code, this was left alone.
+
+
+New Model Parameters -
+
+  A PSPICE/HSPICE-like "M" device parameter (i.e. M devices in
+  parallel) was added to the MOS1,2,3 and BSIM3 mosfet models.
+
+  
+Input Read-in and Checking -
+
+  Numbers beginning with a + sign got the input routine confused.
+  Fixed now.
+
+  Attempts to nodeset (or .IC) non-existant nodes are flagged with a
+  warning.
+
+  PWL statements on Voltage or Current sources are now checked for
+  "non-increasing" time-points at the start of the simulation.
+  Previously each time-point was checked as it was reached during
+  the simulation, which could be very annoying if you made a mistake
+  which caused the simulation to fail after hours of run-time.
+  
+  A check which was performed at the end of each sub-circuit expansion
+  was moved to the top level. This check makes sure that all sub-circuits
+  have been defined, but in its original position, it meant that if a
+  sub-circuit included ANY .MODEL statements at all, then ALL the models
+  called in that sub-circuit must also be defined within that
+  sub-circuit. Now SPICE behaves as expected, i.e. a subcircuit may
+  define its own models, but may also use models defined at any level
+  above.
+
+
+Miscellaneous Fixes/Enhancements -
+
+  MOS devices reported only half of the Meyer capacitances, and did not
+  include overlap capacitances, when reporting to the .OP printout, or
+  when storing device capacitances to the "rawfile".
+
+  The ideal switch devices had no time-step control to stop their
+  controlling voltages/currents overshooting the switching thresholds.
+  The time-step control has been modified to use the last two time
+  points to estimate if the next one will move the controlling
+  voltage/current past a switching threshold. If this looks likely,
+  then the time-step is reduced.
+
+  The "rawfile" writing routines have been modified to print the
+  "reference value" to the console during the simulation. This lets
+  the user see exactly how far and how fast the simulation is
+  proceeding. 
+
+  .OP printout tidied up a lot to make the printout clearer.
+
+  Analysis order changed to fix a "feature" where, if you ask for
+  a .OP and a .TRAN in the same simulation, the node voltages
+  printed out correspond to the .OP, but the device data was from
+  the last timepoint of the .TRAN
+
+
+Etc. -
+
+  There are other minor bug fixes, and changes to reduce compiler
+  warnings. There are probably some more significant fixes which
+  I've forgotten :-)
+
+
+Ng-spice-rework-12
+============
+Arno did a great work this summer!
+The pole-zero analysis has been corrected. The error was introduced 
+in an attempt to eliminate compiler warnings. The source has been 
+reworked and info file have been updated. As you may see, a new dir 
+called "spicelib" has been created, another step toward the separation
+of the simulator from the frontend. 
+
+Ng-spice-rework-11
+============
+
+Resistor code (device) has been modified to conform to spice3 device 
+coding standard. 
+A new step function (U2) has been introduced.
+Documentation updated.
+
 Ng-spice-rework-10
 ============
 
-Added BSIM4 model and closed a couple of serious bugs. Added DEVICES file
-to distribution. This file contains the status of device models in this
-simulator. Read it, this file can save you a lot of time. 
+Added BSIM4 model and closed a couple of serious bugs. Added DEVICES
+file to distribution. This file contains the status of device models
+in this simulator. Read it, this file can save you a lot of time.
 
 Ng-spice-rework-9
 ============
 
-Thanks to Arno Peters now all device models are dynamically loaed on demand.
-Thay are linked as shared libraries. The next step is the dlopen() one which
-will make possible to link devices without any recompilation.
+Thanks to Arno Peters now all device models are dynamically loaed on
+demand.  Thay are linked as shared libraries. The next step is the
+dlopen() one which will make possible to link devices without any
+recompilation.
 
 
 
@@ -74,13 +270,13 @@ Ng-spice-rework-6 (29 Jan 2000)
 
 This porting includes:
 
-1) BSIM3V3.1 model as level 49. This is the version modified by Serban Popescu
-   which understands the M parameter and implements HDIF.
+1) BSIM3V3.1 model as level 49. This is the version modified by Serban
+Popescu which understands the M parameter and implements HDIF.
 
 2) BSIM3V3.2 model al Level 50. This is the standard Berkeley version.
 
-3) Now the resistor model can accepts two differents values for DC and AC
-   resistance.
+3) Now the resistor model can accepts two differents values for DC and
+AC resistance.
 
 
 
@@ -94,11 +290,11 @@ Ng-spice-rework-4  (22/12/99)
 
 This porting includes a new feature:
 
-1) dynamically loading of some device code as an experimental feature for 
-   the future GPL simulator. Thanks to Arno Peters and Manu Rouat.
+1) dynamically loading of some device code as an experimental feature
+for the future GPL simulator. Thanks to Arno Peters and Manu Rouat.
 
-2) Patched the following bug (thanks to Andrew Tuckey for having supplied the 
-   patch).
+2) Patched the following bug (thanks to Andrew Tuckey for having
+supplied the patch).
    
     * Wsw (current controlled switch) in subckt, parsing bug.
     * scale factor in arbitrary source.

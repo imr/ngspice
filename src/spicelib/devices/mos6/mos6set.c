@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1989 Takayasu Sakurai
+Modified: 2000 AlansFixes
 **********/
 
     /* load the MOS6 device structure with those pointers needed later 
@@ -17,13 +18,13 @@ Author: 1989 Takayasu Sakurai
 
 int
 MOS6setup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     int *states;
 {
-    register MOS6model *model = (MOS6model *)inModel;
-    register MOS6instance *here;
+    MOS6model *model = (MOS6model *)inModel;
+    MOS6instance *here;
     int error;
     CKTnode *tmp;
 
@@ -115,6 +116,9 @@ MOS6setup(matrix,inModel,ckt,states)
         /* loop through all the instances of the model */
         for (here = model->MOS6instances; here != NULL ;
                 here=here->MOS6nextInstance) {
+            CKTnode *tmpNode;
+            IFuid tmpName;
+            
 	    if (here->MOS6owner != ARCHme) goto matrixpointers;
 
             if(!here->MOS6drainPerimiterGiven) {
@@ -155,6 +159,14 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->MOS6name,"drain");
                 if(error) return(error);
                 here->MOS6dNodePrime = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             } else {
                 here->MOS6dNodePrime = here->MOS6dNode;
             }
@@ -166,6 +178,14 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->MOS6name,"source");
                 if(error) return(error);
                 here->MOS6sNodePrime = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             } else {
                 here->MOS6sNodePrime = here->MOS6sNode;
             }
@@ -208,7 +228,6 @@ MOS6unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     MOS6model *model;
     MOS6instance *here;
 
@@ -232,6 +251,5 @@ MOS6unsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

@@ -1,3 +1,238 @@
+2001-12-05  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* configure.in: removed (unnecessary) macros to handle GNU getopt
+	(I'm an idiot!)
+
+2001-12-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* configure.in, main.c: Forgot a bit to handle GNU getopt correctly
+
+2001-11-25  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* configure.in: New way (cleaner) to handle GNU getopt.
+
+2001-01-21  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* bsim3soi_dd/*: BSIM3SOI (DD) support added as level 11. Added tests in 
+	  tests directory (tests/bsim3soidd/*).
+
+	* ???: Integrated patch form Alan Gillespie <Alan.Gillespie@analog.com>
+	to revert the spice raw format to the spice3 original. 
+
+	* configure.in: corrected a bug that broke the on line help system.
+	Help system now works again but its text is a little bit outdated.
+
+	* ???: all binaries now have ng prependend, so ngspice can be installed
+	with other spice flavours.
+	
+	
+2000-10-18  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* Makefile.am: Changes for notes dir -> NOTES file conversion.
+
+	* tests/Makefile.am: Make distcheck target work again.
+
+2000-10-17  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* TODO: Little updates.
+
+2000-10-14  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* acconfig.h, configure.in, src/frontend/inpcom.c,
+	src/include/complex.h src/include/macros.h, src/include/memory.h
+	src/include/ngspice.h, src/maths/cmaths/Makefile.am
+	src/maths/cmaths/cmath1.c, src/maths/cmaths/cmath2.c
+	src/maths/cmaths/cmath3.c, src/maths/cmaths/cmath4.c
+	src/maths/cmaths/test_cx_j.c, src/maths/cmaths/test_cx_mag.c
+	src/maths/cmaths/test_cx_ph.c, src/misc/alloc.c src/misc/alloc.h:
+	Added support for the Boehm-Weiser conservative garbage collector.
+
+	* NOTES, src/maths/cmaths/cmath.h: Added.
+
+	* notes/Linux.changes, notes/dbx, notes/internal, notes/mac_port
+	notes/porting, notes/spice2: Removed or incorporated into
+	NOTES.
+
+	* *: replaced malloc, realloc and free calls to use tmalloc,
+	trealloc and txfree.
+
+2000-09-05  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* ???: Paolo and I have integrated patches from Alan Gillespie
+	<Alan.Gillespie@analog.com>.
+
+2000-07-28  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* tests/polezero/*.out: Changed the content of these files because
+	the bug that caused the incorrect pole-zero results have been
+	traced to src/spicelib/analysis/cktpzstr.c.
+
+2000-07-05  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/devices/dev.c: Added first_device() and next_device() to
+	abstract manipulations to the devices list.  Now change all the
+	code that uses direct access to these functions...
+
+2000-07-03  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/parser/alias.c, src/parser/alias.h: contain frontend alias
+	command.  Moved them to src/frontend/com_alias.c and
+	src/frontend/com_alias.h.  Updated Makefile.am's as appropreate.
+
+	* src/parser/front.c, src/parser/front.h, src/parser/history.c,
+	src/parser/history.h, src/parser/modify.c, src/parser/modify.h,
+	src/parser/variable.c, src/parser/variable.h: Empty files.
+	Removed.
+
+	* src/include/spconfig.h: Removed spCOMPLEX,
+	spSEPARATED_COMPLEX_VECTORS and spCOMPATIBILITY defines.  This
+	made including this file from src/include/spmatrix.h unnecessary.
+	Moved this file to src/maths/sparse/spconfig.h.
+
+	* src/include/spmatrix.h: Removed include of
+	src/include/spconfig.h.
+	
+	* src/maths/sparse/spalloc.c, src/maths/sparse/spbuild.c,
+	src/maths/sparse/spcombin.c, src/maths/sparse/spdefs.h,
+	src/maths/sparse/spfactor.c, src/maths/sparse/spoutput.c,
+	src/maths/sparse/spsmp.c, src/maths/sparse/spsolve.c,
+	src/maths/sparse/sputils.c: The other files affected by the
+	removal of spCOMPLEX, spSEPARATED_COMPLEX_VECTORS and
+	spCOMPATIBILITY defines.  Also: assertions are enabled by
+	default.
+
+	* src/include/smpdefs.h, src/maths/sparse/spsmp.c: SMPmatrix is
+	now a typedef for void, instead of char.  Updated all function
+	declarations to match this.  Also added function prototypes not
+	previously mentioned in src/include/smpdefs.h.
+	
+	* src/include/complex.h: Updates of cast from char * to void *
+
+	* src/analysis/cktsens.c: Matrixes cannot be created non-complex.
+	Also added a check to detect an error condition on delta_Y =
+	spCreate(...).
+
+
+2000-06-27  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/parser: Refactored commands from the frontend into the
+	frontend directory.  Major changes to organization, but not to
+	functionality.
+
+2000-06-19  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/analysis/cktask.c: moved to src/devices.
+	
+	* src/analysis/cktbindn.c: moved, renamed to
+	src/devices/cktbindnode.c.
+	
+	* src/analysis/cktfdev.c: moved, renamed to
+	src/devices/cktfinddev.c.
+
+2000-06-18  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* AUTHORS, doc/ngspice.texi: Included an acknowledgements
+	section.
+
+2000-06-16  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/frontend/doplot.c: Refactored into the following files:
+	src/frontend/com_asciiplot.c src/frontend/com_asciiplot.h
+	src/frontend/com_hardcopy.c src/frontend/com_hardcopy.h
+	src/frontend/com_plot.c src/frontend/com_plot.h
+	src/frontend/com_xgraph.c src/frontend/com_xgraph.h
+	src/frontend/plotting/plotit.c src/frontend/plotting/plotit.h
+
+	* src/frontend/Makefile.am src/frontend/plotting/Makefile.am:
+	Updated to match the new files.
+
+2000-06-15  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/frontend/graphdb.c, src/frontend/graphdb.c,
+	src/frontend/Makefile.am, src/frontend/plotting/graphdb.c,
+	src/frontend/plotting/graphdb.c,
+	src/frontend/plotting/Makefile.am: Moved plotting specific files
+	into plotting directory.
+
+2000-06-05  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* tests/*: Added a little hierarchy to the tests.  Removed
+	config.sh in favor of check.sh.  This script does all checking.
+	Made names of the tests better reflect the circuit under test.
+
+2000-06-03  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/include/complex.h, src/include/macros.h,
+	src/include/memory.h, src/maths/sparse/spdefs.h: Moved definitions
+	of complex into complex.h.  There are three different ways to
+	declare a complex number in Spice.  We need further work to reduce
+	this to only one.
+
+	* src/maths/cmaths/Makefile.am, src/maths/cmaths/.cvsignore,
+	src/maths/cmaths/test_cx_ph.c:  Added a new test and updated the
+	corresponding support files.
+
+2000-06-02  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/circuit/inp2dot.c: Refactoring introduced a bug in the line
+	parsing.  Passing line as an extra parameter to the refactored
+	functions fixes the bug.
+
+2000-05-30  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* TODO: Updated.
+
+	* src/maths/cmaths/Makefile.am, src/maths/cmaths/test_cx_mag.c,
+	src/maths/cmaths/test_cx_j.c: Added first testcases for complex
+	math library.
+
+2000-05-25  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/circuit/inp2dot.c: First refactoring of INP2dot into smaller
+	functions.  Still needs work.
+
+	* src/circuit/sperror.c: Reworked, now much simpler.
+
+	* src/include/inpdefs.h, src/include/sperror.h: Removed redundancy
+	in the definition of function prototypes.
+
+2000-05-06  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/include/fte*: Broken header files into smaller pieces.  This
+	avoids long recompile times as less needs to be rebuilt on changes
+	to the header files.  Adjusted all callers to use the new header
+	files.  Left a warning message in the header file to indicate its
+	obsolence.  You will see this message when compiling.
+
+	* src/frontend/*: Reorganized part of the frontend commands into
+	their own source file.  Moved plotting parts into new plotting
+	directory.
+
+	* src/devices/*: Removed all RCS log and rcsid from the devices
+	source files.  They only give extra clutter and all the
+	information you need is available through CVS.
+
+2000-05-04  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/maths/ni/nipzmeth.c: Corrected an overeager deletion.
+
+2000-05-03  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* source tree: removed most of `#ifdef notdef' and made converted
+	some function calls from K&R -> ANSI.
+
+2000-05-01  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* Added .cvsignore files to prevent CVS from marking generated
+	files as unknown.
+
+	* src/devices/Makefile.am, src/devices/dev.c, src/devices/dev.h,
+	src/Makefile.am, src/ngspice.c, src/main.c: Refactored devices
+	initialization code into the devices dir.
+
+	* tests/respart.cir, tests/respart.out, tests/respart.sh:
+	additional tests for resistor.
+
 1999-12-07  Arno Peters  <A.W.Peters@ieee.org>
 
 	* source tree: Added MAINTAINERCLEANFILES to Makefile.am to

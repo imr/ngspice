@@ -42,17 +42,6 @@
 
 #ifndef  spOKAY
 
-/*
- *  IMPORTS
- *
- *  >>> Import descriptions:
- *  spConfig.h
- *      Macros that customize the sparse matrix routines.
- */
-
-#include "spconfig.h"
-
-
 
 
 
@@ -76,8 +65,7 @@
  *      Fatal error.  A zero was encountered on the diagonal the matrix.  This
  *      does not necessarily imply that the matrix is singular.  When this
  *      error occurs, the matrix should be reconstructed and factored using
- *      spOrderAndFactor().  In spCOMPATIBILITY mode, spZERO_DIAG is
- *      indistinguishable from spSINGULAR.
+ *      spOrderAndFactor().
  *  spSINGULAR
  *      Fatal error.  Matrix is singular, so no unique solution exists.
  *  spNO_MEMORY
@@ -108,21 +96,6 @@
 #define  spFATAL                E_BADMATRIX
 
 
-#if spCOMPATIBILITY
-#define  NO_ERROR               spOKAY
-#define  UNDER_FLOW             spOKAY
-#define  OVER_FLOW              spOKAY
-#define  ILL_CONDITIONED        spSMALL_PIVOT
-#define  SINGULAR               spSINGULAR
-#define  NO_MEMORY              spNO_MEMORY
-#define  RANGE                  spPANIC
-
-#define  FATAL                  spFATAL
-
-#undef   spZERO_DIAG
-#define  spZERO_DIAG            spSINGULAR
-#endif /* spCOMPATIBILITY */
-
 
 
 
@@ -144,10 +117,6 @@
 
 #define  spREAL double
 /* #define  void    int   */
-
-#if spCOMPATIBILITY
-#define SPARSE_REAL     spREAL
-#endif
 
 
 
@@ -242,15 +211,6 @@
     *((template).Element4Negated+1) -= imag;    \
 }
 
-#if spCOMPATIBILITY
-#define  ADD_REAL_ELEMENT_TO_MATRIX             spADD_REAL_ELEMENT
-#define  ADD_IMAG_ELEMENT_TO_MATRIX             spADD_IMAG_ELEMENT
-#define  ADD_COMPLEX_ELEMENT_TO_MATRIX          spADD_COMPLEX_ELEMENT
-#define  ADD_REAL_QUAD_ELEMENT_TO_MATRIX        spADD_REAL_ELEMENT
-#define  ADD_IMAG_QUAD_ELEMENT_TO_MATRIX        spADD_IMAG_ELEMENT
-#define  ADD_COMPLEX_QUAD_ELEMENT_TO_MATRIX     spADD_COMPLEX_ELEMENT
-#endif
-
 
 
 
@@ -272,10 +232,6 @@
  *   before being placed in Element3 and Element4.
  */
 
-#if spCOMPATIBILITY
-#define spTemplate TemplateStruct
-#endif
-
 /* Begin `spTemplate'. */
 struct  spTemplate
 {   spREAL    *Element1       ;
@@ -296,146 +252,47 @@ struct  spTemplate
 
 /* Begin function declarations. */
 
-#ifdef __STDC__
-
-/* For compilers that understand function prototypes. */
-
-extern  void     spClear( char* );
-extern  spREAL   spCondition( char*, spREAL, int* );
-extern  char    *spCreate( int, int, int* );
-extern  void     spDeleteRowAndCol( char*, int, int );
-extern  void     spDestroy( char* );
-extern  int      spElementCount( char* );
-extern  int      spError( char* );
-extern  int      spFactor( char* );
-extern  int      spFileMatrix( char*, char*, char*, int, int, int );
-extern  int      spFileStats( char*, char*, char* );
-extern  int      spFillinCount( char* );
-extern  int      spGetAdmittance( char*, int, int, struct spTemplate* );
-extern  spREAL  *spGetElement( char*, int, int );
+extern  void     spClear( void * );
+extern  spREAL   spCondition( void *, spREAL, int* );
+extern  void     *spCreate( int, int, int* );
+extern  void     spDeleteRowAndCol( void *, int, int );
+extern  void     spDestroy(void *);
+extern  int      spElementCount( void * );
+extern  int      spError( void * );
+extern  int      spFactor( void * );
+extern  int      spFileMatrix( void *, char *, char *, int, int, int );
+extern  int      spFileStats( void *, char *, char * );
+extern  int      spFillinCount( void * );
+extern  int      spGetAdmittance( void *, int, int, struct spTemplate* );
+extern  spREAL  *spGetElement( void *, int, int );
 extern  char    *spGetInitInfo( spREAL* );
-extern  int      spGetOnes( char*, int, int, int, struct spTemplate* );
-extern  int      spGetQuad( char*, int, int, int, int, struct spTemplate* );
-extern  int      spGetSize( char*, int );
-extern  int      spInitialize( char*, int (*)() );
-extern  void     spInstallInitInfo( spREAL*, char* );
-extern  spREAL   spLargestElement( char* );
-extern  void     spMNA_Preorder( char* );
-extern  spREAL   spNorm( char* );
-extern  int      spOrderAndFactor( char*, spREAL*, spREAL, spREAL, int );
-extern  int      spOriginalCount( char *);
-extern  void     spPartition( char*, int );
-extern  void     spPrint( char*, int, int, int );
-extern  spREAL   spPseudoCondition( char* );
-extern  spREAL   spRoundoff( char*, spREAL );
-extern  void     spScale( char*, spREAL*, spREAL* );
-extern  void     spSetComplex( char* );
-extern  void     spSetReal( char* );
-extern  void     spStripFills( char* );
-extern  void     spWhereSingular( char*, int*, int* );
+extern  int      spGetOnes( void *, int, int, int, struct spTemplate* );
+extern  int      spGetQuad( void *, int, int, int, int, struct spTemplate* );
+extern  int      spGetSize( void *, int );
+extern  int      spInitialize( void *, int (*)() );
+extern  void     spInstallInitInfo( spREAL*, void * );
+extern  spREAL   spLargestElement( void * );
+extern  void     spMNA_Preorder( void * );
+extern  spREAL   spNorm( void * );
+extern  int      spOrderAndFactor( void *, spREAL*, spREAL, spREAL, int );
+extern  int      spOriginalCount( void *);
+extern  void     spPartition( void *, int );
+extern  void     spPrint( void *, int, int, int );
+extern  spREAL   spPseudoCondition( void * );
+extern  spREAL   spRoundoff( void *, spREAL );
+extern  void     spScale( void *, spREAL*, spREAL* );
+extern  void     spSetComplex( void * );
+extern  void     spSetReal( void * );
+extern  void     spStripFills( void * );
+extern  void     spWhereSingular( void *, int*, int* );
 
 /* Functions with argument lists that are dependent on options. */
 
-#if spCOMPLEX
-extern  void     spDeterminant ( char*, int*, spREAL*, spREAL* );
-#else /* NOT spCOMPLEX */
-extern  void     spDeterminant ( char*, int*, spREAL* );
-#endif /* NOT spCOMPLEX */
-#if spCOMPLEX && spSEPARATED_COMPLEX_VECTORS
-extern  int      spFileVector( char*, char* , spREAL*, spREAL*);
-extern  void     spMultiply( char*, spREAL*, spREAL*, spREAL*, spREAL* );
-extern  void     spMultTransposed(char*,spREAL*,spREAL*,spREAL*,spREAL*);
-extern  void     spSolve( char*, spREAL*, spREAL*, spREAL*, spREAL* );
-extern  void     spSolveTransposed(char*,spREAL*,spREAL*,spREAL*,spREAL*);
-#else /* NOT (spCOMPLEX && spSEPARATED_COMPLEX_VECTORS) */
-extern  int      spFileVector( char*, char* , spREAL* );
-extern  void     spMultiply( char*, spREAL*, spREAL* );
-extern  void     spMultTransposed( char*, spREAL*, spREAL* );
-extern  void     spSolve( char*, spREAL*, spREAL* );
-extern  void     spSolveTransposed( char*, spREAL*, spREAL* );
-#endif /* NOT (spCOMPLEX && spSEPARATED_COMPLEX_VECTORS) */
-
-#else /* NOT defined(__STDC__) */
-
-/* For compilers that do not understand function prototypes. */
-
-extern  void     spClear();
-extern  spREAL   spCondition();
-extern  char    *spCreate();
-extern  void     spDeleteRowAndCol();
-extern  void     spDestroy();
-extern  void     spDeterminant ();
-extern  int      spElementCount();
-extern  int      spError();
-extern  int      spFactor();
-extern  int      spFileMatrix();
-extern  int      spFileStats();
-extern  int      spFileVector();
-extern  int      spFillinCount();
-extern  int      spGetAdmittance();
-extern  spREAL  *spGetElement();
-extern  char    *spGetInitInfo();
-extern  int      spGetOnes();
-extern  int      spGetQuad();
-extern  int      spGetSize();
-extern  int      spInitialize();
-extern  void     spInstallInitInfo();
-extern  spREAL   spLargestElement();
-extern  void     spMNA_Preorder();
-extern  void     spMultiply();
-extern  void     spMultTransposed();
-extern  spREAL   spNorm();
-extern  int      spOrderAndFactor();
-extern  int      spOriginalCount();
-extern  void     spPartition();
-extern  void     spPrint();
-extern  spREAL   spPseudoCondition();
-extern  spREAL   spRoundoff();
-extern  void     spScale();
-extern  void     spSetComplex();
-extern  void     spSetReal();
-extern  void     spSolve();
-extern  void     spSolveTransposed();
-extern  void     spStripFills();
-extern  void     spWhereSingular();
-#endif /* defined(__STDC__) */
-
-#if spCOMPATIBILITY
-extern  char    *AllocateMatrix();
-extern  spREAL  *AddElementToMatrix();
-extern  void     AddRealElementToMatrix();
-extern  void     AddImagElementToMatrix();
-extern  void     AddComplexElementToMatrix();
-extern  void     AddAdmittanceToMatrix();
-extern  void     AddOnesToMatrix();
-extern  void     AddQuadToMatrix();
-extern  void     AddRealQuadElementToMatrix();
-extern  void     AddImagQuadElementToMatrix();
-extern  void     AddComplexQuadElementToMatrix();
-extern  void     CleanMatrix();
-extern  void     ClearMatrix();
-extern  int      ClearMatrixError();
-extern  void     DeallocateMatrix();
-extern  void     DeleteRowAndColFromMatrix();
-extern  void     Determinant();
-extern  int      DecomposeMatrix();
-extern  int      GetMatrixSize();
-extern  int      MatrixElementCount();
-extern  int      MatrixFillinCount();
-extern  void     MatrixMultiply();
-extern  spREAL   MatrixRoundoffError();
-extern  int      MatrixError();
-extern  int      OrderAndDecomposeMatrix();
-extern  void     OutputMatrixToFile();
-extern  void     OutputStatisticsToFile();
-extern  void     OutputVectorToFile();
-extern  void     PreorderForModifiedNodal();
-extern  void     PrintMatrix();
-extern  void     SetMatrixComplex();
-extern  void     SetMatrixReal();
-extern  void     SolveMatrix();
-extern  void     SolveTransposedMatrix();
-extern  void     ScaleMatrix();
-#endif /* spCOMPATIBILITY */
+extern  void     spDeterminant ( void *, int*, spREAL*, spREAL* );
+extern  int      spFileVector( void *, char * , spREAL*, spREAL*);
+extern  void     spMultiply( void *, spREAL*, spREAL*, spREAL*, spREAL* );
+extern  void     spMultTransposed(void *,spREAL*,spREAL*,spREAL*,spREAL*);
+extern  void     spSolve( void *, spREAL*, spREAL*, spREAL*, spREAL* );
+extern  void     spSolveTransposed(void *,spREAL*,spREAL*,spREAL*,spREAL*);
 
 #endif  /* spOKAY */

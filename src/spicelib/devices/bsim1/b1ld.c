@@ -17,14 +17,14 @@ int
 B1load(inModel,ckt)
 
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
 {
-    register B1model *model = (B1model*)inModel;
-    register B1instance *here;
+    B1model *model = (B1model*)inModel;
+    B1instance *here;
     double DrainSatCurrent = 0.0;
     double EffectiveLength = 0.0;
     double GateBulkOverlapCap = 0.0;
@@ -123,9 +123,7 @@ B1load(inModel,ckt)
     double vt0 = 0.0;
     double args[8];
     int    ByPass = 0;
-#ifndef NOBYPASS
     double tempv = 0.0;
-#endif /*NOBYPASS*/
     int error = 0;
 
 
@@ -280,7 +278,6 @@ B1load(inModel,ckt)
                     *(ckt->CKTstate0 + here->B1gbd) * delvbd +
                     *(ckt->CKTstate0 + here->B1gbs) * delvbs ;
 
-#ifndef NOBYPASS
                     /* now lets see if we can bypass (ugh) */
 
                 /* following should be one big if connected by && all over
@@ -344,7 +341,6 @@ B1load(inModel,ckt)
                         goto line850;
                     }
                 }
-#endif /*NOBYPASS*/
 
                 von = model->B1type * here->B1von;
                 if(*(ckt->CKTstate0 + here->B1vds) >=0) {
@@ -495,21 +491,6 @@ B1load(inModel,ckt)
                 if (Check == 1) {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
-#ifndef NEWCONV
-                } else {
-                    tol=ckt->CKTreltol*MAX(fabs(cdhat),fabs(cd))+ckt->CKTabstol;
-                    if (fabs(cdhat-cd) >= tol) { 
-                        ckt->CKTnoncon++;
-			ckt->CKTtroubleElt = (GENinstance *) here;
-                    } else {
-                        tol=ckt->CKTreltol*MAX(fabs(cbhat),fabs(cbs+cbd))+
-                            ckt->CKTabstol;
-                        if (fabs(cbhat-(cbs+cbd)) > tol) {
-                            ckt->CKTnoncon++;
-			    ckt->CKTtroubleElt = (GENinstance *) here;
-                        }
-                    }
-#endif /* NEWCONV */
                 }
             }
             *(ckt->CKTstate0 + here->B1vbs) = vbs;

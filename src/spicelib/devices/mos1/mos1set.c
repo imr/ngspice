@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
     /* load the MOS1 device structure with those pointers needed later 
@@ -17,13 +18,13 @@ Author: 1985 Thomas L. Quarles
 
 int
 MOS1setup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     int *states;
 {
-    register MOS1model *model = (MOS1model *)inModel;
-    register MOS1instance *here;
+    MOS1model *model = (MOS1model *)inModel;
+    MOS1instance *here;
     int error;
     CKTnode *tmp;
 
@@ -139,6 +140,19 @@ MOS1setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->MOS1name,"drain");
                 if(error) return(error);
                 here->MOS1dNodePrime = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->MOS1dNodePrime = here->MOS1dNode;
             }
@@ -150,6 +164,19 @@ MOS1setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->MOS1name,"source");
                 if(error) return(error);
                 here->MOS1sNodePrime = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->MOS1sNodePrime = here->MOS1sNode;
             }
@@ -192,7 +219,6 @@ MOS1unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     MOS1model *model;
     MOS1instance *here;
 
@@ -216,6 +242,5 @@ MOS1unsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

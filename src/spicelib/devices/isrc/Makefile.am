@@ -2,20 +2,22 @@
 
 pkglib_LTLIBRARIES = libisrc.la
 
-libisrc_la_SOURCES = 		\
-		isrc.c		\
-		isrcacct.c	\
-		isrcacld.c	\
-		isrcask.c	\
-		isrcdefs.h	\
-		isrcdel.c	\
-		isrcdest.c	\
-		isrcext.h	\
-		isrcitf.h	\
-		isrcload.c	\
-		isrcmdel.c	\
-		isrcpar.c	\
-		isrctemp.c
+libisrc_la_SOURCES = 	\
+	isrc.c		\
+	isrcacct.c	\
+	isrcacld.c	\
+	isrcask.c	\
+	isrcdefs.h	\
+	isrcdel.c	\
+	isrcdest.c	\
+	isrcext.h	\
+	isrcinit.c	\
+	isrcinit.h	\
+	isrcitf.h	\
+	isrcload.c	\
+	isrcmdel.c	\
+	isrcpar.c	\
+	isrctemp.c
 
 
 

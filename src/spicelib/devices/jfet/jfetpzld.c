@@ -17,11 +17,11 @@ Author: 1985 Thomas L. Quarles
 int
 JFETpzLoad(inModel,ckt,s)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
-    register SPcomplex *s;
+    CKTcircuit *ckt;
+    SPcomplex *s;
 {
-    register JFETmodel *model = (JFETmodel*)inModel;
-    register JFETinstance *here;
+    JFETmodel *model = (JFETmodel*)inModel;
+    JFETinstance *here;
     double gdpr;
     double gspr;
     double gm;

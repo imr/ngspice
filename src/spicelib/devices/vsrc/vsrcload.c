@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -14,14 +15,15 @@ Author: 1985 Thomas L. Quarles
 int
 VSRCload(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current voltage value into the 
          * sparse matrix previously provided 
          */
 {
-    register VSRCmodel *model = (VSRCmodel *)inModel;
-    register VSRCinstance *here;
+    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCinstance *here;
     double time;
+    double value;
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->VSRCnextModel ) {
@@ -38,8 +40,7 @@ VSRCload(inModel,ckt)
             if( (ckt->CKTmode & (MODEDCOP | MODEDCTRANCURVE)) &&
                     here->VSRCdcGiven ) {
                 /* grab dc value */
-                *(ckt->CKTrhs + (here->VSRCbranch)) += ckt->CKTsrcFact * 
-                        here->VSRCdcValue;
+                value = ckt->CKTsrcFact * here->VSRCdcValue;
             } else {
                 if(ckt->CKTmode & (MODEDC)) {
                     time = 0;
@@ -49,7 +50,7 @@ VSRCload(inModel,ckt)
                 /* use the transient functions */
                 switch(here->VSRCfunctionType) {
                 default: { /* no function specified:   use the DC value */
-                    *(ckt->CKTrhs + (here->VSRCbranch)) += here->VSRCdcValue;
+                    value = here->VSRCdcValue;
                     break;
                 }
                 
@@ -82,15 +83,13 @@ VSRCload(inModel,ckt)
                         time -= basetime;
                     }
                     if (time <= 0 || time >= TR + PW + TF) {
-                        ckt->CKTrhs[here->VSRCbranch] += V1;
+                        value = V1;
                     } else  if (time >= TR && time <= TR + PW) {
-                        ckt->CKTrhs[here->VSRCbranch] += V2;
+                        value = V2;
                     } else if (time > 0 && time < TR) {
-                        ckt->CKTrhs[here->VSRCbranch] += 
-                                V1 + (V2 - V1) * (time) / TR;
+                        value = V1 + (V2 - V1) * (time) / TR;
                     } else { /* time > TR + PW && < TR + PW + TF */
-                        ckt->CKTrhs[here->VSRCbranch] += 
-                                V2 + (V1 - V2) * (time - (TR + PW)) / TF;
+                        value = V2 + (V1 - V2) * (time - (TR + PW)) / TF;
                     }
 
                 }
@@ -105,12 +104,10 @@ VSRCload(inModel,ckt)
 #define THETA ((here->VSRCfunctionOrder >=5)?(*(here->VSRCcoeffs+4)):(0.0))
                     time -= TD;
                     if (time <= 0) {
-                        *(ckt->CKTrhs + (here->VSRCbranch)) += VO;
+                        value = VO;
                     } else {
-                        *(ckt->CKTrhs + (here->VSRCbranch)) += 
-                                VO + VA * sin(FREQ * time * 2.0 * M_PI) * 
+                        value = VO + VA * sin(FREQ * time * 2.0 * M_PI) * 
                                 exp(-(time*THETA));
-                                /* 2PI to convert from hz to radians/sec*/
                     }
 #undef VO
 #undef VA
@@ -136,13 +133,11 @@ VSRCload(inModel,ckt)
                     td1 = TD1;
                     td2 = TD2;
                     if(time <= td1)  {
-                        *(ckt->CKTrhs + (here->VSRCbranch)) += V1;
+                        value = V1;
                     } else if (time <= td2) {
-                        *(ckt->CKTrhs + (here->VSRCbranch)) += 
-                                V1 + (V2-V1)*(1-exp(-(time-td1)/TAU1));
+                         value = V1 + (V2-V1)*(1-exp(-(time-td1)/TAU1));
                     } else {
-                        *(ckt->CKTrhs + (here->VSRCbranch)) += 
-                                V1 + (V2-V1)*(1-exp(-(time-td1)/TAU1)) +
+                        value = V1 + (V2-V1)*(1-exp(-(time-td1)/TAU1)) +
                                      (V1-V2)*(1-exp(-(time-td2)/TAU2)) ;
                     }
 #undef V1
@@ -163,9 +158,9 @@ VSRCload(inModel,ckt)
     0.0)
 #define FS (((here->VSRCfunctionOrder >=5) && (*(here->VSRCcoeffs+4)))? \
     (*(here->VSRCcoeffs+4)):(1/ckt->CKTfinalTime))
-                    *(ckt->CKTrhs + (here->VSRCbranch)) += VO + VA * 
-                                sin((2 * 3.141592654 * FC * time) +
-                                MDI * sin(2 * 3.141592654 * FS * time));
+                    value = VO + VA * 
+                            sin((2 * 3.141592654 * FC * time) +
+                            MDI * sin(2 * 3.141592654 * FS * time));
 #undef VO
 #undef VA
 #undef FC
@@ -175,18 +170,17 @@ VSRCload(inModel,ckt)
                 break;
 
                 case PWL: {
-                    register int i;
+                    int i;
                     double foo;
                     if(time < *(here->VSRCcoeffs)) {
                         foo = *(here->VSRCcoeffs + 1) ;
-                        *(ckt->CKTrhs + (here->VSRCbranch)) += foo;
+                        value = foo;
                         goto loadDone;
                     }
                     for(i=0;i<(here->VSRCfunctionOrder/2)-1;i++) {
                         if((*(here->VSRCcoeffs+2*i)==time)) {
                             foo = *(here->VSRCcoeffs+2*i+1);
-                            *(ckt->CKTrhs + (here->VSRCbranch)) +=
-                                foo;
+                            value = foo;
                             goto loadDone;
                         } else if((*(here->VSRCcoeffs+2*i)<time) &&
                                 (*(here->VSRCcoeffs+2*(i+1)) >time)) {
@@ -196,18 +190,19 @@ VSRCload(inModel,ckt)
                                  *(here->VSRCcoeffs+2*i))) *
                                 (*(here->VSRCcoeffs+2*i+3) - 
                                  *(here->VSRCcoeffs+2*i+1)));
-                            *(ckt->CKTrhs + (here->VSRCbranch)) +=
-                                foo;
+                            value = foo;
                             goto loadDone;
                         }
                     }
                     foo = *(here->VSRCcoeffs+ here->VSRCfunctionOrder-1) ;
-                    *(ckt->CKTrhs + (here->VSRCbranch)) += foo;
+                    value = foo;
                     break;
                 }
                 }
             }
-loadDone: ;
+loadDone:
+if (ckt->CKTmode & MODETRANOP) value *= ckt->CKTsrcFact;
+          *(ckt->CKTrhs + (here->VSRCbranch)) += value;
         }
     }
     return(OK);

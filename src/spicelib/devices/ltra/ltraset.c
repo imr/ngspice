@@ -13,17 +13,17 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 int
 LTRAsetup(matrix, inModel, ckt, state)
-  register SMPmatrix *matrix;
+  SMPmatrix *matrix;
   GENmodel *inModel;
-  register CKTcircuit *ckt;
+  CKTcircuit *ckt;
   int *state;
 /*
  * load the transmission line structure with those pointers needed later for
  * fast matrix loading
  */
 {
-  register LTRAmodel *model = (LTRAmodel *) inModel;
-  register LTRAinstance *here;
+  LTRAmodel *model = (LTRAmodel *) inModel;
+  LTRAinstance *here;
   int error;
   CKTnode *tmp;
 
@@ -75,10 +75,6 @@ LTRAsetup(matrix, inModel, ckt, state)
     }
     if ((model->LTRAstepLimit != LTRA_MOD_NOSTEPLIMIT))
       model->LTRAstepLimit = LTRA_MOD_STEPLIMIT;
-#ifdef notdef
-    if ((model->LTRAprintFlag != LTRA_MOD_PRINT))
-      model->LTRAprintFlag = LTRA_MOD_NOPRINT;
-#endif
     if ((model->LTRAlteConType != LTRA_MOD_FULLCONTROL) &&
 	(model->LTRAlteConType != LTRA_MOD_HALFCONTROL))
       model->LTRAlteConType = LTRA_MOD_NOCONTROL;
@@ -231,7 +227,6 @@ LTRAunsetup(inModel, ckt)
   GENmodel *inModel;
   CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
   LTRAmodel *model;
   LTRAinstance *here;
 
@@ -240,15 +235,14 @@ LTRAunsetup(inModel, ckt)
     for (here = model->LTRAinstances; here != NULL;
 	here = here->LTRAnextInstance) {
       if (here->LTRAbrEq1) {
-	CKTdltNNum(ckt, (void *) here->LTRAbrEq1);
+	CKTdltNNum(ckt, here->LTRAbrEq1);
 	here->LTRAbrEq1 = 0;
       }
       if (here->LTRAbrEq2) {
-	CKTdltNNum(ckt, (void *) here->LTRAbrEq2);
+	CKTdltNNum(ckt, here->LTRAbrEq2);
 	here->LTRAbrEq2 = 0;
       }
     }
   }
-#endif
   return OK;
 }

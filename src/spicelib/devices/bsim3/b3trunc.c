@@ -1,23 +1,3 @@
-/* $Id$  */
-/*
- $Log$
- Revision 1.1.1.1  2000-04-27 20:03:59  pnenzi
- Imported sources
-
- Revision 1.1.1.1  1999/11/15 10:35:08  root
- Rework imported sources
-
- Revision 1.1.1.1  1999/07/30 09:05:13  root
- NG-Spice starting sources
-
- * Revision 3.2.2 1999/4/20  18:00:00  Weidong
- * BSIM3v3.2.2 release
- *
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /**********
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
@@ -37,11 +17,11 @@ File: b3trunc.c
 int
 BSIM3trunc(inModel,ckt,timeStep)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 double *timeStep;
 {
-register BSIM3model *model = (BSIM3model*)inModel;
-register BSIM3instance *here;
+BSIM3model *model = (BSIM3model*)inModel;
+BSIM3instance *here;
 
 #ifdef STEPDEBUG
     double debugtemp;

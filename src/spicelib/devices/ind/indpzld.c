@@ -21,9 +21,9 @@ INDpzLoad(inModel,ckt,s)
     CKTcircuit *ckt;
     SPcomplex *s;
 {
-    register INDmodel *model = (INDmodel*)inModel;
+    INDmodel *model = (INDmodel*)inModel;
     double val;
-    register INDinstance *here;
+    INDinstance *here;
 
     for( ; model != NULL; model = model->INDnextModel) {
         for( here = model->INDinstances;here != NULL; 

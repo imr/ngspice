@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -17,10 +18,10 @@ Author: 1985 Thomas L. Quarles
 int
 MOS2temp(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
     double egfet;
     double wkfngs;
     double wkfng;
@@ -147,6 +148,9 @@ MOS2temp(inModel,ckt)
 
             if(!here->MOS2drainAreaGiven) {
                 here->MOS2drainArea = ckt->CKTdefaultMosAD;
+            } 
+            if(!here->MOS2mGiven) {
+                here->MOS2m = ckt->CKTdefaultMosM;
             }
             if(!here->MOS2lGiven) {
                 here->MOS2l = ckt->CKTdefaultMosL;
@@ -159,14 +163,17 @@ MOS2temp(inModel,ckt)
             }
             if(model->MOS2drainResistanceGiven) {
                 if(model->MOS2drainResistance != 0) {
-                    here->MOS2drainConductance = 1/model->MOS2drainResistance;
+                   here->MOS2drainConductance = here->MOS2m /
+                           model->MOS2drainResistance;
                 } else {
                     here->MOS2drainConductance = 0;
                 }
             } else if (model->MOS2sheetResistanceGiven) {
-                if(model->MOS2sheetResistance != 0) {
+                if((model->MOS2sheetResistance != 0) &&
+                                 (here->MOS2drainSquares != 0)) {
                     here->MOS2drainConductance = 
-                        1/(model->MOS2sheetResistance*here->MOS2drainSquares);
+                        here->MOS2m /
+                          (model->MOS2sheetResistance*here->MOS2drainSquares);
                 } else {
                     here->MOS2drainConductance = 0;
                 }
@@ -175,14 +182,17 @@ MOS2temp(inModel,ckt)
             }
             if(model->MOS2sourceResistanceGiven) {
                 if(model->MOS2sourceResistance != 0) {
-                    here->MOS2sourceConductance = 1/model->MOS2sourceResistance;
+                   here->MOS2sourceConductance = here->MOS2m /
+                                    model->MOS2sourceResistance;
                 } else {
                     here->MOS2sourceConductance = 0;
                 }
             } else if (model->MOS2sheetResistanceGiven) {
-                if(model->MOS2sheetResistance != 0) {
+                if ((model->MOS2sheetResistance != 0) &&
+                                  (here->MOS2sourceSquares != 0)) {
                     here->MOS2sourceConductance = 
-                        1/(model->MOS2sheetResistance*here->MOS2sourceSquares);
+                       here->MOS2m /
+                          (model->MOS2sheetResistance*here->MOS2sourceSquares);
                 } else {
                     here->MOS2sourceConductance = 0;
                 }
@@ -238,26 +248,29 @@ MOS2temp(inModel,ckt)
                     (here->MOS2drainArea == 0) ||
                     (here->MOS2sourceArea == 0) ) {
                 here->MOS2sourceVcrit = here->MOS2drainVcrit =
-                        vt*log(vt/(CONSTroot2*here->MOS2tSatCur));
+                        vt*log(vt/(CONSTroot2*here->MOS2m*here->MOS2tSatCur));
             } else {
                 here->MOS2drainVcrit =
                         vt * log( vt / (CONSTroot2 *
+                        here->MOS2m *
                         here->MOS2tSatCurDens * here->MOS2drainArea));
                 here->MOS2sourceVcrit =
                         vt * log( vt / (CONSTroot2 *
+                        here->MOS2m *
                         here->MOS2tSatCurDens * here->MOS2sourceArea));
             }
             if(model->MOS2capBDGiven) {
-                czbd = here->MOS2tCbd;
+                czbd = here->MOS2tCbd * here->MOS2m;
             } else {
                 if(model->MOS2bulkCapFactorGiven) {
-                    czbd=here->MOS2tCj*here->MOS2drainArea;
+                    czbd=here->MOS2tCj*here->MOS2drainArea * here->MOS2m;
                 } else {
                     czbd=0;
                 }
             }
             if(model->MOS2sideWallCapFactorGiven) {
-                czbdsw= here->MOS2tCjsw * here->MOS2drainPerimiter;
+                czbdsw= here->MOS2tCjsw * here->MOS2drainPerimiter *
+                     here->MOS2m;;
             } else {
                 czbdsw=0;
             }
@@ -283,16 +296,17 @@ MOS2temp(inModel,ckt)
                         (here->MOS2tDepCap*here->MOS2tDepCap)
                     -here->MOS2tDepCap * here->MOS2f2d;
             if(model->MOS2capBSGiven) {
-                czbs=here->MOS2tCbs;
+                czbs=here->MOS2tCbs * here->MOS2m;
             } else {
                 if(model->MOS2bulkCapFactorGiven) {
-                    czbs=here->MOS2tCj*here->MOS2sourceArea;
+                    czbs=here->MOS2tCj*here->MOS2sourceArea * here->MOS2m;
                 } else {
                     czbs=0;
                 }
             }
             if(model->MOS2sideWallCapFactorGiven) {
-                czbssw = here->MOS2tCjsw * here->MOS2sourcePerimiter;
+                czbssw = here->MOS2tCjsw * here->MOS2sourcePerimiter *
+                     here->MOS2m;
             } else {
                 czbssw=0;
             }

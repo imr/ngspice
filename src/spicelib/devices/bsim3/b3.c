@@ -1,27 +1,8 @@
-/* $Id$  */
-/*
- $Log$
- Revision 1.1.1.1  2000-04-27 20:03:59  pnenzi
- Imported sources
-
- Revision 1.1.1.1  1999/11/15 10:35:08  root
- Rework imported sources
-
- Revision 1.1.1.1  1999/07/30 09:05:13  root
- NG-Spice starting sources
-
- * Revision 3.2.2 1999/4/20  18:00:00  Weidong
- * BSIM3v3.2.2 release
- *
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /**********
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
 Author: 1997-1999 Weidong Liu.
+Modified: 2000 AlansFixes
 File: b3.c
 **********/
 
@@ -34,6 +15,7 @@ File: b3.c
 IFparm BSIM3pTable[] = { /* parameters */
 IOP( "l",   BSIM3_L,      IF_REAL   , "Length"),
 IOP( "w",   BSIM3_W,      IF_REAL   , "Width"),
+IOP( "m",   BSIM3_M,      IF_REAL   , "Parallel multiplier"),
 IOP( "ad",  BSIM3_AD,     IF_REAL   , "Drain area"),
 IOP( "as",  BSIM3_AS,     IF_REAL   , "Source area"),
 IOP( "pd",  BSIM3_PD,     IF_REAL   , "Drain perimeter"),

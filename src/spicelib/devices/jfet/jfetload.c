@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 	Laboratory for Communication Science Engineering
 	Sydney University Department of Electrical Engineering, Australia
@@ -24,8 +25,8 @@ JFETload(inModel,ckt)
          * sparse matrix previously provided 
          */
 {
-    register JFETmodel *model = (JFETmodel*)inModel;
-    register JFETinstance *here;
+    JFETmodel *model = (JFETmodel*)inModel;
+    JFETinstance *here;
     double beta;
     double betap;
     double capgd;
@@ -74,6 +75,8 @@ JFETload(inModel,ckt)
     int icheck;
     int ichk1;
     int error;
+    
+    double arg, vt_temp;
 
     /*  loop through all the models */
     for( ; model != NULL; model = model->JFETnextModel ) {
@@ -219,22 +222,30 @@ JFETload(inModel,ckt)
              *   determine dc current and derivatives 
              */
             vds=vgs-vgd;
-            if (vgs <= -5*here->JFETtemp*CONSTKoverQ) {
-                ggs = -csat/vgs+ckt->CKTgmin;
-                cg = ggs*vgs;
+            
+            vt_temp=here->JFETtemp*CONSTKoverQ;
+            if (vgs < -3*vt_temp) {
+                arg=3*vt_temp/(vgs*CONSTe);
+                arg = arg * arg * arg;
+                cg = -csat*(1+arg)+ckt->CKTgmin*vgs;
+                ggs = csat*3*arg/vgs+ckt->CKTgmin;
             } else {
-                evgs = exp(vgs/(here->JFETtemp*CONSTKoverQ));
-                ggs = csat*evgs/(here->JFETtemp*CONSTKoverQ)+ckt->CKTgmin;
+                evgs = exp(vgs/vt_temp);
+                ggs = csat*evgs/vt_temp+ckt->CKTgmin;
                 cg = csat*(evgs-1)+ckt->CKTgmin*vgs;
             }
-            if (vgd <= -5*(here->JFETtemp*CONSTKoverQ)) {
-                ggd = -csat/vgd+ckt->CKTgmin;
-                cgd = ggd*vgd;
+            
+            if (vgd < -3*vt_temp) {
+                arg=3*vt_temp/(vgd*CONSTe);
+                arg = arg * arg * arg;
+                cgd = -csat*(1+arg)+ckt->CKTgmin*vgd;
+                ggd = csat*3*arg/vgd+ckt->CKTgmin;
             } else {
-                evgd = exp(vgd/(here->JFETtemp*CONSTKoverQ));
-                ggd = csat*evgd/(here->JFETtemp*CONSTKoverQ)+ckt->CKTgmin;
+                evgd = exp(vgd/vt_temp);
+                ggd = csat*evgd/vt_temp+ckt->CKTgmin;
                 cgd = csat*(evgd-1)+ckt->CKTgmin*vgd;
             }
+            
             cg = cg+cgd;
 
 	    /* Modification for Sydney University JFET model */
@@ -312,76 +323,6 @@ JFETload(inModel,ckt)
                     }
                 }
             }
-#ifdef notdef
-	    /* The original section is now commented out */
-	    /* end Sydney University mod */
-            /*
-             *   compute drain current and derivitives for normal mode 
-             */
-            if (vds >= 0) {
-                vgst=vgs-model->JFETthreshold;
-                /*
-                 *   normal mode, cutoff region 
-                 */
-                if (vgst <= 0) {
-                    cdrain=0;
-                    gm=0;
-                    gds=0;
-                } else {
-                    betap=beta*(1+model->JFETlModulation*vds);
-                    twob=betap+betap;
-                    if (vgst <= vds) {
-                        /*
-                         *   normal mode, saturation region 
-                         */
-                        cdrain=betap*vgst*vgst;
-                        gm=twob*vgst;
-                        gds=model->JFETlModulation*beta*vgst*vgst;
-                    } else {
-                        /*
-                         *   normal mode, linear region 
-                         */
-                        cdrain=betap*vds*(vgst+vgst-vds);
-                        gm=twob*vds;
-                        gds=twob*(vgst-vds)+model->JFETlModulation*beta*
-                                vds*(vgst+vgst-vds);
-                    }
-                }
-            } else {
-                /*
-                 *   compute drain current and derivitives for inverse mode 
-                 */
-                vgdt=vgd-model->JFETthreshold;
-                if (vgdt <= 0) {
-                    /*
-                     *   inverse mode, cutoff region 
-                     */
-                    cdrain=0;
-                    gm=0;
-                    gds=0;
-                } else {
-                    /*
-                     *   inverse mode, saturation region 
-                     */
-                    betap=beta*(1-model->JFETlModulation*vds);
-                    twob=betap+betap;
-                    if (vgdt <= -vds) {
-                        cdrain = -betap*vgdt*vgdt;
-                        gm = -twob*vgdt;
-                        gds = model->JFETlModulation*beta*vgdt*vgdt-gm;
-                    } else {
-                        /*
-                         *  inverse mode, linear region 
-                         */
-                        cdrain=betap*vds*(vgdt+vgdt+vds);
-                        gm=twob*vds;
-                        gds=twob*vgdt-model->JFETlModulation*beta*vds*
-                                (vgdt+vgdt+vds);
-                    }
-                }
-            }
-	    /* end of original section, now deleted (replaced w/SU mod */
-#endif
             /*
              *   compute equivalent drain current source 
              */
@@ -459,16 +400,13 @@ JFETload(inModel,ckt)
             /*
              *  check convergence 
              */
-            if( (!(ckt->CKTmode & MODEINITFIX)) | (!(ckt->CKTmode & MODEUIC))) {
-                if( (icheck == 1)
-#ifndef NEWCONV
-/* XXX */
-#endif /*NEWCONV*/
-                        || (fabs(cghat-cg) >= ckt->CKTreltol*
-                            MAX(fabs(cghat),fabs(cg))+ckt->CKTabstol) ||
-                        (fabs(cdhat-cd) > ckt->CKTreltol*
-                            MAX(fabs(cdhat),fabs(cd))+ckt->CKTabstol) 
-                        ) {
+            if( (!(ckt->CKTmode & MODEINITFIX)) |
+		(!(ckt->CKTmode & MODEUIC))) {
+		if((icheck == 1) ||
+		   (fabs(cghat-cg) >= ckt->CKTreltol *
+		    MAX(fabs(cghat), fabs(cg)) + ckt->CKTabstol) ||
+		   (fabs(cdhat-cd) > ckt->CKTreltol *
+		    MAX(fabs(cdhat), fabs(cd)) + ckt->CKTabstol)) {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
                 }

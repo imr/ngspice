@@ -30,7 +30,7 @@ ASRCask(ckt,instPtr,which,value,select)
     IFvalue *value;
     IFvalue *select;
 {
-    register ASRCinstance *here = (ASRCinstance*)instPtr;
+    ASRCinstance *here = (ASRCinstance*)instPtr;
 
     switch(which) {
         case ASRC_CURRENT:

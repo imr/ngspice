@@ -1,14 +1,23 @@
 /*
  * Copyright (c) 1985 Thomas L. Quarles
  * Modified 1999 Paolo Nenzi - Removed non STDC definitions
+ * Modified 2000 AlansFixes
  */
 #ifndef CKT
 #define CKT "CKTdefs.h $Revision$  on $Date$ "
 
-#define MAXNUMDEVS 32     /* Max number of possible devices; */
-extern int DEVmaxnum;     /* Not sure if still used */
-#define MAXNUMDEVNODES 4  /* Max No. of nodes per device */
-                          /* Need to change for SOI devs ? */
+/* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
+#ifdef XSPICE
+#include "evt.h"
+#include "enh.h"
+#endif
+/* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
+
+
+#define MAXNUMDEVS 40	/* Max number of possible devices PN:XXX may cause toubles*/
+extern int DEVmaxnum;	/* Not sure if still used */
+#define MAXNUMDEVNODES 4	/* Max No. of nodes per device */
+                         /* Need to change for SOI devs ? */
 
 #include "smpdefs.h"
 #include "ifsim.h"
@@ -31,13 +40,13 @@ typedef struct sCKTnode {
 #define NODE_VOLTAGE SP_VOLTAGE
 #define NODE_CURRENT SP_CURRENT
 
-  int number;                /* Number of the node */
-  double ic;                 /* Value of the initial condition */
-  double nodeset;            /* Value of the .nodeset option */
-  double *ptr;               /* ??? */
-  struct sCKTnode *next;     /* pointer to the next node */
-  unsigned int icGiven:1;    /* FLAG ic given */
-  unsigned int nsGiven:1;    /* FLAG nodeset given */ 
+    int number;			/* Number of the node */
+    double ic;			/* Value of the initial condition */
+    double nodeset;		/* Value of the .nodeset option */
+    double *ptr;		/* ??? */
+    struct sCKTnode *next;	/* pointer to the next node */
+    unsigned int icGiven:1;	/* FLAG ic given */
+    unsigned int nsGiven:1;	/* FLAG nodeset given */ 
 } CKTnode;
 
 /* defines for node parameters */
@@ -48,11 +57,23 @@ typedef struct sCKTnode {
 
 
 typedef struct {
-  GENmodel *CKThead[MAXNUMDEVS];  /* The max number of loadable devices */
-  STATistics *CKTstat;            /* The STATistics structure */
-  double *(CKTstates[8]);         /* Used as memory of past steps ??? */
 
-  /* Some shortcut for CKTstates */
+
+/* gtri - begin - wbk - change declaration to allow dynamic sizing */
+
+/* An associated change is made in CKTinit.c to alloc the space */
+/* required for the pointers.  No changes are needed to the source */
+/* code at the 3C1 level, although the compiler will generate */
+/* slightly different code for references to this data. */
+
+    GENmodel **CKThead; /*The max number of loadable devices */    
+
+/* gtri - end   - wbk - change declaration to allow dynamic sizing */
+
+    STATistics *CKTstat;	/* The STATistics structure */
+    double *(CKTstates[8]);	/* Used as memory of past steps ??? */
+
+    /* Some shortcut for CKTstates */
 #define CKTstate0 CKTstates[0]
 #define CKTstate1 CKTstates[1]
 #define CKTstate2 CKTstates[2]
@@ -61,40 +82,44 @@ typedef struct {
 #define CKTstate5 CKTstates[5]
 #define CKTstate6 CKTstates[6]
 #define CKTstate7 CKTstates[7]
-  double CKTtime;                /* ??? */
-  double CKTdelta;               /* ??? */
-  double CKTdeltaOld[7];         /* Memory for ??? */
-  double CKTtemp;                /* Actual temperature of CKT */
-  double CKTnomTemp;             /* Reference temperature 27 C ? */
-  double CKTvt;                  /* Thernmal voltage at CKTtemp */
-  double CKTag[7];               /* the gear variable coefficient matrix */
+    double CKTtime;		/* ??? */
+    double CKTdelta;		/* ??? */
+    double CKTdeltaOld[7];	/* Memory for ??? */
+    double CKTtemp;		/* Actual temperature of CKT */
+    double CKTnomTemp;		/* Reference temperature 27 C ? */
+    double CKTvt;		/* Thernmal voltage at CKTtemp */
+    double CKTag[7];		/* the gear variable coefficient matrix */
 #ifdef PREDICTOR
-    double CKTagp[7];       /* the gear predictor variable coefficient matrix */
+    double CKTagp[7];		/* the gear predictor variable
+                                   coefficient matrix */
 #endif /*PREDICTOR*/
-    int CKTorder;           /* the integration method order */
-    int CKTmaxOrder;        /* maximum integration method order */
-    int CKTintegrateMethod; /* the integration method to be used */
+    int CKTorder;		/* the integration method order */
+    int CKTmaxOrder;		/* maximum integration method order */
+    int CKTintegrateMethod;	/* the integration method to be used */
 
 /* known integration methods */
 #define TRAPEZOIDAL 1
 #define GEAR 2
 
-    SMPmatrix *CKTmatrix;   /* pointer to sparse matrix */
-    int CKTniState;         /* internal state */
-    double *CKTrhs;         /* current rhs value - being loaded */
-    double *CKTrhsOld;      /* previous rhs value for convergence testing */
-    double *CKTrhsSpare;    /* spare rhs value for reordering */
-    double *CKTirhs;        /* current rhs value - being loaded (imag) */
-    double *CKTirhsOld;     /* previous rhs value (imaginary)*/
-    double *CKTirhsSpare;   /* spare rhs value (imaginary)*/
+    SMPmatrix *CKTmatrix;	/* pointer to sparse matrix */
+    int CKTniState;		/* internal state */
+    double *CKTrhs;		/* current rhs value - being loaded */
+    double *CKTrhsOld;		/* previous rhs value for convergence
+                                   testing */
+    double *CKTrhsSpare;	/* spare rhs value for reordering */
+    double *CKTirhs;		/* current rhs value - being loaded
+                                   (imag) */
+    double *CKTirhsOld;		/* previous rhs value (imaginary)*/
+    double *CKTirhsSpare;	/* spare rhs value (imaginary)*/
 #ifdef PREDICTOR
-    double *CKTpred;        /* predicted solution vector */
-    double *CKTsols[8];     /* previous 8 solutions */
+    double *CKTpred;		/* predicted solution vector */
+    double *CKTsols[8];		/* previous 8 solutions */
 #endif /* PREDICTOR */
 
-    double *CKTrhsOp;      /* opearating point values */
-    double *CKTsenRhs;      /* current sensitivity rhs  values */
-    double *CKTseniRhs;      /* current sensitivity rhs  values (imag)*/
+    double *CKTrhsOp;		/* opearating point values */
+    double *CKTsenRhs;		/* current sensitivity rhs values */
+    double *CKTseniRhs;		/* current sensitivity rhs values
+                                   (imag)*/
 
 
 /*
@@ -112,19 +137,21 @@ typedef struct {
 #define NIDIDPREORDER 0x100
 #define NIPZSHOULDREORDER 0x200
 
-  int CKTmaxEqNum;        /* And this ? */
-  int CKTcurrentAnalysis; /* the analysis in progress (if any) */
+    int CKTmaxEqNum;		/* And this ? */
+    int CKTcurrentAnalysis;	/* the analysis in progress (if any) */
 
 /* defines for the value of  CKTcurrentAnalysis */
 /* are in TSKdefs.h */
 
-  CKTnode *CKTnodes;          /* ??? */
-  CKTnode *CKTlastNode;       /* ??? */
+    CKTnode *CKTnodes;          /* ??? */
+    CKTnode *CKTlastNode;       /* ??? */
 
-  /* This define should be somewhere else ??? */
+    /* This define should be somewhere else ??? */
 #define NODENAME(ckt,nodenum) CKTnodName(ckt,nodenum)
-  int CKTnumStates;       /* Number of sates effectively valid ??? */ 
-  long CKTmode;           /* Mode of operation of the circuit ??? */
+    int CKTnumStates;		/* Number of sates effectively valid
+                                   ??? */
+    long CKTmode;		/* Mode of operation of the circuit
+                                   ??? */
 
 /* defines for CKTmode */
 
@@ -151,68 +178,85 @@ typedef struct {
 /* old 'nosolv' paramater */
 #define MODEUIC 0x10000l
 
-  int CKTbypass;          /* bypass option, how does it work ? */
-  int CKTdcMaxIter;       /* iteration limit for dc op.  (itl1) */
-  int CKTdcTrcvMaxIter;   /* iteration limit for dc tran. curv (itl2) */
-  int CKTtranMaxIter;     /* iteration limit for each timepoint for tran*/
-                          /* (itl4) */
-  int CKTbreakSize;       /* ??? */
-  int CKTbreak;           /* ??? */
-  double CKTsaveDelta;    /* ??? */
-  double CKTminBreak;     /* ??? */
-  double *CKTbreaks;      /* List of breakpoints ??? */
-  double CKTabstol;       /* --- */
-  double CKTpivotAbsTol;  /* --- */
-  double CKTpivotRelTol;  /* --- */
-  double CKTreltol;       /* --- */
-  double CKTchgtol;       /* --- */
-  double CKTvoltTol;      /* --- */
-  /* What is this define for  ? */
+    int CKTbypass;		/* bypass option, how does it work ?  */
+    int CKTdcMaxIter;		/* iteration limit for dc op.  (itl1) */
+    int CKTdcTrcvMaxIter;	/* iteration limit for dc tran. curv
+                                   (itl2) */
+    int CKTtranMaxIter;		/* iteration limit for each timepoint
+                                   for tran*/
+    /* (itl4) */
+    int CKTbreakSize;		/* ??? */
+    int CKTbreak;		/* ??? */
+    double CKTsaveDelta;	/* ??? */
+    double CKTminBreak;		/* ??? */
+    double *CKTbreaks;		/* List of breakpoints ??? */
+    double CKTabstol;		/* --- */
+    double CKTpivotAbsTol;	/* --- */
+    double CKTpivotRelTol;	/* --- */
+    double CKTreltol;		/* --- */
+    double CKTchgtol;		/* --- */
+    double CKTvoltTol;		/* --- */
+    /* What is this define for  ? */
 #ifdef NEWTRUNC
     double CKTlteReltol;  
     double CKTlteAbstol;
 #endif /* NEWTRUNC */
-  double CKTgmin;         /* Parallel Conductance --- */
-  double CKTdelmin;       /* ??? */
-  double CKTtrtol;        /* ??? */
-  double CKTfinalTime;    /* ??? */
-  double CKTstep;         /* ??? */
-  double CKTmaxStep;      /* ??? */
-  double CKTinitTime;     /* ??? */
-  double CKTomega;        /* ??? */
-  double CKTsrcFact;      /* ??? */
-  double CKTdiagGmin;     /* ??? */
-  int CKTnumSrcSteps;     /* ??? */
-  int CKTnumGminSteps;    /* ??? */
-  int CKTnoncon;          /* ??? */
-  double CKTdefaultMosL;  /* Default Channel Lenght of MOS devices */
-  double CKTdefaultMosW;  /* Default Channel Width of MOS devics */
-  double CKTdefaultMosAD; /* Default Drain Area of MOS */
-  double CKTdefaultMosAS; /* Default Source Area of MOS */
-  unsigned int CKThadNodeset:1; /* ??? */
-  unsigned int CKTfixLimit:1;   /* flag to indicate that the limiting of 
-                                 * MOSFETs should be done as in SPICE2 */
-  unsigned int CKTnoOpIter:1;   /* flag to indicate not to try the operating
-                                 * point brute force, but to use gmin stepping
-                                 * first */
-  unsigned int CKTisSetup:1;    /* flag to indicate if CKTsetup done */
-  JOB *CKTcurJob;               /* Next analysis to be performed ??? */
+    double CKTgmin;		/* Parallel Conductance --- */
+    double CKTgshunt;       
+    double CKTdelmin;		/* ??? */
+    double CKTtrtol;		/* ??? */
+    double CKTfinalTime;	/* ??? */
+    double CKTstep;		/* ??? */
+    double CKTmaxStep;		/* ??? */
+    double CKTinitTime;		/* ??? */
+    double CKTomega;		/* ??? */
+    double CKTsrcFact;		/* ??? */
+    double CKTdiagGmin;		/* ??? */
+    int CKTnumSrcSteps;		/* ??? */
+    int CKTnumGminSteps;	/* ??? */
+    double CKTgminFactor;   
+    int CKTnoncon;		/* ??? */
+    double CKTdefaultMosM;  
+    double CKTdefaultMosL;	/* Default Channel Lenght of MOS devices */
+    double CKTdefaultMosW;	/* Default Channel Width of MOS devics */
+    double CKTdefaultMosAD;	/* Default Drain Area of MOS */
+    double CKTdefaultMosAS;	/* Default Source Area of MOS */
+    unsigned int CKThadNodeset:1; /* ??? */
+    unsigned int CKTfixLimit:1;	/* flag to indicate that the limiting
+				   of MOSFETs should be done as in
+				   SPICE2 */
+    unsigned int CKTnoOpIter:1;	/* flag to indicate not to try the operating
+				   point brute force, but to use gmin stepping
+				   first */
+    unsigned int CKTisSetup:1;	/* flag to indicate if CKTsetup done */
+    JOB *CKTcurJob;		/* Next analysis to be performed ??? */
 
-  SENstruct *CKTsenInfo;	/* the sensitivity information */
-  double *CKTtimePoints;        /* list of all accepted timepoints in the
+    SENstruct *CKTsenInfo;	/* the sensitivity information */
+    double *CKTtimePoints;	/* list of all accepted timepoints in
+				   the current transient simulation */
+    double *CKTdeltaList;	/* list of all timesteps in the
 				   current transient simulation */
-  double *CKTdeltaList;         /* list of all timesteps in the current
-				   transient simulation */
-  int CKTtimeListSize;	        /* size of above lists */
-  int CKTtimeIndex;		/* current position in above lists */
-  int CKTsizeIncr;		/* amount to increment size of above arrays
-				   when you run out of space */
-  unsigned int CKTtryToCompact:1; /* try to compact past history for LTRA
-				   lines */
-  unsigned int CKTbadMos3:1; /* Use old, unfixed MOS3 equations */
-  unsigned int CKTkeepOpInfo:1; /* flag for small signal analyses */
-  int CKTtroubleNode;		/* Non-convergent node number */
-  GENinstance *CKTtroubleElt;	/* Non-convergent device instance */
+    int CKTtimeListSize;	/* size of above lists */
+    int CKTtimeIndex;		/* current position in above lists */
+    int CKTsizeIncr;		/* amount to increment size of above
+				   arrays when you run out of space */
+    unsigned int CKTtryToCompact:1; /* try to compact past history for LTRA
+				       lines */
+    unsigned int CKTbadMos3:1;	/* Use old, unfixed MOS3 equations */
+    unsigned int CKTkeepOpInfo:1; /* flag for small signal analyses */
+    unsigned int CKTcopyNodesets:1; /* NodesetFIX */
+    unsigned int CKTnodeDamping:1; /* flag for node damping fix */
+    double CKTabsDv;		/* abs limit for iter-iter voltage change */
+    double CKTrelDv;		/* rel limit for iter-iter voltage change */
+    int CKTtroubleNode;		/* Non-convergent node number */
+    GENinstance *CKTtroubleElt;	/* Non-convergent device instance */
+
+/* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
+#ifdef XSPICE
+    Evt_Ckt_Data_t *evt;  /* all data about event driven stuff */
+    Enh_Ckt_Data_t *enh;  /* data used by general enhancements */
+#endif
+/* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 
 } CKTcircuit;
 
@@ -241,6 +285,7 @@ extern int CKTdltMod( void *, void *);
 extern int CKTdltNod( void *, void *);
 extern int CKTdoJob( void *, int , void *);
 extern void CKTdump( CKTcircuit *, double, void *);
+extern void CKTncDump(CKTcircuit *);
 extern int CKTfndAnal( void *, int *, void **, IFuid , void *, IFuid );
 extern int CKTfndBranch( CKTcircuit *, IFuid);
 extern int CKTfndDev( void *, int *, void **, IFuid , void *, IFuid );
@@ -289,7 +334,7 @@ extern int CKTsetBreak( CKTcircuit *, double );
 extern int CKTsetNodPm( void *, void *, int , IFvalue *, IFvalue *);
 extern int CKTsetOpt( void *, void *, int , IFvalue *);
 extern int CKTsetup( CKTcircuit *);
-extern int CKTunsetup(CKTcircuit *ckt); 
+extern int CKTunsetup(CKTcircuit *); 
 extern int CKTtemp( CKTcircuit *);
 extern char *CKTtrouble(void *, char *);
 extern void CKTterr( int , CKTcircuit *, double *);
@@ -314,7 +359,6 @@ extern void SENdestroy( SENstruct *);
 extern int SENsetParm( CKTcircuit *, void *, int , IFvalue *);
 extern int SENstartup( CKTcircuit *);
 extern int SPIinit( IFfrontEnd *, IFsimulator **);
-extern char * SPerror( int );
 extern int TFanal( CKTcircuit *, int );
 extern int TFaskQuest( CKTcircuit *, void *, int , IFvalue *);
 extern int TFsetParm( CKTcircuit *, void *, int , IFvalue *);
@@ -334,6 +378,7 @@ extern int NIpzSym(PZtrial **, PZtrial *);
 extern int NIpzSym2(PZtrial **, PZtrial *);
 extern int NIreinit( CKTcircuit *);
 extern int NIsenReinit( CKTcircuit *);
+extern int NIdIter (CKTcircuit *);             
 extern IFfrontEnd *SPfrontEnd;
 
 #endif /*CKT*/

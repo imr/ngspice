@@ -23,8 +23,8 @@ TRAtemp(inModel,ckt)
          * pre-process parameters for later use
          */
 {
-    register TRAmodel *model = (TRAmodel *)inModel;
-    register TRAinstance *here;
+    TRAmodel *model = (TRAmodel *)inModel;
+    TRAinstance *here;
 
     /*  loop through all the transmission line models */
     for( ; model != NULL; model = model->TRAnextModel ) {

@@ -1,10 +1,14 @@
 /*************
  * Header file for device.c
  * 1999 E. Rouat
+ * Modified: 2000 AlansFixes
  ************/
 
 #ifndef DEVICE_H_INCLUDED
 #define DEVICE_H_INCLUDED
+
+#define LEFT_WIDTH 11
+#define DEV_WIDTH 21
 
 void com_showmod(wordlist *wl);
 void com_show(wordlist *wl);

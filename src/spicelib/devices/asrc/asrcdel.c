@@ -20,7 +20,7 @@ ASRCdelete(model,name,fast)
     GENinstance **fast;
 
 {
-    register ASRCinstance **instPtr = (ASRCinstance**)fast;
+    ASRCinstance **instPtr = (ASRCinstance**)fast;
     ASRCmodel *modPtr = (ASRCmodel*)model;
 
     ASRCinstance **prev = NULL;

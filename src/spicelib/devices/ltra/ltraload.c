@@ -14,14 +14,14 @@ Author: 1990 Jaijeet S. Roychowdhury
 int
 LTRAload(inModel, ckt)
   GENmodel *inModel;
-  register CKTcircuit *ckt;
+  CKTcircuit *ckt;
 /*
  * load the appropriate values for the current timepoint into the sparse
  * matrix and the right-hand-side vector
  */
 {
-  register LTRAmodel *model = (LTRAmodel *) inModel;
-  register LTRAinstance *here;
+  LTRAmodel *model = (LTRAmodel *) inModel;
+  LTRAinstance *here;
   double t1, t2, t3;
   double qf1, qf2, qf3;
   double lf2, lf3;
@@ -29,7 +29,7 @@ LTRAload(inModel, ckt)
   double dummy1, dummy2;
   int isaved;
   unsigned tdover;
-  register int i;
+  int i;
   double max, min;
 
   /* loop through all the transmission line models */

@@ -22,11 +22,11 @@ int
 CAPsAcLoad(inModel,ckt)
 
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 
 {
-    register CAPmodel *model = (CAPmodel*)inModel;
-    register CAPinstance *here;
+    CAPmodel *model = (CAPmodel*)inModel;
+    CAPinstance *here;
     double vcap;
     double ivcap;
     double val;

@@ -1,18 +1,3 @@
-/* $Id$  */
-/* 
-$Log$
-Revision 1.1.1.1  2000-04-27 20:03:59  pnenzi
-Imported sources
-
- * Revision 3.1  96/12/08  19:59:49  yuhua
- * BSIM3v3.1 release
-
- * 
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /***********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
@@ -47,11 +32,11 @@ BSIM3V1temp(inModel,ckt)
 GENmodel *inModel;
 CKTcircuit *ckt;
 {
-register BSIM3V1model *model = (BSIM3V1model*) inModel;
-register BSIM3V1instance *here;
+BSIM3V1model *model = (BSIM3V1model*) inModel;
+BSIM3V1instance *here;
 struct bsim3v1SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
-double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
-double Temp, TRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;
+double tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, Ldrn, Wdrn;
+double Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 int Size_Not_Found;
 
     /*  loop through all the BSIM3V1 device models */
@@ -120,7 +105,7 @@ int Size_Not_Found;
               }
 
 	      if (Size_Not_Found)
-	      {   pParam = (struct bsim3v1SizeDependParam *)malloc(
+	      {   pParam = (struct bsim3v1SizeDependParam *)tmalloc(
 	                    sizeof(struct bsim3v1SizeDependParam));
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;

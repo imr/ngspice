@@ -21,11 +21,11 @@ Author: 1985 Thomas L. Quarles
 void
 BJTsPrint(inModel,ckt)
 
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 GENmodel *inModel;
 {
-    register BJTmodel *model = (BJTmodel*)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel*)inModel;
+    BJTinstance *here;
 
     printf("BJTS-----------------\n");
     /*  loop through all the BJT models */

@@ -19,12 +19,12 @@ Author: 1985 Thomas L. Quarles
 
 int
 CCVSsSetup(info,inModel)
-    register SENstruct *info;
+    SENstruct *info;
     GENmodel *inModel;
 
 {
-    register CCVSmodel *model = (CCVSmodel*)inModel;
-    register CCVSinstance *here;
+    CCVSmodel *model = (CCVSmodel*)inModel;
+    CCVSinstance *here;
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->CCVSnextModel ) {

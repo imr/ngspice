@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #ifdef __STDC__
@@ -21,6 +22,8 @@ extern int JFETtemp(GENmodel*,CKTcircuit*);
 extern int JFETtrunc(GENmodel*,CKTcircuit*,double*);
 extern int JFETdisto(int,GENmodel*,CKTcircuit*);
 extern int JFETnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+
+extern int JFETdSetup(GENmodel*,CKTcircuit*);
 
 #else /* stdc */
 extern int JFETacLoad();

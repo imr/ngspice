@@ -1,39 +1,40 @@
+@c This file will be processed with texinfo.
+
 SPICE was originally written at The University of Berkeley (USA).
+Since then, there have been many people working on the software.
+The following people have contributed in some way:
+Giles C. Billingsley,
+Mansun Chan,
+Wayne A. Christopher,
+Glao S. Dezai <dezai@@hotbot.com>,
+Daniele Foci <d.foci@@ieee.ing.uniroma1.it>,
+Noah Friedman <friedman@@prep.ai.mit.edu>,
+David A. Gates,
+Alan Gillespie <alan.gillespie@@analog.com>,
+JianHui Huang,
+Jeffrey M. Hsu,
+S. Hwang,
+Chris Inbody <cinbody@@cowtown.net>,
+Gordon M. Jacobs,
+Min-Chie Jeng,
+Kenneth H. Keller,
+Mathew Lew,
+Weidong Liu,
+Richard D. McRoberts,
+Manfred Metzger <ManfredMetzger@@gmx.de>,  
+Paolo Nenzi <pnenzi@@ieee.ing.uniroma1.it>,
+Gary W. Ng,
+Hong June Park,
+Arno Peters <A.W.Peters@@ieee.org>,
+Serban-Mihai Popescu <serbanp@@ix.netcom.com>,
+Thomas L. Quarles,
+Emmanuel Rouat <emmanuel.rouat@@wanadoo.fr>,
+Jaijeet S. Roychowdhury,
+Takayasu Sakurai,
+Kanwar Jit Singh,
+Andrew Tuckey <Tuckey@@ieee.org>
+Michael Widlok <widlok@@uci.agh.edu.pl>,
+and many others...
 
-
-Contributors:
--------------
-
-Giles C. Billingsley
-Mansun Chan
-Wayne A. Christopher
-Noah Friedman <friedman@prep.ai.mit.edu>
-David A. Gates
-JianHui Huang
-Jeffrey M. Hsu
-S. Hwang
-Gordon M. Jacobs
-Min-Chie Jeng
-Kenneth H. Keller
-Mathew Lew
-Weidong Liu
-Gary W. Ng
-Hong June Park
-Thomas L. Quarles
-Jaijeet S. Roychowdhury
-Takayasu Sakurai
-Kanwar Jit Singh
-Andrew Tuckey <Tuckey@ieee.org>
-
-NGSPICE is now actively hacked by:
-
-  * Glao S. Dezai <dezai@hotbot.com>
-  * Daniele Foci <d.foci@ieee.ing.uniroma1.it>
-  * Chris Inbody <cinbody@cowtown.net>
-  * Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
-  * Arno Peters <A.W.Peters@ieee.org>
-  * Serban-Mihai Popescu <serbanp@ix.netcom.com>
-  * Emmanuel Rouat <emmanuel.rouat@wanadoo.fr>
-  * Michael Widlok <widlok@uci.agh.edu.pl>
-  
-(and many others...)
+If you feel you should be on this list, write to
+<ngspice-user@lists.sourceforge.net>.

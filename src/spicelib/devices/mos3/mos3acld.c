@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -16,13 +17,14 @@ Author: 1985 Thomas L. Quarles
 int
 MOS3acLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
     int xnrm;
     int xrev;
     double EffectiveLength;
+    double EffectiveWidth;
     double xgs;
     double xgd;
     double xgb;
@@ -50,13 +52,17 @@ MOS3acLoad(inModel,ckt)
             /*
              *    charge oriented model parameters
              */
-            EffectiveLength=here->MOS3l-2*model->MOS3latDiff;
+            EffectiveWidth=here->MOS3w-2*model->MOS3widthNarrow+
+                                    model->MOS3widthAdjust;
+            EffectiveLength=here->MOS3l - 2*model->MOS3latDiff+
+                                    model->MOS3lengthAdjust;
+                                    
             GateSourceOverlapCap = model->MOS3gateSourceOverlapCapFactor * 
-                    here->MOS3w;
+                    here->MOS3m * EffectiveWidth;
             GateDrainOverlapCap = model->MOS3gateDrainOverlapCapFactor * 
-                    here->MOS3w;
+                    here->MOS3m * EffectiveWidth;
             GateBulkOverlapCap = model->MOS3gateBulkOverlapCapFactor * 
-                    EffectiveLength;
+                    here->MOS3m * EffectiveLength;
             /*
              *     meyer"s model parameters
              */

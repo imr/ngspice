@@ -18,7 +18,7 @@ MOS6mAsk(ckt,inModel,param,value)
     int param;
     IFvalue *value;
 {
-    register MOS6model *model = (MOS6model *)inModel;
+    MOS6model *model = (MOS6model *)inModel;
     switch(param) {
         case MOS6_MOD_TNOM:
             value->rValue = model->MOS6tnom;

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
+Modified: 2000 AlansFixes
 **********/
 
 #include <stdio.h>
@@ -23,13 +24,13 @@ static double sig2[4] = {1.0,  1.0,-1.0, -1.0};
 int
 MOS2dSetup(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
     double Beta;
     double DrainSatCur;
     double EffectiveLength;
@@ -82,26 +83,28 @@ double gmbds;
             vt = CONSTKoverQ * here->MOS2temp;
 
             EffectiveLength=here->MOS2l - 2*model->MOS2latDiff;
-            if( (here->MOS2tSatCurDens == 0) || 
+           
+             if( (here->MOS2tSatCurDens == 0) || 
                     (here->MOS2drainArea == 0) ||
                     (here->MOS2sourceArea == 0)) {
-                DrainSatCur = here->MOS2tSatCur;
-                SourceSatCur = here->MOS2tSatCur;
+                DrainSatCur = here->MOS2m * here->MOS2tSatCur;
+                SourceSatCur = here->MOS2m * here->MOS2tSatCur;
             } else {
                 DrainSatCur = here->MOS2tSatCurDens * 
-                        here->MOS2drainArea;
+                        here->MOS2m * here->MOS2drainArea;
                 SourceSatCur = here->MOS2tSatCurDens * 
-                        here->MOS2sourceArea;
+                        here->MOS2m * here->MOS2sourceArea;
             }
             GateSourceOverlapCap = model->MOS2gateSourceOverlapCapFactor * 
-                    here->MOS2w;
+                    here->MOS2m * here->MOS2w;
             GateDrainOverlapCap = model->MOS2gateDrainOverlapCapFactor * 
-                    here->MOS2w;
+                    here->MOS2m * here->MOS2w;
             GateBulkOverlapCap = model->MOS2gateBulkOverlapCapFactor * 
-                    EffectiveLength;
-            Beta = here->MOS2tTransconductance * here->MOS2w/EffectiveLength;
+                    here->MOS2m * EffectiveLength;
+            Beta = here->MOS2tTransconductance * here->MOS2m *
+                    here->MOS2w/EffectiveLength;
             OxideCap = model->MOS2oxideCapFactor * EffectiveLength * 
-                    here->MOS2w;
+                    here->MOS2m * here->MOS2w;
 
 
 
@@ -481,7 +484,7 @@ d_p.d3_pqr = 0.0;
 	    PlusDeriv(&d_cdonco,&d_cdonco,&d_dummy);
 	    TimesDeriv(&d_cdonco,&d_cdonco,-1.0);
 	    d_cdonco.value += factor;
-	   xn = 1.0+cfs/OxideCap*here->MOS2w*EffectiveLength+cdonco;
+	   xn = 1.0+cfs/OxideCap*here->MOS2m*here->MOS2w*EffectiveLength+cdonco;
 	   EqualDeriv(&d_xn,&d_cdonco);
 	   d_xn.value = xn;
 	    tmp = vt*xn;

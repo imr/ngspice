@@ -3,6 +3,7 @@
 noinst_LIBRARIES = libcmaths.a
 
 libcmaths_a_SOURCES = \
+		cmath.h		\
 		cmath1.c	\
 		cmath1.h	\
 		cmath2.c	\
@@ -12,8 +13,34 @@ libcmaths_a_SOURCES = \
 		cmath4.c	\
 		cmath4.h
 
+noinst_PROGRAMS = test_cx_mag test_cx_j test_cx_ph
 
+test_cx_ph_SOURCES = \
+		test_cx_ph.c
 
-INCLUDES = -I$(top_srcdir)/src/include
+test_cx_ph_LDADD = \
+		libcmaths.a \
+		../../misc/libmisc.a \
+		@TCL_BUILD_LIB_SPEC@
+
+test_cx_mag_SOURCES = \
+		test_cx_mag.c
+
+test_cx_mag_LDADD = \
+		libcmaths.a \
+		../../misc/libmisc.a \
+		@TCL_BUILD_LIB_SPEC@
+
+test_cx_j_SOURCES = \
+		test_cx_j.c
+
+test_cx_j_LDADD = \
+		libcmaths.a \
+		../../misc/libmisc.a \
+		@TCL_BUILD_LIB_SPEC@
+
+TESTS = test_cx_mag test_cx_j test_cx_ph
+
+INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/maths/poly
 
 MAINTAINERCLEANFILES = Makefile.in

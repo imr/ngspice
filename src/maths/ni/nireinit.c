@@ -21,9 +21,12 @@ Author: 1985 Thomas L. Quarles
     (type *) MALLOC((size)*sizeof(type))) == NULL) return(E_NOMEM);
 
 int
-NIreinit(register CKTcircuit *ckt)
+NIreinit( CKTcircuit *ckt)
 {
-    register int size;
+    int size;
+#ifdef PREDICTOR
+    int i;
+#endif    
 
     size = SMPmatSize(ckt->CKTmatrix);
     CKALLOC(CKTrhs,size+1,double);
@@ -34,7 +37,7 @@ NIreinit(register CKTcircuit *ckt)
     CKALLOC(CKTirhsSpare,size+1,double);
 #ifdef PREDICTOR
     CKALLOC(CKTpred,size+1,double);
-    for(i=0;i<8;i++) {
+    for( i=0;i<8;i++) {
         CKALLOC(CKTsols[i],size+1,double);
     }
 #endif /* PREDICTOR */

@@ -15,13 +15,18 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  *  and return a char * that is cast to complex or double.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "ftedata.h"
-#include "ftecmath.h"
-#include "cmath4.h"
+#include <ngspice.h>
+#include <plot.h>
+#include <complex.h>
+#include <cpdefs.h>
 
+#include <interpolate.h>
+#include <polyfit.h>
+#include <polyeval.h>
+#include <polyderiv.h>
+
+#include "cmath.h"
+#include "cmath4.h"
 
 void *
 cx_and(void *data1, void *data2, short int datatype1, short int datatype2, int length)
@@ -123,6 +128,12 @@ cx_not(void *data, short int type, int length, int *newlength, short int *newtyp
     return ((void *) d);
 }
 
+#if 0
+/* These functions have been temporarily disabled.  They contain code
+   only found in the frontend and their prototype does not conform to
+   the prototypes found for other complex functions.  They will not be
+   re-enabled until these issues have been resolved. */
+
 /* This is a strange function. What we do is fit a polynomial to the
  * curve, of degree $polydegree, and then evaluate it at the points
  * in the time scale.  What we do is this: for every set of points that
@@ -130,9 +141,8 @@ cx_not(void *data, short int type, int length, int *newlength, short int *newtyp
  * (i.e, between the last value of the old scale we went from to this
  * one). At the ends we just use what we have...  We have to detect
  * badness here too...
- * Note that we pass arguments differently for this one cx_ function...
- */
-
+ *
+ * Note that we pass arguments differently for this one cx_ function...  */
 void *
 cx_interpolate(void *data, short int type, int length, int *newlength, short int *newtype, struct plot *pl, struct plot *newpl, int grouping)
 {
@@ -155,28 +165,10 @@ cx_interpolate(void *data, short int type, int length, int *newlength, short int
     if (iscomplex(ns)) {
         fprintf(cp_err, "Error: new scale has complex data\n");
         return (NULL);
-        /*
-        for (i = ns->v_length - 1; i >= 0; i--)
-            if (imagpart(&ns->v_compdata[i])) {
-                fprintf(cp_err, 
-                    "Error: new scale has complex data\n");
-                return (NULL);
-            }
-        osbuf = alloc_d(olen);
-        */
     }
     if (iscomplex(os)) {
         fprintf(cp_err, "Error: old scale has complex data\n");
         return (NULL);
-        /*
-        for (i = os->v_length - 1; i >= 0; i--)
-            if (imagpart(&os->v_compdata[i])) {
-                fprintf(cp_err, 
-                    "Error: old scale has complex data\n");
-                return (NULL);
-            }
-        nsbuf = alloc_d(nlen);
-        */
     }
 
     if (length != os->v_length) {
@@ -188,9 +180,8 @@ cx_interpolate(void *data, short int type, int length, int *newlength, short int
         return (NULL);
     }
 
-    /* Now make sure that either both scales are strictly increasing or
-     * both are strictly decreasing.
-     */
+    /* Now make sure that either both scales are strictly increasing
+     * or both are strictly decreasing.  */
     if (os->v_realdata[0] < os->v_realdata[1])
         oincreasing = TRUE;
     else
@@ -377,3 +368,4 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
     }
 
 }
+#endif

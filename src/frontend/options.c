@@ -13,10 +13,12 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteinp.h"
-#include "options.h"
 
+#include "circuits.h"
+#include "options.h"
+#include "variable.h"
 
 
 /* static declarations */

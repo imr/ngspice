@@ -10,10 +10,11 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteinp.h"
-#include "nutinp.h"
 
+#include "nutinp.h"
+#include "variable.h"
 
 /* The routine to source a spice input deck. We read the deck in, take out
  * the front-end commands, and create a CKT structure. Also we filter out
@@ -28,8 +29,8 @@ void
 inp_nutsource(FILE *fp, bool comfile, char *filename)
 {
     struct line *deck, *dd, *ld;
-    struct line *realdeck, *options;
-    char *tt, name[BSIZE_SP], *s, *t;
+    struct line *realdeck, *options = NULL;
+    char *tt = NULL, name[BSIZE_SP], *s, *t;
     bool nosubckts, commands = FALSE;
     wordlist *wl = NULL, *end = NULL;
     wordlist *controls = NULL;

@@ -22,8 +22,8 @@ VCVSload(inModel,ckt)
          * sparse matrix previously provided 
          */
 {
-    register VCVSmodel *model = (VCVSmodel *)inModel;
-    register VCVSinstance *here;
+    VCVSmodel *model = (VCVSmodel *)inModel;
+    VCVSinstance *here;
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->VCVSnextModel ) {

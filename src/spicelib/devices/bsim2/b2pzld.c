@@ -17,11 +17,11 @@ Author: 1985 Thomas L. Quarles
 int
 B2pzLoad(inModel,ckt,s)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
-    register SPcomplex *s;
+    CKTcircuit *ckt;
+    SPcomplex *s;
 {
-    register B2model *model = (B2model*)inModel;
-    register B2instance *here;
+    B2model *model = (B2model*)inModel;
+    B2instance *here;
     int xnrm;
     int xrev;
     double gdpr;

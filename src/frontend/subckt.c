@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Modified: 2000 AlansFixes
 **********/
 
 /*
@@ -12,8 +13,15 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "fteinp.h"
-#include "subckt.h"
 
+#ifdef XSPICE
+/* gtri - add - wbk - 11/9/90 - include MIF function prototypes */
+#include "mifproto.h"
+/* gtri - end - wbk - 11/9/90 */
+#endif
+
+#include "subckt.h"
+#include "variable.h"
 
 /* static declarations */
 static struct line * doit(struct line *deck);
@@ -112,6 +120,14 @@ inp_subcktexpand(struct line *deck)
     }
     
     ll = doit(deck);
+
+   /* Now check to see if there are still subckt instances undefined... */
+    if (ll!=NULL) for (c = ll; c; c = c->li_next)
+	if (ciprefix(invoke, c->li_line)) {
+	    fprintf(cp_err, "Error: unknown subckt: %s\n",
+		    c->li_line);
+	    return NULL;
+	}
 
     return (ll);
 }
@@ -293,13 +309,6 @@ doit(struct line *deck)
         return (NULL);
     }
 
-    /* Now check to see if there are still subckt instances undefined... */
-    for (c = deck; c; c = c->li_next)
-	if (ciprefix(invoke, c->li_line)) {
-	    fprintf(cp_err, "Error: unknown subckt: %s\n",
-		    c->li_line);
-	    error = 1;
-	}
 
     if (error)
 	return NULL;	/* error message already reported; should free( ) */
@@ -348,6 +357,14 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
     char *buffer, *name, *s, *t, ch;
     int nnodes, i;
 
+#ifdef XSPICE
+    /* gtri - add - wbk - 10/23/90 - add new local variables */
+    
+    char    *next_name;     /* for look-ahead during tokenizing */
+    
+    /* gtri - end - wbk - 10/23/90 */
+#endif
+
     i = settrans(formal, actual, subname);
     if (i < 0) {
 	fprintf(stderr,
@@ -369,6 +386,102 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
         case '.':
             /* Nothing any good here. */
             continue;
+
+#ifdef XSPICE
+/* gtri - add - wbk - 10/23/90 - process A devices specially */
+/* since they have a more involved and variable length node syntax */
+	    
+        case 'a':
+        case 'A':
+	  
+            /* translate the instance name according to normal rules */
+
+            buffer = tmalloc(10000);     /* XXXXX */
+
+            s = c->li_line;
+            name = MIFgettok(&s);
+
+	    /* maschmann 
+            sprintf(buffer, "%s:%s ", name, scname);   */
+            sprintf(buffer, "a:%s:%s ", scname, name+1 );  
+                   
+
+
+            /* Now translate the nodes, looking ahead one token to recognize */
+            /* when we reach the model name which should not be translated   */
+            /* here.                                                         */
+
+            next_name = MIFgettok(&s);
+
+            while(1) {
+
+                /* rotate the tokens and get the the next one */
+
+                name = next_name;
+                next_name = MIFgettok(&s);
+
+                /* if next token is NULL, name holds the model name, so exit */
+
+                if(next_name == NULL)
+                    break;
+
+                /* Process the token in name.  If it is special, then don't */
+                /* translate it.                                            */
+
+                switch(*name) {
+
+                case '[':
+                case ']':
+                case '~':
+                    sprintf(buffer + strlen(buffer), "%s ", name);
+                    break;
+
+                case '%':
+
+                    sprintf(buffer + strlen(buffer), "%%");
+
+                    /* don't translate the port type identifier */
+
+                    name = next_name;
+                    next_name = MIFgettok(&s);
+
+                    sprintf(buffer + strlen(buffer), "%s ", name);
+                    break;
+
+                default:
+
+                    /* must be a node name at this point, so translate it */
+
+                    t = gettrans(name);
+                    if (t)
+                        sprintf(buffer + strlen(buffer), "%s ", t);
+                    else
+		      /* maschmann:  changed order 
+                        sprintf(buffer + strlen(buffer), "%s:%s ", name, scname); */
+		      if(name[0]=='v' || name[0]=='V')  sprintf(buffer + strlen(buffer), "v:%s:%s ", scname, name+1);
+		      else sprintf(buffer + strlen(buffer), "%s:%s ", scname, name);
+
+                    break;
+
+                } /* switch */
+
+            } /* while */
+
+
+            /* copy in the last token, which is the model name */
+
+            if(name)
+                sprintf(buffer + strlen(buffer), "%s ", name);
+
+            /* Set s to null string for compatibility with code */
+            /* after switch statement                           */
+
+            s = "";
+
+            break;
+
+/* gtri - end - wbk - 10/23/90 */
+#endif
 
         default:
                 s = c->li_line;
@@ -566,6 +679,13 @@ gettrans(char *name)
 {
     int i;
 
+#ifdef XSPICE
+    /* gtri - wbk - 2/27/91 - don't translate the reserved word 'null' */
+    if (eq(name, "null"))
+      return (name);
+    /* gtri - end */
+#endif
+
     if (eq(name, "0"))
         return (name);
     for (i = 0; table[i].t_old; i++)
@@ -577,11 +697,17 @@ gettrans(char *name)
 static int
 numnodes(char *name)
 {
+/* gtri - comment - wbk - 10/23/90 - Do not modify this routine for */
+/* 'A' type devices since the callers will not know how to find the */
+/* nodes even if they know how many there are.  Modify the callers  */
+/* instead.                                                         */
+/* gtri - end - wbk - 10/23/90 */
+
     char c;
     struct subs *sss;
     char *s, *t, buf[4 * BSIZE_SP];
     wordlist *wl;
-    int n, i;
+    int n, i, gotit;
 
     while (*name && isspace(*name))
 	name++;
@@ -609,6 +735,41 @@ numnodes(char *name)
         return (sss->su_numargs);
     }
     n = inp_numnodes(c);
+    
+    /* Added this code for variable number of nodes on BSIM3SOI devices  */
+    /* The consequence of this code is that the value returned by the    */
+    /* inp_numnodes(c) call must be regarded as "maximun number of nodes */
+    /* for a given device type.                                          */
+    /* Paolo Nenzi Jan-2001                                              */
+    
+    /* I hope that works, this code is very very untested */
+    
+	if (c=='m') {		/* IF this is a mos */
+		
+		i = 0;
+		s = buf;
+		gotit = 0;
+		t = gettok(&s);	/* Skip component name */
+		while ((i < n) && (*s) && !gotit) {
+			t = gettok(&s);
+    			for (wl = modnames; wl; wl = wl->wl_next)
+     		   if (eq(t, wl->wl_word)) 
+     		   	gotit = 1;
+     		i++;
+		}
+		
+	/* Note: node checks must be done on #_of_node-1 because the */
+	/* "while" cicle increments the counter even when a model is */
+	/* recognized. This code may be better!                      */
+	 		
+     if (i < 5) {
+     	fprintf(cp_err, "Error: too few nodes for MOS: %s\n", name);
+     	return(0);
+    		}
+    	return(i-1); /* compesate the unnecessary inrement in the while cicle */
+    	}
+    
+    
     if (nobjthack || (c != 'q'))
         return (n);
     for (s = buf, i = 0; *s && (i < 4); i++)
@@ -928,7 +1089,7 @@ inp_numnodes(char c)
         case 'j': return (3);
         case 'k': return (0);
         case 'l': return (2);
-        case 'm': return (4);
+        case 'm': return (7); /* This means that 7 is the maximun number of nodes */
         case 'o': return (4);
         case 'q': return (4);
         case 'r': return (2);

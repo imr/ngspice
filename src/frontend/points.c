@@ -3,19 +3,19 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group 
 **********/
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "ftedata.h"
-#include "ftegraph.h"
-#include "ftedbgra.h"
+#include <ngspice.h>
+#include <cpdefs.h>
+#include <ftedefs.h>
+#include <dvec.h>
+#include <graph.h>
+#include <ftedbgra.h>
+
 #include "points.h"
 
 
-/* Returns the minimum and maximum values of a dvec. Returns a pointer to
- * static data.  If real is TRUE look at the real parts, otherwise the imag
- * parts.
- */
+/* Returns the minimum and maximum values of a dvec. Returns a pointer
+ * to static data.  If real is TRUE look at the real parts, otherwise
+ * the imag parts.  */
 
 
 

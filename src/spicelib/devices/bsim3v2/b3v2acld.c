@@ -1,17 +1,3 @@
-/* $Id$  */
-/*
- $Log$
- Revision 1.1.1.1  2000-04-27 20:03:59  pnenzi
- Imported sources
-
- * Revision 3.2 1998/6/16  18:00:00  Weidong 
- * BSIM3v3.2 release
- *
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
@@ -30,10 +16,10 @@ File: b3acld.c
 int
 BSIM3V2acLoad(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM3V2model *model = (BSIM3V2model*)inModel;
-register BSIM3V2instance *here;
+BSIM3V2model *model = (BSIM3V2model*)inModel;
+BSIM3V2instance *here;
 double xcggb, xcgdb, xcgsb, xcbgb, xcbdb, xcbsb, xcddb, xcssb, xcdgb;
 double gdpr, gspr, gds, gbd, gbs, capbd, capbs, xcsgb, xcdsb, xcsdb;
 double cggb, cgdb, cgsb, cbgb, cbdb, cbsb, cddb, cdgb, cdsb, omega;
@@ -43,7 +29,7 @@ double gbspsp, gbbdp, gbbsp, gbspg, gbspb;
 double gbspdp, gbdpdp, gbdpg, gbdpb, gbdpsp;
 double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
 double dsxpart_dVd, dsxpart_dVg, dsxpart_dVb, dsxpart_dVs;
-double T1, CoxWL, qcheq, Cdg, Cdd, Cds, Cdb, Csg, Csd, Css, Csb;
+double T1, CoxWL, qcheq, Cdg, Cdd, Cds, Csg, Csd, Css;
 
     omega = ckt->CKTomega;
     for (; model != NULL; model = model->BSIM3V2nextModel) 

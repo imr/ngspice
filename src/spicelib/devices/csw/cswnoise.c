@@ -7,7 +7,6 @@ Author: 1987 Gary W. Ng
 #include <stdio.h>
 #include "cswdefs.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "suffix.h"
@@ -31,12 +30,12 @@ CSWnoise (mode, operation, genmodel, ckt, data, OnDens)
     int operation;
     GENmodel *genmodel;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     CSWmodel *firstModel = (CSWmodel *) genmodel;
-    register CSWmodel *model;
-    register CSWinstance *inst;
+    CSWmodel *model;
+    CSWinstance *inst;
     char name[N_MXVLNTH];
     double tempOutNoise;
     double tempInNoise;

@@ -16,11 +16,12 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  *
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "ftedata.h"
-#include "ftecmath.h"
+#include <ngspice.h>
+#include <memory.h>
+#include <cpdefs.h>
+#include <dvec.h>
+
+#include "cmath.h"
 #include "cmath1.h"
 
 

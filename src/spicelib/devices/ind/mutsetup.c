@@ -21,13 +21,13 @@ Author: 1985 Thomas L. Quarles
 /*ARGSUSED*/
 int
 MUTsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
 {
-    register MUTmodel *model = (MUTmodel*)inModel;
-    register MUTinstance *here;
+    MUTmodel *model = (MUTmodel*)inModel;
+    MUTinstance *here;
     int ktype;
     int error;
 

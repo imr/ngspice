@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #ifndef INP
@@ -77,7 +78,6 @@ typedef struct sINPmodel{
 #define LOGICAL 1
 #define PHYSICAL 2
 
-#ifdef __STDC__
 int IFnewUid(void*,IFuid*,IFuid,char*,int,void**);
 int IFdelUid(void*,IFuid,int);
 int INPaName(char*,IFvalue*,void*,int*,char*,void**,IFsimulator*,int*,
@@ -96,6 +96,7 @@ int INPgetTok(char**,char**,int);
 void INPgetTree(char**,INPparseTree**,void*,INPtables*);
 IFvalue * INPgetValue(void*,char**,int,INPtables*);
 int INPgndInsert(void*,char**,INPtables*,void**);
+int INPinsertNofree(char **token, INPtables *tab);
 int INPinsert(char**,INPtables*);
 int INPretrieve(char**,INPtables*);
 int INPremove(char*,INPtables*);
@@ -104,6 +105,7 @@ int INPmakeMod(char*,int,card*);
 char *INPmkTemp(char*);
 void INPpas1(void*,card*,INPtables*);
 void INPpas2(void*,card*,INPtables*,void *);
+void INPpas3(void*,card*,INPtables*,void *,IFparm*,int); 
 int INPpName(char*,IFvalue*,void*,int,void*);
 int INPtermInsert(void*,char**,INPtables*,void**);
 int INPmkTerm(void*,char**,INPtables*,void**);
@@ -121,6 +123,7 @@ void INP2K(void*,INPtables*,card*);
 void INP2L(void*,INPtables*,card*);
 void INP2M(void*,INPtables*,card*);
 void INP2O(void*,INPtables*,card*);
+void INP2P(void*,INPtables*,card*);
 void INP2Q(void*,INPtables*,card*,void*);
 void INP2R(void*,INPtables*,card*);
 void INP2S(void*,INPtables*,card*);
@@ -128,70 +131,10 @@ void INP2T(void*,INPtables*,card*);
 void INP2U(void*,INPtables*,card*);
 void INP2V(void*,INPtables*,card*);
 void INP2W(void*,INPtables*,card*);
+void INP2Y(void*,INPtables*,card*);
 void INP2Z(void*,INPtables*,card*);
 int INP2dot(void*,INPtables*,card*,void*,void*);
 INPtables *INPtabInit(int);
 void INPkillMods(void);
 void INPtabEnd(INPtables *);
-#else /* stdc */
-int IFnewUid();
-int IFdelUid();
-int INPaName();
-IFvalue * INPgetValue();
-INPtables *INPtabInit();
-char * INPdevParse();
-char * INPdomodel();
-char * INPerrCat();
-char * INPfindLev();
-char * INPgetMod();
-char *INPerror();
-char *INPmkTemp();
-double INPevaluate();
-int INPapName();
-int INPgetTitle();
-int INPgetTok();
-int INPgndInsert();
-int INPlookMod();
-int INPmakeMod();
-int INPpName();
-int INPreadAll();
-int INPtermInsert();
-int INPmkTerm();
-int INPtypelook();
-void INPcaseFix();
-void INPdoOpts();
-int INPinsert();
-int INPretrieve();
-int INPremove();
-void INPkillMods();
-void INPlist();
-void INPpas1() ;
-void INPpas2() ;
-void INPtabEnd();
-void INPptPrint();
-void INPgetTree();
-void INP2B();
-void INP2C();
-void INP2D();
-void INP2E();
-void INP2F();
-void INP2G();
-void INP2H();
-void INP2I();
-void INP2J();
-void INP2K();
-void INP2L();
-void INP2M();
-void INP2O();
-void INP2Q();
-void INP2R();
-void INP2S();
-void INP2T();
-void INP2U();
-void INP2V();
-void INP2W();
-void INP2Z();
-int INP2dot();
-#endif /* stdc */
-
 #endif /*INP*/

@@ -14,7 +14,7 @@ Author: 1988 Jaijeet S Roychowdhury
 int
 MOS1disto(mode,genmodel,ckt)
  GENmodel *genmodel;
- register CKTcircuit *ckt;
+ CKTcircuit *ckt;
  int mode;
 
 /* assuming here that ckt->CKTomega has been initialised to 
@@ -40,7 +40,7 @@ MOS1disto(mode,genmodel,ckt)
  double r2h1m2y,i2h1m2y;
  double r2h1m2z, i2h1m2z;
  double temp, itemp;
- register MOS1instance *here;
+ MOS1instance *here;
 
 if (mode == D_SETUP)
  return(MOS1dSetup(model,ckt));

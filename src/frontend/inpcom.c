@@ -6,15 +6,31 @@ Author: 1985 Wayne A. Christopher
 /*
  * For dealing with spice input decks and command scripts
  */
+ 
+/*
+ * SJB 22 May 2001
+ * Fixed memory leaks in inp_readall() when first(?) line of input begins with a '@'.
+ * Fixed memory leaks in inp_readall() when .include lines have errors
+ * Fixed crash where a NULL pointer gets freed in inp_readall()
+ */
 
 #include <config.h>
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteinp.h"
-#include "inpcom.h"
 
+
+#include "inpcom.h"
+#include "variable.h"
+
+#ifdef XSPICE
+/* gtri - add - 12/12/90 - wbk - include new stuff */
+#include "ipctiein.h"
+#include "enh.h"
+/* gtri - end - 12/12/90 */
+#endif
 
 /*  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF'
  *  and returns a pointer to the resulting null terminated string.
@@ -54,7 +70,7 @@ readline(FILE *fd)
         }
     }
     if (!strlen) {
-        free(strptr);
+        tfree(strptr);
         return (NULL);
     }
     strptr[strlen] = '\0'; 
@@ -108,14 +124,54 @@ inp_pathopen(char *name, char *mode)
 void
 inp_readall(FILE *fp, struct line **data)
 {
-    struct line *end = NULL, *cc, *prev = NULL, *working, *newcard;
+    struct line *end = NULL, *cc = NULL, *prev = NULL, *working, *newcard;
     char *buffer, *s, *t, c;
+    /* segfault fix */
+    char *copys=NULL;
     int line = 1;
     FILE *newfp;
 
+/* gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled */
+#ifdef XSPICE
+    Ipc_Status_t    ipc_status;
+    char            ipc_buffer[1025];  /* Had better be big enough */
+    int             ipc_len;
+
+    while (1) {
+
+        /* If IPC is not enabled, do equivalent of what SPICE did before */
+        if(! g_ipc.enabled) {
+            buffer = readline(fp);
+            if(! buffer)
+                break;
+        }
+        else {
+        /* else, get the line from the ipc channel. */
+        /* We assume that newlines are not sent by the client */
+        /* so we add them here */
+            ipc_status = ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
+            if(ipc_status == IPC_STATUS_END_OF_DECK) {
+                buffer = NULL;
+                break;
+            }
+            else if(ipc_status == IPC_STATUS_OK) {
+                buffer = (void *) MALLOC(strlen(ipc_buffer) + 3);
+                strcpy(buffer, ipc_buffer);
+                strcat(buffer, "\n");
+            }
+            else {  /* No good way to report this so just die */
+                exit(1);
+            }
+        }
+
+/* gtri - end - 12/12/90 */
+#else
     while ((buffer = readline(fp))) {
-        if (*buffer == '@')
+#endif
+        if (*buffer == '@') {
+	    tfree(buffer);		/* was allocated by readline() */
             break;
+	}
         for (s = buffer; *s && (*s != '\n'); s++)
             ;
         if (!*s) {
@@ -129,19 +185,34 @@ inp_readall(FILE *fp, struct line **data)
             while (isspace(*s))
                 s++;
             if (!*s) {
-                fprintf(cp_err, 
-                "Error: .include filename missing\n");
+                fprintf(cp_err,  "Error: .include filename missing\n");
+		tfree(buffer);		/* was allocated by readline() */
                 continue;
             }
             for (t = s; *t && !isspace(*t); t++)
                 ;
             *t = '\0';
-            if (*s == '~')
-                s = cp_tildexpand(s);
+		
+	    if (*s == '~') {
+		copys = cp_tildexpand(s); /* allocates memory, but can also return NULL */
+		if(copys != NULL) {
+		    s = copys;		/* reuse s, but remember, buffer still points to allocated memory */
+		}
+	    }
+				
             if (!(newfp = inp_pathopen(s, "r"))) {
                 perror(s);
+		if(copys) {
+			tfree(copys);	/* allocated by the cp_tildexpand() above */
+		}
+		tfree(buffer);		/* allocated by readline() above */
                 continue;
             }
+	    
+	    if(copys) {
+		tfree(copys);		/* allocated by the cp_tildexpand() above */
+	    }  
+	    
             inp_readall(newfp, &newcard);
             (void) fclose(newfp);
 
@@ -242,8 +313,9 @@ inp_readall(FILE *fp, struct line **data)
     return;
 }
 
+
 void
-inp_casefix(register char *string)
+inp_casefix(char *string)
 {
 #ifdef HAVE_CTYPE_H
     if (string)
@@ -254,8 +326,10 @@ inp_casefix(register char *string)
 #endif
 	    if (*string == '"') {
 		*string++ = ' ';
-		while (*string && *string != '"') string++;
-		if (*string == '"') *string = ' ';
+		while (*string && *string != '"')
+		    string++;
+		if (*string == '"')
+		    *string = ' ';
 	    }
 	    if (!isspace(*string) && !isprint(*string))
 		*string = '_';

@@ -8,12 +8,12 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * This also handles relational and logical expressions.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "fteparse.h"
-#include "ftedata.h"
-#include "ftecmath.h"
+#include <ngspice.h>
+#include <bool.h>
+#include <fteparse.h>
+#include <fteext.h>
+#include <sim.h>
+
 #include "parse.h"
 
 
@@ -598,8 +598,15 @@ struct func ft_funcs[] = {
         { "vector", cx_vector } ,
         { "unitvec",    cx_unitvec } ,
         { "length", cx_length } ,
+        { "vecmin", cx_min } ,
+        { "vecmax", cx_max } ,
+        { "vecd", cx_d } ,
+#if 0
+	/* These functions have been temporarily been disabled.  See
+           their definitions for the reason. */
         { "interpolate",cx_interpolate } ,
         { "deriv",  cx_deriv } ,
+#endif
         { "v",      NULL } ,
         { NULL,     NULL }
 } ;

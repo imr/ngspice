@@ -17,13 +17,13 @@ Author: 1985 Thomas L. Quarles
 /*ARGSUSED*/
 int
 CCVSsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     int *states;
 {
-    register CCVSmodel *model = (CCVSmodel*)inModel;
-    register CCVSinstance *here;
+    CCVSmodel *model = (CCVSmodel*)inModel;
+    CCVSinstance *here;
     int error;
     CKTnode *tmp;
 
@@ -70,7 +70,6 @@ CCVSunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     CCVSmodel *model;
     CCVSinstance *here;
 
@@ -86,6 +85,5 @@ CCVSunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

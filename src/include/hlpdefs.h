@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group 
-Modified 1999 Emmanuel Rouat
+Modified 1999 Emmanuel Rouat - 2000  AlansFixes
 **********/
 
 /*
@@ -118,6 +118,7 @@ extern void hlp_pathfix(char *buf);
 extern topic *hlp_read(fplace *place);
 extern void hlp_free(void);
 extern long findsubject(char *filename, char *subject);
+extern bool hlp_approvedfile();
 
 /* provide.c */
 

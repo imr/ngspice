@@ -20,6 +20,12 @@ void * cx_plus(void *data1, void *data2, short int datatype1, short int datatype
 void * cx_minus(void *data1, void *data2, short int datatype1, short int datatype2, int length);
 void * cx_times(void *data1, void *data2, short int datatype1, short int datatype2, int length);
 void * cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int length);
+void * cx_max(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_min(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_d(void *data, short int type, int length, int *newlength, short int *newtype);
 
 
 #endif
+
+
+

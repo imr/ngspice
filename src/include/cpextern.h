@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
+Modified: 2000  AlansFixes
 **********/
 
 /*
@@ -10,6 +11,10 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #ifndef CPEXTERN_H
 #define CPEXTERN_H
 
+#include "wordlist.h"
+#include "bool.h"
+
+
 /* alias.c */
 
 extern struct alias *cp_aliases;
@@ -18,6 +23,7 @@ extern void com_unalias();
 extern void cp_paliases();
 extern void cp_setalias();
 extern void cp_unalias();
+
 extern wordlist *cp_doalias();
 
 /* backquote.c */
@@ -95,7 +101,7 @@ extern int cp_maxhistlength;
 extern struct histent *cp_lastone;
 extern void com_history();
 extern void cp_addhistent();
-extern void cp_hprint();
+void cp_hprint(int eventhi, int eventlo, bool rev);
 extern wordlist *cp_histsubst();
 
 /* lexical.c */
@@ -123,6 +129,7 @@ extern bool out_isatty;
 extern void out_init();
 #ifndef out_printf
 /* don't want to declare it if we have #define'ed it */
+
 extern void out_printf();
 #endif
 extern void out_send();
@@ -141,7 +148,7 @@ extern void cp_printword(char *string, FILE *fp);
 
 extern bool cp_unixcom();
 extern void cp_hstat();
-extern void cp_rehash();
+void cp_rehash(char *pathlist, bool docc);
 
 /* variable.c */
 
@@ -153,33 +160,30 @@ extern bool cp_nonomatch;
 extern char cp_dol;
 extern void cp_remvar(char *varname);
 extern void cp_vset(char *varname, char type, char *value);
-extern wordlist *cp_varwl(struct variable *var);
 extern struct variable *cp_setparse(wordlist *wl);
 
 /* var2.c */
-extern wordlist *vareval(char *string);
-extern wordlist *cp_variablesubst(wordlist *wlist);
 extern void cp_vprint(void);
 extern void com_set(wordlist *wl);
+extern void com_option(wordlist *wl);
+extern void com_state(wordlist *wl);
 extern void com_unset(wordlist *wl);
 extern void com_shift(wordlist *wl);
-extern bool cp_getvar(char *name, int type, char *retval);
-extern wordlist *cp_variablesubst(wordlist *wlist);
+extern bool cp_getvar(char *name, int type, void *retval);
 
 /* cpinterface.c etc -- stuff CP needs from FTE */
 
-extern bool cp_istrue();
+extern bool cp_istrue(wordlist *wl);
 extern bool cp_oddcomm();
 extern void cp_doquit();
 extern void cp_periodic();
 extern void ft_cpinit();
 extern struct comm *cp_coms;
-extern double *ft_numparse();
 extern char *cp_program;
 extern bool ft_nutmeg;
 extern struct variable *cp_enqvar();
 extern void cp_usrvars();
-extern int cp_usrset();
+int cp_usrset(struct variable *var, bool isset);
 extern void fatal();
 
 #endif

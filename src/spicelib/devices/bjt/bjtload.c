@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 /*
@@ -22,13 +23,13 @@ int
 BJTload(inModel,ckt)
 
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current resistance value into the 
          * sparse matrix previously provided 
          */
 {
-    register BJTmodel *model = (BJTmodel*)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel*)inModel;
+    BJTinstance *here;
     double arg1;
     double arg2;
     double arg3;
@@ -313,7 +314,7 @@ BJTload(inModel,ckt)
                 cbhat= *(ckt->CKTstate0 + here->BJTcb)+ *(ckt->CKTstate0 + 
                         here->BJTgpi)*delvbe+ *(ckt->CKTstate0 + here->BJTgmu)*
                         delvbc;
-#ifndef NOBYPASS
+
                 /*
                  *    bypass if solution has not changed
                  */
@@ -354,7 +355,7 @@ BJTload(inModel,ckt)
                     geqbx = *(ckt->CKTstate0 + here->BJTgeqbx);
                     goto load;
                 }
-#endif /*NOBYPASS*/
+
                 /*
                  *   limit nonlinear branch voltages
                  */
@@ -369,43 +370,65 @@ BJTload(inModel,ckt)
              *   determine dc current and derivitives
              */
 next1:      vtn=vt*model->BJTemissionCoeffF;
-            if(vbe > -5*vtn){
+
+            if(vbe >= -3*vtn){
                 evbe=exp(vbe/vtn);
-                cbe=csat*(evbe-1)+ckt->CKTgmin*vbe;
-                gbe=csat*evbe/vtn+ckt->CKTgmin;
-                if (c2 == 0) {
-                    cben=0;
-                    gben=0;
-                } else {
+                cbe=csat*(evbe-1);
+                gbe=csat*evbe/vtn;
+            } else {
+                arg=3*vtn/(vbe*CONSTe);
+                arg = arg * arg * arg;
+                cbe = -csat*(1+arg);
+                gbe = csat*3*arg/vbe;
+            }
+            if (c2 == 0) {
+                cben=0;
+                gben=0;
+            } else {
+                if(vbe >= -3*vte){
                     evben=exp(vbe/vte);
                     cben=c2*(evben-1);
                     gben=c2*evben/vte;
-                }
-            } else {
-                gbe = -csat/vbe+ckt->CKTgmin;
-                cbe=gbe*vbe;
-                gben = -c2/vbe;
-                cben=gben*vbe;
-            }
-            vtn=vt*model->BJTemissionCoeffR;
-            if(vbc > -5*vtn) {
-                evbc=exp(vbc/vtn);
-                cbc=csat*(evbc-1)+ckt->CKTgmin*vbc;
-                gbc=csat*evbc/vtn+ckt->CKTgmin;
-                if (c4 == 0) {
-                    cbcn=0;
-                    gbcn=0;
                 } else {
+                    arg=3*vte/(vbe*CONSTe);
+                    arg = arg * arg * arg;
+                    cben = -c2*(1+arg);
+                    gben = c2*3*arg/vbe;
+                }
+            }
+            gben+=ckt->CKTgmin;
+            cben+=ckt->CKTgmin*vbe;
+            
+            vtn=vt*model->BJTemissionCoeffR;
+            
+              if(vbc >= -3*vtn) {
+                evbc=exp(vbc/vtn);
+                cbc=csat*(evbc-1);
+                gbc=csat*evbc/vtn;
+            } else {
+                arg=3*vtn/(vbc*CONSTe);
+                arg = arg * arg * arg;
+                cbc = -csat*(1+arg);
+                gbc = csat*3*arg/vbc;
+            }
+            if (c4 == 0) {
+                cbcn=0;
+                gbcn=0;
+            } else {
+                if(vbc >= -3*vtc) {
                     evbcn=exp(vbc/vtc);
                     cbcn=c4*(evbcn-1);
                     gbcn=c4*evbcn/vtc;
+                } else {
+                    arg=3*vtc/(vbc*CONSTe);
+                    arg = arg * arg * arg;
+                    cbcn = -c4*(1+arg);
+                    gbcn = c4*3*arg/vbc;
                 }
-            } else {
-                gbc = -csat/vbc+ckt->CKTgmin;
-                cbc = gbc*vbc;
-                gbcn = -c4/vbc;
-                cbcn=gbcn*vbc;
             }
+            gbcn+=ckt->CKTgmin;
+            cbcn+=ckt->CKTgmin*vbc;
+            
             /*
              *   determine base charge terms
              */
@@ -652,21 +675,6 @@ next1:      vtn=vt*model->BJTemissionCoeffF;
                 if (icheck == 1) {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
-#ifndef NEWCONV
-                } else {
-                    tol=ckt->CKTreltol*MAX(fabs(cchat),fabs(cc))+ckt->CKTabstol;
-                    if (fabs(cchat-cc) > tol) {
-                        ckt->CKTnoncon++;
-			ckt->CKTtroubleElt = (GENinstance *) here;
-                    } else {
-                        tol=ckt->CKTreltol*MAX(fabs(cbhat),fabs(cb))+
-                            ckt->CKTabstol;
-                        if (fabs(cbhat-cb) > tol) {
-                            ckt->CKTnoncon++;
-			    ckt->CKTtroubleElt = (GENinstance *) here;
-                        }
-                    }
-#endif /* NEWCONV */
                 }
             }
 

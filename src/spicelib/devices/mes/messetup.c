@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 S. Hwang
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -14,7 +15,7 @@ Author: 1985 S. Hwang
 
 int
 MESsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
@@ -22,8 +23,8 @@ MESsetup(matrix,inModel,ckt,states)
          * for fast matrix loading 
          */
 {
-    register MESmodel *model = (MESmodel*)inModel;
-    register MESinstance *here;
+    MESmodel *model = (MESmodel*)inModel;
+    MESinstance *here;
     int error;
     CKTnode *tmp;
 
@@ -92,6 +93,19 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->MESname,"source");
                 if(error) return(error);
                 here->MESsourcePrimeNode = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->MESsourcePrimeNode = here->MESsourceNode;
             }
@@ -99,6 +113,19 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->MESname,"drain");
                 if(error) return(error);
                 here->MESdrainPrimeNode = tmp->number;
+                
+                if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+                
             } else {
                 here->MESdrainPrimeNode = here->MESdrainNode;
             }
@@ -140,7 +167,6 @@ MESunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     MESmodel *model;
     MESinstance *here;
 
@@ -164,6 +190,5 @@ MESunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

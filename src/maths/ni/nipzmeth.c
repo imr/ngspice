@@ -19,6 +19,8 @@ static unsigned int Debug = 0;
 */
 #endif
 
+extern void zaddeq(double *a, int *amag, double x, int xmag, double y, int ymag);
+
 extern	int CKTpzTrapped;
 double	NIpzK;
 int	NIpzK_mag;
@@ -26,55 +28,13 @@ int	NIpzK_mag;
 int
 NIpzSym(PZtrial **set, PZtrial *new)
 {
-#ifndef notdef
     return NIpzSym2(set, new);
-#else
-    double	a, b, c, x0, x1;
-    double	dx0, dx1;
-    int		a_mag, b_mag, c_mag;
-
-    dx0 = set[1]->s.real - set[0]->s.real;
-    dx1 = set[2]->s.real - set[1]->s.real;
-
-    zaddeq(&a, &a_mag, set[1]->f_def.real, set[1]->mag_def,
-	-set[0]->f_def.real, set[0]->mag_def);
-    a /= dx0;
-    zaddeq(&b, &b_mag, set[2]->f_def.real, set[2]->mag_def,
-	-set[1]->f_def.real, set[1]->mag_def);
-    b /= dx1;
-    zaddeq(&c, &c_mag, b, b_mag, -a, a_mag);
-
-    /* XXX What if c == 0.0 ? */
-
-    x0 = (set[0]->s.real + set[1]->s.real) / 2.0;
-    x1 = (set[1]->s.real + set[2]->s.real) / 2.0;
-
-    c /= (x1 - x0);
-
-    new->s.real = - a / c;
-    c_mag -= a_mag;
-
-    new->s.imag = 0.0;
-
-    while (c_mag > 0) {
-	new->s.real /= 2.0;
-	c_mag -= 1;
-    }
-    while (c_mag < 0) {
-	new->s.real *= 2.0;
-	c_mag += 1;
-    }
-    new->s.real += set[0]->s.real;
-#endif
 }
 
 int
 NIpzComplex(PZtrial **set, PZtrial *new)
 {
     return NIpzSym2(set, new);
-#ifdef notdef
-    NIpzMuller(set, new);
-#endif
 }
 
 int
@@ -257,7 +217,7 @@ NIpzSym2(PZtrial **set, PZtrial *new)
     int		tmag;
     int		error;
     int		disc_mag;
-    int		new_mag;
+    int		new_mag = 0;
 
     error = OK;
 

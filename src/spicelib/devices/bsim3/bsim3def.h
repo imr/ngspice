@@ -2,6 +2,7 @@
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
 Author: 1997-1999 Weidong Liu.
+Modified: 2000 AlansFixes
 File: bsim3def.h
 **********/
 
@@ -20,7 +21,8 @@ typedef struct sBSIM3instance
     struct sBSIM3instance *BSIM3nextInstance;
     IFuid BSIM3name;
     int BSIM3owner;   /* number of owner process */
-    int BSIM3states;  /* index into state table for this device */
+    int BSIM3states;     /* index into state table for this device */
+    
     int BSIM3dNode;
     int BSIM3gNode;
     int BSIM3sNode;
@@ -43,6 +45,7 @@ typedef struct sBSIM3instance
 
     double BSIM3l;
     double BSIM3w;
+    double BSIM3m;
     double BSIM3drainArea;
     double BSIM3sourceArea;
     double BSIM3drainSquares;
@@ -106,6 +109,7 @@ typedef struct sBSIM3instance
 
     unsigned BSIM3lGiven :1;
     unsigned BSIM3wGiven :1;
+    unsigned BSIM3mGiven :1;
     unsigned BSIM3drainAreaGiven :1;
     unsigned BSIM3sourceAreaGiven    :1;
     unsigned BSIM3drainSquaresGiven  :1;
@@ -152,7 +156,7 @@ typedef struct sBSIM3instance
     double *BSIM3SPqPtr;
     double *BSIM3BqPtr;
 
-  /*    int BSIM3states;     index into state table for this device */
+    
 #define BSIM3vbd BSIM3states+ 0
 #define BSIM3vbs BSIM3states+ 1
 #define BSIM3vgs BSIM3states+ 2
@@ -1213,6 +1217,7 @@ typedef struct sBSIM3model
 /* device parameters */
 #define BSIM3_W 1
 #define BSIM3_L 2
+#define BSIM3_M 15
 #define BSIM3_AS 3
 #define BSIM3_AD 4
 #define BSIM3_PS 5

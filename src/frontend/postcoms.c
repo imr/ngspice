@@ -7,255 +7,21 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Various post-processor commands having to do with vectors.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "fteparse.h"
-#include "ftedata.h"
-#include "postcoms.h"
+#include <ngspice.h>
+#include <cpdefs.h>
+#include <ftedefs.h>
+#include <dvec.h>
+#include <sim.h>
+#include <plot.h>
 
+#include "completion.h"
+#include "postcoms.h"
+#include "quote.h"
+#include "variable.h"
 
 /* static declarations */
-static void pvec(struct dvec *d);
-static int dcomp(struct dvec **v1, struct dvec **v2);
 static void killplot(struct plot *pl);
 
-
-void
-com_let(wordlist *wl)
-{
-    char *p, *q, *s;
-    int	indices[MAXDIMS];
-    int	numdims;
-    wordlist fake_wl;
-    int need_open;
-    int offset, length;
-    struct pnode *nn;
-    struct dvec *n, *t;
-    int i, cube;
-    int depth;
-    int newvec;
-    char *rhs;
-
-    fake_wl.wl_next = NULL;
-
-    if (!wl) {
-        com_display((wordlist *) NULL);
-        return;
-    }
-
-    p = wl_flatten(wl);
-
-    /* extract indices */
-    numdims = 0;
-    if ((rhs =strchr(p, '='))) {
-	*rhs++ = 0;
-    } else {
-	fprintf(cp_err, "Error: bad let syntax\n");
-	return;
-    }
-    if ((s =strchr(p, '['))) {
-	need_open = 0;
-	*s++ = 0;
-	while (!need_open || *s == '[') {
-	    depth = 0;
-	    if (need_open)
-		s++;
-	    for (q = s; *q && (*q != ']' && (*q != ',' || depth > 0)); q++) {
-		switch (*q) {
-		case '[':
-		    depth += 1;
-		    break;
-		case ']':
-		    depth -= 1;
-		    break;
-		}
-	    }
-
-	    if (depth != 0 || !*q) {
-		printf("syntax error specifyingstrchr\n");
-		return;
-	    }
-
-	    if (*q == ']')
-		need_open = 1;
-	    else
-		need_open = 0;
-	    if (*q)
-	        *q++ = 0;
-
-/* MW. let[x,y] is not supported - we don't need this code
-	    
-	*   evaluate expression between s and q 
-	    fake_wl.wl_word = s;
-	    nn = ft_getpnames(&fake_wl, TRUE);
-	    t = ft_evaluate(nn);
-
-	    free_pnode(nn);
-	    
-	    if (!t) {		
-	    	fprintf(cp_err, "Error: badstrchr.\n"); // MW. When t == NULL something is wrong 
-	    	tfree(p);
-	    	return;
-	    }
-
-	    if (!isreal(t) || t->v_link2 || t->v_length != 1 || !t->v_realdata)
-	    {
-		fprintf(cp_err, "Error:strchr is not a scalar.\n");
-		tfree(p);
-		
-		return;
-	    }
-	    j = t->v_realdata[0]; 
-	    * ignore sanity checks for now 
-
-	    if (j < 0) {
-		printf("negativestrchr (%d) is not allowed\n", j);
-		tfree(p);
-		return;
-	    }
-
-	    indices[numdims++] = j;
-	
-	
-	
-		
-		* MW. Next line does not hurt. I don't know what it is doing 
-			*/
-	
-	    for (s = q; *s && isspace(*s); s++)
-		;
-	}
-    }
-    /* vector name at p */
-
-    for (q = p + strlen(p) - 1; *q <= ' ' && p <= q; q--)
-	;
-
-    *++q = 0;
-
-    /* sanity check */
-    if (eq(p, "all") ||strchr(p, '@')) {
-        fprintf(cp_err, "Error: bad variable name %s\n", p);
-        return;
-    }
-
-    /* evaluate rhs */
-    fake_wl.wl_word = rhs;
-    nn = ft_getpnames(&fake_wl, TRUE);
-    if (nn == NULL) {
-	/* XXX error message */
-        tfree(p);
-        return;
-    }
-    t = ft_evaluate(nn);
-    if (!t) {
-	fprintf(cp_err, "Error: Can't evaluate %s\n", rhs);
-        tfree(p);
-        return;
-    }
-
-    if (t->v_link2)
-        fprintf(cp_err, "Warning: extra wildcard values ignored\n");
-
-    n = vec_get(p);
-
-    if (n) {
-	/* re-allocate? */
-	/* vec_free(n); */
-	newvec = 0;
-    } else {
-	if (numdims) {
-	    fprintf(cp_err, "Can't assign into a subindex of a new vector\n");
-	    tfree(p);
-	    return;
-	}
-
-	/* create and assign a new vector */
-	n = alloc(struct dvec);
-	ZERO(n, struct dvec);
-	n->v_name = copy(p);
-	n->v_type = t->v_type;
-	n->v_flags = (t->v_flags | VF_PERMANENT);
-	n->v_length = t->v_length;
-
-	if (!t->v_numdims) {
-	    n->v_numdims = 1;
-	    n->v_dims[0] = n->v_length;
-	} else {
-	    n->v_numdims = t->v_numdims;
-	    for (i = 0; i < t->v_numdims; i++)
-		n->v_dims[i] = t->v_dims[i];
-	}
-
-	if (isreal(t))
-	    n->v_realdata = (double *) tmalloc(n->v_length * sizeof(double));
-	else
-	    n->v_compdata = (complex *) tmalloc(n->v_length * sizeof(complex));
-	newvec = 1;
-	vec_new(n);
-    }
-
-    /* fix-up dimensions */
-    if (n->v_numdims < 1) {
-	n->v_numdims = 1;
-	n->v_dims[0] = n->v_length;
-    }
-
-    /* Compare dimensions */
-    offset = 0;
-    length = n->v_length;
-
-    cube = 1;
-    for (i = n->v_numdims - 1; i >= numdims; i--)
-	cube *= n->v_dims[i];
-
-    for (i = numdims - 1; i >= 0; i--) {
-	offset += cube * indices[i];
-	if (i < n->v_numdims) {
-	    cube *= n->v_dims[i];
-	    length /= n->v_dims[i];
-	}
-    }
-
-    /* length is the size of the unit refered to */
-    /* cube ends up being the length */
-
-    if (length > t->v_length) {
-	fprintf(cp_err, "left-hand expression is too small (need %d)\n",
-		length * cube);
-	if (newvec)
-	    n->v_flags &= ~VF_PERMANENT;
-	tfree(p);
-	return;
-    }
-    if (isreal(t) != isreal(n)) {
-	fprintf(cp_err,
-		"Types of vectors are not the same (real vs. complex)\n");
-	if (newvec)
-	    n->v_flags &= ~VF_PERMANENT;
-	tfree(p);
-	return;
-    } else if (isreal(t)) {
-	bcopy((char *) t->v_realdata, (char *) (n->v_realdata + offset),
-		length * sizeof (double));
-    } else {
-	bcopy((char *) t->v_compdata, (char *) (n->v_compdata + offset),
-		length * sizeof (complex));
-    }
-
-    n->v_minsignal = 0.0; /* How do these get reset ??? */
-    n->v_maxsignal = 0.0;
-
-    n->v_scale = t->v_scale;
-
-    if (newvec)
-	cp_addkword(CT_VECTOR, n->v_name);
-
-    /* XXXX Free t !?! */
-    tfree(p);
-    return;
-}
 
 /* Undefine vectors. */
 
@@ -274,12 +40,15 @@ com_unlet(wordlist *wl)
 void
 com_load(wordlist *wl)
 {
-
+char *copypath;
     if (!wl)
         ft_loadfile(ft_rawfile);
     else
         while (wl) {
-            ft_loadfile(cp_unquote(wl->wl_word));
+            /*ft_loadfile(cp_unquote(wl->wl_word)); DG: bad memory leak*/
+            copypath=cp_unquote(wl->wl_word);/*DG*/
+            ft_loadfile(copypath);
+            tfree(copypath);
             wl = wl->wl_next;
         }
 
@@ -298,17 +67,19 @@ com_load(wordlist *wl)
 void
 com_print(wordlist *wl)
 {
-    struct dvec *v, *lv, *bv, *nv, *vecs = NULL;
+    struct dvec *v, *lv = NULL, *bv, *nv, *vecs = NULL;
     int i, j, ll, width = DEF_WIDTH, height = DEF_HEIGHT, npoints, lineno;
     struct pnode *nn;
     struct plot *p;
     bool col = TRUE, nobreak = FALSE, noprintscale, plotnames = FALSE;
     bool optgiven = FALSE;
     char *s, buf[BSIZE_SP], buf2[BSIZE_SP];
+    char numbuf[BSIZE_SP], numbuf2[BSIZE_SP]; /* Printnum buffers */
     int ngood;
 
     if (wl == NULL)
         return;
+        
     if (eq(wl->wl_word, "col")) {
         col = TRUE;
         optgiven = TRUE;
@@ -371,19 +142,30 @@ com_print(wordlist *wl)
             ll = 10;
             if (v->v_length == 1) {
                 if (isreal(v)) {
-                    out_printf("%s = %s\n", buf,
-                        printnum(*v->v_realdata));
+                	printnum(numbuf, *v->v_realdata);
+                    out_printf("%s = %s\n", buf, numbuf);
                 } else {
+                 /*DG: memory leak here copy of the string returned by printnum will never be freed 
                     out_printf("%s = %s,%s\n", buf,
                         copy(printnum(realpart(v->v_compdata))),
-                        copy(printnum(imagpart(v->v_compdata))));
+                        copy(printnum(imagpart(v->v_compdata)))); */
+                        
+                    printnum(numbuf,  realpart(v->v_compdata));
+                    printnum(numbuf2, imagpart(v->v_compdata));
+                    
+                    out_printf("%s = %s,%s\n", buf,
+                        numbuf,
+                        numbuf2);
+                   
+
                 }
             } else {
                 out_printf("%s = (  ", buf);
                 for (i = 0; i < v->v_length; i++)
                     if (isreal(v)) {
-                        (void) strcpy(buf,
-                           printnum(v->v_realdata[i]));
+                    	
+                    	printnum(numbuf, v->v_realdata[i]);
+                        (void) strcpy(buf, numbuf);
                         out_send(buf);
                         ll += strlen(buf);
                         ll = (ll + 7) / 8;
@@ -394,9 +176,12 @@ com_print(wordlist *wl)
                         } else
                             out_send("\t");
                     } else {
+                        /*DG*/
+                        printnum(numbuf,  realpart(&v->v_compdata[i]));
+                        printnum(numbuf2, imagpart(&v->v_compdata[i]));
                         (void) sprintf(buf, "%s,%s",
-                            copy(printnum(realpart(&v->v_compdata[i]))),
-                            copy(printnum(imagpart(&v->v_compdata[i]))));
+                            numbuf,
+                            numbuf2);
                         out_send(buf);
                         ll += strlen(buf);
                         ll = (ll + 7) / 8;
@@ -694,6 +479,7 @@ com_transpose(wordlist *wl)
     while (wl) {
         s = cp_unquote(wl->wl_word);
         d = vec_get(s);
+        tfree(s); /*DG: Avoid Memory Leak */
         if (d == NULL)
             fprintf(cp_err, "Error: no such vector as %s.\n", 
                 wl->wl_word);
@@ -708,259 +494,7 @@ com_transpose(wordlist *wl)
     }
 }
 
-/* Set the default scale to the named vector.  If no vector named,
- * find and print the default scale.
- */
-
-void
-com_setscale(wordlist *wl)
-{
-    struct dvec *d;
-    char *s;
-
-    if (plot_cur) {
-	if (wl) {
-	    s = cp_unquote(wl->wl_word);
-	    d = vec_get(s);
-	    if (d == NULL)
-		fprintf(cp_err, "Error: no such vector as %s.\n", 
-		    wl->wl_word);
-	    else
-		plot_cur->pl_scale = d;
-	} else if (plot_cur->pl_scale) {
-	    pvec(plot_cur->pl_scale);
-	}
-    } else {
-	fprintf(cp_err, "Error: no current plot.\n");
-    }
-}
-
-
-/* Display vector status, etc.  Note that this only displays stuff from the
- * current plot, and you must do a setplot to see the rest of it.
- */
-
-void
-com_display(wordlist *wl)
-{
-    struct dvec *d;
-    struct dvec **dvs;
-    int len = 0, i = 0;
-    bool b;
-    char *s;
-
-    /* Maybe he wants to know about just a few vectors. */
-
-    out_init();
-    while (wl) {
-        s = cp_unquote(wl->wl_word);
-        d = vec_get(s);
-        if (d == NULL)
-            fprintf(cp_err, "Error: no such vector as %s.\n", 
-                wl->wl_word);
-        else
-            while (d) {
-                pvec(d);
-                d = d->v_link2;
-            }
-        if (wl->wl_next == NULL)
-            return;
-        wl = wl->wl_next;
-    }
-    if (plot_cur)
-        for (d = plot_cur->pl_dvecs; d; d = d->v_next)
-            len++;
-    if (len == 0) {
-        fprintf(cp_out, "There are no vectors currently active.\n");
-        return;
-    }
-    out_printf("Here are the vectors currently active:\n\n");
-    dvs = (struct dvec **) tmalloc(len * (sizeof (struct dvec *)));
-    for (d = plot_cur->pl_dvecs, i = 0; d; d = d->v_next, i++)
-        dvs[i] = d;
-    if (!cp_getvar("nosort", VT_BOOL, (char *) &b))
-        qsort((char *) dvs, len, sizeof (struct dvec *), dcomp);
-
-    out_printf("Title: %s\n",  plot_cur->pl_title);
-    out_printf("Name: %s (%s)\nDate: %s\n\n", 
-        plot_cur->pl_typename, plot_cur->pl_name, 
-        plot_cur->pl_date);
-    for (i = 0; i < len; i++) {
-        d = dvs[i];
-        pvec(d);
-    }
-    return;
-}
-
-static void
-pvec(struct dvec *d)
-{
-    char buf[BSIZE_SP], buf2[BSIZE_SP];
-
-    sprintf(buf, "    %-20s: %s, %s, %d long", d->v_name,
-            ft_typenames(d->v_type), isreal(d) ? "real" :
-            "complex", d->v_length);
-    if (d->v_flags & VF_MINGIVEN) {
-        sprintf(buf2, ", min = %g", d->v_minsignal);
-        strcat(buf, buf2);
-    }
-    if (d->v_flags & VF_MAXGIVEN) {
-        sprintf(buf2, ", max = %g", d->v_maxsignal);
-        strcat(buf, buf2);
-    }
-    switch (d->v_gridtype) {
-
-        case GRID_LOGLOG:
-        strcat(buf, ", grid = loglog");
-        break;
-
-        case GRID_XLOG:
-        strcat(buf, ", grid = xlog");
-        break;
-
-        case GRID_YLOG:
-        strcat(buf, ", grid = ylog");
-        break;
-
-        case GRID_POLAR:
-        strcat(buf, ", grid = polar");
-        break;
-
-        case GRID_SMITH:
-        strcat(buf, ", grid = smith (xformed)");
-        break;
-
-        case GRID_SMITHGRID:
-        strcat(buf, ", grid = smithgrid (not xformed)");
-        break;
-    }
-    switch (d->v_plottype) {
-
-        case PLOT_COMB:
-        strcat(buf, ", plot = comb");
-        break;
-
-        case PLOT_POINT:
-        strcat(buf, ", plot = point");
-        break;
-
-    }
-    if (d->v_defcolor) {
-        sprintf(buf2, ", color = %s", d->v_defcolor);
-        strcat(buf, buf2);
-    }
-    if (d->v_scale) {
-        sprintf(buf2, ", scale = %s", d->v_scale->v_name);
-        strcat(buf, buf2);
-    }
-    if (d->v_numdims > 1) {
-	sprintf(buf2, ", dims = [%s]", dimstring(d->v_dims, d->v_numdims));
-        strcat(buf, buf2);
-    }
-    if (d->v_plot->pl_scale == d) {
-        strcat(buf, " [default scale]\n");
-    } else {
-        strcat(buf, "\n");
-    }
-    out_send(buf);
-    return;
-}
-
-#ifdef notdef
-
-/* Set the current working plot. */
-
-void
-com_splot(wl)
-    wordlist *wl;
-{
-    struct plot *p;
-    char buf[BSIZE_SP], *s;
-
-    if (wl == NULL) {
-        fprintf(cp_out, "\tType the name of the desired plot:\n\n");
-        fprintf(cp_out, "\tnew\tNew plot\n");
-        for (p = plot_list; p; p = p->pl_next) {
-            if (plot_cur == p)
-                fprintf(cp_out, "Current");
-            fprintf(cp_out, "\t%s\t%s (%s)\n",
-                p->pl_typename, p->pl_title, p->pl_name);
-        }
-        fprintf(cp_out, "? ");
-        (void) fflush(cp_out);
-        (void) fgets(buf, BSIZE_SP, cp_in);
-        clearerr(cp_in);
-        for (s = buf; *s && !isspace(*s); s++)
-            ;
-        *s = '\0';
-    } else {
-        (void) strcpy(buf, wl->wl_word);
-    }
-    if (prefix("new", buf)) {
-        p = plot_alloc("unknown");
-        p->pl_title = copy("Anonymous");
-        p->pl_name = copy("unknown");
-        p->pl_next = plot_list;
-        plot_list = p;
-    } else {
-        for (p = plot_list; p; p = p->pl_next)
-            if (plot_prefix(buf, p->pl_typename))
-                break;
-        if (!p) {
-            fprintf(cp_err, "Error: no such plot.\n");
-            return;
-        }
-    }
-    plot_cur->pl_ccom = cp_kwswitch(CT_VECTOR, p->pl_ccom);
-    plot_cur = p;
-    plot_docoms(plot_cur->pl_commands);
-    if (wl)
-        fprintf(cp_out, "%s %s (%s)\n", p->pl_typename, p->pl_title,
-                p->pl_name);
-    return;
-}
-
-#endif
-
-/* For the sort in display. */
-
-static int
-dcomp(struct dvec **v1, struct dvec **v2)
-{
-    return (strcmp((*v1)->v_name, (*v2)->v_name));
-}
-
-#ifdef notdef
-
-/* Figure out what the name of this vector should be (if it is a number,
- * then make it 'V' or 'I')... Note that the data is static.
- */
-
-static char *
-dname(d)
-    struct dvec *d;
-{
-    static char buf[128];
-    char *s;
-
-    for (s = d->v_name; *s; s++)
-        if (!isdigit(*s))
-            return (d->v_name);
-    switch (d->v_type) {
-        case SV_VOLTAGE:
-            (void) sprintf(buf, "V(%s)", d->v_name);
-            return (buf);
-        case SV_CURRENT:
-            (void) sprintf(buf, "I(%s)", d->v_name);
-            return (buf);
-    }
-    return (d->v_name);
-}
-
-#endif
-
 /* Take a set of vectors and form a new vector of the nth elements of each. */
-
 void
 com_cross(wordlist *wl)
 {

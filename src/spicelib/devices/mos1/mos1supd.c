@@ -16,10 +16,10 @@ Author: 1985 Thomas L. Quarles
 int
 MOS1sUpdate(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS1model *model = (MOS1model *)inModel;
-    register MOS1instance *here;
+    MOS1model *model = (MOS1model *)inModel;
+    MOS1instance *here;
     int    iparmno;
     double sb;
     double sg;

@@ -16,14 +16,14 @@ Author: 1985 Thomas L. Quarles
 int
 DIOacLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
+    DIOmodel *model = (DIOmodel*)inModel;
     double gspr;
     double geq;
     double xceq;
-    register DIOinstance *here;
+    DIOinstance *here;
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = model->DIOnextModel ) {

@@ -20,12 +20,12 @@ Author: 1985 Thomas L. Quarles
 
 int
 CAPsSetup(info,inModel)
-    register SENstruct *info;
+    SENstruct *info;
     GENmodel *inModel;
 
 {
-    register CAPmodel *model = (CAPmodel*)inModel;
-    register CAPinstance *here;
+    CAPmodel *model = (CAPmodel*)inModel;
+    CAPinstance *here;
 
     /*  loop through all the capacitor models */
     for( ; model != NULL; model = model->CAPnextModel ) {

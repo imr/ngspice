@@ -13,12 +13,12 @@ Author: 1985 Thomas L. Quarles
 
 int
 ISRCaccept(ckt,inModel)
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     GENmodel *inModel;
         /* set up the breakpoint table.  */
 {
-    register ISRCmodel *model = (ISRCmodel*)inModel;
-    register ISRCinstance *here;
+    ISRCmodel *model = (ISRCmodel*)inModel;
+    ISRCinstance *here;
     int error;
 
     /*  loop through all the voltage source models */
@@ -134,7 +134,7 @@ ISRCaccept(ckt,inModel)
                 }
                 break;
                 case PWL: {
-                    register int i;
+                    int i;
                     if(ckt->CKTtime < *(here->ISRCcoeffs)) {
                         if(ckt->CKTbreak) {
                             error = CKTsetBreak(ckt,*(here->ISRCcoeffs));

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -21,8 +22,8 @@ DIOload(inModel,ckt)
          * sparse matrix previously provided 
          */
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
-    register DIOinstance *here;
+    DIOmodel *model = (DIOmodel*)inModel;
+    DIOinstance *here;
     double arg;
     double capd;
     double cd;
@@ -136,7 +137,6 @@ DIOload(inModel,ckt)
                 /*  
                  *   bypass if solution has not changed
                  */
-#ifndef NOBYPASS
                 if ((!(ckt->CKTmode & MODEINITPRED)) && (ckt->CKTbypass)) {
                     tol=ckt->CKTvoltTol + ckt->CKTreltol*
                         MAX(fabs(vd),fabs(*(ckt->CKTstate0 +here->DIOvoltage)));
@@ -153,7 +153,7 @@ DIOload(inModel,ckt)
                         }
                     }
                 }
-#endif /* NOBYPASS */
+
                 /*
                  *   limit new junction voltage
                  */
@@ -177,7 +177,7 @@ next1:      if (vd >= -3*vte) {
                 evd = exp(vd/vte);
                 cd = csat*(evd-1)+ckt->CKTgmin*vd;
                 gd = csat*evd/vte+ckt->CKTgmin;
-            } else if((!(here->DIOtBrkdwnV))|| 
+            } else if((!(model->DIObreakdownVoltageGiven)) || 
                     vd >= -here->DIOtBrkdwnV) {
                 arg=3*vte/(vd*CONSTe);
                 arg = arg * arg * arg;
@@ -188,17 +188,17 @@ next1:      if (vd >= -3*vte) {
                 cd = -csat*evrev+ckt->CKTgmin*vd;
                 gd=csat*evrev/vte + ckt->CKTgmin;
             }
-            if( ((ckt->CKTmode & (MODETRAN | MODEAC | MODEINITSMSIG)) || 
-		 (ckt->CKTmode & MODETRANOP)) && (ckt->CKTmode & MODEUIC) ) {
+            if ((ckt->CKTmode & (MODETRAN | MODEAC | MODEINITSMSIG)) || 
+		     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
 	      /*
 	       *   charge storage elements
 	       */
                 czero=here->DIOtJctCap*here->DIOarea;
                 if (vd < here->DIOtDepCap){
-                    arg=1-vd/model->DIOjunctionPot;
+                    arg=1-vd/here->DIOtJctPot;
                     sarg=exp(-model->DIOgradingCoeff*log(arg));
                     *(ckt->CKTstate0 + here->DIOcapCharge) = 
-                            model->DIOtransitTime*cd+model->DIOjunctionPot*
+                            model->DIOtransitTime*cd+here->DIOtJctPot*
                             czero* (1-arg*sarg)/(1-model->DIOgradingCoeff);
                     capd=model->DIOtransitTime*gd+czero*sarg;
                 } else {
@@ -206,11 +206,11 @@ next1:      if (vd >= -3*vte) {
                     *(ckt->CKTstate0 + here->DIOcapCharge) = 
                             model->DIOtransitTime*cd+czero*here->DIOtF1+czof2*
                             (model->DIOf3*(vd-here->DIOtDepCap)+
-                            (model->DIOgradingCoeff/(model->DIOjunctionPot+
-                            model->DIOjunctionPot))*(vd*vd-here->DIOtDepCap*
+                            (model->DIOgradingCoeff/(here->DIOtJctPot+
+                            here->DIOtJctPot))*(vd*vd-here->DIOtDepCap*
                             here->DIOtDepCap));
                     capd=model->DIOtransitTime*gd+czof2*(model->DIOf3+
-                            model->DIOgradingCoeff*vd/model->DIOjunctionPot);
+                            model->DIOgradingCoeff*vd/here->DIOtJctPot);
                 }
 	        here->DIOcap = capd;
 
@@ -272,15 +272,6 @@ next1:      if (vd >= -3*vte) {
                 if (Check == 1)  {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
-#ifndef NEWCONV
-                } else {
-                    tol=ckt->CKTreltol*
-                            MAX(fabs(cdhat),fabs(cd))+ckt->CKTabstol;
-                    if (fabs(cdhat-cd) > tol) {
-                        ckt->CKTnoncon++;
-			ckt->CKTtroubleElt = (GENinstance *) here;
-                    }
-#endif /* NEWCONV */
                 }
             }
 next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;

@@ -15,12 +15,12 @@ Author: 1985 Thomas L. Quarles
 
 int
 TRAaccept(ckt,inModel)
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     GENmodel *inModel;
 {
-    register TRAmodel *model = (TRAmodel *)inModel;
-    register TRAinstance *here;
-    register int i=0,j;
+    TRAmodel *model = (TRAmodel *)inModel;
+    TRAinstance *here;
+    int i=0,j;
     double v1,v2,v3,v4;
     double v5,v6,d1,d2,d3,d4;
     double *from,*to;

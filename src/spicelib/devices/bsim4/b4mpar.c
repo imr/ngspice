@@ -1,10 +1,13 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
 
 /**********
- * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4mpar.c of BSIM4.0.0.
- * Authors: Weidong Liu, Kanyu M. Cao, Xiaodong Jin, Chenming Hu.
+ * Copyright 2001 Regents of the University of California. All rights reserved.
+ * File: b4mpar.c of BSIM4.2.1.
+ * Author: 2000 Weidong Liu
+ * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ *
+ * Modified by Xuemei Xi 04/06/2001
  **********/
 
 #include "ngspice.h"
@@ -682,6 +685,14 @@ GENmodel *inMod;
         case  BSIM4_MOD_DLC :
             mod->BSIM4dlc = value->rValue;
             mod->BSIM4dlcGiven = TRUE;
+            break;
+        case  BSIM4_MOD_XW :
+            mod->BSIM4xw = value->rValue;
+            mod->BSIM4xwGiven = TRUE;
+            break;
+        case  BSIM4_MOD_XL :
+            mod->BSIM4xl = value->rValue;
+            mod->BSIM4xlGiven = TRUE;
             break;
         case  BSIM4_MOD_DLCIG :
             mod->BSIM4dlcig = value->rValue;

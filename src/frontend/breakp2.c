@@ -10,8 +10,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "ftedebug.h"
+
+#include "quote.h"
 #include "breakp2.h"
 
 
@@ -83,6 +85,7 @@ settrace(wordlist *wl, int what, char *name)
             d->db_nodename1 = copy(s);
 /*          wrd_chtrace(s, TRUE, what); */
         }
+         tfree(s);/*DG avoid memoy leak */
         if (dbs) {
             for (td = dbs; td->db_next; td = td->db_next)
                 ;

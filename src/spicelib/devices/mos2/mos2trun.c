@@ -16,11 +16,11 @@ Author: 1985 Thomas L. Quarles
 int
 MOS2trunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     double *timeStep;
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
 
     for( ; model != NULL; model = model->MOS2nextModel) {
         for(here=model->MOS2instances;here!=NULL;here = here->MOS2nextInstance){

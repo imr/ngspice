@@ -16,12 +16,12 @@ Author: 1985 Thomas L. Quarles
 
 int
 VCVSfindBr(ckt,inModel,name)
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     GENmodel *inModel;
-    register IFuid name;
+    IFuid name;
 {
-    register VCVSmodel *model = (VCVSmodel *)inModel;
-    register VCVSinstance *here;
+    VCVSmodel *model = (VCVSmodel *)inModel;
+    VCVSinstance *here;
     int error;
     CKTnode *tmp;
 

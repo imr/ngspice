@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 /* Pretty print the sensitivity info for all 
@@ -18,13 +19,13 @@ Author: 1985 Thomas L. Quarles
 void
 MOS1sPrint(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 /* Pretty print the sensitivity info for all the MOS1 
          * devices  in the circuit.
          */
 {
-    register MOS1model *model = (MOS1model *)inModel;
-    register MOS1instance *here;
+    MOS1model *model = (MOS1model *)inModel;
+    MOS1instance *here;
 
     printf("LEVEL 1 MOSFETS-----------------\n");
     /*  loop through all the MOS1 models */
@@ -41,7 +42,10 @@ register CKTcircuit *ckt;
             printf("      Drain, Gate , Source nodes: %s, %s ,%s\n",
             CKTnodName(ckt,here->MOS1dNode),CKTnodName(ckt,here->MOS1gNode),
             CKTnodName(ckt,here->MOS1sNode));
-
+            
+            printf("  Multiplier: %g ",here->MOS1m);
+            printf(here->MOS1mGiven ? "(specified)\n" : "(default)\n");
+            
             printf("      Length: %g ",here->MOS1l);
             printf(here->MOS1lGiven ? "(specified)\n" : "(default)\n");
             printf("      Width: %g ",here->MOS1w);

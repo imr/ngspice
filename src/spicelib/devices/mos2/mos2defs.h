@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFIxes
 **********/
 
 #ifndef MOS2
@@ -32,6 +33,8 @@ typedef struct sMOS2instance {
 
 
     int MOS2mode;       /* device mode : 1 = normal, -1 = inverse */
+
+    unsigned MOS2mGiven :1;
 
     unsigned MOS2off :1;/* non-zero to indicate device is off for dc analysis*/
     unsigned MOS2lGiven :1;
@@ -150,6 +153,8 @@ typedef struct sMOS2instance {
     double MOS2tDepCap;     /* temperature adjusted transition point in */
                             /* the cureve matching Fc * Vj */
     double MOS2tVbi;        /* temperature adjusted Vbi */
+
+    double MOS2m;   /* parallel device multiplier */
 
     double MOS2l;   /* the length of the channel region */
     double MOS2w;   /* the width of the channel region */
@@ -489,6 +494,7 @@ typedef struct sMOS2model {       /* model structure for a resistor */
 #define MOS2_TEMP          77
 #define MOS2_SOURCERESIST      78
 #define MOS2_DRAINRESIST       79
+#define MOS2_M 80
 
 /* model paramerers */
 #define MOS2_MOD_VTO 101

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -89,6 +90,18 @@ MOS3mAsk(ckt,inst,which,value)
         case MOS3_MOD_LD:
             value->rValue = here->MOS3latDiff;
             return(OK);
+        case MOS3_MOD_XL:
+            value->rValue = here->MOS3lengthAdjust;
+            return(OK);
+        case MOS3_MOD_WD:
+            value->rValue = here->MOS3widthNarrow;
+            return(OK);
+        case MOS3_MOD_XW:
+            value->rValue = here->MOS3widthAdjust;
+            return(OK);
+        case MOS3_MOD_DELVTO:
+            value->rValue = here->MOS3delvt0;
+            return(OK);    
         case MOS3_MOD_RSH:
             value->rValue = here->MOS3sheetResistance;
             return(OK);
@@ -136,7 +149,13 @@ MOS3mAsk(ckt,inst,which,value)
             return(OK);
         case MOS3_MOD_KAPPA:
             value->rValue = here->MOS3kappa;
+            return(OK);      
+        case MOS3_MOD_KF:
+            value->rValue = here->MOS3fNcoef;
             return(OK);
+        case MOS3_MOD_AF:
+            value->rValue = here->MOS3fNexp;
+            return(OK);    
 	case MOS3_MOD_TYPE:
 	    if (here->MOS3type > 0)
 	        value->sValue = "nmos";

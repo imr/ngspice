@@ -19,7 +19,7 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 
 int
 JFET2setup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
@@ -27,8 +27,8 @@ JFET2setup(matrix,inModel,ckt,states)
          * for fast matrix loading 
          */
 {
-    register JFET2model *model = (JFET2model*)inModel;
-    register JFET2instance *here;
+    JFET2model *model = (JFET2model*)inModel;
+    JFET2instance *here;
     int error;
     CKTnode *tmp;
 
@@ -106,7 +106,6 @@ JFET2unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     JFET2model *model;
     JFET2instance *here;
 
@@ -130,6 +129,5 @@ JFET2unsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

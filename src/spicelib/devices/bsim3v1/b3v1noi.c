@@ -1,17 +1,3 @@
-/* $Id$  */
-/* 
-$Log$
-Revision 1.1.1.1  2000-04-27 20:03:59  pnenzi
-Imported sources
-
- * Revision 3.1  96/12/08  19:57:51  yuhua
- * BSIM3v3.1 release
- * 
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1995 Gary W. Ng and Min-Chie Jeng.
@@ -23,7 +9,6 @@ File:  b3v1noi.c
 #include <math.h>
 #include "bsim3v1def.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "suffix.h"
@@ -59,14 +44,15 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 double
-StrongInversionNoiseEval(vgs, vds, model, here, freq, temp)
+StrongInversionNoiseEvalV1(vgs, vds, model, here, freq, temp)
 double vgs, vds, freq, temp;
 BSIM3V1model *model;
 BSIM3V1instance *here;
 {
 struct bsim3v1SizeDependParam *pParam;
 double cd, esat, DelClm, EffFreq, N0, Nl, Vgst;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Ssi;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9;
+double Ssi;
 
     pParam = here->pParam;
     cd = fabs(here->BSIM3V1cd);
@@ -111,11 +97,11 @@ BSIM3V1noise (mode, operation, inModel, ckt, data, OnDens)
 int mode, operation;
 GENmodel *inModel;
 CKTcircuit *ckt;
-register Ndata *data;
+Ndata *data;
 double *OnDens;
 {
-register BSIM3V1model *model = (BSIM3V1model *)inModel;
-register BSIM3V1instance *here;
+BSIM3V1model *model = (BSIM3V1model *)inModel;
+BSIM3V1instance *here;
 struct bsim3v1SizeDependParam *pParam;
 char name[N_MXVLNTH];
 double tempOnoise;
@@ -124,11 +110,10 @@ double noizDens[BSIM3V1NSRCS];
 double lnNdens[BSIM3V1NSRCS];
 
 double vgs, vds, Slimit;
-double N0, Nl;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13;
-double n, ExpArg, Ssi, Swi;
+double T1, T10, T11;
+double Ssi, Swi;
 
-int error, i;
+int i;
 
     /* define the names of the noise sources */
     static char *BSIM3V1nNames[BSIM3V1NSRCS] =
@@ -268,7 +253,7 @@ int error, i;
 				          vgs = vgs + vds;
 			              }
                                       if (vgs >= here->BSIM3V1von + 0.1)
-			              {   Ssi = StrongInversionNoiseEval(vgs,
+			              {   Ssi = StrongInversionNoiseEvalV1(vgs,
 					      vds, model, here, data->freq,
 					      ckt->CKTtemp);
                                           noizDens[BSIM3V1FLNOIZ] *= Ssi;
@@ -283,7 +268,7 @@ int error, i;
 				              * 4.0e36;
 		                          Swi = T10 / T11 * here->BSIM3V1cd
 				              * here->BSIM3V1cd;
-                                          Slimit = StrongInversionNoiseEval(
+                                          Slimit = StrongInversionNoiseEvalV1(
 				               here->BSIM3V1von + 0.1, vds, model,
 					       here, data->freq, ckt->CKTtemp);
 				          T1 = Swi + Slimit;

@@ -16,11 +16,11 @@ Author: 1985 Thomas L. Quarles
 int
 INDacLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register INDmodel *model = (INDmodel*)inModel;
+    INDmodel *model = (INDmodel*)inModel;
     double val;
-    register INDinstance *here;
+    INDinstance *here;
 
     for( ; model != NULL; model = model->INDnextModel) {
         for( here = model->INDinstances;here != NULL; 

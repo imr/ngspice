@@ -21,9 +21,9 @@ B1evaluate(vds,vbs,vgs,here,model,gmPointer,gdsPointer,gmbsPointer,
         cbgbPointer,cbdbPointer,cbsbPointer,cdgbPointer,cddbPointer,
         cdsbPointer,cdrainPointer,vonPointer,vdsatPointer,ckt)
 
-    register CKTcircuit  *ckt;
-    register B1model   *model;
-    register B1instance *here;
+    CKTcircuit  *ckt;
+    B1model   *model;
+    B1instance *here;
     double vds;
     double vbs;
     double vgs;

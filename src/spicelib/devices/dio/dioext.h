@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #ifdef __STDC__
@@ -28,6 +29,9 @@ extern int DIOtemp(GENmodel*,CKTcircuit*);
 extern int DIOtrunc(GENmodel*,CKTcircuit*,double*);
 extern int DIOdisto(int,GENmodel*,CKTcircuit*);
 extern int DIOnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+
+extern int DIOdSetup(DIOmodel*,CKTcircuit*);
+
 
 #else /* stdc */
 

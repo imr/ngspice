@@ -14,10 +14,10 @@ Author: 1989 Takayasu Sakurai
 int
 MOS6temp(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS6model *model = (MOS6model *)inModel;
-    register MOS6instance *here;
+    MOS6model *model = (MOS6model *)inModel;
+    MOS6instance *here;
 
     double egfet,egfet1;
     double fact1,fact2;

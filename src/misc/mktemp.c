@@ -9,11 +9,15 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  */
 
 #include "ngspice.h"
-#include "stdio.h"
+#include <stdio.h>
 #include "mktemp.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
+#ifdef HAVE_STRING_H
+#include <string.h>
 #endif
 
 #ifndef TEMPFORMAT
@@ -35,7 +39,7 @@ smktemp(char *id)
 	id = "sp";
 
     sprintf(rbuf, TEMPFORMAT, id, num);
-    nbuf = (char *) malloc(strlen(rbuf) + 1);
+    nbuf = (char *) tmalloc(strlen(rbuf) + 1);
     strcpy(nbuf, rbuf);
 
     return nbuf;

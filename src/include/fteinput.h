@@ -4,8 +4,6 @@ Author: 1988 Jeffrey M. Hsu
 **********/
 
 /*
-    $Header$
-
     Defs to use the Input routine.
 
     char_option is used by the lexer and the command interpreter
@@ -22,7 +20,7 @@ Author: 1988 Jeffrey M. Hsu
 
 
 #include <stdio.h>
-#include "ftegraph.h"
+#include "graph.h"
 
 typedef enum {
     error_option,       /* a reply option only */

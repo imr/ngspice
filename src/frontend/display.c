@@ -3,19 +3,22 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
 
-#include "ngspice.h"
-#include "ftegraph.h"
-#include "ftedev.h"
-#include "fteinput.h"
-#include "cpdefs.h"     /* for VT_STRING */
-#include "ftedefs.h"        /* for mylog() */
+#include <ngspice.h>
+#include <graph.h>
+#include <ftedev.h>
+#include <fteinput.h>
+#include <cpdefs.h>     /* for VT_STRING */
+#include <ftedefs.h>        /* for mylog() */
+
+#ifdef TCL_MODULE
+#include <tclspice.h>
+#endif
+
 #include "display.h"
-
-
-
+#include "variable.h"
 
 /* static declarations */
-static int gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny);
+static void gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny);
 static int gen_Input(REQUEST *request, RESPONSE *response);
 static int nop(void);
 static int nodev(void);
@@ -52,7 +55,7 @@ DISPDEVICE device[] = {
     nop, nop, nop, nop, nop,
     nop, nop, nop,
     nop, nop, nop, gen_Input,
-    nop,},
+    (void *)nop,},
 
 #ifndef X_DISPLAY_MISSING
     {"X11", 0, 0, 1024, 864, 0, 0, X11_Init, X11_NewViewport,
@@ -63,6 +66,14 @@ DISPDEVICE device[] = {
     gen_DatatoScreen,},
 #endif
 
+#ifdef TCL_MODULE
+    {"Tk", 0, 0, 1024, 864, 0, 0, sp_Tk_Init, sp_Tk_NewViewport,
+    sp_Tk_Close, sp_Tk_Clear,
+    sp_Tk_DrawLine, sp_Tk_Arc, sp_Tk_Text, sp_Tk_DefineColor, sp_Tk_DefineLinestyle,
+    sp_Tk_SetLinestyle, sp_Tk_SetColor, sp_Tk_Update,
+    nodev, nodev, nodev, nodev,
+    gen_DatatoScreen,},
+#endif
 
     {"plot5", 0, 0, 1000, 1000, 0, 0, Plt5_Init, Plt5_NewViewport,
     Plt5_Close, Plt5_Clear,
@@ -83,7 +94,7 @@ DISPDEVICE device[] = {
     nodev, nodev, nodev, nodev, nodev,
     nodev, nodev, nodev,
     nodev, nodev, nodev, gen_Input,
-    nodev,},
+    (void *)nodev,},
 
 };
 
@@ -135,7 +146,9 @@ DevInit(void)
     }
 #endif
 
-
+#ifdef TCL_MODULE
+    dispdev = FindDev("Tk");
+#endif
 
     if (!dispdev) {
 	externalerror(
@@ -230,7 +243,7 @@ void Update(void)
 
 /* note: screen coordinates are relative to window
     so need to add viewport offsets */
-static int
+static void
 gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny)
 {
 
@@ -276,19 +289,6 @@ void DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny)
 
 }
 
-#ifdef notdef
-/*
-NDCtoScreen(x0, y0, px, py)
-    double x0, y0;
-    int *px, *py;
-{
-
-    (*(dispdev->NDCtoScreen))(x0, y0, px, py);
-
-}
-*/
-#endif
-
 void Input(REQUEST *request, RESPONSE *response)
 {
 
@@ -311,6 +311,7 @@ gen_Input(REQUEST *request, RESPONSE *response)
 	    response->option = error_option;
         break;
     }
+return 0;
 }
 
 /* no operation, do nothing */
@@ -335,7 +336,7 @@ void SaveText(GRAPH *graph, char *text, int x, int y)
 
     struct _keyed *keyed;
 
-    keyed = (struct _keyed *) calloc(1, sizeof(struct _keyed));
+    keyed = (struct _keyed *) tmalloc(sizeof(struct _keyed));
 
     if (!graph->keyed) {
       graph->keyed = keyed;

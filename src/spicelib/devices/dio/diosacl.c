@@ -24,8 +24,8 @@ DIOsAcLoad(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
-    register DIOinstance *here;
+    DIOmodel *model = (DIOmodel*)inModel;
+    DIOinstance *here;
     double SaveState[5];
     int    error;
     int    i;

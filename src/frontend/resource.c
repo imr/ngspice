@@ -11,10 +11,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
+
+#include "circuits.h"
+#include "quote.h"
 #include "resource.h"
-
-
-
+#include "variable.h"
 
 /* static declarations */
 static void printres(char *name);
@@ -31,10 +32,13 @@ char *enddata;
 void
 init_rlimits(void)
 {
-
+#ifndef __MINGW32__
     startdata = (char *) baseaddr( );
     enddata = sbrk(0);
-
+#else
+    startdata = 0;
+    enddata = 0;
+#endif
 }
 
 void
@@ -57,13 +61,17 @@ init_time(void)
 void
 com_rusage(wordlist *wl)
 {
+char* copyword;
     /* Fill in the SPICE accounting structure... */
 
     if (wl && (eq(wl->wl_word, "everything") || eq(wl->wl_word, "all"))) {
         printres((char *) NULL);
     } else if (wl) {
         for (; wl; wl = wl->wl_next) {
-            printres(cp_unquote(wl->wl_word));
+         /*   printres(cp_unquote(wl->wl_word)); DG: bad, memory leak*/
+              copyword=cp_unquote(wl->wl_word);/*DG*/
+              printres(copyword);
+              tfree(copyword);                         
             if (wl->wl_next)
                 (void) putc('\n', cp_out);
         }
@@ -86,7 +94,7 @@ ft_ckspace(void)
     static long old_usage = 0;
     char *hi;
 
-
+#ifndef __MINGW32__
 #    ifdef HAVE_GETRLIMIT
 
     struct rlimit rld;
@@ -103,8 +111,10 @@ ft_ckspace(void)
 #    endif
     hi=sbrk(0);
     usage = (long) (hi - enddata); 
-
-
+#else
+    usage = 0;
+    limit = 0;
+#endif
     if (limit < 0)
 	return;	/* what else do you do? */
 
@@ -304,7 +314,7 @@ fault(void)
 	signal(SIGSEGV, (SIGNAL_FUNCTION) fault);	/* SysV style */
 	longjmp(env, 1);
 }
-
+#ifndef __MINGW32__
 static void *
 baseaddr(void)
 {
@@ -326,16 +336,6 @@ baseaddr(void)
 		at = (char *) ((((long)low >> LOG2_PAGESIZE)
 			+ ((long)high >> LOG2_PAGESIZE))
 			<< (LOG2_PAGESIZE - 1));
-#  ifdef notdef
-		at = (char *) ((((int) low + (int) high) / 2 + 0x7ff)
-			& ~(long) 0xfff);
-			/* nearest page */
-#  endif
-#  ifdef notdef
-		printf(
-		"high = %#8x    low = %#8x     at = %#8x\n",
-			high, low, at);
-#  endif
 
 		if (at == low || at == high) {
 			break;
@@ -357,13 +357,10 @@ baseaddr(void)
 
 	} while (1);
 
-#  ifdef notdef
-	printf ("start is at %#x, end is at %#x\n", high, sbrk(0));
-#  endif
 	(void) signal(SIGSEGV, (SIGNAL_FUNCTION) orig_signal);
 	return (void *) high;
 }
-
+#endif
 #  ifdef notdef
 main( )
 {
