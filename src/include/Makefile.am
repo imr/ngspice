@@ -14,7 +14,6 @@ noinst_HEADERS = \
 	dgen.h \
 	distodef.h \
 	dvec.h \
-	fteconst.h \
 	ftedbgra.h \
 	ftedebug.h \
 	ftedefs.h \
