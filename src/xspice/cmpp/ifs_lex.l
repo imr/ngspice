@@ -86,7 +86,9 @@ E	[eE][+-]?{D}+
 
 <comment>\n             /* new line */
 
-<comment><<EOF>>		{ifs_yyerror ("Unterminated comment"); yyterminate(); }
+<comment><<EOF>>		{ifs_yyerror ("Unterminated comment"); 
+						BEGIN(INITIAL);
+						yyterminate(); }
 
 <comment>"*"+"/"        { BEGIN(INITIAL); }
 
@@ -96,8 +98,9 @@ E	[eE][+-]?{D}+
 						
 <stringl>"\""			{ BEGIN(INITIAL); }
 
-<stringl><<EOF>>		{ifs_yyerror ("Unterminated string literal"); 
-							yyterminate(); }
+<stringl><<EOF>>		{ifs_yyerror ("Unterminated string literal");
+						BEGIN(INITIAL); 
+						yyterminate(); }
 	
 allowed_types{W}*:		{BEGIN CTYPE; return TOK_ALLOWED_TYPES;}
 vector{W}*:			{BEGIN BOOL;  return TOK_ARRAY;}
