@@ -134,6 +134,8 @@ BJT2load(GENmodel *inModel, CKTcircuit *ckt)
     int ichk1;
     int error;
     int SenCond=0;
+    double m;
+    
     /*  loop through all the models */
     for( ; model != NULL; model = model->BJT2nextModel ) {
 
@@ -738,6 +740,7 @@ next2:
 
             if(SenCond)continue;
 load:
+            m = here->BJT2m;
             /*
              *  load current excitation vector
              */
@@ -754,42 +757,42 @@ load:
                     (go - geqcb));
             ceqbc=model->BJT2type * (-cc + vbe * (gm + go) - vbc * (gmu + go));
 
-            *(ckt->CKTrhs + here->BJT2baseNode) += (-ceqbx);
+            *(ckt->CKTrhs + here->BJT2baseNode) +=  m * (-ceqbx);
             *(ckt->CKTrhs + here->BJT2colPrimeNode) += 
-                    (ceqbx+ceqbc);
-            *(ckt->CKTrhs + here->BJT2substConNode) += ceqsub;
+                     m * (ceqbx+ceqbc);
+            *(ckt->CKTrhs + here->BJT2substConNode) += m * ceqsub;
             *(ckt->CKTrhs + here->BJT2basePrimeNode) += 
-                    (-ceqbe-ceqbc);
-            *(ckt->CKTrhs + here->BJT2emitPrimeNode) += (ceqbe);
-            *(ckt->CKTrhs + here->BJT2substNode) += (-ceqsub);
+                    m * (-ceqbe-ceqbc);
+            *(ckt->CKTrhs + here->BJT2emitPrimeNode) += m * (ceqbe);
+            *(ckt->CKTrhs + here->BJT2substNode) +=  m * (-ceqsub);
             
             /*
              *  load y matrix
              */
-            *(here->BJT2colColPtr) += (gcpr);
-            *(here->BJT2baseBasePtr) += (gx+geqbx);
-            *(here->BJT2emitEmitPtr) += (gepr);
-            *(here->BJT2colPrimeColPrimePtr) += (gmu+go+gcpr+geqbx);
-            *(here->BJT2substConSubstConPtr) += (geqsub);
-            *(here->BJT2basePrimeBasePrimePtr) += (gx +gpi+gmu+geqcb);
-            *(here->BJT2emitPrimeEmitPrimePtr) += (gpi+gepr+gm+go);
-            *(here->BJT2colColPrimePtr) += (-gcpr);
-            *(here->BJT2baseBasePrimePtr) += (-gx);
-            *(here->BJT2emitEmitPrimePtr) += (-gepr);
-            *(here->BJT2colPrimeColPtr) += (-gcpr);
-            *(here->BJT2colPrimeBasePrimePtr) += (-gmu+gm);
-            *(here->BJT2colPrimeEmitPrimePtr) += (-gm-go);
-            *(here->BJT2basePrimeBasePtr) += (-gx);
-            *(here->BJT2basePrimeColPrimePtr) += (-gmu-geqcb);
-            *(here->BJT2basePrimeEmitPrimePtr) += (-gpi);
-            *(here->BJT2emitPrimeEmitPtr) += (-gepr);
-            *(here->BJT2emitPrimeColPrimePtr) += (-go+geqcb);
-            *(here->BJT2emitPrimeBasePrimePtr) += (-gpi-gm-geqcb);
-            *(here->BJT2substSubstPtr) += (geqsub);
-            *(here->BJT2substConSubstPtr) += (-geqsub);
-            *(here->BJT2substSubstConPtr) += (-geqsub);
-            *(here->BJT2baseColPrimePtr) += (-geqbx);
-            *(here->BJT2colPrimeBasePtr) += (-geqbx);
+            *(here->BJT2colColPtr) +=               m * (gcpr);
+            *(here->BJT2baseBasePtr) +=             m * (gx+geqbx);
+            *(here->BJT2emitEmitPtr) +=             m * (gepr);
+            *(here->BJT2colPrimeColPrimePtr) +=     m * (gmu+go+gcpr+geqbx);
+            *(here->BJT2substConSubstConPtr) +=     m * (geqsub);
+            *(here->BJT2basePrimeBasePrimePtr) +=   m * (gx +gpi+gmu+geqcb);
+            *(here->BJT2emitPrimeEmitPrimePtr) +=   m * (gpi+gepr+gm+go);
+            *(here->BJT2colColPrimePtr) +=          m * (-gcpr);
+            *(here->BJT2baseBasePrimePtr) +=        m * (-gx);
+            *(here->BJT2emitEmitPrimePtr) +=        m * (-gepr);
+            *(here->BJT2colPrimeColPtr) +=          m * (-gcpr);
+            *(here->BJT2colPrimeBasePrimePtr) +=    m * (-gmu+gm);
+            *(here->BJT2colPrimeEmitPrimePtr) +=    m * (-gm-go);
+            *(here->BJT2basePrimeBasePtr) +=        m * (-gx);
+            *(here->BJT2basePrimeColPrimePtr) +=    m * (-gmu-geqcb);
+            *(here->BJT2basePrimeEmitPrimePtr) +=   m * (-gpi);
+            *(here->BJT2emitPrimeEmitPtr) +=        m * (-gepr);
+            *(here->BJT2emitPrimeColPrimePtr) +=    m * (-go+geqcb);
+            *(here->BJT2emitPrimeBasePrimePtr) +=   m * (-gpi-gm-geqcb);
+            *(here->BJT2substSubstPtr) +=           m * (geqsub);
+            *(here->BJT2substConSubstPtr) +=        m * (-geqsub);
+            *(here->BJT2substSubstConPtr) +=        m * (-geqsub);
+            *(here->BJT2baseColPrimePtr) +=         m * (-geqbx);
+            *(here->BJT2colPrimeBasePtr) +=         m * (-geqbx);
         }
     }
     return(OK);

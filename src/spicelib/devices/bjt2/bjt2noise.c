@@ -117,28 +117,28 @@ if (!data->namelist) return(E_NOMEM);
 		case N_DENS:
 		    NevalSrc(&noizDens[BJT2RCNOIZ],&lnNdens[BJT2RCNOIZ],
 				 ckt,THERMNOISE,inst->BJT2colPrimeNode,inst->BJT2colNode,
-				 model->BJT2collectorConduct * inst->BJT2area);
+				 model->BJT2collectorConduct * inst->BJT2area * inst->BJT2m);
 
 		    NevalSrc(&noizDens[BJT2RBNOIZ],&lnNdens[BJT2RBNOIZ],
 				 ckt,THERMNOISE,inst->BJT2basePrimeNode,inst->BJT2baseNode,
-				 *(ckt->CKTstate0 + inst->BJT2gx));
+				 *(ckt->CKTstate0 + inst->BJT2gx) * inst->BJT2m);
 
 		    NevalSrc(&noizDens[BJT2_RE_NOISE],&lnNdens[BJT2_RE_NOISE],
 				 ckt,THERMNOISE,inst->BJT2emitPrimeNode,inst->BJT2emitNode,
-				 model->BJT2emitterConduct * inst->BJT2area);
+				 model->BJT2emitterConduct * inst->BJT2area * inst->BJT2m);
 
 		    NevalSrc(&noizDens[BJT2ICNOIZ],&lnNdens[BJT2ICNOIZ],
 			         ckt,SHOTNOISE,inst->BJT2colPrimeNode, inst->BJT2emitPrimeNode,
-				 *(ckt->CKTstate0 + inst->BJT2cc));
+				 *(ckt->CKTstate0 + inst->BJT2cc) * inst->BJT2m);
 
 		    NevalSrc(&noizDens[BJT2IBNOIZ],&lnNdens[BJT2IBNOIZ],
 				 ckt,SHOTNOISE,inst->BJT2basePrimeNode, inst->BJT2emitPrimeNode,
-				 *(ckt->CKTstate0 + inst->BJT2cb));
+				 *(ckt->CKTstate0 + inst->BJT2cb) * inst->BJT2m);
 
 		    NevalSrc(&noizDens[BJT2FLNOIZ],(double*)NULL,ckt,
 				 N_GAIN,inst->BJT2basePrimeNode, inst->BJT2emitPrimeNode,
 				 (double)0.0);
-		    noizDens[BJT2FLNOIZ] *= model->BJT2fNcoef * 
+		    noizDens[BJT2FLNOIZ] *= inst->BJT2m * model->BJT2fNcoef * 
 				 exp(model->BJT2fNexp *
 				 log(MAX(fabs(*(ckt->CKTstate0 + inst->BJT2cb)),N_MINLOG))) /
 				 data->freq;

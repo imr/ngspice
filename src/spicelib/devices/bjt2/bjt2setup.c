@@ -185,6 +185,18 @@ BJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if(!here->BJT2areaGiven) {
                 here->BJT2area = 1;
             }
+            
+	    if(!here->BJT2mGiven) {
+                here->BJT2m = 1.0;
+            }
+	    	
+	    here->BJT2state = *states;
+            *states += BJT2numStates;
+            if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
+                *states += 8 * (ckt->CKTsenInfo->SENparms);
+            }	
+
+matrixpointers:	        
             if(model->BJT2collectorResist == 0) {
                 here->BJT2colPrimeNode = here->BJT2colNode;
             } else if(here->BJT2colPrimeNode == 0) {
@@ -241,12 +253,6 @@ BJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                      }
                   }
                 }
-            }
-
-            here->BJT2state = *states;
-            *states += BJT2numStates;
-            if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += 8 * (ckt->CKTsenInfo->SENparms);
             }
 
 /* macro to make elements with built in test for out of memory */

@@ -88,6 +88,7 @@ BJT2ask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value,
             return(OK);
         case BJT2_QUEST_CC:
             value->rValue = *(ckt->CKTstate0 + here->BJT2cc);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_CB:
             value->rValue = *(ckt->CKTstate0 + here->BJT2cb);
@@ -98,60 +99,79 @@ BJT2ask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value,
                       value->rValue -= *(ckt->CKTstate0 + here->BJT2cqsub);
                 }
             };
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_GPI:
             value->rValue = *(ckt->CKTstate0 + here->BJT2gpi);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_GMU:
             value->rValue = *(ckt->CKTstate0 + here->BJT2gmu);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_GM:
             value->rValue = *(ckt->CKTstate0 + here->BJT2gm);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_GO:
             value->rValue = *(ckt->CKTstate0 + here->BJT2go);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_QBE:
             value->rValue = *(ckt->CKTstate0 + here->BJT2qbe);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_CQBE:
             value->rValue = *(ckt->CKTstate0 + here->BJT2cqbe);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_QBC:
             value->rValue = *(ckt->CKTstate0 + here->BJT2qbc);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_CQBC:
             value->rValue = *(ckt->CKTstate0 + here->BJT2cqbc);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_QSUB:
             value->rValue = *(ckt->CKTstate0 + here->BJT2qsub);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_CQSUB:
             value->rValue = *(ckt->CKTstate0 + here->BJT2cqsub);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_QBX:
             value->rValue = *(ckt->CKTstate0 + here->BJT2qbx);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_CQBX:
             value->rValue = *(ckt->CKTstate0 + here->BJT2cqbx);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_GX:
             value->rValue = *(ckt->CKTstate0 + here->BJT2gx);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_CEXBC:
             value->rValue = *(ckt->CKTstate0 + here->BJT2cexbc);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_GEQCB:
             value->rValue = *(ckt->CKTstate0 + here->BJT2geqcb);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_GCSUB:
             value->rValue = *(ckt->CKTstate0 + here->BJT2gcsub);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_GDSUB:
             value->rValue = *(ckt->CKTstate0 + here->BJT2gdsub);
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_GEQBX:
             value->rValue = *(ckt->CKTstate0 + here->BJT2geqbx);
+	    value->rValue *= here->BJT2m;
             return(OK);
     case BJT2_QUEST_SENS_DC:
         if(ckt->CKTsenInfo){
@@ -229,6 +249,7 @@ BJT2ask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value,
                                    (*(ckt->CKTstate0 + here->BJT2cqsub) +
                                     *(ckt->CKTstate0 + here->BJT2cdsub)));
             }
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_CE :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
@@ -247,6 +268,7 @@ BJT2ask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value,
                   }
                 }
             }
+	    value->rValue *= here->BJT2m;
             return(OK);
         case BJT2_QUEST_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
@@ -274,18 +296,23 @@ BJT2ask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value,
                                  *(ckt->CKTrhsOld + here->BJT2substNode));
                 }
             }
+	    value->rValue *= here->BJT2m;
             return(OK);
 	case BJT2_QUEST_CPI:
 	    value->rValue = here->BJT2capbe;
+	    value->rValue *= here->BJT2m;
             return(OK);
 	case BJT2_QUEST_CMU:
 	    value->rValue = here->BJT2capbc;
+	    value->rValue *= here->BJT2m;
             return(OK);
 	case BJT2_QUEST_CBX:
 	    value->rValue = here->BJT2capbx;
+	    value->rValue *= here->BJT2m;
             return(OK);
 	case BJT2_QUEST_CSUB:
 	    value->rValue = here->BJT2capsub;
+	    value->rValue *= here->BJT2m;
             return(OK);
         default:
             return(E_BADPARM);

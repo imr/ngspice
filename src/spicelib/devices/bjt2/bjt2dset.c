@@ -155,16 +155,16 @@ for( ; model != NULL; model = model->BJT2nextModel ) {
             /*
              *   dc model paramters
              */
-            csat=here->BJT2tSatCur*here->BJT2area;
-            rbpr=model->BJT2minBaseResist/here->BJT2area;
-            rbpi=model->BJT2baseResist/here->BJT2area-rbpr;
-            oik=model->BJT2invRollOffF/here->BJT2area;
-            c2=here->BJT2tBEleakCur*here->BJT2area;
+            csat=here->BJT2tSatCur*here->BJT2area * here->BJT2m;
+            rbpr=model->BJT2minBaseResist/(here->BJT2area  * here->BJT2m);
+            rbpi=model->BJT2baseResist/(here->BJT2area * here->BJT2m) - rbpr;
+            oik=model->BJT2invRollOffF/(here->BJT2area * here->BJT2m);
+            c2=here->BJT2tBEleakCur*here->BJT2area * here->BJT2m;
             vte=model->BJT2leakBEemissionCoeff*vt;
-            oikr=model->BJT2invRollOffR/here->BJT2area;
-            c4=here->BJT2tBCleakCur*here->BJT2area;
+            oikr=model->BJT2invRollOffR/(here->BJT2area * here->BJT2m);
+            c4=here->BJT2tBCleakCur*here->BJT2area * here->BJT2m;
             vtc=model->BJT2leakBCemissionCoeff*vt;
-            xjrb=model->BJT2baseCurrentHalfResist*here->BJT2area;
+            xjrb=model->BJT2baseCurrentHalfResist*here->BJT2area * here->BJT2m;
 
 
             /*
@@ -481,22 +481,22 @@ d_ibb.d3_r3 = 6.0*gbb3;
                  */
                 tf=model->BJT2transitTimeF;
                 tr=model->BJT2transitTimeR;
-                czbe=here->BJT2tBEcap*here->BJT2area;
+                czbe=here->BJT2tBEcap*here->BJT2area * here->BJT2m;
                 pe=here->BJT2tBEpot;
                 xme=model->BJT2junctionExpBE;
                 cdis=model->BJT2baseFractionBCcap;
-                ctot=here->BJT2tBCcap*here->BJT2area;
+                ctot=here->BJT2tBCcap*here->BJT2area * here->BJT2m;
                 czbc=ctot*cdis;
                 czbx=ctot-czbc;
                 pc=here->BJT2tBCpot;
                 xmc=model->BJT2junctionExpBC;
                 fcpe=here->BJT2tDepCap;
-                czcs=model->BJT2capSub*here->BJT2area; /* PN */
+                czcs=model->BJT2capSub*here->BJT2area * here->BJT2m; /* PN */
                 ps=model->BJT2potentialSubstrate;
                 xms=model->BJT2exponentialSubstrate;
                 xtf=model->BJT2transitTimeBiasCoeffF;
                 ovtf=model->BJT2transitTimeVBCFactor;
-                xjtf=model->BJT2transitTimeHighCurrentF*here->BJT2area;
+                xjtf=model->BJT2transitTimeHighCurrentF*here->BJT2area * here->BJT2m;
                 if(tf != 0 && vbe >0) {
 		    EqualDeriv(&d_cbe, &d_p);
 		    d_cbe.value = cbe;

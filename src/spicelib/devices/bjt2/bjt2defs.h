@@ -37,11 +37,11 @@ typedef struct sBJT2instance {
                              * or collector prime depending on whether        *
                              * the device is VERTICAL or LATERAL              */
     double BJT2area; /* area factor for the bjt2 */
-    double BJTm;        /* parallel multiplier */
+    double BJT2m;        /* parallel multiplier */
     double BJT2icVBE;    /* initial condition voltage B-E*/
     double BJT2icVCE;    /* initial condition voltage C-E*/
     double BJT2temp;     /* instance temperature */
-    double BJTdtemp;     /* instance delta temperature from circuit */
+    double BJT2dtemp;    /* instance delta temperature from circuit */
     double BJT2tSatCur;  /* temperature adjusted saturation current */
     double BJT2tSubSatCur; /* temperature adjusted subst. saturation current */
     double BJT2tEmitterConduct;   /* emitter conductance */
