@@ -778,6 +778,79 @@ static int plot_nvars TCL_CMDPROCARGS(clientData,interp,argc,argv){
   return TCL_OK;
 }
 
+/*agr1: plot index
+ *agr2: spice variable name
+ *arg3: blt_vector 
+ *arg4: start copy index, optional
+ *arg5: end copy index. optional
+ */
+static int plot_getvector TCL_CMDPROCARGS(clientData,interp,argc,argv) {
+  Blt_Vector *vec;
+  char *blt, *var;
+  int start=0,end=-1,len;
+  int plot;
+  struct dvec *v;
+  struct plot *pl;
+
+  if (argc < 4 || argc > 6) {
+    Tcl_SetResult(interp,
+        "Wrong # args. spice::plot_getvector spice_variable vecName ?start? ?end?",
+        TCL_STATIC);
+    return TCL_ERROR;
+  }
+
+  plot = atoi(argv[1]);
+  
+  if(!(pl = get_plot(plot))){
+    Tcl_SetResult(interp, "bad plot",TCL_STATIC);
+    return TCL_ERROR;
+  }
+
+  var = (char *)argv[2];
+  blt = (char *)argv[3];
+
+  for(v = pl->pl_dvecs;v;v = v->v_next)
+    if(!strcmp(v->v_name,var)){
+      break;
+    }
+  if(v == NULL) {
+    Tcl_SetResult(interp, "variable not found: ",TCL_STATIC);
+    Tcl_AppendResult(interp, (char *)var, TCL_STATIC);
+    return TCL_ERROR;
+   }
+
+  if(Blt_GetVector(interp,blt,&vec)){
+    Tcl_SetResult(interp, "Bad blt vector ",TCL_STATIC);
+    Tcl_AppendResult(interp, (char *)blt, TCL_STATIC);
+    return TCL_ERROR;
+  }
+
+  if(argc >= 5)
+    start = atoi(argv[4]);
+  if(argc == 6)
+    end   = atoi(argv[5]);
+  if(v->v_length) {
+      
+    len = v->v_length;
+      
+    if(start){
+      start = start % len;
+      if(start < 0)
+        start += len;
+    }
+      
+    end = end % len;
+    if(end < 0)
+      end += len;
+      
+    len = abs(end - start + 1);
+      
+    Blt_ResetVector(vec,(v->v_realdata + start),len,
+		    len,TCL_VOLATILE);
+  }
+  return TCL_OK;
+}
+
 
 /*******************************************/
 /*           Misc functions                */
@@ -1910,6 +1983,7 @@ bot:
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_date", plot_date, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_name", plot_name, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_nvars", plot_nvars, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_getvector", plot_getvector, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 
 	Tcl_CreateCommand(interp, TCLSPICE_prefix "registerTrigger", registerTrigger, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   	Tcl_CreateCommand(interp, TCLSPICE_prefix "registerTriggerCallback", registerTriggerCallback, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);

@@ -1,3 +1,9 @@
+2004-07-07 Stefan Jones <stefan.jones@multigig.com>
+
+	* src/tclspice.c:
+	Added new Tcl command plot_getvector,
+	writes to a BLT vector a plot vector
+
 2004-06-22 Adrian Dawe <adrian.dawe@multigig.com>
 
 	* src/spicewish:
