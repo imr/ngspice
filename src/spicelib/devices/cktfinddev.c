@@ -36,7 +36,7 @@ CKTfndDev(void *Ckt, int *type, void **fast, IFuid name, void *modfast, IFuid mo
 	    if (p->GENname == name) {
 	      if (fast != 0)
 		*(GENinstance **)fast = p;
-	      if(modfast) if (type)
+	      if (type)
 		*type = p->GENmodPtr->GENmodType; 
 	      return OK;
 	    }
