@@ -1,0 +1,23 @@
+* 51 stage Ring-Osc.
+
+vin in out 2 pulse 2 0 0.1n 5n 1 1 1
+vdd dd 0 dc 0 pulse 0 2 0 1n 1 1 1
+vss ss 0 dc 0
+ve  sub  0 dc 0
+
+xinv1 dd ss sub in out25 inv25 
+xinv2 dd ss sub out25 out50 inv25
+xinv5 dd ss sub out50 out inv1
+xinv11 dd ss sub out buf inv1
+cout  buf ss 1pF
+
+xdum ss dum
+
+.option itl1=500 gmin=1e-15 itl4=10 
+*.dc vdd 0 2 0.01
+.tran 0.2n 50n
+
+.include nmosdd.mod
+.include pmosdd.mod
+.include lib.h
+.end

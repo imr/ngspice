@@ -6,7 +6,6 @@ Warning: Ps = 0 is less than W.
 Warning: Pd = 0 is less than W.
 Warning: Ps = 0 is less than W.
                              * model = BSIMSOI (PD)
-                             DC transfer characteristic  Sat Dec  9 18:04:21  2000
 --------------------------------------------------------------------------------
 Index   v-sweep         v(in)           v(out)          
 --------------------------------------------------------------------------------

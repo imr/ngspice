@@ -1,7 +1,7 @@
 A simple resistor with a voltage source
 
 R1 1 0 10k
-V1 1 0 1
+V1 1 0 DC 1
 
 .TRAN 1ns 6ns
 .PRINT TRAN I(V1)
