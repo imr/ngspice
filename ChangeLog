@@ -1,3 +1,25 @@
+2003-10-29  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/bjt2/*: Enhanced bjt level 2
+	  model adding dtemp, parallel mutliplier "m" and 
+	  support for CIDER multiprocessor compilation.
+	  
+	* DEVICES: Updated status of Diode and BJT's.  
+
+2003-10-26  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/bjt/*: Improved bjt level 1 model
+	adding dtemp and parallel multiplier.
+
+2003-10-24  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/dio/*: Improved diode model with code
+	sent by Diermar Warning and mine improvements. Forward/Reverse
+	knee currents, periphery effect, temperature corrections of
+	some parameters and parallel multiplier.
+	
+	* doc/ngspice.texi: updated documentation with new diode model.
+
 2003-10-01  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/spicelib/analysis/noisean.c: fixed an arror that caused segfault
