@@ -1,3 +1,9 @@
+2001-12-14  Paolo Nenzi <p.nenzi@iee.org>
+
+	* control.c, control.h, com_cdump.c, com_cdump.h, variable.c, variable.h:
+	  Patched the code with the one contributed by Charles Williams. The patches
+	  addresses some memory leaks.
+	
 2001-11-25  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
 	* circuits.h: transfered definition of sstructire 'circ' to ftedefs.h
