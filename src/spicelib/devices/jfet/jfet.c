@@ -48,8 +48,8 @@ IFparm JFETpTable[] = { /* device parameters */
 
 IFparm JFETmPTable[] = { /* model parameters */
  OP("type",     JFET_MOD_TYPE,    IF_STRING, "N-type or P-type JFET model"),
- IOP("njf",     JFET_MOD_NJF,     IF_FLAG,"N type JFET model"),
- IOP("pjf",     JFET_MOD_PJF,     IF_FLAG,"P type JFET model"),
+ IP("njf",     JFET_MOD_NJF,     IF_FLAG,"N type JFET model"),
+ IP("pjf",     JFET_MOD_PJF,     IF_FLAG,"P type JFET model"),
  IOP("vt0",     JFET_MOD_VTO,     IF_REAL,"Threshold voltage"),
  IOPR("vto",     JFET_MOD_VTO,    IF_REAL,"Threshold voltage"),
  IOP("beta",    JFET_MOD_BETA,    IF_REAL,"Transconductance parameter"),

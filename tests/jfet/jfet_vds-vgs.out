@@ -21,8 +21,6 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
       model                  modj
 
        type                   njf
-        njf             137395941
-        pjf             137395941
         vt0                  -3.5
        beta               0.00041
      lambda                 0.002
