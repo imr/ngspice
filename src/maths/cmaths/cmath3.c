@@ -15,11 +15,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  *  and return a char * that is cast to complex or double.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "ftecmath.h"
+#include <ngspice.h>
+#include <cpdefs.h>
+#include <dvec.h>
+
 #include "cmath3.h"
 
 

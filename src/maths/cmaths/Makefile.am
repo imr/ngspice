@@ -14,6 +14,6 @@ libcmaths_a_SOURCES = \
 
 
 
-INCLUDES = -I$(top_srcdir)/src/include
+INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/maths/poly
 
 MAINTAINERCLEANFILES = Makefile.in

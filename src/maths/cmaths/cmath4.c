@@ -18,11 +18,15 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <ngspice.h>
 #include <plot.h>
 #include <complex.h>
-#include <cpextern.h>
-#include <fteext.h>
+#include <cpdefs.h>
+//#include <fteext.h>
+
+#include <interpolate.h>
+#include <polyfit.h>
+#include <polyeval.h>
+#include <polyderiv.h>
 
 #include "cmath4.h"
-
 
 void *
 cx_and(void *data1, void *data2, short int datatype1, short int datatype2, int length)
