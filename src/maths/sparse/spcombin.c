@@ -58,20 +58,10 @@
 
 
 #if COMBINE
-#ifdef __STDC__
-#if spSEPARATED_COMPLEX_VECTORS
 static void CombineComplexMatrix( MatrixPtr,
                         RealVector, RealVector, RealVector, RealVector );
-#else
-static void CombineComplexMatrix( MatrixPtr, RealVector, RealVector );
-#endif
 static void ClearBuffer( MatrixPtr, int, int, ElementPtr );
 static void ClearComplexBuffer( MatrixPtr, int, int, ElementPtr );
-#else /* __STDC__ */
-static void CombineComplexMatrix();
-static void ClearBuffer();
-static void ClearComplexBuffer();
-#endif /* __STDC__ */
 
 /*
  *  COMBINE MATRICES ON A MULTIPROCESSOR
@@ -91,10 +81,10 @@ static void ClearComplexBuffer();
 static double Buffer[SPBSIZE];
 
 void
-spCombine( eMatrix, RHS, Spare IMAG_VECTORS )
+spCombine( eMatrix, RHS, Spare, iRHS, iSolution )
 
 char *eMatrix;
-RealVector RHS, Spare IMAG_VECTORS;
+RealVector RHS, Spare, iRHS, iSolution;
 {
 MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register ElementPtr  pElement;
@@ -105,18 +95,15 @@ struct ElementListNodeStruct  *pListNode;
 long type = MT_COMBINE, length = Matrix->Size + 1;
 
 /* Begin `spCombine'. */
-    ASSERT( IS_VALID(Matrix) AND NOT Matrix->Factored );
-    if (NOT Matrix->InternalVectorsAllocated)
+    assert( IS_VALID(Matrix) && !Matrix->Factored );
+    if (!Matrix->InternalVectorsAllocated)
 	spcCreateInternalVectors( Matrix );
 
-#if spCOMPLEX
     if (Matrix->Complex) {
-	CombineComplexMatrix( Matrix, RHS, Spare IMAG_VECTORS );
+	CombineComplexMatrix( Matrix, RHS, Spare, iRHS, iSolution );
 	return;
     }
-#endif
 
-#if REAL
     Size = Matrix->Size;
 
 /* Mark original non-zeroes. */
@@ -167,15 +154,14 @@ long type = MT_COMBINE, length = Matrix->Size + 1;
     DGOP_( &type, RHS, &length, "+" );
 
     return;
-#endif /* REAL */
 }
 
-#if spCOMPLEX
+
 static void
-CombineComplexMatrix( Matrix, RHS, Spare IMAG_VECTORS )
+CombineComplexMatrix( Matrix, RHS, Spare, iRHS, iSolution )
 
 MatrixPtr  Matrix;
-RealVector  RHS, Spare IMAG_VECTORS;
+RealVector  RHS, Spare, iRHS, iSolution;
 {
 register ElementPtr  pElement;
 register int  I, Size;
@@ -185,7 +171,7 @@ struct ElementListNodeStruct  *pListNode;
 long type = MT_COMBINE, length = Matrix->Size + 1;
 
 /* Begin `CombineComplexMatrix'. */
-    ASSERT(Matrix->Complex);
+    assert(Matrix->Complex);
     Size = Matrix->Size;
 
 /* Mark original non-zeroes. */
@@ -235,19 +221,13 @@ long type = MT_COMBINE, length = Matrix->Size + 1;
     }
 
 /* Sum all RHS's together */
-#if spSEPARATED_COMPLEX_VECTORS
     DGOP_( &type, RHS, &length, "+" );
     DGOP_( &type, iRHS, &length, "+" );
-#else
-    length *= 2;
-    DGOP_( &type, RHS, &length, "+" );
-#endif
 
     return;
 }
-#endif /* spCOMPLEX */
 
-#if REAL
+
 static void
 ClearBuffer( Matrix, NumElems, StartCol, StartElement )
 
@@ -281,9 +261,8 @@ ElementPtr StartElement;
 	pElement = pElement->NextInCol;
     }
 }
-#endif REAL
 
-#if spCOMPLEX
+
 static void
 ClearComplexBuffer( Matrix, DataCount, StartCol, StartElement )
 
@@ -318,5 +297,4 @@ ElementPtr StartElement;
 	pElement = pElement->NextInCol;
     }
 }
-#endif /* spCOMPLEX */
 #endif /* COMBINE */

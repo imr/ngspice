@@ -1,3 +1,5 @@
+#ifndef _SPDEFS_H
+#define _SPDEFS_H
 /*
  *  DATA STRUCTURE AND MACRO DEFINITIONS for Sparse.
  *
@@ -36,70 +38,13 @@
  *  IMPORTS
  */
 
+#include <ngspice.h>
 #include <stdio.h>
-#include "ngspice.h"
 
 #undef  ABORT
 #undef  MALLOC
 #undef  FREE
 #undef  REALLOC
-
-/*
- *  If running lint, change some of the compiler options to get a more
- *  complete inspection.
- */
-
-#ifdef lint
-#undef  REAL
-#undef  spCOMPLEX
-#undef  EXPANDABLE
-#undef  TRANSLATE
-#undef  INITIALIZE
-#undef  DELETE
-#undef  STRIP
-#undef  MODIFIED_NODAL
-#undef  QUAD_ELEMENT
-#undef  TRANSPOSE
-#undef  SCALING
-#undef  DOCUMENTATION
-#undef  MULTIPLICATION
-#undef  DETERMINANT
-#undef  CONDITION
-#undef  PSEUDOCONDITION
-#undef  FORTRAN
-#undef  DEBUG
-#undef  spCOMPATIBILITY
-
-
-
-#define  REAL                           YES
-#define  spCOMPLEX                      YES
-#define  EXPANDABLE                     YES
-#define  TRANSLATE                      YES
-#define  INITIALIZE                     YES
-#define  DELETE                         YES
-#define  STRIP                          YES
-#define  MODIFIED_NODAL                 YES
-#define  QUAD_ELEMENT                   YES
-#define  TRANSPOSE                      YES
-#define  SCALING                        YES
-#define  DOCUMENTATION                  YES
-#define  MULTIPLICATION                 YES
-#define  DETERMINANT                    YES
-#define  CONDITION                      YES
-#define  PSEUDOCONDITION                YES
-#define  FORTRAN                        YES
-#define  DEBUG                          YES
-#define  spCOMPATIBILITY                YES
-
-#define  LINT                           YES
-#else /* not lint */
-#define  LINT                           NO
-#endif /* not lint */
-
-
-
-
 
 
 
@@ -107,25 +52,15 @@
  *   MACRO DEFINITIONS
  *
  *   Macros are distinguished by using solely capital letters in their
- *   identifiers.  This contrasts with C defined identifiers which are strictly
- *   lower case, and program variable and procedure names which use both upper
- *   and lower case.
- */
+ *   identifiers.  This contrasts with C defined identifiers which are
+ *   strictly lower case, and program variable and procedure names
+ *   which use both upper and lower case.  */
 
 /* Begin macros. */
 
-/* Boolean data type */
-#define  BOOLEAN        int
 #define  NO             0
 #define  YES            1
-#define  NOT            !
-#define  AND            &&
-#define  OR             ||
 
-/* NULL pointer */
-#ifndef  NULL
-#define  NULL           0
-#endif
 
 #define  SPARSE_ID      0x772773        /* Arbitrary (is Sparse on phone). */
 #define  IS_SPARSE(matrix)      ((matrix) != NULL &&            \
@@ -151,11 +86,7 @@
 #define  SWAP(type, a, b)   {type swapx; swapx = a; a = b; b = swapx;}
 
 /* Macro function that returns the approx absolute value of a complex number. */
-#if spCOMPLEX
 #define  ELEMENT_MAG(ptr)   (ABS((ptr)->Real) + ABS((ptr)->Imag))
-#else
-#define  ELEMENT_MAG(ptr)   ((ptr)->Real < 0.0 ? -(ptr)->Real : (ptr)->Real)
-#endif
 
 /* Complex assignment statements. */
 #define  CMPLX_ASSIGN(to,from)  \
@@ -317,114 +248,6 @@
                  (from_a).Imag * (from_b).Real;         \
 }
 
-/*
- * Macro functions that provide complex division.
- */
-
-/* Complex division:  to = num / den */
-#define CMPLX_DIV(to,num,den)                                           \
-{   RealNumber  r_, s_;                                                 \
-    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
-        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
-    {   r_ = (den).Imag / (den).Real;                                   \
-        s_ = (den).Real + r_*(den).Imag;                                \
-        (to).Real = ((num).Real + r_*(num).Imag)/s_;                    \
-        (to).Imag = ((num).Imag - r_*(num).Real)/s_;                    \
-    }                                                                   \
-    else                                                                \
-    {   r_ = (den).Real / (den).Imag;                                   \
-        s_ = (den).Imag + r_*(den).Real;                                \
-        (to).Real = (r_*(num).Real + (num).Imag)/s_;                    \
-        (to).Imag = (r_*(num).Imag - (num).Real)/s_;                    \
-    }                                                                   \
-}
-
-/* Complex division and assignment:  num /= den */
-#define CMPLX_DIV_ASSIGN(num,den)                                       \
-{   RealNumber  r_, s_, t_;                                             \
-    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
-        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
-    {   r_ = (den).Imag / (den).Real;                                   \
-        s_ = (den).Real + r_*(den).Imag;                                \
-        t_ = ((num).Real + r_*(num).Imag)/s_;                           \
-        (num).Imag = ((num).Imag - r_*(num).Real)/s_;                   \
-        (num).Real = t_;                                                \
-    }                                                                   \
-    else                                                                \
-    {   r_ = (den).Real / (den).Imag;                                   \
-        s_ = (den).Imag + r_*(den).Real;                                \
-        t_ = (r_*(num).Real + (num).Imag)/s_;                           \
-        (num).Imag = (r_*(num).Imag - (num).Real)/s_;                   \
-        (num).Real = t_;                                                \
-    }                                                                   \
-}
-
-/* Complex reciprocation:  to = 1.0 / den */
-#define CMPLX_RECIPROCAL(to,den)                                        \
-{   RealNumber  r_;                                                     \
-    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
-        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
-    {   r_ = (den).Imag / (den).Real;                                   \
-        (to).Imag = -r_*((to).Real = 1.0/((den).Real + r_*(den).Imag)); \
-    }                                                                   \
-    else                                                                \
-    {   r_ = (den).Real / (den).Imag;                                   \
-        (to).Real = -r_*((to).Imag = -1.0/((den).Imag + r_*(den).Real));\
-    }                                                                   \
-}
-
-
-
-
-
-
-/*
- *  ASSERT and ABORT
- *
- *  Macro used to assert that if the code is working correctly, then 
- *  a condition must be true.  If not, then execution is terminated
- *  and an error message is issued stating that there is an internal
- *  error and giving the file and line number.  These assertions are
- *  not evaluated unless the DEBUG flag is true.
- */
-
-#if DEBUG
-#define ASSERT(condition) if (NOT(condition)) ABORT()
-#else
-#define ASSERT(condition)
-#endif
-
-#if DEBUG
-#define  ABORT()                                                        \
-{   (void)fflush(stdout);                                               \
-    (void)fprintf(stderr, "sparse: panic in file `%s' at line %d.\n",   \
-            __FILE__, __LINE__);                                        \
-    (void)fflush(stderr);                                               \
-    abort();                                                            \
-}
-#else
-#define  ABORT()
-#endif
-
-
-
-
-
-/*
- *  IMAGINARY VECTORS
- *
- *  The imaginary vectors iRHS and iSolution are only needed when the
- *  options spCOMPLEX and spSEPARATED_COMPLEX_VECTORS are set.  The following
- *  macro makes it easy to include or exclude these vectors as needed.
- */
-
-#if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
-#define IMAG_VECTORS    , iRHS, iSolution
-#define IMAG_RHS        , iRHS
-#else
-#define IMAG_VECTORS
-#define IMAG_RHS
-#endif
 
 #define ALLOC(type,number)  ((type *)tmalloc((unsigned)(sizeof(type)*(number))))
 #define REALLOC(ptr,type,number)  \
@@ -491,10 +314,9 @@
 /* Begin `MatrixElement'. */
 
 struct  MatrixElement
-{   RealNumber   Real;
-#if spCOMPLEX
+{
+    RealNumber   Real;
     RealNumber   Imag;
-#endif
     int          Row;
     int          Col;
     struct MatrixElement  *NextInRow;
@@ -532,7 +354,8 @@ typedef  ElementPtr  *ArrayOfElementPtrs;
 
 /* Begin `AllocationRecord'. */
 struct AllocationRecord
-{   char  *AllocatedPtr;
+{
+    char  *AllocatedPtr;
     struct  AllocationRecord  *NextRecord;
 };
 
@@ -567,7 +390,8 @@ typedef  struct  AllocationRecord  *AllocationListPtr;
 
 /* Begin `FillinListNodeStruct'. */
 struct FillinListNodeStruct
-{   ElementPtr  pFillinList;
+{
+    ElementPtr  pFillinList;
     int         NumberOfFillinsInList;
     struct      FillinListNodeStruct  *Next;
 };
@@ -575,7 +399,8 @@ struct FillinListNodeStruct
 /* Similar to above, but keeps track of the original Elements */
 /* Begin `ElementListNodeStruct'. */
 struct ElementListNodeStruct
-{   ElementPtr  pElementList;
+{
+    ElementPtr  pElementList;
     int         NumberOfElementsInList;
     struct      ElementListNodeStruct  *Next;
 };
@@ -613,7 +438,7 @@ struct ElementListNodeStruct
  *      grow to when EXPANDABLE is set true and AllocatedSize is the largest
  *      the matrix can get without requiring that the matrix frame be
  *      reallocated.
- *  Complex  (BOOLEAN)
+ *  Complex  (int)
  *      The flag which indicates whether the matrix is complex (true) or
  *      real.
  *  CurrentSize  (int)
@@ -622,12 +447,12 @@ struct ElementListNodeStruct
  *      rows and columns that have elements in them.
  *  Diag  (ArrayOfElementPtrs)
  *      Array of pointers that points to the diagonal elements.
- *  DoCmplxDirect  (BOOLEAN *)
+ *  DoCmplxDirect  (int *)
  *      Array of flags, one for each column in matrix.  If a flag is true
  *      then corresponding column in a complex matrix should be eliminated
  *      in spFactor() using direct addressing (rather than indirect
  *      addressing).
- *  DoRealDirect  (BOOLEAN *)
+ *  DoRealDirect  (int *)
  *      Array of flags, one for each column in matrix.  If a flag is true
  *      then corresponding column in a real matrix should be eliminated
  *      in spFactor() using direct addressing (rather than indirect
@@ -644,7 +469,7 @@ struct ElementListNodeStruct
  *  ExtToIntRowMap  (int [])
  *      An array that is used to convert external row numbers to internal
  *      external row numbers.  Present only if TRANSLATE option is set true.
- *  Factored  (BOOLEAN)
+ *  Factored  (int)
  *      Indicates if matrix has been factored.  This flag is set true in
  *      spFactor() and spOrderAndFactor() and set false in spCreate()
  *      and spClear().
@@ -665,7 +490,7 @@ struct ElementListNodeStruct
  *      array used during forward and backward substitution.  It is
  *      commonly called y when the forward and backward substitution process is
  *      denoted  Ax = b => Ly = b and Ux = y.
- *  InternalVectorsAllocated  (BOOLEAN)
+ *  InternalVectorsAllocated  (int)
  *      A flag that indicates whether the Markowitz vectors and the
  *      Intermediate vector have been created.
  *      These vectors are created in spcCreateInternalVectors().
@@ -689,19 +514,19 @@ struct ElementListNodeStruct
  *      The maximum number of off-diagonal element in the rows of L, the
  *      lower triangular matrix.  This quantity is used when computing an
  *      estimate of the roundoff error in the matrix.
- *  NeedsOrdering  (BOOLEAN)
+ *  NeedsOrdering  (int)
  *      This is a flag that signifies that the matrix needs to be ordered
  *      or reordered.  NeedsOrdering is set true in spCreate() and
  *      spGetElement() or spGetAdmittance() if new elements are added to the
  *      matrix after it has been previously factored.  It is set false in
  *      spOrderAndFactor().
- *  NumberOfInterchangesIsOdd  (BOOLEAN)
+ *  NumberOfInterchangesIsOdd  (int)
  *      Flag that indicates the sum of row and column interchange counts
  *      is an odd number.  Used when determining the sign of the determinant.
  *  Originals  (int)
  *      The number of original elements (total elements minus fill ins)
  *      present in matrix.
- *  Partitioned  (BOOLEAN)
+ *  Partitioned  (int)
  *      This flag indicates that the columns of the matrix have been 
  *      partitioned into two groups.  Those that will be addressed directly
  *      and those that will be addressed indirectly in spFactor().
@@ -711,7 +536,7 @@ struct ElementListNodeStruct
  *      Row pivot was chosen from.
  *  PivotSelectionMethod  (char)
  *      Character that indicates which pivot search method was successful.
- *  PreviousMatrixWasComplex  (BOOLEAN)
+ *  PreviousMatrixWasComplex  (int)
  *      This flag in needed to determine how to clear the matrix.  When
  *      dealing with real matrices, it is important that the imaginary terms
  *      in the matrix elements be zero.  Thus, if the previous matrix was
@@ -720,11 +545,11 @@ struct ElementListNodeStruct
  *  RelThreshold  (RealNumber)
  *      The magnitude an element must have relative to others in its row
  *      to be considered as a pivot candidate, except as a last resort.
- *  Reordered  (BOOLEAN)
+ *  Reordered  (int)
  *      This flag signifies that the matrix has been reordered.  It
  *      is cleared in spCreate(), set in spMNA_Preorder() and
  *      spOrderAndFactor() and is used in spPrint().
- *  RowsLinked  (BOOLEAN)
+ *  RowsLinked  (int)
  *      A flag that indicates whether the row pointers exist.  The AddByIndex
  *      routines do not generate the row pointers, which are needed by some
  *      of the other routines, such as spOrderAndFactor() and spScale().
@@ -781,43 +606,44 @@ struct ElementListNodeStruct
 
 /* Begin `MatrixFrame'. */
 struct  MatrixFrame
-{   RealNumber                   AbsThreshold;
+{
+    RealNumber                   AbsThreshold;
     int                          AllocatedSize;
     int                          AllocatedExtSize;
-    BOOLEAN                      Complex;
+    int                      Complex;
     int                          CurrentSize;
     ArrayOfElementPtrs           Diag;
-    BOOLEAN                     *DoCmplxDirect;
-    BOOLEAN                     *DoRealDirect;
+    int                     *DoCmplxDirect;
+    int                     *DoRealDirect;
     int                          Elements;
     int                          Error;
     int                          ExtSize;
     int                         *ExtToIntColMap;
     int                         *ExtToIntRowMap;
-    BOOLEAN                      Factored;
+    int                      Factored;
     int                          Fillins;
     ArrayOfElementPtrs           FirstInCol;
     ArrayOfElementPtrs           FirstInRow;
     unsigned long                ID;
     RealVector                   Intermediate;
-    BOOLEAN                      InternalVectorsAllocated;
+    int                      InternalVectorsAllocated;
     int                         *IntToExtColMap;
     int                         *IntToExtRowMap;
     int                         *MarkowitzRow;
     int                         *MarkowitzCol;
     long                        *MarkowitzProd;
     int                          MaxRowCountInLowerTri;
-    BOOLEAN                      NeedsOrdering;
-    BOOLEAN                      NumberOfInterchangesIsOdd;
+    int                      NeedsOrdering;
+    int                      NumberOfInterchangesIsOdd;
     int                          Originals;
-    BOOLEAN                      Partitioned;
+    int                      Partitioned;
     int                          PivotsOriginalCol;
     int                          PivotsOriginalRow;
     char                         PivotSelectionMethod;
-    BOOLEAN                      PreviousMatrixWasComplex;
+    int                      PreviousMatrixWasComplex;
     RealNumber                   RelThreshold;
-    BOOLEAN                      Reordered;
-    BOOLEAN                      RowsLinked;
+    int                      Reordered;
+    int                      RowsLinked;
     int                          SingularCol;
     int                          SingularRow;
     int                          Singletons;
@@ -844,7 +670,6 @@ typedef  struct MatrixFrame  *MatrixPtr;
  *  Function declarations
  */
 
-#ifdef __STDC__
 extern ElementPtr spcGetElement( MatrixPtr );
 extern ElementPtr spcGetFillin( MatrixPtr );
 extern ElementPtr spcFindElementInCol( MatrixPtr, ElementPtr*, int, int, int );
@@ -853,13 +678,6 @@ extern void spcCreateInternalVectors( MatrixPtr );
 extern void spcLinkRows( MatrixPtr );
 extern void spcColExchange( MatrixPtr, int, int );
 extern void spcRowExchange( MatrixPtr, int, int );
-#else /* __STDC__ */
-extern ElementPtr spcGetElement();
-extern ElementPtr spcGetFillin();
-extern ElementPtr spcFindElementInCol();
-extern ElementPtr spcCreateElement();
-extern void spcCreateInternalVectors();
-extern void spcLinkRows();
-extern void spcColExchange();
-extern void spcRowExchange();
-#endif /* __STDC__ */
+
+#endif
+

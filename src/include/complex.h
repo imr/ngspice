@@ -269,12 +269,9 @@ typedef  struct
 	(A).imag = (B.imag) - (C.imag);					      \
     }
 
-/* Macro function that returns the approx absolute value of a complex number. */
-#if spCOMPLEX
+/* Macro function that returns the approx absolute value of a complex
+   number. */
 #define  ELEMENT_MAG(ptr)   (ABS((ptr)->Real) + ABS((ptr)->Imag))
-#else
-#define  ELEMENT_MAG(ptr)   ((ptr)->Real < 0.0 ? -(ptr)->Real : (ptr)->Real)
-#endif
 
 /* Complex assignment statements. */
 #define  CMPLX_ASSIGN(to,from)  \
@@ -481,8 +478,8 @@ typedef  struct
 /* Complex reciprocation:  to = 1.0 / den */
 #define CMPLX_RECIPROCAL(to,den)                                        \
 {   RealNumber  r_;                                                     \
-    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
-        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
+    if (((den).Real >= (den).Imag && (den).Real > -(den).Imag) ||       \
+        ((den).Real < (den).Imag && (den).Real <= -(den).Imag))         \
     {   r_ = (den).Imag / (den).Real;                                   \
         (to).Imag = -r_*((to).Real = 1.0/((den).Real + r_*(den).Imag)); \
     }                                                                   \

@@ -62,15 +62,6 @@
  *      less storage is required.  There is often a noticeable speed
  *      penalty when using single precision.  Sparse internally refers
  *      to a spREAL as a RealNumber.
- *  REAL
- *      This specifies that the routines are expected to handle real
- *      systems of equations.  The routines can be compiled to handle
- *      both real and complex systems at the same time, but there is a
- *      slight speed and memory advantage if the routines are complied
- *      to handle only real systems of equations.
- *  spCOMPLEX
- *      This specifies that the routines will be complied to handle
- *      complex systems of equations.
  *  EXPANDABLE
  *      Setting this compiler flag true (1) makes the matrix
  *      expandable before it has been factored.  If the matrix is
@@ -129,28 +120,6 @@
  *      threshold.  When DIAGONAL_PIVOTING is turned off, the following
  *      options and constants are not used: MODIFIED_MARKOWITZ,
  *      MAX_MARKOWITZ_TIES, and TIES_MULTIPLIER.
- *  ARRAY_OFFSET
- *      This determines whether arrays start at an index of zero or one.
- *      This option is necessitated by the fact that standard C
- *      convention dictates that arrays begin with an index of zero but
- *      the standard mathematic convention states that arrays begin with
- *      an index of one.  So if you prefer to start your arrays with
- *      zero, or your calling Sparse from FORTRAN, set ARRAY_OFFSET to
- *      NO or 0.  Otherwise, set ARRAY_OFFSET to YES or 1.  Note that if
- *      you use an offset of one, the arrays that you pass to Sparse
- *      must have an allocated length of one plus the size of the
- *      matrix.  ARRAY_OFFSET must be either 0 or 1, no other offsets
- *      are valid.
- *  spSEPARATED_COMPLEX_VECTORS
- *      This specifies the format for complex vectors.  If this is set
- *      false then a complex vector is made up of one double sized
- *      array of RealNumber's in which the real and imaginary numbers
- *      are placed in the alternately array in the array.  In other
- *      words, the first entry would be Complex[1].Real, then comes
- *      Complex[1].Imag, then Complex[1].Real, etc.  If
- *      spSEPARATED_COMPLEX_VECTORS is set true, then each complex
- *      vector is represented by two arrays of RealNumbers, one with
- *      the real terms, the other with the imaginary. [NO]
  *  MODIFIED_MARKOWITZ
  *      This specifies that the modified Markowitz method of pivot
  *      selection is to be used.  The modified Markowitz method differs
@@ -229,33 +198,19 @@
  *  MULTIPLICATION
  *      This specifies that the routines to multiply the unfactored
  *      matrix by a vector should be compiled.
- *  FORTRAN
- *      This specifies that the FORTRAN interface routines should be
- *      compiled.  When interfacing to FORTRAN programs, the ARRAY_OFFSET
- *      options should be set to NO.
  *  DEBUG
  *      This specifies that additional error checking will be compiled.
  *      The type of error checked are those that are common when the
  *      matrix routines are first integrated into a user's program.  Once
  *      the routines have been integrated in and are running smoothly, this
  *      option should be turned off.
- *  spCOMPATIBILITY
- *      This specifies that Sparse1.3 should be configured to be upward
- *      compatible from Sparse1.2.  This option is not suggested for use
- *      in new software.  Sparse1.3, when configured to be compatible with
- *      Sparse1.2, is not completely compatible.  In particular, if
- *      recompiling the calling program, it is necessary to change the
- *      of the Sparse include files. This option will go away in future
- *      versions of Sparse. [0]
  */
 
 /* Begin options. */
-#define  REAL                           YES
 #define  EXPANDABLE                     YES
 #define  TRANSLATE                      YES
 #define  INITIALIZE                     NO
 #define  DIAGONAL_PIVOTING              YES
-#define  ARRAY_OFFSET                   YES
 #define  MODIFIED_MARKOWITZ             NO
 #define  DELETE                         NO
 #define  STRIP                          NO
@@ -270,7 +225,6 @@
 #define  STABILITY                      NO
 #define  CONDITION                      NO
 #define  PSEUDOCONDITION                NO
-#define  FORTRAN                        NO
 #ifdef HAS_MINDATA
 #  define  DEBUG                          NO
 #else
@@ -283,14 +237,6 @@
  *  constants YES an NO are not defined in spMatrix.h to avoid conflicts
  *  with user code, so use 0 for NO and 1 for YES.
  */
-#endif /* spINSIDE_SPARSE */
-#define  spCOMPLEX                      1
-#define  spSEPARATED_COMPLEX_VECTORS    1
-#define  spCOMPATIBILITY                0
-#ifdef spINSIDE_SPARSE
-
-
-
 
 
 

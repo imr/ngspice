@@ -47,7 +47,6 @@ noinst_HEADERS = \
 	sensgen.h \
 	sim.h \
 	smpdefs.h \
-	spconfig.h \
 	sperror.h \
 	spmatrix.h \
 	suffix.h \
