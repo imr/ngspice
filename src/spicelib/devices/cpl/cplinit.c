@@ -40,8 +40,8 @@ SPICEdev CPLinfo = {
   },
 
  
-  DEVparam       : CPLmParam,
-  DEVmodParam    : NULL,
+  DEVparam       : CPLparam,
+  DEVmodParam    : CPLmParam,
   DEVload        : CPLload,
   DEVsetup       : CPLsetup,
   DEVunsetup     : NULL,

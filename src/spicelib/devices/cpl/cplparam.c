@@ -15,11 +15,7 @@ Author: 1992 Charles Hough
 
 /* ARGSUSED */
 int
-CPLparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+CPLparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     CPLinstance *here = (CPLinstance *)inst;
     switch(param) {

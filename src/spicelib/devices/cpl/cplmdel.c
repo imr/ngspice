@@ -12,10 +12,7 @@ Author: 1992 Charles Hough
 
 
 int
-CPLmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+CPLmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     CPLmodel **model = (CPLmodel **)inModel;
     CPLmodel *modfast = (CPLmodel *)kill;

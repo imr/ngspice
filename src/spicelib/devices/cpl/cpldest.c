@@ -9,8 +9,7 @@ Author: 1992 Charles Hough
 #include "suffix.h"
 
 void
-CPLdestroy(inModel)
-    GENmodel **inModel;
+CPLdestroy(GENmodel **inModel)
 {
     CPLmodel **model = (CPLmodel **)inModel;
     CPLinstance *here;

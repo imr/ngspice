@@ -28,9 +28,7 @@ static void copy_cp();
 
 /*ARGSUSED*/
 int
-CPLload(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+CPLload(GENmodel *inModel, CKTcircuit *ckt)
 {
     register CPLmodel *model = (CPLmodel *)inModel;
     register CPLinstance *here;

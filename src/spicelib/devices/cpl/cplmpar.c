@@ -14,10 +14,7 @@ Author: 1992 Charles Hough
 
 
 int
-CPLmParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+CPLmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     register CPLmodel *model = (CPLmodel *)inModel;
     switch(param) {
@@ -41,8 +38,8 @@ CPLmParam(param,value,inModel)
             model->length = value->rValue;
             model->lengthgiven = TRUE;
             break;
-		case CPL_MOD_R:
-			break;
+	case CPL_MOD_R:
+	    break;
         default:
             return(E_BADPARM);
     }

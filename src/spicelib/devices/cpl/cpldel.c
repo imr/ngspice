@@ -12,10 +12,7 @@ Author: 1992 Charles Hough
 
 
 int
-CPLdelete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
+CPLdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
     CPLmodel *model = (CPLmodel *)inModel;
     CPLinstance **fast = (CPLinstance **)inst;

@@ -1,3 +1,8 @@
+/**********
+Copyright 1992 Regents of the University of California.  All rights
+reserved.
+**********/
+
 #ifndef CPL
 #define CPL
 
