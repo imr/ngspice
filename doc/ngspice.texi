@@ -2217,7 +2217,7 @@ exponential increase in the reverse diode current and is determined by
 the parameters BV and IBV (both of which are positive numbers).
 
 
-@multitable @columnfractions .1 .45 .15 .15 .15
+@multitable @columnfractions .1 .45 .15 .15 .15 .1
 @item name @tab parameter @tab units @tab default @tab example @tab   area
 @item IS @tab saturation current @tab A @tab 1.0e-14 @tab 1.0e-14 @tab   *
 @item RS @tab ohmic resistance @tab Z @tab 0 @tab 10 @tab *
@@ -2318,7 +2318,7 @@ accepted.
 
 Modified Gummel-Poon BJT Parameters.
 
-@multitable @columnfractions .1 .45 .15 .15 .15
+@multitable @columnfractions .1 .45 .15 .15 .15 .1
 @item name @tab parameter @tab units @tab default @tab example @tab area
 @item IS @tab transport saturation current @tab A @tab 1.0e-16 @tab
 1.0e-15 @tab *
@@ -2429,7 +2429,7 @@ junction voltage and are defined by the parameters CGS, CGD, and PB.
 Note that in Spice3f and later, a fitting parameter B has been added.
 For details, see [9].
 
-@multitable @columnfractions .1 .45 .15 .15 .15
+@multitable @columnfractions .1 .45 .15 .15 .15 .1
 @item name @tab parameter @tab units @tab default @tab example @tab area
 @item VTO @tab threshold voltage (@math{V_T0}) @tab V @tab -2.0 @tab -2.0
 @item BETA @tab transconductance parameter (B)
