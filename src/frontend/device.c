@@ -73,7 +73,7 @@ all_show(wordlist *wl, int mode)
 
     if (!cp_getvar("width", VT_NUM, (char *) &screen_width))
 	    screen_width = DEF_WIDTH;
-   count = (screen_width - LEFT_WIDTH) / (DEV_WIDTH + 1);
+    count = (screen_width - LEFT_WIDTH) / (DEV_WIDTH + 1);
 
     n = 0;
     do {
@@ -101,10 +101,7 @@ all_show(wordlist *wl, int mode)
 			else
 				thisgroup = next;
 		}
-		/*
-		tfree(w->wl_word);
-		tfree(w);
-		*/
+		/* w must not be freed here */
 		w = NULL;
 	    } else if (eq(w->wl_word, "+")) {
 		if (params) {
@@ -120,16 +117,10 @@ all_show(wordlist *wl, int mode)
 			else
 				thisgroup = next;
 		}
-		/*
-		tfree(w->wl_word);
-		tfree(w);
-		*/
+		/* w must not be freed here */
 		w = NULL;
 	    } else if (eq(w->wl_word, ":")) {
-	    /*
-		tfree(w->wl_word);
-		tfree(w);
-		*/
+		/* w must not be freed here */
 		w = NULL;
 		if (!params) {
 		    params = next;
@@ -145,10 +136,7 @@ all_show(wordlist *wl, int mode)
 		}
 	    } else if (eq(w->wl_word, ";") || eq(w->wl_word, ",")) {
 		    nextgroup = next;
-		    /*
-		    tfree(w->wl_word);
-		    tfree(w);
-		    */
+		    /* w must not be freed here */
 		    w = NULL;
 		    if (prev)
 			prev->wl_next = NULL;
@@ -180,7 +168,7 @@ all_show(wordlist *wl, int mode)
 		if (ft_sim->devices[dg->dev_type_no]->numModelParms) {
 			i = 0;
 			do {
-			printf("%*s", LEFT_WIDTH, "model");
+				printf("%*s", LEFT_WIDTH, "model");
 				j = dgen_for_n(dg, count, printstr, "m", i);
 				i += 1;
 				printf("\n");
@@ -193,7 +181,7 @@ all_show(wordlist *wl, int mode)
 		else if (!params)
 		    param_forall(dg, DGEN_DEFPARAMS);
 		if (params)
-		    wl_forall(params, listparam, (void *)dg);
+		    wl_forall(params, listparam, dg);
 		printf("\n");
 
 	    } else if (ft_sim->devices[dg->dev_type_no]->numModelParms) {
@@ -215,7 +203,7 @@ all_show(wordlist *wl, int mode)
 		else if (!params)
 		    param_forall(dg, DGEN_DEFPARAMS);
 		if (params)
-		    wl_forall(params, listparam, (void *)dg);
+		    wl_forall(params, listparam, dg);
 		printf("\n");
 	    }
 	}
@@ -254,7 +242,7 @@ printstr(dgen *dg, char *name)
     return 0;
 }
 
-void 
+void
 param_forall(dgen *dg, int flags)
 {
     int	i, j, k, found;
@@ -286,8 +274,7 @@ param_forall(dgen *dg, int flags)
                                            plist[i].keyword);
 			else
 			   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
-			k = dgen_for_n(dg, count, printvals,
-				(char *) (plist + i), j);
+			k = dgen_for_n(dg, count, printvals, (plist + i), j);
 			printf("\n");
 			j += 1;
 		} while (k);
@@ -296,7 +283,7 @@ param_forall(dgen *dg, int flags)
     }
 }
 
-void 
+void
 listparam(wordlist *p, dgen *dg)
 {
     int	i, j, k, found;
@@ -331,7 +318,7 @@ listparam(wordlist *p, dgen *dg)
 		   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
 		else
 		   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
-		k = dgen_for_n(dg, count, printvals, (void *)(plist + i), j);
+		k = dgen_for_n(dg, count, printvals, (plist + i), j);
 		printf("\n");
 		j += 1;
 	    } while (k > 0);
@@ -462,7 +449,7 @@ printvals(dgen *dg, IFparm *p, int i)
 
 
 /* (old "show" command)
- * Display various device parameters.  The syntax of this command is 
+ * Display various device parameters.  The syntax of this command is
  *   show devicelist : parmlist
  * where devicelist can be "all", the name of a device, a string like r*,
  * which means all devices with names that begin with 'r', repeated one
@@ -495,7 +482,7 @@ old_show(wordlist *wl)
         inp_casefix(devs->wl_word);
         tw = wl_append(tw, devexpand(devs->wl_word));
     }
-    
+
     devs = tw;
     for (tw = parms; tw; tw = tw->wl_next)
         if (eq(tw->wl_word, "all"))
@@ -571,7 +558,7 @@ com_altermod(wordlist *wl)
     com_alter_common(wl, 1);
 }
 
-void 
+void
 com_alter_common(wordlist *wl, int do_model)
 {
     wordlist *eqword, *words;

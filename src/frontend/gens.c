@@ -27,7 +27,7 @@ wl_forall(wordlist *wl, void (*fn) (/* ??? */), void *data)
 dgen *
 dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
 {
-	dgen	*dg;
+	dgen	*dg, *dg_save;
 	wordlist **prevp;
 
 	dg = NEW(dgen);
@@ -37,6 +37,7 @@ dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
 	dg->dev_type_no = -1;
 	dg->dev_list = wl;
 	dg->flags = 0;
+	dg_save = dg; /* va: save, to avoid memory leak */
 
 	prevp = &wl;
 
@@ -51,6 +52,8 @@ dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
 		dg->flags |= DGEN_DEFDEVS | flag;
 
 	dgen_next(&dg);
+	/* va: it might be too much tests, but safer is better... */
+	if (dg!=dg_save && dg==NULL && dg_save!=NULL) tfree(dg_save);
 
 	return dg;
 }
@@ -79,18 +82,17 @@ dgen_for_n(dgen *dg, int n, int (*fn) (/* ??? */), void *data, int subindex)
 }
 
 void
-dgen_nth_next(dgen **dg, int n)
+dgen_nth_next(dgen **p_dg, int n)
 {
 	int	i, dnum;
-	dgen * dg_old=*dg;
+	dgen *	dg_save=*p_dg; /* va: save, to avoid memory leak */
 
+	dnum = (*p_dg)->dev_type_no;
 
-	dnum = (*dg)->dev_type_no;
-
-	for (i = 0; *dg && (*dg)->dev_type_no == dnum && i < n; i++) {
-		dgen_next(dg);
-		 /* va, it might be too much tests, but safer is better... */
-                 if (*dg!=dg_old && *dg==NULL && dg_old!=NULL) tfree(dg_old);
+	for (i = 0; *p_dg && (*p_dg)->dev_type_no == dnum && i < n; i++) {
+		dgen_next(p_dg);
+		/* va: it might be too much tests, but safer is better... */
+		if (*p_dg!=dg_save && *p_dg==NULL && dg_save!=NULL) tfree(dg_save);
 	}
 }
 
