@@ -1,5 +1,8 @@
 2000-05-25  Arno W. Peters  <A.W.Peters@ieee.org>
 
+	* src/circuit/inp2dot.c: First refactoring of INP2dot into smaller
+	functions.  Still needs work.
+
 	* src/circuit/sperror.c: Reworked, now much simpler.
 
 	* src/include/inpdefs.h, src/include/sperror.h: Removed redundancy

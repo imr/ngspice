@@ -11,36 +11,456 @@ Author: 1988 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
+static int
+dot_nodeset(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
+{
+    int which;			/* which analysis we are performing */
+    int error;			/* error code temporary */
+    char *name;			/* the resistor's name */
+    void *node1;		/* the first node's node pointer */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFparm *prm;		/* pointer to parameter to search through array */
 
+
+    /* the part of the current line left to parse */
+    char *line = current->line;
+
+
+    /* .nodeset */
+    which = -1;
+    for (prm = ft_sim->nodeParms;
+	 prm < ft_sim->nodeParms + ft_sim->numNodeParms; prm++) {
+	if (strcmp(prm->keyword, "nodeset") == 0) {
+	    which = prm->id;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("nodeset unknown to simulator. \n");
+	return (0);
+    }
+    for (;;) {
+	int length;
+
+	/* loop until we run out of data */
+	INPgetTok(&line, &name, 1);
+	/* check to see if in the form V(xxx) and grab the xxx */
+	if (*name == (char) NULL)
+	    break;		/* end of line */
+	length = strlen(name);
+	if ((*name == 'V' || *(name) == 'v') && (length == 1)) {
+	    /* looks like V - must be V(xx) - get xx now */
+	    INPgetTok(&line, &name, 1);
+	    INPtermInsert(ckt, &name, tab, &node1);
+	    ptemp.rValue = INPevaluate(&line, &error, 1);
+	    IFC(setNodeParm,
+		(ckt, node1, which, &ptemp,
+		 (IFvalue *) NULL)) continue;
+	}
+	LITERR(" Error: .nodeset syntax error.\n");
+	break;
+    }
+    return (0);
+}
+
+
+
+static int
+dot_noise(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
+	  void *foo)
+{
+    int which;			/* which analysis we are performing */
+    int i;			/* generic loop variable */
+    int error;			/* error code temporary */
+    char *name;			/* the resistor's name */
+    char *nname1;		/* the first node's name */
+    char *nname2;		/* the second node's name */
+    void *node1;		/* the first node's node pointer */
+    void *node2;		/* the second node's node pointer */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    char *steptype;		/* ac analysis, type of stepping function */
+
+    int found;
+    char *point;
+
+    /* the part of the current line left to parse */
+    char *line = current->line;
+
+    /* .noise V(OUTPUT,REF) SRC {DEC OCT LIN} NP FSTART FSTOP <PTSPRSUM> */
+    which = -1;
+    for (i = 0; i < ft_sim->numAnalyses; i++) {
+	if (strcmp(ft_sim->analyses[i]->name, "NOISE") == 0) {
+	    which = i;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("Noise analysis unsupported.\n");
+	return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Noise Analysis", &foo, task));
+    INPgetTok(&line, &name, 1);
+
+    /* Make sure the ".noise" command is followed by V(xxxx).  If it
+       is, extract 'xxxx'.  If not, report an error. */
+
+    if (name != NULL) {
+	int length;
+
+	length = strlen(name);
+	if (((*name == 'V') || (*name == 'v')) && (length == 1)) {
+
+	    INPgetTok(&line, &nname1, 0);
+	    INPtermInsert(ckt, &nname1, tab, &node1);
+	    ptemp.nValue = (IFnode) node1;
+	    GCA(INPapName, (ckt, which, foo, "output", &ptemp))
+
+		if (*line != /* match ( */ ')') {
+		    INPgetTok(&line, &nname2, 1);
+		    INPtermInsert(ckt, &nname2, tab, &node2);
+		    ptemp.nValue = (IFnode) node2;
+		} else {
+		    ptemp.nValue = (IFnode) gnode;
+		}
+	    GCA(INPapName, (ckt, which, foo, "outputref", &ptemp))
+
+		INPgetTok(&line, &name, 1);
+	    INPinsert(&name, tab);
+	    ptemp.uValue = name;
+	    GCA(INPapName, (ckt, which, foo, "input", &ptemp))
+
+		INPgetTok(&line, &steptype, 1);
+	    ptemp.iValue = 1;
+	    error = INPapName(ckt, which, foo, steptype, &ptemp);
+	    if (error)
+		current->error = INPerrCat(current->error, INPerror(error));
+	    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);
+	    error = INPapName(ckt, which, foo, "numsteps", parm);
+	    if (error)
+		current->error = INPerrCat(current->error, INPerror(error));
+	    parm = INPgetValue(ckt, &line, IF_REAL, tab);
+	    error = INPapName(ckt, which, foo, "start", parm);
+	    if (error)
+		current->error = INPerrCat(current->error, INPerror(error));
+	    parm = INPgetValue(ckt, &line, IF_REAL, tab);
+	    error = INPapName(ckt, which, foo, "stop", parm);
+	    if (error)
+		current->error = INPerrCat(current->error, INPerror(error));
+
+	    /* now see if "ptspersum" has been specified by the user */
+
+	    for (found = 0, point = line; (!found) && (*point != '\0');
+		 found = ((*point != ' ') && (*(point++) != '\t')));
+	    if (found) {
+		parm = INPgetValue(ckt, &line, IF_INTEGER, tab);
+		error = INPapName(ckt, which, foo, "ptspersum", parm);
+		if (error)
+		    current->error = INPerrCat(current->error, INPerror(error));
+	    } else {
+		ptemp.iValue = 0;
+		error = INPapName(ckt, which, foo, "ptspersum", &ptemp);
+		if (error)
+		    current->error = INPerrCat(current->error, INPerror(error));
+	    }
+	} else
+	    LITERR("bad syntax "
+		   "[.noise v(OUT) SRC {DEC OCT LIN} "
+		   "NP FSTART FSTOP <PTSPRSUM>]\n");
+    } else {
+	LITERR("bad syntax "
+	       "[.noise v(OUT) SRC {DEC OCT LIN} "
+	       "NP FSTART FSTOP <PTSPRSUM>]\n");
+    }
+    return 0;
+}
+
+
+static int
+dot_op(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
+       void *foo)
+{
+    int which;			/* which analysis we are performing */
+    int i;			/* generic loop variable */
+    int error;			/* error code temporary */
+
+    /* .op */
+    which = -1;
+    for (i = 0; i < ft_sim->numAnalyses; i++) {
+	if (strcmp(ft_sim->analyses[i]->name, "OP") == 0) {
+	    which = i;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("DC operating point analysis unsupported\n");
+	return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Operating Point", &foo, task));
+    return (0);
+}
+
+
+static int
+dot_disto(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
+	  void *foo)
+{
+    int which;			/* which analysis we are performing */
+    int i;			/* generic loop variable */
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    char *steptype;		/* ac analysis, type of stepping function */
+
+
+    /* the part of the current line left to parse */
+    char *line = current->line;
+
+    /* .disto {DEC OCT LIN} NP FSTART FSTOP <F2OVERF1> */
+    which = -1;
+    for (i = 0; i < ft_sim->numAnalyses; i++) {
+	if (strcmp(ft_sim->analyses[i]->name, "DISTO") == 0) {
+	    which = i;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("Small signal distortion analysis unsupported.\n");
+	return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Distortion Analysis", &foo, task));
+    INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
+    ptemp.iValue = 1;
+    GCA(INPapName, (ckt, which, foo, steptype, &ptemp));
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);	/* number of points */
+    GCA(INPapName, (ckt, which, foo, "numsteps", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
+    GCA(INPapName, (ckt, which, foo, "start", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
+    GCA(INPapName, (ckt, which, foo, "stop", parm));
+    if (*line) {
+	parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* f1phase */
+	GCA(INPapName, (ckt, which, foo, "f2overf1", parm));
+    }
+    return (0);
+}
+
+
+static int
+dot_ic(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
+       void *foo)
+{
+    int which;			/* which analysis we are performing */
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFparm *prm;		/* pointer to parameter to search through array */
+    void *node1;		/* the first node's node pointer */
+
+
+    /* the part of the current line left to parse */
+    char *line = current->line;
+
+    /* .ic */
+    which = -1;
+    for (prm = ft_sim->nodeParms;
+	 prm < ft_sim->nodeParms + ft_sim->numNodeParms; prm++) {
+	if (strcmp(prm->keyword, "ic") == 0) {
+	    which = prm->id;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("ic unknown to simulator. \n");
+	return (0);
+    }
+    for (;;) {		/* loop until we run out of data */
+	int length;
+	char *name;		/* the resistor's name */
+
+	INPgetTok(&line, &name, 1);
+	/* check to see if in the form V(xxx) and grab the xxx */
+	if (*name == 0)
+	    break;		/* end of line */
+	length = strlen(name);
+	if ((*name == 'V' || *(name) == 'v') && (length == 1)) {
+	    /* looks like V - must be V(xx) - get xx now */
+	    INPgetTok(&line, &name, 1);
+	    INPtermInsert(ckt, &name, tab, &node1);
+	    ptemp.rValue = INPevaluate(&line, &error, 1);
+	    IFC(setNodeParm,
+		(ckt, node1, which, &ptemp,
+		 (IFvalue *) NULL)) continue;
+	}
+	LITERR(" Error: .ic syntax error.\n");
+	break;
+    }
+    return 0;
+}
+
+
+static int
+dot_ac(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
+       void *foo)
+{
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    int which;			/* which analysis we are performing */
+    int i;			/* generic loop variable */
+    char *steptype;		/* ac analysis, type of stepping function */
+
+    /* the part of the current line left to parse */
+    char *line = current->line;
+
+    /* .ac {DEC OCT LIN} NP FSTART FSTOP */
+    which = -1;
+    for (i = 0; i < ft_sim->numAnalyses; i++) {
+	if (strcmp(ft_sim->analyses[i]->name, "AC") == 0) {
+	    which = i;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("AC small signal analysis unsupported.\n");
+	return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "AC Analysis", &foo, task))
+	INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
+    ptemp.iValue = 1;
+    GCA(INPapName, (ckt, which, foo, steptype, &ptemp))
+	parm = INPgetValue(ckt, &line, IF_INTEGER, tab); /* number of points */
+    GCA(INPapName, (ckt, which, foo, "numsteps", parm))
+	parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
+    GCA(INPapName, (ckt, which, foo, "start", parm))
+	parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
+    GCA(INPapName, (ckt, which, foo, "stop", parm))
+	return (0);
+}
+
+static int
+dot_pz(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
+       void *foo)
+{
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    int which;			/* which analysis we are performing */
+    int i;			/* generic loop variable */
+    char *steptype;		/* ac analysis, type of stepping function */
+
+    /* the part of the current line left to parse */
+    char *line = current->line;
+
+    /* .pz nodeI nodeG nodeJ nodeK {V I} {POL ZER PZ} */
+    which = -1;
+    for (i = 0; i < ft_sim->numAnalyses; i++) {
+	if (strcmp(ft_sim->analyses[i]->name, "PZ") == 0) {
+	    which = i;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("Pole-zero analysis unsupported.\n");
+	return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Pole-Zero Analysis", &foo, task))
+	parm = INPgetValue(ckt, &line, IF_NODE, tab);
+    GCA(INPapName, (ckt, which, foo, "nodei", parm))
+	parm = INPgetValue(ckt, &line, IF_NODE, tab);
+    GCA(INPapName, (ckt, which, foo, "nodeg", parm))
+	parm = INPgetValue(ckt, &line, IF_NODE, tab);
+    GCA(INPapName, (ckt, which, foo, "nodej", parm))
+	parm = INPgetValue(ckt, &line, IF_NODE, tab);
+    GCA(INPapName, (ckt, which, foo, "nodek", parm))
+	INPgetTok(&line, &steptype, 1);	/* get V or I */
+    ptemp.iValue = 1;
+    GCA(INPapName, (ckt, which, foo, steptype, &ptemp))
+	INPgetTok(&line, &steptype, 1);	/* get POL, ZER, or PZ */
+    ptemp.iValue = 1;
+    GCA(INPapName, (ckt, which, foo, steptype, &ptemp))
+	return (0);
+}
+
+
+static int
+dot_dc(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
+       void *foo)
+{
+    char *name;			/* the resistor's name */
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    int which;			/* which analysis we are performing */
+    int i;			/* generic loop variable */
+
+    /* the part of the current line left to parse */
+    char *line = current->line;
+
+    /* .dc SRC1NAME Vstart1 Vstop1 Vinc1 [SRC2NAME Vstart2 */
+    /*        Vstop2 Vinc2 */
+    which = -1;
+    for (i = 0; i < ft_sim->numAnalyses; i++) {
+	if (strcmp(ft_sim->analyses[i]->name, "DC") == 0) {
+	    which = i;
+	    break;
+	}
+    }
+    if (which == -1) {
+	LITERR("DC transfer curve analysis unsupported\n");
+	return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "DC transfer characteristic", &foo, task));
+    INPgetTok(&line, &name, 1);
+    INPinsert(&name, tab);
+    ptemp.uValue = name;
+    GCA(INPapName, (ckt, which, foo, "name1", &ptemp));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vstart1 */
+    GCA(INPapName, (ckt, which, foo, "start1", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vstop1 */
+    GCA(INPapName, (ckt, which, foo, "stop1", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vinc1 */
+    GCA(INPapName, (ckt, which, foo, "step1", parm));
+    if (*line) {
+	INPgetTok(&line, &name, 1);
+	INPinsert(&name, tab);
+	ptemp.uValue = name;
+	GCA(INPapName, (ckt, which, foo, "name2", &ptemp));
+	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstart1 */
+	GCA(INPapName, (ckt, which, foo, "start2", parm));
+	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstop1 */
+	GCA(INPapName, (ckt, which, foo, "stop2", parm));
+	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vinc1 */
+	GCA(INPapName, (ckt, which, foo, "step2", parm));
+    }
+    return 0;
+}
+
+
+/* FIXME: INP2dot(): factor out all analysises. */
 int
 INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 {
 
     /* .<something> Many possibilities */
 
-    char *line;			/* the part of the current line left to parse */
     char *name;			/* the resistor's name */
     char *nname1;		/* the first node's name */
     char *nname2;		/* the second node's name */
-    char *point;
     void *node1;		/* the first node's node pointer */
     void *node2;		/* the second node's node pointer */
     int error;			/* error code temporary */
     IFvalue ptemp;		/* a value structure to package resistance into */
     IFvalue *parm;		/* a pointer to a value struct for function returns */
-    IFparm *prm;		/* pointer to parameter to search through array */
     char *token;		/* a token from the line */
     int which;			/* which analysis we are performing */
-    int found;
     int i;			/* generic loop variable */
     void *foo;			/* pointer to analysis */
-    int length;			/* length of a name */
     char *steptype;		/* ac analysis, type of stepping function */
     double dtemp;		/* random double precision temporary */
     char *word;			/* something to stick a word of input into */
+    /* the part of the current line left to parse */
+    char *line = current->line;
 
-
-    line = current->line;
     INPgetTok(&line, &token, 1);
     if (strcmp(token, ".model") == 0) {
 	/* don't have to do anything, since models were all done in
@@ -57,170 +477,13 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 	LITERR(" Warning: .TEMP card obsolete - use .options TEMP and TNOM\n");
 	return (0);
     } else if ((strcmp(token, ".op") == 0)) {
-	/* .op */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-	    if (strcmp(ft_sim->analyses[i]->name, "OP") == 0) {
-		which = i;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("DC operating point analysis unsupported\n");
-	    return (0);
-	}
-	IFC(newAnalysis, (ckt, which, "Operating Point", &foo, task))
-	    return (0);
+	return dot_op(ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".nodeset") == 0)) {
-	/* .nodeset */
-	which = -1;
-	for (prm = ft_sim->nodeParms;
-	     prm < ft_sim->nodeParms + ft_sim->numNodeParms; prm++) {
-	    if (strcmp(prm->keyword, "nodeset") == 0) {
-		which = prm->id;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("nodeset unknown to simulator. \n");
-	    return (0);
-	}
-	for (;;) {
-	    /* loop until we run out of data */
-	    INPgetTok(&line, &name, 1);
-	    /* check to see if in the form V(xxx) and grab the xxx */
-	    if (*name == (char) NULL)
-		break;		/* end of line */
-	    length = strlen(name);
-	    if ((*name == 'V' || *(name) == 'v') && (length == 1)) {
-		/* looks like V - must be V(xx) - get xx now */
-		INPgetTok(&line, &name, 1);
-		INPtermInsert(ckt, &name, tab, &node1);
-		ptemp.rValue = INPevaluate(&line, &error, 1);
-		IFC(setNodeParm,
-		    (ckt, node1, which, &ptemp,
-		     (IFvalue *) NULL)) continue;
-	    }
-	    LITERR(" Error: .nodeset syntax error.\n");
-	    break;
-	}
-	return (0);
+	return dot_nodeset(ckt, tab, current, task, gnode);
     } else if ((strcmp(token, ".disto") == 0)) {
-	/* .disto {DEC OCT LIN} NP FSTART FSTOP <F2OVERF1> */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-	    if (strcmp(ft_sim->analyses[i]->name, "DISTO") == 0) {
-		which = i;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("Small signal distortion analysis unsupported.\n");
-	    return (0);
-	}
-	IFC(newAnalysis, (ckt, which, "Distortion Analysis", &foo, task))
-	    INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
-	ptemp.iValue = 1;
-	GCA(INPapName, (ckt, which, foo, steptype, &ptemp))
-	    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);	/* number of points */
-	GCA(INPapName, (ckt, which, foo, "numsteps", parm))
-	    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
-	GCA(INPapName, (ckt, which, foo, "start", parm))
-	    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
-	GCA(INPapName, (ckt, which, foo, "stop", parm))
-	    if (*line) {
-	    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* f1phase */
-	    GCA(INPapName, (ckt, which, foo, "f2overf1", parm))
-	}
-	return (0);
+	return dot_disto(ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".noise") == 0)) {
-	/* .noise V(OUTPUT,REF) SRC {DEC OCT LIN} NP FSTART FSTOP <PTSPRSUM> */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-	    if (strcmp(ft_sim->analyses[i]->name, "NOISE") == 0) {
-		which = i;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("Noise analysis unsupported.\n");
-	    return (0);
-	}
-	IFC(newAnalysis, (ckt, which, "Noise Analysis", &foo, task))
-	    INPgetTok(&line, &name, 1);
-
-	/* Make sure the ".noise" command is followed by                */
-	/* V(xxxx).  If it is, extract 'xxxx'.  If not, report an error. */
-
-	if (name != NULL) {
-	    length = strlen(name);
-	    if (((*name == 'V') || (*name == 'v')) && (length == 1)) {
-
-		INPgetTok(&line, &nname1, 0);
-		INPtermInsert(ckt, &nname1, tab, &node1);
-		ptemp.nValue = (IFnode) node1;
-		GCA(INPapName, (ckt, which, foo, "output", &ptemp))
-
-		    if (*line != /* match ( */ ')') {
-		    INPgetTok(&line, &nname2, 1);
-		    INPtermInsert(ckt, &nname2, tab, &node2);
-		    ptemp.nValue = (IFnode) node2;
-		} else {
-		    ptemp.nValue = (IFnode) gnode;
-		}
-		GCA(INPapName, (ckt, which, foo, "outputref", &ptemp))
-
-		    INPgetTok(&line, &name, 1);
-		INPinsert(&name, tab);
-		ptemp.uValue = name;
-		GCA(INPapName, (ckt, which, foo, "input", &ptemp))
-
-		    INPgetTok(&line, &steptype, 1);
-		ptemp.iValue = 1;
-		error = INPapName(ckt, which, foo, steptype, &ptemp);
-		if (error)
-		    current->error =
-			INPerrCat(current->error, INPerror(error));
-		parm = INPgetValue(ckt, &line, IF_INTEGER, tab);
-		error = INPapName(ckt, which, foo, "numsteps", parm);
-		if (error)
-		    current->error =
-			INPerrCat(current->error, INPerror(error));
-		parm = INPgetValue(ckt, &line, IF_REAL, tab);
-		error = INPapName(ckt, which, foo, "start", parm);
-		if (error)
-		    current->error =
-			INPerrCat(current->error, INPerror(error));
-		parm = INPgetValue(ckt, &line, IF_REAL, tab);
-		error = INPapName(ckt, which, foo, "stop", parm);
-		if (error)
-		    current->error =
-			INPerrCat(current->error, INPerror(error));
-
-		/* now see if "ptspersum" has been specified by the user */
-
-		for (found = 0, point = line; (!found) && (*point != '\0');
-		     found = ((*point != ' ') && (*(point++) != '\t')));
-		if (found) {
-		    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);
-		    error = INPapName(ckt, which, foo, "ptspersum", parm);
-		    if (error)
-			current->error =
-			    INPerrCat(current->error, INPerror(error));
-		} else {
-		    ptemp.iValue = 0;
-		    error =
-			INPapName(ckt, which, foo, "ptspersum", &ptemp);
-		    if (error)
-			current->error =
-			    INPerrCat(current->error, INPerror(error));
-		}
-	    } else
-		LITERR("bad syntax [.noise v(OUT) SRC {DEC OCT LIN} NP FSTART FSTOP <PTSPRSUM>]\n");
-	} else {
-	    LITERR("bad syntax [.noise v(OUT) SRC {DEC OCT LIN} NP FSTART FSTOP <PTSPRSUM>]\n");
-	}
-	return (0);
+	return dot_noise(ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".four") == 0)
 	       || (strcmp(token, ".fourier") == 0)) {
 	/* .four */
@@ -228,130 +491,13 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 	LITERR("Use fourier command to obtain fourier analysis\n");
 	return (0);
     } else if ((strcmp(token, ".ic") == 0)) {
-	/* .ic */
-	which = -1;
-	for (prm = ft_sim->nodeParms;
-	     prm < ft_sim->nodeParms + ft_sim->numNodeParms; prm++) {
-	    if (strcmp(prm->keyword, "ic") == 0) {
-		which = prm->id;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("ic unknown to simulator. \n");
-	    return (0);
-	}
-	for (;;) {		/* loop until we run out of data */
-	    INPgetTok(&line, &name, 1);
-	    /* check to see if in the form V(xxx) and grab the xxx */
-	    if (*name == 0)
-		break;		/* end of line */
-	    length = strlen(name);
-	    if ((*name == 'V' || *(name) == 'v') && (length == 1)) {
-		/* looks like V - must be V(xx) - get xx now */
-		INPgetTok(&line, &name, 1);
-		INPtermInsert(ckt, &name, tab, &node1);
-		ptemp.rValue = INPevaluate(&line, &error, 1);
-		IFC(setNodeParm,
-		    (ckt, node1, which, &ptemp,
-		     (IFvalue *) NULL)) continue;
-	    }
-	    LITERR(" Error: .ic syntax error.\n");
-	    break;
-	}
-	return (0);
+	return dot_ic(ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".ac") == 0)) {
-	/* .ac {DEC OCT LIN} NP FSTART FSTOP */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-	    if (strcmp(ft_sim->analyses[i]->name, "AC") == 0) {
-		which = i;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("AC small signal analysis unsupported.\n");
-	    return (0);
-	}
-	IFC(newAnalysis, (ckt, which, "AC Analysis", &foo, task))
-	    INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
-	ptemp.iValue = 1;
-	GCA(INPapName, (ckt, which, foo, steptype, &ptemp))
-	    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);	/* number of points */
-	GCA(INPapName, (ckt, which, foo, "numsteps", parm))
-	    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
-	GCA(INPapName, (ckt, which, foo, "start", parm))
-	    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
-	GCA(INPapName, (ckt, which, foo, "stop", parm))
-	    return (0);
+	return dot_ac(ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".pz") == 0)) {
-	/* .pz nodeI nodeG nodeJ nodeK {V I} {POL ZER PZ} */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-	    if (strcmp(ft_sim->analyses[i]->name, "PZ") == 0) {
-		which = i;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("Pole-zero analysis unsupported.\n");
-	    return (0);
-	}
-	IFC(newAnalysis, (ckt, which, "Pole-Zero Analysis", &foo, task))
-	    parm = INPgetValue(ckt, &line, IF_NODE, tab);
-	GCA(INPapName, (ckt, which, foo, "nodei", parm))
-	    parm = INPgetValue(ckt, &line, IF_NODE, tab);
-	GCA(INPapName, (ckt, which, foo, "nodeg", parm))
-	    parm = INPgetValue(ckt, &line, IF_NODE, tab);
-	GCA(INPapName, (ckt, which, foo, "nodej", parm))
-	    parm = INPgetValue(ckt, &line, IF_NODE, tab);
-	GCA(INPapName, (ckt, which, foo, "nodek", parm))
-	    INPgetTok(&line, &steptype, 1);	/* get V or I */
-	ptemp.iValue = 1;
-	GCA(INPapName, (ckt, which, foo, steptype, &ptemp))
-	    INPgetTok(&line, &steptype, 1);	/* get POL, ZER, or PZ */
-	ptemp.iValue = 1;
-	GCA(INPapName, (ckt, which, foo, steptype, &ptemp))
-	    return (0);
+	return dot_pz(ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".dc") == 0)) {
-	/* .dc SRC1NAME Vstart1 Vstop1 Vinc1 [SRC2NAME Vstart2 */
-	/*        Vstop2 Vinc2 */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-	    if (strcmp(ft_sim->analyses[i]->name, "DC") == 0) {
-		which = i;
-		break;
-	    }
-	}
-	if (which == -1) {
-	    LITERR("DC transfer curve analysis unsupported\n");
-	    return (0);
-	}
-	IFC(newAnalysis,
-	    (ckt, which, "DC transfer characteristic", &foo,
-	     task)) INPgetTok(&line, &name, 1);
-	INPinsert(&name, tab);
-	ptemp.uValue = name;
-	GCA(INPapName, (ckt, which, foo, "name1", &ptemp))
-	    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vstart1 */
-	GCA(INPapName, (ckt, which, foo, "start1", parm))
-	    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vstop1 */
-	GCA(INPapName, (ckt, which, foo, "stop1", parm))
-	    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vinc1 */
-	GCA(INPapName, (ckt, which, foo, "step1", parm))
-	    if (*line) {
-	    INPgetTok(&line, &name, 1);
-	    INPinsert(&name, tab);
-	    ptemp.uValue = name;
-	    GCA(INPapName, (ckt, which, foo, "name2", &ptemp))
-		parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vstart1 */
-	    GCA(INPapName, (ckt, which, foo, "start2", parm))
-		parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vstop1 */
-	    GCA(INPapName, (ckt, which, foo, "stop2", parm))
-		parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vinc1 */
-	    GCA(INPapName, (ckt, which, foo, "step2", parm))
-	}
-	return (0);
+	return dot_dc(ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".tf") == 0)) {
 	/* .tf v( node1, node2 ) src */
 	/* .tf vsrc2             src */
@@ -471,14 +617,14 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 	    return (0);
 	}
 
-	IFC(newAnalysis, (ckt, which, "Sensitivity Analysis", &foo, task))
+	IFC(newAnalysis, (ckt, which, "Sensitivity Analysis", &foo, task));
 
-	    /* Format is:
-	     *      .sens <output>
-	     *      + [ac [dec|lin|oct] <pts> <low freq> <high freq> | dc ]
-	     */
-	    /* Get the output voltage or current */
-	    INPgetTok(&line, &name, 0);
+	/* Format is:
+	 *      .sens <output>
+	 *      + [ac [dec|lin|oct] <pts> <low freq> <high freq> | dc ]
+	 */
+	/* Get the output voltage or current */
+	INPgetTok(&line, &name, 0);
 	/* name is now either V or I or a serious error */
 	if (*name == 'v' && strlen(name) == 1) {
 	    if (*line != '(' /* match) */ ) {
