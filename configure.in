@@ -413,7 +413,7 @@ if test "$enable_cider" = "yes"; then
      CIDERSIM="	$CIDERDIR/twod/libcidertwod.a     \
 		$CIDERDIR/oned/libcideroned.a     \
 		$CIDERDIR/input/libciderinput.a   \
-		$CIDERDIR/support/libcidersuprt.a \ "
+		$CIDERDIR/support/libcidersuprt.a"
      
      CIDERMATH="misc"
      

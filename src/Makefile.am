@@ -29,7 +29,7 @@ DYNAMIC_DEVICELIBS = 					\
 	spicelib/devices/bsim3v1a/libbsim3v1a.a		\
 	spicelib/devices/bsim4/libbsim4.a		\
 	spicelib/devices/cap/libcap.a			\
-	spicelib/devices/libbsim3soi.a			\
+	spicelib/devices/bsim3soi/libbsim3soi.a		\
 	spicelib/devices/bsim3soi_pd/libbsim3soipd.a	\
 	spicelib/devices/bsim3soi_fd/libbsim3soifd.a   	\
 	spicelib/devices/bsim3soi_dd/libbsim3soidd.a	\
@@ -87,12 +87,12 @@ ngspice_LDADD = \
 	spicelib/devices/libdev.a \
 	@XSPICELIB2@		  \
 	frontend/parser/libparser.a \
-	@CIDERSIM@
+	@CIDERSIM@		\
 	frontend/help/libhlp.a \
 	spicelib/parser/libinp.a \
 	maths/deriv/libderiv.a \
 	maths/cmaths/libcmaths.a \
-	@CIDERMATHDIR@
+	@CIDERMATHDIR@          \
 	maths/poly/libpoly.a \
 	maths/ni/libni.a \
 	maths/sparse/libsparse.a \
