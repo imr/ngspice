@@ -1,3 +1,9 @@
+2004-06-10 Stefan Jones <stefan.jones@multigig.com>
+
+	* src/tclspice.c:
+	Do not join worker thread when using TCL_Threads as it causes
+	lockups on W32
+
 2004-06-04 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/tclspice.c:

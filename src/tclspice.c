@@ -485,8 +485,6 @@ static int _thread_stop(){
     }
 #ifdef HAVE_LIBPTHREAD
     pthread_join(tid, NULL);
-#else
-    Tcl_JoinThread(tid,NULL);
 #endif
     fl_running = FALSE;
     ft_intrpt = FALSE;
@@ -536,7 +534,7 @@ static int _run(int argc,char **argv){
     pthread_create(&tid,NULL,_thread_run,(void *)string);
 #else
     Tcl_CreateThread(&tid,(Tcl_ThreadCreateProc *)_thread_run,string,
-        TCL_THREAD_STACK_DEFAULT,TCL_THREAD_JOINABLE);
+        TCL_THREAD_STACK_DEFAULT,TCL_THREAD_NOFLAGS);
 #endif
   } else 
     /* halt (pause) a bg run */
