@@ -1,5 +1,7 @@
 2004-01-10  Paolo Nenzi <p.nenzi@ieee.org>
 
+	*  src/frontend/aspice.c: Added #ifdef for SOLARIS.
+
 	*  src/include/cktdefs.h: added prototype for NInzIter().
 
 	*  src/spicelib/devices/cpl/*: Added CPLask and CPLmAsk functions to
