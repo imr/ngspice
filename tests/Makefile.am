@@ -8,6 +8,7 @@ SUBDIRS = TransImpedanceAmp	\
 	bsim3soifd		\
 	bsim3soipd		\
 	bsim4			\
+	@CIDERTESTS@ 		\
 	filters			\
 	general			\
 	hfet			\
@@ -20,8 +21,8 @@ SUBDIRS = TransImpedanceAmp	\
 	proc2mod		\
 	resistance		\
 	transmission		\
-	vbic			\
-	@CIDERTESTS@ 
+	vbic
+		
 
 DIST_SUBDIRS = 	bsim1	\
 	bsim1		\

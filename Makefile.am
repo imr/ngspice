@@ -10,7 +10,7 @@ EXTRA_DIST = FAQ acconfig.h autogen.sh Stuarts_Poly_Notes  \
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 			config.h.in config.sub configure install-sh \
 			missing mkinstalldirs stamp-h.in ltconfig \
-			ltmain.sh
+			ltmain.sh autom4te.cache
 
 dist-hook:
 	rm -rf `find $(distdir)/contrib -name CVS`

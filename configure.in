@@ -485,7 +485,7 @@ if test "$enable_cider" = "yes"; then
      AC_MSG_RESULT(CIDER features enabled)
      AC_DEFINE(CIDER)
      
-     CIDERTESTS = "cider"
+     CIDERTESTS="cider"
      
      CIDERDIR="ciderlib"
      
