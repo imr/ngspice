@@ -9,6 +9,12 @@ Modified: Alan Gillespie
  * available to the next level(s) up the calling hierarchy
  */
 
+/*
+ * You may define the preprocessor symbolo
+ * BJT2_COMPAT to enable compatibility with
+ * archaic spice2 bjt model
+ */ 
+
 #include "ngspice.h"
 #include "devdefs.h"
 #include "bjt2defs.h"
@@ -87,7 +93,9 @@ IFparm BJT2mPTable[] = { /* model parameters */
  IOP("ikf",  BJT2_MOD_IKF,  IF_REAL, "Forward beta roll-off corner current"),
  IOPR("ik",  BJT2_MOD_IKF,  IF_REAL, "Forward beta roll-off corner current"),
  IOP("ise",  BJT2_MOD_ISE,  IF_REAL, "B-E leakage saturation current"),
- /*IOP("c2",   BJT2_MOD_C2,   IF_REAL, "Obsolete parameter name"),*/
+#ifdef BJT2_COMPAT 
+ IOP("c2",   BJT2_MOD_C2,   IF_REAL, "Obsolete parameter name"),
+#endif 
  IOP("ne",   BJT2_MOD_NE,   IF_REAL, "B-E leakage emission coefficient"),
  IOP("br",   BJT2_MOD_BR,   IF_REAL, "Ideal reverse beta"),
  IOP("nr",   BJT2_MOD_NR,   IF_REAL, "Reverse emission coefficient"),
@@ -95,7 +103,9 @@ IFparm BJT2mPTable[] = { /* model parameters */
  IOPR("vb",  BJT2_MOD_VAR,  IF_REAL, "Reverse Early voltage"),
  IOP("ikr",  BJT2_MOD_IKR,  IF_REAL, "reverse beta roll-off corner current"),
  IOP("isc",  BJT2_MOD_ISC,  IF_REAL, "B-C leakage saturation current"),
- /*IOP("c4",   BJT2_MOD_C4,   IF_REAL, "Obsolete parameter name"),*/
+#ifdef BJT2_COMPAT 
+ IOP("c4",   BJT2_MOD_C4,   IF_REAL, "Obsolete parameter name"),
+#ifdef SPICE2COMPAT  
  IOP("nc",   BJT2_MOD_NC,   IF_REAL, "B-C leakage emission coefficient"),
  IOP("rb",   BJT2_MOD_RB,   IF_REAL, "Zero bias base resistance"),
  IOP("irb",  BJT2_MOD_IRB,  IF_REAL, "Current for base resistance=(rb+rbm)/2"),
