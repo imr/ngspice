@@ -1,4 +1,4 @@
-\input texinfo   @c -*-texinfo-*-
+bg\input texinfo   @c -*-texinfo-*-
 @c %**start of header
 @setfilename ngspice.info
 @settitle NGSPICE User Manual
@@ -41,9 +41,9 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 @titlepage
 @title NGSPICE User Manual
-@c @subtitle SUBTITLE-IF-ANY
-@c @subtitle SECOND-SUBTITLE
-@author 
+@subtitle Describes ngspice-rework15
+@subtitle Draft Version 0.1
+@author Many Authors
 
 @c  The following two commands
 @c  start the copyright page.
@@ -80,25 +80,38 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 @end titlepage
 
 
-@node Top, Acknowledgements, (dir), (dir)
+
+@node Top, Preface, (dir), (dir)
 
 @ifinfo
-This document describes ...
+This document describes the mixed level simulator NGspice
 
-This document applies to version ...
-of the program named ...
+This document applies to version 15 
+of the program named NGSPICE
 @end ifinfo
 
+@contents
+
 @menu
-* Acknowledgements::
-* Introduction::                
-* Circuit Description::         
-* Circuit Elements and Models::  
-* Analyses and Output Control::  
-* Interactive Interpreter::     
-* Bibliography::                
-* Example Circuits::            
-* Model and Device Parameters::  
+* Preface::						 Some words about this manual.
+* Acknowledgements::				Almost all the people who contributed 
+									to NGSPICE development.
+* Release Notes::				   Release notes for the NGSPICE simulator
+* Introduction::					Description of NGSPICE. Try to answer
+									the question: What NGSPICE is ?     
+* NGSPICE Compilation::			 How to compile NGSPICE.
+* Supported Analyses::			  Describes supoorted analyses and introduces
+									some convergence issues.
+* Circuit Description::			 How to input a circuit to the simulator.      
+* Circuit Elements and Models::	 Description and use of the devices models 
+									built into NGSPICE.
+* Analyses and Output Control::	 How to run analyses and check the results.  
+* Interactive Interpreter::     	The commands recognized by the NGSPICE 
+									interactive frontend.
+* Bibliography::					A small bibliography.  
+* Example Circuits::				Some examples.
+* Model and Device Parameters::	 Equations that makes the models and 
+									parameters.
 @end menu
 
 @c @node    First Chapter, Second Chapter, top,      top
@@ -106,56 +119,411 @@ of the program named ...
 @c @chapter First Chapter
 @c @cindex Index entry for First Chapter
 
+@node    Preface, Acknowledgements, Top, Top
+@comment node-name, next,           previous, up
+@chapter Preface
 
-@node    Acknowledgements, Introduction, Top, Top
+The NGSPICE user's manual is based on the text file included in the Spice3f 
+source package. The original text has been converted to @TeX{}Info format by 
+Emmanuel Rouat and Arno W. Peters.
+
+The original text has been modified and extended to reflect the changes 
+between plain Spice3f5 and NGSPICE. Some of the "changes" comes from the 
+HTML documentation Charles D.H. Williams has written and published on his web
+site.
+
+This manual covers the double role of being an introductory text for the 
+novice user who wants to learn how to use spice (and thus NGSPICE), and a 
+reference text for the expert who wants to identify the differences between 
+the original spice3f code (sometimes referred as the Berkeley's Spice) and 
+the NGSPICE code.
+
+Since NGSPICE is an Open Source software, one chapter describing program 
+compilation and compilation options have been added to the original 
+text. Since its birth, spice3f had many compilation switches that 
+enabled/disabled some features considered experimental or troublesome. In a 
+"perfect world", most of theese switches would be implemented as runtime 
+options, thus allowing users to activate/deactivate the features they want 
+without recompiling the source. Anyway time is never sufficient to implement 
+all the features and, in the end, this is not a "perfect world". 
+
+Trying to keep a record of the "long" history of this piece of software, 
+an entire chapter has been dedicated to the description of the patches 
+publicy made available in the past years through USENET newsgroups. 
+
+
+As always, errors, omissions and unreadable phrases are only my fault.
+@flushright
+@email{p.nenzi@@ieee.org, Paolo Nenzi}
+Roma, March 24th 2001
+@end flushright
+
+@flushright
+@quotation
+Indeed. At the end of the day, this is engineering, and one learns to live
+within the limitations of the tools.
+
+@email{kevin@@anasoft.co.uk, Kevin Aylward} , Warden of the Kings Ale
+@end quotation
+@end flushright
+
+@node    Acknowledgements, Release Notes, Preface, Top
 @comment node-name,     next,           previous, up
 @chapter Acknowledgements
 
 @c FIXME: Get this baby to work with make distcheck target.
 @c
-@c @include ../AUTHORS
-
-SPICE was originally written at The University of Berkeley (USA).
-Since then, there have been many people working on the software.
-The following people have contributed in some way:
-Giles C. Billingsley,
-Mansun Chan,
-Wayne A. Christopher,
-Glao S. Dezai <dezai@@hotbot.com>,
-Daniele Foci <d.foci@@ieee.ing.uniroma1.it>,
-Noah Friedman <friedman@@prep.ai.mit.edu>,
-David A. Gates,
-JianHui Huang,
-Jeffrey M. Hsu,
-S. Hwang,
-Chris Inbody <cinbody@@cowtown.net>,
-Gordon M. Jacobs,
-Min-Chie Jeng,
-Kenneth H. Keller,
-Mathew Lew,
-Weidong Liu,
-Richard D. McRoberts,
-Manfred Metzger <ManfredMetzger@@gmx.de>,  
-Paolo Nenzi <pnenzi@@ieee.ing.uniroma1.it>,
-Gary W. Ng,
-Hong June Park,
-Arno Peters <A.W.Peters@@ieee.org>,
-Serban-Mihai Popescu <serbanp@@ix.netcom.com>,
-Thomas L. Quarles,
-Emmanuel Rouat <emmanuel.rouat@@wanadoo.fr>,
-Jaijeet S. Roychowdhury,
-Takayasu Sakurai,
-Kanwar Jit Singh,
-Andrew Tuckey <Tuckey@@ieee.org>,
-Michael Widlok <widlok@@uci.agh.edu.pl>,
-and many others...
-
-If you feel you should be on this list, write to
-<ng-spice@@ieee.ing.uniroma1.it>.
+@include ../AUTHORS
 
 
-@node    Introduction, Circuit Description, Acknowledgements, Top
+@node    Release Notes, Introduction, Acknowledgements, Top
 @comment node-name,     next,           previous, up
+@chapter Release Notes
+ 
+@noindent
+@sc{NGSPICE rework-14 release} (released on December 10th, 2001):
+
+@example
+This release fixes most of the bugs that appeared in rework-13. 
+
+Some leaks in the frontend have been closed. 
+
+GNU Autoconf interface cleaned (better support for getopt). 
+
+Better error reporting (thanks to Charles Williams "CDHW"). 
+
+Added mesa tests (macspice3f4).
+ 
+Added support for ekv model (not source code).  
+
+The Rawfile format changed again removing "Probe" compatibility code.
+@end example
+
+@noindent
+@sc{NGSPICE rework-13 release} (released on November 5th, 2000):
+
+@example
+This is a major release in terms of fixes and enhancements. 
+
+A garbage collector support has been added. If the configuration 
+script detects that you have installed GC (Bohem-Weiser conservative 
+garbage collector), it will use it. 
+
+Some memory leaks have been fixed too.
+
+Enhancements to the code comes from Alan's (Gillespie) contribute 
+code, a description of improvements follows (extracted form 
+Alan's mail):
+
+* Output File Format Changes -
+
+Rawfile format changed to PSPICE Probe format (Usable with Demo 
+version of Microsim's Probe). (NOTE: Do not rely on this, we may 
+revert to the old format in the next release).
+
+Text mode .OP results even though "rawfile" written.
+
+Internal device nodes are not saved to "rawfile" (reduces file 
+size). Optionally, these internal nodes can be replaced by device 
+currents and saved.
+
+* DC Convergence Enhancements -
+
+"Source-Stepping" algorithm modified with a "Dynamic" step size. 
+After each successful step, the node voltages are saved, the 
+source-factor is increased by the step-factor, and the step-factor 
+is increased (for the next step). If the step fails, i.e. the 
+circuit does not converge, the source-factor is set to the value 
+from the previous successful step, the previously stored node 
+voltages are restored, the step-factor is reduced, the source factor 
+is increased by this smaller step-factor, and convergance is 
+attempted again.
+
+Same thing done for "Gmin-stepping" algorithm.
+
+"Gshunt" option added. This sets the "diagGmin" variable used
+in the gmin-stepping algorithm to a non-zero value for the final 
+solution. (Normally this is set to zero for the final solution). 
+This helps for circuits with floating nodes (and for some others too).
+
+The Gmin implementation across the substrate diodes of MOS1, MOS2, 
+MOS3, MOS6 and BSIM3 devices, and across BJT base-emitter and 
+base-collector diodes, was incorrect. Correcting this dramatically 
+improved DC convergance. (I think this also effects BSIM1 and 2 but 
+I haven't fixed them yet! ).
+
+The gm, gmb and gds calculations in the MOS3 model were all wrong. 
+The device equations were fixed, leading to much improved convergence.
+
+The Vcrit value used for diode voltage limiting was calculated without 
+taking into account the device area (and in some cases without using 
+the temperature corrected saturation current). This could cause floating 
+point overflows, especially in device models designed to be scaled by a 
+small area, e.g. 2u by 2u diodes (area=4e-12). This is now fixed for 
+Diode, BJT, MOS1, MOS2, and MOS3 models.
+
+The diode voltage limiting was modified to add negative voltage 
+limiting. Negative diode voltages are now limited to 3*Vdp-10, where 
+Vdp is the voltage from the previous iteration. If Vdp is positive, 
+then the voltage is limited to -10V. This prevents some more floating 
+point overflows. (Actually, I'm still playing with the best values for 
+this).
+
+The Spice3 "fix" for the MOS3 gds discontinuity between the linear and 
+saturated regions only works if the VMAX parameter is non-zero. A 
+"tweak" has been added for the VMAX=0 case.
+
+* Transient Convergence Enhancements -
+
+Temperature correction of various diode capacitances was implemented 
+slightly incorrectly, leading to capacitance discontinuities in 
+simulations at temperatures other than nominal. This affected the 
+Diode and MOS3 models.
+
+A mistake in the implementation of the MOS3 source-bulk capacitance 
+model resulted in a charge storage discontinuity. This has been fixed.
+
+The level 2 MOSFET model seems to calculate Von and Vth values for the
+threshold and subthreshold values respectively, but then uses Vbin to 
+calculate the Vdsat voltage used to find the drain current. However, a 
+jump statement uses Von to decide that the device is in the "cutoff" 
+region, which means that when this jump allows the drain current to be 
+calculated, Vdsat can already be well above zero. This leads to a 
+discontinuity of drain current with respect to gate voltage. The code 
+is now modified to use Vbin for the jump decision. It looks like the 
+code should actually use Vth as the threshold voltage, but since 
+PSPICE and HSPICE both follow the original Berkeley code, this was 
+left alone.
+
+* New Model Parameters -
+
+A PSPICE/HSPICE-like "M" device parameter (i.e. M devices in parallel) 
+was added to the MOS1,2,3 and BSIM3 mosfet models.
+
+* Input Read-in and Checking -
+
+Numbers beginning with a "+" sign got the input routine confused. 
+Fixed now.
+
+Attempts to nodeset (or .IC) non-existant nodes are flagged with 
+a warning.
+
+PWL statements on Voltage or Current sources are now checked for 
+"non-increasing" time-points at the start of the simulation. 
+Previously each time-point was checked as it was reached during 
+the simulation, which could be very annoying if you made a mistake 
+which caused the simulation to fail after hours of run-time.
+
+A check which was performed at the end of each sub-circuit 
+expansion was moved to the top level. This check makes sure that 
+all sub-circuits have been defined, but in its original position, 
+it meant that if a sub-circuit included ANY .MODEL statements at all, 
+then ALL the models called in that sub-circuit must also be defined 
+within that sub-circuit. Now SPICE behaves as expected, i.e. a 
+subcircuit may define its own models, but may also use models defined 
+at any level above.
+
+* Miscellaneous Fixes/Enhancements -
+
+MOS devices reported only half of the Meyer capacitances, and did 
+not include overlap capacitances, when reporting to the .OP printout, 
+or when storing device capacitances to the "rawfile".
+
+The ideal switch devices had no time-step control to stop their 
+controlling voltages/currents overshooting the switching thresholds. 
+The time-step control has been modified to use the last two time 
+points to estimate if the next one will move the controlling 
+voltage/current past a switching threshold. If this looks likely, 
+then the time-step is reduced.
+
+The "rawfile" writing routines have been modified to print the 
+"reference value" to the console during the simulation. This lets 
+the user see exactly how far and how fast the simulation is proceeding.
+
+.OP printout tidied up a lot to make the printout clearer.
+
+Analysis order changed to fix a "feature" where, if you ask for a 
+.OP and a .TRAN in the same simulation, the node voltages printed out 
+correspond to the .OP, but the device data was from the last timepoint 
+of the .TRAN.
+@end example
+
+@noindent
+@sc{NGSPICE rework-12 release} (released on August 26th, 2000):
+
+@example
+Arno did a great work this summer! 
+This release consists of his work. The pole-zero analysis has been
+corrected. The error was introduced in an attempt to eliminate compiler
+warnings. 
+
+The source has been reworked and info file have been updated. 
+As you may see, a new dir called "spicelib" has been created, another 
+step toward the separation of the simulator from the frontend. 
+@end example
+
+@noindent
+@sc{NGSPICE rework-11 release} (released on May 28th, 2000):
+
+@example
+The code has been cleaned, the resistance code for ac parameter 
+has been modified to conform to Spice3 parameter parsing. 
+
+A new step function has been introduced (u2). 
+
+Updated documentation to reflect changes. 
+@end example
+
+@noindent
+@sc{NGSPICE rework-10 release} (released on April 5th, 2000):
+
+@example
+All devices are compiled as shared libraries (ld.so). 
+
+There is an initial support for the BSIM4 model. This release 
+is to be considered as baseline for the project. 
+
+There are still some harmless bugs in the resistor code.
+@end example
+
+Release notes for older NGSPICE release are not available. For historical 
+pourpose only the following release notes, pertaining to the original Spice3
+code have been included into this manual. They have been copied from 
+"SPICE 3 Version 3f5 User's Manual":
+
+ 
+Spice3f is the six major release of Spice3. This release incorporates 
+new features not available in Spice 3c or 3d, as well as several 
+performance improvements. All of the feature described here are believed
+to be fully functional. The development of SPICE is ongoing at Berkeley,
+and therefore not all of the intended capabilities have been implemented
+in full yet.
+
+
+@noindent
+@sc{Bugs in 3f2 fixed in 3f3:}
+
+@example
+Ascii (printer) plots in spice3f2 did not print bode plots vs log of the
+frequency by default, as in spice2.
+
+You had to explicity request the x-axis to be log; either "@command{plot 
+vdb(2) xlog}" (best) or "@command{plot vdb(2) vs log10(frequency)}" will 
+do. Now, simply "@command{plot vdb(2)}" will work.
+
+The on-line documentation has been brought up to date by converting this
+manual into a format readable on-line.
+
+Significant problems with AC sensitivities in 3f2 only have been fixed.
+
+Multiple analyses and plots in spice2 emulation mode under 3f2 and
+earlier generated misleading error messages. This no longer happens
+in 3f3.
+@end example
+
+@noindent
+@sc{New features and bug fixes incorporated in spice3f}
+(the current release of Spice3):
+
+@example
+Sensitivity analysis
+Added a parameter fot fitting JFET models (parameter "@code{B}").
+ 
+Fixed a discontinuity problem in MOS level 3 (related to the 
+"@code{kappa}" parameter). Working "@command{alter}" command.
+
+Improved "@command{show}" and "@command{showmod}" commands for operating points 
+summary tables (like Spice2). 
+
+Working "@command{trace}" command.
+
+Interactive "@command{set}" variable values now the same as
+"@code{.options}" settings.
+
+Improved plotting, including implicity transforming data for smith
+plots.
+
+Added function "@code{deriv()}" (derivative) to the front-end.
+
+Corrected an error affecting the specified initial conditions for
+some circuits.
+
+Miscellaneous bug fixes in the front-end.
+@end example
+
+@noindent
+@sc{New feature and bugs fixes incorporated in Spice3e}
+(the @emph{previous} release of Spice3):
+
+@example
+Lossy Transmission lines.
+
+Proper calculation of sheet resistance in the MOS models.
+
+A new command ("@command{where}") to aid in debugging troublesome
+circuits.
+
+Smith-chart plots working (see the "@command{plot}" command).
+
+Arbitrary sources in subcircuits handled correctly.
+
+Arbitrary source reciprocal calculations and DC biasing fixed.
+
+Minor bug-fixes to the Pole-Zero analysis.
+
+Miscellaneous bug fixes in the front end.
+@end example
+
+@noindent
+@sc{Some common problems remaining in Spice3f}
+(note that this list is not comlete):
+
+@example
+Models defined within subcircuits are not always handled correctly.
+If you have trouble, move the model definition outside of "@code{.subckt}"
+and "@code{.ends}" lines.
+
+Batch run data is not compacted if a "rawspice" data file is generated,
+resulting in excessively large output files for some difficult inputs.
+
+Sufficient detail is sometimes not preserved in transient analysis.
+Providing a small value for the "@code{TMAX}" parameter (the fourth 
+argument) in the transient run command will solve this problem.
+
+Convergence problems can sometimes be worked around by relaxing the
+transient "@code{TMAX}" parameter.
+
+The substrate node of the bipolar transistor (BJT) is modelled 
+incorrectly (this may actually be due to inherent numerical problems
+with the model). Do not use substrate node; use a semiconductor
+capacitor to model substrate effects.
+
+Charge is not conserved in MOS devices based on the Meyer model.
+
+Transient simulation of strictly resistive circuits (typical for
+first runs or tests) allow a time step the is too large (e.g. a
+sinusoidal source driving a resistor). There is no integration
+error to restrict the time step. Use the "@code{TMAX}" parameter or
+include reactive elements.
+
+Deep nesting of subcircuits may exceed internal static buffers.
+
+The PZ analysis can not be interrupted; the sensitivity analysis
+can not be continued (the interactive "@command{resume}" command) once 
+interrupted.
+
+There are many other small bugs, particularly in the front end.
+@end example
+ 
+@section Reporting a bug
+
+Berkeley does not provinding support anymore for Spice3, if you need
+some kind of help you can 
+
+
+
+@node    Introduction, NGSPICE Compilation, Release Notes, Top
+@comment node-name,    next,                previous,         up
 @chapter Introduction
 
 NGSPICE is a general-purpose circuit simulation program for nonlinear
@@ -166,28 +534,409 @@ and lossy transmission lines (two separate implementations), switches,
 uniform distributed RC lines, and the five most common semiconductor
 devices: diodes, BJTs, JFETs, MESFETs, and MOSFETs.
 
-NGSPICE is a continuation of SPICE3, while SPICE3 version is based 
-directly on SPICE 2G.6.  While NGSPICE is being developed to include new 
-features, it continues to support those capabilities and models which 
-remain in extensive use in the SPICE2 program.
+NGSPICE is a continuation of Spice3f5, the last Berkeley's release of
+Spice3 simulator family.  NGSPICE is being developed to include new 
+features to existing Spice3f5 and to fix its bugs. Improving a circuit
+simulator is a very hard task and, while some improvements have been
+ported, most of the job has been done on bug fixing and code refactoring. 
 
 NGSPICE has built-in models for the semiconductor devices, and the user
-need specify only the pertinent model parameter values.  The model for
-the BJT is based on the integral-charge model of Gummel and Poon;
-however, if the Gummel- Poon parameters are not specified, the model
-reduces to the simpler Ebers-Moll model.  In either case,
-chargestorage effects, ohmic resistances, and a current-dependent
-output conductance may be included.  The diode model can be used for
-either junction diodes or Schottky barrier diodes.  The JFET model is
-based on the FET model of Shichman and Hodges.  Six MOSFET models are
-implemented: MOS1 is described by a square-law I-V characteristic,
-MOS2 [1] is an analytical model, while MOS3 [1] is a semi-empirical
-model; MOS6 [2] is a simple analytic model accurate in the
-shortchannel region; MOS4 [3, 4] and MOS5 [5] are the BSIM (Berkeley
-Short-channel IGFET Model) and BSIM2.  MOS2, MOS3, and MOS4 include
-second-order effects such as channel-length modulation, subthreshold
-conduction, scattering-limited velocity saturation, small-size
-effects, and chargecontrolled capacitances.
+need specify only the pertinent model parameter values.  
+
+There are two models for BJT both based on the integral-charge model of Gummel 
+and Poon; however, if the Gummel-Poon parameters are not specified, the 
+model reduces to the simpler Ebers-Moll model. In either case and in either 
+models, charge storage effects, ohmic resistances, and a current-dependent
+output conductance may be included. The second BJT model BJT2 adds dc current
+computation in the substrate diode @emph{but is not fully implemented as of 
+ngspice-rework-15}. The semiconductor diode model can be used for either 
+junction diodes or Schottky barrier diodes.  There are two models for JFET: 
+the first (JFET) is based on the model of Shichman and Hodges, the second 
+(JFET2) is based on the Parker-Skellern model.  
+All the original six MOSFET models are implemented: MOS1 is described by a 
+square-law I-V characteristic, MOS2 [1] is an analytical model, while MOS3 
+[1] is a semi-empirical model; MOS6 [2] is a simple analytic model accurate 
+in the shortchannel region; MOS4 [3, 4] and MOS5 [5] are the BSIM (Berkeley
+Short-channel IGFET Model) and BSIM2.  MOS2, MOS3, and MOS4 include 
+second-order effects such as channel-length modulation, subthreshold 
+conduction, scattering-limited velocity saturation, small-size effects, and 
+charge controlled capacitances. Other MOS model have been implemented, like
+the new BSIM3 and BSIM4 models, the SOI models from the BSIMSOI family and 
+the STAG one. There is partial support for a couple of HFET models and one 
+model for MESA devices.
+
+Since the rework-15 release, NGSPICE includes CIDER, a mixed-level 
+circuit and device simulator that provides a direct link between 
+technology parameters and circuit performance.  
+
+A mixed-level circuit and device simulator can provide greater 
+simulation accuracy than a stand-alone circuit or device  simulator
+by  numerically modeling  the critical devices in a circuit.  Compact 
+models can be used for noncritical devices.
+
+CIDER couples Spice (version3) to an internal C-based device simulator, 
+DSIM. Spice3 provides circuit analyses, compact models for semiconductor 
+devices, and an interactive user interface. DSIM provides accurate, one- 
+and two-dimensional numerical device models based on the solution of 
+Poisson's equation, and the electron and hole current-continuity equations. 
+DSIM incorporates many of the same basic physical models found in the 
+Stanford two-dimensional device simulator PISCES. Input to CIDER consists 
+of a SPICE-like description of the circuit and its compact models, and 
+PISCES-like descriptions of the structures of numerically modeled devices. 
+As a result, CIDER should seem familiar to designers already accustomed to 
+these two tools.
+
+CIDER is based on the mixed-level circuit and device simulator CODECS,  
+and is a replacement for this program. The basic algorithms of the two 
+programs are the same.  Some of the differences between CIDER and 
+CODECS are described below. The CIDER input format has greater flexibility  
+and allows increased access to physical model parameters.  
+New physical models have been added to allow simulation of state-of-the-art 
+devices. These include transverse field mobility degradation important 
+in scaled-down MOSFETs and a polysilicon model for poly-emitter 
+bipolar  transistors. Temperature dependence has been included over 
+the range from -50C to 150C.  The numerical models can be used to 
+simulate all the basic types of semiconductor devices: resistors, MOS 
+capacitors, diodes, BJTs, JFETs and MOSFETs. BJTs and JFETs can be 
+modeled with or without a substrate contact.  Support has been added 
+for the management of device internal states. Post-processing of 
+device states can be performed using  the NUTMEG user interface of Spice3.  
+Previously computed states can be loaded into the program to provide  
+accurate initial guesses for subsequent analyses. Finally, numerous small
+bugs have been discovered and fixed, and the program has been ported to a 
+wider variety of computing platforms.
+
+@node    NGSPICE Compilation, Supported Analyses, Introduction, Top
+@comment node-name,     next,           previous, up
+@chapter NGSPICE Compilation
+
+@menu
+* Extracting the archive::           
+* Configuring NGSPICE::
+* Compiling NGSPICE::  
+* Supported systems::
+* Platform specific issues::                 
+@end menu
+
+
+NGSPICE is an Open Source project (and software), this means that its source 
+code is available to the end user. Well, to be honest, the source code is the 
+only thing available to the user. This chapter briefly describes how to
+deal with this rather complex package. 
+
+
+@node Extracting the archive, Configuring NGSPICE, NGSPICE Compilation, NGSPICE Compilation
+@section Extracting the archive
+
+
+NGSPICE is released as "gzipped tarball". The source tree is archived with the
+@command{tar} command and the result compressed with @command{gzip}. Since
+the development of the NGSPICE is carried on UNIX (mainly), all the files
+have the "line feed" character as newline character and this may cause 
+problems when working in non UNIX environments (like DOS). If you are going
+to extract NGSPICE on system that use different newline character, you
+will have to convert the files with some utility. 
+
+To extract the NGSPICE archive you need the @command{tar} archiver and 
+@command{gzip} compression utility:
+
+@example
+pnenzi@@janus:~$ gzip -d ngspice-rework-15.tar.gz
+pnenzi@@janus:~$ tar -xvf ngspice-rework-15.tar           
+@end example  
+
+Once extracted, you  have to enter the source tree (just @command{cd} into the
+top level directory).
+
+@node Configuring NGSPICE, Compiling NGSPICE, Extracting the archive, NGSPICE Compilation
+@section Configuring NGSPICE
+
+Now that you have extracted all the files, you need to give values to compile
+time variables and set the correct paths for libraries and include file. If 
+you have compiled other programs released in source form, you have probably 
+already faced the @emph{GNU Autoconf} system. If you already know what 
+Autoconf is and how it works, you can safely skip the next paragraph.  
+
+GNU Autoconf is a package that automates the task of configuring source 
+code packages. Configuring a source code package means assigning desidered 
+values to compile-time variables, something known as "customization", and
+look at functions, libraries available on the host system to produce the 
+makefiles needed for compilation. As said, this is a very brief introduction 
+to the Autoconf package, if you want to know more, look at its documentation.
+         
+NGSPICE uses @emph{GNU Autoconf} configuration tool. To confiugure the 
+package type: @command{./configure --help} on the command prompt. The
+list of available options will be shown. The list comprises "standard" options
+(the one every Autoconf package has) and options specific to the NGSPICE 
+package. This chapter deals with the latter only, sending back the reader to 
+the GNU Autoconf documentation for the former.
+
+The options specific to NGSPICE are:
+
+@itemize @bullet
+@item  @command{--enable-ftedebug}: This switch enables the code for debugging
+       the NGSPICE frontend. Developers who wish to mess with the frontend 
+       should enable it (and set to @code{TRUE} the "debug" option). The 
+       casual user has no gain in enabling this option.
+@item  @command{--enable-ansi}: This switch forces @code{-ansi} option of the
+       for compilation. This is interesting only to developers cleaning the
+       NGSPICE code. Nore real use for the user.
+@item  @command{--enable-debug}: Add @code{-g} option for compilation. This 
+       options is enabled by default and should not be disabled since 
+       debugging tools relies on it.
+@item  @command{--enable-checkergcc}: When enabled, NGSPICE will use the 
+       @emph{Checker} package. Checker tracks down memory errors at runtime. 
+       Again, this is useless for users.   
+@item  @command{--enable-gc}: When enabled, NGSPICE will use the Boehm-Weiser 
+       Conservative Garbage Collector. The garbage collector library is not 
+       provided with NGSPICE, you must donwload and install it separately. Most
+       distributions provide a binary package of this library.         
+@item  @command{--enable-nosqrt}: When enabled, the faster code using SQRT in
+       charge/capacitance calculations of bulk diodes, when the grading 
+       coefficients have a vaule of .5, is switched off. I think there is 
+       no need to enable it.        
+@item  @command{--enable-nobypass}: When enabled the bypass code is not 
+       compiled in. Once enabled NGSPICE does not contain the code to bypass
+       recalculations of slowly changing variables. It is advisable to leave 
+       this disabled since the bypass code does is used only if the "bypass" 
+       option is set to @code{TRUE} at runtime.
+@item  @command{--enable-capbypass}: When enabled the calculation of cbd/cbs 
+       in the mosfets is bypassed ifvbs/vbd voltages were unchanged. Better 
+       do not enable it if you are not sure of its implications.
+@item  @command{--enable-capzerobypass}: When enabled all the calculations
+       cbd/cbs calculations if Czero is zero. It is safe to enable this 
+       feature.
+@item  @command{--enable-nodelimiting}: Eanable some experimental code that
+       was intended to do Newton damping by nodes, rather than by branches 
+       as is currently done. The flag just turns off the branch limiting code 
+       in a couple of mosfets. Obvioulsy, do not enable this if you are not
+       working with the limiting code.              
+@item  @command{--enable-predictor}: When this feature is enabled, NGSPICE 
+       (like the orignal Spice3f) uses a predictor-corrector method for 
+       the numerical integration package. This feature has never been tested 
+       too much, so enabling it is NOT considered safe.
+@item  @command{--enable-newtrunc}: When enabled, some unfinished (?) code to
+        do truncation error timestep control on node voltages (rather than on 
+        charge in the devices) is activated. Casual users should not enable it.
+@item  @command{--enable-sense2}: Use spice2 sensitivity analysis.
+@item  @command{--enable-sensdebug}: Enables debug switch for sensitivity code. 
+@item  @command{--enable-intnoise}: If enabed, noise analysis produces an 
+       additional plot: the integrated noise. Users should always enable this.
+@item  @command{--enable-smoketest}: Enables some very restrictive compilation
+       flags. Useful only in development phase and, if enabled, probably 
+       NGSPICE does not compile. 
+@item  @command{--enable-experimental}: It is possible that some untested code
+       is included in stable releases. If you want to experiment with new 
+       untested features, enable this option.         
+@item  @command{--enable-ekv}: EKV is a device model not released in source 
+       code form. If you have obtained the source code, you have to enable 
+       this to have it compiled into NGSPICE.
+@item  @command{--with-readline}: This option enables GNU Readline on NGSPICE.
+       Since NGSPICE license is incompatible with GPL (which covers Readline 
+       library), the code is not included into NGSPICE by default. The Readline
+       code is delivered as a separate patch. Before enabling this option the
+       patch must be applied. @emph{Applying the patch will break the GPL, 
+       consider this!}
+@end itemize
+
+@sc{Caveat Emptor}:
+NGSPICE, like its father Spice3f5 cannot be considered a "black box", it is a 
+complex numerical software whose stability and correctness depends on many 
+parameters. Be sure to understand well what you enable/disable otherwise your 
+simulations may converge to a wrong value or do not converge at all. 
+
+Once choosen the options to enable/disable, you will have to issue the 
+@command{configure} command followed by the options you choose, like:
+
+@command{configure --enable-intnoise --enable-nobypass --enable-capzerobypass}
+
+If all goes well, all makefiles will be generated and the package is ready 
+to be compiled.
+
+@node Compiling NGSPICE, Supported systems, Configuring NGSPICE, NGSPICE Compilation
+@section Compiling NGSPICE
+
+The reference platform for NGSPICE is a Linux system with glibc2 ang gcc 
+(2.95 o newer) running on the i386 architecture. If you have such a system 
+you can pretty sure that NGSPICE will compile correctly.
+
+Once configured, to compile NGSPICE @command{cd} into the top level directory
+(if you moved from it after configuration) and issue the @command{make}. If 
+you have a multi-processor machine, you can add @option{-j3} to speed up
+compilation. 
+
+NGSPICE compilation takes several minutes on an average machine, enough to
+let you have a lunch. Once NGSPICE has been compiled, you have to install it
+issuing the command @command{make install}. NGSPICE will be installed under
+@file{/usr/local/}.
+  
+@node Supported systems, Platform specific issues, Compiling NGSPICE, NGSPICE Compilation
+@section Supported systems
+  
+NGSPICE development is carried on Linux on the i386 processor architecture.
+Compiling it under different UNIX systems should require only trivial
+changes, since most of the issues will be resolved by Autoconf. Compiling
+under non UNIX OSes may require major changes, since Autoconf and other
+UNIX tools may not be available on those environments. 
+
+In the past, NGSPICE have been ported to some OSes, the table below shows
+the port I am aware of:
+
+@sc{NetBSD}
+
+@email{mcmahill@@mtl.mit.edu, Dan McMahill} has ported NGSPICE 
+(starting from rework-13) on NetBSD systems. Dan maintains a NetBSD package 
+for NGSPICE available at 
+@url{ftp://ftp.netbsd.org/pub/NetBSD/packages/pkgsrc/cad/ng-spice/README.html} .
+
+@sc{Solaris 7}
+
+@email{skod@@ises-llc.com, Scott Griffith} has compiled ngspice rework-12 on 
+Solaris 7 with gcc (verion 2.95.1). Some changes to the source code were 
+needed:
+
+@quotation
+Notes on compilation on SUN Solaris (extracted from Scott's email):
+Solaris lacks some of the functions needed by ngspice. You have to 
+copy them from other GNU tools. 
+(Scott defines the following changes "some of the usual workarounds")
+
+@itemize @bullet
+
+@item Copy @file{getopt.c}, @file{getopt1.c} and @file{asprintf.c} from 
+      other GNU tools into the misc directory of the ngspice tree and 
+      modify the Makefiles accordingly.
+@item Change @file{src/maths/cmaths/test_cx_ph.c} to 
+      @code{#include <defines.h>}, because that gave me a compiler 
+      error on @code{DBL_EPSILON}.
+@end itemize
+@end quotation
+
+@sc{Windows}
+
+@email{holger.vogt@@uni-duisburg.de, Holger Vogt} has ported NGSPICE
+(from rework-14 release) to the Windows Operating System. His port relies 
+only on DLLs coming with Windows.
+
+The following text is the email sent to the users' mailing list describing 
+his port: 
+
+@quotation
+Dear all,
+
+I have successfully made a pure Windows port of ng-spice-rework-14
+using CYGWIN and MINGW32.
+
+Results are @file{ngspice.exe} and @file{ngnutmeg.exe} which only rely on 
+dlls coming with MS WINDOWS (tested on WINDOWS ME so far).
+
+Several files have been edited, all above @file{configure.in} to comply with 
+the autotools from CYGWIN. Other @file{*.c} have been edited and patched with 
+@code{#ifdef __MINGW32__ ... #endif}. Compared to the CYGWIN port for 
+WINDOWS only minor modifications have been done. Still the WINDOWS port 
+from Wolfgang Mües is used. The resulting source code should still be 
+compatible to LINUX or UNIX porting (including autotools). I have however 
+not tested that.
+
+The changes are attached in @file{mingw.patch.bz2}. This file is also cleaned
+a  bit compared to @file{my.zip} from my last posting.
+
+
+This is how I made ngspice with CYGWIN and external MINGW32 with the attached 
+patches applied to ng-spice-rework-14:
+
+according to 
+@url{http://www.geocrawler.com/lists/3/SourceForge/6013/0/7321042/}
+
+
+CYGWIN is installed in @file{C:\cygwin}.
+
+MINGW32 is installed in @file{g:\gcc_mingw}.
+
+@example
+$ cd ng-spice-rework-14
+$ export PATH="/cygdrive/g/gcc_mingw/bin:$PATH"
+$ automake
+$ autoconf
+$ rm config.cache
+$ ./configure --with-windows --prefix="/cygdrive/g/gcc_mingw/bin"
+$ make clean
+$ make 2> make.err
+
+$ cp config.h config_ming.h  (for use described below)
+
+@end example
+@file{ngspice.exe} is o.k., but @command{make check} does not work (cannot 
+directly output console into file). I have switched off garbage collection 
+for the moment because it produces errors as I have already posted. Perhaps 
+the WINDOWS port of gc6.0 which I made is not yet o.k..
+
+I also tried to make ngspice with CYGWIN and internal MINGW32 coming with 
+the CYGWIN installation:
+
+@example
+$ cd ng-spice-rework-14
+$ rm config.cache
+$ export CFLAGS="-mno-cygwin -g -O2"
+$ export LDFLAGS="-L/lib/mingw"
+$ export CPPFLAGS="-I/usr/include/mingw"
+$ ./configure --with-windows
+$ cp config_ming.h config.h
+             (use config.h from porting described above)
+$ make clean
+$ make 2> make.err
+@end example
+
+@command{./configure} does not work correctly: It finds headers and libs 
+which are not really available in the internal port of MINGW32 (flag 
+@option{-mno-cygwin}), but are useful only in CYGWIN. Therefore the resulting
+@file{config.h} is not o.k.. So finally I used @file{config.h} from my port 
+with external MINGW32 as described above. This was however the only change 
+necessary to compile succesfully with internal MINGW32.
+
+ToDo: find appropriate presets for variables in @file{configure.in} or
+rewrite the autotool tests for headers and libs (search exclusively in 
+mingw directories and not in the standard directories). Maybe this is 
+already described in a proper mailing list.
+
+Regards
+
+Holger Vogt 
+@end quotation
+
+
+The situation of NGSPICE ports is evolving continually, the one above are the
+only I (Paolo Nenzi) am aware of. I know that there is a intent to port 
+NGSPICE to FreeBSD but do not know its status. 
+
+This section will be updated in the future.
+
+
+@node Platform specific issues, , Supported systems, NGSPICE Compilation
+@section Platform specific issues
+
+NGSPICE heavily relies on the floating point representation. On the i386
+architecture, the floating point implementation can cause problems to
+numerical software like NGSPICE. Intel i386 and later processors have
+80-bit wide floating point registers in their FPU. This width is referred
+ad @emph{extended double} precision and all the calculation are done,
+internally, at that precision. Externally, the result can be used as is or
+rounded to @emph{double} precision as defined in the IEEE754 standard for
+floating point, so there are two modes of operation and the choice is left
+to the operating system. FreeBSD developers decided that the FPU had to 
+provide results conforming to IEEE745, while Linux ones decided to take 
+advantage of the extended precision. 
+
+This different choice lead to slightly different results when running the 
+same simulation on different operating systems. Catastrophic discrepancies
+arise on badly written software. 
+
+  
+
+@node Supported Analyses, Circuit Description, NGSPICE Compilation, Top
+@chapter Supported Analyses
+
+This chapter introduces the analyses available in NGSPICE.
 
 @menu
 * Types of Analysis::           
@@ -196,7 +945,8 @@ effects, and chargecontrolled capacitances.
 @end menu
 
 
-@node Types of Analysis, Analysis at Different Temperatures, Introduction, Introduction
+
+@node Types of Analysis, Analysis at Different Temperatures, Supported Analyses, Supported Analyses
 @section Types of Analysis
 
 @menu
@@ -216,18 +966,20 @@ effects, and chargecontrolled capacitances.
 
 The dc analysis portion of NGSPICE determines the dc operating point of
 the circuit with inductors shorted and capacitors opened.  The dc
-analysis options are specified on the .DC, .TF, and .OP control lines.
-A dc analysis is automatically performed prior to a transient analysis
-to determine the transient initial conditions, and prior to an ac
+analysis options are specified on the @code{.DC}, @code{.TF}, and @code{.OP}
+control lines.A dc analysis is automatically performed prior to a transient 
+analysis to determine the transient initial conditions, and prior to an ac
 small-signal analysis to determine the linearized, small-signal models
 for nonlinear devices.  If requested, the dc small-signal value of a
 transfer function (ratio of output variable to input source), input
 resistance, and output resistance is also computed as a part of the dc
 solution.  The dc analysis can also be used to generate dc transfer
-curves: a specified independent voltage or current source is stepped
-over a user-specified range and the dc output variables are stored for
-each sequential source value.
+curves: a specified independent voltage, current source, resistor or 
+temperature is stepped over a user-specified range and the dc output 
+variables are stored for each sequential source value.
 
+Temperature (@code{TEMP}) and resistance sweeps have been introduced 
+in NGSPICE, they were not available in the original code of Spice3f5.
 
 @node AC Small-Signal Analysis, Transient Analysis, DC Analysis, Types of Analysis
 @subsection AC Small-Signal Analysis
@@ -254,7 +1006,7 @@ variables as a function of time over a user-specified time interval.
 The initial conditions are automatically determined by a dc analysis.
 All sources which are not time dependent (for example, power supplies)
 are set to their dc value.  The transient time interval is specified
-on a .TRAN control line.
+on a @code{.TRAN} control line.
 
 
 @node Pole-Zero Analysis, Small-Signal Distortion Analysis, Transient Analysis, Types of Analysis
@@ -312,9 +1064,9 @@ calculations.
 @subsection Sensitivity Analysis
 
 
-Ngspice will calculate either the DC operating-point sensitivity or the
+NGSPICE will calculate either the DC operating-point sensitivity or the
 AC small-signal sensitivity of an output variable with respect to all
-circuit variables, including model parameters.  ngspice calculates the
+circuit variables, including model parameters. NGSPICE calculates the
 difference in an output variable (either a node voltage or a branch
 current) by perturbing each parameter of each device independently.
 Since the method is a numerical approximation, the results may
@@ -346,18 +1098,18 @@ noise voltage/current (over this frequency range).  This calculated
 value corresponds to the variance of the circuit variable viewed as a
 stationary gaussian process.
 
-@node Analysis at Different Temperatures, Convergence, Types of Analysis, Introduction
+@node Analysis at Different Temperatures, Convergence, Types of Analysis, Supported Analyses
 @section Analysis at Different Temperatures
 
 All input data for NGSPICE is assumed to have been measured at a nominal
-temperature of 27°C, which can be changed by use of the TNOM
-parameter on the .OPTION control line.  This value can further be
+temperature of 27°C, which can be changed by use of the @code{TNOM}
+parameter on the @code{.OPTION} control line.  This value can further be
 overridden for any device which models temperature effects by
-specifying the TNOM parameter on the model itself.  The circuit
+specifying the @code{TNOM} parameter on the model itself.  The circuit
 simulation is performed at a temperature of 27°C, unless
-overridden by a TEMP parameter on the .OPTION control line.
+overridden by a @code{TEMP} parameter on the @code{.OPTION} control line.
 Individual instances may further override the circuit temperature
-through the specification of a TEMP parameter on the instance.
+through the specification of a @code{TEMP} parameter on the instance.
 
 Temperature dependent support is provided for resistors, diodes,
 JFETs, BJTs, and level 1, 2, and 3 MOSFETs.  BSIM (levels 4 and 5)
@@ -389,10 +1141,10 @@ $$
 @end example
 @end ifnottex
 
-where k is Boltzmann's constant, q is the electronic charge, E is the
-energy gap which is a model parameter, G and XTI is the saturation
-current temperature exponent (also a model parameter, and usually
-equal to 3).
+where `k' is Boltzmann's constant, `q' is the electronic charge, `E' 
+is the energy gap which is a model parameter, `G' and `XTI' is the 
+saturation current temperature exponent (also a model parameter, and 
+usually equal to 3).
 
 
 
@@ -417,10 +1169,10 @@ $$
 @end ifnottex
 
 
-where T and T are in degrees Kelvin, and XTB is a user-supplied model
-parameter.  Temperature effects on beta are carried out by appropriate
-adjustment to the values of B_F , I_SE , B_R , and I_SC (spice model
-parameters BF, ISE, BR, and ISC, respectively).
+where `T_0' and `T_1' are in degrees Kelvin, and `XTB' is a user-supplied 
+model parameter.  Temperature effects on beta are carried out by appropriate
+adjustment to the values of `B_F' , `I_SE' , `B_R' , and `I_SC' (spice model
+parameters @code{BF}, @code{ISE}, @code{BR}, and @code{ISC}, respectively).
 
 
 
@@ -449,16 +1201,16 @@ $$
 @end ifnottex
 
 
-where N is the emission coefficient, which is a model parameter, and the
+where @code{N} is the emission coefficient, which is a model parameter, and the
 other symbols have the same meaning as above.  Note that for Schottky
 barrier diodes, the value of the saturation current temperature
-exponent, XTI, is usually 2.
+exponent, @code{XTI}, is usually 2.
 
 
 
-Temperature appears explicitly in the value of junction potential, U
-(in ngspice PHI), for all the device models.  The temperature dependence
-is determined by:
+Temperature appears explicitly in the value of junction potential, `U'
+(in NGSPICE @code{PHI}), for all the device models.  The temperature 
+dependence is determined by:
 
 @tex
 $$
@@ -476,13 +1228,14 @@ $$
 @end example
 @end ifnottex
 
-where k is Boltzmann's constant, q is the electronic charge, N_a is
-the acceptor impurity density, N_d is the donor impurity density, N_i
-is the intrinsic carrier con centration, and E_g is the energy gap.
+where `k' is Boltzmann's constant, `q' is the electronic charge, `N_a' 
+is the acceptor impurity density, `N_d' is the donor impurity density, 
+`N_i' is the intrinsic carrier con centration, and `E_g' is the energy 
+gap.
 
 
 
-Temperature appears explicitly in the value of surface mobility, M_0
+Temperature appears explicitly in the value of surface mobility, `M_0'
 (or UO), for the MOSFET model.  The temperature dependence is
 determined by:
 
@@ -519,13 +1272,13 @@ $$
 @end example
 @end ifnottex
 
-where T is the circuit temperature, T_0 is the nominal temperature,
-and TC_1 and TC_2 are the first- and second order temperature
+where `T' is the circuit temperature, `T_0' is the nominal temperature,
+and `TC_1' and `TC_2' are the first- and second order temperature
 coefficients.
 
 
 
-@node Convergence,  , Analysis at Different Temperatures, Introduction
+@node Convergence,  , Analysis at Different Temperatures, Supported Analyses
 @section Convergence
 
 
@@ -553,13 +1306,13 @@ failure occurs, the program terminates the job.
 Failure to converge in dc analysis is usually due to an error in
 specifying circuit connections, element values, or model parameter
 values.  Regenerative switching circuits or circuits with positive
-feedback probably will not converge in the dc analysis unless the OFF
-option is used for some of the devices in the feedback path, or the
-.NODESET control line is used to force the circuit to converge to the
-desired state.
+feedback probably will not converge in the dc analysis unless the 
+@code{OFF} option is used for some of the devices in the feedback path, 
+or the @code{.NODESET} control line is used to force the circuit to 
+converge to the desired state.
 
 
-@node Circuit Description, Circuit Elements and Models, Introduction, Top
+@node Circuit Description, Circuit Elements and Models, Supported Analyses, Top
 @chapter Circuit Description
 
 @menu
@@ -578,7 +1331,7 @@ The circuit to be analyzed is described to NGSPICE by a set of element
 lines, which define the circuit topology and element values, and a set
 of control lines, which define the model parameters and the run
 controls.  The first line in the input file must be the title, and the
-last line must be ".END".  The order of the remaining lines is
+last line must be "@code{.END}".  The order of the remaining lines is
 arbitrary (except, of course, that continuation lines must immediately
 follow the line being continued).
 
@@ -587,18 +1340,18 @@ contains the element name, the circuit nodes to which the element is
 connected, and the values of the parameters that determine the
 electrical characteristics of the element.  The first letter of the
 element name specifies the element type.  The format for the NGSPICE
-element types is given in what follows.  The strings XXXXXXX, YYYYYYY,
-and ZZZZZZZ denote arbitrary alphanumeric strings.  For example, a
-resistor name must begin with the letter R and can contain one or more
-characters.  Hence, R, R1, RSE, ROUT, and R3AC2ZY are valid resistor
-names.  Details of each type of device are supplied in a following
-section.
+element types is given in what follows.  The strings @code{XXXXXXX}, 
+@code{YYYYYYY}, and @code{ZZZZZZZ} denote arbitrary alphanumeric strings.
+For example, a resistor name must begin with the letter @code{R} and can 
+contain one or more characters.  Hence, @code{R}, @code{R1}, @code{RSE}, 
+@code{ROUT}, and @code{R3AC2ZY} are valid resistor names.  Details of each 
+type of device are supplied in a following section.
 
 Fields on a line are separated by one or more blanks, a comma, an
-equal ('=') sign, or a left or right parenthesis; extra spaces are
-ignored.  A line may be continued by entering a '+' (plus) in column 1
-of the following line; NGSPICE continues reading beginning with column
-2.
+equal (`@code{=}') sign, or a left or right parenthesis; extra spaces are
+ignored.  A line may be continued by entering a `@code{+}' (plus) in 
+column 1 of the following line; NGSPICE continues reading beginning with 
+column 2.
 
 A name field must begin with a letter (A through Z) and cannot contain
 any delimiters.
@@ -645,15 +1398,21 @@ M, MA, MSec, and MMhos all represent the same scale factor.  Note that
 number.
 
 Nodes names may be arbitrary character strings.  The datum (ground)
-node must be named '0'.  Note the difference in NGSPICE where the nodes
-are treated as character strings and not evaluated as numbers, thus
-'0' and '00' are distinct nodes in NGSPICE but not in SPICE2.  The
-circuit cannot contain a loop of voltage sources and/or inductors and
-cannot contain a cut-set of current sources and/or capacitors.  Each
-node in the circuit must have a dc path to ground.  Every node must
-have at least two connections except for transmission line nodes (to
-permit unterminated transmission lines) and MOSFET substrate nodes
-(which have two internal connections anyway).
+node must be named `0' (zero).  Note the difference in NGSPICE where 
+the nodes are treated as character strings and not evaluated as numbers, 
+thus `0' and `00' are distinct nodes in NGSPICE but not in SPICE2.  
+
+NGSPICE needs that the following topological constraints are satisfied:
+
+@itemize @bullet
+@item The circuit cannot contain a loop of voltage sources and/or 
+      inductors and cannot contain a cut-set of current sources 
+      and/or capacitors.  
+@item Each node in the circuit must have a dc path to ground.  
+@item Every node must have at least two connections except for transmission 
+      line nodes (to permit unterminated transmission lines) and MOSFET 
+      substrate nodes (which have two internal connections anyway).
+@end itemize
 
 
 
@@ -1048,7 +1807,8 @@ Note: ac parameter can be considered "safe" since rework-11
  General form:
 
 @example
-  RXXXXXXX N1 N2 <VALUE> <MNAME> <L=LENGTH> <W=WIDTH> <TEMP=T> m=<val> <ac=val> <scale>
+  RXXXXXXX N1 N2 <VALUE> <MNAME> <L=LENGTH> <W=WIDTH> <TEMP=T> 
+           m=<val> <ac=val> <scale=val>
 @end example
 
 
@@ -1096,6 +1856,8 @@ corrected for temperature.  The parameters available are:
           @tab meters @tab 1e-6 @tab 2e-6
 @item NARROW @tab narrowing due to side etching
           @tab meters @tab 0.0 @tab 1e-7
+@item SHORT  @tab shortening due to side etching 
+          @tab meters @tab 0.0 @tab 1e-7         
 @item TNOM @tab parameter measurement temperature
           @tab °C @tab 27 @tab 50
 @end multitable
@@ -1107,12 +1869,12 @@ formula
 
 @tex
 $$
-    R = {\rm RSH} {L - {\rm NARROW} \over W - {\rm NARROW}}
+    R = {\rm RSH} {L - {\rm SHORT} \over W - {\rm NARROW}}
 $$
 @end tex
 @ifnottex
 @example
-                        L - NARROW
+                        L - SHORT
                 R = RSH ----------
                         W - NARROW
 @end example
@@ -1541,7 +2303,13 @@ Intermediate points are determined by linear interpolation.
 
 The shape of the waveform is described by the following table:
 
-
+@tex
+$$
+V(t) = \cases{V0 ,&if $0\leq t<TD$\cr
+              V0 + VA e^{(t - TD) THETA}sin(2 J FREQ(t + TD)), &if $TD < t \leq TSTOP$\cr }
+$$
+@end tex
+@ifnottex
 @example
 time          value
 ------------------------------------------------------------
@@ -1549,10 +2317,7 @@ time          value
                        -(t - TD)THETA
 TD to TSTOP   VO + VA e               sin(2 J FREQ (t + TD))
 @end example
-
-
-
-
+@end ifnottex
 
 
 @node Exponential, Piece-Wise Linear, Sinusoidal, Independent Sources
@@ -1586,7 +2351,15 @@ TAU2 (fall time constant)   TSTEP           seconds
 
 The shape of the waveform is described by the following table:
 
-
+@tex
+Let $V21 = V2 - V1$, $V12=V1 - V2$:
+$$
+V(t) = \cases{V1 ,&if $0\leq t<TD1$\cr
+              V1 + V21 \left( 1-e^{(t - TD1)\over TAU1}\right), &if $TD1 \leq t < TD2$\cr
+              V1 + V21 \left( 1-e^{(t - TD1)\over TAU1}\right) + V12 \left( 1-e^{(t - TD2)\over TAU2}\right), &if $TD2 \leq t \leq TSTOP$\cr}
+$$
+@end tex
+@ifnottex
 @example
 time           value
 ---------------------------------------------------------------------
@@ -1599,8 +2372,7 @@ TD1 to TD2    V1 + (V2-V1).|1-e ----------|
 TD2 to TSTOP  V1 + (V2-V1).|1-e ----------| + (V1-V2).|1-e ---------|
                            |        TAU1  |           |       TAU2  |
 @end example
-
-
+@end ifnottex
 
 @node Piece-Wise Linear, Single-Frequency FM, Exponential, Independent Sources
 @subsubsection Piece-Wise Linear
@@ -2277,7 +3049,6 @@ the .OPTIONS control line.  Reverse breakdown is modeled by an
 exponential increase in the reverse diode current and is determined by
 the parameters BV and IBV (both of which are positive numbers).
 
-
 @multitable @columnfractions .1 .45 .15 .15 .15 .1
 @item name @tab parameter @tab units @tab default @tab example @tab   area
 @item IS @tab saturation current @tab A @tab 1.0e-14 @tab 1.0e-14 @tab   *
@@ -2523,7 +3294,7 @@ For details, see [9].
  General form:
 
 @example
-  MXXXXXXX ND NG NS NB MNAME <L=VAL> <W=VAL> <AD=VAL> <AS=VAL>
+  MXXXXXXX ND NG NS NB MNAME <M=VAL> <L=VAL> <W=VAL> <AD=VAL> <AS=VAL>
   + <PD=VAL> <PS=VAL> <NRD=VAL> <NRS=VAL> <OFF>
   + <IC=VDS, VGS, VBS> <TEMP=T>
 @end example
@@ -2539,29 +3310,32 @@ For details, see [9].
 
 
 ND, NG, NS, and NB are the drain, gate, source, and bulk (substrate)
-nodes, respectively.  MNAME is the model name.  L and W are the channel
-length and width, in meters.  AD and AS are the areas of the drain and
-source diffusions, in meters@math{^2}.  Note that the suffix U specifies
-microns (1e-6 m) and P sq-microns (1e-12 m@math{^2}). If any of L, W,
-AD, or AS are not specified, default values are used.  The use of
-defaults simplifies input file preparation, as well as the editing
-required if device geometries are to be changed.  PD and PS are the
-perimeters of the drain and source junctions, in meters.  NRD and NRS
-designate the equivalent number of squares of the drain and source
-diffusions; these values multiply the sheet resistance RSH specified on
-the .MODEL control line for an accurate representation of the parasitic
-series drain and source resistance of each transistor.  PD and PS
-default to 0.0 while NRD and NRS to 1.0.  OFF indicates an (optional)
-initial condition on the device for dc analysis.  The (optional) initial
-condition specification using IC=VDS, VGS, VBS is intended for use with
-the UIC option on the .TRAN control line, when a transient analysis is
-desired starting from other than the quiescent operating point.  See the
-.IC control line for a better and more convenient way to specify
-transient initial conditions.  The (optional) TEMP value is the
-temperature at which this device is to operate, and overrides the
-temperature specification on the .OPTION control line.  The temperature
-specification is ONLY valid for level 1, 2, 3, and 6 MOSFETs, not for
-level 4 or 5 (BSIM) devices.
+nodes, respectively.  MNAME is the model name. M is the multiplicity
+parameter, which simulates m paralleled devices. All MOS models 
+support the "M" parameter. L and W are the channel length and width, 
+in meters.  AD and AS are the areas of the drain and source diffusions, 
+in meters@math{^2}.  
+
+Note that the suffix U specifies microns (1e-6 m) and P sq-microns 
+(1e-12 m@math{^2}). If any of L, W, AD, or AS are not specified, 
+default values are used.  The use of defaults simplifies input file 
+preparation, as well as the editing required if device geometries are 
+to be changed.  PD and PS are the perimeters of the drain and source 
+junctions, in meters.  NRD and NRS designate the equivalent number of 
+squares of the drain and source diffusions; these values multiply the 
+sheet resistance RSH specified on the .MODEL control line for an 
+accurate representation of the parasitic series drain and source 
+resistance of each transistor.  PD and PS default to 0.0 while NRD 
+and NRS to 1.0.  OFF indicates an (optional) initial condition on the 
+device for dc analysis.  The (optional) initial condition specification 
+using IC=VDS, VGS, VBS is intended for use with the UIC option on the 
+.TRAN control line, when a transient analysis is desired starting from 
+other than the quiescent operating point.  See the .IC control line for 
+a better and more convenient way to specify transient initial conditions.  
+The (optional) TEMP value is the temperature at which this device is to 
+operate, and overrides the temperature specification on the .OPTION 
+control line.  The temperature specification is ONLY valid for level 1, 
+2, 3, and 6 MOSFETs, not for level 4 or 5 (BSIM) devices.
 
 
 
@@ -2569,43 +3343,50 @@ level 4 or 5 (BSIM) devices.
 @node  MOSFET Models (NMOS/PMOS), MESFETs, MOSFETs, Transistors and Diodes
 @subsection  MOSFET Models (NMOS/PMOS)
 
+MOSFET models are the central part of NGSPICE, probably because they are 
+the most widely used devices in the electronics world. NGSPICE provides
+all the MOSFETs implemented in the original Spice3f and adds several models
+developed by Berkeley's Device Group and other independent groups. Not all
+models below are included in the standard NGSPICE distribution because of
+copyright restrictions.  
 
 NGSPICE provides four MOSFET device models, which differ in the
 formulation of the I-V characteristic.  The variable LEVEL specifies the
 model to be used:
 
-@table @code
+@multitable @columnfractions .10 .33 .50
+@item LEVEL @tab Model           @tab Notes
+@item  1    @tab Shichman-Hodges @tab The classical model
+@item  2    @tab MOS2            @tab Described in [2]
+@item  3    @tab MOS3            @tab A semi-empirical model (see [1])
+@item  4    @tab BSIM            @tab Described in [3]
+@item  5    @tab BSIM2           @tab Described in [5]
+@item  6    @tab MOS6            @tab Described in [2]
+@item  8    @tab BSIM3           @tab Described in [13]
+@item  9    @tab MOS9            @tab n/a 
+@item 10    @tab B3SOI           @tab n/a
+@item 14    @tab BSIM4           @tab n/a
+@item 17    @tab HiSIM1          @tab n/a
+@item 29    @tab B3SOIPD         @tab n/a
+@item 30    @tab B3SOIFD         @tab n/a
+@item 31    @tab B3SOIDD         @tab n/a
+@item 14    @tab BSIM4           @tab n/a
+@item 44    @tab EKV             @tab n/a
+@item 49    @tab BSIM3v1s        @tab n/a (Serban Version)
+@item 50    @tab BSIM3v1         @tab n/a (Berkeley Version)
+@item 51    @tab BSIM3v1a        @tab n/a (Alan Version)
+@item 52    @tab BSIM3v0         @tab n/a (Berkeley Version)
+@item 62    @tab STAG            @tab n/a
+@end multitable
 
-@item LEVEL=1
-
-Shichman-Hodges
-
-@item LEVEL=2
-
-MOS2 (as described in [1])
-
-@item LEVEL=3
-
-MOS3, a semi-empirical model(see [1])
-
-@item LEVEL=4
-
-BSIM (as described in [3])
-
-@item LEVEL=5
-
-new BSIM (BSIM2; as described in [5])
-
-@item LEVEL=6
-
-MOS6 (as described in [2])
-
-@end table
+Level 44 model (EKV) is not available in the standard distribution since
+it is not relased in source form. To obtain the code please refer to 
+the @uref{http://legwww.epfl.ch/ekv/, EKV group home page}. 
 
 The dc characteristics of the level 1 through level 3 MOSFETs are
 defined by the device parameters VTO, KP, LAMBDA, PHI and GAMMA.  These
 parameters are computed by NGSPICE if process parameters (NSUB, TOX, ...)
-are given, but userspecified values always override.  VTO is positive
+are given, but users specified values always override.  VTO is positive
 (negative) for enhancement mode and negative (positive) for depletion
 mode N-channel (P-channel) devices.  Charge storage is modeled by three
 constant capacitors, CGSO, CGDO, and CGBO which represent overlap
@@ -2732,6 +3513,11 @@ NGSPICE level 1, 2, 3 and 6 parameters:
 @end multitable
 
 
+The level 3 model available into ngspice takes into account 
+length and width mask ajdustments (@code{xl} and @code{xw})
+and device width narrowing due to diffusion (@code{wd}).  
+
+
 The level 4 and level 5 (BSIM1 and BSIM2) parameters are all values
 obtained from process characterization, and can be generated
 automatically.  J. Pierret [4] describes a means of generating a
@@ -2800,62 +3586,60 @@ For more information on BSIM2, see reference [5].
 
  NGSPICE BSIM (level 4) parameters.
 
-@example
- name    parameter                                                                 units      l/w
-
- VFB     flat-band voltage                                                         V          *
- PHI     surface inversion potential                                               V          *
-                                                                              1/2
- K1      body effect coefficient                                                   V          *
- K2      drain/source depletion charge-sharing coefficient                         -          *
- ETA     zero-bias drain-induced barrier-lowering coefficient                      -          *
-                                                                               2
- MUZ     zero-bias mobility                                                        cm /V-s
- DL      shortening of channel                                                     Mm
- DW      narrowing of channel                                                      Mm
-                                                                              -1
- U0      zero-bias transverse-field mobility degradation coefficient               V          *
- U1      zero-bias velocity saturation coefficient                                 Mm/V       *
-                                                                               2  2
- X2MZ    sens. of mobility to substrate bias at v  =0                              cm /V -s   *
-                                           ds                                 -1
- X2E     sens. of drain-induced barrier lowering effect to substrate bias          V          *
-                                                                              -1
- X3E     sens. of drain-induced barrier lowering effect to drain bias at V  =V     V          *
-                                                                    ds  dd    -2
- X2U0    sens. of transverse field mobility degradation effect to substrate bias   V          *
-                                                                                -2
- X2U1    sens. of velocity saturation effect to substrate bias                     MmV        *
-                                                                               2  2
- MUS     mobility at zero substrate bias and at V  =V                              cm /V -s
-                                           ds  dd                              2  2
- X2MS    sens. of mobility to substrate bias at V  =V                              cm /V -s   *
-                                           ds  dd                              2  2
- X3MS    sens. of mobility to drain bias at V  =V                                  cm /V -s   *
-                                       ds  dd                                   -2
- X3U1    sens. of velocity saturation effect on drain bias at V  =V                MmV        *
-                                                         ds  dd
- TOX     gate oxide thickness                                                      Mm
-                                                                             o
- TEMP    temperature at which parameters were measured                              C
- VDD     measurement bias range                                                    V
- CGDO    gate-drain overlap capacitance per meter channel width                    F/m
- CGSO    gate-source overlap capacitance per meter channel width                   F/m
- CGBO    gate-bulk overlap capacitance per meter channel length                    F/m
- XPART   gate-oxide capacitance-charge model flag                                  N0      zero-bias subthreshold slope coefficient                                  -          *
- NB      sens. of subthreshold slope to substrate bias                             -          *
- ND      sens. of subthreshold slope to drain bias                                 -          *
- RSH     drain and source diffusion sheet resistance                               Z/[]
-                                                                                2
- JS      source drain junction current density                                     A/m
- PB      built in potential of source drain junction                               V
- MJ      Grading coefficient of source drain junction                              PBSW    built in potential of source, drain junction sidewall                     V
- MJSW    grading coefficient of source drain junction sidewall                                                                                                          2
- CJ      Source drain junction capacitance per unit area                           F/m
- CJSW    source drain junction sidewall capacitance per unit length                F/m
- WDF     source drain junction default width                                       m
- DELL    Source drain junction length reduction                                    m
-@end example
+@multitable @columnfractions .15 .55 .20 .10 
+@item name  @tab  parameter                                            @tab units       @tab  l/w
+@item VFB   @tab  flat-band voltage                                    @tab   V         @tab   *
+@item PHI   @tab  surface inversion potential                          @tab   V         @tab   *
+@item K1    @tab  body effect coefficient                              @tab  V^(1/2)    @tab   *
+@item K2    @tab  drain/source depletion charge-sharing coefficient    @tab   -         @tab   *
+@item ETA   @tab  zero-bias drain-induced barrier-lowering coefficient @tab   -         @tab   *
+@item MUZ   @tab  zero-bias mobility                                   @tab cm^(2)/V-s  @tab   
+@item DL    @tab  shortening of channel                                @tab   Mm        @tab
+@item DW    @tab  narrowing of channel                                 @tab   Mm        @tab
+@item U0    @tab  zero-bias transverse-field mobility degradation 
+                  coefficient                                          @tab   V^(-1)    @tab   *
+@item U1    @tab  zero-bias velocity saturation coefficient            @tab   Mm/V      @tab   *
+@item X2MZ  @tab  sens. of mobility to substrate bias at V_ds=0        @tab cm^(2)/V-s  @tab   *
+@item X2E   @tab  sens. of drain-induced barrier lowering effect to 
+                  substrate bias                                       @tab   V^(-1)    @tab   *
+@item X3E   @tab  sens. of drain-induced barrier lowering effect to 
+                  drain bias at V_ds=V_dd                              @tab   V^(-1)    @tab   *
+@item X2U0  @tab  sens. of transverse field mobility degradation 
+                  effect to substrate bias                             @tab   V^(-2)    @tab   *
+@item X2U1  @tab  sens. of velocity saturation effect to substrate 
+                  bias                                                 @tab  MmV^(-2)   @tab   *
+@item MUS   @tab  mobility at zero substrate bias and at V_ds=V_dd     @tab  cm^2/V^2-s @tab  
+@item X2MS  @tab  sens. of mobility to substrate bias at V_ds=V_dd     @tab  cm^2/V^2-s @tab   *
+@item X3MS  @tab  sens. of mobility to drain bias at V_ds=V_dd         @tab  cm^2/V^2-s @tab   *
+@item X3U1  @tab  sens. of velocity saturation effect on drain bias 
+                  at V_ds=V_dd                                         @tab  MmV^(-2)   @tab   *
+@item TOX   @tab  gate oxide thickness                                 @tab  Mm         @tab
+@item TEMP  @tab  temperature at which parameters were measured        @tab  C          @tab
+@item VDD   @tab  measurement bias range                               @tab  V          @tab   
+@item CGDO  @tab  gate-drain overlap capacitance per meter channel 
+                  width                                                @tab  F/m        @tab
+@item CGSO  @tab  gate-source overlap capacitance per meter channel 
+                  width                                                @tab  F/m        @tab
+@item CGBO  @tab  gate-bulk overlap capacitance per meter channel 
+                  length                                               @tab  F/m        @tab
+@item XPART @tab  gate-oxide capacitance-charge model flag             @tab   -         @tab    
+@item N0    @tab  zero-bias subthreshold slope coefficient             @tab   -         @tab   *
+@item NB    @tab  sens. of subthreshold slope to substrate bias        @tab   -         @tab   *
+@item ND    @tab  sens. of subthreshold slope to drain bias            @tab   -         @tab   *
+@item RSH   @tab  drain and source diffusion sheet resistance          @tab   Z/[]      @tab
+@item JS    @tab  source drain junction current density                @tab   A/m^2     @tab 
+@item PB    @tab  built in potential of source drain junction          @tab   V         @tab 
+@item MJ    @tab  Grading coefficient of source drain junction         @tab   -         @tab                  
+@item BSW   @tab  built in potential of source, drain junction 
+                  sidewall                                             @tab   V         @tab
+@item MJSW  @tab  grading coefficient of source drain junction 
+                  sidewall                                             @tab   -         @tab
+@item CJ    @tab  Source drain junction capacitance per unit area      @tab   F/m^2     @tab
+@item CJSW  @tab  source drain junction sidewall capacitance per 
+                  unit length                                          @tab   F/m       @tab 
+@item WDF   @tab  source drain junction default width                  @tab   m         @tab 
+@item DELL  @tab  Source drain junction length reduction               @tab   m         @tab
+@end multitable
 
 
 XPART = 0 selects a 40/60 drain/source charge partition in saturation,
@@ -3341,20 +4125,22 @@ independent source must have been specified with an ac value.
   .DC VIN 0.25 5.0 0.25
   .DC VDS 0 10 .5 VGS 0 5 1
   .DC VCE 0 10 .25 IB 0 10U 1U
+  .DC RLoad 1k 2k 100
+  .DC TEMP -15 75 5
 @end example
 
 
 
 The DC line defines the dc transfer curve source and sweep limits (again
-with capacitors open and inductors shorted).  SRCNAM is the name of an
-independent voltage or current source.  VSTART, VSTOP, and VINCR are the
-starting, final, and incrementing values respectively.  The first
-example causes the value of the voltage source VIN to be swept from 0.25
-Volts to 5.0 Volts in increments of 0.25 Volts.  A second source (SRC2)
-may optionally be specified with associated sweep parameters.  In this
-case, the first source is swept over its range for each value of the
-second source.  This option can be useful for obtaining semiconductor
-device output characteristics.  See the second example circuit
+with capacitors open and inductors shorted). SRCNAM is the name of an
+independent voltage or current source, a resistor or the circuit temperature.
+VSTART, VSTOP, and VINCR are the starting, final, and incrementing values 
+respectively.  The first example causes the value of the voltage source VIN 
+to be swept from 0.25 Volts to 5.0 Volts in increments of 0.25 Volts.  A 
+second source (SRC2) may optionally be specified with associated sweep 
+parameters.  In this case, the first source is swept over its range for each 
+value of the second source.  This option can be useful for obtaining 
+semiconductor device output characteristics.  See the second example circuit
 description in Appendix A.
 
 
@@ -6243,8 +7029,13 @@ Circuits and Devices, vol. 8, no. 3, pp.  7-8 and 49, May 1992
  [11] H.Statz et al., GaAs FET Device and Circuit Simulation in SPICE,
 IEEE Transactions on Electron Devices, V34, Number 2, February, 1987
 pp160-169.
+ 
+ [12] Weidong Liu et al., BSIM3v3.2.2 MOSFET Model Users' Manual,
+http://www-device.eecs.berkeley.edu/~bsim3/ftpv322/Mod_doc/V322manu.tar.Z 
 
-
+ [13] Weidong Lui et al. BSIM3.v3.2.3 MOSFET Model Users' Manual,
+http://www-device.eecs.berkeley.edu/~bsim3/ftpv323/Mod_doc/BSIM323_manu.tar
+  
 
 @node Example Circuits, Model and Device Parameters, Bibliography, Top
 @chapter Example Circuits
@@ -7717,6 +8508,7 @@ and model, but are provided as a quick reference guide.
  ------------------------------------------------------------
 |         Mos1 - instance parameters (input-output)         |
 |-----------------------------------------------------------+
+| m                 Multiplicity
 | l                 Length                                  |
 | w                 Width                                   |
 | ad                Drain area                              |
@@ -7889,6 +8681,7 @@ and model, but are provided as a quick reference guide.
  ------------------------------------------------------------
 |         Mos2 - instance parameters (input-output)         |
 |-----------------------------------------------------------+
+| m                 Multiplicity                            |
 | l                 Length                                  |
 | w                 Width                                   |
 | ad                Drain area                              |
@@ -8066,11 +8859,12 @@ and model, but are provided as a quick reference guide.
  ------------------------------------------------------------
 |         Mos3 - instance parameters (input-output)         |
 |-----------------------------------------------------------+
+| m                 Multiplicity                            |
 | l                 Length                                  |
 | w                 Width                                   |
 | ad                Drain area                              |
 | as                Source area                             |
- ------------------------------------------------------------
+------------------------------------------------------------+
 | pd                Drain perimeter                         |
 | ps                Source perimeter                        |
 | nrd               Drain squares                           |
@@ -8196,6 +8990,9 @@ and model, but are provided as a quick reference guide.
 | js                Bulk jct. sat. current density          |
  ------------------------------------------------------------
 | tox               Oxide thickness                         |
+| xl                Length mask adjustment                  |
+| wd                Width Narrowing (Diffusion)             |
+| xw                Width mask adjustment                   |
 | ld                Lateral diffusion                       |
 | u0                Surface mobility                        |
 | uo                (null)                                  |
@@ -8651,5 +9448,2104 @@ and model, but are provided as a quick reference guide.
 | p                 Instantaneous power                     |
  ------------------------------------------------------------
 @end example
+
+@chapter NGSPICE enhancements over Spice3
+
+NGSPICE is the result of many hours of work spent in front of a 
+screen trying to fix and enhance the original Spice3 code. Most of
+the work done affects simulation results in some way, so many users
+ask why the results obtained with Spice3 differ with the ones they
+get from NGSPICE. 
+
+This chapter collects all the enhancements introduced into NGSPICE 
+during its development, ordered by categories. For each improvement 
+described here, the file(s) and function(s) affected are reported 
+into a table, letting the experienced user to understand at what 
+extent such improvement affects his or her simulation. 
+  
+
+@section Device models code
+
+This section collects most of the enhancements made to the code 
+that builds up device models and device support routines. If you are 
+concerned about discrepancies between the results you get with 
+NGSPICE and the ones you got with a clean Spice3f, look here to see if 
+they depend on a bug that has been fixed (or a new on introduced)
+
+@subsection Resistor Model
+
+The NGSPICE resistor model has been enhanced adding some useful 
+features already present in other simulators: 
+
+@itemize @bullet
+
+@item Different resistance value for AC analysis (Serban Popescu).
+@item Device Multiplicity. The "M" parameter simulates "M" paralleled
+      resistors (Serban Popescu). 
+@item "Short" model parameter to take into account resistor shortening 
+      due to side etching. The original spice3 implementation had only 
+      the "narrow" parameter (Alan Gillespie).
+@item "scale" instance parameter to scale the AC or DC value (Paolo 
+      Nenzi).     
+@end itemize
+
+
+@noindent
+@table @asis
+@item Authors:
+Alan Gillespie, Paolo Nenzi, Serban Popescu
+
+@item File:
+@file{spicelib/dev/res/*} 
+
+@item Function: 
+All the functions that makes up the model. 
+
+@item Affects: 
+The resistor model only. 
+@end table 
+
+
+@subsection Capacitor Model
+
+In @code{CAPask()}, the power stored in a capacitor and current
+through it were not showed correctly during transient analysis.
+
+@noindent
+@table @asis
+
+@item Author:
+Alan Gillespie
+
+@item File:
+@file{spicelib/devices/cap/capask.c} 
+
+@item Function:
+@code{CAPask()} 
+
+@item Affects: 
+The capacitor model only.
+@end table 
+
+
+@subsection Diode (D) model fixes
+ 
+In the original implementation of the diode model, the parameter 
+@code{DIOtBrkdwnV} was used instead of the flag @code{DIObreakdownVoltageGiven},
+in the @code{DIOload()} function. In the same function the
+@code{DIOjunctionPot} was used instead of the temperature corrected
+version @code{DIOtJctPot}. 
+
+In the @code{DIOtemp()} function, the @code{DIOtVcrit} was calculated without 
+taking into account the device area.  This could cause floating point 
+overflows, especially in device models designed to be scaled by a small area, 
+e.g. 2u by 2u diodes (area=4e-12). 
+
+The flawed code was:
+
+@example
+here->DIOtVcrit=vte*log(vte/(CONSTroot2*here->DIOtSatCur));
+@end example
+
+@example
+here->DIOtVcrit=vte*
+       log(vte/(CONSTroot2*here->DIOtSatCur*here->DIOarea));
+@end example
+
+
+@noindent
+@sc{Enhacement Data:}
+
+@table @asis
+
+@item Author:
+Alan Gillespie
+
+@item Files:
+@file{spicelib/devices/dioload.c}
+@file{spicelib/devices/diotemp.c} 
+
+@item Function:
+@code{DIOload(), DIOtemp()} 
+
+@item Affects: 
+The pn junction diode model. 
+@end table 
+
+
+@subsection Level 1 MOS model
+
+The Level 1 MOS model (MOS1)now accepts the "M" device 
+parameter (mutiplicity), to simulate "M" paralleled identical
+devices. The "M" parameter affects the following quantities:
+
+@itemize @bullet
+@item In the AC load routine (@code{MOS1acLoad()}), the value assigned 
+to the "M" (@code{MOS1m}) parameter multiplies the overlap capacitances: 
+@code{GateSourceOverlapCap}, @code{GateDrainOverlapCap}, 
+@code{GateBulkOverlapCap}.
+
+@item In the instance parameters ask routine (@code{MOS1ask()}),
+the value of gate-source, gate-drain and gate-bulk capacitances,
+corresponding to the parameters: @code{MOS1_CAPGS}, @code{MOS1_CAPGD},
+@code{MOS1_CAPGB}, are multiplied by the value of "M".
+
+@item In the distortion analysis setup routine (@code{MOS1dset()}),
+the overlap capcitances (@code{GateSourceOverlapCap}, 
+@code{GateDrainOverlapCap}, @code{GateBulkOverlapCap}), the saturation
+currents (@code{DrainSatCurr}, @code{SourceSatCurr}), the "beta" 
+(@code{Beta}) and the oxide capacitance (@code{OxideCap}) are all
+mutiplied by the value of "M". 
+
+@item In the main load routine (@code{MOS1load()}), the value of "M"
+paramter multiplies:@code{DrainSatCurr}, @code{SourceSatCurr}, 
+@code{GateSourceOverlapCap}, @code{GateDrainOverlapCap}, 
+@code{GateBulkOverlapCap}, @code{Beta}, @code{OxideCap}. The meaning of 
+the variables have been already explained above.
+
+@item In the noise analysis routine (in @code{MOS1noi()}), the noise 
+densities, contained in the @code{noizDEns[]} vector are multplied by 
+the value of "M". 
+
+@item In the load routine for Pole-Zero analysis, the following quantities
+are multiplied by the value of "M": @code{GateSourceOverlapCap},
+@code{GateDrainOverlapCap}, @code{GateBulkOverlapCap}.
+
+@item In the device "temp" routine (in @code{MOS1temp()}) the source and 
+drain critical voltages (@code{MOS1sourceVcrit}, @code{MOS1drainVcrit})
+are multiplied by the value of "M", like the zero-voltage bulk-drain and 
+bulk-source capacitances: @code{czbd}, @code{czbdsw}, @code{czbs}, 
+@code{czbssw}, where "sw" suffix stands for "sidewall" and means perimetral
+capacitsnces and the drain and sources condiuctances (
+@code{MOS1drainConductance}. @code{MOS1sourceConductance})
+@end itemize
+
+Other minor changes for "M" parameter support includes: @code{MOS1sprt()} 
+prints the value of "M", @code{MOS1param()} sets the value of "M" and
+@code{MOS1ask()} returns that value. 
+
+The "Gmin" implementation across the substrate diodes of MOS1 was incorrect,
+correcting this dramatically improved DC convergence. The original code in
+@code{MOS1load()} was:
+
+@example
+...
+...
+next1:  if(vbs <= 0) @{
+            here->MOS1gbs = SourceSatCur/vt;
+            here->MOS1cbs = here->MOS1gbs*vbs;
+            here->MOS1gbs += ckt->CKTgmin;
+        @} else @{
+            evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
+            here->MOS1gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
+            here->MOS1cbs = SourceSatCur * (evbs-1);
+        @}
+        if(vbd <= 0) @{
+            here->MOS1gbd = DrainSatCur/vt;
+            here->MOS1cbd = here->MOS1gbd *vbd;
+            here->MOS1gbd += ckt->CKTgmin;
+        @} else @{
+            evbd = exp(MIN(MAX_EXP_ARG,vbd/vt));
+            here->MOS1gbd = DrainSatCur*evbd/vt +ckt->CKTgmin;
+            here->MOS1cbd = DrainSatCur *(evbd-1);
+        @}
+...            
+...
+@end example
+
+and the new one is:
+@example
+...
+...
+next1:  if(vbs <= -3*vt) @{
+           here->MOS1gbs = ckt->CKTgmin;
+           here->MOS1cbs = here->MOS1gbs*vbs-SourceSatCur;
+        @} else @{
+           evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
+           here->MOS1gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
+           here->MOS1cbs = SourceSatCur*(evbs-1) + ckt->CKTgmin*vbs;
+        @}
+        if(vbd <= -3*vt) @{
+            here->MOS1gbd = ckt->CKTgmin;
+            here->MOS1cbd = here->MOS1gbd*vbd-DrainSatCur;
+        @} else @{
+            evbd = exp(MIN(MAX_EXP_ARG,vbd/vt));
+            here->MOS1gbd = DrainSatCur*evbd/vt + ckt->CKTgmin;
+            here->MOS1cbd = DrainSatCur*(evbd-1) + ckt->CKTgmin*vbd;
+        @}
+...
+...            
+@end example
+
+In the "load current vector" section of the @code{MOS1load()} routine,
+"Gmin" appeared in the calculation of @code{ceqbd} and @code{ceqbs}:
+
+@example
+     /*
+      *  load current vector
+      */
+      
+      ceqbs = model->MOS1type * 
+              (here->MOS1cbs-(here->MOS1gbs-ckt->CKTgmin)*vbs);
+      ceqbd = model->MOS1type * 
+              (here->MOS1cbd-(here->MOS1gbd-ckt->CKTgmin)*vbd);
+@end example
+ 
+The code has been corrected as follows:
+
+@example
+     /*
+      *  load current vector
+      */
+      
+      ceqbs = model->MOS1type * 
+              (here->MOS1cbs-(here->MOS1gbs)*vbs);
+      ceqbd = model->MOS1type * 
+              (here->MOS1cbd-(here->MOS1gbd)*vbd);
+@end example
+ 
+
+MOS1 device reported only half of the Meyer capcitance without adding the 
+overlap capacitance contribution, when reporting to the @code{.OP} printout
+or in the rawfile. The routine @code{MOS1ask()} was responsible for this:
+
+@example
+...
+...
+ case MOS1_CGS:
+      value->rValue = *(ckt->CKTstate0 + here->MOS1capgs);
+      return(OK);
+ case MOS1_CGD:
+      value->rValue = *(ckt->CKTstate0 + here->MOS1capgd);
+      return(OK);
+...
+...
+ case MOS1_CAPGS:
+      value->rValue = *(ckt->CKTstate0 + here->MOS1capgs);
+      return(OK);
+...
+...        
+ case MOS1_CAPGD:
+      value->rValue = *(ckt->CKTstate0 + here->MOS1capgd);
+      return(OK);
+...
+...      
+ case MOS1_CAPGB:
+      value->rValue = *(ckt->CKTstate0 + here->MOS1capgb);
+      return(OK);
+@end example 
+
+The new code is:
+
+@example
+...
+...
+ case MOS1_CGS:
+      value->rValue = 2* *(ckt->CKTstate0 + here->MOS1capgs);
+      return(OK);
+ case MOS1_CGD:
+      value->rValue = 2* *(ckt->CKTstate0 + here->MOS1capgd);
+      return(OK);
+...
+... 
+ case MOS1_CAPGS:
+    value->rValue = 2* *(ckt->CKTstate0 + here->MOS1capgs);
+    /* add overlap capacitance */
+    value->rValue += (here->sMOS1modPtr->MOS1gateSourceOverlapCapFactor)
+                      * here->MOS1m
+                      * (here->MOS1w);
+      return(OK);
+...
+...
+ case MOS1_CAPGD:
+    value->rValue = 2* *(ckt->CKTstate0 + here->MOS1capgd);
+    /* add overlap capacitance */
+    value->rValue += (here->sMOS1modPtr->MOS1gateSourceOverlapCapFactor)
+                      * here->MOS1m
+                      * (here->MOS1w);
+      return(OK);
+...
+...        
+ case MOS1_CAPGB:
+    value->rValue = 2* *(ckt->CKTstate0 + here->MOS1capgb);
+    /* add overlap capacitance */
+    value->rValue += (here->sMOS1modPtr->MOS1gateBulkOverlapCapFactor)
+                      * here->MOS1m
+                      * (here->MOS1l
+                      -2*(here->sMOS1modPtr->MOS1latDiff));
+      return(OK);
+@end example
+
+@subsection Level 2 MOS Model
+
+Level 2 mosfet model now accetps the "M" instance parameter (multiplicity)
+to simulate M paralleled identical devices. The affected quantities are:
+
+@itemize @bullet
+@item In the AC load routine (@code{MOS2acLoad()}, the value assigned
+      to the "M" (@code{MOS2m}) parameter, multiplies the overlap 
+      capacitance: @code{ GateSourceOverlapCap}, @code{ GateDrainOverlapCap},
+      @code{ GateBulkOverlapCap}.
+@item In the @code{MOS2ask()} routine (instance parameters reporting) the 
+      gate-source, gate-drain and gate-bulk capacitances, corresponding
+      to @code{MOS2_CAPGS}, @code{MOS2_CAPGD}, @code{MOS2_CAPGB} 
+      parameters, are multiplied by the value of "M".
+@item In the @code{MOS2dset()} function (distorsion analysis setup) 
+      the overlap capcitances (@code{GateSourceOverlapCap}, 
+      @code{GateDrainOverlapCap}, @code{GateBulkOverlapCap}), 
+      the saturation currents (@code{DrainSatCurr}, @code{SourceSatCurr}),
+      the "beta" (@code{Beta}), the oxide capacitance (@code{OxideCap}) 
+      and and the @code{xn} quantity are all mutiplied by the value 
+      of "M".
+@item In the main load routine @code{MOS2load()}, the value of "M"
+      parameter multiplies:@code{DrainSatCurr}, @code{SourceSatCurr}, 
+      @code{GateSourceOverlapCap}, @code{GateDrainOverlapCap}, 
+      @code{GateBulkOverlapCap}, @code{Beta}, @code{OxideCap}, 
+      @code{xn}. The meaning of the variables have been already 
+      explained above.
+@item In the noise analysis routine @code{MOS2noi()}, the noise 
+      densities, contained in the @code{noizDEns[]} vector are 
+      multplied by the value of "M".
+@item In the load routine for Pole-Zero analysis (@code{MOS2pzLoad()}),
+      the following quantities are multiplied by the value of "M": 
+      @code{GateSourceOverlapCap}, @code{GateDrainOverlapCap}, 
+      @code{GateBulkOverlapCap}.
+@item In @code{MOS2temp()} routine the source and drain critical 
+      voltages (@code{MOS2sourceVcrit}, @code{MOS2drainVcrit})
+      are multiplied by the value of "M", like the zero-voltage 
+      bulk-drain and bulk-source capacitances: @code{czbd}, 
+      @code{czbdsw}, @code{czbs}, @code{czbssw}, where "sw" suffix 
+      stands for "sidewall" and means perimetral capacitances and 
+      the drain and sources conductances (@code{MOS2drainConductance},
+      @code{MOS2sourceConductance}).
+@end itemize
+
+
+Other minor changes for "M" parameter support includes: @code{MOS2sprt()} 
+prints the value of "M", @code{MOS2param()} sets the value of "M" and
+@code{MOS2ask()} returns that value. 
+
+The "Gmin" implementation across the substrate diodes of MOS2 was incorrect,
+correcting this dramatically improved DC convergence. The original code in
+@code{MOS2load()} was:
+
+@example
+...
+...
+ /* bulk-source and bulk-drain doides
+  * here we just evaluate the ideal diode current and the
+  * correspoinding derivative (conductance).
+  */
+
+next1:      if(vbs <= 0) @{
+                here->MOS2gbs = SourceSatCur/vt;
+                here->MOS2cbs = here->MOS2gbs*vbs;
+                here->MOS2gbs += ckt->CKTgmin;
+            @} else @{
+                evbs = exp(vbs/vt);
+                here->MOS2gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
+                here->MOS2cbs = SourceSatCur * (evbs-1);
+            @}
+            if(vbd <= 0) @{
+                here->MOS2gbd = DrainSatCur/vt;
+                here->MOS2cbd = here->MOS2gbd *vbd;
+                here->MOS2gbd += ckt->CKTgmin;
+            @} else @{
+                evbd = exp(vbd/vt);
+                here->MOS2gbd = DrainSatCur*evbd/vt +ckt->CKTgmin;
+                here->MOS2cbd = DrainSatCur *(evbd-1);
+            @}
+
+...
+...
+@end example
+
+Then new code is:
+
+@example
+...
+...
+ /* bulk-source and bulk-drain doides
+  * here we just evaluate the ideal diode current and the
+  * correspoinding derivative (conductance).
+  */
+next1:    if(vbs <= -3*vt) @{
+              here->MOS2gbs = ckt->CKTgmin;
+              here->MOS2cbs = here->MOS2gbs*vbs-SourceSatCur;
+          @} else @{
+              evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
+              here->MOS2gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
+              here->MOS2cbs = SourceSatCur*(evbs-1) + ckt->CKTgmin*vbs;
+          @}
+          if(vbd <= -3*vt) @{
+              here->MOS2gbd = ckt->CKTgmin;
+              here->MOS2cbd = here->MOS2gbd*vbd-DrainSatCur;
+          @} else @{
+              evbd = exp(MIN(MAX_EXP_ARG,vbd/vt));
+              here->MOS2gbd = DrainSatCur*evbd/vt + ckt->CKTgmin;
+              here->MOS2cbd = DrainSatCur*(evbd-1) + ckt->CKTgmin*vbd;
+          @}
+
+@end example
+
+In the "load current vector" section of the @code{MOS2load()} routine,
+"Gmin" appeared in the calculation of @code{ceqbd} and @code{ceqbs}:
+
+@example                 
+...
+...
+ /*
+  *  load current vector
+  */
+     ceqbs = model->MOS2type * 
+             (here->MOS2cbs-(here->MOS2gbs-ckt->CKTgmin)*vbs);
+     ceqbd = model->MOS2type * 
+             (here->MOS2cbd-(here->MOS2gbd-ckt->CKTgmin)*vbd);
+...
+...
+@end example
+
+The correct code is:
+
+@example
+...
+...
+ /*
+  *  load current vector
+  */
+     ceqbs = model->MOS2type * 
+             (here->MOS2cbs-(here->MOS2gbs)*vbs);
+     ceqbd = model->MOS2type * 
+             (here->MOS2cbd-(here->MOS2gbd)*vbd);
+...
+...
+@end example
+
+MOS2 device reported only half of the Meyer capacitance without adding the 
+overlap capacitance contribution, when reporting to the @code{.OP} printout
+or in the rawfile. The routine @code{MOS2ask()} was responsible for this:
+
+
+@example
+...
+...
+ case MOS2_CGS:
+         value->rValue = *(ckt->CKTstate0 + here->MOS2capgs);
+         return(OK);
+ case MOS2_CGD:
+         value->rValue = *(ckt->CKTstate0 + here->MOS2capgd);
+         return(OK);
+...
+...
+ case MOS2_CAPGS:
+         value->rValue = *(ckt->CKTstate0 + here->MOS2capgs);
+         return(OK);
+...
+... 
+ case MOS2_CAPGD:
+         value->rValue = *(ckt->CKTstate0 + here->MOS2capgd);
+         return(OK);
+...
+... 
+ case MOS2_CAPGB:
+         value->rValue = *(ckt->CKTstate0 + here->MOS2capgb);
+         return(OK);
+...
+...
+@end example
+
+The new code is:
+
+@example
+...
+...
+ case MOS2_CGS:
+         value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgs);
+         return(OK);
+ case MOS2_CGD:
+         value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgd);
+         return(OK);
+...
+...
+ case MOS2_CAPGS:
+      value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgs);
+      /* add overlap capacitance */
+      value->rValue += 
+          (here->MOS2modPtr->MOS2gateSourceOverlapCapFactor)
+           * here->MOS2m
+           * (here->MOS2w);
+      return(OK);
+...
+...        
+ case MOS2_CAPGD:
+      value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgd);
+      /* add overlap capacitance */
+      value->rValue += 
+           (here->MOS2modPtr->MOS2gateSourceOverlapCapFactor)
+            * here->MOS2m
+            * (here->MOS2w);
+      return(OK);
+...
+...         
+ case MOS2_CAPGB:
+      value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgb);
+      /* add overlap capacitance */
+      value->rValue += 
+           (here->MOS2modPtr->MOS2gateBulkOverlapCapFactor)
+            * here->MOS2m
+            * (here->MOS2l
+            -2*(here->MOS2modPtr->MOS2latDiff));
+      return(OK);
+...
+...
+@end example
+
+The level 2 MOSFET model seems to calculate Von and Vth values for the
+threshold and subthreshold values respectively, but then uses Vbin to 
+calculate the Vdsat voltage used to find the drain current. However, a 
+jump statement uses Von to decide that the device is in the "cutoff" 
+region, which means that when this jump allows the drain current to be 
+calculated, Vdsat can already be well above zero. This leads to a 
+discontinuity of drain current with respect to gate voltage. The code 
+is now modified to use Vbin for the jump decision. It looks like the 
+code should actually use Vth as the threshold voltage, but since 
+PSPICE and HSPICE both follow the original Berkeley code, this was 
+left alone. The affected code can be found in @code{MOS2load()}:
+
+@example
+...
+...
+      if ((lvds-lvbs) >= 0) @{
+           barg = sqrt(phiMinVbs+lvds);
+           dbrgdb = -0.5/barg;
+...
+...
+            vgst = lvgs-von;
+            if (lvgs <= von) @{
+                /*
+                 *  cutoff region
+                 */
+...
+...
+            if (lvgs > von) goto line900;
+            /*
+             *  subthreshold region
+             */
+...
+...
+@end example
+
+and the corrected code is:
+
+@example
+...
+...
+      if ((lvbs-lvds) <= 0) @{
+           barg = sqrt(phiMinVbs+lvds);
+           dbrgdb = -0.5/barg;
+...
+...
+
+            vgst = lvgs-von;
+            if (lvgs <= vbin) @{
+                /*
+                 *  cutoff region
+                 */
+...
+...              
+            if (model->MOS2fastSurfaceStateDensity != 0 
+                && OxideCap != 0) @{
+                if (lvgs > von) goto line900;
+            @} else @{
+                if (lvgs > vbin) goto line900;
+                goto doneval;
+            @}
+            /*
+             *  subthreshold region
+             */
+...
+...
+@end example
+
+@subsection Level 3 Mos Model
+
+The level 3 model has been extensively corrected since it is a 
+de-facto standard for circuit simulation. 
+
+The level 3 model supports the "M" parameter (multiplicity), which
+can be used to simulate M identical paralleled devices. The "M"
+parameter affects the quantities described in the following list:
+
+@itemize @bullet
+@item In the AC load routine (@code{MOS3acld()}, the value assigned
+      to the "M" (@code{MOS3m}) parameter, multiplies the overlap 
+      capacitance: @code{ GateSourceOverlapCap}, @code{ GateDrainOverlapCap},
+      @code{ GateBulkOverlapCap}.
+@item In the @code{MOS3ask()} function (instance parameters reporting) the 
+      gate-source, gate-drain and gate-bulk capacitances, corresponding
+      to @code{MOS3_CAPGS}, @code{MOS3_CAPGD}, @code{MOS3_CAPGB} 
+      parameters, are multiplied by the value of "M".
+@item In the @code{MOS3dset()} function (distorsion analysis setup) 
+      the overlap capcitances (@code{GateSourceOverlapCap}, 
+      @code{GateDrainOverlapCap}, @code{GateBulkOverlapCap}), 
+      the saturation currents (@code{DrainSatCurr}, @code{SourceSatCurr}),
+      the "beta" (@code{Beta}), the oxide capacitance (@code{OxideCap}) 
+      and and the @code{csonco} quantity are all mutiplied by the value 
+      of "M".
+@item In the main load routine @code{MOS3load()}, the value of "M"
+      parameter multiplies:@code{DrainSatCurr}, @code{SourceSatCurr}, 
+      @code{GateSourceOverlapCap}, @code{GateDrainOverlapCap}, 
+      @code{GateBulkOverlapCap}, @code{Beta}, @code{OxideCap}, 
+      @code{csonco}. The meaning of the variables have been already 
+      explained above.                  
+@item In the noise analysis routine @code{MOS3noi()}, the noise 
+      densities, contained in the @code{noizDEns[]} vector are 
+      multplied by the value of "M".
+@item In the load routine for Pole-Zero analysis (@code{MOS3pzLoad()}),
+      the following quantities are multiplied by the value of "M": 
+      @code{GateSourceOverlapCap}, @code{GateDrainOverlapCap}, 
+      @code{GateBulkOverlapCap}.
+@item In @code{MOS3temp()} routine the source and drain critical 
+      voltages (@code{MOS3sourceVcrit}, @code{MOS3drainVcrit})
+      are multiplied by the value of "M", like the zero-voltage 
+      bulk-drain and bulk-source capacitances: @code{czbd}, 
+      @code{czbdsw}, @code{czbs}, @code{czbssw}, where "sw" suffix 
+      stands for "sidewall" and means perimetral capacitances and 
+      the drain and sources conductances (@code{MOS3drainConductance},
+      @code{MOS3sourceConductance}).
+@end itemize       
+
+Other minor changes for "M" parameter support includes: @code{MOS3sprt()} 
+prints the value of "M", @code{MOS3param()} sets the value of "M" and
+@code{MOS3ask()} returns that value. 
+
+Another important improvement over the original Spice3 code is the 
+support for process narrowing over drawn dimensions. The three model 
+parameters added to level 3 model are: @code{xl}, @code{wd}, @code{xw}.
+The changes in the code are described in depth as a reference for 
+future model development.
+
+Adding new model parameters usually need the introduction of new 
+variables (one for each parameter) in the model structure: 
+@code{sMOS3model}, which can be found in @file{mos3defs.h}. In this 
+case the new variables are:
+
+@example
+...
+...
+double MOS3lengthAdjust;    /* New parm: mask adjustment to length */
+double MOS3widthNarrow;     /* New parm to reduce effective width */
+double MOS3widthAdjust;     /* New parm: mask adjustment to width */
+...
+...
+unsigned MOS3lengthAdjustGiven  :1;
+unsigned MOS3widthNarrowGiven   :1;
+unsigned MOS3widthAdjustGiven   :1;
+...
+...
+#define MOS3_MOD_XL 145
+#define MOS3_MOD_WD 146
+#define MOS3_MOD_XW 147
+...
+...
+@end example
+
+The single bit field that ends in "Given" are used to indicate 
+wether the parameter has been supplied by the user or must be 
+defaulted.
+The last three @code{#define} are needed as a mean to identify the 
+parameters throughout the model, since comparing integers is faster
+than comparing stings. As you may have already imagined, those 
+numbers must be unique. The association between paramter name and
+numerical code appears in @code{MOS3mPTable[]} in @file{mos3.c}:
+
+@example
+...
+...
+IFparm MOS3mPTable[] = @{ /* model parameters */
+ OP("type",   MOS3_MOD_TYPE,  IF_STRING ,"N-channel or P-channel MOS"),
+ IP("nmos",   MOS3_MOD_NMOS,  IF_FLAG   ,"N type MOSfet model"),
+ IP("pmos",   MOS3_MOD_PMOS,  IF_FLAG   ,"P type MOSfet model"),
+...
+...
+ IOP("xl",    MOS3_MOD_XL,    IF_REAL   ,"Length mask adjustment"),
+ IOP("wd",    MOS3_MOD_WD,    IF_REAL   ,"Width Narrowing (Diffusion)"),
+ IOP("xw",    MOS3_MOD_XW,    IF_REAL   ,"Width mask adjustment"),
+...
+...
+@end example
+
+The keyword @code{IOP} before the three parameters sets them as 
+input/output parameters (that can be set and queried). The function
+used to set parameters values is @code{MOS3mParam()}, which contains 
+the following code:  
+
+@example
+...
+...
+        case MOS3_MOD_XL:
+            model->MOS3lengthAdjust = value->rValue;
+            model->MOS3lengthAdjustGiven = TRUE;
+            break;
+        case MOS3_MOD_WD:
+            model->MOS3widthNarrow = value->rValue;
+            model->MOS3widthNarrowGiven = TRUE;
+            break;
+        case MOS3_MOD_XW:
+            model->MOS3widthAdjust = value->rValue;
+            model->MOS3widthAdjustGiven = TRUE;
+            break;
+...
+...            
+@end example
+
+The function used to query those parameters is @code{MOS3mAsk()} and
+the specific code is:
+
+@example
+...
+...
+        case MOS3_MOD_XL:
+            value->rValue = here->MOS3lengthAdjust;
+            return(OK);
+        case MOS3_MOD_WD:
+            value->rValue = here->MOS3widthNarrow;
+            return(OK);
+        case MOS3_MOD_XW:
+            value->rValue = here->MOS3widthAdjust;
+            return(OK);
+...
+...
+@end example
+
+The code above describes the interface to the new parameters, their
+influence on the model behaviour is contained in the following 
+functions: @code{MOS3acLoad()}, @code{MOS3load()}, @code{MOS3noise()},
+@code{MOS3pzLoad()}, @code{MOS3setup()}, @code{MOS3sLoad()} and 
+@code{MOS3temp()}.
+
+The @code{MOS3acLoad()} function contains the code used to represent
+the model for AC (small signal) analysis. The orignal code was:
+
+@example
+...
+...
+        EffectiveLength=here->MOS3l - 2*model->MOS3latDiff;
+        GateSourceOverlapCap = model->MOS3gateSourceOverlapCapFactor * 
+                here->MOS3w;
+        GateDrainOverlapCap = model->MOS3gateDrainOverlapCapFactor * 
+                here->MOS3w;
+        GateBulkOverlapCap = model->MOS3gateBulkOverlapCapFactor * 
+                EffectiveLength;
+...
+...
+
+@end example
+
+And the new one:
+
+@example
+...
+...
+    double EffectiveWidth;
+...
+...
+         EffectiveWidth  = here->MOS3w - 2*model->MOS3widthNarrow
+                           + model->MOS3widthAdjust;
+         EffectiveLength = here->MOS3l - 2*model->MOS3latDiff
+                           + model->MOS3lengthAdjust;
+         GateSourceOverlapCap = model->MOS3gateSourceOverlapCapFactor * 
+                 here->MOS3m * EffectiveWidth;
+         GateDrainOverlapCap = model->MOS3gateDrainOverlapCapFactor * 
+                 here->MOS3m * EffectiveWidth;
+         GateBulkOverlapCap = model->MOS3gateBulkOverlapCapFactor * 
+                 here->MOS3m * EffectiveLength;
+...
+...
+@end example
+
+A brief look at the new code shows that a new variable 
+@code{EffectiveWidth} appears and its value depends on the 
+newly introduced parameters @code{wd} and @code{xw}, through
+@code{MOS3widthNarrow} and @code{MOS3widthAdjust}, respectively.
+The values of @code{EffectiveLength} is trimmed with the value of
+@code{xl} through @code{MOS3lengthAdjust}. The overlap capacitances
+are multiplied by @code{EffectiveWidth} instead of @code{MOS3w}. The
+@code{MOS3m} value has been discussed above. 
+
+The @code{MOS3pzLoad()} function is very simiar to @code{MOS3acLoad()}
+and the code affected is almost identical to the one above.
+
+ 
+
+The @code{MOS3load()} function describes the model for large signals
+analyses. The old code is:
+
+@example
+...
+...
+ EffectiveLength = here->MOS3l - 2*model->MOS3latDiff;
+    if( (here->MOS3tSatCurDens == 0) 
+        || (here->MOS3drainArea == 0) 
+        || (here->MOS3sourceArea == 0)) @{
+          DrainSatCur = here->MOS3tSatCur;
+          SourceSatCur = here->MOS3tSatCur;
+    @} else @{
+          DrainSatCur  = here->MOS3tSatCurDens * 
+                         here->MOS3drainArea;
+          SourceSatCur = here->MOS3tSatCurDens * 
+                         here->MOS3sourceArea;
+    @}
+    GateSourceOverlapCap = model->MOS3gateSourceOverlapCapFactor 
+                           * here->MOS3w;
+    GateDrainOverlapCap  = model->MOS3gateDrainOverlapCapFactor 
+                           * here->MOS3w;
+    GateBulkOverlapCap   = model->MOS3gateBulkOverlapCapFactor 
+                           * EffectiveLength;
+    Beta = here->MOS3tTransconductance * here->MOS3w/EffectiveLength;
+    OxideCap = model->MOS3oxideCapFactor * EffectiveLength 
+               * here->MOS3w;
+...
+...
+       /*
+        *.....body effect
+        */
+       gammas = model->MOS3gamma*fshort;
+       fbodys = 0.5*gammas/(sqphbs+sqphbs);
+       fbody = fbodys+model->MOS3narrowFactor/here->MOS3w;
+       onfbdy = 1.0/(1.0+fbody);
+       dfbdvb = -fbodys*dsqdvb/sqphbs+fbodys*dfsdvb/fshort;
+       qbonco =gammas*sqphbs+model->MOS3narrowFactor*phibs/here->MOS3w;
+       dqbdvb = gammas*dsqdvb+model->MOS3gamma*dfsdvb*sqphbs-
+                model->MOS3narrowFactor/here->MOS3w;
+...
+...
+       /*
+        *.....joint weak inversion and strong inversion
+        */
+       von = vth;
+       if ( model->MOS3fastSurfaceStateDensity != 0.0 ) @{
+           csonco = CHARGE*model->MOS3fastSurfaceStateDensity 
+                    * 1e4 /*(cm**2/m**2)*/ 
+                    * EffectiveLength*here->MOS3w/OxideCap;
+
+...
+...
+@end example
+
+And the new code is:
+
+@example
+...
+...
+ double EffectiveWidth;
+...
+...
+ EffectiveWidth  = here->MOS3w - 2*model->MOS3widthNarrow
+                   + model->MOS3widthAdjust;
+ EffectiveLength = here->MOS3l - 2*model->MOS3latDiff
+                   + model->MOS3lengthAdjust;
+ if( (here->MOS3tSatCurDens == 0)  
+     || (here->MOS3drainArea == 0)
+     || (here->MOS3sourceArea == 0)) @{
+       DrainSatCur = here->MOS3m * here->MOS3tSatCur;
+       SourceSatCur = here->MOS3m * here->MOS3tSatCur;
+  @} else @{
+       DrainSatCur = here->MOS3m * here->MOS3tSatCurDens 
+                     * here->MOS3drainArea;
+       SourceSatCur = here->MOS3m * here->MOS3tSatCurDens  
+                      * here->MOS3sourceArea;
+  @}
+  GateSourceOverlapCap = model->MOS3gateSourceOverlapCapFactor 
+                         * here->MOS3m * EffectiveWidth;
+  GateDrainOverlapCap  = model->MOS3gateDrainOverlapCapFactor  
+                         * here->MOS3m * EffectiveWidth;
+  GateBulkOverlapCap   = model->MOS3gateBulkOverlapCapFactor 
+                         * here->MOS3m * EffectiveLength;
+  Beta = here->MOS3tTransconductance
+         * here->MOS3m * EffectiveWidth/EffectiveLength;
+  OxideCap = model->MOS3oxideCapFactor * EffectiveLength 
+             * here->MOS3m * EffectiveWidth;
+...
+...
+       /*
+        *.....body effect
+        */
+        gammas = model->MOS3gamma*fshort;
+        fbodys = 0.5*gammas/(sqphbs+sqphbs);
+        fbody  = fbodys+model->MOS3narrowFactor/EffectiveWidth;
+        onfbdy = 1.0/(1.0+fbody);
+        dfbdvb = -fbodys*dsqdvb/sqphbs+fbodys*dfsdvb/fshort;
+        qbonco = gammas*sqphbs+model->MOS3narrowFactor
+                  * phibs/EffectiveWidth;
+        dqbdvb = gammas*dsqdvb+model->MOS3gamma*dfsdvb*sqphbs
+                 - model->MOS3narrowFactor/EffectiveWidth;
+...
+...
+       /*
+        *.....joint weak inversion and strong inversion
+        */
+        von = vth;
+        if ( model->MOS3fastSurfaceStateDensity != 0.0 ) @{
+
+            csonco = CHARGE * model->MOS3fastSurfaceStateDensity * 
+                    1e4 /*(cm**2/m**2)*/ 
+                    * EffectiveLength*EffectiveWidth
+                    *  here->MOS3m/OxideCap;
+...
+...
+@end example
+
+The "trick" is to substitute the @code{MOS3w} with the effective
+width taking into account device multiplicity. Another point
+where device width matters is the noise routine:@code{MOS3noise()}.
+The oginal code computes noise densities as follows:
+
+@example
+...
+...
+noizDens[MOS3FLNOIZ] *= model->MOS3fNcoef * 
+				 exp(model->MOS3fNexp *
+				 log(MAX(FABS(inst->MOS3cd),N_MINLOG))) /
+				 (data->freq * inst->MOS3w * 
+				 (inst->MOS3l - 2*model->MOS3latDiff) *
+				 model->MOS3oxideCapFactor * model->MOS3oxideCapFactor);
+...
+...
+@end example
+
+The new code adds width narrowing and and multiplicity:
+
+@example
+...
+...
+noizDens[MOS3FLNOIZ] *= model->MOS3fNcoef * 
+				 exp(model->MOS3fNexp *
+				 log(MAX(FABS(inst->MOS3cd),N_MINLOG))) /
+				 (data->freq *
+				 (inst->MOS3w - 2*model->MOS3widthNarrow) *
+                                 inst->MOS3m *
+				 (inst->MOS3l - 2*model->MOS3latDiff) *
+				 model->MOS3oxideCapFactor * model->MOS3oxideCapFactor);
+...
+...
+@end example
+
+Another  place in the code that needs changes is the device setup 
+routine @code{MOS3setup()}. The followig code adds support for
+the new parameters:
+
+@example
+...
+...
+        if(!model->MOS3lengthAdjustGiven) @{
+            model->MOS3lengthAdjust = 0;
+        @}
+        if(!model->MOS3widthNarrowGiven) @{
+            model->MOS3widthNarrow = 0;
+        @}
+        if(!model->MOS3widthAdjustGiven) @{
+            model->MOS3widthAdjust = 0;
+        @}
+...
+...
+@end example
+
+This code sets up the default values when the parameters are not
+supplied by the user (since they are optional). 
+
+Another function modified to support the new parameters is the 
+@code{MOS3temp()}. The old code is:
+
+@example
+            if(here->MOS3l - 2 * model->MOS3latDiff <=0) @{
+                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                        "%s: effective channel length less than zero",
+                        &(here->MOS3name));
+                return(E_BADPARM);
+            @}
+@end example
+
+And the new one:
+
+@example
+...
+...
+            if(here->MOS3l - 2 * model->MOS3latDiff +
+                                 model->MOS3lengthAdjust <1e-6) @{
+                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                        "%s: effective channel length less than zero",
+                        &(here->MOS3name));
+                return(E_PARMVAL);
+            @}
+
+
+            if(here->MOS3w - 2 * model->MOS3widthNarrow +
+                                 model->MOS3widthAdjust <1e-6) @{
+                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                        "%s: effective channel width less than zero",
+                        &(here->MOS3name));
+                return(E_PARMVAL);
+            @}
+...
+...
+@end example
+
+The changes add a check over device width that was not present in the 
+orignal code and rise an error if the result is less than one micrometer, 
+while the old code checked against zero.
+
+The last (but not least) function that needed some care is the 
+sensitivity load routine: @code{MOS3sLoad()}. The original code was:
+
+@example
+...
+...
+
+                EffectiveLength = here->MOS3l 
+                    - 2*model->MOS3latDiff;
+                if(EffectiveLength == 0) @{ 
+                    DqgsDp = 0;
+                    DqgdDp = 0;
+                    DqgbDp = 0;
+                @}
+                else @{
+                    DqgsDp = model->MOS3type * qgs0 / EffectiveLength;
+                    DqgdDp = model->MOS3type * qgd0 / EffectiveLength;
+                    DqgbDp = model->MOS3type * qgb0 / EffectiveLength;
+                @}
+            @}
+            else @{
+                DqgsDp = model->MOS3type * qgs0 / here->MOS3w;
+                DqgdDp = model->MOS3type * qgd0 / here->MOS3w;
+                DqgbDp = model->MOS3type * qgb0 / here->MOS3w;
+            @}
+...
+...
+@end example
+
+And the modified code is:
+
+@example
+...
+...
+    double EffectiveWidth;
+...
+...
+                EffectiveLength = here->MOS3l 
+                    - 2*model->MOS3latDiff + model->MOS3lengthAdjust;
+                if(EffectiveLength == 0) @{ 
+                    DqgsDp = 0;
+                    DqgdDp = 0;
+                    DqgbDp = 0;
+                @}
+                else @{
+                    DqgsDp = model->MOS3type * qgs0 / EffectiveLength;
+                    DqgdDp = model->MOS3type * qgd0 / EffectiveLength;
+                    DqgbDp = model->MOS3type * qgb0 / EffectiveLength;
+                @}
+            @}
+            else @{
+                EffectiveWidth = here->MOS3w 
+                    - 2*model->MOS3widthNarrow + model->MOS3widthAdjust;
+                DqgsDp = model->MOS3type * qgs0 / EffectiveWidth;
+                DqgdDp = model->MOS3type * qgd0 / EffectiveWidth;
+                DqgbDp = model->MOS3type * qgb0 / EffectiveWidth;
+            @}
+...
+...
+@end example
+
+There was an error in the original implmentation that did not take into
+account lateral diffusion @code{MOS3LatDiff}. The other changes take
+into acount the effective (against drawn) device width. 
+
+That's all folks! The changes needed to support the new parameters
+are (shorlty and badly) described. This section on MOS3 continues with 
+other fixes. 
+
+MOS3 device reported only half of the Meyer capacitance without adding the 
+overlap capacitance contribution, when reporting to the @code{.OP} printout
+or in the rawfile. The routine @code{MOS3ask()} was responsible for this:
+
+@example
+...
+...
+   case MOS3_CGS:
+            value->rValue = *(ckt->CKTstate0 + here->MOS3capgs);
+            return(OK);
+        case MOS3_CGD:
+            value->rValue = *(ckt->CKTstate0 + here->MOS3capgd);
+            return(OK);
+...
+...
+case MOS3_CAPGS:
+            value->rValue = *(ckt->CKTstate0 + here->MOS3capgs);
+            return(OK);
+...
+...
+        case MOS3_CAPGD:
+            value->rValue = *(ckt->CKTstate0 + here->MOS3capgd);
+            return(OK);
+...
+...
+        case MOS3_CAPGB:
+            value->rValue = *(ckt->CKTstate0 + here->MOS3capgb);
+            return(OK);
+...
+...
+@end example
+
+The new code is:
+
+@example
+...
+...
+  case MOS3_CGS:
+      value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgs);
+      return(OK);
+  case MOS3_CGD:
+      value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgd);
+      return(OK);
+...
+...
+  case MOS3_CAPGS:
+      value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgs);
+/* add overlap capacitance */
+      value->rValue += 
+                   (here->MOS3modPtr->MOS3gateSourceOverlapCapFactor)
+                    * here->MOS3m
+                    * (here->MOS3w
+                       +here->MOS3modPtr->MOS3widthAdjust
+                       -2*(here->MOS3modPtr->MOS3widthNarrow));
+      return(OK);
+...
+...
+  case MOS3_CAPGD:
+      value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgd);
+/* add overlap capacitance */
+      value->rValue += 
+                   (here->MOS3modPtr->MOS3gateDrainOverlapCapFactor)
+                    * here->MOS3m
+                    * (here->MOS3w
+                       +here->MOS3modPtr->MOS3widthAdjust
+                       -2*(here->MOS3modPtr->MOS3widthNarrow));
+      return(OK);
+...
+...
+  case MOS3_CAPGB:
+      value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgb);
+/* add overlap capacitance */
+      value->rValue += 
+                   (here->MOS3modPtr->MOS3gateBulkOverlapCapFactor)
+                    * here->MOS3m
+                    * (here->MOS3l
+                       +here->MOS3modPtr->MOS3lengthAdjust
+                       -2*(here->MOS3modPtr->MOS3latDiff));
+      return(OK);
+...
+...
+@end example
+
+The "Gmin" implementation across the substrate diodes of MOS3 was incorrect,
+correcting this dramatically improved DC convergence. The original code in
+@code{MOS3load()} was:
+
+@example
+            /*
+             * bulk-source and bulk-drain diodes
+             *   here we just evaluate the ideal diode current and the
+             *   corresponding derivative (conductance).
+             */
+
+
+next1:    if(vbs <= 0) @{
+              here->MOS3gbs = SourceSatCur/vt;
+              here->MOS3cbs = here->MOS3gbs*vbs;
+              here->MOS3gbs += ckt->CKTgmin;
+          @} else @{
+              evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
+              here->MOS3gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
+              here->MOS3cbs = SourceSatCur * (evbs-1);
+          @}
+          if(vbd <= 0) @{
+              here->MOS3gbd = DrainSatCur/vt;
+              here->MOS3cbd = here->MOS3gbd *vbd;
+              here->MOS3gbd += ckt->CKTgmin;
+          @} else @{
+              evbd = exp(MIN(MAX_EXP_ARG,vbd/vt));
+              here->MOS3gbd = DrainSatCur*evbd/vt +ckt->CKTgmin;
+              here->MOS3cbd = DrainSatCur *(evbd-1);
+          @}
+@end example
+
+The new corrected code is:
+
+@example
+          /*
+           *   bulk-source and bulk-drain diodes
+           *   here we just evaluate the ideal diode current and the
+           *   corresponding derivative (conductance).
+           */
+
+next1:    if(vbs <= -3*vt) @{
+              here->MOS3gbs = ckt->CKTgmin;
+              here->MOS3cbs = here->MOS3gbs*vbs-SourceSatCur;
+          @} else @{
+              evbs = exp(MIN(MAX_EXP_ARG,vbs/vt));
+              here->MOS3gbs = SourceSatCur*evbs/vt + ckt->CKTgmin;
+              here->MOS3cbs = SourceSatCur*(evbs-1) + ckt->CKTgmin*vbs;
+          @}
+          if(vbd <= -3*vt) @{
+              here->MOS3gbd = ckt->CKTgmin;
+              here->MOS3cbd = here->MOS3gbd*vbd-DrainSatCur;
+          @} else @{
+              evbd = exp(MIN(MAX_EXP_ARG,vbd/vt));
+              here->MOS3gbd = DrainSatCur*evbd/vt + ckt->CKTgmin;
+              here->MOS3cbd = DrainSatCur*(evbd-1) + ckt->CKTgmin*vbd;
+          @}
+@end example
+
+In the "load current vector" section of the @code{MOS3load()} routine,
+"Gmin" appeared in the calculation of @code{ceqbd} and @code{ceqbs}:
+
+@example
+    /*
+     *  load current vector
+     */
+      ceqbs = model->MOS3type * 
+              (here->MOS3cbs-(here->MOS3gbs-ckt->CKTgmin)*vbs);
+      ceqbd = model->MOS3type * 
+              (here->MOS3cbd-(here->MOS3gbd-ckt->CKTgmin)*vbd);
+@end example
+
+The new code is:
+
+@example 
+    /*
+     *  load current vector
+     */
+      ceqbs = model->MOS3type * 
+              (here->MOS3cbs-(here->MOS3gbs)*vbs);
+      ceqbd = model->MOS3type * 
+              (here->MOS3cbd-(here->MOS3gbd)*vbd);
+@end example
+
+The gm, gmb and gs calculations in them MOS3 model (in @code{MOD3load()}
+were all wrong:
+
+@example
+...
+...
+ /* 
+  *.....normalized drain current
+  */
+  cdnorm = cdo*vdsx;
+  here->MOS3gm = vdsx;
+  here->MOS3gds = vgsx-vth-(1.0+fbody+dvtdvd)*vdsx;
+  here->MOS3gmbs = dcodvb*vdsx;
+  /* 
+   *.....drain current without velocity saturation effect
+   */
+   cd1 = Beta*cdnorm;
+   Beta = Beta*fgate;
+   cdrain = Beta*cdnorm;
+   here->MOS3gm = Beta*here->MOS3gm+dfgdvg*cd1;
+   here->MOS3gds = Beta*here->MOS3gds+dfgdvd*cd1;
+   here->MOS3gmbs = Beta*here->MOS3gmbs;
+...
+...
+   cdrain = cdrain*xlfact;
+   diddl = cdrain/(EffectiveLength-delxl);
+   here->MOS3gm = here->MOS3gm*xlfact+diddl*ddldvg;
+   gds0 = here->MOS3gds*xlfact+diddl*ddldvd;
+   here->MOS3gmbs = here->MOS3gmbs*xlfact+diddl*ddldvb;
+   here->MOS3gm = here->MOS3gm+gds0*dvsdvg;
+   here->MOS3gmbs = here->MOS3gmbs+gds0*dvsdvb;
+   here->MOS3gds = gds0*dvsdvd+diddl*dldvd;
+...
+...
+@end example
+
+The code has been corrected as follows leading to much improved 
+convergence:
+
+@example
+...
+...
+ /* 
+  *.....normalized drain current
+  */
+  cdnorm = cdo*vdsx;
+  here->MOS3gm = vdsx;
+  if ((here->MOS3mode*vds) > vdsat) here->MOS3gds = -dvtdvd*vdsx;
+  else here->MOS3gds = vgsx-vth-(1.0+fbody+dvtdvd)*vdsx;
+  here->MOS3gmbs = dcodvb*vdsx;
+  /* 
+   *.....drain current without velocity saturation effect
+   */
+  cd1 = Beta*cdnorm;
+  Beta = Beta*fgate;
+  cdrain = Beta*cdnorm;
+  here->MOS3gm = Beta*here->MOS3gm+dfgdvg*cd1;
+  here->MOS3gds = Beta*here->MOS3gds+dfgdvd*cd1;
+  here->MOS3gmbs = Beta*here->MOS3gmbs+dfgdvb*cd1;
+...
+...
+  cd1 = cdrain;
+  cdrain = cdrain*xlfact;
+  diddl = cdrain/(EffectiveLength-delxl);
+  here->MOS3gm = here->MOS3gm*xlfact+diddl*ddldvg;
+  here->MOS3gmbs = here->MOS3gmbs*xlfact+diddl*ddldvb;
+  gds0 = diddl*ddldvd;
+  here->MOS3gm = here->MOS3gm+gds0*dvsdvg;
+  here->MOS3gmbs = here->MOS3gmbs+gds0*dvsdvb;
+  here->MOS3gds = here->MOS3gds*xlfact+diddl*dldvd+gds0*dvsdvd;
+
+/* 
+  here->MOS3gds = (here->MOS3gds*xlfact)+gds0*dvsdvd-
+  (cd1*ddldvd/(EffectiveLength*(1-2*dlonxl+dlonxl*dlonxl)));
+ */
+...
+...
+@end example
+
+The Spice3 "fix" for the MOS3 gds discontinuity between the linear
+and saturated regions works only if VMAX paramter is set to a 
+non-zero value. A tweak has been added for the zero case. The Spice3
+code (in @code{MOS3load()}) was:
+
+@example
+...
+...
+    /*
+     *.....velocity saturation factor
+     */
+            if ( model->MOS3maxDriftVel != 0.0 ) @{
+                fdrain = 1.0/(1.0+vdsx*onvdsc);
+                fd2 = fdrain*fdrain;
+                arga = fd2*vdsx*onvdsc*onfg;
+                dfddvg = -dfgdvg*arga;
+                dfddvd = -dfgdvd*arga-fd2*onvdsc;
+                dfddvb = -dfgdvb*arga;
+...
+...
+@end example
+
+The code in NGSPICE is:
+
+@example
+...
+...    
+    /*
+     *.....velocity saturation factor
+     */
+            if ( model->MOS3maxDriftVel > 0.0 ) @{
+                fdrain = 1.0/(1.0+vdsx*onvdsc);
+                fd2 = fdrain*fdrain;
+                arga = fd2*vdsx*onvdsc*onfg;
+                dfddvg = -dfgdvg*arga;
+                if ((here->MOS3mode*vds) > vdsat) dfddvd = -dfgdvd*arga;
+                else dfddvd = -dfgdvd*arga-fd2*onvdsc;
+                dfddvb = -dfgdvb*arga;
+...
+...
+@end example
+
+The critical voltages in @code{MOS3Temp()} were calculated without
+using temperature corrected saturation current:
+
+@example
+...
+...
+                  vt*log(vt/(CONSTroot2*model->MOS3jctSatCur));
+      @} else @{
+          here->MOS3drainVcrit =
+                  vt * log( vt / (CONSTroot2 *
+                  model->MOS3jctSatCurDensity * here->MOS3drainArea));
+          here->MOS3sourceVcrit =
+                  vt * log( vt / (CONSTroot2 *
+                  model->MOS3jctSatCurDensity * here->MOS3sourceArea));
+      @}
+...
+...
+@end example
+
+This have been fixed as follows:
+
+@example
+...
+...
+                 vt*log(vt/(CONSTroot2*here->MOS3m*here->MOS3tSatCur));
+     @} else @{
+         here->MOS3drainVcrit =
+                 vt * log( vt / (CONSTroot2 *
+                   here->MOS3m *
+                   here->MOS3tSatCurDens * here->MOS3drainArea));
+           here->MOS3sourceVcrit =
+                   vt * log( vt / (CONSTroot2 *
+                   here->MOS3m *
+                   here->MOS3tSatCurDens * here->MOS3sourceArea));
+     @}
+...
+...
+@end example
+
+In @code{MOS3temp()} some parameters were computed without taking
+into account temperature corrected parameters:
+
+@example
+...
+...
+ here->MOS3f3d = czbd * model->MOS3bulkJctBotGradingCoeff 
+                 * sarg/ arg / model->MOS3bulkJctPotential
+                 + czbdsw * model->MOS3bulkJctSideGradingCoeff 
+                 * sargsw/ arg /model->MOS3bulkJctPotential;
+ here->MOS3f4d = czbd*model->MOS3bulkJctPotential*(1-arg*sarg)/
+                 (1-model->MOS3bulkJctBotGradingCoeff)
+                 + czbdsw*model->MOS3bulkJctPotential*(1-arg*sargsw)/
+                 (1-model->MOS3bulkJctSideGradingCoeff)
+                 -here->MOS3f3d/2*
+                 (here->MOS3tDepCap*here->MOS3tDepCap)
+                 -here->MOS3tDepCap * here->MOS3f2d;
+ if(model->MOS3capBSGiven) @{
+         czbs=here->MOS3tCbs;
+ @} else @{
+        if(model->MOS3bulkCapFactorGiven) @{
+                czbs=here->MOS3tCj*here->MOS3sourceArea;
+        @} else @{
+                czbs=0;
+        @}
+ @}
+...
+... 
+ here->MOS3f3s = czbs * model->MOS3bulkJctBotGradingCoeff 
+                 * sarg/ arg / model->MOS3bulkJctPotential
+                 + czbssw * model->MOS3bulkJctSideGradingCoeff 
+                 * sargsw/ arg / model->MOS3bulkJctPotential;
+ here->MOS3f4s = czbs*model->MOS3bulkJctPotential*(1-arg*sarg)/
+                        (1-model->MOS3bulkJctBotGradingCoeff)
+                    + czbssw*model->MOS3bulkJctPotential*(1-arg*sargsw)/
+                        (1-model->MOS3bulkJctSideGradingCoeff)
+                    -here->MOS3f3s/2*
+                        (here->MOS3tBulkPot*here->MOS3tBulkPot)
+                    -here->MOS3tBulkPot * here->MOS3f2s;
+        @}
+    @}
+...
+...
+@end example
+
+The corrected code is:
+
+@example
+...
+...
+ here->MOS3f3d = czbd * model->MOS3bulkJctBotGradingCoeff 
+                 * sarg/ arg / here->MOS3tBulkPot
+                 + czbdsw * model->MOS3bulkJctSideGradingCoeff 
+                 * sargsw/ arg / here->MOS3tBulkPot;
+ here->MOS3f4d = czbd*here->MOS3tBulkPot*(1-arg*sarg)/
+                 (1-model->MOS3bulkJctBotGradingCoeff)
+                 + czbdsw*here->MOS3tBulkPot*(1-arg*sargsw)/
+                 (1-model->MOS3bulkJctSideGradingCoeff)
+                 -here->MOS3f3d/2*
+                 (here->MOS3tDepCap*here->MOS3tDepCap)
+                 -here->MOS3tDepCap * here->MOS3f2d;
+ if(model->MOS3capBSGiven) @{
+         czbs = here->MOS3tCbs * here->MOS3m;
+ @} else @{
+        if(model->MOS3bulkCapFactorGiven) @{
+                czbs=here->MOS3tCj*here->MOS3sourceArea * here->MOS3m;
+        @} else @{
+               czbs=0;
+        @}
+ @}
+...
+...
+ here->MOS3f3s = czbs * model->MOS3bulkJctBotGradingCoeff 
+                 * sarg/ arg / here->MOS3tBulkPot
+                 + czbssw * model->MOS3bulkJctSideGradingCoeff 
+                 * sargsw/ arg /here->MOS3tBulkPot;
+ here->MOS3f4s = czbs*here->MOS3tBulkPot*(1-arg*sarg)/
+                 (1-model->MOS3bulkJctBotGradingCoeff)
+                 + czbssw*here->MOS3tBulkPot*(1-arg*sargsw)/
+                 (1-model->MOS3bulkJctSideGradingCoeff)
+                 -here->MOS3f3s/2*
+                 (here->MOS3tDepCap*here->MOS3tDepCap)
+                 -here->MOS3tDepCap * here->MOS3f2s;
+        @}
+    @}
+ 
+@end example
+
+
+@subsection switch model
+@subsection current switch model
+@subsection boh
+
+
+@subsection PN diode voltage limiting
+
+Spice3f voltage limiting across PN junctions did not perform limiting 
+on negative voltages, resulting in convergence problems. In NGSPICE 
+voltage limiting for PN diodes have been modified to work for negative
+voltages too, improving convergence on calculations that rely on this 
+code.
+
+@noindent
+@sc{Enhacement Data:}
+
+@table @asis
+
+@item Author:
+Alan Gillespie
+
+@item File:
+@file{spicelib/devices/devsup.c} 
+
+@item Function:
+@code{DEVpnjlim()} 
+
+@item Affects: 
+All devices model that uses that function: @code{BJT1-2}, @code{BSIM3-4},
+@code{DIO}, @code{EKV}, @code{HFET2}, @code{JFET1-2}, @code{MES}, 
+@code{MESA}, @code{MOS1-9}. 
+@end table 
+
+@subsection FET voltage limiting
+
+In NGSPICE the calculation of @var{vtstlo} is done according to the formula:
+@example
+vtstlo = fabs(vold - vto) + 1;
+@end example
+While in spice3f the formula was:
+@example
+vtstlo = vtsthi/2 + 2;
+@end example
+
+@noindent
+@sc{Enhacement Data:}
+
+@table @asis
+
+@item Author:
+Alan Gillespie
+
+@item File:
+@file{spicelib/devices/devsup.c} 
+
+@item Function:
+@code{DEVfetlim()} 
+
+@item Affects: 
+All devices model that uses that function: @code{BSIM1-4},@code{HFET1-2}, 
+@code{JFET1-2}, @code{MES}, @code{MESA}, @code{MOS1-9}, @code{STAG}, @code{EKV}. 
+@end table 
+
+@subsection Meyer model improvement 
+The calculation of active gate capacitance in @file{devsup.c} has been improved
+to achieve better convergence.
+
+@noindent
+@sc{Enhacement Data:}
+
+@table @asis
+
+@item Author:
+Alan Gillespie
+
+@item File:
+@file{spicelib/devices/devsup.c} 
+
+@item Function:
+@code{DEVqmeyer()} 
+
+@item Affects: 
+All devices model that uses that function: @code{MOS1-9}. 
+@end table 
+
+
+@chapter The BSIM3 Model Integration
+
+BSIM3 compact model is a de-facto standard in the circuit simulation world 
+and is extensively supported in the NGSPICE simulator. The original model 
+dates back to the end of 1995. After almost ten years, three major revisions 
+have been released by the Berkeley Device Group. NGSPICE supports all BSIM3 
+model revisions.
+
+We dedicated an entire chapter to the BSIM3 model since the procedure 
+followed to integrate it into NGSPICE equally applies to other models 
+from Berkeley's Device Group like BSIM4 and BSIMSOI. Most of the content
+of this chapter is devoted to the latest release of BSIM3 available at the
+time of writing: version 3.2 and its minor revisions 3.2.2, 3.2.3 and 3.2.4.
+It is trivial to apply the same concepts to the older ones (3.0 and 3.1). 
+
+The BSIM3 integration into NGSPICE is the result of the merging of three 
+different sources: the original Berkeley's code and two enhanced version, one 
+supplied by Alan Gillespie and the other by Serban Popescu. Both Alan and 
+Serban enhanced the basic model adding multiplicity support, though using two 
+different approaches. Serban added another enhacement, the "hdif" parameter.
+
+NGSPICE provides Berkeley's, Alan's and Serban's models, using Alan's approach
+fot multiplicity support in Berkeley's code.
+ 
+
+@section BSIM3 Revisions
+
+As previously said, due to the importance of BSIM3, NGSPICE includes all 
+its revisions. We have decide to assign different levels only to major
+revisions and use the "version" model parameter to switch among minors.
+The only exceptions to this rule are Serban's and Alan's model, they are
+a special kind of BSIM3 version 3.1 and they are kept separate from the 
+Berkeley's model.
+
+NGSPICE has five different levels for BSIM3:
+
+@multitable @columnfractions .30 .30 .10 .30 
+@item Major Revision @tab Minor Revisions @tab Level @tab Notes
+@item BSIM3v3.2 @tab 3.2, 3.2.2, 3.2.3, 3.2.4 @tab  8 @tab The latest release
+@item BSIM3v1S  @tab 3.1                      @tab 49 @tab Serban's code
+@item BSIM3v1   @tab 3.1                      @tab 50 @tab Berkeley's code
+@item BSIM3v1A  @tab 3.1                      @tab 51 @tab Alan's code
+@item BSIM3v0   @tab 3.0                      @tab 52 @tab Berkeley's code
+@end multitable
+
+As you may see from the table above, level 8, the one officially assigned
+by Berkeley Device Group,is reserved to the most recent major revision of 
+the code. All BSIM3 models support the "m" parameter (multiplicity) but 
+only Serban's one has the support for "hdif".
+
+@section The integration process
+
+This section briefly describes how we integrated the BSIM3 model into
+NGSPICE. The integration process of BSIM3 model started with the download 
+of the original code from Berkeley web site (device group). We devoted much 
+of the work on release 3.2 and backported changes to the older ones. Our
+work on the BSIM model can be summarized in the following points:
+
+@itemize @bullet
+@item Restructuring code for spice3f interface.
+@item Adding minor releases switches (where necessary).
+@item Adding support for parallel simulation (CIDER).
+@item Adding support for "m" parameter.
+@item Restructuring code for NGSPICE integration.
+@end itemize
+
+The firts item is a necessary step for older models, since the device 
+interface changed between spice3e (the original interface for BSIM3 model) 
+and spice3f and NGSPICE device interface is based on spice3f. Changes consists 
+is a shift in the position of @code{BSIM3states} in @file{bsim3def.h} and in 
+the addition of the @code{BSIM3unsetup()} function in @file{b3set.c}.
+
+The next step is the inclusion of runtime switches to select code for the
+different minor revisions that a release can have (well, this is necessary 
+only for release 3.2). 
+
+The result of the two steps is a multirevision BSIM3 model with a spice3f4/5 
+interface. Now we are ready to make the necessary enhacements and the changes
+for integrating the model into NGSPICE.
+
+The third and fourth items in the list are the model enhacements: the 
+"paralell simulation support" is a feature inherited from the CIDER simulator 
+(built on top of NGSPICE) that allow the simulator to use multiple processor 
+elements to evaluate device code (making the simulation faster). The parallel 
+simulation is not yet enabled in NGSPICE, but it will probably in the future. The 
+"parallelization" code basically consists in a series of switches that skip device 
+evaluation code if local processor (machine) has not been assigned to that 
+particular device instance.  
+
+Device "multiplicity" is a feature often found in commercial simulators, used to 
+simulate many identical devices connected in parallel. This feature is important 
+because reduces the number of nodes and equations in a circuit and makes the 
+netlist more readable.
+
+Now we are ready to restructure the code to make it compatible with the NGSPICE 
+device interface, which is an extended version of the spice3f4/5 one.
+
+@section The multirevision code
+
+BSIM3 release 3.2 has three minor revisions: 3.2.2, 3.2.3 and 3.2.4. Reserving a 
+different level for each is not a good solution, it will be a waste of space and
+memory. The four (including 3.2) revisions differs for a few lines of code only, 
+so the ideai is to merge the code and isolate revision dependent parts with 
+runtime switches (the @code{switch} statement). The modifications needed are mininal,
+but some work is nedded to avoid slow comparison between strings.
+
+As written before, the magic of revision selection is done via the "version" model
+paramteter, which appears on the model card. In BSIM3 version 3.2 this parameter
+is a floating point value, since earlier releases were 3.0 and 3.1 and was easy to
+code revision into a real number. With the release of 3.2.2 it changed to a string,
+for obvious reasons (3.2.2 is not a rela nummber). Since the "version" parameter was
+used only for model checking, that was not a problem. In the multirevision model,
+comparisons based on it appears in the device evaluation code, where speed is critical,
+so we added a parameter @code{BSIM3intVersion}, defined in @file{bsim3def.h} as fllows:
+
+@example
+...
+...
+ char   *BSIM3version;
+    
+    /* The following field is an integer coding
+     * of BSIM3version.
+     */     
+    int    BSIM3intVersion;             
+#define BSIM3V324  324       /* BSIM3 V3.2.4 */
+#define BSIM3V323  323       /* BSIM3 V3.2.3 */
+#define BSIM3V322  322       /* BSIM3 V3.2.2 */
+#define BSIM3V32   32        /* BSIM3 V3.2   */
+#define BSIM3V3OLD 0         /* Old model    */
+    double BSIM3tox;             
+...
+...
+@end example
+
+The @code{BSIM3intVersion} will be used as argument to the @code{switch} statement,
+because integer comparison is faster than string's one. The correct value of the 
+parameter is assigned in @code{BSIM3setup()} by the code below:
+
+@example
+...
+...
+	/* If the user does not provide the model revision,
+		 * we always choose the most recent.
+		 */
+		if (!model->BSIM3versionGiven)
+			model->BSIM3version = "3.2.4";
+
+		/* I have added below the code that translate model string
+		 * into an integer. This trick is meant to speed up the 
+		 * revision testing instruction, since comparing integer
+		 * is faster than comparing strings.
+		 * Paolo Nenzi 2002
+		 */
+		if (!strcmp (model->BSIM3version, "3.2.4"))
+			model->BSIM3intVersion = BSIM3V324;
+		else if (!strcmp (model->BSIM3version, "3.2.3"))
+			model->BSIM3intVersion = BSIM3V323;
+		else if (!strcmp (model->BSIM3version, "3.2.2"))
+			model->BSIM3intVersion = BSIM3V322;
+		else if (!strcmp (model->BSIM3version, "3.2"))
+			model->BSIM3intVersion = BSIM3V32;
+		else
+			model->BSIM3intVersion = BSIM3V3OLD;
+		/* BSIM3V3OLD is a placeholder for pre 3.2 revision 
+		 * This model should not be used for pre 3.2 models. 
+		 */
+...
+...
+@end example
+
+When we need to switch the code we use a @code{switch} statement
+like the following: 
+
+@example
+
+ /* Added revision dependent code */
+		  switch (model->BSIM3intVersion)
+		    @{
+		    case BSIM3V324:
+			/* BSIM3v3.2.4 specific code */
+		    break;
+			
+			case BSIM3V323:
+			/* BSIM3v3.2.3 specific code */
+			break;
+			
+		    case BSIM3V322:
+			/* BSIM3v3.2.2 specific code */
+			break;
+		    case BSIM3V32:
+			/* BSIM3v3.2 specific code */
+			break;
+			
+		    default:
+		    /* Old code */
+		    @}
+@end example
+
+The differences between minor revision fall in two categories: modification in
+the evaluation code and bug fixes. The idea followed in the merging was to 
+leave out of the revision dependent code what was a mere bug fix.
+
+@section Device Multiplicity
+
+Spice3 (and thus NGSPICE) uses an approach called MNA (Modified Nodal Analysis)
+to solve electrical circuits. MNA represents an electrical circuits using a
+matrix containing devices' conductances and constraint equations (if you
+need to know more, get a good book on circuit theory). This matrix is built
+by summing the contribution of each instance (another name for "element") in
+the circuit. The contribution of each instance to the circuit matrix is called
+a "matrix stamp", which is itself a matrix containing non zero elements only 
+at positions occupied by the device. It is very important to understand that
+row and coloumn index of the stamp must be consistent with the overall 
+circuit matrix, the elements of the stamp have the same indexes they will
+have in the circuit matrix. Note that all stamps are each other independent,
+and this property can be exploited to add parallelization to the simulator 
+(this is not new, CIDER uses this method). 
+
+All the code in the model (every spice3 model) is needed to build the matrix
+stamp for that particular instance of the device and for the analysis type
+requested.
+
+If we add many (let's say "m") device in parallel, "m" identical stamp are 
+added to the circuit matrix. When we write "identical" we mean that the 
+stamps contain identical values but at different locations. Each device has
+"external" and "internal" nodes, the former are connected to devices' terminals
+and the latter are internal to the device. It should be clear that nodes
+corresponding to terminals must have the same node number and the same indexes 
+in the matrix, since devices appear in parallel, while other must be different
+because those nodes are private to each instance.
+
+If we want to simulate "m" identical devices in parallel with a single instance,
+its stamp must have an impact to the overall circuit matrix equal to the 
+"superposition" of the single instances' "m" stamps. The term "superposition" is 
+used instead of "sum" since we are interested in the external behaviour of the
+parallel, not in its internals. The matrix stamp of the "multiple" device is a
+stamp of a single device whose conductances are "adjusted" to represent the
+parallel situation. Doing this we discard the internal complexity of the
+single instance while leaving intact the influence of the parallel to the 
+circuit. Reducing the complexity affects simulation speed, which is increased 
+because there are less equations (not useful to our purposes) to solve and 
+imposes less stress to simulator algorithms, resulting in less convergence
+problems.
+
+We may say that a "multiple" device is an external representation of
+many identical device connected in parallel.
+
+There are basically two approaches to build the equivalent stamp, both based 
+on scaling the conductances of the model by the multiplicity value (the number 
+of device to connect in parallel). The first approach (used in NGSPICE BSIM3) 
+scales the conductances in the matrix stamp, when it is loaded into the overall
+matrix, and the other one scales the conductances in the entire model code. Both
+approaches have advantages and drawbacks, let's examine some of them. 
+
+The first approach, i.e. scaling the conductances at loading time, is 
+advantageous because the stamp "loading" code is easy to spot and because
+the modification consists simply in multiplying each line by the multiplicity
+factor "m". Another advantage is that this approach does not require a full 
+analysis of the device code to isolate the variables (they may be currents, 
+resistances, etc.,  not only conductances) that need to be scaled. The
+most important drawback is that the evaluation code does not know anything
+about "mutiplicity" and then all internal computations are made for the
+"single" device. To correct this, without interfering with the evaluation
+code, you need to correct the routine that exports internal values (it is
+the so called DEVask, where DEV is a placeholder for device's name).
+
+The second approach, i.e. scaling the variables in the evaluation code, does
+not have the drawback of the previous one but require a full code analysis
+which, in turn, means more time to complete. 
+
+@subsection Adding the "m" parameter
+
+The multiplicity parameter is an instance parameter. The first step is to
+modify the code adding space for it in the various structures. The structure 
+@code{BSIM3instance} in @code{bsim3def.h} needs an entry for the new parameter,
+its "given" flag and a numerical ID for the entry in the @code{BSIM3pTable}:
+
+@example
+...
+...
+    double BSIM3w;
+    double BSIM3m;
+    double BSIM3drainArea;
+...
+...
+    unsigned BSIM3wGiven :1;
+    unsigned BSIM3mGiven :1;
+    unsigned BSIM3drainAreaGiven :1;
+...
+...
+#define BSIM3_L 2
+#define BSIM3_M 15
+#define BSIM3_AS 3
+...
+...
+@end example
+
+
+The @code{BSIM3pTable} structure in @file{b3.c} needs an entry too:
+
+@example
+...
+...
+IOP( "w",   BSIM3_W,      IF_REAL   , "Width"),
+IOP( "m",   BSIM3_M,      IF_REAL   , "Parallel multiplier"),
+IOP( "ad",  BSIM3_AD,     IF_REAL   , "Drain area"),
+...
+...
+@end example
+
+Once the entries are created, it is necessary to set up the bureaucracy needed
+to set and query the new parameter. In the setup routine @code{BSIM3setup()} the 
+following code should be added:
+
+@example
+            if (!here->BSIM3mGiven)
+                here->BSIM3m = 1;
+@end example
+
+This states that if multiplicity is not given in the netlist, it must be defaulted
+to one. To set the "given" flag the following code should be added to @code{BSIM3param()}:
+
+@example
+        case BSIM3_M:
+            here->BSIM3m = value->rValue;
+            here->BSIM3mGiven = TRUE;
+            break;
+@end example
+
+The last modification nedeed by model bureaucracy must be done in @code{BSIM3ask()}.
+The following code should be added:
+
+@example
+        case BSIM3_M:
+            value->rValue = here->BSIM3m;
+            return(OK);
+@end example			
+
+Now the model is ready to set, query, default and use the new parameter. As discussed 
+before, this model use the "first" approach, thus only matrix loading code is affected 
+by the new parameter. In the @code{BSIM3load} routine the "Load Current Vector" and 
+"Load Y Matrix" section should become:
+
+@example
+...
+...
+   (*(ckt->CKTrhs + here->BSIM3gNode) -= m*ceqqg);
+   (*(ckt->CKTrhs + here->BSIM3bNode) -= m*(ceqbs + ceqbd + ceqqb));
+   (*(ckt->CKTrhs + here->BSIM3dNodePrime) +=m*(ceqbd - cdreq - ceqqd));
+   (*(ckt->CKTrhs + here->BSIM3sNodePrime) += m*(cdreq + ceqbs + ceqqg
+	                                                 + ceqqb + ceqqd));
+   if (here->BSIM3nqsMod)
+   *(ckt->CKTrhs + here->BSIM3qNode) += m*(cqcheq - cqdef);
+
+   /*
+    *  load y matrix
+    */
+
+   T1 = qdef * here->BSIM3gtau;
+   (*(here->BSIM3DdPtr) += m*here->BSIM3drainConductance);
+   (*(here->BSIM3GgPtr) += m*(gcggb - ggtg));
+...
+...
+   *(here->BSIM3QspPtr) += m*(ggts - gcqsb);
+   *(here->BSIM3QbPtr) += m*(ggtb - gcqbb);
+...
+...
+@end example
+
+The "load y matrix" is not completely shown, each line is multiplied by "m". The
+same method has been applied to @code{BSIM3acLoad()} routine:
+
+@example
+...
+...
+              m = here->BSIM3m;
+
+              *(here->BSIM3GgPtr +1) += m * xcggb;
+              *(here->BSIM3BbPtr +1) -= M * (xcbgb + xcbdb + xcbsb);
+...
+...
+                  *(here->BSIM3QspPtr) += m * xgts;
+                  *(here->BSIM3QbPtr) += m * xgtb;
+              @}
+...
+...
+@end example
+
+The pole-zero anaysis uses a load routine (@code{BSIM3pzLoad()}) very similar to the
+one used by the AC analysis:
+
+@example
+...
+...
+            m = here->BSIM3m;
+
+			*(here->BSIM3GgPtr) += m * (xcggb * s->real);
+			*(here->BSIM3GgPtr + 1) += m * (xcggb * s->imag);
+...
+...
+                *(here->BSIM3QbPtr) += m * xgtb;
+				*(here->BSIM3QspPtr) += m * xgts;
+			@}
+...
+...
+@end example
+
+The noise analysis needs special attention, since it does not directly uses a 
+matrix load  routine. In this case was necessary to study the noise models 
+used by BSIM3 and to scale the paramters affected by multiplicity. The following 
+parameters were multiplied by the value of @code{BSIM3m}: @code{BSIM3cd} (drain 
+current), @code{BSIM3weff} (effective width), @code{BSIM3drainConductance}, 
+@code{BSIM3sourceConductance}, @code{BSIM3gm} (transconductance), @code{BSIM3gds} 
+(drain to source conductance), @code{BSIM3gmbs} (body source transconductance), 
+@code{BSIM3qinv} (charge in the channel). 
+
+In 3.2.4 BSIM3 revision, a bugfix introduced the @code{BSIM3rds} (drain to source 
+resistance) parameter. Since this is a resistance it has been divided by the
+value of @code{BSIM3m}.
+
+Now that we dealt with analyses code, the last piece of code to modify is
+the @code{BSIM3ask()} routine. Again we have to identify what paramters need
+to be scaled and multiply them by the multiplicity. If you look at the code
+you will clearly see the affected parameters.
+
+@section BSIM3 TNOM patch
+
+All BSIM3 models, when implemented into Spice3f (NGSPICE), shows a bug that
+affects simulations when the modelcard contains the TNOM keyword. If you
+run consecutivew times a netlist without reloading the deck, you will get
+different answers with each run. Mike Smith discovered that the bug
+hides in the functions @code{BSIM3mparam()} and @code{BSIM3setup()}. The 
+solutionis (as extracted from Mike's post to @url{comp.lsi.cad}):
+
+@example
+In b3mpar.c look for the following code:-
+
+        case  BSIM3_MOD_TNOM :
+            mod->BSIM3tnom = value->rValue;
+            mod->BSIM3tnomGiven = TRUE;
+            break;
+
+Change the second line so the code reads:-
+
+        case  BSIM3_MOD_TNOM :
+            mod->BSIM3tnom = value->rValue + 273.15;
+            mod->BSIM3tnomGiven = TRUE;
+            break;
+
+In b3set.c, look for the following code:-
+
+        if (!model->BSIM3tnomGiven)  
+            model->BSIM3tnom = ckt->CKTnomTemp; 
+	  else
+            model->BSIM3tnom = model->BSIM3tnom + 273.15;
+
+Delete the second and third lines to read:-
+
+        if (!model->BSIM3tnomGiven)  
+            model->BSIM3tnom = ckt->CKTnomTemp;
+
+@end example
+
+@section References for BSIM3 model
+
+BSIM3 model is developed by the UC Berkeley Device Group, which maintains
+a web site at the URL: @url{http://www-device.eecs.berkeley.edu/} for all
+the model they develop.
+
+@itemize @bullet
+@item BSIM3 home page: @*
+@url{http://www-device.eecs.berkeley.edu/~bsim3/latenews.html}
+@item BSIM3 introduction: @* 
+@url{http://www-device.eecs.berkeley.edu/~bsim3/intro.html}
+@item BSIM3 contact page: @*
+@url{http://www-device.eecs.berkeley.edu/~bsim3/contact.html}
+@end itemize
+
+@chapter EKV Model
+
+da scrivere
 
 @bye
