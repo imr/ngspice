@@ -35,7 +35,6 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double czeroSW;
     double czof2SW;
     double sargSW;
-    double cd_new;
     double sqrt_ikr;
     double sqrt_ikf;
     double ikf_area_m;
@@ -183,55 +182,50 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
 next1:      if (vd >= -3*vte) {  /* forward */
                
 	        evd = exp(vd/vte);
-                cd = csat*(evd-1);
-                gd = csat*evd/vte;
+                cd = csat*(evd-1) + ckt->CKTgmin*vd;
+                gd = csat*evd/vte + ckt->CKTgmin;
                 
-		if( (model->DIOforwardKneeCurrentGiven) && (model->DIOforwardKneeCurrent > 0.0) && (cd > 1.0e-18) ) {
+		
+                if( (model->DIOforwardKneeCurrentGiven) && (model->DIOforwardKneeCurrent > 0.0) && (cd > 1.0e-18) ) {
+                  gd = gd-ckt->CKTgmin;
+                  cd = cd-ckt->CKTgmin*vd;
                   ikf_area_m = model->DIOforwardKneeCurrent*here->DIOarea*here->DIOm;
                   sqrt_ikf = sqrt(cd/ikf_area_m);
-                  cd_new = cd/(1+sqrt_ikf);
-                  gd = ((1+sqrt_ikf)*gd - cd*gd/(2*sqrt_ikf*ikf_area_m))/(1+2*sqrt_ikf+cd/ikf_area_m);
-                  cd = cd_new;
+                  gd = ((1+sqrt_ikf)*gd - cd*gd/(2*sqrt_ikf*ikf_area_m))/(1+2*sqrt_ikf+cd/ikf_area_m)+ckt->CKTgmin;
+                  cd = cd/(1+sqrt_ikf)+ckt->CKTgmin*vd;
                 }
-		
-		cd = cd + ckt->CKTgmin*vd;
-                gd = gd + ckt->CKTgmin;
 		
             } else if((!(model->DIObreakdownVoltageGiven)) ||      /* reverse*/ 
                     vd >= -here->DIOtBrkdwnV) {
                 
 		arg=3*vte/(vd*CONSTe);
                 arg = arg * arg * arg;
-                cd = -csat*(1+arg);
-                gd = csat*3*arg/vd;
+                cd = -csat*(1+arg) + ckt->CKTgmin*vd ;
+                gd = csat*3*arg/vd + ckt->CKTgmin;
 		
 		if( (model->DIOreverseKneeCurrentGiven) && (model->DIOreverseKneeCurrent > 0.0) && (cd < -1.0e-18) ) {
-                  ikr_area_m = model->DIOreverseKneeCurrent*here->DIOarea*here->DIOm;
+		  gd = gd-ckt->CKTgmin;
+		  cd = cd-ckt->CKTgmin*vd;
+		  ikr_area_m = model->DIOreverseKneeCurrent*here->DIOarea*here->DIOm;		
                   sqrt_ikr = sqrt(cd/(-ikr_area_m));
-                  cd_new = cd/(1+sqrt_ikr);
-                  gd = ((1+sqrt_ikr)*gd + cd*gd/(2*sqrt_ikr*ikr_area_m))/(1+2*sqrt_ikr - cd/ikr_area_m);
-		  cd = cd_new;
+                  gd = ((1+sqrt_ikr)*gd + cd*gd/(2*sqrt_ikr*ikr_area_m))/(1+2*sqrt_ikr - cd/ikr_area_m)+ckt->CKTgmin;
+		  cd = cd/(1+sqrt_ikr)+ckt->CKTgmin*vd;
                 }
-		
-		cd = cd + ckt->CKTgmin*vd;
-                gd = gd + ckt->CKTgmin;
-		
            
 	    } else {    /*  breakdown */
                 evrev=exp(-(here->DIOtBrkdwnV+vd)/vte);
-                cd = -csat*evrev;
-                gd = csat*evrev/vte;
+                cd = -csat*evrev + ckt->CKTgmin*vd;
+                gd = csat*evrev/vte + ckt->CKTgmin;
 		
 		if( (model->DIOreverseKneeCurrentGiven) && (model->DIOreverseKneeCurrent > 0.0) && (cd < -1.0e-18) ) {
-                  ikr_area_m = model->DIOreverseKneeCurrent*here->DIOarea*here->DIOm;
+                  gd = gd-ckt->CKTgmin;
+		  cd = cd-ckt->CKTgmin*vd;
+		  ikr_area_m = model->DIOreverseKneeCurrent*here->DIOarea*here->DIOm;
                   sqrt_ikr = sqrt(cd/(-ikr_area_m));
-                  cd_new = cd/(1+sqrt_ikr);
                   gd = ((1+sqrt_ikr)*gd + cd*gd/(2*sqrt_ikr*ikr_area_m))/(1+2*sqrt_ikr - cd/ikr_area_m);
-                  cd = cd_new;
+                  cd = cd/(1+sqrt_ikr);
                 }
-		
-		cd = cd + ckt->CKTgmin*vd;
-                gd = gd + ckt->CKTgmin;
+
             }
             if ((ckt->CKTmode & (MODETRAN | MODEAC | MODEINITSMSIG)) || 
 		     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
