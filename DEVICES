@@ -249,7 +249,12 @@ MOS6  - Level 6 MOS model
       Ver:    N/A
       Class:  M
       Level:  6
-      Status: TO BE TESTED
+      Status: 
+
+      Enhancements over the original model:
+      
+      - Parallel multiplier
+      - Temperature difference from circuit temperature
 
 
 MOS9  - Level 9 MOS model

@@ -1,3 +1,10 @@
+2003-12-08  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/mos6/*: Added "m"
+          "dtemp" parameters.
+
+        * DEVICES: Updated MOS6 status. 
+
 2003-11-22  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/spicelib/devices/bsim2/*: Added "m" 
