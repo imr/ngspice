@@ -49,3 +49,43 @@ NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, 
 
     }
 }
+
+
+/*
+PN 2003:
+The following function includes instance dtemp in 
+thermal noise calculation. 
+It will replace NevalSrc as soon as all devices 
+will implement dtemp feature.
+*/
+
+void
+NevalSrc2 (double *noise, double *lnNoise, CKTcircuit *ckt, int type, 
+           int node1, int node2, double param, double param2)
+{
+    double realVal;
+    double imagVal;
+    double gain;
+
+    realVal = *((ckt->CKTrhs) + node1) - *((ckt->CKTrhs) + node2);
+    imagVal = *((ckt->CKTirhs) + node1) - *((ckt->CKTirhs) + node2);
+    gain = (realVal*realVal) + (imagVal*imagVal);
+    switch (type) {
+
+    case SHOTNOISE:
+	*noise = gain * 2 * CHARGE * fabs(param);          /* param is the dc current in a semiconductor */
+  	*lnNoise = log( MAX(*noise,N_MINLOG) ); 
+	break;
+
+    case THERMNOISE:
+	*noise = gain * 4 * CONSTboltz * (ckt->CKTtemp + param2)  /* param2 is the instance temperature difference */ 
+	         * param;                                         /* param is the conductance of a resistor */
+        *lnNoise = log( MAX(*noise,N_MINLOG) );
+        break;
+
+    case N_GAIN:
+	*noise = gain;
+	break;
+
+    }
+}
