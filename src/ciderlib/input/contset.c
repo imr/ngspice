@@ -1,0 +1,87 @@
+/**********
+Copyright 1991 Regents of the University of California.  All rights reserved.
+Author:	1991 David A. Gates, U. C. Berkeley CAD Group
+Modified: 2001 Paolo Nenzi
+**********/
+
+#include "ngspice.h"
+#include "cktdefs.h"
+#include "contdefs.h"
+#include "meshext.h"
+#include "gendev.h"
+#include "sperror.h"
+#include "suffix.h"
+
+extern int CONTcheck( CONTcard * );
+extern int CONTsetup( CONTcard *, ELCTelectrode * );
+
+
+/*
+ * Name:	CONTcheck
+ * Purpose:	checks a list of CONTcards for input errors
+ * Formals:	cardList: the list to check
+ * Returns:	OK/E_PRIVATE
+ * Users:	 numerical device setup routines
+ * Calls:	error message handler
+ */
+int
+CONTcheck(CONTcard *cardList)
+{
+  CONTcard *card;
+  int cardNum = 0;
+  int error = OK;
+  char ebuf[512];		/* error message buffer */
+
+  for ( card = cardList; card != NIL(CONTcard); card = card->CONTnextCard ) {
+    cardNum++;
+    if (!card->CONTnumberGiven) {
+      sprintf( ebuf,
+	  "contact card %d is missing an electrode index",
+	  cardNum );
+      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+      error = E_PRIVATE;
+    }
+
+/* Return now if anything has failed */
+    if (error) return(error);
+  }
+  return(OK);
+}
+
+
+
+/*
+ * Name:	CONTsetup
+ * Purpose:	copies information from list of CONTcard's to ELCTelectrode's
+ * Formals:	cardList: list of cards to setup
+ *		electrodeList: previously built list of ELCTelectrode's
+ * Returns:	OK/E_PRIVATE
+ * Users:	 numerical devices
+ * Calls:	CONTcheck
+ */
+int
+CONTsetup(CONTcard *cardList, ELCTelectrode *electrodeList)
+{
+  CONTcard *card;
+  ELCTelectrode *electrode;
+  int error;
+
+/* Check the card list */
+  if ((error = CONTcheck( cardList ))) return( error );
+
+  for ( card = cardList; card != NIL(CONTcard); card = card->CONTnextCard ) {
+
+    /* Copy workfunction to all matching electrodes */
+    for ( electrode = electrodeList; electrode != NIL(ELCTelectrode);
+	electrode = electrode->next ) {
+      if ( card->CONTnumber == electrode->id ) {
+	if ( card->CONTworkfunGiven ) {
+	  electrode->workf = card->CONTworkfun;
+	} else {
+	  electrode->workf = 4.10 /* electron volts */;
+	}
+      }
+    }
+  }
+  return( OK );
+}

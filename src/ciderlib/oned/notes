@@ -1,0 +1,36 @@
+Some comments on keeping track of where the solution is:
+
+There are 3 places that the internal state variables can be hiding:
+ 1. In the (psi,n,p) triple of a node (pNode).
+ 2. In the solution vectors (dcSolution, copiedSolution).
+ 3. In the state tables (pDevice->devStates[]).
+
+ To access node variables use:
+   pNode->psi
+   pNode->nConc
+   pNode->pConc
+
+ To access solution vectors use:
+   solution[ pNode->psiEqn ]
+   solution[ pNode->nEqn ]
+   solution[ pNode->pEqn ]
+
+ To access state vector X (0,1,etc.) use:
+   *(pDevice->devStateX + pNode->nodePsi)
+   *(pDevice->devStateX + pNode->nodeN)
+   *(pDevice->devStateX + pNode->nodeP)
+
+There are several functions that copy from one form of these
+to another:
+  storeInitialGuess:  dcSolution <- nodevars
+  biasSolve:          nodevars <- dcSolution (DC)
+                      state0 <- nodevars <- dcSolution (Transient)
+  saveState:          nodevars <- state1 (Transient)
+
+In addition the main device-level Newton iteration copies during
+the computation of currents and derivatives:
+		      state0 <- dcSolution
+
+and the function predict() does a forward prediction step using
+the previous state:
+		      nodevars <- predict(state1)  (Transient)

@@ -1,0 +1,9 @@
+Directory: support
+------------------
+This directory contains the files that support the device simulators and
+their interfaces to the circuit simulators.  They fall into four basic
+areas:
+  1. Numerical algorithms: integration, accuracy limits, special functions
+  2. Semiconductor device physics: material properties, recombination, mobility
+  3. File access for input: doping profiles from SUPREMIII, saved states
+  4. Miscellaneous: diagnstic I/O, string routines

@@ -1,0 +1,15 @@
+Directory: twod
+---------------
+This directory contains the files that are primarily responsible for
+implementing the 2D device simulator. It also contains files that help
+interface the circuit simulator to the device simulator. Most functions
+that are common to all 2D device simulations start with the prefix TWO,
+e.g. TWObiasSolve. The device-specific routines start with either NUMD2,
+NBJT2 or NUMOS, e.g. NUMD2admittance, NBJTproject or NUMOSconductance. The
+simulator contains a Poisson Solver for equilibrium, and a Two-carrier
+solver and One-carrier solvers for bias solutions. An attempt has been
+made to keep the function names parallel in the four portions. Poisson
+routines are identified with a 'Q' (for charge only) after the TWO, Full
+solver routines are identified with an underscore '_',
+Electron-current-only routines are identified with an 'N', and
+Hole-current-only routines are identified with a 'P'. 

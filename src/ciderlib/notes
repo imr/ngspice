@@ -1,0 +1,9 @@
+1. Crucial Difference between Spice3f1 and Spice3e2:
+  The 'states' field in the ***instance structured has been moved.
+  Belongs below the node id's in Spice3e2.
+2. Crucial Differences between Spice3f2 and Spice3f1:
+  Addition of DEVunSetup call to ***itf.h files
+  The 3f2 input parser can't handle arithmetic operators in strings.
+  A special call has been added in spiceitf/inpgval.c to specially
+  parse strings.  Quotes (either "foobar" or 'foobar') are stripped
+  from the string.

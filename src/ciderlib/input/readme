@@ -1,0 +1,6 @@
+Directory: input
+----------------
+The files in this directory serve two purposes:
+	1. Serve as collection point for numerical model parameters.
+	2. Translate data structures containing raw input into
+	   a form usable by the one- and two-dimensional device simulators.

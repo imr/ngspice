@@ -1,0 +1,13 @@
+Directory: oned
+---------------
+This directory contains the files that are primarily responsible for
+implementing the 1D device simulator.  It also contains files that help
+interface the circuit simulator to the device simulator.  Most functions
+that are common to all 1D device simulations start with the prefix ONE,
+e.g. ONEbiasSolve.  The device-specific routines start with either
+NUMD or NBJT, e.g. NUMDadmittance or NBJTproject.  The simulator contains
+both a Poisson Solver for equilibrium and a three-equation solver for bias
+solutions.  An attempt has been made to keep the function names parallel
+in the two portions.  Poisson routines are identified with a 'Q' (for charge
+only) after the ONE, and Full solver routines are identified with an
+underscore '_'.  
