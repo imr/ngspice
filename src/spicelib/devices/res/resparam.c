@@ -26,6 +26,10 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             break;   
         case RES_RESIST:
             here->RESresist = value->rValue;
+	    if (!here->RESmGiven) 
+	        here->RESm = 1.0;
+	    if (!here->RESacresGiven) 
+	        here->RESacResist = value->rValue;
             here->RESresGiven = TRUE;
             break;
         case RES_ACRESIST:
