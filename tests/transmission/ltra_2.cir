@@ -57,6 +57,7 @@ x1 2 3 sixteencm
 *.tran 0.001ns 15ns 0 0.1ns
 * 24cm
 .tran 0.001ns 10ns 0 0.1ns
+.print tran V(1) V(2) V(3)
 * onecm10
 *.tran 0.001ns 10ns 0 0.01ns
 
