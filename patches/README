@@ -9,18 +9,6 @@ of ngspice not included in the main source.
 
 Index:
 
-readline-patch: This patch is not included in the source since the readline 
-                library is released under the GPL (GNU Public License) and 
-                ngspice is released under the old BSD license, which is 
-                incompatible with GPL. Patching ngspice with this cose is a 
-                violation of GPL. This code is included here since has been
-                requested by many spice user. The use of this code is 
-                discouraged since GPL is probably the last and only line of
-                defense of open source software.
-
-                If you want to know more about the license issue, look at 
-                the GNU site: htt://www.gnu.org
-
 win32/:         This directory contains a patch to run ngspice under windows.
                 This code is not yet inserted into the main code but will be
                 in the next ones.
