@@ -18,11 +18,21 @@ MAKE = make -f $(TOPDIR)Makefile TOPDIR=$(TOPDIR)
 
 COMPILE = $(CC) $(INCLUDES) $(CFLAGS)
 
+INSTALL_DATA = ${INSTALL} -m 644
+
 all: 
 	@amf=$$2; for x in $(CMDIRS) ; do \
 	( cd $$x && $(UPMAKE) $$x-mods ) \
 	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
 	done && test -z "$$fail"
+
+install: all
+	$(mkinstalldirs) $(DESTDIR)$(libdir)/spice
+	@for x in $(CMDIRS) ; do \
+	echo "$(INSTALL_DATA) $$x/$$x.cm $(DESTDIR)$(libdir)/spice"; \
+	$(INSTALL_DATA) $$x/$$x.cm $(DESTDIR)$(libdir)/spice \
+	|| exit 1; \
+	done 
 
 clean:
 	@amf=$$2; for x in $(CMDIRS) ; do \

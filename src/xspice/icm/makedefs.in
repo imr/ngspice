@@ -25,3 +25,16 @@ LDFLAGS = -shared
 
 # The codemodels to make
 CMDIRS = spice2poly digital analog xtradev xtraevt
+
+# Install instructions
+
+# or use mkdir -p
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+libdir = @libdir@
+
