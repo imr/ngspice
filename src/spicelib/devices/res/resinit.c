@@ -58,7 +58,7 @@ SPICEdev RESinfo = {
     DEVask        : RESask,
     DEVmodAsk     : RESmodAsk,
     DEVpzLoad     : RESpzLoad,
-    DEVconvTest   : RESconvTest, /* XXXX experimental */
+    DEVconvTest   : NULL,     /* RESconvTest, XXXX experimental */
     DEVsenSetup   : RESsSetup,
     DEVsenLoad    : RESsLoad,
     DEVsenUpdate  : NULL,
