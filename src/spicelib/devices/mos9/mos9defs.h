@@ -31,7 +31,7 @@ typedef struct sMOS9instance {
     int MOS9dNodePrime; /* number of the internal drain node of the mosfet */
     int MOS9sNodePrime; /* number of the internal source node of the mosfet */
 
-    double MOS9m;   /* parallel device multiplier */
+    double MOS9m;   /* parallel device multiplier */
     double MOS9l;   /* the length of the channel region */
     double MOS9w;   /* the width of the channel region */
     double MOS9drainArea;   /* the area of the drain diffusion */
@@ -92,7 +92,7 @@ typedef struct sMOS9instance {
     unsigned MOS9off :1;/* non-zero to indicate device is off for dc analysis*/
     unsigned MOS9tempGiven :1;  /* instance temperature specified */
 
-    unsigned MOS9mGiven :1;
+    unsigned MOS9mGiven :1;
 
     unsigned MOS9lGiven :1;
     unsigned MOS9wGiven :1;
@@ -329,7 +329,7 @@ typedef struct sMOS9model {       /* model structure for a resistor */
     double MOS9lengthAdjust;    /* New parm: mask adjustment to length */
     double MOS9widthNarrow;     /* New parm to reduce effective width */
     double MOS9widthAdjust;     /* New parm: mask adjustment to width */
-    double MOS9delvt0;          /* New parm: adjustment to calculated vtO */
+    double MOS9delvt0;          /* New parm: adjustment to calculated vtO */
     double MOS9jctSatCurDensity;    /* input - use tSatCurDens*/
     double MOS9jctSatCur;   /* input - use tSatCur instead */
     double MOS9drainResistance;
@@ -498,7 +498,7 @@ typedef struct sMOS9model {       /* model structure for a resistor */
 #define MOS9_TEMP               77
 #define MOS9_SOURCERESIST       78
 #define MOS9_DRAINRESIST        79
-#define MOS9_M 80
+#define MOS9_M 80
 
 /* model parameters */
 #define MOS9_MOD_VTO 101
@@ -544,11 +544,11 @@ typedef struct sMOS9model {       /* model structure for a resistor */
 #define MOS9_MOD_TNOM 141
 #define MOS9_MOD_KF 142
 #define MOS9_MOD_AF 143
-#define MOS9_MOD_TYPE 144
+#define MOS9_MOD_TYPE 144
 #define MOS9_MOD_XL 145
 #define MOS9_MOD_WD 146
 #define MOS9_MOD_XW 147
-#define MOS9_MOD_DELVTO 148
+#define MOS9_MOD_DELVTO 148
 
 /* device questions */
 

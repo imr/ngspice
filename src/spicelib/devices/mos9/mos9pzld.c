@@ -53,7 +53,7 @@ MOS9pzLoad(inModel,ckt,s)
             /*
              *     meyer's model parameters
              */
-
+
             EffectiveWidth=here->MOS9w-2*model->MOS9widthNarrow+
                                                     model->MOS9widthAdjust;
             EffectiveLength=here->MOS9l - 2*model->MOS9latDiff+

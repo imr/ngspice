@@ -7,7 +7,7 @@ Modified: Alan Gillespie
 #include "ngspice.h"
 #include <stdio.h>
 #include "cktdefs.h"
-#include "mos9defs.h"
+#include "mos9defs.h"
 #include "const.h"
 #include "sperror.h"
 #include "suffix.h"
@@ -36,8 +36,8 @@ MOS9temp(inModel,ckt)
     double phio;
     double arg1;
     double capfact;
-    double gmanew,gmaold;
-    double ni_temp, nifact;
+    double gmanew,gmaold;
+    double ni_temp, nifact;
     /* loop through all the mosfet models */
     for( ; model != NULL; model = model->MOS9nextModel) {
         
@@ -51,7 +51,7 @@ MOS9temp(inModel,ckt)
                 (model->MOS9tnom+1108);
         arg1 = -egfet1/(kt1+kt1)+1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
         pbfact1 = -2*vtnom *(1.5*log(fact1)+CHARGE*arg1);
-
+
         nifact=(model->MOS9tnom/300)*sqrt(model->MOS9tnom/300);
         nifact*=exp(0.5*egfet1*((1/(double)300)-(1/model->MOS9tnom))/
                                                                   CONSTKoverQ);
@@ -141,10 +141,10 @@ MOS9temp(inModel,ckt)
                     (here->MOS9temp+1108);
             arg = -egfet/(kt+kt)+1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
             pbfact = -2*vt *(1.5*log(fact2)+CHARGE*arg);
-
+
             if(!here->MOS9mGiven) {
                 here->MOS9m = ckt->CKTdefaultMosM;
-            }
+            }
 
             if(!here->MOS9lGiven) {
                 here->MOS9l = ckt->CKTdefaultMosL;
@@ -156,18 +156,18 @@ MOS9temp(inModel,ckt)
                 here->MOS9w = ckt->CKTdefaultMosW;
             }
             if(model->MOS9drainResistanceGiven) {
-                if(model->MOS9drainResistance != 0) {
+                if(model->MOS9drainResistance != 0) {
                     here->MOS9drainConductance = here->MOS9m /
                                                    model->MOS9drainResistance;
                 } else {
                     here->MOS9drainConductance = 0;
                 }
-            } else if (model->MOS9sheetResistanceGiven) {
+            } else if (model->MOS9sheetResistanceGiven) {
                 if ((model->MOS9sheetResistance != 0) &&
                                               (here->MOS9drainSquares != 0)) {
-                    here->MOS9drainConductance = 
+                    here->MOS9drainConductance = 
                         here->MOS9m /
-                          (model->MOS9sheetResistance*here->MOS9drainSquares);
+                          (model->MOS9sheetResistance*here->MOS9drainSquares);
                 } else {
                     here->MOS9drainConductance = 0;
                 }
@@ -181,27 +181,27 @@ MOS9temp(inModel,ckt)
                 } else {
                     here->MOS9sourceConductance = 0;
                 }
-            } else if (model->MOS9sheetResistanceGiven) {
+            } else if (model->MOS9sheetResistanceGiven) {
                 if ((model->MOS9sheetResistance != 0) &&
-                                              (here->MOS9sourceSquares != 0)) {
-                    here->MOS9sourceConductance = 
+                                              (here->MOS9sourceSquares != 0)) {
+                    here->MOS9sourceConductance = 
                         here->MOS9m /
-                          (model->MOS9sheetResistance*here->MOS9sourceSquares);
+                          (model->MOS9sheetResistance*here->MOS9sourceSquares);
                 } else {
                     here->MOS9sourceConductance = 0;
                 }
             } else {
                 here->MOS9sourceConductance = 0;
             }
-
+
             if(here->MOS9l - 2 * model->MOS9latDiff +
-                                 model->MOS9lengthAdjust <1e-6) {
+                                 model->MOS9lengthAdjust <1e-6) {
                 (*(SPfrontEnd->IFerror))(ERR_FATAL,
                         "%s: effective channel length less than zero",
-                        &(here->MOS9name));
-                return(E_PARMVAL);
+                        &(here->MOS9name));
+                return(E_PARMVAL);
             }
-
+
             if(here->MOS9w - 2 * model->MOS9widthNarrow +
                                  model->MOS9widthAdjust <1e-6) {
                 (*(SPfrontEnd->IFerror))(ERR_FATAL,
@@ -216,8 +216,8 @@ MOS9temp(inModel,ckt)
             here->MOS9tSurfMob = model->MOS9surfaceMobility/ratio4;
             phio= (model->MOS9phi-pbfact1)/fact1;
             here->MOS9tPhi = fact2 * phio + pbfact;
-            here->MOS9tVbi = 
-                    model->MOS9delvt0 +
+            here->MOS9tVbi = 
+                    model->MOS9delvt0 +
                     model->MOS9vt0 - model->MOS9type * 
                         (model->MOS9gamma* sqrt(model->MOS9phi))
                     +.5*(egfet1-egfet) 
@@ -253,30 +253,30 @@ MOS9temp(inModel,ckt)
             if( (model->MOS9jctSatCurDensity == 0) ||
                     (here->MOS9drainArea == 0) ||
                     (here->MOS9sourceArea == 0) ) {
-                here->MOS9sourceVcrit = here->MOS9drainVcrit =
+                here->MOS9sourceVcrit = here->MOS9drainVcrit =
                        vt*log(vt/(CONSTroot2*here->MOS9m*here->MOS9tSatCur));
             } else {
                 here->MOS9drainVcrit =
-                        vt * log( vt / (CONSTroot2 *
+                        vt * log( vt / (CONSTroot2 *
                         here->MOS9m *
-                        here->MOS9tSatCurDens * here->MOS9drainArea));
+                        here->MOS9tSatCurDens * here->MOS9drainArea));
                 here->MOS9sourceVcrit =
-                        vt * log( vt / (CONSTroot2 *
+                        vt * log( vt / (CONSTroot2 *
                         here->MOS9m *
-                        here->MOS9tSatCurDens * here->MOS9sourceArea));
+                        here->MOS9tSatCurDens * here->MOS9sourceArea));
             }
-            if(model->MOS9capBDGiven) {
-                czbd = here->MOS9tCbd * here->MOS9m;
+            if(model->MOS9capBDGiven) {
+                czbd = here->MOS9tCbd * here->MOS9m;
             } else {
-                if(model->MOS9bulkCapFactorGiven) {
-                    czbd=here->MOS9tCj*here->MOS9drainArea * here->MOS9m;
+                if(model->MOS9bulkCapFactorGiven) {
+                    czbd=here->MOS9tCj*here->MOS9drainArea * here->MOS9m;
                 } else {
                     czbd=0;
                 }
             }
-            if(model->MOS9sideWallCapFactorGiven) {
+            if(model->MOS9sideWallCapFactorGiven) {
                 czbdsw= here->MOS9tCjsw * here->MOS9drainPerimiter *
-                         here->MOS9m;
+                         here->MOS9m;
             } else {
                 czbdsw=0;
             }
@@ -291,28 +291,28 @@ MOS9temp(inModel,ckt)
                         (1+model->MOS9bulkJctSideGradingCoeff))*
                         sargsw/arg;
             here->MOS9f3d = czbd * model->MOS9bulkJctBotGradingCoeff * sarg/arg/
-                        here->MOS9tBulkPot
-                    + czbdsw * model->MOS9bulkJctSideGradingCoeff * sargsw/arg /
-                        here->MOS9tBulkPot;
+                        here->MOS9tBulkPot
+                    + czbdsw * model->MOS9bulkJctSideGradingCoeff * sargsw/arg /
+                        here->MOS9tBulkPot;
             here->MOS9f4d = czbd*here->MOS9tBulkPot*(1-arg*sarg)/
                         (1-model->MOS9bulkJctBotGradingCoeff)
-                    + czbdsw*here->MOS9tBulkPot*(1-arg*sargsw)/
+                    + czbdsw*here->MOS9tBulkPot*(1-arg*sargsw)/
                         (1-model->MOS9bulkJctSideGradingCoeff)
                     -here->MOS9f3d/2*
                         (here->MOS9tDepCap*here->MOS9tDepCap)
                     -here->MOS9tDepCap * here->MOS9f2d;
-            if(model->MOS9capBSGiven) {
-                czbs = here->MOS9tCbs * here->MOS9m;
+            if(model->MOS9capBSGiven) {
+                czbs = here->MOS9tCbs * here->MOS9m;
             } else {
-                if(model->MOS9bulkCapFactorGiven) {
-                    czbs=here->MOS9tCj*here->MOS9sourceArea * here->MOS9m;
+                if(model->MOS9bulkCapFactorGiven) {
+                    czbs=here->MOS9tCj*here->MOS9sourceArea * here->MOS9m;
                 } else {
                     czbs=0;
                 }
             }
-            if(model->MOS9sideWallCapFactorGiven) {
+            if(model->MOS9sideWallCapFactorGiven) {
                 czbssw = here->MOS9tCjsw * here->MOS9sourcePerimiter *
-                         here->MOS9m;
+                         here->MOS9m;
             } else {
                 czbssw=0;
             }
@@ -326,17 +326,17 @@ MOS9temp(inModel,ckt)
                     +  czbssw*(1-model->MOS9fwdCapDepCoeff*
                         (1+model->MOS9bulkJctSideGradingCoeff))*
                         sargsw/arg;
-            here->MOS9f3s = czbs * model->MOS9bulkJctBotGradingCoeff * sarg/arg/
-                        here->MOS9tBulkPot
-                    + czbssw * model->MOS9bulkJctSideGradingCoeff * sargsw/arg /
-                        here->MOS9tBulkPot;
+            here->MOS9f3s = czbs * model->MOS9bulkJctBotGradingCoeff * sarg/arg/
+                        here->MOS9tBulkPot
+                    + czbssw * model->MOS9bulkJctSideGradingCoeff * sargsw/arg /
+                        here->MOS9tBulkPot;
             here->MOS9f4s = czbs*here->MOS9tBulkPot*(1-arg*sarg)/
                         (1-model->MOS9bulkJctBotGradingCoeff)
                     + czbssw*here->MOS9tBulkPot*(1-arg*sargsw)/
                         (1-model->MOS9bulkJctSideGradingCoeff)
-                    -here->MOS9f3s/2*
+                    -here->MOS9f3s/2*
                         (here->MOS9tDepCap*here->MOS9tDepCap)
-                    -here->MOS9tDepCap * here->MOS9f2s;
+                    -here->MOS9tDepCap * here->MOS9f2s;
         }
     }
     return(OK);

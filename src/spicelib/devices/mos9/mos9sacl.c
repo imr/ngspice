@@ -13,7 +13,7 @@ Modified: Alan Gillespie
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "const.h"
-#include "mos9defs.h"
+#include "mos9defs.h"
 #include "sperror.h"
 #include "suffix.h"
 

@@ -8,7 +8,7 @@ Modified: Alan Gillespie
 #include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
-#include "mos9defs.h"
+#include "mos9defs.h"
 #include "trandefs.h"
 #include "const.h"
 #include "sperror.h"
@@ -76,7 +76,7 @@ MOS9load(inModel,ckt)
     double capgs;   /* total gate-source capacitance */
     double capgd;   /* total gate-drain capacitance */
     double capgb;   /* total gate-bulk capacitance */
-    int Check;
+    int Check;
     double tempv;
     int error;
 #ifdef CAPBYPASS
@@ -297,7 +297,7 @@ asm("mos9ptay:");
 #ifdef DETAILPROF
 asm("   .globl mos9ptb");
 asm("mos9ptb:");
-#endif /* DETAILPROF */
+#endif /* DETAILPROF */
                 /* now lets see if we can bypass (ugh) */
                 /* the following mess should be one if statement, but
                  * many compilers can't handle it all at once, so it
@@ -439,7 +439,7 @@ asm("mos9pte:");
              * bulk-source and bulk-drain diodes
              *   here we just evaluate the ideal diode current and the
              *   corresponding derivative (conductance).
-             */
+             */
 
 next1:      if(vbs <= -3*vt) {
                 arg=3*vt/(vbs*CONSTe);
@@ -653,7 +653,7 @@ asm("mos9ptf:");
              */
             gammas = model->MOS9gamma*fshort;
             fbodys = 0.5*gammas/(sqphbs+sqphbs);
-            fbody = fbodys+model->MOS9narrowFactor/EffectiveWidth;
+            fbody = fbodys+model->MOS9narrowFactor/EffectiveWidth;
             onfbdy = 1.0/(1.0+fbody);
             dfbdvb = -fbodys*dsqdvb/sqphbs+fbodys*dfsdvb/fshort;
             qbonco =gammas*sqphbs+model->MOS9narrowFactor*phibs/EffectiveWidth;
@@ -674,7 +674,7 @@ asm("mos9ptf:");
              *.....joint weak inversion and strong inversion
              */
             von = vth;
-            if ( model->MOS9fastSurfaceStateDensity != 0.0 ) {
+            if ( model->MOS9fastSurfaceStateDensity != 0.0 ) {
                 csonco = CHARGE*model->MOS9fastSurfaceStateDensity * 
                     1e4 /*(cm**2/m**2)*/ *EffectiveLength*EffectiveWidth *
                     here->MOS9m/OxideCap;
@@ -739,7 +739,7 @@ asm("mos9ptf:");
              *.....normalized drain current
              */
             cdnorm = cdo*vdsx;
-            here->MOS9gm = vdsx;
+            here->MOS9gm = vdsx;
             if ((here->MOS9mode*vds) > vdsat) here->MOS9gds = -dvtdvd*vdsx;
             else here->MOS9gds = vgsx-vth-(1.0+fbody+dvtdvd)*vdsx;
             here->MOS9gmbs = dcodvb*vdsx;
@@ -750,12 +750,12 @@ asm("mos9ptf:");
             Beta = Beta*fgate;
             cdrain = Beta*cdnorm;
             here->MOS9gm = Beta*here->MOS9gm+dfgdvg*cd1;
-            here->MOS9gds = Beta*here->MOS9gds+dfgdvd*cd1;
-            here->MOS9gmbs = Beta*here->MOS9gmbs+dfgdvb*cd1;
+            here->MOS9gds = Beta*here->MOS9gds+dfgdvd*cd1;
+            here->MOS9gmbs = Beta*here->MOS9gmbs+dfgdvb*cd1;
             /*
              *.....velocity saturation factor
-             */
-            if ( model->MOS9maxDriftVel > 0.0 ) {
+             */
+            if ( model->MOS9maxDriftVel > 0.0 ) {
                 fdrain = 1.0/(1.0+vdsx*onvdsc);
                 fd2 = fdrain*fdrain;
                 arga = fd2*vdsx*onvdsc*onfg;
@@ -774,7 +774,7 @@ asm("mos9ptf:");
             }
             /*
              *.....channel length modulation
-             */
+             */
             if ((here->MOS9mode*vds) <= vdsat) {
               if ( (model->MOS9maxDriftVel > 0.0) ||
                    (model->MOS9alpha == 0.0) ||
@@ -791,7 +791,7 @@ asm("mos9ptf:");
                  ddldvb = 0.0;
                  goto line520;
               };
-            };
+            };
             if ( model->MOS9maxDriftVel <= 0.0 ) goto line510;
             if (model->MOS9alpha == 0.0) goto line700;
             cdsat = cdrain;
@@ -824,16 +824,16 @@ asm("mos9ptf:");
             ddldvd = dldem*demdvd-dldvd;
             ddldvb = dldem*demdvb;
             goto line520;
-line510:
-	    if (ckt->CKTbadMos3) {
+line510:
+	    if (ckt->CKTbadMos3) {
             delxl = sqrt(model->MOS9kappa*((here->MOS9mode*vds)-vdsat)*
                 model->MOS9alpha);
-            dldvd = 0.5*delxl/((here->MOS9mode*vds)-vdsat);
+            dldvd = 0.5*delxl/((here->MOS9mode*vds)-vdsat);
             } else {
                delxl = sqrt(model->MOS9kappa*model->MOS9alpha*
                                       ((here->MOS9mode*vds)-vdsat+(vdsat/8)));
                dldvd = 0.5*delxl/((here->MOS9mode*vds)-vdsat+(vdsat/8));
-            };
+            };
             ddldvg = 0.0;
             ddldvd = -dldvd;
             ddldvb = 0.0;
@@ -855,7 +855,7 @@ line520:
              *.....saturation region
              */
             dlonxl = delxl*oneoverxl;
-            xlfact = 1.0/(1.0-dlonxl);
+            xlfact = 1.0/(1.0-dlonxl);
             cd1 = cdrain;
             cdrain = cdrain*xlfact;
             diddl = cdrain/(EffectiveLength-delxl);
@@ -1292,9 +1292,9 @@ asm("mos9ptn:");
              *  load current vector
              */
             ceqbs = model->MOS9type * 
-                    (here->MOS9cbs-(here->MOS9gbs)*vbs);
+                    (here->MOS9cbs-(here->MOS9gbs)*vbs);
             ceqbd = model->MOS9type * 
-                    (here->MOS9cbd-(here->MOS9gbd)*vbd);
+                    (here->MOS9cbd-(here->MOS9gbd)*vbd);
             if (here->MOS9mode >= 0) {
                 xnrm=1;
                 xrev=0;

@@ -8,7 +8,7 @@ Modified: Alan Gillespie
 #include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
-#include "mos9defs.h"
+#include "mos9defs.h"
 #include "const.h"
 #include "sperror.h"
 #include "suffix.h"
@@ -41,7 +41,7 @@ MOS9setup(matrix,inModel,ckt,states)
         }
         if(!model->MOS9latDiffGiven) {
             model->MOS9latDiff = 0;
-        }
+        }
         if(!model->MOS9lengthAdjustGiven) {
             model->MOS9lengthAdjust = 0;
         }
@@ -53,7 +53,7 @@ MOS9setup(matrix,inModel,ckt,states)
         }
         if(!model->MOS9delvt0Given) {
             model->MOS9delvt0 = 0;
-        }
+        }
         if(!model->MOS9jctSatCurDensityGiven) {
             model->MOS9jctSatCurDensity = 0;
         }
@@ -150,7 +150,7 @@ MOS9setup(matrix,inModel,ckt,states)
                 here=here->MOS9nextInstance) {
 
             CKTnode *tmpNode;
-            IFuid tmpName;
+            IFuid tmpName;
 
             /* allocate a chunk of the state vector */
             here->MOS9states = *states;
@@ -196,7 +196,7 @@ MOS9setup(matrix,inModel,ckt,states)
                     here->MOS9dNodePrime==0) {
                 error = CKTmkVolt(ckt,&tmp,here->MOS9name,"internal#drain");
                 if(error) return(error);
-                here->MOS9dNodePrime = tmp->number;
+                here->MOS9dNodePrime = tmp->number;
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
@@ -215,7 +215,7 @@ MOS9setup(matrix,inModel,ckt,states)
                     here->MOS9sNodePrime==0) {
                 error = CKTmkVolt(ckt,&tmp,here->MOS9name,"internal#source");
                 if(error) return(error);
-                here->MOS9sNodePrime = tmp->number;
+                here->MOS9sNodePrime = tmp->number;
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
@@ -223,7 +223,7 @@ MOS9setup(matrix,inModel,ckt,states)
                        tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
-                }
+                }
             } else {
                 here->MOS9sNodePrime = here->MOS9sNode;
             }
@@ -266,7 +266,7 @@ int
 MOS9unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
-{
+{
     MOS9model *model;
     MOS9instance *here;
 
@@ -289,6 +289,6 @@ MOS9unsetup(inModel,ckt)
 		here->MOS9sNodePrime= 0;
 	    }
 	}
-    }
+    }
     return OK;
 }

@@ -3,7 +3,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Alan Gillespie
 **********/
-
+
 extern int MOS9acLoad(GENmodel*,CKTcircuit*);
 extern int MOS9ask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int MOS9convTest(GENmodel *,CKTcircuit *);
@@ -26,5 +26,5 @@ extern int MOS9unsetup(GENmodel*,CKTcircuit*);
 extern int MOS9temp(GENmodel*,CKTcircuit*);
 extern int MOS9trunc(GENmodel*,CKTcircuit*,double*);
 extern int MOS9disto(int,GENmodel*,CKTcircuit*);
-extern int MOS9noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
-extern int MOS9dSetup(GENmodel*,CKTcircuit*);
+extern int MOS9noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+extern int MOS9dSetup(GENmodel*,CKTcircuit*);

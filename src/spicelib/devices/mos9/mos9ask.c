@@ -34,12 +34,12 @@ MOS9ask(ckt,inst,which,value,select)
         case MOS9_TEMP:
             value->rValue = here->MOS9temp-CONSTCtoK;
             return(OK);
-        case MOS9_CGS:
-            value->rValue = 2* *(ckt->CKTstate0 + here->MOS9capgs);
+        case MOS9_CGS:
+            value->rValue = 2* *(ckt->CKTstate0 + here->MOS9capgs);
             return(OK);
         case MOS9_CGD:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS9capgd);
-            return(OK);
+            return(OK);
         case MOS9_M:
             value->rValue = here->MOS9m;
                 return(OK);
@@ -188,7 +188,7 @@ MOS9ask(ckt,inst,which,value,select)
                              * here->MOS9m
                              * (here->MOS9w
                                 +here->MOS9modPtr->MOS9widthAdjust
-                                -2*(here->MOS9modPtr->MOS9widthNarrow));
+                                -2*(here->MOS9modPtr->MOS9widthNarrow));
             return(OK);
         case MOS9_QGS:
             value->rValue = *(ckt->CKTstate0 + here->MOS9qgs);

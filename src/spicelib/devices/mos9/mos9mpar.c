@@ -106,7 +106,7 @@ MOS9mParam(param,value,inModel)
         case MOS9_MOD_LD:
             model->MOS9latDiff = value->rValue;
             model->MOS9latDiffGiven = TRUE;
-            break;
+            break;
         case MOS9_MOD_XL:
             model->MOS9lengthAdjust = value->rValue;
             model->MOS9lengthAdjustGiven = TRUE;

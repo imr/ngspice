@@ -76,7 +76,7 @@ CKTcircuit *ckt;
     double sarg;
     double sargsw;
     int offset;
-    double EffectiveLength;
+    double EffectiveLength;
     double EffectiveWidth;
     SENstruct *info;
 
@@ -316,7 +316,7 @@ CKTcircuit *ckt;
                 DcdprmDp = ( - DcdprDp + DcdDp);
                 DcsprmDp = ( - DcbsDp - DcdDp - DcbdDp  - DcsprDp);
 
-                if(flag == 0){
+                if(flag == 0){
                     EffectiveLength = here->MOS9l 
                         - 2*model->MOS9latDiff + model->MOS9lengthAdjust;
                     if(EffectiveLength == 0){ 
@@ -330,7 +330,7 @@ CKTcircuit *ckt;
                         DqgbDp = model->MOS9type * qgb0 / EffectiveLength;
                     }
                 }
-                else{
+                else{
                     EffectiveWidth = here->MOS9w 
                         - 2*model->MOS9widthNarrow + model->MOS9widthAdjust;
                     DqgsDp = model->MOS9type * qgs0 / EffectiveWidth;

@@ -7,7 +7,7 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
+#include <stdio.h>
 #include "mos9defs.h"
 #include "suffix.h"
 

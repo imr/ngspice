@@ -9,7 +9,7 @@ Modified: Alan Gillespie
 #include "ngspice.h"
 #include <stdio.h>
 #include "const.h"
-#include "ifsim.h"
+#include "ifsim.h"
 #include "mos9defs.h"
 #include "sperror.h"
 #include "suffix.h"
@@ -25,7 +25,7 @@ MOS9param(param,value,inst,select)
 {
     MOS9instance *here = (MOS9instance *)inst;
     switch(param) {
-
+
         case MOS9_M:
             here->MOS9m = value->rValue;
             here->MOS9mGiven = TRUE;

@@ -8,7 +8,7 @@ Modified: Alan Gillespie
 #include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
-#include "mos9defs.h"
+#include "mos9defs.h"
 #include "trandefs.h"
 #include "distodef.h"
 #include "const.h"
@@ -386,8 +386,8 @@ d_p.d3_pqr = 0.0;
 	    TimesDeriv(&d_gammas,&d_fshort,model->MOS9gamma);
             fbodys = 0.5*gammas/(sqphbs+sqphbs);
 	    DivDeriv(&d_fbodys,&d_gammas,&d_sqphbs);
-	    TimesDeriv(&d_fbodys,&d_fbodys,0.25);
-            fbody = fbodys+model->MOS9narrowFactor/EffectiveWidth;
+	    TimesDeriv(&d_fbodys,&d_fbodys,0.25);
+            fbody = fbodys+model->MOS9narrowFactor/EffectiveWidth;
 	    EqualDeriv(&d_fbody,&d_fbodys);
 	    d_fbody.value += fbody - fbodys;
 
@@ -417,10 +417,10 @@ d_p.d3_pqr = 0.0;
              */
             von = vth;
 	    EqualDeriv(&d_von,&d_vth);
-            if ( model->MOS9fastSurfaceStateDensity != 0.0 ) {
+            if ( model->MOS9fastSurfaceStateDensity != 0.0 ) {
                 csonco = CHARGE*model->MOS9fastSurfaceStateDensity * 
                     1e4 /*(cm**2/m**2)*/ *EffectiveLength*EffectiveWidth *
-                    here->MOS9m/OxideCap; /*const*/
+                    here->MOS9m/OxideCap; /*const*/
                 cdonco = 0.5*qbonco/phibs;
 		DivDeriv(&d_cdonco,&d_qbonco,&d_phibs);
 		TimesDeriv(&d_cdonco,&d_cdonco,0.5);

@@ -9,7 +9,7 @@ Modified: Alan Gillespie
 #include "mos9defs.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"
-#include "noisedef.h"
+#include "noisedef.h"
 #include "suffix.h"
 
 /*
@@ -134,7 +134,7 @@ if (!data->namelist) return(E_NOMEM);
 				 (double)0.0);
 		    noizDens[MOS9FLNOIZ] *= model->MOS9fNcoef * 
 				 exp(model->MOS9fNexp *
-				 log(MAX(fabs(inst->MOS9cd),N_MINLOG))) /
+				 log(MAX(fabs(inst->MOS9cd),N_MINLOG))) /
 				 (data->freq *
 				 (inst->MOS9w - 2*model->MOS9widthNarrow) *
                                  inst->MOS9m *

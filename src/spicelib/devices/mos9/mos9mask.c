@@ -101,7 +101,7 @@ MOS9mAsk(ckt,inst,which,value)
             return(OK);
         case MOS9_MOD_DELVTO:
             value->rValue = here->MOS9delvt0;
-            return(OK);
+            return(OK);
         case MOS9_MOD_RSH:
             value->rValue = here->MOS9sheetResistance;
             return(OK);
@@ -149,19 +149,19 @@ MOS9mAsk(ckt,inst,which,value)
             return(OK);
         case MOS9_MOD_KAPPA:
             value->rValue = here->MOS9kappa;
-            return(OK);
+            return(OK);
         case MOS9_MOD_KF:
             value->rValue = here->MOS9fNcoef;
             return(OK);
         case MOS9_MOD_AF:
             value->rValue = here->MOS9fNexp;
-            return(OK);
+            return(OK);
 
 	case MOS9_MOD_TYPE:
 	    if (here->MOS9type > 0)
 	        value->sValue = "nmos";
 	    else
-	        value->sValue = "pmos";
+	        value->sValue = "pmos";
             return(OK);
         default:
             return(E_BADPARM);

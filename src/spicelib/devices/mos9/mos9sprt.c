@@ -12,7 +12,7 @@ Modified: Alan Gillespie
 #include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
-#include "mos9defs.h"
+#include "mos9defs.h"
 #include "sperror.h"
 #include "suffix.h"
 
@@ -24,7 +24,7 @@ MOS9sPrint(inModel,ckt)
     register MOS9model *model = (MOS9model *)inModel;
     register MOS9instance *here;
 
-    printf("LEVEL 3 MOSFETS (AG) -----------------\n");
+    printf("LEVEL 3 MOSFETS (AG) -----------------\n");
     /*  loop through all the MOS9 models */
     for( ; model != NULL; model = model->MOS9nextModel ) {
 
@@ -38,9 +38,9 @@ MOS9sPrint(inModel,ckt)
             printf("      Drain, Gate , Source nodes: %s, %s ,%s\n",
             CKTnodName(ckt,here->MOS9dNode),CKTnodName(ckt,here->MOS9gNode),
             CKTnodName(ckt,here->MOS9sNode));
-
+
             printf("  Multiplier: %g ",here->MOS9m);
-            printf(here->MOS9mGiven ? "(specified)\n" : "(default)\n");
+            printf(here->MOS9mGiven ? "(specified)\n" : "(default)\n");
             printf("      Length: %g ",here->MOS9l);
             printf(here->MOS9lGiven ? "(specified)\n" : "(default)\n");
             printf("      Width: %g ",here->MOS9w);
