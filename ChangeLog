@@ -1,3 +1,8 @@
+2004-05-03 Stefan Jones <stefan.jones@multigig.com>
+
+	* src/spicelib/parser/inp2dot.c:
+	Fix .noise statements by reverting Brorson's INPgetNetTok lines
+
 2003-12-24 Stefan Jones <stefan.jones@multigig.com>
 
 	* configure.in:
