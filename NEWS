@@ -1,16 +1,17 @@
 Ng-spice-rework-10
 ============
 
-Added BSIM4 model and closed a couple of serious bugs. Added DEVICES file
-to distribution. This file contains the status of device models in this
-simulator. Read it, this file can save you a lot of time. 
+Added BSIM4 model and closed a couple of serious bugs. Added DEVICES
+file to distribution. This file contains the status of device models
+in this simulator. Read it, this file can save you a lot of time.
 
 Ng-spice-rework-9
 ============
 
-Thanks to Arno Peters now all device models are dynamically loaed on demand.
-Thay are linked as shared libraries. The next step is the dlopen() one which
-will make possible to link devices without any recompilation.
+Thanks to Arno Peters now all device models are dynamically loaed on
+demand.  Thay are linked as shared libraries. The next step is the
+dlopen() one which will make possible to link devices without any
+recompilation.
 
 
 
@@ -74,13 +75,13 @@ Ng-spice-rework-6 (29 Jan 2000)
 
 This porting includes:
 
-1) BSIM3V3.1 model as level 49. This is the version modified by Serban Popescu
-   which understands the M parameter and implements HDIF.
+1) BSIM3V3.1 model as level 49. This is the version modified by Serban
+Popescu which understands the M parameter and implements HDIF.
 
 2) BSIM3V3.2 model al Level 50. This is the standard Berkeley version.
 
-3) Now the resistor model can accepts two differents values for DC and AC
-   resistance.
+3) Now the resistor model can accepts two differents values for DC and
+AC resistance.
 
 
 
@@ -94,11 +95,11 @@ Ng-spice-rework-4  (22/12/99)
 
 This porting includes a new feature:
 
-1) dynamically loading of some device code as an experimental feature for 
-   the future GPL simulator. Thanks to Arno Peters and Manu Rouat.
+1) dynamically loading of some device code as an experimental feature
+for the future GPL simulator. Thanks to Arno Peters and Manu Rouat.
 
-2) Patched the following bug (thanks to Andrew Tuckey for having supplied the 
-   patch).
+2) Patched the following bug (thanks to Andrew Tuckey for having
+supplied the patch).
    
     * Wsw (current controlled switch) in subckt, parsing bug.
     * scale factor in arbitrary source.

@@ -21,13 +21,6 @@
         'a') && ((c) <= 'f')) ? ((c) - 'a' + 10) : ((((c) >= 'A') && \
         ((c) <= 'F')) ? ((c) - 'A' + 10) : 0)))
 
-#define tfree(x) (txfree(x), x = 0)
-#define alloc(TYPE) ((TYPE *) tmalloc(sizeof(TYPE)))
-#define MALLOC(x) tmalloc((unsigned)(x))
-#define FREE(x) {if (x) {txfree((char *)(x));(x) = 0;}}
-#define REALLOC(x,y) trealloc((char *)(x),(unsigned)(y))
-#define ZERO(PTR,TYPE)	(bzero((PTR),sizeof(TYPE)))
-
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))

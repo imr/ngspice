@@ -52,8 +52,6 @@ typedef  struct
 
 
 /* Some defines used mainly in cmath.c. */
-#define alloc_c(len)    ((complex *) tmalloc((len) * sizeof (complex)))
-#define alloc_d(len)    ((double *) tmalloc((len) * sizeof (double)))
 #define FTEcabs(d)  (((d) < 0.0) ? - (d) : (d))
 #define cph(c)    (atan2(imagpart(c), (realpart(c))))
 #define cmag(c)  (sqrt(imagpart(c) * imagpart(c) + realpart(c) * realpart(c)))

@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <math.h>
 
+#include <config.h>
 #include <memory.h>
 #include <dvec.h>
 #include <complex.h>
 
+#include "cmath.h"
 #include "cmath1.h"
 
 FILE *cp_err;

@@ -20,6 +20,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <ftedefs.h>
 #include <dvec.h>
 
+#include "cmath.h"
 #include "cmath2.h"
 
 static double *

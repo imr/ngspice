@@ -10,13 +10,14 @@
 #define _GNU_SOURCE
 
 #include <config.h>
-#include <math.h>
-#include <stdio.h>
+#include <stddef.h>
 
-
-
+#include "memory.h"
 #include "defines.h"
 #include "macros.h"
+
+#include <math.h>
+#include <stdio.h>
 
 
 #ifdef STDC_HEADERS
@@ -98,12 +99,6 @@ struct timeb timebegin;
 #include <time.h>
 #endif
 
-
-/* Functions declarations from src/misc/[].c  */
-
-extern void *tmalloc(size_t num);
-extern void *trealloc(void *str, size_t num);
-extern void txfree(void *ptr);
 
 extern char *gettok(char **s);
 extern void appendc(char *s, char c);

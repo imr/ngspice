@@ -6,8 +6,10 @@
 #ifndef ALLOC_H_INCLUDED
 #define ALLOC_H_INCLUDED
 
+#ifndef WANT_GC
 void * tmalloc(size_t num);
 void * trealloc(void *ptr, size_t num);
 void txfree(void *ptr);
+#endif
 
 #endif

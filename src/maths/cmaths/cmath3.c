@@ -19,6 +19,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <cpdefs.h>
 #include <dvec.h>
 
+#include "cmath.h"
 #include "cmath3.h"
 
 

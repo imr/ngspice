@@ -40,9 +40,8 @@ or another memory checker to find them.  Could also try a garbage
 collector (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) to
 circumvent memory leaks.
 
-Either get help program functioning again; OR interface to webbrowser,
-info reader and get rid of all help-related code.  Option 2 is the
-most appealing.
+Substitute help interface by call to webbrowser or info reader and get
+rid of all help-related code.
 
 
 Refactorings
@@ -100,14 +99,6 @@ Add more circuit tests into the tests directory.
 
 Use gcov to measure current test coverage (and to find out where more
 tests are needed.)  Make this a configure switch.
-
-Let GCC generate even more warnings on dubious construction by
-specifying the following compile switches: -pedantic -W
--Wmissing-prototypes -Wstrict-prototypes -Wtraditional -Wconversion
--Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings
--Waggregate-return -fshort-enums -fno-common -Wnested-externs
--Dinline= -g -O4.  Use 'configure --enable-smoketest' to use these
-compile switches.  Our goal is to remove all warnings.
 
 
 Documentation

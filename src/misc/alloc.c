@@ -5,10 +5,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 /*
  * Memory alloction functions
  */
+#include <config.h>
 
-#include "ngspice.h"
+#ifndef HAVE_LIBGC
+#include <ngspice.h>
 #include <stdio.h>
-#include "alloc.h"
+#include <memory.h>
 
 
 /* Malloc num bytes and initialize to zero. Fatal error if the space can't
@@ -114,3 +116,4 @@ txfree(void *ptr)
 		free(ptr);
 }
 
+#endif

@@ -3,6 +3,7 @@
 noinst_LIBRARIES = libcmaths.a
 
 libcmaths_a_SOURCES = \
+		cmath.h		\
 		cmath1.c	\
 		cmath1.h	\
 		cmath2.c	\

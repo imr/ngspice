@@ -19,13 +19,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <plot.h>
 #include <complex.h>
 #include <cpdefs.h>
-//#include <fteext.h>
 
 #include <interpolate.h>
 #include <polyfit.h>
 #include <polyeval.h>
 #include <polyderiv.h>
 
+#include "cmath.h"
 #include "cmath4.h"
 
 void *

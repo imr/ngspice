@@ -8,6 +8,9 @@
 /* Define the build date */ 
 #define NGSPICEBUILDDATE none
 
+/* Define if we want garbage collection enabled */ 
+#undef HAVE_LIBGC
+
 /* Define if we have termcap */ 
 #undef HAVE_TERMCAP
 

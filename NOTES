@@ -1,0 +1,69 @@
+DEBUGGING SPICE
+
+To avoid a segmentation fault in the initial run, use the following
+command in gdb:
+
+	setenv SPICE_NO_DATASEG_CHECK "1"
+
+Or, the comparable command in your shell before running gdb.  This
+disable accurate tracking of how much memory is used.
+
+----------------------------------------------------------------------
+USING A GARBAGE COLLECTOR
+
+Get the Boehm-Weiser conservative garbage collector at the following
+address:
+
+ http://www.hpl.hp.com/personal/Hans_Boehm/gc/
+
+Compile it with 'make liblinuxgc.so' and install libgc.so and gc.h
+where the compiler can find them (i.e., /usr/local/lib and
+/usr/local/include).  Run configure and compile.
+
+
+----------------------------------------------------------------------
+CREATING PATCHES
+
+If you don't have access to anonymous CVS:
+
+  # extract the differences
+  $ diff -ruN ng-spice-rework-x ng-spice > my.patch
+
+where ng-spice-rework-x is the snapshot you used to base your changes
+on.
+
+If you do have access to anonymous CVS:
+
+  $ cvs diff -u > my.patch
+
+Note: this only works if you haven't added any files.  Otherwise, the
+first method is better.
+
+Now, send your patch to ng-spice mailing list.
+
+
+----------------------------------------------------------------------
+INCORPORATING PATCHES
+
+  # apply the patch
+  $ patch -p1 < my.patch
+
+  # update the automatically generated files
+  $ sh autogen.sh
+
+----------------------------------------------------------------------
+INCOMPATIBILITIES BETWEEN SPICE3 AND SPICE2
+
+The output format of spice3 is slightly different for .print and .plot
+lines.  Most notably, different traces on plots are not scaled
+independently.  This is most noticeable on phase/magnitude plots from
+an AC analysis (also, phase is displayed in radians).  Finally,
+frequency for ".PRINT AC" lines is displayed as a complex quantity
+with an all-zero imaginary component.
+
+For input, "POLY( )" sources are not supported (the non-linear
+dependent source provides a more general replacement).  Also, the
+".ALTER" line is not supported.  The Spice3 parser may be slightly
+different on subtle points of reading input (lines need not start at
+column 1 for instance).
+

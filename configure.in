@@ -160,6 +160,9 @@ dnl Check for a few mathematical functions:
 AC_CHECK_FUNCS(erfc logb scalb scalbn asinh acosh atanh)
 
 
+AC_CHECK_LIB(gc,GC_malloc,AC_DEFINE(HAVE_LIBGC) LIBS="$LIBS -lgc")
+
+
 # Expand the prefix variable (this is really annoying!)
 if eval "test x$prefix = xNONE"; then
  dprefix=$ac_default_prefix

@@ -57,7 +57,7 @@ readline(FILE *fd)
         }
     }
     if (!strlen) {
-        free(strptr);
+        tfree(strptr);
         return (NULL);
     }
     strptr[strlen] = '\0'; 
