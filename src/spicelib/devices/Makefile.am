@@ -36,7 +36,9 @@ SUBDIRS = \
 
 lib_LIBRARIES = libdev.a
 
-libdev_a_SOURCES = dev.c
+libdev_a_SOURCES = 	\
+		dev.c	\
+		dev.h
 
 INCLUDES = -I$(top_srcdir)/src/include
 
