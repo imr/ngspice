@@ -117,7 +117,7 @@ double tmp3, T7, T8, T9;
               }
 
 	      if (Size_Not_Found)
-	      {   pParam = (struct b3soipdSizeDependParam *)xmalloc(
+	      {   pParam = (struct b3soipdSizeDependParam *)tmalloc(
 	                    sizeof(struct b3soipdSizeDependParam));
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;
