@@ -6280,6 +6280,10 @@ ngspice 12 -> version 15
 ngspice 13 -> 
 @end example
 
+@strong{Note for developers:} The option listing returned when @code{version} is called with the 
+@code{-f} option is built at compile time using @code{#ifdef} blocks. When new compile switch are
+added, if you want them to appear on the list, you have to modify the code in @file{misccoms.c}.
+
 @node  Where, Write, Version, Commands
 @subsection  Where:  Identify troublesome node or device
 
