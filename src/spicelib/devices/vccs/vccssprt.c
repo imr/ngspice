@@ -10,7 +10,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "vccsdefs.h"
@@ -19,9 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-VCCSsPrint(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+VCCSsPrint(GENmodel *inModel, CKTcircuit *ckt)
 {
     VCCSmodel *model = (VCCSmodel *)inModel;
     VCCSinstance *here;

@@ -10,7 +10,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "vcvsdefs.h"
@@ -19,9 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-VCVSsSetup(info,inModel)
-    SENstruct *info;
-    GENmodel *inModel;
+VCVSsSetup(SENstruct *info, GENmodel *inModel)
 {
     VCVSmodel *model = (VCVSmodel *)inModel;
     VCVSinstance *here;

@@ -10,7 +10,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "ccvsdefs.h"
 #include "sperror.h"
@@ -18,9 +17,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CCVSsLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+CCVSsLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     CCVSmodel *model = (CCVSmodel*)inModel;
     CCVSinstance *here;

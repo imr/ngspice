@@ -8,7 +8,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "vcvsdefs.h"
@@ -17,11 +16,7 @@ Author: 1985 Thomas L. Quarles
 
 /*ARGSUSED*/
 int
-VCVSsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+VCVSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 {
     VCVSmodel *model = (VCVSmodel *)inModel;
     VCVSinstance *here;
@@ -59,9 +54,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-VCVSunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+VCVSunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     VCVSmodel *model;
     VCVSinstance *here;

@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "ccvsdefs.h"
 #include "sperror.h"
@@ -15,11 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CCVSparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+CCVSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     CCVSinstance *here = (CCVSinstance*)inst;
     switch(param) {

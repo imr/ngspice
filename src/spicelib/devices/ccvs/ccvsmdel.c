@@ -6,17 +6,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ccvsdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-CCVSmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+CCVSmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     CCVSmodel **model = (CCVSmodel**)inModel;
     CCVSmodel *modfast = (CCVSmodel*)kill;

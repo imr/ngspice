@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "vccsdefs.h"
 #include "sperror.h"
@@ -15,9 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 /*ARGSUSED*/
 int
-VCCSload(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+VCCSload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current values into the 
          * sparse matrix previously provided 
          */

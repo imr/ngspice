@@ -6,17 +6,13 @@ Author: 1985 Gordon Jacobs
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cswdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-CSWdelete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
+CSWdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 
 {
     CSWmodel *model = (CSWmodel*)inModel;

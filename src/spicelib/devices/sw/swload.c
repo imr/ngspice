@@ -5,7 +5,6 @@ Modified: 2001 Jon Engelbert
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "swdefs.h"
 #include "trandefs.h"
@@ -13,9 +12,7 @@ Modified: 2001 Jon Engelbert
 #include "suffix.h"
 
 int
-SWload(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+SWload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current values into the 
          * sparse matrix previously provided 
          */

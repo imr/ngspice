@@ -6,7 +6,6 @@ Author: 1985 Gordon Jacobs
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cswdefs.h"
 #include "ifsim.h"
 #include "sperror.h"
@@ -15,11 +14,7 @@ Author: 1985 Gordon Jacobs
 
 /* ARGSUSED */
 int
-CSWparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+CSWparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     CSWinstance *here = (CSWinstance*)inst;
     switch(param) {

@@ -6,7 +6,6 @@ Author: 1985 Gordon Jacobs
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "swdefs.h"
 #include "sperror.h"
@@ -14,9 +13,7 @@ Author: 1985 Gordon Jacobs
 
 
 int
-SWacLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+SWacLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* load the current values into the 
          * sparse matrix previously provided 
          * during AC analysis.

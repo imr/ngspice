@@ -4,7 +4,6 @@ Author: 1987 Gary W. Ng
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "swdefs.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"
@@ -25,13 +24,7 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 int
-SWnoise (mode, operation, genmodel, ckt, data, OnDens)
-    int mode;
-    int operation;
-    GENmodel *genmodel;
-    CKTcircuit *ckt;
-    Ndata *data;
-    double *OnDens;
+SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, double *OnDens)
 {
     SWmodel *firstModel = (SWmodel *) genmodel;
     SWmodel *model;

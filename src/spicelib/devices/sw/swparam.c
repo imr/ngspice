@@ -6,7 +6,6 @@ Author: 1985 Gordon Jacobs
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "swdefs.h"
 #include "ifsim.h"
 #include "sperror.h"
@@ -15,11 +14,7 @@ Author: 1985 Gordon Jacobs
 
 /*ARGSUSED*/
 int
-SWparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+SWparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     SWinstance *here = (SWinstance *)inst;
     switch(param) {

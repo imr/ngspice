@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "vccsdefs.h"
 #include "sperror.h"
@@ -15,11 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-VCCSparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+VCCSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     VCCSinstance *here = (VCCSinstance *)inst;
     switch(param) {

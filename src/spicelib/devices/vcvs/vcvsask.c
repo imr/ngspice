@@ -9,7 +9,6 @@ Author: 1987 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -19,12 +18,7 @@ Author: 1987 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-VCVSask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+VCVSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
     VCVSinstance *here = (VCVSinstance *)inst;
     double vr;

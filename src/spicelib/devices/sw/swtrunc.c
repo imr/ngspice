@@ -7,22 +7,16 @@ Modified: 2000 AlansFixes
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "sperror.h"
 #include "suffix.h"
-
 #include "swdefs.h"
 
 int
-SWtrunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    register CKTcircuit *ckt;
-    register double *timeStep;
+SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
-    register SWmodel *model = (SWmodel*)inModel;
-    register SWinstance *here;
-
+    SWmodel *model = (SWmodel*)inModel;
+    SWinstance *here;
     double   lastChange, maxChange, maxStep, ref;
 
     for( ; model!= NULL; model = model->SWnextModel) {

@@ -6,14 +6,12 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ccvsdefs.h"
 #include "suffix.h"
 
 
 void
-CCVSdestroy(inModel)
-    GENmodel **inModel;
+CCVSdestroy(GENmodel **inModel)
 {
     CCVSmodel **model = (CCVSmodel**)inModel;
     CCVSinstance *here;

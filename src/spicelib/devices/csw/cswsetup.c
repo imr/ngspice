@@ -6,7 +6,6 @@ Author: 1985 Gordon Jacobs
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "cswdefs.h"
 #include "sperror.h"
@@ -14,11 +13,7 @@ Author: 1985 Gordon Jacobs
 
 
 int
-CSWsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the switch conductance with those pointers needed later 
          * for fast matrix loading 
          */

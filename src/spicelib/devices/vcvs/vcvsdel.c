@@ -6,17 +6,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "vcvsdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-VCVSdelete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
+VCVSdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
     VCVSmodel *model = (VCVSmodel *)inModel;
     VCVSinstance **fast = (VCVSinstance**)inst;

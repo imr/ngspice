@@ -6,17 +6,13 @@ Author: 1985 Gordon Jacobs
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "swdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-SWmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+SWmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     SWmodel **model = (SWmodel **)inModel;
     SWmodel *modfast = (SWmodel *)kill;

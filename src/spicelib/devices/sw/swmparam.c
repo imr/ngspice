@@ -7,7 +7,6 @@ Modified: 2001 Jon Engelbert
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "swdefs.h"
 #include "ifsim.h"
 #include "sperror.h"
@@ -15,10 +14,7 @@ Modified: 2001 Jon Engelbert
 
 
 int
-SWmParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+SWmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     SWmodel *model = (SWmodel *)inModel;
     switch(param) {

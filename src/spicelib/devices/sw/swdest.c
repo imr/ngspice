@@ -6,14 +6,12 @@ Author: 1985 Gordon Jacobs
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "swdefs.h"
 #include "suffix.h"
 
 
 void
-SWdestroy(inModel)
-    GENmodel **inModel;
+SWdestroy(GENmodel **inModel)
 {
     SWmodel **model = (SWmodel**)inModel;
     SWinstance *here;

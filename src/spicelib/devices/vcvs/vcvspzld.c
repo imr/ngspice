@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "complex.h"
 #include "sperror.h"
@@ -16,10 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 /*ARGSUSED*/
 int
-VCVSpzLoad(inModel,ckt,s)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    SPcomplex *s;
+VCVSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         /* actually load the current voltage value into the 
          * sparse matrix previously provided 
          */

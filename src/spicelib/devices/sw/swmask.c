@@ -11,7 +11,6 @@ Author: 1987 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -22,11 +21,7 @@ Author: 1987 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-SWmAsk(ckt,inModel,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inModel;
-    int which;
-    IFvalue *value;
+SWmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     SWmodel *model = (SWmodel *)inModel;
     switch(which) {

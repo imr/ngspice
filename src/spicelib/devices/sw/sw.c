@@ -4,7 +4,6 @@ Author: 1987
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "ifsim.h"
 #include "swdefs.h"

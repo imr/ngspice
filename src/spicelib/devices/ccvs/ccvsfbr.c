@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "ccvsdefs.h"
 #include "sperror.h"
@@ -14,10 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CCVSfindBr(ckt,inModel,name)
-    CKTcircuit *ckt;
-    GENmodel *inModel;
-    IFuid name;
+CCVSfindBr(CKTcircuit *ckt, GENmodel *inModel, IFuid name)
 {
     CCVSmodel *model = (CCVSmodel*)inModel;
     CCVSinstance *here;

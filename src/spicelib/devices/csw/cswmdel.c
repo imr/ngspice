@@ -6,17 +6,13 @@ Author: 1985 Gordon Jacobs
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cswdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-CSWmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+CSWmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     CSWmodel **model = (CSWmodel**)inModel;
     CSWmodel *modfast = (CSWmodel*)kill;

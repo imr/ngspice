@@ -7,7 +7,6 @@ Modified: 2001 Jon Englebert
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "cswdefs.h"
 #include "sperror.h"
@@ -15,10 +14,7 @@ Modified: 2001 Jon Englebert
 
 
 int
-CSWmParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+CSWmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     CSWmodel *model = (CSWmodel*)inModel;
     switch(param) {

@@ -6,14 +6,12 @@ Author: 1985 Gordon Jacobs
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cswdefs.h"
 #include "suffix.h"
 
 
 void
-CSWdestroy(inModel)
-    GENmodel **inModel;
+CSWdestroy(GENmodel **inModel)
 {
     CSWmodel **model = (CSWmodel**)inModel;
     CSWinstance *here;

@@ -4,7 +4,6 @@ Author: 1985 Gordon M. Jacobs
 Modified: 2000 AlansFixes
 **********/
 
-#ifdef __STDC__
 extern int CSWask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int CSWacLoad(GENmodel*,CKTcircuit*);
 extern int CSWdelete(GENmodel*,IFuid,GENinstance**);
@@ -17,22 +16,4 @@ extern int CSWparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int CSWpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
 extern int CSWsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int CSWnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
-
 extern int CSWtrunc(GENmodel*,CKTcircuit*,double*);
-
-#else /* stdc */
-extern int CSWask();
-extern int CSWacLoad();
-extern int CSWdelete();
-extern void CSWdestroy();
-extern int CSWload();
-extern int CSWmAsk();
-extern int CSWmDelete();
-extern int CSWmParam();
-extern int CSWparam();
-extern int CSWpzLoad();
-extern int CSWsetup();
-extern int CSWnoise();
-extern int CSWtrunc();
-#endif /* stdc */
-
