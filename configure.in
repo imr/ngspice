@@ -233,6 +233,7 @@ src/devices/vccs/Makefile	\
 src/devices/vcvs/Makefile	\
 src/devices/vsrc/Makefile	\
 src/frontend/Makefile		\
+src/frontend/plotting/Makefile	\
 src/hlp/Makefile		\
 src/include/Makefile		\
 src/maths/Makefile		\

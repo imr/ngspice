@@ -1,3 +1,19 @@
+2000-05-06  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/include/fte*: Broken header files into smaller pieces.  This
+	avoids long recompile times as less needs to be rebuilt on changes
+	to the header files.  Adjusted all callers to use the new header
+	files.  Left a warning message in the header file to indicate its
+	obsolence.  You will see this message when compiling.
+
+	* src/frontend/*: Reorganized part of the frontend commands into
+	their own source file.  Moved plotting parts into new plotting
+	directory.
+
+	* src/devices/*: Removed all RCS log and rcsid from the devices
+	source files.  They only give extra clutter and all the
+	information you need is available through CVS.
+
 2000-05-04  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/maths/ni/nipzmeth.c: Corrected an overeager deletion.

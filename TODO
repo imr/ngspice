@@ -10,7 +10,8 @@ and other files
 
 Fix all compiler warnings
 
-Remove smktemp() in favor of tmpfile(); Note: different symantics!
+Remove smktemp() in favor of tmpfile() or other ANSI C equivalent;
+Note: different symantics!
 
 
 
@@ -37,3 +38,5 @@ Separate ngspice and nutmeg; i.e., no more SIMULATOR define
 Integrate bsim3, bsim3v1, bsim3v2 to use a single codebase instead of
 three only slighty differing implementations
 
+Separate frontend commands from supporting code.  Command files
+start with com_*.   Arno is working on this.
