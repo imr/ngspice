@@ -1,0 +1,26 @@
+Silicon Resistor
+
+* This simulation demonstrates the effects of velocity saturation at
+* high lateral electric fields.
+
+VPP 1 0 10v PWL 0s 0.0v 100s 10v
+VNN 2 0 0.0v 
+D1 1 2 M_RES AREA=1
+
+.MODEL M_RES numd level=1
++ options resistor defa=1p
++ x.mesh loc=0.0 num=1
++ x.mesh loc=1.0 num=101
++ domain   num=1 material=1
++ material num=1 silicon
++ doping unif n.type conc=2.5e16
++ models bgn srh conctau auger concmob fieldmob
++ method ac=direct
+
+*.OP
+.DC VPP 0.0v 10.01v 0.1v
+*.TRAN 1s 100.001s 0s 0.2s
+.PRINT I(VPP)
+
+.OPTION ACCT BYPASS=1 RELTOL=1e-12
+.END

@@ -1,0 +1,31 @@
+Diode Reverse Recovery
+
+* This file simulates reverse recovery of a diode as it switched from an
+* on to off state.
+
+Vpp 1 0 0.7v (PWL 0ns 3.0v 0.1ns 3.0v 0.11ns -6.0v) (AC 1v)
+Vnn 2 0 0v
+R1  1 3 1k
+D1  3 2 M_PN area=100
+
+.MODEL M_PN numd level=1
++ ***************************************
++ *** One-Dimensional Numerical Diode ***
++ ***************************************
++ options defa=1p
++ x.mesh loc=0.0 n=1
++ x.mesh loc=1.3 n=201
++ domain   num=1 material=1
++ material num=1 silicon
++ mobility mat=1 concmod=ct fieldmod=ct
++ doping gauss p.type conc=3e20 x.l=0.0  x.h=0.0 char.l=0.100
++ doping unif  n.type conc=1e16 x.l=0.0  x.h=1.3
++ doping gauss n.type conc=5e19 x.l=1.3  x.h=1.3 char.l=0.100 
++ models bgn aval srh auger conctau concmob fieldmob
++ method ac=direct
+
+.option acct bypass=1 abstol=1e-15 itl2=100
+.tran 0.001ns 1.0ns
+.print i(Vpp)
+
+.END

@@ -1,0 +1,45 @@
+Voltage controlled oscillator
+
+rc1 7 5 1k
+rc2 7 6 1k
+
+q5 7 7 5 qmod area = 100p
+q6 7 7 6 qmod area = 100p
+
+q3 7 5 2 qmod area = 100p
+q4 7 6 1 qmod area = 100p
+
+ib1 2 0 .5ma
+ib2 1 0 .5ma
+cb1 2 0 1pf
+cb2 1 0 1pf
+
+q1 5 1 3 qmod area = 100p
+q2 6 2 4 qmod area = 100p
+
+c1 3 4 .1uf 
+
+is1 3 0 dc 2.5ma pulse 2.5ma 0.5ma 0 1us 1us 50ms
+is2 4 0 1ma
+vcc 7 0 10
+
+.model qmod nbjt level=1
++ x.mesh node=1  loc=0.0
++ x.mesh node=61 loc=3.0
++ region num=1 material=1
++ material num=1 silicon nbgnn=1e17 nbgnp=1e17
++ mobility material=1 concmod=sg fieldmod=sg
++ mobility material=1 elec major
++ mobility material=1 elec minor
++ mobility material=1 hole major
++ mobility material=1 hole minor
++ doping unif n.type conc=1e17 x.l=0.0 x.h=1.0
++ doping unif p.type conc=1e16 x.l=0.0 x.h=1.5
++ doping unif n.type conc=1e15 x.l=0.0 x.h=3.0
++ models bgnw srh conctau auger concmob fieldmob
++ options base.length=1.0 base.depth=1.25
+
+.option acct bypass=1 
+.tran 3us 600us 0 3us
+.print tran v(4)
+.end

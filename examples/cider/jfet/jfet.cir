@@ -1,0 +1,36 @@
+Two-dimensional Junction Field-Effect Transistor (JFET)
+
+VDD 1 0  0.5V
+VGG 2 0 -1.0v AC 1V
+VSS 3 0  0.0V
+QJ1 1 2 3 M_NJF AREA=1
+
+.MODEL M_NJF NBJT LEVEL=2
++ options jfet defw=10.0um
++ output dc.debug phin phip equ.psi vac.psi
++ x.mesh w=0.2 h.e=0.001 r=1.8
++ x.mesh w=0.8 h.s=0.001 h.m=0.1 r=2.0
++ x.mesh w=0.8 h.e=0.001 h.m=0.1 r=2.0
++ x.mesh w=0.2 h.s=0.001 r=1.8
++ y.mesh w=0.2 h.e=0.01  r=1.8
++ y.mesh w=0.8 h.s=0.01  h.m=0.1  r=1.8
++
++ domain num=1 mat=1 
++ material num=1 silicon
++ 
++ elec num=1 x.l=0.0 x.h=0.0 y.l=0.0 y.h=1.0
++ elec num=2 x.l=0.5 x.h=1.5 y.l=0.0 y.h=0.0
++ elec num=3 x.l=2.0 x.h=2.0 y.l=0.0 y.h=1.0
++
++ doping unif n.type conc=3.0e15
++ doping unif p.type conc=2.0e17 x.l=0.2 x.h=1.8 y.h=0.2
++
++ models bgn srh auger conctau concmob fieldmob ^aval
+
+.option acct bypass=1 temp=27
+*.op
+.dc vgg 0.0 -2.0001 -0.1
+*.ac dec 10 1k 100g
+.print i(vnn)
+
+.end

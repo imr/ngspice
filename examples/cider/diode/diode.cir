@@ -1,0 +1,35 @@
+One-Dimensional Diode Simulation
+
+* Several simulations are performed by this file.
+* They are:
+*   1. An operating point at 0.7v forward bias.
+*   2. An ac analysis at 0.7v forward bias.
+*   3. The forward and reverse bias characteristics from -3v to 2v.
+
+Vpp 1 0 0.7v (PWL 0ns 3.0v 0.01ns -6.0v) (AC 1v)
+Vnn 2 0 0v
+D1  1 2 M_PN AREA=100
+
+.model M_PN numd level=1
++ ***************************************
++ *** One-Dimensional Numerical Diode ***
++ ***************************************
++ options defa=1p
++ x.mesh loc=0.0 n=1
++ x.mesh loc=1.3 n=201
++ domain   num=1 material=1
++ material num=1 silicon
++ mobility mat=1 concmod=ct fieldmod=ct
++ doping gauss p.type conc=1e20 x.l=0.0  x.h=0.0 char.l=0.100
++ doping unif  n.type conc=1e16 x.l=0.0  x.h=1.3
++ doping gauss n.type conc=5e19 x.l=1.3  x.h=1.3 char.l=0.100 
++ models bgn aval srh auger conctau concmob fieldmob
++ method ac=direct
+
+.option acct bypass=0 abstol=1e-18 itl2=100
+.op
+.ac dec 10 100kHz 10gHz
+.dc Vpp -3.0v 2.0001v 50mv
+.print i(Vpp)
+
+.END

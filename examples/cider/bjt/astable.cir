@@ -1,0 +1,34 @@
+Astable multivibrator
+
+vin 5 0 dc 0 pulse(0 5 0 1us 1us 100us 100us)
+vcc 6 0 5.0
+rc1 6 1 1k
+rc2 6 2 1k
+rb1 6 3 30k
+rb2 5 4 30k
+c1 1 4 150pf
+c2 2 3 150pf
+q1 1 3 0 qmod area = 100p
+q2 2 4 0 qmod area = 100p
+
+.option acct bypass=1
+.tran 0.05us 8us 0us 0.05us
+.print tran v(1) v(2) v(3) v(4)
+
+.model qmod nbjt level=1
++ x.mesh node=1  loc=0.0
++ x.mesh node=61 loc=3.0
++ region num=1 material=1
++ material num=1 silicon nbgnn=1e17 nbgnp=1e17
++ mobility material=1 concmod=sg fieldmod=sg
++ mobility material=1 elec major
++ mobility material=1 elec minor
++ mobility material=1 hole major
++ mobility material=1 hole minor
++ doping unif n.type conc=1e17 x.l=0.0 x.h=1.0
++ doping unif p.type conc=1e16 x.l=0.0 x.h=1.5
++ doping unif n.type conc=1e15 x.l=0.0 x.h=3.0
++ models bgnw srh conctau auger concmob fieldmob
++ options base.length=1.0 base.depth=1.25
+
+.end

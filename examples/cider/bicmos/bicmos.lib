@@ -1,0 +1,127 @@
+.MODEL M_NPN nbjt level=2
++ title TWO-DIMENSIONAL NUMERICAL POLYSILICON EMITTER BIPOLAR TRANSISTOR
++ * Since, we are only simulating half of a device, we double the unit width
++ * 1.0 um emitter length
++ options defw=2.0u
++ output dc.debug stat
++ 
++ *x.mesh w=2.5 n=5
++ x.mesh w=2.0  h.e=0.05 h.m=0.2 r=1.5
++ x.mesh w=0.5  h.s=0.05 h.m=0.1 r=1.5
++ 
++ y.mesh l=-0.2 n=1
++ y.mesh l= 0.0 n=5
++ y.mesh w=0.10 h.e=0.002 h.m=0.01  r=1.5
++ y.mesh w=0.15 h.s=0.002 h.m=0.01  r=1.5
++ y.mesh w=0.35 h.s=0.01  h.m=0.2   r=1.5
++ y.mesh w=0.40 h.e=0.05  h.m=0.2   r=1.5
++ y.mesh w=0.30 h.s=0.05  h.m=0.1   r=1.5
++
++ domain num=1 material=1 x.l=2.0 y.h=0.0
++ domain num=2 material=2 x.h=2.0 y.h=0.0
++ domain num=3 material=3 y.l=0.0
++ material num=1 polysilicon
++ material num=2 oxide
++ material num=3 silicon
++
++ elec num=1 x.l=0.0  x.h=0.0  y.l=1.1  y.h=1.3
++ elec num=2 x.l=0.0  x.h=0.5  y.l=0.0  y.h=0.0
++ elec num=3 x.l=2.0  x.h=3.0  y.l=-0.2 y.h=-0.2
++
++ doping gauss n.type conc=3e20 x.l=2.0 x.h=3.0 y.l=-0.2 y.h=0.0
++ + char.l=0.047 lat.rotate
++ doping gauss p.type conc=1e19 x.l=0.0 x.h=5.0 y.l=-0.2 y.h=0.0
++ + char.l=0.094 lat.rotate
++ doping unif  n.type conc=1e16 x.l=0.0 x.h=5.0 y.l=0.0 y.h=1.3
++ doping gauss n.type conc=5e19 x.l=0.0 x.h=5.0 y.l=1.3 y.h=1.3
++ + char.l=0.100 lat.rotate
++
++ method ac=direct itlim=10
++ models bgn srh auger conctau concmob fieldmob
+
+.MODEL M_NMOS_1 numos
++ output dc.debug stat
++ title 1.0um NMOS Device
++ 
++ x.mesh w=0.9 h.e=0.020 h.m=0.2 r=2.0
++ x.mesh w=0.2 h.e=0.005 h.m=0.02 r=2.0
++ x.mesh w=0.4 h.s=0.005 h.m=0.1 r=2.0
++ x.mesh w=0.4 h.e=0.005 h.m=0.1 r=2.0
++ x.mesh w=0.2 h.e=0.005 h.m=0.02 r=2.0
++ x.mesh w=0.9 h.s=0.020 h.m=0.2 r=2.0
++
++ y.mesh l=-.0200 n=1
++ y.mesh l=0.0 n=6
++ y.mesh w=0.15 h.s=0.0001 h.max=.02 r=2.0
++ y.mesh w=0.45 h.s=0.02 h.max=0.2 r=2.0
++ y.mesh w=1.40 h.s=0.20 h.max=0.4 r=2.0
++
++ region num=1 material=1 y.h=0.0
++ region num=2 material=2 y.l=0.0
++ interface dom=2 nei=1 x.l=1.0 x.h=2.0 layer.width=0.0
++ material num=1 oxide
++ material num=2 silicon
++
++ elec num=1 x.l=2.5 x.h=3.1	y.l=0.0 y.h=0.0
++ elec num=2 x.l=1.0  x.h=2.0	iy.l=1  iy.h=1
++ elec num=3 x.l=-0.1 x.h=0.5	y.l=0.0 y.h=0.0
++ elec num=4 x.l=-0.1 x.h=3.1   y.l=2.0 y.h=2.0
++
++ doping gauss p.type conc=1.0e17 x.l=-0.1 x.h=3.1 y.l=0.0
++ + char.l=0.30
++ doping unif p.type conc=5.0e15 x.l=-0.1 x.h=3.1 y.l=0.0 y.h=2.1
++ doping gauss n.type conc=4e17  x.l=-0.1 x.h=1.0 y.l=0.0 y.h=0.0
++ + char.l=0.16 lat.rotate ratio=0.65
++ doping gauss n.type conc=1e20  x.l=-0.1 x.h=0.95 y.l=0.0 y.h=0.08
++ + char.l=0.03 lat.rotate ratio=0.65
++ doping gauss n.type conc=4e17  x.l=2.0 x.h=3.1 y.l=0.0 y.h=0.0
++ + char.l=0.16 lat.rotate ratio=0.65
++ doping gauss n.type conc=1e20  x.l=2.05 x.h=3.1 y.l=0.0 y.h=0.08
++ + char.l=0.03 lat.rotate ratio=0.65
++
++ contact num=2 workf=4.10
++ models concmob fieldmob surfmob srh auger conctau bgn ^aval
++ method ac=direct itlim=10 onec
+
+.MODEL M_PMOS_1 numos
++ title 1.0um PMOS Device
++ 
++ x.mesh w=0.9 h.e=0.020 h.m=0.2 r=2.0
++ x.mesh w=0.2 h.e=0.005 h.m=0.02 r=2.0
++ x.mesh w=0.4 h.s=0.005 h.m=0.1 r=2.0
++ x.mesh w=0.4 h.e=0.005 h.m=0.1 r=2.0
++ x.mesh w=0.2 h.e=0.005 h.m=0.02 r=2.0
++ x.mesh w=0.9 h.s=0.020 h.m=0.2 r=2.0
++
++ y.mesh l=-.0200 n=1
++ y.mesh l=0.0 n=6
++ y.mesh w=0.15 h.s=0.0001 h.max=.02 r=2.0
++ y.mesh w=0.45 h.s=0.02 h.max=0.2 r=2.0
++ y.mesh w=1.40 h.s=0.20 h.max=0.4 r=2.0
++
++ region num=1 material=1 y.h=0.0
++ region num=2 material=2 y.l=0.0
++ interface dom=2 nei=1 x.l=1.0 x.h=2.0 layer.width=0.0
++ material num=1 oxide
++ material num=2 silicon
++
++ elec num=1 x.l=2.5 x.h=3.1	y.l=0.0 y.h=0.0
++ elec num=2 x.l=1.0  x.h=2.0	iy.l=1  iy.h=1
++ elec num=3 x.l=-0.1 x.h=0.5	y.l=0.0 y.h=0.0
++ elec num=4 x.l=-0.1 x.h=3.1   y.l=2.0 y.h=2.0
++
++ doping gauss n.type conc=1.0e17 x.l=-0.1 x.h=3.1 y.l=0.0
++ + char.l=0.30
++ doping unif n.type conc=5.0e15 x.l=-0.1 x.h=3.1 y.l=0.0 y.h=2.1
++ doping gauss p.type conc=4e17  x.l=-0.1 x.h=1.0 y.l=0.0 y.h=0.0
++ + char.l=0.16 lat.rotate ratio=0.65
++ doping gauss p.type conc=1e20  x.l=-0.1 x.h=0.95 y.l=0.0 y.h=0.08
++ + char.l=0.03 lat.rotate ratio=0.65
++ doping gauss p.type conc=4e17  x.l=2.0 x.h=3.1 y.l=0.0 y.h=0.0
++ + char.l=0.16 lat.rotate ratio=0.65
++ doping gauss p.type conc=1e20  x.l=2.05 x.h=3.1 y.l=0.0 y.h=0.08
++ + char.l=0.03 lat.rotate ratio=0.65
++
++ contact num=2 workf=5.29
++ models concmob fieldmob surfmob srh auger conctau bgn ^aval
++ method ac=direct itlim=10 onec
