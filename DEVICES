@@ -115,7 +115,19 @@ SW  - Voltage controlled switch
 ***************************************************************************
 
 DIO   - Junction Diode
-      Initial Release 
+        Initial Release.
+	Ver: 	N/A
+	Class:	D
+	Level:	1 (and only) 
+	Status: 
+	
+	Enhancements over the original model:
+	
+	- Parallel Multiplier
+	- Temperature difference from circuit temperature
+	- Forward and reverse knee currents
+	- Periphery (sidewall) effects
+	- Temperature correction of some parameters
 
                      
 ***************************************************************************
@@ -123,14 +135,23 @@ DIO   - Junction Diode
 ***************************************************************************
       
 BJT   - Bipolar Junction Transistor
-      Initial Relelase
+        Initial Release.
+	Ver: 	N/A
+	Class:	Q
+	Level:	1 
+	Status: 
+	
+	Enhancements over the original model:
+	
+	- Parallel Multiplier
+	- Temperature difference from circuit temperature
 
 BJT2  - Bipolar Junction Trasistor
 	Initial Release.
 	Ver: 	N/A
 	Class:	Q
 	Level:	2 
-	Status: TO BE TESTED
+	Status:
 	
 	This is the BJT model written by Alan Gillespie to support lateral
 	devices. The model has been hacked by Dietmar Warning fixing some bugs
@@ -139,6 +160,8 @@ BJT2  - Bipolar Junction Trasistor
 	Enhancements over the original model:
 	
 	- Temperature correction on rc,rb,re
+	- Parallel Multiplier
+	- Temperature difference from circuit temperature
       
 
 ***************************************************************************
