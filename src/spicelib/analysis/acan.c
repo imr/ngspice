@@ -365,20 +365,6 @@ CKTacLoad(CKTcircuit *ckt)
     }
 
 #ifdef XSPICE
-   /* gtri - begin - Put resistors to ground at all nodes. */
-    /* Value of resistor is set by new "rshunt" option.     */
-
-    if(ckt->enh->rshunt_data.enabled) {
-       for(i = 0; i < ckt->enh->rshunt_data.num_nodes; i++) {
-          *(ckt->enh->rshunt_data.diag[i]) +=
-                               ckt->enh->rshunt_data.gshunt;
-       }
-    }
-
-    /* gtri - end - Put resistors to ground at all nodes */
-
-
-
     /* gtri - add - wbk - 11/26/90 - reset the MIF init flags */
 
     /* init is set by CKTinit and should be true only for first load call */

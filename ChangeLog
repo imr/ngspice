@@ -1,4 +1,11 @@
+2003-07-14 Stefan Jones <stefan.jones@multigig.com>
+
+	* src/include/enh.h src/spicelib/analysis/{acan.c,cktload.c,cktsetup.c,cktsopt.c}
+	src/spicelib/devices/cktinit.c src/include/optdefs.h :
+	Removed XSPICE rshunt option, use gshunt from ngspice instead.
+
 2003-07-09 Stefan Jones <stefan.jones@multigig.com>
+
 	* configure.in : Add extra check for tclreadline and headers
 
 2003-04-14 Stefan Jones <stefan.jones@multigig.com>

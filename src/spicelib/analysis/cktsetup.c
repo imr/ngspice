@@ -31,12 +31,6 @@ CKTsetup(CKTcircuit *ckt)
 {
     int i;
     int error;
-#ifdef XSPICE
- /* gtri - begin - Setup for adding rshunt option resistors */
-    CKTnode *node;
-    int     num_nodes;
- /* gtri - end - Setup for adding rshunt option resistors */
-#endif
     SMPmatrix *matrix;
     ckt->CKTnumStates=0;
 
@@ -80,38 +74,6 @@ CKTsetup(CKTcircuit *ckt)
         error = NIreinit(ckt);
         if(error) return(error);
     }
-#ifdef XSPICE
-  /* gtri - begin - Setup for adding rshunt option resistors */
-
-    if(ckt->enh->rshunt_data.enabled) {
-
-        /* Count number of voltage nodes in circuit */
-        for(num_nodes = 0, node = ckt->CKTnodes; node; node = node->next)
-            if((node->type == NODE_VOLTAGE) && (node->number != 0))
-                num_nodes++;
-    
-        /* Allocate space for the matrix diagonal data */
-        if(num_nodes > 0) {
-            ckt->enh->rshunt_data.diag =
-                 (double **) MALLOC(num_nodes * sizeof(double *));
-        }
-
-        /* Set the number of nodes in the rshunt data */
-        ckt->enh->rshunt_data.num_nodes = num_nodes;
-
-        /* Get/create matrix diagonal entry following what RESsetup does */
-        for(i = 0, node = ckt->CKTnodes; node; node = node->next) {
-            if((node->type == NODE_VOLTAGE) && (node->number != 0)) {
-                ckt->enh->rshunt_data.diag[i] = 
-                      SMPmakeElt(matrix,node->number,node->number);
-                i++;
-            }
-        }
-
-    }
-   
-    /* gtri - end - Setup for adding rshunt option resistors */
-#endif
     return(OK);
 }
 

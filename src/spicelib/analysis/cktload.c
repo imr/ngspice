@@ -44,16 +44,6 @@ CKTload(CKTcircuit *ckt)
     int noncon;
 #endif /* STEPDEBUG */
 
-#ifdef XSPICE
-  /* gtri - begin - Put resistors to ground at all nodes */
-    /*   SMPmatrix  *matrix; maschmann : deleted , because unused */
-
-    double gshunt;
-    int num_nodes;
-
-    /* gtri - begin - Put resistors to ground at all nodes */
-#endif
-
     startTime = (*(SPfrontEnd->IFseconds))();
     size = SMPmatSize(ckt->CKTmatrix);
     for (i=0;i<=size;i++) {
@@ -95,19 +85,7 @@ CKTload(CKTcircuit *ckt)
 
     /* gtri - end - wbk - 11/26/90 */
 
-    /* gtri - begin - Put resistors to ground at all nodes. */
-    /* Value of resistor is set by new "rshunt" option.     */
-
-    if(ckt->enh->rshunt_data.enabled) {
-       gshunt = ckt->enh->rshunt_data.gshunt;
-       num_nodes = ckt->enh->rshunt_data.num_nodes;
-       for(i = 0; i < num_nodes; i++) {
-          *(ckt->enh->rshunt_data.diag[i]) += gshunt;
-       }
-    }
 #endif
-    /* gtri - end - Put resistors to ground at all nodes */
-
 
     if(ckt->CKTmode & MODEDC) {
         /* consider doing nodeset & ic assignments */
