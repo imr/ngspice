@@ -238,7 +238,7 @@ src/include/Makefile		\
 src/maths/Makefile		\
 src/maths/cmaths/Makefile	\
 src/maths/ni/Makefile		\
-src/maths/partialderiv/Makefile \
+src/maths/deriv/Makefile	\
 src/maths/poly/Makefile		\
 src/maths/sparse/Makefile	\
 src/misc/Makefile		\
