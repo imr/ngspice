@@ -7,6 +7,9 @@ HDRS=	datadef.h
 SRCC=	inc_main.c inc_inp.c inc_LSD.c
 
 mslib:	$(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) 
+
+clean:
+	$(RM) $(OBJS) mslib
 
 $(OBJS):	$(HDRS)
