@@ -14,7 +14,7 @@ Modified: 2000 AlansFixes
 
 #include "ngspice.h"
 #include "cpdefs.h"
-#include "tskdefs.h"
+#include "tskdefs.h" /* Is really needed ? */
 #include "ftedefs.h"
 #include "fteinp.h"
 #include "inpdefs.h"
@@ -131,7 +131,8 @@ if_run(char *t, char *what, wordlist *args, char *tab)
     int j;
     int which = -1;
     IFuid specUid,optUid;
-
+    
+    
     /* First parse the line... */
     if (eq(what, "tran") 
     || eq(what, "ac") 
@@ -189,6 +190,13 @@ if_run(char *t, char *what, wordlist *args, char *tab)
                 ft_sperror(err,"createOptions");
                 return(2);
             }
+<<<<<<< spiceif.c
+            
+/* -- *** BUG! ****/
+/* -- Inherit the default simulation settings taken from the */
+/* -- .option line.                                          */
+
+=======
             
 /* -- *** BUG! ****/
 /* -- Inherit the default simulation settings taken from the */
@@ -198,7 +206,9 @@ if_run(char *t, char *what, wordlist *args, char *tab)
                    &ft_curckt->ci_defOpt->TSKtemp,
                    sizeof(TSKtask) - offsetof(TSKtask, TSKtemp));
 */
+>>>>>>> 1.7
             ft_curckt->ci_curOpt  = ft_curckt->ci_specOpt;
+
         }
         ft_curckt->ci_curTask = ft_curckt->ci_specTask;
         INPpas2(ckt, (card *) &deck, (INPtables *)tab, ft_curckt->ci_specTask);
