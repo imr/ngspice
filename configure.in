@@ -32,6 +32,10 @@ dnl --enable-sense2 : define HAVE_SENSE2 for the code
 AC_ARG_ENABLE(sense2,
     [  --enable-sense2         Use spice2 sensitivity analysis])
 
+dnl --enable-intnoise : define INT_NOISE for the code
+AC_ARG_ENABLE(intnoise,
+    [  --enable-intnoise       Enables noise integration in noise analysis])
+
 dnl --enable-smoketest : a smoketest
 AC_ARG_ENABLE(smoketest,
     [  --enable-smoketest      Enables smoketest compile])
@@ -191,6 +195,10 @@ if test "$enable_predictor" = "yes"; then
 	AC_DEFINE(PREDICTOR)
 	AC_MSG_RESULT(PREDICTOR algorithm enabled)	
 fi
+if test "$enable_intnoise" = "yes"; then
+	AC_DEFINE(INT_NOISE)
+	AC_MSG_RESULT(Noise integration enabled)
+fi
 if test "$enable_experimental" = "yes"; then
 	AC_DEFINE(EXPERIMENTAL_CODE)
 	AC_MSG_RESULT(EXPERIMENTAL_CODE enabled)	
@@ -258,5 +266,6 @@ tests/polezero/Makefile		\
 tests/resistance/Makefile	\
 tests/bsim3soipd/Makefile	\
 tests/bsim3soifd/Makefile	\
-tests/bsim3soidd/Makefile	
+tests/bsim3soidd/Makefile	\
+tests/bsim4/Makefile
 )
