@@ -45,7 +45,7 @@ INPdoOpts(ckt,anal,optCard,tab)
     }
     if(which == -1) {
         optCard->error = INPerrCat(optCard->error,INPmkTemp(
-                "errr:  analysis options table not found\n"));
+                "error:  analysis options table not found\n"));
         return;
     }
     line = optCard->line;
