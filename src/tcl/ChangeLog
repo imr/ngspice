@@ -1,0 +1,34 @@
+25/07/2002:
+	* Modified configure/Makefiles so use --enable-tcl to make module
+	* Added option --enable-cluster to configure for cluster version
+	* Swig no longer needed to compile
+23/07/2002:
+	* Added display device Tk plot
+	* Added function bltplot
+17/04/2002:
+	* Merged a version of cluster spice.
+26/03/2002:
+	* New TCL function lastVector.
+19/02/2002:
+	* User nodes and codemodels now work in DCtrans analysis, 
+	calculated results are now correct.
+	* Fixed bug where the first timestep always seems to fail to converge
+	after a resume or a step, thus cutting delta.
+30/01/2002:
+	* Precompiled Opus/XSpice models are now supported with 
+	--enable-xspice flag, load them using codemodel "opus spice module"
+22/01/2002:
+	* Fixed parameters being ignored when mosfet model is not found
+16/01/2002:
+	* Fixed crash when a mosfet model is not found
+In the mists of time:
+	* Changed spicelib/parser/inpgtok.c to allow / * ^ in node names (/ needed for ext2spice)
+	* Modifed files in 
+	 spicelib/analysis/(acan.c, dctran.c, dctrcurv.c, noisean.c), frontend/outitf.c,
+	 frontend/runcoms.c, frontend/runcoms2.c
+	 so rawfiles continue to be written to after a pause then a resume
+	* Small modification to main.c to make the struct nutmeginfo global, so tclspice can use it. 
+	* Added ifdefed code to frontend/outitf.c which links output to tclspice.
+	* Modified main.c and frontend/inp.c so .save lines are always processed
+	* ifdefed code in misc/alloc.c so the functions use Tcl_Mutex to stop memory allocation conflicts.
+	* Fixed crash in com_resume() when run without circuit loaded

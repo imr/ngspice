@@ -1,0 +1,77 @@
+Code Model Test: buffer, inverter, and, nand, or, nor, xor, xnor
+*
+*
+*** analysis type ***
+.tran .01s 4s
+*
+*** input sources ***
+*
+v2 200 0 DC PWL( (0 0.0) (2 0.0) (2.0000000001 1.0) (3 1.0) ) 
+*
+v1 100 0 DC PWL( (0 0.0) (1.0 0.0) (1.0000000001 1.0) (2 1.0) 
++                (2.0000000001 0.0) (3 0.0) (3.0000000001 1.0) (4 1.0) )
+*
+*
+*** adc_bridge blocks ***
+aconverter [200 100] [2 1] adc_bridge1
+.model adc_bridge1 adc_bridge (in_low=0.1 in_high=0.9 
++                              rise_delay=1.0e-12 fall_delay=1.0e-12)
+*
+*
+*
+*** buffer block ***
+a1 1 10 d_buffer1 
+.model d_buffer1 d_buffer (rise_delay=1.0e-6 fall_delay=2.0e-6
++                          input_load=1.0e-12)
+*
+*
+*** inverter block ***
+a2 1 20 d_inv1 
+.model d_inv1 d_inverter (rise_delay=1.0e-6 fall_delay=2.0e-6
++                         input_load=1.0e-12)
+*
+*
+*** and block ***
+a3 [1 2] 30 d_and1 
+.model d_and1 d_and (rise_delay=1.0e-6 fall_delay=2.0e-6
++                    input_load=1.0e-12)
+*
+*
+*** nand block ***
+a4 [1 2] 40 d_nand1 
+.model d_nand1 d_nand (rise_delay=1.0e-6 fall_delay=2.0e-6
++                      input_load=1.0e-12)
+*
+*
+*** or block ***
+a5 [1 2] 50 d_or1 
+.model d_or1 d_or (rise_delay=1.0e-6 fall_delay=2.0e-6
++                  input_load=1.0e-12)
+*
+*
+*** nor block ***
+a6 [1 2] 60 d_nor1 
+.model d_nor1 d_nor (rise_delay=1.0e-6 fall_delay=2.0e-6
++                    input_load=1.0e-12)
+*
+*
+*** xor block ***
+a7 [1 2] 70 d_xor1 
+.model d_xor1 d_xor (rise_delay=1.0e-6 fall_delay=2.0e-6
++                    input_load=1.0e-12)
+*
+*
+*** xnor block ***
+a8 [1 2] 80 d_xnor1 
+.model d_xnor1 d_xnor (rise_delay=1.0e-6 fall_delay=2.0e-6
++                      input_load=1.0e-12)
+*
+*
+*
+*** resistors to ground ***
+r1 100 0 1k
+r2 200 0 1k
+*
+*
+*
+.end

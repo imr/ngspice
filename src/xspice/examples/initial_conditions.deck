@@ -1,0 +1,19 @@
+Capacitor and inductor with natural initial conditions
+*
+* This circuit contains a capacitor and an inductor with
+* initial conditions on them.  Each of the components
+* has a parallel resistor so that an exponential decay
+* of the initial condition occurs with a time constant of
+* 1 second.
+*
+.tran 0.1 5
+*
+a1 1 0 cap
+.model cap capacitor (c=1000uf ic=1)
+r1 1 0 1k
+*
+a2 2 0 ind
+.model ind inductor (l=1H ic=1)
+r2 2 0 1.0
+*
+.end

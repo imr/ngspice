@@ -1,0 +1,22 @@
+A simple XSPICE amplifier circuit
+*
+* This uses an XSPICE "gain" code model to substitute for
+* the transistor amplifier circuit in spice3.deck.
+*
+.tran 1e-5 2e-3
+*
+vin  1 0  0.0 ac 1.0 sin(0 1 1k)
+*
+ccouple  1 in  10uF
+*
+*
+rzin  in 0  19.35k
+*
+aamp  in coll  gain_block
+.model gain_block gain (gain = -3.9  out_offset = 7.003)
+*
+rzout out coll 3.9k
+rbig  coll 0   1e12
+*
+*
+.end

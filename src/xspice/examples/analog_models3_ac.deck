@@ -1,0 +1,81 @@
+Code Model Test - AC: hyst, limit, ilimit, climit, cmeter, lmeter
+*
+*
+*** analysis type ***
+.ac dec 10 10 1000
+*
+*
+*** input sources ***
+*
+v1 1 0 1.0 AC 1.0 0.0
+*
+v2 2 0 DC 10.0
+*
+v3 3 0 DC -10.0
+*
+*
+*
+*** hyst block ***
+a1 1 10 hyst1
+.model hyst1 hyst (in_low=0.0 in_high=1.0 hyst=0.1 out_lower_limit=0.0
++                out_upper_limit=1.0 input_domain=0.01 fraction=TRUE)
+*
+*
+*** limit block ***
+a2 1 20 limit1
+.model limit1 limit (in_offset=0.0 gain=1.0 out_lower_limit=-1.0e6
++                  out_upper_limit=1.0e6 limit_range=1.0e-6 fraction=FALSE)
+*
+*
+*** ilimit block ***
+a3 1 2 3 30 ilimit1
+.model ilimit1 ilimit (in_offset=0.0 gain=1.0 r_out_source=1.0
++                      r_out_sink=1.0 i_limit_source=1.0
++                      i_limit_sink=1.0 v_pwr_range=1.0e-3
++                      i_source_range=1.0e-6 i_sink_range=1.0e-6
++                      r_out_domain=1.0e-6)
+*
+*
+*** climit block ***
+a4 1 2 3 40 climit1
+.model climit1 climit (in_offset=0.0 gain=1.0 upper_delta=0.0
++                      lower_delta=0.0 limit_range=1.0e-6
++                      fraction=FALSE)
+*
+*
+*** cmeter block ***
+c5 51 0 1.0e-6
+a5 51 50 cmeter1
+.model cmeter1 cmeter (gain=1.0)
+*
+*
+*
+*** lmeter block ***
+l6 61 0 1.0e-6
+a6 61 60 lmeter1
+.model lmeter1 lmeter (gain=1.0)
+*
+*
+*
+*** resistors to ground ***
+r1 1 0 10k
+r2 2 0 10k
+r3 3 0 10k
+*
+r10 10 0 10k
+r20 20 0 10k
+r30 30 0 10k
+r40 40 0 10k
+r50 50 0 10k
+r51 51 0 10k
+r60 60 0 10k
+r61 61 0 10k
+*
+*
+.end
+
+
+
+
+
+

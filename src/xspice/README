@@ -1,0 +1,24 @@
+Spice Opus / XSpice code model support.
+--------------------------------------
+
+Use configure flag --enable-xspice to compile the support in,
+when you run the ./configure script.
+This creates a new command, "codemodel", which you can 
+use to load a codemodel. 
+
+Some codemodels are included in the xspice/lib directory 
+with some examples in xspice/examples, compiled for linux glibc.
+
+Make sure the the library dir, xspice/lib, is in your LD_LIBRARY_PATH 
+enviromental variable, otherwise the libs will not be found! 
+
+To create codemodels go to http://www.fe.uni-lj.si/spice/welcome.html
+and download their trial version of spice opus for the codemodel toolkit!
+
+TODO:
+	Intergrate the ipc stuff from XSpice.
+	Create ng-spice capacity to create codemodels (a perl script)
+	Ngspice crashes when you try to plot a digital node
+
+Stefan Jones 
+	19/2/2002
