@@ -1,6 +1,7 @@
 /**********
-Copyright 2000 Regents of the University of California.  All rights reserved.
-Author: 2000 Weidong Liu.
+Copyright 2001 Regents of the University of California.  All rights reserved.
+Author: 2000 Weidong Liu
+Author: 2001 Xuemei Xi
 File: bsim4ext.h
 **********/
 

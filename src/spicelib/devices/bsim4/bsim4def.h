@@ -1,6 +1,7 @@
 /**********
-Copyright 2000 Regents of the University of California.  All rights reserved.
+Copyright 2001 Regents of the University of California.  All rights reserved.
 Author: 2000 Weidong Liu.
+Modified by Xuemei Xi October 2001
 File: bsim4def.h
 **********/
 
@@ -18,7 +19,6 @@ typedef struct sBSIM4instance
     struct sBSIM4model *BSIM4modPtr;
     struct sBSIM4instance *BSIM4nextInstance;
     IFuid BSIM4name;
-    int BSIM4owner;      /* Number of owner process */
     int BSIM4states;     /* index into state table for this device */
     int BSIM4dNode;
     int BSIM4gNodeExt;
@@ -100,6 +100,10 @@ typedef struct sBSIM4instance
 
     /* OP point */
     double BSIM4Vgsteff;
+    double BSIM4vgs_eff;
+    double BSIM4vgd_eff;
+    double BSIM4dvgs_eff_dvg;
+    double BSIM4dvgd_eff_dvg;
     double BSIM4Vdseff;
     double BSIM4nstar;
     double BSIM4Abulk;
@@ -111,6 +115,7 @@ typedef struct sBSIM4instance
     double BSIM4cbd;
     double BSIM4csub;
     double BSIM4Igidl;
+    double BSIM4Igisl;
     double BSIM4gm;
     double BSIM4gds;
     double BSIM4gmbs;
@@ -124,6 +129,10 @@ typedef struct sBSIM4instance
     double BSIM4ggidlg;
     double BSIM4ggidls;
     double BSIM4ggidlb;
+    double BSIM4ggisld;
+    double BSIM4ggislg;
+    double BSIM4ggisls;
+    double BSIM4ggislb;
 
     double BSIM4Igcs;
     double BSIM4gIgcsg;
@@ -178,6 +187,13 @@ typedef struct sBSIM4instance
     double BSIM4cdgb;
     double BSIM4cddb;
     double BSIM4cdsb;
+    double BSIM4csgb;
+    double BSIM4csdb;
+    double BSIM4cssb;
+    double BSIM4cgbb;
+    double BSIM4cdbb;
+    double BSIM4csbb;
+    double BSIM4cbbb;
     double BSIM4capbd;
     double BSIM4capbs;
 
@@ -189,6 +205,7 @@ typedef struct sBSIM4instance
     double BSIM4qgate;
     double BSIM4qbulk;
     double BSIM4qdrn;
+    double BSIM4qsrc;
 
     double BSIM4qchqs;
     double BSIM4taunet;
@@ -308,6 +325,7 @@ typedef struct sBSIM4instance
     double *BSIM4GPqPtr;
     double *BSIM4SPqPtr;
 
+
 #define BSIM4vbd BSIM4states+ 0
 #define BSIM4vbs BSIM4states+ 1
 #define BSIM4vgs BSIM4states+ 2
@@ -339,8 +357,9 @@ typedef struct sBSIM4instance
 #define BSIM4qcdump BSIM4states+ 25
 #define BSIM4cqcdump BSIM4states+ 26
 #define BSIM4qdef BSIM4states+ 27
+#define BSIM4qs BSIM4states+ 28
 
-#define BSIM4numStates 28
+#define BSIM4numStates 29
 
 
 /* indices to the array of BSIM4 NOISE SOURCES */
@@ -741,6 +760,8 @@ typedef struct sBSIM4model
     double BSIM4cle;
     double BSIM4dwc;
     double BSIM4dlc;
+    double BSIM4xw;
+    double BSIM4xl;
     double BSIM4dlcig;
     double BSIM4dwj;
     double BSIM4noff;
@@ -1220,6 +1241,12 @@ typedef struct sBSIM4model
     double BSIM4DjctTempSatCurDensity;
     double BSIM4DjctSidewallTempSatCurDensity;
     double BSIM4DjctGateSidewallTempSatCurDensity;
+    double BSIM4SunitAreaTempJctCap;
+    double BSIM4DunitAreaTempJctCap;
+    double BSIM4SunitLengthSidewallTempJctCap;
+    double BSIM4DunitLengthSidewallTempJctCap;
+    double BSIM4SunitLengthGateSidewallTempJctCap;
+    double BSIM4DunitLengthGateSidewallTempJctCap;
 
     double BSIM4oxideTrapDensityA;      
     double BSIM4oxideTrapDensityB;     
@@ -1398,6 +1425,8 @@ typedef struct sBSIM4model
     unsigned  BSIM4cleGiven   :1;
     unsigned  BSIM4dwcGiven   :1;
     unsigned  BSIM4dlcGiven   :1;
+    unsigned  BSIM4xwGiven    :1;
+    unsigned  BSIM4xlGiven    :1;
     unsigned  BSIM4dlcigGiven   :1;
     unsigned  BSIM4dwjGiven   :1;
     unsigned  BSIM4noffGiven  :1;
@@ -2511,37 +2540,39 @@ typedef struct sBSIM4model
 #define BSIM4_MOD_WMAX             864
 #define BSIM4_MOD_DWC              865
 #define BSIM4_MOD_DLC              866
-#define BSIM4_MOD_EM               867
-#define BSIM4_MOD_EF               868
-#define BSIM4_MOD_AF               869
-#define BSIM4_MOD_KF               870
-#define BSIM4_MOD_NJS              871
-#define BSIM4_MOD_XTIS             872
-#define BSIM4_MOD_PBSWGS           873
-#define BSIM4_MOD_MJSWGS           874
-#define BSIM4_MOD_CJSWGS           875
-#define BSIM4_MOD_JSWS             876
-#define BSIM4_MOD_LLC              877
-#define BSIM4_MOD_LWC              878
-#define BSIM4_MOD_LWLC             879
-#define BSIM4_MOD_WLC              880
-#define BSIM4_MOD_WWC              881
-#define BSIM4_MOD_WWLC             882
-#define BSIM4_MOD_DWJ              883
-#define BSIM4_MOD_JSD              884
-#define BSIM4_MOD_PBD              885
-#define BSIM4_MOD_MJD              886
-#define BSIM4_MOD_PBSWD            887
-#define BSIM4_MOD_MJSWD            888
-#define BSIM4_MOD_CJD              889
-#define BSIM4_MOD_CJSWD            890
-#define BSIM4_MOD_NJD              891
-#define BSIM4_MOD_XTID             892
-#define BSIM4_MOD_PBSWGD           893
-#define BSIM4_MOD_MJSWGD           894
-#define BSIM4_MOD_CJSWGD           895
-#define BSIM4_MOD_JSWD             896
-#define BSIM4_MOD_DLCIG            897
+#define BSIM4_MOD_XL               867
+#define BSIM4_MOD_XW               868
+#define BSIM4_MOD_EM               869
+#define BSIM4_MOD_EF               870
+#define BSIM4_MOD_AF               871
+#define BSIM4_MOD_KF               872
+#define BSIM4_MOD_NJS              873
+#define BSIM4_MOD_XTIS             874
+#define BSIM4_MOD_PBSWGS           875
+#define BSIM4_MOD_MJSWGS           876
+#define BSIM4_MOD_CJSWGS           877
+#define BSIM4_MOD_JSWS             878
+#define BSIM4_MOD_LLC              879
+#define BSIM4_MOD_LWC              880
+#define BSIM4_MOD_LWLC             881
+#define BSIM4_MOD_WLC              882
+#define BSIM4_MOD_WWC              883
+#define BSIM4_MOD_WWLC             884
+#define BSIM4_MOD_DWJ              885
+#define BSIM4_MOD_JSD              886
+#define BSIM4_MOD_PBD              887
+#define BSIM4_MOD_MJD              888
+#define BSIM4_MOD_PBSWD            889
+#define BSIM4_MOD_MJSWD            890
+#define BSIM4_MOD_CJD              891
+#define BSIM4_MOD_CJSWD            892
+#define BSIM4_MOD_NJD              893
+#define BSIM4_MOD_XTID             894
+#define BSIM4_MOD_PBSWGD           895
+#define BSIM4_MOD_MJSWGD           896
+#define BSIM4_MOD_CJSWGD           897
+#define BSIM4_MOD_JSWD             898
+#define BSIM4_MOD_DLCIG            899
 
 /* device questions */
 #define BSIM4_DNODE                945
@@ -2574,17 +2605,17 @@ typedef struct sBSIM4model
 #define BSIM4_CQG                  972
 #define BSIM4_QD                   973
 #define BSIM4_CQD                  974
-#define BSIM4_CGG                  975
-#define BSIM4_CGD                  976
-#define BSIM4_CGS                  977
-#define BSIM4_CBG                  978
+#define BSIM4_CGGB                 975
+#define BSIM4_CGDB                 976
+#define BSIM4_CGSB                 977
+#define BSIM4_CBGB                 978
 #define BSIM4_CAPBD                979
 #define BSIM4_CQBD                 980
 #define BSIM4_CAPBS                981
 #define BSIM4_CQBS                 982
-#define BSIM4_CDG                  983
-#define BSIM4_CDD                  984
-#define BSIM4_CDS                  985
+#define BSIM4_CDGB                 983
+#define BSIM4_CDDB                 984
+#define BSIM4_CDSB                 985
 #define BSIM4_VON                  986
 #define BSIM4_VDSAT                987
 #define BSIM4_QBS                  988
@@ -2593,7 +2624,26 @@ typedef struct sBSIM4model
 #define BSIM4_DRAINCONDUCT         991
 #define BSIM4_CBDB                 992
 #define BSIM4_CBSB                 993
+#define BSIM4_CSUB		   994
+#define BSIM4_QINV		   995
+#define BSIM4_IGIDL		   996
+#define BSIM4_CSGB                 997
+#define BSIM4_CSDB                 998
+#define BSIM4_CSSB                 999
+#define BSIM4_CGBB                 1000
+#define BSIM4_CDBB                 1001
+#define BSIM4_CSBB                 1002
+#define BSIM4_CBBB                 1003
+#define BSIM4_QS                   1004
+#define BSIM4_IGISL		   1005
+#define BSIM4_IGS		   1006
+#define BSIM4_IGD		   1007
+#define BSIM4_IGB		   1008
+#define BSIM4_IGCS		   1009
+#define BSIM4_IGCD		   1010
 
+
+#
 #include "bsim4ext.h"
 
 #ifdef __STDC__

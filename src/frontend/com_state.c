@@ -2,6 +2,7 @@
 #include <ngspice.h>
 #include <bool.h>
 #include <wordlist.h>
+#include <ftedefs.h>
 #include <inpdefs.h>
 
 #include "circuits.h"

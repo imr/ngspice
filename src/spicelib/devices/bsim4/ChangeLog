@@ -1,3 +1,7 @@
+2001-11-25  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* *.c *.h: Updated to version BSIM4.2.1 
+
 2000-04-04  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* *.c, *.h: Initial bsim4 support. Modified all files to conform

@@ -1,12 +1,11 @@
-/**** BSIM4.1.0, Released by Weidong Liu 10/11/2000 ****/
+/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
 
 /**********
- * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4geo.c of BSIM4.1.0.
- * Authors: Weidong Liu, Kanyu M. Cao, Xiaodong Jin, Chenming Hu.
+ * Copyright 2001 Regents of the University of California. All rights reserved.
+ * File: b4geo.c of BSIM4.2.1.
+ * Author: 2000 Weidong Liu
+ * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
- *
- * Modified by Weidong Liu, 10/11/2000.
  **********/
 
 #include "ngspice.h"
@@ -261,7 +260,8 @@ double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
 	    *Rtot = Rint;
 	else
 	    *Rtot = Rint * Rend / (Rint + Rend);
-
+if(*Rtot==0.0)
+	printf("Warning: Zero resistance returned from RdseffGeo\n");
 return 0;
 }
 

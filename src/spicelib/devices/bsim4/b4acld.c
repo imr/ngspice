@@ -1,12 +1,13 @@
-/**** BSIM4.1.0, Released by Weidong Liu 10/11/2000 ****/
+/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
 
 /**********
- * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4acld.c of BSIM4.1.0.
- * Authors: Weidong Liu, Xiaodong Jin, Kanyu M. Cao, Chenming Hu.
+ * Copyright 2001 Regents of the University of California. All rights reserved.
+ * File: b4acld.c of BSIM4.2.1.
+ * Author: 2000 Weidong Liu
+ * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
  *
- * Modified by Weidong Liu, 10/11/2000.
+ * Modified by Xuemei Xi 10/05/2001
  **********/
 
 #include "ngspice.h"
@@ -14,15 +15,16 @@
 #include "cktdefs.h"
 #include "bsim4def.h"
 #include "sperror.h"
+#include "suffix.h"
 
 
 int
 BSIM4acLoad(inModel,ckt)
 GENmodel *inModel;
-CKTcircuit *ckt;
+register CKTcircuit *ckt;
 {
-BSIM4model *model = (BSIM4model*)inModel;
-BSIM4instance *here;
+register BSIM4model *model = (BSIM4model*)inModel;
+register BSIM4instance *here;
 
 double gjbd, gjbs, geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb;
 double xcbgb, xcbdb, xcbsb, xcbbb;
@@ -50,13 +52,13 @@ double gmr, gmi, gmbsr, gmbsi, gdsr, gdsi;
 double FwdSumr, RevSumr, Gmr, Gmbsr, Gdsr;
 double FwdSumi, RevSumi, Gmi, Gmbsi, Gdsi;
 struct bsim4SizeDependParam *pParam;
+double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
 
     omega = ckt->CKTomega;
     for (; model != NULL; model = model->BSIM4nextModel) 
     {    for (here = model->BSIM4instances; here!= NULL;
               here = here->BSIM4nextInstance) 
-	 {    if (here->BSIM4owner != ARCHme) continue;
-	      pParam = here->pParam;
+	 {    pParam = here->pParam;
               capbd = here->BSIM4capbd;
               capbs = here->BSIM4capbs;
               cgso = here->BSIM4cgso;
@@ -148,13 +150,12 @@ struct bsim4SizeDependParam *pParam;
                   FwdSumi = Gmi + Gmbsi;
                   RevSumi = 0.0;
 
-                  gbbdp = -(here->BSIM4gbds + here->BSIM4ggidld);
-                  gbbsp = here->BSIM4gbds + here->BSIM4gbgs + here->BSIM4gbbs
-                        - here->BSIM4ggidls;
-                  gbdpg = here->BSIM4gbgs + here->BSIM4ggidlg;
-                  gbdpdp = here->BSIM4gbds + here->BSIM4ggidld;
-                  gbdpb = here->BSIM4gbbs + here->BSIM4ggidlb;
-                  gbdpsp = -(gbdpg + gbdpdp + gbdpb) + here->BSIM4ggidls;
+                  gbbdp = -(here->BSIM4gbds);
+                  gbbsp = here->BSIM4gbds + here->BSIM4gbgs + here->BSIM4gbbs;
+                  gbdpg = here->BSIM4gbgs;
+                  gbdpdp = here->BSIM4gbds;
+                  gbdpb = here->BSIM4gbbs;
+                  gbdpsp = -(gbdpg + gbdpdp + gbdpb);
 
                   gbspdp = 0.0;
                   gbspg = 0.0;
@@ -292,19 +293,18 @@ struct bsim4SizeDependParam *pParam;
                   FwdSumi = 0.0;
                   RevSumi = -(Gmi + Gmbsi);
 
-                  gbbsp = -(here->BSIM4gbds + here->BSIM4ggidld);
-                  gbbdp = here->BSIM4gbds + here->BSIM4gbgs + here->BSIM4gbbs
-                        - here->BSIM4ggidls;
+                  gbbsp = -(here->BSIM4gbds);
+                  gbbdp = here->BSIM4gbds + here->BSIM4gbgs + here->BSIM4gbbs;
 
                   gbdpg = 0.0;
                   gbdpsp = 0.0;
                   gbdpb = 0.0;
                   gbdpdp = 0.0;
 
-                  gbspg = here->BSIM4gbgs + here->BSIM4ggidlg;
-                  gbspsp = here->BSIM4gbds + here->BSIM4ggidld;
-                  gbspb = here->BSIM4gbbs + here->BSIM4ggidlb;
-                  gbspdp = -(gbspg + gbspsp + gbspb) + here->BSIM4ggidls;
+                  gbspg = here->BSIM4gbgs;
+                  gbspsp = here->BSIM4gbds;
+                  gbspb = here->BSIM4gbbs;
+                  gbspdp = -(gbspg + gbspsp + gbspb);
 
                   if (model->BSIM4igcMod)
                   {   gIstotg = here->BSIM4gIgsg + here->BSIM4gIgcdg;
@@ -577,12 +577,37 @@ struct bsim4SizeDependParam *pParam;
               *(here->BSIM4BPdpPtr +1) += xcbdb;
               *(here->BSIM4BPdpPtr) -= gjbd - gbbdp + gIbtotd;
               *(here->BSIM4BPgpPtr +1) += xcbgb;
-              *(here->BSIM4BPgpPtr) -= here->BSIM4gbgs + here->BSIM4ggidlg + gIbtotg;
+              *(here->BSIM4BPgpPtr) -= here->BSIM4gbgs + gIbtotg;
               *(here->BSIM4BPspPtr +1) += xcbsb;
               *(here->BSIM4BPspPtr) -= gjbs - gbbsp + gIbtots;
               *(here->BSIM4BPbpPtr +1) += xcbbb;
               *(here->BSIM4BPbpPtr) += gjbd + gjbs - here->BSIM4gbbs
-				     - here->BSIM4ggidlb - gIbtotb;
+				     - gIbtotb;
+           ggidld = here->BSIM4ggidld;
+           ggidlg = here->BSIM4ggidlg;
+           ggidlb = here->BSIM4ggidlb;
+           ggislg = here->BSIM4ggislg;
+           ggisls = here->BSIM4ggisls;
+           ggislb = here->BSIM4ggislb;
+
+           /* stamp gidl */
+           (*(here->BSIM4DPdpPtr) += ggidld);
+           (*(here->BSIM4DPgpPtr) += ggidlg);
+           (*(here->BSIM4DPspPtr) -= (ggidlg + ggidld) + ggidlb);
+           (*(here->BSIM4DPbpPtr) += ggidlb);
+           (*(here->BSIM4BPdpPtr) -= ggidld);
+           (*(here->BSIM4BPgpPtr) -= ggidlg);
+           (*(here->BSIM4BPspPtr) += (ggidlg + ggidld) + ggidlb);
+           (*(here->BSIM4BPbpPtr) -= ggidlb);
+            /* stamp gisl */
+           (*(here->BSIM4SPdpPtr) -= (ggisls + ggislg) + ggislb);
+           (*(here->BSIM4SPgpPtr) += ggislg);
+           (*(here->BSIM4SPspPtr) += ggisls);
+           (*(here->BSIM4SPbpPtr) += ggislb);
+           (*(here->BSIM4BPdpPtr) += (ggislg + ggisls) + ggislb);
+           (*(here->BSIM4BPgpPtr) -= ggislg);
+           (*(here->BSIM4BPspPtr) -= ggisls);
+           (*(here->BSIM4BPbpPtr) -= ggislb);
 
               if (here->BSIM4rbodyMod)
               {   (*(here->BSIM4DPdbPtr +1) += xcdbdb);

@@ -1,23 +1,26 @@
-/**** BSIM4.1.0, Released by Weidong Liu 10/11/2000 ****/
+/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
 
 /**********
- * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4set.c of BSIM4.1.0.
- * Authors: Weidong Liu, Xiaodong Jin, Kanyu M. Cao, Chenming Hu.
+ * Copyright 2001 Regents of the University of California. All rights reserved.
+ * File: b4set.c of BSIM4.2.1.
+ * Author: 2000 Weidong Liu
+ * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
- *
- * Modified by Weidong Liu, 10/11/2000.
+ * Modified by Xuemei Xi, 04/06/2001.
+ * Modified by Xuemei Xi, 10/05/2001.
  **********/
 
 #include "ngspice.h"
 #include <stdio.h>
 #include <math.h>
+#include "jobdefs.h"
+#include "ftedefs.h"
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "bsim4def.h"
 #include "const.h"
 #include "sperror.h"
-
+#include "suffix.h"
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
@@ -29,17 +32,27 @@
 
 int
 BSIM4setup(matrix,inModel,ckt,states)
-SMPmatrix *matrix;
-GENmodel *inModel;
-CKTcircuit *ckt;
+register SMPmatrix *matrix;
+register GENmodel *inModel;
+register CKTcircuit *ckt;
 int *states;
 {
-BSIM4model *model = (BSIM4model*)inModel;
-BSIM4instance *here;
+register BSIM4model *model = (BSIM4model*)inModel;
+register BSIM4instance *here;
 int error;
 CKTnode *tmp;
-
 double tmp1, tmp2;
+int    noiseAnalGiven = 0, createNode;  /* Criteria for new node creation */
+double Rtot, DMCGeff, DMCIeff, DMDGeff;
+JOB   *job;
+
+    /* Search for a noise analysis request */
+    for (job = ((TSKtask *)(ft_curckt->ci_curTask))->jobs;job;job = job->JOBnextJob) {
+        if(strcmp(job->JOBname,"Noise Analysis")==0) {
+            noiseAnalGiven = 1;
+            break;
+        }
+    }
 
     /*  loop through all the BSIM4 device models */
     for( ; model != NULL; model = model->BSIM4nextModel )
@@ -147,7 +160,7 @@ double tmp1, tmp2;
         }
 
         if (!model->BSIM4versionGiven) 
-            model->BSIM4version = "4.1.0";
+            model->BSIM4version = "4.2.1";
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4toxeGiven)
@@ -1216,6 +1229,10 @@ double tmp1, tmp2;
            model->BSIM4dwc = model->BSIM4Wint;
         if (!model->BSIM4dlcGiven)  
            model->BSIM4dlc = model->BSIM4Lint;
+        if (!model->BSIM4xlGiven)  
+           model->BSIM4xl = 0.0;
+        if (!model->BSIM4xwGiven)  
+           model->BSIM4xw = 0.0;
         if (!model->BSIM4dlcigGiven)
            model->BSIM4dlcig = model->BSIM4Lint;
         if (!model->BSIM4dwjGiven)
@@ -1308,6 +1325,9 @@ double tmp1, tmp2;
             model->BSIM4af = 1.0;
         if (!model->BSIM4kfGiven)
             model->BSIM4kf = 0.0;
+        DMCGeff = model->BSIM4dmcg - model->BSIM4dmcgt;
+        DMCIeff = model->BSIM4dmci;
+        DMDGeff = model->BSIM4dmdg - model->BSIM4dmcgt;
 
 	/*
          * End processing models and begin to loop
@@ -1316,13 +1336,10 @@ double tmp1, tmp2;
 
         for (here = model->BSIM4instances; here != NULL ;
              here=here->BSIM4nextInstance) 
-	{   
-	    if (here->BSIM4owner == ARCHme) {
-	    /* allocate a chunk of the state vector */
+	{   /* allocate a chunk of the state vector */
             here->BSIM4states = *states;
             *states += BSIM4numStates;
-            }
-	    /* perform the parameter defaulting */
+            /* perform the parameter defaulting */
             if (!here->BSIM4lGiven)
                 here->BSIM4l = 5.0e-6;
             if (!here->BSIM4wGiven)
@@ -1403,8 +1420,29 @@ double tmp1, tmp2;
             }
 
             /* process drain series resistance */
-            if (((here->BSIM4rgeoMod != 0) || (model->BSIM4rdsMod != 0)
-                || (model->BSIM4tnoiMod != 0)) && (here->BSIM4dNodePrime == 0))
+            createNode = 0;
+            if ( (model->BSIM4rdsMod != 0)
+                            || (model->BSIM4tnoiMod != 0 && noiseAnalGiven))
+            {
+               createNode = 1;
+            } else if (model->BSIM4sheetResistance > 0)
+            {
+                     if (here->BSIM4drainSquaresGiven
+                                       && here->BSIM4drainSquares > 0)
+                     {
+                          createNode = 1;
+                     } else if (!here->BSIM4drainSquaresGiven
+                                       && (here->BSIM4rgeoMod != 0))
+                     {
+                          BSIM4RdseffGeo(here->BSIM4nf, here->BSIM4geoMod,
+                                  here->BSIM4rgeoMod, here->BSIM4min,
+                                  here->BSIM4w, model->BSIM4sheetResistance,
+                                  DMCGeff, DMCIeff, DMDGeff, 0, &Rtot);
+                          if(Rtot > 0)
+                             createNode = 1;
+                     }
+            }
+            if ( createNode != 0  && (here->BSIM4dNodePrime == 0))
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"drain");
                 if(error) return(error);
                 here->BSIM4dNodePrime = tmp->number;
@@ -1412,16 +1450,37 @@ double tmp1, tmp2;
             else
             {   here->BSIM4dNodePrime = here->BSIM4dNode;
             }
+            
             /* process source series resistance */
-            if (((here->BSIM4rgeoMod != 0) || (model->BSIM4rdsMod != 0)
-		|| (model->BSIM4tnoiMod != 0)) && (here->BSIM4sNodePrime == 0))
+            createNode = 0;
+            if ( (model->BSIM4rdsMod != 0)
+                            || (model->BSIM4tnoiMod != 0 && noiseAnalGiven))
+            {
+               createNode = 1;
+            } else if (model->BSIM4sheetResistance > 0)
+            {
+                     if (here->BSIM4sourceSquaresGiven
+                                        && here->BSIM4sourceSquares > 0)
+                     {
+                          createNode = 1;
+                     } else if (!here->BSIM4sourceSquaresGiven
+                                        && (here->BSIM4rgeoMod != 0))
+                     {
+                          BSIM4RdseffGeo(here->BSIM4nf, here->BSIM4geoMod,
+                                  here->BSIM4rgeoMod, here->BSIM4min,
+                                  here->BSIM4w, model->BSIM4sheetResistance,
+                                  DMCGeff, DMCIeff, DMDGeff, 1, &Rtot);
+                          if(Rtot > 0)
+                             createNode = 1;
+                     }
+            }
+            if ( createNode != 0  && here->BSIM4sNodePrime == 0)
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"source");
                 if(error) return(error);
                 here->BSIM4sNodePrime = tmp->number;
             }
             else
                 here->BSIM4sNodePrime = here->BSIM4sNode;
-            
 
             if ((here->BSIM4rgateMod > 0) && (here->BSIM4gNodePrime == 0))
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"gate");
@@ -1589,6 +1648,7 @@ BSIM4unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
+#ifndef HAS_BATCHSIM
     BSIM4model *model;
     BSIM4instance *here;
 
@@ -1612,5 +1672,6 @@ BSIM4unsetup(inModel,ckt)
             }
         }
     }
+#endif
     return OK;
 }
