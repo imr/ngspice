@@ -1,3 +1,7 @@
+2000-05-21  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* ngspice.texi: documentation update. AC parameter for resistor
+	  added.
 1999-09-06  Arno Peters <A.W.Peters@ieee.org>
 
 	* ngspice.texi: Added TeX equivalents for some formula.

@@ -963,7 +963,7 @@ in the direction of voltage drop).
  General form:
 
 @example
-  RXXXXXXX N1 N2 VALUE
+  RXXXXXXX N1 N2 VALUE <ac=val>
 @end example
 
 
@@ -972,13 +972,17 @@ in the direction of voltage drop).
 @example
   R1 1 2 100
   RC1 12 17 1K
+  R2 5 7 1K ac=2K
 @end example
 
 
 N1 and N2 are the two element nodes.  VALUE is the resistance (in ohms)
-and may be positive or negative but not zero.
+and may be positive or negative but not zero. It is possible to specify
+a different resistance value for ac calculations, using the "ac" 
+parameter. The value of ac resistance must not be zero. If you do not
+specify the "ac" parameter, it will be defaulted to VALUE. 
 
-
+Note: ac parameter can be considered "safe" since rework-11 
 
 
 @node  Semiconductor Resistors, Semiconductor Resistor Model (R), Resistors, Elementary Devices
@@ -987,7 +991,7 @@ and may be positive or negative but not zero.
  General form:
 
 @example
-  RXXXXXXX N1 N2 <VALUE> <MNAME> <L=LENGTH> <W=WIDTH> <TEMP=T>
+  RXXXXXXX N1 N2 <VALUE> <MNAME> <L=LENGTH> <W=WIDTH> <TEMP=T> <ac=val>
 @end example
 
 
