@@ -42,8 +42,7 @@ AC_ARG_ENABLE(nobypass,
 
 dnl --enable-capbypass : define CAPBYPASS for the code
 AC_ARG_ENABLE(capbypass,
-    [  --enable-capbypass      Bypass calculation of cbd/cbs in the mosfets if 
-                          the vbs/vbd voltages are unchanged])
+    [  --enable-capbypass      Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd voltages are unchanged])
 
 dnl --enable-capzerobypass : define CAPZEROBYPASS for the code
 AC_ARG_ENABLE(capzerobypass,
@@ -323,11 +322,11 @@ if test "$enable_nobypass" = "yes"; then
 	AC_DEFINE(NOBYPASS)
 	AC_MSG_RESULT(NOBYPASS option enabled)	
 fi
- if test "$enable_capbypass" = "yes"; then
+if test "$enable_capbypass" = "yes"; then
         AC_DEFINE(CAPBYPASS)
         AC_MSG_RESULT(CAPBYPASS option enabled)	
 fi 
- if test "$enable_capzerobypass" = "yes"; then
+if test "$enable_capzerobypass" = "yes"; then
         AC_DEFINE(CAPZEROBYPASS)
         AC_MSG_RESULT(CAPZEROBYPASS option enabled)	
 fi
@@ -425,7 +424,6 @@ if test "$enable_cider" = "yes"; then
    CIDERSCRIPTS="devload devaxis ciderinit"
    
 else
-
    CIDERLIB=""
    CIDERSIM=""
    NUMDEV=""
@@ -435,6 +433,8 @@ fi
 AC_SUBST(CIDERDIR)
 AC_SUBST(CIDERSIM)
 AC_SUBST(NUMDEV) 
+AC_SUBST(NUMDEVDIR)
+AC_SUBST(CIDERSCRIPTS)
 
 dnl Cluster option
 if test "$enable_cluster" = "yes"; then

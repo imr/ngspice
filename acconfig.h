@@ -18,7 +18,7 @@
 #undef NOBYPASS
 
 /* Define if we want to bypass cbd/cbs calculation for non varying vbs/vbd */
- #undef CAPBYPASS 
+#undef CAPBYPASS
  
 /* Define if we want to bypass cbd/cbs calculation if Czero is zero */
 #undef CAPZEROBYPASS 
