@@ -238,13 +238,15 @@ cp_vset(char *varname, char type, char *value)
 struct variable *
 cp_setparse(wordlist *wl)
 {
-    char *name, *val, *copyval, *s, *ss;
+    char *name=NULL, *val, *copyval, *s, *ss;
     double *td;
     struct variable *listv = NULL, *vv, *lv = NULL;
     struct variable *vars = NULL;
     int balance;
 
     while (wl) {
+        if(name)
+            tfree(name);
         name = cp_unquote(wl->wl_word);
         wl = wl->wl_next;
         if (((wl == NULL) || (*wl->wl_word != '=')) && 
@@ -357,6 +359,8 @@ cp_setparse(wordlist *wl)
         }
         tfree(copyval);/*DG: must free ss any way to avoid cp_unquote memory leak */
     }
+    if(name)
+        tfree(name);
     return (vars);
 }
 

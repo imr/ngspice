@@ -405,13 +405,16 @@ static struct pnode *
 parse(void)
 {
     struct element stack[STACKSIZE];
-    int sp = 0, st, i;
+    char *stringStack[STACKSIZE];
+    int sp = 0, st, i, fsp = 0;
     struct element *top, *next;
     struct pnode *pn, *lpn, *rpn;
     char rel;
 
     stack[0].e_token = END;
     next = lexer();
+    if(next->e_token == VALUE && next->e_type == STRING)
+	stringStack[fsp++] = next->e_string;
 
     while ((sp > 1) || (next->e_token != END)) {
         /* Find the top-most terminal. */
@@ -424,13 +427,15 @@ parse(void)
             case L:
             case E:
             /* Push the token read. */
-            if (sp == (STACKSIZE - 1)) {
+            if (sp == (STACKSIZE - 1) || fsp == (STACKSIZE-1)) {
                 fprintf(cp_err, "Error: stack overflow\n");
                 return (NULL);
             }
             bcopy((char *) next, (char *) &stack[++sp],
                     sizeof (struct element));
             next = lexer();
+	    if(next->e_token == VALUE && next->e_type == STRING)
+		stringStack[fsp++] = next->e_string;
             continue;
 
             case R:
@@ -506,6 +511,8 @@ parse(void)
         }
     }
     pn = makepnode(&stack[1]);
+    for(i=0;i<fsp;i++)
+	tfree(stringStack[i]);
     if (pn)
         return (pn);
 err:
@@ -815,6 +822,9 @@ free_pnode(struct pnode *t)
     free_pnode(t->pn_left);
     free_pnode(t->pn_right);
     free_pnode(t->pn_next);
+    tfree(t->pn_name);
+    if(t->pn_value)
+        vec_free(t->pn_value);
     tfree(t);
 }
 

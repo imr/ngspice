@@ -518,7 +518,6 @@ cp_addkword(int class, char *word)
                 class);
         return;
     }
-    word = copy(word);
     cc = clookup(word, &keywords[class], FALSE, TRUE);
     cc->cc_invalid = 0;
     return;

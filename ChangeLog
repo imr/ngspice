@@ -1,3 +1,9 @@
+2003-07-15 Stefan Jones <stefan.jones@multigig.com>
+
+	* /src/frontend/{com_let.c,com_set.c,evaluate.c,parse.c,variable.c}
+	src/frontend/parser/complete.c :
+	Memory leaks plugged
+
 2003-07-14 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/include/enh.h src/spicelib/analysis/{acan.c,cktload.c,cktsetup.c,cktsopt.c}

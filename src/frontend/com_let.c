@@ -101,6 +101,7 @@ com_let(wordlist *wl)
     if (!t) {
 	fprintf(cp_err, "Error: Can't evaluate %s\n", rhs);
         tfree(p);
+        free_pnode(nn);
         return;
     }
 
@@ -117,6 +118,7 @@ com_let(wordlist *wl)
 	if (numdims) {
 	    fprintf(cp_err, "Can't assign into a subindex of a new vector\n");
 	    tfree(p);
+           free_pnode(nn);
 	    return;
 	}
 
@@ -176,6 +178,7 @@ com_let(wordlist *wl)
 	if (newvec)
 	    n->v_flags &= ~VF_PERMANENT;
 	tfree(p);
+       free_pnode(nn);
 	return;
     }
     if (isreal(t) != isreal(n)) {
@@ -184,6 +187,7 @@ com_let(wordlist *wl)
 	if (newvec)
 	    n->v_flags &= ~VF_PERMANENT;
 	tfree(p);
+       free_pnode(nn);
 	return;
     } else if (isreal(t)) {
 	bcopy((char *) t->v_realdata, (char *) (n->v_realdata + offset),
@@ -201,7 +205,7 @@ com_let(wordlist *wl)
     if (newvec)
 	cp_addkword(CT_VECTOR, n->v_name);
 
-    /* XXXX Free t !?! */
     tfree(p);
+    free_pnode(nn);
     return;
 }

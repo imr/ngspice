@@ -13,7 +13,7 @@
 void
 com_set(wordlist *wl)
 {
-    struct variable *vars;
+    struct variable *vars, *tmp;
     char *s;
 
     if (wl == NULL) {
@@ -44,8 +44,14 @@ com_set(wordlist *wl)
 	    s = (char *) NULL;
         }
         cp_vset(vars->va_name, vars->va_type, s);
+        if(vars->va_type == VT_STRING)
+            tfree(s);
+        tfree(vars->va_name);
+        tmp = vars;
         vars = vars->va_next;
+        tfree(tmp);
     }
+	
     return;
 }
 
