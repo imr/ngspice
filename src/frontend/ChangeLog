@@ -1,3 +1,10 @@
+2000-07-18  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* com_ahelp.c, com_help.c, com_plot.c, com_set.c, com_unset.c:
+	Updated header file includes.
+
+	* quote.c: Code formatting changes.
+	
 2000-07-16  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* com_set.h: New header file.

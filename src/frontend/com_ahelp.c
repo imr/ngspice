@@ -1,4 +1,5 @@
-#include <stdlib.h>
+#include <config.h>
+#include <ngspice.h>
 
 #include <bool.h>
 #include <wordlist.h>

@@ -1,3 +1,8 @@
+2000-07-18  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* main.c: Added the call to the initialization function of the
+	devices.
+
 2000-07-07  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* parser/cshpar.c: Separated out com_chdir(), com_echo(),

@@ -161,6 +161,7 @@ int DEVmaxnum = 0;
 int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 {
 #ifdef SIMULATOR
+    spice_init_devices();
     SIMinfo.numDevices = DEVmaxnum = num_devices();
     SIMinfo.devices = devices_ptr();
 #endif /* SIMULATOR */

@@ -1,5 +1,5 @@
 #include <config.h>
-#include <stddef.h>
+#include <ngspice.h>
 
 #include <macros.h>
 #include <bool.h>

@@ -3,31 +3,28 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
-/*
- *
- * Wordlist manipulation stuff.
- */
+/* Wordlist manipulation stuff.  */
 
-#include "ngspice.h"
-#include "cpstd.h"
-#include "wlist.h"
+#include <config.h>
+#include <ngspice.h>
+#include <bool.h>
+#include <wordlist.h>
 
 
 /* Determine the length of a word list. */
-
 int
 wl_length(wordlist *wlist)
 {
-    register int i = 0;
-    register wordlist *wl;
+    int i = 0;
+    wordlist *wl;
 
     for (wl = wlist; wl; wl = wl->wl_next)
         i++;
     return (i);
 }
 
-/* Free the storage used by a word list. */
 
+/* Free the storage used by a word list. */
 void
 wl_free(wordlist *wlist)
 {
@@ -41,12 +38,12 @@ wl_free(wordlist *wlist)
     return;
 }
 
-/* Copy a wordlist and the words. */
 
+/* Copy a wordlist and the words. */
 wordlist *
 wl_copy(wordlist *wlist)
 {
-    register wordlist *wl, *nwl = NULL, *w = NULL;
+    wordlist *wl, *nwl = NULL, *w = NULL;
 
     for (wl = wlist; wl; wl = wl->wl_next) {
         if (nwl == NULL) {
@@ -64,10 +61,9 @@ wl_copy(wordlist *wlist)
     return (nwl);
 }
 
-/* Substitute a wordlist for one element of a wordlist, and return a pointer
- * to the last element of the inserted list.
- */
 
+/* Substitute a wordlist for one element of a wordlist, and return a
+ * pointer to the last element of the inserted list.  */
 wordlist *
 wl_splice(wordlist *elt, wordlist *list)
 {
@@ -88,27 +84,42 @@ wl_splice(wordlist *elt, wordlist *list)
     return (list);
 }
 
-/* Print a word list. (No \n at the end...) */
 
+
+static void
+printword(char *string, FILE *fp)
+{
+    char *s;
+
+    if (string)
+        for (s = string; *s; s++)
+            putc((strip(*s)), fp);
+    return;
+}
+
+
+/* Print a word list. (No \n at the end...) */
 void
 wl_print(wordlist *wlist, FILE *fp)
 {
     wordlist *wl;
 
     for (wl = wlist; wl; wl = wl->wl_next) {
-        cp_printword(wl->wl_word, fp);
+        printword(wl->wl_word, fp);
         if (wl->wl_next)
-            (void) putc(' ', fp);
+            putc(' ', fp);
     }
     return;
 }
 
-/* Turn an array of char *'s into a wordlist. */
 
+/* Turn an array of char *'s into a wordlist. */
 wordlist *
 wl_build(char **v)
 {
-    wordlist *wlist, *wl = NULL, *cwl;
+    wordlist *wlist = NULL;
+    wordlist *wl = NULL;
+    wordlist *cwl;
 
     while (*v) {
         cwl = alloc(struct wordlist);
@@ -142,8 +153,8 @@ wl_mkvec(wordlist *wl)
     return (v);
 }
 
-/* Nconc two wordlists together. */
 
+/* Nconc two wordlists together. */
 wordlist *
 wl_append(wordlist *wlist, wordlist *nwl)
 {
@@ -158,8 +169,8 @@ wl_append(wordlist *wlist, wordlist *nwl)
     return (wlist);
 }
 
-/* Reverse a word list. */
 
+/* Reverse a word list. */
 wordlist *
 wl_reverse(wordlist *wl)
 {
@@ -175,8 +186,8 @@ wl_reverse(wordlist *wl)
     return (w);
 }
 
-/* Convert a wordlist into a string. */
 
+/* Convert a wordlist into a string. */
 char *
 wl_flatten(wordlist *wl)
 {
@@ -198,14 +209,13 @@ wl_flatten(wordlist *wl)
     return (buf);
 }
 
-/* Return the nth element of a wordlist, or the last one if n is too big.
- * Numbering starts at 0... 
- */
 
+/* Return the nth element of a wordlist, or the last one if n is too
+ * big.  Numbering starts at 0...  */
 wordlist *
-wl_nthelem(register int i, wordlist *wl)
+wl_nthelem(int i, wordlist *wl)
 {
-    register wordlist *ww = wl;
+    wordlist *ww = wl;
 
     while ((i-- > 0) && ww->wl_next)
         ww = ww->wl_next;
@@ -226,8 +236,8 @@ wlcomp(const void *a, const void *b)
 void
 wl_sort(wordlist *wl)
 {
-    register int i = 0;
-    register wordlist *ww = wl;
+    int i = 0;
+    wordlist *ww = wl;
     char **stuff;
 
     for (i = 0; ww; i++)
@@ -246,7 +256,6 @@ wl_sort(wordlist *wl)
 
 
 /* Return a range of wordlist elements... */
-
 wordlist *
 wl_range(wordlist *wl, int low, int up)
 {

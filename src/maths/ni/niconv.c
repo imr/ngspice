@@ -59,12 +59,8 @@ NIconvTest(register CKTcircuit *ckt)
     }
 
 
-#ifdef NEWCONV
     i = CKTconvTest(ckt);
     if (i)
 	ckt->CKTtroubleNode = 0;
     return(i);
-#else /* NEWCONV */
-    return(0);
-#endif /* NEWCONV */
 }

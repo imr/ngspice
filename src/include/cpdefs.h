@@ -91,14 +91,6 @@ struct alias {
 #define CPC_BRR  004 /* Break word to right of character. */
 #define CPC_BRL  010 /* Break word to left of character. */
 
-/* For quoting individual characters. '' strings are all quoted, but `` and
- * "" strings are maintained as single words with the quotes around them.
- * Note that this won't work on non-ascii machines.
- */
-
-#define quote(c)    ((c) | 0200)
-#define strip(c)    ((c) & 0177)
-
 
 #define CT_ALIASES  1
 #define CT_LABEL    15

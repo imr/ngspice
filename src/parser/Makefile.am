@@ -19,9 +19,7 @@ libparser_a_SOURCES = \
 		numparse.h	\
 		std.c		\
 		unixcom.c	\
-		unixcom.h	\
-		wlist.c		\
-		wlist.h	
+		unixcom.h
 
 
 INCLUDES = -I$(top_srcdir)/src/include

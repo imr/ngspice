@@ -3,18 +3,17 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
-/*
- * This routine parses a number.
- */
+/* This routine parses a number.  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
+#include <config.h>
+#include <ngspice.h>
+#include <bool.h>
 #include "ftedefs.h"
 #include "numparse.h"
 
 
 static double
-pow10( double num)   /* Chris Inbody */
+pow10(double num)   /* Chris Inbody */
 {
     double d = 1.0;
 
@@ -32,10 +31,9 @@ bool ft_strictnumparse = FALSE;
  * is advanced to the end of the word. Returns NULL
  * if no number can be found or if there are trailing characters when
  * whole is TRUE.
+ *
  * If ft_strictnumparse is TRUE, and whole is FALSE, the first of the
- * trailing characters must be a '_'.
- */
-
+ * trailing characters must be a '_'.  */
 double *
 ft_numparse(char **s, bool whole)
 {

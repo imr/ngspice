@@ -20,7 +20,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 void
 cp_wstrip(char *str)
 {
-    char	c, d;
+    char c, d;
 
     if (str)
       while ((c = *str)) {   /* assign and test */

@@ -11,18 +11,26 @@ struct wordlist {
 
 typedef struct wordlist wordlist;
 
-extern char **wl_mkvec();
-extern char *wl_flatten();
-extern int wl_length();
-extern void wl_free();
-extern void wl_print();
-extern void wl_sort();
-extern wordlist *wl_append();
-extern wordlist *wl_build();
-extern wordlist *wl_copy();
-extern wordlist *wl_range();
-extern wordlist *wl_nthelem();
-extern wordlist *wl_reverse();
-extern wordlist *wl_splice();
+int wl_length(wordlist *wlist);
+void wl_free(wordlist *wlist);
+wordlist * wl_copy(wordlist *wlist);
+wordlist * wl_splice(wordlist *elt, wordlist *list);
+void wl_print(wordlist *wlist, FILE *fp);
+wordlist * wl_build(char **v);
+char ** wl_mkvec(wordlist *wl);
+wordlist * wl_append(wordlist *wlist, wordlist *nwl);
+wordlist * wl_reverse(wordlist *wl);
+char * wl_flatten(wordlist *wl);
+wordlist * wl_nthelem(int i, wordlist *wl);
+void wl_sort(wordlist *wl);
+wordlist * wl_range(wordlist *wl, int low, int up);
+
+
+/* For quoting individual characters. '' strings are all quoted, but
+ * `` and "" strings are maintained as single words with the quotes
+ * around them.  Note that this won't work on non-ascii machines.  */
+#define quote(c)    ((c) | 0200)
+#define strip(c)    ((c) & 0177)
+
 
 #endif
