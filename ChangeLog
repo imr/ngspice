@@ -1,3 +1,24 @@
+2003-08-24  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/maths/sparse/, src/include/complex.h: Added a function
+	  needed by CIDER in sparse library and started to isolate as
+	  much as possible sparse code from spice, reverting some of
+	  the work did in the previous releases. The idea is to design
+	  an interface between spice and a generic matrix library.
+	  In the future the current sparse code will be upgraded to
+	  version 1.4 (http://sparse.sourceforge.net).
+	
+	  src/frontend/misccoms.c, doc/ngspice.texi: Modified "version" 
+	  command to include compilation information when called with
+	  the new "-f" option.
+	  
+	  src/frontend/(parse.c,define.c): Applied Stefan patches
+	  that close a memory leak.
+	  
+	  src/spicelib/parser/inpgmod.c: Patched Stuart INPgetNetTok
+	  function to correct a parsing error emerged in pole-zero 
+	  analysis.  
+
 2003-08-14  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* configure.in, src/main.c, src/misc/tilde.c, src/misc/tilde.h,

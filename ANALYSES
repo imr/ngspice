@@ -1,1 +1,24 @@
-This file will contain a list of implemented analyses.
+ANALYSES
+-----------------------------------------------------------------
+
+This file lists the analyses currently implemented into ngspice.
+
+AC    : Small-signal frequency response analysis
+
+DC    : DC-sweep analysis
+        + Added resistance sweep as in spice 2.
+        * Note: It is possible to perform a generic parametric sweep ?
+
+DISTO : Small signal distorsion analysis
+
+NOISE : Noise analysis
+
+OP    : Operating point analysis
+
+PZ    : Pole-Zero analysis
+
+SENS  : Sensitivity analysis
+
+TF    : Transfer function analysis
+
+TRAN  : Transient analysis
