@@ -1,3 +1,7 @@
+#Tcl package index file, version %VERSION% 
+
+
+
 
 namespace eval spicewish {
     
@@ -13,7 +17,7 @@ namespace eval spicewish {
     #------------------------------------------------
     # nutmeg extensions  (eqivalent functions to nutmeg)
     # (requires  readline, 
-
+    
     package require tclreadline
     package require Tclx
     
@@ -172,7 +176,7 @@ namespace eval spicewish {
     # returns list of spice nodes
     #
     proc listnodes { } { 
-	#puts listnodes
+	puts listnodes
 	set list ""
 	if { $::spice::steps_completed <  1 } { spice::step  1 }
 
@@ -233,8 +237,8 @@ namespace eval spicewish {
 	$tl.scope.g legend configure -activerelief raised ;# graph legend config 
 
 	# zoom controls
-	#ZoomStack $::graph_to_use Shift-Button-1 Shift-Button-3
-	ZoomStack $::graph_to_use Button-1 Button-3
+	ZoomStack $::graph_to_use Shift-Button-1 Shift-Button-3
+
 
 	blt::table $tl.scope \
 	    0,0 $tl.scope.tp -fill both \
@@ -246,11 +250,8 @@ namespace eval spicewish {
 	
 	
 	# graph legend active on button 3
-#	$::graph_to_use legend bind all <Button-1> { %W legend activate [%W legend get current] }
-#	$::graph_to_use legend bind all <ButtonRelease-1> {  %W legend deactivate [%W legend get current]}
-	$::graph_to_use legend bind all <Shift-Button-1> { %W legend activate [%W legend get current] }
-	$::graph_to_use legend bind all <Shift-ButtonRelease-1> {  %W legend deactivate [%W legend get current]}
-
+	$::graph_to_use legend bind all <Button-1> { %W legend activate [%W legend get current] }
+	$::graph_to_use legend bind all <ButtonRelease-1> {  %W legend deactivate [%W legend get current]}
 	
 	# creates the drag and drop packet for each of the plots in the legend
 	blt::drag&drop source  $::graph_to_use -packagecmd {spicewish::make_package %t %W } -button 1
@@ -702,7 +703,7 @@ namespace eval spicewish {
 	    set args [ string range $args 0 [ expr [ string length $args] - 2] ]
 	}
 	
-	#puts "list add : $args"
+	puts "list add : $args"
 	
 	# blt plots need re work so that there are more than 6 colours then grey 
 	# spice::bltplot $args
@@ -1318,7 +1319,7 @@ namespace eval spicewish {
     
     #------------------------------------------------------------------------------------------------------------
     
-    set ::spice_run 0  ;#- not yet run
+    #set ::spice_run 0  ;#- not yet run
     set ::spicefilename "" ;#- complete name of spice file
 
     #-------------------------------------------------------------------------------------------------------------
@@ -1361,16 +1362,18 @@ namespace eval spicewish {
 	    wm title . "spicewish - $spicefile"
 	}
 	
+	wm deiconify .  
+
 	#pack the gui
 	pack [ frame .control_butts] -side left -anchor n
-	
+
 	pack [ button .control_butts.b_stop -text "STOP " -command { spice::stop }] -fill x
 
 	pack [ button .control_butts.b_go   -text "Run" -command { 
 
 	    if {  $::spice::steps_completed < 1 } { 
 		spice::bg run 
-		set spice_run 1 ;#- has now run once, so next time resume
+		#set spice_run 1 ;#- has now run once, so next time resume
 		.control_butts.b_go configure -text "Resume"
 	    } else { 
 		spice::bg resume
@@ -1443,8 +1446,8 @@ namespace eval spicewish {
 		    spice::source $::spicefilename
 		    
 		    after 100
-		    
-		    set ::spice_run 0 
+		    spice::step 1
+		    #set ::spice_run 0 
 		    restore_all_nutmeg_windows
 		}
 		#------------------------------------------------
@@ -1726,7 +1729,7 @@ namespace eval spicewish {
 	    foreach node $::OLD_plots  {
 		set node [ string tolower $node ]
 		set node "$node\_old"
-		#puts "node : $node "
+		puts "node : $node "
 		.trace_selection_box.tnb.saved.hierbox insert -at 0 end $node -labelfont {times 10} 
 	    }	    
 	}
@@ -1895,6 +1898,13 @@ namespace eval spicewish {
     
     #-----------------------------------------------------------------------------------------------------------------
     
+    #set version "0.2.7"
+    #set libdir  "/usr/lib"
+    #set version "%VERSION%"
+    #set libdir  "%LIB_DIR%"
+    #package ifneeded spice $version [list Loadspice $version $libdir]
+    
+    #-----------------------------------------------------------------------------------------------------------------
     # window management routines
     
     proc save_all_nutmeg_windows { { mode ""} } {
@@ -2122,11 +2132,11 @@ namespace eval spicewish {
     proc spice_run_steps {pre_run_steps { progressBar "" } } {
 
 	# starts spice
-	if {$::spice_run == 1} {
+	if {$::spice::steps_completed < 1 } {
 	    if { [$spice::steps_completed] > $pre_run_steps } { return }	
 	    spice::bg resume
 	} else {	
-	    set ::spice_run 1
+	    #set ::spice_run 1
 	    spice::bg run
 	}
 	
@@ -3039,7 +3049,7 @@ namespace eval spicewish {
 			    temp_vector_Y index $i [ expr ( [temp_vector_Y index $i] / $slot_scale_factor ) + $slot_start_position ]
 			}
 		    }
-		   # puts " taken [ expr [ clock seconds ] - $startTime ] - $startTime - [ clock seconds ]  $scope_trace  "
+		    puts " taken [ expr [ clock seconds ] - $startTime ] - $startTime - [ clock seconds ]  $scope_trace  "
 		    #--------------
 		    
 		    temp_vector_Y dup temp2 
@@ -3145,10 +3155,10 @@ namespace eval spicewish {
 	for { set i 0 } { $i < 8 } { incr i } {
 	    set rowSpan($i) [ lindex [ grid rowconfigure $w $i ] 1 ]
 	    set rowsHeight [ expr $rowsHeight + $rowSpan($i) ]
-	  #  puts " row : $i span : [ lindex [ grid rowconfigure $w $i ] 1 ] "
+	    puts " row : $i span : [ lindex [ grid rowconfigure $w $i ] 1 ] "
 	}
 	set rowsHeightScaleFactor [ expr $rowsHeight / 100.0 ]
-	#puts " factor $rowsHeightScaleFactor"
+	puts " factor $rowsHeightScaleFactor"
 	#----------
 	set columns 3  ;#- will give 2^rows of total choices for trace positons.
 	set rows [expr pow(2, $columns) ] ;# -this many rows (see above) 
@@ -3168,7 +3178,7 @@ namespace eval spicewish {
 		for { set t $slotStartRow } { $t < ( $slotStartRow +$slotsRowSpan)  } { incr t } { 
 		    set slotHeight [expr $slotHeight  - ( $rowSpan($t) / $rowsHeightScaleFactor)   ] 
 		}
-		#puts "$row_cnt $slotsRowSpan $slotStartRow -- $arrh $slotHeight "
+		puts "$row_cnt $slotsRowSpan $slotStartRow -- $arrh $slotHeight "
 		set slotStartRow [ expr $slotStartRow + $slotsRowSpan ]
 		
 	    }
@@ -3381,7 +3391,5 @@ namespace eval spicewish {
     }
 
     ::tclreadline::readline customcompleter  "spicewish::plot_command_readline_completer" ;#- see routine above
-
-    namespace export plot
 
 }
