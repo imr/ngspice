@@ -13,7 +13,6 @@ SUBDIRS = \
 	cccs	\
 	ccvs	\
 	csw	\
-	devsup	\
 	dio	\
 	ind	\
 	isrc	\
@@ -36,8 +35,13 @@ SUBDIRS = \
 lib_LIBRARIES = libdev.a
 
 libdev_a_SOURCES = 	\
-		dev.c	\
-		dev.h
+	dev.c		\
+	dev.h		\
+	devsup.c	\
+	cktaccept.c	\
+	cktaccept.h	\
+	cktcrte.c	\
+	cktinit.c
 
 INCLUDES = -I$(top_srcdir)/src/include
 

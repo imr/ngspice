@@ -5,6 +5,8 @@
    Author: 1985 Wayne A. Christopher
 
    The main routine for ngspice */
+#include <ngspice.h>
+
 #include <stdio.h>
 #include <setjmp.h>
 #include <signal.h>
@@ -14,16 +16,12 @@
 #define _GNU_SOURCE
 #include <getopt.h>
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "inpdefs.h"
-#include "iferrmsg.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "ftedev.h"
-#include "ftedebug.h"
-#include "const.h"
-#include "devices/dev.h"
+#include <iferrmsg.h>
+#include <ftedefs.h>
+#include <devdefs.h>
+#include <devices/dev.h>
+#include <misc/ivars.h>
+#include <frontend/resource.h>
 
 #ifdef HAVE_PWD_H
 #include <pwd.h>

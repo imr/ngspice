@@ -6,15 +6,15 @@ Author: 1985 Thomas L. Quarles
 /* subroutine to do DC TRANSIENT analysis    
         --- ONLY, unlike spice2 routine with the same name! */
 
-#include "ngspice.h"
-#include <stdio.h>
-#include "trandefs.h"
-#include "cktdefs.h"
-#include "sperror.h"
+#include <config.h>
+#include <cktdefs.h>
+#include <cktaccept.h>
+#include <trandefs.h>
+#include <sperror.h>
 
 int
-DCtran(CKTcircuit *ckt, int restart) 
-/* restart: forced restart flag */
+DCtran(CKTcircuit *ckt,
+       int restart)		/* forced restart flag */
 {
     int i;
     double olddelta;

@@ -212,7 +212,6 @@ src/devices/cap/Makefile	\
 src/devices/cccs/Makefile	\
 src/devices/ccvs/Makefile	\
 src/devices/csw/Makefile	\
-src/devices/devsup/Makefile	\
 src/devices/dio/Makefile	\
 src/devices/ind/Makefile	\
 src/devices/isrc/Makefile	\

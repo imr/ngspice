@@ -6,9 +6,9 @@ Standards conformance
 ---------------------
 
 Add proper copyright headers to every source, header, documentation
-and other files
+and other files.
 
-Fix all compiler warnings
+Fix all compiler warnings.
 
 Remove smktemp() in favor of tmpfile() or other ANSI C equivalent;
 Note: different symantics!
@@ -20,8 +20,8 @@ available.
 Usability issues
 ------------------
 
-Plug all memory leaks (use debauch from
-http://quorum.tamu.edu/jon/gnu/ to find them)
+Plug all memory leaks; use debauch (http://quorum.tamu.edu/jon/gnu/)
+or another memory checker to find them.
 
 Either get help program functioning again; OR interface to webbrowser,
 info reader and get rid of all help-related code.  Option 2 is the
@@ -31,15 +31,17 @@ most appealing.
 Refactorings
 ------------
 
-Make devices dynamically loadable (perhaps use framework from glib)
+Make devices dynamically loadable (perhaps use framework from glib).
 
-Separate out circuit builder from the analysis code and put it in a
-separate src/builder directory
+Separate out circuit builder from the analysis code and put it in the
+devices directory (rename devices directory to simbuilder at some
+point). [PARTIAL]
 
-Separate ngspice and nutmeg; i.e., no more SIMULATOR define
+Separate ngspice and nutmeg; i.e., no more SIMULATOR define.  Dispose
+of nutmeg all together once the devices are plugins.
 
 Integrate bsim3, bsim3v1, bsim3v2 to use a single codebase instead of
-three only slighty differing implementations
+three only slighty differing implementations.
 
 Separate frontend commands from supporting code.  Command files
 start with com_*. [PARTIAL]

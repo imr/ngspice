@@ -4,31 +4,31 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 /* CKTaccept(ckt)
- * this is a driver program to iterate through all the various
- * accept functions provided for the circuit elements in the
- * given circuit 
- */
+ *
+ * this is a driver program to iterate through all the various accept
+ * functions provided for the circuit elements in the given circuit */
 
-#include "ngspice.h"
-#include <stdio.h>
-#include "smpdefs.h"
-#include "cktdefs.h"
-#include "devdefs.h"
-#include "sperror.h"
+#include <config.h>
+#include <devdefs.h>
+#include <sperror.h>
+#include <ifsim.h>
+#include <devdefs.h>
 
+#include "dev.h"
 
 int
 CKTaccept(CKTcircuit *ckt)
 {
-    extern SPICEdev *DEVices[];
-
     int i;
     int error;
+    SPICEdev **devs;
 
-    for (i=0;i<DEVmaxnum;i++) {
-        if ( ((*DEVices[i]).DEVaccept != NULL) && (ckt->CKThead[i] != NULL) ){
-            error = (*((*DEVices[i]).DEVaccept))(ckt,ckt->CKThead[i]);
-            if(error) return(error);
+    devs = devices();
+    for (i = 0; i < DEVmaxnum; i++) {
+        if ( ((*devs[i]).DEVaccept != NULL) && (ckt->CKThead[i] != NULL) ){
+            error = (*((*devs[i]).DEVaccept))(ckt,ckt->CKThead[i]);
+            if (error)
+		return(error);
         }
     }
 #ifdef PREDICTOR

@@ -26,7 +26,6 @@ DYNAMIC_DEVICELIBS = 			\
 	devices/ccvs/libccvs.la		\
 	devices/ccvs/libccvs.la		\
 	devices/csw/libcsw.la		\
-	devices/devsup/libdevsup.la	\
 	devices/dio/libdio.la		\
 	devices/ind/libind.la		\
 	devices/isrc/libisrc.la		\
@@ -57,9 +56,9 @@ ngspice_LDADD = \
 	spice.o \
 	frontend/libfte.a \
 	frontend/plotting/libplotting.a \
-	devices/libdev.a \
 	$(DYNAMIC_DEVICELIBS) \
 	analysis/libckt.a \
+	devices/libdev.a \
 	parser/libparser.a \
 	hlp/libhlp.a \
 	circuit/libinp.a \

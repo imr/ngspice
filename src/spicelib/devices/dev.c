@@ -29,8 +29,10 @@
 
 #include <config.h>
 
+#include <devdefs.h>
+#include <ifsim.h>
+
 #include "dev.h"
-#include "devdefs.h"
 
 /* Enable the following devices */
 #define DEV_asrc
@@ -160,4 +162,10 @@ IFdevice **
 devices_ptr(void)
 {
     return (IFdevice **) DEVices;
+}
+
+SPICEdev **
+devices(void)
+{
+    return DEVices;
 }

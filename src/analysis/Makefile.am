@@ -6,7 +6,6 @@ libckt_a_SOURCES = \
 		acan.c		\
 		acaskq.c	\
 		acsetp.c	\
-		cktaccpt.c	\
 		cktacct.c	\
 		cktacdum.c	\
 		cktask.c	\
@@ -15,7 +14,6 @@ libckt_a_SOURCES = \
 		cktbindn.c	\
 		cktbkdum.c	\
 		cktclrbk.c	\
-		cktcrte.c	\
 		cktdelt.c	\
 		cktdest.c	\
 		cktdisto.c	\
@@ -33,7 +31,6 @@ libckt_a_SOURCES = \
 		cktgrnd.c	\
 		ckti2nod.c	\
 		cktic.c		\
-		cktinit.c	\
 		cktlnkeq.c	\
 		cktload.c	\
 		cktmapn.c	\
