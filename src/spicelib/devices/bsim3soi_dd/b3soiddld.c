@@ -3621,24 +3621,6 @@ here->B3SOIDDdum4 = Ic;
 		      {   ckt->CKTnoncon++;
 if (here->B3SOIDDdebugMod > 2)
    fprintf(fpdebug, "Check is on, noncon=%d\n", ckt->CKTnoncon++);
-#ifndef NEWCONV
-		      } 
-		      else
-		      {   tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(here->B3SOIDDcd))
-			      + ckt->CKTabstol;
-			  if (fabs(cdhat - here->B3SOIDDcd) >= tol)
-			  {   ckt->CKTnoncon++;
-			  }
-			  else
-			  {   tol = ckt->CKTreltol * MAX(fabs(cbhat), 
-				    fabs(here->B3SOIDDcbs + here->B3SOIDDcbd)) 
-				    + ckt->CKTabstol;
-			      if (fabs(cbhat - (here->B3SOIDDcbs + here->B3SOIDDcbd)) 
-				  > tol)
-			      {   ckt->CKTnoncon++;
-			      }
-			  }
-#endif /* NEWCONV */
 		      }
 		  }
 

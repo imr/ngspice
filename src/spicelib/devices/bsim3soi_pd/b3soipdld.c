@@ -4043,31 +4043,6 @@ B3SOIPDload (inModel, ckt)
 	      if (Check == 1)
 		{
 		  ckt->CKTnoncon++;
-#ifndef NEWCONV
-		}
-	      else
-		{
-		  tol =
-		    ckt->CKTreltol * MAX (fabs (cdhat),
-					  fabs (here->B3SOIPDcd)) +
-		    ckt->CKTabstol;
-		  if (fabs (cdhat - here->B3SOIPDcd) >= tol)
-		    {
-		      ckt->CKTnoncon++;
-		    }
-		  else
-		    {
-		      tol = ckt->CKTreltol * MAX (fabs (cbhat),
-						  fabs (here->B3SOIPDcbs +
-							here->B3SOIPDcbd)) +
-			ckt->CKTabstol;
-		      if (fabs (cbhat - (here->B3SOIPDcbs + here->B3SOIPDcbd))
-			  > tol)
-			{
-			  ckt->CKTnoncon++;
-			}
-		    }
-#endif /* NEWCONV */
 		}
 	    }
 
