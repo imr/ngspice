@@ -1,6 +1,6 @@
 *Model Card for BSIMFD2.0, floating body FD SOI NMOS
 *Released on 2/15/99
-.Model N1  NMOS Level= 11 
+.Model N1  NMOS Level= 55 
 +TNOM = 27        TOX = 4.5E-09    TSI = 5e-8       TBOX = 8E-08            
 +MOBMOD = 0       CAPMOD = 3       SHMOD = 0
 +PARAMCHK=0       WINT = 0         LINT = -2E-08    
@@ -30,7 +30,7 @@
 +PCLM = 2.9       PVAG = 12        PDIBLC1 = .18    PDIBLC2 = .004              
 +PDIBLCB = -.234  DROUT = .2       
 +DELTA = .01      ETA0 = .01       ETAB = 0   
-+DSUB = .3        RTH0     = .006
++DSUB = .3        RTH0 94    = .006
 +CLC = .0000001   CLE = .6         CF = 1E-20       CKAPPA = .6               
 +CGDL = 1E-20     CGSL = 1E-20     KT1 = -.3        KT1L = 0                
 +KT2 = .022       UTE = -1.5       UA1 = 4.31E-09   UB1 = -7.61E-18         
