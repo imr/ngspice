@@ -54,7 +54,7 @@ typedef struct sINDinstance {
     unsigned INDmGiven     : 1;   /* flag to indicate multiplier given */
     unsigned INDtempGiven  : 1;   /* flag to indicate operating temp. given */
     unsigned INDdtempGiven : 1;   /* flag to indicate delta temp. given */
-    unsigned INDscaleGiven : 1;   /* flsg to indicate scale factor given */
+    unsigned INDscaleGiven : 1;   /* flag to indicate scale factor given */
     int  INDsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
 
