@@ -1,3 +1,6 @@
+2003-07-08  Stefan Jones <stefan.jones@multigig.com>
+	* quote.c: return the pointer to the start of malloced 
+	memory so it can be freeded
 2003-05-02  Stuart Brorson <SDB@cloud9.net>
  	*  Major changes in subckt.c to handle POLY attributes in
  	dependent sources.  Added new case to switch in "translate" to
