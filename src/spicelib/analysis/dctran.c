@@ -7,6 +7,7 @@ Modified: 2000  AlansFixes
 /* subroutine to do DC TRANSIENT analysis    
         --- ONLY, unlike spice2 routine with the same name! */
 
+#include<ngspice.h>
 #include <config.h>
 #include <cktdefs.h>
 #include <cktaccept.h>
