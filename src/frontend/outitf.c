@@ -20,6 +20,7 @@ Author: 1988 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ifsim.h"
 #include "jobdefs.h"
 #include "iferrmsg.h"
+#include "cktdefs.h"
 
 #include "circuits.h"
 #include "outitf.h"
@@ -55,6 +56,10 @@ static void freeRun(runDesc *run);
 
 #define DOUBLE_PRECISION    15
 
+
+static clock_t lastclock, currclock;
+static float *rowbuf;
+static int column, rowbuflen;
 
 
 
@@ -110,7 +115,9 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
     int numsaves;
     int i, j, depind;
     char namebuf[BSIZE_SP], parambuf[BSIZE_SP], depbuf[BSIZE_SP];
+    char *ch, tmpname[BSIZE_SP]; /* AF */
     bool saveall = TRUE;
+    bool savealli = TRUE;        /* AF */
     char *an_name;
 
     /* Check to see if we want to print informational data. */
@@ -144,10 +151,16 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
                 savesused[i] = TRUE;
                 continue;
             }
-            if (cieq(saves[i].name, "all")) {
+            if (cieq(saves[i].name, "all") || cieq(saves[i].name, "allv" )) {
                 saveall = TRUE;
                 savesused[i] = TRUE;
                 saves[i].used = 1;
+                continue;
+            }
+            if (cieq(saves[i].name, "alli")) {  /*AF */
+                savealli = TRUE;
+                savesused[i] = TRUE;
+		saves[i].used = 1;
                 continue;
             }
         }
@@ -183,9 +196,75 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
     } else {
         for (i = 0; i < numNames; i++)
             if (!refName || !name_eq(dataNames[i], refName)) {
+            	        if (!strstr(dataNames[i], "#internal") && /* AF */
+                    !strstr(dataNames[i], "#source") &&
+                    !strstr(dataNames[i], "#drain") &&
+                    !strstr(dataNames[i], "#collector") &&
+                    !strstr(dataNames[i], "#emitter") &&
+                    !strstr(dataNames[i], "#base")) {
                 addDataDesc(run, dataNames[i], dataType, i);
+                }
             }
     }
+
+
+ /* Pass 1 and a bit. */
+    if (savealli) {
+          depind=0;
+          for (i = 0; i < numNames; i++) {
+                if (strstr(dataNames[i], "#internal") ||
+                    strstr(dataNames[i], "#source") ||
+                    strstr(dataNames[i], "#drain") ||
+                    strstr(dataNames[i], "#collector") ||
+                    strstr(dataNames[i], "#emitter") ||
+                    strstr(dataNames[i], "#base")) {
+                  tmpname[0]='@';
+                  tmpname[1]='\0';
+                  strncat(tmpname, dataNames[i], BSIZE_SP-1);
+                  ch=strchr(tmpname, '#');
+
+                  if (strstr(ch, "#collector")!=NULL) {
+                     strcpy(ch, "[ic]");
+                  } else if (strstr(ch, "#base")!=NULL) {
+                     strcpy(ch, "[ib]");
+                  } else if (strstr(ch, "#emitter")!=NULL) {
+                     strcpy(ch, "[ie]");
+                     if (parseSpecial(tmpname, namebuf, parambuf, depbuf)) {
+                       addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
+                     };
+                     strcpy(ch, "[is]");
+                  } else if (strstr(ch, "#drain")!=NULL) {
+                     strcpy(ch, "[id]");
+                     if (parseSpecial(tmpname, namebuf, parambuf, depbuf)) {
+                       addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
+                     };
+                     strcpy(ch, "[ig]");
+                  } else if (strstr(ch, "#source")!=NULL) {
+                     strcpy(ch, "[is]");
+                     if (parseSpecial(tmpname, namebuf, parambuf, depbuf)) {
+                       addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
+                     };
+                     strcpy(ch, "[ib]");
+                  } else
+                      if ((strstr(ch, "#internal")!=NULL)&&(tmpname[1]=='d')) {
+                         strcpy(ch, "[id]");
+                      } else {
+                          fprintf(cp_err,
+                              "Debug: could output current for %s\n", tmpname);
+                          continue;
+                  };
+                  if (parseSpecial(tmpname, namebuf, parambuf, depbuf)) {
+                    if (*depbuf) { fprintf( stderr,
+                    "Warning : unexpected dependant variable on %s\n", tmpname);
+                    } else {
+                      addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
+                    }
+                  }
+                }
+          }
+    }
+
+
 
     /* Pass 2. */
     for (i = 0; i < numsaves; i++) {
@@ -344,12 +423,23 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
         fileStartPoint(run->fp, run->binary, run->pointCount);
 
         if (run->refIndex != -1) {
-          if (run->isComplex)
+          if (run->isComplex) {
             fileAddComplexValue(run->fp, run->binary, refValue->cValue);
-          else
+            currclock = clock();
+            if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
+            	fprintf(stderr, " Reference value : % 12.5e\r",
+                            refValue->cValue.real);
+               lastclock = currclock;
+               }
+         } else {
             fileAddRealValue(run->fp, run->binary, refValue->rValue);
+            currclock = clock();
+            if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
+               fprintf(stderr, " Reference value : % 12.5e\r", refValue->rValue);
+               lastclock = currclock;
+            }      	
         }
-
+     }
         for (i = 0; i < run->numData; i++) {
             /* we've already printed reference vec first */
             if (run->data[i].outIndex == -1) continue;
@@ -368,7 +458,24 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             } else {
                 /* should pre-check instance */
                 if (!getSpecial(&run->data[i], run, &val))
+                    
+                    {
+                    if (run->pointCount==1) 
+                      fprintf(stderr, "Warning: unrecognized variable - %s\n",
+                          run->data[i].name);
+                    if (run->isComplex) {
+                        val.cValue.real=0;
+                        val.cValue.imag=0;
+                        fileAddComplexValue(run->fp, run->binary,
+                           val.cValue);
+                    } else {
+                        val.rValue=0;
+                        fileAddRealValue(run->fp, run->binary,
+                           val.rValue);
+                    };
                     continue;
+                  };
+                  
                 if (run->data[i].type == IF_REAL)
                   fileAddRealValue(run->fp, run->binary,
                      val.rValue);
@@ -380,6 +487,10 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             }
         }
         fileEndPoint(run->fp, run->binary);
+        if (ferror(run->fp)) {
+             fprintf(stderr, "Warning: rawfile write error !!\n");
+             shouldstop=TRUE;
+        };
     } else {
         for (i = 0; i < run->numData; i++) {
             if (run->data[i].outIndex == -1) {
@@ -529,8 +640,13 @@ static void
 fileInit(runDesc *run)
 {
     char buf[513];
-    int i;
+    int i, tmp, sweep;
+    float ftmp;
+    time_t time_of_day;
+    CKTcircuit *ckt;
 
+     lastclock = clock();
+     
     /* This is a hack. */
     run->isComplex = FALSE;
     for (i = 0; i < run->numData; i++)
@@ -538,51 +654,197 @@ fileInit(runDesc *run)
             run->isComplex = TRUE;
 
     i = 0;
+    
+    
+    
+    /*  Write PROBE version marker */
+
+    tmp=0xFFFFFFFF;
+    fwrite((char *)&tmp,sizeof(tmp),1,run->fp);
+    i += sizeof(tmp);
+    tmp=0xF3FFFFFF;
+    fwrite((char *)&tmp,sizeof(tmp),1,run->fp);
+    i += sizeof(tmp);
+    
+    
+    /*  Write Title String */
+    
     sprintf(buf, "Title: %s\n", run->name);
     i += strlen(buf);
     fputs(buf, run->fp);
-    sprintf(buf, "Date: %s\n", datestring());
+    
+    
+    /*  Write \0 for Title string and \0 for empty SubTitle string */
+
+    tmp=0;
+    fwrite((char *)&tmp,2,1,run->fp);
+    i += 2;
+    
+    
+    /*  get the time and date */
+
+    time_of_day = time( NULL );
+    
+    
+    /*  Write Time String */
+
+    strftime( buf, 9, "%H:%M:%S",
+               localtime( &time_of_day ) );
+
     i += strlen(buf);
     fputs(buf, run->fp);
-    sprintf(buf, "Plotname: %s\n", run->type);
+    tmp=0;
+    fwrite((char *)&tmp,1,1,run->fp);
+    i += 1;    
+    
+    
+    /*  Write Date String */
+
+    strftime( buf, 9, "%d/%m/%y",
+               localtime( &time_of_day ) );
+
     i += strlen(buf);
     fputs(buf, run->fp);
-    sprintf(buf, "Flags: %s\n", run->isComplex ? "complex" : "real");
+    tmp=0;
+    fwrite((char *)&tmp,1,1,run->fp);
+    i += 1;
+
+
+     /*  Write Temperature */
+
+    ckt=run->circuit;
+    ftmp=ckt->CKTtemp-273.15;
+    fwrite((char *)&ftmp,sizeof(ftmp),1,run->fp);
+    i += sizeof(ftmp);
+    
+    
+    /*  Write Analysis Type */
+
+    if (strncasecmp(run->type,"AC",2)==0) {
+          sprintf(buf, "AC Sweep");
+          sweep=2;
+    } else if (strncasecmp(run->type,"DC",2)==0) {
+          sprintf(buf, "DC Sweep");
+          sweep=1;
+    } else if (strncasecmp(run->type,"Tran",4)==0) {
+          sprintf(buf, "Transient Analysis");
+          sweep=4;
+    };
     i += strlen(buf);
     fputs(buf, run->fp);
-    sprintf(buf, "No. Variables: %d\n", run->numData);
-    i += strlen(buf);
-    fputs(buf, run->fp);
-    sprintf(buf, "No. Points: ");
-    i += strlen(buf);
-    fputs(buf, run->fp);
+    
+    
+    /*  Write \0 for Analysis Type string and \0 for empty Comment string */
+
+    tmp=0;
+    fwrite((char *)&tmp,2,1,run->fp);
+    i += 2;
+
+    /*  Write Program ID */
+
+    tmp=0x00011A22;
+    fwrite((char *)&tmp,sizeof(tmp),1,run->fp);
+    i += sizeof(tmp);
+
+    /*  Write All-Columns Flag */
+
+    tmp=0;
+    fwrite((char *)&tmp,2,1,run->fp);
+    i += 2;
+
+    /*  Write Complex-Data Flag */
+
+    tmp = run->isComplex ? 2 : 1;
+    fwrite((char *)&tmp,2,1,run->fp);
+    i += 2;
+
+    /*  Write Datatype Flag (PROBE_ANALOG) */
+
+    tmp = 0;
+    fwrite((char *)&tmp,2,1,run->fp);
+    i += 2;
+
+    /*  Write Digital Data Length (meaningless if analogue data) */
+
+    tmp=0;
+    fwrite((char *)&tmp,sizeof(tmp),1,run->fp);
+    i += sizeof(tmp);
+
+    /*  Write space for no. of rows */
 
     fflush(run->fp);        /* Gotta do this for LATTICE. */
     if (run->fp == stdout || (run->pointPos = ftell(run->fp)) <= 0)
-        run->pointPos = i;
-    fprintf(run->fp, "0       \n"); /* Save 8 spaces here. */
+	run->pointPos = i;
+    tmp=0;
+    fwrite((char *)&tmp,sizeof(tmp),1,run->fp);
+    i += sizeof(tmp);
 
-    fprintf(run->fp, "Command: version %s\n", ft_sim->version);
-    fprintf(run->fp, "Variables:\n");
+    /*  Write no. of cols */
+
+    fwrite(&(run->numData),2,1,run->fp);
+    i += 2;
+    fprintf(stderr, "No. of Data Columns : %d  \n", run->numData);
+
+    /*  Write Sweep Mode Flag */
+
+    fwrite((char *)&sweep,2,1,run->fp);
+    i += 2;
+
+/*  Write sweep variable start value */
+
+    ftmp=0;
+    fwrite((char *)&ftmp,sizeof(ftmp),1,run->fp);
+    i += sizeof(ftmp);
+
+    /*  Write sweep variable end value */
+
+    ftmp=0;
+    fwrite((char *)&ftmp,sizeof(ftmp),1,run->fp);
+    i += sizeof(ftmp);
+
+    /*  Write Secondary Sweep Variable name (null string) */
+
+    tmp=0;
+    fwrite((char *)&tmp,1,1,run->fp);
+    i += 1;
+
+    
+    /*  Write Digital Section Flag */
+
+    tmp = 0;
+    fwrite((char *)&tmp,2,1,run->fp);
+    i += 2;
+
+    fflush(run->fp);        /* Make sure this gets to disk */
 
     return;
+     
 }
+
+
 
 static void
 fileInit_pass2(runDesc *run)
 {
-    int i, type;
-    char *name, buf[BSIZE_SP];
+    int i, tmp, type;
+    char *ch, *end, name[BSIZE_SP], buf[BSIZE_SP];
 
     for (i = 0; i < run->numData; i++) {
-        if (isdigit(*run->data[i].name)) {
-        (void) sprintf(buf, "V(%s)", run->data[i].name);
-          name = buf;
-        } else {
-          name = run->data[i].name;
-        }
-        if (substring("#branch", name))
+
+        if ((run->data[i].regular==FALSE) ||
+            cieq(run->data[i].name, "time") ||
+            cieq(run->data[i].name, "sweep") ||
+            cieq(run->data[i].name, "frequency"))
+           (void) sprintf(name, "%s", run->data[i].name);
+        else
+           (void) sprintf(name, "V(%s)", run->data[i].name);
+
+		  if (ch=strstr(name, "#branch")) {
+            name[0]='I';
+            *ch++=')';
+            *ch='\0';
             type = SV_CURRENT;
+            }
         else if (cieq(name, "time"))
             type = SV_TIME;
         else if (cieq(name, "frequency"))
@@ -590,57 +852,151 @@ fileInit_pass2(runDesc *run)
         else 
             type = SV_VOLTAGE;
 
-        fprintf(run->fp, "\t%d\t%s\t%s", i, name,
-                ft_typenames(type));
-        if (run->data[i].gtype == GRID_XLOG)
-            fprintf(run->fp, "\tgrid=3");
-        fprintf(run->fp, "\n");
+        if (*name=='@') {
+          type = SV_CURRENT;
+          memmove(name, &name[1], strlen(name)-1);
+          if ((ch=strchr(name, '['))!=NULL) {
+            ch++;
+            strncpy(buf, ch, BSIZE_SP);
+            ch--;
+            *ch='\0';
+            if ((ch=strchr(buf, ']'))!=NULL) *ch='\0';
+            strcat(buf, "(");
+            if ((ch=strchr(name, ':'))!=NULL) {
+                ch++;
+                strncat(buf, ch, BSIZE_SP-strlen(buf));
+                ch--;
+                *ch='\0';
+                if ((ch=strrchr(buf, ':'))!=NULL) {
+                   ch++;
+                   memmove(&ch[strlen(name)], ch, strlen(ch)+1);
+                   memmove(ch, name, strlen(name));
+                };
+            } else {
+                strncat(buf, name, BSIZE_SP-strlen(buf));
+            };
+            strcat(buf, ")");
+          };
+          strncpy(name, buf, BSIZE_SP);
+        };
+
+        while ((ch=strchr(name, ':'))!=NULL) *ch='.';
+
+        if ((ch=strchr(name, '('))!=NULL) {
+          ch++;
+          end=(char *)memchr(name, '\0', BSIZE_SP);
+          while (strchr(ch, '.')!=NULL) {
+              memmove(ch+1, ch, end-ch+1);
+              end++;
+              *ch='x';
+              ch=strchr(ch, '.');
+              ch++;
+          };
+        };
+
+        fprintf(run->fp, "%s", name);
+        tmp=0;
+        fwrite((char*)&tmp,1,1,run->fp);
 
     }
 
-    fprintf(run->fp, "%s:\n", run->binary ? "Binary" : "Values");
+    fflush(run->fp);        /* Make all sure this gets to disk */
+
+/*  Allocate Row buffer  */
+
+    rowbuflen=(run->numData)*sizeof(float);
+    if (run->isComplex) rowbuflen *=2;
+    rowbuf=(float *)tmalloc(rowbuflen);
 
     return;
+
 }
+
 
 static void
 fileStartPoint(FILE *fp, bool bin, int num)
 {
     if (!bin)
         fprintf(fp, "%d\t", num - 1);
+        
+/*  reset set buffer pointer to zero  */
+
+    column=0;
 
     return;
 }
 
+
+
 static void
-fileAddRealValue(FILE *fp, bool bin, double value)
+fileAddRealValue( FILE *fp, bool bin, double value)
 {
-    if (bin)
-        fwrite((char *) &value, sizeof (double), 1, fp);
-    else
-        fprintf(fp, "\t%.*e\n", DOUBLE_PRECISION, value);
-    
-    return;
+	 if (bin) {
+            if (value<(-FLT_MAX)) {
+                fprintf(stderr,
+                        "Warning, double to float conversion overflow !\n");
+	        rowbuf[column++]=(-FLT_MAX);
+            } else if (value>(FLT_MAX)) {
+                fprintf(stderr,
+                        "Warning, double to float conversion overflow !\n");
+	        rowbuf[column++]=FLT_MAX;
+            } else {
+	        rowbuf[column++]=value;
+            };
+	 } else
+		  fprintf(fp, "\t%.*e\n", DOUBLE_PRECISION, value);
+
+	 return;
 }
 
+
 static void
-fileAddComplexValue(FILE *fp, bool bin, IFcomplex value)
+fileAddComplexValue(fp, bin, value)
+	 FILE *fp;
+	 bool bin;
+	 IFcomplex value;
 {
 
-    if (bin) {
-        fwrite((char *) &value.real, sizeof (double), 1, fp);
-        fwrite((char *) &value.imag, sizeof (double), 1, fp);
-    } else {
-        fprintf(fp, "\t%.*e,%.*e\n", DOUBLE_PRECISION, value.real,
+	 if (bin) {
+              if (value.real<(-FLT_MAX)) {
+                  fprintf(stderr,
+                          "Warning, double to float conversion overflow !\n");
+	          rowbuf[column++]=(-FLT_MAX);
+              } else if (value.real>(FLT_MAX)) {
+                  fprintf(stderr,
+                          "Warning, double to float conversion overflow !\n");
+	          rowbuf[column++]=FLT_MAX;
+              } else {
+	          rowbuf[column++]=value.real;
+              };
+              if (value.imag<(-FLT_MAX)) {
+                  fprintf(stderr,
+                          "Warning, double to float conversion overflow !\n");
+	          rowbuf[column++]=(-FLT_MAX);
+              } else if (value.imag>(FLT_MAX)) {
+                  fprintf(stderr,
+                          "Warning, double to float conversion overflow !\n");
+	          rowbuf[column++]=FLT_MAX;
+              } else {
+	          rowbuf[column++]=value.imag;
+              };
+	 } else {
+         fprintf(fp, "\t%.*e,%.*e\n", DOUBLE_PRECISION, value.real,
                 DOUBLE_PRECISION, value.imag);
     }
 
 }
 
+
+
+
 /* ARGSUSED */ /* until some code gets written */
 static void
 fileEndPoint(FILE *fp, bool bin)
 {
+    /*  write row buffer to file  */
+
+    fwrite((char *)rowbuf, rowbuflen, 1, fp);
     return;
 }
 
@@ -650,17 +1006,24 @@ static void
 fileEnd(runDesc *run)
 {
     long place;
+    int nrows;
 
     if (run->fp != stdout) {
         place = ftell(run->fp);
         fseek(run->fp, run->pointPos, 0);
-        fprintf(run->fp, "%d", run->pointCount);
+           nrows=run->pointCount;
+           fprintf(stderr, "\nNo. of Data Rows : %d\n", nrows);
+           fwrite(&nrows,sizeof(nrows),1,run->fp);
         fseek(run->fp, place, 0);
     } else {
         /* Yet another hack-around */
         fprintf(stderr, "@@@ %ld %d\n", run->pointPos, run->pointCount);
     }
     fflush(run->fp);
+    
+    /*  deallocate row buffer  */
+
+    tfree(rowbuf);
 
     return;
 }
