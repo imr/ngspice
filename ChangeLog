@@ -1,3 +1,10 @@
+2004-02-10  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/frontend/inpcom.c: Applied patch from Dietmar Warning 
+	    to solve the bug discovered by Jelle Haandrikman: wrong 
+	    subcircuit expansion when leading spaces are present in the
+	    subcircuit netlist. 
+
 2004-01-28  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   configure.in: changed version to rework15.

@@ -56,7 +56,7 @@ readline(FILE *fd)
     strptr = tmalloc(memlen);
     memlen -= 1;          /* Save constant -1's in while loop */
     while((c = getc(fd)) != EOF) {
-	if (strlen == 0 && c == '\n')
+	if (strlen == 0 && (c == '\n' || c == ' ')) /* Leading spaces away */
 	    continue;
         strptr[strlen] = c;
         strlen++;
