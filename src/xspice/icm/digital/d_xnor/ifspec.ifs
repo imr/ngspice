@@ -1,0 +1,62 @@
+/* $Id$ */
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 1991
+Georgia Tech Research Corporation, Atlanta, Ga. 30332
+All Rights Reserved
+
+AUTHORS                      
+
+     2 Oct 1991     Jeffrey P. Murray
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    digital d_xnor code model.
+
+===============================================================================*/
+ 
+NAME_TABLE:
+
+
+C_Function_Name:       cm_d_xnor
+Spice_Model_Name:      d_xnor
+Description:           "digital n-input xnor gate"
+
+
+PORT_TABLE:
+
+Port_Name:           in                 out
+Description:         "input"            "output"
+Direction:           in                 out
+Default_Type:        d                  d
+Allowed_Types:       [d]                [d]
+Vector:               yes                no
+Vector_Bounds:        [2 -]              -
+Null_Allowed:        no                 no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     rise_delay                  fall_delay	
+Description:        "rise delay"                "fall delay"
+Data_Type:          real                        real   
+Default_Value:      1.0e-9                      1.0e-9  
+Limits:             [1e-12 -]                   [1e-12 -]       
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                         yes    
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     input_load
+Description:        "input load value (pF)" 
+Data_Type:          real                          
+Default_Value:      1.0                    
+Limits:             [0.0 -]                                 
+Vector:              no                         
+Vector_Bounds:       -                         
+Null_Allowed:       yes                            
+

@@ -1,0 +1,93 @@
+/* $Id$ */
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 1991
+Georgia Tech Research Corporation, Atlanta, Ga. 30332
+All Rights Reserved
+
+AUTHORS                      
+
+    27 Sept 1991     Jeffrey P. Murray
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    analog s-domain transfer function (s_xfer) code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+Spice_Model_Name:      s_xfer
+C_Function_Name:       cm_s_xfer
+Description:           "s-domain transfer function block"
+
+
+PORT_TABLE:
+
+
+Port_Name:           in               out
+Description:         "input"          "output"
+Direction:           in                out
+Default_Type:        v                 v
+Allowed_Types:       [v,vd,i,id]         [v,vd,i,id]
+Vector:               no                no
+Vector_Bounds:        -                 -
+Null_Allowed:        no                no
+
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     in_offset                   gain 
+Description:        "input offset"              "gain"
+Data_Type:          real                        real   
+Default_Value:      0.0                         1.0   
+Limits:             -                           -       
+Vector:              no                          no     
+Vector_Bounds:       -                           -      
+Null_Allowed:       yes                         yes    
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     num_coeff                   den_coeff	
+Description:        "numerator poly coef"       "denominator poly coef" 
+Data_Type:          real                        real   
+Default_Value:      -                           -  
+Limits:             -                           -       
+Vector:              yes                         yes 
+Vector_Bounds:       [1 -]                       [1 -]      
+Null_Allowed:       yes                         yes    
+
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     int_ic                  
+Description:        "int stage init. cond" 
+Data_Type:          real             
+Default_Value:      0.0					
+Limits:             -            
+Vector:              yes          
+Vector_Bounds:       -          
+Null_Allowed:       yes       
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name: denormalized_freq                  
+Description: "frequency (radians/second) at which to denormalize coefficients" 
+Data_Type:          real             
+Default_Value:      1.0					
+Limits:             -            
+Vector:              no          
+Vector_Bounds:       -          
+Null_Allowed:       yes       
+
+

@@ -1,0 +1,110 @@
+/* $Id$ */
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 1991
+Georgia Tech Research Corporation, Atlanta, Ga. 30332
+All Rights Reserved
+
+AUTHORS                      
+
+     2 Oct 1991     Jeffrey P. Murray
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    analog ilimit code model.
+
+===============================================================================*/
+ 
+NAME_TABLE:
+
+
+C_Function_Name:       cm_ilimit
+Spice_Model_Name:      ilimit
+Description:           "current limiter block"
+
+
+PORT_TABLE:
+
+
+Port_Name:             in                 pos_pwr            
+Description:           "input"            "positive power supply"
+Direction:             in                 inout
+Default_Type:          v                  g
+Allowed_Types:         [v,vd,i,id,vnam]   [g,gd]
+Vector:                 no                 no
+Vector_Bounds:          -                  -  
+Null_Allowed:          no                 yes 
+
+PORT_TABLE:
+
+Port_Name:             neg_pwr                  out                 
+Description:           "negative power supply"  "output" 
+Direction:             inout                    inout     
+Default_Type:          g                        g	 
+Allowed_Types:         [g,gd]                   [g,gd]     
+Vector:                 no                       no	 
+Vector_Bounds:          -                        -	   
+Null_Allowed:          yes                      no	  
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     in_offset                   gain 
+Description:        "input offset"              "gain"
+Data_Type:          real                        real   
+Default_Value:      0.0                         1.0   
+Limits:             -                           -       
+Vector:              no                          no     
+Vector_Bounds:       -                           -      
+Null_Allowed:       yes                         yes    
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     r_out_source                r_out_sink	
+Description:        "sourcing resistance"       "sinking resistance"
+Data_Type:          real                        real   
+Default_Value:      1.0                         1.0   
+Limits:             [1e-9 1e9]                  [1e-9 1e9]       
+Vector:              no                          no     
+Vector_Bounds:       -                           -      
+Null_Allowed:       yes                         yes    
+
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     i_limit_source              i_limit_sink 
+Description:        "current sourcing limit"    "current sinking limit"
+Data_Type:          real                        real   
+Default_Value:      10.0e-3                     10.0e-3   
+Limits:             [1e-12 -]                   [1e-12 -]       
+Vector:              no                          no     
+Vector_Bounds:       -                           -      
+Null_Allowed:       yes                         yes    
+
+PARAMETER_TABLE:
+
+Parameter_Name:     v_pwr_range                 i_source_range
+Description:        "pwr. smoothing range"      "sourcing cur sm. rng"
+Data_Type:          real                        real 
+Default_Value:      1e-6                        1e-9 
+Limits:             [1e-15 -]                   [1e-15 -] 
+Vector:              no                          no 
+Vector_Bounds:       -                           - 
+Null_Allowed:       yes                         yes 
+
+PARAMETER_TABLE:
+
+Parameter_Name:     i_sink_range            r_out_domain
+Description:        "sinking cur sm. rng"   "output resistance sm. domain"
+Data_Type:          real                    real 
+Default_Value:      1e-9               	    1e-9 
+Limits:             [1e-15 -]               [1e-15 -] 
+Vector:              no             	        no 
+Vector_Bounds:       -                       - 
+Null_Allowed:       yes                     yes 

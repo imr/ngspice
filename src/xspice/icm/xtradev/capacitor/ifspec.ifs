@@ -1,0 +1,71 @@
+/* ===========================================================================
+FILE    ifspec.ifs
+
+MEMBER OF process XSPICE
+
+Copyright 1991
+Georgia Tech Research Corporation
+Atlanta, Georgia 30332
+All Rights Reserved
+
+PROJECT A-8503
+
+AUTHORS
+
+    9/12/91  Bill Kuhn
+
+MODIFICATIONS
+
+    <date> <person name> <nature of modifications>
+
+SUMMARY
+
+    This file contains the definition of a capacitor code model
+    with voltage type initial conditions.
+
+INTERFACES
+
+    None.
+
+REFERENCED FILES
+
+    None.
+
+NON-STANDARD FEATURES
+
+    None.
+
+=========================================================================== */
+
+NAME_TABLE:
+
+Spice_Model_Name:      capacitor
+C_Function_Name:       cm_capacitor
+Description:           "Capacitor with voltage initial condition"
+
+
+PORT_TABLE:
+
+Port_Name:             cap
+Description:           "capacitor terminals"
+Direction:             inout
+Default_Type:          hd
+Allowed_Types:         [hd]
+Vector:                 no
+Vector_Bounds:          -
+Null_Allowed:          no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        c                ic
+Description:           "capacitance"    "voltage initial condition"
+Data_Type:             real             real
+Default_Value:         -                0.0
+Limits:                -                -
+Vector:                 no               no
+Vector_Bounds:          -                -
+Null_Allowed:          no               no
+
+
+

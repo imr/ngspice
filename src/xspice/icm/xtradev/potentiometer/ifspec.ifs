@@ -1,0 +1,93 @@
+/* $Id$ */
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 1991
+Georgia Tech Research Corporation, Atlanta, Ga. 30332
+All Rights Reserved
+
+AUTHORS                      
+
+    19 June 1992     Jeffrey P. Murray
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    analog potentiometer code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+Spice_Model_Name:      potentiometer
+C_Function_Name:       cm_potentiometer
+Description:           "potentiometer"
+
+
+PORT_TABLE:
+
+Port_Name:           r0                 wiper             
+Description:         "pot connection 0" "wiper contact"    
+Direction:           inout              inout              
+Default_Type:        g                  g
+Allowed_Types:       [g]                [g]
+Vector:              no                 no
+Vector_Bounds:       -                  -
+Null_Allowed:        no                 no
+
+
+PORT_TABLE:
+
+Port_Name:           r1
+Description:         "pot connection 1"
+Direction:           inout  
+Default_Type:        g
+Allowed_Types:       [g]  
+Vector:              no  
+Vector_Bounds:       -  
+Null_Allowed:        no  
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:      position
+Description:         "position of wiper connection (0.0 to 1.0)"  
+Data_Type:           real
+Default_Value:       0.5
+Limits:              [0.0 1.0]
+Vector:              no  
+Vector_Bounds:       -  
+Null_Allowed:        yes  
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:    log                  r	
+Description:       "log-linear switch"	"total resistance"
+Data_Type:     	   boolean              real 
+Default_Value:     FALSE                1.0e5	 
+Limits:            -                    - 
+Vector:            no                   no 
+Vector_Bounds:     -                    - 
+Null_Allowed:      yes                  yes 
+
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:    log_multiplier	
+Description:       "multiplier constant for log resistance"
+Data_Type:     	   real 
+Default_Value:     1.0 
+Limits:            - 
+Vector:            no      
+Vector_Bounds:     -       
+Null_Allowed:      yes     
+
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:     
+Data_Type:             
+Description:           

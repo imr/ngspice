@@ -15,49 +15,50 @@ initdatadir = $(pkgdatadir)/scripts
 initdata_DATA = spinit setplot spectrum
 
 
-DYNAMIC_DEVICELIBS = 			\
-	spicelib/devices/asrc/libasrc.la		\
-	spicelib/devices/bjt/libbjt.la		\
-	spicelib/devices/bsim1/libbsim1.la	\
-	spicelib/devices/bsim2/libbsim2.la	\
-	spicelib/devices/bsim3/libbsim3.la	\
-	spicelib/devices/bsim3v1/libbsim3v1.la	\
-	spicelib/devices/bsim3v2/libbsim3v2.la	\
-	spicelib/devices/bsim4/libbsim4.la	\
-	spicelib/devices/cap/libcap.la		\
-	spicelib/devices/bsim3soi_pd/libbsim3soipd.la	\
-	spicelib/devices/bsim3soi_fd/libbsim3soifd.la   \
-	spicelib/devices/bsim3soi_dd/libbsim3soidd.la	\
-	spicelib/devices/cccs/libcccs.la		\
-	spicelib/devices/ccvs/libccvs.la		\
-	spicelib/devices/ccvs/libccvs.la		\
-	spicelib/devices/cpl/libcpl.a		\
-	spicelib/devices/csw/libcsw.la		\
-	spicelib/devices/dio/libdio.la		\
-	@EKVLIB@				\
-	spicelib/devices/ind/libind.la		\
-	spicelib/devices/isrc/libisrc.la		\
-	spicelib/devices/hfet1/libhfet.la		\
-	spicelib/devices/hfet2/libhfet2.la		\
-	spicelib/devices/jfet/libjfet.la		\
-	spicelib/devices/jfet2/libjfet2.la	\
-	spicelib/devices/ltra/libltra.la		\
-	spicelib/devices/mes/libmes.la		\
-	spicelib/devices/mesa/libmesa.la         \
-	spicelib/devices/mos1/libmos1.la		\
-	spicelib/devices/mos2/libmos2.la		\
-	spicelib/devices/mos3/libmos3.la		\
-	spicelib/devices/mos6/libmos6.la		\
-	spicelib/devices/mos9/libmos9.la		\
-	spicelib/devices/res/libres.la		\
-	spicelib/devices/soi3/libsoi3.la	\
-	spicelib/devices/sw/libsw.la		\
-	spicelib/devices/txl/libtxl.a		\
-	spicelib/devices/tra/libtra.la		\
-	spicelib/devices/urc/liburc.la		\
-	spicelib/devices/vccs/libvccs.la		\
-	spicelib/devices/vcvs/libvcvs.la		\
-	spicelib/devices/vsrc/libvsrc.la
+DYNAMIC_DEVICELIBS = 					\
+	spicelib/devices/asrc/libasrc.a			\
+	spicelib/devices/bjt/libbjt.a			\
+	spicelib/devices/bsim1/libbsim1.a		\
+	spicelib/devices/bsim2/libbsim2.a		\
+	spicelib/devices/bsim3/libbsim3.a		\
+	spicelib/devices/bsim3v1/libbsim3v1.a		\
+	spicelib/devices/bsim3v2/libbsim3v2.a		\
+	spicelib/devices/bsim4/libbsim4.a		\
+	spicelib/devices/cap/libcap.a			\
+	spicelib/devices/bsim3soi_pd/libbsim3soipd.a	\
+	spicelib/devices/bsim3soi_fd/libbsim3soifd.a   	\
+	spicelib/devices/bsim3soi_dd/libbsim3soidd.a	\
+	spicelib/devices/cccs/libcccs.a			\
+	spicelib/devices/ccvs/libccvs.a			\
+	spicelib/devices/ccvs/libccvs.a			\
+	spicelib/devices/cpl/libcpl.a			\
+	spicelib/devices/csw/libcsw.a			\
+	spicelib/devices/dio/libdio.a			\
+	@EKVLIB@					\
+	spicelib/devices/ind/libind.a			\
+	spicelib/devices/isrc/libisrc.a			\
+	spicelib/devices/hfet1/libhfet.a		\
+	spicelib/devices/hfet2/libhfet2.a		\
+	spicelib/devices/jfet/libjfet.a			\
+	spicelib/devices/jfet2/libjfet2.a		\
+	spicelib/devices/ltra/libltra.a			\
+	spicelib/devices/mes/libmes.a			\
+	spicelib/devices/mesa/libmesa.a         	\
+	spicelib/devices/mos1/libmos1.a			\
+	spicelib/devices/mos2/libmos2.a			\
+	spicelib/devices/mos3/libmos3.a			\
+	spicelib/devices/mos6/libmos6.a			\
+	spicelib/devices/mos9/libmos9.a			\
+	spicelib/devices/res/libres.a			\
+	spicelib/devices/soi3/libsoi3.a			\
+	spicelib/devices/sw/libsw.a			\
+	spicelib/devices/txl/libtxl.a			\
+	spicelib/devices/tra/libtra.a			\
+	spicelib/devices/urc/liburc.a			\
+	spicelib/devices/vccs/libvccs.a			\
+	spicelib/devices/vcvs/libvcvs.a			\
+	spicelib/devices/vsrc/libvsrc.a
+
 
 
 ## ----- Note that I moved this stuff to here because it was causing automake
@@ -66,7 +67,6 @@ DYNAMIC_DEVICELIBS = 			\
 ##	spicelib/devices/bjt2/libbjt2.a		\
 ## poly added to dynamic libs by SDB on 6.1.2003
 ##	xspice/icm/poly/libpoly.a
-
 
 ## Build ngspice first:
 
@@ -123,8 +123,6 @@ ngnutmeg_LDADD = \
 	maths/poly/libpoly.a \
 	misc/libmisc.a 
 
-
-
 ## help:
 
 nghelp_SOURCES = nghelp.c
@@ -134,7 +132,6 @@ nghelp_LDADD =  \
 	frontend/parser/libparser.a \
 	frontend/libfte.a \
 	misc/libmisc.a 
-
 
 ## sconvert:
 
@@ -146,7 +143,6 @@ ngsconvert_LDADD =  \
 	frontend/libfte.a \
 	frontend/parser/libparser.a \
 	misc/libmisc.a 
-
 
 ## proc2mod:
 

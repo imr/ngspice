@@ -1,0 +1,54 @@
+/* $Id$ */
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 1991
+Georgia Tech Research Corporation, Atlanta, Ga. 30332
+All Rights Reserved
+
+AUTHORS                      
+
+     2 Oct 1991     Jeffrey P. Murray
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    analog lcouple code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+
+C_Function_Name:       cm_lcouple
+Spice_Model_Name:      lcouple
+Description:           "inductive coupling (for use with 'core' model)"
+
+
+PORT_TABLE:
+
+
+Port_Name:             l              mmf_out
+Description:           "inductor"     "mmf output (in Ampere-turns)"
+Direction:             inout          inout
+Default_Type:          hd             hd
+Allowed_Types:         [h,hd]         [hd]
+Vector:                 no             no
+Vector_Bounds:          -              -
+Null_Allowed:          no             no
+
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     num_turns
+Description:        "number of inductor turns" 
+Data_Type:          real          
+Default_Value:      1.0            
+Limits:             -     
+Vector:              no    
+Vector_Bounds:       -     
+Null_Allowed:       yes   
+
+

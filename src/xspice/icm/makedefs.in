@@ -1,0 +1,40 @@
+# Edit this file to set global include paths, 
+# compiler info and subdirs
+
+# Directory sturcture
+SHELL = @SHELL@
+srcdir = @srcdir@
+top_builddir = ../../..
+top_srcdir = @top_srcdir@
+subdir = src/xspice/icm
+                                                                                
+# C compiler to use
+CC = @CC@
+
+# Spice header include path
+INCLUDES = -I$(TOPDIR)$(top_srcdir)/src/include -I$(TOPDIR)$(top_builddir)
+
+# CFLAGS to use here
+CFLAGS = @CFLAGS@ -fPIC -DCM_LINUX
+
+# Path to the cmpp utility
+CMPP = $(TOPDIR)$(top_builddir)/src/xspice/cmpp/cmpp
+
+# Flags to use when linking shared library
+LDFLAGS = -shared
+
+# The codemodels to make
+CMDIRS = spice2poly digital analog xtradev xtraevt
+
+# Install instructions
+
+# or use mkdir -p
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+libdir = @libdir@
+

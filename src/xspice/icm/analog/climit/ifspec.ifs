@@ -1,0 +1,77 @@
+
+                  /*   INTERFACE TABLE FOR CODE MODEL CLIMIT   */
+
+ 
+NAME_TABLE:
+
+
+C_Function_Name:       cm_climit
+Spice_Model_Name:      climit
+Description:           "controlled limiter block"
+
+
+PORT_TABLE:
+
+
+Port_Name:             in                 cntl_upper            
+Description:           "input"            "upper lim. control input"
+Direction:             in                 in
+Default_Type:          v                  v
+Allowed_Types:         [v,vd,i,id,vnam]   [v,vd,i,id,vnam] 
+Vector:                 no                 no
+Vector_Bounds:          -                  -  
+Null_Allowed:          no                 no 
+
+PORT_TABLE:
+
+Port_Name:             cntl_lower                   out            
+Description:           "lower limit control input"  "output"
+Direction:             in                           out
+Default_Type:          v                            v
+Allowed_Types:         [v,vd,i,id,vnam]             [v,vd,i,id] 
+Vector:                 no                           no
+Vector_Bounds:          -                            -  
+Null_Allowed:          no                           no 
+
+
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     in_offset                   gain 
+Description:        "input offset"              "gain"
+Data_Type:          real                        real   
+Default_Value:      0.0                         1.0   
+Limits:             -                           -       
+Vector:              no                          no     
+Vector_Bounds:       -                           -      
+Null_Allowed:       yes                         yes    
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     upper_delta                 lower_delta 
+Description:        "output upper delta"        "output lower delta"
+Data_Type:          real                        real   
+Default_Value:      0.0                         0.0   
+Limits:             -                           -       
+Vector:              no                          no     
+Vector_Bounds:       -                           -      
+Null_Allowed:       yes                         yes    
+
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     limit_range                 fraction 
+Description:        "upper & lower sm. range"   "smoothing %/abs switch"
+Data_Type:          real                        boolean   
+Default_Value:      1.0e-6                      FALSE   
+Limits:             -                           -       
+Vector:              no                          no     
+Vector_Bounds:       -                           -      
+Null_Allowed:       yes                         yes    
+

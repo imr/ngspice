@@ -1,0 +1,87 @@
+/* $Id$ */
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 1991
+Georgia Tech Research Corporation, Atlanta, Ga. 30332
+All Rights Reserved
+
+AUTHORS                      
+
+     2 Oct 1991     Jeffrey P. Murray
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    analog hyst code model.
+
+===============================================================================*/
+ 
+NAME_TABLE:
+
+
+C_Function_Name:       cm_hyst
+Spice_Model_Name:      hyst
+Description:           "hysteresis block"
+
+
+PORT_TABLE:
+
+
+Port_Name:             in                 out            
+Description:           "input"            "output"
+Direction:             in                 out 
+Default_Type:          v                  v
+Allowed_Types:         [v,vd,i,id,vnam]   [v,vd,i,id] 
+Vector:                 no                 no
+Vector_Bounds:          -                  -  
+Null_Allowed:          no                 no 
+
+PARAMETER_TABLE:
+
+Parameter_Name:     in_low                  in_high	
+Description:        "input low value"       "input high value"
+Data_Type:          real                    real   
+Default_Value:      0.0                     1.0 
+Limits:             -                       -       
+Vector:              no                      no 
+Vector_Bounds:       -                       -     
+Null_Allowed:       yes                     yes     
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     hyst                    out_lower_limit 
+Description:        "hysteresis"            "output lower limit"
+Data_Type:          real                    real 
+Default_Value:      0.1                     0.0 
+Limits:             [0 -]                   -       
+Vector:              no                      no     
+Vector_Bounds:       -                       -      
+Null_Allowed:       yes                     yes    
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     out_upper_limit         input_domain 
+Description:        "output upper limit"    "input smoothing domain"
+Data_Type:          real                    real 
+Default_Value:      1.0                     0.01 
+Limits:              -	                  	-       
+Vector:              no                      no     
+Vector_Bounds:       -                       -      
+Null_Allowed:       yes                     yes    
+
+	
+PARAMETER_TABLE:
+
+Parameter_Name:    fraction 
+Description:       "smoothing percent/abs switch"
+Data_Type:         boolean 
+Default_Value:     TRUE                    
+Limits:            -	                 
+Vector:             no                   
+Vector_Bounds:      -                   
+Null_Allowed:      yes                
+
+	

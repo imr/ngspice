@@ -4,4 +4,10 @@ alias acct rusage all
 set x11lineararcs
 * For SPICE2 POLYs, edit the below line to point to the location 
 * of your codemode.
-* codemodel /usr/local/src/ngspice/src/xspice/icm/spice2poly.cm
+* codemodel /usr/lib/spice/spice2poly.cm
+
+* The other codemodels
+* codemodel /usr/lib/spice/analog.cm
+* codemodel /usr/lib/spice/digital.cm
+* codemodel /usr/lib/spice/xtradev.cm
+* codemodel /usr/lib/spice/xtraevt.cm
