@@ -1,9 +1,12 @@
-/**********
-Copyright 2001 Regents of the University of California.  All rights reserved.
-Author: 2000 Weidong Liu, Xiaodong Jin.
-Author: 2001 Xuemei Xi
-File: bsim4itf.h
-**********/
+/***********************************************************************
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
+
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1itf.h of HiSIM 1.2.0
+
+ April 9, 2003 : released by STARC Physical Design Group
+***********************************************************************/
 
 #ifndef DEV_HISIM1
 #define DEV_HISIM1

@@ -1,5 +1,5 @@
-#ifndef _HISIM1INIT_H
-#define _HISIM1INIT_H
+#ifndef _HISIMINIT_H
+#define _HISIMINIT_H
 
 extern IFparm HSM1pTable[ ];
 extern IFparm HSM1mPTable[ ];

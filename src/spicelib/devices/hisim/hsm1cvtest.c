@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1cvtest.c of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1cvtest.c of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #include "ngspice.h"
 #include "cktdefs.h"
@@ -22,10 +17,11 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM1convTest(GENmodel *inModel, CKTcircuit *ckt)
+int 
+HSM1convTest(GENmodel *inModel, register CKTcircuit *ckt)
 {
-  HSM1model *model = (HSM1model*)inModel;
-  HSM1instance *here;
+  register HSM1model *model = (HSM1model*)inModel;
+  register HSM1instance *here;
   double delvbd, delvbs, delvds, delvgd, delvgs, vbd, vbs, vds;
   double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
 
@@ -35,7 +31,7 @@ int HSM1convTest(GENmodel *inModel, CKTcircuit *ckt)
     for ( here = model->HSM1instances; here != NULL ;
 	  here = here->HSM1nextInstance ) {
 	  
-	  
+	    
       if (here->HSM1owner != ARCHme)
               continue;
   
@@ -77,6 +73,15 @@ int HSM1convTest(GENmodel *inModel, CKTcircuit *ckt)
       if ( here->HSM1_off == 0  || !(ckt->CKTmode & MODEINITFIX) ) {
 	tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(cd)) + ckt->CKTabstol;
 	if ( fabs(cdhat - cd) >= tol ) {
+#ifdef XSPICE	
+/* gtri - begin - wbk - report conv prob */
+                if(ckt->enh->conv_debug.report_conv_probs) {
+                    ENHreport_conv_prob(ENH_ANALOG_INSTANCE,
+                                        (char *) here->MOS1name,
+                                        "");
+                }
+/* gtri - end - wbk - report conv prob */	
+#endif
 	  ckt->CKTnoncon++;
 	  return(OK);
 	} 
@@ -96,6 +101,15 @@ int HSM1convTest(GENmodel *inModel, CKTcircuit *ckt)
 	tol = ckt->CKTreltol * 
 	  MAX(fabs(cbhat), fabs(cbs + cbd - here->HSM1_isub)) + ckt->CKTabstol;
 	if ( fabs(cbhat - (cbs + cbd - here->HSM1_isub)) > tol ) {
+#ifdef XSPICE
+/* gtri - begin - wbk - report conv prob */
+                    if(ckt->enh->conv_debug.report_conv_probs) {
+                        ENHreport_conv_prob(ENH_ANALOG_INSTANCE,
+                                            (char *) here->HSM1name,
+                                            "");
+                    }
+/* gtri - end - wbk - report conv prob */
+#endif
 	  ckt->CKTnoncon++;
 	  return(OK);
 	}

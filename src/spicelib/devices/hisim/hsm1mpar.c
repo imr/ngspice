@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1mpar.c of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1mpar.c of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #include "ngspice.h"
 #include "hsm1def.h"
@@ -19,7 +14,8 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM1mParam(int param, IFvalue *value, GENmodel *inMod)
+int 
+HSM1mParam(int param, IFvalue *value, GENmodel *inMod)
 {
   HSM1model *mod = (HSM1model*)inMod;
   switch (param) {
@@ -103,17 +99,25 @@ int HSM1mParam(int param, IFvalue *value, GENmodel *inMod)
     mod->HSM1_cogidl = value->iValue;
     mod->HSM1_cogidl_Given = TRUE;
     break;
+  case  HSM1_MOD_COGISL:
+    mod->HSM1_cogisl = value->iValue;
+    mod->HSM1_cogisl_Given = TRUE;
+    break;
   case  HSM1_MOD_COOVLP:
     mod->HSM1_coovlp = value->iValue;
     mod->HSM1_coovlp_Given = TRUE;
     break;
-  case  HSM1_MOD_CONOIS: /* HiSIM1.1 */
+  case  HSM1_MOD_CONOIS:
     mod->HSM1_conois = value->iValue;
     mod->HSM1_conois_Given = TRUE;
     break;
-  case  HSM1_MOD_COISTI:
+  case  HSM1_MOD_COISTI: /* HiSIM1.1 */
     mod->HSM1_coisti = value->iValue;
     mod->HSM1_coisti_Given = TRUE;
+    break;
+  case  HSM1_MOD_COSMBI: /* HiSIM1.2 */
+    mod->HSM1_cosmbi = value->iValue;
+    mod->HSM1_cosmbi_Given = TRUE;
     break;
   case  HSM1_MOD_VMAX:
     mod->HSM1_vmax = value->rValue;
@@ -131,13 +135,13 @@ int HSM1mParam(int param, IFvalue *value, GENmodel *inMod)
     mod->HSM1_tox =  value->rValue;
     mod->HSM1_tox_Given = TRUE;
     break;
-  case  HSM1_MOD_DL:
-    mod->HSM1_dl = value->rValue;
-    mod->HSM1_dl_Given = TRUE;
+  case  HSM1_MOD_XLD:
+    mod->HSM1_xld = value->rValue;
+    mod->HSM1_xld_Given = TRUE;
     break;
-  case  HSM1_MOD_DW:
-    mod->HSM1_dw = value->rValue;
-    mod->HSM1_dw_Given = TRUE;
+  case  HSM1_MOD_XWD:
+    mod->HSM1_xwd = value->rValue;
+    mod->HSM1_xwd_Given = TRUE;
     break;
   case  HSM1_MOD_XJ: /* HiSIM1.0 */
     mod->HSM1_xj = value->rValue;
@@ -262,18 +266,6 @@ int HSM1mParam(int param, IFvalue *value, GENmodel *inMod)
   case  HSM1_MOD_BB:
     mod->HSM1_bb = value->rValue;
     mod->HSM1_bb_Given = TRUE;
-    break;
-  case  HSM1_MOD_VDS0:
-    mod->HSM1_vds0 = value->rValue;
-    mod->HSM1_vds0_Given = TRUE;
-    break;
-  case  HSM1_MOD_BC0:
-    mod->HSM1_bc0 = value->rValue;
-    mod->HSM1_bc0_Given = TRUE;
-    break;
-  case  HSM1_MOD_BC1:
-    mod->HSM1_bc1 = value->rValue;
-    mod->HSM1_bc1_Given = TRUE;
     break;
   case  HSM1_MOD_SUB1:
     mod->HSM1_sub1 = value->rValue;
@@ -474,6 +466,30 @@ int HSM1mParam(int param, IFvalue *value, GENmodel *inMod)
   case  HSM1_MOD_CIT:
     mod->HSM1_cit = value->rValue;
     mod->HSM1_cit_Given = TRUE;
+    break;
+  case  HSM1_MOD_GLPART1: /* HiSIM1.2 */
+    mod->HSM1_glpart1 = value->rValue;
+    mod->HSM1_glpart1_Given = TRUE;
+    break;
+  case  HSM1_MOD_GLPART2: /* HiSIM1.2 */
+    mod->HSM1_glpart2 = value->rValue;
+    mod->HSM1_glpart2_Given = TRUE;
+    break;
+  case  HSM1_MOD_KAPPA: /* HiSIM1.2 */
+    mod->HSM1_kappa = value->rValue;
+    mod->HSM1_kappa_Given = TRUE;
+    break;
+  case  HSM1_MOD_XDIFFD: /* HiSIM1.2 */
+    mod->HSM1_xdiffd = value->rValue;
+    mod->HSM1_xdiffd_Given = TRUE;
+    break;
+  case  HSM1_MOD_PTHROU: /* HiSIM1.2 */
+    mod->HSM1_pthrou = value->rValue;
+    mod->HSM1_pthrou_Given = TRUE;
+    break;
+  case  HSM1_MOD_VDIFFJ: /* HiSIM1.2 */
+    mod->HSM1_vdiffj = value->rValue;
+    mod->HSM1_vdiffj_Given = TRUE;
     break;
   case HSM1_MOD_KF:
     mod->HSM1_kf = value->rValue;

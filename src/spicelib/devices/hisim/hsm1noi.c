@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1noi.c of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1noi.c of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #include "ngspice.h"
 #include "hsm1def.h"
@@ -53,11 +48,12 @@
 extern void   NevalSrc();
 extern double Nintegrate();
 
-int HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt, 
-               Ndata *data, double *OnDens)
+int 
+HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
+           register Ndata *data, double *OnDens)
 {
-  HSM1model *model = (HSM1model *)inModel;
-  HSM1instance *here;
+  register HSM1model *model = (HSM1model *)inModel;
+  register HSM1instance *here;
   char name[N_MXVLNTH];
   double tempOnoise;
   double tempInoise;
@@ -80,9 +76,10 @@ int HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
   for ( ;model != NULL; model = model->HSM1nextModel ) {
     for ( here = model->HSM1instances; here != NULL;
 	  here = here->HSM1nextInstance ) {
-	  
+		  
       if (here->HSM1owner != ARCHme)
 	      continue;	  
+	    
 	  
       switch (operation) {
       case N_OPEN:
@@ -139,7 +136,7 @@ int HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 	  NevalSrc(&noizDens[HSM1RDNOIZ], &lnNdens[HSM1RDNOIZ], 
 		   ckt, THERMNOISE,
 		   here->HSM1dNodePrime, here->HSM1dNode,
-		   here->HSM1drainConductance * here->HSM1_m);
+		   here->HSM1drainConductance  * here->HSM1_m);
 	  
 	  NevalSrc(&noizDens[HSM1RSNOIZ], &lnNdens[HSM1RSNOIZ], 
 		   ckt, THERMNOISE,
@@ -153,7 +150,7 @@ int HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 	    I = here->HSM1_gm + here->HSM1_gds + here->HSM1_gmbs;
 	    I *= (I < 0.0) ? -1.0 : 1.0;
 	    I *= 2.0/3.0;
-	    I *=  here->HSM1_m; /* PN */
+	    I *=  here->HSM1_m; /* PN */	    
 	    NevalSrc(&noizDens[HSM1IDNOIZ], &lnNdens[HSM1IDNOIZ], 
 		     ckt, THERMNOISE, 
 		     here->HSM1dNodePrime, here->HSM1sNodePrime, I);
@@ -164,7 +161,7 @@ int HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 	      / (here->HSM1_weff * here->HSM1_leff);
 	    I *= (I < 0.0) ? -1.0 : 1.0;
 	    I *= here->HSM1_mu;
-	    I *= here->HSM1_m; /* PN */
+	    I *=  here->HSM1_m; /* PN */	    
 	    NevalSrc(&noizDens[HSM1IDNOIZ], &lnNdens[HSM1IDNOIZ], 
 		     ckt, THERMNOISE, 
 		     here->HSM1dNodePrime, here->HSM1sNodePrime, I);
@@ -184,8 +181,8 @@ int HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 	  switch ( model->HSM1_noise ) {
 	  case 1:
 	  case 4: /* SPICE2 model */
-	    noizDens[HSM1FLNOIZ] *= model->HSM1_kf
-	      * exp(model->HSM1_af * log(MAX(fabs(here->HSM1_ids * here->HSM1_m), N_MINLOG)))
+	    noizDens[HSM1FLNOIZ] *= here->HSM1_m * model->HSM1_kf
+	      * exp(model->HSM1_af * log(MAX(fabs(here->HSM1_ids), N_MINLOG)))
 	      / (pow(data->freq, model->HSM1_ef) * here->HSM1_leff
 		 * here->HSM1_leff * (3.453133e-11 / model->HSM1_tox));
 	    /*                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~cox  */

@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1ext.c of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1ext.h of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 extern int HSM1acLoad(GENmodel *,CKTcircuit*);
 extern int HSM1ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);

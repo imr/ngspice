@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1ld.c of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1ld.c of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #include "ngspice.h"
 #include "cktdefs.h"
@@ -23,94 +18,138 @@
 #include "devdefs.h"
 #include "suffix.h"
 
-static void ShowPhysVals(HSM1instance *here, int flag, int isFirst, double vds,
-             double vgs, double vbs)
+#define SHOW_EPS_QUANT 1.0e-15
+
+static void 
+ShowPhysVals(HSM1instance *here, HSM1model *model,int isFirst, double vds, 
+             double vgs, double vbs, double vgd, double vbd, double vgb)
 {
-  switch (flag) {
+  /* regard the epsilon-quantity as 0.0 */
+  vds = (fabs(vds) < SHOW_EPS_QUANT) ? 0.0 : vds;
+  vgs = (fabs(vgs) < SHOW_EPS_QUANT) ? 0.0 : vgs;
+  vbs = (fabs(vbs) < SHOW_EPS_QUANT) ? 0.0 : vbs;
+  vgb = (fabs(vgb) < SHOW_EPS_QUANT) ? 0.0 : vgb;
+  switch (model->HSM1_show) {
   case 1:
     if (isFirst) printf("Vds        Ids\n");
-    printf("%e %e\n", vds, here->HSM1_ids);
+    printf("%e %e\n", model->HSM1_type*vds, here->HSM1_mode*here->HSM1_ids);
     break;
   case 2:
     if (isFirst) printf("Vgs        Ids\n");
-    printf("%e %e\n", vgs, here->HSM1_ids);
+    printf("%e %e\n", model->HSM1_type*vgs, here->HSM1_mode*here->HSM1_ids);
     break;
   case 3:
-    if (isFirst) printf("vgs        ln(Ids)\n");
-    printf("%e %e\n", vgs, log(here->HSM1_ids));
+    if (isFirst) printf("Vgs        log10(|Ids|)\n");
+    printf("%e %e\n", model->HSM1_type*vgs, log10(here->HSM1_ids));
     break;
   case 4:
-    if (isFirst) printf("ln(Ids)    gm/Ids\n");
+    if (isFirst) printf("log10(|Ids|)    gm/|Ids|\n");
     if (here->HSM1_ids == 0.0)
-      printf("I can't show gm/Ids - ln(Ids), because Ids = 0.\n");
+      printf("I can't show gm/Ids - log10(Ids), because Ids = 0.\n");
     else
-      printf("%e %e\n",  log(here->HSM1_ids), here->HSM1_gm/here->HSM1_ids);
+      printf("%e %e\n",  log10(here->HSM1_ids), here->HSM1_gm/here->HSM1_ids);
     break;
   case 5:
     if (isFirst) printf("Vds        gds\n");
-    printf("%e %e\n", vds, here->HSM1_gds);
+    printf("%e %e\n", model->HSM1_type*vds, here->HSM1_gds);
     break;
   case 6:
     if (isFirst) printf("Vgs        gm\n");
-    printf("%e %e\n", vgs, here->HSM1_gm);
+    printf("%e %e\n", model->HSM1_type*vgs, here->HSM1_gm);
     break;
   case 7:
     if (isFirst) printf("Vbs        gbs\n");
-    printf("%e %e\n", vbs, here->HSM1_gbs);
+    printf("%e %e\n", model->HSM1_type*vbs, here->HSM1_gmbs);
     break;
   case 8:
     if (isFirst) printf("Vgs        Cgg\n");
-    printf("%e %e\n", vgs, here->HSM1_cggb);
+    printf("%e %e\n", model->HSM1_type*vgs, here->HSM1_cggb);
     break;
   case 9:
     if (isFirst) printf("Vgs        Cgs\n");
-    printf("%e %e\n", vgs, here->HSM1_cgsb);
+    printf("%e %e\n", model->HSM1_type*vgs, here->HSM1_cgsb);
     break;
   case 10:
     if (isFirst) printf("Vgs        Cgd\n");
-    printf("%e %e\n", vgs, here->HSM1_cgdb);
+    printf("%e %e\n", model->HSM1_type*vgs, here->HSM1_cgdb);
     break;
   case 11:
     if (isFirst) printf("Vgs        Cgb\n");
-    printf("%e %e\n", vgs, -(here->HSM1_cggb+here->HSM1_cgsb+here->HSM1_cgdb));
+    printf("%e %e\n", model->HSM1_type*vgs, -(here->HSM1_cggb+here->HSM1_cgsb+here->HSM1_cgdb));
     break;
   case 12:
     if (isFirst) printf("Vds        Csg\n");
-    printf("%e %e\n", vds, -(here->HSM1_cggb+here->HSM1_cbgb+here->HSM1_cdgb));
+    printf("%e %e\n", model->HSM1_type*vds, -(here->HSM1_cggb+here->HSM1_cbgb+here->HSM1_cdgb));
     break;
   case 13:
     if (isFirst) printf("Vds        Cdg\n");
-    printf("%e %e\n", vds, here->HSM1_cdgb);
+    printf("%e %e\n", model->HSM1_type*vds, here->HSM1_cdgb);
     break;
   case 14:
     if (isFirst) printf("Vds        Cbg\n");
-    printf("%e %e\n", vds, here->HSM1_cbgb);
+    printf("%e %e\n", model->HSM1_type*vds, here->HSM1_cbgb);
     break;
-  deafult:
+  case 15:
+    if (isFirst) printf("Vds        Cgg\n");
+    printf("%e %e\n", model->HSM1_type*vds, here->HSM1_cggb);
+    break;
+  case 16:
+    if (isFirst) printf("Vds        Cgs\n");
+    printf("%e %e\n", model->HSM1_type*vds, here->HSM1_cgsb);
+    break;
+  case 17:
+    if (isFirst) printf("Vds        Cgd\n");
+    printf("%e %e\n", model->HSM1_type*vds, here->HSM1_cgdb);
+    break;
+  case 18:
+    if (isFirst) printf("Vds        Cgb\n");
+    printf("%e %e\n", model->HSM1_type*vds, -(here->HSM1_cggb+here->HSM1_cgsb+here->HSM1_cgdb));
+    break;
+  case 19:
+    if (isFirst) printf("Vgs        Csg\n");
+    printf("%e %e\n", model->HSM1_type*vgs, -(here->HSM1_cggb+here->HSM1_cbgb+here->HSM1_cdgb));
+    break;
+  case 20:
+    if (isFirst) printf("Vgs        Cdg\n");
+    printf("%e %e\n", model->HSM1_type*vgs, here->HSM1_cdgb);
+    break;
+  case 21:
+    if (isFirst) printf("Vgs        Cbg\n");
+    printf("%e %e\n", model->HSM1_type*vgs, here->HSM1_cbgb);
+    break;
+  case 22:
+    if (isFirst) printf("Vgb        Cgb\n");
+    printf("%e %e\n", model->HSM1_type*vgb, -(here->HSM1_cggb+here->HSM1_cgsb+here->HSM1_cgdb));
+    break;
+  case 50:
+    if (isFirst) printf("Vgs  Vds  Vbs  Vgb  Ids  log10(|Ids|)  gm/|Ids|  gm  gds  gbs  Cgg  Cgs  Cgb  Cgd  Csg  Cbg  Cdg\n");
+    printf("%e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e\n", model->HSM1_type*vgs, model->HSM1_type*vds, model->HSM1_type*vbs, model->HSM1_type*vgb, here->HSM1_mode*here->HSM1_ids, log10(here->HSM1_ids), here->HSM1_gm/here->HSM1_ids, here->HSM1_gm, here->HSM1_gds, here->HSM1_gmbs, here->HSM1_cggb, here->HSM1_cgsb, -(here->HSM1_cggb+here->HSM1_cgsb+here->HSM1_cgdb), here->HSM1_cgdb, -(here->HSM1_cggb+here->HSM1_cbgb+here->HSM1_cdgb), here->HSM1_cbgb, here->HSM1_cdgb);
+    break;
+  default:
     /*
-    printf("There is no physical vaule corrsponding to %d\n", flag);
+    printf("There is no physical value corrsponding to %d\n", flag);
     */
     break;
   }
 }
 
-int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
+int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
      /* actually load the current value into the 
       * sparse matrix previously provided 
       */
 {
-  HSM1model *model = (HSM1model*)inModel;
-  HSM1instance *here;
+  register HSM1model *model = (HSM1model*)inModel;
+  register HSM1instance *here;
   HiSIM_input sIN;
   HiSIM_output sOT;
   HiSIM_messenger sMS;
-  double cbhat, cdrain, cdhat, cdreq;
-  double Ibtot, Idtot;
+  double cbhat, cdrain, cdhat, cdreq, cgbhat, cgshat, cgdhat;
+  double Ibtot, Idtot, Igbtot, Igstot, Igdtot;
   double ceq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg;
   double delvbd, delvbs, delvds, delvgd, delvgs;
   double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb;
   double gcgdb, gcggb, gcgsb, gcsdb, gcsgb, gcssb;
-  double geq, tol, xfact;
+  double geq, xfact;
   double vbd, vbs, vcrit, vds, vgb, vgd, vgdo, vgs, von;
   double qgd, qgs, qgb;
   double gbbdp, gbbsp, gbspg, gbspdp, gbspb, gbspsp;
@@ -120,19 +159,28 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
   double cgdo, cgso, cgbo;
   double gm, gmbs, FwdSum, RevSum;
   double vt0, ag0;
+  double Ibtoteq, gIbtotg, gIbtotd, gIbtots, gIbtotb;
+  double Igtoteq, gIgtotg, gIgtotd, gIgtots, gIgtotb;
+  double Idtoteq, gIdtotg, gIdtotd, gIdtots, gIdtotb;
+  double Istoteq, gIstotg, gIstotd, gIstots, gIstotb;
   int ByPass, Check, error;
 #ifndef NOBYPASS
   double tempv;
 #endif /*NOBYPASS*/
   double tmp;
+#ifndef NEWCONV
+  double tol, tol2, tol3, tol4;
+#endif
   int ChargeComputationNeeded =  
     ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
      ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
     ? 1 : 0;
   int showPhysVal;
-  
-  double m;
+  int isConv;
+  double vds_pre;
 
+  double m; /* Parallel multiplier */
+  
   /*  loop through all the HSM1 device models */
   for ( ; model != NULL; model = model->HSM1nextModel ) {
     /* loop through all the instances of the model */
@@ -141,7 +189,6 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
 	 
       if (here->HSM1owner != ARCHme)
               continue;
-
 	 
       showPhysVal = 0;
       Check=1;
@@ -177,7 +224,7 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       } 
       else {
 #ifndef PREDICTOR /* BSIM3 style */
-	if(ckt->CKTmode & MODEINITPRED) {
+	if (ckt->CKTmode & MODEINITPRED) {
 	  xfact = ckt->CKTdelta / ckt->CKTdeltaOld[1];
 	  *(ckt->CKTstate0 + here->HSM1vbs) = 
 	    *(ckt->CKTstate1 + here->HSM1vbs);
@@ -194,7 +241,6 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
 	  *(ckt->CKTstate0 + here->HSM1vbd) = 
 	    *(ckt->CKTstate0 + here->HSM1vbs)-
 	    *(ckt->CKTstate0 + here->HSM1vds);
-	  showPhysVal = 1;
 	} 
 	else {
 #endif /* PREDICTOR */
@@ -208,10 +254,10 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
 	  vds = model->HSM1_type * 
 	    (*(ckt->CKTrhsOld+here->HSM1dNodePrime) -
 	     *(ckt->CKTrhsOld+here->HSM1sNodePrime));
-	  showPhysVal = 1;
 #ifndef PREDICTOR
 	}
 #endif /* PREDICTOR */
+
 	vbd = vbs - vds;
 	vgd = vgs - vds;
 	vgdo = *(ckt->CKTstate0 + here->HSM1vgs) - 
@@ -223,28 +269,56 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
 	delvgd = vgd - vgdo;
 	  
 	if (here->HSM1_mode >= 0) {
-	  Idtot = here->HSM1_ids + here->HSM1_isub - here->HSM1_ibd;
+	  Idtot = here->HSM1_ids + here->HSM1_isub - here->HSM1_ibd
+	    + here->HSM1_igidl;
 	  cdhat = Idtot - here->HSM1_gbd * delvbd
-	    + (here->HSM1_gmbs + here->HSM1_gbbs) * delvbs 
-	    + (here->HSM1_gm + here->HSM1_gbgs) * delvgs
-	    + (here->HSM1_gds + here->HSM1_gbds) * delvds;
-	  Ibtot = here->HSM1_ibs + here->HSM1_ibd - here->HSM1_isub;
+	    + (here->HSM1_gmbs + here->HSM1_gbbs + here->HSM1_gigidlbs) * delvbs 
+	    + (here->HSM1_gm + here->HSM1_gbgs + here->HSM1_gigidlgs) * delvgs
+	    + (here->HSM1_gds + here->HSM1_gbds + here->HSM1_gigidlds) * delvds;
+	  Ibtot = here->HSM1_ibs + here->HSM1_ibd - here->HSM1_isub
+	    - here->HSM1_igidl - here->HSM1_igisl;
 	  cbhat = Ibtot + here->HSM1_gbd * delvbd
-	    + (here->HSM1_gbs -  here->HSM1_gbbs) * delvbs
-	    - here->HSM1_gbgs * delvgs
-	    - here->HSM1_gbds * delvds;
+	    + (here->HSM1_gbs -  here->HSM1_gbbs - here->HSM1_gigidlbs) * delvbs
+	    - (here->HSM1_gbgs + here->HSM1_gigidlgs) * delvgs
+	    - (here->HSM1_gbds + here->HSM1_gigidlds) * delvds
+	    - here->HSM1_gigislgd * delvgd - here->HSM1_gigislbd * delvbd
+	    + here->HSM1_gigislsd * delvds;
+	  Igstot = here->HSM1_igs;
+	  cgshat = Igstot + here->HSM1_gigsg * delvgs + 
+	    here->HSM1_gigsd * delvds + here->HSM1_gigsb * delvbs;
+	  Igdtot = here->HSM1_igd;
+	  cgdhat = Igdtot + here->HSM1_gigdg * delvgs + 
+	    here->HSM1_gigdd * delvds + here->HSM1_gigdb * delvbs;
+	  Igbtot = here->HSM1_igb;
+	  cgbhat = Igbtot + here->HSM1_gigbg * delvgs + 
+	    here->HSM1_gigbd * delvds + here->HSM1_gigbb * delvbs;
 	} 
 	else {
-	  Idtot = here->HSM1_ids  - here->HSM1_ibd;
-	  cdhat = Idtot - (here->HSM1_gbd - here->HSM1_gmbs) * delvbd
-	    + here->HSM1_gm * delvgd
-	    - here->HSM1_gds * delvds;
-	  Ibtot = here->HSM1_ibs + here->HSM1_ibd - here->HSM1_isub;
+	  Idtot = here->HSM1_ids + here->HSM1_ibd - here->HSM1_igidl;
+	  cdhat = Idtot + (here->HSM1_gbd + here->HSM1_gmbs) * delvbd
+	    + here->HSM1_gm * delvgd - here->HSM1_gds * delvds
+	    - here->HSM1_gigidlgs * delvgd - here->HSM1_gigidlbs * delvbd 
+	    + here->HSM1_gigidlds * delvds ;
+	  Ibtot = here->HSM1_ibs + here->HSM1_ibd - here->HSM1_isub
+	    - here->HSM1_igidl - here->HSM1_igisl;
 	  cbhat = Ibtot + here->HSM1_gbs * delvbs
-	    + (here->HSM1_gbd - here->HSM1_gbbs) * delvbd
-	    - here->HSM1_gbgs * delvgd
-	    + here->HSM1_gbds * delvds;
+	    + (here->HSM1_gbd - here->HSM1_gbbs - here->HSM1_gigidlbs) * delvbd
+	    - (here->HSM1_gbgs + here->HSM1_gigidlgs) * delvgd
+	    + (here->HSM1_gbds + here->HSM1_gigidlds) * delvds
+	    - here->HSM1_gigislgd * delvgd - here->HSM1_gigislbd * delvbd
+	    + here->HSM1_gigislsd * delvds;
+	  Igbtot = here->HSM1_igb;
+	  cgbhat = Igbtot + here->HSM1_gigbg * delvgd
+	    - here->HSM1_gigbs * delvds + here->HSM1_gigbb * delvbd;
+	  Igstot = here->HSM1_igs;
+	  cgshat = Igstot + here->HSM1_gigsg * delvgd
+	    - here->HSM1_gigss * delvds + here->HSM1_gigsb * delvbd;
+	  Igdtot = here->HSM1_igd;
+	  cgdhat = Igdtot + here->HSM1_gigdg * delvgd
+	    - here->HSM1_gigds * delvds + here->HSM1_gigdb * delvbd;
 	}
+
+	vds_pre = vds;
 
 #ifndef NOBYPASS /* BSIM3 style */
 	/* now lets see if we can bypass (ugh) */
@@ -272,34 +346,43 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
 		       ckt->CKTvoltTol ) )
 		  if ( fabs(cdhat - Idtot) < 
 		       ( ckt->CKTreltol * 
-			 MAX(fabs(cdhat),fabs(Idtot)) + ckt->CKTabstol ) ) {
-		    tempv = MAX(fabs(cbhat),fabs(Ibtot)) + ckt->CKTabstol;
-		    if ((fabs(cbhat - Ibtot)) < ckt->CKTreltol * tempv) {
-		      /* bypass code */
-		      vbs = *(ckt->CKTstate0 + here->HSM1vbs);
-		      vbd = *(ckt->CKTstate0 + here->HSM1vbd);
-		      vgs = *(ckt->CKTstate0 + here->HSM1vgs);
-		      vds = *(ckt->CKTstate0 + here->HSM1vds);
-		      
-		      vgd = vgs - vds;
-		      vgb = vgs - vbs;
-		      
-		      cdrain = here->HSM1_ids;
-		      if ((ckt->CKTmode & (MODETRAN | MODEAC)) || 
-			  ((ckt->CKTmode & MODETRANOP) && 
-			   (ckt->CKTmode & MODEUIC))) {
-			ByPass = 1;
-			qgate = here->HSM1_qg;
-			qbulk = here->HSM1_qb;
-			qdrn = here->HSM1_qd;
-			goto line755;
+			 MAX(fabs(cdhat),fabs(Idtot)) + ckt->CKTabstol ) ) 
+		    if (!model->HSM1_coiigs || 
+			(fabs(cgbhat - Igbtot) < ckt->CKTreltol
+			 * MAX(fabs(cgbhat), fabs(Igbtot)) + ckt->CKTabstol))
+		      if (!model->HSM1_coiigs || 
+			  (fabs(cgshat - Igstot) < ckt->CKTreltol
+			   * MAX(fabs(cgshat), fabs(Igstot)) + ckt->CKTabstol))
+			if (!model->HSM1_coiigs || 
+			    (fabs(cgdhat - Igdtot) < ckt->CKTreltol
+			     * MAX(fabs(cgdhat), fabs(Igdtot)) + ckt->CKTabstol)){
+			  tempv = MAX(fabs(cbhat),fabs(Ibtot)) + ckt->CKTabstol;
+			  if ((fabs(cbhat - Ibtot)) < ckt->CKTreltol * tempv) {
+			    /* bypass code */
+			    vbs = *(ckt->CKTstate0 + here->HSM1vbs);
+			    vbd = *(ckt->CKTstate0 + here->HSM1vbd);
+			    vgs = *(ckt->CKTstate0 + here->HSM1vgs);
+			    vds = *(ckt->CKTstate0 + here->HSM1vds);
+			    
+			    vgd = vgs - vds;
+			    vgb = vgs - vbs;
+			    
+			    cdrain = here->HSM1_ids;
+			    if ((ckt->CKTmode & (MODETRAN | MODEAC)) || 
+				((ckt->CKTmode & MODETRANOP) && 
+				 (ckt->CKTmode & MODEUIC))) {
+			      ByPass = 1;
+			      qgate = here->HSM1_qg;
+			      qbulk = here->HSM1_qb;
+			      qdrn = here->HSM1_qd;
+			      goto line755;
+			    }
+			    else
+			      goto line850;
+			  }
 			}
-		      else
-			goto line850;
-		    }
-		  }
 #endif /*NOBYPASS*/
-
+	
 	/*	von = model->HSM1_type * here->HSM1_von;*/
 	von = here->HSM1_von; 
 	if(*(ckt->CKTstate0 + here->HSM1vds) >= 0.0) {
@@ -335,7 +418,7 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       vgb = vgs - vbs;
 
       /* Input data for HiSIM evaluation part */
-      sIN.gmin = ckt->CKTgmin; /* minimal conductance */
+      sIN.gmin = ckt->CKTgmin; /* minimum conductance */
 
       if (vds >= 0) { /* normal mode */
 	here->HSM1_mode = 1;
@@ -343,7 +426,7 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
 	sIN.vgs = vgs;
 	sIN.vbs = vbs;
       }
-      else { /* inverse mode */
+      else { /* reverse mode */
 	here->HSM1_mode = -1;
 	sIN.vds = -vds;
 	sIN.vgs = vgd;
@@ -372,13 +455,14 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       if ( here->HSM1_dtemp_Given ) sIN.temp = ckt->CKTtemp + here->HSM1_dtemp;
       
       sIN.tox = model->HSM1_tox;
-      sIN.xld = model->HSM1_dl;
-      sIN.xwd = model->HSM1_dw;
+      sIN.xld = model->HSM1_xld;
+      sIN.xwd = model->HSM1_xwd;
       
-      if (model->HSM1_version == 100) { /* HiSIM 1.0.0 */
+      if (model->HSM1_version == 102) { /* HiSIM 1.0.2 */
 	sIN.xj = model->HSM1_xj;
       }
-      else if (model->HSM1_version == 110) {	/* HiSIM 1.1.0 */
+      else if (model->HSM1_version == 112 || 
+	       model->HSM1_version == 120) { /* HiSIM 1.1.2 / 1.2.0 */
 	sIN.xqy = model->HSM1_xqy;
       }
       sIN.vmax = model->HSM1_vmax;
@@ -413,7 +497,8 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       sIN.muesr1 = model->HSM1_muesr1;
       sIN.muesr0 = model->HSM1_muesr0;
       sIN.muetmp = model->HSM1_muetmp;
-      if (model->HSM1_version == 110) { /* HiSIM 1.1.0 */
+      if (model->HSM1_version == 112 ||
+	  model->HSM1_version == 120) { /* HiSIM 1.1.2 / 1.2.0 */
 	sIN.wvthsc = model->HSM1_wvthsc;
 	sIN.nsti = model->HSM1_nsti;
 	sIN.wsti = model->HSM1_wsti;
@@ -424,9 +509,6 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
 	if ( model->HSM1_type == NMOS ) sIN.bb = 2.0e0;
 	else sIN.bb = 1.0e0;
       
-      sIN.vds0 = model->HSM1_vds0;
-      sIN.bc0 = model->HSM1_bc0; 
-      sIN.bc1 = model->HSM1_bc1;
       sIN.sub1 = model->HSM1_sub1;
       sIN.sub2 = model->HSM1_sub2;
       sIN.sub3 = model->HSM1_sub3;
@@ -474,7 +556,8 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       sIN.clm3 = model->HSM1_clm3;
       sIN.rpock1 = model->HSM1_rpock1;
       sIN.rpock2 = model->HSM1_rpock2;
-      if (model->HSM1_version == 110) { /* HiSIM 1.1.0 */
+      if (model->HSM1_version == 112 ||
+	  model->HSM1_version == 120) { /* HiSIM 1.1.2 / 1.2.0 */
 	sIN.rpocp1 = model->HSM1_rpocp1;
 	sIN.rpocp2 = model->HSM1_rpocp2;
       }
@@ -519,11 +602,23 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       sIN.coisub = model->HSM1_coisub;
       sIN.coiigs = model->HSM1_coiigs;
       sIN.cogidl = model->HSM1_cogidl;
+      sIN.cogisl = model->HSM1_cogisl;
       sIN.coovlp = model->HSM1_coovlp;
       sIN.conois = model->HSM1_conois;
-      if (model->HSM1_version == 110) { /* HiSIM 1.1.0 */
+      if (model->HSM1_version == 112 ||
+	  model->HSM1_version == 120) { /* HiSIM 1.1.2 / 1.2.0 */
 	sIN.coisti = model->HSM1_coisti;
       }
+      if (model->HSM1_version == 120) { /* HiSIM 1.2.0 */
+	sIN.cosmbi = model->HSM1_cosmbi;
+	sIN.glpart1 = model->HSM1_glpart1;
+	sIN.glpart2 = model->HSM1_glpart2;
+	sIN.kappa = model->HSM1_kappa;
+	sIN.xdiffd = model->HSM1_xdiffd;
+	sIN.pthrou = model->HSM1_pthrou;
+	sIN.vdiffj = model->HSM1_vdiffj;
+      }
+      sIN.version = model->HSM1_version ;
 
       sIN.vbsc_prv = here->HSM1_vbsc_prv;
       sIN.vdsc_prv = here->HSM1_vdsc_prv;
@@ -565,21 +660,27 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
 	printf( "coisub = %s\n" , (sIN.coisub) ? "true" : "false" ) ;
 	printf( "coiigs = %s\n" , (sIN.coiigs) ? "true" : "false" ) ;
 	printf( "cogidl = %s\n" , (sIN.cogidl) ? "true" : "false" ) ;
+	printf( "cogisl = %s\n" , (sIN.cogisl) ? "true" : "false" ) ;
 	printf( "coovlp = %s\n" , (sIN.coovlp) ? "true" : "false" ) ;
 	printf( "conois = %s\n" , (sIN.conois) ? "true" : "false" ) ;
-	if (model->HSM1_version == 110) { /* HiSIM 1.1.0 */
+	if (model->HSM1_version == 112 ||
+	    model->HSM1_version == 120) { /* HiSIM 1.1.2 / 1.2.0 */
 	  printf( "coisti = %s\n" , (sIN.coisti) ? "true" : "false" ) ;
 	}
       }
       /* print inputs ------------AA */
 
       /* call model evaluation */
-      if (model->HSM1_version == 100) { /* HiSIM 1.0.0 */
-	if ( HSM1evaluate1_0(sIN, &sOT, &sMS) == HiSIM_ERROR ) 
+      if (model->HSM1_version == 102) { /* HiSIM 1.0.2 */
+	if ( HSM1evaluate102(sIN, &sOT, &sMS) == HiSIM_ERROR ) 
 	  return (HiSIM_ERROR);
       }
-      else if (model->HSM1_version == 110) { /* HiSIM 1.1.0 */
-	if ( HSM1evaluate1_1(sIN, &sOT, &sMS) == HiSIM_ERROR ) 
+      else if (model->HSM1_version == 112) { /* HiSIM 1.1.2 */
+	if ( HSM1evaluate112(sIN, &sOT, &sMS) == HiSIM_ERROR ) 
+	  return (HiSIM_ERROR);
+      }
+      else if (model->HSM1_version == 120) { /* HiSIM 1.2.0 */
+	if ( HSM1evaluate120(sIN, &sOT, &sMS) == HiSIM_ERROR ) 
 	  return (HiSIM_ERROR);
       }
       
@@ -624,17 +725,7 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       here->HSM1_cgso = sOT.cgso ; /* G-S */
       here->HSM1_cgdo = sOT.cgdo ; /* G-D */
       here->HSM1_cgbo = sOT.cgbo ; /* G-B */
-   
-      /* capop */
-      /*      pslot->capop  = 13 ; capacitor selector ??? 
-       * no use in SPICE3f5 */
       
-      /* Meyer's capacitances */
-      /*
-      here->HSM1_capgs = sOT.capgs ;
-      here->HSM1_capgd = sOT.capgd ;
-      here->HSM1_capgb  = sOT.capgb ; may be not necessary */
-
       /* intrinsic charge ONLY */
       qgate = here->HSM1_qg = sOT.qg ; /* gate */
       qdrn = here->HSM1_qd = sOT.qd ;  /* drain */
@@ -677,6 +768,72 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
 
       /* mobility added by K.M. */
       here->HSM1_mu = sOT.mu;
+      /* gate induced drain leakage */
+      here->HSM1_igidl = sOT.igidl;
+      here->HSM1_gigidlgs = sOT.ggidlgs;
+      here->HSM1_gigidlds = sOT.ggidlds;
+      here->HSM1_gigidlbs = sOT.ggidlbs;
+      if (model->HSM1_version == 120) { /* HiSIM 1.2.0 */
+	/* gate induced source leakage */
+	here->HSM1_igisl = sOT.igisl;
+	here->HSM1_gigislgd = sOT.ggislgd;
+	here->HSM1_gigislsd = sOT.ggislsd;
+	here->HSM1_gigislbd = sOT.ggislbd;
+
+	/* gate tunneling current (gate to bulk) */
+	here->HSM1_igb = sOT.igateb;
+	here->HSM1_gigbg = sOT.ggbgs;
+	here->HSM1_gigbd = sOT.ggbds;
+	here->HSM1_gigbb = sOT.ggbbs;
+	here->HSM1_gigbs = -( here->HSM1_gigbg + here->HSM1_gigbd 
+			      + here->HSM1_gigbb );
+	/* gate tunneling current (gate to source) */
+	here->HSM1_igs = sOT.igates;
+	here->HSM1_gigsg = sOT.ggsgs;
+	here->HSM1_gigsd = sOT.ggsds;
+	here->HSM1_gigsb = sOT.ggsbs;
+	here->HSM1_gigss = -( here->HSM1_gigsg + here->HSM1_gigsd
+			      + here->HSM1_gigsb );
+	/* gate tunneling current (gate to drain) */
+	here->HSM1_igd = sOT.igated;
+	here->HSM1_gigdg = sOT.ggdgs;
+	here->HSM1_gigdd = sOT.ggdds;
+	here->HSM1_gigdb = sOT.ggdbs;
+	here->HSM1_gigds = -( here->HSM1_gigdg + here->HSM1_gigdd
+			      + here->HSM1_gigdb );
+      }
+      else {
+	/* gate induced source leakage */
+	here->HSM1_igisl = 0.0;
+	here->HSM1_gigislgd = 0.0;
+	here->HSM1_gigislsd = 0.0;
+	here->HSM1_gigislbd = 0.0;
+
+	/* gate tunneling current (gate to bulk) */
+	here->HSM1_igb = sOT.igate;
+	here->HSM1_gigbg = sOT.gggs;
+	here->HSM1_gigbd = sOT.ggds;
+	here->HSM1_gigbb = sOT.ggbs;
+	here->HSM1_gigbs = -( here->HSM1_gigbg + here->HSM1_gigbd 
+			      + here->HSM1_gigbb );
+	/* gate tunneling current (gate to source) */
+	here->HSM1_igs = 0.0;
+	here->HSM1_gigsg = 0.0;
+	here->HSM1_gigsd = 0.0;
+	here->HSM1_gigsb = 0.0;
+	here->HSM1_gigss = 0.0;
+	/* gate tunneling current (gate to drain) */
+	here->HSM1_igd = 0.0;
+	here->HSM1_gigdg = 0.0;
+	here->HSM1_gigdd = 0.0;
+	here->HSM1_gigdb = 0.0;
+	here->HSM1_gigds = 0.0;
+      }
+      /* intrinsic charges without overlap charge etc. */
+      here->HSM1_qg_int = sOT.qg_int;
+      here->HSM1_qd_int = sOT.qd_int;
+      here->HSM1_qs_int = sOT.qs_int;
+      here->HSM1_qb_int = sOT.qb_int;
 
       /* print all outputs ------------VV */
       if ( sIN.info >= 4 ) {
@@ -694,10 +851,6 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
 	
 	printf( "cgbo   = %12.5e\n" , sOT.cgbo ) ;
 	
-	printf( "capgs  = %12.5e\n" , sOT.capgs ) ;
-	printf( "capgd  = %12.5e\n" , sOT.capgd ) ;
-	printf( "capgb  = %12.5e\n" , sOT.capgb ) ;
-      
 	printf( "qg     = %12.5e\n" , sOT.qg ) ;
 	printf( "qd     = %12.5e\n" , sOT.qd ) ;
 	printf( "qs     = %12.5e\n" , sOT.qs ) ;
@@ -749,19 +902,77 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       /*
        *  check convergence
        */
+      isConv = 1;
       if ( (here->HSM1_off == 0) || !(ckt->CKTmode & MODEINITFIX) ) {
 	if (Check == 1) {
 	  ckt->CKTnoncon++;
+	  isConv = 0;
+	} 
+#ifndef NEWCONV
+//DW	} 
+	else {
+	  if (here->HSM1_mode >= 0) 
+	    Idtot = here->HSM1_ids + here->HSM1_isub 
+	      - here->HSM1_ibd + here->HSM1_igidl;
+	  else
+	    Idtot = here->HSM1_ids + here->HSM1_ibd 
+	      - here->HSM1_igidl;
+	  tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(Idtot)) 
+	    + ckt->CKTabstol;
+	  tol2 = ckt->CKTreltol * MAX(fabs(cgbhat), fabs(Igbtot)) 
+	    + ckt->CKTabstol;
+	  tol3 = ckt->CKTreltol * MAX(fabs(cgshat), fabs(Igstot)) 
+	    + ckt->CKTabstol;
+	  tol4 = ckt->CKTreltol * MAX(fabs(cgdhat), fabs(Igdtot)) 
+	    + ckt->CKTabstol;
+	  if (fabs(cdhat - Idtot) >= tol) {
+	    ckt->CKTnoncon++;
+	    isConv = 0;
+	  }
+	  else if (fabs(cgbhat - Igbtot) >= tol2 || 
+		   fabs(cgshat - Igstot) >= tol3 ||
+		   fabs(cgdhat - Igdtot) >= tol4) {
+	    ckt->CKTnoncon++;
+	    isConv = 0;
+	  }
+	  else {
+	    Ibtot = here->HSM1_ibs + here->HSM1_ibd 
+	      - here->HSM1_isub - here->HSM1_igidl - here->HSM1_igisl;
+	    tol = ckt->CKTreltol * 
+	      MAX(fabs(cbhat), fabs(Ibtot)) + ckt->CKTabstol;
+	    if (fabs(cbhat - Ibtot) > tol) {
+	      ckt->CKTnoncon++;
+	      isConv = 0;
+	    }
+	  }
+	}
+#endif /* NEWCONV */
       }
-    }
+//DW    }
     *(ckt->CKTstate0 + here->HSM1vbs) = vbs;
     *(ckt->CKTstate0 + here->HSM1vbd) = vbd;
     *(ckt->CKTstate0 + here->HSM1vgs) = vgs;
     *(ckt->CKTstate0 + here->HSM1vds) = vds;
 
-    if (model->HSM1_show_Given && showPhysVal) {
+    if ((ckt->CKTmode & MODEDC) && 
+	!(ckt->CKTmode & MODEINITFIX) && !(ckt->CKTmode & MODEINITJCT)) 
+      showPhysVal = 1;
+
+    /*
+    if ((ckt->CKTmode & MODEDC) && !(ckt->CKTmode & MODEINITFIX) &&
+	!(ckt->CKTmode & MODEINITJCT)) {
+      if ((!(ckt->CKTmode & MODEINITPRED) && vds != vds_pre) || 
+	  ((ckt->CKTmode & MODEINITPRED) && vds == vds_pre))
+	showPhysVal = 1;
+    }
+    */
+
+    if (model->HSM1_show_Given && showPhysVal && isConv) {
       static int isFirst = 1;
-      ShowPhysVals(here, model->HSM1_show, isFirst, vds, vgs, vbs);
+      if (vds != vds_pre) 
+	ShowPhysVals(here, model, isFirst, vds_pre, vgs, vbs, vgd, vbd, vgb);
+      else 
+	ShowPhysVals(here, model, isFirst, vds, vgs, vbs, vgd, vbd, vgb);
       if (isFirst) isFirst = 0;
     }
 
@@ -775,7 +986,7 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
     cgbo = here->HSM1_cgbo;
 
     ag0 = ckt->CKTag[0];
-    if (here->HSM1_mode > 0) { /* NORAMAL mode */
+    if (here->HSM1_mode > 0) { /* NORMAL mode */
       gcggb = (here->HSM1_cggb + cgdo + cgso + cgbo ) * ag0;
       gcgdb = (here->HSM1_cgdb - cgdo) * ag0;
       gcgsb = (here->HSM1_cgsb - cgso) * ag0;
@@ -909,9 +1120,9 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
      *  load current vector
      */
  line900:
-
+ 
     m = here->HSM1_m;
-
+     
     if (here->HSM1_mode >= 0) { /* NORMAL mode */
       gm = here->HSM1_gm;
       gmbs = here->HSM1_gmbs;
@@ -919,11 +1130,17 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       RevSum = 0.0;
 
       cdreq = model->HSM1_type * 
-	(cdrain - here->HSM1_gds * vds - gm * vgs - gmbs * vbs); 
+	(cdrain - here->HSM1_gds * vds - here->HSM1_gm * vgs - here->HSM1_gmbs * vbs); 
       ceqbd = -model->HSM1_type * 
-	(here->HSM1_isub - here->HSM1_gbds * vds - here->HSM1_gbgs * vgs
-	 - here->HSM1_gbbs * vbs);
-      ceqbs = 0.0;
+	(here->HSM1_isub + here->HSM1_igidl 
+	 - (here->HSM1_gbds + here->HSM1_gigidlds) * vds 
+	 - (here->HSM1_gbgs + here->HSM1_gigidlgs) * vgs 
+	 - (here->HSM1_gbbs + here->HSM1_gigidlbs) * vbs);
+      ceqbs = -model->HSM1_type * 
+	(here->HSM1_igisl 
+	 + here->HSM1_gigislsd * vds 
+	 - here->HSM1_gigislgd * vgd 
+	 - here->HSM1_gigislbd * vbd);
       
       gbbdp = -here->HSM1_gbds;
       gbbsp = here->HSM1_gbds + here->HSM1_gbgs + here->HSM1_gbbs;
@@ -937,6 +1154,48 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       gbspdp = 0.0;
       gbspb = 0.0;
       gbspsp = 0.0;
+
+      if (model->HSM1_coiigs) {
+	gIbtotg = here->HSM1_gigbg;
+	gIbtotd = here->HSM1_gigbd;
+	gIbtots = here->HSM1_gigbs;
+	gIbtotb = here->HSM1_gigbb;
+	Ibtoteq = model->HSM1_type * 
+	  (here->HSM1_igb - here->HSM1_gigbg * vgs 
+	   - here->HSM1_gigbd * vds - here->HSM1_gigbb * vbs);
+
+	gIstotg = here->HSM1_gigsg;
+	gIstotd = here->HSM1_gigsd;
+	gIstots = here->HSM1_gigss;
+	gIstotb = here->HSM1_gigsb;
+	Istoteq = model->HSM1_type * 
+	  (here->HSM1_igs - here->HSM1_gigsg * vgs
+	   - here->HSM1_gigsd * vds - here->HSM1_gigsb * vbs);
+
+	gIdtotg = here->HSM1_gigdg;
+	gIdtotd = here->HSM1_gigdd;
+	gIdtots = here->HSM1_gigds;
+	gIdtotb = here->HSM1_gigdb;
+	Idtoteq = model->HSM1_type * 
+	  (here->HSM1_igd - here->HSM1_gigdg * vgs
+	   - here->HSM1_gigdd * vds - here->HSM1_gigdb * vbs);
+      }
+      else {
+	gIbtotg = gIbtotd = gIbtots = gIbtotb = Ibtoteq = 0.0;
+	gIstotg = gIstotd = gIstots = gIstotb = Istoteq = 0.0;
+	gIdtotg = gIdtotd = gIdtots = gIdtotb = Idtoteq = 0.0;
+      }
+
+      if (model->HSM1_coiigs) {
+	gIgtotg = gIbtotg + gIstotg + gIdtotg;
+	gIgtotd = gIbtotd + gIstotd + gIdtotd;
+	gIgtots = gIbtots + gIstots + gIdtots;
+	gIgtotb = gIbtotb + gIstotb + gIdtotb;
+	Igtoteq = Ibtoteq + Istoteq + Idtoteq;
+      }
+      else
+	gIgtotg = gIgtotd = gIgtots = gIgtotb = Igtoteq = 0.0;
+
     }
     else { /* REVERSE mode */
       gm = -here->HSM1_gm;
@@ -945,11 +1204,18 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       RevSum = -(gm + gmbs);
 
       cdreq = -model->HSM1_type * 
-	(cdrain + here->HSM1_gds * vds + gm * vgd + gmbs * vbd);
+	(cdrain + here->HSM1_gds * vds 
+	 - here->HSM1_gm * vgd - here->HSM1_gmbs * vbd);
       ceqbs = -model->HSM1_type * 
-	(here->HSM1_isub + here->HSM1_gbds * vds - here->HSM1_gbgs * vgd
-	 - here->HSM1_gbbs * vbd);
-      ceqbd = 0.0;
+	(here->HSM1_isub + here->HSM1_igisl 
+	 + (here->HSM1_gbds + here->HSM1_gigislsd) * vds
+	 - (here->HSM1_gbgs + here->HSM1_gigislgd) * vgd
+	 - (here->HSM1_gbbs + here->HSM1_gigislbd) * vbd);
+      ceqbd = -model->HSM1_type * 
+	( here->HSM1_igidl 
+	 - here->HSM1_gigidlds * vds 
+	 - here->HSM1_gigidlgs * vgs 
+	 - here->HSM1_gigidlbs * vbs);
 
       gbbsp = -here->HSM1_gbds;
       gbbdp = here->HSM1_gbds + here->HSM1_gbgs + here->HSM1_gbbs;
@@ -963,6 +1229,47 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
       gbspsp = here->HSM1_gbds;
       gbspb = here->HSM1_gbbs;
       gbspdp = -(gbspg + gbspsp + gbspb);
+
+      if (model->HSM1_coiigs) {
+	gIbtotg = here->HSM1_gigbg;
+	gIbtotd = here->HSM1_gigbd;
+	gIbtots = here->HSM1_gigbs;
+	gIbtotb = here->HSM1_gigbb;
+	Ibtoteq = model->HSM1_type * 
+	  (here->HSM1_igb - here->HSM1_gigbg * vgd 
+	   + here->HSM1_gigbs * vds - here->HSM1_gigbb * vbd);
+
+	gIstotg = here->HSM1_gigsg;
+	gIstotd = here->HSM1_gigsd;
+	gIstots = here->HSM1_gigss;
+	gIstotb = here->HSM1_gigsb;
+	Istoteq = model->HSM1_type * 
+	  (here->HSM1_igs - here->HSM1_gigsg * vgd
+	   + here->HSM1_gigss * vds - here->HSM1_gigsb * vbd);
+	gIdtotg = here->HSM1_gigdg;
+	gIdtotd = here->HSM1_gigdd;
+	gIdtots = here->HSM1_gigds;
+	gIdtotb = here->HSM1_gigdb;
+	Idtoteq = model->HSM1_type *
+	  (here->HSM1_igd - here->HSM1_gigdg * vgd
+	   + here->HSM1_gigds * vds - here->HSM1_gigdb * vbd);
+      }
+      else {
+	gIbtotg = gIbtotd = gIbtots = gIbtotb = Ibtoteq = 0.0;
+	gIstotg = gIstotd = gIstots = gIstotb = Istoteq = 0.0;
+	gIdtotg = gIdtotd = gIdtots = gIdtotb = Idtoteq = 0.0;
+      }
+
+      if (model->HSM1_coiigs) {
+	gIgtotg = gIbtotg + gIstotg + gIdtotg;
+	gIgtotd = gIbtotd + gIstotd + gIdtotd;
+	gIgtots = gIbtots + gIstots + gIdtots;
+	gIgtotb = gIbtotb + gIstotb + gIdtotb;
+	Igtoteq = Ibtoteq + Istoteq + Idtoteq;
+      }
+      else
+	gIgtotg = gIgtotd = gIgtots = gIgtotb = Igtoteq = 0.0;
+
     }
     
     if (model->HSM1_type > 0) { 
@@ -991,41 +1298,76 @@ int HSM1load(GENmodel *inModel, CKTcircuit *ckt)
     printf( "----------------------------------------------------\n" ) ;
     */
     
-    *(ckt->CKTrhs + here->HSM1gNode) -= m * ceqqg;
-    *(ckt->CKTrhs + here->HSM1bNode) -= m * (ceqbs + ceqbd + ceqqb);
-    *(ckt->CKTrhs + here->HSM1dNodePrime) += m * (ceqbd - cdreq - ceqqd);
-    *(ckt->CKTrhs + here->HSM1sNodePrime) += m * (cdreq 
-      + ceqbs + ceqqg + ceqqb + ceqqd);
+    *(ckt->CKTrhs + here->HSM1gNode)      -= m * (ceqqg + Igtoteq);
+    *(ckt->CKTrhs + here->HSM1bNode)      -= m * (ceqbs + ceqbd + ceqqb - Ibtoteq);
+    *(ckt->CKTrhs + here->HSM1dNodePrime) += m * (ceqbd - cdreq - ceqqd + Idtoteq);
+    *(ckt->CKTrhs + here->HSM1sNodePrime) += m * (cdreq + ceqbs + ceqqg + ceqqb + ceqqd + Istoteq);
     
     /*
      *  load y matrix
      */
 
-    *(here->HSM1DdPtr) += m * here->HSM1drainConductance;
-    *(here->HSM1GgPtr) += m * gcggb;
-    *(here->HSM1SsPtr) += m * here->HSM1sourceConductance;
-    *(here->HSM1BbPtr) += m * (here->HSM1_gbd + here->HSM1_gbs
-      - gcbgb - gcbdb - gcbsb - here->HSM1_gbbs);
+    *(here->HSM1DdPtr)   += m * here->HSM1drainConductance;
+    *(here->HSM1GgPtr)   += m * (gcggb + gIgtotg);
+    *(here->HSM1SsPtr)   += m * here->HSM1sourceConductance;
+    *(here->HSM1BbPtr)   += m * (here->HSM1_gbd + here->HSM1_gbs
+                                 - gcbgb - gcbdb - gcbsb - 
+				 here->HSM1_gbbs - gIbtotb);
     *(here->HSM1DPdpPtr) += m * (here->HSM1drainConductance
-      + here->HSM1_gds + here->HSM1_gbd + RevSum + gcddb + gbdpdp);
+                                 + here->HSM1_gds + here->HSM1_gbd 
+				 + RevSum + gcddb + gbdpdp - gIdtotd);
     *(here->HSM1SPspPtr) += m * (here->HSM1sourceConductance
-      + here->HSM1_gds + here->HSM1_gbs + FwdSum + gcssb + gbspsp);
-    *(here->HSM1DdpPtr) -= m * here->HSM1drainConductance;
-    *(here->HSM1GbPtr) -= m * (gcggb + gcgdb + gcgsb);
-    *(here->HSM1GdpPtr) += m * gcgdb;
-    *(here->HSM1GspPtr) += m * gcgsb;
-    *(here->HSM1SspPtr) -= m * here->HSM1sourceConductance;
-    *(here->HSM1BgPtr) += m * (gcbgb - here->HSM1_gbgs);
-    *(here->HSM1BdpPtr) += m * (gcbdb - here->HSM1_gbd + gbbdp);
-    *(here->HSM1BspPtr) += m * (gcbsb - here->HSM1_gbs + gbbsp);
-    *(here->HSM1DPdPtr) -= m * here->HSM1drainConductance;
-    *(here->HSM1DPgPtr) += m * (gm + gcdgb + gbdpg);
-    *(here->HSM1DPbPtr) -= m * (here->HSM1_gbd - gmbs + gcdgb + gcddb + gcdsb - gbdpb);
-    *(here->HSM1DPspPtr) -= m * (here->HSM1_gds + FwdSum - gcdsb - gbdpsp);
-    *(here->HSM1SPgPtr) += m * (gcsgb - gm + gbspg);
-    *(here->HSM1SPsPtr) -= m * here->HSM1sourceConductance;
-    *(here->HSM1SPbPtr) -= m * (here->HSM1_gbs + gmbs + gcsgb + gcsdb + gcssb - gbspb);
-    *(here->HSM1SPdpPtr) -= m * (here->HSM1_gds + RevSum - gcsdb - gbspdp);
+                                 + here->HSM1_gds + here->HSM1_gbs 
+				 + FwdSum + gcssb + gbspsp - gIstots);
+    *(here->HSM1DdpPtr)  -= m * here->HSM1drainConductance;
+    *(here->HSM1GbPtr)   -= m * (gcggb + gcgdb + gcgsb - gIgtotb);
+    *(here->HSM1GdpPtr)  += m * (gcgdb + gIgtotd);
+    *(here->HSM1GspPtr)  += m * (gcgsb + gIgtots);
+    *(here->HSM1SspPtr)  -= m * (here->HSM1sourceConductance);
+    *(here->HSM1BgPtr)   += m * (gcbgb - here->HSM1_gbgs - gIbtotg);
+    *(here->HSM1BdpPtr)  += m * (gcbdb - here->HSM1_gbd + gbbdp 
+                                 - gIbtotd);
+    *(here->HSM1BspPtr)  += m * (gcbsb - here->HSM1_gbs + gbbsp 
+                                 - gIbtots);
+    *(here->HSM1DPdPtr)  -= m * (here->HSM1drainConductance);
+    *(here->HSM1DPgPtr)  += m * (gm + gcdgb + gbdpg - gIdtotg);
+    *(here->HSM1DPbPtr)  -= m * (here->HSM1_gbd - gmbs + gcdgb + gcddb 
+                                 + gcdsb - gIdtotb);
+    *(here->HSM1DPspPtr) -= m * (here->HSM1_gds + FwdSum - gcdsb - gbdpsp 
+                                 + gIdtots);
+    *(here->HSM1SPgPtr)  += m * (gcsgb - gm + gbspg - gIstotg);
+    *(here->HSM1SPsPtr)  -= m * (here->HSM1sourceConductance);
+    *(here->HSM1SPbPtr)  -= m * (here->HSM1_gbs + gmbs + gcsgb + gcsdb 
+                                 + gcssb - gbspb + gIstotb);
+    *(here->HSM1SPdpPtr) -= m * (here->HSM1_gds + RevSum - gcsdb - gbspdp 
+                                 + gIstotd);
+
+    /* stamp GIDL */
+    *(here->HSM1DPdpPtr) += m * here->HSM1_gigidlds;
+    *(here->HSM1DPgPtr)  += m * here->HSM1_gigidlgs;
+    *(here->HSM1DPspPtr) -= m *(here->HSM1_gigidlgs 
+                                + here->HSM1_gigidlds 
+				+ here->HSM1_gigidlbs);
+    *(here->HSM1DPbPtr)  += m * here->HSM1_gigidlbs;
+    *(here->HSM1BdpPtr)  -= m * here->HSM1_gigidlds;
+    *(here->HSM1BgPtr)   -= m * here->HSM1_gigidlgs;
+    *(here->HSM1BspPtr)  += m * (here->HSM1_gigidlgs 
+                                 + here->HSM1_gigidlds 
+				 + here->HSM1_gigidlbs);
+    *(here->HSM1BbPtr)   -= m * here->HSM1_gigidlbs;
+    /* stamp GISL */
+    *(here->HSM1SPdpPtr) -= m * (here->HSM1_gigislsd 
+                                 + here->HSM1_gigislgd 
+			         + here->HSM1_gigislbd);
+    *(here->HSM1SPgPtr)  += m * here->HSM1_gigislgd;
+    *(here->HSM1SPspPtr) += m * here->HSM1_gigislsd;
+    *(here->HSM1SPbPtr)  += m * here->HSM1_gigislbd;
+    *(here->HSM1BdpPtr)  += m * (here->HSM1_gigislgd 
+                                 + here->HSM1_gigislsd 
+				 + here->HSM1_gigislbd);
+    *(here->HSM1BgPtr)   -= m * here->HSM1_gigislgd;
+    *(here->HSM1BspPtr)  -= m * here->HSM1_gigislsd;
+    *(here->HSM1BbPtr)   -= m * here->HSM1_gigislbd;
 
   line1000:
     ;

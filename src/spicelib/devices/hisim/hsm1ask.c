@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1ask.c of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1ask.c of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #include "ngspice.h"
 #include "ifsim.h"
@@ -21,8 +16,9 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM1ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
-            IFvalue *select)
+int 
+HSM1ask(CKTcircuit *ckt, GENinstance *inst, int which, 
+        IFvalue *value, IFvalue *select)
 {
   HSM1instance *here = (HSM1instance*)inst;
 
@@ -35,7 +31,7 @@ int HSM1ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
     return(OK);
   case HSM1_M:
     value->rValue = here->HSM1_m;
-    return(OK);
+    return(OK);    
   case HSM1_AS:
     value->rValue = here->HSM1_as;
     return(OK);
@@ -143,8 +139,8 @@ int HSM1ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
     value->rValue *= here->HSM1_m;
     return(OK);
   case HSM1_QB:
-    value->rValue = *(ckt->CKTstate0 + here->HSM1qb);
-    value->rValue *= here->HSM1_m; 
+    value->rValue = *(ckt->CKTstate0 + here->HSM1qb); 
+    value->rValue *= here->HSM1_m;
     return(OK);
   case HSM1_CQB:
     value->rValue = *(ckt->CKTstate0 + here->HSM1cqb); 
@@ -163,8 +159,8 @@ int HSM1ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
     value->rValue *= here->HSM1_m;
     return(OK);
   case HSM1_CQD:
-    value->rValue = *(ckt->CKTstate0 + here->HSM1cqd); 
-    value->rValue *= here->HSM1_m;
+    value->rValue = *(ckt->CKTstate0 + here->HSM1cqd);
+    value->rValue *= here->HSM1_m; 
     return(OK);
   case HSM1_CGG:
     value->rValue = here->HSM1_cggb; 
@@ -221,8 +217,8 @@ int HSM1ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
     value->rValue *= here->HSM1_m;
     return(OK);
   case HSM1_QBD:
-    value->rValue = *(ckt->CKTstate0 + here->HSM1qbd);
-    value->rValue *= here->HSM1_m; 
+    value->rValue = *(ckt->CKTstate0 + here->HSM1qbd); 
+    value->rValue *= here->HSM1_m;
     return(OK);
   default:
     return(E_BADPARM);

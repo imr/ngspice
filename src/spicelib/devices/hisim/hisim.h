@@ -1,17 +1,13 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hisim.h of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hisim.h of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
 
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #ifndef _HiSIM_H
 #define _HiSIM_H
@@ -69,6 +65,9 @@ typedef struct sHiSIM_input {
 
   /* frequency [Hz] */
   double  freq ;
+
+  /* version */
+  double  version ;
   
   /* Control options that can be set in a model parameter set. */
   int     info ;   /* information level (for debug, etc.) */
@@ -82,11 +81,13 @@ typedef struct sHiSIM_input {
   int     coxx08 ; /* spare */
   int     coxx09 ; /* spare */
   int     coisub ; /* calculate isub */
-  int     coiigs ; /* calculate igs */
-  int     cogidl ; /* calculate ilg */
+  int     coiigs ; /* calculate igate */
+  int     cogidl ; /* calculate igidl */
+  int     cogisl ; /* calculate igisl */
   int     coovlp ; /* calculate overlap charge */
   int     conois ; /* calculate 1/f noise */
   int     coisti ; /* calculate STI */
+  int     cosmbi ; /* bias smoothing in dVth */
 
    /* Previous values that may be used as initial guesses */
   /* - derivatives are ones w.r.t. internal biases. */
@@ -119,6 +120,7 @@ typedef struct sHiSIM_input {
   double  nrd ;   /* equivalent num of squares of drain [-] (unused) */
   double  nrs ;   /* equivalent num of squares of source [-] (unused) */
   double  temp ;  /* lattice temperature [K] */
+  double  m ;     /* multiplier */
   
   /* Model parameters */
   double  vmax ;  /* saturation velocity [cm/s] */
@@ -162,9 +164,6 @@ typedef struct sHiSIM_input {
   double  muesr1 ;  /* coeff. for S.R. scattering [-] */
   double  muetmp ;  /* parameter for mobility [-] */
   double  bb ;    /* empirical mobility model coefficient [-] */
-  double  vds0 ;  /* Vds0 used for low field mobility [V] */
-  double  bc0 ;   /* coeff. for BC */
-  double  bc1 ;   /* power of L for BC */
 /**/
   double  sub1 ;  /* parameter for Isub [1/V] */
   double  sub2 ;  /* parameter for Isub [V] */
@@ -231,7 +230,15 @@ typedef struct sHiSIM_input {
   double  nfalp ;
   double  cit ;
 
-  double  gmin ; /* gmin = minimam conductance of SPICE3 K.M. */
+  double  gmin ; /* gmin = minimum conductance of SPICE3 */
+ /**/
+  double glpart1 ; /* partition of gate leackage current */
+  double glpart2 ;
+  double kappa ;  /* */
+  double xdiffd ; /* */
+  double pthrou ;  /* */
+  double vdiffj ; /* */
+
 } HiSIM_input ;
 
 /*-------------------------------------------------------------------*
@@ -252,10 +259,6 @@ typedef struct sHiSIM_output {
 /**/
   double von ;    /* Vth [V] */
   double vdsat ;  /* saturation voltage [V] */
-/**/
-  double capgs ;  /* Meyer's gate capacitance (dQg/dVgs+cgso) [S] */
-  double capgd ;  /* Meyer's gate capacitance (dQg/dVgs+cgso) [S] */
-  double capgb ;  /* Meyer's gate capacitance (dQg/dVgs+cgso) [S] */
 /**/
   double ibs ;    /* substrate source leakage current [A] */
   double ibd ;    /* substrate drain leakage current [A] */
@@ -286,15 +289,35 @@ typedef struct sHiSIM_output {
   double cddb ;   /* intrinsic drain capacitance w.r.t. drain [F] */
   double cdsb ;   /* intrinsic drain capacitance w.r.t. source [F] */
 /**/
-  double igs ;    /* gate current due to tunneling [A] */
-  double gggs ;   /* trans conductance (dIgs/dVgs) [S] */
-  double ggds ;   /* trans conductance (dIgs/dVds) [S] */
-  double ggbs ;   /* trans conductance (dIgs/dVbs) [S] */
+  double igate ;  /* gate current due to tunneling [A] */
+  double gggs ;   /* trans conductance (dIgate/dVgs) [S] */
+  double ggds ;   /* trans conductance (dIgate/dVds) [S] */
+  double ggbs ;   /* trans conductance (dIgate/dVbs) [S] */
 /**/
-  double ilg ;    /* gate induced drain leakage [A] */
-  double glgs ;   /* trans conductance (dIlg/dVgs) [S] */
-  double glds ;   /* trans conductance (dIlg/dVds) [S] */
-  double glbs ;   /* trans conductance (dIlg/dVbs) [S] */
+  double igateb ;  /* gate current due to tunneling [A] (G->B)*/
+  double ggbgs ;   /* trans conductance (dIgateb/dVgs) [S] */
+  double ggbds ;   /* trans conductance (dIgateb/dVds) [S] */
+  double ggbbs ;   /* trans conductance (dIgateb/dVbs) [S] */
+/**/
+  double igates ;  /* gate current due to tunneling [A] (G->S)*/
+  double ggsgs ;   /* trans conductance (dIgates/dVgs) [S] */
+  double ggsds ;   /* trans conductance (dIgates/dVds) [S] */
+  double ggsbs ;   /* trans conductance (dIgates/dVbs) [S] */
+/**/
+  double igated ;  /* gate current due to tunneling [A] (G->D)*/
+  double ggdgs ;   /* trans conductance (dIgated/dVgs) [S] */
+  double ggdds ;   /* trans conductance (dIgated/dVds) [S] */
+  double ggdbs ;   /* trans conductance (dIgated/dVbs) [S] */
+/**/
+  double igidl ;    /* gate induced drain leakage [A] */
+  double ggidlgs ;   /* trans conductance (dIgidl/dVgs) [S] */
+  double ggidlds ;   /* trans conductance (dIgidl/dVds) [S] */
+  double ggidlbs ;   /* trans conductance (dIgidl/dVbs) [S] */
+/**/
+  double igisl ;    /* gate induced source leakage [A] */
+  double ggislgd ;   /* trans conductance (dIgisl/dVgs) [S] */
+  double ggislsd ;   /* trans conductance (dIgisl/dVds) [S] */
+  double ggislbd ;   /* trans conductance (dIgisl/dVbs) [S] */
 /**/
   double nois_idsfl ;
   double nois_ird ;
@@ -322,6 +345,13 @@ typedef struct sHiSIM_output {
 
   /* mobility added by K.M. */
   double  mu ;
+
+  /* intrinsic charges */
+  double qg_int ;
+  double qd_int ;
+  double qs_int ;
+  double qb_int ;
+
 } HiSIM_output ;
 
 /*-------------------------------------------------------------------*
@@ -353,5 +383,24 @@ typedef struct sHiSIM_messenger {
 * if CMI_OK is defined.
 *   dms[ 1 ] :(in) timepoint. 
 -------------------------------------------*/
+
+
+extern int HSM1evaluate102( 
+ HiSIM_input     sIN,
+ HiSIM_output    *pOT,
+ HiSIM_messenger *pMS 
+ ) ;
+extern int HSM1evaluate112
+(
+ HiSIM_input     sIN,
+ HiSIM_output    *pOT,
+ HiSIM_messenger *pMS 
+ ) ;
+extern int HSM1evaluate120
+(
+ HiSIM_input     sIN,
+ HiSIM_output    *pOT,
+ HiSIM_messenger *pMS 
+ ) ;
 
 #endif /* _HiSIM_H */

@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1del.c of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1del.c of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #include "ngspice.h"
 #include "hsm1def.h"
@@ -19,7 +14,8 @@
 #include "gendefs.h"
 #include "suffix.h"
 
-int HSM1delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+int 
+HSM1delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 {
   HSM1instance **fast = (HSM1instance**)inInst;
   HSM1model *model = (HSM1model*)inModel;

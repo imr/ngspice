@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1mask.c of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1mask.c of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #include "ngspice.h"
 #include "ifsim.h"
@@ -21,7 +16,8 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM1mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
+int 
+HSM1mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
   HSM1model *model = (HSM1model *)inst;
   switch (which) {
@@ -82,6 +78,9 @@ int HSM1mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
   case  HSM1_MOD_COGIDL:
     value->iValue = model->HSM1_cogidl;
     return(OK);
+  case  HSM1_MOD_COGISL:
+    value->iValue = model->HSM1_cogisl;
+    return(OK);
   case  HSM1_MOD_COOVLP:
     value->iValue = model->HSM1_coovlp;
     return(OK);
@@ -90,6 +89,9 @@ int HSM1mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
     return(OK);
   case  HSM1_MOD_COISTI: /* HiSIM1.1 */
     value->iValue = model->HSM1_coisti;
+    return(OK);
+  case  HSM1_MOD_COSMBI: /* HiSIM1.2 */
+    value->iValue = model->HSM1_cosmbi;
     return(OK);
   case  HSM1_MOD_VMAX:
     value->rValue = model->HSM1_vmax;
@@ -103,11 +105,11 @@ int HSM1mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
   case  HSM1_MOD_TOX:
     value->rValue = model->HSM1_tox;
     return(OK);
-  case  HSM1_MOD_DL:
-    value->rValue = model->HSM1_dl;
+  case  HSM1_MOD_XLD:
+    value->rValue = model->HSM1_xld;
     return(OK);
-  case  HSM1_MOD_DW:
-    value->rValue = model->HSM1_dw;
+  case  HSM1_MOD_XWD:
+    value->rValue = model->HSM1_xwd;
     return(OK);
   case  HSM1_MOD_XJ: /* HiSIM1.0 */
     value->rValue = model->HSM1_xj;
@@ -201,15 +203,6 @@ int HSM1mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
     return(OK);
   case  HSM1_MOD_BB:
     value->rValue = model->HSM1_bb;
-  return(OK);
-  case  HSM1_MOD_VDS0:
-    value->rValue = model->HSM1_vds0;
-    return(OK);
-  case  HSM1_MOD_BC0:
-    value->rValue = model->HSM1_bc0;
-    return(OK);
-  case  HSM1_MOD_BC1:
-    value->rValue = model->HSM1_bc1;
     return(OK);
   case  HSM1_MOD_SUB1:
     value->rValue = model->HSM1_sub1;
@@ -360,6 +353,24 @@ int HSM1mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
     return(OK);
   case  HSM1_MOD_CIT:
     value->rValue = model->HSM1_cit;
+    return(OK);
+  case  HSM1_MOD_GLPART1: /* HiSIM1.2 */
+    value->rValue = model->HSM1_glpart1;
+    return(OK);
+  case  HSM1_MOD_GLPART2: /* HiSIM1.2 */
+    value->rValue = model->HSM1_glpart2;
+    return(OK);
+  case  HSM1_MOD_KAPPA: /* HiSIM1.2 */
+    value->rValue = model->HSM1_kappa;
+    return(OK);
+  case  HSM1_MOD_XDIFFD: /* HiSIM1.2 */
+    value->rValue = model->HSM1_xdiffd;
+    return(OK);
+  case  HSM1_MOD_PTHROU: /* HiSIM1.2 */
+    value->rValue = model->HSM1_pthrou;
+    return(OK);
+  case  HSM1_MOD_VDIFFJ: /* HiSIM1.2 */
+    value->rValue = model->HSM1_vdiffj;
     return(OK);
   case HSM1_MOD_KF:
     value->rValue = model->HSM1_kf;

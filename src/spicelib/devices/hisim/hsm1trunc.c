@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1trunc.c of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1trunc of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #include "ngspice.h"
 #include "cktdefs.h"
@@ -19,10 +14,11 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM1trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
+int 
+HSM1trunc(GENmodel *inModel, register CKTcircuit *ckt, double *timeStep)
 {
-HSM1model *model = (HSM1model*)inModel;
-HSM1instance *here;
+  register HSM1model *model = (HSM1model*)inModel;
+  register HSM1instance *here;
 #ifdef STEPDEBUG
   double debugtemp;
 #endif /* STEPDEBUG */
@@ -30,10 +26,10 @@ HSM1instance *here;
   for ( ;model != NULL ;model = model->HSM1nextModel ) {
     for ( here=model->HSM1instances ;here!=NULL ;
 	  here = here->HSM1nextInstance ) {
+    	  
+    if (here->HSM1owner != ARCHme)
+            continue;	  
 	  
-      if (here->HSM1owner != ARCHme)
-              continue;
-
 #ifdef STEPDEBUG
       debugtemp = *timeStep;
 #endif /* STEPDEBUG */

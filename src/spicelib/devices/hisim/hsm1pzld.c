@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1pzld.c of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1pzld.c of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #include "ngspice.h"
 #include "cktdefs.h"
@@ -20,10 +15,12 @@
 #include "hsm1def.h"
 #include "suffix.h"
 
-int HSM1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
+int 
+HSM1pzLoad(GENmodel *inModel, register CKTcircuit *ckt, 
+           register SPcomplex *s)
 {
-  HSM1model *model = (HSM1model*)inModel;
-  HSM1instance *here;
+  register HSM1model *model = (HSM1model*)inModel;
+  register HSM1instance *here;
   double xcggb, xcgdb, xcgsb, xcgbb, xcbgb, xcbdb, xcbsb, xcbbb;
   double xcdgb, xcddb, xcdsb, xcdbb, xcsgb, xcsdb, xcssb, xcsbb;
   double gdpr, gspr, gds, gbd, gbs, capbd, capbs, FwdSum, RevSum, gm, gmbs;
@@ -31,16 +28,20 @@ int HSM1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
   double cgso, cgdo, cgbo;
   double gbspsp, gbbdp, gbbsp, gbspg, gbspb;
   double gbspdp, gbdpdp, gbdpg, gbdpb, gbdpsp;
+  double gIbtotg, gIbtotd, gIbtots, gIbtotb;
+  double gIgtotg, gIgtotd, gIgtots, gIgtotb;
+  double gIdtotg, gIdtotd, gIdtots, gIdtotb;
+  double gIstotg, gIstotd, gIstots, gIstotb;
   
-  double m;
+  double m; /* Multiplier */
   
   for ( ;model != NULL ;model = model->HSM1nextModel ) {
     for ( here = model->HSM1instances ;here!= NULL ;
 	  here = here->HSM1nextInstance ) {
 	  
       if (here->HSM1owner != ARCHme)
-              continue;
-	  
+            continue;
+  
       if ( here->HSM1_mode >= 0 ) {
 	gm = here->HSM1_gm;
 	gmbs = here->HSM1_gmbs;
@@ -59,7 +60,39 @@ int HSM1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 	gbspdp = 0.0;
 	gbspb = 0.0;
 	gbspsp = 0.0;
-	
+
+	if (model->HSM1_coiigs) {
+	  gIbtotg = here->HSM1_gigbg;
+	  gIbtotd = here->HSM1_gigbd;
+	  gIbtots = here->HSM1_gigbs;
+	  gIbtotb = here->HSM1_gigbb;
+
+	  gIstotg = here->HSM1_gigsg;
+	  gIstotd = here->HSM1_gigsd;
+	  gIstots = here->HSM1_gigss;
+	  gIstotb = here->HSM1_gigsb;
+
+	  gIdtotg = here->HSM1_gigdg;
+	  gIdtotd = here->HSM1_gigdd;
+	  gIdtots = here->HSM1_gigds;
+	  gIdtotb = here->HSM1_gigdb;
+
+	}
+	else {
+	  gIbtotg = gIbtotd = gIbtots = gIbtotb = 0.0;
+	  gIstotg = gIstotd = gIstots = gIstotb = 0.0;
+	  gIdtotg = gIdtotd = gIdtots = gIdtotb = 0.0;
+	}
+
+	if (model->HSM1_coiigs) {
+	  gIgtotg = gIbtotg + gIstotg + gIdtotg;
+	  gIgtotd = gIbtotd + gIstotd + gIdtotd;
+	  gIgtots = gIbtots + gIstots + gIdtots;
+	  gIgtotb = gIbtotb + gIstotb + gIdtotb;
+	}
+	else
+	  gIgtotg = gIgtotd = gIgtots = gIgtotb = 0.0;
+
 	cggb = here->HSM1_cggb;
 	cgsb = here->HSM1_cgsb;
 	cgdb = here->HSM1_cgdb;
@@ -86,6 +119,37 @@ int HSM1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 	gbdpsp = 0.0;
 	gbdpb = 0.0;
 	gbdpdp = 0.0;
+
+	if (model->HSM1_coiigs) {
+	  gIbtotg = here->HSM1_gigbg;
+	  gIbtotd = here->HSM1_gigbd;
+	  gIbtots = here->HSM1_gigbs;
+	  gIbtotb = here->HSM1_gigbb;
+
+	  gIstotg = here->HSM1_gigsg;
+	  gIstotd = here->HSM1_gigsd;
+	  gIstots = here->HSM1_gigss;
+	  gIstotb = here->HSM1_gigsb;
+
+	  gIdtotg = here->HSM1_gigdg;
+	  gIdtotd = here->HSM1_gigdd;
+	  gIdtots = here->HSM1_gigds;
+	  gIdtotb = here->HSM1_gigdb;
+	}
+	else {
+	  gIbtotg = gIbtotd = gIbtots = gIbtotb = 0.0;
+	  gIstotg = gIstotd = gIstots = gIstotb = 0.0;
+	  gIdtotg = gIdtotd = gIdtots = gIdtotb = 0.0;
+	}
+	
+	if (model->HSM1_coiigs) {
+	  gIgtotg = gIbtotg + gIstotg + gIdtotg;
+	  gIgtotd = gIbtotd + gIstotd + gIdtotd;
+	  gIgtots = gIbtots + gIstots + gIdtots;
+	  gIgtotb = gIbtotb + gIstotb + gIdtotb;
+	}
+	else
+	  gIgtotg = gIgtotd = gIgtots = gIgtotb = 0.0;
 	
 	gbspg = here->HSM1_gbgs;
 	gbspsp = here->HSM1_gbds;
@@ -117,8 +181,6 @@ int HSM1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
       cgdo = here->HSM1_cgdo;
       cgbo = here->HSM1_cgbo;
       
-      m = here->HSM1_m;
-      
       xcdgb = (cdgb - cgdo);
       xcddb = (cddb + capbd + cgdo);
       xcdsb = cdsb;
@@ -136,70 +198,100 @@ int HSM1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
       xcbsb = (cbsb - capbs);
       xcbbb = -(xcbgb + xcbdb + xcbsb);
       
-      *(here->HSM1GgPtr ) += m * xcggb * s->real;
-      *(here->HSM1GgPtr +1) += m * xcggb * s->imag;
-      *(here->HSM1BbPtr ) += m * xcbbb * s->real;
-      *(here->HSM1BbPtr +1) += m * xcbbb * s->imag;
-      *(here->HSM1DPdpPtr ) += m * xcddb * s->real;
+      m = here->HSM1_m;
+      
+      *(here->HSM1GgPtr )     += m * xcggb * s->real;
+      *(here->HSM1GgPtr +1)   += m * xcggb * s->imag;
+      *(here->HSM1GgPtr)      += m * gIgtotg;
+      *(here->HSM1BbPtr )     += m * xcbbb * s->real;
+      *(here->HSM1BbPtr +1)   += m * xcbbb * s->imag;
+      *(here->HSM1GbPtr)      += m * gIgtotb;
+      *(here->HSM1DPdpPtr )   += m * xcddb * s->real;
       *(here->HSM1DPdpPtr +1) += m * xcddb * s->imag;
-      *(here->HSM1SPspPtr ) += m * xcssb * s->real;
+      *(here->HSM1SPspPtr )   += m * xcssb * s->real;
       *(here->HSM1SPspPtr +1) += m * xcssb * s->imag;
       
-      *(here->HSM1GbPtr ) += m * xcgbb * s->real;
-      *(here->HSM1GbPtr +1) += m * xcgbb * s->imag;
-      *(here->HSM1GdpPtr ) += m * xcgdb * s->real;
-      *(here->HSM1GdpPtr +1) += m * xcgdb * s->imag;
-      *(here->HSM1GspPtr ) += m * xcgsb * s->real;
-      *(here->HSM1GspPtr +1) += m * xcgsb * s->imag;
+      *(here->HSM1GbPtr )     += m * xcgbb * s->real;
+      *(here->HSM1GbPtr +1)   += m * xcgbb * s->imag;
+      *(here->HSM1GdpPtr )    += m * xcgdb * s->real;
+      *(here->HSM1GdpPtr +1)  += m * xcgdb * s->imag;
+      *(here->HSM1GdpPtr)     += m * gIgtotd;
+      *(here->HSM1GspPtr )    += m * xcgsb * s->real;
+      *(here->HSM1GspPtr +1)  += m * xcgsb * s->imag;
+      *(here->HSM1GspPtr)     += m * gIgtots;
       
-      *(here->HSM1BgPtr ) += m * xcbgb * s->real;
-      *(here->HSM1BgPtr +1) += m * xcbgb * s->imag;
-      *(here->HSM1BdpPtr ) += m * xcbdb * s->real;
-      *(here->HSM1BdpPtr +1) += m * xcbdb * s->imag;
-      *(here->HSM1BspPtr ) += m * xcbsb * s->real;
-      *(here->HSM1BspPtr +1) += m * xcbsb * s->imag;
+      *(here->HSM1BgPtr )     += m * xcbgb * s->real;
+      *(here->HSM1BgPtr +1)   += m * xcbgb * s->imag;
+      *(here->HSM1BdpPtr )    += m * xcbdb * s->real;
+      *(here->HSM1BdpPtr +1)  += m * xcbdb * s->imag;
+      *(here->HSM1BspPtr )    += m * xcbsb * s->real;
+      *(here->HSM1BspPtr +1)  += m * xcbsb * s->imag;
       
-      *(here->HSM1DPgPtr ) += m * xcdgb * s->real;
-      *(here->HSM1DPgPtr +1) += m * xcdgb * s->imag;
-      *(here->HSM1DPbPtr ) += m * xcdbb * s->real;
-      *(here->HSM1DPbPtr +1) += m * xcdbb * s->imag;
-      *(here->HSM1DPspPtr ) += m * xcdsb * s->real;
+      *(here->HSM1DPgPtr )    += m * xcdgb * s->real;
+      *(here->HSM1DPgPtr +1)  += m * xcdgb * s->imag;
+      *(here->HSM1DPbPtr )    += m * xcdbb * s->real;
+      *(here->HSM1DPbPtr +1)  += m * xcdbb * s->imag;
+      *(here->HSM1DPspPtr )   += m * xcdsb * s->real;
       *(here->HSM1DPspPtr +1) += m * xcdsb * s->imag;
       
-      *(here->HSM1SPgPtr ) += m * xcsgb * s->real;
-      *(here->HSM1SPgPtr +1) += m * xcsgb * s->imag;
-      *(here->HSM1SPbPtr ) += m * xcsbb * s->real;
-      *(here->HSM1SPbPtr +1) += m * xcsbb * s->imag;
-      *(here->HSM1SPdpPtr ) += m * xcsdb * s->real;
+      *(here->HSM1SPgPtr )    += m * xcsgb * s->real;
+      *(here->HSM1SPgPtr +1)  += m * xcsgb * s->imag;
+      *(here->HSM1SPbPtr )    += m * xcsbb * s->real;
+      *(here->HSM1SPbPtr +1)  += m * xcsbb * s->imag;
+      *(here->HSM1SPdpPtr )   += m * xcsdb * s->real;
       *(here->HSM1SPdpPtr +1) += m * xcsdb * s->imag;
       
-      *(here->HSM1DdPtr) += m * gdpr;
-      *(here->HSM1DdpPtr) -= m * gdpr;
-      *(here->HSM1DPdPtr) -= m * gdpr;
+      *(here->HSM1DdPtr)      += m * gdpr;
+      *(here->HSM1DdpPtr)     -= m * gdpr;
+      *(here->HSM1DPdPtr)     -= m * gdpr;
       
-      *(here->HSM1SsPtr) += m * gspr;
-      *(here->HSM1SspPtr) -= m * gspr;
-      *(here->HSM1SPsPtr) -= m * gspr;
+      *(here->HSM1SsPtr)      += m * gspr;
+      *(here->HSM1SspPtr)     -= m * gspr;
+      *(here->HSM1SPsPtr)     -= m * gspr;
       
-      *(here->HSM1BgPtr) -= m * here->HSM1_gbgs;
-      *(here->HSM1BbPtr) += m * (gbd + gbs - here->HSM1_gbbs);
-      *(here->HSM1BdpPtr) -= m * (gbd - gbbdp);
-      *(here->HSM1BspPtr) -= m * (gbs - gbbsp);
+      *(here->HSM1BgPtr)      -= m * (here->HSM1_gbgs + gIbtotg);
+      *(here->HSM1BbPtr)      += m * (gbd + gbs - here->HSM1_gbbs - gIbtotb);
+      *(here->HSM1BdpPtr)     -= m * (gbd - gbbdp + gIbtotd);
+      *(here->HSM1BspPtr)     -= m * (gbs - gbbsp + gIbtots);
       
-      *(here->HSM1DPgPtr) += m * (gm + gbdpg);
-      *(here->HSM1DPdpPtr) += m * (gdpr + gds + gbd + RevSum + gbdpdp);
-      *(here->HSM1DPspPtr) -= m * (gds + FwdSum - gbdpsp);
-      *(here->HSM1DPbPtr) -= m * (gbd - gmbs - gbdpb);
+      *(here->HSM1DPgPtr)     += m * (gm + gbdpg - gIdtotg);
+      *(here->HSM1DPdpPtr)    += m * (gdpr + gds + gbd + RevSum + gbdpdp 
+                                      - gIdtotd);
+      *(here->HSM1DPspPtr)    -= m * (gds + FwdSum - gbdpsp + gIdtots);
+      *(here->HSM1DPbPtr)     -= m * (gbd - gmbs - gbdpb + gIdtotb);
       
-      *(here->HSM1SPgPtr) -= m * (gm - gbspg);
-      *(here->HSM1SPspPtr) += m * (gspr + gds + gbs + FwdSum + gbspsp);
-      *(here->HSM1SPbPtr) -= m * (gbs + gmbs - gbspb);
-      *(here->HSM1SPdpPtr) -= m * (gds + RevSum - gbspdp);
-      
-      /*
-       ... may nedeed in the future ... 	
-       *(here->HSM1GgPtr) -= m * xgtg;
-       *(here->HSM1GbPtr) -= m * xgtb;
+      *(here->HSM1SPgPtr)     -= m * (gm - gbspg + gIstotg);
+      *(here->HSM1SPspPtr)    += m * (gspr + gds + gbs + FwdSum + gbspsp 
+                                      - gIstots);
+      *(here->HSM1SPbPtr)     -= m * (gbs + gmbs - gbspb + gIstotb);
+      *(here->HSM1SPdpPtr)    -= m * (gds + RevSum - gbspdp + gIstotd);
+
+      /* stamp gidl */
+      *(here->HSM1DPdpPtr)    += m * here->HSM1_gigidlds;
+      *(here->HSM1DPgPtr)     += m * here->HSM1_gigidlgs;
+      *(here->HSM1DPspPtr)    -= m * (here->HSM1_gigidlgs + 
+			              here->HSM1_gigidlds + here->HSM1_gigidlbs);
+      *(here->HSM1DPbPtr)     += m * here->HSM1_gigidlbs;
+      *(here->HSM1BdpPtr)     -= m * here->HSM1_gigidlds;
+      *(here->HSM1BgPtr)      -= m * here->HSM1_gigidlgs;
+      *(here->HSM1BspPtr)     += m * (here->HSM1_gigidlgs + 
+			              here->HSM1_gigidlds + here->HSM1_gigidlbs);
+      *(here->HSM1BbPtr)      -= m * here->HSM1_gigidlbs;
+      /* stamp gisl */
+      *(here->HSM1SPdpPtr)    -= m * (here->HSM1_gigislsd + 
+			              here->HSM1_gigislgd + here->HSM1_gigislbd);
+      *(here->HSM1SPgPtr)     += m * here->HSM1_gigislgd;
+      *(here->HSM1SPspPtr)    += m * here->HSM1_gigislsd;
+      *(here->HSM1SPbPtr)     += m * here->HSM1_gigislbd;
+      *(here->HSM1BdpPtr)     += m * (here->HSM1_gigislgd + 
+			              here->HSM1_gigislsd + here->HSM1_gigislbd);
+      *(here->HSM1BgPtr)      -= m * here->HSM1_gigislgd;
+      *(here->HSM1BspPtr)     -= m * here->HSM1_gigislsd;
+      *(here->HSM1BbPtr)      -= m * here->HSM1_gigislbd;      
+
+      /*	
+       *(here->HSM1GgPtr)  -= m * xgtg;
+       *(here->HSM1GbPtr)  -= m * xgtb;
        *(here->HSM1GdpPtr) -= m * xgtd;
        *(here->HSM1GspPtr) -= m * xgts;
        */

@@ -1,22 +1,17 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1evalenv.h of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1evalenv.h of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #ifndef HSM1_EVAL_ENV_H
 #define HSM1_EVAL_ENV_H
 
-/* macros and constants used in hsm1eval1_x.c */
+/* macros and constants used in hsm1eval1_y_z.c */
 
 /*---------------------------------------------------*
 * Numerical constants. (macro) 
@@ -57,9 +52,10 @@
 /* Boltzmann constant */
 #define C_KB    (1.3806226e-23) 
 
-/* Permitivity of Si and SiO2 */
+/* Permitivity of Si, SiO2 and vacuum */
 #define C_ESI   (1.034943e-12) 
 #define C_EOX   (3.453133e-13) 
+#define C_VAC   (8.8541878e-14) 
 
 /* Room temperature constants */
 #define C_T300  (300e+00)

@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1par.c of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1par.c of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #include "ngspice.h"
 #include "ifsim.h"
@@ -19,7 +14,8 @@
 #include "sperror.h"
 #include "suffix.h"
 
-int HSM1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
+int 
+HSM1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
   HSM1instance *here = (HSM1instance*)inst;
   switch (param) {
@@ -32,9 +28,9 @@ int HSM1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     here->HSM1_l_Given = TRUE;
     break;
   case HSM1_M:
-    here->HSM1_m = value->rValue;
-    here->HSM1_m_Given = TRUE;
-    break;  
+   here->HSM1_m = value->rValue;
+   here->HSM1_m_Given = TRUE;
+   break;   
   case HSM1_AS:
     here->HSM1_as = value->rValue;
     here->HSM1_as_Given = TRUE;

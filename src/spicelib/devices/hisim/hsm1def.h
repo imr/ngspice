@@ -1,17 +1,12 @@
 /***********************************************************************
- HiSIM v1.1.0
- File: hsm1def.h of HiSIM v1.1.0
+ HiSIM (Hiroshima University STARC IGFET Model)
+ Copyright (C) 2003 STARC
 
- Copyright (C) 2002 STARC
+ VERSION : HiSIM 1.2.0
+ FILE : hsm1def.h of HiSIM 1.2.0
 
- June 30, 2002: developed by Hiroshima University and STARC
- June 30, 2002: posted by Keiichi MORIKAWA, STARC Physical Design Group
+ April 9, 2003 : released by STARC Physical Design Group
 ***********************************************************************/
-
-/*
- * Modified by Paolo Nenzi 2002
- * ngspice integration
- */
 
 #ifndef HSM1
 #define HSM1
@@ -30,7 +25,8 @@ typedef struct sHSM1instance {
   struct sHSM1instance *HSM1nextInstance;  /* pointer to next instance of 
                                               current model*/
   IFuid HSM1name; /* pointer to character string naming this instance */
-  int HSM1owner;  /* number of owner process */ 
+/*DW next is additional in spice */
+  int HSM1owner;  /* number of owner process */
   int HSM1states; /* index into state table for this device */
 
   int HSM1dNode;      /* number of the drain node of the mosfet */
@@ -75,8 +71,8 @@ typedef struct sHSM1instance {
   double HSM1_dtemp;
 
   /* added by K.M. */
-  double HSM1_weff; /* the effectiv width of the channel region */
-  double HSM1_leff; /* the effectiv length of the channel region */
+  double HSM1_weff; /* the effective width of the channel region */
+  double HSM1_leff; /* the effective length of the channel region */
 
   /* output */
   int    HSM1_capop;
@@ -129,8 +125,34 @@ typedef struct sHSM1instance {
   double HSM1_freq;
   */
 
-  /* added by K.M. */
   double HSM1_mu; /* mobility */
+  double HSM1_igidl; /* gate induced drain leakage */
+  double HSM1_gigidlgs;
+  double HSM1_gigidlds;
+  double HSM1_gigidlbs;
+  double HSM1_igisl; /* gate induced source leakage */
+  double HSM1_gigislgd;
+  double HSM1_gigislsd;
+  double HSM1_gigislbd;
+  double HSM1_igb; /* gate tunneling current (gate to bulk) */
+  double HSM1_gigbg;
+  double HSM1_gigbd;
+  double HSM1_gigbb;
+  double HSM1_gigbs;
+  double HSM1_igs; /* gate tunneling current (gate to source) */
+  double HSM1_gigsg;
+  double HSM1_gigsd;
+  double HSM1_gigsb;
+  double HSM1_gigss;
+  double HSM1_igd; /* gate tunneling current (gate to drain) */
+  double HSM1_gigdg;
+  double HSM1_gigdd;
+  double HSM1_gigdb;
+  double HSM1_gigds;
+  double HSM1_qg_int ;
+  double HSM1_qd_int ;
+  double HSM1_qs_int ;
+  double HSM1_qb_int ;
 
   /* no use in SPICE3f5
       double HSM1drainSquares;       the length of the drain in squares
@@ -258,7 +280,7 @@ typedef struct sHiSIM1model {       	/* model structure for a resistor */
   int HSM1_level;               /* level */
   int HSM1_info;                /* information */
   int HSM1_noise;               /* noise model selecter see hsm1noi.c */
-  int HSM1_version;             /* model version 100/110 */
+  int HSM1_version;             /* model version 101/111/120 */
   int HSM1_show;                /* show physical value 1, 2, ... , 11 */
 
   /* flags for initial guess */
@@ -274,16 +296,19 @@ typedef struct sHiSIM1model {       	/* model structure for a resistor */
   int HSM1_coisub ;
   int HSM1_coiigs ;
   int HSM1_cogidl ;
+  int HSM1_cogisl ;
   int HSM1_coovlp ;
   int HSM1_conois ;
   int HSM1_coisti ; /* HiSIM1.1 */
+  int HSM1_cosmbi ; /* HiSIM1.2 */
+
   /* HiSIM original */
   double HSM1_vmax ;
   double HSM1_bgtmp1 ;
   double HSM1_bgtmp2 ;
   double HSM1_tox ;
-  double HSM1_dl ;
-  double HSM1_dw ;
+  double HSM1_xld ;
+  double HSM1_xwd ;
   double HSM1_xj ;   /* HiSIM1.0 */
   double HSM1_xqy ;  /* HiSIM1.1 */
   double HSM1_rs;     /* source contact resistance */
@@ -315,9 +340,6 @@ typedef struct sHiSIM1model {       	/* model structure for a resistor */
   double HSM1_muesr1 ;
   double HSM1_muesr0 ;
   double HSM1_bb ;
-  double HSM1_vds0 ;
-  double HSM1_bc0 ;
-  double HSM1_bc1 ;
   double HSM1_sub1 ;
   double HSM1_sub2 ;
   double HSM1_sub3 ;
@@ -368,6 +390,12 @@ typedef struct sHiSIM1model {       	/* model structure for a resistor */
   double HSM1_nftrp ;
   double HSM1_nfalp ;
   double HSM1_cit ;
+  double HSM1_glpart1 ; /* HiSIM1.2 */
+  double HSM1_glpart2 ; /* HiSIM1.2 */
+  double HSM1_kappa ;   /* HiSIM1.2 */
+  double HSM1_xdiffd ;  /* HiSIM1.2 */
+  double HSM1_pthrou ;   /* HiSIM1.2 */
+  double HSM1_vdiffj ;  /* HiSIM1.2 */
 
   /* for flicker noise of SPICE3 added by K.M. */
   double HSM1_ef;
@@ -393,15 +421,23 @@ typedef struct sHiSIM1model {       	/* model structure for a resistor */
   unsigned HSM1_coisub_Given  :1;
   unsigned HSM1_coiigs_Given  :1;
   unsigned HSM1_cogidl_Given  :1;
+  unsigned HSM1_cogisl_Given  :1;
   unsigned HSM1_coovlp_Given  :1;
   unsigned HSM1_conois_Given  :1;
   unsigned HSM1_coisti_Given  :1; /* HiSIM1.1 */
+  unsigned HSM1_cosmbi_Given  :1; /* HiSIM1.2 */
+  unsigned HSM1_glpart1_Given :1; /* HiSIM1.2 */
+  unsigned HSM1_glpart2_Given :1; /* HiSIM1.2 */
+  unsigned HSM1_kappa_Given :1;   /* HiSIM1.2 */
+  unsigned HSM1_xdiffd_Given :1; /* HiSIM1.2 */
+  unsigned HSM1_pthrou_Given :1; /* HiSIM1.2 */
+  unsigned HSM1_vdiffj_Given :1; /* HiSIM1.2 */
   unsigned HSM1_vmax_Given  :1;
   unsigned HSM1_bgtmp1_Given  :1;
   unsigned HSM1_bgtmp2_Given  :1;
   unsigned HSM1_tox_Given  :1;
-  unsigned HSM1_dl_Given  :1;
-  unsigned HSM1_dw_Given  :1; 
+  unsigned HSM1_xld_Given  :1;
+  unsigned HSM1_xwd_Given  :1; 
   unsigned HSM1_xj_Given  :1;    /* HiSIM1.0 */
   unsigned HSM1_xqy_Given  :1;   /* HiSIM1.1 */
   unsigned HSM1_rs_Given  :1;
@@ -433,9 +469,6 @@ typedef struct sHiSIM1model {       	/* model structure for a resistor */
   unsigned HSM1_muesr1_Given  :1;
   unsigned HSM1_muesr0_Given  :1;
   unsigned HSM1_bb_Given  :1;
-  unsigned HSM1_vds0_Given  :1;
-  unsigned HSM1_bc0_Given  :1;
-  unsigned HSM1_bc1_Given  :1;
   unsigned HSM1_sub1_Given  :1;
   unsigned HSM1_sub2_Given  :1;
   unsigned HSM1_sub3_Given  :1;
@@ -523,10 +556,11 @@ typedef struct sHiSIM1model {       	/* model structure for a resistor */
 #define HSM1_MOD_COOVLP  24
 #define HSM1_MOD_CONOIS  25
 #define HSM1_MOD_COISTI  26 /* HiSIM1.1 */
+#define HSM1_MOD_COSMBI  27 /* HiSIM1.2 */
+#define HSM1_MOD_COGISL  28 /* HiSIM1.2 */
 /* device parameters */
 #define HSM1_L 51
 #define HSM1_W 52
-#define HSM1_M 66
 #define HSM1_AD 53
 #define HSM1_AS 54
 #define HSM1_PD 55
@@ -540,14 +574,15 @@ typedef struct sHiSIM1model {       	/* model structure for a resistor */
 #define HSM1_IC_VDS 63
 #define HSM1_IC_VGS 64
 #define HSM1_IC 65
+#define HSM1_M 66
 
 /* model parameters */
 #define HSM1_MOD_VMAX   101
 #define HSM1_MOD_BGTMP1 103
 #define HSM1_MOD_BGTMP2 104
 #define HSM1_MOD_TOX    105
-#define HSM1_MOD_DL     106
-#define HSM1_MOD_DW     107
+#define HSM1_MOD_XLD    106
+#define HSM1_MOD_XWD    107
 #define HSM1_MOD_XJ     996 /* HiSIM1.0 */
 #define HSM1_MOD_XQY    997 /* HiSIM1.1 */
 #define HSM1_MOD_RS     108
@@ -570,9 +605,6 @@ typedef struct sHiSIM1model {       	/* model structure for a resistor */
 #define HSM1_MOD_MUESR1 135
 #define HSM1_MOD_MUESR0 136
 #define HSM1_MOD_BB     137
-#define HSM1_MOD_VDS0   138
-#define HSM1_MOD_BC0    139
-#define HSM1_MOD_BC1    140
 #define HSM1_MOD_SUB1   141
 #define HSM1_MOD_SUB2   142
 #define HSM1_MOD_SUB3   143
@@ -629,6 +661,12 @@ typedef struct sHiSIM1model {       	/* model structure for a resistor */
 #define HSM1_MOD_WSTI   209 /* HiSIM1.1 */
 #define HSM1_MOD_RPOCP1 210 /* HiSIM1.1 */
 #define HSM1_MOD_RPOCP2 211 /* HiSIM1.1 */
+#define HSM1_MOD_GLPART1 212 /* HiSIM1.2 */
+#define HSM1_MOD_GLPART2 213 /* HiSIM1.2 */
+#define HSM1_MOD_KAPPA  214 /* HiSIM1.2 */
+#define HSM1_MOD_XDIFFD 215 /* HiSIM1.2 */
+#define HSM1_MOD_PTHROU  216 /* HiSIM1.2 */
+#define HSM1_MOD_VDIFFJ 217 /* HiSIM1.2 */
 #define HSM1_MOD_NFTRP  401
 #define HSM1_MOD_NFALP  402
 #define HSM1_MOD_CIT    403
