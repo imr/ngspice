@@ -1,5 +1,18 @@
 2004-01-10  Paolo Nenzi <p.nenzi@ieee.org>
 
+	*  src/xspice/ipc/ipc.c:
+	   Remove linux specific includes which are not needed
+	   (Stefan Jones).
+
+	*  src/xspice/{Makefile.am,xspice.c} 
+	   src/xspice/cm/{cmexport.c,Makefile.am}:
+	   Moved the xspice library hooks into the cm directory
+	   (Stefan Jones).
+
+	*  src/xspice/enh/enhtrans.c src/xspice/mif/mif_inp2.c:
+	   Fixed version from Stuart Brorson <sdb@cloud9.net>, 
+	   http://www.brorson.com/gEDA/ngspice/
+
 	*  src/spinit, arc/spinit.in, configure.in: parametrized spinit paths
 	   for codemodel devices.
 
