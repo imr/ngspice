@@ -328,7 +328,7 @@ hprefix(char *buf)
 void
 cp_addhistent(int event, wordlist *wlist)
 {
-	/* MW. This test is not needed if everything works right */
+	/* MW. This test is not needed if everything works right 
 	if (cp_lastone && !cp_lastone->hi_wlist)
         fprintf(cp_err, "Internal error: bad history list\n"); */
         

@@ -13,7 +13,7 @@
 #include <stddef.h>
 
 #ifdef HAVE_LIMITS_H
-#  include <machine/limits.h>
+#  include <limits.h>
 #endif
 
 #include "memory.h"
