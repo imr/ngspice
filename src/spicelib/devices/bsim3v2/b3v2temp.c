@@ -1,8 +1,8 @@
 /* $Id$  */
 /*
  $Log$
- Revision 1.1  2000-04-27 20:03:59  pnenzi
- Initial revision
+ Revision 1.1.1.1  2000-04-27 20:03:59  pnenzi
+ Imported sources
 
  * Revision 3.2 1998/6/16  18:00:00  Weidong
  * BSIM3v3.2 release
