@@ -59,17 +59,16 @@
  *      Matrix type and macro definitions for the sparse matrix routines.
  */
 #include <assert.h>
+#include <stdlib.h>
 
 #define spINSIDE_SPARSE
+
 #include "spconfig.h"
 #include "spmatrix.h"
 #include "spdefs.h"
 #ifdef PARALLEL_ARCH
 #define COMBINE 1
 #endif /* PARALLEL_ARCH */
-
-
-
 
 
 /*

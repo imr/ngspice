@@ -95,15 +95,12 @@
  */
 
 #include <config.h>
-
 #include <assert.h>
 #include <stdio.h>
-
+#include <math.h>
 #include <spmatrix.h>
 #include "spdefs.h"
 #include <smpdefs.h>
-
-
 
 static void LoadGmin(SMPmatrix *eMatrix, double Gmin);
 
@@ -358,14 +355,14 @@ SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
 	y = z;
 
     *pExponent = x + y;
-    x = scalb(re, (int) -y);
-    z = scalb(im, (int) -y);
+    x = scalbn(re, (int) -y);
+    z = scalbn(im, (int) -y);
 #ifdef debug_print
     printf(" ** values are: re %g, im %g, y %g, re' %g, im' %g\n",
 	    re, im, y, x, z);
 #endif
-    pMantissa->real = scalb(re, (int) -y);
-    pMantissa->imag = scalb(im, (int) -y);
+    pMantissa->real = scalbn(re, (int) -y);
+    pMantissa->imag = scalbn(im, (int) -y);
 
 #ifdef debug_print
     printf("Determinant 10->2: (%20g,%20g)^%d\n", pMantissa->real,

@@ -46,6 +46,7 @@
  *     Matrix type and macro definitions for the sparse matrix routines.
  */
 #include <assert.h>
+#include <stdlib.h>
 
 #define spINSIDE_SPARSE
 #include "spconfig.h"

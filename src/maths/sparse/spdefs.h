@@ -368,7 +368,11 @@ typedef  struct
 
 /* Allocation */
 
-#define ALLOC(type,number)  ((type *)tmalloc((unsigned)(sizeof(type)*(number))))
+extern void * tmalloc(size_t);
+extern void * txfree(void *);
+extern void * trealloc(void *, size_t);
+
+#define ALLOC(type,number)  ((type *)tmalloc((size_t)(sizeof(type)*(number))))
 #define REALLOC(ptr,type,number)  \
            ptr = (type *)trealloc((char *)ptr,(unsigned)(sizeof(type)*(number)))
 #define FREE(ptr) { if ((ptr) != NULL) txfree((char *)(ptr)); (ptr) = NULL; }
