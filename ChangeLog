@@ -8,6 +8,17 @@
 	    memory using "listdg" instead. There were sone "tfree" that 
 	    caused problems for incorrect inputs, I have removed them and  
 	    tested against some bad syntax. Results shows no leaks. 
+	
+	*   src/spicelibe/devices/{res/resparam.c, cap/capparam.c,
+	    ind/indparam.c}: Fixed a bug introduced with m and acResistance
+	    parameters. Since show command works as soon as a circuit is 
+	    loaded, before any call to DEVsetup or DEVtemp is made, some
+	    parameters, in this early call showed incorrect results. 
+	    Simulations are not affected by this bug, but it is annoying.
+	    Now principal parameters are display correctly.
+	
+	*   src/spicelib/analysis/cktncdump.c: fixed a typo that prevents
+	    compilation on some systems.      
 
 2004-08-09  Paolo Nenzi <p.nenzi@ieee.org>
 
