@@ -1339,11 +1339,13 @@ static void escape_brackets(char *string) {
     if(string[i] == ']' || string[i] == '[') {
       int j;
       for(j=printed;j>=i;j--) {
-        string[j+1] = string[j];
+        string[j+3] = string[j];
       }
       string[i] = '\\';
-      i++;
-      printed++;
+      string[i+1] = '\\';
+      string[i+2] = '\\';
+      i+=3;
+      printed+=3;
     }
   }
   return;
