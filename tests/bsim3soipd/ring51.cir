@@ -1,4 +1,4 @@
-* 51 stage Ring-Osc.
+* 51 stage Ring-Osc. (PD)
 
 vin in out 2 pulse 2 0 0.1n 5n 1 1 1
 vdd dd 0 dc 0 pulse 0 2 0 1n 1 1 1
@@ -14,8 +14,11 @@ cout  buf ss 1pF
 xdum ss dum
 
 .option itl1=500 gmin=1e-15 itl4=10 
-*.dc vdd 0 2 0.01
+.dc vdd 0 2 0.01
 .tran 0.2n 50n
+
+.print dc v(out)
+.print tran v(out)
 
 .include nmospd.mod
 .include pmospd.mod

@@ -165,12 +165,18 @@ BSIM3SOI_DD - SOI model (dynamic depletion)
       NOT YET IMPLEMENTED.
 
 BSIM3SOI_FD - SOI model (fully depleted devices)
-      NOT YET IMPLEMENTED.
+      Initial Release Ver: 2.1. TO BE TESTED.
+      FD model has been integrated as Level = 10
+      There is a bsim3soifd directory under the test
+      hierarchy. Test circuits come from the bsim3soi
+      web site at:
+      http://www-device.eecs.berkeley.edu/~bsimsoi
 
 BSIM3SOI_PD - SOI model (partially depleted devices)
-      Initial Release Ver: 2.2.1. TO BE TESTED
+      Initial Release Ver: 2.2.1. TO BE TESTED.
+      PD model has been integrated as Level = 9 
       There is a bsim3soipd directory under the test
-      hierarchy. The tests come from the bsim3soi
+      hierarchy. Test circuits come from the bsim3soi
       web site at: 
       http://www-device.eecs.berkeley.edu/~bsimsoi
       

@@ -47,8 +47,8 @@ B3SOIPDtemp (inModel, ckt)
      GENmodel *inModel;
      CKTcircuit *ckt;
 {
-  register B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
-  register B3SOIPDinstance *here;
+   B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
+   B3SOIPDinstance *here;
   struct b3soipdSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
   double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, T6, Ldrn, Wdrn;
   double Temp, TempRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;

@@ -307,7 +307,7 @@ cp_setparse(wordlist *wl)
                 }
                 vv = alloc(struct variable);
 		vv->va_next = NULL;
-                ss = cp_unquote(wl->wl_word);
+                copyval = ss = cp_unquote(wl->wl_word);
                 td = ft_numparse(&ss, FALSE);
                 if (td) {
                     vv->va_type = VT_REAL;
@@ -316,7 +316,7 @@ cp_setparse(wordlist *wl)
                     vv->va_type = VT_STRING;
                     vv->va_string = copy(ss);
                 }
-                 tfree(ss);/*DG: must free ss any way to avoid cp_unquote memory leak*/
+                 tfree(copyval);/*DG: must free ss any way to avoid cp_unquote memory leak*/
                 if (listv) {
                     lv->va_next = vv;
                     lv = vv;

@@ -1,4 +1,4 @@
-* model = BSIMSOI
+* model = BSIMSOI (PD)
 *
 *
 * SOI Inverter - floating body
@@ -12,6 +12,6 @@ m2 out in ss e n1 w=10u l=0.25u
 
 .option itl1=500 gmin=1e-25
 .dc vin 0 2.5 0.01 
-.print v(in), v(out)
+.print dc v(in), v(out)
 .include nmospd.mod
 .include pmospd.mod

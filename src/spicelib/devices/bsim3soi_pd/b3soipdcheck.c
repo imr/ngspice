@@ -21,8 +21,8 @@ Modified by Pin Su 00/3/1
 
 int
 B3SOIPDcheckModel (model, here, ckt)
-     register B3SOIPDmodel *model;
-     register B3SOIPDinstance *here;
+      B3SOIPDmodel *model;
+      B3SOIPDinstance *here;
      CKTcircuit *ckt;
 {
   struct b3soipdSizeDependParam *pParam;

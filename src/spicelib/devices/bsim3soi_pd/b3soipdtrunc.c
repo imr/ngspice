@@ -17,11 +17,11 @@ File: b3soipdtrunc.c          98/5/01
 int
 B3SOIPDtrunc (inModel, ckt, timeStep)
      GENmodel *inModel;
-     register CKTcircuit *ckt;
+      CKTcircuit *ckt;
      double *timeStep;
 {
-  register B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
-  register B3SOIPDinstance *here;
+   B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
+   B3SOIPDinstance *here;
 
 #ifdef STEPDEBUG
   double debugtemp;

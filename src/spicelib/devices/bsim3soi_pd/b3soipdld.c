@@ -94,11 +94,11 @@ B3SOIPDlimit (vnew, vold, limit, check)
 int
 B3SOIPDload (inModel, ckt)
      GENmodel *inModel;
-     register CKTcircuit *ckt;
+      CKTcircuit *ckt;
 {
-  register B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
-  register B3SOIPDinstance *here;
-  register int selfheat;
+   B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
+   B3SOIPDinstance *here;
+   int selfheat;
 
   double SourceSatCurrent, DrainSatCurrent, Gmin;
   double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;

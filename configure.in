@@ -215,6 +215,7 @@ src/spicelib/devices/bsim3/Makefile	\
 src/spicelib/devices/bsim4/Makefile	\
 src/spicelib/devices/bsim3v2/Makefile	\
 src/spicelib/devices/bsim3soi_pd/Makefile \
+src/spicelib/devices/bsim3soi_fd/Makefile \
 src/spicelib/devices/cap/Makefile	\
 src/spicelib/devices/cccs/Makefile	\
 src/spicelib/devices/ccvs/Makefile	\
@@ -254,4 +255,6 @@ tests/Makefile			\
 tests/filters/Makefile		\
 tests/polezero/Makefile		\
 tests/resistance/Makefile	\
+tests/bsim3soipd/Makefile	\
+tests/bsim3soifd/Makefile	
 )

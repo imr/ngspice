@@ -28,13 +28,13 @@ Modified by Pin Su 00/3/1
 
 int
 B3SOIPDsetup (matrix, inModel, ckt, states)
-     register SMPmatrix *matrix;
-     register GENmodel *inModel;
-     register CKTcircuit *ckt;
+      SMPmatrix *matrix;
+      GENmodel *inModel;
+      CKTcircuit *ckt;
      int *states;
 {
-  register B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
-  register B3SOIPDinstance *here;
+   B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
+   B3SOIPDinstance *here;
   int error;
   CKTnode *tmp;
 

@@ -16,11 +16,11 @@ File: b3soipzld.c          98/5/01
 int
 B3SOIPDpzLoad (inModel, ckt, s)
      GENmodel *inModel;
-     register CKTcircuit *ckt;
-     register SPcomplex *s;
+      CKTcircuit *ckt;
+      SPcomplex *s;
 {
-  register B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
-  register B3SOIPDinstance *here;
+   B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
+   B3SOIPDinstance *here;
   double xcggb, xcgdb, xcgsb, xcbgb, xcbdb, xcbsb, xcddb, xcssb, xcdgb;
   double gdpr, gspr, gds, gbd, gbs, capbd, capbs, xcsgb, xcdsb, xcsdb;
   double cggb, cgdb, cgsb, cbgb, cbdb, cbsb, cddb, cdgb, cdsb;

@@ -17,11 +17,11 @@ Modified by Pin Su    99/9/27
 int
 B3SOIPDacLoad (inModel, ckt)
      GENmodel *inModel;
-     register CKTcircuit *ckt;
+      CKTcircuit *ckt;
 {
-  register B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
-  register B3SOIPDinstance *here;
-  register int selfheat;
+   B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
+   B3SOIPDinstance *here;
+   int selfheat;
   double xcggb, xcgdb, xcgsb, xcgeb, xcgT;
   double xcdgb, xcddb, xcdsb, xcdeb, xcdT;
   double xcsgb, xcsdb, xcssb, xcseb, xcsT;

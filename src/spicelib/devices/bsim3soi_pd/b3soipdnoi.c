@@ -101,11 +101,11 @@ B3SOIPDnoise (mode, operation, inModel, ckt, data, OnDens)
      int mode, operation;
      GENmodel *inModel;
      CKTcircuit *ckt;
-     register Ndata *data;
+      Ndata *data;
      double *OnDens;
 {
-  register B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
-  register B3SOIPDinstance *here;
+   B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
+   B3SOIPDinstance *here;
   struct b3soipdSizeDependParam *pParam;
   char name[N_MXVLNTH];
   double tempOnoise;

@@ -20,10 +20,10 @@ File: b3soipdcvtest.c          98/5/01
 int
 B3SOIPDconvTest (inModel, ckt)
      GENmodel *inModel;
-     register CKTcircuit *ckt;
+      CKTcircuit *ckt;
 {
-  register B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
-  register B3SOIPDinstance *here;
+   B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
+   B3SOIPDinstance *here;
   double delvbd, delvbs, delvds, delvgd, delvgs, vbd, vbs, vds;
   double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
 

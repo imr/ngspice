@@ -1,4 +1,4 @@
-*model = BSIMSOI
+*model = BSIMSOI (PD)
 *Berkeley Spice Compatibility 
 *
 * SOI NMOSFET, floating body simulation
@@ -13,6 +13,6 @@ m1 d g s e n1 w=10u l=0.25u
 
 .option gmin=1e-25 itl1=500
 .dc vd 0 3 0.01 vg 0.5 3 0.5
-.print v(g), i(vs)
+.print dc v(g), i(vs)
 .include nmospd.mod
 

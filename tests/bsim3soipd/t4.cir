@@ -1,4 +1,4 @@
-*model = BSIMSOI
+*model = BSIMSOI (PD)
 *Berkeley Spice Compatibility 
 *
 * SOI NMOSFET, tied body simulation
@@ -13,7 +13,6 @@ m1 d g s e b n1 w=10u l=0.25u
 
 .option gmin=1e-25 itl1=500
 .dc vg 0 1.5 0.01 vb -0.3 0.5 0.1
-.include nmosfd.mod
+.print dc i(vs)
+.include nmospd.mod
 
-* For PD, the command '.include nmosfd.mod ' should
-* be replaced with '.include nmospd.mod'.

@@ -931,7 +931,7 @@ inp_numnodes(char c)
         case 'j': return (3);
         case 'k': return (0);
         case 'l': return (2);
-        case 'm': return (4);
+        case 'm': return (7);
         case 'o': return (4);
         case 'q': return (4);
         case 'r': return (2);
