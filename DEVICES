@@ -26,9 +26,9 @@ RES - Resistor
         standard. 
       
                      
-		     **************************************
+		           **************************************
                      ******** Distributed elements ********
-		     **************************************
+		           **************************************
 		     
 TRA  - Transmission line
       Initial release
@@ -66,7 +66,7 @@ VSRC  - Independent Voltage Source
       Initial Release
 
                      
-		     **************************************
+		           **************************************
                      *********      Switches     **********
                      **************************************
 		     
@@ -85,7 +85,7 @@ DIO   - Junction Diode
       Initial Release 
 
                      
-		     **************************************
+		           **************************************
                      *********** Bipolar Devices **********
                      **************************************
       
@@ -104,15 +104,15 @@ JFET2 - Jfet PS model
       Initial release. TO BE TESTED
 
                 
-		     **************************************
+		           **************************************
                      *********     MES devices    *********
                      **************************************
 		
 MES - MESfet model
       Initial release
     		
-		
-		     **************************************
+		 
+		           **************************************
                      *********     MOS devices    *********
                      **************************************
  
@@ -161,9 +161,6 @@ BSIM4   - BSIM model level 4 (0.18 um)
                      **************************************
 
 
-BSIM3SOI_DD - SOI model (dynamic depletion)
-      NOT YET IMPLEMENTED.
-
 BSIM3SOI_FD - SOI model (fully depleted devices)
       Initial Release Ver: 2.1. TO BE TESTED.
       FD model has been integrated as Level = 10
@@ -171,6 +168,10 @@ BSIM3SOI_FD - SOI model (fully depleted devices)
       hierarchy. Test circuits come from the bsim3soi
       web site at:
       http://www-device.eecs.berkeley.edu/~bsimsoi
+
+      *) rework-14: removed #ifndef NEWCONV code.
+         
+
 
 BSIM3SOI_PD - SOI model (partially depleted devices)
       Initial Release Ver: 2.2.1. TO BE TESTED.
@@ -180,6 +181,8 @@ BSIM3SOI_PD - SOI model (partially depleted devices)
       web site at: 
       http://www-device.eecs.berkeley.edu/~bsimsoi
 
+      *) rework-14: removed #ifndef NEWCONV code.
+
 BSIM3SOI_DD - SOI Model (dynamic depletion model)
      Initial Release Ver: 2.1. TO BE TESTED.
      DD model has been integrated as level= 11
@@ -187,3 +190,5 @@ BSIM3SOI_DD - SOI Model (dynamic depletion model)
      test hierarchy. Test circuits come from bsim3soi
      web site at:
      http://www-device.eecs.berkeley.edu/~bsimsoi
+    
+     *) rework-14: removed #ifndef NEWCONV code.
