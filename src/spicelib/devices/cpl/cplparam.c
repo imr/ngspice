@@ -17,6 +17,7 @@ Author: 1992 Charles Hough
 int
 CPLparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
+
     CPLinstance *here = (CPLinstance *)inst;
     switch(param) {
         case CPL_POS_NODE:
@@ -28,11 +29,10 @@ CPLparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         case CPL_DIM:
             here->dimension = value->iValue;
             break;
-		case CPL_LENGTH:
-			here->CPLlength = value->rValue;
-			here->CPLlengthgiven = TRUE;
-			break;
-
+	case CPL_LENGTH:
+	    here->CPLlength = value->rValue;
+	    here->CPLlengthGiven = TRUE;
+	    break;
         default:
             return(E_BADPARM);
     }

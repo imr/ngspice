@@ -21,11 +21,12 @@ typedef struct sCPLinstance {
                                              * current model*/
 
     IFuid CPLname;  /* pointer to character string naming this instance */
-    int CPLowner;  /* number of owner process */
+    int CPLowner;   /* number of owner process */
+    int CPLstate;   /* not used */
 
-	int dimension;
 	int *CPLposNodes;
 	int *CPLnegNodes;
+        int dimension;
 	double CPLlength;
 	int *CPLibr1;
 	int *CPLibr2;
@@ -52,10 +53,10 @@ typedef struct sCPLinstance {
 	double ***CPLibr1Ibr2;
 	double ***CPLibr2Ibr1;
 	
-	unsigned CPLibr1Given : 1;
-	unsigned CPLibr2Given : 1;
-	unsigned CPLdcGiven : 1;
-	unsigned CPLlengthgiven : 1;
+	unsigned CPLibr1Given   : 1;
+	unsigned CPLibr2Given   : 1;
+	unsigned CPLdcGiven     : 1;
+	unsigned CPLlengthGiven : 1;
 
 } CPLinstance ;
 
@@ -71,9 +72,13 @@ typedef struct sCPLmodel {       /* model structure for a cpl */
     IFuid CPLmodName;       /* pointer to character string naming this model */
 
 	double *Rm;
+        int Rm_counter;
 	double *Gm;
+        int Gm_counter;
 	double *Lm;
+        int Lm_counter;
 	double *Cm;
+        int Cm_counter;
 	double length;
     unsigned Rmgiven : 1;   
     unsigned Lmgiven : 1;  

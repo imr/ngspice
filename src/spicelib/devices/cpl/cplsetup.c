@@ -2,6 +2,7 @@
 Copyright 1992 Regents of the University of California.  All rights
 reserved.
 Author: 1992 Charles Hough
+Modified: 2004 Paolo Nenzi - (ng)spice integration
 **********/
 
 
@@ -11,22 +12,29 @@ Author: 1992 Charles Hough
 #include "sperror.h"
 #include "suffix.h"
 
-#include "../cap/capdefs.h"
 #include "multi_line.h"
 
+
 #define VECTOR_ALLOC(vec, n) { \
-	int i; \
-	vec = (double **) malloc(n * sizeof(double *)); \
-	for (i = 0; i < n; i++) {  \
-		vec[i] = (double *) malloc(sizeof(double)); \
-	} \
+	vec = (double **) tmalloc(n * sizeof(double *)); \
 }
+
 #define MATRIX_ALLOC(mat, m, j) { \
 	int k; \
-	mat = (double ***) malloc(m * sizeof(double **)); \
+	mat = (double ***) tmalloc(m * sizeof(double **)); \
 	for (k = 0; k < m; k++) {  \
 		VECTOR_ALLOC(mat[k], j); \
 	} \
+}
+
+#define VECTOR_FREE(vec) free(vec) 
+
+#define MATRIX_FREE(mat, m, j) { \
+	int k; \
+	for (k = 0; k < m; k++) {  \
+		free(mat[k]); \
+	} \
+        free(mat); \
 }
 
 #define MAX_DEG 8
@@ -69,71 +77,68 @@ static  double  Scaling_F;
 static  double  Scaling_F2;
 
 /* misc.c match */
-static void new_memory();
-static double *vector();
-static void free_vector();
-static void polint();
-/*static int match_x();*/
-static int match();
-static int Gaussian_Elimination2();
-static void eval_Si_Si_1();
-static void loop_ZY();
-static void poly_matrix();
-/*static int checkW();*/
-static void poly_W();
-static void eval_frequency();
-static void store();
-static void store_SiSv_1();
-/*static int check();*/
-static int coupled();
-static int generate_out();
-static int ReadCpL();
-/*static int divC();*/
+static void new_memory(int, int, int);
+static double *vector(int, int);
+static void free_vector(double*, int, int);
+static void polint(double*, double*, int, double, double*, double*);
+static int match(int, double*, double*, double*);
+/* static int match_x(int, double*, double*, double*); */
+static int Gaussian_Elimination2(int, int);
+static void eval_Si_Si_1(int, double);
+static void loop_ZY(int, double);
+static void poly_matrix(); /* quale è il prototipo ? */
+/* static int checkW(double*, double); */
+static void poly_W(int, int);
+static void eval_frequency(int, int);
+static void store(int, int);
+static void store_SiSv_1(int, int);
+/*static int check(); quale è il prototipo ?*/
+static int coupled(int);
+static int generate_out(int, int);
+static int ReadCpL(CPLinstance*, CKTcircuit*);
+/* static int divC(double, double, double, double, double*, double*); */
 
 /* mult */
-static void mult_p();
-static void matrix_p_mult();
-static double approx_mode();
-static double eval2();
-static int get_c();
-static int Pade_apx();
-static int Gaussian_Elimination();
-static double root3();
-static int div3();
-static int find_roots();
+static void mult_p(double*, double*, double*, int, int, int);
+static void matrix_p_mult(); /* quale è il prototipo ?*/
+static double approx_mode(double*, double*, double);
+static double eval2(double, double, double, double);
+static int get_c(double, double, double, double, double, double, double, double*, double*);
+static int Pade_apx(double, double*, double*, double*, double*, double*, double*, double*);
+static int Gaussian_Elimination(int);
+static double root3(double, double, double, double);
+static int div3(double, double, double, double, double*, double*);
+static int find_roots(double, double, double, double*, double*,double*);
 
-static NODE* insert_node();
-static NDnamePt insert_ND();
-static NODE* NEW_node();
+static NODE* insert_node(char*);
+static NDnamePt insert_ND(char*, NDnamePt*);
+static NODE* NEW_node(void);
 static NDnamePt ndn;
 static NODE *node_tab;
 #define epsi_mult 1e-28
 
 /* diag */
-static MAXE_PTR sort();
-static void ordering();
-static MAXE_PTR delete_1();
-static void reordering();
-static void diag();
-static int rotate();
+static MAXE_PTR sort(MAXE_PTR, float, int, int, MAXE_PTR);
+static void ordering(void);
+static MAXE_PTR delete_1(MAXE_PTR*, int);
+static void reordering(int, int);
+static void diag(int);
+static int rotate(int, int, int);
 
 #define epsi 1.0e-16
 static char *message = "tau of coupled lines is larger than max time step";
 
 /* ARGSUSED */
 int
-CPLsetup(matrix,inModel,ckt,state)
-    register SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit*ckt;
-    int *state;
+CPLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 {
-    register CPLmodel *model = (CPLmodel *)inModel;
-    register CPLinstance *here;
+    CPLmodel *model = (CPLmodel *)inModel;
+    CPLinstance *here;
     CKTnode *tmp, *node;
     int error, m, p;
     char **branchname;
     int noL;
+
 
     /*  loop through all the models */
     for( ; model != NULL; model = model->CPLnextModel ) {
@@ -142,26 +147,32 @@ CPLsetup(matrix,inModel,ckt,state)
         for (here = model->CPLinstances; here != NULL ;
                 here=here->CPLnextInstance) {
             
+
+
+        if (!here->CPLlengthGiven)
+            here->CPLlength=0.0;
+
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
 }
+                    
 			noL = here->dimension;
 
-			here->CPLposNodes = (int *) malloc(noL * sizeof(int));
-			here->CPLnegNodes = (int *) malloc(noL * sizeof(int));
-			here->CPLibr1 = (int *) malloc(noL * sizeof(int));
-			here->CPLibr2 = (int *) malloc(noL * sizeof(int));
+			here->CPLposNodes = (int *) tmalloc(noL * sizeof(int));
+			here->CPLnegNodes = (int *) tmalloc(noL * sizeof(int));
+			here->CPLibr1 = (int *) tmalloc(noL * sizeof(int));
+			here->CPLibr2 = (int *) tmalloc(noL * sizeof(int));
 
 			VECTOR_ALLOC(here->CPLibr1Ibr1, noL);
 			VECTOR_ALLOC(here->CPLibr2Ibr2, noL);
 			VECTOR_ALLOC(here->CPLposIbr1, noL);
-			VECTOR_ALLOC(here->CPLnegIbr2, noL);
-			VECTOR_ALLOC(here->CPLposPos, noL);
+			VECTOR_ALLOC(here->CPLnegIbr2, noL); 
+			VECTOR_ALLOC(here->CPLposPos, noL); 
 			VECTOR_ALLOC(here->CPLnegNeg, noL);
-			VECTOR_ALLOC(here->CPLnegPos, noL);
-			VECTOR_ALLOC(here->CPLposNeg, noL);
+			VECTOR_ALLOC(here->CPLnegPos, noL); 
+			VECTOR_ALLOC(here->CPLposNeg, noL); 
 
 			MATRIX_ALLOC(here->CPLibr1Pos, noL, noL);
 			MATRIX_ALLOC(here->CPLibr2Neg, noL, noL);
@@ -170,10 +181,11 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 			MATRIX_ALLOC(here->CPLibr1Ibr2, noL, noL);
 			MATRIX_ALLOC(here->CPLibr2Ibr1, noL, noL);
 
-			branchname = (char **) malloc(sizeof(char *) * here->dimension);
+
+			branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
 			if (! here->CPLibr1Given) {
 				for (m = 0; m < here->dimension; m++) {
-					branchname[m] = malloc(MAX_STRING);
+					branchname[m] = tmalloc(MAX_STRING);
 					sprintf(branchname[m], "branch1_%d", m);
 					error = 
 					CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
@@ -183,10 +195,10 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 				here->CPLibr1Given = 1;
 			}
 			free(branchname);
-			branchname = (char **) malloc(sizeof(char *) * here->dimension);
+			branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
 			if (! here->CPLibr2Given) {
 				for (m = 0; m < here->dimension; m++) {
-					branchname[m] = malloc(MAX_STRING);
+					branchname[m] = tmalloc(MAX_STRING);
 					sprintf(branchname[m], "branch2_%d", m);
 					error = 
 					CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
@@ -245,10 +257,72 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 
+
+int
+CPLunsetup(GENmodel *inModel, CKTcircuit *ckt)
+{
+  CPLmodel *model;
+  CPLinstance *here;
+  int m;
+  int noL; 
+  
+  for (model = (CPLmodel *) inModel; model != NULL;
+      model = model->CPLnextModel) {
+    for (here = model->CPLinstances; here != NULL;
+        here = here->CPLnextInstance) {
+
+        noL = here->dimension;
+
+        VECTOR_FREE(here->CPLibr1Ibr1); 
+        VECTOR_FREE(here->CPLibr2Ibr2);
+        VECTOR_FREE(here->CPLposIbr1);
+        VECTOR_FREE(here->CPLnegIbr2);
+        VECTOR_FREE(here->CPLposPos);
+        VECTOR_FREE(here->CPLnegNeg); 
+        VECTOR_FREE(here->CPLnegPos);
+        VECTOR_FREE(here->CPLposNeg);
+
+      
+     MATRIX_FREE(here->CPLibr1Pos, noL, noL);
+     MATRIX_FREE(here->CPLibr2Neg, noL, noL);
+     MATRIX_FREE(here->CPLibr1Neg, noL, noL);
+     MATRIX_FREE(here->CPLibr2Pos, noL, noL);
+     MATRIX_FREE(here->CPLibr1Ibr2, noL, noL);
+     MATRIX_FREE(here->CPLibr2Ibr1, noL, noL);
+
+      
+      for (m = 0; m < noL; m++) {
+          if (here->CPLibr1[m]) {
+               CKTdltNNum(ckt, here->CPLibr1[m]);
+               here->CPLibr1[m] = 0;
+          }
+      }
+
+      for (m = 0; m < noL; m++) {
+          if (here->CPLibr2[m]) {
+               CKTdltNNum(ckt, here->CPLibr2[m]);
+               here->CPLibr2[m] = 0;
+          }
+      }
+
+  free(here->CPLposNodes);
+  free(here->CPLnegNodes);
+  free(here->CPLibr1);
+  free(here->CPLibr2);
+
+  /* reset switches */
+  here->CPLdcGiven=0;
+  here->CPLibr1Given = 0;
+  here->CPLibr2Given = 0;
+    }
+  }
+  return OK;
+}
+
+
+
 static int 
-ReadCpL(here, ckt)
-CPLinstance *here;
-CKTcircuit *ckt;
+ReadCpL(CPLinstance *here, CKTcircuit *ckt)
 {
    int i, j, noL, counter;
    float f;
@@ -259,15 +333,15 @@ CKTcircuit *ckt;
    RLINE *lines[MAX_CP_TX_LINES];
    ERLINE *er;
 
-   c = (CPLine *) malloc(sizeof (CPLine));
-   c2 = (CPLine *) malloc(sizeof (CPLine));
+   c = (CPLine *) tmalloc(sizeof (CPLine));
+   c2 = (CPLine *) tmalloc(sizeof (CPLine));
    c->vi_head = c->vi_tail = NULL;
    noL = c->noL = here->dimension;
    here->cplines = c;
    here->cplines2 = c2;
 
    for (i = 0; i < noL; i++) {
-      ec = (ECPLine *) malloc(sizeof (ECPLine));
+      ec = (ECPLine *) tmalloc(sizeof (ECPLine));
 	  name = here->in_node_names[i];
       nd = insert_node(name);
       ec->link = nd->cplptr;
@@ -276,17 +350,17 @@ CKTcircuit *ckt;
       c->in_node[i] = nd;
       c2->in_node[i] = nd;
 
-      er = (ERLINE *) malloc(sizeof (ERLINE));
+      er = (ERLINE *) tmalloc(sizeof (ERLINE));
       er->link = nd->rlptr;
       nd->rlptr = er;
-      er->rl = lines[i] = (RLINE *) malloc(sizeof (RLINE));
+      er->rl = lines[i] = (RLINE *) tmalloc(sizeof (RLINE));
       er->rl->in_node = nd;
 
       c->dc1[i] = c->dc2[i] = 0.0;
    }
 
    for (i = 0; i < noL; i++) {
-      ec = (ECPLine *) malloc(sizeof (ECPLine));
+      ec = (ECPLine *) tmalloc(sizeof (ECPLine));
 	  name = here->out_node_names[i];
       nd = insert_node(name);
       ec->link = nd->cplptr;
@@ -295,7 +369,7 @@ CKTcircuit *ckt;
       c->out_node[i] = nd;
       c2->out_node[i] = nd;
 
-      er = (ERLINE *) malloc(sizeof (ERLINE));
+      er = (ERLINE *) tmalloc(sizeof (ERLINE));
       er->link = nd->rlptr;
       nd->rlptr = er;
       er->rl = lines[i];
@@ -314,7 +388,7 @@ CKTcircuit *ckt;
 			}
 			else {
 				f = here->CPLmodPtr->Rm[counter];
-				R_m[i][j] =here->CPLmodPtr->Rm[counter]= MAX(f, 1.0e-4);
+				R_m[i][j] = here->CPLmodPtr->Rm[counter] = MAX(f, 1.0e-4);
 				G_m[i][j] = here->CPLmodPtr->Gm[counter];
 				L_m[i][j] = here->CPLmodPtr->Lm[counter];
 				C_m[i][j] = here->CPLmodPtr->Cm[counter];
@@ -322,7 +396,7 @@ CKTcircuit *ckt;
 			}
 		}
 	}
-	if (here->CPLlengthgiven)
+	if (here->CPLlengthGiven)
 		length = here->CPLlength;
 	else length = here->CPLmodPtr->length;
 
@@ -340,7 +414,7 @@ CKTcircuit *ckt;
          if (SIV[i][j].C_0 == 0.0)
             c->h1t[i][j] = NULL;
 	 else {
-	    c->h1t[i][j] = (TMS *) malloc(sizeof (TMS));
+	    c->h1t[i][j] = (TMS *) tmalloc(sizeof (TMS));
 	    d = c->h1t[i][j]->aten = SIV[i][j].C_0;
 	    c->h1t[i][j]->ifImg = (int) SIV[i][j].Poly[6] - 1.0;
 	        /* since originally 2 for img 1 for noimg */
@@ -364,7 +438,7 @@ CKTcircuit *ckt;
             if (IWI[i][j].C_0[k] == 0.0)
                c->h2t[i][j][k] = NULL;
             else {
-               c->h2t[i][j][k] = (TMS *) malloc(sizeof (TMS));
+               c->h2t[i][j][k] = (TMS *) tmalloc(sizeof (TMS));
                d = c->h2t[i][j][k]->aten = IWI[i][j].C_0[k];
                c->h2t[i][j][k]->ifImg = (int) IWI[i][j].Poly[k][6] - 1.0;
                 /* since originally 2 for img 1 for noimg */
@@ -385,7 +459,7 @@ CKTcircuit *ckt;
             if (IWV[i][j].C_0[k] == 0.0)
                c->h3t[i][j][k] = NULL;
             else {
-               c->h3t[i][j][k] = (TMS *) malloc(sizeof (TMS));
+               c->h3t[i][j][k] = (TMS *) tmalloc(sizeof (TMS));
                d = c->h3t[i][j][k]->aten = IWV[i][j].C_0[k];
                c->h3t[i][j][k]->ifImg = (int) IWV[i][j].Poly[k][6] - 1.0;
                 /* since originally 2 for img 1 for noimg */
@@ -409,7 +483,7 @@ CKTcircuit *ckt;
 
    for (i = 0; i < noL; i++) {
 		if (c->taul[i] < ckt->CKTmaxStep) {
-			errMsg = MALLOC(strlen(message)+1);
+			errMsg = tmalloc(strlen(message)+1);
 			strcpy(errMsg,message);
 			return(-1);
 		}
@@ -426,8 +500,7 @@ CKTcircuit *ckt;
 
 
 static void 
-new_memory(dim, deg, deg_o)
-   int dim, deg, deg_o;
+new_memory(int dim, int deg, int deg_o)
 {
    int i, j;
 
@@ -460,14 +533,13 @@ new_memory(dim, deg, deg_o)
 
 
 static double 
-*vector(nl, nh)
-   int nl, nh;
+*vector(int nl, int nh)
 {
    double *v;
 
-   v = (double *) malloc((unsigned) (nh - nl +1) * sizeof(double));
+   v = (double *) tmalloc((unsigned) (nh - nl +1) * sizeof(double));
    if (!v) {
-      fprintf(stderr, "Memory Allocation Error by malloc in vector().\n");
+      fprintf(stderr, "Memory Allocation Error by tmalloc in vector().\n");
       fprintf(stderr, "...now exiting to system ...\n");
       exit(0);
    }
@@ -475,28 +547,23 @@ static double
 }
 
 static void 
-free_vector(v, nl, nh)
-   double *v;
-   int nl, nh;
+free_vector(double *v, int nl, int nh)
 {
-   free((char*) (v +nl));
+   free((void*) (v +nl));
 }
 
 static void 
-polint(xa, ya, n, x, y, dy)
+polint(double *xa, double *ya, int n, double x, double *y, double *dy)
 /*
    Given arrays xa[1..n] and ya[1..n], and given a value x, this routine
    returns a value y, and an error estimate dy.  If P(x) is the 
    polynomial of degree n-1 such that P(xa) = ya, then the returned 
    value y = P(x)
  */
-   double xa[], ya[], x, *y, *dy;
-   int n;
 {
    int i, m, ns = 1;
    double den, dif, dift, ho, hp, w;
-   double *c, *d, *vector();
-   void free_vector();
+   double *c, *d;
 
    dif = ABS(x - xa[1]);
    c = vector(1, n);
@@ -531,9 +598,7 @@ polint(xa, ya, n, x, y, dy)
 }
 
 static int 
-match(n, cof, xa, ya)
-   double xa[], ya[], cof[];
-   int n;
+match(int n, double *cof, double *xa, double *ya)
 /*
    Given arrays xa[0..n] and ya[0..n] containing a tabulated function
    ya = f(xa), this routine returns an array of coefficients cof[0..n],
@@ -541,8 +606,7 @@ match(n, cof, xa, ya)
  */
 {
    int k, j, i;
-   double xmin, dy, *x, *y, *xx, *vector();
-   void polint(), free_vector();
+   double xmin, dy, *x, *y, *xx;
 
    x = vector(0, n);
    y = vector(0, n);
@@ -591,11 +655,7 @@ match(n, cof, xa, ya)
  ***/
 /***
 static int
-match_x(dim, Alfa, X, Y)
-   int dim;
-   double  X[]; 
-   double  Y[]; 
-   double  Alfa[];
+match_x(int dim, double *Alfa, double *X, double *Y)
 {
    int i, j;
    double f;
@@ -645,14 +705,12 @@ match_x(dim, Alfa, X, Y)
  ***/
 
 static int 
-Gaussian_Elimination2(dims, type)
+Gaussian_Elimination2(int dims, int type)
    /*  type = 1 : to solve a linear system  
 	     -1 : to inverse a matrix  */
-   int dims;
-   int type;
 {
-   register int i, j, k, dim;
-   register double f;
+   int i, j, k, dim;
+   double f;
    double max;
    int imax;
 
@@ -702,9 +760,7 @@ Gaussian_Elimination2(dims, type)
 /***
 
 static void
-eval_Si_Si_1(dim, y)
-   int dim;
-   double y;
+eval_Si_Si_1(int dim, double y)
 {
    int i, j, k;
 
@@ -743,9 +799,7 @@ eval_Si_Si_1(dim, y)
 ***/
 
 static void
-eval_Si_Si_1(dim, y)
-   int dim;
-   double y;
+eval_Si_Si_1(int dim, double y)
 {
    int i, j, k;
 
@@ -782,9 +836,7 @@ eval_Si_Si_1(dim, y)
 /***
 
 static void
-loop_ZY(dim, y)
-   int dim;
-   double y;
+loop_ZY(int dim, double y)
 {
    int i, j, k;
    double fmin, fmin1;
@@ -877,9 +929,7 @@ loop_ZY(dim, y)
 ***/
 
 static void
-loop_ZY(dim, y)
-   int dim;
-   double y;
+loop_ZY(int dim, double y)
 {
    int i, j, k;
    double fmin, fmin1;
@@ -976,7 +1026,7 @@ loop_ZY(dim, y)
  ***/
 
 static void 
-poly_matrix(A, dim, deg)
+poly_matrix(A,  dim,  deg)
    double *A[MAX_DIM][MAX_DIM];
    int dim, deg;
 {
@@ -991,8 +1041,7 @@ poly_matrix(A, dim, deg)
  ***/
 /***
 static int 
-checkW(W, d)
-   double W[], d;
+checkW(double *W, double d)
 {
   double f, y;
   float  y1;
@@ -1017,11 +1066,9 @@ checkW(W, d)
  ***/
 
 static void 
-poly_W(dim, deg)
-   int dim, deg;
+poly_W(int dim, int deg)
 {
    int i;
-   extern double approx_mode();
 
    for (i = 0; i < dim; i++) {
       match(deg, W[i], frequency, W[i]);
@@ -1036,8 +1083,7 @@ poly_W(dim, deg)
  ***/
    
 static void
-eval_frequency(dim, deg_o)
-   int deg_o;
+eval_frequency(int dim, int deg_o)
 {
    int i, im;
    double min;
@@ -1077,8 +1123,7 @@ eval_frequency(dim, deg_o)
  ***/
 
 static void
-store(dim, ind)
-   int ind;
+store(int dim, int ind)
 {
    int i, j;
 
@@ -1100,7 +1145,7 @@ store(dim, ind)
  ***/
 
 static void
-store_SiSv_1(dim, ind)
+store_SiSv_1(int dim, int ind)
 {
    int i, j, k;
    double temp;
@@ -1198,8 +1243,7 @@ check(Sip, Si_1p, Sv_1p, SiSv_1p)
  ***/
 
 static int 
-coupled(dim)
-   int dim;
+coupled(int dim)
 {
    int deg, deg_o;
    int i;
@@ -1247,8 +1291,7 @@ coupled(dim)
  ***/
 
 static int 
-generate_out(dim, deg_o)
-   int dim, deg_o;
+generate_out(int dim, int deg_o)
 {
    int i, j, k, rtv;
    double C;
@@ -1373,10 +1416,8 @@ generate_out(dim, deg_o)
  ****************************************************************/
 
 static void
-mult_p(p1, p2, p3, d1, d2, d3)
+mult_p(double *p1, double *p2, double *p3, int d1, int d2, int d3)
 /*   p3 = p1 * p2   */
-   double *p1, *p2, *p3;
-   int    d1, d2, d3;
 {
    int i, j, k;
 
@@ -1447,8 +1488,7 @@ matrix_p_mult(A, D, B, dim, deg, deg_o, X)
  ***/
 
 static double 
-approx_mode(X, b, length)
-   double X[], b[], length;
+approx_mode(double *X, double *b, double length)
 {
    double w0, w1, w2, w3, w4, w5;
    double a[8];
@@ -1504,8 +1544,7 @@ approx_mode(X, b, length)
  ***/
 
 static double 
-eval2(a, b, c, x)
-   double a, b, c, x;
+eval2(double a, double b, double c, double x)
 {
    return(a*x*x + b*x + c);
 }
@@ -1514,9 +1553,8 @@ eval2(a, b, c, x)
  ***/
 
 static int 
-get_c(q1, q2, q3, p1, p2, a, b, cr, ci)
-   double q1, q2, q3, p1, p2, a, b;
-   double *cr, *ci;
+get_c(double q1, double q2, double q3, double p1, double p2, double a, double b, 
+      double *cr, double *ci)
 {
    double d, n;
 
@@ -1534,7 +1572,8 @@ get_c(q1, q2, q3, p1, p2, a, b, cr, ci)
 
 
 static int 
-Pade_apx(a_b, b, c1, c2, c3, x1, x2, x3)
+Pade_apx(double a_b, double *b, double *c1, double *c2, double *c3, 
+         double *x1, double *x2, double *x3)
 /*     
         b[0] + b[1]*y + b[2]*y^2 + ... + b[5]*y^5 + ...
       = (q3*y^3 + q2*y^2 + q1*y + 1) / (p3*y^3 + p2*y^2 + p1*y + 1)
@@ -1546,10 +1585,6 @@ Pade_apx(a_b, b, c1, c2, c3, x1, x2, x3)
       = (s^3 + q1*s^2 + q2*s + q3) / (s^3 + p1*s^2 + p2*s + p3)
       = c1 / (s - x1) + c2 / (s - x2) + c3 / (s - x3) + 1.0
  */
-   double a_b;
-   double b[];
-   double *c1, *c2, *c3;
-   double *x1, *x2, *x3;
 {
    double p1, p2, p3, q1, q2, q3;
 
@@ -1604,11 +1639,10 @@ Pade_apx(a_b, b, c1, c2, c3, x1, x2, x3)
 }
 
 static int 
-Gaussian_Elimination(dims)
-   int dims;
+Gaussian_Elimination(int dims)
 {
-   register int i, j, k, dim;
-   register double f;
+   int i, j, k, dim;
+   double f;
    double max;
    int imax;
 
@@ -1652,9 +1686,7 @@ Gaussian_Elimination(dims)
 }
 
 static double 
-root3(a1, a2, a3, x)
-   double x;
-   double a1, a2, a3;
+root3(double a1, double a2, double a3, double x)
 {
    double t1, t2;
 
@@ -1665,10 +1697,7 @@ root3(a1, a2, a3, x)
 }
 
 static int 
-div3(a1, a2, a3, x, p1, p2)
-   double x;
-   double a1, a2, a3;
-   double *p1, *p2;
+div3(double a1, double a2, double a3, double x, double *p1, double *p2)
 {
 	*p1 = a1 + x;
 
@@ -1681,9 +1710,7 @@ div3(a1, a2, a3, x, p1, p2)
 
 
 static int 
-find_roots(a1, a2, a3, x1, x2, x3)
-   double  a1, a2, a3;
-   double *x1, *x2, *x3;
+find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
 {
    double x, t;
    double p, q;
@@ -1783,15 +1810,13 @@ find_roots(a1, a2, a3, x1, x2, x3)
 
 
 static NDnamePt
-insert_ND(name, ndn)
-   char *name;
-   NDnamePt *ndn;
+insert_ND(char *name, NDnamePt *ndn)
 {
    int       cmp;
    NDnamePt  p;
 
    if (*ndn == NULL) {
-      p = *ndn = (NDnamePt) malloc(sizeof (NDname));
+      p = *ndn = (NDnamePt) tmalloc(sizeof (NDname));
       p->nd = NULL;
       p->right = p->left = NULL;
       strcpy(p->id, name);
@@ -1809,8 +1834,7 @@ insert_ND(name, ndn)
 }
 
 static NODE *
-insert_node(name)
-   char *name;
+insert_node(char *name)
 {
    NDnamePt n;
    NODE    *p;
@@ -1827,9 +1851,7 @@ insert_node(name)
       return(n->nd);
 }
 /***
-static int divC(ar, ai, br, bi, cr, ci)
-double ar, ai, br, bi;
-double *cr, *ci;
+static int divC(double ar, double ai, double br, double bi, double *cr, double *ci)
 {
 	double t;
 
@@ -1842,14 +1864,14 @@ double *cr, *ci;
 ***/
 
 static NODE
-*NEW_node()
+*NEW_node(void)
 {
    /*
-   char *malloc();
+   char *tmalloc();
     */
    NODE *n;
 
-   n = (NODE *) malloc (sizeof (NODE));
+   n = (NODE *) tmalloc (sizeof (NODE));
    n->mptr = NULL;
    n->gptr = NULL;
    n->cptr = NULL;
@@ -1885,10 +1907,7 @@ static  int         dim;
 static  MAXE_PTR    row;
 
 static MAXE_PTR 
-sort(list, val, r, c, e)
-   MAXE_PTR list, e;
-   float val;
-   int r, c;
+sort(MAXE_PTR list, float val, int r, int c, MAXE_PTR e)
 {
    if (list == NULL || list->value < val) {
       e->row = r;
@@ -1904,7 +1923,7 @@ sort(list, val, r, c, e)
 
 
 static void
-ordering()
+ordering(void)
 {
    MAXE_PTR e;
    int i, j, m;
@@ -1919,16 +1938,14 @@ ordering()
 	    mv = ABS(ZY[i][j]);
 	    m = j;
 	 }
-      e = (MAXE_PTR) malloc(sizeof (MAXE));
+      e = (MAXE_PTR) tmalloc(sizeof (MAXE));
       row = sort(row, mv, i, m, e);
    }
 }
       
 
 static MAXE_PTR 
-delete_1(list, rc)
-   MAXE_PTR *list;
-   int rc;
+delete_1(MAXE_PTR *list, int rc)
 {
    MAXE_PTR list1, e;
 
@@ -1945,8 +1962,7 @@ delete_1(list, rc)
 
 
 static void
-reordering(p, q)
-   int p, q;
+reordering(int p, int q)
 {
    MAXE_PTR e;
    int j, m;
@@ -1978,8 +1994,7 @@ reordering(p, q)
 }
 
 static void 
-diag(dims)
-   int dims;
+diag(int dims)
 {
    int i, j, c;
    double fmin, fmax;
@@ -2029,8 +2044,7 @@ diag(dims)
  ****************************************************************/
 
 static int
-rotate(dim, p, q)
-   int  p, q, dim;
+rotate(int dim, int p, int q)
 {
    int j;
    double co, si;

@@ -12,26 +12,25 @@ Author: 1992 Charles Hough
 
 VI_list *pool_vi;
 static double ratio[MAX_CP_TX_LINES];
-static VI_list *new_vi();
-static void free_vi();
+static VI_list *new_vi(void);
+static void free_vi(VI_list*);
 static int get_pvs_vi();
-static int update_cnv();
-static int add_new_vi();
-static int right_consts();
-static int update_delayed_cnv();
-static int multC();
-static int expC();
-static int divC();
-static void update_cnv_a();
-static void copy_cp();
-
+static int update_cnv(CPLine*, float);
+static int add_new_vi(CPLinstance*, CKTcircuit*, int);
+static int right_consts(CPLinstance*, CPLine*, int, int, double, double, int*, int*, CKTcircuit*);
+static int update_delayed_cnv(CPLine*, float);
+static int multC(double, double, double, double, double*, double*);
+static int expC(double, double, double, double*, double*);
+static int divC(double, double, double, double, double*, double*);
+static void update_cnv_a(TMS*, float, double, double, double, double, double, double);
+static void copy_cp(CPLine*, CPLine*);
 
 /*ARGSUSED*/
 int
 CPLload(GENmodel *inModel, CKTcircuit *ckt)
 {
-    register CPLmodel *model = (CPLmodel *)inModel;
-    register CPLinstance *here;
+        CPLmodel *model = (CPLmodel *)inModel;
+        CPLinstance *here;
 	CPLine *cp, *cp2;
 	int *k, *l;
 	int time, time2;
@@ -62,6 +61,7 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 			here=here->CPLnextInstance) {
 
 			cp = here->cplines;
+
 			if (cond1 || cp->vi_head == NULL) continue;
 
 			noL = cp->noL = here->dimension;
@@ -130,7 +130,7 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 			if (cond1) {
 				resindex = 0;
 				for (m = 0; m < noL; m++) {
-					if (here->CPLlengthgiven)
+					if (here->CPLlengthGiven)
 						g = model->Rm[resindex] * here->CPLlength;
 					else g = model->Rm[resindex] * here->CPLmodPtr->length;
 					*(here->CPLposIbr1[m]) += 1.0;
@@ -301,8 +301,7 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 }
 
 static void
-copy_cp(new, old)
-CPLine *new, *old;
+copy_cp(CPLine *new, CPLine *old)
 {
 	int i, j, k, l, m;
 	VI_list *temp;
@@ -359,6 +358,7 @@ CPLine *new, *old;
 		}
 	}
 
+
 	while (new->vi_head->time < old->vi_head->time) {
 		temp = new->vi_head;
 		new->vi_head = new->vi_head->next;
@@ -368,13 +368,8 @@ CPLine *new, *old;
 
 
 static int
-right_consts(here, cp, t, time, h, h1, l1, l2, ckt)
-CPLinstance *here;
-CPLine *cp;
-int t, time;
-double h, h1;  
-int *l1, *l2;
-CKTcircuit *ckt;
+right_consts(CPLinstance *here, CPLine *cp, int t, int time, double h, double h1, 
+             int *l1, int *l2, CKTcircuit *ckt)
 {
    int i, j, k, l;
    double e;
@@ -388,12 +383,12 @@ CKTcircuit *ckt;
    double i1_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES]; 
    double i2_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES];
    int ext;
-   register int noL;
+   int noL;
 
    noL = cp->noL;
 
    for (j = 0; j < noL; j++) {
-      register double ff1;
+       double ff1;
 
       ff[j] = 0.0;
       gg[j] = 0.0;
@@ -437,14 +432,14 @@ CKTcircuit *ckt;
           v1_o, v2_o, i1_o, i2_o);
 
    for (j  = 0; j < noL; j++) {       /**  current eqn  **/
-      register TERM *tm;
+       TERM *tm;
 
       for (k = 0; k < noL; k++)       /**  node voltage  **/
      for (l = 0; l < noL; l++)    /**  different mode  **/
         if (cp->h3t[j][k][l]) {
            if (cp->h3t[j][k][l]->ifImg) {
           double er, ei, a, b, a1, b1, a2, b2;
-          register TMS *tms;
+          TMS *tms;
           tms = cp->h3t[j][k][l];
           expC(tms->tm[1].x, tms->tm[2].x, h, &er, &ei);
           a2 = h1 * tms->tm[1].c;
@@ -490,7 +485,7 @@ CKTcircuit *ckt;
         if (cp->h2t[j][k][l]) {
            if (cp->h2t[j][k][l]->ifImg) {
           double er, ei, a, b, a1, b1, a2, b2;
-          register TMS *tms;
+          TMS *tms;
           tms = cp->h2t[j][k][l];
           expC(tms->tm[1].x, tms->tm[2].x, h, &er, &ei);
           a2 = h1 * tms->tm[1].c;
@@ -542,16 +537,14 @@ CKTcircuit *ckt;
 }
 
 static int 
-update_cnv(cp, h)
-CPLine *cp;
-float h;
+update_cnv(CPLine *cp, float h)
 {
    int i, j, k;
-   register int noL;
+   int noL;
    double ai, bi, ao, bo;
    double e, t;
-   register TMS *tms;
-   register TERM *tm;
+   TMS *tms;
+   TERM *tm;
 
    noL = cp->noL;
    for (j = 0; j < noL; j++)
@@ -596,7 +589,7 @@ float h;
 }
 
 static VI_list
-*new_vi()
+*new_vi(void)
 {
    VI_list *q;
 
@@ -608,8 +601,7 @@ static VI_list
 }
 
 static void
-free_vi(q)
-VI_list *q;
+free_vi(VI_list *q)
 {
   	q->pool = pool_vi;
 	pool_vi = q;
@@ -617,13 +609,10 @@ VI_list *q;
 
 
 static int 
-add_new_vi(here, ckt, time)
-   CPLinstance *here;
-   CKTcircuit *ckt;
-   int time;
+add_new_vi(CPLinstance *here, CKTcircuit *ckt, int time)
 {
    VI_list *vi;
-   register int i, noL;
+   int i, noL;
    CPLine *cp, *cp2;
 
    cp = here->cplines;
@@ -666,13 +655,13 @@ get_pvs_vi(t1, t2, cp, v1_i, v2_i, i1_i, i2_i, v1_o, v2_o, i1_o, i2_o)
    double i2_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES];
 {
    double ta[MAX_CP_TX_LINES], tb[MAX_CP_TX_LINES]; 
-   register VI_list *vi, *vi1;
-   register double f;
-   register int i, j;
+   VI_list *vi, *vi1;
+   double f;
+   int i, j;
    int  mini = -1;
    double minta = 123456789.0;
    int ext = 0;
-   register int noL;
+   int noL;
 
    noL = cp->noL;
 
@@ -775,16 +764,14 @@ errordetect:
 
 
 static int 
-update_delayed_cnv(cp, h)
-   CPLine *cp;
-   float h;
+update_delayed_cnv(CPLine *cp, float h)
 {
    int i, j, k;
    float *ratio;
-   register double f;
-   register VI_list *vi;
-   register TMS *tms;
-   register int noL;
+   double f;
+   VI_list *vi;
+   TMS *tms;
+   int noL;
 
    h *= 0.5e-12;
    ratio = cp->ratio;
@@ -823,9 +810,8 @@ update_delayed_cnv(cp, h)
 }
 
 
-static int expC(ar, ai, h, cr, ci)
-double ar, ai, *cr, *ci;
-double h;
+static int 
+expC(double ar, double ai, double h, double *cr, double *ci)
 {
 	double e, cs, si;
 
@@ -838,11 +824,11 @@ double h;
 	return(1);
 }
 
-static int multC(ar, ai, br, bi, cr, ci)
-double ar, ai, br, bi;
-double *cr, *ci;
+static int 
+multC(double ar, double ai, double br, double bi, 
+      double *cr, double *ci)
 {
-	register double tp;
+	double tp;
 
 	tp = ar*br - ai*bi;
 	*ci = ar*bi+ai*br;
@@ -853,11 +839,8 @@ double *cr, *ci;
 }
 
 static void
-update_cnv_a(tms, h, ai, ao, bi, bo, er, ei)
-   TMS *tms;
-   float h;
-   double ai, bi, ao, bo;
-   double er, ei;
+update_cnv_a(TMS *tms, float h, double ai, double ao, double bi, double bo, 
+             double er, double ei)
 {
    double a, b, a1, b1;
 
@@ -872,9 +855,8 @@ update_cnv_a(tms, h, ai, ao, bi, bo, er, ei)
    tms->tm[2].cnv_o = b + h * (b1 * bo + ao * tms->tm[2].c);
 }
 
-static int divC(ar, ai, br, bi, cr, ci)
-double ar, ai, br, bi;
-double *cr, *ci;
+static int 
+divC(double ar, double ai, double br, double bi, double *cr, double *ci)
 {
 	double t;
 

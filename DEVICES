@@ -70,11 +70,18 @@ CPL	- Simple Coupled Multiconductor Lines (Kspice)
 	Level:	1 (and only)
 	Status:	
 		
-	This model comes from kspice. It is not documented, if
+	This model comes from swec and kspice. It is not documented, if
 	you have kspice docs, can you write a short description
 	of its use ?
 	
 	- Does not implement parallel code switches
+	- Probably a lot of memory leaks
+	
+	Enhancements over the original model:
+	
+	- Better integrated into ngspice adding CPLask, CPLmAsk and
+	  CPLunsetup functions
+	
 	
 LTRA	- Lossy Transmission line
 	Initial Release.

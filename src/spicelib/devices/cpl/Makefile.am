@@ -4,7 +4,9 @@ noinst_LIBRARIES = libcpl.a
 
 libcpl_a_SOURCES = 	\
 	cpl.c	   \
+	cplask.c   \
 	cpldest.c  \
+	cplmask.c  \
 	cplmdel.c  \
 	cplparam.c \
 	cpldel.c   \

@@ -20,18 +20,22 @@ CPLmParam(int param, IFvalue *value, GENmodel *inModel)
     switch(param) {
         case CPL_R:
             model->Rm = value->v.vec.rVec;
+            model->Rm_counter = value->v.numValue;
             model->Rmgiven = TRUE;
             break;
         case CPL_L:
             model->Lm = value->v.vec.rVec;
+            model->Lm_counter = value->v.numValue;
             model->Lmgiven = TRUE;
             break;
         case CPL_G:
             model->Gm = value->v.vec.rVec;
+            model->Gm_counter = value->v.numValue;
             model->Gmgiven = TRUE;
             break;
         case CPL_C:
             model->Cm = value->v.vec.rVec;
+            model->Cm_counter = value->v.numValue;
             model->Cmgiven = TRUE;
             break;
         case CPL_length:

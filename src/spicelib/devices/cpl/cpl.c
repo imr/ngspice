@@ -11,10 +11,10 @@ Author: 1992 Charles Hough
 #include "suffix.h"
 
 IFparm CPLpTable[] = { 
-	IOP("pos_nodes", CPL_POS_NODE, IF_VECTOR|IF_STRING, "in nodes"),
-	IOP("neg_nodes", CPL_NEG_NODE, IF_VECTOR|IF_STRING, "out nodes"),
-	IOP("dimension", CPL_DIM, IF_INTEGER, "number of coupled lines"),
-	IOP("length", CPL_LENGTH, IF_REAL, "length of lines"),
+	IOPU("pos_nodes", CPL_POS_NODE, IF_VECTOR|IF_STRING, "in nodes"),
+	IOPU("neg_nodes", CPL_NEG_NODE, IF_VECTOR|IF_STRING, "out nodes"),
+	IOP("dimension", CPL_DIM, IF_INTEGER,               "number of coupled lines"),
+	IOP("length",    CPL_LENGTH, IF_REAL,               "length of lines"),
 };
 
 IFparm CPLmPTable[] = { /* model parameters */
