@@ -265,14 +265,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
                 ("Device type MOS9 not available in this binary\n");
         }
         break;
-	case 10:
-	    type = INPtypelook("B3SOI");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Device type B3SOI V3.0 not available in this binary\n");
-	    }
-	    break;
+	
 	case 14:
 	    type = INPtypelook("BSIM4");
 	    if (type < 0) {
@@ -295,30 +288,6 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		err =
 		    INPmkTemp
 		    ("Device type BSIM6 not available in this binary\n");}
-	    break;
-	case 29:
-	    type = INPtypelook("B3SOIPD");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Placeholder: Device type B3SOIPD not available in this binary\n");
-	    }
-	    break;
-        case 30:
-	    type = INPtypelook("B3SOIFD");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Placeholder: Device type B3SOIFD not available in this binary\n");
-	    }
-	    break;
-        case 31:
-	    type = INPtypelook("B3SOIDD");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Placeholder: Device type B3SOIDD not available in this binary\n");
-	    }
 	    break;
 	case 44:
 		type = INPtypelook("EKV");
@@ -360,6 +329,38 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Device type BSIM3v0 not available in this binary\n");
 	    }
 	    break;
+	case 55:
+	    type = INPtypelook("B3SOIFD");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Placeholder: Device type B3SOIFD not available in this binary\n");
+	    }
+	    break;	
+        case 56:
+	    type = INPtypelook("B3SOIDD");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Placeholder: Device type B3SOIDD not available in this binary\n");
+	    }
+	    break;	    
+	case 57:
+	    type = INPtypelook("B3SOIPD");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Placeholder: Device type B3SOIPD not available in this binary\n");
+	    }
+	    break;	        
+	case 58:
+	    type = INPtypelook("B3SOI");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Device type B3SOI V3.0 not available in this binary\n");
+	    }
+	    break;  	    
 	case 60:
 	    type = INPtypelook("SOI");
 	    if (type < 0) {
@@ -396,7 +397,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	default:		/* placeholder; use level xxx for the next model */
 	    err =
 		INPmkTemp
-		("Only MOS device levels 1-6,8,14,44,49-50,62 are supported in this binary\n");
+		("Only MOS device levels 1-6,8,9,14,44,49-52,55-58,62,64 are supported in this binary\n");
 	    break;
 	}
 	INPmakeMod(modname, type, image);
