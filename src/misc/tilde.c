@@ -83,6 +83,7 @@ tildexpand(char *string)
 #else
        /* Emulate the old behavior to prevent side effects. -- ro */
        return copy(string);
+    }
 #endif
 }
 
