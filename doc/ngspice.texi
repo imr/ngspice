@@ -6239,15 +6239,46 @@ Clear the value of the specified variable(s) (word).
  General Form:
 
 @example
-     version [version id]
+     version [-s | -f | <version id>]
 @end example
 
 
-Print out the version of nutmeg that is running.  If there are
-arguments, it checks to make sure that the arguments match the current
-version of NGSPICE.  (This is mainly used as a Command: line in rawfiles.)
+Print out the version of @emph{nutmeg} that is running, if invoked without argument
+or with @code{-s} or @code{-f}. If the argument is a  @code{<version id>} (any string different
+from  @code{-s} or @code{-f} is considered a  @code{<version id>} ), the command checks to make
+sure that the arguments match the current version of NGSPICE.  
+(This is mainly used as a @code{Command:} line in rawfiles.)
 
 
+@emph{Options description}
+@itemize @bullet
+@item No option: The output of the command is the message you can see when running NGSPICE 
+                 from the command line, no more no less.
+@item @code{-s}(hort):  A shorter version of the message you see when calling NGSPICE from the 
+                       command line. 
+@item @code{-f}(ull):   You may want to use this option if you want to know what extensions
+                        are included into the simulator and what compilation switches are
+			active. A list of compilation options and included extensions is
+	                appended to the normal (not short) message. May be useful when sending 
+	                bug reports.  
+@end itemize
+
+The following example shows what the command returns is some situations:
+
+@example
+ngspice 10 -> version
+******
+** ngspice-15 : Circuit level simulation program
+** The U. C. Berkeley CAD Group
+** Copyright 1985-1994, Regents of the University of California.
+** Please submit bug-reports to: ngspice-devel@@lists.sourceforge.net
+** Creation Date: Sun Aug 24 00:35:57 CEST 2003
+******
+ngspice 11 -> version 14 
+Note: rawfile is version 14 (current version is 15)
+ngspice 12 -> version 15
+ngspice 13 -> 
+@end example
 
 @node  Where, Write, Version, Commands
 @subsection  Where:  Identify troublesome node or device

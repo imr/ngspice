@@ -156,7 +156,7 @@ com_version(wordlist *wl)
 
     } else {
         s = wl_flatten(wl);
-	if (!strncmp(s, "-s", 2)) {
+	if (!strncmp(s, "-s", 2) || !strncmp(s, "-S", 2) ) {
 	    fprintf(cp_out, "******\n");
 	    fprintf(cp_out, "** %s-%s\n", ft_sim->simulator,
 		    ft_sim->version);
@@ -165,6 +165,63 @@ com_version(wordlist *wl)
 	    if (Spice_Build_Date && *Spice_Build_Date)
 		fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
 	    fprintf(cp_out, "******\n");
+	} else if (!strncmp(s, "-f", 2) || !strncmp(s, "-F", 2) )  { 
+	
+	    fprintf(cp_out, "******\n");
+
+	    fprintf(cp_out, "** %s-%s : %s\n", ft_sim->simulator,
+		    ft_sim->version, ft_sim->description);
+	    fprintf(cp_out, "** The U. C. Berkeley CAD Group\n");
+	    fprintf(cp_out,
+	            "** Copyright 1985-1994, Regents of the University of California.\n");
+	    if (Spice_Notice && *Spice_Notice)
+	        fprintf(cp_out, "** %s\n", Spice_Notice);
+	    if (Spice_Build_Date && *Spice_Build_Date)
+	        fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
+            fprintf(cp_out,"**\n");
+#ifdef CIDER
+            fprintf(cp_out,"** CIDER 1.b1 (CODECS simulator) included\n");	    
+#endif	    
+#ifdef XSPICE
+            fprintf(cp_out,"** XSPICE extensions included\n");
+#endif
+            fprintf(cp_out,"** Relevant compilation options (refer to user's manual):\n");
+#ifdef NOBYPASS
+            fprintf(cp_out,"** --enable-nobypass\n");
+#endif   
+#ifdef CAPBYPASS
+            fprintf(cp_out,"** --enable-capbypass\n");
+#endif	    
+#ifdef CAPZEROBYPASS
+            fprintf(cp_out,"** --enable-capzerobypass\n");
+#endif
+#ifdef NODELIMITING
+            fprintf(cp_out,"** --enable-nodelimiting\n");
+#endif
+#ifdef PREDICTOR
+            fprintf(cp_out,"** --enable-predictor\n");
+#endif
+#ifdef NEWTRUNC
+            fprintf(cp_out,"** --enable-newtrunc\n");
+#endif
+#ifdef NOSQRT
+            fprintf(cp_out,"** --enable-nosqrt\n");
+#endif
+#ifdef INT_NOISE
+            fprintf(cp_out,"** --enable-intnoise\n");
+#endif
+#ifdef WANT_SENSE2
+            fprintf(cp_out,"** --enable-sense2\n");
+#endif
+            fprintf(cp_out,"**\n");
+#ifdef EXPERIMENTAL_CODE
+            fprintf(cp_out,"** Experimental code enabled.\n");
+#endif
+#ifdef EXP_DEV
+            fprintf(cp_out,"** Experimental devices enabled.\n");
+#endif	    	    	    
+	    fprintf(cp_out, "******\n");
+	
 	} else if (!eq(ft_sim->version, s)) {
             fprintf(stderr,
         "Note: rawfile is version %s (current version is %s)\n",
