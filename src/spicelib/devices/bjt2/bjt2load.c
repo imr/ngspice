@@ -19,10 +19,7 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 int
-BJT2load(inModel,ckt)
-
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BJT2load(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the 
          * sparse matrix previously provided 
          */
@@ -167,10 +164,10 @@ BJT2load(inModel,ckt)
              */
             csat=here->BJT2tSatCur*here->BJT2area;
             csubsat=here->BJT2tSubSatCur*here->BJT2area;
-            rbpr=model->BJT2minBaseResist/here->BJT2area;
-            rbpi=model->BJT2baseResist/here->BJT2area-rbpr;
-            gcpr=model->BJT2collectorConduct*here->BJT2area;
-            gepr=model->BJT2emitterConduct*here->BJT2area;
+            rbpr=here->BJT2tMinBaseResist/here->BJT2area;
+            rbpi=here->BJT2tBaseResist/here->BJT2area-rbpr;
+            gcpr=here->BJT2tCollectorConduct*here->BJT2area;
+            gepr=here->BJT2tEmitterConduct*here->BJT2area;
             oik=model->BJT2invRollOffF/here->BJT2area;
             c2=here->BJT2tBEleakCur*here->BJT2area;
             vte=model->BJT2leakBEemissionCoeff*vt;
@@ -444,7 +441,7 @@ next1:      vtn=vt*model->BJT2emissionCoeffF;
             gbcn+=ckt->CKTgmin;
             cbcn+=ckt->CKTgmin*vbc;
             if(vsub <= -3*vt) {
-                arg=3*vte/(vsub*CONSTe);
+                arg=3*vt/(vsub*CONSTe);
                 arg = arg * arg * arg;
                 gdsub = csubsat*3*arg/vsub+ckt->CKTgmin;
                 cdsub = -csubsat*(1+arg)+ckt->CKTgmin*vsub;

@@ -19,10 +19,7 @@ Modified: Alan Gillespie
 
 
 int
-BJT2mDelete(inModels,modname,kill)
-    GENmodel **inModels;
-    IFuid modname;
-    GENmodel *kill;
+BJT2mDelete(GENmodel **inModels, IFuid modname, GENmodel *kill)
 
 {
     BJT2model **model = (BJT2model**)inModels;

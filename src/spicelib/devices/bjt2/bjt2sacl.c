@@ -19,10 +19,7 @@ Modified: Alan Gillespie
 
 
 int
-BJT2sAcLoad(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
-
+BJT2sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
 
     BJT2model *model = (BJT2model*)inModel;
@@ -166,11 +163,11 @@ CKTcircuit *ckt;
                 *(here->BJT2senCpi)= *(ckt->CKTstate0 + here->BJT2cqbe);
                 *(here->BJT2senCmu)= *(ckt->CKTstate0 + here->BJT2cqbc);
                 *(here->BJT2senCbx)= *(ckt->CKTstate0 + here->BJT2cqbx);
-                *(here->BJT2senCcs)= *(ckt->CKTstate0 + here->BJT2cqcs);
+                *(here->BJT2senCsub)= *(ckt->CKTstate0 + here->BJT2cqsub);
                 *(here->BJT2senCmcb)= *(ckt->CKTstate0 + here->BJT2cexbc);
             }
-            gcpr = model->BJT2collectorConduct * A0;
-            gepr = model->BJT2emitterConduct * A0;
+            gcpr = here->BJT2tCollectorConduct * A0;
+            gepr = here->BJT2tEmitterConduct * A0;
             gpi= *(here->BJT2senGpi);
             gmu= *(here->BJT2senGmu);
             gm= *(here->BJT2senGm);
@@ -187,7 +184,7 @@ CKTcircuit *ckt;
             xcpi= *(here->BJT2senCpi) * ckt->CKTomega;
             xcmu= *(here->BJT2senCmu) * ckt->CKTomega;
             xcbx= *(here->BJT2senCbx) * ckt->CKTomega;
-            xccs= *(here->BJT2senCcs) * ckt->CKTomega;
+            xccs= *(here->BJT2senCsub) * ckt->CKTomega;
             xcmcb= *(here->BJT2senCmcb) * ckt->CKTomega;
 
 
@@ -282,7 +279,7 @@ CKTcircuit *ckt;
                 *(here->BJT2senCpi + 1)= *(ckt->CKTstate0 + here->BJT2cqbe);
                 *(here->BJT2senCmu + 1)= *(ckt->CKTstate0 + here->BJT2cqbc);
                 *(here->BJT2senCbx + 1)= *(ckt->CKTstate0 + here->BJT2cqbx);
-                *(here->BJT2senCcs + 1)= *(ckt->CKTstate0 + here->BJT2cqcs);
+                *(here->BJT2senCsub + 1)= *(ckt->CKTstate0 + here->BJT2cqsub);
                 *(here->BJT2senCmcb + 1)= *(ckt->CKTstate0 + here->BJT2cexbc);
             }
 
@@ -321,7 +318,7 @@ pertvbx:    /* Perturbation of vbx */
                 *(here->BJT2senCpi + 2)= *(ckt->CKTstate0 + here->BJT2cqbe);
                 *(here->BJT2senCmu + 2)= *(ckt->CKTstate0 + here->BJT2cqbc);
                 *(here->BJT2senCbx + 2)= *(ckt->CKTstate0 + here->BJT2cqbx);
-                *(here->BJT2senCcs + 2)= *(ckt->CKTstate0 + here->BJT2cqcs);
+                *(here->BJT2senCsub + 2)= *(ckt->CKTstate0 + here->BJT2cqsub);
                 *(here->BJT2senCmcb + 2)= *(ckt->CKTstate0 + here->BJT2cexbc);
             }
 
@@ -360,7 +357,7 @@ pertvbe:    /* Perturbation of vbe */
                 *(here->BJT2senCpi + 3)= *(ckt->CKTstate0 + here->BJT2cqbe);
                 *(here->BJT2senCmu + 3)= *(ckt->CKTstate0 + here->BJT2cqbc);
                 *(here->BJT2senCbx + 3)= *(ckt->CKTstate0 + here->BJT2cqbx);
-                *(here->BJT2senCcs + 3)= *(ckt->CKTstate0 + here->BJT2cqcs);
+                *(here->BJT2senCsub + 3)= *(ckt->CKTstate0 + here->BJT2cqsub);
                 *(here->BJT2senCmcb + 3)= *(ckt->CKTstate0 + here->BJT2cexbc);
             }
 
@@ -401,7 +398,7 @@ pertvbc:    /* Perturbation of vbc */
                 *(here->BJT2senCpi + 4)= *(ckt->CKTstate0 + here->BJT2cqbe);
                 *(here->BJT2senCmu + 4)= *(ckt->CKTstate0 + here->BJT2cqbc);
                 *(here->BJT2senCbx + 4)= *(ckt->CKTstate0 + here->BJT2cqbx);
-                *(here->BJT2senCcs + 4)= *(ckt->CKTstate0 + here->BJT2cqcs);
+                *(here->BJT2senCsub + 4)= *(ckt->CKTstate0 + here->BJT2cqsub);
                 *(here->BJT2senCmcb + 4)= *(ckt->CKTstate0 + here->BJT2cexbc);
 
             }
@@ -432,7 +429,7 @@ pertvcs:    /* Perturbation of vcs */
                  * corresponding to perturbed vcs 
                  */
                 if(error = BJT2load((GENmodel*)model,ckt)) return(error);
-                *(here->BJT2senCcs + 5)= *(ckt->CKTstate0 + here->BJT2cqcs);
+                *(here->BJT2senCsub + 5)= *(ckt->CKTstate0 + here->BJT2cqsub);
 
             }
 
@@ -440,7 +437,7 @@ pertvcs:    /* Perturbation of vcs */
             flag = 4;
 
             *(ckt->CKTrhsOp + here->BJT2substNode) -= DELA;
-            xccs= *(here->BJT2senCcs + 5) * ckt->CKTomega;
+            xccs= *(here->BJT2senCsub + 5) * ckt->CKTomega;
 
             ccs=( -xccs * ivcs) ;
             iccs= xccs * vcs ;
@@ -461,8 +458,8 @@ pertvcs:    /* Perturbation of vcs */
             goto next2;
 
 load:
-            gcpr=model->BJT2collectorConduct * here->BJT2area;
-            gepr=model->BJT2emitterConduct * here->BJT2area;
+            gcpr=here->BJT2tCollectorConduct * here->BJT2area;
+            gepr=here->BJT2tEmitterConduct * here->BJT2area;
             gpi= *(here->BJT2senGpi + flag+1);
             gmu= *(here->BJT2senGmu + flag+1);
             gm= *(here->BJT2senGm + flag+1);
@@ -479,7 +476,7 @@ load:
             xcpi= *(here->BJT2senCpi + flag+1) * ckt->CKTomega;
             xcmu= *(here->BJT2senCmu + flag+1) * ckt->CKTomega;
             xcbx= *(here->BJT2senCbx + flag+1) * ckt->CKTomega;
-            xccs= *(here->BJT2senCcs + flag+1) * ckt->CKTomega;
+            xccs= *(here->BJT2senCsub + flag+1) * ckt->CKTomega;
             xcmcb= *(here->BJT2senCmcb + flag+1) * ckt->CKTomega;
 
 

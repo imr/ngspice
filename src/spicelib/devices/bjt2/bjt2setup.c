@@ -21,11 +21,7 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 int
-BJT2setup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+BJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the BJT2 structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -132,6 +128,30 @@ BJT2setup(matrix,inModel,ckt,states)
         }
         if(!model->BJT2tempExpISGiven) {
             model->BJT2tempExpIS = 3;
+        }
+        if(!model->BJT2reTempCoeff1Given) {
+            model->BJT2reTempCoeff1 = 0.0;
+        }
+        if(!model->BJT2reTempCoeff2Given) {
+            model->BJT2reTempCoeff2 = 0.0;
+        }
+        if(!model->BJT2rcTempCoeff1Given) {
+            model->BJT2rcTempCoeff1 = 0.0;
+        }
+        if(!model->BJT2rcTempCoeff2Given) {
+            model->BJT2rcTempCoeff2 = 0.0;
+        }
+        if(!model->BJT2rbTempCoeff1Given) {
+            model->BJT2rbTempCoeff1 = 0.0;
+        }
+        if(!model->BJT2rbTempCoeff2Given) {
+            model->BJT2rbTempCoeff2 = 0.0;
+        }
+        if(!model->BJT2rbmTempCoeff1Given) {
+            model->BJT2rbmTempCoeff1 = 0.0;
+        }
+        if(!model->BJT2rbmTempCoeff2Given) {
+            model->BJT2rbmTempCoeff2 = 0.0;
         }
 	if(!model->BJT2fNcoefGiven) {
 	    model->BJT2fNcoef = 0;
@@ -267,9 +287,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-BJT2unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BJT2unsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     BJT2model *model;
     BJT2instance *here;

@@ -3,7 +3,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Alan Gillespie
 **********/
-#ifndef __BJ2TEXT_H
+#ifndef __BJT2EXT_H
 #define __BJT2EXT_H
 
 

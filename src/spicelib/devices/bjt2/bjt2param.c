@@ -21,11 +21,7 @@ Modified: Alan Gillespie
 
 /* ARGSUSED */
 int
-BJT2param(param,value,instPtr,select)
-    int param;
-    IFvalue *value;
-    GENinstance *instPtr;
-    IFvalue *select;
+BJT2param(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
 {
     BJT2instance *here = (BJT2instance*)instPtr;
 

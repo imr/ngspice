@@ -25,13 +25,8 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 int
-BJT2noise (mode, operation, genmodel, ckt, data, OnDens)
-    GENmodel *genmodel;
-    int mode;
-    int operation;
-    CKTcircuit *ckt;
-    Ndata *data;
-    double *OnDens;
+BJT2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, 
+           Ndata *data, double *OnDens)
 {
     BJT2model *firstModel = (BJT2model *) genmodel;
     BJT2model *model;

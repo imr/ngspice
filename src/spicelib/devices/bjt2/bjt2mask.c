@@ -18,11 +18,7 @@ Modified: Alan Gillespie
 
 /*ARGSUSED*/
 int
-BJT2mAsk(ckt,instPtr,which,value)
-    CKTcircuit *ckt;
-    GENmodel *instPtr;
-    int which;
-    IFvalue *value;
+BJT2mAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
 {
     BJT2model *here = (BJT2model*)instPtr;
 
@@ -149,6 +145,30 @@ BJT2mAsk(ckt,instPtr,which,value)
             return(OK);
         case BJT2_MOD_XTI:
             value->rValue = here->BJT2tempExpIS;
+            return(OK);
+        case BJT2_MOD_TRE1:
+            value->rValue = here->BJT2reTempCoeff1;
+            return(OK);
+        case BJT2_MOD_TRE2:
+            value->rValue = here->BJT2reTempCoeff2;
+            return(OK);
+        case BJT2_MOD_TRC1:
+            value->rValue = here->BJT2rcTempCoeff1;
+            return(OK);
+        case BJT2_MOD_TRC2:
+            value->rValue = here->BJT2rcTempCoeff2;
+            return(OK);
+        case BJT2_MOD_TRB1:
+            value->rValue = here->BJT2rbTempCoeff1;
+            return(OK);
+        case BJT2_MOD_TRB2:
+            value->rValue = here->BJT2rbTempCoeff2;
+            return(OK);
+        case BJT2_MOD_TRBM1:
+            value->rValue = here->BJT2rbmTempCoeff1;
+            return(OK);
+        case BJT2_MOD_TRBM2:
+            value->rValue = here->BJT2rbmTempCoeff2;
             return(OK);
         case BJT2_MOD_FC:
             value->rValue = here->BJT2depletionCapCoeff;

@@ -19,12 +19,8 @@ Modified: Alan Gillespie
 
 /*ARGSUSED*/
 int
-BJT2ask(ckt,instPtr,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *instPtr;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+BJT2ask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value,
+        IFvalue *select)
 {
     BJT2instance *here = (BJT2instance*)instPtr;
     double tmp;

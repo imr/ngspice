@@ -17,9 +17,7 @@ Modified: Alan Gillespie
 
 
 int
-BJT2sUpdate(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BJT2sUpdate(GENmodel *inModel, CKTcircuit *ckt)
 {
     BJT2model *model = (BJT2model*)inModel;
     BJT2instance *here;
@@ -62,7 +60,7 @@ BJT2sUpdate(inModel,ckt)
 
             printf("capbe = %.7e\n",here->BJT2capbe);
             printf("capbc = %.7e\n",here->BJT2capbc);
-            printf("capcs = %.7e\n",here->BJT2capcs);
+            printf("capcs = %.7e\n",here->BJT2capsub);
             printf("capbx = %.7e\n",here->BJT2capbx);
 #endif /* SENSDEBUG */
 
@@ -82,13 +80,13 @@ BJT2sUpdate(inModel,ckt)
 
                 sxpbc = model ->BJT2type *  (sbprm - scprm)*here->BJT2capbc ;
 
-                sxpcs = model ->BJT2type *  (ss - scprm)*here->BJT2capcs ;
+                sxpcs = model ->BJT2type *  (ss - scprm)*here->BJT2capsub ;
 
                 sxpbx = model ->BJT2type *  (sb - scprm)*here->BJT2capbx ;
                 if(iparmno == here->BJT2senParmNo){
                     sxpbe += *(here->BJT2dphibedp);
                     sxpbc += *(here->BJT2dphibcdp);
-                    sxpcs += *(here->BJT2dphicsdp);
+                    sxpcs += *(here->BJT2dphisubdp);
                     sxpbx += *(here->BJT2dphibxdp);
                 }
 
@@ -101,10 +99,10 @@ BJT2sUpdate(inModel,ckt)
                         sxpbc; 
                 NIintegrate(ckt,&dummy1,&dummy2,here->BJT2capbc,
                         here->BJT2sensxpbc + 8*(iparmno -1));
-                *(ckt->CKTstate0 + here->BJT2sensxpcs + 8 * (iparmno - 1)) = 
+                *(ckt->CKTstate0 + here->BJT2sensxpsub + 8 * (iparmno - 1)) = 
                         sxpcs; 
-                NIintegrate(ckt,&dummy1,&dummy2,here->BJT2capcs,
-                        here->BJT2sensxpcs + 8*(iparmno -1));
+                NIintegrate(ckt,&dummy1,&dummy2,here->BJT2capsub,
+                        here->BJT2sensxpsub + 8*(iparmno -1));
                 *(ckt->CKTstate0 + here->BJT2sensxpbx + 8 * (iparmno - 1)) = 
                         sxpbx; 
                 NIintegrate(ckt,&dummy1,&dummy2,here->BJT2capbx,
@@ -119,7 +117,7 @@ BJT2sUpdate(inModel,ckt)
                         sxpbc,*(ckt->CKTstate0 + here->BJT2sensxpbc + 8 * 
                         (iparmno - 1) + 1));
                 printf("sxpcs = %.7e,sdotxpsc = %.7e\n",
-                        sxpcs,*(ckt->CKTstate0 + here->BJT2sensxpcs + 8 * 
+                        sxpcs,*(ckt->CKTstate0 + here->BJT2sensxpsub + 8 * 
                         (iparmno - 1) + 1));
                 printf("sxpbx = %.7e,sdotxpbx = %.7e\n",
                         sxpbx,*(ckt->CKTstate0 + here->BJT2sensxpbx + 8 * 
@@ -131,7 +129,7 @@ BJT2sUpdate(inModel,ckt)
                             sxpbe;
                     *(ckt->CKTstate1 + here->BJT2sensxpbc + 8 * (iparmno - 1)) =
                             sxpbc;
-                    *(ckt->CKTstate1 + here->BJT2sensxpcs + 8 * (iparmno - 1)) =
+                    *(ckt->CKTstate1 + here->BJT2sensxpsub + 8 * (iparmno - 1)) =
                             sxpcs;
                     *(ckt->CKTstate1 + here->BJT2sensxpbx + 8 * (iparmno - 1)) =
                             sxpbx;
@@ -139,7 +137,7 @@ BJT2sUpdate(inModel,ckt)
                             1) = 0;
                     *(ckt->CKTstate1 + here->BJT2sensxpbc + 8 * (iparmno - 1) + 
                             1) = 0;
-                    *(ckt->CKTstate1 + here->BJT2sensxpcs + 8 * (iparmno - 1) + 
+                    *(ckt->CKTstate1 + here->BJT2sensxpsub + 8 * (iparmno - 1) + 
                             1) = 0;
                     *(ckt->CKTstate1 + here->BJT2sensxpbx + 8 * (iparmno - 1) + 
                             1) = 0;

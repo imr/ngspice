@@ -19,9 +19,7 @@ Modified: Alan Gillespie
  */
 
 int
-BJT2dSetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BJT2dSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the 
          * sparse matrix previously provided 
          */

@@ -13,10 +13,7 @@ Modified: Alan Gillespie
 #include "bjt2dset.h"
 
 int
-BJT2disto(mode,genmodel,ckt)
- int mode;
- GENmodel *genmodel;
- CKTcircuit *ckt;
+BJT2disto(int mode, GENmodel *genmodel, CKTcircuit *ckt)
 /* assuming here that ckt->CKTomega has been initialised to 
  * the correct value
  */

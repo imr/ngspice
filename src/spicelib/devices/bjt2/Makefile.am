@@ -29,7 +29,12 @@ libbjt2_a_SOURCES = 	\
 	bjt2noise.c	\
 	bjt2param.c	\
 	bjt2pzld.c	\
+	bjt2sacl.c      \
 	bjt2setup.c	\
+	bjt2sload.c     \
+	bjt2sprt.c      \
+	bjt2sset.c      \
+	bjt2supd.c      \
 	bjt2temp.c	\
 	bjt2trun.c
 

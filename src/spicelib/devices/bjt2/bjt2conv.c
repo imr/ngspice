@@ -16,10 +16,7 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 int
-BJT2convTest(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-
+BJT2convTest(GENmodel *inModel, CKTcircuit *ckt)
 {
     BJT2instance *here;
     BJT2model *model = (BJT2model *) inModel;

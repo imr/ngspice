@@ -19,10 +19,7 @@ Modified: Alan Gillespie
 
 
 void
-BJT2sPrint(inModel,ckt)
-
-CKTcircuit *ckt;
-GENmodel *inModel;
+BJT2sPrint(GENmodel *inModel, CKTcircuit *ckt)
 {
     BJT2model *model = (BJT2model*)inModel;
     BJT2instance *here;

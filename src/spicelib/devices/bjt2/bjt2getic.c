@@ -19,10 +19,7 @@ Modified: Alan Gillespie
 
 
 int
-BJT2getic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-
+BJT2getic(GENmodel *inModel, CKTcircuit *ckt)
 {
 
     BJT2model *model = (BJT2model*)inModel;

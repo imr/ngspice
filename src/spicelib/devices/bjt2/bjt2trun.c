@@ -19,10 +19,7 @@ Modified: Alan Gillespie
 
 
 int
-BJT2trunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+BJT2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
 {
     BJT2model *model = (BJT2model*)inModel;

@@ -16,11 +16,10 @@ Modified: Alan Gillespie
 
 /* ARGSUSED */
 int
-BJT2temp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-        /* Pre-compute many useful parameters
-         */
+BJT2temp(GENmodel *inModel, CKTcircuit *ckt)
+        /* 
+      * Pre-compute many useful parameters
+      */
 
 {
     BJT2model *model = (BJT2model *)inModel;
@@ -37,6 +36,7 @@ BJT2temp(inModel,ckt)
     double gmaold,gmanew;
     double egfet;
     double arg;
+    double dtemp;
 
     /*  loop through all the bipolar models */
     for( ; model != NULL; model = model->BJT2nextModel ) {
@@ -155,6 +155,28 @@ BJT2temp(inModel,ckt)
                     exp(factlog/model->BJT2leakBEemissionCoeff)/bfactor;
             here->BJT2tBCleakCur = model->BJT2leakBCcurrent * 
                     exp(factlog/model->BJT2leakBCemissionCoeff)/bfactor;
+
+            dtemp = here->BJT2temp - model->BJT2tnom;
+            if(model->BJT2emitterResistGiven && model->BJT2emitterResist != 0) {
+              factor = 1.0 + (model->BJT2reTempCoeff1)*dtemp + 
+                      (model->BJT2reTempCoeff2)*dtemp*dtemp;
+              here -> BJT2tEmitterConduct = 1/(model->BJT2emitterResist * factor);
+            } else {
+              here -> BJT2tEmitterConduct = 0;
+            }
+            if(model->BJT2collectorResistGiven && model->BJT2collectorResist != 0) {
+              factor = 1.0 + (model->BJT2rcTempCoeff1)*dtemp + 
+                      (model->BJT2rcTempCoeff2)*dtemp*dtemp;
+              here -> BJT2tCollectorConduct = 1/(model->BJT2collectorResist * factor);
+            } else {
+              here -> BJT2tCollectorConduct = 0;
+            }
+            factor = 1.0 + (model->BJT2rbTempCoeff1)*dtemp + 
+                    (model->BJT2rbTempCoeff2)*dtemp*dtemp;
+            here -> BJT2tBaseResist = model->BJT2baseResist * factor;
+            factor = 1.0 + (model->BJT2rbmTempCoeff1)*dtemp + 
+                    (model->BJT2rbmTempCoeff2)*dtemp*dtemp;
+            here -> BJT2tMinBaseResist = model->BJT2minBaseResist * factor;
 
             pbo = (model->BJT2potentialBE-pbfact)/fact1;
             gmaold = (model->BJT2potentialBE-pbo)/pbo;

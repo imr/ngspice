@@ -19,9 +19,7 @@ Modified: Alan Gillespie
 
 
 int
-BJT2sLoad(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BJT2sLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     BJT2model *model = (BJT2model*)inModel;
     BJT2instance *here;
@@ -111,7 +109,7 @@ CKTcircuit *ckt;
             *(SaveState0 + 22) = *(ckt->CKTstate2 + here->BJT2cexbc);
             *(SaveState0 + 23) = here->BJT2capbe;
             *(SaveState0 + 24) = here->BJT2capbc;
-            *(SaveState0 + 25) = here->BJT2capcs;
+            *(SaveState0 + 25) = here->BJT2capsub;
             *(SaveState0 + 26) = here->BJT2capbx;
 
             if(here->BJT2senParmNo == 0) goto next;
@@ -130,7 +128,7 @@ CKTcircuit *ckt;
 
             qbe0 = *(ckt->CKTstate0 + here->BJT2qbe);
             qbc0 = *(ckt->CKTstate0 + here->BJT2qbc);
-            qcs0 = *(ckt->CKTstate0 + here->BJT2qcs);
+            qcs0 = *(ckt->CKTstate0 + here->BJT2qsub);
             qbx0 = *(ckt->CKTstate0 + here->BJT2qbx);
 
             /* perturbation of area */
@@ -153,7 +151,7 @@ CKTcircuit *ckt;
 
             qbe = *(ckt->CKTstate0 + here->BJT2qbe);
             qbc = *(ckt->CKTstate0 + here->BJT2qbc);
-            qcs = *(ckt->CKTstate0 + here->BJT2qcs);
+            qcs = *(ckt->CKTstate0 + here->BJT2qsub);
             qbx = *(ckt->CKTstate0 + here->BJT2qbx);
 
             /* compute the gradients of currents */
@@ -182,7 +180,7 @@ CKTcircuit *ckt;
 
             *(here->BJT2dphibedp) = DqbeDp;
             *(here->BJT2dphibcdp) = DqbcDp;
-            *(here->BJT2dphicsdp) = DqcsDp;
+            *(here->BJT2dphisubdp) = DqcsDp;
             *(here->BJT2dphibxdp) = DqbxDp;
 
 #ifdef SENSDEBUG
@@ -254,9 +252,9 @@ next:
                     + tag1 * *(ckt->CKTstate1 + here->BJT2sensxpbc +
                         8*(iparmno - 1) + 1);
 
-                Osxpcs = tag0 * *(ckt->CKTstate1 + here->BJT2sensxpcs +
+                Osxpcs = tag0 * *(ckt->CKTstate1 + here->BJT2sensxpsub +
                         8*(iparmno - 1))
-                    + tag1 * *(ckt->CKTstate1 + here->BJT2sensxpcs +
+                    + tag1 * *(ckt->CKTstate1 + here->BJT2sensxpsub +
                         8*(iparmno - 1) + 1);
 
                 Osxpbx = tag0 * *(ckt->CKTstate1 + here->BJT2sensxpbx +
@@ -318,7 +316,7 @@ restore:
             *(ckt->CKTstate1 + here->BJT2cexbc) = *(SaveState0 + 21);
             here->BJT2capbe = *(SaveState0 + 23) ;
             here->BJT2capbc = *(SaveState0 + 24) ;
-            here->BJT2capcs = *(SaveState0 + 25) ;
+            here->BJT2capsub = *(SaveState0 + 25) ;
             here->BJT2capbx = *(SaveState0 + 26) ;
 
         }

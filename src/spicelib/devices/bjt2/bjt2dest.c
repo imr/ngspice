@@ -17,11 +17,8 @@ Modified: Alan Gillespie
 
 
 void
-BJT2destroy(inModel)
-    GENmodel **inModel;
-
+BJT2destroy(GENmodel **inModel)
 {
-
     BJT2model **model = (BJT2model**)inModel;
     BJT2instance *here;
     BJT2instance *prev = NULL;

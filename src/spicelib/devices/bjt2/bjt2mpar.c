@@ -20,10 +20,7 @@ Modified: Alan Gillespie
 
 
 int
-BJT2mParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+BJT2mParam(int param, IFvalue *value, GENmodel *inModel)
 {
     BJT2model *mods = (BJT2model*)inModel;
 
@@ -205,6 +202,38 @@ BJT2mParam(param,value,inModel)
         case BJT2_MOD_XTI:
             mods->BJT2tempExpIS = value->rValue;
             mods->BJT2tempExpISGiven = TRUE;
+            break;
+        case BJT2_MOD_TRE1:
+            mods->BJT2reTempCoeff1 = value->rValue;
+            mods->BJT2reTempCoeff1Given = TRUE;
+            break;
+        case BJT2_MOD_TRE2:
+            mods->BJT2reTempCoeff2 = value->rValue;
+            mods->BJT2reTempCoeff2Given = TRUE;
+            break;
+        case BJT2_MOD_TRC1:
+            mods->BJT2rcTempCoeff1 = value->rValue;
+            mods->BJT2rcTempCoeff1Given = TRUE;
+            break;
+        case BJT2_MOD_TRC2:
+            mods->BJT2rcTempCoeff2 = value->rValue;
+            mods->BJT2rcTempCoeff2Given = TRUE;
+            break;
+        case BJT2_MOD_TRB1:
+            mods->BJT2rbTempCoeff1 = value->rValue;
+            mods->BJT2rbTempCoeff1Given = TRUE;
+            break;
+        case BJT2_MOD_TRB2:
+            mods->BJT2rbTempCoeff2 = value->rValue;
+            mods->BJT2rbTempCoeff2Given = TRUE;
+            break;
+        case BJT2_MOD_TRBM1:
+            mods->BJT2rbmTempCoeff1 = value->rValue;
+            mods->BJT2rbmTempCoeff1Given = TRUE;
+            break;
+        case BJT2_MOD_TRBM2:
+            mods->BJT2rbmTempCoeff2 = value->rValue;
+            mods->BJT2rbmTempCoeff2Given = TRUE;
             break;
         case BJT2_MOD_FC:
             mods->BJT2depletionCapCoeff = value->rValue;

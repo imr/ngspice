@@ -42,6 +42,10 @@ typedef struct sBJT2instance {
     double BJT2temp;     /* instance temperature */
     double BJT2tSatCur;  /* temperature adjusted saturation current */
     double BJT2tSubSatCur; /* temperature adjusted subst. saturation current */
+    double BJT2tEmitterConduct;   /* emitter conductance */
+    double BJT2tCollectorConduct; /* collector conductance */
+    double BJT2tBaseResist;  /* temperature adjusted base resistance */
+    double BJT2tMinBaseResist;  /* temperature adjusted base resistance */
     double BJT2tBetaF;   /* temperature adjusted forward beta */
     double BJT2tBetaR;   /* temperature adjusted reverse beta */
     double BJT2tBEleakCur;   /* temperature adjusted B-E leakage current */
@@ -349,6 +353,14 @@ typedef struct sBJT2model {          /* model structure for a bjt2 */
     double BJT2betaExp;
     double BJT2energyGap;
     double BJT2tempExpIS;
+    double BJT2reTempCoeff1;
+    double BJT2reTempCoeff2;
+    double BJT2rcTempCoeff1;
+    double BJT2rcTempCoeff2;
+    double BJT2rbTempCoeff1;
+    double BJT2rbTempCoeff2;
+    double BJT2rbmTempCoeff1;
+    double BJT2rbmTempCoeff2;
     double BJT2depletionCapCoeff;
     double BJT2fNcoef;
     double BJT2fNexp;
@@ -408,6 +420,14 @@ typedef struct sBJT2model {          /* model structure for a bjt2 */
     unsigned BJT2betaExpGiven : 1;
     unsigned BJT2energyGapGiven : 1;
     unsigned BJT2tempExpISGiven : 1;
+    unsigned BJT2reTempCoeff1Given : 1;
+    unsigned BJT2reTempCoeff2Given : 1;
+    unsigned BJT2rcTempCoeff1Given : 1;
+    unsigned BJT2rcTempCoeff2Given : 1;
+    unsigned BJT2rbTempCoeff1Given : 1;
+    unsigned BJT2rbTempCoeff2Given : 1;
+    unsigned BJT2rbmTempCoeff1Given : 1;
+    unsigned BJT2rbmTempCoeff2Given : 1;
     unsigned BJT2depletionCapCoeffGiven : 1;
     unsigned BJT2fNcoefGiven : 1;
     unsigned BJT2fNexpGiven :1;
@@ -482,6 +502,14 @@ typedef struct sBJT2model {          /* model structure for a bjt2 */
 #define BJT2_MOD_AF 144
 #define BJT2_MOD_KF 145
 #define BJT2_MOD_SUBS 147
+#define BJT2_MOD_TRE1 148
+#define BJT2_MOD_TRE2 149
+#define BJT2_MOD_TRC1 150
+#define BJT2_MOD_TRC2 151
+#define BJT2_MOD_TRB1 152
+#define BJT2_MOD_TRB2 153
+#define BJT2_MOD_TRBM1 154
+#define BJT2_MOD_TRBM2 155
 
 
 /* device questions */

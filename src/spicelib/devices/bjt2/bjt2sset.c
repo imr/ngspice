@@ -19,9 +19,7 @@ Modified: Alan Gillespie
 
 
 int
-BJT2sSetup(info,inModel)
-    SENstruct *info;
-    GENmodel *inModel;
+BJT2sSetup(SENstruct *info, GENmodel *inModel)
 {
     BJT2model *model = (BJT2model*)inModel;
     BJT2instance *here;

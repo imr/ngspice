@@ -17,10 +17,7 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 int
-BJT2acLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-
+BJT2acLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     BJT2instance *here;
     BJT2model *model = (BJT2model*)inModel;
@@ -45,8 +42,8 @@ BJT2acLoad(inModel,ckt)
                 here = here->BJT2nextInstance) {
             
 
-            gcpr=model->BJT2collectorConduct * here->BJT2area;
-            gepr=model->BJT2emitterConduct * here->BJT2area;
+            gcpr=here->BJT2tCollectorConduct * here->BJT2area;
+            gepr=here->BJT2tEmitterConduct * here->BJT2area;
             gpi= *(ckt->CKTstate0 + here->BJT2gpi);
             gmu= *(ckt->CKTstate0 + here->BJT2gmu);
             gm= *(ckt->CKTstate0 + here->BJT2gm);

@@ -16,11 +16,7 @@ Modified: Alan Gillespie
 
 
 int
-BJT2delete(inModel,name,kill)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **kill;
-
+BJT2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     BJT2model *model = (BJT2model*)inModel;
     BJT2instance **fast = (BJT2instance**)kill;
