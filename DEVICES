@@ -27,7 +27,20 @@ CAP 	- Capacitor
 	  and insulator thickness 
 
 IND 	- Inductor
-      	Initial Release
+      	Initial Release.
+	Ver: 	N/A
+	Class:	L
+	Level:	1 (and only)
+	Status:
+	
+	Enhancements over the original model:
+	
+	- Parallel Multiplier
+	- Temperature difference from circuit temperature
+	- Preliminary technology scaling support
+	- Model inductance
+	- Inductance calculation for toroids or solenoids
+	  on the model line. 
 
 RES	- Simple linear resistor
 	Initial Release.
