@@ -479,7 +479,6 @@ gr_pmsg(char *text)
 	    fprintf(cp_err, " %s \n", text);
 	
     Update();
-    (void) getchar();
     return;
 }
 
