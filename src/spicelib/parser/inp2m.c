@@ -66,7 +66,6 @@ INP2M (void *ckt, INPtables * tab, card * current)
   INPgetTok (&line, &nname5, 1);	/*  get 5th token  */
   thismodel = (INPmodel *) NULL;
   INPgetMod (ckt, nname5, &thismodel, tab);
-  printf("Model=%x",thismodel);
   if (thismodel == NULL)
     {				/*  5th token is not a model in the table  */
       nodeflag = 1;		/*  now specify a 5 node device  */

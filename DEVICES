@@ -172,5 +172,5 @@ BSIM3SOI_PD - SOI model (partially depleted devices)
       There is a bsim3soipd directory under the test
       hierarchy. The tests come from the bsim3soi
       web site at: 
-      http://www-device.eecs.berkeley.edu/~bsim3soi
+      http://www-device.eecs.berkeley.edu/~bsimsoi
       
