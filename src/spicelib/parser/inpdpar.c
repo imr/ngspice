@@ -30,10 +30,11 @@ char *INPdevParse(char **line, void *ckt, int dev, void *fast,
 		    /* flag - 1 if leading double given, 0 otherwise */
 {
     int error;			/* int to store evaluate error return codes in */
-    char *parm;
+    char *parm=NULL;
     char *errbuf;
     int i;
     IFvalue *val;
+    char *rtn=NULL;
 
     /* check for leading value */
     *waslead = 0;
@@ -44,10 +45,14 @@ char *INPdevParse(char **line, void *ckt, int dev, void *fast,
 	*leading = 0.0;
     while (**line != (char) 0) {
 	error = INPgetTok(line, &parm, 1);
-	if (!*parm)
+	if (!*parm) {
+	    FREE(parm);
 	    continue;
-	if (error)
-	    return (INPerror(error));
+	}
+	if (error) {
+	    rtn  = (INPerror(error));
+	    goto quit;
+	}
 	for (i = 0; i < (*(*(ft_sim->devices)[dev]).numInstanceParms); i++) {
 	    if (strcmp(parm,
 		       ((*(ft_sim->devices)[dev]).instanceParms[i].
@@ -56,25 +61,32 @@ char *INPdevParse(char **line, void *ckt, int dev, void *fast,
 		    INPgetValue(ckt, line,
 				((*(ft_sim->devices)[dev]).
 				 instanceParms[i].dataType), tab);
-		if (!val)
-		    return (INPerror(E_PARMVAL));
+		if (!val) {
+		    rtn = (INPerror(E_PARMVAL));
+		    goto quit;
+		}
 		error = (*(ft_sim->setInstanceParm)) (ckt, fast,
 						      (*(ft_sim->devices)
 						       [dev]).
 						      instanceParms[i].id,
 						      val,
 						      (IFvalue *) NULL);
-		if (error)
-		    return (INPerror(error));
+		if (error) {
+		    rtn = (INPerror(error));
+		    goto quit;
+		}
 		break;
 	    }
 	}
 	if (i == (*(*(ft_sim->devices)[dev]).numInstanceParms)) {
 	    errbuf = MALLOC(strlen(parm) + 25);
 	    (void) sprintf(errbuf, " unknown parameter (%s) \n", parm);
-	    return (errbuf);
+	    rtn = (errbuf);
+	    goto quit;
 	}
 	FREE(parm);
     }
-    return ((char *) NULL);
+quit:
+   FREE(parm);
+   return rtn;
 }

@@ -30,7 +30,7 @@ INPpas3(void *ckt, card *data, INPtables *tab, void *task,
     char *line;			/* the part of the current line left
                                    to parse */
     char *name;			/* the node's name */
-    char *token;		/* a token from the line */
+    char *token=NULL;		/* a token from the line */
     IFparm *prm;		/* pointer to parameter to search
                                    through array */
     IFvalue ptemp;		/* a value structure to package
@@ -46,6 +46,7 @@ INPpas3(void *ckt, card *data, INPtables *tab, void *task,
 
     for(current = data; current != NULL; current = current->nextcard) {
 	line = current->line;
+	FREE(token)
 	INPgetTok(&line,&token,1);
 
 	if (strcmp(token,".nodeset")==0) {
@@ -60,7 +61,7 @@ INPpas3(void *ckt, card *data, INPtables *tab, void *task,
 
 	    if(which == -1) {
 		LITERR("nodeset unknown to simulator. \n")
-		    return;
+		goto quit;
 	    }
 
 	    for(;;) {
@@ -95,7 +96,7 @@ INPpas3(void *ckt, card *data, INPtables *tab, void *task,
 
 	    if(which==-1) {
 		LITERR("ic unknown to simulator. \n")
-		    return;
+		goto quit;
 	    }
 
 	    for(;;) {
@@ -119,6 +120,8 @@ INPpas3(void *ckt, card *data, INPtables *tab, void *task,
 	    }
 	}
     }
-    return;
+quit:
+    FREE(token);
+   return;
 }
 

@@ -116,6 +116,9 @@ struct timeb timebegin;
 #endif
 
 extern char *gettok(char **s);
+extern char *gettok_noparens(char **s);
+extern int get_l_paren(char **s);
+extern int get_r_paren(char **s);
 extern void appendc(char *s, char c);
 extern int scannum(char *str);
 extern int ciprefix(register char *p, register char *s);

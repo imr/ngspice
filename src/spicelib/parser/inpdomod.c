@@ -34,6 +34,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 #endif
 
     INPgetTok(&line, &modname, 1);	/* throw away '.model' */
+    tfree(modname);
     INPgetTok(&line, &modname, 1);      /* get model name */
     INPinsert(&modname, tab);           /* stick model name into table */
     INPgetTok(&line, &typename, 1);     /* get model type */
@@ -530,5 +531,6 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 #endif
       
     }
+    tfree(typename);
     return (err);
 }

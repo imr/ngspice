@@ -74,7 +74,9 @@ char *INPgetMod(void *ckt, char *name, INPmodel ** model, INPtables * tab)
 
 
 		INPgetTok(&line, &parm, 1);	/* throw away '.model' */
+		tfree(parm);
 		INPgetTok(&line, &parm, 1);	/* throw away 'modname' */
+		tfree(parm);
 		while (*line != 0) {
 		    INPgetTok(&line, &parm, 1);
 		    if (!*parm)

@@ -141,7 +141,6 @@ com_compose(wordlist *wl)
                 ;
             pn = pn->pn_next;
         }
-        free_pnode(first_pn);
         /* Now make sure these are all of the same dimensionality.  We
          * can coerce the sizes...
          */
@@ -479,6 +478,7 @@ com_compose(wordlist *wl)
     result->v_dims[0] = length;
     vec_new(result);
     cp_addkword(CT_VECTOR, result->v_name);
+    free_pnode(first_pn);
     tfree(resname);/*DG: resname has been copied so its remains allocated: memory leak One can remove this and not copy resname*/
     return;
 }

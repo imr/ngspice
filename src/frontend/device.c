@@ -637,7 +637,6 @@ com_alter_common(wordlist *wl, int do_model)
 	return;
     }
     dv = ft_evaluate(names);
-    free_pnode(names);
     if (!dv)
 	return;
     if (dv->v_length < 1) {
@@ -647,8 +646,8 @@ com_alter_common(wordlist *wl, int do_model)
 
     if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
 
-    /* Vector data (dv) should get garbage-collected. */
-
+    free_pnode(names);
+    
     return;
 }
 

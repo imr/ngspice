@@ -267,7 +267,7 @@ doit(struct line *deck)
 	    /*  Now put the .subckt definition found into sss  */
             sss->su_def = last->li_next;  
             s = last->li_line;    
-            (void) gettok(&s);
+            txfree(gettok(&s));
             sss->su_name = gettok(&s);
             sss->su_args = copy(s);
 	    /* count the number of args in the .subckt line */
@@ -317,7 +317,7 @@ doit(struct line *deck)
     for (c = deck; c; c = c->li_next)
         if (prefix(model, c->li_line)) {
             s = c->li_line;
-            (void) gettok(&s);
+            txfree(gettok(&s));
             wl = alloc(struct wordlist);
             wl->wl_next = modnames;
             if (modnames)
@@ -332,8 +332,9 @@ doit(struct line *deck)
         gotone = FALSE;
         for (c = deck, lc = NULL; c; ) {
 	   if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
-                gotone = TRUE;
-                t = s = copy(c->li_line);       /*  s & t hold copy of component line  */
+		char *tofree;
+	        gotone = TRUE;
+                t = tofree = s = copy(c->li_line);       /*  s & t hold copy of component line  */
 
 		/*  make scname point to first non-whitepace chars after refdes invocation
 		 * e.g. if invocation is Xreference, *scname = reference
@@ -390,7 +391,7 @@ doit(struct line *deck)
                     devmodtranslate(lcc, scname);
 
                 s = sss->su_args;
-                (void) gettok(&t);  /* Throw out the subcircuit refdes */
+                txfree(gettok(&t));  /* Throw out the subcircuit refdes */
 
 		/* now invoke translate, which handles the remainder of the
 		 * translation.
@@ -408,6 +409,7 @@ doit(struct line *deck)
                 lcc->li_next = c->li_next;
                 c = lcc->li_next;
                 lc = lcc;
+		tfree(tofree);
             } 	  /* if (ciprefix(invoke, c->li_line)) . . . */
 	   else {
                 lc = c;
@@ -477,7 +479,7 @@ static int
 translate(struct line *deck, char *formal, char *actual, char *scname, char *subname)
 {
     struct line *c;
-    char *buffer, *next_name, dev_type, *name, *s, *t, ch;
+    char *buffer, *next_name, dev_type, *name, *s, *t, ch, *nametofree;
     int nnodes, i, dim;
 
     /* settrans builds the table holding the translated netnames.  */
@@ -695,8 +697,10 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 		return 0;
 	      }
 
-	      dim = (int *) atoi( (char *)gettok_noparens(&s) );  /* convert returned string to int */
-
+	      nametofree = gettok_noparens(&s);
+	      dim = atoi(nametofree);  /* convert returned string to int */
+	      tfree(nametofree);
+	      
 	      /* move pointer ahead of ) */
 	      if( get_r_paren(&s) == 1 ) {   
 		fprintf(cp_err, "Error: no right paren after POLY %s\n",
@@ -782,7 +786,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 /*=================   Default case  ===================*/
         default:            /* this section handles ordinary components */
 	  s = c->li_line;
-	  name = gettok(&s);
+	  nametofree = name = gettok(&s);
 	  if (!name)
 	    continue;
 	  if (!*name) {
@@ -804,7 +808,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 			   name);
 	  else
 	    (void) sprintf(buffer, "%c:%s ", ch, scname);
-	  
+	  tfree(nametofree);
 
 
 /* Next iterate over all nodes (netnames) found and translate them. */
@@ -830,6 +834,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	      (void) sprintf(buffer + strlen(buffer),
 			     "%s:%s ", scname, name);
 	    }
+	    free(name);
 	  }  /* while (nnodes-- . . . . */
   
 /* Now translate any devices (i.e. controlling sources).  
@@ -838,7 +843,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
  */
 	  nnodes = numdevs(c->li_line);     
 	  while (nnodes-- > 0) {
-	    name = gettok(&s);
+	    t = name = gettok(&s);
 	    if (name == NULL) {
 	      fprintf(cp_err, "Error: too few devs: %s\n",
 		      c->li_line);
@@ -855,7 +860,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    else
 	      (void) sprintf(buffer + strlen(buffer),
 			     "%c:%s ", ch, scname);
-	    
+	    tfree(t);
 	  } /* while (nnodes--. . . . */
 	    
 	    
@@ -1100,13 +1105,14 @@ numnodes(char *name)
 	        i = 0;
 		s = buf;
 		gotit = 0;
-		t = gettok(&s);	     /* Skip component name */
+		txfree(gettok(&s));	     /* Skip component name */
 		while ((i < n) && (*s) && !gotit) {
 		  t = gettok(&s);
 		  for (wl = modnames; wl; wl = wl->wl_next)
 		    if (eq(t, wl->wl_word)) 
 		      gotit = 1;
 		  i++;
+		  tfree(t);
 		} /* while . . . . */
 		
 		/* Note: node checks must be done on #_of_node-1 because the */
@@ -1125,7 +1131,7 @@ numnodes(char *name)
         return (n);
 
     for (s = buf, i = 0; *s && (i < 4); i++)
-        (void) gettok(&s);
+        txfree(gettok(&s));
 
     if (i == 3)
         return (3);
@@ -1138,8 +1144,11 @@ numnodes(char *name)
     /* Now, is this a model? */
     t = gettok(&s);
     for (wl = modnames; wl; wl = wl->wl_next)
-      if (eq(t, wl->wl_word))
+      if (eq(t, wl->wl_word)) {
+	  tfree(t);
 	  return (3);
+      }
+    tfree(t);
     return (4);
 }
 
@@ -1221,7 +1230,7 @@ modtranslate(struct line *deck, char *subname)
             tfree(c->li_line);
             c->li_line = buffer;
             t = c->li_line;
-            (void) gettok(&t);
+            txfree(gettok(&t));
             wl = alloc(struct wordlist);
             wl->wl_next = modnames;
             if (modnames) 

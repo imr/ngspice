@@ -265,23 +265,27 @@ cp_istrue(wordlist *wl)
 
     pn = ft_getpnames(wl, TRUE);
     v = ft_evaluate(pn);
-    free_pnode(pn);
 
     /* It makes no sense to say while (all), but what the heck... */
     while (v) {
         if (isreal(v)) {
             for (i = 0; i < v->v_length; i++)
-                if (v->v_realdata[i] != 0.0)
-                    return (TRUE);
+                if (v->v_realdata[i] != 0.0) {
+		   free_pnode(pn);
+                   return (TRUE);
+		}
         } else {
             for (i = 0; i < v->v_length; i++)
                 if ((realpart(&v->v_compdata[i]) != 0.0) ||
-                    (imagpart(&v->v_compdata[i]) != 0.0))
+                    (imagpart(&v->v_compdata[i]) != 0.0)) {
+		    free_pnode(pn);
                     return (TRUE);
+		}
         }
         v = v->v_link2;
     }
-    return (FALSE);
+   free_pnode(pn);
+   return (FALSE);
 }
 
 /* This gets called before every command is executed... */

@@ -600,8 +600,7 @@ vec_free(struct dvec *v)
     pl = v->v_plot;
 
     /* Now we have to take this dvec out of the plot list. */
-    if (pl == NULL)
-        fprintf(cp_err, "vec_free: Internal Error: plot ptr is 0\n");
+    if (pl != NULL) {
     if (pl->pl_dvecs == v)
         pl->pl_dvecs = v->v_next;
     else {
@@ -620,11 +619,14 @@ vec_free(struct dvec *v)
         else
             pl->pl_scale = NULL;
     }
+    }
     tfree(v->v_name);
+    if(v->v_length) {
     if (isreal(v)) {
         tfree(v->v_realdata);
     } else {
         tfree(v->v_compdata);
+    }
     }
     tfree(v);
     return;
