@@ -212,6 +212,10 @@ void EVTprint(wordlist *wl){
 struct dvec *EVTfindvec(char *node){
   return NULL;
 }
+int INPretrieve(char**a,INPtables*b){
+  return 0;
+}
+
 #endif
 
 #endif /* SIMULATOR */

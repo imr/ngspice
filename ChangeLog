@@ -6,6 +6,9 @@
 	* src/include/ngspice.h:
 	include <errno.h> for Tcl version of perror
 
+	* src/main.c:
+	Add dummy INPretrieve() symbol so ngnutmeg and co link with xspice enabled
+
 2004-06-22 Adrian Dawe <adrian.dawe@multigig.com>
 
 	* src/pkgIndex.tcl.in  src/spicepp.pl  src/spicepp.tcl  src/spicewish 
