@@ -866,101 +866,16 @@ pvec(struct dvec *d)
     return;
 }
 
-#ifdef notdef
-
-/* Set the current working plot. */
-
-void
-com_splot(wl)
-    wordlist *wl;
-{
-    struct plot *p;
-    char buf[BSIZE_SP], *s;
-
-    if (wl == NULL) {
-        fprintf(cp_out, "\tType the name of the desired plot:\n\n");
-        fprintf(cp_out, "\tnew\tNew plot\n");
-        for (p = plot_list; p; p = p->pl_next) {
-            if (plot_cur == p)
-                fprintf(cp_out, "Current");
-            fprintf(cp_out, "\t%s\t%s (%s)\n",
-                p->pl_typename, p->pl_title, p->pl_name);
-        }
-        fprintf(cp_out, "? ");
-        (void) fflush(cp_out);
-        (void) fgets(buf, BSIZE_SP, cp_in);
-        clearerr(cp_in);
-        for (s = buf; *s && !isspace(*s); s++)
-            ;
-        *s = '\0';
-    } else {
-        (void) strcpy(buf, wl->wl_word);
-    }
-    if (prefix("new", buf)) {
-        p = plot_alloc("unknown");
-        p->pl_title = copy("Anonymous");
-        p->pl_name = copy("unknown");
-        p->pl_next = plot_list;
-        plot_list = p;
-    } else {
-        for (p = plot_list; p; p = p->pl_next)
-            if (plot_prefix(buf, p->pl_typename))
-                break;
-        if (!p) {
-            fprintf(cp_err, "Error: no such plot.\n");
-            return;
-        }
-    }
-    plot_cur->pl_ccom = cp_kwswitch(CT_VECTOR, p->pl_ccom);
-    plot_cur = p;
-    plot_docoms(plot_cur->pl_commands);
-    if (wl)
-        fprintf(cp_out, "%s %s (%s)\n", p->pl_typename, p->pl_title,
-                p->pl_name);
-    return;
-}
-
-#endif
 
 /* For the sort in display. */
-
 static int
 dcomp(struct dvec **v1, struct dvec **v2)
 {
     return (strcmp((*v1)->v_name, (*v2)->v_name));
 }
 
-#ifdef notdef
-
-/* Figure out what the name of this vector should be (if it is a number,
- * then make it 'V' or 'I')... Note that the data is static.
- */
-
-static char *
-dname(d)
-    struct dvec *d;
-{
-    static char buf[128];
-    char *s;
-
-    for (s = d->v_name; *s; s++)
-        if (!isdigit(*s))
-            return (d->v_name);
-    switch (d->v_type) {
-        case SV_VOLTAGE:
-            (void) sprintf(buf, "V(%s)", d->v_name);
-            return (buf);
-        case SV_CURRENT:
-            (void) sprintf(buf, "I(%s)", d->v_name);
-            return (buf);
-    }
-    return (d->v_name);
-}
-
-#endif
 
 /* Take a set of vectors and form a new vector of the nth elements of each. */
-
 void
 com_cross(wordlist *wl)
 {

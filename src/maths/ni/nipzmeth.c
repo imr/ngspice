@@ -26,9 +26,6 @@ int	NIpzK_mag;
 int
 NIpzSym(PZtrial **set, PZtrial *new)
 {
-#ifndef notdef
-    return NIpzSym2(set, new);
-#else
     double	a, b, c, x0, x1;
     double	dx0, dx1;
     int		a_mag, b_mag, c_mag;
@@ -72,9 +69,6 @@ int
 NIpzComplex(PZtrial **set, PZtrial *new)
 {
     return NIpzSym2(set, new);
-#ifdef notdef
-    NIpzMuller(set, new);
-#endif
 }
 
 int

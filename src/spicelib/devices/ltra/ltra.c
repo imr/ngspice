@@ -55,20 +55,6 @@ IFparm LTRAmPTable[] = {	/* model parameters */
       "special reltol for straight line checking"),
   IOPAU("compactabs", LTRA_MOD_STLINEABS, IF_REAL,
       "special abstol for straight line checking")
-#ifdef notdef
-  IOP("f", LTRA_MOD_FREQ, IF_REAL, "Frequency"),
-  IOP("nl", LTRA_MOD_NL, IF_REAL, "Normalized length at frequency given"),
-  IOP("fullcontrol", LTRA_MOD_FULLCONTROL, IF_FLAG, "rigorous timestep control"),
-  IOP("halfcontrol", LTRA_MOD_HALFCONTROL, IF_FLAG,
-      "only the current step is considered for timestep control"),
-  IOP("print", LTRA_MOD_PRINT, IF_FLAG, "printing of debugging info on"),
-  IOP("noprint", LTRA_MOD_NOPRINT, IF_FLAG, "printing of debugging info off"),
-  IOP("ronly", LTRA_MOD_RONLY, IF_FLAG, "use special load routines for G=0"),
-  IOP("choprel", LTRA_MOD_CHOPREL, IF_REAL,
-      "special reltol for truncation of impulse responses"),
-  IOP("chopabs", LTRA_MOD_CHOPABS, IF_REAL,
-      "special abstol for truncation of impulse responses "),
-#endif
 };
 
 char *LTRAnames[] = {

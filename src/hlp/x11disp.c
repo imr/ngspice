@@ -104,18 +104,6 @@ hlp_xdisplay(topic *top)
             top->titlewidget, buttonargs, XtNumber(buttonargs));
     XtAddCallback(buttonwidget, XtNcallback, (XtCallbackProc) delete, top);
 
-#ifdef notdef
-    /* enclose text string w/in a viewport widget for scrolling */
-    XtSetArg(vportargs[0], XtNfromVert, top->titlewidget);
-    XtSetArg(vportargs[1], XtNallowResize, True);
-    XtSetArg(vportargs[2], XtNallowVert, True);
-    XtSetArg(vportargs[3], XtNallowHoriz, True);
-    XtSetArg(vportargs[4], XtNforceBars, True);
-    top->viewwidget = XtCreateManagedWidget("viewport",
-            viewportWidgetClass, top->formwidget,
-            vportargs, 5);
-#endif
-
     buf = tmalloc(80 * top->numlines + 100);
     buf[0] = '\0';
     for (wl = top->text; wl; wl = wl->wl_next) {

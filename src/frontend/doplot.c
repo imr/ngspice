@@ -762,37 +762,12 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
     /* Figure out the proper x- and y-axis limits. */
     if (ylim) {
-#ifdef notdef
-	if (gtype == GRID_SMITH) {
-	    if (xlim) {
-		SMITH_tfm(xlim[0], ylim[0], &dummy, &ylims[0]);
-		SMITH_tfm(xlim[1], ylim[1], &dummy, &ylims[1]);
-	    } else {
-		SMITH_tfm(0.0, ylim[0], &dummy, &ylims[0]);
-		SMITH_tfm(0.0, ylim[1], &dummy, &ylims[1]);
-	    }
-	} else {
-	}
-#endif
 	    ylims[0] = ylim[0];
 	    ylims[1] = ylim[1];
     } else if (oneval) {
         ylims[0] = HUGE;
         ylims[1] = - ylims[0];
         for (d = vecs; d; d = d->v_link2) {
-#ifdef notdef
-	    if (gtype == GRID_SMITH) {
-		dd = ft_SMITHminmax(d, TRUE);
-		if( dd[0] < 0.0 )
-		    dd[0] *= 1.1;
-		else
-		    dd[0] *= 0.9;
-		if( dd[1] >= 0.0 )
-		    dd[1] *= 1.1;
-		else
-		    dd[1] *= 0.9;
-	    } else
-#endif
 		dd = ft_minmax(d, TRUE);
             if (dd[0] < ylims[0])
                 ylims[0] = dd[0];
@@ -822,37 +797,12 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
 
     if (xlim) {
-#ifdef notdef
-	if (gtype == GRID_SMITH) {
-	    if (ylim) {
-		SMITH_tfm(xlim[0], ylim[0], &xlims[0], &dummy);
-		SMITH_tfm(xlim[1], ylim[1], &xlims[1], &dummy);
-	    } else {
-		SMITH_tfm(xlim[0], 0.0, &xlims[0], &dummy);
-		SMITH_tfm(xlim[1], 0.0, &xlims[1], &dummy);
-	    }
-	} else {
-	}
-#endif
 	    xlims[0] = xlim[0];
 	    xlims[1] = xlim[1];
     } else if (oneval) {
         xlims[0] = HUGE;
         xlims[1] = - xlims[0];
         for (d = vecs; d; d = d->v_link2) {
-#ifdef notdef
-	    if (gtype == GRID_SMITH) {
-		dd = ft_SMITHminmax(d, FALSE);
-		if( dd[0] < 0.0 )
-		    dd[0] *= 1.1;
-		else
-		    dd[0] *= 0.9;
-		if( dd[1] >= 0.0 )
-		    dd[1] *= 1.1;
-		else
-		    dd[1] *= 0.9;
-	    } else
-#endif
 		dd = ft_minmax(d, FALSE);
 
             if (dd[0] < xlims[0])
@@ -910,25 +860,6 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         ylims[1] *= (ylims[1] > 0) ? 1.1 : 0.9;
     }
 
-#ifdef notdef
-    /* Now shrink the limits very slightly -- this helps prevent round-off
-     * error from doing bad things.
-     */
-    if (gtype != GRID_LOGLOG && gtype != GRID_XLOG
-	    && gtype != GRID_POLAR && gtype != GRID_SMITH)
-    {
-        tt = xlims[1] - xlims[0];
-        xlims[0] += tt * 0.001;
-        xlims[1] -= tt * 0.001;
-    }
-    if (gtype != GRID_LOGLOG && gtype != GRID_YLOG
-	    && gtype != GRID_POLAR && gtype != GRID_SMITH) {
-        tt = ylims[1] - ylims[0];
-        ylims[0] += tt * 0.001;
-        ylims[1] -= tt * 0.001;
-    }
-#endif
-
     if ((xlims[0] <= 0.0) && ((gtype == GRID_XLOG) ||
             (gtype == GRID_LOGLOG))) {
         fprintf(cp_err, 
@@ -958,19 +889,6 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     } else if ((!xlim || !ylim) && (gtype == GRID_SMITH
         || gtype == GRID_SMITHGRID))
     {
-#ifdef notdef
-	/* Let the user zoom in */
-        mx = (fabs(xlims[0]) > fabs(xlims[1])) ? fabs(xlims[0]) :
-                fabs(xlims[1]);
-        my = (fabs(ylims[0]) > fabs(ylims[1])) ? fabs(ylims[0]) :
-                fabs(ylims[1]);
-        rad = (mx > my) ? mx : my;
-	/* XXX */
-        xlims[0] = - rad;
-        xlims[1] = rad;
-        ylims[0] = - rad;
-        ylims[1] = rad;
-#endif
         xlims[0] = -1.0;
         xlims[1] = 1.0;
         ylims[0] = -1.0;

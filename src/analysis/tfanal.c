@@ -46,16 +46,6 @@ TFanal(CKTcircuit *ckt, int restart)
             (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
             ckt->CKTdcMaxIter);
 
-#ifdef notdef
-    /* don't need this any more since newconvtest leaves the matrix factored */
-    ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT;
-    error = CKTload(ckt);
-    if(error) return(error);
-
-    error=SMPluFac(ckt->CKTmatrix,ckt->CKTpivotAbsTol,ckt->CKTdiagGmin);
-    if(error) return(error);
-#endif /* notdef */
-
     Itype = CKTtypelook("Isource");
     Vtype = CKTtypelook("Vsource");
     if(Itype != -1) {

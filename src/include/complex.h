@@ -18,23 +18,6 @@ typedef struct {
 
 #define DC_ABS(a,b) (fabs(a) + fabs(b))
 
-/* Why that ??? */
-#ifdef notdef
-#define DC_DIV(a,b,c,d,x,y) { \
-    double r,s;\
-    if(fabs(c)>fabs(d)) { \
-        r=(d)/(c);\
-        s=(c)+r*(d);\
-        x=((a)+(b)*r)/s;\
-        y=((b)-(a)*r)/s;\
-    } else { \
-        r=(c)/(d);\
-        s=(d)+r*(c);\
-        x=((a)*r+(b))/s;\
-        y=((b)*r-(a))/s;\
-    }\
-}
-#endif /*notdef */
 
 /*
  * Division among complex numbers
@@ -66,14 +49,6 @@ typedef struct {
     *(y) = (a) * (d) + (b) * (c) ;\
 }
 
-
-/* Why that ??? */
-#ifdef notdef 
-#define DC_MINUS(a,b,c,d,x,y) { \
-    (x) = (a) - (c) ;\
-    (y) = (b) - (d) ;\
-}
-#endif /*notdef*/
 
 /*
  * Difference among complex numbers a+jb and c+jd

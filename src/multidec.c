@@ -241,14 +241,6 @@ int
       fprintf(stderr,"Singular matrix: problem in row %d and col %d\n", singular_row, singular_col);
       fflush(stderr);
       exit(1);
-#ifdef notdef
-      /* For the original "sparse" interface; doesn't work with the spice3 interface
-	 to sparse */
-    case spSMALL_PIVOT:
-      fprintf(stderr,"* Warning: matrix is illconditioned.\n");
-      fflush(stderr);
-      break;
-#endif
     default: break;
     }
 

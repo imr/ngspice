@@ -1,3 +1,8 @@
+2000-05-03  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* source tree: removed most of `#ifdef notdef' and made converted
+	some function calls from K&R -> ANSI.
+
 2000-05-01  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* Added .cvsignore files to prevent CVS from marking generated

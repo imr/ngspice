@@ -45,12 +45,6 @@ SENSask(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
 	value->rValue = sinfo->defperturb;
 	break;
 
-#ifdef notdef
-    case SENS_TYPE:
-	value->sValue = sinfo->type;
-	break;
-#endif
-
     default:
         return(E_BADPARM);
     }

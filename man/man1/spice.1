@@ -20,34 +20,46 @@ are described here.  You should be familiar with the manual page for
 .PP
 Arguments are:
 .TP
-\fB-n\fR (or \fB-N\fR)
+\fB-n\fR (or \fB--no-spiceinit\fR)
 Don't try to source the file ".spiceinit" upon startup. Normally \*S
 tries to find the file in the current directory, and if it is not found then
 in the user's home directory.
 .TP
-\fB-t term\fR (or \fB-T term\fR)
+\fB-q\fR (or \fB--completion\fR)
+Enable command completion.
+.TP
+\fB-t term\fR (or \fB--term=term\fR)
 The program is being run on a terminal with \fImfb\fR name \fBterm\fR.
 .TP
-\fB-b\fR (or \fB-B\fR)
+\fB-b\fR (or \fB--batch\fR)
 Run in batch mode. \*S will read the standard input or the specified
 input file and do the simulation. Note that if the standard input
 is not a terminal, \*S will default to batch mode, unless the
 -i flag is given.
 .TP
-\fB-s\fR (or \fB-S\fR)
+\fB-s\fR (or \fB--server\fR)
 Run in server mode. This is like batch mode, except that a temporary
 rawfile is used and then written to the standard output, preceded by
 a line with a single "@", after the simulation is done. This mode
 is used by the spice daemon.
 .TP
-\fB-i\fR (or \fB-I\fR)
+\fB-i\fR (or \fB--interactive\fR)
 Run in interactive mode. This is useful if the standard input is
 not a terminal but interactive mode is desired. Command completion is
 not available unless the standard input is a terminal, however.
 .TP
-\fB-r rawfile\fR (or \fB-R rawfile\fR)
+\fB-r rawfile\fR (or \fB--rawfile=file\fR)
 Use \fBrawfile\fR as the default file into which the results of
 the simulation are saved.
+.TP
+\fB-c circuitfile\fR (or \fB--circuitfile=circuitfile\fR)
+Use \fBcircuitfile\fR as the default input deck.
+.TP
+\fB-h\fR (or \fB--help\fR)
+Display a verbose help on the arguments available to the program.
+.TP
+\fB-v\fR (or \fB--version\fR)
+Display a version number and copyright information of the program.
 .PP
 Further arguments are taken to be \*S input decks, which are read
 and saved. (If batch mode is requested then they are run immediately.)

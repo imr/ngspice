@@ -725,44 +725,6 @@ finddev(void *ck, char *name, void **devptr, void **modptr)
 
 }
 
-#ifdef notdef
-/* XXX Not useful */
-/* Extract the node and device names from the line and add them to the command
- * completion structure.  This is probably not a good thing to do if it
- * takes too much time.
- */
-
- /* BLOW THIS AWAY */
-
-void
-if_setndnames(line)
-    char *line;
-{
-    char *t;
-    int i;
-
-    while (isspace(*line))
-        line++;
-
-    if (!*line || (*line == '*') || (*line == '.'))
-        return;
-    t = gettok(&line);
-
-    if (!(i = inp_numnodes(*t)))
-        return;
-    if ((*t == 'q') || (*t == 'Q'))
-        i = 3;
-    
-    cp_addkword(CT_DEVNAMES, t);
-    while (i-- > 0) {
-        t = gettok(&line);
-        if (t)
-            cp_addkword(CT_NODENAMES, t);
-    }
-    return;
-}
-#endif
-
 /* get an analysis parameter by name instead of id */
 
 int 

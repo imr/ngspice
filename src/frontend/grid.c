@@ -520,15 +520,6 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
 
 	(void) sprintf(buf, "%.*f", digits + 1, m * mag / 100.0);
 
-#ifdef notdef
-	if (floor(step/10.0) != step/10.0)
-		(void) sprintf(buf, "%.*lf", mag, m * mag / 100.0);
-	else if (floor(step/100.0) != step/100.0)
-		(void) sprintf(buf, "%.1lf", m * mag / 100.0);
-	else
-		(void) sprintf(buf, "%lg", j * mag / 100);
-#endif
-
 	if (axis == x_axis)
 	    Text(buf, graph->viewportxoff + i -
 		    strlen(buf) / 2 * graph->fontwidth,
@@ -818,45 +809,9 @@ polargrid(GRAPH *graph)
 
     /* Range is square with upper bound maxrad */
 
-#ifdef notdef
-    xx = graph->datawindow.xmin + graph->datawindow.xmax;
-    yy = graph->datawindow.ymin + graph->datawindow.ymax;
-    graph->datawindow.xmin = xx - maxrad;
-    graph->datawindow.xmax = xx + maxrad;
-    graph->datawindow.ymin = yy - maxrad;
-    graph->datawindow.ymax = yy + maxrad;
-#endif
-
-
-#ifdef notdef
-    if (ft_grdb)
-        printf("polar: maxrad = %g, center = (%g, %g)\n", maxrad, xx, yy);
-
-    if ((minrad == 0) && ((hmt - lmt) > 5)) {
-        if (!((hmt - lmt) % 2))
-            step = 2;
-        else if (!((hmt - lmt) % 3))
-            step = 3;
-        else 
-            step = 1;
-    } else
-        step = 1;
-
-	graph->grid.xaxis.circular.lmt = lmt;
-	graph->grid.yaxis.circular.lmt = step;
-#endif
-
     graph->grid.xaxis.circular.hmt = hmt;
     graph->grid.xaxis.circular.lmt = lmt;
     graph->grid.xaxis.circular.mag = mag;
-
-#ifdef notdef
-    graph->datawindow.xmin = xx - maxrad;
-    graph->datawindow.xmax = xx + maxrad;
-    graph->datawindow.ymin = yy - maxrad;
-    graph->datawindow.ymax = yy + maxrad;
-#endif
-
 }
 
 
@@ -870,12 +825,6 @@ drawpolargrid(GRAPH *graph)
     double minrad, maxrad, pixperunit;
     char buf[64];
 
-#ifdef notdef
-    step = graph->grid.yaxis.circular.lmt;
-    mag = floor(mylog10(maxrad));
-    tenpowmag = pow(10.0, (double) mag);
-    pixperunit = graph->grid.xaxis.circular.radius / (maxrad - minrad);
-#endif
     hmt = graph->grid.xaxis.circular.hmt;
     lmt = graph->grid.xaxis.circular.lmt;
     mag = graph->grid.xaxis.circular.mag;
@@ -1146,15 +1095,6 @@ smithgrid(GRAPH *graph)
 	    graph->datawindow.ymax) && (graph->datawindow.xmin == 
 	    graph->datawindow.ymin))
 	centered = TRUE;
-
-#ifdef notdef
-    /* Figure out the minimum and maximum radii we're dealing with. */
-    mx = (graph->datawindow.xmin + graph->datawindow.xmax) / 2;
-    my = (graph->datawindow.ymin + graph->datawindow.ymax) / 2;
-    d = sqrt(mx * mx + my * my);
-    maxrad = d + (graph->datawindow.xmax - graph->datawindow.xmin) / 2;
-    minrad = d - (graph->datawindow.xmax - graph->datawindow.xmin) / 2;
-#endif
 
     /* Issue a warning if our data range is not normalized */
     if (graph->datawindow.ymax > 1.1) {

@@ -896,10 +896,6 @@ PTlexer(char **line)
     char *sbuf, *s;
 
     sbuf = *line;
-#ifdef notdef
-    printf("entering lexer, sbuf = '%s', lastoken = %d, lasttype = %d\n", 
-        sbuf, lasttoken, lasttype);
-#endif
     while ((*sbuf == ' ') || (*sbuf == '\t') || (*sbuf == '='))
         sbuf++;
 
@@ -991,19 +987,15 @@ PTlexer(char **line)
     return (&el);
 }
 
-#ifdef notdef
+#if 0
 
 /* Debugging stuff. */
 
-#ifdef __STDC__
+
 void printTree(INPparseNode*);
-#else /* stdc */
-void printTree();
-#endif /* stdc */
+
 void
-INPptPrint(str, ptree)
-    char *str;
-    IFparseTree *ptree;
+INPptPrint(char *str, IFparseTree *ptree)
 {
     int i;
 
@@ -1019,8 +1011,7 @@ INPptPrint(str, ptree)
 }
 
 void
-printTree(pt)
-    INPparseNode *pt;
+printTree(INPparseNode *pt)
 {
     switch (pt->type) {
         case PT_CONSTANT:

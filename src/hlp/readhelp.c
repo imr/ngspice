@@ -10,26 +10,6 @@ Modified 1999 Emmanuel Rouat
 #include "ngspice.h"
 #include "cpstd.h"
 #include "hlpdefs.h"
-
-#ifdef notdef
-
-#  ifdef HAVE_SYS_DIR_H
-#    include <sys/types.h>
-#    include <sys/dir.h>
-#    include <sys/stat.h>
-#  else
-#    ifdef HAVE_DIRENT_H
-#      include <sys/types.h>
-#      include <dirent.h>
-#      ifndef direct
-#        define direct dirent
-#      endif
-#    endif
-#  endif
-
-
-#endif
-
 #include "suffix.h"
 
 static char *getsubject(fplace *place);

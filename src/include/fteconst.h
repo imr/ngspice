@@ -21,19 +21,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define SV_ZERO     10
 #define SV_SPARAM   11
 
-#ifdef notdef
-#define SV_OUTPUT_NOISE 5
-#define SV_INPUT_NOISE  6
-#define SV_HD2    7
-#define SV_HD3    8
-#define SV_DIM2  9
-#define SV_SIM2  10
-#define SV_DIM3  11
-#define SV_POLE     12
-#define SV_ZERO     13
-#define SV_SPARAM   14
-#endif
-
 /* Dvec flags. */
 
 #define VF_REAL     (1 << 0) /* The data is real. */

@@ -194,10 +194,6 @@ dosim(char *what, wordlist *wl)
         ft_setflag = FALSE;
         return 0;
     }
-#ifdef notdef
-    if (ft_curckt->ci_runonce)
-        com_rset((wordlist *) NULL);
-#endif
 
     /* From now on until the next prompt, an interrupt will just
      * set a flag and let spice finish up, then control will be
@@ -224,10 +220,6 @@ dosim(char *what, wordlist *wl)
 #endif /* PARALLEL_ARCH */
     } else {
         rawfileFp = NULL;
-#ifdef notdef
-	XXX why?
-        plot_num++; /* There should be a better way */
-#endif
     }
 
     /* Spice calls wrd_init and wrd_end itself */

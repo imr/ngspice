@@ -566,10 +566,6 @@ com_altermod(wordlist *wl)
 void 
 com_alter_common(wordlist *wl, int do_model)
 {
-#ifdef notdef
-    struct variable var, *nv, *prev;
-    double *dd;
-#endif
     wordlist *eqword, *words;
     char *dev, *p;
     char *param;
@@ -650,78 +646,6 @@ com_alter_common(wordlist *wl, int do_model)
     /* Vector data (dv) should get garbage-collected. */
 
     return;
-
-#ifdef notdef
-    while (wl) {
-	param = wl->wl_word;
-	wl = wl->wl_next;
-
-	if (!wl) {
-	    val = param;
-	    param = NULL;
-	} else {
-	    val = wl->wl_word;
-	    wl = wl->wl_next;
-	}
-
-	/* Now figure out what the value should be... */
-	if (eq(val, "TRUE")) {
-	    var.va_type = VT_BOOL;
-	    var.va_bool = TRUE;
-	} else if (eq(val, "FALSE")) { 
-	    var.va_type = VT_BOOL;
-	    var.va_bool = FALSE;
-	} else if (eq(val, "[")) { 
-	    var.va_type = VT_LIST;
-	    prev = NULL;
-	    while (wl && !eq(wl->wl_word, "]")) {
-		val = wl->wl_word;
-		nv = alloc(struct variable);
-		if (dd = ft_numparse(&val, FALSE)) {
-			nv->va_type = VT_REAL;
-			nv->va_real = *dd;
-		} else {
-			fprintf(cp_err, "Error: \"%s\" is not a number\n", val);
-			break;
-		}
-		if (!prev)
-		    var.va_vlist = nv;
-		else
-		    prev->va_next = nv;
-		nv->va_next = NULL;
-		wl = wl->wl_next;
-		prev = nv;
-	    }
-	    if (wl && eq(wl->wl_word, "]")) {
-		wl = wl->wl_next;
-	    } else {
-		while (nv) {
-			prev = nv->va_next;
-			tfree(nv);
-			nv = prev;
-		}
-		return;
-	    }
-	} else if (dd = ft_numparse(&val, FALSE)) {
-	    var.va_type = VT_REAL;
-	    var.va_real = *dd;
-	} else {
-	    var.va_type = VT_STRING;
-	    var.va_string = val;
-	}
-
-        if_setparam(ft_curckt->ci_ckt, &dev, param, &var, do_model);
-
-	if (var.va_type == VT_LIST) {
-	    for (nv = var.va_vlist; nv; nv = prev) {
-		prev = nv->va_next;
-		tfree(nv);
-	    }
-	}
-
-    }
-#endif
-
 }
 
 /* Given a device name, possibly with wildcards, return the matches. */

@@ -177,23 +177,6 @@ fprintf(cp_err, "n = %d, xdata = ( ", n);
           mat2[i] = mat2[lindex];
           mat2[lindex] = d;
         }
-#ifdef notdef
-        if (mat1[i * n + i] == 0.0)
-            for (j = i; j < n; j++)
-                if (mat1[j * n + i] != 0.0) {
-                    /* Swap rows i and j. */
-                    for (k = 0; k < n; k++) {
-                        d = mat1[i * n + k];
-                        mat1[i * n + k] =
-                            mat1[j * n + k];
-                        mat1[j * n + k] = d;
-                    }
-                    d = mat2[i];
-                    mat2[i] = mat2[j];
-                    mat2[j] = d;
-                    break;
-                }
-#endif
         /* Make sure we have a non-zero pivot. */
         if (mat1[i * n + i] == 0.0) {
             /* this should be rotated. */
@@ -311,36 +294,6 @@ ft_peval(double x, double *coeffs, int degree)
 
 	return y;
 }
-
-#ifdef notdef
-
-XXX The following code is rediculous
-
-/* This should be a macro or be asm coded if possible. */
-
-double
-ft_peval(pt, coeffs, degree)
-    double pt, *coeffs;
-    register int degree;
-{
-    register int i, j;
-    double d = 0.0, f;
-
-    /* fprintf(cp_err, "peval "); 
-    for (i = 0; i <= degree; i++) 
-        fprintf(cp_err, "%G ", coeffs[i]);
-    fprintf(cp_err, "at %G", pt);
-    */
-    for (i = 0; i <= degree; i++) {
-        f = 1.0;
-        for (j = 0; j < i; j++)
-            f *= pt;
-        d += f * coeffs[i];
-    }
-    /* fprintf(cp_err, " = %G\n", d);*/
-    return (d);
-}
-#endif
 
 void
 lincopy(struct dvec *ov, double *newscale, int newlen, struct dvec *oldscale)

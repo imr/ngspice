@@ -22,13 +22,19 @@ Arguments are:
 Don't try to load the default data file ("rawspice") if no other files
 are given.
 .TP
-\fB-n\fR (or \fB-N\fR)
+\fB-n\fR (or \fB--no-spiceinit\fR)
 Don't try to source the file ".spiceinit" upon startup. Normally \fBnutmeg\fR
 tries to find the file in the current directory, and if it is not found then
 in the user's home directory.
 .TP
-\fB-t term\fR (or \fB-T term\fR)
+\fB-t term\fR (or \fB--term=term\fR)
 The program is being run on a terminal with \fImfb\fR name \fBterm\fR.
+.TP
+\fB-h\fR (or \fB--help\fR)
+Display a verbose help on the arguments available to the program.
+.TP
+\fB-v\fR (or \fB--version\fR)
+Display a version number and copyright information of the program.
 .PP
 Further arguments are taken to be data files in binary or ascii format
 (see \fBsconvert\fR(1)) which are loaded into nutmeg. If the file

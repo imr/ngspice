@@ -326,16 +326,6 @@ baseaddr(void)
 		at = (char *) ((((long)low >> LOG2_PAGESIZE)
 			+ ((long)high >> LOG2_PAGESIZE))
 			<< (LOG2_PAGESIZE - 1));
-#  ifdef notdef
-		at = (char *) ((((int) low + (int) high) / 2 + 0x7ff)
-			& ~(long) 0xfff);
-			/* nearest page */
-#  endif
-#  ifdef notdef
-		printf(
-		"high = %#8x    low = %#8x     at = %#8x\n",
-			high, low, at);
-#  endif
 
 		if (at == low || at == high) {
 			break;
@@ -357,9 +347,6 @@ baseaddr(void)
 
 	} while (1);
 
-#  ifdef notdef
-	printf ("start is at %#x, end is at %#x\n", high, sbrk(0));
-#  endif
 	(void) signal(SIGSEGV, (SIGNAL_FUNCTION) orig_signal);
 	return (void *) high;
 }

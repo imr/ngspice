@@ -75,10 +75,6 @@ LTRAsetup(matrix, inModel, ckt, state)
     }
     if ((model->LTRAstepLimit != LTRA_MOD_NOSTEPLIMIT))
       model->LTRAstepLimit = LTRA_MOD_STEPLIMIT;
-#ifdef notdef
-    if ((model->LTRAprintFlag != LTRA_MOD_PRINT))
-      model->LTRAprintFlag = LTRA_MOD_NOPRINT;
-#endif
     if ((model->LTRAlteConType != LTRA_MOD_FULLCONTROL) &&
 	(model->LTRAlteConType != LTRA_MOD_HALFCONTROL))
       model->LTRAlteConType = LTRA_MOD_NOCONTROL;

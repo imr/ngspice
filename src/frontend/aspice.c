@@ -293,12 +293,6 @@ com_rspice(wordlist *wl)
 
     pid = fork( );
     if (pid == 0) {
-#ifdef notdef
-	char	com_buf[200];
-
-	sprintf(com_buf, "%s %s %s -s", remote_shell, rhost, program);
-	printf("executing: \"%s\"\n", com_buf);
-#endif
 	/* I am the "server" process */
 	close(to_serv[1]);
 	close(from_serv[0]);
@@ -381,10 +375,6 @@ com_rspice(wordlist *wl)
 		fprintf(stderr, "Error reading rawdata: %s\n", buf);
 		continue;
 	    }
-#ifdef notdef
-	    fprintf(stderr, "adjusting rawfile: write \"%d\" at %ld\n",
-		num, pos);
-#endif
 	    if (fseek(out, pos, SEEK_SET))
 		fprintf(stderr,
 			"Error adjusting rawfile: write \"%d\" at %ld\n",

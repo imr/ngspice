@@ -506,12 +506,6 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, struct line *
      */
 
     if (!reuse) {
-#ifdef notdef
-	/* Unused time-waster. */
-        for (dd = deck->li_next; dd; dd = dd->li_next)
-            if_setndnames(dd->li_line);
-#endif
-
         /* Be sure that ci_devices and ci_nodes are valid */
         ft_curckt->ci_devices = cp_kwswitch(CT_DEVNAMES, 
                 (char *) NULL);

@@ -276,19 +276,6 @@ void DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny)
 
 }
 
-#ifdef notdef
-/*
-NDCtoScreen(x0, y0, px, py)
-    double x0, y0;
-    int *px, *py;
-{
-
-    (*(dispdev->NDCtoScreen))(x0, y0, px, py);
-
-}
-*/
-#endif
-
 void Input(REQUEST *request, RESPONSE *response)
 {
 

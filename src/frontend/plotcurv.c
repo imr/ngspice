@@ -339,26 +339,3 @@ plotinterval(struct dvec *v, double lo, double hi, register double *coeffs, int 
     }
     return;
 }
-
-#ifdef notdef
-
-static void
-printmat(name, mat, m, n)
-    char *name;
-    double *mat;
-{
-    int i, j;
-
-    printf("\n\r=== Matrix: %s ===\n\r", name);
-    for (i = 0; i < m; i++) {
-        printf(" | ");
-        for (j = 0; j < n; j++)
-            printf("%G ", mat[i * n + j]);
-        printf("|\n\r");
-    }
-    printf("===\n\r");
-    return;
-}
-
-#endif
-

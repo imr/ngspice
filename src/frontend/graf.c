@@ -381,13 +381,6 @@ gr_start_internal(struct dvec *dv, bool copyvec)
 	dv->v_linestyle = curlst;
     dv->v_color = curcolor;
 
-/* note: XXX */
-#ifdef notdef
-    /* This is a minor hack -- reset the color */
-    if (dv->v_defcolor)
-        ReSetColor(curcolor, dv->v_defcolor);
-#endif
-
     /* save the data so we can refresh */
     link = (struct dveclist *) calloc(1, sizeof(struct dveclist));
     link->next = currentgraph->plotdata;

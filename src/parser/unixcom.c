@@ -234,56 +234,6 @@ cp_hstat(void)
     return;
 }
 
-#ifdef notdef
-/*** The person who wrote this should be strung up ***/
-/* Some strange stuff... Don't ever free the dir buffer, because we keep
- * pointers into it in the command hash table.
- */
-
-static bool
-myopendir(char *path)
-{
-    struct stat stbuf;
-    int i;
-
-    if (!path)
-        return (0);
-    if (stat(path, &stbuf))
-        return (FALSE);
-    if ((i = open(path, O_RDONLY)) == -1)
-        return (0);
-    dirbuffer = tmalloc(stbuf.st_size);
-    if (read(i, dirbuffer, stbuf.st_size) != stbuf.st_size) {
-        fprintf(cp_err, "Error: bad read on directory %s\n", path);
-        return (0);
-    }
-    dirlength = stbuf.st_size;
-    dirpos = 0;
-    return (1);
-}
-
-static char *
-myreaddir(void)
-{
-    struct direct *dp;
-
-    /* Advance us to the next valid directory entry. */
-    for (;;) {
-        dp = (struct direct *) &dirbuffer[dirpos];
-        if (dirpos >= dirlength)
-            return (NULL);
-        while (dp->d_ino == 0) {
-            dirpos += dp->d_reclen;
-            goto x; /* Ack... */
-        }
-        break;
-x:      ;
-    }
-    dirpos += dp->d_reclen;
-    return (dp->d_name);
-}
-#  endif
-
 #else
 
 void
@@ -303,4 +253,3 @@ cp_unixcom(wordlist *wl)
 }
 
 #endif
-

@@ -40,27 +40,6 @@ dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
 
 	prevp = &wl;
 
-#ifdef notdef
-	for (w = wl; w; w = w->wl_next) {
-		if (!strcmp(w->wl_word, "#")) {
-			model = 1;
-			*prevp = w->wl_next;
-			flag |= DGEN_DEFDEVS;
-		} else if (index(w->wl_word, '#'))
-			model = 1;
-		else
-			instance = 1;
-		prevp = &w->wl_next;
-	}
-
-	if (instance && model) {
-		fprintf(stderr,
-			"Error: can't mix instances and models");
-		tfree(dg);
-		return NULL;
-	}
-#endif
-
 	if (model)
 		dg->flags = (DGEN_ALL & ~ DGEN_INSTANCE) | DGEN_INIT;
 	else
@@ -172,15 +151,7 @@ dgen_next(dgen **dgx)
 		if (need & DGEN_MODEL && !dg->model)
 			continue;
 
-#ifdef notdef
-		if (dg->instance)
-			printf("Maybe : %s\n", dg->instance->GENname);
-		if (dg->model)
-			printf("Maybe mod : %s\n", dg->model->GENmodName);
-#endif
-
 		/* Filter */
-
 		if (!dg->dev_list) {
 			if ((dg->flags & DGEN_ALLDEVS)
 				|| ((dg->flags & DGEN_DEFDEVS)
@@ -263,11 +234,6 @@ dgen_next(dgen **dgx)
 			}
 
 			/* Now compare */
-#ifdef notdef
-			printf("Type: %c, subckt: %s, name: %s\n",
-				type ? type : '0', subckt, device);
-#endif
-
 			if (dg->instance)
 				dev_name = dg->instance->GENname;
 			else
@@ -333,13 +299,6 @@ dgen_next(dgen **dgx)
 
 			break;
 		}
-
-#ifdef notdef
-		if (done == 1)
-			printf("Accepted\n");
-		else
-			printf("Skipped\n");
-#endif
 
 	}
 

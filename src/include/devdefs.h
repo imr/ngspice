@@ -13,7 +13,6 @@ Author: 1985 Thomas L. Quarles
 #include "noisedef.h"
 #include "complex.h"
 
-#ifdef __STDC__
 double DEVlimvds(double,double);
 double DEVpnjlim(double,double,double,double,int*);
 double DEVfetlim(double,double,double);
@@ -21,30 +20,11 @@ void DEVcmeyer(double,double,double,double,double,double,double,double,double,
         double,double,double*,double*,double*,double,double,double,double);
 void DEVqmeyer(double,double,double,double,double,double*,double*,double*,
         double,double);
-#ifdef notdef
-void DEVcap(CKTcircuit*, double, double, double, double, double, double,
-        double, double, double, double, double, double, double, double,
-        double*, double*, double*, double*, double*, double*, double*,
-        double*, double*, double*, double*, double*, double, double,
-        double, double*, double*, double);
-#endif
 double DEVpred(CKTcircuit*,int);
-#else /* stdc */
-double DEVlimvds();
-double DEVpnjlim();
-double DEVfetlim();
-void DEVcmeyer();
-void DEVqmeyer();
-#ifdef notdef
-void DEVcap();
-#endif
-double DEVpred();
-#endif /* stdc */
 
 typedef struct SPICEdev {
     IFdevice DEVpublic;
 
-#ifdef __STDC__
     int (*DEVparam)(int,IFvalue*,GENinstance*,IFvalue *);  
         /* routine to input a parameter to a device instance */
     int (*DEVmodParam)(int,IFvalue*,GENmodel*);   
@@ -100,48 +80,11 @@ typedef struct SPICEdev {
     	/* procedure to do distortion operations */
     int (*DEVnoise)(int, int, GENmodel*,CKTcircuit*, Ndata *, double *);
 	/* noise routine */
-
-#else /* stdc */
-
-    int (*DEVparam)();  /* routine to input a parameter to a device instance */
-    int (*DEVmodParam)();   /* routine to input a paramater to a model */
-    int (*DEVload)();   /* routine to load the device into the matrix */
-    int (*DEVsetup)();  /* setup routine to preprocess devices once before
-                         * soloution begins */
-    int (*DEVunsetup)(); /* clean up before running again */
-
-    int (*DEVpzSetup)();  /* setup routine to process devices specially for 
-                         * pz analysis */
-    int (*DEVtemperature)();    /* subroutine to do temperature dependent 
-                                 * setup processing */
-    int (*DEVtrunc)();  /* subroutine to perform truncation error calc. */
-    int (*DEVfindBranch)(); /* subroutine to search for device branch eq.s */
-    int (*DEVacLoad)(); /* ac analysis loading function */
-    int (*DEVaccept)(); /* subroutine to call on acceptance of a timepoint */
-    void (*DEVdestroy)();   /* subroutine to destroy all models and instances */
-    int (*DEVmodDelete)();  /* subroutine to delete a model and all instances */
-    int (*DEVdelete)(); /* subroutine to delete an instance */
-    int (*DEVsetic)();  /* routine to pick up device init conds from rhs */
-    int (*DEVask)();    /* routine to ask about device details*/
-    int (*DEVmodAsk)(); /* routine to ask about model details*/
-    int (*DEVpzLoad)(); /* routine to load for pole-zero analysis */
-    int (*DEVconvTest)();   /* convergence test function */
-
-    int (*DEVsenSetup)();   /* routine to setup the device sensitivity info */
-    int (*DEVsenLoad)();    /* routine to load the device sensitivity info */
-    int (*DEVsenUpdate)();  /* routine to update the device sensitivity info */
-    int (*DEVsenAcLoad)();  /* routine to load  the device ac sensitivity info*/
-    void (*DEVsenPrint)();   /* subroutine to print out sensitivity info */
-    int (*DEVsenTrunc)();   /* subroutine to print out sensitivity info */
-    int (*DEVdisto)();  /* distortion routine */
-    int (*DEVnoise)(); /* noise routine */
-
-#endif /* stdc */
-
     int *DEVinstSize;    /* size of an instance */
     int *DEVmodSize;     /* size of a model */
 
 } SPICEdev;  /* instance of structure for each possible type of device */
+
 
 /* IOP( )	Input/output parameter
  * IOPP( )	IO parameter which the principle value of a device (used

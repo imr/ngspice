@@ -76,13 +76,6 @@ INPgetTok(char **line, char **token, int gobble)
         if(**line == '\t') continue;
         if((**line == '=') && gobble) continue;
         if((**line == ',') && gobble) continue;
-#ifdef notdef
-    /* This is the wrong thing to do for expression-valued parameters.  The
-	parens will get taken out at the beginning, leave them here for
-	parse trees */
-        if((**line == /* (match */')') && gobble) continue;
-        if((**line == '(' /* match) */) && gobble) continue;
-#endif
         break;
     }
     /*printf("found token (%s) and rest of line (%s)\n",*token,*line);*/

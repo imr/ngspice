@@ -27,10 +27,6 @@ CKTinit(void **ckt)
     (sckt)->CKTnodes = (CKTnode *)NULL;
     (sckt)->CKTlastNode = (CKTnode *)NULL;
     sckt->CKTmatrix = NULL;
-#ifdef notdef
-    error = NIinit(sckt);
-    if(error) return(error);
-#endif
 
     (sckt)->CKTgmin = 1e-12;
     (sckt)->CKTabstol = 1e-12;

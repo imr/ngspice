@@ -52,11 +52,6 @@ combine:
     }
 #endif /* PARALLEL_ARCH */
 
-#ifdef notdef
-    printf("*** Before PZ adjustments *\n");
-    SMPprint(ckt->CKTmatrix, stdout);
-#endif
-
     if (pzan->PZbalance_col && pzan->PZsolution_col) {
 	SMPcAddCol(ckt->CKTmatrix, pzan->PZbalance_col, pzan->PZsolution_col);
 	/* AC sources ?? XXX */
@@ -71,11 +66,6 @@ combine:
 	*pzan->PZdrive_pptr = 1.0;
     if (pzan->PZdrive_nptr)
 	*pzan->PZdrive_nptr = -1.0;
-
-#ifdef notdef
-    printf("*** After PZ adjustments *\n");
-    SMPprint(ckt->CKTmatrix, stdout);
-#endif
 
     return(OK);
 }

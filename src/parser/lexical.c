@@ -298,15 +298,6 @@ prompt(void)
         s = cp_promptstring;
     if (cp_altprompt)
         s = cp_altprompt;
-#ifdef notdef
-    /* XXXX VMS */
-    /* this is for VMS/RMS which otherwise won't output the LF
-     * part of the newline on the previous line if this line
-     * doesn't also end in newline, and most prompts don't, so...
-     * we force an extra line here.
-     */
-    fprintf(cp_out,"\n");
-#endif
     while (*s) {
         switch (strip(*s)) {
             case '!':

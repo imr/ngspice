@@ -90,16 +90,6 @@
  *  any purpose.  It is provided `as is', without express or implied warranty.
  */
 
-#ifdef notdef
-static char copyright[] =
-    "Sparse1.3: Copyright (c) 1985,86,87,88,89,90 by Kenneth S. Kundert";
-static char RCSid[] =
-    "@(#)$Header$";
-#endif
-
-
-
-
 /*
  *  IMPORTS
  *

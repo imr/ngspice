@@ -99,33 +99,6 @@ static IFparm SENSparms[] = {
     { "oct",        SENS_OCT,     IF_SET|IF_FLAG, "step by octaves" },
     { "lin",        SENS_LIN,     IF_SET|IF_FLAG, "step linearly" },
     { "dc",         SENS_DC,      IF_SET|IF_FLAG, "analysis at DC" },
-
-#ifdef notdef
-	/* Future coding */
-    /* perturbation limits */
-    /* defaults for the analysis */
-    { "deftol",	    SENS_DEFTOL, IF_SET|IF_REAL, "default tolerance" },
-    { "defperturb", SENS_DEFPERT, IF_SET|IF_REAL, "default perterbation" },
-    { "type",       SENS_TYPE, IF_SET|IF_INTEGER,
-	    "describe device, model or element parameters" },
-
-    { "device",     SENS_DEVICE, IF_STRING, "type of model or device" },
-    { "devdeftol",  SENS_DEVDEFTOL, IF_SET|IF_REAL,
-	    "default tolerance (device type)" },
-    { "devdefperturb",SENS_DEVDEFPERT, IF_SET|IF_REAL,
-	    "default perturbation (device type)" },
-    { "moddeftol",  SENS_DEVDEFTOL, IF_SET|IF_REAL,
-	    "default tolerance (model)" },
-    { "moddefperturb",SENS_DEVDEFPERT, IF_SET|IF_REAL,
-	    "default perturbation (model)" },
-
-    /*{ "name",       SENS_NAME, IF_SET|IF_STRING,
-	    "name of model or element" }, */
-    { "param",      SENS_PARAM,IF_SET|IF_STRING, "name of parameter" },
-    { "tol",	    SENS_TOL, IF_SET|IF_REAL, "tolerance" },
-    { "perturb",    SENS_PERT, IF_SET|IF_REAL, "perturbation" }
-#endif
-
 };
 
 SPICEanalysis SENSinfo  = {

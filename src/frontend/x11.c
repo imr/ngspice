@@ -449,15 +449,6 @@ X11_Arc(int x0, int y0, int radius, double theta1, double theta2)
 		x0 - radius,
 		currentgraph->absolute.height - radius - y0,
 		2 * radius, 2 * radius, t1, t2);
-#  ifdef notdef
-	printf("at %d, %d, %g %g x %d :: (%d, %d)\n",
-		x0, y0, theta1, theta2, radius, t1, t2);
-		printf("skip\n");
-	XSync(display, 0);
-	printf("XDrawArc(%d, %d, %d, %d, %d, %d)\n", x0 - radius,
-		currentgraph->absolute.height - radius - y0,
-		2 * radius, 2 * radius, t1, t2);
-#  endif
     }
 }
 
@@ -502,19 +493,6 @@ X11_SetLinestyle(int linestyleid)
 
 	if (currentgraph->linestyle != linestyleid) {
 
-#  ifdef notdef
-	  switch (linestyleid %3) {
-	  case 0:
-	    values.line_style = LineSolid;
-		break;
-	  case 1:
-	    values.line_style = LineOnOffDash;
-		break;
-	  case 2:
-	    values.line_style = LineDoubleDash;
-		break;
-	  }
-#  endif
 	  if ((linestyleid == 0 || numdispplanes > 1) && linestyleid != 1) {
 	    /* solid if linestyle 0 or if has color, allow only one
 	     * dashed linestyle */
@@ -584,21 +562,6 @@ handlekeypressed(Widget w, caddr_t clientdata, caddr_t calldata)
 
 }
 
-#  ifdef notdef
-void
-keyhandler(clientdata, source, id)
-caddr_t clientdata;
-int *source;
-XtInputId id;
-{
-
-#    ifdef notdef
-	KEYwaiting = TRUE;
-#  endif
-
-}
-#  endif
-
 void
 handlebuttonev(Widget w, caddr_t clientdata, caddr_t calldata)
 {
@@ -615,18 +578,6 @@ handlebuttonev(Widget w, caddr_t clientdata, caddr_t calldata)
 	}
 
 }
-
-#  ifdef notdef
-handlemotionev(w, clientdata, calldata)
-Widget w;
-caddr_t clientdata, calldata;
-{
-
-	XMotionEvent *motionev = (XMotionEvent *) calldata;
-
-	switch
-}
-#  endif
 
 void
 slopelocation(GRAPH *graph, int x0, int y0)
@@ -835,15 +786,6 @@ redraw(Widget w, caddr_t client_data, caddr_t call_data)
 	int n = 1;
 
 	DEVDEP(graph).isopen = 1;
-#  ifdef notdef
-	/* if there is a resize, let the resize routine handle the exposures */
-	if (XCheckWindowEvent(display, DEVDEP(graph).window,
-	 (long) StructureNotifyMask, &ev)) {
-	  resize(w, client_data, &ev);
-	  return;
-	}
-#  endif
-
 	rects[0].x = pev->x;
 	rects[0].y = pev->y;
 	rects[0].width = pev->width;
@@ -891,38 +833,6 @@ resize(Widget w, caddr_t client_data, caddr_t call_data)
 	gr_resize(graph);
 
 }
-
-#  ifdef notdef
-/* stolen from CP/lexical.c */
-
-/* A special 'getc' so that we can deal with ^D properly. There is no way for
- * stdio to know if we have typed a ^D after some other characters, so
- * don't use buffering at all...
- */
-static int inchar(fp)
-    FILE *fp;
-{
-
-	char c;
-	int i;
-	extern int errno;
-
-#    ifdef HAS_TERMREAD
-	if (cp_interactive && !cp_nocc) {
-	  i = read((int) fileno(fp), &c, 1);
-	  if (i == 0)
-	    return (EOF);
-	  else if (i == -1) {
-	    perror("read");
-	    return (EOF);
-	  } else
-	    return ((int) c);
-	}
-#    endif
-	c = getc(fp);
-	return ((int) c);
-}
-#  endif
 
 void
 X11_Input(REQUEST *request, RESPONSE *response)

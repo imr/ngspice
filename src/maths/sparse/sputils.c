@@ -47,15 +47,6 @@
  *  or implied warranty.
  */
 
-#ifdef notdef
-static char copyright[] =
-    "Sparse1.3: Copyright (c) 1985,86,87,88,89,90 by Kenneth S. Kundert";
-static char RCSid[] =
-    "@(#)$Header$";
-#endif
-
-
-
 /*
  *  IMPORTS
  *
@@ -271,13 +262,8 @@ ElementPtr pTwin1, pTwin2;
             if ((pTwin2 != NULL) AND (ABS(pTwin2->Real) == 1.0))
             {   /* Found symmetric twins. */
                 if (++Twins >= 2) return Twins;
-#ifdef notdef
-                (*ppTwin1 = pTwin1)/*->Col = Col XXX */;
-                (*ppTwin2 = pTwin2)/*->Col = Row XXX */;
-#else
                 (*ppTwin1 = pTwin1)->Col = Col;
                 (*ppTwin2 = pTwin2)->Col = Row;
-#endif
             }
         }
         pTwin1 = pTwin1->NextInCol;
@@ -304,15 +290,6 @@ ElementPtr pTwin1, pTwin2;
 int Col1 = pTwin1->Col, Col2 = pTwin2->Col;
 
 /* Begin `SwapCols'. */
-
-#ifdef notdef
-ElementPtr e; /*XXX*/
-    /* XXX Update column numbers */
-    for (e = Matrix->FirstInCol[Col1]; e != NULL; e = e->NextInCol)
-	e->Col = Col2;
-    for (e = Matrix->FirstInCol[Col2]; e != NULL; e = e->NextInCol)
-	e->Col = Col1;
-#endif
 
     SWAP (ElementPtr, Matrix->FirstInCol[Col1], Matrix->FirstInCol[Col2]);
     SWAP (int, Matrix->IntToExtColMap[Col1], Matrix->IntToExtColMap[Col2]);

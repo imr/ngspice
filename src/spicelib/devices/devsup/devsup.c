@@ -3,22 +3,17 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-    /* support routines for device models */
+/* support routines for device models */
 
 #include "ngspice.h"
 #include "devdefs.h"
 #include "cktdefs.h"
 #include "suffix.h"
 
-    /* DEVlimvds(vnew,vold)
-     *  limit the per-iteration change of VDS
-     */
-
+/* limit the per-iteration change of VDS */
 double
-DEVlimvds(vnew,vold)
-    double vnew;
-    double vold;
-
+DEVlimvds(double vnew,
+	  double vold)
 {
 
     if(vold >= 3.5) {
@@ -40,20 +35,13 @@ DEVlimvds(vnew,vold)
 }
 
 
-    /* DEVpnjlim(vnew,vold,vt,vcrit,icheck)
-     * limit the per-iteration change of PN junction  voltages 
-     */
-
-
+/*  limit the per-iteration change of PN junction voltages */
 double
-DEVpnjlim(vnew,vold,vt,vcrit,icheck)
-
-    double vnew;
-    double vold;
-    double vt;
-    double vcrit;
-    int *icheck;
-
+DEVpnjlim(double vnew,
+	  double vold,
+	  double vt,
+	  double vcrit,
+	  int *icheck)
 {
     double arg;
 
@@ -75,18 +63,11 @@ DEVpnjlim(vnew,vold,vt,vcrit,icheck)
     return(vnew);
 }
 
-    /*
-     * DEVfetlim(vnew,vold.vto)
-     *
-     * limit the per-iteration change of FET voltages 
-     */
-
+/* limit the per-iteration change of FET voltages */
 double
-DEVfetlim(vnew,vold,vto)
-    double vnew;
-    double vold;
-    double vto;
-
+DEVfetlim(double vnew,
+	  double vold,
+	  double vto)
 {
     double vtsthi;
     double vtstlo;
@@ -147,40 +128,27 @@ DEVfetlim(vnew,vold,vto)
 }
 
 
-    /*
-     * DEVcmeyer(vgs0,vgd0,vgb0,von0,vdsat0,
-     *           vgs1,vgd1,vgb1,covlgs,covlgd,covlgb,
-     *           cgs0,cgd0,cgb0,
-     *           von,vdsat)
-     *
-     *  Compute the MOS overlap capacitances as functions of the 
-     *  device terminal voltages
-     */
-
+/* Compute the MOS overlap capacitances as functions of the device
+ * terminal voltages */
 void
-DEVcmeyer(vgs0,vgd0,vgb0,von0,vdsat0,
-         vgs1,vgd1,vgb1,covlgs,covlgd,covlgb,
-         cgs,cgd,cgb,
-         phi,cox,von,vdsat)
-double vgs0;    /* initial voltage gate-source */
-double vgd0;    /* initial voltage gate-drain */
-double vgb0;    /* initial voltage gate-bulk */
-double von0;
-double vdsat0;
-double vgs1;    /* final voltage gate-source */
-double vgd1;    /* final voltage gate-drain */
-double vgb1;    /* final voltage gate-bulk */
-double covlgs;  /* overlap capacitance gate-source */
-double covlgd;  /* overlap capacitance gate-drain */
-double covlgb;  /* overlap capacitance gate-bulk */
-register double *cgs;
-register double *cgd;
-register double *cgb;
-double phi;
-double cox;
-double von;
-double vdsat;
-
+DEVcmeyer(double vgs0,		/* initial voltage gate-source */
+	  double vgd0,		/* initial voltage gate-drain */
+	  double vgb0,		/* initial voltage gate-bulk */
+	  double von0,
+	  double vdsat0,
+	  double vgs1,		/* final voltage gate-source */
+	  double vgd1,		/* final voltage gate-drain */
+	  double vgb1,		/* final voltage gate-bulk */
+	  double covlgs,	/* overlap capacitance gate-source */
+	  double covlgd,	/* overlap capacitance gate-drain */
+	  double covlgb,	/* overlap capacitance gate-bulk */
+	  double *cgs,
+	  double *cgd,
+	  double *cgb,
+	  double phi,
+	  double cox,
+	  double von,
+	  double vdsat)
 {
 
 
@@ -245,38 +213,28 @@ double vdsat;
 }
 
 
-    /*
-     * DEVqmeyer(vgs,vgd,vgb,von,vdsat,capgs,capgd,capgb,phi,cox)
-     *           
-     *           
-     *
-     *  Compute the MOS overlap capacitances as functions of the 
-     *  device terminal voltages
-     */
-
-/* ARGSUSED */ /* because vgb is no longer used */
+/* Compute the MOS overlap capacitances as functions of the device
+ * terminal voltages */
 void
-DEVqmeyer(vgs,vgd,vgb,von,vdsat,capgs,capgd,capgb,phi,cox)
-double vgs;    /* initial voltage gate-source */
-double vgd;    /* initial voltage gate-drain */
-double vgb;    /* initial voltage gate-bulk */
-double von;
-double vdsat;
-double *capgs;  /* non-constant portion of g-s overlap capacitance */
-double *capgd;  /* non-constant portion of g-d overlap capacitance */
-double *capgb;  /* non-constant portion of g-b overlap capacitance */
-double phi;
-double cox;     /* oxide capactiance */
-
+DEVqmeyer(double vgs,		/* initial voltage gate-source */
+	  double vgd,		/* initial voltage gate-drain */
+	  double vgb,		/* initial voltage gate-bulk */
+	  double von,
+	  double vdsat,
+	  double *capgs,	/* non-constant portion of g-s overlap
+                                   capacitance */
+	  double *capgd,	/* non-constant portion of g-d overlap
+                                   capacitance */
+	  double *capgb,	/* non-constant portion of g-b overlap
+                                   capacitance */
+	  double phi,
+	  double cox)		/* oxide capactiance */
 {
-
-
     double vds;
     double vddif;
     double vddif1;
     double vddif2;
     double vgst;
-
 
     vgst = vgs-von;
     if (vgst <= -phi) {
@@ -309,119 +267,17 @@ double cox;     /* oxide capactiance */
 
 }
 
-#ifdef notdef
-/* XXX This is no longer used, apparently */
-void
-DEVcap(ckt,vgd,vgs,vgb,covlgd,covlgs,covlgb,
-    capbd,capbs,cggb,cgdb,cgsb,cbgb,cbdb,cbsb,
-    gcggb,gcgdb,gcgsb,gcbgb,gcbdb,gcbsb,
-    gcdgb,gcddb,gcdsb,gcsgb,gcsdb,gcssb,
-    qgate,qchan,qbulk,qdrn,qsrc,xqc)
 
-register CKTcircuit *ckt;
-    double vgd;
-    double vgs;
-    double vgb;
-    double covlgd;
-    double covlgs;
-    double covlgb;
-    double capbd;
-    double capbs;
-    double cggb;
-    double cgdb;
-    double cgsb;
-    double cbgb;
-    double cbdb;
-    double cbsb;
-    double *gcggb;
-    double *gcgdb;
-    double *gcgsb;
-    double *gcbgb;
-    double *gcbdb;
-    double *gcbsb;
-    double *gcdgb;
-    double *gcddb;
-    double *gcdsb;
-    double *gcsgb;
-    double *gcsdb;
-    double *gcssb;
-    double qgate;
-    double qchan;
-    double qbulk;
-    double *qdrn;
-    double *qsrc;
-    double xqc;
-
-    /*
-     *     compute equivalent conductances
-     *     divide up the channel charge (1-xqc)/xqc to source and drain
-     */
+/* Predict a value for the capacitor at loct by extrapolating from
+ * previous values */
+double
+DEVpred(CKTcircuit *ckt, int loct)
 {
-
-    double gcd;
-    double gcdxd;
-    double gcdxs;
-    double gcg;
-    double gcgxd;
-    double gcgxs;
-    double gcs;
-    double gcsxd;
-    double gcsxs;
-    double qgb;
-    double qgd;
-    double qgs;
-
-    gcg = (cggb+cbgb)*ckt->CKTag[1];
-    gcd = (cgdb+cbdb)*ckt->CKTag[1];
-    gcs = (cgsb+cbsb)*ckt->CKTag[1];
-    gcgxd = -xqc*gcg;
-    gcgxs = -(1-xqc)*gcg;
-    gcdxd = -xqc*gcd;
-    gcdxs = -(1-xqc)*gcd;
-    gcsxd = -xqc*gcs;
-    gcsxs = -(1-xqc)*gcs;
-    *gcdgb = gcgxd-covlgd*ckt->CKTag[1];
-    *gcddb = gcdxd+(capbd+covlgd)*ckt->CKTag[1];
-    *gcdsb = gcsxd;
-    *gcsgb = gcgxs-covlgs*ckt->CKTag[1];
-    *gcsdb = gcdxs;
-    *gcssb = gcsxs+(capbs+covlgs)*ckt->CKTag[1];
-    *gcggb = (cggb+covlgd+covlgs+covlgb)*ckt->CKTag[1];
-    *gcgdb = (cgdb-covlgd)*ckt->CKTag[1];
-    *gcgsb = (cgsb-covlgs)*ckt->CKTag[1];
-    *gcbgb = (cbgb-covlgb)*ckt->CKTag[1];
-    *gcbdb = (cbdb-capbd)*ckt->CKTag[1];
-    *gcbsb = (cbsb-capbs)*ckt->CKTag[1];
-    /*
-     *     compute total terminal charges
-     */
-    qgd = covlgd*vgd;
-    qgs = covlgs*vgs;
-    qgb = covlgb*vgb;
-    qgate = qgate+qgd+qgs+qgb;
-    qbulk = qbulk-qgb;
-    *qdrn = xqc*qchan-qgd;
-    *qsrc = (1-xqc)*qchan-qgs;
-    /*
-     *     finished
-     */
-}
-#endif
-
-double DEVpred(ckt,loct)
-    CKTcircuit *ckt;
-    int loct;
-{
-
-    /* predict a value for the capacitor at loct by
-     * extrapolating from previous values
-     */
-
 #ifndef NEWTRUNC
     double xfact;
+
     xfact = ckt->CKTdelta/ckt->CKTdeltaOld[1];
     return( ( (1+xfact) * *(ckt->CKTstate1+loct) ) -
             (    xfact  * *(ckt->CKTstate2+loct) )  );
-#endif /*NEWTRUNC*/
-
+#endif /* NEWTRUNC */
 }

@@ -129,9 +129,5 @@ SPerror(int type)
     if (val) {
 	(void) strcpy(val, msg);
     }
-#ifdef notdef
-    else
-	(*(SPfrontEnd->IFerror))(ERR_PANIC,nomem,(IFuid *)NULL);
-#endif
     return(val);
 }

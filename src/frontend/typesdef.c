@@ -42,13 +42,6 @@ struct type types[NUMTYPES] = {
     { "inoise-integrated", "V or A" } ,
     { "output-noise", NULL } ,
     { "input-noise", NULL } ,
-#ifdef notdef
-    { "HD2", NULL } ,
-    { "HD3", NULL } ,
-    { "DIM2", NULL } ,
-    { "SIM2", NULL } ,
-    { "DIM3", NULL } ,
-#endif
     { "pole", NULL } ,
     { "zero", NULL } ,
     { "s-param", NULL } ,
