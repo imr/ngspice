@@ -963,7 +963,7 @@ in the direction of voltage drop).
  General form:
 
 @example
-  RXXXXXXX N1 N2 VALUE <ac=val> <m=val>
+  RXXXXXXX N1 N2 VALUE <ac=val> <m=val> <scale=val>
 @end example
 
 
@@ -983,13 +983,16 @@ a different resistance value for ac calculations, using the "ac"
 parameter. The value of ac resistance must not be zero. If you do not
 specify the "ac" parameter, it will be defaulted to VALUE.
 
-The "m" parameter is the "multiplication factor":
-                   Resistance = Resistance / M
+The "m" parameter is the "multiplication factor" and scale is the "scale"
+factor:
+                   Resistance = Resistance * Scale / M
 Setting m to "val" is like putting m equal resistance in parallel.
-  
+The "scale" parameter let the designer to choose a different scale
+for elements. 
 
 Note: ac parameter can be considered "safe" since rework-11 
-
+      Scale parameter is not applied to l,w and other geometric
+      parameters. 
 
 @node  Semiconductor Resistors, Semiconductor Resistor Model (R), Resistors, Elementary Devices
 @subsection  Semiconductor Resistors
@@ -997,7 +1000,7 @@ Note: ac parameter can be considered "safe" since rework-11
  General form:
 
 @example
-  RXXXXXXX N1 N2 <VALUE> <MNAME> <L=LENGTH> <W=WIDTH> <TEMP=T> m=<val> <ac=val>
+  RXXXXXXX N1 N2 <VALUE> <MNAME> <L=LENGTH> <W=WIDTH> <TEMP=T> m=<val> <ac=val> <scale>
 @end example
 
 

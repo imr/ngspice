@@ -37,6 +37,10 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->RESlength = value->rValue;
             here->RESlengthGiven = TRUE;
             break;
+	case RES_SCALE:
+	    here->RESscale = value->rValue;
+	    here->RESscaleGiven = TRUE;
+	    break;
         case RES_RESIST_SENS:
             here->RESsenParmNo = value->iValue;
 	    break;

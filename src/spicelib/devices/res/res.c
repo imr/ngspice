@@ -11,12 +11,13 @@ Modified: Apr 2000 - Paolo Nenzi
 #include "ifsim.h"
 
 IFparm RESpTable[] = { /* parameters */ 
- IOPP( "resistance", RES_RESIST, IF_REAL,"Resistance"),
- IOPAA( "ac", RES_ACRESIST, IF_REAL, "AC resistance value"),
- IOPZU( "temp",        RES_TEMP,   IF_REAL,"Instance operating temperature"),
- IOPQU( "l",          RES_LENGTH, IF_REAL,"Length"),
- IOPZU( "w",          RES_WIDTH,  IF_REAL,"Width"),
- IOPU( "m", RES_M, IF_REAL, "Multiplication factor"),
+ IOPP( "resistance", 	RES_RESIST, 	IF_REAL,"Resistance"),
+ IOPAA( "ac",		RES_ACRESIST,	IF_REAL, "AC resistance value"),
+ IOPZU( "temp",		RES_TEMP,	IF_REAL,"Instance operating temperature"),
+ IOPQU( "l",		RES_LENGTH,	IF_REAL,"Length"),
+ IOPZU( "w",		RES_WIDTH,	IF_REAL,"Width"),
+ IOPU(  "m",		RES_M,		IF_REAL, "Multiplication factor"),
+ IOPU(  "scale",	RES_SCALE,	IF_REAL, "Scale factor"),
  IP(   "sens_resist", RES_RESIST_SENS, IF_FLAG,   
         "flag to request sensitivity WRT resistance"),
  OP( "i",          RES_CURRENT,IF_REAL,"Current"),

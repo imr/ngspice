@@ -30,12 +30,12 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->RESnextModel ) {
 
         /* Default Value Processing for Resistor Models */
-        if(!model->REStnomGiven) model->REStnom = ckt->CKTnomTemp;
+        if(!model->REStnomGiven) model->REStnom         = ckt->CKTnomTemp;
         if(!model->RESsheetResGiven) model->RESsheetRes = 0;
         if(!model->RESdefWidthGiven) model->RESdefWidth = 10.e-6; /*M*/
-        if(!model->REStc1Given) model->REStempCoeff1 = 0;
-        if(!model->REStc2Given) model->REStempCoeff2 = 0;
-        if(!model->RESnarrowGiven) model->RESnarrow = 0;
+        if(!model->REStc1Given) model->REStempCoeff1    = 0;
+        if(!model->REStc2Given) model->REStempCoeff2    = 0;
+        if(!model->RESnarrowGiven) model->RESnarrow     = 0;
 
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
@@ -43,9 +43,11 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 	    if (here->RESowner != ARCHme) continue;
             
             /* Default Value Processing for Resistor Instance */
-            if(!here->REStempGiven) here->REStemp = ckt->CKTtemp;
-            if(!here->RESwidthGiven) here->RESwidth = model->RESdefWidth;
-            if(!here->RESlengthGiven)  here->RESlength = 0 ;
+            if(!here->REStempGiven)    here->REStemp   = ckt->CKTtemp;
+            if(!here->RESwidthGiven)   here->RESwidth  = model->RESdefWidth;
+            if(!here->RESlengthGiven)  here->RESlength = 0.0;
+	    if(!here->RESscaleGiven)   here->RESscale  = 1.0;
+	    if(!here->RESmGiven)       here->RESm      = 1.0;
             if(!here->RESresGiven)  {
                 if(model->RESsheetResGiven && (model->RESsheetRes != 0) &&
                         (here->RESlength != 0)) {
@@ -62,16 +64,12 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
             factor = 1.0 + (model->REStempCoeff1)*difference + 
                     (model->REStempCoeff2)*difference*difference;
 
-            here->RESconduct = 1.0/(here->RESresist * factor);
+            here -> RESconduct = here->RESm*(1.0/(here->RESresist * factor * here->RESscale));
+	    here -> RESacConduct = here -> RESconduct; /* default value  */
 	    
-	    if(here->RESmGiven)
-	      here->RESconduct = here->RESconduct * here->RESm;
-	    
-	    /* Paolo Nenzi: Temperature effects for AC value */
+	    /* Paolo Nenzi:  AC value */
 	    if(here->RESacresGiven) 
-	       here->RESacConduct = 1.0/(here->RESacResist * factor);
-	    if (here->RESmGiven)
-	       here->RESacConduct = here->RESacConduct * here->RESm;
+	       here->RESacConduct = here->RESm*(1.0/(here->RESacResist * factor * here->RESscale));
         }
     }
     return(OK);
