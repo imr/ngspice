@@ -30,12 +30,12 @@ bool cp_didhsubst;
 static struct histent *histlist = NULL;
 static int histlength = 0;
 
-/* First check for a ^ at the beginning
- * of the line, and then search each word for !. Following this can be any
- * of string, number, ?string, -number ; then there may be a word specifier,
- * the same as csh, and then the : modifiers. For the :s modifier,
- * the syntax is :sXoooXnnnX, where X is any character, and ooo and nnn are
- * strings not containing X.
+/* First check for a ^ at the beginning of the line, and then search
+ * each word for !. Following this can be any of string, number,
+ * ?string, -number ; then there may be a word specifier, the same as
+ * csh, and then the : modifiers. For the :s modifier, the syntax is
+ * :sXoooXnnnX, where X is any character, and ooo and nnn are strings
+ * not containing X.
  */
 
 wordlist *
@@ -328,9 +328,14 @@ hprefix(char *buf)
 void
 cp_addhistent(int event, wordlist *wlist)
 {
-    if (cp_lastone && !cp_lastone->hi_wlist)
-        fprintf(cp_err, "Internal error: bad history list\n");
+	/* MW. This test is not needed if everything works right */
+	if (cp_lastone && !cp_lastone->hi_wlist)
+        fprintf(cp_err, "Internal error: bad history list\n"); */
+        
     if (cp_lastone == NULL) {
+/* MW. the begging - initialize histlength*/
+	histlength = 1;
+		 
         cp_lastone = histlist = alloc(struct histent);
         cp_lastone->hi_prev = NULL;
     } else {

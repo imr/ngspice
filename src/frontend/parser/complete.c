@@ -73,7 +73,8 @@ static void printem(wordlist *wl);
 static wordlist * cctowl(struct ccom *cc, bool sib);
 static struct ccom * clookup(register char *word, struct ccom **dd, bool pref, 
 			     bool create);
-static void cdelete(struct ccom *node);
+/* MW. I need top node in cdelete */
+static void cdelete(struct ccom *node, struct ccom **top);
 
 
 #ifdef TIOCSTI
@@ -87,10 +88,7 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
     int i=0; 
     int j, arg;
 
-/*    buf = cp_unquote(copy(buf)); DG: ugly*/
-       s=cp_unquote(buf);/*DG*/
-       strcpy(buf,s);
-       tfree(s);
+    buf = cp_unquote(copy(buf));
     cp_wstrip(buf);
     if (wlist->wl_next) {   /* Not the first word. */
         cc = getccom(wlist->wl_word);
@@ -197,7 +195,7 @@ static wordlist *
 ccfilec(char *buf)
 {
     DIR *wdir;
-    char *lcomp, *dir,*copydir;
+    char *lcomp, *dir;
     struct direct *de;
     wordlist *wl = NULL, *t;
     struct passwd *pw;
@@ -234,10 +232,7 @@ ccfilec(char *buf)
         *lcomp = '\0';
         lcomp++;
         if (*dir == cp_til) {
-             copydir=cp_tildexpand(dir);/*DG*/
-            /*dir = cp_tildexpand(dir); very bad the last reference is lost: memory leak*/
-            strcpy(dir,copydir);
-            tfree(copydir);
+            dir = cp_tildexpand(dir);
             if (dir == NULL)
                 return (NULL);
         }
@@ -266,9 +261,10 @@ ccfilec(char *buf)
     return (wl);
 }
 
-/* See what keywords or commands match the prefix. Check extra also for
- * matches, if it is non-NULL. Return a wordlist which is in alphabetical
- * order. Note that we have to call this once for each class.
+/* See what keywords or commands match the prefix. Check extra also
+ * for matches, if it is non-NULL. Return a wordlist which is in
+ * alphabetical order. Note that we have to call this once for each
+ * class.
  */
 
 static wordlist *
@@ -288,8 +284,8 @@ ccmatch(char *word, struct ccom **dbase)
     return (wl);
 }
 
-/* Print the words in the wordlist in columns. They are already sorted... 
- * This is a hard thing to do with wordlists...
+/* Print the words in the wordlist in columns. They are already
+ * sorted...  This is a hard thing to do with wordlists...
  */
 
 static void
@@ -389,8 +385,8 @@ cp_ccon(bool on)
     ison = on;
 
     /* Set the terminal up -- make escape the break character, and
-     * make sure we aren't in raw or cbreak mode.  Hope the (void) ioctl's
-     * won't fail.
+     * make sure we aren't in raw or cbreak mode.  Hope the (void)
+     * ioctl's won't fail.
      */
     (void) ioctl(fileno(cp_in), TIOCGETC, (char *) &tbuf);
     if (on)
@@ -461,7 +457,8 @@ cp_comlook(char *word)
         return (FALSE);
 }
 
-/* Add a command to the database, with the given keywords and filename flag. */
+/* Add a command to the database, with the given keywords and filename
+ * flag. */
 
 void
 cp_addcomm(char *word, long int bits0, long int bits1, long int bits2, long int bits3)
@@ -486,7 +483,7 @@ cp_remcomm(char *word)
     
     cc = clookup(word, &commands, FALSE, FALSE);
     if (cc)
-        cdelete(cc);
+        cdelete(cc, &commands);
     return;
 }
 
@@ -516,13 +513,13 @@ cp_remkword(int class, char *word)
     struct ccom *cc;
     
     if ((class < 1) || (class >= NCLASSES)) {
-        fprintf(cp_err, "cp_addkword: Internal Error: bad class %d\n",
+        fprintf(cp_err, "cp_remkword: Internal Error: bad class %d\n",
                 class);
         return;
     }
     cc = clookup(word, &keywords[class], FALSE, FALSE);
     if (cc)
-        cdelete(cc);
+        cdelete(cc, &keywords[class]);
     return;
 }
 
@@ -567,10 +564,10 @@ throwaway(struct ccom *dbase)
     return;
 }
 
-/* Look up a word in the database. Because of the
- * way the tree is set up, this also works for looking up all words with
- * a given prefix (if the pref arg is TRUE). If create is TRUE, then the
- * node is created if it doesn't already exist.
+/* Look up a word in the database. Because of the way the tree is set
+ * up, this also works for looking up all words with a given prefix
+ * (if the pref arg is TRUE). If create is TRUE, then the node is
+ * created if it doesn't already exist.
  */
 
 static struct ccom *
@@ -579,9 +576,6 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
     register struct ccom *place = *dd, *tmpc;
     int ind = 0, i;
     char buf[BSIZE_SP];
-
-/* printf("----- adding %s -----\n", word); */
-/* prcc(); */
 
     if (!place) {
         /* This is the first time we were called. */
@@ -648,7 +642,6 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
         /* place now points to that node that matches the word for
          * ind + 1 characters.
          */
-/* printf("place %s, word %s, ind %d\n", place->cc_name, word, ind); */
         if (word[ind + 1]) {    /* More to go... */
             if (!place->cc_child) {
                 /* No children, maybe make one and go on. */
@@ -681,16 +674,43 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
 }
 
 /* Delete a node from the tree. Returns the new tree... */
+/* MW. It is quite difficoult to free() everything right, but... 
+ * Anyway this could be more optimal, I think */
 
 static void
-cdelete(struct ccom *node)
+cdelete(struct ccom *node, struct ccom **top)
 {
-    node->cc_invalid = 1;
-    tfree(node->cc_name);
-    tfree(node->cc_child);
-    tfree(node->cc_sibling);
-    tfree(node->cc_ysibling);
-    tfree(node->cc_parent);
-    return;
+     /* if cc_child exist only mark as deleted */
+     node->cc_invalid = 1;
+     if (node->cc_child)  
+	  return;
+		
+     /* fix cc_sibling */
+     if (node->cc_sibling) 
+	  node->cc_sibling->cc_ysibling = node->cc_ysibling;
+     if (node->cc_ysibling)
+	  node->cc_ysibling->cc_sibling = node->cc_sibling;
+     
+     /* if we have cc_parent, check if it should not be removed too */
+     if (node->cc_parent) {
+	  
+	  /* this node will be free() */
+	  if (node->cc_parent->cc_child == node) {
+	       if (node->cc_ysibling)
+		    node->cc_parent->cc_child = node->cc_ysibling;
+	       else
+		    node->cc_parent->cc_child = node->cc_sibling;
+	  }
+	  if (node->cc_parent->cc_invalid == 1)  
+	       /* free parent only if it is invalid */
+	       cdelete(node->cc_parent, top);
+     }
+     
+     /* now free() everything and check the top */
+     if (node == *top) 
+	  *top = node->cc_sibling;
+     free(node->cc_name);
+     free(node);
+     return;
 }
 

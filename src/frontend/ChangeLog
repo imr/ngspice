@@ -1,3 +1,9 @@
+2000-11-07  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* com_history, com_alias, parser/cshpar.c, parser/complete.c:
+	Applied patch by Michael Widlok.  It fixes command completion and
+	history list.  In the process, Michael also fixed a memory leak.
+
 2000-09-09  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* commands.c: Use fourier.h.

@@ -83,19 +83,13 @@ cp_parse(char *string)
     }
 
     /* Add the word list to the history. */
-    if (*wlist->wl_word)
+    /* MW. If string==NULL we do not have to do this, and then play
+     * with cp_lastone is not needed, but watch out cp_doalias */
+    if ((*wlist->wl_word) && !(string))
         cp_addhistent(cp_event - 1, wlist);
 
     wlist = cp_doalias(wlist);
     pwlist(wlist, "After alias substitution");
-
-    if (string && cp_lastone) {
-        /* Don't put this one in... */
-        cp_lastone = cp_lastone->hi_prev;
-        if (cp_lastone)
-            cp_lastone->hi_next = NULL;
-    }
-
     pwlist(wlist, "Returning ");
     return (wlist);
 }

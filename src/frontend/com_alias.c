@@ -51,11 +51,13 @@ asubst(wordlist *wlist)
 
 
 
+/* MW. This function should not use cp_lastone, see cp_parse in cpshar.c 
+ * 	Many things are deleted here and memory leak closed */
 wordlist *
 cp_doalias(wordlist *wlist)
 {
     int ntries;
-    wordlist *realw, *nwl, *nextc = NULL, *end = NULL;
+    wordlist *nwl, *nextc = NULL, *end = NULL;
     wordlist *comm;
 
     while (wlist && eq(wlist->wl_word, cp_csep))
@@ -66,7 +68,6 @@ cp_doalias(wordlist *wlist)
      * save a copy of what it really is and restore it after aliasing
      * is done. We have to do tricky things do get around the problems
      * with ; ...  */
-    realw = wl_copy(cp_lastone->hi_wlist);
     comm = wlist;
     do {
         end = comm->wl_prev;
@@ -77,9 +78,7 @@ cp_doalias(wordlist *wlist)
 			nextc->wl_prev->wl_next = NULL;
                 break;
             }
-
-        wl_free(cp_lastone->hi_wlist);
-        cp_lastone->hi_wlist = wl_copy(comm);
+        
         for (ntries = 21; ntries; ntries--) {
             nwl = asubst(comm);
             if (nwl == NULL)
@@ -115,8 +114,6 @@ cp_doalias(wordlist *wlist)
         }
     } while (nextc);
 
-    wl_free(cp_lastone->hi_wlist);
-    cp_lastone->hi_wlist = realw;
     return (wlist);
 }
 
@@ -130,14 +127,11 @@ cp_setalias(char *word, wordlist *wlist)
     cp_unalias(word);
     cp_addkword(CT_ALIASES, word);
     if (cp_aliases == NULL) {
-        /* printf("first one...\n"); */
         al = cp_aliases = alloc(struct alias);
 	al->al_next = NULL;
 	al->al_prev = NULL;
     } else {
-        /* printf("inserting %s: %s ...\n", word, wlist->wl_word); */
         for (al = cp_aliases; al->al_next; al = al->al_next) {
-            /* printf("checking %s...\n", al->al_name); */
             if (strcmp(al->al_name, word) > 0)
                 break;
         }
@@ -165,9 +159,6 @@ cp_setalias(char *word, wordlist *wlist)
      * keyword lookup is done the alias is evaluated.  Make everything
      * file completion, just in case...  */
     cp_addcomm(word, (long) 1, (long) 1, (long) 1, (long) 1);
-    /* printf("word %s, next = %s, prev = %s...\n", al->al_name, 
-            al->al_next ? al->al_next->al_name : "(none)",
-            al->al_prev ? al->al_prev->al_name : "(none)"); */
     return;
 }
 
