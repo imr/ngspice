@@ -1,3 +1,7 @@
+2003-07-08  Stefan Jones  <stefan.jones@multigig.com>
+	* tclspice.c: handle SIGINT while running a command
+	* Makefile.am spicewish tclspice_source.tcl: new frontend
+	* pkgIndex.tcl: don't export spice::history
 2003-06-25  Stefan Jones    <stefan.jones@multigig.com>
 
 	* tclspice.c :

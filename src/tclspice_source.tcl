@@ -11,24 +11,35 @@
 # comments : a.dawe@multigig.com
 #
 # spicewish
-# spicewish version : 0.2.1.1
+# spicewish version : 0.2.1.4
 #
 
 # packages
 package require BLT
-package require Tclx
+#package require Tclx
+package require tclreadline 
 
 # globals
-set ::spicewish_globals(version) 0.2.1.1
+set ::spicewish_globals(version) 0.2.1.4
 set ::spicewish_globals(fileName) ""
 set ::spicewish_globals(include_fileNames) ""
 set ::spicewish_globals(viewerCount) 1
 set ::spicewish_globals(editor) 0
 set ::spicewish_globals(editor_syntaxHighlight) 1
+set ::spicewish_globals(editor_syntaxHighlight_auto) 1
 set ::spicewish_globals(editor_statusbar) 1
 set ::spicewish_globals(editor_width) 568
 set ::spicewish_globals(editor_height) 344
 set ::spicewish_externalTraces ""
+set ::spicewish_mode "" 
+
+
+#----------------------------------------------------------------------------------------------------
+#
+proc lcontain { list element } { 
+    if { [ lsearch -exact $list $element ] == -1 } { return 0 } 
+    return 1
+} 
 
 
 #========================================================
@@ -130,6 +141,8 @@ proc sw_viewer_png { viewer { fileName "" } } {
 #
 proc sw_viewer_snapshot { viewer } { 
 
+    if { ! [ winfo exists $viewer ] } { return }
+
     # script fileName
     set scriptFileName "viewier.sw_snap.tcl"
     set script_fileId [open $scriptFileName "w"]
@@ -140,18 +153,23 @@ proc sw_viewer_snapshot { viewer } {
     puts $script_fileId "package require spice"
     puts $script_fileId "spice_init_gui /home/ad/proj1.cir \n"
 
+    set traceList ""
+    
     # loop for each trace in the vector 
     foreach traceInfo $::spicewish_plots($viewer) {
 	set traceName "_[ lindex $traceInfo 0 ]"
 	set traceVector [ lindex $traceInfo 1 ]
 	set timeVector "$viewer.time"
 	set traceColour [ lindex $traceInfo 2 ]
+	lappend traceList $traceName
 
 	set xdata [ $timeVector range 0 [ expr [ $timeVector length ] -1 ] ]
 	set ydata [ $traceVector range 0 [ expr [ $traceVector length ] -1 ] ]
 
-	puts $script_fileId "sw_externaltrace_add  $traceName \"$xdata\" \"$ydata\" $traceColour "
+	puts $script_fileId "sw_externaltrace_add  $traceName \"$ydata\" \"$xdata\" $traceColour "
     }  
+    puts $script_fileId "sw_plot $traceList"
+    
 
     close $script_fileId
 } 
@@ -267,7 +285,7 @@ proc sw_viewer_create_measurments { w } {
     pack [ label $w_meas.dx -text "dx : " -background "grey" ] -side right
     bind  $w_meas.dxv <ButtonPress-1> { regexp  {(.[0-9A-z]+)} %W w; puts "dx :  $::spicewish_meas_dx($w.g)"}
     bind  $w_meas.dxv <ButtonPress-2> { 
-	regexp  {(.[0-9A-z]+)} %W w; puts "freq : [ sw_float_eng [ expr 1 / $::spicewish_meas_dx($w.g) ] ] Hz"}
+	regexp  {(.[0-9A-z]+)} %W w; if { $::spicewish_meas_dx($w.g) != 0 } { puts "freq : [ sw_float_eng [ expr 1 / $::spicewish_meas_dx($w.g) ] ] Hz" } }
  
     pack [ label $w_meas.y2v -textvariable  spicewish_meas_y2($w.g)  -background "lightgrey" -width 16  ] -side right
     pack [ label $w_meas.y2 -text "y2 :"  -background "lightgrey"] -side right
@@ -1360,16 +1378,26 @@ proc sw_nodeselection_loadSelection { w { viewer "" } } {
 #----------------------------------------------------------------------------------
 # tests if trace is a valid spice node 
 #
-proc sw_spice_validNode { trace } {
+proc sw_spice_validNode { trace {spicedeck 0} } {
     
     if { $::spice::steps_completed <1 } { spice::step 1 } 
     
+    # check against the spice deck
     set trace [ string tolower $trace ]
     set spiceNodeList  [ spice::spice_data ] ;#- all lowercase
     
     for { set i 0 } { $i< [ llength $spiceNodeList] }  { incr i } { 
 	if { [ lcontain [ lindex [ lindex $spiceNodeList $i ] 0 ]  $trace] } { return 1 }
     } 
+
+    # if flaged jsu check against the spice deck
+    if { $spicedeck } { return 0 } 
+
+    # bltplot straing eg "a1_x1_y0+4"
+    spice::X_Data set ""
+    spice::bltplot $trace
+    if { [ spice::X_Data length ] != 0 } {  return 1 }
+
     return 0
 } 
 
@@ -1501,10 +1529,26 @@ proc sw_trace_vectorUpdate { viewer traceName } {
 	if { $holder_traceName == $traceName } {
 	   
 	    if { [ sw_spice_validNode $traceName ] } { 
+	    
+ 
 		# spice node
-		spice::spicetoblt  $holder_traceName $holder_traceVector
-		spice::spicetoblt time $holder_traceTimeVector
+		# check if in spice deck
+		if { [ sw_spice_validNode $traceName 1 ]  } { 
+		    spice::spicetoblt  $holder_traceName $holder_traceVector
+		    spice::spicetoblt time $holder_traceTimeVector
+		} else {
 
+		    spice::X_Data set ""
+		    spice::Y_Data set ""	
+		    spice::bltplot $holder_traceName
+
+		    # no vectors returned 
+		    if { ( [ spice::X_Data length ] != 0 )  && ( [ spice::Y_Data length ] != 0 )  } {  
+			eval "$holder_traceVector set  spice::Y_Data"
+			eval "$holder_traceTimeVector set spice::X_Data "
+		    }
+
+		}
 	    } else {
 		# external node
 		
@@ -1513,6 +1557,7 @@ proc sw_trace_vectorUpdate { viewer traceName } {
 	} 
     }
 } 
+
 
 
 #----------------------------------------------------------------------------------------------------
@@ -1579,11 +1624,14 @@ proc sw_plot { args } {
 
 	set traceName [ string tolower $trace ] ;#- lowercase to match spice 
 
+
+
 	switch [ sw_trace_type $traceName ]  { 
 	    
 	    "" { 
 		# not valid trace 
 		#puts "$trace not valid "
+		
 	    }
 	    
 	    "spice" {
@@ -1599,12 +1647,19 @@ proc sw_plot { args } {
 		# generate trace colour 
 		set traceColour [ sw_trace_colour $viewer $traceName ]
 		
+		
+	
 		# get unique vector name 
 		set traceVectorName [ sw_trace_createUniqueVector $viewer ] 
 		set traceTimeVectorName "$viewer.time"
-		
+		#puts "$viewer $traceVectorName $traceTimeVectorName "
+	
 		blt::vector create $traceVectorName
 		blt::vector create $traceTimeVectorName  ;# make sure that time vector exists 
+
+		# add trace to the data holder
+		lappend ::spicewish_plots($viewer) "$traceName $traceVectorName $traceColour $traceTimeVectorName"
+		
 	    }
 
 	    "external" {
@@ -1620,11 +1675,12 @@ proc sw_plot { args } {
 			set traceTimeVectorName [ lindex $traceInfo 3 ]
 		    }	    
 		}
+		# add trace to the data holder
+		lappend ::spicewish_plots($viewer) "$traceName $traceVectorName $traceColour $traceTimeVectorName"
 	    }
 	    
 	}
-	# add trace to the data holder
-	lappend ::spicewish_plots($viewer) "$traceName $traceVectorName $traceColour $traceTimeVectorName"
+
     }
 
     # update the viewer
@@ -1706,6 +1762,8 @@ proc sw_update { args } {
 	    set traceVector [ lindex $traceInfo 1 ]
 	    set traceColour [ lindex $traceInfo 2 ]
 	    set timeVector [ lindex $traceInfo 3 ]
+
+	
 
 	    if { $traceName == "" } { continue  }
 	    
@@ -1796,6 +1854,7 @@ proc sw_halt { } {
 # sw_controls_editor_saveFile 
 # sw_controls_editor_includeFiles
 # sw_controls_editor_syntaxHighlighting_toggle
+# sw_controls_editor_syntaxHighlighting_update 
 # sw_controls_editor_syntaxHighlighting
 #
 #========================================================
@@ -1816,6 +1875,7 @@ proc sw_controls_create { fileName } {
 	spice::reset 
 	spice::source $fileName
 	.controls.brun configure -text "Run"
+
 	return 
     }
 
@@ -1833,9 +1893,6 @@ proc sw_controls_create { fileName } {
     # create spice file editor widget + load file + highlight paremeters
     set editor_w [ sw_controls_editor_create $fileName ]
 
-    #   sw_controls_editor_loadFile $editor_w $fileName
-    #   sw_controls_editor_syntaxHighlighting 
-    #   $editor_w.text configure -state disabled ;#- disabled no editting for now
 
     # table
     blt::table . \
@@ -1856,14 +1913,15 @@ proc sw_controls_create { fileName } {
 
     wm deiconify .  ;#- required for magic use
 
+    wm protocol . WM_DELETE_WINDOW { sw_controls_exit } ;#- safe exit for magic use
 
     # keyboard shortcuts
     if {1} {
-	bind . <KeyPress-r> { sw_run }
-	bind . <KeyPress-h> { sw_halt }
-	bind . <KeyPress-p> { sw_nodeselection_create }
-	bind . <KeyPress-u> { sw_update }
-	bind . <KeyPress-e> { sw_controls_editor_toggle }
+	bind . <Control-KeyPress-r> { sw_run }
+	bind . <Control-KeyPress-h> { sw_halt }
+	bind . <Control-KeyPress-p> { sw_nodeselection_create }
+	bind . <Control-KeyPress-u> { sw_update }
+	bind . <Control-KeyPress-e> { sw_controls_editor_toggle }
     }
 }
 
@@ -1895,7 +1953,7 @@ proc sw_controls_exit { } {
 #---------------------------------------------------------------------------------------------
 # sets the line number at the bottom of the status bar 
 #
-proc sw_controls_editor_lineNumber { w } {
+proc sw_controls_editor_lineNumber { w key } {
     
     set lineIndex [ $w index insert ] 
     set lineIndex [ split $lineIndex . ]
@@ -1910,6 +1968,14 @@ proc sw_controls_editor_lineNumber { w } {
 	"0"       { set ::sw_editor_lineInfo($w) "L${lineNum}--C${colNum}--Top" }
 	"100"   { set ::sw_editor_lineInfo($w) "L${lineNum}--C${colNum}--Bot" }
 	default { set ::sw_editor_lineInfo($w) "L${lineNum}--C${colNum}--${percentage}%" }
+    }
+
+    # only update syntax colouring when a new character is added
+    if { $::spicewish_globals(editor_syntaxHighlight_auto) } {
+	set list_key { Up Down Right Left Alt_L End Home Mode_switch Control_L Control_R Shift_R Shift_L  Insert Prior Next ?? }
+	if { [lsearch -exact $list_key $key] == -1} {
+	    sw_controls_editor_syntaxHighlighting_update $w $lineNum
+	} 
     }
 } 
 
@@ -1929,7 +1995,7 @@ proc sw_controls_editor_popupMenu { w x y { _x ""} { _y ""} } {
 	set node [ $w get [lindex $sel_coords 0] [lindex $sel_coords 1] ]
 	
 	# test if valid node
-	if { [ sw_spice_validNode $node ] } {  
+	if { [ sw_spice_validNode $node 1 ] } {  
 
 	    set coords_first [ $w bbox [lindex [ $w tag ranges sel ] 0 ] ]
 	    set coords_sec [ $w bbox [lindex [ $w tag ranges sel ] 1 ] ]
@@ -1942,16 +2008,31 @@ proc sw_controls_editor_popupMenu { w x y { _x ""} { _y ""} } {
 	}
     }
 
-
+ 
     catch {destroy .m}                     ;# destroy old pop up      
     menu .m -tearoff 0
     
     .m add command -label "Drag and drop" -state disabled
 
     .m add command -label "New viewer" -command "sw_viewer_create"
-    .m add checkbutton -label "Syntax highlighting" \
+    
+
+    .m add cascade -label "Syntax Highlighting" -menu .m.syntax
+    menu .m.syntax -tearoff 0
+    .m.syntax add checkbutton -label "In buffers" \
 	-variable spicewish_globals(editor_syntaxHighlight) \
 	-command "sw_controls_editor_syntaxHighlighting_toggle"
+    
+    if { $::spicewish_globals(editor_syntaxHighlight) } {
+	.m.syntax add checkbutton -label "Automatic" \
+	    -variable spicewish_globals(editor_syntaxHighlight_auto)
+    } else { 
+	
+	.m.syntax add checkbutton -label "Automatic" \
+	    -variable spicewish_globals(editor_syntaxHighlight_auto) \
+	    -state disabled
+	
+    } 
 
     .m add checkbutton -label "Status bar" \
 	-variable spicewish_globals(editor_statusbar) \
@@ -2003,9 +2084,9 @@ proc sw_controls_editor_create_statusbar { { w "" } } {
 	    pack [ label $w.status.line.lv -textvariable sw_editor_lineInfo($w.text) ] -side left
 
 	    # - line number - bindings 
-	    bind $w.text <Button> { sw_controls_editor_lineNumber %W } 
-	    bind $w.text <ButtonRelease> { sw_controls_editor_lineNumber %W }
-	    bind $w.text <KeyRelease> { sw_controls_editor_lineNumber %W }
+	    bind $w.text <Button> { sw_controls_editor_lineNumber %W %K } 
+	    bind $w.text <ButtonRelease> { sw_controls_editor_lineNumber %W %K }
+	    bind $w.text <KeyRelease> { sw_controls_editor_lineNumber %W %K }
 	} 
     } else {
 	set w [ sw_controls_editor_active_editors ]
@@ -2062,7 +2143,8 @@ proc sw_controls_editor_create { fileName } {
 	    $w.tnb tab configure $tabCount -window $w.tnb.$tabCount -fill both
 	    set w "$w.tnb.$tabCount"
 
-	    text $w.text -background LemonChiffon 
+	    text $w.text -background $::spicewish_syntax_colour(background) 
+	
 	    
 	    eval "$w.text configure -yscrollcommand { $w.y set } -xscrollcommand { $w.x set }"
 	    eval "scrollbar $w.y -command { $w.text yview } -orient vertical -width 10"
@@ -2108,7 +2190,7 @@ proc sw_controls_editor_create { fileName } {
 	return $w
 
     } else {
-	text $w.text -background LemonChiffon 
+	text $w.text -background $::spicewish_syntax_colour(background) 
 	
 	eval "$w.text configure -yscrollcommand { $w.y set } -xscrollcommand { $w.x set }"
 	eval "scrollbar $w.y -command { $w.text yview } -orient vertical -width 10"
@@ -2134,7 +2216,6 @@ proc sw_controls_editor_create { fileName } {
 	# add status bar 
 	set w_status [ sw_controls_editor_create_statusbar $w ]
 	
-
 	blt::table configure $w c1 r1 r2 -resize none
 
 	# create a drag a drop packet (source) 
@@ -2145,14 +2226,12 @@ proc sw_controls_editor_create { fileName } {
 	# popup menu 
 	bind $w.text <Button-3> { sw_controls_editor_popupMenu %W %X %Y %x %y}
 	
-
 	# load file + add syntax highlighting
 	sw_controls_editor_loadFile $w $fileName
 	sw_controls_editor_syntaxHighlighting  $w.text
 
 	#$w.text configure -state disabled ;#- disabled no editting for now
     }
-
     return $w
 } 
 
@@ -2187,7 +2266,7 @@ proc sw_controls_editor_dragDropPacket { token widget } {
     set node [ $widget get [lindex $sel_coords 0] [lindex $sel_coords 1] ]
     
     # exit if selected text is not node in spice deck
-    if { ! [ sw_spice_validNode $node ] } { return } 
+    if { ! [ sw_spice_validNode $node 1 ] } { return } 
     
     # create token ( drag drop packet )
     $token.label configure -text $node  -background "grey"
@@ -2295,8 +2374,6 @@ proc sw_controls_editor_revertBuffer { w } {
 	    sw_controls_editor_syntaxHighlighting $w
 	}
     }
-    
-
 }
 
 #-------------------------------------------------------------------------------
@@ -2374,7 +2451,6 @@ proc sw_controls_editor_includeFiles { fileName } {
 	} 
     }  
     
-    
     return $includeFileList 
 } 
 
@@ -2398,94 +2474,162 @@ proc sw_controls_editor_syntaxHighlighting_toggle { } {
     }
 }
 
+#-------------------------------------------------------
+# initial syntax colours
+set ::spicewish_syntax_colour(background) "LemonChiffon" 
+set ::spicewish_syntax_colour(c) ""
+set ::spicewish_syntax_colour(b) ""
+set ::spicewish_syntax_colour(c) ""
+set ::spicewish_syntax_colour(d) ""
+set ::spicewish_syntax_colour(e) ""
+set ::spicewish_syntax_colour(f) ""
+set ::spicewish_syntax_colour(g) ""
+set ::spicewish_syntax_colour(h) ""
+set ::spicewish_syntax_colour(j) ""
+set ::spicewish_syntax_colour(k) ""
+set ::spicewish_syntax_colour(l) "orange"
+set ::spicewish_syntax_colour(m) "green"
+set ::spicewish_syntax_colour(q) ""
+set ::spicewish_syntax_colour(r) "purple"
+set ::spicewish_syntax_colour(s) ""
+set ::spicewish_syntax_colour(t) ""
+set ::spicewish_syntax_colour(o) ""
+set ::spicewish_syntax_colour(v) "blue"
+set ::spicewish_syntax_colour(x) ""
+set ::spicewish_syntax_colour(*) "grey"
+set ::spicewish_syntax_colour(.model) "green"
 
-#--------------------------------------------------------------------------------
-# highlight in different coolour the different parameters
+#---------------------------------------------------------------------------------------
+# updates the syntax highlighting when a new character is added to the text
 #
-proc sw_controls_editor_syntaxHighlighting { w } {
+proc sw_controls_editor_syntaxHighlighting_update { w lineNum } {
+    
+    # check next line in case of continutaion (+)
+    set checkLinesEnd $lineNum
+    set cnt $lineNum
+    while { 1 }  {
+	incr cnt
+	set lineText [$w get "$cnt.0 linestart" "$cnt.0 lineend"] 
+	set firstChar [ string range $lineText 0 0 ]
+	set firstChar [ string tolower $firstChar ] ;#- lowercase
 
+	if  { $firstChar != "+" } { break }
+	set checkLinesEnd $cnt
+    }
+
+    # If current line is a continuation (+) check prevoius lines 
+    set checkLinesStart $lineNum
+    set cnt $lineNum
+    set lineText [$w get "$checkLinesStart.0 linestart" "$checkLinesStart.0 lineend"] 
+    set firstChar [ string range $lineText 0 0 ]
+    set firstChar [ string tolower $firstChar ] ;#- lowercase
+    
+    if { $firstChar == "+" } { 
+	while { 1 }  {
+	    incr cnt -1
+	    set lineText [$w get "$cnt.0 linestart" "$cnt.0 lineend"] 
+	    set firstChar [ string range $lineText 0 0 ]
+	    set firstChar [ string tolower $firstChar ] ;#- lowercase
+	    
+	    if  { $firstChar != "+" } { break }   
+	}
+	set checkLinesStart  $cnt
+    }
+
+    sw_controls_editor_syntaxHighlighting $w $checkLinesStart $checkLinesEnd    
+}
+
+#----------------------------------------------------------------------------------------
+# proc runs through texts in widget 'w' 
+#  highlights lines of text depending on its parameter and the colours set in 
+#  $::spicewish_syntax_colour()
+# 
+proc sw_controls_editor_syntaxHighlighting { w {start ""} {end "" } } {
 
     if { ! $::spicewish_globals(editor_syntaxHighlight) } { return } ;#- syntax highlighting disabled 
 
-    #set w "$w"
-    
-    # number of lines
-    scan [$w index end] %d nl
-    
-    # tag names
-    set tagName "parameters"
-
-    # loop foreah line
+    if { ($start == "" )  || ($end == "" ) } {
+	set start 0
+	scan [$w index end] %d end
+    }
+   
+    # list of syntax coloured parameters
+    set paramList [ array names ::spicewish_syntax_colour ]
+    set tagName "param"
     set lastLineColour ""
-    set count 0
-    while { $count < $nl } { 
+
+    for { set count $start } { $count <= $end } { incr count } { 
+
+	# delete any tags associated with this line
+	foreach del_tag [ $w tag names $count.0 ]  {
+	    $w tag delete $del_tag
+	}
+	
+	# select a random tag name that has not been used 
+	set tcnt $count ;#- start current line for speed
+	set UtagName "${tagName}.$tcnt"
+	while { [ $w tag ranges $UtagName ] != "" } {
+
+	    set UtagName "${tagName}.$tcnt"
+	    if { $tcnt > 1000000 } { break } 
+	    incr tcnt
+	}
+
 	set lineText [$w get "$count.0 linestart" "$count.0 lineend"] 
 	set firstChar [ string range $lineText 0 0 ]
-	set firstString [ string range $lineText 0 [ string first " " $lineText ] ]
+	set firstString [ string range $lineText 0 [expr [string first " " $lineText ] -1]]
+	
+	set firstChar [ string tolower $firstChar ] ;#- lowercase
+	set firstString [ string tolower $firstString ] ;#- lowercase
+	
+	switch $firstChar {    
+	    "+" { 
+		if { $lastLineColour != "" }  { 
+		    $w tag add $UtagName "$count.0 linestart" "$count.0 lineend"
+		    $w tag configure $UtagName -foreground $lastLineColour
+		}
+	    }
+	    
+	    "" - " " { 
+		set lastLineColour "" ;#- remove line continuation on empty line
+	    }
 
-	switch $firstChar {
-	    "" {
-		# blank line 
-		set lastLineColour ""
+	}
+
+	# test first character of line
+	if { [ lcontain $paramList $firstChar ] } {
+	    set colour $::spicewish_syntax_colour($firstChar)
+	
+	    if { $colour != "" } { 
+		$w tag add $UtagName "$count.0 linestart" "$count.0 lineend"
+		$w tag configure $UtagName -foreground $colour
+
+		set lastLineColour $colour  ;#- set colour incase of line continuation
 	    }
-	    "+" {
-		# continuation line
-		if { $lastLineColour != "" } {
-		    $w tag add $tagName.$count "$count.0 linestart" "$count.0 lineend"
-		    $w tag configure $tagName.$count -foreground $lastLineColour
-		}
+	} 
+
+	# test first string of line 
+	if { [ lcontain $paramList $firstString ] } {
+	    set colour $::spicewish_syntax_colour($firstString)
+	 
+	    if { $colour != "" } { 
+		$w tag add $UtagName "$count.0 linestart" "$count.0 lineend"
+		$w tag configure $UtagName -foreground $colour
+		set lastLineColour $colour ;#- set colour incase of line continuation
 	    }
-	    "C" - "c" {
-		set lineColour "red"
-		$w tag add $tagName.$count "$count.0 linestart" "$count.0 lineend"
-		$w tag configure $tagName.$count -foreground $lineColour
-		set lastLineColour $lineColour
-	    }
-	    "M" - "m" { 
-		set lineColour "green"
-		$w tag add $tagName.$count "$count.0 linestart" "$count.0 lineend"
-		$w tag configure $tagName.$count -foreground $lineColour
-		set lastLineColour $lineColour
-	    }
-	    "V" - "v" {
-		set lineColour "blue"
-		$w tag add $tagName.$count "$count.0 linestart" "$count.0 lineend"
-		$w tag configure $tagName.$count -foreground $lineColour
-		set lastLineColour $lineColour
-	    }
-	    "L" - "l" {
-		set lineColour "orange"
-		$w tag add $tagName.$count "$count.0 linestart" "$count.0 lineend"
-		$w tag configure $tagName.$count -foreground $lineColour
-		set lastLineColour $lineColour
-	    }
-	    "R" - "r" {
-		set lineColour "purple"
-		$w tag add $tagName.$count "$count.0 linestart" "$count.0 lineend"
-		$w tag configure $tagName.$count -foreground $lineColour
-		set lastLineColour $lineColour
-	    }
-	    "." {
-		switch $firstString {
-		    ".MODEL " - ".model " {
-			set lineColour "darkgreen"
-			$w tag add $tagName.$count "$count.0 linestart" "$count.0 lineend"
-			$w tag configure $tagName.$count -foreground $lineColour
-			set lastLineColour $lineColour
-		    }
-		}
-		
-	    }
-	} ;#- end switch $firstChar
-	incr count 
+	} 
+	
+	if { $firstChar == "*" } { set lastLineColour "" } ;#- no line continutaion colour after comment
     }
-} 
+}
 
 
 #--------------------------------------------------------------------------------
 # export main proc to namespace spicewish::
 #
 namespace eval spicewish {
+
+    namespace export run halt plot
 
     proc run { args}                         { eval "sw_run $args" } 
     proc halt { }                                { sw_halt }
@@ -2593,16 +2737,49 @@ proc sw_float_eng { num {forceunit ""} } {
 #
 #   
 proc sw_plot_command_readline_completer { word start end line } {
-    
+        
     set match {} ;#- no match found yet
     set shortest_string_len 1000 ;#- will always get shorter
     set matches 0 ;#- totaliser for matches
     
+
+    if { $::spicewish_mode == "standalone" } {
+	if { [ regexp {\s+run} " $line " ]   ||  [  regexp {\s+halt} " $line " ]  } {
+	    return ""
+	}
+	
+	if { [ regexp {\s+source} " $line " ]   ||  [  regexp {\s+codemodel} " $line " ]  } {   
+	    return [ ::tclreadline::TryFromList $word [ glob * ] ]
+	}
+
+
+    } else {
+	if { [ regexp {\s+spice\:\:run} " $line " ]   ||  [  regexp {\s+spice\:\:halt} " $line " ]  } {
+	    return ""
+	}
+
+	if { [ regexp {\s+spice\:\:source} " $line " ]   ||  [  regexp {\s+spice\:\:codemodel} " $line " ]  } {   
+	    return [ ::tclreadline::TryFromList $word [ glob * ] ]
+	}
+	
+    }
+    
+
+	
     #check for "plot" command line
     
-    if { [ regexp {\s+sw_plot} " $line " ]   ||  [  regexp {\s+spicewish\:\:plot} " $line " ] } {
+    set valid 0
+    if { [ regexp {\s+sw_plot} " $line " ]   ||  [  regexp {\s+spicewish\:\:plot} " $line " ] } { set valid 1 }
+    
+    if { $::spicewish_mode == "standalone" } {
+	if {  [ regexp {\s+plot} " $line " ] } { set valid 1 }
+    }
+
+  
+
+    if { $valid } {
 	#found plot near the start of the line
-	
+
 	#check if punter is asking for a variable
 	if { $start >= 5 } {
 	    
@@ -2672,7 +2849,7 @@ proc sw_plot_command_readline_completer { word start end line } {
 	
     } ;#- end of if got plot in the line
     
-    ::tclreadline::ScriptCompleter  $word $start $end $line    
+    ::tclreadline::ScriptCompleter  $word $start $end $line 
 }
 
 ::tclreadline::readline customcompleter  "sw_plot_command_readline_completer" ;#- see routine above

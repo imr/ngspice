@@ -17,7 +17,7 @@ proc Loadspice { version dir } {
     blt::vector create ::spice::Y_Data
 
     namespace eval spice {
-	namespace export ac help save alias history sens alter altermod iplot setcirc asciiplot jobs setplot aspice setscale bg let settype linearize shell bug listing shift show cdump maxstep showmod compose newhelp noise spec cross oldhelp spice dc op spice_data define spice_header deftype plot state delete plot_datapoints status delta plot_date step plot_get_value stop diff plot_name strcmp display plot_nvars tf disto plot_title dowhile plot_variables tran dump print transpose echo pz tutorial edit quit unalias else rehash undefine end repeat unlet reset fourier reshape version spicetoblt resume where get_output rspice get_param run write goto running xgraph hardcopy rusage steps_completed blt_vnum codemodel halt loadsnap savesnap
+	namespace export ac help save alias sens alter altermod iplot setcirc asciiplot jobs setplot aspice setscale bg let settype linearize shell bug listing shift show cdump maxstep showmod compose newhelp noise spec cross oldhelp spice dc op spice_data define spice_header deftype plot state delete plot_datapoints status delta plot_date step plot_get_value stop diff plot_name strcmp display plot_nvars tf disto plot_title dowhile plot_variables tran dump print transpose echo pz tutorial edit quit unalias else rehash undefine end repeat unlet reset fourier reshape version spicetoblt resume where get_output rspice get_param run write goto running xgraph hardcopy rusage steps_completed blt_vnum codemodel halt loadsnap savesnap
 	
     }
     

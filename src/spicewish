@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# the next line starts SpiceWish interactively with the given file name  \
+exec wish  "$0" "$@"
+
+set ::tcl_interactive 1
+
+if { [ llength $argv ] != 1 } {  
+     puts " usage: spicewish filename.cir \n"
+     wm withdraw .  
+     exit
+} else {
+    set fileName $argv
+} 
+
+
+# check file exists
+if {![ file exists $fileName ]} { 
+    puts " file '${fileName}' doesn't exists \n"
+    exit
+} 
+
+if { [ file extension $fileName ] == ".tcl" } {
+    source $fileName
+    
+} else {
+    package require spice
+    spice_init_gui $fileName
+
+    # import the spice namespace
+    namespace import spice::*
+
+    # import the spicewish namespace
+    namespace import -force spicewish::*
+
+    set ::spicewish_mode "standalone"
+}
+
+
+
+
+# readline with prompt set to "tclspice > "
+if {$tcl_interactive} {
+  package require tclreadline
+  proc ::tclreadline::prompt1 { } { return "tclspice > " }
+
+
+  ::tclreadline::Loop
+}
+
+
+
