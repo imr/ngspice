@@ -25,3 +25,6 @@
 
 /* Define if we want some experimental code */ 
 #undef EXPERIMENTAL_CODE
+
+/* Define if we want noise integration code */
+#undef INT_NOISE
