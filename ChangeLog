@@ -1,3 +1,9 @@
+2005-03-06  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/spicelib/devices/bsim4: removed uninitialized variables in model
+	    files.
+	  
+
 2005-02-28  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   DEVICES: Updated (again) changing BSIM4 level from 60 to 14 since
