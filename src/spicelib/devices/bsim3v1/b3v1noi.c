@@ -48,7 +48,7 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 double
-StrongInversionNoiseEval(double vgs, double vds, BSIM3v1model *model, 
+StrongInversionNoiseEval_b3v1(double vgs, double vds, BSIM3v1model *model, 
                          BSIM3v1instance *here, double freq, double temp)
 {
 struct bsim3v1SizeDependParam *pParam;
@@ -256,7 +256,7 @@ int error, i;
 				          vgs = vgs + vds;
 			              }
                                       if (vgs >= here->BSIM3v1von + 0.1)
-			              {   Ssi = StrongInversionNoiseEval(vgs,
+			              {   Ssi = StrongInversionNoiseEval_b3v1(vgs,
 					      vds, model, here, data->freq,
 					      ckt->CKTtemp);
                                           noizDens[BSIM3v1FLNOIZ] *= Ssi;
@@ -271,7 +271,7 @@ int error, i;
 				              * 4.0e36;
 		                          Swi = T10 / T11 * here->BSIM3v1cd * here->BSIM3v1m
 				              * here->BSIM3v1cd * here->BSIM3v1m;
-                                          Slimit = StrongInversionNoiseEval(
+                                          Slimit = StrongInversionNoiseEval_b3v1(
 				               here->BSIM3v1von + 0.1, vds, model,
 					       here, data->freq, ckt->CKTtemp);
 				          T1 = Swi + Slimit;
