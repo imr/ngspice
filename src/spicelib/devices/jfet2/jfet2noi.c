@@ -11,7 +11,6 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 #include <stdio.h>
 #include "jfet2defs.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "suffix.h"

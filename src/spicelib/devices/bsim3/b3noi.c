@@ -1,29 +1,3 @@
-/* $Id$  */
-/*
- $Log$
- Revision 1.1  2000-04-27 20:03:59  pnenzi
- Initial revision
-
- Revision 1.1.1.1  1999/11/15 10:35:08  root
- Rework imported sources
-
- Revision 1.3  1999/08/28 21:00:03  manu
- Big commit - merged ngspice.h, misc.h and util.h - protoized fte
-
- Revision 1.2  1999/08/23 18:14:39  manu
- Added cleanup patch by Arno Peters - also added 'make check' to configure
-
- Revision 1.1.1.1  1999/07/30 09:05:13  root
- NG-Spice starting sources
-
- * Revision 3.2.2 1999/4/20  18:00:00  Weidong
- * BSIM3v3.2.2 release
- *
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /**********
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1995 Gary W. Ng and Min-Chie Jeng.
@@ -36,7 +10,6 @@ File:  b3noi.c
 #include <math.h>
 #include "bsim3def.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "suffix.h"

@@ -8,7 +8,6 @@ Modified: Apr 2000 - Paolo Nenzi
 #include <stdio.h>
 #include "resdefs.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 

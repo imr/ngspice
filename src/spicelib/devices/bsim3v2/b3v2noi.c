@@ -1,17 +1,3 @@
-/* $Id$  */
-/*
- $Log$
- Revision 1.1  2000-04-27 20:03:59  pnenzi
- Initial revision
-
- * Revision 3.2 1998/6/16  18:00:00  Weidong 
- * BSIM3v3.2 release
- *
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1995 Gary W. Ng and Min-Chie Jeng.
@@ -23,7 +9,6 @@ File:  b3v2noi.c
 #include <math.h>
 #include "bsim3v2def.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "suffix.h"

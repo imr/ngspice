@@ -134,14 +134,10 @@ SPICEdev *DEVices[] = {
 };
 
 
-/* my internal global constant for number of device types */
-int DEVmaxnum = sizeof(DEVices)/sizeof(SPICEdev *);
-
-
 int
 num_devices(void)
 {
-    return DEVmaxnum;
+    return sizeof(DEVices)/sizeof(SPICEdev *);
 }
 
 IFdevice **

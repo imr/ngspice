@@ -1,17 +1,3 @@
-/* $Id$  */
-/* 
-$Log$
-Revision 1.1  2000-04-27 20:03:59  pnenzi
-Initial revision
-
- * Revision 3.1  96/12/08  20:00:16  yuhua
- * BSIM3v3.1 release
- * 
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
