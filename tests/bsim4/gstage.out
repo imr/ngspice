@@ -1,12 +1,7 @@
 
 Circuit: ** MOSFET Gain Stage (AC): Benchmarking Implementation of BSIM4.1.0 by Weidong Liu 10/11/2000.
 
-Circuit: ** MOSFET Gain Stage (AC): Benchmarking Implementation of BSIM4.1.0 by Weidong Liu 10/11/2000.
-Date: Wed Oct 11 05:37:12  2000
-
-
 ** MOSFET Gain Stage (AC): Benchmarking Implementation of BSIM4.1.0 by Weidong Liu 10/11/2000.
-AC Analysis  Wed Oct 11 05:37:12  2000
 --------------------------------------------------------------------------------
 Index   frequency                       db(v(3))        
 --------------------------------------------------------------------------------
@@ -85,10 +80,6 @@ Index   frequency                       db(v(3))
 69	7.943282e+08,	0.000000e+00	-5.940545e+01	
 70	1.000000e+09,	0.000000e+00	-6.000260e+01	
 
-CPU time since last call: 0.300 seconds.
 
-Total CPU time: 0.300 seconds.
 
-Current dynamic memory usage = 188416,
-Dynamic memory limit = -18074808.
 
