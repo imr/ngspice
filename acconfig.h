@@ -32,11 +32,11 @@
 /* Undefine HAVE_EKV since it is not included in the standard distribution */
 #undef HAVE_EKV
 
-/* Undefine HAVE_GNUREADLINE */   
+/* Define if we have GNU readline */   
 #undef HAVE_GNUREADLINE
 
-/* Define if we don't have GETOPT in the library */
-#undef HAVE_GETOPT
+/* Define if we have GNU long getopt */   
+#undef HAVE_GNUGETOPT
 
 /* We do not want spurios debug info into non-developer code */
 #undef FTEDEBUG

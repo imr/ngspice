@@ -28,7 +28,7 @@ EXTRA_libmisc_a_SOURCES = \
 		misc_time.h	\
 		wlist.c	
 
-if HAVE_GETOPT_LONG
+if HAVE_GNUGETOPT
 libmisc_a_SOURCES = \
 		alloc.c		\
 		alloc.h		\

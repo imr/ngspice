@@ -16,8 +16,12 @@
 
 #include <sys/types.h>
 
-#define _GNU_SOURCE
+#ifdef HAVE_GNUGETOPT
 #include <getopt.h>
+#else
+#include <misc/getopt.h>
+#endif
+
 
 #include <iferrmsg.h>
 #include <ftedefs.h>

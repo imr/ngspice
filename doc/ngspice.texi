@@ -1870,8 +1870,9 @@ Note: "u2" function has been introduced in rework-11.
 
 The following standard operators are defined:
 
+
 @example
-+       -       *       /       @^{@ }      unary -
++       -       *       /       @{ @}      unary -
 @end example
 
 
@@ -6529,6 +6530,7 @@ and model, but are provided as a quick reference guide.
 
 @node Uniform RC line, Arbitrary Source, Model and Device Parameters, Model and Device Parameters
 @section URC:  Uniform R.C. line
+@example
  
  ------------------------------------------------------------
 |          URC - instance parameters (input-output)         |
@@ -6564,10 +6566,12 @@ and model, but are provided as a quick reference guide.
 | isperl            Saturation current per length           |
 | rsperl            Diode resistance per length             |
  ------------------------------------------------------------
+@end example
 
 
 @node Arbitrary Source, Bipolar Junction Transistor, Uniform RC line, Model and Device Parameters
 @section ASRC:  Arbitrary Source
+@example
  
  ------------------------------------------------------------
 |          ASRC - instance parameters (input-only)          |
@@ -6585,10 +6589,12 @@ and model, but are provided as a quick reference guide.
 | pos_node          Positive Node                           |
 | neg_node          Negative Node                           |
  ------------------------------------------------------------
+@end example
 
 @node Bipolar Junction Transistor, BSIM1 Berkeley Short Channel IGFET Model, Arbitrary Source, Model and Device Parameters
 @section BJT:  Bipolar Junction Transistor
- 
+ @example
+
  ------------------------------------------------------------
 |           BJT - instance parameters (input-only)          |
 |-----------------------------------------------------------+
@@ -6752,10 +6758,12 @@ and model, but are provided as a quick reference guide.
 | transtimevbcfact  Transit time VBC factor                 |
 | excessphasefactor Excess phase fact.                      |
  ------------------------------------------------------------
+@end example
 
 
 @node BSIM1 Berkeley Short Channel IGFET Model, BSIM2 Berkeley Short Channel IGFET Model, Bipolar Junction Transistor, Model and Device Parameters
 @section BSIM1:  Berkeley Short Channel IGFET Model
+@example
  
  ------------------------------------------------------------
 |          BSIM1 - instance parameters (input-only)         |
@@ -6796,7 +6804,7 @@ and model, but are provided as a quick reference guide.
 |          BSIM1 - model parameters (input-output)          |
 |-----------------------------------------------------------+
 | vfb               Flat band voltage                       |
-  lvfb              Length dependence of vfb
+|lvfb               Length dependence of vfb                |
 | wvfb              Width dependence of vfb                 |
 | phi               Strong inversion surface potential      |
  ------------------------------------------------------------
@@ -6820,7 +6828,7 @@ and model, but are provided as a quick reference guide.
 
  
  ---------------------------------------------------------------------
-|          BSIM1 - model input-output parameters - continued|
+|          BSIM1 - model input-output parameters - continued         |
 |--------------------------------------------------------------------+
 |wx2e           Width dependence of x2e                              |
 |x3e            VDS dependence of eta                                |
@@ -6903,10 +6911,12 @@ and model, but are provided as a quick reference guide.
 |wdf            Default width of source drain diffusion in um              |
 |dell           Length reduction of source drain diffusion                 |
  ---------------------------------------------------------------------------
+@end example
 
 
 @node BSIM2 Berkeley Short Channel IGFET Model, Fixed capacitor, BSIM1 Berkeley Short Channel IGFET Model, Model and Device Parameters
 @section BSIM2:  Berkeley Short Channel IGFET Model
+@example
  
  ------------------------------------------------------------
 |          BSIM2 - instance parameters (input-only)         |
@@ -7052,90 +7062,101 @@ and model, but are provided as a quick reference guide.
 | wu1d              Width depence of u1d                    |
 | n0                Subthreshold slope at VDS=0 VBS=0       |
 | ln0               Length dependence of n0                 |
-|                         continued                |
+|                         continued                         |
  ------------------------------------------------------------
 
  
- ------------------------------------------------------------------------
+ --------------------------------------------------------------
 |           BSIM2 - model input-output parameters - continued  |
-|-----------------------------------------------------------------------+
-|wn0            Width dependence of n0                                  |
-|nb             VBS dependence of n                                     |
-|lnb            Length dependence of nb                                 |
-|wnb            Width dependence of nb                                  |
- ------------------------------------------------------------------------
-|nd             VDS dependence of n                                     |
-|lnd            Length dependence of nd                                 |
-|wnd            Width dependence of nd                                  |
-|vof0           Threshold voltage offset AT VDS=0 VBS=0                 |
-|-----------------------------------------------------------------------+
-|lvof0          Length dependence of vof0                               |
-|wvof0          Width dependence of vof0                                |
-|vofb           VBS dependence of vof                                   |
-|lvofb          Length dependence of vofb                               |
- ------------------------------------------------------------------------
-|wvofb          Width dependence of vofb                                |
-|vofd           VDS dependence of vof                                   |
-|lvofd          Length dependence of vofd                               |
-|wvofd          Width dependence of vofd                                |
-|-----------------------------------------------------------------------+
-|ai0            Pre-factor of hot-electron effect.                      |
-|lai0           Length dependence of ai0                                |
-|wai0           Width dependence of ai0                                 |
-|aib            VBS dependence of ai                                    |
- ------------------------------------------------------------------------
-|laib           Length dependence of aib                                |
-|waib           Width dependence of aib                                 |
-|bi0            Exponential factor of hot-electron effect.              |
-|lbi0           Length dependence of bi0                                |
-|-----------------------------------------------------------------------+
-|wbi0           Width dependence of bi0                                 |
-|bib            VBS dependence of bi                                    |
-|lbib           Length dependence of bib                                |
-|wbib           Width dependence of bib                                 |
- ------------------------------------------------------------------------
-|vghigh         Upper bound of the cubic spline function.               |
-|lvghigh        Length dependence of vghigh                             |
-|wvghigh        Width dependence of vghigh                              |
-|vglow          Lower bound of the cubic spline function.               |
-|-----------------------------------------------------------------------+
-|lvglow         Length dependence of vglow                              |
-|wvglow         Width dependence of vglow                               |
-|tox            Gate oxide thickness in um                              |
-|temp           Temperature in degree Celcius                           |
- ------------------------------------------------------------------------
-|vdd            Maximum Vds                                             |
-|vgg            Maximum Vgs                                             |
-|vbb            Maximum Vbs                                             |
-|cgso           Gate source overlap capacitance per unit channel width(m)
-|-----------------------------------------------------------------------+
-|cgdo           Gate drain overlap capacitance per unit channel width(m)|
-|cgbo           Gate bulk overlap capacitance per unit channel length(m)|
-|xpart          Flag for channel charge partitioning                    |
+|--------------------------------------------------------------+
+|wn0            Width dependence of n0                         |
+|nb             VBS dependence of n                            |
+|lnb            Length dependence of nb                        |
+|wnb            Width dependence of nb                         |
+ --------------------------------------------------------------+
+|nd             VDS dependence of n                            |
+|lnd            Length dependence of nd                        |
+|wnd            Width dependence of nd                         |
+|vof0           Threshold voltage offset AT VDS=0 VBS=0        |
+|--------------------------------------------------------------+
+|lvof0          Length dependence of vof0                      |
+|wvof0          Width dependence of vof0                       |
+|vofb           VBS dependence of vof                          |
+|lvofb          Length dependence of vofb                      |
+ --------------------------------------------------------------+
+|wvofb          Width dependence of vofb                       |
+|vofd           VDS dependence of vof                          |
+|lvofd          Length dependence of vofd                      |
+|wvofd          Width dependence of vofd                       |
+|--------------------------------------------------------------+
+|ai0            Pre-factor of hot-electron effect.             |
+|lai0           Length dependence of ai0                       |
+|wai0           Width dependence of ai0                        |
+|aib            VBS dependence of ai                           |
+ --------------------------------------------------------------+
+|laib           Length dependence of aib                       |
+|waib           Width dependence of aib                        |
+|bi0            Exponential factor of hot-electron effect.     |
+|lbi0           Length dependence of bi0                       |
+|--------------------------------------------------------------+
+|wbi0           Width dependence of bi0                        |
+|bib            VBS dependence of bi                           |
+|lbib           Length dependence of bib                       |
+|wbib           Width dependence of bib                        |
+ --------------------------------------------------------------+
+|vghigh         Upper bound of the cubic spline function.      |
+|lvghigh        Length dependence of vghigh                    |
+|wvghigh        Width dependence of vghigh                     |
+|vglow          Lower bound of the cubic spline function.      |
+|--------------------------------------------------------------+
+|lvglow         Length dependence of vglow                     |
+|wvglow         Width dependence of vglow                      |
+|tox            Gate oxide thickness in um                     |
+|temp           Temperature in degree Celcius                  |
+ --------------------------------------------------------------+
+|vdd            Maximum Vds                                    |
+|vgg            Maximum Vgs                                    |
+|vbb            Maximum Vbs                                    |
+|cgso           Gate source overlap capacitance per unit       |
+|               channel width(m)                               |
+|--------------------------------------------------------------+
+|cgdo           Gate drain overlap capacitance                 |
+|               per unit channel width(m)                      |
+|cgbo           Gate bulk overlap capacitance                  |
+|               per unit channel length(m)                     |
+|xpart          Flag for channel charge partitioning           |
 |                               continued                      |
- ------------------------------------------------------------------------
+ ---------------------------------------------------------------
 
  
- ---------------------------------------------------------------------------
-|             BSIM2 - model input-output parameters - continued   |
-|--------------------------------------------------------------------------+
-|rsh            Source drain diffusion sheet resistance in ohm per square  |
-|js             Source drain junction saturation current per unit area     |
-|pb             Source drain junction built in potential                   |
- mj             Source drain bottom junction capacitance grading coefficient
-|                                                                          |
- ---------------------------------------------------------------------------
-|pbsw           Source drain side junction capacitance built in potential  |
-|mjsw           Source drain side junction capacitance grading coefficient |
-|cj             Source drain bottom junction capacitance per unit area     |
-|cjsw           Source drain side junction capacitance per unit area       |
-|wdf            Default width of source drain diffusion in um              |
-|dell           Length reduction of source drain diffusion                 |
- ---------------------------------------------------------------------------
+ ---------------------------------------------------------------
+|             BSIM2 - model input-output parameters            |
+|--------------------------------------------------------------+
+|rsh            Source drain diffusion sheet resistance        |
+|               in ohm per square                              |
+|js             Source drain junction saturation current       |
+|               per unit area                                  |
+|pb             Source drain junction built in potential       |
+|mj             Source drain bottom junction capacitance       |
+|               grading coefficient                            |
+ --------------------------------------------------------------+
+|pbsw           Source drain side junction capacitance         |
+|               built in potential                             |
+|mjsw           Source drain side junction capacitance         |
+|               grading coefficient                            |
+|cj             Source drain bottom junction capacitance       |
+|               per unit area                                  |
+|cjsw           Source drain side junction capacitance         |
+|               per unit area                                  |
+|wdf            Default width of source drain diffusion in um  |
+|dell           Length reduction of source drain diffusion     |
+ ---------------------------------------------------------------
+@end example
 
 
 @node Fixed capacitor, Current controlled current source, BSIM2 Berkeley Short Channel IGFET Model, Model and Device Parameters
 @section Capacitor:  Fixed capacitor
+@example
  
  ------------------------------------------------------------
 |       Capacitor - instance parameters (input-output)      |
@@ -7170,10 +7191,12 @@ and model, but are provided as a quick reference guide.
 | defw              Default width                           |
 | narrow            width correction factor                 |
  ------------------------------------------------------------
+@end example
 
 
 @node Current controlled current source, Linear current controlled current source, Fixed capacitor, Model and Device Parameters
 @section CCCS:  Current controlled current source
+@example
  
  ------------------------------------------------------------
 |         CCCS - instance parameters (input-output)         |
@@ -7192,10 +7215,12 @@ and model, but are provided as a quick reference guide.
 | v                 CCCS voltage at output                  |
 | p                 CCCS power                              |
  ------------------------------------------------------------
+@end example
 
 
 @node Linear current controlled current source, Current controlled ideal switch, Current controlled current source, Model and Device Parameters
 @section CCVS:  Linear current controlled current source
+@example
  
  ------------------------------------------------------------
 |         CCVS - instance parameters (input-output)         |
@@ -7214,11 +7239,13 @@ and model, but are provided as a quick reference guide.
 | v                 CCVS output voltage                     |
 | p                 CCVS power                              |
  ------------------------------------------------------------
+@end example
 
 
 
 @node Current controlled ideal switch, Junction Diode model, Linear current controlled current source, Model and Device Parameters
 @section CSwitch:  Current controlled ideal switch
+@example
  
  ------------------------------------------------------------
 |         CSwitch - instance parameters (input-only)        |
@@ -7262,10 +7289,12 @@ and model, but are provided as a quick reference guide.
 | gon               Closed conductance                      |
 | goff              Open conductance                        |
  ------------------------------------------------------------
+@end example
 
 
 @node Junction Diode model, Inductor, Current controlled ideal switch, Model and Device Parameters
 @section Diode:  Junction Diode model
+@example
  
  ------------------------------------------------------------
 |         Diode - instance parameters (input-output)        |
@@ -7329,10 +7358,12 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | cond              Ohmic conductance                       |
  ------------------------------------------------------------
+@end example
 
 
 @node Inductor, Mutual inductors, Junction Diode model, Model and Device Parameters
 @section Inductor:  Inductors
+@example
  
  ------------------------------------------------------------
 |       Inductor - instance parameters (input-output)       |
@@ -7353,10 +7384,12 @@ and model, but are provided as a quick reference guide.
  p              instantaneous power dissipated by the inductor
 |                                                            |
  -------------------------------------------------------------
+@end example
 
 
 @node Mutual inductors, Independent current source, Inductor, Model and Device Parameters
 @section mutual:  Mutual inductors
+@example
  
  ------------------------------------------------------------
 |        mutual - instance parameters (input-output)        |
@@ -7366,10 +7399,12 @@ and model, but are provided as a quick reference guide.
 | inductor1         First coupled inductor                  |
 | inductor2         Second coupled inductor                 |
  ------------------------------------------------------------
+@end example
 
 
 @node Independent current source, Junction Field effect transistor, Mutual inductors, Model and Device Parameters
 @section Isource:  Independent current source
+@example
  
  ------------------------------------------------------------
 |         Isource - instance parameters (input-only)        |
@@ -7411,10 +7446,12 @@ and model, but are provided as a quick reference guide.
 | v                 Voltage across the supply               |
 | p                 Power supplied by the source            |
  ------------------------------------------------------------
+@end example
 
 
 @node Junction Field effect transistor, Lossy transmission line, Independent current source, Model and Device Parameters
 @section JFET:  Junction Field effect transistor
+@example
  
  ------------------------------------------------------------
 |         JFET - instance parameters (input-output)         |
@@ -7472,7 +7509,7 @@ and model, but are provided as a quick reference guide.
 | rd                Drain ohmic resistance                  |
 | rs                Source ohmic resistance                 |
 | cgs               G-S junction capactance                 |
-|                         continued                |
+|                         continued                         |
  ------------------------------------------------------------
 
  
@@ -7498,10 +7535,12 @@ and model, but are provided as a quick reference guide.
 | gd                Drain conductance                       |
 | gs                Source conductance                      |
  ------------------------------------------------------------
+@end example
 
 
 @node Lossy transmission line, GaAs MESFET model, Junction Field effect transistor, Model and Device Parameters
 @section LTRA:  Lossy transmission line
+@example
  
  ------------------------------------------------------------
 |          LTRA - instance parameters (input-only)          |
@@ -7541,22 +7580,24 @@ and model, but are provided as a quick reference guide.
 |len             length of line                             |
 |nocontrol       No timestep control                        |
 |steplimit       always limit timestep to 0.8*(delay of line)
-|                         continued                |
+|                         continued                         |
  ------------------------------------------------------------
 
- -----------------------------------------------------------------------------------
-|                 LTRA - model input-output parameters - continued        |
-|----------------------------------------------------------------------------------+
-|nosteplimit    don't always limit timestep to 0.8*(delay of line)                 |
-|lininterp      use linear interpolation                                           |
-|quadinterp     use quadratic interpolation                                        |
-|mixedinterp    use linear interpolation if quadratic results look unacceptable    |
- -----------------------------------------------------------------------------------
-|truncnr        use N-R iterations for step calculation in LTRAtrunc               |
-|truncdontcut   don't limit timestep to keep impulse response calculation errors low
-|compactrel     special reltol for straight line checking                          |
-|compactabs     special abstol for straight line checking                          |
- -----------------------------------------------------------------------------------
+ ---------------------------------------------------------------------
+|                 LTRA - model input-output parameters - continued    |
+|---------------------------------------------------------------------+
+|nosteplimit    don't always limit timestep to 0.8*(delay of line)    |
+|lininterp      use linear interpolation                              |
+|quadinterp     use quadratic interpolation                           |
+|mixedinterp    use linear interpolation if quadratic results         |
+|               look unacceptable                                     | 
+ ---------------------------------------------------------------------
+|truncnr        use N-R iterations for step calculation in LTRAtrunc  |
+|truncdontcut   don't limit timestep to keep impulse response         |
+|               calculation errors low                                |
+|compactrel     special reltol for straight line checking             |
+|compactabs     special abstol for straight line checking             |
+ ---------------------------------------------------------------------
 
  
  ------------------------------------------------------------
@@ -7565,10 +7606,12 @@ and model, but are provided as a quick reference guide.
 | rel               Rel. rate of change of deriv. for bkpt  |
 | abs               Abs. rate of change of deriv. for bkpt  |
  ------------------------------------------------------------
+@end example
 
 
 @node GaAs MESFET model, Level 1 MOSfet model, Lossy transmission line, Model and Device Parameters
 @section MES:  GaAs MESFET model
+@example
  
  ------------------------------------------------------------
 |          MES - instance parameters (input-output)         |
@@ -7656,10 +7699,12 @@ and model, but are provided as a quick reference guide.
 | depl_cap          Depletion capacitance                   |
 | vcrit             Critical voltage                        |
  ------------------------------------------------------------
+@end example
 
 
 @node Level 1 MOSfet model, Level 2 MOSfet model, GaAs MESFET model, Model and Device Parameters
 @section Mos1:  Level 1 MOSfet model with  Meyer capacitance model
+@example
  
  ------------------------------------------------------------
 |          Mos1 - instance parameters (input-only)          |
@@ -7826,10 +7871,12 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | type              N-channel or P-channel MOS              |
  ------------------------------------------------------------
+@end example
 
 
 @node Level 2 MOSfet model, Level 3 MOSfet model, Level 1 MOSfet model, Model and Device Parameters
 @section Mos2:  Level 2 MOSfet model with Meyer capacitance model
+@example
  
  ------------------------------------------------------------
 |          Mos2 - instance parameters (input-only)          |
@@ -8001,10 +8048,12 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | type              N-channel or P-channel MOS              |
  ------------------------------------------------------------
+@end example
 
 
 @node Level 3 MOSfet model, Level 6 MOSfet model, Level 2 MOSfet model, Model and Device Parameters
 @section Mos3: Level 3 MOSfet model with Meyer capacitance model
+@example
 
  
  ------------------------------------------------------------
@@ -8179,10 +8228,12 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | type              N-channel or P-channel MOS              |
  ------------------------------------------------------------
+@end example
 
 
 @node Level 6 MOSfet model, Simple linear resistor, Level 3 MOSfet model, Model and Device Parameters
 @section Mos6: Level 6 MOSfet model with Meyer capacitance model
+@example
 
  
  ------------------------------------------------------------
@@ -8353,10 +8404,12 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | type              N-channel or P-channel MOS              |
  ------------------------------------------------------------
+@end example
 
 
 @node Simple linear resistor, Ideal voltage controlled switch, Level 6 MOSfet model, Model and Device Parameters
 @section Resistor:  Simple linear resistor
+@example
  
  ------------------------------------------------------------
 |       Resistor - instance parameters (input-output)       |
@@ -8393,10 +8446,12 @@ and model, but are provided as a quick reference guide.
 | defw              Default device width                    |
 | tnom              Parameter measurement temperature       |
  ------------------------------------------------------------
+@end example
 
 
 @node Ideal voltage controlled switch, Lossless transmission line, Simple linear resistor, Model and Device Parameters
 @section Switch:  Ideal voltage controlled switch
+@example
  
  ------------------------------------------------------------
 |         Switch - instance parameters (input-only)         |
@@ -8441,10 +8496,12 @@ and model, but are provided as a quick reference guide.
 | gon               Conductance when closed                 |
 | goff              Conductance when open                   |
  ------------------------------------------------------------
+@end example
 
 
 @node Lossless transmission line, Voltage controlled current source, Ideal voltage controlled switch, Model and Device Parameters
 @section Tranline:  Lossless transmission line
+@example
  
  ------------------------------------------------------------
 |        Tranline - instance parameters (input-only)        |
@@ -8481,10 +8538,12 @@ and model, but are provided as a quick reference guide.
 | neg_node2         Negative node of end 2 of t. line       |
 | delays            Delayed values of excitation            |
  ------------------------------------------------------------
+@end example
 
 
 @node Voltage controlled current source, Voltage controlled voltage source, Lossless transmission line, Model and Device Parameters
 @section VCCS:  Voltage controlled current source
+@example
  
  ------------------------------------------------------------
 |          VCCS - instance parameters (input-only)          |
@@ -8512,10 +8571,12 @@ and model, but are provided as a quick reference guide.
 | v                 Voltage across output                   |
 | p                 Power                                   |
  ------------------------------------------------------------
+@end example
 
 
 @node Voltage controlled voltage source, Independent voltage source, Voltage controlled current source, Model and Device Parameters
 @section VCVS:  Voltage controlled voltage source
+@example
  
  ------------------------------------------------------------
 |          VCVS - instance parameters (input-only)          |
@@ -8543,10 +8604,12 @@ and model, but are provided as a quick reference guide.
 | v                 Output voltage                          |
 | p                 Power                                   |
  ------------------------------------------------------------
+@end example
 
 
 @node Independent voltage source,  , Voltage controlled voltage source, Model and Device Parameters
 @section Vsource:  Independent voltage source
+@example
  
  ------------------------------------------------------------
 |         Vsource - instance parameters (input-only)        |
@@ -8587,5 +8650,6 @@ and model, but are provided as a quick reference guide.
 | i                 Voltage source current                  |
 | p                 Instantaneous power                     |
  ------------------------------------------------------------
+@end example
 
 @bye

@@ -1,3 +1,7 @@
+2001-12-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* ngspice.texi: corrected a few bugs, and made some chapters readable.
+
 2000-05-22  Paolo Nenzi <p.nenzi@ieee.org>
 	* ngspice.texi: Added text for u2 function and for resistance ac
 	                paramter.

@@ -179,9 +179,9 @@ AC_CHECK_LIB(gc,GC_malloc,AC_DEFINE(HAVE_LIBGC) LIBS="$LIBS -lgc")
 dnl Check for the asprintf function:
 AC_CHECK_FUNCS(asprintf)
 
-
-AC_CHECK_FUNC(getopt_long, getopt_long=true)
-AM_CONDITIONAL(HAVE_GETOPT_LONG, test "$getopt_long" = "true")
+dnl Check for the GNU long getopt_long:
+AC_CHECK_FUNC(getopt_long, AC_DEFINE(HAVE_GNUGETOPT) getopt_long=true)
+AM_CONDITIONAL(HAVE_GNUGETOPT, test "$getopt_long" = "true")
 
 # Expand the prefix variable (this is really annoying!)
 if eval "test x$prefix = xNONE"; then

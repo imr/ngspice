@@ -1,3 +1,8 @@
+2001-12-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* maths/cmaths/Makefile.am (noinst_PROGRAMS): test programs
+	shouldnt get installed
+
 2000-10-13  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* ngspice.txt: changes SPICE: to NGSPICE: to restore help
