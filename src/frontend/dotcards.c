@@ -167,6 +167,7 @@ ft_cktcoms(bool terse)
     static wordlist twl = { "col", NULL, NULL } ;
     struct plot *pl;
     int i, found;
+    char numbuf[BSIZE_SP]; /* For printnum*/
 
     all.wl_next = NULL;
     all.wl_word = "all";
@@ -207,16 +208,18 @@ ft_cktcoms(bool terse)
 				v->v_name);
 			continue;
 		    }
-		    if ((v->v_type == SV_VOLTAGE) && (*(v->v_name)!='@'))
-			fprintf(cp_out, "\t%-30s%15s\n", v->v_name,
-				printnum(v->v_realdata[0]));
+		    if ((v->v_type == SV_VOLTAGE) && (*(v->v_name)!='@')) {
+			printnum(numbuf, v->v_realdata[0]);
+			fprintf(cp_out, "\t%-30s%15s\n", v->v_name, numbuf);
+				}
 		}
 		fprintf(cp_out, "\n\tSource\tCurrent\n");
 		fprintf(cp_out, "\t------\t-------\n\n");
 		for (v = plot_cur->pl_dvecs; v; v = v->v_next)
-		    if (v->v_type == SV_CURRENT)
-			fprintf(cp_out, "\t%-30s%15s\n", v->v_name,
-				printnum(v->v_realdata[0]));
+		    if (v->v_type == SV_CURRENT) {
+			printnum(numbuf, v->v_realdata[0]);
+			fprintf(cp_out, "\t%-30s%15s\n", v->v_name, numbuf);
+			}
 		fprintf(cp_out, "\n");
 
 		if (!ft_nomod)
@@ -378,6 +381,7 @@ static void
 fixdotplot(wordlist *wl)
 {
     char buf[BSIZE_SP], *s;
+    char numbuf[128]; /* Printnum Fix */
     double *d, d1, d2;
 
     while (wl) {
@@ -408,13 +412,14 @@ fixdotplot(wordlist *wl)
             wl->wl_next = alloc(struct wordlist);
             wl->wl_next->wl_prev = wl;
             wl = wl->wl_next;
-            (void) strcpy(buf, printnum(d1));
-            wl->wl_word = copy(buf);
+            
+            printnum(numbuf, d1);
+            wl->wl_word = copy(numbuf);
             wl->wl_next = alloc(struct wordlist);
             wl->wl_next->wl_prev = wl;
             wl = wl->wl_next;
-            (void) strcpy(buf, printnum(d2));
-            wl->wl_word = copy(buf);
+            printnum(numbuf, d2);
+            wl->wl_word = copy(numbuf);
         }
         wl = wl->wl_next;
     }

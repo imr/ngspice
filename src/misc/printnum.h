@@ -6,6 +6,6 @@
 #ifndef PRINTNUM_H_INCLUDED
 #define PRINTNUM_H_INCLUDED
 
-char * printnum(double num);
+void printnum(char * buf, double num);
 
 #endif

@@ -74,6 +74,7 @@ com_print(wordlist *wl)
     bool col = TRUE, nobreak = FALSE, noprintscale, plotnames = FALSE;
     bool optgiven = FALSE;
     char *s, buf[BSIZE_SP], buf2[BSIZE_SP];
+    char numbuf[BSIZE_SP], numbuf2[BSIZE_SP];
     int ngood;
 
     if (wl == NULL)
@@ -140,17 +141,20 @@ com_print(wordlist *wl)
             ll = 10;
             if (v->v_length == 1) {
                 if (isreal(v)) {
-                    out_printf("%s = %s\n", buf,
-                        printnum(*v->v_realdata));
+                	printnum(numbuf, *v->v_realdata);
+                    out_printf("%s = %s\n", buf, numbuf);
                 } else {
                  /*DG: memory leak here copy of the string returned by printnum will never be freed 
                     out_printf("%s = %s,%s\n", buf,
                         copy(printnum(realpart(v->v_compdata))),
-                        copy(printnum(imagpart(v->v_compdata))));
-                   */
+                        copy(printnum(imagpart(v->v_compdata)))); */
+                        
+                    printnum(numbuf,  realpart(v->v_compdata));
+                    printnum(numbuf2, imagpart(v->v_compdata));
+                    
                     out_printf("%s = %s,%s\n", buf,
-                        printnum(realpart(v->v_compdata)),
-                        printnum(imagpart(v->v_compdata)));
+                        numbuf,
+                        numbuf2);
                    
 
                 }
@@ -158,8 +162,9 @@ com_print(wordlist *wl)
                 out_printf("%s = (  ", buf);
                 for (i = 0; i < v->v_length; i++)
                     if (isreal(v)) {
-                        (void) strcpy(buf,
-                           printnum(v->v_realdata[i]));
+                    	
+                    	printnum(numbuf, v->v_realdata[i]);
+                        (void) strcpy(buf, numbuf);
                         out_send(buf);
                         ll += strlen(buf);
                         ll = (ll + 7) / 8;
@@ -171,9 +176,11 @@ com_print(wordlist *wl)
                             out_send("\t");
                     } else {
                         /*DG*/
+                        printnum(numbuf,  realpart(&v->v_compdata[i]));
+                        printnum(numbuf2, imagpart(&v->v_compdata[i]));
                         (void) sprintf(buf, "%s,%s",
-                            printnum(realpart(&v->v_compdata[i])),
-                            printnum(imagpart(&v->v_compdata[i])));
+                            numbuf,
+                            numbuf2);
                         out_send(buf);
                         ll += strlen(buf);
                         ll = (ll + 7) / 8;

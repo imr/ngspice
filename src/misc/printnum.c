@@ -1,10 +1,11 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+Modified: 2001 Paolo Nenzi
 **********/
 
-/* Print a number in a reasonable form.  This is the sort of thing that
- * %G does, but more appropriate for spice.  Returns static data.
+/* Paolo Nenzi 2001: printnum  does not returns static data anymore. 
+ * It is up to the caller to allocate space for strings.
  */
 
 #include "ngspice.h"
@@ -13,10 +14,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 int cp_numdgt = -1;
 
-char *
-printnum(double num)
+void printnum(char *buf, double num)
 {
-    static char buf[128];
     int n;
 
     if (cp_numdgt > 1)
@@ -27,6 +26,5 @@ printnum(double num)
         n--;
 
     (void) sprintf(buf, "%.*e", n, num);
-
-    return (buf);
+    
 }
