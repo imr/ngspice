@@ -314,7 +314,7 @@ extern int CKTnames(CKTcircuit *, int *, IFuid **);
 extern int CKTnewAnal( void *, int , IFuid , void **, void *);
 extern int CKTnewEq( void *, void **, IFuid );
 extern int CKTnewNode( void *, void **, IFuid );
-extern int CKTnewTask( void *, void **, IFuid );
+extern int CKTnewTask( void *, void **, IFuid, void ** );
 extern int CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data);
 extern IFuid CKTnodName( CKTcircuit *, int );
 extern void CKTnodOut( CKTcircuit *);
