@@ -1,3 +1,8 @@
+2004-02-14  Paolo Nenzi <p.nenzi@ieee.ord>
+
+	*   Trimmed the autoconf interfaces. Added dummy ".out" files
+	    into many tests subdirectories and modified many Makefile.amS.
+
 2004-02-05  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/spicelib/analysis/cktntask.c: Bug: not all the values
