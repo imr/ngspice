@@ -1,3 +1,9 @@
+2004-08-15  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   configure.in, src/spinit.in: Added a variable in configure.in
+	    to decomment codemodels lines in spinit if --enable-xspice is
+	    issued in the configure phase. It is a hack but works.
+
 2004-08-14  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/main.c: The code for -o option contained an error that
