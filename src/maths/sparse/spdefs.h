@@ -255,13 +255,17 @@
 #define FREE(ptr) { if ((ptr) != NULL) txfree((char *)(ptr)); (ptr) = NULL; }
 
 
-/* Calloc that properly handles allocating a cleared vector. */
-#define CALLOC(ptr,type,number)                         \
-{   int i; ptr = ALLOC(type, number);                   \
-    if (ptr != (type *)NULL)                            \
-        for(i=(number)-1;i>=0; i--) ptr[i] = (type) 0;  \
-}
 
+/* A new calloc */
+#ifndef HAVE_LIBGC
+#define CALLOC(ptr,type,number)                    	     \
+{ ptr = (type *) calloc(type, number); 		             \
+}
+#else /* HAVE_LIBCG */
+#define CALLOC(ptr,type,number)                         	\
+{ ptr = (type *) tmalloc(((size_t)number) * sizeof(type));	\
+}
+#endif
 
 #include "complex.h"
 
