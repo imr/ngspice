@@ -53,8 +53,6 @@ libfte_a_SOURCES = \
 	fourier.h	\
 	gens.c		\
 	gens.h		\
-	graphdb.c	\
-	graphdb.h	\
 	inp.c		\
 	inp.h		\
 	inpcom.c	\

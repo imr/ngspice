@@ -1,3 +1,11 @@
+2000-06-15  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/frontend/graphdb.c, src/frontend/graphdb.c,
+	src/frontend/Makefile.am, src/frontend/plotting/graphdb.c,
+	src/frontend/plotting/graphdb.c,
+	src/frontend/plotting/Makefile.am: Moved plotting specific files
+	into plotting directory.
+
 2000-06-05  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* tests/*: Added a little hierarchy to the tests.  Removed

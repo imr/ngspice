@@ -9,6 +9,8 @@ libplotting_a_SOURCES = \
 	clip.h		\
 	graf.c		\
 	graf.h		\
+	graphdb.c	\
+	graphdb.h	\
 	grid.c		\
 	grid.h		\
 	pvec.c		\
