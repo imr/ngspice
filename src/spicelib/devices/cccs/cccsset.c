@@ -10,7 +10,6 @@ Author: 1985 Thomas L. Quarles
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "cccsdefs.h"
@@ -20,11 +19,7 @@ Author: 1985 Thomas L. Quarles
 
 /*ARGSUSED*/
 int
-CCCSsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+CCCSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 {
     CCCSmodel *model = (CCCSmodel*)inModel;
     CCCSinstance *here;

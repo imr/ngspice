@@ -9,7 +9,6 @@ Author: 1987
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -20,12 +19,7 @@ Author: 1987
 
 /* ARGSUSED */
 int
-CCCSask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+CCCSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
     CCCSinstance *here = (CCCSinstance*)inst;
     double vr;

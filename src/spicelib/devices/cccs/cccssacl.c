@@ -10,7 +10,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "cccsdefs.h"
@@ -19,9 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CCCSsAcLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+CCCSsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     CCCSmodel *model = (CCCSmodel*)inModel;
     CCCSinstance *here;

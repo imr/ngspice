@@ -6,18 +6,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cccsdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-CCCSdelete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
-
+CCCSdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
 
     CCCSmodel *model = (CCCSmodel*)inModel;

@@ -6,14 +6,12 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cccsdefs.h"
 #include "suffix.h"
 
 
 void
-CCCSdestroy(inModel)
-    GENmodel **inModel;
+CCCSdestroy(GENmodel **inModel)
 
 {
     CCCSmodel **model = (CCCSmodel**)inModel;
