@@ -11,7 +11,6 @@ Author: 1985 Thomas L. Quarles
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "sperror.h"
 #include "cktdefs.h"
@@ -49,6 +48,12 @@ CKTinst2Node(void *ckt, void *instPtr, int terminal, void **node, IFuid *nodeNam
             case 5:
                 nodenum = ((GENinstance *)instPtr)->GENnode5;
                 break;
+	    case 6:
+                nodenum = ((GENinstance *)instPtr)->GENnode6;
+                break;
+	    case 7:
+                nodenum = ((GENinstance *)instPtr)->GENnode7;
+                break;	
         }
         /* ok, now we know its number, so we just have to find it.*/
         for(here = ((CKTcircuit*)ckt)->CKTnodes;here;here = here->next) {

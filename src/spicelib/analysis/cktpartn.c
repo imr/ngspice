@@ -9,7 +9,6 @@ Author: 1992 David A. Gates, UC Berkeley CADgroup
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "const.h"

@@ -11,7 +11,6 @@ Author: 1985 Thomas L. Quarles
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "cktdefs.h"
 #include "sperror.h"

@@ -13,7 +13,6 @@ Author: 1987 Gary W. Ng
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "iferrmsg.h"

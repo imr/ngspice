@@ -15,7 +15,6 @@ Author: 1985 Thomas L. Quarles
 #include "const.h"
 #include "optdefs.h"
 #include "ifsim.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "spmatrix.h"
 

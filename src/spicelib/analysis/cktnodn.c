@@ -12,9 +12,7 @@ Author: 1985 Thomas L. Quarles
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
-
 
 
 IFuid

@@ -16,7 +16,6 @@ Author: 1988 Jaijeet S Roychowdhury
 #include "iferrmsg.h"
 #include "distodef.h"
 #include "sperror.h"
-#include <stdio.h>
 
 
 int

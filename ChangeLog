@@ -1,3 +1,8 @@
+2004-01-11  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/spicelib/analysis/*: Removed redundant includes. File stdio.h
+	    is already included via ngspice.h.
+
 2004-01-10  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   configure.in: changed version to rework-15pre2.

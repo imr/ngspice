@@ -5,7 +5,6 @@ Modified: 2000  AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "sperror.h"
 #include "ifsim.h"

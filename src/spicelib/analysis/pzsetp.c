@@ -4,7 +4,7 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 
-#include <stdio.h>
+#include "ngspice.h"
 #include "ifsim.h"
 #include "iferrmsg.h"
 #include "pzdefs.h"

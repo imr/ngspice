@@ -18,7 +18,6 @@ Author: 1987 Gary W. Ng
  *   Hence, the reason for the constant 'N_INTUSELOG'.
  */
 
-#include <stdio.h>
 #include "ngspice.h"
 #include "noisedef.h"
 

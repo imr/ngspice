@@ -4,12 +4,10 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 
-
-
 #define ccap (qcap+1)
+
 
 void
 CKTterr(int qcap, CKTcircuit *ckt, double *timeStep)

@@ -3,8 +3,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
 **********/
 
-
-#include <stdio.h>
+#include "ngspice.h"
 #include "ifsim.h"
 #include "iferrmsg.h"
 #include "cktdefs.h"

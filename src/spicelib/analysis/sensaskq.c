@@ -3,7 +3,6 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "iferrmsg.h"
 #include "cktdefs.h"

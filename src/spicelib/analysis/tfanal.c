@@ -6,7 +6,6 @@ Author: 1988 Thomas L. Quarles
 /* subroutine to do DC Transfer Function analysis     */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "ifsim.h"
 #include "sperror.h"

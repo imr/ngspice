@@ -5,7 +5,6 @@ Modified 2001: AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "acdefs.h"
 #include "devdefs.h"

@@ -4,12 +4,11 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 /* CKTmkVolt
- *  make the given name a 'node' of type current in the 
+ *  make the given name a 'node' of type voltage in the 
  * specified circuit
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "sperror.h"
 #include "cktdefs.h"
