@@ -215,9 +215,6 @@ extern struct dvec *op_times();
 extern struct dvec *op_uminus();
 extern struct dvec *op_range();
 
-/* fourier.c */
-
-extern void com_fourier();
 
 /* spec.c */
 
