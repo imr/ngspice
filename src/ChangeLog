@@ -1,3 +1,13 @@
+2000-07-20  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/circuit/*: moved these files into src/devices/parser.  The
+	files in this directory take a model line from the input file and
+	add the corresponding element to the representation of
+	the circuit in memory.
+
+	* configure.in, src/Makefile.am, src/devices/Makefile.am: Files
+	affected by the move.
+
 2000-07-18  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* main.c: Added the call to the initialization function of the

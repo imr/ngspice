@@ -61,7 +61,7 @@ ngspice_LDADD = \
 	devices/libdev.a \
 	parser/libparser.a \
 	hlp/libhlp.a \
-	circuit/libinp.a \
+	devices/parser/libinp.a \
 	maths/deriv/libderiv.a \
 	maths/cmaths/libcmaths.a \
 	maths/poly/libpoly.a \
@@ -121,7 +121,7 @@ proc2mod_SOURCES = proc2mod.c
 
 proc2mod_LDADD =  \
 	parser/libparser.a \
-	circuit/libinp.a \
+	devices/parser/libinp.a \
 	misc/libmisc.a 
 
 

@@ -198,7 +198,6 @@ man/Makefile			\
 man/man1/Makefile		\
 src/Makefile			\
 src/analysis/Makefile		\
-src/circuit/Makefile		\
 src/devices/Makefile		\
 src/devices/asrc/Makefile	\
 src/devices/bjt/Makefile	\
@@ -230,6 +229,7 @@ src/devices/urc/Makefile	\
 src/devices/vccs/Makefile	\
 src/devices/vcvs/Makefile	\
 src/devices/vsrc/Makefile	\
+src/devices/parser/Makefile	\
 src/frontend/Makefile		\
 src/frontend/plotting/Makefile	\
 src/hlp/Makefile		\
