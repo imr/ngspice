@@ -3,11 +3,9 @@ Copyright 1999 AG inc.  All rights reserved.
 Author: 1999 Alan Gillespie
 **********/
 
-#include "spice.h"
+#include "ngspice.h"
 #include <stdio.h>
-#include "cktdefs.h"
-#include "util.h"
-#include "misc.h"
+#include "cktdefs.h"
 #include "suffix.h"
 
 void
@@ -29,13 +27,13 @@ CKTncDump(ckt)
       old =  *((ckt->CKTrhs) + i ) ;
       fprintf(stdout,"%-30s %20g %20g", node->name, new, old);
       if(node->type == 3) {
-          tol =  ckt->CKTreltol * (MAX(FABS(old),FABS(new))) +
+          tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
                   ckt->CKTvoltTol;
       } else {
-          tol =  ckt->CKTreltol * (MAX(FABS(old),FABS(new))) +
+          tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
                   ckt->CKTabstol;
       }
-      if (FABS(new-old) >tol ) {
+      if (fabs(new-old) >tol ) {
            fprintf(stdout," *");
       }
       fprintf(stdout,"\n");

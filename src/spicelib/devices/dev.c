@@ -55,7 +55,7 @@
 
 #include "asrc/asrcitf.h"
 #include "bjt/bjtitf.h"
-#include "bjt2/bjt2itf.h"
+/* #include "bjt2/bjt2itf.h" */
 #include "bsim1/bsim1itf.h"
 #include "bsim2/bsim2itf.h"
 #include "bsim3/bsim3itf.h"
@@ -102,7 +102,8 @@ spice_init_devices(void)
     DEVices[ 0] = get_urc_info();
     DEVices[ 1] = get_asrc_info();
     DEVices[ 2] = get_bjt_info();
-    DEVices[ 3] = get bjt2_info();
+    DEVices[ 3] = get_bjt_info(); /* Quick hack until bjt2 works */
+  /*  DEVices[ 3] = get bjt2_info(); */
     DEVices[ 4] = get_bsim1_info();
     DEVices[ 5] = get_bsim2_info();
     DEVices[ 6] = get_bsim3_info();

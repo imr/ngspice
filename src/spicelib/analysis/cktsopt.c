@@ -231,7 +231,7 @@ static IFparm OPTtbl[] = {
  { "copynodesets", OPT_COPYNODESETS, IF_SET|IF_FLAG,
       "Copy nodesets from device terminals to internal nodes" },
  { "nodedamping", OPT_NODEDAMPING, IF_SET|IF_FLAG,
-	 "Limit iter-iter change in node voltages" },
+	 "Limit iteration to iteration node voltage change" },
  { "absdv", OPT_ABSDV, IF_SET|IF_REAL,
 	 "Maximum absolute iter-iter node voltage change" },
  { "reldv", OPT_RELDV, IF_SET|IF_REAL,
