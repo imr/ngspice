@@ -192,3 +192,7 @@ spice2poly.cm: $(SUBDIRS)/cfunc.o $(SUBDIRS)/ifspec.o dlmain.o
 dlmain.o: dlmain.c cmextrn.h udnextrn.h cminfo.h udninfo.h
 	$(CC) -fPIC -I$(OPUS_INCLUDE_DIR) $(INCLUDES) $(CFLAGS) -DCM_LINUX -c dlmain.c
 
+
+distclean: clean
+
+check:

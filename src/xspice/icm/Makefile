@@ -133,6 +133,9 @@ maintainer-clean-generic: clean
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 
 
+distclean: maintainer-clean
+
 distdir:
 
+check:
 

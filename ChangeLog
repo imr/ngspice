@@ -1,3 +1,8 @@
+2004-08-09  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   Updated and corrected test files in "tests" directory. Added
+	    "examples" directory.
+
 2004-07-08  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   Applied Al Niessner <Al.Niessner@jpl.nasa.gov> negabyte patch

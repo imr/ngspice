@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 SUBDIRS = @XGRAPHDIR@ doc src man tests
-DIST_SUBDIRS = xgraph doc src man tests
+DIST_SUBDIRS = xgraph doc src man tests examples
 
 EXTRA_DIST = FAQ acconfig.h autogen.sh Stuarts_Poly_Notes  \
 		ANALYSES BUGS AUTHORS ChangeLog \
