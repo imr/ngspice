@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified: 2000 AnalsFixes
+Modified: 2000 AlansFixes
 **********/
 #ifndef __BJTEXT_H
 #define __BJTEXT_H
@@ -30,7 +30,6 @@ extern int BJTtemp(GENmodel*,CKTcircuit*);
 extern int BJTtrunc(GENmodel*,CKTcircuit*,double*);
 extern int BJTdisto(int,GENmodel*,CKTcircuit*);
 extern int BJTnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
-
 extern int BJTdSetup(GENmodel*, register CKTcircuit*);
 
 #endif

@@ -11,14 +11,12 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "bjtdefs.h"
 #include "suffix.h"
 
 
 void
-BJTdestroy(inModel)
-    GENmodel **inModel;
+BJTdestroy(GENmodel **inModel)
 
 {
 

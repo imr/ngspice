@@ -12,18 +12,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "bjtdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-BJTmDelete(inModels,modname,kill)
-    GENmodel **inModels;
-    IFuid modname;
-    GENmodel *kill;
-
+BJTmDelete(GENmodel **inModels, IFuid modname, GENmodel *kill)
 {
     BJTmodel **model = (BJTmodel**)inModels;
     BJTmodel *modfast = (BJTmodel*)kill;

@@ -9,16 +9,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bjtdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-BJTconvTest(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BJTconvTest(GENmodel *inModel, CKTcircuit *ckt)
 
 {
     BJTinstance *here;

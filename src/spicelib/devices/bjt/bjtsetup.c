@@ -12,7 +12,6 @@ Modified: 2000 AlansFixes
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "smpdefs.h"
 #include "bjtdefs.h"
@@ -22,15 +21,10 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 int
-BJTsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
-        /* load the BJT structure with those pointers needed later 
-         * for fast matrix loading 
-         */
-
+BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
+  /* load the BJT structure with those pointers needed later 
+  * for fast matrix loading 
+  */
 {
     BJTmodel *model = (BJTmodel*)inModel;
     BJTinstance *here;
@@ -158,6 +152,11 @@ BJTsetup(matrix,inModel,ckt,states)
             if(!here->BJTareaGiven) {
                 here->BJTarea = 1;
             }
+	    
+	    if(!here->BJTmGiven) {
+                here->BJTm = 1.0;
+            }
+	    
             here->BJTstate = *states;
             *states += BJTnumStates;
             if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){

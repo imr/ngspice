@@ -4,7 +4,6 @@ Author: 1987 Gary W. Ng
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "bjtdefs.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"
@@ -25,13 +24,8 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 int
-BJTnoise (mode, operation, genmodel, ckt, data, OnDens)
-    GENmodel *genmodel;
-    int mode;
-    int operation;
-    CKTcircuit *ckt;
-    Ndata *data;
-    double *OnDens;
+BJTnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, 
+          Ndata *data, double *OnDens)
 {
     BJTmodel *firstModel = (BJTmodel *) genmodel;
     BJTmodel *model;
@@ -124,7 +118,7 @@ if (!data->namelist) return(E_NOMEM);
 		case N_DENS:
 		    NevalSrc(&noizDens[BJTRCNOIZ],&lnNdens[BJTRCNOIZ],
 				 ckt,THERMNOISE,inst->BJTcolPrimeNode,inst->BJTcolNode,
-				 model->BJTcollectorConduct * inst->BJTarea);
+				 model->BJTcollectorConduct * inst->BJTarea * inst->BJTm);
 
 		    NevalSrc(&noizDens[BJTRBNOIZ],&lnNdens[BJTRBNOIZ],
 				 ckt,THERMNOISE,inst->BJTbasePrimeNode,inst->BJTbaseNode,
@@ -132,20 +126,20 @@ if (!data->namelist) return(E_NOMEM);
 
 		    NevalSrc(&noizDens[BJT_RE_NOISE],&lnNdens[BJT_RE_NOISE],
 				 ckt,THERMNOISE,inst->BJTemitPrimeNode,inst->BJTemitNode,
-				 model->BJTemitterConduct * inst->BJTarea);
+				 model->BJTemitterConduct * inst->BJTarea * inst-> BJTm);
 
 		    NevalSrc(&noizDens[BJTICNOIZ],&lnNdens[BJTICNOIZ],
 			         ckt,SHOTNOISE,inst->BJTcolPrimeNode, inst->BJTemitPrimeNode,
-				 *(ckt->CKTstate0 + inst->BJTcc));
+				 *(ckt->CKTstate0 + inst->BJTcc) * inst->BJTm);
 
 		    NevalSrc(&noizDens[BJTIBNOIZ],&lnNdens[BJTIBNOIZ],
 				 ckt,SHOTNOISE,inst->BJTbasePrimeNode, inst->BJTemitPrimeNode,
-				 *(ckt->CKTstate0 + inst->BJTcb));
+				 *(ckt->CKTstate0 + inst->BJTcb) * inst->BJTm);
 
 		    NevalSrc(&noizDens[BJTFLNOIZ],(double*)NULL,ckt,
 				 N_GAIN,inst->BJTbasePrimeNode, inst->BJTemitPrimeNode,
 				 (double)0.0);
-		    noizDens[BJTFLNOIZ] *= model->BJTfNcoef * 
+		    noizDens[BJTFLNOIZ] *= inst->BJTm * model->BJTfNcoef * 
 				 exp(model->BJTfNexp *
 				 log(MAX(fabs(*(ckt->CKTstate0 + inst->BJTcb)),N_MINLOG))) /
 				 data->freq;

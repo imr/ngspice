@@ -4,7 +4,6 @@ Author: 1988 Jaijeet S Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bjtdefs.h"
 #include "const.h"
@@ -154,16 +153,16 @@ BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   dc model paramters
              */
-            csat=here->BJTtSatCur*here->BJTarea;
-            rbpr=model->BJTminBaseResist/here->BJTarea;
-            rbpi=model->BJTbaseResist/here->BJTarea-rbpr;
-            oik=model->BJTinvRollOffF/here->BJTarea;
-            c2=here->BJTtBEleakCur*here->BJTarea;
+            csat=here->BJTtSatCur*here->BJTarea * here->BJTm;
+            rbpr=model->BJTminBaseResist/(here->BJTarea * here->BJTm);
+            rbpi=model->BJTbaseResist/(here->BJTarea * here->BJTm)-rbpr;
+            oik=model->BJTinvRollOffF/(here->BJTarea * here->BJTm);
+            c2=here->BJTtBEleakCur*here->BJTarea * here->BJTm;
             vte=model->BJTleakBEemissionCoeff*vt;
-            oikr=model->BJTinvRollOffR/here->BJTarea;
-            c4=here->BJTtBCleakCur*here->BJTarea;
+            oikr=model->BJTinvRollOffR/(here->BJTarea * here->BJTm);
+            c4=here->BJTtBCleakCur*here->BJTarea * here->BJTm;
             vtc=model->BJTleakBCemissionCoeff*vt;
-            xjrb=model->BJTbaseCurrentHalfResist*here->BJTarea;
+            xjrb=model->BJTbaseCurrentHalfResist*here->BJTarea * here->BJTm;
 
 
             /*
@@ -480,22 +479,22 @@ BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
 	     */
 	    tf=model->BJTtransitTimeF;
 	    tr=model->BJTtransitTimeR;
-	    czbe=here->BJTtBEcap*here->BJTarea;
+	    czbe=here->BJTtBEcap*here->BJTarea * here->BJTm;
 	    pe=here->BJTtBEpot;
 	    xme=model->BJTjunctionExpBE;
 	    cdis=model->BJTbaseFractionBCcap;
-	    ctot=here->BJTtBCcap*here->BJTarea;
+	    ctot=here->BJTtBCcap*here->BJTarea * here->BJTm;
 	    czbc=ctot*cdis;
 	    czbx=ctot-czbc;
 	    pc=here->BJTtBCpot;
 	    xmc=model->BJTjunctionExpBC;
 	    fcpe=here->BJTtDepCap;
-	    czcs=model->BJTcapCS*here->BJTarea;
+	    czcs=model->BJTcapCS*here->BJTarea * here->BJTm;
 	    ps=model->BJTpotentialSubstrate;
 	    xms=model->BJTexponentialSubstrate;
 	    xtf=model->BJTtransitTimeBiasCoeffF;
 	    ovtf=model->BJTtransitTimeVBCFactor;
-	    xjtf=model->BJTtransitTimeHighCurrentF*here->BJTarea;
+	    xjtf=model->BJTtransitTimeHighCurrentF*here->BJTarea * here->BJTm;
 	    if(tf != 0 && vbe >0) {
 		EqualDeriv(&d_cbe, &d_p);
 		d_cbe.value = cbe;

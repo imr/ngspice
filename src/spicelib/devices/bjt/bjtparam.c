@@ -11,7 +11,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "bjtdefs.h"
@@ -21,11 +20,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-BJTparam(param,value,instPtr,select)
-    int param;
-    IFvalue *value;
-    GENinstance *instPtr;
-    IFvalue *select;
+BJTparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
 {
     BJTinstance *here = (BJTinstance*)instPtr;
 
@@ -34,10 +29,18 @@ BJTparam(param,value,instPtr,select)
             here->BJTarea = value->rValue;
             here->BJTareaGiven = TRUE;
             break;
+        case BJT_M:
+            here->BJTm = value->rValue;
+            here->BJTmGiven = TRUE;
+            break;	    
         case BJT_TEMP:
-            here->BJTtemp = value->rValue+CONSTCtoK;
+            here->BJTtemp = value->rValue + CONSTCtoK;
             here->BJTtempGiven = TRUE;
             break;
+        case BJT_DTEMP:
+            here->BJTdtemp = value->rValue;
+            here->BJTdtempGiven = TRUE;
+            break;	    
         case BJT_OFF:
             here->BJToff = value->iValue;
             break;

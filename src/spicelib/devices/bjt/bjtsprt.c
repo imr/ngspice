@@ -1,6 +1,8 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 /* Pretty print the sensitivity info for all 
@@ -8,7 +10,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "smpdefs.h"
 #include "bjtdefs.h"
@@ -19,10 +20,7 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-BJTsPrint(inModel,ckt)
-
-CKTcircuit *ckt;
-GENmodel *inModel;
+BJTsPrint(GENmodel *inModel, CKTcircuit *ckt)
 {
     BJTmodel *model = (BJTmodel*)inModel;
     BJTinstance *here;

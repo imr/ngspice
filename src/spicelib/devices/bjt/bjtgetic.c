@@ -11,7 +11,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bjtdefs.h"
 #include "sperror.h"
@@ -19,9 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-BJTgetic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BJTgetic(GENmodel *inModel, CKTcircuit *ckt)
 
 {
 

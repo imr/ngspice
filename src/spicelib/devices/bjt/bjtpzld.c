@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "complex.h"
 #include "bjtdefs.h"
@@ -15,11 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-BJTpzLoad(inModel,ckt,s)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    SPcomplex *s;
-
+BJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     BJTmodel *model = (BJTmodel*)inModel;
     BJTinstance *here;
@@ -36,11 +31,14 @@ BJTpzLoad(inModel,ckt,s)
     double xcbx;
     double xccs;
     double xcmcb;
+    double m;
 
     for( ; model != NULL; model = model->BJTnextModel) {
         for( here = model->BJTinstances; here!= NULL; 
                 here = here->BJTnextInstance) {
 	    if (here->BJTowner != ARCHme) continue;
+
+            m = here->BJTm;
 
             gcpr=model->BJTcollectorResist * here->BJTarea;
             gepr=model->BJTemitterResist * here->BJTarea;
@@ -55,62 +53,63 @@ BJTpzLoad(inModel,ckt,s)
             xcbx= *(ckt->CKTstate0 + here->BJTcqbx);
             xccs= *(ckt->CKTstate0 + here->BJTcqcs);
             xcmcb= *(ckt->CKTstate0 + here->BJTcexbc);
-            *(here->BJTcolColPtr) +=   (gcpr);
-            *(here->BJTbaseBasePtr) +=   (gx) + (xcbx) * (s->real);
-            *(here->BJTbaseBasePtr + 1) +=   (xcbx) * (s->imag);
-            *(here->BJTemitEmitPtr) +=   (gepr);
-            *(here->BJTcolPrimeColPrimePtr) +=   (gmu+go+gcpr)
-                                        + (xcmu+xccs+xcbx) * (s->real);
-            *(here->BJTcolPrimeColPrimePtr + 1) +=   (xcmu+xccs+xcbx)
-                                                 * (s->imag);
-            *(here->BJTbasePrimeBasePrimePtr) +=   (gx+gpi+gmu)
-                                   + (xcpi+xcmu+xcmcb) * (s->real);
-            *(here->BJTbasePrimeBasePrimePtr + 1) +=   (xcpi+xcmu+xcmcb) 
-                                                   * (s->imag);
-            *(here->BJTemitPrimeEmitPrimePtr) +=   (gpi+gepr+gm+go)
-                                           + (xcpi+xgm) * (s->real);
-            *(here->BJTemitPrimeEmitPrimePtr + 1) +=   (xcpi+xgm)
-                                                 * (s->imag);
-            *(here->BJTcolColPrimePtr) +=   (-gcpr);
-            *(here->BJTbaseBasePrimePtr) +=   (-gx);
-            *(here->BJTemitEmitPrimePtr) +=   (-gepr);
-            *(here->BJTcolPrimeColPtr) +=   (-gcpr);
-            *(here->BJTcolPrimeBasePrimePtr) +=   (-gmu+gm)
-                                           +   (-xcmu+xgm) * (s->real);
-            *(here->BJTcolPrimeBasePrimePtr + 1) +=   (-xcmu+xgm)
-                                                * (s->imag);
-            *(here->BJTcolPrimeEmitPrimePtr) +=   (-gm-go)
-                                             + (-xgm) * (s->real);
-            *(here->BJTcolPrimeEmitPrimePtr + 1) +=   (-xgm) *
-                                                  (s->imag);
-            *(here->BJTbasePrimeBasePtr) +=   (-gx);
-            *(here->BJTbasePrimeColPrimePtr) +=   (-gmu)
-                                        +   (-xcmu-xcmcb) * (s->real);
-            *(here->BJTbasePrimeColPrimePtr + 1) +=   (-xcmu-xcmcb)
-                                                * (s->imag);
-            *(here->BJTbasePrimeEmitPrimePtr) +=   (-gpi)
-                                              +  (-xcpi) * (s->real);
-            *(here->BJTbasePrimeEmitPrimePtr + 1) +=   (-xcpi) 
-                                                 * (s->imag);
-            *(here->BJTemitPrimeEmitPtr) +=   (-gepr);
-            *(here->BJTemitPrimeColPrimePtr) +=   (-go)
-                                              +   (xcmcb) * (s->real);
-            *(here->BJTemitPrimeColPrimePtr + 1) +=   (xcmcb) 
-                                               *  (s->imag);
-            *(here->BJTemitPrimeBasePrimePtr) +=   (-gpi-gm)
-                                      +  (-xcpi-xgm-xcmcb) * (s->real);
-            *(here->BJTemitPrimeBasePrimePtr + 1) +=   (-xcpi-xgm-xcmcb)
-                             * (s->imag);
-            *(here->BJTsubstSubstPtr) +=   (xccs) * (s->real);
-            *(here->BJTsubstSubstPtr + 1) +=   (xccs) * (s->imag);
-            *(here->BJTcolPrimeSubstPtr) +=   (-xccs) * (s->real);
-            *(here->BJTcolPrimeSubstPtr + 1) +=   (-xccs) * (s->imag);
-            *(here->BJTsubstColPrimePtr) +=   (-xccs) * (s->real);
-            *(here->BJTsubstColPrimePtr + 1) +=   (-xccs) * (s->imag);
-            *(here->BJTbaseColPrimePtr) +=   (-xcbx) * (s->real);
-            *(here->BJTbaseColPrimePtr + 1) +=   (-xcbx) * (s->imag);
-            *(here->BJTcolPrimeBasePtr) +=   (-xcbx) * (s->real);
-            *(here->BJTcolPrimeBasePtr + 1) +=   (-xcbx) * (s->imag);
+            
+	    *(here->BJTcolColPtr) +=                 m * (gcpr);
+            *(here->BJTbaseBasePtr) +=               m * ((gx) + (xcbx) * (s->real));
+            *(here->BJTbaseBasePtr + 1) +=           m *  ((xcbx) * (s->imag));
+            *(here->BJTemitEmitPtr) +=               m *  (gepr);
+            *(here->BJTcolPrimeColPrimePtr) +=       m * ((gmu+go+gcpr)
+                                        + (xcmu+xccs+xcbx) * (s->real));
+            *(here->BJTcolPrimeColPrimePtr + 1) +=   m * ((xcmu+xccs+xcbx)
+                                                 * (s->imag));
+            *(here->BJTbasePrimeBasePrimePtr) +=     m * ((gx+gpi+gmu)
+                                   + (xcpi+xcmu+xcmcb) * (s->real));
+            *(here->BJTbasePrimeBasePrimePtr + 1) += m * ((xcpi+xcmu+xcmcb) 
+                                                   * (s->imag));
+            *(here->BJTemitPrimeEmitPrimePtr) +=     m * ((gpi+gepr+gm+go)
+                                           + (xcpi+xgm) * (s->real));
+            *(here->BJTemitPrimeEmitPrimePtr + 1) += m * ((xcpi+xgm)
+                                                 * (s->imag));
+            *(here->BJTcolColPrimePtr) +=            m * (-gcpr);
+            *(here->BJTbaseBasePrimePtr) +=          m * (-gx);
+            *(here->BJTemitEmitPrimePtr) +=          m * (-gepr);
+            *(here->BJTcolPrimeColPtr) +=            m * (-gcpr);
+            *(here->BJTcolPrimeBasePrimePtr) +=      m * ((-gmu+gm)
+                                           +   (-xcmu+xgm) * (s->real));
+            *(here->BJTcolPrimeBasePrimePtr + 1) +=  m * ((-xcmu+xgm)
+                                                * (s->imag));
+            *(here->BJTcolPrimeEmitPrimePtr) +=      m * ((-gm-go)
+                                             + (-xgm) * (s->real));
+            *(here->BJTcolPrimeEmitPrimePtr + 1) +=  m * ((-xgm) *
+                                                  (s->imag));
+            *(here->BJTbasePrimeBasePtr) +=          m * (-gx);
+            *(here->BJTbasePrimeColPrimePtr) +=      m * ((-gmu)
+                                        +   (-xcmu-xcmcb) * (s->real));
+            *(here->BJTbasePrimeColPrimePtr + 1) +=  m * ((-xcmu-xcmcb)
+                                                * (s->imag));
+            *(here->BJTbasePrimeEmitPrimePtr) +=     m * ((-gpi)
+                                              +  (-xcpi) * (s->real));
+            *(here->BJTbasePrimeEmitPrimePtr + 1) += m * ((-xcpi) 
+                                                 * (s->imag));
+            *(here->BJTemitPrimeEmitPtr) +=          m * (-gepr);
+            *(here->BJTemitPrimeColPrimePtr) +=      m * ((-go)
+                                              +   (xcmcb) * (s->real));
+            *(here->BJTemitPrimeColPrimePtr + 1) +=  m * ((xcmcb) 
+                                               *  (s->imag));
+            *(here->BJTemitPrimeBasePrimePtr) +=     m * ((-gpi-gm)
+                                      +  (-xcpi-xgm-xcmcb) * (s->real));
+            *(here->BJTemitPrimeBasePrimePtr + 1) += m * ((-xcpi-xgm-xcmcb)
+                             * (s->imag));
+            *(here->BJTsubstSubstPtr) +=             m * ((xccs) * (s->real));
+            *(here->BJTsubstSubstPtr + 1) +=         m * ((xccs) * (s->imag));
+            *(here->BJTcolPrimeSubstPtr) +=          m * ((-xccs) * (s->real));
+            *(here->BJTcolPrimeSubstPtr + 1) +=      m * ((-xccs) * (s->imag));
+            *(here->BJTsubstColPrimePtr) +=          m * ((-xccs) * (s->real));
+            *(here->BJTsubstColPrimePtr + 1) +=      m * ((-xccs) * (s->imag));
+            *(here->BJTbaseColPrimePtr) +=           m * ((-xcbx) * (s->real));
+            *(here->BJTbaseColPrimePtr + 1) +=       m * ((-xcbx) * (s->imag));
+            *(here->BJTcolPrimeBasePtr) +=           m * ((-xcbx) * (s->real));
+            *(here->BJTcolPrimeBasePtr + 1) +=       m * ((-xcbx) * (s->imag));
         }
     }
     return(OK);

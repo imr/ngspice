@@ -1,6 +1,8 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 /* loop through all the devices and 
@@ -8,7 +10,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "smpdefs.h"
 #include "bjtdefs.h"
@@ -19,9 +20,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-BJTsSetup(info,inModel)
-    SENstruct *info;
-    GENmodel *inModel;
+BJTsSetup(SENstruct *info, GENmodel *inModel)
 {
     BJTmodel *model = (BJTmodel*)inModel;
     BJTinstance *here;

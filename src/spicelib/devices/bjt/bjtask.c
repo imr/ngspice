@@ -10,7 +10,6 @@ Author: 1985 Mathew Lew and Thomas L. Quarles
 
 #include "ngspice.h"
 #include "const.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bjtdefs.h"
 #include "ifsim.h"
@@ -19,12 +18,7 @@ Author: 1985 Mathew Lew and Thomas L. Quarles
 
 /*ARGSUSED*/
 int
-BJTask(ckt,instPtr,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *instPtr;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue *select)
 {
     BJTinstance *here = (BJTinstance*)instPtr;
     double tmp;
@@ -45,9 +39,15 @@ BJTask(ckt,instPtr,which,value,select)
         case BJT_TEMP:
             value->rValue = here->BJTtemp - CONSTCtoK;
             return(OK);
+        case BJT_DTEMP:
+            value->rValue = here->BJTdtemp;
+            return(OK);	    
         case BJT_AREA:
             value->rValue = here->BJTarea;
             return(OK);
+	case BJT_M:
+            value->rValue = here->BJTm;
+            return(OK);    
         case BJT_OFF:
             value->iValue = here->BJToff;
             return(OK);

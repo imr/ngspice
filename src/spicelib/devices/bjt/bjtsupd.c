@@ -1,12 +1,13 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 /* update the  charge sensitivities and their derivatives */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "smpdefs.h"
 #include "bjtdefs.h"
@@ -17,9 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-BJTsUpdate(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BJTsUpdate(GENmodel *inModel, CKTcircuit *ckt)
 {
     BJTmodel *model = (BJTmodel*)inModel;
     BJTinstance *here;

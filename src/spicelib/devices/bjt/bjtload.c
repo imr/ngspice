@@ -10,7 +10,6 @@ Modified: 2000 AlansFixes
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bjtdefs.h"
 #include "const.h"
@@ -20,13 +19,10 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 int
-BJTload(inModel,ckt)
-
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BJTload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the 
-         * sparse matrix previously provided 
-         */
+      * sparse matrix previously provided 
+      */
 {
     BJTmodel *model = (BJTmodel*)inModel;
     BJTinstance *here;
@@ -132,6 +128,8 @@ BJTload(inModel,ckt)
     int ichk1;
     int error;
     int SenCond=0;
+    double m;
+    
     /*  loop through all the models */
     for( ; model != NULL; model = model->BJTnextModel ) {
 
@@ -141,7 +139,9 @@ BJTload(inModel,ckt)
 	    if (here->BJTowner != ARCHme) continue;
 
             vt = here->BJTtemp * CONSTKoverQ;
-
+	    
+	    m = here->BJTm;
+	    
             if(ckt->CKTsenInfo){
 #ifdef SENSDEBUG
                 printf("BJTload \n");
@@ -314,7 +314,7 @@ BJTload(inModel,ckt)
                 cbhat= *(ckt->CKTstate0 + here->BJTcb)+ *(ckt->CKTstate0 + 
                         here->BJTgpi)*delvbe+ *(ckt->CKTstate0 + here->BJTgmu)*
                         delvbc;
-
+#ifndef NOBYPASS
                 /*
                  *    bypass if solution has not changed
                  */
@@ -355,7 +355,7 @@ BJTload(inModel,ckt)
                     geqbx = *(ckt->CKTstate0 + here->BJTgeqbx);
                     goto load;
                 }
-
+#endif /*NOBYPASS*/
                 /*
                  *   limit nonlinear branch voltages
                  */
@@ -713,8 +713,8 @@ next2:
             if(SenCond)continue;
 load:
             /*
-             *  load current excitation vector
-             */
+         *  load current excitation vector
+         */
             ceqcs=model->BJTtype * (*(ckt->CKTstate0 + here->BJTcqcs) - 
                     vcs * gccs);
             ceqbx=model->BJTtype * (*(ckt->CKTstate0 + here->BJTcqbx) -
@@ -723,39 +723,39 @@ load:
                     (go - geqcb));
             ceqbc=model->BJTtype * (-cc + vbe * (gm + go) - vbc * (gmu + go));
 
-            *(ckt->CKTrhs + here->BJTbaseNode) += (-ceqbx);
+            *(ckt->CKTrhs + here->BJTbaseNode) +=  m * (-ceqbx);
             *(ckt->CKTrhs + here->BJTcolPrimeNode) += 
-                    (ceqcs+ceqbx+ceqbc);
+                    m * (ceqcs+ceqbx+ceqbc);
             *(ckt->CKTrhs + here->BJTbasePrimeNode) += 
-                    (-ceqbe-ceqbc);
-            *(ckt->CKTrhs + here->BJTemitPrimeNode) += (ceqbe);
-            *(ckt->CKTrhs + here->BJTsubstNode) += (-ceqcs);
+                    m * (-ceqbe-ceqbc);
+            *(ckt->CKTrhs + here->BJTemitPrimeNode) += m * (ceqbe);
+            *(ckt->CKTrhs + here->BJTsubstNode) += m * (-ceqcs);
             /*
              *  load y matrix
              */
-            *(here->BJTcolColPtr) += (gcpr);
-            *(here->BJTbaseBasePtr) += (gx+geqbx);
-            *(here->BJTemitEmitPtr) += (gepr);
-            *(here->BJTcolPrimeColPrimePtr) += (gmu+go+gcpr+gccs+geqbx);
-            *(here->BJTbasePrimeBasePrimePtr) += (gx +gpi+gmu+geqcb);
-            *(here->BJTemitPrimeEmitPrimePtr) += (gpi+gepr+gm+go);
-            *(here->BJTcolColPrimePtr) += (-gcpr);
-            *(here->BJTbaseBasePrimePtr) += (-gx);
-            *(here->BJTemitEmitPrimePtr) += (-gepr);
-            *(here->BJTcolPrimeColPtr) += (-gcpr);
-            *(here->BJTcolPrimeBasePrimePtr) += (-gmu+gm);
-            *(here->BJTcolPrimeEmitPrimePtr) += (-gm-go);
-            *(here->BJTbasePrimeBasePtr) += (-gx);
-            *(here->BJTbasePrimeColPrimePtr) += (-gmu-geqcb);
-            *(here->BJTbasePrimeEmitPrimePtr) += (-gpi);
-            *(here->BJTemitPrimeEmitPtr) += (-gepr);
-            *(here->BJTemitPrimeColPrimePtr) += (-go+geqcb);
-            *(here->BJTemitPrimeBasePrimePtr) += (-gpi-gm-geqcb);
-            *(here->BJTsubstSubstPtr) += (gccs);
-            *(here->BJTcolPrimeSubstPtr) += (-gccs);
-            *(here->BJTsubstColPrimePtr) += (-gccs);
-            *(here->BJTbaseColPrimePtr) += (-geqbx);
-            *(here->BJTcolPrimeBasePtr) += (-geqbx);
+            *(here->BJTcolColPtr) +=  m * (gcpr);
+            *(here->BJTbaseBasePtr) +=  m * (gx+geqbx);
+            *(here->BJTemitEmitPtr) += m * (gepr);
+            *(here->BJTcolPrimeColPrimePtr) += m * (gmu+go+gcpr+gccs+geqbx);
+            *(here->BJTbasePrimeBasePrimePtr) += m * (gx +gpi+gmu+geqcb);
+            *(here->BJTemitPrimeEmitPrimePtr) += m * (gpi+gepr+gm+go);
+            *(here->BJTcolColPrimePtr) += m * (-gcpr);
+            *(here->BJTbaseBasePrimePtr) += m * (-gx);
+            *(here->BJTemitEmitPrimePtr) += m * (-gepr);
+            *(here->BJTcolPrimeColPtr) += m * (-gcpr);
+            *(here->BJTcolPrimeBasePrimePtr) += m * (-gmu+gm);
+            *(here->BJTcolPrimeEmitPrimePtr) += m * (-gm-go);
+            *(here->BJTbasePrimeBasePtr) += m * (-gx);
+            *(here->BJTbasePrimeColPrimePtr) += m * (-gmu-geqcb);
+            *(here->BJTbasePrimeEmitPrimePtr) += m * (-gpi);
+            *(here->BJTemitPrimeEmitPtr) += m * (-gepr);
+            *(here->BJTemitPrimeColPrimePtr) += m * (-go+geqcb);
+            *(here->BJTemitPrimeBasePrimePtr) += m * (-gpi-gm-geqcb);
+            *(here->BJTsubstSubstPtr) += m * (gccs);
+            *(here->BJTcolPrimeSubstPtr) += m * (-gccs);
+            *(here->BJTsubstColPrimePtr) += m * (-gccs);
+            *(here->BJTbaseColPrimePtr) += m * (-geqbx);
+            *(here->BJTcolPrimeBasePtr) += m * (-geqbx);
         }
     }
     return(OK);

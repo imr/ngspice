@@ -31,10 +31,12 @@ typedef struct sBJTinstance {
     int BJTcolPrimeNode;    /* number of internal collector node of bjt */
     int BJTbasePrimeNode;   /* number of internal base node of bjt */
     int BJTemitPrimeNode;   /* number of internal emitter node of bjt */
-    double BJTarea; /* area factor for the bjt */
+    double BJTarea;      /* area factor for the bjt */
+    double BJTm;        /* parallel multiplier */
     double BJTicVBE;    /* initial condition voltage B-E*/
     double BJTicVCE;    /* initial condition voltage C-E*/
     double BJTtemp;     /* instance temperature */
+    double BJTdtemp;     /* instance delta temperature from circuit */
     double BJTtSatCur;  /* temperature adjusted saturation current */
     double BJTtBetaF;   /* temperature adjusted forward beta */
     double BJTtBetaR;   /* temperature adjusted reverse beta */
@@ -97,9 +99,11 @@ typedef struct sBJTinstance {
     double *BJTcolPrimeBasePtr; /* pointer to sparse matrix at
                              * (collector prime,base) */
 
-    unsigned BJToff :1;   /* 'off' flag for bjt */
+    unsigned BJToff         :1;   /* 'off' flag for bjt */
     unsigned BJTtempGiven   :1; /* temperature given  for bjt instance*/
+    unsigned BJTdtempGiven  :1; /* delta temperature given  for bjt instance*/
     unsigned BJTareaGiven   :1; /* flag to indicate area was specified */
+    unsigned BJTmGiven      :1; /* flag to indicate m parameter specified */
     unsigned BJTicVBEGiven  :1; /* flag to indicate VBE init. cond. given */
     unsigned BJTicVCEGiven  :1; /* flag to indicate VCE init. cond. given */
     unsigned BJTsenPertFlag :1; /* indictes whether the the parameter of
@@ -403,6 +407,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 #define BJT_IC 5
 #define BJT_AREA_SENS 6
 #define BJT_TEMP 7
+#define BJT_DTEMP 8
+#define BJT_M 9
 
 /* model parameters */
 #define BJT_MOD_NPN 101

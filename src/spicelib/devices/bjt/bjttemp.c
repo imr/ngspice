@@ -5,7 +5,6 @@ Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "smpdefs.h"
 #include "bjtdefs.h"
@@ -17,11 +16,9 @@ Modified: 2000 AlansFixes
 
 /* ARGSUSED */
 int
-BJTtemp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* Pre-compute many useful parameters
-         */
+      */
 
 {
     BJTmodel *model = (BJTmodel *)inModel;
@@ -135,7 +132,7 @@ BJTtemp(inModel,ckt)
                 here=here->BJTnextInstance) {
 	    if (here->BJTowner != ARCHme) continue;
 
-            if(!here->BJTtempGiven) here->BJTtemp = ckt->CKTtemp;
+            if(!here->BJTtempGiven) here->BJTtemp = ckt->CKTtemp + here->BJTdtemp;
             vt = here->BJTtemp * CONSTKoverQ;
             fact2 = here->BJTtemp/REFTEMP;
             egfet = 1.16-(7.02e-4*here->BJTtemp*here->BJTtemp)/

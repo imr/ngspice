@@ -9,7 +9,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "bjtdefs.h"
 #include "suffix.h"
@@ -19,6 +18,7 @@ IFparm BJTpTable[] = { /* parameters */
  IOPAU("icvbe",  BJT_IC_VBE,         IF_REAL, "Initial B-E voltage"),
  IOPAU("icvce",  BJT_IC_VCE,         IF_REAL, "Initial C-E voltage"),
  IOPU("area",    BJT_AREA,           IF_REAL,    "Area factor"),
+ IOPU("m",       BJT_M,              IF_REAL,   "Parallel Multiplier"),
  IP("ic",       BJT_IC,             IF_REALVEC, "Initial condition vector"),
  IP("sens_area",BJT_AREA_SENS,IF_FLAG, "flag to request sensitivity WRT area"),
  OPU("colnode",  BJT_QUEST_COLNODE,  IF_INTEGER, "Number of collector node"),
@@ -68,7 +68,8 @@ IFparm BJTpTable[] = { /* parameters */
  OPU("sens_mag", BJT_QUEST_SENS_MAG, IF_REAL,   "sensitivity of ac magnitude"),
  OPU("sens_ph",   BJT_QUEST_SENS_PH,   IF_REAL,    "sensitivity of ac phase"),
  OPU("sens_cplx", BJT_QUEST_SENS_CPLX, IF_COMPLEX, "ac sensitivity"),
- IOPU("temp",     BJT_TEMP,            IF_REAL,    "instance temperature")
+ IOPU("temp",     BJT_TEMP,            IF_REAL,    "instance temperature"),
+ IOPU("dtemp",    BJT_DTEMP,           IF_REAL,    "instance temperature delta from circuit")
 };
 
 IFparm BJTmPTable[] = { /* model parameters */

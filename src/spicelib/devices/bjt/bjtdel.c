@@ -9,17 +9,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "bjtdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-BJTdelete(inModel,name,kill)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **kill;
+BJTdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 
 {
     BJTmodel *model = (BJTmodel*)inModel;
