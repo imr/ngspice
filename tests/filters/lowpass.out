@@ -1,9 +1,6 @@
 
 Circuit: A Simple AC Run
 
-Circuit: A Simple AC Run
-
-
 a simple ac run
 .op
 .ac dec 10 1k 1meg
@@ -13,57 +10,56 @@ r2 2 0 10k
 c1 2 0 1n
 .options list node post trans
 .end
-
-Operating point information:
-
-	Node	Voltage
+	Node                                  Voltage
+	----                                  -------
 	----	-------
-	V(2)	0.000000e+00
-	V(1)	0.000000e+00
+	V(2)                             0.000000e+00
+	V(1)                             0.000000e+00
 
 	Source	Current
 	------	-------
 
-	v1#branch	0.000000e+00
+	v1#branch                        0.000000e+00
 
  Capacitor models (Fixed capacitor)
- model             C
+      model                     C
 
-        cj         0
-      cjsw         0
-      defw     1e-05
-    narrow         0
+         cj                     0
+       cjsw                     0
+       defw                 1e-05
+     narrow                     0
 
  Resistor models (Simple linear resistor)
- model             R
+      model                     R
 
-       rsh         0
-    narrow         0
-       tc1         0
-       tc2         0
-      defw     1e-05
+        rsh                     0
+     narrow                     0
+      short                     0
+        tc1                     0
+        tc2                     0
+       defw                 1e-05
 
  Capacitor: Fixed capacitor
- device           c1
- model             C
-capacitanc     1e-09
-         i  2.69e-312
-         p  2.69e-312
+     device                    c1
+      model                     C
+capacitance                 1e-09
+          i                     0
+          p                     0
 
  Resistor: Simple linear resistor
- device           r2        r1
- model             R         R
-resistance     1e+04     1e+04
-        ac         0         0
-         i         0         0
-         p         0         0
+     device                    r2                    r1
+      model                     R                     R
+ resistance                 10000                 10000
+         ac                     0                     0
+          i                     0                     0
+          p                     0                     0
 
  Vsource: Independent voltage source
- device           v1
-        dc         0
-     acmag         1
-         i         0
-         p        -0
+     device                    v1
+         dc                     0
+      acmag                     1
+          i                     0
+          p                    -0
 
                                 A Simple AC Run
 --------------------------------------------------------------------------------

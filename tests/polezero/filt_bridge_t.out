@@ -1,61 +1,57 @@
 
 Circuit: BRIDGE-T FILTER
 
-Circuit: BRIDGE-T FILTER
-
-
-
-Operating point information:
-
-	Node	Voltage
+	Node                                  Voltage
+	----                                  -------
 	----	-------
-	V(3)	1.200000e+01
-	V(2)	0.000000e+00
-	V(1)	1.200000e+01
+	V(3)                             1.200000e+01
+	V(2)                             0.000000e+00
+	V(1)                             1.200000e+01
 
 	Source	Current
 	------	-------
 
-	v1#branch	0.000000e+00
+	v1#branch                        0.000000e+00
 
  Capacitor models (Fixed capacitor)
- model             C
+      model                     C
 
-        cj         0
-      cjsw         0
-      defw     1e-05
-    narrow         0
+         cj                     0
+       cjsw                     0
+       defw                 1e-05
+     narrow                     0
 
  Resistor models (Simple linear resistor)
- model             R
+      model                     R
 
-       rsh         0
-    narrow         0
-       tc1         0
-       tc2         0
-      defw     1e-05
+        rsh                     0
+     narrow                     0
+      short                     0
+        tc1                     0
+        tc2                     0
+       defw                 1e-05
 
  Capacitor: Fixed capacitor
- device           c2        c1
- model             C         C
-capacitanc     1e-06     1e-06
-         i  2.69e-312  2.69e-312
-         p  2.69e-312  2.69e-312
+     device                    c2                    c1
+      model                     C                     C
+capacitance                 1e-06                 1e-06
+          i                     0                     0
+          p                     0                     0
 
  Resistor: Simple linear resistor
- device           r4        r3
- model             R         R
-resistance     1e+03     1e+03
-        ac         0         0
-         i         0         0
-         p         0         0
+     device                    r4                    r3
+      model                     R                     R
+ resistance                  1000                  1000
+         ac                     0                     0
+          i                     0                     0
+          p                     0                     0
 
  Vsource: Independent voltage source
- device           v1
-        dc        12
-     acmag         1
-         i         0
-         p        -0
+     device                    v1
+         dc                    12
+      acmag                     1
+          i                     0
+          p                    -0
 
                                 BRIDGE-T FILTER
 --------------------------------------------------------------------------------

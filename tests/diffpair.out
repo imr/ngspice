@@ -1,18 +1,15 @@
 
 Circuit: simple differential pair - CM and DM dc sensitivity
 
-Circuit: simple differential pair - CM and DM dc sensitivity
-
-
 Transfer function information:
 transfer_function = -1.10340e-01
-output_impedance_at_v(5) = 9.446409e+03
-vcm#input_impedance = 1.792504e+06
+output_impedance_at_v(5) = 9.446401e+03
+vcm#input_impedance = 1.792489e+06
 
 Transfer function information:
-transfer_function = -8.78993e+01
-output_impedance_at_v(5) = 9.446409e+03
-vdm#input_impedance = 8.934967e+03
+transfer_function = -8.79002e+01
+output_impedance_at_v(5) = 9.446401e+03
+vdm#input_impedance = 8.934860e+03
 
 
 

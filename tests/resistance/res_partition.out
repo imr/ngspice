@@ -1,45 +1,41 @@
 
 Circuit: * Resistive partition with different ratios for AC/DC (Print V(2))
 
-Circuit: * Resistive partition with different ratios for AC/DC (Print V(2))
-
-
-
-Operating point information:
-
-	Node	Voltage
+	Node                                  Voltage
+	----                                  -------
 	----	-------
-	V(2)	5.000000e-01
-	V(1)	1.000000e+00
+	V(2)                             5.000000e-01
+	V(1)                             1.000000e+00
 
 	Source	Current
 	------	-------
 
-	vin#branch	-1.00000e-04
+	vin#branch                       -1.00000e-04
 
  Resistor models (Simple linear resistor)
- model             R
+      model                     R
 
-       rsh         0
-    narrow         0
-       tc1         0
-       tc2         0
-      defw     1e-05
+        rsh                     0
+     narrow                     0
+      short                     0
+        tc1                     0
+        tc2                     0
+       defw                 1e-05
 
  Resistor: Simple linear resistor
- device           r2        r1
- model             R         R
-resistance     5e+03     5e+03
-        ac   1.5e+04         0
-         i    0.0001    0.0001
-         p     5e-05     5e-05
+     device                    r2                    r1
+      model                     R                     R
+ resistance                  5000                  5000
+         ac                 15000                     0
+          i                0.0001                0.0001
+          p                 5e-05                 5e-05
 
  Vsource: Independent voltage source
- device          vin
-        dc         1
-     acmag         1
-         i   -0.0001
-         p    0.0001
+     device                   vin
+         dc                     1
+      acmag                     1
+          i               -0.0001
+          p                0.0001
 
 
 
