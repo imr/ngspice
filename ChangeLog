@@ -1,5 +1,9 @@
 2004-01-10  Paolo Nenzi <p.nenzi@ieee.org>
 
+	*   Fixed makefiles in src/xspice/icm and src/xspice/cmpp to make 
+	    distclean without barfing. (Stuart Brorson <sdb@cloud9.net>).
+
+
 	*   configure.in 
 	    src/xspice/cmpp/Makefile src/xspice/cmpp/Makefile.in:
 	    Make configure automatically set paths for lex yacc and 
