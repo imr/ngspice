@@ -30,7 +30,7 @@ cmpp: $(cmpp_OBJS)
 ifs_lex.c : ifs_lex.l
 	$(LEX) -i -P$(*:lex=)yy $< > $@
 
-
+install:
 
 clean:
 	rm -f $(cmpp_OBJS) $(cmpp_GEN) cmpp 

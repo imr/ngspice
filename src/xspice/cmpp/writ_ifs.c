@@ -862,11 +862,20 @@ static void  write_SPICEdev(
     FILE        *fp,         /* File to write to */
     Ifs_Table_t *ifs_table)  /* Table of Interface Specification data */
 {
-
+	
     /* Extern the code model function name */
     fprintf(fp, "\n");
     fprintf(fp, "extern void %s(Mif_Private_t *);\n",
                  ifs_table->name.c_fcn_name);
+
+	/* SPICE now needs these static integers */
+	fprintf(fp, "\n");
+	fprintf(fp, "static int val_terms             = 0;\n");
+	fprintf(fp, "static int val_numNames          = 0;\n");
+	fprintf(fp, "static int val_numInstanceParms  = %d;\n",ifs_table->num_inst_var);
+	fprintf(fp, "static int val_numModelParms     = %d;\n",ifs_table->num_param);
+	fprintf(fp, "static int val_sizeofMIFinstance = sizeof(MIFinstance);\n");
+	fprintf(fp, "static int val_sizeofMIFmodel    = sizeof(MIFmodel);\n");
 
     /* Write out the structure beginning */
 
@@ -880,17 +889,17 @@ static void  write_SPICEdev(
 
     fprintf(fp, "    { \"%s\",\n", ifs_table->name.model_name);
     fprintf(fp, "      \"%s\",\n", ifs_table->name.description);
-    fprintf(fp, "      0,\n");
-    fprintf(fp, "      0,\n");
+    fprintf(fp, "      &val_terms,\n");
+    fprintf(fp, "      &val_numNames,\n");
     fprintf(fp, "      NULL,\n");
 
-    fprintf(fp, "      %d,\n", ifs_table->num_inst_var);
+    fprintf(fp, "      &val_numInstanceParms,\n");
     if(ifs_table->num_inst_var > 0)
         fprintf(fp, "      MIFpTable,\n");
     else
         fprintf(fp, "      NULL,\n");
 
-    fprintf(fp, "      %d,\n", ifs_table->num_param);
+    fprintf(fp, "      &val_numModelParms,\n");
     if(ifs_table->num_param > 0)
         fprintf(fp, "      MIFmPTable,\n");
     else
@@ -924,6 +933,7 @@ static void  write_SPICEdev(
     fprintf(fp, "MIFmParam,     \n");  /* DEVmodParam */
     fprintf(fp, "MIFload,       \n");  /* DEVload */
     fprintf(fp, "MIFsetup,      \n");  /* DEVsetup */
+    fprintf(fp, "NULL,          \n");  /* DEVunsetup */
     fprintf(fp, "NULL,          \n");  /* DEVpzSetup */
     fprintf(fp, "NULL,          \n");  /* DEVtemperature */
     fprintf(fp, "MIFtrunc,      \n");  /* DEVtrunc */
@@ -944,11 +954,14 @@ static void  write_SPICEdev(
     fprintf(fp, "NULL,          \n");  /* DEVsenAcLoad */
     fprintf(fp, "NULL,          \n");  /* DEVsenPrint */
     fprintf(fp, "NULL,          \n");  /* DEVsenTrunc */
+    fprintf(fp, "NULL,          \n");  /* DEVdisto */
+    fprintf(fp, "NULL,          \n");  /* DEVnoise */
+
 
     /* Write the sizeof stuff used in dynamic allocation of inst/model structs */
 
-    fprintf(fp, "sizeof(MIFinstance),\n");
-    fprintf(fp, "sizeof(MIFmodel),\n");
+    fprintf(fp, "&val_sizeofMIFinstance,\n");
+    fprintf(fp, "&val_sizeofMIFmodel,\n");
     fprintf(fp, "\n");
     fprintf(fp, "};\n");
     fprintf(fp, "\n");
