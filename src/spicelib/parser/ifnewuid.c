@@ -34,7 +34,7 @@ IFnewUid(void *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
 	asprintf(&newname, "%s#%s", (char *) olduid, suffix);
 #else /* ~ HAVE_ASPRINTF */
       if ( (newname = (char *) malloc(strlen((char *) olduid) +
-				      strlen(suffix) + strlen("#\0"))) 
+				      strlen(suffix) + 2)) /* 2 = strlen("#\0") */ 
 	   == NULL){
 	fprintf(stderr,"malloc failed\n");
 	exit(1);
