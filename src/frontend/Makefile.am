@@ -35,10 +35,13 @@ libfte_a_SOURCES = \
 	com_plot.h	\
 	com_rehash.c	\
 	com_set.c	\
+	com_set.h	\
 	com_setscale.c	\
 	com_setscale.h	\
 	com_shell.c	\
 	com_shift.c	\
+	com_state.c	\
+	com_state.h	\
 	com_strcmp.c	\
 	com_strcmp.h	\
 	com_unset.c	\

@@ -1,31 +1,45 @@
+2000-07-16  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* com_set.h: New header file.
+
+	* com_state.c, com_state.h: Separated from debugcom.c.
+
+	* com_dump.c, com_dump.h: Separated from debugcom.c.
+
+	* debugcom.c, debugcom.h: Removed.
+
+	* Makefile.am: Updates for added/removed files.
+
 2000-03-22  Paolo Nenzi <p.nenzi@ieee.org>
 
-    * rawfile.c: Applied Michael Widlok patch.
-    
-    * spiceif.c: Applied Michael Widlok patch. 
+	* rawfile.c: Applied Michael Widlok patch.
+
+	* spiceif.c: Applied Michael Widlok patch. 
 
 2000-03-12  Paolo Nenzi <p.nenzi@ieee.org>
-   
-    * x11.c: Cleared the code. Rewmoved some empty return on void functions.
+
+	* x11.c: Cleared the code. Rewmoved some empty return on void
+	functions.
 
 1999-12-20  Paolo Nenzi <p.nenzi@ieee.org>
-            outif.c: 
-            To fix various "save"-related segmentation faults, make this one-line patch
-            to outitf.c: line 356, change
-            unique = devname; to unique = copy(devname);
+
+	* outif.c: To fix various "save"-related segmentation faults, make
+	this one-line patch to outitf.c: line 356, change unique =
+	devname; to unique = copy(devname);
 
 1999-12-20  Paolo Nenzi <p.nenzi@ieee.org>
-            subckt.c: 
-                     Bug: Current controlled switch subcircuit does not expand
-                     the controlling source correctly: vsrc expands to name:vsrc,
-                     not to v:name:src.
-                     Fix: changed this file to indicate that w device has only 2
-                     not 3 nodes and 1 not zero controlling sources.
+
+        * subckt.c: Bug: Current controlled switch subcircuit does not
+	expand the controlling source correctly: vsrc expands to
+	name:vsrc, not to v:name:src.
+
+	Fix: changed this file to indicate that w device has only 2 not 3
+	nodes and 1 not zero controlling sources.
 
 1999-09-07  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* *.c: put back static functions declarations back in the .c files (shouldn't
-	be in .h files!)
+	* *.c: put back static functions declarations back in the .c files
+	(shouldn't be in .h files!)
 
 1999-09-07  Arno  <A.W.Peters@ieee.org>
 
@@ -34,7 +48,7 @@
 	* cmath1.c:
 
 	* cmath2.c: removed most warnings about possible use of
- 	uninitialized variables.  Only two remain in cx_sqrt().
+	uninitialized variables.  Only two remain in cx_sqrt().
 
 1999-09-06  Arno Peters <A.W.Peters@ieee.org>
 
@@ -104,16 +118,14 @@
 
 	* resource.c: removed tests on HAS_UNIX_SEGMENT_HACK
 
-	* xgraph.c (ft_xgraph): 
-	* options.c (cp_usrset): 
-	* misccoms.c: removed tests on HAS_SYSTEM
+	* xgraph.c (ft_xgraph), options.c (cp_usrset), misccoms.c: removed
+	tests on HAS_SYSTEM
 
-	* nutinp.c: 
-	* inp.c (com_source): 
-	(doedit): removed tests on HAS_SYSTEM (always true?)
+	* nutinp.c, inp.c (com_source, doedit): removed tests on
+	HAS_SYSTEM (always true?)
 
-	* doplot.c (com_hardcopy): removed tests on HAS_UNLINK (always true)
-	(com_hardcopy): removed tests on HAS_SYSTEM (always true?)
+	* doplot.c (com_hardcopy): removed tests on HAS_UNLINK (always
+	true), removed tests on HAS_SYSTEM (always true?)
 
 	* signal.c: 
 	* evaluate.c (doop): 
@@ -127,28 +139,22 @@
 
 	* aspice.c: changed HAS_WAIT into HAVE_SYS_WAIT_H
 
-	* inpcom.c:
-	* breakp.c: changed HAS_CTYPE into HAVE_CTYPE_H
+	* inpcom.c, breakp.c: changed HAS_CTYPE into HAVE_CTYPE_H
 
 1999-08-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* signal.c:
-	* resource.c:
-	* evaluate.c:
-	* aspice.c: changed SIGNAL_TYPE into RETSIGTYPE
+	* signal.c, resource.c, evaluate.c, aspice.c: changed SIGNAL_TYPE
+	into RETSIGTYPE
 
 1999-07-31  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* Makefile.am: added @X_CFLAGS@ (X11 header files) to INCLUDES and removed
-	unused LIBS list.
+	* Makefile.am: added @X_CFLAGS@ (X11 header files) to INCLUDES and
+	removed unused LIBS list.
 
 28-07-1999 emmanuel.rouat@wanadoo.fr (Manu Rouat)
 
-	* graf.c:
-	* display.c:
-	* doplot.c:
-	* x11.c: changed HAS_X11 define to X_DISPLAY_MISSING, which is supplied
-	by autoconf in config.h
+	* graf.c, display.c, doplot.c, x11.c: changed HAS_X11 define
+	to X_DISPLAY_MISSING, which is supplied by autoconf in config.h
 	
-	* removed -DWANT_X11 in Makefile.am
+	* Makefile.am: removed -DWANT_X11
 

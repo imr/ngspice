@@ -1,21 +1,13 @@
-/**********
-Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
-**********/
-
-/*
- * Circuit debugging commands.
- */
-
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "ftedebug.h"
-#include "dvec.h"
-#include "fteinp.h"
+#include <config.h>
+#include <ngspice.h>
+#include <bool.h>
+#include <wordlist.h>
+#include <inpdefs.h>
 
 #include "circuits.h"
-#include "debugcom.h"
+#include "com_state.h"
+#include "streams.h"
+#include "plotting/plotting.h"
 
 
 void
@@ -36,16 +28,3 @@ com_state(wordlist *wl)
     fprintf(cp_out, "(That's all this command does so far)\n");
     return;
 }
-
-
-void
-com_dump(wordlist *wl)
-{
-    if (!ft_curckt || !ft_curckt->ci_ckt) {
-        fprintf(cp_err, "Error: no circuit loaded.\n");
-        return;
-    }
-    if_dump(ft_curckt->ci_ckt, cp_out);
-    return;
-}
-
