@@ -14,7 +14,7 @@ void INP2L(void *ckt, INPtables * tab, card * current)
 {
 
 /* parse an inductor card */
-/* Cname <node> <node> [<val>] [<mname>] [IC=<val>] */
+/* Lname <node> <node> [<val>] [<mname>] [IC=<val>] */
 
     int mytype;			/* the type we determine inductors are */
     int type = 0;		/* the type the model says it is */
@@ -75,25 +75,25 @@ void INP2L(void *ckt, INPtables * tab, card * current)
 	    /* It is not a model */
 	    line = saveline;	/* go back */
 	    type = mytype;
-	    if (!tab->defCmod) {	/* create default L model */
+	    if (!tab->defLmod) {	/* create default L model */
 		IFnewUid(ckt, &uid, (IFuid) NULL, "L", UID_MODEL,
 			 (void **) NULL);
-		IFC(newModel, (ckt, type, &(tab->defCmod), uid));
+		IFC(newModel, (ckt, type, &(tab->defLmod), uid));
 	    }
-	    mdfast = tab->defCmod;
+	    mdfast = tab->defLmod;
 	}
 	IFC(newInstance, (ckt, mdfast, &fast, name));
     } else {
 	tfree(model);
 	/* The token is null and a default model will be created */
 	type = mytype;
-	if (!tab->defCmod) {
+	if (!tab->defLmod) {
 	    /* create default L model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "L", UID_MODEL,
 		     (void **) NULL);
-	    IFC(newModel, (ckt, type, &(tab->defCmod), uid));
+	    IFC(newModel, (ckt, type, &(tab->defLmod), uid));
 	}
-	IFC(newInstance, (ckt, tab->defCmod, &fast, name));
+	IFC(newInstance, (ckt, tab->defLmod, &fast, name));
     }
     
     if (error1 == 0) {		/* Looks like a number */
