@@ -201,7 +201,7 @@ resume:
             if((((VSRCinstance*)(cv->TRCVvElt[i]))->VSRCdcValue)*
                     SIGN(1.,cv->TRCVvStep[i]) - 
                     SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] >
-		    0.5 * fabs(cv->TRCVvStep[i]))
+		    DBL_EPSILON*1e+03)
                 { 
                     i++ ; 
                     firstTime=1;
@@ -214,7 +214,7 @@ resume:
             if((((ISRCinstance*)(cv->TRCVvElt[i]))->ISRCdcValue)*
                     SIGN(1.,cv->TRCVvStep[i]) -
                     SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] >
-		    0.5 * fabs(cv->TRCVvStep[i]))
+		    DBL_EPSILON*1e+03)
                 { 
                     i++ ; 
                     firstTime=1;
@@ -228,7 +228,7 @@ resume:
             if((((RESinstance*)(cv->TRCVvElt[i]))->RESresist)*
                     SIGN(1.,cv->TRCVvStep[i]) -
                     SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] 
-		    > 0.5 * fabs(cv->TRCVvStep[i]))
+		    > DBL_EPSILON*1e+03)
                 { 
                     i++ ; 
                     firstTime=1;
@@ -240,7 +240,7 @@ resume:
         } else if(cv->TRCVvType[i]==TEMP_CODE) { /* temp sweep */
             if(((ckt->CKTtemp) - CONSTCtoK) * SIGN(1.,cv->TRCVvStep[i]) -
 	            SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] >
-		    0.5 * fabs(cv->TRCVvStep[i]))
+		    DBL_EPSILON*1e+03)
 		  {
 		     i++ ;
 		     firstTime=1;
