@@ -863,14 +863,9 @@ free_pnode(struct pnode *t)
     free_pnode(t->pn_left);
     free_pnode(t->pn_right);
     free_pnode(t->pn_next);
-     tfree(t->pn_name); /* va: it is a copy() of original string, can be free'd */
-    /* va: tfree struct func, allocated within parser */
-//    if (t->pn_func!=NULL) {
-//    	tfree(t->pn_func->fu_name); /* va: name is a copy of original string */
-//    	tfree(t->pn_func);    	    /* va: t->pn_func->fu_func must not tfree'd */
-//    }
+     tfree(t->pn_name);
     if (t->pn_value)
-        vec_free(t->pn_value); /* patch by Stefan Jones */   
+        vec_free(t->pn_value);
     tfree(t);
 }
 
