@@ -1,7 +1,23 @@
 This file contais a list of known but not yet fixed bugs in ngspice.
 ====================================================================
 
-Rework 14: 
-   If you run tests in the test tree, you will discover that some 
-   of them fails because of a different value in "Reference Value".
-   Anyway, analyses results are not affected.
+Rework15fixed:
+
+define/let commands: 
+the following code causes a segmentation fault:
+
+ngspice 1 -> define max(x,y) ( x gt y ) * x + ( x le y ) * y
+ngspice 2 -> let z = max(2,3)
+vec_free: Internal Error: not in plot
+Segmentation fault (core dumped)
+
+---------------------------------------------------------------------
+
+output redirection:
+
+ngspice 1 -> print v(1) > data.txt
+
+This syntax does not work anymore. If you wanto to use
+output redirection you have to remove spaces around ">":
+
+ngspice 1 -> print v(1)>data.txt
