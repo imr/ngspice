@@ -1,18 +1,18 @@
 
-cmpp_OBJS=main.o  pp_ifs.o  pp_lst.o  pp_mod.o  read_ifs.o  util.o  writ_ifs.o \
+cmpp_OBJS = main.o  pp_ifs.o  pp_lst.o  pp_mod.o  \
+	read_ifs.o  util.o  writ_ifs.o \
 	ifs_yacc.o ifs_lex.o mod_yacc.o mod_lex.o
 
-cmpp_GEN=ifs_yacc.c ifs_tok.h \
+cmpp_GEN = ifs_yacc.c ifs_tok.h \
 	ifs_lex.c ifs_lex.h \
 	mod_lex.c mod_lex.h \
 	mod_yacc.c 	mod_tok.h
 
-YACC=bison -d --yacc
-#YACC=yacc -d
+YACC = @YACC@ -d
 
-CC=gcc -O2 -g
+CC = @CC@ @CFLAGS@
 
-LEX=flex -t
+LEX = @LEX@ -t
 
 all: cmpp
 

@@ -52,9 +52,11 @@ and based upon the NG-Spice source code base with many improvements
 
 ** More information:
 
-    tclspice/src/tcl/README : more in depth information on how to create your
+    src/tcl/README : more in depth information on how to create your
        own Tcl scripts. 
        Example also supplied in the same directory (vector_test.tcl).
+
+    src/xspice/README : More details on the xspice additions / useage
 
     http://tclspice.sourceforge.net/ : Homepage of Tclspice
 

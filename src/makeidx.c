@@ -4,13 +4,13 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 /* from FILENAME.txt, make FILENAME.idx */
 
-#include "ngspice.h"
 #include <stdio.h>
-#include "cpdefs.h"
-#include "hlpdefs.h"
-#include "suffix.h"
+#include <string.h>
+#include <stdlib.h>
 
-
+#include <defines.h>
+#include <cpextern.h>
+#include <hlpdefs.h>
 
 int
 main(argc, argv)

@@ -8,7 +8,7 @@ EXTRA_DIST = ngspice.txt spinit setplot spectrum
 
 helpdatadir = $(pkgdatadir)/helpdir
 
-helpdata_DATA = ngspice.txt
+helpdata_DATA = ngspice.txt ngspice.idx
 
 initdatadir = $(pkgdatadir)/scripts
 
@@ -58,15 +58,6 @@ DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/vccs/libvccs.a		\
 	spicelib/devices/vcvs/libvcvs.a		\
 	spicelib/devices/vsrc/libvsrc.a
-
-
-
-## ----- Note that I moved this stuff to here because it was causing automake
-##       to choke when it was in the DYNAMIC_DEVICELIBS list above -----
-## This lib deleted from DYNAMIC_DEVICELIBS by sdb 'cause there's no source for it.
-##	spicelib/devices/bjt2/libbjt2.a		\
-## poly added to dynamic libs by SDB on 6.1.2003
-##	xspice/icm/poly/libpoly.a
 
 ## Build ngspice first:
 
@@ -159,12 +150,9 @@ ngmultidec_LDADD =  \
 
 makeidx_SOURCES = makeidx.c
 
-makeidx_LDADD =  \
-	misc/libmisc.a 
-
 ## create index for online help:
 
-all:
+ngspice.idx: makeidx
 	./makeidx $(srcdir)/ngspice.txt
 
 

@@ -5,7 +5,7 @@
 
 
 /*how annoying!, needed for structure below*/
-void *tcalloc(size_t a, size_t b){
+static void *tcalloc(size_t a, size_t b){
   return tmalloc(a*b);
 }
 

@@ -1,5 +1,26 @@
+2003-08-31 Stefan Jones <stefan.jones@multigig.com>
+
+	* tests/TransImpedanceAmp/output.net:
+	processed with dos2unix
+	
+	* configure.in src/spinit.in src/spinit
+	src/xspice/cmpp/Makefile src/xspice/cmpp/Makefile.in:
+	Make configure automatically set paths for lex yacc and install dir
+
 2003-08-30 Stefan Jones <stefan.jones@multigig.com>
 
+	* src/Makefile.am Makefile.am README.Tcl
+	src/xspice/README src/xspice/icm/README
+	src/xspice/icm/spice2poly/icm_spice2poly/README:
+	Updated to reflect codemodel support is now complete
+
+	* src/xspice/{Makefile.am,xspice.c} 
+	src/xspice/cm/{cmexport.c,Makefile.am}:
+	Moved the xspice library hooks into the cm directory
+	
+	* src/Makefile.am src/ngspice.idx:
+	Remove ngspice.idx and make it auto-generated and installed
+	
 	* configure.in:
 	Change version to 0.2.14
 

@@ -19,5 +19,3 @@ tcl:
 install-tcl:
 	cd src && $(MAKE) install-tcl
 
-codemodels: 
-	cd src/xspice/icm && make

@@ -21,10 +21,10 @@ COMPILE = $(CC) $(INCLUDES) $(CFLAGS)
 INSTALL_DATA = ${INSTALL} -m 644
 
 all: 
-	@amf=$$2; for x in $(CMDIRS) ; do \
+	@for x in $(CMDIRS) ; do \
 	( cd $$x && $(UPMAKE) $$x-mods ) \
-	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done && test -z "$$fail"
+	|| exit 1; \
+	done
 
 install: all
 	$(mkinstalldirs) $(DESTDIR)$(libdir)/spice
@@ -35,10 +35,10 @@ install: all
 	done 
 
 clean:
-	@amf=$$2; for x in $(CMDIRS) ; do \
+	@for x in $(CMDIRS) ; do \
 	( cd $$x && $(UPMAKE) $$x-mods-clean ) \
-	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done && test -z "$$fail"
+	|| exit 1; \
+	done
 	-rm -rf .deps
 
 ifspec.c: ifspec.ifs
@@ -68,26 +68,26 @@ dlmain.o: cmextrn.h cminfo.h udnextrn.h udninfo.h
 	$(COMPILE) $(LDFLAGS) -o $@ `awk '{ print $$1 }' objects.inc` dlmain.o
 
 %-mods: modpath.lst udnpath.lst
-	@amf=$$2; for x in `cat modpath.lst` ; do \
+	@for x in `cat modpath.lst` ; do \
 	( cd $$x && $(UPMAKE) objs ) \
-	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done && test -z "$$fail"
-	@amf=$$2; for x in `cat udnpath.lst` ; do \
+	|| exit 1; \
+	done
+	@for x in `cat udnpath.lst` ; do \
 	( cd $$x && $(UPMAKE) uobjs ) \
-	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done && test -z "$$fail"
+	|| exit 1; \
+	done
 	@target=`echo $@ | sed s/-mods//`; $(MAKE) $$target.cm
 
 %-mods-clean:
 	@target=`echo $@ | sed s/-mods-clean//` && rm -f $$target.cm
-	@amf=$$2; for x in `cat modpath.lst` ; do \
+	@for x in `cat modpath.lst` ; do \
 	( cd $$x && $(UPMAKE) objs-clean ) \
-	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done && test -z "$$fail"
-	@amf=$$2; for x in `cat udnpath.lst` ; do \
+	|| exit 1; \
+	done
+	@for x in `cat udnpath.lst` ; do \
 	( cd $$x && $(UPMAKE) uobjs-clean ) \
-	|| case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done && test -z "$$fail"
+	|| exit 1; \
+	done
 	-rm -f cmextrn.h cminfo.h objects.inc udnextrn.h udninfo.h \
 	dlmain.c dlmain.o
 	-rm -rf .deps

@@ -402,9 +402,10 @@ dnl Add new code models to the build by pointing to them here.
 if test "$enable_xspice" = "yes"; then
     AC_MSG_RESULT(X-Spice features included)
     AC_DEFINE(XSPICE)
+    AC_PROG_YACC
+    AM_PROG_LEX
     XSPICEDIR="xspice"
-    XSPICELIB1="$XSPICEDIR/xspice.o        \
-		$XSPICEDIR/mif/libmifxsp.a \
+    XSPICELIB1="$XSPICEDIR/mif/libmifxsp.a \
 	        $XSPICEDIR/cm/libcmxsp.a"
     XSPICELIB2="$XSPICEDIR/evt/libevtxsp.a \
                 $XSPICEDIR/enh/libenhxsp.a \
@@ -415,7 +416,7 @@ if test "$enable_xspice" = "yes"; then
 else
     XSPCIEDIR=""
     XSPICELIB1=""
-    XSPICELIB2=""	
+    XSPICELIB2=""
 fi
 AC_SUBST(XSPICEDIR)
 AC_SUBST(XSPICELIB1)
@@ -443,6 +444,7 @@ doc/Makefile			\
 man/Makefile			\
 man/man1/Makefile		\
 src/Makefile			\
+src/spinit			\
 src/spicelib/Makefile		\
 src/spicelib/analysis/Makefile	\
 src/spicelib/devices/Makefile		\
@@ -503,6 +505,7 @@ src/maths/sparse/Makefile	\
 src/misc/Makefile		\
 src/xspice/Makefile		\
 src/xspice/cm/Makefile		\
+src/xspice/cmpp/Makefile	\
 src/xspice/icm/makedefs		\
 src/xspice/mif/Makefile		\
 src/xspice/evt/Makefile		\
