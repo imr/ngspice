@@ -1,14 +1,14 @@
 DEVICES
--------------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
-This file contains the status of devices available in ng-spice. This
-file will be updated every time the device cospecific code is
-altered/changed.
+This file contains the status of devices available in ngspice. This file 
+will be updated every time the device pecific code is altered or changed. 
+This file it is useful in writing ngspice documentation.
 
 
-                     **************************************
-                     **********  Linear devices  **********
-                     **************************************
+***************************************************************************
+*************************  Linear devices  ********************************
+***************************************************************************
 
 CAP - Capacitor
       Initial Release
@@ -17,18 +17,18 @@ IND - Inductor
       Initial Release
 
 RES - Resistor
-      This is a modified version of the spice3 resistance model. This
-      model supports different ac and dc values (ac=...). This changes
-      are introduced by Serban Popescu. The "multiplicity factor" (m) 
-      has been introduced. The "scale factor" has been introduced.
+      This is a modified version of the spice3 resistance model. This model 
+      supports different ac and dc values (ac=...). These changes have been
+      introduced by Serban Popescu. The "multiplicity factor" (m) has been 
+      introduced. The "scale factor" has been introduced.
       
-      *)Rework 11: The code has been modified to reflect spice parsing
-        standard. 
+      *)Rework 11: The code has been modified to reflect spice parsing 
+      standard. 
       
-                     
-		           **************************************
-                     ******** Distributed elements ********
-		           **************************************
+
+***************************************************************************
+********************* Distributed elements ********************************
+***************************************************************************
 		     
 TRA  - Transmission line
       Initial release
@@ -40,9 +40,9 @@ URC  - Uniform distributed RC line
       Initial release		     
 
 
-                     **************************************
-                     **********    V/I Sources   **********
-                     **************************************
+***************************************************************************
+****************************    V/I Sources   *****************************
+***************************************************************************
 
 ASRC  - Arbitrary Source
       Initial Release
@@ -66,9 +66,9 @@ VSRC  - Independent Voltage Source
       Initial Release
 
                      
-		           **************************************
-                     *********      Switches     **********
-                     **************************************
+***************************************************************************
+****************************      Switches     ****************************
+***************************************************************************
 		     
 CSW - Current controlled switch
       Initial release
@@ -77,25 +77,27 @@ SW  - Voltage controlled switch
       Initial release		   
 		   
 		     
-                     **************************************
-                     **********      Diodes      **********
-                     **************************************
+***************************************************************************
+****************************      Diodes       ****************************      
+***************************************************************************
 
 DIO   - Junction Diode
       Initial Release 
 
                      
-		           **************************************
-                     *********** Bipolar Devices **********
-                     **************************************
+***************************************************************************
+*************************     Bipolar Devices     *************************
+***************************************************************************
       
 BJT   - Bipolar Junction Transistor
       Initial Relelase
 
+BJT2  - Bipolar Junction Trasistor (Alan Gillespie)
+      On hold (not included)
 
-                     **************************************
-                     **********   FET Devices    **********
-                     **************************************
+***************************************************************************
+*****************************    FET Devices    ***************************
+***************************************************************************
 		     
 JFET  - Junction Field Effect transistor
       Initial Release
@@ -103,71 +105,158 @@ JFET  - Junction Field Effect transistor
 JFET2 - Jfet PS model
       Initial release. TO BE TESTED
 
-                
-		           **************************************
-                     *********     MES devices    *********
-                     **************************************
+***************************************************************************
+***************************    HFET devices     ***************************
+***************************************************************************
+           
+HFET  - HFET Level 1
+      Initial release.
+     
+HFET2 - HFET Level 2
+      Initial release.
+
+
+***************************************************************************
+***************************     MES devices     ***************************
+***************************************************************************
 		
-MES - MESfet model
+MES   - MESfet model
       Initial release
-    		
+      
+MESA  - MESA model
+      Initial release. TO BE TESTED
 		 
-		           **************************************
-                     *********     MOS devices    *********
-                     **************************************
+***************************************************************************
+****************************    MOS devices    ****************************
+***************************************************************************
  
 MOS1  - Level 1 MOS model
-      Initial Release
+      Initial Release.
+      Ver:    N/A
+      Class:  M
+      Level:  1
+      Status: TO BE TESTED
 
 MOS2  - Level 2 MOS model
-      Initial Release
+      Initial Release.
+      Ver:    N/A
+      Class:  M
+      Level:  2
+      Status: TO BE TESTED 
 
 MOS3  - Level 3 MOS model
-      Initial Release
+      Initial Release.
+      Ver:    N/A
+      Class:  M
+      Level:  3
+      Status: TO BE TESTED
 
 MOS6  - Level 6 MOS model
-      Initial Release
+      Initial Release.
+      Ver:    N/A
+      Class:  M
+      Level:  6
+      Status: TO BE TESTED
+
+
+MOS9  - Level 9 MOS model
+      Initial Release.
+      Ver:    N/A
+      Class:  M
+      Level:  9
+      Status: TO BE TESTED
+
 
 BSIM1 - BSIM model level 1
-      Initial Release
+      Initial Release.
+      Ver:    N/A
+      Class:  M
+      Level:  4
+      Status: TO BE TESTED
+
 
 BSIM2 - BSIM model level 2
-      Initial Release
+      Initial Release.
+      Ver:    N/A
+      Class:  M
+      Level:  5
+      Status: TO BE TESTED
+
 
 BSIM3 - BSIM model level 3
-      This is the BSIM3v3.2.2 model from Berkeley device group.  You
-      can find some test netlists with results for this model at
-      http://www-device.eecs.berkeley.edu/~bsim3.
+      Initial Release.
+      Ver:    3.2.2
+      Class:  M
+      Level:  8
+      Status: TO BE TESTED
+      
+      This is the BSIM3v3.2.2 model from Berkeley device group.  
+      You can find some test netlists with results for this model
+      on its web site.
+      
+      Web site:
+      http://www-device.eecs.berkeley.edu/~bsim3
         
 
 BSIM3v1 - BSIM model level 3
-      This is the BSIM3v3.1 model modified by Serban Popescu. This is
-      level 49 model. It is an implementation that supports HDIF and M
-      parameters. Test netlists are available at the URL above.  TO BE
-      TESTED AND IMPROVED.
+        Initial Release.
+        Ver:    N/A
+        Class:  M
+        Level:  49
+        Status: TO BE TESTED AND IMPROVED
+        
+        This is the BSIM3v3.1 model modified by Serban Popescu. 
+        This is level 49 model. It is an implementation that supports 
+        "HDIF" and "M" parameters.
+        
 
 BSIM3v2 - BSIM model level 3
-      This is the BSIM3v3.2 model. It is proved only for compatibility
-      with existing netlists and parameters files. As always, tests
-      are availabe on the Berkeley's device group site (at the above
-      URL).
+        Initial Relese.
+        Ver:    3.2
+        Class:  M
+        Level:  50
+        Status: TO BE TESTED
+
+        This is the BSIM3v3.2 model. It is included only for compatibility
+        with existing netlists and parameters files. As always, tests
+        are availabe on the Berkeley's device group site.
+        
+        Web site:
+        http://www-device.eecs.berkeley.edu/~bsim3
 
 BSIM4   - BSIM model level 4 (0.18 um)
-      Initial Release. TO BE TESTED.
-      Updated to 4.21 YET UNTESTED.
+        Initial Release. 
+        Ver:    4.2.1 (Updated in rewor 14)
+        Class:  M
+        Level:  14
+        Status: TO BE TESTED
+        
+        This is the BSIM4 device model from Berkeley Device Group.
+        Test are available on its web site.
+        
+        Web site:
+        http://www-device.eecs.berkeley.edu/~bsim3/bsim4.html
+      
+      *) Rework 14: Updated to 4.21 YET UNTESTED.
 	 
 	 
-                     **************************************	 
-                     **********    SOI Devices    *********
-                     **************************************
+***************************************************************************	 
+*****************************    SOI Devices   ****************************
+***************************************************************************
 
 
 BSIM3SOI_FD - SOI model (fully depleted devices)
-      Initial Release Ver: 2.1. TO BE TESTED.
-      FD model has been integrated as Level = 10
+      Initial Release.
+      Ver:    2.1. 
+      Class:  M
+      Level:  11
+      Status: TO BE TESTED.
+      
+      FD model has been integrated.
       There is a bsim3soifd directory under the test
       hierarchy. Test circuits come from the bsim3soi
-      web site at:
+      
+      Web site at:
       http://www-device.eecs.berkeley.edu/~bsimsoi
 
       *) rework-14: removed #ifndef NEWCONV code.
@@ -175,21 +264,60 @@ BSIM3SOI_FD - SOI model (fully depleted devices)
 
 
 BSIM3SOI_PD - SOI model (partially depleted devices)
-      Initial Release Ver: 2.2.1. TO BE TESTED.
-      PD model has been integrated as Level = 9 
+      Initial Release.
+      Ver:    2.2.1
+      Class:  M
+      Level:  10 
+      Status: TO BE TESTED.
+      
+      PD model has been integrated. 
       There is a bsim3soipd directory under the test
       hierarchy. Test circuits come from the bsim3soi
-      web site at: 
+      
+      Web site at: 
       http://www-device.eecs.berkeley.edu/~bsimsoi
 
       *) rework-14: removed #ifndef NEWCONV code.
 
 BSIM3SOI_DD - SOI Model (dynamic depletion model)
-     Initial Release Ver: 2.1. TO BE TESTED.
-     DD model has been integrated as level= 11
+     Initial Release. 
+     Ver:    2.1
+     Class:  M
+     Level:  12
+     Status: TO BE TESTED.
+     
      There is a bsim3soidd directory under the
      test hierarchy. Test circuits come from bsim3soi
-     web site at:
+     
+     Web site at:
      http://www-device.eecs.berkeley.edu/~bsimsoi
     
      *) rework-14: removed #ifndef NEWCONV code.
+
+SOI3 - STAG SOI3 Model
+       Initial Release. 
+       Ver:    2.6
+       Class:  M
+       Level:  62
+       Status: TO BE TESTED
+       
+       Web site at:
+       http://www.micro.ecs.soton.ac.uk/stag/
+       
+***************************************************************************
+**************** Other devices not released as source code ****************
+***************************************************************************
+
+EKV  - EKV model
+       Initial Release. 
+       Ver:    2.6
+       Class:  M
+       Level:  44
+       Status: TO BE TESTED
+       
+       Note: This model is not released in source code.
+       You have to obtain the source code from the address below.
+       
+       Web site at:
+       http://legwww.epfl.ch/ekv/
+            
