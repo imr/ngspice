@@ -181,6 +181,8 @@ fi
 
 . $tcl_config_sh	
 
+AC_CHECK_HEADERS(tcl.h blt.h,,AC_MSG_ERROR(Couldn't find Tcl/BLT headers))
+
 AC_MSG_CHECKING(for TCL module BLT)
 rm -f conftest.tcl
 cat > conftest.tcl << EOF
@@ -191,6 +193,19 @@ if (wish conftest.tcl; exit) 2>/dev/null; then
    AC_MSG_RESULT(Found)
 else
    AC_MSG_ERROR(Couldn't find BLT)
+fi
+rm -f conftest.tcl
+
+AC_MSG_CHECKING(for TCL module tclreadline)
+rm -f conftest.tcl
+cat > conftest.tcl << EOF
+package require tclreadline;
+exit;
+EOF
+if (wish conftest.tcl; exit) 2>/dev/null; then
+   AC_MSG_RESULT(Found)
+else
+   AC_MSG_ERROR(Couldn't find tclreadline)
 fi
 rm -f conftest.tcl
 
@@ -491,5 +506,5 @@ tests/TransImpedanceAmp/Makefile
 
 dnl Printout Tcl option
 if test "$enable_tcl" = "yes"; then
-   echo 'Tcl module being made, use "make tcl" and "make install-tcl", read README in src/tcl/README'
+   echo 'Tcl module being made, use "make tcl" and "make install-tcl", read README.Tcl'
 fi
