@@ -1,3 +1,14 @@
+2003-09-25  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/cap/*, src/spicelib/parser/inp2c.c,
+	  src/include/defines.h, src/include/const.h: enhanced
+	  capacitor model. Added temperature dependence, model capacitance
+	  and cj computation based on insulator thickness and relative
+	  dielectric constant.
+	
+	* doc/ngspice.tex, DEVICES: updated documentation reflecting
+	  capacitor model changes.  
+
 2003-09-24  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/spicelib/analysis/dctrcurv.c: Fixed resistance sweep. First

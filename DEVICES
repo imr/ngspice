@@ -44,8 +44,6 @@ RES	- Simple linear resistor
 	- Noiseless resistor
 	- Flicker noise
 	- Preliminary technology scaling support
-	- Xspice extensions
-	- Cider extensions
       
 
 ***************************************************************************
@@ -207,18 +205,24 @@ BSIM2 - BSIM model level 2
 
 BSIM3 - BSIM model level 3
       Initial Release.
-      Ver:    3.2.2
+      Ver:    3.2.4
       Class:  M
       Level:  8
-      Status: TO BE TESTED
+      Status: TO BE TESTED 
       
-      This is the BSIM3v3.2.2 model from Berkeley device group.  
+      This is the BSIM3v3.2.4 model from Berkeley device group.  
       You can find some test netlists with results for this model
       on its web site.
       
       Web site:
       http://www-device.eecs.berkeley.edu/~bsim3
-        
+      
+      Enhancements over the original model:
+	
+	- Parallel Multiplier
+	- ACM Area Calculation Method
+	- Multirevision code (supports all 3v3.2 minor revisions)
+	- NodesetFix  
 
 BSIM3v1 - BSIM model level 3
         Initial Release.
@@ -278,9 +282,7 @@ HiSIM	- Hiroshima-university STARC IGFET Model
 	Enhancements over the original model:
 	
 	- Parallel Multiplier
-	- Xspice extensions
-	- Cider extensions
-	- Copynodeset (?)
+	- NodesetFix
 	
 ***************************************************************************	 
 *****************************    SOI Devices   ****************************
