@@ -16,9 +16,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOsUpdate(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+DIOsUpdate(GENmodel *inModel, CKTcircuit *ckt)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;

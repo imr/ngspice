@@ -4,8 +4,6 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 **********/
 
-#ifdef __STDC__
-
 extern int DIOacLoad(GENmodel*,CKTcircuit*);
 extern int DIOask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int DIOconvTest(GENmodel *,CKTcircuit*);
@@ -29,34 +27,5 @@ extern int DIOtemp(GENmodel*,CKTcircuit*);
 extern int DIOtrunc(GENmodel*,CKTcircuit*,double*);
 extern int DIOdisto(int,GENmodel*,CKTcircuit*);
 extern int DIOnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
-
 extern int DIOdSetup(DIOmodel*,CKTcircuit*);
-
-
-#else /* stdc */
-
-extern int DIOacLoad();
-extern int DIOask();
-extern int DIOconvTest();
-extern int DIOdelete();
-extern void DIOdestroy();
-extern int DIOgetic();
-extern int DIOload();
-extern int DIOmAsk();
-extern int DIOmDelete();
-extern int DIOmParam();
-extern int DIOparam();
-extern int DIOpzLoad();
-extern int DIOsAcLoad();
-extern int DIOsLoad();
-extern int DIOsSetup();
-extern void DIOsPrint();
-extern int DIOsUpdate();
-extern int DIOsetup();
-extern int DIOunsetup();
-extern int DIOtemp();
-extern int DIOtrunc();
-extern int DIOdisto();
-extern int DIOnoise();
-#endif /* stdc */
 

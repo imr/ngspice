@@ -12,10 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+DIOmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     DIOmodel **model = (DIOmodel**)inModel;
     DIOmodel *modfast = (DIOmodel*)kill;

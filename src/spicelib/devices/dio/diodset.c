@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author:  1988 Jaijeet S Roychowdhury
+Modified by Dietmar Warning 2003
 **********/
 
 #include "ngspice.h"
@@ -12,7 +13,7 @@ Author:  1988 Jaijeet S Roychowdhury
 
 
 /* actually load the current resistance value into the sparse matrix
- * previously provided */
+ * previously provided - for distortion analysis */
 int
 DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 {
@@ -31,6 +32,13 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 	double g2,g3;
 	double cdiff2,cdiff3;
 	double cjunc1,cjunc2,cjunc3;
+        double cd;
+        double sqrt_ikf;
+        double ikf_area_m;
+	double sqrt_ikr;
+        double ikr_area_m;
+	double czeroSW;
+	double cjunc1SW,cjunc2SW,cjunc3SW;
 
 	/*  loop through all the diode models */
 	for( ; model != NULL; model = model->DIOnextModel ) {
@@ -44,10 +52,7 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 			     *  this routine loads diodes for dc and transient analyses.
 			     */
 
-
-
-
-			csat=here->DIOtSatCur*here->DIOarea;
+                        csat=(here->DIOtSatCur*here->DIOarea+here->DIOtSatSWCur*here->DIOpj)*here->DIOm;
 			vt = CONSTKoverQ * here->DIOtemp;
 			vte=model->DIOemissionCoeff * vt;
 	    		vd = *(ckt->CKTrhsOld + (here->DIOposPrimeNode)) -
@@ -58,11 +63,17 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 			 */
 			if (vd >= -5*vte) {
 				evd = exp(vd/vte);
+                                cd = csat*(evd-1)+ckt->CKTgmin*vd;
 				gd = csat*evd/vte+ckt->CKTgmin;
+                                if((model->DIOforwardKneeCurrentGiven) && (model->DIOforwardKneeCurrent > 0.0) && (cd > 1.0e-18) ) {
+                                  ikf_area_m = model->DIOforwardKneeCurrent*here->DIOarea*here->DIOm;
+                                  sqrt_ikf = sqrt(cd/ikf_area_m);
+                                  gd = ((1+sqrt_ikf)*gd - cd*gd/(2*sqrt_ikf*ikf_area_m))/(1+2*sqrt_ikf+cd/ikf_area_m)+ckt->CKTgmin;
+                                }
 				g2 = 0.5*(gd-ckt->CKTgmin)/vte;
-				cdiff2 = g2*model->DIOtransitTime;
+				cdiff2 = g2 * here->DIOtTransitTime;
 				g3 = g2/3/vte;
-				cdiff3 = g3*model->DIOtransitTime;
+				cdiff3 = g3 * here->DIOtTransitTime;
 			} 
 			else if((!(here->DIOtBrkdwnV))|| 
 			    (vd >= -here->DIOtBrkdwnV)) {
@@ -86,35 +97,54 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 			/*
 			                 *   junction charge storage elements
 			                 */
-			czero=here->DIOtJctCap*here->DIOarea;
+                        czero=here->DIOtJctCap*here->DIOarea*here->DIOm;
 			if (czero != 0.0) {
-			if (vd < here->DIOtDepCap){
-				arg=1-vd/model->DIOjunctionPot;
-				sarg=exp(-model->DIOgradingCoeff*log(arg));
-				/* the expression for depletion charge 
-				                        model->DIOjunctionPot*czero*
-                            (1-arg*sarg)/(1-model->DIOgradingCoeff);
-						    */
-				cjunc1 = czero*sarg;
-				cjunc2 = cjunc1/2/model->DIOjunctionPot*model->DIOgradingCoeff/arg;
-				cjunc3 = cjunc2/3/model->DIOjunctionPot/arg*(model->DIOgradingCoeff + 1);
-			} 
-			else {
-				czof2=czero/model->DIOf2;
-				/* depletion charge equation 
-				                        czero*here->DIOtF1+czof2*
-                        (model->DIOf3*(vd-here->DIOtDepCap)+
-				                        (model->DIOgradingCoeff/(model->DIOjunctionPot+
-				                        model->DIOjunctionPot))*(vd*vd-here->DIOtDepCap*
-                        here->DIOtDepCap));
-							*/
-				cjunc2 = czof2/2/model->DIOjunctionPot*model->DIOgradingCoeff;
-				cjunc3 =0.0;
-			}
+			  if (vd < here->DIOtDepCap){
+			  	arg=1-vd/model->DIOjunctionPot;
+			  	sarg=exp(-here->DIOtGradingCoeff*log(arg));
+			  	/* the expression for depletion charge 
+			  	                        model->DIOjunctionPot*czero*
+                              (1-arg*sarg)/(1-here->DIOtGradingCoeff);
+			  			    */
+			  	cjunc1 = czero*sarg;
+			  	cjunc2 = cjunc1/2/model->DIOjunctionPot*here->DIOtGradingCoeff/arg;
+			  	cjunc3 = cjunc2/3/model->DIOjunctionPot/arg*(here->DIOtGradingCoeff + 1);
+			  } 
+			  else {
+			  	czof2=czero/here->DIOtF2;
+			  	/* depletion charge equation 
+			  	                        czero*here->DIOtF1+czof2*
+                          (model->DIOtF3*(vd-here->DIOtDepCap)+
+			  	                        (here->DIOtGradingCoeff/(model->DIOjunctionPot+
+			  	                        model->DIOjunctionPot))*(vd*vd-here->DIOtDepCap*
+                          here->DIOtDepCap));
+			  				*/
+			  	cjunc2 = czof2/2/model->DIOjunctionPot*here->DIOtGradingCoeff;
+			  	cjunc3 =0.0;
+			  }
 			} 
 			else 
 			{
-			cjunc1 = cjunc2 = cjunc3 = 0.0;
+			  cjunc1 = cjunc2 = cjunc3 = 0.0;
+			}
+                        czeroSW=+here->DIOtJctSWCap*here->DIOpj*here->DIOm;
+			if (czeroSW != 0.0) {
+			  if (vd < here->DIOtDepCap){
+			  	arg=1-vd/model->DIOjunctionSWPot;
+			  	sarg=exp(-model->DIOgradingSWCoeff*log(arg));
+			  	cjunc1SW = czeroSW*sarg;
+			  	cjunc2SW = cjunc1SW/2/model->DIOjunctionSWPot*model->DIOgradingSWCoeff/arg;
+			  	cjunc3SW = cjunc2SW/3/model->DIOjunctionSWPot/arg*(model->DIOgradingSWCoeff + 1);
+			  } 
+			  else {
+			  	czof2=czeroSW/here->DIOtF2SW;
+			  	cjunc2SW = czof2/2/model->DIOjunctionSWPot*model->DIOgradingSWCoeff;
+			  	cjunc3SW = 0.0;
+			  }
+			} 
+			else 
+			{
+			  cjunc1SW = cjunc2SW = cjunc3SW = 0.0;
 			}
 
 			/*
@@ -125,8 +155,8 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 			here->id_x3 = g3;
 			here->cdif_x2 = cdiff2;
 			here->cdif_x3 = cdiff3;
-			here->cjnc_x2 = cjunc2;
-			here->cjnc_x3 = cjunc3;
+			here->cjnc_x2 = cjunc2+cjunc2SW;
+			here->cjnc_x3 = cjunc3+cjunc3SW;
 		}
 	}
 		return(OK);

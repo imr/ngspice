@@ -19,9 +19,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOsAcLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+DIOsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;
@@ -111,7 +109,7 @@ DIOsAcLoad(inModel,ckt)
             geq0 = *(here->DIOsenGeq);
             xceq0 = *(here->DIOsenCeq) * ckt->CKTomega;
             A0 = here->DIOarea;
-            gspr0=model->DIOconductance*A0;
+            gspr0=here->DIOtConductance*A0;
             cpos0 = gspr0 * vspr;
             icpos0 = gspr0 * ivspr;
             cposprm0 = geq0 * vd - xceq0 * ivd - cpos0;
@@ -146,7 +144,7 @@ DIOsAcLoad(inModel,ckt)
                 *(here->DIOsenCeq + 1)= *(ckt->CKTstate0 + here->DIOcapCurrent);
                 here->DIOarea = A0;
             }
-            gspr=model->DIOconductance*Apert; 
+            gspr=here->DIOtConductance*Apert; 
             geq = *(here->DIOsenGeq + 1);
             xceq = *(here->DIOsenCeq + 1) * ckt->CKTomega;
             flag = 0;
@@ -173,7 +171,7 @@ pertvd:     /* Perturbation of Diode Voltage */
                 *(here->DIOsenCeq + 2)= *(ckt->CKTstate0 + here->DIOcapCurrent);
                 *(ckt->CKTstate0 + here->DIOvoltage) = A0;
             }
-            gspr=model->DIOconductance*here->DIOarea; 
+            gspr=here->DIOtConductance*here->DIOarea; 
             geq = *(here->DIOsenGeq + 2);
             xceq = *(here->DIOsenCeq + 2) * ckt->CKTomega;
 

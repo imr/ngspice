@@ -13,10 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOtrunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+DIOtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;

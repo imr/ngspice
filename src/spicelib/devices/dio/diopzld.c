@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified by Dietmar Warning 2003
 **********/
 /*
  */
@@ -14,10 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOpzLoad(inModel,ckt,s)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    SPcomplex *s;
+DIOpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     double gspr;
@@ -32,8 +30,7 @@ DIOpzLoad(inModel,ckt,s)
         for (here = model->DIOinstances; here != NULL ;
                 here=here->DIOnextInstance) {
 	    if (here->DIOowner != ARCHme) continue;
-
-            gspr=model->DIOresist*here->DIOarea;
+            gspr=here->DIOtConductance*here->DIOarea*here->DIOm;
             geq= *(ckt->CKTstate0 + here->DIOconduct);
             xceq= *(ckt->CKTstate0 + here->DIOcapCurrent);
             *(here->DIOposPosPtr ) += gspr;

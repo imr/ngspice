@@ -11,8 +11,7 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-DIOdestroy(inModel)
-    GENmodel **inModel;
+DIOdestroy(GENmodel **inModel)
 {
     DIOmodel **model = (DIOmodel**)inModel;
     DIOinstance *here;

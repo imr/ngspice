@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified by Dietmar Warning 2003
 **********/
 #ifndef DIO
 #define DIO
@@ -52,23 +53,43 @@ typedef struct sDIOinstance {
 
     unsigned DIOoff : 1;   /* 'off' flag for diode */
     unsigned DIOareaGiven : 1;   /* flag to indicate area was specified */
+    unsigned DIOpjGiven : 1;   /* flag to indicate perimeter was specified */
+    unsigned DIOmGiven : 1;   /* flag to indicate multiplier was specified */
+
     unsigned DIOinitCondGiven : 1;  /* flag to indicate ic was specified */
     unsigned DIOsenPertFlag :1; /* indictes whether the the parameter of
                                the particular instance is to be perturbed */
     unsigned DIOtempGiven : 1;  /* flag to indicate temperature was specified */
-
+    unsigned DIOdtempGiven : 1; /* flag to indicate dtemp given */
 
     double DIOarea;     /* area factor for the diode */
-    double DIOinitCond;     /* initial condition */
-    double DIOtemp;     /* temperature of the instance */
-    double DIOtJctPot;  /* temperature adjusted junction potential */
-    double DIOtJctCap;  /* temperature adjusted junction capacitance */
+    double DIOpj;     /* perimeter for the diode */
+    double DIOm;     /* multiplier for the diode */
+
+    double DIOinitCond;      /* initial condition */
+    double DIOtemp;          /* temperature of the instance */
+    double DIOdtemp;         /* delta temperature of instance */
+    double DIOtJctPot;       /* temperature adjusted junction potential */
+    double DIOtJctCap;       /* temperature adjusted junction capacitance */
+    double DIOtJctSWPot;     /* temperature adjusted sidewall junction potential */
+    double DIOtJctSWCap;     /* temperature adjusted sidewall junction capacitance */
+    double DIOtTransitTime;  /* temperature adjusted transit time */
+    double DIOtGradingCoeff; /* temperature adjusted grading coefficient (MJ) */
+    double DIOtConductance;  /* temperature adjusted series conductance */
+
     double DIOtDepCap;  /* temperature adjusted transition point in */
                         /* the curve matching (Fc * Vj ) */
     double DIOtSatCur;  /* temperature adjusted saturation current */
+    double DIOtSatSWCur;  /* temperature adjusted side wall saturation current */
+
     double DIOtVcrit;   /* temperature adjusted V crit */
     double DIOtF1;      /* temperature adjusted f1 */
     double DIOtBrkdwnV; /* temperature adjusted breakdown voltage */
+    
+    double DIOtF2;     /* coeff. for capacitance equation precomputation */
+    double DIOtF3;     /* coeff. for capacitance equation precomputation */
+    double DIOtF2SW;   /* coeff. for capacitance equation precomputation */
+    double DIOtF3SW;   /* coeff. for capacitance equation precomputation */
 
 /*
  * naming convention:
@@ -139,15 +160,29 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     IFuid DIOmodName; /* pointer to character string naming this model */
 
     unsigned DIOsatCurGiven : 1;
+    unsigned DIOsatSWCurGiven : 1;
+
     unsigned DIOresistGiven : 1;
+    unsigned DIOresistTemp1Given : 1;
     unsigned DIOemissionCoeffGiven : 1;
     unsigned DIOtransitTimeGiven : 1;
+    unsigned DIOtranTimeTemp1Given : 1;
+    unsigned DIOtranTimeTemp2Given : 1;
     unsigned DIOjunctionCapGiven : 1;
     unsigned DIOjunctionPotGiven : 1;
     unsigned DIOgradingCoeffGiven : 1;
+    unsigned DIOgradCoeffTemp1Given : 1;
+    unsigned DIOgradCoeffTemp2Given : 1;
+    unsigned DIOjunctionSWCapGiven : 1;
+    unsigned DIOjunctionSWPotGiven : 1;
+    unsigned DIOgradingSWCoeffGiven : 1;
+    unsigned DIOforwardKneeCurrentGiven : 1;
+    unsigned DIOreverseKneeCurrentGiven : 1;
+
     unsigned DIOactivationEnergyGiven : 1;
     unsigned DIOsaturationCurrentExpGiven : 1;
     unsigned DIOdepletionCapCoeffGiven : 1;
+    unsigned DIOdepletionSWcapCoeffGiven :1;
     unsigned DIObreakdownVoltageGiven : 1;
     unsigned DIObreakdownCurrentGiven : 1;
     unsigned DIOnomTempGiven : 1;
@@ -155,20 +190,33 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOfNexpGiven : 1;
 
     double DIOsatCur;   /* saturation current */
-    double DIOresist;   /* ohmic series resistance */
-    double DIOconductance;  /* conductance corresponding to ohmic R */
-    double DIOemissionCoeff;    /* emission coefficient (N) */
-    double DIOtransitTime;      /* transit time (TT) */
-    double DIOjunctionCap;      /* Junction Capacitance (Cj0) */
-    double DIOjunctionPot;      /* Junction Potential (Vj) or (PB) */
-    double DIOgradingCoeff;     /* grading coefficient (m) */
+    double DIOsatSWCur;   /* Sidewall saturation current */
+
+    double DIOresist;             /* ohmic series resistance */ 
+    double DIOresistTemp1;        /* series resistance 1st order temp. coeff. */
+    double DIOconductance;        /* conductance corresponding to ohmic R */
+    double DIOemissionCoeff;      /* emission coefficient (N) */
+    double DIOtransitTime;        /* transit time (TT) */
+    double DIOtranTimeTemp1;      /* transit time 1st order coefficient */
+    double DIOtranTimeTemp2;      /* transit time 2nd order coefficient */
+    double DIOjunctionCap;        /* Junction Capacitance (Cj0) */
+    double DIOjunctionPot;        /* Junction Potential (Vj) or (PB) */
+    double DIOgradingCoeff;       /* grading coefficient (m) or (mj) */
+    double DIOgradCoeffTemp1;     /* grading coefficient 1st order temp. coeff.*/
+    double DIOgradCoeffTemp2;     /* grading coefficient 2nd order temp. coeff.*/
+    double DIOjunctionSWCap;      /* Sidewall Junction Capacitance (Cjsw) */
+    double DIOjunctionSWPot;      /* Sidewall Junction Potential (Vjsw) or (PBSW) */
+    double DIOgradingSWCoeff;     /* Sidewall grading coefficient (mjsw) */
+    double DIOforwardKneeCurrent; /* Forward Knee current */
+    double DIOreverseKneeCurrent; /* Reverse Knee current */
+
     double DIOactivationEnergy; /* activation energy (EG) */
     double DIOsaturationCurrentExp; /* Saturation current exponential (XTI) */
     double DIOdepletionCapCoeff;    /* Depletion Cap fraction coefficient (FC)*/
+    double DIOdepletionSWcapCoeff;    /* Depletion sw-Cap fraction coefficient (FCS)*/
     double DIObreakdownVoltage; /* Voltage at reverse breakdown */
     double DIObreakdownCurrent; /* Current at above voltage */
-    double DIOf2;   /* coefficient for capacitance equation precomputation */
-    double DIOf3;   /* coefficient for capacitance equation precomputation */
+
     double DIOnomTemp;  /* nominal temperature (temp at which parms measured */
     double DIOfNcoef;
     double DIOfNexp;
@@ -195,6 +243,9 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 #define DIO_QUEST_SENS_CPLX      16
 #define DIO_QUEST_SENS_DC        17
 #define DIO_CAP 18
+#define DIO_PJ 19 
+#define DIO_M 20 
+#define DIO_DTEMP 21
 
 /* model parameters */
 #define DIO_MOD_IS 101
@@ -214,6 +265,18 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 #define DIO_MOD_TNOM 115
 #define DIO_MOD_KF 116
 #define DIO_MOD_AF 117
+#define DIO_MOD_JSW 118
+#define DIO_MOD_CJSW 119
+#define DIO_MOD_VJSW 120
+#define DIO_MOD_MJSW 121
+#define DIO_MOD_IKF 122
+#define DIO_MOD_IKR 123
+#define DIO_MOD_FCS 124
+#define DIO_MOD_TTT1 125
+#define DIO_MOD_TTT2 126
+#define DIO_MOD_TM1 127
+#define DIO_MOD_TM2 128
+#define DIO_MOD_TRS 129
 
 #include "dioext.h"
 #endif /*DIO*/

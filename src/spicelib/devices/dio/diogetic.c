@@ -13,9 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOgetic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+DIOgetic(GENmodel *inModel, CKTcircuit *ckt)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Gary W. Ng
+Modified by Dietmar Warning 2003
 **********/
 
 #include "ngspice.h"
@@ -24,13 +25,8 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 int
-DIOnoise (mode, operation, genmodel, ckt, data, OnDens)
-    int mode;
-    int operation;
-    GENmodel *genmodel;
-    CKTcircuit *ckt;
-    Ndata *data;
-    double *OnDens;
+DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, 
+          Ndata *data, double *OnDens)
 {
     DIOmodel *firstModel = (DIOmodel *) genmodel;
     DIOmodel *model;
@@ -69,12 +65,10 @@ DIOnoise (mode, operation, genmodel, ckt, data, OnDens)
 			for (i=0; i < DIONSRCS; i++) {
 			    (void)sprintf(name,"onoise_%s%s",inst->DIOname,DIOnNames[i]);
 
-
-data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
-if (!data->namelist) return(E_NOMEM);
-		(*(SPfrontEnd->IFnewUid))(ckt,
-			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL,name,UID_OTHER,(void **)NULL);
+                            data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+                            if (!data->namelist) return(E_NOMEM);
+		            (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
+			                              (IFuid)NULL,name,UID_OTHER,(void **)NULL);
 				/* we've added one more plot */
 
 			}
@@ -84,25 +78,19 @@ if (!data->namelist) return(E_NOMEM);
 			for (i=0; i < DIONSRCS; i++) {
 			    (void)sprintf(name,"onoise_total_%s%s",inst->DIOname,DIOnNames[i]);
 
-
-data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
-if (!data->namelist) return(E_NOMEM);
-		(*(SPfrontEnd->IFnewUid))(ckt,
-			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL,name,UID_OTHER,(void **)NULL);
+                            data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+                            if (!data->namelist) return(E_NOMEM);
+		            (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
+			                              (IFuid)NULL,name,UID_OTHER,(void **)NULL);
 				/* we've added one more plot */
-
 
 			    (void)sprintf(name,"inoise_total_%s%s",inst->DIOname,DIOnNames[i]);
 
-
-data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
-if (!data->namelist) return(E_NOMEM);
-		(*(SPfrontEnd->IFnewUid))(ckt,
-			&(data->namelist[data->numPlots++]),
-			(IFuid)NULL,name,UID_OTHER,(void **)NULL);
+                            data->namelist = (IFuid *)trealloc((char *)data->namelist,(data->numPlots + 1)*sizeof(IFuid));
+                            if (!data->namelist) return(E_NOMEM);
+		            (*(SPfrontEnd->IFnewUid))(ckt, &(data->namelist[data->numPlots++]),
+			                              (IFuid)NULL,name,UID_OTHER,(void **)NULL);
 				/* we've added one more plot */
-
 
 			}
 			break;
@@ -116,8 +104,7 @@ if (!data->namelist) return(E_NOMEM);
 		case N_DENS:
 		    NevalSrc(&noizDens[DIORSNOIZ],&lnNdens[DIORSNOIZ],
 				 ckt,THERMNOISE,inst->DIOposPrimeNode,inst->DIOposNode,
-				 model->DIOconductance * inst->DIOarea);
-
+				 inst->DIOtConductance * inst->DIOarea * inst->DIOm);
 		    NevalSrc(&noizDens[DIOIDNOIZ],&lnNdens[DIOIDNOIZ],
 			         ckt,SHOTNOISE,inst->DIOposPrimeNode, inst->DIOnegNode,
 				 *(ckt->CKTstate0 + inst->DIOcurrent));
@@ -127,8 +114,8 @@ if (!data->namelist) return(E_NOMEM);
 				 (double)0.0);
 		    noizDens[DIOFLNOIZ] *= model->DIOfNcoef * 
 				 exp(model->DIOfNexp *
-				 log(MAX(fabs(*(ckt->CKTstate0 + inst->DIOcurrent)),N_MINLOG))) /
-				 data->freq;
+				 log(MAX(fabs(*(ckt->CKTstate0 + inst->DIOcurrent)/inst->DIOm),N_MINLOG))) /
+				 data->freq * inst->DIOm;
 		    lnNdens[DIOFLNOIZ] = 
 				 log(MAX(noizDens[DIOFLNOIZ],N_MINLOG));
 

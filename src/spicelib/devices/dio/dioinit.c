@@ -1,7 +1,7 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
-#include <cktdefs.h>
+#include "devdefs.h"
+#include "cktdefs.h"
 
 #include "diodefs.h"
 #include "dioitf.h"
@@ -72,7 +72,7 @@ SPICEdev DIOinfo = {
 #ifdef CIDER
     DEVdump       : NULL,
     DEVacct       : NULL,
-#endif    
+#endif                     
     DEVinstSize   : &DIOiSize,
     DEVmodSize    : &DIOmSize
 };

@@ -18,9 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOsSetup(info,inModel)
-    SENstruct *info;
-    GENmodel *inModel;
+DIOsSetup(SENstruct *info, GENmodel *inModel)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified by Dietmar Warning 2003
 **********/
 /*
  */
@@ -13,10 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOacLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-
+DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     double gspr;
@@ -31,8 +29,7 @@ DIOacLoad(inModel,ckt)
         for (here = model->DIOinstances; here != NULL ;
                 here=here->DIOnextInstance) {
 	    if (here->DIOowner != ARCHme) continue;
-
-            gspr=model->DIOconductance*here->DIOarea;
+            gspr=here->DIOtConductance*here->DIOarea*here->DIOm;
             geq= *(ckt->CKTstate0 + here->DIOconduct);
             xceq= *(ckt->CKTstate0 + here->DIOcapCurrent) * ckt->CKTomega;
             *(here->DIOposPosPtr ) += gspr;

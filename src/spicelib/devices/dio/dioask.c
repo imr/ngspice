@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified by Dietmar Warning 2003
 **********/
 
 #include "ngspice.h"
@@ -14,12 +15,8 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-DIOask (ckt,inst,which,value,select) 
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
+        IFvalue *select)
 {
     DIOinstance *here = (DIOinstance*)inst;
     double vr;
@@ -39,9 +36,19 @@ DIOask (ckt,inst,which,value,select)
         case DIO_AREA:
             value->rValue = here->DIOarea;
             return(OK);
+        case DIO_PJ:
+            value->rValue = here->DIOpj;
+            return(OK);
+        case DIO_M:
+            value->rValue = here->DIOm;
+            return(OK);
+
         case DIO_TEMP:
             value->rValue = here->DIOtemp-CONSTCtoK;
             return(OK);
+	case DIO_DTEMP:
+            value->rValue = here->DIOdtemp;
+            return(OK);    
         case DIO_VOLTAGE:
             value->rValue = *(ckt->CKTstate0+here->DIOvoltage);
             return(OK);

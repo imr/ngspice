@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
+Modified by Dietmar Warning 2003
 **********/
 
 /* load the diode structure with those pointers needed later 
@@ -16,11 +17,7 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 int
-DIOsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;
@@ -36,6 +33,10 @@ DIOsetup(matrix,inModel,ckt,states)
         if(!model->DIOsatCurGiven) {
             model->DIOsatCur = 1e-14;
         }
+        if(!model->DIOsatSWCurGiven) {
+            model->DIOsatSWCur = 0.0;
+        }
+
         if(!model->DIObreakdownCurrentGiven) {
             model->DIObreakdownCurrent = 1e-3;
         }
@@ -45,15 +46,45 @@ DIOsetup(matrix,inModel,ckt,states)
         if(!model->DIOgradingCoeffGiven) {
             model->DIOgradingCoeff = .5;
         } 
+	if(!model->DIOgradCoeffTemp1Given) {
+            model->DIOgradCoeffTemp1 = 0.0;
+        }
+	if(!model->DIOgradCoeffTemp2Given) {
+            model->DIOgradCoeffTemp2 = 0.0;
+        }	
         if(!model->DIOdepletionCapCoeffGiven) {
             model->DIOdepletionCapCoeff = .5;
         } 
+	if(!model->DIOdepletionSWcapCoeffGiven) {
+            model->DIOdepletionSWcapCoeff = .5;
+        }
         if(!model->DIOtransitTimeGiven) {
             model->DIOtransitTime = 0;
+        }
+	if(!model->DIOtranTimeTemp1Given) {
+            model->DIOtranTimeTemp1 = 0.0;
+        }
+	if(!model->DIOtranTimeTemp2Given) {
+            model->DIOtranTimeTemp2 = 0.0;
         }
         if(!model->DIOjunctionCapGiven) {
             model->DIOjunctionCap = 0;
         }
+        if(!model->DIOjunctionSWCapGiven) {
+            model->DIOjunctionSWCap = 0;
+        }
+        if(!model->DIOjunctionSWPotGiven){
+            model->DIOjunctionSWPot = 1;
+        }
+        if(!model->DIOgradingSWCoeffGiven) {
+            model->DIOgradingSWCoeff = .33;
+        } 
+        if(!model->DIOforwardKneeCurrentGiven) {
+            model->DIOforwardKneeCurrent = 1e-3;
+        } 
+        if(!model->DIOreverseKneeCurrentGiven) {
+            model->DIOreverseKneeCurrent = 1e-3;
+        } 
         if(!model->DIOactivationEnergyGiven) {
             model->DIOactivationEnergy = 1.11;
         } 
@@ -66,6 +97,9 @@ DIOsetup(matrix,inModel,ckt,states)
 	if(!model->DIOfNexpGiven) {
 	    model->DIOfNexp = 1.0;
 	}
+	if(!model->DIOresistTemp1Given) {
+	    model->DIOresistTemp1 = 0.0;
+	}
 
         /* loop through all the instances of the model */
         for (here = model->DIOinstances; here != NULL ;
@@ -74,6 +108,12 @@ DIOsetup(matrix,inModel,ckt,states)
 
             if(!here->DIOareaGiven) {
                 here->DIOarea = 1;
+            }
+            if(!here->DIOpjGiven) {
+                here->DIOpj = 0;
+            }
+            if(!here->DIOmGiven) {
+                here->DIOm = 1;
             }
 
             here->DIOstate = *states;

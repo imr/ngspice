@@ -18,9 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-DIOsPrint(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+DIOsPrint(GENmodel *inModel, CKTcircuit *ckt)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;

@@ -13,9 +13,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-DIOconvTest(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+DIOconvTest(GENmodel *inModel, CKTcircuit *ckt)
         /* Check the devices for convergence
          */
 {

@@ -12,10 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOdelete(inModel,name,kill)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **kill;
+DIOdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance **fast = (DIOinstance**)kill;

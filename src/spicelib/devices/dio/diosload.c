@@ -18,9 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOsLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+DIOsLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;
