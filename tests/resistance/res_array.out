@@ -56,12 +56,16 @@ No. of Data Rows : 60
         tc1                     0                     0
         tc2                     0                     0
        defw                 1e-05                 1e-05
+         kf                     0                     0
+         af                     0                     0
 
  Resistor: Simple linear resistor
      device                    r3                    r5                    r4
       model               rmodel1                     R                     R
- resistance                 11000                    10                 10000
-         ac                  2500                     5                  5000
+ resistance                 11000                    10                  5000
+         ac                  2500                     5                  2500
+      dtemp                     0                     0                     0
+      noisy                     1                     1                     1
           i           -5.3435e-05          -5.87785e-05          -0.000117557
           p           3.14083e-05           3.45492e-05           6.90983e-05
 
@@ -69,7 +73,9 @@ No. of Data Rows : 60
      device                    r2                    r1
       model                     R                     R
  resistance                 10000                 10000
-         ac                  5000                     0
+         ac                  5000                 10000
+      dtemp                     0                     0
+      noisy                     1                     1
           i          -5.87785e-05          -5.87785e-05
           p           3.45492e-05           3.45492e-05
 

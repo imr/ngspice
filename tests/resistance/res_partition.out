@@ -26,12 +26,16 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
         tc1                     0
         tc2                     0
        defw                 1e-05
+         kf                     0
+         af                     0
 
  Resistor: Simple linear resistor
      device                    r2                    r1
       model                     R                     R
  resistance                  5000                  5000
-         ac                 15000                     0
+         ac                 15000                  5000
+      dtemp                     0                     0
+      noisy                     1                     1
           i                0.0001                0.0001
           p                 5e-05                 5e-05
 
