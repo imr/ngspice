@@ -2,7 +2,7 @@
 
 SUBDIRS = doc src man tests
 
-EXTRA_DIST = FAQ acconfig.h autogen.sh notes contrib 
+EXTRA_DIST = FAQ acconfig.h autogen.sh NOTES contrib 
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 			config.h.in config.sub configure install-sh \

@@ -1,3 +1,9 @@
+2000-10-18  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* Makefile.am: Changes for notes dir -> NOTES file conversion.
+
+	* tests/Makefile.am: Make distcheck target work again.
+
 2000-10-17  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* TODO: Little updates.
