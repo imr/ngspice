@@ -3,6 +3,9 @@
 	* configure.in:
 	Change to version 17
 
+	* src/include/ngspice.h:
+	include <errno.h> for Tcl version of perror
+
 2004-06-22 Adrian Dawe <adrian.dawe@multigig.com>
 
 	* src/pkgIndex.tcl.in  src/spicepp.pl  src/spicepp.tcl  src/spicewish 
