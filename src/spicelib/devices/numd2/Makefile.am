@@ -6,7 +6,7 @@ libnumd2_a_SOURCES = 	\
 	nud2.c		\
 	nud2acld.c	\
 	nud2ask.c	\
-	numd2defs.h	\
+	numd2def.h	\
 	nud2del.c	\
 	nud2dest.c	\
 	nud2dump.c	\

@@ -6,7 +6,7 @@ libnbjt2_a_SOURCES = 	\
 	nbt2.c		\
 	nbt2acld.c	\
 	nbt2ask.c	\
-	nbjt2defs.h	\
+	nbjt2def.h	\
 	nbt2del.c	\
 	nbt2dest.c	\
 	nbt2dump.c	\

@@ -41,8 +41,8 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
+#include "mod_yacc_y.h"
 #include "mod_yacc.h"
-#include "mod_tok.h"
 
 %}
 

@@ -48,7 +48,48 @@ NON-STANDARD FEATURES
 
 #include <assert.h>
 #include <stdio.h>
-#include "mod_yacc.h"
+#include "mod_yacc_y.h"
+
+#define	yymaxdepth mod_yymaxdepth
+#define	yyparse	mod_yyparse
+#define	yylex	mod_yylex
+#define	yyerror	mod_yyerror
+#define	yylval	mod_yylval
+#define	yychar	mod_yychar
+#define	yydebug	mod_yydebug
+#define	yypact	mod_yypact
+#define	yyr1	mod_yyr1
+#define	yyr2	mod_yyr2
+#define	yydef	mod_yydef
+#define	yychk	mod_yychk
+#define	yypgo	mod_yypgo
+#define	yyact	mod_yyact
+#define	yyexca	mod_yyexca
+#define yyerrflag mod_yyerrflag
+#define yynerrs	mod_yynerrs
+#define	yyps	mod_yyps
+#define	yypv	mod_yypv
+#define	yys	mod_yys
+#define	yy_yys	mod_yyyys
+#define	yystate	mod_yystate
+#define	yytmp	mod_yytmp
+#define	yyv	mod_yyv
+#define	yy_yyv	mod_yyyyv
+#define	yyval	mod_yyval
+#define	yylloc	mod_yylloc
+#define yyreds	mod_yyreds
+#define yytoks	mod_yytoks
+#define yylhs	mod_yyyylhs
+#define yylen	mod_yyyylen
+#define yydefred mod_yyyydefred
+#define yydgoto	mod_yyyydgoto
+#define yysindex mod_yyyysindex
+#define yyrindex mod_yyyyrindex
+#define yygindex mod_yyyygindex
+#define yytable	 mod_yyyytable
+#define yycheck	 mod_yyyycheck
+#define yyname   mod_yyyyname
+#define yyrule   mod_yyyyrule
 
 Ifs_Table_t *mod_ifs_table;
 

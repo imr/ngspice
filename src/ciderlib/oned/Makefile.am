@@ -7,7 +7,9 @@ libcideroned_a_SOURCES = 	\
 		oneaval.c	\
 		onecond.c	\
 		onecont.c	\
+		oneddefs.h	\
 		onedest.c	\
+		onedext.h	\
 		onedopng.c	\
 		onefreez.c	\
 		onemesh.c	\

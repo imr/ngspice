@@ -8,7 +8,9 @@ libcidertwod_a_SOURCES = 	\
 		twocond.c	\
 		twocont.c	\
 		twocurr.c	\
+		twoddefs.h	\
 		twodest.c	\
+		twodext.h	\
 		twodopng.c	\
 		twoelect.c	\
 		twofield.c	\

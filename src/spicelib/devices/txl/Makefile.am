@@ -6,8 +6,12 @@ libtxl_a_SOURCES = 	\
 	txl.c      \
 	txlacct.c  \
 	txlask.c   \
+	txldefs.h  \
 	txldest.c  \
+	txlext.h   \
 	txlfbr.c   \
+	txlinit.h  \
+	txlitf.h   \
 	txlload.c  \
 	txlmdel.c  \
 	txlparam.c \

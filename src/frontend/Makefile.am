@@ -1,6 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 SUBDIRS = plotting help parser wdisp @NUMPARAMDIR@
+DIST_SUBDIRS = plotting help parser wdisp numparam
 
 noinst_LIBRARIES = libfte.a
 

@@ -1,10 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
 SUBDIRS = misc maths frontend spicelib include @XSPICEDIR@ @CIDERDIR@
+DIST_SUBDIRS = misc maths frontend spicelib include xspice ciderlib
 
-bin_PROGRAMS =  ngspice ngnutmeg nghelp ngsconvert ngproc2mod ngmultidec makeidx
+bin_PROGRAMS =  ngspice ngnutmeg nghelp ngsconvert ngproc2mod ngmultidec \
+	        makeidx
 
-EXTRA_DIST = ngspice.txt ngspice.idx spinit setplot spectrum @CIDERSCRIPTS@
+EXTRA_DIST = ngspice.txt ngspice.idx setplot spectrum \
+	     devload devaxis ciderinit winmain.c
 
 helpdatadir = $(pkgdatadir)/helpdir
 

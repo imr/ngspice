@@ -42,8 +42,8 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
+#include "ifs_yacc_y.h"
 #include "ifs_yacc.h"
-#include "ifs_tok.h"
 
 int yyival;
 double yydval;

@@ -485,6 +485,8 @@ if test "$enable_cider" = "yes"; then
      AC_MSG_RESULT(CIDER features enabled)
      AC_DEFINE(CIDER)
      
+     CIDERTESTS = "cider"
+     
      CIDERDIR="ciderlib"
      
      CIDERSIM="	$CIDERDIR/twod/libcidertwod.a     \
@@ -517,6 +519,7 @@ else
    NUMDEV=""
    NUMDEVDIR=""
    CIDERSCRIPTS=""
+   CIDERTESTS=""
 fi
 AC_SUBST(CIDERDIR)
 AC_SUBST(CIDERSIM)
@@ -525,6 +528,7 @@ AC_SUBST(CIDERMATHDIR)
 AC_SUBST(NUMDEV) 
 AC_SUBST(NUMDEVDIR)
 AC_SUBST(CIDERSCRIPTS)
+AC_SUBST(CIDERTESTS)
 
 dnl Cluster option
 if test "$enable_cluster" = "yes"; then
@@ -636,41 +640,72 @@ src/ciderlib/input/Makefile		\
 src/ciderlib/support/Makefile		\
 src/ciderlib/oned/Makefile		\
 src/ciderlib/twod/Makefile		\
-src/frontend/Makefile		\
-src/frontend/numparam/Makefile	\
-src/frontend/help/Makefile	\
-src/frontend/parser/Makefile	\
-src/frontend/plotting/Makefile	\
-src/frontend/wdisp/Makefile	\
-src/include/Makefile		\
-src/maths/Makefile		\
-src/maths/cmaths/Makefile	\
-src/maths/misc/Makefile		\
-src/maths/ni/Makefile		\
-src/maths/deriv/Makefile	\
-src/maths/poly/Makefile		\
-src/maths/sparse/Makefile	\
-src/misc/Makefile		\
-src/xspice/Makefile		\
-src/xspice/cm/Makefile		\
-src/xspice/cmpp/Makefile	\
-src/xspice/icm/makedefs		\
-src/xspice/mif/Makefile		\
-src/xspice/evt/Makefile		\
-src/xspice/enh/Makefile		\
-src/xspice/ipc/Makefile		\
-src/xspice/idn/Makefile		\
-tests/Makefile			\
-tests/filters/Makefile		\
-tests/polezero/Makefile		\
-tests/resistance/Makefile	\
-tests/bsim1/Makefile		\
-tests/bsim2/Makefile		\
-tests/bsim3soipd/Makefile	\
-tests/bsim3soifd/Makefile	\
-tests/bsim3soidd/Makefile	\
-tests/bsim4/Makefile		\
-tests/mesa/Makefile		\
-tests/transmission/Makefile	\
-tests/TransImpedanceAmp/Makefile
+src/frontend/Makefile			\
+src/frontend/numparam/Makefile		\
+src/frontend/help/Makefile		\
+src/frontend/parser/Makefile		\
+src/frontend/plotting/Makefile		\
+src/frontend/wdisp/Makefile		\
+src/include/Makefile			\
+src/maths/Makefile			\
+src/maths/cmaths/Makefile		\
+src/maths/misc/Makefile			\
+src/maths/ni/Makefile			\
+src/maths/deriv/Makefile		\
+src/maths/poly/Makefile			\
+src/maths/sparse/Makefile		\
+src/misc/Makefile			\
+src/xspice/Makefile			\
+src/xspice/cm/Makefile			\
+src/xspice/cmpp/Makefile		\
+src/xspice/icm/makedefs			\
+src/xspice/mif/Makefile			\
+src/xspice/evt/Makefile			\
+src/xspice/enh/Makefile			\
+src/xspice/ipc/Makefile			\
+src/xspice/idn/Makefile			\
+tests/Makefile				\
+tests/TransImpedanceAmp/Makefile	\
+tests/bsim1/Makefile			\
+tests/bsim2/Makefile			\
+tests/bsim3/Makefile			\
+tests/bsim3/Berkeley/Makefile		\
+tests/bsim3/Berkeley/3v0/Makefile	\
+tests/bsim3/Berkeley/3v0/ac_sim/Makefile	\
+tests/bsim3/Berkeley/3v0/dc_sim/Makefile	\
+tests/bsim3/Berkeley/3v0/tran_sim/Makefile	\
+tests/bsim3/Berkeley/3v1/Makefile		\
+tests/bsim3/Berkeley/3v1/ac_sim/Makefile	\
+tests/bsim3/Berkeley/3v1/dc_sim/Makefile	\
+tests/bsim3/Berkeley/3v1/tran_sim/Makefile	\
+tests/bsim3/Berkeley/3v2/Makefile		\
+tests/bsim3/Berkeley/3v2/ac_sim/Makefile	\
+tests/bsim3/Berkeley/3v2/dc_sim/Makefile	\
+tests/bsim3/Berkeley/3v2/tran_sim/Makefile	\
+tests/bsim3soidd/Makefile		\
+tests/bsim3soifd/Makefile		\
+tests/bsim3soipd/Makefile		\
+tests/bsim4/Makefile			\
+tests/cider/Makefile			\
+tests/cider/bicmos/Makefile		\
+tests/cider/bjt/Makefile		\
+tests/cider/diode/Makefile		\
+tests/cider/jfet/Makefile		\
+tests/cider/mos/Makefile		\
+tests/cider/parallel/Makefile		\
+tests/cider/resistor/Makefile		\
+tests/cider/serial/Makefile		\
+tests/filters/Makefile			\
+tests/general/Makefile			\
+tests/hfet/Makefile			\
+tests/hisim/Makefile			\
+tests/jfet/Makefile			\
+tests/mes/Makefile			\
+tests/mesa/Makefile			\
+tests/mos6/Makefile			\
+tests/polezero/Makefile			\
+tests/proc2mod/Makefile			\
+tests/transmission/Makefile		\
+tests/resistance/Makefile		\
+tests/vbic/Makefile
 )

@@ -17,6 +17,5 @@ libcidersuprt_a_SOURCES = 	\
 		suprem.c	\
 		suprmitf.c	
 
-EXTRA_DIST = makefile
 INCLUDES = -I$(top_srcdir)/src/include
 MAINTAINERCLEANFILES = Makefile.in

@@ -43,7 +43,48 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 #include <assert.h>
-#include "ifs_yacc.h"
+#include "ifs_yacc_y.h"
+
+#define	yymaxdepth ifs_yymaxdepth
+#define	yyparse	ifs_yyparse
+#define	yylex	ifs_yylex
+#define	yyerror	ifs_yyerror
+#define	yylval	ifs_yylval
+#define	yychar	ifs_yychar
+#define	yydebug	ifs_yydebug
+#define	yypact	ifs_yypact
+#define	yyr1	ifs_yyr1
+#define	yyr2	ifs_yyr2
+#define	yydef	ifs_yydef
+#define	yychk	ifs_yychk
+#define	yypgo	ifs_yypgo
+#define	yyact	ifs_yyact
+#define	yyexca	ifs_yyexca
+#define yyerrflag ifs_yyerrflag
+#define yynerrs	ifs_yynerrs
+#define	yyps	ifs_yyps
+#define	yypv	ifs_yypv
+#define	yys	ifs_yys
+#define	yy_yys	ifs_yyyys
+#define	yystate	ifs_yystate
+#define	yytmp	ifs_yytmp
+#define	yyv	ifs_yyv
+#define	yy_yyv	ifs_yyyyv
+#define	yyval	ifs_yyval
+#define	yylloc	ifs_yylloc
+#define yyreds	ifs_yyreds
+#define yytoks	ifs_yytoks
+#define yylhs	ifs_yyyylhs
+#define yylen	ifs_yyyylen
+#define yydefred ifs_yyyydefred
+#define yydgoto	ifs_yyyydgoto
+#define yysindex ifs_yyyysindex
+#define yyrindex ifs_yyyyrindex
+#define yygindex ifs_yyyygindex
+#define yytable	 ifs_yyyytable
+#define yycheck	 ifs_yyyycheck
+#define yyname   ifs_yyyyname
+#define yyrule   ifs_yyyyrule
 
 extern int yylineno;
 extern int yyival;
