@@ -51,7 +51,8 @@ BSIM3V1instance *here;
 {
 struct bsim3v1SizeDependParam *pParam;
 double cd, esat, DelClm, EffFreq, N0, Nl, Vgst;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Ssi;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9;
+double Ssi;
 
     pParam = here->pParam;
     cd = fabs(here->BSIM3V1cd);
@@ -109,11 +110,10 @@ double noizDens[BSIM3V1NSRCS];
 double lnNdens[BSIM3V1NSRCS];
 
 double vgs, vds, Slimit;
-double N0, Nl;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13;
-double n, ExpArg, Ssi, Swi;
+double T1, T10, T11;
+double Ssi, Swi;
 
-int error, i;
+int i;
 
     /* define the names of the noise sources */
     static char *BSIM3V1nNames[BSIM3V1NSRCS] =

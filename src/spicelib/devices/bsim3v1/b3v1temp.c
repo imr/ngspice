@@ -35,8 +35,8 @@ CKTcircuit *ckt;
 register BSIM3V1model *model = (BSIM3V1model*) inModel;
 register BSIM3V1instance *here;
 struct bsim3v1SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
-double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
-double Temp, TRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;
+double tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, Ldrn, Wdrn;
+double Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 int Size_Not_Found;
 
     /*  loop through all the BSIM3V1 device models */

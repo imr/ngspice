@@ -37,7 +37,6 @@ register BSIM4instance *here;
 int error;
 CKTnode *tmp;
 
-double tmp1, tmp2;
 
     /*  loop through all the BSIM4 device models */
     for( ; model != NULL; model = model->BSIM4nextModel )

@@ -125,8 +125,7 @@ double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Csg1, Csd1, Csb1, Qac0, Qsub0;
 double dQac0_dVg, dQac0_dVd, dQac0_dVb, dQsub0_dVg, dQsub0_dVd, dQsub0_dVb;
    
 struct BSIM3V2SizeDependParam *pParam;
-int ByPass, Check, ChargeComputationNeeded, J, error, I;
-double junk[50];
+int ByPass, Check, ChargeComputationNeeded, error;
 
 ScalingFactor = 1.0e-9;
 ChargeComputationNeeded =  

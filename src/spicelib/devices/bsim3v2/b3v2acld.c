@@ -29,7 +29,7 @@ double gbspsp, gbbdp, gbbsp, gbspg, gbspb;
 double gbspdp, gbdpdp, gbdpg, gbdpb, gbdpsp;
 double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
 double dsxpart_dVd, dsxpart_dVg, dsxpart_dVb, dsxpart_dVs;
-double T1, CoxWL, qcheq, Cdg, Cdd, Cds, Cdb, Csg, Csd, Css, Csb;
+double T1, CoxWL, qcheq, Cdg, Cdd, Cds, Csg, Csd, Css;
 
     omega = ckt->CKTomega;
     for (; model != NULL; model = model->BSIM3V2nextModel) 
