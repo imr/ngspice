@@ -124,7 +124,7 @@ ngnutmeg_LDADD = \
 	frontend/help/libhlp.a \
 	maths/cmaths/libcmaths.a \
 	maths/poly/libpoly.a \
-	misc/libmisc.a 
+	misc/libmisc.a
 
 ## help:
 
@@ -146,7 +146,7 @@ ngsconvert_LDADD =  \
 	frontend/libfte.a \
 	frontend/parser/libparser.a \
 	misc/libmisc.a
-
+	
 ## proc2mod:
 
 ngproc2mod_SOURCES = ngproc2mod.c

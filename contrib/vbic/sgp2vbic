@@ -1,0 +1,322 @@
+#!/bin/sh --  # perl
+eval 'exec perl -S -x -w $0 ${1+"$@"}'
+if 0;
+
+#
+#	sgp2vbic: program to convert an SGP .model card to VBIC
+#
+# Vers	Date		Who		Comments
+# ====	==========	=============	========
+#  2.0	06/01/00	Colin McAndrew	translated from shell/nawk version
+#
+
+sub usage() {
+	print "
+$prog: convert SGP .model card to VBIC .model card
+
+Usage: $prog [options] modelFile
+
+Files:
+	modelFile	file with SGP .model card
+
+Options:
+	-d		debug mode
+	-h		print this help message
+	-i		print detailed information
+	-v		verbose mode
+	-vbeif Vbe	do fwd Early voltage map at Vbe ($Vbeif)
+	-vceif Vce	do fwd Early voltage map at Vce ($Vceif)
+	-vbcir Vbc	do rev Early voltage map at Vbc ($Vbcir)
+	-vecir Vec	do rev Early voltage map at Vec ($Vecir)
+";
+} # End of: sub usage
+
+sub info() {
+	print "
+This program maps an SGP .model card into a VBIC .model card.
+For many parameters there is a 1-to-1 mapping between the two,
+and the default VBIC parameters are such that the model extensions
+that are not part of SGP are turned off.
+
+There are two fundamental and non-mappable differences between
+the two models. First, the IRB emitter crowding based resistance
+modulation model is not supported in VBIC. This parameter is
+ignored. Second, the Early effect model is different, the bias
+dependence is substantially better in VBIC than in SGP. This means
+the models can be made to match only at specific biases.
+These biases can be specified by the -vxxi[fr] flags.
+";
+} # End of: sub info
+
+#
+#	Set program names and variables.
+#
+
+$\="\n";
+$,=" ";
+$Debug="";
+$Verbose="";
+$Number='([+-]?[0-9]+[.]?[0-9]*|[+-]?[0-9]+[.]?[0-9]*[eE][+-]?[0-9]+|[+-]?[.][0-9]+|[+-]?[.][0-9]+[eE][+-]?[0-9]+)';
+@prog=split("/",$0);
+$prog=$prog[$#prog];
+$Pi=atan2(0,-1);
+$Vbeif=0.6;
+$Vceif=2.5;
+$Vbcir=0.5;
+$Vecir=2.5;
+
+#
+#	Parse command line arguments, allow argument
+#	flags to be any case.
+#
+
+for (;;){
+	if ($#ARGV < 0) {
+		last;
+	} elsif ($ARGV[0] =~ /^-d/i) {
+		$Debug="-d";$Verbose="-v";
+	} elsif ($ARGV[0] =~ /^-h/i) {
+		&usage();exit(0);
+	} elsif ($ARGV[0] =~ /^-i/i) {
+		&info();exit(0);
+	} elsif ($ARGV[0] =~ /^-v$/i) {
+		$Verbose="-v";
+	} elsif ($ARGV[0] =~ /^-vbeif$/i) {
+		shift(@ARGV);
+		if (!defined($ARGV[0])) {
+			die("ERROR: no value specified for -vbeif flag, stopped");
+		}
+		$Vbeif=$ARGV[0];
+		if ($Vbeif !~ /$Number/) {
+			die("ERROR: value for -vbeif flag must be a number, stopped");
+		}
+	} elsif ($ARGV[0] =~ /^-vceif$/i) {
+		shift(@ARGV);
+		if (!defined($ARGV[0])) {
+			die("ERROR: no value specified for -vceif flag, stopped");
+		}
+		$Vceif=$ARGV[0];
+		if ($Vceif !~ /$Number/) {
+			die("ERROR: value for -vceif flag must be a number, stopped");
+		}
+	} elsif ($ARGV[0] =~ /^-vbcir$/i) {
+		shift(@ARGV);
+		if (!defined($ARGV[0])) {
+			die("ERROR: no value specified for -vbcir flag, stopped");
+		}
+		$Vbcir=$ARGV[0];
+		if ($Vbcir !~ /$Number/) {
+			die("ERROR: value for -vbcir flag must be a number, stopped");
+		}
+	} elsif ($ARGV[0] =~ /^-vecir$/i) {
+		shift(@ARGV);
+		if (!defined($ARGV[0])) {
+			die("ERROR: no value specified for -vecir flag, stopped");
+		}
+		$Vecir=$ARGV[0];
+		if ($Vecir !~ /$Number/) {
+			die("ERROR: value for -vecir flag must be a number, stopped");
+		}
+	} elsif ($ARGV[0] =~ /^-/) {
+		&usage();
+		die("ERROR: unknown flag $ARGV[0], stopped");
+	} else {
+		last;
+	}
+	shift(@ARGV);
+}
+if ($#ARGV < 0) {
+	&usage();exit(1);	# exit if no file name is specified
+}
+
+$ModelFile=$ARGV[0];
+
+sub QCDEPL {
+	my($vj,$p,$m,$f)=@_;
+	my($w,$xx,$cj,$qj);
+
+	$w=1.0-$vj/$p;
+	if($w>=1.0-$f){
+		$cj=$w**(-$m);
+		$qj=$p*(1.0-$w*$cj)/(1.0-$m);
+	} else {
+		$xx=(1.0-$f)**(-(1.0+$m));
+		$cj=$xx*(1.0-$f*(1.0+$m)+$m*$vj/$p);
+		$qj=$xx*((1.0-$f*(1.0+$m))*($vj-$f*$p)+0.5*$m*($vj*$vj-$f*$f*$p*$p)/$p)+$p*(1.0-$xx*(1.0-$f)**2)/(1.0-$m);
+	}
+	return($qj,$cj);
+}
+
+#
+#	Parse model file
+#
+
+open(IF,"$ModelFile") ||
+	die("ERROR: cannot open file $ModelFile, stopped");
+$inModel="no";
+while (<IF>) {
+	chomp;tr/A-Z/a-z/;
+	if ($_ =~ /^\s*$/) {next;}
+	if ($_ =~ /^\s*\*/) {next;}
+	last if ($_ !~ /^\+/ && $inModel eq "yes");
+	if ($_ =~ /^\s*\.mod/) {
+		$inModel="yes";$model=$_;next;
+	}
+	if ($inModel eq "yes") {
+		$_=~s/^\+\s*/ /;$model.=$_;next;
+	}
+}
+close(IF);
+$model=~s/\s*=\s*/=/g;
+
+#
+#	Set SGP parameters from .model card
+#
+
+$val{"is"}=1.0e-16;
+$val{"bf"}=100.0;
+$val{"nf"}=1.0;
+$val{"vaf"}=0.0;
+$val{"ikf"}=0.0;
+$val{"ise"}=0.0;
+$val{"ne"}=1.5;
+$val{"br"}=1.0;
+$val{"nr"}=1.0;
+$val{"var"}=0.0;
+$val{"ikr"}=0.0;
+$val{"isc"}=0.0;
+$val{"nc"}=2.0;
+$val{"rb"}=0.0;
+$val{"rbm"}=0.0;
+$val{"re"}=0.0;
+$val{"rc"}=0.0;
+$val{"cje"}=0.0;
+$val{"vje"}=0.75;
+$val{"mje"}=0.33;
+$val{"cjc"}=0.0;
+$val{"vjc"}=0.75;
+$val{"mjc"}=0.33;
+$val{"xcjc"}=1.0;
+$val{"cjs"}=0.0;
+$val{"vjs"}=0.75;
+$val{"mjs"}=0.0;
+$val{"fc"}=0.5;
+$val{"tf"}=0.0;
+$val{"xtf"}=0.0;
+$val{"vtf"}=0.0;
+$val{"itf"}=0.0;
+$val{"ptf"}=0.0;
+$val{"tr"}=0.0;
+$val{"kf"}=0.0;
+$val{"af"}=1.0;
+$val{"eg"}=1.11;
+$val{"xtb"}=0.0;
+$val{"xti"}=3.0;
+$alias{"va"}="vaf";
+$alias{"ik"}="ikf";
+$alias{"c2"}="ise";
+$alias{"vb"}="var";
+$alias{"c4"}="isc";
+$alias{"pe"}="vje";
+$alias{"me"}="mje";
+$alias{"pc"}="vjc";
+$alias{"mc"}="mjc";
+$alias{"ccs"}="cjs";
+$alias{"ps"}="vjs";
+$alias{"ms"}="mjs";
+$alias{"pt"}="xti";
+
+@Field=split(/\s+/,$model);
+$name=$Field[1];
+for ($i=3;$i<=$#Field;++$i) {
+	die("ERROR: term $Field[$i] is not in name=value format, stopped")
+		if ($Field[$i] !~ /=/);
+	($param,$value)=split(/=/,$Field[$i]);
+	die("ERROR: parameter $param must be a number, stopped")
+		if ($value !~ /$Number/);
+	if (defined($alias{$param})) {$param=$alias{$param};}
+	if ($param eq "irb") {
+		print STDERR "* WARNING: IRB parameter is not supported in vbic";
+		next;
+	}
+	if (!defined($val{$param})) {
+		print STDERR "* WARNING: parameter $param is not supported in vbic";
+		next;
+	}
+	$val{$param}=$value;
+	if ($param eq "rbm") {$done{"rbm"}="yes";}
+}
+if (!defined($done{"rbm"})) {$val{"rbm"}=$val{"rb"};}
+if($val{"ise"}>1) {$val{"ise"}=$val{"ise"}*$val{"is"};}
+if($val{"isc"}>1) {$val{"isc"}=$val{"isc"}*$val{"is"};}
+$Vbcif=$Vbeif-$Vceif;
+$Vbeir=$Vbcir-$Vecir;
+($qjbef,$cj   )=&QCDEPL($Vbeif,$val{"vje"},$val{"mje"},$val{"fc"});
+($qjbcf,$cjbcf)=&QCDEPL($Vbcif,$val{"vjc"},$val{"mjc"},$val{"fc"});
+($qjber,$cjber)=&QCDEPL($Vbeir,$val{"vje"},$val{"mje"},$val{"fc"});
+($qjbcr,$cj   )=&QCDEPL($Vbcir,$val{"vjc"},$val{"mjc"},$val{"fc"});
+$ivaf=$val{"vaf"};if($ivaf>0){$ivaf=1/$ivaf;}
+$ivar=$val{"var"};if($ivar>0){$ivar=1/$ivar;}
+$godIf=$ivaf/(1-$Vbeif*$ivar-$Vbcif*$ivaf);
+if($godIf<1e-10) {$godIf=1e-10;}
+$godIr=$ivar/(1-$Vbeir*$ivar-$Vbcir*$ivaf);
+if($godIr<1e-10) {$godIr=1e-10;}
+$a11=$qjbcf-$cjbcf/$godIf;
+$a12=$qjbef;
+$r1=-1.0;
+$a21=$qjbcr;
+$a22=$qjber-$cjber/$godIr;
+$r2=-1.0;
+$det=$a11*$a22-$a12*$a21;
+$ivef=($r1*$a22-$r2*$a12)/$det;
+$iver=($r2*$a11-$r1*$a21)/$det;
+$vef=1/$ivef;$ver=1/$iver;
+
+print '.model '.$name.' vbic
++ rcx  = '.$val{"rc"}.'
++ rci  = '."0.0".'
++ rbx  = '.$val{"rbm"}.'
++ rbi  = '.($val{"rb"}-$val{"rbm"}).'
++ re   = '.$val{"re"}.'
++ is   = '.$val{"is"}.'
++ nf   = '.$val{"nf"}.'
++ nr   = '.$val{"nr"}.'
++ fc   = '.$val{"fc"}.'
++ cje  = '.$val{"cje"}.'
++ pe   = '.$val{"vje"}.'
++ me   = '.$val{"mje"}.'
++ cjc  = '.($val{"cjc"}*$val{"xcjc"}).'
++ cjep = '.($val{"cjc"}*(1.0-$val{"xcjc"})).'
++ pc   = '.$val{"vjc"}.'
++ mc   = '.$val{"mjc"}.'
++ cjcp = '.$val{"cjs"}.'
++ ps   = '.$val{"vjs"}.'
++ ms   = '.$val{"mjs"}.'
++ ibei = '.($val{"is"}/$val{"bf"}).'
++ nei  = '.$val{"nf"}.'
++ iben = '.$val{"ise"}.'
++ nen  = '.$val{"ne"}.'
++ ibci = '.($val{"is"}/$val{"br"}).'
++ nci  = '.$val{"nr"}.'
++ ibcn = '.$val{"isc"}.'
++ ncn  = '.$val{"nc"}.'
++ vef  = '.$vef.'
++ ver  = '.$ver.'
++ ikf  = '.$val{"ikf"}.'
++ ikr  = '.$val{"ikr"}.'
++ tf   = '.$val{"tf"}.'
++ xtf  = '.$val{"xtf"}.'
++ vtf  = '.$val{"vtf"}.'
++ itf  = '.$val{"itf"}.'
++ tr   = '.$val{"tr"}.'
++ td   = '.($val{"tf"}*$val{"ptf"}*$Pi/180.0).'
++ ea   = '.$val{"eg"}.'
++ eaie = '.$val{"eg"}.'
++ eaic = '.$val{"eg"}.'
++ eane = '.$val{"eg"}.'
++ eanc = '.$val{"eg"}.'
++ xis  = '.$val{"xti"}.'
++ xii  = '.($val{"xti"}-$val{"xtb"}).'
++ xin  = '.($val{"xti"}-$val{"ne"}*$val{"xtb"}).'
++ kfn  = '.$val{"kf"}.'
++ afn  = '.$val{"af"};

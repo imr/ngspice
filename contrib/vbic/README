@@ -1,0 +1,4 @@
+Two scripts from Colin McAndrew for vbic model.
+
+sgp2vbic - converts a Spice Gummel-Poon model card to a vbic model card.
+vbis2sgb - converts a vbic model card to a Spice Gummel-Poom model card.

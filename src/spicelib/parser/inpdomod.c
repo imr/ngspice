@@ -49,7 +49,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	  		  err = INPmkTemp(
 	  		          "Device type BJT not available in this binary\n");
 			}
-			break;
+		break;
 		case 2:
 			 type = INPtypelook("BJT2");
                 if(type < 0) {
@@ -57,9 +57,16 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
                             "Device type BJT2 not available in this binary\n");
                 }
                 break;
-		default: /* placeholder; use level 3 for the next model */
+		case 4:
+			 type = INPtypelook("VBIC");
+                if(type < 0) {
+                    err = INPmkTemp(
+                            "Device type VBIC not available in this binary\n");
+                }
+                break;
+		default: /* placeholder; use level 4 for the next model */
 		err = INPmkTemp(
-		  "Only BJT levels 1 and 2 are supported in this binary\n");
+		  "Only BJT levels 1-2, 4 are supported in this binary\n");
                 break;
 
 	}	
@@ -289,14 +296,6 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    INPmkTemp
 		    ("Device type BSIM6 not available in this binary\n");}
 	    break;
-	case 17:
-	    type = INPtypelook("HiSIM1");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Placeholder: Device type HiSIM1 not available in this binary\n");
-	    }
-	    break;
 	case 29:
 	    type = INPtypelook("B3SOIPD");
 	    if (type < 0) {
@@ -384,6 +383,14 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		err =
 		    INPmkTemp
 		    ("Device type SOI3 not available in this binary (internal STAG release)\n");
+	    }
+	    break;
+	case 64:
+	    type = INPtypelook("HiSIM1");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Placeholder: Device type HiSIM1 not available in this binary\n");
 	    }
 	    break;
 	default:		/* placeholder; use level xxx for the next model */

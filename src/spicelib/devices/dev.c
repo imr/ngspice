@@ -39,7 +39,7 @@
 #ifdef XSPICE
 /*saj headers for xspice*/
 #include <string.h> /* for strcpy, strcat*/
-#include <dlfcn.h> /* to load librarys*/
+#include <dlfcn.h> /* to load libraries*/
 #include "dllitf.h" /* the coreInfo Structure*/
 #include "evtudn.h" /*Use defined nodes */
 
@@ -55,7 +55,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 
 #define DEVICES_USED "asrc bjt bjt2 bsim1 bsim2 bsim3 bsim3v2 bsim3v1 bsim4 bsim3soipd bsim3soifd   \
                       bsim3soidd cap cccs ccvs csw dio hfet hfet2 ind isrc jfet ltra mes mesa mos1  \
-                      mos2 mos3 mos6 mos9 res soi3 sw tra urc vccs vcvs vsrc (ekv)" 
+                      mos2 mos3 mos6 mos9 res soi3 sw tra urc vbic vccs vcvs vsrc (ekv)" 
                       
 
 /*
@@ -116,6 +116,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "tra/traitf.h"
 #include "txl/txlitf.h"
 #include "urc/urcitf.h"
+#include "vbic/vbicitf.h"
 #include "vccs/vccsitf.h"
 #include "vcvs/vcvsitf.h"
 #include "vsrc/vsrcitf.h"
@@ -137,17 +138,17 @@ int add_udn(int,Evt_Udn_Info_t **);
  #include "ekv/ekvitf.h"
 
   #ifdef XSPICE
-   static int DEVNUM = 52;
+   static int DEVNUM = 53;
   #else
-   #define DEVNUM 52
+   #define DEVNUM 53
   #endif
 
  #else	
 
   #ifdef XSPICE
-   static int DEVNUM = 51;
+   static int DEVNUM = 52;
   #else
-   #define DEVNUM 51
+   #define DEVNUM 52
   #endif
 
  #endif
@@ -157,15 +158,15 @@ int add_udn(int,Evt_Udn_Info_t **);
  #ifdef HAVE_EKV
   #include "ekv/ekvitf.h"
   #ifdef XSPICE
-   static int DEVNUM = 47;
+   static int DEVNUM = 48;
   #else
-   #define DEVNUM 47
+   #define DEVNUM 48
   #endif
  #else
   #ifdef XSPICE
-   static int DEVNUM = 46;
+   static int DEVNUM = 47;
   #else
-   #define DEVNUM 46
+   #define DEVNUM 47
   #endif
  #endif
 
@@ -248,28 +249,30 @@ spice_init_devices(void)
     DEVices[40] = get_sw_info();
     DEVices[41] = get_tra_info();
     DEVices[42] = get_txl_info();
-    DEVices[43] = get_vccs_info();
-    DEVices[44] = get_vcvs_info();
-    DEVices[45] = get_vsrc_info();
+    DEVices[43] = get_vbic_info();
+    DEVices[44] = get_vccs_info();
+    DEVices[45] = get_vcvs_info();
+    DEVices[46] = get_vsrc_info();
+    
 
 #ifdef CIDER
-    DEVices[46] = get_nbjt_info();
-    DEVices[47] = get_nbjt2_info();
-    DEVices[48] = get_numd_info();
-    DEVices[49] = get_numd2_info();
-    DEVices[50] = get_numos_info();    
+    DEVices[47] = get_nbjt_info();
+    DEVices[48] = get_nbjt2_info();
+    DEVices[49] = get_numd_info();
+    DEVices[50] = get_numd2_info();
+    DEVices[51] = get_numos_info();    
 #ifdef HAVE_EKV
-    DEVices[51] = get_ekv_info();
-    assert(52 == DEVNUM);
+    DEVices[52] = get_ekv_info();
+    assert(53 == DEVNUM);
 #else                              /* NOT EKV */
-    assert(51 == DEVNUM);
+    assert(52 == DEVNUM);
 #endif                            /* HAVE_EKV */
 #else                            /* NOT CIDER */
 #ifdef HAVE_EKV
-    DEVices[46] = get_ekv_info();
-    assert(47 == DEVNUM);
+    DEVices[47] = get_ekv_info();
+    assert(48 == DEVNUM);
 #else
-    assert(46 == DEVNUM);
+    assert(47 == DEVNUM);
 #endif
 #endif                          /* CIDER */
 return;
@@ -299,11 +302,11 @@ devices(void)
 #ifdef DEVLIB
 /*not yet usable*/
 #ifdef HAVE_EKV
-#define DEVICES_USED {"asrc", "bjt", "bjt2", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
+#define DEVICES_USED {"asrc", "bjt", "bjt2", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
                       "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \
                       "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "ekv" }
 #else
-#define DEVICES_USED {"asrc", "bjt", "bjt2", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
+#define DEVICES_USED {"asrc", "bjt", "bjt2", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
                       "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \
                       "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc"}
 #endif

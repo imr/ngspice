@@ -44,6 +44,7 @@ SUBDIRS = \
 	tra	\
 	txl	\
 	urc	\
+	vbic	\
 	vccs	\
 	vcvs	\
 	vsrc	\

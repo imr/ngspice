@@ -299,11 +299,16 @@ VBIC	- Bipolar Junction Transistor
 	Level:	4 
 	Status:
 
-        This is the VBIC model. Colin mcAndrews ert al.
-	Spice 3 porting Dietmar Warning
-	only 3 terminals 
-	no xcess pahse 
-	no other
+        This is the Vertical Bipolar InterCompany model.
+	The author of VBIC is Colin McAndrew <mcandrew@ieee.org>
+	Spice3 Implementation: Dietmar Warning DAnalyse GmbH 
+	                       <warning@danalyse.de>
+	Web Site:
+	http://www.designers-guide.com/VBIC/index.html
+	
+	Notes: This is the three terminals model, without excess phase
+	and thermal network.
+	
 
 ***************************************************************************
 *****************************    FET Devices    ***************************
@@ -579,8 +584,8 @@ HiSIM	- Hiroshima-university STARC IGFET Model
 	Initial Release.
 	Ver:	1.2.0
 	Class:	M
-	Level:	TBD
-	Status:	TO BE TESTED
+	Level:	64
+	Status:
 	
 	This is the HiSIM model available from Hiroshima University
 	(Ultra-Small Device Engineering Laboratory)
