@@ -77,6 +77,22 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	int		type;
 
 #ifndef notdef
+#ifdef notdef
+	for (sg = sgen_init(ckt, 0); sg; sgen_next(&sg)) {
+		if (sg->is_instparam)
+			printf("%s:%s:%s -> param %s\n",
+				DEVices[sg->dev]->DEVpublic.name,
+				sg->model->GENmodName,
+				sg->instance->GENname,
+				sg->ptable[sg->param].keyword);
+		else
+			printf("%s:%s:%s -> mparam %s\n",
+				DEVices[sg->dev]->DEVpublic.name,
+				sg->model->GENmodName,
+				sg->instance->GENname,
+				sg->ptable[sg->param].keyword);
+	}
+#endif
 #ifdef ASDEBUG
 	DEBUG(1)
 		printf(">>> restart : %d\n", restart);
@@ -101,6 +117,10 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			(ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
 			ckt->CKTdcMaxIter);
 
+#ifdef notdef
+		ckt->CKTmode = (ckt->CKTmode & MODEUIC)
+			| MODEDCOP | MODEINITSMSIG;
+#endif
 		if (error)
 			return error;
 
@@ -210,6 +230,13 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	}
 #endif
 
+#ifdef notdef
+	for (j = 0; j <= ckt->CKTmaxOrder + 1; j++) {
+		save_states[j] = ckt->CKTstates[j];
+		ckt->CKTstates[j] = NULL;
+	}
+#endif
+
 	for (i = 0; i < nfreqs; i++) {
 		/* XXX handle restart */
 
@@ -248,6 +275,12 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			E = ckt->CKTrhs;
 			iE = ckt->CKTirhs;
 			Y = ckt->CKTmatrix;
+#ifdef notdef
+			for (j = 0; j <= ckt->CKTmaxOrder + 1; j++) {
+				/* XXX Free new states */
+				ckt->CKTstates[j] = save_states[j];
+			}
+#endif
 			error = CKTtemp(ckt);
 			if (error)
 				return error;
@@ -257,6 +290,13 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			error = NIacIter(ckt);
 			if (error)
 				return error;
+
+#ifdef notdef
+			/* XXX Why? */
+			for (j = 0; j <= ckt->CKTmaxOrder + 1; j++) {
+				ckt->CKTstates[j] = NULL;
+			}
+#endif
 
 		}
 
@@ -330,7 +370,9 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 #ifdef ASDEBUG
 			DEBUG(1) printf("Original value: %g\n", sg->value);
+#endif
 
+#ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of device:\n");
 				spPrint(delta_Y, 0, 1, 1);
@@ -529,6 +571,13 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	ckt->CKTmatrix = Y;
 	ckt->CKTbypass = bypass;
 
+#ifdef notdef
+	for (j = 0; j <= ckt->CKTmaxOrder + 1; j++) {
+		if (ckt->CKTstates[j])
+			FREE(ckt->CKTstates[j]);
+		ckt->CKTstates[j] = save_states[j];
+	}
+#endif
 #endif
 
 	return OK;

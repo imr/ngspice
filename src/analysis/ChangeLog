@@ -1,17 +1,21 @@
-2000-04-04  Paolo Nenzi <p.nenzi@ieee.or
+2000-05-22  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* cktpzstr.c, cktsens.c: Applied Widlok patches.
+
+2000-04-04  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* noisean.c: Merged the previous code with the new one included in
 	             bsim4 distribution. This code originated from Weidong Lu 
 		     (bsim group).
 
 1999-12-20  Paolo Nenzi <p.nenzi@ieee.org>
-
-        * noisean.c:
-          Bug: he ac noise analysis in Spice3f4 has a serious bug.  In interactive mode,
-          it fails to reproduce frequency dependence known to exist.  In batch (Spice2)
-          mode, it works only if a corresponding ac analysis has been run first.
-          Fix: This bug is fixed by providing a call to CKTload() in noisean.c as shown 
-          by the source code patch which is attached below.
+	* noisean.c:
+          Bug: The ac noise analysis in Spice3f4 has a serious bug. In 
+	  interactive mode it fails to reproduce frequency dependence known 
+	  to exist.  In batch (Spice2) mode, it works only if a corresponding 
+	  ac analysis has been run first.
+          Fix: This bug is fixed by providing a call to CKTload() in 
+	  noisean.c as shown  by the source code patch which is attached below.
 
 
 1999-09-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
