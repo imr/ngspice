@@ -16,14 +16,13 @@ Author: 1985 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
-int
-INPgetTitle(void **ckt, card **data)
+int INPgetTitle(void **ckt, card ** data)
 {
     int error;
 
-    error = (*(ft_sim->newCircuit))(ckt);
-    if(error) return(error);
+    error = (*(ft_sim->newCircuit)) (ckt);
+    if (error)
+	return (error);
     *data = (*data)->nextcard;
-    return(OK);
+    return (OK);
 }
-

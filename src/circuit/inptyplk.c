@@ -14,17 +14,15 @@ Author: 1985 Thomas L. Quarles
 #include "ifsim.h"
 #include "inp.h"
 
-int
-INPtypelook(char *type)
+int INPtypelook(char *type)
 {
 
     int i;
-    for(i = 0; i < ft_sim->numDevices; i++) {
-        if(strcmp(type, (*(ft_sim->devices)[i]).name) == 0) {
-            /*found the device - return it */
-            return i;
-        }
+    for (i = 0; i < ft_sim->numDevices; i++) {
+	if (strcmp(type, (*(ft_sim->devices)[i]).name) == 0) {
+	    /*found the device - return it */
+	    return i;
+	}
     }
     return -1;
 }
-

@@ -15,8 +15,7 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 #include "inp.h"
 
-char *
-INPerror(int type)
+char *INPerror(int type)
 {
     char *val;
     char ebuf[513];
@@ -24,9 +23,9 @@ INPerror(int type)
     val = SPerror(type);
 
     if (!val)
-        return(val);
+	return (val);
 
-    if(errRtn)
+    if (errRtn)
 	sprintf(ebuf, "%s detected in routine \"%s\"\n", val, errRtn);
     else
 	sprintf(ebuf, "%s\n", val);
@@ -36,6 +35,5 @@ INPerror(int type)
     if (val)
 	strcpy(val, ebuf);
 
-    return(val);
+    return (val);
 }
-    

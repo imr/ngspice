@@ -13,23 +13,23 @@ INPmodel *modtab;
 
     /* create/lookup a 'model' entry */
 
-int
-INPmakeMod(char *token, int type, card *line)
+int INPmakeMod(char *token, int type, card * line)
 {
     register INPmodel **i;
 
-    for (i = &modtab;*i != (INPmodel *)NULL;i = &((*i)->INPnextModel)) {
-        if (strcmp((*i)->INPmodName,token) == 0) {
-            return(OK);
-        }
+    for (i = &modtab; *i != (INPmodel *) NULL; i = &((*i)->INPnextModel)) {
+	if (strcmp((*i)->INPmodName, token) == 0) {
+	    return (OK);
+	}
     }
-    *i = (INPmodel *)MALLOC(sizeof(INPmodel));
-    if(*i==NULL) return(E_NOMEM);
+    *i = (INPmodel *) MALLOC(sizeof(INPmodel));
+    if (*i == NULL)
+	return (E_NOMEM);
     (*i)->INPmodName = token;
     (*i)->INPmodType = type;
-    (*i)->INPnextModel = (INPmodel *)NULL;
+    (*i)->INPnextModel = (INPmodel *) NULL;
     (*i)->INPmodUsed = 0;
     (*i)->INPmodLine = line;
     (*i)->INPmodfast = NULL;
-    return(OK);
+    return (OK);
 }

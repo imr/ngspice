@@ -11,15 +11,15 @@ Author: 1985 Thomas L. Quarles
 #include "inp.h"
 
 
-char *
-INPmkTemp(char *string)
+char *INPmkTemp(char *string)
 {
-int len;
-char *temp;
-    
+    int len;
+    char *temp;
+
     len = strlen(string);
-    temp = MALLOC(len+1);
-    if(temp!=(char *)NULL) (void)strcpy(temp,string);
-    return(temp);
+    temp = MALLOC(len + 1);
+    if (temp != (char *) NULL)
+	(void) strcpy(temp, string);
+    return (temp);
 
 }

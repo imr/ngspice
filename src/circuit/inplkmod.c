@@ -14,18 +14,16 @@ Author: 1985 Thomas L. Quarles
 extern INPmodel *modtab;
 
 
-int
-INPlookMod(char *name)
+int INPlookMod(char *name)
 {
     register INPmodel **i;
 
-    for (i = &modtab;*i != (INPmodel *)NULL;i = &((*i)->INPnextModel)) {
-        if (strcmp((*i)->INPmodName,name) == 0) {
-            /* found the model in question - return TRUE */
-            return(1);
-        }
+    for (i = &modtab; *i != (INPmodel *) NULL; i = &((*i)->INPnextModel)) {
+	if (strcmp((*i)->INPmodName, name) == 0) {
+	    /* found the model in question - return TRUE */
+	    return (1);
+	}
     }
     /* didn't find model - return FALSE */
-    return(0);
+    return (0);
 }
-

@@ -11,24 +11,25 @@ Author: 1985 Thomas L. Quarles
 #include "inp.h"
 
 
-char *
-INPerrCat(char *a, char *b)
+char *INPerrCat(char *a, char *b)
 {
 
-    if(a != (char *)NULL) {
-        if(b == (char *)NULL) { /* a valid, b null, return a */
-            return(a);
-        } else { /* both valid  - hard work...*/
-            register char *errtmp;
-            errtmp = (char *)MALLOC( (strlen(a) + strlen(b)+2)*sizeof(char));
-            (void) strcpy(errtmp,a);
-            (void) strcat(errtmp,"\n");
-            (void) strcat(errtmp,b);
-            FREE(a);
-            FREE(b);
-            return(errtmp);
-        }
-    } else { /* a null, so return b */
-        return(b);
+    if (a != (char *) NULL) {
+	if (b == (char *) NULL) {	/* a valid, b null, return a */
+	    return (a);
+	} else {		/* both valid  - hard work... */
+	    register char *errtmp;
+	    errtmp =
+		(char *) MALLOC((strlen(a) + strlen(b) + 2) *
+				sizeof(char));
+	    (void) strcpy(errtmp, a);
+	    (void) strcat(errtmp, "\n");
+	    (void) strcat(errtmp, b);
+	    FREE(a);
+	    FREE(b);
+	    return (errtmp);
+	}
+    } else {			/* a null, so return b */
+	return (b);
     }
 }

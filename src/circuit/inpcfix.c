@@ -12,14 +12,13 @@ Author: 1985 Thomas L. Quarles
 #include "inp.h"
 
 
-void
-INPcaseFix(register char *string)
+void INPcaseFix(register char *string)
 {
 
-    while(*string) {
-        if(isupper(*string)) {
-            *string = tolower(*string);
-        }
-        string++;
+    while (*string) {
+	if (isupper(*string)) {
+	    *string = tolower(*string);
+	}
+	string++;
     }
 }

@@ -13,18 +13,18 @@ Author: 1985 Thomas L. Quarles
 
 extern INPmodel *modtab;
 
-void
-INPkillMods(void)
+void INPkillMods(void)
 {
     INPmodel *modtmp;
     INPmodel *prev = NULL;
 
-    for (modtmp = modtab;modtmp != (INPmodel *)NULL;modtmp =
-            modtmp->INPnextModel) {
-        if(prev) FREE(prev);
-        prev = modtmp;
+    for (modtmp = modtab; modtmp != (INPmodel *) NULL; modtmp =
+	 modtmp->INPnextModel) {
+	if (prev)
+	    FREE(prev);
+	prev = modtmp;
     }
-    if(prev) FREE(prev);
-    modtab = (INPmodel *)NULL;
+    if (prev)
+	FREE(prev);
+    modtab = (INPmodel *) NULL;
 }
-

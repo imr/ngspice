@@ -21,44 +21,38 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #ifndef HAVE_ATANH
 extern double asinh(), acosh(), atanh();
-#endif 
+#endif
 
 double PTfudge_factor;
 
 #define	MODULUS(NUM,LIMIT)	((NUM) - ((int) ((NUM) / (LIMIT))) * (LIMIT))
 
-double
-PTabs(double arg)
+double PTabs(double arg)
 {
     return arg >= 0.0 ? arg : -arg;
 }
 
-double
-PTsgn(double arg)
+double PTsgn(double arg)
 {
     return arg > 0.0 ? 1.0 : arg < 0.0 ? -1.0 : 0.0;
 }
 
-double
-PTplus(double arg1, double arg2)
+double PTplus(double arg1, double arg2)
 {
     return (arg1 + arg2);
 }
 
-double
-PTminus(double arg1, double arg2)
+double PTminus(double arg1, double arg2)
 {
     return (arg1 - arg2);
 }
 
-double
-PTtimes(double arg1, double arg2)
+double PTtimes(double arg1, double arg2)
 {
     return (arg1 * arg2);
 }
 
-double 
-PTdivide(double arg1, double arg2)
+double PTdivide(double arg1, double arg2)
 {
     if (arg2 >= 0.0)
 	arg2 += PTfudge_factor;
@@ -66,13 +60,12 @@ PTdivide(double arg1, double arg2)
 	arg2 -= PTfudge_factor;
 
     if (arg2 == 0.0)
-        return (HUGE);
+	return (HUGE);
 
     return (arg1 / arg2);
 }
 
-double
-PTpower(double arg1, double arg2)
+double PTpower(double arg1, double arg2)
 {
     if (arg1 < 0.0) {
 	if (fabs(arg2 - ((int) arg2)) / (arg2 + 0.001) < 0.000001) {
@@ -84,48 +77,42 @@ PTpower(double arg1, double arg2)
     return (pow(arg1, arg2));
 }
 
-double
-PTacos(double arg)
+double PTacos(double arg)
 {
     return (acos(arg));
 }
 
-double
-PTacosh(double arg)
+double PTacosh(double arg)
 {
 #ifdef HAVE_ACOSH
     return (acosh(arg));
 #else
     if (arg < 1.0)
 	arg = 1.0;
-    return (log(arg + sqrt(arg*arg-1.0)));
-#endif 
+    return (log(arg + sqrt(arg * arg - 1.0)));
+#endif
 }
 
-double
-PTasin(double arg)
+double PTasin(double arg)
 {
     return (asin(arg));
 }
 
-double
-PTasinh(double arg)
+double PTasinh(double arg)
 {
 #ifdef HAVE_ASINH
     return (asinh(arg));
 #else
     return log(arg + sqrt(arg * arg + 1.0));
-#endif 
+#endif
 }
 
-double
-PTatan(double arg)
+double PTatan(double arg)
 {
     return (atan(arg));
 }
 
-double
-PTatanh(double arg)
+double PTatanh(double arg)
 {
 #ifdef HAVE_ATANH
     return (atanh(arg));
@@ -135,22 +122,20 @@ PTatanh(double arg)
     else if (arg > 1.0)
 	arg = 1.0 - PTfudge_factor - 1e-10;
     return (log((1.0 + arg) / (1.0 - arg)) / 2.0);
-#endif 
+#endif
 }
 
-double
-PTustep(double arg)
+double PTustep(double arg)
 {
     if (arg < 0.0)
 	return 0.0;
     else if (arg > 0.0)
 	return 1.0;
     else
-	return 0.5; /* Ick! */
+	return 0.5;		/* Ick! */
 }
 
-double
-PTuramp(double arg)
+double PTuramp(double arg)
 {
     if (arg < 0.0)
 	return 0.0;
@@ -158,87 +143,75 @@ PTuramp(double arg)
 	return arg;
 }
 
-double
-PTcos(double arg)
+double PTcos(double arg)
 {
     return (cos(MODULUS(arg, 2 * M_PI)));
 }
 
-double
-PTcosh(double arg)
+double PTcosh(double arg)
 {
     return (cosh(arg));
 }
 
-double
-PTexp(double arg)
+double PTexp(double arg)
 {
     return (exp(arg));
 }
 
-double
-PTln(double arg)
+double PTln(double arg)
 {
     if (arg < 0.0)
 #ifdef EXPERIMENTAL_CODE
-        return (HUGE);
-#else    
+	return (HUGE);
+#else
 	arg = -arg;
 #endif
     return (log(arg));
 }
 
-double
-PTlog(double arg)
+double PTlog(double arg)
 {
     if (arg <= 0.0)
 #ifdef EXPERIMENTAL_CODE
-        return (HUGE);
-#else        
+	return (HUGE);
+#else
 	arg = -arg;
 #endif
     return (log10(arg));
 }
 
-double
-PTsin(double arg)
+double PTsin(double arg)
 {
     return (sin(MODULUS(arg, 2 * M_PI)));
 }
 
-double
-PTsinh(double arg)
+double PTsinh(double arg)
 {
     return (sinh(arg));
 }
 
-double
-PTsqrt(double arg)
+double PTsqrt(double arg)
 {
     if (arg < 0.0)
 #ifdef EXPERIMENTAL_CODE
-        return (HUGE);
+	return (HUGE);
 #else
 	arg = -arg;
 #endif
     return (sqrt(arg));
 }
 
-double
-PTtan(double arg)
+double PTtan(double arg)
 {
     return (tan(MODULUS(arg, M_PI)));
 }
 
-double
-PTtanh(double arg)
+double PTtanh(double arg)
 {
     return (tanh(arg));
 }
 
-double
-PTuminus(double arg)
+double PTuminus(double arg)
 {
-    return (- arg);
+    return (-arg);
 }
-

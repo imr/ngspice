@@ -122,6 +122,4 @@ double PTuminus(double arg);
 
 /* sperror.c */
 
-char * SPerror(int type);
-
 #endif
