@@ -340,7 +340,7 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
 
         pn = alloc(struct pnode);
         pn->pn_value = NULL;
-	/* pn_func are pointers to a global static struct */
+	/* pn_func are pointers to a global constant struct */
         pn->pn_func = tree->pn_func;
         pn->pn_op = NULL;
         pn->pn_left = trcopy(tree->pn_left, args, nn);
@@ -348,20 +348,14 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
         pn->pn_next = NULL;
 
     } else if (tree->pn_op) {
-        struct op *op;
-
-        op = alloc(struct op);
-        op->op_num = tree->pn_op->op_num;
-        op->op_arity = tree->pn_op->op_arity;
-        op->op_func = tree->pn_op->op_func;
-        op->op_name = copy(tree->pn_op->op_name);
 
         pn = alloc(struct pnode);
         pn->pn_value = NULL;
         pn->pn_func = NULL;
-        pn->pn_op = op;
+	/* pn_op are pointers to a global constant struct */
+        pn->pn_op = tree->pn_op;
         pn->pn_left = trcopy(tree->pn_left, args, nn);
-        if (op->op_arity == 2)
+        if (pn->pn_op->op_arity == 2)
             pn->pn_right = trcopy(tree->pn_right, args, nn);
 	else
             pn->pn_right = NULL;

@@ -2,6 +2,7 @@
 
 	* src/frontend/define.c:
 	don't alloc pn_func if we don't need to.
+	ditto with pn_op
 
 2003-08-20 Stefan Jones <stefan.jones@multigig.com>
 
