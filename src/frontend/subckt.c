@@ -106,7 +106,11 @@ struct subs {
     struct line *su_def;    /* Pointer to the .subckt definition. */
     struct subs *su_next;
 } ;
-
+  
+  
+/* submod is the list of original model names, modnames is the
+ * list of translated names (i.e. after subckt expansion)
+ */
 
 static wordlist *modnames, *submod;
 static struct subs *subs = NULL;
@@ -681,13 +685,22 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
                     /* must be a node name at this point, so translate it */
 
                     t = gettrans(name);
-                    if (t)
-                        sprintf(buffer + strlen(buffer), "%s ", t);
-                    else
+
+                    if (t) {
+                     sprintf(buffer + strlen(buffer), "%s ", t);
+                    } else {                    
 		      /* maschmann:  changed order 
-                        sprintf(buffer + strlen(buffer), "%s:%s ", name, scname); */
-		      if(name[0]=='v' || name[0]=='V')  sprintf(buffer + strlen(buffer), "v:%s:%s ", scname, name+1);
-		      else sprintf(buffer + strlen(buffer), "%s:%s ", scname, name);
+                       *  sprintf(buffer + strlen(buffer), "%s:%s ", name, scname); */
+ 
+                      if(name[0]=='v' || name[0]=='V')
+                        /* If the name begins with V (Vsource), translate it as a source:
+                         * V:subcircuitname:sourcename
+                         *  SDB says: This is a bad hack. What if my netname has a V in it?!?!? */
+                        sprintf(buffer + strlen(buffer), "v:%s:%s ", scname, name+1);
+                      else
+                        /* Translate it as a normal node */
+                        sprintf(buffer + strlen(buffer), "%s:%s ", scname, name);
+                    }                     
 
                     break;
 
@@ -1318,23 +1331,45 @@ modtranslate(struct line *deck, char *subname)
         if (prefix(model, c->li_line)) {
             gotone = TRUE;
             t = c->li_line;
+
+#ifdef TRACE
+             /* SDB debug statement */
+             printf("In modtranslate, translating line %s\n", t);
+#endif
+	    
             name = gettok(&t);     /* at this point, name = .model */
             buffer = tmalloc(strlen(name) + strlen(t) +
                     strlen(subname) + 4);
             (void) sprintf(buffer, "%s ",name);    /* at this point, buffer = ".model " */
 	    tfree(name);
+	    
             name = gettok(&t);                     /* name now holds model name */
             wlsub = alloc(struct wordlist);
             wlsub->wl_next = submod;
             if (submod)
                 submod->wl_prev = wlsub;
+            /* here's where we insert the model name into the model name list */		
             submod = wlsub;
             wlsub->wl_word = name;
+#ifdef TRACE
+           /* SDB debug statement */
+           printf("In modtranslate, sticking model name %s into submod\n", wlsub->wl_word);
+#endif
+
+
+           /*  now stick the new model name into the model line.  */	    
             (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
                     subname, name);                 /* buffer = "model subname:modelname " */
             (void) strcat(buffer, t);
             tfree(c->li_line);
             c->li_line = buffer;
+
+#ifdef TRACE
+           /* SDB debug statement */
+           printf("In modtranslate, translated line= %s\n", c->li_line);
+#endif
+
+           /* this looks like it tries to stick the translated model name into the list of model names */	    
             t = c->li_line;
             txfree(gettok(&t));
             wl = alloc(struct wordlist);
@@ -1343,6 +1378,12 @@ modtranslate(struct line *deck, char *subname)
                 modnames->wl_prev = wl;
             modnames = wl;
             wl->wl_word = gettok(&t);
+
+#ifdef TRACE
+             /* SDB debug statement */
+             printf("In modtranslate, sticking model name %s into modnames\n", wl->wl_word);
+#endif
+	    
         }
     }
     return(gotone);
@@ -1360,7 +1401,7 @@ static void
 devmodtranslate(struct line *deck, char *subname)
 {
     struct line *s;
-    char *buffer, *name, *t, c;
+    char *buffer, *name, *next_name, *t, c;
     wordlist *wlsub;
     bool found;
 
@@ -1379,6 +1420,74 @@ devmodtranslate(struct line *deck, char *subname)
 
 	switch (c) {
 
+        case 'a':
+          /*  Code for codemodels (dev prefix "A") added by SDB on 6.10.2004.
+           *  The algorithm is simple.  We don't know how many nodes or sources are attached,
+           *  but the name of the model is always last.  Therefore, just iterate through all
+           *  tokens until the last one is reached.  Then translate it.
+           */
+
+#ifdef TRACE
+         /* SDB debug statement */
+         printf("In devmodtranslate, found codemodel, line= %s\n", t);
+#endif
+
+         /* first do refdes. */
+         name = gettok(&t);  /* get refdes */
+         (void) sprintf(buffer,"%s ",name);
+         tfree(name);
+
+         /* now do remainder of line. */
+         next_name = gettok(&t);
+         while(1) {
+                name = next_name;
+                next_name = gettok(&t);
+
+                if(next_name == NULL) {
+                 /* if next_name is NULL, we are at the line end.
+                  * name holds the model name.  Therefore, break */
+                 break;
+
+               } else {
+                 /* next_name holds something.  Write name into the buffer and continue. */
+                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                 tfree(name);
+               }
+         }  /* while  */
+
+
+        /* Now, is name a subcircuit model?
+         *  Note that we compare against submod = untranslated names of models.
+         */
+         for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+
+#ifdef TRACE
+           /* SDB debug statement */
+           printf("In devmodtranslate, comparing model name against submod list item %s\n", wlsub->wl_word );
+#endif
+
+           if (eq(name, wlsub->wl_word)) {
+             (void) sprintf(buffer + strlen(buffer), "%s:%s ",
+                            subname, name);
+             found = TRUE;
+             break;
+           }
+         }
+
+         if (!found)
+           (void) sprintf(buffer + strlen(buffer), "%s ", name);
+         tfree(name);
+
+#ifdef TRACE
+         /* SDB debug statement */
+         printf("In devmodtranslate, translated codemodel line= %s\n", buffer);
+#endif
+
+         (void) strcat(buffer, t);
+         tfree(s->li_line);
+         s->li_line = buffer;
+         break;
+	
         case 'r':
         case 'c':
 	    name = gettok(&t);  /* get refdes */

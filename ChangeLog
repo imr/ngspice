@@ -1,3 +1,16 @@
+2004-06-21  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/frontend/subckt.c: patch from Stuart Brorson
+	    <sdb@cloud9.net>. This patch adresses the following
+	    problem (as written by Stuart):
+	    Modified modtranslate and devmodtranslate to fix bug noticed 
+	    by Liu:  codemodel names called out in the device instantiation 
+	    line ("A1 1 2 3 4 lim") were not translated correctly if they 
+	    were invoked inside a .subckt.  Fix involved explicitly adding 
+	    code to handle "A" device types when translating the line.  
+	    SDB 6.18.2004.	    
+	    
+
 2004-05-30  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/frontend/subckt.c: patch from Dietmar Warning 
