@@ -122,7 +122,7 @@ if (!data->namelist) return(E_NOMEM);
 
 		    NevalSrc(&noizDens[BJTRBNOIZ],&lnNdens[BJTRBNOIZ],
 				 ckt,THERMNOISE,inst->BJTbasePrimeNode,inst->BJTbaseNode,
-				 *(ckt->CKTstate0 + inst->BJTgx));
+				 *(ckt->CKTstate0 + inst->BJTgx) * here->BJTm);
 
 		    NevalSrc(&noizDens[BJT_RE_NOISE],&lnNdens[BJT_RE_NOISE],
 				 ckt,THERMNOISE,inst->BJTemitPrimeNode,inst->BJTemitNode,
