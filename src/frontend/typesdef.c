@@ -32,7 +32,7 @@ struct plotab {
 /* note:  This should correspond to SV_ defined in FTEconstant.h */
 struct type types[NUMTYPES] = {
     { "notype", NULL } ,
-    { "time", "S" } ,
+    { "time", "s" } ,
     { "frequency", "Hz" } ,
     { "voltage", "V" } ,
     { "current", "A" } ,
