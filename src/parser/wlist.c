@@ -13,9 +13,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "wlist.h"
 
 
-static int wlcomp(char **s, char **t);
-
-
 /* Determine the length of a word list. */
 
 int
@@ -215,6 +212,17 @@ wl_nthelem(register int i, wordlist *wl)
     return (ww);
 }
 
+
+
+static int
+wlcomp(const void *a, const void *b)
+{
+    char **s = (char **) a;
+    char **t = (char **) b;
+    return (strcmp(*s, *t));
+}
+
+
 void
 wl_sort(wordlist *wl)
 {
@@ -236,11 +244,6 @@ wl_sort(wordlist *wl)
     return;
 }
 
-static int
-wlcomp(char **s, char **t)
-{
-    return (strcmp(*s, *t));
-}
 
 /* Return a range of wordlist elements... */
 
