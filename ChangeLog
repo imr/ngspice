@@ -1,3 +1,11 @@
+2003-08-20 Stefan Jones <stefan.jones@multigig.com>
+
+	* src/frontend/parse.c:
+	Fix the bad free of pn_func in free_pnode
+
+	* src/Makefile.am:
+	Fixed libspice.so dependancies to avoid src/xspice.o
+	
 2003-08-01 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/xspice/mif/mif_inp2.c:

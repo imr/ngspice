@@ -213,7 +213,7 @@ install-tclspice: ${TCL_FILES}
 tclspice.o: tclspice.c
 	$(COMPILE) -c -fpic tclspice.c -DTCLSPICE_version="\"$(TCLSPICE_VERSION)\""
 
-libspice.so:  $(ngspice_OBJECTS) $(LIBSPICE_OBJS) $(ngspice_LDADD)
+libspice.so:  $(ngspice_OBJECTS) $(LIBSPICE_OBJS) $(ngspice_DEPENDENCIES)
 	$(LINK) $(ngspice_LDFLAGS) $(ngspice_OBJECTS) $(ngspice_LDADD) $(LIBS) $(LIBSPICE_OBJS) -shared -Wl,--version-script=tclspice.map
 	if test -f .libs/$@ ; then \
 	mv .libs/$@ ./ ;\
