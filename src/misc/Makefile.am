@@ -17,9 +17,11 @@ libmisc_a_SOURCES = \
 		printnum.h	\
 		string.c	\
 		string.h	\
+		terminal.c	\
+		terminal.h	\
 		tilde.c		\
 		tilde.h		\
-		misc_time.c		\
+		misc_time.c	\
 		misc_time.h
 
 

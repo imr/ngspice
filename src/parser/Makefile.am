@@ -25,8 +25,6 @@ libparser_a_SOURCES = \
 		modify.h	\
 		numparse.c	\
 		numparse.h	\
-		output.c	\
-		output.h	\
 		quote.c		\
 		quote.h		\
 		std.c		\

@@ -8,18 +8,31 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
  * dependencies in here, and it isn't clear that versions of this stuff
  * can be written for every possible machine...
  */
-
 #include <config.h>
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "output.h"
 
 #ifdef HAVE_SGTTY_H
 #include <sgtty.h>
 #endif
 
-static void bufputc(char c);
-static int outfn(char c);
+#if 0
+/* Bad interaction with bool type in bool.h because curses also
+   defines this symbol. */
+#ifdef HAVE_TERMCAP
+#include <curses.h>
+#include <term.h>
+#endif
+#endif
+
+#include "ngspice.h"
+#include "cpdefs.h"
+
+
+#include "terminal.h"
+
+static char *motion_chars;
+static char *clear_chars;
+static char *home_chars;
+static char *cleol_chars;
 
 
 #define DEF_SCRHEIGHT   24
@@ -31,11 +44,6 @@ bool out_isatty = TRUE;
 static int xsize, ysize;
 static int xpos, ypos;
 static bool noprint, nopause;
-
-static char *motion_chars;
-static char *clear_chars;
-static char *home_chars;
-static char *cleol_chars;
 
 
 /* out_printf doesn't handle double arguments correctly, so we
@@ -108,7 +116,7 @@ outbufputc(void)
 
     if (ourbuf.count != BUFSIZ) {
       fputs(staticbuf, cp_out);
-      bzero(staticbuf, BUFSIZ-ourbuf.count);
+      memset(staticbuf, 0, BUFSIZ-ourbuf.count);
       ourbuf.count = BUFSIZ;
       ourbuf.ptr = staticbuf;
     }
@@ -129,28 +137,6 @@ bufputc(char c)
     }
 }
 
-#ifdef NOTDEF
-/* This tricky little macro + recursive routine was giving the Ultrix
- * global optimizer serious fits, so it was nuked.
- * The replacement above is not quite as fast, but somehow I don't think
- * that will cause too many problems these days.
- */
-#define bufputc(c)  ( --ourbuf.count >= 0 ? ((int) \
-    (*ourbuf.ptr++ = (unsigned)(c))) : fbufputc((unsigned) (c)))
-
-static int
-fbufputc(c)
-unsigned char c;
-{
-
-    ourbuf.count = 0;
-    outbufputc();
-    ourbuf.count = BUFSIZ;
-    ourbuf.ptr = staticbuf;
-    bufputc(c);
-
-}
-#endif
 
 /* prompt for a return */
 void
@@ -255,45 +241,13 @@ out_printf(char *fmt, char *s1, char *s2, char *s3, char *s4, char *s5, char *s6
     return;
 }
 
-void 
-term_clear(void)
-{
-#ifdef HAVE_TERMCAP
-    if (*clear_chars)
-	tputs(clear_chars, 1, outfn);
-    else
-	fputs("\n", stdout);
-#endif
-}
-
-void 
-term_home(void)
-{
-#ifdef HAVE_TERMCAP
-    if (*home_chars)
-	tputs(home_chars, 1, outfn);
-    else if (*motion_chars)
-	tputs(tgoto(motion_chars, 1, 1), 1, outfn);
-    else
-	fputs("\n", stdout);
-#endif
-}
-
-void 
-term_cleol(void)
-{
-#ifdef HAVE_TERMCAP
-    if (*cleol_chars)
-	tputs(cleol_chars, 1, outfn);
-#endif
-}
-
 static int
-outfn(char c)
+outfn(int c)
 {
 	putc(c, stdout);
 	return c;
 }
+
 
 void 
 tcap_init(void)
@@ -333,4 +287,40 @@ tcap_init(void)
         if (ysize <= 0)
             ysize = 0;
     }
+}
+
+
+void 
+term_clear(void)
+{
+#ifdef HAVE_TERMCAP
+    if (*clear_chars)
+	tputs(clear_chars, 1, outfn);
+    else
+	fputs("\n", stdout);
+#endif
+}
+
+
+void 
+term_home(void)
+{
+#ifdef HAVE_TERMCAP
+    if (*home_chars)
+	tputs(home_chars, 1, outfn);
+    else if (*motion_chars)
+	tputs(tgoto(motion_chars, 1, 1), 1, outfn);
+    else
+	fputs("\n", stdout);
+#endif
+}
+
+
+void 
+term_cleol(void)
+{
+#ifdef HAVE_TERMCAP
+    if (*cleol_chars)
+	tputs(cleol_chars, 1, outfn);
+#endif
 }
