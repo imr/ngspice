@@ -1,4 +1,4 @@
-bg\input texinfo   @c -*-texinfo-*-
+\input texinfo   @c -*-texinfo-*-
 @c %**start of header
 @setfilename ngspice.info
 @settitle NGSPICE User Manual
@@ -1770,8 +1770,8 @@ in the direction of voltage drop).
  General form:
 
 @example
-  RXXXXXXX n+ n- value <ac=val> <m=val> <scale=val> <dtemp = val> 
-  +        <noisy = 0|1>
+  RXXXXXXX n+ n- value <ac=val> <m=val> <scale=val> <temp=val> 
+  +        <dtemp=val> <noisy=0|1>
 @end example
 
  Examples:
@@ -1863,7 +1863,7 @@ following section on semiconductor resistors.
  General form:
 
 @example
-  RXXXXXXX n+ n- <value> <mname> <l=lenght> <w=width> <temp=t> 
+  RXXXXXXX n+ n- <value> <mname> <l=length> <w=width> <temp=val> 
   +        <dtemp=val> m=<val> <ac=val> <scale=val> <noisy = 0|1>
 @end example
 
@@ -1881,8 +1881,8 @@ actual resistance value from strictly geometric information and the
 specifications of the process.  If @option{value} is specified, it overrides 
 the geometric information and defines the resistance.  If @option{mname} is 
 specified, then the resistance may be calculated from the process information 
-in the model @option{mname} and the given @option{lenght} and @option{width}.  
-If @option{value} is not specified, then @option{mname} and @option{lenght}
+in the model @option{mname} and the given @option{length} and @option{width}.  
+If @option{value} is not specified, then @option{mname} and @option{length}
 must be specified.  If @option{width} is not specified, then it is taken
 from the default width given in the model.  
 
@@ -2033,9 +2033,9 @@ CMOS VLSI Design 2nd Edition,  Addison Wesley}.
  General form:
 
 @example
-  CXXXXXXX N+ N- VALUE <IC=INCOND>
+  CXXXXXXX n+ n- <value> <mname> <m=val> <scale=val> <temp=val> 
+  +        <dtemp=val> <ic=init_condition>
 @end example
-
 
  Examples:
 
@@ -2044,15 +2044,69 @@ CMOS VLSI Design 2nd Edition,  Addison Wesley}.
   COSC 17 23 10U IC=3V
 @end example
 
+Ngspice provides a detailed model for capacitors.  Capacitors in the netlist can
+be specified giving their capacitance or their geometrical and physical
+characteristics. Following the original spice3 "convention", capacitors
+specified by their geometrical or physical characteristics are called
+"semiconductor capacitors" and are described in the next section.
 
-N+ and N- are the positive and negative element nodes, respectively.
-VALUE is the capacitance in Farads.
+In this first form @option{n+} and @option{n-} are the positive and negative 
+element nodes, respectively and  @option{value} is the capacitance in Farads.
+
+Capacitance can be specified in the instance line as in the examples above or
+in a @command{.model} line, as in the example below:
+
+@example
+  C1 15 5 cstd
+  C2  2 7 cstd
+  
+  .model cstd cap=3n
+@end example
+
+Both capacitors have a capacitance of 3nF.
+
+The @option{m} parameter is the "multiplication factor", and can be used to 
+simulate "m" instances of the same kind in parallel. This parameter affects 
+all analyses. 
+
+The @option{scale} keyword let the designer choose a different scale for 
+elements. This option is not yet very useful, it will fully implemented in the
+future to perform technology scaling. At present is here as a work in progress.
+
+The operating temperature of instances can be changed using the @option{dtemp}
+keyword. Ngspice simulates the circuit with all components at the same single 
+temperature (the circuit temperature). To adjust the temperature of a capacitor 
+instance you can define its temperature difference from the rest of the 
+circuit using @option{dtemp}.
+
+If you want to simulate temperature dependence of a capacitor, you need to
+specify its temperature coefficients, using a @command{.model} line, like in the
+example below:
+
+@example
+  CEB 1 2 1u cap1 dtemp=5 
+  
+  .MODEL cap1 tc1=0.001
+@end example
 
 
 The (optional) initial condition is the initial (timezero) value of
 capacitor voltage (in Volts).  Note that the initial conditions (if any)
-apply 'only' if the UIC option is specified on the .TRAN control line.
+apply 'only' if the @option{uic} option is specified on the @command{.tran}
+control line.
 
+Ngspice calculates the nominal capacitance as described below:
+
+@tex
+$$
+    C_{nom} = {{{\rm value} * {\rm scale}} * m}
+$$
+@end tex
+@ifnottex
+@example
+                        Cnom = value * scale * m
+@end example
+@end ifnottex
 
 
 @node  Semiconductor Capacitors, Semiconductor Capacitor Model (C), Capacitors, Elementary Devices
@@ -2061,7 +2115,8 @@ apply 'only' if the UIC option is specified on the .TRAN control line.
  General form:
 
 @example
-  CXXXXXXX N1 N2 <VALUE> <MNAME> <L=LENGTH> <W=WIDTH> <IC=VAL>
+  CXXXXXXX n+ n- <value> <mname> <l=length> <w=width> <m=val> 
+  +        <scale=val> <temp=val> <dtemp=val> <ic=init_condition>
 @end example
 
 
@@ -2073,17 +2128,15 @@ apply 'only' if the UIC option is specified on the .TRAN control line.
 @end example
 
 
-
-This is the more general form of the Capacitor presented in section 6.2,
-and allows for the calculation of the actual capacitance value from
-strictly geometric information and the specifications of the process.
-If VALUE is specified, it defines the capacitance.  If MNAME is
-specified, then the capacitance is calculated from the process
-information in the model MNAME and the given LENGTH and WIDTH.  If VALUE
-is not specified, then MNAME and LENGTH must be specified.  If WIDTH is
-not specified, then it is taken from the default width given in the
-model.  Either VALUE or MNAME, LENGTH, and WIDTH may be specified, but
-not both sets.
+This is the more general form of the Capacitor presented in section
+(@pxref{Capacitors}), and allows for the calculation of the actual capacitance 
+value from strictly geometric information and the specifications of the process.
+If @option{value} is specified, it defines the capacitance and both process and
+geometrical information are discarded. If @option{value} is not specified, the
+capacitance is calculated from information contained model @option{mname} and
+the given length and width (@option{l}, @option{w} keywords, respectively). 
+It is possible to specify  @option{mname} only, without geometrical dimensions
+and set the capacitance in the @command{.model} line (@pxref{Capacitors}). 
 
 
 
@@ -2096,33 +2149,167 @@ The capacitor model contains process information that may be used to
 compute the capacitance from strictly geometric information.
 
 @multitable @columnfractions .15 .4 .2 .1 .1
-@item name @tab parameter @tab units @tab default @tab example
-@item CJ @tab junction bottom capacitance
-         @tab F/meters@math{^2} @tab - @tab 5e-5
-@item CJSW @tab junction sidewall capacitance
-         @tab F/meters @tab - @tab 2e-11
-@item DEFW @tab default device width
-         @tab meters @tab 1e-6 @tab 2e-6
+@item name   @tab parameter @tab units @tab default @tab example
+@item CAP    @tab model capacitance 
+                          @tab F                 @tab 0.0  @tab 1e-6
+@item CJ     @tab junction bottom capacitance
+                          @tab F/meters@math{^2} @tab -    @tab 5e-5
+@item CJSW   @tab junction sidewall capacitance
+                          @tab F/meters          @tab -    @tab 2e-11
+@item DEFW   @tab default device width
+                          @tab meters            @tab 1e-6 @tab 2e-6
+@item DEFL   @tab default device length
+                          @tab meters            @tab 0.0  @tab 1e-6
 @item NARROW @tab narrowing due to side etching
-         @tab meters @tab 0.0 @tab 1e-7
+                          @tab meters            @tab 0.0  @tab 1e-7
+@item SHORT  @tab shorting due to side etching   
+                          @tab meters            @tab 0.0  @tab 1e-7
+@item TC1    @tab first order temperature coeff.
+                          @tab F/°C              @tab 0.0  @tab 0.001
+@item TC2    @tab second order temperature coeff.
+                          @tab F/°C@math{^2}     @tab 0.0  @tab 0.0001
+@item TNOM   @tab parameter measurement temperature
+                          @tab °C                @tab 27   @tab 50			  			  
+@item DI    @tab relative dielectric constant
+                          @tab F/m               @tab 0.0  @tab 1
+@item THICK @tab insulator thickness
+                          @tab meters            @tab 0.0  @tab 1e-9
 @end multitable
 
 
-The capacitor has a capacitance computed as
+The capacitor has a capacitance computed as:
+
+If @option{value} is specified on the instance line then
 
 @tex
 $$
-  {\rm CAP} = {\rm CJ} ({\rm LENGTH} - {\rm NARROW})
-                       ({\rm WIDTH} - {\rm NARROW}) +
-              2 {\rm CJSW} ({\rm LENGTH} + {\rm WIDTH} - 2 {\rm NARROW})
+   C_{nom} = {{{\rm value} * {\rm scale}} * m}
 $$
 @end tex
 @ifnottex
 @example
-  CAP = CJ (LENGTH - NARROW) (WIDTH - NARROW) +
-        2 CJSW (LENGTH + WIDTH - 2 NARROW)
+                   Cnom = value * scale * m
 @end example
 @end ifnottex
+
+If model capacitance is specified then
+
+@tex
+$$
+   C_{nom} = {{{\rm CAP} * {\rm scale}} * m}
+$$
+@end tex
+@ifnottex
+@example
+                   Cnom = CAP * scale * m
+@end example
+@end ifnottex
+
+If neither @option{value} nor @option{CAP} are specified, then geometrical and
+physical parameters are take into account:
+
+
+@tex
+$$
+  {\rm C_{0}} = {\rm CJ} (l - {\rm SHORT})
+                       (w - {\rm NARROW}) +
+              2 {\rm CJSW} (l - {\rm SHORT} + w -  {\rm NARROW})
+$$
+@end tex
+@ifnottex
+@example
+            C0 = CJ (l - NARROW) (w - NARROW) +
+                   2 CJSW (l - SHORT + w -  NARROW)
+@end example
+@end ifnottex
+
+@option{CJ} can be explicitly given on the @command{.model} line or calculated
+by physical parameters. When @option{CJ} is not given, is calculated as:
+
+If @option{THICK} is not zero:
+
+@tex
+
+if {\rm DI } is specified:
+$$
+   {\rm CJ } = {{{\rm DI} * \epsilon_{0}}  \over {\rm THICK} }
+$$
+
+otherwise:
+
+$$
+   {\rm CJ } = {{ \epsilon_{SiO_{2}}}  \over {\rm THICK} }
+$$
+
+with:
+$$
+ \epsilon_{0} = 8.854214871e-12 {F \over m}
+$$
+$$ 
+\epsilon_{SiO_{2}} = 3.4531479969e-11 {F \over m}
+$$
+
+@end tex
+@ifnottex
+@example
+                        DI * eps
+			        0
+                   CJ = ---------   if DI is specified
+		         THICK
+
+                         eps
+			    SiO
+			       2
+                   CJ = ---------   if DI is not specified
+		         THICK
+
+with:
+
+eps =    8.854214871e-12 F/m
+   0
+
+eps    = 3.4531479969e-11 F/m
+   SiO
+      2
+
+@end example
+@end ifnottex
+
+@tex
+$$
+   C_{nom} = {C_{0} * {\rm scale} * m}
+$$
+@end tex
+@ifnottex
+@example
+                   Cnom = C0 * scale * m
+@end example
+@end ifnottex
+
+After the nominal capacitance is calculated, it is adjusted for temperature 
+by the formula:
+
+@tex
+$$
+   C(T) = C({\rm TNOM}) \Bigl( 1 + TC_1 (T - {\rm TNOM}) + TC_2 (T-{\rm TNOM})^2 \Bigr)
+$$
+where $C({\rm TNOM}) = C_{nom}$.
+@end tex
+@ifnottex
+@example
+                                                     2
+  C(T) = C(TNOM) [1 + TC  (T - TNOM) + TC  (T - TNOM) ]
+                        1                2       
+  where C(TNOM) = Cnom
+@end example
+@end ifnottex
+
+In the above formula, "T" represents the instance temperature, which can be
+explicitly using the @option{temp} keyword or os calculated using the 
+circuit temperature and @option{dtemp}, if present.
+
+If both @option{temp} and @option{dtemp} are specified, the latter is ignored.
+
 
 @node  Inductors, Coupled (Mutual) Inductors, Semiconductor Capacitor Model (C), Elementary Devices
 @subsection  Inductors

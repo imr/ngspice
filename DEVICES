@@ -11,7 +11,20 @@ This file it is useful in writing ngspice documentation.
 ***************************************************************************
 
 CAP 	- Capacitor
-      	Initial Release
+	Initial Release.
+	Ver: 	N/A
+	Class:	C
+	Level:	1 (and only)
+	Status:
+	
+	Enhancements over the original model:
+	
+	- Parallel Multiplier
+	- Temperature difference from circuit temperature
+	- Preliminary technology scaling support
+	- Model capacitance
+	- Cj calculation based on relative dielectric constant
+	  and insulator thickness 
 
 IND 	- Inductor
       	Initial Release
@@ -33,15 +46,6 @@ RES	- Simple linear resistor
 	- Preliminary technology scaling support
 	- Xspice extensions
 	- Cider extensions
-
-RES - Resistor
-      This is a modified version of the spice3 resistance model. This model 
-      supports different ac and dc values (ac=...). These changes have been
-      introduced by Serban Popescu. The "multiplicity factor" (m) has been 
-      introduced. The "scale factor" has been introduced.
-      
-      *)Rework 11: The code has been modified to reflect spice parsing 
-      standard. 
       
 
 ***************************************************************************
