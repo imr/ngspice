@@ -3632,7 +3632,8 @@ and @option{IBV} (both of which are positive numbers).
 @item TM1  @tab 1st order tempco for MJ @tab 1/°C @tab 0.0 @tab -
 @item TM2  @tab 2nd order tempco for MJ @tab 1/°C^2 @tab 0.0 @tab -
 @item TNOM @tab parameter measurement temperature @tab C @tab 27 @tab 50
-@item TRS  @tab 1st order tempco for RS @tab 1/°C^2 @tab 0.0 @tab -
+@item TRS  @tab 1st order tempco for RS @tab 1/°C   @tab 0.0 @tab -
+@item TRS2 @tab 2nd order tempco for RS @tab 1/°C^2 @tab 0.0 @tab -
 @item TTT1 @tab 1st order tempco for TT @tab 1/°C @tab 0.0 @tab -
 @item TTT2 @tab 2nd order tempco for TT @tab 1/°C^2 @tab 0.0 @tab -
 @item XTI  @tab saturation-current temp. exp @tab - @tab 3.0 @tab 3.0 pn 
@@ -3867,8 +3868,161 @@ $$
 @end example
 @end ifnottex
 
+The temperature affects many of the parameters in the equations above,
+the following equations show how. One of the most significative parameter
+that varies with the temperature for a semiconductor is the band-gap
+energy:
+
+@tex
+$$
+EG_{nom} =  1.16 - 7.02e^{-4}\cdot{{\rm TNOM}^2 \over {{\rm TNOM} + 1108.0}}
+$$
+$$
+EG(T) =  1.16 - 7.02e^{-4}\cdot{T^2 \over {{\rm TNOM} + 1108.0}}
+$$
+@end tex
+@ifnottex
+@example                     
+                                           2
+				       TNOM
+        EGnom = 1.16 - 7.02e-4 * ---------------
+                                  TNOM + 1108.0
+				  
+	                                 2
+	                                T
+	EG(T) = 1.16 - 7.02e-4 * ---------------
+			          TNOM + 1108.0
+				  
+@end example
+@end ifnottex
+
+The leakeage currents temperature dependence is:
+
+@tex
+$$
+IS(T) =  {\rm IS}\cdot e^{logfactor \over {\rm N}}
+$$
+$$
+JSW(T) =  {\rm JSW}\cdot e^{logfactor \over {\rm N}}
+$$
+@end tex
+@ifnottex
+@example                     
+                              logfactor
+			      ---------
+                                  N
+              IS(T)  =  IS * e  
+	 
+	                      logfactor
+	                      ---------
+	                          N
+	      JSW(T) = JSW * e
+
+@end example
+@end ifnottex
+
+where "logfactor" is defined:
+
+@tex
+$$
+logfactor =  {{\rm EG} \over {V_t( {\rm TNOM})} } - {{\rm EG} \over {V_t(T)}} + {\rm XTI}\cdot\ln({T \over {\rm TNOM}})
+$$
+@end tex
+@ifnottex
+@example                     
+                       EG        EG                T
+        logfactor = -------- - ----- + XTI * ln ( ---- )
+                    Vt(TNOM)   Vt(t)              TNOM
+@end example
+@end ifnottex
+
+The contact potentials (bottowall an sidewall) temperature dependence is:
+
+@tex
+$$
+ VJ(T) = {\rm VJ} \cdot ({T \over {\rm TNOM}}) - V_t(T) \cdot \lbrack 3 \cdot \ln({T \over {\rm TNOM}}) 
+         + {{\rm EG_{nom}} \over V_t({\rm TNOM})} - {{\rm EG(T)} \over V_t(T)}\rbrack
+$$
+$$
+ PHP(T) = {\rm PHP} \cdot ({T \over {\rm TNOM}}) - V_t(T) \cdot \lbrack 3 \cdot \ln({T \over {\rm TNOM}}) 
+         + {{\rm EG_{nom}} \over V_t({\rm TNOM})} - {{\rm EG(T)} \over V_t(T)}\rbrack
+$$
+@end tex
+@ifnottex
+@example      
+                       T                            T        EGnom     EG(T)
+      VJ(T) = VJ * ( ----- ) - Vt(T) * [ 3 * ln ( ----- ) + -------- - ----- ] 
+                     TNOM                         TNOM      Vt(TNOM)   Vt(T)
 
 
+                         T                            T        EGnom     EG(T)
+      PHP(T) = PHP * ( ----- ) - Vt(T) * [ 3 * ln ( ----- ) + -------- - ----- ] 
+                       TNOM                         TNOM      Vt(TNOM)   Vt(T)
+@end example
+@end ifnottex
+
+The depletion capacitances temperature dependence is:
+
+@tex
+$$
+ CJ(T) = {\rm CJ} \cdot \lbrack 1 + {\rm MJ} \cdot (4.0e^{-4}\cdot (T - {\rm TNOM})
+         - {VJ(T) \over {\rm VJ}} + 1) \rbrack
+$$
+$$
+ CJSW(T) = {\rm CJSW} \cdot \lbrack 1 + {\rm MJSW} \cdot (4.0e^{-4}\cdot (T - {\rm TNOM})
+          - {PHP(T) \over {\rm PHP}} + 1) \rbrack 
+$$
+@end tex
+@ifnottex
+@example      
+                                                    PB(T)
+      CJ(T) = CJ * [1 + MJ * (4.0e-4 * (T - TMON) - ----- + 1) ] 
+                                                      PB
+
+                                                        PHP(T)
+      CJSW(T) = CJSW * [1 + MJ * (4.0e-4 * (T - TMON) - ------ + 1) ] 
+                                                         PHP
+@end example
+@end ifnottex
+
+The transit time temperature dependence is:
+
+@tex
+$$
+TT(T) = {\rm TT}\cdot(1 + {\rm TTT1}\cdot(T - {\rm TNOM}) +  {\rm TTT2}\cdot(T - {\rm TNOM})^2)
+$$
+@end tex
+@ifnottex
+@example      
+      TT(T) = TT * (1 + TTT1 * (T - TNOM) + TTT2} * (T -TNOM)^2)   
+@end example
+@end ifnottex
+
+The junction grading coefficient temperature dependece is:
+
+@tex
+$$
+MJ(T) = {\rm MJ}\cdot(1 + {\rm TM1}\cdot(T - {\rm TNOM}) +  {\rm TM2}\cdot(T - {\rm TNOM})^2)
+$$
+@end tex
+@ifnottex
+@example      
+      MJ(T) = MJ * (1 + TM1 * (T - TNOM) + TM2} * (T -TNOM)^2)   
+@end example
+@end ifnottex
+
+The series resistance temperature dependence is:
+
+@tex
+$$
+RS(T) = {\rm RS}\cdot(1 + {\rm TRS}\cdot(T - {\rm TNOM}) +  {\rm TRS2}\cdot(T - {\rm TNOM})^2)
+$$
+@end tex
+@ifnottex
+@example      
+      RS(T) = RS * (1 + TRS * (T - TNOM) + TRS2} * (T -TNOM)^2)   
+@end example
+@end ifnottex
 
 @node  Bipolar Junction Transistors (BJTs), BJT Models (NPN/PNP), Diode Model (D), Transistors and Diodes
 @subsection  Bipolar Junction Transistors (BJTs)
