@@ -1,0 +1,39 @@
+List of Things To Do
+====================
+
+
+Standards conformance
+---------------------
+
+Add proper copyright headers to every source, header, documentation
+and other files
+
+Fix all compiler warnings
+
+Remove smktemp() in favor of tmpfile(); Note: different symantics!
+
+
+
+Usability issues
+------------------
+
+Plug all memory leaks (use debauch from
+http://quorum.tamu.edu/jon/gnu/ to find them)
+
+Either get help program functioning again; OR interface to webbrowser,
+info reader and get rid of all help-related code.  Option 2 is the
+most appealing.
+
+
+Refactorings
+------------
+
+Make devices dynamically loadable (perhaps use framework from glib)
+
+Separate out analysis code in much the same way as the devices code
+
+Separate ngspice and nutmeg; i.e., no more SIMULATOR define
+
+Integrate bsim3, bsim3v1, bsim3v2 to use a single codebase instead of
+three only slighty differing implementations
+
