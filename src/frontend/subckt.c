@@ -1593,6 +1593,7 @@ inp_numnodes(char c)
         case 'l': return (2);
         case 'm': return (7); /* This means that 7 is the maximun number of nodes */
         case 'o': return (4);
+        case 'p': return (0);
         case 'q': return (4);
         case 'r': return (2);
         case 's': return (4);
@@ -1601,6 +1602,7 @@ inp_numnodes(char c)
         case 'v': return (2);
  /* change 3 to 2 here to fix w bug, NCF 1/31/95 */
         case 'w': return (2);
+        case 'y': return (2);
         case 'z': return (3);
 
         default:

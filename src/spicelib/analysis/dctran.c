@@ -688,6 +688,11 @@ resume:
                 *(ckt->CKTstate3+i) = *(ckt->CKTstate1+i);
             }
         }
+		/* txl, cpl addition */
+		if (converged == 1111) {
+            return(converged);
+		}
+
         if(converged != 0) {
 #ifndef CLUSTER	
             ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;

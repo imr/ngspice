@@ -157,6 +157,8 @@ printf("Doing analysis at TEMP = %f and TNOM = %f\n",
                   /* gtri - end - 6/10/91 - wbk - Setup event-driven data */
 #endif
 		    error = (*(analInfo[i]->an_func))(ckt, reset);
+			/* txl, cpl addition */
+			if (error == 1111) break;
 		}
 		if (error)
 		    error2 = error;
