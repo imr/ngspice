@@ -1,3 +1,13 @@
+2004-08-22  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/xspice/enhtrans.c: Removed code introduced by Stuart Brorson to
+	    limit parsing of POLY statements to dimension 2. Now functions 
+	    returns a copy of the error strings that i freed by higher level
+	    code once precessed and write the error on the expanded netlist (as
+	    comments) instead of expanded lines (this fixes a segmentation fault
+	    since INPpas1() does not check if the returned line is not null and 
+	    makes expandend netlist more informative). 
+
 2004-08-20  Paolo Nenzi <p.nenzi@ieee.org>
 	
 	*   src/frontend/{gens.h, gens.c, device.c}: Committed another Vera 

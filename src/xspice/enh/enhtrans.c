@@ -126,6 +126,13 @@ struct line * ENHtranslate_poly(
      l1->li_next = l2;
      d->li_next  = l1;
      
+/* PN 2004: Add original linenumber to ease the debug process 
+ * for malfromned netlist
+ */
+ 
+     l1->li_linenum = d->li_linenum;
+     l2->li_linenum = d->li_linenum;     
+     
      /* Create the translated cards */
      d->li_error = two2three_translate(d->li_line, &(l1->li_line), &(l2->li_line));
      
@@ -308,8 +315,13 @@ static char *two2three_translate(
       invalid dimensiion, otherwise returns numeric value of POLY */
    dim = get_poly_dimension(orig_card);
    if(dim == -1) {
+      char *errmsg;
       printf("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
-      return("ERROR - Argument to poly() is not an integer\n");
+      printf("ERROR  while parsing: %s\n", orig_card);
+      errmsg = copy("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
+      *inst_card = (void *)copy(" * ERROR Argument to poly() is not an integer");
+      *mod_card  = (void *)copy(" * ERROR Argument to poly() is not an integer");
+      return errmsg;
    }
 
    /* Compute number of output connections based on type and dimension */
@@ -337,9 +349,15 @@ static char *two2three_translate(
 #endif
 
 
-   if(num_coefs < 1)
-      return("ERROR - Number of connections differs from poly dimension\n");
-
+   if(num_coefs < 1){
+      char *errmsg;
+      printf("ERROR - Number of connections differs from poly dimension\n");
+      printf("ERROR  while parsing: %s\n", orig_card);
+      errmsg = copy("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
+      *inst_card = (void *)copy("* ERROR - Number of connections differs from poly dimension\n");
+      *mod_card  = (void *)copy(" * ERROR - Number of connections differs from poly dimension\n");
+      return(errmsg);
+}
    /* Split card into name, output connections, input connections, */
    /* and coefficients */
 
@@ -381,6 +399,7 @@ static char *two2three_translate(
    inst_card_len = 70;
    inst_card_len += 2 * (strlen(name) + 1);
    for(i = 0; i < 2; i++)
+
       inst_card_len += strlen(out_conn[i]) + 1;
    for(i = 0; i < num_conns; i++)
       inst_card_len += strlen(in_conn[i]) + 1;
@@ -500,7 +519,6 @@ the 'poly' if any.  Return values changed by SDB on 5.23.2003 to be:
 If "poly" is not present, return 0.
 If the dimension token following "poly" is invalid, return -1.
 Otherwise, return the integer dimension.
-Note that the dimension may only be 1 or 2.  Is this correct SPICE?
 */
 
 
@@ -537,8 +555,13 @@ static int get_poly_dimension(
    dim = atoi(local_tok);
    FREE(local_tok);
 
-   /*  This is stupid, but it works. . . . */
-   if ( (dim == 0) || (dim == 1) || (dim == 2) ) {
+   /*  Notice to Stuart: on error atoi returns 0. The following
+    *  code thus cannot distinguish between a POLY(0), which is
+    *  meaningless, I think, and POLY(FOO) which is not a number.
+    * 
+    *  What about using strtol ?
+    */
+   if (dim > 0) {
    return(dim);
    } 
    else {
