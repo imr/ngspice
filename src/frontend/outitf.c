@@ -154,12 +154,18 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
 		savesused[i] = TRUE;
 		continue;
 	    }
+
+/*  Check for ".save all" and new synonym ".save allv"  */
+
 	    if (cieq(saves[i].name, "all") || cieq(saves[i].name, "allv")) {
                 saveall = TRUE;
                 savesused[i] = TRUE;
 		saves[i].used = 1;
                 continue;
             }
+
+/*  And now for the new ".save alli" option  */
+
             if (cieq(saves[i].name, "alli")) {
                 savealli = TRUE;
                 savesused[i] = TRUE;
@@ -199,6 +205,9 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
     } else {
         for (i = 0; i < numNames; i++)
             if (!refName || !name_eq(dataNames[i], refName)) {
+
+/*  Save the node as long as it's an internal device node  */
+
                if (!strstr(dataNames[i], "#internal") &&
                     !strstr(dataNames[i], "#source") &&
                     !strstr(dataNames[i], "#drain") &&
@@ -210,7 +219,10 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
             }
     }
 
- /* Pass 1 and a bit. */
+ /* Pass 1 and a bit.
+    This is a new pass which searches for all the internal device
+    nodes, and saves the terminal currents instead  */
+
     if (savealli) {
           depind=0;
           for (i = 0; i < numNames; i++) {
@@ -423,6 +435,11 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
         if (run->refIndex != -1) {
           if (run->isComplex){
             fileAddComplexValue(run->fp, run->binary, refValue->cValue);
+
+/*  While we're looking at the reference value, print it to the screen
+      every quarter of a second, to give some feedback without using
+      too much CPU time  */
+
             currclock = clock();
             if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
             	fprintf(stderr, " Reference value : % 12.5e\r",
@@ -430,6 +447,9 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
               lastclock = currclock;
             }
          } else {
+
+/*  And the same for a non-complex value  */
+
             fileAddRealValue(run->fp, run->binary, refValue->rValue);
             currclock = clock();
             if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
@@ -457,9 +477,14 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 /* should pre-check instance */
                 if (!getSpecial(&run->data[i], run, &val))
                    {
+
+/*  If this is the first data point, print a warning for any unrecognized
+    variables, since this has not already been checked  */
+
                     if (run->pointCount==1) 
                       fprintf(stderr, "Warning: unrecognized variable - %s\n",
                           run->data[i].name);
+
                     if (run->isComplex) {
                         val.cValue.real=0;
                         val.cValue.imag=0;
@@ -483,11 +508,30 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             }
         }
         fileEndPoint(run->fp, run->binary);
+
+/*  Check that the write to disk completed successfully, otherwise abort  */
+
         if (ferror(run->fp)) {
              fprintf(stderr, "Warning: rawfile write error !!\n");
              shouldstop = TRUE;
         };
     } else {
+
+/*  This is interactive mode. Update the screen with the reference
+    variable just the same  */
+
+        currclock = clock();
+        if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
+          if (run->isComplex) {
+              fprintf(stderr, " Reference value : % 12.5e\r",
+                            refValue->cValue.real);
+          } else {
+              fprintf(stderr, " Reference value : % 12.5e\r",
+                            refValue->rValue);
+          }
+          lastclock = currclock;
+        }
+
         for (i = 0; i < run->numData; i++) {
             if (run->data[i].outIndex == -1) {
                 if (run->data[i].type == IF_REAL)
@@ -902,7 +946,7 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 static void
 plotEnd(runDesc *run)
 {
-
+    fprintf(stderr, "\nNo. of Data Rows : %d\n", run->pointCount);
     return;
 }
 
