@@ -1,5 +1,5 @@
 
-Circuit:  	Example 3 for interconnect simulation
+Circuit: 	Example 3 for interconnect simulation
 
 Warning -- Level not specified on line "(bf=100 rb=100 cje=0.09375pf cjc=0.28125pf is=1e-12 pe=0.5 pc=0.5)"
 Using level 1.
@@ -340,7 +340,7 @@ l:1:1:1:1:1:1:1:1:1#branch           -5.01e-12
 v1#branch                             5.01e-12
 vcc#branch                           -5.01e-12
 
- Reference value :  1.26802e-09 Reference value :  2.69334e-09 Reference value :  3.79139e-09 Reference value :  5.00830e-09 Reference value :  5.83877e-09 Reference value :  6.51931e-09 Reference value :  7.49518e-09 Reference value :  8.44909e-09 Reference value :  9.52791e-09
+
 No. of Data Rows : 947
                      	Example 3 for interconnect simulation
 --------------------------------------------------------------------------------

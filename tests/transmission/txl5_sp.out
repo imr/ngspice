@@ -1,1 +1,9 @@
-To be done
+
+Circuit: 	Example 3 for interconnect simulation
+
+Warning -- Level not specified on line "(bf=100 rb=100 cje=0.09375pf cjc=0.28125pf is=1e-12 pe=0.5 pc=0.5)"
+Using level 1.
+Warning -- Level not specified on line "(bf=100 rb=100 cje=0.08187pf cjc=0.2525pf is=1e-12 pe=0.5 pc=0.5)"
+Using level 1.
+Warning -- Level not specified on line "(bf=100 rb=100  cje=0.08187pf cjc=0.05pf is=1e-12 pe=0.5 pc=0.5)"
+Using level 1.

@@ -1,1 +1,17 @@
-To be done
+
+Circuit: **********************  test circuit No. 3 **************************
+
+Error on line 8 : p2    2    1 7  2 8 pline
+	model name is not found
+Error on line 24 : y1  9 10  txline
+	model name is not found
+Error on line 35 : p1    4     4 2 13 17       5 14 15 18 pline1
+	model name is not found
+Error on line 54 : d1   5  0 
+	 unable to find definition of model  - default assumed 
+Error on line 55 : d2  14  0 
+	 unable to find definition of model  - default assumed 
+Error on line 56 : d3  15  0 
+	 unable to find definition of model  - default assumed 
+Error on line 57 : d4  18  0 
+	 unable to find definition of model  - default assumed 

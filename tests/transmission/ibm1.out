@@ -1,1 +1,252 @@
-To be done
+Warning: vein_right: no DC value, transient time 0 value used
+Warning: vein_left: no DC value, transient time 0 value used
+Warning: singular matrix:  check nodes jcntran and jcntran
+
+Trying gmin =   9.0376E-09 Trying gmin =   9.0380E-09 Warning: last gmin step failed
+Warning: singular matrix:  check nodes jcntran and jcntran
+
+Warning: dynamic gmin stepping failed
+Supplies reduced to   0.0000% Warning: singular matrix:  check nodes jcntran and jcntran
+
+
+Supplies reduced to   0.1000% Warning: singular matrix:  check nodes jcntran and jcntran
+
+Supplies reduced to   0.0000% Warning: singular matrix:  check nodes jcntran and jcntran
+
+Warning: source stepping failed
+
+Circuit: ************  Multiconductor 6-line with ECL drivers  *******
+
+Warning -- Level not specified on line "bf=150 vaf=20v is=4e-17 rb=300 rc=100 cje=30ff cjc=30ff                cjs=40ff vje=0.6v vjc=0.6v vjs=0.6 mje=0.5 mjc=0.5                mjs=0.5 tf=16ps tr=1ns"
+Using level 1.
+Error on line 55 : q:1:1 1:2 1:3 1:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 56 : q:1:2 1:6 1:4 1:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 57 : q:1:3 1:3 1:p 1outn jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 58 : q:1:4 1:4 1:p 1 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 55 : q:2:1 2:2 2:3 2:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 56 : q:2:2 2:6 2:4 2:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 57 : q:2:3 2:3 2:p 2outn jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 58 : q:2:4 2:4 2:p 2 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 55 : q:7:1 7:2 7:3 7:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 56 : q:7:2 7:6 7:4 7:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 57 : q:7:3 7:3 7:p 7routn jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 58 : q:7:4 7:4 7:p 7r jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 55 : q:8:1 8:2 8:3 8:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 56 : q:8:2 8:6 8:4 8:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 57 : q:8:3 8:3 8:p 8routn jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 58 : q:8:4 8:4 8:p 8r jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 55 : q:11:1 11:2 11:3 11:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 56 : q:11:2 11:6 11:4 11:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 57 : q:11:3 11:3 11:p 11outn jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 58 : q:11:4 11:4 11:p 11 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 55 : q:12:1 12:2 12:3 12:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 56 : q:12:2 12:6 12:4 12:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 57 : q:12:3 12:3 12:p 12outn jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 58 : q:12:4 12:4 12:p 12 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 55 : q:5:1 5:2 5:3 5:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 56 : q:5:2 5:6 5:4 5:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 57 : q:5:3 5:3 5:p 5loutn jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 58 : q:5:4 5:4 5:p 5l jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 55 : q:6:1 6:2 6:3 6:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 56 : q:6:2 6:6 6:4 6:7 jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 57 : q:6:3 6:3 6:p 6loutn jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 58 : q:6:4 6:4 6:p 6l jcntran
+	 unable to find definition of model  - default assumed 
+Error on line 20 : p1 6 1 2 3 4 5 6   7 8 9 10 11 12 pline
+	model name is not found
+Error on line 62 : .model jcntran (b-c-e)
+	unknown model type b - ignored
+Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
+
+Transient solution failed -
+
+Last Node Voltages
+------------------
+
+Node                                   Last Voltage        Previous Iter
+----                                   ------------        -------------
+mm                                    -2.99541e-111                    0
+g                                     -2.99541e-111                    0
+pp                                    -2.99541e-111                    0
+lin                                   -2.99541e-111                    0
+ring                                  -2.99541e-111                    0
+1:1                                   -2.99541e-111                    0
+1:2                                   -2.99541e-111        -1.44303e-134
+1:5                                   -2.99541e-111                    0
+1:6                                   -2.99541e-111        -1.50962e-134
+1:7                                   -2.99541e-111         2.15232e-134
+1:n                                   -2.99541e-111                    0
+1:p                                   -2.99541e-111        -9.91695e-135
+1:3                                   -2.99541e-111         1.20108e-134
+1:4                                   -2.99541e-111         1.48931e-134
+1outn                                 -2.99541e-111        -3.69774e-135
+1                                     -2.99541e-111        -5.28589e-135
+jcntran                                           0                    0
+2:1                                   -2.99541e-111                    0
+2:2                                   -2.99541e-111        -1.44303e-134
+2:5                                   -2.99541e-111                    0
+2:6                                   -2.99541e-111        -1.50962e-134
+2:7                                   -2.99541e-111         2.15232e-134
+2:n                                   -2.99541e-111                    0
+2:p                                   -2.99541e-111        -9.91695e-135
+2:3                                   -2.99541e-111         1.20108e-134
+2:4                                   -2.99541e-111         1.48931e-134
+2outn                                 -2.99541e-111        -3.69774e-135
+2                                     -2.99541e-111        -5.28589e-135
+7:1                                    1.85449e-110                    0
+7:2                                    1.85449e-110         1.66565e-124
+7:5                                   -2.99541e-111                    0
+7:6                                   -2.99541e-111         9.82462e-134
+7:7                                   -2.99541e-111        -8.32824e-125
+7:n                                   -2.99541e-111                    0
+7:p                                   -2.99541e-111         2.10704e-135
+7:3                                   -2.99541e-111        -8.32824e-125
+7:4                                   -2.99541e-111         1.60265e-134
+7routn                                -2.99541e-111         8.32624e-135
+7r                                    -2.99541e-111        -5.28589e-135
+7                                      1.85449e-110                    0
+8:1                                    1.85447e-110                    0
+8:2                                    1.85447e-110         1.66563e-124
+8:5                                   -2.99541e-111                    0
+8:6                                   -2.99541e-111         9.82451e-134
+8:7                                   -2.99541e-111        -8.32817e-125
+8:n                                   -2.99541e-111                    0
+8:p                                   -2.99541e-111         2.10689e-135
+8:3                                   -2.99541e-111        -8.32817e-125
+8:4                                   -2.99541e-111         1.60265e-134
+8routn                                -2.99541e-111         8.32609e-135
+8r                                    -2.99541e-111        -5.28589e-135
+8                                      1.85447e-110                    0
+11:1                                  -2.99541e-111                    0
+11:2                                  -2.99541e-111        -1.44535e-134
+11:5                                  -2.99541e-111                    0
+11:6                                  -2.99541e-111        -1.50962e-134
+11:7                                  -2.99541e-111         2.15348e-134
+11:n                                  -2.99541e-111                    0
+11:p                                  -2.99541e-111        -9.91695e-135
+11:3                                  -2.99541e-111         1.20224e-134
+11:4                                  -2.99541e-111         1.48931e-134
+11outn                                -2.99541e-111        -3.69774e-135
+11                                    -2.99541e-111        -5.28589e-135
+12:1                                   1.85449e-110                    0
+12:2                                   1.85449e-110         1.66565e-124
+12:5                                  -2.99541e-111                    0
+12:6                                  -2.99541e-111         9.82462e-134
+12:7                                  -2.99541e-111        -8.32824e-125
+12:n                                  -2.99541e-111                    0
+12:p                                  -2.99541e-111         2.10704e-135
+12:3                                  -2.99541e-111        -8.32824e-125
+12:4                                  -2.99541e-111         1.60265e-134
+12outn                                -2.99541e-111         8.32624e-135
+12                                    -2.99541e-111        -5.28589e-135
+rin                                    1.85449e-110                    0
+5:1                                     1.8545e-110                    0
+5:2                                     1.8545e-110         1.66565e-124
+5:5                                   -2.99541e-111                    0
+5:6                                   -2.99541e-111         9.82464e-134
+5:7                                   -2.99541e-111        -8.32826e-125
+5:n                                   -2.99541e-111                    0
+5:p                                   -2.99541e-111         2.10706e-135
+5:3                                   -2.99541e-111        -8.32826e-125
+5:4                                   -2.99541e-111         1.60265e-134
+5loutn                                -2.99541e-111         8.32627e-135
+5l                                    -2.99541e-111        -5.28589e-135
+5                                       1.8545e-110                    0
+6:1                                     1.8545e-110                    0
+6:2                                     1.8545e-110         1.66566e-124
+6:5                                   -2.99541e-111                    0
+6:6                                   -2.99541e-111         9.82469e-134
+6:7                                   -2.99541e-111        -8.32829e-125
+6:n                                   -2.99541e-111                    0
+6:p                                   -2.99541e-111         2.10713e-135
+6:3                                   -2.99541e-111        -8.32829e-125
+6:4                                   -2.99541e-111         1.60265e-134
+6loutn                                -2.99541e-111         8.32634e-135
+6l                                    -2.99541e-111        -5.28589e-135
+6                                       1.8545e-110                    0
+3                                                 0                    0
+4                                                 0                    0
+9                                                 0                    0
+10                                                0                    0
+pline                                             0                    0
+l:6:ref#branch                         5.99081e-123                    0
+l:6:in#branch                                     0                    0
+l:5:ref#branch                         5.99081e-123                    0
+l:5:in#branch                                     0                    0
+l:12:ref#branch                        5.99081e-123                    0
+l:12:in#branch                                    0                    0
+l:11:ref#branch                        5.99081e-123                    0
+l:11:in#branch                        -5.99081e-123                    0
+l:8:ref#branch                         5.99081e-123                    0
+l:8:in#branch                                     0                    0
+l:7:ref#branch                         5.99081e-123                    0
+l:7:in#branch                                     0                    0
+l:2:ref#branch                         5.99081e-123                    0
+l:2:in#branch                         -5.99081e-123                    0
+l:1:ref#branch                          5.9908e-123                    0
+l:1:in#branch                         -5.99081e-123                    0
+v:6:en#branch                         -2.59351e-122                    0
+v:6:ep#branch                         -1.78401e-123                    0
+v:5:en#branch                         -2.59349e-122                    0
+v:5:ep#branch                         -1.78396e-123                    0
+v:12:en#branch                        -2.59349e-122                    0
+v:12:ep#branch                        -1.78395e-123                    0
+v:11:en#branch                         3.38022e-123                    0
+v:11:ep#branch                         5.99082e-123                    0
+v:8:en#branch                         -2.59346e-122                    0
+v:8:ep#branch                         -1.78385e-123                    0
+v:7:en#branch                         -2.59349e-122                    0
+v:7:ep#branch                         -1.78395e-123                    0
+v:2:en#branch                          3.38022e-123                    0
+v:2:ep#branch                          5.99082e-123                    0
+v:1:en#branch                          3.38022e-123                    0
+v:1:ep#branch                          5.99082e-123                    0
+vein_right#branch                                 0                    0
+vein_left#branch                       5.99081e-123                    0
+vepp#branch                            5.99081e-123                    0
+vemm#branch                            5.99081e-123                    0
+
+
+doAnalyses: Too many iterations without convergence
+
+run simulation(s) aborted
+Error: no such vector v(3) 
+Error: no such vector v(5) 
+Error: no such vector v(8) 
+Error: no such vector v(11) 
+Error: no such vector v(12)
+
+
+
+

@@ -1,6 +1,6 @@
 Warning: option itl5 is currently unsupported.
 
-Circuit:    BJTdriver -- 2in st. lin -- 20in coupled line -- 2in st line -- DiodeCircuit
+Circuit: BJTdriver -- 2in st. lin -- 20in coupled line -- 2in st line -- DiodeCircuit
 
 Warning -- Level not specified on line "(bf=100 rb=100 cje=0.09375pf cjc=0.28125pf is=1e-12 pe=0.5 pc=0.5)"
 Using level 1.
