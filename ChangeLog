@@ -1,3 +1,17 @@
+2003-08-01 Stefan Jones <stefan.jones@multigig.com>
+
+	* src/xspice/mif/mif_inp2.c:
+	Reverted to version 1.1.2.2 so POLY and codemodels work
+
+	* src/Makefile.am:
+	Fixed libspice.so dependancies
+
+	* configure.in src/tclspice.c:
+	tclspice can now be built without thread support
+
+	* src/frontend/{com_let.c,device.c,evaluate.c}:
+	more memory leak fixes by Vera Albrecht <albrecht@danalyse.de>
+	
 2003-07-18 Vera Albrecht <albrecht@danalyse.de>
 
 	* src/{main.c,tclspice.c}

@@ -41,6 +41,7 @@ com_let(wordlist *wl)
 	*rhs++ = 0;
     } else {
 	fprintf(cp_err, "Error: bad let syntax\n");
+	tfree(p);
 	return;
     }
     if ((s =strchr(p, '['))) {
@@ -63,6 +64,7 @@ com_let(wordlist *wl)
 
 	    if (depth != 0 || !*q) {
 		printf("syntax error specifyingstrchr\n");
+		tfree(p);
 		return;
 	    }
 
@@ -86,6 +88,7 @@ com_let(wordlist *wl)
     /* sanity check */
     if (eq(p, "all") ||strchr(p, '@')) {
         fprintf(cp_err, "Error: bad variable name %s\n", p);
+        tfree(p);
         return;
     }
 
@@ -100,8 +103,8 @@ com_let(wordlist *wl)
     t = ft_evaluate(nn);
     if (!t) {
 	fprintf(cp_err, "Error: Can't evaluate %s\n", rhs);
-        tfree(p);
         free_pnode(nn);
+        tfree(p);
         return;
     }
 
@@ -117,9 +120,7 @@ com_let(wordlist *wl)
     } else {
 	if (numdims) {
 	    fprintf(cp_err, "Can't assign into a subindex of a new vector\n");
-	    tfree(p);
-           free_pnode(nn);
-	    return;
+	    goto quit;
 	}
 
 	/* create and assign a new vector */
@@ -177,18 +178,14 @@ com_let(wordlist *wl)
 		length * cube);
 	if (newvec)
 	    n->v_flags &= ~VF_PERMANENT;
-	tfree(p);
-       free_pnode(nn);
-	return;
+	goto quit;
     }
     if (isreal(t) != isreal(n)) {
 	fprintf(cp_err,
 		"Types of vectors are not the same (real vs. complex)\n");
 	if (newvec)
 	    n->v_flags &= ~VF_PERMANENT;
-	tfree(p);
-       free_pnode(nn);
-	return;
+	goto quit;
     } else if (isreal(t)) {
 	bcopy((char *) t->v_realdata, (char *) (n->v_realdata + offset),
 		length * sizeof (double));
@@ -205,7 +202,10 @@ com_let(wordlist *wl)
     if (newvec)
 	cp_addkword(CT_VECTOR, n->v_name);
 
+quit:
+    /* va: garbage collection for t, if pnode nn is no simple value */
+    if (nn->pn_value==NULL && t!=NULL) vec_free(t);
+    free_pnode(nn); /* frees also t, if pnode nn is simple value */
     tfree(p);
-    free_pnode(nn);
     return;
 }

@@ -81,8 +81,10 @@ extern jmp_buf jbuf;
 #include <fcntl.h>
 #include <sys/stat.h>
 
+#ifdef HAVE_LIBPTHREAD
 /* run spicein background */
 #include <pthread.h>
+#endif
 
 #include <stdarg.h>     /* for va_copy() */
 
@@ -95,7 +97,9 @@ extern int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 /*For blt spice to use*/
 typedef struct {
   char *name;
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_t mutex;/*lock for this vector*/
+#endif
   double *data;/* vector data*/
   int size;/*data it can store*/
   int length;/*actual amount of data*/
@@ -187,7 +191,9 @@ void blt_init(void *run) {
       if(ownVectors)
 	FREE(vectors[i].data);
       FREE(vectors[i].name);
+#ifdef HAVE_LIBPTHREAD
       pthread_mutex_destroy(&vectors[i].mutex);
+#endif
     }
     FREE(vectors);
   }
@@ -198,7 +204,9 @@ void blt_init(void *run) {
   vectors = (vector *)MALLOC(cur_run->numData*sizeof(vector));
   for(i = 0;i < cur_run->numData;i++){
     vectors[i].name = copy((cur_run->data[i]).name);
+#ifdef HAVE_LIBPTHREAD
     pthread_mutex_init(&vectors[i].mutex,NULL);
+#endif
     vectors[i].data = NULL;
     vectors[i].size = 0;
     vectors[i].length = 0;
@@ -212,20 +220,26 @@ void blt_init(void *run) {
 void blt_add(int index,double value){ 
   vector *v;
   v = &vectors[index];
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_lock(&vectors[index].mutex);
+#endif
   if(!(v->length < v->size)){
     v->size += 100;
     v->data = (double *)REALLOC(v->data,sizeof(double)*v->size);
   }
   v->data[v->length] = value;
   v->length ++;
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_unlock(&vectors[index].mutex);
+#endif
   return;
 }
   
 /* Locks the vector data to stop conflicts*/
 void blt_lockvec(int index){
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_lock(&vectors[index].mutex);
+#endif
   return;
 }
 
@@ -237,7 +251,9 @@ void blt_relink(int index,void *tmp){
   vectors[index].data = v->v_realdata;
   vectors[index].length = v->v_length;
   vectors[index].size = v->v_length;/*silly spice doesn't use v_rlength*/
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_unlock(&vectors[index].mutex);
+#endif
   return;
 }
 
@@ -270,9 +286,13 @@ static int lastVector TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   }
 
   for(i=0;i < blt_vnum;i++){
+#ifdef HAVE_LIBPTHREAD
     pthread_mutex_lock(&vectors[i].mutex);
+#endif
     V[i] = vectors[i].data[vectors[i].length-1];
+#ifdef HAVE_LIBPTHREAD
     pthread_mutex_unlock(&vectors[i].mutex);
+#endif
   }
   Blt_ResetVector(vec,V,blt_vnum,
 		  blt_vnum,TCL_VOLATILE);
@@ -319,7 +339,9 @@ static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   if(argc == 5)
     end   = atoi(argv[4]);
   if(vectors[index].length) {
+#ifdef HAVE_LIBPTHREAD
     pthread_mutex_lock(&vectors[index].mutex);
+#endif
       
     len = vectors[index].length;
       
@@ -337,8 +359,10 @@ static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
       
     Blt_ResetVector(vec,(vectors[index].data + start),len,
 		    len,TCL_VOLATILE);
-      
+    
+#ifdef HAVE_LIBPTHREAD
     pthread_mutex_unlock(&vectors[index].mutex);
+#endif
   }
   return TCL_OK;
 }
@@ -348,6 +372,7 @@ static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 /*     Main spice command executions and thread control           */
 /*****************************************************************/
 
+#ifdef HAVE_LIBPTHREAD
 static pthread_t tid, bgtid=(pthread_t)0;
 static bool fl_running = FALSE;
 static bool fl_exited = TRUE;
@@ -389,11 +414,14 @@ static int _thread_stop(){
   }
   return TCL_OK;
 }
+#endif /*HAVE_LIBPTHREAD*/
 
 static int _run(int argc,char **argv){
-  char buf[1024] = "", *string;
+  char buf[1024] = "";
   int i;
   sighandler_t oldHandler;
+#ifdef HAVE_LIBPTHREAD
+  char *string;
   bool fl_bg = FALSE;
   /* run task in background if preceeded by "bg"*/
   if(!strcmp(argv[0],"bg")) {
@@ -401,6 +429,7 @@ static int _run(int argc,char **argv){
     argv = &argv[1];
     fl_bg = TRUE;
   }
+#endif
 
   /* Catch Ctrl-C to break simulations */
   oldHandler = signal(SIGINT,ft_sigintr);
@@ -415,7 +444,7 @@ static int _run(int argc,char **argv){
     strcat(buf," ");
   }
    
-
+#ifdef HAVE_LIBPTHREAD
   /* run in the background */
   if(fl_bg){
     if(fl_running) _thread_stop();
@@ -449,6 +478,9 @@ static int _run(int argc,char **argv){
 	  cp_evloop(buf);
 	}
       }
+#else
+  cp_evloop(buf);
+#endif /*HAVE_LIBPTHREAD*/
   signal(SIGINT,oldHandler);
   return TCL_OK;
 }
@@ -471,12 +503,13 @@ static int _spice_dispatch TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   return _run(argc-1,(char **)&argv[1]);
 }
 
+#ifdef HAVE_LIBPTHREAD
 /*Checks if spice is runnuing in the background */
 static int running TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   Tcl_SetObjResult(interp,Tcl_NewIntObj((long) (fl_running && !fl_exited)));
   return TCL_OK;
 }
-
+#endif
 
 /**************************************/
 /*  plot manipulation functions       */
@@ -1098,7 +1131,9 @@ struct triggerEvent {
 struct triggerEvent *eventQueue=NULL;
 struct triggerEvent *eventQueueEnd=NULL;
 
+#ifdef HAVE_LIBPTHREAD
 pthread_mutex_t triggerMutex;
+#endif
 
 struct watch {
   struct watch *next;
@@ -1114,14 +1149,18 @@ struct watch *watches=NULL;
 int Tcl_ExecutePerLoop() {
 
   struct watch *current;
-       
+  
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_lock(&vectors[0].mutex);
   pthread_mutex_lock(&triggerMutex);
+#endif
 
   for(current=watches;current;current = current->next) {
     vector *v;
     v = &vectors[current->vector];
+#ifdef HAVE_LIBPTHREAD
     pthread_mutex_lock(&v->mutex);
+#endif
 
     if((current->type > 0 && current->state && v->data[v->length-1] > current->Vmax) ||
        (current->type < 0 && current->state && v->data[v->length-1] < current->Vmin) ) { 
@@ -1149,18 +1188,24 @@ int Tcl_ExecutePerLoop() {
       if((current->type > 0 && v->data[v->length-1] < current->Vmin) || 
 	 (current->type < 0 && v->data[v->length-1] > current->Vmax))
 	current->state = 1;
-    pthread_mutex_unlock(&v->mutex);    
+#ifdef HAVE_LIBPTHREAD
+    pthread_mutex_unlock(&v->mutex);
+#endif
   }
   
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_unlock(&triggerMutex);
   
   pthread_mutex_unlock(&vectors[0].mutex);
-  
+#endif
+ 
   return 0;
 }
 
 static int resetTriggers() {
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_lock(&triggerMutex);
+#endif
   
   while(watches) {
     struct watch *tmp = watches;
@@ -1176,7 +1221,9 @@ static int resetTriggers() {
   
   eventQueueEnd = NULL;
   
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_unlock(&triggerMutex);
+#endif
   return 0;
 }
 
@@ -1207,7 +1254,9 @@ static int registerTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
     return TCL_ERROR;
   } else index = i;
 
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_lock(&triggerMutex);
+#endif
   
   tmp = (struct watch *)MALLOC(sizeof(struct watch));
 
@@ -1224,7 +1273,9 @@ static int registerTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   watches->Vmin = atof(argv[2]);
   watches->Vmax = atof(argv[3]);
   
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_unlock(&triggerMutex);
+#endif
   
   return TCL_OK;
 }
@@ -1258,7 +1309,9 @@ static int unregisterTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   else
     type = 1;
 
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_lock(&triggerMutex);
+#endif
   
   cut = &watches;
   
@@ -1275,8 +1328,10 @@ static int unregisterTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
       tmp = tmp->next;
     }
   
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_unlock(&triggerMutex);
- 
+#endif
+  
   return TCL_OK;
 }
 
@@ -1294,8 +1349,10 @@ static int popTriggerEvent TCL_CMDPROCARGS(clientData,interp,argc,argv){
     struct triggerEvent *popedEvent;
     Tcl_Obj *list;
 
+#ifdef HAVE_LIBPTHREAD
     pthread_mutex_lock(&triggerMutex);
-    
+#endif
+
     popedEvent = eventQueue;
     
     eventQueue = popedEvent->next;
@@ -1315,7 +1372,9 @@ static int popTriggerEvent TCL_CMDPROCARGS(clientData,interp,argc,argv){
 
     FREE(popedEvent);
     
+#ifdef HAVE_LIBPTHREAD
     pthread_mutex_unlock(&triggerMutex);
+#endif
   }
   
   return TCL_OK;
@@ -1332,13 +1391,17 @@ static int listTriggers TCL_CMDPROCARGS(clientData,interp,argc,argv){
   
   list = Tcl_NewListObj(0,NULL);
 
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_lock(&triggerMutex);
+#endif
   
   for(tmp=watches;tmp;tmp=tmp->next)
     Tcl_ListObjAppendElement(interp,list,Tcl_NewStringObj(vectors[tmp->vector].name,strlen(vectors[tmp->vector].name)));
 
+#ifdef HAVE_LIBPTHREAD
   pthread_mutex_unlock(&triggerMutex);
-
+#endif
+  
   Tcl_SetObjResult(interp,list);
 
   return TCL_OK;
@@ -1406,8 +1469,10 @@ int Spice_Init(Tcl_Interp *interp) {
     ARCHsize = 1;
     
     /* init the mutex */
+#ifdef HAVE_LIBPTHREAD
     pthread_mutex_init(&triggerMutex,NULL);
-
+#endif
+	
     /*register functions*/
     for (i = 0;(key = cp_coms[i].co_comname); i++) {
       sprintf(buf,"%s%s",TCLSPICE_prefix,key);
@@ -1424,13 +1489,10 @@ int Spice_Init(Tcl_Interp *interp) {
     Tcl_CreateCommand(interp, TCLSPICE_prefix "lastVector", lastVector, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "spice", _spice_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "get_output", get_output, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-    Tcl_CreateCommand(interp, TCLSPICE_prefix "bg", _tcl_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-    Tcl_CreateCommand(interp, TCLSPICE_prefix "halt", _tcl_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "get_param", get_param, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "get_mod_param", get_mod_param, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "delta", delta, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "maxstep", maxstep, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-    Tcl_CreateCommand(interp, TCLSPICE_prefix "running", running, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_variables", plot_variables, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_get_value", plot_get_value, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_datapoints", plot_datapoints, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
@@ -1443,6 +1505,12 @@ int Spice_Init(Tcl_Interp *interp) {
     Tcl_CreateCommand(interp, TCLSPICE_prefix "unregisterTrigger", unregisterTrigger, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "listTriggers", listTriggers, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 
+#ifdef HAVE_LIBPTHREAD
+	Tcl_CreateCommand(interp, TCLSPICE_prefix "bg", _tcl_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "halt", _tcl_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "running", running, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+#endif
+	
     Tcl_LinkVar(interp, TCLSPICE_prefix "steps_completed", (char *)&steps_completed, TCL_LINK_READ_ONLY|TCL_LINK_INT);
     Tcl_LinkVar(interp, TCLSPICE_prefix "blt_vnum", (char *)&blt_vnum, TCL_LINK_READ_ONLY|TCL_LINK_INT);
   }
@@ -1478,8 +1546,11 @@ int tcl_vfprintf(FILE *f, const char *fmt, va_list args_in)
   char *outptr, *bigstr = NULL, *finalstr = NULL;
   int i, nchars, result, escapes = 0;
 
-  if((f != stdout && f != stderr) || 
-     ( fl_running && bgtid == pthread_self()) )
+  if((f != stdout && f != stderr)
+#ifdef HAVE_LIBPTHREAD
+     || ( fl_running && bgtid == pthread_self())
+#endif
+	)
       return vfprintf(f,fmt,args_in);
 
   strcpy (outstr + 19, (f == stderr) ? "err \"" : "out \"");
@@ -1576,8 +1647,10 @@ void tcl_stdflush(FILE *f)
   static char stdstr[] = "flush stdxxx";
   char *stdptr = stdstr + 9;
   
+#ifdef HAVE_LIBPTHREAD
   if ( fl_running && bgtid == pthread_self())
       return;
+#endif
   
   Tcl_SaveResult(spice_interp, &state);
   strcpy(stdptr, (f == stderr) ? "err" : "out");

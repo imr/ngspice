@@ -217,6 +217,8 @@ else
 fi
 rm -f conftest.tcl
 
+AC_CHECK_LIB(pthread,pthread_create)
+
 else
   TCL_PACKAGE_PATH=""
   TCL_BUILD_LIB_SPEC=""
