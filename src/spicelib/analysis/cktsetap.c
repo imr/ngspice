@@ -11,6 +11,7 @@ Author: 1985 Thomas L. Quarles
 #include "iferrmsg.h"
 #include "cktdefs.h"
 
+#include "analysis.h"
 
 extern SPICEanalysis *analInfo[];
 

@@ -34,6 +34,7 @@ typedef struct {
                             /* (itl4) */
     int TSKnumSrcSteps;     /* number of steps for source stepping */
     int TSKnumGminSteps;    /* number of steps for Gmin stepping */
+    double TSKgminFactor;   /* factor for Gmin stepping */
     double TSKminBreak;
     double TSKabstol;
     double TSKpivotAbsTol;

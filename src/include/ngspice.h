@@ -95,15 +95,8 @@ struct timeb timebegin;
 #endif
 
 #ifdef HAS_TIME_
-#  ifdef HAVE_GETTIMEOFDAY
-/* extern char *timezone(); */  /* never used ? (ER) */
-#  endif
-extern char *asctime();
-extern struct tm *localtime();
+#include <time.h>
 #endif
-
-extern char *sbrk();
-
 
 
 /* Functions declarations from src/misc/[].c  */
@@ -122,12 +115,12 @@ extern char *tilde_expand(char *string);
 
 extern char *smktemp(char *id);
 
-extern char *copy();
-extern int prefix();
-extern int substring();
-extern void cp_printword();
+extern char *copy(char *str);
+extern int prefix(char *p, char *str);
+extern int substring(char *sub, char *str);
+extern void cp_printword(char *string, FILE *fp);
 
-extern char *datestring();
+extern char *datestring(void);
 extern double seconds(void);
 
 /* Some external variables */

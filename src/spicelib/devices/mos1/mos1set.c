@@ -105,9 +105,6 @@ MOS1setup(matrix,inModel,ckt,states)
 		}
 	    }
 
-            CKTnode *tmpNode;
-            IFuid tmpName;
-
             if(!here->MOS1drainPerimiterGiven) {
                 here->MOS1drainPerimiter = 0;
             }
@@ -145,6 +142,9 @@ MOS1setup(matrix,inModel,ckt,states)
                 here->MOS1dNodePrime = tmp->number;
                 
                 if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
                   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
@@ -166,6 +166,9 @@ MOS1setup(matrix,inModel,ckt,states)
                 here->MOS1sNodePrime = tmp->number;
                 
                 if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
                   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 

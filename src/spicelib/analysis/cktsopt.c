@@ -19,6 +19,7 @@ Modified: 2000 AlansFixes
 #include "cktdefs.h"
 #include "sperror.h"
 
+#include "analysis.h"
 
 /* ARGSUSED */
 int

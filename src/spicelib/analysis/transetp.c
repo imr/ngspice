@@ -10,6 +10,8 @@ Author: 1985 Thomas L. Quarles
 #include "trandefs.h"
 #include "cktdefs.h"
 
+#include "analysis.h"
+
 /* ARGSUSED */
 int 
 TRANsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)

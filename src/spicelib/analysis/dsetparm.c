@@ -10,6 +10,7 @@ Author: 1988 Jaijeet S Roychowdhury
 #include "cktdefs.h"
 #include "distodef.h"
 
+#include "analysis.h"
 
 /* ARGSUSED */
 int 

@@ -3,8 +3,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AnalsFixes
 **********/
+#ifndef __BJTEXT_H
+#define __BJTEXT_H
 
-#ifdef __STDC__
+
 extern int BJTacLoad(GENmodel *,CKTcircuit*);
 extern int BJTask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int BJTconvTest(GENmodel*,CKTcircuit*);
@@ -31,29 +33,4 @@ extern int BJTnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 
 extern int BJTdSetup(GENmodel*, register CKTcircuit*);
 
-#else /* stdc */
-extern int BJTacLoad();
-extern int BJTask();
-extern int BJTconvTest();
-extern int BJTdelete();
-extern void BJTdestroy();
-extern int BJTgetic();
-extern int BJTload();
-extern int BJTmAsk();
-extern int BJTmDelete();
-extern int BJTmParam();
-extern int BJTparam();
-extern int BJTpzLoad();
-extern int BJTsAcLoad();
-extern int BJTsLoad();
-extern void BJTsPrint();
-extern int BJTsSetup();
-extern int BJTsUpdate();
-extern int BJTsetup();
-extern int BJTunsetup();
-extern int BJTtemp();
-extern int BJTtrunc();
-extern int BJTdisto();
-extern int BJTnoise();
-#endif /* stdc */
-
+#endif

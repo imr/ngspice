@@ -4,7 +4,8 @@
 
 #include <inpdefs.h>
 
-void INPpas3(void *ckt, card *data, INPtables *tab, void *task);
+void INPpas3(void *ckt, card *data, INPtables *tab, void *task,
+	     IFparm *nodeParms, int numNodeParams);
 
 
 #endif

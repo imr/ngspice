@@ -196,7 +196,7 @@ MOS1ask(ckt,inst,which,value,select)
             return(OK);
         case MOS1_CAPGD:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS1capgd);
-            * add overlap capacitance */
+            /* add overlap capacitance */
             value->rValue += (here->sMOS1modPtr->MOS1gateSourceOverlapCapFactor)
                              * here->MOS1m
                              * (here->MOS1w);

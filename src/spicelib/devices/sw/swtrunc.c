@@ -6,13 +6,13 @@ Modified: 2000 AlansFixes
 /*
  */
 
-#include "spice.h"
+#include "ngspice.h"
 #include <stdio.h>
 #include "cktdefs.h"
-#include "sw\swdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
+#include "swdefs.h"
 
 int
 SWtrunc(inModel,ckt,timeStep)

@@ -146,7 +146,7 @@ Emmanuel Rouat <emmanuel.rouat@@wanadoo.fr>,
 Jaijeet S. Roychowdhury,
 Takayasu Sakurai,
 Kanwar Jit Singh,
-Andrew Tuckey <Tuckey@@ieee.org>
+Andrew Tuckey <Tuckey@@ieee.org>,
 Michael Widlok <widlok@@uci.agh.edu.pl>,
 and many others...
 

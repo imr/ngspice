@@ -6,22 +6,19 @@ Modified: 2000 AlansFixes
 /*
  */
 
-#include "spice.h"
+#include "ngspice.h"
 #include <stdio.h>
 #include "cktdefs.h"
-#include "csw\cswdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
+#include "cswdefs.h"
 
 int
-CSWtrunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    register CKTcircuit *ckt;
-    register double *timeStep;
+CSWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
-    register CSWmodel *model = (CSWmodel*)inModel;
-    register CSWinstance *here;
+    CSWmodel *model = (CSWmodel*)inModel;
+    CSWinstance *here;
 
     double   lastChange, maxChange, maxStep, ref;
 

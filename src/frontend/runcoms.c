@@ -294,11 +294,10 @@ ft_getOutReq(FILE **fpp, struct plot **plotp, bool *binp, char *name, char *titl
 {
     /*struct plot *pl;*/
 #ifndef BATCH
-struct plot *pl;
 
     if ( (strcmp(name, "Operating Point")==0) ||
          (strcmp(name, "AC Operating Point")==0) ) {
-        return (false);
+        return (FALSE);
     };
 #endif
 

@@ -30,7 +30,9 @@ Modified: 2000 AlansFixes
 
 
 extern void gr_end_iplot(void);
-extern SPICEanalysis *analInfo[];
+extern char *spice_analysis_get_name(int index);
+extern char *spice_analysis_get_description(int index);
+
 
 /* static declarations */
 static int beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, 
@@ -135,7 +137,7 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
     run->windowed = windowed;
     run->numData = 0;
 
-    an_name = analInfo[((JOB *) analysisPtr)->JOBtype]->public.name;
+    an_name = spice_analysis_get_name(((JOB *) analysisPtr)->JOBtype);
 
     /* Now let's see which of these things we need.  First toss in the
      * reference vector.  Then toss in anything that getSaves() tells
@@ -159,8 +161,8 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
                 continue;
             }
             if (cieq(saves[i].name, "alli")) {
-                savealli = true;
-                savesused[i] = true;
+                savealli = TRUE;
+                savesused[i] = TRUE;
 		saves[i].used = 1;
                 continue;
             }
@@ -315,7 +317,7 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
 	    && run->refIndex == -1))
     {
 	fprintf(cp_err, "Error: no data saved for %s; analysis not run\n",
-	    analInfo[((JOB *) analysisPtr)->JOBtype]->public.description);
+		spice_analysis_get_description(((JOB *) analysisPtr)->JOBtype));
 	return E_NOTFOUND;
     }
     
@@ -488,7 +490,7 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
         fileEndPoint(run->fp, run->binary);
         if (ferror(run->fp)) {
              fprintf(stderr, "Warning: rawfile write error !!\n");
-             shouldstop=true;
+             shouldstop = TRUE;
         };
     } else {
         for (i = 0; i < run->numData; i++) {
@@ -711,13 +713,13 @@ fileInit(runDesc *run)
     
     /*  Write Analysis Type */
 
-    if (strnicmp(run->type,"AC",2)==0) {
+    if (strncasecmp(run->type,"AC",2)==0) {
           sprintf(buf, "AC Sweep");
           sweep=2;
-    } else if (strnicmp(run->type,"DC",2)==0) {
+    } else if (strncasecmp(run->type,"DC",2)==0) {
           sprintf(buf, "DC Sweep");
           sweep=1;
-    } else if (strnicmp(run->type,"Tran",4)==0) {
+    } else if (strncasecmp(run->type,"Tran",4)==0) {
           sprintf(buf, "Transient Analysis");
           sweep=4;
     };
@@ -818,23 +820,24 @@ fileInit_pass2(runDesc *run)
     int i, type;
     char *name, buf[BSIZE_SP];
     char *ch, *end;
+    int tmp;
 
     for (i = 0; i < run->numData; i++) {
        
-       if ((run->data[i].regular==false) ||
+	if ((run->data[i].regular == FALSE) ||
             cieq(run->data[i].name, "time") ||
             cieq(run->data[i].name, "sweep") ||
             cieq(run->data[i].name, "frequency"))
-           (void) sprintf(name, "%s", run->data[i].name);
+	    (void) sprintf(name, "%s", run->data[i].name);
         else
-           (void) sprintf(name, "V(%s)", run->data[i].name);
+	    (void) sprintf(name, "V(%s)", run->data[i].name);
 
-		  if (ch=strstr(name, "#branch")) {
+	if (ch=strstr(name, "#branch")) {
             name[0]='I';
             *ch++=')';
             *ch='\0';	
             type = SV_CURRENT;
-            }
+	}
         else if (cieq(name, "time"))
             type = SV_TIME;
         else if (cieq(name, "frequency"))
@@ -842,56 +845,57 @@ fileInit_pass2(runDesc *run)
         else 
             type = SV_VOLTAGE;
         if (*name=='@') {
-          type = SV_CURRENT;
-          memmove(name, &name[1], strlen(name)-1);
-          if ((ch=strchr(name, '['))!=NULL) {
-            ch++;
-            strncpy(buf, ch, BSIZE_SP);
-            ch--;
-            *ch='\0';
-            if ((ch=strchr(buf, ']'))!=NULL) *ch='\0';
-            strcat(buf, "(");
-            if ((ch=strchr(name, ':'))!=NULL) {
-                ch++;
-                strncat(buf, ch, BSIZE_SP-strlen(buf));
-                ch--;
-                *ch='\0';
-                if ((ch=strrchr(buf, ':'))!=NULL) {
-                   ch++;
-                   memmove(&ch[strlen(name)], ch, strlen(ch)+1);
-                   memmove(ch, name, strlen(name));
-                };
-            } else {
-                strncat(buf, name, BSIZE_SP-strlen(buf));
-            };
-            strcat(buf, ")");
-          };
-          strncpy(name, buf, BSIZE_SP);
+	    type = SV_CURRENT;
+	    memmove(name, &name[1], strlen(name)-1);
+	    if ((ch=strchr(name, '['))!=NULL) {
+		ch++;
+		strncpy(buf, ch, BSIZE_SP);
+		ch--;
+		*ch='\0';
+		if ((ch=strchr(buf, ']'))!=NULL) *ch='\0';
+		strcat(buf, "(");
+		if ((ch=strchr(name, ':'))!=NULL) {
+		    ch++;
+		    strncat(buf, ch, BSIZE_SP-strlen(buf));
+		    ch--;
+		    *ch='\0';
+		    if ((ch=strrchr(buf, ':'))!=NULL) {
+			ch++;
+			memmove(&ch[strlen(name)], ch, strlen(ch)+1);
+			memmove(ch, name, strlen(name));
+		    };
+		} else {
+		    strncat(buf, name, BSIZE_SP-strlen(buf));
+		};
+		strcat(buf, ")");
+	    };
+	    strncpy(name, buf, BSIZE_SP);
         };
 
-        while ((ch=strchr(name, ':'))!=NULL) *ch='.';
+        while ((ch=strchr(name, ':'))!=NULL)
+	    *ch='.';
 
         if ((ch=strchr(name, '('))!=NULL) {
-          ch++;
-          end=(char *)memchr(name, '\0', BSIZE_SP);
-          while (strchr(ch, '.')!=NULL) {
-              memmove(ch+1, ch, end-ch+1);
-              end++;
-              *ch='x';
-              ch=strchr(ch, '.');
-              ch++;
-          };
+	    ch++;
+	    end=(char *)memchr(name, '\0', BSIZE_SP);
+	    while (strchr(ch, '.')!=NULL) {
+		memmove(ch+1, ch, end-ch+1);
+		end++;
+		*ch='x';
+		ch=strchr(ch, '.');
+		ch++;
+	    };
         };
 
         fprintf(run->fp, "%s", name);
         tmp=0;
-        fwrite((char*)&tmp,1,1,run->fp);
+        fwrite((void *)&tmp,1,1,run->fp);
 
     }
 
     fflush(run->fp);        /* Make all sure this gets to disk */
 
-/*  Allocate Row buffer  */
+    /*  Allocate Row buffer  */
 
     rowbuflen=(run->numData)*sizeof(float);
     if (run->isComplex) rowbuflen *=2;
@@ -1126,7 +1130,7 @@ parseSpecial(char *name, char *dev, char *param, char *ind)
     *dev = *param = *ind = '\0';
 
     if (*name != '@')
-        return (FALSE);
+        return FALSE;
     name++;
     
     s = dev;
@@ -1134,7 +1138,7 @@ parseSpecial(char *name, char *dev, char *param, char *ind)
         *s++ = *name++;
     *s = '\0';
     if (!*name)
-        return (TRUE);
+        return TRUE;
     name++;
 
     s = param;
@@ -1144,7 +1148,7 @@ parseSpecial(char *name, char *dev, char *param, char *ind)
     if (*name == ']')
         return (!name[1] ? TRUE : FALSE);
     else if (!*name)
-        return (FALSE);
+        return FALSE;
     name++;
 
     s = ind;
@@ -1152,9 +1156,9 @@ parseSpecial(char *name, char *dev, char *param, char *ind)
         *s++ = *name++;
     *s = '\0';
     if (*name && !name[1])
-        return (TRUE);
+        return TRUE;
     else
-        return (FALSE);
+        return FALSE;
 }
 
 /* This routine must match two names with or without a V() around them. */
@@ -1167,14 +1171,14 @@ name_eq(char *n1, char *n2)
     if ((s =strchr(n1, '('))) {
         strcpy(buf1, s);
         if (!(s =strchr(buf1, ')')))
-            return (FALSE);
+            return FALSE;
         *s = '\0';
         n1 = buf1;
     }
     if ((s =strchr(n2, '('))) {
         strcpy(buf2, s);
         if (!(s =strchr(buf2, ')')))
-            return (FALSE);
+            return FALSE;
         *s = '\0';
         n2 = buf2;
     }
@@ -1193,7 +1197,7 @@ getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
             desc->specName, &desc->specFast, ft_sim, &desc->type,
             &selector) == OK) {
       desc->type &= (IF_REAL | IF_COMPLEX);   /* mask out other bits */
-      return(TRUE);
+      return TRUE;
     } else if ((vv = if_getstat(run->circuit, &desc->name[1]))) {
 						/* skip @ sign */
       desc->type = IF_REAL;
@@ -1204,13 +1208,13 @@ getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
       else if (vv->va_type == VT_BOOL)
 	val->rValue = (vv->va_bool ? 1.0 : 0.0);
       else {
-	return (FALSE); /* not a real */
+	return FALSE; /* not a real */
       }
       tfree(vv);
-      return(TRUE);
+      return TRUE;
     }
 
-    return (FALSE);
+    return FALSE;
 }
 
 static void

@@ -82,9 +82,6 @@ MESsetup(matrix,inModel,ckt,states)
                 here=here->MESnextInstance) {
 	    if (here->MESowner != ARCHme) goto matrixpointers;
             
-            CKTnode *tmpNode;
-            IFuid tmpName;
-            
             if(!here->MESareaGiven) {
                 here->MESarea = 1;
             }
@@ -98,6 +95,9 @@ matrixpointers:
                 here->MESsourcePrimeNode = tmp->number;
                 
                 if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
                   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
@@ -115,6 +115,9 @@ matrixpointers:
                 here->MESdrainPrimeNode = tmp->number;
                 
                 if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
                   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 

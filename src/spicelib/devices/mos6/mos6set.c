@@ -116,11 +116,11 @@ MOS6setup(matrix,inModel,ckt,states)
         /* loop through all the instances of the model */
         for (here = model->MOS6instances; here != NULL ;
                 here=here->MOS6nextInstance) {
-	    if (here->MOS6owner != ARCHme) goto matrixpointers;
-
             CKTnode *tmpNode;
             IFuid tmpName;
             
+	    if (here->MOS6owner != ARCHme) goto matrixpointers;
+
             if(!here->MOS6drainPerimiterGiven) {
                 here->MOS6drainPerimiter = 0;
             }

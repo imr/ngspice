@@ -149,11 +149,12 @@ BJTsetup(matrix,inModel,ckt,states)
         /* loop through all the instances of the model */
         for (here = model->BJTinstances; here != NULL ;
                 here=here->BJTnextInstance) {
-	    if (here->BJTowner != ARCHme) goto matrixpointers;
-	    
-	       CKTnode *tmpNode;
-            IFuid tmpName;
+	    CKTnode *tmpNode;
+	    IFuid tmpName;
             
+	    if (here->BJTowner != ARCHme)
+		goto matrixpointers;
+	    
             if(!here->BJTareaGiven) {
                 here->BJTarea = 1;
             }

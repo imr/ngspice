@@ -851,9 +851,6 @@ CKTnode *tmp;
 	    if (here->BSIM3owner == ARCHme) {
 	    /* allocate a chunk of the state vector */
             
-            CKTnode *tmpNode;
-            IFuid tmpName;
-            
             here->BSIM3states = *states;
             *states += BSIM3numStates;
 	    }
@@ -891,10 +888,14 @@ CKTnode *tmp;
             if ((model->BSIM3sheetResistance > 0.0) && 
                 (here->BSIM3drainSquares > 0.0 ) &&
                 (here->BSIM3dNodePrime == 0))
-	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"drain");
+	    {
+		    error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"drain");
                 if(error) return(error);
                 here->BSIM3dNodePrime = tmp->number;
                  if (ckt->CKTcopyNodesets) {
+            CKTnode *tmpNode;
+            IFuid tmpName;
+            
                   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
@@ -915,6 +916,9 @@ CKTnode *tmp;
                 if(error) return(error);
                 here->BSIM3sNodePrime = tmp->number;
                 if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
                   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 

@@ -1,7 +1,9 @@
 #include <config.h>
 
 #include <devdefs.h>
+#include <cktdefs.h>
 
+#include "diodefs.h"
 #include "dioitf.h"
 #include "dioext.h"
 #include "dioinit.h"

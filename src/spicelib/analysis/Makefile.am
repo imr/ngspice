@@ -6,6 +6,8 @@ libckt_a_SOURCES = \
 		acan.c		\
 		acaskq.c	\
 		acsetp.c	\
+		analysis.c	\
+		analysis.h	\
 		cktacct.c	\
 		cktacdum.c	\
 		cktaskaq.c	\

@@ -16,17 +16,6 @@ typedef struct sJOB{
 
 } JOB;
 
-typedef struct {
-    IFanalysis public;
-    int size;
-    int domain;
-    int do_ic;
-    int (*(setParm))( );
-    int (*(askQuest))( );
-    int (*an_init)( );
-    int (*an_func)( );
-} SPICEanalysis;
-
 #define NODOMAIN	0
 #define TIMEDOMAIN	1
 #define FREQUENCYDOMAIN 2

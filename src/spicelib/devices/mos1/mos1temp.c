@@ -311,7 +311,6 @@ MOS1temp(inModel,ckt)
             } else if (model->MOS1sheetResistanceGiven) {
                 if ((model->MOS1sheetResistance != 0) &&
                                    (here->MOS1sourceSquares != 0)) {
-#else
                     here->MOS1sourceConductance = 
                         here->MOS1m /
                           (model->MOS1sheetResistance*here->MOS1sourceSquares);

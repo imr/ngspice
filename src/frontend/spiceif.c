@@ -51,27 +51,32 @@ if_inpdeck(struct line *deck, INPtables **tab)
         i++;
     *tab = INPtabInit(i);
     ft_curckt->ci_symtab = *tab;
-    if ((err = (*(ft_sim->newCircuit))(&ckt))
-            != OK) {
+
+    err = (*(ft_sim->newCircuit))(&ckt);
+    if (err != OK) {
         ft_sperror(err, "CKTinit");
         return (NULL);
     }
+
     err = IFnewUid(ckt,&taskUid,(IFuid)NULL,"default",UID_TASK,(void**)NULL);
     if(err) {
         ft_sperror(err,"newUid");
         return(NULL);
     }
+
     err = (*(ft_sim->newTask))(ckt,(void**)&(ft_curckt->ci_defTask),taskUid);
     if(err) {
         ft_sperror(err,"newTask");
         return(NULL);
     }
+
     for(j=0;j<ft_sim->numAnalyses;j++) {
         if(strcmp(ft_sim->analyses[j]->name,"options")==0) {
             which = j;
             break;
         }
     } 
+
     if(which != -1) {
         err = IFnewUid(ckt,&optUid,(IFuid)NULL,"options",UID_ANALYSIS,
                 (void**)NULL);
@@ -79,6 +84,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
             ft_sperror(err,"newUid");
             return(NULL);
         }
+
         err = (*(ft_sim->newAnalysis))(ft_curckt->ci_ckt,which,optUid,
                 (void**)&(ft_curckt->ci_defOpt),
                 (void*)ft_curckt->ci_defTask);
@@ -86,33 +92,34 @@ if_inpdeck(struct line *deck, INPtables **tab)
             ft_sperror(err,"createOptions");
             return(NULL);
         }
+
         ft_curckt->ci_curOpt  = ft_curckt->ci_defOpt;
     }
+
     ft_curckt->ci_curTask = ft_curckt->ci_defTask;
     INPpas1((void *) ckt, (card *) deck->li_next,(INPtables *)*tab);
     INPpas2((void *) ckt, (card *) deck->li_next,
             (INPtables *) *tab,ft_curckt->ci_defTask);
     INPkillMods();
 
-/*  INPpas2 has been modified to ignore .NODESET and .IC cards. These are
- *  left till INPpas3 so that we can check for nodeset/ic of non-existant
- *  nodes.
- */
+    /* INPpas2 has been modified to ignore .NODESET and .IC
+     * cards. These are left till INPpas3 so that we can check for
+     * nodeset/ic of non-existant nodes.  */
 
-    INPpas3((GENERIC *) ckt, (card *) deck->li_next,
-            (INPtables *) *tab,ft_curckt->ci_defTask);
+    INPpas3((void *) ckt, (card *) deck->li_next,
+            (INPtables *) *tab,ft_curckt->ci_defTask, ft_sim->nodeParms,
+	    ft_sim->numNodeParms);
 
     return (ckt);
 }
 
-/* Do a run of the circuit, of the given type. Type "resume" is special --
- * it means to resume whatever simulation that was in progress. The
- * return value of this routine is 0 if the exit was ok, and 1 if there was
- * a reason to interrupt the circuit (interrupt typed at the keyboard,
- * error in the simulation, etc). args should be the entire command line,
- * e.g. "tran 1 10 20 uic"
- */
 
+/* Do a run of the circuit, of the given type. Type "resume" is
+ * special -- it means to resume whatever simulation that was in
+ * progress. The return value of this routine is 0 if the exit was ok,
+ * and 1 if there was a reason to interrupt the circuit (interrupt
+ * typed at the keyboard, error in the simulation, etc). args should
+ * be the entire command line, e.g. "tran 1 10 20 uic" */
 int
 if_run(char *t, char *what, wordlist *args, char *tab)
 {

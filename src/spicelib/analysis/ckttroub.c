@@ -11,6 +11,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "isrc/isrcdefs.h"
 #include "jobdefs.h"
 
+#include "analysis.h"
 
 extern SPICEdev *DEVices[];
 extern SPICEanalysis *analInfo[];

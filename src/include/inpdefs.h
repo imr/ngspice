@@ -104,7 +104,7 @@ int INPmakeMod(char*,int,card*);
 char *INPmkTemp(char*);
 void INPpas1(void*,card*,INPtables*);
 void INPpas2(void*,card*,INPtables*,void *);
-void INPpas3(void*,card*,INPtables*,void *); 
+void INPpas3(void*,card*,INPtables*,void *,IFparm*,int); 
 int INPpName(char*,IFvalue*,void*,int,void*);
 int INPtermInsert(void*,char**,INPtables*,void**);
 int INPmkTerm(void*,char**,INPtables*,void**);

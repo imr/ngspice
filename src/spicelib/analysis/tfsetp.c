@@ -10,6 +10,7 @@ Author: 1985 Thomas L. Quarles
 #include "tfdefs.h"
 #include "cktdefs.h"
 
+#include "analysis.h"
 
 /* ARGSUSED */
 int 

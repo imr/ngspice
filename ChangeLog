@@ -1,3 +1,8 @@
+2000-09-05  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* ???: Paolo and I have integrated patches from Alan Gillespie
+	<Alan.Gillespie@analog.com>.
+
 2000-07-28  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* tests/polezero/*.out: Changed the content of these files because

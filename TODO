@@ -1,3 +1,16 @@
+Long term vision
+================
+
+Remove distinction between subcircuits and models as much as possible.
+With a Spice netlist compiler (to be written), the subcircuit can be
+translated into a compiled version, dynamically loadable into the
+simulation core.
+
+Using the approach outlined above, we can cut down on maintenance for
+the bsim[123], bjt, and other transistor models.  For inspiration,
+look at *.model files in ACS (Al's Circuit Simulator).
+
+
 List of Things To Do
 ====================
 
@@ -23,7 +36,9 @@ Usability issues
 ------------------
 
 Plug all memory leaks; use debauch (http://quorum.tamu.edu/jon/gnu/)
-or another memory checker to find them.
+or another memory checker to find them.  Could also try a garbage
+collector (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) to
+circumvent memory leaks.
 
 Either get help program functioning again; OR interface to webbrowser,
 info reader and get rid of all help-related code.  Option 2 is the
@@ -43,10 +58,6 @@ Separate ngspice and nutmeg; i.e., no more SIMULATOR define.  ngspice
 should probably only contain the batch processor.  nutmeg would have
 the complete frontend.
 
-Integrate bsim3, bsim3v1, bsim3v2 to use a single codebase instead of
-three only slighty differing implementations.  This also cuts down
-compilation time.
-
 All frontend commands can now be found in the frontend directory.
 Move frontend helper functions into frontend directory as well.
 Not all files that define commands, start with com_*; fix that.
@@ -54,9 +65,24 @@ Not all files that define commands, start with com_*; fix that.
 Make devices dynamically loadable.  Perhaps use framework from glib
 (http://developer.gnome.org/doc/API/glib/index.html).
 
+Integrate bsim3, bsim3v1, bsim3v2 to use a single codebase instead of
+three only slighty differing implementations.  This also cuts down
+compilation time.
+
+Code for determing memory limits and resource usage, now use
+setjmp()/longjmp(), replace this by rlimit() on systems that have it.
+
+Program frontend in Guile (http://www.gnu.org/software/guile ),
+Python (http://www.python.org ), or SWIG (http://www.swig.org).  This
+shows where the spicelib API needs refining.
+
 
 Testability
 -----------
+
+Verify C code device models by building equivalent netlists and
+comparing simulation results.  Equivalent netlists also help document
+the models currently in Spice.
 
 Add tests for all functions in the complex library in
 src/maths/cmaths.
@@ -72,11 +98,23 @@ src/maths/deriv.
 
 Add more circuit tests into the tests directory.
 
+Use gcov to measure current test coverage (and to find out where more
+tests are needed.)  Make this a configure switch.
+
+Let GCC generate even more warnings on dubious construction by
+specifying the following compile switches: -pedantic -W
+-Wmissing-prototypes -Wstrict-prototypes -Wtraditional -Wconversion
+-Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings
+-Waggregate-return -fshort-enums -fno-common -Wnested-externs
+-Dinline= -g -O4.  Use 'configure --enable-smoketest' to use these
+compile switches.  Our goal is to remove all warnings.
+
 
 Documentation
 -------------
 
-Update ARCHITECTURE to contain a high level overview of spice.
+Make a document that contains a high level architectural overview of
+spice.
 
 Convert ngspice.texi further to texinfo format. [PARTIAL]
 

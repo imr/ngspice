@@ -20,6 +20,7 @@
 #include <ftedefs.h>
 #include <devdefs.h>
 #include <spicelib/devices/dev.h>
+#include <spicelib/analysis/analysis.h>
 #include <misc/ivars.h>
 #include <frontend/resource.h>
 #include <frontend/variable.h>
@@ -164,6 +165,8 @@ int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
     spice_init_devices();
     SIMinfo.numDevices = DEVmaxnum = num_devices();
     SIMinfo.devices = devices_ptr();
+    SIMinfo.numAnalyses = spice_num_analysis();
+    SIMinfo.analyses = spice_analysis_ptr();
 #endif /* SIMULATOR */
 
     SPfrontEnd = frontEnd;

@@ -10,9 +10,8 @@ Author: 1985 Thomas L. Quarles
 
 #include "inppas2.h"
 
-/* pass 2 - Scan through the lines.  ".model" cards have processed
- *  in pass1 and are ignored here.
- */
+/* pass 2 - Scan through the lines.  ".model" cards have processed in
+ *  pass1 and are ignored here.  */
 
 void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 {
@@ -45,101 +44,131 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 
 	switch (c) {
 
-	case ' ':		/* blank line (space leading) */
-	case '\t':		/* blank line (tab leading) */
+	case ' ':
+	    /* blank line (space leading) */
+	case '\t':
+	    /* blank line (tab leading) */
 	    break;
 
-	case 'R':		/* Rname <node> <node> [<val>][<mname>][w=<val>][l=<val>] */
+	case 'R':
+	    /* Rname <node> <node> [<val>][<mname>][w=<val>][l=<val>] */
 	    INP2R(ckt, tab, current);
 	    break;
-	case 'C':		/* Cname <node> <node> <val> [IC=<val>] */
+
+	case 'C':
+	    /* Cname <node> <node> <val> [IC=<val>] */
 	    INP2C(ckt, tab, current);
 	    break;
-	case 'L':		/* Lname <node> <node> <val> [IC=<val>] */
+
+	case 'L':
+	    /* Lname <node> <node> <val> [IC=<val>] */
 	    INP2L(ckt, tab, current);
 	    break;
-	case 'G':		/* Gname <node> <node> <node> <node> <val> */
+
+	case 'G':
+	    /* Gname <node> <node> <node> <node> <val> */
 	    INP2G(ckt, tab, current);
 	    break;
-	case 'E':		/* Ename <node> <node> <node> <node> <val> */
+
+	case 'E':
+	    /* Ename <node> <node> <node> <node> <val> */
 	    INP2E(ckt, tab, current);
 	    break;
-	case 'F':		/* Fname <node> <node> <vname> <val> */
+
+	case 'F':
+	    /* Fname <node> <node> <vname> <val> */
 	    INP2F(ckt, tab, current);
 	    break;
-	case 'H':		/* Hname <node> <node> <vname> <val> */
+
+	case 'H':
+	    /* Hname <node> <node> <vname> <val> */
 	    INP2H(ckt, tab, current);
 	    break;
-	case 'D':		/* Dname <node> <node> <model> [<val>] [OFF] [IC=<val>] */
+
+	case 'D':
+	    /* Dname <node> <node> <model> [<val>] [OFF] [IC=<val>] */
 	    INP2D(ckt, tab, current);
 	    break;
-	case 'J':		/* Jname <node> <node> <node> <model> [<val>] [OFF] 
-				 *       [IC=<val>,<val>] */
+
+	case 'J':
+	    /* Jname <node> <node> <node> <model> [<val>] [OFF]
+               [IC=<val>,<val>] */
 	    INP2J(ckt, tab, current);
 	    break;
-	case 'Z':		/* Zname <node> <node> <node> <model> [<val>] [OFF] 
-				 *       [IC=<val>,<val>] */
+
+	case 'Z':
+	    /* Zname <node> <node> <node> <model> [<val>] [OFF] 
+	       [IC=<val>,<val>] */
 	    INP2Z(ckt, tab, current);
 	    break;
-	case 'M':		/* Mname <node> <node> <node> <node> <model> [L=<val>]
-				 *       [W=<val>] [AD=<val>] [AS=<val>] [PD=<val>]
-				 *       [PS=<val>] [NRD=<val>] [NRS=<val>] [OFF] 
-				 *       [IC=<val>,<val>,<val>] */
+
+	case 'M':
+	    /* Mname <node> <node> <node> <node> <model> [L=<val>]
+	       [W=<val>] [AD=<val>] [AS=<val>] [PD=<val>]
+	       [PS=<val>] [NRD=<val>] [NRS=<val>] [OFF] 
+	       [IC=<val>,<val>,<val>] */
 	    INP2M(ckt, tab, current);
 	    break;
 
-	case 'O':		/* Oname <node> <node> <node> <node> <model>
-				   *       [IC=<val>,<val>,<val>,<val>] */
+	case 'O':
+	    /* Oname <node> <node> <node> <node> <model>
+	       [IC=<val>,<val>,<val>,<val>] */
 	    INP2O(ckt, tab, current);
 	    break;
 
-	case 'V':		/* Vname <node> <node> [ [DC] <val>] [AC [<val> [<val> ] ] ]
-				 *       [<tran function>] */
+	case 'V':
+	    /* Vname <node> <node> [ [DC] <val>] [AC [<val> [<val> ] ] ]
+	       [<tran function>] */
 	    INP2V(ckt, tab, current);
 	    break;
-	case 'I':		/* Iname <node> <node> [ [DC] <val>] [AC [<val> [<val> ] ] ]
-				 *       [<tran function>] */
+
+	case 'I':
+	    /* Iname <node> <node> [ [DC] <val>] [AC [<val> [<val> ] ] ]
+	       [<tran function>] */
 	    INP2I(ckt, tab, current);
 	    break;
 
-	case 'Q':		/* Qname <node> <node> <node> [<node>] <model> [<val>] [OFF]
-				 *       [IC=<val>,<val>] */
+	case 'Q':
+	    /* Qname <node> <node> <node> [<node>] <model> [<val>] [OFF]
+	       [IC=<val>,<val>] */
 	    INP2Q(ckt, tab, current, gnode);
 	    break;
 
-	case 'T':		/* Tname <node> <node> <node> <node> [TD=<val>] 
-				 *       [F=<val> [NL=<val>]][IC=<val>,<val>,<val>,<val>] */
+	case 'T':
+	    /* Tname <node> <node> <node> <node> [TD=<val>] 
+	       [F=<val> [NL=<val>]][IC=<val>,<val>,<val>,<val>] */
 	    INP2T(ckt, tab, current);
 	    break;
 
-	case 'S':		/* Sname <node> <node> <node> <node> [<modname>] [IC] */
+	case 'S':
+	    /* Sname <node> <node> <node> <node> [<modname>] [IC] */
 	    INP2S(ckt, tab, current);
 	    break;
 
-	case 'W':		/* Wname <node> <node> <vctrl> [<modname>] [IC] */
+	case 'W':
+	    /* Wname <node> <node> <vctrl> [<modname>] [IC] */
 	    /* CURRENT CONTROLLED SWITCH */
 	    INP2W(ckt, tab, current);
 	    break;
 
-	case 'U':		/* Uname <node> <node> <model> [l=<val>] [n=<val>] */
+	case 'U':
+	    /* Uname <node> <node> <model> [l=<val>] [n=<val>] */
 	    INP2U(ckt, tab, current);
 	    break;
 
-	case 'K':		/* Kname Lname Lname <val> */
+	case 'K':
+	    /* Kname Lname Lname <val> */
 	    INP2K(ckt, tab, current);
 	    break;
 
-	case '*':		/* *<anything> - a comment - ignore */
+	case '*':
+	    /* *<anything> - a comment - ignore */
 	    break;
 
-	case 'B':		/* Bname <node> <node> [V=expr] [I=expr] */
+	case 'B':
+	    /* Bname <node> <node> [V=expr] [I=expr] */
 	    /* Arbitrary source. */
 	    INP2B(ckt, tab, current);
-	    break;
-
-	case '.':		/* .<something> Many possibilities */
-	    if (INP2dot(ckt, tab, current, task, gnode))
-		goto end;
 	    break;
 
 	case 0:
@@ -151,6 +180,6 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 	    break;
 	}
     }
-  end:
+
     return;
 }

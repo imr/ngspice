@@ -11,6 +11,8 @@ Author: 1985 Thomas L. Quarles
 #include "opdefs.h"
 
 
+#include "analysis.h"
+
 /* ARGSUSED */
 int 
 DCOsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)

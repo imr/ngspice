@@ -96,9 +96,6 @@ JFETsetup(matrix,inModel,ckt,states)
                 here=here->JFETnextInstance) {
 	    if (here->JFETowner != ARCHme) goto matrixpointers;
             
-            CKTnode *tmpNode;
-            IFuid tmpName;
-            
             if(!here->JFETareaGiven) {
                 here->JFETarea = 1;
             }
@@ -112,6 +109,9 @@ matrixpointers:
                 here->JFETsourcePrimeNode = tmp->number;
                 
                 if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+            
                   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
@@ -129,6 +129,9 @@ matrixpointers:
                 here->JFETdrainPrimeNode = tmp->number;
                 
                 if (ckt->CKTcopyNodesets) {
+		    CKTnode *tmpNode;
+		    IFuid tmpName;
+
                   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 

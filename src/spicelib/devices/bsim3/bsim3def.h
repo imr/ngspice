@@ -21,7 +21,6 @@ typedef struct sBSIM3instance
     struct sBSIM3instance *BSIM3nextInstance;
     IFuid BSIM3name;
     int BSIM3owner;   /* number of owner process */
-    int BSIM3states;  /* index into state table for this device */
     int BSIM3dNode;
     int BSIM3gNode;
     int BSIM3sNode;
@@ -44,6 +43,7 @@ typedef struct sBSIM3instance
 
     double BSIM3l;
     double BSIM3w;
+    double BSIM3m;
     double BSIM3drainArea;
     double BSIM3sourceArea;
     double BSIM3drainSquares;
@@ -154,7 +154,7 @@ typedef struct sBSIM3instance
     double *BSIM3SPqPtr;
     double *BSIM3BqPtr;
 
-int BSIM3states;     /* index into state table for this device */
+    int BSIM3states;     /* index into state table for this device */
 #define BSIM3vbd BSIM3states+ 0
 #define BSIM3vbs BSIM3states+ 1
 #define BSIM3vgs BSIM3states+ 2

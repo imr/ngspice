@@ -9,6 +9,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #include "cktdefs.h"
 #include "sensdefs.h"
 
+#include "analysis.h"
 
 /* ARGSUSED */
 int 

@@ -10,6 +10,7 @@ Author: 1987 Gary W. Ng
 #include "iferrmsg.h"
 #include "noisedef.h"
 
+#include "analysis.h"
 
 int 
 NsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)

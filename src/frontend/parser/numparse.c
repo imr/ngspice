@@ -13,7 +13,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 
 static double
-pow10(double num)   /* Chris Inbody */
+power10(double num)   /* Chris Inbody */
 {
     double d = 1.0;
 
@@ -65,7 +65,7 @@ ft_numparse(char **s, bool whole)
         string++;
         p = 1;
         while (isdigit(*string))
-            mant += (*string++ - '0') / pow10(p++);
+            mant += (*string++ - '0') / power10(p++);
     }
 
     /* Now look for the scale factor or the exponent (can't have both). */
@@ -87,7 +87,7 @@ ft_numparse(char **s, bool whole)
                 string++;
                 p = 1;
                 while (isdigit(*string))
-                    expo += (*string++ - '0') / pow10(p++);
+                    expo += (*string++ - '0') / power10(p++);
             }
             expo *= exsign;
             break;

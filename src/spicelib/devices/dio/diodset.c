@@ -11,14 +11,11 @@ Author:  1988 Jaijeet S Roychowdhury
 #include "sperror.h"
 #include "suffix.h"
 
-int
-DIOdSetup(model,ckt)
 
-DIOmodel *model;
-CKTcircuit *ckt;
-/* actually load the current resistance value into the 
-         * sparse matrix previously provided 
-         */
+/* actually load the current resistance value into the sparse matrix
+ * previously provided */
+int
+DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 {
 	DIOinstance *here;
 	double arg;

@@ -11,6 +11,7 @@ Author: 1985 Thomas L. Quarles
 #include "ifsim.h"
 #include "iferrmsg.h"
 
+#include "analysis.h"
 
 extern SPICEanalysis *analInfo[];
 

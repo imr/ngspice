@@ -27,6 +27,10 @@ dnl --enable-sense2 : define HAVE_SENSE2 for the code
 AC_ARG_ENABLE(sense2,
     [  --enable-sense2         Use spice2 sensitivity analysis])
 
+dnl --enable-smoketest : a smoketest
+AC_ARG_ENABLE(smoketest,
+    [  --enable-smoketest      Enables smoketest compile])
+
 dnl --enable-experimental : define EXPERIMENTAL_CODE for the code
 AC_ARG_ENABLE(experimental,
     [  --enable-experimental   Enables some experimental code])
@@ -52,6 +56,7 @@ if test "$enable_debug" = "no"; then
 	CFLAGS=" "
 fi
 
+
 dnl Not sure that this will work....
 if test "$with_checkergcc" = "yes"; then
         CC="checkergcc"
@@ -68,23 +73,19 @@ if test "$enable_ansi" = "yes"; then
 	fi	
 fi
 
-
+if test "$enable_smoketest" = "yes"; then
+dnl	CFLAGS="$CFLAGS -Werror"
+	CFLAGS="$CFLAGS -pedantic -W -Wmissing-prototypes"
+	CFLAGS="$CFLAGS -Wstrict-prototypes -Wtraditional"
+	CFLAGS="$CFLAGS -Wconversion -Wshadow -Wpointer-arith"
+	CFLAGS="$CFLAGS -Wcast-qual -Wcast-align -Wwrite-strings"
+	CFLAGS="$CFLAGS -Waggregate-return -fshort-enums -fno-common"
+	CFLAGS="$CFLAGS -Wnested-externs -Dinline= -g -O4"
+fi
 
 
 dnl Chech system we're on , and tune accordingly 
 AC_CANONICAL_HOST
-
-case "$host" in
-
-*bsd* )    CFLAGS="$CFLAGS";;
-*linux*)   CFLAGS="$CFLAGS";;
-*rs6000* ) CFLAGS="$CFLAGS";;
-*sgi* )    CFLAGS="$CFLAGS";;
-*sun* )    CFLAGS="$CFLAGS";;
-*ultrix* ) CFLAGS="$CFLAGS";;
-
-esac
-
 
 
 dnl Checks for programs

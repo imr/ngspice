@@ -187,8 +187,8 @@ extern void fatal();
 extern void fperror();
 extern void ft_sperror();
 extern char ErrorMessage[];
-extern int internalerror(char *); 
-extern int externalerror(char *); 
+extern void internalerror(char *); 
+extern void externalerror(char *); 
 
 
 

@@ -20,33 +20,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "suffix.h"
 
 
-extern SPICEanalysis OPTinfo;
-extern SPICEanalysis ACinfo;
-extern SPICEanalysis DCTinfo;
-extern SPICEanalysis DCOinfo;
-extern SPICEanalysis TRANinfo;
-extern SPICEanalysis PZinfo;
-extern SPICEanalysis TFinfo;
-extern SPICEanalysis DISTOinfo;
-extern SPICEanalysis NOISEinfo;
-extern SPICEanalysis SENSinfo;
-
-
-SPICEanalysis *analInfo[] = {
-    &OPTinfo,
-    &ACinfo,
-    &DCTinfo,
-    &DCOinfo,
-    &TRANinfo,
-    &PZinfo,
-    &TFinfo,
-    &DISTOinfo,
-    &NOISEinfo,
-    &SENSinfo,
-
-};
-
-int ANALmaxnum = sizeof(analInfo)/sizeof(SPICEanalysis*);
 /* XXX Should be -1 ? There is always an extra null element at the end ? */
 static char * specSigList[] = {
     "time"
@@ -100,9 +73,8 @@ IFsimulator SIMinfo = {
 
     0,				/* Initialized in SIMinit() */
     NULL,			/* Initialized in SIMinit() */
-
-    sizeof(analInfo)/sizeof(SPICEanalysis *),
-    (IFanalysis **)analInfo,
+    0,				/* Initialized in SIMinit() */
+    NULL,			/* Initialized in SIMinit() */
 
     sizeof(nodeParms)/sizeof(IFparm),
     nodeParms,

@@ -10,9 +10,9 @@ Modified: 2000 AlansFixes
 #include "sperror.h"
 #include "trandefs.h"
 
+#include "analysis.h"
 
 extern SPICEanalysis *analInfo[];
-extern int ANALmaxnum;
 
 int
 CKTdoJob(void *inCkt, int reset, void *inTask)
@@ -22,6 +22,7 @@ CKTdoJob(void *inCkt, int reset, void *inTask)
     JOB		*job;
     double	startTime;
     int		error, i, error2;
+    int ANALmaxnum;
 
 #ifdef WANT_SENSE2
     int		senflag;
@@ -35,6 +36,8 @@ CKTdoJob(void *inCkt, int reset, void *inTask)
 	sens_num = i;
     }
 #endif
+
+    ANALmaxnum = spice_num_analysis();
 
     startTime = (*(SPfrontEnd->IFseconds))( );
 
