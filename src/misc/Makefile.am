@@ -16,7 +16,7 @@ libmisc_a_SOURCES = \
 		printnum.c	\
 		printnum.h	\
 		string.c	\
-		string.h	\
+		stringutil.h	\
 		terminal.c	\
 		terminal.h	\
 		tilde.c		\

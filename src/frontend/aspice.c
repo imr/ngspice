@@ -176,6 +176,14 @@ sigchild(void)
  * whether the exit was normal or not.
  */
 
+#if defined(__NetBSD__)
+    pid_t status;
+#else
+    union wait status;
+#endif
+
+
+
 void
 ft_checkkids(void)
 {
@@ -191,7 +199,7 @@ ft_checkkids(void)
     here = TRUE;
 
     while (numchanged > 0) {
-        pid = wait((union wait *) NULL);
+        pid = wait((&status);
         if (pid == -1) {
             fprintf(cp_err, 
 "ft_checkkids: Internal Error: should be %d jobs done but there aren't any.\n",

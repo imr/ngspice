@@ -235,11 +235,11 @@ LTRAunsetup(inModel, ckt)
     for (here = model->LTRAinstances; here != NULL;
 	here = here->LTRAnextInstance) {
       if (here->LTRAbrEq1) {
-	CKTdltNNum(ckt, (void *) here->LTRAbrEq1);
+	CKTdltNNum(ckt, here->LTRAbrEq1);
 	here->LTRAbrEq1 = 0;
       }
       if (here->LTRAbrEq2) {
-	CKTdltNNum(ckt, (void *) here->LTRAbrEq2);
+	CKTdltNNum(ckt, here->LTRAbrEq2);
 	here->LTRAbrEq2 = 0;
       }
     }

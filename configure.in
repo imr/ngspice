@@ -133,7 +133,7 @@ AC_SEARCH_LIBS(tputs,ncurses termcap,AC_DEFINE(HAVE_TERMCAP),
 
 
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS(ctype.h unistd.h pwd.h fcntl.h)
+AC_CHECK_HEADERS(ctype.h unistd.h pwd.h fcntl.h string.h)
 AC_HEADER_SYS_WAIT
 AC_HEADER_STAT
 

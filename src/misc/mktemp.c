@@ -9,11 +9,15 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  */
 
 #include "ngspice.h"
-#include "stdio.h"
+#include <stdio.h>
 #include "mktemp.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
+#ifdef HAVE_STRING_H
+#include <string.h>
 #endif
 
 #ifndef TEMPFORMAT

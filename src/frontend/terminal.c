@@ -24,6 +24,10 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #endif
 #endif
 
+#ifdef HAVE_TERMCAP
+#include <termcap.h>
+#endif
+
 #include <ngspice.h>
 #include <cpdefs.h>
 
