@@ -1,22 +1,13 @@
+/**** BSIM3v3.2.4, Released by Xuemei Xi 12/21/2001 ****/
+
 /**********
  * Copyright 2001 Regents of the University of California. All rights reserved.
  * File: b3mpar.c of BSIM3v3.2.4
  * Author: 1995 Min-Chie Jeng and Mansun Chan. 
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
- * Modified by Paolo Nenzi 2002
+ * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
  **********/
-
-/* 
- * Release Notes: 
- * BSIM3v3.2.4, Released by Xuemei Xi   12/21/2001
- * BSIM3v3.2.3, Released by Xuemei Xi   10/05/2001
- * BSIM3v3.2.2, Released by Weidong Liu 04/20/1999
- * BSIM3v3.2,   Released by Weidong Liu 06/16/1998  
- */
-
-
-/*************************************/
 
 #include "ngspice.h"
 #include "bsim3def.h"
@@ -46,12 +37,16 @@ BSIM3mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3capMod = value->iValue;
             mod->BSIM3capModGiven = TRUE;
             break;
+        case BSIM3_MOD_ACMMOD:
+            mod->BSIM3acmMod = value->iValue;
+            mod->BSIM3acmModGiven = TRUE;
+            break;
         case  BSIM3_MOD_NOIMOD :
             mod->BSIM3noiMod = value->iValue;
             mod->BSIM3noiModGiven = TRUE;
             break;
         case  BSIM3_MOD_VERSION :
-            mod->BSIM3version = value->sValue;	    	    
+            mod->BSIM3version = value->sValue;
             mod->BSIM3versionGiven = TRUE;
             break;
         case  BSIM3_MOD_TOX :
@@ -439,6 +434,36 @@ BSIM3mParam(int param, IFvalue *value, GENmodel *inMod)
         case  BSIM3_MOD_TPBSWG :
             mod->BSIM3tpbswg = value->rValue;
             mod->BSIM3tpbswgGiven = TRUE;
+            break;
+
+          /* acm model */
+        case BSIM3_MOD_HDIF:
+            mod->BSIM3hdif = value->rValue;
+            mod->BSIM3hdifGiven = TRUE;
+            break;
+        case BSIM3_MOD_LDIF:
+            mod->BSIM3ldif = value->rValue;
+            mod->BSIM3ldifGiven = TRUE;
+            break;
+        case BSIM3_MOD_LD:
+            mod->BSIM3ld = value->rValue;
+            mod->BSIM3ldGiven = TRUE;
+            break;
+        case BSIM3_MOD_RD:
+            mod->BSIM3rd = value->rValue;
+            mod->BSIM3rdGiven = TRUE;
+            break;
+        case BSIM3_MOD_RS:
+            mod->BSIM3rs = value->rValue;
+            mod->BSIM3rsGiven = TRUE;
+            break;
+        case BSIM3_MOD_RDC:
+            mod->BSIM3rdc = value->rValue;
+            mod->BSIM3rdcGiven = TRUE;
+            break;
+        case BSIM3_MOD_RSC:
+            mod->BSIM3rsc = value->rValue;
+            mod->BSIM3rscGiven = TRUE;
             break;
 
 	/* Length dependence */
@@ -1471,7 +1496,7 @@ BSIM3mParam(int param, IFvalue *value, GENmodel *inMod)
             break;
 
         case  BSIM3_MOD_TNOM :
-            mod->BSIM3tnom = value->rValue + 273.15;
+            mod->BSIM3tnom = value->rValue;
             mod->BSIM3tnomGiven = TRUE;
             break;
         case  BSIM3_MOD_CGSO :
@@ -1633,6 +1658,15 @@ BSIM3mParam(int param, IFvalue *value, GENmodel *inMod)
         case  BSIM3_MOD_WMAX :
             mod->BSIM3Wmax = value->rValue;
             mod->BSIM3WmaxGiven = TRUE;
+            break;
+
+       case BSIM3_MOD_XL:
+            mod->BSIM3xl = value->rValue;
+            mod->BSIM3xlGiven = TRUE;
+            break;
+       case BSIM3_MOD_XW:
+            mod->BSIM3xw = value->rValue;
+            mod->BSIM3xwGiven = TRUE;
             break;
 
         case  BSIM3_MOD_NOIA :

@@ -29,6 +29,3 @@ extern int BSIM3temp(GENmodel*,CKTcircuit*);
 extern int BSIM3trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM3noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM3unsetup(GENmodel*,CKTcircuit*);
-
-
-
