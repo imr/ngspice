@@ -37,8 +37,8 @@ JFETpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
             m = here->JFETm;
 
-            gdpr=model->JFETdrainResist * here->JFETarea;
-            gspr=model->JFETsourceResist * here->JFETarea;
+            gdpr=model->JFETdrainConduct * here->JFETarea;
+            gspr=model->JFETsourceConduct * here->JFETarea;
             gm= *(ckt->CKTstate0 + here->JFETgm) ;
             gds= *(ckt->CKTstate0 + here->JFETgds) ;
             ggs= *(ckt->CKTstate0 + here->JFETggs) ;

@@ -1,5 +1,8 @@
 2003-12-30  Paolo Nenzi <p.nenzi@ieee.org>
 
+        * src/spicelib/devices/jfet/jfetpzld.c: gspr and gdpr were initialized
+	  with Resist and not Conduct, corrected!
+
 	* src/spicelib/devices/hfet1/*: Added parallel multiplier and "dtemp" to
 	  the code. Added the pole-zero analysis and parallel code checks.
 	  Corrected a bug in the unsetup function that caused a segfault.
