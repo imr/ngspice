@@ -96,7 +96,7 @@ int HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 	      (void) sprintf(name, "onoise.%s%s", 
 			     (char *)here->HSM1name, HSM1nNames[i]);
 	      data->namelist = 
-		(IFuid *) xrealloc((char *) data->namelist,
+		(IFuid *) trealloc((char *) data->namelist,
 				   (data->numPlots + 1) * sizeof(IFuid));
 	      if (!data->namelist)
 		return(E_NOMEM);
@@ -110,7 +110,7 @@ int HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 	      (void) sprintf(name, "onoise_total.%s%s", 
 			     (char *)here->HSM1name, HSM1nNames[i]);
 	      data->namelist = 
-		(IFuid *) xrealloc((char *) data->namelist,
+		(IFuid *) trealloc((char *) data->namelist,
 				   (data->numPlots + 1) * sizeof(IFuid));
 	      if (!data->namelist)
 		return(E_NOMEM);
@@ -121,7 +121,7 @@ int HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
 	      (void) sprintf(name, "inoise_total.%s%s", 
 			     (char *)here->HSM1name, HSM1nNames[i]);
 	      data->namelist = 
-		(IFuid *) xrealloc((char *) data->namelist,
+		(IFuid *) trealloc((char *) data->namelist,
 				   (data->numPlots + 1) * sizeof(IFuid));
 	      if (!data->namelist)
 		return(E_NOMEM);
