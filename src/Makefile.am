@@ -70,8 +70,8 @@ ngspice_LDADD = \
 	spice.o \
 	frontend/libfte.a \
 	frontend/plotting/libplotting.a \
-	@XSPICELIB1@ \
 	spicelib/devices/dev.o \
+	@XSPICELIB1@ \
 	$(DYNAMIC_DEVICELIBS)  \
 	spicelib/analysis/libckt.a \
 	spicelib/devices/libdev.a \
