@@ -12,7 +12,8 @@ Author: 1988 Thomas L. Quarles
 #include "inp.h"
 
 static int
-dot_nodeset(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
+dot_nodeset(char *line, void *ckt, INPtables *tab, card *current,
+	    void *task, void *gnode)
 {
     int which;			/* which analysis we are performing */
     int error;			/* error code temporary */
@@ -20,11 +21,6 @@ dot_nodeset(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
     void *node1;		/* the first node's node pointer */
     IFvalue ptemp;		/* a value structure to package resistance into */
     IFparm *prm;		/* pointer to parameter to search through array */
-
-
-    /* the part of the current line left to parse */
-    char *line = current->line;
-
 
     /* .nodeset */
     which = -1;
@@ -39,7 +35,6 @@ dot_nodeset(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 	LITERR("nodeset unknown to simulator. \n");
 	return (0);
     }
-    INPgetTok(&line, &name, 1); /* [mme] skip .nodeset */
     for (;;) {
 	int length;
 
@@ -67,8 +62,8 @@ dot_nodeset(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 
 
 static int
-dot_noise(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
-	  void *foo)
+dot_noise(char *line, void *ckt, INPtables *tab, card *current,
+	  void *task, void *gnode, void *foo)
 {
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
@@ -85,9 +80,6 @@ dot_noise(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
     int found;
     char *point;
 
-    /* the part of the current line left to parse */
-    char *line = current->line;
-
     /* .noise V(OUTPUT,REF) SRC {DEC OCT LIN} NP FSTART FSTOP <PTSPRSUM> */
     which = -1;
     for (i = 0; i < ft_sim->numAnalyses; i++) {
@@ -102,7 +94,6 @@ dot_noise(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
     }
     IFC(newAnalysis, (ckt, which, "Noise Analysis", &foo, task));
     INPgetTok(&line, &name, 1);
-    INPgetTok(&line, &name, 1); /* [mme] skip .noise */
 
     /* Make sure the ".noise" command is followed by V(xxxx).  If it
        is, extract 'xxxx'.  If not, report an error. */
@@ -118,7 +109,7 @@ dot_noise(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 	    ptemp.nValue = (IFnode) node1;
 	    GCA(INPapName, (ckt, which, foo, "output", &ptemp))
 
-		if (*line != /* match ( */ ')') {
+		if (*line != ')') {
 		    INPgetTok(&line, &nname2, 1);
 		    INPtermInsert(ckt, &nname2, tab, &node2);
 		    ptemp.nValue = (IFnode) node2;
@@ -179,8 +170,8 @@ dot_noise(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 
 
 static int
-dot_op(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
-       void *foo)
+dot_op(char *line, void *ckt, INPtables *tab, card *current,
+       void *task, void *gnode, void *foo)
 {
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
@@ -204,8 +195,8 @@ dot_op(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 
 
 static int
-dot_disto(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
-	  void *foo)
+dot_disto(char *line, void *ckt, INPtables *tab, card *current,
+	  void *task, void *gnode, void *foo)
 {
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
@@ -213,10 +204,6 @@ dot_disto(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
     IFvalue ptemp;		/* a value structure to package resistance into */
     IFvalue *parm;		/* a pointer to a value struct for function returns */
     char *steptype;		/* ac analysis, type of stepping function */
-
-
-    /* the part of the current line left to parse */
-    char *line = current->line;
 
     /* .disto {DEC OCT LIN} NP FSTART FSTOP <F2OVERF1> */
     which = -1;
@@ -230,7 +217,6 @@ dot_disto(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 	LITERR("Small signal distortion analysis unsupported.\n");
 	return (0);
     }
-    INPgetTok(&line, &steptype, 1); /* [mme] skip .disto */
     IFC(newAnalysis, (ckt, which, "Distortion Analysis", &foo, task));
     INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
     ptemp.iValue = 1;
@@ -250,18 +236,14 @@ dot_disto(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 
 
 static int
-dot_ic(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
-       void *foo)
+dot_ic(char *line, void *ckt, INPtables *tab, card *current,
+       void *task, void *gnode, void *foo)
 {
     int which;			/* which analysis we are performing */
     int error;			/* error code temporary */
     IFvalue ptemp;		/* a value structure to package resistance into */
     IFparm *prm;		/* pointer to parameter to search through array */
     void *node1;		/* the first node's node pointer */
-
-
-    /* the part of the current line left to parse */
-    char *line = current->line;
 
     /* .ic */
     which = -1;
@@ -276,7 +258,6 @@ dot_ic(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 	LITERR("ic unknown to simulator. \n");
 	return (0);
     }
-    INPgetTok(&line, &node1, 1); /* [mme] skip .ic */
     for (;;) {
 	/* loop until we run out of data */
 	int length;
@@ -304,8 +285,8 @@ dot_ic(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 
 
 static int
-dot_ac(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
-       void *foo)
+dot_ac(char *line, void *ckt, INPtables *tab, card *current,
+       void *task, void *gnode, void *foo)
 {
     int error;			/* error code temporary */
     IFvalue ptemp;		/* a value structure to package resistance into */
@@ -313,9 +294,6 @@ dot_ac(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
     char *steptype;		/* ac analysis, type of stepping function */
-
-    /* the part of the current line left to parse */
-    char *line = current->line;
 
     /* .ac {DEC OCT LIN} NP FSTART FSTOP */
     which = -1;
@@ -329,7 +307,6 @@ dot_ac(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 	LITERR("AC small signal analysis unsupported.\n");
 	return (0);
     }
-    INPgetTok(&line, &steptype, 1); /* [mme] skip .ac */
     IFC(newAnalysis, (ckt, which, "AC Analysis", &foo, task))
 	INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
     ptemp.iValue = 1;
@@ -344,8 +321,8 @@ dot_ac(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 }
 
 static int
-dot_pz(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
-       void *foo)
+dot_pz(char *line, void *ckt, INPtables *tab, card *current,
+       void *task, void *gnode, void *foo)
 {
     int error;			/* error code temporary */
     IFvalue ptemp;		/* a value structure to package resistance into */
@@ -353,9 +330,6 @@ dot_pz(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
     char *steptype;		/* ac analysis, type of stepping function */
-
-    /* the part of the current line left to parse */
-    char *line = current->line;
 
     /* .pz nodeI nodeG nodeJ nodeK {V I} {POL ZER PZ} */
     which = -1;
@@ -369,7 +343,6 @@ dot_pz(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 	LITERR("Pole-zero analysis unsupported.\n");
 	return (0);
     }
-    INPgetTok(&line, &steptype, 1); /* [mme] skip .pz */
     IFC(newAnalysis, (ckt, which, "Pole-Zero Analysis", &foo, task))
 	parm = INPgetValue(ckt, &line, IF_NODE, tab);
     GCA(INPapName, (ckt, which, foo, "nodei", parm))
@@ -390,8 +363,8 @@ dot_pz(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 
 
 static int
-dot_dc(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
-       void *foo)
+dot_dc(char *line, void *ckt, INPtables *tab, card *current,
+       void *task, void *gnode, void *foo)
 {
     char *name;			/* the resistor's name */
     int error;			/* error code temporary */
@@ -399,9 +372,6 @@ dot_dc(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
     IFvalue *parm;		/* a pointer to a value struct for function returns */
     int which;			/* which analysis we are performing */
     int i;			/* generic loop variable */
-
-    /* the part of the current line left to parse */
-    char *line = current->line;
 
     /* .dc SRC1NAME Vstart1 Vstop1 Vinc1 [SRC2NAME Vstart2 */
     /*        Vstop2 Vinc2 */
@@ -418,7 +388,6 @@ dot_dc(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
     }
     IFC(newAnalysis, (ckt, which, "DC transfer characteristic", &foo, task));
     INPgetTok(&line, &name, 1);
-    INPgetTok(&line, &name, 1); /* [mme] skip .dc */
     INPinsert(&name, tab);
     ptemp.uValue = name;
     GCA(INPapName, (ckt, which, foo, "name1", &ptemp));
@@ -485,13 +454,13 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 	LITERR(" Warning: .TEMP card obsolete - use .options TEMP and TNOM\n");
 	return (0);
     } else if ((strcmp(token, ".op") == 0)) {
-	return dot_op(ckt, tab, current, task, gnode, foo);
+	return dot_op(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".nodeset") == 0)) {
-	return dot_nodeset(ckt, tab, current, task, gnode);
+	return dot_nodeset(line, ckt, tab, current, task, gnode);
     } else if ((strcmp(token, ".disto") == 0)) {
-	return dot_disto(ckt, tab, current, task, gnode, foo);
+	return dot_disto(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".noise") == 0)) {
-	return dot_noise(ckt, tab, current, task, gnode, foo);
+	return dot_noise(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".four") == 0)
 	       || (strcmp(token, ".fourier") == 0)) {
 	/* .four */
@@ -499,13 +468,13 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 	LITERR("Use fourier command to obtain fourier analysis\n");
 	return (0);
     } else if ((strcmp(token, ".ic") == 0)) {
-	return dot_ic(ckt, tab, current, task, gnode, foo);
+	return dot_ic(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".ac") == 0)) {
-	return dot_ac(ckt, tab, current, task, gnode, foo);
+	return dot_ac(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".pz") == 0)) {
-	return dot_pz(ckt, tab, current, task, gnode, foo);
+	return dot_pz(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".dc") == 0)) {
-	return dot_dc(ckt, tab, current, task, gnode, foo);
+	return dot_dc(line, ckt, tab, current, task, gnode, foo);
     } else if ((strcmp(token, ".tf") == 0)) {
 	/* .tf v( node1, node2 ) src */
 	/* .tf vsrc2             src */

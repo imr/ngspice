@@ -1,3 +1,9 @@
+2000-06-02  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/circuit/inp2dot.c: Refactoring introduced a bug in the line
+	parsing.  Passing line as an extra parameter to the refactored
+	functions fixes the bug.
+
 2000-05-30  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* TODO: Updated.
