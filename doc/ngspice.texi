@@ -171,7 +171,10 @@ within the limitations of the tools.
 @comment node-name,     next,           previous, up
 @chapter Acknowledgements
 
-See the AUTHORS file in distribution directory.
+@c FIXME: Get this baby to work with make distcheck target.
+@c
+@include ../AUTHORS
+
 
 @node    Release Notes, Introduction, Acknowledgements, Top
 @comment node-name,     next,           previous, up
