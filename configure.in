@@ -111,22 +111,13 @@ fi
 dnl Chech system we're on , and tune accordingly 
 AC_CANONICAL_HOST
 
-
-dnl Checks for programs
-
-AC_LIBTOOL_DLOPEN
-AM_PROG_LIBTOOL
-
-
-
-
 dnl
 dnl The tclSpice options
 dnl
 if test "$enable_tcl" = "yes"; then
    AC_DEFINE(TCL_MODULE)
    with_x=no
-
+   enable_shared=no
 
   AC_MSG_CHECKING([for tclConfig.sh])
   tcl_config_sh=""
@@ -210,6 +201,13 @@ fi
 
 AC_SUBST(TCL_PACKAGE_PATH)
 AC_SUBST(TCL_BUILD_LIB_SPEC)
+
+
+dnl Checks for programs
+
+AC_LIBTOOL_DLOPEN
+AM_PROG_LIBTOOL
+
 
 dnl Checks for X11 header files and libraries - X11 support can be disabled
 dnl by passing the '--without-x' option to configure:
@@ -387,11 +385,6 @@ AC_SUBST(XSPICEDIR)
 AC_SUBST(XSPICELIB1)
 AC_SUBST(XSPICELIB2)
 
-dnl Printout Tcl option
-if test "$enable_tcl" = "yes"; then
-   AC_MSG_RESULT(Tcl module being made, use "make tcl" and "make tcl_install", read README in src/tcl/README)
-fi
-
 dnl Cluster option
 if test "$enable_cluster" = "yes"; then
    AC_MSG_RESULT(Cluster version is being compiled)
@@ -489,3 +482,8 @@ tests/bsim3soidd/Makefile	\
 tests/bsim4/Makefile		\
 tests/mesa/Makefile
 )
+
+dnl Printout Tcl option
+if test "$enable_tcl" = "yes"; then
+   echo 'Tcl module being made, use "make tcl" and "make install-tcl", read README in src/tcl/README'
+fi
