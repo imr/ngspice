@@ -153,7 +153,7 @@ void blt_init(void *tmp){
   /* reset varaibles and free*/
   if(vectors){
     resetTriggers();
-    for(i = blt_vnum, blt_vnum = 0/*stops vector access*/;i > 0;i--){
+    for(i = blt_vnum-1, blt_vnum = 0/*stops vector access*/;i >= 0;i--){
       if(run->writeOut)
 	FREE(vectors[i].data);
       FREE(vectors[i].name);
