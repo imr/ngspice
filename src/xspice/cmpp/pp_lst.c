@@ -784,7 +784,7 @@ static Status_t write_CMextrn(
 
 
     /* Open the file to be written */
-    fp = fopen("CMextrn.h", "w");
+    fp = fopen("cmextrn.h", "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening CMextrn.h for write");
         return(ERROR);
@@ -824,7 +824,7 @@ static Status_t write_CMinfo(
 
 
     /* Open the file to be written */
-    fp = fopen("CMinfo.h", "w");
+    fp = fopen("cminfo.h", "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening CMinfo.h for write");
         return(ERROR);
@@ -868,7 +868,7 @@ static Status_t write_UDNextrn(
 
 
     /* Open the file to be written */
-    fp = fopen("UDNextrn.h", "w");
+    fp = fopen("udnextrn.h", "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening UDNextrn.h for write");
         return(ERROR);
@@ -910,7 +910,7 @@ static Status_t write_UDNinfo(
 
 
     /* Open the file to be written */
-    fp = fopen("UDNinfo.h", "w");
+    fp = fopen("udninfo.h", "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening UDNinfo.h for write");
         return(ERROR);

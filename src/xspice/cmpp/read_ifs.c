@@ -155,8 +155,10 @@ static Status_t read_ifs_table(
 
    if (ifs_yyparse()) {
       print_error ("Error parsing interface specification file");
+      ifs_yyrestart(NULL);
       return ERROR;
    }
+   ifs_yyrestart(NULL);
    return OK;
 }
 
@@ -165,7 +167,7 @@ int ifs_yyerror (str)
      char *str;
 {
    extern int ifs_yylineno;
-   extern char ifs_yytext[];
+   extern char *ifs_yytext;
    
    fprintf (stderr, "%s: Error: \"%s\": line %d (near \'%s\'):\n\t%s.\n",
 	    prog_name, current_filename, ifs_yylineno, ifs_yytext, str);

@@ -163,6 +163,7 @@ void preprocess_mod_file (
       exit (1);
    }
    fclose (mod_yyout);
+   mod_yyrestart(NULL);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -170,7 +171,7 @@ int mod_yyerror (str)
      char *str;
 {
    extern int mod_yylineno;
-   extern char mod_yytext[];
+   extern char *mod_yytext;
    extern char *current_filename;
    extern char *prog_name;
    
