@@ -220,7 +220,6 @@ BJTunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     BJTmodel *model;
     BJTinstance *here;
 
@@ -250,6 +249,5 @@ BJTunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

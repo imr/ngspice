@@ -968,7 +968,6 @@ BSIM3V2unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     BSIM3V2model *model;
     BSIM3V2instance *here;
 
@@ -992,6 +991,5 @@ BSIM3V2unsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

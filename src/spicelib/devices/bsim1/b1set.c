@@ -383,7 +383,6 @@ B1unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     B1model *model;
     B1instance *here;
 
@@ -407,6 +406,5 @@ B1unsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

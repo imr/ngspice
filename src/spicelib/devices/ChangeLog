@@ -1,3 +1,13 @@
+2000-08-28  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* asrc/asrcset.c, bjt/bjtsetup.c, bsim1/b1set.c, bsim2/b2set.c,
+	bsim3/b3set.c, bsim3v2/b3v2set.c, bsim4/b4set.c, ccvs/ccvsset.c,
+	dio/diosetup.c, ind/indsetup.c, jfet/jfetset.c, jfet2/jfet2set.c,
+	ltra/ltraset.c, mes/messetup.c, mos1/mos1set.c, mos2/mos2set.c,
+	mos3/mos3set.c, mos6/mos6set.c, tra/trasetup.c, urc/urcsetup.c,
+	vcvs/vcvsset.c, vsrc/vsrcset.c: Removed HAS_BATCHSIM preprocessor
+	checks.
+	
 2000-07-21  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* README: Updated.

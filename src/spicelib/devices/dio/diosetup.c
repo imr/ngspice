@@ -114,7 +114,6 @@ DIOunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     DIOmodel *model;
     DIOinstance *here;
 
@@ -133,6 +132,5 @@ DIOunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

@@ -70,7 +70,6 @@ CCVSunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     CCVSmodel *model;
     CCVSinstance *here;
 
@@ -86,6 +85,5 @@ CCVSunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

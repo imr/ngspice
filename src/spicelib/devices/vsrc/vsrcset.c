@@ -60,7 +60,6 @@ VSRCunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     VSRCmodel *model;
     VSRCinstance *here;
 
@@ -76,6 +75,5 @@ VSRCunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

@@ -208,7 +208,6 @@ MOS6unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     MOS6model *model;
     MOS6instance *here;
 
@@ -232,6 +231,5 @@ MOS6unsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

@@ -284,60 +284,63 @@ URCunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
-	IFuid	varUid;
-	int	error;
-	URCinstance *here;
-	URCmodel *model = (URCmodel *) inModel;
-	GENinstance *in;
-	GENmodel *modfast;
-	int type;
+    IFuid	varUid;
+    int	error;
+    URCinstance *here;
+    URCmodel *model = (URCmodel *) inModel;
+    GENinstance *in;
+    GENmodel *modfast;
+    int type;
 
-	/* Delete models, devices, and intermediate nodes;
-	 */
+    /* Delete models, devices, and intermediate nodes; */
 
-	for ( ; model; model = model->URCnextModel) {
-	    for (here = model->URCinstances; here;
-		here = here->URCnextInstance)
-	    {
-		if(model->URCisPerLGiven) {
-		    /* Diodes */
-		    error = (*(SPfrontEnd->IFnewUid))(ckt,&varUid,here->URCname,
-			"diodemod",UID_MODEL,(void **)NULL);
-		} else {
-		    /* Capacitors */
-		    error = (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,
-			here->URCname, "capmod",UID_MODEL,(void **)NULL);
-		}
-		if (error && error != E_EXISTS)
-		    return error;
+    for ( ; model; model = model->URCnextModel) {
+	for (here = model->URCinstances; here;
+	     here = here->URCnextInstance)
+	{
+	    if(model->URCisPerLGiven) {
+		/* Diodes */
+		error = (*(SPfrontEnd->IFnewUid))(ckt, &varUid,
+						  here->URCname,
+						  "diodemod",
+						  UID_MODEL,
+						  (void **)NULL);
+	    } else {
+		/* Capacitors */
+		error = (*(SPfrontEnd->IFnewUid))((void *)ckt, &varUid,
+						  here->URCname,
+						  "capmod",
+						  UID_MODEL,
+						  (void **)NULL);
+	    }
+	    if (error && error != E_EXISTS)
+		return error;
 
-		modfast = NULL;
-		type = -1;
-		error = CKTfndMod(ckt, &type, (void **) &modfast, varUid);
-		if (error)
-		    return error;
+	    modfast = NULL;
+	    type = -1;
+	    error = CKTfndMod(ckt, &type, (void **) &modfast, varUid);
+	    if (error)
+		return error;
 
-		for (in = modfast->GENinstances; in; in = in->GENnextInstance)
-			CKTdltNNum(ckt, in->GENnode1);
+	    for (in = modfast->GENinstances; in; in = in->GENnextInstance)
+		CKTdltNNum(ckt, in->GENnode1);
 
-		CKTdltMod(ckt, modfast);	/* Does the elements too */
+	    CKTdltMod(ckt, modfast);	/* Does the elements too */
 
-		/* Resistors */
-		error = (*(SPfrontEnd->IFnewUid))(ckt,&varUid,here->URCname,
-			"resmod",UID_MODEL,(void **)NULL);
-		if (error && error != E_EXISTS)
-		    return error;
+	    /* Resistors */
+	    error = (*(SPfrontEnd->IFnewUid))(ckt,&varUid,here->URCname,
+					      "resmod",UID_MODEL,(void **)NULL);
+	    if (error && error != E_EXISTS)
+		return error;
 
-		modfast = NULL;
-		type = -1;
-		error = CKTfndMod(ckt, &type, (void **) &modfast, varUid);
-		if (error)
-		    return error;
+	    modfast = NULL;
+	    type = -1;
+	    error = CKTfndMod(ckt, &type, (void **) &modfast, varUid);
+	    if (error)
+		return error;
 
-		CKTdltMod(ckt, modfast);
+	    CKTdltMod(ckt, modfast);
 	}
     }
-#endif
     return OK;
 }

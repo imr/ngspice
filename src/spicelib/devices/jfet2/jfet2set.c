@@ -106,7 +106,6 @@ JFET2unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     JFET2model *model;
     JFET2instance *here;
 
@@ -130,6 +129,5 @@ JFET2unsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

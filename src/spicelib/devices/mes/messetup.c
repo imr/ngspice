@@ -140,7 +140,6 @@ MESunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     MESmodel *model;
     MESinstance *here;
 
@@ -164,6 +163,5 @@ MESunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

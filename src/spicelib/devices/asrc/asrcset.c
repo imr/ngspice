@@ -147,7 +147,6 @@ ASRCunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     ASRCmodel *model;
     ASRCinstance *here;
 
@@ -163,6 +162,5 @@ ASRCunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

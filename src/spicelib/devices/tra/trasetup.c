@@ -122,7 +122,6 @@ TRAunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     TRAmodel *model;
     TRAinstance *here;
 
@@ -150,6 +149,5 @@ TRAunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

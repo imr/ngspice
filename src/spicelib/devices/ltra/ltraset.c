@@ -227,7 +227,6 @@ LTRAunsetup(inModel, ckt)
   GENmodel *inModel;
   CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
   LTRAmodel *model;
   LTRAinstance *here;
 
@@ -245,6 +244,5 @@ LTRAunsetup(inModel, ckt)
       }
     }
   }
-#endif
   return OK;
 }

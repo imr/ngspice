@@ -63,7 +63,6 @@ VCVSunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     VCVSmodel *model;
     VCVSinstance *here;
 
@@ -79,6 +78,5 @@ VCVSunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }
