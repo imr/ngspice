@@ -79,8 +79,6 @@ libfte_a_SOURCES = \
 	outitf.h	\
 	parse.c		\
 	parse.h		\
-	plotcurv.c	\
-	plotcurv.h	\
 	points.c	\
 	points.h	\
 	postcoms.c	\
