@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified 2001: AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -62,7 +63,11 @@ ACan(CKTcircuit *ckt, int restart)
                 (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
                 (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
                 ckt->CKTdcMaxIter);
-        if(error) return(error);
+        if(error){
+        	 fprintf(stdout,"\nAC operating point failed -\n");
+           CKTncDump(ckt);
+           return(error);
+        	} 
 
         ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
         error = CKTload(ckt);

@@ -51,7 +51,7 @@ DCtran(CKTcircuit *ckt,
 #endif /* PARALLEL_ARCH */
 
     if(restart || ckt->CKTtime == 0) {
-        delta=MIN(ckt->CKTfinalTime/100,ckt->CKTstep)/10;
+        delta=MIN(ckt->CKTfinalTime/200,ckt->CKTstep)/10;
 
 	/* begin LTRA code addition */
 	if (ckt->CKTtimePoints != NULL)
@@ -100,8 +100,9 @@ DCtran(CKTcircuit *ckt,
                 ckt->CKTdcMaxIter);
                 
          if(converged != 0) {
-
-           CKTnode *node;
+			fprintf(stdout,"\nTransient solution failed -\n");
+			CKTncDump(ckt);
+     /*      CKTnode *node;
            double new, old, tol;
            int i=1;
 
@@ -130,7 +131,7 @@ DCtran(CKTcircuit *ckt,
                fprintf(stdout,"\n");
              };
              i++;
-           }
+           } */
         } else {
            fprintf(stdout,"\nInitial Transient Solution\n");
            fprintf(stdout,"--------------------------\n\n");

@@ -3,6 +3,7 @@
 SUBDIRS = \
 	asrc	\
 	bjt	\
+	bjt2	\
 	bsim1	\
 	bsim2	\
 	bsim3	\
@@ -27,6 +28,7 @@ SUBDIRS = \
 	mos2	\
 	mos3	\
 	mos6	\
+	mos9 \
 	res	\
 	sw	\
 	tra	\

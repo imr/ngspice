@@ -18,6 +18,7 @@ initdata_DATA = spinit setplot spectrum
 DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/asrc/libasrc.la		\
 	spicelib/devices/bjt/libbjt.la		\
+	spicelib/devices/bjt2/libbjt2.la		\
 	spicelib/devices/bsim1/libbsim1.la	\
 	spicelib/devices/bsim2/libbsim2.la	\
 	spicelib/devices/bsim3/libbsim3.la	\
@@ -43,6 +44,7 @@ DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/mos2/libmos2.la		\
 	spicelib/devices/mos3/libmos3.la		\
 	spicelib/devices/mos6/libmos6.la		\
+	spicelib/devices/mos9/libmos9.la		\
 	spicelib/devices/res/libres.la		\
 	spicelib/devices/sw/libsw.la		\
 	spicelib/devices/tra/libtra.la		\

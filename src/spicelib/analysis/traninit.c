@@ -40,7 +40,7 @@ int TRANinit(CKTcircuit	*ckt, JOB *job)
 #else
 /* The original spice code */
  if(ckt->CKTmaxStep == 0) {
-	ckt->CKTmaxStep = (ckt->CKTfinalTime-ckt->CKTinitTime)/100;
+	ckt->CKTmaxStep = (ckt->CKTfinalTime-ckt->CKTinitTime)/200;
     }
 #endif
    

@@ -66,12 +66,13 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     INPinsert(&model, tab);
     current->error = INPgetMod(ckt, model, &thismodel, tab);
     if (thismodel != NULL) {
-	if (mytype != thismodel->INPmodType) {
-	    LITERR("incorrect model type");
-	    return;
-	}
-	type = mytype;
-	mdfast = (thismodel->INPmodfast);
+	if(thismodel->INPmodType != INPtypelook("BJT") &&
+           thismodel->INPmodType != INPtypelook("BJT2")) {
+            LITERR("incorrect model type")
+            return;
+        }
+        type = (thismodel->INPmodType);
+        mdfast = (thismodel->INPmodfast);    
     } else {
 	type = mytype;
 	if (!tab->defQmod) {

@@ -26,12 +26,29 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
     INPinsert(&modname, tab);
     INPgetTok(&line, &typename, 1);
     if ((strcmp(typename, "npn") == 0) || (strcmp(typename, "pnp") == 0)) {
-	type = INPtypelook("BJT");
-	if (type < 0) {
-	    err =
-		INPmkTemp
-		("Device type BJT not available in this binary\n");
-	}
+	err = INPfindLev(line,&lev);
+	switch(lev) {
+		case 0:
+		case 1:
+			type = INPtypelook("BJT");
+			if (type < 0) {
+	  		  err = INPmkTemp(
+	  		          "Device type BJT not available in this binary\n");
+			}
+			break;
+		case 2:
+			 type = INPtypelook("BJT2");
+                if(type < 0) {
+                    err = INPmkTemp(
+                            "Device type BJT2 not available in this binary\n");
+                }
+                break;
+		default: /* placeholder; use level 3 for the next model */
+		err = INPmkTemp(
+		  "Only BJT levels 1 and 2 are supported in this binary\n");
+                break;
+
+	}	
 	INPmakeMod(modname, type, image);
     } else if (strcmp(typename, "d") == 0) {
 	type = INPtypelook("Diode");
@@ -155,7 +172,15 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Device type BSIM3 not available in this binary\n");
 	    }
 	    break;
-	case 9:
+	    
+	case  9:
+	    type = INPtypelook("Mos9");
+         if(type < 0) {
+          err = INPmkTemp(
+              "Device type MOS9 not available in this binary\n");
+        }
+        break;
+	case 10:
 	    type = INPtypelook("B3SOIPD");
 	    if (type < 0) {
 		err =
@@ -163,7 +188,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Device type B3SOIPD not available in this binary\n");
 	    }
 	    break;
-	case 10:
+	case 11:
 	    type = INPtypelook("B3SOIFD");
 	    if (type < 0) {
 		err =
@@ -171,7 +196,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Device type B3SOIFD not available in this binary\n");
 	    }
 	    break;
-	case 11:
+	case 12:
 	    type = INPtypelook("B3SOIDD");
 	    if (type < 0) {
 		err =

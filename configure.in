@@ -225,6 +225,7 @@ src/spicelib/analysis/Makefile	\
 src/spicelib/devices/Makefile		\
 src/spicelib/devices/asrc/Makefile	\
 src/spicelib/devices/bjt/Makefile	\
+src/spicelib/devices/bjt2/Makefile	\
 src/spicelib/devices/bsim1/Makefile	\
 src/spicelib/devices/bsim2/Makefile	\
 src/spicelib/devices/bsim3v1/Makefile	\
@@ -249,6 +250,7 @@ src/spicelib/devices/mos1/Makefile	\
 src/spicelib/devices/mos2/Makefile	\
 src/spicelib/devices/mos3/Makefile	\
 src/spicelib/devices/mos6/Makefile	\
+src/spicelib/devices/mos9/Makefile	\
 src/spicelib/devices/res/Makefile	\
 src/spicelib/devices/sw/Makefile	\
 src/spicelib/devices/tra/Makefile	\

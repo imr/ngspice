@@ -6,6 +6,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Gary W. Ng
+Modified: 2001 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -17,6 +18,9 @@ Author: 1987 Gary W. Ng
 #include "sperror.h"
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
+
+extern int CKTnoise( CKTcircuit *, int, int, Ndata * );
+
 
 int
 NOISEan (CKTcircuit *ckt, int restart)

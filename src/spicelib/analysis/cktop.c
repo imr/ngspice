@@ -16,9 +16,9 @@ CKTop(CKTcircuit *ckt, long int firstmode, long int continuemode, int iterlim)
 {
     int converged;
     int i;
-    CKTnode *n;                         /* AlansFixes */
-    double  raise, ConvFact, NumNodes;  /* AlansFixes */
-    double  *OldRhsOld, *OldCKTstate0;  /* AlansFixes */
+    CKTnode *n;                         
+    double  raise, ConvFact, NumNodes;  
+    double  *OldRhsOld, *OldCKTstate0; 
     int     iters;
     
     ckt->CKTmode = firstmode;

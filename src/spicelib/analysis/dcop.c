@@ -33,7 +33,9 @@ DCop(CKTcircuit *ckt)
             (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
             ckt->CKTdcMaxIter);
      if(converged != 0) {
-
+     	fprintf(stdout,"\nDC solution failed -\n");
+     	CKTncDump(ckt);
+/*
            CKTnode *node;
            double new, old, tol;
            int i=1;
@@ -65,7 +67,8 @@ DCop(CKTcircuit *ckt)
              i++;
            };
            fprintf(stdout,"\n");
-	   (*(SPfrontEnd->OUTendPlot))(plot);
+	   (*(SPfrontEnd->OUTendPlot))(plot); */
+	   
 	   return(converged);
 	 };
 

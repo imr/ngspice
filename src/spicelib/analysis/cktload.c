@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified: 2000 AlansFIxes
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -105,7 +105,7 @@ CKTload(CKTcircuit *ckt)
 			  *(ckt->CKTrhs+node->number) += 1.0e10 * node->ic;
 		    */
 		    *(ckt->CKTrhs+node->number) = 1.0e10 * node->ic *
-                                        ckt->CKTsrcFact; /* AlansFixes */
+                                        ckt->CKTsrcFact;
 			*(node->ptr) += 1.0e10;
 		    } else {
 	      	/* Original code: 

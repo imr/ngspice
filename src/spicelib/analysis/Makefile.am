@@ -22,6 +22,7 @@ libckt_a_SOURCES = \
 		cktdltn.c	\
 		cktdojob.c	\
 		cktdump.c	\
+		cktncdump.c	\
 		cktfbran.c	\
 		cktfnda.c	\
 		cktfndm.c	\
