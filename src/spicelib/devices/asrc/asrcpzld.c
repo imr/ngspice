@@ -4,7 +4,6 @@ Author: 1987 Kanwar Jit Singh
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "asrcdefs.h"
 #include "sperror.h"
@@ -13,11 +12,7 @@ Author: 1987 Kanwar Jit Singh
 
 /*ARGSUSED*/
 int
-ASRCpzLoad(inModel,ckt,s)
-
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    SPcomplex *s;
+ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
         /* actually load the current voltage value into the 
          * sparse matrix previously provided 

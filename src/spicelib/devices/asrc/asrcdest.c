@@ -4,13 +4,11 @@ Author: 1987 Kanwar Jit Singh
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "asrcdefs.h"
 #include "suffix.h"
 
 void
-ASRCdestroy(model)
-    GENmodel **model;
+ASRCdestroy(GENmodel **model)
 
 {
     ASRCmodel **start = (ASRCmodel**)model; /* starting model */

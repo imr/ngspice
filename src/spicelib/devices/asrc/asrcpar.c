@@ -7,7 +7,6 @@ Author: 1987 Kanwar Jit Singh
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "asrcdefs.h"
 #include "sperror.h"
@@ -16,11 +15,7 @@ Author: 1987 Kanwar Jit Singh
 
 /* ARGSUSED */
 int
-ASRCparam(param,value,fast,select)
-    int param;
-    IFvalue *value;
-    GENinstance *fast;
-    IFvalue *select;
+ASRCparam(int param, IFvalue *value, GENinstance *fast, IFvalue *select)
 {
     ASRCinstance *here = (ASRCinstance*)fast;
     switch(param) {

@@ -7,7 +7,6 @@ Author: 1987 Kanwar Jit Singh
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "asrcdefs.h"
 #include "sperror.h"
@@ -16,11 +15,7 @@ Author: 1987 Kanwar Jit Singh
 
 /*ARGSUSED*/
 int
-ASRCsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the voltage source structure with those 
      * pointers needed later for fast matrix loading 
          */

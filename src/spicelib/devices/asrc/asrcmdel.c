@@ -7,18 +7,13 @@ Author: 1987 Kanwar Jit Singh
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "asrcdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-ASRCmDelete(modList,modname,killModel)
-    GENmodel **modList;
-    IFuid modname;
-    GENmodel *killModel;
-
+ASRCmDelete(GENmodel **modList, IFuid modname, GENmodel *killModel)
 {
 
     ASRCmodel **model = (ASRCmodel**)modList;

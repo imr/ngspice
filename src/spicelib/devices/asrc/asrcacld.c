@@ -7,7 +7,6 @@ Author: 1988 Kanwar Jit Singh
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "asrcdefs.h"
 #include "sperror.h"

@@ -7,17 +7,13 @@ Author: 1987 Kanwar Jit Singh
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "asrcdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-ASRCdelete(model,name,fast)
-    GENmodel *model;
-    IFuid name;
-    GENinstance **fast;
+ASRCdelete(GENmodel *model, IFuid name, GENinstance **fast)
 
 {
     ASRCinstance **instPtr = (ASRCinstance**)fast;

@@ -7,7 +7,6 @@ Author: 1987 Kanwar Jit Singh
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "asrcdefs.h"
 #include "sperror.h"
@@ -18,9 +17,7 @@ int	asrc_nvals;
 
 /*ARGSUSED*/
 int
-ASRCload(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+ASRCload(GENmodel *inModel, CKTcircuit *ckt)
 {
 
     /* actually load the current voltage value into the 

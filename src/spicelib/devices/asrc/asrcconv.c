@@ -4,16 +4,13 @@ Author: 1988 Kanwar Jit Singh
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "asrcdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-ASRCconvTest( inModel, ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
 {
     ASRCmodel *model = (ASRCmodel *)inModel;
     ASRCinstance *here;

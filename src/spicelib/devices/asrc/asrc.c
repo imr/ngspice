@@ -4,7 +4,6 @@ Author: 1987 Kanwar Jit Singh
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "devdefs.h"
 #include "asrcdefs.h"

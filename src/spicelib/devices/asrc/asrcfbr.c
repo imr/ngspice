@@ -7,7 +7,6 @@ Author: 1987 Kanwar Jit Singh
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "ifsim.h"
 #include "asrcdefs.h"
@@ -16,10 +15,7 @@ Author: 1987 Kanwar Jit Singh
 
 
 int
-ASRCfindBr(ckt,inputModel,name)
-    CKTcircuit *ckt;
-    GENmodel *inputModel;
-    IFuid name;
+ASRCfindBr(CKTcircuit *ckt, GENmodel *inputModel, IFuid name)
 {
     ASRCinstance *here;
     ASRCmodel *model = (ASRCmodel*)inputModel;

@@ -12,7 +12,6 @@ Author: 1987 Kanwar Jit Singh
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -23,12 +22,7 @@ Author: 1987 Kanwar Jit Singh
 
 /* ARGSUSED */
 int
-ASRCask(ckt,instPtr,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *instPtr;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+ASRCask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue *select)
 {
     ASRCinstance *here = (ASRCinstance*)instPtr;
 
