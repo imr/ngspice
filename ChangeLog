@@ -1,3 +1,8 @@
+2001-12-05  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* configure.in: removed (unnecessary) macros to handle GNU getopt
+	(I'm an idiot!)
+
 2001-12-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
 	* configure.in, main.c: Forgot a bit to handle GNU getopt correctly

@@ -2,58 +2,7 @@
 
 noinst_LIBRARIES = libmisc.a
 
-EXTRA_libmisc_a_SOURCES = \
-		getopt1.c	\
-		getopt.c	\
-		getopt.h	\
-		alloc.c		\
-		alloc.h		\
-		dup2.c		\
-		dup2.h		\
-		ivars.c		\
-		ivars.h		\
-		missing_math.c	\
-		missing_math.h	\
-		mktemp.c	\
-		mktemp.h	\
-		printnum.c	\
-		printnum.h	\
-		string.c	\
-		stringutil.h	\
-		terminal.c	\
-		terminal.h	\
-		tilde.c		\
-		tilde.h		\
-		misc_time.c	\
-		misc_time.h	\
-		wlist.c	
 
-if HAVE_GNUGETOPT
-libmisc_a_SOURCES = \
-		alloc.c		\
-		alloc.h		\
-		dup2.c		\
-		dup2.h		\
-		ivars.c		\
-		ivars.h		\
-		missing_math.c	\
-		missing_math.h	\
-		mktemp.c	\
-		mktemp.h	\
-		printnum.c	\
-		printnum.h	\
-		string.c	\
-		stringutil.h	\
-		terminal.c	\
-		terminal.h	\
-		tilde.c		\
-		tilde.h		\
-		misc_time.c	\
-		misc_time.h	\
-		wlist.c	
-
-
-else
 libmisc_a_SOURCES = \
 		getopt1.c	\
 		getopt.c	\
@@ -80,7 +29,9 @@ libmisc_a_SOURCES = \
 		misc_time.h	\
 		wlist.c	
 
-endif
+## Note that the getopt files get compiled unconditionnaly but some
+## magic #define away the body of their own code if the compilation environment
+## provides an implementation of its own (like GNU libc)
 
 
 
