@@ -11,8 +11,7 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-INDdestroy(inModel)
-    GENmodel **inModel;
+INDdestroy(GENmodel **inModel)
 {
     INDmodel **model = (INDmodel**)inModel;
     INDinstance *here;

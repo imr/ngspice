@@ -13,9 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-INDacLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+INDacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     INDmodel *model = (INDmodel*)inModel;
     double val;
@@ -24,14 +22,16 @@ INDacLoad(inModel,ckt)
     for( ; model != NULL; model = model->INDnextModel) {
         for( here = model->INDinstances;here != NULL; 
                 here = here->INDnextInstance) {
+		
 	    if (here->INDowner != ARCHme) continue;
     
             val = ckt->CKTomega * here->INDinduct;
-            *(here->INDposIbrptr) += 1;
-            *(here->INDnegIbrptr) -= 1;
-            *(here->INDibrPosptr) += 1;
-            *(here->INDibrNegptr) -= 1;
-            *(here->INDibrIbrptr +1) -= val;
+	    
+            *(here->INDposIbrptr) +=  1;
+            *(here->INDnegIbrptr) -=  1;
+            *(here->INDibrPosptr) +=  1;
+            *(here->INDibrNegptr) -=  1;
+            *(here->INDibrIbrptr +1) -=  val;
         }
     }
     return(OK);

@@ -15,10 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-INDpzLoad(inModel,ckt,s)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    SPcomplex *s;
+INDpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     INDmodel *model = (INDmodel*)inModel;
     double val;
@@ -27,14 +24,16 @@ INDpzLoad(inModel,ckt,s)
     for( ; model != NULL; model = model->INDnextModel) {
         for( here = model->INDinstances;here != NULL; 
                 here = here->INDnextInstance) {
+	    
 	    if (here->INDowner != ARCHme) continue;
     
             val = here->INDinduct;
-            *(here->INDposIbrptr) += 1;
-            *(here->INDnegIbrptr) -= 1;
-            *(here->INDibrPosptr) += 1;
-            *(here->INDibrNegptr) -= 1;
-            *(here->INDibrIbrptr ) -= val * s->real;
+	    
+            *(here->INDposIbrptr) +=  1;
+            *(here->INDnegIbrptr) -=  1;
+            *(here->INDibrPosptr) +=  1;
+            *(here->INDibrNegptr) -=  1;
+            *(here->INDibrIbrptr ) -=   val * s->real;
             *(here->INDibrIbrptr +1) -= val * s->imag;
         }
     }

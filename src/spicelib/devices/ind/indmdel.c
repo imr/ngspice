@@ -12,10 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-INDmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+INDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     INDmodel **model = (INDmodel**)inModel;
     INDmodel *modfast = (INDmodel*)kill;

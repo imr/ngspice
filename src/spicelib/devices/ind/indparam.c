@@ -14,18 +14,30 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-INDparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+INDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     INDinstance *here = (INDinstance*)inst;
     switch(param) {
         case IND_IND:
             here->INDinduct = value->rValue;
             here->INDindGiven = TRUE;
+            break;    
+        case IND_TEMP:
+            here->INDtemp = value->rValue + CONSTCtoK;
+            here->INDtempGiven = TRUE;
             break;
+        case IND_DTEMP:
+            here->INDdtemp = value->rValue;
+            here->INDdtempGiven = TRUE;
+            break;
+        case IND_M:
+            here->INDm = value->rValue;
+            here->INDmGiven = TRUE;
+            break;
+        case IND_SCALE:
+            here->INDscale = value->rValue;
+            here->INDscaleGiven = TRUE;
+            break;	    
         case IND_IC:
             here->INDinitCond = value->rValue;
             here->INDicGiven = TRUE;

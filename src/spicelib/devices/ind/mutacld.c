@@ -14,9 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef MUTUAL
 int
-MUTacLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MUTacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     MUTmodel *model = (MUTmodel*)inModel;
     double val;

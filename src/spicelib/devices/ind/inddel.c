@@ -12,10 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-INDdelete(inModel,name,kill)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **kill;
+INDdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     INDmodel *model = (INDmodel*)inModel;
     INDinstance **fast = (INDinstance**)kill;

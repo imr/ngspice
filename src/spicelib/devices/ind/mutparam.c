@@ -15,11 +15,7 @@ Author: 1985 Thomas L. Quarles
 #ifdef MUTUAL
 /* ARGSUSED */
 int
-MUTparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+MUTparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     MUTinstance *here = (MUTinstance*)inst;
     switch(param) {

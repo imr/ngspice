@@ -15,9 +15,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-INDsSetup(info,inModel)
-    SENstruct *info;
-    GENmodel *inModel;
+INDsSetup(SENstruct *info, GENmodel *inModel)
 {
     INDmodel *model = (INDmodel*)inModel;
     INDinstance *here;

@@ -15,9 +15,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-INDsAcLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+INDsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     INDmodel *model = (INDmodel*)inModel;
     INDinstance *here;

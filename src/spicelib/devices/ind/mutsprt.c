@@ -18,9 +18,7 @@ Author: 1985 Thomas L. Quarles
 #ifdef MUTUAL
 /* ARGSUSED */
 void
-MUTsPrint(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit* ckt;
+MUTsPrint(GENmodel *inModel, CKTcircuit* ckt)
 {
     MUTmodel *model = (MUTmodel*)inModel;
     MUTinstance *here;

@@ -14,7 +14,9 @@ libind_a_SOURCES = 	\
 	indinit.h	\
 	inditf.h	\
 	indload.c	\
+	indmask.c	\
 	indmdel.c	\
+	indmpar.c	\
 	indparam.c	\
 	indpzld.c	\
 	indsacl.c	\
@@ -23,6 +25,7 @@ libind_a_SOURCES = 	\
 	indsprt.c	\
 	indsset.c	\
 	indsupd.c	\
+	indtemp.c	\
 	indtrunc.c	\
 	mutacld.c	\
 	mutask.c	\
@@ -33,7 +36,8 @@ libind_a_SOURCES = 	\
 	mutpzld.c	\
 	mutsetup.c	\
 	mutsprt.c	\
-	mutsset.c
+	mutsset.c	\
+	muttemp.c
 
 
 

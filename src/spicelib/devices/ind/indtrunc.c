@@ -13,10 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-INDtrunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+INDtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
     INDmodel *model = (INDmodel*)inModel;
     INDinstance *here;

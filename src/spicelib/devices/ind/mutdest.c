@@ -12,8 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef MUTUAL
 void
-MUTdestroy(inModel)
-    GENmodel **inModel;
+MUTdestroy(GENmodel **inModel)
 {
     MUTmodel **model = (MUTmodel**)inModel;
     MUTinstance *here;

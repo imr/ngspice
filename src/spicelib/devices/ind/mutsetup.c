@@ -19,11 +19,7 @@ Author: 1985 Thomas L. Quarles
 #ifdef MUTUAL
 /*ARGSUSED*/
 int
-MUTsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 {
     MUTmodel *model = (MUTmodel*)inModel;
     MUTinstance *here;
@@ -67,9 +63,6 @@ MUTsetup(matrix,inModel,ckt,states)
                     "%s: coupling to non-existant inductor %s.",
                     namarray);
             }
-
-            here->MUTfactor = here->MUTcoupling *sqrt(here->MUTind1->INDinduct *
-                    here->MUTind2->INDinduct);
 
 
 /* macro to make elements with built in test for out of memory */

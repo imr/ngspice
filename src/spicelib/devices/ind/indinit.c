@@ -10,7 +10,7 @@
 SPICEdev INDinfo = {
     {
         "Inductor",
-        "Inductors",
+        "Fixed inductor",
 
         &INDnSize,
         &INDnSize,
@@ -19,8 +19,8 @@ SPICEdev INDinfo = {
         &INDpTSize,
         INDpTable,
 
-        0,
-        NULL,
+        &INDmPTSize,
+        INDmPTable,
 
 #ifdef XSPICE
 /*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
@@ -40,12 +40,12 @@ SPICEdev INDinfo = {
     },
 
     DEVparam      : INDparam,
-    DEVmodParam   : NULL,
+    DEVmodParam   : INDmParam,
     DEVload       : INDload,
     DEVsetup      : INDsetup,
     DEVunsetup    : INDunsetup,
     DEVpzSetup    : INDsetup,
-    DEVtemperature: NULL,
+    DEVtemperature: INDtemp,
     DEVtrunc      : INDtrunc,
     DEVfindBranch : NULL,
     DEVacLoad     : INDacLoad,
@@ -55,7 +55,7 @@ SPICEdev INDinfo = {
     DEVdelete     : INDdelete,
     DEVsetic      : NULL,
     DEVask        : INDask,
-    DEVmodAsk     : NULL,
+    DEVmodAsk     : INDmAsk,
     DEVpzLoad     : INDpzLoad,
     DEVconvTest   : NULL,
     DEVsenSetup   : INDsSetup,
@@ -108,34 +108,37 @@ SPICEdev MUTinfo = {
 	0
     },
 
-    MUTparam,
-    NULL,
-    NULL,/* load handled by INDload */
-    MUTsetup,
-    NULL,
-    MUTsetup,
-    NULL,
-    NULL,
-    NULL,
-    MUTacLoad,
-    NULL,
-    MUTdestroy,
-    MUTmDelete,
-    MUTdelete,
-    NULL,
-    MUTask,
-    NULL,
-    MUTpzLoad,
-    NULL,
-    MUTsSetup,
-    NULL,
-    NULL,
-    NULL,
-    MUTsPrint,
-    NULL,
-    NULL,	/* DISTO */
-    NULL,	/* NOISE */
-
+    DEVparam      : MUTparam,
+    DEVmodParam   : NULL,
+    DEVload       : NULL,/* load handled by INDload */
+    DEVsetup      : MUTsetup,
+    DEVunsetup    : NULL,
+    DEVpzSetup    : MUTsetup,
+    DEVtemperature: MUTtemp,
+    DEVtrunc      : NULL,
+    DEVfindBranch : NULL,
+    DEVacLoad     : MUTacLoad,
+    DEVaccept     : NULL,
+    DEVdestroy    : MUTdestroy,
+    DEVmodDelete  : MUTmDelete,
+    DEVdelete     : MUTdelete,
+    DEVsetic      : NULL,
+    DEVask        : MUTask,
+    DEVmodAsk     : NULL,
+    DEVpzLoad     : MUTpzLoad,
+    DEVconvTest   : NULL,
+    DEVsenSetup   : MUTsSetup,
+    DEVsenLoad    : NULL,
+    DEVsenUpdate  : NULL,
+    DEVsenAcLoad  : NULL,
+    DEVsenPrint   : MUTsPrint,
+    DEVsenTrunc   : NULL,
+    DEVdisto      : NULL,	/* DISTO */
+    DEVnoise      :NULL,	/* NOISE */
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif  
     &MUTiSize,
     &MUTmSize
 

@@ -13,10 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef MUTUAL
 int
-MUTdelete(inModel,name,kill)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **kill;
+MUTdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     MUTmodel *model = (MUTmodel*)inModel;
     MUTinstance **fast = (MUTinstance**)kill;

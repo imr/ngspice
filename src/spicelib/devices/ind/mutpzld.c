@@ -16,10 +16,7 @@ Author: 1985 Thomas L. Quarles
 #ifdef MUTUAL
 /* ARGSUSED */
 int
-MUTpzLoad(inModel,ckt,s)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    SPcomplex *s;
+MUTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     MUTmodel *model = (MUTmodel*)inModel;
     double val;

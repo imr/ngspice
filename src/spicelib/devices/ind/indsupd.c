@@ -13,9 +13,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-INDsUpdate(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
 {
     INDmodel *model = (INDmodel*)inModel;
     INDinstance *here;

@@ -12,12 +12,8 @@ Author: 1985 Thomas L. Quarles
 
 /*ARGSUSED*/
 int
-INDask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+INDask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
+       IFvalue *select)
 {
     INDinstance *here = (INDinstance*)inst;
     double vr;
@@ -39,6 +35,18 @@ INDask(ckt,inst,which,value,select)
         case IND_IC:    
             value->rValue = here->INDinitCond;
             return(OK);
+        case IND_TEMP:    
+            value->rValue = here->INDtemp - CONSTCtoK;
+            return(OK);	 
+        case IND_DTEMP:    
+            value->rValue = here->INDdtemp;
+            return(OK);
+        case IND_M:    
+            value->rValue = here->INDm;
+            return(OK);
+        case IND_SCALE:    
+            value->rValue = here->INDscale;
+            return(OK);	    	    	       
         case IND_CURRENT :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
                 errMsg = MALLOC(strlen(msg)+1);
@@ -47,6 +55,7 @@ INDask(ckt,inst,which,value,select)
                 return(E_ASKCURRENT);
             } else {
                 value->rValue = *(ckt->CKTrhsOld + here->INDbrEq);
+		value->rValue *= here->INDm;
             }
             return(OK);
         case IND_POWER :
@@ -58,6 +67,7 @@ INDask(ckt,inst,which,value,select)
             } else {
                 value->rValue = *(ckt->CKTrhsOld + here->INDbrEq) *
                         *(ckt->CKTstate0+here->INDvolt);
+		value->rValue *= here->INDm;	
             }
             return(OK);
         case IND_QUEST_SENS_DC:

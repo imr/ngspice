@@ -1,27 +1,25 @@
 /**********
-Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1985 Thomas L. Quarles
+Copyright 2003 Paolo Nenzi
+Author: 2003 Paolo Nenzi
 **********/
-
-/* loop through all the devices and 
- * allocate parameter #s to design parameters 
+/*
  */
 
+
 #include "ngspice.h"
-#include "ifsim.h"
-#include "smpdefs.h"
 #include "cktdefs.h"
 #include "inddefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
-#ifdef MUTUAL
+
 /*ARGSUSED*/
 int
-MUTsSetup(SENstruct *info, GENmodel *inModel)
+MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
 {
     MUTmodel *model = (MUTmodel*)inModel;
     MUTinstance *here;
+    double ind1, ind2;
 
     /*  loop through all the inductor models */
     for( ; model != NULL; model = model->MUTnextModel ) {
@@ -31,14 +29,16 @@ MUTsSetup(SENstruct *info, GENmodel *inModel)
                 here=here->MUTnextInstance) {
 	    if (here->MUTowner != ARCHme) continue;
 
-            if(here->MUTsenParmNo){
-                here->MUTsenParmNo = ++(info->SENparms);
-            }
-
-
-        }
+            /* Value Processing for mutual inductors */
+	   
+	    ind1 = here->MUTind1->INDinduct;
+	    ind2 = here->MUTind2->INDinduct;
+	    
+	    
+            here->MUTfactor = here->MUTcoupling * sqrt(ind1 * ind2); 
+		     
+	}
     }
     return(OK);
 }
-#endif /* MUTUAL */
 

@@ -11,11 +11,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-INDsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the inductor structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -27,7 +23,51 @@ INDsetup(matrix,inModel,ckt,states)
 
     /*  loop through all the inductor models */
     for( ; model != NULL; model = model->INDnextModel ) {
-
+ 
+   /* Default Value Processing for Model Parameters */
+        if (!model->INDmIndGiven) {
+             model->INDmInd = 0.0;
+        }
+	if (!model->INDtnomGiven) {
+             model->INDtnom = ckt->CKTnomTemp;
+        }
+	if (!model->INDtc1Given) {
+             model->INDtempCoeff1 = 0.0;
+        }
+        if (!model->INDtc2Given) {
+             model->INDtempCoeff2 = 0.0;
+        }
+        if (!model->INDcsectGiven){
+             model->INDcsect = 0.0;
+        }
+        if (!model->INDlengthGiven) {
+             model->INDlength = 0.0;
+        }
+        if (!model->INDnGiven) {
+             model->INDn = 0.0;
+        }
+        if (!model->INDmuGiven) {
+             model->INDmu = 0.0;
+        }
+                
+        if (!model->INDmIndGiven) {
+            if((model->INDlengthGiven) 
+              && (model->INDlength > 0.0)) {
+                
+		if (model->INDmuGiven)
+                    model->INDmInd = ((model->INDmu * CONSTmuZero) 
+		    * model->INDn * model->INDn * model->INDcsect)
+		    / model->INDlength;
+                   
+		   else
+                   model->INDmInd = (CONSTmuZero 
+		    * model->INDn * model->INDn * model->INDcsect)
+		    / model->INDlength;
+		   
+            } else {
+                model->INDmInd = 0.0;
+            }
+        }
         /* loop through all the instances of the model */
         for (here = model->INDinstances; here != NULL ;
                 here=here->INDnextInstance) {
@@ -63,9 +103,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-INDunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+INDunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     INDmodel *model;
     INDinstance *here;

@@ -15,15 +15,14 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-INDload(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+INDload(GENmodel *inModel, CKTcircuit *ckt)
 {
     INDmodel *model = (INDmodel*)inModel;
     INDinstance *here;
     double veq;
     double req;
     int error;
+    
 #ifdef MUTUAL
     MUTinstance *muthere;
     MUTmodel *mutmodel;
@@ -37,6 +36,7 @@ INDload(inModel,ckt)
         /* loop through all the instances of the model */
         for (here = model->INDinstances; here != NULL ;
                 here=here->INDnextInstance) {
+	    
 	    if (here->INDowner != ARCHme) continue;
 
             if(!(ckt->CKTmode & (MODEDC|MODEINITPRED))) {
@@ -59,16 +59,19 @@ INDload(inModel,ckt)
         /* loop through all the instances of the model */
         for (muthere = mutmodel->MUTinstances; muthere != NULL ;
                 muthere=muthere->MUTnextInstance) {
+	    
 	    if (muthere->MUTowner != ARCHme) continue;
 
             if(!(ckt->CKTmode& (MODEDC|MODEINITPRED))) {
-                *(ckt->CKTstate0 + muthere->MUTind1->INDflux) +=
-                    muthere->MUTfactor * *(ckt->CKTrhsOld+
+                *(ckt->CKTstate0 + muthere->MUTind1->INDflux)  +=
+                    muthere->MUTfactor * *(ckt->CKTrhsOld +
                     muthere->MUTind2->INDbrEq);
-                *(ckt->CKTstate0 + muthere->MUTind2->INDflux) +=
-                    muthere->MUTfactor * *(ckt->CKTrhsOld+
+		    
+                *(ckt->CKTstate0 + muthere->MUTind2->INDflux)  +=
+                    muthere->MUTfactor * *(ckt->CKTrhsOld +
                     muthere->MUTind1->INDbrEq);
             }
+	    
             *(muthere->MUTbr1br2) -= muthere->MUTfactor*ckt->CKTag[0];
             *(muthere->MUTbr2br1) -= muthere->MUTfactor*ckt->CKTag[0];
         }
@@ -85,8 +88,8 @@ INDload(inModel,ckt)
 
 #endif /*MUTUAL*/
             if(ckt->CKTmode & MODEDC) {
-                req = 0;
-                veq = 0;
+                req = 0.0;
+                veq = 0.0;
             } else {
 #ifndef PREDICTOR
                 if(ckt->CKTmode & MODEINITPRED) {
@@ -104,16 +107,19 @@ INDload(inModel,ckt)
                 error=NIintegrate(ckt,&req,&veq,here->INDinduct,here->INDflux);
                 if(error) return(error);
             }
+	    
             *(ckt->CKTrhs+here->INDbrEq) += veq;
-            if(ckt->CKTmode & MODEINITTRAN) {
+            
+	    if(ckt->CKTmode & MODEINITTRAN) {
                 *(ckt->CKTstate1+here->INDvolt) = 
                     *(ckt->CKTstate0+here->INDvolt);
             }
-            *(here->INDposIbrptr) += 1;
-            *(here->INDnegIbrptr) -= 1;
-            *(here->INDibrPosptr) += 1;
-            *(here->INDibrNegptr) -= 1;
-            *(here->INDibrIbrptr) -= req;
+	    
+            *(here->INDposIbrptr) +=  1;
+            *(here->INDnegIbrptr) -=  1;
+            *(here->INDibrPosptr) +=  1;
+            *(here->INDibrNegptr) -=  1;
+            *(here->INDibrIbrptr) -=  req;
         }
     }
     return(OK);

@@ -14,12 +14,8 @@ Author: 1985 Thomas L. Quarles
 
 /*ARGSUSED*/
 int
-MUTask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+MUTask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
+       IFvalue *select)
 {
     MUTinstance *here = (MUTinstance*)inst;
     double vr;

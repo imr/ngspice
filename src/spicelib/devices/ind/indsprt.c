@@ -15,9 +15,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 void
-INDsPrint(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+INDsPrint(GENmodel *inModel, CKTcircuit *ckt)
 {
     INDmodel *model = (INDmodel*)inModel;
     INDinstance *here;

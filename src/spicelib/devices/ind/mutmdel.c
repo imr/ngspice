@@ -13,10 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef MUTUAL
 int
-MUTmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+MUTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     MUTmodel **model = (MUTmodel**)inModel;
     MUTmodel *modfast = (MUTmodel*)kill;
