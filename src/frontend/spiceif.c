@@ -1166,6 +1166,12 @@ do {\
     _foo(ckt->CKTdeltaList,double,-1);
 
     _foo(ckt->CKTbreaks,double,ckt->CKTbreakSize);
+	if(ckt->CKTbreakSize == 2 && ckt->CKTbreaks[0] == ckt->CKTbreaks[1]) {
+		ckt->CKTbreaks[0] =
+			((TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs)->TRANfinalTime;
+		ckt->CKTbreaks[1] =
+			((TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs)->TRANfinalTime;
+	}
     
 #if 0
 	_foo((TSKtask *)ft_curckt->ci_curTask,TSKtask,1);
