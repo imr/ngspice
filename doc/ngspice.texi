@@ -2518,7 +2518,7 @@ If both @option{temp} and @option{dtemp} are specified, the latter is ignored.
 
 
 
-@node  Coupled (Mutual) Inductors, Switches, Inductors, Elementary Devices
+@node  Coupled (Mutual) Inductors, Switches, Inductor model, Elementary Devices
 @subsection  Coupled (Mutual) Inductors
 
  General form:
