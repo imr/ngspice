@@ -794,7 +794,7 @@ static int plot_getvector TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 
   if (argc < 4 || argc > 6) {
     Tcl_SetResult(interp,
-        "Wrong # args. spice::plot_getvector spice_variable vecName ?start? ?end?",
+        "Wrong # args. spice::plot_getvector plot spice_variable vecName ?start? ?end?",
         TCL_STATIC);
     return TCL_ERROR;
   }
