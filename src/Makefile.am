@@ -18,27 +18,16 @@ DYNAMIC_DEVICELIBS = 			\
 	devices/bsim1/libbsim1.la	\
 	devices/bsim2/libbsim2.la	\
 	devices/bsim3/libbsim3.la	\
-	devices/bsim4/libbsim4.la	\
 	devices/bsim3v1/libbsim3v1.la	\
 	devices/bsim3v2/libbsim3v2.la	\
+	devices/bsim4/libbsim4.la	\
 	devices/cap/libcap.la		\
 	devices/cccs/libcccs.la		\
 	devices/ccvs/libccvs.la		\
-	devices/csw/libcsw.la		\
-	devices/devsup/libdevsup.la	\
-	devices/dio/libdio.la		\
-	devices/disto/libdisto.la	\
-	devices/ind/libind.la		\
-	devices/isrc/libisrc.la		\
-	devices/jfet/libjfet.la		\
-	devices/jfet2/libjfet2.la	\
-	devices/ltra/libltra.la		\
-	devices/cccs/libcccs.la		\
 	devices/ccvs/libccvs.la		\
 	devices/csw/libcsw.la		\
 	devices/devsup/libdevsup.la	\
 	devices/dio/libdio.la		\
-	devices/disto/libdisto.la	\
 	devices/ind/libind.la		\
 	devices/isrc/libisrc.la		\
 	devices/jfet/libjfet.la		\

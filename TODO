@@ -43,10 +43,6 @@ three only slighty differing implementations
 Separate frontend commands from supporting code.  Command files
 start with com_*. [PARTIAL]
 
-Move src/devices/disto into src/maths/partialderiv.  Partial
-derivatives are math functions and should be classified under that
-directory.
-
 
 Testability
 -----------
@@ -59,6 +55,9 @@ src/maths/sparse.
 
 Add tests for all functions in the polynomial library in
 src/maths/poly.
+
+Add tests for all functions in the derivative library in
+src/maths/deriv.
 
 Add more circuit tests into the tests directory.
 
