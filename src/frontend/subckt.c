@@ -584,7 +584,7 @@ numnodes(char *name)
     struct subs *sss;
     char *s, *t, buf[4 * BSIZE_SP];
     wordlist *wl;
-    int n, i;
+    int n, i, gotit;
 
     while (*name && isspace(*name))
 	name++;
@@ -612,6 +612,41 @@ numnodes(char *name)
         return (sss->su_numargs);
     }
     n = inp_numnodes(c);
+    
+    /* Added this code for variable number of nodes on BSIM3SOI devices  */
+    /* The consequence of this code is that the value returned by the    */
+    /* inp_numnodes(c) call must be regarded as "maximun number of nodes */
+    /* for a given device type.                                          */
+    /* Paolo Nenzi Jan-2001                                              */
+    
+    /* I hope that works, this code is very very untested */
+    
+	if (c=='m') {		/* IF this is a mos */
+		
+		i = 0;
+		s = buf;
+		gotit = 0;
+		t = gettok(&s);	/* Skip component name */
+		while ((i < n) && (*s) && !gotit) {
+			t = gettok(&s);
+    			for (wl = modnames; wl; wl = wl->wl_next)
+     		   if (eq(t, wl->wl_word)) 
+     		   	gotit = 1;
+     		i++;
+		}
+		
+	/* Note: node checks must be done on #_of_node-1 because the */
+	/* "while" cicle increments the counter even when a model is */
+	/* recognized. This code may be better!                      */
+	 		
+     if (i < 5) {
+     	fprintf(cp_err, "Error: too few nodes for MOS: %s\n", name);
+     	return(0);
+    		}
+    	return(i-1); /* compesate the unnecessary inrement in the while cicle */
+    	}
+    
+    
     if (nobjthack || (c != 'q'))
         return (n);
     for (s = buf, i = 0; *s && (i < 4); i++)
@@ -931,7 +966,7 @@ inp_numnodes(char c)
         case 'j': return (3);
         case 'k': return (0);
         case 'l': return (2);
-        case 'm': return (7);
+        case 'm': return (7); /* This means that 7 is the maximun number of nodes */
         case 'o': return (4);
         case 'q': return (4);
         case 'r': return (2);

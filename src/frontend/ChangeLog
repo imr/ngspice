@@ -1,3 +1,10 @@
+2001-01-23  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* subckt.c: added some code (very, very experimental)
+	to support mos devices with variable number of nodes
+	(5 to 7) in subcircuit expansion. This hack is necessary
+	since SOI devices can have up to 7 nodes.
+
 2000-11-07  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* com_history, com_alias, parser/cshpar.c, parser/complete.c:
