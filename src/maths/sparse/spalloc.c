@@ -137,8 +137,9 @@ spCreate(int Size, int Complex, int *pError)
         return NULL;
     }
 
+
+#if 0  /* pn: skipped for cider */
     /* Test for valid type. */
-#if !REAL
     if (!Complex) {
 	*pError = spPANIC;
 	return NULL;
