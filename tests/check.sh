@@ -3,7 +3,7 @@
 NGSPICE=$1
 TEST=$2
 
-DIFFPIPE="Analysis|CPU|memory|Date|Note"
+DIFFPIPE="Analysis|CPU|memory|Date|Note|Sun|Mon|Tue|Wed|Thu|Fri|Sat|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec"
 
 testname=$(basename $TEST .cir)
 testdir=$(dirname $TEST)
