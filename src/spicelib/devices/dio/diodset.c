@@ -41,10 +41,6 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 	double cdiff2,cdiff3;
 	double cjunc1,cjunc2,cjunc3;
         double cd;
-        double sqrt_ikf;
-        double ikf_area_m;
-	double sqrt_ikr;
-        double ikr_area_m;
 	double czeroSW;
 	double cjunc1SW,cjunc2SW,cjunc3SW;
 
