@@ -53,6 +53,7 @@ typedef struct sMOS2instance {
     unsigned MOS2vonGiven   :1;
     unsigned MOS2vdsatGiven :1;
     unsigned MOS2tempGiven  :1; /* per-instance temperature specified? */
+    unsigned MOS2dtempGiven :1; /* per-instance temperature difference specified? */
     unsigned MOS2sens_l :1;   /* field which indicates whether  
                                   length of the mosfet is a design
                                   parameter or not */
@@ -139,6 +140,7 @@ typedef struct sMOS2instance {
 #define MOS2dphibd_dw MOS2sens + 69
 
     double MOS2temp;        /* temperature at which this instance operates */
+    double MOS2dtemp;       /* difference of instance temperature from circuit temperature */
     double MOS2tTransconductance;   /* temperature corrected transconductance*/
     double MOS2tSurfMob;            /* temperature corrected surface mobility */
     double MOS2tPhi;                /* temperature corrected Phi */
@@ -491,10 +493,11 @@ typedef struct sMOS2model {       /* model structure for a resistor */
 #define MOS2_L_SENS_CPLX        74
 #define MOS2_L_SENS_DC          75
 #define MOS2_W_SENS_DC          76
-#define MOS2_TEMP          77
-#define MOS2_SOURCERESIST      78
-#define MOS2_DRAINRESIST       79
-#define MOS2_M 80
+#define MOS2_TEMP               77
+#define MOS2_SOURCERESIST       78
+#define MOS2_DRAINRESIST        79
+#define MOS2_M                  80
+#define MOS2_DTEMP              81
 
 /* model paramerers */
 #define MOS2_MOD_VTO 101

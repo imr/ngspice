@@ -2,6 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 #include "ngspice.h"
@@ -12,9 +14,7 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 void
-MOS2sPrint(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS2sPrint(GENmodel *inModel, CKTcircuit *ckt)
         /* Pretty print the sensitivity info for all the MOS2 
          * devices  in the circuit.
          */

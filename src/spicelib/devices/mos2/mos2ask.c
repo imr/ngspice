@@ -15,12 +15,8 @@ Modified: 2000 AlansFixes
 
 /*ARGSUSED*/
 int
-MOS2ask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+MOS2ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
+        IFvalue *select)
 {
     MOS2instance *here = (MOS2instance *)inst;
     double vr;
@@ -32,6 +28,9 @@ MOS2ask(ckt,inst,which,value,select)
     switch(which) {
         case MOS2_TEMP:
             value->rValue = here->MOS2temp-CONSTCtoK;
+            return(OK);
+        case MOS2_DTEMP:
+            value->rValue = here->MOS2dtemp;
             return(OK);
         case MOS2_CGS:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS2capgs);

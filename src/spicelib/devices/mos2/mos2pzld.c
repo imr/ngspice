@@ -15,10 +15,7 @@ Modified: 2000 AlansFixes
 
 
 int
-MOS2pzLoad(inModel,ckt,s)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    SPcomplex *s;
+MOS2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     MOS2model *model = (MOS2model *)inModel;
     MOS2instance *here;

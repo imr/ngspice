@@ -11,11 +11,8 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-MOS2mAsk(ckt,inModel,param,value)
-    CKTcircuit	*ckt;
-    GENmodel *inModel;
-    int param;
-    IFvalue *value;
+MOS2mAsk(CKTcircuit *ckt, GENmodel *inModel, int param,
+         IFvalue *value)
 {
     MOS2model *model = (MOS2model *)inModel;
     switch(param) {

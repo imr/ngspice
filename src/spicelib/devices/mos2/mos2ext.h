@@ -4,7 +4,6 @@ Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
 **********/
 
-#ifdef __STDC__
 extern int MOS2acLoad(GENmodel*,CKTcircuit*);
 extern int MOS2ask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int MOS2mAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
@@ -30,29 +29,3 @@ extern int MOS2disto(int,GENmodel*,CKTcircuit*);
 extern int MOS2noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 
 extern int MOS2dSetup(GENmodel*,CKTcircuit*);
-
-#else /* stdc */
-extern int MOS2acLoad();
-extern int MOS2ask();
-extern int MOS2mAsk();
-extern int MOS2convTest();
-extern int MOS2delete();
-extern void MOS2destroy();
-extern int MOS2getic();
-extern int MOS2load();
-extern int MOS2mDelete();
-extern int MOS2mParam();
-extern int MOS2param();
-extern int MOS2pzLoad();
-extern int MOS2sAcLoad();
-extern int MOS2sLoad();
-extern void MOS2sPrint();
-extern int MOS2sSetup();
-extern int MOS2sUpdate();
-extern int MOS2setup();
-extern int MOS2unsetup();
-extern int MOS2temp();
-extern int MOS2trunc();
-extern int MOS2disto();
-extern int MOS2noise();
-#endif /* stdc */

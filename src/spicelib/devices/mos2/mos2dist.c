@@ -11,11 +11,7 @@ Author: 1988 Jaijeet S Roychowdhury
 #include "suffix.h"
 
 int
-MOS2disto(mode,genmodel,ckt)
- GENmodel *genmodel;
- CKTcircuit *ckt;
- int mode;
-
+MOS2disto(int mode,GENmodel *genmodel, CKTcircuit *ckt)
 /* assuming here that ckt->CKTomega has been initialised to 
  * the correct value
  */

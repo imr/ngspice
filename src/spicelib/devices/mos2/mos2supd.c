@@ -1,6 +1,8 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 /* update the  charge sensitivities and their derivatives */
@@ -13,9 +15,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-MOS2sUpdate(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS2sUpdate(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS2model *model = (MOS2model *)inModel;
     MOS2instance *here;

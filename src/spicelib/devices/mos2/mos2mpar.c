@@ -14,10 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-MOS2mParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+MOS2mParam(int param, IFvalue *value, GENmodel *inModel)
 {
     MOS2model *model = (MOS2model *)inModel;
     switch(param) {

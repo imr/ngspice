@@ -16,17 +16,18 @@ Modified: 2000 AlansFixes
 
 /* ARGSUSED */
 int
-MOS2param(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+MOS2param(int param, IFvalue *value, GENinstance *inst,
+          IFvalue *select)
 {
     MOS2instance *here = (MOS2instance *)inst;
     switch(param) {
         case MOS2_TEMP:
             here->MOS2temp = value->rValue+CONSTCtoK;
             here->MOS2tempGiven = TRUE;
+            break;
+        case MOS2_DTEMP:
+            here->MOS2dtemp = value->rValue;
+            here->MOS2dtempGiven = TRUE;
             break;
         case MOS2_M:
             here->MOS2m = value->rValue;

@@ -12,10 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-MOS2mDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+MOS2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     MOS2model **model = (MOS2model **)inModel;
     MOS2model *modfast = (MOS2model *)kill;

@@ -13,11 +13,7 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 int
-MOS2setup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+MOS2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the MOS2 device structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -238,9 +234,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-MOS2unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS2unsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS2model *model;
     MOS2instance *here;

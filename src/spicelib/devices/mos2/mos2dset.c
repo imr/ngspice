@@ -21,9 +21,7 @@ static double sig1[4] = {1.0, -1.0, 1.0, -1.0};
 static double sig2[4] = {1.0,  1.0,-1.0, -1.0};
 
 int
-MOS2dSetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS2dSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */

@@ -11,8 +11,7 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-MOS2destroy(inModel)
-    GENmodel **inModel;
+MOS2destroy(GENmodel **inModel)
 {
     MOS2model **model = (MOS2model **)inModel;
     MOS2instance *here;

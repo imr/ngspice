@@ -10,9 +10,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-MOS2convTest(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS2convTest(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS2model *model = (MOS2model *)inModel;
     MOS2instance *here;

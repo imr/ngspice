@@ -15,9 +15,7 @@ Modified: 2000 AlansFixes
 #define EPSSIL (11.7 * 8.854214871e-12)
 
 int
-MOS2temp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS2temp(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS2model *model = (MOS2model *)inModel;
     MOS2instance *here;
@@ -130,8 +128,12 @@ MOS2temp(inModel,ckt)
 	    if (here->MOS2owner != ARCHme) continue;
 
             /* perform the parameter defaulting */
+            if(!here->MOS2dtempGiven) {
+                here->MOS2dtemp = 0.0;
+            }
+
             if(!here->MOS2tempGiven) {
-                here->MOS2temp = ckt->CKTtemp;
+                here->MOS2temp = ckt->CKTtemp + here->MOS2dtemp;
             }
             here->MOS2mode = 1;
             here->MOS2von = 0;

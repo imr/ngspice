@@ -13,10 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-MOS2trunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+MOS2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
     MOS2model *model = (MOS2model *)inModel;
     MOS2instance *here;
