@@ -4,12 +4,16 @@ namespace eval viewer {
 	variable wNames ".tclspice"
 	variable viewCnt 1
 
+	variable vecUpdate_flag 0
+
 	variable viewTraces
 	variable viewTraceScale
 	variable view_w
 	variable view_traces
 	variable view_type
 	variable view_plotName
+	variable view_traceCnt
+	variable view_Xscale
 
 	variable meas_dx
 	variable meas_dy
@@ -24,7 +28,7 @@ namespace eval viewer {
 		variable view_w
 
 		set w [toplevel "${wNames}${viewCnt}"]
-		set plotName [spicewish::vectors::plotTypeName $plotNum]
+		set plotName [spicewish::vectors::get_plotTypeName $plotNum]
 
 		wm title $w "\[$w\] - $plotName - [spice::plot_title $plotNum]"
 		
@@ -135,64 +139,90 @@ namespace eval viewer {
 		return [array names view_w]
 	}
 
-	proc plot { args } {
-		eval "oplot 0 $args"
+	proc plot { args } { 
+
+		if {$args == ""} {return}
+
+		spice::bltplot $args
 	}
 
-	proc oplot { plotNum args } {
+	proc oplot { plotTypeName args } {
+		
+		if {$args == ""} {return}
+
+		set currentPlotType [spice::getplot]
+
+		spice::setplot $plotTypeName
+
+		spice::bltplot $args
+
+		spice::setplot $currentPlotType
+	}
+
+	proc newplot { plotNum args } {
 
 		variable view_w
 		variable view_traces
 		variable view_type
 		variable view_plotName
-
-		eval "set args \[spicewish::vectors::validVectorList $plotNum $args\]"	
-
+		variable view_traceCnt
+	
 		if {$args == ""} {return}
-		
+	
 		# create a new viewer
 		set viewNum [create $plotNum]
 		set w $view_w($viewNum)
-		set view_traces($viewNum) ""
-		set view_type($viewNum) "plot"
-		set view_plotName($viewNum) [spicewish::vectors::plotTypeName $plotNum]
+                set view_traces($viewNum) ""
+                set view_type($viewNum) "plot"
+                set view_plotName($viewNum) [spicewish::vectors::get_plotTypeName $plotNum]
+		set view_traceCnt 0
 
-		# add/update default scale 
-		set defBLTvec [spicewish::vectors::create $plotNum [spicewish::vectors::defaultScale $plotNum]]
-
-		if {$defBLTvec == ""} {
-         		puts "Error: plotting '[spicewish::vectors::defaultScale $plotNum]'"
-                	return
-              	}
-
-		set traceCnt 0
-		#loop for all vectors
-		foreach vectorName $args {
-
-			# don't allow duplicate traces
-
-			set BLTvec [spicewish::vectors::create $plotNum "$vectorName"]
-
-			if {$BLTvec == ""} {
-				puts "Error: plotting '$vectorName'"
-				continue
-			}
-
-			lappend view_traces($viewNum) $vectorName
-
-			$w.g element create "$vectorName" \
-				-xdata $defBLTvec \
-				-ydata $BLTvec \
-				-symbol "circle" \
-		    		-linewidth 2 \
-		    		-pixels 3 \
-				-color [trace_colour $traceCnt]
-	
-			incr traceCnt
-		}
-		return $w
+		eval "addplot $viewNum $plotNum $args"
 	}
+	
+	proc addplot { viewNum plotNum args } { 
+		
+		variable view_w
+		variable view_traces
+		variable view_type
+		variable view_plotName
+		variable view_traceCnt
+		variable view_Xscale
+		
+		if {$args == ""} {return}
 
+		set w $view_w($viewNum)
+
+		set xName  [lindex $args 0]
+	        set xType  [lindex $args 1]
+	        set xUnits [lindex $args 2]
+	        set yName  [lindex $args 3]
+	        set yType  [lindex $args 4]
+	        set yUnits [lindex $args 5]
+	
+		set xVarName [spicewish::vectors::create_vecName $plotNum $xName]
+		set yVarName [spicewish::vectors::create_vecName $plotNum $yName]
+	
+		eval $xVarName set ::spice::X_Data
+		eval $yVarName set ::spice::Y_Data
+	
+		lappend view_traces($viewNum) $yName
+		set view_Xscale($viewNum) $xName
+
+                $w.g element create "$yName" \
+                      	-xdata $xVarName \
+                        -ydata $yVarName \
+                       	-symbol "circle" \
+                      	-linewidth 2 \
+                      	-pixels 3 \
+                       	-color [trace_colour $view_traceCnt]
+
+		$w.g axis configure x -title $xName
+
+          	incr view_traceCnt
+	#	return $w
+	}
+	
 	proc iplot  { args } {
 		variable view_type
 
@@ -213,16 +243,6 @@ namespace eval viewer {
 		foreach viewNum [array names view_w] {
 			if { $name == $view_w($viewNum) } {
 				return $viewNum
-			}
-		}
-		return -1
-	}
-
-	proc get_plotNum { plotTypeName } {
-
-		for {set i 0} {$i < [spicewish::vectors::avaliable_plots]} {incr i} {
-			if {[spicewish::vectors::plotTypeName $i] == $plotTypeName} { 
-				return $i
 			}
 		}
 		return -1
@@ -250,7 +270,7 @@ namespace eval viewer {
 
 	proc stepCallBack { } {
 
-		set currentPlotName [spicewish::vectors::plotTypeName 0]
+		set currentPlotName [spicewish::vectors::get_plotTypeName 0]
 	
 		#puts $::spice::steps_completed
 		# hack !!!
@@ -259,22 +279,90 @@ namespace eval viewer {
 
 	}
 
+	proc save_postscript { w } { 
+			variable view_plotName
+
+			if {![winfo exists $w]} {
+				puts stderr "Error: '$w' doesn't exist"
+				return
+			}
+			
+			set plotNum [spicewish::viewer::get_index $w]
+			if {$plotNum == -1} {
+				puts stderr "Error: invalid viewer"
+				return
+			}
+			
+			set fileName "[string range $w 1 end].ps"
+
+			set plotNum [spicewish::vectors::get_plotNum $view_plotName($plotNum)]
+			set w "$w.g"
+
+			# save current backround colours etc
+			set prevSetting(title)         [$w cget -title]
+			set prevSetting(plotrelief)    [$w cget -plotrelief]
+			set prevSetting(bg)            [$w cget -background]
+			set prevSetting(xaxis_bg)      [$w xaxis cget -background]
+			set prevSetting(yaxis_bg)      [$w xaxis cget -background]
+			set prevSetting(legend_relief) [$w legend cget -relief]
+			set prevSetting(legend_bg)     [$w legend cget -background]
+			
+
+			# apply white background
+			$w configure -title [spice::plot_title $plotNum]
+			$w configure -plotrelief "flat"
+			$w configure -background "white"
+			$w xaxis configure -background "white"
+			$w yaxis configure -background "white"
+			$w legend configure -relief "flat"
+			$w legend configure -background "white"
+			
+
+			# save postscript
+			$w postscript output $fileName -maxpect 1
+
+			# reapply inital colours
+			$w configure -title $prevSetting(title)
+			$w configure -plotrelief $prevSetting(plotrelief)
+			$w configure -background $prevSetting(bg)
+                        $w xaxis configure -background $prevSetting(xaxis_bg)
+                        $w yaxis configure -background $prevSetting(yaxis_bg)
+			$w legend configure -relief $prevSetting(legend_relief)
+			$w legend configure -background $prevSetting(legend_bg)
+	
+
+			puts stdout "created '$fileName'"	
+	}
+
 	proc Update { } {
 		variable view_traces
 		variable view_plotName
+		variable vecUpdate_flag
+		variable view_Xscale
+		variable view_plotName
+		
+		set vecUpdate_flag 1
 
 		foreach index [names] {
 
 			set plotTypeName $view_plotName($index)
-			set plotNum [get_plotNum $plotTypeName]
-			
-			# default scale
-			spicewish::vectors::create $plotNum [spicewish::vectors::defaultScale $plotNum]
+			set plotNum [spicewish::vectors::get_plotNum $plotTypeName]
+							
+			foreach trace "$view_traces($index) $view_Xscale($index)" {
+				set currentPlot [spice::getplot]
+				spice::setplot $view_plotName($index)
 
-			foreach trace $view_traces($index) {
-				spicewish::vectors::create $plotNum $trace
+				::spice::X_Data set ""
+				spice::bltplot $trace
+
+				eval $\{::$view_plotName($index):v:$trace\} set \"::spice::Y_Data\"
+
+				spice::setplot $currentPlot
 			}
+
 		}
+		set vecUpdate_flag 0
+		return ""
 	}
 	
 	proc Destroy { w } {
@@ -307,8 +395,37 @@ namespace eval vectors {
 		if {[lsearch -exact $list $name] != -1} {
 			return $name
 		} else {
-			return "" 
+			::spice::Y_Data set ""
+                       	uplevel #0 ::spice::bltplot $name
+
+                       	if {[::spice::Y_Data length] != 0} {
+                               	return $name
+                       	} else {
+				return ""
+			}
 		}
+	}
+
+	proc get_plotNum { plotTypeName } {
+
+		for {set i 0} {$i < [avaliable_plotNums]} {incr i} {
+                        if {[get_plotTypeName $i] == $plotTypeName} {
+                                return $i
+                        }
+                }
+                return -1
+	}
+
+	proc get_plotTypeName { plotNum } {
+		return [spice::plot_typename $plotNum]
+	}
+
+	proc avaliable_plotNames { } {
+		
+		for {set plotNum 0} {$plotNum < [avaliable_plotNums]} {incr plotNum} {
+			lappend list [get_plotTypeName $plotNum]	
+		}
+		return $list
 	}
 
 	proc validVectorList { plotNum args } {
@@ -324,21 +441,16 @@ namespace eval vectors {
 
 		return $validList
 	}
-
-	proc plotTypeName { plot } {
-		# plot type eg tran1, dc1
-		return [spice::plot_typename $plot]
-	}
 	
-	proc type { plot name } {
-		set spice_data [spice::spice_data $plot] ;# "{a0 voltage}{time time}"
+	proc type { plotNum name } {
+		set spice_data [spice::spice_data $plotNum] ;# "{a0 voltage}{time time}"
 
 		set name       [string tolower $name]
 		set spice_data [string tolower $spice_data]
 
-		foreach plot $spice_data {
-			set p_name [lindex $plot 0] ;# node name
-			set p_type [lindex $plot 1] ;# voltage/current/time
+		foreach plot_data $spice_data {
+			set p_name [lindex $plot_data 0] ;# node name
+			set p_type [lindex $plot_data 1] ;# voltage/current/time
 
 			if {$p_name == $name} {
 				return $p_type
@@ -347,7 +459,7 @@ namespace eval vectors {
 		return ""
 	}
 
-	proc avaliable_plots { } {
+	proc avaliable_plotNums { } {
 		set cnt 0
 		while {![catch { spice::plot_name $cnt }]} {
 			incr cnt
@@ -355,25 +467,23 @@ namespace eval vectors {
 		return $cnt
 	}
 	
-	proc defaultScale { plot } {
+	proc defaultScale { plotNum } {
 
-		return [spice::plot_defaultscale $plot]
+		return [spice::plot_defaultscale $plotNum]
 	}
+	
+	proc create_vecName { plotNum nodeName } {
 		
-	proc create { plot name } {
-
-		# valid vector 
-		if {[exists $plot $name] == ""} {return ""}
-
-		if { ![info exists "::[plotTypeName $plot]:v:${name}"]} {
-			set ::[plotTypeName $plot]:v:${name} "[blt::vector #auto]"
+		set name "::[get_plotTypeName $plotNum]:v:${nodeName}"
+	
+		if {![info exists $name]} {
+			set vecName [blt::vector #auto]
+			eval set $name $vecName
+		} else {
+			eval set vecName \${$name}
 		}
-
-		eval "set tmp \${::[plotTypeName $plot]:v:${name}}"
-
-		eval spice::plot_getvector $plot $name $tmp
-
-		return $tmp
+		return $vecName
 	}
+
 
 }

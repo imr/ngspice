@@ -22,7 +22,7 @@ proc run_spicepp { fileName } {
 	source [file join $::spice_library "spice/spicepp.tcl"]
 
 	puts ""
-	# check if file contains Hspice statemenst
+	# check if file contains Hspice statements
 	if {[spicepp::checkHSpiceFormat $fileName]} {
 
 		set ppFileName  [spicepp::convert $fileName]
@@ -58,7 +58,7 @@ proc spicewish_load { argv argc } {
 	            		}
 				-h - -help   { spicewish_usage }
 		                -b           { set ::mode_batch 1 }
-				-version     { spice::version }
+				-version     { spice::version; exit }
 		                -pp          { set mode_spicePP 1 }
 				default { spicewish_usage }
 		     	}
@@ -86,22 +86,45 @@ proc Tclreadline { } {
 	if {$::tcl_interactive} {
 		proc ::tclreadline::prompt1 { } { return "tclspice -> " }
 		
-		puts "tclspice ->"
-		puts "tclspice ->"
-		::tclreadline::Loop .tclspice-history			
+		puts "tclspice -> "
+	
+		if [info exists ::env(HOME)] {
+	 	   set historyfile  $::env(HOME)/.tclspice-history
+		} else {
+		    set historyfile  .tclspice-history
+		}
+
+		::tclreadline::Loop $historyfile		
 	}
 }
 	
 	
 proc spicewish_import_namespaces { } {
 
+
+	#----------------
 	# spice::
-	namespace eval spice {
-		namespace export ac help save alias sens alter altermod setcirc asciiplot jobs setplot aspice setscale bg let settype linearize shell bug listing shift show cdump maxstep showmod compose newhelp noise spec cross oldhelp spice dc op spice_data define spice_header deftype state delete plot_datapoints status delta plot_date step plot_get_value stop diff plot_name strcmp display plot_nvars tf disto plot_title dowhile plot_variables tran dump print transpose echo pz tutorial edit quit unalias else rehash undefine end repeat unlet reset fourier reshape version spicetoblt resume where get_output rspice get_param write goto running xgraph hardcopy rusage steps_completed blt_vnum codemodel loadsnap savesnap
+	# get list of spice:: commands
+	set all_spiceCommands [namespace eval spice [list info commands]]
+	set commands ""
+	foreach command $all_spiceCommands {
+		if {[namespace eval spice [list namespace origin $command]] == "::spice::${command}" } {
+			lappend commands $command
+		}
 	}
 
-	namespace import -force spice::*
+	# export 	
+	namespace eval spice [namespace export $commands]
 
+	# import into current namespace
+	namespace import -force spice::*
+	
+	# add command to readline
+	foreach command $commands {
+		::tclreadline::readline add $command
+	}
+
+	#----------------
 	# spicewish::
 	rename ::source ::tclSource
 	rename ::load ::tclLoad

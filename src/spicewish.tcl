@@ -27,9 +27,13 @@ namespace eval spicewish {
 		spicewish::controls::create
 	}
 
-        proc iplot {args} {
-		eval spicewish::viewer::iplot $args
-        }
+#        proc iplot {args} {
+#		eval spicewish::viewer::iplot $args
+#        }
+
+	proc oplot {args} { 
+		eval spicewish::viewer::oplot $args
+	}
 
 	proc source { fileName } {
 		if {![file exists $fileName]} {
@@ -48,6 +52,7 @@ namespace eval spicewish {
 	proc load { fileName } {
 		if {[string tolower [file extension $fileName]] == ".raw" } {
                         spice::load $fileName
+			spicewish::nodeDialog::Update
                         return
                 }
 
@@ -85,5 +90,35 @@ namespace eval spicewish {
 
 	spice::registerStepCallback spicewish::stepCallBack 1 1
 
-	namespace export plot gui iplot source run halt load measDialog write2gnuplot
+	namespace export plot gui oplot source run halt load measDialog write2gnuplot
+}
+
+
+set ::spicewish::viewer::bltplotCnt -1
+
+proc spice_gr_Plot { args } { 
+
+	# time time s a0 voltage V 1
+	set xName  [lindex $args 0]
+	set xType  [lindex $args 1]
+	set xUnits [lindex $args 2]
+	set yName  [lindex $args 3]
+	set yType  [lindex $args 4]
+	set yUnits [lindex $args 5]
+	set viewerCnt [lindex $args 6]	
+	
+	set plotNum [spicewish::vectors::get_plotNum [spice::getplot]]
+
+	if {$spicewish::viewer::vecUpdate_flag} {
+		# update exsisting plots
+		
+	} else {
+		# add new plot
+		if {$::spicewish::viewer::bltplotCnt == $viewerCnt } {
+			eval spicewish::viewer::addplot [expr $::spicewish::viewer::viewCnt -1] $plotNum $args
+		} else {
+			eval spicewish::viewer::newplot $plotNum $args
+			set ::spicewish::viewer::bltplotCnt $viewerCnt
+		}
+	}
 }

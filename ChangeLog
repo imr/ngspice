@@ -1,3 +1,9 @@
+2004-07-22 Adrian Dawe <adrian.dawe@multigig.com>
+
+	* src/{measure.tcl,nodeDialog.tcl,pkgIndex.tcl.in,
+	readline.tcl,spicewish,spicewish.tcl,viewer.tcl}:
+	Update Tcl, plot improved
+
 2004-07-22 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/spicepp.pl.in:

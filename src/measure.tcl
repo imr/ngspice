@@ -254,7 +254,9 @@ namespace eval meas_markers {
 	proc marker_position { w x y } { 
 		
 		variable VDD
-		set VDD [spice::get_value vdd [ expr $::spice::steps_completed -1]]
+
+		# get VDD value from spice
+		set VDD [spice::get_value vdd [expr $::spice::steps_completed -1]]
 
 		catch { $w element delete "m_riseTime" }
 	        catch { $w marker delete "m_riseTime_t" }

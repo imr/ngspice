@@ -1,10 +1,10 @@
 
-
 namespace eval nodeDialog {
 
 	variable w ".nodeSelect"
 	variable plot_title
 	variable selection
+	variable selected "const"
 	variable selectionCnt
 
 	proc create { } {
@@ -12,13 +12,18 @@ namespace eval nodeDialog {
 
 		if {[winfo exists $w]} {
 			raise $w
+			Update
 			return
 		}
 
 		toplevel $w
 		
-		pack [frame $w.plots] -fill x
-		pack [listbox $w.plots.lst -height 3 \
+		wm title $w "Vectors"
+
+		# Plot names
+		#pack [frame $w.plots] -fill x
+		frame $w.plots
+		pack [listbox $w.plots.lst -height 4 \
 			-width 50 \
 			-yscrollcommand {.nodeSelect.plots.sx set} \
 			] -fill x -expand 1 -side left
@@ -28,8 +33,9 @@ namespace eval nodeDialog {
 			-command {.nodeSelect.plots.lst yview}\
 			] -fill y -side right
 
-
-		pack [frame $w.nodes] -fill both -expand 1
+		# vector names
+		#pack [frame $w.nodes] -fill both -expand 1
+		frame $w.nodes
 		pack [blt::hierbox $w.nodes.hb -hideroot 1 \
 			-yscrollcommand {.nodeSelect.nodes.sx set} \
 			-selectbackground "#e6e6e6" \
@@ -40,6 +46,27 @@ namespace eval nodeDialog {
 			-command {.nodeSelect.nodes.hb yview} \
 			] -fill y -side right
 
+		# control frame
+		#pack [frame $w.fcont] -fill x
+		frame $w.fcont
+		pack [label $w.fcont.lselected -text "Selected: "] -side left
+                pack [button $w.fcont.bNodeCnt -textvariable spicewish::nodeDialog::selectionCnt \
+                                -padx 1m \
+                                -command spicewish::nodeDialog::clearSelection \
+                                ] -side left
+                pack [button $w.fcont.bPlot -text " Plot " \
+                                -command spicewish::nodeDialog::plotSelection ]
+
+
+		# blt table
+                blt::table $w \
+                        0,0 $w.plots -fill x \
+                        1,0 $w.nodes -fill both \
+                        2,0 $w.fcont -fill x
+
+		blt::table configure $w r0 r2 -resize none
+
+		# bindings
 		$w.nodes.hb bind all <Button-1> {
 			set hierbox_path %W
 			set index [$hierbox_path index current]
@@ -64,19 +91,18 @@ namespace eval nodeDialog {
 		   	}   
 			set spicewish::nodeDialog::selectionCnt [llength $::spicewish::nodeDialog::selection($plotTypeName)]
 		}
-		pack [frame $w.fcont] -fill x
-		pack [button $w.fcont.bNodeCnt -textvariable spicewish::nodeDialog::selectionCnt \
-				-padx 1m \
-				-command spicewish::nodeDialog::clearSelection \
-				] -side left
-		pack [button $w.fcont.bPlot -text "Plot" \
-				-command spicewish::nodeDialog::plotSelection ] 
 
-		bind $w.plots.lst <ButtonRelease-1> { spicewish::nodeDialog::selectPlot %W  }
+		bind $w.plots.lst <ButtonRelease-1> {
+			spicewish::nodeDialog::selectPlot %W  
+		}
 
-		wm protocol $w WM_TAKE_FOCUS { spicewish::nodeDialog::currentPlots }
+		# mouse wheel bindings
+		bind $w.nodes.hb <Button-5> [list %W yview scroll 5 units]
+		bind $w.nodes.hb <Button-4> [list %W yview scroll -5 units]
+
+		wm protocol $w WM_TAKE_FOCUS { spicewish::nodeDialog::Update }
 	
-		currentPlots
+		Update
 	}
 
 	proc plotSelection { } {
@@ -84,7 +110,10 @@ namespace eval nodeDialog {
 
 		set plotNum [.nodeSelect.plots.lst curselection]
 		set plotTypeName [spice::plot_typename $plotNum]
-		eval "spicewish::viewer::oplot $plotNum $selection($plotTypeName)"
+
+		if {$selection($plotTypeName) == ""} {return}
+
+		eval "spicewish::viewer::oplot $plotTypeName $selection($plotTypeName)"
 	}
 
 	proc loadSelection { } {
@@ -117,10 +146,15 @@ namespace eval nodeDialog {
 		populateTree [.nodeSelect.plots.lst curselection]
 	}
 
-	proc currentPlots { } {
+	proc Update { } {
 		variable plot_title
 		variable selection
+		variable selected
+		variable w
 
+		if {![winfo exists $w]} {return}
+
+		# get current plots titles
 		set index 0
 		while { ![catch {set t [spice::plot_name $index]} ] } {
 
@@ -136,14 +170,21 @@ namespace eval nodeDialog {
 	                incr index
 		}
 
+		# populate current plot window
 		.nodeSelect.plots.lst delete 0 end
-
+		
                 for {set i 0} {$i < [array size plot_title]} {incr i} {
                         .nodeSelect.plots.lst insert end $plot_title($i)
                 }
 
-		.nodeSelect.plots.lst selection set 0
-		populateTree 0
+		# list position of selected plot
+		set listPos [spicewish::vectors::get_plotNum $selected]
+		if {$listPos < 0} {set listPos 0}
+	
+		.nodeSelect.plots.lst selection set $listPos
+		.nodeSelect.plots.lst see $listPos
+
+		populateTree $listPos
 		
         }	
 	
@@ -166,7 +207,10 @@ namespace eval nodeDialog {
 	}
 	
 	proc selectPlot { w } {
+		variable selected
 		set index [$w curselection]
+		set selected [spicewish::vectors::get_plotTypeName $index]
+		
 		populateTree $index
 	}
 }

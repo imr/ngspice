@@ -22,6 +22,16 @@ namespace eval readline {
 			"spicewish\:\:iplot" - "iplot" {
 				return [::tclreadline::TryFromList $word [spice::plot_variables 0]]
 			}
+			"spicewish\:\:oplot" - "oplot" {
+	
+				if {[lsearch "[spicewish::vectors::avaliable_plotNames]" [lindex $line 1]] != -1} {
+					set plotNum [spicewish::vectors::get_plotNum [lindex $line 1]]
+                                        return [::tclreadline::TryFromList $word [spice::plot_variables $plotNum]]
+				} else {
+					return [::tclreadline::TryFromList $word [spicewish::vectors::avaliable_plotNames]]
+				}
+
+                        }
 			"spicewish\:\:measDialog" - "measDialog" {
 				return [::tclreadline::TryFromList $word [spice::plot_variables 0]]
 			}
