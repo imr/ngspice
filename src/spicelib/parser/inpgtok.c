@@ -49,9 +49,9 @@ int INPgetTok(char **line, char **token, int gobble)
     }
     /* mark beginning of token */
     *line = point;
-    
+
     /* now find all good characters up to next occurance of a 
-       separation character. */   
+       separation character. */
     signstate = 0;
     for (point = *line; *point != '\0'; point++) {
 	if (*point == ' ')
@@ -59,7 +59,7 @@ int INPgetTok(char **line, char **token, int gobble)
 	if (*point == '\t')
 	    break;
 	if (*point == '\r')
-	    break;	    
+	    break;
 	if (*point == '=')
 	    break;
 	if (*point == '(')
@@ -93,6 +93,7 @@ int INPgetTok(char **line, char **token, int gobble)
 	    signstate = 3;
 
     }
+
     if (point == *line && *point)	/* Weird items, 1 char */
 	point++;
     *token = (char *) MALLOC(1 + point - *line);
@@ -101,6 +102,7 @@ int INPgetTok(char **line, char **token, int gobble)
     (void) strncpy(*token, *line, point - *line);
     *(*token + (point - *line)) = '\0';
     *line = point;
+
     /* gobble garbage to next token */
     for (; **line != '\0'; (*line)++) {
 	if (**line == ' ')
@@ -108,22 +110,21 @@ int INPgetTok(char **line, char **token, int gobble)
 	if (**line == '\t')
 	    continue;
 	if (**line == '\r')
-	    continue;	    
+	    continue;
 	if ((**line == '=') && gobble)
 	    continue;
 	if ((**line == ',') && gobble)
 	    continue;
 	break;
     }
-    
+
 #ifdef TRACE
-    /* SDB debug statement */    
-    /*printf("found generic token (%s) and rest of line (%s)\n",*token,*line); */
-#endif 
-   
+    /* SDB debug statement */
+    /* printf("found generic token (%s) and rest of line (%s)\n", *token, *line); */
+#endif
+
     return (OK);
 }
-
 
 
 /*-------------------------------------------------------------------
@@ -211,6 +212,7 @@ int INPgetNetTok(char **line, char **token, int gobble)
 
     return (OK);
 }
+
 
 
 /*-------------------------------------------------------------------
@@ -323,11 +325,11 @@ int INPgetUTok(char **line, char **token, int gobble)
 	break;
     }
     *line = point;
-    
+
 #ifdef TRACE
     /* SDB debug statement */
     /*  printf("found refdes token (%s) and rest of line (%s)\n",*token,*line);  */
-#endif    
-    
+#endif
+
     return (OK);
 }
