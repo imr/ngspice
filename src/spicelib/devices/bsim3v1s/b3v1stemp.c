@@ -31,7 +31,7 @@ BSIM3v1Stemp(GENmodel *inModel, CKTcircuit *ckt)
 {
 BSIM3v1Smodel *model = (BSIM3v1Smodel*) inModel;
 BSIM3v1Sinstance *here;
-struct bsim3v1sSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
+struct bsim3v1sSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam = NULL;
 double tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, Ldrn, Wdrn;
 double Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 int Size_Not_Found;

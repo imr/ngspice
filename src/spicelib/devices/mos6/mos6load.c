@@ -66,12 +66,12 @@ MOS6load(GENmodel *inModel, CKTcircuit *ckt)
     double vgs;
     double von;
     double vt;
-    double xfact;
+    double xfact = 0.0;
     int xnrm;
     int xrev;
-    double capgs;   /* total gate-source capacitance */
-    double capgd;   /* total gate-drain capacitance */
-    double capgb;   /* total gate-bulk capacitance */
+    double capgs = 0.0;   /* total gate-source capacitance */
+    double capgd = 0.0;   /* total gate-drain capacitance */
+    double capgb = 0.0;   /* total gate-bulk capacitance */
     int Check;
 #ifndef NOBYPASS
     double tempv;
@@ -301,7 +301,7 @@ MOS6load(GENmodel *inModel, CKTcircuit *ckt)
                         ckt->CKTreltol * MAX(fabs(cdhat),fabs(
                         here->MOS6cd)) + ckt->CKTabstol) ) {
                     /* bypass code *
-                    /* nothing interesting has changed since last
+                     * nothing interesting has changed since last
                      * iteration on this device, so we just
                      * copy all the values computed last iteration out
                      * and keep going
@@ -467,7 +467,7 @@ next1:      if(vbs <= -3*vt) {
             double sarg;
             double vgon;
             double vdshere, vbsvbd;
-	    double idsat, lambda, vonbm;
+	    double idsat, lambda, vonbm = 0.0;
 	    double vdst, vdst2, ivdst1, vdstg;
 
 		vbsvbd = (here->MOS6mode==1?vbs:vbd);

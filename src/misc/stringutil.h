@@ -3,6 +3,8 @@
  * 1999 E. Rouat
  ************/
 
+#include "config.h"
+
 #ifndef STRING_H_INCLUDED
 #define STRING_H_INCLUDED
 

@@ -104,7 +104,7 @@ void udn_int_copy(COPY_ARGS)
 
 void udn_int_resolve(RESOLVE_ARGS)
 {
-    int **array    = INPUT_STRUCT_PTR_ARRAY;
+    int **array    = (int**)INPUT_STRUCT_PTR_ARRAY;
     int *out       = OUTPUT_STRUCT_PTR;
     int num_struct = INPUT_STRUCT_PTR_ARRAY_SIZE;
 

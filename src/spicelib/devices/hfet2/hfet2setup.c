@@ -40,10 +40,12 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
     if(!model->HFET2epsiGiven)
       EPSI = 12.244*8.85418e-12;
     if(!model->HFET2etaGiven)
-      if(TYPE == NHFET)
-        ETA = 1.28;
-      else
-        ETA = 1.4;
+      {
+        if(TYPE == NHFET)
+          ETA = 1.28;
+        else
+          ETA = 1.4;
+      }
     if(!model->HFET2eta1Given)
       ETA1 = 2;
     if(!model->HFET2eta2Given)
@@ -69,10 +71,12 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
     if(!model->HFET2mcGiven)
       MC = 3.0;
     if(!model->HFET2muGiven)
-      if(TYPE == NHFET)
-        MU = 0.4;
-      else
-        MU = 0.03;
+      {
+        if(TYPE == NHFET)
+          MU = 0.4;
+        else
+          MU = 0.03;
+      }
     if(!model->HFET2nGiven)
       N = 5.0;
     if(!model->HFET2nmaxGiven)
@@ -90,10 +94,12 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
     if(!model->HFET2sigma0Given)
       SIGMA0 = 0.057;
     if(!model->HFET2vsGiven)
-      if(TYPE == NHFET)
-        VS = 1.5e5;
-      else
-        VS = 0.8e5;
+      {
+        if(TYPE == NHFET)
+          VS = 1.5e5;
+        else
+          VS = 0.8e5;
+      }
     if(!model->HFET2vsigmaGiven)
       VSIGMA = 0.1;
     if(!model->HFET2vsigmatGiven)
@@ -117,7 +123,7 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
     for (here = model->HFET2instances; here != NULL; 
          here=here->HFET2nextInstance) {
       
-      CKTnode *tmpNode;
+      CKTnode *tmpNode[1];
       IFuid tmpName;
 
       if (here->HFET2owner != ARCHme) goto matrixpointers;
@@ -139,10 +145,10 @@ matrixpointers:
         here->HFET2sourcePrimeNode = tmp->number;
         
         if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,3,(void**)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
                      }
                   }
                 }
@@ -156,10 +162,10 @@ matrixpointers:
         here->HFET2drainPrimeNode = tmp->number;
         
         if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,1,(void**)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
                      }
                   }
                 }

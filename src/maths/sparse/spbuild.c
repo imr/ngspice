@@ -185,7 +185,6 @@ spFindElement( void *eMatrix, int Row, int Col )
 {
 MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 RealNumber  *pElement;
-int index;
 ElementPtr spcFindElementInCol();
 void  Translate();
 

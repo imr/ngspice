@@ -19,6 +19,7 @@ Author: 1990 Jaijeet Roychowdury
 extern void usage();
 extern void comments();
 extern double phi();
+extern void spErrorMessage(char*, FILE*, char*);
 
 int
  main (argc, argv)
@@ -30,7 +31,7 @@ int
   double l,c,ctot,r=0.0,g=0.0,k=0.0,lm=0.0,cm=0.0,len;
   unsigned gotl=0,gotc=0,gotr=0,gotg=0,gotk=0,gotcm=0,gotlen=0;
   unsigned gotname=0, gotnum=0;
-  char *name;
+  char *name = "";
   double **matrix, **inverse;
   double *tpeigenvalues, *gammaj;
   char *options;

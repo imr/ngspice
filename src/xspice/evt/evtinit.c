@@ -267,12 +267,12 @@ static int EVTinit_info(
     Evt_Port_Info_t     *port;
     Evt_Output_Info_t   *output;
 
-    Evt_Inst_Info_t     **inst_table;
-    Evt_Node_Info_t     **node_table;
-    Evt_Port_Info_t     **port_table;
-    Evt_Output_Info_t   **output_table;
+    Evt_Inst_Info_t     **inst_table = NULL;
+    Evt_Node_Info_t     **node_table = NULL;
+    Evt_Port_Info_t     **port_table = NULL;
+    Evt_Output_Info_t   **output_table = NULL;
 
-    int                 *hybrid_index;
+    int                 *hybrid_index = NULL;
 
     int num_hybrids;
 

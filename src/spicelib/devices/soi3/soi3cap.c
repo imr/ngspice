@@ -68,10 +68,6 @@ double DVqs_Dvgfb,DVqs_Dvdb,DVqs_Dvsb,DVqs_DdeltaT;
 double DF_Dvgfb,DF_Dvdb,DF_Dvsb,DF_DdeltaT;
 double ccgf,ccd,ccs,ccdeltaT,ccgb;
 
-double A0B,EA0B,tmpsb;
-double Vgmax0B,VgBx0,EBmax0,tmpmax0,tmpmaxsb;
-double VgBy0,EBy0,tmpmin0;
-double SgB0;
 
 double vg,vgacc,Egacc,tmpacc,Qacc;
 double csf;

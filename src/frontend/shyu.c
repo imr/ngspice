@@ -42,7 +42,7 @@ if_sens_run(char *t, wordlist *args, INPtables *tab)
     char *steptype;
     char *name;
     char *line;
-    struct line deck;
+    struct line deck[1];
     int i;
     int j;
     int error;
@@ -51,12 +51,12 @@ if_sens_run(char *t, wordlist *args, INPtables *tab)
     int which = -1;
 
     (void) sprintf(buf, ".%s", wl_flatten(args));
-    deck.li_next = deck.li_actual = NULL;
-    deck.li_error = NULL;
-    deck.li_linenum = 0;
-    deck.li_line = buf;
+    deck[0].li_next = deck[0].li_actual = NULL;
+    deck[0].li_error = NULL;
+    deck[0].li_linenum = 0;
+    deck[0].li_line = buf;
 
-    current = (card *) &deck;
+    current = (card *)deck;
     line = current->line;
     INPgetTok(&line,&token,1);
 

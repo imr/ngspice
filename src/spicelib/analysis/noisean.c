@@ -17,7 +17,7 @@ Modified: 2001 AlansFixes
 #include "sperror.h"
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
-#include "src/maths/ni/niniter.h" /* va, NInzIter */
+#include "../maths/ni/niniter.h" /* va, NInzIter */
 
 extern int CKTnoise( CKTcircuit *, int, int, Ndata * );
 
@@ -37,7 +37,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     int code;
     int step;
     IFuid freqUid;
-    char *inst;  
+    char *inst[1];  
     double freqTol; /* tolerence parameter for finding final frequency; hack */
 
     NOISEAN *job = (NOISEAN*) (ckt->CKTcurJob);
@@ -47,12 +47,12 @@ NOISEan (CKTcircuit *ckt, int restart)
     negOutNode = ((CKTnode*) (job->outputRef))->number;
 
     /* see if the source specified is AC */
-    inst = NULL;
+    inst[0] = NULL;
     code = CKTtypelook("Vsource");
     if (code != -1) {
-        error = CKTfndDev((void *)ckt,&code,(void **)&inst,
+        error = CKTfndDev((void *)ckt, &code,(void **)inst,
                 job->input, (void *)NULL, (IFuid)NULL);
-	if (!error && !((VSRCinstance *)inst)->VSRCacGiven) {
+	if (!error && !((VSRCinstance *)inst[0])->VSRCacGiven) {
 	    errMsg = MALLOC(strlen(noacinput)+1);
 	    strcpy(errMsg,noacinput);
 	    return (E_NOACINPUT);
@@ -60,8 +60,8 @@ NOISEan (CKTcircuit *ckt, int restart)
     }
 
     code = CKTtypelook("Isource");
-    if (code != -1 && inst==NULL) {
-        error = CKTfndDev((void *)ckt,&code, (void **)&inst,
+    if (code != -1 && inst[0]==NULL) {
+        error = CKTfndDev((void *)ckt,&code, (void **)inst,
                 job->input, (void *)NULL,(IFuid)NULL);
         if (error) {
 	    /* XXX ??? */
@@ -70,7 +70,7 @@ NOISEan (CKTcircuit *ckt, int restart)
                     &job->input);
 		return (E_NOTFOUND);
 	    }
-	if (!((ISRCinstance *)inst)->ISRCacGiven) {
+	if (!((ISRCinstance *)inst[0])->ISRCacGiven) {
 	    errMsg = MALLOC(strlen(noacinput)+1);
 	    strcpy(errMsg,noacinput);
 	    return (E_NOACINPUT);

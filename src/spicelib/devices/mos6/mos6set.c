@@ -112,7 +112,7 @@ MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         /* loop through all the instances of the model */
         for (here = model->MOS6instances; here != NULL ;
                 here=here->MOS6nextInstance) {
-            CKTnode *tmpNode;
+            CKTnode *tmpNode[1];
             IFuid tmpName;
             
 	    if (here->MOS6owner != ARCHme) goto matrixpointers;
@@ -159,10 +159,10 @@ matrixpointers:
                 if(error) return(error);
                 here->MOS6dNodePrime = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,1,(void**)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
                      }
                   }
                 }
@@ -178,10 +178,10 @@ matrixpointers:
                 if(error) return(error);
                 here->MOS6sNodePrime = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,3,(void**)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
                      }
                   }
                 }

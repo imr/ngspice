@@ -41,7 +41,7 @@ MESAload(GENmodel *inModel, CKTcircuit *ckt)
     double capgd;
     double capgs;
     double cd;
-    double cdhat;
+    double cdhat = 0.0;
     double cdrain;
     double cdreq;
     double ceq;
@@ -50,7 +50,7 @@ MESAload(GENmodel *inModel, CKTcircuit *ckt)
     double cg;
     double cgd;
     double cgs;
-    double cghat;
+    double cghat = 0.0;
     double arg;
     double earg;
     double delvds;

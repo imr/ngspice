@@ -577,7 +577,6 @@ com_alter_common(wordlist *wl, int do_model)
     char *param;
     struct dvec *dv;
     struct pnode *names;
-    char *hlp=NULL;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");

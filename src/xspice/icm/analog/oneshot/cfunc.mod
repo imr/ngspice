@@ -141,6 +141,8 @@ NON-STANDARD FEATURES
 *
 ****************************************************************************************/
 
+#include <stdlib.h>
+
 void cm_oneshot(ARGS)  /* structure holding parms, 
                                    inputs, outputs, etc.     */
 {
@@ -161,11 +163,11 @@ void cm_oneshot(ARGS)  /* structure holding parms,
     double *x;         /* pointer used to store the control array       */
 	double *y;         /* pointer used to store the pulse-width array   */
 	double cntl_input; /* the actual value of the control input         */
-	double out;        /* value of the output                           */
+	/*double out;*/        /* value of the output                           */
 	double dout_din;   /* slope of the pw wrt the control voltage       */
 	double output_low; /* output low value                              */
 	double output_hi;  /* output high value                             */
-    double pw;         /* actual value of the pulse-width               */
+    double pw=0.0;         /* actual value of the pulse-width               */
 /*	double del_out;     value of the delay time between triggering 
                           and a change in the output                    */
 	double del_rise;    /* value of the delay time between triggering 

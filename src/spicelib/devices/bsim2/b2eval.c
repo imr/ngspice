@@ -21,16 +21,17 @@ B2evaluate(double Vds, double Vbs, double Vgs, B2instance *here, B2model *model,
            double *cdg, double *cdd, double *cds, double *Ids, double *von, 
            double *vdsat, CKTcircuit *ckt)
  {
-    double Vth, Vdsat;
+    double Vth, Vdsat = 0.0;
     double Phisb, T1s, Eta, Gg, Aa, Inv_Aa, U1, U1s, Vc, Kk, SqrtKk;
     double dPhisb_dVb, dT1s_dVb, dVth_dVb, dVth_dVd, dAa_dVb, dVc_dVd;
-    double dVc_dVg, dVc_dVb, dKk_dVc, dVdsat_dVd, dVdsat_dVg, dVdsat_dVb;
+    double dVc_dVg, dVc_dVb, dKk_dVc;
+    double dVdsat_dVd = 0.0, dVdsat_dVg = 0.0, dVdsat_dVb = 0.0;
     double dUvert_dVg, dUvert_dVd, dUvert_dVb, Inv_Kk;
     double dUtot_dVd, dUtot_dVb, dUtot_dVg, Ai, Bi, Vghigh, Vglow, Vgeff, Vof;
     double Vbseff, Vgst, Vgdt, Qbulk, Utot;
-    double T0, T1, T2, T3, T4, T5, Arg1, Arg2, Exp0;
-    double tmp, tmp1, tmp2, tmp3, Uvert, Beta1, Beta2, Beta0, dGg_dVb, Exp1;
-    double T6, T7, T8, T9, n, ExpArg, ExpArg1;
+    double T0, T1, T2, T3, T4, T5, Arg1, Arg2, Exp0 = 0.0, Exp1 = 0.0;
+    double tmp, tmp1, tmp2, tmp3, Uvert, Beta1, Beta2, Beta0, dGg_dVb;
+    double T6, T7, T8, T9, n = 0.0, ExpArg, ExpArg1;
     double Beta, dQbulk_dVb, dVgdt_dVg, dVgdt_dVd;
     double dVbseff_dVb, Ua, Ub, dVgdt_dVb, dQbulk_dVd;
     double Con1, Con3, Con4, SqrVghigh, SqrVglow, CubVghigh, CubVglow;

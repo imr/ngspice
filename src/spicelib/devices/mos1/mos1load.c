@@ -66,12 +66,12 @@ MOS1load(GENmodel *inModel, CKTcircuit *ckt)
     double vgs;
     double von;
     double vt;
-    double xfact;
+    double xfact = 0.0;
     int xnrm;
     int xrev;
-    double capgs;   /* total gate-source capacitance */
-    double capgd;   /* total gate-drain capacitance */
-    double capgb;   /* total gate-bulk capacitance */
+    double capgs = 0.0;   /* total gate-source capacitance */
+    double capgd = 0.0;   /* total gate-drain capacitance */
+    double capgb = 0.0;   /* total gate-bulk capacitance */
     int Check;
 #ifndef NOBYPASS    
     double tempv;

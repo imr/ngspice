@@ -31,10 +31,10 @@ BJTsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     double vbeOp;
     double vbcOp;
     double A0;
-    double DELA;
+    double DELA = 0.0;
     double Apert;
     double DELAinv;
-    double vte;
+    double vte = 0.0;
     double gcpr;
     double gepr;
     double gpi;
@@ -78,7 +78,7 @@ BJTsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     double ce0,ice0;
     double ceprm0,iceprm0;
     double cs0,ics0;
-    double DvDp;
+    double DvDp = 0.0;
     int iparmno,i;
     SENstruct *info;
 

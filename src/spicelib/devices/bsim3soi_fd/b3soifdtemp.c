@@ -38,9 +38,9 @@ B3SOIFDtemp(GENmodel *inModel, CKTcircuit *ckt)
 {
 B3SOIFDmodel *model = (B3SOIFDmodel*) inModel;
 B3SOIFDinstance *here;
-struct b3soifdSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
+struct b3soifdSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
 double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, T6, Ldrn, Wdrn;
-double Temp, TRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;
+double Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double SDphi, SDgamma;
 int Size_Not_Found;
 

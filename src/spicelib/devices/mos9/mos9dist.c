@@ -43,7 +43,7 @@ MOS9disto(mode,genmodel,ckt)
  register MOS9instance *here;
 
 if (mode == D_SETUP)
- return(MOS9dSetup(model,ckt));
+ return(MOS9dSetup(genmodel,ckt));
 
 if ((mode == D_TWOF1) || (mode == D_THRF1) || 
  (mode == D_F1PF2) || (mode == D_F1MF2) ||

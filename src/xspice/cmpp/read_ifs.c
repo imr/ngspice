@@ -47,9 +47,12 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 #include <assert.h>
+#include <stdio.h>
 #include  "cmpp.h"
 
 extern char *prog_name;
+extern int ifs_yyparse ();
+extern void ifs_yyrestart (FILE*);
 
 void  *malloc(unsigned size);
 
@@ -171,5 +174,7 @@ int ifs_yyerror (str)
    
    fprintf (stderr, "%s: Error: \"%s\": line %d (near \'%s\'):\n\t%s.\n",
 	    prog_name, current_filename, ifs_yylineno, ifs_yytext, str);
+
+   return 0;
 }
 

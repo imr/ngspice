@@ -131,7 +131,7 @@ void cm_lcouple(ARGS)  /* structure holding parms,
           output_voltage,   /* output voltage reflected to electricaL-side */
     *output_voltage_fake,   /* fake output voltage for use with 
                                truncation error checking. */
-              input_flux,   /* input flux value from core side (represented 
+              /*input_flux,*/   /* input flux value from core side (represented 
                                as a current. */
               output_mmf,   /* output driving amp-turns to core side.      */
 

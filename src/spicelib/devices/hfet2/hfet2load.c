@@ -27,7 +27,7 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
   double capgd;
   double capgs;
   double cd;
-  double cdhat;
+  double cdhat = 0.0;
   double cdrain;
   double cdreq;
   double ceq;
@@ -35,7 +35,7 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
   double ceqgs;
   double cg;
   double cgd;
-  double cghat;
+  double cghat = 0.0;
   double delvds;
   double delvgd;
   double delvgs;
@@ -353,8 +353,8 @@ static void hfeta2(HFET2model *model, HFET2instance *here, CKTcircuit *ckt,
   double s;
   double t;
   double u;
-  double nsc;
-  double nsn;
+  double nsc = 0.0;
+  double nsn = 0.0;
   double temp;
   double etavth;
   double gch;

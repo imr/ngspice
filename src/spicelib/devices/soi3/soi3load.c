@@ -87,8 +87,6 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
     int tnodeindex;
     double geq;
     double sarg;
-    double sargsw;
-    double tol;
     double vbd;
     double vbs;
     double vds;
@@ -98,7 +96,9 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
     double vgbb;
 /* now back to our regular programming   */
 /* vgfb exists already for gate cap calc */
-    double deltaT,deltaT1,deltaT2,deltaT3,deltaT4,deltaT5;
+    double deltaT,deltaT1 = 0.0,deltaT2 = 0.0,deltaT3 = 0.0;
+    double deltaT4 = 0.0,deltaT5 = 0.0;
+
     double vdsat_ext;
     double vgfb;
     double vgfd;
@@ -152,14 +152,6 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
 #ifdef CAPBYPASS
     int senflag;
 #endif /* CAPBYPASS */
-    int SenCond;
-
-    /* JimB - 4/1/99.  New variables for junction */
-    /* depletion capacitance model. */
-    double Esj, Vsj, Xs;
-    double Edj, Vdj, Xd;
-    double DXs_Dvgfb, DXs_Dvdb, DXs_Dvsb, DXs_DdeltaT;
-    double DXd_Dvgfb, DXd_Dvdb, DXd_Dvsb, DXd_DdeltaT;
 
     double m;
 
@@ -914,16 +906,16 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
             double vg;
             double eta_s; /* 1+Citf/Cof */
             double gamma,sigma;
-            double Egy,vgy,Sgy;
+            double Egy = 0.0,vgy,Sgy;
             double psi_ss;
             double AL,A0,LL,L0;
-            double ALx,A0x,EAL,EA0;
+            double ALx,A0x,EAL = 0.0,EA0 = 0.0;
             double logterm0,logtermL;
             double Vgconst0,VgconstL;
-            double Egx0,EgxL;
+            double Egx0 = 0.0,EgxL = 0.0;
             double vgx0,vgxL;
             double psi_si0,psi_siL,psi_st0;
-            double Esi0,EsiL,Ess0;
+            double Esi0 = 0.0,EsiL = 0.0,Ess0 = 0.0;
             double theta2;
             double TVF; /* thermal velocity-saturation factor */
             double Mmob;
@@ -933,7 +925,7 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
             double PSI;
             double S;
             double psi_sLsat;
-            double Esd0,EsdL;
+            double Esd0 = 0.0,EsdL = 0.0;
 
             double psi_s0,psi_sL;
             double fL,f0;
@@ -973,7 +965,7 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
             double DVmx_Dvgfb,DVmx_Dvdb,DVmx_Dvsb,DVmx_DdeltaT;
             double Vm1,Em1,Vm1x;
             double DVm1x_Dvgfb,DVm1x_Dvdb,DVm1x_Dvsb,DVm1x_DdeltaT;
-            double vgeff,lm,lmeff,lmeff2,Elm,Dlm_Dvgfb,Dlm_Dvdb,Dlm_Dvsb,Dlm_DdeltaT;
+            double vgeff,lm,lmeff,Elm,Dlm_Dvgfb,Dlm_Dvdb,Dlm_Dvsb,Dlm_DdeltaT;
 
             double Mminus1=0;
             double EM,betaM;
@@ -983,7 +975,7 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
             double tmp,tmp1; /* temporary var to aid pre-calculation */
             double TMF; /* thermal mobility factor */
             int vgx0trans,vgxLtrans; /* flags to indicate if vg transform performed */
-            int psi_s0_trans,psi_sL_trans;
+            int psi_s0_trans,psi_sL_trans=0;
             int Ess0_trans,Esd0_trans,EsdL_trans;
             int A0trans,ALtrans;
 
@@ -1991,9 +1983,6 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
                     here->SOI3ibs += *(ckt->CKTstate0 + here->SOI3iqbs);
                 }
             }
-
-
-/*          if(SenCond) goto next2;   */
 
 
             /*

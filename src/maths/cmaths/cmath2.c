@@ -66,7 +66,7 @@ c_tan(complex *cc, int length)
 }
 
 void *
-cx_tan(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_tan(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     *newlength = length;
     if (type == VF_REAL) {
@@ -81,7 +81,7 @@ cx_tan(void *data, short int type, int length, int *newlength, short int *newtyp
 
 
 void *
-cx_atan(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_atan(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     double *d;
 
@@ -131,7 +131,7 @@ cx_max_local(void *data, short int type, int length)
 /* Normalize the data so that the magnitude of the greatest value is 1. */
 
 void *
-cx_norm(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_norm(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     double largest = 0.0;
 
@@ -170,7 +170,7 @@ cx_norm(void *data, short int type, int length, int *newlength, short int *newty
 }
 
 void *
-cx_uminus(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_uminus(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
@@ -199,7 +199,7 @@ cx_uminus(void *data, short int type, int length, int *newlength, short int *new
 }
 
 void *
-cx_rnd(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_rnd(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
@@ -238,7 +238,7 @@ cx_rnd(void *data, short int type, int length, int *newlength, short int *newtyp
 /* Compute the mean of a vector. */
 
 void *
-cx_mean(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_mean(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     *newlength = 1;
     rcheck(length > 0, "mean");
@@ -272,7 +272,7 @@ cx_mean(void *data, short int type, int length, int *newlength, short int *newty
 
 
 void *
-cx_length(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_length(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     double *d;
 
@@ -289,7 +289,7 @@ cx_length(void *data, short int type, int length, int *newlength, short int *new
 
 
 void *
-cx_vector(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_vector(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     complex *cc = (complex *) data;
     double *dd = (double *) data;
@@ -314,7 +314,7 @@ cx_vector(void *data, short int type, int length, int *newlength, short int *new
 
 
 void *
-cx_unitvec(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_unitvec(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     complex *cc = (complex *) data;
     double *dd = (double *) data;
@@ -344,7 +344,7 @@ cx_unitvec(void *data, short int type, int length, int *newlength, short int *ne
  */
 
 void *
-cx_plus(void *data1, void *data2, short int datatype1, short int datatype2, int length)
+cx_plus(void *data1, void *data2, short int datatype1, short int datatype2, int length, ...)
 {
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
@@ -384,7 +384,7 @@ cx_plus(void *data1, void *data2, short int datatype1, short int datatype2, int 
 }
 
 void *
-cx_minus(void *data1, void *data2, short int datatype1, short int datatype2, int length)
+cx_minus(void *data1, void *data2, short int datatype1, short int datatype2, int length, ...)
 {
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
@@ -424,7 +424,7 @@ cx_minus(void *data1, void *data2, short int datatype1, short int datatype2, int
 }
 
 void *
-cx_times(void *data1, void *data2, short int datatype1, short int datatype2, int length)
+cx_times(void *data1, void *data2, short int datatype1, short int datatype2, int length, ...)
 {
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
@@ -466,7 +466,7 @@ cx_times(void *data1, void *data2, short int datatype1, short int datatype2, int
 }
 
 void *
-cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int length)
+cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int length, ...)
 {
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
@@ -525,7 +525,7 @@ cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int l
 /* Routoure JM : Compute the max of a vector. */
 
 void *
-cx_max(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_max(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     *newlength = 1;
     /* test if length >0 et affiche un message d'erreur */
@@ -566,7 +566,7 @@ cx_max(void *data, short int type, int length, int *newlength, short int *newtyp
 /* Routoure JM : Compute the min of a vector. */
 
 void *
-cx_min(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_min(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     *newlength = 1;
     /* test if length >0 et affiche un message d'erreur */
@@ -609,7 +609,7 @@ cx_min(void *data, short int type, int length, int *newlength, short int *newtyp
 /* Routoure JM : Compute the differential  of a vector. */
 
 void *
-cx_d(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_d(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     *newlength = length;
     /* test if length >0 et affiche un message d'erreur */

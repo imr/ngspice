@@ -36,12 +36,16 @@ SOI3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         IFvalue *select)
 {
     SOI3instance *here = (SOI3instance*)inst;
-    double vr;
-    double vi;
-    double sr;
-    double si;
-    double vm;
-    static char *msg = "Current and power not available for ac analysis";
+
+    /* The line below belong to the parts of the case statement that are also
+     * commented out */
+/*     double vr; */
+/*     double vi; */
+/*     double sr; */
+/*     double si; */
+/*     double vm; */
+/*     static char *msg = "Current and power not available for ac analysis"; */
+
     switch(which) {
         case SOI3_L:
             value->rValue = here->SOI3l;

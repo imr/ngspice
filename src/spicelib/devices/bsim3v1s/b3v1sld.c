@@ -33,7 +33,7 @@ BSIM3v1Sload(GENmodel *inModel, CKTcircuit *ckt)
 BSIM3v1Smodel *model = (BSIM3v1Smodel*)inModel;
 BSIM3v1Sinstance *here;
 double SourceSatCurrent, DrainSatCurrent;
-double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
+double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst = 0.0;
 double cdrain, cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
 double czbd, czbdsw, czbdswg, czbs, czbssw, czbsswg, evbd, evbs, arg, sarg;
 double delvbd, delvbs, delvds, delvgd, delvgs;
@@ -63,7 +63,7 @@ double T3, dT3_dVg, dT3_dVd, dT3_dVb;
 double T4;
 double T5;
 double T6;
-double T7, dT7_dVg, dT7_dVd, dT7_dVb;
+double T7;
 double T8;
 double T9;
 double T10;
@@ -94,7 +94,7 @@ double VASCBE, dVASCBE_dVg, dVASCBE_dVd, dVASCBE_dVb;
 double CoxWovL;
 double Rds, dRds_dVg, dRds_dVb, WVCox, WVCoxRds;
 double Vgst2Vtm, VdsatCV, dVdsatCV_dVg, dVdsatCV_dVb;
-double Leff, Weff, dWeff_dVg, dWeff_dVb;
+double Leff = 0.0, Weff, dWeff_dVg, dWeff_dVb;
 double AbulkCV, dAbulkCV_dVb;
 double qgdo, qgso, cgdo, cgso;
 
@@ -110,7 +110,7 @@ double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Qac0, Qsub0;
 double dQac0_dVg, dQac0_dVd, dQac0_dVb, dQsub0_dVg, dQsub0_dVd, dQsub0_dVb;
    
 struct bsim3v1sSizeDependParam *pParam;
-int ByPass, Check, ChargeComputationNeeded, error;
+int ByPass, Check, ChargeComputationNeeded = 0, error;
 
 for (; model != NULL; model = model->BSIM3v1SnextModel)
 {  for (here = model->BSIM3v1Sinstances; here != NULL; 

@@ -38,7 +38,9 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
-#include  <stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include  "cmpp.h"
 
 
@@ -51,6 +53,8 @@ NON-STANDARD FEATURES
 
 /* *********************************************************************** */
 
+
+extern void init_error (char *program_name);
 
 /*
 main
@@ -66,9 +70,9 @@ major functions as appropriate:
 depending on the argument.
 */
 
-main(
-    int argc,      /* Number of command line arguments */
-    char *argv[])  /* Command line argument text */
+int main(
+         int argc,      /* Number of command line arguments */
+         char *argv[])  /* Command line argument text */
 {
 
    init_error (argv[0]);

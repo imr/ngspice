@@ -35,7 +35,7 @@ BSIM3instance *here;
 int error;
 CKTnode *tmp;
  
-CKTnode *tmpNode;
+CKTnode *tmpNode[1];
 IFuid tmpName;
 
     /*  loop through all the BSIM3 device models */
@@ -947,10 +947,10 @@ IFuid tmpName;
 		here->BSIM3dNodePrime = tmp->number;
 		
 		 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,1,(void **)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
                      }
                   }
                 }
@@ -976,10 +976,10 @@ IFuid tmpName;
                 here->BSIM3sNodePrime = tmp->number;
 		
 		 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,3,(void **)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
                      }
                   }
                 }

@@ -25,7 +25,6 @@ SUBDIRS = TransImpedanceAmp	\
 		
 
 DIST_SUBDIRS = 	bsim1	\
-	bsim1		\
 	bsim2		\
 	bsim3		\
 	bsim3soidd	\

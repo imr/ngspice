@@ -38,7 +38,7 @@ MOS3disto(int mode, GENmodel *genmodel, CKTcircuit *ckt)
  MOS3instance *here;
 
 if (mode == D_SETUP)
- return(MOS3dSetup(model,ckt));
+ return(MOS3dSetup(genmodel,ckt));
 
 if ((mode == D_TWOF1) || (mode == D_THRF1) || 
  (mode == D_F1PF2) || (mode == D_F1MF2) ||

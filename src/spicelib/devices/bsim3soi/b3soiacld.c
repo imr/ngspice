@@ -38,7 +38,7 @@ double gbbg, gbbdp, gbbb, gbbp, gbbsp, gbbT;
 double gddpg, gddpdp, gddpsp, gddpb, gddpT;
 double gsspg, gsspdp, gsspsp, gsspb, gsspT;
 double gppb, gppp;
-double xcTt, cTt, gcTt, gTtt, gTtg, gTtb, gTtdp, gTtsp;
+double xcTt, cTt, gTtt, gTtg, gTtb, gTtdp, gTtsp;
 double EDextrinsicCap, ESextrinsicCap;
 double xcedb, xcesb;
 

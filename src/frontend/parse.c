@@ -27,8 +27,8 @@ static struct pnode * mkunode(int op, struct pnode *arg);
 static struct pnode * mkfnode(char *func, struct pnode *arg);
 static struct pnode * mknnode(double number);
 static struct pnode * mksnode(char *string);
-static void   print_elem(struct element *elem); /* va: for debugging */
-static char * get_token_name(int e_token); /* va, for debugging */
+/*static void   print_elem(struct element *elem); / va: for debugging /
+static char * get_token_name(int e_token); / va, for debugging */
 
 
 static int lasttoken = END, lasttype;
@@ -582,9 +582,10 @@ makepnode(struct element *elem)
     }   
 }
 
+/*
 static char * get_token_name(int e_token)
 {
-  /* see include/fteparse.h */
+  / see include/fteparse.h /
     switch (e_token) {
     case   0: return "END   ";
     case   1: return "PLUS  ";
@@ -612,6 +613,7 @@ static char * get_token_name(int e_token)
     default : return "UNKNOWN";
     }
 }
+
 static void print_elem(struct element *elem)
 {
     printf("e_token = %d(%s)", elem->e_token, get_token_name(elem->e_token)); 
@@ -631,7 +633,7 @@ static void print_elem(struct element *elem)
     }   
     printf("\n");
 }
-
+*/
 
 
 /* Some auxiliary functions for building the parse tree. */
@@ -700,12 +702,8 @@ struct func ft_funcs[] = {
         { "vecmin", cx_min } ,
         { "vecmax", cx_max } ,
         { "vecd", cx_d } ,
-	/* va, deactivate function prototype testing for this 2 functions, only. Gives a warning. */
-#define INTERPOL_FUNC (void *(*)())
-	/* These functions have been temporarily been disabled.  See
-           their definitions for the reason. */
-        { "interpolate", INTERPOL_FUNC  cx_interpolate } ,
-        { "deriv",       INTERPOL_FUNC  cx_deriv } ,
+        { "interpolate", cx_interpolate } ,
+        { "deriv",       cx_deriv } ,
         { "v",      NULL } ,
         { NULL,     NULL }
 } ;

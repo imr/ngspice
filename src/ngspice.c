@@ -1,8 +1,6 @@
 /* Configuration file for ng-spice */
 #include <config.h>
 
-#include "conf.h"
-
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/

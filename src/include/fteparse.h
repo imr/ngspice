@@ -39,7 +39,7 @@ struct func {
 
     /* The function. */
     void *(*fu_func)(void *data, short int type, int length,
-		     int *newlength, short int *newtype);
+		     int *newlength, short int *newtype, ...);
 } ;
 
 /* User-definable functions. The idea of ud_name is that the args are

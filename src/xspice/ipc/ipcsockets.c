@@ -488,7 +488,7 @@ Ipc_Status_t ipc_transport_get_line (str, len, wait)
      int                *len;    /* length of str passed IN and passed OUT */
      Ipc_Wait_t         wait;    /* IN - wait or dont wait on incoming msg */
 {
-  int count;                     /* number of bytes read                   */
+  int count = 0;                     /* number of bytes read                   */
   int message_length;            /* extracted from message header          */
 
   if (sock_state == IPC_SOCK_UNINITIALIZED) {

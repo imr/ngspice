@@ -17,9 +17,8 @@ Modified: Alan Gillespie
  * This function initialises the Taylor coeffs for the
  * BJT2's in the circuit
  */
-
-int
-BJT2dSetup(GENmodel *inModel, CKTcircuit *ckt)
+void TanDeriv(Dderivs *new, Dderivs *old);
+int BJT2dSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the 
          * sparse matrix previously provided 
          */
@@ -31,7 +30,7 @@ BJT2dSetup(GENmodel *inModel, CKTcircuit *ckt)
     double c4;
     double lcapbe1,lcapbe2,lcapbe3;
     double lcapbx1,lcapbx2,lcapbx3;
-    double cb;
+    double cb = 0.0;
     double cbc;
     double cbcn;
     double cbe;
@@ -55,7 +54,7 @@ BJT2dSetup(GENmodel *inModel, CKTcircuit *ckt)
     double f3;
     double fcpc;
     double fcpe;
-    double gbb1;
+    double gbb1 = 0.0;
     double gbc;
     double gbcn;
     double gbe;
@@ -64,7 +63,7 @@ BJT2dSetup(GENmodel *inModel, CKTcircuit *ckt)
     double gben2,gben3;
     double gbcn2,gbcn3;
     double gben;
-    double gbb2, gbb3;
+    double gbb2 = 0.0, gbb3 = 0.0;
     double oik;
     double oikr;
     double ovtf;
@@ -233,7 +232,7 @@ for( ; model != NULL; model = model->BJT2nextModel ) {
             /*
              *   determine dc current and derivitives
              */
-next1:      vtn=vt*model->BJT2emissionCoeffF;
+            vtn=vt*model->BJT2emissionCoeffF;
             if(vbe > -5*vtn){
                 evbe=exp(vbe/vtn);
                 cbe=csat*(evbe-1)+ckt->CKTgmin*vbe;

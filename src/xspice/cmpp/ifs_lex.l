@@ -49,6 +49,7 @@ int yyival;
 double yydval;
 extern int atoi();
 extern double atof();
+extern void ifs_yyerror (char*);
 
 /*
  * IFS specs are case insensitive:

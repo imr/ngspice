@@ -21,8 +21,28 @@ SPICEdev BSIM3v1Sinfo = {
 
         &BSIM3v1SmPTSize,
         BSIM3v1SmPTable,
-	DEV_DEFAULT,
 
+#ifdef XSPICE
+        /*
+         * OH what a hack this is!!! I have no idea what the proper values
+         * should be so I am just going to zero it out! This is a heck of a
+         * lot better than what existed perviously which was to convert
+         * DEV_DEFAULT to a function pointer. Would have started executing
+         * data at that point. Gotta love it!!!
+         */
+        NULL,
+
+        0,
+        NULL,
+
+        0,
+        NULL,
+
+        0,
+        NULL,
+#endif
+
+	DEV_DEFAULT,
     },
 
     DEVparam      : BSIM3v1Sparam,

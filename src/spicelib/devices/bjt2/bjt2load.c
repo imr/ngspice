@@ -109,13 +109,12 @@ BJT2load(GENmodel *inModel, CKTcircuit *ckt)
     double td;
     double temp;
     double tf;
-    double tol;
     double tr;
     double vbc;
     double vbe;
-    double vbx;
+    double vbx = 0.0;
     double vce;
-    double vsub;
+    double vsub = 0.0;
     double vt;
     double vtc;
     double vte;

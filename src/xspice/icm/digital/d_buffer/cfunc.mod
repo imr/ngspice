@@ -124,7 +124,7 @@ NON-STANDARD FEATURES
 void cm_d_buffer(ARGS) 
 
 {
-    int                    i;   /* generic loop counter index */
+    /*int                    i;*/   /* generic loop counter index */
          
                         
 

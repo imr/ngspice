@@ -49,11 +49,16 @@ NON-STANDARD FEATURES
 
 #include  "cmpp.h"
 #include  <ctype.h>
+#include  <stdlib.h>
 #include  <string.h>
 
 
+extern int str_to_lower(char *s);
+
+/*
 void    *malloc(unsigned size);
 void    *realloc(void *ptr, unsigned size);
+*/
 
 /* *********************************************************************** */
 
@@ -220,7 +225,7 @@ static Status_t read_modpath(
     FILE     *fp;                     /* Model pathname file pointer */
     char     msg[MAX_PATH_LEN+257];   /* space for an error message */
     char     path[MAX_PATH_LEN+2];    /* space to read pathnames into */
-    Model_Info_t  *model;             /* temporary pointer to model info */
+    Model_Info_t  *model = NULL;      /* temporary pointer to model info */
 
     int     n;
     int     i;
@@ -340,7 +345,7 @@ static Status_t read_udnpath(
     FILE     *fp;                     /* Udn pathname file pointer */
     char     msg[MAX_PATH_LEN+257];   /* space for an error message */
     char     path[MAX_PATH_LEN+2];    /* space to read pathnames into */
-    Node_Info_t  *node;               /* temporary pointer to node info */
+    Node_Info_t  *node = NULL;        /* temporary pointer to node info */
 
     int     n;
     int     i;
@@ -992,7 +997,7 @@ static Status_t read_udn_type_name(
 )
 {
     FILE        *fp;                    /* file pointer for opened file */
-    char        msg[MAX_PATH_LEN+257];  /* space for an error message */
+    /*char        msg[MAX_PATH_LEN+257];*/  /* space for an error message */
     Boolean_t   found;                  /* true if name found successfully */
     Boolean_t   in_struct;              /* true if found struct with name */
     char        name[MAX_NAME_LEN + 1]; /* temporary storage for name read */

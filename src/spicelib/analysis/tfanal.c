@@ -20,7 +20,7 @@ TFanal(CKTcircuit *ckt, int restart)
                     /* forced restart flag */
 {
     int size;
-    int insrc,outsrc;
+    int insrc = 0, outsrc = 0;
     double outputs[3];
     IFvalue outdata;    /* structure for output data vector, will point to 
                          * outputs vector above */

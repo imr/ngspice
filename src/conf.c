@@ -4,9 +4,9 @@
 
 #include "conf.h"
 
-char	Spice_Version[ ] = VERSION;
-char	Spice_Notice[ ] = "Please submit bug-reports to: ngspice-devel@lists.sourceforge.net";
-char	Spice_Build_Date[ ] = NGSPICEBUILDDATE;
+char	Spice_Version[] = VERSION;
+char	Spice_Notice[] = "Please submit bug-reports to: ngspice-devel@lists.sourceforge.net";
+char	Spice_Build_Date[] = NGSPICEBUILDDATE;
 /*
 char	*Spice_Exec_Dir	= "/spice_win/bin";
 char	*Spice_Lib_Dir	= "/spice_win/lib";

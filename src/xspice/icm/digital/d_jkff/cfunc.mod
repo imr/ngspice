@@ -288,7 +288,7 @@ NON-STANDARD FEATURES
 void cm_d_jkff(ARGS) 
 
 {
-    int                    i;   /* generic loop counter index */
+    /*int                    i;*/   /* generic loop counter index */
                         
 
     Digital_State_t     *clk,   /* current clk value    */

@@ -127,7 +127,7 @@ NON-STANDARD FEATURES
 
     NONE
                                                    
-/*=============================================================================*/
+=============================================================================*/
 
 /*=== CM_TOGGLE_BIT ROUTINE ===*/
 
@@ -196,7 +196,7 @@ NON-STANDARD FEATURES
 
     NONE
                                                    
-/*=============================================================================*/
+=============================================================================*/
 
 /*=== CM_D_TFF ROUTINE ===*/
 
@@ -212,7 +212,7 @@ NON-STANDARD FEATURES
 void cm_d_tff(ARGS) 
 
 {
-    int                    i;   /* generic loop counter index */
+    /*int                    i;*/   /* generic loop counter index */
                         
 
     Digital_State_t     *clk,   /* current clk value    */

@@ -55,3 +55,9 @@ CFLAGS=$(ADDITIONAL_INCLUDES)  $(C_WARNINGS) -g  $(X_CFLAGS)
 xgraph_LDADD= $(ADDITIONAL_LIBS) $(X_LIBS) $(X_PRE_LIBS) $(X_EXTRA_LIBS) -lX11 -lm
 
 MAINTAINERCLEANFILES= Makefile.in
+
+mrproper: maintainer-clean
+	rm -f `find . -type f -name "*~" -print`
+	rm -f `find . -type f -name "*.orig" -print`
+	rm -f `find . -type f -name "*.rej" -print`
+

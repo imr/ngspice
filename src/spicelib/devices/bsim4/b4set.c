@@ -30,8 +30,11 @@
 #define PI 3.141592654
 #define Charge_q 1.60219e-19
 
-int
-BSIM4setup(matrix,inModel,ckt,states)
+int BSIM4RdseffGeo(double nf, int geo, int rgeo, int minSD,
+                   double Weffcj, double Rsh, double DMCG, double DMCI,
+                   double DMDG, int Type, double *Rtot);
+
+int BSIM4setup(matrix,inModel,ckt,states)
 SMPmatrix *matrix;
 GENmodel *inModel;
 CKTcircuit *ckt;
@@ -41,7 +44,6 @@ BSIM4model *model = (BSIM4model*)inModel;
 BSIM4instance *here;
 int error;
 CKTnode *tmp;
-double tmp1, tmp2;
 int    noiseAnalGiven = 0, createNode;  /* Criteria for new node creation */
 double Rtot, DMCGeff, DMCIeff, DMDGeff;
 JOB   *job;

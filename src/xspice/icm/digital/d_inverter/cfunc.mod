@@ -127,7 +127,7 @@ NON-STANDARD FEATURES
 void cm_d_inverter(ARGS) 
 
 {
-    int                    i;   /* generic loop counter index */
+    /*int                    i;*/   /* generic loop counter index */
          
                         
 

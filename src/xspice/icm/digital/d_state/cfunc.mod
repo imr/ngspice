@@ -192,7 +192,7 @@ NON-STANDARD FEATURES
     NONE
 
 ==============================================================================*/
-
+#include <stdlib.h>
 
 /*=== Static CNVgettok ROUTINE ================*/
 /*
@@ -207,7 +207,7 @@ static char  *CNVgettok(char **s)
 {
 
     char    *buf;       /* temporary storage to copy token into */
-    char    *temp;      /* temporary storage to copy token into */
+    /*char    *temp;*/      /* temporary storage to copy token into */
     char    *ret_str;   /* storage for returned string */
 
     int     i;
@@ -407,8 +407,8 @@ float   *p_value;    /* OUT - The numerical value     */
 
     line_t  val_str;
 
-    char    *suffix;
-    char    c;
+    /*char    *suffix;*/
+    char    c = ' ';
     char    c1;
 
     float   scale_factor;
@@ -925,6 +925,7 @@ static int cm_inputs_mask_and_store(short *base,int bit_offset,int bit_value)
     }
      
     *base = *base | bit_value;
+return 0;
 }
 
 
@@ -989,7 +990,7 @@ static void cm_store_inputs_value(State_Table_t *states,int index, int bit_numbe
                                 int in_val)
 
 {
-    int       err,      /* error index value    */
+    int       /*err,*/      /* error index value    */
              int1,      /* temp storage variable    */
         bit_index,      /* bits base address at which word bits will
                            be found */
@@ -1105,6 +1106,7 @@ static int cm_bits_mask_and_store(short *base,int bit_offset,int bit_value)
     }
      
     *base = *base | bit_value;
+return 0;
 }
 
 
@@ -1309,7 +1311,7 @@ static void cm_get_bits_value(State_Table_t *states,int index, int bit_number,
                               Digital_t *out)
 
 {
-    int       err,      /* error index value    */
+    int       /*err,*/      /* error index value    */
              int1,      /* temp storage variable    */
         bit_index,      /* bits base address at which word bits will
                            be found */
@@ -1402,7 +1404,7 @@ static void cm_store_bits_value(State_Table_t *states,int index, int bit_number,
                                 int in_val)
 
 {
-    int       err,      /* error index value    */
+    int       /*err,*/      /* error index value    */
              int1,      /* temp storage variable    */
         bit_index,      /* bits base address at which word bits will
                            be found */
@@ -1498,17 +1500,17 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
     int         i,  /* indexing variable    */
                 j,  /* indexing variable    */
        num_tokens,  /* number of tokens in a given string    */
-        bit_index,  /* index to which bits[] integer we are accessing   */
-       bit_offset,  /* index to which bit within the current bits[] 
+        /*bit_index,*/  /* index to which bits[] integer we are accessing   */
+       /*bit_offset,*/  /* index to which bit within the current bits[] 
                        integer we are accessing   */
-      string_type,  /* integer holding value corresponding to the
+      string_type;  /* integer holding value corresponding to the
                        type of input string obtained:
                            1 = HEADER => State Header string
                            2 = CONTINUATION => a continuation line...
                                                values of state and
                                                bits must be retreived from
                                                the previous string. */
-             int1;  /* temporary holding variable   */
+             /*int1;*/  /* temporary holding variable   */
 
 
     Cnv_Token_Type_t type;  /* variable for testing token type returned.    */
@@ -1524,12 +1526,9 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
 
     float                 number;   /* holding variable for timepoint values */                                             
                                                  
-    double               double1,   /* temporary holding variable   */
-                         double2;   /* temporary holding variable   */
-
-    short              bit_value,   /* holding variable for value read from
+    short              bit_value=0;   /* holding variable for value read from
                                        state.in file which needs to be stored */
-                            base;   /* holding variable for existing 
+                            /*base;*/   /* holding variable for existing 
                                        non-masked bits[] integer  */
                      
 
@@ -1686,7 +1685,8 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                     /* set bits values to previous bits values */
                     for (j=0; j<states->num_outputs; j++) {      
     
-                        /*** Retrieve the previous bit value ***?                              
+                        /*** Retrieve the previous bit value ***/
+/*                              
                         cm_get_bits_value(*states,i,j,&out);
     
                         switch (out.state) {
@@ -1755,7 +1755,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                             break;
     
                         }
-        
+  */      
                         /*** Store this bit value ***/
     
                         cm_store_bits_value(states,i,j,bit_value);
@@ -1871,7 +1871,7 @@ void cm_d_state(ARGS)
 {
     int                    i,   /* generic loop counter index */
                            j,   /* generic loop counter index */
-                         err,   /* integer for storage of error status  */
+                         err=0,   /* integer for storage of error status  */
                         test;   /* testing integer  */   
                
     State_Table_t    *states;   /* pointer to base address structure

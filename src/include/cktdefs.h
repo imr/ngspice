@@ -337,7 +337,7 @@ extern int CKTsenUpdate( CKTcircuit *);
 extern int CKTsetAnalPm( void *, void *, int , IFvalue *, IFvalue *);
 extern int CKTsetBreak( CKTcircuit *, double );
 extern int CKTsetNodPm( void *, void *, int , IFvalue *, IFvalue *);
-extern int CKTsetOpt( void *, void *, int , IFvalue *);
+extern int CKTsetOpt( CKTcircuit *, void *, int , IFvalue *);
 extern int CKTsetup( CKTcircuit *);
 extern int CKTunsetup(CKTcircuit *); 
 extern int CKTtemp( CKTcircuit *);

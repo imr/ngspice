@@ -37,7 +37,7 @@ int HFETAload(GENmodel *inModel, CKTcircuit *ckt)
     double capgd;
     double capgs;
     double cd;
-    double cdhat;
+    double cdhat = 0.0;
     double cdrain;
     double cdreq;
     double ceq;
@@ -46,7 +46,7 @@ int HFETAload(GENmodel *inModel, CKTcircuit *ckt)
     double cg;
     double cgd=0;
     double cgs=0;
-    double cghat;
+    double cghat = 0.0;
     double delvds;
     double delvgd;
     double delvgs;
@@ -554,14 +554,14 @@ static void hfeta(HFETAmodel *model, HFETAinstance *here, CKTcircuit *ckt,
   double s;
   double t;
   double u;
-  double nsc;
-  double nsn;
+  double nsc = 0.0;
+  double nsn = 0.0;
   double temp;
   double etavth;
   double gch;
   double gchi;
   double gchim;
-  double vsate;
+  double vsate = 0.0;
   double vdse;
   double cg1;
   double cgc;
@@ -572,7 +572,7 @@ static void hfeta(HFETAmodel *model, HFETAinstance *here, CKTcircuit *ckt,
   double delgchins;
   double delnsnsm;
   double delnsmvgt;
-  double delvgtevgt;
+  double delvgtevgt = 0.0;
   double delidvsate;
   double delvsateisat;
   double delisatisatm;
@@ -580,8 +580,8 @@ static void hfeta(HFETAmodel *model, HFETAinstance *here, CKTcircuit *ckt,
   double delisatmgchim;
   double delvsategch;
   double delidvds;
-  double delvgtvgs;
-  double delvsatevgt;
+  double delvgtvgs = 0.0;
+  double delvsatevgt = 0.0;
 
   vt     = CONSTKoverQ*TEMP;
   etavth = ETA*vt;

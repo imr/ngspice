@@ -42,13 +42,14 @@ double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
 double cdrain, cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
 double czbd, czbdsw, czbdswg, czbs, czbssw, czbsswg, evbd, evbs, arg, sarg;
 double delvbd, delvbs, delvds, delvgd, delvgs;
-double Vfbeff, dVfbeff_dVg, dVfbeff_dVd, dVfbeff_dVb, V3, V4;
+double Vfbeff, dVfbeff_dVg, dVfbeff_dVd = 0.0, dVfbeff_dVb, V3, V4;
 double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb, gcgdb, gcggb, gcgsb, gcsdb;
 double gcsgb, gcssb, MJ, MJSW, MJSWG;
 double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
-double qgate, qbulk, qdrn, qsrc, qinoi, cqgate, cqbulk, cqdrn;
+double qgate = 0.0, qbulk = 0.0, qdrn = 0.0, qsrc;
+double qinoi, cqgate, cqbulk, cqdrn;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
-double Vgs_eff, Vfb, dVfb_dVb, dVfb_dVd;
+double Vgs_eff, Vfb, dVfb_dVb = 0.0, dVfb_dVd = 0.0;
 double Phis, dPhis_dVb, sqrtPhis, dsqrtPhis_dVb, Vth, dVth_dVb, dVth_dVd;
 double Vgst, dVgst_dVg, dVgst_dVb, dVgs_eff_dVg, Nvtm;
 double Vtm;
@@ -107,8 +108,8 @@ double Leff, Weff, dWeff_dVg, dWeff_dVb;
 double AbulkCV, dAbulkCV_dVb;
 double qgdo, qgso, cgdo, cgso;
 
-double qcheq, qdef, gqdef, cqdef, cqcheq, gtau_diff, gtau_drift;
-double gcqdb,gcqsb,gcqgb,gcqbb;
+double qcheq = 0.0, qdef, gqdef = 0.0, cqdef, cqcheq, gtau_diff, gtau_drift;
+double gcqdb = 0.0,gcqsb = 0.0, gcqgb = 0.0,gcqbb = 0.0;
 double dxpart, sxpart, ggtg, ggtd, ggts, ggtb;
 double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
 double dsxpart_dVd, dsxpart_dVg, dsxpart_dVb, dsxpart_dVs;
@@ -118,7 +119,8 @@ double gbdpdp, gbdpg, gbdpb, gbdpsp;
 double Cgg, Cgd, Cgb, Cdg, Cdd, Cds;
 double Csg, Csd, Css, Csb, Cbg, Cbd, Cbb;
 double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Qac0, Qsub0;
-double dQac0_dVg, dQac0_dVd, dQac0_dVb, dQsub0_dVg, dQsub0_dVd, dQsub0_dVb;
+double dQac0_dVg, dQac0_dVd = 0.0, dQac0_dVb, dQsub0_dVg;
+double dQsub0_dVd, dQsub0_dVb;
    
 double m;
 

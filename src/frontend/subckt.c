@@ -61,14 +61,10 @@ extern char * nupa_copy(char *s, int linenum);
 extern int    nupa_eval(char *s, int linenum);
 extern int    nupa_signal(int sig, char *info); 
 static char NumParams='y';
-static char DoGarbage='n';
-
 #else
 #define nupa_copy(x,y)   copy(x)
 #define nupa_eval(x,y)    1
 #define nupa_signal(x,y)  1
-static char NumParams='n';
-static char DoGarbage='n';
 #endif
 
 

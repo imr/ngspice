@@ -78,7 +78,7 @@ int CKTsenUpdate( CKTcircuit *);
 int CKTsetAnalPm( void *, void *, int , IFvalue *, IFvalue *);
 int CKTsetBreak( CKTcircuit *, double );
 int CKTsetNodPm( void *, void *, int , IFvalue *, IFvalue *);
-int CKTsetOpt( void *, void *, int , IFvalue *);
+int CKTsetOpt( CKTcircuit *, void *, int , IFvalue *);
 int CKTsetup( CKTcircuit *);
 int CKTunsetup(CKTcircuit *ckt); 
 int CKTtemp( CKTcircuit *);

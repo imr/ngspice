@@ -200,7 +200,7 @@ NON-STANDARD FEATURES
 void cm_d_dlatch(ARGS) 
 
 {
-    int                    i;   /* generic loop counter index */
+    /*int                    i;*/   /* generic loop counter index */
                         
 
     Digital_State_t    *data,   /* current data value    */

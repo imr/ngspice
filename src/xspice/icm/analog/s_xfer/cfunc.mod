@@ -117,6 +117,7 @@ NON-STANDARD FEATURES
     NONE
 
 ==============================================================================*/
+#include <stdlib.h>
 
 /*=== Static CM_COMPLEX_DIV ROUTINE ===*/
 
@@ -214,7 +215,7 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 									denonminator coefficients */
 	double **num_coefficient;    /* dynamic array that holds the numerator
 									coefficients */
-	double **old_num_coefficient;/* dynamic array that holds the old numerator
+	/*double **old_num_coefficient;?* dynamic array that holds the old numerator
 									coefficients */
 	double factor;               /* gain factor in case the highest
 									denominator coefficient is not 1 */
@@ -223,7 +224,7 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 	double null;                 /* dummy pointer for use with the
 									integrate function               */
 	double pout_pin;             /* partial out wrt in               */
-	double total_gain;           /* not used, currently-used with ITP stuff */
+	/*double total_gain;*/           /* not used, currently-used with ITP stuff */
     double temp;                 /* temporary variable used with the 
 									correct type of AC value */
 	double frac;                 /* holds fractional part of a divide */
@@ -410,7 +411,7 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         /* Test denominator highest order coefficient...if that value   */
         /* is other than 1.0, then divide all denominator coefficients  */
         /* and the gain by that value...                                */
-        if ( factor = PARAM(den_coeff[den_size-1]) != 1.0 ) {
+        if ( (factor = PARAM(den_coeff[den_size-1])) != 1.0 ) {
             for (i=0; i<den_size; i++) {
                 *(den_coefficient[i]) = *(den_coefficient[i]) / factor;
             }
@@ -430,12 +431,12 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         /**** DC Analysis - Not needed JPM 10/29/91 *****************/
 /*        if (ANALYSIS == MIF_DC) {    
             
-            /* Test to see if a term exists for the zero-th order
+            ?* Test to see if a term exists for the zero-th order
                denom coeff...       
 
-            /* division by zero if output              
-            /* num_coefficient[0]/den_coefficient[0],  
-            /* so output init. conds. instead...       
+            ?* division by zero if output              
+            ?* num_coefficient[0]/den_coefficient[0],  
+            ?* so output init. conds. instead...       
             if ( 0.0 == *(den_coefficient[0])) {    
                                             
                                             
@@ -449,8 +450,8 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 
             }
 
-            /* Zero-th order den term != 0.0, so output 
-            /*    num_coeff[0]/den_coeff[0]...          
+            ?* Zero-th order den term != 0.0, so output 
+            ?*    num_coeff[0]/den_coeff[0]...          
             else {                      
                                         
                 *out = *gain * ( INPUT(in) + 

@@ -177,14 +177,14 @@ double gmbds;
             double sarg;
             double a4[4],b4[4],x4[8],poly4[8];
             double beta1;
-            double sphi;    /* square root of phi */
-            double sphi3;   /* square root of phi cubed */
+            double sphi = 0.0;    /* square root of phi */
+            double sphi3 = 0.0;   /* square root of phi cubed */
             double barg;
             double factor;
             double eta;
             double vbin;
-            double argd;
-            double args;
+            double argd = 0.0;
+            double args = 0.0;
             double argss;
             double argsd;
             double argxs;
@@ -196,7 +196,7 @@ double gmbds;
             double cfs;
             double cdonco;
             double xn;
-            double argg;
+            double argg = 0.0;
             double sarg3;
             double sbiarg;
             double body;
@@ -231,7 +231,7 @@ double gmbds;
             double xv;
             double y3;
             double delta4;
-            double xvalid;
+            double xvalid = 0.0;
             double bsarg;
             double bodys;
             double sargv;
@@ -282,7 +282,7 @@ double gmbds;
     Dderivs d_von, d_dummy, d_vgsx, d_arg, d_dumarg;
     Dderivs d_ueff, d_beta1, d_clfact, d_xlamda,d_mos2gds;
     Dderivs d_vdson, d_cdson, d_expg;
-    double dsrgdb, dbrgdb, dbxwd, dbxws, dbargs, dbargd;
+    double dsrgdb, dbrgdb, dbxwd, dbxws, dbargs = 0.0, dbargd = 0.0;
     double dgddvb;
 
 

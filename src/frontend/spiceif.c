@@ -195,7 +195,7 @@ if_run(char *t, char *what, wordlist *args, char *tab)
 {
     void *ckt = (void *) t;
     int err;
-    struct line deck;
+    struct line deck[1];
     char buf[BSIZE_SP];
     int j;
     int which = -1;
@@ -219,10 +219,10 @@ if_run(char *t, char *what, wordlist *args, char *tab)
     	s = wl_flatten(args); /* va: tfree char's tmalloc'ed in wl_flatten */
         (void) sprintf(buf, ".%s", s);
         tfree(s);      
-        deck.li_next = deck.li_actual = NULL;
-        deck.li_error = NULL;
-        deck.li_linenum = 0;
-        deck.li_line = buf;
+        deck[0].li_next = deck[0].li_actual = NULL;
+        deck[0].li_error = NULL;
+        deck[0].li_linenum = 0;
+        deck[0].li_line = buf;
         
 /*CDHW Delete any previous special task CDHW*/	
 
@@ -296,10 +296,10 @@ ci_specTask will point to it CDHW*/
 
 /*CDHW ci_curTask and ci_specTask point to the interactive task AAA CDHW*/  
         
-      INPpas2(ckt, (card *) &deck, (INPtables *)tab, ft_curckt->ci_specTask);
+      INPpas2(ckt, (card *)deck, (INPtables *)tab, ft_curckt->ci_specTask);
         
-        if (deck.li_error) {
-            fprintf(cp_err, "Warning: %s\n", deck.li_error);
+        if (deck[0].li_error) {
+            fprintf(cp_err, "Warning: %s\n", deck[0].li_error);
 	    return 2;
         }
     }
@@ -559,8 +559,8 @@ spif_getparam(void *ckt, char **name, char *param, int ind, int do_model)
     IFvalue *pv;
     IFparm *opt;
     int typecode, i;
-    GENinstance *dev=(GENinstance *)NULL;
-    GENmodel *mod=(GENmodel *)NULL;
+    GENinstance *dev[1]={ (GENinstance *)NULL };
+    GENmodel *mod[1]= { (GENmodel *)NULL };
     IFdevice *device;
 
     /* fprintf(cp_err, "Calling if_getparam(%s, %s)\n", *name, param); */
@@ -570,7 +570,7 @@ spif_getparam(void *ckt, char **name, char *param, int ind, int do_model)
     	/* MW. My "special routine here" */
         INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
         
-        typecode = finddev(ckt, *name,(void**) &dev,(void **) &mod);
+        typecode = finddev(ckt, *name,(void**)dev,(void **)mod);
         if (typecode == -1) {
             fprintf(cp_err,
                 "Error: no such device or model name %s\n",
@@ -583,7 +583,7 @@ spif_getparam(void *ckt, char **name, char *param, int ind, int do_model)
             if(opt->dataType & IF_REDUNDANT || !opt->description)
 		    continue;
             if(!(opt->dataType & IF_ASK)) continue;
-            pv = doask(ckt, typecode, dev, mod, opt, ind);
+            pv = doask(ckt, typecode, dev[0], mod[0], opt, ind);
             if (pv) {
                 tv = parmtovar(pv, opt);
                 if (vv)
@@ -600,7 +600,7 @@ spif_getparam(void *ckt, char **name, char *param, int ind, int do_model)
     
     	/* MW.  */
         INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
-        typecode = finddev(ckt, *name, (void**)&dev, (void **)&mod);
+        typecode = finddev(ckt, *name, (void**)dev, (void **)mod);
         if (typecode == -1) {
             fprintf(cp_err,
                 "Error: no such device or model name %s\n",
@@ -608,13 +608,13 @@ spif_getparam(void *ckt, char **name, char *param, int ind, int do_model)
             return (NULL);
         }
         device = ft_sim->devices[typecode];
-        opt = parmlookup(device, &dev, param, do_model, 0);
+        opt = parmlookup(device, dev, param, do_model, 0);
         if (!opt) {
             fprintf(cp_err, "Error: no such parameter %s.\n",
                     param);
             return (NULL);
         }
-        pv = doask(ckt, typecode, dev, mod, opt, ind);
+        pv = doask(ckt, typecode, dev[0], mod[0], opt, ind);
         if (pv)
             vv = parmtovar(pv, opt);
         return (vv);
@@ -627,19 +627,19 @@ if_setparam(void *ckt, char **name, char *param, struct dvec *val, int do_model)
 {
     IFparm *opt;
     IFdevice *device;
-    GENmodel *mod=(GENmodel *)NULL;
-    GENinstance *dev=(GENinstance *)NULL;
+    GENmodel *mod[1]={(GENmodel *)NULL};
+    GENinstance *dev[1]={(GENinstance *)NULL};
     int typecode;
 
 	/* PN  */
     INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
-    typecode = finddev(ckt, *name, (void**)&dev, (void **)&mod);
+    typecode = finddev(ckt, *name, (void**)dev, (void **)mod);
     if (typecode == -1) {
 	fprintf(cp_err, "Error: no such device or model name %s\n", *name);
 	return;
     }
     device = ft_sim->devices[typecode];
-    opt = parmlookup(device, &dev, param, do_model, 1);
+    opt = parmlookup(device, dev, param, do_model, 1);
     if (!opt) {
 	if (param)
 		fprintf(cp_err, "Error: no such parameter %s.\n", param);
@@ -647,11 +647,11 @@ if_setparam(void *ckt, char **name, char *param, struct dvec *val, int do_model)
 		fprintf(cp_err, "Error: no default parameter.\n");
 	return;
     }
-    if (do_model && !mod) {
-	mod = dev->GENmodPtr;
-	dev = (GENinstance *)NULL;
+    if (do_model && !mod[0]) {
+	mod[0] = dev[0]->GENmodPtr;
+	dev[1] = (GENinstance *)NULL;
     }
-    doset(ckt, typecode, dev, mod, opt, val);
+    doset(ckt, typecode, dev[0], mod[0], opt, val);
 }
 
 static struct variable *

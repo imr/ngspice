@@ -140,12 +140,14 @@ string is copied to malloced storage and a pointer to that storage
 is returned.  The original input string is undisturbed.
 */
 
+#include <stdlib.h>
+
 static char  *CNVgettok(char **s)
 
 {
 
     char    *buf;       /* temporary storage to copy token into */
-    char    *temp;      /* temporary storage to copy token into */
+    /*char    *temp;*/      /* temporary storage to copy token into */
     char    *ret_str;   /* storage for returned string */
 
     int     i;
@@ -345,8 +347,8 @@ float   *p_value;    /* OUT - The numerical value     */
 
     line_t  val_str;
 
-    char    *suffix;
-    char    c;
+    /*char    *suffix;*/
+    char    c = ' ';
     char    c1;
 
     float   scale_factor;
@@ -668,6 +670,7 @@ static int cm_source_mask_and_store(short *base,int bit_offset,int bit_value)
     }
      
     *base = *base | bit_value;
+return 0;
 }
 
 
@@ -727,7 +730,7 @@ static void cm_get_source_value(int word_width,int bit_number,int index,
                          short *bits, Digital_t *out)
 
 {
-    int       err,      /* error index value    */
+    int       /*err,*/      /* error index value    */
              int1,      /* temp storage variable    */
         bit_index,      /* bits base address at which word bits will
                            be found */

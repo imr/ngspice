@@ -31,7 +31,7 @@ char *
 tildexpand(char *string)
 {
     char buf[BSIZE_SP];
-    char *result, *k, c;
+    char *result = NULL, *k, c;
 
     if (!string)
 	return NULL;

@@ -117,7 +117,7 @@ void EVTprint(
     Mif_Boolean_t    more;
     Mif_Boolean_t    dcop;
 
-    double      step;
+    double      step = 0.0;
     double      next_step;
     double      this_step;
 

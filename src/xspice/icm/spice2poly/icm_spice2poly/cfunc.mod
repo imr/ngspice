@@ -281,7 +281,7 @@ stmt20: if(k == pdim) goto stmt30;
 stmt30: km1 = k - 1;
         for(i = 1; i <= km1; i++)
             if(PWRSEQ(i) != 0) goto stmt50;
-stmt40: PWRSEQ(1) = PWRSEQ(pdim) + 1;
+/*stmt40:*/ PWRSEQ(1) = PWRSEQ(pdim) + 1;
         PWRSEQ(pdim) = 0;
         goto stmt100;
 stmt50: psum = 1;

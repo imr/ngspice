@@ -76,7 +76,7 @@ MOS1dSetup(GENmodel *inModel, CKTcircuit *ckt)
     double lcapbs3;
     double lcapbd2;
     double lcapbd3;
-    double gmbds;
+    double gmbds = 0.0;
 
 
     /*  loop through all the MOS1 device models */

@@ -25,7 +25,7 @@ MOS1sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     int xnrm;
     int xrev;
     double A0;
-    double Apert;
+    double Apert = 0.0;
     double DELA;
     double DELAinv;
     double gdpr0;
@@ -110,7 +110,7 @@ MOS1sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     double icdprm;
     double icg;
     double icb;
-    double DvDp;
+    double DvDp = 0.0;
     int i;
     int flag;
     int error;

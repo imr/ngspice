@@ -11,7 +11,7 @@ void ucm_real_to_v (ARGS)
     double *t, *v;
     double *in;
 
-    double out;
+    /*double out;*/
 
 
     in = INPUT(in);

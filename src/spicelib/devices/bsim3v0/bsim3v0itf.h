@@ -4,7 +4,8 @@ Author: 1991 JianHui Huang and Min-Chie Jeng.
 File: bsim3v0itf.h
 **********/
 
-#ifdef DEV_bsim3v0
+#ifndef DEV_bsim3v0
+#define DEV_bsim3v0
 
 SPICEdev *get_bsim3v0_info(void);
 

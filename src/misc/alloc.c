@@ -28,7 +28,12 @@ tmalloc(size_t num)
     s = calloc(num,1);
     if (!s){
       fprintf(stderr,
-	      "malloc: Internal Error: can't allocate %d bytes. \n", num);
+#if IS_SIZE_T_LONG
+	      "malloc: Internal Error: can't allocate %ld bytes. \n",
+#else
+	      "malloc: Internal Error: can't allocate %d bytes. \n",
+#endif
+              num);
       exit(EXIT_BAD);
     }
     return(s);
@@ -51,8 +56,13 @@ trealloc(void *ptr, size_t num)
     s = realloc(ptr, num);
 
   if (!s) {
-    fprintf(stderr, 
-	    "realloc: Internal Error: can't allocate %d bytes.\n", num);
+    fprintf(stderr,
+#if IS_SIZE_T_LONG 
+	    "realloc: Internal Error: can't allocate %ld bytes.\n",
+#else
+	    "realloc: Internal Error: can't allocate %d bytes.\n",
+#endif
+            num);
     exit(EXIT_BAD);
   }
   return(s);

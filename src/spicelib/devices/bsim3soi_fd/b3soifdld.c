@@ -55,8 +55,6 @@ double
 B3SOIFDSmartVbs(double New, double Old, B3SOIFDinstance *here, 
                 CKTcircuit *ckt, int *check)
 {
-   double T0, T1, del;
-
    /* only do it for floating body and DC */
    if (here->B3SOIFDfloat && (ckt->CKTmode & (MODEDC | MODEDCOP)))
    {
@@ -104,13 +102,10 @@ B3SOIFDmodel *model = (B3SOIFDmodel*)inModel;
 B3SOIFDinstance *here;
 int selfheat;
 
-double SourceSatCurrent, DrainSatCurrent, Gmin;
-double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
+double ag0, qgd, qgs, von, cbhat, VgstNVt, ExpVgst = 0.0;
 double cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
-double evbd, evbs, arg, sarg;
 double delvbd, delvbs, delvds, delvgd, delvgs;
-double Vfbeff, dVfbeff_dVg, dVfbeff_dVd, dVfbeff_dVb, V3, V4;
-double tol, PhiB, PhiBSW, MJ, MJSW, PhiBSWG, MJSWG;
+double Vfbeff, dVfbeff_dVd, dVfbeff_dVb, V3, V4;
 double gcgdb, gcggb, gcgsb, gcgeb, gcgT;
 double gcsdb, gcsgb, gcssb, gcseb, gcsT;
 double gcddb, gcdgb, gcdsb, gcdeb, gcdT;
@@ -121,59 +116,56 @@ double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
 double vg, vd, vs, vp, ve, vb;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
 double Vgs_eff, Vfb, dVfb_dVb, dVfb_dVd, dVfb_dT;
-double Phis, dPhis_dVb, sqrtPhis, dsqrtPhis_dVb, Vth, dVth_dVb, dVth_dVd, dVth_dT;
-double Vgst, dVgst_dVg, dVgst_dVb, dVgs_eff_dVg, Nvtm;
-double Vgdt, Vgsaddvth, Vgsaddvth2, Vgsaddvth1o3, n, dn_dVb, Vtm;
+double Phis, dPhis_dVb, sqrtPhis, dsqrtPhis_dVb, Vth = 0.0, dVth_dVb;
+double dVth_dVd, dVth_dT;
+double Vgst, dVgs_eff_dVg;
+double n, dn_dVb, Vtm;
 double ExpArg, V0;
-double ueff, dueff_dVg, dueff_dVd, dueff_dVb, dueff_dT;
-double Esat, dEsat_dVg, dEsat_dVd, dEsat_dVb, Vdsat, Vdsat0;
+double ueff = 0.0, dueff_dVg, dueff_dVd, dueff_dVb, dueff_dT;
+double Esat, Vdsat = 0.0;
 double EsatL, dEsatL_dVg, dEsatL_dVd, dEsatL_dVb, dEsatL_dT;
-double dVdsat_dVg, dVdsat_dVb, dVdsat_dVd, dVdsat_dT, Vasat, dAlphaz_dVg, dAlphaz_dVb;
+double dVdsat_dVg, dVdsat_dVb, dVdsat_dVd, dVdsat_dT, Vasat;
 double dVasat_dVg, dVasat_dVb, dVasat_dVd, dVasat_dT;
-double Va, Va2, dVa_dVd, dVa_dVg, dVa_dVb, dVa_dT;
-double Vbseff, dVbseff_dVb, VbseffCV, dVbseffCV_dVb;
-double One_Third_CoxWL, Two_Third_CoxWL, Alphaz, CoxWL;
-double dVgdt_dVg, dVgdt_dVd, dVgdt_dVb;
-double T0, dT0_dVg, dT0_dVd, dT0_dVb, dT0_dVc, dT0_dVe, dT0_dVrg, dT0_dT;
+double Va, dVa_dVd, dVa_dVg, dVa_dVb, dVa_dT;
+double Vbseff, dVbseff_dVb;
+double One_Third_CoxWL, Two_Third_CoxWL, CoxWL;
+double T0, dT0_dVg, dT0_dVd, dT0_dVb, dT0_dVc, dT0_dVe, dT0_dT;
 double T1, dT1_dVg, dT1_dVd, dT1_dVb, dT1_dVc, dT1_dVe, dT1_dT;
 double T2, dT2_dVg, dT2_dVd, dT2_dVb, dT2_dVc, dT2_dVe, dT2_dT;
 double T3, dT3_dVg, dT3_dVd, dT3_dVb, dT3_dVc, dT3_dVe, dT3_dT;
-double T4, dT4_dVg, dT4_dVd, dT4_dVb, dT4_dVc, dT4_dVe, dT4_dT;
-double T5, dT5_dVg, dT5_dVd, dT5_dVb, dT5_dVc, dT5_dVe, dT5_dT;
-double T6, dT6_dVg, dT6_dVd, dT6_dVb, dT6_dVc, dT6_dVe, dT6_dT;
-double T7, dT7_dVg, dT7_dVd, dT7_dVb;
-double T8, dT8_dVg, dT8_dVd, dT8_dVb, dT8_dVc, dT8_dVe, dT8_dVrg;
-double T9, dT9_dVg, dT9_dVd, dT9_dVb, dT9_dVc, dT9_dVe, dT9_dVrg;
-double T10, dT10_dVg, dT10_dVb, dT10_dVd;
-double T11, T12;
-double tmp, Abulk, dAbulk_dVb, Abulk0, dAbulk0_dVb;
-double T100, T101;
+double T4, dT4_dVg, dT4_dVd, dT4_dVb, dT4_dVe, dT4_dT;
+double T5, dT5_dVe;
+double T6, dT6_dVe, dT6_dT;
+double T7;
+double T8;
+double T9;
+double T10;
+double T11;
+double Abulk, dAbulk_dVb, Abulk0, dAbulk0_dVb;
 double VACLM, dVACLM_dVg, dVACLM_dVd, dVACLM_dVb, dVACLM_dT;
 double VADIBL, dVADIBL_dVg, dVADIBL_dVd, dVADIBL_dVb, dVADIBL_dT;
-double VAHCE,  dVAHCE_dVg, dVAHCE_dVd, dVAHCE_dVb;
 double Xdep, dXdep_dVb, lt1, dlt1_dVb, ltw, dltw_dVb;
 double Delt_vth, dDelt_vth_dVb, dDelt_vth_dT;
-double Theta0, dTheta0_dVb, Theta1, dTheta1_dVb;
-double Thetarout, dThetarout_dVb, TempRatio, tmp1, tmp2, tmp3, tmp4;
-double DIBL_Sft, dDIBL_Sft_dVd, DIBL_fact, Lambda, dLambda_dVg;
-double Rout_Vgs_factor, dRout_Vgs_factor_dVg, dRout_Vgs_factor_dVb;
-double dRout_Vgs_factor_dVd;
-double tempv, a1;
+double Theta0, dTheta0_dVb;
+double TempRatio, tmp1, tmp2, tmp3, tmp4;
+double DIBL_Sft, dDIBL_Sft_dVd, Lambda, dLambda_dVg;
+double a1;
  
-double Vgsteff, dVgsteff_dVg, dVgsteff_dVd, dVgsteff_dVb, dVgsteff_dVe, dVgsteff_dT;
-double Vdseff, dVdseff_dVg, dVdseff_dVd, dVdseff_dVb, dVdseff_dT;
+double Vgsteff = 0.0, dVgsteff_dVg, dVgsteff_dVd, dVgsteff_dVb;
+double dVgsteff_dVe, dVgsteff_dT;
+double Vdseff = 0.0, dVdseff_dVg, dVdseff_dVd, dVdseff_dVb, dVdseff_dT;
 double VdseffCV, dVdseffCV_dVg, dVdseffCV_dVd, dVdseffCV_dVb;
-double diffVds, diffVdsCV;
+double diffVds;
 double dAbulk_dVg, dn_dVd ;
 double beta, dbeta_dVg, dbeta_dVd, dbeta_dVb, dbeta_dT;
 double gche, dgche_dVg, dgche_dVd, dgche_dVb, dgche_dT;
 double fgche1, dfgche1_dVg, dfgche1_dVd, dfgche1_dVb, dfgche1_dT;
 double fgche2, dfgche2_dVg, dfgche2_dVd, dfgche2_dVb, dfgche2_dT;
 double Idl, dIdl_dVg, dIdl_dVd, dIdl_dVb, dIdl_dT;
-double Ids, Gm, Gds, Gmb;
+double Ids = 0.0, Gm, Gds = 0.0, Gmb;
 double CoxWovL;
 double Rds, dRds_dVg, dRds_dVb, dRds_dT, WVCox, WVCoxRds;
-double Vgst2Vtm, dVgst2Vtm_dT, VdsatCV, dVdsatCV_dVd, dVdsatCV_dVg, dVdsatCV_dVb;
+double Vgst2Vtm, dVgst2Vtm_dT, VdsatCV, dVdsatCV_dVg, dVdsatCV_dVb;
 double Leff, Weff, dWeff_dVg, dWeff_dVb;
 double AbulkCV, dAbulkCV_dVb;
 double qgdo, qgso, cgdo, cgso;
@@ -181,14 +173,13 @@ double qgdo, qgso, cgdo, cgso;
 double dxpart, sxpart;
  
 struct b3soifdSizeDependParam *pParam;
-int ByPass, Check, ChargeComputationNeeded, J, error, I;
-double junk[50];
+int ByPass, Check, ChargeComputationNeeded = 0, error;
  
 double gbbsp, gbbdp, gbbg, gbbb, gbbe, gbbp, gbbT;
 double gddpsp, gddpdp, gddpg, gddpb, gddpe, gddpT;
 double gsspsp, gsspdp, gsspg, gsspb, gsspe, gsspT;
 double Gbpbs, Gbpgs, Gbpds, Gbpes, Gbpps, GbpT;
-double vse, vde, ves, ved, veb, vge, delves, vedo, delved;
+double ves, ved, veb, vge = 0.0, delves, vedo, delved;
 double vps, vpd, Vps, delvps;
 double Vbd, Ves, Vesfb, sqrtXdep, DeltVthtemp, dDeltVthtemp_dT;
 double Vbp, dVbp_dVp, dVbp_dVb, dVbp_dVg, dVbp_dVd, dVbp_dVe, dVbp_dT;
@@ -198,94 +189,77 @@ double dVbseff_dVd, dVbseff_dVe, dVbseff_dT;
 double dVdsat_dVc, dVasat_dVc, dVACLM_dVc, dVADIBL_dVc, dVa_dVc;
 double dfgche1_dVc, dfgche2_dVc, dgche_dVc, dVdseff_dVc, dIdl_dVc;
 double Gm0, Gds0, Gmb0, GmT0, Gmc, Gme, GmT, dVbseff_dVg;
-double dDIBL_Sft_dVb, BjtA, dBjtA_dVd;
+double dDIBL_Sft_dVb;
 double diffVdsii  ;
-double Idgidl, Gdgidld, Gdgidlg, Isgidl, Gsgidlg;
-double Gjsd, Gjss, Gjsb, GjsT, Gjdd, Gjdb, GjdT;
-double Ibp, Iii, Giid, Giig, Giib, Giie, GiiT, Gcd, Gcb, GcT, ceqbody, ceqbodcon;
-double gppg, gppdp, gppb, gppe, gppp, gppsp, gppT;
+double Idgidl = 0.0, Gdgidld, Gdgidlg, Isgidl = 0.0, Gsgidlg;
+double Gjsd, Gjsb, GjsT, Gjdd, Gjdb, GjdT;
+double Ibp = 0.0, Iii = 0.0, Giid, Giig, Giib, Giie, GiiT, Gcd, Gcb, GcT;
+double ceqbody, ceqbodcon = 0.0;
+double gppg = 0.0, gppdp = 0.0, gppb = 0.0, gppe = 0.0;
+double gppp = 0.0, gppsp = 0.0, gppT;
 double delTemp, deldelTemp, Temp;
 double ceqth, ceqqth;
-double K1, WL;
-double qjs, gcjsbs, gcjsT;
-double qjd, gcjdbs, gcjdds, gcjdT;
+double K1;
+double qjs = 0.0, gcjsbs, gcjsT;
+double qjd = 0.0, gcjdbs, gcjdds, gcjdT;
 double qge;
 double ceqqe;
 double ni, Eg, Cbox, Nfb, CboxWL;
-double cjsbs;
-double Qbf0, Qsicv, dVfbeff_dVrg, Cbe ;
-double qinv, qgate, qbody, qdrn, qsrc, qsub, cqgate, cqbody, cqdrn, cqsub, cqtemp;
-double Cgg, Cgd, Cgs, Cgb, Cge, Cdg, Cdd, Cds, Cdb, Qg, Qd;
-double Csg, Csd, Css, Csb, Cse, Cbg, Cbd, Cbs, Cbb, Qs, Qb;
-double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Csg1, Csd1, Csb1;
-double Vbs0t, dVbs0t_dT ;
-double Vbs0 ,dVbs0_dVe, dVbs0_dT;
-double Vbs0eff ,dVbs0eff_dVg ,dVbs0eff_dVd ,dVbs0eff_dVe, dVbs0eff_dT;
-double Vbs0teff,dVbs0teff_dVg ,dVbs0teff_dVd, dVbs0teff_dVe, dVbs0teff_dT;
-double Vbsdio, dVbsdio_dVg, dVbsdio_dVd, dVbsdio_dVe, dVbsdio_dVb, dVbsdio_dT;
-double Vbseff0;
-double Vthfd ,dVthfd_dVd ,dVthfd_dVe, dVthfd_dT;
-double Vbs0mos ,dVbs0mos_dVe, dVbs0mos_dT;
+double dVfbeff_dVrg, Cbe = 0.0;
+double qinv = 0.0, qgate = 0.0, qbody = 0.0, qdrn = 0.0, qsrc, qsub = 0.0;
+double cqgate, cqbody = 0.0, cqdrn = 0.0, cqsub, cqtemp;
+double Cgg, Cgd, Cgb, Cge;
+double Csg, Csd, Csb, Cse, Cbg = 0.0, Cbd = 0.0, Cbb = 0.0;
+double Cgg1, Cgb1, Cgd1, Csg1, Csd1, Csb1;
+double Vbs0t = 0.0, dVbs0t_dT ;
+double Vbs0 = 0.0,dVbs0_dVe, dVbs0_dT;
+double Vbs0eff = 0.0 ,dVbs0eff_dVg ,dVbs0eff_dVd ,dVbs0eff_dVe, dVbs0eff_dT;
+double Vbs0teff = 0.0, dVbs0teff_dVg, dVbs0teff_dVd;
+double dVbs0teff_dVe, dVbs0teff_dT;
+double dVbsdio_dVg, dVbsdio_dVd, dVbsdio_dVe;
+double dVbsdio_dVb, dVbsdio_dT;
+double Vthfd = 0.0,dVthfd_dVd ,dVthfd_dVe, dVthfd_dT;
+double Vbs0mos = 0.0 ,dVbs0mos_dVe, dVbs0mos_dT;
 double Vbsmos ,dVbsmos_dVg ,dVbsmos_dVb ,dVbsmos_dVd, dVbsmos_dVe, dVbsmos_dT;
 double Abeff ,dAbeff_dVg ,dAbeff_dVb, dAbeff_dVc;
 double Vcs ,dVcs_dVg ,dVcs_dVb ,dVcs_dVd ,dVcs_dVe, dVcs_dT;
-double Xcsat ,dXcsat_dVg ,dXcsat_dVb, dXcsat_dVc;
+double Xcsat = 0.0 ,dXcsat_dVg , dXcsat_dVc;
 double Vdsatii ,dVdsatii_dVg ,dVdsatii_dVd, dVdsatii_dVb, dVdsatii_dT;
 double Vdseffii ,dVdseffii_dVg ,dVdseffii_dVd, dVdseffii_dVb, dVdseffii_dT;
-double VcsCV ,dVcsCV_dVg ,dVcsCV_dVb ,dVcsCV_dVd  ,dVcsCV_dVc ,dVcsCV_dVe;
-double VdsCV ,dVdsCV_dVg ,dVdsCV_dVb ,dVdsCV_dVd  ,dVdsCV_dVc;
-double Phisc ,dPhisc_dVg ,dPhisc_dVb ,dPhisc_dVd,  dPhisc_dVc;
+double VcsCV = 0.0;
+double VdsCV = 0.0, dVdsCV_dVg = 0.0, dVdsCV_dVb = 0.0;
+double dVdsCV_dVd = 0.0, dVdsCV_dVc = 0.0;
 double Phisd ,dPhisd_dVg ,dPhisd_dVb ,dPhisd_dVd,  dPhisd_dVc;
-double sqrtPhisc ,dsqrtPhisc_dVg  ,dsqrtPhisc_dVb;
-double sqrtPhisd ,dsqrtPhisd_dVg  ,dsqrtPhisd_dVb;
-double Xc ,dXc_dVg ,dXc_dVb ,dXc_dVd ,dXc_dVc;
-double Ibjt ,dIbjt_dVb ,dIbjt_dVd ,dIbjt_dT;
-double Ibs1 ,dIbs1_dVb ,dIbs1_dT;
-double Ibs2 ,dIbs2_dVb ,dIbs2_dT;
-double Ibs3 ,dIbs3_dVb ,dIbs3_dVd, dIbs3_dT;
-double Ibs4 ,dIbs4_dVb ,dIbs4_dT;
-double Ibd1 ,dIbd1_dVb ,dIbd1_dVd ,dIbd1_dT;
-double Ibd2 ,dIbd2_dVb ,dIbd2_dVd ,dIbd2_dT;
-double Ibd3 ,dIbd3_dVb ,dIbd3_dVd ,dIbd3_dT;
-double Ibd4 ,dIbd4_dVb ,dIbd4_dVd ,dIbd4_dT;
-double ExpVbs1, dExpVbs1_dVb, dExpVbs1_dT;
-double ExpVbs2, dExpVbs2_dVb, dExpVbs2_dT;
-double ExpVbs4, dExpVbs4_dVb, dExpVbs4_dT;
-double ExpVbd1, dExpVbd1_dVb, dExpVbd1_dT;
-double ExpVbd2, dExpVbd2_dVb, dExpVbd2_dT;
-double ExpVbd4, dExpVbd4_dVb, dExpVbd4_dT;
-double WTsi, NVtm1, NVtm2;
-double Ic  ,dIc_dVb ,dIc_dVd;
-double Ibs ,dIbs_dVb ,dIbs_dVd ,dIbs_dVe;
-double Ibd ,dIbd_dVb;
-double Nomi ,dNomi_dVg ,dNomi_dVb ,dNomi_dVd ,dNomi_dVc;
-double Denomi ,dDenomi_dVg ,dDenomi_dVd ,dDenomi_dVb ,dDenomi_dVc, dDenomi_dT;
-double Qbf ,dQbf_dVg ,dQbf_dVb ,dQbf_dVd ,dQbf_dVc ,dQbf_dVe;
-double Qsubs1 ,dQsubs1_dVg  ,dQsubs1_dVb ,dQsubs1_dVd ,dQsubs1_dVc ,dQsubs1_dVe;
-double Qsubs2 ,dQsubs2_dVg  ,dQsubs2_dVb ,dQsubs2_dVd ,dQsubs2_dVc ,dQsubs2_dVe;
-double Qsub0  ,dQsub0_dVg   ,dQsub0_dVb  ,dQsub0_dVd ;
-double Qac0 ,dQac0_dVb   ,dQac0_dVd;
+double sqrtPhisd;
+double Xc = 0.0;
+double Ic = 0.0;
+double Ibs = 0.0;
+double Ibd = 0.0;
+double Denomi ,dDenomi_dVg ,dDenomi_dVd ,dDenomi_dVb , dDenomi_dT;
+double Qbf = 0.0;
+double Qsubs1 = 0.0;
+double Qsubs2 = 0.0;
+double Qsub0 = 0.0  ,dQsub0_dVg   ,dQsub0_dVb  ,dQsub0_dVd ;
+double Qac0 = 0.0 ,dQac0_dVb   ,dQac0_dVd;
 double Qdep0 ,dQdep0_dVb;
-double Qe1 , dQe1_dVg ,dQe1_dVb, dQe1_dVd, dQe1_dVe, dQe1_dT;
+double Qe1 = 0.0;
 double Ce1g ,Ce1b ,Ce1d ,Ce1e, Ce1T;
 double Ce2g ,Ce2b ,Ce2d ,Ce2e, Ce2T;
-double Qe2 , dQe2_dVg ,dQe2_dVb, dQe2_dVd, dQe2_dVe, dQe2_dT;
-double dQbf_dVrg, dQac0_dVrg, dQsub0_dVrg; 
-double dQsubs1_dVrg, dQsubs2_dVrg, dQbf0_dVe, dQbf0_dT;
+double Qe2 = 0.0;
+double dQac0_dVrg, Vbsdio = 0.0, dQsub0_dVrg;
 
 /*  for self-heating  */
 double vbi, vfbb, phi, sqrtPhi, Xdep0, jbjt, jdif, jrec, jtun, u0temp, vsattemp;
 double rds0, ua, ub, uc;
 double dvbi_dT, dvfbb_dT, djbjt_dT, djdif_dT, djrec_dT, djtun_dT, du0temp_dT;
 double dvsattemp_dT, drds0_dT, dua_dT, dub_dT, duc_dT, dni_dT, dVtm_dT;
-double dVfbeff_dT, dQac0_dT, dQsub0_dT, dQbf_dT, dVdsCV_dT, dPhisd_dT;
-double dNomi_dT,dXc_dT,dQsubs1_dT,dQsubs2_dT, dVcsCV_dT, dPhisc_dT, dQsicv_dT;
-double CbT, CsT, CgT, CeT;
+double dVfbeff_dT, dQac0_dT, dQsub0_dT, dVdsCV_dT = 0.0, dPhisd_dT;
+double CbT, CsT, CgT;
 
 double Qex, dQex_dVg, dQex_dVb, dQex_dVd, dQex_dVe, dQex_dT;
 
 /* clean up last */
-FILE *fpdebug;
+FILE *fpdebug = NULL;
 /* end clean up */
 int nandetect;
 static int nanfound = 0;
@@ -338,7 +312,9 @@ for (; model != NULL; model = model->B3SOIFDnextModel)
               }
               if (here->B3SOIFDdebugMod > 0)
               {
-                 fprintf(stderr,"DC op. point converge with %d iterations\n");
+                 fprintf(stderr,
+                         "DC op. point converge with %d iterations\n",
+                         here->B3SOIFDiterations);
               }
           }
 	  else if ((ckt->CKTmode & MODEINITTRAN))
@@ -3344,25 +3320,25 @@ if (here->B3SOIFDdebugMod > 2)
 /*  Here NaN will be detected in any conductance or equivalent current.  Note
     that nandetect is initialized within the "if" statements  */
 
-                   if (nandetect = isnan (*(here->B3SOIFDGgPtr)))
+                   if ((nandetect = isnan (*(here->B3SOIFDGgPtr))))
                    { strcpy (nanmessage, "GgPtr"); }
-                   else if (nandetect = isnan (*(here->B3SOIFDGdpPtr)))
+                   else if ((nandetect = isnan (*(here->B3SOIFDGdpPtr))))
                    { strcpy (nanmessage, "GdpPtr"); }
-                   else if (nandetect = isnan (*(here->B3SOIFDGspPtr)))
+                   else if ((nandetect = isnan (*(here->B3SOIFDGspPtr))))
                    { strcpy (nanmessage, "GspPtr"); }
-                   else if (nandetect = isnan (*(here->B3SOIFDDPgPtr)))
+                   else if ((nandetect = isnan (*(here->B3SOIFDDPgPtr))))
                    { strcpy (nanmessage, "DPgPtr"); }
-                   else if (nandetect = isnan (*(here->B3SOIFDDPdpPtr)))
+                   else if ((nandetect = isnan (*(here->B3SOIFDDPdpPtr))))
                    { strcpy (nanmessage, "DPdpPtr"); }
-                   else if (nandetect = isnan (*(here->B3SOIFDDPspPtr)))
+                   else if ((nandetect = isnan (*(here->B3SOIFDDPspPtr))))
                    { strcpy (nanmessage, "DPspPtr"); }
-                   else if (nandetect = isnan (*(here->B3SOIFDSPgPtr)))
+                   else if ((nandetect = isnan (*(here->B3SOIFDSPgPtr))))
                    { strcpy (nanmessage, "SPgPtr"); }
-                   else if (nandetect = isnan (*(here->B3SOIFDSPdpPtr)))
+                   else if ((nandetect = isnan (*(here->B3SOIFDSPdpPtr))))
                    { strcpy (nanmessage, "SPdpPtr"); }
-                   else if (nandetect = isnan (*(here->B3SOIFDSPspPtr)))
+                   else if ((nandetect = isnan (*(here->B3SOIFDSPspPtr))))
                    { strcpy (nanmessage, "SPspPtr"); }
-                   else if (nandetect = isnan (*(here->B3SOIFDEePtr)))
+                   else if ((nandetect = isnan (*(here->B3SOIFDEePtr))))
                    { strcpy (nanmessage, "EePtr"); }
  
                    /*  At this point, nandetect = 0 if none of the
@@ -3370,17 +3346,17 @@ if (here->B3SOIFDdebugMod > 2)
  
                    if (nandetect == 0)
                    {
-                      if (nandetect = isnan (*(here->B3SOIFDEgPtr)))
+                     if ((nandetect = isnan (*(here->B3SOIFDEgPtr))))
                       { strcpy (nanmessage, "EgPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDEdpPtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDEdpPtr))))
                       { strcpy (nanmessage, "EdpPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDEspPtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDEspPtr))))
                       { strcpy (nanmessage, "EspPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDGePtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDGePtr))))
                       { strcpy (nanmessage, "GePtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDDPePtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDDPePtr))))
                       { strcpy (nanmessage, "DPePtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDSPePtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDSPePtr))))
                       { strcpy (nanmessage, "SPePtr"); } }
  
                    /*  Now check if self-heating caused NaN if nothing else
@@ -3388,29 +3364,29 @@ if (here->B3SOIFDdebugMod > 2)
  
                    if (selfheat && nandetect == 0)
                    {
-                      if (nandetect = isnan (*(here->B3SOIFDTemptempPtr)))
+                     if ((nandetect = isnan (*(here->B3SOIFDTemptempPtr))))
                       { strcpy (nanmessage, "TemptempPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDTempgPtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDTempgPtr))))
                       { strcpy (nanmessage, "TempgPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDTempbPtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDTempbPtr))))
                       { strcpy (nanmessage, "TempbPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDTempePtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDTempePtr))))
                       { strcpy (nanmessage, "TempePtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDTempdpPtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDTempdpPtr))))
                       { strcpy (nanmessage, "TempdpPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDTempspPtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDTempspPtr))))
                       { strcpy (nanmessage, "TempspPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDGtempPtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDGtempPtr))))
                       { strcpy (nanmessage, "GtempPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDDPtempPtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDDPtempPtr))))
                       { strcpy (nanmessage, "DPtempPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDSPtempPtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDSPtempPtr))))
                       { strcpy (nanmessage, "SPtempPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDEtempPtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDEtempPtr))))
                       { strcpy (nanmessage, "EtempPtr"); }
-                      else if (nandetect = isnan (*(here->B3SOIFDBtempPtr)))
+                     else if ((nandetect = isnan (*(here->B3SOIFDBtempPtr))))
                       { strcpy (nanmessage, "BtempPtr"); }
-                      else if (nandetect = isnan (*(ckt->CKTrhs + here->B3SOIFDtempNode)))
+                     else if ((nandetect = isnan (*(ckt->CKTrhs + here->B3SOIFDtempNode))))
                       { strcpy (nanmessage, "tempNode"); }
                    }
  
@@ -3419,20 +3395,20 @@ if (here->B3SOIFDdebugMod > 2)
  
                    if (nandetect == 0)
                    {
-                      if (nandetect = isnan (*(ckt->CKTrhs
-                                             + here->B3SOIFDgNode)))
+                      if ((nandetect = isnan (*(ckt->CKTrhs
+                                                + here->B3SOIFDgNode))))
                       { strcpy (nanmessage, "gNode"); }
-                      else if (nandetect = isnan (*(ckt->CKTrhs
-                                                  + here->B3SOIFDbNode)))
+                      else if ((nandetect = isnan (*(ckt->CKTrhs
+                                                     + here->B3SOIFDbNode))))
                       { strcpy (nanmessage, "bNode"); }
-                      else if (nandetect = isnan (*(ckt->CKTrhs
-                                                  + here->B3SOIFDdNodePrime)))
+                      else if ((nandetect = isnan (*(ckt->CKTrhs
+                                                     + here->B3SOIFDdNodePrime))))
                       { strcpy (nanmessage, "dpNode"); }
-                      else if (nandetect = isnan (*(ckt->CKTrhs
-                                                  + here->B3SOIFDsNodePrime)))
+                      else if ((nandetect = isnan (*(ckt->CKTrhs
+                                                  + here->B3SOIFDsNodePrime))))
                       { strcpy (nanmessage, "spNode"); }
-                      else if (nandetect = isnan (*(ckt->CKTrhs
-                                                  + here->B3SOIFDeNode)))
+                      else if ((nandetect = isnan (*(ckt->CKTrhs
+                                                     + here->B3SOIFDeNode))))
                       { strcpy (nanmessage, "eNode"); } 
                    }
 

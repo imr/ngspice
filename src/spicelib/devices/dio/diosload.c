@@ -39,7 +39,7 @@ DIOsLoad(GENmodel *inModel, CKTcircuit *ckt)
     double qd;
     double DcsprDp;
     double DcdDp;
-    double DqdDp;
+    double DqdDp = 0.0;
     double tag0;
     double tag1;
     double Osxp;

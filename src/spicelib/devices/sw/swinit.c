@@ -71,7 +71,7 @@ SPICEdev SWinfo = {
 #ifdef CIDER
     DEVdump       : NULL,
     DEVacct       : NULL,
-#endif CIDER                        
+#endif /* CIDER */                        
     DEVinstSize   : &SWiSize,
     DEVmodSize    : &SWmSize
 

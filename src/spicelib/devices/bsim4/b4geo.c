@@ -12,6 +12,13 @@
 #include <stdio.h>
 #include <math.h>
 
+int BSIM4RdsEndIso(double Weffcj, double Rsh, double DMCG, double DMCI,
+                   double DMDG, double nuEnd, int rgeo, int Type,
+                   double *Rend);
+int BSIM4RdsEndSha(double Weffcj, double Rsh, double DMCG, double DMCI,
+                   double DMDG, double nuEnd, int rgeo, int Type,
+                   double *Rend);
+
 /*
  * WDLiu:
  * This subrutine is a special module to process the geometry dependent
@@ -154,7 +161,7 @@ int geo, rgeo, minSD, Type;
 double nf, Weffcj, Rsh, DMCG, DMCI, DMDG;
 double *Rtot;
 {
-double Rint, Rend = 0.0;
+double Rint = 0.0, Rend = 0.0;
 double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
 
         if (geo < 9) /* since geo = 9 and 10 only happen when nf = even */

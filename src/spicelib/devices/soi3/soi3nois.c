@@ -57,7 +57,6 @@ SOI3noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
     double lnNdens[SOI3NSRCS];
     double gain;
     double EffectiveLength;
-    int error;
     int i;
 
     /* define the names of the noise sources */

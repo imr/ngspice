@@ -38,7 +38,7 @@ MOS2disto(int mode,GENmodel *genmodel, CKTcircuit *ckt)
  MOS2instance *here;
 
 if (mode == D_SETUP)
- return(MOS2dSetup(model,ckt));
+ return(MOS2dSetup(genmodel,ckt));
 
 if ((mode == D_TWOF1) || (mode == D_THRF1) || 
  (mode == D_F1PF2) || (mode == D_F1MF2) ||

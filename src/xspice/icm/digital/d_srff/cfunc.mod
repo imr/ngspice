@@ -120,7 +120,7 @@ NON-STANDARD FEATURES
 
     NONE
                                                    
-/*=============================================================================*/
+=============================================================================*/
 
 /*=== CM_TOGGLE_BIT ROUTINE ===*/
 
@@ -188,7 +188,7 @@ static Digital_State_t cm_eval_sr_result(Digital_State_t s_input,
                                          Digital_State_t r_input,
                                          Digital_State_t old_output)
 {
-    Digital_State_t     output;
+    Digital_State_t     output = ZERO;
 
 
     switch (s_input) {
@@ -287,7 +287,7 @@ NON-STANDARD FEATURES
 void cm_d_srff(ARGS) 
 
 {
-    int                    i;   /* generic loop counter index */
+    /*int                    i;*/   /* generic loop counter index */
                         
 
     Digital_State_t     *clk,   /* current clk value    */

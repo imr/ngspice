@@ -342,6 +342,8 @@ static int cm_mask_and_store(short *base,int ram_offset,Digital_State_t out)
         break;
 
     }
+
+return 0;
 }
 
 
@@ -517,6 +519,7 @@ static int cm_mask_and_retrieve(short base,int ram_offset,Digital_State_t *out)
         }
         break;
     }
+return 0;
 }
 
 
@@ -575,9 +578,9 @@ NON-STANDARD FEATURES
 static void cm_initialize_ram(Digital_State_t out,int word_width,int bit_number,
                         int word_number,short *ram)
 {
-    int       err,      /* error index value    */
+    int       /*err,*/      /* error index value    */
              int1,      /* temp storage variable    */
-             int2,      /* temp storage variable    */
+             /*int2,*/      /* temp storage variable    */
         ram_index,      /* ram base address at which word bits will
                            be found */
        ram_offset;      /* offset from ram base address at which bit[0]

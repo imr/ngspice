@@ -6,6 +6,7 @@ Modified: 2001 Jon Engelbert
 
 #include "ngspice.h"
 #include "cktdefs.h"
+#include "fteext.h"
 #include "swdefs.h"
 #include "trandefs.h"
 #include "sperror.h"
@@ -24,7 +25,6 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
     double previous_state = -1; 
     double current_state = -1;
 	double old_current_state = -1;
-	double UNKNOWN = -1;
 	double REALLY_OFF = 0, REALLY_ON = 1;	// switch is on or off, not in hysteresis region.
 	double HYST_OFF = 2, HYST_ON = 3;	// switch is on or off while control value is in hysteresis region.
 //    double previous_region = -1; 

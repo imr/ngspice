@@ -61,7 +61,7 @@ MOS9dSetup(GENmodel *inModel, CKTcircuit *ckt)
 
 
     /*  loop through all the MOS9 device models */
-next: for( ; model != NULL; model = model->MOS9nextModel ) {
+    for( ; model != NULL; model = model->MOS9nextModel ) {
 
         /* loop through all the instances of the model */
         for (here = model->MOS9instances; here != NULL ;
@@ -143,7 +143,7 @@ next: for( ; model != NULL; model = model->MOS9nextModel ) {
              * here we just evaluate the ideal diode current and the
              * correspoinding derivative (conductance).
              */
-next1:      if(vbs <= 0) {
+/*next1:*/  if(vbs <= 0) {
                 lgbs = SourceSatCur/vt;
                 lgbs += ckt->CKTgmin;
 		lgbs2 = lgbs3 = 0;
@@ -233,13 +233,13 @@ next1:      if(vbs <= 0) {
             double onfg;
             double fgate;
             double us;
-            double xn;
+            double xn = 0.0;
             double vdsc;
-            double onvdsc;
+            double onvdsc = 0.0;
             double vdsx;
             double cdnorm;
             double cdo;
-            double fdrain;
+            double fdrain = 0.0;
             double gdsat;
             double cdsat;
             double emax;

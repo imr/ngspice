@@ -118,6 +118,7 @@ NON-STANDARD FEATURES
     NONE
 
 ==============================================================================*/
+#include <stdlib.h>
 
 /*=== CM_SQUARE ROUTINE ===*/
 
@@ -155,7 +156,7 @@ void cm_square(ARGS)  /* structure holding parms,
     	double *x;        /* pointer to the control array values */
 	double *y;        /* pointer to the frequecy array values */
 	double cntl_input; /* control input                       */
-	double out;        /* output */
+	/*double out;*/        /* output */
 	double dout_din;   /* slope of the frequency array wrt the control
 						  array.  Used to extrapolate a frequency above
 						  and below the control input high and low level */
@@ -164,7 +165,7 @@ void cm_square(ARGS)  /* structure holding parms,
 	double dphase;     /* fractional part into cycle */
     	double *phase;     /* pointer to the phase value */
 	double *phase1;    /* pointer to the old phase value */
-	double freq;       /* frequency of the wave           */
+	double freq=0.0;       /* frequency of the wave           */
 	double d_cycle;    /* duty cycle   */
 	double *t1;        /* pointer containing the value of time1 */
 	double *t2;        /* pointer containing the value of time2 */

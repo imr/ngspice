@@ -522,7 +522,7 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
     PZtrial	*p, *prev;
     SPcomplex	def_frac, diff_frac;
     double	reltol, abstol;
-    int		def_mag, diff_mag, error;
+    int		def_mag, diff_mag, error = 0;
     int		i;
     int		pretest, shifted, was_shifted;
     int		repeat;

@@ -155,10 +155,6 @@ double  cn_nc55 =  6.36964918866352e-5 ; /* (1509-1040*sqrt(2))/600000 */
 double  cn_im53 =  2.9693154855770998e-1 ;
 double  cn_im54 = -7.0536542840097616e-2 ;
 double  cn_im55 =  6.1152888951331797e-3 ;
-/* 3-degree polynomial approx for ( exp[Chi]-Chi-1 )^{1/2} */
-double  cn_ik53 =  2.6864599830664019e-1 ;
-double  cn_ik54 = -6.1399531828413338e-2 ;
-double  cn_ik55 =  5.3528499428744690e-3 ;
 /** initial guess **/
 double  c_ps0ini_2 = 8.0e-4 ;
 double  c_pslini_1 = 0.3e0 ;
@@ -170,11 +166,9 @@ double  Vds_max = 10.5e0 ;
 double  Vgs_max = 10.5e0 ; 
 double  Vbd_max = 0.8e0 ;
 double  Vbd_min = -10.5e0 ;
-double  Vsd_max = 10.5e0 ; 
 double  Vgd_max = 10.5e0 ; 
 double  epsm10 = 10.0e0 * C_EPS_M ;
 double  small = 1.0e-50 ;
-double  Vz_dlt = 5.0e-3 ;
 double  Gdsmin = 0.0 ;
 double  Gjmin = sIN.gmin ;
 double  cclmmdf = 1.0e-1 ;
@@ -182,7 +176,6 @@ double  qme_dlt = 1.0e-9 ;
 double  eef_dlt = 1.0e-2 ;
 double	sti1_dlt = -3.0e-3 ;
 double  sti2_dlt = 2.0e-3 ;
-double  pol_dlt = 2.0e-1 ;
 double  pol2_dlt = 1.0e-5 ;
 double  pol_tmp = 1.0 ;
 
@@ -192,7 +185,7 @@ int     flg_ncnv = 0 ; /* Flag for negative conductance */
 int     flg_rsrd ; /* Flag for bias loop accounting Rs and Rd */
 int     flg_iprv ; /* Flag for initial guess of Ids */
 int     flg_pprv ; /* Flag for initial guesses of Ps0 and Pds */
-int     flg_noqi ; /* Flag for the cases regarding Qi=Qd=0 */
+int     flg_noqi = 0; /* Flag for the cases regarding Qi=Qd=0 */
 int     flg_vbsc = 0 ; /* Flag for Vbs confining */
 int     flg_vdsc = 0 ; /* Flag for Vds confining */
 int     flg_vgsc = 0 ; /* Flag for Vgs confining */
@@ -216,10 +209,10 @@ int     flg_gidsl_d = 0 ;
 /* Important Variables in HiSIM -------*/
 /* external bias */
 double  Vbse , Vdse , Vgse ;
-double  Vbde , Vsde , Vgde ;
+double  Vbde , Vsde = 0.0 , Vgde = 0.0 ;
 /* confine bias */
-double  Vbsc , Vdsc , Vgsc ;
-double  Vbdc , Vsdc , Vgdc ;
+double  Vbsc = 0.0 , Vdsc , Vgsc ;
+double  Vbdc = 0.0 , Vsdc = 0.0 , Vgdc = 0.0;
 double  Vbsc_dVbse = 1.0 ;
 double  Vbdc_dVbde = 1.0 ;
 /* internal bias */
@@ -227,25 +220,25 @@ double  Vbs , Vds , Vgs ;
 double  Vbs_dVbse = 1.0 , Vbs_dVdse = 0.0 , Vbs_dVgse = 0.0 ;
 double  Vds_dVbse = 0.0 , Vds_dVdse = 1.0 , Vds_dVgse = 0.0 ;
 double  Vgs_dVbse = 0.0 , Vgs_dVdse = 0.0 , Vgs_dVgse = 1.0 ;
-double  Vgp ;
-double  Vgp_dVbs , Vgp_dVds , Vgp_dVgs ;
+double  Vgp = 0.0 ;
+double  Vgp_dVbs = 0.0 , Vgp_dVds = 0.0 , Vgp_dVgs = 0.0 ;
 double  Vgs_fb ;
 double  Vbd , Vsd , Vgd ;
 double  Vbd_dVbde = 1.0 , Vbd_dVsde = 0.0 , Vbd_dVgde = 0.0 ;
 double  Vsd_dVbde = 0.0 , Vsd_dVsde = 1.0 , Vsd_dVgde = 0.0 ;
 double  Vgd_dVbde = 0.0 , Vgd_dVsde = 0.0 , Vgd_dVgde = 1.0 ;
 /* Ps0 : surface potential at the source side */
-double  Ps0 ;
-double  Ps0_dVbs , Ps0_dVds , Ps0_dVgs ;
-double  Ps0_ini , Ps0_iniA , Ps0_iniB ;
+double  Ps0 = 0.0 ;
+double  Ps0_dVbs = 0.0 , Ps0_dVds = 0.0 , Ps0_dVgs = 0.0 ;
+double  Ps0_ini = 0.0 , Ps0_iniA , Ps0_iniB ;
 /* Psl : surface potential at the drain side */
-double  Psl ;
-double  Psl_dVbs , Psl_dVds , Psl_dVgs ;
+double  Psl = 0.0 ;
+double  Psl_dVbs = 0.0 , Psl_dVds = 0.0 , Psl_dVgs = 0.0 ;
 double  Psl_lim ;
 /* Pds := Psl - Ps0 */
 double  Pds = 0.0 ;
 double  Pds_dVbs = 0.0 , Pds_dVds = 0.0 , Pds_dVgs = 0.0 ;
-double  Pds_ini ;
+double  Pds_ini = 0.0 ;
 double  Pds_max ;
 /* iteration numbers of Ps0 and Psl equations. */
 int     lp_s0 , lp_sl ;
@@ -261,17 +254,14 @@ double  Xilp12 ;
 double  Xilp32 ;
 double  Xil ;
 /* modified bias and potential for sym.*/
-double  Vbsz , Vdsz , Vgsz ;
+double  Vbsz , Vdsz = 0.0 , Vgsz = 0.0 ;
 double  Vbsz_dVbs , Vbsz_dVds ;
-double  Vdsz_dVds ;
-double  Vdsz_dVgs = 0.0 ;
-double  Vdsz_dVbs = 0.0 ;
-double  Vgsz_dVgs , Vgsz_dVds ;
-double  Vgsz_dVbs = 0.0 ;
+double  Vdsz_dVds = 0.0 ;
+double  Vgsz_dVgs = 0.0 ;
 double  Vbs1 , Vbs2 , Vbsd ;
 double  Vbsd_dVbs , Vbsd_dVds ;
-double  Vzadd , Vzadd_dVds , Vzadd_dVsd , Vzadd_dA ;
-double  VzaddA , VzaddA_dVds ;
+double  Vgsz_dVds = 0.0;
+double  Vzadd = 0.0 , Vzadd_dVds = 0.0 , Vzadd_dVsd ;
 double  Ps0z , Ps0z_dVbs , Ps0z_dVds , Ps0z_dVgs ;
 double  Pzadd , Pzadd_dVbs , Pzadd_dVds , Pzadd_dVgs ;
 double  Ps0Vbsz , Ps0Vbsz_dVbs , Ps0Vbsz_dVds , Ps0Vbsz_dVgs ;
@@ -297,19 +287,19 @@ double  Chi_dVbs , Chi_dVds , Chi_dVgs ;
 /* Rho := beta * ( Psl - Vds ) */
 double  Rho ;
 /* threshold voltage */
-double  Vth ;
-double  Vth_dVb , Vth_dVd , Vth_dVs , Vth_dVg ;
+double  Vth = 0.0 ;
+double  Vth_dVb , Vth_dVd , Vth_dVg ;
 double  Vth0 ;
 double  Vth0_dVb , Vth0_dVd , Vth0_dVs , Vth0_dVg ;
 /* variation of threshold voltage */
-double  dVth ;
-double  dVth_dVb , dVth_dVd , dVth_dVg ;
+double  dVth = 0.0 ;
+double  dVth_dVb = 0.0 , dVth_dVd = 0.0 , dVth_dVg = 0.0 ;
 double  dVth0 ;
 double  dVth0_dVb , dVth0_dVd , dVth0_dVs , dVth0_dVg ;
 double  dVthSC ;
 double  dVthSC_dVb , dVthSC_dVd , dVthSC_dVs , dVthSC_dVg ;
 double  delta0 = 1.0e-5 ;
-double  Vgpa , Psi_a , Pb20a , Pb20b , cnst3 ;
+double  Vgpa , Psi_a , Pb20a , Pb20b , cnst3 = 0.0 ;
 double  Psi_a_dVg, Pb20a_dVg, Pb20b_dVg ;
 double  dVthW ;
 double  dVthW_dVb , dVthW_dVd , dVthW_dVs , dVthW_dVg ;
@@ -318,23 +308,23 @@ double  dVthP_dVb , dVthP_dVs , dVthP_dVg ;
 /* Alpha and related parameters */
 double  Alpha ;
 double  Alpha_dVbs , Alpha_dVds , Alpha_dVgs ;
-double  Achi ;
+double  Achi = 0.0 ;
 double  Achi_dVbs , Achi_dVds , Achi_dVgs ;
 double  VgVt = 0.0 ;
 double  VgVt_dVbs , VgVt_dVds , VgVt_dVgs ;
 double  Delta  , Vdsat ;
 /* Q_B and capacitances */
-double  Qb , Qb_dVbs , Qb_dVds , Qb_dVgs ;
+double  Qb = 0.0 , Qb_dVbs = 0.0 , Qb_dVds = 0.0 , Qb_dVgs = 0.0 ;
 double  Qb_dVbse , Qb_dVdse , Qb_dVgse ;
 /* Q_I and capacitances */
-double  Qi , Qi_dVbs , Qi_dVds , Qi_dVgs ;
+double  Qi = 0.0 , Qi_dVbs = 0.0 , Qi_dVds = 0.0 , Qi_dVgs = 0.0 ;
 double  Qi_dVbse , Qi_dVdse , Qi_dVgse ;
 /* Q_D and capacitances */
-double  Qd , Qd_dVbs , Qd_dVds , Qd_dVgs ;
+double  Qd = 0.0 , Qd_dVbs = 0.0 , Qd_dVds = 0.0 , Qd_dVgs = 0.0 ;
 double  Qd_dVbse , Qd_dVdse , Qd_dVgse ;
 /* channel current */
 double  Ids ;
-double  Ids_dVbs , Ids_dVds , Ids_dVgs ;
+double  Ids_dVbs = 0.0 , Ids_dVds = 0.0 , Ids_dVgs = 0.0 ;
 double  Ids_dVbse , Ids_dVdse , Ids_dVgse ;
 double  Ids0 ;
 double  Ids0_dVbs , Ids0_dVds , Ids0_dVgs ;
@@ -342,7 +332,7 @@ double  Isd_dVbde , Isd_dVsde , Isd_dVgde ;
 /* STI */
 double  Vgssti ;
 double  Vgssti_dVbs , Vgssti_dVds , Vgssti_dVgs ;
-double  costi0 , costi1 , costi2 , costi3 ;
+double  costi0 , costi1 , costi3 ;
 double  costi4 , costi5 , costi6 , costi7 ;
 double  Psasti ;
 double  Psasti_dVbs , Psasti_dVds , Psasti_dVgs ;
@@ -362,8 +352,6 @@ double  Qn0sti ;
 double  Qn0sti_dVbs , Qn0sti_dVds , Qn0sti_dVgs ;
 double  Idssti ;
 double  Idssti_dVbs , Idssti_dVds , Idssti_dVgs ;
-/* (for debug) */
-double  user1 , user2 , user3 , user4 ;
 /* constants */
 double  beta ;
 double  beta2 ;
@@ -409,21 +397,13 @@ double  dPs0 , dPsl ;
 double  Qn0 = 0.0e0 ;
 double  Qn0_dVbs , Qn0_dVds , Qn0_dVgs ;
 double  Qb0 ;
-double  Qb0_dVb , Qb0_dVd , Qb0_dVs ,Qb0_dVg ;
-double  Qn00 ;
-double  Qn00_dVbs , Qn00_dVds , Qn00_dVgs ;
+double  Qb0_dVb , Qb0_dVd , Qb0_dVs ,Qb0_dVg = 0.0 ;
+double  Qn00 = 0.0 ;
+double  Qn00_dVbs = 0.0 , Qn00_dVds = 0.0 , Qn00_dVgs = 0.0 ;
 double  Qbnm ;
 double  Qbnm_dVbs , Qbnm_dVds , Qbnm_dVgs ;
 double  DtPds ;
 double  DtPds_dVbs , DtPds_dVds , DtPds_dVgs ;
-double  Fid2 ;
-double  Fid2_dVbs , Fid2_dVds , Fid2_dVgs ;
-double  Fid3 ;
-double  Fid3_dVbs , Fid3_dVds , Fid3_dVgs ;
-double  Fid4 ;
-double  Fid4_dVbs , Fid4_dVds , Fid4_dVgs ;
-double  Fid5 ;
-double  Fid5_dVbs , Fid5_dVds , Fid5_dVgs ;
 double  Qbm ;
 double  Qbm_dVbs , Qbm_dVds , Qbm_dVgs ;
 double  Qinm ;
@@ -446,10 +426,10 @@ double  Fdd_dVbs , Fdd_dVds , Fdd_dVgs ;
 double  Eeff ;
 double  Eeff_dVbs , Eeff_dVds , Eeff_dVgs ;
 double  Rns ;
-double  Mu ;
+double  Mu = 0.0 ;
 double  Mu_dVbs , Mu_dVds , Mu_dVgs ;
 double  Muun , Muun_dVbs , Muun_dVds , Muun_dVgs ;
-double  Ey ;
+double  Ey = 0.0 ;
 double  Ey_dVbs , Ey_dVds , Ey_dVgs ;
 double  Em ;
 double  Em_dVbs , Em_dVds , Em_dVgs ;
@@ -486,13 +466,10 @@ double  Epkf_dVbs , Epkf_dVds , Epkf_dVgs ;
 /* PART-3 (overlap) */
 double  yn , yn2 , yn3 ;
 double  yn_dVbs , yn_dVds , yn_dVgs ;
-double  yned , yned2 ;
-double  yned_dVbs , yned_dVds , yned_dVgs ;
-double  Lov , Lov2 , Lov23 ; 
-double  Ndsat , Gjnp ; 
-double  Qgos , Qgos_dVbs , Qgos_dVds , Qgos_dVgs ;
+double  Lov , Lov2 ; 
+double  Qgos = 0.0 , Qgos_dVbs = 0.0 , Qgos_dVds = 0.0 , Qgos_dVgs = 0.0 ;
 double  Qgos_dVbse , Qgos_dVdse , Qgos_dVgse ;
-double  Qgod , Qgod_dVbs , Qgod_dVds , Qgod_dVgs ;
+double  Qgod = 0.0 , Qgod_dVbs = 0.0 , Qgod_dVds = 0.0 , Qgod_dVgs = 0.0 ;
 double  Qgod_dVbse , Qgod_dVdse , Qgod_dVgse ;
 double  Cggo , Cgdo , Cgso , Cgbo ;
 /* fringing capacitance */
@@ -502,7 +479,6 @@ double  Qfd , Qfs ;
 double  Pslk , Pslk_dVbs , Pslk_dVds , Pslk_dVgs ;
 double  Qy ;
 double  Cqyd, Cqyg, Cqys, Cqyb ;
-double  qy_dlt ;
 /* PART-4 (junction diode) */
 double  Ibs , Ibd , Gbs , Gbd , Gbse , Gbde ;
 double  js ;
@@ -515,18 +491,18 @@ double  Qbs , Qbd , Capbs , Capbd , Capbse , Capbde ;
 double  czbd , czbdsw , czbdswg , czbs , czbssw , czbsswg ;
 double  arg , sarg ;
 /* PART-5 (noise) */
-double  NFalp , NFtrp , Freq , Cit , Nflic ;
+double  NFalp , NFtrp , Cit , Nflic ;
 /* Bias iteration accounting Rs/Rd */
 int     lp_bs ;
 double  Ids_last ;
 double  vtol_iprv = 2.0e-1 ;
 double  vtol_pprv = 5.0e-2 ;
-double  Vbsc_dif , Vdsc_dif , Vgsc_dif , sum_vdif ;
+double  Vbsc_dif = 0.0 , Vdsc_dif = 0.0 , Vgsc_dif = 0.0 , sum_vdif ;
 double  Rs , Rd ;
 double  Fbs , Fds , Fgs ;
-double  DJ , DJI , DJIP ;
+double  DJ , DJI = 0.0 , DJIP ;
 double  JI11 , JI12 , JI13 , JI21 , JI22 , JI23 , JI31 , JI32 , JI33 ;
-double  dVbs , dVds , dVgs ;
+double  dVbs = 0.0 , dVds = 0.0 , dVgs = 0.0 ;
 double  dV_sum ;
 /* Junction Bias */
 double  Vbsj , Vbdj ;
@@ -534,24 +510,24 @@ double  Vbsj , Vbdj ;
 double  Psa ;
 double  Psa_dVbs , Psa_dVds , Psa_dVgs ;
 /* CLM */
-double  Psdl , Psdl_dVbs , Psdl_dVds , Psdl_dVgs ;
+double  Psdl = 0.0 , Psdl_dVbs = 0.0 , Psdl_dVds = 0.0 , Psdl_dVgs = 0.0 ;
 double  Ed , Ed_dVbs , Ed_dVds , Ed_dVgs ;
-double  Ec , Ec_dVbs , Ec_dVds , Ec_dVgs ;
-double  Lred , Lred_dVbs , Lred_dVds , Lred_dVgs ;
+double  Ec = 0.0 , Ec_dVbs = 0.0 , Ec_dVds = 0.0 , Ec_dVgs = 0.0 ;
+double  Lred = 0.0 , Lred_dVbs , Lred_dVds , Lred_dVgs ;
 double  Wd , Wd_dVbs , Wd_dVds , Wd_dVgs ;
-double  Aclm ;
+double  Aclm = 0.0 ;
 /* Pocket Implant */
 double Vthp, Vthp_dVb, Vthp_dVd, Vthp_dVs, Vthp_dVg ;
 double dVthLP, dVthLP_dVb, dVthLP_dVd, dVthLP_dVs, dVthLP_dVg ;
 /* Poly-Depletion Effect */
-double dPpg , dPpg_dVd , dPpg_dVg , dPpg_dVb ;
+double dPpg = 0.0 , dPpg_dVd = 0.0 , dPpg_dVg = 0.0 , dPpg_dVb = 0.0 ;
 double dPpgP , dPpgP_dVs , dPpgP_dVg , dPpgP_dVb ;
 /* Quantum Effect */
-double Tox , Tox_dVb , Tox_dVd , Tox_dVg ;
+double Tox = 0.0 , Tox_dVb = 0.0 , Tox_dVd = 0.0 , Tox_dVg = 0.0 ;
 double dTox , dTox_dVb , dTox_dVd , dTox_dVs , dTox_dVg ;
-double Cox , Cox_dVb , Cox_dVd , Cox_dVg ;
+double Cox = 0.0 , Cox_dVb , Cox_dVd , Cox_dVg ;
 double Cox_inv , Cox_inv_dVb , Cox_inv_dVd , Cox_inv_dVg ;
-double Vthq, Vthq_dVb , Vthq_dVd , Vthq_dVs , Vthq_dVg ;
+double Vthq, Vthq_dVb , Vthq_dVd , Vthq_dVs ;
 double ToxP , ToxP_dVb , ToxP_dVs , ToxP_dVg ;
 double CoxP , CoxP_dVb , CoxP_dVs , CoxP_dVg ;
 double CoxP_inv , CoxP_inv_dVb , CoxP_inv_dVs , CoxP_inv_dVg ;
@@ -573,28 +549,26 @@ double  Cox0 ;
 double  Lgate ;
 double  rp1 , rp1_dVds ;
 /* connecting function */
-double  FD2 , FD2_dVbs , FD2_dVds , FD2_dVgs ;
+double  FD2 = 0.0 , FD2_dVbs = 0.0 , FD2_dVds = 0.0 , FD2_dVgs = 0.0 ;
 double  FMD , FMD_dVds ;
 /* Phonon scattering */
 double	Wgate ;
 double	mueph ;
 /* temporary vars. */
-double  T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13 ;
+double  T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T13 ;
 double  TX , TX_dVbs , TX_dVds , TX_dVgs ;
 double  TY , TY_dVbs , TY_dVds , TY_dVgs ;
-double  T1_dVb , T1_dVd , T1_dVs ,T1_dVg ;
-double  T2_dVb , T2_dVd , T2_dVs , T2_dVg ;
-double  T3_dVb , T3_dVd , T3_dVs , T3_dVg ;
-double  T4_dVb , T4_dVd , T4_dVs , T4_dVg ;
-double  T5_dVb , T5_dVd , T5_dVs , T5_dVg ;
-double  T6_dVb , T6_dVd , T6_dVs , T6_dVg ;
+double  T1_dVb , T1_dVd , T1_dVg ;
+double  T2_dVb , T2_dVd , T2_dVg ;
+double  T3_dVb , T3_dVd , T3_dVg ;
+double  T4_dVb , T4_dVd , T4_dVs ;
+double  T5_dVd , T5_dVs , T5_dVg ;
 double  T7_dVb , T7_dVd , T7_dVs , T7_dVg ;
 double  T8_dVb , T8_dVd , T8_dVs , T8_dVg ;
-double  T9_dVb , T9_dVd , T9_dVs , T9_dVg ;
-double  T10_dVb , T10_dVd , T10_dVs , T10_dVg ;
-double  T11_dVb , T11_dVd , T11_dVs , T11_dVg ;
-double  T12_dVb , T12_dVd , T12_dVs , T12_dVg ;
-double  T13_dVb , T13_dVd , T13_dVs , T13_dVg ;
+double  T9_dVd , T9_dVs , T9_dVg ;
+double  T10_dVd , T10_dVs , T10_dVg ;
+double  T11_dVd , T11_dVs , T11_dVg ;
+double  T13_dVd , T13_dVs , T13_dVg ;
 double  T20 , T21 , T30 , T31 ;
 
 double c_eox ;
@@ -654,7 +628,7 @@ double c_eox ;
 /*-----------------------------------------------------------*
 * Start of the routine. (label)
 *-----------------*/
-start_of_routine:
+/* start_of_routine: */
 
 
 
@@ -2251,7 +2225,7 @@ start_of_routine:
 * Start point of Psl (= Ps0 + Pds) calculation. (label)
 *-----------------*/
 
-start_of_Psl: ;
+/* start_of_Psl: ; */
 
     exp_bVbsVds    = exp( beta * ( Vbs - Vds ) ) ;
 
@@ -3356,7 +3330,7 @@ end_of_CLM: ;
     Mu_dVds = Muun_dVds * T5 - Muun / Vmax * T6 * T3 * Em_dVds ;
     Mu_dVgs = Muun_dVgs * T5 - Muun / Vmax * T6 * T3 * Em_dVgs ;
 
-end_of_mobility : ;
+/* end_of_mobility : ; */
 
 
 /*-----------------------------------------------------------*
@@ -3594,7 +3568,7 @@ end_of_mobility : ;
 * Bottom of bias loop. (label) 
 *-----------------*/
 
-bottom_of_bias_loop : ;
+/* bottom_of_bias_loop : ; */
 
 
 /*-----------------------------------------------------------*
@@ -4244,7 +4218,7 @@ end_of_Isub: ;
 * End of PART-2. (label) 
 *-----------------*/
 
-end_of_part_2: ;
+/* end_of_part_2: ; */
 
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
@@ -4412,7 +4386,7 @@ end_of_part_2: ;
 * End of PART-3. (label) 
 *-----------------*/ 
 
-end_of_part_3: ;
+/* end_of_part_3: ; */
 
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
@@ -4694,7 +4668,7 @@ end_of_part_3: ;
 * End of PART-4. (label) 
 *-----------------*/ 
 
-end_of_part_4: ;
+/* end_of_part_4: ; */
 
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
@@ -4723,7 +4697,7 @@ end_of_part_4: ;
 * End of PART-5. (label) 
 *-----------------*/ 
 
-end_of_part_5: ;
+/* end_of_part_5: ; */
 
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
@@ -5539,7 +5513,7 @@ end_of_part_5: ;
 * End of PART-6. (label) 
 *-----------------*/ 
 
-end_of_part_6: ;
+/* end_of_part_6: ; */
 
 
 /*-----------------------------------------------------------* 

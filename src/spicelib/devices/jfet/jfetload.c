@@ -29,7 +29,7 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
     double capgd;
     double capgs;
     double cd;
-    double cdhat;
+    double cdhat = 0.0;
     double cdrain;
     double cdreq;
     double ceq;
@@ -37,7 +37,7 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
     double ceqgs;
     double cg;
     double cgd;
-    double cghat;
+    double cghat = 0.0;
     double csat;
     double czgd;
     double czgdf2;

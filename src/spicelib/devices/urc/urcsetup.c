@@ -45,9 +45,9 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     double wnorm;
     double prop;
     int i;
-    GENinstance  *fast;
-    GENmodel *modfast; /* capacitor or diode model */
-    GENmodel *rmodfast; /* resistor model */
+    GENinstance  *fast[1];
+    GENmodel *modfast[1]; /* capacitor or diode model */
+    GENmodel *rmodfast[1]; /* resistor model */
     int error;
     IFuid dioUid;
     IFuid resUid;
@@ -95,25 +95,25 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 error = (*(SPfrontEnd->IFnewUid))(ckt,&dioUid,here->URCname,
                         "diodemod",UID_MODEL,(void **)NULL);
                 if(error) return(error);
-                modfast = (GENmodel *)NULL;
-                error = CKTmodCrt((void *)ckt,dtype,(void **)&modfast,
+                modfast[0] = (GENmodel *)NULL;
+                error = CKTmodCrt((void *)ckt,dtype,(void **)modfast,
                         dioUid);
                 if(error) return(error);
                 ptemp.rValue = c1;
-                error= CKTpModName("cjo",&ptemp,ckt,dtype,dioUid,&modfast);
+                error= CKTpModName("cjo",&ptemp,ckt,dtype,dioUid,modfast);
                 if(error) return(error);
                 ptemp.rValue = rd;
-                error = CKTpModName("rs",&ptemp,ckt,dtype,dioUid,&modfast);
+                error = CKTpModName("rs",&ptemp,ckt,dtype,dioUid,modfast);
                 if(error) return(error);
                 ptemp.rValue = i1;
-                error = CKTpModName("is",&ptemp,ckt,dtype,dioUid,&modfast);
+                error = CKTpModName("is",&ptemp,ckt,dtype,dioUid,modfast);
                 if(error) return(error);
             } else {
                 error = (*(SPfrontEnd->IFnewUid))((void *)ckt,&capUid,
                         here->URCname, "capmod",UID_MODEL,(void **)NULL);
                 if(error) return(error);
-                modfast = (GENmodel *)NULL;
-                error = CKTmodCrt((void *)ckt,ctype,(void **)&modfast,
+                modfast[0] = (GENmodel *)NULL;
+                error = CKTmodCrt((void *)ckt,ctype,(void **)modfast,
                         capUid);
                 if(error) return(error);
             }
@@ -121,8 +121,8 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
             error = (*(SPfrontEnd->IFnewUid))(ckt,&resUid,here->URCname,
                     "resmod",UID_MODEL,(void **)NULL);
             if(error) return(error);
-            rmodfast = (GENmodel *)NULL;
-            error = CKTmodCrt((void *)ckt,rtype,(void **)&rmodfast,resUid);
+            rmodfast[0] = (GENmodel *)NULL;
+            error = CKTmodCrt((void *)ckt,rtype,(void **)rmodfast,resUid);
             if(error) return(error);
             lowl = CKTnum2nod(ckt,here->URCposNode);
             hir = CKTnum2nod(ckt,here->URCnegNode);
@@ -150,34 +150,34 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 error = (*(SPfrontEnd->IFnewUid))(ckt,&eltUid,here->URCname,
                         nameelt,UID_INSTANCE, (void **)NULL);
                 if(error) return(error);
-                error = CKTcrtElt((void *)ckt,(void *)rmodfast,
-                        (void **)&fast,eltUid);
+                error = CKTcrtElt((void *)ckt,(void *)rmodfast[0],
+                        (void **)fast,eltUid);
                 if(error) return(error);
                 error = CKTbindNode((void *)ckt,(void *)fast,1,lowl);
                 if(error) return(error);
                 error = CKTbindNode((void *)ckt,(void *)fast,2,lowr);
                 if(error) return(error);
                 ptemp.rValue = r;
-                error = CKTpName("resistance",&ptemp,ckt,rtype,nameelt,&fast);
+                error = CKTpName("resistance",&ptemp,ckt,rtype,nameelt,fast);
                 if(error) return(error);
-		fast->GENowner = here->URCowner;
+		fast[0]->GENowner = here->URCowner;
 
                 nameelt = (char *)MALLOC(10*sizeof(char));
                 (void)sprintf(nameelt,"rhi%d",i);
                 error = (*(SPfrontEnd->IFnewUid))(ckt,&eltUid,here->URCname,
                         nameelt,UID_INSTANCE, (void **)NULL);
                 if(error) return(error);
-                error = CKTcrtElt((void *)ckt,(void *)rmodfast,
-                        (void **)&fast,eltUid);
+                error = CKTcrtElt((void *)ckt,(void *)rmodfast[0],
+                        (void **)fast,eltUid);
                 if(error) return(error);
                 error = CKTbindNode((void *)ckt,(void *)fast,1,hil);
                 if(error) return(error);
                 error = CKTbindNode((void *)ckt,(void *)fast,2,hir);
                 if(error) return(error);
                 ptemp.rValue = r;
-                error = CKTpName("resistance",&ptemp,ckt,rtype,nameelt,&fast);
+                error = CKTpName("resistance",&ptemp,ckt,rtype,nameelt,fast);
                 if(error) return(error);
-		fast->GENowner = here->URCowner;
+		fast[0]->GENowner = here->URCowner;
 
                 if(model->URCisPerLGiven) {
                     /* use diode */
@@ -187,8 +187,8 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                             here->URCname,nameelt,UID_INSTANCE, 
                             (void **)NULL);
                     if(error) return(error);
-                    error = CKTcrtElt((void *)ckt,(void *)modfast,
-                            (void **)&fast, eltUid);
+                    error = CKTcrtElt((void *)ckt,(void *)modfast[0],
+                            (void **)fast, eltUid);
                     if(error) return(error);
                     error = CKTbindNode((void *)ckt,(void *)fast,1,lowr);
                     if(error) return(error);
@@ -196,9 +196,9 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                             (void *)CKTnum2nod(ckt, here->URCgndNode));
                     if(error) return(error);
                     ptemp.rValue = prop;
-                    error = CKTpName("area",&ptemp,ckt,dtype,nameelt,&fast);
+                    error = CKTpName("area",&ptemp,ckt,dtype,nameelt,fast);
                     if(error) return(error);
-		    fast->GENowner = here->URCowner;
+		    fast[0]->GENowner = here->URCowner;
                 } else {
                     /* use simple capacitor */
                     nameelt = (char *)MALLOC(10*sizeof(char));
@@ -206,8 +206,8 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                     error = (*(SPfrontEnd->IFnewUid))(ckt,&eltUid,here->URCname
                             ,nameelt,UID_INSTANCE, (void **)NULL);
                     if(error) return(error);
-                    error = CKTcrtElt((void *)ckt,(void *)modfast,
-                            (void **)&fast, eltUid);
+                    error = CKTcrtElt((void *)ckt,(void *)modfast[0],
+                            (void **)fast, eltUid);
                     if(error) return(error);
                     error = CKTbindNode((void *)ckt,(void *)fast,1,lowr);
                     if(error) return(error);
@@ -216,9 +216,9 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                     if(error) return(error);
                     ptemp.rValue = c;
                     error = CKTpName("capacitance",&ptemp,ckt,ctype,nameelt,
-                            &fast);
+                            fast);
                     if(error) return(error);
-		    fast->GENowner = here->URCowner;
+		    fast[0]->GENowner = here->URCowner;
                 }
 
                 if(i!=here->URClumps){
@@ -230,8 +230,8 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                                 here->URCname,nameelt,UID_INSTANCE,
                                 (void **)NULL);
                         if(error) return(error);
-                        error = CKTcrtElt((void *)ckt,(void *)modfast,
-                                (void **) &fast,eltUid);
+                        error = CKTcrtElt((void *)ckt,(void *)modfast[0],
+                                (void **)fast,eltUid);
                         if(error) return(error);
                         error = CKTbindNode((void *)ckt,(void *)fast,1,hil);
                         if(error) return(error);
@@ -239,9 +239,9 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                                 (void *)CKTnum2nod(ckt, here->URCgndNode));
                         if(error) return(error);
                         ptemp.rValue = prop;
-                        error=CKTpName("area",&ptemp,ckt,dtype,nameelt,&fast);
+                        error=CKTpName("area",&ptemp,ckt,dtype,nameelt,fast);
                         if(error) return(error);
-			fast->GENowner = here->URCowner;
+			fast[0]->GENowner = here->URCowner;
                     } else {
                         /* use simple capacitor */
                         nameelt = (char *)MALLOC(10*sizeof(char));
@@ -250,8 +250,8 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                                 here->URCname,nameelt,UID_INSTANCE,
                                 (void **)NULL);
                         if(error) return(error);
-                        error = CKTcrtElt((void *)ckt,(void *)modfast,
-                                (void **)&fast,eltUid);
+                        error = CKTcrtElt((void *)ckt,(void *)modfast[0],
+                                (void **)fast,eltUid);
                         if(error) return(error);
                         error = CKTbindNode((void *)ckt,(void *)fast,1,hil);
                         if(error) return(error);
@@ -260,9 +260,9 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                         if(error) return(error);
                         ptemp.rValue = c;
                         error =CKTpName("capacitance",&ptemp,ckt,ctype,nameelt,
-                                &fast);
+                                fast);
                         if(error) return(error);
-			fast->GENowner = here->URCowner;
+			fast[0]->GENowner = here->URCowner;
                     }
                 }
                 prop *= p;
@@ -282,7 +282,7 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
     URCinstance *here;
     URCmodel *model = (URCmodel *) inModel;
     GENinstance *in;
-    GENmodel *modfast;
+    GENmodel *modfast[1];
     int type;
 
     /* Delete models, devices, and intermediate nodes; */
@@ -309,16 +309,16 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    if (error && error != E_EXISTS)
 		return error;
 
-	    modfast = NULL;
+	    modfast[0] = NULL;
 	    type = -1;
-	    error = CKTfndMod(ckt, &type, (void **) &modfast, varUid);
+	    error = CKTfndMod(ckt, &type, (void **)modfast, varUid);
 	    if (error)
 		return error;
 
-	    for (in = modfast->GENinstances; in; in = in->GENnextInstance)
+	    for (in = modfast[0]->GENinstances; in; in = in->GENnextInstance)
 		CKTdltNNum(ckt, in->GENnode1);
 
-	    CKTdltMod(ckt, modfast);	/* Does the elements too */
+	    CKTdltMod(ckt, modfast[0]);	/* Does the elements too */
 
 	    /* Resistors */
 	    error = (*(SPfrontEnd->IFnewUid))(ckt,&varUid,here->URCname,
@@ -326,13 +326,13 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    if (error && error != E_EXISTS)
 		return error;
 
-	    modfast = NULL;
+	    modfast[0] = NULL;
 	    type = -1;
-	    error = CKTfndMod(ckt, &type, (void **) &modfast, varUid);
+	    error = CKTfndMod(ckt, &type, (void **)modfast, varUid);
 	    if (error)
 		return error;
 
-	    CKTdltMod(ckt, modfast);
+	    CKTdltMod(ckt, modfast[0]);
 	}
     }
     return OK;

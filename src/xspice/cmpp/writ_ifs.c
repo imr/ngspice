@@ -40,14 +40,9 @@ NON-STANDARD FEATURES
 
 
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 #include  "cmpp.h"
-
-/* Explicitly prototype malloc and free.  BSD has no header file for this */
-
-void  *malloc(unsigned size);
-void  *realloc(void *ptr, unsigned size);
-void  free(void *ptr);
-
 
 /* Local function prototypes */
 
@@ -463,9 +458,6 @@ static void  write_conn_info(
     int             i;
     int             j;
     char            *str;
-    Boolean_t       is_array;
-    Data_Type_t     type;
-
 
     /* Only write the connTable if there is something to put in it.      */
     /* Otherwise, we will put NULL in the SPICEdev structure in its slot */
@@ -628,8 +620,6 @@ static void  write_param_info(
 
     int             i;
     char            *str;
-    Boolean_t       is_array;
-    Data_Type_t     type;
 
 
     /* Only write the paramTable if there is something to put in it.      */
@@ -797,9 +787,6 @@ static void  write_inst_var_info(
 
     int             i;
     char            *str;
-    Boolean_t       is_array;
-    Data_Type_t     type;
-
 
     /* Only write the inst_varTable if there is something to put in it.  */
     /* Otherwise, we will put NULL in the SPICEdev structure in its slot */

@@ -78,61 +78,61 @@ extern bool clip_to_circle();
 /* cmath1.c */
 
 extern bool cx_degrees;
-extern void *cx_mag(void *, short int , int , int *, short int *);
-extern void *cx_ph(void *, short int , int , int *, short int *);
-extern void *cx_j(void *, short int , int , int *, short int *);
-extern void *cx_real(void *, short int , int , int *, short int *);
-extern void *cx_imag(void *, short int , int , int *, short int *);
-extern void *cx_pos(void *, short int , int , int *, short int *);
-extern void *cx_db(void *, short int , int , int *, short int *);
-extern void *cx_log(void *, short int , int , int *, short int *);
-extern void *cx_ln(void *, short int , int , int *, short int *);
-extern void *cx_exp(void *, short int , int , int *, short int *);
-extern void *cx_sqrt(void *, short int , int , int *, short int *);
-extern void *cx_sin(void *, short int , int , int *, short int *);
-extern void *cx_cos(void *, short int , int , int *, short int *);
+extern void *cx_mag(void *, short int , int , int *, short int *, ...);
+extern void *cx_ph(void *, short int , int , int *, short int *, ...);
+extern void *cx_j(void *, short int , int , int *, short int *, ...);
+extern void *cx_real(void *, short int , int , int *, short int *, ...);
+extern void *cx_imag(void *, short int , int , int *, short int *, ...);
+extern void *cx_pos(void *, short int , int , int *, short int *, ...);
+extern void *cx_db(void *, short int , int , int *, short int *, ...);
+extern void *cx_log(void *, short int , int , int *, short int *, ...);
+extern void *cx_ln(void *, short int , int , int *, short int *, ...);
+extern void *cx_exp(void *, short int , int , int *, short int *, ...);
+extern void *cx_sqrt(void *, short int , int , int *, short int *, ...);
+extern void *cx_sin(void *, short int , int , int *, short int *, ...);
+extern void *cx_cos(void *, short int , int , int *, short int *, ...);
 
 /* cmath2.c */
 
-extern void *cx_tan(void *, short int , int , int *, short int *);
-extern void *cx_atan(void *, short int , int , int *, short int *);
-extern void *cx_norm(void *, short int , int , int *, short int *);
-extern void *cx_uminus(void *, short int , int , int *, short int *);
-extern void *cx_rnd(void *, short int , int , int *, short int *);
-extern void *cx_mean(void *, short int , int , int *, short int *);
-extern void *cx_length(void *, short int , int , int *, short int *);
-extern void *cx_vector(void *, short int , int , int *, short int *);
-extern void *cx_unitvec(void *, short int , int , int *, short int *);
+extern void *cx_tan(void *, short int , int , int *, short int *, ...);
+extern void *cx_atan(void *, short int , int , int *, short int *, ...);
+extern void *cx_norm(void *, short int , int , int *, short int *, ...);
+extern void *cx_uminus(void *, short int , int , int *, short int *, ...);
+extern void *cx_rnd(void *, short int , int , int *, short int *, ...);
+extern void *cx_mean(void *, short int , int , int *, short int *, ...);
+extern void *cx_length(void *, short int , int , int *, short int *, ...);
+extern void *cx_vector(void *, short int , int , int *, short int *, ...);
+extern void *cx_unitvec(void *, short int , int , int *, short int *, ...);
  
 /* Routoure JM : somme useful functions */
-extern void *cx_min(void *, short int , int , int *, short int *);
-extern void *cx_max(void *, short int , int , int *, short int *);
-extern void *cx_d(void *, short int , int , int *, short int *);
+extern void *cx_min(void *, short int , int , int *, short int *, ...);
+extern void *cx_max(void *, short int , int , int *, short int *, ...);
+extern void *cx_d(void *, short int , int , int *, short int *, ...);
 
-extern void *cx_plus(void *, void *, short int , short int , int );
-extern void *cx_minus(void *, void *, short int , short int , int );
-extern void *cx_times(void *, void *, short int , short int , int );
-extern void *cx_mod(void *, void *, short int , short int , int );
+extern void *cx_plus(void *, void *, short int , short int , int, ...);
+extern void *cx_minus(void *, void *, short int , short int , int, ...);
+extern void *cx_times(void *, void *, short int , short int , int, ...);
+extern void *cx_mod(void *, void *, short int , short int , int, ...);
 
 /* cmath3.c */
 
-extern void *cx_divide(void *, void *, short int , short int , int );
-extern void *cx_comma(void *, void *, short int , short int , int );
-extern void *cx_power(void *, void *, short int , short int , int );
-extern void *cx_eq(void *, void *, short int , short int , int );
-extern void *cx_gt(void *, void *, short int , short int , int );
-extern void *cx_lt(void *, void *, short int , short int , int );
-extern void *cx_ge(void *, void *, short int , short int , int );
-extern void *cx_le(void *, void *, short int , short int , int );
-extern void *cx_ne(void *, void *, short int , short int , int );
+extern void *cx_divide(void *, void *, short int , short int , int, ...);
+extern void *cx_comma(void *, void *, short int , short int , int, ...);
+extern void *cx_power(void *, void *, short int , short int , int, ...);
+extern void *cx_eq(void *, void *, short int , short int , int, ...);
+extern void *cx_gt(void *, void *, short int , short int , int, ...);
+extern void *cx_lt(void *, void *, short int , short int , int, ...);
+extern void *cx_ge(void *, void *, short int , short int , int, ...);
+extern void *cx_le(void *, void *, short int , short int , int, ...);
+extern void *cx_ne(void *, void *, short int , short int , int, ...);
 
 /* cmath4.c */
 
-extern void *cx_and(void *, void *, short int , short int , int );
-extern void *cx_or(void *, void *, short int , short int , int );
-extern void *cx_not(void *, short int , int , int *, short int * );
-extern void *cx_interpolate(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
-extern void *cx_deriv(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
+extern void *cx_and(void *, void *, short int , short int , int, ...);
+extern void *cx_or(void *, void *, short int , short int , int, ...);
+extern void *cx_not(void *, short int , int , int *, short int * , ...);
+extern void *cx_interpolate(void *, short int , int , int *, short int *, ...); /* struct plot *, struct plot *, int ); */
+extern void *cx_deriv(void *, short int , int , int *, short int *, ...); /*struct plot *, struct plot *, int );*/
 
 /* cmdtab.c */
 

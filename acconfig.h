@@ -97,3 +97,7 @@
 
 /* get system memory and time */
 #undef HAVE__MEMAVL
+
+/* define whether size_t is int or is long */
+#undef IS_SIZE_T_LONG
+

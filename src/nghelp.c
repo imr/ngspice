@@ -34,6 +34,8 @@ bool cp_interactive = FALSE;
 
 char *hlp_filelist[] = { "ngspice", 0 };
 
+extern void ivars();
+
 int
 main(int ac, char **av)
 {

@@ -48,9 +48,8 @@ B3SOIStrongInversionNoiseEval(double vgs, double vds, B3SOImodel *model,
                               B3SOIinstance *here, double freq, double temp)
 {
 struct b3soiSizeDependParam *pParam;
-double cd, esat, DelClm, EffFreq, N0, Nl, Vgst;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Ssi;
-double req, ceq;
+double cd, esat, DelClm, EffFreq, N0, Nl;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
 
     pParam = here->pParam;
     cd = fabs(here->B3SOIcd) * here->B3SOIm;
@@ -107,11 +106,10 @@ double noizDens[B3SOINSRCS];
 double lnNdens[B3SOINSRCS];
 
 double vgs, vds, Slimit;
-double N0, Nl;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13;
-double n, ExpArg, Ssi, Swi;
+double T1, T10, T11;
+double Ssi, Swi;
 
-int error, i;
+int i;
 
     /* define the names of the noise sources */
     static char *B3SOInNames[B3SOINSRCS] =

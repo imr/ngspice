@@ -29,7 +29,7 @@ VBICask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
     double sr;
     double si;
     double vm;
-    static char *msg = "Current and power not available for ac analysis";
+
     switch(which) {
         case VBIC_AREA:
             value->rValue = here->VBICarea;

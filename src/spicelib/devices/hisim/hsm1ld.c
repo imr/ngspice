@@ -143,8 +143,9 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
   HiSIM_input sIN;
   HiSIM_output sOT;
   HiSIM_messenger sMS;
-  double cbhat, cdrain, cdhat, cdreq, cgbhat, cgshat, cgdhat;
-  double Ibtot, Idtot, Igbtot, Igstot, Igdtot;
+  double cbhat = 0.0, cdrain, cdhat = 0.0, cdreq;
+  double cgbhat = 0.0, cgshat = 0.0, cgdhat = 0.0;
+  double Ibtot = 0.0, Idtot, Igbtot = 0.0, Igstot = 0.0, Igdtot = 0.0;
   double ceq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg;
   double delvbd, delvbs, delvds, delvgd, delvgs;
   double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb;
@@ -177,7 +178,7 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
     ? 1 : 0;
   int showPhysVal;
   int isConv;
-  double vds_pre;
+  double vds_pre = 0.0;
 
   double m; /* Parallel multiplier */
   

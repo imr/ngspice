@@ -33,7 +33,7 @@ MESdisto(int mode,GENmodel *genmodel, CKTcircuit *ckt)
  MESinstance *here;
 
 if (mode == D_SETUP)
- return(MESdSetup(model,ckt));
+  return(MESdSetup(genmodel,ckt)); /* AFN: Oh what a wonderful thing!!! */
 
 if ((mode == D_TWOF1) || (mode == D_THRF1) || 
  (mode == D_F1PF2) || (mode == D_F1MF2) ||

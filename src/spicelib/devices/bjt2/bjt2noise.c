@@ -36,7 +36,6 @@ BJT2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
     double tempInoise;
     double noizDens[BJT2NSRCS];
     double lnNdens[BJT2NSRCS];
-    int error;
     int i;
 
     /* define the names of the noise sources */

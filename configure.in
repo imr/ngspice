@@ -3,10 +3,11 @@ dnl
 dnl This file is part of ngspice.
 dnl
 dnl (Process this file with autoconf to produce a configure script.)
-AC_INIT(src/main.c)
+AC_INIT
+AC_CONFIG_SRCDIR([src/main.c])
 
 dnl Create a configuration header
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 dnl Initialize automake stuff
 AM_INIT_AUTOMAKE(ng-spice-rework,15)
@@ -174,7 +175,14 @@ dnl Checks for ANSI-C header files.
 AC_HEADER_STDC
 
 if test "$enable_ansi" = "yes"; then
-	AM_PROG_CC_STDC
+	AC_PROG_CC()
+AC_DIAGNOSE([obsolete],[AM_PROG_CC_STDC:
+	your code should no longer depend upon `am_cv_prog_cc_stdc', but upon
+	`ac_cv_prog_cc_stdc'.  Remove this warning and the assignment when
+	you adjust the code.  You can also remove the above call to
+	AC_PROG_CC if you already called it elsewhere.])
+am_cv_prog_cc_stdc=$ac_cv_prog_cc_stdc
+
 	if test ! "$am_cv_prog_cc_stdc"="yes"; then
 	AC_MSG_WARN(Failed to find Ansi flag!)
 	fi	
@@ -265,6 +273,18 @@ AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_CHECK_FUNCS(localtime)
 
+dnl Some special AMD64 processor issues. This change may be common to many
+dnl 64 bit processors, but I have only this platform to work with and did not
+dnl find a good way of automatically determining this information.
+case $host in
+  x86_64-*-linux*)
+     AC_DEFINE(IS_SIZE_T_LONG, 1)
+  ;;
+  *)
+     AC_DEFINE(IS_SIZE_T_LONG, 0)
+  ;;
+esac
+
 case $host_os in
   *cygwin* )
 	AC_CHECK_FUNCS(ftime)
@@ -280,7 +300,7 @@ AC_CHECK_HEADERS(termios.h termio.h sgtty.h , break)
 AC_CHECK_FUNCS(isatty tcgetattr tcsetattr)
 
 dnl Check for a few functions:
-AC_FUNC_VFORK
+AC_FUNC_FORK([])
 AC_CHECK_FUNCS(access bcopy qsort dup2 popen)
 AC_CHECK_FUNCS(strchr index , break)
 AC_CHECK_FUNCS(getcwd getwd , break)
@@ -303,26 +323,18 @@ AC_CHECK_FUNCS(asprintf,,AC_CHECK_LIB(iberty,asprintf,AC_DEFINE(HAVE_ASPRINTF) L
 
 dnl Check for va_copy
 AC_CACHE_CHECK([for va_copy], ac_cv_c_va_copy,
- AC_TRY_LINK(
-   [#include <stdarg.h>],
-   [va_list ap1, ap2;
+ AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>]], [[va_list ap1, ap2;
     va_copy(ap1,ap2); 
-   ],
-   [ac_cv_c_va_copy="yes"],
-   [ac_cv_c_va_copy="no"])
+   ]])],[ac_cv_c_va_copy="yes"],[ac_cv_c_va_copy="no"])
  )
 if test "$ac_cv_c_va_copy" = "yes"
 then 
     AC_DEFINE(HAVE_VA_COPY, 1, [Define if we have va_copy])
 fi
 AC_CACHE_CHECK([for __va_copy], ac_cv_c___va_copy,
- AC_TRY_LINK(   
-   [#include <stdarg.h>],
-   [va_list ap1, ap2;
+ AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>]], [[va_list ap1, ap2;
     __va_copy(ap1,ap2);
-   ],
-   [ac_cv_c___va_copy="yes"],
-   [ac_cv_c___va_copy="no"])
+   ]])],[ac_cv_c___va_copy="yes"],[ac_cv_c___va_copy="no"])
  )
 if test "$ac_cv_c___va_copy" = "yes"
 then
@@ -572,7 +584,7 @@ fi
 
 
 
-AC_OUTPUT(			\
+AC_CONFIG_FILES([\
 Makefile			\
 doc/Makefile			\
 man/Makefile			\
@@ -603,7 +615,6 @@ src/spicelib/devices/ccvs/Makefile	\
 src/spicelib/devices/csw/Makefile	\
 src/spicelib/devices/cpl/Makefile       \
 src/spicelib/devices/dio/Makefile	\
-dnl            src/spicelib/devices/ekv/Makefile	\
 src/spicelib/devices/ind/Makefile	\
 src/spicelib/devices/isrc/Makefile	\
 src/spicelib/devices/hfet1/Makefile	\
@@ -708,4 +719,5 @@ tests/proc2mod/Makefile			\
 tests/transmission/Makefile		\
 tests/resistance/Makefile		\
 tests/vbic/Makefile
-)
+])
+AC_OUTPUT

@@ -59,7 +59,7 @@ HSM1noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
   double tempInoise;
   double noizDens[HSM1NSRCS];
   double lnNdens[HSM1NSRCS];
-  register int error, i;
+  register int i;
 
   /* define the names of the noise sources */
   static char * HSM1nNames[HSM1NSRCS] = {

@@ -231,13 +231,13 @@ MOS3dSetup(GENmodel *inModel, CKTcircuit *ckt)
             double onfg;
             double fgate;
             double us;
-            double xn;
+            double xn = 0.0;
             double vdsc;
-            double onvdsc;
+            double onvdsc = 0.0;
             double vdsx;
             double cdnorm;
             double cdo;
-            double fdrain;
+            double fdrain = 0.0;
             double gdsat;
             double cdsat;
             double emax;

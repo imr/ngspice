@@ -71,9 +71,7 @@ void print_error(
 
 /* Convert a string to all lower case */
 
-str_to_lower(s)
-
-char *s;   /* The string to convert */
+void str_to_lower(char *s)
 {
     int     i;
     char    c;

@@ -41,10 +41,9 @@ double gbbg, gbbdp, gbbb, gbbe, gbbp, gbbsp, gbbT;
 double gddpg, gddpdp, gddpsp, gddpb, gddpe, gddpT;
 double gsspg, gsspdp, gsspsp, gsspb, gsspe, gsspT;
 double gppg, gppdp, gppb, gppe, gppp, gppsp, gppT;
-double xcTt, cTt, gcTt, gTtt, gTtg, gTtb, gTte, gTtdp, gTtsp;
+double xcTt, cTt, gTtt, gTtg, gTtb, gTte, gTtdp, gTtsp;
 
-double Dum1, Dum2, Dum3, Dum4, Dum5;
-FILE *fpdebug;
+FILE *fpdebug = NULL;
 
 double m;
 

@@ -32,8 +32,8 @@ B2load(GENmodel *inModel, CKTcircuit *ckt)
     double DrainPerimeter;
     double SourcePerimeter;
     double arg;
-    double capbd;
-    double capbs;
+    double capbd = 0.0;
+    double capbs = 0.0;
     double cbd;
     double cbhat;
     double cbs;

@@ -50,6 +50,7 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 
+#define CONFIG
 
 #include "ngspice.h"
 #include <stdio.h>

@@ -24,9 +24,10 @@ B3SOIDDpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
 B3SOIDDinstance *here;
 double xcggb, xcgdb, xcgsb, xcbgb, xcbdb, xcbsb, xcddb, xcssb, xcdgb;
-double gdpr, gspr, gds, gbd, gbs, capbd, capbs, xcsgb, xcdsb, xcsdb;
+double gdpr, gspr, gds, gbd, gbs, capbd = 0.0, capbs = 0.0;
+double xcsgb, xcdsb, xcsdb;
 double cggb, cgdb, cgsb, cbgb, cbdb, cbsb, cddb, cdgb, cdsb;
-double GSoverlapCap, GDoverlapCap, GBoverlapCap;
+double GSoverlapCap, GDoverlapCap, GBoverlapCap = 0.0;
 double FwdSum, RevSum, Gm, Gmbs;
 
 double m;

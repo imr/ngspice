@@ -33,7 +33,7 @@ JFETdisto(int mode, GENmodel *genmodel, CKTcircuit *ckt)
  JFETinstance *here;
 
 if (mode == D_SETUP)
- return(JFETdSetup(model,ckt));
+  return(JFETdSetup(genmodel,ckt)); /* another hack from similar structures */
 
 if ((mode == D_TWOF1) || (mode == D_THRF1) || 
  (mode == D_F1PF2) || (mode == D_F1MF2) ||

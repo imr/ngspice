@@ -48,6 +48,7 @@ NON-STANDARD FEATURES
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "mod_yacc_y.h"
 
 #define	yymaxdepth mod_yymaxdepth
@@ -95,6 +96,7 @@ Ifs_Table_t *mod_ifs_table;
 
 extern char *mod_yytext;
 extern FILE* mod_yyout;
+ extern void mod_yyerror(char*);
 
 #include <string.h>
 #include <ctype.h>
@@ -139,7 +141,7 @@ int strcmpi(s, t)
 /*---------------------------------------------------------------------------*/
 static void put_type (FILE *fp, Data_Type_t type)
 {
-   char ch;
+   char ch = ' ';
    
    switch (type) {
    case INTEGER:
@@ -302,14 +304,14 @@ static int valid_subid (Sub_Id_t sub_id, Id_Kind_t kind)
 }
 
 /*---------------------------------------------------------------------------*/
-static init_buffer ()
+static void init_buffer ()
 {
    buf_len = 0;
    buffer[0] = '\0';
 }
 
 /*---------------------------------------------------------------------------*/
-static append (char *str)
+static void append (char *str)
 {
    int len = strlen (str);
    if (len + buf_len > BUFFER_SIZE) {

@@ -124,7 +124,7 @@ NON-STANDARD FEATURES
 void cm_d_open_e(ARGS) 
 
 {
-    int                    i;   /* generic loop counter index */
+    /*int                    i;*/   /* generic loop counter index */
          
                         
 

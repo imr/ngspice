@@ -22,12 +22,12 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
   double t1, t2, t3;
   double qf1, qf2, qf3;
   double lf2, lf3;
-  double v1d, v2d, i1d, i2d;
+  double v1d = 0.0, v2d = 0.0, i1d = 0.0, i2d = 0.0;
   double dummy1, dummy2;
-  int isaved;
-  unsigned tdover;
+  int isaved = 0;
+  unsigned tdover = 0;
   int i;
-  double max, min;
+  double max = 0.0, min = 0.0;
 
   /* loop through all the transmission line models */
   for (; model != NULL; model = model->LTRAnextModel) {

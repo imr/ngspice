@@ -71,7 +71,7 @@ cp_histsubst(wordlist *wlist)
                     return (wlist);
                 }
                 if (b < s) {
-                    (void) sprintf(buf, "%.*s%s", s - b, b, 
+                    (void) sprintf(buf, "%.*s%s", (int)(s-b), b, 
                         n->wl_word);
                     tfree(n->wl_word);
                     n->wl_word = copy(buf);

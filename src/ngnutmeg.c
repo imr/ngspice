@@ -1,9 +1,6 @@
 /* Configuration file for nutmeg */
 #include <config.h>
 
-#include "conf.h"
-
-
 /*
  * Devices
  */

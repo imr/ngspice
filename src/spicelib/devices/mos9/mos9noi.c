@@ -35,7 +35,6 @@ MOS9noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
     double tempInoise;
     double noizDens[MOS9NSRCS];
     double lnNdens[MOS9NSRCS];
-    int error;
     int i;
 
     /* define the names of the noise sources */

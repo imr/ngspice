@@ -896,7 +896,8 @@ X11_Input(REQUEST *request, RESPONSE *response)
 {
 
 	XEvent ev;
-	int nfds, readfds; 
+	int nfds;
+        fd_set rfds;
 
 	switch (request->option) {
 	  case char_option:
@@ -913,15 +914,19 @@ X11_Input(REQUEST *request, RESPONSE *response)
 	        XtDispatchEvent(&ev);
 	      }
 
-	      readfds = 1 << fileno(request->fp) |
-	            1 << ConnectionNumber(display);
-
 	      /* block on ConnectionNumber and request->fp */
 	      /* PN: added fd_set * casting */
-	      select(nfds + 1, (fd_set *)&readfds, (fd_set *) NULL, (fd_set *) NULL, NULL);
-
+              FD_ZERO(&rfds);
+              FD_SET(fileno(request->fp), &rfds);
+              FD_SET(ConnectionNumber(display), &rfds);
+	      select (nfds + 1,
+                      &rfds,
+                      (fd_set *)NULL,
+                      (fd_set *)NULL,
+                      NULL);
+              
 	      /* handle X events first */
-	      if (readfds & (1 << ConnectionNumber(display))) {
+              if (FD_ISSET (ConnectionNumber(display), &rfds)) {
 		    /* handle ALL X events */
 		    while (XtPending()) {
 			  XtNextEvent(&ev);
@@ -929,7 +934,7 @@ X11_Input(REQUEST *request, RESPONSE *response)
 		    }
 	      }
 
-	      if (readfds & (1 << fileno(request->fp))) {
+	      if (FD_ISSET (fileno(request->fp), &rfds)) {
 		    response->reply.ch = inchar(request->fp);
 		    goto out;
 	      }

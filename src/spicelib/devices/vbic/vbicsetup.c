@@ -366,7 +366,7 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->VBICinstances; here != NULL ;
                 here=here->VBICnextInstance) {
-            CKTnode *tmpNode;
+            CKTnode *tmpNode[1];
             IFuid tmpName;
 
 	    if (here->VBICowner != ARCHme)
@@ -396,10 +396,10 @@ matrixpointers:
                 if(error) return(error);
                 here->VBICcollCXNode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,1,(void**)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
                     }
                   }
                 }
@@ -411,10 +411,10 @@ matrixpointers:
                 if(error) return(error);
                 here->VBICbaseBXNode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,2,(void**)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
                      }
                   }
                 }
@@ -426,10 +426,10 @@ matrixpointers:
                 if(error) return(error);
                 here->VBICemitEINode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,3,(void**)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
                      }
                   }
                 }
@@ -441,10 +441,10 @@ matrixpointers:
                 if(error) return(error);
                 here->VBICsubsSINode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,4,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,4,(void**)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
                      }
                   }
                 }

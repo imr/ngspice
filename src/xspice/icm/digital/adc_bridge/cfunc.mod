@@ -318,6 +318,8 @@ void cm_adc_bridge(ARGS)
                             case ZERO:
                                 OUTPUT_DELAY(out[i]) = PARAM(rise_delay);        
                                 break;
+                            case UNKNOWN: /* should never get here! */
+                                break;
                             }
                         }
                         else {

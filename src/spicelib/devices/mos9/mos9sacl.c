@@ -26,7 +26,7 @@ MOS9sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     int xnrm;
     int xrev;
     double A0;
-    double Apert;
+    double Apert = 0.0;
     double DELA;
     double DELAinv;
     double gdpr0;
@@ -111,7 +111,7 @@ MOS9sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     double icdprm;
     double icg;
     double icb;
-    double DvDp;
+    double DvDp = 0.0;
     int i;
     int flag;
     int error;
@@ -233,7 +233,7 @@ MOS9sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
             here->MOS9senPertFlag = ON ;
             if(info->SENacpertflag == 1){
                 /* store the  unperturbed values of small signal parameters */
-                if(error = MOS9load((GENmodel*)model,ckt)) return(error);
+                if((error = MOS9load((GENmodel*)model,ckt))) return(error);
                 *(here->MOS9senCgs) = here->MOS9cgs;
                 *(here->MOS9senCgd) = here->MOS9cgd;
                 *(here->MOS9senCgb) = here->MOS9cgb;
@@ -322,7 +322,7 @@ MOS9sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(ckt->CKTstate0 + here->MOS9vbs) = Apert;
                 *(ckt->CKTstate0 + here->MOS9vbd) = vbdOp;
 
-                if(error = MOS9load((GENmodel*)model,ckt)) return(error);
+                if((error = MOS9load((GENmodel*)model,ckt))) return(error);
 
                 *(here->MOS9senCgs + 1) = here->MOS9cgs;
                 *(here->MOS9senCgd + 1) = here->MOS9cgd;
@@ -360,7 +360,7 @@ pertvbd:  /* Perturbation of vbd */
                 *(ckt->CKTstate0 + here->MOS9vbs) = vbsOp;
                 *(ckt->CKTstate0 + here->MOS9vbd) = Apert;
 
-                if(error = MOS9load((GENmodel*)model,ckt)) return(error);
+                if((error = MOS9load((GENmodel*)model,ckt))) return(error);
 
                 *(here->MOS9senCgs + 2) = here->MOS9cgs;
                 *(here->MOS9senCgd + 2) = here->MOS9cgd;
@@ -399,7 +399,7 @@ pertvgb:  /* Perturbation of vgb */
                 *(ckt->CKTstate0 + here->MOS9vbd) = vbdOp;
                 *(ckt->CKTrhsOp + here->MOS9bNode) -= DELA; 
 
-                if(error = MOS9load((GENmodel*)model,ckt)) return(error);
+                if((error = MOS9load((GENmodel*)model,ckt))) return(error);
 
                 *(here->MOS9senCgs + 3) = here->MOS9cgs;
                 *(here->MOS9senCgd + 3) = here->MOS9cgd;
@@ -439,7 +439,7 @@ pertl:    /* Perturbation of length */
                 *(ckt->CKTstate0 + here->MOS9vbs) = vbsOp;
                 *(ckt->CKTstate0 + here->MOS9vbd) = vbdOp;
 
-                if(error = MOS9load((GENmodel*)model,ckt)) return(error);
+                if((error = MOS9load((GENmodel*)model,ckt))) return(error);
 
                 *(here->MOS9senCgs + 4) = here->MOS9cgs;
                 *(here->MOS9senCgd + 4) = here->MOS9cgd;
@@ -541,7 +541,7 @@ pertw:    /* Perturbation of width */
                 *(ckt->CKTstate0 + here->MOS9vbs) = vbsOp;
                 *(ckt->CKTstate0 + here->MOS9vbd) = vbdOp;
 
-                if(error = MOS9load((GENmodel*)model,ckt)) return(error);
+                if((error = MOS9load((GENmodel*)model,ckt))) return(error);
 
                 *(here->MOS9senCgs + 5) = here->MOS9cgs;
                 *(here->MOS9senCgd + 5) = here->MOS9cgd;

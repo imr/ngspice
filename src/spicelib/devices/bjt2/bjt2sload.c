@@ -61,10 +61,10 @@ BJT2sLoad(GENmodel *inModel, CKTcircuit *ckt)
     double qcs;
     double qbx0;
     double qbx;
-    double DqbeDp;
-    double DqbcDp;
-    double DqcsDp;
-    double DqbxDp;
+    double DqbeDp = 0.0;
+    double DqbcDp = 0.0;
+    double DqcsDp = 0.0;
+    double DqbxDp = 0.0;
     double Osxpbe;
     double Osxpbc;
     double Osxpcs;

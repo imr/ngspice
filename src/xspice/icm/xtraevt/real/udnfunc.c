@@ -93,7 +93,7 @@ void udn_real_invert(INVERT_ARGS)
 
 void udn_real_resolve(RESOLVE_ARGS)
 {
-    double **array    = INPUT_STRUCT_PTR_ARRAY;
+    double **array    = (double**)INPUT_STRUCT_PTR_ARRAY;
     double *out       = OUTPUT_STRUCT_PTR;
     int    num_struct = INPUT_STRUCT_PTR_ARRAY_SIZE;
 

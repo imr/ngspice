@@ -174,7 +174,7 @@ card         *current;  /* the card we are to parse                     */
     int     error;      /* for the IFC macro */
 
     MIFmodel     *mdfast;  /* pointer to model struct */
-    MIFinstance  *fast;    /* pointer to instance struct */
+    MIFinstance  *fast[1];    /* pointer to instance struct */
 
     INPmodel  *thismodel;  /* pointer to model struct */
 
@@ -226,11 +226,11 @@ card         *current;  /* the card we are to parse                     */
 
     /* create a new structure for this instance in ckt */
     mdfast = thismodel->INPmodfast;
-    IFC(newInstance, (ckt, mdfast,(void **)&fast, name))
+    IFC(newInstance, (ckt, mdfast,(void **)fast, name))
 
 
     /* initialize the code model specific elements of the inst struct */
-    MIFinit_inst(mdfast, fast);
+    MIFinit_inst(mdfast, fast[0]);
 
 
     /* *********************** */
@@ -306,11 +306,11 @@ card         *current;  /* the card we are to parse                     */
         /* set analog and event_driven flags on instance and model */
         if((def_port_type == MIF_DIGITAL) || 
 	   (def_port_type == MIF_USER_DEFINED)) {
-	      fast->event_driven = MIF_TRUE;
+	      fast[0]->event_driven = MIF_TRUE;
 	      mdfast->event_driven = MIF_TRUE;
         }
         else {
-              fast->analog = MIF_TRUE;
+              fast[0]->analog = MIF_TRUE;
               mdfast->analog = MIF_TRUE;
         }
 
@@ -324,8 +324,8 @@ card         *current;  /* the card we are to parse                     */
             }
 
             /* set the null flag to true */
-            fast->conn[i]->is_null = MIF_TRUE;
-            fast->conn[i]->size = 0;
+            fast[0]->conn[i]->is_null = MIF_TRUE;
+            fast[0]->conn[i]->size = 0;
 
             /* eat the null token and continue to next connection */
             next_token = MIFget_token(&line,&next_token_type);
@@ -333,7 +333,7 @@ card         *current;  /* the card we are to parse                     */
         }
         else {
             /* set the null flag to false */
-            fast->conn[i]->is_null = MIF_FALSE;
+            fast[0]->conn[i]->is_null = MIF_FALSE;
         }
 
 
@@ -358,7 +358,7 @@ card         *current;  /* the card we are to parse                     */
             MIFget_port(ckt,
                         tab,
                         current,
-                        fast,
+                        fast[0],
                         &line,
                         &next_token,
                         &next_token_type,
@@ -372,7 +372,7 @@ card         *current;  /* the card we are to parse                     */
             if(status == MIF_ERROR)
                 return;
 
-            fast->conn[i]->size = 1;
+            fast[0]->conn[i]->size = 1;
 
 	    /* when we leave here, next_token should hold the next, unprocessed netname */
 
@@ -408,7 +408,7 @@ card         *current;  /* the card we are to parse                     */
                 MIFget_port(ckt,
                             tab,
                             current,
-                            fast,
+                            fast[0],
                             &line,
                             &next_token,
                             &next_token_type,
@@ -439,7 +439,7 @@ card         *current;  /* the card we are to parse                     */
                 LITERR("Array connection must have at least one port");
                 return;
             }
-            fast->conn[i]->size = j;
+            fast[0]->conn[i]->size = j;
 
 	    /*  At this point, the next time we get_token, we should get a % or a net name.
 		We'll do that now, since when we enter the loop, we expect next_token
@@ -478,21 +478,21 @@ card         *current;  /* the card we are to parse                     */
 
         conn_info = &(DEVices[type]->DEVpublic.conn[i]);
 
-        if( (fast->conn[i]->is_null) &&
+        if( (fast[0]->conn[i]->is_null) &&
             (! conn_info->null_allowed) ) {
             LITERR("Null found for connection where not allowed");
             return;
         }
 
         if(conn_info->has_lower_bound) {
-            if(fast->conn[i]->size < conn_info->lower_bound) {
+            if(fast[0]->conn[i]->size < conn_info->lower_bound) {
                 LITERR("Too few ports in connection");
                 return;
             }
         }
 
         if(conn_info->has_upper_bound) {
-            if(fast->conn[i]->size > conn_info->upper_bound) {
+            if(fast[0]->conn[i]->size > conn_info->upper_bound) {
                 LITERR("Too many ports in connection");
                 return;
             }
@@ -519,7 +519,7 @@ card         *current;  /* the card we are to parse                     */
         }
         if((! mdfast->param[i]->is_null) && (param_info->is_array)) {
             if(param_info->has_conn_ref) {
-                if(fast->conn[param_info->conn_ref]->size != fast->param[i]->size) {
+                if(fast[0]->conn[param_info->conn_ref]->size != fast[0]->param[i]->size) {
                     LITERR("Array parameter size on model does not match connection size");
                     return;
                 }
@@ -764,8 +764,8 @@ MIFget_port(
 {
 
 
-    CKTnode         *pos_node;          /* positive connection node */
-    CKTnode         *neg_node;          /* negative connection node */
+    CKTnode         *pos_node[1];          /* positive connection node */
+    CKTnode         *neg_node[1];          /* negative connection node */
 
 	char            *node;
 
@@ -856,12 +856,12 @@ MIFget_port(
     case MIF_DIFF_RESISTANCE:
 
         /* Call the spice3c1 function to put this node in the node list in ckt */
-        INPtermInsert(ckt, next_token, tab,(void **)&pos_node);
+        INPtermInsert(ckt, next_token, tab,(void **)pos_node);
 
         /* store the equation number and node identifier */
         /* This is the equivalent of what CKTbindNode() does in 3C1 */
         fast->conn[conn_num]->port[port_num]->pos_node_str = *next_token;
-        fast->conn[conn_num]->port[port_num]->smp_data.pos_node = pos_node->number;
+        fast->conn[conn_num]->port[port_num]->smp_data.pos_node = pos_node[0]->number;
 
         break;
 
@@ -923,10 +923,10 @@ MIFget_port(
 //		node = "0";		// deleted by K.A. March 5th 2000, this is incorrect, it creates a new pointer
 						// that cause a crash in INPtermInsert()
 
-		INPtermInsert(ckt, &node, tab,(void **)&neg_node);
+		INPtermInsert(ckt, &node, tab,(void **)neg_node);
 
         fast->conn[conn_num]->port[port_num]->neg_node_str = node;
-        fast->conn[conn_num]->port[port_num]->smp_data.neg_node = neg_node->number;
+        fast->conn[conn_num]->port[port_num]->smp_data.neg_node = neg_node[0]->number;
         break;
 
     case MIF_DIFF_VOLTAGE:
@@ -939,9 +939,9 @@ MIFget_port(
             *status = MIF_ERROR;
             return;
         }
-        INPtermInsert(ckt, next_token, tab,(void **)&neg_node);
+        INPtermInsert(ckt, next_token, tab,(void **)neg_node);
         fast->conn[conn_num]->port[port_num]->neg_node_str = *next_token;
-        fast->conn[conn_num]->port[port_num]->smp_data.neg_node = neg_node->number;
+        fast->conn[conn_num]->port[port_num]->smp_data.neg_node = neg_node[0]->number;
         *next_token = MIFget_token(line, next_token_type);
         break;
 

@@ -54,7 +54,6 @@ MOS9load(GENmodel *inModel, CKTcircuit *ckt)
     double geq;
     double sarg;
     double sargsw;
-    double tol;
     double vbd;
     double vbs;
     double vds;
@@ -67,12 +66,12 @@ MOS9load(GENmodel *inModel, CKTcircuit *ckt)
     double vgs1;
     double vgs;
     double von;
-    double xfact;
+    double xfact = 0.0;
     int xnrm;
     int xrev;
-    double capgs;   /* total gate-source capacitance */
-    double capgd;   /* total gate-drain capacitance */
-    double capgb;   /* total gate-bulk capacitance */
+    double capgs = 0.0;   /* total gate-source capacitance */
+    double capgd = 0.0;   /* total gate-drain capacitance */
+    double capgb = 0.0;   /* total gate-bulk capacitance */
     int Check;
 #ifndef NOBYPASS      
     double tempv;
@@ -507,9 +506,9 @@ next1:      if(vbs <= -3*vt) {
             double dvtdvb;
             double csonco;
             double cdonco;
-            double dxndvb;
-            double dvodvb;
-            double dvodvd;
+            double dxndvb = 0.0;
+            double dvodvb = 0.0;
+            double dvodvd = 0.0;
             double vgsx;
             double dvtdvd;
             double onfg;
@@ -521,20 +520,20 @@ next1:      if(vbs <= -3*vt) {
             double dvsdvg;
             double dvsdvb;
             double dvsdvd;
-            double xn;
+            double xn = 0.0;
             double vdsc;
-            double onvdsc;
+            double onvdsc = 0.0;
             double dvsdga;
             double vdsx;
             double dcodvb;
             double cdnorm;
             double cdo;
             double cd1;
-            double fdrain;
+            double fdrain = 0.0;
             double fd2;
-            double dfddvg;
-            double dfddvb;
-            double dfddvd;
+            double dfddvg = 0.0;
+            double dfddvb = 0.0;
+            double dfddvd = 0.0;
             double gdsat;
             double cdsat;
             double gdoncd;
@@ -557,7 +556,7 @@ next1:      if(vbs <= -3*vt) {
             double dlonxl;
             double xlfact;
             double diddl;
-            double gds0;
+            double gds0 = 0.0;
             double emoncd;
             double ondvt;
             double onxn;

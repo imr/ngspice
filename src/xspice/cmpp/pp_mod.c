@@ -54,7 +54,14 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include  "cmpp.h"
+
+extern int mod_yyparse();
+extern void mod_yyrestart (FILE*);
 
 /*---------------------------------------------------------------------------*/
 static void change_extension (char *filename, char *ext, char *new_filename)
@@ -177,5 +184,7 @@ int mod_yyerror (str)
    
    fprintf (stderr, "%s: Error: \"%s\": line %d (near \'%s\'):\n\t%s.\n",
             prog_name, current_filename, mod_yylineno, mod_yytext, str);
+
+   return 0;
 }
 

@@ -600,21 +600,21 @@ LTRArlcCoeffsSetup(h1dashfirstcoeff, h2firstcoeff, h3dashfirstcoeff, h1dashcoeff
   int listsize, timeindex, *auxindexptr;
 {
   unsigned exact;
-  double lolimit1, lolimit2, hilimit1, hilimit2;
+  double lolimit1, lolimit2 = 0.0, hilimit1, hilimit2 = 0.0;
   double delta1, delta2;
 
   double h1dummy1, h1dummy2;
   double h1lovalue1, h1lovalue2, h1hivalue1, h1hivalue2;
 
-  double h2dummy1, h2dummy2;
-  double h2lovalue1, h2lovalue2, h2hivalue1, h2hivalue2;
+  double h2dummy1 = 0.0, h2dummy2;
+  double h2lovalue1 = 0.0, h2lovalue2, h2hivalue1 = 0.0, h2hivalue2;
 
-  double h3dummy1, h3dummy2;
-  double h3lovalue1, h3lovalue2, h3hivalue1, h3hivalue2;
+  double h3dummy1 = 0.0, h3dummy2;
+  double h3lovalue1 = 0.0, h3lovalue2, h3hivalue1 = 0.0, h3hivalue2;
 
-  double exparg, besselarg, expterm, bessi1overxterm, bessi0term;
-  double expbetaTterm, alphasqTterm;
-  double h1relval, h2relval, h3relval;
+  double exparg, besselarg = 0.0, expterm, bessi1overxterm, bessi0term;
+  double expbetaTterm = 0.0, alphasqTterm = 0.0;
+  double h1relval, h2relval = 0.0, h3relval = 0.0;
   int doh1 = 1, doh2 = 1, doh3 = 1;
 
   int i, auxindex;
@@ -863,13 +863,13 @@ LTRAlteCalculate(ckt, genmodel, geninstance, curtime)
   LTRAmodel *model = (LTRAmodel *) genmodel;
   LTRAinstance *instance = (LTRAinstance *) geninstance;
   double h1dashTfirstCoeff;
-  double h2TfirstCoeff;
-  double h3dashTfirstCoeff;
+  double h2TfirstCoeff = 0.0;
+  double h3dashTfirstCoeff = 0.0;
   double dashdash;
   double oof;
   double hilimit1, lolimit1, hivalue1, lovalue1, f1i, g1i;
   double eq1LTE = 0.0, eq2LTE = 0.0;
-  int auxindex, tdover, i, exact;
+  int auxindex = 0, tdover, i, exact;
 
   switch (model->LTRAspecialCase) {
 

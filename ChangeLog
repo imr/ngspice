@@ -1,3 +1,12 @@
+2004-07-08  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   Applied Al Niessner <Al.Niessner@jpl.nasa.gov> negabyte patch
+	    that removed all compiler warnings. 
+	    
+	*   configure.in, src/xspice/icm/makedefs.in, tests/Makefile.am,
+	    xgraph/aclocal.m4, xgraph/configure.in, xgraph/configure: updated 
+	    configuration files for autoconf V2.59 automake V1.8.
+
 2004-07-05  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/frontend/resource.c: added __APPLE__ for mac osx support as in

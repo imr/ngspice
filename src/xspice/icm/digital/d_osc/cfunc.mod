@@ -157,6 +157,8 @@ NON-STANDARD FEATURES
 *                                                            *
 *************************************************************/
 
+#include <stdlib.h>
+
 void cm_d_osc(ARGS) 
 {
 
@@ -167,9 +169,9 @@ void cm_d_osc(ARGS)
              *phase_old,    /* previous phase of the model   */
                     *t1,    /* pointer to t1 value  */   
                     *t3,    /* pointer to t3 value  */   
-                  time1,    /* variable for calculating new time1 value */   
-                  time3,    /* variable for calculating new time3 value */   
-                   freq,    /* instantaneous frequency value    */   
+              /*time1,*/    /* variable for calculating new time1 value */   
+              /*time3,*/    /* variable for calculating new time3 value */   
+                   freq = 0.0,    /* instantaneous frequency value    */   
                  dphase,    /* fractional part into cycle */
              duty_cycle,    /* duty_cycle value */
             test_double,    /* testing variable */

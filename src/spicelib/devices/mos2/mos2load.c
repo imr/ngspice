@@ -39,7 +39,7 @@ MOS2load(GENmodel *inModel, CKTcircuit *ckt)
     double arg;
     double cbhat;
     double cdhat;
-    double cdrain;
+    double cdrain = 0.0;
     double cdreq;
     double ceq;
     double ceqbd;
@@ -73,10 +73,10 @@ MOS2load(GENmodel *inModel, CKTcircuit *ckt)
     double vgs;
     double von;
     double vt;      /* K * T / Q */
-    double xfact;
-    double capgs;   /* total gate-source capacitance */
-    double capgd;   /* total gate-drain capacitance */
-    double capgb;   /* total gate-bulk capacitance */
+    double xfact = 0.0;
+    double capgs = 0.0;   /* total gate-source capacitance */
+    double capgd = 0.0;   /* total gate-drain capacitance */
+    double capgb = 0.0;   /* total gate-bulk capacitance */
     int xnrm;
     int xrev;
     int Check;
@@ -436,20 +436,20 @@ next1:      if(vbs <= -3*vt) {
             double beta1;
             double dsrgdb;
             double d2sdb2;
-            double sphi;    /* square root of phi */
-            double sphi3;   /* square root of phi cubed */
+            double sphi = 0.0;    /* square root of phi */
+            double sphi3 = 0.0;   /* square root of phi cubed */
             double barg;
             double d2bdb2;
             double factor;
             double dbrgdb;
             double eta;
             double vbin;
-            double argd;
-            double args;
+            double argd = 0.0;
+            double args = 0.0;
             double argss;
             double argsd;
-            double argxs;
-            double argxd;
+            double argxs = 0.0;
+            double argxd = 0.0;
             double daddb2;
             double dasdb2;
             double dbargd;
@@ -467,8 +467,8 @@ next1:      if(vbs <= -3*vt) {
             double vth;
             double cfs;
             double cdonco;
-            double xn;
-            double argg;
+            double xn = 0.0;
+            double argg = 0.0;
             double vgst;
             double sarg3;
             double sbiarg;
@@ -476,9 +476,9 @@ next1:      if(vbs <= -3*vt) {
             double body;
             double gdbdv;
             double dodvbs;
-            double dodvds;
-            double dxndvd;
-            double dxndvb;
+            double dodvds = 0.0;
+            double dxndvd = 0.0;
+            double dxndvb = 0.0;
             double udenom;
             double dudvgs;
             double dudvds;
@@ -515,11 +515,11 @@ next1:      if(vbs <= -3*vt) {
             double xv;
             double y3;
             double delta4;
-            double xvalid;
-            double bsarg;
+            double xvalid = 0.0;
+            double bsarg = 0.0;
             double dbsrdb;
-            double bodys;
-            double gdbdvs;
+            double bodys = 0.0;
+            double gdbdvs = 0.0;
             double sargv;
             double xlfact;
             double dldsat;

@@ -282,7 +282,11 @@ raw_read(char *name)
     struct variable *vv;
     wordlist *wl, *nwl;
     FILE *fp, *lastin, *lastout, *lasterr;
+
+
+#ifdef __MINGW32__
     bool binary = TRUE;
+#endif
 
     if (!(fp = fopen(name, "r"))) {
         perror(name);

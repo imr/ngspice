@@ -53,14 +53,14 @@ B3SOIPDtemp(GENmodel *inModel, CKTcircuit *ckt)
 {
 B3SOIPDmodel *model = (B3SOIPDmodel*) inModel;
 B3SOIPDinstance *here;
-struct b3soipdSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
-double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, T6, Ldrn, Wdrn;
-double Temp, TempRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;
+struct b3soipdSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
+double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
+double Temp, TempRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double SDphi, SDgamma;
 int Size_Not_Found;
 
 /* v2.0 release */
-double tmp3, T7, T8, T9;
+double tmp3, T7;
 
 
     /*  loop through all the B3SOIPD device models */

@@ -185,7 +185,7 @@ BJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* loop through all the instances of the model */
         for (here = model->BJT2instances; here != NULL ;
                 here=here->BJT2nextInstance) {
-            CKTnode *tmpNode;
+            CKTnode *tmpNode[1];
             IFuid tmpName;
 
             if (here->BJT2owner != ARCHme)
@@ -220,10 +220,10 @@ matrixpointers:
                 if(error) return(error);
                 here->BJT2colPrimeNode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,1,(void **)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
 /*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
                        fprintf(stderr, "                 to %s\n", tmp->name);
                        fprintf(stderr, "              value %g\n",
@@ -239,10 +239,10 @@ matrixpointers:
                 if(error) return(error);
                 here->BJT2basePrimeNode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,2,(void **)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
 /*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
                        fprintf(stderr, "                 to %s\n", tmp->name);
                        fprintf(stderr, "              value %g\n",
@@ -258,10 +258,10 @@ matrixpointers:
                 if(error) return(error);
                 here->BJT2emitPrimeNode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                  if (CKTinst2Node(ckt,here,3,(void **)tmpNode,&tmpName)==OK) {
+                     if (tmpNode[0]->nsGiven) {
+                       tmp->nodeset=tmpNode[0]->nodeset; 
+                       tmp->nsGiven=tmpNode[0]->nsGiven; 
 /*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
                        fprintf(stderr, "                 to %s\n", tmp->name);
                        fprintf(stderr, "              value %g\n",

@@ -7,6 +7,7 @@ Modified: 2001 Jon Engelbert
 #include "ngspice.h"
 #include "cktdefs.h"
 #include "cswdefs.h"
+#include "fteext.h"
 #include "trandefs.h"
 #include "sperror.h"
 #include "suffix.h"

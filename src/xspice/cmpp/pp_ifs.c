@@ -37,6 +37,7 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
+#include <stdlib.h>
 #include  "cmpp.h"
 
 
