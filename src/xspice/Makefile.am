@@ -9,7 +9,7 @@ EXTRA_DIST = README
 ## libs.  It is currently compiled manually, last.
 ##SUBDIRS = mif cm enh evt ipc idn icm
 
-SUBDIRS = mif cm enh evt ipc idn cmpp
+SUBDIRS = mif cm enh evt ipc idn cmpp icm
 
 INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)
 

@@ -314,11 +314,8 @@ This function allocates a new copy of a string.
 
 char *MIFcopy(char *str)
 {
-    char *temp;
-
-    /* Allocate space for the string and then copy it */
-    temp = MALLOC(strlen(str) + 1);
-    strcpy(temp,str);
-
-    return(temp);
+	if(str)
+		return copy(str);
+	else
+		return NULL;
 }
