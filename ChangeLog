@@ -1,5 +1,8 @@
 2003-08-31 Stefan Jones <stefan.jones@multigig.com>
 
+	* configure.in:
+	Change linking order of libxspmif.a and libxspcm.a
+
 	* tests/TransImpedanceAmp/output.net:
 	processed with dos2unix
 	

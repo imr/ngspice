@@ -405,8 +405,8 @@ if test "$enable_xspice" = "yes"; then
     AC_PROG_YACC
     AM_PROG_LEX
     XSPICEDIR="xspice"
-    XSPICELIB1="$XSPICEDIR/mif/libmifxsp.a \
-	        $XSPICEDIR/cm/libcmxsp.a"
+    XSPICELIB1="$XSPICEDIR/cm/libcmxsp.a \
+    		$XSPICEDIR/mif/libmifxsp.a"
     XSPICELIB2="$XSPICEDIR/evt/libevtxsp.a \
                 $XSPICEDIR/enh/libenhxsp.a \
 	        $XSPICEDIR/ipc/libipcxsp.a \
