@@ -1,3 +1,24 @@
+2004-01-27  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   configure.in: changed version to rework15-pre3 and other
+	    small changes for release.
+	
+	*   AUTHORS, FAQ: Updates
+
+	*   src/spicelib/devices/bjt/bjtpzld.c, 
+	    src/spicelib/devices/bjt2/bjt2pzld.c: there was an error
+	    in the pole-zero routine. The collector resistance was
+	    loaded into the matrix instead of the condictance.
+
+        *   inpdomod.c: Updated HiSIM level to 64.
+
+	*   src/spicelib/devices/vbic/*, src/Makefile.am, 
+	    src/spicelib/devices/dev.c, src/spicelibe/parser/inp2q.c,
+	    src/spicelib/parser/inpdomod.c,src/spicelib/devices/Makefile.am,
+	    tests/vbic, contrib/vbic, DEVICES: Added VBIC model from
+	    Dietmar Warning <warning@danalyse.de>. This is the 3 terminal
+	    model without excess phase and termal network.
+
 2004-01-26  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   DEVICES: updated isrc an vsrc status
