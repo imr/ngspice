@@ -379,7 +379,7 @@ src/spicelib/devices/ccvs/Makefile	\
 src/spicelib/devices/csw/Makefile	\
 src/spicelib/devices/cpl/Makefile       \
 src/spicelib/devices/dio/Makefile	\
-src/spicelib/devices/ekv/Makefile	\
+dnl src/spicelib/devices/ekv/Makefile	\
 src/spicelib/devices/ind/Makefile	\
 src/spicelib/devices/isrc/Makefile	\
 src/spicelib/devices/hfet1/Makefile	\
