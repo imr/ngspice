@@ -576,5 +576,6 @@ tests/bsim3soifd/Makefile	\
 tests/bsim3soidd/Makefile	\
 tests/bsim4/Makefile		\
 tests/mesa/Makefile		\
+tests/transmission/Makefile	\
 tests/TransImpedanceAmp/Makefile
 )
