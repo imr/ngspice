@@ -18,7 +18,7 @@ Author: 1985 Thomas L. Quarles
 char *INPerror(int type)
 {
     char *val;
-    char ebuf[513];
+    char *ebuf;
 
     val = SPerror(type);
 
@@ -26,14 +26,9 @@ char *INPerror(int type)
 	return (val);
 
     if (errRtn)
-	sprintf(ebuf, "%s detected in routine \"%s\"\n", val, errRtn);
+	asprintf(&ebuf, "%s detected in routine \"%s\"\n", val, errRtn);
     else
-	sprintf(ebuf, "%s\n", val);
+	asprintf(&ebuf, "%s\n", val);
 
-    FREE(val);
-    val = MALLOC(strlen(ebuf) + 1);
-    if (val)
-	strcpy(val, ebuf);
-
-    return (val);
+    return ebuf;
 }
