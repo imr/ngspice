@@ -7,12 +7,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
     Routines to draw the various sorts of grids -- linear, log, polar.
 */
 
-#include "ngspice.h"
-#include "ftegraph.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "fteparse.h"
+#include <ngspice.h>
+#include <graph.h>
+#include <cpdefs.h>
+#include <ftedefs.h>
+
 #include "grid.h"
 
 

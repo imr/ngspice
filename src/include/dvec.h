@@ -62,4 +62,10 @@ struct dvec {
 #define isreal(v)   ((v)->v_flags & VF_REAL)
 #define iscomplex(v)    ((v)->v_flags & VF_COMPLEX)
 
+/* list of data vectors being displayed */
+struct dveclist {
+    struct dvec *vector;
+    struct dveclist *next;
+};
+
 #endif

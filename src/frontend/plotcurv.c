@@ -7,12 +7,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Curve plotting routines and general (non-graphics) plotting things.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "ftegraph.h"
-#include "ftedbgra.h"
+#include <ngspice.h>
+#include <cpdefs.h>
+#include <ftedefs.h>
+#include <dvec.h>
+#include <graph.h>
+#include <ftedbgra.h>
+
 #include "plotcurv.h"
 
 

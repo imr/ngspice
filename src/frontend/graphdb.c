@@ -6,10 +6,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
     Manage graph data structure.
 */
 
-#include "ngspice.h"
-#include "ftegraph.h"
-#include "ftedebug.h"
-#include "fteext.h"
+#include <ngspice.h>
+#include <graph.h>
+#include <ftedebug.h>
+#include <fteext.h>
+
 #include "graphdb.h"
 
 

@@ -2,10 +2,10 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
-#include "ngspice.h"
-#include "ftegraph.h"
-#include "ftedev.h"
-#include "fteinput.h"
+#include <ngspice.h>
+#include <graph.h>
+#include <ftedev.h>
+
 #include "plot5.h"
 
 static FILE *plotfile;

@@ -7,16 +7,15 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Plotting routines
  */
 
-#include "ngspice.h"
-#include "fteinput.h"
-#include "ftedbgra.h"
-#include "cpdefs.h"
-#include "plot.h"
-#include "ftedefs.h"
-#include "ftedev.h"
-#include "dvec.h"
-#include "fteparse.h"
-#include "fteext.h"
+#include <ngspice.h>
+#include <fteinput.h>
+#include <ftedbgra.h>
+#include <cpdefs.h>
+#include <plot.h>
+#include <fteparse.h>
+#include <fteext.h>
+#include <sim.h>
+
 #include "doplot.h"
 
 #include "plotting/agraf.h"

@@ -15,18 +15,17 @@ noinst_HEADERS = \
 	distodef.h \
 	dvec.h \
 	fteconst.h \
-	ftedata.h \
 	ftedbgra.h \
 	ftedebug.h \
 	ftedefs.h \
 	ftedev.h \
 	fteext.h \
-	ftegraph.h \
 	ftehelp.h \
 	fteinp.h \
 	fteinput.h \
 	fteparse.h \
 	gendefs.h \
+	graph.h \
 	grid.h \
 	hlpdefs.h \
 	iferrmsg.h \

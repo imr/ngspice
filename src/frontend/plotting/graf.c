@@ -10,7 +10,7 @@ Author: 1988 Jeffrey M. Hsu
  */
 
 
-#include "ngspice.h"
+#include <ngspice.h>
 #include "cpdefs.h"		/* for VT_ */
 #include "cpextern.h"
 #include <plot.h>
@@ -18,7 +18,7 @@ Author: 1988 Jeffrey M. Hsu
 #include <dvec.h>		/* for struct dvec */
 #include "ftedefs.h"		/* for FTEextern.h and IPOINT{MIN,MAX} */
 #include "fteinput.h"
-#include "ftegraph.h"
+#include <graph.h>
 #include "ftedbgra.h"
 #include "ftedev.h"
 #include <terminal.h>

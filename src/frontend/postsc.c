@@ -9,7 +9,7 @@ Author: 1988 Jeffrey M. Hsu
 
 #include "ngspice.h"
 #include "cpdefs.h"
-#include "ftegraph.h"
+#include "graph.h"
 #include "ftedbgra.h"
 #include "ftedev.h"
 #include "fteinput.h"

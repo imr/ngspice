@@ -35,24 +35,6 @@ extern char *printnum();
 extern int cp_numdgt;
 extern void fatal();
 
-/* extern void setenv(); */
-
 extern void cp_printword();
-
-/* Externs from wlist.c */
-
-extern char **wl_mkvec();
-extern char *wl_flatten();
-extern int wl_length();
-extern void wl_free();
-extern void wl_print();
-extern void wl_sort();
-extern wordlist *wl_append();
-extern wordlist *wl_build();
-extern wordlist *wl_copy();
-extern wordlist *wl_range();
-extern wordlist *wl_nthelem();
-extern wordlist *wl_reverse();
-extern wordlist *wl_splice();
 
 #endif /* _STD_H_*/

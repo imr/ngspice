@@ -3,15 +3,14 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
 
-#include "ngspice.h"
-#include "ftegraph.h"
-#include "ftedev.h"
-#include "fteinput.h"
-#include "cpdefs.h"     /* for VT_STRING */
-#include "ftedefs.h"        /* for mylog() */
+#include <ngspice.h>
+#include <graph.h>
+#include <ftedev.h>
+#include <fteinput.h>
+#include <cpdefs.h>     /* for VT_STRING */
+#include <ftedefs.h>        /* for mylog() */
+
 #include "display.h"
-
-
 
 
 /* static declarations */

@@ -8,7 +8,7 @@ Author: 1988 Jeffrey M. Hsu
 */
 
 
-#include "ngspice.h"
+#include <ngspice.h>
 
 #ifndef X_DISPLAY_MISSING
 
@@ -16,13 +16,12 @@ Author: 1988 Jeffrey M. Hsu
 #  include <sys/types.h>  /* PN */
 #  include <unistd.h>     /* PN */
 
-
-#  include "ftegraph.h"
-#  include "ftedbgra.h"
-#  include "ftedev.h"
-#  include "fteinput.h"
-#  include "cpdefs.h"
-#  include "ftedefs.h"
+#  include <graph.h>
+#  include <ftedbgra.h>
+#  include <ftedev.h>
+#  include <fteinput.h>
+#  include <cpdefs.h>
+#  include <ftedefs.h>
 
 /* Added X11/ prefix to the next includes - ER */
 

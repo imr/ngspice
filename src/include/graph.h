@@ -7,10 +7,9 @@ Author: 1988 Jeffrey M. Hsu
     This file contains the graph structure.
 */
 
-#ifndef _GRAPH_H_
-#define _GRAPH_H_
+#ifndef _GRAPH_H
+#define _GRAPH_H
 
-#include "sim.h"
 #include "grid.h"
 #include "plot.h"
 #include "dvec.h"            /* for struct dvec */
@@ -18,12 +17,6 @@ Author: 1988 Jeffrey M. Hsu
 /* Device-independent data structure for plots. */
 
 #define NUMCOLORS 20
-
-/* list of data vectors being displayed */
-struct dveclist {
-    struct dvec *vector;
-    struct dveclist *next;
-};
 
 typedef struct graph {
     int graphid;
@@ -142,4 +135,4 @@ typedef struct graph {
 
 #define rnd(x)  (int) ((x)+0.5)
 
-#endif  /* notdef _GRAPH_H_ */
+#endif
