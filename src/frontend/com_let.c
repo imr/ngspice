@@ -3,11 +3,12 @@
 #include <dvec.h>
 #include <ngspice.h>
 #include <fteext.h>
+#include <cpextern.h>
 
 #include "com_let.h"
 #include "com_display.h"
 #include "completion.h"
-#include "streams.h"
+
 
 void
 com_let(wordlist *wl)

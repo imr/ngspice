@@ -270,7 +270,6 @@ main(int argc, char **argv)
 
 
     char buf[BSIZE_SP];
-    bool ciprefix();
     bool readinit = TRUE;
     bool rflag = FALSE;
     bool istty = TRUE;

@@ -239,6 +239,7 @@ src/include/Makefile		\
 src/maths/Makefile		\
 src/maths/cmaths/Makefile	\
 src/maths/ni/Makefile		\
+src/maths/poly/Makefile		\
 src/maths/sparse/Makefile	\
 src/misc/Makefile		\
 src/parser/Makefile		\
