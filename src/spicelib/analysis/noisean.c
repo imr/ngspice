@@ -1,5 +1,7 @@
 /* Patch to noisean.c by Richard D. McRoberts.
- * Patched with modifications from Weidong Lu (2000)
+ * Patched with modifications from Weidong Liu (2000)
+ * Patched with modifications ftom Weidong Liu 
+ * in bsim4.1.0 code
  */
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
@@ -96,12 +98,8 @@ NOISEan (CKTcircuit *ckt, int restart)
 	error = CKTop(ckt, (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
 		(ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
 		ckt->CKTdcMaxIter);
+
 	if (error) return(error);
-	
-        ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
-        error = CKTload(ckt);
-	if (error) return(error);
-	
         data = (Ndata*)MALLOC(sizeof(Ndata));
 	step = 0;
 	data->freq = job->NstartFreq;
@@ -253,7 +251,8 @@ NOISEan (CKTcircuit *ckt, int restart)
 
     error = CKTnoise(ckt,N_DENS,N_CLOSE,data);
     if (error) return(error);
-
+    
+#ifdef INT_NOISE
     data->numPlots = 0;
     data->outNumber = 0;
 
@@ -273,6 +272,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	error = CKTnoise(ckt,INT_NOIZ,N_CLOSE,data);
 	if (error) return(error);
     }
+#endif
 
     FREE(data);
     return(OK);
