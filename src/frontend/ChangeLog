@@ -1,3 +1,8 @@
+2000-09-09  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* dotcards.c: Added assertions to guard a double indirection, now
+	ngspice will bomb out on an assertion instead of a segfault.
+
 2000-07-18  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* com_ahelp.c, com_help.c, com_plot.c, com_set.c, com_unset.c:

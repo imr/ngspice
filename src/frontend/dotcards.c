@@ -7,8 +7,10 @@ Modified: 2000 AlansFixes
 /*
  * Spice-2 compatibility stuff for .plot, .print, .four, and .width.
  */
+#include <config.h>
+#include <ngspice.h>
+#include <assert.h>
 
-#include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "dvec.h"
@@ -162,7 +164,7 @@ ft_cktcoms(bool terse)
 
     /* Listing */
     if (ft_listprint) {
-	if (FALSE)
+	if (terse)
 	    fprintf(cp_err, ".options: no listing, rawfile was generated.\n");
 	else
 	    inp_list(cp_out, ft_curckt->ci_deck, ft_curckt->ci_options,
@@ -170,8 +172,10 @@ ft_cktcoms(bool terse)
     }
 
     /* If there was a .op line, then we have to do the .op output. */
+    assert(plot_cur != NULL);
+    assert(plot_cur->pl_dvecs != NULL);
     if (setcplot("op") && (plot_cur->pl_dvecs->v_realdata!=NULL)) {
-	if (FALSE) {
+	if (terse) {
 	    fprintf(cp_out, "OP information in rawfile.\n");
 	} else {
 	    fprintf(cp_out, "\t%-30s%15s\n", "Node", "Voltage");
@@ -237,7 +241,7 @@ ft_cktcoms(bool terse)
         } else if (eq(command->wl_word, ".print")) {
             if (terse) {
                 fprintf(cp_out, 
-            ".print line ignored since rawfile was produced.\n");
+			".print line ignored since rawfile was produced.\n");
             } else {
                 command = command->wl_next;
                 if (!command) {
@@ -265,7 +269,7 @@ ft_cktcoms(bool terse)
         } else if (eq(command->wl_word, ".plot")) {
             if (terse) {
                 fprintf(cp_out, 
-		    ".plot line ignored since rawfile was produced.\n");
+			".plot line ignored since rawfile was produced.\n");
             } else {
                 command = command->wl_next;
                 if (!command) {
@@ -288,12 +292,12 @@ ft_cktcoms(bool terse)
 		}
                 if (!found)
                     fprintf(cp_err, "Error: .plot: no %s analysis found.\n",
-			plottype);
+			    plottype);
             }
         } else if (ciprefix(".four", command->wl_word)) {
             if (terse) {
                 fprintf(cp_out, 
-		    ".fourier line ignored since rawfile was produced.\n");
+			".fourier line ignored since rawfile was produced.\n");
             } else if (setcplot("tran")) {
 		com_fourier(command->wl_next);
 		fprintf(cp_out, "\n\n");
@@ -328,10 +332,11 @@ nocmds:
     } else
         com_rusage((wordlist *) NULL);
 
-    (void) putc('\n', cp_out);
+    putc('\n', cp_out);
     return 0;
 
-bad:    fprintf(cp_err, "Internal Error: ft_cktcoms: bad commands\n");
+bad:
+    fprintf(cp_err, "Internal Error: ft_cktcoms: bad commands\n");
     return 1;
 }
 
