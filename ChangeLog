@@ -1,3 +1,11 @@
+2004-07-19 Stefan Jones <stefan.jones@multigig.com>
+
+	* src/tclspice.c:
+	Register a SIGINT handler which stops any running bg job
+
+	* src/frontend/commands.c:
+	Make the BLT plot command default for spice plot
+
 2004-07-19 Adrian Dawe <adrian.dawe@multigig.com>
 
 	* src/{Makefile.am,controls.tcl,engUnits.tcl,gnuplot.tcl,

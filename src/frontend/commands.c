@@ -111,12 +111,17 @@ struct comm spcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 3, LOTS,
       (void (*)()) NULL,
       "spec name pat ... : Redefine vector and plot types.\n" } ,
-    { "plot", com_plot, FALSE, FALSE, TRUE,
+#ifdef TCL_MODULE
+    { "bltplot", com_bltplot, FALSE, FALSE, TRUE,
       { 041000, 041000, 041000, 041000 }, E_BEGINNING | E_HASPLOTS, 1, LOTS,
       arg_plot,
       "expr ... [vs expr] [xl xlo xhi] [yl ylo yhi] : Plot things." },
-#ifdef TCL_MODULE
-    { "bltplot", com_bltplot, FALSE, FALSE, TRUE,
+    { "plot", com_bltplot, FALSE, FALSE, TRUE,
+      { 041000, 041000, 041000, 041000 }, E_BEGINNING | E_HASPLOTS, 1, LOTS,
+      arg_plot,
+      "expr ... [vs expr] [xl xlo xhi] [yl ylo yhi] : Plot things." },
+#else
+    { "plot", com_plot, FALSE, FALSE, TRUE,
       { 041000, 041000, 041000, 041000 }, E_BEGINNING | E_HASPLOTS, 1, LOTS,
       arg_plot,
       "expr ... [vs expr] [xl xlo xhi] [yl ylo yhi] : Plot things." },
