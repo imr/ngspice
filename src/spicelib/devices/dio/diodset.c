@@ -14,6 +14,14 @@ Modified by Dietmar Warning 2003
 
 /* actually load the current resistance value into the sparse matrix
  * previously provided - for distortion analysis */
+ 
+ /*
+  * For some unknown reason the code in this fuction was based on the 
+  * spice2 diode implementation (the one with -5 nVt). I have changed 
+  * it with spice3 implementation.
+  * 
+  * Paolo Nenzi 2003
+  */
 int
 DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 {
@@ -48,9 +56,14 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
                 here=here->DIOnextInstance) {
 		    if (here->DIOowner != ARCHme) continue;
 
-			    /*
-			     *  this routine loads diodes for dc and transient analyses.
-			     */
+                      /*
+                *  this routine loads diodes for dc and transient analyses.
+                *  PN 2003: High level injection is not taken into
+		*           account, since resulting equations are
+		*           very complex to deal with.
+		*
+		*           This is an old analysis anyway....
+		*/
 
                         csat=(here->DIOtSatCur*here->DIOarea+here->DIOtSatSWCur*here->DIOpj)*here->DIOm;
 			vt = CONSTKoverQ * here->DIOtemp;
@@ -59,36 +72,45 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 			*(ckt->CKTrhsOld + (here->DIOnegNode));
 
 			/*
-			 *   compute derivatives
-			 */
-			if (vd >= -5*vte) {
+                 *   compute derivatives
+                 * Note: pn 2003 changed the code to the new spice 3 code 
+                 */
+			if (vd >= -3*vte) { /* forward */
 				evd = exp(vd/vte);
-                                cd = csat*(evd-1)+ckt->CKTgmin*vd;
-				gd = csat*evd/vte+ckt->CKTgmin;
-                                if((model->DIOforwardKneeCurrentGiven) && (model->DIOforwardKneeCurrent > 0.0) && (cd > 1.0e-18) ) {
-                                  ikf_area_m = model->DIOforwardKneeCurrent*here->DIOarea*here->DIOm;
-                                  sqrt_ikf = sqrt(cd/ikf_area_m);
-                                  gd = ((1+sqrt_ikf)*gd - cd*gd/(2*sqrt_ikf*ikf_area_m))/(1+2*sqrt_ikf+cd/ikf_area_m)+ckt->CKTgmin;
-                                }
-				g2 = 0.5*(gd-ckt->CKTgmin)/vte;
+                                cd = csat*(evd-1);
+				gd = csat*evd/vte;
+				
+				g2 = 0.5 * gd / vte;
 				cdiff2 = g2 * here->DIOtTransitTime;
-				g3 = g2/3/vte;
+				g3 = g2 / 3 / vte;
 				cdiff3 = g3 * here->DIOtTransitTime;
+				
+				gd = gd + ckt->CKTgmin;
 			} 
 			else if((!(here->DIOtBrkdwnV))|| 
-			    (vd >= -here->DIOtBrkdwnV)) {
-				gd = -csat/vd+ckt->CKTgmin;
-				g2=g3=cdiff2=cdiff3=0.0;
-				/* off */
+			    (vd >= -here->DIOtBrkdwnV)) { /* reverse */
+			    
+			        arg=3*vte/(vd*CONSTe);
+                                arg = arg * arg * arg;
+                                
+				cd = -csat * (1 + arg);
+                                gd = csat * 3 * arg / vd;
+				g2 = -4 * gd / vd;
+				g3 = 5 * g2 / vd;
+				cdiff2 = cdiff3 = 0.0;
+				
+				gd = gd + ckt->CKTgmin;
 			} 
-			else {
-				/* reverse breakdown */
+			else { /* breakdown*/
 				/* why using csat instead of breakdowncurrent? */
 				evrev=exp(-(here->DIOtBrkdwnV+vd)/vt);
+				cd = -csat*evrev;
+                                gd = csat*evrev/vte;
 				/*
-				                cd = -csat*(evrev-1+here->DIOtBrkdwnV/vt);
-						*/
-				/* should there be a minus here above? */
+                      * cd = -csat*(evrev-1+here->DIOtBrkdwnV/vt);
+                      */
+				/* should there be a minus here above? 
+		      */
 				gd=csat*evrev/vt;
 				g2 = -gd/2/vt;
 				g3 = -g2/3/vt;
