@@ -1,5 +1,10 @@
 2000-07-25  Arno W. Peters  <A.W.Peters@ieee.org>
 
+	* src/spicelib/devices/README: Moved to src/spicelib/README.
+
+	* src/spicelib/Makefile.am, src/spicelib/devices/Makefile.am:
+	Files affected by the move.
+
 	* src/spicelib/devices/parser/*: Moved all files to
 	src/spicelib/parser.
 

@@ -46,8 +46,6 @@ libdev_a_SOURCES = 	\
 	cktfinddev.c	\
 	cktinit.c
 
-EXTRA_DIST = README
-
 INCLUDES = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in
