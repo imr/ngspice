@@ -1,15 +1,48 @@
-#! /bin/sh
+#!/bin/sh
 
-NGSPICE=$1
+SPICE=$1
 TEST=$2
 
-DIFFPIPE="Added|Got|Reference|Analysis|CPU|memory|Date|Note|Sun|Mon|Tue|Wed|Thu|Fri|Sat|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec"
+FILTER="Note|Circuit|Trying|Reference|Date|Doing|---|v-sweep|time|Error|Warning|Data|Index|transfer|transient|acan|Transient|Noise|Analysis|Total|memory|Current"
 
 testname=`basename $TEST .cir`
 testdir=`dirname $TEST`
-$NGSPICE --batch $testdir/$testname.cir 2>&1 | egrep -v $DIFFPIPE > $testname.test
-if diff -u $testdir/$testname.out $testname.test; then
-    rm $testname.test
-    exit 0
-fi
+
+HOST_TYPE=`/bin/uname -srvm`
+
+case $HOST_TYPE in
+    MINGW32*)
+      $SPICE --batch $testdir/$testname.cir -o $testname.test &&\
+      sed -e 's/e-000/e+000/g' $testname.test | sed 's/e-0/e-/g' | sed 's/e+0/e+/g' | egrep -v $FILTER > $testname.test_tmp &&\
+      sed -e 's/-0$/ 0/g' $testdir/$testname.out | egrep -v $FILTER > $testname.out_tmp
+      if diff -B -w -u $testname.out_tmp $testname.test_tmp; then
+          rm $testname.test $testname.test_tmp $testname.out_tmp
+          exit 0
+      fi
+      rm -f $testname.test_tmp $testname.out_tmp
+      sed -e 's/e-000/e+000/g' $testname.test | sed 's/e-0/e-/g' | sed 's/e+0/e+/g' > $testname.test_tmp
+      mv $testname.test_tmp $testname.test
+      ;;
+    Linux*)
+      $SPICE --batch $testdir/$testname.cir >$testname.test &&\
+      egrep -v $FILTER $testname.test > $testname.test_tmp &&\
+      egrep -v $FILTER $testdir/$testname.out > $testname.out_tmp
+      if diff -B -w -u $testname.out_tmp $testname.test_tmp; then
+          rm $testname.test $testname.test_tmp $testname.out_tmp
+          exit 0
+      fi
+      rm -f $testname.test_tmp $testname.out_tmp
+      ;;
+    SunOS*)
+      $SPICE --batch $testdir/$testname.cir >$testname.test &&\
+      sed -e '/^$/d' $testname.test | egrep -v $FILTER > $testname.test_tmp &&\
+      sed -e '/^$/d' $testdir/$testname.out | egrep -v $FILTER > $testname.out_tmp
+      if diff -b -w $testname.out_tmp $testname.test_tmp; then
+          rm $testname.test $testname.test_tmp $testname.out_tmp
+          exit 0
+      fi
+      rm -f $testname.test_tmp $testname.out_tmp
+      ;;
+esac
+
 exit 1

@@ -1,3 +1,9 @@
+2005-03-13  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   tests/bin/check.sh: Changed the previous check script with the one
+	    supplied by Dietmar warning <warning@danalyse.de>. This new script
+	    adds support for different architectures (MINGW32, Linux, SunOS). 
+
 2005-03-07  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/spicelib/devices/bsim4/b4ld.c: commented out NEWCONV section.
