@@ -46,13 +46,13 @@ void INP2S(void *ckt, INPtables * tab, card * current)
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
-    INPgetTok(&line, &nname1, 1);
+    INPgetNetTok(&line, &nname1, 1);
     INPtermInsert(ckt, &nname1, tab, &node1);
-    INPgetTok(&line, &nname2, 1);
+    INPgetNetTok(&line, &nname2, 1);
     INPtermInsert(ckt, &nname2, tab, &node2);
-    INPgetTok(&line, &nname3, 1);
+    INPgetNetTok(&line, &nname3, 1);
     INPtermInsert(ckt, &nname3, tab, &node3);
-    INPgetTok(&line, &nname4, 1);
+    INPgetNetTok(&line, &nname4, 1);
     INPtermInsert(ckt, &nname4, tab, &node4);
     INPgetTok(&line, &model, 1);
     INPinsert(&model, tab);

@@ -54,18 +54,18 @@ INP2M (void *ckt, INPtables * tab, card * current)
   line = current->line;
   INPgetTok (&line, &name, 1);
   INPinsert (&name, tab);
-  INPgetTok (&line, &nname1, 1);
+  INPgetNetTok (&line, &nname1, 1);
   INPtermInsert (ckt, &nname1, tab, &node1);
-  INPgetTok (&line, &nname2, 1);
+  INPgetNetTok (&line, &nname2, 1);
   INPtermInsert (ckt, &nname2, tab, &node2);
-  INPgetTok (&line, &nname3, 1);
+  INPgetNetTok (&line, &nname3, 1);
   INPtermInsert (ckt, &nname3, tab, &node3);
-  INPgetTok (&line, &nname4, 1);
+  INPgetNetTok (&line, &nname4, 1);
   INPtermInsert (ckt, &nname4, tab, &node4);
 
   /*  See if 5th token after device specification is a model name  */
 
-  INPgetTok (&line, &nname5, 1);	/*  get 5th token  */
+  INPgetNetTok (&line, &nname5, 1);	/*  get 5th token  */
   save = line; /*saj - save the posn for later if 
   	the default mosfet model is used */
   thismodel = (INPmodel *) NULL;
@@ -73,13 +73,13 @@ INP2M (void *ckt, INPtables * tab, card * current)
   if (thismodel == NULL)
     {				/*  5th token is not a model in the table  */
       nodeflag = 1;		/*  now specify a 5 node device  */
-      INPgetTok (&line, &nname6, 1);	/*  get next token  */
+      INPgetNetTok (&line, &nname6, 1);	/*  get next token  */
       thismodel = (INPmodel *) NULL;
       INPgetMod (ckt, nname6, &thismodel, tab);
       if (thismodel == NULL)
 	{			/*  6th token is not a model in the table  */
 	  nodeflag = 2;		/*  now specify a 6 node device  */
-	  INPgetTok (&line, &nname7, 1);	/*  get next token  */
+	  INPgetNetTok (&line, &nname7, 1);	/*  get next token  */
 	  thismodel = (INPmodel *) NULL;
 	  INPgetMod (ckt, nname7, &thismodel, tab);
 	  if (thismodel == NULL)

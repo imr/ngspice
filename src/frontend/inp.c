@@ -533,9 +533,13 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
         ckt = NULL;
 
     out_init();
-    for (dd = deck; dd; dd = dd->li_next)
-        if (dd->li_error) {
-	    char *p, *q;
+    for (dd = deck; dd; dd = dd->li_next) {
+
+      /* debug statement */
+      /*      printf("In inp_dodeck, examining line %s . . . \n", dd->li_line); */
+
+      if (dd->li_error) {
+	  char *p, *q;
 #ifdef XSPICE
 /* gtri - modify - 12/12/90 - wbk - add setting of ipc syntax error flag */            g_ipc.syntax_error = IPC_TRUE;
 #endif
@@ -556,7 +560,10 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
 		    *q++ = '\n';
 		p = q;
 	    } while (p && *p);
-	}
+        }  /* end  if (dd->li_error) */
+      
+    }   /* for (dd = deck; dd; dd = dd->li_next) */
+
 
     /* Add this circuit to the circuit list. If reuse is TRUE then use
      * the ft_curckt structure.  */

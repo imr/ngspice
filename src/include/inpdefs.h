@@ -93,6 +93,7 @@ double INPevaluate(char**,int*,int);
 char * INPfindLev(char*,int*);
 char * INPgetMod(void*,char*,INPmodel**,INPtables*);
 int INPgetTok(char**,char**,int);
+int INPgetNetTok(char**,char**,int);
 void INPgetTree(char**,INPparseTree**,void*,INPtables*);
 IFvalue * INPgetValue(void*,char**,int,INPtables*);
 int INPgndInsert(void*,char**,INPtables*,void**);

@@ -1,3 +1,9 @@
+2003.4.10  Stuart Brorson <sdb@cloud9.net>
+	* modified inp_readall (inpcom.c) to ignore blank 
+	  lines terminated by \r\n *and * \n.  This fixes problems
+	  associated with importing files from Windozeland.
+	* Added explanatory comments to many modules.
+	
 2001-11-25  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
 	* circuits.h: transfered definition of sstructire 'circ' to ftedefs.h

@@ -70,13 +70,13 @@ int num, i;
 
 
 	for (i = 0; i < num; i++) {
-    	INPgetTok(&line,&(nname1[i]),1);
+    	INPgetNetTok(&line,&(nname1[i]),1);
     	INPtermInsert(ckt,&(nname1[i]),tab,&(node1[i]));
 	}
     INPgetTok(&line,&ground,1);
     INPtermInsert(ckt,&ground,tab,&groundnode);
 	for (i = 0; i < num; i++) {
-		INPgetTok(&line,&(nname2[i]),1);
+		INPgetNetTok(&line,&(nname2[i]),1);
 		INPtermInsert(ckt,&(nname2[i]),tab,&(node2[i]));
 	}
     INPgetTok(&line,&ground,1);

@@ -14,22 +14,23 @@ Author: 1988 Thomas L. Quarles
 void INP2F(void *ckt, INPtables * tab, card * current)
 {
 
-/* Fname <node> <node> <vname> <val> */
+/* Fname <node> <node> <vnam> <val> */
 
-    int type;			/* the type the model says it is */
-    char *line;			/* the part of the current line left to parse */
-    char *name;			/* the resistor's name */
-    char *nname1;		/* the first node's name */
-    char *nname2;		/* the second node's name */
-    void *node1;		/* the first node's node pointer */
-    void *node2;		/* the second node's node pointer */
-    int error;			/* error code temporary */
-    void *fast;			/* pointer to the actual instance */
-    IFvalue ptemp;		/* a value structure to package resistance into */
-    IFvalue *parm;		/* a pointer to a value structure to pick things up into */
-    int waslead;		/* flag to indicate that funny unlabeled number was found */
-    double leadval;		/* actual value of unlabeled number */
-    IFuid uid;			/* uid for default model */
+    int type;                   /* the type the model says it is */
+    char *line;                 /* the part of the current line left to parse */
+    char *name;                 /* the resistor's name */
+    char *nname1;               /* the first node's name */
+    char *nname2;               /* the second node's name */
+    void *node1;                /* the first node's node pointer */
+    void *node2;                /* the second node's node pointer */
+    int error;                  /* error code temporary */
+    void *fast;                 /* pointer to the actual instance */
+    IFvalue ptemp;              /* a value structure to package resistance into */
+    IFvalue *parm;              /* pointer to a value structure for functions which return one */
+    int waslead;                /* flag to indicate that funny unlabeled number was found */
+    double leadval;             /* actual value of unlabeled number */
+    IFuid uid;                  /* uid of default model to be created */
+
 
     type = INPtypelook("CCCS");
     if (type < 0) {
@@ -39,23 +40,38 @@ void INP2F(void *ckt, INPtables * tab, card * current)
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
-    INPgetTok(&line, &nname1, 1);
+    INPgetNetTok(&line, &nname1, 1);
     INPtermInsert(ckt, &nname1, tab, &node1);
-    INPgetTok(&line, &nname2, 1);
+    INPgetNetTok(&line, &nname2, 1);
     INPtermInsert(ckt, &nname2, tab, &node2);
     if (!tab->defFmod) {
 	/* create default F model */
 	IFnewUid(ckt, &uid, (IFuid) NULL, "F", UID_MODEL, (void **) NULL);
 	IFC(newModel, (ckt, type, &(tab->defFmod), uid));
     }
+
+    /* call newInstance with macro IFC */
     IFC(newInstance, (ckt, tab->defFmod, &fast, name));
+
+    /* call bindNode with macro IFC */
     IFC(bindNode, (ckt, fast, 1, node1));
+
+    /* call bindNode with macro IFC */
     IFC(bindNode, (ckt, fast, 2, node2));
+
     parm = INPgetValue(ckt, &line, IF_INSTANCE, tab);
+
+    /* call INPpName with macro GCA */
     GCA(INPpName, ("control", parm, ckt, type, fast));
+
+    /* call INPdevParse with macro PARSECALL */
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+
     if (waslead) {
-	ptemp.rValue = leadval;
-	GCA(INPpName, ("gain", &ptemp, ckt, type, fast));
+        ptemp.rValue = leadval;
+
+	/* call INPpName with macro GCA */
+        GCA(INPpName, ("gain", &ptemp, ckt, type, fast));
     }
+
 }

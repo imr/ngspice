@@ -57,13 +57,13 @@ dot_noise(char *line, void *ckt, INPtables *tab, card *current,
 	length = strlen(name);
 	if (((*name == 'V') || (*name == 'v')) && (length == 1)) {
 
-	    INPgetTok(&line, &nname1, 0);
+	    INPgetNetTok(&line, &nname1, 0);
 	    INPtermInsert(ckt, &nname1, tab, &node1);
 	    ptemp.nValue = (IFnode) node1;
 	    GCA(INPapName, (ckt, which, foo, "output", &ptemp))
 
 		if (*line != ')') {
-		    INPgetTok(&line, &nname2, 1);
+		    INPgetNetTok(&line, &nname2, 1);
 		    INPtermInsert(ckt, &nname2, tab, &node2);
 		    ptemp.nValue = (IFnode) node2;
 		} else {
@@ -351,12 +351,12 @@ dot_tf(char *line, void *ckt, INPtables *tab, card *current,
 	if (*line != '(' ) {
 	    /* error, bad input format */
 	}
-	INPgetTok(&line, &nname1, 0);
+	INPgetNetTok(&line, &nname1, 0);
 	INPtermInsert(ckt, &nname1, tab, &node1);
 	ptemp.nValue = (IFnode) node1;
 	GCA(INPapName, (ckt, which, foo, "outpos", &ptemp));
 	if (*line != ')') {
-	    INPgetTok(&line, &nname2, 1);
+	    INPgetNetTok(&line, &nname2, 1);
 	    INPtermInsert(ckt, &nname2, tab, &node2);
 	    ptemp.nValue = (IFnode) node2;
 	    GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
@@ -486,13 +486,13 @@ dot_sens(char *line, void *ckt, INPtables *tab, card *current,
 	    LITERR("Syntax error: '(' expected after 'v'\n");
 	    return 0;
 	}
-	INPgetTok(&line, &nname1, 0);
+	INPgetNetTok(&line, &nname1, 0);
 	INPtermInsert(ckt, &nname1, tab, &node1);
 	ptemp.nValue = (IFnode) node1;
 	GCA(INPapName, (ckt, which, foo, "outpos", &ptemp))
 
 	    if (*line != ')') {
-		INPgetTok(&line, &nname2, 1);
+		INPgetNetTok(&line, &nname2, 1);
 		INPtermInsert(ckt, &nname2, tab, &node2);
 		ptemp.nValue = (IFnode) node2;
 		GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));

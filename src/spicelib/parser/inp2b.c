@@ -40,10 +40,10 @@ void INP2B(void *ckt, INPtables * tab, card * current)
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
 
-    INPgetTok(&line, &nname1, 1);
+    INPgetNetTok(&line, &nname1, 1);
     error = INPtermInsert(ckt, &nname1, tab, &node1);
 
-    INPgetTok(&line, &nname2, 1);
+    INPgetNetTok(&line, &nname2, 1);
     error = INPtermInsert(ckt, &nname2, tab, &node2);
 
     if (!tab->defBmod) {

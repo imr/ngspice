@@ -1,3 +1,8 @@
+14/04/2003:
+	* loadsnap / savesnap commands added
+	* Improved spice Tcl GUI
+	* Net name and CR fix by Stuart Brorson <sdb@cloud9.net>
+	* stdout now gets redirected to Tcl in the tclmodule
 25/07/2002:
 	* Modified configure/Makefiles so use --enable-tcl to make module
 	* Added option --enable-cluster to configure for cluster version
