@@ -1,13 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
-TESTS = gain-stage.sp	\
-	op-amp.sp
+TESTS = gain-stage.cir	\
+	op-amp.cir
 	
 
-TESTS_ENVIRONMENT = $(SHELL) $(srcdir)/check.sh $(top_builddir)/src/ngspice
+TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
 	$(TESTS)		\
-	$(TESTS:.sp=.out)
+	$(TESTS:.cir=.out)
 
 MAINTAINERCLEANFILES = Makefile.in

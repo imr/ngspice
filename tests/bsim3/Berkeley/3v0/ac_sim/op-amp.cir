@@ -26,8 +26,8 @@ Vdd vdd 0 5
 .ac dec 10 100 100Meg 
 .print ac vdb(8)
 
-.model nmos nmos level=8
-.model pmos pmos level=8
+.model nmos nmos level=52
+.model pmos pmos level=52
 
 .end
 

@@ -1,16 +1,14 @@
 
+No. of Data Rows : 284
+
 Circuit: ***  For BSIM3V3.1  general purpose check (Id-Vg) for Pmosfet***
 
+Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
 Warning: Pd = 0 is less than W.
 Warning: Ps = 0 is less than W.
-Circuit: ***  For BSIM3V3.1  general purpose check (Id-Vg) for Pmosfet***
-Date: Tue Mar  4 16:31:40  1997
-
-
         ***  For BSIM3V3.1  general purpose check (Id-Vg) for Pmosfet***
-        DCtransferCurve  Tue Mar  4 16:31:40  1997
 --------------------------------------------------------------------------------
-Index   sweep           v(2)            vds#branch      
+Index   v-sweep         v(2)            vds#branch      
 --------------------------------------------------------------------------------
 0	0.000000e+00	-1.000000e-01	1.110141e-12	
 1	-5.000000e-02	-1.000000e-01	3.385195e-12	
@@ -68,7 +66,7 @@ Index   sweep           v(2)            vds#branch
 53	-2.650000e+00	-1.000000e-01	2.580986e-04	
 54	-2.700000e+00	-1.000000e-01	2.625932e-04	
 
-Index   sweep           v(2)            vds#branch      
+Index   v-sweep         v(2)            vds#branch      
 --------------------------------------------------------------------------------
 55	-2.750000e+00	-1.000000e-01	2.670191e-04	
 56	-2.800000e+00	-1.000000e-01	2.713778e-04	
@@ -129,7 +127,7 @@ Index   sweep           v(2)            vds#branch
 111	-2.000000e+00	-1.100000e+00	1.193595e-03	
 112	-2.050000e+00	-1.100000e+00	1.250910e-03	
 
-Index   sweep           v(2)            vds#branch      
+Index   v-sweep         v(2)            vds#branch      
 --------------------------------------------------------------------------------
 113	-2.100000e+00	-1.100000e+00	1.307954e-03	
 114	-2.150000e+00	-1.100000e+00	1.364611e-03	
@@ -190,7 +188,7 @@ Index   sweep           v(2)            vds#branch
 169	-1.350000e+00	-2.100000e+00	5.939933e-04	
 170	-1.400000e+00	-2.100000e+00	6.498813e-04	
 
-Index   sweep           v(2)            vds#branch      
+Index   v-sweep         v(2)            vds#branch      
 --------------------------------------------------------------------------------
 171	-1.450000e+00	-2.100000e+00	7.073106e-04	
 172	-1.500000e+00	-2.100000e+00	7.661950e-04	
@@ -251,7 +249,7 @@ Index   sweep           v(2)            vds#branch
 227	-7.000000e-01	-3.100000e+00	9.679774e-05	
 228	-7.500000e-01	-3.100000e+00	1.282275e-04	
 
-Index   sweep           v(2)            vds#branch      
+Index   v-sweep         v(2)            vds#branch      
 --------------------------------------------------------------------------------
 229	-8.000000e-01	-3.100000e+00	1.627169e-04	
 230	-8.500000e-01	-3.100000e+00	1.999877e-04	
@@ -311,8 +309,4 @@ Index   sweep           v(2)            vds#branch
 
 
 
-Total run time: 0.440 seconds.
-
-Current data size = 188416,
-Data limits: hard = 2147483647, soft = 2147483647.
 

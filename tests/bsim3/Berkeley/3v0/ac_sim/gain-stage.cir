@@ -10,7 +10,7 @@ Vin 1 0 1.44 ac .1
 .ac dec 10 100 1000Meg 
 .print ac vdb(3)
 
-.model nmos nmos level=8
+.model nmos nmos level=52
 
 .end
 

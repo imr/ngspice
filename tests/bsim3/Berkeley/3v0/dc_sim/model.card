@@ -1,4 +1,4 @@
-.model n1  nmos level=8
+.model n1  nmos level=52
 + Tnom=27.0
 + nch= 1.024685E+17  tox=1.00000E-08 xj=1.00000E-07
 + lint= 3.75860E-08 wint=-2.02101528644562E-07
@@ -33,7 +33,7 @@
 + ckappa=0.6
 
 
-.model p1  pmos level=8
+.model p1  pmos level=52
 + Tnom=27.0
 + nch= 5.73068E+16  tox=1.00000E-08 xj=1.00000E-07
 + lint= 8.195860E-08 wint=-1.821562E-07

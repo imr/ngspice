@@ -1,14 +1,10 @@
 
-Circuit: *A Simple MOSFET Gain Stage. AC Analysis using BSIM3v3.1.
+No. of Data Rows : 71
 
+
+Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
 Warning: Pd = 0 is less than W.
 Warning: Ps = 0 is less than W.
-Circuit: *A Simple MOSFET Gain Stage. AC Analysis using BSIM3v3.1.
-Date: Tue Mar  4 16:38:49  1997
-
-
-           *A Simple MOSFET Gain Stage. AC Analysis using BSIM3v3.1.
-           acan  Tue Mar  4 16:38:49  1997
 --------------------------------------------------------------------------------
 Index   frequency                       db(v(3))        
 --------------------------------------------------------------------------------
@@ -89,8 +85,4 @@ Index   frequency                       db(v(3))
 
 
 
-Total run time: 0.090 seconds.
-
-Current data size = 167936,
-Data limits: hard = 2147483647, soft = 2147483647.
 
