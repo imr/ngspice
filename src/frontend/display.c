@@ -24,8 +24,6 @@ static int nop(void);
 static int nodev(void);
 
 
-
-
 #ifndef X_DISPLAY_MISSING
 extern int  X11_Init(void), X11_NewViewport(GRAPH *graph), X11_Close(void), X11_Clear(void),
         X11_DrawLine(int x1, int y1, int x2, int y2), X11_Arc(int x0, int y0, int radius, double theta1, double theta2), X11_Text(char *text, int x, int y), X11_DefineColor(int colorid, double red, double green, double blue),
@@ -34,9 +32,17 @@ extern int  X11_Init(void), X11_NewViewport(GRAPH *graph), X11_Close(void), X11_
         X11_Input(REQUEST *request, RESPONSE *response);
 #endif
 
+#ifdef HAS_WINDOWS      /* Grafik-IO über MS Windows */
+extern int WIN_Init(), WIN_NewViewport(), WIN_Close(), WIN_Clear(),
+        WIN_DrawLine(), WIN_Arc(), WIN_Text(), WIN_DefineColor(),
+        WIN_DefineLinestyle(), WIN_SetLinestyle(), WIN_SetColor(),
+        WIN_Update(), WIN_DiagramReady();
 
-
-
+extern int WPRINT_Init(), WPRINT_NewViewport(), WPRINT_Close(), WPRINT_Clear(),
+        WPRINT_DrawLine(), WPRINT_Arc(), WPRINT_Text(), WPRINT_DefineColor(),
+        WPRINT_DefineLinestyle(), WPRINT_SetLinestyle(), WPRINT_SetColor(),
+        WPRINT_Update(), WPRINT_DiagramReady();
+#endif
 
 extern int  Plt5_Init(void), Plt5_NewViewport(GRAPH *graph), Plt5_Close(void), Plt5_Clear(void),
         Plt5_DrawLine(int x1, int y1, int x2, int y2), Plt5_Arc(int x0, int y0, int radius, double theta1, double theta2), Plt5_Text(char *text, int x, int y),
@@ -47,6 +53,11 @@ extern int  PS_Init(void), PS_NewViewport(GRAPH *graph), PS_Close(void), PS_Clea
         PS_DrawLine(int x1, int y1, int x2, int y2), PS_Arc(int x0, int y0, int r, double theta1, double theta2), PS_Text(char *text, int x, int y),
         PS_DefineLinestyle(), PS_SetLinestyle(int linestyleid), PS_SetColor(int colorid),
         PS_Update(void);
+
+extern int  GL_Init(void), GL_NewViewport(GRAPH *graph), GL_Close(void), GL_Clear(void),
+        GL_DrawLine(int x1, int y1, int x2, int y2), GL_Arc(int x0, int y0, int r, double theta1, double theta2), GL_Text(char *text, int x, int y),
+        GL_DefineLinestyle(), GL_SetLinestyle(int linestyleid), GL_SetColor(int colorid),
+        GL_Update(void);
 
 DISPDEVICE device[] = {
 
@@ -64,6 +75,23 @@ DISPDEVICE device[] = {
     X11_SetLinestyle, X11_SetColor, X11_Update,
     nodev, nodev, nodev, X11_Input,
     gen_DatatoScreen,},
+#endif
+
+#ifdef HAS_WINDOWS      /* Grafik-IO über MS Windows */
+    {"Windows", 0, 0, 1000, 1000, 0, 0, WIN_Init, WIN_NewViewport,
+    WIN_Close, WIN_Clear,
+    WIN_DrawLine, WIN_Arc, WIN_Text, WIN_DefineColor, WIN_DefineLinestyle,
+    WIN_SetLinestyle, WIN_SetColor, WIN_Update,
+    nodev, nodev, nodev, gen_Input,
+    gen_DatatoScreen, WIN_DiagramReady},
+
+    // Achtung: Namen "WinPrint" nicht ändern!
+    {"WinPrint", 0, 0, 1000, 1000, 0, 0, WPRINT_Init, WPRINT_NewViewport,
+    WPRINT_Close, WPRINT_Clear,
+    WPRINT_DrawLine, WPRINT_Arc, WPRINT_Text, WPRINT_DefineColor, WPRINT_DefineLinestyle,
+    WPRINT_SetLinestyle, WPRINT_SetColor, WPRINT_Update,
+    nodev, nodev, nodev, nodev,
+    gen_DatatoScreen, WPRINT_DiagramReady},
 #endif
 
 #ifdef TCL_MODULE
@@ -89,6 +117,13 @@ DISPDEVICE device[] = {
     nodev, nodev, nodev, nodev,
     gen_DatatoScreen,},
 
+    {"hpgl", 0, 0, 1000, 1000, 0, 0, GL_Init, GL_NewViewport,
+    GL_Close, GL_Clear,
+    GL_DrawLine, GL_Arc, GL_Text, nodev, nodev,
+    GL_SetLinestyle, GL_SetColor, GL_Update,
+    nodev, nodev, nodev, nodev,
+    gen_DatatoScreen,},
+
     {"printf", 0, 0, 24, 80, 0, 0, nodev, nodev,
     nodev, nodev,
     nodev, nodev, nodev, nodev, nodev,
@@ -99,6 +134,7 @@ DISPDEVICE device[] = {
 };
 
 DISPDEVICE *dispdev = device + NUMELEMS(device) - 1;
+// DISPDEVICE *dispdev = device ;  /* GCC257 stuertzt hier ab */
 
 #define XtNumber(arr)       (sizeof(arr) / sizeof(arr[0]))
 
@@ -124,8 +160,9 @@ DISPDEVICE *FindDev(char *name)
 void
 DevInit(void)
 {
-
-    char buf[128];
+#ifndef X_DISPLAY_MISSING
+    char buf[128];       /* va: used with NOT X_DISPLAY_MISSING only */
+#endif /* X_DISPLAY_MISSING */
 
 /* note: do better determination */
 
@@ -139,10 +176,13 @@ DevInit(void)
 #ifndef X_DISPLAY_MISSING
     /* determine display type */
     if (getenv("DISPLAY") || cp_getvar("display", VT_STRING, buf)) {
-
-#ifndef X_DISPLAY_MISSING
       dispdev = FindDev("X11");
+    }
 #endif
+
+#ifdef HAS_WINDOWS
+    if (!dispdev) {
+      dispdev = FindDev("Windows");
     }
 #endif
 
@@ -159,7 +199,6 @@ DevInit(void)
         "Warning: can't initialize display device for graphics.\n");
       dispdev = FindDev("error");
     }
-
 }
 
 /* NewViewport is responsible for filling in graph->viewport */

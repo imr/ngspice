@@ -14,6 +14,7 @@ struct control {
     wordlist *co_cond;      /* if, while, dowhile */
     char *co_foreachvar;        /* foreach */
     int co_numtimes;        /* repeat, break & continue levels */
+    int co_timestodo;
     wordlist *co_text;      /* Ordinary text and foreach values. */
     struct control *co_parent;  /* If this is inside a block. */
     struct control *co_children;    /* The contents of this block. */

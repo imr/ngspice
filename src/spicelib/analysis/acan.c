@@ -133,6 +133,7 @@ ACan(CKTcircuit *ckt, int restart)
             (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,(void*)ckt->CKTcurJob,
                 ckt->CKTcurJob->JOBname,(IFuid)NULL,IF_REAL,numNames,nameList,
                 IF_REAL,&acPlot);
+	    tfree(nameList);
 
 
             ipc_send_dcop_prefix();
@@ -169,6 +170,7 @@ ACan(CKTcircuit *ckt, int restart)
 		(void*)ckt->CKTcurJob,
                 ckt->CKTcurJob->JOBname,freqUid,IF_REAL,numNames,nameList,
                 IF_COMPLEX,&acPlot);
+	tfree(nameList);
 	if(error) return(error);
 
         if (((ACAN*)ckt->CKTcurJob)->ACstepType != LINEAR) {

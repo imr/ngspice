@@ -12,7 +12,7 @@ Modified: 2000  AlansFixes
 
 
 int
-DCop(CKTcircuit *ckt)
+DCop(CKTcircuit *ckt, int notused)
 {
     int CKTload(CKTcircuit *ckt);
     int converged;
@@ -26,6 +26,7 @@ DCop(CKTcircuit *ckt)
     error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
 	(void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
 	(IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&plot);
+    tfree(nameList);
     if(error) return(error);
 
     converged = CKTop(ckt,

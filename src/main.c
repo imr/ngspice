@@ -45,6 +45,8 @@
 #endif
 #endif
 
+extern void DevInit(void);
+
 /* Main options */
 static bool ft_servermode = FALSE;
 static bool ft_batchmode = FALSE;
@@ -210,7 +212,7 @@ int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
     SIMinfo.numDevices = DEVmaxnum = num_devices();
     SIMinfo.devices = devices_ptr();
     SIMinfo.numAnalyses = spice_num_analysis();
-    SIMinfo.analyses = spice_analysis_ptr();
+    SIMinfo.analyses = (IFanalysis **)spice_analysis_ptr();
 #endif /* SIMULATOR */
 
     SPfrontEnd = frontEnd;
@@ -302,8 +304,13 @@ append_to_stream(FILE *dest, FILE *source)
 	OUTattributes
     };
 #endif
+
 int
+#ifdef HAS_WINDOWS
+xmain(int argc, char **argv)
+#else
 main(int argc, char **argv)
+#endif
 {
     int c;
     int		err;
@@ -377,7 +384,7 @@ main(int argc, char **argv)
 #ifdef MALLOCTRACE
     mallocTraceInit("malloc.out");
 #endif
-#ifdef HAVE_ISATTY
+#if defined(HAVE_ISATTY) && !defined(HAS_WINDOWS)
     istty = (bool) isatty(fileno(stdin));
 #endif
 
@@ -566,11 +573,8 @@ main(int argc, char **argv)
 	    asprintf(&s, "%s/.spiceinit", pw->pw_dir);
 #else /* ~ HAVE_ASPRINTF */
 #define INITSTR "/.spiceinit"
-if ( (s=(char *) malloc(1 + strlen(pw->pw_dir)+strlen(INITSTR))) == NULL){
-	fprintf(stderr,"malloc failed\n");
-	exit(1);
-		}
-		sprintf(s,"%s%s",pw->pw_dir,INITSTR);
+	    s=(char *) tmalloc(1 + strlen(pw->pw_dir)+strlen(INITSTR));
+	    sprintf(s,"%s%s",pw->pw_dir,INITSTR);
 #endif /* HAVE_ASPRINTF */
 
             if (access(s, 0) == 0)

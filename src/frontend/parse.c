@@ -27,7 +27,7 @@ static struct pnode * mkunode(int op, struct pnode *arg);
 static struct pnode * mkfnode(char *func, struct pnode *arg);
 static struct pnode * mknnode(double number);
 static struct pnode * mksnode(char *string);
-static void   print_elem(struct element *elem); /* va: for debugging */
+void   print_elem(struct element *elem); /* va: for debugging */
 
 
 static int lasttoken = END, lasttype;
@@ -557,7 +557,7 @@ makepnode(struct element *elem)
     }   
 }
 
-static void print_elem(struct element *elem)
+void print_elem(struct element *elem)
 {
     printf("e_token = %d", elem->e_token); 
     if (elem->e_token == VALUE) {

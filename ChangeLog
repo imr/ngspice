@@ -1,3 +1,16 @@
+2003-07-18 Vera Albrecht <albrecht@danalyse.de>
+
+	* src/{main.c,tclspice.c}
+	src/frontend/{Makefile.am,control.c,control.h,display.c,dotcards.c,
+	hcomp.c,hpgl.c,outitf.c,parse.c,postcoms.c,postsc.c,runcoms.c,
+	spiceif.c,variable.c,variable.h,parser/complete.c,plotting/pvec.c}
+	src/include/{cktdefs.h,ngspice.h}
+	src/misc/{ivars.c,string.c,stringutil.h}
+	src/spicelib/analysis/{acan.c,ckt.h,dcop.c}
+	src/spicelib/devices/bsim3/b3temp.c
+	src/spicelib/parser/{ifnewuid.c,inp2dot.c,inperror.c} :
+	Memory leaks and some WINDOWS compile fixes.
+
 2003-07-17 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/frontend/{subckt.c,vectors.c} 

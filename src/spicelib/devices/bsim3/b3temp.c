@@ -56,6 +56,7 @@ int Size_Not_Found;
 	 {   model->BSIM3GatesidewallJctPotential = 0.1;
 	     fprintf(stderr, "Given pbswg is less than 0.1. Pbswg is set to 0.1.\n");
 	 }
+	 FREE(model->pSizeDependParamKnot);
          model->pSizeDependParamKnot = NULL;
 	 pLastKnot = NULL;
 

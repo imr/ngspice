@@ -337,10 +337,8 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
     }
 
     if (numNames && 
-       (run->numData == 1 
-     && run->refIndex != -1
-     || run->numData == 0 
-     && run->refIndex == -1))
+       (  (run->numData == 1 && run->refIndex != -1)
+       || (run->numData == 0 && run->refIndex == -1)))
     {
 	fprintf(cp_err, "Error: no data saved for %s; analysis not run\n",
 		spice_analysis_get_description(((JOB *) analysisPtr)->JOBtype));

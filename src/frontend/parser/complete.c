@@ -125,6 +125,9 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
         pmatches = ccmatch(buf, &commands);
         i = strlen(buf);
     }
+    
+     tfree(buf); /*CDHW*/
+    
     if (!esc) {
         printem(pmatches);
         wl_free(pmatches);
@@ -574,10 +577,12 @@ cp_ccrestart(bool kwords)
 void
 throwaway(struct ccom *dbase)
 {
+    if (!dbase) return; /* va: security first */
     if (dbase->cc_child)
         throwaway(dbase->cc_child);
     if (dbase->cc_sibling)
         throwaway(dbase->cc_sibling);
+    tfree(dbase->cc_name); /* va: also tfree dbase->cc_name (memory leak) */
     tfree(dbase);
     return;
 }
@@ -727,8 +732,8 @@ cdelete(struct ccom *node, struct ccom **top)
      /* now free() everything and check the top */
      if (node == *top) 
 	  *top = node->cc_sibling;
-     free(node->cc_name);
-     free(node);
+     tfree(node->cc_name); /* va: we should allways use tfree */
+     tfree(node);
      return;
 }
 

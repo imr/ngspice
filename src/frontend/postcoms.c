@@ -18,6 +18,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "postcoms.h"
 #include "quote.h"
 #include "variable.h"
+#include "parser/complete.h"
 
 /* static declarations */
 static void killplot(struct plot *pl);
@@ -609,10 +610,12 @@ killplot(struct plot *pl)
         fprintf(cp_err, "Error: can't destroy the constant plot\n");
         return;
     }
+    /* pl_dvecs, pl_scale */
     for (v = pl->pl_dvecs; v; v = nv) {
         nv = v->v_next;
         vec_free(v);
     }
+    /* unlink from plot_list (linked via pl_next) */
     if (pl == plot_list) {
         plot_list = pl->pl_next;
         if (pl == plot_cur)
@@ -632,9 +635,17 @@ killplot(struct plot *pl)
     tfree(pl->pl_name);
     tfree(pl->pl_typename);
     wl_free(pl->pl_commands);
-
-    /* Never mind about the rest... */
-
+    tfree(pl->pl_date); /* va: also tfree (memory leak) */
+    if (pl->pl_ccom)    /* va: also tfree (memory leak) */
+    {
+        throwaway((struct ccom *)pl->pl_ccom);
+    }
+    if (pl->pl_env) /* The 'environment' for this plot. */
+    {
+    	/* va: HOW to do? */
+        printf("va: killplot should tfree pl->pl_env=(%p)\n", pl->pl_env); fflush(stdout);    
+    }
+    tfree(pl); /* va: also tfree pl itself (memory leak) */
     return;
 }
 

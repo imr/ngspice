@@ -154,6 +154,7 @@ if_run(char *t, char *what, wordlist *args, char *tab)
     int j;
     int which = -1;
     IFuid specUid,optUid;
+    char *s;
     
     
     /* First parse the line... */
@@ -168,7 +169,9 @@ if_run(char *t, char *what, wordlist *args, char *tab)
     || eq(what,"tf")
     || eq(what, "noise")) 
     {
-        (void) sprintf(buf, ".%s", wl_flatten(args));
+    	s = wl_flatten(args); /* va: tfree char's tmalloc'ed in wl_flatten */
+        (void) sprintf(buf, ".%s", s);
+        tfree(s);
         deck.li_next = deck.li_actual = NULL;
         deck.li_error = NULL;
         deck.li_linenum = 0;
@@ -301,6 +304,7 @@ if_run(char *t, char *what, wordlist *args, char *tab)
         ||(eq(what, "sens")) 
         ||(eq(what,"tf"))
         ||(eq(what, "run"))  )  {
+        ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;
         if ((err = (*(ft_sim->doAnalyses))(ckt, 1, ft_curckt->ci_curTask))!=OK){
             ft_sperror(err, "doAnalyses");
             /* wrd_end(); */

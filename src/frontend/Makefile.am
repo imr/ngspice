@@ -157,7 +157,8 @@ libfte_a_SOURCES = \
 	vectors.c	\
 	vectors.h	\
 	where.c		\
-	where.h	
+	where.h		\
+	hpgl.c
 
 # TESTS = testcommands
 # 

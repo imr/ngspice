@@ -215,6 +215,7 @@ dot_ac(char *line, void *ckt, INPtables *tab, card *current,
     INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
     ptemp.iValue = 1;
     GCA(INPapName, (ckt, which, foo, steptype, &ptemp));
+    tfree(steptype);
     parm = INPgetValue(ckt, &line, IF_INTEGER, tab); /* number of points */
     GCA(INPapName, (ckt, which, foo, "numsteps", parm));
     parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
@@ -306,11 +307,11 @@ dot_dc(char *line, void *ckt, INPtables *tab, card *current,
 	INPinsert(&name, tab);
 	ptemp.uValue = name;
 	GCA(INPapName, (ckt, which, foo, "name2", &ptemp));
-	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstart1 */
+	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstart2 */
 	GCA(INPapName, (ckt, which, foo, "start2", parm));
-	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstop1 */
+	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstop2 */
 	GCA(INPapName, (ckt, which, foo, "stop2", parm));
-	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vinc1 */
+	parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vinc2 */
 	GCA(INPapName, (ckt, which, foo, "step2", parm));
     }
     return 0;

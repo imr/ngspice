@@ -49,6 +49,7 @@ pvec(struct dvec *d)
         break;
 
     default:
+	break;
     }
 
     switch (d->v_plottype) {
@@ -62,6 +63,7 @@ pvec(struct dvec *d)
         break;
 
     default:
+	break;
     }
     if (d->v_defcolor) {
         sprintf(buf2, ", color = %s", d->v_defcolor);

@@ -380,7 +380,7 @@ ft_cktcoms(bool terse)
 static void
 fixdotplot(wordlist *wl)
 {
-    char buf[BSIZE_SP], *s;
+    char *s;
     char numbuf[128]; /* Printnum Fix */
     double *d, d1, d2;
 

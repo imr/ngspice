@@ -22,6 +22,14 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
+#ifdef __MINGW32__
+    #include <stdarg.h>
+    #include <windef.h>
+    #include <winbase.h>  /* Sleep */
+    #define  srandom(a) srand(a) /* srandom */
+#else
+    #include <unistd.h> /* usleep */
+#endif /* __MINGW32__ */
 
 #define _GNU_SOURCE
 
@@ -52,8 +60,22 @@ extern jmp_buf jbuf;
 #include <dvec.h>
 #include <plot.h>
 #include <tcl.h>
+
+#ifdef __CYGWIN__
+#undef WIN32
+#endif
 #include <blt.h>
 #include  <sim.h>
+
+/* defines for Tcl support
+ * Tcl 8.3 and Tcl 8.4 support, 
+ * suggested by http://mini.net/tcl/3669, 07.03.03 */
+#ifndef CONST84
+#define CONST84
+#endif /* CONST84 */
+/* Arguments of Tcl_CmpProc for Tcl/Tk 8.4.x */
+#define TCL_CMDPROCARGS(clientData,interp,argc,argv) \
+    (ClientData clientData, Tcl_Interp *interp, int argc, CONST84 char *argv[])
 
 /*For get_output*/
 #include <fcntl.h>
@@ -90,8 +112,7 @@ static int ownVectors = 0;
 static Tcl_Interp *spice_interp=NULL;
 #define save_interp() \
 do {\
-if ((spice_interp = Tcl_GetMaster(interp)) == NULL)\
-      spice_interp = interp;\
+    spice_interp = interp;\
 } while(0)
 
 /****************************************************************************/
@@ -106,11 +127,10 @@ static int blt_vnum = 0;
 
 /*Native Tcl functions */
 
-static int spice_header(ClientData clientData, Tcl_Interp *interp, 
-			int args, char **argv){
+static int spice_header TCL_CMDPROCARGS(clientData,interp,argc,argv){
   char buf[256];
   char *date, *name, *title;
-  if (args != 1) {
+  if (argc != 1) {
     Tcl_SetResult(interp, "Wrong # args. spice::spice_header",TCL_STATIC);
     return TCL_ERROR;
   }
@@ -126,12 +146,11 @@ static int spice_header(ClientData clientData, Tcl_Interp *interp,
 }
 
 
-static int spice_data(ClientData clientData, Tcl_Interp *interp, 
-		      int args, char **argv){ 
+static int spice_data TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   char buf[256];
   int i, type;
   char *name;
-  if (args != 1) {
+  if (argc != 1) {
     Tcl_SetResult(interp, "Wrong # args. spice::spice_data",TCL_STATIC);
     return TCL_ERROR;
   }
@@ -230,17 +249,16 @@ void blt_relink(int index,void *tmp){
 /* This copys the last Spice state vector to the given blt_vector
  * arg1: blt_vector 
  */
-static int lastVector(ClientData clientData, Tcl_Interp *interp, 
-		      int args, char **argv){
+static int lastVector TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   Blt_Vector *vec;
   char *blt;
   int i;
   double *V;
-  if (args != 2) {
+  if (argc != 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::lastVector vecName",TCL_STATIC);
     return TCL_ERROR;
   }
-  blt = argv[1];
+  blt = (char *)argv[1];
   if(Blt_GetVector(interp,blt,&vec)){
     Tcl_SetResult(interp, "Bad blt vector ",TCL_STATIC);
     Tcl_AppendResult(interp, (char *)blt, TCL_STATIC);
@@ -267,20 +285,19 @@ static int lastVector(ClientData clientData, Tcl_Interp *interp,
  *arg3: start copy index, optional
  *arg4: end copy index. optional
  */
-static int spicetoblt(ClientData clientData, Tcl_Interp *interp, 
-		      int args, char **argv){
+static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   Blt_Vector *vec;
   int index, i;
   char *blt, *var;
   int start=0,end=-1,len;
 
-  if (args < 3 || args > 5) {
+  if (argc < 3 || argc > 5) {
     Tcl_SetResult(interp, "Wrong # args. spice::spicetoblt spice_variable vecName ?start? ?end?",TCL_STATIC);
     return TCL_ERROR;
   }
 
-  var = argv[1];
-  blt = argv[2];
+  var = (char *)argv[1];
+  blt = (char *)argv[2];
 
   for(i=0;i < blt_vnum && strcmp(var,vectors[i].name);i++);
 
@@ -297,9 +314,9 @@ static int spicetoblt(ClientData clientData, Tcl_Interp *interp,
   }
 
 
-  if(args >= 4)
+  if(argc >= 4)
     start = atoi(argv[3]);
-  if(args == 5)
+  if(argc == 5)
     end   = atoi(argv[4]);
   if(vectors[index].length) {
     pthread_mutex_lock(&vectors[index].mutex);
@@ -353,7 +370,11 @@ static int _thread_stop(){
     while(!fl_exited && timeout < 100){
       ft_intrpt = TRUE;
       timeout++;
-      sleep(1);
+#ifdef __MINGW32__
+      Sleep(10); /* va: windows native */
+#else
+      usleep(10000);
+#endif
     }
     if(!fl_exited) {
       fprintf(stderr,"couldn't stop tclspice\n");
@@ -369,14 +390,14 @@ static int _thread_stop(){
   return TCL_OK;
 }
 
-static int _run(int args,char **argv){
+static int _run(int argc,char **argv){
   char buf[1024] = "", *string;
   int i;
   sighandler_t oldHandler;
   bool fl_bg = FALSE;
   /* run task in background if preceeded by "bg"*/
   if(!strcmp(argv[0],"bg")) {
-    args--;
+    argc--;
     argv = &argv[1];
     fl_bg = TRUE;
   }
@@ -389,7 +410,7 @@ static int _run(int args,char **argv){
   }
 
   /*build a char * to pass to cp_evloop */
-  for(i=0;i<args;i++) {
+  for(i=0;i<argc;i++) {
     strcat(buf,argv[i]);
     strcat(buf," ");
   }
@@ -409,7 +430,7 @@ static int _run(int args,char **argv){
     } else
       /* backwards compatability with old command */
       if(!strcmp(argv[0],"stop"))
-	if(args > 1)
+	if(argc > 1)
 	  cp_evloop(buf);
 	else{
 	  _thread_stop();
@@ -432,28 +453,26 @@ static int _run(int args,char **argv){
   return TCL_OK;
 }
    
-static int _tcl_dispatch(ClientData clientData, Tcl_Interp *interp, 
-			 int args, char **argv){
+static int _tcl_dispatch TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   int i;
   save_interp();
   /* Looks backwards through the first command and strips the :: part */ 
   for(i = strlen(argv[0])-1;i > 0;i--)
     if(argv[0][i] == *":")
       argv[0] += i + 1;  
-  return _run(args,argv);
+  return _run(argc,(char **)argv);
 }
    
 
 /* Runs the spice command given in spice <cmd>*/
-static int _spice_dispatch(ClientData clientData, Tcl_Interp *interp, 
-			   int args, char **argv){
+static int _spice_dispatch TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   save_interp();
-  if(args == 1) return TCL_OK;
-  return _run(args-1,&argv[1]);
+  if(argc == 1) return TCL_OK;
+  return _run(argc-1,(char **)&argv[1]);
 }
 
 /*Checks if spice is runnuing in the background */
-static int running(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int running TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   Tcl_SetObjResult(interp,Tcl_NewIntObj((long) (fl_running && !fl_exited)));
   return TCL_OK;
 }
@@ -477,7 +496,7 @@ inline static struct plot * get_plot(int plot){
 }
 
 /*Outputs the names of all variables in the plot */
-static int plot_variables(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int plot_variables TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
   int plot;
   struct dvec *v;
@@ -501,7 +520,7 @@ static int plot_variables(ClientData clientData, Tcl_Interp *interp, int argc, c
 }
  
 /*returns the value of a variable */
-static int plot_get_value(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int plot_get_value TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
   struct dvec *v;
   char *name;
@@ -512,7 +531,7 @@ static int plot_get_value(ClientData clientData, Tcl_Interp *interp, int argc, c
     return TCL_ERROR;
   }
   
-  name = argv[1];
+  name = (char *)argv[1];
   plot = atoi(argv[2]);
   index = atoi(argv[3]);
   
@@ -536,7 +555,7 @@ static int plot_get_value(ClientData clientData, Tcl_Interp *interp, int argc, c
 
 
 /*The length of the first vector in a plot*/
-static int plot_datapoints(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int plot_datapoints TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
   struct dvec *v;
   int plot;
@@ -561,11 +580,11 @@ static int plot_datapoints(ClientData clientData, Tcl_Interp *interp, int argc, 
 
 /*These functions give you infomation about a plot*/
 
-static int plot_title(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int plot_title TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
   int plot;
   if (argc != 2) {
-    Tcl_SetResult(interp, "Wrong # args. spice::plot_nvars plot",TCL_STATIC);
+    Tcl_SetResult(interp, "Wrong # args. spice::plot_title plot",TCL_STATIC);
     return TCL_ERROR;
   }
   
@@ -579,12 +598,12 @@ static int plot_title(ClientData clientData, Tcl_Interp *interp, int argc, char 
   return TCL_OK;
 }
 
-static int plot_date(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int plot_date TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
 
   int plot;
   if (argc != 2) {
-    Tcl_SetResult(interp, "Wrong # args. spice::plot_nvars plot",TCL_STATIC);
+    Tcl_SetResult(interp, "Wrong # args. spice::plot_date plot",TCL_STATIC);
     return TCL_ERROR;
   }
   
@@ -598,11 +617,11 @@ static int plot_date(ClientData clientData, Tcl_Interp *interp, int argc, char *
   return TCL_OK;
 }
 
-static int plot_name(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int plot_name TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
   int plot;
   if (argc != 2) {
-    Tcl_SetResult(interp, "Wrong # args. spice::plot_nvars plot",TCL_STATIC);
+    Tcl_SetResult(interp, "Wrong # args. spice::plot_name plot",TCL_STATIC);
     return TCL_ERROR;
   }
   
@@ -618,7 +637,7 @@ static int plot_name(ClientData clientData, Tcl_Interp *interp, int argc, char *
 
 /*number of variables in a plot*/
 
-static int plot_nvars(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int plot_nvars TCL_CMDPROCARGS(clientData,interp,argc,argv){
   struct plot *pl;
   struct dvec *v;
   int plot;
@@ -647,7 +666,7 @@ static int plot_nvars(ClientData clientData, Tcl_Interp *interp, int argc, char 
 /*******************************************/
 
 /*Runs a tcl script and returns the output*/
-static int get_output(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]) {
+static int get_output TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   FILE *pipein;
   int tmp_1,tmp_2=0;
   char buf[1024];
@@ -707,7 +726,7 @@ static int get_output(ClientData clientData, Tcl_Interp *interp, int argc, char 
 /* Returns the current value of a parameter 
  * has lots of memory leaks
  */
-static int get_param(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int get_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   wordlist *wl= NULL;
   char *device, *param;
   struct variable *v;
@@ -721,8 +740,8 @@ static int get_param(ClientData clientData, Tcl_Interp *interp, int argc, char *
     return TCL_ERROR;
   }
     
-  device = argv[1];
-  param = argv[2];
+  device = (char *)argv[1];
+  param  = (char *)argv[2];
   /* copied from old_show(wordlist *) */ 
   v = (*if_getparam)(ft_curckt->ci_ckt,
 		     &device, param, 0, 0);
@@ -744,15 +763,96 @@ static int get_param(ClientData clientData, Tcl_Interp *interp, int argc, char *
 
 }
 
+/* va - added
+   call:    s. errormessage
+   returns: param == all: list of all model parameters of device/model
+            param == name: description of given model parameter
+*/
+int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
+  char *name;
+  char *paramname;
+  GENinstance *devptr=(GENinstance *)NULL;
+  GENmodel *modptr=(GENmodel *)NULL;
+  IFdevice *device;
+  IFparm *opt;
+  IFvalue pv;
+  int i, err, typecode=-1;
+  char buf[128];
+  bool found;
+
+  if (argc < 2 || argc >3) {
+    Tcl_SetResult(interp, 
+      "Wrong # args. spice::get_mod_param device|model [all|param]", TCL_STATIC);
+    return TCL_ERROR;
+  }
+  if (ft_curckt==NULL) {
+    Tcl_SetResult(interp, "No circuit loaded ",TCL_STATIC);
+    return TCL_ERROR;
+  }
+    
+  name = (char *)argv[1];
+  if (argc>2) {
+    paramname=(char *)argv[2];
+  } else {
+    paramname="all";
+  }
+  if (name==NULL || name[0]=='\0') {
+    Tcl_SetResult(interp, "No model or device name provided.",TCL_STATIC);
+    return TCL_ERROR;
+  }
+  
+  /* get the unique IFuid for name (device/model) */
+  INPretrieve(&name,(INPtables *)ft_curckt->ci_symtab);
+  err = (*(ft_sim->findInstance))(ft_curckt->ci_ckt,&typecode,(void **)&devptr,name,NULL,NULL);
+  if (err != OK) {
+    typecode = -1;
+    devptr   = (void *)NULL;
+    err = (*(ft_sim->findModel))(ft_curckt->ci_ckt,&typecode,(void **)&modptr,name);
+  }
+  if (err != OK) {
+    sprintf(buf,"No such device or model name %s",name);
+    Tcl_SetResult(interp,buf,TCL_VOLATILE);
+    return TCL_ERROR;
+  }
+  device = ft_sim->devices[typecode];
+  found = FALSE;
+  for (i = 0; i < *(device->numModelParms); i++) {
+    opt = &device->modelParms[i];
+    if (opt->dataType != (IF_SET|IF_ASK|IF_REAL)) continue; /* only real IO-parameter */
+    if (strcmp(paramname,"all")==0) {
+      Tcl_AppendElement(interp,opt->keyword);
+      found=TRUE;
+    } else if (strcmp(paramname,opt->keyword)==0) {
+      if (devptr)
+        err = (*(ft_sim->askInstanceQuest))(ft_curckt->ci_ckt, (void *)devptr, 
+                opt->id, &pv, (IFvalue *)NULL);
+      else
+        err = (*(ft_sim->askModelQuest))(ft_curckt->ci_ckt, (void *)modptr, 
+                opt->id, &pv, (IFvalue *)NULL);
+      if (err==OK) {
+      	sprintf(buf,"%g",pv.rValue); /* dataType is here always real */
+        Tcl_SetResult(interp,buf,TCL_VOLATILE);
+        return TCL_OK;
+      }
+    }
+  }
+  if (found!=TRUE) {
+    sprintf(buf,"unknown parameter %s",paramname);
+    Tcl_SetResult(interp,buf,TCL_VOLATILE);
+    return TCL_ERROR;
+  }
+  return TCL_OK;
+}
+
 /* Direct control over the step size
  * Spice will still adjust it to keep accuracy wuithin reltol and abstol
  */
-static int delta(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int delta TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   if (argc < 1 ||argc > 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::delta ?value?",TCL_STATIC);
     return TCL_ERROR;
   }
-  if (!ft_curckt) {
+  if (ft_curckt==NULL) {
     Tcl_SetResult(interp, "No circuit loaded ",TCL_STATIC);
     return TCL_ERROR;
   }
@@ -769,13 +869,13 @@ static int delta(ClientData clientData, Tcl_Interp *interp, int argc, char *argv
 /* Direct control over the maximum stepsize
  * Spice will still adjust it to keep accuracy wuithin reltol and abstol
  */
-static int maxstep(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int maxstep TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   TRANan *job;
   if (argc < 1 ||argc > 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::maxstep ?value?",TCL_STATIC);
     return TCL_ERROR;
   }
-  if (!ft_curckt) {
+  if (ft_curckt == NULL) {
     Tcl_SetResult(interp, "No circuit loaded ",TCL_STATIC);
     return TCL_ERROR;
   } 
@@ -809,7 +909,7 @@ int  sp_Tk_Init(void) {
 
 #include <graph.h>
 int  sp_Tk_NewViewport(GRAPH *graph) {
-  char *result;
+  const char *result;
   int width, height, fontwidth, fontheight;
   graph->devdep = (char *) NULL;
     
@@ -1087,7 +1187,7 @@ static int resetTriggers() {
  *arg2: Vmax
  *arg3: 1 / -1 for +ive(voltage goes +ive) or -ive trigger
  */
-static int registerTrigger(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int registerTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   int i, index;
   char *var;
   struct watch *tmp;
@@ -1097,7 +1197,7 @@ static int registerTrigger(ClientData clientData, Tcl_Interp *interp, int argc, 
     return TCL_ERROR;
   }
 
-  var = argv[1];
+  var = (char *)argv[1];
 
   for(i=0;i < blt_vnum && strcmp(var,vectors[i].name);i++);
 
@@ -1132,7 +1232,7 @@ static int registerTrigger(ClientData clientData, Tcl_Interp *interp, int argc, 
  *arg0: Vector name
  *arg1: type
  */
-static int unregisterTrigger(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int unregisterTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   int i, index, type;
   char *var;
   struct watch *tmp;
@@ -1143,7 +1243,7 @@ static int unregisterTrigger(ClientData clientData, Tcl_Interp *interp, int argc
     return TCL_ERROR;
   }
 
-  var = argv[1];
+  var = (char *)argv[1];
   
   for(i=0;i < blt_vnum && strcmp(var,vectors[i].name);i++);
   
@@ -1183,7 +1283,7 @@ static int unregisterTrigger(ClientData clientData, Tcl_Interp *interp, int argc
 /* returns:
 "vecName" "time" "stepNumber" "type"
 */
-static int popTriggerEvent(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int popTriggerEvent TCL_CMDPROCARGS(clientData,interp,argc,argv){
   
   if (argc != 1) {
     Tcl_SetResult(interp, "Wrong # args. spice::popTriggerEvent",TCL_STATIC);
@@ -1221,7 +1321,7 @@ static int popTriggerEvent(ClientData clientData, Tcl_Interp *interp, int argc, 
   return TCL_OK;
 }
 
-static int listTriggers(ClientData clientData, Tcl_Interp *interp, int argc, char *argv[]){
+static int listTriggers TCL_CMDPROCARGS(clientData,interp,argc,argv){
   struct watch *tmp;
   Tcl_Obj *list;
   
@@ -1327,6 +1427,7 @@ int Spice_Init(Tcl_Interp *interp) {
     Tcl_CreateCommand(interp, TCLSPICE_prefix "bg", _tcl_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "halt", _tcl_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "get_param", get_param, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "get_mod_param", get_mod_param, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "delta", delta, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "maxstep", maxstep, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "running", running, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);

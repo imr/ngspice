@@ -47,6 +47,14 @@ int stackp = 0;
  * blown away every time we return -- probably every time we type
  * source at the keyboard and every time a source returns to keyboard
  * input is ok though -- use ft_controlreset.  */
+ 
+ /* Notes by CDHW:
+ * This routine leaked like a sieve because each getcommand() created a
+ * wordlist that was never freed because it might have been added into
+ * the control structure. I've tackled this by making sure that everything
+ * put into the cend[stackp] is a copy. This means that wlist can be
+ * destroyed safely
+ */
 
 static char *noredirect[] = { "stop", NULL } ;  /* Only one?? */
 
@@ -79,6 +87,37 @@ pwlist(wordlist *wlist, char *name)
 }
 
 
+/* CDHW defined functions */
+
+static void
+pwlist_echo(wlist, name)   /*CDHW used to perform function of set echo */
+    wordlist *wlist;
+    char *name;
+{
+    wordlist *wl;
+
+    if ((!cp_echo)||cp_debug) /* cpdebug prints the same info */
+        return;
+    fprintf(cp_err, "%s ", name);
+    for (wl = wlist; wl; wl = wl->wl_next)
+        fprintf(cp_err, "%s ", wl->wl_word);
+    fprintf(cp_err, "\n");
+    return;
+}
+
+/*CDHW Remove control structure and free the memory its hogging CDHW*/
+
+void ctl_free(struct control *ctrl) {
+   if (!ctrl) return;
+   wl_free(ctrl->co_cond); ctrl->co_cond = NULL;
+   tfree(ctrl->co_foreachvar); ctrl->co_foreachvar = NULL;
+   wl_free(ctrl->co_text); ctrl->co_text = NULL;
+   ctl_free(ctrl->co_children); ctrl->co_children = NULL;
+   ctl_free(ctrl->co_elseblock); ctrl->co_elseblock = NULL;
+   ctl_free(ctrl->co_next); ctrl->co_next = NULL;
+   tfree(ctrl); ctrl = NULL;
+}
+
 
 /* Note that we only do io redirection when we get to here - we also
  * postpone some other things until now.  */
@@ -108,8 +147,10 @@ docommand(wordlist *wlist)
 
     wlist = cp_doglob(wlist);
     pwlist(wlist, "After globbing");
+    
+    pwlist_echo(wlist, "Becomes >");
 
-    if (!wlist || !wlist->wl_word)
+    if (!wlist || !wlist->wl_word) /*CDHW need to free wlist in second case? CDHW*/
         return;
 
     /* Now loop through all of the commands given. */
@@ -185,7 +226,7 @@ docommand(wordlist *wlist)
         for (wl = wlist->wl_next; wl; wl = wl->wl_next)
             nargs++;
         if (command->co_stringargs) {
-            lcom = wl_flatten(wlist->wl_next);
+            lcom = wl_flatten(wlist->wl_next); /*CDHW lcom will need freeing CDHW*/
             (*command->co_func) ((void *)(lcom));
         } else {
             if (nargs < command->co_minargs) {
@@ -196,8 +237,9 @@ docommand(wordlist *wlist)
 		}
             } else if (nargs > command->co_maxargs) {
                 fprintf(cp_err, "%s: too many args.\n", s);
-            } else
+            } else {
                 (*command->co_func) (wlist->wl_next);
+            }
         }
 
         /* Now fix the pointers and advance wlist. */
@@ -241,10 +283,17 @@ doblock(struct control *bl, int *num)
     wordlist *wl;
     char *i;
     int nn;
-
+ 
+    nn = *num + 1 ; /*CDHW this is a guess... CDHW*/
+    
     switch (bl->co_type) {
     case CO_WHILE:
+        if (!bl->co_children) {
+          fprintf(cp_err, "Warning: Executing empty 'while' block.\n");
+          fprintf(cp_err, "         (Use a label statement as a no-op to suppress this warning.)\n");
+        }
         while (bl->co_cond && cp_istrue(bl->co_cond)) {
+            if (!bl->co_children) cp_periodic();  /*CDHW*/
             for (ch = bl->co_children; ch; ch = cn) {
                 cn = ch->co_next;
                 i = doblock(ch, &nn);
@@ -316,10 +365,21 @@ doblock(struct control *bl, int *num)
         break;
 
     case CO_REPEAT:
-        while ((bl->co_numtimes > 0) ||
-	       (bl->co_numtimes == -1)) {
+        if (!bl->co_children) {
+          fprintf(cp_err, "Warning: Executing empty 'repeat' block.\n");
+          fprintf(cp_err, "         (Use a label statement as a no-op to suppress this warning.)\n");
+        }
+	if (!bl->co_timestodo) bl->co_timestodo = bl->co_numtimes;
+        /*...CDHW*/
+        while ((bl->co_timestodo > 0) ||
+	       (bl->co_timestodo == -1)) {
             if (bl->co_numtimes != -1)
                 bl->co_numtimes--;
+            
+            if (!bl->co_children) cp_periodic();  /*CDHW*/
+
+            if (bl->co_timestodo != -1) bl->co_timestodo--;
+
             for (ch = bl->co_children; ch; ch = cn) {
                 cn = ch->co_next;
                 i = doblock(ch, &nn);
@@ -447,11 +507,12 @@ doblock(struct control *bl, int *num)
 
     case CO_GOTO:
         wl = cp_variablesubst(cp_bquote(cp_doglob(
-	    wl_copy(bl->co_text))));
+	    wl_copy(bl->co_text)))); /*CDHW Leak ? CDHW*/
         return (wl->wl_word);
 
     case CO_LABEL:
 	/* Do nothing. */
+	cp_periodic();  /*CDHW needed to avoid lock-ups when loop contains only a label CDHW*/
 	break;
 
     case CO_STATEMENT:
@@ -511,7 +572,7 @@ getcommand(char *string)
     return (wlist);
 }
 
-
+/* va: TODO: free control structure(s) before overwriting (memory leakage) */
 int
 cp_evloop(char *string)
 {
@@ -556,7 +617,9 @@ cp_evloop(char *string)
 
 	/* Add this to the control structure list. If cend->co_type is
 	 * CO_UNFILLED, the last line was the beginning of a block,
-	 * and this is the unfilled first statement.  */
+	 * and this is the unfilled first statement.  
+	 */
+	/* va: TODO: free old structure and its content, before overwriting */ 
 	if (cend[stackp] && (cend[stackp]->co_type != CO_UNFILLED)) {
 	    cend[stackp]->co_next = alloc(struct control);
 	    ZERO(cend[stackp]->co_next, struct control);
@@ -574,15 +637,16 @@ cp_evloop(char *string)
 	    cend[stackp]->co_cond = wlist->wl_next;
 	    if (!cend[stackp]->co_cond) {
 		fprintf(stderr,
-			"Error: missing while condition.\n");
+			"Error: missing while condition, 'false' will be assumed.\n");
 	    }
 	    newblock;
 	} else if (eq(wlist->wl_word, "dowhile")) {
 	    cend[stackp]->co_type = CO_DOWHILE;
 	    cend[stackp]->co_cond = wlist->wl_next;
 	    if (!cend[stackp]->co_cond) {
+	    	/* va: prevent misinterpretation as trigraph sequence with \-sign */
 		fprintf(stderr,
-			"Error: missing dowhile condition.\n");
+			"Error: missing dowhile condition, '?\?\?' will be assumed.\n");
 	    }
 	    newblock;
 	} else if (eq(wlist->wl_word, "repeat")) {
@@ -592,10 +656,11 @@ cp_evloop(char *string)
 	    } else {
 		char *s;
 		double *dd;
-		wlist = cp_variablesubst(cp_bquote(
-		    cp_doglob(wl_copy(wlist))));
-		s = wlist->wl_next->wl_word;
-
+		struct wordlist *t;  /*CDHW*/
+        	/*CDHW wlist = cp_variablesubst(cp_bquote(cp_doglob(wl_copy(wlist)))); Wrong order? Leak? CDHW*/
+        	t = cp_doglob(cp_bquote(cp_variablesubst(wl_copy(wlist)))); /*CDHW leak from cp_doglob? */
+        	s = t->wl_next->wl_word;
+		
 		dd = ft_numparse(&s, FALSE);
 		if (dd) {
 		    if (*dd < 0) {
@@ -607,7 +672,8 @@ cp_evloop(char *string)
 		} else
 		    fprintf(cp_err, 
 			    "Error: bad repeat argument %s\n",
-			    wlist->wl_next->wl_word);
+			    t->wl_next->wl_word); /* CDHW */
+		    wl_free(t); t = NULL;  /* CDHW */
 	    }
 	    newblock;
 	} else if (eq(wlist->wl_word, "if")) {
@@ -618,6 +684,7 @@ cp_evloop(char *string)
 			"Error: missing if condition.\n");
 	    }
 	    newblock;
+	    
 	} else if (eq(wlist->wl_word, "foreach")) {
 	    cend[stackp]->co_type = CO_FOREACH;
 	    if (wlist->wl_next) {
@@ -628,7 +695,7 @@ cp_evloop(char *string)
 	    } else
 		fprintf(stderr, 
 			"Error: missing foreach variable.\n");
-	    wlist = cp_doglob(wlist);
+	    wlist = cp_doglob(wlist);  /*CDHW Possible leak around here? */
 	    cend[stackp]->co_text = wl_copy(wlist);
 	    newblock;
 	} else if (eq(wlist->wl_word, "label")) {
@@ -642,6 +709,7 @@ cp_evloop(char *string)
 			    "Warning: ignored extra junk after label.\n");
 	    } else
 		fprintf(stderr, "Error: missing label.\n");
+		
 	} else if (eq(wlist->wl_word, "goto")) {
 	    /* Incidentally, this won't work if the values 1 and 2 ever get
 	     * to be valid character pointers -- I think it's reasonably
@@ -685,12 +753,12 @@ cp_evloop(char *string)
 		cend[stackp]->co_prev->co_next = NULL;
 		x = cend[stackp];
 		cend[stackp] = cend[stackp]->co_parent;
-		tfree(x);
+		tfree(x); x=NULL;
 	    } else {
 		x = cend[stackp];
 		cend[stackp] = cend[stackp]->co_parent;
 		cend[stackp]->co_children = NULL;
-		tfree(x);
+		tfree(x); x=NULL;
 	    }
 	} else if (eq(wlist->wl_word, "else")) {
 	    if (!cend[stackp]->co_parent ||
@@ -708,14 +776,15 @@ cp_evloop(char *string)
 	    }
 	} else {
 	    cend[stackp]->co_type = CO_STATEMENT;
-	    cend[stackp]->co_text = wlist;
+	    cend[stackp]->co_text = wl_copy(wlist);
 	}
+
 	if (!cend[stackp]->co_parent) {
 	    x = cend[stackp];
 	    /* We have to toss this do-while loop in here so
 	     * that gotos at the top level will work.
 	     */
-	    do {
+	    do { nn = 0; /* CDHW */
 		i = doblock(x, &nn);
 		switch (*i) {
 		case NORMAL:
@@ -737,15 +806,20 @@ cp_evloop(char *string)
 		    x = x->co_next;
 	    } while (x);
 	}
-	if (string)
+	wl_free(wlist); wlist = NULL;
+	if (string) {
 	    return (1); /* The return value is irrelevant. */
+	}
     }
+    wl_free(wlist); wlist = NULL;
+    return (0); /* va: which value? */
 }
 
 /* This blows away the control structures... */
 void
 cp_resetcontrol(void)
 {
+    fprintf(cp_err, "Warning: clearing control structures\n");
     if (cend[stackp] && cend[stackp]->co_parent)
         fprintf(cp_err, "Warning: EOF before block terminated\n");
     /* We probably should free the control structures... */
@@ -764,8 +838,9 @@ cp_popcontrol(void)
         fprintf(cp_err, "pop: stackp: %d -> %d\n", stackp, stackp - 1);
     if (stackp < 1)
         fprintf(cp_err, "cp_popcontrol: Internal Error: stack empty\n");
-    else
+    else {
         stackp--;
+    }
     return;
 }
 
@@ -797,5 +872,3 @@ cp_toplevel(void)
             cend[stackp] = cend[stackp]->co_parent;
     return;
 }
-
-

@@ -103,6 +103,11 @@ struct timeb timebegin;
 #ifdef HAVE_INDEX
 #   define strchr index
 #   define strrchr rindex
+#else /* va: no index, but strchr */
+    #ifdef HAVE_STRCHR
+        #define index  strchr
+        #define rindex strrchr
+    #endif /* va: no index, but strchr */
 #endif
 
 #ifdef HAS_TIME_
@@ -113,6 +118,10 @@ struct timeb timebegin;
 #define srandom srand
 #define random rand
 #define index strchr
+#endif
+
+#ifdef HAS_WINDOWS
+#include "wstdio.h"
 #endif
 
 extern char *gettok(char **s);
