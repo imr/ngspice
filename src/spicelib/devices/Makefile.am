@@ -33,6 +33,7 @@ SUBDIRS = \
 	mos6	\
 	mos9 	\
 	res	\
+	soi3	\
 	sw	\
 	tra	\
 	urc	\

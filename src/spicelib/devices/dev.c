@@ -35,7 +35,7 @@
 
 #include "dev.h"
 
-#define DEVICES_USED "asrc bjt bjt2 bsim1 bsim2 bsim3 bsim3v2 bsim3v1 bsim4 bsim3soipd bsim3soifd bsim3soidd cap cccs ccvs csw dio hfet hfet2 ind isrc jfet ltra mes mesa mos1 mos2 mos3 mos6 mos9 res sw tra urc vccs vcvs vsrc"
+#define DEVICES_USED "asrc bjt bjt2 bsim1 bsim2 bsim3 bsim3v2 bsim3v1 bsim4 bsim3soipd bsim3soifd bsim3soidd cap cccs ccvs csw dio hfet hfet2 ind isrc jfet ltra mes mesa mos1 mos2 mos3 mos6 mos9 res soi3 sw tra urc vccs vcvs vsrc"
 
 /*
  * Analyses
@@ -85,6 +85,7 @@
 #include "mos6/mos6itf.h"
 #include "mos9/mos9itf.h"
 #include "res/resitf.h"
+#include "soi3/soi3itf.h"
 #include "sw/switf.h"
 #include "tra/traitf.h"
 #include "urc/urcitf.h"
@@ -93,7 +94,7 @@
 #include "vsrc/vsrcitf.h"
 
 
-#define DEVNUM 39
+#define DEVNUM 40
 
 SPICEdev *DEVices[DEVNUM];
 
@@ -137,12 +138,13 @@ spice_init_devices(void)
     DEVices[31] = get_mos6_info();
     DEVices[32] = get_mos9_info();
     DEVices[33] = get_res_info();
-    DEVices[34] = get_sw_info();
-    DEVices[35] = get_tra_info();
-    DEVices[36] = get_vccs_info();
-    DEVices[37] = get_vcvs_info();
-    DEVices[38] = get_vsrc_info();
-    assert(39 == DEVNUM);
+    DEVices[34] = get_soi3_info();
+    DEVices[35] = get_sw_info();
+    DEVices[36] = get_tra_info();
+    DEVices[37] = get_vccs_info();
+    DEVices[38] = get_vcvs_info();
+    DEVices[39] = get_vsrc_info();
+    assert(40 == DEVNUM);
 }
 
 

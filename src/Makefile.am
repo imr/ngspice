@@ -49,6 +49,7 @@ DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/mos6/libmos6.la		\
 	spicelib/devices/mos9/libmos9.la		\
 	spicelib/devices/res/libres.la		\
+	spicelib/devices/soi3/libsoi3.la	\
 	spicelib/devices/sw/libsw.la		\
 	spicelib/devices/tra/libtra.la		\
 	spicelib/devices/urc/liburc.la		\

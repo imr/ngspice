@@ -151,7 +151,9 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	}
 	INPmakeMod(modname, type, image);
     } else if ((strcmp(typename, "nmos") == 0)
-	       || (strcmp(typename, "pmos") == 0)) {
+	       || (strcmp(typename, "pmos") == 0)
+	       || (strcmp(typename, "nsoi") == 0)
+	       || (strcmp(typename, "psoi") == 0)) {
 	err = INPfindLev(line, &lev);
 	switch (lev) {
 	case 0:
@@ -274,6 +276,14 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Placeholder: Device type BSIM6 not available in this binary\n");
 	    }
 	    break;
+	case 44:
+		type = INPtypelook("EKV");
+		if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Placeholder for EKV model: look at http://.... for info on EKV\n");
+	    }
+	    break;    
 	case 49:
 	    type = INPtypelook("BSIM3V1");
 	    if (type < 0) {
@@ -282,8 +292,6 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Device type BSIM3V1 not available in this binary\n");
 	    }
 	    break;
-
-
 	case 50:
 	    type = INPtypelook("BSIM3V2");
 	    if (type < 0) {
@@ -291,11 +299,36 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    INPmkTemp
 		    ("Device type BSIM3V2 not available in this binary\n");
 	    }
+	    break;	    
+	case 60:
+	    type = INPtypelook("SOI");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Device type SOI not available in this binary (internal STAG release)\n");
+	    }
+	    break;	 
+	case 61:
+	    type = INPtypelook("SOI2");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Device type SOI2 not available in this binary (internal STAG release)\n");
+	    }
+	    break;    
+	
+	case 62:
+	    type = INPtypelook("SOI3");
+	    if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Device type SOI3 not available in this binary (internal STAG release)\n");
+	    }
 	    break;
 	default:		/* placeholder; use level xxx for the next model */
 	    err =
 		INPmkTemp
-		("Only MOS device levels 1-6,8,14 are supported in this binary\n");
+		("Only MOS device levels 1-6,8,14,44,49-50,62 are supported in this binary\n");
 	    break;
 	}
 	INPmakeMod(modname, type, image);
