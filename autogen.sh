@@ -40,34 +40,10 @@ test $TEST_TYPE $FILE || {
 	exit 1
 }
 
-if test -z "$*"; then
-	echo "I am going to run ./configure with no arguments - if you wish "
-        echo "to pass any to it, please specify them on the $0 command line."
-fi
 
-case $CC in
-*lcc | *lcc\ *) am_opt=--include-deps;;
-esac
-
-#echo "Running gettextize...  Ignore non-fatal messages."
-# Hmm, we specify --force here, since otherwise things don't
-# get added reliably, but we don't want to overwrite intl
-# while making dist.
-#echo "no" | gettextize --copy --force
-
-echo "Running libtoolize"
 libtoolize --copy --force
-
 aclocal $ACLOCAL_FLAGS
-
 # optionally feature autoheader
 (autoheader --version)  < /dev/null > /dev/null 2>&1 && autoheader
-
 automake -c -a $am_opt
 autoconf
-
-./configure "$@"
-
-echo 
-echo "Now type 'make' to compile $PROJECT."
-
