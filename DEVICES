@@ -181,6 +181,7 @@ JFET  - Junction Field Effect transistor
 	
 	Enhancements over the original model:
 	
+	- Alan Gillespie's modified diode model
 	- Parallel multiplier
 	- Instance temperature as difference for circuit temperature
         

@@ -1,7 +1,11 @@
 2003-12-26  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelibe/devices/jfet/*: Added parallel multiplier and
+	* src/spicelib/devices/jfet/*: Added parallel multiplier and
 	  "dtemp" parameter.
+	  
+	* src/spicelib/devices/jfet/jfetload.c: reintroduces the old model
+	  code, superseded by Sydney code (Parker Skellern). The code is
+	  not useed but is left as reference.   
 	
 	* DEVICES: Updated jfet status
 	
