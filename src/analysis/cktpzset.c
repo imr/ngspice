@@ -16,11 +16,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "sperror.h"
 
 
-#define CKALLOC(var,size,type) \
-    if(size && (!(var =(type *)MALLOC((size)*sizeof(type))))){\
-            return(E_NOMEM);\
-}
-
 int
 CKTpzSetup(register CKTcircuit *ckt, int type)
 {

@@ -3,21 +3,6 @@
 
 #include "conf.h"
 
-/*
- * Analyses
- */
-#define AN_op
-#define AN_dc
-#define AN_tf
-#define AN_ac
-#define AN_tran
-#define AN_pz
-#define AN_disto
-#define AN_noise
-#define AN_sense
-
-#define ANALYSES_USED "op dc tf ac tran pz disto noise sense"
-
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/

@@ -66,6 +66,22 @@
 
 #define DEVICES_USED "asrc bjt bsim1 bsim2 bsim3 bsim3v2 bsim3v1 cap cccs ccvs csw dio ind isrc jfet ltra mes mos1 mos2 mos3 mos6 res sw tra urc vccs vcvs vsrc"
 
+/*
+ * Analyses
+ */
+#define AN_op
+#define AN_dc
+#define AN_tf
+#define AN_ac
+#define AN_tran
+#define AN_pz
+#define AN_disto
+#define AN_noise
+#define AN_sense
+
+#define ANALYSES_USED "op dc tf ac tran pz disto noise sense"
+
+
 #include "asrc/asrcitf.h"
 #include "bjt/bjtitf.h"
 #include "cap/capitf.h"

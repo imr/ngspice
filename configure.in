@@ -244,6 +244,7 @@ src/maths/sparse/Makefile	\
 src/misc/Makefile		\
 src/parser/Makefile		\
 tests/Makefile			\
-tests/resistance/Makefile	\
 tests/filters/Makefile		\
+tests/polezero/Makefile		\
+tests/resistance/Makefile	\
 )
