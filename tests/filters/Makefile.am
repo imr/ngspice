@@ -1,15 +1,11 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = resistance filters
-
 TESTS = \
-	diffpair.cir		\
-	fourbitadder.cir
+	lowpass.cir
 
-TESTS_ENVIRONMENT = $(SHELL) check.sh $(top_builddir)/src/ngspice
+TESTS_ENVIRONMENT = $(SHELL) $(srcdir)/../check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
-	README			\
 	$(TESTS)		\
 	$(TESTS:.cir=.out)
 

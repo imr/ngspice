@@ -1,3 +1,9 @@
+2000-06-05  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* tests/*: Added a little hierarchy to the tests.  Removed
+	config.sh in favor of check.sh.  This script does all checking.
+	Made names of the tests better reflect the circuit under test.
+
 2000-06-03  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/include/complex.h, src/include/macros.h,
