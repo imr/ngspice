@@ -54,7 +54,7 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 	     } else { /* REStempGiven */
 	       here->RESdtemp = 0.0;
 	       if (here->RESdtempGiven)
-	           printf("%s: You specified instance temperature, dtemp ignored\n", here->RESname);
+	           printf("%s: Instance temperature specified, dtemp ignored\n", here->RESname);
 	     }
 	    
 	    if(!here->RESwidthGiven)   here->RESwidth  = model->RESdefWidth;
