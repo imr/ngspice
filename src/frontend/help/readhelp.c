@@ -4,7 +4,12 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified 1999 Emmanuel Rouat
 **********/
 
-
+/*
+ * SJB 20 May 2001
+ * Bug fix in help_read()
+ * findsubject() now ignores case and does additional searches for partial matches
+ * when a complete match is not found - additional code based on code in MacSpice.
+ */
 
 #include <config.h>
 #include "ngspice.h"
@@ -84,7 +89,7 @@ hlp_read(fplace *place)
     /* skip to TEXT: */
     while (fgets(buf, BSIZE_SP, place->fp)) {
       if (!strncmp("TEXT: ", buf, 6)) break;
-      if ((*buf = '\0') ||
+      if ((*buf == '\0') ||		/* SJB - bug fix */
         !strncmp("SEEALSO: ", buf, 9) ||
         !strncmp("SUBTOPIC: ", buf, 10)) {
         /* no text */
@@ -244,8 +249,39 @@ findsubject(char *filename, char *subject)
       return(-1);
     }
 
+    /* try it exactly (but ignore case) */
     while(fread((char *) &indexitem, sizeof (struct hlp_index), 1, fp)) {
-      if (!strncmp(subject, indexitem.subject, 64)) {
+      if (!strncasecmp(subject, indexitem.subject, 64)) { /* sjb - ignore case */
+        fclose(fp);
+        return(indexitem.fpos);
+      }
+    }
+
+    fclose(fp);
+
+    if (!(fp = fopen(buf, "rb"))) {
+      perror(buf);
+      return(-1);
+    }
+
+    /* try it abbreviated (ignore case)  */
+    while(fread((char *) &indexitem, sizeof (struct hlp_index), 1, fp)) {
+      if (!strncasecmp(indexitem.subject,subject, strlen(subject))) {
+        fclose(fp);
+        return(indexitem.fpos);
+      }
+    }
+
+    fclose(fp);
+
+    if (!(fp = fopen(buf, "rb"))) {
+      perror(buf);
+      return(-1);
+    }
+
+	/* try it within */ /* FIXME: need a case independent version of strstr() */
+    while(fread((char *) &indexitem, sizeof (struct hlp_index), 1, fp)) {
+	  if (strstr(indexitem.subject,subject)) {
         fclose(fp);
         return(indexitem.fpos);
       }
