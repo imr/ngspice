@@ -10,11 +10,29 @@ This file it is useful in writing ngspice documentation.
 *************************  Linear devices  ********************************
 ***************************************************************************
 
-CAP - Capacitor
-      Initial Release
+CAP 	- Capacitor
+      	Initial Release
 
-IND - Inductor
-      Initial Release
+IND 	- Inductor
+      	Initial Release
+
+RES	- Simple linear resistor
+	Initial Release.
+	Ver:	N/A
+	Class:	R
+	Level:	1 (and only)
+	Status:	
+		
+	Enhancements over the original model:
+	
+	- Parallel Multiplier
+	- Different value for ac analysis
+	- Temperature difference from circuit temperature
+	- Noiseless resistor
+	- Flicker noise
+	- Preliminary technology scaling support
+	- Xspice extensions
+	- Cider extensions
 
 RES - Resistor
       This is a modified version of the spice3 resistance model. This model 
@@ -226,7 +244,7 @@ BSIM3v2 - BSIM model level 3
 
 BSIM4   - BSIM model level 4 (0.18 um)
         Initial Release. 
-        Ver:    4.2.1 (Updated in rewor 14)
+        Ver:    4.2.1 (Updated in rework 14)
         Class:  M
         Level:  14
         Status: TO BE TESTED
@@ -239,7 +257,27 @@ BSIM4   - BSIM model level 4 (0.18 um)
       
       *) Rework 14: Updated to 4.21 YET UNTESTED.
 	 
-	 
+HiSIM	- Hiroshima-university STARC IGFET Model
+	Initial Release.
+	Ver:	1.2.0
+	Class:	M
+	Level:	TBD
+	Status:	TO BE TESTED
+	
+	This is the HiSIM model available from Hiroshima University
+	(Ultra-Small Device Engineering Laboratory)
+	
+	Web site:
+	http://home.hiroshima-u.ac.jp/usdl/HiSIM.shtml
+	http://www.starc.or.jp/kaihatu/pdgr/hisim/index.html
+	
+	Enhancements over the original model:
+	
+	- Parallel Multiplier
+	- Xspice extensions
+	- Cider extensions
+	- Copynodeset (?)
+	
 ***************************************************************************	 
 *****************************    SOI Devices   ****************************
 ***************************************************************************

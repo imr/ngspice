@@ -1,6 +1,16 @@
+2003-09-20  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/res/*, src/spicelib/analysis/nevalsrc.c,
+	  doc/ngspice.texi, DEVICES: Added new features to resistors: 
+	  flicker noise, tempereature difference with the rest of the 
+	  circuit, noiseless resistors. The implementation of dtemp 
+	  required a change in the nevalsrc.c file in the function that 
+	  computes the noise densities. Updated documentation. 
+	  
+
 2003-09-18  Paolo Nenzi <p.nenzi@ieee.org>
 	
-	* src/spicelib/frontend/dctrcv.c: Corrected temperature sweep.
+	* src/spicelib/analysis/dctrcv.c: Corrected temperature sweep.
 	  Initial temp was the circuit temperature and not the start
 	  value in the input line. There was a missing call to CKTtemp().
 
