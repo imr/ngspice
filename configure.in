@@ -128,8 +128,9 @@ case $with_windows in
 	yes )
 		AC_DEFINE(X_DISPLAY_MISSING)
 		AC_MSG_RESULT(No X display!)
-		CFLAGS="$CFLAGS -mwindows";
-	*) 
+		CFLAGS="$CFLAGS -mwindows";;
+	*)
+ 
 
 dnl Checks for X11 header files and libraries - X11 support can be disabled
 dnl by passing the '--without-x' option to configure:
@@ -152,7 +153,7 @@ if test ! "$no_x" = "yes" ; then
 	AC_CHECK_LIB(Xaw,main,X_LIBS="$X_LIBS -lXaw",AC_MSG_ERROR(Couldn't find Xaw librairies),$X_LIBS  $X_EXTRA_LIBS)
 
 
-fi
+fi ;;
 
 esac
 
@@ -181,11 +182,11 @@ AC_CHECK_FUNCS(localtime)
 case $host_os in
   *cygwin* )
 	AC_CHECK_FUNCS(ftime)
-   AC_DEFINE(HAVE__MEMAVL) ;
+   AC_DEFINE(HAVE__MEMAVL);;
   * )
 	AC_CHECK_FUNCS(gettimeofday time ftime , break)
 	AC_CHECK_FUNCS(getrusage utimes, break)
-	AC_CHECK_FUNCS(getrlimit ulimit, break) ;
+	AC_CHECK_FUNCS(getrlimit ulimit, break);;
 esac
 
 dnl Look for termios first (posix)
@@ -260,14 +261,16 @@ AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE, "`date`" )
 dnl  with the MS WINDOWS executable we suggest /spice_win/bin as *.exe-path
 if test "$with_windows" = "yes"; then
 dnl redefine the path for WINDOWS:
-    AC_MSG_RESULT(WINDOWS cide enabled)
+    AC_MSG_RESULT(WINDOWS code enabled)
     AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo /spice_win/bin`" )
     AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo /spice_win/lib`" )
-    WINMAIN = "winmain.o"
+    WINMAIN="winmain.o"
 else
-    WINMAIN =""
+    WINMAIN=""
 fi
+
 AC_SUBST(WINMAIN)
+
 
 # Recapitulate settings:
 AC_MSG_RESULT(Settings which were chosen:)
@@ -307,6 +310,7 @@ else
     EKVDIR=""
     EKVLIB=""	
 fi
+
 AC_SUBST(EKVDIR)
 AC_SUBST(EKVLIB)
 
