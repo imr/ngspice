@@ -3,6 +3,10 @@
 	* configure.in src/xspice/xspice.c :
 	Fix compile problems with garbage collector
 
+	 * configure.in :
+	 Change --enable-tcl to --with-tcl[=dir] for non-std 
+	 install setup.
+
 2003-07-17 Steven Borley <sjb@salix.demon.co.uk>
 
 	* src/frontend/resource.c src/frontend/parser/complete.c
