@@ -103,6 +103,11 @@ extern void *cx_mean(void *, short int , int , int *, short int *);
 extern void *cx_length(void *, short int , int , int *, short int *);
 extern void *cx_vector(void *, short int , int , int *, short int *);
 extern void *cx_unitvec(void *, short int , int , int *, short int *);
+ 
+/* Routoure JM : somme useful functions */
+extern void *cx_min(void *, short int , int , int *, short int *);
+extern void *cx_max(void *, short int , int , int *, short int *);
+extern void *cx_d(void *, short int , int , int *, short int *);
 
 extern void *cx_plus(void *, void *, short int , short int , int );
 extern void *cx_minus(void *, void *, short int , short int , int );

@@ -106,7 +106,7 @@ cx_atan(void *data, short int type, int length, int *newlength, short int *newty
 
 
 double
-cx_max(void *data, short int type, int length)
+cx_max_local(void *data, short int type, int length)
 {
     double largest = 0.0;
 
@@ -135,7 +135,7 @@ cx_norm(void *data, short int type, int length, int *newlength, short int *newty
 {
     double largest = 0.0;
 
-    largest = cx_max(data, type, length);
+    largest = cx_max_local(data, type, length);
     if (largest == 0.0) {
 	fprintf(cp_err, "Error: can't normalize a 0 vector\n");
 	return (NULL);
@@ -521,3 +521,131 @@ cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int l
     }
 }
 
+
+/* Routoure JM : Compute the max of a vector. */
+
+void *
+cx_max(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    *newlength = 1;
+    /* test if length >0 et affiche un message d'erreur */
+    rcheck(length > 0, "mean");
+    if (type == VF_REAL) {
+      double largest=0.0;
+      double *d;
+      double *dd = (double *) data;
+      int i;
+      
+      d = alloc_d(1);
+      *newtype = VF_REAL;
+      largest=dd[0];
+      for (i = 1; i < length; i++)
+        if (dd[i]>largest) largest=dd[i];
+      *d=largest;
+      return ((void *) d);
+    } else { 
+      double largest_real=0.0;
+      double largest_complex=0.0;
+      complex *c;
+      complex *cc = (complex *) data;
+      int i;
+      
+      c = alloc_c(1);
+      *newtype = VF_COMPLEX;
+      largest_real=realpart(cc);
+      largest_complex=imagpart(cc);
+      for (i = 0; i < length; i++) {
+        if (realpart(cc + i)>largest_real) largest_real=realpart(cc + i);
+        if (imagpart(cc + i)>largest_complex) largest_complex=imagpart(cc + i);
+        }
+        realpart(c) = largest_real;
+        imagpart(c) = largest_complex;
+        return ((void *) c);
+    }
+}
+/* Routoure JM : Compute the min of a vector. */
+
+void *
+cx_min(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    *newlength = 1;
+    /* test if length >0 et affiche un message d'erreur */
+    rcheck(length > 0, "mean");
+    if (type == VF_REAL) {
+      double smallest;
+      double *d;
+      double *dd = (double *) data;
+      int i;
+      
+      d = alloc_d(1);
+      *newtype = VF_REAL;
+      smallest=dd[0];
+      for (i = 1; i < length; i++)
+        if (dd[i]<smallest) smallest=dd[i];
+      *d=smallest;
+      return ((void *) d);
+    } else { 
+      double smallest_real;
+      double smallest_complex;
+      complex *c;
+      complex *cc = (complex *) data;
+      int i;
+      
+      c = alloc_c(1);
+      *newtype = VF_COMPLEX;
+      smallest_real=realpart(cc);
+      smallest_complex=imagpart(cc);
+      for (i = 1; i < length; i++) {
+        if (realpart(cc + i)<smallest_real) smallest_real=realpart(cc + i);
+        if (imagpart(cc + i)<smallest_complex) smallest_complex=imagpart(cc + i);
+        }
+        realpart(c) = smallest_real;
+        imagpart(c) = smallest_complex;
+        return ((void *) c);
+    }
+}
+
+
+/* Routoure JM : Compute the differential  of a vector. */
+
+void *
+cx_d(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    *newlength = length;
+    /* test if length >0 et affiche un message d'erreur */
+    rcheck(length > 0, "deriv");
+    if (type == VF_REAL) {
+      double *d;
+      double *dd = (double *) data;
+      int i;
+      
+      d = alloc_d(length);
+      *newtype = VF_REAL;
+      d[0]=dd[1]-dd[0];
+      d[length-1]=dd[length-1]-dd[length-2];
+      for (i = 1; i < length-1; i++)
+        d[i]=dd[i+1]-dd[i-1];
+
+      return ((void *) d);
+    } else { 
+
+      complex *c;
+      complex *cc = (complex *) data;
+      int i;
+      
+      c = alloc_c(length);
+      *newtype = VF_COMPLEX;
+      realpart(c)=realpart(cc+1)-realpart(cc);
+      imagpart(c)=imagpart(cc+1)-imagpart(cc);
+      realpart(c+length-1)=realpart(cc+length-1)-realpart(cc+length-2);
+      imagpart(c+length-1)=imagpart(cc+length-1)-imagpart(cc+length-2);
+      
+      
+      for (i = 1; i < (length-1); i++) {
+        realpart(c+i)=realpart(cc+i+1)-realpart(cc+i-1);
+        imagpart(c+i)=imagpart(cc+i+1)-imagpart(cc+i-1);
+
+        }
+        return ((void *) c);
+    }
+}
