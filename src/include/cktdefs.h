@@ -6,7 +6,7 @@
 #ifndef CKT
 #define CKT "CKTdefs.h $Revision$  on $Date$ "
 
-#define MAXNUMDEVS 34		/* Max number of possible devices PN:XXX may cause toubles*/
+#define MAXNUMDEVS 36		/* Max number of possible devices PN:XXX may cause toubles*/
 extern int DEVmaxnum;		/* Not sure if still used */
 #define MAXNUMDEVNODES 4	/* Max No. of nodes per device */
 				/* Need to change for SOI devs ? */
