@@ -789,6 +789,11 @@ int Size_Not_Found;
                                      * pParam->BSIM3sqrtPhi;
                   /* End of vfbzb */
               }
+	      else /* !Size_Not_Found */
+	      {
+		  /* va: pParam might be uninitialized, if !Size_Not_Found */
+		  pParam = here->pParam;
+	      }
 
               /* process source/drain series resistance */
               here->BSIM3drainConductance = model->BSIM3sheetResistance 

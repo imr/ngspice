@@ -569,10 +569,10 @@ main(int argc, char **argv)
 
             pw = getpwuid(getuid());
 
-#ifdef HAVE_ASPRINTF
-	    asprintf(&s, "%s/.spiceinit", pw->pw_dir);
-#else /* ~ HAVE_ASPRINTF */
 #define INITSTR "/.spiceinit"
+#ifdef HAVE_ASPRINTF
+	    asprintf(&s, "%s%s", pw->pw_dir,INITSTR);
+#else /* ~ HAVE_ASPRINTF */
 	    s=(char *) tmalloc(1 + strlen(pw->pw_dir)+strlen(INITSTR));
 	    sprintf(s,"%s%s",pw->pw_dir,INITSTR);
 #endif /* HAVE_ASPRINTF */

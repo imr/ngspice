@@ -621,12 +621,10 @@ vec_free(struct dvec *v)
     }
     }
     tfree(v->v_name);
-    if(v->v_length) {
     if (isreal(v)) {
         tfree(v->v_realdata);
     } else {
         tfree(v->v_compdata);
-    }
     }
     tfree(v);
     return;
