@@ -1,10 +1,12 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.1.0, Released by Weidong Liu 10/11/2000 ****/
 
 /**********
  * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4acld.c of BSIM4.0.0.
+ * File: b4acld.c of BSIM4.1.0.
  * Authors: Weidong Liu, Xiaodong Jin, Kanyu M. Cao, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ *
+ * Modified by Weidong Liu, 10/11/2000.
  **********/
 
 #include "ngspice.h"
@@ -40,13 +42,13 @@ double gIgtotg, gIgtotd, gIgtots, gIgtotb;
 double cgso, cgdo, cgbo;
 double gbspsp, gbbdp, gbbsp, gbspg, gbspb;
 double gbspdp, gbdpdp, gbdpg, gbdpb, gbdpsp;
-double T0, T1, T2, T3;
-double Csg, Csd, Css;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11;
+double Csg, Csd, Css, Csb;
 double Cdgr, Cddr, Cdsr, Cdbr, Csgr, Csdr, Cssr, Csbr;
 double Cdgi, Cddi, Cdsi, Cdbi, Csgi, Csdi, Cssi, Csbi;
 double gmr, gmi, gmbsr, gmbsi, gdsr, gdsi;
-double FwdSumr, RevSumr, Gmr, Gmbsr;
-double FwdSumi, RevSumi, Gmi, Gmbsi;
+double FwdSumr, RevSumr, Gmr, Gmbsr, Gdsr;
+double FwdSumi, RevSumi, Gmi, Gmbsi, Gdsi;
 struct bsim4SizeDependParam *pParam;
 
     omega = ckt->CKTomega;

@@ -1,10 +1,12 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.1.0, Released by Weidong Liu 10/11/2000 ****/
 
 /**********
  * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4ld.c of BSIM4.0.0.
+ * File: b4ld.c of BSIM4.1.0.
  * Author: Weidong Liu, Kanyu M. Cao, Xiaodong Jin, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ *
+ * Modified by Weidong Liu, 10/11/2000.
  ******/
 
 #include "ngspice.h"
@@ -46,6 +48,7 @@ double dRs_dvg, dRd_dvg, dRs_dvb, dRd_dvb;
 double dT0_dvg, dT1_dvb, dT3_dvg, dT3_dvb;
 double vses, vdes, vdedo, delvses, delvded, delvdes;
 double Isestot, cseshat, Idedtot, cdedhat;
+double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
 
 double geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb, ceqgcrg;
 double vges, vgms, vgedo, vgmdo, vged, vgmd, delvged, delvgmd;
@@ -59,7 +62,7 @@ double delvdbs, delvdbd, delvsbs;
 double delvbd_jct, delvbs_jct, vbs_jct, vbd_jct;
 
 double SourceSatCurrent, DrainSatCurrent;
-double ag0, qgb, von, cbhat, VgstNVt, ExpVgst;
+double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
 double ceqqb, ceqqd, ceqqg, ceqqjd, ceqqjs, ceq, geq;
 double cdrain, cdhat, ceqdrn, ceqbd, ceqbs, ceqjd, ceqjs, gjbd, gjbs;
 double czbd, czbdsw, czbdswg, czbs, czbssw, czbsswg, evbd, evbs, arg, sarg;
@@ -79,59 +82,62 @@ double Igc, dIgc_dVg, dIgc_dVd, dIgc_dVb;
 double Igcs, dIgcs_dVg, dIgcs_dVd, dIgcs_dVb;
 double Igcd, dIgcd_dVg, dIgcd_dVd, dIgcd_dVb;
 double Igs, dIgs_dVg, dIgs_dVs, Igd, dIgd_dVg, dIgd_dVd;
-double Igbacc, dIgbacc_dVg, dIgbacc_dVb;
+double Igbacc, dIgbacc_dVg, dIgbacc_dVd, dIgbacc_dVb;
 double Igbinv, dIgbinv_dVg, dIgbinv_dVd, dIgbinv_dVb;
+double Igb, dIgb_dVg, dIgb_dVd, dIgb_dVb;
+double Pigcd, dPigcd_dVg, dPigcd_dVd, dPigcd_dVb;
 double Istoteq, gIstotg, gIstotd, gIstots, gIstotb;
 double Idtoteq, gIdtotg, gIdtotd, gIdtots, gIdtotb;
 double Ibtoteq, gIbtotg, gIbtotd, gIbtots, gIbtotb;
 double Igtoteq, gIgtotg, gIgtotd, gIgtots, gIgtotb;
 double Igstot, cgshat, Igdtot, cgdhat, Igbtot, cgbhat;
-double Vgs_eff, Vfb, Vth_NarrowW;
+double Vgs_eff, Vfb, dVbs_dVb, Vth_NarrowW;
 double Phis, dPhis_dVb, sqrtPhis, dsqrtPhis_dVb, Vth, dVth_dVb, dVth_dVd;
 double Vgst, dVgst_dVg, dVgst_dVb, dVgs_eff_dVg, Nvtms, Nvtmd;
-double Vtm;
+double Vgdt, Vgsaddvth, Vgsaddvth2, Vgsaddvth1o3,Vtm;
 double n, dn_dVb, dn_dVd, voffcv, noff, dnoff_dVd, dnoff_dVb;
-double V0, CoxWLcen, QovCox, LINK;
+double ExpArg, ExpArg1, V0, CoxWLcen, QovCox, LINK;
 double DeltaPhi, dDeltaPhi_dVg;
 double Cox, Tox, Tcen, dTcen_dVg, dTcen_dVd, dTcen_dVb;
 double Ccen, Coxeff, dCoxeff_dVd, dCoxeff_dVg, dCoxeff_dVb;
 double Denomi, dDenomi_dVg, dDenomi_dVd, dDenomi_dVb;
 double ueff, dueff_dVg, dueff_dVd, dueff_dVb; 
-double Esat, Vdsat;
+double Esat, dEsat_dVg, dEsat_dVd, dEsat_dVb, Vdsat, Vdsat0;
 double EsatL, dEsatL_dVg, dEsatL_dVd, dEsatL_dVb;
+double Ilimit, Iexp, dIexp_dVg, dIexp_dVd, dIexp_dVb;
 double dVdsat_dVg, dVdsat_dVb, dVdsat_dVd, Vasat, dAlphaz_dVg, dAlphaz_dVb; 
-double dVasat_dVg, dVasat_dVb, dVasat_dVd, Va, dVa_dVd, dVa_dVg, dVa_dVb; 
+double dVasat_dVg, dVasat_dVb, dVasat_dVd, Va, Va2, dVa_dVd, dVa_dVg, dVa_dVb; 
 double Vbseff, dVbseff_dVb, VbseffCV, dVbseffCV_dVb; 
-double Arg1, One_Third_CoxWL, Two_Third_CoxWL, Alphaz, CoxWL; 
+double Arg1, Arg2, One_Third_CoxWL, Two_Third_CoxWL, Alphaz, CoxWL; 
 double T0, dT0_dVg, dT0_dVd, dT0_dVb;
 double T1, dT1_dVg, dT1_dVd, dT1_dVb;
 double T2, dT2_dVg, dT2_dVd, dT2_dVb;
 double T3, dT3_dVg, dT3_dVd, dT3_dVb;
-double T4, dT4_dVd;
-double T5, dT5_dVb;
+double T4, dT4_dVd, dT4_dVg, dT4_dVd, dT4_dVb;
+double T5, dT5_dVb, dT5_dVg, dT5_dVd, dT5_dVb;
 double T6, dT6_dVg, dT6_dVd, dT6_dVb;
-double T7, dT7_dVg;
-double T8, dT8_dVd;
+double T7, dT7_dVg, dT7_dVg, dT7_dVd, dT7_dVb;
+double T8, dT8_dVd, dT8_dVg, dT8_dVd, dT8_dVb;
 double T9, dT9_dVg, dT9_dVd, dT9_dVb;
 double T10, dT10_dVg, dT10_dVb, dT10_dVd; 
-double T11, T12;
+double T11, T12, T13, T14;
 double tmp, Abulk, dAbulk_dVb, Abulk0, dAbulk0_dVb;
 double Cclm, dCclm_dVg, dCclm_dVd, dCclm_dVb;
 double FP, dFP_dVg, PvagTerm, dPvagTerm_dVg, dPvagTerm_dVd, dPvagTerm_dVb;
 double VADITS, dVADITS_dVg, dVADITS_dVd;
-double Lpe_Vb, dDITS_Sft_dVb, dDITS_Sft_dVd;
+double Lpe_Vb, DITS_Sft, dDITS_Sft_dVb, dDITS_Sft_dVd;
 double VACLM, dVACLM_dVg, dVACLM_dVd, dVACLM_dVb;
 double VADIBL, dVADIBL_dVg, dVADIBL_dVd, dVADIBL_dVb;
 double Xdep, dXdep_dVb, lt1, dlt1_dVb, ltw, dltw_dVb, Delt_vth, dDelt_vth_dVb;
-double Theta0, dTheta0_dVb;
-double TempRatio, tmp1, tmp2, tmp3, tmp4;
-double DIBL_Sft, dDIBL_Sft_dVd, Lambda, dLambda_dVg;
+double Theta0, dTheta0_dVb, Theta1, dTheta1_dVb;
+double Thetarout, dThetarout_dVb, TempRatio, tmp1, tmp2, tmp3, tmp4;
+double DIBL_Sft, dDIBL_Sft_dVd, DIBL_fact, Lambda, dLambda_dVg;
 double Idtot, Ibtot, a1, ScalingFactor;
 
 double Vgsteff, dVgsteff_dVg, dVgsteff_dVd, dVgsteff_dVb; 
 double Vdseff, dVdseff_dVg, dVdseff_dVd, dVdseff_dVb; 
 double VdseffCV, dVdseffCV_dVg, dVdseffCV_dVd, dVdseffCV_dVb; 
-double diffVds, dAbulk_dVg;
+double diffVds, diffVdsCV, dAbulk_dVg;
 double beta, dbeta_dVg, dbeta_dVd, dbeta_dVb;
 double gche, dgche_dVg, dgche_dVd, dgche_dVb;
 double fgche1, dfgche1_dVg, dfgche1_dVd, dfgche1_dVb;
@@ -143,7 +149,7 @@ double Isub, Gbd, Gbg, Gbb;
 double VASCBE, dVASCBE_dVg, dVASCBE_dVd, dVASCBE_dVb;
 double CoxeffWovL;
 double Rds, dRds_dVg, dRds_dVb, WVCox, WVCoxRds;
-double Vgst2Vtm, VdsatCV;
+double Vgst2Vtm, VdsatCV, dVdsatCV_dVd, dVdsatCV_dVg, dVdsatCV_dVb;
 double Leff, Weff, dWeff_dVg, dWeff_dVb;
 double AbulkCV, dAbulkCV_dVb;
 double qcheq, qdef, gqdef, cqdef, cqcheq;
@@ -153,10 +159,10 @@ double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
 double dsxpart_dVd, dsxpart_dVg, dsxpart_dVb, dsxpart_dVs;
 double gbspsp, gbbdp, gbbsp, gbspg, gbspb, gbspdp; 
 double gbdpdp, gbdpg, gbdpb, gbdpsp; 
-double qgdo, qgso, cgdo, cgso;
-double Cgg, Cgd, Cgb, Cdg, Cdd, Cds;
-double Csg, Csd, Css, Csb, Cbg, Cbd, Cbb;
-double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Qac0, Qsub0;
+double qgdo, qgso, cgdo, cgso, cqbs, cqbd;
+double Cgg, Cgd, Cgs, Cgb, Cdg, Cdd, Cds, Cdb, Qg, Qd;
+double Csg, Csd, Css, Csb, Cbg, Cbd, Cbs, Cbb, Qs, Qb;
+double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Csg1, Csd1, Csb1, Qac0, Qsub0;
 double dQac0_dVg, dQac0_dVb, dQsub0_dVg, dQsub0_dVd, dQsub0_dVb;
    
 struct bsim4SizeDependParam *pParam;
@@ -422,7 +428,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                        + here->BSIM4gdtotd * delvds + here->BSIM4gdtotg * delvgs
                        + here->BSIM4gdtotb * delvbs;
 
-
+#ifndef NOBYPASS
                /* Following should be one IF statement, but some C compilers 
                 * can't handle that all at once, so we split it into several
                 * successive IF's */
@@ -514,7 +520,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 		    else
 		       goto line850;
                }
-
+#endif /*NOBYPASS*/
                von = here->BSIM4von;
                if (*(ckt->CKTstate0 + here->BSIM4vds) >= 0.0)
 	       {   vgs = DEVfetlim(vgs, *(ckt->CKTstate0 + here->BSIM4vgs), von);
@@ -1933,7 +1939,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
           if (model->BSIM4igcMod)
           {   T0 = Vtm * pParam->BSIM4nigc;
-              VxNVt = (Vgs_eff - model->BSIM4type * pParam->BSIM4vth0) / T0; /* Vth instead of Vth0 may be used */
+              VxNVt = (Vgs_eff - model->BSIM4type * pParam->BSIM4vth0) / T0;
               if (VxNVt > EXP_THRESHOLD)
               {   Vaux = Vgs_eff - model->BSIM4type * pParam->BSIM4vth0;
                   dVaux_dVg = dVgs_eff_dVg;
@@ -1948,8 +1954,8 @@ for (; model != NULL; model = model->BSIM4nextModel)
               {   ExpVxNVt = exp(VxNVt);
                   Vaux = T0 * log(1.0 + ExpVxNVt);
                   dVaux_dVg = ExpVxNVt / (1.0 + ExpVxNVt);
-		  dVaux_dVd = -dVaux_dVg * 0.0;
-                  dVaux_dVb = -dVaux_dVg * 0.0;
+		  dVaux_dVd = 0.0;
+                  dVaux_dVb = 0.0;
                   dVaux_dVg *= dVgs_eff_dVg;
               }
 
@@ -1987,40 +1993,75 @@ for (; model != NULL; model = model->BSIM4nextModel)
               dIgc_dVd = T11 * (T2 * dT6_dVd + T6 * dT2_dVd);
               dIgc_dVb = T11 * (T2 * dT6_dVb + T6 * dT2_dVb);
 
-	      T7 = -pParam->BSIM4pigcd * Vds;
-	      T8 = T7 * T7 + 2.0e-4;
-	      dT8_dVd = -2.0 * pParam->BSIM4pigcd * T7;
-	      if (T7 > EXP_THRESHOLD)
-	      {   T9 = MAX_EXP;
-                  dT9_dVd = 0.0;
-	      }
-	      else if (T7 < -EXP_THRESHOLD)
-              {   T9 = MIN_EXP;
-                  dT9_dVd = 0.0;
-              }
-              else
-              {   T9 = exp(T7);
-                  dT9_dVd = -T9 * pParam->BSIM4pigcd;
-              }
-
-	      T0 = T8 * T8;
-	      T1 = T9 - 1.0 + 1.0e-4;
-	      T10 = (T1 - T7) / T8;
-	      dT10_dVd = ((pParam->BSIM4pigcd + dT9_dVd) * T8
-		       - (T1 - T7) * dT8_dVd) / T0;
-	      Igcs = Igc * T10;
-	      dIgcs_dVg = dIgc_dVg * T10;
-              dIgcs_dVd = dIgc_dVd * T10 + Igc * dT10_dVd;
-              dIgcs_dVb = dIgc_dVb * T10;
-
-              T1 = T9 - 1.0 - 1.0e-4;
-              T10 = (T7 * T9 - T1) / T8;
-              dT10_dVd = (-pParam->BSIM4pigcd * T9 + (T7 - 1.0)
-		       * dT9_dVd - T10 * dT8_dVd) / T8;
-              Igcd = Igc * T10;
-              dIgcd_dVg = dIgc_dVg * T10;
-              dIgcd_dVd = dIgc_dVd * T10 + Igc * dT10_dVd;
-              dIgcd_dVb = dIgc_dVb * T10;
+               if (model->BSIM4pigcdGiven)
+               {   Pigcd = pParam->BSIM4pigcd;
+                   dPigcd_dVg = dPigcd_dVd = dPigcd_dVb = 0.0;
+               }
+               else
+               {   T11 = pParam->BSIM4Bechvb * model->BSIM4toxe;
+                   T12 = Vgsteff + 1.0e-20;
+                   T13 = T11 / T12 / T12;
+                   T14 = -T13 / T12;
+                   Pigcd = T13 * (1.0 - 0.5 * Vdseff / T12);
+                   dPigcd_dVg = T14 * (2.0 + 0.5 * (dVdseff_dVg
+                              * Vgsteff - 3.0 * Vdseff) / T12);
+                   dPigcd_dVd = 0.5 * T14 * dVdseff_dVd
+                              + dPigcd_dVg * dVgsteff_dVd;
+                   dPigcd_dVb = 0.5 * T14 * dVdseff_dVb
+                              + dPigcd_dVg * dVgsteff_dVb;
+                   dPigcd_dVg *= dVgsteff_dVg;
+               }
+ 
+               T7 = -Pigcd * Vds;
+               dT7_dVg = -Vds * dPigcd_dVg;
+               dT7_dVd = -Pigcd - Vds * dPigcd_dVd;
+               dT7_dVb = -Vds * dPigcd_dVb;
+               T8 = T7 * T7 + 2.0e-4;
+               dT8_dVg = 2.0 * T7;
+               dT8_dVd = dT8_dVg * dT7_dVd;
+               dT8_dVb = dT8_dVg * dT7_dVb;
+               dT8_dVg *= dT7_dVg;
+ 
+               if (T7 > EXP_THRESHOLD)
+               {   T9 = MAX_EXP;
+                   dT9_dVg = dT9_dVd = dT9_dVb = 0.0;
+               }
+               else if (T7 < -EXP_THRESHOLD)
+                {   T9 = MIN_EXP;
+                   dT9_dVg = dT9_dVd = dT9_dVb = 0.0;
+                }
+                else
+                {   T9 = exp(T7);
+                   dT9_dVg = T9 * dT7_dVg;
+                   dT9_dVd = T9 * dT7_dVd;
+                   dT9_dVb = T9 * dT7_dVb;
+                }
+  
+               T0 = T8 * T8;
+               T1 = T9 - 1.0 + 1.0e-4;
+               T10 = (T1 - T7) / T8;
+               dT10_dVg = (dT9_dVg - dT7_dVg - T10 * dT8_dVg) / T8;
+               dT10_dVd = (dT9_dVd - dT7_dVd - T10 * dT8_dVd) / T8;
+               dT10_dVb = (dT9_dVb - dT7_dVb - T10 * dT8_dVb) / T8;
+ 
+               Igcs = Igc * T10;
+               dIgcs_dVg = dIgc_dVg * T10 + Igc * dT10_dVg;
+               dIgcs_dVd = dIgc_dVd * T10 + Igc * dT10_dVd;
+               dIgcs_dVb = dIgc_dVb * T10 + Igc * dT10_dVb;
+  
+               T1 = T9 - 1.0 - 1.0e-4;
+               T10 = (T7 * T9 - T1) / T8;
+               dT10_dVg = (dT7_dVg * T9 + (T7 - 1.0) * dT9_dVg
+                        - T10 * dT8_dVg) / T8;
+               dT10_dVd = (dT7_dVd * T9 + (T7 - 1.0) * dT9_dVd
+                        - T10 * dT8_dVd) / T8;
+               dT10_dVb = (dT7_dVb * T9 + (T7 - 1.0) * dT9_dVb
+                        - T10 * dT8_dVb) / T8;
+               Igcd = Igc * T10;
+               dIgcd_dVg = dIgc_dVg * T10 + Igc * dT10_dVg;
+               dIgcd_dVd = dIgc_dVd * T10 + Igc * dT10_dVd;
+               dIgcd_dVb = dIgc_dVb * T10 + Igc * dT10_dVb;
+  
 
               here->BSIM4Igcs = Igcs;
               here->BSIM4gIgcsg = dIgcs_dVg;
@@ -2273,15 +2314,30 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	  here->BSIM4cd = cdrain;
 
 
-          if (model->BSIM4tnoiMod == 0)
-          {   T0 = Abulk * Vdseff;
-              T1 = 12.0 * (Vgsteff - 0.5 * T0 + 1.0e-20);
-              T2 = Vdseff / T1;
-              T3 = T0 * T2;
-              here->BSIM4qinv = Coxeff * pParam->BSIM4weffCV * here->BSIM4nf
-                              * pParam->BSIM4leffCV
-			      * (Vgsteff - 0.5 * T0 + Abulk * T3); 
-	  }
+            if (model->BSIM4tnoiMod == 0)
+           {   Abulk = Abulk0 * pParam->BSIM4abulkCVfactor;
+               Vdsat = Vgsteff / Abulk;
+               T0 = Vdsat - Vds - DELTA_4;
+               T1 = sqrt(T0 * T0 + 4.0 * DELTA_4 * Vdsat);
+               if (T0 >= 0.0)
+                   Vdseff = Vdsat - 0.5 * (T0 + T1);
+               else
+               {   T3 = (DELTA_4 + DELTA_4) / (T1 - T0);
+                   T4 = 1.0 - T3;
+                   T5 = Vdsat * T3 / (T1 - T0);
+                   Vdseff = Vdsat * T4;
+               }
+               if (Vds == 0.0)
+                   Vdseff = 0.0;
+ 
+               T0 = Abulk * Vdseff;
+                T1 = 12.0 * (Vgsteff - 0.5 * T0 + 1.0e-20);
+                T2 = Vdseff / T1;
+                T3 = T0 * T2;
+                here->BSIM4qinv = Coxeff * pParam->BSIM4weffCV * here->BSIM4nf
+                                * pParam->BSIM4leffCV
+                               * (Vgsteff - 0.5 * T0 + Abulk * T3);
+           }
 
 	  /*
            *  BSIM4 C-V begins
@@ -2825,7 +2881,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	          here->BSIM4cbdb = Cbd;
 	      } 
 
-              /* New Charge-Thickness capMod (CTM) begins */
+              /* Charge-Thickness capMod (CTM) begins */
 	      else if (model->BSIM4capMod == 2)
 	      {   V3 = pParam->BSIM4vfbzb - Vgs_eff + VbseffCV - DELTA_3;
 		  if (pParam->BSIM4vfbzb <= 0.0)
@@ -4257,7 +4313,7 @@ line900:
                                    - gstots + FwdSum + gcssb + gbspsp + sxpart * ggts - gIstots);
            (*(here->BSIM4SPsPtr) -= gspr + gstot);
            (*(here->BSIM4SPbpPtr) -= gjbs + gstotb + Gmbs - gcsbb - gbspb - sxpart * ggtb
-				   - T1 * dsxpart_dVb) + gIstotb;
+				   - T1 * dsxpart_dVb + gIstotb);
 
            (*(here->BSIM4SspPtr) -= gspr - gstots);
            (*(here->BSIM4SsPtr) += gspr + gstot);

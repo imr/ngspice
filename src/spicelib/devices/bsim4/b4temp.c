@@ -1,10 +1,12 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.1.0, Released by Weidong Liu 10/11/2000 ****/
 
 /**********
  * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4temp.c of BSIM4.0.0.
+ * File: b4temp.c of BSIM4.1.0.
  * Authors: Weidong Liu, Xiaodong Jin, Kanyu M. Cao, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ *
+ * Modified by Weidong Liu, 10/11/2000.
  **********/
 
 #include "ngspice.h"
@@ -52,7 +54,7 @@ BSIM4instance *here;
 struct bsim4SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni;
 double T0, T1, T2, T3, T4, T5, T8, T9, Ldrn, Wdrn;
-double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
+double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;
 double dumPs, dumPd, dumAs, dumAd, PowWeffWr;
 double DMCGeff, DMCIeff, DMDGeff;
 double Nvtms, Nvtmd, SourceSatCurrent, DrainSatCurrent;
@@ -1465,7 +1467,7 @@ int Size_Not_Found;
               {   IFuid namarray[2];
                   namarray[0] = model->BSIM4modName;
                   namarray[1] = here->BSIM4name;
-                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4.0.0 parameter checking for %s in model %s", namarray);
+                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4.1.0 parameter checking for %s in model %s", namarray);
                   return(E_BADPARM);
               }
          } /* End instance */

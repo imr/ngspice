@@ -1,10 +1,12 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.1.0, Released by Weidong Liu 10/11/2000 ****/
 
 /**********
  * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4set.c of BSIM4.0.0.
+ * File: b4set.c of BSIM4.1.0.
  * Authors: Weidong Liu, Xiaodong Jin, Kanyu M. Cao, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ *
+ * Modified by Weidong Liu, 10/11/2000.
  **********/
 
 #include "ngspice.h"
@@ -37,6 +39,7 @@ BSIM4instance *here;
 int error;
 CKTnode *tmp;
 
+double tmp1, tmp2;
 
     /*  loop through all the BSIM4 device models */
     for( ; model != NULL; model = model->BSIM4nextModel )
@@ -144,7 +147,7 @@ CKTnode *tmp;
         }
 
         if (!model->BSIM4versionGiven) 
-            model->BSIM4version = "4.0.0";
+            model->BSIM4version = "4.1.0";
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4toxeGiven)

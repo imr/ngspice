@@ -1,10 +1,12 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.1.0, Released by Weidong Liu 10/11/2000 ****/
 
 /**********
  * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4check.c of BSIM4.0.0.
+ * File: b4check.c of BSIM4.1.0.
  * Authors: Weidong Liu, Kanyu M. Cao, Xiaodong Jin, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ *
+ * Modified by Weidong Liu, 10/11/2000.
  **********/
 
 #include "ngspice.h"
@@ -35,17 +37,18 @@ FILE *fplog;
         fprintf(fplog, "\n");
 	fprintf(fplog, "++++++++++ BSIM4 PARAMETER CHECKING BELOW ++++++++++\n");
 
-        if (strcmp(model->BSIM4version, "4.0.0") != 0)
-        {  fprintf(fplog, "Warning: This model is BSIM4.0.0; you specified a wrong version number.\n");
-           printf("Warning: This model is BSIM4.0.0; you specified a wrong version number.\n");
+        if (strcmp(model->BSIM4version, "4.1.0") != 0)
+        {  fprintf(fplog, "Warning: This model is BSIM4.1.0; you specified a wrong version number.\n");
+           printf("Warning: This model is BSIM4.1.0; you specified a wrong version number.\n");
         }
 	fprintf(fplog, "Model = %s\n", model->BSIM4modName);
 
 
         if ((here->BSIM4rgateMod == 2) || (here->BSIM4rgateMod == 3))
         {   if ((here->BSIM4trnqsMod == 1) || (here->BSIM4acnqsMod == 1))
-            fprintf(fplog, "Warning: You've selected both Rg and charge deficit NQS; select one only.\n");
-            printf("Warning: You've selected both Rg and charge deficit NQS; select one only.\n");
+             {   fprintf(fplog, "Warning: You've selected both Rg and charge deficit NQS; select one only.\n");
+                 printf("Warning: You've selected both Rg and charge deficit NQS; select one only.\n");
+             }
         }
 
 
@@ -207,11 +210,7 @@ FILE *fplog;
             printf("Fatal: Number of finger = %g is smaller than one.\n", here->BSIM4nf);
             Fatal_Flag = 1;
         }
-        if (here->BSIM4nf > 500.0)
-        {   here->BSIM4nf = 20.0;
-            fprintf(fplog, "Warning: Nf = %g is too large; reset to 20.0.\n", here->BSIM4nf);
-            printf("Warning: Nf = %g is too large; reset to 20.0.\n", here->BSIM4nf);
-        }
+        
 
         if (here->BSIM4l <= model->BSIM4xgl)
         {   fprintf(fplog, "Fatal: The parameter xgl must be smaller than Ldrawn.\n");

@@ -1,10 +1,12 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.1.0, Released by Weidong Liu 10/11/2000 ****/
 
 /**********
  * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4mdel.c of BSIM4.0.0.
+ * File: b4mdel.c of BSIM4.1.0.
  * Authors: Weidong Liu, Kanyu M. Cao, Xiaodong Jin, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ *
+ * Modified by Weidong Liu, 10/11/2000.
  **********/
 
 #include "ngspice.h"

@@ -1,10 +1,12 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.1.0, Released by Weidong Liu 10/11/2000 ****/
 
 /**********
  * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4noi.c of BSIM4.0.0.
+ * File: b4noi.c of BSIM4.1.0.
  * Authors: Weidong Liu, Xiaodong Jin, Kanyu M. Cao, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ *
+ * Modified by Weidong Liu, 10/11/2000.
  **********/
 
 #include "ngspice.h"
@@ -34,8 +36,7 @@ BSIM4instance *here;
 {
 struct bsim4SizeDependParam *pParam;
 double cd, esat, DelClm, EffFreq, N0, Nl;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9;
-double Ssi;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Ssi;
 
     pParam = here->pParam;
     cd = fabs(here->BSIM4cd);
@@ -84,11 +85,12 @@ double tempInoise;
 double noizDens[BSIM4NSRCS];
 double lnNdens[BSIM4NSRCS];
 
+double N0, Nl;
 double T0, T1, T2, T5, T10, T11;
-double Vds, Ssi, Swi;
+double Vds, n, ExpArg, Ssi, Swi;
 double tmp, gdpr, gspr, npart_theta, npart_beta, igsquare;
 
-int i;
+int error, i;
 
     /* define the names of the noise sources */
     static char *BSIM4nNames[BSIM4NSRCS] =
