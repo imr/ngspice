@@ -1,3 +1,9 @@
+2004-07-12 Stefan Jones <stefan.jones@multigig.com>
+
+	* src/tclspice.c:
+	New commands: plot_typename plot_defaultscale
+	Mod: spice_data can be passed the plot number
+	
 2004-07-07 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/tclspice.c:

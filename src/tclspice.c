@@ -151,6 +151,18 @@ do {\
 /*                          BLT and data routines                           */
 /****************************************************************************/
 
+/*helper function*/
+inline static struct plot * get_plot(int plot){
+  struct plot *pl;
+  pl = plot_list;
+  for(;0 < plot;plot--){
+    pl = pl->pl_next;
+    if(!pl) 
+      return (struct plot *)NULL;
+  }
+  return pl;
+}
+
 /*this holds the number of time points done (altered by spice)*/
 int steps_completed;
 /* number of bltvectors*/
@@ -182,10 +194,12 @@ static int spice_data TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   char buf[256];
   int i, type;
   char *name;
-  if (argc != 1) {
-    Tcl_SetResult(interp, "Wrong # args. spice::spice_data",TCL_STATIC);
+  if (argc > 2) {
+    Tcl_SetResult(interp, "Wrong # args. spice::spice_data ?plot?",
+        TCL_STATIC);
     return TCL_ERROR;
   }
+  if(argc == 1) {
   if(blt_vnum){
     Tcl_ResetResult(interp);
     for(i = 0; i < blt_vnum;i++){
@@ -204,6 +218,29 @@ static int spice_data TCL_CMDPROCARGS(clientData,interp,argc,argv) {
     }
     return TCL_OK;
   }else return TCL_ERROR;
+  } else {
+    struct plot *pl;
+    struct dvec *v;
+    if(!(pl = get_plot(atoi(argv[1])))){
+      Tcl_SetResult(interp, "Bad plot number", TCL_STATIC);
+      return TCL_ERROR;
+    }
+    for(v = pl->pl_dvecs;v;v = v->v_next) {
+      name = v->v_name;
+      if (substring("#branch", name))
+	type = SV_CURRENT;
+      else if (cieq(name, "time"))
+	type = SV_TIME;
+      else if (cieq(name, "frequency"))
+	type = SV_FREQUENCY;
+      else
+	type = SV_VOLTAGE;
+      sprintf(buf,"{%s %s} ",name,
+	      ft_typenames(type));
+      Tcl_AppendResult(interp, (char *)buf, TCL_STATIC);
+    }
+    return TCL_OK;
+  }
 }
 
 static int resetTriggers();
@@ -601,18 +638,6 @@ static int running TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 /*  only usefull if plots are saved   */
 /**************************************/
 
-/*helper function*/
-inline static struct plot * get_plot(int plot){
-  struct plot *pl;
-  pl = plot_list;
-  for(;0 < plot;plot--){
-    pl = pl->pl_next;
-    if(!pl) 
-      return (struct plot *)NULL;
-  }
-  return pl;
-}
-
 /*Outputs the names of all variables in the plot */
 static int plot_variables TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   struct plot *pl;
@@ -627,7 +652,7 @@ static int plot_variables TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   plot = atoi(argv[1]);
   
   if(!(pl = get_plot(plot))){
-    Tcl_SetResult(interp,"bad plot given",TCL_STATIC);
+    Tcl_SetResult(interp,"Bad plot given",TCL_STATIC);
     return TCL_ERROR;
   }
     
@@ -654,7 +679,7 @@ static int plot_get_value TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   index = atoi(argv[3]);
   
   if(!(pl = get_plot(plot))){
-    Tcl_SetResult(interp, "bad plot",TCL_STATIC);
+    Tcl_SetResult(interp, "Bad plot",TCL_STATIC);
     return TCL_ERROR;
   }
   for(v = pl->pl_dvecs;v;v = v->v_next)
@@ -663,7 +688,7 @@ static int plot_get_value TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 	Tcl_SetObjResult(interp,Tcl_NewDoubleObj((double) v->v_realdata[index]));
 	return TCL_OK;
       } else {
-	Tcl_SetResult(interp, "bad index",TCL_STATIC);
+	Tcl_SetResult(interp, "Bad index",TCL_STATIC);
 	return TCL_ERROR;
       }
     }
@@ -686,7 +711,7 @@ static int plot_datapoints TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   plot = atoi(argv[1]);
     
   if(!(pl = get_plot(plot))){
-    Tcl_SetResult(interp, "bad plot", TCL_STATIC);
+    Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
     return TCL_ERROR;
   }
 
@@ -709,7 +734,7 @@ static int plot_title TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   plot = atoi(argv[1]);
   
   if(!(pl = get_plot(plot))){
-    Tcl_SetResult(interp, "bad plot", TCL_STATIC);
+    Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
     return TCL_ERROR;
   }
   Tcl_SetObjResult(interp,Tcl_NewStringObj(pl->pl_title,-1));
@@ -728,7 +753,7 @@ static int plot_date TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   plot = atoi(argv[1]);
   
   if(!(pl = get_plot(plot))){
-    Tcl_SetResult(interp, "bad plot", TCL_STATIC);
+    Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
     return TCL_ERROR;
   }
   Tcl_SetObjResult(interp,Tcl_NewStringObj(pl->pl_date,-1));
@@ -746,10 +771,28 @@ static int plot_name TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   plot = atoi(argv[1]);
   
   if(!(pl = get_plot(plot))){
-    Tcl_SetResult(interp, "bad plot", TCL_STATIC);
+    Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
     return TCL_ERROR;
   }
   Tcl_SetObjResult(interp,Tcl_NewStringObj(pl->pl_name,-1));
+  return TCL_OK;
+}
+
+static int plot_typename TCL_CMDPROCARGS(clientData,interp,argc,argv) {
+  struct plot *pl;
+  int plot;
+  if (argc != 2) {
+    Tcl_SetResult(interp, "Wrong # args. spice::plot_typename plot",TCL_STATIC);
+    return TCL_ERROR;
+  }
+  
+  plot = atoi(argv[1]);
+  
+  if(!(pl = get_plot(plot))){
+    Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
+    return TCL_ERROR;
+  }
+  Tcl_SetObjResult(interp,Tcl_NewStringObj(pl->pl_typename,-1));
   return TCL_OK;
 }
 
@@ -769,12 +812,34 @@ static int plot_nvars TCL_CMDPROCARGS(clientData,interp,argc,argv){
   plot = atoi(argv[1]);
   
   if(!(pl = get_plot(plot))){
-    Tcl_SetResult(interp, "bad plot",TCL_STATIC);
+    Tcl_SetResult(interp, "Bad plot",TCL_STATIC);
     return TCL_ERROR;
   }
   for(v = pl->pl_dvecs;v;v = v->v_next)
     i++;
   Tcl_SetObjResult(interp,Tcl_NewIntObj((long) i));
+  return TCL_OK;
+}
+
+static int plot_defaultscale TCL_CMDPROCARGS(clientData,interp,argc,argv){
+  struct plot *pl;
+  int plot;
+  
+  if (argc != 2) {
+    Tcl_SetResult(interp, "Wrong # args. spice::plot_defaultscale plot",
+        TCL_STATIC);
+    return TCL_ERROR;
+  }
+  
+  plot = atoi(argv[1]);
+  
+  if(!(pl = get_plot(plot))){
+    Tcl_SetResult(interp, "Bad plot",TCL_STATIC);
+    return TCL_ERROR;
+  }
+
+  if(pl->pl_scale)
+    Tcl_SetObjResult(interp,Tcl_NewStringObj(pl->pl_scale->v_name,-1));
   return TCL_OK;
 }
 
@@ -802,7 +867,7 @@ static int plot_getvector TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   plot = atoi(argv[1]);
   
   if(!(pl = get_plot(plot))){
-    Tcl_SetResult(interp, "bad plot",TCL_STATIC);
+    Tcl_SetResult(interp, "Bad plot",TCL_STATIC);
     return TCL_ERROR;
   }
 
@@ -1982,7 +2047,9 @@ bot:
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_title", plot_title, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_date", plot_date, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_name", plot_name, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_typename", plot_typename, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_nvars", plot_nvars, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_defaultscale", plot_defaultscale, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_getvector", plot_getvector, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 
 	Tcl_CreateCommand(interp, TCLSPICE_prefix "registerTrigger", registerTrigger, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
