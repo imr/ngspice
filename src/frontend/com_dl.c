@@ -37,6 +37,8 @@ void com_xaltermod(wordlist *wl){
   bool found;
   char *dev, *p;
   char *param;
+  int id;
+  int numParams =0;
 
   if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
@@ -103,9 +105,6 @@ void com_xaltermod(wordlist *wl){
 
   device = ft_sim->devices[typecode];
   found = FALSE;
-
-  int id;
-  int numParams =0;
 
   for(ww = words;ww;ww = ww->wl_next)
     numParams ++;

@@ -1,5 +1,8 @@
 2004-06-22 Stefan Jones <stefan.jones@multigig.com>
 
+	* src/frontend/com_dl.c:
+	Moved variable declaration to beginning of function
+
 	* configure.in:
 	Change to version 17
 
