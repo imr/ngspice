@@ -1,3 +1,12 @@
+2003-08-30 Stefan Jones <stefan.jones@multigig.com>
+
+	* configure.in:
+	Change version to 0.2.14
+
+	* src/xspice/enh/enhtrans.c src/xspice/mif/mif_inp2.c:
+	Fixed version from Stuart Brorson <sdb@cloud9.net>, 
+	http://www.brorson.com/gEDA/ngspice/
+	
 2003-08-28 Stefan Jones <stefan.jones@multigig.com>
 	
 	* src/spicelib/parser/inpgtok.c:
