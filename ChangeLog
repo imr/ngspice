@@ -9,6 +9,12 @@
 	* src/spicelib/devices/bjt2/*, DEVICES, Changelog: Added bjt2 code sent
 	by Dietmar Warning, containing some fixes over the original code and
 	a new feature: temperature correction of re,rb,rc. 
+	
+	* src/frontend/numparam/*, src/frontend/Makefile.am, src/Makefile.am,
+	  configure.in, acconfig.h, src/frontend/subckt.c: Added numparam 
+	  library contributed by Georg Post. This library let users to
+	  input parametric netlists in ngspice. Look at readme in library
+	  directory. 
 
 2003-09-25  Paolo Nenzi <p.nenzi@ieee.org>
 
