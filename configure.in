@@ -569,6 +569,8 @@ tests/Makefile			\
 tests/filters/Makefile		\
 tests/polezero/Makefile		\
 tests/resistance/Makefile	\
+tests/bsim1/Makefile		\
+tests/bsim2/Makefile		\
 tests/bsim3soipd/Makefile	\
 tests/bsim3soifd/Makefile	\
 tests/bsim3soidd/Makefile	\
