@@ -171,7 +171,18 @@ BJT2  - Bipolar Junction Trasistor
 ***************************************************************************
 		     
 JFET  - Junction Field Effect transistor
-      Initial Release
+        Initial Release.
+	Ver: 	N/A
+	Class:	J
+	Level:	1 
+	Status:
+	
+	This is the original spice JFET model.
+	
+	Enhancements over the original model:
+	
+	- Parallel multiplier
+	- Instance temperature as difference for circuit temperature
         
 JFET2 - Jfet PS model
       Initial release. TO BE TESTED

@@ -4,7 +4,6 @@ Author: 1987 Gary W. Ng
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "jfetdefs.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"
@@ -24,13 +23,8 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 int
-JFETnoise (mode, operation, genmodel, ckt, data, OnDens)
-    int mode;
-    int operation;
-    GENmodel *genmodel;
-    CKTcircuit *ckt;
-    Ndata *data;
-    double *OnDens;
+JFETnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, 
+           double *OnDens)
 {
     JFETmodel *firstModel = (JFETmodel *) genmodel;
     JFETmodel *model;
@@ -117,21 +111,22 @@ if (!data->namelist) return(E_NOMEM);
 		case N_DENS:
 		    NevalSrc(&noizDens[JFETRDNOIZ],&lnNdens[JFETRDNOIZ],
 				 ckt,THERMNOISE,inst->JFETdrainPrimeNode,inst->JFETdrainNode,
-				 model->JFETdrainConduct * inst->JFETarea);
+				 model->JFETdrainConduct * inst->JFETarea * inst->JFETm);
 
 		    NevalSrc(&noizDens[JFETRSNOIZ],&lnNdens[JFETRSNOIZ],
 				 ckt,THERMNOISE,inst->JFETsourcePrimeNode,
-				 inst->JFETsourceNode,model->JFETsourceConduct*inst->JFETarea);
+				 inst->JFETsourceNode,model->JFETsourceConduct 
+                                 * inst->JFETarea * inst->JFETm);
 
 		    NevalSrc(&noizDens[JFETIDNOIZ],&lnNdens[JFETIDNOIZ],
 				 ckt,THERMNOISE,inst->JFETdrainPrimeNode,
 				 inst->JFETsourcePrimeNode,
-				 (2.0/3.0 * fabs(*(ckt->CKTstate0 + inst->JFETgm))));
+				 (2.0/3.0 * inst->JFETm * fabs(*(ckt->CKTstate0 + inst->JFETgm))));
 
 		    NevalSrc(&noizDens[JFETFLNOIZ],(double*)NULL,ckt,
 				 N_GAIN,inst->JFETdrainPrimeNode,
 				 inst->JFETsourcePrimeNode, (double)0.0);
-		    noizDens[JFETFLNOIZ] *= model->JFETfNcoef * 
+		    noizDens[JFETFLNOIZ] *= inst->JFETm * model->JFETfNcoef * 
 				 exp(model->JFETfNexp *
 				 log(MAX(fabs(*(ckt->CKTstate0 + inst->JFETcd)),N_MINLOG))) /
 				 data->freq;

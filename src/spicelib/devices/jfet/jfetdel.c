@@ -6,17 +6,13 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "jfetdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-JFETdelete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
+JFETdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
     JFETmodel *model = (JFETmodel*)inModel;
     JFETinstance **fast = (JFETinstance**)inst;

@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "jfetdefs.h"
 #include "sperror.h"
@@ -14,10 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-JFETtrunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+JFETtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
     JFETmodel *model = (JFETmodel*)inModel;
     JFETinstance *here;

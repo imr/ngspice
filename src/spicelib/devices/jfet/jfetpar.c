@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "jfetdefs.h"
@@ -16,11 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-JFETparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+JFETparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     JFETinstance *here = (JFETinstance *)inst;
     switch(param) {
@@ -28,9 +23,17 @@ JFETparam(param,value,inst,select)
             here->JFETtemp = value->rValue+CONSTCtoK;
             here->JFETtempGiven = TRUE;
             break;
+        case JFET_DTEMP:
+            here->JFETdtemp = value->rValue;
+            here->JFETdtempGiven = TRUE;
+            break;
         case JFET_AREA:
             here->JFETarea = value->rValue;
             here->JFETareaGiven = TRUE;
+            break;
+       case JFET_M:
+            here->JFETm = value->rValue;
+            here->JFETmGiven = TRUE;
             break;
         case JFET_IC_VDS:
             here->JFETicVDS = value->rValue;

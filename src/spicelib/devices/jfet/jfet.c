@@ -7,7 +7,6 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "devdefs.h"
 #include "jfetdefs.h"
@@ -17,9 +16,11 @@ IFparm JFETpTable[] = { /* device parameters */
  IOPU("off",         JFET_OFF,            IF_FLAG,   "Device initially off"),
  IOPAU("ic",          JFET_IC,             IF_REALVEC,"Initial VDS,VGS vector"),
  IOPU("area",        JFET_AREA,           IF_REAL,   "Area factor"),
+ IOPU("m",           JFET_M,              IF_REAL,   "Parallel multiplier"),
  IOPAU("ic-vds",      JFET_IC_VDS,         IF_REAL,   "Initial D-S voltage"),
  IOPAU("ic-vgs",      JFET_IC_VGS,         IF_REAL,   "Initial G-S volrage"),
  IOPU("temp",        JFET_TEMP,           IF_REAL,   "Instance temperature"),
+ IOPU("dtemp",        JFET_DTEMP,           IF_REAL,   "Instance temperature difference"),
  OPU("drain-node",   JFET_DRAINNODE,      IF_INTEGER,"Number of drain node"),
  OPU("gate-node",    JFET_GATENODE,       IF_INTEGER,"Number of gate node"),
  OPU("source-node",  JFET_SOURCENODE,     IF_INTEGER,"Number of source node"),

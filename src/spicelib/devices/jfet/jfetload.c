@@ -8,7 +8,6 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "jfetdefs.h"
 #include "const.h"
@@ -18,9 +17,7 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 #include "suffix.h"
 
 int
-JFETload(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+JFETload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the 
          * sparse matrix previously provided 
          */
@@ -77,6 +74,8 @@ JFETload(inModel,ckt)
     int error;
     
     double arg, vt_temp;
+
+    double m;
 
     /*  loop through all the models */
     for( ; model != NULL; model = model->JFETnextModel ) {
@@ -424,32 +423,35 @@ JFETload(inModel,ckt)
              *    load current vector
              */
 load:
+
+            m = here->JFETm;
+
             ceqgd=model->JFETtype*(cgd-ggd*vgd);
             ceqgs=model->JFETtype*((cg-cgd)-ggs*vgs);
             cdreq=model->JFETtype*((cd+cgd)-gds*vds-gm*vgs);
-            *(ckt->CKTrhs + here->JFETgateNode) += (-ceqgs-ceqgd);
+            *(ckt->CKTrhs + here->JFETgateNode) += m * (-ceqgs-ceqgd);
             *(ckt->CKTrhs + here->JFETdrainPrimeNode) +=
-                    (-cdreq+ceqgd);
+                    m * (-cdreq+ceqgd);
             *(ckt->CKTrhs + here->JFETsourcePrimeNode) +=
-                    (cdreq+ceqgs);
+                    m * (cdreq+ceqgs);
             /*
              *    load y matrix 
              */
-            *(here->JFETdrainDrainPrimePtr) += (-gdpr);
-            *(here->JFETgateDrainPrimePtr) += (-ggd);
-            *(here->JFETgateSourcePrimePtr) += (-ggs);
-            *(here->JFETsourceSourcePrimePtr) += (-gspr);
-            *(here->JFETdrainPrimeDrainPtr) += (-gdpr);
-            *(here->JFETdrainPrimeGatePtr) += (gm-ggd);
-            *(here->JFETdrainPrimeSourcePrimePtr) += (-gds-gm);
-            *(here->JFETsourcePrimeGatePtr) += (-ggs-gm);
-            *(here->JFETsourcePrimeSourcePtr) += (-gspr);
-            *(here->JFETsourcePrimeDrainPrimePtr) += (-gds);
-            *(here->JFETdrainDrainPtr) += (gdpr);
-            *(here->JFETgateGatePtr) += (ggd+ggs);
-            *(here->JFETsourceSourcePtr) += (gspr);
-            *(here->JFETdrainPrimeDrainPrimePtr) += (gdpr+gds+ggd);
-            *(here->JFETsourcePrimeSourcePrimePtr) += (gspr+gds+gm+ggs);
+            *(here->JFETdrainDrainPrimePtr)        += m * (-gdpr);
+            *(here->JFETgateDrainPrimePtr)         += m * (-ggd);
+            *(here->JFETgateSourcePrimePtr)        += m * (-ggs);
+            *(here->JFETsourceSourcePrimePtr)      += m * (-gspr);
+            *(here->JFETdrainPrimeDrainPtr)        += m * (-gdpr);
+            *(here->JFETdrainPrimeGatePtr)         += m * (gm-ggd);
+            *(here->JFETdrainPrimeSourcePrimePtr)  += m * (-gds-gm);
+            *(here->JFETsourcePrimeGatePtr)        += m * (-ggs-gm);
+            *(here->JFETsourcePrimeSourcePtr)      += m * (-gspr);
+            *(here->JFETsourcePrimeDrainPrimePtr)  += m * (-gds);
+            *(here->JFETdrainDrainPtr)             += m * (gdpr);
+            *(here->JFETgateGatePtr)               += m * (ggd+ggs);
+            *(here->JFETsourceSourcePtr)           += m * (gspr);
+            *(here->JFETdrainPrimeDrainPrimePtr)   += m * (gdpr+gds+ggd);
+            *(here->JFETsourcePrimeSourcePrimePtr) += m * (gspr+gds+gm+ggs);
         }
     }
     return(OK);

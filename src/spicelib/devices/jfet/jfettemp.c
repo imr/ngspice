@@ -7,7 +7,6 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "jfetdefs.h"
@@ -16,9 +15,7 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 #include "suffix.h"
 
 int
-JFETtemp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+JFETtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* Pre-process the model parameters after a possible change
          */
 {
@@ -84,8 +81,11 @@ JFETtemp(inModel,ckt)
                 here=here->JFETnextInstance) {
 	    if (here->JFETowner != ARCHme) continue;
 
+            if(!(here->JFETdtempGiven)) {
+                here->JFETdtemp = 0.0;
+            }
             if(!(here->JFETtempGiven)) {
-                here->JFETtemp = ckt->CKTtemp;
+                here->JFETtemp = ckt->CKTtemp + here->JFETdtemp;
             }
             vt = here->JFETtemp * CONSTKoverQ;
             fact2 = here->JFETtemp/REFTEMP;

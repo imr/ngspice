@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "jfetdefs.h"
 #include "sperror.h"
@@ -14,9 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-JFETacLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+JFETacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     JFETmodel *model = (JFETmodel*)inModel;
     JFETinstance *here;
@@ -28,6 +25,8 @@ JFETacLoad(inModel,ckt)
     double xgs;
     double ggd;
     double xgd;
+
+    double m;
 
     for( ; model != NULL; model = model->JFETnextModel ) {
         
@@ -43,28 +42,31 @@ JFETacLoad(inModel,ckt)
             xgs= *(ckt->CKTstate0 + here->JFETqgs) * ckt->CKTomega ;
             ggd= *(ckt->CKTstate0 + here->JFETggd) ;
             xgd= *(ckt->CKTstate0 + here->JFETqgd) * ckt->CKTomega ;
-            *(here->JFETdrainDrainPtr ) += gdpr;
-            *(here->JFETgateGatePtr ) += ggd+ggs;
-            *(here->JFETgateGatePtr +1) += xgd+xgs;
-            *(here->JFETsourceSourcePtr ) += gspr;
-            *(here->JFETdrainPrimeDrainPrimePtr ) += gdpr+gds+ggd;
-            *(here->JFETdrainPrimeDrainPrimePtr +1) += xgd;
-            *(here->JFETsourcePrimeSourcePrimePtr ) += gspr+gds+gm+ggs;
-            *(here->JFETsourcePrimeSourcePrimePtr +1) += xgs;
-            *(here->JFETdrainDrainPrimePtr ) -= gdpr;
-            *(here->JFETgateDrainPrimePtr ) -= ggd;
-            *(here->JFETgateDrainPrimePtr +1) -= xgd;
-            *(here->JFETgateSourcePrimePtr ) -= ggs;
-            *(here->JFETgateSourcePrimePtr +1) -= xgs;
-            *(here->JFETsourceSourcePrimePtr ) -= gspr;
-            *(here->JFETdrainPrimeDrainPtr ) -= gdpr;
-            *(here->JFETdrainPrimeGatePtr ) += (-ggd+gm);
-            *(here->JFETdrainPrimeGatePtr +1) -= xgd;
-            *(here->JFETdrainPrimeSourcePrimePtr ) += (-gds-gm);
-            *(here->JFETsourcePrimeGatePtr ) += (-ggs-gm);
-            *(here->JFETsourcePrimeGatePtr +1) -= xgs;
-            *(here->JFETsourcePrimeSourcePtr ) -= gspr;
-            *(here->JFETsourcePrimeDrainPrimePtr ) -= gds;
+            
+            m = here->JFETm;
+
+            *(here->JFETdrainDrainPtr )               += m * (gdpr);
+            *(here->JFETgateGatePtr )                 += m * (ggd+ggs);
+            *(here->JFETgateGatePtr +1)               += m * (xgd+xgs);
+            *(here->JFETsourceSourcePtr )             += m * (gspr);
+            *(here->JFETdrainPrimeDrainPrimePtr )     += m * (gdpr+gds+ggd);
+            *(here->JFETdrainPrimeDrainPrimePtr +1)   += m * (xgd);
+            *(here->JFETsourcePrimeSourcePrimePtr )   += m * (gspr+gds+gm+ggs);
+            *(here->JFETsourcePrimeSourcePrimePtr +1) += m * (xgs);
+            *(here->JFETdrainDrainPrimePtr )          -= m * (gdpr);
+            *(here->JFETgateDrainPrimePtr )           -= m * (ggd);
+            *(here->JFETgateDrainPrimePtr +1)         -= m * (xgd);
+            *(here->JFETgateSourcePrimePtr )          -= m * (ggs);
+            *(here->JFETgateSourcePrimePtr +1)        -= m * (xgs);
+            *(here->JFETsourceSourcePrimePtr )        -= m * (gspr);
+            *(here->JFETdrainPrimeDrainPtr )          -= m * (gdpr);
+            *(here->JFETdrainPrimeGatePtr )           += m * (-ggd+gm);
+            *(here->JFETdrainPrimeGatePtr +1)         -= m * (xgd);
+            *(here->JFETdrainPrimeSourcePrimePtr )    += m * (-gds-gm);
+            *(here->JFETsourcePrimeGatePtr )          += m * (-ggs-gm);
+            *(here->JFETsourcePrimeGatePtr +1)        -= m * (xgs);
+            *(here->JFETsourcePrimeSourcePtr )        -= m * (gspr);
+            *(here->JFETsourcePrimeDrainPrimePtr )    -= m * (gds);
 
         }
     }

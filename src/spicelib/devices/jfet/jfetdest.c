@@ -6,14 +6,12 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "jfetdefs.h"
 #include "suffix.h"
 
 
 void
-JFETdestroy(inModel)
-    GENmodel **inModel;
+JFETdestroy(GENmodel **inModel)
 {
     JFETmodel **model = (JFETmodel**)inModel;
     JFETinstance *here;

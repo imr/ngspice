@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "jfetdefs.h"
 #include "sperror.h"
@@ -14,9 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-JFETgetic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+JFETgetic(GENmodel *inModel, CKTcircuit *ckt)
 {
     JFETmodel *model = (JFETmodel*)inModel;
     JFETinstance *here;

@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "jfetdefs.h"
@@ -15,10 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-JFETmParam(param,value,inModels)
-    int param;
-    IFvalue *value;
-    GENmodel *inModels;
+JFETmParam(int param, IFvalue *value, GENmodel *inModels)
 {
     JFETmodel *model = (JFETmodel*)inModels;
     switch(param) {

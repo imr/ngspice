@@ -9,7 +9,6 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "cktdefs.h"
@@ -21,11 +20,7 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 
 /*ARGSUSED*/
 int
-JFETmAsk(ckt,inModel,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inModel;
-    int which;
-    IFvalue *value;
+JFETmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     JFETmodel *model = (JFETmodel*)inModel;
     switch(which) {

@@ -1,3 +1,13 @@
+2003-12-26  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelibe/devices/jfet/*: Added parallel multiplier and
+	  "dtemp" parameter.
+	
+	* DEVICES: Updated jfet status
+	
+	* tests/jfet, tests/jfet/jfet_vds-vgs.cir: added jfet directory 
+	  and one netlist.
+
 2003-12-24  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/maths/cmaths/cmath4.c: Applied

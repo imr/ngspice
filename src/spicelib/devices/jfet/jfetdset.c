@@ -4,7 +4,6 @@ Author: 1988 Jaijeet S Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "distodef.h"
 #include "cktdefs.h"
 #include "jfetdefs.h"
@@ -15,9 +14,7 @@ Author: 1988 Jaijeet S Roychowdhury
 #include "suffix.h"
 
 int
-JFETdSetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+JFETdSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the 
          * sparse matrix previously provided 
          */
@@ -81,10 +78,10 @@ JFETdSetup(inModel,ckt)
             /*
              *  dc model parameters 
              */
-            beta = model->JFETbeta * here->JFETarea;
-            gdpr=model->JFETdrainConduct*here->JFETarea;
-            gspr=model->JFETsourceConduct*here->JFETarea;
-            csat=here->JFETtSatCur*here->JFETarea;
+            beta = model->JFETbeta * here->JFETarea * here->JFETm;
+            gdpr=model->JFETdrainConduct*here->JFETarea * here->JFETm;
+            gspr=model->JFETsourceConduct*here->JFETarea * here-> JFETm;
+            csat=here->JFETtSatCur*here->JFETarea * here-> JFETm;
             /*
              *    initialization
              */
@@ -189,8 +186,8 @@ JFETdSetup(inModel,ckt)
                 /* 
                  *    charge storage elements 
                  */
-                czgs=here->JFETtCGS*here->JFETarea;
-                czgd=here->JFETtCGD*here->JFETarea;
+                czgs=here->JFETtCGS*here->JFETarea * here->JFETm;
+                czgd=here->JFETtCGD*here->JFETarea * here->JFETm;
                 twop=here->JFETtGatePot+here->JFETtGatePot;
                 fcpb2=here->JFETcorDepCap*here->JFETcorDepCap;
                 czgsf2=czgs/model->JFETf2;

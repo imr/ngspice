@@ -8,7 +8,6 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "jfetdefs.h"
@@ -17,11 +16,7 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 #include "suffix.h"
 
 int
-JFETsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the diode structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -98,6 +93,9 @@ JFETsetup(matrix,inModel,ckt,states)
             
             if(!here->JFETareaGiven) {
                 here->JFETarea = 1;
+            }
+            if(!here->JFETmGiven) {
+                here->JFETm = 1;
             }
             here->JFETstate = *states;
             *states += 13;
@@ -177,9 +175,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-JFETunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+JFETunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     JFETmodel *model;
     JFETinstance *here;

@@ -127,15 +127,19 @@ typedef struct sJFETinstance {
 
     unsigned JFEToff :1;            /* 'off' flag for jfet */
     unsigned JFETareaGiven  : 1;    /* flag to indicate area was specified */
+    unsigned JFETmGiven     : 1;    /* flag to indicate parallel multiplier given */
     unsigned JFETicVDSGiven : 1;    /* initial condition given flag for V D-S*/
     unsigned JFETicVGSGiven : 1;    /* initial condition given flag for V G-S*/
     unsigned JFETtempGiven  : 1;    /* flag to indicate instance temp given */
+    unsigned JFETdtempGiven : 1;    /* flag to indicate instance dtemp given */
 
 
     double JFETarea;    /* area factor for the jfet */
+    double JFETm;       /* Parallel multiplier */
     double JFETicVDS;   /* initial condition voltage D-S*/
     double JFETicVGS;   /* initial condition voltage G-S*/
     double JFETtemp;    /* operating temperature */
+    double JFETdtemp;   /* instance temperature difference */
     double JFETtSatCur; /* temperature adjusted saturation current */
     double JFETtGatePot;    /* temperature adjusted gate potential */
     double JFETtCGS;    /* temperature corrected G-S capacitance */
@@ -230,6 +234,8 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
 #define JFET_IC 4
 #define JFET_OFF 5
 #define JFET_TEMP 6
+#define JFET_DTEMP 7
+#define JFET_M 8
 
 /* model parameters */
 #define JFET_MOD_VTO 101
