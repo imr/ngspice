@@ -20,7 +20,10 @@ RES - Resistor
       This is a modified version of the spice3 resistance model. This
       model supports different ac and dc values (ac=...). This changes
       are introduced by Serban Popescu. This device needs more
-      testing.  TO BE TESTED AND IMPROVED.
+      testing.
+      
+      *)Rework 11: The code has been modified to reflect spice parsing
+        standard. 
       
                      
 		     **************************************
