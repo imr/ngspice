@@ -30,7 +30,7 @@ Operating point information:
  device           r2        r1
  model             R         R
 resistance     5e+03     5e+03
-        ac   1.5e+04     5e+03
+        ac   1.5e+04         0
          i    0.0001    0.0001
          p     5e-05     5e-05
 
