@@ -219,14 +219,28 @@ MOS2  - Level 2 MOS model
       Ver:    N/A
       Class:  M
       Level:  2
-      Status: TO BE TESTED 
+      Status: 
+      
+      This is the so-called  Grove-Frohman model. 
+      
+      Enhancements over the original model:
+      
+      - Parallel multiplier
+      - Temperature difference from circuit temperature
+
 
 MOS3  - Level 3 MOS model
       Initial Release.
       Ver:    N/A
       Class:  M
       Level:  3
-      Status: TO BE TESTED
+      Status:  
+      
+      Enhancements over the original model:
+      
+      - Parallel multiplier
+      - Temperature difference from circuit temperature
+      
 
 MOS6  - Level 6 MOS model
       Initial Release.
@@ -249,7 +263,19 @@ BSIM1 - BSIM model level 1
       Ver:    N/A
       Class:  M
       Level:  4
-      Status: TO BE TESTED
+      Status: 
+      
+      Enhancements over the original model:
+      
+      - Parallel multiplier
+      - Noise analysis
+      
+      BUGS:
+      
+      Distortion analysis probably does not 
+      works with "parallel" devices. Equations
+      are too intricate to deal with. Any one
+      has ideas on the subject ?
 
 
 BSIM2 - BSIM model level 2
@@ -257,7 +283,7 @@ BSIM2 - BSIM model level 2
       Ver:    N/A
       Class:  M
       Level:  5
-      Status: TO BE TESTED
+      Status: TO BE TESTED 
 
 
 BSIM3 - BSIM model level 3
