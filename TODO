@@ -16,6 +16,8 @@ Note: different symantics!
 Write a asprintf() replacement for systems that don't have it
 available.
 
+Prefix all functions in the spice library with spice_*.
+
 
 Usability issues
 ------------------
@@ -31,21 +33,56 @@ most appealing.
 Refactorings
 ------------
 
-Make devices dynamically loadable.  Perhaps use framework from glib
-(http://developer.gnome.org/doc/API/glib/index.html).
-
 Separate out circuit builder from the analysis code and put it in the
 devices directory (rename devices directory to simbuilder at some
 point). [PARTIAL]
 
-Separate ngspice and nutmeg; i.e., no more SIMULATOR define.  Dispose
-of nutmeg all together once the devices are plugins.
+Netlist parsing.  The circuit directory currrently has definitions for
+parsing one model line per device.  Get this generalized into a
+structure that codifies the changes between the devices.  At a later
+stage, distribute the structure into the devices directories.  The
+generic parser remains in the spice library.
+
+Separate ngspice and nutmeg; i.e., no more SIMULATOR define.  ngspice
+should probably only contain the batch processor.  nutmeg would have
+the complete frontend.
 
 Integrate bsim3, bsim3v1, bsim3v2 to use a single codebase instead of
-three only slighty differing implementations.
+three only slighty differing implementations.  This also cuts down
+compilation time.
 
-Separate frontend commands from supporting code.  Command files
-start with com_*. [PARTIAL]
+All frontend commands can now be found in the frontend directory.
+Move frontend helper functions into frontend directory as well.
+Not all files that define commands, start with com_*; fix that.
+
+Make devices dynamically loadable.  Perhaps use framework from glib
+(http://developer.gnome.org/doc/API/glib/index.html).  As a first
+step, replace everywhere in the code the following snippet
+====================================================================
+  int i;
+
+  for (i = 0; i < DEVmaxnum; i++) {
+      ...
+      DEVices[i].xxx ...;
+      ...
+  }
+====================================================================
+by
+====================================================================
+  SPICEdev **dev;
+
+  for (dev = first_device(); dev != NULL; dev = next_device(dev)) {
+      ...
+      *dev->xxx ...;
+      ...
+  }
+====================================================================
+Note: the double indirection is currently necessary.  Once we get a
+linked list implementation, we can do a global search and replace on
+
+  *dev => dev
+
+And let the compiler find the rest of the type mismatches.
 
 
 Testability
@@ -71,7 +108,7 @@ Documentation
 
 Update ARCHITECTURE to contain a high level overview of spice.
 
-Convert ngspice.texi further to texinfo format.
+Convert ngspice.texi further to texinfo format. [PARTIAL]
 
 Distribute devices documentation into the devices tree.  This makes it
 easier for developers to update documentation in concert with code.
