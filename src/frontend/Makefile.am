@@ -49,8 +49,6 @@ libfte_a_SOURCES = \
 	dimens.h	\
 	display.c	\
 	display.h	\
-	doplot.c	\
-	doplot.h	\
 	dotcards.c	\
 	dotcards.h	\
 	error.c		\
