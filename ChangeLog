@@ -2,6 +2,10 @@
 
 	*   src/spicelib/devices/bsim4: removed uninitialized variables in model
 	    files.
+	
+	*   src/spicelib/analysis/dctrcurv.c: Dietmar Warning
+	    <warning@danalyse.de> has changed the way the lst point in a dc
+	    sweep is computed. This new scheme is more accurate.    
 	  
 
 2005-02-28  Paolo Nenzi <p.nenzi@ieee.org>
