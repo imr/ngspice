@@ -1,3 +1,8 @@
+2005-04-06  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/frontend/subckt.h: Since inp_numnodes has been declared static
+	    the prototype has been removed.
+
 2005-04-04  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/frontend/subckt.c: Applied patch from Steven Borley
