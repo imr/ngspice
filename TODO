@@ -13,6 +13,8 @@ Fix all compiler warnings
 Remove smktemp() in favor of tmpfile() or other ANSI C equivalent;
 Note: different symantics!
 
+Write a asprintf() replacement for systems that don't have it
+available.
 
 
 Usability issues
@@ -39,11 +41,24 @@ Integrate bsim3, bsim3v1, bsim3v2 to use a single codebase instead of
 three only slighty differing implementations
 
 Separate frontend commands from supporting code.  Command files
-start with com_*.   Arno is working on this.
+start with com_*. [PARTIAL]
 
 Move src/devices/disto into src/maths/partialderiv.  Partial
 derivatives are math functions and should be classified under that
 directory.
 
 Refactor src/circuit/inp2dot.c so that the parser calls subroutines
-for each possible dotcard.
+for each possible dotcard. [PARTIAL]
+
+
+Testability
+===========
+
+Add tests for all functions in the complex library in
+src/maths/cmaths.
+
+Add tests for all functions in the sparse matrix library in
+src/maths/sparse.
+
+Add tests for all functions in the polynomial library in
+src/maths/poly.

@@ -1,5 +1,7 @@
 2000-05-30  Arno W. Peters  <A.W.Peters@ieee.org>
 
+	* TODO: Updated.
+
 	* src/maths/cmaths/Makefile.am, src/maths/cmaths/test_cx_mag.c,
 	src/maths/cmaths/test_cx_j.c: Added first testcases for complex
 	math library.
