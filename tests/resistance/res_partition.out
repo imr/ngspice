@@ -1,3 +1,7 @@
+Error: no data saved for A.C. Small signal analysis; analysis not run
+doAnalyses: not found
+
+run simulation(s) aborted
 
 Circuit: * Resistive partition with different ratios for AC/DC (Print V(2))
 

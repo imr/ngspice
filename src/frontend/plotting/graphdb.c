@@ -26,18 +26,17 @@ GRAPH *currentgraph;
 
 /* linked list of graphs */
 typedef struct listgraph {
-      /* we use GRAPH here instead of a pointer to save a calloc */
+      /* we use GRAPH here instead of a pointer to save a tmalloc */
     GRAPH graph;
     struct listgraph *next;
 } LISTGRAPH;
-#define NEWLISTGRAPH (LISTGRAPH *) calloc(1, sizeof(LISTGRAPH))
+#define NEWLISTGRAPH (LISTGRAPH *) tmalloc(sizeof(LISTGRAPH))
 
 #define NUMGBUCKETS 16
 
 typedef struct gbucket {
     LISTGRAPH *list;
 } GBUCKET;
-/* #define NEWGBUCKET (GBUCKET *) calloc(1, sizeof(GBUCKET)) */
 
 static GBUCKET GBucket[NUMGBUCKETS];
 
@@ -122,7 +121,7 @@ GRAPH *CopyGraph(GRAPH *graph)
     /* copy dvecs */
     ret->plotdata = NULL;
     for (link = graph->plotdata; link; link = link->next) {
-      newlink = (struct dveclist *) calloc(1, sizeof(struct dveclist));
+      newlink = (struct dveclist *) tmalloc(sizeof(struct dveclist));
       newlink->next = ret->plotdata;
       newlink->vector = vec_copy(link->vector);
       /* vec_copy doesn't set v_color or v_linestyle */
@@ -176,8 +175,8 @@ DestroyGraph(int id)
         k=list->graph.keyed;
         while (k) {
           nextk = k->next;
-          free(k->text);
-          free(k);
+          tfree(k->text);
+          tfree(k);
           k = nextk;
         }
 
@@ -191,18 +190,18 @@ DestroyGraph(int id)
               } else {
                 tfree(d->vector->v_compdata);
               }
-          free(d->vector);
-          free(d);
+          tfree(d->vector);
+          tfree(d);
           d = nextd;
         }
 
-        free(list->graph.commandline);
-        free(list->graph.plotname);
+        tfree(list->graph.commandline);
+        tfree(list->graph.plotname);
 
         /* If device dependent space allocated, free it. */
         if (list->graph.devdep)
-          free(list->graph.devdep);
-        free(list);
+          tfree(list->graph.devdep);
+        tfree(list);
 
         return(1);
       }
@@ -228,7 +227,7 @@ FreeGraphs(void)
       while (list) {
         deadl = list;
         list = list->next;
-        free(deadl);
+        tfree(deadl);
       }
     }
 
@@ -247,7 +246,7 @@ typedef struct gcstack {
     struct gcstack *next;
 } GCSTACK;
 GCSTACK *gcstacktop;
-#define NEWGCSTACK (GCSTACK *) calloc(1, sizeof(GCSTACK))
+#define NEWGCSTACK (GCSTACK *) tmalloc(sizeof(GCSTACK))
 
 /* note: This Push and Pop has tricky semantics.
     Push(graph) will push the currentgraph onto the stack
@@ -280,6 +279,5 @@ PopGraphContext(void)
     currentgraph = gcstacktop->pgraph;
     dead = gcstacktop;
     gcstacktop = gcstacktop->next;
-    free(dead);
-
+    tfree(dead);
 }

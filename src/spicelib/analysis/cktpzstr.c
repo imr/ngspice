@@ -175,7 +175,7 @@ CKTpzFindZeros(CKTcircuit *ckt, PZtrial **rootinfo, int *rootcount)
 	} else if (new_trial->flags & ISANABERRATION) {
 	    CKTpzReset(neighborhood);
 	    Aberr_Num += 1;
-	    free(new_trial);
+	    tfree(new_trial);
 	} else if (new_trial->flags & ISAMINIMA) {
 	    neighborhood[0] = NULL;
 	    neighborhood[1] = new_trial;
@@ -645,7 +645,7 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 	    } else {
 #endif
 	    p->flags |= ISAMINIMA;
-	    free(new_trial);
+	    tfree(new_trial);
 	    *new_trialp = p;
 	    repeat = 1;
 	} else if (p->flags & ISAROOT) {
@@ -841,7 +841,7 @@ CKTpzVerify(PZtrial **set, PZtrial *new_trial)
 	    if (t == Trials) {
 		Trials = t->next;
 	    }
-	    free(t);
+	    tfree(t);
 	} else {
 
 	    if (prev)
@@ -899,7 +899,7 @@ clear_trials(int mode)
     for (t = Trials; t; t = next) {
 	next = t->next;
 	if (mode || !(t->flags & ISAROOT)) {
-	    free(t);
+	    tfree(t);
 	} else {
 	    if (prev)
 		prev->next = t;

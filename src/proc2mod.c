@@ -61,9 +61,9 @@ main(void) {
     char *filename;
 
 
-    filename = (char *)malloc(1024);
-    typeline = (char *)malloc(1024);
-    dataline = (char *)malloc(1024);
+    filename = (char *)tmalloc(1024);
+    typeline = (char *)tmalloc(1024);
+    dataline = (char *)tmalloc(1024);
 
     while(p == NULL) {
         printf("name of process file (input): ");
@@ -107,7 +107,7 @@ main(void) {
         }
         if(*typeline == 0) break;
         if(strncmp("nm",typeline,2) == 0) {
-            ncur = (nmod *)malloc(sizeof(nmod));
+            ncur = (nmod *)tmalloc(sizeof(nmod));
             ncur->nnext = NULL;
             ncur->nname = typeline;
             *(typeline+3) = (char)NULL;
@@ -116,7 +116,7 @@ main(void) {
             ncur->nnext = nlist;
             nlist = ncur;
         } else if(strncmp("pm",typeline,2) == 0) {
-            pcur = (pmod *)malloc(sizeof(pmod));
+            pcur = (pmod *)tmalloc(sizeof(pmod));
             pcur->pnext = NULL;
             pcur->pname = typeline;
             *(typeline+3) = (char)NULL;
@@ -125,7 +125,7 @@ main(void) {
             pcur->pnext = plist;
             plist = pcur;
         } else if(strncmp("py",typeline,2) == 0) {
-            ycur = (ymod *)malloc(sizeof(ymod));
+            ycur = (ymod *)tmalloc(sizeof(ymod));
             ycur->ynext = NULL;
             ycur->yname = typeline;
             *(typeline+3) = (char)NULL;
@@ -134,7 +134,7 @@ main(void) {
             ycur->ynext = ylist;
             ylist = ycur;
         } else if(strncmp("du",typeline,2) == 0) {
-            dcur = (dmod *)malloc(sizeof(dmod));
+            dcur = (dmod *)tmalloc(sizeof(dmod));
             dcur->dnext = NULL;
             dcur->dname = typeline;
             *(typeline+3) = (char)NULL;
@@ -143,7 +143,7 @@ main(void) {
             dcur->dnext = dlist;
             dlist = dcur;
         } else if(strncmp("ml",typeline,2) == 0) {
-            mcur = (mmod *)malloc(sizeof(mmod));
+            mcur = (mmod *)tmalloc(sizeof(mmod));
             mcur->mnext = NULL;
             mcur->mname = typeline;
             *(typeline+3) = (char)NULL;

@@ -57,7 +57,7 @@ int
 
       switch (ch) {
       case 'o':
-	name = (char *) malloc((unsigned) (strlen(optarg)*sizeof(char)));
+	name = (char *) tmalloc((unsigned) (strlen(optarg)*sizeof(char)));
 	(void) strcpy(name,optarg);
 	gotname=1;
 	use_opt = 1;
@@ -158,13 +158,13 @@ int
 
   comments(r,l,g,c,ctot,cm,lm,k,name,num,len);
 
-  matrix = (double **) malloc((unsigned) (sizeof(double*)*(num+1)));
-  inverse = (double **) malloc((unsigned) (sizeof(double*)*(num+1)));
-  tpeigenvalues = (double *) malloc((unsigned) (sizeof(double)*(num+1)));
+  matrix = (double **) tmalloc((unsigned) (sizeof(double*)*(num+1)));
+  inverse = (double **) tmalloc((unsigned) (sizeof(double*)*(num+1)));
+  tpeigenvalues = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
 
   for (i=1;i<=num;i++) {
-    matrix[i] = (double *) malloc((unsigned) (sizeof(double)*(num+1)));
-    inverse[i] = (double *) malloc((unsigned) (sizeof(double)*(num+1)));
+    matrix[i] = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
+    inverse[i] = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
   }
 
   for (i=1;i<=num;i++) {
@@ -176,7 +176,7 @@ int
       matrix[i][j] = phi(i-1,tpeigenvalues[j]);
     }
   }
-  gammaj = (double *) malloc((unsigned) (sizeof(double)*(num+1)));
+  gammaj = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
 
   for (j=1;j<=num;j++) {
     gammaj[j] = 0.0;
@@ -192,7 +192,7 @@ int
     }
   }
 
-  free(gammaj);
+  tfree(gammaj);
 
   /* matrix = M set up */
 
@@ -203,10 +203,10 @@ int
     int errflg, err, singular_row, singular_col;
     double *elptr;
 
-    rhs = (double *) malloc((unsigned) (sizeof(double)*(num+1)));
-    irhs = (double *) malloc((unsigned) (sizeof(double)*(num+1)));
-    solution = (double *) malloc((unsigned) (sizeof(double)*(num+1)));
-    isolution = (double *) malloc((unsigned) (sizeof(double)*(num+1)));
+    rhs = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
+    irhs = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
+    solution = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
+    isolution = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
 
     othermatrix = spCreate(num,0,&errflg);
 
@@ -255,7 +255,8 @@ int
       }
     }
 
-    free(rhs); free(solution);
+    tfree(rhs);
+    tfree(solution);
   }
 
   /* inverse = M^{-1} set up */
@@ -263,7 +264,7 @@ int
   fprintf(stdout,"\n");
   fprintf(stdout,"* Lossy line models\n");
 
-  options = (char *) malloc((unsigned) 256);
+  options = (char *) tmalloc((unsigned) 256);
   (void) strcpy(options,"rel=1.2 nocontrol");
   for (i=1;i<=num;i++) {
     fprintf(stdout,".model mod%d_%s ltra %s r=%0.12g l=%0.12g g=%0.12g c=%0.12g len=%0.12g\n",
@@ -326,15 +327,15 @@ int
 
   fprintf(stdout,".ends %s\n",name);
 
-  free(tpeigenvalues);
+  tfree(tpeigenvalues);
   for (i=1;i<=num;i++) {
-    free(matrix[i]);
-    free(inverse[i]);
+    tfree(matrix[i]);
+    tfree(inverse[i]);
   }
-  free(matrix);
-  free(inverse);
-  free(name);
-  free(options);
+  tfree(matrix);
+  tfree(inverse);
+  tfree(name);
+  tfree(options);
 
   return EXIT_NORMAL; 
 }

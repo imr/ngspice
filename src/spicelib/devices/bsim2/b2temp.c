@@ -71,7 +71,7 @@ B2temp(inModel,ckt)
             }
 
 	    if (Size_Not_Found)
-	    {   here->pParam = (struct bsim2SizeDependParam *)malloc(
+	    {   here->pParam = (struct bsim2SizeDependParam *)tmalloc(
 	                        sizeof(struct bsim2SizeDependParam));
                 if (pLastKnot == NULL)
 		    model->pSizeDependParamKnot = here->pParam;

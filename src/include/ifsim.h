@@ -173,14 +173,14 @@ typedef struct sIFparseTree {
  * should arrange to free it when appropriate.
  *
  * The responsibilities of the data supplier are:
- * Any vectors referenced by the structure are to be malloc()'d 
+ * Any vectors referenced by the structure are to be tmalloc()'d 
  * and are assumed to have been turned over to the recipient and 
- * thus should not be re-used or free()'d.
+ * thus should not be re-used or tfree()'d.
  *
  * The responsibilities of the data recipient are:
  * scalar valued data is to be copied by the recipient
  * vector valued data is now the property of the recipient,
- * and must be free()'d when no longer needed.
+ * and must be tfree()'d when no longer needed.
  *
  * Character strings are a special case:  Since it is assumed
  * that all character strings are directly descended from input 

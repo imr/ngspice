@@ -1,3 +1,8 @@
+2000-10-14  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* *: replaced malloc, realloc and free calls to use tmalloc,
+	trealloc and txfree.
+
 2000-09-05  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* ???: Paolo and I have integrated patches from Alan Gillespie

@@ -6,7 +6,7 @@
 /* Takes n = (degree+1) doubles, and fills in result with the n
  * coefficients of the polynomial that will fit them. It also takes a
  * pointer to an array of n ^ 2 + n doubles to use for scratch -- we
- * want to make this fast and avoid doing mallocs for each call.  */
+ * want to make this fast and avoid doing tmallocs for each call.  */
 bool
 ft_polyfit(double *xdata, double *ydata, double *result,
 	   int degree, double *scratch)

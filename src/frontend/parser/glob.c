@@ -57,7 +57,7 @@ cp_doglob(wordlist *wlist)
         if (*wl->wl_word == cp_til) {
             s = cp_tildexpand(wl->wl_word);
             if (!s)
-                *wl->wl_word = '\0';	/* MW. We Con't touch malloc addres */
+                *wl->wl_word = '\0';	/* MW. We Con't touch tmalloc addres */
             else
 		wl->wl_word = s;
         }

@@ -24,7 +24,7 @@
 #define tfree(x) (txfree(x), x = 0)
 #define alloc(TYPE) ((TYPE *) tmalloc(sizeof(TYPE)))
 #define MALLOC(x) tmalloc((unsigned)(x))
-#define FREE(x) {if (x) {free((char *)(x));(x) = 0;}}
+#define FREE(x) {if (x) {txfree((char *)(x));(x) = 0;}}
 #define REALLOC(x,y) trealloc((char *)(x),(unsigned)(y))
 #define ZERO(PTR,TYPE)	(bzero((PTR),sizeof(TYPE)))
 

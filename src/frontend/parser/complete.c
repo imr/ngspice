@@ -680,11 +680,11 @@ static void
 cdelete(struct ccom *node)
 {
     node->cc_invalid = 1;
-    free(node->cc_name);
-    free(node->cc_child);
-    free(node->cc_sibling);
-    free(node->cc_ysibling);
-    free(node->cc_parent);
+    tfree(node->cc_name);
+    tfree(node->cc_child);
+    tfree(node->cc_sibling);
+    tfree(node->cc_ysibling);
+    tfree(node->cc_parent);
     return;
 }
 

@@ -160,7 +160,7 @@ int Size_Not_Found;
               }
 
 	      if (Size_Not_Found)
-	      {   pParam = (struct BSIM3V2SizeDependParam *)malloc(
+	      {   pParam = (struct BSIM3V2SizeDependParam *)tmalloc(
 	                    sizeof(struct BSIM3V2SizeDependParam));
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;

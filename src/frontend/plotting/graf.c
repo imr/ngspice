@@ -157,7 +157,7 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     /* note: have enum here or some better convention */
     if (NewViewport(graph) == 1) {
       /* note: where is the error message generated? */
-      /* note: undo mallocs */
+      /* note: undo tmallocs */
       fprintf(cp_err, "Can't open viewport for graphics.\n");
       return(FALSE);
     }
@@ -368,7 +368,7 @@ gr_start_internal(struct dvec *dv, bool copyvec)
     dv->v_color = curcolor;
 
     /* save the data so we can refresh */
-    link = (struct dveclist *) calloc(1, sizeof(struct dveclist));
+    link = (struct dveclist *) tmalloc(sizeof(struct dveclist));
     link->next = currentgraph->plotdata;
 
     if (copyvec) {

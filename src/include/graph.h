@@ -131,7 +131,7 @@ typedef struct graph {
 
 } GRAPH;
 
-#define NEWGRAPH (GRAPH *) calloc(1, sizeof(GRAPH))
+#define NEWGRAPH (GRAPH *) tmalloc(sizeof(GRAPH))
 
 #define rnd(x)  (int) ((x)+0.5)
 

@@ -1217,17 +1217,14 @@ freeRun(runDesc *run)
     int i;
 
     for (i=0; i < run->numData; i++) {
-/*    vec_free(run->data[i].vec); */ /* kill run, leave plot */
       tfree(run->data[i].name);
       tfree(run->data[i].specParamName);
     }
     tfree(run->data);
 
-/*  killplot(run->runPlot); */ /* kill run, leave plot */
-
-    free(run->type);
-    free(run->name);
-    free(run);
+    tfree(run->type);
+    tfree(run->name);
+    tfree(run);
 
 }
 

@@ -532,7 +532,7 @@ spcGetFillin(MatrixPtr Matrix)
  *  Matrix  <input>    (MatrixPtr)
  *      Pointer to the matrix.
  *  AllocatedPtr  <input>  (void *)
- *      The pointer returned by malloc or calloc.  These pointers are
+ *      The pointer returned by tmalloc or calloc.  These pointers are
  *      saved in a list so that they can be easily freed.
  *
  *  >>> Possible errors:
@@ -542,7 +542,7 @@ static void
 RecordAllocation(MatrixPtr Matrix, void *AllocatedPtr )
 {
     /* Begin `RecordAllocation'. */
-    /* If Allocated pointer is NULL, assume that malloc returned a
+    /* If Allocated pointer is NULL, assume that tmalloc returned a
      * NULL pointer, which indicates a spNO_MEMORY error.  */
     if (AllocatedPtr == NULL) {
 	Matrix->Error = spNO_MEMORY;

@@ -311,7 +311,7 @@ handlebuttonev(Widget w, caddr_t clientdata, caddr_t calldata)
 
 
 /* Recover from bad NewViewPort call. */
-#define RECOVERNEWVIEWPORT()    free((char *) graph);\
+#define RECOVERNEWVIEWPORT()    tfree((char *) graph);\
 	            graph = (GRAPH *) NULL; 
 	    /* need to do this or else DestroyGraph will free it again */
 
@@ -353,7 +353,7 @@ X11_NewViewport(GRAPH *graph)
 	};
 	int	trys;
 
-	graph->devdep = calloc(1, sizeof(X11devdep));
+	graph->devdep = tmalloc(sizeof(X11devdep));
 
 	/* set up new shell */
 	DEVDEP(graph).shell = XtCreateApplicationShell("shell",

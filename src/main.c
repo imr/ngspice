@@ -503,9 +503,6 @@ main(int argc, char **argv)
 	    asprintf(&s, "%s/.spiceinit", pw->pw_dir);
             if (access(s, 0) == 0)
                 inp_source(s);
-	     /* free(s); */  
-	    /* FIXME: Do we need to free() char* fields in pw as well? */
-	   /* free(pw); */
 	}
 #else /* ~ HAVE_PWD_H */
 	/* Try to source the file "spice.rc" in the current directory.  */

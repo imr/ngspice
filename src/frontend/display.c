@@ -321,7 +321,7 @@ void SaveText(GRAPH *graph, char *text, int x, int y)
 
     struct _keyed *keyed;
 
-    keyed = (struct _keyed *) calloc(1, sizeof(struct _keyed));
+    keyed = (struct _keyed *) tmalloc(sizeof(struct _keyed));
 
     if (!graph->keyed) {
       graph->keyed = keyed;

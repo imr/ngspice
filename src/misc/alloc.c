@@ -12,7 +12,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 
 /* Malloc num bytes and initialize to zero. Fatal error if the space can't
- * be malloc'd.   Return NULL for a request for 0 bytes.
+ * be tmalloc'd.   Return NULL for a request for 0 bytes.
  */
 
 /* New implementation of tmalloc, it uses calloc and does not call bzero()  */
