@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon Jacobs
-Modified: 2000 AlansFixes
+Modified: 2001 Jon Engelbert
 **********/
 
 #include "ngspice.h"
@@ -25,8 +25,10 @@ CSWload(inModel,ckt)
     CSWinstance *here;
     double g_now;
     double i_ctrl;
-    double previous_state; 
-    double current_state;
+    double previous_state = -1; 
+    double current_state = -1, old_current_state = -1;
+	double REALLY_OFF = 0, REALLY_ON = 1;	// switch is on or off, not in hysteresis region.
+	double HYST_OFF = 2, HYST_ON = 3;	// switch is on or off while control value is in hysteresis region.
 
     /*  loop through all the switch models */
     for( ; model != NULL; model = model->CSWnextModel ) {
@@ -34,7 +36,13 @@ CSWload(inModel,ckt)
         /* loop through all the instances of the model */
         for (here = model->CSWinstances; here != NULL ;
                 here=here->CSWnextInstance) {
-	    if (here->CSWowner != ARCHme) continue;
+                	
+        if (here->CSWowner != ARCHme) continue;
+			
+			old_current_state = *(ckt->CKTstates[0] + here->CSWstate);
+			previous_state = *(ckt->CKTstates[1] + here->CSWstate);
+            i_ctrl = *(ckt->CKTrhsOld + 
+                    here->CSWcontBranch);
 
             /* decide the state of the switch */
 
@@ -42,71 +50,94 @@ CSWload(inModel,ckt)
 
                 if(here->CSWzero_stateGiven) {
                         /* switch specified "on" */
-                    *(ckt->CKTstate0 + here->CSWstate) = 1.0;
-                    current_state = 1.0;
+					if ((model->CSWiHysteresis >= 0) && (i_ctrl > (model->CSWiThreshold + model->CSWiHysteresis))) 
+						current_state = REALLY_ON;
+					else if ((model->CSWiHysteresis < 0) && (i_ctrl > (model->CSWiThreshold - model->CSWiHysteresis))) 
+						current_state = REALLY_ON;
+					else 
+						current_state = HYST_ON;
                 } else {
-                    *(ckt->CKTstate0 + here->CSWstate) = 0.0;
-                    current_state = 0.0;
+					if ((model->CSWiHysteresis >= 0) && (i_ctrl < (model->CSWiThreshold - model->CSWiHysteresis))) 
+						current_state = REALLY_OFF;
+					else if ((model->CSWiHysteresis < 0) && (i_ctrl < (model->CSWiThreshold + model->CSWiHysteresis))) 
+						current_state = REALLY_OFF;
+					else 
+						current_state = HYST_OFF;
                 }
-                
-                *(ckt->CKTstate0 + (here->CSWstate+1)) = 0;
-                
+
             } else if (ckt->CKTmode & (MODEINITSMSIG)) {
 
-                previous_state = *(ckt->CKTstate0 + here->CSWstate);
                 current_state = previous_state;
 
             } else if (ckt->CKTmode & (MODEINITFLOAT)) {
                 /* use state0 since INITTRAN or INITPRED already called */
-                previous_state = *(ckt->CKTstate0 + here->CSWstate);
-                i_ctrl = *(ckt->CKTrhsOld + 
-                        here->CSWcontBranch);
-                if(i_ctrl > (model->CSWiThreshold+model->CSWiHysteresis)) {
-                    *(ckt->CKTstate0 + here->CSWstate) = 1.0;
-                    current_state = 1.0;
-                }
-                else if(i_ctrl < (model->CSWiThreshold - 
-                        model->CSWiHysteresis)) {
-                    *(ckt->CKTstate0 + here->CSWstate) = 0.0;
-                    current_state = 0.0;
-                }
-                else {
-                    current_state = previous_state;
-                }
 
-                *(ckt->CKTstate0 + (here->CSWstate+1)) = i_ctrl;
+				if (model->CSWiHysteresis > 0) {
+					if (i_ctrl > (model->CSWiThreshold + model->CSWiHysteresis)) {
+						current_state = REALLY_ON;
+					} else if (i_ctrl < (model->CSWiThreshold -  model->CSWiHysteresis)) {
+						current_state = REALLY_OFF;
+					} else {
+						current_state = previous_state;
+					}
+				} else {
+					if (i_ctrl > (model->CSWiThreshold - model->CSWiHysteresis)) 					{
+						current_state = REALLY_ON;
+					} else if (i_ctrl < (model->CSWiThreshold +  model->CSWiHysteresis)) {
+						current_state = REALLY_OFF;
+					} else {	// in hysteresis... change value if going from low to hysteresis, or from hi to hysteresis.
+						// if previous state was in hysteresis, then don't change the state..
+						if ((previous_state == HYST_OFF) || (previous_state == HYST_ON)) {
+							current_state = previous_state;
+						} else if (previous_state == REALLY_ON) {
+							current_state = HYST_OFF;
+						} else if (previous_state == REALLY_OFF) {
+							current_state = HYST_ON;
+						} else
+							internalerror("bad value for previous region in swload");
+					}
+				}
 
-                if(current_state != previous_state) {
-                    ckt->CKTnoncon++;    /* ensure one more iteration */
-		    ckt->CKTtroubleElt = (GENinstance *) here;
+                if(current_state != old_current_state) {
+						ckt->CKTnoncon++;    /* ensure one more iteration */
+						ckt->CKTtroubleElt = (GENinstance *) here;
                 }
 
             } else if (ckt->CKTmode & (MODEINITTRAN|MODEINITPRED)) {
 
-                previous_state = *(ckt->CKTstate1 + here->CSWstate);
-                i_ctrl = *(ckt->CKTrhsOld + 
-                        here->CSWcontBranch);
+				if (model->CSWiHysteresis > 0) {
+					if (i_ctrl > (model->CSWiThreshold + model->CSWiHysteresis)) {
+						current_state = REALLY_ON;
+					} else if (i_ctrl < (model->CSWiThreshold -  model->CSWiHysteresis)) {
+						current_state = REALLY_OFF;
+					} else {
+						current_state = previous_state;
+					}
+				} else {
+					if (i_ctrl > (model->CSWiThreshold - model->CSWiHysteresis)) 					{
+						current_state = REALLY_ON;
+					} else if (i_ctrl < (model->CSWiThreshold +  model->CSWiHysteresis)) {
+						current_state = REALLY_OFF;
+					} else {	// in hysteresis... change value if going from low to hysteresis, or from hi to hysteresis.
+						// if previous state was in hysteresis, then don't change the state..
+						if ((previous_state == HYST_OFF) || (previous_state == HYST_ON)) {
+							current_state = previous_state;
+						} else if (previous_state == REALLY_ON) {
+							current_state = HYST_OFF;
+						} else if (previous_state == REALLY_OFF) {
+							current_state = HYST_ON;
+						} else
+							internalerror("bad value for previous region in cswload");
+					}
+				}
+             }
 
-                if(i_ctrl > (model->CSWiThreshold+model->CSWiHysteresis)) {
-                    current_state = 1;
-                } else if(i_ctrl < (model->CSWiThreshold - 
-                        model->CSWiHysteresis))  {
-                    current_state = 0;
-                } else {
-                    current_state = previous_state;
-                }
-
-                if(current_state == 0) {
-                    *(ckt->CKTstate0 + here->CSWstate) = 0.0;
-                } else {
-                    *(ckt->CKTstate0 + here->CSWstate) = 1.0;
-                }
-
-                *(ckt->CKTstate0 + (here->CSWstate+1)) = i_ctrl;
-
-            }
-
-            g_now = current_state?(model->CSWonConduct):(model->CSWoffConduct);
+			*(ckt->CKTstates[0] + here->CSWstate) = current_state;
+			*(ckt->CKTstates[1] + here->CSWstate) = previous_state;
+            if ((current_state == REALLY_ON) || (current_state == HYST_ON)) 
+				g_now = model->CSWonConduct;
+			else 
+				g_now = model->CSWoffConduct;
             here->CSWcond = g_now;
 
             *(here->CSWposPosptr) += g_now;
