@@ -17,7 +17,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #ifdef PZDEBUG
 #  ifndef notdef
 #    define DEBUG(N)	if (Debug >= (unsigned) (N))
-static unsigned int	Debug = 1;
+static unsigned int	Debug = 3;
 #  else
 #    define DEBUG(N)	if (0)
 #  endif
@@ -719,12 +719,13 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 	else {
 
 	    /* PZnumswaps is either 0 or 1 */
-	    new_trial->f_raw.real *= ((PZAN *) ckt->CKTcurJob)->PZnumswaps;
-	    new_trial->f_raw.imag *= ((PZAN *) ckt->CKTcurJob)->PZnumswaps;
-	    /*
+	    new_trial->f_raw.real *=  ((PZAN *) ckt->CKTcurJob)->PZnumswaps;
+	    new_trial->f_raw.imag *=  ((PZAN *) ckt->CKTcurJob)->PZnumswaps;
+	    
+#ifdef PZDEBUG	    
 	    printf("SMP Det: (%g,%g)^%d\n", new_trial->f_raw.real,
 		    new_trial->f_raw.imag, new_trial->mag_raw);
-	    */
+#endif	    
 
 	    new_trial->f_def.real = new_trial->f_raw.real;
 	    new_trial->f_def.imag = new_trial->f_raw.imag;

@@ -3,7 +3,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "pzdefs.h"
 #include "smpdefs.h"
 #include "cktdefs.h"

@@ -3,7 +3,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "complex.h"
 #include "cktdefs.h"
 #include "smpdefs.h"
@@ -190,7 +189,7 @@ PZpost(CKTcircuit *ckt)
     outData.v.numValue = pzan->PZnPoles + pzan->PZnZeros;
     outData.v.vec.cVec = out_list;
 
-    (*SPfrontEnd->OUTpData)(pzPlotPtr, (IFvalue *) 0, &outData);
+    (*SPfrontEnd->OUTpData)(pzPlotPtr, (IFvalue *) 0, &outData); 
     (*(SPfrontEnd->OUTendPlot))(pzPlotPtr);
 
     return(OK);
