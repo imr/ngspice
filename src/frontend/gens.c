@@ -82,11 +82,15 @@ void
 dgen_nth_next(dgen **dg, int n)
 {
 	int	i, dnum;
+	dgen * dg_old=*dg;
+
 
 	dnum = (*dg)->dev_type_no;
 
 	for (i = 0; *dg && (*dg)->dev_type_no == dnum && i < n; i++) {
 		dgen_next(dg);
+		 /* va, it might be too much tests, but safer is better... */
+                 if (*dg!=dg_old && *dg==NULL && dg_old!=NULL) tfree(dg_old);
 	}
 }
 

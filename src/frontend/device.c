@@ -19,10 +19,10 @@ Modified: 2000 AlansFixes
 #include "device.h"
 #include "variable.h"
 
+#include "gens.h" /* wl_forall */
 
 static wordlist *devexpand(char *name);
 static void all_show(wordlist *wl, int mode);
-
 
 /*
  *	show: list device operating point info
@@ -37,10 +37,6 @@ static void all_show(wordlist *wl, int mode);
 
 static	int	count;
 
-
-extern void dgen_nth_next (dgen **dg, int n);
-extern int dgen_for_n (dgen *dg, int n, int (*fn) (/* ??? */), char *data, int subindex);
-extern void wl_forall (wordlist *wl, int (*fn) (/* ??? */), char *data);
 
 void
 com_showmod(wordlist *wl)
@@ -60,7 +56,7 @@ all_show(wordlist *wl, int mode)
     wordlist	*params, *nextgroup, *thisgroup;
     wordlist	*prev, *next, *w;
     int		screen_width;
-    dgen	*dg, *listdg = NULL;
+    dgen	*dg, *listdg;
     int		instances;
     int		i, j, n;
     int		param_flag, dev_flag;
@@ -197,7 +193,7 @@ all_show(wordlist *wl, int mode)
 		else if (!params)
 		    param_forall(dg, DGEN_DEFPARAMS);
 		if (params)
-		    wl_forall(params, (void *)listparam, (void *)dg);
+		    wl_forall(params, listparam, (void *)dg);
 		printf("\n");
 
 	    } else if (ft_sim->devices[dg->dev_type_no]->numModelParms) {
@@ -219,16 +215,11 @@ all_show(wordlist *wl, int mode)
 		else if (!params)
 		    param_forall(dg, DGEN_DEFPARAMS);
 		if (params)
-		    wl_forall(params, (void *) listparam, (void *)dg);
+		    wl_forall(params, listparam, (void *)dg);
 		printf("\n");
 	    }
 	}
-	/* Paolo Nenzi 2004:
-	 * This tfree is necessary to free memory allocated by NEW in 
-	 * dgen_init. It is not possible to free dg since it is casted 
-	 * to NULL from dgen_next and is lost.
-	 */ 
-	tfree(listdg);
+
 	wl = nextgroup;
 
     } while (wl);
@@ -661,7 +652,7 @@ com_alter_common(wordlist *wl, int do_model)
 
     /* va: garbage collection for dv, if pnode names is no simple value */
     if (names->pn_value==NULL && dv!=NULL) vec_free(dv);
-    free_pnode(names); /* free also dv, if pnode names is simple value */            
+    free_pnode(names); /* free also dv, if pnode names is simple value */
     return;
 }
 
