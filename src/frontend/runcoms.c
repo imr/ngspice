@@ -203,11 +203,11 @@ dosim(char *what, wordlist *wl)
             ct->ci_inprogress = FALSE;
         }
     if (ft_curckt->ci_inprogress && eq(what, "resume")) {
-        ft_setflag = TRUE;
+        ft_setflag = TRUE;  /* don't allow abort upon interrupt during run  */
         ft_intrpt = FALSE;
         fprintf(cp_err, "Warning: resuming run in progress.\n");
         com_resume((wordlist *) NULL);
-        ft_setflag = FALSE;
+        ft_setflag = FALSE;  /* Now allow aborts again  */
         return 0;
     }
 
@@ -215,7 +215,7 @@ dosim(char *what, wordlist *wl)
      * set a flag and let spice finish up, then control will be
      * passed back to the user.
      */
-    ft_setflag = TRUE;
+    ft_setflag = TRUE;  /* Don't allow abort upon interrupt during run.  */
     ft_intrpt = FALSE;
     if (dofile) {
 #ifdef PARALLEL_ARCH
@@ -245,9 +245,9 @@ dosim(char *what, wordlist *wl)
 #else	    
         else if (!(rawfileFp = fopen(wl->wl_word, "w"))) {
         	setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
-            perror(wl->wl_word);
-            ft_setflag = FALSE;
-            return 1;
+		perror(wl->wl_word);
+		ft_setflag = FALSE;
+		return 1;
         }
 #endif /* __MINGW32__ */
         rawfileBinary = !ascii;
@@ -261,14 +261,14 @@ dosim(char *what, wordlist *wl)
     }
     /*save rawfile name saj*/
     if(last_used_rawfile) 
-       tfree(last_used_rawfile); /* va: we should allways use tfree */
+        tfree(last_used_rawfile);
     if(rawfileFp){
       last_used_rawfile = copy(wl->wl_word);
     }else {
       last_used_rawfile = NULL;
     }
     /*end saj*/
-    
+ 
     /* Spice calls wrd_init and wrd_end itself */
     ft_curckt->ci_inprogress = TRUE;
     if (eq(what,"sens2")) {
@@ -282,7 +282,7 @@ dosim(char *what, wordlist *wl)
         if(g_ipc.enabled)
             ipc_send_errchk();
         /* gtri - end - 12/12/90 */
-#endif	        
+#endif
         } else
 	    ft_curckt->ci_inprogress = FALSE;
     } else {
@@ -296,7 +296,7 @@ dosim(char *what, wordlist *wl)
         if(g_ipc.enabled)
             ipc_send_errchk();
     /* gtri - end - 12/12/90 */
-#endif	    
+#endif
 	    err = 0;
         } else if (err == 2) {
 	    fprintf(cp_err, "%s simulation(s) aborted\n", what);
@@ -322,7 +322,7 @@ dosim(char *what, wordlist *wl)
         if (wl)
             wl->wl_prev = NULL;
         tfree(ww);
-    }  
+    }
     return err;
 }
 

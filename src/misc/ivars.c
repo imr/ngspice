@@ -40,7 +40,7 @@ mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
 	asprintf(p, "%s", buffer);
     else
 	asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir);
-#else /* ~ HAVE_ASPRINTF */ /* va: we use tmalloc */
+#else /* ~ HAVE_ASPRINTF */
     if (buffer){
 	*p = (char *) tmalloc(strlen(buffer)+1);
 	sprintf(*p,"%s",buffer);
@@ -48,7 +48,7 @@ mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
     }
     else{
 	*p = (char *) tmalloc(strlen(path_prefix) + 
-			strlen(DIR_PATHSEP) + strlen(var_dir) + 1);	
+			strlen(DIR_PATHSEP) + strlen(var_dir) + 1);
 	sprintf(*p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir); 
 	/* asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir); */
     }
@@ -63,6 +63,7 @@ ivars(void)
 	
     env_overr(&Spice_Exec_Dir, "SPICE_EXEC_DIR");
     env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR");
+
 
     mkvar(&News_File, Spice_Lib_Dir, "news", "SPICE_NEWS");
     mkvar(&Default_MFB_Cap, Spice_Lib_Dir, "mfbcap", "SPICE_MFBCAP");

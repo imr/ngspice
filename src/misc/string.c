@@ -192,8 +192,13 @@ register char *p, *s;
 #endif /* CIDER */
 
 
-
-
+/*-------------------------------------------------------------------------*
+ * gettok skips over whitespace and returns the next token found.  This is 
+ * the original version.  It does not "do the right thing" when you have 
+ * parens or commas anywhere in the nodelist.  Note that I left this unmodified
+ * since I didn't want to break any fcns which called it from elsewhere than
+ * subckt.c.  -- SDB 12.3.2003.
+ *-------------------------------------------------------------------------*/
 char *
 gettok(char **s)
 {
@@ -224,9 +229,10 @@ gettok(char **s)
 
 /*-------------------------------------------------------------------------*
  * gettok_noparens was added by SDB on 4.21.2003.
- * It acts like gettok, except that it stops parsing when it hits a paren
- * (i.e. it treats parens like whitespace).  It is used in translate (subckt.c)
- * while looking for the POLY token.
+ * It acts like gettok, except that it treats parens and commas like
+ * whitespace while looking for the POLY token.  That is, it stops 
+ * parsing and returns when it finds one of those chars.  It is called from 
+ * 'translate' (subckt.c).
  *-------------------------------------------------------------------------*/
 char *
 gettok_noparens(char **s)
@@ -235,24 +241,78 @@ gettok_noparens(char **s)
     int i = 0;
     char c;
 
-    while (isspace(**s))
-        (*s)++;
+    while ( isspace(**s) )
+        (*s)++;   /* iterate over whitespace */
+
     if (!**s)
-        return (NULL);
-    while ((c = **s) && !isspace(c) && 
-	   ( **s != '(' ) && ( **s != ')' )  )  {
+        return (NULL);  /* return NULL if we come to end of line */
+
+    while ((c = **s) && 
+	   !isspace(c) && 
+	   ( **s != '(' ) &&
+	   ( **s != ')' ) &&
+	   ( **s != ',') 
+	  )  {
         buf[i++] = *(*s)++;
     }
     buf[i] = '\0';
-    while (isspace(**s))
-        (*s)++;
+
+    /* Now iterate up to next non-whitespace char */
+    while ( isspace(**s) )
+        (*s)++;  
+
+    return (copy(buf));
+}
+
+/*-------------------------------------------------------------------------*
+ * gettok_node was added by SDB on 12.3.2003
+ * It acts like gettok, except that it treats parens and commas like
+ * whitespace (i.e. it ignores them).  Use it when parsing through netnames
+ * (node names) since they may be grouped using ( , ).
+ *-------------------------------------------------------------------------*/
+char *
+gettok_node(char **s)
+{
+    char buf[BSIZE_SP];
+    int i = 0;
+    char c;
+
+    while (isspace(**s) ||
+           ( **s == '(' ) ||
+           ( **s == ')' ) ||
+           ( **s == ',')
+          )
+        (*s)++;   /* iterate over whitespace and ( , ) */
+
+    if (!**s)
+        return (NULL);  /* return NULL if we come to end of line */
+
+    while ((c = **s) && 
+	   !isspace(c) && 
+	   ( **s != '(' ) &&
+	   ( **s != ')' ) &&
+	   ( **s != ',') 
+	   )  {           /* collect chars until whitespace or ( , ) */
+        buf[i++] = *(*s)++;
+    }
+    buf[i] = '\0';
+
+    /* Now iterate up to next non-whitespace char */
+    while (isspace(**s) ||
+           ( **s == '(' ) ||
+           ( **s == ')' ) ||
+           ( **s == ',')
+          )
+        (*s)++;   /* iterate over whitespace and ( , ) */
+
     return (copy(buf));
 }
 
 /*-------------------------------------------------------------------------*
  * get_l_paren iterates the pointer forward in a string until it hits
  * the position after the next left paren "(".  It returns 0 if it found a left 
- * paren, and 1 if no left paren is found.
+ * paren, and 1 if no left paren is found.  It is called from 'translate'
+ * (subckt.c).
  *-------------------------------------------------------------------------*/
 int
 get_l_paren(char **s)
@@ -274,7 +334,8 @@ get_l_paren(char **s)
 /*-------------------------------------------------------------------------*
  * get_r_paren iterates the pointer forward in a string until it hits
  * the position after the next right paren ")".  It returns 0 if it found a right 
- * paren, and 1 if no right paren is found.
+ * paren, and 1 if no right paren is found.  It is called from 'translate'
+ * (subckt.c).
  *-------------------------------------------------------------------------*/
 int
 get_r_paren(char **s)

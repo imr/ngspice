@@ -796,6 +796,7 @@ zoomin(GRAPH *graph)
 	  wl = cp_parse(buf);
 	  (void) cp_addhistent(cp_event++, wl);
 	}
+
 #endif /* HAVE_GNUREADLINE */
 
 	(void) cp_evloop(buf);

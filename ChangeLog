@@ -1,8 +1,22 @@
 2004-01-10  Paolo Nenzi <p.nenzi@ieee.org>
 
+	*   configure.in: changed version to rework-15pre2.
+
+	*   src/frontend/{com_history.c, cpitf.c, display.h, evaluate.c,
+	    inpcom.c, misccoms.c, parser/glob.c, plotting/x11.c, resource.c,
+	    runcoms.c, signal_handler.c, subckt.c, variable.c}
+	    src/include/{ftedev.h, ngspice.h}
+	    src/misc{ivars.c, Makefile.am, string.c, tilde.c, tilde.h, util.c,
+	    util.h}
+	    src/{main.c, nghelp.c, ngmultidec.c}
+	    configure.in:
+	    
+	    Applied Stuart's patch tclspice-0.2.14_12-03-2003.diff.gz but
+	    with libreadline disabled by default. (Stuart Brorson 
+	    <sdb@cloud9.net>).
+
 	*   Fixed makefiles in src/xspice/icm and src/xspice/cmpp to make 
 	    distclean without barfing. (Stuart Brorson <sdb@cloud9.net>).
-
 
 	*   configure.in 
 	    src/xspice/cmpp/Makefile src/xspice/cmpp/Makefile.in:

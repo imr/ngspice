@@ -127,6 +127,7 @@ struct timeb timebegin;
 
 extern char *gettok(char **s);
 extern char *gettok_noparens(char **s);
+extern char *gettok_node(char **s);
 extern int get_l_paren(char **s);
 extern int get_r_paren(char **s);
 extern void appendc(char *s, char c);
@@ -134,11 +135,11 @@ extern int scannum(char *str);
 extern int ciprefix(register char *p, register char *s);
 extern int cieq(register char *p, register char *s);
 extern void strtolower(char *str);
-#ifdef HAVE_GNUREADLINE
 extern char *tildexpand(char *string);
-#else
-extern char *tilde_expand(char *string);
-#endif
+
+extern char *canonicalize_pathname(char *path);
+extern char *absolute_pathname(char *string, char *dot_path);
+
 extern char *smktemp(char *id);
 
 extern char *copy(char *str);

@@ -157,7 +157,7 @@ cp_vset(char *varname, char type, char *value)
         cp_maxhistlength = v->va_real;
     else if (eq(copyvarname, "noclobber"))
         cp_noclobber = TRUE;
-     else if (eq(varname, "echo"))   /*CDHW*/
+    else if (eq(varname, "echo"))   /*CDHW*/
         cp_echo = TRUE;             /*CDHW*/    
     else if (eq(copyvarname, "prompt") && (type == VT_STRING))
         cp_promptstring = copy(v->va_string);
@@ -208,10 +208,12 @@ cp_vset(char *varname, char type, char *value)
 	alreadythere = FALSE;
 	if (ft_curckt) {
 	    for (u = ft_curckt->ci_vars; u; u = u->va_next)
+	    {
 		if (eq(copyvarname, u->va_name)) {
 		    alreadythere = TRUE;
 		    break;
 		}
+	    }
 	    if (!alreadythere) {
 		v->va_next = ft_curckt->ci_vars;
 		ft_curckt->ci_vars = v;
@@ -225,7 +227,7 @@ cp_vset(char *varname, char type, char *value)
                 /* va_next left unchanged */
                 tfree(v->va_name);
                 tfree(v);
-/* va: old version with memory leaks	    
+/* va: old version with memory leaks
 		w = u->va_next;
 		bcopy(v, u, sizeof(*u));
 		u->va_next = w;
@@ -291,9 +293,7 @@ cp_setparse(wordlist *wl)
             *s = '\0';
             if (*val == '\0') {
                 if (!wl) {
-                    fprintf(cp_err,
-                        "Error:  %s equals what?.\n",
-                        name);
+                    fprintf(cp_err, "Error:  %s equals what?.\n", name);
                    tfree(name);/*DG: cp_unquote Memory leak: free name before exiting*/
                    return (NULL);
                 } else {
@@ -343,7 +343,7 @@ cp_setparse(wordlist *wl)
             }
             if (balance && !wl) {
                 fprintf(cp_err, "Error: bad set form.\n");
-		tfree(name); /* va: cp_unquote memory leak: free name before exiting */
+                tfree(name); /* va: cp_unquote memory leak: free name before exiting */
                 return (NULL);
             }
             
@@ -373,7 +373,7 @@ cp_setparse(wordlist *wl)
             vv->va_string = copy(val);
         }
         tfree(copyval);/*DG: must free ss any way to avoid cp_unquote memory leak */
-        tfree(name); /* va: cp_unquote memory leak: free name for every loop */    
+        tfree(name); /* va: cp_unquote memory leak: free name for every loop */
     }
     if(name)
         tfree(name);
@@ -484,6 +484,11 @@ bool
 cp_getvar(char *name, int type, void *retval)
 {
     struct variable *v;
+
+#ifdef TRACE
+    /* SDB debug statement */
+    printf("in cp_getvar, trying to get value of variable %s.\n", name);
+#endif
 
     for (v = variables; v; v = v->va_next)
         if (eq(name, v->va_name))

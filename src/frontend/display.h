@@ -3,8 +3,14 @@
  * 1999 E. Rouat
  ************/
 
+/*  See if we have been already included  */
 #ifndef DISPLAY_H_INCLUDED
 #define DISPLAY_H_INCLUDED
+
+/*  Include a bunch of other stuff to make display.h work  */
+#include <ftedev.h>
+#include <fteinput.h>
+#include <graph.h>
 
 DISPDEVICE *FindDev(char *name);
 void DevInit(void);
@@ -25,6 +31,5 @@ void SaveText(GRAPH *graph, char *text, int x, int y);
 int DevSwitch(char *devname);
 
 
+#endif /* DISPLAY_H_INCLUDED */
 
-
-#endif

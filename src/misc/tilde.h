@@ -6,10 +6,7 @@
 #ifndef TILDE_H_INCLUDED
 #define TILDE_H_INCLUDED
 
-#ifdef HAVE_GNUREADLINE
 char * tildexpand(char *string);
-#else
-char * tilde_expand(char *string);
-#endif
+
 
 #endif

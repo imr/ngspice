@@ -72,11 +72,8 @@ cp_tildexpand(char *string)
 {
     char	*result;
 
-#ifdef HAVE_READLINE
     result = tildexpand(string);
-#else
-    result = tilde_expand(string);
-#endif
+
     if (!result) {
 	if (cp_nonomatch) {
 	    return copy(string);
