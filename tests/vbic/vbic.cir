@@ -1,18 +1,15 @@
 VBIC Test
+
 VC 1  0 DC 2.0
 VB 2  0 DC 0.7
 VE 3  0 DC 0.0
 *VS 4  0 DC 0.0
 Q1 1  2  3  VBIC_HSPICE
 .OPTIONS GMIN=1e-13
-*.OP
+.OP
 .DC VB 0.2 1.0 0.01
 
-.control
-run
-plot abs(-i(vc)) abs(-i(vb)) ylimit 1e-12 0.1 ylog
-plot abs(-i(vc))/abs(-i(vb)) vs abs(-i(vc)) xlimit 1e-09 0.1 xlog
-.endc
+.print dc -i(vc) -i(vb)
 
 .MODEL VBIC NPN LEVEL=4
 + RCX=10 RCI=10 RBX=1 RBI=10 RE=1 RBP=10 RS=10

@@ -6,11 +6,7 @@ Q1 Q1_C Q1_B Q1_E P1
 .DC V1 0.2 1.2 10m
 .OPTIONS GMIN=1e-13
 
-.control
-run
-plot abs(i(vc)) abs(i(vb)) ylimit 1e-15 0.1 ylog
-plot abs(i(vc))/abs(i(vb)) vs abs(-i(vc)) xlimit 1e-09 0.1 xlog
-.endc
+.print dc abs(i(vc)) abs(i(vb)) 
 
 .MODEL P1 PNP LEVEL=4 
 + IS=1e-16 IBEI=1e-18 IBEN=5e-15 IBCI=2e-17 IBCN=5e-15 ISP=1e-15 RCX=10

@@ -1,4 +1,5 @@
 VBIC DiffAmp Test
+
 Q8 Q8_B Q8_B VCC P1
 Q9 Q9_B Q9_B Q8_B P1
 V1 VCC 0 3.3 
@@ -21,14 +22,13 @@ Q4 Q4_C Q9_B Q6_C P1
 R2 Q4_C 0 100k
 R3 VCC R3_N 1K
 Q5 Q5_C Q5_B VCC P1
-*.OP
+.OP
 .TRAN 1n 1u 0 10n
-*.AC DEC 25 100k 1G
+.AC DEC 25 100k 1G
 
-.control
-run
-plot v(e1_p)
-.endc
+.print ac v(e1_p)
+.print tran v(e1_p)
+
 
 .MODEL N1 NPN LEVEL=4 
 + IS=1e-16 IBEI=1e-18 IBEN=5e-15 IBCI=2e-17 IBCN=5e-15 ISP=1e-15 RCX=10

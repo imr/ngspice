@@ -1,15 +1,20 @@
-VBIC Temp test
-V1 1 0 1.0
-VC 1 Q1_C 0.0
-VB 1 Q1_B 0.0
-Q1 Q1_C Q1_B 0 N1
-.OPTIONS TEMP=150
-.DC V1 0.2 1.2 10m
+VBIC Pole Zero Test
 
-.control
-run
-plot i(vc) i(vb)
-.endc
+Vcc    3 0 5
+Rc     2 3 1k
+Rb     3 1 200k
+I1     0 1 AC 1
+Vmeas  4 2
+Cshunt 4 0 .1u
+
+Q1  2 1 0 0 N1
+
+.ac dec 100 0.1Meg 10G
+.print ac db(i(vmeas))
+.print ac ph(i(vmeas))
+.pz 1 0 4 0 cur pz
+.print pz all
+
 
 .MODEL N1 NPN LEVEL=4 
 + IS=1e-16 IBEI=1e-18 IBEN=5e-15 IBCI=2e-17 IBCN=5e-15 ISP=1e-15 RCX=10

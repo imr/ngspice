@@ -5,11 +5,10 @@ VC Q1_C 0 0.0
 Q1 Q1_C V1_P 0 N1
 .DC VC 0 5 50M VB 700M 1 50M
 
-.control
-run
-plot -i(vc)
-plot -i(vb)
-.endc
+
+.print dc -i(vc)
+.print dc -i(vb)
+
 
 .MODEL N1 NPN LEVEL=4 
 + IS=1e-16 IBEI=1e-18 IBEN=5e-15 IBCI=2e-17 IBCN=5e-15 ISP=1e-15 RCX=10

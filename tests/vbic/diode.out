@@ -1,0 +1,164 @@
+
+No. of Data Rows : 1
+
+Circuit: VBIC diode test
+
+Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
+	Node                                  Voltage
+	----                                  -------
+	----	-------
+	q1#subsSI                        1.961187e-11
+	q1#collCI                        8.483758e-01
+	q1#substrate                     0.000000e+00
+	vcc                              1.000000e+00
+
+	Source	Current
+	------	-------
+
+	v1#branch                        -2.13290e-02
+
+ VBIC models (Vertical Bipolar Inter-Company Model)
+      model                    p1
+
+       type                   pnp
+       tnom                    27
+        rcx                    10
+        rci                    60
+         vo                     2
+       gamm                 2e-11
+       hrcf                     2
+        rbx                    10
+        rbi                    40
+         re                     2
+         rs                    20
+        rbp                    40
+         is                 1e-16
+         nf                     1
+         nr                     1
+         fc                   0.9
+       cbeo                     0
+        cje                 1e-13
+         pe                  0.75
+         me                  0.33
+        aje                  -0.5
+       cbco                     0
+        cjc                 2e-14
+        qco                 1e-12
+       cjep                 1e-13
+         pc                  0.75
+         mc                  0.33
+        ajc                  -0.5
+       cjcp                 4e-13
+         ps                  0.75
+         ms                  0.33
+        ajs                  -0.5
+       ibei                 1e-18
+        wbe                     1
+        nei                     1
+       iben                 5e-15
+        nen                     2
+       ibci                 2e-17
+        nci                     1
+       ibcn                 5e-15
+        ncn                     2
+       avc1                     2
+       avc2                    15
+        isp                 1e-15
+        wsp                     1
+        nfp                     1
+      ibeip                     0
+      ibenp                     0
+      ibcip                     0
+       ncip                     1
+      ibcnp                     0
+       ncnp                     2
+        vef                    10
+        ver                     4
+        ikf                 0.002
+        ikr                0.0002
+        ikp                0.0002
+         tf                 1e-11
+        qtf                     0
+        xtf                    20
+        vtf                     0
+        itf                  0.08
+         tr                 1e-10
+         td                 2e-11
+        kfn                     0
+        afn                     1
+        bfn                     1
+        xre                     0
+       xrbi                     0
+       xrci                     0
+        xrs                     0
+        xvo                     0
+         ea                  1.12
+       eaie                  1.12
+       eaic                  1.12
+       eais                  1.12
+       eane                  1.12
+       eanc                  1.12
+       eans                  1.12
+        xis                     3
+        xii                     3
+        xin                     3
+        tnf                     0
+       tavc                     0
+        rth                   300
+        cth                     0
+        vrt                     0
+        art                   0.1
+       ccso                     0
+        qbm                     0
+        nkf                   0.5
+       xikf                     0
+       xrcx                     0
+       xrbx                     0
+       xrbp                     0
+       isrr                     1
+       xisr                     0
+       dear                     0
+        eap                  1.12
+       vbbe                     0
+       nbbe                     1
+       ibbe                 1e-06
+     tvbbe1                     0
+     tvbbe2                     0
+      tnbbe                     0
+       ebbe                     0
+      dtemp                     0
+       vers                   1.2
+       vref                     0
+
+ VBIC: Vertical Bipolar Inter-Company Model
+     device                    q1
+      model                    p1
+        vbe               0.91612
+        vbc              0.807154
+         ic             0.0182022
+         ib            0.00312671
+         ie             -0.021329
+         is          -9.80594e-13
+         gm              0.439271
+         go             -0.045008
+        gpi             0.0932675
+        gmu              0.027613
+         gx              0.314082
+        cbe           9.60805e-11
+       cbex                     0
+        cbc           5.30126e-10
+       cbcx           8.94218e-20
+       cbep           1.07686e-13
+       cbcp           4.38431e-13
+          p            0.00484787
+
+ Vsource: Independent voltage source
+     device                    v1
+         dc                     1
+      acmag                     0
+          i             -0.021329
+          p              0.021329
+
+
+
+

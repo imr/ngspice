@@ -1,21 +1,18 @@
-VBIC Pole Zero Test
+VBIC Aplac Transient Test
 
-Vcc    3 0 5
-Rc     2 3 1k
-Rb     3 1 200k
-I1     0 1 AC 1
-Vmeas  4 2
-Cshunt 4 0 .1u
+V1 R3_P 0 5 
+V2 V2_P 0 5 Pulse(0 100m 0 10n 10n 490.1n 1u)
+C1 R3_N V2_P 1n  
+R4 R3_N 0 100k
+Q1 R1_N R3_N Q1_E N1
+R1 R3_P R1_N 100k
+R2 Q1_E 0 10k
+R3 R3_P R3_N 500k
 
-Q1  2 1 0 0 N1
 
-.control
-ac dec 100 0.1Meg 10G
-plot db(i(vmeas))
-plot ph(i(vmeas))
-pz 1 0 4 0 cur pz
-print all
-.endc
+.tran 10n 10u
+.print tran v(Q1_E)
+
 
 .MODEL N1 NPN LEVEL=4 
 + IS=1e-16 IBEI=1e-18 IBEN=5e-15 IBCI=2e-17 IBCN=5e-15 ISP=1e-15 RCX=10

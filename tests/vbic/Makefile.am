@@ -2,7 +2,21 @@
 
 
 
-EXTRA_DIST = CEamp.sp FG.sp FO.sp diffamp.sp diode.sp noise_scale_test.sp \
-	temp.sp tran_aplac_test.sp vbic.sp
+TESTS = CEamp.cir		\
+	FG.cir 			\
+	FO.cir 			\
+	diffamp.cir 		\
+	diode.cir 		\
+	noise_scale_test.cir 	\
+	temp.cir 		\
+	tran_aplac_test.cir 	\
+	vbic.cir
+
+TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
+
+EXTRA_DIST = \
+        $(TESTS)                \
+        $(TESTS:.cir=.out)
+
 
 MAINTAINERCLEANFILES = Makefile.in
