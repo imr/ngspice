@@ -2,7 +2,14 @@
 
 	*   Updated and corrected test files in "tests" directory. Added
 	    "examples" directory.
+	    
+	*   src/spicelib/devices/bsim3/b3set.c: Added Dietmar Warning patch
+	    to solve a bug that shows up when acm=2 was used. From Dietmar's
+	    mail: 
+	      if we use the acm=2 option we must set the nrd and nrs 
+	      defaults to 0.
 
+ 
 2004-07-08  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   Applied Al Niessner <Al.Niessner@jpl.nasa.gov> negabyte patch
