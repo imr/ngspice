@@ -4,7 +4,8 @@ Author: 1999 Alan Gillespie
 **********/
 
 #include "ngspice.h"
-#include "cktdefs.h"#include "suffix.h"
+#include "cktdefs.h"
+#include "suffix.h"
 
 void
 CKTncDump(ckt) 
