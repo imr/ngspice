@@ -609,7 +609,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
         case '*':
         case '.':
             /* Just a pointer to the line into s and then break */
-	  buffer = tmalloc(2000);    /* XXXXX */
+	  buffer = tmalloc(2000+strlen(c->li_line));    /* DW,VA */
 	  s = c->li_line;
 	  break;
 

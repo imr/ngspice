@@ -1,3 +1,13 @@
+2004-05-30  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/frontend/subckt.c: patch from Dietmar Warning 
+	    (warning@danalyse.de) to fix memory errors when using very 
+	    long model card.
+	    
+	    src/spicelibe/devices/vbic/vbicsetup.c: patch from Dietmar Warning
+	    (warning@danalyse.de) to fix vbic behavior.
+
+
 2004-02-14  Paolo Nenzi <p.nenzi@ieee.ord>
 
 	*   Trimmed the autoconf interfaces. Added dummy ".out" files
