@@ -674,6 +674,11 @@ the GNU Autoconf documentation for the former.
 The options specific to NGSPICE are:
 
 @itemize @bullet
+@item  @command{--enable-numaparam}: Preliminary support for parameters expansion
+       in netlists. Numparam is a library that attach itself to a single point
+       in NGSPICE code and comes with its own documentation. Before using this 
+       library you should look at library's documentation in @file{src/frontend/numaparam}
+       directory.
 @item  @command{--enable-ftedebug}: This switch enables the code for debugging
        the NGSPICE frontend. Developers who wish to mess with the frontend 
        should enable it (and set to @code{TRUE} the "debug" option). The 
@@ -733,10 +738,7 @@ The options specific to NGSPICE are:
        this to have it compiled into NGSPICE.
 @item  @command{--with-readline}: This option enables GNU Readline on NGSPICE.
        Since NGSPICE license is incompatible with GPL (which covers Readline 
-       library), the code is not included into NGSPICE by default. The Readline
-       code is delivered as a separate patch. Before enabling this option the
-       patch must be applied. @emph{Applying the patch will break the GPL, 
-       consider this!}
+       library), the code is not included compiled into NGSPICE by default.
 @end itemize
 
 @sc{Caveat Emptor}:
@@ -1101,19 +1103,40 @@ stationary gaussian process.
 @node Analysis at Different Temperatures, Convergence, Types of Analysis, Supported Analyses
 @section Analysis at Different Temperatures
 
-All input data for NGSPICE is assumed to have been measured at a nominal
-temperature of 27°C, which can be changed by use of the @code{TNOM}
-parameter on the @code{.OPTION} control line.  This value can further be
-overridden for any device which models temperature effects by
-specifying the @code{TNOM} parameter on the model itself.  The circuit
-simulation is performed at a temperature of 27°C, unless
-overridden by a @code{TEMP} parameter on the @code{.OPTION} control line.
-Individual instances may further override the circuit temperature
-through the specification of a @code{TEMP} parameter on the instance.
 
-Temperature dependent support is provided for resistors, diodes,
-JFETs, BJTs, and level 1, 2, and 3 MOSFETs.  BSIM (levels 4 and 5)
-MOSFETs have an alternate temperature dependency scheme which adjusts
+Temperature, in NGSPICE, is a property associated to the entire circuit, 
+rather an analysis option. Circuit temperature has a default (nominal)
+value of 27°C (300.15 K) that can be changed using the @option{TNOM} 
+option in an @code{.OPTION} control line. All analyses are, thus,  
+performed at circuit temperature, and if you want to simulate circuit
+behaviour at different tempereratures you should prepare a netlist
+for each temperature.
+
+All input data for NGSPICE is assumed to have been measured at the 
+circuit nominal temperature. This value can further be overridden for 
+any device which models temperature effects by specifying the @option{TNOM} 
+parameter on the @code{.model} itself.  
+
+Individual instances may further override the circuit temperature
+through the specification of @option{TEMP} and @option{DTEMP} parameters
+on the instance. The two options are not independent even if you can
+specify both on the instance line, the @option{TEMP} option overrides
+@option{DTEMP}. The algorithm to compute instance temperature is described 
+below:
+
+@example
+
+IF TEMP is specified THEN 
+        instance_temperature = TEMP
+ELSE IF
+        instance_temperature = circuit_temperature + DTEMP
+END IF
+
+@end example
+
+Temperature dependent support is provided for all devices except voltage 
+and current sources (either independent and controlled) and BSIM models.
+BSIM MOSFETs have an alternate temperature dependency scheme which adjusts
 all of the model parameters before input to NGSPICE.  For details of the
 BSIM temperature adjustment, see [6] and [7].
 
@@ -1141,10 +1164,10 @@ $$
 @end example
 @end ifnottex
 
-where `k' is Boltzmann's constant, `q' is the electronic charge, `E' 
-is the energy gap which is a model parameter, `G' and `XTI' is the 
-saturation current temperature exponent (also a model parameter, and 
-usually equal to 3).
+where `@math{k}' is Boltzmann's constant, `@math{q}' is the electronic 
+charge, `@math{E}' is the energy gap which is a model parameter, `@math{G}' 
+and `@math{XTI}' is the saturation current temperature exponent (also a 
+model parameter, and usually equal to 3).
 
 
 
@@ -1169,10 +1192,11 @@ $$
 @end ifnottex
 
 
-where `T_0' and `T_1' are in degrees Kelvin, and `XTB' is a user-supplied 
-model parameter.  Temperature effects on beta are carried out by appropriate
-adjustment to the values of `B_F' , `I_SE' , `B_R' , and `I_SC' (spice model
-parameters @code{BF}, @code{ISE}, @code{BR}, and @code{ISC}, respectively).
+where `@math{T_0}' and `@math{T_1}' are in degrees Kelvin, and `@math{XTB}' 
+is a user-supplied model parameter.  Temperature effects on beta are carried 
+out by appropriate adjustment to the values of `@math{B_F}', `@math{I_SE}', 
+`@math{B_R}', and `@math{I_SC}' (spice model parameters @option{BF}, 
+@option{ISE}, @option{BR}, and @option{ISC}, respectively).
 
 
 
@@ -1201,16 +1225,16 @@ $$
 @end ifnottex
 
 
-where @code{N} is the emission coefficient, which is a model parameter, and the
+where `@math{N}' is the emission coefficient, which is a model parameter, and the
 other symbols have the same meaning as above.  Note that for Schottky
 barrier diodes, the value of the saturation current temperature
-exponent, @code{XTI}, is usually 2.
+exponent, `@math{XTI}', is usually 2.
 
 
 
-Temperature appears explicitly in the value of junction potential, `U'
-(in NGSPICE @code{PHI}), for all the device models.  The temperature 
-dependence is determined by:
+Temperature appears explicitly in the value of junction potential, 
+`@option{U}' (in NGSPICE @option{PHI}), for all the device models.
+The temperature dependence is determined by:
 
 @tex
 $$
@@ -1228,16 +1252,16 @@ $$
 @end example
 @end ifnottex
 
-where `k' is Boltzmann's constant, `q' is the electronic charge, `N_a' 
-is the acceptor impurity density, `N_d' is the donor impurity density, 
-`N_i' is the intrinsic carrier con centration, and `E_g' is the energy 
-gap.
+where `@math{k}' is Boltzmann's constant, `@math{q}' is the electronic 
+charge, `@math{N_a}' is the acceptor impurity density, `@math{N_d}' is 
+the donor impurity density, `@math{N_i}' is the intrinsic carrier 
+concentration, and `@math{E_g}' is the energy gap.
 
 
 
-Temperature appears explicitly in the value of surface mobility, `M_0'
-(or UO), for the MOSFET model.  The temperature dependence is
-determined by:
+Temperature appears explicitly in the value of surface mobility, 
+`@math{M_0}' (or @math{U_0}), for the MOSFET model.  The temperature 
+dependence is determined by:
 
 @tex
 $$
@@ -1257,7 +1281,8 @@ $$
 @end example
 @end ifnottex
 
-The effects of temperature on resistors is modeled by the formula:
+The effects of temperature on resistors, capacitor and inductors is modeled 
+by the formula:
 
 @tex
 $$
@@ -1272,8 +1297,8 @@ $$
 @end example
 @end ifnottex
 
-where `T' is the circuit temperature, `T_0' is the nominal temperature,
-and `TC_1' and `TC_2' are the first- and second order temperature
+where `@math{T}' is the circuit temperature, `@math{T_0}' is the nominal temperature,
+and `@math{TC_1}' and `@math{TC_2}' are the first and second order temperature
 coefficients.
 
 
@@ -1327,7 +1352,7 @@ converge to the desired state.
 @node General Structure and Conventions, Basics, Circuit Description, Circuit Description
 @section General Structure and Conventions
 
-The circuit to be analyzed is described to NGSPICE by a set of element
+The circuit to be analyzed is described to ngspice by a set of element
 lines, which define the circuit topology and element values, and a set
 of control lines, which define the model parameters and the run
 controls.  The first line in the input file must be the title, and the
@@ -1535,6 +1560,10 @@ Semiconductor resistor model
 
 Semiconductor capacitor model
 
+@item L
+
+Inductor model
+
 @item SW
 
 Voltage controlled switch
@@ -1741,13 +1770,67 @@ in the direction of voltage drop).
 
 
 @menu
+* General options and information::
 * Elementary Devices::          
 * Voltage and Current Sources::  
 * Transmission Lines::          
 * Transistors and Diodes::      
 @end menu
 
-@node  Elementary Devices, Voltage and Current Sources, Circuit Elements and Models, Circuit Elements and Models
+@node  General options and information, Elementary Devices, Circuit Elements and Models, Circuit Elements and Models
+@section  General options and information
+
+@menu
+* Simulating more devices in parallel::
+* Technology scaling::
+* Model binning::
+@end menu
+
+@node Simulating more devices in parallel, Technology scaling, General options and information, General options and information
+@subsection Simulating more devices in parallel
+
+If you need to simulate more devices of the same kind in parallel, you
+can use the @option{m} (often called parallel multiplier) option which 
+is available for all instances except transmission lines and sources 
+(both independent and controlled). 
+
+The parallel multiplier is implemented by multiplying by the value of 
+@option{m} the element's matrix stamp, thus it cannot be used to accurately
+simulate larger devices in integrated circuits. 
+
+The netlist below show how to correclty use the parallel multiplier: 
+
+@example
+Multiple devices 
+
+d1  2  0 mydiode  m=10
+
+d01 1  0 mydiode
+d02 1  0 mydiode
+d03 1  0 mydiode
+d04 1  0 mydiode
+d05 1  0 mydiode
+d06 1  0 mydiode
+d07 1  0 mydiode
+d08 1  0 mydiode
+d09 1  0 mydiode
+d10 1  0 mydiode
+
+...
+@end example
+
+The @code{d1} instance connected between nodes 2 and 0  is equivalent
+to the parallel @code{d01-d10} connected between 1 and 0.  
+
+@node Technology scaling, Model binning, Simulating more devices in parallel, General options and information
+@subsection Technology scaling
+Still to be implemented and written.
+
+@node Model Binning, Elementary Devices, Technology scaling, General options and information
+@subsection Model binning
+Still to be implemented and written.
+
+@node  Elementary Devices, General options and information, Circuit Elements and Models, Circuit Elements and Models
 @section  Elementary Devices
 
 
@@ -1789,35 +1872,24 @@ discrete and semiconductor resistors. Semiconductor resistors in ngspice
 means: resistors described by geometrical parameters. So, do not expect 
 detailed modeling of semiconductor effects.
 
-@option{n+} and @option{n-} are the two element nodes, @option{value} is the 
-resistance (in ohms) and may be positive or negative but not zero. If you 
-need to simulate very small resistors (0.001 Ohm or less) , you should use 
-CCVS (transresistance), it is less efficient but improves numerical 
-accuracy (a small resistance is a large conductance).   
+@option{n+} and @option{n-} are the two element nodes, @option{value} is 
+the resistance (in ohms) and may be positive or negative but not zero. 
+
+@sc{Hint}: If you need to simulate very small resistors (0.001 Ohm or 
+less), you should use CCVS (transresistance), it is less efficient but 
+improves overall numerical accuracy. Think about that a small resistance
+is a large conductance.   
  
 Ngspice can assign a resistor instance a different value for AC analysis,
 specified using the @option{ac} keyword. This value must not be zero as 
 described above. The AC resistance is used in AC analysis only (not Pole-Zero
-nor noise).  If you do not specify the @option{ac} parameter, it is defaulted 
-to @option{value}.
+nor noise).  If you do not specify the @option{ac} parameter, it is 
+defaulted to @option{value}.
 
-The @option{m} parameter is the "multiplication factor", and can be used to 
-simulate "m" instances of the same kind in parallel. This parameter affects 
-all analyses. 
+If you want to simulate temperature dependence of a resistor, you need 
+to specify its temperature coefficients, using a @command{.model} line,
+like in the example below:
 
-The @option{scale} keyword let the designer choose a different scale for 
-elements. This option is not yet very useful, it will fully implemented in the
-future to perform technology scaling. At present is here as a work in progress.
-
-The operating temperature of instances can be changed using the @option{dtemp}
-keyword. Ngspice simulates the circuit with all components at the same single 
-temperature (the circuit temperature). To adjust the temperature of a resistor 
-instance you can define its temperature difference from the rest of the 
-circuit using @option{dtemp}.
-
-If you want to simulate temperature dependence of a resistor, you need to
-specify its temperature coefficients, using a @command{.model} line, like in the
-example below:
 @example
   RE1 1 2 700 std dtemp=5 
   
@@ -1855,8 +1927,8 @@ $$
 @end example
 @end ifnottex
 
-If you are interested in temperature effects or noise equations, read the
-following section on semiconductor resistors.
+If you are interested in temperature effects or noise equations, read
+the following section on semiconductor resistors.
 
 @node  Semiconductor Resistors, Semiconductor Resistor Model (R), Resistors, Elementary Devices
 @subsection  Semiconductor Resistors
@@ -1877,18 +1949,18 @@ following section on semiconductor resistors.
 @end example
 
 This is the more general form of the resistor presented before (@pxref{Resistors}) 
-and allows the modeling of temperature effects and for the calculation of the 
-actual resistance value from strictly geometric information and the 
-specifications of the process.  If @option{value} is specified, it overrides 
-the geometric information and defines the resistance.  If @option{mname} is 
-specified, then the resistance may be calculated from the process information 
-in the model @option{mname} and the given @option{length} and @option{width}.  
-If @option{value} is not specified, then @option{mname} and @option{length}
-must be specified.  If @option{width} is not specified, then it is taken
-from the default width given in the model.  
+and allows the modeling of temperature effects and for the calculation 
+of the  actual resistance value from strictly geometric information and
+the specifications of the process.  If @option{value} is specified, it 
+overrides the geometric information and defines the resistance.  If 
+@option{mname} is specified, then the resistance may be calculated from
+the process information in the model @option{mname} and the given @option{length} 
+and @option{width}. If @option{value} is not specified, then @option{mname}
+and @option{length} must be specified.  If @option{width} is not specified,
+then it is taken from the default width given in the model.  
 
-The (optional) @option{temp} value is the temperature at which this device is 
-to operate, and overrides the temperature specification on the 
+The (optional) @option{temp} value is the temperature at which this device
+is to operate, and overrides the temperature specification on the 
 @command{.option} control line and the value specified in @option{dtemp}.  
 
 
@@ -1926,7 +1998,7 @@ corrected for temperature.  The parameters available are:
 
 The sheet resistance is used with the narrowing parameter and @option{l} 
 and @option{w} from the resistor device to determine the nominal resistance 
-by the formula
+by the formula:
 
 @tex
 $$
@@ -1966,7 +2038,7 @@ where $R({\rm TNOM}) = R_{nom} \vert R_{acnom}$.
 @end example
 @end ifnottex
 
-In the above formula, "T" represents the instance temperature, which can be
+In the above formula, `@math{T}' represents the instance temperature, which can be
 explicitly using the @option{temp} keyword or os calculated using the 
 circuit temperature and @option{dtemp}, if present.
 
@@ -2065,20 +2137,6 @@ in a @command{.model} line, as in the example below:
 @end example
 
 Both capacitors have a capacitance of 3nF.
-
-The @option{m} parameter is the "multiplication factor", and can be used to 
-simulate "m" instances of the same kind in parallel. This parameter affects 
-all analyses. 
-
-The @option{scale} keyword let the designer choose a different scale for 
-elements. This option is not yet very useful, it will fully implemented in the
-future to perform technology scaling. At present is here as a work in progress.
-
-The operating temperature of instances can be changed using the @option{dtemp}
-keyword. Ngspice simulates the circuit with all components at the same single 
-temperature (the circuit temperature). To adjust the temperature of a capacitor 
-instance you can define its temperature difference from the rest of the 
-circuit using @option{dtemp}.
 
 If you want to simulate temperature dependence of a capacitor, you need to
 specify its temperature coefficients, using a @command{.model} line, like in the
@@ -2305,11 +2363,10 @@ where $C({\rm TNOM}) = C_{nom}$.
 @end example
 @end ifnottex
 
-In the above formula, "T" represents the instance temperature, which can be
+In the above formula, `@math{T}' represents the instance temperature, which can be
 explicitly using the @option{temp} keyword or os calculated using the 
 circuit temperature and @option{dtemp}, if present.
 
-If both @option{temp} and @option{dtemp} are specified, the latter is ignored.
 
 
 @node  Inductors, Inductor model, Semiconductor Capacitor Model (C), Elementary Devices
@@ -2330,12 +2387,12 @@ If both @option{temp} and @option{dtemp} are specified, the latter is ignored.
      LSHUNT 23 51 10U IC=15.7MA
 @end example
 
-The inductor device implemented into ngspice has many enhancements over the
-orginal one. @option{n+} and @option{n-} are the positive and negative element 
-nodes, respectively. @option{value} is the inductance in Henries.
+The inductor device implemented into ngspice has many enhancements over
+the orginal one. @option{n+} and @option{n-} are the positive and negative 
+element nodes, respectively. @option{value} is the inductance in Henries.
 
-Inductance can be specified in the instance line as in the examples above or
-in a @command{.model} line, as in the example below:
+Inductance can be specified in the instance line as in the examples above 
+or in a @command{.model} line, as in the example below:
 
 @example
   L1 15 5 indmod1
@@ -2346,26 +2403,12 @@ in a @command{.model} line, as in the example below:
 
 Both inductors have an inductance of 3nH.
 
-The @option{m} parameter is the "multiplication factor", and can be used to 
-simulate "m" instances of the same kind in parallel. This parameter affects 
-all analyses. 
+The @option{nt} is used in conjunction with a @command{.model} line, and
+is used to specify the number of turns of the inductor. 
 
-The @option{scale} keyword let the designer choose a different scale for 
-elements. This option is not yet very useful, it will fully implemented in the
-future to perform technology scaling. At present is here as a work in progress.
-
-The @option{nt} is used in conjunction with a @command{.model} line, and is used
-to specify the number of turns of the inductor. 
-
-The operating temperature of instances can be set using the @option{temp} 
-option. Ngspice simulates the circuit with all components at the same single 
-temperature (the circuit temperature). To adjust the temperature of an 
-inductor instance you can define its temperature difference from the rest of 
-the  circuit using @option{dtemp}.
-
-If you want to simulate temperature dependence of an inductor, you need to
-specify its temperature coefficients, using a @command{.model} line, like in 
-the example below:
+If you want to simulate temperature dependence of an inductor, you need
+to specify its temperature coefficients, using a @command{.model} line,
+like in the example below:
 
 @example
   Lload 1 2 1u ind1 dtemp=5 
@@ -2374,9 +2417,10 @@ the example below:
 @end example
 
 The (optional) initial condition is the initial (timezero) value of
-inductor current (in Amps) that flows from @option{n+}, through the inductor, 
-to @option{n-}.  Note that the initial conditions (if any) apply only if the 
-@option{UIC} option is specified on the @command{.tran} analysis line.
+inductor current (in Amps) that flows from @option{n+}, through the 
+inductor, to @option{n-}.  Note that the initial conditions (if any) 
+apply only if the @option{UIC} option is specified on the @command{.tran} 
+analysis line.
 
 Ngspice calculates the nominal inductance as described below:
 
@@ -2395,10 +2439,10 @@ $$
 @node Inductor model, Coupled (Mutual) Inductors, Inductors, Elementary Devices
 @subsection Inductor model
 
-The inductor model contains physical and geometrical information that may be used to
-compute the inductance in some special cases (solenoid, toroid) In the present 
-form is not very useful, but may be extended in the future to accomodate 
-silicon integrated inductors, an emerging technology.
+The inductor model contains physical and geometrical information that 
+may be used to compute the inductance of some common topologies like 
+solenoids and toroids, wound in air or other material with constant
+magnetic permeability. 
 
 @multitable @columnfractions .15 .4 .2 .1 .1
 @item name    @tab parameter @tab units @tab default @tab example
@@ -2448,10 +2492,10 @@ $$
 @end example
 @end ifnottex
 
-If neither @option{value} nor @option{IND} are specified, then geometrical and
-physical parameters are take into account. In the following formulas @option{NT}
-refers to both instance and model parameter (instance parameter overrides model
-parameter):
+If neither @option{value} nor @option{IND} are specified, then geometrical
+and physical parameters are take into account. In the following formulas 
+@option{NT} refers to both instance and model parameter (instance parameter 
+overrides model parameter):
 
 If @option{LENGTH} is not zero:
 
@@ -2515,12 +2559,9 @@ where $L({\rm TNOM}) = L_{nom}$.
 @end example
 @end ifnottex
 
-In the above formula, "T" represents the instance temperature, which can be
-explicitly using the @option{temp} keyword or os calculated using the 
-circuit temperature and @option{dtemp}, if present.
-
-If both @option{temp} and @option{dtemp} are specified, the latter is ignored.
-
+In the above formula, `@math{T}' represents the instance temperature, 
+which can be explicitly using the @option{temp} keyword or calculated 
+using the circuit temperature and @option{dtemp}, if present.
 
 
 @node  Coupled (Mutual) Inductors, Switches, Inductor model, Elementary Devices
@@ -3481,7 +3522,8 @@ conditions.
 
 @menu
 * Junction Diodes::             
-* Diode Model (D)::             
+* Diode Model (D)::
+* Diode Equations::             
 * Bipolar Junction Transistors (BJTs)::  
 * BJT Models (NPN/PNP)::        
 * Junction Field-Effect Transistors (JFETs)::  
@@ -3500,7 +3542,8 @@ conditions.
  General form:
 
 @example
-  DXXXXXXX N+ N- MNAME <AREA> <OFF> <IC=VD> <TEMP=T>
+  DXXXXXXX n+ n- mname <area=val> <pj=val> <off> <ic=vd> <temp=val> 
+  +                    <dtemp=val>
 @end example
 
 
@@ -3512,59 +3555,317 @@ conditions.
 @end example
 
 
+The pn junction (diode) implemented in NGSPICE expands the original 
+spice's implementation. Perimetral effects and high injection level
+have been introduced into the original model and temperature dependence
+of some parameters has beed added. 
 
-N+ and N- are the positive and negative nodes, respectively.  MNAME is
-the model name, AREA is the area factor, and OFF indicates an (optional)
-starting condition on the device for dc analysis.  If the area factor is
-omitted, a value of 1.0 is assumed.  The (optional) initial condition
-specification using IC=VD is intended for use with the UIC option on the
-.TRAN control line, when a transient analysis is desired starting from
-other than the quiescent operating point.  The (optional) TEMP value is
-the temperature at which this device is to operate, and overrides the
-temperature specification on the .OPTION control line.
+@option{n+} and @option{n-} are the positive and negative nodes, respectively.
+@option{mname} is the model name, @option{area} is the area factor, @option{pj}
+is the perimeter factor, and @option{off} indicates an (optional)starting 
+condition on the device for dc analysis.  If the area factor is omitted, 
+a value of 1.0 is assumed. The (optional) initial condition specification 
+using @option{ic} is intended for use with the @option{uic} option on 
+the @code{.tran} control line, when a transient analysis is desired starting 
+from other than the quiescent operating point. You should supply the inital 
+voltage across the diode there. The (optional) @option{temp} value is 
+the temperature at which this device is to operate, and overrides the 
+temperature specification on the @code{.option} control line. As always, 
+instance temperature can be specified as an offset to the circuit 
+temperature with the @option{dtemp} option.
 
 
 
-
-@node  Diode Model (D), Bipolar Junction Transistors (BJTs), Junction Diodes, Transistors and Diodes
+@node  Diode Model (D), Diode Equations, Junction Diodes, Transistors and Diodes
 @subsection  Diode Model (D)
 
 
-The dc characteristics of the diode are determined by the parameters IS
-and N.  An ohmic resistance, RS, is included.  Charge storage effects
-are modeled by a transit time, TT, and a nonlinear depletion layer
-capacitance which is determined by the parameters CJO, VJ, and M.  The
-temperature dependence of the saturation current is defined by the
-parameters EG, the energy and XTI, the saturation current temperature
-exponent.  The nominal temperature at which these parameters were
-measured is TNOM, which defaults to the circuit-wide value specified on
-the .OPTIONS control line.  Reverse breakdown is modeled by an
-exponential increase in the reverse diode current and is determined by
-the parameters BV and IBV (both of which are positive numbers).
+The dc characteristics of the diode are determined by the parameters 
+@option{IS} and @option{N}.  An ohmic resistance, @option{RS}, is 
+included. Charge storage effects are modeled by a transit time, 
+@option{TT}, and a nonlinear depletion layer capacitance which is 
+determined by the parameters @option{CJO}, @option{VJ}, and @option{M}.
+The temperature dependence of the saturation current is defined by the
+parameters @option{EG}, the energy and @option{XTI}, the saturation 
+current temperature exponent. The nominal temperature at which these 
+parameters were measured is @option{TNOM}, which defaults to the 
+circuit-wide value specified on the @code{.options} control line.
+Reverse breakdown is modeled by an exponential increase in the 
+reverse diode current and is determined by the parameters @option{BV} 
+and @option{IBV} (both of which are positive numbers).
 
-@multitable @columnfractions .1 .45 .15 .15 .15 .1
-@item name @tab parameter @tab units @tab default @tab example @tab   area
-@item IS @tab saturation current @tab A @tab 1.0e-14 @tab 1.0e-14 @tab   *
-@item RS @tab ohmic resistance @tab Z @tab 0 @tab 10 @tab *
-@item N @tab emission coefficient @tab - @tab 1 @tab 1.0
-@item TT @tab transit-time @tab sec @tab 0 @tab 0.1ns
-@item CJO @tab zero-bias junction capacitance
-      @tab F @tab 0 @tab 2pF @tab *
-@item VJ @tab junction potential @tab V @tab 1 @tab 0.6
-@item M @tab grading coefficient @tab - @tab 0.5 @tab 0.5
-@item EG @tab activation energy
-      @tab eV @tab 1.11 @tab 1.11 Si; 0.69 Sbd; 0.67 Ge
-@item XTI @tab saturation-current temp. exp
-      @tab - @tab 3.0 @tab 3.0 jn; 2.0 Sbd
-@item KF @tab flicker noise coefficient @tab - @tab 0
-@item AF @tab flicker noise exponent @tab - @tab 1
-@item FC @tab coefficient for forward-bias
-      @tab - @tab 0.5 @tab depletion capacitance formula
-@item BV @tab reverse breakdown voltage @tab V @tab infinite @tab 40.0
-@item IBV @tab current at breakdown voltage @tab A @tab 1.0e-3
-@item TNOM @tab parameter measurement temperature @tab C @tab 27 @tab 50
+@sc{Junction DC parameters}
+@multitable @columnfractions .10 .40 .1 .15 .15 .10
+@item name @tab parameter @tab units @tab default @tab example @tab scale factor
+@item BV        @tab reverse breakdown voltage @tab V @tab infinite @tab 40.0
+@item IBV       @tab current at breakdown voltage @tab A @tab 1.0e-3 @tab 1.0e-4 
+@item IK (IKF)  @tab forward knee current @tab A @tab 1.0e-3 @tab 1.0e-6 
+@item IK        @tab reverse knee current @tab A @tab 1.0e-3 @tab 1.0e-6
+@item IS (JS)   @tab saturation current   @tab A @tab 1.0e-14 @tab 1.0e-16 @tab area
+@item JSW       @tab Sidewall saturation current   @tab A @tab 1.0e-14 @tab 1.0e-15 @tab perim.
+@item N         @tab emission coefficient @tab - @tab 1 @tab 1.5 
+@item RS        @tab ohmic resistance     @tab Ohm @tab 0 @tab 100 @tab 1/area
 @end multitable
 
+@sc{Junction capacitance paramters}
+@multitable @columnfractions .10 .40 .1 .15 .15 .10 
+@item name @tab parameter @tab units @tab default @tab example @tab scale factor
+@item CJO (CJ0)  @tab zero-bias junction bottowall capacitance @tab F @tab 0.0 @tab 2pF @tab area
+@item CJP (CJSW) @tab zero-bias junction sidewall capacitance @tab F @tab 0.0 @tab .1pF @tab perim.
+@item FC         @tab coefficient for forward-bias depletion bottomwall capacitance formula
+                 @tab - @tab 0.5 @tab -
+@item FCS        @tab coefficient for forward-bias depletion sidewall capacitance formula 
+                 @tab - @tab 0.5 @tab -
+@item M (MJ)     @tab Area junction grading coefficient @tab - @tab 0.5 @tab 0.5
+@item MJSW       @tab Periphery junction grading coefficient @tab - @tab 0.33 @tab 0.5		 
+@item VJ         @tab junction potential @tab V @tab 1 @tab 0.6
+@item PHP        @tab Periphery junction potential @tab V @tab 1 @tab 0.6
+@item TT         @tab transit-time @tab sec @tab 0 @tab 0.1ns
+@end multitable
+
+@sc{Temperature effects}
+@multitable @columnfractions .10 .40 .1 .15 .15 .10
+@item name @tab parameter @tab units @tab default @tab example @tab scale factor
+@item EG   @tab activation energy @tab eV @tab 1.11 @tab 1.11 Si
+@item      @tab                   @tab    @tab      @tab 0.69 Sbd 
+@item      @tab                   @tab    @tab      @tab 0.67 Ge
+@item TM1  @tab 1st order tempco for MJ @tab 1/°C @tab 0.0 @tab -
+@item TM2  @tab 2nd order tempco for MJ @tab 1/°C^2 @tab 0.0 @tab -
+@item TNOM @tab parameter measurement temperature @tab C @tab 27 @tab 50
+@item TRS  @tab 1st order tempco for RS @tab 1/°C^2 @tab 0.0 @tab -
+@item TTT1 @tab 1st order tempco for TT @tab 1/°C @tab 0.0 @tab -
+@item TTT2 @tab 2nd order tempco for TT @tab 1/°C^2 @tab 0.0 @tab -
+@item XTI  @tab saturation-current temp. exp @tab - @tab 3.0 @tab 3.0 pn 
+@item      @tab                              @tab   @tab     @tab 2.0 Sbd
+@end multitable
+
+@sc{Noise modeling}
+@multitable @columnfractions .10 .40 .1 .15 .15 .10
+@item name @tab parameter @tab units @tab default @tab example @tab scale factor
+@item KF   @tab flicker noise coefficient @tab - @tab 0
+@item AF   @tab flicker noise exponent @tab - @tab 1
+@end multitable
+
+
+@node  Diode Equations, Bipolar Junction Transistors (BJTs), Diode Model (D), Transistors and Diodes
+@subsection  Diode Equations
+
+The junction diode is the the basic semiconductor device and the simplest
+one modeled in NGSPICE, but it's model is quite complex, even if not
+all the physical phenomena affecting a pn junction are modeled. The diode
+is modeled in three different regions:
+ 
+@itemize @bullet
+     @item
+     Forward bias: the anode is more positive than the cathode, the 
+     diode is "on" and can conduct large currents. To avoid convergence
+     problems and unrealistic high current, it is better to specify a 
+     series resistance to limit current with @option{RS} model parameter.
+     @item
+     Reverse bias: the cathode is more positive than the anode and
+     the diode is "off". A reverse biase diode conducts a small leakage
+     current.
+     @item
+     Brakdown: the breakdown region is modeled only if the @option{BV}
+     model parameter is given. When a diode enters breakdown the current
+     increase expoentially (remember to limit it). @option{BV} is a 
+     positive value. 
+@end itemize
+
+
+@sc{Parameters Scaling}
+
+Model parameters are scaled using the unitless parameters @option{AREA}
+and @option{PJ} and the multiplier @option{M} as depicted below:
+
+@tex
+$$AREA_{eff} = {\rm AREA}\cdot{\rm M} $$
+$$PJ_{eff} = {\rm PJ}\cdot{\rm M} $$
+$$IS_{eff} = {\rm IS} \cdot AREA_{eff} + {\rm JSW} * PJ_{eff} $$
+$$IBV_{eff} = {\rm IBV}\cdot AREA_{eff}$$
+$$IK_{eff} = {\rm IK}\cdot AREA_{eff} $$ 
+$$IKR_{eff} = {\rm IKR}\cdot AREA_{eff} $$
+$$CJ_{eff} = {\rm CJ0}\cdot AREA_{eff} $$
+$$CJP_{eff} = {\rm CJP}\cdot PJ_{eff} $$
+@end tex
+@ifnottex
+@example
+               AREAeff = AREA * M
+	       PJeff = PJ * M
+               ISeff = IS * AREAeff + JSW * PJeff
+               IKeff = IK * AREAeff
+               IKReff = IKR * AREAeff
+	       CJeff = CJ0 * AREAeff
+	       CJPeff = CJP * PJeff
+@end example
+@end ifnottex
+
+@sc{Diode DC, Transient and AC model equations}
+
+@tex
+$$
+I_D= \cases{IS_{eff} ( e^{q V_D \over N k T} - 1) + V_D * GMIN, &if $V_D \geq -3{NkT \over q}$\cr
+            -IS_{eff} [1 + ({3NkT \over q V_D e })^3] + V_D * GMIN , &if $-BV_{eff}<V_D<-3{NkT \over q}$\cr
+	    -IS_{eff} ( e^{-q (BV_{eff} + V_D) \over N k T}) + V_D * GMIN, &if $V_D \leq -BV_{eff}$ \cr}
+$$    
+@end tex
+@ifnottex
+@example
+            To be written!
+@end example
+@end ifnottex
+
+The breakdown region must be described with more depth since the breakdown
+is not modeled in physically.  As written before, the breakdown modeling
+is based on two model parameters: the "nominal breakdown voltage" @option{BV} 
+and the current at the onset of breakdown @option{IBV}. For the diode 
+model to be consistent, the current value cannot be arbitrary choosen,
+since the reverse bias and breakdown regions must match. 
+
+When the diode enters breakdown region from reverse bias, the current 
+is calculated using the formula:
+
+@tex
+$$
+I_{bdwn} = -IS_{eff} ( e^{-q {\rm BV} \over N k T} - 1)           
+$$    
+@end tex
+@ifnottex
+@example
+            To be written!
+@end example
+@end ifnottex
+
+@sc{Note:} if you look at the code in @file{diotemp.c} you will discover
+that the exponential relation is replaced with a first order taylor 
+series expansion.
+
+The computed current is necessary to adjust the breakdown voltage
+making the two regions match. The algorithm is a little bit convoluted
+and only a brief description is given here:
+
+@tex
+if $IBV_{eff} < I_{bdwn}$ then 
+$$ IBV_{eff} = I_{bdwn} $$ 
+$$BV_{eff} = {\rm BV} $$
+else
+$$BV_{eff} = {\rm BV} - {\rm N} V_t \ln({ IBV_{eff} \over I_{bdwn}}) $$
+@end tex
+@ifnottex
+@example
+
+IF IBVeff < Ibdwm THEN
+   IBVeff = Ibwn
+   BVeff = BV
+ELSE
+   BVeff = BV - N * Vt * LN(IBVeff/Ibdvn)
+END IF   
+@end example
+@end ifnottex
+
+Most real diodes shows a current increase that, at high current levels,
+does not follow the exponential relationship given above. This behavior
+is due to high level of carriers injected into the junction. High
+injection effects (as they are called) are modeled with @option{IK} and
+@option{IKR}. 
+
+@tex
+$$
+I_{Deff} = \cases{ {{I_D} \over {1 + \sqrt{I_D \over IK_{eff} }}}, &if $V_D \geq -3{NkT \over q}$\cr
+                   {{I_D} \over {1 + \sqrt{I_D \over IKR_{eff} }}}, &otherwise.\cr}
+$$
+@end tex
+@ifnottex
+@example
+
+            Not yet written!
+
+@end example
+@end ifnottex
+
+Diode capacitance is divided into two different terms: 
+
+@itemize @bullet
+@item Depletion capacitance
+@item Diffusion capacitance
+@end itemize
+
+Depletion capacitance is composed by two different contributes, one
+associated to the bottom of the junction (bottowall depletion capacitance)
+and the other to the periphery (sidewall depletion capacitance).
+
+The basic equations are:
+
+@tex
+$$
+C_{Diode} = C_{diffusion} + C_{depletion}
+$$
+@end tex
+@ifnottex
+@example
+
+       Cdiode = Cdiffusion + Cdepletion       
+
+@end example
+@end ifnottex
+
+Where the depletion capacitance i defined as:
+
+@tex
+$$
+C_{depletion} = C_{depl_{bw}} + C_{depl_{sw}}
+$$
+@end tex
+@ifnottex
+@example
+
+       Cdepletion = CdeplBW + CdeplSW       
+
+@end example
+@end ifnottex
+
+
+
+The diffusion capacitance, due to the injected minority carriers is
+modeled with the transit time @option{TT}:
+
+@tex
+$$
+C_{diffusion} = {\rm TT}{{\partial I_{Deff}} \over {\partial V_{D}}}
+$$
+@end tex
+@ifnottex
+@example
+
+                      dIDeff
+         Cdiffusion = ----- * TT
+                       dVd
+@end example
+@end ifnottex
+
+The depletion capacitance is more complex to model, since the function
+used to approximate it diverges vhen the diode voltage become greater 
+than the junction built-in potential. To avoid function divergence, the 
+capacitance function is approximated with a linear extrapolation for
+applied voltage greater than a fraction of the junction built-in potential.
+
+@tex
+$$
+C_{depl_{bw}} = \cases{  CJ_{eff}\cdot(1-{V_D \over {\rm VJ}})^{-{\rm MJ}}, &if $V_D < {\rm FC}\cdot{\rm VJ}$\cr
+                  CJ_{eff}\cdot{{1 - {\rm FC}\cdot(1 + {\rm MJ}I) + {\rm MJ}\cdot{V_D \over {\rm VJ}}}\over{(1-{\rm FC})^{(1 +{\rm MJ})}}} , &otherwise.\cr}
+$$
+$$
+C_{depl_{sw}} = \cases{  CJP_{eff}\cdot(1-{V_D \over {\rm PHP}})^{-{\rm MJSW}}, &if $V_D < {\rm FCS}\cdot{\rm PHP}$\cr
+                  CJP_{eff}\cdot{{1 - {\rm FCS}\cdot(1 + {\rm MJSW}) + {\rm MJSW}\cdot{V_D \over {\rm PHP}}}\over{(1-{\rm FCS})^{(1 +{\rm MJSW})}}} , &otherwise.\cr}
+$$
+@end tex
+@ifnottex
+@example
+
+            Not yet written!
+
+@end example
+@end ifnottex
 
 
 
