@@ -1,5 +1,5 @@
 # Process this file with automake
 
-SUBDIRS = analysis devices
+SUBDIRS = analysis parser devices
 
 MAINTAINERCLEANFILES = Makefile.in

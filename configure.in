@@ -224,13 +224,13 @@ src/spicelib/devices/mos2/Makefile	\
 src/spicelib/devices/mos3/Makefile	\
 src/spicelib/devices/mos6/Makefile	\
 src/spicelib/devices/res/Makefile	\
-src/spicelib/devices/sw/Makefile		\
+src/spicelib/devices/sw/Makefile	\
 src/spicelib/devices/tra/Makefile	\
 src/spicelib/devices/urc/Makefile	\
 src/spicelib/devices/vccs/Makefile	\
 src/spicelib/devices/vcvs/Makefile	\
 src/spicelib/devices/vsrc/Makefile	\
-src/spicelib/devices/parser/Makefile	\
+src/spicelib/parser/Makefile	\
 src/frontend/Makefile		\
 src/frontend/help/Makefile	\
 src/frontend/parser/Makefile	\

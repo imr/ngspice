@@ -30,8 +30,7 @@ SUBDIRS = \
 	urc	\
 	vccs	\
 	vcvs	\
-	vsrc	\
-	parser
+	vsrc
 
 lib_LIBRARIES = libdev.a
 
