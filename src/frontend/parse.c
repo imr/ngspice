@@ -8,14 +8,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * This also handles relational and logical expressions.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "fteparse.h"
-#include "dvec.h"
-#include "ftecmath.h"
+#include <ngspice.h>
+#include <bool.h>
+#include <fteparse.h>
+#include <fteext.h>
+#include <sim.h>
+
 #include "parse.h"
-#include "sim.h"
 
 
 /* static declarations */

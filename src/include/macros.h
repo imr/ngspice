@@ -105,10 +105,4 @@
 #define DEBUGMSG(testargs) 
 #endif
 
-
-#define realpart(cval)  ((struct _complex *) (cval))->cx_real
-#define imagpart(cval)  ((struct _complex *) (cval))->cx_imag
-
-
-
 #endif /* _MACROS_H_ */

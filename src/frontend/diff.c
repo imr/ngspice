@@ -7,12 +7,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Do a 'diff' of two plots.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "ftecmath.h"
-#include "sim.h"
+#include <ngspice.h>
+#include <ftedefs.h>
+#include <dvec.h>
+#include <sim.h>
 
 #include "diff.h"
 

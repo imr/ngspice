@@ -7,14 +7,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Convert a parse tree to a list of data vectors.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "dvec.h"
-#include "fteparse.h"
-#include "ftecmath.h"
 #include <setjmp.h>
 #include <signal.h>
+
+#include <ngspice.h>
+#include <ftedefs.h>
+#include <dvec.h>
+
 #include "evaluate.h"
 
 
