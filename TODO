@@ -33,10 +33,6 @@ most appealing.
 Refactorings
 ------------
 
-Separate out circuit builder from the analysis code and put it in the
-devices directory (rename devices directory to simbuilder at some
-point). [PARTIAL]
-
 Netlist parsing.  The circuit directory currrently has definitions for
 parsing one model line per device.  Get this generalized into a
 structure that codifies the changes between the devices.  At a later
@@ -56,33 +52,7 @@ Move frontend helper functions into frontend directory as well.
 Not all files that define commands, start with com_*; fix that.
 
 Make devices dynamically loadable.  Perhaps use framework from glib
-(http://developer.gnome.org/doc/API/glib/index.html).  As a first
-step, replace everywhere in the code the following snippet
-====================================================================
-  int i;
-
-  for (i = 0; i < DEVmaxnum; i++) {
-      ...
-      DEVices[i].xxx ...;
-      ...
-  }
-====================================================================
-by
-====================================================================
-  SPICEdev **dev;
-
-  for (dev = first_device(); dev != NULL; dev = next_device(dev)) {
-      ...
-      *dev->xxx ...;
-      ...
-  }
-====================================================================
-Note: the double indirection is currently necessary.  Once we get a
-linked list implementation, we can do a global search and replace on
-
-  *dev => dev
-
-And let the compiler find the rest of the type mismatches.
+(http://developer.gnome.org/doc/API/glib/index.html).
 
 
 Testability
