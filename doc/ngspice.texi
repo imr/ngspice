@@ -2318,7 +2318,7 @@ If both @option{temp} and @option{dtemp} are specified, the latter is ignored.
  General form:
 
 @example
-     LYYYYYYY n+ n- <value> <mname> <m=val> <scale=val> <temp=val> 
+     LYYYYYYY n+ n- <value> <mname> <nt=val> <m=val> <scale=val> <temp=val> 
      +        <dtemp=val> <ic=init_condition>
 @end example
 
@@ -2353,6 +2353,9 @@ all analyses.
 The @option{scale} keyword let the designer choose a different scale for 
 elements. This option is not yet very useful, it will fully implemented in the
 future to perform technology scaling. At present is here as a work in progress.
+
+The @option{nt} is used in conjunction with a @command{.model} line, and is used
+to specify the number of turns of the inductor. 
 
 The operating temperature of instances can be set using the @option{temp} 
 option. Ngspice simulates the circuit with all components at the same single 
@@ -2411,13 +2414,13 @@ silicon integrated inductors, an emerging technology.
                           @tab F/°C@math{^2}     @tab 0.0  @tab 0.0001
 @item TNOM    @tab parameter measurement temperature
                           @tab °C                @tab 27   @tab 50			  			  
-@item N       @tab number of turns
+@item NT      @tab number of turns
                           @tab -                 @tab 0.0  @tab 10
 @item MU      @tab relative magnetic permeability
                           @tab H/meters          @tab 0.0  @tab -
 @end multitable
 
-The inductor has an indiuctance computed as:
+The inductor has an inductance computed as:
 
 If @option{value} is specified on the instance line then
 
@@ -2446,7 +2449,9 @@ $$
 @end ifnottex
 
 If neither @option{value} nor @option{IND} are specified, then geometrical and
-physical parameters are take into account:
+physical parameters are take into account. In the following formulas @option{NT}
+refers to both instance and model parameter (instance parameter overrides model
+parameter):
 
 If @option{LENGTH} is not zero:
 
@@ -2454,13 +2459,13 @@ If @option{LENGTH} is not zero:
 
 if {\rm MU } is specified:
 $$
-   L_{nom} = {{{\rm MU} * \mu_0 * {\rm N}^2 * {\rm CSECT}}  \over {\rm LENGTH} }
+   L_{nom} = {{{\rm MU} * \mu_0 * {\rm NT}^2 * {\rm CSECT}}  \over {\rm LENGTH} }
 $$
 
 otherwise:
 
 $$
-   L_{nom} = {{ \mu_0 * {\rm N}^2 * {\rm CSECT}}  \over {\rm LENGTH} }
+   L_{nom} = {{ \mu_0 * {\rm NT}^2 * {\rm CSECT}}  \over {\rm LENGTH} }
 $$
 
 with:
@@ -2471,17 +2476,17 @@ $$
 @end tex
 @ifnottex
 @example
-                             2
-                  MU * mu * N * CSECT
+                              2
+                  MU * mu * NT * CSECT
 			 0
-           Lnom = -------------------   if MU is specified
-                       LENGTH
+           Lnom = --------------------   if MU is specified
+                        LENGTH
 
                          
-                        2
-                  mu * N * CSECT
+                         2
+                  mu * NT * CSECT
                     0	       
-           Lnom = --------------   if MU is not specified
+           Lnom = ---------------   if MU is not specified
 		      LENGTH
 
 with:
@@ -2492,7 +2497,7 @@ mu =  1.25663706143592e-6  H/m
 @end example
 @end ifnottex
 
-After the nominal inducatnce is calculated, it is adjusted for temperature 
+After the nominal inductance is calculated, it is adjusted for temperature 
 by the formula:
 
 @tex
