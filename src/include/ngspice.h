@@ -12,6 +12,10 @@
 #include <config.h>
 #include <stddef.h>
 
+#ifdef HAVE_LIMITS_H
+#  include <machine/limits.h>
+#endif
+
 #include "memory.h"
 #include "defines.h"
 #include "macros.h"

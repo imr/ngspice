@@ -410,6 +410,11 @@ cp_ccon(bool on)
 #  else
 #    ifdef HAVE_TERMIOS_H
 
+#      ifdef __NetBSD__
+#        define TCGETS
+#        define TCSETS
+#      endif
+
 #      define TERM_GET TCGETS
 #      define TERM_SET TCSETS
     static struct termios sbuf;
@@ -418,7 +423,7 @@ cp_ccon(bool on)
 #    endif
 #  endif
 
-#  ifdef TERM_GET
+#  if defined(TERM_GET) || defined(__NetBSD__)
     static bool ison = FALSE;
 
     if (cp_nocc || !cp_interactive || (ison == on))
@@ -426,14 +431,26 @@ cp_ccon(bool on)
     ison = on;
 
     if (ison == TRUE) {
+#ifdef __NetBSD__
+	tcgetattr(fileno(cp_in),&OS_Buf);
+#else
 	(void) ioctl(fileno(cp_in), TERM_GET, (char *) &OS_Buf);
+#endif
 	sbuf = OS_Buf;
 	sbuf.c_cc[VEOF] = 0;
 	sbuf.c_cc[VEOL] = ESCAPE;
 	sbuf.c_cc[VEOL2] = CNTRL_D;
+#ifdef __NetBSD__
+	tcsetattr(fileno(cp_in),TCSANOW,&sbuf);
+#else
 	(void) ioctl(fileno(cp_in), TERM_SET, (char *) &sbuf);
+#endif
     } else {
+#ifdef __NetBSD__
+	tcsetattr(fileno(cp_in),TCSANOW,&OS_Buf);
+#else
 	(void) ioctl(fileno(cp_in), TERM_SET, (char *) &OS_Buf);
+#endif
     }
 
 #  endif
