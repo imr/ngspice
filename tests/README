@@ -1,17 +1,27 @@
-ngspice test files:
-===================
+ngspice test and example files:
+===============================
 
-The test directory contains several netlist designed to test ngspice functionality and correctness.
-There are netlists that test devices behavior and netlists that test analyses correctness.
+This directory is organized as a tree of subdirectories containing test and
+example files for the models and analyses implemented in ngspice.
+Some files comes from the original Spice3f5 and Cider1b1 distributions
+or have been contributed by developers and users and others come directly 
+from the models developers.  
 
+
+File Extensione Convention:
+
+.cir : Circuit file. This can be a simple circuit description or a spice2
+       input file.
+.sp  : Spice file. This is a circuit file with a ".control" section; 
+       "sp" files are batch scripts describing the circuit and the 
+       operations to do on it.
+.out : Some .cir files have been run and results are recorded into this
+       type of file. This is useful if want to test ngspice against
+       known (hopefully correct results).        
+               
 REPLICATE TESTS
 
-Tests are done with an ngspice compiled with the following options:
-
-  --enable-ftedebug     <- Should have no effect
-  --enable-nobypass   
-  --enavle-predictor
-  --enable-experimental <- Living on the edge :)
+To Be Written
 
 TO ADD NEW TESTS
 
