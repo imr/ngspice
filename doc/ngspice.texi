@@ -1777,7 +1777,7 @@ in the direction of voltage drop).
 * Transistors and Diodes::      
 @end menu
 
-@node  General options and information, Elementary Devices, Circuit Elements and Models, Circuit Elements and Models
+@node  General options and information, Simulating more devices in parallel, Circuit Elements and Models, Circuit Elements and Models
 @section  General options and information
 
 @menu
@@ -1826,11 +1826,11 @@ to the parallel @code{d01-d10} connected between 1 and 0.
 @subsection Technology scaling
 Still to be implemented and written.
 
-@node Model Binning, Elementary Devices, Technology scaling, General options and information
+@node Model binning, Elementary Devices, Technology scaling, General options and information
 @subsection Model binning
 Still to be implemented and written.
 
-@node  Elementary Devices, General options and information, Circuit Elements and Models, Circuit Elements and Models
+@node  Elementary Devices, Resistors, Model binning, Circuit Elements and Models
 @section  Elementary Devices
 
 
@@ -2623,7 +2623,7 @@ from the positive node, through the source, to the negative node.
 
 
 
-@node  Switch Model (SW/CSW),  , Switches, Elementary Devices
+@node  Switch Model (SW/CSW), , Switches, Elementary Devices
 @subsection  Switch Model (SW/CSW)
 
 
@@ -2676,7 +2676,7 @@ change in the circuit.
 
 
 
-@node Voltage and Current Sources, Transmission Lines, Elementary Devices, Circuit Elements and Models
+@node Voltage and Current Sources, Transmission Lines,  ,Circuit Elements and Models
 @section Voltage and Current Sources
 
 
@@ -3994,7 +3994,7 @@ $$
 @end tex
 @ifnottex
 @example      
-      TT(T) = TT * (1 + TTT1 * (T - TNOM) + TTT2} * (T -TNOM)^2)   
+      TT(T) = TT * (1 + TTT1 * (T - TNOM) + TTT2) * (T -TNOM)^2)   
 @end example
 @end ifnottex
 
@@ -4007,7 +4007,7 @@ $$
 @end tex
 @ifnottex
 @example      
-      MJ(T) = MJ * (1 + TM1 * (T - TNOM) + TM2} * (T -TNOM)^2)   
+      MJ(T) = MJ * (1 + TM1 * (T - TNOM) + TM2) * (T -TNOM)^2)   
 @end example
 @end ifnottex
 
@@ -4020,11 +4020,11 @@ $$
 @end tex
 @ifnottex
 @example      
-      RS(T) = RS * (1 + TRS * (T - TNOM) + TRS2} * (T -TNOM)^2)   
+      RS(T) = RS * (1 + TRS * (T - TNOM) + TRS2) * (T -TNOM)^2)   
 @end example
 @end ifnottex
 
-@node  Bipolar Junction Transistors (BJTs), BJT Models (NPN/PNP), Diode Model (D), Transistors and Diodes
+@node  Bipolar Junction Transistors (BJTs), BJT Models (NPN/PNP), Diode Equations, Transistors and Diodes
 @subsection  Bipolar Junction Transistors (BJTs)
 
  General form:
