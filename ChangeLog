@@ -1,3 +1,8 @@
+2004-07-21 Stefan Jones <stefan.jones@multigig.com>
+
+	* src/tclspice.c:
+	add getplot() command
+	
 2004-07-20 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/tclspice.c:
