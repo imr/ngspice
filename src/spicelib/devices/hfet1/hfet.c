@@ -1,5 +1,9 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
+
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "devdefs.h"
 #include "hfetdefs.h"
@@ -10,9 +14,11 @@ IFparm HFETApTable[] = { /* parameters */
  OP("off",       HFETA_OFF,            IF_FLAG   ,"Device initially off"),
  IOP("l",        HFETA_LENGTH,         IF_REAL   ,"Length of device"),
  IOP("w",        HFETA_WIDTH,          IF_REAL   ,"Width of device"),
+ IOP("m",        HFETA_M,              IF_REAL   ,"Parallel Multiplier"),
  IOP("icvds",    HFETA_IC_VDS,         IF_REAL   ,"Initial D-S voltage"),
  IOP("icvgs",    HFETA_IC_VGS,         IF_REAL   ,"Initial G-S voltage"),
  IOP("temp",     HFETA_TEMP,           IF_REAL   ,"Instance temperature"),
+ IOP("dtemp",    HFETA_DTEMP,          IF_REAL   ,"Instance temperature difference"),
  OP("dnode",     HFETA_DRAINNODE,      IF_INTEGER,"Number of drain node"),
  OP("gnode",     HFETA_GATENODE,       IF_INTEGER,"Number of gate node"),
  OP("snode",     HFETA_SOURCENODE,     IF_INTEGER,"Number of source node"),

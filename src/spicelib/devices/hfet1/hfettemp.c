@@ -1,6 +1,9 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "hfetdefs.h"
@@ -11,9 +14,7 @@
 
 /* ARGSUSED */
 int
-HFETAtemp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+HFETAtemp(GENmodel *inModel, CKTcircuit *ckt)
 {
     HFETAmodel *model = (HFETAmodel*)inModel;
     HFETAinstance *here;
@@ -57,6 +58,16 @@ HFETAtemp(inModel,ckt)
           
         for (here = model->HFETAinstances; here != NULL ;
                 here=here->HFETAnextInstance) {
+            if (here->HFETAowner != ARCHme) continue;
+
+            if(!here->HFETAdtempGiven) {
+                here->HFETAdtemp = 0.0;
+            }
+
+            if(!here->HFETAtempGiven) {
+                here->HFETAtemp = ckt->CKTtemp + here->HFETAdtemp;
+            }
+
             vt      = CONSTKoverQ*TEMP;
             TLAMBDA = LAMBDA + KLAMBDA*(TEMP-ckt->CKTnomTemp);            
             TMU     = MU - KMU*(TEMP-ckt->CKTnomTemp);

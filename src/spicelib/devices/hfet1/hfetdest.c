@@ -1,13 +1,15 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "hfetdefs.h"
 #include "suffix.h"
 
 
 void
-HFETAdestroy(inModel)
-GENmodel **inModel;
+HFETAdestroy(GENmodel **inModel)
 {
     HFETAmodel **model = (HFETAmodel**)inModel;
     HFETAinstance *here;

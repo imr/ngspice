@@ -57,7 +57,7 @@ SPICEdev HFETAinfo = {
     DEVsetic      : HFETAgetic,
     DEVask        : HFETAask,
     DEVmodAsk     : HFETAmAsk,
-    DEVpzLoad     : NULL,
+    DEVpzLoad     : HFETApzLoad,
     DEVconvTest   : NULL,
     DEVsenSetup   : NULL,
     DEVsenLoad    : NULL,

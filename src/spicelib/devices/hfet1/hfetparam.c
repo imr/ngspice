@@ -1,6 +1,9 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "hfetdefs.h"
 #include "sperror.h"
@@ -9,11 +12,7 @@
 
 /* ARGSUSED */
 int
-HFETAparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+HFETAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     HFETAinstance *here = (HFETAinstance*)inst;
     switch(param) {
@@ -24,6 +23,10 @@ HFETAparam(param,value,inst,select)
         case HFETA_WIDTH:
             here->HFETAwidth = value->rValue;
             here->HFETAwidthGiven = TRUE;
+            break;
+        case HFETA_M:
+            here->HFETAm = value->rValue;
+            here->HFETAmGiven = TRUE;
             break;
         case HFETA_IC_VDS:
             here->HFETAicVDS = value->rValue;
@@ -50,8 +53,12 @@ HFETAparam(param,value,inst,select)
             }
             break;
         case HFETA_TEMP:
-            here->HFETAtemp = value->rValue+CONSTCtoK;
+            here->HFETAtemp = value->rValue + CONSTCtoK;
             here->HFETAtempGiven = TRUE;
+            break;
+        case HFETA_DTEMP:
+            here->HFETAdtemp = value->rValue;
+            here->HFETAdtempGiven = TRUE;
             break;
         default:
             return(E_BADPARM);

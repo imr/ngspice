@@ -1,4 +1,8 @@
-#ifdef __STDC__
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
+
 extern int HFETAacLoad(GENmodel*,CKTcircuit*);
 extern int HFETAask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int HFETAdelete(GENmodel*,IFuid,GENinstance**);
@@ -9,26 +13,8 @@ extern int HFETAmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
 extern int HFETAmDelete(GENmodel**,IFuid,GENmodel*);
 extern int HFETAmParam(int,IFvalue*,GENmodel*);
 extern int HFETAparam(int,IFvalue*,GENinstance*,IFvalue*);
+extern int HFETApzLoad(GENmodel*, CKTcircuit*, SPcomplex*);
 extern int HFETAsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int HFETAtemp(GENmodel*,CKTcircuit*);
 extern int HFETAtrunc(GENmodel*,CKTcircuit*,double*);
 extern int HFETAunsetup(GENmodel*,CKTcircuit*);
-
-#else /*stdc*/
-extern int HFETAacLoad();
-extern int HFETAask();
-extern int HFETAdelete();
-extern void HFETAdestroy();
-extern int HFETAgetic();
-extern int HFETAload();
-extern int HFETAmAsk();
-extern int HFETAmDelete();
-extern int HFETAmParam();
-extern int HFETAparam();
-extern int HFETAsetup();
-extern int HFETAtemp();
-extern int HFETAtrunc();
-extern int HFETAunsetup();
-
-
-#endif

@@ -7,17 +7,13 @@ Imported into hfeta model: Paolo Nenzi 2001
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "hfetdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-HFETAmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+HFETAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     HFETAmodel **model = (HFETAmodel**)inModel;
     HFETAmodel *modfast = (HFETAmodel*)kill;

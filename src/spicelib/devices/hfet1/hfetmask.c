@@ -7,7 +7,6 @@ Imported into HFETA model: Paolo Nenzi 2001
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -18,11 +17,7 @@ Imported into HFETA model: Paolo Nenzi 2001
 
 /* ARGSUSED */
 int
-HFETAmAsk(ckt,inst,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inst;
-    int which;
-    IFvalue *value;
+HFETAmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     HFETAmodel *here = (HFETAmodel*)inst;
     switch(which) {

@@ -7,7 +7,6 @@ Imported into HFETA source: Paolo Nenzi 2001
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -18,12 +17,7 @@ Imported into HFETA source: Paolo Nenzi 2001
 
 /* ARGSUSED */
 int
-HFETAask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+HFETAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
     HFETAinstance *here = (HFETAinstance*)inst;
     static char *msg = "Current and power not available in ac analysis";
@@ -32,7 +26,12 @@ HFETAask(ckt,inst,which,value,select)
             value->rValue = here->HFETAlength;
             return (OK);
         case HFETA_WIDTH:
-        	  value->rValue = here->HFETAwidth;
+            value->rValue = here->HFETAwidth;
+            value->rValue *= here->HFETAm;
+            return (OK);
+        case HFETA_M:
+            value->rValue = here->HFETAm;
+            return (OK);
         case HFETA_IC_VDS:
             value->rValue = here->HFETAicVDS;
             return (OK);
@@ -58,7 +57,11 @@ HFETAask(ckt,inst,which,value,select)
             value->iValue = here->HFETAsourcePrimeNode;
             return (OK); 
         case HFETA_TEMP:
-        	  value->rValue = here->HFETAtemp;
+            value->rValue = here->HFETAtemp - CONSTCtoK;
+            return(OK); 
+        case HFETA_DTEMP:
+            value->rValue = here->HFETAdtemp;
+            return(OK);
         case HFETA_VGS:
             value->rValue = *(ckt->CKTstate0 + here->HFETAvgs);
             return (OK);
@@ -67,36 +70,47 @@ HFETAask(ckt,inst,which,value,select)
             return (OK);
         case HFETA_CG:
             value->rValue = *(ckt->CKTstate0 + here->HFETAcg);
+            value->rValue *= here->HFETAm;
             return (OK);
         case HFETA_CD:
             value->rValue = *(ckt->CKTstate0 + here->HFETAcd);
+            value->rValue *= here->HFETAm;
             return (OK);
         case HFETA_CGD:
             value->rValue = *(ckt->CKTstate0 + here->HFETAcgd);
+            value->rValue *= here->HFETAm;
             return (OK);
         case HFETA_GM:
             value->rValue = *(ckt->CKTstate0 + here->HFETAgm);
+            value->rValue *= here->HFETAm;
             return (OK);
         case HFETA_GDS:
             value->rValue = *(ckt->CKTstate0 + here->HFETAgds);
+            value->rValue *= here->HFETAm;
             return (OK);
         case HFETA_GGS:
             value->rValue = *(ckt->CKTstate0 + here->HFETAggs);
+            value->rValue *= here->HFETAm;
             return (OK);
         case HFETA_GGD:
             value->rValue = *(ckt->CKTstate0 + here->HFETAggd);
+            value->rValue *= here->HFETAm;
             return (OK);
         case HFETA_QGS:
             value->rValue = *(ckt->CKTstate0 + here->HFETAqgs);
+            value->rValue *= here->HFETAm;
             return (OK);
         case HFETA_CQGS:
             value->rValue = *(ckt->CKTstate0 + here->HFETAcqgs);
+            value->rValue *= here->HFETAm;
             return (OK);
         case HFETA_QGD:
             value->rValue = *(ckt->CKTstate0 + here->HFETAqgd);
+            value->rValue *= here->HFETAm;
             return (OK);
         case HFETA_CQGD:
             value->rValue = *(ckt->CKTstate0 + here->HFETAcqgd);
+            value->rValue *= here->HFETAm;
             return (OK);
         case HFETA_CS :
              if (ckt->CKTcurrentAnalysis & DOING_AC) {
@@ -107,6 +121,7 @@ HFETAask(ckt,inst,which,value,select)
              } else {
                  value->rValue = -*(ckt->CKTstate0 + here->HFETAcd);
                  value->rValue -= *(ckt->CKTstate0 + here->HFETAcg);
+                 value->rValue *= here->HFETAm;
              }
              return(OK);
         case HFETA_POWER :
@@ -123,6 +138,7 @@ HFETAask(ckt,inst,which,value,select)
                  value->rValue -= (*(ckt->CKTstate0+here->HFETAcd) +
                          *(ckt->CKTstate0 + here->HFETAcg)) *
                          *(ckt->CKTrhsOld + here->HFETAsourceNode);
+                 value->rValue *= here->HFETAm;
              }
              return(OK);
         default:

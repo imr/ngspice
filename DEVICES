@@ -207,8 +207,20 @@ JFET2 - Junction Field Effect Transistor  (PS model)
 ***************************    HFET devices     ***************************
 ***************************************************************************
            
-HFET  - HFET Level 1
-      Initial release.
+HFET  - HFET Level 1 (Ytterdal)
+        Initial Release.
+	Ver: 	N/A
+	Class:	Z
+	Level:	5 
+	Status:
+	
+	
+	Enhancements over the original model:
+	
+	- Parallel multiplier
+	- Instance temperature as difference for circuit temperature
+	- Added pole-zero analysis
+
      
 HFET2 - HFET Level 2
       Initial release.

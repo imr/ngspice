@@ -1,6 +1,9 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "hfetdefs.h"
@@ -9,10 +12,7 @@
 
 
 int
-HFETAmParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+HFETAmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     HFETAmodel *model = (HFETAmodel*)inModel;
     switch(param) 

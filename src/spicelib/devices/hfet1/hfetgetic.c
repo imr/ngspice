@@ -1,6 +1,9 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "hfetdefs.h"
 #include "sperror.h"
@@ -8,9 +11,7 @@
 
 
 int
-HFETAgetic(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+HFETAgetic(GENmodel *inModel, CKTcircuit *ckt)
 {
     HFETAmodel *model = (HFETAmodel*)inModel;
     HFETAinstance *here;
@@ -21,6 +22,8 @@ CKTcircuit *ckt;
 
     for( ; model ; model = model->HFETAnextModel) {
         for(here = model->HFETAinstances; here ; here = here->HFETAnextInstance) {
+            if (here->HFETAowner != ARCHme) continue;
+
             if(!here->HFETAicVDSGiven) {
                 here->HFETAicVDS = 
                         *(ckt->CKTrhs + here->HFETAdrainNode) - 

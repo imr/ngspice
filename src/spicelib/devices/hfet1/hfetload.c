@@ -1,5 +1,9 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
+
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "cktdefs.h"
 #include "hfetdefs.h"
@@ -26,12 +30,10 @@ static void hfeta(HFETAmodel *model, HFETAinstance *here, CKTcircuit *ckt,
                  
 void Pause(void);
 
-int HFETAload(inModel, ckt)
-GENmodel *inModel;
-register CKTcircuit *ckt;
+int HFETAload(GENmodel *inModel, CKTcircuit *ckt)
 {
-    register HFETAmodel *model = (HFETAmodel*)inModel;
-    register HFETAinstance *here;
+    HFETAmodel *model = (HFETAmodel*)inModel;
+    HFETAinstance *here;
     double capgd;
     double capgs;
     double cd;
@@ -78,9 +80,15 @@ register CKTcircuit *ckt;
     int icheck;
     int error;
 
+    double m;
+
     for( ; model != NULL; model = model->HFETAnextModel ) {
         for (here = model->HFETAinstances; here != NULL ;
                 here=here->HFETAnextInstance) {
+            
+            if (here->HFETAowner != ARCHme) continue;
+
+
             vcrit = here->HFETAvcrit;
             vt  = CONSTKoverQ * here->HFETAtemp;
             icheck = 0;
@@ -411,51 +419,54 @@ register CKTcircuit *ckt;
              *    load current vector
              */
 load:
+
+            m = here->HFETAm;
+
             ceqgd = model->HFETAtype*(cgd+cgdpp-ggd*vgd-gmg*vgs-gmd*vds-ggdpp*vgdpp);
             ceqgs = model->HFETAtype*(cgs + cgspp - ggs*vgs - ggspp*vgspp);
-            cdreq = model->HFETAtype*(cd + cgd + cgdpp - gds*vds - gm*vgs);
-            *(ckt->CKTrhs + here->HFETAgatePrimeNode) += (-ceqgs-ceqgd);
+            cdreq = model->HFETAtype*(cd + cgd + cgdpp - gds*vds - gm*vgs);            
+            *(ckt->CKTrhs + here->HFETAgatePrimeNode) += m * (-ceqgs-ceqgd);
             ceqgd = model->HFETAtype*(cgd-ggd*vgd-gmg*vgs-gmd*vds);
-            *(ckt->CKTrhs + here->HFETAdrainPrimeNode) += (-cdreq+ceqgd);
+            *(ckt->CKTrhs + here->HFETAdrainPrimeNode) += m * (-cdreq+ceqgd);
             ceqgd = model->HFETAtype*(cgdpp-ggdpp*vgdpp);
-            *(ckt->CKTrhs + here->HFETAdrainPrmPrmNode) += ceqgd;
+            *(ckt->CKTrhs + here->HFETAdrainPrmPrmNode) += m * ceqgd;
             ceqgs = model->HFETAtype*(cgs-ggs*vgs);
-            *(ckt->CKTrhs + here->HFETAsourcePrimeNode) += (cdreq+ceqgs);
+            *(ckt->CKTrhs + here->HFETAsourcePrimeNode) += m * (cdreq+ceqgs);
             ceqgs = model->HFETAtype*(cgspp-ggspp*vgspp);
-            *(ckt->CKTrhs + here->HFETAsourcePrmPrmNode) += ceqgs;
+            *(ckt->CKTrhs + here->HFETAsourcePrmPrmNode) += m * ceqgs;
                     
             /*
              *    load y matrix 
              */
 
-            *(here->HFETAdrainDrainPtr) += model->HFETAdrainConduct;
-            *(here->HFETAsourceSourcePtr) += model->HFETAsourceConduct;
-            *(here->HFETAgatePrimeGatePrimePtr) += (ggd+ggs+ggspp+ggdpp+gmg+model->HFETAgateConduct);
-            *(here->HFETAdrainPrimeDrainPrimePtr) += (gds+ggd-gmd+model->HFETAdrainConduct+model->HFETAgf);
-            *(here->HFETAsourcePrimeSourcePrimePtr) += (gds+gm+ggs+model->HFETAsourceConduct+model->HFETAgi);
-            *(here->HFETAsourcePrmPrmSourcePrmPrmPtr) += (model->HFETAgi+ggspp);
-            *(here->HFETAdrainPrmPrmDrainPrmPrmPtr) += (model->HFETAgf+ggdpp);
-            *(here->HFETAdrainDrainPrimePtr) -= model->HFETAdrainConduct;
-            *(here->HFETAdrainPrimeDrainPtr) -= model->HFETAdrainConduct;
-            *(here->HFETAsourceSourcePrimePtr) -= model->HFETAsourceConduct;
-            *(here->HFETAsourcePrimeSourcePtr) -= model->HFETAsourceConduct;
-            *(here->HFETAgatePrimeDrainPrimePtr) += -ggd+gmd;
-            *(here->HFETAdrainPrimeGatePrimePtr) += (gm-ggd-gmg);
-            *(here->HFETAgatePrimeSourcePrimePtr) -= ggs+gmg+gmd;
-            *(here->HFETAsourcePrimeGatePrimePtr) += (-ggs-gm);
-            *(here->HFETAdrainPrimeSourcePrimePtr) += (-gds-gm+gmg+gmd);
-            *(here->HFETAsourcePrimeDrainPrimePtr) -= gds;
-            *(here->HFETAsourcePrimeSourcePrmPrmPtr) -= model->HFETAgi;            
-            *(here->HFETAsourcePrmPrmSourcePrimePtr) -= model->HFETAgi;
-            *(here->HFETAgatePrimeSourcePrmPrmPtr) -= ggspp;
-            *(here->HFETAsourcePrmPrmGatePrimePtr) -= ggspp;
-            *(here->HFETAdrainPrimeDrainPrmPrmPtr) -= model->HFETAgf;
-            *(here->HFETAdrainPrmPrmDrainPrimePtr) -= model->HFETAgf;
-            *(here->HFETAgatePrimeDrainPrmPrmPtr) -= ggdpp;
-            *(here->HFETAdrainPrmPrmGatePrimePtr) -= ggdpp;
-            *(here->HFETAgateGatePtr) += model->HFETAgateConduct;
-            *(here->HFETAgateGatePrimePtr) -= model->HFETAgateConduct;
-            *(here->HFETAgatePrimeGatePtr) -= model->HFETAgateConduct;
+            *(here->HFETAdrainDrainPtr)               += m * (model->HFETAdrainConduct);
+            *(here->HFETAsourceSourcePtr)             += m * (model->HFETAsourceConduct);
+            *(here->HFETAgatePrimeGatePrimePtr)       += m * (ggd+ggs+ggspp+ggdpp+gmg+model->HFETAgateConduct);
+            *(here->HFETAdrainPrimeDrainPrimePtr)     += m * (gds+ggd-gmd+model->HFETAdrainConduct+model->HFETAgf);
+            *(here->HFETAsourcePrimeSourcePrimePtr)   += m * (gds+gm+ggs+model->HFETAsourceConduct+model->HFETAgi);
+            *(here->HFETAsourcePrmPrmSourcePrmPrmPtr) += m * (model->HFETAgi+ggspp);
+            *(here->HFETAdrainPrmPrmDrainPrmPrmPtr)   += m * (model->HFETAgf+ggdpp);
+            *(here->HFETAdrainDrainPrimePtr)          -= m * (model->HFETAdrainConduct);
+            *(here->HFETAdrainPrimeDrainPtr)          -= m * (model->HFETAdrainConduct);
+            *(here->HFETAsourceSourcePrimePtr)        -= m * (model->HFETAsourceConduct);
+            *(here->HFETAsourcePrimeSourcePtr)        -= m * (model->HFETAsourceConduct);
+            *(here->HFETAgatePrimeDrainPrimePtr)      += m * (-ggd+gmd);
+            *(here->HFETAdrainPrimeGatePrimePtr)      += m * (gm-ggd-gmg);
+            *(here->HFETAgatePrimeSourcePrimePtr)     -= m * (ggs+gmg+gmd);
+            *(here->HFETAsourcePrimeGatePrimePtr)     += m * (-ggs-gm);
+            *(here->HFETAdrainPrimeSourcePrimePtr)    += m * (-gds-gm+gmg+gmd);
+            *(here->HFETAsourcePrimeDrainPrimePtr)    -= m * (gds);
+            *(here->HFETAsourcePrimeSourcePrmPrmPtr)  -= m * (model->HFETAgi);            
+            *(here->HFETAsourcePrmPrmSourcePrimePtr)  -= m * (model->HFETAgi);
+            *(here->HFETAgatePrimeSourcePrmPrmPtr)    -= m * (ggspp);
+            *(here->HFETAsourcePrmPrmGatePrimePtr)    -= m * (ggspp);
+            *(here->HFETAdrainPrimeDrainPrmPrmPtr)    -= m * (model->HFETAgf);
+            *(here->HFETAdrainPrmPrmDrainPrimePtr)    -= m * (model->HFETAgf);
+            *(here->HFETAgatePrimeDrainPrmPrmPtr)     -= m * (ggdpp);
+            *(here->HFETAdrainPrmPrmGatePrimePtr)     -= m * (ggdpp);
+            *(here->HFETAgateGatePtr)                 += m * (model->HFETAgateConduct);
+            *(here->HFETAgateGatePrimePtr)            -= m * (model->HFETAgateConduct);
+            *(here->HFETAgatePrimeGatePtr)            -= m * (model->HFETAgateConduct);
             
 
         }

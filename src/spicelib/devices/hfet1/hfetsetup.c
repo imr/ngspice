@@ -1,6 +1,9 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "hfetdefs.h"
@@ -12,11 +15,7 @@
 //#define CHARGE 1.60219e-19
 
 int
-HFETAsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the diode structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -230,17 +229,19 @@ HFETAsetup(matrix,inModel,ckt,states)
         /* loop through all the instances of the model */
         for (here = model->HFETAinstances; here != NULL ;
                 here=here->HFETAnextInstance) {
-            
+  
+            if (here->HFETAowner != ARCHme) goto matrixpointers;
+           
             if(!here->HFETAlengthGiven) {
                 here->HFETAlength = 1e-6;
             }
             if(!here->HFETAwidthGiven) {
                 here->HFETAwidth = 20e-6;
             }
-            if(!here->HFETAtempGiven) {
-                here->HFETAtemp = ckt->CKTtemp;
+            if(!here->HFETAmGiven) {
+                here->HFETAm = 1.0;
             }
-
+ 
             here->HFETAstate = *states;
             // *states += 24;
             *states += HFETAnumStates;
@@ -272,8 +273,7 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->HFETAname,"drain");
                 if(error) return(error);
                 here->HFETAdrainPrimeNode = tmp->number;
-
-/* XXX: Applied AlansFixes */                
+       
                 if (ckt->CKTcopyNodesets) {
 		    CKTnode *tmpNode;
 		    IFuid tmpName;
@@ -294,13 +294,12 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->HFETAname,"gate");
                 if(error) return(error);
                 here->HFETAgatePrimeNode = tmp->number;
-
-/* XXX: Applied AlansFixes */                
+         
                 if (ckt->CKTcopyNodesets) {
 		    CKTnode *tmpNode;
 		    IFuid tmpName;
 
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                  if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
                        tmp->nsGiven=tmpNode->nsGiven; 
@@ -315,8 +314,7 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->HFETAname,"gd");
                 if(error) return(error);
                 here->HFETAdrainPrmPrmNode = tmp->number;
-
-/* XXX: Applied AlansFixes */                
+         
                 if (ckt->CKTcopyNodesets) {
 		    CKTnode *tmpNode;
 		    IFuid tmpName;
@@ -337,13 +335,12 @@ matrixpointers:
                 error = CKTmkVolt(ckt,&tmp,here->HFETAname,"gs");
                 if(error) return(error);
                 here->HFETAsourcePrmPrmNode = tmp->number;
-
-/* XXX: Applied AlanFixes */                
+      
                 if (ckt->CKTcopyNodesets) {
 		    CKTnode *tmpNode;
 		    IFuid tmpName;
 
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
                        tmp->nsGiven=tmpNode->nsGiven; 
@@ -395,9 +392,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-HFETAunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+HFETAunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     HFETAmodel *model;
     HFETAinstance *here;
@@ -420,12 +415,27 @@ HFETAunsetup(inModel,ckt)
                 CKTdltNNum(ckt, here->HFETAsourcePrimeNode);
                 here->HFETAsourcePrimeNode = 0;
             }
-        }	if (here->HFETAgatePrimeNode
+	    if (here->HFETAgatePrimeNode
         			&& here->HFETAgatePrimeNode != here->HFETAgateNode)
-        	{
+            {
         		CKTdltNNum(ckt, here->HFETAgatePrimeNode);
         		here->HFETAgatePrimeNode = 0;
-        	}
+            }
+	    
+	    if (here->HFETAdrainPrmPrmNode
+        			&& here->HFETAdrainPrmPrmNode != here->HFETAdrainPrimeNode)
+            {
+        		CKTdltNNum(ckt, here->HFETAdrainPrmPrmNode);
+        		here->HFETAdrainPrmPrmNode = 0;
+            }
+	    if (here->HFETAsourcePrmPrmNode
+        			&& here->HFETAsourcePrmPrmNode != here->HFETAsourcePrimeNode)
+            {
+        		CKTdltNNum(ckt, here->HFETAsourcePrmPrmNode);
+        		here->HFETAsourcePrmPrmNode = 0;
+            }
+	    
+        }	
     }
     return OK;
 }

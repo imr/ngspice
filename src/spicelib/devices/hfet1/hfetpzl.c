@@ -1,17 +1,20 @@
 /**********
-Imported from MacSpice3f4 - Antony Wilson
-Modified: Paolo Nenzi
+Author: 2003 Paolo Nenzi
 **********/
+/*
+ */
+
 
 #include "ngspice.h"
 #include "cktdefs.h"
+#include "complex.h"
 #include "hfetdefs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-HFETAacLoad(GENmodel *inModel, CKTcircuit *ckt)
+HFETApzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     HFETAmodel *model = (HFETAmodel*)inModel;
     HFETAinstance *here;
@@ -39,9 +42,9 @@ HFETAacLoad(GENmodel *inModel, CKTcircuit *ckt)
             gds = *(ckt->CKTstate0 + here->HFETAgds);
             xds = CDS*ckt->CKTomega;
             ggs = *(ckt->CKTstate0 + here->HFETAggs);
-            xgs = *(ckt->CKTstate0 + here->HFETAqgs) * ckt->CKTomega;
+            xgs = *(ckt->CKTstate0 + here->HFETAqgs);
             ggd = *(ckt->CKTstate0 + here->HFETAggd);
-            xgd = *(ckt->CKTstate0 + here->HFETAqgd) * ckt->CKTomega;
+            xgd = *(ckt->CKTstate0 + here->HFETAqgd);
             ggspp = *(ckt->CKTstate0 + here->HFETAggspp);
             ggdpp = *(ckt->CKTstate0 + here->HFETAggdpp);
             if(model->HFETAkappaGiven && here->HFETAdelf != 0.0) {
@@ -79,17 +82,29 @@ HFETAacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HFETAgateGatePtr)                   += m * (model->HFETAgateConduct);
             *(here->HFETAgateGatePrimePtr)              -= m * (model->HFETAgateConduct);
             *(here->HFETAgatePrimeGatePtr)              -= m * (model->HFETAgateConduct);
-            *(here->HFETAgatePrimeGatePrimePtr+1)       += m * (xgd+xgs);                                       
-            *(here->HFETAdrainPrmPrmDrainPrmPrmPtr+1)   += m * (xgd);
-            *(here->HFETAsourcePrmPrmSourcePrmPrmPtr+1) += m * (xgs);
-            *(here->HFETAgatePrimeDrainPrmPrmPtr+1)     -= m * (xgd);
-            *(here->HFETAgatePrimeSourcePrmPrmPtr+1)    -= m * (xgs);
-            *(here->HFETAdrainPrmPrmGatePrimePtr+1)     -= m * (xgd);
-            *(here->HFETAsourcePrmPrmGatePrimePtr+1)    -= m * (xgs);
-            *(here->HFETAdrainPrimeDrainPrimePtr+1)     += m * (xds);
-            *(here->HFETAsourcePrimeSourcePrimePtr+1)   += m * (xds);
-            *(here->HFETAdrainPrimeSourcePrimePtr+1)    -= m * (xds);
-            *(here->HFETAsourcePrimeDrainPrimePtr+1)    -= m * (xds);
+            
+	    *(here->HFETAgatePrimeGatePrimePtr)         += m * ((xgd+xgs) * s->real);    
+	    *(here->HFETAgatePrimeGatePrimePtr+1)       += m * ((xgd+xgs) * s->imag); 
+	    *(here->HFETAdrainPrmPrmDrainPrmPrmPtr)     += m * (xgd * s->real);                                     
+            *(here->HFETAdrainPrmPrmDrainPrmPrmPtr+1)   += m * (xgd * s->imag);
+	    *(here->HFETAsourcePrmPrmSourcePrmPrmPtr)   += m * (xgs * s->real);
+            *(here->HFETAsourcePrmPrmSourcePrmPrmPtr+1) += m * (xgs * s->imag);
+	    *(here->HFETAgatePrimeDrainPrmPrmPtr)       -= m * (xgd * s->real);	  
+            *(here->HFETAgatePrimeDrainPrmPrmPtr+1)     -= m * (xgd * s->imag);	    
+	    *(here->HFETAgatePrimeSourcePrmPrmPtr)      -= m * (xgs * s->real);
+            *(here->HFETAgatePrimeSourcePrmPrmPtr+1)    -= m * (xgs * s->imag);
+	    *(here->HFETAdrainPrmPrmGatePrimePtr)       -= m * (xgd * s->real);
+            *(here->HFETAdrainPrmPrmGatePrimePtr+1)     -= m * (xgd * s->imag);
+	    *(here->HFETAsourcePrmPrmGatePrimePtr)      -= m * (xgs * s->real);
+            *(here->HFETAsourcePrmPrmGatePrimePtr+1)    -= m * (xgs * s->imag);
+	    *(here->HFETAdrainPrimeDrainPrimePtr)       += m * (xds * s->real);
+            *(here->HFETAdrainPrimeDrainPrimePtr+1)     += m * (xds * s->imag);
+	    *(here->HFETAsourcePrimeSourcePrimePtr)     += m * (xds * s->real);
+            *(here->HFETAsourcePrimeSourcePrimePtr+1)   += m * (xds * s->imag);
+	    *(here->HFETAdrainPrimeSourcePrimePtr)      -= m * (xds * s->real);
+            *(here->HFETAdrainPrimeSourcePrimePtr+1)    -= m * (xds * s->imag);
+	    *(here->HFETAsourcePrimeDrainPrimePtr)      -= m * (xds * s->real);
+            *(here->HFETAsourcePrimeDrainPrimePtr+1)    -= m * (xds * s->imag);
         }
     }
     return(OK);

@@ -19,6 +19,7 @@ libhfet_a_SOURCES = 	\
 	hfetmdel.c	\
 	hfetmpar.c	\
 	hfetparam.c	\
+	hfetpzl.c	\
 	hfetsetup.c	\
 	hfettemp.c	\
 	hfettrunc.c

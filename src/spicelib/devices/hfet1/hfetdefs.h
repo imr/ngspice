@@ -1,3 +1,8 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
+
 #ifndef HFETA
 #define HFETA
 
@@ -26,9 +31,11 @@ typedef struct sHFETAinstance {
     int HFETAsourcePrmPrmNode;
     double HFETAlength;
     double HFETAwidth;
+    double HFETAm;
     double HFETAicVDS;
     double HFETAicVGS;
     double HFETAtemp;
+    double HFETAdtemp;
     double HFETAtVto;
     double HFETAtMu;
     double HFETAtLambda;
@@ -92,10 +99,12 @@ typedef struct sHFETAinstance {
 
     int HFETAoff;
     unsigned HFETAlengthGiven : 1;
-    unsigned HFETAwidthGiven : 1;
-    unsigned HFETAicVDSGiven : 1;
-    unsigned HFETAicVGSGiven : 1;
-    unsigned HFETAtempGiven : 1;
+    unsigned HFETAwidthGiven  : 1;
+    unsigned HFETAmGiven      : 1;
+    unsigned HFETAicVDSGiven  : 1;
+    unsigned HFETAicVGSGiven  : 1;
+    unsigned HFETAtempGiven   : 1;
+    unsigned HFETAdtempGiven  : 1;
     int HFETAmode;
 
     double HFETAn0;
@@ -280,6 +289,8 @@ typedef struct sHFETAmodel {
 #define HFETA_OFF      7
 #define HFETA_CS       8
 #define HFETA_POWER    9
+#define HFETA_DTEMP   10
+#define HFETA_M       11
 
 /* model parameters */
 #define HFETA_MOD_VTO      101
