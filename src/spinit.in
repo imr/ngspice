@@ -2,12 +2,13 @@
 alias exit quit
 alias acct rusage all
 set x11lineararcs
+
 * For SPICE2 POLYs, edit the below line to point to the location 
 * of your codemode.
-* codemodel @prefix@/lib/spice/spice2poly.cm
+@XSPICEINIT@ codemodel @prefix@/lib/spice/spice2poly.cm
 
 * The other codemodels
-* codemodel @prefix@/lib/spice/analog.cm
-* codemodel @prefix@/lib/spice/digital.cm
-* codemodel @prefix@/lib/spice/xtradev.cm
-* codemodel @prefix@/lib/spice/xtraevt.cm
+@XSPICEINIT@ codemodel @prefix@/lib/spice/analog.cm
+@XSPICEINIT@ codemodel @prefix@/lib/spice/digital.cm
+@XSPICEINIT@ codemodel @prefix@/lib/spice/xtradev.cm
+@XSPICEINIT@ codemodel @prefix@/lib/spice/xtraevt.cm

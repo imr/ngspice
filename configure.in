@@ -482,16 +482,22 @@ if test "$enable_xspice" = "yes"; then
 	        $XSPICEDIR/ipc/libipcxsp.a \
 		$XSPICEDIR/idn/libidnxsp.a \
 		-ldl"
+    XSPICEINIT=""    
+    XSPICETESTS=""		
+		
 
 else
     XSPCIEDIR=""
     XSPICELIB1=""
     XSPICELIB2=""
     XSPICETESTS=""
+    XSPICEINIT="*"
 fi
 AC_SUBST(XSPICEDIR)
 AC_SUBST(XSPICELIB1)
 AC_SUBST(XSPICELIB2)
+AC_SUBST(XSPICETESTS)
+AC_SUBST(XSPICEINIT)
 
 dnl Add CIDER enhacements to ngspice.
 if test "$enable_cider" = "yes"; then
