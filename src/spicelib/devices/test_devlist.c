@@ -56,18 +56,21 @@ main(void)
     int count = 0;
     int ret;
 
+    ret = EXIT_SUCCESS;
     for (dev = first_device(); dev != NULL; dev = next_device(dev)) {
-	printf("count: %d\n", count);
+	if (*dev != DEVices[count]) {
+	    ret = EXIT_FAILURE;
+	}
 	count++;
     }
 
-    if (count == num_devices() + 1) {
+    if (ret == EXIT_SUCCESS && count == num_devices() + 1) {
 	printf("PASSED");
 	ret = EXIT_SUCCESS;
     } else {
 	printf("FAILED");
 	ret = EXIT_FAILURE;
     }
-    printf(": test_dev\n");
+    printf(": test_devlist\n");
     return ret;
 }

@@ -52,10 +52,9 @@ next_device(SPICEdev **current)
     int index;
     SPICEdev **ret;
 
-    index = (current - devices())/sizeof(SPICEdev *);
-    printf("index: %d\n", index);
+    index = current - devices();
     if (index < num_devices()) {
-	ret = current + sizeof(SPICEdev *);
+	ret = current + 1;
     } else {
 	ret = NULL;
     }

@@ -1,3 +1,9 @@
+2000-07-08  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* devlist.c, test-devlist: Additional checks revealed a bug,
+	first_device() and next_device() should now do what they are
+	supposed to do.
+
 2000-07-07  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* devlist.c, devlist.h: Another step towards
