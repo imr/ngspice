@@ -104,8 +104,8 @@ struct subs {
     struct line *su_def;    /* Pointer to the .subckt definition. */
     struct subs *su_next;
 } ;
-  
-  
+
+
 /* submod is the list of original model names, modnames is the
  * list of translated names (i.e. after subckt expansion)
  */
@@ -465,7 +465,7 @@ doit(struct line *deck)
 
                 /* Change the names of .models found in .subckts . . .  */
                 if (modtranslate(lcc, scname))    /* this translates the model name in the .model line */
-		   devmodtranslate(lcc, scname);  /* This translates the model name on all components in the deck */
+                    devmodtranslate(lcc, scname); /* This translates the model name on all components in the deck */
 
                 s = sss->su_args;
                 txfree(gettok(&t));  /* Throw out the subcircuit refdes */
@@ -577,7 +577,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 {
     struct line *c;
     char *buffer, *next_name, dev_type, *name, *s, *t, ch, *nametofree;
-    int nnodes, i, dim;
+    int nnodes, i, dim, blen;
     int rtn=0;
     
     /* settrans builds the table holding the translated netnames.  */
@@ -626,13 +626,13 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	  
             /* translate the instance name according to normal rules */
 
-            buffer = tmalloc(2000);     /* XXXXX */
 
             s = c->li_line;
             name = MIFgettok(&s);
 
 	    /* maschmann 
             sprintf(buffer, "%s:%s ", name, scname);   */
+            buffer = (char *)tmalloc((strlen(scname)+strlen(name)+5)*sizeof(char));
             sprintf(buffer, "a:%s:%s ", scname, name+1 );  
                    
 
@@ -663,19 +663,25 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
                 case '[':
                 case ']':
                 case '~':
-                    sprintf(buffer + strlen(buffer), "%s ", name);
+                    blen = strlen(buffer);
+                    buffer = (char *)trealloc(buffer, (blen+strlen(name)+2)*sizeof(char));
+                    sprintf(buffer + blen, "%s ", name);
                     break;
 
                 case '%':
 
-                    sprintf(buffer + strlen(buffer), "%%");
+                    blen = strlen(buffer);
+                    buffer = (char *)trealloc(buffer, (blen+2)*sizeof(char));
+                    sprintf(buffer + blen, "%%");
 
                     /* don't translate the port type identifier */
 
                     name = next_name;
                     next_name = MIFgettok(&s);
 
-                    sprintf(buffer + strlen(buffer), "%s ", name);
+                    blen = strlen(buffer);
+                    buffer = (char *)trealloc(buffer, (blen+strlen(name)+2)*sizeof(char));
+                    sprintf(buffer + blen, "%s ", name);
                     break;
 
                 default:
@@ -685,23 +691,24 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
                     t = gettrans(name);
 
                     if (t) {
-                     sprintf(buffer + strlen(buffer), "%s ", t);
-                    } else {                    
+                        blen = strlen(buffer);
+                        buffer = (char *)trealloc(buffer, (blen+strlen(t)+2)*sizeof(char));
+                        sprintf(buffer + blen, "%s ", t);
+                    } else {
 		      /* maschmann:  changed order 
-                       *  sprintf(buffer + strlen(buffer), "%s:%s ", name, scname); */
- 
-                      if(name[0]=='v' || name[0]=='V')
-                        /* If the name begins with V (Vsource), translate it as a source:
-                         * V:subcircuitname:sourcename
-                         *  SDB says: This is a bad hack. What if my netname has a V in it?!?!? */
-                        sprintf(buffer + strlen(buffer), "v:%s:%s ", scname, name+1);
-                      else
-                        /* Translate it as a normal node */
-                        sprintf(buffer + strlen(buffer), "%s:%s ", scname, name);
-                    }                     
-
+                        sprintf(buffer + strlen(buffer), "%s:%s ", name, scname); */
+                      if(name[0]=='v' || name[0]=='V') {
+                        blen = strlen(buffer);
+                        buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+5)*sizeof(char));
+                        sprintf(buffer + blen, "v:%s:%s ", scname, name+1);
+                      } else { 
+                        blen = strlen(buffer);
+                        buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
+                        sprintf(buffer + blen, "%s:%s ", scname, name);
+                      }
+                    }
                     break;
-
+                    
                 } /* switch */
 
             } /* while */
@@ -709,9 +716,11 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 
             /* copy in the last token, which is the model name */
 
-            if(name)
-                sprintf(buffer + strlen(buffer), "%s ", name);
-
+            if(name) {
+                blen = strlen(buffer);
+                buffer = (char *)trealloc(buffer, (blen+strlen(name)+2)*sizeof(char));
+                sprintf(buffer + blen, "%s ", name);
+            }
             /* Set s to null string for compatibility with code */
             /* after switch statement                           */
 
@@ -746,17 +755,19 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
  * and stick the translated name into buffer.
  */
 	  ch = *name;           /* ch identifies the type of component */
-	  buffer = tmalloc(2000);    /* XXXXX */
 	  name++;
 	  if (*name == ':')
 	    name++;             /* now name point to the rest of the refdes */
 	                           
 
-	  if (*name)
-	    (void) sprintf(buffer, "%c:%s:%s ", ch, scname,  /* F:subcircuitname:refdesname */
+          if (*name) {
+	    buffer = (char *)tmalloc((strlen(scname)+strlen(name)+5)*sizeof(char));
+	    sprintf(buffer, "%c:%s:%s ", ch, scname,  /* F:subcircuitname:refdesname */
 			   name);
-	  else
-	    (void) sprintf(buffer, "%c:%s ", ch, scname);    /* F:subcircuitname */
+          } else {
+	    buffer = (char *)tmalloc((strlen(scname)+4)*sizeof(char));
+	    sprintf(buffer, "%c:%s ", ch, scname);    /* F:subcircuitname */
+          }
 	  tfree(t);
 	  
 
@@ -775,13 +786,16 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    t = gettrans(name);     
 	      
 	    if (t) {   /* the netname was used during the invocation; print it into the buffer */
-	      (void) sprintf(buffer + strlen(buffer), "%s ", t);
+	      blen = strlen(buffer);
+	      buffer = (char *)trealloc(buffer, (blen+strlen(t)+2)*sizeof(char));
+	      sprintf(buffer + blen, "%s ", t);
 	    }
 	    else {    /* net netname was not used during the invocation; place a 
 		       * translated name into the buffer.
 		       */
-	      (void) sprintf(buffer + strlen(buffer),
-			     "%s:%s ", scname, name);
+	      blen = strlen(buffer);
+	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
+	      sprintf(buffer + blen, "%s:%s ", scname, name);
 	    }
 	    tfree(name);
 	  }  /* while (nnodes-- . . . . */
@@ -820,8 +834,9 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	      }
 
 	      /* Write POLY(dim) into buffer */
-	      (void) sprintf(buffer + strlen(buffer),
-			     "POLY( %d ) ", dim);
+	      blen = strlen(buffer);
+	      buffer = (char *)trealloc(buffer, (blen+17)*sizeof(char));
+	      sprintf(buffer + blen, "POLY( %d ) ", dim);
 	      
 
 	  } /* if ( (strcmp(next_name, "POLY") == 0) . . .  */
@@ -854,9 +869,10 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	      ch = *name;         /*  ch is the first char of the token.  */
 	      name++;
 	      if (*name == ':')
-		name++;           /* name now points to the remainder of the token */
-	      (void) sprintf(buffer + strlen(buffer),
-			     "%c:%s:%s ", ch, scname, name);  
+	        name++;           /* name now points to the remainder of the token */
+	      blen = strlen(buffer);
+	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+5)*sizeof(char));
+	      sprintf(buffer + blen, "%c:%s:%s ", ch, scname, name);  
 	      /* From Vsense and Urefdes creates V:Urefdes:sense */
 	    }
 	    else {                              /* Handle netname */
@@ -870,13 +886,16 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	      t = gettrans(name);
 	      
 	      if (t) {   /* the netname was used during the invocation; print it into the buffer */
-		(void) sprintf(buffer + strlen(buffer), "%s ", t);
+	        blen = strlen(buffer);
+	        buffer = (char *)trealloc(buffer, (blen+strlen(t)+2)*sizeof(char));
+	        sprintf(buffer + blen, "%s ", t);
 	      }
 	      else {    /* net netname was not used during the invocation; place a 
 			 * translated name into the buffer.
 			 */
-		(void) sprintf(buffer + strlen(buffer),
-			       "%s:%s ", scname, name);
+	        blen = strlen(buffer);
+	        buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
+	        sprintf(buffer + blen, "%s:%s ", scname, name);
 		/* From netname and Urefdes creates Urefdes:netname */
 	      }
 	    }
@@ -884,7 +903,9 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	  }      /* while (nnodes--. . . . */
 	  
 /* Now write out remainder of line (polynomial coeffs) */
-	  finishLine(buffer + strlen(buffer), s, scname);
+	  blen = strlen(buffer);
+	  buffer = (char *)trealloc(buffer, (blen+strlen(s)+strlen(scname)+1000)*sizeof(char));
+	  finishLine(buffer + blen, s, scname);
 	  s = "";
 	  break;
 
@@ -904,16 +925,18 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
  * and stick the translated name into buffer.
  */
 	  ch = *name;
-	  buffer = tmalloc(2000);    /* XXXXX */
+
 	  name++;
 	  if (*name == ':')
 	    name++;
 
-	  if (*name)
-	    (void) sprintf(buffer, "%c:%s:%s ", ch, scname,
-			   name);
-	  else
-	    (void) sprintf(buffer, "%c:%s ", ch, scname);
+	  if (*name) {
+	    buffer = (char *)tmalloc((strlen(scname)+strlen(name)+5)*sizeof(char));
+	    sprintf(buffer, "%c:%s:%s ", ch, scname, name);
+	  } else {
+	    buffer = (char *)tmalloc((strlen(scname)+4)*sizeof(char));
+	    sprintf(buffer, "%c:%s ", ch, scname);
+	  }
 	  tfree(nametofree);
 
 
@@ -932,15 +955,18 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    t = gettrans(name);
 	      
 	    if (t) {   /* the netname was used during the invocation; print it into the buffer */
-	      (void) sprintf(buffer + strlen(buffer), "%s ", t);
+	      blen = strlen(buffer);
+	      buffer = (char *)trealloc(buffer, (blen+strlen(t)+2)*sizeof(char));
+	      sprintf(buffer + blen, "%s ", t);
 	    }
 	    else {    /* net netname was not used during the invocation; place a 
 		       * translated name into the buffer.
 		       */
-	      (void) sprintf(buffer + strlen(buffer),
-			     "%s:%s ", scname, name);
+	      blen = strlen(buffer);
+	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
+	      sprintf(buffer + blen, "%s:%s ", scname, name);
 	    }
-	    free(name);
+	    tfree(name);
 	  }  /* while (nnodes-- . . . . */
   
 /* Now translate any devices (i.e. controlling sources).  
@@ -960,12 +986,15 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    if (*name == ':')
 	      name++;
 	    
-	    if (*name)
-	      (void) sprintf(buffer + strlen(buffer),
-			     "%c:%s:%s ", ch, scname, name);
-	    else
-	      (void) sprintf(buffer + strlen(buffer),
-			     "%c:%s ", ch, scname);
+	    if (*name) {
+	      blen = strlen(buffer);
+	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+5)*sizeof(char));
+	      sprintf(buffer + blen, "%c:%s:%s ", ch, scname, name);
+	    } else {
+	      blen = strlen(buffer);
+	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+4)*sizeof(char));
+	      sprintf(buffer + blen, "%c:%s ", ch, scname);
+	    }
 	    tfree(t);
 	  } /* while (nnodes--. . . . */
 	    
@@ -975,14 +1004,18 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
  * We also scan through the line for v(something) and
  * i(something)...
  */
-	    finishLine(buffer + strlen(buffer), s, scname);
-	    s = "";
+	  blen = strlen(buffer);
+	  buffer = (char *)trealloc(buffer, (blen+strlen(s)+strlen(scname)+1000)*sizeof(char));
+	  finishLine(buffer + blen, s, scname);
+	  s = "";
 
 	} /* switch(c->li_line . . . . */
 
-	(void) strcat(buffer, s);
-        tfree(c->li_line);
-        c->li_line = copy(buffer);
+	blen = strlen(buffer);
+	buffer = (char *)trealloc(buffer, (blen+strlen(s)+1)*sizeof(char));
+	strcat(buffer, s);
+	tfree(c->li_line);
+	c->li_line = copy(buffer);
 
 #ifdef TRACE 
 	/* SDB debug statement */
@@ -1102,6 +1135,7 @@ finishLine(char *dst, char *src, char *scname)
 	}
     }
 
+    *dst = '\0'; /* va, append in each case '\0' */
     return;
 }
 
@@ -1221,7 +1255,7 @@ numnodes(char *name)
 	        i = 0;
 		s = buf;
 		gotit = 0;
-		txfree(gettok(&s));          /* Skip component name */
+		txfree(gettok(&s));	     /* Skip component name */
 		while ((i < n) && (*s) && !gotit) {
 		  t = gettok_node(&s);       /* get nodenames . . .  */
 		  for (wl = modnames; wl; wl = wl->wl_next)
@@ -1308,7 +1342,7 @@ numdevs(char *s)
 }
 
 /*----------------------------------------------------------------------*
- *  modtranslate --  translates .model liness found in subckt definitions.
+ *  modtranslate --  translates .model lines found in subckt definitions.
  *  Calling arguments are:
  *  *deck = pointer to the .subckt definition (linked list)
  *  *subname = pointer to the subcircuit name used at the subcircuit invocation (string)
@@ -1339,8 +1373,7 @@ modtranslate(struct line *deck, char *subname)
             buffer = tmalloc(strlen(name) + strlen(t) +
                     strlen(subname) + 4);
             (void) sprintf(buffer, "%s ",name);    /* at this point, buffer = ".model " */
-	    tfree(name);
-	    
+            tfree(name);
             name = gettok(&t);                     /* name now holds model name */
             wlsub = alloc(struct wordlist);
             wlsub->wl_next = submod;

@@ -1,3 +1,9 @@
+2005-02-08  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/frontend/subckt.c: modified the file with the one supplied by
+	    Dietmar Warning's (warning@danalyse.de). This fix the bug that
+	    caused ngspice to crash with long subckt lines.
+
 2004-09-05  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/spicelib/devices/jfet/jfet.c: model type (njf or pjf) was
