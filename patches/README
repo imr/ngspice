@@ -21,4 +21,7 @@ readline-patch: This patch is not included in the source since the readline
                 If you want to know more about the license issue, look at 
                 the GNU site: htt://www.gnu.org
 
-
+win32/:         This directory contains a patch to run ngspice under windows.
+                This code is not yet inserted into the main code but will be
+                in the next ones.
+                
