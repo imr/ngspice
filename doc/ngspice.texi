@@ -1167,11 +1167,19 @@ compute the capacitance from strictly geometric information.
 
 The capacitor has a capacitance computed as
 
+@tex
+$$
+  {\rm CAP} = {\rm CJ} ({\rm LENGTH} - {\rm NARROW})
+                       ({\rm WIDTH} - {\rm NARROW}) +
+              2 {\rm CJSW} ({\rm LENGTH} + {\rm WIDTH} - 2 {\rm NARROW})
+$$
+@end tex
+@ifnottex
 @example
-CAP = CJ (LENGTH - NARROW) (WIDTH - NARROW)
-      + 2 CJSW (LENGTH + WIDTH - 2 NARROW)
+  CAP = CJ (LENGTH - NARROW) (WIDTH - NARROW) +
+        2 CJSW (LENGTH + WIDTH - 2 NARROW)
 @end example
-
+@end ifnottex
 
 @node  Inductors, Coupled (Mutual) Inductors, Semiconductor Capacitor Model (C), Elementary Devices
 @subsection  Inductors
@@ -1601,7 +1609,6 @@ $$
 @end tex
 @ifnottex
 @example
-
                   |                            |
   V(t)=V  + V  sin 2 J FC t + MDI sin(2 J FS t)
         O    A    |                            |
@@ -2095,15 +2102,21 @@ junction capacitance equivalent to the capacitance replaced, and with a
 saturation current of ISPERL amps per meter of transmission line and an
 optional series resistance equivalent to RSPERL ohms per meter.
 
-@multitable @columnfractions .15 .4 .2 .1 .1
-@item name @tab parameter @tab units @tab default @tab example   area
-@item K @tab Propagation Constant @tab - @tab 2.0 @tab 1.2
-@item FMAX @tab Maximum Frequency of interest @tab Hz @tab 1.0G @tab 6.5Meg     
-@item RPERL @tab Resistance per unit length @tab Z/m @tab 1000 @tab 10 
-@item CPERL @tab Capacitance per unit length @tab F/m @tab 1.0e-15 @tab 1pF 
-@item ISPERL @tab Saturation Current per unit length @tab A/m @tab 0
-@tab - 
-@item RSPERL @tab Diode Resistance per unit length @tab Z/m @tab 0 @tab -         -
+@multitable @columnfractions .1 .45 .1 .15 .1 .1
+@item name   @tab parameter
+                        @tab units @tab default @tab example
+@item K      @tab Propagation Constant
+                        @tab - @tab 2.0 @tab 1.2
+@item FMAX   @tab Maximum Frequency of interest
+                        @tab Hz @tab 1.0G @tab 6.5Meg     
+@item RPERL  @tab Resistance per unit length
+                        @tab Z/m @tab 1000 @tab 10 
+@item CPERL  @tab Capacitance per unit length
+                        @tab F/m @tab 1.0e-15 @tab 1pF
+@item ISPERL @tab Saturation Current per unit length
+                        @tab A/m @tab 0 @tab - 
+@item RSPERL @tab Diode Resistance per unit length
+                        @tab Z/m @tab 0 @tab -
 @end multitable
 
 
@@ -2204,7 +2217,7 @@ exponential increase in the reverse diode current and is determined by
 the parameters BV and IBV (both of which are positive numbers).
 
 
-@multitable @columnfractions .1 .4 .2 .1 .1 .1
+@multitable @columnfractions .1 .45 .15 .15 .15
 @item name @tab parameter @tab units @tab default @tab example @tab   area
 @item IS @tab saturation current @tab A @tab 1.0e-14 @tab 1.0e-14 @tab   *
 @item RS @tab ohmic resistance @tab Z @tab 0 @tab 10 @tab *
@@ -2224,7 +2237,6 @@ the parameters BV and IBV (both of which are positive numbers).
       @tab - @tab 0.5 @tab depletion capacitance formula
 @item BV @tab reverse breakdown voltage @tab V @tab infinite @tab 40.0
 @item IBV @tab current at breakdown voltage @tab A @tab 1.0e-3
- @tab o
 @item TNOM @tab parameter measurement temperature @tab C @tab 27 @tab 50
 @end multitable
 
@@ -2306,7 +2318,7 @@ accepted.
 
 Modified Gummel-Poon BJT Parameters.
 
-@multitable @columnfractions .1 .4 .2 .1 .1 .1
+@multitable @columnfractions .1 .45 .15 .15 .15
 @item name @tab parameter @tab units @tab default @tab example @tab area
 @item IS @tab transport saturation current @tab A @tab 1.0e-16 @tab
 1.0e-15 @tab *
@@ -2363,7 +2375,7 @@ internal base node @tab - @tab 1
 @item AF @tab flicker-noise exponent @tab - @tab 1
 @item FC @tab coefficient for forward-bias depletion capacitance formula
          @tab - @tab 0.5 @tab o
-@item TNOM @tab Parameter measurement temperature @tab C @tab 27 @tab 50
+@item TNOM @tab Parameter measurement temperature @tab °C @tab 27 @tab 50
 @end multitable
 
 
@@ -2417,7 +2429,7 @@ junction voltage and are defined by the parameters CGS, CGD, and PB.
 Note that in Spice3f and later, a fitting parameter B has been added.
 For details, see [9].
 
-@multitable @columnfractions .1 .4 .1 .1 .1 .1
+@multitable @columnfractions .1 .45 .15 .15 .15
 @item name @tab parameter @tab units @tab default @tab example @tab area
 @item VTO @tab threshold voltage (@math{V_T0}) @tab V @tab -2.0 @tab -2.0
 @item BETA @tab transconductance parameter (B)
@@ -2568,81 +2580,95 @@ fitting, the option "BADMOS3" may be set to use the old implementation
 (see the section on simulation variables and the ".OPTIONS" line).
 SPICE level 1, 2, 3 and 6 parameters:
 
-@example
-name     parameter                               units   default           example
-
- 1    LEVEL    model index                             -       1
- 2    VTO      zero-bias threshold voltage (V  )       V       0.0               1.0
-                                             TO           2
- 3    KP       transconductance parameter              A/V     2.0e-5            3.1e-5
-                                                        1/2
- 4    GAMMA    bulk threshold parameter (\)            V       0.0               0.37
- 5    PHI      surface potential (U)                   V       0.6               0.65
- 6    LAMBDA   channel-length modulation
-               (MOS1 and MOS2 only) (L)                1/V     0.0               0.02
- 7    RD       drain ohmic resistance                  Z       0.0               1.0
- 8    RS       source ohmic resistance                 Z       0.0               1.0
- 9    CBD      zero-bias B-D junction capacitance      F       0.0               20fF
- 10   CBS      zero-bias B-S junction capacitance      F       0.0               20fF
- 11   IS       bulk junction saturation current (I )   A       1.0e-14           1.0e-15
-                                                  S
- 12   PB       bulk junction potential                 V       0.8               0.87
- 13   CGSO     gate-source overlap capacitance
-               per meter channel width                 F/m     0.0               4.0e-11
- 14   CGDO     gate-drain overlap capacitance
-               per meter channel width                 F/m     0.0               4.0e-11
- 15   CGBO     gate-bulk overlap capacitance
-               per meter channel length                F/m     0.0               2.0e-10
- 16   RSH      drain and source diffusion
-               sheet resistance                        Z/[]    0.0               10.0
- 17   CJ       zero-bias bulk junction bottom cap.
-                                                    2
-               per sq-meter of junction area           F/m     0.0               2.0e-4
- 18   MJ       bulk junction bottom grading coeff.     -       0.5               0.5
- 19   CJSW     zero-bias bulk junction sidewall cap.
-               per meter of junction perimeter         F/m     0.0               1.0e-9
- 20   MJSW     bulk junction sidewall grading coeff.   -       0.50(level1)
-                                                         0.33(level2, 3)
- 21   JS       bulk junction saturation current
-                                                    2
-               per sq-meter of junction area           A/m                       1.0e-8
- 22   TOX      oxide thickness                         meter   1.0e-7            1.0e-7
-                                                     3
- 23   NSUB     substrate doping                        1/cm    0.0               4.0e15
-                                                     2
- 24   NSS      surface state density                   1/cm    0.0               1.0e10
-                                                     2
- 25   NFS      fast surface state density              1/cm    0.0               1.0e10
-
- 26   TPG     type of gate material:                 -        1.0
-                  +1 opp. to substrate
-                  -1 same as substrate
-                   0  Al gate
- 27   XJ      metallurgical junction depth           meter    0.0       1M
- 28   LD      lateral diffusion                      meter    0.0       0.8M
-                                                       2
- 29   UO      surface mobility                       cm /Vs   600       700
- 30   UCRIT   critical field for mobility
-              degradation (MOS2 only)                V/cm     1.0e4     1.0e4
- 31   UEXP    critical field exponent in
-              mobility degradation (MOS2 only)       -        0.0       0.1
- 32   UTRA    transverse field coeff. (mobility)
-              (deleted for MOS2)                     -        0.0       0.3
- 33   VMAX    maximum drift velocity of carriers     m/s      0.0       5.0e4
- 34   NEFF    total channel-charge (fixed and
-              mobile) coefficient (MOS2 only)        -        1.0       5.0
- 35   KF      flicker noise coefficient              -        0.0       1.0e-26
- 36   AF      flicker noise exponent                 -        1.0       1.2
- 37   FC      coefficient for forward-bias
-              depletion capacitance formula          -        0.5
- 38   DELTA   width effect on threshold voltage
-              (MOS2 and MOS3)                        -        0.0       1.0
- 39   THETA   mobility modulation (MOS3 only)        1/V      0.0       0.1
- 40   ETA     static feedback (MOS3 only)            -        0.0       1.0
- 41   KAPPA   saturation field factor (MOS3 only)    -        0.2       0.5
-                                                     o
- 42   TNOM    parameter measurement temperature       C       27        50
-@end example
+@multitable @columnfractions .1 .45 .15 .15 .15
+@item name  @tab parameter
+                        @tab units @tab default @tab example
+@item LEVEL @tab model index
+                        @tab -     @tab 1
+@item VTO   @tab zero-bias threshold voltage (@math{V_T0})
+                        @tab V @tab 0.0 @tab 1.0
+@item KP    @tab transconductance parameter
+                        @tab @math{A/V^2} @tab 2.0e-5 @tab 3.1e-5
+@item GAMMA @tab bulk threshold parameter
+                        @tab @math{V^1/2} @tab 0.0 @tab 0.37
+@item PHI   @tab surface potential (U)
+                        @tab V @tab 0.6 @tab 0.65
+@item LAMBDA @tab channel-length modulation (MOS1 and MOS2 only) (L)
+                        @tab 1/V @tab 0.0 @tab 0.02
+@item RD    @tab drain ohmic resistance
+                        @tab Z @tab 0.0 @tab 1.0
+@item RS    @tab source ohmic resistance
+                        @tab Z @tab 0.0 @tab 1.0
+@item CBD   @tab zero-bias B-D junction capacitance
+                        @tab F @tab 0.0 @tab 20fF
+@item CBS   @tab zero-bias B-S junction capacitance
+                        @tab F @tab 0.0 @tab 20fF
+@item IS    @tab bulk junction saturation current (@math{I_S})
+                        @tab A @tab 1.0e-14 @tab 1.0e-15
+@item PB    @tab bulk junction potential
+                        @tab V @tab 0.8 @tab 0.87
+@item CGSO  @tab gate-source overlap capacitance per meter channel width
+                        @tab F/m @tab 0.0 @tab 4.0e-11
+@item CGDO  @tab gate-drain overlap capacitance per meter channel width
+                        @tab F/m @tab 0.0 @tab 4.0e-11
+@item CGBO  @tab gate-bulk overlap capacitance per meter channel length
+                        @tab F/m @tab 0.0 @tab 2.0e-10
+@item RSH   @tab drain and source diffusion sheet resistance
+                        @tab Z/[] @tab 0.0 @tab 10.0
+@item CJ    @tab zero-bias bulk junction bottom cap. per sq-meter of junction area
+                        @tab @math{F/m^2} @tab 0.0 @tab 2.0e-4
+@item MJ    @tab bulk junction bottom grading coeff.
+                        @tab - @tab 0.5 @tab 0.5
+@item CJSW  @tab zero-bias bulk junction sidewall cap. per meter of junction perimeter
+                        @tab F/m @tab 0.0 @tab 1.0e-9
+@item MJSW  @tab bulk junction sidewall grading coeff.
+                        @tab - @tab 0.50(level1), 0.33(level2, 3)
+@item JS    @tab bulk junction saturation current per sq-meter of junction area
+                        @tab @math{A/m^2} @tab 1.0e-8
+@item TOX   @tab oxide thickness
+                        @tab meter @tab 1.0e-7 @tab 1.0e-7
+@item NSUB  @tab substrate doping
+                        @tab @math{1/cm^3} @tab 0.0 @tab 4.0e15
+@item NSS   @tab surface state density
+                        @tab @math{1/cm^2} @tab 0.0 @tab 1.0e10
+@item NFS   @tab fast surface state density
+                        @tab @math{1/cm^2} @tab 0.0 @tab 1.0e10
+@item TPG   @tab type of gate material:
+                +1 opp. to substrate, -1 same as substrate, 0  Al gate
+                        @tab - @tab 1.0
+@item XJ    @tab metallurgical junction depth
+                        @tab meter @tab 0.0 @tab 1M
+@item LD    @tab lateral diffusion
+                        @tab meter @tab 0.0 @tab 0.8M
+@item UO    @tab surface mobility
+                        @tab @math{cm^2/Vs} @tab 600 @tab 700
+@item UCRIT @tab critical field for mobility degradation (MOS2 only)
+                        @tab V/cm @tab 1.0e4 @tab 1.0e4
+@item UEXP  @tab critical field exponent in mobility degradation (MOS2 only)
+                        @tab - @tab 0.0 @tab 0.1
+@item UTRA  @tab transverse field coeff. (mobility) (deleted for MOS2)
+                        @tab - @tab 0.0 @tab 0.3
+@item VMAX  @tab maximum drift velocity of carriers
+                        @tab m/s @tab 0.0 @tab 5.0e4
+@item NEFF  @tab total channel-charge (fixed and mobile) coefficient (MOS2 only)
+                        @tab - @tab 1.0 @tab 5.0
+@item KF    @tab flicker noise coefficient
+                        @tab - @tab 0.0 @tab 1.0e-26
+@item AF    @tab flicker noise exponent
+                        @tab - @tab 1.0 @tab 1.2
+@item FC    @tab coefficient for forward-bias depletion capacitance formula
+                        @tab - @tab 0.5
+@item DELTA @tab width effect on threshold voltage (MOS2 and MOS3)
+                        @tab - @tab 0.0 @tab 1.0
+@item THETA @tab mobility modulation (MOS3 only)
+                        @tab 1/V @tab 0.0 @tab 0.1
+@item ETA   @tab static feedback (MOS3 only)
+                        @tab - @tab 0.0 @tab 1.0
+@item KAPPA @tab saturation field factor (MOS3 only)
+                        @tab - @tab 0.2 @tab 0.5
+@item TNOM  @tab parameter measurement temperature
+                        @tab °C @tab 27 @tab 50
+@end multitable
 
 
 The level 4 and level 5 (BSIM1 and BSIM2) parameters are all values
