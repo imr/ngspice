@@ -28,13 +28,13 @@ static char * mkcname(char what, char *v1, char *v2);
  * be lost, but that's no great loss.
  */
 
-static jmp_buf matherrbuf;
+static sigjmp_buf matherrbuf;
 
 static RETSIGTYPE
 sig_matherr(void)
 {
     fprintf(cp_err, "Error: argument out of range for math function\n");
-    longjmp(matherrbuf, 1);
+    siglongjmp(matherrbuf, 1);
 }
 
 
@@ -221,7 +221,7 @@ doop(char what,
     /* Some of the math routines generate SIGILL if the argument is
      * out of range.  Catch this here.
      */
-    if (setjmp(matherrbuf)) {
+    if (sigsetjmp(matherrbuf, 1)) {
         return (NULL);
     }
     (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
@@ -701,7 +701,7 @@ apply_func(struct func *func, struct pnode *arg)
         /* Some of the math routines generate SIGILL if the argument is
          * out of range.  Catch this here.
          */
-        if (setjmp(matherrbuf)) {
+        if (sigsetjmp(matherrbuf, 1)) {
             (void) signal(SIGILL, SIG_DFL);
             return (NULL);
         }

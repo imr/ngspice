@@ -118,3 +118,20 @@ makedefs: $(srcdir)/makedefs.in $(top_builddir)/config.status
 	cd $(top_builddir) \
 	&& CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
+# Hack by SDB to enable "make mrproper" from top level.
+#  Since there is no Makefile.am for this directory, we need to 
+#  incorporate this stuff by hand.
+MAINTAINERCLEANFILES = 
+
+maintainer-clean: maintainer-clean-generic
+	rm -f `find . -type f -name "*~" -print`
+	rm -f `find . -type f -name "*.orig" -print`
+	rm -f `find . -type f -name "*.rej" -print`
+	rm -fR `find . -type d -name ".deps" -print`
+
+maintainer-clean-generic: clean
+	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
+
+
+
+

@@ -133,6 +133,10 @@ inp_subcktexpand(struct line *deck)
      */
     for (c = deck; c; c = c->li_next) {    /* iterate on lines in deck */
       if (prefix(start, c->li_line)) {   /* if we find .subckt . . . */
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In inp_subcktexpand, found a .subckt: %s\n", c->li_line);
+#endif
 	for (s = c->li_line; *s && (*s != '('); s++)    /* Iterate charwise along line until ( is found */
 	  ;
 	if (*s) {
@@ -165,6 +169,10 @@ inp_subcktexpand(struct line *deck)
     
 
     /* doit does the actual splicing in of the .subckt . . .  */
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In inp_subcktexpand, about to call doit.\n");
+#endif
     ll = doit(deck);
 
    /* Now check to see if there are still subckt instances undefined... */
@@ -208,6 +216,11 @@ doit(struct line *deck)
     modnames = NULL;
     subs = NULL;
     submod = NULL;
+
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In doit, about to start first pass through deck.\n");
+#endif
 
     /* First pass: xtract all the .subckts and stick pointers to them into sss.  */
     for (last = deck, lc = NULL;  last;  ) {
@@ -326,6 +339,11 @@ doit(struct line *deck)
             wl->wl_word = gettok(&s);  /* wl->wl_word now holds name of model */
         }
 
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In doit, about to start second pass through deck.\n");
+#endif
+
     error = 0;
     /* Second pass: do the replacements. */
     do {                    /*  while (!error && numpasses-- && gotone)  */
@@ -387,8 +405,8 @@ doit(struct line *deck)
                 lcc = inp_deckcopy(sss->su_def);  
 
                 /* Change the names of .models found in .subckts . . .  */
-                if (modtranslate(lcc, scname))   
-                    devmodtranslate(lcc, scname);
+                if (modtranslate(lcc, scname))    /* this translates the model name in the .model line */
+		   devmodtranslate(lcc, scname);  /* This translates the model name on all components in the deck */
 
                 s = sss->su_args;
                 txfree(gettok(&t));  /* Throw out the subcircuit refdes */
@@ -660,7 +678,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	  nnodes = numnodes(c->li_line);
 	  
 	  while (nnodes-- > 0) {
-	    name = gettok(&s);
+	    name = gettok_node(&s);
 	    if (name == NULL) {
 	      fprintf(cp_err, "Error: too few nodes: %s\n",
 		      c->li_line);
@@ -695,12 +713,12 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	      printf("In translate, looking at e, f, g, h found poly\n");
 #endif
 
-	      /* move pointer ahead of paren */
+	      /* move pointer ahead of (  */
 	      if( get_l_paren(&s) == 1 ) {   
-		fprintf(cp_err, "Error: no left paren after POLY %s\n",
-			c->li_line);
-		tfree(next_name);
-		goto quit;
+	      	fprintf(cp_err, "Error: no left paren after POLY %s\n",
+	      		c->li_line);
+	      	tfree(next_name);
+	      	goto quit;
 	      }
 
 	      nametofree = gettok_noparens(&s);
@@ -709,10 +727,10 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	      
 	      /* move pointer ahead of ) */
 	      if( get_r_paren(&s) == 1 ) {   
-		fprintf(cp_err, "Error: no right paren after POLY %s\n",
-			c->li_line);
-		tfree(next_name);
-		goto quit;
+	      	fprintf(cp_err, "Error: no right paren after POLY %s\n",
+	      		c->li_line);
+	      	tfree(next_name);
+	      	goto quit;
 	      }
 
 	      /* Write POLY(dim) into buffer */
@@ -728,7 +746,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 /* Now translate the controlling source/nodes */
 	  nnodes = dim * numdevs(c->li_line);     
 	  while (nnodes-- > 0) {
-	    nametofree = name = gettok(&s);   /* name points to the returned token  */
+	    nametofree = name = gettok_node(&s);   /* name points to the returned token  */
 	    if (name == NULL) {
 	      fprintf(cp_err, "Error: too few devs: %s\n",
 		      c->li_line);
@@ -788,7 +806,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 /*=================   Default case  ===================*/
         default:            /* this section handles ordinary components */
 	  s = c->li_line;
-	  nametofree = name = gettok(&s);
+	  nametofree = name = gettok_node(&s);  /* changed to gettok_node to handle netlists with ( , ) */
 	  if (!name)
 	    continue;
 	  if (!*name) {
@@ -817,7 +835,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	  nnodes = numnodes(c->li_line);
 	  
 	  while (nnodes-- > 0) {
-	    name = gettok(&s);
+	    name = gettok_node(&s);
 	    if (name == NULL) {
 	      fprintf(cp_err, "Error: too few nodes: %s\n",
 		      c->li_line);
@@ -845,7 +863,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
  */
 	  nnodes = numdevs(c->li_line);     
 	  while (nnodes-- > 0) {
-	    t = name = gettok(&s);
+	    t = name = gettok_node(&s);
 	    if (name == NULL) {
 	      fprintf(cp_err, "Error: too few devs: %s\n",
 		      c->li_line);
@@ -1117,9 +1135,9 @@ numnodes(char *name)
 	        i = 0;
 		s = buf;
 		gotit = 0;
-		txfree(gettok(&s));	     /* Skip component name */
+		txfree(gettok(&s));          /* Skip component name */
 		while ((i < n) && (*s) && !gotit) {
-		  t = gettok(&s);
+		  t = gettok_node(&s);       /* get nodenames . . .  */
 		  for (wl = modnames; wl; wl = wl->wl_next)
 		    if (eq(t, wl->wl_word)) 
 		      gotit = 1;
@@ -1257,8 +1275,11 @@ modtranslate(struct line *deck, char *subname)
 
 
 /*-------------------------------------------------------------------*
- *  Devmodtranslate translates ??????
- *  
+ *  Devmodtranslate scans through the deck, and translates the 
+ *  name of the model in a line held in a .subckt.  For example:
+ *  before:   .subckt U1 . . . .
+ *            Q1 c b e 2N3904
+ *  after:    Q1 c b e U1:2N3904
  *-------------------------------------------------------------------*/
 static void
 devmodtranslate(struct line *deck, char *subname)
@@ -1270,9 +1291,14 @@ devmodtranslate(struct line *deck, char *subname)
 
     for (s = deck; s; s = s->li_next) {
         t = s->li_line;
+#ifdef TRACE
+	/* SDB debug stuff */
+	printf("In devmodtranslate, examining line %s.\n", t);
+#endif
+
 	while (*t && isspace(*t))
 	    t++;
-        c = isupper(*t) ? tolower(*t) : *t;
+        c = isupper(*t) ? tolower(*t) : *t;  /* set c to first char in line. . . . */
         found = FALSE;
         buffer = tmalloc(strlen(t) + strlen(subname) + 4);
 
@@ -1280,17 +1306,17 @@ devmodtranslate(struct line *deck, char *subname)
 
         case 'r':
         case 'c':
-            name = gettok(&t);
+	    name = gettok(&t);  /* get refdes */
             (void) sprintf(buffer,"%s ",name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* get first netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* get second netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
 
-            if (*t) {
+            if (*t) {    /* if there is a model, process it. . . . */
                 name = gettok(&t);
 		/* Now, is this a subcircuit model? */
 		for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
@@ -1329,13 +1355,13 @@ devmodtranslate(struct line *deck, char *subname)
             break;
 
 	case 'd':
-            name = gettok(&t);
+	    name = gettok(&t);  /* get refdes */
             (void) sprintf(buffer,"%s ",name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* get first attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* get second attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
             name = gettok(&t);
@@ -1362,6 +1388,10 @@ devmodtranslate(struct line *deck, char *subname)
 	case 'u':
 	case 'j':
 	case 'z':
+	    /* What are these devices anyway?   J = JFET, W = trans line (?), 
+	       and u = IC, but what is Z?.
+	       Also, why is 'U' here?  A 'U' element can have an arbitrary
+	       number of nodes attached. . . .   -- SDB. */
             name = gettok(&t);
             (void) sprintf(buffer,"%s ",name);
             name = gettok(&t);
@@ -1389,22 +1419,26 @@ devmodtranslate(struct line *deck, char *subname)
             s->li_line = buffer;
             break;
 
-        case 'o':
+	    /*  Changed gettok() to gettok_node() on 12.2.2003 by SDB 
+		to enable parsing lines like "S1 10 11 (80,51) SLATCH1"
+		which occurr in real Analog Devices SPICE models.
+	    */
+        case 'o':    /* what is this element?  -- SDB */
 	case 's':
 	case 'm':
-            name = gettok(&t);
+	    name = gettok(&t);  /* get refdes */
             (void) sprintf(buffer,"%s ",name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* get first attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* get second attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* get third attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* get fourth attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
             name = gettok(&t);
@@ -1428,19 +1462,19 @@ devmodtranslate(struct line *deck, char *subname)
             break;
 
 	case 'q':
-            name = gettok(&t);
+	    name = gettok(&t);  /* get refdes */
             (void) sprintf(buffer,"%s ",name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* get first attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* get second attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* get third attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* this can be either a model name or a node name. */
 
             /* Now, is this a subcircuit model? */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {

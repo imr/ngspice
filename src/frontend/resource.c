@@ -306,13 +306,13 @@ printres(char *name)
 
 #define LOG2_PAGESIZE	8
 
-static jmp_buf	env;
+static sigjmp_buf	env;
 
 static RETSIGTYPE
 fault(void)
 {
 	signal(SIGSEGV, (SIGNAL_FUNCTION) fault);	/* SysV style */
-	longjmp(env, 1);
+	siglongjmp(env, 1);
 }
 #if !defined(__MINGW32__) && !defined(__APPLE_CC__)
 static void *
@@ -342,13 +342,13 @@ baseaddr(void)
 			break;
 		}
 
-		if (setjmp(env)) {
+		if (sigsetjmp(env, 1)) {
 			low = at;
 			continue;
 		} else
 			x = *at;
 
-		if (setjmp(env)) {
+		if (sigsetjmp(env, 1)) {
 			low = at;
 			continue;
 		} else

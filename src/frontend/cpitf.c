@@ -293,7 +293,8 @@ cp_istrue(wordlist *wl)
 void
 cp_periodic(void)
 {
-    ft_setflag = ft_intrpt = FALSE;
+    ft_setflag = FALSE;
+    ft_intrpt = FALSE;
     ft_ckspace();
     ft_checkkids();
     vec_gc();

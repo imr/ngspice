@@ -9,6 +9,10 @@ Author: 1987 Jeffrey M. Hsu
     The display device structure.
 */
 
+#ifndef FTEDEV_H_INCLUDED
+#define FTEDEV_H_INCLUDED
+
+
 typedef struct {
     char *name;
     int minx, miny;
@@ -35,3 +39,6 @@ typedef struct {
 } DISPDEVICE;
 
 extern DISPDEVICE *dispdev;
+
+
+#endif

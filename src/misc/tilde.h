@@ -6,7 +6,7 @@
 #ifndef TILDE_H_INCLUDED
 #define TILDE_H_INCLUDED
 
-char * tilde_expand(char *string);
+char * tildexpand(char *string);
 
 
 #endif

@@ -64,6 +64,7 @@ ivars(void)
     env_overr(&Spice_Exec_Dir, "SPICE_EXEC_DIR");
     env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR");
 
+
     mkvar(&News_File, Spice_Lib_Dir, "news", "SPICE_NEWS");
     mkvar(&Default_MFB_Cap, Spice_Lib_Dir, "mfbcap", "SPICE_MFBCAP");
     mkvar(&Help_Path, Spice_Lib_Dir, "helpdir", "SPICE_HELP_DIR");

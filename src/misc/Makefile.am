@@ -27,7 +27,9 @@ libmisc_a_SOURCES = \
 		tilde.h		\
 		misc_time.c	\
 		misc_time.h	\
-		wlist.c	
+		wlist.c	        \
+		util.c		\
+		util.h
 
 ## Note that the getopt files get compiled unconditionnaly but some
 ## magic #define away the body of their own code if the compilation environment

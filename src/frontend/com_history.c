@@ -10,6 +10,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "com_history.h"
 
+#ifdef HAVE_GNUREADLINE
+
+/* Added GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
+#include <readline/readline.h>
+#include <readline/history.h>
+
+#endif /* HAVE_GNUREADLINE */
 
 /* static declarations */
 static wordlist * dohsubst(char *string);
@@ -346,8 +353,10 @@ cp_addhistent(int event, wordlist *wlist)
     cp_lastone->hi_next = NULL;
     cp_lastone->hi_event = event;
     cp_lastone->hi_wlist = wl_copy(wlist);
+#ifndef HAVE_GNUREADLINE
     freehist(histlength - cp_maxhistlength);
     histlength++;
+#endif
     return;
 }
 
@@ -484,10 +493,38 @@ com_history(wordlist *wl)
         wl = wl->wl_next;
         rev = TRUE;
     }
+
+#ifdef HAVE_GNUREADLINE
+    /* Added GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
+    {
+       HIST_ENTRY *he;
+       int i, N;
+
+       N = (wl == NULL) ? history_length : atoi(wl->wl_word);
+
+       if (N < 0) N = 0;
+       if (N > history_length) N = history_length;
+
+       if (rev)
+           for (i = history_length; i > 0 && N; --i, --N) {
+               he = history_get(i);
+               if (!he) return;
+               fprintf(cp_out, "%d\t%s\n", i, he->line);
+           }
+       else
+           for (i = history_length - N + 1; i <= history_length; ++i) {
+               he = history_get(i);
+               if (!he) return;
+               fprintf(cp_out, "%d\t%s\n", i, he->line);
+           }
+    }
+#else
     if (wl == NULL)
         cp_hprint(cp_event - 1, cp_event - histlength, rev);
     else
         cp_hprint(cp_event - 1, cp_event - 1 - atoi(wl->wl_word), rev);
+#endif /* ifelse HAVE_GNUREADLINE */
+
     return;
 }
 

@@ -135,7 +135,10 @@ inp_readall(FILE *fp, struct line **data)
     int line = 1;
     FILE *newfp;
 
-/* gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled */
+    /*   Must set this to NULL or non-tilde includes segfault. -- Tim Molteno   */
+    /* copys = NULL; */   /*  This caused a parse error with gcc 2.96.  Why???  */
+
+/*   gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled   */
 #ifdef XSPICE
     Ipc_Status_t    ipc_status;
     char            ipc_buffer[1025];  /* Had better be big enough */

@@ -69,7 +69,6 @@ libfte_a_SOURCES = \
 	terminal.h	\
 	variable.c	\
 	variable.h	\
-	\
 	arg.c		\
 	arg.h		\
 	aspice.c	\
@@ -144,8 +143,8 @@ libfte_a_SOURCES = \
 	runcoms2.h	\
 	shyu.c		\
 	shyu.h		\
-	signal_handler.c\
-	signal_handler.h\
+	signal_handler.c \
+	signal_handler.h \
 	spec.c		\
 	spec.h		\
 	spiceif.c	\

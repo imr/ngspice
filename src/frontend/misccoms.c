@@ -16,6 +16,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 
 
+#ifdef HAVE_GNUREADLINE
+#include <readline/readline.h>
+#include <readline/history.h>
+#endif
+
 static void byemesg(void);
 
 void
@@ -70,8 +75,9 @@ com_quit(wordlist *wl)
                 clearerr(stdin);
                 *buf = 'y';
             }
-            if ((*buf == 'y') || (*buf == 'Y') || (*buf == '\n'))
+            if ((*buf == 'y') || (*buf == 'Y') || (*buf == '\n')) {
                 byemesg();
+	    }
             else {
                 return;
             }
@@ -166,6 +172,18 @@ com_version(wordlist *wl)
 static void
 byemesg(void)
 {
+
+#ifdef HAVE_GNUREADLINE
+    extern char gnu_history_file[];
+
+    /*  write out command history only when saying goodbye.  */
+    if (cp_interactive && (cp_maxhistlength > 0)) {
+      stifle_history(cp_maxhistlength);
+      write_history(gnu_history_file);
+    }
+#endif /* HAVE_GNUREADLINE */
+
     printf("%s-%s done\n", ft_sim->simulator, ft_sim->version);
     return;
 }
+

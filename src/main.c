@@ -27,6 +27,7 @@
 #include <misc/getopt.h>
 #include <frontend/resource.h>
 #include <frontend/variable.h>
+#include <frontend/display.h>  /*  added by SDB to pick up Input() fcn  */
 
 /* saj xspice headers */
 #ifdef XSPICE
@@ -38,6 +39,17 @@
 #ifdef HAVE_PWD_H
 #include <pwd.h>
 #endif
+
+#ifdef HAVE_GNUREADLINE
+/* Added GNU Readline Support 11/3/97 -- Andrew Veliath <veliaa@rpi.edu> */
+/* from spice3f4 patch to ng-spice. jmr */
+#include <readline/readline.h>
+#include <readline/history.h>
+#include "fteinput.h"
+
+char gnu_history_file[512];
+static char *application_name;
+#endif  /* HAVE_GNUREADLINE */
 
 #ifndef HAVE_GETRUSAGE
 #ifdef HAVE_FTIME
@@ -52,9 +64,10 @@ static bool ft_servermode = FALSE;
 static bool ft_batchmode = FALSE;
 
 /* Frontend options */
-bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. */
-bool ft_setflag = FALSE;    /* Don't abort after an interrupt. */
+bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. TRUE = we've been interrupted. */
+bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt. */
 char *ft_rawfile = "rawspice.raw";
+
 
 /* Frontend and circuit options */
 IFsimulator *ft_sim = NULL;
@@ -73,7 +86,7 @@ struct variable *(*if_getparam)( );
 
 
 
-jmp_buf jbuf;
+sigjmp_buf jbuf;
 
 static int started = FALSE;
 
@@ -100,56 +113,67 @@ extern struct comm nutcp_coms[ ];
 struct comm *cp_coms = nutcp_coms;
 static IFfrontEnd nutmeginfo;
 
+/* -------------------------------------------------------------------------- */
 int
 if_run(char *t, char *w, wordlist *s, char *b)
 {
     return (0);
 }
 
+/* -------------------------------------------------------------------------- */
 int
 if_sens_run(char *t, char *w, wordlist *s, char *b)
 {
     return (0);
 }
 
+/* -------------------------------------------------------------------------- */
 void
 if_dump(char *ckt, FILE *fp)
 {}
 
+/* -------------------------------------------------------------------------- */
 char *
 if_inpdeck(struct line *deck, char **tab)
 {
     return ((char *) 0);
 }
 
+/* -------------------------------------------------------------------------- */
 int
 if_option(char *ckt, char *name, int type, char *value)
 {
     return 0;
 }
 
+/* -------------------------------------------------------------------------- */
 void if_cktfree(char *ckt, char *tab)
 {}
 
+/* -------------------------------------------------------------------------- */
 void if_setndnames(char *line)
 {}
 
+/* -------------------------------------------------------------------------- */
 char *
 if_errstring(int code)
 {
     return ("spice error");
 }
 
+/* -------------------------------------------------------------------------- */
 void
 if_setparam(char *ckt, char *name, char *param, struct variable *val)
 {}
 
+/* -------------------------------------------------------------------------- */
 bool
 if_tranparams(struct circ *ckt, double *start, double *stop, double *step)
 {
     return (FALSE); 
 }
 
+/* -------------------------------------------------------------------------- */
 struct variable *
 if_getstat(char *n, char *c)
 {
@@ -204,7 +228,7 @@ double CONSTe;
 IFfrontEnd *SPfrontEnd = NULL;
 int DEVmaxnum = 0;
 
-
+/* -------------------------------------------------------------------------- */
 int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 {
 #ifdef SIMULATOR
@@ -225,6 +249,7 @@ int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 }
 
 
+/* -------------------------------------------------------------------------- */
 /* Shutdown gracefully. */
 int 
 shutdown(int exitval)
@@ -240,6 +265,87 @@ shutdown(int exitval)
     exit (exitval);
 }
 
+/* -------------------------------------------------------------------------- */
+
+#ifdef HAVE_GNUREADLINE
+/* Adapted ../lib/cp/lexical.c:prompt() for GNU Readline -- Andrew Veliath <veliaa@rpi.edu> */
+static char *
+prompt()
+{
+    static char pbuf[128];
+    char *p = pbuf, *s;
+
+    if (cp_interactive == FALSE)
+        return;
+    if (cp_promptstring == NULL)
+        s = "-> ";
+    else
+        s = cp_promptstring;
+    if (cp_altprompt)
+        s = cp_altprompt;
+    while (*s) {
+        switch (strip(*s)) {
+       case '!':
+           p += sprintf(p, "%d", where_history() + 1);
+           break;
+       case '\\':
+           if (*(s + 1))
+               p += sprintf(p, "%c", strip(*++s));
+       default:
+           *p = strip(*s); ++p;
+           break;
+        }
+        s++;
+    }
+    *p = 0;
+    return pbuf;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Process device events in Readline's hook since there is no where
+   else to do it now - AV */
+int rl_event_func()  
+/* called by GNU readline periodically to know what to do about keypresses */
+{
+    static REQUEST reqst = { checkup_option, 0 };
+    Input(&reqst, NULL);
+    return 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Added GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
+void app_rl_readlines()
+{
+    char *line, *expanded_line;
+
+    /* note that we want some mechanism to detect ctrl-D and expand it to exit */
+    while (1) {
+       history_set_pos(history_length);
+
+       sigsetjmp(jbuf, 1);    /* Set location to jump to after handling SIGINT (ctrl-C)  */
+
+       line = readline(prompt());
+       if (line && *line) {
+           int s = history_expand(line, &expanded_line);
+
+           if (s == 2) {
+               fprintf(stderr, "-> %s\n", expanded_line);
+           } else if (s == -1) {
+               fprintf(stderr, "readline: %s\n", expanded_line);
+           } else {
+               cp_evloop(expanded_line);
+               add_history(expanded_line);
+           }
+           free(expanded_line);
+       }
+       if (line) free(line);
+    }
+    /* History gets written in ../fte/misccoms.c com_quit */
+}
+#endif /* HAVE_GNUREADLINE */
+
+
+/* -------------------------------------------------------------------------- */
 void
 show_help(void)
 {
@@ -261,6 +367,7 @@ show_help(void)
 	   "Report bugs to %s.\n", cp_program, Bug_Addr);
 }
 
+/* -------------------------------------------------------------------------- */
 void
 show_version(void)
 {
@@ -273,6 +380,7 @@ show_version(void)
 	   "  The NG-Spice Project\n", cp_program, PACKAGE, VERSION);
 }
 
+/* -------------------------------------------------------------------------- */
 void
 append_to_stream(FILE *dest, FILE *source)
 {
@@ -282,6 +390,7 @@ append_to_stream(FILE *dest, FILE *source)
     while ((i = fread(buf, 1, BSIZE_SP, source)) > 0)
 	fwrite(buf, i, 1, dest);
 }
+
 #ifdef SIMULATOR
     extern int OUTpBeginPlot(), OUTpData(), OUTwBeginPlot(), OUTwReference();
     extern int OUTwData(), OUTwEnd(), OUTendPlot(), OUTbeginDomain();
@@ -305,6 +414,9 @@ append_to_stream(FILE *dest, FILE *source)
     };
 #endif
 
+/* ======================================================= */
+/* ===============  main prog begins here ================ */
+/* ======================================================= */
 int
 #ifdef HAS_WINDOWS
 xmain(int argc, char **argv)
@@ -347,15 +459,19 @@ main(int argc, char **argv)
     /*     mwDoFlush(1);  */
 #endif
 
-
-
-
     /* MFB tends to jump to 0 on errors.  This tends to catch it. */
     if (started) {
         fprintf(cp_err, "main: Internal Error: jump to zero\n");
         shutdown(EXIT_BAD);
     }
     started = TRUE;
+
+#ifdef HAVE_GNUREADLINE
+    if (!(application_name = strrchr(argv[0],'/')))
+        application_name = argv[0];
+    else
+        ++application_name;
+#endif  /* HAVE_GNUREADLINE  */
 
 #ifdef PARALLEL_ARCH
     PBEGIN_(argc, argv);
@@ -401,7 +517,7 @@ main(int argc, char **argv)
 
     srandom(getpid());
 
-
+    /* --- Process command line options --- */
     while (1) {
 	int option_index = 0;
 	static struct option long_options[] = {
@@ -498,7 +614,7 @@ main(int argc, char **argv)
 	default:
 	    printf ("?? getopt returned character code 0%o ??\n", c);
 	}
-    }
+    }  /* --- End of command line option processing  --- */
 
 
 #ifdef SIMULATOR
@@ -529,7 +645,7 @@ main(int argc, char **argv)
     ft_cpinit();
 
     /* To catch interrupts during .spiceinit... */
-    if (setjmp(jbuf) == 1) {
+    if (sigsetjmp(jbuf, 1) == 1) {
         fprintf(cp_err, "Warning: error executing .spiceinit.\n");
         if (!ft_batchmode)
             goto bot;
@@ -537,8 +653,12 @@ main(int argc, char **argv)
  
     /* Set up signal handling */
     if (!ft_batchmode) {
-        signal(SIGINT, ft_sigintr);
-        signal(SIGFPE, sigfloat);
+        /*  Set up interrupt handler  */
+        (void) signal(SIGINT, ft_sigintr);
+
+        /* floating point exception  */
+        (void) signal(SIGFPE, sigfloat);
+
 #ifdef SIGTSTP
         signal(SIGTSTP, sigstop);
 #endif
@@ -611,7 +731,7 @@ bot:
      * build a circuit for this file. If this is in server mode, don't
      * process any of these args.  */
 
-    if (setjmp(jbuf) == 1)
+    if (sigsetjmp(jbuf, 1) == 1)
         goto evl;
 
 
@@ -657,7 +777,7 @@ bot:
         }
 	if (ft_batchmode && err)
 	    shutdown(EXIT_BAD);
-    }
+    }   /* ---  if (!ft_servermode && !ft_nutmeg) --- */
 
     if (!gotone && ft_batchmode && !ft_nutmeg)
         inp_spsource(circuit_file, FALSE, (char *) NULL);
@@ -668,7 +788,8 @@ evl:
          * so exit.  */
         bool st = FALSE;
 
-        (void) setjmp(jbuf);
+        (void) sigsetjmp(jbuf, 1);
+
 
         if (st == TRUE) {
             shutdown(EXIT_BAD);
@@ -703,11 +824,34 @@ evl:
 		    "no simulations run\n");
 	    shutdown(EXIT_BAD);
         }
-    } else {
-        (void) setjmp(jbuf);
+    }  /* ---  if (ft_batchmode) ---  */ 
+    else {
         cp_interactive = TRUE;
+
+#ifdef HAVE_GNUREADLINE
+        /* ---  set up readline params --- */
+        strcpy(gnu_history_file, getenv("HOME"));
+	strcat(gnu_history_file, "/.");
+	strcat(gnu_history_file, application_name);
+	strcat(gnu_history_file, "_history");
+	
+	using_history();
+	read_history(gnu_history_file);
+	
+	rl_readline_name = application_name;
+	rl_instream = cp_in;
+	rl_outstream = cp_out;
+	rl_event_hook = rl_event_func;
+	rl_catch_signals = 0;   /* disable readline signal handling  */
+	rl_catch_sigwinch = 1;  /* allow readline to respond to resized windows  */
+
+	/*  Here's where we enter the command processing loop  */
+       app_rl_readlines();
+#else
 	while (cp_evloop((char *) NULL) == 1) ;
-    }
+#endif /* ifelse HAVE_GNUREADLINE */
+
+    }  /* --- else (if (ft_batchmode)) --- */
 
 #else  /* ~ SIMULATOR */
 
@@ -722,7 +866,7 @@ evl:
 
 evl:
     /* Nutmeg "main" */
-    (void) setjmp(jbuf);
+    (void) sigsetjmp(jbuf, 1);
     cp_interactive = TRUE;
     while (cp_evloop((char *) NULL) == 1) ;
 
@@ -731,3 +875,7 @@ evl:
     shutdown(EXIT_NORMAL);
     return EXIT_NORMAL;
 }
+
+
+
+

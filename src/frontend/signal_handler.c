@@ -18,10 +18,15 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <signal.h>
 #include "signal_handler.h"
 
+#ifdef HAVE_GNUREADLINE
+/* Added GNU Readline Support 11/3/97 -- Andrew Veliath <veliaa@rpi.edu> */
+/* from spice3f4 patch to ng-spice. jmr */
+#include <readline/readline.h>
+#include <readline/history.h>
+#include "fteinput.h"
+#endif
 
-
-
-extern jmp_buf jbuf;
+extern sigjmp_buf jbuf;
 
 /* The (void) signal handlers... SIGINT is the only one that gets reset (by
  * cshpar) so it is global. They are ifdef BSD because of the sigmask
@@ -32,28 +37,43 @@ extern jmp_buf jbuf;
 
 extern pid_t getpid (void);
 
+/*  invoke this function upon keyboard interrupt  */
 RETSIGTYPE
 ft_sigintr(void)
 {
+  /*  fprintf (cp_err, "Received interrupt.  Handling it  . . . . .\n");  */
 
-    gr_clean();
+  /* Reinstall ft_signintr as the signal handler. */
+  (void) signal( SIGINT, (SIGNAL_FUNCTION) ft_sigintr );
 
-    (void) signal( SIGINT, (SIGNAL_FUNCTION) ft_sigintr );
+    gr_clean();  /* Clean up plot window */
 
-    if (ft_intrpt)
-        fprintf(cp_err, "Interrupt (ouch)\n");
+    if (ft_intrpt)     /* check to see if we're being interrupted repeatedly */
+        fprintf(cp_err, "Interrupted again (ouch)\n"); 
     else {
-        fprintf(cp_err, "Interrupt\n");
+        fprintf(cp_err, "Interrupted once . . .\n"); 
         ft_intrpt = TRUE;
     }
-    if (ft_setflag)
-        return;
-/* To restore screen after an interrupt to a plot for instance
- */
 
+    if (ft_setflag) {
+        return;     /* just return without aborting simulation if ft_setflag = TRUE */
+    }
+
+#ifdef HAVE_GNUREADLINE
+	/*  Clean up readline after catching signals  */
+        /*  One or all of these might be supurfluous  */
+	(void) rl_free_line_state();
+	(void) rl_cleanup_after_signal();
+	(void) rl_reset_after_signal(); 
+#endif
+
+    /* To restore screen after an interrupt to a plot for instance */
     cp_interactive = TRUE;
-    cp_resetcontrol();
-    longjmp(jbuf, 1);
+    cp_resetcontrol();   
+
+    /* here we jump to the start of command processing in main() after resetting everything.  */
+    siglongjmp(jbuf, 1);
+
 }
 
 
@@ -64,7 +84,7 @@ sigfloat(int sig, int code)
     fperror("Error", code);
     rewind(cp_out);
     (void) signal( SIGFPE, (SIGNAL_FUNCTION) sigfloat );
-    longjmp(jbuf, 1);
+    siglongjmp(jbuf, 1);
 }
 
 /* This should give a new prompt if cshpar is waiting for input.  */
@@ -86,7 +106,7 @@ sigcont(void)
 {
     (void) signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
     if (cp_cwait)
-        longjmp(jbuf, 1);
+        siglongjmp(jbuf, 1);
 }
 
 #    endif

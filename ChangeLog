@@ -1,3 +1,16 @@
+2003-12-03 Stefan Jones <stefan.jones@multigig.com>
+
+	* configure.in:
+	Change to version 0.2.15
+
+2003-10-31 Stuart Brorson <sdb@cloud9.net>
+ 
+	*  Integrated readline into ngspice CLI.  Code was shamelessly
+	stolen from http://www.btae.mam.gov.tr/~genc/ngspice/ & reworked by SDB.
+
+	*  Fixed makefiles in src/xspice/icm and src/xspice/cmpp to make distclean
+	without barfing.
+
 2003-09-30 Vera Albrecht <albrecht@danalyse.de>
 
 	* src/include/cktdefs.h src/spicelib/analysis/noisean.c:

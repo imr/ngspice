@@ -481,6 +481,11 @@ cp_getvar(char *name, int type, void *retval)
 {
     struct variable *v;
 
+#ifdef TRACE
+    /* SDB debug statement */
+    printf("in cp_getvar, trying to get value of variable %s.\n", name);
+#endif
+
     for (v = variables; v; v = v->va_next)
         if (eq(name, v->va_name))
             break;

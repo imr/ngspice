@@ -472,6 +472,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             /* Now expand subcircuit macros. Note that we have to fix
              * the case before we do this but after we deal with the
              * commands.  */
+#ifdef TRACE
+      /* SDB debug statement */
+      printf("In inp_spsource, about to expand subcircuit using inp_subcktexpand.\n");
+#endif
             if (!cp_getvar("nosubckt", VT_BOOL, (char *) &nosubckts))
                 if( (deck->li_next = inp_subcktexpand(deck->li_next)) == NULL ){
 		      line_free(realdeck,TRUE);
@@ -486,13 +490,23 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
  */
 #ifdef XSPICE
 /* gtri - wbk - Translate all SPICE 2G6 polynomial type sources */
+
+#ifdef TRACE
+      /* SDB debug statement */
+      printf("In inp_spsource, about to translate SPICE 2G6 polys using ENHtranslate_poly.\n");
+#endif
             deck->li_next = ENHtranslate_poly(deck->li_next);
+
 /* gtri - end - Translate all SPICE 2G6 polynomial type sources */
 #endif
 
 	    line_free(deck->li_actual,FALSE); /* SJB - free memory used by old li_actual (if any) */
             deck->li_actual = realdeck;
 
+#ifdef TRACE
+      /* SDB debug statement */
+      printf("In inp_spsource, about to call inp_dodeck to load deck into ft_curckt.\n");
+#endif
 	    /* now call inp_dodeck, which loads deck into ft_curckt -- the current circuit. */
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
 
@@ -501,9 +515,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
 #ifdef TRACE
       /* SDB debug statement */
-      printf("In inp_spsource, done with dodeck.\n");
+      printf("In inp_spsource, done with dodeck, about to do commands.\n");
 #endif
-
       /* Now that the deck is loaded, do the commands if there are any */
       if (controls) {
             for (end = wl = wl_reverse(controls); wl; wl = wl->wl_next)

@@ -72,7 +72,7 @@ cp_tildexpand(char *string)
 {
     char	*result;
 
-    result = tilde_expand(string);
+    result = tildexpand(string);
 
     if (!result) {
 	if (cp_nonomatch) {

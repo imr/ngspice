@@ -203,11 +203,11 @@ dosim(char *what, wordlist *wl)
             ct->ci_inprogress = FALSE;
         }
     if (ft_curckt->ci_inprogress && eq(what, "resume")) {
-        ft_setflag = TRUE;
+        ft_setflag = TRUE;  /* don't allow abort upon interrupt during run  */
         ft_intrpt = FALSE;
         fprintf(cp_err, "Warning: resuming run in progress.\n");
         com_resume((wordlist *) NULL);
-        ft_setflag = FALSE;
+        ft_setflag = FALSE;  /* Now allow aborts again  */
         return 0;
     }
 
@@ -215,7 +215,7 @@ dosim(char *what, wordlist *wl)
      * set a flag and let spice finish up, then control will be
      * passed back to the user.
      */
-    ft_setflag = TRUE;
+    ft_setflag = TRUE;  /* Don't allow abort upon interrupt during run.  */
     ft_intrpt = FALSE;
     if (dofile) {
 #ifdef PARALLEL_ARCH

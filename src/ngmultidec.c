@@ -14,6 +14,7 @@ Author: 1990 Jaijeet Roychowdury
 
 #undef DEBUG_LEVEL1
 
+/* `-u' option showing the usage help is changed to `-h'. -- ro */
 
 extern void usage();
 extern void comments();
@@ -102,7 +103,7 @@ int
 	use_opt = 1;
 	gotnum=1;
 	break;
-      case 'u':
+      case 'h':
 	usage(pname);
 	exit(1);
 	break;
@@ -350,7 +351,7 @@ fprintf(stderr,"Usage: %s -l<line-inductance> -c<line-capacitance>\n",argv[0]);
 fprintf(stderr,"	   -r<line-resistance> -g<line-conductance> \n");
 fprintf(stderr,"	   -k<inductive coeff. of coupling> \n");
 fprintf(stderr,"	   -x<line-to-line capacitance> -o<subckt-name> \n");
-fprintf(stderr,"	   -n<number of conductors> -L<length> -u\n");
+fprintf(stderr,"	   -n<number of conductors> -L<length> -h\n");
 fprintf(stderr,"Example: %s -n4 -l9e-9 -c20e-12 -r5.3 -x5e-12 -k0.7 -otest -L5.4\n\n",argv[0]);
 
 fprintf(stderr,"See \"Efficient Transient Simulation of Lossy Interconnect\",\n");

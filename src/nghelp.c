@@ -28,6 +28,7 @@ char	*Bug_Addr	= "";
 char	*Spice_Host	= "";
 char	*Spiced_Log	= "";
 
+
 /* dummy declaration so CP.a doesn't pull in lexical.o and other objects */
 bool cp_interactive = FALSE;
 
@@ -110,5 +111,5 @@ cp_getvar(char *n, int t, void *r)
 char *
 cp_tildexpand(char *s)
 {
-	return tilde_expand(s);
+	return tildexpand(s);
 }
