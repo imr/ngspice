@@ -10,6 +10,8 @@ TESTS = \
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
+	nmosdd.mod		\
+	pmosdd.mod		\
 	$(TESTS)		\
 	$(TESTS:.cir=.out)
 
