@@ -1,3 +1,9 @@
+2004-08-29  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/fronted/aspice.c: Added a define for FreeBSD (from 
+	    FreeBSD ports archive).
+
+
 2004-08-22  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/xspice/enhtrans.c: Removed code introduced by Stuart Brorson to
