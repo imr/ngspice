@@ -1,3 +1,8 @@
+2000-05-01  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* tests/respart.cir, tests/respart.out, tests/respart.sh:
+	additional tests for resistor.
+
 1999-12-07  Arno Peters  <A.W.Peters@ieee.org>
 
 	* source tree: Added MAINTAINERCLEANFILES to Makefile.am to
