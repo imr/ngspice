@@ -8,7 +8,7 @@ EXTRA_DIST = ngspice.txt ngspice.idx spinit setplot spectrum @CIDERSCRIPTS@
 
 helpdatadir = $(pkgdatadir)/helpdir
 
-helpdata_DATA = ngspice.idx ngspice.txt
+helpdata_DATA = ngspice.txt ngspice.idx
 
 initdatadir = $(pkgdatadir)/scripts
 

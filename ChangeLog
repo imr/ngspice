@@ -1,13 +1,19 @@
 2004-01-10  Paolo Nenzi <p.nenzi@ieee.org>
 
+	*  src/Makefile.am Makefile.am README.Tcl
+	   src/xspice/README src/xspice/icm/README
+	   src/xspice/icm/spice2poly/icm_spice2poly/README:
+	   Updated to reflect codemodel support is now complete
+	   (Stefan Jones <stefan.jones@multigig.com>)
+
 	*  src/xspice/ipc/ipc.c:
 	   Remove linux specific includes which are not needed
-	   (Stefan Jones).
+	   (Stefan Jones <stefan.jones@multigig.com>).
 
 	*  src/xspice/{Makefile.am,xspice.c} 
 	   src/xspice/cm/{cmexport.c,Makefile.am}:
 	   Moved the xspice library hooks into the cm directory
-	   (Stefan Jones).
+	   (Stefan Jones <stefan.jones@multigig.com>).
 
 	*  src/xspice/enh/enhtrans.c src/xspice/mif/mif_inp2.c:
 	   Fixed version from Stuart Brorson <sdb@cloud9.net>, 
@@ -17,7 +23,8 @@
 	   for codemodel devices.
 
 	*  src/Makefile.am, src/ngspice.idx: removed ngspice.idx
-	   and make it auto-generated and installed (Stefan Jones).
+	   and make it auto-generated and installed 
+	   (Stefan Jones <stefan.jones@multigig.com>).
 
 	*  src/frontend/aspice.c: Added #ifdef for SOLARIS.
 
