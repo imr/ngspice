@@ -39,6 +39,7 @@ dot_nodeset(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 	LITERR("nodeset unknown to simulator. \n");
 	return (0);
     }
+    INPgetTok(&line, &name, 1); /* [mme] skip .nodeset */
     for (;;) {
 	int length;
 
@@ -101,6 +102,7 @@ dot_noise(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
     }
     IFC(newAnalysis, (ckt, which, "Noise Analysis", &foo, task));
     INPgetTok(&line, &name, 1);
+    INPgetTok(&line, &name, 1); /* [mme] skip .noise */
 
     /* Make sure the ".noise" command is followed by V(xxxx).  If it
        is, extract 'xxxx'.  If not, report an error. */
@@ -228,6 +230,7 @@ dot_disto(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 	LITERR("Small signal distortion analysis unsupported.\n");
 	return (0);
     }
+    INPgetTok(&line, &steptype, 1); /* [mme] skip .disto */
     IFC(newAnalysis, (ckt, which, "Distortion Analysis", &foo, task));
     INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
     ptemp.iValue = 1;
@@ -273,7 +276,9 @@ dot_ic(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 	LITERR("ic unknown to simulator. \n");
 	return (0);
     }
-    for (;;) {		/* loop until we run out of data */
+    INPgetTok(&line, &node1, 1); /* [mme] skip .ic */
+    for (;;) {
+	/* loop until we run out of data */
 	int length;
 	char *name;		/* the resistor's name */
 
@@ -324,6 +329,7 @@ dot_ac(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 	LITERR("AC small signal analysis unsupported.\n");
 	return (0);
     }
+    INPgetTok(&line, &steptype, 1); /* [mme] skip .ac */
     IFC(newAnalysis, (ckt, which, "AC Analysis", &foo, task))
 	INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
     ptemp.iValue = 1;
@@ -363,6 +369,7 @@ dot_pz(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
 	LITERR("Pole-zero analysis unsupported.\n");
 	return (0);
     }
+    INPgetTok(&line, &steptype, 1); /* [mme] skip .pz */
     IFC(newAnalysis, (ckt, which, "Pole-Zero Analysis", &foo, task))
 	parm = INPgetValue(ckt, &line, IF_NODE, tab);
     GCA(INPapName, (ckt, which, foo, "nodei", parm))
@@ -411,6 +418,7 @@ dot_dc(void *ckt, INPtables *tab, card *current, void *task, void *gnode,
     }
     IFC(newAnalysis, (ckt, which, "DC transfer characteristic", &foo, task));
     INPgetTok(&line, &name, 1);
+    INPgetTok(&line, &name, 1); /* [mme] skip .dc */
     INPinsert(&name, tab);
     ptemp.uValue = name;
     GCA(INPapName, (ckt, which, foo, "name1", &ptemp));
