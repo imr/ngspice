@@ -3,11 +3,15 @@
 	*   Updated and corrected test files in "tests" directory. Added
 	    "examples" directory.
 	    
-	*   src/spicelib/devices/bsim3/b3set.c: Added Dietmar Warning patch
-	    to solve a bug that shows up when acm=2 was used. From Dietmar's
-	    mail: 
+	*   src/spicelib/devices/bsim3/b3set.c: Added Dietmar Warning 
+	    <warning@danalyse.de> patch to solve a bug that shows up when 
+	    acm=2 was used. From Dietmar's mail message: 
 	      if we use the acm=2 option we must set the nrd and nrs 
 	      defaults to 0.
+	
+	*   src/spicelib/devices/mos3/mos3temp.c: As suggested by Dietmar 
+	    Warning <warning@danalyse.de> I removed the >1um limit for the 
+	    model.    
 
  
 2004-07-08  Paolo Nenzi <p.nenzi@ieee.org>
