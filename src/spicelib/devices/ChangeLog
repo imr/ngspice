@@ -1,3 +1,28 @@
+2000-07-10  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* asrc/asrcinit.c, asrc/asrcitf.h, bjt/bjtinit.c, bjt/bjtitf.h,
+	bsim1/b1init.c, bsim1/b1itf.h, bsim2/b2init.c, bsim2/b2itf.h,
+	bsim3/b3init.c, bsim3/b3itf.h, bsim3v1/b3v1init.c,
+	bsim3v1/b3v1itf.h, bsim3v2/b3v2init.c, bsim3v2/b3v2itf.h,
+	bsim4/b4init.c, bsim4/b4itf.h, cap/capinit.c, cap/capitf.h,
+	cccs/cccsinit.c, cccs/cccsitf.h, ccvs/ccvsinit.c, ccvs/ccvsitf.h,
+	csw/cswinit.c, csw/cswitf.h, dio/dioinit.c, dio/dioitf.h,
+	ind/indinit.c, ind/inditf.h, isrc/isrcinit.c, isrc/isrcitf.h,
+	jfet/jfetinit.c, jfet/jfetitf.h, jfet2/jfet2init.c,
+	jfet2/jfet2itf.h, ltra/ltrainit.c, ltra/ltraitf.h, mes/mesinit.c,
+	mes/mesitf.h, mos1/mos1init.c, mos1/mos1itf.h, mos2/mos2init.c,
+	mos2/mos2itf.h, mos3/mos3init.c, mos3/mos3itf.h, mos6/mos6init.c,
+	mos6/mos6itf.h, res/resinit.c, res/resitf.h, sw/swinit.c,
+	sw/switf.h, tra/trainit.c, tra/traitf.h, urc/urcinit.c,
+	urc/urcitf.h, vccs/vccsinit.c, vccs/vccsitf.h, vcvs/vcvsinit.c,
+	vcvs/vcvsitf.h, vsrc/vsrcinit.c, vsrc/vsrcitf.h: Moved the device
+	info structure from every devices' *itf.h file into a new *init.c
+	file.  Moved external declaration of addresses into *init.h file.
+	Removed conditional compilation based on the AN_* defines
+	as they were by default defined.  The calling code will only get a
+	pointer to a SPICEdev structure.  This takes us another step
+	closer to loadable devices.
+
 2000-07-09  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* devlist.c, devlist.h, test_devlist.c: Removed.  This idea is not

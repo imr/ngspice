@@ -3,23 +3,25 @@
 pkglib_LTLIBRARIES = libccvs.la
 
 libccvs_la_SOURCES = 		\
-		ccvs.c		\
-		ccvsask.c	\
-		ccvsdefs.h	\
-		ccvsdel.c	\
-		ccvsdest.c	\
-		ccvsext.h	\
-		ccvsfbr.c	\
-		ccvsitf.h	\
-		ccvsload.c	\
-		ccvsmdel.c	\
-		ccvspar.c	\
-		ccvspzld.c	\
-		ccvssacl.c	\
-		ccvsset.c	\
-		ccvssld.c	\
-		ccvssprt.c	\
-		ccvssset.c
+	ccvs.c		\
+	ccvsask.c	\
+	ccvsdefs.h	\
+	ccvsdel.c	\
+	ccvsdest.c	\
+	ccvsext.h	\
+	ccvsfbr.c	\
+	ccvsinit.c	\
+	ccvsinit.h	\
+	ccvsitf.h	\
+	ccvsload.c	\
+	ccvsmdel.c	\
+	ccvspar.c	\
+	ccvspzld.c	\
+	ccvssacl.c	\
+	ccvsset.c	\
+	ccvssld.c	\
+	ccvssprt.c	\
+	ccvssset.c
 
 
 
