@@ -197,9 +197,9 @@ doc/Makefile			\
 man/Makefile			\
 man/man1/Makefile		\
 src/Makefile			\
-src/spicelib/Makefile	\
+src/spicelib/Makefile		\
+src/spicelib/analysis/Makefile	\
 src/spicelib/devices/Makefile		\
-src/spicelib/devices/analysis/Makefile	\
 src/spicelib/devices/asrc/Makefile	\
 src/spicelib/devices/bjt/Makefile	\
 src/spicelib/devices/bsim1/Makefile	\

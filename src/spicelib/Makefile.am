@@ -1,4 +1,5 @@
 # Process this file with automake
 
-SUBDIRS = devices
+SUBDIRS = analysis devices
+
 MAINTAINERCLEANFILES = Makefile.in
