@@ -23,6 +23,7 @@
 #include "ftedev.h"
 #include "ftedebug.h"
 #include "const.h"
+#include "devices/dev.h"
 
 #ifdef HAVE_PWD_H
 #include <pwd.h>
@@ -160,6 +161,11 @@ IFfrontEnd *SPfrontEnd = NULL;
 
 int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 {
+#ifdef SIMULATOR
+    SIMinfo.numDevices = num_devices();
+    SIMinfo.devices = devices_ptr();
+#endif /* SIMULATOR */
+
     SPfrontEnd = frontEnd;
     *simulator = &SIMinfo;
     CONSTroot2 = sqrt(2.);

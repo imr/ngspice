@@ -1,5 +1,9 @@
 2000-05-01  Arno W. Peters  <A.W.Peters@ieee.org>
 
+	* src/devices/Makefile.am, src/devices/dev.c, src/devices/dev.h,
+	src/Makefile.am, src/ngspice.c, src/main.c: Refactored devices
+	initialization code into the devices dir.
+
 	* tests/respart.cir, tests/respart.out, tests/respart.sh:
 	additional tests for resistor.
 

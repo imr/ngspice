@@ -67,6 +67,7 @@ ngspice_SOURCES = \
 ngspice_LDADD = \
 	spice.o \
 	frontend/libfte.a \
+	devices/libdev.a \
 	$(DYNAMIC_DEVICELIBS) \
 	analysis/libckt.a \
 	parser/libparser.a \

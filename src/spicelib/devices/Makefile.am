@@ -34,5 +34,10 @@ SUBDIRS = \
 	vcvs	\
 	vsrc
 
+lib_LIBRARIES = libdev.a
+
+libdev_a_SOURCES = dev.c
+
+INCLUDES = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in
