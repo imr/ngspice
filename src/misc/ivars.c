@@ -65,7 +65,7 @@ void
 ivars(void)
 {
 	
-    char *temp;
+    char *temp=NULL;
 	
     env_overr(&Spice_Exec_Dir, "SPICE_EXEC_DIR");
     env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR");
@@ -81,7 +81,8 @@ ivars(void)
     env_overr(&Def_Editor, "SPICE_EDITOR");
     env_overr(&temp, "SPICE_ASCIIRAWFILE");
     
-    AsciiRawFile = atoi(temp);
+    if(temp)
+       AsciiRawFile = atoi(temp);
     
 }
 
