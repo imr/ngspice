@@ -23,6 +23,11 @@ CKTaccept(CKTcircuit *ckt)
     int error;
     SPICEdev **devs;
 
+#ifdef PREDICTOR
+    double *temp;
+    int size;
+#endif
+
     devs = devices();
     for (i = 0; i < DEVmaxnum; i++) {
         if ( ((*devs[i]).DEVaccept != NULL) && (ckt->CKThead[i] != NULL) ){
