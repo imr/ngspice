@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified by Dietmar Warning 2003
+Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 **********/
 
 #include "ngspice.h"
@@ -43,7 +43,9 @@ IFparm DIOmPTable[] = { /* model parameters */
 
  IOPU( "tnom",DIO_MOD_TNOM,IF_REAL, "Parameter measurement temperature"),
  IOP( "rs",  DIO_MOD_RS,  IF_REAL, "Ohmic resistance"),
- IOP( "trs", DIO_MOD_TRS, IF_REAL, "Ohmic resistance temp. coeff."),
+ IOP( "trs", DIO_MOD_TRS, IF_REAL, "Ohmic resistance 1st order temp. coeff."),
+ IOPR( "trs1", DIO_MOD_TRS, IF_REAL, "Ohmic resistance 1st order temp. coeff."),
+ IOP( "trs2", DIO_MOD_TRS2, IF_REAL, "Ohmic resistance 2nd order temp. coeff."),
  IOP( "n",   DIO_MOD_N,   IF_REAL, "Emission Coefficient"),
  IOPA( "tt",  DIO_MOD_TT,  IF_REAL, "Transit Time"),
  IOPA( "ttt1", DIO_MOD_TTT1, IF_REAL, "Transit Time 1st order temp. coeff."),
@@ -51,10 +53,11 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOPA( "cjo", DIO_MOD_CJO, IF_REAL, "Junction capacitance"),
  IOPR( "cj0", DIO_MOD_CJO, IF_REAL, "Junction capacitance"),
  IOP( "vj",  DIO_MOD_VJ,  IF_REAL, "Junction potential"),
+ IOPR( "pb",  DIO_MOD_VJ,  IF_REAL, "Junction potential"),
  IOP( "m",   DIO_MOD_M,   IF_REAL, "Grading coefficient"),
  IOPR("mj",  DIO_MOD_M,   IF_REAL, "Grading coefficient"),
  IOP("tm1", DIO_MOD_TM1,  IF_REAL, " Grading coefficient 1st temp. coeff."),
- IOP("tm1", DIO_MOD_TM2,  IF_REAL, " Grading coefficient 2nd temp. coeff."),
+ IOP("tm2", DIO_MOD_TM2,  IF_REAL, " Grading coefficient 2nd temp. coeff."),
  IOP( "cjp", DIO_MOD_CJSW, IF_REAL, "Sidewall junction capacitance"),
  IOPR( "cjsw", DIO_MOD_CJSW, IF_REAL, "Sidewall junction capacitance"),
  IOP( "php",  DIO_MOD_VJSW,  IF_REAL, "Sidewall junction potential"),
@@ -68,6 +71,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "kf",   DIO_MOD_KF,  IF_REAL, "flicker noise coefficient"),
  IOP( "af",   DIO_MOD_AF,  IF_REAL, "flicker noise exponent"),
  IOP( "fc",  DIO_MOD_FC,  IF_REAL, "Forward bias junction fit parameter"),
+ IOP( "fcs",  DIO_MOD_FCS,  IF_REAL, "Forward bias sidewall junction fit parameter"),
  IOP( "bv",  DIO_MOD_BV,  IF_REAL, "Reverse breakdown voltage"),
  IOP( "ibv", DIO_MOD_IBV, IF_REAL, "Current at reverse breakdown voltage"),
  OPU( "cond", DIO_MOD_COND,IF_REAL, "Ohmic conductance"),

@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified by Dietmar Warning 2003
+Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 **********/
 /*
  */
@@ -37,6 +37,9 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_TRS:
             value->rValue = model->DIOresistTemp1;
             return(OK);	    
+        case DIO_MOD_TRS2:
+            value->rValue = model->DIOresistTemp2;
+            return(OK);	    	    
         case DIO_MOD_N:
             value->rValue = model->DIOemissionCoeff;
             return(OK);

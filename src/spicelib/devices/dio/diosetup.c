@@ -2,7 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
-Modified by Dietmar Warning 2003
+Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 **********/
 
 /* load the diode structure with those pointers needed later 
@@ -100,7 +100,9 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	if(!model->DIOresistTemp1Given) {
 	    model->DIOresistTemp1 = 0.0;
 	}
-
+        if(!model->DIOresistTemp2Given) {
+	    model->DIOresistTemp2 = 0.0;
+	}
         /* loop through all the instances of the model */
         for (here = model->DIOinstances; here != NULL ;
                 here=here->DIOnextInstance) {

@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified by Dietmar Warning 2003
+Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 **********/
 /*
  */
@@ -39,7 +39,11 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
         case DIO_MOD_TRS:
             model->DIOresistTemp1 = value->rValue;
             model->DIOresistTemp1Given = TRUE;
-            break;	    
+            break;
+        case DIO_MOD_TRS2:
+            model->DIOresistTemp2 = value->rValue;
+            model->DIOresistTemp2Given = TRUE;
+            break;	    	    	    
         case DIO_MOD_N:
             model->DIOemissionCoeff = value->rValue;
             model->DIOemissionCoeffGiven = TRUE;

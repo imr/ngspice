@@ -2,7 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
-Modified by Dietmar Warning 2003
+Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 **********/
 
 #include "ngspice.h"
@@ -143,6 +143,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                 /*  
                  *   bypass if solution has not changed
                  */
+#ifndef NOBYPASS		 
                 if ((!(ckt->CKTmode & MODEINITPRED)) && (ckt->CKTbypass)) {
                     tol=ckt->CKTvoltTol + ckt->CKTreltol*
                         MAX(fabs(vd),fabs(*(ckt->CKTstate0 +here->DIOvoltage)));
@@ -159,7 +160,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                         }
                     }
                 }
-
+#endif /* NOBYPASS */
                 /*
                  *   limit new junction voltage
                  */

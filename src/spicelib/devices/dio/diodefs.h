@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified by Dietmar Warning 2003
+Modified by Dietmar Warning 2003 and Paolo Nenzi 2003
 **********/
 #ifndef DIO
 #define DIO
@@ -164,6 +164,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 
     unsigned DIOresistGiven : 1;
     unsigned DIOresistTemp1Given : 1;
+    unsigned DIOresistTemp2Given : 1;
     unsigned DIOemissionCoeffGiven : 1;
     unsigned DIOtransitTimeGiven : 1;
     unsigned DIOtranTimeTemp1Given : 1;
@@ -194,6 +195,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 
     double DIOresist;             /* ohmic series resistance */ 
     double DIOresistTemp1;        /* series resistance 1st order temp. coeff. */
+    double DIOresistTemp2;        /* series resistance 2nd order temp. coeff. */
     double DIOconductance;        /* conductance corresponding to ohmic R */
     double DIOemissionCoeff;      /* emission coefficient (N) */
     double DIOtransitTime;        /* transit time (TT) */
@@ -277,6 +279,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 #define DIO_MOD_TM1 127
 #define DIO_MOD_TM2 128
 #define DIO_MOD_TRS 129
+#define DIO_MOD_TRS2 130
 
 #include "dioext.h"
 #endif /*DIO*/
