@@ -1,6 +1,6 @@
 *Model Card for BSIMFD2.0, floating body FD SOI PMOS
 *Released on 2/15/99
-.Model P1  PMOS Level= 10 
+.Model P1  PMOS Level= 11 
 +TNOM = 27        TOX = 4.5E-09    TSI = 5e-8       TBOX = 8E-08 
 +MOBMOD = 2       CAPMOD = 3       SHMOD = 0
 +WINT = 0         LINT = -2E-08    

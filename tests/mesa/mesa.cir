@@ -1,0 +1,14 @@
+* DCFL GaAs MESFET Gate\
+* Taken from macspice3f4
+
+vdd 1 0 dc 3
+vin 3 0 dc 0
+z1 2 3 0 enha l=1u w=10u
+z2 1 2 2 depl l=1u w=10u
+
+.model enha nmf level=2 rd=31 rs=31 vto=0.1 astar=0
+.model depl nmf level=2 rd=31 rs=31 vto=-1.0 astar=0
+
+.dc vin 0 3.0 0.05
+.print dc v(2) vin#branch
+.end

@@ -6,4 +6,5 @@ r2  2 0 5K ac=15k
 
 .OP
 .AC DEC 10 1 10K
+.print ac v(2)
 .END

@@ -1,3 +1,18 @@
+Ng-spice-rework-14
+============
+
+This is a major release in terms of bug-fixes. Some enhancements
+have been included: BSIM4 model and support for EKV model. The 
+source code for the latter must be obtained from EKV web site
+(see DEVICE for more info). To enable EKV support you have
+to obtain the code first and then use the configure switch
+"--enable-ekv". 
+
+The spice code contains an option to debug frontend code, now
+this is available in configure as "--enable-ftedebug".
+
+
+
 Ng-spice-rework-13
 ============
 

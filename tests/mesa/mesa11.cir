@@ -1,0 +1,17 @@
+* Mesa Level 2 test
+* Taken from macspice3f4 archive.
+
+vds 1 0
+vids 1 2 dc 0
+vgs 3 0 dc 0
+z1 2 3 0 mesmod l=1u w=20u
+
+.op
+.dc vds 0 2 0.05 vgs -1.2 0 0.4
+.print  DC vids#branch
+
+.model mesmod nmf level=2
+*d=0.12u mu=0.23 vs=1.5e5 m=2.5
+*+ vto=-1.26 eta=1.73 lambda=0.045 sigma0=0.081 vsigma=0.1
+*+ vsigmat=1 rd=31 rs=31
+.end

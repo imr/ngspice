@@ -1,0 +1,35 @@
+* Simulation of MESFET output conductance
+* Taken from macspice3f4
+*
+
+rd 1 2 20
+z1 3 4 0 driver l=1u w=10u
+rs 5 0 20
+vgs 4 0 dc 0.5 ac 0.01
+vds 1 0 dc 1.0
+vid 2 3 dc 0
+
+.model driver nmf
++ level=2
+*+ jsdf=1e-100
++ n=1.44
++ rd=0
++ rs=0
++ vs=1.5e5
++ mu=0.25
++ d=2e-7
++ vto=0.1
++ m=2
++ lambda=0
++ sigma0=0
++ delfo=5
++ flo=0.5
++ tf=100000
++ lambdahf=120
+
+.ac DEC 10 0.001 1e6
+
+.print ac V(3)
+
+.end
+

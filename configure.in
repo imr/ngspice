@@ -312,5 +312,6 @@ tests/resistance/Makefile	\
 tests/bsim3soipd/Makefile	\
 tests/bsim3soifd/Makefile	\
 tests/bsim3soidd/Makefile	\
-tests/bsim4/Makefile
+tests/bsim4/Makefile		\
+tests/mesa/Makefile
 )

@@ -1,3 +1,7 @@
+2001-12-07  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* tests/: added mesa tests from macspice3f4 and corrected all other tests.
+	
 2001-12-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
 	* check.sh (testdir): turned that script into 'real' sh script
