@@ -1,3 +1,7 @@
+2000-05-04  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/maths/ni/nipzmeth.c: Corrected an overeager deletion.
+
 2000-05-03  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* source tree: removed most of `#ifdef notdef' and made converted
