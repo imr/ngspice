@@ -1,3 +1,24 @@
+Ng-spice-rework-13
+
+This release c
+
+Ng-spice-rework-12
+============
+Arno did a great work this summer!
+The pole-zero analysis has been corrected. The error was introduced 
+in an attempt to eliminate compiler warnings. The source has been 
+reworked and info file have been updated. As you may see, a new dir 
+called "spicelib" has been created, another step toward the separation
+of the simulator from the frontend. 
+
+Ng-spice-rework-11
+============
+
+Resistor code (device) has been modified to conform to spice3 device 
+coding standard. 
+A new step function (U2) has been introduced.
+Documentation updated.
+
 Ng-spice-rework-10
 ============
 

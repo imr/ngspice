@@ -234,7 +234,7 @@ cp_vset(char *varname, char type, char *value)
 struct variable *
 cp_setparse(wordlist *wl)
 {
-    char *name, *val, *s, *ss;
+    char *name, *val, *copyval, *s, *ss;
     double *td;
     struct variable *listv = NULL, *vv, *lv = NULL;
     struct variable *vars = NULL;
