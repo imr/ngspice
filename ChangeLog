@@ -1,3 +1,9 @@
+2000-05-30  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/maths/cmaths/Makefile.am, src/maths/cmaths/test_cx_mag.c,
+	src/maths/cmaths/test_cx_j.c: Added first testcases for complex
+	math library.
+
 2000-05-25  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/circuit/inp2dot.c: First refactoring of INP2dot into smaller

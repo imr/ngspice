@@ -12,7 +12,23 @@ libcmaths_a_SOURCES = \
 		cmath4.c	\
 		cmath4.h
 
+bin_PROGRAMS = test_cx_mag test_cx_j
 
+test_cx_mag_SOURCES = \
+		test_cx_mag.c
+
+test_cx_mag_LDADD = \
+		libcmaths.a \
+		../../misc/libmisc.a
+
+test_cx_j_SOURCES = \
+		test_cx_j.c
+
+test_cx_j_LDADD = \
+		libcmaths.a \
+		../../misc/libmisc.a
+
+TESTS = test_cx_mag test_cx_j
 
 INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/maths/poly
 
