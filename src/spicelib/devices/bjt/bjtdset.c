@@ -160,7 +160,7 @@ BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
             c2=here->BJTtBEleakCur*here->BJTarea * here->BJTm;
             vte=model->BJTleakBEemissionCoeff*vt;
             oikr=model->BJTinvRollOffR/(here->BJTarea * here->BJTm);
-            c4=here->BJTtBCleakCur*here->BJTarea * here->BJTm;
+            c4=here->BJTtBCleakCur*here->BJTareab * here->BJTm;
             vtc=model->BJTleakBCemissionCoeff*vt;
             xjrb=model->BJTbaseCurrentHalfResist*here->BJTarea * here->BJTm;
 
@@ -483,13 +483,13 @@ BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
 	    pe=here->BJTtBEpot;
 	    xme=model->BJTjunctionExpBE;
 	    cdis=model->BJTbaseFractionBCcap;
-	    ctot=here->BJTtBCcap*here->BJTarea * here->BJTm;
+	    ctot=here->BJTtBCcap*here->BJTareab * here->BJTm;
 	    czbc=ctot*cdis;
 	    czbx=ctot-czbc;
 	    pc=here->BJTtBCpot;
 	    xmc=model->BJTjunctionExpBC;
 	    fcpe=here->BJTtDepCap;
-	    czcs=model->BJTcapCS*here->BJTarea * here->BJTm;
+	    czcs=model->BJTcapCS*here->BJTareac * here->BJTm;
 	    ps=model->BJTpotentialSubstrate;
 	    xms=model->BJTexponentialSubstrate;
 	    xtf=model->BJTtransitTimeBiasCoeffF;

@@ -170,7 +170,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
             c2=here->BJTtBEleakCur*here->BJTarea;
             vte=model->BJTleakBEemissionCoeff*vt;
             oikr=model->BJTinvRollOffR/here->BJTarea;
-            c4=here->BJTtBCleakCur*here->BJTarea;
+            c4=here->BJTtBCleakCur*here->BJTareab;
             vtc=model->BJTleakBCemissionCoeff*vt;
             td=model->BJTexcessPhaseFactor;
             xjrb=model->BJTbaseCurrentHalfResist*here->BJTarea;
@@ -507,7 +507,7 @@ next1:      vtn=vt*model->BJTemissionCoeffF;
                 pc=here->BJTtBCpot;
                 xmc=model->BJTjunctionExpBC;
                 fcpe=here->BJTtDepCap;
-                czcs=model->BJTcapCS*here->BJTarea;
+                czcs=model->BJTcapCS*here->BJTareac;
                 ps=model->BJTpotentialSubstrate;
                 xms=model->BJTexponentialSubstrate;
                 xtf=model->BJTtransitTimeBiasCoeffF;

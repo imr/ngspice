@@ -150,9 +150,14 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 		goto matrixpointers;
 	    
             if(!here->BJTareaGiven) {
-                here->BJTarea = 1;
+                here->BJTarea = 1.0;
             }
-	    
+	    if(!here->BJTareabGiven) {
+                here->BJTareab = here->BJTarea;
+            }
+	    if(!here->BJTareacGiven) {
+                here->BJTareac = here->BJTarea;
+            }
 	    if(!here->BJTmGiven) {
                 here->BJTm = 1.0;
             }

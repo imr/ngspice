@@ -31,7 +31,9 @@ typedef struct sBJTinstance {
     int BJTcolPrimeNode;    /* number of internal collector node of bjt */
     int BJTbasePrimeNode;   /* number of internal base node of bjt */
     int BJTemitPrimeNode;   /* number of internal emitter node of bjt */
-    double BJTarea;      /* area factor for the bjt */
+    double BJTarea;      /* (emitter) area factor for the bjt */
+    double BJTareab;     /* base area factor for the bjt */
+    double BJTareac;     /* collector area factor for the bjt */
     double BJTm;        /* parallel multiplier */
     double BJTicVBE;    /* initial condition voltage B-E*/
     double BJTicVCE;    /* initial condition voltage C-E*/
@@ -103,6 +105,8 @@ typedef struct sBJTinstance {
     unsigned BJTtempGiven   :1; /* temperature given  for bjt instance*/
     unsigned BJTdtempGiven  :1; /* delta temperature given  for bjt instance*/
     unsigned BJTareaGiven   :1; /* flag to indicate area was specified */
+    unsigned BJTareabGiven   :1; /* flag to indicate base area was specified */
+    unsigned BJTareacGiven   :1; /* flag to indicate collector area was specified */
     unsigned BJTmGiven      :1; /* flag to indicate m parameter specified */
     unsigned BJTicVBEGiven  :1; /* flag to indicate VBE init. cond. given */
     unsigned BJTicVCEGiven  :1; /* flag to indicate VCE init. cond. given */
@@ -409,6 +413,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 #define BJT_TEMP 7
 #define BJT_DTEMP 8
 #define BJT_M 9
+#define BJT_AREAB 10
+#define BJT_AREAC 11
 
 /* model parameters */
 #define BJT_MOD_NPN 101
