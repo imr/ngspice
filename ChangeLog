@@ -1,3 +1,9 @@
+2004-02-05  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/spicelib/analysis/cktntask.c: Bug: not all the values
+	    of TSKtask structure were copied and got a correct default
+	    value. The bug showed as an infinite loop in gmin stepping.
+
 2004-02-10  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/frontend/inpcom.c: Applied patch from Dietmar Warning 

@@ -33,36 +33,45 @@ CKTnewTask(void *ckt, void **taskPtr, IFuid taskName, void **defPtr)
        def = *(TSKtask **)defPtr;
     if ((strcmp(taskName,"special")==0) && def )  {
     /* create options by copying the circuit's defaults */  
-        tsk->TSKgmin = def->TSKgmin;
-        tsk->TSKabstol = def->TSKabstol;
-        tsk->TSKreltol = def->TSKreltol;
-        tsk->TSKchgtol = def->TSKchgtol;
-        tsk->TSKvoltTol = def->TSKvoltTol;
-#ifdef NEWTRUNC
-        tsk->TSKlteReltol = def->TSKlteRelto;
-        tsk->TSKlteAbstol = def->TSKlteAbstol;
-#endif /* NEWTRUNC */
-        tsk->TSKtrtol = def->TSKtrtol;
-        tsk->TSKbypass = def->TSKbypass;
-        tsk->TSKtranMaxIter = def->TSKtranMaxIter;
-        tsk->TSKdcMaxIter = def->TSKdcMaxIter;
-        tsk->TSKdcTrcvMaxIter = def->TSKdcTrcvMaxIter;
-        tsk->TSKintegrateMethod = def->TSKintegrateMethod;
-        tsk->TSKmaxOrder = def->TSKmaxOrder;
-        tsk->TSKnumSrcSteps = def->TSKnumSrcSteps;
-        tsk->TSKnumGminSteps = def->TSKnumGminSteps;
-        tsk->TSKpivotAbsTol = def->TSKpivotAbsTol;
+        tsk->TSKtemp = def->TSKtemp;    
+	tsk->TSKnomTemp = def->TSKnomTemp;
+	tsk->TSKmaxOrder = def->TSKmaxOrder;
+	tsk->TSKintegrateMethod = def->TSKintegrateMethod;
+	tsk->TSKbypass = def->TSKbypass;
+	tsk->TSKdcMaxIter = def->TSKdcMaxIter;
+	tsk->TSKdcTrcvMaxIter = def->TSKdcTrcvMaxIter;
+	tsk->TSKtranMaxIter = def->TSKtranMaxIter;
+	tsk->TSKnumSrcSteps = def->TSKnumSrcSteps;
+	tsk->TSKnumGminSteps = def->TSKnumGminSteps;
+	tsk->TSKgminFactor   = def->TSKgminFactor;
+	/* minBreak */
+	tsk->TSKabstol = def->TSKabstol;
+	tsk->TSKpivotAbsTol = def->TSKpivotAbsTol;
         tsk->TSKpivotRelTol = def->TSKpivotRelTol;
-        tsk->TSKtemp = def->TSKtemp;
-        tsk->TSKnomTemp = def->TSKnomTemp;
+	tsk->TSKreltol = def->TSKreltol;
+        tsk->TSKchgtol = def->TSKchgtol;
+	tsk->TSKvoltTol = def->TSKvoltTol;
+        tsk->TSKgmin = def->TSKgmin;
+	tsk->TSKgshunt = def->TSKgshunt;
+        /* delmin */
+        tsk->TSKtrtol = def->TSKtrtol;
         tsk->TSKdefaultMosL = def->TSKdefaultMosL;
         tsk->TSKdefaultMosW = def->TSKdefaultMosW;
         tsk->TSKdefaultMosAD = def->TSKdefaultMosAD;
         tsk->TSKdefaultMosAS = def->TSKdefaultMosAS;
-        tsk->TSKnoOpIter= def->TSKnoOpIter;
-        tsk->TSKtryToCompact = def->TSKtryToCompact;
-        tsk->TSKbadMos3 = def->TSKbadMos3;
+	/* fixLimit */
+	tsk->TSKnoOpIter= def->TSKnoOpIter;
+	tsk->TSKtryToCompact = def->TSKtryToCompact;
+	tsk->TSKbadMos3 = def->TSKbadMos3;
         tsk->TSKkeepOpInfo = def->TSKkeepOpInfo;
+	tsk->TSKcopyNodesets = def->TSKcopyNodesets;
+	tsk->TSKnodeDamping = def->TSKnodeDamping;
+	tsk->TSKabsDv = def->TSKabsDv;
+        tsk->TSKrelDv = def->TSKrelDv;
+#ifdef NEWTRUNC
+        tsk->TSKlteReltol = def->TSKlteReltol;
+        tsk->TSKlteAbstol = def->TSKlteAbstol;
+#endif /* NEWTRUNC */       
         } else {
      /* use the application defaults */
 #endif /*CDHW*/	
