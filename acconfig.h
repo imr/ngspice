@@ -50,6 +50,9 @@
 /* We do not want spurios debug info into non-developer code */
 #undef FTEDEBUG
 
+/* Define if you want to debug pole-zero analysis */
+#undef PZDEBUG
+
 /* Do not trigger unwanted traps by default */
 #undef NEWTRUNC
   
