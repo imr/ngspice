@@ -1,0 +1,6 @@
+2000-09-09  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* fourbitadder.out, resistance/res_simple.out: Updated to
+	correspond to the new output from ngspice.
+
+
