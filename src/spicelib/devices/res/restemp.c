@@ -38,7 +38,7 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
         if(!model->RESnarrowGiven) model->RESnarrow     = 0.0;
         if(!model->RESshortGiven) model->RESshort       = 0.0;
 	if(!model->RESfNcoefGiven) model->RESfNcoef     = 0.0;
-	if(!model->RESfNexpGiven) model->RESfNexp       = 0.0;
+	if(!model->RESfNexpGiven) model->RESfNexp       = 1.0;
 
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
