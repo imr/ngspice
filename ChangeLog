@@ -1,6 +1,10 @@
 2004-06-10 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/tclspice.c:
+	test for FILE in tcl_printf being stdout/stderr
+	Could be more than one fd for stdout/stderr
+	
+	* src/tclspice.c:
 	Do not join worker thread when using TCL_Threads as it causes
 	lockups on W32
 

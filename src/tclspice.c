@@ -1961,7 +1961,8 @@ int tcl_vfprintf(FILE *f, const char *fmt, va_list args_in)
   char *outptr, *bigstr = NULL, *finalstr = NULL;
   int i, nchars, result, escapes = 0;
 
-  if((fileno(f) !=  STDOUT_FILENO && fileno(f) != STDERR_FILENO)
+  if((fileno(f) !=  STDOUT_FILENO && fileno(f) != STDERR_FILENO &&
+	 f != stderr && f != stdout )
 #ifdef THREADS
      || ( fl_running && bgtid == thread_self())
 #endif
