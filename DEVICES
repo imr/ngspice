@@ -112,8 +112,21 @@ DIO   - Junction Diode
 BJT   - Bipolar Junction Transistor
       Initial Relelase
 
-BJT2  - Bipolar Junction Trasistor (Alan Gillespie)
-      On hold (not included)
+BJT2  - Bipolar Junction Trasistor
+	Initial Release.
+	Ver: 	N/A
+	Class:	Q
+	Level:	2 
+	Status: TO BE TESTED
+	
+	This is the BJT model written by Alan Gillespie to support lateral
+	devices. The model has been hacked by Dietmar Warning fixing some bugs
+	and adding some features (temp. correction on resistors).
+	
+	Enhancements over the original model:
+	
+	- Temperature correction on rc,rb,re
+      
 
 ***************************************************************************
 *****************************    FET Devices    ***************************

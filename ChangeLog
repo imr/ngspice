@@ -6,6 +6,10 @@
 	
 	* DEVICES: updated bsim3 status. 
 
+	* src/spicelib/devices/bjt2/*, DEVICES, Changelog: Added bjt2 code sent
+	by Dietmar Warning, containing some fixes over the original code and
+	a new feature: temperature correction of re,rb,rc. 
+
 2003-09-25  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/spicelib/devices/cap/*, src/spicelib/parser/inp2c.c,
