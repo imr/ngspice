@@ -10,4 +10,5 @@ vds 1 0 dc 1.0
 + vsigma=0.1 Vsigmat=0.3 js1s=0 js1d=0 nmax=6e15
 
 .dc vds 0 1 0.01
+.print DC i(vds)
 .end
