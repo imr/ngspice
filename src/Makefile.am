@@ -75,6 +75,7 @@ ngspice_LDADD = \
 	hlp/libhlp.a \
 	circuit/libinp.a \
 	maths/cmaths/libcmaths.a \
+	maths/poly/libpoly.a \
 	maths/ni/libni.a \
 	maths/sparse/libsparse.a \
 	misc/libmisc.a	
@@ -97,6 +98,7 @@ nutmeg_LDADD = \
 	parser/libparser.a \
 	hlp/libhlp.a \
 	maths/cmaths/libcmaths.a \
+	maths/poly/libpoly.a \
 	misc/libmisc.a 
 
 
