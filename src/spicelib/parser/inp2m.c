@@ -167,7 +167,11 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	  && thismodel->INPmodType != INPtypelook ("BSIM4")
 	  && thismodel->INPmodType != INPtypelook ("BSIM3V1")
 	  && thismodel->INPmodType != INPtypelook ("BSIM3V2")
-	  && thismodel->INPmodType != INPtypelook ("SOI3"))
+	  && thismodel->INPmodType != INPtypelook ("SOI3")
+#ifdef HAVE_EKV	  
+	  && thismodel->INPmodType != INPtypelook ("EKV")
+#endif	
+	  )
 	{
 	  LITERR ("incorrect model type");
 	  return;
