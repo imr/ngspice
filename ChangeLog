@@ -1,3 +1,9 @@
+2003-09-30 Vera Albrecht <albrecht@danalyse.de>
+
+	* src/include/cktdefs.h src/spicelib/analysis/noisean.c:
+	Fix resuming noise analysis causing segfault,
+	also fix compiler warnings.
+
 2003-08-31 Stefan Jones <stefan.jones@multigig.com>
 
 	* configure.in:
