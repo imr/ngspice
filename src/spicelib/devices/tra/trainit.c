@@ -4,6 +4,7 @@
 
 #include "traitf.h"
 #include "traext.h"
+#include "trainit.h"
 
 
 SPICEdev TRAinfo = {
