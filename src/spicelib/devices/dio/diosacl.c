@@ -10,7 +10,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "const.h"
 #include "cktdefs.h"

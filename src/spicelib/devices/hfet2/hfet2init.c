@@ -67,7 +67,10 @@ SPICEdev HFET2info = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,
     DEVnoise      : NULL,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif    
     DEVinstSize   : &HFET2iSize,
     DEVmodSize    : &HFET2mSize
 

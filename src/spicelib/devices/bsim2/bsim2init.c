@@ -67,7 +67,10 @@ SPICEdev B2info = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,
     DEVnoise      : NULL,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif    
     DEVinstSize   : &B2iSize,
     DEVmodSize    : &B2mSize
 

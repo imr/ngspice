@@ -1,12 +1,16 @@
 /**********
-Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1995 Min-Chie Jeng and Mansun Chan.
-File: b3v1cvtest.c
-**********/
+ * Copyright 1990 Regents of the University of California. All rights reserved.
+ * File: b3v1cvtest.c
+ * Author: 1995 Min-Chie Jeng and Mansun Chan. 
+ * Modified by Paolo Nenzi 2002
+ **********/
+ 
+/* 
+ * Release Notes: 
+ * BSIM3v3.1,   Released by yuhua  96/12/08
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "cktdefs.h"
 #include "bsim3v1def.h"
 #include "trandefs.h"
@@ -17,92 +21,71 @@ File: b3v1cvtest.c
 
 
 int
-BSIM3V1convTest(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM3v1convTest(GENmodel *inModel, CKTcircuit *ckt)
 {
-BSIM3V1model *model = (BSIM3V1model*)inModel;
-BSIM3V1instance *here;
+BSIM3v1model *model = (BSIM3v1model*)inModel;
+BSIM3v1instance *here;
 double delvbd, delvbs, delvds, delvgd, delvgs, vbd, vbs, vds;
 double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
 
-    /*  loop through all the BSIM3V1 device models */
-    for (; model != NULL; model = model->BSIM3V1nextModel)
+    /*  loop through all the BSIM3v1 device models */
+    for (; model != NULL; model = model->BSIM3v1nextModel)
     {    /* loop through all the instances of the model */
-         for (here = model->BSIM3V1instances; here != NULL ;
-              here=here->BSIM3V1nextInstance) 
+         for (here = model->BSIM3v1instances; here != NULL ;
+              here=here->BSIM3v1nextInstance) 
 	 {    
-             if (here->BSIM3V1owner != ARCHme) continue;
-             vbs = model->BSIM3V1type 
-		  * (*(ckt->CKTrhsOld+here->BSIM3V1bNode) 
-		  - *(ckt->CKTrhsOld+here->BSIM3V1sNodePrime));
-              vgs = model->BSIM3V1type
-		  * (*(ckt->CKTrhsOld+here->BSIM3V1gNode) 
-		  - *(ckt->CKTrhsOld+here->BSIM3V1sNodePrime));
-              vds = model->BSIM3V1type
-		  * (*(ckt->CKTrhsOld+here->BSIM3V1dNodePrime) 
-		  - *(ckt->CKTrhsOld+here->BSIM3V1sNodePrime));
+	 
+             if (here->BSIM3v1owner != ARCHme)
+                     continue;
+
+	      vbs = model->BSIM3v1type 
+		  * (*(ckt->CKTrhsOld+here->BSIM3v1bNode) 
+		  - *(ckt->CKTrhsOld+here->BSIM3v1sNodePrime));
+              vgs = model->BSIM3v1type
+		  * (*(ckt->CKTrhsOld+here->BSIM3v1gNode) 
+		  - *(ckt->CKTrhsOld+here->BSIM3v1sNodePrime));
+              vds = model->BSIM3v1type
+		  * (*(ckt->CKTrhsOld+here->BSIM3v1dNodePrime) 
+		  - *(ckt->CKTrhsOld+here->BSIM3v1sNodePrime));
               vbd = vbs - vds;
               vgd = vgs - vds;
-              vgdo = *(ckt->CKTstate0 + here->BSIM3V1vgs) 
-		   - *(ckt->CKTstate0 + here->BSIM3V1vds);
-              delvbs = vbs - *(ckt->CKTstate0 + here->BSIM3V1vbs);
-              delvbd = vbd - *(ckt->CKTstate0 + here->BSIM3V1vbd);
-              delvgs = vgs - *(ckt->CKTstate0 + here->BSIM3V1vgs);
-              delvds = vds - *(ckt->CKTstate0 + here->BSIM3V1vds);
+              vgdo = *(ckt->CKTstate0 + here->BSIM3v1vgs) 
+		   - *(ckt->CKTstate0 + here->BSIM3v1vds);
+              delvbs = vbs - *(ckt->CKTstate0 + here->BSIM3v1vbs);
+              delvbd = vbd - *(ckt->CKTstate0 + here->BSIM3v1vbd);
+              delvgs = vgs - *(ckt->CKTstate0 + here->BSIM3v1vgs);
+              delvds = vds - *(ckt->CKTstate0 + here->BSIM3v1vds);
               delvgd = vgd-vgdo;
 
-              cd = here->BSIM3V1cd;
-              if (here->BSIM3V1mode >= 0)
-	      {   cdhat = cd - here->BSIM3V1gbd * delvbd 
-			+ here->BSIM3V1gmbs * delvbs + here->BSIM3V1gm * delvgs
-			+ here->BSIM3V1gds * delvds;
+              cd = here->BSIM3v1cd;
+              if (here->BSIM3v1mode >= 0)
+	      {   cdhat = cd - here->BSIM3v1gbd * delvbd 
+			+ here->BSIM3v1gmbs * delvbs + here->BSIM3v1gm * delvgs
+			+ here->BSIM3v1gds * delvds;
               }
 	      else
-	      {   cdhat = cd - (here->BSIM3V1gbd - here->BSIM3V1gmbs) * delvbd 
-			- here->BSIM3V1gm * delvgd + here->BSIM3V1gds * delvds;
+	      {   cdhat = cd - (here->BSIM3v1gbd - here->BSIM3v1gmbs) * delvbd 
+			- here->BSIM3v1gm * delvgd + here->BSIM3v1gds * delvds;
               }
 
             /*
              *  check convergence
              */
-              if ((here->BSIM3V1off == 0)  || (!(ckt->CKTmode & MODEINITFIX)))
+              if ((here->BSIM3v1off == 0)  || (!(ckt->CKTmode & MODEINITFIX)))
 	      {   tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(cd))
 		      + ckt->CKTabstol;
-                  if (fabs(cdhat - cd) >= tol)  {   
-
-#ifdef STRANGE_PATCH
-/* gtri - begin - wbk - report conv prob */
-                    if(ckt->enh->conv_debug.report_conv_probs) {
-                        ENHreport_conv_prob(ENH_ANALOG_INSTANCE,
-                                            (char *) here->BSIM3V1name,
-                                            "");
-                    }
-/* gtri - end - wbk - report conv prob */
-#endif /* STRANGE_PATCH */
-
-
-		    ckt->CKTnoncon++;
+                  if (fabs(cdhat - cd) >= tol)
+		  {   ckt->CKTnoncon++;
                       return(OK);
                   } 
-                  cbs = here->BSIM3V1cbs;
-                  cbd = here->BSIM3V1cbd;
-                  cbhat = cbs + cbd + here->BSIM3V1gbd * delvbd 
-		        + here->BSIM3V1gbs * delvbs;
+                  cbs = here->BSIM3v1cbs;
+                  cbd = here->BSIM3v1cbd;
+                  cbhat = cbs + cbd + here->BSIM3v1gbd * delvbd 
+		        + here->BSIM3v1gbs * delvbs;
                   tol = ckt->CKTreltol * MAX(fabs(cbhat), fabs(cbs + cbd))
 		      + ckt->CKTabstol;
-                  if (fabs(cbhat - (cbs + cbd)) > tol) {   
-#ifdef STRANGE_PATCH
-/* gtri - begin - wbk - report conv prob */
-                    if(ckt->enh->conv_debug.report_conv_probs) {
-                        ENHreport_conv_prob(ENH_ANALOG_INSTANCE,
-                                            (char *) here->BSIM3V1name,
-                                            "");
-                    }
-/* gtri - end - wbk - report conv prob */
-#endif /* STRANGE_PATCH */
-
-		    ckt->CKTnoncon++;
+                  if (fabs(cbhat - (cbs + cbd)) > tol) 
+		  {   ckt->CKTnoncon++;
                       return(OK);
                   }
               }

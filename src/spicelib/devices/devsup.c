@@ -11,10 +11,11 @@ Modified: 2000 AlansFixes
 #include "cktdefs.h"
 #include "suffix.h"
 
-/* limit the per-iteration change of VDS */
+/* 
+ * Limit the per-iteration change of VDS 
+ */
 double
-DEVlimvds(double vnew,
-	  double vold)
+DEVlimvds(double vnew, double vold)
 {
 
     if(vold >= 3.5) {
@@ -36,13 +37,14 @@ DEVlimvds(double vnew,
 }
 
 
-/*  limit the per-iteration change of PN junction voltages */
+/*  
+ * Limit the per-iteration change of PN junction voltages 
+ *
+ * This code has been fixed by Alan Gillespie adding limiting
+ * for negative voltages.
+ */
 double
-DEVpnjlim(double vnew,
-	  double vold,
-	  double vt,
-	  double vcrit,
-	  int *icheck)
+DEVpnjlim(double vnew, double vold, double vt, double vcrit, int *icheck)
 {
     double arg;
 
@@ -78,11 +80,14 @@ DEVpnjlim(double vnew,
     return(vnew);
 }
 
-/* limit the per-iteration change of FET voltages */
+/* 
+ * Limit the per-iteration change of FET voltages 
+ *
+ * This code has been fixed by Alan Gillespie: a new
+ * definition for vtstlo. 
+ */
 double
-DEVfetlim(double vnew,
-	  double vold,
-	  double vto)
+DEVfetlim(double vnew, double vold, double vto)
 {
     double vtsthi;
     double vtstlo;
@@ -144,7 +149,10 @@ DEVfetlim(double vnew,
 
 
 /* Compute the MOS overlap capacitances as functions of the device
- * terminal voltages */
+ * terminal voltages
+ *
+ * PN 2002: As of ngspice this code is not used by any device. 
+ */
 void
 DEVcmeyer(double vgs0,		/* initial voltage gate-source */
 	  double vgd0,		/* initial voltage gate-drain */
@@ -229,7 +237,11 @@ DEVcmeyer(double vgs0,		/* initial voltage gate-source */
 
 
 /* Compute the MOS overlap capacitances as functions of the device
- * terminal voltages */
+ * terminal voltages 
+ *
+ * PN 2002: This is the Meyer model used by  MOS1 MOS2 MOS3 MOS6 and MOS9
+ *          device models.
+ */
 void
 DEVqmeyer(double vgs,		/* initial voltage gate-source */
 	  double vgd,		/* initial voltage gate-drain */
@@ -294,6 +306,77 @@ DEVqmeyer(double vgs,		/* initial voltage gate-source */
     }
 
 }
+
+
+#ifdef notdef
+/* XXX This is no longer used, apparently 
+ * PN 2002: This is industrial archaelology
+ */
+void
+DEVcap(CKTcircuit *ckt, double vgd, double vgs, double vgb, double covlgd,
+       double covlgs, double covlgb, double capbd, double capbs, double cggb,
+       double cgdb, double cgsb, double cbgb, double cbdb, double cbsb,
+       double *gcggb, double *gcgdb, double *gcgsb, double *gcbgb, 
+       double *gcbdb, double *gcbsb, double *gcdgb, double *gcddb, 
+       double *gcdsb, double *gcsgb, double *gcsdb, double *gcssb,
+       double qgate, double qchan, double qbulk, double *qdrn, double *qsrc,
+       double xqc)
+
+    /*
+     *     compute equivalent conductances
+     *     divide up the channel charge (1-xqc)/xqc to source and drain
+     */
+{
+
+    double gcd;
+    double gcdxd;
+    double gcdxs;
+    double gcg;
+    double gcgxd;
+    double gcgxs;
+    double gcs;
+    double gcsxd;
+    double gcsxs;
+    double qgb;
+    double qgd;
+    double qgs;
+
+    gcg = (cggb+cbgb)*ckt->CKTag[1];
+    gcd = (cgdb+cbdb)*ckt->CKTag[1];
+    gcs = (cgsb+cbsb)*ckt->CKTag[1];
+    gcgxd = -xqc*gcg;
+    gcgxs = -(1-xqc)*gcg;
+    gcdxd = -xqc*gcd;
+    gcdxs = -(1-xqc)*gcd;
+    gcsxd = -xqc*gcs;
+    gcsxs = -(1-xqc)*gcs;
+    *gcdgb = gcgxd-covlgd*ckt->CKTag[1];
+    *gcddb = gcdxd+(capbd+covlgd)*ckt->CKTag[1];
+    *gcdsb = gcsxd;
+    *gcsgb = gcgxs-covlgs*ckt->CKTag[1];
+    *gcsdb = gcdxs;
+    *gcssb = gcsxs+(capbs+covlgs)*ckt->CKTag[1];
+    *gcggb = (cggb+covlgd+covlgs+covlgb)*ckt->CKTag[1];
+    *gcgdb = (cgdb-covlgd)*ckt->CKTag[1];
+    *gcgsb = (cgsb-covlgs)*ckt->CKTag[1];
+    *gcbgb = (cbgb-covlgb)*ckt->CKTag[1];
+    *gcbdb = (cbdb-capbd)*ckt->CKTag[1];
+    *gcbsb = (cbsb-capbs)*ckt->CKTag[1];
+    /*
+     *     compute total terminal charges
+     */
+    qgd = covlgd*vgd;
+    qgs = covlgs*vgs;
+    qgb = covlgb*vgb;
+    qgate = qgate+qgd+qgs+qgb;
+    qbulk = qbulk-qgb;
+    *qdrn = xqc*qchan-qgd;
+    *qsrc = (1-xqc)*qchan-qgs;
+    /*
+     *     finished
+     */
+}
+#endif
 
 
 /* Predict a value for the capacitor at loct by extrapolating from

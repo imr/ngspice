@@ -1,12 +1,12 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White, and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,10 +15,12 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "soi3defs.h"
@@ -28,11 +30,7 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 /* ARGSUSED */
 int
-SOI3param(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+SOI3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     SOI3instance *here = (SOI3instance *)inst;
     switch(param) {
@@ -44,6 +42,22 @@ SOI3param(param,value,inst,select)
             here->SOI3w = value->rValue;
             here->SOI3wGiven = TRUE;
             break;
+	case SOI3_M:
+            here->SOI3m = value->rValue;
+            here->SOI3mGiven = TRUE;
+            break;
+	case SOI3_AS:
+            here->SOI3as = value->rValue;
+            here->SOI3asGiven = TRUE;
+            break;
+        case SOI3_AD:
+            here->SOI3ad = value->rValue;
+            here->SOI3adGiven = TRUE;
+            break;
+        case SOI3_AB:
+            here->SOI3ab = value->rValue;
+            here->SOI3abGiven = TRUE;
+            break;    
         case SOI3_NRD:
             here->SOI3drainSquares = value->rValue;
             here->SOI3drainSquaresGiven = TRUE;

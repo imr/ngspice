@@ -4,13 +4,17 @@ Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 Modified by Pin Su, Wei Jin 99/9/27
 File: b3soiddtemp.c          98/5/01
+Modified by Paolo Nenzi 2002
 **********/
+
+/* 
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMDD2.1 release
+ */
 
 /* Lmin, Lmax, Wmin, Wmax */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "b3soidddef.h"
@@ -31,12 +35,10 @@ File: b3soiddtemp.c          98/5/01
 
 /* ARGSUSED */
 int
-B3SOIDDtemp(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+B3SOIDDtemp(GENmodel *inModel, CKTcircuit *ckt)
 {
-register B3SOIDDmodel *model = (B3SOIDDmodel*) inModel;
-register B3SOIDDinstance *here;
+B3SOIDDmodel *model = (B3SOIDDmodel*) inModel;
+B3SOIDDinstance *here;
 struct b3soiddSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
 double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, T6, Ldrn, Wdrn;
 double Temp, TRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;
@@ -73,7 +75,11 @@ int Size_Not_Found;
          for (here = model->B3SOIDDinstances; here != NULL;
               here = here->B3SOIDDnextInstance) 
 	 {    
-              here->B3SOIDDrbodyext = here->B3SOIDDbodySquares *
+              
+	      if (here->B3SOIDDowner != ARCHme)
+                      continue;
+	      
+	      here->B3SOIDDrbodyext = here->B3SOIDDbodySquares *
                                     model->B3SOIDDrbsh;
 	      pSizeDependParamKnot = model->pSizeDependParamKnot;
               Size_Not_Found = 1;
@@ -92,7 +98,7 @@ int Size_Not_Found;
               }
 
 	      if (Size_Not_Found)
-	      {   pParam = (struct b3soiddSizeDependParam *)malloc(
+	      {   pParam = (struct b3soiddSizeDependParam *)tmalloc(
 	                    sizeof(struct b3soiddSizeDependParam));
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;
@@ -529,7 +535,7 @@ int Size_Not_Found;
 
 	          T0 = (TRatio - 1.0);
 
-                  pParam->B3SOIDDuatemp = pParam->B3SOIDDua;  /*  save ua, ub, and uc for b3soild.c */
+                  pParam->B3SOIDDuatemp = pParam->B3SOIDDua;  /*  save ua, ub, and uc for b3soiddld.c */
                   pParam->B3SOIDDubtemp = pParam->B3SOIDDub;
                   pParam->B3SOIDDuctemp = pParam->B3SOIDDuc;
                   pParam->B3SOIDDrds0denom = pow(pParam->B3SOIDDweff * 1E6, pParam->B3SOIDDwr);

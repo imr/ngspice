@@ -3,12 +3,16 @@ Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 Modified by Wei Jin 99/9/27
+Modified by Paolo Nenzi 2002
 File: b3soifd.c          98/5/01
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMFD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "b3soifddef.h"
 #include "suffix.h"
@@ -16,6 +20,7 @@ File: b3soifd.c          98/5/01
 IFparm B3SOIFDpTable[] = { /* parameters */
 IOP( "l",   B3SOIFD_L,      IF_REAL   , "Length"),
 IOP( "w",   B3SOIFD_W,      IF_REAL   , "Width"),
+IOP( "m",   B3SOIFD_M,      IF_REAL   , "Parallel Multiplier"),
 IOP( "ad",  B3SOIFD_AD,     IF_REAL   , "Drain area"),
 IOP( "as",  B3SOIFD_AS,     IF_REAL   , "Source area"),
 IOP( "pd",  B3SOIFD_PD,     IF_REAL   , "Drain perimeter"),

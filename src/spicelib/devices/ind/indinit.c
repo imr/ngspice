@@ -66,7 +66,10 @@ SPICEdev INDinfo = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,	/* DISTO */
     DEVnoise      : NULL,	/* NOISE */
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif                       
     DEVinstSize   : &INDiSize,
     DEVmodSize    : &INDmSize
 

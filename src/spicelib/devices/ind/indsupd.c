@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
 /* update the  charge sensitivities and their derivatives */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "inddefs.h"

@@ -4,7 +4,6 @@ Author: 1988 Jaijeet S Roychowdhury
 Modified: 2000 AlansFixes
 **********/
 
-#include <stdio.h>
 #include "ngspice.h"
 #include "distodef.h"
 #include "devdefs.h"

@@ -69,7 +69,10 @@ SPICEdev CSWinfo = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,	/* DISTO */
     DEVnoise      : CSWnoise,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif
     DEVinstSize   : &CSWiSize,
     DEVmodSize    : &CSWmSize
 

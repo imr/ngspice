@@ -68,7 +68,10 @@ SPICEdev SWinfo = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL, /* DISTO */
     DEVnoise      : SWnoise,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif CIDER                        
     DEVinstSize   : &SWiSize,
     DEVmodSize    : &SWmSize
 

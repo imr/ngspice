@@ -67,7 +67,10 @@ SPICEdev B1info = {
     DEVsenTrunc   : NULL,
     DEVdisto      : B1disto,
     DEVnoise      : NULL,	/* NOISE */
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif    
     DEVinstSize   : &B1iSize,
     DEVmodSize    : &B1mSize
 

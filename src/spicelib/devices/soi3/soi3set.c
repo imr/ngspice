@@ -1,12 +1,13 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White,
+						 and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,10 +16,12 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "soi3defs.h"
@@ -27,11 +30,7 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 
 int
-SOI3setup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+SOI3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 {
     SOI3model *model = (SOI3model *)inModel;
     SOI3instance *here;
@@ -41,9 +40,14 @@ SOI3setup(matrix,inModel,ckt,states)
     /* JimB - new variable for RT and CT scaling */
     double thermal_area;
 
-	 double rtargs[5];
+    double rtargs[5];
     double * rtptr;
-	 int node_count;
+    int node_count;
+  
+     CKTnode *tmpNode;
+     IFuid tmpName;
+	 
+	 
 
     /****** Part 1 - set any model parameters that are not present in ******/
     /****** the netlist to default values.                            ******/
@@ -81,14 +85,14 @@ SOI3setup(matrix,inModel,ckt,states)
         if(!model->SOI3frontGateBulkOverlapCapFactorGiven) {
             model->SOI3frontGateBulkOverlapCapFactor = 0;
         }
-        if(!model->SOI3backGateSourceOverlapCapFactorGiven) {
-            model->SOI3backGateSourceOverlapCapFactor = 0;
+        if(!model->SOI3backGateSourceOverlapCapAreaFactorGiven) {
+            model->SOI3backGateSourceOverlapCapAreaFactor = 0;
         }
-        if(!model->SOI3backGateDrainOverlapCapFactorGiven) {
-            model->SOI3backGateDrainOverlapCapFactor = 0;
+        if(!model->SOI3backGateDrainOverlapCapAreaFactorGiven) {
+            model->SOI3backGateDrainOverlapCapAreaFactor = 0;
         }
-        if(!model->SOI3backGateBulkOverlapCapFactorGiven) {
-            model->SOI3backGateBulkOverlapCapFactor = 0;
+        if(!model->SOI3backGateBulkOverlapCapAreaFactorGiven) {
+            model->SOI3backGateBulkOverlapCapAreaFactor = 0;
         }
         if(!model->SOI3sideWallCapFactorGiven) {
             model->SOI3sideWallCapFactor = 0;
@@ -175,21 +179,6 @@ SOI3setup(matrix,inModel,ckt,states)
         if(!model->SOI3gammaBGiven) {
             model->SOI3gammaB = 0;
         }
-/* now check to determine which CLM model to use */
-        if((model->SOI3lx != 0) && (model->SOI3lambda != 0)) {
-            (*(SPfrontEnd->IFerror))(ERR_WARNING,
-             "%s: Non-zero values for BOTH LAMBDA and LX. \nDefaulting to simple LAMBDA model",
-                        &model->SOI3modName);
-          model->SOI3useLAMBDA = TRUE;
-        }
-
-/* if only lx given and vp!=0, use froody model, else basic */
-        if ((model->SOI3lxGiven) && (model->SOI3lx != 0) &&
-            (!model->SOI3lambdaGiven) && (model->SOI3vp != 0)) {
-          model->SOI3useLAMBDA = FALSE;
-        } else {
-          model->SOI3useLAMBDA = TRUE;
-        }
         if(!model->SOI3etaGiven) {
             model->SOI3eta = 1.0; /* normal field for imp. ion. */
         }
@@ -268,6 +257,31 @@ SOI3setup(matrix,inModel,ckt,states)
         if(!model->SOI3ctaGiven) {
             model->SOI3cta = 0;
         }
+        if(!model->SOI3mexpGiven) {
+            model->SOI3mexp = 0;
+        }
+
+        /* now check to determine which CLM model to use */
+        if((model->SOI3lx != 0) && (model->SOI3lambda != 0))
+        {
+
+            (*(SPfrontEnd->IFerror))(ERR_WARNING,
+             "%s: Non-zero values for BOTH LAMBDA and LX. \nDefaulting to simple LAMBDA model",
+                        &model->SOI3modName);
+
+				model->SOI3useLAMBDA = TRUE;
+        }
+
+        /* if only lx given, AND vp!=0, AND mexp (integer) is at least 1, use lx/vp, else basic lambda model*/
+        if ((model->SOI3lxGiven) && (model->SOI3lx != 0) &&
+            (!model->SOI3lambdaGiven) && (model->SOI3vp != 0) && (model->SOI3mexp > 0))
+        {
+           model->SOI3useLAMBDA = FALSE;
+        }
+        else
+        {
+           model->SOI3useLAMBDA = TRUE;
+        }
 
 
         /****** Part 2 - set any instance parameters that are not present ******/
@@ -276,11 +290,7 @@ SOI3setup(matrix,inModel,ckt,states)
         /* loop through all the instances of the model */
         for (here = model->SOI3instances; here != NULL ;
                 here=here->SOI3nextInstance) {
-            
-            CKTnode *tmpNode;
-            IFuid tmpName;
-            
-            
+
 
             if(!here->SOI3icVBSGiven) {
                 here->SOI3icVBS = 0;
@@ -301,6 +311,9 @@ SOI3setup(matrix,inModel,ckt,states)
                 here->SOI3sourceSquares=1;
             }
 
+	     if (!here->SOI3mGiven)
+                here->SOI3m = 1;
+
             /****** Part 3 - Initialise transconductances. ******/
 
             /* initialise gM's */
@@ -311,14 +324,18 @@ SOI3setup(matrix,inModel,ckt,states)
             here->SOI3gMmb = 0.0;
             here->SOI3gMd = 0.0;
             here->SOI3gMdeltaT = 0.0;
-            /* allocate a chunk of the state vector */
-            here->SOI3states = *states;
-            *states += SOI3numStates;
-/*            if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += 10 * (ckt->CKTsenInfo->SENparms);
-            }
-*/
+            
+	    if (here->SOI3owner == ARCHme)
+	    {
 
+	       /* allocate a chunk of the state vector */
+               here->SOI3states = *states;
+               *states += SOI3numStates;
+/*               if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
+                   *states += 10 * (ckt->CKTsenInfo->SENparms);
+               }
+*/
+            }
 				/****** Part 4 - check resistance values for internal nodes, ******/
             /****** to see which internal nodes need to be created.      ******/
 
@@ -331,14 +348,15 @@ SOI3setup(matrix,inModel,ckt,states)
                     && here->SOI3dNodePrime == 0)
             {
                 error = CKTmkVolt(ckt,&tmp,here->SOI3name,"drain");
+
                 if(error)
 					 {
                     return(error);
                 }
                 here->SOI3dNodePrime = tmp->number;
-                
-                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+		
+		 if (ckt->CKTcopyNodesets) {
+		   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
                        tmp->nsGiven=tmpNode->nsGiven; 
@@ -359,14 +377,15 @@ SOI3setup(matrix,inModel,ckt,states)
                     here->SOI3sNodePrime==0)
             {
                 error = CKTmkVolt(ckt,&tmp,here->SOI3name,"source");
+
                 if(error)
 					 {
                     return(error);
                 }
                 here->SOI3sNodePrime = tmp->number;
-                
-                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+		 
+		 if (ckt->CKTcopyNodesets) {
+		   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
                        tmp->nsGiven=tmpNode->nsGiven; 
@@ -374,7 +393,7 @@ SOI3setup(matrix,inModel,ckt,states)
                   }
                 }
 
-                
+		
             }
             else
             {
@@ -495,16 +514,6 @@ SOI3setup(matrix,inModel,ckt,states)
                	return(error);
 					}
                here->SOI3branch = tmp->number;
-               
-                if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
-                }              
-               
             }
             else
             { /* have thermal - now how many time constants ? */
@@ -514,17 +523,6 @@ SOI3setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->SOI3name,"tout1");
                 if (error) return (error);
                 here->SOI3tout1Node = tmp->number;
-                
-                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
-                }
-
-                
               }
               else
               {
@@ -536,17 +534,6 @@ SOI3setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->SOI3name,"tout2");
                 if (error) return (error);
                 here->SOI3tout2Node = tmp->number;
-                
-                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
-                }
-
-                                
               }
               else
               {
@@ -558,18 +545,6 @@ SOI3setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->SOI3name,"tout3");
                 if (error) return (error);
                 here->SOI3tout3Node = tmp->number;
-                
-                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
-                }
-
-                
-                
               }
               else
               {
@@ -581,16 +556,6 @@ SOI3setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->SOI3name,"tout4");
                 if (error) return (error);
                 here->SOI3tout4Node = tmp->number;
-                
-                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
-                }
-
               }
               else
               {
@@ -609,35 +574,44 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
 }
 
+
             TSTALLOC(SOI3D_dPtr,SOI3dNode,SOI3dNode)
-            TSTALLOC(SOI3GF_gfPtr,SOI3gfNode,SOI3gfNode)
-            TSTALLOC(SOI3S_sPtr,SOI3sNode,SOI3sNode)
-            TSTALLOC(SOI3GB_gbPtr,SOI3gbNode,SOI3gbNode)
-            TSTALLOC(SOI3B_bPtr,SOI3bNode,SOI3bNode)
-            TSTALLOC(SOI3DP_dpPtr,SOI3dNodePrime,SOI3dNodePrime)
-            TSTALLOC(SOI3SP_spPtr,SOI3sNodePrime,SOI3sNodePrime)
             TSTALLOC(SOI3D_dpPtr,SOI3dNode,SOI3dNodePrime)
-            TSTALLOC(SOI3GF_bPtr,SOI3gfNode,SOI3bNode)
+            TSTALLOC(SOI3DP_dPtr,SOI3dNodePrime,SOI3dNode)
+
+            TSTALLOC(SOI3S_sPtr,SOI3sNode,SOI3sNode)
+            TSTALLOC(SOI3S_spPtr,SOI3sNode,SOI3sNodePrime)
+            TSTALLOC(SOI3SP_sPtr,SOI3sNodePrime,SOI3sNode)
+
+            TSTALLOC(SOI3GF_gfPtr,SOI3gfNode,SOI3gfNode)
+            TSTALLOC(SOI3GF_gbPtr,SOI3gfNode,SOI3gbNode)
             TSTALLOC(SOI3GF_dpPtr,SOI3gfNode,SOI3dNodePrime)
             TSTALLOC(SOI3GF_spPtr,SOI3gfNode,SOI3sNodePrime)
-            TSTALLOC(SOI3GB_bPtr,SOI3gbNode,SOI3bNode)
+            TSTALLOC(SOI3GF_bPtr,SOI3gfNode,SOI3bNode)
+
+            TSTALLOC(SOI3GB_gfPtr,SOI3gbNode,SOI3gfNode)
+            TSTALLOC(SOI3GB_gbPtr,SOI3gbNode,SOI3gbNode)
             TSTALLOC(SOI3GB_dpPtr,SOI3gbNode,SOI3dNodePrime)
             TSTALLOC(SOI3GB_spPtr,SOI3gbNode,SOI3sNodePrime)
-            TSTALLOC(SOI3S_spPtr,SOI3sNode,SOI3sNodePrime)
+            TSTALLOC(SOI3GB_bPtr,SOI3gbNode,SOI3bNode)
+            
+            TSTALLOC(SOI3B_gfPtr,SOI3bNode,SOI3gfNode)
+            TSTALLOC(SOI3B_gbPtr,SOI3bNode,SOI3gbNode)
             TSTALLOC(SOI3B_dpPtr,SOI3bNode,SOI3dNodePrime)
             TSTALLOC(SOI3B_spPtr,SOI3bNode,SOI3sNodePrime)
-            TSTALLOC(SOI3DP_spPtr,SOI3dNodePrime,SOI3sNodePrime)
-            TSTALLOC(SOI3DP_dPtr,SOI3dNodePrime,SOI3dNode)
-            TSTALLOC(SOI3B_gfPtr,SOI3bNode,SOI3gfNode)
+            TSTALLOC(SOI3B_bPtr,SOI3bNode,SOI3bNode)
+
             TSTALLOC(SOI3DP_gfPtr,SOI3dNodePrime,SOI3gfNode)
-            TSTALLOC(SOI3SP_gfPtr,SOI3sNodePrime,SOI3gfNode)
-            TSTALLOC(SOI3B_gbPtr,SOI3bNode,SOI3gbNode)
             TSTALLOC(SOI3DP_gbPtr,SOI3dNodePrime,SOI3gbNode)
-            TSTALLOC(SOI3SP_gbPtr,SOI3sNodePrime,SOI3gbNode)
-            TSTALLOC(SOI3SP_sPtr,SOI3sNodePrime,SOI3sNode)
+            TSTALLOC(SOI3DP_dpPtr,SOI3dNodePrime,SOI3dNodePrime)
+            TSTALLOC(SOI3DP_spPtr,SOI3dNodePrime,SOI3sNodePrime)
             TSTALLOC(SOI3DP_bPtr,SOI3dNodePrime,SOI3bNode)
-            TSTALLOC(SOI3SP_bPtr,SOI3sNodePrime,SOI3bNode)
+
+            TSTALLOC(SOI3SP_gfPtr,SOI3sNodePrime,SOI3gfNode)
+            TSTALLOC(SOI3SP_gbPtr,SOI3sNodePrime,SOI3gbNode)
             TSTALLOC(SOI3SP_dpPtr,SOI3sNodePrime,SOI3dNodePrime)
+            TSTALLOC(SOI3SP_spPtr,SOI3sNodePrime,SOI3sNodePrime)
+            TSTALLOC(SOI3SP_bPtr,SOI3sNodePrime,SOI3bNode)
 
             if (here->SOI3rt == 0)
             {
@@ -673,16 +647,16 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
               }
 
               TSTALLOC(SOI3TOUT_toutPtr,SOI3toutNode,SOI3toutNode)
-              TSTALLOC(SOI3TOUT_dpPtr,SOI3toutNode,SOI3dNodePrime)
               TSTALLOC(SOI3TOUT_gfPtr,SOI3toutNode,SOI3gfNode)
               TSTALLOC(SOI3TOUT_gbPtr,SOI3toutNode,SOI3gbNode)
-              TSTALLOC(SOI3TOUT_bPtr,SOI3toutNode,SOI3bNode)
+              TSTALLOC(SOI3TOUT_dpPtr,SOI3toutNode,SOI3dNodePrime)
               TSTALLOC(SOI3TOUT_spPtr,SOI3toutNode,SOI3sNodePrime)
+              TSTALLOC(SOI3TOUT_bPtr,SOI3toutNode,SOI3bNode)
 
               TSTALLOC(SOI3GF_toutPtr,SOI3gfNode,SOI3toutNode)
+              TSTALLOC(SOI3GB_toutPtr,SOI3gbNode,SOI3toutNode)
               TSTALLOC(SOI3DP_toutPtr,SOI3dNodePrime,SOI3toutNode)
               TSTALLOC(SOI3SP_toutPtr,SOI3sNodePrime,SOI3toutNode)
-              
               TSTALLOC(SOI3B_toutPtr,SOI3bNode,SOI3toutNode)
             }
         }
@@ -690,14 +664,10 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(OK);
 }
 
-/* JimB - SIMetrix is based on SPICE3e2.  Since   */
-/* unsetup is a SPICE3f5 function, only use it in */
-/* the standard version */
+
 
 int
-SOI3unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+SOI3unsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     SOI3model *model;
     SOI3instance *here;

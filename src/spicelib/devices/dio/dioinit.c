@@ -69,7 +69,9 @@ SPICEdev DIOinfo = {
     DEVsenTrunc   : NULL,
     DEVdisto      : DIOdisto,
     DEVnoise      : DIOnoise,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
     DEVinstSize   : &DIOiSize,
     DEVmodSize    : &DIOmSize
 };

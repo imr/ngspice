@@ -4,12 +4,15 @@ Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 Modified by Pin Su, Wei Jin 99/9/27
 File: b3soiddset.c          98/5/01
+Modified by Paolo Nenzi 2002
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMDD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "b3soidddef.h"
@@ -28,20 +31,21 @@ File: b3soiddset.c          98/5/01
 #define Meter2Micron 1.0e6
 
 int
-B3SOIDDsetup(matrix,inModel,ckt,states)
-register SMPmatrix *matrix;
-register GENmodel *inModel;
-register CKTcircuit *ckt;
-int *states;
+B3SOIDDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, 
+             int *states)
 {
-register B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
-register B3SOIDDinstance *here;
+B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
+B3SOIDDinstance *here;
 int error;
 CKTnode *tmp;
 
 double tmp1, tmp2;
 double nfb0, Cboxt;
 int    itmp1;
+
+CKTnode *tmpNode;
+IFuid tmpName;
+
 
     /*  loop through all the B3SOIDD device models */
     for( ; model != NULL; model = model->B3SOIDDnextModel )
@@ -873,10 +877,16 @@ int    itmp1;
         /* loop through all the instances of the model */
         for (here = model->B3SOIDDinstances; here != NULL ;
              here=here->B3SOIDDnextInstance) 
-	{   /* allocate a chunk of the state vector */
-            here->B3SOIDDstates = *states;
-            *states += B3SOIDDnumStates;
-            /* perform the parameter defaulting */
+	{   
+	
+            if (here->B3SOIDDowner == ARCHme)
+            {
+                /* allocate a chunk of the state vector */
+		    here->B3SOIDDstates = *states;
+                    *states += B3SOIDDnumStates;
+	    }
+	    
+	    /* perform the parameter defaulting */
             if (!here->B3SOIDDdrainAreaGiven)
                 here->B3SOIDDdrainArea = 0.0;
             if (!here->B3SOIDDdrainPerimeterGiven)
@@ -913,7 +923,11 @@ int    itmp1;
                 here->B3SOIDDsourceSquares = 1;
             if (!here->B3SOIDDwGiven)
                 here->B3SOIDDw = 5e-6;
-            if (!here->B3SOIDDoffGiven)
+            
+	    if (!here->B3SOIDDmGiven)
+                here->B3SOIDDm = 1;
+	    
+	    if (!here->B3SOIDDoffGiven)
                 here->B3SOIDDoff = 0;
 
             /* process drain series resistance */
@@ -923,6 +937,15 @@ int    itmp1;
 	    {   error = CKTmkVolt(ckt,&tmp,here->B3SOIDDname,"drain");
                 if(error) return(error);
                 here->B3SOIDDdNodePrime = tmp->number;
+		if (ckt->CKTcopyNodesets) {
+		  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+
             }
 	    else
 	    {   here->B3SOIDDdNodePrime = here->B3SOIDDdNode;
@@ -935,6 +958,16 @@ int    itmp1;
 	    {   error = CKTmkVolt(ckt,&tmp,here->B3SOIDDname,"source");
                 if(error) return(error);
                 here->B3SOIDDsNodePrime = tmp->number;
+		
+		 if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+		
             }
 	    else 
 	    {   here->B3SOIDDsNodePrime = here->B3SOIDDsNode;
@@ -1319,11 +1352,8 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }  
 
 int
-B3SOIDDunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+B3SOIDDunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
-#ifndef HAS_BATCHSIM
     B3SOIDDmodel *model;
     B3SOIDDinstance *here;
  
@@ -1347,7 +1377,6 @@ B3SOIDDunsetup(inModel,ckt)
             }
         }
     }
-#endif
     return OK;
 }
 

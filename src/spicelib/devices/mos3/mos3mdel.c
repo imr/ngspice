@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mos3defs.h"
 #include "sperror.h"
 #include "suffix.h"

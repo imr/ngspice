@@ -1,13 +1,16 @@
 /**********
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
+Modified by Paolo Nenzi 2002
 File: b3soifdcheck.c          98/5/01
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMFD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "cktdefs.h"
 #include "b3soifddef.h"
 #include "trandefs.h"
@@ -17,20 +20,18 @@ File: b3soifdcheck.c          98/5/01
 #include "suffix.h"
 
 int
-B3SOIFDcheckModel(model, here, ckt)
- B3SOIFDmodel *model;
- B3SOIFDinstance *here;
-CKTcircuit *ckt;
+B3SOIFDcheckModel(B3SOIFDmodel *model, B3SOIFDinstance *here, CKTcircuit *ckt)
 {
 struct b3soifdSizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
     
-    if ((fplog = fopen("b3soifdv1check.log", "w")) != NULL)
+    if ((fplog = fopen("b3soifdv2check.log", "w")) != NULL)
     {   pParam = here->pParam;
-	fprintf(fplog, "B3SOIFDV3 Parameter Check\n");
+	fprintf(fplog, "B3SOI (FD) Version 2.1 Parameter Check\n");
 	fprintf(fplog, "Model = %s\n", model->B3SOIFDmodName);
-	fprintf(fplog, "W = %g, L = %g\n", here->B3SOIFDw, here->B3SOIFDl);
+	fprintf(fplog, "W = %g, L = %g M = %g\n", here->B3SOIFDw, 
+	        here->B3SOIFDl, here->B3SOIFDm);
    	    
 
             if (pParam->B3SOIFDnlx < -pParam->B3SOIFDleff)

@@ -1,23 +1,24 @@
 /**********
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
+Modified by Paolo Nenzi 2002
 File: b3soifdpar.c          98/5/01
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMFD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "b3soifddef.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-B3SOIFDparam(param,value,inst,select)
-int param;
-IFvalue *value;
-GENinstance *inst;
-IFvalue *select;
+B3SOIFDparam(int param, IFvalue *value, GENinstance *inst, 
+             IFvalue *select)
 {
     B3SOIFDinstance *here = (B3SOIFDinstance*)inst;
     switch(param) 
@@ -29,6 +30,10 @@ IFvalue *select;
             here->B3SOIFDl = value->rValue;
             here->B3SOIFDlGiven = TRUE;
             break;
+	case B3SOIFD_M:
+            here->B3SOIFDm = value->rValue;
+            here->B3SOIFDmGiven = TRUE;
+            break;    
         case B3SOIFD_AS:
             here->B3SOIFDsourceArea = value->rValue;
             here->B3SOIFDsourceAreaGiven = TRUE;

@@ -1,12 +1,12 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White, and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,20 +15,19 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "soi3defs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-SOI3mDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+SOI3mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     SOI3model **model = (SOI3model **)inModel;
     SOI3model *modfast = (SOI3model *)kill;

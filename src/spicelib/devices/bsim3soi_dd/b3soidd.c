@@ -4,11 +4,15 @@ Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 File: b3soidd.c          98/5/01
 Modified by Wei Jin 99/9/27
+Modified by Paolo Nenzi 2001
 **********/
 
-
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMDD2.1 release
+ */
+ 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "b3soidddef.h"
 #include "suffix.h"
@@ -16,6 +20,7 @@ Modified by Wei Jin 99/9/27
 IFparm B3SOIDDpTable[] = { /* parameters */
 IOP( "l",   B3SOIDD_L,      IF_REAL   , "Length"),
 IOP( "w",   B3SOIDD_W,      IF_REAL   , "Width"),
+IOP( "m",   B3SOIDD_M,      IF_REAL   , "Parallel Multiplier"),
 IOP( "ad",  B3SOIDD_AD,     IF_REAL   , "Drain area"),
 IOP( "as",  B3SOIDD_AS,     IF_REAL   , "Source area"),
 IOP( "pd",  B3SOIDD_PD,     IF_REAL   , "Drain perimeter"),

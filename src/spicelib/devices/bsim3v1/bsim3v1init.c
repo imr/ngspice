@@ -6,21 +6,19 @@
 #include "bsim3v1ext.h"
 #include "bsim3v1init.h"
 
+SPICEdev B3v1info = {
+    {   "BSIM3v1",
+        "Berkeley Short Channel IGFET Model Version-3 (3.1)",
 
-SPICEdev BSIM3V1info = {
-    {
-        "BSIM3V1",
-        "Berkeley Short Channel IGFET Model Version-3 (3v3.1)",
+        &BSIM3v1nSize,
+        &BSIM3v1nSize,
+        BSIM3v1names,
 
-        &BSIM3V1nSize,
-        &BSIM3V1nSize,
-        BSIM3V1names,
+        &BSIM3v1pTSize,
+        BSIM3v1pTable,
 
-        &BSIM3V1pTSize,
-        BSIM3V1pTable,
-
-        &BSIM3V1mPTSize,
-        BSIM3V1mPTable,
+        &BSIM3v1mPTSize,
+        BSIM3v1mPTable,
 
 #ifdef XSPICE
 /*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
@@ -36,41 +34,43 @@ SPICEdev BSIM3V1info = {
         NULL,  /* This is a SPICE device, it has no MIF info data */
 /*---------------------------  End of SDB fix   -------------------------*/
 #endif
-
-	DEV_DEFAULT,
-
+	
+        DEV_DEFAULT
     },
 
-    DEVparam      : BSIM3V1param,
-    DEVmodParam   : BSIM3V1mParam,
-    DEVload       : BSIM3V1load,
-    DEVsetup      : BSIM3V1setup,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : BSIM3V1setup,
-    DEVtemperature: BSIM3V1temp,
-    DEVtrunc      : BSIM3V1trunc,
+    DEVparam      : BSIM3v1param,
+    DEVmodParam   : BSIM3v1mParam,
+    DEVload       : BSIM3v1load,
+    DEVsetup      : BSIM3v1setup,  
+    DEVunsetup    : BSIM3v1unsetup,
+    DEVpzSetup    : BSIM3v1setup,
+    DEVtemperature: BSIM3v1temp,
+    DEVtrunc      : BSIM3v1trunc,
     DEVfindBranch : NULL,
-    DEVacLoad     : BSIM3V1acLoad,
+    DEVacLoad     : BSIM3v1acLoad,
     DEVaccept     : NULL,
-    DEVdestroy    : BSIM3V1destroy,
-    DEVmodDelete  : BSIM3V1mDelete,
-    DEVdelete     : BSIM3V1delete, 
-    DEVsetic      : BSIM3V1getic,
-    DEVask        : BSIM3V1ask,
-    DEVmodAsk     : BSIM3V1mAsk,
-    DEVpzLoad     : BSIM3V1pzLoad,
-    DEVconvTest   : BSIM3V1convTest,
+    DEVdestroy    : BSIM3v1destroy, 
+    DEVmodDelete  : BSIM3v1mDelete,
+    DEVdelete     : BSIM3v1delete,  
+    DEVsetic      : BSIM3v1getic,
+    DEVask        : BSIM3v1ask,
+    DEVmodAsk     : BSIM3v1mAsk, 
+    DEVpzLoad     : BSIM3v1pzLoad,    
+    DEVconvTest   : BSIM3v1convTest,
     DEVsenSetup   : NULL,
     DEVsenLoad    : NULL,
     DEVsenUpdate  : NULL,
     DEVsenAcLoad  : NULL,
     DEVsenPrint   : NULL,
     DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : BSIM3V1noise,
-                    
-    DEVinstSize   : &BSIM3V1iSize,
-    DEVmodSize    : &BSIM3V1mSize
+    DEVdisto      : NULL,        
+    DEVnoise      : BSIM3v1noise,
+#ifdef CIDER    
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif                    
+    DEVinstSize   : &BSIM3v1iSize,
+    DEVmodSize    : &BSIM3v1mSize
 
 };
 
@@ -78,5 +78,5 @@ SPICEdev BSIM3V1info = {
 SPICEdev *
 get_bsim3v1_info(void)
 {
-    return &BSIM3V1info;
+     return &B3v1info; 
 }

@@ -1,5 +1,5 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
@@ -15,17 +15,18 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "soi3defs.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "const.h"
 #include "suffix.h"
-
 
 
 /* This routine is VERY closely based on the standard MOS noise function.
@@ -40,18 +41,15 @@ Acknowledgements : Rupert Howes and Pete Mole.
 extern void   NevalSrc();
 extern double Nintegrate();
 
+
 int
-SOI3noise (mode, operation, genmodel, ckt, data, OnDens)
-    int mode;
-    int operation;
-    GENmodel *genmodel;
-    CKTcircuit *ckt;
-    register Ndata *data;
-    double *OnDens;
+SOI3noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, 
+           Ndata *data, double *OnDens)
+    
 {
     SOI3model *firstModel = (SOI3model *) genmodel;
-    register SOI3model *model;
-    register SOI3instance *inst;
+    SOI3model *model;
+    SOI3instance *inst;
     char name[N_MXVLNTH];
     double tempOnoise;
     double tempInoise;
@@ -64,6 +62,8 @@ SOI3noise (mode, operation, genmodel, ckt, data, OnDens)
 
     /* define the names of the noise sources */
 
+
+
     static char *SOI3nNames[SOI3NSRCS] = {       /* Note that we have to keep the order */
 	"_rd",              /* noise due to rd */        /* consistent with the index definitions */
 	"_rs",              /* noise due to rs */        /* in SOI3defs.h */
@@ -74,6 +74,10 @@ SOI3noise (mode, operation, genmodel, ckt, data, OnDens)
 
     for (model=firstModel; model != NULL; model=model->SOI3nextModel) {
 	for (inst=model->SOI3instances; inst != NULL; inst=inst->SOI3nextInstance) {
+	    
+	     if (inst->SOI3owner != ARCHme)
+	             continue;
+	    
 	    switch (operation) {
 
 	    case N_OPEN:
@@ -145,7 +149,7 @@ if (!data->namelist) return(E_NOMEM);
 				 (double)0.0);
 		    noizDens[SOI3RDNOIZ] *= 4 * CONSTboltz *
 					    (ckt->CKTtemp + *(ckt->CKTstate0 + inst->SOI3deltaT)) *
-					    inst->SOI3drainConductance;
+					    inst->SOI3drainConductance * inst->SOI3m;
 		    lnNdens[SOI3RDNOIZ] = log(MAX(noizDens[SOI3RDNOIZ],N_MINLOG));
 
 		    NevalSrc(&noizDens[SOI3RSNOIZ],(double*)NULL,
@@ -153,7 +157,7 @@ if (!data->namelist) return(E_NOMEM);
 				 (double)0.0);
 		    noizDens[SOI3RSNOIZ] *= 4 * CONSTboltz *
 					    (ckt->CKTtemp + *(ckt->CKTstate0 + inst->SOI3deltaT)) *
-					    inst->SOI3sourceConductance;
+					    inst->SOI3sourceConductance * inst->SOI3m;
 		    lnNdens[SOI3RSNOIZ] = log(MAX(noizDens[SOI3RSNOIZ],N_MINLOG));
 
 		    NevalSrc(&gain,(double*)NULL,ckt,
@@ -162,7 +166,7 @@ if (!data->namelist) return(E_NOMEM);
 
 		    noizDens[SOI3IDNOIZ] = (gain * 4 * CONSTboltz *
 		                            (ckt->CKTtemp + *(ckt->CKTstate0 + inst->SOI3deltaT)) *
-		                            inst->SOI3ueff *
+		                            inst->SOI3ueff * inst->SOI3m *
 		                            fabs(*(ckt->CKTstate0 + inst->SOI3qd) +
 		                                 *(ckt->CKTstate0 + inst->SOI3qs)))/
 		                           (EffectiveLength*EffectiveLength);
@@ -171,9 +175,9 @@ if (!data->namelist) return(E_NOMEM);
                     switch (model->SOI3nLev) {
                     case 2:
                       noizDens[SOI3FLNOIZ] = gain * model->SOI3fNcoef *
-                                 (inst->SOI3gmf)*(inst->SOI3gmf)/
+                                 (inst->SOI3gmf * inst->SOI3m)*(inst->SOI3gmf * inst->SOI3m)/
                                  (model->SOI3frontOxideCapFactor *
-                                  inst->SOI3w * EffectiveLength *
+                                  inst->SOI3w * inst->SOI3m * EffectiveLength *
                                   exp(model->SOI3fNexp *
                                       log(MAX(fabs(data->freq),N_MINLOG)))
                                  );
@@ -182,8 +186,8 @@ if (!data->namelist) return(E_NOMEM);
                     case 1:
                       noizDens[SOI3FLNOIZ] = gain * model->SOI3fNcoef * 
 				 exp(model->SOI3fNexp *
-				 log(MAX(fabs(inst->SOI3id),N_MINLOG))) /
-				 (data->freq * EffectiveLength * inst->SOI3w *
+				 log(MAX(fabs(inst->SOI3id * inst->SOI3m),N_MINLOG))) /
+				 (data->freq * EffectiveLength * inst->SOI3w * inst->SOI3m *
 				  model->SOI3frontOxideCapFactor);
 		      break;
 

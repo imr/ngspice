@@ -1,12 +1,12 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White, and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,10 +15,12 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "soi3defs.h"
@@ -26,10 +28,7 @@ Acknowledgements : Rupert Howes and Pete Mole.
 #include "suffix.h"
 
 int
-SOI3mParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+SOI3mParam(int param, IFvalue *value, GENmodel *inModel)
 {
     register SOI3model *model = (SOI3model *)inModel;
     switch(param) {
@@ -102,16 +101,16 @@ SOI3mParam(param,value,inModel)
             model->SOI3frontGateBulkOverlapCapFactorGiven = TRUE;
             break;
         case SOI3_MOD_CGBSO:
-            model->SOI3backGateSourceOverlapCapFactor = value->rValue;
-            model->SOI3backGateSourceOverlapCapFactorGiven = TRUE;
+            model->SOI3backGateSourceOverlapCapAreaFactor = value->rValue;
+            model->SOI3backGateSourceOverlapCapAreaFactorGiven = TRUE;
             break;
         case SOI3_MOD_CGBDO:
-            model->SOI3backGateDrainOverlapCapFactor = value->rValue;
-            model->SOI3backGateDrainOverlapCapFactorGiven = TRUE;
+            model->SOI3backGateDrainOverlapCapAreaFactor = value->rValue;
+            model->SOI3backGateDrainOverlapCapAreaFactorGiven = TRUE;
             break;
-        case SOI3_MOD_CGB_BO:
-            model->SOI3backGateBulkOverlapCapFactor = value->rValue;
-            model->SOI3backGateBulkOverlapCapFactorGiven = TRUE;
+        case SOI3_MOD_CGBBO:
+            model->SOI3backGateBulkOverlapCapAreaFactor = value->rValue;
+            model->SOI3backGateBulkOverlapCapAreaFactorGiven = TRUE;
             break;
 /*        case SOI3_MOD_CJ:
             model->SOI3bulkCapFactor = value->rValue;
@@ -381,6 +380,10 @@ SOI3mParam(param,value,inModel)
         case SOI3_MOD_CTA:
             model->SOI3cta = value->rValue;
             model->SOI3ctaGiven = TRUE;
+            break;
+	case SOI3_MOD_MEXP:
+            model->SOI3mexp = value->rValue;
+            model->SOI3mexpGiven = TRUE;
             break;
 
         default:

@@ -1,90 +1,92 @@
 /**********
-Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1995 Min-Chie Jeng and Mansun Chan.
-File: b3v1par.c
-**********/
+ * Copyright 1990 Regents of the University of California. All rights reserved.
+ * File: b3v1par.c
+ * Author: 1995 Min-Chie Jeng and Mansun Chan. 
+ * Modified by Paolo Nenzi 2002
+ **********/
+ 
+/* 
+ * Release Notes: 
+ * BSIM3v3.1,   Released by yuhua  96/12/08
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "bsim3v1def.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-BSIM3V1param(param,value,inst,select)
-int param;
-IFvalue *value;
-GENinstance *inst;
-IFvalue *select;
+BSIM3v1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
-    BSIM3V1instance *here = (BSIM3V1instance*)inst;
+    BSIM3v1instance *here = (BSIM3v1instance*)inst;
     switch(param) 
-    {   case BSIM3V1_W:
-            here->BSIM3V1w = value->rValue;
-            here->BSIM3V1wGiven = TRUE;
+    {   case BSIM3v1_W:
+            here->BSIM3v1w = value->rValue;
+            here->BSIM3v1wGiven = TRUE;
             break;
-        case BSIM3V1_L:
-            here->BSIM3V1l = value->rValue;
-            here->BSIM3V1lGiven = TRUE;
+        case BSIM3v1_L:
+            here->BSIM3v1l = value->rValue;
+            here->BSIM3v1lGiven = TRUE;
             break;
-        case BSIM3V1_AS:
-            here->BSIM3V1sourceArea = value->rValue;
-            here->BSIM3V1sourceAreaGiven = TRUE;
+	    case BSIM3v1_M:
+            here->BSIM3v1m = value->rValue;
+            here->BSIM3v1mGiven = TRUE;
             break;
-        case BSIM3V1_AD:
-            here->BSIM3V1drainArea = value->rValue;
-            here->BSIM3V1drainAreaGiven = TRUE;
+        case BSIM3v1_AS:
+            here->BSIM3v1sourceArea = value->rValue;
+            here->BSIM3v1sourceAreaGiven = TRUE;
             break;
-        case BSIM3V1_PS:
-            here->BSIM3V1sourcePerimeter = value->rValue;
-            here->BSIM3V1sourcePerimeterGiven = TRUE;
+        case BSIM3v1_AD:
+            here->BSIM3v1drainArea = value->rValue;
+            here->BSIM3v1drainAreaGiven = TRUE;
             break;
-        case BSIM3V1_PD:
-            here->BSIM3V1drainPerimeter = value->rValue;
-            here->BSIM3V1drainPerimeterGiven = TRUE;
+        case BSIM3v1_PS:
+            here->BSIM3v1sourcePerimeter = value->rValue;
+            here->BSIM3v1sourcePerimeterGiven = TRUE;
             break;
-        case BSIM3V1_NRS:
-            here->BSIM3V1sourceSquares = value->rValue;
-            here->BSIM3V1sourceSquaresGiven = TRUE;
+        case BSIM3v1_PD:
+            here->BSIM3v1drainPerimeter = value->rValue;
+            here->BSIM3v1drainPerimeterGiven = TRUE;
             break;
-        case BSIM3V1_NRD:
-            here->BSIM3V1drainSquares = value->rValue;
-            here->BSIM3V1drainSquaresGiven = TRUE;
+        case BSIM3v1_NRS:
+            here->BSIM3v1sourceSquares = value->rValue;
+            here->BSIM3v1sourceSquaresGiven = TRUE;
             break;
-        case BSIM3V1_OFF:
-            here->BSIM3V1off = value->iValue;
+        case BSIM3v1_NRD:
+            here->BSIM3v1drainSquares = value->rValue;
+            here->BSIM3v1drainSquaresGiven = TRUE;
             break;
-        case BSIM3V1_M:
-            here->BSIM3V1m = value->rValue;
+        case BSIM3v1_OFF:
+            here->BSIM3v1off = value->iValue;
             break;
-        case BSIM3V1_IC_VBS:
-            here->BSIM3V1icVBS = value->rValue;
-            here->BSIM3V1icVBSGiven = TRUE;
+        case BSIM3v1_IC_VBS:
+            here->BSIM3v1icVBS = value->rValue;
+            here->BSIM3v1icVBSGiven = TRUE;
             break;
-        case BSIM3V1_IC_VDS:
-            here->BSIM3V1icVDS = value->rValue;
-            here->BSIM3V1icVDSGiven = TRUE;
+        case BSIM3v1_IC_VDS:
+            here->BSIM3v1icVDS = value->rValue;
+            here->BSIM3v1icVDSGiven = TRUE;
             break;
-        case BSIM3V1_IC_VGS:
-            here->BSIM3V1icVGS = value->rValue;
-            here->BSIM3V1icVGSGiven = TRUE;
+        case BSIM3v1_IC_VGS:
+            here->BSIM3v1icVGS = value->rValue;
+            here->BSIM3v1icVGSGiven = TRUE;
             break;
-        case BSIM3V1_NQSMOD:
-            here->BSIM3V1nqsMod = value->iValue;
-            here->BSIM3V1nqsModGiven = TRUE;
+        case BSIM3v1_NQSMOD:
+            here->BSIM3v1nqsMod = value->iValue;
+            here->BSIM3v1nqsModGiven = TRUE;
             break;
-        case BSIM3V1_IC:
+        case BSIM3v1_IC:
             switch(value->v.numValue){
                 case 3:
-                    here->BSIM3V1icVBS = *(value->v.vec.rVec+2);
-                    here->BSIM3V1icVBSGiven = TRUE;
+                    here->BSIM3v1icVBS = *(value->v.vec.rVec+2);
+                    here->BSIM3v1icVBSGiven = TRUE;
                 case 2:
-                    here->BSIM3V1icVGS = *(value->v.vec.rVec+1);
-                    here->BSIM3V1icVGSGiven = TRUE;
+                    here->BSIM3v1icVGS = *(value->v.vec.rVec+1);
+                    here->BSIM3v1icVGSGiven = TRUE;
                 case 1:
-                    here->BSIM3V1icVDS = *(value->v.vec.rVec);
-                    here->BSIM3V1icVDSGiven = TRUE;
+                    here->BSIM3v1icVDS = *(value->v.vec.rVec);
+                    here->BSIM3v1icVDSGiven = TRUE;
                     break;
                 default:
                     return(E_BADPARM);

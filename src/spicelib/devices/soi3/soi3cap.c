@@ -1,12 +1,13 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White,
+						 and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,7 +16,10 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
 #include "cktdefs.h"
@@ -26,34 +30,19 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 
 void
-SOI3cap(vgB,Phiplusvsb,gammaB,
-           paramargs,
-           Bfargs,alpha_args,psi_st0args,
-           vGTargs,
-           psi_sLargs,psi_s0args,
-           ldargs,
-           Qg,Qb,Qd,QgB,
-           cggf,cgd,cgs,cgdeltaT,
-           cbgf,cbd,cbs,cbdeltaT,cbgb,
-           cdgf,cdd,cds,cddeltaT,
-           cgbgb,cgbsb
+SOI3cap(double vgB, double Phiplusvsb, double gammaB,
+           double paramargs[10],
+           double Bfargs[2], double alpha_args[2], double psi_st0args[5],
+           double vGTargs[5],
+           double psi_sLargs[5], double psi_s0args[5],
+           double ldargs[5],
+           double *Qg, double *Qb, double *Qd, double *QgB,
+           double *cgfgf, double *cgfd, double *cgfs, double *cgfdeltaT,
+	   double *cgfgb, double *cbgf, double *cbd, double *cbs, 
+	   double *cbdeltaT, double *cbgb, double *cdgf, double *cdd,
+	   double *cds, double *cddeltaT, double *cdgb, double *cgbgf,
+	   double *cgbd, double *cgbs, double *cgbdeltaT, double *cgbgb
            )
-
-double vgB,Phiplusvsb,gammaB;
-double paramargs[10];
-double Bfargs[2],alpha_args[5];
-double psi_st0args[5];
-double vGTargs[5];
-double psi_sLargs[5],psi_s0args[5];
-double ldargs[5];
-
-double *Qg,*Qb,*Qd,*QgB;
-double *cggf,*cgd,*cgs,*cgdeltaT;
-double *cbgf,*cbd,*cbs,*cbdeltaT,*cbgb;
-double *cdgf,*cdd,*cds,*cddeltaT;
-double *cgbgb,*cgbsb;
-
-
 /****** Part 1 - declare local variables.  ******/
 
 {
@@ -77,7 +66,7 @@ double dercq,derdq;
 double sigmaC,Eqc,Eqd;
 double DVqs_Dvgfb,DVqs_Dvdb,DVqs_Dvsb,DVqs_DdeltaT;
 double DF_Dvgfb,DF_Dvdb,DF_Dvsb,DF_DdeltaT;
-double ccgf,ccd,ccs,ccdeltaT;
+double ccgf,ccd,ccs,ccdeltaT,ccgb;
 
 double A0B,EA0B,tmpsb;
 double Vgmax0B,VgBx0,EBmax0,tmpmax0,tmpmaxsb;
@@ -142,11 +131,14 @@ sigmaC = 1E-8;
 
 Vqd = (vGT - alpha*psi_sL); /* This is -qd/Cof */
 Vqs = (vGT - alpha*psi_s0); /* This is -qs/Cof */
-if (Vqs<=0) { /* deep subthreshold contingency */
+if (Vqs<=0)
+{ /* deep subthreshold contingency */
   F = 1;
-} else {
+} else
+{
   F = Vqd/Vqs;
-  if (F<0) { /* physically impossible situation */
+  if (F<0)
+  { /* physically impossible situation */
     F=0;
   }
 }
@@ -208,12 +200,15 @@ DVqs_Dvdb = DvGT_Dvdb - alpha*Dpsi_s0_Dvdb - psi_s0*Dalpha_Dvdb;
 DVqs_Dvsb = DvGT_Dvsb - alpha*Dpsi_s0_Dvsb - psi_s0*Dalpha_Dvsb;
 DVqs_DdeltaT = DvGT_DdeltaT - alpha*Dpsi_s0_DdeltaT - psi_s0*Dalpha_DdeltaT;
 
-if (Vqs==0) {
+if (Vqs==0)
+{
   DF_Dvgfb = 0;
   DF_Dvdb = 0;
   DF_Dvsb = 0;
   DF_DdeltaT = 0;
-} else {
+}
+else
+{
   DF_Dvgfb = (DvGT_Dvgfb - alpha*Dpsi_sL_Dvgfb - psi_sL*Dalpha_Dvgfb -
               F*DVqs_Dvgfb)/Vqs;
   DF_Dvdb = (DvGT_Dvdb - alpha*Dpsi_sL_Dvdb - psi_sL*Dalpha_Dvdb -
@@ -230,6 +225,7 @@ ccgf = Dlimc*(-2*(DVqs_Dvgfb*cq + Vqs*dercq*DF_Dvgfb)/3);
 ccd  = Dlimc*(-2*(DVqs_Dvdb*cq + Vqs*dercq*DF_Dvdb)/3);
 ccs  = Dlimc*(-2*(DVqs_Dvsb*cq + Vqs*dercq*DF_Dvsb)/3);
 ccdeltaT  = Dlimc*(-2*(DVqs_DdeltaT*cq + Vqs*dercq*DF_DdeltaT)/3);
+ccgb = 0;
 
 derdq = F*(3*F2 + 9*F + 8)/((1+F)*(1+F)*(1+F));
 
@@ -237,6 +233,7 @@ derdq = F*(3*F2 + 9*F + 8)/((1+F)*(1+F)*(1+F));
 *cdd  = Dlimd*(-2*(DVqs_Dvdb * dq + Vqs*derdq*DF_Dvdb)/15);
 *cds  = Dlimd*(-2*(DVqs_Dvsb * dq + Vqs*derdq*DF_Dvsb)/15);
 *cddeltaT  = Dlimd*(-2*(DVqs_DdeltaT * dq + Vqs*derdq*DF_DdeltaT)/15);
+*cdgb = 0;
 
 /* JimB - note that for the following expressions, the Vx dependence of */
 /* delta is accounted for by the term (vGT+Qcprime)*(Dalpha_Dvx/gamma). */
@@ -265,6 +262,7 @@ derdq = F*(3*F2 + 9*F + 8)/((1+F)*(1+F)*(1+F));
                   delta*(vGT+Qcprime)*Dalpha_DdeltaT
                  )/(alpha*alpha)
                 );
+*cbgb = 0;
 
 
 /****** Part 6 - Normalised expressions from part 4 are adjusted  ******/
@@ -338,6 +336,7 @@ Qg2prime = -Qc2prime-Qb2prime;
 					(psi_sL*Dalpha_DdeltaT/gamma)) +
 					(Qb2prime - Qbprime/(Fc*Fc))*Dld_DdeltaT
                );
+*cbgb = 0;
 
                
 ccgf = WCox*(Lprime*(ccgf) - ld*(DvGT_Dvgfb - alpha*Dpsi_sL_Dvgfb - psi_sL*Dalpha_Dvgfb) +
@@ -353,25 +352,8 @@ ccdeltaT  = WCox*(Lprime*(ccdeltaT) -
               ld*(DvGT_DdeltaT - alpha*Dpsi_sL_DdeltaT - psi_sL*Dalpha_DdeltaT) +
               (Qc2prime - Qcprime/(Fc*Fc))*Dld_DdeltaT
              );
+ccgb = 0;
 
-
-/* JimB - 9/1/99. Re-partition drain region charge */
-
-/*
-*cdgf = WCox*(Lprime*(*cdgf) - ld*(DvGT_Dvgfb - alpha*Dpsi_sL_Dvgfb - psi_sL*Dalpha_Dvgfb) +
-              (Qd2prime - Qdprime/(Fc*Fc))*Dld_Dvgfb
-             );
-*cdd  = WCox*(Lprime*(*cdd) - ld*(DvGT_Dvdb - alpha*Dpsi_sL_Dvdb - psi_sL*Dalpha_Dvdb) +
-              (Qd2prime - Qdprime/(Fc*Fc))*Dld_Dvdb
-             );
-*cds  = WCox*(Lprime*(*cds) - ld*(DvGT_Dvsb - alpha*Dpsi_sL_Dvsb - psi_sL*Dalpha_Dvsb) +
-              (Qd2prime - Qdprime/(Fc*Fc))*Dld_Dvsb
-             );
-*cddeltaT  = WCox*(Lprime*(*cddeltaT) - ld*(DvGT_DdeltaT -
-                    alpha*Dpsi_sL_DdeltaT - psi_sL*Dalpha_DdeltaT) +
-              (Qd2prime - Qdprime/(Fc*Fc))*Dld_DdeltaT
-             );
-*/
 
 *cdgf = WCox*(Lprime*(*cdgf) - 0.5*ld*(DvGT_Dvgfb - alpha*Dpsi_sL_Dvgfb - psi_sL*Dalpha_Dvgfb) +
               (Qd2prime - Qdprime/(Fc*Fc))*Dld_Dvgfb
@@ -386,9 +368,9 @@ ccdeltaT  = WCox*(Lprime*(ccdeltaT) -
                     alpha*Dpsi_sL_DdeltaT - psi_sL*Dalpha_DdeltaT) +
               (Qd2prime - Qdprime/(Fc*Fc))*Dld_DdeltaT
              );
+*cdgb = 0;
 
-
-/****** Part 9 - Finally, include accumulation charge derivatives.   ******/
+/****** Part 9 - Finally, include accumulation charge derivatives. ******/
 
 /* Now include accumulation charge derivs */
 
@@ -396,125 +378,59 @@ ccdeltaT  = WCox*(Lprime*(ccdeltaT) -
 *cbd  += -WCox*L*tmpacc*sigma;
 *cbs  += -WCox*L*tmpacc*(-sigma);
 *cbdeltaT += -WCox*L*tmpacc*chiFB;
+*cbgb += 0;
 
-*cggf = -(ccgf + *cbgf);
-*cgd = -(ccd + *cbd);
-*cgs = -(ccs + *cbs);
-*cgdeltaT = -(ccdeltaT + *cbdeltaT);
+*cgfgf = -(ccgf + *cbgf);
+*cgfd = -(ccd + *cbd);
+*cgfs = -(ccs + *cbs);
+*cgfdeltaT = -(ccdeltaT + *cbdeltaT);
+*cgfgb = 0;
 
+/****** Part 10 - Back gate stuff - doesn't work, so set to zero.  ******/
 
-/****** Part 10 - Back gate stuff - doesn't work, so commented out.  ******/
-
-/* front gate stuff is self consistent by itself, now add in back gate stuff
-   we're not too interested in EXACT back gate behaviour, so this is quite a
-   rough model.
-   But even this causes convergence problems in transient - so leave it out
-   for now.  Scope for further work.
-*/
-/*
-if (Phiplusvsb > vt*MAX_EXP_ARG) {
-  A0B = Phiplusvsb;
-  tmpsb = 1;
-} else {
-  EA0B = exp(Phiplusvsb/vt);
-  A0B = vt*log(1+EA0B);
-  tmpsb = EA0B/(1+EA0B);
-}
-
-Vgmax0B = A0B + gammaB*sqrt(A0B);
-
-if ((Vgmax0B-vgB)>vt*MAX_EXP_ARG) {
-  VgBx0=vgB;
-  tmpmax0 = 1;
-  tmpmaxsb = 0;
-} else {
-  EBmax0 = exp((Vgmax0B - vgB)/vt);
-  VgBx0=Vgmax0B - vt*log(1+EBmax0);
-  tmpmax0 = EBmax0/(1+EBmax0);
-  tmpmaxsb = 1/(1+EBmax0);
-}
-
-if (VgBx0>vt*MAX_EXP_ARG) {
-  VgBy0 = VgBx0;
-  tmpmin0 = 1;
-} else {
-  EBy0 = exp(VgBx0/vt);
-  VgBy0 = vt*log(1+EBy0);
-  tmpmin0 = EBy0/(1+EBy0);
-}
-
-SgB0 = sqrt(gammaB*gammaB + 4*VgBy0);
-
-*QgB = -WCob*L*gammaB*0.5*(gammaB-SgB0);
-*Qb -= *QgB;
-
-*cgbgb = (WCob*L*gammaB/SgB0)*tmpmin0*tmpmax0;
-*cgbsb = (WCob*L*gammaB/SgB0)*tmpmin0*tmpmaxsb*(1+0.5*gammaB/sqrt(A0B))*tmpsb;
-
-*cbgb = -(*cgbgb);
-*cbs  -= *cgbsb;
-*/
+/* Should move this before the accumulation section for consistency, but */
+/* doesn't matter, as all intrinsic back-gate capacitances set to zero
+anyway. */
 
 *QgB = 0;
-*cbgb = 0;
+
+*cgbgf = 0;
+*cgbd = 0;
+*cgbs = 0;
 *cgbgb = 0;
-*cgbsb = 0;
+*cgbdeltaT = 0;
 
 }
 
 void
-SOI3capEval(ckt,
-            Frontcapargs,
-            Backcapargs,
-            cgfgf,cgfd,cgfs,cgfdeltaT,
-            cdgf,cdd,cds,cddeltaT,
-            csgf,csd,css,csdeltaT,
-            cbgf,cbd,cbs,cbdeltaT,cbgb,
-            cgbgb,cgbsb,
-            gcgfgf,gcgfd,gcgfs,gcgfdeltaT,
-            gcdgf,gcdd,gcds,gcddeltaT,
-            gcsgf,gcsd,gcss,gcsdeltaT,
-            gcbgf,gcbd,gcbs,gcbdeltaT,gcbgb,
-            gcgbgb,gcgbsb,gcgbdb,
-            gcgbs0,gcgbd0,
-            qgatef,qbody,qdrn,qsrc,qgateb)
-
-register CKTcircuit *ckt;
-double Frontcapargs[6];
-double Backcapargs[6];
-
-
-double cgfgf,cgfd,cgfs,cgfdeltaT;
-double cdgf,cdd,cds,cddeltaT;
-double csgf,csd,css,csdeltaT;
-double cbgf,cbd,cbs,cbdeltaT,cbgb;
-double cgbgb,cgbsb;
-
-double *gcgfgf,*gcgfd,*gcgfs,*gcgfdeltaT;
-double *gcdgf,*gcdd,*gcds,*gcddeltaT;
-double *gcsgf,*gcsd,*gcss,*gcsdeltaT;
-double *gcbgf,*gcbd,*gcbs,*gcbdeltaT,*gcbgb;
-double *gcgbgb,*gcgbsb,*gcgbdb;
-double *gcgbs0,*gcgbd0;
-
-double *qgatef;
-double *qbody;
-double *qdrn;
-double *qsrc;
-double *qgateb;
+SOI3capEval(CKTcircuit *ckt,
+            double Frontcapargs[6],
+            double Backcapargs[6],
+            double cgfgf, double cgfd, double cgfs, double cgfdeltaT, double cgfgb,
+            double cdgf, double cdd, double cds, double cddeltaT, double cdgb,
+            double csgf, double csd, double css, double csdeltaT, double csgb,
+            double cbgf, double cbd, double cbs, double cbdeltaT, double cbgb,
+            double cgbgf, double cgbd, double cgbs, double cgbdeltaT, double cgbgb,
+            
+	    double *gcgfgf, double *gcgfd, double *gcgfs, double *gcgfdeltaT, double *gcgfgb,
+            double *gcdgf, double *gcdd, double *gcds, double *gcddeltaT, double *gcdgb,
+            double *gcsgf, double *gcsd, double *gcss, double *gcsdeltaT, double *gcsgb,
+            double *gcbgf, double *gcbd, double *gcbs, double *gcbdeltaT, double *gcbgb,
+            double *gcgbgf, double *gcgbd, double *gcgbs, double *gcgbdeltaT, double *gcgbgb,
+            double *qgatef, double *qbody, double *qdrn, double *qsrc, double *qgateb)
 
 {
+double cgfd0,cgfs0,cgfb0;
+double cgbd0,cgbs0,cgbb0;
 double vgfd,vgfs,vgfb;
 double vgbd,vgbs,vgbb;
-double cgd0,cgs0,cgb0;
-double cgbd0,cgbs0,cgbb0;
 double ag0;
-double qgd,qgs,qgb;
-double qgb_d,qgb_s,qgb_b;
+double qgfd,qgfs,qgfb;
+double qgbd,qgbs,qgbb;
 
-cgd0 = Frontcapargs[0];
-cgs0 = Frontcapargs[1];
-cgb0 = Frontcapargs[2];
+cgfd0 = Frontcapargs[0];
+cgfs0 = Frontcapargs[1];
+cgfb0 = Frontcapargs[2];
 vgfd = Frontcapargs[3];
 vgfs = Frontcapargs[4];
 vgfb = Frontcapargs[5];
@@ -529,62 +445,47 @@ vgbb = Backcapargs[5];
 /* stuff below includes overlap caps' conductances */
 ag0 = ckt->CKTag[0];
 
-*gcgfgf = (cgfgf + cgd0 + cgs0 + cgb0) * ag0;
-*gcgfd  = (cgfd - cgd0) * ag0;
-*gcgfs  = (cgfs - cgs0) * ag0;
+*gcgfgf = (cgfgf + cgfd0 + cgfs0 + cgfb0) * ag0;
+*gcgfd  = (cgfd - cgfd0) * ag0;
+*gcgfs  = (cgfs - cgfs0) * ag0;
 *gcgfdeltaT = cgfdeltaT * ag0;
+*gcgfgb = cgfgb * ag0;
 
-*gcdgf = (cdgf - cgd0) * ag0;
-*gcdd  = (cdd + cgd0) * ag0;
+*gcdgf = (cdgf - cgfd0) * ag0;
+*gcdd  = (cdd + cgfd0 + cgbd0) * ag0;
 *gcds  = cds * ag0;
 *gcddeltaT = cddeltaT * ag0;
+*gcdgb = (cdgb - cgbd0) * ag0;
 
-*gcsgf = (csgf - cgs0) * ag0;
+*gcsgf = (csgf - cgfs0) * ag0;
 *gcsd  = csd * ag0;
-*gcss  = (css + cgs0) * ag0;
+*gcss  = (css + cgfs0 + cgbs0) * ag0;
 *gcsdeltaT = csdeltaT * ag0;
+*gcsgb = (csgb - cgbs0) * ag0;
 
-*gcbgf = (cbgf - cgb0) * ag0;
+*gcbgf = (cbgf - cgfb0) * ag0;
 *gcbd  = cbd * ag0;
 *gcbs  = cbs * ag0;
 *gcbdeltaT = cbdeltaT * ag0;
-
-*gcbgb = cbgb * ag0;
-/*
 *gcbgb = (cbgb - cgbb0) * ag0;
 
+*gcgbgf = cgbgf * ag0;
+*gcgbd  = (cgbd - cgbd0) * ag0;
+*gcgbs  = (cgbs - cgbs0) * ag0;
+*gcgbdeltaT = cgbdeltaT * ag0;
+*gcgbgb = (cgbgb + cgbd0 + cgbs0 + cgbb0) * ag0;
 
-*gcgbgb = (cgbgb + cgbb0 + cgbd0 + cgbs0) * ag0;
-*gcgbsb = (cgbsb - cgbs0) * ag0;
-*gcgbdb = -cgbd0 * ag0;
+qgfd = cgfd0 * vgfd;
+qgfs = cgfs0 * vgfs;
+qgfb = cgfb0 * vgfb;
 
-*gcgbd0 = cgbd0 * ag0;
-*gcgbs0 = cgbs0 * ag0;
-*/
+qgbd = cgbd0 * vgbd;
+qgbs = cgbs0 * vgbs;
+qgbb = cgbb0 * vgbb;
 
-*gcgbgb = cgbgb * ag0;
-*gcgbsb = cgbsb * ag0;
-*gcgbdb = 0;
-
-*gcgbd0 = 0;
-*gcgbs0 = 0;
-
-qgd = cgd0 * vgfd;
-qgs = cgs0 * vgfs;
-qgb = cgb0 * vgfb;
-
-/*
-qgb_d = cgbd0 * vgbd;
-qgb_s = cgbs0 * vgbs;
-qgb_b = cgbb0 * vgbb;
-*/
-qgb_d = 0;
-qgb_s = 0;
-qgb_b = 0;
-
-*qgatef = *qgatef + qgd + qgs + qgb;
-*qbody  = *qbody - qgb - qgb_b;
-*qdrn   = *qdrn - qgd - qgb_d;
-*qgateb = *qgateb + qgb_d + qgb_s + qgb_b;
+*qgatef = *qgatef + qgfd + qgfs + qgfb;
+*qbody  = *qbody - qgfb - qgbb;
+*qdrn   = *qdrn - qgfd - qgbd;
+*qgateb = *qgateb + qgbd + qgbs + qgbb;
 *qsrc = -(*qgatef + *qbody + *qdrn + *qgateb);
 }

@@ -67,7 +67,10 @@ SPICEdev MESAinfo = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,
     DEVnoise      : NULL,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif                        
     DEVinstSize   : &MESAiSize,
     DEVmodSize    : &MESAmSize
 

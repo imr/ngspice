@@ -10,7 +10,6 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "bjt2defs.h"
 #include "suffix.h"

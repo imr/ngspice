@@ -6,7 +6,6 @@ Author: 1992 Charles Hough
 
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "cpldefs.h"

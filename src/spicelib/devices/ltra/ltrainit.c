@@ -67,7 +67,10 @@ SPICEdev LTRAinfo = {
     DEVsenTrunc   : NULL,	/* */
     DEVdisto      : NULL,	/* disto */
     DEVnoise      : NULL,	/* noise */
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif                        
     DEVinstSize   : &LTRAiSize,
     DEVmodSize    : &LTRAmSize
 

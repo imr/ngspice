@@ -1,12 +1,12 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White, and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,15 +15,16 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "ifsim.h"
 #include "soi3defs.h"
 #include "suffix.h"
-
 
 
 char *SOI3names[] = {
@@ -39,6 +40,10 @@ char *SOI3names[] = {
 IFparm SOI3pTable[] = { /* parameters */
  IOP("l",            SOI3_L,          IF_REAL,    "Length"),
  IOP("w",            SOI3_W,          IF_REAL,    "Width"),
+ IOP("m",            SOI3_M,          IF_REAL,    "Parallel Multiplier"),
+ IOP("as",           SOI3_AS,         IF_REAL,	  "Source area"),
+ IOP("ad",           SOI3_AD,         IF_REAL,	  "Drain area"),
+ IOP("ab",           SOI3_AB,         IF_REAL,	  "Body area"),
  IOP("nrd",          SOI3_NRD,        IF_REAL,    "Drain squares"),
  IOP("nrs",          SOI3_NRS,        IF_REAL,    "Source squares"),
  IP("off",           SOI3_OFF,        IF_FLAG,    "Device initially off"),
@@ -156,7 +161,7 @@ IFparm SOI3mPTable[] = { /* model parameters */
  IOP("cgfbo",  SOI3_MOD_CGFBO,  IF_REAL   ,"Front Gate-bulk overlap cap."),
  IOP("cgbso",  SOI3_MOD_CGBSO,  IF_REAL   ,"Back Gate-source overlap cap."),
  IOP("cgbdo",  SOI3_MOD_CGBDO,  IF_REAL   ,"Back Gate-drain overlap cap."),
- IOP("cgb_bo",  SOI3_MOD_CGB_BO,  IF_REAL   ,"Back Gate-bulk overlap cap."),
+ IOP("cgbbo",  SOI3_MOD_CGBBO,  IF_REAL   ,"Back Gate-bulk overlap cap."),
  IOP("rsh",   SOI3_MOD_RSH,   IF_REAL   ,"Sheet resistance"),
  IOP("cj",    SOI3_MOD_CJSW,  IF_REAL   ,"Side junction cap per area"),
  IOP("mj",    SOI3_MOD_MJSW,  IF_REAL   ,"Side grading coefficient"),
@@ -222,10 +227,9 @@ IFparm SOI3mPTable[] = { /* model parameters */
  IOP("csf",   SOI3_MOD_CSF   ,IF_REAL   ,"Saturation region charge sharing factor"),
  IOP("nplus", SOI3_MOD_NPLUS  ,IF_REAL  ,"Doping concentration of N+ or P+ regions"),
  IOP("rta",   SOI3_MOD_RTA    ,IF_REAL  ,"Thermal resistance area scaling factor"),
- IOP("cta",   SOI3_MOD_CTA    ,IF_REAL  ,"Thermal capacitance area scaling factor")
-
+ IOP("cta",   SOI3_MOD_CTA    ,IF_REAL  ,"Thermal capacitance area scaling factor"),
+ IOP("mexp",  SOI3_MOD_MEXP   ,IF_REAL  ,"Exponent for CLM smoothing")
 };
-
 
 
 int     SOI3nSize = NUMELEMS(SOI3names);
@@ -233,7 +237,4 @@ int     SOI3pTSize = NUMELEMS(SOI3pTable);
 int     SOI3mPTSize = NUMELEMS(SOI3mPTable);
 int     SOI3iSize = sizeof(SOI3instance);
 int     SOI3mSize = sizeof(SOI3model);
-
-
-
 

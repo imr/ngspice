@@ -4,6 +4,7 @@ Author: Weidong Liu and Pin Su       Feb 1999
 Author: 1998 Samuel Fung
 Modified by Pin Su, Wei Jin 99/9/27
 File: b3soidddef.h
+Modified by Paolo Nenzi 2002
 **********/
 
 #ifndef B3SOIDD
@@ -22,9 +23,10 @@ typedef struct sB3SOIDDinstance
 {
     struct sB3SOIDDmodel *B3SOIDDmodPtr;
     struct sB3SOIDDinstance *B3SOIDDnextInstance;
-    IFuid B3SOIDDname;   
-    int B3SOIFDowner;
+    IFuid B3SOIDDname;
+    int B3SOIDDowner;      /* number of owner process */   
     int B3SOIDDstates;     /* index into state table for this device */
+
     int B3SOIDDdNode;
     int B3SOIDDgNode;
     int B3SOIDDsNode;
@@ -128,6 +130,7 @@ typedef struct sB3SOIDDinstance
 
     double B3SOIDDl;
     double B3SOIDDw;
+    double B3SOIDDm;
     double B3SOIDDdrainArea;
     double B3SOIDDsourceArea;
     double B3SOIDDdrainSquares;
@@ -211,7 +214,6 @@ typedef struct sB3SOIDDinstance
 
     double B3SOIDDcggb;
     double B3SOIDDcgdb;
-    double B3SOIDDcbs;    /* XXX PN */
     double B3SOIDDcgsb;
     double B3SOIDDcgeb;
     double B3SOIDDcgT;
@@ -243,6 +245,7 @@ typedef struct sB3SOIDDinstance
 
     unsigned B3SOIDDlGiven :1;
     unsigned B3SOIDDwGiven :1;
+    unsigned B3SOIDDmGiven :1;
     unsigned B3SOIDDdrainAreaGiven :1;
     unsigned B3SOIDDsourceAreaGiven    :1;
     unsigned B3SOIDDdrainSquaresGiven  :1;
@@ -1470,6 +1473,7 @@ typedef struct sB3SOIDDmodel
 /* device parameters */
 #define B3SOIDD_W 1
 #define B3SOIDD_L 2
+#define B3SOIDD_M 22
 #define B3SOIDD_AS 3
 #define B3SOIDD_AD 4
 #define B3SOIDD_PS 5
@@ -1610,7 +1614,7 @@ typedef struct sB3SOIDDmodel
 #define B3SOIDD_MOD_BII             211
 #define B3SOIDD_MOD_CII             212
 #define B3SOIDD_MOD_DII             213
-#define B3SOIDD_MOD_ALPHA1	  214
+#define B3SOIDD_MOD_ALPHA1	    214
 #define B3SOIDD_MOD_NGIDL           215
 #define B3SOIDD_MOD_AGIDL           216
 #define B3SOIDD_MOD_BGIDL           217
@@ -1974,18 +1978,12 @@ typedef struct sB3SOIDDmodel
 
 #include "b3soiddext.h"
 
-#ifdef __STDC__
 extern void B3SOIDDevaluate(double,double,double,B3SOIDDinstance*,B3SOIDDmodel*,
         double*,double*,double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, CKTcircuit*);
 extern int B3SOIDDdebug(B3SOIDDmodel*, B3SOIDDinstance*, CKTcircuit*, int);
 extern int B3SOIDDcheckModel(B3SOIDDmodel*, B3SOIDDinstance*, CKTcircuit*);
-#else /* stdc */
-extern void B3SOIDDevaluate();
-extern int B3SOIDDdebug();
-extern int B3SOIDDcheckModel();
-#endif /* stdc */
 
 #endif /*B3SOIDD*/
 

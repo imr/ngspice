@@ -67,7 +67,10 @@ SPICEdev TRAinfo = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,	/* DISTO */
     DEVnoise      : NULL,	/* NOISE */
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif                        
     DEVinstSize   : &TRAiSize,
     DEVmodSize    : &TRAmSize
 

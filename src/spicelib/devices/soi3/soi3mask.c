@@ -1,12 +1,12 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White, and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,10 +15,12 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: Paolo Nenzi 2001 */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "cktdefs.h"
@@ -30,11 +32,7 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 /*ARGSUSED*/
 int
-SOI3mAsk(ckt,inst,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inst;
-    int which;
-    IFvalue *value;
+SOI3mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     SOI3model *model = (SOI3model *)inst;
     switch(which) {
@@ -90,13 +88,13 @@ SOI3mAsk(ckt,inst,which,value)
             value->rValue = model->SOI3frontGateBulkOverlapCapFactor;
             return(OK);
         case SOI3_MOD_CGBSO:
-            value->rValue = model->SOI3backGateSourceOverlapCapFactor;
+            value->rValue = model->SOI3backGateSourceOverlapCapAreaFactor;
             return(OK);
         case SOI3_MOD_CGBDO:
-            value->rValue = model->SOI3backGateDrainOverlapCapFactor;
+            value->rValue = model->SOI3backGateDrainOverlapCapAreaFactor;
             return(OK);
-        case SOI3_MOD_CGB_BO:
-            value->rValue = model->SOI3backGateBulkOverlapCapFactor;
+        case SOI3_MOD_CGBBO:
+            value->rValue = model->SOI3backGateBulkOverlapCapAreaFactor;
             return(OK);
         case SOI3_MOD_RSH:
             value->rValue = model->SOI3sheetResistance;
@@ -278,6 +276,9 @@ SOI3mAsk(ckt,inst,which,value)
             return(OK);
         case SOI3_MOD_CTA:
             value->rValue = model->SOI3cta;
+            return(OK);
+	case SOI3_MOD_MEXP:
+            value->rValue = model->SOI3mexp;
             return(OK);
         default:
             return(E_BADPARM);

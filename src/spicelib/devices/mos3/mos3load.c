@@ -5,7 +5,6 @@ Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "mos3defs.h"
@@ -73,16 +72,27 @@ MOS3load(GENmodel *inModel, CKTcircuit *ckt)
     double capgd;   /* total gate-drain capacitance */
     double capgb;   /* total gate-bulk capacitance */
     int Check;
+#ifndef NOBYPASS      
     double tempv;
+#endif /*NOBYPASS*/    
     int error;
+#ifdef CAPBYPASS
+    int senflag;
+#endif /*CAPBYPASS*/          
     int SenCond;
     double vt;  /* vt at instance temperature */
 
-
+#ifdef CAPBYPASS
+    senflag = 0;
+#endif /* CAPBYPASS */
     if(ckt->CKTsenInfo){
         if(ckt->CKTsenInfo->SENstatus == PERTURBATION) {
             if((ckt->CKTsenInfo->SENmode == ACSEN)||
 	       (ckt->CKTsenInfo->SENmode == TRANSEN)){
+#ifdef CAPBYPASS
+                senflag = 1;
+#endif /* CAPBYPASS */
+	       	       
             }
             goto next;
         }
@@ -268,7 +278,7 @@ MOS3load(GENmodel *inModel, CKTcircuit *ckt)
                     here->MOS3cbd +
                     here->MOS3gbd * delvbd +
                     here->MOS3gbs * delvbs ;
-
+#ifndef NOBYPASS
                 /* now lets see if we can bypass (ugh) */
                 /* the following mess should be one if statement, but
                  * many compilers can't handle it all at once, so it
@@ -322,7 +332,7 @@ MOS3load(GENmodel *inModel, CKTcircuit *ckt)
 					    }
 					    goto bypass;
 					}
-
+#endif /*NOBYPASS*/
                 /* ok - bypass is out, do it the hard way */
 
                 von = model->MOS3type * here->MOS3von;
@@ -885,9 +895,18 @@ innerline1000:;
 		     *
 		     *.. bulk-drain and bulk-source depletion capacitances
 		     */
+#ifdef CAPBYPASS
+                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
+                        fabs(delvbs) >= ckt->CKTreltol * MAX(fabs(vbs),
+                        fabs(*(ckt->CKTstate0+here->MOS3vbs)))+
+                        ckt->CKTvoltTol)|| senflag )
+#endif /*CAPBYPASS*/
+		     		     
 		    {
 			/* can't bypass the diode capacitance calculations */
+#ifdef CAPZEROBYPASS						
 			if(here->MOS3Cbs != 0 || here->MOS3Cbssw != 0 ) {
+#endif /*CAPZEROBYPASS*/			   			
 			    if (vbs < here->MOS3tDepCap){
 				arg=1-vbs/here->MOS3tBulkPot;
 				/*
@@ -939,14 +958,24 @@ innerline1000:;
 				    vbs*(here->MOS3f2s+vbs*(here->MOS3f3s/2));
 				here->MOS3capbs=here->MOS3f2s+here->MOS3f3s*vbs;
 			    }
+#ifdef CAPZEROBYPASS			    			    
 			} else {
 			    *(ckt->CKTstate0 + here->MOS3qbs) = 0;
 			    here->MOS3capbs=0;
 			}
+#endif /*CAPZEROBYPASS*/						
 		    }
+#ifdef CAPBYPASS
+                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
+                        fabs(delvbd) >= ckt->CKTreltol * MAX(fabs(vbd),
+                        fabs(*(ckt->CKTstate0+here->MOS3vbd)))+
+                        ckt->CKTvoltTol)|| senflag )
+#endif /*CAPBYPASS*/		    		    
 		    /* can't bypass the diode capacitance calculations */
 		    {
+#ifdef CAPZEROBYPASS		    		    
 			if(here->MOS3Cbd != 0 || here->MOS3Cbdsw != 0 ) {
+#endif /*CAPZEROBYPASS*/						
 			    if (vbd < here->MOS3tDepCap) {
 				arg=1-vbd/here->MOS3tBulkPot;
 				/*
@@ -993,10 +1022,12 @@ innerline1000:;
 				    vbd * (here->MOS3f2d + vbd * here->MOS3f3d/2);
 				here->MOS3capbd=here->MOS3f2d + vbd * here->MOS3f3d;
 			    }
+#ifdef CAPZEROBYPASS			    			    
 			} else {
 			    *(ckt->CKTstate0 + here->MOS3qbd) = 0;
 			    here->MOS3capbd = 0;
 			}
+#endif /*CAPZEROBYPASS*/						
 		    }
 		    if(SenCond && (ckt->CKTsenInfo->SENmode==TRANSEN)) goto next2;
 			    
@@ -1209,8 +1240,16 @@ innerline1000:;
 		*(ckt->CKTrhs + here->MOS3sNodePrime) += 
 		    cdreq + ceqbs + model->MOS3type * ceqgs;
 		/*
-		 *  load y matrix
-		 */
+            *  load y matrix
+            */
+#if 0
+printf(" loading %s at time %g\n",here->MOS3name,ckt->CKTtime);
+printf("%g %g %g %g %g\n", here->MOS3drainConductance,gcgd+gcgs+gcgb,
+        here->MOS3sourceConductance,here->MOS3gbd,here->MOS3gbs);
+printf("%g %g %g %g %g\n",-gcgb,0.0,0.0,here->MOS3gds,here->MOS3gm);
+printf("%g %g %g %g %g\n", here->MOS3gds,here->MOS3gmbs,gcgd,-gcgs,-gcgd);
+printf("%g %g %g %g %g\n", -gcgs,-gcgd,0.0,-gcgs,0.0);
+#endif		 	    	    
 		*(here->MOS3DdPtr) += (here->MOS3drainConductance);
 		*(here->MOS3GgPtr) += ((gcgd+gcgs+gcgb));
 		*(here->MOS3SsPtr) += (here->MOS3sourceConductance);

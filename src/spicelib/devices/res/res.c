@@ -6,7 +6,6 @@ Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "resdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"

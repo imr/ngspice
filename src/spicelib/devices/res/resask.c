@@ -5,7 +5,6 @@ Modified: Apr 2000 - Paolo Nenzi
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "resdefs.h"
 #include "ifsim.h"

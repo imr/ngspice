@@ -67,7 +67,10 @@ SPICEdev MOS9info = {
     DEVsenTrunc   : NULL,
     DEVdisto      : MOS9disto,
     DEVnoise      : MOS9noise,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif                        
     DEVinstSize   : &MOS9iSize,
     DEVmodSize    : &MOS9mSize
 

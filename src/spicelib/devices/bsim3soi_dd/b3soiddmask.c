@@ -4,11 +4,11 @@ Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 Modified by Wei Jin 99/9/27
 File: b3soiddmask.c          98/5/01
+Modified by Paolo Nenzi 2002
 **********/
 
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "cktdefs.h"
 #include "devdefs.h"
@@ -17,11 +17,7 @@ File: b3soiddmask.c          98/5/01
 #include "suffix.h"
 
 int
-B3SOIDDmAsk(ckt,inst,which,value)
-CKTcircuit *ckt;
-GENmodel *inst;
-int which;
-IFvalue *value;
+B3SOIDDmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     B3SOIDDmodel *model = (B3SOIDDmodel *)inst;
     switch(which) 

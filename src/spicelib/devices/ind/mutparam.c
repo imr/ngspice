@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "inddefs.h"
 #include "sperror.h"

@@ -1,12 +1,16 @@
 /**********
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
+Modified by Paolo Nenzi 2002
 File: b3soifdgetic.c          98/5/01
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMFD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "b3soifddef.h"
 #include "sperror.h"
@@ -14,16 +18,20 @@ File: b3soifdgetic.c          98/5/01
 
 
 int
-B3SOIFDgetic(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+B3SOIFDgetic(GENmodel *inModel, CKTcircuit *ckt)
 {
 B3SOIFDmodel *model = (B3SOIFDmodel*)inModel;
 B3SOIFDinstance *here;
 
     for (; model ; model = model->B3SOIFDnextModel) 
     {    for (here = model->B3SOIFDinstances; here; here = here->B3SOIFDnextInstance)
-	 {    if(!here->B3SOIFDicVBSGiven) 
+	 {    
+	 	
+              if (here->B3SOIFDowner != ARCHme)
+                      continue;
+
+	 
+	      if(!here->B3SOIFDicVBSGiven) 
 	      {  here->B3SOIFDicVBS = *(ckt->CKTrhs + here->B3SOIFDbNode) 
 				  - *(ckt->CKTrhs + here->B3SOIFDsNode);
               }

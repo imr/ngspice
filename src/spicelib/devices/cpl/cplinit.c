@@ -39,41 +39,40 @@ SPICEdev CPLinfo = {
     0
   },
 
-  CPLparam,
-  CPLmParam,
-  CPLload,
-  CPLsetup,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL, /* CPLfindBranch, */
-  NULL, 
-  NULL,
-  CPLdestroy,
-#ifdef DELETES
-  CPLmDelete,
-  CPLdelete,
-#else /* DELETES */
-  NULL,
-  NULL,
-#endif /* DELETES */
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-
-  &CPLiSize,
-  &CPLmSize
+ 
+  DEVparam       : CPLmParam,
+  DEVmodParam    : NULL,
+  DEVload        : CPLload,
+  DEVsetup       : CPLsetup,
+  DEVunsetup     : NULL,
+  DEVpzSetup     : NULL,
+  DEVtemperature : NULL,
+  DEVtrunc       : NULL,
+  DEVfindBranch  : NULL, /* CPLfindBranch, */
+  DEVacLoad      : NULL, 
+  DEVaccept      : NULL,
+  DEVdestroy     : CPLdestroy,
+  DEVmodDelete   : CPLmDelete,
+  DEVdelete      : CPLdelete,
+  DEVsetic       : NULL,
+  DEVask         : NULL,
+  DEVmodAsk      : NULL,
+  DEVpzload      : NULL,
+  DEVconvTest    : NULL,
+  DEVsenSetup    : NULL,
+  DEVsenLoad     : NULL,
+  DEVsenUpdate   : NULL,
+  DEVsenAcLoad   : NULL,
+  DEVsenPrint    : NULL,
+  DEVsenTrunc    : NULL,
+  DEVdisto       : NULL,
+  DEVnoise       : NULL,
+#ifdef CIDER
+  DEVdump        : NULL,
+  DEVacct        : NULL,
+#endif   
+  DEVinstSize    : &CPLiSize,
+  DEVmodSize     : &CPLmSize
 
 };
 

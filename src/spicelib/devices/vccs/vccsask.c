@@ -131,7 +131,7 @@ VCCSask(ckt,inst,which,value,select)
         case VCCS_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
                 errMsg = MALLOC(strlen(msg)+1);
-                errRtn = "BJTask";
+                errRtn = "VCCSask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);
             } else {

@@ -3,11 +3,15 @@ Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 File: b3soiddpzld.c          98/5/01
+Modified by Paolo Nenzi 2002
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMDD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "complex.h"
 #include "sperror.h"
@@ -15,23 +19,26 @@ File: b3soiddpzld.c          98/5/01
 #include "suffix.h"
 
 int
-B3SOIDDpzLoad(inModel,ckt,s)
-GENmodel *inModel;
-register CKTcircuit *ckt;
-register SPcomplex *s;
+B3SOIDDpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
-register B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
-register B3SOIDDinstance *here;
+B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
+B3SOIDDinstance *here;
 double xcggb, xcgdb, xcgsb, xcbgb, xcbdb, xcbsb, xcddb, xcssb, xcdgb;
 double gdpr, gspr, gds, gbd, gbs, capbd, capbs, xcsgb, xcdsb, xcsdb;
 double cggb, cgdb, cgsb, cbgb, cbdb, cbsb, cddb, cdgb, cdsb;
 double GSoverlapCap, GDoverlapCap, GBoverlapCap;
 double FwdSum, RevSum, Gm, Gmbs;
 
+double m;
+
     for (; model != NULL; model = model->B3SOIDDnextModel) 
     {    for (here = model->B3SOIDDinstances; here!= NULL;
               here = here->B3SOIDDnextInstance) 
 	 {
+	 
+            if (here->B3SOIDDowner != ARCHme)
+                    continue;
+
             if (here->B3SOIDDmode >= 0) 
 	    {   Gm = here->B3SOIDDgm;
 		Gmbs = here->B3SOIDDgmbs;
@@ -94,56 +101,57 @@ double FwdSum, RevSum, Gm, Gmbs;
             xcbdb = (cbdb - capbd);
             xcbsb = (cbsb - capbs);
 
+            m = here->B3SOIDDm;
 
-            *(here->B3SOIDDGgPtr ) += xcggb * s->real;
-            *(here->B3SOIDDGgPtr +1) += xcggb * s->imag;
-            *(here->B3SOIDDBbPtr ) += (-xcbgb-xcbdb-xcbsb) * s->real;
-            *(here->B3SOIDDBbPtr +1) += (-xcbgb-xcbdb-xcbsb) * s->imag;
-            *(here->B3SOIDDDPdpPtr ) += xcddb * s->real;
-            *(here->B3SOIDDDPdpPtr +1) += xcddb * s->imag;
-            *(here->B3SOIDDSPspPtr ) += xcssb * s->real;
-            *(here->B3SOIDDSPspPtr +1) += xcssb * s->imag;
-            *(here->B3SOIDDGbPtr ) += (-xcggb-xcgdb-xcgsb) * s->real;
-            *(here->B3SOIDDGbPtr +1) += (-xcggb-xcgdb-xcgsb) * s->imag;
-            *(here->B3SOIDDGdpPtr ) += xcgdb * s->real;
-            *(here->B3SOIDDGdpPtr +1) += xcgdb * s->imag;
-            *(here->B3SOIDDGspPtr ) += xcgsb * s->real;
-            *(here->B3SOIDDGspPtr +1) += xcgsb * s->imag;
-            *(here->B3SOIDDBgPtr ) += xcbgb * s->real;
-            *(here->B3SOIDDBgPtr +1) += xcbgb * s->imag;
-            *(here->B3SOIDDBdpPtr ) += xcbdb * s->real;
-            *(here->B3SOIDDBdpPtr +1) += xcbdb * s->imag;
-            *(here->B3SOIDDBspPtr ) += xcbsb * s->real;
-            *(here->B3SOIDDBspPtr +1) += xcbsb * s->imag;
-            *(here->B3SOIDDDPgPtr ) += xcdgb * s->real;
-            *(here->B3SOIDDDPgPtr +1) += xcdgb * s->imag;
-            *(here->B3SOIDDDPbPtr ) += (-xcdgb-xcddb-xcdsb) * s->real;
-            *(here->B3SOIDDDPbPtr +1) += (-xcdgb-xcddb-xcdsb) * s->imag;
-            *(here->B3SOIDDDPspPtr ) += xcdsb * s->real;
-            *(here->B3SOIDDDPspPtr +1) += xcdsb * s->imag;
-            *(here->B3SOIDDSPgPtr ) += xcsgb * s->real;
-            *(here->B3SOIDDSPgPtr +1) += xcsgb * s->imag;
-            *(here->B3SOIDDSPbPtr ) += (-xcsgb-xcsdb-xcssb) * s->real;
-            *(here->B3SOIDDSPbPtr +1) += (-xcsgb-xcsdb-xcssb) * s->imag;
-            *(here->B3SOIDDSPdpPtr ) += xcsdb * s->real;
-            *(here->B3SOIDDSPdpPtr +1) += xcsdb * s->imag;
-            *(here->B3SOIDDDdPtr) += gdpr;
-            *(here->B3SOIDDSsPtr) += gspr;
-            *(here->B3SOIDDBbPtr) += gbd+gbs;
-            *(here->B3SOIDDDPdpPtr) += gdpr+gds+gbd+RevSum;
-            *(here->B3SOIDDSPspPtr) += gspr+gds+gbs+FwdSum;
-            *(here->B3SOIDDDdpPtr) -= gdpr;
-            *(here->B3SOIDDSspPtr) -= gspr;
-            *(here->B3SOIDDBdpPtr) -= gbd;
-            *(here->B3SOIDDBspPtr) -= gbs;
-            *(here->B3SOIDDDPdPtr) -= gdpr;
-            *(here->B3SOIDDDPgPtr) += Gm;
-            *(here->B3SOIDDDPbPtr) -= gbd - Gmbs;
-            *(here->B3SOIDDDPspPtr) -= gds + FwdSum;
-            *(here->B3SOIDDSPgPtr) -= Gm;
-            *(here->B3SOIDDSPsPtr) -= gspr;
-            *(here->B3SOIDDSPbPtr) -= gbs + Gmbs;
-            *(here->B3SOIDDSPdpPtr) -= gds + RevSum;
+            *(here->B3SOIDDGgPtr ) += m * (xcggb * s->real);
+            *(here->B3SOIDDGgPtr +1) += m * (xcggb * s->imag);
+            *(here->B3SOIDDBbPtr ) += m * ((-xcbgb-xcbdb-xcbsb) * s->real);
+            *(here->B3SOIDDBbPtr +1) += m * ((-xcbgb-xcbdb-xcbsb) * s->imag);
+            *(here->B3SOIDDDPdpPtr ) += m * (xcddb * s->real);
+            *(here->B3SOIDDDPdpPtr +1) += m * (xcddb * s->imag);
+            *(here->B3SOIDDSPspPtr ) += m * (xcssb * s->real);
+            *(here->B3SOIDDSPspPtr +1) += m * (xcssb * s->imag);
+            *(here->B3SOIDDGbPtr ) += m * ((-xcggb-xcgdb-xcgsb) * s->real);
+            *(here->B3SOIDDGbPtr +1) += m * ((-xcggb-xcgdb-xcgsb) * s->imag);
+            *(here->B3SOIDDGdpPtr ) += m * (xcgdb * s->real);
+            *(here->B3SOIDDGdpPtr +1) += m * (xcgdb * s->imag);
+            *(here->B3SOIDDGspPtr ) += m * (xcgsb * s->real);
+            *(here->B3SOIDDGspPtr +1) += m * (xcgsb * s->imag);
+            *(here->B3SOIDDBgPtr ) += m * (xcbgb * s->real);
+            *(here->B3SOIDDBgPtr +1) += m * (xcbgb * s->imag);
+            *(here->B3SOIDDBdpPtr ) += m * (xcbdb * s->real);
+            *(here->B3SOIDDBdpPtr +1) += m * (xcbdb * s->imag);
+            *(here->B3SOIDDBspPtr ) += m * (xcbsb * s->real);
+            *(here->B3SOIDDBspPtr +1) += (xcbsb * s->imag);
+            *(here->B3SOIDDDPgPtr ) += m * (xcdgb * s->real);
+            *(here->B3SOIDDDPgPtr +1) += m * (xcdgb * s->imag);
+            *(here->B3SOIDDDPbPtr ) += m * ((-xcdgb-xcddb-xcdsb) * s->real);
+            *(here->B3SOIDDDPbPtr +1) += m * ((-xcdgb-xcddb-xcdsb) * s->imag);
+            *(here->B3SOIDDDPspPtr ) += m * (xcdsb * s->real);
+            *(here->B3SOIDDDPspPtr +1) += m * (xcdsb * s->imag);
+            *(here->B3SOIDDSPgPtr ) += m * (xcsgb * s->real);
+            *(here->B3SOIDDSPgPtr +1) += m * (xcsgb * s->imag);
+            *(here->B3SOIDDSPbPtr ) += m * ((-xcsgb-xcsdb-xcssb) * s->real);
+            *(here->B3SOIDDSPbPtr +1) += m * ((-xcsgb-xcsdb-xcssb) * s->imag);
+            *(here->B3SOIDDSPdpPtr ) += m * (xcsdb * s->real);
+            *(here->B3SOIDDSPdpPtr +1) += m * (xcsdb * s->imag);
+            *(here->B3SOIDDDdPtr) += m * gdpr;
+            *(here->B3SOIDDSsPtr) += m * gspr;
+            *(here->B3SOIDDBbPtr) += m * (gbd + gbs);
+            *(here->B3SOIDDDPdpPtr) += m * (gdpr + gds + gbd + RevSum);
+            *(here->B3SOIDDSPspPtr) += m * (gspr + gds + gbs + FwdSum);
+            *(here->B3SOIDDDdpPtr) -= m * gdpr;
+            *(here->B3SOIDDSspPtr) -= m * gspr;
+            *(here->B3SOIDDBdpPtr) -= m * gbd;
+            *(here->B3SOIDDBspPtr) -= m * gbs;
+            *(here->B3SOIDDDPdPtr) -= m * gdpr;
+            *(here->B3SOIDDDPgPtr) += m * Gm;
+            *(here->B3SOIDDDPbPtr) -= m * (gbd - Gmbs);
+            *(here->B3SOIDDDPspPtr) -= m * (gds + FwdSum);
+            *(here->B3SOIDDSPgPtr) -= m * Gm;
+            *(here->B3SOIDDSPsPtr) -= m * gspr;
+            *(here->B3SOIDDSPbPtr) -= m * (gbs + Gmbs);
+            *(here->B3SOIDDSPdpPtr) -= m * (gds + RevSum);
 
         }
     }

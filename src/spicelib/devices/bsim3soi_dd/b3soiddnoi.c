@@ -3,11 +3,15 @@ Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 File: b3soiddnoi.c          98/5/01
+Modofied by Paolo Nenzi 2002
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMDD2.1 release
+ */
+
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "b3soidddef.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"
@@ -45,10 +49,9 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 double
-B3SOIDDStrongInversionNoiseEval(vgs, vds, model, here, freq, temp)
-double vgs, vds, freq, temp;
-B3SOIDDmodel *model;
-B3SOIDDinstance *here;
+B3SOIDDStrongInversionNoiseEval(double vgs, double vds, B3SOIDDmodel *model, 
+                                B3SOIDDinstance *here, double freq, 
+				double temp)
 {
 struct b3soiddSizeDependParam *pParam;
 double cd, esat, DelClm, EffFreq, N0, Nl, Vgst;
@@ -56,7 +59,7 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Ssi;
 double req, ceq;
 
     pParam = here->pParam;
-    cd = fabs(here->B3SOIDDcd);
+    cd = fabs(here->B3SOIDDcd) * here->B3SOIDDm;
     if (vds > here->B3SOIDDvdsat)
     {   esat = 2.0 * pParam->B3SOIDDvsattemp / here->B3SOIDDueff;
 	T0 = ((((vds - here->B3SOIDDvdsat) / pParam->B3SOIDDlitl) + model->B3SOIDDem)
@@ -84,7 +87,7 @@ double req, ceq;
 
     T6 = 8.62e-5 * temp * cd * cd;
     T7 = 1.0e8 * EffFreq * pParam->B3SOIDDleff
-       * pParam->B3SOIDDleff * pParam->B3SOIDDweff;
+       * pParam->B3SOIDDleff * pParam->B3SOIDDweff * here->B3SOIDDm;
     T8 = model->B3SOIDDoxideTrapDensityA + model->B3SOIDDoxideTrapDensityB * Nl
        + model->B3SOIDDoxideTrapDensityC * Nl * Nl;
     T9 = (Nl + 2.0e14) * (Nl + 2.0e14);
@@ -95,15 +98,11 @@ double req, ceq;
 }
 
 int
-B3SOIDDnoise (mode, operation, inModel, ckt, data, OnDens)
-int mode, operation;
-GENmodel *inModel;
-CKTcircuit *ckt;
-register Ndata *data;
-double *OnDens;
+B3SOIDDnoise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt, 
+              Ndata *data, double *OnDens)
 {
-register B3SOIDDmodel *model = (B3SOIDDmodel *)inModel;
-register B3SOIDDinstance *here;
+B3SOIDDmodel *model = (B3SOIDDmodel *)inModel;
+B3SOIDDinstance *here;
 struct b3soiddSizeDependParam *pParam;
 char name[N_MXVLNTH];
 double tempOnoise;
@@ -134,7 +133,12 @@ int error, i;
     for (; model != NULL; model = model->B3SOIDDnextModel)
     {    for (here = model->B3SOIDDinstances; here != NULL;
 	      here = here->B3SOIDDnextInstance)
-	 {    pParam = here->pParam;
+	 {    
+	 
+	      if (here->B3SOIDDowner != ARCHme)
+	              continue;
+
+	      pParam = here->pParam;
 	      switch (operation)
 	      {  case N_OPEN:
 		     /* see if we have to to produce a summary report */
@@ -202,12 +206,12 @@ int error, i;
 		              NevalSrc(&noizDens[B3SOIDDRDNOIZ],
 				       &lnNdens[B3SOIDDRDNOIZ], ckt, THERMNOISE,
 				       here->B3SOIDDdNodePrime, here->B3SOIDDdNode,
-				       here->B3SOIDDdrainConductance);
+				       here->B3SOIDDdrainConductance * here->B3SOIDDm);
 
 		              NevalSrc(&noizDens[B3SOIDDRSNOIZ],
 				       &lnNdens[B3SOIDDRSNOIZ], ckt, THERMNOISE,
 				       here->B3SOIDDsNodePrime, here->B3SOIDDsNode,
-				       here->B3SOIDDsourceConductance);
+				       here->B3SOIDDsourceConductance * here->B3SOIDDm);
 
                               switch( model->B3SOIDDnoiMod )
 			      {  case 1:
@@ -216,9 +220,9 @@ int error, i;
 				               &lnNdens[B3SOIDDIDNOIZ], ckt, 
 					       THERMNOISE, here->B3SOIDDdNodePrime,
 				               here->B3SOIDDsNodePrime,
-                                               (2.0 / 3.0 * fabs(here->B3SOIDDgm
+                                               (2.0 / 3.0 * fabs(here->B3SOIDDm * (here->B3SOIDDgm
 				               + here->B3SOIDDgds
-					       + here->B3SOIDDgmbs)));
+					       + here->B3SOIDDgmbs))));
 				      break;
 			         case 2:
 			         case 4:
@@ -227,7 +231,7 @@ int error, i;
 					       THERMNOISE, here->B3SOIDDdNodePrime,
                                                here->B3SOIDDsNodePrime,
 					       (here->B3SOIDDueff
-					       * fabs(here->B3SOIDDqinv
+					       * fabs((here->B3SOIDDqinv * here->B3SOIDDm)
 					       / (pParam->B3SOIDDleff
 					       * pParam->B3SOIDDleff))));
 				      break;
@@ -241,7 +245,7 @@ int error, i;
 			         case 4:
 			              noizDens[B3SOIDDFLNOIZ] *= model->B3SOIDDkf
 					    * exp(model->B3SOIDDaf
-					    * log(MAX(fabs(here->B3SOIDDcd),
+					    * log(MAX(fabs(here->B3SOIDDcd * here->B3SOIDDm),
 					    N_MINLOG)))
 					    / (pow(data->freq, model->B3SOIDDef)
 					    * pParam->B3SOIDDleff
@@ -266,12 +270,12 @@ int error, i;
 			              {   pParam = here->pParam;
 				          T10 = model->B3SOIDDoxideTrapDensityA
 					      * 8.62e-5 * ckt->CKTtemp;
-		                          T11 = pParam->B3SOIDDweff
+		                          T11 = pParam->B3SOIDDweff * here->B3SOIDDm
 					      * pParam->B3SOIDDleff
 				              * pow(data->freq, model->B3SOIDDef)
 				              * 4.0e36;
-		                          Swi = T10 / T11 * here->B3SOIDDcd
-				              * here->B3SOIDDcd;
+		                          Swi = T10 / T11 * here->B3SOIDDcd * here->B3SOIDDm
+				              * here->B3SOIDDcd * here->B3SOIDDm;
                                           Slimit = B3SOIDDStrongInversionNoiseEval(
 				               here->B3SOIDDvon + 0.1, vds, model,
 					       here, data->freq, ckt->CKTtemp);
@@ -292,7 +296,8 @@ int error, i;
 		              NevalSrc(&noizDens[B3SOIDDFBNOIZ], &lnNdens[B3SOIDDFBNOIZ],
 				          ckt, SHOTNOISE, here->B3SOIDDsNodePrime,
 				          here->B3SOIDDbNode, 
-                                          2.0 * model->B3SOIDDnoif * here->B3SOIDDibs);
+                                          2.0 * model->B3SOIDDnoif * here->B3SOIDDibs *
+					  here->B3SOIDDm);
 
 		              noizDens[B3SOIDDTOTNOIZ] = noizDens[B3SOIDDRDNOIZ]
 						     + noizDens[B3SOIDDRSNOIZ]

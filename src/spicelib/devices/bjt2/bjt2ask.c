@@ -11,7 +11,6 @@ Modified: Alan Gillespie
 
 #include "ngspice.h"
 #include "const.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bjt2defs.h"
 #include "ifsim.h"

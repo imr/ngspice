@@ -8,6 +8,6 @@ File: b3soipditf.h
 
 #include "b3soipdext.h"
 
-SPICEdev *get_bsim3soipd_info (void);
+SPICEdev *get_b3soipd_info (void);
 
 #endif

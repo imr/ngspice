@@ -76,12 +76,15 @@ int add_udn(int,Evt_Udn_Info_t **);
 
 #include "asrc/asrcitf.h"
 #include "bjt/bjtitf.h"
-/* #include "bjt2/bjt2itf.h" */
+#include "bjt2/bjt2itf.h"
 #include "bsim1/bsim1itf.h"
 #include "bsim2/bsim2itf.h"
 #include "bsim3/bsim3itf.h"
+#include "bsim3v0/bsim3v0itf.h"
 #include "bsim3v1/bsim3v1itf.h"
-#include "bsim3v2/bsim3v2itf.h"
+#include "bsim3v1a/bsim3v1aitf.h"
+#include "bsim3v1s/bsim3v1sitf.h"
+#include "bsim3soi/b3soiitf.h"
 #include "bsim4/bsim4itf.h"
 #include "bsim3soi_pd/b3soipditf.h"
 #include "bsim3soi_fd/b3soifditf.h"
@@ -93,6 +96,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "dio/dioitf.h"
 #include "hfet1/hfetitf.h"
 #include "hfet2/hfet2itf.h"
+#include "hisim/hsm1itf.h"
 #include "ind/inditf.h"
 #include "isrc/isrcitf.h"
 #include "jfet/jfetitf.h"
@@ -115,19 +119,30 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "vccs/vccsitf.h"
 #include "vcvs/vcvsitf.h"
 #include "vsrc/vsrcitf.h"
+
+#ifdef CIDER
+/* Numerical devices (Cider integration) */
+#include "nbjt/nbjtitf.h"
+#include "nbjt2/nbjt2itf.h"
+#include "numd/numditf.h"
+#include "numd2/numd2itf.h"
+#include "numos/numositf.h"
+#endif
+
+
 /*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
 #ifdef HAVE_EKV
 #include "ekv/ekvitf.h"
 #ifdef XSPICE
-static int DEVNUM = 43;
+static int DEVNUM = 52;
 #else
-#define DEVNUM 43
+#define DEVNUM 52
 #endif
 #else
 #ifdef XSPICE
-static int DEVNUM = 42;
+static int DEVNUM = 51;
 #else
-#define DEVNUM 42
+#define DEVNUM 51
 #endif
 #endif
 
@@ -168,52 +183,69 @@ spice_init_devices(void)
     DEVices[ 0] = get_urc_info();
     DEVices[ 1] = get_asrc_info();
     DEVices[ 2] = get_bjt_info();
-    DEVices[ 3] = get_bjt_info(); /* Quick hack until bjt2 works */
-  /*  DEVices[ 3] = get bjt2_info(); */
+    DEVices[ 3] = get_bjt2_info();
     DEVices[ 4] = get_bsim1_info();
     DEVices[ 5] = get_bsim2_info();
     DEVices[ 6] = get_bsim3_info();
-    DEVices[ 7] = get_bsim3v1_info();
-    DEVices[ 8] = get_bsim3v2_info();
-    DEVices[ 9] = get_bsim4_info();
-    DEVices[10] = get_bsim3soipd_info();
-    DEVices[11] = get_bsim3soifd_info();
-    DEVices[12] = get_bsim3soidd_info();
-    DEVices[13] = get_cap_info();
-    DEVices[14] = get_cccs_info();
-    DEVices[15] = get_ccvs_info();
-    DEVices[16] = get_cpl_info();
-    DEVices[17] = get_csw_info();
-    DEVices[18] = get_dio_info();
-    DEVices[19] = get_hfeta_info();
-    DEVices[20] = get_hfet2_info();
-    DEVices[21] = get_ind_info();
-    DEVices[22] = get_mut_info();
-    DEVices[23] = get_isrc_info();
-    DEVices[24] = get_jfet_info();
-    DEVices[25] = get_jfet2_info();
-    DEVices[26] = get_ltra_info();
-    DEVices[27] = get_mes_info();
-    DEVices[28] = get_mesa_info();
-    DEVices[29] = get_mos1_info();
-    DEVices[30] = get_mos2_info();
-    DEVices[31] = get_mos3_info();
-    DEVices[32] = get_mos6_info();
-    DEVices[33] = get_mos9_info();
-    DEVices[34] = get_res_info();
-    DEVices[35] = get_soi3_info();
-    DEVices[36] = get_sw_info();
-    DEVices[37] = get_tra_info();
-    DEVices[38] = get_txl_info();
-    DEVices[39] = get_vccs_info();
-    DEVices[40] = get_vcvs_info();
-    DEVices[41] = get_vsrc_info();
-    
+    DEVices[ 7] = get_bsim3v0_info();
+    DEVices[ 8] = get_bsim3v1_info();
+    DEVices[ 9] = get_bsim3v1a_info();
+    DEVices[10] = get_bsim3v1s_info();
+    DEVices[11] = get_b3soi_info();
+    DEVices[12] = get_bsim4_info();
+    DEVices[13] = get_b3soipd_info();
+    DEVices[14] = get_b3soifd_info();
+    DEVices[15] = get_b3soidd_info();
+    DEVices[16] = get_cap_info();
+    DEVices[17] = get_cccs_info();
+    DEVices[18] = get_ccvs_info();
+    DEVices[19] = get_cpl_info();
+    DEVices[20] = get_csw_info();
+    DEVices[21] = get_dio_info();
+    DEVices[22] = get_hfeta_info();
+    DEVices[23] = get_hfet2_info();
+    DEVices[24] = get_hsm1_info();  
+    DEVices[25] = get_ind_info();
+    DEVices[26] = get_mut_info();
+    DEVices[27] = get_isrc_info();
+    DEVices[28] = get_jfet_info();
+    DEVices[29] = get_jfet2_info();
+    DEVices[30] = get_ltra_info();
+    DEVices[31] = get_mes_info();
+    DEVices[32] = get_mesa_info();
+    DEVices[33] = get_mos1_info();
+    DEVices[34] = get_mos2_info();
+    DEVices[35] = get_mos3_info();
+    DEVices[36] = get_mos6_info();
+    DEVices[37] = get_mos9_info();
+    DEVices[38] = get_res_info();
+    DEVices[39] = get_soi3_info();
+    DEVices[40] = get_sw_info();
+    DEVices[41] = get_tra_info();
+    DEVices[42] = get_txl_info();
+    DEVices[43] = get_vccs_info();
+    DEVices[44] = get_vcvs_info();
+    DEVices[45] = get_vsrc_info();
+
+#ifdef CIDER
+    DEVices[46] = get_nbjt_info();
+    DEVices[47] = get_nbjt2_info();
+    DEVices[48] = get_numd_info();
+    DEVices[49] = get_numd2_info();
+    DEVices[50] = get_numos_info();    
 #ifdef HAVE_EKV
-    DEVices[42] = get_ekv_info();
-    assert(43 == DEVNUM);
+    DEVices[51] = get_ekv_info();
+    assert(52 == DEVNUM);
 #else
-    assert(42 == DEVNUM);
+    assert(51 == DEVNUM);
+#endif /* HAVE_EKV */
+#endif /* CIDER */
+
+#ifdef HAVE_EKV
+    DEVices[46] = get_ekv_info();
+    assert(47 == DEVNUM);
+#else
+    assert(46 == DEVNUM);
 #endif
 return;
 }

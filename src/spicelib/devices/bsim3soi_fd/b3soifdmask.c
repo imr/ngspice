@@ -4,11 +4,15 @@ Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 File: b3soifdmask.c          98/5/01
 Modified by Wei Jin 99/9/27
+Modified by Paolo Nenzi 2002
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMFD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "cktdefs.h"
 #include "devdefs.h"
@@ -17,11 +21,7 @@ Modified by Wei Jin 99/9/27
 #include "suffix.h"
 
 int
-B3SOIFDmAsk(ckt,inst,which,value)
-CKTcircuit *ckt;
-GENmodel *inst;
-int which;
-IFvalue *value;
+B3SOIFDmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     B3SOIFDmodel *model = (B3SOIFDmodel *)inst;
     switch(which) 

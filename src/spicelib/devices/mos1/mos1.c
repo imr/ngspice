@@ -5,7 +5,6 @@ Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "ifsim.h"
 #include "mos1defs.h"

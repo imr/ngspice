@@ -1,21 +1,22 @@
 /**********
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
+Modified by Paolo Nenzi 2002
 File: b3soifdmdel.c          98/5/01
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMFD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "b3soifddef.h"
 #include "sperror.h"
 #include "suffix.h"
 
 int
-B3SOIFDmDelete(inModel,modname,kill)
-GENmodel **inModel;
-IFuid modname;
-GENmodel *kill;
+B3SOIFDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
 B3SOIFDmodel **model = (B3SOIFDmodel**)inModel;
 B3SOIFDmodel *modfast = (B3SOIFDmodel*)kill;

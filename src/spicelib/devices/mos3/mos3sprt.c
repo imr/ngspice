@@ -9,7 +9,6 @@ Modified: 2000 AlansFixes
      */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "mos3defs.h"

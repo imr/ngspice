@@ -3,13 +3,17 @@ Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 File: b3soifdtemp.c          98/5/01
 Modified by Pin Su, Wei Jin 99/9/27
+Modified by Paolo Nenzi 2002
 **********/
+
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMFD2.1 release
+ */
 
 /* Lmin, Lmax, Wmin, Wmax */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "b3soifddef.h"
@@ -30,12 +34,10 @@ Modified by Pin Su, Wei Jin 99/9/27
 
 /* ARGSUSED */
 int
-B3SOIFDtemp(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+B3SOIFDtemp(GENmodel *inModel, CKTcircuit *ckt)
 {
- B3SOIFDmodel *model = (B3SOIFDmodel*) inModel;
- B3SOIFDinstance *here;
+B3SOIFDmodel *model = (B3SOIFDmodel*) inModel;
+B3SOIFDinstance *here;
 struct b3soifdSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
 double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, T6, Ldrn, Wdrn;
 double Temp, TRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;
@@ -72,7 +74,11 @@ int Size_Not_Found;
          for (here = model->B3SOIFDinstances; here != NULL;
               here = here->B3SOIFDnextInstance) 
 	 {    
-              here->B3SOIFDrbodyext = here->B3SOIFDbodySquares *
+
+              if (here->B3SOIFDowner != ARCHme)
+                      continue;
+	      
+	      here->B3SOIFDrbodyext = here->B3SOIFDbodySquares *
                                     model->B3SOIFDrbsh;
 	      pSizeDependParamKnot = model->pSizeDependParamKnot;
               Size_Not_Found = 1;
@@ -91,7 +97,7 @@ int Size_Not_Found;
               }
 
 	      if (Size_Not_Found)
-	      {   pParam = (struct b3soifdSizeDependParam *)malloc(
+	      {   pParam = (struct b3soifdSizeDependParam *)tmalloc(
 	                    sizeof(struct b3soifdSizeDependParam));
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;

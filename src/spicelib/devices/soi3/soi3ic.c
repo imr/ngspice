@@ -1,12 +1,12 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White, and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,10 +15,12 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "soi3defs.h"
 #include "sperror.h"
@@ -26,9 +28,7 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 
 int
-SOI3getic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+SOI3getic(GENmodel *inModel, CKTcircuit *ckt)
 {
     SOI3model *model = (SOI3model *)inModel;
     SOI3instance *here;
@@ -39,7 +39,11 @@ SOI3getic(inModel,ckt)
 
     for( ; model ; model = model->SOI3nextModel) {
         for(here = model->SOI3instances; here ; here = here->SOI3nextInstance) {
-            if(!here->SOI3icVBSGiven) {
+            
+	    if (here->SOI3owner != ARCHme)
+                    continue;
+	    
+	    if(!here->SOI3icVBSGiven) {
                 here->SOI3icVBS =
                         *(ckt->CKTrhs + here->SOI3bNode) -
                         *(ckt->CKTrhs + here->SOI3sNode);

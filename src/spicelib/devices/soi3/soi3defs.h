@@ -1,18 +1,24 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White,
+						 and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
 With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
                    and John Bunyan.
 Acknowledgements : Rupert Howes and Pete Mole.
+**********/
+
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
 **********/
 
 #ifndef SOI3
@@ -31,12 +37,11 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 typedef struct sSOI3instance {
 
-
     struct sSOI3model *sSOI3modPtr; /* backpointer to model */
     struct sSOI3instance *SOI3nextInstance;  /* pointer to next instance of
                                               *current model*/
-    IFuid SOI3name; /* pointer to character string naming this instance */
-    int SOI3owner;  /* number of owner process */
+    IFuid SOI3name;     /* pointer to character string naming this instance */
+    int SOI3owner;      /* number of owner process */ 
     int SOI3states;     /* index into state table for this device */
 
 
@@ -53,7 +58,6 @@ typedef struct sSOI3instance {
     int SOI3sNodePrime; /* number of the internal source node of the mosfet */
 
 
-
     int SOI3tout1Node; /* first internal thermal node */
     int SOI3tout2Node; /* second internal thermal node */
     int SOI3tout3Node; /* third internal thermal node */
@@ -61,6 +65,11 @@ typedef struct sSOI3instance {
 
     double SOI3l;   /* the length of the channel region */
     double SOI3w;   /* the width of the channel region */
+    double SOI3m;   /* the parallel multiplier parameter */
+
+    double SOI3as;			  /* Area of source region */
+    double SOI3ad;           /* Area of drain region  */
+    double SOI3ab;           /* Area of body region   */
     
     double SOI3drainSquares;    /* the length of the drain in squares */
     double SOI3sourceSquares;   /* the length of the source in squares */
@@ -78,7 +87,6 @@ typedef struct sSOI3instance {
     double SOI3ct3;          /* 3rd internal Thermal capacitance */
     double SOI3rt4;          /* 4th internal Thermal resistance */
     double SOI3ct4;          /* 4th internal Thermal capacitance */
-
 
     double SOI3tTransconductance;   /* temperature corrected transconductance (KP param) */
     double SOI3ueff;                /* passed on to noise model */
@@ -107,7 +115,7 @@ typedef struct sSOI3instance {
     double SOI3vdsat;
     double SOI3sourceVcrit; /* Vcrit for pos. vds */
     double SOI3drainVcrit;  /* Vcrit for pos. vds */
-    double SOI3id;          /* drain current */
+    double SOI3id;          /* DC drain current */
     double SOI3ibs;         /* bulk source current */
     double SOI3ibd;         /* bulk drain current */
     double SOI3iMdb;        /* drain bulk impact ionisation current */
@@ -175,6 +183,10 @@ typedef struct sSOI3instance {
     unsigned SOI3tempGiven :1;  /* instance temperature specified */
     unsigned SOI3lGiven :1;
     unsigned SOI3wGiven :1;
+    unsigned SOI3mGiven :1;
+    unsigned SOI3asGiven:1;
+    unsigned SOI3adGiven:1;
+    unsigned SOI3abGiven:1;
     unsigned SOI3drainSquaresGiven  :1;
     unsigned SOI3sourceSquaresGiven :1;
     unsigned SOI3dNodePrimeSet  :1;
@@ -200,62 +212,66 @@ typedef struct sSOI3instance {
 
     double *SOI3D_dPtr;      /* pointer to sparse matrix element at
                                      * (Drain node,drain node) */
-    double *SOI3GF_gfPtr;    /* pointer to sparse matrix element at
-                                     * (front gate node,front gate node) */
-    double *SOI3S_sPtr;      /* pointer to sparse matrix element at
-                                     * (source node,source node) */
-    double *SOI3B_bPtr;      /* pointer to sparse matrix element at
-                                     * (bulk node,bulk node) */
-    double *SOI3GB_gbPtr;    /* pointer to sparse matrix element at
-                                     * (back gate node,back gate node) */
-    double *SOI3DP_dpPtr;    /* pointer to sparse matrix element at
-                                     * (drain prime node,drain prime node) */
-    double *SOI3SP_spPtr;    /* pointer to sparse matrix element at
-                                     * (source prime node,source prime node) */
     double *SOI3D_dpPtr;     /* pointer to sparse matrix element at
                                      * (drain node,drain prime node) */
-    double *SOI3GF_bPtr;     /* pointer to sparse matrix element at
-                                     * (front gate node,bulk node) */
-    double *SOI3GB_bPtr;     /* pointer to sparse matrix element at
-                                     * (back gate node,bulk node) */
-    double *SOI3GF_dpPtr;    /* pointer to sparse matrix element at
-                                     * (front gate node,drain prime node) */
-    double *SOI3GB_dpPtr;    /* pointer to sparse matrix element at
-                                     * (back gate node,drain prime node) */
-    double *SOI3GF_spPtr;    /* pointer to sparse matrix element at
-                                     * (front gate node,source prime node) */
-    double *SOI3GB_spPtr;    /* pointer to sparse matrix element at
-                                     * (back gate node,source prime node) */
-    double *SOI3S_spPtr;     /* pointer to sparse matrix element at
-                                     * (source node,source prime node) */
-    double *SOI3B_dpPtr;     /* pointer to sparse matrix element at
-                                     * (bulk node,drain prime node) */
-    double *SOI3B_spPtr;     /* pointer to sparse matrix element at
-                                     * (bulk node,source prime node) */
-    double *SOI3DP_spPtr;    /* pointer to sparse matrix element at
-                                     * (drain prime node,source prime node) */
     double *SOI3DP_dPtr;     /* pointer to sparse matrix element at
                                      * (drain prime node,drain node) */
-    double *SOI3B_gfPtr;     /* pointer to sparse matrix element at
-                                     * (bulk node,front gate node) */
-    double *SOI3B_gbPtr;     /* pointer to sparse matrix element at
-                                     * (bulk node,back gate node) */
+    double *SOI3S_sPtr;      /* pointer to sparse matrix element at
+                                     * (source node,source node) */
+    double *SOI3S_spPtr;     /* pointer to sparse matrix element at
+                                     * (source node,source prime node) */
+    double *SOI3SP_sPtr;     /* pointer to sparse matrix element at
+                                     * (source prime node,source node) */
+    double *SOI3GF_gfPtr;    /* pointer to sparse matrix element at
+                                     * (front gate node,front gate node) */
+    double *SOI3GF_gbPtr;    /* pointer to sparse matrix element at
+                                     * (front gate node,back gate node) */
+    double *SOI3GF_dpPtr;    /* pointer to sparse matrix element at
+                                     * (front gate node,drain prime node) */
+    double *SOI3GF_spPtr;    /* pointer to sparse matrix element at
+                                     * (front gate node,source prime node) */
+    double *SOI3GF_bPtr;     /* pointer to sparse matrix element at
+                                     * (front gate node,bulk node) */
+    double *SOI3GB_gfPtr;    /* pointer to sparse matrix element at
+                                     * (back gate node,front gate node) */
+    double *SOI3GB_gbPtr;    /* pointer to sparse matrix element at
+                                     * (back gate node,back gate node) */
+    double *SOI3GB_dpPtr;    /* pointer to sparse matrix element at
+                                     * (back gate node,drain prime node) */
+    double *SOI3GB_spPtr;    /* pointer to sparse matrix element at
+                                     * (back gate node,source prime node) */
+    double *SOI3GB_bPtr;     /* pointer to sparse matrix element at
+                                     * (back gate node,bulk node) */
     double *SOI3DP_gfPtr;    /* pointer to sparse matrix element at
                                      * (drain prime node,front gate node) */
     double *SOI3DP_gbPtr;    /* pointer to sparse matrix element at
                                      * (drain prime node,back gate node) */
+    double *SOI3DP_dpPtr;    /* pointer to sparse matrix element at
+                                     * (drain prime node,drain prime node) */
+    double *SOI3DP_spPtr;    /* pointer to sparse matrix element at
+                                     * (drain prime node,source prime node) */
+    double *SOI3DP_bPtr;     /* pointer to sparse matrix element at
+                                     * (drain prime node,bulk node) */
     double *SOI3SP_gfPtr;    /* pointer to sparse matrix element at
                                      * (source prime node,front gate node) */
     double *SOI3SP_gbPtr;    /* pointer to sparse matrix element at
                                      * (source prime node,back gate node) */
-    double *SOI3SP_sPtr;     /* pointer to sparse matrix element at
-                                     * (source prime node,source node) */
-    double *SOI3DP_bPtr;     /* pointer to sparse matrix element at
-                                     * (drain prime node,bulk node) */
-    double *SOI3SP_bPtr;     /* pointer to sparse matrix element at
-                                     * (source prime node,bulk node) */
     double *SOI3SP_dpPtr;    /* pointer to sparse matrix element at
                                      * (source prime node,drain prime node) */
+    double *SOI3SP_spPtr;    /* pointer to sparse matrix element at
+                                     * (source prime node,source prime node) */
+    double *SOI3SP_bPtr;     /* pointer to sparse matrix element at
+                                     * (source prime node,bulk node) */
+    double *SOI3B_gfPtr;     /* pointer to sparse matrix element at
+                                     * (bulk node,front gate node) */
+    double *SOI3B_gbPtr;     /* pointer to sparse matrix element at
+                                     * (bulk node,back gate node) */
+    double *SOI3B_dpPtr;     /* pointer to sparse matrix element at
+                                     * (bulk node,drain prime node) */
+    double *SOI3B_spPtr;     /* pointer to sparse matrix element at
+                                     * (bulk node,source prime node) */
+    double *SOI3B_bPtr;      /* pointer to sparse matrix element at
+                                     * (bulk node,bulk node) */
 
 /** Now for Thermal Node **/
 
@@ -267,6 +283,7 @@ typedef struct sSOI3instance {
     double *SOI3TOUT_spPtr;
 
     double *SOI3GF_toutPtr;
+    double *SOI3GB_toutPtr;
     double *SOI3DP_toutPtr;
     double *SOI3SP_toutPtr;
     
@@ -329,60 +346,65 @@ typedef struct sSOI3instance {
 #define SOI3cgfgf SOI3states+     16 
 #define SOI3cgfd SOI3states+      17 
 #define SOI3cgfs SOI3states+      18 
-#define SOI3cgfdeltaT SOI3states+ 19 
+#define SOI3cgfdeltaT SOI3states+ 19
+#define SOI3cgfgb SOI3states+     20 
 
-#define SOI3cdgf SOI3states+      20 
-#define SOI3cdd SOI3states+       21 
-#define SOI3cds SOI3states+       22 
-#define SOI3cddeltaT SOI3states+  23 
+#define SOI3cdgf SOI3states+      21
+#define SOI3cdd SOI3states+       22
+#define SOI3cds SOI3states+       23
+#define SOI3cddeltaT SOI3states+  24
+#define SOI3cdgb SOI3states+      25
 
-#define SOI3csgf SOI3states+      24 
-#define SOI3csd SOI3states+       25 
-#define SOI3css SOI3states+       26 
-#define SOI3csdeltaT SOI3states+  27 
+#define SOI3csgf SOI3states+      26
+#define SOI3csd SOI3states+       27
+#define SOI3css SOI3states+       28
+#define SOI3csdeltaT SOI3states+  29
+#define SOI3csgb SOI3states+      30
 
-#define SOI3cgbgb SOI3states +    28
-#define SOI3cgbsb SOI3states +    29
-#define SOI3cgbdb SOI3states +    30
+#define SOI3cgbgf SOI3states +    31
+#define SOI3cgbd SOI3states +     32
+#define SOI3cgbs SOI3states +     33
+#define SOI3cgbdeltaT SOI3states+ 34
+#define SOI3cgbgb SOI3states +    35
 
-#define SOI3qbd SOI3states+    31  /* body-drain capacitor charge */
-#define SOI3iqbd SOI3states+   32  /* body-drain capacitor current */
+#define SOI3qbd SOI3states+       36  /* body-drain capacitor charge */
+#define SOI3iqbd SOI3states+      37  /* body-drain capacitor current */
 
-#define SOI3qbs SOI3states+    33  /* body-source capacitor charge */
-#define SOI3iqbs SOI3states+   34  /* body-source capacitor current */
+#define SOI3qbs SOI3states+       38  /* body-source capacitor charge */
+#define SOI3iqbs SOI3states+      39  /* body-source capacitor current */
 
-#define SOI3qt SOI3states+       35      /* Energy or 'charge' associated with ct */
-#define SOI3iqt SOI3states+      36      /* equiv current source for ct */
-#define SOI3qt1 SOI3states+       37      /* Energy or 'charge' associated with ct */
-#define SOI3iqt1 SOI3states+      38      /* equiv current source for ct */
-#define SOI3qt2 SOI3states+       39      /* Energy or 'charge' associated with ct */
-#define SOI3iqt2 SOI3states+      40      /* equiv current source for ct */
-#define SOI3qt3 SOI3states+       41      /* Energy or 'charge' associated with ct */
-#define SOI3iqt3 SOI3states+      42      /* equiv current source for ct */
-#define SOI3qt4 SOI3states+       43      /* Energy or 'charge' associated with ct */
-#define SOI3iqt4 SOI3states+      44      /* equiv current source for ct */
+#define SOI3qt SOI3states+        40      /* Energy or 'charge' associated with ct */
+#define SOI3iqt SOI3states+       41      /* equiv current source for ct */
+#define SOI3qt1 SOI3states+       42      /* Energy or 'charge' associated with ct */
+#define SOI3iqt1 SOI3states+      43      /* equiv current source for ct */
+#define SOI3qt2 SOI3states+       44      /* Energy or 'charge' associated with ct */
+#define SOI3iqt2 SOI3states+      45      /* equiv current source for ct */
+#define SOI3qt3 SOI3states+       46      /* Energy or 'charge' associated with ct */
+#define SOI3iqt3 SOI3states+      47      /* equiv current source for ct */
+#define SOI3qt4 SOI3states+       48      /* Energy or 'charge' associated with ct */
+#define SOI3iqt4 SOI3states+      49      /* equiv current source for ct */
 
-#define SOI3qBJTbs SOI3states+    45
-#define SOI3iqBJTbs SOI3states+   46
+#define SOI3qBJTbs SOI3states+    50
+#define SOI3iqBJTbs SOI3states+   51
 
-#define SOI3qBJTbd SOI3states+    47
-#define SOI3iqBJTbd SOI3states+   48
+#define SOI3qBJTbd SOI3states+    52
+#define SOI3iqBJTbd SOI3states+   53
 
-#define SOI3cBJTbsbs SOI3states+     49
-#define SOI3cBJTbsdeltaT SOI3states+ 50
+#define SOI3cBJTbsbs SOI3states+     54
+#define SOI3cBJTbsdeltaT SOI3states+ 55
 
-#define SOI3cBJTbdbd SOI3states+     51
-#define SOI3cBJTbddeltaT SOI3states+ 52
+#define SOI3cBJTbdbd SOI3states+     56
+#define SOI3cBJTbddeltaT SOI3states+ 57
 
-#define SOI3idrain SOI3states+ 53  /* final drain current at timepoint (no define) */
+#define SOI3idrain SOI3states+    58  /* final drain current at timepoint (no define) */
 
-#define SOI3deltaT1 SOI3states+ 54  /* final temperature difference */
-#define SOI3deltaT2 SOI3states+ 55  /* final temperature difference */
-#define SOI3deltaT3 SOI3states+ 56  /* final temperature difference */
-#define SOI3deltaT4 SOI3states+ 57  /* final temperature difference */
-#define SOI3deltaT5 SOI3states+ 58  /* final temperature difference */
+#define SOI3deltaT1 SOI3states+   59  /* final temperature difference */
+#define SOI3deltaT2 SOI3states+   60  /* final temperature difference */
+#define SOI3deltaT3 SOI3states+   61  /* final temperature difference */
+#define SOI3deltaT4 SOI3states+   62  /* final temperature difference */
+#define SOI3deltaT5 SOI3states+   63  /* final temperature difference */
 
-#define SOI3numStates 59
+#define SOI3numStates 64
 
 /* per model data */
 
@@ -394,7 +416,6 @@ typedef struct sSOI3instance {
 
 
 typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
-
 
     int SOI3modType;    /* type index to this device type */
     struct sSOI3model *SOI3nextModel;    /* pointer to next possible model
@@ -416,9 +437,9 @@ typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
     double SOI3frontGateSourceOverlapCapFactor;
     double SOI3frontGateDrainOverlapCapFactor;
     double SOI3frontGateBulkOverlapCapFactor;
-    double SOI3backGateSourceOverlapCapFactor;
-    double SOI3backGateDrainOverlapCapFactor;
-    double SOI3backGateBulkOverlapCapFactor;
+    double SOI3backGateSourceOverlapCapAreaFactor;
+    double SOI3backGateDrainOverlapCapAreaFactor;
+    double SOI3backGateBulkOverlapCapAreaFactor;
     double SOI3frontOxideCapFactor; /* Cof   NO DEFINES      */
     double SOI3backOxideCapFactor;  /* Cob       OR          */
     double SOI3bodyCapFactor;       /* Cb       FLAGS        */
@@ -497,6 +518,7 @@ typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
     double SOI3nplusDoping;     /* Doping concentration of N+ or P+ regions */
     double SOI3rta;     /* thermal resistance area scaling factor */
     double SOI3cta;     /* thermal capacitance area scaling factor */
+    double SOI3mexp;    /* exponent for CLM smoothing */
 
     unsigned SOI3typeGiven  :1;
     unsigned SOI3latDiffGiven   :1;
@@ -511,9 +533,9 @@ typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
     unsigned SOI3frontGateSourceOverlapCapFactorGiven    :1;
     unsigned SOI3frontGateDrainOverlapCapFactorGiven :1;
     unsigned SOI3frontGateBulkOverlapCapFactorGiven  :1;
-    unsigned SOI3backGateSourceOverlapCapFactorGiven    :1;
-    unsigned SOI3backGateDrainOverlapCapFactorGiven :1;
-    unsigned SOI3backGateBulkOverlapCapFactorGiven  :1;
+    unsigned SOI3backGateSourceOverlapCapAreaFactorGiven    :1;
+    unsigned SOI3backGateDrainOverlapCapAreaFactorGiven :1;
+    unsigned SOI3backGateBulkOverlapCapAreaFactorGiven  :1;
     unsigned SOI3subsBiasFactorGiven  :1;
     unsigned SOI3bodyFactorGiven      :1;
     unsigned SOI3vt0Given   :1;
@@ -585,6 +607,7 @@ typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
     unsigned SOI3nplusDopingGiven          :1;
     unsigned SOI3rtaGiven                  :1;
     unsigned SOI3ctaGiven                  :1;
+    unsigned SOI3mexpGiven                 :1;
 
 } SOI3model;
 
@@ -594,74 +617,77 @@ typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
 #endif /*NSOI3*/
 
 /* device parameters */
-#define SOI3_W 1
-#define SOI3_L 2
-#define SOI3_AS 3
-#define SOI3_AD 4
-#define SOI3_PS 5
-#define SOI3_PD 6
-#define SOI3_NRS 7
-#define SOI3_NRD 8
-#define SOI3_OFF 9
-#define SOI3_IC 10
-#define SOI3_IC_VBS 11
-#define SOI3_IC_VDS 12
-#define SOI3_IC_VGFS 13
-#define SOI3_IC_VGBS      21
-#define SOI3_W_SENS 14
-#define SOI3_L_SENS 15
-#define SOI3_IB 16
-#define SOI3_IGF 17
-#define SOI3_IGB          22
-#define SOI3_IS 18
-#define SOI3_POWER 19
-#define SOI3_TEMP 20
+#define SOI3_W 			 1
+#define SOI3_L 			 2
+#define SOI3_M			25
+#define SOI3_AS 		 3
+#define SOI3_AD 		 4
+#define SOI3_AB 		 5
+#define SOI3_PS 		 6
+#define SOI3_PD 	 	 7
+#define SOI3_PB 		 8
+#define SOI3_NRS 		 9
+#define SOI3_NRD 		10
+#define SOI3_OFF 		11
+#define SOI3_IC 		12
+#define SOI3_IC_VBS 		13
+#define SOI3_IC_VDS 		14
+#define SOI3_IC_VGFS 		15
+#define SOI3_IC_VGBS      	16
+#define SOI3_W_SENS 		17
+#define SOI3_L_SENS 		18
+#define SOI3_IB 		19
+#define SOI3_IGF 		20
+#define SOI3_IGB           	21
+#define SOI3_IS 		22
+#define SOI3_POWER 		23
+#define SOI3_TEMP 		24
 
 /* model parameters */
-#define SOI3_MOD_VTO      101
+#define SOI3_MOD_VTO      	101
 #define SOI3_MOD_VFBF           149
-#define SOI3_MOD_KP       102
-#define SOI3_MOD_GAMMA    103
-#define SOI3_MOD_PHI      104
-#define SOI3_MOD_LAMBDA   105
+#define SOI3_MOD_KP       	102
+#define SOI3_MOD_GAMMA    	103
+#define SOI3_MOD_PHI      	104
+#define SOI3_MOD_LAMBDA   	105
 #define SOI3_MOD_THETA          139
-#define SOI3_MOD_RD       106
-#define SOI3_MOD_RS       107
-#define SOI3_MOD_CBD      108
-#define SOI3_MOD_CBS      109
-#define SOI3_MOD_IS       110
-#define SOI3_MOD_PB       111
-#define SOI3_MOD_CGFSO    112
-#define SOI3_MOD_CGFDO    113
-#define SOI3_MOD_CGFBO    114
+#define SOI3_MOD_RD       	106
+#define SOI3_MOD_RS       	107
+#define SOI3_MOD_CBD      	108
+#define SOI3_MOD_CBS      	109
+#define SOI3_MOD_IS       	110
+#define SOI3_MOD_PB      	111
+#define SOI3_MOD_CGFSO    	112
+#define SOI3_MOD_CGFDO    	113
+#define SOI3_MOD_CGFBO    	114
 #define SOI3_MOD_CGBSO          144
 #define SOI3_MOD_CGBDO          145
-#define SOI3_MOD_CGB_BO         146
-#define SOI3_MOD_CJ       115
-#define SOI3_MOD_MJ       116
-#define SOI3_MOD_CJSW     117
-#define SOI3_MOD_MJSW     118
-#define SOI3_MOD_JS       119
-#define SOI3_MOD_TOF      120
-#define SOI3_MOD_TOB          133
-#define SOI3_MOD_TB           134
-#define SOI3_MOD_LD       121
-#define SOI3_MOD_RSH      122
-#define SOI3_MOD_U0       123
-#define SOI3_MOD_FC       124
-#define SOI3_MOD_NSUB     125
-#define SOI3_MOD_TPG      126
+#define SOI3_MOD_CGBBO          146
+#define SOI3_MOD_CJ       	115
+#define SOI3_MOD_MJ       	116
+#define SOI3_MOD_CJSW     	117
+#define SOI3_MOD_MJSW     	118
+#define SOI3_MOD_JS       	119
+#define SOI3_MOD_TOF      	120
+#define SOI3_MOD_TOB    	133
+#define SOI3_MOD_TB          	134
+#define SOI3_MOD_LD       	121
+#define SOI3_MOD_RSH      	122
+#define SOI3_MOD_U0       	123
+#define SOI3_MOD_FC       	124
+#define SOI3_MOD_NSUB     	125
+#define SOI3_MOD_TPG      	126
 #define SOI3_MOD_NQFF           147
 #define SOI3_MOD_NQFB           148
-#define SOI3_MOD_NSSF     127
-#define SOI3_MOD_NSSB         135
-#define SOI3_MOD_NSOI3    128
-#define SOI3_MOD_PSOI3    129
-#define SOI3_MOD_TNOM     130
-#define SOI3_MOD_KF       131
-#define SOI3_MOD_AF       132
-#define SOI3_MOD_KOX          142
-#define SOI3_MOD_SHSI         143
+#define SOI3_MOD_NSSF     	127
+#define SOI3_MOD_NSSB         	135
+#define SOI3_MOD_NSOI3    	128
+#define SOI3_MOD_PSOI3    	129
+#define SOI3_MOD_TNOM     	130
+#define SOI3_MOD_KF       	131
+#define SOI3_MOD_AF		132
+#define SOI3_MOD_KOX		142
+#define SOI3_MOD_SHSI		143
 /* extra stuff for newer model - msll Jan96 */
 #define SOI3_MOD_SIGMA          150
 #define SOI3_MOD_CHIFB          151
@@ -705,6 +731,7 @@ typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
 #define SOI3_MOD_NPLUS          388
 #define SOI3_MOD_RTA            389
 #define SOI3_MOD_CTA            390
+#define SOI3_MOD_MEXP           391
 
 /* device questions */
 #define SOI3_DNODE              201
@@ -759,38 +786,46 @@ typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
 #define SOI3_CGFD               250
 #define SOI3_CGFS               251
 #define SOI3_CGFDELTAT          252
-#define SOI3_CDGF               253
-#define SOI3_CDD                254
-#define SOI3_CDS                255
-#define SOI3_CDDELTAT           256
-#define SOI3_CSGF               257
-#define SOI3_CSD                258
-#define SOI3_CSS                259
-#define SOI3_CSDELTAT           260
-#define SOI3_L_SENS_REAL        261
-#define SOI3_L_SENS_IMAG        262
-#define SOI3_L_SENS_MAG         263
-#define SOI3_L_SENS_PH          264
-#define SOI3_L_SENS_CPLX        265
-#define SOI3_W_SENS_REAL        266
-#define SOI3_W_SENS_IMAG        267
-#define SOI3_W_SENS_MAG         268
-#define SOI3_W_SENS_PH          269
-#define SOI3_W_SENS_CPLX        270
-#define SOI3_L_SENS_DC          271
-#define SOI3_W_SENS_DC          272
-#define SOI3_RT                 273
-#define SOI3_CT                 274
-/* extra stuff for newer model - msll Jan96 */
-#define SOI3_VFBB               275
-#define SOI3_RT1                276
-#define SOI3_CT1                277
-#define SOI3_RT2                278
-#define SOI3_CT2                279
-#define SOI3_RT3                280
-#define SOI3_CT3                281
-#define SOI3_RT4                282
-#define SOI3_CT4                283
+#define SOI3_CGFGB              253
+#define SOI3_CDGF               254
+#define SOI3_CDD                255
+#define SOI3_CDS                256
+#define SOI3_CDDELTAT           257
+#define SOI3_CDGB               258
+#define SOI3_CSGF               259
+#define SOI3_CSD                260
+#define SOI3_CSS                261
+#define SOI3_CSDELTAT           262
+#define SOI3_CSGB               263
+#define SOI3_CGBGF              264
+#define SOI3_CGBD               265
+#define SOI3_CGBS               266
+#define SOI3_CGBDELTAT          267
+#define SOI3_CGBGB              268
+#define SOI3_L_SENS_REAL        269
+#define SOI3_L_SENS_IMAG        270
+#define SOI3_L_SENS_MAG         271
+#define SOI3_L_SENS_PH          272
+#define SOI3_L_SENS_CPLX        273
+#define SOI3_W_SENS_REAL        274
+#define SOI3_W_SENS_IMAG        275
+#define SOI3_W_SENS_MAG         276
+#define SOI3_W_SENS_PH          277
+#define SOI3_W_SENS_CPLX        278
+#define SOI3_L_SENS_DC          279
+#define SOI3_W_SENS_DC          280
+#define SOI3_RT                 281
+#define SOI3_CT                 282
+#define SOI3_VFBB               283
+#define SOI3_RT1                284
+#define SOI3_CT1                285
+#define SOI3_RT2                286
+#define SOI3_CT2                287
+#define SOI3_RT3                288
+#define SOI3_CT3                289
+#define SOI3_RT4                290
+#define SOI3_CT4                291
+#define SOI3_ITOT		292
 
 /* model questions */
 

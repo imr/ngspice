@@ -3,10 +3,15 @@ Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 File: b3soiddacld.c          98/5/01
+Modified by Paolo Nenzi 2002
 **********/
 
+/* 
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMDD2.1 release
+ */
+
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "b3soidddef.h"
 #include "sperror.h"
@@ -14,13 +19,11 @@ File: b3soiddacld.c          98/5/01
 
 
 int
-B3SOIDDacLoad(inModel,ckt)
-GENmodel *inModel;
-register CKTcircuit *ckt;
+B3SOIDDacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
-register B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
-register B3SOIDDinstance *here;
-register int selfheat;
+B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
+B3SOIDDinstance *here;
+int selfheat;
 double xcggb, xcgdb, xcgsb, xcgeb, xcgT;
 double xcdgb, xcddb, xcdsb, xcdeb, xcdT;
 double xcsgb, xcsdb, xcssb, xcseb, xcsT;
@@ -43,6 +46,8 @@ double xcTt, cTt, gcTt, gTtt, gTtg, gTtb, gTte, gTtdp, gTtsp;
 double Dum1, Dum2, Dum3, Dum4, Dum5;
 FILE *fpdebug;
 
+double m;
+
     omega = ckt->CKTomega;
     for (; model != NULL; model = model->B3SOIDDnextModel) 
     {    
@@ -50,10 +55,14 @@ FILE *fpdebug;
       for (here = model->B3SOIDDinstances; here!= NULL;
               here = here->B3SOIDDnextInstance) 
 	 {    
-              selfheat = (model->B3SOIDDshMod == 1) && (here->B3SOIDDrth0 != 0.0);
+              if (here->B3SOIDDowner != ARCHme)
+		      continue;
+
+	      
+	      selfheat = (model->B3SOIDDshMod == 1) && (here->B3SOIDDrth0 != 0.0);
               if (here->B3SOIDDdebugMod > 2)
               {
-                 fpdebug = fopen("b3soiDDac.log", "a");
+                 fpdebug = fopen("b3soiddac.log", "a");
                  fprintf(fpdebug, ".......omega=%.5e\n", omega);
               }
               if (here->B3SOIDDmode >= 0) 
@@ -257,49 +266,51 @@ FILE *fpdebug;
               xcbsb = cbsb * omega;
               xcbeb = cbeb * omega;
               xcbT  = cbT * omega;
-
+	      
               xcTt = cTt * omega;
 
-              *(here->B3SOIDDEgPtr  +1) += xcegb;
-              *(here->B3SOIDDEdpPtr  +1) += xcedb;
-              *(here->B3SOIDDEspPtr  +1) += xcesb;
-              *(here->B3SOIDDGePtr +1)  += xcgeb;
-              *(here->B3SOIDDDPePtr +1) += xcdeb;
-              *(here->B3SOIDDSPePtr +1) += xcseb;
+              m = here->B3SOIDDm;
+
+              *(here->B3SOIDDEgPtr  +1) += m * xcegb;
+              *(here->B3SOIDDEdpPtr  +1) += m * xcedb;
+              *(here->B3SOIDDEspPtr  +1) += m * xcesb;
+              *(here->B3SOIDDGePtr +1)  += m * xcgeb;
+              *(here->B3SOIDDDPePtr +1) += m * xcdeb;
+              *(here->B3SOIDDSPePtr +1) += m * xcseb;
               
-              *(here->B3SOIDDEePtr  +1) += xceeb;
+              *(here->B3SOIDDEePtr  +1) += m * xceeb;
 
-              *(here->B3SOIDDGgPtr  +1) += xcggb;
-              *(here->B3SOIDDGdpPtr +1) += xcgdb;
-              *(here->B3SOIDDGspPtr +1) += xcgsb;
+              *(here->B3SOIDDGgPtr  +1) += m * xcggb;
+              *(here->B3SOIDDGdpPtr +1) += m * xcgdb;
+              *(here->B3SOIDDGspPtr +1) += m * xcgsb;
 
-              *(here->B3SOIDDDPgPtr +1) += xcdgb;
-              *(here->B3SOIDDDPdpPtr +1) += xcddb;
-              *(here->B3SOIDDDPspPtr +1) += xcdsb;
+              *(here->B3SOIDDDPgPtr +1) += m * xcdgb;
+              *(here->B3SOIDDDPdpPtr +1) += m * xcddb;
+              *(here->B3SOIDDDPspPtr +1) += m * xcdsb;
 
-              *(here->B3SOIDDSPgPtr +1) += xcsgb;
-              *(here->B3SOIDDSPdpPtr +1) += xcsdb;
-              *(here->B3SOIDDSPspPtr +1) += xcssb;
+              *(here->B3SOIDDSPgPtr +1) += m * xcsgb;
+              *(here->B3SOIDDSPdpPtr +1) += m * xcsdb;
+              *(here->B3SOIDDSPspPtr +1) += m * xcssb;
 
-              *(here->B3SOIDDBePtr +1) += xcbeb;
-              *(here->B3SOIDDBgPtr +1) += xcbgb;
-              *(here->B3SOIDDBdpPtr +1) += xcbdb;
-              *(here->B3SOIDDBspPtr +1) += xcbsb;
+              *(here->B3SOIDDBePtr +1) += m * xcbeb;
+              *(here->B3SOIDDBgPtr +1) += m * xcbgb;
+              *(here->B3SOIDDBdpPtr +1) += m * xcbdb;
+              *(here->B3SOIDDBspPtr +1) += m * xcbsb;
 
-              *(here->B3SOIDDEbPtr  +1) -= xcegb + xcedb + xcesb + xceeb;
-              *(here->B3SOIDDGbPtr +1) -= xcggb + xcgdb + xcgsb + xcgeb;
-              *(here->B3SOIDDDPbPtr +1) -= xcdgb + xcddb + xcdsb + xcdeb;
-              *(here->B3SOIDDSPbPtr +1) -= xcsgb + xcsdb + xcssb + xcseb;
-              *(here->B3SOIDDBbPtr +1) -= xcbgb + xcbdb + xcbsb + xcbeb;
+              *(here->B3SOIDDEbPtr  +1) -= m * (xcegb + xcedb + xcesb + xceeb);
+              *(here->B3SOIDDGbPtr +1) -= m * (xcggb + xcgdb + xcgsb + xcgeb);
+              *(here->B3SOIDDDPbPtr +1) -= m * (xcdgb + xcddb + xcdsb + xcdeb);
+              *(here->B3SOIDDSPbPtr +1) -= m * (xcsgb + xcsdb + xcssb + xcseb);
+              *(here->B3SOIDDBbPtr +1) -= m * (xcbgb + xcbdb + xcbsb + xcbeb);
 
               if (selfheat)
               {
-                 *(here->B3SOIDDTemptempPtr + 1) += xcTt;
-                 *(here->B3SOIDDDPtempPtr + 1) += xcdT;
-                 *(here->B3SOIDDSPtempPtr + 1) += xcsT;
-                 *(here->B3SOIDDBtempPtr + 1) += xcbT;
-                 *(here->B3SOIDDEtempPtr + 1) += xceT;
-                 *(here->B3SOIDDGtempPtr + 1) += xcgT;
+                 *(here->B3SOIDDTemptempPtr + 1) += m * xcTt;
+                 *(here->B3SOIDDDPtempPtr + 1) += m * xcdT;
+                 *(here->B3SOIDDSPtempPtr + 1) += m * xcsT;
+                 *(here->B3SOIDDBtempPtr + 1) += m * xcbT;
+                 *(here->B3SOIDDEtempPtr + 1) += m * xceT;
+                 *(here->B3SOIDDGtempPtr + 1) += m * xcgT;
               }
                                                                
  
@@ -329,45 +340,45 @@ xcsgb, xcsdb, xcssb, -(xcsgb+xcsdb+xcssb+xcseb), xcseb);
               *(here->B3SOIDDEdpPtr) += 0.0;
               *(here->B3SOIDDEspPtr) += 0.0;
               *(here->B3SOIDDGePtr) -=  0.0;
-              *(here->B3SOIDDDPePtr) += Gme + gddpe;
-              *(here->B3SOIDDSPePtr) += gsspe - Gme;
+              *(here->B3SOIDDDPePtr) += m * (Gme + gddpe);
+              *(here->B3SOIDDSPePtr) += m * (gsspe - Gme);
              
               *(here->B3SOIDDEePtr) += 0.0;
 
-              *(here->B3SOIDDDPgPtr) += Gm + gddpg;
-              *(here->B3SOIDDDPdpPtr) += gdpr + gds + gddpdp + RevSum ;
-              *(here->B3SOIDDDPspPtr) -= gds + FwdSum - gddpsp;
-              *(here->B3SOIDDDPdPtr) -= gdpr;
+              *(here->B3SOIDDDPgPtr) += m * (Gm + gddpg);
+              *(here->B3SOIDDDPdpPtr) += m * (gdpr + gds + gddpdp + RevSum);
+              *(here->B3SOIDDDPspPtr) -= m * (gds + FwdSum - gddpsp);
+              *(here->B3SOIDDDPdPtr) -= m * gdpr;
 
-              *(here->B3SOIDDSPgPtr) -= Gm - gsspg;
-              *(here->B3SOIDDSPdpPtr) -= gds + RevSum - gsspdp;
-              *(here->B3SOIDDSPspPtr) += gspr + gds + FwdSum + gsspsp;
-              *(here->B3SOIDDSPsPtr) -= gspr;
+              *(here->B3SOIDDSPgPtr) -= m * (Gm - gsspg);
+              *(here->B3SOIDDSPdpPtr) -= m * (gds + RevSum - gsspdp);
+              *(here->B3SOIDDSPspPtr) += m * (gspr + gds + FwdSum + gsspsp);
+              *(here->B3SOIDDSPsPtr) -= m * gspr;
 
-              *(here->B3SOIDDBePtr) += gbbe;
-              *(here->B3SOIDDBgPtr)  += gbbg;
-              *(here->B3SOIDDBdpPtr) += gbbdp;
-              *(here->B3SOIDDBspPtr) += gbbsp;
-	      *(here->B3SOIDDBbPtr) += gbbb;
+              *(here->B3SOIDDBePtr) += m * gbbe;
+              *(here->B3SOIDDBgPtr)  += m * gbbg;
+              *(here->B3SOIDDBdpPtr) += m * gbbdp;
+              *(here->B3SOIDDBspPtr) += m * gbbsp;
+	      *(here->B3SOIDDBbPtr) += m * gbbb;
               *(here->B3SOIDDEbPtr) += 0.0;
-              *(here->B3SOIDDSPbPtr) -= Gmbs - gsspb; 
-              *(here->B3SOIDDDPbPtr) -= (-gddpb - Gmbs);
+              *(here->B3SOIDDSPbPtr) -= m * (Gmbs - gsspb); 
+              *(here->B3SOIDDDPbPtr) -= m * (-gddpb - Gmbs);
 
               if (selfheat)
               {
-                 *(here->B3SOIDDDPtempPtr) += GmT + gddpT;
-                 *(here->B3SOIDDSPtempPtr) += -GmT + gsspT;
-                 *(here->B3SOIDDBtempPtr) += gbbT;
+                 *(here->B3SOIDDDPtempPtr) += m * (GmT + gddpT);
+                 *(here->B3SOIDDSPtempPtr) += m * (-GmT + gsspT);
+                 *(here->B3SOIDDBtempPtr) += m * gbbT;
                  if (here->B3SOIDDbodyMod == 1) {
-                    (*(here->B3SOIDDPtempPtr) += gppT);
+                    (*(here->B3SOIDDPtempPtr) += m * gppT);
                  }
 
-                 *(here->B3SOIDDTemptempPtr) += gTtt + 1/here->pParam->B3SOIDDrth;
-                 *(here->B3SOIDDTempgPtr) += gTtg;
-                 *(here->B3SOIDDTempbPtr) += gTtb;
-                 *(here->B3SOIDDTempePtr) += gTte;
-                 *(here->B3SOIDDTempdpPtr) += gTtdp;
-                 *(here->B3SOIDDTempspPtr) += gTtsp;
+                 *(here->B3SOIDDTemptempPtr) += m * (gTtt + 1/here->pParam->B3SOIDDrth);
+                 *(here->B3SOIDDTempgPtr) += m * gTtg;
+                 *(here->B3SOIDDTempbPtr) += m * gTtb;
+                 *(here->B3SOIDDTempePtr) += m * gTte;
+                 *(here->B3SOIDDTempdpPtr) += m * gTtdp;
+                 *(here->B3SOIDDTempspPtr) += m * gTtsp;
               }
 
 if (here->B3SOIDDdebugMod > 3)
@@ -389,68 +400,68 @@ if (here->B3SOIDDdebugMod > 3)
 gbbg, gbbdp, gbbsp, gbbb, gbbe);
 }
 
-              *(here->B3SOIDDDdPtr) += gdpr;
-              *(here->B3SOIDDDdpPtr) -= gdpr;
-              *(here->B3SOIDDSsPtr) += gspr;
-              *(here->B3SOIDDSspPtr) -= gspr;
+              *(here->B3SOIDDDdPtr) += m * gdpr;
+              *(here->B3SOIDDDdpPtr) -= m * gdpr;
+              *(here->B3SOIDDSsPtr) += m * gspr;
+              *(here->B3SOIDDSspPtr) -= m * gspr;
 
 
               if (here->B3SOIDDbodyMod == 1) {
-                 (*(here->B3SOIDDBpPtr) -= gppp);
-                 (*(here->B3SOIDDPbPtr) += gppb);
-                 (*(here->B3SOIDDPpPtr) += gppp);
-                 (*(here->B3SOIDDPgPtr) += gppg);
-                 (*(here->B3SOIDDPdpPtr) += gppdp);
-                 (*(here->B3SOIDDPspPtr) += gppsp);
-                 (*(here->B3SOIDDPePtr) += gppe);
+                 (*(here->B3SOIDDBpPtr) -= m * gppp);
+                 (*(here->B3SOIDDPbPtr) += m * gppb);
+                 (*(here->B3SOIDDPpPtr) += m * gppp);
+                 (*(here->B3SOIDDPgPtr) += m * gppg);
+                 (*(here->B3SOIDDPdpPtr) += m * gppdp);
+                 (*(here->B3SOIDDPspPtr) += m * gppsp);
+                 (*(here->B3SOIDDPePtr) += m * gppe);
               }
               if (here->B3SOIDDdebugMod > 1)
               {
-                      *(here->B3SOIDDVbsPtr) += 1;
-                      *(here->B3SOIDDIdsPtr) += 1;
-                      *(here->B3SOIDDIcPtr) += 1;
-                      *(here->B3SOIDDIbsPtr) += 1;
-                      *(here->B3SOIDDIbdPtr) += 1;
-                      *(here->B3SOIDDIiiPtr) += 1;
-                      *(here->B3SOIDDIgidlPtr) += 1;
-                      *(here->B3SOIDDItunPtr) += 1;
-                      *(here->B3SOIDDIbpPtr) += 1;
-                      *(here->B3SOIDDAbeffPtr) += 1;
-                      *(here->B3SOIDDVbs0effPtr) += 1;
+                      *(here->B3SOIDDVbsPtr) += m * 1;
+                      *(here->B3SOIDDIdsPtr) += m * 1;
+                      *(here->B3SOIDDIcPtr) += m * 1;
+                      *(here->B3SOIDDIbsPtr) += m * 1;
+                      *(here->B3SOIDDIbdPtr) += m * 1;
+                      *(here->B3SOIDDIiiPtr) += m * 1;
+                      *(here->B3SOIDDIgidlPtr) += m * 1;
+                      *(here->B3SOIDDItunPtr) += m * 1;
+                      *(here->B3SOIDDIbpPtr) += m * 1;
+                      *(here->B3SOIDDAbeffPtr) += m * 1;
+                      *(here->B3SOIDDVbs0effPtr) += m * 1;
                       *(here->B3SOIDDVbseffPtr) += 1;
-                      *(here->B3SOIDDXcPtr) += 1;
-                      *(here->B3SOIDDCbgPtr) += 1;
-                      *(here->B3SOIDDCbbPtr) += 1;
-                      *(here->B3SOIDDCbdPtr) += 1;
-                      *(here->B3SOIDDqbPtr) += 1;
-                      *(here->B3SOIDDQbfPtr) += 1;
-                      *(here->B3SOIDDQjsPtr) += 1;
-                      *(here->B3SOIDDQjdPtr) += 1;
+                      *(here->B3SOIDDXcPtr) += m * 1;
+                      *(here->B3SOIDDCbgPtr) += m * 1;
+                      *(here->B3SOIDDCbbPtr) += m * 1;
+                      *(here->B3SOIDDCbdPtr) += m * 1;
+                      *(here->B3SOIDDqbPtr) += m * 1;
+                      *(here->B3SOIDDQbfPtr) += m * 1;
+                      *(here->B3SOIDDQjsPtr) += m * 1;
+                      *(here->B3SOIDDQjdPtr) += m * 1;
 
                       /* clean up last */
-                      *(here->B3SOIDDGmPtr) += 1;
-                      *(here->B3SOIDDGmbsPtr) += 1;
-                      *(here->B3SOIDDGdsPtr) += 1;
-                      *(here->B3SOIDDGmePtr) += 1;
-                      *(here->B3SOIDDVbs0teffPtr) += 1;
-                      *(here->B3SOIDDVgsteffPtr) += 1;
-                      *(here->B3SOIDDCbePtr) += 1;
-                      *(here->B3SOIDDVthPtr) += 1;
-                      *(here->B3SOIDDXcsatPtr) += 1;
-                      *(here->B3SOIDDVdscvPtr) += 1;
-                      *(here->B3SOIDDVcscvPtr) += 1;
-                      *(here->B3SOIDDQaccPtr) += 1;
-                      *(here->B3SOIDDQsub0Ptr) += 1;
-                      *(here->B3SOIDDQsubs1Ptr) += 1;
-                      *(here->B3SOIDDQsubs2Ptr) += 1;
-                      *(here->B3SOIDDqgPtr) += 1;
-                      *(here->B3SOIDDqdPtr) += 1;
-                      *(here->B3SOIDDqePtr) += 1;
-                      *(here->B3SOIDDDum1Ptr) += 1;
-                      *(here->B3SOIDDDum2Ptr) += 1;
-                      *(here->B3SOIDDDum3Ptr) += 1;
-                      *(here->B3SOIDDDum4Ptr) += 1;
-                      *(here->B3SOIDDDum5Ptr) += 1;
+                      *(here->B3SOIDDGmPtr) += m * 1;
+                      *(here->B3SOIDDGmbsPtr) += m * 1;
+                      *(here->B3SOIDDGdsPtr) += m * 1;
+                      *(here->B3SOIDDGmePtr) += m * 1;
+                      *(here->B3SOIDDVbs0teffPtr) += m * 1;
+                      *(here->B3SOIDDVgsteffPtr) += m * 1;
+                      *(here->B3SOIDDCbePtr) += m * 1;
+                      *(here->B3SOIDDVthPtr) += m * 1;
+                      *(here->B3SOIDDXcsatPtr) += m * 1;
+                      *(here->B3SOIDDVdscvPtr) += m * 1;
+                      *(here->B3SOIDDVcscvPtr) += m * 1;
+                      *(here->B3SOIDDQaccPtr) += m * 1;
+                      *(here->B3SOIDDQsub0Ptr) += m * 1;
+                      *(here->B3SOIDDQsubs1Ptr) += m * 1;
+                      *(here->B3SOIDDQsubs2Ptr) += m * 1;
+                      *(here->B3SOIDDqgPtr) += m * 1;
+                      *(here->B3SOIDDqdPtr) += m * 1;
+                      *(here->B3SOIDDqePtr) += m * 1;
+                      *(here->B3SOIDDDum1Ptr) += m * 1;
+                      *(here->B3SOIDDDum2Ptr) += m * 1;
+                      *(here->B3SOIDDDum3Ptr) += m * 1;
+                      *(here->B3SOIDDDum4Ptr) += m * 1;
+                      *(here->B3SOIDDDum5Ptr) += m * 1;
               }
 
            if (here->B3SOIDDdebugMod > 2)

@@ -5,7 +5,6 @@ Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "mos1defs.h"
@@ -76,10 +75,24 @@ MOS1load(inModel,ckt)
     double capgd;   /* total gate-drain capacitance */
     double capgb;   /* total gate-bulk capacitance */
     int Check;
+#ifndef NOBYPASS    
     double tempv;
+#endif /*NOBYPASS*/    
     int error;
+ #ifdef CAPBYPASS
+    int senflag;
+#endif /*CAPBYPASS*/           
     int SenCond;
 
+
+
+#ifdef CAPBYPASS
+    senflag = 0;
+    if(ckt->CKTsenInfo && ckt->CKTsenInfo->SENstatus == PERTURBATION &&
+        (ckt->CKTsenInfo->SENmode & (ACSEN | TRANSEN))) {
+        senflag = 1;
+    }
+#endif /* CAPBYPASS */ 
 
     /*  loop through all the MOS1 device models */
     for( ; model != NULL; model = model->MOS1nextModel ) {
@@ -264,6 +277,7 @@ MOS1load(inModel,ckt)
   
 */
 
+#ifndef NOBYPASS
                 /* now lets see if we can bypass (ugh) */
                 tempv = (MAX(fabs(cbhat),
 			    fabs(here->MOS1cbs + here->MOS1cbd)) +
@@ -329,6 +343,7 @@ MOS1load(inModel,ckt)
 		  }
 		  goto bypass;
 		}
+#endif /*NOBYPASS*/
 
 /*
   
@@ -543,9 +558,18 @@ next1:      if(vbs <= -3*vt) {
                  *
                  *.. bulk-drain and bulk-source depletion capacitances
                  */
+#ifdef CAPBYPASS
+                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
+                        fabs(delvbs) >= ckt->CKTreltol * MAX(fabs(vbs),
+                        fabs(*(ckt->CKTstate0+here->MOS1vbs)))+
+                        ckt->CKTvoltTol)|| senflag)
+#endif /*CAPBYPASS*/
+		 
                 {
                     /* can't bypass the diode capacitance calculations */
+#ifdef CAPZEROBYPASS		    
                     if(here->MOS1Cbs != 0 || here->MOS1Cbssw != 0 ) {
+#endif /*CAPZEROBYPASS*/		    
 			if (vbs < here->MOS1tDepCap){
 			    arg=1-vbs/here->MOS1tBulkPot;
 			    /*
@@ -597,14 +621,25 @@ next1:      if(vbs <= -3*vt) {
                                 vbs*(here->MOS1f2s+vbs*(here->MOS1f3s/2));
 			    here->MOS1capbs=here->MOS1f2s+here->MOS1f3s*vbs;
 			}
+#ifdef CAPZEROBYPASS						
                     } else {
 			*(ckt->CKTstate0 + here->MOS1qbs) = 0;
                         here->MOS1capbs=0;
                     }
+#endif /*CAPZEROBYPASS*/		    
                 }
+#ifdef CAPBYPASS
+                    if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
+                        fabs(delvbd) >= ckt->CKTreltol * MAX(fabs(vbd),
+                        fabs(*(ckt->CKTstate0+here->MOS1vbd)))+
+                        ckt->CKTvoltTol)|| senflag)
+#endif /*CAPBYPASS*/		    	
+	
                     /* can't bypass the diode capacitance calculations */
                 {
+#ifdef CAPZEROBYPASS					
                     if(here->MOS1Cbd != 0 || here->MOS1Cbdsw != 0 ) {
+#endif /*CAPZEROBYPASS*/		    		    
 			if (vbd < here->MOS1tDepCap) {
 			    arg=1-vbd/here->MOS1tBulkPot;
 			    /*
@@ -651,10 +686,12 @@ next1:      if(vbs <= -3*vt) {
                                 vbd * (here->MOS1f2d + vbd * here->MOS1f3d/2);
 			    here->MOS1capbd=here->MOS1f2d + vbd * here->MOS1f3d;
 			}
+#ifdef CAPZEROBYPASS						
 		    } else {
 			*(ckt->CKTstate0 + here->MOS1qbd) = 0;
 			here->MOS1capbd = 0;
 		    }
+#endif /*CAPZEROBYPASS*/		    		    
                 }
 /*
   

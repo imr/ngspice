@@ -1,11 +1,16 @@
 /**********
-Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1995 Min-Chie Jeng and Mansun Chan.
-File: b3v1pzld.c
-**********/
+ * Copyright 1990 Regents of the University of California. All rights reserved.
+ * File: b3v1pzld.c
+ * Author: 1995 Min-Chie Jeng and Mansun Chan. 
+ * Modified by Paolo Nenzi 2002
+ **********/
+ 
+/* 
+ * Release Notes: 
+ * BSIM3v3.1,   Released by yuhua  96/12/08
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "complex.h"
 #include "sperror.h"
@@ -13,68 +18,70 @@ File: b3v1pzld.c
 #include "suffix.h"
 
 int
-BSIM3V1pzLoad(inModel,ckt,s)
-GENmodel *inModel;
-CKTcircuit *ckt;
-SPcomplex *s;
+BSIM3v1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
-BSIM3V1model *model = (BSIM3V1model*)inModel;
-BSIM3V1instance *here;
+BSIM3v1model *model = (BSIM3v1model*)inModel;
+BSIM3v1instance *here;
 double xcggb, xcgdb, xcgsb, xcbgb, xcbdb, xcbsb, xcddb, xcssb, xcdgb;
 double gdpr, gspr, gds, gbd, gbs, capbd, capbs, xcsgb, xcdsb, xcsdb;
 double cggb, cgdb, cgsb, cbgb, cbdb, cbsb, cddb, cdgb, cdsb;
 double GSoverlapCap, GDoverlapCap, GBoverlapCap;
 double FwdSum, RevSum, Gm, Gmbs;
 
-    for (; model != NULL; model = model->BSIM3V1nextModel) 
-    {    for (here = model->BSIM3V1instances; here!= NULL;
-              here = here->BSIM3V1nextInstance) 
-	 {  
-            if (here->BSIM3V1owner != ARCHme) continue;
-            if (here->BSIM3V1mode >= 0) 
-	    {   Gm = here->BSIM3V1gm;
-		Gmbs = here->BSIM3V1gmbs;
+double m;
+
+    for (; model != NULL; model = model->BSIM3v1nextModel) 
+    {    for (here = model->BSIM3v1instances; here!= NULL;
+              here = here->BSIM3v1nextInstance) 
+	 {
+	 
+           if (here->BSIM3v1owner != ARCHme)
+	           continue;
+	 
+            if (here->BSIM3v1mode >= 0) 
+	    {   Gm = here->BSIM3v1gm;
+		Gmbs = here->BSIM3v1gmbs;
 		FwdSum = Gm + Gmbs;
 		RevSum = 0.0;
-                cggb = here->BSIM3V1cggb;
-                cgsb = here->BSIM3V1cgsb;
-                cgdb = here->BSIM3V1cgdb;
+                cggb = here->BSIM3v1cggb;
+                cgsb = here->BSIM3v1cgsb;
+                cgdb = here->BSIM3v1cgdb;
 
-                cbgb = here->BSIM3V1cbgb;
-                cbsb = here->BSIM3V1cbsb;
-                cbdb = here->BSIM3V1cbdb;
+                cbgb = here->BSIM3v1cbgb;
+                cbsb = here->BSIM3v1cbsb;
+                cbdb = here->BSIM3v1cbdb;
 
-                cdgb = here->BSIM3V1cdgb;
-                cdsb = here->BSIM3V1cdsb;
-                cddb = here->BSIM3V1cddb;
+                cdgb = here->BSIM3v1cdgb;
+                cdsb = here->BSIM3v1cdsb;
+                cddb = here->BSIM3v1cddb;
             }
 	    else
-	    {   Gm = -here->BSIM3V1gm;
-		Gmbs = -here->BSIM3V1gmbs;
+	    {   Gm = -here->BSIM3v1gm;
+		Gmbs = -here->BSIM3v1gmbs;
 		FwdSum = 0.0;
 		RevSum = -Gm - Gmbs;
-                cggb = here->BSIM3V1cggb;
-                cgsb = here->BSIM3V1cgdb;
-                cgdb = here->BSIM3V1cgsb;
+                cggb = here->BSIM3v1cggb;
+                cgsb = here->BSIM3v1cgdb;
+                cgdb = here->BSIM3v1cgsb;
 
-                cbgb = here->BSIM3V1cbgb;
-                cbsb = here->BSIM3V1cbdb;
-                cbdb = here->BSIM3V1cbsb;
+                cbgb = here->BSIM3v1cbgb;
+                cbsb = here->BSIM3v1cbdb;
+                cbdb = here->BSIM3v1cbsb;
 
-                cdgb = -(here->BSIM3V1cdgb + cggb + cbgb);
-                cdsb = -(here->BSIM3V1cddb + cgsb + cbsb);
-                cddb = -(here->BSIM3V1cdsb + cgdb + cbdb);
+                cdgb = -(here->BSIM3v1cdgb + cggb + cbgb);
+                cdsb = -(here->BSIM3v1cddb + cgsb + cbsb);
+                cddb = -(here->BSIM3v1cdsb + cgdb + cbdb);
             }
-            gdpr=here->BSIM3V1drainConductance;
-            gspr=here->BSIM3V1sourceConductance;
-            gds= here->BSIM3V1gds;
-            gbd= here->BSIM3V1gbd;
-            gbs= here->BSIM3V1gbs;
-            capbd= here->BSIM3V1capbd;
-            capbs= here->BSIM3V1capbs;
-	    GSoverlapCap = here->BSIM3V1cgso;
-	    GDoverlapCap = here->BSIM3V1cgdo;
-	    GBoverlapCap = here->pParam->BSIM3V1cgbo;
+            gdpr=here->BSIM3v1drainConductance;
+            gspr=here->BSIM3v1sourceConductance;
+            gds= here->BSIM3v1gds;
+            gbd= here->BSIM3v1gbd;
+            gbs= here->BSIM3v1gbs;
+            capbd= here->BSIM3v1capbd;
+            capbs= here->BSIM3v1capbs;
+	    GSoverlapCap = here->BSIM3v1cgso;
+	    GDoverlapCap = here->BSIM3v1cgdo;
+	    GBoverlapCap = here->pParam->BSIM3v1cgbo;
 
             xcdgb = (cdgb - GDoverlapCap);
             xcddb = (cddb + capbd + GDoverlapCap);
@@ -89,56 +96,57 @@ double FwdSum, RevSum, Gm, Gmbs;
             xcbdb = (cbdb - capbd);
             xcbsb = (cbsb - capbs);
 
+            m = here->BSIM3v1m;
 
-            *(here->BSIM3V1GgPtr ) += xcggb * s->real;
-            *(here->BSIM3V1GgPtr +1) += xcggb * s->imag;
-            *(here->BSIM3V1BbPtr ) += (-xcbgb-xcbdb-xcbsb) * s->real;
-            *(here->BSIM3V1BbPtr +1) += (-xcbgb-xcbdb-xcbsb) * s->imag;
-            *(here->BSIM3V1DPdpPtr ) += xcddb * s->real;
-            *(here->BSIM3V1DPdpPtr +1) += xcddb * s->imag;
-            *(here->BSIM3V1SPspPtr ) += xcssb * s->real;
-            *(here->BSIM3V1SPspPtr +1) += xcssb * s->imag;
-            *(here->BSIM3V1GbPtr ) += (-xcggb-xcgdb-xcgsb) * s->real;
-            *(here->BSIM3V1GbPtr +1) += (-xcggb-xcgdb-xcgsb) * s->imag;
-            *(here->BSIM3V1GdpPtr ) += xcgdb * s->real;
-            *(here->BSIM3V1GdpPtr +1) += xcgdb * s->imag;
-            *(here->BSIM3V1GspPtr ) += xcgsb * s->real;
-            *(here->BSIM3V1GspPtr +1) += xcgsb * s->imag;
-            *(here->BSIM3V1BgPtr ) += xcbgb * s->real;
-            *(here->BSIM3V1BgPtr +1) += xcbgb * s->imag;
-            *(here->BSIM3V1BdpPtr ) += xcbdb * s->real;
-            *(here->BSIM3V1BdpPtr +1) += xcbdb * s->imag;
-            *(here->BSIM3V1BspPtr ) += xcbsb * s->real;
-            *(here->BSIM3V1BspPtr +1) += xcbsb * s->imag;
-            *(here->BSIM3V1DPgPtr ) += xcdgb * s->real;
-            *(here->BSIM3V1DPgPtr +1) += xcdgb * s->imag;
-            *(here->BSIM3V1DPbPtr ) += (-xcdgb-xcddb-xcdsb) * s->real;
-            *(here->BSIM3V1DPbPtr +1) += (-xcdgb-xcddb-xcdsb) * s->imag;
-            *(here->BSIM3V1DPspPtr ) += xcdsb * s->real;
-            *(here->BSIM3V1DPspPtr +1) += xcdsb * s->imag;
-            *(here->BSIM3V1SPgPtr ) += xcsgb * s->real;
-            *(here->BSIM3V1SPgPtr +1) += xcsgb * s->imag;
-            *(here->BSIM3V1SPbPtr ) += (-xcsgb-xcsdb-xcssb) * s->real;
-            *(here->BSIM3V1SPbPtr +1) += (-xcsgb-xcsdb-xcssb) * s->imag;
-            *(here->BSIM3V1SPdpPtr ) += xcsdb * s->real;
-            *(here->BSIM3V1SPdpPtr +1) += xcsdb * s->imag;
-            *(here->BSIM3V1DdPtr) += gdpr;
-            *(here->BSIM3V1SsPtr) += gspr;
-            *(here->BSIM3V1BbPtr) += gbd+gbs;
-            *(here->BSIM3V1DPdpPtr) += gdpr+gds+gbd+RevSum;
-            *(here->BSIM3V1SPspPtr) += gspr+gds+gbs+FwdSum;
-            *(here->BSIM3V1DdpPtr) -= gdpr;
-            *(here->BSIM3V1SspPtr) -= gspr;
-            *(here->BSIM3V1BdpPtr) -= gbd;
-            *(here->BSIM3V1BspPtr) -= gbs;
-            *(here->BSIM3V1DPdPtr) -= gdpr;
-            *(here->BSIM3V1DPgPtr) += Gm;
-            *(here->BSIM3V1DPbPtr) -= gbd - Gmbs;
-            *(here->BSIM3V1DPspPtr) -= gds + FwdSum;
-            *(here->BSIM3V1SPgPtr) -= Gm;
-            *(here->BSIM3V1SPsPtr) -= gspr;
-            *(here->BSIM3V1SPbPtr) -= gbs + Gmbs;
-            *(here->BSIM3V1SPdpPtr) -= gds + RevSum;
+            *(here->BSIM3v1GgPtr ) += m * (xcggb * s->real);
+            *(here->BSIM3v1GgPtr +1) += m * (xcggb * s->imag);
+            *(here->BSIM3v1BbPtr ) += m * ((-xcbgb-xcbdb-xcbsb) * s->real);
+            *(here->BSIM3v1BbPtr +1) += m * ((-xcbgb-xcbdb-xcbsb) * s->imag);
+            *(here->BSIM3v1DPdpPtr ) += m * (xcddb * s->real);
+            *(here->BSIM3v1DPdpPtr +1) += xcddb * s->imag;
+            *(here->BSIM3v1SPspPtr ) += m * (xcssb * s->real);
+            *(here->BSIM3v1SPspPtr +1) += m * (xcssb * s->imag);
+            *(here->BSIM3v1GbPtr ) += m * ((-xcggb-xcgdb-xcgsb) * s->real);
+            *(here->BSIM3v1GbPtr +1) += m * ((-xcggb-xcgdb-xcgsb) * s->imag);
+            *(here->BSIM3v1GdpPtr ) += m * (xcgdb * s->real);
+            *(here->BSIM3v1GdpPtr +1) += m * (xcgdb * s->imag);
+            *(here->BSIM3v1GspPtr ) += m * (xcgsb * s->real);
+            *(here->BSIM3v1GspPtr +1) += m * (xcgsb * s->imag);
+            *(here->BSIM3v1BgPtr ) += m * (xcbgb * s->real);
+            *(here->BSIM3v1BgPtr +1) += m * (xcbgb * s->imag);
+            *(here->BSIM3v1BdpPtr ) += m * (xcbdb * s->real);
+            *(here->BSIM3v1BdpPtr +1) += m * (xcbdb * s->imag);
+            *(here->BSIM3v1BspPtr ) += m * (xcbsb * s->real);
+            *(here->BSIM3v1BspPtr +1) += m * (xcbsb * s->imag);
+            *(here->BSIM3v1DPgPtr ) += m * (xcdgb * s->real);
+            *(here->BSIM3v1DPgPtr +1) += m * (xcdgb * s->imag);
+            *(here->BSIM3v1DPbPtr ) += m * ((-xcdgb-xcddb-xcdsb) * s->real);
+            *(here->BSIM3v1DPbPtr +1) += m * ((-xcdgb-xcddb-xcdsb) * s->imag);
+            *(here->BSIM3v1DPspPtr ) += m * (xcdsb * s->real);
+            *(here->BSIM3v1DPspPtr +1) += m * (xcdsb * s->imag);
+            *(here->BSIM3v1SPgPtr ) += m * (xcsgb * s->real);
+            *(here->BSIM3v1SPgPtr +1) += m * (xcsgb * s->imag);
+            *(here->BSIM3v1SPbPtr ) += m * ((-xcsgb-xcsdb-xcssb) * s->real);
+            *(here->BSIM3v1SPbPtr +1) += m * ((-xcsgb-xcsdb-xcssb) * s->imag);
+            *(here->BSIM3v1SPdpPtr ) += m * (xcsdb * s->real);
+            *(here->BSIM3v1SPdpPtr +1) += m * (xcsdb * s->imag);
+            *(here->BSIM3v1DdPtr) += m * gdpr;
+            *(here->BSIM3v1SsPtr) += m * gspr;
+            *(here->BSIM3v1BbPtr) += m * (gbd + gbs);
+            *(here->BSIM3v1DPdpPtr) += m * (gdpr + gds + gbd + RevSum);
+            *(here->BSIM3v1SPspPtr) += m * (gspr + gds + gbs + FwdSum);
+            *(here->BSIM3v1DdpPtr) -= m * gdpr;
+            *(here->BSIM3v1SspPtr) -= m * gspr;
+            *(here->BSIM3v1BdpPtr) -= m * gbd;
+            *(here->BSIM3v1BspPtr) -= m * gbs;
+            *(here->BSIM3v1DPdPtr) -= m * gdpr;
+            *(here->BSIM3v1DPgPtr) += m * Gm;
+            *(here->BSIM3v1DPbPtr) -= m * (gbd - Gmbs);
+            *(here->BSIM3v1DPspPtr) -= m * (gds + FwdSum);
+            *(here->BSIM3v1SPgPtr) -= m * Gm;
+            *(here->BSIM3v1SPsPtr) -= m * gspr;
+            *(here->BSIM3v1SPbPtr) -= m * (gbs + Gmbs);
+            *(here->BSIM3v1SPdpPtr) -= m * (gds + RevSum);
 
         }
     }

@@ -10,7 +10,6 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bjt2defs.h"
 #include "sperror.h"

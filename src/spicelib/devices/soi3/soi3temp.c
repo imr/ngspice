@@ -1,12 +1,12 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White, and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,10 +15,12 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "soi3defs.h"
 #include "const.h"
@@ -27,9 +29,7 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 
 int
-SOI3temp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
 {
     SOI3model *model = (SOI3model *)inModel;
     SOI3instance *here;
@@ -94,10 +94,11 @@ SOI3temp(inModel,ckt)
            !model->SOI3bodyThicknessGiven       ||
             model->SOI3bodyThickness == 0)
         {
+
         		(*(SPfrontEnd->IFerror))(ERR_FATAL,
             	"%s: SOI3 device film thickness must be supplied",
             	&model->SOI3modName);
-            return(E_BADPARM);          
+            return(E_BADPARM);              
         }
         else /* Oxide and film thicknesses are supplied. */
         {
@@ -309,8 +310,18 @@ SOI3temp(inModel,ckt)
             double arg;     /* 1 - fc */
             double sarg;    /* (1-fc) ^^ (-mj) */
 
+            
+	    if (here->SOI3owner != ARCHme)
+                    continue;
+
             /* perform the parameter defaulting */
-            if(!here->SOI3tempGiven)
+            
+	    /* JimB - if device temperature not given, OR, if self-heating switched */
+            /* on, then set device temperature equal to circuit temperature.  Can't */
+            /* set device temp with self-heating on, otherwise get multiple thermal */
+            /* ground nodes, but doesn't matter, since any sizeable thermal gradient*/
+            /* across an IC circuit is probably due to self-heating anyway.         */
+            if ( (!here->SOI3tempGiven) || (here->SOI3rt != 0) )
             {
                here->SOI3temp = ckt->CKTtemp;
             }

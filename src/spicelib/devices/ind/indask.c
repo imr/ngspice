@@ -4,7 +4,6 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "inddefs.h"
 #include "ifsim.h"
 #include "cktdefs.h"

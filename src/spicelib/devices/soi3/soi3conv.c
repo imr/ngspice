@@ -1,12 +1,12 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White, and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,10 +15,12 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "soi3defs.h"
 #include "sperror.h"
@@ -26,9 +28,7 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 
 int
-SOI3convTest(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+SOI3convTest(GENmodel *inModel, CKTcircuit *ckt)
 {
     SOI3model *model = (SOI3model*)inModel;
     SOI3instance *here;
@@ -59,6 +59,9 @@ SOI3convTest(inModel,ckt)
     for( ; model != NULL; model = model->SOI3nextModel) {
         for(here = model->SOI3instances; here!= NULL;
                 here = here->SOI3nextInstance) {
+
+            if (here->SOI3owner != ARCHme)
+                    continue;
 
             vbs = model->SOI3type * (
                 *(ckt->CKTrhs+here->SOI3bNode) -
@@ -174,9 +177,11 @@ SOI3convTest(inModel,ckt)
                     ckt->CKTabstol;
             if (fabs(idhat-here->SOI3id) >= tol) {
                 ckt->CKTnoncon++;
-					 /* JimB - Remove line containing ckt->CKTtroubleElt for the */
+
+		/* JimB - Remove line containing ckt->CKTtroubleElt for the */
                 /* Simetrix DLL version - element removed from ckt structure */
                 ckt->CKTtroubleElt = (GENinstance *) here;
+
                 return(OK); /* no reason to continue, we haven't converged */
             } else {
                 tol=ckt->CKTreltol*
@@ -188,8 +193,9 @@ SOI3convTest(inModel,ckt)
                         - here->SOI3iMdb - here->SOI3iMsb
                         - here->SOI3iBJTdb - here->SOI3iBJTsb)) > tol) {
                     ckt->CKTnoncon++;
-						  /* JimB - Remove line containing ckt->CKTtroubleElt for the */
-						  /* Simetrix DLL version - element removed from ckt structure */
+
+		/* JimB - Remove line containing ckt->CKTtroubleElt for the */
+		/* Simetrix DLL version - element removed from ckt structure */
                     ckt->CKTtroubleElt = (GENinstance *) here;
                     return(OK); /* no reason to continue,we haven't converged*/
                 } else {
@@ -197,7 +203,8 @@ SOI3convTest(inModel,ckt)
                          fabs(here->SOI3iPt))+ckt->CKTabstol;
                     if (fabs(iPthat-here->SOI3iPt) >= tol) {
                       ckt->CKTnoncon++;
-						    /* JimB - Remove line containing ckt->CKTtroubleElt for the */
+
+		   /* JimB - Remove line containing ckt->CKTtroubleElt for the */
                       /* Simetrix DLL version - element removed from ckt structure */
                       ckt->CKTtroubleElt = (GENinstance *) here;
                       return(OK); /* no reason to continue,we haven't converged*/

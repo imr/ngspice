@@ -7,7 +7,6 @@ Modified: Alan Gillespie
 /* update the  charge sensitivities and their derivatives */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "smpdefs.h"
 #include "bjt2defs.h"

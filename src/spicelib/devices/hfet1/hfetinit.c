@@ -67,7 +67,10 @@ SPICEdev HFETAinfo = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,
     DEVnoise      : NULL,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif    
     DEVinstSize   : &HFETAiSize,
     DEVmodSize    : &HFETAmSize
 

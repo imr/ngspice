@@ -4,12 +4,15 @@ Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 File: b3soifdset.c          98/5/01
 Modified by Pin Su, Wei Jin 99/9/27
+Modified by Paolo Nenzi 2002
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMFD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "b3soifddef.h"
@@ -28,20 +31,21 @@ Modified by Pin Su, Wei Jin 99/9/27
 #define Meter2Micron 1.0e6
 
 int
-B3SOIFDsetup(matrix,inModel,ckt,states)
- SMPmatrix *matrix;
- GENmodel *inModel;
- CKTcircuit *ckt;
-int *states;
+B3SOIFDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
+             int *states)
 {
- B3SOIFDmodel *model = (B3SOIFDmodel*)inModel;
- B3SOIFDinstance *here;
+B3SOIFDmodel *model = (B3SOIFDmodel*)inModel;
+B3SOIFDinstance *here;
 int error;
 CKTnode *tmp;
 
 double tmp1, tmp2;
 double nfb0, Cboxt;
 int    itmp1;
+
+CKTnode *tmpNode;
+IFuid tmpName;
+
 
     /*  loop through all the B3SOIFD device models */
     for( ; model != NULL; model = model->B3SOIFDnextModel )
@@ -874,10 +878,16 @@ int    itmp1;
         /* loop through all the instances of the model */
         for (here = model->B3SOIFDinstances; here != NULL ;
              here=here->B3SOIFDnextInstance) 
-	{   /* allocate a chunk of the state vector */
-            here->B3SOIFDstates = *states;
-            *states += B3SOIFDnumStates;
-            /* perform the parameter defaulting */
+	{   
+	
+            if (here->B3SOIFDowner == ARCHme)
+            {
+               /* allocate a chunk of the state vector */
+                here->B3SOIFDstates = *states;
+                *states += B3SOIFDnumStates;
+            }
+	    
+	    /* perform the parameter defaulting */
             if (!here->B3SOIFDdrainAreaGiven)
                 here->B3SOIFDdrainArea = 0.0;
             if (!here->B3SOIFDdrainPerimeterGiven)
@@ -915,6 +925,9 @@ int    itmp1;
             if (!here->B3SOIFDwGiven)
                 here->B3SOIFDw = 5e-6;
 
+            if (!here->B3SOIFDmGiven)
+                here->B3SOIFDm = 1;
+
             if (!here->B3SOIFDoffGiven)
                 here->B3SOIFDoff = 0;
  
@@ -926,6 +939,16 @@ int    itmp1;
 	    {   error = CKTmkVolt(ckt,&tmp,here->B3SOIFDname,"drain");
                 if(error) return(error);
                 here->B3SOIFDdNodePrime = tmp->number;
+		
+		 if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+
             }
 	    else
 	    {   here->B3SOIFDdNodePrime = here->B3SOIFDdNode;
@@ -938,6 +961,16 @@ int    itmp1;
 	    {   error = CKTmkVolt(ckt,&tmp,here->B3SOIFDname,"source");
                 if(error) return(error);
                 here->B3SOIFDsNodePrime = tmp->number;
+		
+		 if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
+
             }
 	    else 
 	    {   here->B3SOIFDsNodePrime = here->B3SOIFDsNode;
@@ -1307,11 +1340,8 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }  
 
 int
-B3SOIFDunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+B3SOIFDunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
-#ifndef HAS_BATCHSIM
     B3SOIFDmodel *model;
     B3SOIFDinstance *here;
  
@@ -1335,7 +1365,6 @@ B3SOIFDunsetup(inModel,ckt)
             }
         }
     }
-#endif
     return OK;
 }
 

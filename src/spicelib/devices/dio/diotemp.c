@@ -7,7 +7,6 @@ Modified: 2000 AlansFixes
     /* perform the temperature update to the diode */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "diodefs.h"
 #include "const.h"

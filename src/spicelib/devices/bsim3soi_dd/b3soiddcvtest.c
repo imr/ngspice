@@ -2,12 +2,15 @@
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 File: b3soiddcvtest.c          98/5/01
+Modified by Paolo Nenzi 2002
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMDD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "cktdefs.h"
 #include "b3soidddef.h"
 #include "trandefs.h"
@@ -18,12 +21,10 @@ File: b3soiddcvtest.c          98/5/01
 
 
 int
-B3SOIDDconvTest(inModel,ckt)
-GENmodel *inModel;
-register CKTcircuit *ckt;
+B3SOIDDconvTest(GENmodel *inModel, CKTcircuit *ckt)
 {
-register B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
-register B3SOIDDinstance *here;
+B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
+B3SOIDDinstance *here;
 double delvbd, delvbs, delvds, delvgd, delvgs, vbd, vbs, vds;
 double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
 
@@ -32,7 +33,12 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
     {    /* loop through all the instances of the model */
          for (here = model->B3SOIDDinstances; here != NULL ;
               here=here->B3SOIDDnextInstance) 
-	 {    vbs = model->B3SOIDDtype 
+	 {    
+	 
+              if (here->B3SOIDDowner != ARCHme)
+                      continue;
+	 
+	      vbs = model->B3SOIDDtype 
 		  * (*(ckt->CKTrhsOld+here->B3SOIDDbNode) 
 		  - *(ckt->CKTrhsOld+here->B3SOIDDsNodePrime));
               vgs = model->B3SOIDDtype

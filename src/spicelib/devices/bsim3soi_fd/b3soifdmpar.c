@@ -4,11 +4,15 @@ Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 File: b3soifdmpar.c          98/5/01
 Modified by Wei Jin 99/9/27
+Modified by Paolo Nenzi 2002
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMFD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "b3soifddef.h"
 #include "ifsim.h"
 #include "sperror.h"
@@ -16,10 +20,7 @@ Modified by Wei Jin 99/9/27
 
 
 int
-B3SOIFDmParam(param,value,inMod)
-int param;
-IFvalue *value;
-GENmodel *inMod;
+B3SOIFDmParam(int param, IFvalue *value, GENmodel *inMod)
 {
     B3SOIFDmodel *mod = (B3SOIFDmodel*)inMod;
     switch(param)

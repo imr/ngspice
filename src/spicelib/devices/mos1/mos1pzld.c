@@ -7,7 +7,6 @@ Modified: 2000 AlansFixes
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "complex.h"
 #include "mos1defs.h"

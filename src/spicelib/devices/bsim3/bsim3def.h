@@ -1,8 +1,9 @@
 /**********
-Copyright 1999 Regents of the University of California.  All rights reserved.
+Copyright 2001 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
 Author: 1997-1999 Weidong Liu.
-Modified: 2000 AlansFixes
+Author: 2001 Xuemei Xi
+Modified by Paolo Nenzi 2002
 File: bsim3def.h
 **********/
 
@@ -20,9 +21,8 @@ typedef struct sBSIM3instance
     struct sBSIM3model *BSIM3modPtr;
     struct sBSIM3instance *BSIM3nextInstance;
     IFuid BSIM3name;
-    int BSIM3owner;   /* number of owner process */
+     int BSIM3owner;     /* number of owner process */   
     int BSIM3states;     /* index into state table for this device */
-    
     int BSIM3dNode;
     int BSIM3gNode;
     int BSIM3sNode;
@@ -39,13 +39,13 @@ typedef struct sBSIM3instance
     double BSIM3cgdo;
     double BSIM3cgso;
     double BSIM3vjsm;
-    double BSIM3IsEvjsm;
+    double BSIM3IsEvjsm;   
     double BSIM3vjdm;
-    double BSIM3IsEvjdm;
+    double BSIM3IsEvjdm;    
 
     double BSIM3l;
     double BSIM3w;
-    double BSIM3m;
+    double BSIM3m;  
     double BSIM3drainArea;
     double BSIM3sourceArea;
     double BSIM3drainSquares;
@@ -104,12 +104,17 @@ typedef struct sBSIM3instance
     double BSIM3gtd;
     double BSIM3gts;
     double BSIM3gtb;
+    double BSIM3rds;  /* Noise bugfix */
+    double BSIM3Vgsteff;
+    double BSIM3Vdseff;
+    double BSIM3Abulk;
+    double BSIM3AbovVgst2Vtm;   
 
     struct bsim3SizeDependParam  *pParam;
 
     unsigned BSIM3lGiven :1;
     unsigned BSIM3wGiven :1;
-    unsigned BSIM3mGiven :1;
+    unsigned BSIM3mGiven :1;    
     unsigned BSIM3drainAreaGiven :1;
     unsigned BSIM3sourceAreaGiven    :1;
     unsigned BSIM3drainSquaresGiven  :1;
@@ -351,7 +356,17 @@ typedef struct sBSIM3model
     int    BSIM3noiMod;
     int    BSIM3binUnit;
     int    BSIM3paramChk;
-    char   *BSIM3version;             
+    char   *BSIM3version;
+    
+    /* The following field is an integer coding
+     * of BSIM3version.
+     */     
+    int    BSIM3intVersion;             
+#define BSIM3V324  324       /* BSIM3 V3.2.4 */
+#define BSIM3V323  323       /* BSIM3 V3.2.3 */
+#define BSIM3V322  322       /* BSIM3 V3.2.2 */
+#define BSIM3V32   32        /* BSIM3 V3.2   */
+#define BSIM3V3OLD 0         /* Old model    */
     double BSIM3tox;             
     double BSIM3toxm;
     double BSIM3cdsc;           
@@ -773,6 +788,9 @@ typedef struct sBSIM3model
     double BSIM3PhiBSWG;
     double BSIM3jctTempSatCurDensity;
     double BSIM3jctSidewallTempSatCurDensity;
+    double BSIM3unitAreaTempJctCap;
+    double BSIM3unitLengthSidewallTempJctCap;
+    double BSIM3unitLengthGateSidewallTempJctCap;
 
     double BSIM3oxideTrapDensityA;      
     double BSIM3oxideTrapDensityB;     
@@ -1745,18 +1763,13 @@ typedef struct sBSIM3model
 
 #include "bsim3ext.h"
 
-#ifdef __STDC__
 extern void BSIM3evaluate(double,double,double,BSIM3instance*,BSIM3model*,
         double*,double*,double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, CKTcircuit*);
 extern int BSIM3debug(BSIM3model*, BSIM3instance*, CKTcircuit*, int);
 extern int BSIM3checkModel(BSIM3model*, BSIM3instance*, CKTcircuit*);
-#else /* stdc */
-extern void BSIM3evaluate();
-extern int BSIM3debug();
-extern int BSIM3checkModel();
-#endif /* stdc */
+
 
 #endif /*BSIM3*/
 

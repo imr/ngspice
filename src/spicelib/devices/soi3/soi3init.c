@@ -10,7 +10,7 @@
 SPICEdev SOI3info = {
     {
         "SOI3",
-        "Basic Thick Film SOI3 model",
+        "Basic Thick Film SOI3 model v2.7",
 
         &SOI3nSize,
         &SOI3nSize,
@@ -67,7 +67,10 @@ SPICEdev SOI3info = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,
     DEVnoise      : SOI3noise,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif                        
     DEVinstSize   : &SOI3iSize,
     DEVmodSize    : &SOI3mSize
 

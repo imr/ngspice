@@ -1,12 +1,16 @@
 /**********
-Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1995 Min-Chie Jeng and Mansun Chan.
-File: b3v1ask.c
-**********/
+ * Copyright 1990 Regents of the University of California. All rights reserved.
+ * File: b3v1ask.c
+ * Author: 1995 Min-Chie Jeng and Mansun Chan. 
+ * Modified by Paolo Nenzi 2002
+ **********/
+
+/* 
+ * Release Notes: 
+ * BSIM3v3.1,   Released by yuhua  96/12/08
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "ifsim.h"
 #include "cktdefs.h"
 #include "devdefs.h"
@@ -15,184 +19,209 @@ File: b3v1ask.c
 #include "suffix.h"
 
 int
-BSIM3V1ask(ckt,inst,which,value,select)
-CKTcircuit *ckt;
-GENinstance *inst;
-int which;
-IFvalue *value;
-IFvalue *select;
+BSIM3v1ask (CKTcircuit * ckt, GENinstance * inst, int which, IFvalue * value,
+	    IFvalue * select)
 {
-BSIM3V1instance *here = (BSIM3V1instance*)inst;
+  BSIM3v1instance *here = (BSIM3v1instance *) inst;
 
-    switch(which) 
-    {   case BSIM3V1_L:
-            value->rValue = here->BSIM3V1l;
-            return(OK);
-        case BSIM3V1_W:
-            value->rValue = here->BSIM3V1w;
-            return(OK);
-        case BSIM3V1_AS:
-            value->rValue = here->BSIM3V1sourceArea;
-            return(OK);
-        case BSIM3V1_AD:
-            value->rValue = here->BSIM3V1drainArea;
-            return(OK);
-        case BSIM3V1_PS:
-            value->rValue = here->BSIM3V1sourcePerimeter;
-            return(OK);
-        case BSIM3V1_PD:
-            value->rValue = here->BSIM3V1drainPerimeter;
-            return(OK);
-        case BSIM3V1_NRS:
-            value->rValue = here->BSIM3V1sourceSquares;
-            return(OK);
-        case BSIM3V1_NRD:
-            value->rValue = here->BSIM3V1drainSquares;
-            return(OK);
-        case BSIM3V1_OFF:
-            value->rValue = here->BSIM3V1off;
-            return(OK);
-        case BSIM3V1_NQSMOD:
-            value->iValue = here->BSIM3V1nqsMod;
-            return(OK);
-        case BSIM3V1_M:
-            value->rValue = here->BSIM3V1m;
-            return(OK);
-        case BSIM3V1_IC_VBS:
-            value->rValue = here->BSIM3V1icVBS;
-            return(OK);
-        case BSIM3V1_IC_VDS:
-            value->rValue = here->BSIM3V1icVDS;
-            return(OK);
-        case BSIM3V1_IC_VGS:
-            value->rValue = here->BSIM3V1icVGS;
-            return(OK);
-        case BSIM3V1_DNODE:
-            value->iValue = here->BSIM3V1dNode;
-            return(OK);
-        case BSIM3V1_GNODE:
-            value->iValue = here->BSIM3V1gNode;
-            return(OK);
-        case BSIM3V1_SNODE:
-            value->iValue = here->BSIM3V1sNode;
-            return(OK);
-        case BSIM3V1_BNODE:
-            value->iValue = here->BSIM3V1bNode;
-            return(OK);
-        case BSIM3V1_DNODEPRIME:
-            value->iValue = here->BSIM3V1dNodePrime;
-            return(OK);
-        case BSIM3V1_SNODEPRIME:
-            value->iValue = here->BSIM3V1sNodePrime;
-            return(OK);
-        case BSIM3V1_SOURCECONDUCT:
-            value->rValue = here->BSIM3V1sourceConductance;
-            return(OK);
-        case BSIM3V1_DRAINCONDUCT:
-            value->rValue = here->BSIM3V1drainConductance;
-            return(OK);
-        case BSIM3V1_VBD:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1vbd);
-            return(OK);
-        case BSIM3V1_VBS:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1vbs);
-            return(OK);
-        case BSIM3V1_VGS:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1vgs);
-            return(OK);
-        case BSIM3V1_VDS:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1vds);
-            return(OK);
-        case BSIM3V1_CD:
-            value->rValue = here->BSIM3V1cd; 
-            return(OK);
-        case BSIM3V1_CBS:
-            value->rValue = here->BSIM3V1cbs; 
-            return(OK);
-        case BSIM3V1_CBD:
-            value->rValue = here->BSIM3V1cbd; 
-            return(OK);
-        case BSIM3V1_GM:
-            value->rValue = here->BSIM3V1gm; 
-            return(OK);
-        case BSIM3V1_GDS:
-            value->rValue = here->BSIM3V1gds; 
-            return(OK);
-        case BSIM3V1_GMBS:
-            value->rValue = here->BSIM3V1gmbs; 
-            return(OK);
-        case BSIM3V1_GBD:
-            value->rValue = here->BSIM3V1gbd; 
-            return(OK);
-        case BSIM3V1_GBS:
-            value->rValue = here->BSIM3V1gbs; 
-            return(OK);
-        case BSIM3V1_QB:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1qb); 
-            return(OK);
-        case BSIM3V1_CQB:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1cqb); 
-            return(OK);
-        case BSIM3V1_QG:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1qg); 
-            return(OK);
-        case BSIM3V1_CQG:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1cqg); 
-            return(OK);
-        case BSIM3V1_QD:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1qd); 
-            return(OK);
-        case BSIM3V1_CQD:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1cqd); 
-            return(OK);
-        case BSIM3V1_CGG:
-            value->rValue = here->BSIM3V1cggb; 
-            return(OK);
-        case BSIM3V1_CGD:
-            value->rValue = here->BSIM3V1cgdb;
-            return(OK);
-        case BSIM3V1_CGS:
-            value->rValue = here->BSIM3V1cgsb;
-            return(OK);
-        case BSIM3V1_CDG:
-            value->rValue = here->BSIM3V1cdgb; 
-            return(OK);
-        case BSIM3V1_CDD:
-            value->rValue = here->BSIM3V1cddb; 
-            return(OK);
-        case BSIM3V1_CDS:
-            value->rValue = here->BSIM3V1cdsb; 
-            return(OK);
-        case BSIM3V1_CBG:
-            value->rValue = here->BSIM3V1cbgb;
-            return(OK);
-        case BSIM3V1_CBDB:
-            value->rValue = here->BSIM3V1cbdb;
-            return(OK);
-        case BSIM3V1_CBSB:
-            value->rValue = here->BSIM3V1cbsb;
-            return(OK);
-        case BSIM3V1_CAPBD:
-            value->rValue = here->BSIM3V1capbd; 
-            return(OK);
-        case BSIM3V1_CAPBS:
-            value->rValue = here->BSIM3V1capbs;
-            return(OK);
-        case BSIM3V1_VON:
-            value->rValue = here->BSIM3V1von; 
-            return(OK);
-        case BSIM3V1_VDSAT:
-            value->rValue = here->BSIM3V1vdsat; 
-            return(OK);
-        case BSIM3V1_QBS:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1qbs); 
-            return(OK);
-        case BSIM3V1_QBD:
-            value->rValue = *(ckt->CKTstate0 + here->BSIM3V1qbd); 
-            return(OK);
-        default:
-            return(E_BADPARM);
+  switch (which)
+    {
+    case BSIM3v1_L:
+      value->rValue = here->BSIM3v1l;
+      return (OK);
+    case BSIM3v1_W:
+      value->rValue = here->BSIM3v1w;
+      return (OK);
+    case BSIM3v1_M:
+      value->rValue = here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_AS:
+      value->rValue = here->BSIM3v1sourceArea;
+      return (OK);
+    case BSIM3v1_AD:
+      value->rValue = here->BSIM3v1drainArea;
+      return (OK);
+    case BSIM3v1_PS:
+      value->rValue = here->BSIM3v1sourcePerimeter;
+      return (OK);
+    case BSIM3v1_PD:
+      value->rValue = here->BSIM3v1drainPerimeter;
+      return (OK);
+    case BSIM3v1_NRS:
+      value->rValue = here->BSIM3v1sourceSquares;
+      return (OK);
+    case BSIM3v1_NRD:
+      value->rValue = here->BSIM3v1drainSquares;
+      return (OK);
+    case BSIM3v1_OFF:
+      value->rValue = here->BSIM3v1off;
+      return (OK);
+    case BSIM3v1_NQSMOD:
+      value->iValue = here->BSIM3v1nqsMod;
+      return (OK);
+    case BSIM3v1_IC_VBS:
+      value->rValue = here->BSIM3v1icVBS;
+      return (OK);
+    case BSIM3v1_IC_VDS:
+      value->rValue = here->BSIM3v1icVDS;
+      return (OK);
+    case BSIM3v1_IC_VGS:
+      value->rValue = here->BSIM3v1icVGS;
+      return (OK);
+    case BSIM3v1_DNODE:
+      value->iValue = here->BSIM3v1dNode;
+      return (OK);
+    case BSIM3v1_GNODE:
+      value->iValue = here->BSIM3v1gNode;
+      return (OK);
+    case BSIM3v1_SNODE:
+      value->iValue = here->BSIM3v1sNode;
+      return (OK);
+    case BSIM3v1_BNODE:
+      value->iValue = here->BSIM3v1bNode;
+      return (OK);
+    case BSIM3v1_DNODEPRIME:
+      value->iValue = here->BSIM3v1dNodePrime;
+      return (OK);
+    case BSIM3v1_SNODEPRIME:
+      value->iValue = here->BSIM3v1sNodePrime;
+      return (OK);
+    case BSIM3v1_SOURCECONDUCT:
+      value->rValue = here->BSIM3v1sourceConductance;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_DRAINCONDUCT:
+      value->rValue = here->BSIM3v1drainConductance;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_VBD:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1vbd);
+      return (OK);
+    case BSIM3v1_VBS:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1vbs);
+      return (OK);
+    case BSIM3v1_VGS:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1vgs);
+      return (OK);
+    case BSIM3v1_VDS:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1vds);
+      return (OK);
+    case BSIM3v1_CD:
+      value->rValue = here->BSIM3v1cd;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CBS:
+      value->rValue = here->BSIM3v1cbs;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CBD:
+      value->rValue = here->BSIM3v1cbd;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_GM:
+      value->rValue = here->BSIM3v1gm;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_GDS:
+      value->rValue = here->BSIM3v1gds;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_GMBS:
+      value->rValue = here->BSIM3v1gmbs;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_GBD:
+      value->rValue = here->BSIM3v1gbd;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_GBS:
+      value->rValue = here->BSIM3v1gbs;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_QB:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1qb);
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CQB:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1cqb);
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_QG:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1qg);
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CQG:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1cqg);
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_QD:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1qd);
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CQD:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1cqd);
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CGG:
+      value->rValue = here->BSIM3v1cggb;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CGD:
+      value->rValue = here->BSIM3v1cgdb;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CGS:
+      value->rValue = here->BSIM3v1cgsb;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CDG:
+      value->rValue = here->BSIM3v1cdgb;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CDD:
+      value->rValue = here->BSIM3v1cddb;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CDS:
+      value->rValue = here->BSIM3v1cdsb;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CBG:
+      value->rValue = here->BSIM3v1cbgb;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CBDB:
+      value->rValue = here->BSIM3v1cbdb;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CBSB:
+      value->rValue = here->BSIM3v1cbsb;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CAPBD:
+      value->rValue = here->BSIM3v1capbd;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_CAPBS:
+      value->rValue = here->BSIM3v1capbs;
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_VON:
+      value->rValue = here->BSIM3v1von;
+      return (OK);
+    case BSIM3v1_VDSAT:
+      value->rValue = here->BSIM3v1vdsat;
+      return (OK);
+    case BSIM3v1_QBS:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1qbs);
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    case BSIM3v1_QBD:
+      value->rValue = *(ckt->CKTstate0 + here->BSIM3v1qbd);
+      value->rValue *= here->BSIM3v1m;
+      return (OK);
+    default:
+      return (E_BADPARM);
     }
-    /* NOTREACHED */
+  /* NOTREACHED */
 }
-

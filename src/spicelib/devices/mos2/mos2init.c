@@ -67,7 +67,10 @@ SPICEdev MOS2info = {
     DEVsenTrunc   : NULL,
     DEVdisto      : MOS2disto,
     DEVnoise      : MOS2noise,
-
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif    
     DEVinstSize   : &MOS2iSize,
     DEVmodSize    : &MOS2mSize
 };

@@ -66,7 +66,10 @@ SPICEdev CCCSinfo = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,	/* DISTO */
     DEVnoise      : NULL,	/* NOISE */
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif    
     DEVinstSize   : &CCCSiSize,
     DEVmodSize    : &CCCSmSize
 

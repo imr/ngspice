@@ -1,13 +1,16 @@
 /**********
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
+Modified by Paolo Nenzi 2002
 File: b3soifdtrunc.c          98/5/01
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMFD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "cktdefs.h"
 #include "b3soifddef.h"
 #include "sperror.h"
@@ -15,13 +18,10 @@ File: b3soifdtrunc.c          98/5/01
 
 
 int
-B3SOIFDtrunc(inModel,ckt,timeStep)
-GENmodel *inModel;
- CKTcircuit *ckt;
-double *timeStep;
+B3SOIFDtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
- B3SOIFDmodel *model = (B3SOIFDmodel*)inModel;
- B3SOIFDinstance *here;
+B3SOIFDmodel *model = (B3SOIFDmodel*)inModel;
+B3SOIFDinstance *here;
 
 #ifdef STEPDEBUG
     double debugtemp;
@@ -31,6 +31,10 @@ double *timeStep;
     {    for (here = model->B3SOIFDinstances; here != NULL;
 	      here = here->B3SOIFDnextInstance)
 	 {
+            
+	    if (here->B3SOIFDowner != ARCHme)
+                    continue;
+
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
 #endif /* STEPDEBUG */

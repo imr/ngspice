@@ -3,12 +3,16 @@
 SUBDIRS = \
 	asrc	\
 	bjt	\
+	bjt2	\
 	bsim1	\
 	bsim2	\
 	bsim3	\
+	bsim3soi	\
 	bsim4	\
+	bsim3v0	\
 	bsim3v1 \
-	bsim3v2 \
+	bsim3v1s	\
+	bsim3v1a	\
 	bsim3soi_pd	\
 	bsim3soi_fd	\
 	bsim3soi_dd	\
@@ -23,6 +27,7 @@ SUBDIRS = \
 	isrc	\
 	hfet1	\
 	hfet2	\
+	hisim	\
 	jfet	\
 	jfet2	\
 	ltra	\
@@ -41,11 +46,9 @@ SUBDIRS = \
 	urc	\
 	vccs	\
 	vcvs	\
-	vsrc
+	vsrc	\
+	@NUMDEVDIR@
 
-##  This line move to here 'cause it was causing automake to choke 
-##  when it was in the list of subdirs
-##	bjt2	\
 
 
 noinst_LIBRARIES = libdev.a
@@ -60,7 +63,8 @@ libdev_a_SOURCES = 	\
 	cktbindnode.c	\
 	cktcrte.c	\
 	cktfinddev.c	\
-	cktinit.c
+	cktinit.c	\
+	limit.c
 
 INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 

@@ -7,7 +7,7 @@
 #include "bsim3init.h"
 
 
-SPICEdev BSIM3info = {
+SPICEdev B3info = {
     {   "BSIM3",
         "Berkeley Short Channel IGFET Model Version-3",
 
@@ -66,7 +66,10 @@ SPICEdev BSIM3info = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,
     DEVnoise      : BSIM3noise,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif                        
     DEVinstSize   : &BSIM3iSize,
     DEVmodSize    : &BSIM3mSize
 
@@ -76,5 +79,5 @@ SPICEdev BSIM3info = {
 SPICEdev *
 get_bsim3_info(void)
 {
-    return &BSIM3info;
+    return &B3info;
 }

@@ -67,7 +67,10 @@ SPICEdev RESinfo = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,
     DEVnoise      : RESnoise,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif                        
     DEVinstSize   : &RESiSize,
     DEVmodSize    : &RESmSize
 

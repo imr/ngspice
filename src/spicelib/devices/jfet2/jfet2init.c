@@ -67,7 +67,10 @@ SPICEdev JFET2info = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL, /* AN_disto */
     DEVnoise      : JFET2noise,
-                    
+#ifdef CIDER
+    DEVdump       : NULL,
+    DEVacct       : NULL,
+#endif                        
     DEVinstSize   : &JFET2iSize,
     DEVmodSize    : &JFET2mSize
 

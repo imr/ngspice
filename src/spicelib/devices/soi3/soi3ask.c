@@ -1,12 +1,12 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White, and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,10 +15,12 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "const.h"
 #include "ifsim.h"
 #include "cktdefs.h"
@@ -30,12 +32,8 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 /*ARGSUSED*/
 int
-SOI3ask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+SOI3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
+        IFvalue *select)
 {
     SOI3instance *here = (SOI3instance*)inst;
     double vr;
@@ -51,6 +49,18 @@ SOI3ask(ckt,inst,which,value,select)
         case SOI3_W:
             value->rValue = here->SOI3w;
                 return(OK);
+	case SOI3_M:
+            value->rValue = here->SOI3m;
+                return(OK);
+	 case SOI3_AS:
+            value->rValue = here->SOI3as;
+            	 return(OK);
+        case SOI3_AD:
+            value->rValue = here->SOI3ad;
+            	 return(OK);
+        case SOI3_AB:
+            value->rValue = here->SOI3ab;
+            	 return(OK);
         case SOI3_NRS:
             value->rValue = here->SOI3sourceSquares;
                 return(OK);
@@ -77,9 +87,11 @@ SOI3ask(ckt,inst,which,value,select)
             return(OK);
         case SOI3_RT:
             value->rValue = here->SOI3rt;
+	    value->rValue /= here->SOI3m;
             return(OK);
         case SOI3_CT:
             value->rValue = here->SOI3ct;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_DNODE:
             value->iValue = here->SOI3dNode;
@@ -110,9 +122,11 @@ SOI3ask(ckt,inst,which,value,select)
             return(OK);
         case SOI3_SOURCECONDUCT:
             value->rValue = here->SOI3sourceConductance;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_DRAINCONDUCT:
             value->rValue = here->SOI3drainConductance;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_VON:
             value->rValue = here->SOI3tVto;
@@ -131,42 +145,55 @@ SOI3ask(ckt,inst,which,value,select)
             return(OK);
         case SOI3_ID:
             value->rValue = here->SOI3id;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_IBS:
             value->rValue = here->SOI3ibs;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_IBD:
             value->rValue = here->SOI3ibd;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_GMBS:
             value->rValue = here->SOI3gmbs;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_GMF:
             value->rValue = here->SOI3gmf;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_GMB:
             value->rValue = here->SOI3gmb;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_GDS:
             value->rValue = here->SOI3gds;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_GBD:
             value->rValue = here->SOI3gbd;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_GBS:
             value->rValue = here->SOI3gbs;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_CAPBD:
             value->rValue = here->SOI3capbd;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_CAPBS:
             value->rValue = here->SOI3capbs;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_CAPZEROBIASBD:
             value->rValue = here->SOI3Cbd;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_CAPZEROBIASBS:
             value->rValue = here->SOI3Cbs;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_VBD:
             value->rValue = *(ckt->CKTstate0 + here->SOI3vbd);
@@ -185,69 +212,123 @@ SOI3ask(ckt,inst,which,value,select)
             return(OK);
         case SOI3_QGF:
             value->rValue = *(ckt->CKTstate0 + here->SOI3qgf);
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_IQGF:
             value->rValue = *(ckt->CKTstate0 + here->SOI3iqgf);
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_QD:
             value->rValue = *(ckt->CKTstate0 + here->SOI3qd);
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_IQD:
             value->rValue = *(ckt->CKTstate0 + here->SOI3iqd);
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_QS:
             value->rValue = *(ckt->CKTstate0 + here->SOI3qs);
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_IQS:
             value->rValue = *(ckt->CKTstate0 + here->SOI3iqs);
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_CGFGF:
             value->rValue = *(ckt->CKTstate0 + here->SOI3cgfgf);
+	    value->rValue *= here->SOI3m;
             return (OK);
         case SOI3_CGFD:
             value->rValue = *(ckt->CKTstate0 + here->SOI3cgfd);
+	    value->rValue *= here->SOI3m;
             return (OK);
         case SOI3_CGFS:
             value->rValue = *(ckt->CKTstate0 + here->SOI3cgfs);
+	    value->rValue *= here->SOI3m;
             return (OK);
         case SOI3_CGFDELTAT:
             value->rValue = *(ckt->CKTstate0 + here->SOI3cgfdeltaT);
+	    value->rValue *= here->SOI3m;
             return (OK);
+	case SOI3_CGFGB:
+            value->rValue = *(ckt->CKTstate0 + here->SOI3cgfgb);
+	    value->rValue *= here->SOI3m;
+	    return (OK);
         case SOI3_CDGF:
             value->rValue = *(ckt->CKTstate0 + here->SOI3cdgf);
+	    value->rValue *= here->SOI3m;
             return (OK);
         case SOI3_CDD:
             value->rValue = *(ckt->CKTstate0 + here->SOI3cdd);
+	    value->rValue *= here->SOI3m;
             return (OK);
         case SOI3_CDS:
             value->rValue = *(ckt->CKTstate0 + here->SOI3cds);
+	    value->rValue *= here->SOI3m;
             return (OK);
         case SOI3_CDDELTAT:
             value->rValue = *(ckt->CKTstate0 + here->SOI3cddeltaT);
+	    value->rValue *= here->SOI3m;
+            return (OK);
+	case SOI3_CDGB:
+            value->rValue = *(ckt->CKTstate0 + here->SOI3cdgb);
+	    value->rValue *= here->SOI3m;
             return (OK);
         case SOI3_CSGF:
             value->rValue = *(ckt->CKTstate0 + here->SOI3csgf);
+	    value->rValue *= here->SOI3m;
             return (OK);
         case SOI3_CSD:
             value->rValue = *(ckt->CKTstate0 + here->SOI3csd);
+	    value->rValue *= here->SOI3m;
             return (OK);
         case SOI3_CSS:
             value->rValue = *(ckt->CKTstate0 + here->SOI3css);
+	    value->rValue *= here->SOI3m;
             return (OK);
         case SOI3_CSDELTAT:
             value->rValue = *(ckt->CKTstate0 + here->SOI3csdeltaT);
+	    value->rValue *= here->SOI3m;
+            return (OK);
+	case SOI3_CSGB:
+            value->rValue = *(ckt->CKTstate0 + here->SOI3csgb);
+	    value->rValue *= here->SOI3m;
+            return (OK);
+        case SOI3_CGBGF:
+            value->rValue = *(ckt->CKTstate0 + here->SOI3cgbgf);
+	    value->rValue *= here->SOI3m;
+            return (OK);
+        case SOI3_CGBD:
+            value->rValue = *(ckt->CKTstate0 + here->SOI3cgbd);
+	    value->rValue *= here->SOI3m;
+            return (OK);
+        case SOI3_CGBS:
+            value->rValue = *(ckt->CKTstate0 + here->SOI3cgbs);
+	    value->rValue *= here->SOI3m;
+            return (OK);
+        case SOI3_CGBDELTAT:
+            value->rValue = *(ckt->CKTstate0 + here->SOI3cgbdeltaT);
+	    value->rValue *= here->SOI3m;
+            return (OK);
+        case SOI3_CGBGB:
+            value->rValue = *(ckt->CKTstate0 + here->SOI3cgbgb);
+	    value->rValue *= here->SOI3m;
             return (OK);
         case SOI3_QBD:
             value->rValue = *(ckt->CKTstate0 + here->SOI3qbd);
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_IQBD:
             value->rValue = *(ckt->CKTstate0 + here->SOI3iqbd);
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_QBS:
             value->rValue = *(ckt->CKTstate0 + here->SOI3qbs);
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_IQBS:
             value->rValue = *(ckt->CKTstate0 + here->SOI3iqbs);
+	    value->rValue *= here->SOI3m;
             return(OK);
 /* extra stuff for newer model - msll Jan96 */
         case SOI3_VFBB:
@@ -255,27 +336,35 @@ SOI3ask(ckt,inst,which,value,select)
             return(OK);
         case SOI3_RT1:
             value->rValue = here->SOI3rt1;
+	    value->rValue /= here->SOI3m;
             return(OK);
         case SOI3_CT1:
             value->rValue = here->SOI3ct1;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_RT2:
             value->rValue = here->SOI3rt2;
+	    value->rValue /= here->SOI3m;
             return(OK);
         case SOI3_CT2:
             value->rValue = here->SOI3ct2;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_RT3:
             value->rValue = here->SOI3rt3;
+	    value->rValue /= here->SOI3m;
             return(OK);
         case SOI3_CT3:
             value->rValue = here->SOI3ct3;
+	    value->rValue *= here->SOI3m;
             return(OK);
         case SOI3_RT4:
             value->rValue = here->SOI3rt4;
+	    value->rValue /= here->SOI3m;
             return(OK);
         case SOI3_CT4:
             value->rValue = here->SOI3ct4;
+	    value->rValue *= here->SOI3m;
             return(OK);
 
 /*

@@ -7,7 +7,6 @@ Modified: Alan Gillespie
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "complex.h"
 #include "bjt2defs.h"
@@ -35,7 +34,7 @@ BJT2pzLoad(inModel,ckt,s)
     double xcpi;
     double xcmu;
     double xcbx;
-    double xccs;
+    double xcsub;
     double xcmcb;
 
     for( ; model != NULL; model = model->BJT2nextModel) {
@@ -54,16 +53,22 @@ BJT2pzLoad(inModel,ckt,s)
             xcpi= *(ckt->CKTstate0 + here->BJT2cqbe);
             xcmu= *(ckt->CKTstate0 + here->BJT2cqbc);
             xcbx= *(ckt->CKTstate0 + here->BJT2cqbx);
-            xccs= *(ckt->CKTstate0 + here->BJT2cqsub); /* PN */
+            xcsub= *(ckt->CKTstate0 + here->BJT2cqsub); 
             xcmcb= *(ckt->CKTstate0 + here->BJT2cexbc);
             *(here->BJT2colColPtr) +=   (gcpr);
             *(here->BJT2baseBasePtr) +=   (gx) + (xcbx) * (s->real);
             *(here->BJT2baseBasePtr + 1) +=   (xcbx) * (s->imag);
             *(here->BJT2emitEmitPtr) +=   (gepr);
-            *(here->BJT2colPrimeColPrimePtr) +=   (gmu+go+gcpr)
-                                        + (xcmu+xccs+xcbx) * (s->real);
-            *(here->BJT2colPrimeColPrimePtr + 1) +=   (xcmu+xccs+xcbx)
+            
+	    *(here->BJT2colPrimeColPrimePtr) +=   (gmu+go+gcpr)
+                                        + (xcmu+xcbx) * (s->real);
+            *(here->BJT2colPrimeColPrimePtr + 1) +=   (xcmu+xcbx)
                                                  * (s->imag);
+						 
+	    *(here->BJT2substConSubstPtr)      +=   (-xcsub) * (s->real);
+	    *(here->BJT2substConSubstPtr = 1)  +=   (-xcsub) * (s->imag);
+	    				 				 
+						 
             *(here->BJT2basePrimeBasePrimePtr) +=   (gx+gpi+gmu)
                                    + (xcpi+xcmu+xcmcb) * (s->real);
             *(here->BJT2basePrimeBasePrimePtr + 1) +=   (xcpi+xcmu+xcmcb) 
@@ -102,12 +107,31 @@ BJT2pzLoad(inModel,ckt,s)
                                       +  (-xcpi-xgm-xcmcb) * (s->real);
             *(here->BJT2emitPrimeBasePrimePtr + 1) +=   (-xcpi-xgm-xcmcb)
                              * (s->imag);
-            *(here->BJT2substSubstPtr) +=   (xccs) * (s->real);
-            *(here->BJT2substSubstPtr + 1) +=   (xccs) * (s->imag);
-            *(here->BJT2colPrimeSubstPtr) +=   (-xccs) * (s->real);
-            *(here->BJT2colPrimeSubstPtr + 1) +=   (-xccs) * (s->imag);
-            *(here->BJT2substColPrimePtr) +=   (-xccs) * (s->real);
-            *(here->BJT2substColPrimePtr + 1) +=   (-xccs) * (s->imag);
+
+/* 
+ * Paolo Nenzi 2002 
+ * 
+ * This is a very quick and dirty hack to make BJ2 compile.
+ * The code replacing the commented out one has been built using
+ * the one in bjt2acld.c
+ * DO NOT USE THIS DEVICE 
+ * 
+ *           *(here->BJT2substSubstPtr) +=   (xccs) * (s->real);
+ *           *(here->BJT2substSubstPtr + 1) +=   (xccs) * (s->imag);
+ *           *(here->BJT2colPrimeSubstPtr) +=   (-xccs) * (s->real);
+ *           *(here->BJT2colPrimeSubstPtr + 1) +=   (-xccs) * (s->imag);
+ *           *(here->BJT2substColPrimePtr) +=   (-xccs) * (s->real);
+ *           *(here->BJT2substColPrimePtr + 1) +=   (-xccs) * (s->imag);
+ */
+
+            *(here->BJT2substSubstPtr)         +=   (xcsub)  * (s->real);
+            *(here->BJT2substSubstPtr + 1)     +=   (xcsub)  * (s->imag);
+	    *(here->BJT2substConSubstPtr)      +=   (-xcsub) * (s->real);
+	    *(here->BJT2substConSubstPtr = 1)  +=   (-xcsub) * (s->imag);
+	    *(here->BJT2substSubstConPtr)      +=   (-xcsub) * (s->real);
+	    *(here->BJT2substSubstConPtr = 1)  +=   (-xcsub) * (s->imag);
+	    
+  
             *(here->BJT2baseColPrimePtr) +=   (-xcbx) * (s->real);
             *(here->BJT2baseColPrimePtr + 1) +=   (-xcbx) * (s->imag);
             *(here->BJT2colPrimeBasePtr) +=   (-xcbx) * (s->real);

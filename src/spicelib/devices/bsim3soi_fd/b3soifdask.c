@@ -1,13 +1,16 @@
 /**********
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
+Modified by Paolo Nenzi 2002
 File: b3soifdask.c          98/5/01
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMFD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "ifsim.h"
 #include "cktdefs.h"
 #include "devdefs.h"
@@ -16,12 +19,8 @@ File: b3soifdask.c          98/5/01
 #include "suffix.h"
 
 int
-B3SOIFDask(ckt,inst,which,value,select)
-CKTcircuit *ckt;
-GENinstance *inst;
-int which;
-IFvalue *value;
-IFvalue *select;
+B3SOIFDask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
+           IFvalue *select)
 {
 B3SOIFDinstance *here = (B3SOIFDinstance*)inst;
 
@@ -32,6 +31,9 @@ B3SOIFDinstance *here = (B3SOIFDinstance*)inst;
         case B3SOIFD_W:
             value->rValue = here->B3SOIFDw;
             return(OK);
+	case B3SOIFD_M:
+            value->rValue = here->B3SOIFDm;
+            return(OK);    
         case B3SOIFD_AS:
             value->rValue = here->B3SOIFDsourceArea;
             return(OK);
@@ -58,9 +60,11 @@ B3SOIFDinstance *here = (B3SOIFDinstance*)inst;
             return(OK);
         case B3SOIFD_RTH0:
             value->rValue = here->B3SOIFDrth0;
+	    value->rValue /= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_CTH0:
             value->rValue = here->B3SOIFDcth0;
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_NRB:
             value->rValue = here->B3SOIFDbodySquares;
@@ -103,9 +107,11 @@ B3SOIFDinstance *here = (B3SOIFDinstance*)inst;
             return(OK);
         case B3SOIFD_SOURCECONDUCT:
             value->rValue = here->B3SOIFDsourceConductance;
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_DRAINCONDUCT:
             value->rValue = here->B3SOIFDdrainConductance;
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_VBD:
             value->rValue = *(ckt->CKTstate0 + here->B3SOIFDvbd);
@@ -123,76 +129,99 @@ B3SOIFDinstance *here = (B3SOIFDinstance*)inst;
             value->rValue = *(ckt->CKTstate0 + here->B3SOIFDvds);
             return(OK);
         case B3SOIFD_CD:
-            value->rValue = here->B3SOIFDcd; 
+            value->rValue = here->B3SOIFDcd;
+	    value->rValue *= here->B3SOIFDm; 
             return(OK);
         case B3SOIFD_CBS:
-            value->rValue = here->B3SOIFDcjs; 
+            value->rValue = here->B3SOIFDcjs;
+	    value->rValue *= here->B3SOIFDm; 
             return(OK);
         case B3SOIFD_CBD:
-            value->rValue = here->B3SOIFDcjd; 
+            value->rValue = here->B3SOIFDcjd;
+	    value->rValue *= here->B3SOIFDm; 
             return(OK);
         case B3SOIFD_GM:
             value->rValue = here->B3SOIFDgm; 
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_GMID:
             value->rValue = here->B3SOIFDgm/here->B3SOIFDcd; 
             return(OK);
         case B3SOIFD_GDS:
             value->rValue = here->B3SOIFDgds; 
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_GMBS:
-            value->rValue = here->B3SOIFDgmbs; 
+            value->rValue = here->B3SOIFDgmbs;
+	    value->rValue *= here->B3SOIFDm; 
             return(OK);
         case B3SOIFD_GBD:
             value->rValue = here->B3SOIFDgjdb; 
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_GBS:
-            value->rValue = here->B3SOIFDgjsb; 
+            value->rValue = here->B3SOIFDgjsb;
+	    value->rValue *= here->B3SOIFDm; 
             return(OK);
         case B3SOIFD_QB:
             value->rValue = *(ckt->CKTstate0 + here->B3SOIFDqb); 
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_CQB:
-            value->rValue = *(ckt->CKTstate0 + here->B3SOIFDcqb); 
+            value->rValue = *(ckt->CKTstate0 + here->B3SOIFDcqb);
+	    value->rValue *= here->B3SOIFDm; 
             return(OK);
         case B3SOIFD_QG:
             value->rValue = *(ckt->CKTstate0 + here->B3SOIFDqg); 
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_CQG:
-            value->rValue = *(ckt->CKTstate0 + here->B3SOIFDcqg); 
+            value->rValue = *(ckt->CKTstate0 + here->B3SOIFDcqg);
+	    value->rValue *= here->B3SOIFDm; 
             return(OK);
         case B3SOIFD_QD:
             value->rValue = *(ckt->CKTstate0 + here->B3SOIFDqd); 
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_CQD:
             value->rValue = *(ckt->CKTstate0 + here->B3SOIFDcqd); 
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_CGG:
             value->rValue = here->B3SOIFDcggb; 
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_CGD:
             value->rValue = here->B3SOIFDcgdb;
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_CGS:
             value->rValue = here->B3SOIFDcgsb;
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_CDG:
-            value->rValue = here->B3SOIFDcdgb; 
+            value->rValue = here->B3SOIFDcdgb;
+	    value->rValue *= here->B3SOIFDm; 
             return(OK);
         case B3SOIFD_CDD:
-            value->rValue = here->B3SOIFDcddb; 
+            value->rValue = here->B3SOIFDcddb;
+	    value->rValue *= here->B3SOIFDm; 
             return(OK);
         case B3SOIFD_CDS:
             value->rValue = here->B3SOIFDcdsb; 
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_CBG:
             value->rValue = here->B3SOIFDcbgb;
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_CBDB:
             value->rValue = here->B3SOIFDcbdb;
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_CBSB:
             value->rValue = here->B3SOIFDcbsb;
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         case B3SOIFD_VON:
             value->rValue = here->B3SOIFDvon; 
@@ -201,10 +230,12 @@ B3SOIFDinstance *here = (B3SOIFDinstance*)inst;
             value->rValue = here->B3SOIFDvdsat; 
             return(OK);
         case B3SOIFD_QBS:
-            value->rValue = *(ckt->CKTstate0 + here->B3SOIFDqbs); 
+            value->rValue = *(ckt->CKTstate0 + here->B3SOIFDqbs);
+	    value->rValue *= here->B3SOIFDm; 
             return(OK);
         case B3SOIFD_QBD:
             value->rValue = *(ckt->CKTstate0 + here->B3SOIFDqbd); 
+	    value->rValue *= here->B3SOIFDm;
             return(OK);
         default:
             return(E_BADPARM);

@@ -6,7 +6,6 @@ Author: 1992 Charles Hough
 
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "txldefs.h"
 #include "sperror.h"

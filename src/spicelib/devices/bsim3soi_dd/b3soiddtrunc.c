@@ -2,12 +2,15 @@
 Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
 File: b3soiddtrunc.c          98/5/01
+Modified by Paolo Nenzi 2002
 **********/
 
+/*
+ * Revision 2.1  99/9/27 Pin Su 
+ * BSIMDD2.1 release
+ */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "cktdefs.h"
 #include "b3soidddef.h"
 #include "sperror.h"
@@ -15,13 +18,10 @@ File: b3soiddtrunc.c          98/5/01
 
 
 int
-B3SOIDDtrunc(inModel,ckt,timeStep)
-GENmodel *inModel;
-register CKTcircuit *ckt;
-double *timeStep;
+B3SOIDDtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
-register B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
-register B3SOIDDinstance *here;
+B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
+B3SOIDDinstance *here;
 
 #ifdef STEPDEBUG
     double debugtemp;
@@ -31,6 +31,9 @@ register B3SOIDDinstance *here;
     {    for (here = model->B3SOIDDinstances; here != NULL;
 	      here = here->B3SOIDDnextInstance)
 	 {
+	    if (here->B3SOIDDowner != ARCHme)
+                    continue;
+
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
 #endif /* STEPDEBUG */

@@ -9,6 +9,6 @@ File: b3soidditf.h
 
 #include "b3soiddext.h"
 
-SPICEdev *get_bsim3soidd_info (void);
+SPICEdev *get_b3soidd_info (void);
 
 #endif

@@ -45,39 +45,37 @@ SPICEdev TXLinfo = {
     0
   },
 
-  TXLparam,
-  TXLmParam,
-  TXLload,
-  TXLsetup,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL, /* TXLfindBranch, */
-  TXLload, /* ac load */
-  NULL,
-  TXLdestroy,
-#ifdef DELETES
-  TXLmDelete,
-  TXLdelete,
-#else /* DELETES */
-  NULL,
-  NULL,
-#endif /* DELETES */
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-
+  DEVparam      : TXLparam,
+  DEVmodParam   : TXLmParam,
+  DEVload       : TXLload,
+  DEVsetup      : TXLsetup,
+  DEVunsetup    : NULL,
+  DEVpzSetup    : NULL,
+  DEVtemperature: NULL,
+  DEVtrunc      : NULL,
+  DEVfindBranch : NULL, /* TXLfindBranch, */
+  DEVacLoad     : TXLload, /* ac load */
+  DEVaccept     : NULL,
+  DEVdestroy    : TXLdestroy,
+  DEVmodDelete  : TXLmDelete,
+  DEVdelete     : TXLdelete,
+  DEVsetic      : NULL,
+  DEVask        : NULL,
+  DEVmodAsk     : NULL,
+  DEVpzLoad     : NULL,
+  DEVconvTest   : NULL,
+  DEVsenSetup   : NULL,
+  DEVsenLoad    : NULL,
+  DEVsenUpdate  : NULL,
+  DEVsenAcLoad  : NULL,
+  DEVsenPrint   : NULL,
+  DEVsenTrunc   : NULL,
+  DEVdisto      : NULL,
+  DEVnoise      : NULL,
+#ifdef CIDER
+  DEVdump       : NULL,
+  DEVacct       : NULL,  
+#endif
   &TXLiSize,
   &TXLmSize
 

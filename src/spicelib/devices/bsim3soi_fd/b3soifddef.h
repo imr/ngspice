@@ -3,6 +3,7 @@ Copyright 1999 Regents of the University of California.  All rights reserved.
 Author: Weidong Liu and Pin Su         Feb 1999
 Author: 1998 Samuel Fung
 Modified by Pin Su, Wei Jin 99/9/27
+Modified by Paolo Nenzi 2002
 File: b3soifddef.h
 **********/
 
@@ -23,8 +24,9 @@ typedef struct sB3SOIFDinstance
     struct sB3SOIFDmodel *B3SOIFDmodPtr;
     struct sB3SOIFDinstance *B3SOIFDnextInstance;
     IFuid B3SOIFDname;
-    int B3SOIPDowner;
-    int B3SOIFDstates;     /* index into state table for this device */ 
+    int B3SOIFDowner;      /* number of owner process */   
+    int B3SOIFDstates;     /* index into state table for this device */
+
     int B3SOIFDdNode;
     int B3SOIFDgNode;
     int B3SOIFDsNode;
@@ -128,6 +130,7 @@ typedef struct sB3SOIFDinstance
 
     double B3SOIFDl;
     double B3SOIFDw;
+    double B3SOIFDm;
     double B3SOIFDdrainArea;
     double B3SOIFDsourceArea;
     double B3SOIFDdrainSquares;
@@ -217,7 +220,6 @@ typedef struct sB3SOIFDinstance
 
     double B3SOIFDcbgb;
     double B3SOIFDcbdb;
-    double B3SOIFDcbs; /* XXX PN */
     double B3SOIFDcbsb;
     double B3SOIFDcbeb;
     double B3SOIFDcbT;
@@ -243,6 +245,7 @@ typedef struct sB3SOIFDinstance
 
     unsigned B3SOIFDlGiven :1;
     unsigned B3SOIFDwGiven :1;
+    unsigned B3SOIFDmGiven :1;
     unsigned B3SOIFDdrainAreaGiven :1;
     unsigned B3SOIFDsourceAreaGiven    :1;
     unsigned B3SOIFDdrainSquaresGiven  :1;
@@ -1469,6 +1472,7 @@ typedef struct sB3SOIFDmodel
 /* device parameters */
 #define B3SOIFD_W 1
 #define B3SOIFD_L 2
+#define B3SOIFD_M 22
 #define B3SOIFD_AS 3
 #define B3SOIFD_AD 4
 #define B3SOIFD_PS 5
@@ -1973,18 +1977,12 @@ typedef struct sB3SOIFDmodel
 
 #include "b3soifdext.h"
 
-#ifdef __STDC__
 extern void B3SOIFDevaluate(double,double,double,B3SOIFDinstance*,B3SOIFDmodel*,
         double*,double*,double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, CKTcircuit*);
 extern int B3SOIFDdebug(B3SOIFDmodel*, B3SOIFDinstance*, CKTcircuit*, int);
 extern int B3SOIFDcheckModel(B3SOIFDmodel*, B3SOIFDinstance*, CKTcircuit*);
-#else /* stdc */
-extern void B3SOIFDevaluate();
-extern int B3SOIFDdebug();
-extern int B3SOIFDcheckModel();
-#endif /* stdc */
 
 #endif /*B3SOIFD*/
 

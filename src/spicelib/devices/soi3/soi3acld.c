@@ -1,12 +1,13 @@
 /**********
-STAG version 2.6
+STAG version 2.7
 Copyright 2000 owned by the United Kingdom Secretary of State for Defence
 acting through the Defence Evaluation and Research Agency.
 Developed by :     Jim Benson,
                    Department of Electronics and Computer Science,
                    University of Southampton,
                    United Kingdom.
-With help from :   Nele D'Halleweyn, Bill Redman-White, and Craig Easson.
+With help from :   Nele D'Halleweyn, Ketan Mistry, Bill Redman-White,
+						 and Craig Easson.
 
 Based on STAG version 2.1
 Developed by :     Mike Lee,
@@ -15,10 +16,12 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/* Modified: 2001 Paolo Nenzi */
+/********** 
+Modified by Paolo Nenzi 2002
+ngspice integration
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "soi3defs.h"
 #include "sperror.h"
@@ -26,26 +29,24 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 
 int
-SOI3acLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+SOI3acLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     SOI3model *model = (SOI3model*)inModel;
     SOI3instance *here;
     int xnrm;
     int xrev;
 
-    double cgfgf,cgfd,cgfs,cgfdeltaT;
-    double cdgf,cdd,cds,cddeltaT;
-    double csgf,csd,css,csdeltaT;
+	 double cgfgf,cgfd,cgfs,cgfdeltaT,cgfgb;
+	 double cdgf,cdd,cds,cddeltaT,cdgb;
+    double csgf,csd,css,csdeltaT,csgb;
     double cbgf,cbd,cbs,cbdeltaT,cbgb;
-    double cgbgb,cgbsb,cgbdb;
+    double cgbgf,cgbd,cgbs,cgbdeltaT,cgbgb;
 
-    double xcgfgf,xcgfd,xcgfs,xcgfdeltaT;
-    double xcdgf,xcdd,xcds,xcddeltaT;
-    double xcsgf,xcsd,xcss,xcsdeltaT;
+    double xcgfgf,xcgfd,xcgfs,xcgfdeltaT,xcgfgb;
+    double xcdgf,xcdd,xcds,xcddeltaT,xcdgb;
+    double xcsgf,xcsd,xcss,xcsdeltaT,xcsgb;
     double xcbgf,xcbd,xcbs,xcbdeltaT,xcbgb;
-    double xcgbgb,xcgbsb,xcgbdb;
+    double xcgbgf,xcgbd,xcgbs,xcgbdeltaT,xcgbgb;
 
     double capbd,capbs; /* diode capacitances */
 
@@ -66,11 +67,11 @@ SOI3acLoad(inModel,ckt)
     double cgbd0;
     double cgbs0;
 
-    double xcgbd0,xcgbs0;
-
     double EffectiveLength;
 
     double omega;
+
+    double m;
 
     omega = ckt->CKTomega;
 
@@ -80,6 +81,9 @@ SOI3acLoad(inModel,ckt)
                 here = here->SOI3nextInstance)
         {
         
+           if (here->SOI3owner != ARCHme)
+                   continue;
+	
             if (here->SOI3mode < 0)
             {
                 xnrm=0;
@@ -92,39 +96,71 @@ SOI3acLoad(inModel,ckt)
             }
 
             EffectiveLength=here->SOI3l - 2*model->SOI3latDiff;
-            cgfs0 = model->SOI3frontGateSourceOverlapCapFactor * here->SOI3w;
-            cgfd0 = model->SOI3frontGateDrainOverlapCapFactor * here->SOI3w;
-            cgfb0 = model->SOI3frontGateBulkOverlapCapFactor * EffectiveLength;
 
-            /* JimB - can use basic device geometry to calculate source/back gate  */
-            /* and drain/back gate capacitances to a first approximation.  Use this*/
-            /* default model if capacitance factors aren't given in model netlist. */
+            /* JimB - can use basic device geometry to estimate front and back */
+            /* overlap capacitances to a first approximation. Use this default */
+            /* model if capacitance factors aren't given in model netlist. */
 
-        		if(model->SOI3backGateSourceOverlapCapFactorGiven)
+            /* Calculate front gate overlap capacitances. */
+
+        		if(model->SOI3frontGateSourceOverlapCapFactorGiven)
             {
-               cgbs0 = model->SOI3backGateSourceOverlapCapFactor * here->SOI3w;
+               cgfs0 = model->SOI3frontGateSourceOverlapCapFactor * here->SOI3w;
         		}
             else
             {
-               /* As a basic circuit designers approximation, length of drain and  */
-               /* source regions often taken to have length of twice the minimum   */
-               /* feature size for that technology. */
-               cgbs0 = 2*1e-6*model->SOI3minimumFeatureSize * here->SOI3w
-               			* model->SOI3backOxideCapFactor;
+               cgfs0 = model->SOI3latDiff * here->SOI3w * model->SOI3frontOxideCapFactor;
             }
-        		if(model->SOI3backGateDrainOverlapCapFactorGiven)
+        		if(model->SOI3frontGateDrainOverlapCapFactorGiven)
             {
-               cgbd0 = model->SOI3backGateDrainOverlapCapFactor * here->SOI3w;
+				   cgfd0 = model->SOI3frontGateDrainOverlapCapFactor * here->SOI3w;
         		}
             else
             {
-               /* As a basic circuit designer's approximation, length of drain and */
-               /* source regions often taken to have length of twice the minimum   */
-               /* feature size for that technology. */
-               cgbd0 = 2*1e-6*model->SOI3minimumFeatureSize * here->SOI3w
+               cgfd0 = model->SOI3latDiff * here->SOI3w * model->SOI3frontOxideCapFactor;
+            }
+        		if(model->SOI3frontGateBulkOverlapCapFactorGiven)
+            {
+               cgfb0 = model->SOI3frontGateBulkOverlapCapFactor * EffectiveLength;
+            }
+            else
+            {
+               cgfb0 = EffectiveLength * (0.1*1e-6*model->SOI3minimumFeatureSize)
+               			* model->SOI3frontOxideCapFactor;
+            }
+
+            /* Calculate back gate overlap capacitances. */
+
+        		if( (model->SOI3backGateSourceOverlapCapAreaFactorGiven) &&
+            (!model->SOI3backGateSourceOverlapCapAreaFactor || here->SOI3asGiven) )
+            {
+               cgbs0 = model->SOI3backGateSourceOverlapCapAreaFactor * here->SOI3as;
+        		}
+            else
+            {
+               cgbs0 = (2*1e-6*model->SOI3minimumFeatureSize + model->SOI3latDiff) * here->SOI3w
                			* model->SOI3backOxideCapFactor;
             }
-            cgbb0 = model->SOI3backGateBulkOverlapCapFactor * EffectiveLength;
+        		if( (model->SOI3backGateDrainOverlapCapAreaFactorGiven) &&
+            (!model->SOI3backGateDrainOverlapCapAreaFactor || here->SOI3adGiven) )
+            {
+               cgbd0 = model->SOI3backGateDrainOverlapCapAreaFactor * here->SOI3ad;
+        		}
+            else
+            {
+               cgbd0 = (2*1e-6*model->SOI3minimumFeatureSize + model->SOI3latDiff) * here->SOI3w
+               			* model->SOI3backOxideCapFactor;
+            }
+        		if( (model->SOI3backGateBulkOverlapCapAreaFactorGiven) &&
+            (!model->SOI3backGateBulkOverlapCapAreaFactor || here->SOI3abGiven) )
+            {
+               cgbb0 = model->SOI3backGateBulkOverlapCapAreaFactor * here->SOI3ab;
+            }
+            else
+            {
+               cgbb0 = EffectiveLength * (0.1*1e-6*model->SOI3minimumFeatureSize + here->SOI3w)
+               			* model->SOI3backOxideCapFactor;
+            }
 
             capbd = here->SOI3capbd;
             capbs = here->SOI3capbs;
@@ -133,46 +169,53 @@ SOI3acLoad(inModel,ckt)
             cgfd  = *(ckt->CKTstate0 + here->SOI3cgfd);
             cgfs  = *(ckt->CKTstate0 + here->SOI3cgfs);
             cgfdeltaT  = *(ckt->CKTstate0 + here->SOI3cgfdeltaT);
+            cgfgb = *(ckt->CKTstate0 + here->SOI3cgfgb);
             csgf = *(ckt->CKTstate0 + here->SOI3csgf);
             csd  = *(ckt->CKTstate0 + here->SOI3csd);
             css  = *(ckt->CKTstate0 + here->SOI3css);
             csdeltaT  = *(ckt->CKTstate0 + here->SOI3csdeltaT);
+            csgb = *(ckt->CKTstate0 + here->SOI3csgb);
             cdgf = *(ckt->CKTstate0 + here->SOI3cdgf);
             cdd  = *(ckt->CKTstate0 + here->SOI3cdd);
             cds  = *(ckt->CKTstate0 + here->SOI3cds);
             cddeltaT  = *(ckt->CKTstate0 + here->SOI3cddeltaT);
+            cdgb  = *(ckt->CKTstate0 + here->SOI3cdgb);
+            cgbgf = *(ckt->CKTstate0 + here->SOI3cgbgf);
+            cgbd  = *(ckt->CKTstate0 + here->SOI3cgbd);
+            cgbs  = *(ckt->CKTstate0 + here->SOI3cgbs);
+            cgbdeltaT  = *(ckt->CKTstate0 + here->SOI3cgbdeltaT);
             cgbgb = *(ckt->CKTstate0 + here->SOI3cgbgb);
-            cgbsb = *(ckt->CKTstate0 + here->SOI3cgbsb);
-            cgbdb = *(ckt->CKTstate0 + here->SOI3cgbdb);
-            cbgf = -(cgfgf + cdgf + csgf);
-            cbd = -(cgfd + cdd + csd + cgbdb);
-            cbs = -(cgfs + cds + css + cgbsb);
-            cbdeltaT = -(cgfdeltaT + cddeltaT + csdeltaT);
-            cbgb = -cgbgb;
+            cbgf = -(cgfgf + cdgf + csgf + cgbgf);
+            cbd = -(cgfd + cdd + csd + cgbd);
+            cbs = -(cgfs + cds + css + cgbs);
+            cbdeltaT = -(cgfdeltaT + cddeltaT + csdeltaT + cgbdeltaT);
+            cbgb = -(cgfgb + cdgb + csgb + cgbgb);
 
-            xcgfgf = (cgfgf + cgfd0 + cgfs0 + cgfb0) * omega;
-            xcgfd  = (cgfd - cgfd0) * omega;
-            xcgfs  = (cgfs - cgfs0) * omega;
-            xcgfdeltaT  = cgfdeltaT * omega;
-            xcsgf = (csgf - cgfs0) * omega;
-            xcsd  = csd * omega;
-            xcss  = (css + capbs + cgfs0) * omega;
-            xcsdeltaT  = csdeltaT * omega;
-            xcdgf = (cdgf - cgfd0) * omega;
-            xcdd  = (cdd + capbd + cgfd0) * omega;
-            xcds  = cds * omega;
-            xcddeltaT  = cddeltaT * omega;
-            xcgbgb = (cgbgb + cgbb0 + cgbd0 + cgbs0) * omega;
-            xcgbsb = (cgbsb - cgbs0) * omega;
-            xcgbdb = -cgbd0 * omega;
-            xcbgf = (cbgf - cgfb0) * omega;
+				xcgfgf = (cgfgf + cgfd0 + cgfs0 + cgfb0) * omega;
+				xcgfd  = (cgfd - cgfd0) * omega;
+				xcgfs  = (cgfs - cgfs0) * omega;
+				xcgfdeltaT = cgfdeltaT * omega;
+				xcgfgb = cgfgb * omega;
+				xcdgf = (cdgf - cgfd0) * omega;
+				xcdd  = (cdd + capbd + cgfd0 + cgbd0) * omega;
+				xcds  = cds * omega;
+				xcddeltaT = cddeltaT * omega;
+				xcdgb = (cdgb - cgbd0) * omega;
+				xcsgf = (csgf - cgfs0) * omega;
+				xcsd  = csd * omega;
+				xcss  = (css + capbs + cgfs0 + cgbs0) * omega;
+				xcsdeltaT = csdeltaT * omega;
+				xcsgb = (csgb - cgbs0) * omega;
+				xcbgf = (cbgf - cgfb0) * omega;
             xcbd = (cbd - capbd) * omega;
             xcbs = (cbs - capbs) * omega;
-            xcbdeltaT = cbdeltaT * omega;
-            xcbgb = cbgb * omega;
-
-            xcgbs0 = cgbs0 * omega;
-            xcgbd0 = cgbd0 * omega;
+				xcbdeltaT = cbdeltaT * omega;
+				xcbgb = (cbgb - cgbb0) * omega;
+				xcgbgf = cgbgf * omega;
+				xcgbd  = (cgbd - cgbd0) * omega;
+				xcgbs  = (cgbs - cgbs0) * omega;
+				xcgbdeltaT = cgbdeltaT * omega;
+				xcgbgb = (cgbgb + cgbd0 + cgbs0 + cgbb0) * omega;
 
             xcBJTbsbs = *(ckt->CKTstate0 + here->SOI3cBJTbsbs) * omega;
             xcBJTbsdeltaT = *(ckt->CKTstate0 + here->SOI3cBJTbsdeltaT) * omega;
@@ -212,191 +255,191 @@ SOI3acLoad(inModel,ckt)
              *    load matrix
              */
 
-            *(here->SOI3GF_gfPtr + 1) += xcgfgf;
-            *(here->SOI3GB_gbPtr + 1) += xcgbgb;
-            *(here->SOI3B_bPtr + 1) += -(xcbgf+xcbd+xcbs+xcbgb)
-                                       +xcBJTbsbs+xcBJTbdbd;
+            m = here->SOI3m;
 
-            *(here->SOI3DP_dpPtr + 1) += xcdd+xcgbd0+xcBJTbdbd;
-            *(here->SOI3SP_spPtr + 1) += xcss+xcgbs0+xcBJTbsbs;
+            *(here->SOI3GF_gfPtr + 1) += m * xcgfgf;
+            *(here->SOI3GF_gbPtr + 1) += m * xcgfgb;
+            *(here->SOI3GF_dpPtr + 1) += m * xcgfd;
+            *(here->SOI3GF_spPtr + 1) += m * xcgfs;
+            *(here->SOI3GF_bPtr + 1)  -= m * (xcgfgf + xcgfd + xcgfs + xcgfgb);
 
-            *(here->SOI3GF_dpPtr + 1) += xcgfd;
-            *(here->SOI3GF_spPtr + 1) += xcgfs;
-            *(here->SOI3GF_bPtr + 1)  -= (xcgfgf + xcgfd + xcgfs);
+            *(here->SOI3GB_gfPtr + 1) += m * xcgbgf;
+            *(here->SOI3GB_gbPtr + 1) += m * xcgbgb;
+            *(here->SOI3GB_dpPtr + 1) += m * xcgbd;
+            *(here->SOI3GB_spPtr + 1) += m * xcgbs;
+            *(here->SOI3GB_bPtr + 1)  -= m * (xcgbgf + xcgbd + xcgbs + xcgbgb);
 
-            *(here->SOI3GB_dpPtr + 1) += xcgbdb;
-            *(here->SOI3GB_spPtr + 1) += xcgbsb;
-            *(here->SOI3GB_bPtr + 1)  -= (xcgbgb + xcgbdb + xcgbsb);
+            *(here->SOI3B_gfPtr + 1) += m * xcbgf;
+            *(here->SOI3B_gbPtr + 1) += m * xcbgb;
+            *(here->SOI3B_dpPtr + 1) += m * (xcbd-xcBJTbdbd);
+            *(here->SOI3B_spPtr + 1) += m * (xcbs-xcBJTbsbs);
+            *(here->SOI3B_bPtr + 1)  += m * (-(xcbgf+xcbd+xcbs+xcbgb)
+                                        +xcBJTbsbs+xcBJTbdbd);
 
-            *(here->SOI3B_gfPtr + 1) += xcbgf;
-            *(here->SOI3B_gbPtr + 1) += xcbgb;
-            *(here->SOI3B_dpPtr + 1) += xcbd-xcBJTbdbd;
-            *(here->SOI3B_spPtr + 1) += xcbs-xcBJTbsbs;
+            *(here->SOI3DP_gfPtr + 1) += m * xcdgf;
+            *(here->SOI3DP_gbPtr + 1) += m * xcdgb;
+            *(here->SOI3DP_dpPtr + 1) += m * (xcdd+xcBJTbdbd);
+            *(here->SOI3DP_spPtr + 1) += m * xcds;
+            *(here->SOI3DP_bPtr + 1)  -= m * (xcdgf + xcdd + xcds + xcdgb + xcBJTbdbd);
 
-            *(here->SOI3DP_gfPtr + 1) += xcdgf;
-            *(here->SOI3DP_gbPtr + 1) += -xcgbd0;
-            *(here->SOI3DP_bPtr + 1) += -(xcdgf + xcdd + xcds + xcBJTbdbd);
-            *(here->SOI3DP_spPtr + 1) += xcds;
-
-            *(here->SOI3SP_gfPtr + 1) += xcsgf;
-            *(here->SOI3SP_gbPtr + 1) += -xcgbs0;
-            *(here->SOI3SP_bPtr + 1) += -(xcsgf + xcsd + xcss + xcBJTbsbs);
-            *(here->SOI3SP_dpPtr + 1) += xcsd;
+            *(here->SOI3SP_gfPtr + 1) += m * xcsgf;
+            *(here->SOI3SP_gbPtr + 1) += m * xcsgb;
+            *(here->SOI3SP_dpPtr + 1) += m * xcsd;
+            *(here->SOI3SP_spPtr + 1) += m * (xcss+xcBJTbsbs);
+            *(here->SOI3SP_bPtr + 1)  -= m * (xcsgf + xcsd + xcss + xcsgb + xcBJTbsbs);
         
 /* if no thermal behaviour specified, then put in zero valued indpt. voltage source
    between TOUT and ground */
             if (here->SOI3rt==0)
             {
-            	*(here->SOI3TOUT_ibrPtr + 1) += 1.0;
-   				*(here->SOI3IBR_toutPtr + 1) += 1.0;
+            	*(here->SOI3TOUT_ibrPtr + 1) += m * 1.0;
+   		*(here->SOI3IBR_toutPtr + 1) += m * 1.0;
             	*(ckt->CKTirhs + (here->SOI3branch)) = 0;
             }
             else
             {
-            	*(here->SOI3TOUT_toutPtr + 1) += xct[0];
+            	*(here->SOI3TOUT_toutPtr + 1) += m * xct[0];
             	if (here->SOI3numThermalNodes > 1)
               	{
-               	*(here->SOI3TOUT_tout1Ptr + 1) += -xct[0];
-               	*(here->SOI3TOUT1_toutPtr + 1) += -xct[0];
-               	*(here->SOI3TOUT1_tout1Ptr + 1) += xct[0]+xct[1];
+               	*(here->SOI3TOUT_tout1Ptr + 1) += m * (-xct[0]);
+               	*(here->SOI3TOUT1_toutPtr + 1) += m * (-xct[0]);
+               	*(here->SOI3TOUT1_tout1Ptr + 1) += m * (xct[0]+xct[1]);
               	}
               	if (here->SOI3numThermalNodes > 2)
               	{
-               	*(here->SOI3TOUT1_tout2Ptr + 1) += -xct[1];
-               	*(here->SOI3TOUT2_tout1Ptr + 1) += -xct[1];
-               	*(here->SOI3TOUT2_tout2Ptr + 1) += xct[1]+xct[2];
+               	*(here->SOI3TOUT1_tout2Ptr + 1) += m * (-xct[1]);
+               	*(here->SOI3TOUT2_tout1Ptr + 1) += m * (-xct[1]);
+               	*(here->SOI3TOUT2_tout2Ptr + 1) += m * (xct[1]+xct[2]);
               	}
             	if (here->SOI3numThermalNodes > 3)
               	{
-               	*(here->SOI3TOUT2_tout3Ptr + 1) += -xct[2];
-               	*(here->SOI3TOUT3_tout2Ptr + 1) += -xct[2];
-               	*(here->SOI3TOUT3_tout3Ptr + 1) += xct[2]+xct[3];
+               	*(here->SOI3TOUT2_tout3Ptr + 1) += m * (-xct[2]);
+               	*(here->SOI3TOUT3_tout2Ptr + 1) += m * (-xct[2]);
+               	*(here->SOI3TOUT3_tout3Ptr + 1) += m * (xct[2]+xct[3]);
               	}
               	if (here->SOI3numThermalNodes > 4)
               	{
-               	*(here->SOI3TOUT3_tout4Ptr + 1) += -xct[3];
-               	*(here->SOI3TOUT4_tout3Ptr + 1) += -xct[3];
-               	*(here->SOI3TOUT4_tout4Ptr + 1) += xct[3]+xct[4];
+               	*(here->SOI3TOUT3_tout4Ptr + 1) += m * (-xct[3]);
+               	*(here->SOI3TOUT4_tout3Ptr + 1) += m * (-xct[3]);
+               	*(here->SOI3TOUT4_tout4Ptr + 1) += m * (xct[3]+xct[4]);
               	}
-            	*(here->SOI3GF_toutPtr + 1) += xcgfdeltaT*model->SOI3type;
-            	*(here->SOI3DP_toutPtr + 1) += (xcddeltaT - xcBJTbddeltaT)*model->SOI3type;
-            	*(here->SOI3SP_toutPtr + 1) += (xcsdeltaT - xcBJTbsdeltaT)*model->SOI3type;
-            	*(here->SOI3B_toutPtr + 1) += model->SOI3type*
+            	*(here->SOI3GF_toutPtr + 1) += m * xcgfdeltaT*model->SOI3type;
+            	*(here->SOI3DP_toutPtr + 1) += m * (xcddeltaT - xcBJTbddeltaT)*model->SOI3type;
+            	*(here->SOI3SP_toutPtr + 1) += m * (xcsdeltaT - xcBJTbsdeltaT)*model->SOI3type;
+            	*(here->SOI3B_toutPtr + 1) += m * model->SOI3type *
                                             (xcbdeltaT + xcBJTbsdeltaT + xcBJTbddeltaT);
+            	*(here->SOI3GB_toutPtr + 1) += m * xcgbdeltaT*model->SOI3type;
             }
 
 
             /* and now real part */
-            *(here->SOI3D_dPtr) += (here->SOI3drainConductance);
-            *(here->SOI3S_sPtr) += (here->SOI3sourceConductance);
-            *(here->SOI3B_bPtr) += (here->SOI3gbd+here->SOI3gbs -
+            *(here->SOI3D_dPtr)  += (m * here->SOI3drainConductance);
+            *(here->SOI3D_dpPtr) += (m * (-here->SOI3drainConductance));
+            *(here->SOI3DP_dPtr) += (m * (-here->SOI3drainConductance));
+            
+            *(here->SOI3S_sPtr)  += (m * here->SOI3sourceConductance);
+            *(here->SOI3S_spPtr) += (m * (-here->SOI3sourceConductance));
+            *(here->SOI3SP_sPtr) += (m * (-here->SOI3sourceConductance));
+
+            *(here->SOI3DP_gfPtr) += ((m * (xnrm-xrev)*here->SOI3gmf +
+                                      xnrm*here->SOI3gMmf));
+            *(here->SOI3DP_gbPtr) += (m * ((xnrm-xrev)*here->SOI3gmb +
+                                      xnrm*here->SOI3gMmb));
+            *(here->SOI3DP_dpPtr) += m * (here->SOI3drainConductance+here->SOI3gds+
+            			      here->SOI3gbd+xrev*(here->SOI3gmf+here->SOI3gmbs+
+                                      here->SOI3gmb)+xnrm*here->SOI3gMd);
+            *(here->SOI3DP_spPtr) += m * (-here->SOI3gds - here->SOI3gBJTdb_bs
+                                      -xnrm*(here->SOI3gmf+here->SOI3gmb+here->SOI3gmbs +
+                                      here->SOI3gMmf+here->SOI3gMmb+here->SOI3gMmbs+here->SOI3gMd));
+            *(here->SOI3DP_bPtr) += m * (-here->SOI3gbd + here->SOI3gBJTdb_bs
+                                     +(xnrm-xrev)*here->SOI3gmbs+
+                                      xnrm*here->SOI3gMmbs);
+
+            *(here->SOI3SP_gfPtr) += m * (-(xnrm-xrev)*here->SOI3gmf+
+                                      xrev*here->SOI3gMmf);
+            *(here->SOI3SP_gbPtr) += m * (-(xnrm-xrev)*here->SOI3gmb+
+                                      xrev*here->SOI3gMmb);
+            *(here->SOI3SP_dpPtr) += m * (-here->SOI3gds - here->SOI3gBJTsb_bd
+                                      -xrev*(here->SOI3gmf+here->SOI3gmb+here->SOI3gmbs+
+                                      here->SOI3gMmf+here->SOI3gMmb+here->SOI3gMmbs+here->SOI3gMd));
+            *(here->SOI3SP_spPtr) += m * (here->SOI3sourceConductance+here->SOI3gds+
+                    						  here->SOI3gbs+xnrm*(here->SOI3gmf+here->SOI3gmbs+
+                    						  here->SOI3gmb)+xrev*here->SOI3gMd);
+            *(here->SOI3SP_bPtr) += m * (-here->SOI3gbs + here->SOI3gBJTsb_bd
+                                     -(xnrm-xrev)*here->SOI3gmbs+
+                                      xrev*here->SOI3gMmbs);
+
+            *(here->SOI3B_gfPtr) += m * (-here->SOI3gMmf);
+            *(here->SOI3B_gbPtr) += m * (-here->SOI3gMmb);
+            *(here->SOI3B_dpPtr) += m * (-(here->SOI3gbd) + here->SOI3gBJTsb_bd +
+                                   xrev*(here->SOI3gMmf+here->SOI3gMmb+
+                                         here->SOI3gMmbs+here->SOI3gMd) -
+                                   xnrm*here->SOI3gMd);
+            *(here->SOI3B_spPtr) += m * (-(here->SOI3gbs) + here->SOI3gBJTdb_bs +
+                                   xnrm*(here->SOI3gMmf+here->SOI3gMmb+
+                                         here->SOI3gMmbs+here->SOI3gMd) -
+                                   xrev*here->SOI3gMd);
+            *(here->SOI3B_bPtr) += m * (here->SOI3gbd+here->SOI3gbs -
                                    here->SOI3gMmbs
                                    - here->SOI3gBJTdb_bs - here->SOI3gBJTsb_bd);
 
-            *(here->SOI3DP_dpPtr) +=
-                    (here->SOI3drainConductance+here->SOI3gds+
-                    here->SOI3gbd+xrev*(here->SOI3gmf+here->SOI3gmbs+
-                    here->SOI3gmb)+xnrm*here->SOI3gMd);
-            *(here->SOI3SP_spPtr) += 
-                    (here->SOI3sourceConductance+here->SOI3gds+
-                    here->SOI3gbs+xnrm*(here->SOI3gmf+here->SOI3gmbs+
-                    here->SOI3gmb)+xrev*here->SOI3gMd);
-
-            *(here->SOI3D_dpPtr) += (-here->SOI3drainConductance);
-
-            *(here->SOI3S_spPtr) += (-here->SOI3sourceConductance);
-            *(here->SOI3B_gfPtr) += -here->SOI3gMmf;
-            *(here->SOI3B_gbPtr) += -(here->SOI3gMmb);
-            *(here->SOI3B_dpPtr) += -(here->SOI3gbd) + here->SOI3gBJTsb_bd +
-                                   xrev*(here->SOI3gMmf+here->SOI3gMmb+
-                                         here->SOI3gMmbs+here->SOI3gMd) -
-                                   xnrm*here->SOI3gMd;
-            *(here->SOI3B_spPtr) += -(here->SOI3gbs) + here->SOI3gBJTdb_bs +
-                                   xnrm*(here->SOI3gMmf+here->SOI3gMmb+
-                                         here->SOI3gMmbs+here->SOI3gMd) -
-                                   xrev*here->SOI3gMd;
-            *(here->SOI3DP_dPtr) += (-here->SOI3drainConductance);
-            *(here->SOI3SP_sPtr) += (-here->SOI3sourceConductance);
-
-            *(here->SOI3DP_gfPtr) += ((xnrm-xrev)*here->SOI3gmf +
-                                      xnrm*here->SOI3gMmf);
-            *(here->SOI3DP_gbPtr) += ((xnrm-xrev)*here->SOI3gmb +
-                                      xnrm*here->SOI3gMmb);
-            *(here->SOI3DP_bPtr) += (-here->SOI3gbd + here->SOI3gBJTdb_bs
-                                     +(xnrm-xrev)*here->SOI3gmbs+
-                                      xnrm*here->SOI3gMmbs);
-            *(here->SOI3DP_spPtr) += (-here->SOI3gds - here->SOI3gBJTdb_bs
-                                      -xnrm*(here->SOI3gmf+here->SOI3gmb+here->SOI3gmbs +
-                   here->SOI3gMmf+here->SOI3gMmb+here->SOI3gMmbs+here->SOI3gMd));
-
-            *(here->SOI3SP_gfPtr) += (-(xnrm-xrev)*here->SOI3gmf+
-                                      xrev*here->SOI3gMmf);
-            *(here->SOI3SP_gbPtr) += (-(xnrm-xrev)*here->SOI3gmb+
-                                      xrev*here->SOI3gMmb);
-            *(here->SOI3SP_bPtr) += (-here->SOI3gbs + here->SOI3gBJTsb_bd
-                                     -(xnrm-xrev)*here->SOI3gmbs+
-                                      xrev*here->SOI3gMmbs);
-            *(here->SOI3SP_dpPtr) += (-here->SOI3gds - here->SOI3gBJTsb_bd
-                                      -xrev*(here->SOI3gmf+here->SOI3gmb+here->SOI3gmbs+
-                   here->SOI3gMmf+here->SOI3gMmb+here->SOI3gMmbs+here->SOI3gMd));
-        
 /* if no thermal behaviour specified, then put in zero valued indpt. voltage source
    between TOUT and ground */
             if (here->SOI3rt==0)
             {
-              *(here->SOI3TOUT_ibrPtr) += 1.0;
-              *(here->SOI3IBR_toutPtr) += 1.0;
+              *(here->SOI3TOUT_ibrPtr) += m * 1.0;
+              *(here->SOI3IBR_toutPtr) += m * 1.0;
               *(ckt->CKTrhs + (here->SOI3branch)) = 0;
             }
             else
             {
-            	*(here->SOI3TOUT_toutPtr) += -(here->SOI3gPdT)+grt[0];
+            	*(here->SOI3TOUT_toutPtr) += m * (-(here->SOI3gPdT)+grt[0]);
             	if (here->SOI3numThermalNodes > 1)
               	{
-                	*(here->SOI3TOUT_tout1Ptr) += -grt[0];
-                	*(here->SOI3TOUT1_toutPtr) += -grt[0];
-                	*(here->SOI3TOUT1_tout1Ptr) += grt[0]+grt[1];
+                	*(here->SOI3TOUT_tout1Ptr) += m * (-grt[0]);
+                	*(here->SOI3TOUT1_toutPtr) += m * (-grt[0]);
+                	*(here->SOI3TOUT1_tout1Ptr) += m * (grt[0]+grt[1]);
               	}
               	if (here->SOI3numThermalNodes > 2)
               	{
-                 	*(here->SOI3TOUT1_tout2Ptr) += -grt[1];
-                	*(here->SOI3TOUT2_tout1Ptr) += -grt[1];
-                	*(here->SOI3TOUT2_tout2Ptr) += grt[1]+grt[2];
+                 	*(here->SOI3TOUT1_tout2Ptr) += m * (-grt[1]);
+                	*(here->SOI3TOUT2_tout1Ptr) += m * (-grt[1]);
+                	*(here->SOI3TOUT2_tout2Ptr) += m * (grt[1]+grt[2]);
               	}
       			if (here->SOI3numThermalNodes > 3)
               	{
-                	*(here->SOI3TOUT2_tout3Ptr) += -grt[2];
-                	*(here->SOI3TOUT3_tout2Ptr) += -grt[2];
-                	*(here->SOI3TOUT3_tout3Ptr) += grt[2]+grt[3];
+                	*(here->SOI3TOUT2_tout3Ptr) += m * (-grt[2]);
+                	*(here->SOI3TOUT3_tout2Ptr) += m * (-grt[2]);
+                	*(here->SOI3TOUT3_tout3Ptr) += m * (grt[2]+grt[3]);
               	}
               	if (here->SOI3numThermalNodes > 4)
               	{
-                 	*(here->SOI3TOUT3_tout4Ptr) += -grt[3];
-                	*(here->SOI3TOUT4_tout3Ptr) += -grt[3];
-                	*(here->SOI3TOUT4_tout4Ptr) += grt[3]+grt[4];
+                 	*(here->SOI3TOUT3_tout4Ptr) += m * (-grt[3]);
+                	*(here->SOI3TOUT4_tout3Ptr) += m * (-grt[3]);
+                	*(here->SOI3TOUT4_tout4Ptr) += m * (grt[3]+grt[4]);
               	}
 
-              *(here->SOI3TOUT_dpPtr) += xnrm*(-(here->SOI3gPds*model->SOI3type))
+              *(here->SOI3TOUT_dpPtr) += m * (xnrm*(-(here->SOI3gPds*model->SOI3type))
                                         +xrev*(here->SOI3gPds+here->SOI3gPmf+
                                                here->SOI3gPmb+here->SOI3gPmbs)*
-                                               model->SOI3type;
-              *(here->SOI3TOUT_gfPtr) += -(here->SOI3gPmf*model->SOI3type);
-              *(here->SOI3TOUT_gbPtr) += -(here->SOI3gPmb*model->SOI3type);
-              *(here->SOI3TOUT_bPtr) += -(here->SOI3gPmbs*model->SOI3type);
-              *(here->SOI3TOUT_spPtr) += xnrm*(here->SOI3gPds+here->SOI3gPmf+
+                                               model->SOI3type);
+              *(here->SOI3TOUT_gfPtr) += m * (-(here->SOI3gPmf*model->SOI3type));
+              *(here->SOI3TOUT_gbPtr) += m * (-(here->SOI3gPmb*model->SOI3type));
+              *(here->SOI3TOUT_bPtr) += m * (-(here->SOI3gPmbs*model->SOI3type));
+              *(here->SOI3TOUT_spPtr) += m * (xnrm*(here->SOI3gPds+here->SOI3gPmf+
                                           here->SOI3gPmb+here->SOI3gPmbs)*model->SOI3type
-                                        +xrev*(-(here->SOI3gPds*model->SOI3type));
+                                        +xrev*(-(here->SOI3gPds*model->SOI3type)));
 
-              *(here->SOI3DP_toutPtr) += (xnrm-xrev)*here->SOI3gt*model->SOI3type;
-              *(here->SOI3SP_toutPtr) += (xrev-xnrm)*here->SOI3gt*model->SOI3type;
+              *(here->SOI3DP_toutPtr) += m * (xnrm-xrev)*here->SOI3gt*model->SOI3type;
+              *(here->SOI3SP_toutPtr) += m * (xrev-xnrm)*here->SOI3gt*model->SOI3type;
 /* need to mult by type in above as conductances will be used with exterior voltages
   which will be -ve for PMOS except for gPdT */
-/* now for thermal influence on impact ionisation current and tranisent stuff */
-              *(here->SOI3DP_toutPtr) += (xnrm*here->SOI3gMdeltaT -
+/* now for thermal influence on impact ionisation current and transient stuff */
+              *(here->SOI3DP_toutPtr) += m * (xnrm*here->SOI3gMdeltaT -
                                           here->SOI3gbdT + here->SOI3gBJTdb_deltaT)*model->SOI3type;
-              *(here->SOI3SP_toutPtr) += (xrev*here->SOI3gMdeltaT -
+              *(here->SOI3SP_toutPtr) += m * (xrev*here->SOI3gMdeltaT -
                                           here->SOI3gbsT + here->SOI3gBJTsb_deltaT)*model->SOI3type;
-              *(here->SOI3B_toutPtr) -= (here->SOI3gMdeltaT - here->SOI3gbsT -
+              *(here->SOI3B_toutPtr) -= m * (here->SOI3gMdeltaT - here->SOI3gbsT -
                                          here->SOI3gbdT + here->SOI3gBJTdb_deltaT +
                                          here->SOI3gBJTsb_deltaT)*model->SOI3type;
             }

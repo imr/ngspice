@@ -5,7 +5,6 @@ Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "mos1defs.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"

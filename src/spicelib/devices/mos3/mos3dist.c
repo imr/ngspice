@@ -4,7 +4,6 @@ Author: 1988 Jaijeet S Roychowdhury
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "mos3defs.h"
 #include "sperror.h"

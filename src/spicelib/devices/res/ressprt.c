@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
-Modified: Apr 2000 - Paolo Nenzi
+Modified: Apr 2002 - Paolo Nenzi
 **********/
 
 /* Pretty print the sensitivity info for all 
@@ -9,7 +9,6 @@ Modified: Apr 2000 - Paolo Nenzi
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "resdefs.h"
 #include "sperror.h"
@@ -35,6 +34,10 @@ RESsPrint(GENmodel *inModel, CKTcircuit *ckt)
             printf("    Instance name:%s\n",here->RESname);
             printf("      Positive, negative nodes: %s, %s\n",
             CKTnodName(ckt,here->RESposNode),CKTnodName(ckt,here->RESnegNode));
+	            
+	    printf("  Multiplier: %g ",here->RESm);
+            printf(here->RESmGiven ? "(specified)\n" : "(default)\n");
+	        
             printf("      Resistance: %f ",here->RESresist);
             printf(here->RESresGiven ? "(specified)\n" : "(default)\n");
             printf("    RESsenParmNo:%d\n",here->RESsenParmNo);
