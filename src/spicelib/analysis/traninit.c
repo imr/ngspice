@@ -18,9 +18,32 @@ int TRANinit(CKTcircuit	*ckt, JOB *job)
     ckt->CKTstep = ((TRANan*)job)->TRANstep;
     ckt->CKTinitTime = ((TRANan*)job)->TRANinitTime;
     ckt->CKTmaxStep = ((TRANan*)job)->TRANmaxStep;
-    if(ckt->CKTmaxStep == 0) {
+   
+   
+    
+   /*  The following code has been taken from macspice 3f4 (A. Wilson) 
+       in the file traninit.new.c - Seems interesting */
+#ifdef EXPERIMENTAL_CODE 
+    if(ckt->CKTmaxStep == 0) 
+      {
+       if (ckt->CKTstep < ( ckt->CKTfinalTime - ckt->CKTinitTime )/50.0)
+    	      {
+    		  ckt->CKTmaxStep = ckt->CKTstep;
+       } 
+       else
+    	      {
+    		ckt->CKTmaxStep = ( ckt->CKTfinalTime - ckt->CKTinitTime )/50.0;
+    	 } 
+}
+
+#else
+/* The original spice code */
+ if(ckt->CKTmaxStep == 0) {
 	ckt->CKTmaxStep = (ckt->CKTfinalTime-ckt->CKTinitTime)/50;
     }
+#endif
+   
+    
     ckt->CKTdelmin = 1e-9*ckt->CKTmaxStep;	/* XXX */
     ckt->CKTmode = ((TRANan*)job)->TRANmode;
 
