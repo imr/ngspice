@@ -1,3 +1,21 @@
+2004-06-02 Adrian Dawe <adrian.dawe@multigig.com>
+
+	* src/frontend/com_dl.c src/frontend/com_dl.c src/frontend/commands.c:
+	Add function xaltermod
+
+2004-06-02 Stefan Jones <stefan.jones@multigig.com>
+
+	* configure.in:
+	Change to version 16
+	Disable GnuReadline in tclspice
+	
+	* src/tclspice.c:
+	Added trigger and step callbacks
+	Fix redef of sighandler_t
+
+	* src/pkgIndex.tcl.in:
+	set a global variable spice_version
+
 2004-05-26 Stefan Jones <stefan.jones@multigig.com>
 
 	* src/tclspice.c src/include/ngspice.h src/misc/tilde.c

@@ -79,6 +79,7 @@ proc Loadspice { version dir } {
 		spicewish::init_gui $spicefile
     }
     
+	set ::spice_version $version
 }
 
 proc q { } { exit }

@@ -53,9 +53,8 @@
 
 /* To interupt a spice run */
 #include <signal.h>
-#ifndef sighandler_t
-typedef void (*sighandler_t)(int);
-#endif
+typedef void (*sighandler)(int);
+
 #include <setjmp.h>
 extern sigjmp_buf jbuf;
 
@@ -109,14 +108,14 @@ typedef struct {
 } vector;
 
 /*The current run (to get variable names, etc)*/
-static runDesc *cur_run = NULL;
+static runDesc *cur_run;
 
-static vector *vectors = NULL;
+static vector *vectors;
 
-static int ownVectors = 0;
+static int ownVectors;
 
 /* save this each time called */
-static Tcl_Interp *spice_interp=NULL;
+static Tcl_Interp *spice_interp;
 #define save_interp() \
 do {\
     spice_interp = interp;\
@@ -127,9 +126,9 @@ do {\
 /****************************************************************************/
 
 /*this holds the number of time points done (altered by spice)*/
-int steps_completed = 0;
+int steps_completed;
 /* number of bltvectors*/
-static int blt_vnum = 0;
+static int blt_vnum;
 
 
 /*Native Tcl functions */
@@ -304,13 +303,62 @@ static int lastVector TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 }
 
 /*agr1: spice variable name
+ *arg2: index
+ */
+static int get_value TCL_CMDPROCARGS(clientData,interp,argc,argv) {
+	char *var;
+	int i, vindex, j;
+	double val=0;
+	if(argc != 3) {
+	    Tcl_SetResult(interp,
+				"Wrong # args. spice::get_value spice_variable index",
+				TCL_STATIC);
+    	return TCL_ERROR;
+	}
+  var = (char *)argv[1];
+
+  for(i=0;i < blt_vnum && strcmp(var,vectors[i].name);i++);
+
+  if(i == blt_vnum) {
+    Tcl_SetResult(interp, "Bad spice variable ",TCL_STATIC);
+    Tcl_AppendResult(interp, (char *)var, TCL_STATIC);
+    return TCL_ERROR;
+  } else vindex = i;
+
+  j = atoi(argv[2]);
+  
+#ifdef HAVE_LIBPTHREAD
+    pthread_mutex_lock(&vectors[vindex].mutex);
+#endif
+
+	if(j < 0 || j >= vectors[vindex].length) {
+		i = 1;
+	} else {
+		i = 0;
+		val =  vectors[vindex].data[j];
+	}
+	
+#ifdef HAVE_LIBPTHREAD
+    pthread_mutex_unlock(&vectors[vindex].mutex);
+#endif
+
+	if(i) {
+	    Tcl_SetResult(interp, "Index out of range",TCL_STATIC);
+		return TCL_ERROR;
+	} else {
+		Tcl_SetObjResult(interp,Tcl_NewDoubleObj(val));
+		return TCL_OK;
+	}
+}
+	
+/*agr1: spice variable name
  *arg2: blt_vector 
  *arg3: start copy index, optional
  *arg4: end copy index. optional
  */
 static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   Blt_Vector *vec;
-  int index, i;
+  int j, i;
   char *blt, *var;
   int start=0,end=-1,len;
 
@@ -328,7 +376,7 @@ static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
     Tcl_SetResult(interp, "Bad spice variable ",TCL_STATIC);
     Tcl_AppendResult(interp, (char *)var, TCL_STATIC);
     return TCL_ERROR;
-  } else index = i;
+  } else j = i;
 
   if(Blt_GetVector(interp,blt,&vec)){
     Tcl_SetResult(interp, "Bad blt vector ",TCL_STATIC);
@@ -341,12 +389,12 @@ static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
     start = atoi(argv[3]);
   if(argc == 5)
     end   = atoi(argv[4]);
-  if(vectors[index].length) {
+  if(vectors[j].length) {
 #ifdef HAVE_LIBPTHREAD
-    pthread_mutex_lock(&vectors[index].mutex);
+    pthread_mutex_lock(&vectors[j].mutex);
 #endif
       
-    len = vectors[index].length;
+    len = vectors[j].length;
       
     if(start){
       start = start % len;
@@ -360,11 +408,11 @@ static int spicetoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
       
     len = abs(end - start + 1);
       
-    Blt_ResetVector(vec,(vectors[index].data + start),len,
+    Blt_ResetVector(vec,(vectors[j].data + start),len,
 		    len,TCL_VOLATILE);
     
 #ifdef HAVE_LIBPTHREAD
-    pthread_mutex_unlock(&vectors[index].mutex);
+    pthread_mutex_unlock(&vectors[j].mutex);
 #endif
   }
   return TCL_OK;
@@ -422,7 +470,7 @@ static int _thread_stop(){
 static int _run(int argc,char **argv){
   char buf[1024] = "";
   int i;
-  sighandler_t oldHandler;
+  sighandler oldHandler;
 #ifdef HAVE_LIBPTHREAD
   char *string;
   bool fl_bg = FALSE;
@@ -1146,8 +1194,8 @@ struct triggerEvent {
 };
 
 
-struct triggerEvent *eventQueue=NULL;
-struct triggerEvent *eventQueueEnd=NULL;
+struct triggerEvent *eventQueue;
+struct triggerEvent *eventQueueEnd;
 
 #ifdef HAVE_LIBPTHREAD
 pthread_mutex_t triggerMutex;
@@ -1166,7 +1214,103 @@ struct watch {
   double oV;
 };
 
-struct watch *watches=NULL;
+struct watch *watches;
+
+char *triggerCallback;
+unsigned int triggerPollTime=1;
+
+char *stepCallback;
+unsigned int stepPollTime=1;
+unsigned int stepCount=1;
+int stepCallbackPending;
+
+void stepEventSetup(ClientData clientData,int flags) {
+	Tcl_Time t;
+	if(stepCallbackPending) {
+		t.sec  = 0;
+		t.usec = 0;
+	} else {
+		t.sec = stepPollTime / 1000;
+		t.usec = (stepPollTime % 1000) * 1000;
+	}
+	Tcl_SetMaxBlockTime(&t);
+}
+
+int stepEventHandler(Tcl_Event *evPtr, int flags) {
+	if(stepCallbackPending) {
+		stepCallbackPending = 0;
+		Tcl_Preserve((ClientData)spice_interp);
+		Tcl_Eval(spice_interp,stepCallback);
+		Tcl_ResetResult(spice_interp);
+		Tcl_Release((ClientData)spice_interp);
+	}
+	return TCL_OK;
+}
+
+void stepEventCheck(ClientData clientData,int flags) {
+	if(stepCallbackPending) {
+		Tcl_Event *tclEvent;
+		tclEvent = (Tcl_Event *) ckalloc(sizeof(Tcl_Event));
+		tclEvent->proc = stepEventHandler;
+		Tcl_QueueEvent(tclEvent,TCL_QUEUE_TAIL);
+	}
+}
+
+int triggerEventHandler(Tcl_Event *evPtr, int flags) {
+	static char buf[512];
+	int rtn=TCL_OK;
+	Tcl_Preserve((ClientData)spice_interp);
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_lock(&triggerMutex);
+#endif
+	while(eventQueue) {
+		struct triggerEvent *event = eventQueue;
+		eventQueue = eventQueue->next;
+	
+		snprintf(buf,512,"%s %s %g %d %d",triggerCallback,vectors[event->vector].name,
+					event->time,event->stepNumber,event->type);
+		rtn = Tcl_Eval(spice_interp,buf);
+		FREE(event);
+		if(rtn) {
+			goto quit;
+		}
+	}
+	eventQueueEnd = NULL;
+quit:
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_unlock(&triggerMutex);
+#endif
+	Tcl_ResetResult(spice_interp);
+	Tcl_Release((ClientData)spice_interp);
+	return TCL_OK;
+}
+
+void triggerEventSetup(ClientData clientData,int flags) {
+	Tcl_Time t;
+	if(eventQueue) {
+		t.sec  = 0;
+		t.usec = 0;
+	} else {
+		t.sec = triggerPollTime / 1000;
+		t.usec = (triggerPollTime % 1000) * 1000;
+	}
+	Tcl_SetMaxBlockTime(&t);
+}
+
+void triggerEventCheck(ClientData clientData,int flags) {
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_lock(&triggerMutex);
+#endif
+	if(eventQueue) {
+		Tcl_Event *tclEvent;
+		tclEvent = (Tcl_Event *) ckalloc(sizeof(Tcl_Event));
+		tclEvent->proc = triggerEventHandler;
+		Tcl_QueueEvent(tclEvent,TCL_QUEUE_TAIL);
+	}
+#ifdef HAVE_LIBPTHREAD
+	pthread_mutex_unlock(&triggerMutex);
+#endif	
+}
 
 int Tcl_ExecutePerLoop() {
 
@@ -1225,12 +1369,32 @@ int Tcl_ExecutePerLoop() {
     pthread_mutex_unlock(&v->mutex);
 #endif
   }
+ 
+  if(stepCallback && vectors[0].length % stepCount == 0) {
+	  stepCallbackPending=1;
+  }
   
 #ifdef HAVE_LIBPTHREAD
   pthread_mutex_unlock(&triggerMutex);
   
   pthread_mutex_unlock(&vectors[0].mutex);
+
+  if(triggerCallback && eventQueue && bgtid != pthread_self()) {
+	triggerEventHandler(NULL,0);
+  }
+
+  if(stepCallback && stepCallbackPending && bgtid != pthread_self()) {
+	stepEventHandler(NULL,0);
+  }
+#else
+  if(triggerCallback && eventQueue) {
+	triggerEventHandler(NULL,0);
+  }
+  if(stepCallback && stepCallbackPending) {
+	triggerEventHandler(NULL,0);
+  }
 #endif
+
  
   return 0;
 }
@@ -1260,6 +1424,83 @@ static int resetTriggers() {
   return 0;
 }
 
+
+/* Registers a watch for a trigger
+ *arg0: Callback function (optional - none removes callback)
+ *arg1: Poll interval usec (optional - defaults to 500000 )
+ */
+static int registerTriggerCallback TCL_CMDPROCARGS(clientData,interp,argc,argv){
+
+  if (argc > 3) {
+    Tcl_SetResult(interp,
+			"Wrong # args. spice::registerTriggerCallback ?proc? ?ms?",
+			TCL_STATIC);
+    return TCL_ERROR;
+  }
+
+  if(triggerCallback) {
+	  Tcl_DeleteEventSource(triggerEventSetup,triggerEventCheck,NULL);
+	  free(triggerCallback);
+	  triggerCallback = NULL;
+  }
+
+  if(argc == 1) {
+	  return TCL_OK;
+  }
+
+  triggerCallback = strdup(argv[1]);
+  Tcl_CreateEventSource(triggerEventSetup,triggerEventCheck,NULL);
+  
+  if(argc == 3) {
+	triggerPollTime = atoi(argv[2]);
+	if(triggerPollTime == 0)
+		triggerPollTime = 500;
+  }
+
+  return TCL_OK;
+}
+
+/* Registers step counter callback
+ *arg0: Callback function (optional - none removes callback)
+ *arg1: Number of steps per Callback
+ *arg2: Poll interval usec (optional - defaults to 500000 )
+ */
+static int registerStepCallback TCL_CMDPROCARGS(clientData,interp,argc,argv){
+
+  if (argc > 4) {
+    Tcl_SetResult(interp,
+			"Wrong # args. spice::registerStepCallback ?proc? ?steps? ?ms?",
+			TCL_STATIC);
+    return TCL_ERROR;
+  }
+
+  if(stepCallback) {
+	  Tcl_DeleteEventSource(stepEventSetup,stepEventCheck,NULL);
+	  free(stepCallback);
+	  stepCallback = NULL;
+  }
+
+  if(argc == 1) {
+	  return TCL_OK;
+  }
+
+  stepCallback = strdup(argv[1]);
+  Tcl_CreateEventSource(stepEventSetup,stepEventCheck,NULL);
+  
+  if(argc >= 3) {
+	stepCount = atoi(argv[2]);
+	if(stepCount == 0)
+		stepCount = 1;
+  }
+
+  if(argc == 4) {
+	stepPollTime = atoi(argv[3]);
+	if(stepPollTime == 0)
+		stepPollTime = 50;
+  }
+
+  return TCL_OK;
+}
 
 /* Registers a watch for a trigger
  *arg0: Vector Name to watch
@@ -1390,7 +1631,8 @@ static int popTriggerEvent TCL_CMDPROCARGS(clientData,interp,argc,argv){
     popedEvent = eventQueue;
     
     eventQueue = popedEvent->next;
-      
+	if(eventQueue == NULL)
+		eventQueueEnd = NULL;
     
     list = Tcl_NewListObj(0,NULL);
     
@@ -1470,7 +1712,7 @@ int Spice_Init(Tcl_Interp *interp) {
     char *key;
     Tcl_CmdInfo infoPtr;
     char buf[256];
-    sighandler_t old_sigint;
+    sighandler old_sigint;
     
     ft_rawfile = NULL;
     ivars( );
@@ -1563,6 +1805,7 @@ bot:
     Tcl_CreateCommand(interp, TCLSPICE_prefix "spice_data", spice_data, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "spicetoblt", spicetoblt, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "lastVector", lastVector, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "get_value", get_value, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "spice", _spice_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "get_output", get_output, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "get_param", get_param, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
@@ -1576,16 +1819,21 @@ bot:
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_date", plot_date, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_name", plot_name, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "plot_nvars", plot_nvars, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-    Tcl_CreateCommand(interp, TCLSPICE_prefix "registerTrigger", registerTrigger, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-    Tcl_CreateCommand(interp, TCLSPICE_prefix "popTriggerEvent", popTriggerEvent, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+
+	Tcl_CreateCommand(interp, TCLSPICE_prefix "registerTrigger", registerTrigger, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  	Tcl_CreateCommand(interp, TCLSPICE_prefix "registerTriggerCallback", registerTriggerCallback, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp, TCLSPICE_prefix "popTriggerEvent", popTriggerEvent, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "unregisterTrigger", unregisterTrigger, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "listTriggers", listTriggers, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 
+  	Tcl_CreateCommand(interp, TCLSPICE_prefix "registerStepCallback", registerTriggerCallback, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 #ifdef HAVE_LIBPTHREAD
 	Tcl_CreateCommand(interp, TCLSPICE_prefix "bg", _tcl_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "halt", _tcl_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "running", running, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 #endif
+
+	Tcl_CreateCommand(interp, TCLSPICE_prefix "registerStepCallback", registerStepCallback, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 	
     Tcl_LinkVar(interp, TCLSPICE_prefix "steps_completed", (char *)&steps_completed, TCL_LINK_READ_ONLY|TCL_LINK_INT);
     Tcl_LinkVar(interp, TCLSPICE_prefix "blt_vnum", (char *)&blt_vnum, TCL_LINK_READ_ONLY|TCL_LINK_INT);

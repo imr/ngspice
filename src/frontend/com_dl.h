@@ -3,6 +3,7 @@
 
 #ifdef XSPICE
 void com_codemodel(wordlist *wl);
+void com_xaltermod(wordlist *wl);
 #endif
 
 #ifdef DEVLIB

@@ -184,6 +184,11 @@ struct comm spcp_coms[] = {
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
       (void (*)()) NULL,
       "library library ... : Loads the opus librarys." } ,
+    { "xaltermod", com_xaltermod, FALSE, FALSE, TRUE,
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
+      (void (*)()) NULL,
+      "library library ... : Loads the opus librarys." } ,
+
 #endif
 #ifdef DEVLIB
     { "use", com_use, FALSE, FALSE, TRUE,
