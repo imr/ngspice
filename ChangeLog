@@ -1,3 +1,9 @@
+2000-07-05  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/devices/dev.c: Added first_device() and next_device() to
+	abstract manipulations to the devices list.  Now change all the
+	code that uses direct access to these functions...
+
 2000-07-03  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/parser/alias.c, src/parser/alias.h: contain frontend alias
