@@ -66,7 +66,7 @@ evalAccLimits(void)
     double xh, x1, x2, expLim;
     double muLim, temp1, temp2, temp3, temp4;
     
-    double xhold;  /* Introduced to avoid numerical trap if
+    double xhold, dif;  /* Introduced to avoid numerical trap if
                       using non IEEE754 FPU */
 
 
@@ -99,7 +99,9 @@ evalAccLimits(void)
 	    xhold = xh;
 	}
 	xh = 0.5 * (xl + xu);
-	if (xhold == xh) break;
+	
+	dif = fabs(xhold - xh);
+	if (dif <= DBL_EPSILON) break;
     }
     BMin = xh;
     BMax = -log( acc );
