@@ -19,12 +19,27 @@ TRANsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value)
     switch(which) {
 
     case TRAN_TSTOP:
+        if (value->rValue <= 0.0) {
+	        errMsg = copy("TST0P is invalid, must be greater than zero.");
+                ((TRANan *)anal)->TRANfinalTime = 1.0;
+	        return(E_PARMVAL);
+	    }
         ((TRANan *)anal)->TRANfinalTime = value->rValue;
         break;
     case TRAN_TSTEP:
+          if (value->rValue <= 0.0) {
+           errMsg = copy( "TSTEP is invalid, must be greater than zero." );
+           ((TRANan *)anal)->TRANstep = 1.0;
+	       return(E_PARMVAL);
+	    }
         ((TRANan *)anal)->TRANstep = value->rValue;
         break;
     case TRAN_TSTART:
+        if (value->rValue >= ((TRANan *)anal)->TRANfinalTime ) {
+	        errMsg = copy("TSTART is invalid, must be less than TSTOP.");
+                ((TRANan *)anal)->TRANinitTime = 0.0;
+	        return(E_PARMVAL);
+	    }
         ((TRANan *)anal)->TRANinitTime = value->rValue;
         break;
     case TRAN_TMAX:

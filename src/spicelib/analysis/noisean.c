@@ -34,7 +34,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     int code;
     int step;
     IFuid freqUid;
-    void *inst;  /* PN fixes incompatible pointer type warning */
+    char *inst;  
     double freqTol; /* tolerence parameter for finding final frequency; hack */
 
     NOISEAN *job = (NOISEAN*) (ckt->CKTcurJob);
@@ -47,7 +47,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     inst = NULL;
     code = CKTtypelook("Vsource");
     if (code != -1) {
-        error = CKTfndDev((void *)ckt,&code,&inst,
+        error = CKTfndDev((void *)ckt,&code,(void **)&inst,
                 job->input, (void *)NULL, (IFuid)NULL);
 	if (!error && !((VSRCinstance *)inst)->VSRCacGiven) {
 	    errMsg = MALLOC(strlen(noacinput)+1);
@@ -58,7 +58,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 
     code = CKTtypelook("Isource");
     if (code != -1 && inst==NULL) {
-        error = CKTfndDev((void *)ckt,&code,&inst,
+        error = CKTfndDev((void *)ckt,&code, (void **)&inst,
                 job->input, (void *)NULL,(IFuid)NULL);
         if (error) {
 	    /* XXX ??? */
