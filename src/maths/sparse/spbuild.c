@@ -11,6 +11,7 @@
  *  >>> User accessible functions contained in this file:
  *  spClear
  *  spGetElement
+ *  spFindElement
  *  spGetAdmittance
  *  spGetQuad
  *  spGetOnes
@@ -144,10 +145,89 @@ spClear(void *eMatrix )
 
 
 
+/*
+ *  SINGLE ELEMENT LOCATION IN MATRIX BY INDEX
+ *
+ *  Finds element [Row,Col] and returns a pointer to it.  If element is
+ *  not found then it is created and spliced into matrix.  This routine
+ *  is only to be used after spCreate() and before spMNA_Preorder(),
+ *  spFactor() or spOrderAndFactor().  Returns a pointer to the
+ *  Real portion of a MatrixElement.  This pointer is later used by
+ *  spADD_xxx_ELEMENT to directly access element.
+ *
+ *  >>> Returns:
+ *  Returns a pointer to the element.  This pointer is then used to directly
+ *  access the element during successive builds.
+ *
+ *  >>> Arguments:
+ *  Matrix  <input>  (char *)
+ *     Pointer to the matrix that the element is to be added to.
+ *  Row  <input>  (int)
+ *     Row index for element.  Must be in the range of [0..Size] unless
+ *     the options EXPANDABLE or TRANSLATE are used. Elements placed in
+ *     row zero are discarded.  In no case may Row be less than zero.
+ *  Col  <input>  (int)
+ *     Column index for element.  Must be in the range of [0..Size] unless
+ *     the options EXPANDABLE or TRANSLATE are used. Elements placed in
+ *     column zero are discarded.  In no case may Col be less than zero.
+ *
+ *  >>> Local variables:
+ *  pElement  (RealNumber *)
+ *     Pointer to the element.
+ *
+ *  >>> Possible errors:
+ *  spNO_MEMORY
+ *  Error is not cleared in this routine.
+ */
 
+RealNumber *
+spFindElement( void *eMatrix, int Row, int Col )
+{
+MatrixPtr  Matrix = (MatrixPtr)eMatrix;
+RealNumber  *pElement;
+int index;
+ElementPtr spcFindElementInCol();
+void  Translate();
 
+/* Begin `spFindElement'. */
+    assert( IS_SPARSE( Matrix ) AND Row >= 0 AND Col >= 0 );
 
+    if ((Row == 0) OR (Col == 0))
+        return &Matrix->TrashCan.Real;
 
+#if TRANSLATE
+    Translate( Matrix, &Row, &Col );
+    if (Matrix->Error == spNO_MEMORY) return NULL;
+#endif
+
+#if NOT TRANSLATE
+    assert(Row <= Matrix->Size AND Col <= Matrix->Size);
+#endif
+
+/*
+ * The condition part of the following if statement tests to see if the
+ * element resides along the diagonal, if it does then it tests to see
+ * if the element has been created yet (Diag pointer not NULL).  The
+ * pointer to the element is then assigned to Element after it is cast
+ * into a pointer to a RealNumber.  This casting makes the pointer into
+ * a pointer to Real.  This statement depends on the fact that Real
+ * is the first record in the MatrixElement structure.
+ */
+
+    if ((Row != Col) OR ((pElement = (RealNumber *)Matrix->Diag[Row]) == NULL))
+    {
+/*
+ * Element does not exist or does not reside along diagonal.  Search
+ * column for element.  As in the if statement above, the pointer to the
+ * element which is returned by spcFindElementInCol is cast into a
+ * pointer to Real, a RealNumber.
+ */
+        pElement = (RealNumber*)spcFindElementInCol( Matrix,
+                                                     &(Matrix->FirstInCol[Col]),
+                                                     Row, Col, NO );
+    }
+    return pElement;
+}
 
 
 
