@@ -7,7 +7,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Routines for dealing with the vector database.
  */
 
-#include <ngspice.h>
+#include <spice.h>
 #include <cpdefs.h>
 #include <ftedefs.h>
 #include <dvec.h>
@@ -601,33 +601,28 @@ vec_free(struct dvec *v)
 
     /* Now we have to take this dvec out of the plot list. */
     if (pl != NULL) {
-    if (pl->pl_dvecs == v)
-        pl->pl_dvecs = v->v_next;
-    else {
-        for (lv = pl->pl_dvecs; lv->v_next; lv = lv->v_next)
-            if (lv->v_next == v)
-                break;
-        if (lv->v_next == NULL)
-            fprintf(cp_err, 
-                "vec_free: Internal Error: %s not in plot\n",
-                    v->v_name);
-        lv->v_next = v->v_next;
-    }
-    if (pl->pl_scale == v) {
-        if (pl->pl_dvecs)
-            pl->pl_scale = pl->pl_dvecs;    /* Random one... */
-        else
-            pl->pl_scale = NULL;
-    }
+        if (pl->pl_dvecs == v)
+            pl->pl_dvecs = v->v_next;
+        else {
+            for (lv = pl->pl_dvecs; lv->v_next; lv = lv->v_next)
+                if (lv->v_next == v)
+                    break;
+            if (lv->v_next == NULL)
+                fprintf(cp_err, 
+                    "vec_free: Internal Error: %s not in plot\n",
+                        v->v_name);
+            lv->v_next = v->v_next;
+        }
+        if (pl->pl_scale == v) {
+            if (pl->pl_dvecs)
+                pl->pl_scale = pl->pl_dvecs;    /* Random one... */
+            else
+                pl->pl_scale = NULL;
+        }
     }
     tfree(v->v_name);
-    if(v->v_length) {
-    if (isreal(v)) {
-        tfree(v->v_realdata);
-    } else {
-        tfree(v->v_compdata);
-    }
-    }
+    if (v->v_realdata) tfree(v->v_realdata);
+    if (v->v_compdata) tfree(v->v_compdata);
     tfree(v);
     return;
 }
@@ -652,10 +647,10 @@ vec_eq(struct dvec *v1, struct dvec *v2)
         rtn = TRUE;
     else
         rtn = FALSE;
-   
+
     tfree(s1);
     tfree(s2);
-    return rtn;	
+    return rtn;
 }
 
 /* Return the name of the vector with the plot prefix stripped off.  This

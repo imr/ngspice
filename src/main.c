@@ -5,6 +5,7 @@
    Author: 1985 Wayne A. Christopher
 
    The main routine for ngspice */
+   
 #include <ngspice.h>
 
 #include <stdio.h>
@@ -167,9 +168,12 @@ void com_loadsnap(wordlist *wl) { return; }
 void com_savesnap(wordlist *wl) { return; }
 #endif
 
+#endif /* SIMULATOR */
+
+#ifndef SIMULATOR
 
 #ifdef XSPICE
-/* saj to get nutmeg to compile, not nice but necessary */
+/* saj,dw to get nutmeg to compile, not nice but necessary */
 Ipc_Tiein_t  g_ipc;
 Ipc_Status_t ipc_send_errchk(void ) {
   Ipc_Status_t x=0;
@@ -291,6 +295,12 @@ append_to_stream(FILE *dest, FILE *source)
 	fwrite(buf, i, 1, dest);
 }
 
+#ifdef SIMULATOR
+extern int OUTpBeginPlot(), OUTpData(), OUTwBeginPlot(), OUTwReference();
+extern int OUTwData(), OUTwEnd(), OUTendPlot(), OUTbeginDomain();
+extern int OUTendDomain(), OUTstopnow(), OUTerror(), OUTattributes();
+#endif /* SIMULATOR */    
+
 int
 #ifdef HAS_WINDOWS
 xmain(int argc, char **argv)
@@ -305,9 +315,7 @@ main(int argc, char **argv)
 #ifdef SIMULATOR
     int error2;
 
-    extern int OUTpBeginPlot(), OUTpData(), OUTwBeginPlot(), OUTwReference();
-    extern int OUTwData(), OUTwEnd(), OUTendPlot(), OUTbeginDomain();
-    extern int OUTendDomain(), OUTstopnow(), OUTerror(), OUTattributes();
+    
     static IFfrontEnd nutmeginfo = {
 	IFnewUid,
 	IFdelUid,
