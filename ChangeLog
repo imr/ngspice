@@ -1,3 +1,20 @@
+2003-11-21  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/bsim1/*: Added "m" 
+	  parameter and noise routine. 
+	
+	* DEVICES: Updated file with bsim1 changes.  
+
+2003-11-12  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/mos2/*: Added "dtemp"
+	  parameter.
+	
+	* src/spicelib/devices/mos3/*: Added "dtemp"
+	  parameter.  
+	  
+	* DEVICES: updated file.  
+
 2003-11-11  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/spicelib/devices/mos1/*: Added "dtemp"
