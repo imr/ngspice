@@ -117,7 +117,7 @@ com_bug(wordlist *wl)
 void
 com_bug(wordlist *wl)
 {
-    fprintf(cp_out, "Send mail to the address ng-spice@ieee.ing.uniroma1.it\n");
+    fprintf(cp_out, "Send mail to the address ngspice-devel@lists.sourceforge.net\n");
     return;
 }
 

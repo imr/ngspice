@@ -181,7 +181,7 @@ CLEANFILES = pkgIndex.tcl libspice.so
 
 TCL_PKG_PATH = @TCL_PACKAGE_PATH@
 
-TCLSPICE_VERSION = 0.2.12
+TCLSPICE_VERSION = @VERSION@
 
 TCL_FILES = libspice.so pkgIndex.tcl
 
@@ -192,7 +192,7 @@ pkgIndex.tcl: pkgIndex.tcl.in
 	sed -e 's;%LIB_DIR%;$(TCL_PKG_PATH);g' pkgIndex.tcl.in | \
 	sed -e 's;%VERSION%;$(TCLSPICE_VERSION);g' > pkgIndex.tcl
 
-install-tcl: install-tcl-recursive install-tclspice
+install-tcl: install-tcl-recursive install-tclspice install-data-am
 
 install-tcl-recursive:
 	list='$(SUBDIRS)'; for subdir in $$list; do \

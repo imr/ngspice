@@ -32,7 +32,7 @@ static IFparm nodeParms[] = {
 };
 
 IFsimulator SIMinfo = {
-    "ngspice",			/* name */
+    "tclspice",			/* name */
     "Circuit level simulation program",	/* more about me */
     Spice_Version,		/* version */
 

@@ -22,6 +22,10 @@
 	added the codemodels from xspice in the same
 	structure as spiceopus
 	
+	* src/frontend/misccoms.c src/tclspice.c src/spinit 
+	src/ngspice.c src/conf.c src/Makefile.am configure.in:
+	tclspiceised the files and the email addrs. s/ngspice/tclspice/
+	.spiceinit and co work
 	
 2003-07-18 Vera Albrecht <albrecht@danalyse.de>
 

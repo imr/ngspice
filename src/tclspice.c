@@ -1436,6 +1436,7 @@ int Spice_Init(Tcl_Interp *interp) {
     char *key;
     Tcl_CmdInfo infoPtr;
     char buf[256];
+    sighandler_t old_sigint;
     
     ft_rawfile = NULL;
     ivars( );
@@ -1461,6 +1462,47 @@ int Spice_Init(Tcl_Interp *interp) {
     /*Command prompt stuff */
     ft_cpinit();
     
+
+    /* Read the user config files */
+    /* To catch interrupts during .spiceinit... */
+    old_sigint = signal(SIGINT, ft_sigintr);
+    if (setjmp(jbuf) == 1) {
+        fprintf(cp_err, "Warning: error executing .spiceinit.\n");
+        goto bot;
+    }
+
+#ifdef HAVE_PWD_H
+    /* Try to source either .spiceinit or ~/.spiceinit. */
+    if (access(".spiceinit", 0) == 0)
+        inp_source(".spiceinit");
+    else {
+    char *s;
+    struct passwd *pw;
+    pw = getpwuid(getuid());
+
+#define INITSTR "/.spiceinit"
+#ifdef HAVE_ASPRINTF
+    asprintf(&s, "%s%s", pw->pw_dir,INITSTR);
+#else /* ~ HAVE_ASPRINTF */
+    s=(char *) tmalloc(1 + strlen(pw->pw_dir)+strlen(INITSTR));
+    sprintf(s,"%s%s",pw->pw_dir,INITSTR);
+#endif /* HAVE_ASPRINTF */
+    if (access(s, 0) == 0)
+        inp_source(s);
+    }
+#else /* ~ HAVE_PWD_H */
+    {
+    FILE *fp;
+    /* Try to source the file "spice.rc" in the current directory.  */
+    if ((fp = fopen("spice.rc", "r")) != NULL) {
+        (void) fclose(fp);
+        inp_source("spice.rc");
+    }
+    }
+#endif /* ~ HAVE_PWD_H */
+bot:
+    signal(SIGINT, old_sigint);
+
     /* initilise Tk display */
     DevInit();
 
