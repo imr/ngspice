@@ -11,15 +11,12 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-MOS1mParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+MOS1mParam(int param, IFvalue *value, GENmodel *inModel)
 {
     MOS1model *model = (MOS1model *)inModel;
     switch(param) {
         case MOS1_MOD_TNOM:
-            model->MOS1tnom = value->rValue+CONSTCtoK;
+            model->MOS1tnom = value->rValue + CONSTCtoK;
             model->MOS1tnomGiven = TRUE;
             break;
         case MOS1_MOD_VTO:

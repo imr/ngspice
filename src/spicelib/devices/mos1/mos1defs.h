@@ -45,6 +45,7 @@ typedef struct sMOS1instance {
     double MOS1sourceConductance;   /*conductance of source(or 0):set in setup*/
     double MOS1drainConductance;    /*conductance of drain(or 0):set in setup*/
     double MOS1temp;    /* operating temperature of this instance */
+    double MOS1dtemp;   /* operating temperature of the instance relative to circuit temperature*/
 
     double MOS1tTransconductance;   /* temperature corrected transconductance*/
     double MOS1tSurfMob;            /* temperature corrected surface mobility */
@@ -159,6 +160,7 @@ typedef struct sMOS1instance {
 
     unsigned MOS1off:1;  /* non-zero to indicate device is off for dc analysis*/
     unsigned MOS1tempGiven :1;  /* instance temperature specified */
+    unsigned MOS1dtempGiven :1;  /* instance delta temperature specified */
     unsigned MOS1mGiven :1;
     unsigned MOS1lGiven :1;
     unsigned MOS1wGiven :1;
@@ -411,6 +413,7 @@ typedef struct sMOS1model {       /* model structure for a resistor */
 #define MOS1_POWER 19
 #define MOS1_TEMP 20
 #define MOS1_M 21
+#define MOS1_DTEMP 22
 /* model paramerers */
 #define MOS1_MOD_VTO 101
 #define MOS1_MOD_KP 102

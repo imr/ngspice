@@ -14,11 +14,7 @@ Author: 1987 Thomas L. Quarles
 
 /*ARGSUSED*/
 int
-MOS1mAsk(ckt,inst,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inst;
-    int which;
-    IFvalue *value;
+MOS1mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     MOS1model *model = (MOS1model *)inst;
     switch(which) {

@@ -15,10 +15,7 @@ Modified: 2000 AlansFixes
 
 
 int
-MOS1pzLoad(inModel,ckt,s)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    SPcomplex *s;
+MOS1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     MOS1model *model = (MOS1model*)inModel;
     MOS1instance *here;
@@ -72,7 +69,7 @@ MOS1pzLoad(inModel,ckt,s)
             xgb = capgb;
             xbd  = here->MOS1capbd;
             xbs  = here->MOS1capbs;
-            /*printf("mos2: xgs=%g, xgd=%g, xgb=%g, xbd=%g, xbs=%g\n",
+            /*printf("mos1: xgs=%g, xgd=%g, xgb=%g, xbd=%g, xbs=%g\n",
                     xgs,xgd,xgb,xbd,xbs);*/
             /*
              *    load matrix

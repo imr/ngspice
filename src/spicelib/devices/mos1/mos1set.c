@@ -16,11 +16,8 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 int
-MOS1setup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+MOS1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
+          int *states)
 {
     MOS1model *model = (MOS1model *)inModel;
     MOS1instance *here;
@@ -214,9 +211,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-MOS1unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS1unsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS1model *model;
     MOS1instance *here;

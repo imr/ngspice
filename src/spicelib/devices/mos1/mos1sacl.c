@@ -1,6 +1,8 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 #include "ngspice.h"
@@ -16,9 +18,7 @@ Author: 1985 Thomas L. Quarles
  */
 
 int
-MOS1sAcLoad(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+MOS1sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS1model *model = (MOS1model*)inModel;
     MOS1instance *here;

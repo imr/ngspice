@@ -24,13 +24,8 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 int
-MOS1noise (mode, operation, genmodel, ckt, data, OnDens)
-    int mode;
-    int operation;
-    GENmodel *genmodel;
-    CKTcircuit *ckt;
-    Ndata *data;
-    double *OnDens;
+MOS1noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
+           Ndata *data, double *OnDens)
 {
     MOS1model *firstModel = (MOS1model *) genmodel;
     MOS1model *model;

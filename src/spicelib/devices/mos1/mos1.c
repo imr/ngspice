@@ -25,6 +25,7 @@ IFparm MOS1pTable[] = { /* parameters */
  IOPU("icvgs",        MOS1_IC_VGS,     IF_REAL   , "Initial G-S voltage"),
  IOPU("icvbs",        MOS1_IC_VBS,     IF_REAL   , "Initial B-S voltage"),
  IOPU("temp",         MOS1_TEMP,       IF_REAL,    "Instance temperature"),
+ IOPU("dtemp",         MOS1_DTEMP,       IF_REAL,    "Instance temperature difference"),
  IP( "ic",           MOS1_IC,  IF_REALVEC, "Vector of D-S, G-S, B-S voltages"),
  IP( "sens_l", MOS1_L_SENS, IF_FLAG, "flag to request sensitivity WRT length"),
  IP( "sens_w", MOS1_W_SENS, IF_FLAG, "flag to request sensitivity WRT width"),

@@ -13,9 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-MOS1getic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS1getic(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS1model *model = (MOS1model *)inModel;
     MOS1instance *here;

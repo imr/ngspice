@@ -15,12 +15,8 @@ Modified: 2000 AlansFixes
 
 /*ARGSUSED*/
 int
-MOS1ask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+MOS1ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
+        IFvalue *select)
 {
     MOS1instance *here = (MOS1instance*)inst;
     double vr;
@@ -31,7 +27,10 @@ MOS1ask(ckt,inst,which,value,select)
     static char *msg = "Current and power not available for ac analysis";
     switch(which) {
         case MOS1_TEMP:
-            value->rValue = here->MOS1temp-CONSTCtoK;
+            value->rValue = here->MOS1temp - CONSTCtoK;
+            return(OK);
+        case MOS1_DTEMP:
+            value->rValue = here->MOS1dtemp;
             return(OK);
         case MOS1_CGS:
             value->rValue = 2*  *(ckt->CKTstate0 + here->MOS1capgs);

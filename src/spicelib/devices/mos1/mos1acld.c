@@ -14,9 +14,7 @@ Modified: 2000 AlansFixes
 
 
 int
-MOS1acLoad(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS1acLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS1model *model = (MOS1model*)inModel;
     MOS1instance *here;

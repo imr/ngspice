@@ -1,6 +1,8 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 #include "ngspice.h"
@@ -11,9 +13,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-MOS1sSetup(info,inModel)
-SENstruct *info;
-GENmodel *inModel;
+MOS1sSetup(SENstruct *info, GENmodel *inModel)
 /* loop through all the devices and 
          * allocate parameter #s to design parameters 
          */

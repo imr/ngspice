@@ -1,6 +1,8 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+
+This function is obsolete (was used by an old sensitivity analysis)
 **********/
 
 /* actually load the current sensitivity 
@@ -15,9 +17,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-MOS1sLoad(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+MOS1sLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS1model *model = (MOS1model *)inModel;
     MOS1instance *here;

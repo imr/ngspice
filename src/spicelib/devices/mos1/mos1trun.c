@@ -13,10 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-MOS1trunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+MOS1trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
     MOS1model *model = (MOS1model *)inModel;
     MOS1instance *here;

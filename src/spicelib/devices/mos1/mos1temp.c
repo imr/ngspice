@@ -12,9 +12,7 @@ Modified: 2000 AlansFixes
 #include "suffix.h"
 
 int
-MOS1temp(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS1temp(GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS1model *model = (MOS1model *)inModel;
     MOS1instance *here;
@@ -122,8 +120,12 @@ MOS1temp(inModel,ckt)
 	    if (here->MOS1owner != ARCHme) continue;
 
             /* perform the parameter defaulting */
+            
+            if(!here->MOS1dtempGiven) {
+                here->MOS1dtemp = 0.0;
+            }
             if(!here->MOS1tempGiven) {
-                here->MOS1temp = ckt->CKTtemp;
+                here->MOS1temp = ckt->CKTtemp + here->MOS1dtemp;
             }
             vt = here->MOS1temp * CONSTKoverQ;
             ratio = here->MOS1temp/model->MOS1tnom;

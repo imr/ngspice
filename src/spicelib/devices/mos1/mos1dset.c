@@ -13,9 +13,7 @@ Author: 1988 Jaijeet S Roychowdhury
 #include "suffix.h"
 
 int
-MOS1dSetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+MOS1dSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
