@@ -21,10 +21,6 @@ Modified: 1999 Paolo Nenzi
 #include "ftedefs.h"
 #include "fteinp.h"
 
-/* agraf.c */
-
-extern void ft_agraf();
-
 /* arg.c */
 
 extern void arg_plot();
@@ -174,7 +170,7 @@ extern bool ft_nopage;
 extern bool ft_nomod;
 extern bool ft_nodesprint;
 extern bool ft_optsprint;
-extern int ft_cktcoms();
+extern int ft_cktcoms(bool terse);
 extern void ft_dotsaves();
 extern int ft_savedotargs();
 
@@ -243,7 +239,6 @@ extern void gi_update();
 
 extern bool gr_gmode;
 extern bool gr_hmode;
-extern bool gr_init();
 extern void gr_clean();
 extern void gr_end();
 extern void gr_iplot();
@@ -269,9 +264,10 @@ extern void gr_fixgrid();
 extern void com_edit();
 extern void com_listing();
 extern void com_source();
-extern void inp_dodeck();
+void inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, 
+		struct line *options, char *filename);
 extern void inp_source();
-extern void inp_spsource();
+void inp_spsource(FILE *fp, bool comfile, char *filename);
 extern void inp_casefix();
 extern void inp_list();
 extern void inp_readall();
@@ -279,8 +275,9 @@ extern FILE *inp_pathopen();
 
 /* nutinp.c */
 
-extern void inp_nutsource();
-extern void nutinp_dodeck();
+void inp_nutsource(FILE *fp, bool comfile, char *filename);
+void nutinp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, 
+		   struct line *options, char *filename);
 extern void nutcom_source();
 
 /* interpolate.c */
@@ -317,7 +314,7 @@ extern void com_where();
 /* numparse.c */
 
 extern bool ft_strictnumparse;
-extern double *ft_numparse();
+double * ft_numparse(char **s, bool whole);
 
 /* options.c */
 
@@ -340,14 +337,14 @@ extern int cp_userset();
 extern struct func ft_funcs[];
 extern struct func func_not;
 extern struct func func_uminus;
-extern struct pnode *ft_getpnames();
+struct pnode * ft_getpnames(wordlist *wl, bool check);
 extern void free_pnode();
 
 /* plotcurve.c */
 
-extern int ft_findpoint();
-extern double *ft_minmax();
-extern void ft_graf();
+int ft_findpoint(double pt, double *lims, int maxp, int minp, bool islog);
+double * ft_minmax(struct dvec *v, bool real);
+void ft_graf(struct dvec *v, struct dvec *xs, bool nostart);
 
 /* plotinterface.c */
 
@@ -379,7 +376,7 @@ extern void com_transpose();
 /* rawfile.c */
 
 extern int raw_prec;
-extern void raw_write();
+void raw_write(char *name, struct plot *pl, bool app, bool binary);
 extern struct plot *raw_read();
 
 /* resource.c */

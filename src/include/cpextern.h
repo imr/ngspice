@@ -101,7 +101,7 @@ extern int cp_maxhistlength;
 extern struct histent *cp_lastone;
 extern void com_history();
 extern void cp_addhistent();
-extern void cp_hprint();
+void cp_hprint(int eventhi, int eventlo, bool rev);
 extern wordlist *cp_histsubst();
 
 /* lexical.c */
@@ -147,7 +147,7 @@ extern void cp_printword(char *string, FILE *fp);
 
 extern bool cp_unixcom();
 extern void cp_hstat();
-extern void cp_rehash();
+void cp_rehash(char *pathlist, bool docc);
 
 /* variable.c */
 
@@ -180,12 +180,11 @@ extern void cp_doquit();
 extern void cp_periodic();
 extern void ft_cpinit();
 extern struct comm *cp_coms;
-extern double *ft_numparse();
 extern char *cp_program;
 extern bool ft_nutmeg;
 extern struct variable *cp_enqvar();
 extern void cp_usrvars();
-extern int cp_usrset();
+int cp_usrset(struct variable *var, bool isset);
 extern void fatal();
 
 #endif
