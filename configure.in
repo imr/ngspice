@@ -498,8 +498,7 @@ src/maths/sparse/Makefile	\
 src/misc/Makefile		\
 src/xspice/Makefile		\
 src/xspice/cm/Makefile		\
-src/xspice/icm/Makefile		\
-src/xspice/icm/icm_spice2poly/Makefile		\
+src/xspice/icm/makedefs		\
 src/xspice/mif/Makefile		\
 src/xspice/evt/Makefile		\
 src/xspice/enh/Makefile		\

@@ -11,6 +11,13 @@
 
 	* src/frontend/{com_let.c,device.c,evaluate.c}:
 	more memory leak fixes by Vera Albrecht <albrecht@danalyse.de>
+
+	* configure.in src/xspice/icm/* src/xspice/lib/*.cm 
+	src/xspice/Makefile.am :
+	Added some easy to use makefiles for codemodels and reordered
+	Removed binary files
+	Added icm to build list
+	
 	
 2003-07-18 Vera Albrecht <albrecht@danalyse.de>
 
