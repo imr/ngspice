@@ -4,7 +4,7 @@ SUBDIRS = misc maths frontend spicelib include
 
 bin_PROGRAMS =  ngspice ngnutmeg nghelp ngsconvert ngproc2mod ngmultidec makeidx
 
-EXTRA_DIST = ngspice.txt ngspice.idx
+EXTRA_DIST = ngspice.txt ngspice.idx spinit setplot spectrum
 
 helpdatadir = $(pkgdatadir)/helpdir
 
