@@ -77,7 +77,6 @@ typedef struct sINPmodel{
 #define LOGICAL 1
 #define PHYSICAL 2
 
-#ifdef __STDC__
 int IFnewUid(void*,IFuid*,IFuid,char*,int,void**);
 int IFdelUid(void*,IFuid,int);
 int INPaName(char*,IFvalue*,void*,int*,char*,void**,IFsimulator*,int*,
@@ -133,65 +132,4 @@ int INP2dot(void*,INPtables*,card*,void*,void*);
 INPtables *INPtabInit(int);
 void INPkillMods(void);
 void INPtabEnd(INPtables *);
-#else /* stdc */
-int IFnewUid();
-int IFdelUid();
-int INPaName();
-IFvalue * INPgetValue();
-INPtables *INPtabInit();
-char * INPdevParse();
-char * INPdomodel();
-char * INPerrCat();
-char * INPfindLev();
-char * INPgetMod();
-char *INPerror();
-char *INPmkTemp();
-double INPevaluate();
-int INPapName();
-int INPgetTitle();
-int INPgetTok();
-int INPgndInsert();
-int INPlookMod();
-int INPmakeMod();
-int INPpName();
-int INPreadAll();
-int INPtermInsert();
-int INPmkTerm();
-int INPtypelook();
-void INPcaseFix();
-void INPdoOpts();
-int INPinsert();
-int INPretrieve();
-int INPremove();
-void INPkillMods();
-void INPlist();
-void INPpas1() ;
-void INPpas2() ;
-void INPtabEnd();
-void INPptPrint();
-void INPgetTree();
-void INP2B();
-void INP2C();
-void INP2D();
-void INP2E();
-void INP2F();
-void INP2G();
-void INP2H();
-void INP2I();
-void INP2J();
-void INP2K();
-void INP2L();
-void INP2M();
-void INP2O();
-void INP2Q();
-void INP2R();
-void INP2S();
-void INP2T();
-void INP2U();
-void INP2V();
-void INP2W();
-void INP2Z();
-int INP2dot();
-#endif /* stdc */
-
 #endif /*INP*/

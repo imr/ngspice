@@ -314,7 +314,6 @@ extern void SENdestroy( SENstruct *);
 extern int SENsetParm( CKTcircuit *, void *, int , IFvalue *);
 extern int SENstartup( CKTcircuit *);
 extern int SPIinit( IFfrontEnd *, IFsimulator **);
-extern char * SPerror( int );
 extern int TFanal( CKTcircuit *, int );
 extern int TFaskQuest( CKTcircuit *, void *, int , IFvalue *);
 extern int TFsetParm( CKTcircuit *, void *, int , IFvalue *);
