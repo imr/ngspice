@@ -1759,6 +1759,7 @@ in the direction of voltage drop).
 * Semiconductor Capacitors::    
 * Semiconductor Capacitor Model (C)::  
 * Inductors::                   
+* Inductor model::
 * Coupled (Mutual) Inductors::  
 * Switches::                    
 * Switch Model (SW/CSW)::       
@@ -2060,7 +2061,7 @@ in a @command{.model} line, as in the example below:
   C1 15 5 cstd
   C2  2 7 cstd
   
-  .model cstd cap=3n
+  .model cstd C cap=3n
 @end example
 
 Both capacitors have a capacitance of 3nF.
@@ -2086,7 +2087,7 @@ example below:
 @example
   CEB 1 2 1u cap1 dtemp=5 
   
-  .MODEL cap1 tc1=0.001
+  .MODEL cap1 C tc1=0.001
 @end example
 
 
@@ -2311,13 +2312,14 @@ circuit temperature and @option{dtemp}, if present.
 If both @option{temp} and @option{dtemp} are specified, the latter is ignored.
 
 
-@node  Inductors, Coupled (Mutual) Inductors, Semiconductor Capacitor Model (C), Elementary Devices
+@node  Inductors, Inductor model, Semiconductor Capacitor Model (C), Elementary Devices
 @subsection  Inductors
 
  General form:
 
 @example
-     LYYYYYYY N+ N- VALUE <IC=INCOND>
+     LYYYYYYY n+ n- <value> <mname> <m=val> <scale=val> <temp=val> 
+     +        <dtemp=val> <ic=init_condition>
 @end example
 
 
@@ -2328,15 +2330,191 @@ If both @option{temp} and @option{dtemp} are specified, the latter is ignored.
      LSHUNT 23 51 10U IC=15.7MA
 @end example
 
+The inductor device implemented into ngspice has many enhancements over the
+orginal one. @option{n+} and @option{n-} are the positive and negative element 
+nodes, respectively. @option{value} is the inductance in Henries.
 
-N+ and N- are the positive and negative element nodes, respectively.
-VALUE is the inductance in Henries.
+Inductance can be specified in the instance line as in the examples above or
+in a @command{.model} line, as in the example below:
 
+@example
+  L1 15 5 indmod1
+  L2  2 7 indmod1
+  
+  .model indmod1 L ind=3n
+@end example
+
+Both inductors have an inductance of 3nH.
+
+The @option{m} parameter is the "multiplication factor", and can be used to 
+simulate "m" instances of the same kind in parallel. This parameter affects 
+all analyses. 
+
+The @option{scale} keyword let the designer choose a different scale for 
+elements. This option is not yet very useful, it will fully implemented in the
+future to perform technology scaling. At present is here as a work in progress.
+
+The operating temperature of instances can be set using the @option{temp} 
+option. Ngspice simulates the circuit with all components at the same single 
+temperature (the circuit temperature). To adjust the temperature of an 
+inductor instance you can define its temperature difference from the rest of 
+the  circuit using @option{dtemp}.
+
+If you want to simulate temperature dependence of an inductor, you need to
+specify its temperature coefficients, using a @command{.model} line, like in 
+the example below:
+
+@example
+  Lload 1 2 1u ind1 dtemp=5 
+  
+  .MODEL ind1 L tc1=0.001
+@end example
 
 The (optional) initial condition is the initial (timezero) value of
-inductor current (in Amps) that flows from N+, through the inductor, to
-N-.  Note that the initial conditions (if any) apply only if the UIC
-option is specified on the .TRAN analysis line.
+inductor current (in Amps) that flows from @option{n+}, through the inductor, 
+to @option{n-}.  Note that the initial conditions (if any) apply only if the 
+@option{UIC} option is specified on the @command{.tran} analysis line.
+
+Ngspice calculates the nominal inductance as described below:
+
+@tex
+$$
+    L_{nom} = {{{\rm value} * {\rm scale}} \over m}
+$$
+@end tex
+@ifnottex
+@example
+                        Lnom = value * scale / m
+@end example
+@end ifnottex
+
+
+@node Inductor model, Coupled (Mutual) Inductors, Inductors, Elementary Devices
+@subsection Inductor model
+
+The inductor model contains physical and geometrical information that may be used to
+compute the inductance in some special cases (solenoid, toroid) In the present 
+form is not very useful, but may be extended in the future to accomodate 
+silicon integrated inductors, an emerging technology.
+
+@multitable @columnfractions .15 .4 .2 .1 .1
+@item name    @tab parameter @tab units @tab default @tab example
+@item IND     @tab model inductance 
+                          @tab H                 @tab 0.0  @tab 1e-3
+@item CSECT   @tab Cross section
+                          @tab meters@math{^2}   @tab 0.0  @tab 1e-3
+@item LENGTH  @tab Length
+                          @tab meters            @tab 0.0  @tab 1e-2
+@item TC1     @tab first order temperature coeff.
+                          @tab F/°C              @tab 0.0  @tab 0.001
+@item TC2     @tab second order temperature coeff.
+                          @tab F/°C@math{^2}     @tab 0.0  @tab 0.0001
+@item TNOM    @tab parameter measurement temperature
+                          @tab °C                @tab 27   @tab 50			  			  
+@item N       @tab number of turns
+                          @tab -                 @tab 0.0  @tab 10
+@item MU      @tab relative magnetic permeability
+                          @tab H/meters          @tab 0.0  @tab -
+@end multitable
+
+The inductor has an indiuctance computed as:
+
+If @option{value} is specified on the instance line then
+
+@tex
+$$
+   L_{nom} = {{{\rm value} * {\rm scale}} \over m}
+$$
+@end tex
+@ifnottex
+@example
+                   Lnom = value * scale / m
+@end example
+@end ifnottex
+
+If model inductance is specified then
+
+@tex
+$$
+   L_{nom} = {{{\rm IND} * {\rm scale}} \over m}
+$$
+@end tex
+@ifnottex
+@example
+                   Lnom = IND * scale / m
+@end example
+@end ifnottex
+
+If neither @option{value} nor @option{IND} are specified, then geometrical and
+physical parameters are take into account:
+
+If @option{LENGTH} is not zero:
+
+@tex
+
+if {\rm MU } is specified:
+$$
+   L_{nom} = {{{\rm MU} * \mu_0 * {\rm N}^2 * {\rm CSECT}}  \over {\rm LENGTH} }
+$$
+
+otherwise:
+
+$$
+   L_{nom} = {{ \mu_0 * {\rm N}^2 * {\rm CSECT}}  \over {\rm LENGTH} }
+$$
+
+with:
+$$
+ \mu_{0} = 1.25663706143592e-6 {H \over m}
+$$
+
+@end tex
+@ifnottex
+@example
+                             2
+                  MU * mu * N * CSECT
+			 0
+           Lnom = -------------------   if MU is specified
+                       LENGTH
+
+                         
+                        2
+                  mu * N * CSECT
+                    0	       
+           Lnom = --------------   if MU is not specified
+		      LENGTH
+
+with:
+
+mu =  1.25663706143592e-6  H/m
+  0
+
+@end example
+@end ifnottex
+
+After the nominal inducatnce is calculated, it is adjusted for temperature 
+by the formula:
+
+@tex
+$$
+   L(T) = L({\rm TNOM}) \Bigl( 1 + TC_1 (T - {\rm TNOM}) + TC_2 (T-{\rm TNOM})^2 \Bigr)
+$$
+where $L({\rm TNOM}) = L_{nom}$.
+@end tex
+@ifnottex
+@example
+                                                     2
+  L(T) = L(TNOM) [1 + TC  (T - TNOM) + TC  (T - TNOM) ]
+                        1                2       
+  where L(TNOM) = Lnom
+@end example
+@end ifnottex
+
+In the above formula, "T" represents the instance temperature, which can be
+explicitly using the @option{temp} keyword or os calculated using the 
+circuit temperature and @option{dtemp}, if present.
+
+If both @option{temp} and @option{dtemp} are specified, the latter is ignored.
 
 
 
@@ -2346,7 +2524,7 @@ option is specified on the .TRAN analysis line.
  General form:
 
 @example
-  KXXXXXXX LYYYYYYY LZZZZZZZ VALUE
+  KXXXXXXX LYYYYYYY LZZZZZZZ value
 @end example
 
 
@@ -2359,10 +2537,9 @@ option is specified on the .TRAN analysis line.
 
 
 LYYYYYYY and LZZZZZZZ are the names of the two coupled inductors, and
-VALUE is the coefficient of coupling, K, which must be greater than 0
+@option{value} is the coefficient of coupling, K, which must be greater than 0
 and less than or equal to 1.  Using the 'dot' convention, place a 'dot'
 on the first node of each inductor.
-
 
 
 
