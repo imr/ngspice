@@ -650,7 +650,7 @@ main(int argc, char **argv)
 #else
 		sprintf (buf, "%s", optarg);
 #endif
-#ifdef HAS_WINDOWS
+#ifndef HAS_WINDOWS
 		if (!(freopen (buf, "w", stdout))) {
 		    perror (buf);
 		    shutdown (EXIT_BAD);
