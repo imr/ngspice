@@ -34,7 +34,7 @@ Installation:
 			
 	The install commands are:
 		From the root directory of the source:
-		./configure --enable-tcl --enable-experimental --enable-xspice --disable-shared
+		./configure --enable-tcl --enable-experimental --disable-shared
 		make tcl
 	    And as root:
 		make install-tcl
@@ -157,6 +157,23 @@ Plotting functions;
 	WARNING:
 		If any of the Tcl callback functions cause an error then a crash may occour as tcl
 		overwrites random data in the spice code. Not sure why.
+
+SpiceWish:
+
+This is a wish GUI to spice, it contains among other things graphical plotting.
+To use it you need to have Tclx installed.
+To initilise the GUI type:
+% spice_init_gui <file>
+	where file is your spice circuit file.
+
+This will pop up a GUI for spice.
+
+Commands available in spicewish:
+
+spicewish::plot spice_vars ...
+	Plots the given spice variables on a BLT graph.
+
+Try "namespace import spicewish::plot" to make this your default plot command ( highly recommended ).
 
 TODO & BUGS
 

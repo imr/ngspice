@@ -173,7 +173,7 @@ CLEANFILES = pkgIndex.tcl libspice.so
 
 TCL_PKG_PATH = @TCL_PACKAGE_PATH@
 
-TCLSPICE_VERSION = 0.2.7
+TCLSPICE_VERSION = 0.2.8
 
 TCL_FILES = libspice.so pkgIndex.tcl
 
@@ -197,6 +197,7 @@ install-tclspice: ${TCL_FILES}
 	install -c -m 644 libspice.so $(TCL_PKG_PATH)
 	mkdir -p $(TCL_PKG_PATH)/spice
 	install -c -m 644 pkgIndex.tcl $(TCL_PKG_PATH)/spice
+	install -c -m 644 tclspice_source.tcl $(TCL_PKG_PATH)/spice
 
 tclspice.o: tclspice.c
 	$(COMPILE) -c -fpic tclspice.c -DTCLSPICE_version="\"$(TCLSPICE_VERSION)\""
