@@ -22,6 +22,16 @@ CKTinit(void **ckt)		/* new circuit to create */
     sckt = (CKTcircuit *)(*ckt);
     if (sckt == NULL)
 	return(E_NOMEM);
+
+/* gtri - begin - dynamically allocate the array of model lists */
+/* CKThead used to be statically sized in CKTdefs.h, but has been changed */
+/* to a ** pointer */
+    (sckt)->CKThead = (GENmodel **)MALLOC(DEVmaxnum * sizeof(GENmodel *));
+    if((sckt)->CKThead == NULL) return(E_NOMEM);
+/* gtri - end   - dynamically allocate the array of model lists */
+
+
+	
     for (i = 0; i < DEVmaxnum; i++)
         sckt->CKThead[i] = (GENmodel *) NULL;
 
