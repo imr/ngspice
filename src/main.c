@@ -16,12 +16,6 @@
 
 #include <sys/types.h>
 
-#ifdef HAVE_GNUGETOPT
-#include <getopt.h>
-#else
-#include <misc/getopt.h>
-#endif
-
 
 #include <iferrmsg.h>
 #include <ftedefs.h>
@@ -29,6 +23,7 @@
 #include <spicelib/devices/dev.h>
 #include <spicelib/analysis/analysis.h>
 #include <misc/ivars.h>
+#include <misc/getopt.h>
 #include <frontend/resource.h>
 #include <frontend/variable.h>
 
