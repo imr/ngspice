@@ -22,9 +22,9 @@ typedef struct sB3SOIDDinstance
 {
     struct sB3SOIDDmodel *B3SOIDDmodPtr;
     struct sB3SOIDDinstance *B3SOIDDnextInstance;
-    IFuid B3SOIDDname;
-    int B3SOIDDstates;     /* index into state table for this device */
+    IFuid B3SOIDDname;   
     int B3SOIFDowner;
+    int B3SOIDDstates;     /* index into state table for this device */
     int B3SOIDDdNode;
     int B3SOIDDgNode;
     int B3SOIDDsNode;

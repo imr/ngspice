@@ -5,6 +5,10 @@
 	
 	* src/frontend/vectors.c: Applied Vera patch.
 	
+	* src/spicelib/devices/bsim3soi_{dd,fd,pd}:
+	Corrected bsim3soi{pd,fd,dd}def.h, owner and states fields
+	were swapped. Thanks to Jon Elngelbert.
+	
 2003-07-23  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* A lot of changes that touched too many files to mention each one. 
