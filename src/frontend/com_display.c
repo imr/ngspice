@@ -2,9 +2,9 @@
 #include <bool.h>
 #include <variable.h>
 #include <fteext.h>
+#include <cpextern.h>
 
 #include "com_display.h"
-#include "streams.h"
 #include "plotting/plotting.h"
 #include "plotting/pvec.h"
 

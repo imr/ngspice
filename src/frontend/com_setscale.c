@@ -2,6 +2,7 @@
 #include <dvec.h>
 #include <cpextern.h>
 
+#include "vectors.h"
 #include "com_setscale.h"
 #include "plotting/plotting.h"
 #include "plotting/pvec.h"

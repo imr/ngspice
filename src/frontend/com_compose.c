@@ -7,10 +7,10 @@
 #include <sim.h>
 #include <pnode.h>
 #include <fteext.h>
+#include <cpextern.h>
 
 #include "com_compose.h"
 #include "completion.h"
-#include "streams.h"
 
 /* Copy the data from a vector into a buffer with larger dimensions. */
 static void

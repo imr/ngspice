@@ -10,6 +10,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "fteparse.h"
 #include "cpitf.h"
 
+#include <terminal.h>
+
 #include "completion.h"
 
 /* Set some standard variables and aliases, etc, and init the ccom stuff.  */

@@ -19,6 +19,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "fteext.h"
 #include "doplot.h"
 
+#include "plotting/agraf.h"
+#include "plotting/graf.h"
 
 
 extern double *ft_SMITHminmax(struct dvec *v, bool yval);
