@@ -1,3 +1,15 @@
+2000-07-07  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* devlist.c, devlist.h: Another step towards
+	dynamically loadable devices.  The first_device() and
+	next_device() functions abstract away the actual
+	implementation of the devices list.  Currently it is a fixed
+	length array, when we start supporting dynamically loaded devices,
+	this is no longer true.
+
+	* test_devlist.c: Checks the implementation of first_device()
+	and next_device().
+
 2000-04-04  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* Makefile.am: Added support for BSIM4

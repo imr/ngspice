@@ -173,28 +173,3 @@ devices(void)
 }
 
 
-/* Returns the first device in the list, or NULL if the list is empty */
-SPICEdev *
-first_device(void)
-{
-    return DEVices[0];
-}
-
-
-/* Returns the next device on the list, or NULL if no more devices
-   left. */
-SPICEdev *
-next_device(SPICEdev *current)
-{
-    SPICEdev *ret;
-    int index;
-
-    index = (current - first_device()) / sizeof(SPICEdev *);
-    if (index < num_devices()) {
-	ret = DEVices[index + 1];
-    } else {
-	ret = NULL;
-    }
-
-    return ret;
-}

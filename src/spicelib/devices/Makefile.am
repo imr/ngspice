@@ -37,6 +37,8 @@ lib_LIBRARIES = libdev.a
 libdev_a_SOURCES = 	\
 	dev.c		\
 	dev.h		\
+	devlist.c	\
+	devlist.h	\
 	devsup.c	\
 	cktaccept.c	\
 	cktaccept.h	\
@@ -45,6 +47,15 @@ libdev_a_SOURCES = 	\
 	cktcrte.c	\
 	cktfinddev.c	\
 	cktinit.c
+
+bin_PROGRAMS = test_devlist
+
+test_devlist_SOURCES =	\
+	devlist.c	\
+	devlist.h	\
+	test_devlist.c
+
+TESTS = test_devlist
 
 EXTRA_DIST = README
 
