@@ -28,6 +28,8 @@
  * ENHANCEMENTS, OR MODIFICATIONS. */
 
 #include <config.h>
+#include <ngspice.h>
+
 #include <assert.h>
 
 #include <devdefs.h>
@@ -39,7 +41,13 @@
 #ifdef XSPICE
 /*saj headers for xspice*/
 #include <string.h> /* for strcpy, strcat*/
+
+#ifndef __MINGW32__
 #include <dlfcn.h> /* to load librarys*/
+#else
+#include <windows.h>
+#endif
+
 #include "dllitf.h" /* the coreInfo Structure*/
 #include "evtudn.h" /*Use defined nodes */
 
@@ -346,6 +354,7 @@ int add_udn(int n,Evt_Udn_Info_t **udns){
 
 extern struct coreInfo_t  coreInfo;
 
+#ifndef __MINGW32__
 
 int load_opus(char *name){
   void *lib;
@@ -421,6 +430,78 @@ int load_opus(char *name){
 
   return 0;
 }
+
+#else
+
+int load_opus(char *name){
+  void *lib;
+  int *num=NULL;
+  struct coreInfo_t **core;
+  SPICEdev **devs;
+  Evt_Udn_Info_t  **udns;
+  void *(*fetch)(void)=NULL;
+
+  lib = LoadLibrary(name);
+  if(!lib){
+    printf("Could not open library %s\n",name);
+    return 1;
+  }
+  
+  fetch = GetProcAddress(lib,"CMdevNum");
+  if(fetch){
+    num = (int *)(*fetch)();
+    printf("Got %u devices.\n",*num);
+    fetch = NULL;
+  }else{
+    printf("Could not find symbol CMdevNum\n");
+    return 1;
+  }
+
+  fetch = GetProcAddress(lib,"CMdevs");
+  if(fetch){
+    devs = (SPICEdev **)(*fetch)();
+    fetch = NULL;
+  }else{
+    printf("Could not find symbol CMdevs\n");
+    return 1;
+  }
+
+  fetch = GetProcAddress(lib,"CMgetCoreItfPtr");
+  if(fetch){
+    core = (struct coreInfo_t **)(*fetch)();
+    *core = &coreInfo;
+    fetch = NULL;
+  }else{
+    printf("Could not find symbol CMgetCoreItfPtr\n");
+    return 1;
+  }
+  add_device(*num,devs,1);
+
+  fetch = GetProcAddress(lib,"CMudnNum");
+  if(fetch){
+    num = (int *)(*fetch)();
+    printf("Got %u udns.\n",*num);
+    fetch = NULL;
+  }else{
+    printf("Could not find symbol CMudnNum\n");
+    return 1;
+  }
+
+  fetch = GetProcAddress(lib,"CMudns");
+  if(fetch){
+    udns = (Evt_Udn_Info_t  **)(*fetch)();
+    fetch = NULL;
+  }else{
+    printf("Could not find symbol CMudns\n");
+    return 1;
+  }
+
+  add_udn(*num,udns);
+
+  return 0;
+}
+
+#endif /* MINGW */
 
 #endif
 /*--------------------   end of XSPICE additions  ----------------------*/

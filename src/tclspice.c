@@ -53,6 +53,9 @@
 
 /* To interupt a spice run */
 #include <signal.h>
+#ifndef sighandler_t
+typedef void (*sighandler_t)(int);
+#endif
 #include <setjmp.h>
 extern sigjmp_buf jbuf;
 

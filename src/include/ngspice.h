@@ -184,3 +184,11 @@ extern int tcl_fprintf(FILE *f, const char *format, ...);
 #define fprintf tcl_fprintf
 
 #endif
+
+#ifdef __MINGW32__
+
+#define sigjmp_buf jmp_buf
+#define sigsetjmp(a,b) setjmp(a)
+#define siglongjmp longjmp
+
+#endif

@@ -71,7 +71,6 @@ tildexpand(char *string)
 #endif
     }
     if (result) {
-#ifdef HAVE_PWD_H
        strcpy(buf, result);
 	if (*string)
 	    strcat(buf, string);
@@ -79,9 +78,4 @@ tildexpand(char *string)
 
     } else
 	return NULL;
-
-#else
-       /* Emulate the old behavior to prevent side effects. -- ro */
-       return copy(string);
-#endif
 }

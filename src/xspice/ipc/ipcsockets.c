@@ -94,6 +94,9 @@
 
 /*=== INCLUDE FILES ===*/
 #include "ngspice.h"
+
+#ifndef __MINGW32__
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -740,5 +743,42 @@ Ipc_Status_t ipc_transport_terminate_server ()
 	    (status != IPC_STATUS_EOF));
    return status;
 }
+
+#else
+
+#include "ipc.h"
+#include "ipctiein.h"
+
+Ipc_Status_t ipc_transport_initialize_server (server_name, mode, protocol,
+                                              batch_filename)
+     char               *server_name;     /* not used                      */
+     Ipc_Mode_t         mode;             /* not used                      */
+     Ipc_Protocol_t     protocol;         /* IN - only used in assert      */
+     char               *batch_filename;  /* OUT - returns a value         */
+     /* Note that unused parameters are required to maintain compatibility */
+     /* with version 1 (mailboxes) functions of the same names.            */
+{
+	return IPC_STATUS_ERROR;
+}
+
+Ipc_Status_t ipc_transport_get_line (str, len, wait)
+     char               *str;    /* returns the result, null terminated    */
+     int                *len;    /* length of str passed IN and passed OUT */
+     Ipc_Wait_t         wait;    /* IN - wait or dont wait on incoming msg */
+{
+	return IPC_STATUS_ERROR;
+}
+
+Ipc_Status_t ipc_transport_send_line (str, len)
+     char *str;           /* IN - String to write                          */
+     int len;             /* IN - Number of characters out of STR to write */
+{
+	return IPC_STATUS_ERROR;
+}
+
+Ipc_Status_t ipc_transport_terminate_server () {
+	return IPC_STATUS_ERROR;
+}
+#endif /* MINGW */
 
 /*#endif   IPC_UNIX_SOCKETS */
