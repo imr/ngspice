@@ -28,6 +28,7 @@ bool cp_noglob = TRUE;
 bool cp_nonomatch = FALSE;
 bool cp_noclobber = FALSE;
 bool cp_ignoreeof = FALSE;
+bool cp_echo = FALSE;   /* CDHW */
 
 struct variable *variables = NULL;
 
@@ -156,6 +157,8 @@ cp_vset(char *varname, char type, char *value)
         cp_maxhistlength = v->va_real;
     else if (eq(copyvarname, "noclobber"))
         cp_noclobber = TRUE;
+     else if (eq(varname, "echo"))   /*CDHW*/
+        cp_echo = TRUE;             /*CDHW*/    
     else if (eq(copyvarname, "prompt") && (type == VT_STRING))
         cp_promptstring = copy(v->va_string);
     else if (eq(copyvarname, "ignoreeof"))
@@ -234,7 +237,7 @@ cp_vset(char *varname, char type, char *value)
     return;
 }
 
-
+/*CDHW This needs leak checking carefully CDHW*/
 struct variable *
 cp_setparse(wordlist *wl)
 {
@@ -391,6 +394,8 @@ cp_remvar(char *varname)
         cp_nonomatch = FALSE;
     else if (eq(varname, "noclobber"))
         cp_noclobber = FALSE;
+    else if (eq(varname, "echo")) /*CDHW*/
+        cp_echo = FALSE;          /*CDHW*/
     else if (eq(varname, "prompt")){
        /* cp_promptstring = ""; Memory leak here the last allocated reference wil be lost*/
        if(cp_promptstring) {
@@ -557,7 +562,7 @@ cp_variablesubst(wordlist *wlist)
 {
     wordlist *wl, *nwl;
     char *s, *t, buf[BSIZE_SP], wbuf[BSIZE_SP], tbuf[BSIZE_SP];
-	/* MW. tbuf holds curret word after wl_splice() calls free() on it */
+	/* MW. tbuf holds current word after wl_splice() calls free() on it */
     int i;
 
     for (wl = wlist; wl; wl = wl->wl_next) {
@@ -591,7 +596,7 @@ cp_variablesubst(wordlist *wlist)
             }
 	    
             	(void) strcpy(tbuf, t); /* MW. Save t*/
-	    if (!(wl = wl_splice(wl, nwl)))
+	    if (!(wl = wl_splice(wl, nwl))) /*CDHW this frees wl CDHW*/
                 return (NULL);
             /* This is bad... */
             for (wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev)

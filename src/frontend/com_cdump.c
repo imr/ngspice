@@ -5,6 +5,7 @@
 #include "control.h"
 #include "streams.h"
 
+#include "com_cdump.h"
 
 static int indent;
 
@@ -39,10 +40,10 @@ dodump(struct control *cc)
 	fprintf(cp_out, "while ");
 	wl_print(cc->co_cond, cp_out);
 	putc('\n', cp_out);
-	indent += 8;
+	indent += TABINDENT;
 	for (tc = cc->co_children; tc; tc = tc->co_next)
 	    dodump(tc);
-	indent -= 8;
+	indent -= TABINDENT;
 	tab(indent);
 	fprintf(cp_out, "end\n");
 	break;
@@ -50,13 +51,13 @@ dodump(struct control *cc)
 	tab(indent);
 	fprintf(cp_out, "repeat ");
 	if (cc->co_numtimes != -1)
-	    fprintf(cp_out, "%d\n", cc->co_numtimes);
+	    fprintf(cp_out, "%d (%d left to do)\n", cc->co_numtimes, cc->co_timestodo); /* CDHW */
 	else
 	    putc('\n', cp_out);
-	indent += 8;
+	indent += TABINDENT;
 	for (tc = cc->co_children; tc; tc = tc->co_next)
 	    dodump(tc);
-	indent -= 8;
+	indent -= TABINDENT;
 	tab(indent);
 	fprintf(cp_out, "end\n");
 	break;
@@ -65,10 +66,10 @@ dodump(struct control *cc)
 	fprintf(cp_out, "dowhile ");
 	wl_print(cc->co_cond, cp_out);
 	putc('\n', cp_out);
-	indent += 8;
+	indent += TABINDENT;
 	for (tc = cc->co_children; tc; tc = tc->co_next)
 	    dodump(tc);
-	indent -= 8;
+	indent -= TABINDENT;
 	tab(indent);
 	fprintf(cp_out, "end\n");
 	break;
@@ -77,10 +78,10 @@ dodump(struct control *cc)
 	fprintf(cp_out, "if ");
 	wl_print(cc->co_cond, cp_out);
 	putc('\n', cp_out);
-	indent += 8;
+	indent += TABINDENT;
 	for (tc = cc->co_children; tc; tc = tc->co_next)
 	    dodump(tc);
-	indent -= 8;
+	indent -= TABINDENT;
 	tab(indent);
 	fprintf(cp_out, "end\n");
 	break;
@@ -89,10 +90,10 @@ dodump(struct control *cc)
 	fprintf(cp_out, "foreach %s ", cc->co_foreachvar);
 	wl_print(cc->co_text, cp_out);
 	putc('\n', cp_out);
-	indent += 8;
+	indent += TABINDENT;
 	for (tc = cc->co_children; tc; tc = tc->co_next)
 	    dodump(tc);
-	indent -= 8;
+	indent -= TABINDENT;
 	tab(indent);
 	fprintf(cp_out, "end\n");
 	break;

@@ -123,6 +123,9 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
         pmatches = ccmatch(buf, &commands);
         i = strlen(buf);
     }
+    
+     tfree(buf); /*CDHW*/
+    
     if (!esc) {
         printem(pmatches);
         wl_free(pmatches);

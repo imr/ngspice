@@ -10,6 +10,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <config.h>
 #include "ngspice.h"
 #include "cpdefs.h"
+
 #include <errno.h>
 
 #ifdef HAVE_UNISTD_H
@@ -45,6 +46,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 static void prompt(void);
 
+extern bool cp_echo;  /* For CDHW patches: defined in variable.c */
 
 FILE *cp_inp_cur = NULL;
 int cp_event = 1;
@@ -77,6 +79,27 @@ static int numeofs = 0;
         bzero(buf, BSIZE_SP); \
         i = 0;
 
+
+/* CDHW Debug function */
+
+static void
+pwlist_echo(wlist, name)   /*CDHW used to perform function of set echo */
+    wordlist *wlist;
+    char *name;
+{
+    wordlist *wl;
+
+    if ((!cp_echo)||cp_debug) /* cpdebug prints the same info */
+        return;
+    fprintf(cp_err, "%s ", name);
+    for (wl = wlist; wl; wl = wl->wl_next)
+        fprintf(cp_err, "%s ", wl->wl_word );
+      fprintf(cp_err, "\n");
+    return;
+}
+
+/* CDHW */
+
 wordlist *
 cp_lexer(char *string)
 {
@@ -86,10 +109,10 @@ cp_lexer(char *string)
     char buf[BSIZE_SP], linebuf[BSIZE_SP], d;
     int paren;
 
-    if (cp_inp_cur == NULL)
+   if (cp_inp_cur == NULL)
         cp_inp_cur = cp_in;
 
-    if (!string && cp_interactive) {
+    if (!string && cp_interactive) {/* prompt for string if none is passed */
         cp_ccon(TRUE);
         prompt();
     }
@@ -261,6 +284,11 @@ gotchar:
 		newword;
 		break;
 	    }
+	    case ';':  /*CDHW semicolon inside parentheses is part of expression CDHW*/
+		    if (paren > 0) {
+		    buf[i++]=c;
+			break;
+		    }
 	default:
             /* We have to remember the special case $<
              * here
@@ -280,6 +308,8 @@ gotchar:
         }
     }
 done:
+
+    if (wlist->wl_word) pwlist_echo(wlist,"Command>");
     return (wlist);
 }
 
