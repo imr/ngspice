@@ -1,3 +1,7 @@
+2005-03-07  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/spicelib/devices/bsim4/b4ld.c: commented out NEWCONV section.
+
 2005-03-06  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/spicelib/devices/bsim4: removed uninitialized variables in model
