@@ -187,8 +187,9 @@ fi
 . $tcl_config_sh	
 
 CFLAGS="$CFLAGS $TCL_INCLUDE_SPEC"
+CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC"
 
-AC_CHECK_HEADERS(tcl.h blt.h,,AC_MSG_ERROR(Couldn't find Tcl/BLT headers),$TCL_INCLUDE_SPEC)
+AC_CHECK_HEADERS(tcl.h blt.h,,AC_MSG_ERROR(Couldn't find Tcl/BLT headers),)
 
 if test ! -x "$TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION" ; then
 AC_MSG_ERROR(Couldn't find $TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION)

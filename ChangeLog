@@ -1,4 +1,9 @@
-2003-12-03 Evgeny Fiksman <fike@bezeqint.net>
+2003-12-24 Stefan Jones <stefan.jones@multigig.com>
+
+	* configure.in:
+	Fix the check for headers so it actually uses the info from tclConfig.sh
+
+2003-12-13 Evgeny Fiksman <fike@bezeqint.net>
 
 	* src/frontend/terminal.c:
 	Increase the buffer size for tgetent
