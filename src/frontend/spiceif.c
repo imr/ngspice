@@ -1167,23 +1167,32 @@ do {\
 
     _foo(ckt->CKTbreaks,double,ckt->CKTbreakSize);
     
-    _foo((TSKtask *)ft_curckt->ci_curTask,TSKtask,1);
+#if 0
+	_foo((TSKtask *)ft_curckt->ci_curTask,TSKtask,1);
 
-    /* To stop the Free */
     ((TSKtask *)ft_curckt->ci_curTask)->TSKname = NULL;
-    ((TSKtask *)ft_curckt->ci_curTask)->jobs = NULL;
-
     _foo(((TSKtask *)ft_curckt->ci_curTask)->TSKname,char,-1);
     
+    ((TSKtask *)ft_curckt->ci_curTask)->jobs = NULL;
     _foo(((TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs),TRANan,1);
-    ((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname = NULL;
-    ckt->CKTcurJob = (JOB *)((TSKtask *)ft_curckt->ci_curTask)->jobs;
-    
+	
+    ((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname = NULL;    
     _foo(((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname,char,-1);
+#else
+	{
+		void *tmp=NULL;
+  		_foo(tmp,TSKtask,1);
+		_foo(tmp,char,-1);
+		_foo(tmp,TRANan,1);
+		_foo(tmp,char,-1);
+		tfree(tmp);
+	}
+#endif    
+    ckt->CKTcurJob = (JOB *)((TSKtask *)ft_curckt->ci_curTask)->jobs;
 
-    ((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBnextJob = NULL;
+	((TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs)->TRANplot = NULL;
     
-    ((TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs)->TRANplot = NULL;
+	((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBnextJob = NULL;
 
     _foo(ckt->CKTstat,STATistics,1);
 

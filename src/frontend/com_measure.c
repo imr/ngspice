@@ -7,8 +7,6 @@
 #include "vectors.h"
 #include <math.h>
 
-#ifdef TCL_MODULE
-
 typedef struct measure
 {
   char *result;
@@ -940,4 +938,3 @@ void com_measure(wordlist *wl) {
 	return;
 }
 
-#endif
