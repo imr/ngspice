@@ -1,3 +1,10 @@
+2003-11-11  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/mos1/*: Added "dtemp"
+	  parameter.
+	  
+	* DEVICES: Updated MOS1 status.  
+
 2003-11-02  Paolo Nenzi <p.nenzi@ieee.org>
 	
 	* doc/ngspice.texi: updated documentation.
