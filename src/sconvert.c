@@ -32,127 +32,6 @@ char *cp_program = "sconvert";
 /* doesn't get used, but some unused routine in some file references it */
 char out_pbuf[BSIZE_SP];
 
-static void oldwrite();
-static struct plot *oldread();
-static char *fixdate();
-
-int
-main(ac, av)
-    char **av;
-{
-    char *sf, *af;
-    char buf[BSIZE_SP];
-    char t, f;
-    struct plot *pl;
-    int i;
-    char *infile;
-    char *outfile;
-    FILE *fp;
-    cp_in = stdin;
-    cp_out = stdout;
-    cp_err = stderr;
-    cp_curin = stdin;
-    cp_curout = stdout;
-    cp_curerr = stderr;
-
-    switch (ac) {
-        case 5: 
-            sf = av[2];
-            af = av[4];
-            f = *av[1];
-            t = *av[3];
-            break;
-
-        case 3:
-            f = *av[1];
-            t = *av[2];
-            /* This is a pain, but there is no choice */
-            sf = infile = smktemp("scin");
-            af = outfile = smktemp("scout");
-            if (!(fp = fopen(infile, "w"))) {
-                perror(infile);
-                exit(EXIT_BAD);
-            }
-            while ((i = fread(buf, 1, sizeof(buf), stdin)))
-                (void) fwrite(buf, 1, i, fp);
-            (void) fclose(fp);
-            break;
-
-        case 1: printf("Input file: ");
-            (void) fflush(stdout);
-            (void) fgets(buf, BSIZE_SP, stdin);
-            sf = copy(buf);
-            printf("Input type: ");
-            (void) fflush(stdout);
-            (void) fgets(buf, BSIZE_SP, stdin);
-            f = buf[0];
-            printf("Output file: ");
-            (void) fflush(stdout);
-            (void) fgets(buf, BSIZE_SP, stdin);
-            af = copy(buf);
-            printf("Output type: ");
-            (void) fflush(stdout);
-            (void) fgets(buf, BSIZE_SP, stdin);
-            t = buf[0];
-            break;
-        default:
-            fprintf(cp_err, 
-                "Usage: %s fromtype fromfile totype tofile,\n",
-                cp_program);
-            fprintf(cp_err, "\twhere types are o, b, or a\n");
-            fprintf(cp_err, 
-                "\tor, %s fromtype totype, used as a filter.\n",
-                cp_program);
-            exit(EXIT_BAD);
-    }
-    switch(f) {
-        case 'o' :
-        pl = oldread(sf);
-        break;
-
-        case 'b' :
-        case 'a' :
-        pl = raw_read(sf);
-        break;
-
-        default:
-        fprintf(cp_err, "Types are o, a, or b\n");
-        exit(EXIT_BAD);
-    }
-    if (!pl)
-        exit(EXIT_BAD);
-
-    switch(t) {
-        case 'o' :
-        oldwrite(af, FALSE, pl);
-        break;
-
-        case 'b' :
-        raw_write(af, pl, FALSE, TRUE);
-        break;
-
-        case 'a' :
-        raw_write(af, pl, FALSE, FALSE);
-        break;
-
-        default:
-        fprintf(cp_err, "Types are o, a, or b\n");
-        exit(EXIT_BAD);
-    }
-    if (ac == 3) {
-        /* Gotta finish this stuff up */
-        if (!(fp = fopen(outfile, "r"))) {
-            perror(outfile);
-            exit(EXIT_BAD);
-        }
-        while ((i = fread(buf, 1, sizeof(buf), fp)))
-            (void) fwrite(buf, 1, i, stdout);
-        (void) fclose(fp);
-        (void) unlink(infile);
-        (void) unlink(outfile);
-    }
-    exit(EXIT_NORMAL);
-}
 
 #define tfread(ptr, siz, nit, fp)   if (fread((char *) (ptr), (siz), \
                         (nit), (fp)) != (nit)) { \
@@ -164,9 +43,23 @@ main(ac, av)
                     fprintf(cp_err, "Write error\n"); \
                     return; }
 
+static char *
+fixdate(char *date)
+{
+    char buf[20];
+    int i;
+
+    (void) strcpy(buf, date);
+    for (i = 17; i > 8; i--)
+        buf[i] = buf[i - 1];
+    buf[8] = ' ';
+    buf[18] = '\0';
+    return (copy(buf));
+}
+
+
 static struct plot *
-oldread(name)
-    char *name;
+oldread(char *name)
 {
     struct plot *pl;
     char buf[BSIZE_SP];
@@ -288,11 +181,9 @@ oldread(name)
     return (pl);
 }
 
+
 static void
-oldwrite(name, app, pl)
-    char *name;
-    bool app;
-    struct plot *pl;
+oldwrite(char *name, bool app, struct plot *pl)
 {
     short four = 4, k;
     struct dvec *v;
@@ -404,37 +295,140 @@ oldwrite(name, app, pl)
     return;
 }
 
-static char *
-fixdate(date)
-    char *date;
-{
-    char buf[20];
-    int i;
 
-    (void) strcpy(buf, date);
-    for (i = 17; i > 8; i--)
-        buf[i] = buf[i - 1];
-    buf[8] = ' ';
-    buf[18] = '\0';
-    return (copy(buf));
+int
+main(int ac, char **av)
+{
+    char *sf, *af;
+    char buf[BSIZE_SP];
+    char t, f;
+    struct plot *pl;
+    int i;
+    char *infile = NULL;
+    char *outfile = NULL;
+    FILE *fp;
+    cp_in = stdin;
+    cp_out = stdout;
+    cp_err = stderr;
+    cp_curin = stdin;
+    cp_curout = stdout;
+    cp_curerr = stderr;
+
+    switch (ac) {
+        case 5: 
+            sf = av[2];
+            af = av[4];
+            f = *av[1];
+            t = *av[3];
+            break;
+
+        case 3:
+            f = *av[1];
+            t = *av[2];
+            /* This is a pain, but there is no choice */
+            sf = infile = smktemp("scin");
+            af = outfile = smktemp("scout");
+            if (!(fp = fopen(infile, "w"))) {
+                perror(infile);
+                exit(EXIT_BAD);
+            }
+            while ((i = fread(buf, 1, sizeof(buf), stdin)))
+                (void) fwrite(buf, 1, i, fp);
+            (void) fclose(fp);
+            break;
+
+        case 1: printf("Input file: ");
+            (void) fflush(stdout);
+            (void) fgets(buf, BSIZE_SP, stdin);
+            sf = copy(buf);
+            printf("Input type: ");
+            (void) fflush(stdout);
+            (void) fgets(buf, BSIZE_SP, stdin);
+            f = buf[0];
+            printf("Output file: ");
+            (void) fflush(stdout);
+            (void) fgets(buf, BSIZE_SP, stdin);
+            af = copy(buf);
+            printf("Output type: ");
+            (void) fflush(stdout);
+            (void) fgets(buf, BSIZE_SP, stdin);
+            t = buf[0];
+            break;
+        default:
+            fprintf(cp_err, 
+                "Usage: %s fromtype fromfile totype tofile,\n",
+                cp_program);
+            fprintf(cp_err, "\twhere types are o, b, or a\n");
+            fprintf(cp_err, 
+                "\tor, %s fromtype totype, used as a filter.\n",
+                cp_program);
+            exit(EXIT_BAD);
+    }
+    switch(f) {
+        case 'o' :
+        pl = oldread(sf);
+        break;
+
+        case 'b' :
+        case 'a' :
+        pl = raw_read(sf);
+        break;
+
+        default:
+        fprintf(cp_err, "Types are o, a, or b\n");
+        exit(EXIT_BAD);
+    }
+    if (!pl)
+        exit(EXIT_BAD);
+
+    switch(t) {
+        case 'o' :
+        oldwrite(af, FALSE, pl);
+        break;
+
+        case 'b' :
+        raw_write(af, pl, FALSE, TRUE);
+        break;
+
+        case 'a' :
+        raw_write(af, pl, FALSE, FALSE);
+        break;
+
+        default:
+        fprintf(cp_err, "Types are o, a, or b\n");
+        exit(EXIT_BAD);
+    }
+    if (ac == 3) {
+        /* Gotta finish this stuff up */
+        if (!(fp = fopen(outfile, "r"))) {
+            perror(outfile);
+            exit(EXIT_BAD);
+        }
+        while ((i = fread(buf, 1, sizeof(buf), fp)))
+            (void) fwrite(buf, 1, i, stdout);
+        (void) fclose(fp);
+        (void) unlink(infile);
+        (void) unlink(outfile);
+    }
+    exit(EXIT_NORMAL);
 }
 
-void cp_pushcontrol() { }
-void cp_popcontrol() { }
-void out_init() { }
-void cp_doquit() { exit(0); }
-/* ARGSUSED */ void cp_usrvars(v1, v2) struct variable **v1, **v2; { return; }
-/* ARGSUSED */ int cp_evloop(s) char *s; { return (0); }
-/* ARGSUSED */ void cp_ccon(o) bool o; { }
-/* ARGSUSED */ char *if_errstring(c) int c; { return ("error"); }
+void cp_pushcontrol(void) { }
+void cp_popcontrol(void) { }
+void out_init(void) { }
+void cp_doquit(void) { exit(0); }
+void cp_usrvars(struct variable **v1, struct variable **v2) { return; }
+int cp_evloop(char *s) { return (0); }
+void cp_ccon(bool o) { }
+char *if_errstring(int c) { return ("error"); }
 #ifndef out_printf
-/* VARARGS1 ARGSUSED */ void out_printf(fmt, args) char *fmt; { }
+void out_printf(char *fmt, int args) { }
 #endif
-/* ARGSUSED */ void out_send(string) char *string; {}
-/* ARGSUSED */ struct variable * cp_enqvar(word) char *word; { return (NULL); }
-/* ARGSUSED */ struct dvec *vec_get(word) char *word; { return (NULL); }
-/* ARGSUSED */ void cp_ccom(w, b, e) wordlist *w; char *b; bool e; { return; }
-/* ARGSUSED */ int cp_usrset(v, i) struct variable *v; bool i;{return(US_OK); }
+void out_send(char *string) {}
+struct variable * cp_enqvar(char *word) { return (NULL); }
+struct dvec *vec_get(char *word) { return (NULL); }
+void cp_ccom(wordlist *w, char *b, bool e) { return; }
+int cp_usrset(struct variable *v, bool i) { return(US_OK); }
 
 int disptype;
-void XtDispatchEvent(pev) char *pev; {}
+void XtDispatchEvent(char *pev) { }

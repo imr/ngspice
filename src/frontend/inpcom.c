@@ -242,8 +242,9 @@ inp_readall(FILE *fp, struct line **data)
     return;
 }
 
+
 void
-inp_casefix(register char *string)
+inp_casefix(char *string)
 {
 #ifdef HAVE_CTYPE_H
     if (string)
@@ -254,8 +255,10 @@ inp_casefix(register char *string)
 #endif
 	    if (*string == '"') {
 		*string++ = ' ';
-		while (*string && *string != '"') string++;
-		if (*string == '"') *string = ' ';
+		while (*string && *string != '"')
+		    string++;
+		if (*string == '"')
+		    *string = ' ';
 	    }
 	    if (!isspace(*string) && !isprint(*string))
 		*string = '_';

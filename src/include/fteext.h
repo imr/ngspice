@@ -64,9 +64,7 @@ extern void dbfree( );
 extern struct circ *ft_curckt;
 extern struct circ *ft_circuits;
 extern struct subcirc *ft_subcircuits;
-extern void ft_setccirc();
 extern void ft_newcirc();
-extern void ft_newsubcirc();
 
 /* clip.c */
 
