@@ -1,5 +1,8 @@
 2004-01-10  Paolo Nenzi <p.nenzi@ieee.org>
 
+	*  src/Makefile.am, src/ngspice.idx: removed ngspice.idx
+	   and make it auto-generated and installed (Stefan Jones).
+
 	*  src/frontend/aspice.c: Added #ifdef for SOLARIS.
 
 	*  src/include/cktdefs.h: added prototype for NInzIter().

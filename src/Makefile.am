@@ -1,5 +1,4 @@
 ## Process this file with automake to produce Makefile.in
-## PN: remember to add CIDERSCRIPTS
 
 SUBDIRS = misc maths frontend spicelib include @XSPICEDIR@ @CIDERDIR@
 
@@ -61,6 +60,7 @@ DYNAMIC_DEVICELIBS = 					\
 	spicelib/devices/txl/libtxl.a			\
 	spicelib/devices/tra/libtra.a			\
 	spicelib/devices/urc/liburc.a			\
+	spicelib/devices/vbic/libvbic.a			\
 	spicelib/devices/vccs/libvccs.a			\
 	spicelib/devices/vcvs/libvcvs.a			\
 	spicelib/devices/vsrc/libvsrc.a			\
@@ -72,7 +72,7 @@ DYNAMIC_DEVICELIBS = 					\
 ngspice_SOURCES = \
 	conf.c \
 	conf.h \
-	ngspice.c 
+	ngspice.c
 
 ngspice_LDADD = \
 	@WINMAIN@ \
@@ -82,7 +82,7 @@ ngspice_LDADD = \
 	frontend/plotting/libplotting.a \
 	@XSPICELIB1@ \
 	spicelib/devices/dev.o \
-	$(DYNAMIC_DEVICELIBS) \
+	$(DYNAMIC_DEVICELIBS)  \
 	spicelib/analysis/libckt.a \
 	spicelib/devices/libdev.a \
 	@XSPICELIB2@		  \
@@ -97,7 +97,7 @@ ngspice_LDADD = \
 	maths/poly/libpoly.a \
 	maths/ni/libni.a \
 	maths/sparse/libsparse.a \
-	misc/libmisc.a	
+	misc/libmisc.a
 
 
 winmain.o: winmain.c
@@ -145,7 +145,7 @@ ngsconvert_SOURCES =  ngsconvert.c
 ngsconvert_LDADD =  \
 	frontend/libfte.a \
 	frontend/parser/libparser.a \
-	misc/libmisc.a 
+	misc/libmisc.a
 
 ## proc2mod:
 
@@ -170,12 +170,9 @@ ngmultidec_LDADD =  \
 
 makeidx_SOURCES = makeidx.c
 
-makeidx_LDADD =  \
-	misc/libmisc.a 
-
 ## create index for online help:
 
-all:
+ngspice.idx: makeidx
 	./makeidx $(srcdir)/ngspice.txt
 
 
