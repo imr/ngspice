@@ -6,7 +6,6 @@ Author: 1992 Charles Hough
 
 
 #include "ngspice.h"
-#include <math.h>
 #include "const.h"
 #include "txldefs.h"
 #include "ifsim.h"
@@ -17,12 +16,7 @@ Author: 1992 Charles Hough
 
 /*ARGSUSED*/
 int
-TXLask(ckt,inst,which,value,select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;
-    IFvalue *select;
+TXLask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
     TXLinstance *fast = (TXLinstance *)inst;
     switch(which) {
@@ -32,9 +26,9 @@ TXLask(ckt,inst,which,value,select)
         case TXL_IN_NODE:
             value->iValue = fast->TXLposNode;
             return(OK);
-		case TXL_LENGTH:
-			value->rValue = fast->TXLlength;
-			return(OK);
+        case TXL_LENGTH:
+            value->rValue = fast->TXLlength;
+            return(OK);
         default:
             return(E_BADPARM);
     }

@@ -14,11 +14,7 @@ Author: 1992 Charles Hough
 
 /* ARGSUSED */
 int
-TXLparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+TXLparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     TXLinstance *here = (TXLinstance *)inst;
     switch(param) {

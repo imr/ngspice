@@ -28,6 +28,7 @@ typedef struct sTXLinstance {
 	TXLine *txline2;  /* pointer to SWEC txline type. temporary storage */
 	char *in_node_name;
 	char *out_node_name;
+	int TXLbranch;       /* unused */
 	
 	double *TXLposPosptr;
 	double *TXLposNegptr;
@@ -47,7 +48,7 @@ typedef struct sTXLinstance {
 	unsigned TXLibr1Given : 1;
 	unsigned TXLibr2Given : 1;
 	unsigned TXLdcGiven : 1;
-    unsigned TXLlengthgiven : 1;   /* flag to indicate C was specified */
+        unsigned TXLlengthgiven : 1;   /* flag to indicate C was specified */
 
 } TXLinstance ;
 

@@ -13,13 +13,10 @@ Author: 1992 Charles Hough
 
 
 int
-TXLfindBr(ckt,inModel,name)
-    register CKTcircuit *ckt;
-    GENmodel *inModel;
-    register IFuid name;
+TXLfindBr(CKTcircuit *ckt, GENmodel *inModel, IFuid name)
 {
-    register TXLmodel *model = (TXLmodel *)inModel;
-    register TXLinstance *here;
+    TXLmodel *model = (TXLmodel *)inModel;
+    TXLinstance *here;
     int error;
     CKTnode *tmp;
 

@@ -26,12 +26,10 @@ static void copy_tx();
 
 /*ARGSUSED*/
 int
-TXLload(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+TXLload(GENmodel *inModel, CKTcircuit *ckt)
 {
-    register TXLmodel *model = (TXLmodel *)inModel;
-    register TXLinstance *here;
+     TXLmodel *model = (TXLmodel *)inModel;
+     TXLinstance *here;
 	TXLine *tx, *tx2;
 	int k, l;
 	int time, time2;

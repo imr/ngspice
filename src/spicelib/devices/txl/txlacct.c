@@ -6,7 +6,6 @@ Author: 1992 Charles Hough
 
 
 #include "ngspice.h"
-#include <math.h>
 #include "cktdefs.h"
 #include "txldefs.h"
 #include "sperror.h"
@@ -14,14 +13,12 @@ Author: 1992 Charles Hough
 
 
 int
-TXLaccept(ckt,inModel)
-    register CKTcircuit *ckt;
-    GENmodel *inModel;
+TXLaccept(CKTcircuit *ckt, GENmodel *inModel)
         /* set up the breakpoint table.
          */
 {
-    register TXLmodel *model = (TXLmodel *)inModel;
-    register TXLinstance *here;
+     TXLmodel *model = (TXLmodel *)inModel;
+     TXLinstance *here;
 	int hint;
 	double h, v, v1;
 	NODE *nd;

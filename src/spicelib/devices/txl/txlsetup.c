@@ -75,14 +75,10 @@ static double AA[3][4];
 
 /* ARGSUSED */
 int
-TXLsetup(matrix,inModel,ckt,state)
-    register SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit*ckt;
-    int *state;
+TXLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
 {
-  register TXLmodel *model = (TXLmodel *)inModel;
-  register TXLinstance *here;     
+  TXLmodel *model = (TXLmodel *)inModel;
+  TXLinstance *here;     
   CKTnode *tmp;
   int error;
 

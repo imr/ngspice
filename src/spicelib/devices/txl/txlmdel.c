@@ -12,10 +12,7 @@ Author: 1992 Charles Hough
 
 
 int
-TXLmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+TXLmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     TXLmodel **model = (TXLmodel **)inModel;
     TXLmodel *modfast = (TXLmodel *)kill;

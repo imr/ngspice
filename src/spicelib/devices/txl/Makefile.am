@@ -4,8 +4,10 @@ noinst_LIBRARIES = libtxl.a
 
 libtxl_a_SOURCES = 	\
 	txl.c      \
+	txlacct.c  \
 	txlask.c   \
 	txldest.c  \
+	txlfbr.c   \
 	txlload.c  \
 	txlmdel.c  \
 	txlparam.c \

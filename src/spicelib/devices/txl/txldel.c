@@ -12,10 +12,7 @@ Author: 1992 Charles Hough
 
 
 int
-TXLdelete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
+TXLdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
     TXLmodel *model = (TXLmodel *)inModel;
     TXLinstance **fast = (TXLinstance **)inst;

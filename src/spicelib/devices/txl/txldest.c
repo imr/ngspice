@@ -11,8 +11,7 @@ Author: 1992 Charles Hough
 
 
 void
-TXLdestroy(inModel)
-    GENmodel **inModel;
+TXLdestroy(GENmodel **inModel)
 {
     TXLmodel **model = (TXLmodel **)inModel;
     TXLinstance *here;

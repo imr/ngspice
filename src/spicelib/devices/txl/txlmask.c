@@ -18,11 +18,7 @@ Author: 1992 Charles Hough
 
 /* ARGSUSED */
 int 
-TXLmodAsk(ckt,inModel,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inModel;
-    int which;
-    IFvalue *value;
+TXLmodAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
     TXLmodel *model = (TXLmodel *)inModel;
     switch(which) {

@@ -53,15 +53,15 @@ SPICEdev TXLinfo = {
   DEVpzSetup    : NULL,
   DEVtemperature: NULL,
   DEVtrunc      : NULL,
-  DEVfindBranch : NULL, /* TXLfindBranch, */
+  DEVfindBranch : NULL, /* TXLfindBranch default: disabled */
   DEVacLoad     : TXLload, /* ac load */
-  DEVaccept     : NULL,
+  DEVaccept     : NULL, /* TXLaccept default: disabled */
   DEVdestroy    : TXLdestroy,
   DEVmodDelete  : TXLmDelete,
   DEVdelete     : TXLdelete,
   DEVsetic      : NULL,
-  DEVask        : NULL,
-  DEVmodAsk     : NULL,
+  DEVask        : TXLask,
+  DEVmodAsk     : TXLmodAsk,
   DEVpzLoad     : NULL,
   DEVconvTest   : NULL,
   DEVsenSetup   : NULL,

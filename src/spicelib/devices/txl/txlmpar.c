@@ -14,10 +14,7 @@ Author: 1992 Charles Hough
 
 
 int
-TXLmParam(param,value,inModel)
-    int param;
-    IFvalue *value;
-    GENmodel *inModel;
+TXLmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     register TXLmodel *model = (TXLmodel *)inModel;
     switch(param) {
