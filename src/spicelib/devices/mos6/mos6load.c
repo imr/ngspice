@@ -73,12 +73,24 @@ MOS6load(GENmodel *inModel, CKTcircuit *ckt)
     double capgd;   /* total gate-drain capacitance */
     double capgb;   /* total gate-bulk capacitance */
     int Check;
+#ifndef NOBYPASS
     double tempv;
+#endif /*NOBYPASS*/
     int error;
+#ifdef CAPBYPASS
+    int senflag;
+#endif /* CAPBYPASS */ 
     int SenCond;
 
     int m;
 
+#ifdef CAPBYPASS
+    senflag = 0;
+    if(ckt->CKTsenInfo && ckt->CKTsenInfo->SENstatus == PERTURBATION &&
+        (ckt->CKTsenInfo->SENmode & (ACSEN | TRANSEN))) {
+        senflag = 1;
+    }
+#endif /* CAPBYPASS */ 
 
     /*  loop through all the MOS6 device models */
     for( ; model != NULL; model = model->MOS6nextModel ) {
@@ -260,7 +272,7 @@ MOS6load(GENmodel *inModel, CKTcircuit *ckt)
 /*
 
 */
-
+#ifndef NOBYPASS
                 /* now lets see if we can bypass (ugh) */
                 /* the following mess should be one if statement, but
                  * many compilers can't handle it all at once, so it
@@ -288,7 +300,7 @@ MOS6load(GENmodel *inModel, CKTcircuit *ckt)
                 if( (fabs(cdhat- here->MOS6cd) <
                         ckt->CKTreltol * MAX(fabs(cdhat),fabs(
                         here->MOS6cd)) + ckt->CKTabstol) ) {
-		  /* bypass code */
+                    /* bypass code *
                     /* nothing interesting has changed since last
                      * iteration on this device, so we just
                      * copy all the values computed last iteration out
@@ -320,6 +332,7 @@ MOS6load(GENmodel *inModel, CKTcircuit *ckt)
                     }
                     goto bypass;
                 }
+#endif /*NOBYPASS*/
 /*
 
 */
@@ -556,9 +569,17 @@ next1:      if(vbs <= -3*vt) {
                  *
                  *.. bulk-drain and bulk-source depletion capacitances
                  */
+#ifdef CAPBYPASS
+                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
+                        FABS(delvbs) >= ckt->CKTreltol * MAX(FABS(vbs),
+                        FABS(*(ckt->CKTstate0+here->MOS6vbs)))+
+                        ckt->CKTvoltTol)|| senflag)
+#endif /*CAPBYPASS*/
                 {
                     /* can't bypass the diode capacitance calculations */
+#ifdef CAPZEROBYPASS
                     if(here->MOS6Cbs != 0 || here->MOS6Cbssw != 0 ) {
+#endif /*CAPZEROBYPASS*/
                     if (vbs < here->MOS6tDepCap){
                         arg=1-vbs/here->MOS6tBulkPot;
                         /*
@@ -610,14 +631,24 @@ next1:      if(vbs <= -3*vt) {
                                 vbs*(here->MOS6f2s+vbs*(here->MOS6f3s/2));
                         here->MOS6capbs=here->MOS6f2s+here->MOS6f3s*vbs;
                     }
+#ifdef CAPZEROBYPASS
                     } else {
                         *(ckt->CKTstate0 + here->MOS6qbs) = 0;
                         here->MOS6capbs=0;
                     }
+#endif /*CAPZEROBYPASS*/
                 }
+#ifdef CAPBYPASS
+                if(((ckt->CKTmode & (MODEINITPRED | MODEINITTRAN) ) ||
+                        FABS(delvbd) >= ckt->CKTreltol * MAX(FABS(vbd),
+                        FABS(*(ckt->CKTstate0+here->MOS6vbd)))+
+                        ckt->CKTvoltTol)|| senflag)
+#endif /*CAPBYPASS*/
                     /* can't bypass the diode capacitance calculations */
                 {
+#ifdef CAPZEROBYPASS
                     if(here->MOS6Cbd != 0 || here->MOS6Cbdsw != 0 ) {
+#endif /*CAPZEROBYPASS*/
                     if (vbd < here->MOS6tDepCap) {
                         arg=1-vbd/here->MOS6tBulkPot;
                         /*
@@ -664,10 +695,12 @@ next1:      if(vbs <= -3*vt) {
                                 vbd * (here->MOS6f2d + vbd * here->MOS6f3d/2);
                         here->MOS6capbd=here->MOS6f2d + vbd * here->MOS6f3d;
                     }
+#ifdef CAPZEROBYPASS
                 } else {
                     *(ckt->CKTstate0 + here->MOS6qbd) = 0;
                     here->MOS6capbd = 0;
                 }
+#endif /*CAPZEROBYPASS*/
                 }
 /*
 
