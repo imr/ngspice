@@ -1191,6 +1191,8 @@ struct triggerEvent {
   int type;
   int stepNumber;
   double time;
+  double voltage;
+  char ident[16];
 };
 
 
@@ -1203,6 +1205,7 @@ pthread_mutex_t triggerMutex;
 
 struct watch {
   struct watch *next;
+  char name[16];
   int vector;/* index of vector to watch */
   int type; /* +ive or -ive trigger */
   int state; /* pretriggered or not */
@@ -1267,8 +1270,9 @@ int triggerEventHandler(Tcl_Event *evPtr, int flags) {
 		struct triggerEvent *event = eventQueue;
 		eventQueue = eventQueue->next;
 	
-		snprintf(buf,512,"%s %s %g %d %d",triggerCallback,vectors[event->vector].name,
-					event->time,event->stepNumber,event->type);
+		snprintf(buf,512,"%s %s %g %d %d %g %s",triggerCallback,vectors[event->vector].name,
+					event->time,event->stepNumber,event->type,event->voltage,event->ident);
+		
 		rtn = Tcl_Eval(spice_interp,buf);
 		FREE(event);
 		if(rtn) {
@@ -1348,14 +1352,16 @@ int Tcl_ExecutePerLoop() {
       tmp->stepNumber = vectors[0].length;
 
 	  {
-		double T = vectors[0].data[vectors[0].length-1];
-        double V = v->data[v->length-1];
+      double T = vectors[0].data[vectors[0].length-1];
+      double V = v->data[v->length-1];
 		  
-		tmp->time = current->oT + 
-		  (current->Vavg - current->oV) * (T - current->oT) / (V - current->oV);
-      }
-
-      current->state = 0;
+      tmp->time = current->oT + 
+        (current->Vavg - current->oV) * (T - current->oT) / (V - current->oV);
+      tmp->voltage = current->Vavg;
+    }
+    
+    strcpy(tmp->ident,current->name);
+    current->state = 0;
 
     } else 
       if((current->type > 0 && v->data[v->length-1] < current->Vmin) || 
@@ -1510,15 +1516,18 @@ static int registerStepCallback TCL_CMDPROCARGS(clientData,interp,argc,argv){
  */
 static int registerTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   int i, index;
-  char *var;
+  const char *var;
+  char ident[16];
   struct watch *tmp;
+  int type;
+  double Vavg, Vmin, Vmax;
   
-  if (argc != 4 && argc != 5) {
-    Tcl_SetResult(interp, "Wrong # args. spice::registerTrigger vecName Vmin Vmax ?type?",TCL_STATIC);
+  if (argc < 4 && argc > 6) {
+    Tcl_SetResult(interp, "Wrong # args. spice::registerTrigger vecName Vmin Vmax ?type? ?string?",TCL_STATIC);
     return TCL_ERROR;
   }
 
-  var = (char *)argv[1];
+  var = argv[1];
 
   for(i=0;i < blt_vnum && strcmp(var,vectors[i].name);i++);
 
@@ -1528,25 +1537,65 @@ static int registerTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
     return TCL_ERROR;
   } else index = i;
 
+  if(argc >= 5)
+     type = atoi(argv[4]);
+  else
+    type = 1;
+
+  if(argc >= 6) {
+     strncpy(ident,argv[5],sizeof(ident));
+     ident[sizeof(ident)-1] = '\0';
+  } else
+    ident[0] = '\0';
+
+  Vmin = atof(argv[2]);
+  Vmax = atof(argv[3]);
+  Vavg = (Vmin + Vmax) / 2 ;
+  
 #ifdef HAVE_LIBPTHREAD
   pthread_mutex_lock(&triggerMutex);
 #endif
   
-  tmp = (struct watch *)MALLOC(sizeof(struct watch));
+  for(tmp = watches;tmp != NULL;tmp=tmp->next) {
+	  if(ident[0] != '\0') {
+		  if(strcmp(ident,tmp->name) == 0) {
+        watches->vector = index;
+        watches->type = type;
+        strcpy(watches->name,ident);
 
-  tmp->next = watches;
-  watches = tmp;
+        watches->state = 0;
+        watches->Vmin = Vmin;
+        watches->Vmax = Vmax;
+        watches->Vavg = Vavg;
 
-  watches->vector = index;
-  if(argc == 5)
-     watches->type = atoi(argv[4]);
-  else
-    watches->type = 1;
+        break;
+      }
+    } else {
+      if(tmp->vector == index && tmp->type == type
+          && tmp->Vavg == Vavg ) {
+        tmp->Vmin = Vmin;
+        tmp->Vmax = Vmax;
+        break;
+      }
+    }
+  }
   
-  watches->state = 0;
-  watches->Vmin = atof(argv[2]);
-  watches->Vmax = atof(argv[3]);
-  watches->Vavg = (watches->Vmin + watches->Vmax) / 2 ;
+  if(tmp == NULL) {
+	
+    tmp = (struct watch *)MALLOC(sizeof(struct watch));
+    tmp->next = watches;
+    watches = tmp;
+
+    watches->vector = index;
+    watches->type = type;
+    strcpy(watches->name,ident);
+  
+    watches->state = 0;
+    watches->Vmin = Vmin;
+    watches->Vmax = Vmax;
+    watches->Vavg = Vavg;
+
+  }
   
 #ifdef HAVE_LIBPTHREAD
   pthread_mutex_unlock(&triggerMutex);
@@ -1573,11 +1622,10 @@ static int unregisterTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   
   for(i=0;i < blt_vnum && strcmp(var,vectors[i].name);i++);
   
-  if(i == blt_vnum) {
-    Tcl_SetResult(interp, "Bad spice variable ",TCL_STATIC);
-    Tcl_AppendResult(interp, (char *)var, TCL_STATIC);
-    return TCL_ERROR;
-  } else index = i;
+  if(i == blt_vnum)
+    index = -1;
+  else
+    index = i;
   
   if(argc == 3)
     type = atoi(argv[4]);
@@ -1593,11 +1641,10 @@ static int unregisterTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   tmp = watches;
 
   while(tmp)
-    if(tmp->vector == index && tmp->type == type) {
-      struct watch *t = tmp;
+    if((tmp->vector == index && tmp->type == type) || strcmp(var,tmp->name) == 0) {
       *cut = tmp->next;
-      tmp = tmp->next;
-      FREE(t);
+      txfree(tmp);
+      break;
     } else {
       cut = &tmp->next;
       tmp = tmp->next;
@@ -1606,6 +1653,12 @@ static int unregisterTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
 #ifdef HAVE_LIBPTHREAD
   pthread_mutex_unlock(&triggerMutex);
 #endif
+  
+  if(tmp == NULL) {
+    Tcl_SetResult(interp, "Could not find trigger ",TCL_STATIC);
+    Tcl_AppendResult(interp, (char *)var, TCL_STATIC);
+    return TCL_ERROR;
+  }
   
   return TCL_OK;
 }
@@ -1643,6 +1696,10 @@ static int popTriggerEvent TCL_CMDPROCARGS(clientData,interp,argc,argv){
     Tcl_ListObjAppendElement(interp,list,Tcl_NewIntObj(popedEvent->stepNumber));
 
     Tcl_ListObjAppendElement(interp,list,Tcl_NewIntObj(popedEvent->type));
+
+    Tcl_ListObjAppendElement(interp,list,Tcl_NewDoubleObj(popedEvent->voltage));
+
+    Tcl_ListObjAppendElement(interp,list,Tcl_NewStringObj(popedEvent->ident,strlen(popedEvent->ident)));
 
     Tcl_SetObjResult(interp,list);
 
