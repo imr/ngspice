@@ -17,7 +17,6 @@
 #include "cktdefs.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
-#include "suffix.h"
 #include "const.h"
 
 
@@ -78,11 +77,11 @@ BSIM4noise (mode, operation, inModel, ckt, data, OnDens)
 int mode, operation;
 GENmodel *inModel;
 CKTcircuit *ckt;
-register Ndata *data;
+Ndata *data;
 double *OnDens;
 {
-register BSIM4model *model = (BSIM4model *)inModel;
-register BSIM4instance *here;
+BSIM4model *model = (BSIM4model *)inModel;
+BSIM4instance *here;
 struct bsim4SizeDependParam *pParam;
 char name[N_MXVLNTH];
 double tempOnoise;

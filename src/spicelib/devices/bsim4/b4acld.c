@@ -15,16 +15,16 @@
 #include "cktdefs.h"
 #include "bsim4def.h"
 #include "sperror.h"
-#include "suffix.h"
+
 
 
 int
 BSIM4acLoad(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM4model *model = (BSIM4model*)inModel;
-register BSIM4instance *here;
+BSIM4model *model = (BSIM4model*)inModel;
+BSIM4instance *here;
 
 double gjbd, gjbs, geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb;
 double xcbgb, xcbdb, xcbsb, xcbbb;
@@ -58,7 +58,8 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
     for (; model != NULL; model = model->BSIM4nextModel) 
     {    for (here = model->BSIM4instances; here!= NULL;
               here = here->BSIM4nextInstance) 
-	 {    pParam = here->pParam;
+	 {        if (here->BSIM4owner != ARCHme) continue;
+	          pParam = here->pParam;
               capbd = here->BSIM4capbd;
               capbs = here->BSIM4capbs;
               cgso = here->BSIM4cgso;

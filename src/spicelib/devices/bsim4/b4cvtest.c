@@ -19,16 +19,16 @@
 #include "const.h"
 #include "devdefs.h"
 #include "sperror.h"
-#include "suffix.h"
+
 
 
 int
 BSIM4convTest(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM4model *model = (BSIM4model*)inModel;
-register BSIM4instance *here;
+BSIM4model *model = (BSIM4model*)inModel;
+BSIM4instance *here;
 double delvbd, delvbs, delvds, delvgd, delvgs;
 double delvdbd, delvsbs; 
 double delvbd_jct, delvbs_jct;
@@ -43,7 +43,10 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
     for (; model != NULL; model = model->BSIM4nextModel)
     {    for (here = model->BSIM4instances; here != NULL ;
               here=here->BSIM4nextInstance) 
-	 {    vds = model->BSIM4type
+	 {    
+	      if (here->BSIM4owner != ARCHme) continue; 
+	 
+	      vds = model->BSIM4type
                   * (*(ckt->CKTrhsOld + here->BSIM4dNodePrime)
                   - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
               vgs = model->BSIM4type

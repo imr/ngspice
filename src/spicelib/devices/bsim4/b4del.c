@@ -13,7 +13,6 @@
 #include "bsim4def.h"
 #include "sperror.h"
 #include "gendefs.h"
-#include "suffix.h"
 
 
 int

@@ -13,14 +13,14 @@
 #include "ngspice.h"
 #include <stdio.h>
 #include <math.h>
-#include "jobdefs.h"
-#include "ftedefs.h"
+#include "jobdefs.h"  /* Needed because the model searches for noise Analysis */   
+#include "ftedefs.h"  /*                   "       "                          */
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "bsim4def.h"
 #include "const.h"
 #include "sperror.h"
-#include "suffix.h"
+
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
@@ -32,13 +32,13 @@
 
 int
 BSIM4setup(matrix,inModel,ckt,states)
-register SMPmatrix *matrix;
-register GENmodel *inModel;
-register CKTcircuit *ckt;
+SMPmatrix *matrix;
+GENmodel *inModel;
+CKTcircuit *ckt;
 int *states;
 {
-register BSIM4model *model = (BSIM4model*)inModel;
-register BSIM4instance *here;
+BSIM4model *model = (BSIM4model*)inModel;
+BSIM4instance *here;
 int error;
 CKTnode *tmp;
 double tmp1, tmp2;
@@ -1335,10 +1335,13 @@ JOB   *job;
          */
 
         for (here = model->BSIM4instances; here != NULL ;
-             here=here->BSIM4nextInstance) 
-	{   /* allocate a chunk of the state vector */
+             here=here->BSIM4nextInstance)      
+	{   
+	     if (here->BSIM4owner == ARCHme) {
+	    /* allocate a chunk of the state vector */
             here->BSIM4states = *states;
             *states += BSIM4numStates;
+            }
             /* perform the parameter defaulting */
             if (!here->BSIM4lGiven)
                 here->BSIM4l = 5.0e-6;
@@ -1648,7 +1651,7 @@ BSIM4unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
+
     BSIM4model *model;
     BSIM4instance *here;
 
@@ -1672,6 +1675,5 @@ BSIM4unsetup(inModel,ckt)
             }
         }
     }
-#endif
     return OK;
 }

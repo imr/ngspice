@@ -18,7 +18,6 @@
 #include "bsim4def.h"
 #include "const.h"
 #include "sperror.h"
-#include "suffix.h"
 
 #define Kb 1.3806226e-23
 #define KboQ 8.617087e-5 
@@ -51,8 +50,8 @@ BSIM4temp(inModel,ckt)
 GENmodel *inModel;
 CKTcircuit *ckt;
 {
-register BSIM4model *model = (BSIM4model*) inModel;
-register BSIM4instance *here;
+BSIM4model *model = (BSIM4model*) inModel;
+BSIM4instance *here;
 struct bsim4SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni;
 double T0, T1, T2, T3, T4, T5, T8, T9, Lnew, Wnew;
@@ -321,7 +320,8 @@ int Size_Not_Found;
          /* loop through all the instances of the model */
          for (here = model->BSIM4instances; here != NULL;
               here = here->BSIM4nextInstance) 
-	 {    pSizeDependParamKnot = model->pSizeDependParamKnot;
+	 {    if (here->BSIM4owner != ARCHme) continue;
+	      pSizeDependParamKnot = model->pSizeDependParamKnot;
 	      Size_Not_Found = 1;
 	      while ((pSizeDependParamKnot != NULL) && Size_Not_Found)
 	      {   if ((here->BSIM4l == pSizeDependParamKnot->Length)

@@ -11,7 +11,6 @@
 #include "ngspice.h"
 #include <stdio.h>
 #include "bsim4def.h"
-#include "suffix.h"
 
 void
 BSIM4destroy(inModel)

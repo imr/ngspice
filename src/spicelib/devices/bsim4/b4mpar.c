@@ -15,7 +15,6 @@
 #include "bsim4def.h"
 #include "ifsim.h"
 #include "sperror.h"
-#include "suffix.h"
 #include "const.h"
 
 int

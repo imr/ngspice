@@ -14,17 +14,16 @@
 #include "cktdefs.h"
 #include "bsim4def.h"
 #include "sperror.h"
-#include "suffix.h"
 
 
 int
 BSIM4trunc(inModel,ckt,timeStep)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 double *timeStep;
 {
-register BSIM4model *model = (BSIM4model*)inModel;
-register BSIM4instance *here;
+BSIM4model *model = (BSIM4model*)inModel;
+BSIM4instance *here;
 
 #ifdef STEPDEBUG
     double debugtemp;
@@ -34,6 +33,7 @@ register BSIM4instance *here;
     {    for (here = model->BSIM4instances; here != NULL;
 	      here = here->BSIM4nextInstance)
 	 {
+	 if (here->BSIM4owner != ARCHme) continue;
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
 #endif /* STEPDEBUG */

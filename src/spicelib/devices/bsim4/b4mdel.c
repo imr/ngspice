@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include "bsim4def.h"
 #include "sperror.h"
-#include "suffix.h"
+
 
 int
 BSIM4mDelete(inModel,modname,kill)

@@ -19,7 +19,6 @@
 #include "const.h"
 #include "sperror.h"
 #include "devdefs.h"
-#include "suffix.h"
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
@@ -184,7 +183,8 @@ ChargeComputationNeeded =
 for (; model != NULL; model = model->BSIM4nextModel)
 {    for (here = model->BSIM4instances; here != NULL; 
           here = here->BSIM4nextInstance)
-     {    Check = Check1 = Check2 = 1;
+     {    if (here->BSIM4owner != ARCHme) continue; 
+          Check = Check1 = Check2 = 1;
           ByPass = 0;
 	  pParam = here->pParam;
 
@@ -3376,46 +3376,6 @@ finished:
           if ((here->BSIM4off == 0) || (!(ckt->CKTmode & MODEINITFIX)))
 	  {   if (Check == 1)
 	      {   ckt->CKTnoncon++;
-#ifndef NEWCONV
-              } 
-	      else
-              {   if (here->BSIM4mode >= 0)
-                  {   Idtot = here->BSIM4cd + here->BSIM4csub
-			    + here->BSIM4Igidl - here->BSIM4cbd;
-                  }
-                  else
-                  {   Idtot = here->BSIM4cd + here->BSIM4cbd;
-                  }
-                  tol0 = ckt->CKTreltol * MAX(fabs(cdhat), fabs(Idtot))
-                       + ckt->CKTabstol;
-		  tol1 = ckt->CKTreltol * MAX(fabs(cseshat), fabs(Isestot))
-                       + ckt->CKTabstol;
-                  tol2 = ckt->CKTreltol * MAX(fabs(cdedhat), fabs(Idedtot))
-                       + ckt->CKTabstol;
-                  tol3 = ckt->CKTreltol * MAX(fabs(cgshat), fabs(Igstot))
-                       + ckt->CKTabstol;
-                  tol4 = ckt->CKTreltol * MAX(fabs(cgdhat), fabs(Igdtot))
-                       + ckt->CKTabstol;
-                  tol5 = ckt->CKTreltol * MAX(fabs(cgbhat), fabs(Igbtot))
-                       + ckt->CKTabstol;
-                  if ((fabs(cdhat - Idtot) >= tol0) || (fabs(cseshat - Isestot) >= tol1)
-		      || (fabs(cdedhat - Idedtot) >= tol2))
-                  {   ckt->CKTnoncon++;
-                  }
-		  else if ((fabs(cgshat - Igstot) >= tol3) || (fabs(cgdhat - Igdtot) >= tol4)
-		      || (fabs(cgbhat - Igbtot) >= tol5))
-                  {   ckt->CKTnoncon++;
-                  }
-                  else
-                  {   Ibtot = here->BSIM4cbs + here->BSIM4cbd
-			    - here->BSIM4Igidl - here->BSIM4Igisl - here->BSIM4csub;
-                      tol6 = ckt->CKTreltol * MAX(fabs(cbhat), fabs(Ibtot))
-                          + ckt->CKTabstol;
-                      if (fabs(cbhat - Ibtot) > tol6)
-		      {   ckt->CKTnoncon++;
-                      }
-                  }
-#endif /* NEWCONV */
               }
           }
           *(ckt->CKTstate0 + here->BSIM4vds) = vds;
