@@ -14,6 +14,7 @@ Modified: 2000 AlansFixes
 
 #include "ngspice.h"
 #include "cpdefs.h"
+#include "tskdefs.h"
 #include "ftedefs.h"
 #include "fteinp.h"
 #include "inpdefs.h"
@@ -132,10 +133,17 @@ if_run(char *t, char *what, wordlist *args, char *tab)
     IFuid specUid,optUid;
 
     /* First parse the line... */
-    if (eq(what, "tran") || eq(what, "ac") || eq(what, "dc")
-            || eq(what, "op") || eq(what, "pz") || eq(what,"disto")
-            || eq(what, "adjsen") || eq(what, "sens") || eq(what,"tf")
-	    || eq(what, "noise")) {
+    if (eq(what, "tran") 
+    || eq(what, "ac") 
+    || eq(what, "dc")
+    || eq(what, "op") 
+    || eq(what, "pz") 
+    || eq(what,"disto")
+    || eq(what, "adjsen") 
+    || eq(what, "sens") 
+    || eq(what,"tf")
+    || eq(what, "noise")) 
+    {
         (void) sprintf(buf, ".%s", wl_flatten(args));
         deck.li_next = deck.li_actual = NULL;
         deck.li_error = NULL;
@@ -181,6 +189,15 @@ if_run(char *t, char *what, wordlist *args, char *tab)
                 ft_sperror(err,"createOptions");
                 return(2);
             }
+            
+/* -- *** BUG! ****/
+/* -- Inherit the default simulation settings taken from the */
+/* -- .option line.                                          */
+
+/*            memcpy(&ft_curckt->ci_specOpt->TSKtemp,
+                   &ft_curckt->ci_defOpt->TSKtemp,
+                   sizeof(TSKtask) - offsetof(TSKtask, TSKtemp));
+*/
             ft_curckt->ci_curOpt  = ft_curckt->ci_specOpt;
         }
         ft_curckt->ci_curTask = ft_curckt->ci_specTask;
@@ -190,10 +207,18 @@ if_run(char *t, char *what, wordlist *args, char *tab)
 	    return 2;
         }
     }
+
+/* -- *** BUG! ****/
+/* -- A bug fix suggested by Cecil Aswell (aswell@netcom.com) to let */
+/* -- the interactive analysis commands get the current temperature */
+/* -- and other options. */
+    
     if( eq(what,"run") ) {
         ft_curckt->ci_curTask = ft_curckt->ci_defTask;
         ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;
     }
+
+/* -- Find out what we are supposed to do.              */
 
     if (  (eq(what, "tran"))  ||
           (eq(what, "ac"))  ||
@@ -786,7 +811,7 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
 	UID_ANALYSIS, (void**)NULL);
     if(err != OK) return(FALSE);
     err =(*(ft_sim->findAnalysis))(ci->ci_ckt,&which, &anal,tranUid,
-            ci->ci_curTask,(IFuid *)NULL);
+            ci->ci_curTask,(IFuid )NULL);
     if(err != OK) return(FALSE);
     err = if_analQbyName(ci->ci_ckt,which,anal,"tstart",&tmp);
     if(err != OK) return(FALSE);
