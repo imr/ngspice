@@ -58,7 +58,6 @@ INDask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
                 return(E_ASKCURRENT);
             } else {
                 value->rValue = *(ckt->CKTrhsOld + here->INDbrEq);
-		value->rValue *= here->INDm;
             }
             return(OK);
         case IND_POWER :
@@ -70,7 +69,6 @@ INDask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             } else {
                 value->rValue = *(ckt->CKTrhsOld + here->INDbrEq) *
                         *(ckt->CKTstate0+here->INDvolt);
-		value->rValue *= here->INDm;	
             }
             return(OK);
         case IND_QUEST_SENS_DC:

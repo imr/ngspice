@@ -87,7 +87,7 @@ typedef struct sINDmodel {       /* model structure for an inductor */
     double INDlength;      /* Mean length of magnetic path */
     double INDmodNt;       /* Model number of turns */
     double INDmu;          /* Relative magnetic permeability */
-    double INDspecInd;     /* Specific (one turn) inductance */
+   
     unsigned INDtnomGiven  : 1; /* flag to indicate nominal temp was given */ 
     unsigned INDtc1Given   : 1; /* flag to indicate tc1 was specified */
     unsigned INDtc2Given   : 1; /* flag to indicate tc2 was specified */
@@ -95,7 +95,9 @@ typedef struct sINDmodel {       /* model structure for an inductor */
     unsigned INDlengthGiven: 1; /* flag to indicate length given */
     unsigned INDmodNtGiven : 1; /* flag to indicate mod. n. of turns given */
     unsigned INDmuGiven    : 1; /* flag to indicate mu_r given */
-    unsigned INDmIndGiven  : 1;   /* flag to indicate model inductance given */
+    unsigned INDmIndGiven  : 1; /* flag to indicate model inductance given */
+
+    double INDspecInd;     /* Specific (one turn) inductance */
 } INDmodel;
 
 
@@ -165,8 +167,7 @@ typedef struct sMUTmodel {       /* model structure for a mutual inductor */
 #define IND_MOD_LENGTH 105
 #define IND_MOD_NT     106
 #define IND_MOD_MU     107
-#define IND_MOD_SIND   108
-#define IND_MOD_L      109
+#define IND_MOD_L      108
 
 /* device questions */
 #define IND_QUEST_SENS_REAL      201

@@ -12,9 +12,9 @@ Author: 1985 Thomas L. Quarles
 
 int
 INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
-        /* load the inductor structure with those pointers needed later 
-         * for fast matrix loading 
-         */
+   /* load the inductor structure with those pointers needed later 
+   * for fast matrix loading 
+   */
 {
     INDmodel *model = (INDmodel*)inModel;
     INDinstance *here;
@@ -56,10 +56,10 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 
 		if (model->INDmuGiven)
                     model->INDspecInd = (model->INDmu * CONSTmuZero 
-		     * model->INDcsect) / model->INDlength;   
+		     * model->INDcsect * model->INDcsect) / model->INDlength;   
 		else
-                   model->INDspecInd = (CONSTmuZero * model->INDcsect)
-		    / model->INDlength; 
+                   model->INDspecInd = (CONSTmuZero * model->INDcsect
+		   * model->INDcsect ) / model->INDlength; 
 	
 	} else  {
 	        model->INDspecInd = 0.0;

@@ -45,7 +45,6 @@ IFparm INDmPTable[] = { /* model parameters */
  IOPA(  "length", IND_MOD_LENGTH,   IF_REAL,"Inductor length"),
  IOPA(  "nt",     IND_MOD_NT,       IF_REAL,"Model number of turns"),
  IOPA(  "mu",     IND_MOD_MU,       IF_REAL,"Relative magnetic permeability"),
- OPU(   "sind",   IND_MOD_SIND,     IF_REAL,"Specific model inductance"),
  IP(    "l",      IND_MOD_L,        IF_FLAG,"Inductor model")
 };
 
