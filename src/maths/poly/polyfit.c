@@ -19,7 +19,7 @@ ft_polyfit(double *xdata, double *ydata, double *result,
 
     memset((char *) result, 0, n * sizeof(double));
     memset((char *) mat1, 0, n * n * sizeof (double));
-    memcpy((char *) ydata, (char *) mat2, n * sizeof (double));
+    memcpy((char *) mat2, (char *) ydata, n * sizeof (double));
 
     /* Fill in the matrix with x^k for 0 <= k <= degree for each point */
     l = 0;
