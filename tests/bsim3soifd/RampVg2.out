@@ -1,0 +1,13 @@
+Error: no data saved for Transient analysis; analysis not run
+doAnalyses: not found
+
+run simulation(s) aborted
+Error: .print: no m1#vbs analysis found.
+
+Circuit: * BSIMSOI example
+
+Warning: Pd = 0 is less than W.
+Warning: Ps = 0 is less than W.
+
+
+

@@ -1,0 +1,13 @@
+Error: no data saved for D.C. Transfer curve analysis; analysis not run
+doAnalyses: not found
+
+run simulation(s) aborted
+Error: .print: no v(g) analysis found.
+
+Circuit: *model = BSIMSOI
+
+Warning: Pd = 0 is less than W.
+Warning: Ps = 0 is less than W.
+
+
+

@@ -85,10 +85,12 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	      INPgetMod (ckt, model, &thismodel, tab);	/*  get pointer to the model  */
 	      if (thismodel != NULL)
 		{
-		  if (thismodel->INPmodType != INPtypelook ("B3SOIPD"))
+		  if ((thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
+		      (thismodel->INPmodType != INPtypelook ("B3SOIFD"))
+		      )
 		    {
 		      /*  if model is not variable node B3SOIPD model, error!  */
-		      LITERR ("only level 9 B3SOIPD can have 7 nodes") return;
+		      LITERR ("only level 9-10 B3SOI(PD | FD) can have 7 nodes") return;
 		    }
 		  else
 		    {		/*  if looking at B3SOIPD model, allocate the 7th node  */
@@ -100,10 +102,12 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	    }
 	  else
 	    {			/*  7th token is a model - only have 6 terminal device  */
-	      if (thismodel->INPmodType != INPtypelook ("B3SOIPD"))
+	      if ((thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
+	          (thismodel->INPmodType != INPtypelook ("B3SOIFD"))
+	          )
 		{
 		  /*  if model is not variable node B3SOIPD model, error!  */
-		  LITERR ("only level 9 B3SOIPD can have 6 nodes") return;
+		  LITERR ("only level 9-10 B3SOI(PD | FD) can have 6 nodes") return;
 		}
 	      else
 		{		/*  if looking at B3SOIPD model, allocate the 6th node  */
@@ -115,10 +119,12 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	}
       else
 	{			/*  6th token is a model - only have 5 terminal device  */
-	  if (thismodel->INPmodType != INPtypelook ("B3SOIPD"))
+	  if ((thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
+	      (thismodel->INPmodType != INPtypelook ("B3SOIFD"))
+	      )
 	    {
 	      /*  if model is not variable node B3SOIPD model, error!  */
-	      LITERR ("only level 9 B3SOIPD can have 5 nodes") return;
+	      LITERR ("only level 9-10 B3SOI(PD | FD) can have 5 nodes") return;
 	    }
 	  else
 	    {			/*  if looking at B3SOIPD model, allocate the 5th node  */
@@ -150,6 +156,7 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	  && thismodel->INPmodType != INPtypelook ("BSIM2")
 	  && thismodel->INPmodType != INPtypelook ("BSIM3")
 	  && thismodel->INPmodType != INPtypelook ("B3SOIPD")
+	  && thismodel->INPmodType != INPtypelook ("B3SOIFD")
 	  && thismodel->INPmodType != INPtypelook ("BSIM4")
 	  && thismodel->INPmodType != INPtypelook ("BSIM3V1")
 	  && thismodel->INPmodType != INPtypelook ("BSIM3V2"))
@@ -181,7 +188,9 @@ INP2M (void *ckt, INPtables * tab, card * current)
   IFC (bindNode, (ckt, fast, 2, node2));
   IFC (bindNode, (ckt, fast, 3, node3));
   IFC (bindNode, (ckt, fast, 4, node4));
-  if (thismodel->INPmodType == INPtypelook ("B3SOIPD"))
+  if ((thismodel->INPmodType == INPtypelook ("B3SOIPD")) ||
+      (thismodel->INPmodType == INPtypelook ("B3SOIFD"))
+      )
     {
       switch (nodeflag)
 	{
