@@ -2,7 +2,7 @@
 
 BUILT_SOURCES = ifs_lex.c ifs_yacc.c ifs_yacc.h mod_lex.c mod_yacc.c mod_yacc.h
 
-EXTRA_DIST= ifs_lex.l ifs_yacc.h mod_yacc.h
+EXTRA_DIST= ifs_lex.l mod_lex.l ifs_yacc.h mod_yacc.h
 
 AM_YFLAGS = -d
 
@@ -19,3 +19,5 @@ cmpp_SOURCES = cmpp.h main.c pp_ifs.c pp_lst.c pp_mod.c read_ifs.c util.c \
 	
 ifs_lex.c : ifs_lex.l
 	$(LEX)  -i -P$(*:lex=)yy $< > $@	
+
+MAINTAINERCLEANFILES = Makefile.in
