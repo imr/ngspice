@@ -261,8 +261,8 @@ tcap_init(void)
 {
     char *s;
 #ifdef HAVE_TERMCAP
-    char tbuf[1025];
-    static char buf2[100];
+    char tbuf[16384];
+    static char buf2[1024];
     char *charbuf;
 
     charbuf = buf2;

@@ -1,3 +1,8 @@
+2003-12-03 Evgeny Fiksman <fike@bezeqint.net>
+
+	* src/frontend/terminal.c:
+	Increase the buffer size for tgetent
+
 2003-12-03 Stefan Jones <stefan.jones@multigig.com>
 
 	* configure.in:
