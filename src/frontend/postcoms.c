@@ -67,7 +67,7 @@ char *copypath;
 void
 com_print(wordlist *wl)
 {
-    struct dvec *v, *lv, *bv, *nv, *vecs = NULL;
+    struct dvec *v, *lv = NULL, *bv, *nv, *vecs = NULL;
     int i, j, ll, width = DEF_WIDTH, height = DEF_HEIGHT, npoints, lineno;
     struct pnode *nn;
     struct plot *p;

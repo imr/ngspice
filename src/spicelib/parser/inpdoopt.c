@@ -71,7 +71,7 @@ INPdoOpts(ckt,anal,optCard,tab)
                     if(error) {
                         errmsg =(char *)MALLOC((35+strlen(token))*sizeof(char));
                         (void) sprintf(errmsg,
-                                "Warning:  can't set optione %s\n", token);
+                                "Warning:  can't set option %s\n", token);
                         optCard->error = INPerrCat(optCard->error, errmsg);
                     }
                     break;

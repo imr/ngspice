@@ -11,6 +11,7 @@ Modified: 2000 AlansFixes
 #include "inpmacs.h"
 #include "fteext.h"
 #include "inp.h"
+#include "cpdefs.h"
 
 
 static int
@@ -617,6 +618,17 @@ dot_sens2(char *line, void *ckt, INPtables *tab, card *current,
 }
 #endif
 
+static int
+dot_options(char *line, void *ckt, INPtables *tab, card *current,
+	  void *task, void *gnode, void *foo)
+{
+	/* .option - specify program options - rather complicated */
+	/* use a subroutine to handle all of them to keep this    */
+	/* subroutine managable.                                  */
+    	
+    	INPdoOpts(ckt,task,current,tab);	
+    	return (0);
+}
 
 
 int
@@ -690,6 +702,11 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
     else if ((strcmp(token, ".probe") == 0)) {
 	/* Maybe generate a "probe" format file in the future. */
 	return 0;
+    }
+    else if ((strcmp(token, ".options") == 0)||
+            (strcmp(token,".option")==0) ||
+            (strcmp(token,".opt")==0)) {
+     return dot_options(line, ckt, tab, current, task, gnode, foo);
     }
     LITERR(" unimplemented control card - error \n");
     return (0);

@@ -190,7 +190,7 @@ ft_checkkids(void)
     struct proc *p = NULL, *lp = NULL;
     char buf[BSIZE_SP];
     FILE *fp;
-    int pid;
+    int pid = 0;
     static bool here = FALSE;   /* Don't want to be re-entrant. */
 
     if (!numchanged || here)
@@ -199,10 +199,10 @@ ft_checkkids(void)
     here = TRUE;
 
     while (numchanged > 0) {
-        pid = wait((&status);
+        pid = wait(&status);
         if (pid == -1) {
-            fprintf(cp_err, 
-"ft_checkkids: Internal Error: should be %d jobs done but there aren't any.\n",
+            fprintf(cp_err,  
+               "ft_checkkids: Internal Error: should be %d jobs done but there aren't any.\n", 
                 numchanged);
             numchanged = 0;
             running = NULL;
