@@ -1,3 +1,15 @@
+2000-06-03  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/include/complex.h, src/include/macros.h,
+	src/include/memory.h, src/maths/sparse/spdefs.h: Moved definitions
+	of complex into complex.h.  There are three different ways to
+	declare a complex number in Spice.  We need further work to reduce
+	this to only one.
+
+	* src/maths/cmaths/Makefile.am, src/maths/cmaths/.cvsignore,
+	src/maths/cmaths/test_cx_ph.c:  Added a new test and updated the
+	corresponding support files.
+
 2000-06-02  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/circuit/inp2dot.c: Refactoring introduced a bug in the line

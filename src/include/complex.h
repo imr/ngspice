@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 1985 Thomas L. Quarles
- * Modified: Paolo Nenzi 1999, Arno W. Peters 2000
+ * Modified: 1999 Paolo Nenzi, 2000 Arno W. Peters
  */
 #ifndef _COMPLEX_H
 #define _COMPLEX_H
@@ -18,8 +18,7 @@ typedef struct _complex complex;
 #define imagpart(cval)  ((struct _complex *) (cval))->cx_imag
 
 
-/*  header file containing definitions for complex functions
- *
+/*
  *  Each expects two arguments for each complex number - a real and an
  *  imaginary part.
  */
@@ -27,6 +26,61 @@ typedef struct {
     double real;
     double imag;
 } SPcomplex;
+
+/*
+ *  COMPLEX NUMBER DATA STRUCTURE
+ *
+ *  >>> Structure fields:
+ *  Real  (RealNumber)
+ *      The real portion of the number.  Real must be the first
+ *      field in this structure.
+ *  Imag  (RealNumber)
+ *      The imaginary portion of the number. This field must follow
+ *      immediately after Real.
+ */
+
+#define spREAL  double
+
+/* Begin `RealNumber'. */
+typedef  spREAL  RealNumber, *RealVector;
+
+/* Begin `ComplexNumber'. */
+typedef  struct
+{   RealNumber  Real;
+    RealNumber  Imag;
+} ComplexNumber, *ComplexVector;
+
+
+/* Some defines used mainly in cmath.c. */
+#define alloc_c(len)    ((complex *) tmalloc((len) * sizeof (complex)))
+#define alloc_d(len)    ((double *) tmalloc((len) * sizeof (double)))
+#define FTEcabs(d)  (((d) < 0.0) ? - (d) : (d))
+#define cph(c)    (atan2(imagpart(c), (realpart(c))))
+#define cmag(c)  (sqrt(imagpart(c) * imagpart(c) + realpart(c) * realpart(c)))
+#define radtodeg(c) (cx_degrees ? ((c) / 3.14159265358979323846 * 180) : (c))
+#define degtorad(c) (cx_degrees ? ((c) * 3.14159265358979323846 / 180) : (c))
+#define rcheck(cond, name)      if (!(cond)) { \
+    fprintf(cp_err, "Error: argument out of range for %s\n", name); \
+    return (NULL); }
+
+
+#define cdiv(r1, i1, r2, i2, r3, i3)            \
+{                           \
+    double r, s;                    \
+    if (FTEcabs(r2) > FTEcabs(i2)) {          \
+        r = (i2) / (r2);            \
+        s = (r2) + r * (i2);            \
+        (r3) = ((r1) + r * (i1)) / s;       \
+        (i3) = ((i1) - r * (r1)) / s;       \
+    } else {                    \
+        r = (r2) / (i2);            \
+        s = (i2) + r * (r2);            \
+        (r3) = (r * (r1) + (i1)) / s;       \
+        (i3) = (r * (i1) - (r1)) / s;       \
+    }                       \
+}
+
+
 
 
 #define DC_ABS(a,b) (fabs(a) + fabs(b))
@@ -215,6 +269,228 @@ typedef struct {
 	(A).imag = (B.imag) - (C.imag);					      \
     }
 
+/* Macro function that returns the approx absolute value of a complex number. */
+#if spCOMPLEX
+#define  ELEMENT_MAG(ptr)   (ABS((ptr)->Real) + ABS((ptr)->Imag))
+#else
+#define  ELEMENT_MAG(ptr)   ((ptr)->Real < 0.0 ? -(ptr)->Real : (ptr)->Real)
+#endif
+
+/* Complex assignment statements. */
+#define  CMPLX_ASSIGN(to,from)  \
+{   (to).Real = (from).Real;    \
+    (to).Imag = (from).Imag;    \
+}
+#define  CMPLX_CONJ_ASSIGN(to,from)     \
+{   (to).Real = (from).Real;            \
+    (to).Imag = -(from).Imag;           \
+}
+#define  CMPLX_NEGATE_ASSIGN(to,from)   \
+{   (to).Real = -(from).Real;           \
+    (to).Imag = -(from).Imag;           \
+}
+#define  CMPLX_CONJ_NEGATE_ASSIGN(to,from)      \
+{   (to).Real = -(from).Real;                   \
+    (to).Imag = (from).Imag;                    \
+}
+#define  CMPLX_CONJ(a)  (a).Imag = -(a).Imag
+#define  CMPLX_NEGATE(a)        \
+{   (a).Real = -(a).Real;       \
+    (a).Imag = -(a).Imag;       \
+}
+
+/* Macro that returns the approx magnitude (L-1 norm) of a complex number. */
+#define  CMPLX_1_NORM(a)        (ABS((a).Real) + ABS((a).Imag))
+
+/* Macro that returns the approx magnitude (L-infinity norm) of a complex. */
+#define  CMPLX_INF_NORM(a)      (MAX (ABS((a).Real),ABS((a).Imag)))
+
+/* Macro function that returns the magnitude (L-2 norm) of a complex number. */
+#define  CMPLX_2_NORM(a)        (sqrt((a).Real*(a).Real + (a).Imag*(a).Imag))
+
+/* Macro function that performs complex addition. */
+#define  CMPLX_ADD(to,from_a,from_b)            \
+{   (to).Real = (from_a).Real + (from_b).Real;  \
+    (to).Imag = (from_a).Imag + (from_b).Imag;  \
+}
+
+/* Macro function that performs complex subtraction. */
+#define  CMPLX_SUBT(to,from_a,from_b)           \
+{   (to).Real = (from_a).Real - (from_b).Real;  \
+    (to).Imag = (from_a).Imag - (from_b).Imag;  \
+}
+
+/* Macro function that is equivalent to += operator for complex numbers. */
+#define  CMPLX_ADD_ASSIGN(to,from)      \
+{   (to).Real += (from).Real;           \
+    (to).Imag += (from).Imag;           \
+}
+
+/* Macro function that is equivalent to -= operator for complex numbers. */
+#define  CMPLX_SUBT_ASSIGN(to,from)     \
+{   (to).Real -= (from).Real;           \
+    (to).Imag -= (from).Imag;           \
+}
+
+/* Macro function that multiplies a complex number by a scalar. */
+#define  SCLR_MULT(to,sclr,cmplx)       \
+{   (to).Real = (sclr) * (cmplx).Real;  \
+    (to).Imag = (sclr) * (cmplx).Imag;  \
+}
+
+/* Macro function that multiply-assigns a complex number by a scalar. */
+#define  SCLR_MULT_ASSIGN(to,sclr)      \
+{   (to).Real *= (sclr);                \
+    (to).Imag *= (sclr);                \
+}
+
+/* Macro function that multiplies two complex numbers. */
+#define  CMPLX_MULT(to,from_a,from_b)           \
+{   (to).Real = (from_a).Real * (from_b).Real - \
+                (from_a).Imag * (from_b).Imag;  \
+    (to).Imag = (from_a).Real * (from_b).Imag + \
+                (from_a).Imag * (from_b).Real;  \
+}
+
+/* Macro function that implements to *= from for complex numbers. */
+#define  CMPLX_MULT_ASSIGN(to,from)             \
+{   RealNumber to_real_ = (to).Real;            \
+    (to).Real = to_real_ * (from).Real -        \
+                (to).Imag * (from).Imag;        \
+    (to).Imag = to_real_ * (from).Imag +        \
+                (to).Imag * (from).Real;        \
+}
+
+/* Macro function that multiplies two complex numbers, the first of which is
+ * conjugated. */
+#define  CMPLX_CONJ_MULT(to,from_a,from_b)      \
+{   (to).Real = (from_a).Real * (from_b).Real + \
+                (from_a).Imag * (from_b).Imag;  \
+    (to).Imag = (from_a).Real * (from_b).Imag - \
+                (from_a).Imag * (from_b).Real;  \
+}
+
+/* Macro function that multiplies two complex numbers and then adds them
+ * to another. to = add + mult_a * mult_b */
+#define  CMPLX_MULT_ADD(to,mult_a,mult_b,add)                   \
+{   (to).Real = (mult_a).Real * (mult_b).Real -                 \
+                (mult_a).Imag * (mult_b).Imag + (add).Real;     \
+    (to).Imag = (mult_a).Real * (mult_b).Imag +                 \
+                (mult_a).Imag * (mult_b).Real + (add).Imag;     \
+}
+
+/* Macro function that subtracts the product of two complex numbers from
+ * another.  to = subt - mult_a * mult_b */
+#define  CMPLX_MULT_SUBT(to,mult_a,mult_b,subt)                 \
+{   (to).Real = (subt).Real - (mult_a).Real * (mult_b).Real +   \
+                              (mult_a).Imag * (mult_b).Imag;    \
+    (to).Imag = (subt).Imag - (mult_a).Real * (mult_b).Imag -   \
+                              (mult_a).Imag * (mult_b).Real;    \
+}
+
+/* Macro function that multiplies two complex numbers and then adds them
+ * to another. to = add + mult_a* * mult_b where mult_a* represents mult_a
+ * conjugate. */
+#define  CMPLX_CONJ_MULT_ADD(to,mult_a,mult_b,add)              \
+{   (to).Real = (mult_a).Real * (mult_b).Real +                 \
+                (mult_a).Imag * (mult_b).Imag + (add).Real;     \
+    (to).Imag = (mult_a).Real * (mult_b).Imag -                 \
+                (mult_a).Imag * (mult_b).Real + (add).Imag;     \
+}
+
+/* Macro function that multiplies two complex numbers and then adds them
+ * to another. to += mult_a * mult_b */
+#define  CMPLX_MULT_ADD_ASSIGN(to,from_a,from_b)        \
+{   (to).Real += (from_a).Real * (from_b).Real -        \
+                 (from_a).Imag * (from_b).Imag;         \
+    (to).Imag += (from_a).Real * (from_b).Imag +        \
+                 (from_a).Imag * (from_b).Real;         \
+}
+
+/* Macro function that multiplies two complex numbers and then subtracts them
+ * from another. */
+#define  CMPLX_MULT_SUBT_ASSIGN(to,from_a,from_b)       \
+{   (to).Real -= (from_a).Real * (from_b).Real -        \
+                 (from_a).Imag * (from_b).Imag;         \
+    (to).Imag -= (from_a).Real * (from_b).Imag +        \
+                 (from_a).Imag * (from_b).Real;         \
+}
+
+/* Macro function that multiplies two complex numbers and then adds them
+ * to the destination. to += from_a* * from_b where from_a* represents from_a
+ * conjugate. */
+#define  CMPLX_CONJ_MULT_ADD_ASSIGN(to,from_a,from_b)   \
+{   (to).Real += (from_a).Real * (from_b).Real +        \
+                 (from_a).Imag * (from_b).Imag;         \
+    (to).Imag += (from_a).Real * (from_b).Imag -        \
+                 (from_a).Imag * (from_b).Real;         \
+}
+
+/* Macro function that multiplies two complex numbers and then subtracts them
+ * from the destination. to -= from_a* * from_b where from_a* represents from_a
+ * conjugate. */
+#define  CMPLX_CONJ_MULT_SUBT_ASSIGN(to,from_a,from_b)  \
+{   (to).Real -= (from_a).Real * (from_b).Real +        \
+                 (from_a).Imag * (from_b).Imag;         \
+    (to).Imag -= (from_a).Real * (from_b).Imag -        \
+                 (from_a).Imag * (from_b).Real;         \
+}
+
+/*
+ * Macro functions that provide complex division.
+ */
+
+/* Complex division:  to = num / den */
+#define CMPLX_DIV(to,num,den)                                           \
+{   RealNumber  r_, s_;                                                 \
+    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
+        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
+    {   r_ = (den).Imag / (den).Real;                                   \
+        s_ = (den).Real + r_*(den).Imag;                                \
+        (to).Real = ((num).Real + r_*(num).Imag)/s_;                    \
+        (to).Imag = ((num).Imag - r_*(num).Real)/s_;                    \
+    }                                                                   \
+    else                                                                \
+    {   r_ = (den).Real / (den).Imag;                                   \
+        s_ = (den).Imag + r_*(den).Real;                                \
+        (to).Real = (r_*(num).Real + (num).Imag)/s_;                    \
+        (to).Imag = (r_*(num).Imag - (num).Real)/s_;                    \
+    }                                                                   \
+}
+
+/* Complex division and assignment:  num /= den */
+#define CMPLX_DIV_ASSIGN(num,den)                                       \
+{   RealNumber  r_, s_, t_;                                             \
+    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
+        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
+    {   r_ = (den).Imag / (den).Real;                                   \
+        s_ = (den).Real + r_*(den).Imag;                                \
+        t_ = ((num).Real + r_*(num).Imag)/s_;                           \
+        (num).Imag = ((num).Imag - r_*(num).Real)/s_;                   \
+        (num).Real = t_;                                                \
+    }                                                                   \
+    else                                                                \
+    {   r_ = (den).Real / (den).Imag;                                   \
+        s_ = (den).Imag + r_*(den).Real;                                \
+        t_ = (r_*(num).Real + (num).Imag)/s_;                           \
+        (num).Imag = (r_*(num).Imag - (num).Real)/s_;                   \
+        (num).Real = t_;                                                \
+    }                                                                   \
+}
+
+/* Complex reciprocation:  to = 1.0 / den */
+#define CMPLX_RECIPROCAL(to,den)                                        \
+{   RealNumber  r_;                                                     \
+    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
+        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
+    {   r_ = (den).Imag / (den).Real;                                   \
+        (to).Imag = -r_*((to).Real = 1.0/((den).Real + r_*(den).Imag)); \
+    }                                                                   \
+    else                                                                \
+    {   r_ = (den).Real / (den).Imag;                                   \
+        (to).Real = -r_*((to).Imag = -1.0/((den).Imag + r_*(den).Real));\
+    }                                                                   \
+}
 
 
-#endif /*CMPLX*/
+#endif /*_COMPLEX_H */

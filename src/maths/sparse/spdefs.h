@@ -440,48 +440,7 @@
 }
 
 
-
-
-
-
-
-/*
- *  REAL NUMBER
- */
-
-/* Begin `RealNumber'. */
-
-typedef  spREAL  RealNumber, *RealVector;
-
-
-
-
-
-
-
-
-/*
- *  COMPLEX NUMBER DATA STRUCTURE
- *
- *  >>> Structure fields:
- *  Real  (RealNumber)
- *      The real portion of the number.  Real must be the first
- *      field in this structure.
- *  Imag  (RealNumber)
- *      The imaginary portion of the number. This field must follow
- *      immediately after Real.
- */
-
-/* Begin `ComplexNumber'. */
-
-typedef  struct
-{   RealNumber  Real;
-    RealNumber  Imag;
-} ComplexNumber, *ComplexVector;
-
-
-
-
+#include "complex.h"
 
 
 
