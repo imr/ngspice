@@ -1,3 +1,13 @@
+2003-09-27  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* src/spicelib/devices/ind/*, src/spicelib/parser/inp2l.c,
+	  src/spicelib/parser/inpdomod.c, src/include/defines.h,
+	  src/include/const.h: Improved inductor model. Added parallel
+	  multiplier, temperature correction and solenoid/toroid model.
+	  
+	* DEVICES, doc/ngspice.texi: updated documentation to reflect changes
+	  in inductor code.   
+
 2003-09-25  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/spicelib/devices/bsim3/*: Added new multirevision bsim3 code sent
@@ -15,6 +25,9 @@
 	  library contributed by Georg Post. This library let users to
 	  input parametric netlists in ngspice. Look at readme in library
 	  directory. 
+	  
+	* src/spicelib/analysis/dctrcurv.c: small bug fix. CKTtime was confused
+	  with CKTtemp.
 
 2003-09-25  Paolo Nenzi <p.nenzi@ieee.org>
 
