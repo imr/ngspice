@@ -89,13 +89,15 @@ cp_vset(char *varname, char type, char *value)
     int i;
     bool alreadythere = FALSE;
     char* copyvarname;
-/*    varname = cp_unquote(varname); DG: Memory leak old varname is lost*/
-      copyvarname= cp_unquote(varname);
-      strcpy(varname,copyvarname);
-      tfree(copyvarname);
+    
+   
+    /* varname = cp_unquote(varname);  DG: Memory leak old varname is lost*/
+    
+    copyvarname = cp_unquote(varname);
+    
     w = NULL;
     for (v = variables; v; v = v->va_next) {
-        if (eq(varname, v->va_name)) {
+        if (eq(copyvarname, v->va_name)) {
             alreadythere = TRUE;
             break;
         }
@@ -103,13 +105,13 @@ cp_vset(char *varname, char type, char *value)
     }
     if (!v) {
         v = alloc(struct variable);
-        v->va_name = copy(varname);
+        v->va_name = copy(copyvarname);
         v->va_next = NULL;
     }
     switch (type) {
     case VT_BOOL:
         if (* ((bool *) value) == FALSE) {
-            cp_remvar(varname);
+            cp_remvar(copyvarname);
             return;
         } else
             v->va_bool = TRUE;
@@ -143,21 +145,21 @@ cp_vset(char *varname, char type, char *value)
      * recognise these special variables: noglob, nonomatch, history,
      * echo, noclobber, prompt, and verbose. cp_remvar looks for these
      * variables too. The host program will get any others.  */
-    if (eq(varname, "noglob"))
+    if (eq(copyvarname, "noglob"))
         cp_noglob = TRUE;
-    else if (eq(varname, "nonomatch"))
+    else if (eq(copyvarname, "nonomatch"))
         cp_nonomatch = TRUE;
-    else if (eq(varname, "history") && (type == VT_NUM))
+    else if (eq(copyvarname, "history") && (type == VT_NUM))
         cp_maxhistlength = v->va_num;
-    else if (eq(varname, "history") && (type == VT_REAL))
+    else if (eq(copyvarname, "history") && (type == VT_REAL))
         cp_maxhistlength = v->va_real;
-    else if (eq(varname, "noclobber"))
+    else if (eq(copyvarname, "noclobber"))
         cp_noclobber = TRUE;
-    else if (eq(varname, "prompt") && (type == VT_STRING))
+    else if (eq(copyvarname, "prompt") && (type == VT_STRING))
         cp_promptstring = copy(v->va_string);
-    else if (eq(varname, "ignoreeof"))
+    else if (eq(copyvarname, "ignoreeof"))
         cp_ignoreeof = TRUE;
-    else if (eq(varname, "cpdebug")) {
+    else if (eq(copyvarname, "cpdebug")) {
         cp_debug = TRUE;
 #ifndef CPDEBUG
         fprintf(cp_err, 
@@ -202,7 +204,7 @@ cp_vset(char *varname, char type, char *value)
 	alreadythere = FALSE;
 	if (ft_curckt) {
 	    for (u = ft_curckt->ci_vars; u; u = u->va_next)
-		if (eq(varname, u->va_name)) {
+		if (eq(copyvarname, u->va_name)) {
 		    alreadythere = TRUE;
 		    break;
 		}
@@ -220,13 +222,14 @@ cp_vset(char *varname, char type, char *value)
     case US_NOSIMVAR:
 	/* What do you do? */
 	tfree(v);
+	
 	break;
 
     default:
         fprintf(cp_err, "cp_vset: Internal Error: bad US val %d\n", i);
         break;
     }
-
+    tfree(copyvarname);
     return;
 }
 
