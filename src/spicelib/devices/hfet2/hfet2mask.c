@@ -7,7 +7,6 @@ Imported into HFET2 model: Paolo Nenzi 2001
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "devdefs.h"
 #include "ifsim.h"
@@ -18,11 +17,7 @@ Imported into HFET2 model: Paolo Nenzi 2001
 
 /* ARGSUSED */
 int
-HFET2mAsk(ckt,inst,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inst;
-    int which;
-    IFvalue *value;
+HFET2mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     HFET2model *here = (HFET2model*)inst;
     switch(which) {

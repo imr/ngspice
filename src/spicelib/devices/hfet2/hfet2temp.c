@@ -1,6 +1,9 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "hfet2defs.h"
@@ -16,6 +19,8 @@ CKTcircuit *ckt;
 
   HFET2instance *here;
   HFET2model *model = (HFET2model*)inModel;
+  double vt;
+  double tdiff;
 
   for( ; model != NULL; model = model->HFET2nextModel ) {
     if(model->HFET2rd != 0)
@@ -31,9 +36,19 @@ CKTcircuit *ckt;
     if(!model->HFET2vt2Given)
       VT2 = VTO;
     DELTA2 = DELTA*DELTA;
-    for (here = model->HFET2instances; here != NULL; here=here->HFET2nextInstance) {
-      double vt    = CONSTKoverQ*TEMP;
-      double tdiff = TEMP - ckt->CKTnomTemp;
+    for (here = model->HFET2instances; here != NULL; 
+         here=here->HFET2nextInstance) {
+ 
+    if (here->HFET2owner != ARCHme) continue;
+
+    if(!here->HFET2dtempGiven)
+       here->HFET2dtemp = 0.0;
+    if(!here->HFET2tempGiven)
+       TEMP = ckt->CKTtemp + here->HFET2dtemp;
+
+      vt    = CONSTKoverQ*TEMP;
+      tdiff = TEMP - ckt->CKTnomTemp;
+
       TLAMBDA = LAMBDA + KLAMBDA*tdiff;
       TMU     = MU - KMU*tdiff;
       TNMAX   = NMAX - KNMAX*tdiff;

@@ -19,6 +19,7 @@ libhfet2_a_SOURCES = 	\
 	hfet2mdel.c	\
 	hfet2mpar.c	\
 	hfet2param.c	\
+	hfet2pzl.c	\
 	hfet2setup.c	\
 	hfet2temp.c	\
 	hfet2trunc.c

@@ -17,7 +17,11 @@ double *tiHFET2tep;
   HFET2instance *here;
 
   for( ; model != NULL; model = model->HFET2nextModel) {
-    for(here=model->HFET2instances;here!=NULL;here = here->HFET2nextInstance){
+    for(here=model->HFET2instances;here!=NULL;
+        here = here->HFET2nextInstance){
+      
+       if (here->HFET2owner != ARCHme) continue;
+
       CKTterr(here->HFET2qgs,ckt,tiHFET2tep);
       CKTterr(here->HFET2qgd,ckt,tiHFET2tep);
     }

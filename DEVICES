@@ -222,9 +222,19 @@ HFET  - HFET Level 1 (Ytterdal)
 	- Added pole-zero analysis
 
      
-HFET2 - HFET Level 2
-      Initial release.
-
+HFET2 - HFET Level 2 (Ytterdal)
+        Initial Release.
+	Ver: 	N/A
+	Class:	Z
+	Level:	6 
+	Status:
+	
+	
+	Enhancements over the original model:
+	
+	- Parallel multiplier
+	- Instance temperature as difference for circuit temperature
+	- Added pole-zero analysis
 
 ***************************************************************************
 ***************************     MES devices     ***************************

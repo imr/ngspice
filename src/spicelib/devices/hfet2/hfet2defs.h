@@ -23,7 +23,9 @@ typedef struct sHFET2instance {
     int HFET2sourcePrimeNode;
     double HFET2length;
     double HFET2width;
+    double HFET2m;
     double HFET2temp;
+    double HFET2dtemp;
     double HFET2tLambda;
     double HFET2tMu;
     double HFET2tNmax;
@@ -64,11 +66,13 @@ typedef struct sHFET2instance {
     int HFET2mode;
     int HFET2off;
     
-    unsigned HFET2icVDSGiven : 1;
-    unsigned HFET2icVGSGiven : 1;
+    unsigned HFET2icVDSGiven  : 1;
+    unsigned HFET2icVGSGiven  : 1;
     unsigned HFET2lengthGiven : 1;
-    unsigned HFET2widthGiven : 1;
-    unsigned HFET2tempGiven : 1;
+    unsigned HFET2widthGiven  : 1;
+    unsigned HFET2mGiven      : 1;
+    unsigned HFET2tempGiven   : 1;
+    unsigned HFET2dtempGiven  : 1;
         
     double HFET2n0;
     double HFET2n01;
@@ -186,6 +190,8 @@ typedef struct sHFET2model {
 #define HFET2_CS     7
 #define HFET2_POWER  8
 #define HFET2_TEMP   9
+#define HFET2_DTEMP 10
+#define HFET2_M     11
 
 /* model parameters */
 #define HFET2_MOD_NHFET   101

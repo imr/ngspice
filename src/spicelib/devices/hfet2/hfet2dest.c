@@ -1,12 +1,14 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "hfet2defs.h"
 #include "suffix.h"
 
 
-void HFET2destroy(inModel)
-GENmodel **inModel;
+void HFET2destroy(GENmodel **inModel)
 {
 
   HFET2model **model = (HFET2model**)inModel;

@@ -1,17 +1,16 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "hfet2defs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
-int HFET2param(param, value, inst, select)
-int param;
-IFvalue *value;
-GENinstance *inst;
-IFvalue *select;
+int HFET2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
   
   HFET2instance *here = (HFET2instance*)inst;
@@ -45,12 +44,20 @@ IFvalue *select;
       }
       break;
     case HFET2_TEMP:
-      TEMP = value->rValue+CONSTCtoK;
+      TEMP = value->rValue + CONSTCtoK;
       here->HFET2tempGiven = TRUE;
+      break;
+    case HFET2_DTEMP:
+      here->HFET2dtemp = value->rValue;
+      here->HFET2dtempGiven = TRUE;
       break;
     case HFET2_WIDTH:
       W = value->rValue;
       here->HFET2widthGiven = TRUE;
+      break;
+    case HFET2_M:
+      here->HFET2m = value->rValue;
+      here->HFET2mGiven = TRUE;
       break;
     default:
       return(E_BADPARM);

@@ -1,6 +1,9 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "devdefs.h"
 #include "hfet2defs.h"
@@ -8,32 +11,34 @@
 
 
 IFparm HFET2pTable[] = { /* parameters */ 
- OP("off",       HFET2_OFF,            IF_FLAG    ,""),
- IOP("l",        HFET2_LENGTH,         IF_REAL    ,""),
- IOP("w",        HFET2_WIDTH,          IF_REAL    ,""),
- IOP("icvds",    HFET2_IC_VDS,         IF_REAL    ,""),
- IOP("icvgs",    HFET2_IC_VGS,         IF_REAL    ,""),
- IOP("temp",     HFET2_TEMP,           IF_REAL    ,""),
- OP("dnode",     HFET2_DRAINNODE,      IF_INTEGER ,""),
- OP("gnode",     HFET2_GATENODE,       IF_INTEGER ,""),
- OP("snode",     HFET2_SOURCENODE,     IF_INTEGER ,""),
- OP("dprimenode",HFET2_DRAINPRIMENODE, IF_INTEGER ,""),
- OP("sprimenode",HFET2_SOURCEPRIMENODE,IF_INTEGER ,""),
- OP("vgs",       HFET2_VGS,            IF_REAL    ,""),
- OP("vgd",       HFET2_VGD,            IF_REAL    ,""),
- OP("cg",        HFET2_CG,             IF_REAL    ,""),
- OP("cd",        HFET2_CD,             IF_REAL    ,""),
- OP("cgd",       HFET2_CGD,            IF_REAL    ,""),
- OP("gm",        HFET2_GM,             IF_REAL    ,""),
- OP("gds",       HFET2_GDS,            IF_REAL    ,""),
- OP("ggs",       HFET2_GGS,            IF_REAL    ,""),
- OP("ggd",       HFET2_GGD,            IF_REAL    ,""),
- OP("qgs",       HFET2_QGS,            IF_REAL    ,""),
- OP("cqgs",      HFET2_CQGS,           IF_REAL    ,""),
- OP("qgd",       HFET2_QGD,            IF_REAL    ,""),
- OP("cqgd",      HFET2_CQGD,           IF_REAL    ,""),
- OP("cs",        HFET2_CS,             IF_REAL    ,""),
- OP("p",         HFET2_POWER,          IF_REAL    ,"")
+ OP("off",       HFET2_OFF,            IF_FLAG    ,"Device initialli OFF"),
+ IOP("l",        HFET2_LENGTH,         IF_REAL    ,"Length of device"),
+ IOP("w",        HFET2_WIDTH,          IF_REAL    ,"Width of device"),
+ IOP("m",        HFET2_M,              IF_REAL    ,"Parallel Multiplier"),
+ IOP("icvds",    HFET2_IC_VDS,         IF_REAL    ,"Initial D-S voltage"),
+ IOP("icvgs",    HFET2_IC_VGS,         IF_REAL    ,"Initial G-S voltage"),
+ IOP("temp",     HFET2_TEMP,           IF_REAL    ,"Instance temperature"),
+ IOP("dtemp",    HFET2_DTEMP,          IF_REAL    ,"Instance temperature difference"),
+ OP("dnode",     HFET2_DRAINNODE,      IF_INTEGER ,"Number of drain node"),
+ OP("gnode",     HFET2_GATENODE,       IF_INTEGER ,"Number of gate node"),
+ OP("snode",     HFET2_SOURCENODE,     IF_INTEGER ,"Number of source node"),
+ OP("dprimenode",HFET2_DRAINPRIMENODE, IF_INTEGER ,"Number of internal drain node"),
+ OP("sprimenode",HFET2_SOURCEPRIMENODE,IF_INTEGER ,"Number of internal source node"),
+ OP("vgs",       HFET2_VGS,            IF_REAL    ,"Gate-Source voltage"),
+ OP("vgd",       HFET2_VGD,            IF_REAL    ,"Gate-Drain voltage"),
+ OP("cg",        HFET2_CG,             IF_REAL    ,"Gate capacitance"),
+ OP("cd",        HFET2_CD,             IF_REAL    ,"Drain capacitance"),
+ OP("cgd",       HFET2_CGD,            IF_REAL    ,"Gate_Drain capacitance"),
+ OP("gm",        HFET2_GM,             IF_REAL    ,"Transconductance"),
+ OP("gds",       HFET2_GDS,            IF_REAL    ,"Drain-Source conductance"),
+ OP("ggs",       HFET2_GGS,            IF_REAL    ,"Gate-Source conductance"),
+ OP("ggd",       HFET2_GGD,            IF_REAL    ,"Gate-Drain conductance"),
+ OP("qgs",       HFET2_QGS,            IF_REAL    ,"Gate-Source charge storage"),
+ OP("cqgs",      HFET2_CQGS,           IF_REAL    ,"Capacitance due to gate-source charge storage"),
+ OP("qgd",       HFET2_QGD,            IF_REAL    ,"Gate-Drain charge storage"),
+ OP("cqgd",      HFET2_CQGD,           IF_REAL    ,"Capacitance due to gate-drain charge storage"),
+ OP("cs",        HFET2_CS,             IF_REAL    ,"Source current"),
+ OP("p",         HFET2_POWER,          IF_REAL    ,"Power dissipated by the mesfet")
 
 };
 
@@ -74,10 +79,10 @@ IFparm HFET2mPTable[] = { /* model parameters */
  IOP( "vs",      HFET2_MOD_VS,      IF_REAL,"Saturation velocity"), 
  IOP( "vsigma",  HFET2_MOD_VSIGMA,  IF_REAL,""), 
  IOP( "vsigmat", HFET2_MOD_VSIGMAT, IF_REAL,""),
- IOP( "vt0",     HFET2_MOD_VTO,     IF_REAL,""),
+ IOP( "vt0",     HFET2_MOD_VTO,     IF_REAL,"Pinch-off voltage"),
  IOP( "vt1",     HFET2_MOD_VT1,     IF_REAL,""),
  IOP( "vt2",     HFET2_MOD_VT2,     IF_REAL,""),
- IOP( "vto",     HFET2_MOD_VTO,     IF_REAL,"")
+ IOP( "vto",     HFET2_MOD_VTO,     IF_REAL,"Pinch-off voltage")
  
 };
 

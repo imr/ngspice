@@ -1,16 +1,16 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "hfet2defs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
-int HFET2mParam(param, value, inModel)
-int param;
-IFvalue *value;
-GENmodel *inModel;
+int HFET2mParam(int param, IFvalue *value, GENmodel *inModel)
 {
   
   HFET2model *model = (HFET2model*)inModel;

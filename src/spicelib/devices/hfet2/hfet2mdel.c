@@ -7,17 +7,13 @@ Imported into hfet2 model: Paolo Nenzi 2001
  */
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "hfet2defs.h"
 #include "sperror.h"
 #include "suffix.h"
 
 
 int
-HFET2mDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
+HFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     HFET2model **model = (HFET2model**)inModel;
     HFET2model *modfast = (HFET2model*)kill;

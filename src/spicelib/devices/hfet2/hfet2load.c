@@ -1,6 +1,9 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "cktdefs.h"
 #include "hfet2defs.h"
@@ -16,13 +19,11 @@ static void hfeta2(HFET2model *model, HFET2instance *here, CKTcircuit *ckt,
                   double *gds, double *capgs, double *capgd);
 
 
-int HFET2load(inModel, ckt)
-GENmodel *inModel;
-register CKTcircuit *ckt;
+int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
 {
 
-  register HFET2model *model = (HFET2model*)inModel;
-  register HFET2instance *here;
+  HFET2model *model = (HFET2model*)inModel;
+  HFET2instance *here;
   double capgd;
   double capgs;
   double cd;
@@ -59,8 +60,14 @@ register CKTcircuit *ckt;
   int    error;
   int    inverse;
 
+  double m;
+
   for( ; model != NULL; model = model->HFET2nextModel ) {
-    for(here = model->HFET2instances; here != NULL; here=here->HFET2nextInstance) {
+    for(here = model->HFET2instances; here != NULL; 
+        here=here->HFET2nextInstance) {
+
+      if (here->HFET2owner != ARCHme) continue;
+
       gdpr = model->HFET2drainConduct;
       gspr = model->HFET2sourceConduct;
       vcrit = VCRIT;
@@ -283,30 +290,33 @@ register CKTcircuit *ckt;
       //    load current vector
 
 load:
+
+      m = here->HFET2m;
+
       ceqgd=model->HFET2type*(cgd-ggd*vgd);
       ceqgs=model->HFET2type*((cg-cgd)-ggs*vgs);
       cdreq=model->HFET2type*((cd+cgd)-gds*vds-gm*vgs);
-      *(ckt->CKTrhs + here->HFET2gateNode) += (-ceqgs-ceqgd);
-      *(ckt->CKTrhs + here->HFET2drainPrimeNode) += (-cdreq+ceqgd);
-      *(ckt->CKTrhs + here->HFET2sourcePrimeNode) += (cdreq+ceqgs);
+      *(ckt->CKTrhs + here->HFET2gateNode)        += m * (-ceqgs-ceqgd);
+      *(ckt->CKTrhs + here->HFET2drainPrimeNode)  += m * (-cdreq+ceqgd);
+      *(ckt->CKTrhs + here->HFET2sourcePrimeNode) += m * (cdreq+ceqgs);
 
       //   load y matrix 
 
-      *(here->HFET2drainDrainPrimePtr) += (-gdpr);
-      *(here->HFET2gateDrainPrimePtr) += (-ggd);
-      *(here->HFET2gateSourcePrimePtr) += (-ggs);
-      *(here->HFET2sourceSourcePrimePtr) += (-gspr);
-      *(here->HFET2drainPrimeDrainPtr) += (-gdpr);
-      *(here->HFET2drainPrimeGatePtr) += (gm-ggd);
-      *(here->HFET2drainPriHFET2ourcePrimePtr) += (-gds-gm);
-      *(here->HFET2sourcePrimeGatePtr) += (-ggs-gm);
-      *(here->HFET2sourcePriHFET2ourcePtr) += (-gspr);
-      *(here->HFET2sourcePrimeDrainPrimePtr) += (-gds);
-      *(here->HFET2drainDrainPtr) += (gdpr);
-      *(here->HFET2gateGatePtr) += (ggd+ggs);
-      *(here->HFET2sourceSourcePtr) += (gspr);
-      *(here->HFET2drainPrimeDrainPrimePtr) += (gdpr+gds+ggd);
-      *(here->HFET2sourcePriHFET2ourcePrimePtr) += (gspr+gds+gm+ggs);
+      *(here->HFET2drainDrainPrimePtr)          += m * (-gdpr);
+      *(here->HFET2gateDrainPrimePtr)           += m * (-ggd);
+      *(here->HFET2gateSourcePrimePtr)          += m * (-ggs);
+      *(here->HFET2sourceSourcePrimePtr)        += m * (-gspr);
+      *(here->HFET2drainPrimeDrainPtr)          += m * (-gdpr);
+      *(here->HFET2drainPrimeGatePtr)           += m * (gm-ggd);
+      *(here->HFET2drainPriHFET2ourcePrimePtr)  += m * (-gds-gm);
+      *(here->HFET2sourcePrimeGatePtr)          += m * (-ggs-gm);
+      *(here->HFET2sourcePriHFET2ourcePtr)      += m * (-gspr);
+      *(here->HFET2sourcePrimeDrainPrimePtr)    += m * (-gds);
+      *(here->HFET2drainDrainPtr)               += m * (gdpr);
+      *(here->HFET2gateGatePtr)                 += m * (ggd+ggs);
+      *(here->HFET2sourceSourcePtr)             += m * (gspr);
+      *(here->HFET2drainPrimeDrainPrimePtr)     += m * (gdpr+gds+ggd);
+      *(here->HFET2sourcePriHFET2ourcePrimePtr) += m * (gspr+gds+gm+ggs);
     }
   }
   return(OK);

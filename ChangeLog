@@ -1,6 +1,9 @@
 2003-12-30  Paolo Nenzi <p.nenzi@ieee.org>
 
-        * src/spicelib/devices/jfet/jfetpzld.c: gspr and gdpr were initialized
+        * src/spicelibe/devices/hfet2/*: Added parallel multipler and "dtemp"
+	  parameters. Added pole-zero analysis and parallel code switches. 
+	
+	* src/spicelib/devices/jfet/jfetpzld.c: gspr and gdpr were initialized
 	  with Resist and not Conduct, corrected!
 
 	* src/spicelib/devices/hfet1/*: Added parallel multiplier and "dtemp" to

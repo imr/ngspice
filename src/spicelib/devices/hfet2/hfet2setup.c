@@ -1,6 +1,9 @@
+/**********
+Imported from MacSpice3f4 - Antony Wilson
+Modified: Paolo Nenzi
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "smpdefs.h"
 #include "cktdefs.h"
 #include "hfet2defs.h"
@@ -9,11 +12,7 @@
 #include "suffix.h"
 
 
-int HFET2setup(matrix, inModel, ckt, states)
-SMPmatrix *matrix;
-GENmodel *inModel;
-CKTcircuit *ckt;
-int *states;
+int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 {
     
   HFET2model *model = (HFET2model*)inModel;
@@ -115,21 +114,25 @@ int *states;
     /* loop through all the instances of the model */
    
     
-    for (here = model->HFET2instances; here != NULL; here=here->HFET2nextInstance) {
+    for (here = model->HFET2instances; here != NULL; 
+         here=here->HFET2nextInstance) {
       
       CKTnode *tmpNode;
       IFuid tmpName;
-      
+
+      if (here->HFET2owner != ARCHme) goto matrixpointers;
+   
       here->HFET2state = *states;
       *states += 13;
       
       if(!here->HFET2lengthGiven)
-        L = 1e-6;
-      if(!here->HFET2tempGiven)
-        TEMP = ckt->CKTtemp;
+        L = 1e-6;      
       if(!here->HFET2widthGiven)
         W = 20e-6;
-      
+      if(!here->HFET2mGiven)
+        here->HFET2m = 1.0;
+
+matrixpointers:     
       if(model->HFET2rs != 0 && here->HFET2sourcePrimeNode==0) {
         error = CKTmkVolt(ckt,&tmp,here->HFET2name,"source");
         if(error) return(error);
@@ -195,9 +198,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 
 
 int
-HFET2unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+HFET2unsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     HFET2model *model;
     HFET2instance *here;
@@ -220,12 +221,6 @@ HFET2unsetup(inModel,ckt)
                 CKTdltNNum(ckt, here->HFET2sourcePrimeNode);
                 here->HFET2sourcePrimeNode = 0;
             }
-        	/*if (here->HFET2gateNode
-        			&& here->HFET2gateNode != here->HFET2gateNode)
-        	{
-        		CKTdltNNum(ckt, here->HFET2gateNode);
-        		here->HFET2gateNode = 0;
-        	}*/
         }
     
     }

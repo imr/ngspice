@@ -1,7 +1,9 @@
 /**********
-Imported from MacSpice3f4 - Antony Wilson
-Modified: Paolo Nenzi
+Author: 2003 Paolo Nenzi
 **********/
+/*
+ */
+
 
 #include "ngspice.h"
 #include "cktdefs.h"
@@ -10,7 +12,7 @@ Modified: Paolo Nenzi
 #include "suffix.h"
 
 
-int HFET2acLoad(GENmodel *inModel, CKTcircuit *ckt)
+int HFET2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
   
   HFET2model *model = (HFET2model*)inModel;
@@ -40,30 +42,37 @@ int HFET2acLoad(GENmodel *inModel, CKTcircuit *ckt)
       gm= *(ckt->CKTstate0 + here->HFET2gm) ;
       gds= *(ckt->CKTstate0 + here->HFET2gds) ;
       ggs= *(ckt->CKTstate0 + here->HFET2ggs) ;
-      xgs= *(ckt->CKTstate0 + here->HFET2qgs) * ckt->CKTomega ;
+      xgs= *(ckt->CKTstate0 + here->HFET2qgs) ;
       ggd= *(ckt->CKTstate0 + here->HFET2ggd) ;
-      xgd= *(ckt->CKTstate0 + here->HFET2qgd) * ckt->CKTomega ;
+      xgd= *(ckt->CKTstate0 + here->HFET2qgd) ;
 
       *(here->HFET2drainDrainPtr )                 += m * (gdpr);
       *(here->HFET2gateGatePtr )                   += m * (ggd+ggs);
-      *(here->HFET2gateGatePtr +1)                 += m * (xgd+xgs);
+      *(here->HFET2gateGatePtr)                    += m * ((xgd+xgs) * s->real);  
+      *(here->HFET2gateGatePtr +1)                 += m * ((xgd+xgs) * s->imag);      
       *(here->HFET2sourceSourcePtr )               += m * (gspr);
       *(here->HFET2drainPrimeDrainPrimePtr )       += m * (gdpr+gds+ggd);
-      *(here->HFET2drainPrimeDrainPrimePtr +1)     += m * (xgd);
+      *(here->HFET2drainPrimeDrainPrimePtr)        += m * (xgd * s->real);
+      *(here->HFET2drainPrimeDrainPrimePtr +1)     += m * (xgd * s->imag);
       *(here->HFET2sourcePriHFET2ourcePrimePtr )   += m * (gspr+gds+gm+ggs);
-      *(here->HFET2sourcePriHFET2ourcePrimePtr +1) += m * (xgs);
+      *(here->HFET2sourcePriHFET2ourcePrimePtr)    += m * (xgs * s->real);
+      *(here->HFET2sourcePriHFET2ourcePrimePtr +1) += m * (xgs * s->imag);
       *(here->HFET2drainDrainPrimePtr )            -= m * (gdpr);
       *(here->HFET2gateDrainPrimePtr )             -= m * (ggd);
-      *(here->HFET2gateDrainPrimePtr +1)           -= m * (xgd);
+      *(here->HFET2gateDrainPrimePtr)              -= m * (xgd * s->real);
+      *(here->HFET2gateDrainPrimePtr +1)           -= m * (xgd * s->imag);
       *(here->HFET2gateSourcePrimePtr )            -= m * (ggs);
-      *(here->HFET2gateSourcePrimePtr +1)          -= m * (xgs);
+      *(here->HFET2gateSourcePrimePtr)             -= m * (xgs * s->real);
+      *(here->HFET2gateSourcePrimePtr +1)          -= m * (xgs * s->imag);
       *(here->HFET2sourceSourcePrimePtr )          -= m * (gspr);
       *(here->HFET2drainPrimeDrainPtr )            -= m * (gdpr);
       *(here->HFET2drainPrimeGatePtr )             += m * (-ggd+gm);
-      *(here->HFET2drainPrimeGatePtr +1)           -= m * (xgd);
+      *(here->HFET2drainPrimeGatePtr)              -= m * (xgd * s->real);
+      *(here->HFET2drainPrimeGatePtr +1)           -= m * (xgd * s->imag);
       *(here->HFET2drainPriHFET2ourcePrimePtr )    += m * (-gds-gm);
       *(here->HFET2sourcePrimeGatePtr )            += m * (-ggs-gm);
-      *(here->HFET2sourcePrimeGatePtr +1)          -= m * (xgs);
+      *(here->HFET2sourcePrimeGatePtr)             -= m * (xgs * s->real);
+      *(here->HFET2sourcePrimeGatePtr +1)          -= m * (xgs * s->imag);
       *(here->HFET2sourcePriHFET2ourcePtr )        -= m * (gspr);
       *(here->HFET2sourcePrimeDrainPrimePtr )      -= m * (gds);
     }

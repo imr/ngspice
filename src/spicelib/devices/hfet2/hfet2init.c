@@ -57,7 +57,7 @@ SPICEdev HFET2info = {
     DEVsetic      : HFET2getic,
     DEVask        : HFET2ask,
     DEVmodAsk     : HFET2mAsk,
-    DEVpzLoad     : NULL,
+    DEVpzLoad     : HFET2pzLoad,
     DEVconvTest   : NULL,
     DEVsenSetup   : NULL,
     DEVsenLoad    : NULL,
