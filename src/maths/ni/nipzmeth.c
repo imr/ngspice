@@ -3,7 +3,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "pzdefs.h"
 #include "complex.h"
 #include "cktdefs.h"
@@ -13,10 +12,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 
 #ifdef PZDEBUG
-#define DEBUG(N)        if (0)
-/*if (Debug >= (unsigned) (N))
-static unsigned int Debug = 0;
-*/
+#define DEBUG(N)  if (Debug >= (unsigned) (N))
+static unsigned int Debug = 3;
 #endif
 
 extern void zaddeq(double *a, int *amag, double x, int xmag, double y, int ymag);
