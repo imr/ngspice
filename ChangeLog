@@ -1,3 +1,43 @@
+2000-07-03  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/parser/alias.c, src/parser/alias.h: contain frontend alias
+	command.  Moved them to src/frontend/com_alias.c and
+	src/frontend/com_alias.h.  Updated Makefile.am's as appropreate.
+
+	* src/parser/front.c, src/parser/front.h, src/parser/history.c,
+	src/parser/history.h, src/parser/modify.c, src/parser/modify.h,
+	src/parser/variable.c, src/parser/variable.h: Empty files.
+	Removed.
+
+	* src/include/spconfig.h: Removed spCOMPLEX,
+	spSEPARATED_COMPLEX_VECTORS and spCOMPATIBILITY defines.  This
+	made including this file from src/include/spmatrix.h unnecessary.
+	Moved this file to src/maths/sparse/spconfig.h.
+
+	* src/include/spmatrix.h: Removed include of
+	src/include/spconfig.h.
+	
+	* src/maths/sparse/spalloc.c, src/maths/sparse/spbuild.c,
+	src/maths/sparse/spcombin.c, src/maths/sparse/spdefs.h,
+	src/maths/sparse/spfactor.c, src/maths/sparse/spoutput.c,
+	src/maths/sparse/spsmp.c, src/maths/sparse/spsolve.c,
+	src/maths/sparse/sputils.c: The other files affected by the
+	removal of spCOMPLEX, spSEPARATED_COMPLEX_VECTORS and
+	spCOMPATIBILITY defines.  Also: assertions are enabled by
+	default.
+
+	* src/include/smpdefs.h, src/maths/sparse/spsmp.c: SMPmatrix is
+	now a typedef for void, instead of char.  Updated all function
+	declarations to match this.  Also added function prototypes not
+	previously mentioned in src/include/smpdefs.h.
+	
+	* src/include/complex.h: Updates of cast from char * to void *
+
+	* src/analysis/cktsens.c: Matrixes cannot be created non-complex.
+	Also added a check to detect an error condition on delta_Y =
+	spCreate(...).
+
+
 2000-06-27  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/parser: Refactored commands from the frontend into the

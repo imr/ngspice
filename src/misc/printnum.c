@@ -26,7 +26,7 @@ printnum(double num)
     if (num < 0.0)
         n--;
 
-    (void) sprintf(buf, "%.*le", n, num);
+    (void) sprintf(buf, "%.*e", n, num);
 
     return (buf);
 }

@@ -6,6 +6,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #include <config.h>
 #include "ngspice.h"
 #include <stdio.h>
+#include <string.h>
 #include "tilde.h"
 
 #ifdef HAVE_PWD_H
