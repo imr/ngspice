@@ -202,7 +202,7 @@ tclspice.o: tclspice.c
 	$(COMPILE) -c -fpic tclspice.c -DTCLSPICE_version="\"$(TCLSPICE_VERSION)\""
 
 libspice.so:  $(ngspice_OBJECTS) $(LIBSPICE_OBJS) $(ngspice_DEPENDENCIES)
-	$(LINK) $(ngspice_LDFLAGS) $(ngspice_OBJECTS) $(ngspice_LDADD) $(LIBS) $(LIBSPICE_OBJS) -shared -lpthread
+	$(LINK) $(ngspice_LDFLAGS) $(ngspice_OBJECTS) $(ngspice_LDADD) $(LIBS) $(LIBSPICE_OBJS) -shared -lpthread -Wl,--version-script tclsymbols
 	if test -f .libs/$@ ; then \
 	mv .libs/$@ ./ ;\
 	rmdir .libs ;\

@@ -1,0 +1,4 @@
+{
+    global: Spice_Init;
+    local: *;
+};
