@@ -184,9 +184,9 @@ pkgIndex.tcl: pkgIndex.tcl.in
 	sed -e 's;%LIB_DIR%;$(TCL_PKG_PATH);g' pkgIndex.tcl.in | \
 	sed -e 's;%VERSION%;$(TCLSPICE_VERSION);g' > pkgIndex.tcl
 
-tcl_install: tcl-install-recursive install-tclspice
+install-tcl: install-tcl-recursive install-tclspice
 
-tcl-install-recursive:
+install-tcl-recursive:
 	list='$(SUBDIRS)'; for subdir in $$list; do \
 	  echo "Making $$target in $$subdir"; \
 	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) install) \

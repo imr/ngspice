@@ -37,7 +37,7 @@ Installation:
 		./configure --enable-tcl --enable-experimental --enable-xspice --disable-shared
 		make tcl
 	    And as root:
-		make tcl_install
+		make install-tcl
 
 USAGE
 

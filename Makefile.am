@@ -16,5 +16,5 @@ mrproper: maintainer-clean
 
 tcl:
 	cd src && $(MAKE) tcl
-tcl_install:
-	cd src && $(MAKE) tcl_install
+install-tcl:
+	cd src && $(MAKE) install-tcl
