@@ -1,0 +1,5 @@
+BSIM4: Berkeley Short Channel IGFET Model-4
+Developed by Xuemei (Jane) Xi, Jin He, Mohan Dunga, Prof. Ali Niknejad and Prof. Chenming Hu in 2003.
+
+++++++++++ BSIM4 PARAMETER CHECKING BELOW ++++++++++
+Model = p1

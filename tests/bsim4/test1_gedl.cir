@@ -1,0 +1,16 @@
+** NMOSFET: Benchmarking Implementation of BSIM4.4.0 by Jane Xi 01/30/2004.
+
+** Circuit Description **
+m1 2 1 0 b n1 L=0.09u W=10.0u NF=5 rgeomod=1 
++ geomod=0 as=2e-12 ad=2e-12 ps=1.4e-5 pd=1.4e-5
+*+SA=0.5u SB=20u geomod=0 sd=0.1u
+vgs 1 0 1.2 
+vds 2 0 1.2 
+Vbs b 0 0.0 
+
+*.dc vds 0.0 1.2 0.02 vgs 0.2 1.2 0.2
+.dc vbs 0.5 -2 -0.02
+.print dc i(vds)
+
+.include modelcard.nmos
+.end

@@ -2,9 +2,13 @@
 
 TESTS = \
 	test1.cir	\
+	test1_gedl.cir	\
 	test2.cir	\
+	test2_gedl.cir	\
 	test3.cir	\
+	test3_gedl.cir	\
 	test4.cir	\
+	test4_gedl.cir	\
 	test5.cir	\
 	test6.cir	\
 	test7.cir	\
@@ -18,7 +22,8 @@ TESTS = \
 	comprt.cir	\
 	gstage.cir	\
 	oneshot.cir	\
-	opamp.cir
+	opamp.cir	\
+	ro_17.cir
 
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
