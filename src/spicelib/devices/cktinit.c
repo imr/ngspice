@@ -3,11 +3,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modifed: 2000 AlansFixes
 **********/
-
+#include <stdlib.h>
 #include <config.h>
-
-#include <stdio.h>
-
+#include "memory.h"
 #include <cktdefs.h>
 #include <devdefs.h>
 #include <sperror.h>

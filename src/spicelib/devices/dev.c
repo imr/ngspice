@@ -131,20 +131,45 @@ int add_udn(int,Evt_Udn_Info_t **);
 
 
 /*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
-#ifdef HAVE_EKV
-#include "ekv/ekvitf.h"
-#ifdef XSPICE
-static int DEVNUM = 52;
-#else
-#define DEVNUM 52
-#endif
-#else
-#ifdef XSPICE
-static int DEVNUM = 51;
-#else
-#define DEVNUM 51
-#endif
-#endif
+#ifdef CIDER
+
+ #ifdef HAVE_EKV
+ #include "ekv/ekvitf.h"
+
+  #ifdef XSPICE
+   static int DEVNUM = 52;
+  #else
+   #define DEVNUM 52
+  #endif
+
+ #else	
+
+  #ifdef XSPICE
+   static int DEVNUM = 51;
+  #else
+   #define DEVNUM 51
+  #endif
+
+ #endif
+
+#else /* NOT CIDER */
+ 
+ #ifdef HAVE_EKV
+  #include "ekv/ekvitf.h"
+  #ifdef XSPICE
+   static int DEVNUM = 47;
+  #else
+   #define DEVNUM 47
+  #endif
+ #else
+  #ifdef XSPICE
+   static int DEVNUM = 46;
+  #else
+   #define DEVNUM 46
+  #endif
+ #endif
+
+#endif /* CIDER */
 
 /*Make this dynamic for later attempt to make all devices dynamic*/
 SPICEdev **DEVices=NULL;
@@ -175,7 +200,7 @@ spice_init_devices(void)
   g_evt_udn_info[0] =  &idn_digital_info;
 
   DEVicesfl = (int *)tmalloc(DEVNUM*sizeof(int));
-  /* tmalloc should automaticlly zero the array! */
+  /* tmalloc should automatically zero the array! */
 #endif
 
     DEVices = (SPICEdev **)tmalloc(DEVNUM*sizeof(SPICEdev *));
@@ -236,17 +261,17 @@ spice_init_devices(void)
 #ifdef HAVE_EKV
     DEVices[51] = get_ekv_info();
     assert(52 == DEVNUM);
-#else
+#else                              /* NOT EKV */
     assert(51 == DEVNUM);
-#endif /* HAVE_EKV */
-#endif /* CIDER */
-
+#endif                            /* HAVE_EKV */
+#else                            /* NOT CIDER */
 #ifdef HAVE_EKV
     DEVices[46] = get_ekv_info();
     assert(47 == DEVNUM);
 #else
     assert(46 == DEVNUM);
 #endif
+#endif                          /* CIDER */
 return;
 }
 
