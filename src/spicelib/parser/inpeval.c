@@ -24,9 +24,11 @@ double INPevaluate(char **line, int *error, int gobble)
     /* setup */
     tmpline = *line;
     if (gobble) {
-	*error = INPgetUTok(line, &token, 1);
-	if (*error)
-	    return ((double) 0.0);
+         /* MW. INPgetUTok should be called with gobble=0 or it make
+	  * errors in v(1,2) exp */
+	 *error = INPgetUTok(line, &token, 0);
+	 if (*error)
+	      return ((double) 0.0);
     } else {
 	token = *line;
 	*error = 0;

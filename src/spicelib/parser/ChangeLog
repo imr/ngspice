@@ -1,3 +1,8 @@
+2000-10-12  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* inpeval.c: Bugfix for subcircuits contributed by Michael
+	Widlok.
+
 2000-09-09  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* inp2dot.c: Removed unused static functions dot_ic and
