@@ -1,0 +1,15 @@
+** MOSFET Gain Stage (AC): Benchmarking Implementation of BSIM4.1.0 by Weidong Liu 10/11/2000.
+
+M1 3 2 0 0 N1 L=1u W=4u
+Rsource 1 2 100k
+Rload 3 vdd 25k
+
+Vdd vdd 0 1.8 
+Vin 1 0 1.2 ac 0.1
+
+.ac dec 10 100 1000Meg 
+.print ac vdb(3)
+
+.include modelcard.nmos
+
+.end

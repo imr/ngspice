@@ -1,0 +1,14 @@
+** PMOSFET: Benchmarking Implementation of BSIM4.1.0 by Weidong Liu 10/11/2000.
+
+** Circuit Description **
+m1 2 1 0 3 p1 L=0.13u W=10.0u rgeoMod=1
+vgs 1 0 -1.8
+vds 2 0 -0.1
+vbs 3 0 0.0
+
+.dc vgs 0.6 -1.8 -0.05 vds -0.1 -1.8 -0.3
+
+.print dc v(2) i(vds)
+
+.include modelcard.pmos 
+.end
