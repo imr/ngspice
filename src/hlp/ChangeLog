@@ -1,0 +1,32 @@
+1999-08-12  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* x11disp.c: made a cast to (XtCallbackProc) when necessary 
+
+	* readhelp.c: sanitised the code slighly
+
+	* *.c: changed functions from K&R into ANSI using protoize 
+
+1999-08-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* xdisplay.c: removed all X10 related code
+
+	* Makefile.am (DEFS): removed -DWANT_MFB (don't need it)
+
+1999-08-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* readhelp.c: HAVE_SYS_DIR_H and HAVE_DIRENT_H instead of 
+	HAS_BSDDIRS and HAS_SYSVDIRS.
+
+1999-07-31  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am: added @X_CFLAGS@ in INCLUDES list and removed unused LIBS
+	
+
+28-07-1999 emmanuel.rouat@wanadoo.fr (Manu Rouat)
+
+	* help.c: 
+	* provide.c:
+	* x11disp.c: changed HAS_X11 define to X_DISPLAY_MISSING, which is supplied
+	by autoconf in config.h
+
+	* removed -DWANT_X11 in Makefile.am

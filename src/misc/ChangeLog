@@ -1,0 +1,60 @@
+2000-03-11  Paolo Nenzi <p.nenzi@ieee.org>
+
+   * missing_math.c: as Chris wrote:
+     In missing_math.c line 50: changed the preprocessor directive "#elif" to "#else" because the 
+     elif must have a condition (ie. else if <condition>...). 
+     Again seemingly no adverse side effects.
+ 
+1999-09-07  Arno  <A.W.Peters@ieee.org>
+
+	* string.c: put extra braces around assignment in if condition.
+
+1999-09-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* misc_time.c: renamed time.c into misc_time.c
+
+	* missing_math.c: renamed math.c into missing_math.c
+
+	* *.c: added header file for all .c files
+
+1999-08-30  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+
+	* Removed suffix.h and replaced GENERIC with void
+
+	* alloc.c: Modified the code of tmalloc, tralloc and txfree
+	functions. Now tmalloc uses calloc() instead of malloc+bzero
+	and all of them works on void *.
+
+1999-08-29  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Made function decls ANSI using protoize 
+
+1999-08-28  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Removed all #includes of misc.h and util.h (now in spice.h)
+
+1999-08-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am (libmisc_a_SOURCES): removed dos_dirs.c (unused)
+
+	* string.c: changed HAS_INDEX in HAVE_INDEX
+
+	* dup2.c (dup2): changed HAS_FCNTL in HAVE_FCNTL_H
+
+1999-08-06  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* time.c: changed HAS_LOCALTIME in HAVE_LOCALTIME
+
+	* dup2.c: 
+	changed HAS_DUP2 into HAVE_DUP2
+
+1999-08-05  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* ivars.c (env_overr): removed HAS_ENVIRON tests
+
+	* mktemp.c (smktemp): removed test on HAS_GETPID
+
+1999-08-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* string.c (bcopy): changed HAS_BCOPY into HAVE_BCOPY 
+

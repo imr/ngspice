@@ -1,0 +1,98 @@
+Internal Changes from 3e2
+
+	The device structure has changed:  The state counter in all device
+	structures has been moved to correspond to GENstates in the
+	GENinstance structure.
+
+	Also, a new per-device-type function has been added: XXXunsetup,
+	which deallocates nodes and other resources created in the
+	XXXsetup function.  ("XXX" is the device abbreviation.)
+
+Internal Changes from 3d2
+
+FILE NAMES:
+
+	Of the changes to spice3 between 3d2 and 3e1, the
+	the most obvious is the new filenames.  All filesnames
+	have been converted to lowercase and are at most eight
+	characters plus an optional dot and three character extension.
+	This change was made to accomodate MS-DOS and other operating
+	systems which limit the maximum file name length.
+
+
+ORGANIZATION
+
+	The top level directory contains the installation "readme" file
+	and a "makedefs" files used by the "build" command.
+
+	"src/" contains all of the C source code.  This used to be named
+	"spice3" or "spice3d2" in previous releases.
+
+	"src/lib" is the library or "toolkit" portion of Spice3.  Within
+	it are the following subdirectories:
+
+		ckt/	All of the analysis code.
+		ni/	Numerical algorithms (used by ckt routines).
+		sparse/	Sparse matrix package (used by ckt and ni).
+		misc/	Miscellaneous utility and portability routines.
+		dev/	All of the device specific code, with a subdir for
+			each device implementation.
+
+		inp/	Input parsing; could be much smaller.
+
+		fte/	The front end.  Really bad.
+		cp/	More front end -- "C shell".
+		hlp/	The windowed help system.
+
+		mfb/	Terminal independant graphics package.
+		mfbpc/	MFB interface for the IBM PC.
+		
+
+	"src/bin" contains the source for all executable programs (the
+	location for "main( )").  "main.c" is used by spice, nutmeg,
+	bspice, and cspice (the latter two for MS-DOS).  The function
+	of "main.c" is altered by defining the pre-processor symbols
+	SIMULATOR (for either spice, bspice, or cspice), BATCH for
+	bspice, and BATCH and SPICE2 for cspice (no special defines
+	give nutmeg).  Each variant of the simulator uses "conf.c" (or
+	"bconf.c" or "cconf.c", or "nconf.c" for nutmeg), which is
+	automatically generated from "config.c".  "config.c" is a
+	template used to select devices and analyses.  "tune.c"
+	("tunepc.c") contains the compiled in pathnames.
+
+
+	"examples/" contains several spice input files.
+
+	"lib/" contains standard data files for spice, such as the help 
+	files and MFB capability files.
+
+	"man/" contains UNIX style manual pages (ala "man(1)").
+
+	"util/" contains utility scripts, such as "build" for running the
+	recursive "make" and "delall.bat" for deleting the distribution on
+	MS-DOS systems.
+
+	All "Makefile"s have been replaced with "makedefs" (and optionally
+	"depend" and "makeops").  "makedefs" is combined with other
+	make definition files with the "build" script.
+
+SOURCE LEVEL CHANGES
+
+	(Added features are listed in the "README" file).
+
+	DEVICES:  The interface to devices has, once again, changed.
+	The change is small from 3d2.  Table size values in the device
+	information struction are now pointers to integers containing
+	the table sizes.  Per-analyses functions have been surrounded 
+	with "#ifdef AN_xx"/"#else"/"#endif" lines.  Note that the
+	"itf.h" files are stored only in the "include/" subdirectory.
+
+	Adding devices to the master list is done in the file
+	"src/bin/config.c", instead of "FTE/SPIinit.c".
+
+	SPARSE MATRIX PACKAGE:  the sparse matrix package in Spice3e1
+	and later is a more efficient implementation than in earlier releases.
+	The interface is the same.
+
+
+

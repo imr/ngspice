@@ -1,0 +1,162 @@
+README for NGSPICE
+------------------
+
+This long message describes what NG-SPICE may become in the (near ?)
+future. I used a question mark because, as you will read, most of the
+features of ng-spice are found on Hi-quality commercial products and
+(which is the true reason) I have no idea on how can be implemented.
+
+** Why resurrecting Berkeley's Spice ?
+
+Berkeley's spice can be considered the father of most circuit simulator
+available today. It is an old but still good piece of software. It may not
+be the fastest or the most reliable, but it's free, it is available in
+source code, and most of the electrical simulators inherited it's syntax.
+On the more technical side, spice3f4(5) uses good numerical algorithms
+(commercial implementations have only strengthened them), implements most
+of the models for MOSFET submicron designs and has a powerful set of
+analyses. On the more "social" side: it's weel introduced in the
+academic environment.
+
+ 
+** What does NG-SPICE mean ?
+
+It stands for Next Generation Spice but that's not the official name of
+the projest. This projects still lacks a name. NG-SPICE is a temporary
+name.  
+
+
+** What will NG-SPICE be ?
+
+Berkeley's Spice lacks in three directions:
+
+ a) Graphical user interface (I prefer to say "the framework").
+ b) Documentation.
+ c) Features in the code.
+
+ * The framework:
+   Spice is (and should continue to be) acommand line or a text tool, but
+   this makes very difficult to design large circuits. To overcome this
+   difficulty, a schematic entry tool and a waveform viewer tool are
+   needed. Nevertheless, there are other tools that can be useful:
+   a parts database, an editor which higlights the syntax, a symbol
+   editor, etc. Most of these program already exists in the open source
+   world, so they need ony to be integrated in a common EDA environment.
+   This is the first direction of development. 
+
+ * Documentation: Commercial simulators (hi-end) have very good manuals
+   with tutorials, models equation explained, example of use, suggestions,
+   etc. This line of development has the task of provinding the final
+   spice user with an orderd and comprehensive set of information on the
+   program and it's features. The documentation should be useful for the
+   student as well as for the circuit professional.
+
+ * Improvements to the spice code: This is the hard part. Th target of
+   this direction is to make ng-spice a commercial grade simulator. This
+   means improving it's speed, it's numerical robustness, include the
+   latest models available and some other important features. I will
+   describe some of them briefly:
+
+   - Analyses -
+     Network analisys: given four nodes, extract z,y,s and the other
+     double bipole paramters.  
+     
+     Monte Carlo analisys: statistical simulation based on device
+     tolerances.
+
+     Worst Case analisys: find the worst case of operation of a given 
+     circuit based on device tolerances.
+
+     Parametric analisys: repeat an analysis when one or more parameters 
+     assumes different values.
+
+   - Devices -
+     Behavioral device: enhance the B device of spice3 to accepts IF THEN
+     ELSE conditions, and digital keywords like DELAY, HIGHV. LOWV, etc to
+     simulate simple digital device.
+     
+     Dynamically loading of device: reduce the memory occupied by the
+     simulator by using shared object code for devices. Each device
+     is a .so library that is inserted only if the circuit contains
+     an element modeled by the device. If we are simulating CMOS, 
+     we do not need BJT or SOI (in most of the situations).  
+
+     Code Level Modeling: Let users write their devices in C and use 
+     them in the simulator.  I have discovered a couple of standars
+     for doing this at the Sematech ftp site.
+     
+     Improving device: Include additional parameters to some devices:
+     HDIF, LDIF, etc. (Serban, can you explain better).
+
+   - Numerical Algs - 
+     Integration: include (if necessary) more stable algorithms for
+     integration. Runge-Kutta Methods ?
+     
+     Linearization:
+     Are there better algorithms for nonlinear equations the the Newton
+     raphson ?
+
+  - Sparse Matrix - 
+    Faster handling of sparse matrices.
+
+  
+  - Options - 
+    Possibility to mesure circuit pameters, like the delay between two
+    nodes, etc.
+    
+
+... and others that will emerge during the project.
+
+
+Paolo Nenzi (pnenzi@ieee.ing.uniroma.it)
+
+
+
+
+NOTES:
+------
+
+This version builds correctly on redhat linux 6.0, and most probably
+on any glibc2-based linux distribution. The executables have hardly been
+tested, all I know is that they build. The main goal of this release is
+to get autoconf to work.
+
+The goal is to put all possible configurations flags into the autoconf support.
+
+It should build on most other unices (especially POSIX ones), please report to me 
+if it does, or if you know how to fix it if it doesn't.
+
+As the -Wall flag is turned on during compilation, you will notice a HUGE
+amount of warnings - our first job should be to work on those to 'sanitize'
+the existing code.
+
+
+MAILING LISTS:
+-------------
+
+There are three mailing lists dedicated to the development of ngspice. 
+
+ng-spice@ieee.ing.uniroma1.it: This list is the list for the users of the
+                               ng-spice simulator. 
+
+ng-spice-devel@ieee.ing.uniroma1.it: ng-spice development issues.      
+
+ng-spice-frontends@ieee.ing.uniroma1.it: issues related to development of
+                                         frontends for ng-spice.
+
+To subscribe the list(s), send a message to:
+   <ng-spice-subscribe@ieee.ing.uniroma1.it>
+   <ng-spice-devel-subscribe@ieee.ing.uniroma1.it>
+   <ng-spice-frontends-subscribe@ieee.ing.uniroma1.it>
+
+
+WEB SITE:
+--------
+
+This project is hosted on the IEEE Central & South Italy Section Server.
+The home page is http://ieee.ing.uniroma1.it/ngspice
+
+Manu (emmanuel.rouat@wanadoo.fr)
+Paolo (p.nenzi@ieee.org)
+
+

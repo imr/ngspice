@@ -1,0 +1,237 @@
+(ER - 7/08/99)
+
+These are a few notes on the autoconf porting that is being done.
+
+Autoconf automaticcaly provides #defines (in config.h) that describe
+the system that ng-spice is being compiled on. Thus, all the os_xxx.h 
+files should no longer be necessary.
+
+
+Here is a (as complete as possible) list of new #defines and their
+corresponding #defines in the old build system:
+
+
+
+
+#define HAS_VAX_FPERRORS	    - unused (should remove the code)
+#define MAXPOSINT	4294967295  - don't know about that one
+#define MAX_EXP_ARG	87.0        - same
+
+---------- Operating System (os_xxx.h) parameters:
+
+----- Enabling flags
+#define AVAIL_MFB		-DWANT_MFB passed to cpp
+#define AVAIL_X11		X_DISPLAY_MISSING (reversed)
+
+----- String or character constants
+#define DIR_CWD		"."	now in spice.h
+#define DIR_PATHSEP	"/"	now in spice;h
+#define DIR_TERM	'/'	now in spice.h
+
+On Unix, I don't think that there are other possibilities. 
+We should get rid of those.
+
+
+----- sprintf( ) format strings
+#define TEMPFORMAT "/tmp/%s%d"	/* sprintf format for creating temp files */
+#define SYSTEM_MAIL	"mail -s \"%s (%s) Bug Report\" %s"  /* mail command */
+#define SYSTEM_PLOT5LPR	"lpr -P%s -g %s" /* For printing Unix plot(5) files */
+#define SYSTEM_PSLPR	"lpr -P%s %s" /* For printing postscript files */
+
+
+Same for these I guess...
+
+
+
+----- System capabilities
+#define HAS_ACCESS		HAVE_ACCES
+#define HAS_ASCII		not handled yet
+#define HAS_ATRIGH		HAVE_ATANH HAVE_ACOSH HAVE_ASINH
+#define HAS_BCOPY		HAVE_BCOPY
+#define HAS_BSDDIRS		HAVE_DIR_H
+#define HAS_BSDRANDOM		unused
+#define HAS_BSDRLIMIT		HAVE_GETRLIMIT
+#define HAS_BSDRUSAGE		HAVE_GETRUSAGE
+#define HAS_BSDSOCKETS		unused
+#define HAS_BSDTIME		HAVE_GETTIMEOFDAY
+#define HAS_BSDTTY		HAVE_SGTTY_H
+#define HAS_CHDIR		removed
+#define HAS_CLEARERR		removed
+#define HAS_CTYPE		HAVE_CTYPE_H
+#define HAS_DOSDIRS		dos only - should remove code
+#define HAS_DUP2		HAVE_DUP2
+#define HAS_ENVIRON		removed
+#define HAS_EXIT1		vms only - should remove the code
+#define HAS_FCNTL		HAVE_FCNTL_H
+#define HAS_FTIME		HAVE_FTIME
+#define HAS_GETCWD		HAVE_GETCWD
+#define HAS_GETPID		removed
+#define HAS_GETPW		HAVE_PWD_H
+#define HAS_GETWD		HAVE_GETWD
+#define HAS_INDEX		HAVE_INDEX
+#define HAS_NO_IEEE_LOGB	HAVE_LOGB HAVE_SCALB HAVE_SCALBN
+#define HAS_NO_IEEE_LOGB_DECL	removed
+#define HAS_ISATTY		HAVE_ISATTY
+#define HAS_LONGJUMP		removed
+#define HAS_MINDATA		dos only? - should remove code if so
+#define HAS_NOINLINE		dos only? - should remove code if so
+#define HAS_NOVM		dos only? - should remove code if so
+#define HAS_NO_ATRIGH_DECL	removed
+#define HAS_PCTERM		dos only - should remove code
+#define HAS_POPEN		HAVE_POPEN
+#define HAS_QSORT		HAVE_QSORT
+#define HAS_SHORTMACRO		dos only - should remove code
+#define HAS_STAT		STAT_MACROS_BROKEN (reversed)
+#define HAS_STDLIB		STDC_HEADERS
+#define HAS_STRCHR		HAVE_STRCHR
+#define HAS_STRINGS		STDC_HEADERS (reversed) not sure about that one!
+#define HAS_SYSTEM		removed
+#define HAS_SYSVDIRS		HAVE_DIRENT_H
+#define HAS_SYSVRLIMIT		HAVE_ULIMIT
+#define HAS_SYSVRUSAGE		HAVE_UTIME
+#define HAS_SYSVTIME		HAVE_TIME
+#define HAS_SYSVTTY		HAVE_TERMIO_H
+#define HAS_TERMCAP		HAVE_TERMCAP
+#define HAS_TERMREAD		don't know what to do with this one
+#define HAS_UNIX_SIGS		removed
+#define HAS_UNLINK		removed
+#define HAS_VFORK		HAVE_VFORK_H
+#define HAS_VMSHACK		vms only - should remove the code
+#define HAS_VPERROR		removed 
+#define HAS_WAIT		HAVE_WAIT
+
+plus a few others:
+
+#define HAS_MEMAVL		dos only - should remove code
+#define HAS_FLAT_INCLUDES	macos only - should remove code
+#define HAS_BATCHSIM		dos only - should remove code
+
+
+
+----------------------------------------------------------------------------
+
+PORTING SPICE3e1
+
+    Porting Spice3 to a new operating system usually consists of listing
+    the capabilities of that operating system in a new '.h' file and
+    including this '.h' file in the standard portability sequence.  This
+    also needs to be done separately for the numerical capabilities of the
+    system hardware (this consist of only two parameters at present).
+
+    For each operating system there is a file in the "include/" directory
+    named "os_xxx.h", where xxx identifies the given operating system (ex.
+    "os_bsd.h", "os_aix.h").  These files are selectively #include-d by
+    "include/port.h".  For a new operating system, you should add the
+    appropriate "#include" line to "include/port.h".  Be sure to guard
+    the new "#include" line with "#ifdef/#endif", as is done with the other
+    operating system capability files.  The same may also need to be done
+    for your hardware (for the file "hw_xxx.h"), though there is typically
+    very little difference in hardware.
+
+    Note that operating system which are a derivative of another supported
+    system can '#include' the "os_xxx.h" file from the other system.  For
+    example, "os_aix.h" includes "os_sysv.h", which in turn includes
+    "os_unix.h".
+
+    The entries that can go into a "os_xxx.h" file are described below;
+    most are simple flags (e.g. HAS_xxxx).  To turn on a flag, insert the
+    "#define" line for that flag; to turn off the flag, simply leave the
+    "#define" line out.  Other entries are strings, others single-quoted
+    characters or numbers.  Be sure to use the same type as the example
+    values shown.
+
+    There are always exceptions to the rule. Some incompatibilities
+    have not yet been dealt with cleanly;  review the other "os_xxx.h"
+    files, the file "capabil.h", and the file "suffix.h" to understand
+    how some problems have been handled (note especially the lines like
+    "#define index strchr").  After trying to compile, you may yet find
+    non-portable code that is not guarded by one of the following
+    options.  You are encouraged to alter the source code (".c" or ".h"
+    files) in the style of the current portability scheme.
+
+    Note: to enable X11 or MFB, the flag AVAIL_X11 or AVAIL_MFB,
+    respectively, must be included in the "os_xxx.h" file; this _was_ to
+    simplify the problems of forgetting to re-edit the "config.h" file,
+    but this is no longer necessary.
+
+---------- Machine architecture numerics (hw_xxx.h) parameters:
+    (In the future this will be more complete and will be used for
+    tuning the accuracy or performance of the numerical algorithms)
+
+#define HAS_VAX_FPERRORS	/* Only for Vax				*/
+#define MAXPOSINT	4294967295 /* == 2^32 - 1, maximum positive integer */
+#define MAX_EXP_ARG	87.0		/* Approximate largest arg to exp() */
+
+---------- Operating System (os_xxx.h) parameters:
+
+----- Enabling flags
+#define AVAIL_MFB		/* If the MFB package can work on this system */
+#define AVAIL_X11		/* If the X11 Window System can work	*/
+
+----- String or character constants
+#define DIR_CWD		"."	/* Current working directory		*/
+#define DIR_PATHSEP	"/"	/* subdirectory separator		*/
+#define DIR_TERM	'/'	/* Subdirectory component terminator	*/
+
+----- sprintf( ) format strings
+#define TEMPFORMAT "/tmp/%s%d"	/* sprintf format for creating temp files */
+#define SYSTEM_MAIL	"mail -s \"%s (%s) Bug Report\" %s"  /* mail command */
+#define SYSTEM_PLOT5LPR	"lpr -P%s -g %s" /* For printing Unix plot(5) files */
+#define SYSTEM_PSLPR	"lpr -P%s %s" /* For printing postscript files */
+
+----- System capabilities
+#define HAS_ACCESS		/* access( )				*/
+#define HAS_ASCII		/* eighth bit of a character is not used */
+#define HAS_ATRIGH		/* acosh( ), asinh( ), atanh( )		*/
+#define HAS_BCOPY		/* bcopy( ), bzero( )			*/
+#define HAS_BSDDIRS		/* <sys/dir.h>				*/
+#define HAS_BSDRANDOM		/* srandom( ) and random( )		*/
+#define HAS_BSDRLIMIT		/* getrlimit( ) returns proc limits	*/
+#define HAS_BSDRUSAGE		/* getrusage( ) returns cpu usage	*/
+#define HAS_BSDSOCKETS		/* <net/inet.h>, socket( ), etc.	*/
+#define HAS_BSDTIME		/* gettimeofday( ) return time		*/
+#define HAS_BSDTTY		/* <sgtty.h>				*/
+#define HAS_CHDIR		/* for tree filesystems, chdir( )	*/
+#define HAS_CLEARERR		/* clearerr( ), should be in stdio	*/
+#define HAS_CTYPE		/* <ctype.h>, iswhite( ), etc.		*/
+#define HAS_DOSDIRS		/* Emulate opendir, etc.		*/
+#define HAS_DUP2		/* dup2(a, b) for shifting file descrs. */
+#define HAS_ENVIRON		/* getenv( )				*/
+#define HAS_EXIT1		/* If exit status of 1 is normal for procs */
+#define HAS_FCNTL		/* acosh( ), asinh( ), atanh( )		*/
+#define HAS_FTIME		/* ftime( ), <times.h>			*/
+#define HAS_GETCWD		/* getcwd(buf, size)			*/
+#define HAS_GETPID		/* getpid( ) to identify processes	*/
+#define HAS_GETPW		/* getpwuid( ), etc.			*/
+#define HAS_GETWD		/* getwd(buf)				*/
+#define HAS_INDEX		/* index( ) instead of strchr( )	*/
+#define HAS_NO_IEEE_LOGB	/* no logb( ) and scalb( ) functions	*/
+#define HAS_NO_IEEE_LOGB_DECL	/* logb( ) and scalb( ) not in math.h	*/
+#define HAS_ISATTY		/* isatty( )				*/
+#define HAS_LONGJUMP		/* setjmp( ), longjmp( )		*/
+#define HAS_MINDATA		/* Machine has limited data area	*/
+#define HAS_NOINLINE		/* Machine has limited data area	*/
+#define HAS_NOVM		/* Machine has limited data area	*/
+#define HAS_NO_ATRIGH_DECL	/* if asinh( ) is not in math.h		*/
+#define HAS_PCTERM		/* For MS-DOS, use PC graphics for MFB	*/
+#define HAS_POPEN		/* popen( ), pipe through shell command	*/
+#define HAS_QSORT		/* qsort( ) exists			*/
+#define HAS_SHORTMACRO		/* If the compiler can't handle long macros */
+#define HAS_STAT		/* stat( ) returns info on files	*/
+#define HAS_STDLIB		/* #include <stdlib.h> for libc defs	*/
+#define HAS_STRCHR		/* strchr( ) instead of index( )	*/
+#define HAS_STRINGS		/* #include <strings.h> (else <string.h>) */
+#define HAS_SYSTEM		/* system( ), execute system command	*/
+#define HAS_SYSVDIRS		/* <dirent.h>				*/
+#define HAS_SYSVRLIMIT		/* ulimit( ) reports on proc size limit */
+#define HAS_SYSVRUSAGE		/* utimes( ) reports on cpu usage	*/
+#define HAS_SYSVTIME		/* time( ) returns seconds from 1970	*/
+#define HAS_SYSVTTY		/* <termio.h>				*/
+#define HAS_TERMCAP		/* tgetxxx( )				*/
+#define HAS_TERMREAD		/* Has "read" syscall from terminals	*/
+#define HAS_UNIX_SIGS		/* signal( ), kill( )			*/
+#define HAS_UNLINK		/* unlink( ), for removing files	*/
+#define HAS_VFORK		/* BSD-ism, should not be necessary	*/
+#define HAS_VMSHACK		/* Stand on your head for VMS		*/
+#define HAS_VPERROR		/* perror( ) defined by standard '.h's	*/
+#define HAS_WAIT		/* wait( ) wait for processes		*/

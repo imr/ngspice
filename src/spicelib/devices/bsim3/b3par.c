@@ -1,0 +1,121 @@
+/* $Id$  */
+/*
+ $Log$
+ Revision 1.1  2000-04-27 20:03:59  pnenzi
+ Initial revision
+
+ Revision 1.1.1.1  1999/11/15 10:35:08  root
+ Rework imported sources
+
+ Revision 1.2  1999/08/28 21:00:03  manu
+ Big commit - merged ngspice.h, misc.h and util.h - protoized fte
+
+ Revision 1.1.1.1  1999/07/30 09:05:13  root
+ NG-Spice starting sources
+
+ * Revision 3.2.2 1999/4/20  18:00:00  Weidong
+ * BSIM3v3.2.2 release
+ *
+*/
+static char rcsid[] = "$Id$";
+
+/*************************************/
+
+/**********
+Copyright 1999 Regents of the University of California.  All rights reserved.
+Author: 1995 Min-Chie Jeng and Mansun Chan.
+Author: 1997-1999 Weidong Liu.
+File: b3par.c
+**********/
+
+#include "ngspice.h"
+#include <stdio.h>
+#include "ifsim.h"
+#include "bsim3def.h"
+#include "sperror.h"
+#include "suffix.h"
+
+int
+BSIM3param(param,value,inst,select)
+int param;
+IFvalue *value;
+GENinstance *inst;
+IFvalue *select;
+{
+    BSIM3instance *here = (BSIM3instance*)inst;
+    switch(param) 
+    {   case BSIM3_W:
+            here->BSIM3w = value->rValue;
+            here->BSIM3wGiven = TRUE;
+            break;
+        case BSIM3_L:
+            here->BSIM3l = value->rValue;
+            here->BSIM3lGiven = TRUE;
+            break;
+        case BSIM3_AS:
+            here->BSIM3sourceArea = value->rValue;
+            here->BSIM3sourceAreaGiven = TRUE;
+            break;
+        case BSIM3_AD:
+            here->BSIM3drainArea = value->rValue;
+            here->BSIM3drainAreaGiven = TRUE;
+            break;
+        case BSIM3_PS:
+            here->BSIM3sourcePerimeter = value->rValue;
+            here->BSIM3sourcePerimeterGiven = TRUE;
+            break;
+        case BSIM3_PD:
+            here->BSIM3drainPerimeter = value->rValue;
+            here->BSIM3drainPerimeterGiven = TRUE;
+            break;
+        case BSIM3_NRS:
+            here->BSIM3sourceSquares = value->rValue;
+            here->BSIM3sourceSquaresGiven = TRUE;
+            break;
+        case BSIM3_NRD:
+            here->BSIM3drainSquares = value->rValue;
+            here->BSIM3drainSquaresGiven = TRUE;
+            break;
+        case BSIM3_OFF:
+            here->BSIM3off = value->iValue;
+            break;
+        case BSIM3_IC_VBS:
+            here->BSIM3icVBS = value->rValue;
+            here->BSIM3icVBSGiven = TRUE;
+            break;
+        case BSIM3_IC_VDS:
+            here->BSIM3icVDS = value->rValue;
+            here->BSIM3icVDSGiven = TRUE;
+            break;
+        case BSIM3_IC_VGS:
+            here->BSIM3icVGS = value->rValue;
+            here->BSIM3icVGSGiven = TRUE;
+            break;
+        case BSIM3_NQSMOD:
+            here->BSIM3nqsMod = value->iValue;
+            here->BSIM3nqsModGiven = TRUE;
+            break;
+        case BSIM3_IC:
+            switch(value->v.numValue){
+                case 3:
+                    here->BSIM3icVBS = *(value->v.vec.rVec+2);
+                    here->BSIM3icVBSGiven = TRUE;
+                case 2:
+                    here->BSIM3icVGS = *(value->v.vec.rVec+1);
+                    here->BSIM3icVGSGiven = TRUE;
+                case 1:
+                    here->BSIM3icVDS = *(value->v.vec.rVec);
+                    here->BSIM3icVDSGiven = TRUE;
+                    break;
+                default:
+                    return(E_BADPARM);
+            }
+            break;
+        default:
+            return(E_BADPARM);
+    }
+    return(OK);
+}
+
+
+

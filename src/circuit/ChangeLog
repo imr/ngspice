@@ -1,0 +1,85 @@
+2000-04-04  Paolo Nenzi <p.nenzi@ieee.org>
+    
+	* inpfindl.c: Modified the file for BSIM4 and future extensions to
+                      BSIM5 and BSIM6. I have merged the inpfindl.c coming 
+		      with the BSIM4 distribution.
+	* inp2r.c:    Added acval=val to initialize the acval parameter to
+	              a significative value. Hope does not brak anything. 
+		      
+		      
+	* inp2m.c:    Added BSIM4 support.
+	
+	* inpdomod.c: Added support for BSIM4 device model.
+	
+2000-03-28  Paolo Nenzi <p.nenzi@ieee.org>
+
+    * ptfuncs.c: I have applied a couple of patches by GLAO Dezay. He noted
+                 that PTln, PTlog and PTsqrt returned non consistent values
+		 if the argument was out of domain. If arg <0 they returned 
+		 f(-arg). The patch is masked by #ifdef EXPERIMENTAL_CODE. 
+		 You have to remove these lines or #define it to compile
+		 Dezai's patched code.
+
+2000-03-11 Paolo Nenzi <p.nenzi@ieee.org>
+    *  inp2dot.c: Applied Glao Dezai patch, adding which = -1 in the .sens code.
+ 
+2000-01-17 Paolo Nenzi  <p.nenzi@ieee.org>
+	*  inp2m.c, inpdomod.c: Inserted code to dupport BSIM3V1 model as 
+	   level 49.
+	
+2000-01-16 Paolo Nenzi  <p.nenzi@ieee.org>
+
+	*  inp2r.c: Modified resistor code. Added ac value (ala HSPICE), from
+	   Serban Popescu contributed sources.
+
+2000-01-15  Paolo Nenzi <p.nenzi@ieee.org>
+
+        *   inp2m.c, inpdomod.c : Inserted code to support BSIM3V2 model as
+            level 50. 
+
+1999-12-20  Paolo Nenzi <p.nenzi@ieee.org>
+
+        *   inpgtok.c, inpptree.c: Bug Fix
+            Bug: Scale factors (eg. m, k, meg, etc.) for constants in arbitrary
+            source (b devices) are not recognized.
+            Fix: Changes to inpgtok.c and inpptree.c, as supplied by Berkeley.
+            NOTE:  These changes were orignally supplied to me as a patch to 3e2 
+            by Beorn Johnson who was maintaining Spice a while back.  They were 
+            supposed to have been incorporated in Spice 3f2 at that time, but are 
+            missing from the 3f5 version that I recently got from Berkeley.  I
+            don't know if they were removed in ignorance or because of a conflict
+            with some other requirement, but they appear to work in 3f5.  ALSO,
+            the fix for 3e2 had many more changes, all of which remain in 3f5, so
+            don't try these alone on 3e2.
+ 
+1999-09-07  Arno  <A.W.Peters@ieee.org>
+
+	* inpsymt.c: removed unused function prototype for local_remove().
+
+	* sperror.c: removed unused variable `notempty'
+
+1999-09-05  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* inpptree.c (PTdifferentiate): removed superfluous argument
+	to 2 occurences of function mkf
+
+	* *.c: put all function prototypes in inp.h 
+
+1999-08-28  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Removed all #includes of misc.h and util.h (now in spice.h)
+
+1999-08-24  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+
+	* inpdomod.c: added level check for ps model, jfet level 2
+
+	* inp2j.c: added code for ps model, jfet level 2
+1999-08-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* inp2dot.c (INP2dot):changed HAS_SENSE2 in WANT_SENSE2 
+
+1999-08-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* ptfuncs.c: changed HAS_ATRIGH to HAVE_ACOSH,HAVE_ASINH and
+	HAVE_ATANH provided in config.h
+

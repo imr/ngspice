@@ -1,0 +1,154 @@
+2000-03-22  Paolo Nenzi <p.nenzi@ieee.org>
+
+    * rawfile.c: Applied Michael Widlok patch.
+    
+    * spiceif.c: Applied Michael Widlok patch. 
+
+2000-03-12  Paolo Nenzi <p.nenzi@ieee.org>
+   
+    * x11.c: Cleared the code. Rewmoved some empty return on void functions.
+
+1999-12-20  Paolo Nenzi <p.nenzi@ieee.org>
+            outif.c: 
+            To fix various "save"-related segmentation faults, make this one-line patch
+            to outitf.c: line 356, change
+            unique = devname; to unique = copy(devname);
+
+1999-12-20  Paolo Nenzi <p.nenzi@ieee.org>
+            subckt.c: 
+                     Bug: Current controlled switch subcircuit does not expand
+                     the controlling source correctly: vsrc expands to name:vsrc,
+                     not to v:name:src.
+                     Fix: changed this file to indicate that w device has only 2
+                     not 3 nodes and 1 not zero controlling sources.
+
+1999-09-07  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* *.c: put back static functions declarations back in the .c files (shouldn't
+	be in .h files!)
+
+1999-09-07  Arno  <A.W.Peters@ieee.org>
+
+	* aspice.c: template to fprintf now conform to argument types.
+
+	* cmath1.c:
+
+	* cmath2.c: removed most warnings about possible use of
+ 	uninitialized variables.  Only two remain in cx_sqrt().
+
+1999-09-06  Arno Peters <A.W.Peters@ieee.org>
+
+	* dotcards.c: Put proper braces around an
+        ambiguous if/else construct.
+
+	* postcoms.c: 
+
+	* postsc.c: Removed unused variables.
+
+1999-09-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am (libfte_a_SOURCES): forgot display.h in list
+
+	* typesdef.c: moved types.c to typesdef.c
+
+	* signal_handler.c: moved signal.c to signal_handler.c
+
+	* *.c: added header file for all .c files 
+
+1999-09-01  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* *.c: removed lots of unnecessary HAS_XX tests and code 
+
+	* Makefile.am (libfte_a_SOURCES): removed mfb.c from sources
+
+	* signal.c (ft_sigintr): removed HAS_MFB test
+
+1999-08-30  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+
+	* Removed #include "suffix.h" and replaced GENERIC with void.
+
+1999-08-28  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am (libfte_a_SOURCES): removed x10.c from source files
+
+	* clip.c: removed MAX/MIN #defines 
+
+	* Removed all #includes of misc.h and util.h (now in spice.h)
+
+1999-08-19  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+
+        * Makefile.am: added spec.c.
+ 
+	* spcmdtab.c: added code for spec command support. The original 
+	patch came from ftp.mpce.mq.edu.au.
+
+	* spec.c: added this file containing the spec command code.
+	
+1999-08-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am (DEFS): removed -DWANT_MFB (don't need it)
+
+	* resource.c : removed HAS_RLIMIT_ tests
+
+	* error.c: removed HAS_VAXFPERROR code
+
+	* cmath3.c: removed HAS_SHORTMACRO code
+
+	* display.c : removed HAS_X10 code
+
+	* mfb.c (Mfb_Init): removed HAS_PCTERM code
+
+	* resource.c: removed all code related to HAS_MEMAVL 
+
+1999-08-06  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* resource.c: removed tests on HAS_UNIX_SEGMENT_HACK
+
+	* xgraph.c (ft_xgraph): 
+	* options.c (cp_usrset): 
+	* misccoms.c: removed tests on HAS_SYSTEM
+
+	* nutinp.c: 
+	* inp.c (com_source): 
+	(doedit): removed tests on HAS_SYSTEM (always true?)
+
+	* doplot.c (com_hardcopy): removed tests on HAS_UNLINK (always true)
+	(com_hardcopy): removed tests on HAS_SYSTEM (always true?)
+
+	* signal.c: 
+	* evaluate.c (doop): 
+	* error.c (fatal): 
+	* aspice.c: removed test on HAS_UNIX_SIGS (always true)
+
+	* signal.c: 
+	* evaluate.c: removed test on HAS_LONGJUMP (always true)
+
+1999-08-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* aspice.c: changed HAS_WAIT into HAVE_SYS_WAIT_H
+
+	* inpcom.c:
+	* breakp.c: changed HAS_CTYPE into HAVE_CTYPE_H
+
+1999-08-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* signal.c:
+	* resource.c:
+	* evaluate.c:
+	* aspice.c: changed SIGNAL_TYPE into RETSIGTYPE
+
+1999-07-31  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am: added @X_CFLAGS@ (X11 header files) to INCLUDES and removed
+	unused LIBS list.
+
+28-07-1999 emmanuel.rouat@wanadoo.fr (Manu Rouat)
+
+	* graf.c:
+	* display.c:
+	* doplot.c:
+	* x11.c: changed HAS_X11 define to X_DISPLAY_MISSING, which is supplied
+	by autoconf in config.h
+	
+	* removed -DWANT_X11 in Makefile.am
+

@@ -1,0 +1,8 @@
+1999-09-07  Arno  <A.W.Peters@ieee.org>
+
+        * bjtnoise.c: removed unused variable `error'.
+
+1999-09-06  Arno Peters <A.W.Peters@ieee.org>
+
+	* bjtnoise.c: Reformatted comment.
+

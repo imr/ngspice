@@ -1,0 +1,107 @@
+1999-12-07  Arno Peters  <A.W.Peters@ieee.org>
+
+	* source tree: Added MAINTAINERCLEANFILES to Makefile.am to
+	eliminate automatically generated cruft from patches.  To create a
+	minimal patch between two trees, just do `make maintainer-clean'
+	on both trees and run `diff -ruN tree1 tree2'.
+
+1999-10-15  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* source tree: entirely modified by Arno Peters (after discussion
+	on the mailing list)
+
+1999-09-06  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* AUTHORS: added list provided by Arno Peters
+
+	* Applied patch supplied by Arno
+
+1999-09-01  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* AUTHORS: some additions
+
+	* FAQ: a few minor corrections
+
+1999-08-31  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* configure.in: config.h now in top directory
+
+	* All Makefile.am's: removed useless 'DEFS' line
+
+1999-08-30  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* FAQ: added the FAQ to the distribution
+
+1999-08-28  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Removed mfb from build - nutmeg doesn't use it on Unix.
+
+1999-08-23  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* configure.in: added tests ('make check') 
+
+	* ng-spice.patch: added cleanup patch by Arno Peters
+
+1999-08-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* configure.in: added some features
+
+1999-08-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* configure.in: added a whole bunch of tests!
+
+1999-08-02  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* configure.in: added --with-checkergcc option (experimental!)
+	added some maths checks
+
+1999-07-31  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* configure.in: made X11 tests more efficient
+
+
+ng-spice-0.0:
+-------------
+	* changed HAX_X11 define to XMISSING_DISPLAY supplied in config.h
+
+	* added 'Changelog' files in all subdirectories
+
+	* added '--enable-ansi' option to configure
+
+	* put src/lib/dev/devsup.c into src/lib/dev/devsup/
+
+	* added header files into Makefile.am's
+	
+Chianti:
+--------
+	(27/07/99)
+
+	* added some tests to configure.in (ncurses/termcap, xaw....)
+
+	* cleaned up some directories (examples, patches..)
+
+	* removed all .orig files 
+	
+Pizza:
+------
+	(25/07/99)
+
+	* added installation of man pages
+
+	* emptied 'COPYING' file until we know what to put in it
+	
+	* fixed missing install of help and init files (created tune.c.in
+	to support this)
+
+	* added missing -DWANT_X11 and -DWANT_MFB in several compiles
+	(fixed some headers in: src/lib/fte/x11.c
+	                        src/lib/fte/x11disp.c )
+	
+	
+Spaghetti:
+----------
+	(25/07/99)
+
+	- first attempt at autoconf/automake support
+
+	- based on spice3f5-chili, hardly anything touched on it.

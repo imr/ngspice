@@ -1,0 +1,108 @@
+Ng-spice-rework-10
+============
+
+Added BSIM4 model and closed a couple of serious bugs. Added DEVICES file
+to distribution. This file contains the status of device models in this
+simulator. Read it, this file can save you a lot of time. 
+
+Ng-spice-rework-9
+============
+
+Thanks to Arno Peters now all device models are dynamically loaed on demand.
+Thay are linked as shared libraries. The next step is the dlopen() one which
+will make possible to link devices without any recompilation.
+
+
+
+Ng-spice-rework-8
+============
+
+Applied Arno's patch.
+
+From his mail message:
+
+Hi Paolo,
+
+I have prepared a source cleaning patch.
+
+Features:
+
+  + patches don't get polluted with differences between automatically
+  generated Makefile.am files.  Usually these make up the biggest part
+  of the patches.  This allows me to read the patch on the mailing
+  list instead of sifting through 90% redundant and irrelevant changes.
+
+  + the shell script autogen.sh automatically regenerates the required
+  files if the user has automake, autoconf and libtool installed.
+
+  + this feature is only valuable to developers, not to end users.
+
+
+Usage of this patch, once incorporated:
+
+  # create a working tree to work from
+  cp -a ng-spice-rework-x ng-spice
+  
+  [ Changes made to ng-spice ]
+
+  # clean up all the automatically generated files
+  cd ng-spice; make maintainer-clean
+
+  # extract the differences
+  diff -ruN ng-spice-rework-x ng-spice > my.patch
+
+  [ Patch sent to ng-spice mailing list or you ]
+
+  # incorporate changes into the tree
+  cd ng-spice-rework-x; patch -p1 < my.patch
+
+  # update the automatically generated files
+  cd ng-spice-rework-x; sh autogen.sh
+
+
+
+
+Ng-spice-rework-7 (22 Mar 2000)
+============
+
+Bug fix release
+
+
+
+Ng-spice-rework-6 (29 Jan 2000)
+============
+
+This porting includes:
+
+1) BSIM3V3.1 model as level 49. This is the version modified by Serban Popescu
+   which understands the M parameter and implements HDIF.
+
+2) BSIM3V3.2 model al Level 50. This is the standard Berkeley version.
+
+3) Now the resistor model can accepts two differents values for DC and AC
+   resistance.
+
+
+
+Ng-spice-rework-5 and 5_2  (Jan 2000)
+============
+
+Internal development release, buggy and not working. 
+
+Ng-spice-rework-4  (22/12/99)
+============
+
+This porting includes a new feature:
+
+1) dynamically loading of some device code as an experimental feature for 
+   the future GPL simulator. Thanks to Arno Peters and Manu Rouat.
+
+2) Patched the following bug (thanks to Andrew Tuckey for having supplied the 
+   patch).
+   
+    * Wsw (current controlled switch) in subckt, parsing bug.
+    * scale factor in arbitrary source.
+    * bug in noise analisys.
+    * save segmentation faults.
+    
+    

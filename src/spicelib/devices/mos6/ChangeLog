@@ -1,0 +1,3 @@
+1999-08-20  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+	* mos6itf.h: added patch to the interface code. The patch was 
+	downloaded from ftp://ftp.mpce.mq.edu.au/pub/elec/spice/patches

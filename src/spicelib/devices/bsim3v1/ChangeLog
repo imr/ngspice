@@ -1,0 +1,7 @@
+27-01-2000	Paolo Nenzi <p.nenzi@ieee.org>
+	
+	* bsim3v1def.h: added BSIM3V1owner varialbe to the BSIM3V1instance
+	  structure to support "parallel" processing with Cider.
+	
+ 	* b3v1acld.c, b3v1cvtest.c, b3v1getic.c, b3v1ld.c,b3v1pzld.c, b3v1set.c, b3v1temp.c, b3v1trunc.c: added the BSIM3V1owner check in these files.
+	

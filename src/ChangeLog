@@ -1,0 +1,97 @@
+2000-04-04  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* ngspice.c: Added support for BSIM4.
+	
+	* Makefile.am: Added support for bsim4 shared library.
+
+2000-01-14  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* conf.c: inserted definitions for bsim3v2 and bsim3v1 devices.
+ 	It is necessary to include old models for commercially available
+	components libraries.
+	
+1999-12-01  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* source code: created new directory 'frontend' mainly filled with
+ 	files from 'fte' - remaing files go into maths/cmaths (complex maths
+	routines)
+
+1999-11-30  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* tune.c: removed 
+ 	
+	* conf.c/nconf.c : simplified
+
+1999-09-07  Arno  <A.W.Peters@ieee.org>
+
+	* conf.c: removed unused variables `devs' and `ans'
+
+	* help.c: return value from main() changed to int
+
+1999-09-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* main.c: removed #include patchlec.h and suffix.h (and related code)
+
+	* Makefile.am: updated to reflect filename changes in fte/
+
+1999-08-31  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* help.c: renamed helpfile 'ngspice'
+
+	* main.c: renamed helpfile 'ngspice' 
+
+1999-08-28  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Removed all #includes of misc.h and util.h (now in spice.h)
+
+1999-08-24  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+
+	* conf.c: linked the jfet2 model to the devices table.
+	
+1999-08-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* makeidx.c: removed HAS_MAC_ARCARGV related code
+
+	* main.c: removed all code related to dos and macos features
+
+1999-08-06  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* proc2mod.c: removed test on HAS_VPERROR (always true on Unix)
+
+	* main.c (main): changed HAS_ISATTY in HAVE_ISATTY
+	(main): removed test on HAS_LONGJUMP (always have it)
+	(main): removed test on HAS_UNIX_SIGS (always true on Unix)
+	(main): removed test on HAS_UNLINK (always true on Unix)
+
+1999-08-05  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* main.c: changed HAS_GETPW in HAVE_PWD_H
+	(main): removed test on HAS_GETPID
+
+1999-08-02  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am (LIBS): removed '-lm' since it is handled by autoconf
+
+1999-08-01  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* conf.c: changed SIMinfo entry to 'ngspice'
+
+	* Makefile.am: changed binary name to ngspice
+
+1999-07-31  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am: added @X_CFLAGS@ to INCLUDES list
+
+1999-07-30  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am : fixed breaking of 'make distcheck'
+
+29-07-1999 emmanuel.rouat@wanadoo.fr (Manu Rouat)
+
+	* tune.c: includes <config.h> which defines SPICEBINDIR etc
+	
+28-07-1999 emmanuel.rouat@wanadoo.fr (Manu Rouat)
+
+	* help.c: Changed HAS_X11 define to X_DISPLAY_MISSING (supplied by
+	autoconf in config.h)
+	* removed HAS_X11 in defs flag in Makefile.am

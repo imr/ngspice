@@ -1,0 +1,5 @@
+1999-08-28  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* spdefs.h: #includes spice.h instead of misc.h
+	added a few #undefs to avoid redaclarations 
+

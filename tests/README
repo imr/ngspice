@@ -1,0 +1,5 @@
+TO ADD NEW TESTS
+
+Take an existing test and adopt it to your liking.  Add the test
+script and its supporting files to Makefile.am.  Use `make check' to
+see your new test in action.

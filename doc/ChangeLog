@@ -1,0 +1,11 @@
+1999-09-06  Arno Peters <A.W.Peters@ieee.org>
+
+	* ngspice.texi: Added TeX equivalents for some formula.
+        First tables converted to texinfo format.
+
+1999-08-31  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am: added .texi file by Arno Peters - a distribution will now
+	include a postscript doc.
+	updated 'clean' rules
+

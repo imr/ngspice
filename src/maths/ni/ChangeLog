@@ -1,0 +1,18 @@
+1999-09-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* *.h: added header file for each .c file 
+
+1999-09-01  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+
+	* *.c: replaced GENERIC with void and removed #include suffix.h.
+
+1999-08-12  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* nipzmeth.c (NIpzMuller): removed unused variables
+
+	* *.c : made functions ANSI compliant using 'protoize'
+
+1999-08-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* niiter.c: changed HAS_SENSE2 in WANT_SENSE2
+

@@ -1,0 +1,7 @@
+A note when using dbx (under unix-type operating systems) to debug spice3:
+
+To avoid a segmentation fault in the initial run, use the following command
+in dbx:
+	setenv SPICE_NO_DATASEG_CHECK "1"
+Or, the comparable command in your shell before running dbx.  This
+disable accurate tracking of how much memory is used.

@@ -1,0 +1,39 @@
+SPICE was originally written at The University of Berkeley (USA).
+
+
+Contributors:
+-------------
+
+Giles C. Billingsley
+Mansun Chan
+Wayne A. Christopher
+Noah Friedman <friedman@prep.ai.mit.edu>
+David A. Gates
+JianHui Huang
+Jeffrey M. Hsu
+S. Hwang
+Gordon M. Jacobs
+Min-Chie Jeng
+Kenneth H. Keller
+Mathew Lew
+Weidong Liu
+Gary W. Ng
+Hong June Park
+Thomas L. Quarles
+Jaijeet S. Roychowdhury
+Takayasu Sakurai
+Kanwar Jit Singh
+Andrew Tuckey <Tuckey@ieee.org>
+
+NGSPICE is now actively hacked by:
+
+  * Glao S. Dezai <dezai@hotbot.com>
+  * Daniele Foci <d.foci@ieee.ing.uniroma1.it>
+  * Chris Inbody <cinbody@cowtown.net>
+  * Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+  * Arno Peters <A.W.Peters@ieee.org>
+  * Serban-Mihai Popescu <serbanp@ix.netcom.com>
+  * Emmanuel Rouat <emmanuel.rouat@wanadoo.fr>
+  * Michael Widlok <widlok@uci.agh.edu.pl>
+  
+(and many others...)

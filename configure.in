@@ -1,0 +1,245 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(src/main.c)
+dnl Create a configuration header
+AM_CONFIG_HEADER(config.h)
+
+dnl --enable-ansi : try to force --ansi option to the compiler
+AC_ARG_ENABLE(ansi,
+    [  --enable-ansi           Force --ansi option for compilation])
+
+dnl --disable-debug : remove -g and -Wall  option to the compiler
+AC_ARG_ENABLE(debug,
+    [  --enable-debug          Add -g option for compilation (default)])
+
+dnl --enable-checker : add --with-checker-debug  option to the compiler
+AC_ARG_ENABLE(checker,
+    [  --enable-checkergcc     Option for compilation with checkergcc])
+
+dnl --enable-bypass : define BYPASS for the code
+AC_ARG_ENABLE(nobypass,
+    [  --enable-nobypass       Don't bypass recalculations of slowly changing variables])
+
+dnl --enable-predictor : define PREDICTOR for the code
+AC_ARG_ENABLE(predictor,
+    [  --enable-predictor      Enables a predictor method for convergence])
+
+dnl --enable-sense2 : define HAVE_SENSE2 for the code
+AC_ARG_ENABLE(sense2,
+    [  --enable-sense2         Use spice2 sensitivity analysis])
+
+dnl --enable-experimental : define EXPERIMENTAL_CODE for the code
+AC_ARG_ENABLE(experimental,
+    [  --enable-experimental   Enables some experimental code])
+
+
+dnl Initialize automake stuff
+AM_INIT_AUTOMAKE(ng-spice-rework,10)
+
+dnl Enable maintainer commands only if requested
+AM_MAINTAINER_MODE
+
+dnl Work on compiler options according to system:
+dnl Set default CFLAG - only use -Wall if we have gcc
+
+AC_PROG_CC
+
+if test "x$GCC" = "xyes"; then
+	CFLAGS="$CFLAGS -Wall "
+fi
+
+if test "$enable_debug" = "no"; then
+	AC_MSG_WARN(Removing debugging option!)
+	CFLAGS=" "
+fi
+
+dnl Not sure that this will work....
+if test "$with_checkergcc" = "yes"; then
+        CC="checkergcc"
+fi      
+
+
+dnl Checks for ANSI-C header files.
+AC_HEADER_STDC
+
+if test "$enable_ansi" = "yes"; then
+	AM_PROG_CC_STDC
+	if test ! "$am_cv_prog_cc_stdc"="yes"; then
+	AC_MSG_WARN(Failed to find Ansi flag!)
+	fi	
+fi
+
+
+
+
+dnl Chech system we're on , and tune accordingly 
+AC_CANONICAL_HOST
+
+case "$host" in
+
+*bsd* )    CFLAGS="$CFLAGS";;
+*linux*)   CFLAGS="$CFLAGS";;
+*rs6000* ) CFLAGS="$CFLAGS";;
+*sgi* )    CFLAGS="$CFLAGS";;
+*sun* )    CFLAGS="$CFLAGS";;
+*ultrix* ) CFLAGS="$CFLAGS";;
+
+esac
+
+
+
+dnl Checks for programs
+
+AC_LIBTOOL_DLOPEN
+AM_PROG_LIBTOOL
+
+
+dnl Checks for X11 header files and libraries - X11 support can be disabled
+dnl by passing the '--without-x' option to configure:
+
+AC_PATH_X
+AC_PATH_XTRA
+
+
+
+dnl Checks for X libraries - if X11 wasn't found then don't make following
+dnl tests and compile without X11 support - otherwise, check if the following
+dnl libraries are present (error if they are not)
+
+
+if test ! "$no_x" = "yes" ; then
+	X_LIBS="$X_LIBS -lX11 -lXt"
+	AC_CHECK_LIB(Xext, XShmAttach,X_LIBS="$X_LIBS -lXext",AC_MSG_ERROR(Couldn't find Xext librairies), $X_LIBS $X_EXTRA_LIBS)
+	AC_CHECK_LIB(Xaw,main,X_LIBS="$X_LIBS -lXaw",AC_MSG_ERROR(Couldn't find Xaw librairies),$X_LIBS  $X_EXTRA_LIBS)
+	AC_CHECK_LIB(Xmu,main,X_LIBS="$X_LIBS -lXmu",AC_MSG_ERROR(Couldn't find Xmu librairies), $X_LIBS $X_EXTRA_LIBS)
+
+fi
+
+dnl Check for a few typdefs:
+AC_TYPE_PID_T
+AC_TYPE_SIGNAL
+
+dnl Check for a few libraries and headers:
+
+dnl Look for ncurses first, then termcap
+AC_SEARCH_LIBS(tputs,ncurses termcap,AC_DEFINE(HAVE_TERMCAP),
+               AC_MSG_ERROR(Found neither ncurses or termcap))
+
+
+AC_HEADER_DIRENT
+AC_CHECK_HEADERS(ctype.h unistd.h pwd.h fcntl.h)
+AC_HEADER_SYS_WAIT
+AC_HEADER_STAT
+
+dnl Check time and ressources headers and functions:
+AC_HEADER_TIME
+AC_STRUCT_TM
+AC_STRUCT_TIMEZONE
+AC_CHECK_FUNCS(localtime)
+AC_CHECK_FUNCS(gettimeofday time ftime , break)
+AC_CHECK_FUNCS(getrusage utimes, break)
+AC_CHECK_FUNCS(getrlimit ulimit, break)
+
+dnl Look for termios first (posix)
+AC_CHECK_HEADERS(termios.h termio.h sgtty.h , break)
+AC_CHECK_FUNCS(isatty)
+
+dnl Check for a few functions:
+AC_FUNC_VFORK
+AC_CHECK_FUNCS(access bcopy qsort dup2 popen)
+AC_CHECK_FUNCS(strchr index , break)
+AC_CHECK_FUNCS(getcwd getwd , break)
+
+
+AC_MSG_RESULT(Checking mathematical features of the system:)
+dnl Look for math library:
+AC_CHECK_LIB(m,sqrt)
+AC_CHECK_HEADERS(float.h limits.h values.h)
+
+dnl Check for a few mathematical functions:
+AC_CHECK_FUNCS(erfc logb scalb scalbn asinh acosh atanh)
+
+
+# Expand the prefix variable (this is really annoying!)
+if eval "test x$prefix = xNONE"; then
+ dprefix=$ac_default_prefix
+else
+ dprefix=$prefix
+fi
+
+AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo $dprefix/bin`" )
+AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice`" )
+AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE, "`date`" )
+
+
+# Recapitulate settings:
+AC_MSG_RESULT(Settings which were chosen:)
+if test "$enable_sense2" = "yes"; then
+	AC_DEFINE(WANT_SENSE2)
+	AC_MSG_RESULT(Spice2 sensitivity analysis enabled)	
+fi
+if test "$enable_nobypass" = "yes"; then
+	AC_DEFINE(NOBYPASS)
+	AC_MSG_RESULT(NOBYPASS option enabled)	
+fi
+if test "$enable_predictor" = "yes"; then
+	AC_DEFINE(PREDICTOR)
+	AC_MSG_RESULT(PREDICTOR algorithm enabled)	
+fi
+if test "$enable_experimental" = "yes"; then
+	AC_DEFINE(EXPERIMENTAL_CODE)
+	AC_MSG_RESULT(EXPERIMENTAL_CODE enabled)	
+fi
+
+
+AC_OUTPUT(			\
+Makefile			\
+doc/Makefile			\
+man/Makefile			\
+man/man1/Makefile		\
+src/Makefile			\
+src/analysis/Makefile		\
+src/circuit/Makefile		\
+src/devices/Makefile		\
+src/devices/asrc/Makefile	\
+src/devices/bjt/Makefile	\
+src/devices/bsim1/Makefile	\
+src/devices/bsim2/Makefile	\
+src/devices/bsim3v1/Makefile	\
+src/devices/bsim3/Makefile	\
+src/devices/bsim4/Makefile	\
+src/devices/bsim3v2/Makefile	\
+src/devices/cap/Makefile	\
+src/devices/cccs/Makefile	\
+src/devices/ccvs/Makefile	\
+src/devices/csw/Makefile	\
+src/devices/devsup/Makefile	\
+src/devices/dio/Makefile	\
+src/devices/disto/Makefile	\
+src/devices/ind/Makefile	\
+src/devices/isrc/Makefile	\
+src/devices/jfet/Makefile	\
+src/devices/jfet2/Makefile	\
+src/devices/ltra/Makefile	\
+src/devices/mes/Makefile	\
+src/devices/mos1/Makefile	\
+src/devices/mos2/Makefile	\
+src/devices/mos3/Makefile	\
+src/devices/mos6/Makefile	\
+src/devices/res/Makefile	\
+src/devices/sw/Makefile		\
+src/devices/tra/Makefile	\
+src/devices/urc/Makefile	\
+src/devices/vccs/Makefile	\
+src/devices/vcvs/Makefile	\
+src/devices/vsrc/Makefile	\
+src/frontend/Makefile		\
+src/hlp/Makefile		\
+src/include/Makefile		\
+src/maths/Makefile		\
+src/maths/cmaths/Makefile	\
+src/maths/ni/Makefile		\
+src/maths/sparse/Makefile	\
+src/misc/Makefile		\
+src/parser/Makefile		\
+tests/Makefile			\
+)

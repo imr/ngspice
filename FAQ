@@ -1,0 +1,299 @@
+
+
+                               NG-Spice F.A.Q.
+                         Frequently Asked Questions
+                                (and Answers)
+
+           Maintened by Daniele Foci <d.foci@ieee.ing.uniroma1.it>
+                         Last update:  29/08/1999
+
+
+CONTENTS
+
+1. INTRODUCTION AND GENERAL INFORMATION
+     1.1  What is NG-Spice?
+     1.2  Why resurrecting Berkeley's Spice?
+     1.3  What is the project's goal?
+     1.4  What you are going to do ?
+     1.5  Legal issues
+     1.6  What mailing lists exist for NG-Spice?
+     1.7  Are the mailing lists archived anywhere?
+     1.8  What newsgroups exist for NG-Spice?
+     1.9  Where can I get a copy of NG-Spice?
+     1.10 Where should I look on the World Wide Web for NG-Spice stuff?
+2. DEVELOPMENT
+     2.1 What is the current version?
+     2.2 What are the latest features in the current release?
+     2.3 What does it look like ?
+     2.4 Who are the authors of ng-spice ?
+     2.5 How can I report a bug/request for a feature?
+     2.6 How can I join the development?
+3. SOLUTIONS TO COMMON MISCELLANEOUS PROBLEMS
+     3.1 What systems are supported?
+     3.2 I get errors when I try to compile the source code, why?
+     3.3 This document didn't answer my question. Where else can I look for
+         an answer?
+4. ADMINISTRATIVE INFORMATION AND ACKNOWLEDGEMENTS
+     4.1 Feedback
+     4.2 Formats in which this FAQ is available
+     4.3 Authorship and acknowledgements
+     4.4 Disclaimer and Copyright
+
+-------------------------------------------------------------------------------
+
+1. INTRODUCTION AND GENERAL INFORMATION
+
+1.1 What is NG-Spice?
+
+  NG-spice is the name of a project and of a program in the project. Spice is 
+  the famous circuit simulator developed by the CAD Group of the University 
+  of California at Berkeley (UCB). The NG prefix has a lot of meanings: Next
+  Generation, New Good, etc. Choose or invent the one you prefer. The NG-spice
+  project aims to improve the capabilities of the Spice3 circuit simulator. 
+  The heart of the project is the ng-spice program, a circuit simulator 
+  derived from spice3f5.
+
+1.2 Why resurrecting Berkeley's Spice?
+
+  Berkeley's Spice can be considered the father of most circuit simulators
+  available today. It is an old but still good piece of software, it may not
+  be the fastest or the most reliable but it's free, it's available in
+  source code and most of the electrical simulators inherited it's syntax.
+  On the more technical side, spice3 uses good numerical algorithms
+  ( most commercial implementations have only strengthened them), implements 
+  most of the models for MOSFET submicron designs and has a powerful set of
+  analyses. On the more "social" side, spice3 it's well introduced in the 
+  academic environment.
+
+1.3 What is the project's goal?
+  
+  The final goal of NG-spice project is to develop a reliable, fast and 
+  friendly circuit simulator for mixed signal/mixed level simulation. 
+  Easy isn't it ;-). 
+
+1.4 What you are going to do?
+  
+  The NG-spice project is divided in two main overlapping phases. The first 
+  phase is strictly pertinent to the spice3f5 code: during this phase the 
+  original spice3f5 code will be "cleaned" and corrected and small improvements
+  made to it. In phase one the Autoconf interface will replace the Berkeley's 
+  one and this will lead to a different structure of the sources.
+  The second phase is the development of improvements in the ngspice code
+  (the old spice3f5 code cleaned and corrected) and of some programs that will
+   interface with it, like a schematic editor and a waveform viewer. A list of
+   proposed improvements follows:
+
+  1) The framework (or Graphic User Interface):
+     Spice is (and should continue to be) a command line or a text tool, but
+     this makes very difficult to design large circuits. To overcome this
+     difficulty, a schematic entry tool and a waveform viewer tools are needed.
+     Nevertheless, there are other tools that can be useful: a parts database,
+     an editor which higlights the syntax, a symbol editor, etc.
+     Most of these program already exists in the open source world, so they
+     need only to be integrated in a common EDA environment.
+
+  2) Documentation:
+     Commercial simulators have very good manuals with tutorials, models
+     equations explained, example of use, suggestions, etc. This line of
+     development has the task of providing the final spice user with an ordered
+     and comprehensive set of information on the program and its features.
+     The documentation should be useful for the student as well as for the
+     circuit professional.
+
+  3) Improvements to the Spice code:
+     This is the hard part. The target of this direction is to make ngspice a
+     commercial grade simulator. This means improving it's speed, its
+     numerical strenght, include the latest models available and some other
+     important features:
+
+      * Numerical Algorithms:
+        - More stable algorithms for integration (as Runge-Kutta Methods).
+        - Better convergence in Operating Point Calculation replacing the
+          Newton-Raphson algorithm, a modified version of Fixed-Point
+          Homotopy.
+
+      * Devices:
+        - Behavioral device: enhance the B device of spice3 to accepts IF THEN
+                             ELSE conditions, and digital keywords like DELAY,
+                             HIGHV, LOWV, etc. to simulate simple digital
+                             device.
+        - Dynamically Loadable Devices: reduce the memory occupied by the
+                                        simulator by using shared object code
+                                        for devices. Each device is a .so
+                                        library that is inserted only if the
+                                        circuit contains an element modeled by
+                                        the device. If we are simulating CMOS,
+                                        we do not need BJT or SOI (in most of
+                                        the situations).
+        - Code Level Modeling: let users write their devices in C and use
+                               them in the simulator.
+        - Improving device: include additional parameters to some devices as
+                            HDIF, LDIF, etc.
+
+      * New types of analysis, oriented to circuits syntesis and optimization:
+        - Network analysis: given four nodes, extract z,y,s and the other
+                            double bipole paramters.
+        - Monte Carlo analysis: statistical simulation based on device
+                                tolerances.
+        - Worst Case analysis: find the worst case of operation of a given
+                               circuit based on device tolerances.
+        - Parametric analysis: repeat an analysis when one or more parameters
+                               assumes different values.
+
+      * Faster handling of sparse matrices.
+
+      * Possibility to mesure circuit pameters, like the delay between two
+        nodes, etc.
+
+      * ... whatever else can be judged useful.
+
+
+1.5 Legal issues
+
+  [not written yet: GPL vs. Berkeley]
+
+1.6 What mailing lists exist for NG-Spice?
+
+  Only one. Send an empty message to <ng-spice-help@ieee.ing.uniroma1.it> to
+  have information on subscription.
+
+1.7 Is the mailing lists archived anywhere?
+
+  Yes, the list is archived. Send an empty message to
+  <ng-spice-help@ieee.ing.uniroma1.it> to have information on how to retrieve
+  old messages.
+
+1.8 What newsgroups exist for NG-Spice?
+
+  None. Sorry.
+
+1.9 Where can I get a copy of NG-Spice?
+
+  You can download NG-Spice from:
+  ftp://ieee.ing.uniroma1.it/pub/ng-spice/distribution/
+
+1.10 Where should I look on the World Wide Web for NG-Spice stuff?
+
+  There is a WWW page for NG-Spice. The URL is:
+  http://geda.seul.org under the tools section.
+
+
+2. DEVELOPMENT
+
+2.1 What is the current version?
+
+  0.3 (released on 30/08/1999)
+
+2.2 What are the latest features in the current release?
+
+  * New features:
+    - Autoconf interface.
+    - BSIM 3.2.2 Model.
+    - PS jfet Model (jfet level 2).
+    - Temperature and resistance sweeps.
+    - "spec" command for spectrum analysis.
+
+  * Bug fixes:
+    - Altermod command connected to the parser.
+    - Some memory leaks closed.
+    - Spice3f5 fixes available on the net.
+
+2.3 What does it look like ?
+
+  This is a command line utility, no screenshots!
+
+2.4 Who are the authors of ng-spice ?
+
+  The development is open to anyone who wish to contribute.
+  People who contributed are:
+
+  * Daniele Foci <d.foci@ieee.ing.uniroma1.it>
+  * Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+  * Arno Peters <A.W.Peters@ieee.org>
+  * Serban-Mihai Popescu <serbanp@ix.netcom.com>
+  * Emmanuel Rouat <emmanuel.rouat@wanadoo.fr>
+  * Michael Widlok <widlok@uci.agh.edu.pl>
+  
+  This list is surely incomplete (due to open development group), there are 
+  many people who contributed with improvements, pieces of code, bux fixes, 
+  etc. If you have contributed and do not appear, write to:
+                         ng-spice@ieee.ing.uniroma1.it
+  and ask to be included.
+
+2.5 How can I report a bug/request for a feature?
+
+  Write in the mailing list.
+
+2.6 How can I join the development?
+
+  To join the development just code the feature you want to add and send your
+  patch in the mailing list. Before you start coding check the latest
+  development release of NG-Spice from our CVS. It might be that your feature
+  has already been implemented.
+  To access the anonymous CVS do the following:
+
+  1) Install cvs on your machine (version 1.9.x - 1.10.x are just fine).
+  2) Set one of the following environment variables:
+  For bash:
+  export CVSROOT=:pserver:anonymous@ieee.ing.uniroma1.it:/var/services/cvsroot
+  For csh/tcsh:
+  setenv CVSROOT :pserver:anonymous@ieee.ing.uniroma1.it:/var/services/cvsroot
+  3) Login to the cvs server by running:
+     $>  cvs login
+     The password is 'guest' (without the quotes of course). You will only
+     have to do this once.
+  4) Checkout the appropriate files executing the following commands:
+     $>  mkdir somedirectory
+     $>  cd somedirectory
+     $>  cvs co ng-spice
+  5) Wait for the cvs logout.
+
+
+3. SOLUTIONS TO COMMON MISCELLANEOUS PROBLEMS
+
+3.1 What systems are supported?
+
+  This is the updated list:
+
+  Hardware           O.S.               Compiler       Functional?
+  ----------------   ------------------ -------------- -----------
+  i386               Linux (RedHat)     gcc            yes
+  i386               Linux (Debian)     gcc            yes
+  i386               Linux (SuSE)       gcc            yes
+  IBM Risc 6000      AiX                lcc            no
+  SUN                Solaris 7          gcc            yes
+  SUN                Solaris 7          SUN Workshop   ?
+
+3.2 I get errors when I try to compile the source code, why?
+
+  [not written yet]
+
+3.3 This document didn't answer my question. Where else can I look for
+    an answer?
+
+  Read old messages from the mailing list archive, search the web site or read
+  the docs. Upgrade to the latest version of NG-Spice, many problems are fixed
+  in the new versions. If you still can't find an answer, post your question
+  to the mailing list.
+
+
+4. ADMINISTRATIVE INFORMATION AND ACKNOWLEDGEMENTS
+
+4.1 Feedback
+
+  Send your comments about this F.A.Q. to <d.foci@ieee.ing.uniroma1.it>.
+  Send your comments about NG-Spice to <ng-spice@ieee.ing.uniroma1.it>.
+
+4.2 Formats in which this FAQ is available
+
+  This document is available only in ASCII format in the NG-Spice source
+  package.
+
+4.3 Authorship and acknowledgements
+
+  Parts of the questions and answers are originate from Paolo Nenzi.
+
+4.4 Disclaimer and Copyright
+
+  This document is provided as is. The information in it is not warranted to
+  be correct: you use it at your own risk.

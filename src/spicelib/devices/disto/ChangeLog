@@ -1,0 +1,4 @@
+1999-09-08  Arno  <A.W.Peters@ieee.org>
+
+	* *.c: reformatted; put prototypes in distodef.h; protoized.
+

@@ -1,0 +1,1051 @@
+.\" RCS Info: $Revision$ on $Date$
+.\"           $Source$
+.\" Copyright (c) 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+.TH NUTMEG 1 "27 April 1987"
+.UC 4
+.SH NAME
+nutmeg \- spice post-processor
+.SH SYNOPSIS
+\fBnutmeg [ - ] [ -n ] [ -t term ] [ datafile ... ]\fR
+.SH DESCRIPTION
+.B Nutmeg
+is a post processor for \s-2SPICE\s+2 \- it takes the raw 
+output file created 
+by \fBspice -r\fR
+and plots the data on a graphics terminal or a workstation display.
+Note that the raw output file is different from the
+data that \s-2SPICE\s+2 writes to the standard output.
+.PP
+Arguments are:
+.TP
+\fB-\fR
+Don't try to load the default data file ("rawspice") if no other files
+are given.
+.TP
+\fB-n\fR (or \fB-N\fR)
+Don't try to source the file ".spiceinit" upon startup. Normally \fBnutmeg\fR
+tries to find the file in the current directory, and if it is not found then
+in the user's home directory.
+.TP
+\fB-t term\fR (or \fB-T term\fR)
+The program is being run on a terminal with \fImfb\fR name \fBterm\fR.
+.PP
+Further arguments are taken to be data files in binary or ascii format
+(see \fBsconvert\fR(1)) which are loaded into nutmeg. If the file
+is in binary format, it may be only partially completed (useful for
+examining \s-2SPICE\s+2 ouput before the simulation is finished). One
+file may contain any number of data sets from different analyses.
+.PP
+\fBNutmeg\fR
+data is in the form of vectors: time, voltage, etc. Each vector has
+a type, and vectors can be operated on and combined algebraicly in
+ways consistent with their types. Vectors are normally created when
+a data file is read in (see the
+.B load
+command below), and when the initial datafile is loaded. They can
+also be created with the
+.B let
+command.
+.PP
+An expression 
+is an algebraic
+formula involving vectors and scalars (a scalar is a vector of
+length 1), and the following operations:
+.IP
++, -, *, %, /, ^, and ,.
+.PP
+% is the modulo operator, and the comma operator has two meanings:
+if it is present in the argument list of a user-definable function, it
+serves to seperate the arguments. Otherwise, the term \fBx , y\fR is
+synonymous with \fBx + j(y)\fR.
+.PP
+Also available are the logical operations & (and), | (or), ! (not),
+and the relational operations <, >, >=, <=, =, and <> (not equal).
+If used in an algebraic expression they work like they would in C,
+producing values of 0 or 1.  The relational operators have the
+following synonyms: 
+\fB"gt"\fR is >,
+\fB"lt"\fR is <, 
+\fB"ge"\fR is >=,
+\fB"le"\fR is <=,
+\fB"ne"\fR is <>,
+\fB"eq"\fR is =,
+\fB"and"\fR is &,
+\fB"or"\fR is |,
+and
+\fB"not"\fR is !.
+These are useful when < and > might be confused with IO redirection
+(which is almost always).
+.PP
+The following functions are available:
+.IP
+\fBmag(vector) \-\fR
+The magnitude of vector.
+.IP
+\fBph(vector) \-\fR
+The phase of vector.
+.IP
+\fBj(vector) \-\fR
+\fIi\fR (sqrt(-1)) times vector.
+.IP
+\fBreal(vector) \-\fR
+The real component of vector.
+.IP
+\fBimag(vector) \-\fR
+The imaginary part of vector.
+.IP
+\fBdb(vector) \-\fR
+20 * log10(mag(vector)).
+.IP
+\fBlog(vector) \-\fR
+The logarithm (base 10) of the vector.
+.IP
+\fBln(vector) \-\fR
+The natural logarithm (base e) of vector.
+.IP
+\fBexp(vector) \-\fR
+e to the vector power.
+.IP
+\fBabs(vector) \-\fR
+The absolute value of vector.
+.IP
+\fBsqrt(vector) \-\fR
+The square root of vector.
+.IP
+\fBsin(vector) \-\fR
+The sin of vector.
+.IP
+\fBcos(vector) \-\fR
+The cosine of vector.
+.IP
+\fBtan(vector) \-\fR
+The tangent of vector.
+.IP
+\fBatan(vector) \-\fR
+The inverse tangent of vector.
+.IP
+\fBnorm(vector) \-\fR
+The \fBvector\fR normalized to 1 (i.e, the largest magnitude of any component
+will be 1).
+.IP
+\fBrnd(vector) \-\fR
+A vector with each component a random integer between 0 and the absolute
+value of the vectors's corresponding component.
+.IP
+\fBmean(vector) \-\fR
+The result is a scalar (a length 1 vector) that is the mean of the elements
+of \fBvector\fR.
+.IP
+\fBvector(number) \-\fR
+The result is a vector of length \fBnumber\fR, with elements 0, 1, ... 
+\fBnumber - 1\fR. If \fBnumber\fR is a vector then just the first element
+is taken, and if it isn't an integer then the floor of the magnitude is
+used.
+.IP
+\fBlength(vector) \-\fR
+The length of \fBvector\fR.
+.IP
+\fBinterpolate(plot.vector) \-\fR
+The result of interpolating the named vector onto the scale of the current
+plot.  This function uses the variable \fBpolydegree\fR to determine
+the degree of interpolation.
+.PP
+A vector may be either the name of a vector already defined, a floating-
+point number (a scalar), or a list like \fB[elt1 elt2 ... eltn]\fR, which
+is a vector of length n.
+A number may be written in any format acceptable to \s-2SPICE\s+2, such
+as \fB14.6MEG\fR or \fB-1.231E-4\fR. Note that you can either use
+scientific notation or one of the abbreviations like \fIMEG\fR or \fIG\fR,
+but not both.  As with \s-2SPICE\s+2, a number may have trailing 
+alphabetic characters after it.
+.PP
+The notation \fBexpr [lower upper]\fR, where \fBlower\fR and \fBupper\fR
+are numbers, denotes the range of elements from \fBexpr\fR between
+\fBlower\fR and \fBupper\fR.  The notation \fBexpr [num]\fR denotes
+the \fBnum\fR'th element of \fBexpr\fR.  If \fBupper\fR
+is lower than \fBlower\fR, the order of the elements in the vector
+is reversed.  In all other cases, \fB[\fR and \fB]\fR serve to surround
+literal vectors as described above.  (You may have to use a lot of
+parentheses to make sure that you get what you want.  For instance,
+you have to type \fBprint (foo) ([1 2])\fR to print the two vectors.
+Otherwise it will be interpreted as a function call or a vector with an
+index.)  Note that the expression \fBfoo[10 20][5]\fR will \fInot\fR 
+yield the 15th element of \fBfoo\fR, but rather the 5th.  In general only
+the last index suffix on an expression will take effect.
+.PP
+To reference vectors in a plot that is not the
+\fIcurrent plot\fR (see the \fBsetplot\fR command, below), the
+notation \fBplotname.vecname\fR can be used.
+.PP
+Either a plotname or a vector name may be the wildcard \fBall\fR.  If the
+plotname is \fBall\fR, matching vectors from all plots are specified, and
+if the vector name is \fBall\fR, all vectors in the specified plots are
+referenced.  Note that you may not use binary operations on expressions
+involving wildcards \- it is not obvious what \fBall + all\fR should
+denote, for instance.
+.PP
+Thus some (contrived) examples of expressions are:
+.IP
+\fBcos(TIME) + db(v(3))\fR
+.IP
+\fBsin(cos(log([1 2 3 4 5 6 7 8 9 10])))\fR
+.IP
+\fBTIME * rnd(v(9)) - 15 * cos(vin#branch) ^ [7.9e5 8]\fR
+.IP
+\fBnot ((ac3.FREQ[32] & tran1.TIME[10]) gt 3)\fR
+.PP
+.B Nutmeg
+commands are as follows:
+.TP
+\fBplot exprs [ylimit ylo yhi] [xlimit xlo xhi] [xindices xilo xihi]\fR
+.ce
+\fB[xcompress comp] [xdelta xdel] [ydelta ydel] [xlog] [ylog] [vs xname]\fR
+.ce
+\fB[xlabel word] [ylabel word] [title word] [samep]\fR
+Plot the given
+.B exprs
+on the screen (if you are on a graphics terminal). The
+.B xlimit
+and
+.B ylimit
+arguments determine the high and low x- and y-limits of the axes,
+respectively. The
+.B xindices
+arguments determine what range of points are to be plotted \- everything
+between the \fBxilo\fR'th point and the \fBxihi\fR'th point is plotted.
+The
+.B xcompress
+argument specifies that only one out of every \fBcomp\fR points should
+be plotted. If an \fBxdelta\fR or a \fBydelta\fR parameter is present,
+it specifies the spacing between grid lines on the X- and Y-axis.
+These parameter names may be abbreviated to
+.B xl,
+.B yl,
+.B xind,
+.B xcomp,
+.B xdel,
+and
+.B ydel
+respectively.
+The
+.B xname
+argument is an expression to use as the scale on the x-axis. 
+If \fBxlog\fR or \fBylog\fR are present, the X or Y scale respectively
+will be logarithmic.
+The \fBxlabel\fR and \fBylabel\fR arguments cause the specified
+labels to be used for the X and Y axes, respectively.
+If \fBsamep\fR is given, the values of the other parameters (other than
+\fBxname\fR) from the previous \fBplot, hardcopy,\fR or \fBasciiplot\fR
+command will be used unless re-defined on the command line.
+Finally, the \fBtitle\fR argument will be used in the place of the plot
+name at the bottom of the graph.
+.TP
+\fBhardcopy file \fIplotargs\fR
+Just like \fBplot\fR, except creates a file called
+.B file
+containing the plot.  The file is an image in \fIplot(5)\fR format,
+and can be printed by either the \fBplot(1)\fR program or \fBlpr\fR
+with the \fB-g\fR flag.
+.TP
+\fBasciiplot \fIplotargs\fR
+Produce a line printer plot of the vectors.
+The plot is sent to the standard
+output, so you can put it into a file with \fIasciiplot args ... > file\fR.
+The \fBset\fR options \fBwidth, height,\fR and \fBnobreak\fR determine
+the width and height of the plot, and whether there are page breaks,
+respectively. Note that you will have problems if you try to \fBasciiplot\fR
+something with an X-scale that isn't monotonic (i.e, something
+like \fIsin(TIME)\fR ), because \fBasciiplot\fR uses a simple-minded sort
+of linear interpolation.
+.TP
+\fBdefine function(arg1, arg2, ...) expression\fR
+Define the \fIuser-definable function\fR with the name \fIfunction\fR
+and arguments \fIarg1, arg2, ...\fR to be \fIexpression\fR, which
+may involve the arguments. When the function is later used, the arguments
+it is given are substituted for the formal arguments when it is parsed.
+If \fIexpression\fR is not present, any definition for \fIfunction\fR
+is printed, and if there are no arguments to \fIdefine\fR then all
+currently active definitions are printed. Note that you may have different
+functions defined with the same name but different arities.
+Some useful definitions are:
+.IP
+define max(x,y) (x > y) * x + (x <= y) * y
+.br
+define min(x,y) (x < y) * x + (x >= y) * y
+.TP
+\fBundefine function ...\fR
+Definitions for the named user-defined functions are deleted.
+.TP
+\fBlet name = expr\fR
+Creates a new vector called
+.B name
+with the value specified by
+.B expr,
+an expression as described above. If \fBexpr\fR is [] (a zero-length vector)
+then the vector becomes undefined.
+If there are no arguments, \fBlet\fR is the same as \fBdisplay\fR.
+.TP
+\fBprint [col] [line] expr ... \fR
+Prints the vector described by the expression
+.B expr.
+If the 
+.B col
+argument is present, print the vectors named side by side. If \fBline\fR
+is given, the vectors are printed horizontally.  \fBcol\fR is the default,
+unless all the vectors named have a length of one, in which case \fBline\fR
+is the default.
+The options
+\fBwidth, length,\fR and \fBnobreak\fR are effective for this
+command (see \fBasciiplot\fR). If the expression is \fBall\fR,
+all of the vectors available are printed. Thus \fBprint col all > file\fR
+will print everything in the file in \s-2SPICE\s+2\&2 format.
+The scale vector (time, frequency) will always be in the first column
+unless the variable \fBnoprintscale\fR is true.
+.TP
+\fBload [filename] ... \fR
+Loads the raw data in either binary or ascii format
+from the files named. The default filename is \fBrawspice\fR, or the argument
+to the \fB-r\fR flag if there was one.
+.TP
+\fBsource filename\fR
+Reads commands from the file
+.B filename.
+Lines beginning with the character \fB*\fR are considered comments and
+ignored.
+.TP
+\fBhelp [all] [command ...]\fR
+Prints help.  If the argument \fBall\fR is given, a short description
+of everything you could possibly type is printed.  If \fBcommand\fRs are
+given, descriptions of those commands are printed.  Otherwise help for
+only a few major commands is printed.
+.TP
+\fBdisplay [varname ...]\fR
+Prints a summary of currently defined vectors, or of the names specified.
+The vectors are sorted by name unless the variable \fBnosort\fR is set.
+The information given is the name of the vector, the length, the
+type of the vector, and whether it is real or complex data. Additionally,
+one vector will be labeled \fB[scale]\fR. When a command such as
+\fIplot\fR is given without a \fIvs\fR argument, this scale is used
+for the X-axis. It is always the first vector in a rawfile, or
+the first vector defined in a new plot. If you undefine the scale
+(i.e, \fIlet TIME = []\fR), a random remaining
+vector will become the scale.
+.TP
+\fBsetplot [plotname]\fR
+Set the \fBcurrent plot\fR to the plot with the given
+name, or if no name is given, prompt the user with a menu. 
+(Note that the plots are named as they are loaded, with names
+like \fBtran1\fR or \fBop2\fR. These names are shown by the
+\fBsetplot\fR and \fBdisplay\fR commands and are used by \fBdiff\fR,
+below.)
+If the
+"New plot" item is selected, the current plot will become one with
+no vectors defined.
+Note that here the word "plot" refers
+to a group of vectors that are the result of one \s-2SPICE\s+2 run.
+When
+more than one file is loaded in, or more than one plot is present
+in one file, \fBnutmeg\fR keeps them seperate and only shows you the
+vectors in the current plot.
+.TP
+\fBsettype type vector ...\fR
+Change the type of the named vectors to \fBtype\fR.  Type names can
+be found in the manual page for \fBsconvert\fR.
+.TP
+\fBdiff plot1 plot2 [vec ...]\fR
+Compare all the vectors in the specified \fIplots\fR, or only the named
+vectors if any are given. There are different vectors in the two plots,
+or any values in the vectors differ significantly the difference is
+reported. The variables \fBabstol, reltol,\fR and \fBvntol\fR are used
+to determine what "significantly" means (see the \s-2SPICE\s+2\&3 User's
+Manual).
+.TP
+.B quit
+Quit nutmeg.
+.TP
+.B bug
+Send a bug report. (If you have defined BUGADDR, the mail will go there.)
+.TP
+\fBwrite [file] [exprs]\fR
+Writes out the expr's to
+.B file.
+First vectors are grouped together by plots, and written out as such.
+(I.e, if the expression list contained three vectors from one plot
+and two from another, then two plots will be written, one with three
+vectors and one with two.)  Additionally, if the scale for a vector
+isn't present, it is automatically written out as well.
+The default format
+is ascii, but this can be changed with the \fBset filetype\fR command.
+The default filename is \fBrawspice\fR, or the argument to the \fB-r\fR
+flag on the command line, if there was one, and the default expression
+list is \fBall\fR.
+.TP
+\fBshell [args ...]\fR
+Fork a shell, or execute the arguments as a command to the shell.
+.TP
+\fBalias [word] [text ...]\fR
+Causes \fBword\fR to be aliased to \fBtext\fR.  History substitutions may
+be used, as in C-shell aliases.
+.TP
+\fBunalias [word ...]\fR
+Removes any aliases present for the \fBword\fRs.
+.TP
+\fBhistory [number]\fR
+Print out the history, or the last \fBnumber\fR commands typed at the keyboard.
+\fINote:\fR in \*S version 3a7 and earlier, all commands (including ones read
+from files) were saved.
+.TP
+\fBset [word] [word = value] ... \fR
+Set the value of \fBword\fR to be \fBvalue\fR, if it is present.
+You can set any word to be any value, numeric or string.  If no value is
+given then the value is the boolean 'true'.   The value of \fIword\fR may
+be inserted into a command by writing \fI$word\fR.
+If a variable is set to a list of values that are enclosed in parentheses 
+(which
+\fBmust\fR be seperated from their values by white space), the value
+of the variable is the list.
+The variables meaningful to \fBnutmeg\fR (of which there are too many) are:
+.IP "" 16
+\fBabstol\fR
+.br
+The absolute tolerance used by the \fBdiff\fR command.
+.IP
+\fBappendwrite\fR
+.br
+Append to the file when a \fBwrite\fR command is issued, if one
+already exists.
+.IP
+\fBcolor\fIN\fR
+.br
+These variables determine the colors used, if \fBX\fR is being run on
+a color display.
+\fIN\fR may be between 0 and 15.  Color 0 is the background, color 1
+is the grid and text color, and colors 2 through 15 are used in order for
+vectors plotted.  The value of the \fBcolor\fR variables should be names
+of colors, which may be found in the file \fB/usr/lib/rgb.txt\fR.
+.IP
+\fBcombplot\fR
+.br
+Plot vectors by drawing a vertical line from each point to the X-axis,
+as opposed to joining the points.  Note that this option is subsumed
+in the \fIplottype\fR option, below.
+.IP
+\fBcpdebug\fR
+.br
+Print \fIcshpar\fR debugging information. (Must be complied with the
+-DCPDEBUG flag.)
+.IP
+\fBdebug\fR 
+.br
+If set then a lot of debugging information is printed. (Must be
+compiled with the -DFTEDEBUG flag.)
+.IP
+\fBdevice\fR
+.br
+The name (/dev/tty??) of the graphics device. If this variable
+isn't set then the user's terminal is used. To do plotting on
+another monitor you will probably have to set both the \fBdevice\fR
+and \fBterm\fR variables.  (If \fBdevice\fR is set to the name of
+a file, \fBnutmeg\fR will dump the graphics control codes into
+this file -- this is useful for saving plots.)
+.\".IP
+.\"\fBdontplot\fR 
+.\".br
+.\"No graphics control codes are actually sent. (Useful for debugging on
+.\"non-graphics terminals.)
+.IP
+\fBecho\fR 
+.br
+Print out each command before it is executed.
+.IP
+\fBfiletype\fR
+.br
+This can be either
+.B ascii
+or
+.B binary,
+and determines what the format of
+.I rawfiles
+will be. The default is
+.B ascii.
+.IP
+\fBfourgridsize\fR
+.br
+How many points to use for interpolating into when doing fourier analysis.
+.\".IP
+.\"\fBgeometry\fIN\fR
+.\".br
+.\"The size and positioning information for X windows.  \fIN\fR may be
+.\"any positive integer, in which case it is the information for the \fIN\fR'th
+.\"window on the screen, or may be omitted, in which case it is used whenever
+.\"there is no information for the window.  The geometry information is a string
+.\"of the form \fR=\fIheight\fBx\fIwidth\fB+\fIxoff\fB+\fIyoff\fR, where the
+.\"window will be of size \fIheight\fR by \fIwidth\fR and be positioned at
+.\"(\fIxoff, yoff\fR), where (0,0) is the upper left hand corner of the screen.
+.\"Either the positioning information or the size information may be omitted,
+.\"in which case the window will be opened interactively (as will happen if no
+.\"\fBgeometry\fR information is given).  The method of interactive sizing is
+.\"the same as for other X utilities.
+.\"A typical use for the \fBgeometry\fR variables might be to set \fBmaxwins\fR
+.\"to 3 and set \fBgeometry1, geometry2,\fR and \fBgeometry3\fR to position three
+.\"plot windows in a row across the top of the screen.
+.IP
+\fBgridsize\fR
+.br
+If this variable is set to an integer, this number will be used as the number
+of equally spaced points to use for the Y-axis when plotting.  Otherwise
+the current scale will be used (which may not have equally spaced points).
+If the current scale isn't strictly monotonic, then this option will have
+no effect.
+.IP
+\fBhcopydev\fR
+.br
+If this is set, when the \fBhardcopy\fR command is run the resulting file
+is automatically printed on the printer named \fBhcopydev\fR with the
+command \fIlpr -P\fBhcopydev\fI -g \fBfile\fR.
+.IP
+\fBhcopydevtype\fR 
+.br
+This variable specifies the type of the printer output to use in the
+\fBhardcopy\fR command.  If hcopydevtype is not set, plot (5) format
+is assumed.  The standard distribution currently recognizes \fBpostscript\fR
+as an alternative output format.  When used in conjunction with
+\fBhcopydev\fR, \fBhcopydevtype\fR should specify a format supported by
+the printer.
+.IP
+\fBheight\fR 
+.br
+The length of the page for \fBasciiplot\fR and \fBprint col\fR.
+.IP
+\fBhistory\fR 
+.br
+The number of events to save in the history list.
+.\".IP
+.\"\fBmaxwins\fR
+.\".br
+.\"The maximum number of windows X should have on the screen at one time.
+.\"If it has \fBmaxwins\fR or more windows, it will begin re-using them
+.\"for plots in an oldest-first manner.
+.IP
+\fBnfreqs\fR
+.br
+The number of frequencies to compute in the
+.B fourier
+command. (Defaults to 10.)
+.IP
+\fBnobreak\fR 
+.br
+Don't have \fBasciiplot\fR and \fBprint col\fR break between pages.
+.IP
+\fBnoasciiplotvalue\fR
+.br
+Don't print the first vector plotted to the left when doing an
+\fBasciiplot\fR.
+.IP
+\fBnoclobber\fR 
+.br
+Don't overwrite existing files when doing IO redirection.
+.IP
+\fBnoglob\fR
+.br
+Don't expand the global characters `*', `?', `[', and `]'. This is the
+default.
+.IP
+\fBnogrid\fR
+.br
+Don't plot a grid when graphing curves (but do label the axes).
+.IP
+\fBnomoremode\fR
+.br
+If \fBnomoremode\fR is not set, whenever a large amount of data is being
+printed to the screen (e.g, the \fBprint\fR or \fBasciiplot\fR commands),
+the output will be stopped every screenful and will continue when
+a carriage return is typed. If \fBnomoremode\fR is set then data will scroll
+off the screen without hesitation.
+.IP
+\fBnonomatch\fR
+.br
+If \fBnoglob\fR is unset and a global expression cannot be matched, use
+the global characters literally instead of complaining.
+.IP
+\fBnosort\fR 
+.br
+Don't have \fBdisplay\fR sort the variable names.
+.IP
+\fBnoprintscale\fR 
+.br
+Don't print the scale in the leftmost column when a \fBprint col\fR command
+is given.
+.IP
+\fBnumdgt\fR
+.br
+The number of digits to print when printing tables of data (\fBfourier, print
+col\fR).  The default precision is 6 digits.  On the VAX, approximately
+16 decimal digits are available using double precision, so \fBnumdgt\fR
+should not be more than 16.  If the number is negative, one fewer digit
+is printed to ensure constant widths in tables.
+.IP
+\fBplottype\fR
+.br
+This should be one of \fInormal\fR, \fIcomb\fR, or \fIpoint:\fBchars\fR.
+\fInormal\fR, the  default, causes points to be plotted as parts of connected
+lines.  \fIcomb\fR causes a comb plot to be done (see the description of the
+\fIcombplot\fR variable above).  \fIpoint\fR causes each point to be plotted
+seperately \- the \fBchars\fR are a list of characters that will be used
+for each vector plotted.  If they are omitted then a default set is used.
+.IP
+\fBpolydegree\fR
+.br
+The degree of the polynomial that the \fBplot\fR command should fit
+to the data. If \fIpolydegree\fR is N, then \fBnutmeg\fR will fit a degree N
+polynomial to every set of N points and draw 10 intermediate points
+in between each endpoint. If the points aren't monotonic, then it will try
+rotating the curve and reducing the degree until a fit is achieved.
+.IP
+\fBpolysteps\fR
+.br
+The number of points to interpolate between every pair of points available
+when doing curve fitting. The default is 10. (This should really be done
+automatically.)
+.IP
+\fBprogram\fR 
+.br
+The name of the current program (\fIargv[0]\fR).
+.IP
+\fBprompt\fR 
+.br
+The prompt, with the character `!' replaced by the current event number.
+.IP
+\fBrawfile\fR
+.br
+The default name for rawfiles created.
+.IP
+\fBreltol\fR
+.br
+The relative tolerance used by the \fBdiff\fR command.
+.IP
+\fBrhost\fR
+.br
+The machine to use for remote \s-2SPICE-3\s+2 runs, instead of the
+default one. (See the description of the \fBrspice\fR command,
+below.)
+.IP
+\fBrprogram\fR
+.br
+The name of the remote program to use in the \fBrspice\fR command.
+.\".IP
+.\"\fBsavewins\fR
+.\".br
+.\"If true, then don't get rid of the plot window after the plot is done (X
+.\"only).  The window may be removed by clicking any mouse button inside of it.
+.IP
+\fBslowplot\fR
+.br
+Stop between each graph plotted and wait for the user to type
+return before continuing.
+.IP
+\fBsourcepath\fR
+.br
+A list of the directories to search when a \fBsource\fR command is given.
+The default is the current directory and the standard spice library
+(\fI/usr/local/lib/spice\fR, or whatever \fBLIBPATH\fR is #defined to
+in the \*S source.
+.IP
+\fBspicepath\fR
+.br
+The program to use for the \fBaspice\fR command. The default is
+/cad/bin/spice.
+.IP
+\fBterm\fR 
+.br
+The \fImfb\fR name of the current terminal.
+.IP
+\fBunits\fR 
+.br
+If this is \fBdegrees\fR, then all the trig functions will use degrees
+instead of radians.
+.IP
+\fBunixcom\fR
+.br
+If a command isn't defined, try to execute it as a \s-2UNIX\s+2 command.
+Setting this option has the effect of giving a \fBrehash\fR command,
+below.
+This is useful for people who want to use \fBnutmeg\fR as a login shell.
+.IP
+\fBverbose\fR 
+.br
+Be verbose. This is midway between \fBecho\fR and \fBdebug\fR / \fBcpdebug\fR.
+.IP
+\fBvntol\fR
+.br
+The absolute voltage tolerance used by the \fBdiff\fR command.
+.IP
+\fBwidth\fR 
+.br
+The width of the page for \fBasciiplot\fR and \fBprint col\fR.
+.IP
+\fBxbrushheight\fR
+.br
+The height of the brush to use if \fBX\fR is being run.
+.IP
+\fBxbrushwidth\fR
+.br
+The width of the brush to use if \fBX\fR is being run.
+.IP
+\fBxfont\fR
+.br
+The name of the X font to use when plotting data and entering labels.
+The plot may not look entirely great if this is a variable-width font.
+.PP
+.TP
+\fBunset [word] ... \fR
+Unset the variables \fBword\fR.
+.TP
+\fBshift [varname] [number]\fR
+If \fIvarname\fR is the name of a list variable, it is shifted to the left
+by \fInumber\fR elements. (I.e, the \fInumber\fR leftmost elements are
+removed.)  The default \fIvarname\fR is \fBargv\fR, and the default
+\fInumber\fR is 1.
+.TP
+\fBrusage [resource ...]\fR
+Print resource usage statistics.  If any \fBresource\fR\&s are given,
+just print the usage of that resource.  Currently valid \fBresource\fR\&s
+are:
+.IP "" 16
+\fBelapsed\fR
+.br
+The amount of time elapsed since the last \fBrusage elaped\fR call.
+.IP
+\fBfaults\fR
+.br
+Number of page faults and context switches (BSD only).
+.IP
+\fBspace\fR
+.br
+Data space used.
+.IP
+\fBtime\fR
+.br
+CPU time used so far.
+.IP
+\fBeverything\fR
+.br
+All of the above.
+.TP
+\fBcd [directory]\fR
+Change the current working directory to \fBdirectory\fR, or to the user's
+home directory if none is given.
+.TP
+\fBaspice [output-file]\fR
+Start a \s-2SPICE-3\s+2 run, and when it is finished load the data. The
+raw data is kept in a temporary file. If \fIoutput-file\fR is specified
+then the diagnostic output is directed into that file, otherwise it
+is thrown away.
+.TP
+\fBjobs\fR
+Report on the asynchronous \s-2SPICE-3\s+2 jobs currently running.
+\fBNutmeg\fR checks to see if the jobs are finished every time you
+execute a command.
+If it is done then the data is loaded and becomes available.
+.TP
+\fBrspice [input file]\fR
+Runs a \s-2SPICE-3\s+2 remotely taking the \fBinput file\fR as a
+\s-2SPICE-3\s+2 input deck, or the current circuit if no argument is
+given. \fBNutmeg\fR waits for the job to complete, and passes output
+from the remote job to the user's standard output. When the job is
+finished the data is loaded in as with \fRaspice\fR. If the variable
+\fIrhost\fR is set, \fBnutmeg\fR will connect to this host instead of
+the default remote \s-2SPICE-3\s+2 server machine. Note that this
+command will only work if your system administrator is running a
+\s-2SPICE-3\s+2 daemon on the remote host. If the variable \fIrprogram\fR
+is set, then \fBrspice\fR will use this as the pathname to the program
+to run.
+.TP
+\fBecho [stuff...]\fR
+Echos the arguments.
+.TP
+\fBfourier fundamental_frequency [value ...]\fR
+Does a fourier analysis of each of the given values, using the first 10
+multiples of the fundamental frequency (or the first \fInfreqs\fR, if that
+variable is set \- see below). The output is like that of 
+the \fB.four\fR \*S card. The values may be any valid expression.
+The values are interpolated onto a fixed-space grid with the number of
+points given by the \fBfourgridsize\fR variable, or 200 if it is not set.
+The interpolation will be of degree \fBpolydegree\fR if that variable is
+set, or 1.  If \fBpolydegree\fR is 0, then no interpolation will be done.
+This is likely to give erroneous results if the time scale is not monotonic,
+though.
+.TP
+\fBversion [version id]\fR
+Print out the version of \fBnutmeg\fR that is running.
+If there are arguments, it checks to make sure that the arguments match
+the current version of \s-2SPICE\s+2. (This is mainly used as a \fBCommand:\fR
+line in rawfiles.)
+.TP
+\fBrehash\fR
+Recalculate the internal hash tables used when looking up UNIX commands,
+and make all UNIX commands in the user's PATH available for command
+completion.
+This is useless unless you have \fBset unixcom\fR first (see above).
+.PP
+The following control structures are available:
+.IP
+.nf
+\fBwhile\fR \fIcondition\fR
+	statement
+	...
+\fBend\fR
+.fi
+.PP
+While \fIcondition\fR, an arbitrary algebraic expression, is true,
+execute the statements.
+.IP
+.nf
+\fBrepeat\fR \fI[number]\fR
+	statement
+	...
+\fBend\fR
+.fi
+.PP
+Execute the statements \fInumber\fR times, or forever if no argument is
+given.
+.IP
+.nf
+\fBdowhile\fR \fIcondition\fR
+	statement
+	...
+\fBend\fR
+.fi
+.PP
+The same as \fBwhile\fR, except that the \fIcondition\fR is tested after
+the statements are executed.
+.IP
+.nf
+\fBforeach\fR \fIvar\fR \fIvalue ...\fR
+	statement
+	...
+\fBend\fR
+.fi
+.PP
+The statements are executed once for each of the \fIvalue\fRs, each time
+with the variable \fIvar\fR set to the current one.  (\fIvar\fR can be accessed
+by the $\fIvar\fR notation \- see below).
+.IP
+.nf
+\fBif\fR \fIcondition\fR
+	statement
+	...
+\fBelse\fR
+	statement
+	...
+\fBend\fR
+.fi
+.PP
+If the \fIcondition\fR is non-zero then the first set of statements are
+executed, otherwise the second set.  The \fBelse\fR and the second set
+of statements may be omitted.
+.IP
+\fBlabel\fR \fIword\fR
+.PP
+If a statement of the form \fBgoto\fI word\fR is encountered, control is
+transfered to this point, otherwise this is a no-op.
+.IP
+\fBgoto\fR \fIword\fR
+.PP
+If a statement of the form \fBlabel\fI word\fR is present in the block
+or an enclosing block, control is transfered there.  Note that if the
+label is at the top level, it \fImust\fR be before the \fBgoto\fR statement
+(i.e, a forward \fBgoto\fR may occur only within a block).
+.IP
+\fBcontinue\fR
+.PP
+If there is a \fBwhile, dowhile,\fR or \fBforeach\fR block enclosing this
+statement, control passes to the test, or in the case of \fBforeach\fR,
+the next value is taken.
+Otherwise an
+error results.
+.IP
+\fBbreak\fR
+.PP
+If there is a \fBwhile, dowhile,\fR or \fBforeach\fR block enclosing this
+statement, control passes out of the block. Otherwise an
+error results.
+.PP
+Of course, control structures may be nested.  When a block is entered
+and the input is the terminal, the prompt becomes a number of >'s
+equalling the number of blocks the user has entered. The current control
+structures may be examined with the debugging command
+.B cdump.
+.PP
+If a word is typed as a command, and there is no built-in command
+with that name, the directories in the \fIsourcepath\fR list are searched
+in order for the file.  If it is found, it is read in as a command file (as
+if it were \fBsource\fRd).  Before it is read, however, the variables
+\fIargc\fR and \fIargv\fR are set to the number of words following the
+filename on the command line, and a list of those words respectively.
+After the file is finished, these variables are \fBunset\fR.  Note that
+if a command file calls another, it must save its \fIargv\fR and \fIargc\fR
+since they will get altered.  Also, command files may not be re-entrant
+since there are no local variables.  (Of course, the procedures may
+explicitly manipulate a stack...)
+This way one can write scripts analogous to shell scripts for \fBnutmeg\fR and
+\*S.  Note that for the script to work with \*S, it \fBmust\fR begin
+with a blank line (or whatever you like, since it will be thrown away)
+and then a line with \fB.control\fR on it.  This is an unfortunate result
+of the \fBsource\fR command being used for both circuit input and command
+file execution.  Note also that this allows the user to merely type the
+name of a circuit file as a command, and it will be automatically run.
+.PP
+There are various command scripts installed in
+\fI/usr/local/lib/spice/scripts\fR (or whatever the path is on your machine),
+and the default \fIsourcepath\fR includes this directory, so you can use
+these command files (almost) like builtin commands.  
+.PP
+\fBNutmeg\fR will use either \fBX\fR or \fBMFB\fR, depending on whether
+it finds the variable \fBDISPLAY\fR in the environment.  If you are
+using \fBX\fR on a workstation, it should already be present, but if you
+want to display graphics on a different machine than the one you
+are running \fBnutmeg\fR on, \fBDISPLAY\fR should be of the form 
+\fImachine\fR:0.
+.PP
+If \fBX\fR is being used, the cursor may be positioned at any
+point on the screen when the window is up and characters typed at the
+keyboard will be added to the window at that point.  The window may
+then be sent to a printer using the \fBxpr(1)\fR program.
+.PP
+There are a number of pre-defined constants in \fBnutmeg\fR. They are:
+.na
+.nf
+	pi		pi
+	e		The base of natural logarithms
+	c		The speed of light
+	i		The square root of -1
+	kelvin		Absolute 0 in Centigrade
+	echarge		The charge on an electron
+	boltz		Boltzman's constant
+	planck		Planck's constant (h)
+
+.fi
+.ad
+.PP
+These are all in MKS units. If you have another variable with
+a name that conflicts with one of these then it takes precedence.
+.PP
+Nutmeg occasionally checks to see if it
+is getting close to running out of space, and warns the user if this
+is the case. (This is more likely to be useful with the \s-2SPICE\s+2
+front end.)
+.PP
+C-shell type quoting with "" and '', and backquote substitution may
+be used. Within single quotes, no further substitution (like
+history substitution) is done, and within double quotes, the words
+are kept together but further substitution is done. Any text between
+backquotes is replaced by the result of executing the text as a command
+to the shell.
+.PP
+Tenex-style ('set filec' in the 4.3 C-shell)
+command, filename, and keyword completion is possible: If EOF
+(control-D) is typed after the first character on the line, a list
+of the commands or possible arguments is printed. (If it is alone
+on the line it will exit \fBnutmeg\fR.) If escape is typed, then
+\fBnutmeg\fR will try to complete what the user has already typed.
+To get a list of all commands, the user should type <space> ^D.
+.PP
+The values of variables may be used in commands by writing \fB$varname\fR
+where the value of the variable is to appear.  The special variables
+\fI$$\fR and \fI$<\fR refer to the process ID of the program and a
+line of input which is read from the terminal when the variable
+is evaluated, respectively.  If a variable has a name of the form
+\fB$&word\fR, then \fBword\fR is considered a vector (see above),
+and its value is taken to be the value of the variable.
+If \fI$foo\fR is a valid variable, and is of type \fBlist\fR, then the
+expression \fI$foo[low-high]\fR represents a range of elements.  Either
+the upper index or the lower may be left out, and the reverse of a list may
+be obtained with \fI$foo[len-0]\fR.  Also, the notation \fI$?foo\fR evaluates
+to 1 if the variable \fIfoo\fR is defined, 0 otherwise, and \fI$#foo\fR
+evaluates to the number of elements in \fIfoo\fR if it is a list, 1 if it
+is a number or string, and 0 if it is a boolean variable.
+.PP
+History substitutions, similar to C-shell history substitutions, are
+also available \- see the C-shell manual page for all of the details.
+.PP
+The characters ~, {, and } have the same effects as they do in the
+C-Shell, i.e., home directory and alternative expansion. It is
+possible to use the wildcard characters *, ?, [, and ] also,
+but only if you \fBunset noglob\fR first. This makes them rather
+useless for typing algebraic expressions, so you should \fBset noglob\fR
+again after you are done with wildcard expansion. Note that the
+pattern \fB[^abc]\fR will match all characters \fIexcept\fB a, b, 
+\fRand\fB c.\fR
+.PP
+IO redirection is available \- the symbols \fB>, >>, >&, >>&, \fRand\fB <\fR
+have the same effects as in the C-shell.
+.PP
+You may type multiple commands on one line, seperated by semicolons.
+.PP
+If you want to use a different \fBmfbcap\fR file than the default (usually
+\fB~cad/lib/mfbcap\fR), you have to set the environment variable \fBMFBCAP\fR
+before you start \fBnutmeg\fR.  The \fB-m\fR option and the \fBmfbcap\fR
+variable no longer work.
+.SH "VMS NOTES"
+\fBNutmeg\fR can be run under VAX/VMS. Some features like command, etc
+completion, expansion of *, ?, and [], backquote substitution, the
+shell command, and so forth do not work. (In fact command completion
+only works on 4.2 or 4.3 BSD.) 
+.PP
+\fBNutmeg\fR will look for start-up
+commands in the file \fIspice.rc\fR in the current directory.
+.PP
+The standard suffix for rawspice files in VMS is ".raw".
+.PP
+You will have to respond to the \fI-more-\fR prompt during plot with a
+carriage return instead of any key as you can do on UNIX.
+.SH "SEE ALSO"
+sconvert(1), spice(1), mfb(3), writedata(3)
+.SH AUTHOR
+Wayne Christopher (faustus@cad.berkeley.edu)
+.SH BUGS
+.PP
+The label entry facilities are very primitive \- after all, \fBnutmeg\fR isn't
+a graphics editor (yet).  You must be careful to type very slowly when
+entering labels -- \fBnutmeg\fR checks the \fBX\fR event queue once
+every second, and can get very confused if characters arrive faster than
+that.
+.PP
+If you redefine colors after creating a plot window with X, and then
+cause the window to be redrawn, it will not to the right thing.
+.PP
+When defining aliases like
+.IP
+\fIalias pdb plot db( '!:1' - '!:2' )\fR
+.PP
+you must be careful to quote the argument list substitutions in this
+manner. If you quote the whole argument it might not work properly.
+.PP
+In a user-defined function, the arguments cannot be part of a name that
+uses the \fIplot.vec\fR syntax.  I.e,
+.IP
+\fIdefine poke(duck) cos(tran1.duck)
+.PP
+won't do the right thing.
+.PP
+If you type \fBplot all all\fR, or otherwise use a wildcard reference for
+one plot twice in a command, bad things will happen.
+.PP
+The \fBasciiplot\fR command doesn't deal with log scales or the \fBdelta\fR
+keywords.
+.PP
+There are probably some features that \fBnutmeg\fR doesn't have yet.
+.SH CAVEATS
+Often the names of terminals recognised by \fBMFB\fR are different
+from those in /etc/termcap. Thus you may have to reset your terminal
+type with the command
+.IP
+\fBset term = termname\fR
+.PP
+where \fBtermname\fR is the name in the \fBmfbcap\fR file.
+.PP
+The \fBhardcopy\fR command is useless on VMS and other systems without
+the \fBplot\fR command, unless the user has a program that understands
+\fIplot(5)\fR format.
+

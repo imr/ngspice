@@ -1,0 +1,19 @@
+2000-03-11  Paolo Nenzi <p.nenzi@ieee.org> 
+    
+    * jfet2acld.c: prepared the code for multiprocessing and CIDER integration.
+    
+    * jfet2ic.c: prepared the code for multiprocessing and CIDER integration.
+  
+    * jfet2set.c: prepared the code for multiprocessing and CIDER integration.
+
+    * jfet2load.c: prepared the code for multiprocessing and CIDER integration.
+   
+    * jfet2noi.c: prepared the code for multiprocessing and CIDER integration.
+
+    * jfet2trun.c: prepared the code for multiprocessing and CIDER integration.
+
+1999-09-07  Arno  <A.W.Peters@ieee.org>
+
+	* jfet2load.c: removed unused variables.
+
+	* jfet2noi.c: removed unused variable.  Reformatted some comments.

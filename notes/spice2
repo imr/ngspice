@@ -1,0 +1,15 @@
+
+	Incompatibilities between spice3 and spice2
+
+The output format of spice3 is slightly different for .print and .plot lines.
+Most notably, different traces on plots are not scaled independently.  This
+is most noticeable on phase/magnitude plots from an AC analysis (also,
+phase is displayed in radians).  Finally, frequency for ".PRINT AC" lines
+is displayed as a complex quantity with an all-zero imaginary component.
+
+For input, "POLY( )" sources are not supported (the non-linear dependent
+source provides a more general replacement).  Also, the ".ALTER" line
+is not supported.  The Spice3 parser may be slightly different
+on subtle points of reading input (lines need not start at column 1
+for instance).
+

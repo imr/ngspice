@@ -1,0 +1,13 @@
+2000-04-04  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* Makefile.am: Added support for BSIM4
+
+2000-01-16  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* *.c : replaced all FABS macros by the 'fabs' function  
+
+2000-01-14	Paolo Nenzi <p.nenzi@ieee.org>
+
+	* Added bsim3v1 and bsim3v2 directories. They containthe old bsim3 
+	models V3.2 and V3.1. This models are still used in commercial 
+	simulators and some components libraries relies upon them. 

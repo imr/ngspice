@@ -1,0 +1,207 @@
+
+
+	Compiling spice with Think C on a Macintosh. 
+
+A 68020 (Mac II) with co-processor is required.
+
+The src directory from the spice distribution should be moved into
+the C folder.
+
+**** recompile think c libraries ****
+
+	Both the ANSI and unix libraries must be recompiled with the
+	following additional compiler settings:
+		Generate 68020 instructions
+		Generate 68881 instructions
+		4-bytes ints
+		Native floating-point format
+
+	The "console.c" file must be edited and should be removed from
+	the ANSI project.  I actually recompiled copies of the ANSI and
+	unix libraries that I called ANSI.68881 and unix.68881.
+	Copy the "console.c" source (a THINK C file) to a suitable
+	location so that it can be included in the spice project. (See
+	the next section for details of how "consol.c" must be modified.)
+
+
+**** creating the project ****
+
+	Create a new project and set the Options as follows:
+		Laguage Settings
+			Turn on the following options
+				Define #__STDC__
+				Recognize trigraphs
+				enums are always ints
+				Check pointer types
+				Language Extension
+					THINK C
+		Compiler Settings
+			Turn on the following options
+				Generate 68020 instructions
+				Generate 68881 instructions
+				4-bytes ints
+				Native floating-point format
+		Code Optimization
+			Turn on all options
+		Prefix
+			make sure there is no prefix (remove
+			default #include <macheaders>)	
+
+	Note: The Language setting 'Strict Prototype Enforcement' must be
+	turned off.
+			
+	Set the project type to application with at least 1024k partition
+	and turn on the 'Far DATA' option.		
+
+*** Adding the code to the project ***
+
+	Start Adding the code to the project. The code must be divided
+	into segments that are less that 32K each when compiled. The
+	following division has been used:
+
+		Segment  1: the ANSI.68881 and unix.68881 libraries.
+		Segment  2: all *.c files in /src/sparse
+		Segment  3: all *.c files in /src/lib/ni
+		Segment  4: all *.c files in /src/lib/misc
+		Segment  5: files /src/lib/inp/inp2dot.c
+				and /src/lib/inp/inptree.c
+		Segment  6: all other *.c files in /src/inp
+		Segment  7: all *.c files in /src/lib/hlp
+		Segment  8: all *.c files in /src/lib/cp
+				except /src/lib/cp/input.c
+		Segment  9: file /src/lib/ckt/dloadfns.c
+		Segment 10: files /src/lib/ckt/cktpzstr.c,
+				/src/lib/ckt/cktsens.c, /src/lib/ckt/dctran.c,
+				and /src/lib/ckt/distoan.c
+		Segment 11: all other *.c files in /src/lib/ckt
+		Segment 12: cmath*.c files in /src/lib/fte
+		Segment 13: files agraf.c, clip.c, display.c, graf.c,
+				graphdb.c, plot5.c, plotcurv.c and
+				postsc.c in /src/lib/fte
+
+		Segment 14: files evaluate.c, parse.c, postcoms.c,
+				and subckt.c in /src/lib/fte
+		Segment 15: files breakp.c, device.c, doplot.c,
+				grid.c and shyu.c in /src/lib/fte
+		Segment 16: files dotcards.c, inp.c, outif.c, rawfile.c,
+				spiceif.c and vectors.c in /src/lib/fte
+		Segment 17: all other *.c files in /src/lib/fte
+				except nutmegif.c
+		Segment 18: all *.c files in /src/lib/fte/vsrc
+				and /src/lib/fte/isrc
+		Segment 19: all *.c files in /src/lib/fte/jfet
+		Segment 20: all *.c files in /src/lib/fte/vccs,
+				/src/lib/fte/vcvs, /src/lib/fte/cccs,
+				and /src/lib/fte/ccvs
+		Segment 21: all *.c files in /src/lib/fte/asrc
+				and /src/lib/fte/urc
+		Segment 22: all *.c files in /src/lib/fte/cap,
+				/src/lib/fte/ind, and /src/lib/fte/res
+		Segment 23: all *.c files in /src/lib/fte/csw,
+				/src/lib/fte/sw, and /src/lib/fte/tra
+		Segment 24: all *.c files in /src/lib/fte/mos6
+		Segment 25: all *.c files in /src/lib/fte/mes
+		Segment 26: all *.c files in /src/lib/fte/ltra
+		Segment 27: file mos3load.c in /src/lib/fte/mos3
+		Segment 28: files mos3dist.c, mos3dset.c,
+				and mos3sld.c in /src/lib/fte/mos3
+		Segment 29: remaining *.c files in /src/lib/fte/mos3
+		Segment 30: all *.c files in /src/lib/fte/dio
+		Segment 31: file mos1load.c in /src/lib/fte/mos1
+		Segment 32: files mos1dist.c, mos1dset.c,
+				and mos1sld.c in /src/lib/fte/mos1
+		Segment 33: remaining *.c files in /src/lib/fte/mos1
+		Segment 34: file bjtload.c in /src/lib/fte/bjt
+		Segment 35: files bjtdisto.c, bjtdset.c,
+				and bjtsload.c in /src/lib/fte/bjt
+		Segment 36: remaining *.c files in /src/lib/fte/bjt
+		Segment 37: file mos2load.c in /src/lib/fte/mos2
+		Segment 38: file mos2dset.c in /src/lib/fte/mos2
+		Segment 39: files mos2dist.c, and mos2sld.c
+				in /src/lib/fte/mos2
+		Segment 40: remaining *.c files in /src/lib/fte/mos2
+		Segment 41: files b1dset.c, and b1ld.c in /src/lib/fte/bsim1
+		Segment 42: files b1disto.c, and b1eval.c in /src/lib/fte/bsim1
+		Segment 43: remaining *.c files in /src/lib/fte/bsim1
+		Segment 44: files b2eval.c, and b2ld.c in /src/lib/fte/bsim2
+		Segment 45: remaining *.c files in /src/lib/fte/bsim2
+		Segment 46: all *.c files in /src/lib/dev/disto,
+				and devsup.c in /src/lib/dev
+		Segment 47  all *.c files in /src/lib/mac,
+				and file /src/bin/main.c
+
+	Note that the following files are not included:
+		/src/lib/cp/input.c
+		/src/lib/fte/nutmegif.c
+		
+	Add "console.c" (the copy made as described above) and make the
+	following alterations to it:
+		1. The lines:
+			static char console_environment, noPrint, interrupted;
+			static short console_refnum;
+			static MenuHandle appleMenu;
+			static WindowPeek theConsole;
+
+		   must be changed to make console_environment and
+		   appleMenu external:
+			extern char console_environment, noPrint, interrupted;
+			static char noPrint, interrupted;
+			static short console_refnum;
+			extern MenuHandle appleMenu;
+			static WindowPeek theConsole;
+
+		2. Alter the function ProcessEvent() to add a default switch
+		case. The altered section appears following a doEvent label as
+		(note: this code fragment has 4-space tabs and long lines
+		broken to fit an 80-column page; these changes do not affect
+		the code):
+
+			doEvent:
+			    if (event.what == mouseDown) {
+				switch (FindWindow(event.where, &wp)) {
+				    case inMenuBar:
+					InitCursor();
+					choice = MenuSelect(event.where);
+					goto doMenu;
+				    case inSysWindow:
+					SystemClick(&event, wp);
+					break;
+				    default:   /* For spice to pass mouse
+						    events to graphs */
+					if ((WindowPtr) wp != FrontWindow()) {
+					    SelectWindow(wp);
+					    in.cnt = 0;
+					}  /* in.cnt=0 forces console to
+						return to application */
+				}
+			    }
+
+
+
+
+
+	Compilation takes about 3 to 4 hours on a 25MHz mac.  Set the cache
+	to at least 256k to eliminate a lot of disk access.	
+
+**** makeindx ****
+	Create a project with the same option settings decribed above.
+
+	Add src/bin/makeidx.c, ANSI.68881 and an unmodified version of
+	"console.c".
+
+	Build the makeindex application.
+
+	Move the application into lib/helpdir directory of the the spice
+	distribution.  Run it and add the names of the files to be indexed
+	(nutmeg.txt spice.txt) to the command line and hit return.
+
+**** proc2mod ****
+
+	Create a project with the same option settings decribed above.
+
+	Add src/bin/proc2mod.c, src/lib/misc/alloc.c, src/lib/misc/string.c
+		src/lib/inp/inpcfix.c, src/lib/inp/inpeval.c,
+		src/lib/inp/inpgtok.c, ANSI.68881 and an unmodified
+		version of console.c.
+
+	Build the proc2mod application.  

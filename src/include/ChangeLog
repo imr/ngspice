@@ -1,0 +1,98 @@
+1999-11-30  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* ngspice.h: substitutes spice.h
+
+1999-09-08  Arno  <A.W.Peters@ieee.org>
+
+	* distodef.h: added prototypes for derivative functions, retained
+	only ANSI conforming prototypes.
+
+1999-09-07  Arno  <A.W.Peters@ieee.org>
+
+	* ifsim.h: changed the typedef for IFuid from GENERIC to char *.
+
+1999-09-06   Arno Peters <A.W.Peters@ieee.org>
+
+	* fteext.h: changed parameters and return values for math functions from
+        char * to void *.
+
+1999-09-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Makefile.am (noinst_HEADERS): removed patchlev.h
+	added ngspice.h
+
+1999-09-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* ngspice.h: added this generic header file (will eventually replace
+	spice.h)
+
+1999-08-28  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* cpstd.h: now #includes spice.h instead of misc.h
+
+	* spice.h: removed capabil.h from #includes
+	#includes "hw_ieee.h" instead of "hw.h" (removes vms support)
+	merged spice.h with misc.h and util.h
+
+	* misc.h: suppressed code related to HAS_MEMAVL and HAS_BSDRAND
+
+1999-08-26  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+
+	* spmatrix.h: added externs for spOriginalCount
+	
+1999-08-19  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+	* fteext.h: patched for spec command downloaded from:
+	ftp://ftp.mpce.mq.edu.au/pub/elec/spice/patches.
+	
+1999-08-12  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* hlpdefs.h: ansi-fied function declarations
+
+	* complex.h (C_NORM): fixed a bug in C_NORM macros
+
+1999-10-08  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+	* cktdefs.h: removed non STDC definitions and converted to ANSI 
+	prototypes the functions. Marked with ??? the circuit elements 
+	whose function is unknown. If you know their meaning, please write 
+	me an email describing it. Thank you.
+
+	* complex.h: Removed HAS_SHORTMACRO definitions. Defined macros 
+	should be better documented.
+	
+1999-08-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* spice.h: removed 'porth.h' from #includes - now everything
+	shold be handled by autoconf
+
+1999-08-07  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* strext.h: changed HAS_STRINGS into STDC_HEADERS (reversed)
+
+1999-08-06  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* capabil.h: removed X10 defines 
+
+	* misc.h: removed test on HAS_VPERROR
+	removed test on HAS_CLEARERR
+
+1999-08-05  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* util.h: 
+	* misc.h: changed HAS_STDLIB to STDC_HEADERS
+
+	* spice.h: removed 'port.h' from includes
+
+1999-08-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* mfb.h: changed HAS_STAT into STAT_MACROS_BROKEN
+
+04-08-1999 Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+
+	* changed trcvdefs.h: now includes the TEMP code for the temperature
+	sweep code supplied by Serban-Mihai Popescu.
+	
+29-07-1999 emmanuel.rouat@wanadoo.fr (Manu Rouat)
+	
+	* removed old config.h (used my ms-dos only) to avoid confusion
+	with autoconf config.h
+
