@@ -80,7 +80,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 @end titlepage
 
 
-@node Top, Introduction, (dir), (dir)
+@node Top, Acknowledgements, (dir), (dir)
 
 @ifinfo
 This document describes ...
@@ -90,6 +90,7 @@ of the program named ...
 @end ifinfo
 
 @menu
+* Acknowledgements::
 * Introduction::                
 * Circuit Description::         
 * Circuit Elements and Models::  
@@ -106,7 +107,13 @@ of the program named ...
 @c @cindex Index entry for First Chapter
 
 
-@node    Introduction, Circuit Description, Top, Top
+@node    Acknowledgements, Introduction, Top, Top
+@comment node-name,     next,           previous, up
+@chapter Acknowledgements
+
+@include ../AUTHORS
+
+@node    Introduction, Circuit Description, Acknowledgements, Top
 @comment node-name,     next,           previous, up
 @chapter Introduction
 
