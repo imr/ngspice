@@ -6,10 +6,10 @@
 #ifndef CKT
 #define CKT "CKTdefs.h $Revision$  on $Date$ "
 
-#define MAXNUMDEVS 36		/* Max number of possible devices PN:XXX may cause toubles*/
-extern int DEVmaxnum;		/* Not sure if still used */
+#define MAXNUMDEVS 39	/* Max number of possible devices PN:XXX may cause toubles*/
+extern int DEVmaxnum;	/* Not sure if still used */
 #define MAXNUMDEVNODES 4	/* Max No. of nodes per device */
-				/* Need to change for SOI devs ? */
+                         /* Need to change for SOI devs ? */
 
 #include "smpdefs.h"
 #include "ifsim.h"
@@ -258,6 +258,7 @@ extern int CKTdltMod( void *, void *);
 extern int CKTdltNod( void *, void *);
 extern int CKTdoJob( void *, int , void *);
 extern void CKTdump( CKTcircuit *, double, void *);
+extern void CKTncDump(CKTcircuit *);
 extern int CKTfndAnal( void *, int *, void **, IFuid , void *, IFuid );
 extern int CKTfndBranch( CKTcircuit *, IFuid);
 extern int CKTfndDev( void *, int *, void **, IFuid , void *, IFuid );

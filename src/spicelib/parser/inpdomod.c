@@ -86,14 +86,61 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    break;
 	}
 	INPmakeMod(modname, type, image);
-    } else if ((strcmp(typename, "nmf") == 0)
-	       || (strcmp(typename, "pmf") == 0)) {
-	type = INPtypelook("MES");
-	if (type < 0) {
-	    err =
-		INPmkTemp
-		("Device type MES not available in this binary\n");
-	}
+    } else if ((strcmp(typename, "nmf")   == 0)
+	       || (strcmp(typename, "pmf")   == 0)
+	       || (strcmp(typename, "nhfet") == 0)
+	       || (strcmp(typename, "phfet") == 0)) {
+	  err = INPfindLev( line, &lev );
+	  switch ( lev ) 
+	  {	
+		case 0:
+        	case 1:
+        		type = INPtypelook("MES");
+        		if (type < 0)
+        		{
+        			err = INPmkTemp("Device type MES not available\n");
+        		}
+        		break;
+        	case 2:
+        		type = INPtypelook("MESA");
+        		if (type < 0)
+        		{
+        			err = INPmkTemp("Device type MES2 not availabe\n");
+        		}
+        		break;
+			case 3:
+        		type = INPtypelook("MESA");
+        		if (type < 0)
+        		{
+        			err = INPmkTemp("Device type MES2 not availabe\n");
+        		}
+        		break;
+        	case 4:
+        		type = INPtypelook("MESA");
+        		if ( type < 0)
+        		{
+        			err = INPmkTemp(" Device type MESA not available\n");
+        		}
+        		break;
+        	case 5:
+        		type = INPtypelook("HFET1");
+        		if ( type < 0)
+        		{
+        			err = INPmkTemp(" Device type HFET1 not available\n");
+        		}
+        		break;
+        	case 6:
+        		type = INPtypelook("HFET2");
+        		if ( type < 0)
+        		{
+        			err = INPmkTemp(" Device type HFET2 not available in this binary\n");
+        		}
+        		break;
+
+        	default:
+        		err = INPmkTemp("only mesfet device level 1  and hfet level 5-6 supported\n");
+        		break;
+        }
 	INPmakeMod(modname, type, image);
     } else if (strcmp(typename, "urc") == 0) {
 	type = INPtypelook("URC");

@@ -242,10 +242,13 @@ src/spicelib/devices/csw/Makefile	\
 src/spicelib/devices/dio/Makefile	\
 src/spicelib/devices/ind/Makefile	\
 src/spicelib/devices/isrc/Makefile	\
+src/spicelib/devices/hfet1/Makefile	\
+src/spicelib/devices/hfet2/Makefile	\
 src/spicelib/devices/jfet/Makefile	\
 src/spicelib/devices/jfet2/Makefile	\
 src/spicelib/devices/ltra/Makefile	\
 src/spicelib/devices/mes/Makefile	\
+src/spicelib/devices/mesa/Makefile      \
 src/spicelib/devices/mos1/Makefile	\
 src/spicelib/devices/mos2/Makefile	\
 src/spicelib/devices/mos3/Makefile	\

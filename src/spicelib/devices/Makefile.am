@@ -20,15 +20,18 @@ SUBDIRS = \
 	dio	\
 	ind	\
 	isrc	\
+	hfet1	\
+	hfet2	\
 	jfet	\
 	jfet2	\
 	ltra	\
 	mes	\
+	mesa	\
 	mos1	\
 	mos2	\
 	mos3	\
 	mos6	\
-	mos9 \
+	mos9 	\
 	res	\
 	sw	\
 	tra	\

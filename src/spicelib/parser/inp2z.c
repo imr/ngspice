@@ -3,6 +3,13 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Thomas L. Quarles
 **********/
 
+/* Added code from macspice3f4 HFET1&2 and MESA model 
+   Original note:
+     Added device calls for Mesfet models  and HFET models
+   provided by Trond Ytterdal  as of Nov 98 
+*/
+
+
 #include "ngspice.h"
 #include <stdio.h>
 #include "ifsim.h"
@@ -16,7 +23,6 @@ void INP2Z(void *ckt, INPtables * tab, card * current)
 
     /* Zname <node> <node> <node> <model> [<val>] [OFF] [IC=<val>,<val>] */
 
-    int mytype;			/* the type we looked up */
     int type;			/* the type the model says it is */
     char *line;			/* the part of the current line left to parse */
     char *name;			/* the resistor's name */
@@ -36,11 +42,7 @@ void INP2Z(void *ckt, INPtables * tab, card * current)
     void *mdfast;		/* pointer to the actual model */
     IFuid uid;			/* uid for default model */
 
-    mytype = INPtypelook("MES");
-    if (mytype < 0) {
-	LITERR("Device type MES not supported by this binary\n");
-	return;
-    }
+   
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
@@ -55,14 +57,26 @@ void INP2Z(void *ckt, INPtables * tab, card * current)
     thismodel = (INPmodel *) NULL;
     current->error = INPgetMod(ckt, model, &thismodel, tab);
     if (thismodel != NULL) {
-	if (mytype != thismodel->INPmodType) {
-	    LITERR("incorrect model type");
-	    return;
-	}
-	type = mytype;
+		if (   thismodel->INPmodType != INPtypelook("MES") 
+    		    && thismodel->INPmodType != INPtypelook("MESA")
+    		    && thismodel->INPmodType != INPtypelook("HFET1")
+    		    && thismodel->INPmodType != INPtypelook("HFET2")) 
+    	{
+            LITERR("incorrect model type")
+            return;
+        }
+	
+	
+	type = thismodel->INPmodType;
 	mdfast = (thismodel->INPmodfast);
     } else {
-	type = mytype;
+    	
+     type = INPtypelook("MES");
+	if (type < 0 ) {
+			LITERR("Device type MES not supported by this binary\n");
+           	return;
+        }    
+		
 	if (!tab->defZmod) {
 	    /* create default Z model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "Z", UID_MODEL,
@@ -76,7 +90,7 @@ void INP2Z(void *ckt, INPtables * tab, card * current)
     IFC(bindNode, (ckt, fast, 2, node2));
     IFC(bindNode, (ckt, fast, 3, node3));
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
-    if (waslead) {
+    if ( (waslead) && ( thismodel != INPtypelook("MES") ) ) {
 	ptemp.rValue = leadval;
 	GCA(INPpName, ("area", &ptemp, ckt, type, fast));
     }

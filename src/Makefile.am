@@ -36,10 +36,13 @@ DYNAMIC_DEVICELIBS = 			\
 	spicelib/devices/dio/libdio.la		\
 	spicelib/devices/ind/libind.la		\
 	spicelib/devices/isrc/libisrc.la		\
+	spicelib/devices/hfet1/libhfet.la		\
+	spicelib/devices/hfet2/libhfet2.la		\
 	spicelib/devices/jfet/libjfet.la		\
 	spicelib/devices/jfet2/libjfet2.la	\
 	spicelib/devices/ltra/libltra.la		\
 	spicelib/devices/mes/libmes.la		\
+	spicelib/devices/mesa/libmesa.la         \
 	spicelib/devices/mos1/libmos1.la		\
 	spicelib/devices/mos2/libmos2.la		\
 	spicelib/devices/mos3/libmos3.la		\
