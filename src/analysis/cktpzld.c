@@ -45,10 +45,10 @@ combine:
     /* See if any of the DEVload functions bailed. If not, proceed. */
     IGOP_( &type, &error, &length, "max" );
     if (error == OK) {
-      SMPcCombine( ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTrhsSpare,
-	  ckt->CKTirhs, ckt->CKTirhsSpare );
+	SMPcCombine(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTrhsSpare,
+		    ckt->CKTirhs, ckt->CKTirhsSpare );
     } else {
-      return(error);
+	return(error);
     }
 #endif /* PARALLEL_ARCH */
 

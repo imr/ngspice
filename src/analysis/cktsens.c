@@ -127,9 +127,9 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		size = spGetSize(ckt->CKTmatrix, 1);
 
 		/* Create the perturbation matrix */
-		/* XXX check error return, '1' is complex -- necessary?
-		 * only in ac */
-		delta_Y = spCreate(size, !is_dc, &error);
+		delta_Y = spCreate(size, 1, &error);
+		if (error)
+			return error;
 
 		size += 1;
 
