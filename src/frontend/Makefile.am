@@ -76,8 +76,6 @@ libfte_a_SOURCES = \
 	circuits.h	\
 	cpitf.c		\
 	cpitf.h		\
-	debugcom.c	\
-	debugcom.h	\
 	define.c	\
 	define.h	\
 	device.c	\
