@@ -12,7 +12,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cpdefs.h"
 #include "hlpdefs.h"
 
-
+#include "frontend/variable.h"
 
 #ifndef X_DISPLAY_MISSING
 Widget toplevel;

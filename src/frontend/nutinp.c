@@ -12,8 +12,9 @@ Author: 1985 Wayne A. Christopher
 #include "ftedefs.h"
 #include "dvec.h"
 #include "fteinp.h"
-#include "nutinp.h"
 
+#include "nutinp.h"
+#include "variable.h"
 
 /* The routine to source a spice input deck. We read the deck in, take out
  * the front-end commands, and create a CKT structure. Also we filter out

@@ -12,7 +12,6 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "wordlist.h"
 #include "bool.h"
-#include "variable.h"
 
 
 /* alias.c */
@@ -159,18 +158,14 @@ extern bool cp_nonomatch;
 extern char cp_dol;
 extern void cp_remvar(char *varname);
 extern void cp_vset(char *varname, char type, char *value);
-extern wordlist *cp_varwl(struct variable *var);
 extern struct variable *cp_setparse(wordlist *wl);
 
 /* var2.c */
-extern wordlist *vareval(char *string);
-extern wordlist *cp_variablesubst(wordlist *wlist);
 extern void cp_vprint(void);
 extern void com_set(wordlist *wl);
 extern void com_unset(wordlist *wl);
 extern void com_shift(wordlist *wl);
 extern bool cp_getvar(char *name, int type, char *retval);
-extern wordlist *cp_variablesubst(wordlist *wlist);
 
 /* cpinterface.c etc -- stuff CP needs from FTE */
 

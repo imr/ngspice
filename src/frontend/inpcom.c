@@ -13,7 +13,10 @@ Author: 1985 Wayne A. Christopher
 #include "ftedefs.h"
 #include "dvec.h"
 #include "fteinp.h"
+
+
 #include "inpcom.h"
+#include "variable.h"
 
 
 /*  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF'

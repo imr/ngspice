@@ -20,7 +20,10 @@ Author: 1988 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ifsim.h"
 #include "jobdefs.h"
 #include "iferrmsg.h"
+
+#include "circuits.h"
 #include "outitf.h"
+#include "variable.h"
 
 
 extern void gr_end_iplot(void);

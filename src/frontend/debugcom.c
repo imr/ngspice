@@ -13,6 +13,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ftedebug.h"
 #include "dvec.h"
 #include "fteinp.h"
+
+#include "circuits.h"
 #include "debugcom.h"
 
 

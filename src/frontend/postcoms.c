@@ -16,6 +16,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "postcoms.h"
 #include "completion.h"
+#include "variable.h"
 
 /* static declarations */
 static void killplot(struct plot *pl);

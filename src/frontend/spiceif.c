@@ -18,8 +18,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "inpdefs.h"
 #include "iferrmsg.h"
 #include "ifsim.h"
-#include "spiceif.h"
 
+#include "circuits.h"
+#include "spiceif.h"
+#include "variable.h"
 
 /* static declarations */
 static struct variable * parmtovar(IFvalue *pv, IFparm *opt);

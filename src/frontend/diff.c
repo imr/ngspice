@@ -13,6 +13,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <sim.h>
 
 #include "diff.h"
+#include "variable.h"
 
 
 /* Determine if two vectors have the 'same' name. */

@@ -59,6 +59,6 @@ libinp_a_SOURCES = \
 		inp.h
 
 
-INCLUDES = -I$(top_srcdir)/src/include
+INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend
 
 MAINTAINERCLEANFILES = Makefile.in

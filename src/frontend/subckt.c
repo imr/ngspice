@@ -12,8 +12,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "fteinp.h"
-#include "subckt.h"
 
+#include "subckt.h"
+#include "variable.h"
 
 /* static declarations */
 static struct line * doit(struct line *deck);

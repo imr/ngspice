@@ -14,6 +14,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "fteparse.h"
 #include "agraf.h"
 
+#include <variable.h>
+
 #define FUDGE		7
 #define MARGIN_BASE	11
 #define LCHAR		'.'

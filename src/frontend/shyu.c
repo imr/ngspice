@@ -19,6 +19,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "inpdefs.h"
 #include "iferrmsg.h"
 #include "ifsim.h"
+
+#include "circuits.h"
 #include "shyu.h"
 
 

@@ -7,11 +7,6 @@
 #define VAR2_H_INCLUDED
 
 
-struct xxx {
-    struct variable *x_v;
-    char x_char;
-} ;
-
 wordlist * cp_variablesubst(wordlist *wlist);
 wordlist * vareval(char *string);
 void cp_vprint(void);

@@ -19,7 +19,6 @@ noinst_HEADERS = \
 	ftedefs.h \
 	ftedev.h \
 	fteext.h \
-	ftehelp.h \
 	fteinp.h \
 	fteinput.h \
 	fteparse.h \
@@ -34,6 +33,7 @@ noinst_HEADERS = \
 	inpptree.h \
 	jobdefs.h \
 	macros.h \
+	memory.h \
 	missing_math.h \
 	ngspice.h \
 	noisedef.h \
@@ -56,7 +56,6 @@ noinst_HEADERS = \
 	trandefs.h \
 	trcvdefs.h \
 	tskdefs.h \
-	variable.h \
 	wordlist.h
 
 MAINTAINERCLEANFILES = Makefile.in

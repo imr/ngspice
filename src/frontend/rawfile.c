@@ -12,8 +12,9 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "dvec.h"
-#include "rawfile.h"
 
+#include "rawfile.h"
+#include "variable.h"
 
 /* static declarations */
 static void fixdims(struct dvec *v, char *s);

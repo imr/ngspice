@@ -14,7 +14,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "fteinp.h"
 #include <sim.h>
 
+#include "circuits.h"
 #include "dotcards.h"
+#include "variable.h"
 
 
 /* Extract all the .save lines */

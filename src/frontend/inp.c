@@ -16,7 +16,10 @@ Author: 1985 Wayne A. Christopher
 #include "fteinp.h"
 #include "inp.h"
 
+#include "circuits.h"
 #include "completion.h"
+#include "variable.h"
+
 
 /* static declarations */
 static char * upper(register char *string);

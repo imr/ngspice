@@ -13,6 +13,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <terminal.h>
 
 #include "completion.h"
+#include "variable.h"
 
 /* Set some standard variables and aliases, etc, and init the ccom stuff.  */
 

@@ -22,6 +22,7 @@ Author: 1988 Jeffrey M. Hsu
 #  include <fteinput.h>
 #  include <cpdefs.h>
 #  include <ftedefs.h>
+#  include <variable.h>
 
 /* Added X11/ prefix to the next includes - ER */
 

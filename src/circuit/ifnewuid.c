@@ -5,10 +5,15 @@ Author: 1988 Thomas L. Quarles
 
 #include "ngspice.h"
 #include <stdio.h>
-#include "inpdefs.h"
+
+#include <wordlist.h>
+#include <bool.h>
+#include <inpdefs.h>
+#include <circuits.h>
+#include <cpdefs.h>
+
 #include "ifsim.h"
 #include "iferrmsg.h"
-#include "cpdefs.h"
 #include "fteext.h"
 #include "inp.h"
 
@@ -21,14 +26,9 @@ IFnewUid(void *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
     int error;
 
     if (olduid) {
-	newname = (char *)
-	    MALLOC(sizeof(char) *
-		   (strlen(suffix) + strlen((char *) olduid) + 2));
-	/* 2 = '#' + '\0' */
-	sprintf(newname, "%s#%s", (char *) olduid, suffix);
+	asprintf(&newname, "%s#%s", (char *) olduid, suffix);
     } else {
-	newname = (char *) MALLOC(sizeof(char) * (strlen(suffix) + 1));	/* 1 = '\0' */
-	sprintf(newname, "%s", suffix);
+	asprintf(&newname, "%s", suffix);
     }
 
     switch (type) {

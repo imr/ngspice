@@ -66,12 +66,6 @@ struct histent {
 };
 
 
-/* FIXME: Split this file and adjust all callers to the new header files. */
-#if 0
-#warning "Please use a header file more specific than cpdef.h"
-#endif
-#include "variable.h"
-
 
 /* The values returned by cp_userset(). */
 

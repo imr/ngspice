@@ -16,6 +16,7 @@
 #include "arg.h"
 #include "display.h"
 #include "com_hardcopy.h"
+#include "variable.h"
 
 
 /* hardcopy file plotargs, or 'hardcopy file' -- with no other args

@@ -22,6 +22,7 @@ Author: 1988 Jeffrey M. Hsu
 #include "ftedbgra.h"
 #include "ftedev.h"
 #include <terminal.h>
+#include <variable.h>
 
 #include "graf.h"
 

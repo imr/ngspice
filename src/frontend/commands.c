@@ -32,9 +32,21 @@
 
 #include <ngspice.h>
 #include <ftedefs.h>
-#include <ftehelp.h>
+#include <cpdefs.h>
 
+#include "ftehelp.h"
 #include "commands.h"
+
+#include "com_ahelp.h"
+#include "com_asciiplot.h"
+#include "com_compose.h"
+#include "com_display.h"
+#include "com_hardcopy.h"
+#include "com_help.h"
+#include "com_let.h"
+#include "com_plot.h"
+#include "com_setscale.h"
+#include "com_xgraph.h"
 
 
 /* FIXME: Integrate spcp_coms and nutcp_coms into one variable. */
@@ -43,7 +55,6 @@
 /* Bool fields:     stringargs, spiceonly, major */
 
 struct comm spcp_coms[] = {
-
     { "let", com_let, FALSE, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
       arg_let,

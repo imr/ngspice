@@ -13,8 +13,9 @@ Author: 1988 Jeffrey M. Hsu
 #include "ftedbgra.h"
 #include "ftedev.h"
 #include "fteinput.h"
-#include "postsc.h"
 
+#include "postsc.h"
+#include "variable.h"
 
 #define RAD_TO_DEG	(180.0 / M_PI)
 #define DEVDEP(g) (*((PSdevdep *) (g)->devdep))

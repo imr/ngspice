@@ -13,8 +13,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ftedev.h"
 #include "ftedebug.h"
 #include "dvec.h"
-#include "runcoms2.h"
 
+#include "circuits.h"
+#include "runcoms2.h"
+#include "variable.h"
 
 extern FILE *rawfileFp;
 extern bool rawfileBinary;

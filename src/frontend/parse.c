@@ -598,8 +598,12 @@ struct func ft_funcs[] = {
         { "vector", cx_vector } ,
         { "unitvec",    cx_unitvec } ,
         { "length", cx_length } ,
+#if 0
+	/* These functions have been temporarily been disabled.  See
+           their definitions for the reason. */
         { "interpolate",cx_interpolate } ,
         { "deriv",  cx_deriv } ,
+#endif
         { "v",      NULL } ,
         { NULL,     NULL }
 } ;

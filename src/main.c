@@ -22,6 +22,7 @@
 #include <devices/dev.h>
 #include <misc/ivars.h>
 #include <frontend/resource.h>
+#include <frontend/variable.h>
 
 #ifdef HAVE_PWD_H
 #include <pwd.h>

@@ -1,10 +1,11 @@
 #include <ngspice.h>
 #include <bool.h>
-#include <variable.h>
+#include <wordlist.h>
 #include <fteext.h>
 #include <cpextern.h>
 
 #include "com_display.h"
+#include "variable.h"
 #include "plotting/plotting.h"
 #include "plotting/pvec.h"
 

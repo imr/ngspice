@@ -10,8 +10,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "aspice.h"
 
+#include "aspice.h"
+#include "variable.h"
+#include "circuits.h"
 
 #  ifdef HAVE_SYS_WAIT_H
      /* should be more tests here I think */

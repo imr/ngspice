@@ -13,7 +13,7 @@ Author:   1994 Anthony E. Parker, Department of Electronics, Macquarie Uni.
 #include "sim.h"
 
 #include "spec.h"
-
+#include "variable.h"
 
 void
 com_spec(wordlist *wl)

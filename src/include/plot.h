@@ -4,7 +4,6 @@
 #include "wordlist.h"
 #include "bool.h"
 #include "dvec.h"
-#include "variable.h"
 
 /* The information for a particular set of vectors that come from one
  * plot.  */

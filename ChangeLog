@@ -1,3 +1,9 @@
+2000-06-27  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/parser: Refactored commands from the frontend into the
+	frontend directory.  Major changes to organization, but not to
+	functionality.
+
 2000-06-19  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/analysis/cktask.c: moved to src/devices.

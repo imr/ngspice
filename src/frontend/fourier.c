@@ -16,7 +16,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "fteparse.h"
 #include "sperror.h"
 #include "const.h"
+
 #include "fourier.h"
+#include "variable.h"
 
 
 /* static declarations */

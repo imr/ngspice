@@ -99,6 +99,7 @@ help_SOURCES = help.c
 help_LDADD =  \
 	hlp/libhlp.a \
 	parser/libparser.a \
+	frontend/libfte.a \
 	misc/libmisc.a 
 
 

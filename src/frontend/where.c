@@ -9,8 +9,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "dvec.h"
 #include "ftehelp.h"
 #include "hlpdefs.h"
-#include "where.h"
 
+#include "circuits.h"
+#include "where.h"
 
 void
 com_where(void)

@@ -13,8 +13,10 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "dgen.h"
-#include "device.h"
 
+#include "circuits.h"
+#include "device.h"
+#include "variable.h"
 
 
 static wordlist *devexpand(char *name);

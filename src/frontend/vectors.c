@@ -13,8 +13,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <dvec.h>
 #include <sim.h>
 
-#include "vectors.h"
+#include "circuits.h"
 #include "completion.h"
+#include "variable.h"
+#include "vectors.h"
 #include "plotting/plotting.h"
 
 
