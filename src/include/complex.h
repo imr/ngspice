@@ -401,14 +401,6 @@ typedef  struct
     (to).Imag *= (sclr);                \
 }
 
-/* Macro function that multiplies two complex numbers. */
-#define  CMPLX_MULT(to,from_a,from_b)           \
-{   (to).Real = (from_a).Real * (from_b).Real - \
-                (from_a).Imag * (from_b).Imag;  \
-    (to).Imag = (from_a).Real * (from_b).Imag + \
-                (from_a).Imag * (from_b).Real;  \
-}
-
 /* Macro function that implements to *= from for complex numbers. */
 #define  CMPLX_MULT_ASSIGN(to,from)             \
 {   RealNumber to_real_ = (to).Real;            \
