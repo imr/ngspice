@@ -1,23 +1,40 @@
 This file contais a list of known but not yet fixed bugs in ngspice.
-====================================================================
+===========================================================================
 
 Rework15fixed:
 
-define/let commands: 
-the following code causes a segmentation fault:
+* define/let commands: 
+  the following code causes a segmentation fault:
 
-ngspice 1 -> define max(x,y) ( x gt y ) * x + ( x le y ) * y
-ngspice 2 -> let z = max(2,3)
-vec_free: Internal Error: not in plot
-Segmentation fault (core dumped)
+   ngspice 1 -> define max(x,y) ( x gt y ) * x + ( x le y ) * y
+   ngspice 2 -> let z = max(2,3)
+   vec_free: Internal Error: not in plot
+   Segmentation fault (core dumped)
 
----------------------------------------------------------------------
+  The problem seems caused by the attempt to free an already freed 
+  memory area in free_pnode and free_vec functions.
 
-output redirection:
+---------------------------------------------------------------------------
 
-ngspice 1 -> print v(1) > data.txt
+* output redirection:
 
-This syntax does not work anymore. If you wanto to use
-output redirection you have to remove spaces around ">":
+   ngspice 1 -> print v(1) > data.txt
 
-ngspice 1 -> print v(1)>data.txt
+  This syntax does not work anymore (it worked in rework-14). If you 
+  want to use output redirection you have to remove spaces around ">":
+
+   ngspice 1 -> print v(1)>data.txt
+
+---------------------------------------------------------------------------
+
+* return value:
+
+  When ngspice is called in batch mode it returns 1 even if the simulations
+  are run. The problem arise when there is a .control section but no
+  .print, .plot or .fourier lines. Ngspice outputs:
+  
+    Note: No ".plot", ".print", or ".fourier" lines; no simulations run 
+  
+  and exits returning 1.
+  
+  Workaround: add -r <dummyfile> to the command line to avoid this. 
