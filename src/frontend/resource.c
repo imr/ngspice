@@ -32,7 +32,7 @@ char *enddata;
 void
 init_rlimits(void)
 {
-#ifndef __MINGW32__
+#if !defined( __MINGW32__) && !defined(__APPLE_CC__)
     startdata = (char *) baseaddr( );
     enddata = sbrk(0);
 #else
@@ -314,7 +314,7 @@ fault(void)
 	signal(SIGSEGV, (SIGNAL_FUNCTION) fault);	/* SysV style */
 	longjmp(env, 1);
 }
-#ifndef __MINGW32__
+#if !defined(__MINGW32__) && !defined(__APPLE_CC__)
 static void *
 baseaddr(void)
 {

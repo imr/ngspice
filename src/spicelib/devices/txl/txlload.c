@@ -11,7 +11,6 @@ Author: 1992 Charles Hough
 #include "sperror.h"
 #include "suffix.h"
 
-VI_list_txl *pool_vi_txl;
 static double ratio[MAX_CP_TX_LINES];
 static int update_cnv_txl();
 static VI_list_txl *new_vi_txl();

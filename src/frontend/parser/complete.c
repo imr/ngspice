@@ -412,7 +412,7 @@ cp_ccon(bool on)
 #  else
 #    ifdef HAVE_TERMIOS_H
 
-#      ifdef __NetBSD__
+#      if defined(__NetBSD__) || defined(__APPLE_CC__)
 #        define TCGETS
 #        define TCSETS
 #      endif
@@ -425,7 +425,7 @@ cp_ccon(bool on)
 #    endif
 #  endif
 
-#  if defined(TERM_GET) || defined(__NetBSD__)
+#  if defined(TERM_GET) || defined(__NetBSD__) || defined(__APPLE_CC__)
     static bool ison = FALSE;
 
     if (cp_nocc || !cp_interactive || (ison == on))
@@ -433,7 +433,7 @@ cp_ccon(bool on)
     ison = on;
 
     if (ison == TRUE) {
-#ifdef __NetBSD__
+#if defined(__NetBSD__) || defined(__APPLE_CC__)
 	tcgetattr(fileno(cp_in),&OS_Buf);
 #else
 	(void) ioctl(fileno(cp_in), TERM_GET, (char *) &OS_Buf);
@@ -442,13 +442,13 @@ cp_ccon(bool on)
 	sbuf.c_cc[VEOF] = 0;
 	sbuf.c_cc[VEOL] = ESCAPE;
 	sbuf.c_cc[VEOL2] = CNTRL_D;
-#ifdef __NetBSD__
+#if defined(__NetBSD__) || defined(__APPLE_CC__)
 	tcsetattr(fileno(cp_in),TCSANOW,&sbuf);
 #else
 	(void) ioctl(fileno(cp_in), TERM_SET, (char *) &sbuf);
 #endif
     } else {
-#ifdef __NetBSD__
+#if defined(__NetBSD__) || defined(__APPLE_CC__)
 	tcsetattr(fileno(cp_in),TCSANOW,&OS_Buf);
 #else
 	(void) ioctl(fileno(cp_in), TERM_SET, (char *) &OS_Buf);
