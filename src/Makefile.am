@@ -171,14 +171,20 @@ TCL_PKG_PATH = @TCL_PACKAGE_PATH@
 
 TCLSPICE_VERSION = @VERSION@
 
-TCL_FILES = libspice.so pkgIndex.tcl
+TCL_FILES = libspice.so pkgIndex.tcl measure_spice.pl  spicepp.pl \
+	tclspice_source.tcl spicepp.tcl
 
 LIBSPICE_OBJS = tclspice.o
 
 pkgIndex.tcl: pkgIndex.tcl.in
-	rm -f pkgIndex.tcl
-	sed -e 's;%LIB_DIR%;$(TCL_PKG_PATH);g' pkgIndex.tcl.in | \
-	sed -e 's;%VERSION%;$(TCLSPICE_VERSION);g' > pkgIndex.tcl
+	rm -f $@
+	sed -e 's;%LIB_DIR%;$(TCL_PKG_PATH);g' $< | \
+	sed -e 's;%VERSION%;$(TCLSPICE_VERSION);g' > $@
+
+spicepp.pl: spicepp.pl.in
+	rm -f $@
+	sed -e 's;%LIB_DIR%;$(TCL_PKG_PATH);g' $< | \
+	sed -e 's;%VERSION%;$(TCLSPICE_VERSION);g' > $@
 
 install-tcl: install-tcl-recursive install-tclspice install-data-am
 
@@ -197,6 +203,7 @@ install-tclspice: ${TCL_FILES}
 	$(INSTALL_DATA) tclspice_source.tcl $(DESTDIR)$(TCL_PKG_PATH)/spice
 	$(INSTALL_DATA) spicepp.tcl $(DESTDIR)$(TCL_PKG_PATH)/spice
 	$(INSTALL_PROGRAM) spicepp.pl $(DESTDIR)$(TCL_PKG_PATH)/spice
+	$(INSTALL_PROGRAM) measure_spice.pl $(DESTDIR)$(TCL_PKG_PATH)/spice
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	$(INSTALL_PROGRAM) spicewish $(DESTDIR)$(bindir)
 

@@ -14,6 +14,7 @@ namespace eval spicewish {
 		puts "usage: spicewish \[options ...\] \[inputfile ...\]"
 		puts " -b        Run in batch mode."
 		puts " -pp       Execute spicePP on given file."
+		puts " -cm       load Xspice codemodel."
 		puts " -version  Display version number."
 		puts ""
 		exit
@@ -52,6 +53,7 @@ namespace eval spicewish {
 		set fileName ""
 		set mode_batch 0
 		set mode_spicePP 0
+		set codeModels {}
 
 		for {set i 0} {$i < $argc} {incr i} {
 			set arg [lindex $argv $i]
@@ -69,6 +71,10 @@ namespace eval spicewish {
 		                -b           { set mode_batch 1 }
 				-version     { version }
 		                -pp          { set mode_spicePP 1 }
+				-cm	     {
+					set val [lindex $argv [incr i]]
+					lappend codeModels $val
+				}
 				default { usage }
 		            }
 		        } elseif {[file isfile $arg]} {
@@ -78,6 +84,12 @@ namespace eval spicewish {
 
 		if {$fileName == "" } { usage }
 
+		if {[llength $codeModels] != 0} {
+			foreach codeModel $codeModels {
+				spice::codemodel $codeModel
+			}	
+		} 
+		
 		if {$mode_spicePP} {
 			set fileName [ run_spicepp $fileName ]
 		}

@@ -307,7 +307,7 @@ sub expand_meas  {
       push(@xtra, ".control");
       push(@xtra, "print time $trig $targ > meas.data");
       push(@xtra, "echo $_ > meas.ctl");
-      push(@xtra, "shell /usr/lib/spice/measure_spice.pl $name");
+      push(@xtra, "shell %LIB_DIR%/spice/measure_spice.pl $name");
       push(@xtra, ".endc");
       splice(@deck,$i,1,@xtra);
       @xtra=();
