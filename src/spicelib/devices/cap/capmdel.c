@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: Spetember 2003 Paolo Nenzi
 **********/
 /*
  */
@@ -12,11 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CAPmDelete(inModel,modname,kill)
-    GENmodel **inModel;
-    IFuid modname;
-    GENmodel *kill;
-
+CAPmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
 
     CAPmodel *modfast = (CAPmodel*)kill;

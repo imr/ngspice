@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: September 2003 Paolo Nenzi 
 **********/
 /*
  */
@@ -12,11 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CAPdelete(inModel,name,inst)
-    GENmodel *inModel;
-    IFuid name;
-    GENinstance **inst;
-
+CAPdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
 
     CAPinstance **fast = (CAPinstance**)inst;

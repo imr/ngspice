@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: September 2003 Paolo Nenzi
 **********/
 /*
  */
@@ -13,10 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CAPtrunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+CAPtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
     CAPmodel *model = (CAPmodel*)inModel;
     CAPinstance *here;

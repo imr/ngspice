@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: September 2003 Paolo Nenzi
 **********/
 /*
  */
@@ -16,14 +17,22 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CAPmAsk(ckt,inst,which,value)
-    CKTcircuit *ckt;
-    GENmodel *inst;
-    int which;
-    IFvalue *value;
+CAPmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     CAPmodel *here = (CAPmodel*)inst;
     switch(which) {
+        case CAP_MOD_TNOM:
+	    value->rValue = here->CAPtnom-CONSTCtoK;
+	    return(OK);
+	case CAP_MOD_TC1:
+	    value->rValue = here->CAPtempCoeff1;   
+	    return(OK);
+	case CAP_MOD_TC2:
+	    value->rValue = here->CAPtempCoeff2;   
+	    return(OK);  
+	case CAP_MOD_CAP:
+            value->rValue = here->CAPmCap;
+            return(OK);      
         case CAP_MOD_CJ:
             value->rValue = here->CAPcj;
             return(OK);
@@ -33,9 +42,21 @@ CAPmAsk(ckt,inst,which,value)
         case CAP_MOD_DEFWIDTH:
             value->rValue = here->CAPdefWidth;
             return(OK);
+        case CAP_MOD_DEFLENGTH:
+            value->rValue = here->CAPdefLength;
+            return(OK);	    
         case CAP_MOD_NARROW:
             value->rValue = here->CAPnarrow;
             return(OK);
+	case CAP_MOD_SHORT:
+	    value->rValue = here->CAPshort;
+	    return(OK);    
+	case CAP_MOD_DI:
+	    value->rValue = here->CAPdi;
+	    return(OK);
+	case CAP_MOD_THICK:
+	    value->rValue = here->CAPthick;
+	    return(OK);        
         default:  
             return(E_BADPARM);
     }

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: September 2003 Paolo Nenzi
 **********/
 /*
  */
@@ -14,11 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CAPparam(param,value,inst,select)
-    int param;
-    IFvalue *value;
-    GENinstance *inst;
-    IFvalue *select;
+CAPparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     CAPinstance *here = (CAPinstance*)inst;
     switch(param) {
@@ -30,6 +27,14 @@ CAPparam(param,value,inst,select)
             here->CAPinitCond = value->rValue;
             here->CAPicGiven = TRUE;
             break;
+        case CAP_TEMP:
+            here->CAPtemp = value->rValue + CONSTCtoK;
+            here->CAPtempGiven = TRUE;
+            break;
+        case CAP_DTEMP:
+            here->CAPdtemp = value->rValue;
+            here->CAPdtempGiven = TRUE;
+            break;	    	    
         case CAP_WIDTH:
             here->CAPwidth = value->rValue;
             here->CAPwidthGiven = TRUE;
@@ -38,6 +43,14 @@ CAPparam(param,value,inst,select)
             here->CAPlength = value->rValue;
             here->CAPlengthGiven = TRUE;
             break;
+        case CAP_M:
+            here->CAPm = value->rValue;
+            here->CAPmGiven = TRUE;
+            break;	    
+        case CAP_SCALE:
+            here->CAPscale = value->rValue;
+            here->CAPscaleGiven = TRUE;
+            break;	    
         case CAP_CAP_SENS:
             here->CAPsenParmNo = value->iValue;
             break;

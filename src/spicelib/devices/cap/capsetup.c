@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: September 2003 Paolo Nenzi
 **********/
 /*
  */
@@ -14,11 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 /*ARGSUSED*/
 int
-CAPsetup(matrix,inModel,ckt,states)
-    SMPmatrix *matrix;
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    int *states;
+CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the capacitor structure with those pointers needed later 
          * for fast matrix loading 
          */
@@ -31,19 +28,53 @@ CAPsetup(matrix,inModel,ckt,states)
     for( ; model != NULL; model = model->CAPnextModel ) {
 
         /*Default Value Processing for Model Parameters */
-        if (!model->CAPcjGiven) {
-            model->CAPcj = 0;
+	if (!model->CAPmCapGiven) {
+            model->CAPmCap = 0.0;
         }
         if (!model->CAPcjswGiven){
-             model->CAPcjsw = 0;
+             model->CAPcjsw = 0.0;
         }
         if (!model->CAPdefWidthGiven) {
             model->CAPdefWidth = 10.e-6;
         }
-        if (!model->CAPnarrowGiven) {
-            model->CAPnarrow = 0;
+	if (!model->CAPdefLengthGiven) {
+            model->CAPdefLength = 0.0;
         }
-
+        if (!model->CAPnarrowGiven) {
+            model->CAPnarrow = 0.0;
+        }
+        if (!model->CAPshortGiven) {
+            model->CAPshort = 0.0;
+        }
+        if (!model->CAPtc1Given) {
+            model->CAPtempCoeff1 = 0.0;
+        }
+        if (!model->CAPtc2Given) {
+            model->CAPtempCoeff2 = 0.0;
+        }
+	if (!model->CAPtnomGiven) {
+            model->CAPtnom = ckt->CKTnomTemp;
+        }
+	if (!model->CAPdiGiven) {
+            model->CAPdi = 0.0;
+        }
+	if (!model->CAPthickGiven) {
+            model->CAPthick = 0.0;
+        }
+	
+	if (!model->CAPcjGiven) {
+	    if((model->CAPthickGiven) 
+	       && (model->CAPthick > 0.0)) {
+	       
+	       if (model->CAPdiGiven)
+	         model->CAPcj = (model->CAPdi * CONSTepsZero) / model->CAPthick;
+	       else
+	         model->CAPcj = CONSTepsSiO2 / model->CAPthick; 
+	    } else {
+	       model->CAPcj = 0.0;
+	    }
+        }
+	
         /* loop through all the instances of the model */
         for (here = model->CAPinstances; here != NULL ;
                 here=here->CAPnextInstance) {

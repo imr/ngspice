@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: September 2003 Paolo Nenzi
 **********/
 
 #include "ngspice.h"
@@ -10,9 +11,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-CAPgetic(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+CAPgetic(GENmodel *inModel, CKTcircuit *ckt)
 
 {
 

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: September 2003 Paolo Nenzi
 **********/
 
 #include "ngspice.h"
@@ -13,12 +14,8 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CAPask(ckt,inst, which, value, select)
-    CKTcircuit *ckt;
-    GENinstance *inst;
-    int which;
-    IFvalue *value;  
-    IFvalue *select;  
+CAPask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
+       IFvalue *select)  
 {
     CAPinstance *here = (CAPinstance *)inst;
     double vr;
@@ -29,8 +26,15 @@ CAPask(ckt,inst, which, value, select)
     static char *msg = "Current and power not available for ac analysis";
 
     switch(which) {
+        case CAP_TEMP:
+	    value->rValue = here->CAPtemp - CONSTCtoK;
+	    return(OK);
+	case CAP_DTEMP:
+	    value->rValue = here->CAPdtemp;    
+	    return(OK);
         case CAP_CAP:
-        value->rValue=here->CAPcapac;
+            value->rValue=here->CAPcapac;
+	    value->rValue *= here->CAPm;
             return(OK);
         case CAP_IC:
             value->rValue = here->CAPinitCond;
@@ -41,6 +45,12 @@ CAPask(ckt,inst, which, value, select)
         case CAP_LENGTH:
             value->rValue = here->CAPlength;
             return(OK);
+	case CAP_SCALE:
+	    value->rValue = here->CAPscale;
+	    return(OK);
+	case CAP_M:
+	    value->rValue = here->CAPm;
+	    return(OK);        
         case CAP_CURRENT:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
                 errMsg = MALLOC(strlen(msg)+1);
@@ -56,7 +66,10 @@ CAPask(ckt,inst, which, value, select)
                     value->rValue = *(ckt->CKTstate0 + here->CAPccap);
                 }
              } else value->rValue = *(ckt->CKTstate0 + here->CAPccap);
-            return(OK);
+	     
+	    value->rValue *= here->CAPm;
+            
+	    return(OK);
         case CAP_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
                 errMsg = MALLOC(strlen(msg)+1);
@@ -76,7 +89,10 @@ CAPask(ckt,inst, which, value, select)
             } else value->rValue = *(ckt->CKTstate0 + here->CAPccap) *
                             (*(ckt->CKTrhsOld + here->CAPposNode) - 
                             *(ckt->CKTrhsOld + here->CAPnegNode));
-            return(OK);
+            
+	    value->rValue *= here->CAPm;
+	    
+	    return(OK);
         case CAP_QUEST_SENS_DC:
             if(ckt->CKTsenInfo){
                value->rValue = *(ckt->CKTsenInfo->SEN_Sap[select->iValue + 1]+

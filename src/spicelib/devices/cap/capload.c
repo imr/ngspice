@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: September 2003 Paolo Nenzi
 **********/
 
 #include "ngspice.h"
@@ -11,10 +12,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 int
-CAPload(inModel,ckt)
-
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+CAPload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current capacitance value into the 
          * sparse matrix previously provided 
          */
@@ -26,6 +24,7 @@ CAPload(inModel,ckt)
     double geq;
     double ceq;
     int error;
+    double m;
 
     /* check if capacitors are in the circuit or are open circuited */
     if(ckt->CKTmode & (MODETRAN|MODEAC|MODETRANOP) ) {
@@ -41,8 +40,11 @@ CAPload(inModel,ckt)
             /* loop through all the instances of the model */
             for (here = model->CAPinstances; here != NULL ;
                     here=here->CAPnextInstance) {
+		
 		if (here->CAPowner != ARCHme) continue;
                 
+		m = here->CAPm;
+		
                 if(cond1) {
                     vcap = here->CAPinitCond;
                 } else {
@@ -71,12 +73,12 @@ CAPload(inModel,ckt)
                         *(ckt->CKTstate1+here->CAPccap) = 
                             *(ckt->CKTstate0+here->CAPccap);
                     }
-                    *(here->CAPposPosptr) += geq;
-                    *(here->CAPnegNegptr) += geq;
-                    *(here->CAPposNegptr) -= geq;
-                    *(here->CAPnegPosptr) -= geq;
-                    *(ckt->CKTrhs+here->CAPposNode) -= ceq;
-                    *(ckt->CKTrhs+here->CAPnegNode) += ceq;
+                    *(here->CAPposPosptr) += m * geq;
+                    *(here->CAPnegNegptr) += m * geq;
+                    *(here->CAPposNegptr) -= m * geq;
+                    *(here->CAPnegPosptr) -= m * geq;
+                    *(ckt->CKTrhs+here->CAPposNode) -= m * ceq;
+                    *(ckt->CKTrhs+here->CAPnegNode) += m * ceq;
                 } else
 		    *(ckt->CKTstate0+here->CAPqcap) = here->CAPcapac * vcap;
             }
