@@ -151,7 +151,7 @@ OUTPparam(int param, IFvalue *value, void *inCard)
 	    card->OUTPstatsGiven = TRUE;
 	    break;
 	case OUTP_ROOTFILE:
-	    card->OUTProotFile = tilde_expand(value->sValue);
+	    card->OUTProotFile = tildexpand(value->sValue); /*xxx*/
 	    card->OUTProotFileGiven = TRUE;
 	    break;
 	case OUTP_RAWFILE:
