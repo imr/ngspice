@@ -150,6 +150,7 @@ if_run(char *t, char *what, wordlist *args, char *tab)
         deck.li_error = NULL;
         deck.li_linenum = 0;
         deck.li_line = buf;
+        
         if(ft_curckt->ci_specTask) {
             err=(*(ft_sim->deleteTask))(ft_curckt->ci_ckt,
                     ft_curckt->ci_specTask);
@@ -166,10 +167,14 @@ if_run(char *t, char *what, wordlist *args, char *tab)
         }
         err = (*(ft_sim->newTask))(ft_curckt->ci_ckt,
                 (void**)&(ft_curckt->ci_specTask),specUid);
+        
+        
         if(err) {
             ft_sperror(err,"newTask");
             return(2);
         }
+        
+        
         for(j=0;j<ft_sim->numAnalyses;j++) {
             if(strcmp(ft_sim->analyses[j]->name,"options")==0) {
                 which = j;
@@ -190,12 +195,60 @@ if_run(char *t, char *what, wordlist *args, char *tab)
                 ft_sperror(err,"createOptions");
                 return(2);
             }
-
-            ft_curckt->ci_curOpt  = ft_curckt->ci_specOpt;
-
+		ft_curckt->ci_curOpt  = ft_curckt->ci_specOpt;
+		
+		/* This is a very dirty hack but it is the only one I
+		   was able to find without intervening on all the code
+		   It will be changed in the future. */
+		
+		((TSKtask *)(ft_curckt->ci_specOpt))->TSKtemp            = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKtemp;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKnomTemp         = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKnomTemp;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKgmin            = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKgmin;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKgshunt          = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKgshunt;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKabstol          = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKabstol;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKreltol          = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKreltol;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKchgtol          = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKchgtol;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKvoltTol         = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKvoltTol;
+#ifdef NEWTRUNC
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKlteReltol       = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKlteReltol;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKlteAbstol       = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKlteAbstol;
+#endif          
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKtrtol           = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKtrtol;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKbypass          = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKbypass;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKtranMaxIter     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKtranMaxIter;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdcMaxIter       = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdcMaxIter;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdcTrcvMaxIter   = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdcTrcvMaxIter;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKintegrateMethod = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKintegrateMethod;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKmaxOrder        = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKmaxOrder;
+          
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKnumSrcSteps     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKnumSrcSteps;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKnumGminSteps    = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKnumGminSteps;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKgminFactor      = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKgminFactor;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKpivotAbsTol     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKpivotAbsTol;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKpivotRelTol     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKpivotRelTol;
+          
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdefaultMosM     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdefaultMosM;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdefaultMosL     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdefaultMosL;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdefaultMosW     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdefaultMosW;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdefaultMosAD    = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdefaultMosAD;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKdefaultMosAS    = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKdefaultMosAS;
+          
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKnoOpIter        = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKnoOpIter;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKtryToCompact    = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKtryToCompact;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKbadMos3         = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKbadMos3;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKkeepOpInfo      = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKkeepOpInfo;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKcopyNodesets    = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKcopyNodesets;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKnodeDamping     = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKnodeDamping;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKabsDv           = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKabsDv;
+          ((TSKtask *)(ft_curckt->ci_specOpt))->TSKrelDv           = ((TSKtask *)(ft_curckt->ci_defOpt))->TSKrelDv;
+         
+        
         }
         ft_curckt->ci_curTask = ft_curckt->ci_specTask;
-        INPpas2(ckt, (card *) &deck, (INPtables *)tab, ft_curckt->ci_specTask);
+   
+        
+      INPpas2(ckt, (card *) &deck, (INPtables *)tab, ft_curckt->ci_specTask);
+        
         if (deck.li_error) {
             fprintf(cp_err, "Warning: %s\n", deck.li_error);
 	    return 2;
@@ -214,15 +267,17 @@ if_run(char *t, char *what, wordlist *args, char *tab)
 
 /* -- Find out what we are supposed to do.              */
 
-    if (  (eq(what, "tran"))  ||
-          (eq(what, "ac"))  ||
-          (eq(what, "dc")) ||
-          (eq(what, "op")) ||
-          (eq(what, "pz")) ||
-          (eq(what, "disto")) ||
-          (eq(what, "noise")) ||
-            eq(what, "adjsen") || eq(what, "sens") || eq(what,"tf") ||
-          (eq(what, "run"))     )  {
+    if (  (eq(what, "tran"))
+        ||(eq(what, "ac"))
+        ||(eq(what, "dc"))
+        ||(eq(what, "op"))
+        ||(eq(what, "pz"))
+        ||(eq(what, "disto"))
+        ||(eq(what, "noise"))
+        ||(eq(what, "adjsen")) 
+        ||(eq(what, "sens")) 
+        ||(eq(what,"tf"))
+        ||(eq(what, "run"))  )  {
         if ((err = (*(ft_sim->doAnalyses))(ckt, 1, ft_curckt->ci_curTask))!=OK){
             ft_sperror(err, "doAnalyses");
             /* wrd_end(); */
