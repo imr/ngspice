@@ -10,11 +10,11 @@ m1  1 2 0 3 nmos w=10e-6 l=1e-6 m=1.0
 *.dc vgs 0 3 0.05 vbs 0 -5 -1.0
 .dc vds 0 5 0.05 vgs 1 5 1.0
 *
-*.print dc i(vds)
+.print dc i(vds)
 *
 **** HiSIM1.2 ****
 .MODEL NMOS NMOS
-+ LEVEL = 17
++ LEVEL = 64
 + VERSION = 120
 + TOX = 2.480n
 + XLD = 6.66134E-23
@@ -87,7 +87,7 @@ m1  1 2 0 3 nmos w=10e-6 l=1e-6 m=1.0
 + CORSRD=1.000
 *** HiSIM1.2 ***
 .MODEL PMOS PMOS
-+ LEVEL = 17
++ LEVEL = 64
 + VERSION = 120
 + TOX = 2.480n
 + XLD = 6.66134E-22
