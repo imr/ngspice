@@ -6,13 +6,23 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "ftehelp.h"
 #include "hlpdefs.h"
 #include "misccoms.h"
 
 
 static void byemesg(void);
+
+static int
+hcomp(const void *a, const void *b)
+{
+    struct comm **c1 = (struct comm **) a;
+    struct comm **c2 = (struct comm **) b;
+    return (strcmp((*c1)->co_comname, (*c2)->co_comname));
+}
+
+
 
 void
 com_help(wordlist *wl)
@@ -225,12 +235,6 @@ com_ghelp(wordlist *wl)
         hlp_displayname = NULL;
     hlp_main(path, wl);
     return;
-}
-
-int
-hcomp(struct comm **c1, struct comm **c2)
-{
-    return (strcmp((*c1)->co_comname, (*c2)->co_comname));
 }
 
 

@@ -7,35 +7,138 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * Routines for dealing with the vector database.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "ftedata.h"
+#include <ngspice.h>
+#include <cpdefs.h>
+#include <ftedefs.h>
+#include <dvec.h>
+#include <sim.h>
+
 #include "vectors.h"
-
-/* static declarations */
-
-static struct dvec * findvec(char *word, struct plot *pl);
-static struct dvec * sortvecs(struct dvec *d);
-static int veccmp(struct dvec **d1, struct dvec **d2);
-static int namecmp(char *s, char *t);
+#include "completion.h"
+#include "plotting/plotting.h"
 
 
-/* Where 'constants' go when defined on initialization. */
+/* Find a named vector in a plot. We are careful to copy the vector if
+ * v_link2 is set, because otherwise we will get screwed up.  */
+static struct dvec *
+findvec(char *word, struct plot *pl)
+{
+    struct dvec *d, *newv = NULL, *end = NULL, *v;
+    char buf[BSIZE_SP];
 
-static struct plot constantplot = {
-    "Constant values", "Sat Aug 16 10:55:15 PDT 1986", "constants",
-    "const", NULL, NULL, NULL, NULL, NULL, NULL, TRUE
-} ;
+    if (pl == NULL)
+        return (NULL);
 
-struct plot *plot_cur = &constantplot;
-struct plot *plot_list = &constantplot;
-int plotl_changed;      /* TRUE after a load */
+    if (cieq(word, "all")) {
+        for (d = pl->pl_dvecs; d; d = d->v_next) {
+            if (d->v_flags & VF_PERMANENT) {
+                if (d->v_link2) {
+                    v = vec_copy(d);
+                    vec_new(v);
+                } else
+                    v = d;
+                if (end)
+                    end->v_link2 = v;
+                else
+                    newv = v;
+                end = v;
+            }
+        }
+        return (newv);
+    }
 
-int plot_num = 1;
+    for (d = pl->pl_dvecs; d; d = d->v_next)
+        if (cieq(word, d->v_name) && (d->v_flags & VF_PERMANENT))
+            break;
+    if (!d) {
+        (void) sprintf(buf, "v(%s)", word);
+        for (d = pl->pl_dvecs; d; d = d->v_next)
+            if (cieq(buf, d->v_name) && (d->v_flags & VF_PERMANENT))
+                break;
+    }
+    if (d && d->v_link2) {
+        d = vec_copy(d);
+        vec_new(d);
+    }
+
+    return (d);
+}
+
+
+/* If there are imbedded numeric strings, compare them numerically, not
+ * alphabetically.
+ */
+static int
+namecmp(const void *a, const void *b)
+{
+    int i, j;
+
+    char *s = (char *) a;
+    char *t = (char *) b;
+    for (;;) {
+        while ((*s == *t) && !isdigit(*s) && *s)
+            s++, t++;
+        if (!*s)
+            return (0);
+        if ((*s != *t) && (!isdigit(*s) || !isdigit(*t)))
+            return (*s - *t);
+        
+        /* The beginning of a number... Grab the two numbers and then
+         * compare them...  */
+        for (i = 0; isdigit(*s); s++)
+            i = i * 10 + *s - '0';
+        for (j = 0; isdigit(*t); t++)
+            j = j * 10 + *t - '0';
+        
+        if (i != j)
+            return (i - j);
+    }
+}
+
+
+static int
+veccmp(const void *a, const void *b)
+{
+    int i;
+    struct dvec **d1 = (struct dvec **) a;
+    struct dvec **d2 = (struct dvec **) b;
+
+    if ((i = namecmp((*d1)->v_plot->pl_typename,
+            (*d2)->v_plot->pl_typename)) != 0)
+        return (i);
+    return (namecmp((*d1)->v_name, (*d2)->v_name));
+}
+
+
+/* Sort all the vectors in d, first by plot name and then by vector
+ * name.  Do the right thing with numbers.  */
+static struct dvec *
+sortvecs(struct dvec *d)
+{
+    struct dvec **array, *t;
+    int i, j;
+
+    for (t = d, i = 0; t; t = t->v_link2)
+        i++;
+    if (i < 2)
+        return (d);
+    array = (struct dvec **) tmalloc(i * sizeof (struct dvec *));
+    for (t = d, i = 0; t; t = t->v_link2)
+        array[i++] = t;
+    
+    qsort((char *) array, i, sizeof (struct dvec *), veccmp);
+
+    /* Now string everything back together... */
+    for (j = 0; j < i - 1; j++)
+        array[j]->v_link2 = array[j + 1];
+    array[j]->v_link2 = NULL;
+    d = array[0];
+    tfree(array);
+    return (d);
+}
+
 
 /* Load in a rawfile. */
-
 void
 ft_loadfile(char *file)
 {
@@ -304,54 +407,6 @@ vec_get(char *word)
     return (sortvecs(d));
 }
 
-/* Find a named vector in a plot. We are careful to copy the vector
- * if v_link2 is set, because otherwise we will get screwed up.
- */
-
-static struct dvec *
-findvec(char *word, struct plot *pl)
-{
-    struct dvec *d, *newv = NULL, *end = NULL, *v;
-    char buf[BSIZE_SP];
-
-    if (pl == NULL)
-        return (NULL);
-
-    if (cieq(word, "all")) {
-        for (d = pl->pl_dvecs; d; d = d->v_next) {
-            if (d->v_flags & VF_PERMANENT) {
-                if (d->v_link2) {
-                    v = vec_copy(d);
-                    vec_new(v);
-                } else
-                    v = d;
-                if (end)
-                    end->v_link2 = v;
-                else
-                    newv = v;
-                end = v;
-            }
-        }
-        return (newv);
-    }
-
-    for (d = pl->pl_dvecs; d; d = d->v_next)
-        if (cieq(word, d->v_name) && (d->v_flags & VF_PERMANENT))
-            break;
-    if (!d) {
-        (void) sprintf(buf, "v(%s)", word);
-        for (d = pl->pl_dvecs; d; d = d->v_next)
-            if (cieq(buf, d->v_name) && (d->v_flags & VF_PERMANENT))
-                break;
-    }
-    if (d && d->v_link2) {
-        d = vec_copy(d);
-        vec_new(d);
-    }
-
-    return (d);
-}
-
 /* Execute the commands for a plot. This is done whenever a plot becomes
  * the current plot.
  */
@@ -615,75 +670,7 @@ vec_basename(struct dvec *v)
     return (copy(s));
 }
 
-/* Sort all the vectors in d, first by plot name and then by vector name.
- * Do the right thing with numbers.
- */
 
-static struct dvec *
-sortvecs(struct dvec *d)
-{
-    struct dvec **array, *t;
-    int i, j;
-
-    for (t = d, i = 0; t; t = t->v_link2)
-        i++;
-    if (i < 2)
-        return (d);
-    array = (struct dvec **) tmalloc(i * sizeof (struct dvec *));
-    for (t = d, i = 0; t; t = t->v_link2)
-        array[i++] = t;
-    
-    qsort((char *) array, i, sizeof (struct dvec *), veccmp);
-
-    /* Now string everything back together... */
-    for (j = 0; j < i - 1; j++)
-        array[j]->v_link2 = array[j + 1];
-    array[j]->v_link2 = NULL;
-    d = array[0];
-    tfree(array);
-    return (d);
-}
-
-static int
-veccmp(struct dvec **d1, struct dvec **d2)
-{
-    int i;
-
-    if ((i = namecmp((*d1)->v_plot->pl_typename,
-            (*d2)->v_plot->pl_typename)) != 0)
-        return (i);
-    return (namecmp((*d1)->v_name, (*d2)->v_name));
-}
-
-/* If there are imbedded numeric strings, compare them numerically, not
- * alphabetically.
- */
-
-static int
-namecmp(char *s, char *t)
-{
-    int i, j;
-
-    for (;;) {
-        while ((*s == *t) && !isdigit(*s) && *s)
-            s++, t++;
-        if (!*s)
-            return (0);
-        if ((*s != *t) && (!isdigit(*s) || !isdigit(*t)))
-            return (*s - *t);
-        
-        /* The beginning of a number... Grab the two numbers 
-         * and then compare them...
-         */
-        for (i = 0; isdigit(*s); s++)
-            i = i * 10 + *s - '0';
-        for (j = 0; isdigit(*t); t++)
-            j = j * 10 + *t - '0';
-        
-        if (i != j)
-            return (i - j);
-    }
-}
 
 
 /* Make a plot the current one.  This gets called by cp_usrset() when one

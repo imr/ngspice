@@ -15,8 +15,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 
 /* static declarations */
-static int gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny);
-static int gen_Input(REQUEST *request, RESPONSE *response);
+static void gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny);
+static void gen_Input(REQUEST *request, RESPONSE *response);
 static int nop(void);
 static int nodev(void);
 
@@ -230,7 +230,7 @@ void Update(void)
 
 /* note: screen coordinates are relative to window
     so need to add viewport offsets */
-static int
+static void
 gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny)
 {
 
@@ -283,7 +283,7 @@ void Input(REQUEST *request, RESPONSE *response)
 
 }
 
-static int
+static void
 gen_Input(REQUEST *request, RESPONSE *response)
 {
 

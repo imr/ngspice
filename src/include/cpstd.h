@@ -11,35 +11,20 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #ifndef _STD_H_
 #define _STD_H_
 
-typedef int bool;
-
 
 #ifndef FILE
 /* XXX Bogus */
 #  include <stdio.h>
 #endif
 
-/* Doubly linked lists of words. */
+/* FIXME: Split this file and adjust all callers to use new header files */
+#if 0
+#warning "Please use bool.h, wordlist.h or complex.h rather than cpstd.h"
+#endif
 
-struct wordlist {
-    char *wl_word;
-    struct wordlist *wl_next;
-    struct wordlist *wl_prev;
-} ;
-
-typedef struct wordlist wordlist;
-
-/* Complex numbers. */
-
-struct _complex {   /* IBM portability... */
-    double cx_real;
-    double cx_imag;
-} ;
-
-typedef struct _complex complex;
-
-#define realpart(cval)  ((struct _complex *) (cval))->cx_real
-#define imagpart(cval)  ((struct _complex *) (cval))->cx_imag
+#include "bool.h"
+#include "wordlist.h"
+#include "complex.h"
 
 /* Externs defined in std.c */
 

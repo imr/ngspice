@@ -14,7 +14,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "fteinp.h"
-#include "fteconst.h"
+#include "sim.h"
 #include "devdefs.h"
 #include "inpdefs.h"
 #include "iferrmsg.h"

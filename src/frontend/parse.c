@@ -12,9 +12,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "fteparse.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "ftecmath.h"
 #include "parse.h"
+#include "sim.h"
 
 
 /* static declarations */

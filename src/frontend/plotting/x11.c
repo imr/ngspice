@@ -89,8 +89,6 @@ static int numdispplanes;
 
 extern void internalerror (char *message);
 extern void externalerror (char *message);
-void initlinestyles (void);
-void initcolors (GRAPH *graph);
 extern void PushGraphContext (GRAPH *graph);
 extern void SetColor (int colorid);
 extern void Text (char *text, int x, int y);
@@ -98,10 +96,20 @@ extern void SaveText (GRAPH *graph, char *text, int x, int y);
 extern void PopGraphContext (void);
 void slopelocation (GRAPH *graph, int x0, int y0);
 void zoomin (GRAPH *graph);
-void X_ScreentoData (GRAPH *graph, int x, int y, double *fx, double *fy);
 extern int DestroyGraph (int id);
 extern void gr_redraw (GRAPH *graph);
 extern void gr_resize (GRAPH *graph);
+
+
+int
+errorhandler(Display *display, XErrorEvent *errorev)
+{
+	XGetErrorText(display, errorev->error_code, ErrorMessage, 1024);
+	externalerror(ErrorMessage);
+	return 0;
+}
+
+
 
 int
 X11_Init(void)
@@ -167,159 +175,6 @@ X11_Init(void)
 
 	return (0);
 
-}
-
-void
-errorhandler(Display *display, XErrorEvent *errorev)
-{
-	XGetErrorText(display, errorev->error_code, ErrorMessage, 1024);
-	externalerror(ErrorMessage);
-}
-
-/* Recover from bad NewViewPort call. */
-#define RECOVERNEWVIEWPORT()    free((char *) graph);\
-	            graph = (GRAPH *) NULL; 
-	    /* need to do this or else DestroyGraph will free it again */
-
-/* NewViewport is responsible for filling in graph->viewport */
-int
-X11_NewViewport(GRAPH *graph)
-{
-
-	char fontname[513]; /* who knows . . . */
-	char *p, *q;
-	Cursor cursor;
-	XSetWindowAttributes	w_attrs;
-	XGCValues gcvalues;
-	static Arg formargs[ ] = {
-	    { XtNleft, (XtArgVal) XtChainLeft },
-	    { XtNresizable, (XtArgVal) TRUE }
-	};
-	static Arg bboxargs[ ] = {
-	    { XtNfromHoriz, (XtArgVal) NULL },
-	    { XtNbottom, (XtArgVal) XtChainTop },
-	    { XtNtop, (XtArgVal) XtChainTop },
-	    { XtNleft, (XtArgVal) XtChainRight },
-	    { XtNright, (XtArgVal) XtChainRight }
-	};
-	static Arg buttonargs[ ] = {
-	    { XtNlabel, (XtArgVal) NULL },
-	    { XtNfromVert, (XtArgVal) NULL },
-	    { XtNbottom, (XtArgVal) XtChainTop },
-	    { XtNtop, (XtArgVal) XtChainTop },
-	    { XtNleft, (XtArgVal) XtRubber },
-	    { XtNright, (XtArgVal) XtRubber },
-	    { XtNresizable, (XtArgVal) TRUE }
-	};
-	static Arg viewargs[] = {
-	    { XtNresizable, (XtArgVal) TRUE },
-	    { XtNwidth, (XtArgVal) 300 },
-	    { XtNheight, (XtArgVal) 300 },
-	    { XtNright, (XtArgVal) XtChainRight }
-	};
-	int	trys;
-
-	graph->devdep = calloc(1, sizeof(X11devdep));
-
-	/* set up new shell */
-	DEVDEP(graph).shell = XtCreateApplicationShell("shell",
-	        topLevelShellWidgetClass, NULL, 0);
-
-	/* set up form widget */
-	DEVDEP(graph).form = XtCreateManagedWidget("form",
-	    formWidgetClass, DEVDEP(graph).shell, formargs, XtNumber(formargs));
-
-	/* set up viewport */
-	DEVDEP(graph).view = XtCreateManagedWidget("viewport", widgetClass,
-	    DEVDEP(graph).form, viewargs, XtNumber(viewargs));
-	XtAddEventHandler(DEVDEP(graph).view, ButtonPressMask, FALSE,
-	        handlebuttonev, graph);
-	XtAddEventHandler(DEVDEP(graph).view, KeyPressMask, FALSE,
-	        handlekeypressed, graph);
-	XtAddEventHandler(DEVDEP(graph).view, StructureNotifyMask, FALSE,
-	        resize, graph);
-	XtAddEventHandler(DEVDEP(graph).view, ExposureMask, FALSE,
-	        redraw, graph);
-
-	/* set up button box */
-	XtSetArg(bboxargs[1], XtNfromHoriz, DEVDEP(graph).view);
-	DEVDEP(graph).buttonbox = XtCreateManagedWidget("buttonbox",
-	    boxWidgetClass, DEVDEP(graph).form, bboxargs, XtNumber(bboxargs));
-
-	/* set up buttons */
-	XtSetArg(buttonargs[0], XtNlabel, "quit");
-	XtSetArg(bboxargs[1], XtNfromVert, NULL);
-	DEVDEP(graph).buttons[0] = XtCreateManagedWidget("quit",
-	    commandWidgetClass, DEVDEP(graph).buttonbox,
-	    buttonargs, 1);
-	XtAddCallback(DEVDEP(graph).buttons[0], XtNcallback, killwin, graph);
-
-	XtSetArg(buttonargs[0], XtNlabel, "hardcopy");
-	XtSetArg(bboxargs[1], XtNfromVert, DEVDEP(graph).buttons[0]);
-	DEVDEP(graph).buttons[1] = XtCreateManagedWidget("hardcopy",
-	    commandWidgetClass, DEVDEP(graph).buttonbox,
-	    buttonargs, 1);
-	XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, hardcopy, graph);
-
-	/* set up fonts */
-	if (!cp_getvar("font", VT_STRING, fontname)) {
-	  (void) strcpy(fontname, DEF_FONT);
-	}
-
-	for (p = fontname; *p && *p <= ' '; p++)
-		;
-	if (p != fontname) {
-		for (q = fontname; *p; *q++ = *p++)
-			;
-		*q = 0;
-	}
-
-	trys = 1;
-	while (!(DEVDEP(graph).font = XLoadQueryFont(display, fontname))) {
-	  sprintf(ErrorMessage, "can't open font %s", fontname);
-	  strcpy(fontname, "fixed");
-	  if (trys > 1) {
-	      internalerror(ErrorMessage);
-	      RECOVERNEWVIEWPORT();
-	      return(1);
-	  }
-	  trys += 1;
-	}
-
-	graph->fontwidth = DEVDEP(graph).font->max_bounds.rbearing -
-	        DEVDEP(graph).font->min_bounds.lbearing + 1;
-	graph->fontheight = DEVDEP(graph).font->max_bounds.ascent +
-	        DEVDEP(graph).font->max_bounds.descent + 1;
-
-	XtRealizeWidget(DEVDEP(graph).shell);
-
-	DEVDEP(graph).window = XtWindow(DEVDEP(graph).view);
-	DEVDEP(graph).isopen = 0;
-	w_attrs.bit_gravity = ForgetGravity;
-	XChangeWindowAttributes(display, DEVDEP(graph).window, CWBitGravity,
-		&w_attrs);
-	/* have to note font and set mask GCFont in XCreateGC, p.w.h. */
-	gcvalues.font = DEVDEP(graph).font->fid;
-	gcvalues.line_width = MW_LINEWIDTH;
-	gcvalues.cap_style = CapNotLast;
-	gcvalues.function = GXcopy;
-	DEVDEP(graph).gc = XCreateGC(display, DEVDEP(graph).window,
-	        GCFont | GCLineWidth | GCCapStyle | GCFunction, &gcvalues);
-
-	/* should absolute.positions really be shell.pos? */
-	graph->absolute.xpos = DEVDEP(graph).view->core.x;
-	graph->absolute.ypos = DEVDEP(graph).view->core.y;
-	graph->absolute.width = DEVDEP(graph).view->core.width;
-	graph->absolute.height = DEVDEP(graph).view->core.height;
-
-	initlinestyles();
-	initcolors(graph);
-
-	/* set up cursor */
-	cursor = XCreateFontCursor(display, XC_left_ptr);
-	XDefineCursor(display, DEVDEP(graph).window, cursor);
-
-	return (0);
 }
 
 static void
@@ -404,6 +259,199 @@ initcolors(GRAPH *graph)
     for (i = xmaxcolors; i < NUMCOLORS; i++) {
 	graph->colors[i] = graph->colors[i + 1 - xmaxcolors];
     }
+}
+
+
+void
+handlekeypressed(Widget w, caddr_t clientdata, caddr_t calldata)
+{
+
+	XKeyEvent *keyev = (XKeyPressedEvent *) calldata;
+	GRAPH *graph = (GRAPH *) clientdata;
+	char text[4];
+	int nbytes;
+
+	nbytes = XLookupString(keyev, text, 4, NULL, NULL);
+	if (!nbytes) return;
+	/* write it */
+	PushGraphContext(graph);
+	text[nbytes] = '\0';
+	SetColor(1);
+	Text(text, keyev->x, graph->absolute.height - keyev->y);
+	/* save it */
+	SaveText(graph, text, keyev->x, graph->absolute.height - keyev->y);
+	/* warp mouse so user can type in sequence */
+	XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0,
+	    keyev->x + XTextWidth(DEVDEP(graph).font, text, nbytes),
+	    keyev->y);
+	PopGraphContext();
+
+}
+
+void
+handlebuttonev(Widget w, caddr_t clientdata, caddr_t calldata)
+{
+
+	XButtonEvent *buttonev = (XButtonEvent *) calldata;
+
+	switch (buttonev->button) {
+	  case Button1:
+	    slopelocation((GRAPH *) clientdata, buttonev->x, buttonev->y);
+	    break;
+	  case Button3:
+	    zoomin((GRAPH *) clientdata);
+	    break;
+	}
+
+}
+
+
+/* Recover from bad NewViewPort call. */
+#define RECOVERNEWVIEWPORT()    free((char *) graph);\
+	            graph = (GRAPH *) NULL; 
+	    /* need to do this or else DestroyGraph will free it again */
+
+/* NewViewport is responsible for filling in graph->viewport */
+int
+X11_NewViewport(GRAPH *graph)
+{
+
+	char fontname[513]; /* who knows . . . */
+	char *p, *q;
+	Cursor cursor;
+	XSetWindowAttributes	w_attrs;
+	XGCValues gcvalues;
+	static Arg formargs[ ] = {
+	    { XtNleft, (XtArgVal) XtChainLeft },
+	    { XtNresizable, (XtArgVal) TRUE }
+	};
+	static Arg bboxargs[ ] = {
+	    { XtNfromHoriz, (XtArgVal) NULL },
+	    { XtNbottom, (XtArgVal) XtChainTop },
+	    { XtNtop, (XtArgVal) XtChainTop },
+	    { XtNleft, (XtArgVal) XtChainRight },
+	    { XtNright, (XtArgVal) XtChainRight }
+	};
+	static Arg buttonargs[ ] = {
+	    { XtNlabel, (XtArgVal) NULL },
+	    { XtNfromVert, (XtArgVal) NULL },
+	    { XtNbottom, (XtArgVal) XtChainTop },
+	    { XtNtop, (XtArgVal) XtChainTop },
+	    { XtNleft, (XtArgVal) XtRubber },
+	    { XtNright, (XtArgVal) XtRubber },
+	    { XtNresizable, (XtArgVal) TRUE }
+	};
+	static Arg viewargs[] = {
+	    { XtNresizable, (XtArgVal) TRUE },
+	    { XtNwidth, (XtArgVal) 300 },
+	    { XtNheight, (XtArgVal) 300 },
+	    { XtNright, (XtArgVal) XtChainRight }
+	};
+	int	trys;
+
+	graph->devdep = calloc(1, sizeof(X11devdep));
+
+	/* set up new shell */
+	DEVDEP(graph).shell = XtCreateApplicationShell("shell",
+	        topLevelShellWidgetClass, NULL, 0);
+
+	/* set up form widget */
+	DEVDEP(graph).form = XtCreateManagedWidget("form",
+	    formWidgetClass, DEVDEP(graph).shell, formargs, XtNumber(formargs));
+
+	/* set up viewport */
+	DEVDEP(graph).view = XtCreateManagedWidget("viewport", widgetClass,
+						   DEVDEP(graph).form,
+						   viewargs,
+						   XtNumber(viewargs));
+	XtAddEventHandler(DEVDEP(graph).view, ButtonPressMask, FALSE,
+			  handlebuttonev, graph);
+	XtAddEventHandler(DEVDEP(graph).view, KeyPressMask, FALSE,
+			  handlekeypressed, graph);
+	XtAddEventHandler(DEVDEP(graph).view, StructureNotifyMask, FALSE,
+			  resize, graph);
+	XtAddEventHandler(DEVDEP(graph).view, ExposureMask, FALSE,
+	        redraw, graph);
+
+	/* set up button box */
+	XtSetArg(bboxargs[1], XtNfromHoriz, DEVDEP(graph).view);
+	DEVDEP(graph).buttonbox = XtCreateManagedWidget("buttonbox",
+	    boxWidgetClass, DEVDEP(graph).form, bboxargs, XtNumber(bboxargs));
+
+	/* set up buttons */
+	XtSetArg(buttonargs[0], XtNlabel, "quit");
+	XtSetArg(bboxargs[1], XtNfromVert, NULL);
+	DEVDEP(graph).buttons[0] = XtCreateManagedWidget("quit",
+	    commandWidgetClass, DEVDEP(graph).buttonbox,
+	    buttonargs, 1);
+	XtAddCallback(DEVDEP(graph).buttons[0], XtNcallback, killwin, graph);
+
+	XtSetArg(buttonargs[0], XtNlabel, "hardcopy");
+	XtSetArg(bboxargs[1], XtNfromVert, DEVDEP(graph).buttons[0]);
+	DEVDEP(graph).buttons[1] = XtCreateManagedWidget("hardcopy",
+	    commandWidgetClass, DEVDEP(graph).buttonbox,
+	    buttonargs, 1);
+	XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, hardcopy, graph);
+
+	/* set up fonts */
+	if (!cp_getvar("font", VT_STRING, fontname)) {
+	  (void) strcpy(fontname, DEF_FONT);
+	}
+
+	for (p = fontname; *p && *p <= ' '; p++)
+		;
+	if (p != fontname) {
+		for (q = fontname; *p; *q++ = *p++)
+			;
+		*q = 0;
+	}
+
+	trys = 1;
+	while (!(DEVDEP(graph).font = XLoadQueryFont(display, fontname))) {
+	  sprintf(ErrorMessage, "can't open font %s", fontname);
+	  strcpy(fontname, "fixed");
+	  if (trys > 1) {
+	      internalerror(ErrorMessage);
+	      RECOVERNEWVIEWPORT();
+	      return(1);
+	  }
+	  trys += 1;
+	}
+
+	graph->fontwidth = DEVDEP(graph).font->max_bounds.rbearing -
+	        DEVDEP(graph).font->min_bounds.lbearing + 1;
+	graph->fontheight = DEVDEP(graph).font->max_bounds.ascent +
+	        DEVDEP(graph).font->max_bounds.descent + 1;
+
+	XtRealizeWidget(DEVDEP(graph).shell);
+
+	DEVDEP(graph).window = XtWindow(DEVDEP(graph).view);
+	DEVDEP(graph).isopen = 0;
+	w_attrs.bit_gravity = ForgetGravity;
+	XChangeWindowAttributes(display, DEVDEP(graph).window, CWBitGravity,
+		&w_attrs);
+	/* have to note font and set mask GCFont in XCreateGC, p.w.h. */
+	gcvalues.font = DEVDEP(graph).font->fid;
+	gcvalues.line_width = MW_LINEWIDTH;
+	gcvalues.cap_style = CapNotLast;
+	gcvalues.function = GXcopy;
+	DEVDEP(graph).gc = XCreateGC(display, DEVDEP(graph).window,
+	        GCFont | GCLineWidth | GCCapStyle | GCFunction, &gcvalues);
+
+	/* should absolute.positions really be shell.pos? */
+	graph->absolute.xpos = DEVDEP(graph).view->core.x;
+	graph->absolute.ypos = DEVDEP(graph).view->core.y;
+	graph->absolute.width = DEVDEP(graph).view->core.width;
+	graph->absolute.height = DEVDEP(graph).view->core.height;
+
+	initlinestyles();
+	initcolors(graph);
+
+	/* set up cursor */
+	cursor = XCreateFontCursor(display, XC_left_ptr);
+	XDefineCursor(display, DEVDEP(graph).window, cursor);
+
+	return (0);
 }
 
 /* This routine closes the X connection.
@@ -536,48 +584,40 @@ X11_Clear(void)
 
 }
 
-void
-handlekeypressed(Widget w, caddr_t clientdata, caddr_t calldata)
+static void
+X_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy)
 {
+	double	lmin, lmax;
 
-	XKeyEvent *keyev = (XKeyPressedEvent *) calldata;
-	GRAPH *graph = (GRAPH *) clientdata;
-	char text[4];
-	int nbytes;
+	if (graph->grid.gridtype == GRID_XLOG
+		|| graph->grid.gridtype == GRID_LOGLOG)
+	{
+		lmin = log10(graph->datawindow.xmin);
+		lmax = log10(graph->datawindow.xmax);
+		*fx = exp(((x - graph->viewportxoff)
+			* (lmax - lmin) / graph->viewport.width + lmin)
+			* M_LN10);
+	} else {
+		*fx = (x - graph->viewportxoff) * graph->aspectratiox +
+			graph->datawindow.xmin;
+	}
 
-	nbytes = XLookupString(keyev, text, 4, NULL, NULL);
-	if (!nbytes) return;
-	/* write it */
-	PushGraphContext(graph);
-	text[nbytes] = '\0';
-	SetColor(1);
-	Text(text, keyev->x, graph->absolute.height - keyev->y);
-	/* save it */
-	SaveText(graph, text, keyev->x, graph->absolute.height - keyev->y);
-	/* warp mouse so user can type in sequence */
-	XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0,
-	    keyev->x + XTextWidth(DEVDEP(graph).font, text, nbytes),
-	    keyev->y);
-	PopGraphContext();
-
-}
-
-void
-handlebuttonev(Widget w, caddr_t clientdata, caddr_t calldata)
-{
-
-	XButtonEvent *buttonev = (XButtonEvent *) calldata;
-
-	switch (buttonev->button) {
-	  case Button1:
-	    slopelocation((GRAPH *) clientdata, buttonev->x, buttonev->y);
-	    break;
-	  case Button3:
-	    zoomin((GRAPH *) clientdata);
-	    break;
+	if (graph->grid.gridtype == GRID_YLOG
+		|| graph->grid.gridtype == GRID_LOGLOG)
+	{
+		lmin = log10(graph->datawindow.ymin);
+		lmax = log10(graph->datawindow.ymax);
+		*fy = exp(((graph->absolute.height - y - graph->viewportxoff)
+			* (lmax - lmin) / graph->viewport.height + lmin)
+			* M_LN10);
+	} else {
+		*fy = ((graph->absolute.height - y) - graph->viewportyoff)
+			* graph->aspectratioy + graph->datawindow.ymin;
 	}
 
 }
+
+
 
 void
 slopelocation(GRAPH *graph, int x0, int y0)
@@ -913,41 +953,6 @@ out:
 	return;
 
 }
-
-static
-void
-X_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy)
-{
-	double	lmin, lmax;
-
-	if (graph->grid.gridtype == GRID_XLOG
-		|| graph->grid.gridtype == GRID_LOGLOG)
-	{
-		lmin = log10(graph->datawindow.xmin);
-		lmax = log10(graph->datawindow.xmax);
-		*fx = exp(((x - graph->viewportxoff)
-			* (lmax - lmin) / graph->viewport.width + lmin)
-			* M_LN10);
-	} else {
-		*fx = (x - graph->viewportxoff) * graph->aspectratiox +
-			graph->datawindow.xmin;
-	}
-
-	if (graph->grid.gridtype == GRID_YLOG
-		|| graph->grid.gridtype == GRID_LOGLOG)
-	{
-		lmin = log10(graph->datawindow.ymin);
-		lmax = log10(graph->datawindow.ymax);
-		*fy = exp(((graph->absolute.height - y - graph->viewportxoff)
-			* (lmax - lmin) / graph->viewport.height + lmin)
-			* M_LN10);
-	} else {
-		*fy = ((graph->absolute.height - y) - graph->viewportyoff)
-			* graph->aspectratioy + graph->datawindow.ymin;
-	}
-
-}
-
 
 static void
 linear_arc(int x0, int y0, int radius, double theta1, double theta2)

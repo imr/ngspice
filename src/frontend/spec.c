@@ -9,7 +9,9 @@ Author:   1994 Anthony E. Parker, Department of Electronics, Macquarie Uni.
 
 #include "ngspice.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
+#include "sim.h"
+
 #include "spec.h"
 
 

@@ -1,22 +1,63 @@
-/**********
-Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
-**********/
+/* The 'compose' command.  This is a more powerful and convenient form
+ * of the 'let' command.  */
+#include <ngspice.h>
+#include <complex.h>
+#include <dvec.h>
+#include <bool.h>
+#include <sim.h>
+#include <pnode.h>
+#include <fteext.h>
 
-/*
- * The 'compose' command.  This is a more powerful and convenient form of the
- * 'let' command.
- */
+#include "com_compose.h"
+#include "completion.h"
+#include "streams.h"
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "ftedata.h"
-#include "fteparse.h"
-#include "compose.h"
+/* Copy the data from a vector into a buffer with larger dimensions. */
+static void
+dimxpand(struct dvec *v, int *newdims, double *data)
+{
+    complex *cdata = (complex *) data;
+    bool realflag = isreal(v);
+    int i, j, o, n, t, u;
+    int ncount[MAXDIMS], ocount[MAXDIMS];
+
+    for (i = 0; i < MAXDIMS; i++)
+        ncount[i] = ocount[i] = 0;
+    
+    for (;;) {
+        for (o = n = i = 0; i < v->v_numdims; i++) {
+            for (j = i, t = u = 1; j < v->v_numdims; j++) {
+                t *= v->v_dims[j];
+                u *= newdims[j];
+            }
+            o += ocount[i] * t;
+            n += ncount[i] * u;
+        }
+
+        if (realflag) {
+            data[n] = v->v_realdata[o];
+        } else {
+            realpart(&cdata[n]) = realpart(&v->v_compdata[o]);
+            imagpart(&cdata[n]) = imagpart(&v->v_compdata[o]);
+        }
+        /* Now find the nextstrchr element... */
+        for (i = v->v_numdims - 1; i >= 0; i--) {
+            if ((ocount[i] < v->v_dims[i] - 1) &&
+                    (ncount[i] < newdims[i] - 1)) {
+                ocount[i]++;
+                ncount[i]++;
+                break;
+            } else
+                ocount[i] = ncount[i] = 0;
+        }
+        if (i < 0)
+            break;
+    }
+
+    return;
+}
 
 
-static void dimxpand(struct dvec *v, int *newdims, double *data);
 
 
 /* The general syntax is 'compose name parm = val ...'
@@ -47,7 +88,10 @@ static void dimxpand(struct dvec *v, int *newdims, double *data);
 void
 com_compose(wordlist *wl)
 {
-    double start, stop, step, lin;
+    double start = 0.0;
+    double stop = 0.0;
+    double step = 0.0;
+    double lin = 0.0;
     double center;
     double span;
     double mean, sd;
@@ -66,9 +110,10 @@ com_compose(wordlist *wl)
 
     char *resname, *s, *var, *val;
     double *td, tt;
-    double *data;
-    complex *cdata;
-    int length, dim, type = SV_NOTYPE, blocksize;
+    double *data = NULL;
+    complex *cdata = NULL;
+    int length = 0;
+    int dim, type = SV_NOTYPE, blocksize;
     bool realflag = TRUE;
     int dims[MAXDIMS];
     struct dvec *result, *vecs = NULL, *v, *lv = NULL;
@@ -435,50 +480,3 @@ com_compose(wordlist *wl)
     cp_addkword(CT_VECTOR, result->v_name);
     return;
 }
-
-/* Copy the data from a vector into a buffer with larger dimensions. */
-
-static void
-dimxpand(struct dvec *v, int *newdims, double *data)
-{
-    complex *cdata = (complex *) data;
-    bool realflag = isreal(v);
-    int i, j, o, n, t, u;
-    int ncount[MAXDIMS], ocount[MAXDIMS];
-
-    for (i = 0; i < MAXDIMS; i++)
-        ncount[i] = ocount[i] = 0;
-    
-    for (;;) {
-        for (o = n = i = 0; i < v->v_numdims; i++) {
-            for (j = i, t = u = 1; j < v->v_numdims; j++) {
-                t *= v->v_dims[j];
-                u *= newdims[j];
-            }
-            o += ocount[i] * t;
-            n += ncount[i] * u;
-        }
-
-        if (realflag) {
-            data[n] = v->v_realdata[o];
-        } else {
-            realpart(&cdata[n]) = realpart(&v->v_compdata[o]);
-            imagpart(&cdata[n]) = imagpart(&v->v_compdata[o]);
-        }
-        /* Now find the nextstrchr element... */
-        for (i = v->v_numdims - 1; i >= 0; i--) {
-            if ((ocount[i] < v->v_dims[i] - 1) &&
-                    (ncount[i] < newdims[i] - 1)) {
-                ocount[i]++;
-                ncount[i]++;
-                break;
-            } else
-                ocount[i] = ncount[i] = 0;
-        }
-        if (i < 0)
-            break;
-    }
-
-    return;
-}
-

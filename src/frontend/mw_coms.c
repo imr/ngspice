@@ -7,7 +7,7 @@
 #include "ftedefs.h"
 #include "ftedev.h"
 #include "ftedebug.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "mw_coms.h"
 
 

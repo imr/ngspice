@@ -10,6 +10,11 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #ifndef CPEXTERN_H
 #define CPEXTERN_H
 
+#include "wordlist.h"
+#include "bool.h"
+#include "variable.h"
+
+
 /* alias.c */
 
 extern struct alias *cp_aliases;
@@ -18,6 +23,7 @@ extern void com_unalias();
 extern void cp_paliases();
 extern void cp_setalias();
 extern void cp_unalias();
+
 extern wordlist *cp_doalias();
 
 /* backquote.c */

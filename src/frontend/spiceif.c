@@ -15,7 +15,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "fteinp.h"
-#include "fteconst.h"
 #include "inpdefs.h"
 #include "iferrmsg.h"
 #include "ifsim.h"

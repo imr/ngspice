@@ -15,7 +15,8 @@ Modified: 1999 Paolo Nenzi
 
 /* needed to find out what the interface structures look like */
 #include "ifsim.h"
-#include "fteparse.h"
+#include "dvec.h"
+#include "plot.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "fteinp.h"
@@ -311,7 +312,6 @@ extern void com_ghelp();
 extern void com_help();
 extern void com_quit();
 extern void com_version();
-extern int hcomp();
 extern void com_where();
 
 /* numparse.c */

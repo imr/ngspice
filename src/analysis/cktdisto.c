@@ -13,7 +13,6 @@ Author: 1988 Jaijeet S Roychowdhury
 #include "devdefs.h"
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "distodef.h"
 #include "sperror.h"

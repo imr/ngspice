@@ -10,8 +10,10 @@ Author: 1988 Jeffrey M. Hsu
 #ifndef _GRAPH_H_
 #define _GRAPH_H_
 
-#include "fteconst.h"
-#include "ftedata.h"            /* for struct dvec */
+#include "sim.h"
+#include "grid.h"
+#include "plot.h"
+#include "dvec.h"            /* for struct dvec */
 
 /* Device-independent data structure for plots. */
 

@@ -31,7 +31,7 @@ typedef struct {
     int (*MakeMenu)();
     int (*MakeDialog)();
     int (*Input)();
-    int (*DatatoScreen)();
+    void (*DatatoScreen)();
 } DISPDEVICE;
 
 extern DISPDEVICE *dispdev;

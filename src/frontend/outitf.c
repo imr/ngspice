@@ -13,8 +13,9 @@ Author: 1988 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
-#include "fteconst.h"
+#include "dvec.h"
+#include "plot.h"
+#include "sim.h"
 #include "inpdefs.h"        /* for INPtables */
 #include "ifsim.h"
 #include "jobdefs.h"

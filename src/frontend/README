@@ -1,0 +1,5 @@
+This directory contains the code that is behind the commands of the
+interactive frontend.  Note that every command has a source file
+associated with it.  The source file is prefixed with `com_' to
+distinguish command source files from other supporting code.
+

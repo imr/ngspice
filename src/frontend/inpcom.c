@@ -11,7 +11,7 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteinp.h"
 #include "inpcom.h"
 

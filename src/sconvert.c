@@ -11,7 +11,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <stdio.h>
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "sim.h"
 #include "suffix.h"
 
 FILE *cp_in = 0;

@@ -7,10 +7,7 @@
 #define X11_H_INCLUDED
 
 int X11_Init(void);
-void errorhandler(Display *display, XErrorEvent *errorev);
 int X11_NewViewport(GRAPH *graph);
-void initlinestyles(void);
-void initcolors(GRAPH *graph);
 void X11_Close(void);
 void X11_DrawLine(int x1, int y1, int x2, int y2);
 void X11_Arc(int x0, int y0, int radius, double theta1, double theta2);
@@ -30,8 +27,6 @@ void killwin(Widget w, caddr_t client_data, caddr_t call_data);
 void redraw(Widget w, caddr_t client_data, caddr_t call_data);
 void resize(Widget w, caddr_t client_data, caddr_t call_data);
 void X11_Input(REQUEST *request, RESPONSE *response);
-void X_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy);
-
 
 
 #endif

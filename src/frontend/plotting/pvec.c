@@ -1,0 +1,85 @@
+#include <ngspice.h>
+#include <dvec.h>
+#include <plot.h>
+#include <fteext.h>
+
+#include "pvec.h"
+
+void
+pvec(struct dvec *d)
+{
+    char buf[BSIZE_SP], buf2[BSIZE_SP];
+
+    sprintf(buf, "    %-20s: %s, %s, %d long",
+	    d->v_name,
+	    ft_typenames(d->v_type),
+	    isreal(d) ? "real" : "complex",
+	    d->v_length);
+    if (d->v_flags & VF_MINGIVEN) {
+        sprintf(buf2, ", min = %g", d->v_minsignal);
+        strcat(buf, buf2);
+    }
+    if (d->v_flags & VF_MAXGIVEN) {
+        sprintf(buf2, ", max = %g", d->v_maxsignal);
+        strcat(buf, buf2);
+    }
+    switch (d->v_gridtype) {
+    case GRID_LOGLOG:
+        strcat(buf, ", grid = loglog");
+        break;
+
+    case GRID_XLOG:
+        strcat(buf, ", grid = xlog");
+        break;
+
+    case GRID_YLOG:
+        strcat(buf, ", grid = ylog");
+        break;
+
+    case GRID_POLAR:
+        strcat(buf, ", grid = polar");
+        break;
+
+    case GRID_SMITH:
+        strcat(buf, ", grid = smith (xformed)");
+        break;
+
+    case GRID_SMITHGRID:
+        strcat(buf, ", grid = smithgrid (not xformed)");
+        break;
+
+    default:
+    }
+
+    switch (d->v_plottype) {
+
+    case PLOT_COMB:
+        strcat(buf, ", plot = comb");
+        break;
+
+    case PLOT_POINT:
+        strcat(buf, ", plot = point");
+        break;
+
+    default:
+    }
+    if (d->v_defcolor) {
+        sprintf(buf2, ", color = %s", d->v_defcolor);
+        strcat(buf, buf2);
+    }
+    if (d->v_scale) {
+        sprintf(buf2, ", scale = %s", d->v_scale->v_name);
+        strcat(buf, buf2);
+    }
+    if (d->v_numdims > 1) {
+	sprintf(buf2, ", dims = [%s]", dimstring(d->v_dims, d->v_numdims));
+        strcat(buf, buf2);
+    }
+    if (d->v_plot->pl_scale == d) {
+        strcat(buf, " [default scale]\n");
+    } else {
+        strcat(buf, "\n");
+    }
+    out_send(buf);
+    return;
+}

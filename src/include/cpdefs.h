@@ -18,17 +18,38 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* Information about spice commands. */
 
 struct comm {
-    char *co_comname;   /* The name of the command. */
-    void (*co_func) (); /* The function that handles the command. */
-    bool co_stringargs; /* Collapse the arguments into a string. */
-    bool co_spiceonly;  /* These can't be used from nutmeg. */
-    bool co_major;      /* Is this a "major" command? */
-    long co_cctypes[4]; /* Bitmasks for command completion. */
-    unsigned int co_env;/* print help message on this environment mask */
-    int co_minargs; /* minimum number of arguments required */
-    int co_maxargs; /* maximum number of arguments allowed */
-    int (*co_argfn) (); /* The fn that prompts the user. */
-    char *co_help;  /* When these are printed, printf(string, av[0]) .. */
+    /* The name of the command. */
+    char *co_comname;
+
+    /* The function that handles the command. */
+    void (*co_func) (wordlist *wl);
+
+    /* Collapse the arguments into a string. */
+    bool co_stringargs;
+
+    /* These can't be used from nutmeg. */
+    bool co_spiceonly;
+
+    /* Is this a "major" command? */
+    bool co_major;
+
+    /* Bitmasks for command completion. */
+    long co_cctypes[4];
+
+    /* print help message on this environment mask */
+    unsigned int co_env;
+
+    /* minimum number of arguments required */
+    int co_minargs;
+
+    /* maximum number of arguments allowed */
+    int co_maxargs;
+
+    /* The fn that prompts the user. */
+    void (*co_argfn) (wordlist *wl, struct comm *command);
+
+    /* When these are printed, printf(string, av[0]) .. */
+    char *co_help;
 };
 
 #define LOTS        1000
@@ -44,34 +65,13 @@ struct histent {
     struct histent *hi_prev;
 };
 
-/* Variables that are accessible to the parser via $varname expansions. 
- * If the type is VT_LIST the value is a pointer to a list of the elements.
- */
 
-struct variable {
-    char va_type;
-    char *va_name;
-    union {
-        bool vV_bool;
-        int vV_num;
-        double vV_real;
-        char *vV_string;
-        struct variable *vV_list;
-    } va_V;
-    struct variable *va_next;      /* Link. */
-} ;
+/* FIXME: Split this file and adjust all callers to the new header files. */
+#if 0
+#warning "Please use a header file more specific than cpdef.h"
+#endif
+#include "variable.h"
 
-#define va_bool  va_V.vV_bool
-#define va_num    va_V.vV_num
-#define va_real  va_V.vV_real
-#define va_string   va_V.vV_string
-#define va_vlist     va_V.vV_list
-
-#define VT_BOOL  1
-#define VT_NUM    2
-#define VT_REAL  3
-#define VT_STRING   4
-#define VT_LIST  5
 
 /* The values returned by cp_userset(). */
 

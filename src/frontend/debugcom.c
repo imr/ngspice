@@ -11,7 +11,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "ftedebug.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteinp.h"
 #include "debugcom.h"
 

@@ -10,8 +10,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "ftecmath.h"
+#include "sim.h"
+
 #include "diff.h"
 
 

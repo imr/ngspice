@@ -10,7 +10,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "interp.h"
 
 
@@ -24,7 +24,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* static declarations */
 static int putinterval(double *poly, int degree, double *nvec, int last, double *nscale, 
 		       int nlen, double oval, int sign);
-static void printmat(char *name, double *mat, int m, int n);
 
 
 bool
@@ -260,21 +259,6 @@ putinterval(double *poly, int degree, double *nvec, int last, double *nscale, in
     return (end);
 }
 
-static void
-printmat(char *name, double *mat, int m, int n)
-{
-    int i, j;
-
-    printf("\n\r=== Matrix: %s ===\n\r", name);
-    for (i = 0; i < m; i++) {
-        printf(" | ");
-        for (j = 0; j < n; j++)
-            printf("%G ", mat[i * n + j]);
-        printf("|\n\r");
-    }
-    printf("===\n\r");
-    return;
-}
 
 double
 ft_peval(double x, double *coeffs, int degree)

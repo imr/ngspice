@@ -156,13 +156,13 @@ double CONSTvt0;
 double CONSTKoverQ;
 double CONSTe;
 IFfrontEnd *SPfrontEnd = NULL;
-
+int DEVmaxnum = 0;
 
 
 int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 {
 #ifdef SIMULATOR
-    SIMinfo.numDevices = num_devices();
+    SIMinfo.numDevices = DEVmaxnum = num_devices();
     SIMinfo.devices = devices_ptr();
 #endif /* SIMULATOR */
 

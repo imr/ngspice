@@ -11,7 +11,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "ftegraph.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteparse.h"
 #include "grid.h"
 

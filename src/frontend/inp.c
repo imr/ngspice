@@ -12,11 +12,11 @@ Author: 1985 Wayne A. Christopher
 #include "cpdefs.h"
 #include "inpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteinp.h"
 #include "inp.h"
 
-
+#include "completion.h"
 
 /* static declarations */
 static char * upper(register char *string);

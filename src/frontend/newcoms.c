@@ -10,7 +10,7 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "fteparse.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "newcoms.h"
 
 

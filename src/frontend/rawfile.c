@@ -11,7 +11,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "rawfile.h"
 
 
@@ -303,7 +303,7 @@ raw_read(char *name)
         } else if (ciprefix("flags:", buf)) {
             s = buf;
             skip(s);
-            while (t = gettok(&s)) {
+            while ((t = gettok(&s))) {
                 if (cieq(t, "real"))
                     flags |= VF_REAL;
                 else if (cieq(t, "complex"))
@@ -453,7 +453,7 @@ raw_read(char *name)
                     v->v_name = copy(buf2);
                 }
                 /* Now come the strange options... */
-                while (t = gettok(&s)) {
+                while ((t = gettok(&s))) {
                     if (ciprefix("min=", t)) {
                         if (sscanf(t + 4, "%lf",
                             &v->v_minsignal) != 1)

@@ -13,7 +13,6 @@ Author: 1987 Gary W. Ng
 #include <stdio.h>
 #include "acdefs.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "sperror.h"

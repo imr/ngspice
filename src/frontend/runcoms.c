@@ -12,8 +12,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ftedefs.h"
 #include "ftedev.h"
 #include "ftedebug.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "runcoms.h"
+
+#include "completion.h"
 
 /* static declarations */
 static int dosim(char *what, wordlist *wl);

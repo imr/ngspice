@@ -8,7 +8,7 @@ Author: 1992 David A. Gates, U. C. Berkeley CAD Group
  */
 
 #include "ngspice.h"
-#include "ftedata.h"		/* For MAXDIMS */
+#include "dvec.h"		/* For MAXDIMS */
 #include "dimens.h"
 
 

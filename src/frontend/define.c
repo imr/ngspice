@@ -17,10 +17,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteparse.h"
 #include "define.h"
 
+#include "completion.h"
 
 /* static declarations */
 static void savetree(struct pnode *pn);
@@ -439,7 +440,7 @@ com_undefine(wordlist *wlist)
  */
 
 void
-ft_pnode(struct pn *pn)
+ft_pnode(struct pnode *pn)
 {
     prtree1(pn, cp_err);
 }

@@ -10,7 +10,7 @@ Author: 1992 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteparse.h"
 #include "xgraph.h"
 

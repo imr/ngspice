@@ -10,7 +10,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteparse.h"
 #include "ftecmath.h"
 #include <setjmp.h>
@@ -22,9 +22,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 static RETSIGTYPE sig_matherr(void);
 static struct dvec * apply_func(struct func *func, struct pnode *arg);
 static char * mkcname(char what, char *v1, char *v2);
-static struct dvec * doop(char what, void *(*func) (/* ??? */),
-			  struct pnode *arg1, struct pnode *arg2);
-
 
 
 /* We are careful here to catch SIGILL and recognise them as math errors.
@@ -81,8 +78,226 @@ ft_evaluate(struct pnode *node)
         return (d);
 }
 
-/* The binary operations. */
 
+/* Operate on two vectors, and return a third with the data, length, and flags
+ * fields filled in. Add it to the current plot and get rid of the two args.
+ */
+
+static struct dvec *
+doop(char what,
+     void*(*func) (void *data1, void *data2,
+		   short int datatype1, short int datatype2,
+		   int length),
+     struct pnode *arg1,
+     struct pnode *arg2)
+{
+    struct dvec *v1, *v2, *res;
+    complex *c1, *c2, lc;
+    double *d1, *d2, ld;
+    int length, i;
+    void *data;
+    bool free1 = FALSE, free2 = FALSE, relflag = FALSE;
+
+    v1 = ft_evaluate(arg1);
+    v2 = ft_evaluate(arg2);
+    if (!v1 || !v2)
+	return (NULL);
+
+    /* Now the question is, what do we do when one or both of these
+     * has more than one vector?  This is definitely not a good
+     * thing.  For the time being don't do anything.
+     */
+    if (v1->v_link2 || v2->v_link2) {
+	fprintf(cp_err, "Warning: no operations on wildcards yet.\n");
+	if (v1->v_link2 && v2->v_link2)
+	    fprintf(cp_err, "\t(You couldn't do that one anyway)\n");
+	return (NULL);
+    }
+
+    /* How do we handle operations on multi-dimensional vectors?
+     * For now, we only allow operations between one-D vectors,
+     * equivalently shaped multi-D vectors, or a multi-D vector and
+     * a one-D vector.  It's not at all clear what to do in the other cases.
+     * So only check shape requirement if its an operation between two multi-D
+     * arrays.
+     */
+    if ((v1->v_numdims > 1) && (v2->v_numdims > 1)) {
+	if (v1->v_numdims != v2->v_numdims) {
+	    fprintf(cp_err,
+		"Warning: operands %s and %s have incompatible shapes.\n",
+		v1->v_name, v2->v_name);
+	    return (NULL);
+	}
+	for (i = 1; i < v1->v_numdims; i++) {
+	    if ((v1->v_dims[i] != v2->v_dims[i])) {
+		fprintf(cp_err,
+		    "Warning: operands %s and %s have incompatible shapes.\n",
+		    v1->v_name, v2->v_name);
+		return (NULL);
+	    }
+	}
+    }
+
+    /* This is a bad way to do this. */
+    switch (what) {
+	case '=':
+	case '>':
+	case '<':
+	case 'G':
+	case 'L':
+	case 'N':
+	case '&':
+	case '|':
+	case '~':
+	    relflag = TRUE;
+    }
+
+    /* Don't bother to do type checking.  Maybe this should go in at
+     * some point.
+     */
+
+    /* Make sure we have data of the same length. */
+    length = ((v1->v_length > v2->v_length) ? v1->v_length : v2->v_length);
+    if (v1->v_length < length) {
+	free1 = TRUE;
+	if (isreal(v1)) {
+	    ld = 0.0;
+	    d1 = (double *) tmalloc(length * sizeof (double));
+	    for (i = 0; i < v1->v_length; i++)
+		d1[i] = v1->v_realdata[i];
+	    if (length > 0)
+		ld = v1->v_realdata[v1->v_length - 1];
+	    for ( ; i < length; i++)
+		d1[i] = ld;
+	} else {
+	    realpart(&lc) = 0.0;
+	    imagpart(&lc) = 0.0;
+	    c1 = (complex *) tmalloc(length * sizeof (complex));
+	    for (i = 0; i < v1->v_length; i++)
+		c1[i] = v1->v_compdata[i];
+	    if (length > 0)
+		lc = v1->v_compdata[v1->v_length - 1];
+	    for ( ; i < length; i++)
+		c1[i] = lc;
+	}
+    } else
+	if (isreal(v1))
+	    d1 = v1->v_realdata;
+	else
+	    c1 = v1->v_compdata;
+    if (v2->v_length < length) {
+	free2 = TRUE;
+	if (isreal(v2)) {
+	    ld = 0.0;
+	    d2 = (double *) tmalloc(length * sizeof (double));
+	    for (i = 0; i < v2->v_length; i++)
+		d2[i] = v2->v_realdata[i];
+	    if (length > 0)
+		ld = v2->v_realdata[v2->v_length - 1];
+	    for ( ; i < length; i++)
+		d2[i] = ld;
+	} else {
+	    realpart(&lc) = 0.0;
+	    imagpart(&lc) = 0.0;
+	    c2 = (complex *) tmalloc(length * sizeof (complex));
+	    for (i = 0; i < v2->v_length; i++)
+		c2[i] = v2->v_compdata[i];
+	    if (length > 0)
+		lc = v2->v_compdata[v1->v_length - 1];
+	    for ( ; i < length; i++)
+		c2[i] = lc;
+	}
+    } else
+	if (isreal(v2))
+	    d2 = v2->v_realdata;
+	else
+	    c2 = v2->v_compdata;
+
+    /* Some of the math routines generate SIGILL if the argument is
+     * out of range.  Catch this here.
+     */
+    if (setjmp(matherrbuf)) {
+        return (NULL);
+    }
+    (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
+
+    /* Now pass the vectors to the appropriate function. */
+    data = ((*func) ((isreal(v1) ? (void *) d1 : (void *) c1),
+		     (isreal(v2) ? (void *) d2 : (void *) c2),
+		     (isreal(v1) ? VF_REAL : VF_COMPLEX),
+		     (isreal(v2) ? VF_REAL : VF_COMPLEX),
+		     length));
+    /* Back to normal */
+    (void) signal(SIGILL, SIG_DFL);
+
+    if (!data)
+	return (NULL);
+    /* Make up the new vector. */
+    res = alloc(struct dvec);
+    ZERO(res,struct dvec);
+    if (relflag || (isreal(v1) && isreal(v2) && (func != cx_comma))) {
+        res->v_flags = (v1->v_flags | v2->v_flags |
+                        VF_REAL) & ~ VF_COMPLEX;
+        res->v_realdata = (double *) data;
+    } else {
+        res->v_flags = (v1->v_flags | v2->v_flags |
+                        VF_COMPLEX) & ~ VF_REAL;
+        res->v_compdata = (complex *) data;
+    }
+
+    res->v_name = mkcname(what, v1->v_name, v2->v_name);
+    res->v_length = length;
+
+    /* This is a non-obvious thing */
+    if (v1->v_scale != v2->v_scale) {
+        fprintf(cp_err, "Warning: scales of %s and %s are different.\n",
+                v1->v_name, v2->v_name);
+        res->v_scale = NULL;
+    } else
+        res->v_scale = v1->v_scale;
+
+    /* Copy a few useful things */
+    res->v_defcolor = v1->v_defcolor;
+    res->v_gridtype = v1->v_gridtype;
+    res->v_plottype = v1->v_plottype;
+
+    /* Copy dimensions. */
+    if (v1->v_numdims > v2->v_numdims) {
+	res->v_numdims = v1->v_numdims;
+	for (i = 0; i < v1->v_numdims; i++)
+	    res->v_dims[i] = v1->v_dims[i];
+    } else {
+	res->v_numdims = v2->v_numdims;
+	for (i = 0; i < v2->v_numdims; i++)
+	    res->v_dims[i] = v2->v_dims[i];
+    }
+
+    /* This depends somewhat on what the operation is.  XXX Should fix */
+    res->v_type = v1->v_type;
+    vec_new(res);
+
+    /* Free the temporary data areas we used, if we allocated any. */
+    if (free1) {
+        if (isreal(v1)) {
+            tfree(d1);
+        } else {
+            tfree(c1);
+        }
+    }
+    if (free2) {
+        if (isreal(v2)) {
+            tfree(d2);
+        } else {
+            tfree(c2);
+        }
+    }
+
+    return (res);
+}
+
+
+
+/* The binary operations. */
 struct dvec *
 op_plus(struct pnode *arg1, struct pnode *arg2)
 {
@@ -476,6 +691,11 @@ apply_func(struct func *func, struct pnode *arg)
         }
         (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
 
+#if 0
+	/* FIXME: The call to (*func->fu_func) has too many arguments;
+           hence the compiler quits.  How to circumvent this (without
+           losing function prototypes)?  For now, these functions have
+           been disabled. */
         if (eq(func->fu_name, "interpolate")
             || eq(func->fu_name, "deriv"))       /* Ack */
 	{
@@ -487,13 +707,16 @@ apply_func(struct func *func, struct pnode *arg)
 				      v->v_length, &len, &type,
 				      v->v_plot, plot_cur, v->v_dims[0]));
         } else {
+#endif
             data = ((*func->fu_func) ((isreal(v) ? (void *)
 				       v->v_realdata :
 				       (void *) v->v_compdata),
 				      (short) (isreal(v) ? VF_REAL :
 					       VF_COMPLEX),
 				      v->v_length, &len, &type));
+#if 0
 	}
+#endif
         /* Back to normal */
         (void) signal(SIGILL, SIG_DFL);
 
@@ -584,217 +807,5 @@ mkcname(char what, char *v1, char *v2)
 	(void) sprintf(buf, "(%s)%c(%s)", v1, what, v2);
     s = copy(buf);
     return (s);
-}
-
-/* Operate on two vectors, and return a third with the data, length, and flags
- * fields filled in. Add it to the current plot and get rid of the two args.
- */
-
-static struct dvec *
-doop(char what, void*(*func) (/* ??? */), struct pnode *arg1,
-     struct pnode *arg2)
-{
-    struct dvec *v1, *v2, *res;
-    complex *c1, *c2, lc;
-    double *d1, *d2, ld;
-    int length, i;
-    void *data;
-    bool free1 = FALSE, free2 = FALSE, relflag = FALSE;
-
-    v1 = ft_evaluate(arg1);
-    v2 = ft_evaluate(arg2);
-    if (!v1 || !v2)
-	return (NULL);
-
-    /* Now the question is, what do we do when one or both of these
-     * has more than one vector?  This is definitely not a good
-     * thing.  For the time being don't do anything.
-     */
-    if (v1->v_link2 || v2->v_link2) {
-	fprintf(cp_err, "Warning: no operations on wildcards yet.\n");
-	if (v1->v_link2 && v2->v_link2)
-	    fprintf(cp_err, "\t(You couldn't do that one anyway)\n");
-	return (NULL);
-    }
-
-    /* How do we handle operations on multi-dimensional vectors?
-     * For now, we only allow operations between one-D vectors,
-     * equivalently shaped multi-D vectors, or a multi-D vector and
-     * a one-D vector.  It's not at all clear what to do in the other cases.
-     * So only check shape requirement if its an operation between two multi-D
-     * arrays.
-     */
-    if ((v1->v_numdims > 1) && (v2->v_numdims > 1)) {
-	if (v1->v_numdims != v2->v_numdims) {
-	    fprintf(cp_err,
-		"Warning: operands %s and %s have incompatible shapes.\n",
-		v1->v_name, v2->v_name);
-	    return (NULL);
-	}
-	for (i = 1; i < v1->v_numdims; i++) {
-	    if ((v1->v_dims[i] != v2->v_dims[i])) {
-		fprintf(cp_err,
-		    "Warning: operands %s and %s have incompatible shapes.\n",
-		    v1->v_name, v2->v_name);
-		return (NULL);
-	    }
-	}
-    }
-
-    /* This is a bad way to do this. */
-    switch (what) {
-	case '=':
-	case '>':
-	case '<':
-	case 'G':
-	case 'L':
-	case 'N':
-	case '&':
-	case '|':
-	case '~':
-	    relflag = TRUE;
-    }
-
-    /* Don't bother to do type checking.  Maybe this should go in at
-     * some point.
-     */
-
-    /* Make sure we have data of the same length. */
-    length = ((v1->v_length > v2->v_length) ? v1->v_length : v2->v_length);
-    if (v1->v_length < length) {
-	free1 = TRUE;
-	if (isreal(v1)) {
-	    ld = 0.0;
-	    d1 = (double *) tmalloc(length * sizeof (double));
-	    for (i = 0; i < v1->v_length; i++)
-		d1[i] = v1->v_realdata[i];
-	    if (length > 0)
-		ld = v1->v_realdata[v1->v_length - 1];
-	    for ( ; i < length; i++)
-		d1[i] = ld;
-	} else {
-	    realpart(&lc) = 0.0;
-	    imagpart(&lc) = 0.0;
-	    c1 = (complex *) tmalloc(length * sizeof (complex));
-	    for (i = 0; i < v1->v_length; i++)
-		c1[i] = v1->v_compdata[i];
-	    if (length > 0)
-		lc = v1->v_compdata[v1->v_length - 1];
-	    for ( ; i < length; i++)
-		c1[i] = lc;
-	}
-    } else
-	if (isreal(v1))
-	    d1 = v1->v_realdata;
-	else
-	    c1 = v1->v_compdata;
-    if (v2->v_length < length) {
-	free2 = TRUE;
-	if (isreal(v2)) {
-	    ld = 0.0;
-	    d2 = (double *) tmalloc(length * sizeof (double));
-	    for (i = 0; i < v2->v_length; i++)
-		d2[i] = v2->v_realdata[i];
-	    if (length > 0)
-		ld = v2->v_realdata[v2->v_length - 1];
-	    for ( ; i < length; i++)
-		d2[i] = ld;
-	} else {
-	    realpart(&lc) = 0.0;
-	    imagpart(&lc) = 0.0;
-	    c2 = (complex *) tmalloc(length * sizeof (complex));
-	    for (i = 0; i < v2->v_length; i++)
-		c2[i] = v2->v_compdata[i];
-	    if (length > 0)
-		lc = v2->v_compdata[v1->v_length - 1];
-	    for ( ; i < length; i++)
-		c2[i] = lc;
-	}
-    } else
-	if (isreal(v2))
-	    d2 = v2->v_realdata;
-	else
-	    c2 = v2->v_compdata;
-
-    /* Some of the math routines generate SIGILL if the argument is
-     * out of range.  Catch this here.
-     */
-    if (setjmp(matherrbuf)) {
-        return (NULL);
-    }
-    (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
-
-    /* Now pass the vectors to the appropriate function. */
-    data = ((*func) ((isreal(v1) ? (void *) d1 : (void *) c1),
-		     (isreal(v2) ? (void *) d2 : (void *) c2),
-		     (isreal(v1) ? VF_REAL : VF_COMPLEX),
-		     (isreal(v2) ? VF_REAL : VF_COMPLEX),
-		     length));
-    /* Back to normal */
-    (void) signal(SIGILL, SIG_DFL);
-
-    if (!data)
-	return (NULL);
-    /* Make up the new vector. */
-    res = alloc(struct dvec);
-    ZERO(res,struct dvec);
-    if (relflag || (isreal(v1) && isreal(v2) && (func != cx_comma))) {
-        res->v_flags = (v1->v_flags | v2->v_flags |
-                        VF_REAL) & ~ VF_COMPLEX;
-        res->v_realdata = (double *) data;
-    } else {
-        res->v_flags = (v1->v_flags | v2->v_flags |
-                        VF_COMPLEX) & ~ VF_REAL;
-        res->v_compdata = (complex *) data;
-    }
-
-    res->v_name = mkcname(what, v1->v_name, v2->v_name);
-    res->v_length = length;
-
-    /* This is a non-obvious thing */
-    if (v1->v_scale != v2->v_scale) {
-        fprintf(cp_err, "Warning: scales of %s and %s are different.\n",
-                v1->v_name, v2->v_name);
-        res->v_scale = NULL;
-    } else
-        res->v_scale = v1->v_scale;
-
-    /* Copy a few useful things */
-    res->v_defcolor = v1->v_defcolor;
-    res->v_gridtype = v1->v_gridtype;
-    res->v_plottype = v1->v_plottype;
-
-    /* Copy dimensions. */
-    if (v1->v_numdims > v2->v_numdims) {
-	res->v_numdims = v1->v_numdims;
-	for (i = 0; i < v1->v_numdims; i++)
-	    res->v_dims[i] = v1->v_dims[i];
-    } else {
-	res->v_numdims = v2->v_numdims;
-	for (i = 0; i < v2->v_numdims; i++)
-	    res->v_dims[i] = v2->v_dims[i];
-    }
-
-    /* This depends somewhat on what the operation is.  XXX Should fix */
-    res->v_type = v1->v_type;
-    vec_new(res);
-
-    /* Free the temporary data areas we used, if we allocated any. */
-    if (free1) {
-        if (isreal(v1)) {
-            tfree(d1);
-        } else {
-            tfree(c1);
-        }
-    }
-    if (free2) {
-        if (isreal(v2)) {
-            tfree(d2);
-        } else {
-            tfree(c2);
-        }
-    }
-
-    return (res);
 }
 

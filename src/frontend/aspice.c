@@ -31,7 +31,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <signal.h>
 
 #include "fteinp.h"
-#include "ftedata.h"
+#include "dvec.h"
 
 
 #ifndef SEEK_SET

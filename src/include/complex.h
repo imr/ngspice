@@ -1,9 +1,22 @@
 /*
  * Copyright (c) 1985 Thomas L. Quarles
- * Modified: Paolo Nenzi 1999
+ * Modified: Paolo Nenzi 1999, Arno W. Peters 2000
  */
-#ifndef CMPLX
-#define CMPLX "complex.h $Revision$  on $Date$ "
+#ifndef _COMPLEX_H
+#define _COMPLEX_H
+
+
+/* Complex numbers. */
+struct _complex {   /* IBM portability... */
+    double cx_real;
+    double cx_imag;
+} ;
+
+typedef struct _complex complex;
+
+#define realpart(cval)  ((struct _complex *) (cval))->cx_real
+#define imagpart(cval)  ((struct _complex *) (cval))->cx_imag
+
 
 /*  header file containing definitions for complex functions
  *
