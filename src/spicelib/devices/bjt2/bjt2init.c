@@ -59,11 +59,11 @@ SPICEdev BJT2info = {
     DEVmodAsk     : BJT2mAsk,
     DEVpzLoad     : BJT2pzLoad,
     DEVconvTest   : BJT2convTest,
-    DEVsenSetup   : BJT2sSetup,
-    DEVsenLoad    : BJT2sLoad,
-    DEVsenUpdate  : BJT2sUpdate,
-    DEVsenAcLoad  : BJT2sAcLoad,
-    DEVsenPrint   : BJT2sPrint,
+    DEVsenSetup   : NULL, /* BJT2sSetup  */
+    DEVsenLoad    : NULL, /* BJT2sLoad   */
+    DEVsenUpdate  : NULL, /* BJT2sUpdate */
+    DEVsenAcLoad  : NULL, /* BJT2sAcLoad */
+    DEVsenPrint   : NULL, /* BJT2sPrint  */
     DEVsenTrunc   : NULL,
     DEVdisto      : BJT2disto,
     DEVnoise      : BJT2noise,
