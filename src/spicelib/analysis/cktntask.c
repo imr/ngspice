@@ -25,7 +25,7 @@ CKTnewTask(void *ckt, void **taskPtr, IFuid taskName)
     tsk = *(TSKtask **)taskPtr;
     tsk->TSKname = taskName;
     tsk->TSKgmin = 1e-12;
-     tsk->TSKgshunt = 0;
+    tsk->TSKgshunt = 0;
     tsk->TSKabstol = 1e-12;
     tsk->TSKreltol = 1e-3;
     tsk->TSKchgtol = 1e-14;
@@ -35,7 +35,7 @@ CKTnewTask(void *ckt, void **taskPtr, IFuid taskName)
     tsk->TSKlteAbstol = 1e-6;
 #endif /* NEWTRUNC */
     tsk->TSKtrtol = 7;
-    tsk->TSKbypass = 1;
+    tsk->TSKbypass = 0;
     tsk->TSKtranMaxIter = 10;
     tsk->TSKdcMaxIter = 100;
     tsk->TSKdcTrcvMaxIter = 50;
@@ -43,14 +43,12 @@ CKTnewTask(void *ckt, void **taskPtr, IFuid taskName)
     tsk->TSKmaxOrder = 2;
     tsk->TSKnumSrcSteps = 1; 
     tsk->TSKnumGminSteps = 1; 
-    tsk->TSKnumSrcSteps = 10;
-    tsk->TSKnumGminSteps = 10;
     tsk->TSKgminFactor = 10;  
     tsk->TSKpivotAbsTol = 1e-13;
     tsk->TSKpivotRelTol = 1e-3;
     tsk->TSKtemp = 300.15;
     tsk->TSKnomTemp = 300.15;
-     tsk->TSKdefaultMosM = 1; 
+    tsk->TSKdefaultMosM = 1; 
     tsk->TSKdefaultMosL = 1e-4;
     tsk->TSKdefaultMosW = 1e-4;
     tsk->TSKdefaultMosAD = 0;
