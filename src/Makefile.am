@@ -87,9 +87,9 @@ ngspice_LDADD = \
 	spicelib/devices/libdev.a \
 	@XSPICELIB2@		  \
 	frontend/parser/libparser.a \
-	@CIDERSIM@		\
 	frontend/help/libhlp.a \
 	spicelib/parser/libinp.a \
+	@CIDERSIM@		\
 	maths/deriv/libderiv.a \
 	maths/cmaths/libcmaths.a \
 	@CIDERMATHDIR@          \
