@@ -14,8 +14,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* Print the values of currently defined variables. */
 
 
-static int vcmp(struct xxx *v1, struct xxx *v2);
-
 extern struct variable *variables;
 
 /* A variable substitution is
@@ -234,6 +232,19 @@ vareval(char *string)
 }
 
 
+static int
+vcmp(const void *a, const void *b)
+{
+    int i;
+    struct xxx *v1 = (struct xxx *) a;
+    struct xxx *v2 = (struct xxx *) b;
+    if ((i = strcmp(v1->x_v->va_name, v2->x_v->va_name)))
+        return (i);
+    else
+        return (v1->x_char - v2->x_char);
+}
+
+
 
 void
 cp_vprint(void)
@@ -293,17 +304,6 @@ cp_vprint(void)
 
     tfree(vars);
     return;
-}
-
-static int
-vcmp(struct xxx *v1, struct xxx *v2)
-{
-    int i;
-
-    if ((i = strcmp(v1->x_v->va_name, v2->x_v->va_name)))
-        return (i);
-    else
-        return (v1->x_char - v2->x_char);
 }
 
 /* The set command. Syntax is 

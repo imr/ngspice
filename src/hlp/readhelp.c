@@ -14,12 +14,43 @@ Modified 1999 Emmanuel Rouat
 
 static char *getsubject(fplace *place);
 static toplink *getsubtoplink(char **ss);
-extern void sortlist(toplink **tlp), tlfree(toplink *tl);
-extern int sortcmp(toplink **tlp1, toplink **tlp2);
 
 static topic *alltopics = NULL;
 
 static fplace *copy_fplace(fplace *place);
+
+static int
+sortcmp(const void *a, const void *b)
+{
+    toplink **tlp1 = (toplink **) a;
+    toplink **tlp2 = (toplink **) b;
+
+    return (strcmp((*tlp1)->description, (*tlp2)->description));
+}
+
+
+static void
+sortlist(toplink **tlp)
+{
+    toplink **vec, *tl;
+    int num = 0, i;
+
+    for (tl = *tlp; tl; tl = tl->next)
+        num++;
+    if (!num)
+        return;
+    vec = (toplink **) tmalloc(sizeof (toplink *) * num);
+    for (tl = *tlp, i = 0; tl; tl = tl->next, i++)
+        vec[i] = tl;
+    (void) qsort((char *) vec, num, sizeof (toplink *), sortcmp);
+    *tlp = vec[0];
+    for (i = 0; i < num - 1; i++)
+        vec[i]->next = vec[i + 1];
+    vec[i]->next = NULL;
+    tfree(vec);
+    return;
+}
+
 
 topic *
 hlp_read(fplace *place)
@@ -241,33 +272,24 @@ getsubject(fplace *place)
     return (copy(&buf[9]));     /* don't copy "SUBJECT: " */
 }
 
-static
- void sortlist(toplink **tlp)
-{
-    toplink **vec, *tl;
-    int num = 0, i;
 
-    for (tl = *tlp; tl; tl = tl->next)
-        num++;
-    if (!num)
-        return;
-    vec = (toplink **) tmalloc(sizeof (toplink *) * num);
-    for (tl = *tlp, i = 0; tl; tl = tl->next, i++)
-        vec[i] = tl;
-    (void) qsort((char *) vec, num, sizeof (toplink *), sortcmp);
-    *tlp = vec[0];
-    for (i = 0; i < num - 1; i++)
-        vec[i]->next = vec[i + 1];
-    vec[i]->next = NULL;
-    tfree(vec);
+static 
+void tlfree(toplink *tl)
+{
+    toplink *nt = NULL;
+
+    while (tl) {
+        tfree(tl->description);
+        tfree(tl->place->filename);
+        tfree(tl->place);
+        /* Don't free the button stuff... */
+        nt = tl->next;
+        tfree(tl);
+        tl = nt;
+    }
     return;
 }
 
-static int
-sortcmp(toplink **tlp1, toplink **tlp2)
-{
-    return (strcmp((*tlp1)->description, (*tlp2)->description));
-}
 
 void
 hlp_free(void)
@@ -284,23 +306,6 @@ hlp_free(void)
         tfree(top);
     }
     alltopics = NULL;
-    return;
-}
-
-static 
-void tlfree(toplink *tl)
-{
-    toplink *nt = NULL;
-
-    while (tl) {
-        tfree(tl->description);
-        tfree(tl->place->filename);
-        tfree(tl->place);
-        /* Don't free the button stuff... */
-        nt = tl->next;
-        tfree(tl);
-        tl = nt;
-    }
     return;
 }
 
