@@ -3,6 +3,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
+/*
+ * SJB 22 May 2001
+ * Corrected freeing of memory in ft_cpinit()
+ */
+
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
@@ -211,6 +216,7 @@ ft_cpinit(void)
 		s++;
 	    for (r = buf; *s && !isspace(*s); r++, s++)
 		*r = *s;
+	    tfree(copys);	/* sjb - it's safe to free this here */
 	    (void) strcpy(r, DIR_PATHSEP);
 	    (void) strcat(r, "spinit");
 	    if ((fp = fopen(buf, "r"))) {
@@ -236,7 +242,8 @@ ft_cpinit(void)
     }
 
     tcap_init( );
-    tfree(copys);/*DG Avoid memory leak*/
+  /*  tfree(copys);*/ /*DG Avoid memory leak*/
+  /* SJB - must not free here as cp_tildexpande() can return NULL */
     return;
 }
 

@@ -4,6 +4,12 @@ Author: 1985 Wayne A. Christopher
 **********/
 
 /*
+ * SJB 22 May 2001
+ * Fixed memory leaks accociated with freeing memory used by lines in the input deck
+ * in inp_spsource(). New line_free() routine added to help with this.
+ */
+
+/*
  * Stuff for dealing with spice input decks and command scripts, and
  * the listing routines.
  */
@@ -243,6 +249,25 @@ top2:
     return;
 }
 
+/*
+ * Free memory used by a line.
+ * If recure is TRUE then recursivly free all lines linked via the li_next field.
+ * If recurse is FALSE free only this line.
+ * All lines linked via the li_actual field are always recursivly freed.
+ * SJB - 22nd May 2001
+ */
+void
+line_free(struct line * deck, bool recurse) {
+    if(!deck)
+	return;
+    tfree(deck->li_line);
+    tfree(deck->li_error);
+    if(recurse)
+	line_free(deck->li_next,TRUE);
+    line_free(deck->li_actual,TRUE);
+    tfree(deck);
+}
+
 
 /* The routine to source a spice input deck. We read the deck in, take
  * out the front-end commands, and create a CKT structure. Also we
@@ -312,8 +337,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 else
                     cp_evloop(dd->li_line);
 	    }
-            tfree(dd->li_line);
-            tfree(dd);
+	    line_free(dd,FALSE); /* SJB - free this line's memory */
+ /*         tfree(dd->li_line);
+            tfree(dd); */
         }   
     } else {
         for (dd = deck->li_next; dd; dd = ld->li_next) {
@@ -332,8 +358,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
             if (ciprefix(".control", dd->li_line)) {
                 ld->li_next = dd->li_next;
-                tfree(dd->li_line);
-                tfree(dd);
+		line_free(dd,FALSE); /* SJB - free this line's memory */
+ /*             tfree(dd->li_line);
+                tfree(dd); */
                 if (commands)
                     fprintf(cp_err,
 			    "Warning: redundant .control card\n");
@@ -341,8 +368,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     commands = TRUE;
             } else if (ciprefix(".endc", dd->li_line)) {
                 ld->li_next = dd->li_next;
-                tfree(dd->li_line);
-                tfree(dd);
+		line_free(dd,FALSE); /* SJB - free this line's memory */
+/*              tfree(dd->li_line);
+                tfree(dd); */
                 if (commands)
                     commands = FALSE;
                 else
@@ -358,16 +386,20 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     controls = wl;
                 if (prefix("*#", dd->li_line))
                     wl->wl_word = copy(dd->li_line + 2);
-                else
+                else {
                     wl->wl_word = dd->li_line;
+		    dd->li_line = 0; /* SJB - prevent line_free() freeing the string (now pointed at by wl->wl_word) */
+		}
                 ld->li_next = dd->li_next;
-                tfree(dd);
+		line_free(dd,FALSE); /* SJB - free this line's memory */
+/*                tfree(dd); */
             } else if (!*dd->li_line) {
                 /* So blank lines in com files don't get considered as
                  * circuits.  */
                 ld->li_next = dd->li_next;
-                tfree(dd->li_line);
-                tfree(dd);
+		line_free(dd,FALSE); /* SJB - free this line's memory */
+/*              tfree(dd->li_line);
+                tfree(dd); */
             } else {
                 inp_casefix(s);
                 inp_casefix(dd->li_line);
@@ -389,8 +421,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
 		    if (!eq(s, ".op") && !eq(s, ".tf")) {
 			ld->li_next = dd->li_next;
-			tfree(dd->li_line);
-			tfree(dd);
+			line_free(dd,FALSE); /* SJB - free this line's memory */
+/*			tfree(dd->li_line);
+			tfree(dd); */
 		    } else
 			ld = dd;
                 } else
@@ -406,6 +439,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
              * commands.  */
             if (!cp_getvar("nosubckt", VT_BOOL, (char *) &nosubckts))
                 deck->li_next = inp_subcktexpand(deck->li_next);
+	    line_free(deck->li_actual,FALSE); /* SJB - free memory used by old li_actual (if any) */
             deck->li_actual = realdeck;
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
         }

@@ -6,6 +6,13 @@ Author: 1985 Wayne A. Christopher
 /*
  * For dealing with spice input decks and command scripts
  */
+ 
+/*
+ * SJB 22 May 2001
+ * Fixed memory leaks in inp_readall() when first(?) line of input begins with a '@'.
+ * Fixed memory leaks in inp_readall() when .include lines have errors
+ * Fixed crash where a NULL pointer gets freed in inp_readall()
+ */
 
 #include <config.h>
 #include "ngspice.h"
@@ -117,8 +124,10 @@ inp_readall(FILE *fp, struct line **data)
     FILE *newfp;
 
     while ((buffer = readline(fp))) {
-        if (*buffer == '@')
+        if (*buffer == '@') {
+	    tfree(buffer);		/* was allocated by readline() */
             break;
+	}
         for (s = buffer; *s && (*s != '\n'); s++)
             ;
         if (!*s) {
@@ -132,24 +141,34 @@ inp_readall(FILE *fp, struct line **data)
             while (isspace(*s))
                 s++;
             if (!*s) {
-                fprintf(cp_err, 
-                "Error: .include filename missing\n");
+                fprintf(cp_err,  "Error: .include filename missing\n");
+		tfree(buffer);		/* was allocated by readline() */
                 continue;
             }
             for (t = s; *t && !isspace(*t); t++)
                 ;
             *t = '\0';
-            if (*s == '~')
-                {
-                copys=cp_tildexpand(s); /*DG*/
-                /*s = cp_tildexpand(s);  very bad the last reference is los: memory leak*/
-                strcpy(s,copys);
-                tfree(copys); 
-                }
+		
+	    if (*s == '~') {
+		copys = cp_tildexpand(s); /* allocates memory, but can also return NULL */
+		if(copys != NULL) {
+		    s = copys;		/* reuse s, but remember, buffer still points to allocated memory */
+		}
+	    }
+				
             if (!(newfp = inp_pathopen(s, "r"))) {
                 perror(s);
+		if(copys) {
+			tfree(copys);	/* allocated by the cp_tildexpand() above */
+		}
+		tfree(buffer);		/* allocated by readline() above */
                 continue;
             }
+	    
+	    if(copys) {
+		tfree(copys);		/* allocated by the cp_tildexpand() above */
+	    }  
+	    
             inp_readall(newfp, &newcard);
             (void) fclose(newfp);
 
