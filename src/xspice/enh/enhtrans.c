@@ -555,12 +555,7 @@ static int get_poly_dimension(
    dim = atoi(local_tok);
    FREE(local_tok);
 
-   /*  Notice to Stuart: on error atoi returns 0. The following
-    *  code thus cannot distinguish between a POLY(0), which is
-    *  meaningless, I think, and POLY(FOO) which is not a number.
-    * 
-    *  What about using strtol ?
-    */
+   
    if (dim > 0) {
    return(dim);
    } 
