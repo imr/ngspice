@@ -1,4 +1,16 @@
-2004-01-21  Paolo Nenzi <p-nenzi@ieee.org>
+2004-01-25  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   configure.in, acconfig.h: Added configure options for the
+	    following debug symbols: ASDEBUG, D_DBG_BLOCKTIMES,
+	    D_DBG_SMALLTIMES, NEWPRED.
+
+2004-01-23  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   xgraph: Added xgraph plotting program. It can be added to
+	    the ngspice binaries by adding --enable-xgraph in the 
+	    configuration phase. 
+
+2004-01-21  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/include/ifsim.h, src/include/cktdefs.h, src/frontend/spiceif.c,
 	    src/frontend/shyu.c, src/spicelib/cktntask.c: Applied the options 

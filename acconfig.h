@@ -29,6 +29,9 @@
 /* Define if we want predictor algorithm */ 
 #undef PREDICTOR
 
+/* Define if you want to discover :) */
+#undef NEWPRED
+
 /* Define if we want spice2 sensitivity analysis */ 
 #undef WANT_SENSE2
 
@@ -59,10 +62,19 @@
 /* Do not trigger unwanted traps by default */
 #undef NEWTRUNC
   
-/* Define if we wanto debug sensititvity analysis */
+/* Define if we want debug sensititvity analysis */
 #undef SENSDEBUG
 
-/* Define i we want stepdebug */
+/* Define if we want debug sensitivity analysis */
+#undef ASDEBUG
+
+/* Define if we want debug distortion analysis (BLOCKTIMES) */
+#undef D_DBG_BLOCKTIMES
+
+/* Define if we want debug distortion analysis (SMALLTIMES) */
+#undef D_DBG_SMALLTIMES
+
+/* Define if we want stepdebug */
 #undef STEPDEBUG
   
 /* Define to use always exp/log for bulk diode calculations in mosfet */
