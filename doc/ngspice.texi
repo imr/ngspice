@@ -963,7 +963,7 @@ in the direction of voltage drop).
  General form:
 
 @example
-  RXXXXXXX N1 N2 VALUE <ac=val>
+  RXXXXXXX N1 N2 VALUE <ac=val> <m=val>
 @end example
 
 
@@ -973,6 +973,7 @@ in the direction of voltage drop).
   R1 1 2 100
   RC1 12 17 1K
   R2 5 7 1K ac=2K
+  RL 1 4 2K m=2
 @end example
 
 
@@ -980,7 +981,12 @@ N1 and N2 are the two element nodes.  VALUE is the resistance (in ohms)
 and may be positive or negative but not zero. It is possible to specify
 a different resistance value for ac calculations, using the "ac" 
 parameter. The value of ac resistance must not be zero. If you do not
-specify the "ac" parameter, it will be defaulted to VALUE. 
+specify the "ac" parameter, it will be defaulted to VALUE.
+
+The "m" parameter is the "multiplication factor":
+                   Resistance = Resistance / M
+Setting m to "val" is like putting m equal resistance in parallel.
+  
 
 Note: ac parameter can be considered "safe" since rework-11 
 
@@ -991,7 +997,7 @@ Note: ac parameter can be considered "safe" since rework-11
  General form:
 
 @example
-  RXXXXXXX N1 N2 <VALUE> <MNAME> <L=LENGTH> <W=WIDTH> <TEMP=T> <ac=val>
+  RXXXXXXX N1 N2 <VALUE> <MNAME> <L=LENGTH> <W=WIDTH> <TEMP=T> m=<val> <ac=val>
 @end example
 
 
