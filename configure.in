@@ -392,7 +392,7 @@ if test "$enable_ekv" = "yes"; then
     AC_MSG_RESULT(Model EKV included)
     AC_DEFINE(HAVE_EKV)
     EKVDIR="ekv"
-    EKVLIB="spicelib/devices/ekv/libekv.a"
+    EKVLIB="spicelib/devices/ekv/libekv.la"
 else
     EKVDIR=""
     EKVLIB=""	
@@ -405,10 +405,11 @@ dnl Add new code models to the build by pointing to them here.
 if test "$enable_xspice" = "yes"; then
     AC_MSG_RESULT(X-Spice features included)
     AC_DEFINE(XSPICE)
+    AC_PROG_YACC
+    AM_PROG_LEX
     XSPICEDIR="xspice"
-    XSPICELIB1="$XSPICEDIR/xspice.o        \
-		$XSPICEDIR/mif/libmifxsp.a \
-	        $XSPICEDIR/cm/libcmxsp.a"
+    XSPICELIB1="$XSPICEDIR/cm/libcmxsp.a \
+    		$XSPICEDIR/mif/libmifxsp.a"
     XSPICELIB2="$XSPICEDIR/evt/libevtxsp.a \
                 $XSPICEDIR/enh/libenhxsp.a \
 	        $XSPICEDIR/ipc/libipcxsp.a \
@@ -587,6 +588,7 @@ src/maths/sparse/Makefile	\
 src/misc/Makefile		\
 src/xspice/Makefile		\
 src/xspice/cm/Makefile		\
+src/xspice/cmpp/Makefile	\
 src/xspice/icm/makedefs		\
 src/xspice/mif/Makefile		\
 src/xspice/evt/Makefile		\

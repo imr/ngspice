@@ -1,10 +1,15 @@
 2004-01-10  Paolo Nenzi <p.nenzi@ieee.org>
 
+	*   configure.in 
+	    src/xspice/cmpp/Makefile src/xspice/cmpp/Makefile.in:
+	    Make configure automatically set paths for lex yacc and 
+	    install dir (Stefan Jones <stefan.jones@multigig.com>).
+
 	*  src/Makefile.am Makefile.am README.Tcl
 	   src/xspice/README src/xspice/icm/README
 	   src/xspice/icm/spice2poly/icm_spice2poly/README:
 	   Updated to reflect codemodel support is now complete
-	   (Stefan Jones <stefan.jones@multigig.com>)
+	   (Stefan Jones <stefan.jones@multigig.com>).
 
 	*  src/xspice/ipc/ipc.c:
 	   Remove linux specific includes which are not needed
