@@ -227,7 +227,8 @@ resume:
 	} else if(cv->TRCVvType[i]==rcode) { /* resistance */
             if((((RESinstance*)(cv->TRCVvElt[i]))->RESresist)*
                     SIGN(1.,cv->TRCVvStep[i]) -
-                    SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] >		    0.5 * fabs(cv->TRCVvStep[i]))
+                    SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] 
+		    > 0.5 * fabs(cv->TRCVvStep[i]))
                 { 
                     i++ ; 
                     firstTime=1;
@@ -339,7 +340,7 @@ resume:
             }
 	    if(cv->TRCVvType[i]==TEMP_CODE) { /* Temperature */
                 printf("Current Circuit Temperature : %.5e C\n",
-                        ckt-CKTtime - CONSTCtoK);
+                        ckt-CKTtemp - CONSTCtoK);
             }
 	    
 #endif /* SENSDEBUG */
