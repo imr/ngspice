@@ -1,3 +1,36 @@
+2000-07-07  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* parser/cshpar.c: Separated out com_chdir(), com_echo(),
+	com_rehash() and com_shell() and moved them into frontend
+	directory.
+
+	* frontend/com_chdir.c, frontend/com_echo.c, frontend/com_rehash.c,
+	frontend/com_shell.c: Their new homes.
+
+	* parser/quote.c, parser/quote.h: The quote/unquote functions are
+	used exclusively in the frontend, moved them there.
+
+	* frontend/quote.c, frontend/quote.h: Their new location.
+
+	* parser/input.c, parser/input.h: Input, output and error streams
+	handled in the frontend.  Moved to the frontend directory.
+
+	* frontend/streams.c: Its new home.
+	
+	* frontend/Makefile.am: Updates for new files.
+
+	* frontend/breakp2.c, frontend/newcoms.c, frontend/postcoms.c,
+	frontend/resource.c, frontend/terminal.h, frontend/variable.c,
+	frontend/variable.h, frontend/com_compose.c,
+	frontend/com_display.c, frontend/com_setscale.c,
+	frontend/com_strcmp.c: Include files update.
+
+	* parser/var2.c, parser/var2.h: Empty files, removed.
+
+	* parser/Makefile.am: Updates for removed files.
+
+	* parser/lexical.c: Small adjustments
+
 2000-04-04  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* ngspice.c: Added support for BSIM4.
