@@ -63,8 +63,10 @@ void INP2R(void *ckt, INPtables * tab, card * current)
 
     INPgetTok(&line, &model, 1);
 
-    if (*model) {		/* token isn't null */
-	if (INPlookMod(model)) {	/* If this is a valid model connect it */
+    if (*model) {
+	/* token isn't null */
+	if (INPlookMod(model)) {
+	    /* If this is a valid model connect it */
 	    INPinsert(&model, tab);
 	    thismodel = (INPmodel *) NULL;
 	    current->error = INPgetMod(ckt, model, &thismodel, tab);
@@ -76,27 +78,28 @@ void INP2R(void *ckt, INPtables * tab, card * current)
 		mdfast = thismodel->INPmodfast;
 		type = thismodel->INPmodType;
 	    }
-
-	} else {		/* It is not a model */
+	} else {
+	    /* It is not a model */
 	    line = saveline;	/* go back */
 	    type = mytype;
 	    if (!tab->defRmod) {	/* create default R model */
 		IFnewUid(ckt, &uid, (IFuid) NULL, "R", UID_MODEL,
 			 (void **) NULL);
-		IFC(newModel, (ckt, type, &(tab->defRmod), uid))
+		IFC(newModel, (ckt, type, &(tab->defRmod), uid));
 	    }
 	    mdfast = tab->defRmod;
 	}
-	IFC(newInstance, (ckt, mdfast, &fast, name))
-    } else {			/* The token is null and a default model will be created */
+	IFC(newInstance, (ckt, mdfast, &fast, name));
+    } else {
+	/* The token is null and a default model will be created */
 	type = mytype;
 	if (!tab->defRmod) {
 	    /* create default R model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "R", UID_MODEL,
 		     (void **) NULL);
-	    IFC(newModel, (ckt, type, &(tab->defRmod), uid))
+	    IFC(newModel, (ckt, type, &(tab->defRmod), uid));
 	}
-	IFC(newInstance, (ckt, tab->defRmod, &fast, name))
+	IFC(newInstance, (ckt, tab->defRmod, &fast, name));
     }
 
     if (error1 == 0) {		/* got a resistance above */
@@ -104,12 +107,12 @@ void INP2R(void *ckt, INPtables * tab, card * current)
 	GCA(INPpName, ("resistance", &ptemp, ckt, type, fast))
     }
 
-    IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
-	if (waslead) {
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+    if (waslead) {
 	ptemp.rValue = leadval;
-	GCA(INPpName, ("resistance", &ptemp, ckt, type, fast))
+	GCA(INPpName, ("resistance", &ptemp, ckt, type, fast));
     }
     return;
 }

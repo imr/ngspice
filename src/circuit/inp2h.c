@@ -46,16 +46,16 @@ void INP2H(void *ckt, INPtables * tab, card * current)
     if (!tab->defHmod) {
 	/* create default H model */
 	IFnewUid(ckt, &uid, (IFuid) NULL, "H", UID_MODEL, (void **) NULL);
-	IFC(newModel, (ckt, type, &(tab->defHmod), uid))
+	IFC(newModel, (ckt, type, &(tab->defHmod), uid));
     }
-    IFC(newInstance, (ckt, tab->defHmod, &fast, name))
-	IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	parm = INPgetValue(ckt, &line, IF_INSTANCE, tab);
-    GCA(INPpName, ("control", parm, ckt, type, fast))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
-	if (waslead) {
+    IFC(newInstance, (ckt, tab->defHmod, &fast, name));
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    parm = INPgetValue(ckt, &line, IF_INSTANCE, tab);
+    GCA(INPpName, ("control", parm, ckt, type, fast));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+    if (waslead) {
 	ptemp.rValue = leadval;
-	GCA(INPpName, ("gain", &ptemp, ckt, type, fast))
+	GCA(INPpName, ("gain", &ptemp, ckt, type, fast));
     }
 }

@@ -54,12 +54,12 @@ void INP2T(void *ckt, INPtables * tab, card * current)
     if (!tab->defTmod) {
 	/* create deafult T model */
 	IFnewUid(ckt, &uid, (IFuid) NULL, "T", UID_MODEL, (void **) NULL);
-	IFC(newModel, (ckt, type, &(tab->defTmod), uid))
+	IFC(newModel, (ckt, type, &(tab->defTmod), uid));
     }
-    IFC(newInstance, (ckt, tab->defTmod, &fast, name))
-	IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	IFC(bindNode, (ckt, fast, 3, node3))
-	IFC(bindNode, (ckt, fast, 4, node4))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
+    IFC(newInstance, (ckt, tab->defTmod, &fast, name));
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    IFC(bindNode, (ckt, fast, 3, node3));
+    IFC(bindNode, (ckt, fast, 4, node4));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
 }

@@ -78,14 +78,14 @@ void INP2O(void *ckt, INPtables * tab, card * current)
 	    /* create default O model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "O", UID_MODEL,
 		     (void **) NULL);
-	    IFC(newModel, (ckt, type, &(tab->defOmod), uid))
+	    IFC(newModel, (ckt, type, &(tab->defOmod), uid));
 	}
 	mdfast = tab->defOmod;
     }
-    IFC(newInstance, (ckt, mdfast, &fast, name))
-	IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	IFC(bindNode, (ckt, fast, 3, node3))
-	IFC(bindNode, (ckt, fast, 4, node4))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
+    IFC(newInstance, (ckt, mdfast, &fast, name));
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    IFC(bindNode, (ckt, fast, 3, node3));
+    IFC(bindNode, (ckt, fast, 4, node4));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
 }

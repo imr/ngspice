@@ -49,9 +49,8 @@ dot_nodeset(char *line, void *ckt, INPtables *tab, card *current,
 	    INPgetTok(&line, &name, 1);
 	    INPtermInsert(ckt, &name, tab, &node1);
 	    ptemp.rValue = INPevaluate(&line, &error, 1);
-	    IFC(setNodeParm,
-		(ckt, node1, which, &ptemp,
-		 (IFvalue *) NULL)) continue;
+	    IFC(setNodeParm, (ckt, node1, which, &ptemp, (IFvalue *) NULL));
+	    continue;
 	}
 	LITERR(" Error: .nodeset syntax error.\n");
 	break;
@@ -273,9 +272,8 @@ dot_ic(char *line, void *ckt, INPtables *tab, card *current,
 	    INPgetTok(&line, &name, 1);
 	    INPtermInsert(ckt, &name, tab, &node1);
 	    ptemp.rValue = INPevaluate(&line, &error, 1);
-	    IFC(setNodeParm,
-		(ckt, node1, which, &ptemp,
-		 (IFvalue *) NULL)) continue;
+	    IFC(setNodeParm, (ckt, node1, which, &ptemp, (IFvalue *) NULL));
+	    continue;
 	}
 	LITERR(" Error: .ic syntax error.\n");
 	break;
@@ -307,17 +305,17 @@ dot_ac(char *line, void *ckt, INPtables *tab, card *current,
 	LITERR("AC small signal analysis unsupported.\n");
 	return (0);
     }
-    IFC(newAnalysis, (ckt, which, "AC Analysis", &foo, task))
-	INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
+    IFC(newAnalysis, (ckt, which, "AC Analysis", &foo, task));
+    INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
     ptemp.iValue = 1;
-    GCA(INPapName, (ckt, which, foo, steptype, &ptemp))
-	parm = INPgetValue(ckt, &line, IF_INTEGER, tab); /* number of points */
-    GCA(INPapName, (ckt, which, foo, "numsteps", parm))
-	parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
-    GCA(INPapName, (ckt, which, foo, "start", parm))
-	parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
-    GCA(INPapName, (ckt, which, foo, "stop", parm))
-	return (0);
+    GCA(INPapName, (ckt, which, foo, steptype, &ptemp));
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab); /* number of points */
+    GCA(INPapName, (ckt, which, foo, "numsteps", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
+    GCA(INPapName, (ckt, which, foo, "start", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
+    GCA(INPapName, (ckt, which, foo, "stop", parm));
+    return (0);
 }
 
 static int
@@ -343,22 +341,22 @@ dot_pz(char *line, void *ckt, INPtables *tab, card *current,
 	LITERR("Pole-zero analysis unsupported.\n");
 	return (0);
     }
-    IFC(newAnalysis, (ckt, which, "Pole-Zero Analysis", &foo, task))
-	parm = INPgetValue(ckt, &line, IF_NODE, tab);
-    GCA(INPapName, (ckt, which, foo, "nodei", parm))
-	parm = INPgetValue(ckt, &line, IF_NODE, tab);
-    GCA(INPapName, (ckt, which, foo, "nodeg", parm))
-	parm = INPgetValue(ckt, &line, IF_NODE, tab);
-    GCA(INPapName, (ckt, which, foo, "nodej", parm))
-	parm = INPgetValue(ckt, &line, IF_NODE, tab);
-    GCA(INPapName, (ckt, which, foo, "nodek", parm))
-	INPgetTok(&line, &steptype, 1);	/* get V or I */
+    IFC(newAnalysis, (ckt, which, "Pole-Zero Analysis", &foo, task));
+    parm = INPgetValue(ckt, &line, IF_NODE, tab);
+    GCA(INPapName, (ckt, which, foo, "nodei", parm));
+    parm = INPgetValue(ckt, &line, IF_NODE, tab);
+    GCA(INPapName, (ckt, which, foo, "nodeg", parm));
+    parm = INPgetValue(ckt, &line, IF_NODE, tab);
+    GCA(INPapName, (ckt, which, foo, "nodej", parm));
+    parm = INPgetValue(ckt, &line, IF_NODE, tab);
+    GCA(INPapName, (ckt, which, foo, "nodek", parm));
+    INPgetTok(&line, &steptype, 1);	/* get V or I */
     ptemp.iValue = 1;
-    GCA(INPapName, (ckt, which, foo, steptype, &ptemp))
-	INPgetTok(&line, &steptype, 1);	/* get POL, ZER, or PZ */
+    GCA(INPapName, (ckt, which, foo, steptype, &ptemp));
+    INPgetTok(&line, &steptype, 1);	/* get POL, ZER, or PZ */
     ptemp.iValue = 1;
-    GCA(INPapName, (ckt, which, foo, steptype, &ptemp))
-	return (0);
+    GCA(INPapName, (ckt, which, foo, steptype, &ptemp));
+    return (0);
 }
 
 

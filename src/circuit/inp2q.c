@@ -78,18 +78,18 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
 	    /* create default Q model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "Q", UID_MODEL,
 		     (void **) NULL);
-	    IFC(newModel, (ckt, type, &(tab->defQmod), uid))
+	    IFC(newModel, (ckt, type, &(tab->defQmod), uid));
 	}
 	mdfast = tab->defQmod;
     }
-    IFC(newInstance, (ckt, mdfast, &fast, name))
-	IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	IFC(bindNode, (ckt, fast, 3, node3))
-	IFC(bindNode, (ckt, fast, 4, node4))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
-	if (waslead) {
+    IFC(newInstance, (ckt, mdfast, &fast, name));
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    IFC(bindNode, (ckt, fast, 3, node3));
+    IFC(bindNode, (ckt, fast, 4, node4));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+    if (waslead) {
 	ptemp.rValue = leadval;
-	GCA(INPpName, ("area", &ptemp, ckt, type, fast))
+	GCA(INPpName, ("area", &ptemp, ckt, type, fast));
     }
 }

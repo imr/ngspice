@@ -67,17 +67,17 @@ void INP2W(void *ckt, INPtables * tab, card * current)
 	    /* create deafult W model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "W", UID_MODEL,
 		     (void **) NULL);
-	    IFC(newModel, (ckt, type, &(tab->defWmod), uid))
+	    IFC(newModel, (ckt, type, &(tab->defWmod), uid));
 	}
 	mdfast = tab->defWmod;
     }
-    IFC(newInstance, (ckt, mdfast, &fast, name))
+    IFC(newInstance, (ckt, mdfast, &fast, name));
 
-	GCA(INPpName, ("control", &ptemp, ckt, type, fast))
-	IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
-	if (waslead) {
+    GCA(INPpName, ("control", &ptemp, ckt, type, fast));
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+    if (waslead) {
 	/* ignore a number */
     }
 }

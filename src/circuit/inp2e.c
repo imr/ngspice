@@ -53,16 +53,16 @@ void INP2E(void *ckt, INPtables * tab, card * current)
     if (!tab->defEmod) {
 	/* create default E model */
 	IFnewUid(ckt, &uid, (IFuid) NULL, "E", UID_MODEL, (void **) NULL);
-	IFC(newModel, (ckt, type, &(tab->defEmod), uid))
+	IFC(newModel, (ckt, type, &(tab->defEmod), uid));
     }
-    IFC(newInstance, (ckt, tab->defEmod, &fast, name))
-	IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	IFC(bindNode, (ckt, fast, 3, node3))
-	IFC(bindNode, (ckt, fast, 4, node4))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
-	if (waslead) {
+    IFC(newInstance, (ckt, tab->defEmod, &fast, name));
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    IFC(bindNode, (ckt, fast, 3, node3));
+    IFC(bindNode, (ckt, fast, 4, node4));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+    if (waslead) {
 	ptemp.rValue = leadval;
-	GCA(INPpName, ("gain", &ptemp, ckt, type, fast))
+	GCA(INPpName, ("gain", &ptemp, ckt, type, fast));
     }
 }

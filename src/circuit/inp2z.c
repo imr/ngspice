@@ -67,17 +67,17 @@ void INP2Z(void *ckt, INPtables * tab, card * current)
 	    /* create default Z model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "Z", UID_MODEL,
 		     (void **) NULL);
-	    IFC(newModel, (ckt, type, &(tab->defZmod), uid))
+	    IFC(newModel, (ckt, type, &(tab->defZmod), uid));
 	}
 	mdfast = tab->defZmod;
     }
-    IFC(newInstance, (ckt, mdfast, &fast, name))
-	IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	IFC(bindNode, (ckt, fast, 3, node3))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
-	if (waslead) {
+    IFC(newInstance, (ckt, mdfast, &fast, name));
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    IFC(bindNode, (ckt, fast, 3, node3));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+    if (waslead) {
 	ptemp.rValue = leadval;
-	GCA(INPpName, ("area", &ptemp, ckt, type, fast))
+	GCA(INPpName, ("area", &ptemp, ckt, type, fast));
     }
 }

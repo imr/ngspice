@@ -84,17 +84,17 @@ void INP2M(void *ckt, INPtables * tab, card * current)
 	    /* create default M model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "M", UID_MODEL,
 		     (void **) NULL);
-	    IFC(newModel, (ckt, type, &(tab->defMmod), uid))
+	    IFC(newModel, (ckt, type, &(tab->defMmod), uid));
 	}
 	mdfast = tab->defMmod;
     }
-    IFC(newInstance, (ckt, mdfast, &fast, name))
-	IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	IFC(bindNode, (ckt, fast, 3, node3))
-	IFC(bindNode, (ckt, fast, 4, node4))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
-	if (waslead) {
-	    LITERR(" error:  no unlabeled parameter permitted on mosfet\n");
-	}
+    IFC(newInstance, (ckt, mdfast, &fast, name));
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    IFC(bindNode, (ckt, fast, 3, node3));
+    IFC(bindNode, (ckt, fast, 4, node4));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+    if (waslead) {
+	LITERR(" error:  no unlabeled parameter permitted on mosfet\n");
+    }
 }

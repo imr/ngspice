@@ -65,13 +65,13 @@ void INP2U(void *ckt, INPtables * tab, card * current)
 	    /* create deafult U model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "U", UID_MODEL,
 		     (void **) NULL);
-	    IFC(newModel, (ckt, type, &(tab->defUmod), uid))
+	    IFC(newModel, (ckt, type, &(tab->defUmod), uid));
 	}
 	mdfast = tab->defUmod;
     }
-    IFC(newInstance, (ckt, mdfast, &fast, name))
-	IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	IFC(bindNode, (ckt, fast, 3, node3))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
+    IFC(newInstance, (ckt, mdfast, &fast, name));
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    IFC(bindNode, (ckt, fast, 3, node3));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
 }

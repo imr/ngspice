@@ -49,10 +49,10 @@ void INP2B(void *ckt, INPtables * tab, card * current)
     if (!tab->defBmod) {
 	/* create default B model */
 	IFnewUid(ckt, &uid, (IFuid) NULL, "B", UID_MODEL, (void **) NULL);
-	IFC(newModel, (ckt, type, &(tab->defBmod), uid))
+	IFC(newModel, (ckt, type, &(tab->defBmod), uid));
     }
-    IFC(newInstance, (ckt, tab->defBmod, &fast, name))
-	IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
+    IFC(newInstance, (ckt, tab->defBmod, &fast, name));
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
 }

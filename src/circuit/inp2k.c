@@ -38,18 +38,18 @@ void INP2K(void *ckt, INPtables * tab, card * current)
     if (!tab->defKmod) {
 	/* create deafult K model */
 	IFnewUid(ckt, &uid, (IFuid) NULL, "K", UID_MODEL, (void **) NULL);
-	IFC(newModel, (ckt, type, &(tab->defKmod), uid))
+	IFC(newModel, (ckt, type, &(tab->defKmod), uid));
     }
-    IFC(newInstance, (ckt, tab->defKmod, &fast, name))
+    IFC(newInstance, (ckt, tab->defKmod, &fast, name));
 
-	parm = INPgetValue(ckt, &line, IF_INSTANCE, tab);
-    GCA(INPpName, ("inductor1", parm, ckt, type, fast))
-	parm = INPgetValue(ckt, &line, IF_INSTANCE, tab);
-    GCA(INPpName, ("inductor2", parm, ckt, type, fast))
+    parm = INPgetValue(ckt, &line, IF_INSTANCE, tab);
+    GCA(INPpName, ("inductor1", parm, ckt, type, fast));
+    parm = INPgetValue(ckt, &line, IF_INSTANCE, tab);
+    GCA(INPpName, ("inductor2", parm, ckt, type, fast));
 
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
-	if (waslead) {
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+    if (waslead) {
 	ptemp.rValue = leadval;
-	GCA(INPpName, ("coefficient", &ptemp, ckt, type, fast))
+	GCA(INPpName, ("coefficient", &ptemp, ckt, type, fast));
     }
 }

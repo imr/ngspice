@@ -62,16 +62,16 @@ void INP2D(void *ckt, INPtables * tab, card * current)
 	    /* create default D model */
 	    IFnewUid(ckt, &uid, (IFuid) NULL, "D", UID_MODEL,
 		     (void **) NULL);
-	    IFC(newModel, (ckt, type, &(tab->defDmod), uid))
+	    IFC(newModel, (ckt, type, &(tab->defDmod), uid));
 	}
 	mdfast = tab->defDmod;
     }
-    IFC(newInstance, (ckt, mdfast, &fast, name))
-	IFC(bindNode, (ckt, fast, 1, node1))
-	IFC(bindNode, (ckt, fast, 2, node2))
-	PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab))
-	if (waslead) {
+    IFC(newInstance, (ckt, mdfast, &fast, name));
+    IFC(bindNode, (ckt, fast, 1, node1));
+    IFC(bindNode, (ckt, fast, 2, node2));
+    PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+    if (waslead) {
 	ptemp.rValue = leadval;
-	GCA(INPpName, ("area", &ptemp, ckt, type, fast))
+	GCA(INPpName, ("area", &ptemp, ckt, type, fast));
     }
 }
