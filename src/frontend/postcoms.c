@@ -74,11 +74,12 @@ com_print(wordlist *wl)
     bool col = TRUE, nobreak = FALSE, noprintscale, plotnames = FALSE;
     bool optgiven = FALSE;
     char *s, buf[BSIZE_SP], buf2[BSIZE_SP];
-    char numbuf[BSIZE_SP], numbuf2[BSIZE_SP];
+    char numbuf[BSIZE_SP], numbuf2[BSIZE_SP]; /* Printnum buffers */
     int ngood;
 
     if (wl == NULL)
         return;
+        
     if (eq(wl->wl_word, "col")) {
         col = TRUE;
         optgiven = TRUE;

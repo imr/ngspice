@@ -37,3 +37,6 @@
 
 /* Define if we don't have GETOPT in the library */
 #undef HAVE_GETOPT
+
+/* We do not want spurios debug info into non-developer code */
+#undef FTEDEBUG
