@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -16,10 +17,10 @@ Author: 1985 Thomas L. Quarles
 int
 MOS2acLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
     int xnrm;
     int xrev;
     double xgs;
@@ -52,11 +53,11 @@ MOS2acLoad(inModel,ckt)
              */
             EffectiveLength=here->MOS2l - 2*model->MOS2latDiff;
             GateSourceOverlapCap = model->MOS2gateSourceOverlapCapFactor * 
-                    here->MOS2w;
+                    here->MOS2m * here->MOS2w;
             GateDrainOverlapCap = model->MOS2gateDrainOverlapCapFactor * 
-                    here->MOS2w;
+                    here->MOS2m * here->MOS2w;
             GateBulkOverlapCap = model->MOS2gateBulkOverlapCapFactor * 
-                    EffectiveLength;
+                    here->MOS2m * EffectiveLength;
             capgs = ( *(ckt->CKTstate0+here->MOS2capgs)+ 
                       *(ckt->CKTstate0+here->MOS2capgs) +
                       GateSourceOverlapCap );

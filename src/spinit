@@ -1,0 +1,4 @@
+* Standard spice and nutmeg init file
+alias exit quit
+alias acct rusage all
+set x11lineararcs

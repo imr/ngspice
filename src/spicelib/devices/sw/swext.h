@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon M. Jacobs
+Modified: 2000 AlansFixes
 **********/
 
 #ifdef __STDC__
@@ -16,6 +17,7 @@ extern int SWparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int SWpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
 extern int SWsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int SWnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+extern int SWtrunc(GENmodel*,CKTcircuit*,double*);
 #else /* stdc */
 extern int SWacLoad();
 extern int SWask();
@@ -29,5 +31,6 @@ extern int SWparam();
 extern int SWpzLoad();
 extern int SWsetup();
 extern int SWnoise();
+extern int SWtrunc();
 #endif /* stdc */
 

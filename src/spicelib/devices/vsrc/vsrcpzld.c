@@ -18,8 +18,8 @@ VSRCpzLoad(inModel,ckt,s)
     CKTcircuit *ckt;
     SPcomplex *s;
 {
-    register VSRCmodel *model = (VSRCmodel *)inModel;
-    register VSRCinstance *here;
+    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCinstance *here;
 
     for( ; model != NULL; model = model->VSRCnextModel ) {
 

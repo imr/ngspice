@@ -1,16 +1,20 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
 
 /**********
- * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4.c of BSIM4.0.0.
- * Authors: Weidong Liu, Kanyu M. Cao, Xiaodong Jin, Chenming Hu.
+ * Copyright 2001 Regents of the University of California. All rights reserved.
+ * File: b4.c of BSIM4.2.1.
+ * Author: 2000 Weidong Liu
+ * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ *
+ * Modified by Xuemei Xi, 10/05/2001.
  **********/
 
 #include "ngspice.h"
 #include <stdio.h>
 #include "devdefs.h"
 #include "bsim4def.h"
+#include "suffix.h"
 
 IFparm BSIM4pTable[] = { /* parameters */
 IOP( "l",   BSIM4_L,      IF_REAL   , "Length"),
@@ -43,9 +47,42 @@ OP( "gds",          BSIM4_GDS,        IF_REAL,    "Gds"),
 OP( "vdsat",        BSIM4_VDSAT,      IF_REAL,    "Vdsat"),
 OP( "vth",          BSIM4_VON,        IF_REAL,    "Vth"),
 OP( "id",           BSIM4_CD,         IF_REAL,    "Ids"),
+OP( "ibd",          BSIM4_CBD,        IF_REAL,    "Ibd"),
+OP( "ibs",          BSIM4_CBS,        IF_REAL,    "Ibs"),
+OP( "isub",         BSIM4_CSUB,       IF_REAL,    "Isub"),
+OP( "igidl",        BSIM4_IGIDL,      IF_REAL,    "Igidl"),
+OP( "igisl",        BSIM4_IGISL,      IF_REAL,    "Igisl"),
+OP( "igs",          BSIM4_IGS,        IF_REAL,    "Igs"),
+OP( "igd",          BSIM4_IGD,        IF_REAL,    "Igd"),
+OP( "igb",          BSIM4_IGB,        IF_REAL,    "Igb"),
+OP( "igcs",         BSIM4_IGCS,       IF_REAL,    "Igcs"),
+OP( "igcd",         BSIM4_IGCD,       IF_REAL,    "Igcd"),
 OP( "vbs",          BSIM4_VBS,        IF_REAL,    "Vbs"),
 OP( "vgs",          BSIM4_VGS,        IF_REAL,    "Vgs"),
 OP( "vds",          BSIM4_VDS,        IF_REAL,    "Vds"),
+OP( "cgg",         BSIM4_CGGB,       IF_REAL,    "Cggb"),
+OP( "cgs",         BSIM4_CGSB,       IF_REAL,    "Cgsb"),
+OP( "cgd",         BSIM4_CGDB,       IF_REAL,    "Cgdb"),
+OP( "cbg",         BSIM4_CBGB,       IF_REAL,    "Cbgb"),
+OP( "cbd",         BSIM4_CBDB,       IF_REAL,    "Cbdb"),
+OP( "cbs",         BSIM4_CBSB,       IF_REAL,    "Cbsb"),
+OP( "cdg",         BSIM4_CDGB,       IF_REAL,    "Cdgb"),
+OP( "cdd",         BSIM4_CDDB,       IF_REAL,    "Cddb"),
+OP( "cds",         BSIM4_CDSB,       IF_REAL,    "Cdsb"),
+OP( "csg",         BSIM4_CSGB,       IF_REAL,    "Csgb"),
+OP( "csd",         BSIM4_CSDB,       IF_REAL,    "Csdb"),
+OP( "css",         BSIM4_CSSB,       IF_REAL,    "Cssb"),
+OP( "cgb",         BSIM4_CGBB,       IF_REAL,    "Cgbb"),
+OP( "cdb",         BSIM4_CDBB,       IF_REAL,    "Cdbb"),
+OP( "csb",         BSIM4_CSBB,       IF_REAL,    "Csbb"),
+OP( "cbb",         BSIM4_CBBB,       IF_REAL,    "Cbbb"),
+OP( "capbd",       BSIM4_CAPBD,      IF_REAL,    "Capbd"),
+OP( "capbs",       BSIM4_CAPBS,      IF_REAL,    "Capbs"),
+OP( "qg",          BSIM4_QG,         IF_REAL,    "Qgate"),
+OP( "qb",          BSIM4_QB,         IF_REAL,    "Qbulk"),
+OP( "qd",          BSIM4_QD,         IF_REAL,    "Qdrain"),
+OP( "qs",          BSIM4_QS,         IF_REAL,    "Qsource"),
+OP( "qinv",        BSIM4_QINV,       IF_REAL,    "Qinversion"),
 };
 
 IFparm BSIM4mPTable[] = { /* model parameters */
@@ -254,6 +291,8 @@ IOP( "clc", BSIM4_MOD_CLC, IF_REAL, "Vdsat parameter for C-V model"),
 IOP( "cle", BSIM4_MOD_CLE, IF_REAL, "Vdsat parameter for C-V model"),
 IOP( "dwc", BSIM4_MOD_DWC, IF_REAL, "Delta W for C-V model"),
 IOP( "dlc", BSIM4_MOD_DLC, IF_REAL, "Delta L for C-V model"),
+IOP( "xw", BSIM4_MOD_XW, IF_REAL, "W offset for channel width due to mask/etch effect"),
+IOP( "xl", BSIM4_MOD_XL, IF_REAL, "L offset for channel length due to mask/etch effect"),
 IOP( "dlcig", BSIM4_MOD_DLCIG, IF_REAL, "Delta L for Ig model"),
 IOP( "dwj", BSIM4_MOD_DWJ, IF_REAL, "Delta W for S/D junctions"),
 

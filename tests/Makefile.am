@@ -1,18 +1,18 @@
 ## Process this file with automake to produce Makefile.in
 
-TESTS = diffpair.sh fourbitadder.sh resistor.sh
+SUBDIRS = resistance filters polezero bsim3soipd bsim3soifd bsim3soidd bsim4 mesa
 
-TESTS_ENVIRONMENT = $(SHELL)
+TESTS = \
+	diffpair.cir		\
+	fourbitadder.cir
+
+TESTS_ENVIRONMENT = $(SHELL) $(srcdir)/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
 	README			\
-	config.sh		\
+	check.sh		\
+	maketest.sh		\
 	$(TESTS)		\
-	diffpair.cir		\
-	diffpair.out		\
-	fourbitadder.cir	\
-	fourbitadder.out	\
-	resistor.cir		\
-	resistor.out
+	$(TESTS:.cir=.out)
 
 MAINTAINERCLEANFILES = Makefile.in

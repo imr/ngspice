@@ -21,11 +21,11 @@ ASRCmDelete(modList,modname,killModel)
 
 {
 
-    register ASRCmodel **model = (ASRCmodel**)modList;
-    register ASRCmodel *modfast = (ASRCmodel*)killModel;
-    register ASRCinstance *here;
-    register ASRCinstance *prev = NULL;
-    register ASRCmodel **oldmod;
+    ASRCmodel **model = (ASRCmodel**)modList;
+    ASRCmodel *modfast = (ASRCmodel*)killModel;
+    ASRCinstance *here;
+    ASRCinstance *prev = NULL;
+    ASRCmodel **oldmod;
     oldmod = model;
     for( ; *model ; model = &((*model)->ASRCnextModel)) {
         if( (*model)->ASRCmodName == modname || 

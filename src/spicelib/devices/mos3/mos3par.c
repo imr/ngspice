@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -24,6 +25,11 @@ MOS3param(param,value,inst,select)
 {
     MOS3instance *here = (MOS3instance *)inst;
     switch(param) {
+    	
+        case MOS3_M:
+            here->MOS3m = value->rValue;
+            here->MOS3mGiven = TRUE;
+            break;
         case MOS3_W:
             here->MOS3w = value->rValue;
             here->MOS3wGiven = TRUE;

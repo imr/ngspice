@@ -17,14 +17,14 @@ int
 B2convTest(inModel,ckt)
 
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 
         /* actually load the current value into the 
          * sparse matrix previously provided 
          */
 {
-    register B2model *model = (B2model*)inModel;
-    register B2instance *here;
+    B2model *model = (B2model*)inModel;
+    B2instance *here;
     double cbd;
     double cbhat;
     double cbs;

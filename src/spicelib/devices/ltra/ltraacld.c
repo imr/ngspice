@@ -21,8 +21,8 @@ LTRAacLoad(inModel, ckt)
  * matrix and the right-hand-side vector
  */
 {
-  register LTRAmodel *model = (LTRAmodel *) inModel;
-  register LTRAinstance *here;
+  LTRAmodel *model = (LTRAmodel *) inModel;
+  LTRAinstance *here;
   double y0_r, y0_i, lambda_r, lambda_i, mag, theta;
   double exparg_r, exparg_i, explambda_r, explambda_i;
   double y0exp_r, y0exp_i;

@@ -1,3 +1,4 @@
+/* Modified: 2000 AlansFixes */
 #include <config.h>
 #include "ngspice.h"
 #include "dup2.h"
@@ -16,5 +17,5 @@ dup2(int oldd, int newd)
 	return 0;
 }
 #else
-int Dummy_Symbol;
+int Dummy_Symbol_2;
 #endif

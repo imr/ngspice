@@ -1,0 +1,14 @@
+* MESA1 - Gate Leakage Test 
+* Taken from macspice3f4
+*
+
+z1 0 2 0 mesmod l=1u w=20u
+vgs 1 0 dc 0
+vig 1 2 dc 0
+.model mesmod nmf(level=2 rd=31 rs=31 rg=10)
+
+.dc vgs -3 0.4 0.05
+.print vig#branch
+
+.end
+

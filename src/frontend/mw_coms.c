@@ -7,9 +7,11 @@
 #include "ftedefs.h"
 #include "ftedev.h"
 #include "ftedebug.h"
-#include "ftedata.h"
-#include "mw_coms.h"
+#include "dvec.h"
 
+#include "circuits.h"
+#include "mw_coms.h"
+#include "variable.h"
 
 extern FILE *rawfileFp;
 extern bool rawfileBinary;

@@ -17,15 +17,15 @@ int
 CSWacLoad(inModel,ckt)
 
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 
         /* load the current values into the 
          * sparse matrix previously provided 
          * during AC analysis
          */
 {
-    register CSWmodel *model = (CSWmodel*)inModel;
-    register CSWinstance *here;
+    CSWmodel *model = (CSWmodel*)inModel;
+    CSWinstance *here;
     double g_now;
     int current_state;
 

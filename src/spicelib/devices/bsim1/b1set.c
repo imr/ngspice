@@ -14,17 +14,17 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 int
 B1setup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
-    register GENmodel *inModel;
-    register CKTcircuit *ckt;
+    SMPmatrix *matrix;
+    GENmodel *inModel;
+    CKTcircuit *ckt;
     int *states;
         /* load the B1 device structure with those pointers needed later 
          * for fast matrix loading 
          */
 
 {
-    register B1model *model = (B1model*)inModel;
-    register B1instance *here;
+    B1model *model = (B1model*)inModel;
+    B1instance *here;
     int error;
     CKTnode *tmp;
 
@@ -271,6 +271,9 @@ B1setup(matrix,inModel,ckt,states)
         for (here = model->B1instances; here != NULL ;
                 here=here->B1nextInstance) {
 
+        CKTnode *tmpNode;
+        IFuid tmpName;
+
 	    if (here->B1owner == ARCHme) {
 		/* allocate a chunk of the state vector */
 		here->B1states = *states;
@@ -325,6 +328,14 @@ B1setup(matrix,inModel,ckt,states)
                 error = CKTmkVolt(ckt,&tmp,here->B1name,"drain");
                 if(error) return(error);
                 here->B1dNodePrime = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
             } else {
                     here->B1dNodePrime = here->B1dNode;
             }
@@ -337,6 +348,14 @@ B1setup(matrix,inModel,ckt,states)
                     error = CKTmkVolt(ckt,&tmp,here->B1name,"source");
                     if(error) return(error);
                     here->B1sNodePrime = tmp->number;
+                    if (ckt->CKTcopyNodesets) {
+                     if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset; 
+                       tmp->nsGiven=tmpNode->nsGiven; 
+                     }
+                  }
+                }
                 }
             } else  {
                 here->B1sNodePrime = here->B1sNode;
@@ -383,7 +402,6 @@ B1unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     B1model *model;
     B1instance *here;
 
@@ -407,6 +425,5 @@ B1unsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

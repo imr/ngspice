@@ -7,7 +7,6 @@ Author: 1987 Gary W. Ng
 #include <stdio.h>
 #include "bjtdefs.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "suffix.h"
@@ -31,12 +30,12 @@ BJTnoise (mode, operation, genmodel, ckt, data, OnDens)
     int mode;
     int operation;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     BJTmodel *firstModel = (BJTmodel *) genmodel;
-    register BJTmodel *model;
-    register BJTinstance *inst;
+    BJTmodel *model;
+    BJTinstance *inst;
     char name[N_MXVLNTH];
     double tempOnoise;
     double tempInoise;

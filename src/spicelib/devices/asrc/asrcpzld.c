@@ -23,8 +23,8 @@ ASRCpzLoad(inModel,ckt,s)
          * sparse matrix previously provided 
          */
 {
-    register ASRCmodel *model = (ASRCmodel*)inModel;
-    register ASRCinstance *here;
+    ASRCmodel *model = (ASRCmodel*)inModel;
+    ASRCinstance *here;
     double value;
     int i, v_first, j, branch;
     int node_num;

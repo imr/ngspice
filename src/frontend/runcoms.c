@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+Modified: 2000 AlansFixes
 **********/
 
 /*
@@ -12,8 +13,18 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ftedefs.h"
 #include "ftedev.h"
 #include "ftedebug.h"
-#include "ftedata.h"
+#include "dvec.h"
+
+#include "circuits.h"
+#include "completion.h"
 #include "runcoms.h"
+#include "variable.h"
+
+#ifdef XSPICE
+/* gtri - add - 12/12/90 - wbk - include ipc stuff */
+#include "ipctiein.h"
+/* gtri - end - 12/12/90 */
+#endif
 
 /* static declarations */
 static int dosim(char *what, wordlist *wl);
@@ -30,6 +41,11 @@ extern struct dbcomm *dbs;
 
 FILE *rawfileFp;
 bool rawfileBinary;
+#define RAWBUF_SIZE 32768
+char rawfileBuf[RAWBUF_SIZE];
+/*To tell resume the rawfile name saj*/
+char *last_used_rawfile = NULL;
+/*end saj */
 
 void
 com_scirc(wordlist *wl)
@@ -144,7 +160,7 @@ com_noise(wordlist *wl)
 static int
 dosim(char *what, wordlist *wl)
 {
-    wordlist *ww;
+    wordlist *ww = NULL;
     bool dofile = FALSE;
     char buf[BSIZE_SP];
     struct circ *ct;
@@ -194,10 +210,6 @@ dosim(char *what, wordlist *wl)
         ft_setflag = FALSE;
         return 0;
     }
-#ifdef notdef
-    if (ft_curckt->ci_runonce)
-        com_rset((wordlist *) NULL);
-#endif
 
     /* From now on until the next prompt, an interrupt will just
      * set a flag and let spice finish up, then control will be
@@ -212,9 +224,10 @@ dosim(char *what, wordlist *wl)
         if (!*wl->wl_word)
 	    rawfileFp = stdout;
         else if (!(rawfileFp = fopen(wl->wl_word, "w"))) {
-            perror(wl->wl_word);
-            ft_setflag = FALSE;
-            return 1;
+        	setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
+		perror(wl->wl_word);
+		ft_setflag = FALSE;
+		return 1;
         }
         rawfileBinary = !ascii;
 #ifdef PARALLEL_ARCH
@@ -224,12 +237,16 @@ dosim(char *what, wordlist *wl)
 #endif /* PARALLEL_ARCH */
     } else {
         rawfileFp = NULL;
-#ifdef notdef
-	XXX why?
-        plot_num++; /* There should be a better way */
-#endif
     }
-
+    /*save rawfile name saj*/
+    if(last_used_rawfile) free((void *)last_used_rawfile);
+    if(rawfileFp){
+      last_used_rawfile = copy(wl->wl_word);
+    }else {
+      last_used_rawfile = NULL;
+    }
+    /*end saj*/
+ 
     /* Spice calls wrd_init and wrd_end itself */
     ft_curckt->ci_inprogress = TRUE;
     if (eq(what,"sens2")) {
@@ -237,6 +254,13 @@ dosim(char *what, wordlist *wl)
         /* The circuit was interrupted somewhere. */
 
 	    fprintf(cp_err, "%s simulation interrupted\n", what);
+#ifdef XSPICE
+  /* gtri - add - 12/12/90 - wbk - record error and return errchk */
+        g_ipc.run_error = IPC_TRUE;
+        if(g_ipc.enabled)
+            ipc_send_errchk();
+        /* gtri - end - 12/12/90 */
+#endif
         } else
 	    ft_curckt->ci_inprogress = FALSE;
     } else {
@@ -244,6 +268,13 @@ dosim(char *what, wordlist *wl)
         if (err == 1) {
 	    /* The circuit was interrupted somewhere. */
 	    fprintf(cp_err, "%s simulation interrupted\n", what);
+#ifdef XSPICE
+    /* gtri - add - 12/12/90 - wbk - record error and return errchk */
+        g_ipc.run_error = IPC_TRUE;
+        if(g_ipc.enabled)
+            ipc_send_errchk();
+    /* gtri - end - 12/12/90 */
+#endif
 	    err = 0;
         } else if (err == 2) {
 	    fprintf(cp_err, "%s simulation(s) aborted\n", what);
@@ -252,8 +283,14 @@ dosim(char *what, wordlist *wl)
 	} else
 	    ft_curckt->ci_inprogress = FALSE;
     }
-    if (rawfileFp)
-	(void) fclose(rawfileFp);
+    if (rawfileFp){
+      if (ftell(rawfileFp)==0) {
+	    (void) fclose(rawfileFp);
+            (void) remove(wl->wl_word);
+        } else {
+	    (void) fclose(rawfileFp);
+        }
+    }
     ft_curckt->ci_runonce = TRUE;
     ft_setflag = FALSE;
     return err;
@@ -288,6 +325,13 @@ bool
 ft_getOutReq(FILE **fpp, struct plot **plotp, bool *binp, char *name, char *title)
 {
     /*struct plot *pl;*/
+#ifndef BATCH
+
+    if ( (strcmp(name, "Operating Point")==0) ||
+         (strcmp(name, "AC Operating Point")==0) ) {
+        return (FALSE);
+    };
+#endif
 
     if (rawfileFp) {
         *fpp = rawfileFp;

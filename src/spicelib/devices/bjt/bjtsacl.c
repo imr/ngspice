@@ -25,8 +25,8 @@ CKTcircuit *ckt;
 
 {
 
-    register BJTmodel *model = (BJTmodel*)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel*)inModel;
+    BJTinstance *here;
     double SaveState[25];
     int    error;
     int    flag;

@@ -80,11 +80,6 @@
  *  #define-s that are always on
  */
 
-#define CAPZEROBYPASS
-#define NEWCONV
-/* #define CAPBYPASS	Internal use only */
-
-
 /* On Unix the following should always be true, so they should jump out */
 
 #define HAS_ASCII

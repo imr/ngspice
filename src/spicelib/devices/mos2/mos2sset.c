@@ -13,14 +13,14 @@ Author: 1985 Thomas L. Quarles
 
 int
 MOS2sSetup(info,inModel)
-register SENstruct *info;
+SENstruct *info;
 GENmodel *inModel;
 /* loop through all the devices and 
          * allocate parameter #s to design parameters 
          */
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
 
     /*  loop through all the models */
     for( ; model != NULL; model = model->MOS2nextModel ) {

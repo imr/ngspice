@@ -3,8 +3,11 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef EVALUATE_H_INCLUDED
-#define EVALUATE_H_INCLUDED
+#ifndef _EVALUATE_H
+#define _EVALUATE_H
+
+#include <dvec.h>
+#include <pnode.h>
 
 struct dvec * ft_evaluate(struct pnode *node);
 struct dvec * op_plus(struct pnode *arg1, struct pnode *arg2);

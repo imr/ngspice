@@ -20,11 +20,11 @@ Author: 1985 Thomas L. Quarles
 /*ARGSUSED*/
 int
 MUTsSetup(info,inModel)
-    register SENstruct *info;
+    SENstruct *info;
     GENmodel *inModel;
 {
-    register MUTmodel *model = (MUTmodel*)inModel;
-    register MUTinstance *here;
+    MUTmodel *model = (MUTmodel*)inModel;
+    MUTinstance *here;
 
     /*  loop through all the inductor models */
     for( ; model != NULL; model = model->MUTnextModel ) {

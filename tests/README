@@ -1,3 +1,18 @@
+ngspice test files:
+===================
+
+The test directory contains several netlist designed to test ngspice functionality and correctness.
+There are netlists that test devices behavior and netlists that test analyses correctness.
+
+REPLICATE TESTS
+
+Tests are done with an ngspice compiled with the following options:
+
+  --enable-ftedebug     <- Should have no effect
+  --enable-nobypass   
+  --enavle-predictor
+  --enable-experimental <- Living on the edge :)
+
 TO ADD NEW TESTS
 
 Take an existing test and adopt it to your liking.  Add the test

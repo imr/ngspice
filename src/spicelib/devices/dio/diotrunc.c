@@ -16,11 +16,11 @@ Author: 1985 Thomas L. Quarles
 int
 DIOtrunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     double *timeStep;
 {
-    register DIOmodel *model = (DIOmodel*)inModel;
-    register DIOinstance *here;
+    DIOmodel *model = (DIOmodel*)inModel;
+    DIOinstance *here;
 
     for( ; model != NULL; model = model->DIOnextModel) {
         for(here=model->DIOinstances;here!=NULL;here = here->DIOnextInstance){

@@ -1,0 +1,65 @@
+#include <config.h>
+
+#include <devdefs.h>
+
+#include "ltraitf.h"
+#include "ltraext.h"
+#include "ltrainit.h"
+
+
+SPICEdev LTRAinfo = {
+    {
+	"LTRA",
+        "Lossy transmission line",
+
+        &LTRAnSize,
+	&LTRAnSize,
+	LTRAnames,
+
+        &LTRApTSize,
+        LTRApTable,
+
+        &LTRAmPTSize,
+        LTRAmPTable,
+	0
+    },
+
+    DEVparam      : LTRAparam,
+    DEVmodParam   : LTRAmParam,
+    DEVload       : LTRAload,
+    DEVsetup      : LTRAsetup,
+    DEVunsetup    : LTRAunsetup,
+    DEVpzSetup    : LTRAsetup,
+    DEVtemperature: LTRAtemp,
+    DEVtrunc      : LTRAtrunc,
+    DEVfindBranch : NULL,
+    DEVacLoad     : LTRAacLoad /*LTRAacLoad*/,
+    DEVaccept     : LTRAaccept,
+    DEVdestroy    : LTRAdestroy,
+    DEVmodDelete  : LTRAmDelete,
+    DEVdelete     : LTRAdelete,
+    DEVsetic      : NULL, 	/* getic */
+    DEVask        : LTRAask,
+    DEVmodAsk     : LTRAmAsk, 	/* */
+    DEVpzLoad     : NULL,	/* pzLoad */
+    DEVconvTest   : NULL,	/* convTest */
+    DEVsenSetup   : NULL,	/* sSetup */
+    DEVsenLoad    : NULL,	/* sLoad */
+    DEVsenUpdate  : NULL,	/* sUpdate */
+    DEVsenAcLoad  : NULL,	/* sAcLoad */
+    DEVsenPrint   : NULL,	/* sPrint */
+    DEVsenTrunc   : NULL,	/* */
+    DEVdisto      : NULL,	/* disto */
+    DEVnoise      : NULL,	/* noise */
+                    
+    DEVinstSize   : &LTRAiSize,
+    DEVmodSize    : &LTRAmSize
+
+};
+
+
+SPICEdev *
+get_ltra_info(void)
+{
+    return &LTRAinfo;
+}

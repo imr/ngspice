@@ -20,11 +20,11 @@ Author: 1985 Thomas L. Quarles
 
 int
 CCCSsSetup(info,inModel)
-    register SENstruct *info;
+    SENstruct *info;
     GENmodel *inModel;
 {
-    register CCCSmodel *model = (CCCSmodel*)inModel;
-    register CCCSinstance *here;
+    CCCSmodel *model = (CCCSmodel*)inModel;
+    CCCSinstance *here;
 
     /*  loop through all the CCCS models */
     for( ; model != NULL; model = model->CCCSnextModel ) {

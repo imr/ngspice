@@ -3,8 +3,11 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef PARSE_H_INCLUDED
-#define PARSE_H_INCLUDED
+#ifndef _PARSE_H
+#define _PARSE_H
+
+#include <pnode.h>
+#include <wordlist.h>
 
 struct pnode * ft_getpnames(wordlist *wl, bool check);
 void free_pnode(struct pnode *t);

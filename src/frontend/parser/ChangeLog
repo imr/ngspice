@@ -1,0 +1,105 @@
+2000-07-18  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* numparse.c: Updates of header file includes.  Some formatting
+	changes.
+
+	* wlist.c: Moved this file to src/misc/wlist.c
+	
+	* Makefile.am: Removed wlist.c
+
+2000-03-11 Paolo Nenzi <p.nenzi@ieee.org>
+
+	* numparse.c: as wrote in Chris Inbody patch: In numparse.c line
+	17 changed the arg type of "num" to double. This (so far :) seems
+	to have had no adverse effect.
+
+2000-03-11 Paolo Nenzi <p.nenzi@ieee.org>
+   
+	* history.c: applied Chris Inbody <cinbody@cowtown.net> patch. He
+	wrote: I had some trouble running ng-spice in batch mode on a
+	fairly repetitive job (probably 10 - 20 commands repeated 256
+	times in a single session :), it was giving me "mangled history"
+	errors and then seg faulting.
+
+	[...]  In history.c line 425, added an exit(0) call to the else
+	condition to prevent seg fault upon generation of the history list
+	error. On line 25, changed cp_maxhistlength to 10000 vs 1000. The
+	value of 10000 was enough to keep my task from crashing but there
+	may be a better way to do this,.. I didn't try an arbitrarily high
+	number because I'm not sure what effect it would have on memory
+	usage or progam size or speed. Maybe that's the best answer, just
+	bump the value to 1e6 or something that no one would ever
+	approach.
+
+1999-09-07  Arno  <A.W.Peters@ieee.org>
+
+	* lexical.c: read() requires #include of unistd.h.
+
+	* modify.c: removed warning about char subscript for array.
+
+	* unixcom.h: removed prototypes for static tryexec(), hash().
+
+	* var2.c: added default case to remove warning.
+
+1999-09-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* *.c: added header files for .c files
+
+1999-08-28  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Removed all #includes of misc.h and util.h (now in spice.h)
+
+1999-08-27  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+
+	* Removed #include "suffix.h", replaced GENERIC with void and
+	ansified the code with protoize.
+
+1999-08-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Removed HAS_DOSDIRS and HAS_POW10 code in directory
+
+	* Makefile.am (libcp_a_SOURCES): removed spawn.c (vms only) 
+
+1999-08-06  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* unixcom.c (cp_unixcom): 
+	* cshpar.c: removed test on HAS_SYSTEM (always true on Unix?)
+
+	* backq.c (backeval): changed HAS_POPEN in HAVE_POPEN
+
+	* cshpar.c (fileexists): changed HAS_ACCESS in HAVE_ACCESS
+	(com_chdir): removed test on HAS_CHDIR (always true on Unix)
+	(com_shell): removed test on HAS_UNIX_SIGS (always true on Unix)
+
+	* unixcom.c (cp_unixcom): changed HAS_INTSYSWAIT in HAVE_SYS_WAIT_H
+
+1999-08-05  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* cshpar.c (com_chdir): removed HAS_GETENV tests.
+
+	* var2.c (vareval): removed test on HAS_GETPID
+
+	* unixcom.c: changed HAS_GETCWD in HAVE_GETCWD and HAS_GETWD into
+	HAVE_GETWD
+
+	* lexical.c, gloc.c, cshpar.c: changed HAS_GETPW in HAVE_PWD_H
+	(com_chdir): changed HAS_GETCWD in HAVE_GETCWD (and #included
+	unistd.h)
+
+	* std.c: changed HAS_QSORT in HAVE_QSORT
+
+1999-08-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* cshpar.c: changed HAS_WAIT2(??) into HAVE_SYS_WAIT_H
+
+1999-08-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* output.c: changed HAS_TERMCAP in HAVE_TERMCAP
+
+	* unixcom.c: changed HAS_VFORK in HAVE_VORK_H
+	
+	* unixcom.c, complete.c, glob.c: HAVE_SYS_DIR_H and HAVE_DIRENT_H
+	(instead of HAS_BSDDIRS and HAS_SYSVDIRS)
+	
+	* cshpar.c (com_shell): changed HAS_VFORK in HAVE_VORK_H
+

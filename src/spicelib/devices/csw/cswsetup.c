@@ -15,7 +15,7 @@ Author: 1985 Gordon Jacobs
 
 int
 CSWsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
@@ -24,8 +24,8 @@ CSWsetup(matrix,inModel,ckt,states)
          */
 
 {
-    register CSWmodel *model = (CSWmodel*)inModel;
-    register CSWinstance *here;
+    CSWmodel *model = (CSWmodel*)inModel;
+    CSWinstance *here;
 
     /*  loop through all the current source models */
     for( ; model != NULL; model = model->CSWnextModel ) {

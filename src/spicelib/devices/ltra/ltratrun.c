@@ -13,12 +13,12 @@ Author: 1990 Jaijeet S. Roychowdhury
 int
 LTRAtrunc(inModel, ckt, timeStep)
   GENmodel *inModel;
-  register CKTcircuit *ckt;
+  CKTcircuit *ckt;
   double *timeStep;
 
 {
-  register LTRAmodel *model = (LTRAmodel *) inModel;
-  register LTRAinstance *here;
+  LTRAmodel *model = (LTRAmodel *) inModel;
+  LTRAinstance *here;
   double i1, i2, i3, i4;
   double i5, i6, d1, d2, d3, d4;
   double tmp;

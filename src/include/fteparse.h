@@ -12,17 +12,15 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define FTEPARSE
 
 
-#include "ftedata.h"
+#include "cpstd.h"
+#include "dvec.h"
+#include "plot.h"
 
-struct pnode {
-    char *pn_name;		/* If non-NULL, the name. */
-    struct dvec *pn_value;	/* Non-NULL in a terminal node. */
-    struct func *pn_func;	/* Non-NULL is a function. */
-    struct op *pn_op;		/* Operation if the above two NULL. */
-    struct pnode *pn_left;	/* Left branch or function argument. */
-    struct pnode *pn_right;	/* Right branch. */
-    struct pnode *pn_next;	/* For expression lists. */
-} ;
+/* FIXME: Split this file and adjust all callers. */
+#if 0
+#warning "Please use a more specific header than fteparse.h"
+#endif
+#include "pnode.h"
 
 /* Operations. These should really be considered functions. */
 
@@ -36,8 +34,12 @@ struct op {
 /* The functions that are available. */
 
 struct func {
-    char *fu_name;		/* The print name of the function. */
-    void *(*fu_func)();		/* The function. */
+    /* The print name of the function. */
+    char *fu_name;
+
+    /* The function. */
+    void *(*fu_func)(void *data, short int type, int length,
+		     int *newlength, short int *newtype);
 } ;
 
 /* User-definable functions. The idea of ud_name is that the args are

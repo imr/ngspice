@@ -47,12 +47,10 @@
  *  To be compatible with SPICE, the following Sparse compiler options
  *  (in spConfig.h) should be set as shown below:
  *
- *      REAL                            YES
  *      EXPANDABLE                      YES
  *      TRANSLATE                       NO
  *      INITIALIZE                      NO or YES, YES for use with test prog.
  *      DIAGONAL_PIVOTING               YES
- *      ARRAY_OFFSET                    YES
  *      MODIFIED_MARKOWITZ              NO
  *      DELETE                          NO
  *      STRIP                           NO
@@ -66,11 +64,7 @@
  *      STABILITY                       NO
  *      CONDITION                       NO
  *      PSEUDOCONDITION                 NO
- *      FORTRAN                         NO
  *      DEBUG                           YES
- *      spCOMPLEX                       1
- *      spSEPARATED_COMPLEX_VECTORS     1
- *      spCOMPATIBILITY                 0
  *
  *      spREAL  double
  */
@@ -90,16 +84,6 @@
  *  any purpose.  It is provided `as is', without express or implied warranty.
  */
 
-#ifdef notdef
-static char copyright[] =
-    "Sparse1.3: Copyright (c) 1985,86,87,88,89,90 by Kenneth S. Kundert";
-static char RCSid[] =
-    "@(#)$Header$";
-#endif
-
-
-
-
 /*
  *  IMPORTS
  *
@@ -110,63 +94,56 @@ static char RCSid[] =
  *     Spice3's matrix macro definitions.
  */
 
-#include "ngspice.h"
+#include <config.h>
+#include <ngspice.h>
+
+#include <assert.h>
 #include <stdio.h>
-#include "spmatrix.h"
-#include "smpdefs.h"
+
+#include <spmatrix.h>
+#include <smpdefs.h>
+
 #include "spdefs.h"
 
-/* #define NO   0 */
-/* #define YES  1 */
 
-#ifdef __STDC__
-static void LoadGmin( char * /*eMatrix*/, double /*Gmin*/ );
-#else
-static void LoadGmin( );
-#endif
+static void LoadGmin(SMPmatrix *eMatrix, double Gmin);
+
 
 /*
  * SMPaddElt()
  */
 int
-SMPaddElt( Matrix, Row, Col, Value )
-SMPmatrix *Matrix;
-int Row, Col;
-double Value;
+SMPaddElt(SMPmatrix *Matrix, int Row, int Col, double Value)
 {
-    *spGetElement( (char *)Matrix, Row, Col ) = Value;
-    return spError( (char *)Matrix );
+    *spGetElement( (void *)Matrix, Row, Col ) = Value;
+    return spError( (void *)Matrix );
 }
 
 /*
  * SMPmakeElt()
  */
 double *
-SMPmakeElt( Matrix, Row, Col )
-SMPmatrix *Matrix;
-int Row, Col;
+SMPmakeElt(SMPmatrix *Matrix, int Row, int Col)
 {
-    return spGetElement( (char *)Matrix, Row, Col );
+    return spGetElement( (void *)Matrix, Row, Col );
 }
 
 /*
  * SMPcClear()
  */
 void
-SMPcClear( Matrix )
-SMPmatrix *Matrix;
+SMPcClear(SMPmatrix *Matrix)
 {
-    spClear( (char *)Matrix );
+    spClear( (void *)Matrix );
 }
 
 /*
  * SMPclear()
  */
 void
-SMPclear( Matrix )
-SMPmatrix *Matrix;
+SMPclear(SMPmatrix *Matrix)
 {
-    spClear( (char *)Matrix );
+    spClear( (void *)Matrix );
 }
 
 /*
@@ -174,12 +151,10 @@ SMPmatrix *Matrix;
  */
 /*ARGSUSED*/
 int
-SMPcLUfac( Matrix, PivTol )
-SMPmatrix *Matrix;
-double PivTol;
+SMPcLUfac(SMPmatrix *Matrix, double PivTol)
 {
-    spSetComplex( (char *)Matrix );
-    return spFactor( (char *)Matrix );
+    spSetComplex( (void *)Matrix );
+    return spFactor( (void *)Matrix );
 }
 
 /*
@@ -187,27 +162,23 @@ double PivTol;
  */
 /*ARGSUSED*/
 int
-SMPluFac( Matrix, PivTol, Gmin )
-SMPmatrix *Matrix;
-double PivTol, Gmin;
+SMPluFac(SMPmatrix *Matrix, double PivTol, double Gmin)
 {
-    spSetReal( (char *)Matrix );
-    LoadGmin( (char *)Matrix, Gmin );
-    return spFactor( (char *)Matrix );
+    spSetReal( (void *)Matrix );
+    LoadGmin( (void *)Matrix, Gmin );
+    return spFactor( (void *)Matrix );
 }
 
 /*
  * SMPcReorder()
  */
 int
-SMPcReorder( Matrix, PivTol, PivRel, NumSwaps )
-SMPmatrix *Matrix;
-double PivTol, PivRel;
-int *NumSwaps;
+SMPcReorder(SMPmatrix *Matrix, double PivTol, double PivRel,
+	    int *NumSwaps)
 {
     *NumSwaps = 1;
-    spSetComplex( (char *)Matrix );
-    return spOrderAndFactor( (char *)Matrix, (spREAL*)NULL,
+    spSetComplex( (void *)Matrix );
+    return spOrderAndFactor( (void *)Matrix, (spREAL*)NULL,
                              (spREAL)PivRel, (spREAL)PivTol, YES );
 }
 
@@ -215,13 +186,11 @@ int *NumSwaps;
  * SMPreorder()
  */
 int
-SMPreorder( Matrix, PivTol, PivRel, Gmin )
-SMPmatrix *Matrix;
-double PivTol, PivRel, Gmin;
+SMPreorder(SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
 {
-    spSetReal( (char *)Matrix );
-    LoadGmin( (char *)Matrix, Gmin );
-    return spOrderAndFactor( (char *)Matrix, (spREAL*)NULL,
+    spSetReal( (void *)Matrix );
+    LoadGmin( (void *)Matrix, Gmin );
+    return spOrderAndFactor( (void *)Matrix, (spREAL*)NULL,
                              (spREAL)PivRel, (spREAL)PivTol, YES );
 }
 
@@ -229,53 +198,47 @@ double PivTol, PivRel, Gmin;
  * SMPcaSolve()
  */
 void
-SMPcaSolve( Matrix, RHS, iRHS, Spare, iSpare)
-SMPmatrix *Matrix;
-double RHS[], iRHS[], Spare[], iSpare[];
+SMPcaSolve(SMPmatrix *Matrix, double RHS[], double iRHS[],
+	   double Spare[], double iSpare[])
 {
-    spSolveTransposed( (char *)Matrix, RHS, RHS, iRHS, iRHS );
+    spSolveTransposed( (void *)Matrix, RHS, RHS, iRHS, iRHS );
 }
 
 /*
  * SMPcSolve()
  */
 void
-SMPcSolve( Matrix, RHS, iRHS, Spare, iSpare)
-SMPmatrix *Matrix;
-double RHS[], iRHS[], Spare[], iSpare[];
+SMPcSolve(SMPmatrix *Matrix, double RHS[], double iRHS[],
+	  double Spare[], double iSpare[])
 {
-    spSolve( (char *)Matrix, RHS, RHS, iRHS, iRHS );
+    spSolve( (void *)Matrix, RHS, RHS, iRHS, iRHS );
 }
 
 /*
  * SMPsolve()
  */
 void
-SMPsolve( Matrix, RHS, Spare )
-SMPmatrix *Matrix;
-double RHS[], Spare[];
+SMPsolve(SMPmatrix *Matrix, double RHS[], double Spare[])
 {
-    spSolve( (char *)Matrix, RHS, RHS, (spREAL*)NULL, (spREAL*)NULL );
+    spSolve( (void *)Matrix, RHS, RHS, (spREAL*)NULL, (spREAL*)NULL );
 }
 
 /*
  * SMPmatSize()
  */
 int
-SMPmatSize( Matrix )
-SMPmatrix *Matrix;
+SMPmatSize(SMPmatrix *Matrix)
 {
-    return spGetSize( (char *)Matrix, 1 );
+    return spGetSize( (void *)Matrix, 1 );
 }
 
 /*
  * SMPnewMatrix()
  */
 int
-SMPnewMatrix( pMatrix )
-SMPmatrix **pMatrix;
+SMPnewMatrix(SMPmatrix **pMatrix)
 {
-int Error;
+    int Error;
     *pMatrix = (SMPmatrix *)spCreate( 0, 1, &Error );
     return Error;
 }
@@ -284,21 +247,19 @@ int Error;
  * SMPdestroy()
  */
 void
-SMPdestroy( Matrix )
-SMPmatrix *Matrix;
+SMPdestroy(SMPmatrix *Matrix)
 {
-    spDestroy( (char *)Matrix );
+    spDestroy( (void *)Matrix );
 }
 
 /*
  * SMPpreOrder()
  */
 int
-SMPpreOrder( Matrix )
-SMPmatrix *Matrix;
+SMPpreOrder(SMPmatrix *Matrix)
 {
-    spMNA_Preorder( (char *)Matrix );
-    return spError( (char *)Matrix );
+    spMNA_Preorder( (void *)Matrix );
+    return spError( (void *)Matrix );
 }
 
 /*
@@ -306,22 +267,18 @@ SMPmatrix *Matrix;
  */
 /*ARGSUSED*/
 void
-SMPprint( Matrix, File )
-SMPmatrix *Matrix;
-FILE *File;
+SMPprint(SMPmatrix *Matrix, FILE *File)
 {
-    spPrint( (char *)Matrix, 0, 1, 1 );
+    spPrint( (void *)Matrix, 0, 1, 1 );
 }
 
 /*
  * SMPgetError()
  */
 void
-SMPgetError( Matrix, Col, Row)
-SMPmatrix *Matrix;
-int *Row, *Col;
+SMPgetError(SMPmatrix *Matrix, int *Col, int *Row)
 {
-    spWhereSingular( (char *)Matrix, Row, Col );
+    spWhereSingular( (void *)Matrix, Row, Col );
 }
 
 /*
@@ -329,29 +286,23 @@ int *Row, *Col;
  *    note: obsolete for Spice3d2 and later
  */
 int
-SMPcProdDiag( Matrix, pMantissa, pExponent)
-SMPmatrix *Matrix;
-SPcomplex *pMantissa;
-int *pExponent;
+SMPcProdDiag(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
 {
-    spDeterminant( (char *)Matrix, pExponent, &(pMantissa->real),
+    spDeterminant( (void *)Matrix, pExponent, &(pMantissa->real),
                                               &(pMantissa->imag) );
-    return spError( (char *)Matrix );
+    return spError( (void *)Matrix );
 }
 
 /*
  * SMPcDProd()
  */
 int
-SMPcDProd( Matrix, pMantissa, pExponent)
-SMPmatrix *Matrix;
-SPcomplex *pMantissa;
-int *pExponent;
+SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
 {
     double	re, im, x, y, z;
     int		p;
 
-    spDeterminant( (char *)Matrix, &p, &re, &im);
+    spDeterminant( (void *)Matrix, &p, &re, &im);
 
 #ifndef M_LN2
 #define M_LN2   0.69314718055994530942
@@ -421,7 +372,7 @@ int *pExponent;
     printf("Determinant 10->2: (%20g,%20g)^%d\n", pMantissa->real,
 	pMantissa->imag, *pExponent);
 #endif
-    return spError( (char *)Matrix );
+    return spError( (void *)Matrix );
 }
 
 
@@ -443,17 +394,15 @@ int *pExponent;
  */
 
 static void
-LoadGmin( eMatrix, Gmin )
-char *eMatrix;
-register double Gmin;
+LoadGmin(SMPmatrix *eMatrix, double Gmin)
 {
-MatrixPtr Matrix = (MatrixPtr)eMatrix;
-register int I;
-register ArrayOfElementPtrs Diag;
-register ElementPtr diag;
+    MatrixPtr Matrix = (MatrixPtr)eMatrix;
+    int I;
+    ArrayOfElementPtrs Diag;
+    ElementPtr diag;
 
-/* Begin `LoadGmin'. */
-    ASSERT( IS_SPARSE( Matrix ) );
+    /* Begin `LoadGmin'. */
+    assert( IS_SPARSE( Matrix ) );
 
     if (Gmin != 0.0) {
 	Diag = Matrix->Diag;
@@ -478,17 +427,13 @@ register ElementPtr diag;
  */
 
 SMPelement *
-SMPfindElt( eMatrix, Row, Col, CreateIfMissing )
-
-SMPmatrix *eMatrix;
-int Row, Col;
-int CreateIfMissing;
+SMPfindElt(SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
 {
-MatrixPtr Matrix = (MatrixPtr)eMatrix;
-ElementPtr Element;
+    MatrixPtr Matrix = (MatrixPtr)eMatrix;
+    ElementPtr Element;
 
-/* Begin `SMPfindElt'. */
-    ASSERT( IS_SPARSE( Matrix ) );
+    /* Begin `SMPfindElt'. */
+    assert( IS_SPARSE( Matrix ) );
     Row = Matrix->ExtToIntRowMap[Row];
     Col = Matrix->ExtToIntColMap[Col];
     Element = Matrix->FirstInCol[Col];
@@ -502,10 +447,9 @@ ElementPtr Element;
  * SMPcZeroCol()
  */
 int
-SMPcZeroCol( Matrix, Col )
-MatrixPtr Matrix;
-int Col;
+SMPcZeroCol(SMPmatrix *eMatrix, int Col)
 {
+    MatrixPtr Matrix = (MatrixPtr)eMatrix;
     ElementPtr	Element;
 
     Col = Matrix->ExtToIntColMap[Col];
@@ -518,17 +462,16 @@ int Col;
 	Element->Imag = 0.0;
     }
 
-    return spError( (char *)Matrix );
+    return spError( (void *)Matrix );
 }
 
 /*
  * SMPcAddCol()
  */
 int
-SMPcAddCol( Matrix, Accum_Col, Addend_Col )
-MatrixPtr Matrix;
-int Accum_Col, Addend_Col;
+SMPcAddCol(SMPmatrix *eMatrix, int Accum_Col, int Addend_Col)
 {
+    MatrixPtr Matrix = (MatrixPtr)eMatrix;
     ElementPtr	Accum, Addend, *Prev;
 
     Accum_Col = Matrix->ExtToIntColMap[Accum_Col];
@@ -551,17 +494,16 @@ int Accum_Col, Addend_Col;
 	Addend = Addend->NextInCol;
     }
 
-    return spError( (char *)Matrix );
+    return spError( (void *)Matrix );
 }
 
 /*
  * SMPzeroRow()
  */
 int
-SMPzeroRow( Matrix, Row )
-MatrixPtr Matrix;
-int Row;
+SMPzeroRow(SMPmatrix *eMatrix, int Row)
 {
+    MatrixPtr Matrix = (MatrixPtr)eMatrix;
     ElementPtr	Element;
 
     Row = Matrix->ExtToIntColMap[Row];
@@ -569,8 +511,7 @@ int Row;
     if (Matrix->RowsLinked == NO)
 	spcLinkRows(Matrix);
 
-#if spCOMPLEX
-    if (Matrix->PreviousMatrixWasComplex OR Matrix->Complex) {
+    if (Matrix->PreviousMatrixWasComplex || Matrix->Complex) {
 	for (Element = Matrix->FirstInRow[Row];
 	    Element != NULL;
 	    Element = Element->NextInRow)
@@ -578,9 +519,7 @@ int Row;
 	    Element->Real = 0.0;
 	    Element->Imag = 0.0;
 	}
-    } else
-#endif
-    {
+    } else {
 	for (Element = Matrix->FirstInRow[Row];
 	    Element != NULL;
 	    Element = Element->NextInRow)
@@ -589,7 +528,7 @@ int Row;
 	}
     }
 
-    return spError( (char *)Matrix );
+    return spError( (void *)Matrix );
 }
 
 #ifdef PARALLEL_ARCH
@@ -597,24 +536,20 @@ int Row;
  * SMPcombine()
  */
 void
-SMPcombine( Matrix, RHS, Spare )
-SMPmatrix *Matrix;
-double RHS[], Spare[];
+SMPcombine(SMPmatrix *Matrix, double RHS[], double Spare[])
 {
-    spSetReal( (char *)Matrix );
-    spCombine( (char *)Matrix, RHS, Spare, (spREAL*)NULL, (spREAL*)NULL );
+    spSetReal( (void *)Matrix );
+    spCombine( (void *)Matrix, RHS, Spare, (spREAL*)NULL, (spREAL*)NULL );
 }
 
 /*
  * SMPcCombine()
  */
 void
-SMPcCombine( Matrix, RHS, Spare, iRHS, iSpare )
-SMPmatrix *Matrix;
-double RHS[], Spare[];
-double iRHS[], iSpare[];
+SMPcCombine(SMPmatrix *Matrix, double RHS[], double Spare[],
+	    double iRHS[], double iSpare[])
 {
-    spSetComplex( (char *)Matrix );
-    spCombine( (char *)Matrix, RHS, Spare, iRHS, iSpare );
+    spSetComplex( (void *)Matrix );
+    spCombine( (void *)Matrix, RHS, Spare, iRHS, iSpare );
 }
 #endif /* PARALLEL_ARCH */

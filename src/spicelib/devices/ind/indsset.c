@@ -17,11 +17,11 @@ Author: 1985 Thomas L. Quarles
 
 int
 INDsSetup(info,inModel)
-    register SENstruct *info;
+    SENstruct *info;
     GENmodel *inModel;
 {
-    register INDmodel *model = (INDmodel*)inModel;
-    register INDinstance *here;
+    INDmodel *model = (INDmodel*)inModel;
+    INDinstance *here;
 
     /*  loop through all the inductor models */
     for( ; model != NULL; model = model->INDnextModel ) {

@@ -11,9 +11,10 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
-#include "rawfile.h"
+#include "dvec.h"
 
+#include "rawfile.h"
+#include "variable.h"
 
 /* static declarations */
 static void fixdims(struct dvec *v, char *s);
@@ -37,6 +38,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     wordlist *wl;
     struct variable *vv;
     double dd;
+    char buf[BSIZE_SP];
 
     if (!cp_getvar("nopadding", VT_BOOL, (char *) &raw_padding))
         raw_padding = FALSE;
@@ -90,7 +92,8 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     fprintf(fp, "No. Variables: %d\n", nvars);
     fprintf(fp, "No. Points: %d\n", length);
     if (numdims > 1) {
-	fprintf(fp, "Dimensions: %s\n", dimstring(dims, numdims));
+    	dimstring(dims, numdims, buf);
+	fprintf(fp, "Dimensions: %s\n", buf);
     }
 
     for (wl = pl->pl_commands; wl; wl = wl->wl_next)
@@ -146,7 +149,8 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 		    writedims = TRUE;
 	}
 	if (writedims) {
-	    fprintf(fp, " dims=%s", dimstring(v->v_dims, v->v_numdims));
+	    dimstring(v->v_dims, v->v_numdims, buf);	
+	    fprintf(fp, " dims=%s",buf);
         }
         (void) putc('\n', fp);
     }
@@ -241,7 +245,7 @@ raw_read(char *name)
     char *date = 0;
     struct plot *plots = NULL, *curpl = NULL;
     char buf[BSIZE_SP], buf2[BSIZE_SP], *s, *t, *r;
-    int flags, nvars, npoints, i, j;
+    int flags = 0, nvars = 0, npoints = 0, i, j;
     int ndimpoints, numdims=0, dims[MAXDIMS];
     bool raw_padded = TRUE;
     double junk;
@@ -303,7 +307,7 @@ raw_read(char *name)
         } else if (ciprefix("flags:", buf)) {
             s = buf;
             skip(s);
-            while (t = gettok(&s)) {
+            while ((t = gettok(&s))) {
                 if (cieq(t, "real"))
                     flags |= VF_REAL;
                 else if (cieq(t, "complex"))
@@ -453,7 +457,7 @@ raw_read(char *name)
                     v->v_name = copy(buf2);
                 }
                 /* Now come the strange options... */
-                while (t = gettok(&s)) {
+                while ((t = gettok(&s))) {
                     if (ciprefix("min=", t)) {
                         if (sscanf(t + 4, "%lf",
                             &v->v_minsignal) != 1)

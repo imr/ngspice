@@ -13,11 +13,11 @@ Author: 1985 Thomas L. Quarles
 int
 MOS3trunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     double *timeStep;
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
 
     for( ; model != NULL; model = model->MOS3nextModel) {
         for(here=model->MOS3instances;here!=NULL;here = here->MOS3nextInstance){

@@ -26,8 +26,8 @@ CCCSpzLoad(inModel,ckt,s)
          * sparse matrix previously provided 
          */
 {
-    register CCCSmodel *model = (CCCSmodel*)inModel;
-    register CCCSinstance *here;
+    CCCSmodel *model = (CCCSmodel*)inModel;
+    CCCSinstance *here;
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->CCCSnextModel ) {

@@ -15,12 +15,12 @@ Author: 1985 Thomas L. Quarles
 
 int
 VSRCfindBr(ckt,inModel,name)
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     GENmodel *inModel;
-    register IFuid name;
+    IFuid name;
 {
-    register VSRCmodel *model = (VSRCmodel *)inModel;
-    register VSRCinstance *here;
+    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCinstance *here;
     int error;
     CKTnode *tmp;
 

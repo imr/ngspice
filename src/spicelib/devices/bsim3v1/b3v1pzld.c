@@ -1,17 +1,3 @@
-/* $Id$  */
-/* 
-$Log$
-Revision 1.1  2000-04-27 20:03:59  pnenzi
-Initial revision
-
- * Revision 3.1  96/12/08  19:58:46  yuhua
- * BSIM3v3.1 release
- * 
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
@@ -29,11 +15,11 @@ File: b3v1pzld.c
 int
 BSIM3V1pzLoad(inModel,ckt,s)
 GENmodel *inModel;
-register CKTcircuit *ckt;
-register SPcomplex *s;
+CKTcircuit *ckt;
+SPcomplex *s;
 {
-register BSIM3V1model *model = (BSIM3V1model*)inModel;
-register BSIM3V1instance *here;
+BSIM3V1model *model = (BSIM3V1model*)inModel;
+BSIM3V1instance *here;
 double xcggb, xcgdb, xcgsb, xcbgb, xcbdb, xcbsb, xcddb, xcssb, xcdgb;
 double gdpr, gspr, gds, gbd, gbs, capbd, capbs, xcsgb, xcdsb, xcsdb;
 double cggb, cgdb, cgsb, cbgb, cbdb, cbsb, cddb, cdgb, cdsb;

@@ -6,13 +6,13 @@ Author: 1986 Thomas L. Quarles
 #ifndef IFSIMULATOR
 #define IFSIMULATOR
 
-/*
- * We don't always have access to an ANSI C compiler yet, so we
- * make the following convenient definition
- */
+/* gtri - add - wbk - 10/11/90 - for structs referenced in IFdevice */
+#ifdef XSPICE
+#include "mifparse.h"
+#include "mifcmdat.h"
+#endif
+/* gtri - end - wbk - 10/11/90 */
 
-
-/* Removed code for non STDC compilers  Paolo Nenzi 2000*/
 
 /* 
  * structure:   IFparm
@@ -180,14 +180,14 @@ typedef struct sIFparseTree {
  * should arrange to free it when appropriate.
  *
  * The responsibilities of the data supplier are:
- * Any vectors referenced by the structure are to be malloc()'d 
+ * Any vectors referenced by the structure are to be tmalloc()'d 
  * and are assumed to have been turned over to the recipient and 
- * thus should not be re-used or free()'d.
+ * thus should not be re-used or tfree()'d.
  *
  * The responsibilities of the data recipient are:
  * scalar valued data is to be copied by the recipient
  * vector valued data is now the property of the recipient,
- * and must be free()'d when no longer needed.
+ * and must be tfree()'d when no longer needed.
  *
  * Character strings are a special case:  Since it is assumed
  * that all character strings are directly descended from input 
@@ -276,8 +276,22 @@ typedef struct sIFdevice {
     int *numModelParms;         /* number of model parameter descriptors */
     IFparm *modelParms;         /* array  of model parameter descriptors */
 
-    int	flags;			/* DEV_ */
+/* gtri - modify - wbk - 10/11/90 - add entries to hold data required */
+/*                                  by new parser                     */
+#ifdef XSPICE
+    void ((*cm_func)(Mif_Private_t *));  /* pointer to code model function */
 
+    int num_conn;               /* number of code model connections */
+    Mif_Conn_Info_t  *conn;     /* array of connection info for mif parser */
+
+    int num_param;              /* number of parameters = numModelParms */
+    Mif_Param_Info_t *param;    /* array of parameter info for mif parser */
+
+    int num_inst_var;              /* number of instance vars = numInstanceParms */
+    Mif_Inst_Var_Info_t *inst_var; /* array of instance var info for mif parser */
+/* gtri - end - wbk - 10/11/90 */
+#endif
+  int	flags;			/* DEV_ */
 } IFdevice;
 
 
@@ -321,7 +335,6 @@ typedef struct sIFsimulator {
     char *description;              /* description of this simulator */
     char *version;                  /* version or revision level of simulator*/
 
-#ifdef __STDC__
     int ((*newCircuit)(void **));  
                                     /* create new circuit */
     int ((*deleteCircuit)(void *));
@@ -383,42 +396,6 @@ typedef struct sIFsimulator {
 
     int ((*doAnalyses)(void*,int,void*));          
     char *((*nonconvErr)(void*,char *)); /* return nonconvergence error */
-#else
-    int ((*newCircuit)());          /* create new circuit */
-    int ((*deleteCircuit)());       /* destroy old circuit's data structures */
-
-    int ((*newNode)());             /* create new node */
-    int ((*groundNode)());          /* create ground node */
-    int ((*bindNode)());            /* bind a node to a terminal */
-    int ((*findNode)());            /* find a node by name */
-    int ((*instToNode)());          /* find the node attached to a terminal */
-    int ((*setNodeParm)());         /* set a parameter on a node */
-    int ((*askNodeQuest)());        /* ask a question about a node */
-    int ((*deleteNode)());          /* delete a node from the circuit */
-
-    int ((*newInstance)());         /* create new instance */
-    int ((*setInstanceParm)());     /* set a parameter on an instance */
-    int ((*askInstanceQuest)());    /* ask a question about an instance */
-    int ((*findInstance)());        /* find a specific instance */
-    int ((*deleteInstance)());      /* delete an instance from the circuit */
-
-    int ((*newModel)());            /* create new model */
-    int ((*setModelParm)());        /* set a parameter on a model */
-    int ((*askModelQuest)());       /* ask a questions about a model */
-    int ((*findModel)());           /* find a specific model */
-    int ((*deleteModel)());         /* delete a model from the circuit*/
-
-    int ((*newTask)());             /* create a new task */
-    int ((*newAnalysis)());         /* create new analysis within a task */
-    int ((*setAnalysisParm)());     /* set a parameter on an analysis  */
-    int ((*askAnalysisQuest)());    /* ask a question about an analysis */
-    int ((*findAnalysis)());        /* find a specific analysis */
-    int ((*findTask)());            /* find a specific task */
-    int ((*deleteTask)());          /* delete a task */
-
-    int ((*doAnalyses)());          /* run a specified task */
-    char *((*nonconvErr)());	    /* return nonconvergence error */
-#endif /* STDC */
 
     int numDevices;                 /* number of device types supported */
     IFdevice **devices;             /* array of device type descriptors */
@@ -445,7 +422,6 @@ typedef struct sIFsimulator {
  */
 
 typedef struct sIFfrontEnd {
-#ifdef __STDC__
     int ((*IFnewUid)(void*,IFuid*,IFuid,char*,int,void**));    
                             /* create a new UID in the circuit */
     int ((*IFdelUid)(void*,IFuid,int));
@@ -478,23 +454,6 @@ typedef struct sIFfrontEnd {
                             /* end nested domain */
     int ((*OUTattributes)(void *,IFuid*,int,IFvalue*));
                             /* specify output attributes of node */
-#else /* not STDC */
-    int ((*IFnewUid)());    /* create a new UID in the circuit */
-    int ((*IFdelUid)());    /* create a new UID in the circuit */
-    int ((*IFpauseTest)()); /* should we stop now? */
-    double ((*IFseconds)());   /* what time is it? */
-    int ((*IFerror)());     /* output an error or warning message */
-    int ((*OUTpBeginPlot)());   /* start pointwise output plot */
-    int ((*OUTpData)());        /* data for pointwise plot */
-    int ((*OUTwBeginPlot)());   /* start windowed output plot */
-    int ((*OUTwReference)());   /* independent vector for windowed plot */
-    int ((*OUTwData)());        /* data for windowed plot */
-    int ((*OUTwEnd)());         /* signal end of windows */
-    int ((*OUTendPlot)());      /* end of plot */
-    int ((*OUTbeginDomain)());  /* start nested domain */
-    int ((*OUTendDomain)());    /* end nested domain */
-    int ((*OUTattributes)());      /* specify output attributes of node */
-#endif /* STDC */
 } IFfrontEnd;
 
 /* flags for the first argument to IFerror */

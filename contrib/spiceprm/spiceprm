@@ -163,8 +163,9 @@ sub prm_scan {
                     }
                     $hasprm = 0;
                     undef @list; $sublist = '';
+		    last PRM_TST;
                 }
-                last PRM_TST;
+# MW. 'last PRM_TST' should be inside 'if' loop to allow nestle subckts.
             }
             if ($depth) {
                 push(@list, $_);
@@ -248,7 +249,7 @@ sub prm_wr {
             last PRMWR_SCAN;
         }
         if (/^\.ends/) {
-            if (--$depth == 0)  { $sublist = ''; }
+	    if (--$depth == 0)  { $sublist = ''; }
             else                { $sublist =~ s/(\#\w+)$//; }
         }
         prm_wrline($_);

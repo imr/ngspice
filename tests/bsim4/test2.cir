@@ -1,0 +1,15 @@
+** NMOSFET: Benchmarking Implementation of BSIM4.1.0 by Weidong Liu 10/11/2000.
+
+** Circuit Description **
+m1 2 1 0 0 n1 L=0.13u W=10.0u rgeoMod=1
+vgs 1 0 1.8 
+vds 2 0 1.8 
+
+.dc vds 0 1.8 0.05 vgs 0 1.8 0.3
+
+.options Temp=-55.0
+
+.print dc v(1) i(vds)
+
+.include modelcard.nmos
+.end

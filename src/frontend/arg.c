@@ -8,12 +8,13 @@ Author: 1987 Jeffrey M. Hsu
       and prompt the user if necessary.
 */
 
-#include "ngspice.h"
-#include "fteinput.h"
-#include "cpdefs.h"
-#include "fteext.h"
-#include "arg.h"
+#include <ngspice.h>
+#include <fteinput.h>
+#include <cpdefs.h>
+#include <fteext.h>
 
+#include "arg.h"
+#include "variable.h"
 
 static void common(char *string, struct wordlist *wl, struct comm *command);
 

@@ -23,8 +23,8 @@ MUTsPrint(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit* ckt;
 {
-    register MUTmodel *model = (MUTmodel*)inModel;
-    register MUTinstance *here;
+    MUTmodel *model = (MUTmodel*)inModel;
+    MUTinstance *here;
 
     printf("MUTUAL INDUCTORS-----------------\n");
     /*  loop through all the inductor models */

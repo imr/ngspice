@@ -1,17 +1,3 @@
-/* $Id$  */
-/* 
-$Log$
-Revision 1.1  2000-04-27 20:03:59  pnenzi
-Initial revision
-
- * Revision 3.1  96/12/08  19:55:29  yuhua
- * BSIM3v3.1 release
- * 
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1991 JianHui Huang and Min-Chie Jeng.
@@ -45,10 +31,10 @@ Modified by Mansun Chan  (1995)
 int
 BSIM3V1load(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM3V1model *model = (BSIM3V1model*)inModel;
-register BSIM3V1instance *here;
+BSIM3V1model *model = (BSIM3V1model*)inModel;
+BSIM3V1instance *here;
 double SourceSatCurrent, DrainSatCurrent;
 double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
 double cdrain, cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
@@ -56,54 +42,48 @@ double czbd, czbdsw, czbdswg, czbs, czbssw, czbsswg, evbd, evbs, arg, sarg;
 double delvbd, delvbs, delvds, delvgd, delvgs;
 double Vfbeff, dVfbeff_dVg, dVfbeff_dVd, dVfbeff_dVb, V3, V4;
 double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb, gcgdb, gcggb, gcgsb, gcsdb;
-double gcsgb, gcssb, tol, PhiB, PhiBSW, MJ, MJSW, PhiBSWG, MJSWG;
+double gcsgb, gcssb, PhiB, PhiBSW, MJ, MJSW, PhiBSWG, MJSWG;
 double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
 double qgate=0.0, qbulk=0.0, qdrn=0.0, qsrc=0.0, cqgate=0.0, cqbulk=0.0, cqdrn=0.0;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
-double Vgs_eff, Vfb, dVfb_dVb, dVfb_dVd, dVbs_dVb;
+double Vgs_eff, Vfb, dVfb_dVb, dVfb_dVd;
 double Phis, dPhis_dVb, sqrtPhis, dsqrtPhis_dVb, Vth, dVth_dVb, dVth_dVd;
 double Vgst, dVgst_dVg, dVgst_dVb, dVgs_eff_dVg, Nvtm;
-double Vgdt, Vgsaddvth, Vgsaddvth2, Vgsaddvth1o3, n, dn_dVb, Vtm;
-double ExpArg, ExpArg1, V0;
+double n, dn_dVb, Vtm;
+double ExpArg, V0;
 double Denomi, dDenomi_dVg, dDenomi_dVd, dDenomi_dVb;
 double ueff, dueff_dVg, dueff_dVd, dueff_dVb; 
-double Esat, dEsat_dVg, dEsat_dVd, dEsat_dVb, Vdsat, Vdsat0;
+double Esat, Vdsat;
 double EsatL, dEsatL_dVg, dEsatL_dVd, dEsatL_dVb;
-double Ilimit, Iexp, dIexp_dVg, dIexp_dVd, dIexp_dVb;
 double dVdsat_dVg, dVdsat_dVb, dVdsat_dVd, Vasat, dAlphaz_dVg, dAlphaz_dVb; 
-double dVasat_dVg, dVasat_dVb, dVasat_dVd, Va, Va2, dVa_dVd, dVa_dVg, dVa_dVb; 
+double dVasat_dVg, dVasat_dVb, dVasat_dVd, Va, dVa_dVd, dVa_dVg, dVa_dVb; 
 double Vbseff, dVbseff_dVb, VbseffCV, dVbseffCV_dVb; 
-double Arg1, Arg2, One_Third_CoxWL, Two_Third_CoxWL, Alphaz, CoxWL; 
-double dqbulk_dVb, dVgdt_dVg, dVgdt_dVd, dVgdt_dVb; 
+double Arg1, One_Third_CoxWL, Two_Third_CoxWL, Alphaz, CoxWL; 
 double T0, dT0_dVg, dT0_dVd, dT0_dVb;
 double T1, dT1_dVg, dT1_dVd, dT1_dVb;
 double T2, dT2_dVg, dT2_dVd, dT2_dVb;
 double T3, dT3_dVg, dT3_dVd, dT3_dVb;
-double T4, dT4_dVg, dT4_dVd, dT4_dVb;
-double T5, dT5_dVg, dT5_dVd, dT5_dVb;
-double T6, dT6_dVg, dT6_dVd, dT6_dVb;
+double T4;
+double T5;
+double T6;
 double T7, dT7_dVg, dT7_dVd, dT7_dVb;
-double T8, dT8_dVg, dT8_dVd, dT8_dVb;
-double T9, dT9_dVg, dT9_dVd, dT9_dVb;
-double T10, dT10_dVg, dT10_dVb, dT10_dVd; 
+double T8;
+double T9;
+double T10;
 double T11, T12;
 double tmp, Abulk, dAbulk_dVb, Abulk0, dAbulk0_dVb;
-double T100, T101;  
 double VACLM, dVACLM_dVg, dVACLM_dVd, dVACLM_dVb;
 double VADIBL, dVADIBL_dVg, dVADIBL_dVd, dVADIBL_dVb;
-double VAHCE,  dVAHCE_dVg, dVAHCE_dVd, dVAHCE_dVb;
 double Xdep, dXdep_dVb, lt1, dlt1_dVb, ltw, dltw_dVb, Delt_vth, dDelt_vth_dVb;
-double Theta0, dTheta0_dVb, Theta1, dTheta1_dVb;
-double Thetarout, dThetarout_dVb, TempRatio, tmp1, tmp2, tmp3, tmp4;
-double DIBL_Sft, dDIBL_Sft_dVd, DIBL_fact, Lambda, dLambda_dVg;
-double Rout_Vgs_factor, dRout_Vgs_factor_dVg, dRout_Vgs_factor_dVb;
-double dRout_Vgs_factor_dVd;
+double Theta0, dTheta0_dVb;
+double TempRatio, tmp1, tmp2, tmp3, tmp4;
+double DIBL_Sft, dDIBL_Sft_dVd, Lambda, dLambda_dVg;
 double tempv, a1;
 
 double Vgsteff, dVgsteff_dVg, dVgsteff_dVd, dVgsteff_dVb; 
 double Vdseff, dVdseff_dVg, dVdseff_dVd, dVdseff_dVb; 
 double VdseffCV, dVdseffCV_dVg, dVdseffCV_dVd, dVdseffCV_dVb; 
-double diffVds, diffVdsCV;  
+double diffVds;  
 double dAbulk_dVg, dn_dVd ;
 double beta, dbeta_dVg, dbeta_dVd, dbeta_dVb;
 double gche, dgche_dVg, dgche_dVd, dgche_dVb;
@@ -112,29 +92,28 @@ double fgche2, dfgche2_dVg, dfgche2_dVd, dfgche2_dVb;
 double Idl, dIdl_dVg, dIdl_dVd, dIdl_dVb;
 double Idsa, dIdsa_dVg, dIdsa_dVd, dIdsa_dVb;
 double Ids, Gm, Gds, Gmb;
-double Isub, Isubd, Isubs, Gbd, Gbg, Gbb;
+double Isub, Gbd, Gbg, Gbb;
 double VASCBE, dVASCBE_dVg, dVASCBE_dVd, dVASCBE_dVb;
 double CoxWovL;
 double Rds, dRds_dVg, dRds_dVb, WVCox, WVCoxRds;
-double Vgst2Vtm, VdsatCV, dVdsatCV_dVd, dVdsatCV_dVg, dVdsatCV_dVb;
+double Vgst2Vtm, VdsatCV, dVdsatCV_dVg, dVdsatCV_dVb;
 double Leff, Weff, dWeff_dVg, dWeff_dVb;
 double AbulkCV, dAbulkCV_dVb;
 double qgdo, qgso, cgdo, cgso;
 
-double qcheq, qdef, gqdef, cqdef, cqcheq, gtau_diff, gtau_drift, csreq;
-double gcqdb,gcqsb,gcqgb,gcqbb,vss;
+double qcheq, qdef, gqdef, cqdef, cqcheq, gtau_diff, gtau_drift;
+double gcqdb,gcqsb,gcqgb,gcqbb;
 double dxpart, sxpart;
 
 double gbspsp, gbbdp, gbbsp, gbspg, gbspb, gbspdp; 
 double gbdpdp, gbdpg, gbdpb, gbdpsp; 
-double Cgg, Cgd, Cgs, Cgb, Cdg, Cdd, Cds, Cdb, Qg, Qd;
-double Csg, Csd, Css, Csb, Cbg, Cbd, Cbs, Cbb, Qs, Qb;
-double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Csg1, Csd1, Csb1, Qac0, Qsub0;
+double Cgg, Cgd, Cgb;
+double Csg, Csd, Csb, Cbg, Cbd, Cbb;
+double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Qac0, Qsub0;
 double dQac0_dVg, dQac0_dVd, dQac0_dVb, dQsub0_dVg, dQsub0_dVd, dQsub0_dVb;
    
 struct bsim3v1SizeDependParam *pParam;
-int ByPass, Check, ChargeComputationNeeded, J, error, I;
-double junk[50];
+int ByPass, Check, ChargeComputationNeeded, error;
 
 for (; model != NULL; model = model->BSIM3V1nextModel)
 {  for (here = model->BSIM3V1instances; here != NULL; 
@@ -246,7 +225,6 @@ for (; model != NULL; model = model->BSIM3V1nextModel)
                cbhat = here->BSIM3V1cbs + here->BSIM3V1cbd + here->BSIM3V1gbd
                      * delvbd + here->BSIM3V1gbs * delvbs;
 
-#ifndef NOBYPASS
            /* following should be one big if connected by && all over
             * the place, but some C compilers can't handle that, so
             * we split it up here to let them digest it in stages
@@ -291,7 +269,6 @@ for (; model != NULL; model = model->BSIM3V1nextModel)
                    }
                }
 
-#endif /*NOBYPASS*/
                von = here->BSIM3V1von;
                if (*(ckt->CKTstate0 + here->BSIM3V1vds) >= 0.0)
 	       {   vgs = DEVfetlim(vgs, *(ckt->CKTstate0+here->BSIM3V1vgs), von);
@@ -2049,24 +2026,6 @@ finished: /* returning Values to Calling Routine */
           if ((here->BSIM3V1off == 0) || (!(ckt->CKTmode & MODEINITFIX)))
 	  {   if (Check == 1)
 	      {   ckt->CKTnoncon++;
-#ifndef NEWCONV
-              } 
-	      else
-	      {   tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(here->BSIM3V1cd))
-		      + ckt->CKTabstol;
-                  if (fabs(cdhat - here->BSIM3V1cd) >= tol)
-		  {   ckt->CKTnoncon++;
-                  }
-		  else
-		  {   tol = ckt->CKTreltol * MAX(fabs(cbhat), 
-			    fabs(here->BSIM3V1cbs + here->BSIM3V1cbd)) 
-			    + ckt->CKTabstol;
-                      if (fabs(cbhat - (here->BSIM3V1cbs + here->BSIM3V1cbd)) 
-			  > tol)
-		      {   ckt->CKTnoncon++;
-                      }
-                  }
-#endif /* NEWCONV */
               }
           }
           *(ckt->CKTstate0 + here->BSIM3V1vbs) = vbs;

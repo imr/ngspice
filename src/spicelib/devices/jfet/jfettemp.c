@@ -22,8 +22,8 @@ JFETtemp(inModel,ckt)
         /* Pre-process the model parameters after a possible change
          */
 {
-    register JFETmodel *model = (JFETmodel*)inModel;
-    register JFETinstance *here;
+    JFETmodel *model = (JFETmodel*)inModel;
+    JFETinstance *here;
     double xfc;
     double vt;
     double vtnom;

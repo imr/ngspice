@@ -11,19 +11,14 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 #include "suffix.h"
 
-/* ARGSUSED */
+/* load the voltage source structure with those pointers needed later
+ * for fast matrix loading */
 int
-VSRCpzSetup(matrix,inModel,ckt,state)
-    register SMPmatrix *matrix;
-    GENmodel *inModel;
-    register CKTcircuit *ckt;
-    int *state;
-        /* load the voltage source structure with those pointers needed later 
-         * for fast matrix loading 
-         */
+VSRCpzSetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
+	    int *state)
 {
-    register VSRCmodel *model = (VSRCmodel *)inModel;
-    register VSRCinstance *here;
+    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCinstance *here;
     CKTnode *tmp;
     int error;
 
@@ -32,9 +27,9 @@ VSRCpzSetup(matrix,inModel,ckt,state)
 
         /* loop through all the instances of the model */
         for (here = model->VSRCinstances; here != NULL ;
-                here=here->VSRCnextInstance) {
+	     here = here->VSRCnextInstance) {
             
-            if(here->VSRCbranch == 0) {
+            if (here->VSRCbranch == 0) {
                 error = CKTmkCur(ckt,&tmp,here->VSRCname,"branch");
                 if(error) return(error);
                 here->VSRCbranch = tmp->number;

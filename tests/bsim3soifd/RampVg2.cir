@@ -1,0 +1,19 @@
+* BSIMSOI (FD) example
+*
+* SOI, Ramp Vg
+
+Vd   d 0 1.5
+Vg   g 0 0.0 PULSE 0V  2V  .02n  .1n  .1n  .2n  .6n
+Ve   e 0 0.0
+Vs   s 0 0.0
+Vb   b 0 0.0
+
+m1 d g s e n1 w=10u l=0.25u debug=-1
+
+.option gmin=1e-20 itl1=200 itl2=200 abstol=1e-9
+.tran 1p 1.0ns
+.print tran  @m1[Vbs], V(g)/10
+.include nmosfd.mod
+
+.end
+

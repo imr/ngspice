@@ -14,16 +14,16 @@ Author: 1985 Thomas L. Quarles
 /* ARGSUSED */
 int
 VSRCsetup(matrix,inModel,ckt,state)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     int *state;
         /* load the voltage source structure with those pointers needed later 
          * for fast matrix loading 
          */
 {
-    register VSRCmodel *model = (VSRCmodel *)inModel;
-    register VSRCinstance *here;
+    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCinstance *here;
     CKTnode *tmp;
     int error;
 
@@ -60,7 +60,6 @@ VSRCunsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     VSRCmodel *model;
     VSRCinstance *here;
 
@@ -76,6 +75,5 @@ VSRCunsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

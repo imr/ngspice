@@ -1,17 +1,3 @@
-/* $Id$  */
-/*
- $Log$
- Revision 1.1  2000-04-27 20:03:59  pnenzi
- Initial revision
-
- * Revision 3.2 1998/6/16  18:00:00  Weidong 
- * BSIM3v3.2 release
- *
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: Min-Chie Jeng.
@@ -32,8 +18,8 @@ File: b3v2check.c
 
 int
 BSIM3V2checkModel(model, here, ckt)
-register BSIM3V2model *model;
-register BSIM3V2instance *here;
+BSIM3V2model *model;
+BSIM3V2instance *here;
 CKTcircuit *ckt;
 {
 struct BSIM3V2SizeDependParam *pParam;

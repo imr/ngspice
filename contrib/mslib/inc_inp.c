@@ -92,10 +92,11 @@ readlib(struct LSData *lib, FILE * tlib, \
 {
 
   char name[BSIZE];
-  int numi, wflag;
+  int numi, wflag, nextsub;
 
   numi = 0;
   wflag = NOWRITE;
+  nextsub = 0;    
 
   while (fgets(buf, bsizer, lib->filedes))
 	{
@@ -128,7 +129,16 @@ readlib(struct LSData *lib, FILE * tlib, \
 		case (SUBLLINE):
 		  if (sub)
 			{
-			  if (checkname(sub, name))
+			    if (wflag==WRITESUB) 
+				{
+				/* subckt inside subckt  
+				    not so funny */
+				    nextsub++;
+				    fputs(buf, tlib);
+				    break;
+				}    
+				
+			    if (checkname(sub, name))
 				{
 				  wflag = WRITESUB;
 				  numi++;
@@ -150,12 +160,20 @@ readlib(struct LSData *lib, FILE * tlib, \
 		  break;
 
 		case (ENDSLLINE):
-		  if (wflag == WRITESUB)
+		    if (nextsub)
+			{
+			nextsub--;
+			fputs(buf, tlib);
+			break;
+			} else {
+		    
+		    if (wflag == WRITESUB)
 			{
 			  fprintf(tlib, "%s\n*  End Subckt\n\n", buf);
 			}
 		  wflag = NOWRITE;
 		  break;
+		  }
 
 		case (CONTLLINE):
 		  if (wflag != NOWRITE)

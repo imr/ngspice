@@ -16,6 +16,12 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "fteparse.h"
 #include "fteinp.h"
 
+struct save_info {
+    char	*name;
+    IFuid	*analysis;
+    int		used;
+};
+
 /* The curcuits that are currently available to the user. */
 
 struct circ {
@@ -41,15 +47,6 @@ struct circ {
     char *ci_curOpt;    /* the most recent options anal. for the circuit */
 } ;
 
-struct subcirc {
-    char *sc_name;  /* Whatever... */
-} ;
-
-struct save_info {
-    char	*name;
-    IFuid	*analysis;
-    int		used;
-};
 
 #define mylog10(xx) (((xx) > 0.0) ? log10(xx) : (- log10(HUGE)))
 

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -23,8 +24,8 @@ BJTtemp(inModel,ckt)
          */
 
 {
-    register BJTmodel *model = (BJTmodel *)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel *)inModel;
+    BJTinstance *here;
     double xfc;
     double vt;
     double ratlog;
@@ -185,7 +186,8 @@ BJTtemp(inModel,ckt)
             here->BJTtf5 = here->BJTtBCpot * (1 - exp((1 -
                     model->BJTjunctionExpBC) * xfc)) /
                     (1 - model->BJTjunctionExpBC);
-            here->BJTtVcrit = vt * log(vt / (CONSTroot2*model->BJTsatCur));
+            here->BJTtVcrit = vt *
+                     log(vt / (CONSTroot2*here->BJTtSatCur*here->BJTarea));
             
         }
     }

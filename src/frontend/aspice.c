@@ -10,8 +10,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "aspice.h"
 
+#include "aspice.h"
+#include "variable.h"
+#include "circuits.h"
 
 #  ifdef HAVE_SYS_WAIT_H
      /* should be more tests here I think */
@@ -31,7 +33,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <signal.h>
 
 #include "fteinp.h"
-#include "ftedata.h"
+#include "dvec.h"
 
 
 #ifndef SEEK_SET
@@ -174,13 +176,21 @@ sigchild(void)
  * whether the exit was normal or not.
  */
 
+#if defined(__NetBSD__)
+    pid_t status;
+#else
+    union wait status;
+#endif
+
+
+
 void
 ft_checkkids(void)
 {
-    struct proc *p, *lp;
+    struct proc *p = NULL, *lp = NULL;
     char buf[BSIZE_SP];
     FILE *fp;
-    int pid;
+    int pid = 0;
     static bool here = FALSE;   /* Don't want to be re-entrant. */
 
     if (!numchanged || here)
@@ -189,10 +199,10 @@ ft_checkkids(void)
     here = TRUE;
 
     while (numchanged > 0) {
-        pid = wait((union wait *) NULL);
+        pid = wait(&status);
         if (pid == -1) {
-            fprintf(cp_err, 
-"ft_checkkids: Internal Error: should be %d jobs done but there aren't any.\n",
+            fprintf(cp_err,  
+               "ft_checkkids: Internal Error: should be %d jobs done but there aren't any.\n", 
                 numchanged);
             numchanged = 0;
             running = NULL;
@@ -293,12 +303,6 @@ com_rspice(wordlist *wl)
 
     pid = fork( );
     if (pid == 0) {
-#ifdef notdef
-	char	com_buf[200];
-
-	sprintf(com_buf, "%s %s %s -s", remote_shell, rhost, program);
-	printf("executing: \"%s\"\n", com_buf);
-#endif
 	/* I am the "server" process */
 	close(to_serv[1]);
 	close(from_serv[0]);
@@ -381,10 +385,6 @@ com_rspice(wordlist *wl)
 		fprintf(stderr, "Error reading rawdata: %s\n", buf);
 		continue;
 	    }
-#ifdef notdef
-	    fprintf(stderr, "adjusting rawfile: write \"%d\" at %ld\n",
-		num, pos);
-#endif
 	    if (fseek(out, pos, SEEK_SET))
 		fprintf(stderr,
 			"Error adjusting rawfile: write \"%d\" at %ld\n",

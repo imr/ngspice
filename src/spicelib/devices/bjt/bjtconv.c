@@ -18,11 +18,11 @@ Author: 1985 Thomas L. Quarles
 int
 BJTconvTest(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 
 {
-    register BJTinstance *here;
-    register BJTmodel *model = (BJTmodel *) inModel;
+    BJTinstance *here;
+    BJTmodel *model = (BJTmodel *) inModel;
     double tol;
     double cc;
     double cchat;

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #ifndef RES
@@ -36,6 +37,8 @@ typedef struct sRESinstance {
     double RESacConduct; /* AC conductance */
     double RESwidth;    /* width of the resistor */
     double RESlength;   /* length of the resistor */
+    double RESscale;    /* Scale factor */
+    double RESm;        /* Multiplicity factor for this instance */
     double *RESposPosptr;    /* pointer to sparse matrix diagonal at 
                               * (positive,positive) */
     double *RESnegNegptr;    /* pointer to sparse matrix diagonal at 
@@ -44,12 +47,14 @@ typedef struct sRESinstance {
                               * (positive,negative) */
     double *RESnegPosptr;    /* pointer to sparse matrix offdiagonal at 
                               * (negative,positive) */
-    unsigned RESresGiven : 1;   /* flag to indicate resistance was specified */
+    unsigned RESresGiven    : 1;    /* flag to indicate resistance was specified */
     unsigned RESwidthGiven  : 1;    /* flag to indicate width given */
     unsigned RESlengthGiven : 1;    /* flag to indicate length given */
+    unsigned RESscaleGiven  : 1;    /* flag to indicate scale given */
     unsigned REStempGiven   : 1;    /* indicates temperature specified */
 /* serban */
-    unsigned RESacresGiven   : 1;   /* indicates AC value specified */
+    unsigned RESacresGiven  : 1;    /* indicates AC value specified */
+    unsigned RESmGiven      : 1;    /* indicates M parameter specified */
     int    RESsenParmNo;         /* parameter # for sensitivity use;
                 set equal to  0 if not a design parameter*/
 #ifndef NONOISE
@@ -77,12 +82,14 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     double RESsheetRes;     /* sheet resistance of devices in ohms/square */
     double RESdefWidth;     /* default width of a resistor */
     double RESnarrow;       /* amount by which device is narrower than drawn */
+    double RESshort;        /* amount by which device is shorter than drawn */
     unsigned REStnomGiven: 1;   /* flag to indicate nominal temp. was given */
     unsigned REStc1Given : 1;   /* flag to indicate tc1 was specified */
     unsigned REStc2Given : 1;   /* flag to indicate tc2 was specified */
     unsigned RESsheetResGiven   :1; /* flag to indicate sheet resistance given*/
     unsigned RESdefWidthGiven   :1; /* flag to indicate default width given */
     unsigned RESnarrowGiven     :1; /* flag to indicate narrow effect given */
+    unsigned RESshortGiven      :1; /* flag to indicate short effect given */
 } RESmodel;
 
 /* device parameters */
@@ -97,6 +104,8 @@ typedef struct sRESmodel {       /* model structure for a resistor */
 /* serban */
 #define RES_ACRESIST 10
 #define RES_ACCONDUCT 11
+#define RES_M 12 /* pn */
+#define RES_SCALE 13 /* pn */
 
 
 /* model parameters */
@@ -107,6 +116,7 @@ typedef struct sRESmodel {       /* model structure for a resistor */
 #define RES_MOD_NARROW 105
 #define RES_MOD_R 106
 #define RES_MOD_TNOM 107
+#define RES_MOD_SHORT 108
 
 /* device questions */
 #define RES_QUEST_SENS_REAL      201

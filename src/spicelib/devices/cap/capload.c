@@ -15,14 +15,14 @@ int
 CAPload(inModel,ckt)
 
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
         /* actually load the current capacitance value into the 
          * sparse matrix previously provided 
          */
 {
-    register CAPmodel *model = (CAPmodel*)inModel;
-    register CAPinstance *here;
-    register int cond1;
+    CAPmodel *model = (CAPmodel*)inModel;
+    CAPinstance *here;
+    int cond1;
     double vcap;
     double geq;
     double ceq;

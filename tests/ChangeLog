@@ -1,0 +1,23 @@
+2001-12-07  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* tests/: added mesa tests from macspice3f4 and corrected all other tests.
+	
+2001-12-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* check.sh (testdir): turned that script into 'real' sh script
+	(was bash, really)
+
+2000-09-14  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* diffpair.out, filters/lowpass.out, polezero/filt_bridge_t.out,
+	polezero/filt_multistage.out, polezero/filt_rc.out,
+	resistance/res_array.out, resistance/res_partition.out: Updated
+	for new spice output.
+
+
+2000-09-09  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* fourbitadder.out, resistance/res_simple.out: Updated to
+	correspond to the new output from ngspice.
+
+

@@ -9,9 +9,11 @@ Author:   1994 Anthony E. Parker, Department of Electronics, Macquarie Uni.
 
 #include "ngspice.h"
 #include "ftedefs.h"
-#include "ftedata.h"
-#include "spec.h"
+#include "dvec.h"
+#include "sim.h"
 
+#include "spec.h"
+#include "variable.h"
 
 void
 com_spec(wordlist *wl)
@@ -23,7 +25,7 @@ com_spec(wordlist *wl)
     int     fpts, i, j, k, tlen, ngood;
     bool    trace;
     char    *s;
-    struct dvec  *f, *vlist, *lv, *vec;
+    struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *names, *first_name;
 
     if (!plot_cur || !plot_cur->pl_scale) {

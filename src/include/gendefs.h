@@ -24,6 +24,8 @@ typedef struct sGENinstance {
     int GENnode3;   /* appropriate node numbers */
     int GENnode4;   /* appropriate node numbers */
     int GENnode5;   /* appropriate node numbers */
+    int GENnode6;   /* added to create body node 01/06/99 */
+    int GENnode7;   /* added to create temp node  2/03/99 */
 } GENinstance ;
 
 

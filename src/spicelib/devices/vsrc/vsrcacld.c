@@ -16,10 +16,10 @@ Author: 1985 Thomas L. Quarles
 int
 VSRCacLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register VSRCmodel *model = (VSRCmodel *)inModel;
-    register VSRCinstance *here;
+    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCinstance *here;
 
     for( ; model != NULL; model = model->VSRCnextModel ) {
 

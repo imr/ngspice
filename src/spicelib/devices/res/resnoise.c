@@ -8,7 +8,6 @@ Modified: Apr 2000 - Paolo Nenzi
 #include <stdio.h>
 #include "resdefs.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 
@@ -114,6 +113,7 @@ if (!data->namelist) return(E_NOMEM);
 
 			if (data->freq == ((NOISEAN*)ckt->CKTcurJob)->NstartFreq) {
 			    inst->RESnVar[OUTNOIZ] = 0.0;
+			    inst->RESnVar[INNOIZ] = 0.0;  /* Clear input noise */ 
 			}
 		    } else {   /* data->delFreq != 0.0 (we have to integrate) */
 			tempOutNoise = Nintegrate(noizDens, lnNdens,

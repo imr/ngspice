@@ -16,11 +16,11 @@ Author: 1985 S. Hwang
 int
 MEStrunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     double *timeStep;
 {
-    register MESmodel *model = (MESmodel*)inModel;
-    register MESinstance *here;
+    MESmodel *model = (MESmodel*)inModel;
+    MESinstance *here;
 
     for( ; model != NULL; model = model->MESnextModel) {
         for(here=model->MESinstances;here!=NULL;here = here->MESnextInstance){

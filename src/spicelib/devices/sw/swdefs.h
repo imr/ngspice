@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon M. Jacobs
+Modified: 2000 AlansFixes
 **********/
 
 #ifndef SW
@@ -53,7 +54,7 @@ typedef struct sSWinstance {
 
 #define SW_ON_CONDUCTANCE 1.0   /* default on conductance = 1 mho */
 #define SW_OFF_CONDUCTANCE ckt->CKTgmin   /* default off conductance */
-#define SW_NUM_STATES 1   
+#define SW_NUM_STATES 2   
 
 typedef struct sSWmodel {      /* model structure for a switch */
     int SWmodType;  /* type index of this device type */

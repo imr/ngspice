@@ -16,12 +16,12 @@ Author: 1985 Thomas L. Quarles
 int
 CAPacLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 
 {
-    register CAPmodel *model = (CAPmodel*)inModel;
+    CAPmodel *model = (CAPmodel*)inModel;
     double val;
-    register CAPinstance *here;
+    CAPinstance *here;
 
     for( ; model != NULL; model = model->CAPnextModel) {
         for( here = model->CAPinstances;here != NULL; 

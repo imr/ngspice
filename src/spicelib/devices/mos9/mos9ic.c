@@ -1,0 +1,49 @@
+/**********
+Copyright 1990 Regents of the University of California.  All rights reserved.
+Author: 1985 Thomas L. Quarles
+Modified: Alan Gillespie
+**********/
+/*
+ */
+
+#include "ngspice.h"
+#include <stdio.h>
+#include "cktdefs.h"
+#include "mos9defs.h"
+#include "sperror.h"
+#include "suffix.h"
+
+
+int
+MOS9getic(inModel,ckt)
+    GENmodel *inModel;
+    CKTcircuit *ckt;
+{
+    MOS9model *model = (MOS9model *)inModel;
+    MOS9instance *here;
+    /*
+     * grab initial conditions out of rhs array.   User specified, so use
+     * external nodes to get values
+     */
+
+    for( ; model ; model = model->MOS9nextModel) {
+        for(here = model->MOS9instances; here ; here = here->MOS9nextInstance) {
+            if(!here->MOS9icVBSGiven) {
+                here->MOS9icVBS = 
+                        *(ckt->CKTrhs + here->MOS9bNode) - 
+                        *(ckt->CKTrhs + here->MOS9sNode);
+            }
+            if(!here->MOS9icVDSGiven) {
+                here->MOS9icVDS = 
+                        *(ckt->CKTrhs + here->MOS9dNode) - 
+                        *(ckt->CKTrhs + here->MOS9sNode);
+            }
+            if(!here->MOS9icVGSGiven) {
+                here->MOS9icVGS = 
+                        *(ckt->CKTrhs + here->MOS9gNode) - 
+                        *(ckt->CKTrhs + here->MOS9sNode);
+            }
+        }
+    }
+    return(OK);
+}

@@ -4,6 +4,12 @@ Author: 1985 Wayne A. Christopher
 **********/
 
 /*
+ * SJB 22 May 2001
+ * Fixed memory leaks accociated with freeing memory used by lines in the input deck
+ * in inp_spsource(). New line_free() routine added to help with this.
+ */
+
+/*
  * Stuff for dealing with spice input decks and command scripts, and
  * the listing routines.
  */
@@ -12,11 +18,20 @@ Author: 1985 Wayne A. Christopher
 #include "cpdefs.h"
 #include "inpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteinp.h"
 #include "inp.h"
 
+#include "circuits.h"
+#include "completion.h"
+#include "variable.h"
 
+#ifdef XSPICE
+/* gtri - add - 12/12/90 - wbk - include new stuff */
+#include "ipctiein.h"
+#include "enh.h"
+/* gtri - end - 12/12/90 */
+#endif
 
 /* static declarations */
 static char * upper(register char *string);
@@ -71,8 +86,9 @@ com_listing(wordlist *wl)
     return;
 }
 
+
 static char *
-upper(register char *string)
+upper(char *string)
 {
 
     static char buf[BSIZE_SP];
@@ -89,11 +105,10 @@ upper(register char *string)
 
 }
 
-/* Provide an input listing on the specified file of the given
- * card deck.  The listing should be of either LS_PHYSICAL or LS_LOGICAL
- * or LS_DECK lines as specified by the type parameter.
- */
 
+/* Provide an input listing on the specified file of the given card
+ * deck.  The listing should be of either LS_PHYSICAL or LS_LOGICAL or
+ * LS_DECK lines as specified by the type parameter.  */
 void
 inp_list(FILE *file, struct line *deck, struct line *extras, int type)
 {
@@ -102,12 +117,20 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
     bool renumber;
     bool useout = (file == cp_out);
     int i = 1;
+/* gtri - wbk - 03/07/91 - Don't use 'more' type output if ipc enabled */
+#ifdef XSPICE
+    if(g_ipc.enabled) {
+        useout = FALSE;
+    }
+#endif
+/* gtri - end - 03/07/91 */
 
     if (useout)
         out_init();
-    (void) cp_getvar("renumber", VT_BOOL, (char *) &renumber);
+    cp_getvar("renumber", VT_BOOL, (char *) &renumber);
     if (type == LS_LOGICAL) {
-top1:       for (here = deck; here; here = here->li_next) {
+top1:
+	for (here = deck; here; here = here->li_next) {
             if (renumber)
                 here->li_linenum = i;
             i++;
@@ -119,10 +142,7 @@ top1:       for (here = deck; here; here = here->li_next) {
                     sprintf(out_pbuf, "%6d : %s\n",
                             here->li_linenum,
                             upper(here->li_line));
-            out_send(out_pbuf);
-/*                    out_printf("%6d : %s\n",
-                            here->li_linenum,
-                            upper(here->li_line)); */
+		    out_send(out_pbuf);
                 } else
                     fprintf(file, "%6d : %s\n",
                             here->li_linenum,
@@ -141,13 +161,13 @@ top1:       for (here = deck; here; here = here->li_next) {
             goto top1;
         }
         if (useout) {
-/*            out_printf("%6d : .end\n", i); */
             sprintf(out_pbuf, "%6d : .end\n", i);
         out_send(out_pbuf);
         } else
             fprintf(file, "%6d : .end\n", i);
     } else if ((type == LS_PHYSICAL) || (type == LS_DECK)) {
-top2:       for (here = deck; here; here = here->li_next) {
+top2:
+	for (here = deck; here; here = here->li_next) {
             if ((here->li_actual == NULL) || (here == deck)) {
                 if (renumber)
                     here->li_linenum = i;
@@ -158,28 +178,28 @@ top2:       for (here = deck; here; here = here->li_next) {
                 if (type == LS_PHYSICAL) {
                     if (useout) {
                         sprintf(out_pbuf, "%6d : %s\n",
-                            here->li_linenum,
-                            upper(here->li_line));
-            out_send(out_pbuf);
+				here->li_linenum,
+				upper(here->li_line));
+			out_send(out_pbuf);
                     } else
                         fprintf(file, "%6d : %s\n",
-                            here->li_linenum,
-                            upper(here->li_line));
+				here->li_linenum,
+				upper(here->li_line));
                 } else {
                     if (useout)
                         out_printf("%s\n",
-                            upper(here->li_line));
+				   upper(here->li_line));
                     else
                         fprintf(file, "%s\n",
-                            upper(here->li_line));
+				upper(here->li_line));
                 }
                 if (here->li_error && (type == LS_PHYSICAL)) {
                     if (useout)
                         out_printf("%s\n",
-                            here->li_error);
+				   here->li_error);
                     else
                         fprintf(file, "%s\n",
-                            here->li_error);
+				here->li_error);
                 }
             } else {
                 for (there = here->li_actual; there;
@@ -191,13 +211,13 @@ top2:       for (here = deck; here; here = here->li_next) {
                     if (type == LS_PHYSICAL) {
                         if (useout) {
                             sprintf(out_pbuf, "%6d : %s\n",
-                                there->li_linenum,
-                                upper(there->li_line));
-                out_send(out_pbuf);
+				    there->li_linenum,
+				    upper(there->li_line));
+			    out_send(out_pbuf);
                         } else
                             fprintf(file, "%6d : %s\n",
-                                there->li_linenum,
-                                upper(there->li_line));
+				    there->li_linenum,
+				    upper(there->li_line));
                     } else {
                         if (useout)
                             out_printf("%s\n",
@@ -242,18 +262,36 @@ top2:       for (here = deck; here; here = here->li_next) {
     return;
 }
 
-/* The routine to source a spice input deck. We read the deck in, take out
- * the front-end commands, and create a CKT structure. Also we filter out
- * the following cards: .save, .width, .four, .print, and .plot, to perform
- * after the run is over.
+/*
+ * Free memory used by a line.
+ * If recure is TRUE then recursivly free all lines linked via the li_next field.
+ * If recurse is FALSE free only this line.
+ * All lines linked via the li_actual field are always recursivly freed.
+ * SJB - 22nd May 2001
  */
+void
+line_free(struct line * deck, bool recurse) {
+    if(!deck)
+	return;
+    tfree(deck->li_line);
+    tfree(deck->li_error);
+    if(recurse)
+	line_free(deck->li_next,TRUE);
+    line_free(deck->li_actual,TRUE);
+    tfree(deck);
+}
 
+
+/* The routine to source a spice input deck. We read the deck in, take
+ * out the front-end commands, and create a CKT structure. Also we
+ * filter out the following cards: .save, .width, .four, .print, and
+ * .plot, to perform after the run is over.  */
 void
 inp_spsource(FILE *fp, bool comfile, char *filename)
 {
     struct line *deck, *dd, *ld;
-    struct line *realdeck, *options;
-    char *tt, name[BSIZE_SP], *s, *t;
+    struct line *realdeck, *options = NULL;
+    char *tt = NULL, name[BSIZE_SP], *s, *t;
     bool nosubckts, commands = FALSE;
     wordlist *wl = NULL, *end = NULL, *wl_first = NULL;
     wordlist *controls = NULL;
@@ -263,7 +301,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     inp_readall(fp, &deck);
     
     if (!deck) {	/* MW. We must close fp always when returning */
-        (void) fclose(fp);
+        fclose(fp);
         return;
     }
     
@@ -280,11 +318,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     }
     fclose(fp);
 
-    /* Now save the IO context and start a new control set.  After
-     * we are done with the source we'll put the old file descriptors 
-     * back.  I guess we could use a FILE stack, but since this routine
-     * is recursive anyway.
-     */
+    /* Now save the IO context and start a new control set.  After we
+     * are done with the source we'll put the old file descriptors
+     * back.  I guess we could use a FILE stack, but since this
+     * routine is recursive anyway.  */
     lastin = cp_curin;
     lastout = cp_curout;
     lasterr = cp_curerr;
@@ -294,13 +331,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
     cp_pushcontrol();
 
-    /* We should now go through the deck and execute front-end 
+    /* We should now go through the deck and execute front-end
      * commands and remove them. Front-end commands are enclosed by
-     * the cards .control and .endc, unless comfile
-     * is TRUE, in which case every line must be a front-end command.
-     * There are too many problems with matching the first word on
-     * the line.
-     */
+     * the cards .control and .endc, unless comfile is TRUE, in which
+     * case every line must be a front-end command.  There are too
+     * many problems with matching the first word on the line.  */
     ld = deck;
     if (comfile) {
         /* This is easy. */
@@ -311,12 +346,13 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             if (!ciprefix(".control", dd->li_line) &&
 		!ciprefix(".endc", dd->li_line)) {
                 if (dd->li_line[0] == '*')
-                    (void) cp_evloop(dd->li_line + 2);
+                    cp_evloop(dd->li_line + 2);
                 else
-                    (void) cp_evloop(dd->li_line);
+                    cp_evloop(dd->li_line);
 	    }
-            tfree(dd->li_line);
-            tfree(dd);
+	    line_free(dd,FALSE); /* SJB - free this line's memory */
+ /*         tfree(dd->li_line);
+            tfree(dd); */
         }   
     } else {
         for (dd = deck->li_next; dd; dd = ld->li_next) {
@@ -326,7 +362,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 ld = dd;
                 continue;
             }
-            (void) strncpy(name, dd->li_line, BSIZE_SP);
+            strncpy(name, dd->li_line, BSIZE_SP);
             for (s = name; *s && isspace(*s); s++)
                 ;
             for (t = s; *t && !isspace(*t); t++)
@@ -335,17 +371,19 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
             if (ciprefix(".control", dd->li_line)) {
                 ld->li_next = dd->li_next;
-                tfree(dd->li_line);
-                tfree(dd);
+		line_free(dd,FALSE); /* SJB - free this line's memory */
+ /*             tfree(dd->li_line);
+                tfree(dd); */
                 if (commands)
-                    fprintf(cp_err, 
-                    "Warning: redundant .control card\n");
+                    fprintf(cp_err,
+			    "Warning: redundant .control card\n");
                 else
                     commands = TRUE;
             } else if (ciprefix(".endc", dd->li_line)) {
                 ld->li_next = dd->li_next;
-                tfree(dd->li_line);
-                tfree(dd);
+		line_free(dd,FALSE); /* SJB - free this line's memory */
+/*              tfree(dd->li_line);
+                tfree(dd); */
                 if (commands)
                     commands = FALSE;
                 else
@@ -361,23 +399,30 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     controls = wl;
                 if (prefix("*#", dd->li_line))
                     wl->wl_word = copy(dd->li_line + 2);
-                else
+                else {
                     wl->wl_word = dd->li_line;
+		    dd->li_line = 0; /* SJB - prevent line_free() freeing the string (now pointed at by wl->wl_word) */
+		}
                 ld->li_next = dd->li_next;
-                tfree(dd);
+		line_free(dd,FALSE); /* SJB - free this line's memory */
+/*                tfree(dd); */
             } else if (!*dd->li_line) {
-                /* So blank lines in com files don't get
-                 * considered as circuits.
-                 */
+                /* So blank lines in com files don't get considered as
+                 * circuits.  */
                 ld->li_next = dd->li_next;
-                tfree(dd->li_line);
-                tfree(dd);
+		line_free(dd,FALSE); /* SJB - free this line's memory */
+/*              tfree(dd->li_line);
+                tfree(dd); */
             } else {
                 inp_casefix(s);
                 inp_casefix(dd->li_line);
-                if (eq(s, ".width") || ciprefix(".four", s) || eq(s, ".plot")
-			|| eq(s, ".print") || eq(s, ".save")
-                        || eq(s, ".op") || eq(s, ".tf"))
+                if (eq(s, ".width")
+		    || ciprefix(".four", s)
+		    || eq(s, ".plot")
+		    || eq(s, ".print")
+		    || eq(s, ".save")
+		    || eq(s, ".op")
+		    || eq(s, ".tf"))
 		{
                     if (end) {
                         end->wl_next = alloc(struct wordlist);
@@ -389,8 +434,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
 		    if (!eq(s, ".op") && !eq(s, ".tf")) {
 			ld->li_next = dd->li_next;
-			tfree(dd->li_line);
-			tfree(dd);
+			line_free(dd,FALSE); /* SJB - free this line's memory */
+/*			tfree(dd->li_line);
+			tfree(dd); */
 		    } else
 			ld = dd;
                 } else
@@ -401,33 +447,41 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             /* There is something left after the controls. */
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
 
-            /* Now expand subcircuit macros. Note that we have to 
-             * fix the case before we do this but after we 
-             * deal with the commands.
-             */
-            if (!cp_getvar("nosubckt", VT_BOOL, (char *) 
-                    &nosubckts))
-                deck->li_next = inp_subcktexpand(deck->
-                        li_next);
+#ifdef XSPICE
+/* gtri - wbk - Translate all SPICE 2G6 polynomial type sources */
+            deck->li_next = ENHtranslate_poly(deck->li_next);
+/* gtri - end - Translate all SPICE 2G6 polynomial type sources */
+#endif
+
+            /* Now expand subcircuit macros. Note that we have to fix
+             * the case before we do this but after we deal with the
+             * commands.  */
+            if (!cp_getvar("nosubckt", VT_BOOL, (char *) &nosubckts))
+                if((deck->li_next = inp_subcktexpand(deck->li_next)) == NULL){
+					line_free(realdeck,TRUE);
+					line_free(deck->li_actual, TRUE);
+			return;
+		}
+	    line_free(deck->li_actual,FALSE); /* SJB - free memory used by old li_actual (if any) */
             deck->li_actual = realdeck;
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
         }
 
         /* Now that the deck is loaded, do the commands */
         if (controls) {
-            for (end = wl = wl_reverse(controls); wl;
-                    wl = wl->wl_next)
-                (void) cp_evloop(wl->wl_word);
-                
+            for (end = wl = wl_reverse(controls); wl; wl = wl->wl_next)
+                cp_evloop(wl->wl_word);
+
             wl_free(end); 
-            	/* MW. Memory leak fixed here */
-            
         }
     }
 
+    /*saj, to process save commands always, not just in batch mode 
+     *(breaks encapsulation of frountend and parsing commands slightly)*/
+    ft_dotsaves();
+
     /* Now reset everything.  Pop the control stack, and fix up the IO
-     * as it was before the source.
-     */
+     * as it was before the source.  */
     cp_popcontrol();
 
     cp_curin = lastin;
@@ -436,14 +490,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     return;
 }
 
-/* This routine is cut in half here because com_rset has to do what follows
- * also. End is the list of commands we execute when the job is finished:
- * we only bother with this if we might be running in batch mode, since
- * it isn't much use otherwise.
- */
 
+/* This routine is cut in half here because com_rset has to do what
+ * follows also. End is the list of commands we execute when the job
+ * is finished: we only bother with this if we might be running in
+ * batch mode, since it isn't much use otherwise.  */
 void
-inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, struct line *options, char *filename)
+inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
+	   struct line *options, char *filename)
 {
     struct circ *ct;
     struct line *dd;
@@ -454,8 +508,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, struct line *
     bool noparse, ii;
 
     /* First throw away any old error messages there might be and fix
-     * the case of the lines.
-     */
+     * the case of the lines.  */
     for (dd = deck; dd; dd = dd->li_next) {
         if (dd->li_error) {
             tfree(dd->li_error);
@@ -473,7 +526,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, struct line *
         }
         ft_curckt = ct = alloc(struct circ);
     }
-    (void) cp_getvar("noparse", VT_BOOL, (char *) &noparse);
+    cp_getvar("noparse", VT_BOOL, (char *) &noparse);
     if (!noparse)
         ckt = if_inpdeck(deck, &tab);
     else
@@ -483,6 +536,10 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, struct line *
     for (dd = deck; dd; dd = dd->li_next)
         if (dd->li_error) {
 	    char *p, *q;
+#ifdef XSPICE
+/* gtri - modify - 12/12/90 - wbk - add setting of ipc syntax error flag */            g_ipc.syntax_error = IPC_TRUE;
+#endif
+/* gtri - end - 12/12/90 */
 	    p = dd->li_error;
 	    do {
 		q =strchr(p, '\n');
@@ -501,25 +558,18 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, struct line *
 	    } while (p && *p);
 	}
 
-    /* Add this circuit to the circuit list. If reuse is TRUE then 
-     * use the ft_curckt structure.
-     */
-
+    /* Add this circuit to the circuit list. If reuse is TRUE then use
+     * the ft_curckt structure.  */
     if (!reuse) {
-#ifdef notdef
-	/* Unused time-waster. */
-        for (dd = deck->li_next; dd; dd = dd->li_next)
-            if_setndnames(dd->li_line);
-#endif
-
         /* Be sure that ci_devices and ci_nodes are valid */
         ft_curckt->ci_devices = cp_kwswitch(CT_DEVNAMES, 
                 (char *) NULL);
-        (void) cp_kwswitch(CT_DEVNAMES, ft_curckt->ci_devices);
+        cp_kwswitch(CT_DEVNAMES, ft_curckt->ci_devices);
         ft_curckt->ci_nodes = cp_kwswitch(CT_NODENAMES, (char *) NULL);
-        (void) cp_kwswitch(CT_NODENAMES, ft_curckt->ci_nodes);
+        cp_kwswitch(CT_NODENAMES, ft_curckt->ci_nodes);
         ft_newcirc(ct);
-        /* ft_setccirc(); */ ft_curckt = ct;
+	/* Assign current circuit */
+        ft_curckt = ct;
     }
     ct->ci_name = tt;
     ct->ci_deck = deck;
@@ -582,11 +632,10 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, struct line *
     return;
 }
 
-/* Edit and re-load the current input deck.  Note that if these commands are
- * used on a non-unix machine, they will leave spice.tmp junk files lying
- * around.
- */
 
+/* Edit and re-load the current input deck.  Note that if these
+ * commands are used on a non-unix machine, they will leave spice.tmp
+ * junk files lying around.  */
 void
 com_edit(wordlist *wl)
 {
@@ -626,8 +675,9 @@ com_edit(wordlist *wl)
             inp_list(fp, ft_curckt->ci_deck, ft_curckt->ci_options,
                 LS_DECK);
             fprintf(cp_err,
-        "Warning: editing a temporary file -- circuit not saved\n");
-            (void) fclose(fp);
+		    "Warning: editing a temporary file -- "
+		    "circuit not saved\n");
+            fclose(fp);
         } else if (!ft_curckt) {
             if (!(fp = fopen(filename, "w"))) {
                 perror(filename);
@@ -635,7 +685,7 @@ com_edit(wordlist *wl)
                 return;
             }
             fprintf(fp, "SPICE 3 test deck\n");
-            (void) fclose(fp);
+            fclose(fp);
         }
         if (!doedit(filename)) {
             cp_interactive = inter;
@@ -649,11 +699,11 @@ com_edit(wordlist *wl)
         }
         inp_spsource(fp, FALSE, permfile ? filename : (char *) NULL);
         
-        /* (void) fclose(fp);  */
+        /* fclose(fp);  */
         /*	MW. inp_spsource already closed fp */
         
         if (ft_curckt && !ft_curckt->ci_filename)
-            (void) unlink(filename);
+            unlink(filename);
     }
 
     cp_interactive = inter;
@@ -662,7 +712,7 @@ com_edit(wordlist *wl)
 
     fprintf(cp_out, "run circuit? ");
     fflush(cp_out);
-    (void) fgets(buf, BSIZE_SP, stdin);
+    fgets(buf, BSIZE_SP, stdin);
     if (buf[0] != 'n') {
       fprintf(cp_out, "running circuit\n");
       com_run(NULL);
@@ -683,10 +733,10 @@ doedit(char *filename)
             if (Def_Editor && *Def_Editor)
 	        editor = Def_Editor;
 	    else
-	        editor = "/usr/ucb/vi";
+	        editor = "/usr/bin/vi";
 	}
     }
-    (void) sprintf(buf, "%s %s", editor, filename);
+    sprintf(buf, "%s %s", editor, filename);
     return (system(buf) ? FALSE : TRUE);
 
 }
@@ -716,17 +766,17 @@ com_source(wordlist *wl)
         while (wl) {
             if (!(tp = inp_pathopen(wl->wl_word, "r"))) {
                 perror(wl->wl_word);
-                (void) fclose(fp);
+                fclose(fp);
                 cp_interactive = TRUE;
-                (void) unlink(tempfile);
+                unlink(tempfile);
                 return;
             }
             while ((i = fread(buf, 1, BSIZE_SP, tp)) > 0)
-                (void) fwrite(buf, 1, i, fp);
-            (void) fclose(tp);
+                fwrite(buf, 1, i, fp);
+            fclose(tp);
             wl = wl->wl_next;
         }
-        (void) fseek(fp, (long) 0, 0);
+        fseek(fp, (long) 0, 0);
     } else
         fp = inp_pathopen(wl->wl_word, "r");
     if (fp == NULL) {
@@ -743,7 +793,7 @@ com_source(wordlist *wl)
         inp_spsource(fp, FALSE, tempfile ? (char *) NULL : wl->wl_word);
     cp_interactive = inter;
     if (tempfile)
-        (void) unlink(tempfile);
+        unlink(tempfile);
     return;
 }
 

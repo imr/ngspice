@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
+Modified: 2000 AlansFixes
 **********/
 
 #ifndef DISTODEF
@@ -198,18 +199,18 @@ extern double DFiF12(double, double, double, double,
 extern double DFn2F12(DpassStr*);
 extern double DFi2F12(DpassStr*);
 
-extern void EqualDeriv(Dderivs *new, Dderivs *old);
-extern void TimesDeriv(Dderivs *new, Dderivs *old, double k);
-extern void InvDeriv(Dderivs *new, Dderivs *old);
-extern void MultDeriv(Dderivs *new, Dderivs *old1, Dderivs *old2);
-extern void CubeDeriv(Dderivs *new, Dderivs *old);
-extern void PlusDeriv(Dderivs *new, Dderivs *old1, Dderivs *old2);
-extern void SqrtDeriv(Dderivs *new, Dderivs *old);
-extern void DivDeriv(Dderivs *new, Dderivs *old1, Dderivs *old2);
-extern void PowDeriv(Dderivs *new, Dderivs *old, double emm);
-extern void AtanDeriv(Dderivs *new, Dderivs *old);
-extern void CosDeriv(Dderivs *new, Dderivs *old);
-extern void ExpDeriv(Dderivs *new, Dderivs *old);
+extern void EqualDeriv(Dderivs *, Dderivs *);
+extern void TimesDeriv(Dderivs *, Dderivs *, double);
+extern void InvDeriv(Dderivs *, Dderivs *);
+extern void MultDeriv(Dderivs *, Dderivs *, Dderivs *);
+extern void CubeDeriv(Dderivs *, Dderivs *);
+extern void PlusDeriv(Dderivs *, Dderivs *, Dderivs *);
+extern void SqrtDeriv(Dderivs *, Dderivs *);
+extern void DivDeriv(Dderivs *, Dderivs *, Dderivs *);
+extern void PowDeriv(Dderivs *, Dderivs *, double);
+extern void AtanDeriv(Dderivs *, Dderivs *);
+extern void CosDeriv(Dderivs *, Dderivs *);
+extern void ExpDeriv(Dderivs *, Dderivs *);
 
 
 

@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 - Paolo Nenzi
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -11,11 +12,13 @@ Modified: Apr 2000 - Paolo Nenzi
 #include "ifsim.h"
 
 IFparm RESpTable[] = { /* parameters */ 
- IOPP( "resistance", RES_RESIST, IF_REAL,"Resistance"),
- IOPPA( "ac", RES_ACRESIST, IF_REAL, "AC resistance value"),
- IOPZU( "temp",        RES_TEMP,   IF_REAL,"Instance operating temperature"),
- IOPQU( "l",          RES_LENGTH, IF_REAL,"Length"),
- IOPZU( "w",          RES_WIDTH,  IF_REAL,"Width"),
+ IOPP( "resistance", 	RES_RESIST, 	IF_REAL,"Resistance"),
+ IOPAA( "ac",		RES_ACRESIST,	IF_REAL, "AC resistance value"),
+ IOPZU( "temp",		RES_TEMP,	IF_REAL,"Instance operating temperature"),
+ IOPQU( "l",		RES_LENGTH,	IF_REAL,"Length"),
+ IOPZU( "w",		RES_WIDTH,	IF_REAL,"Width"),
+ IOPU(  "m",		RES_M,		IF_REAL, "Multiplication factor"),
+ IOPU(  "scale",	RES_SCALE,	IF_REAL, "Scale factor"),
  IP(   "sens_resist", RES_RESIST_SENS, IF_FLAG,   
         "flag to request sensitivity WRT resistance"),
  OP( "i",          RES_CURRENT,IF_REAL,"Current"),
@@ -33,6 +36,7 @@ IFparm RESpTable[] = { /* parameters */
 IFparm RESmPTable[] = { /* model parameters */
  IOPQ( "rsh",    RES_MOD_RSH,      IF_REAL,"Sheet resistance"),
  IOPZ( "narrow", RES_MOD_NARROW,   IF_REAL,"Narrowing of resistor"),
+ IOPZ( "short",  RES_MOD_SHORT,    IF_REAL,"Shortening of resistor"),
  IOPQ( "tc1",    RES_MOD_TC1,      IF_REAL,"First order temp. coefficient"),
  IOPQO( "tc2",    RES_MOD_TC2,      IF_REAL,"Second order temp. coefficient"),
  IOPX( "defw",   RES_MOD_DEFWIDTH, IF_REAL,"Default device width"),

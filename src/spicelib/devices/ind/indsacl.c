@@ -18,14 +18,14 @@ Author: 1985 Thomas L. Quarles
 int
 INDsAcLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register INDmodel *model = (INDmodel*)inModel;
-    register INDinstance *here;
+    INDmodel *model = (INDmodel*)inModel;
+    INDinstance *here;
     double  cind,icind,val,ival;     
 #ifdef MUTUAL
-    register MUTinstance *muthere;
-    register MUTmodel *mutmodel;
+    MUTinstance *muthere;
+    MUTmodel *mutmodel;
     double  cind1;
     double  icind1;
     double  cind2;

@@ -1,0 +1,9 @@
+2000-10-10  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* graf.c: Removed need to press return after resizing the plot
+	window.
+
+2000-05-22  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* x11.c: Applied Widlok patch and reintroduced some #ifdef notdef
+	code.

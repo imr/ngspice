@@ -3,16 +3,17 @@
 noinst_LIBRARIES = libsparse.a
 
 libsparse_a_SOURCES = \
-		spalloc.c	\
-		spbuild.c	\
-		spcombin.c	\
-		spdefs.h	\
-		spextra.c	\
-		spfactor.c	\
-		spoutput.c	\
-		spsmp.c		\
-		spsolve.c	\
-		sputils.c
+	spalloc.c	\
+	spbuild.c	\
+	spcombin.c	\
+	spconfig.h	\
+	spdefs.h	\
+	spextra.c	\
+	spfactor.c	\
+	spoutput.c	\
+	spsmp.c		\
+	spsolve.c	\
+	sputils.c
 
 
 

@@ -1,10 +1,13 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
 
 /**********
- * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4noi.c of BSIM4.0.0.
- * Authors: Weidong Liu, Xiaodong Jin, Kanyu M. Cao, Chenming Hu.
+ * Copyright 2001 Regents of the University of California. All rights reserved.
+ * File: b4noi.c of BSIM4.2.1.
+ * Author: 2000 Weidong Liu
+ * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+
+ * Modified by Xuemei Xi, 10/05/2001.
  **********/
 
 #include "ngspice.h"
@@ -12,7 +15,6 @@
 #include <math.h>
 #include "bsim4def.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "const.h"
@@ -40,9 +42,12 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Ssi;
     pParam = here->pParam;
     cd = fabs(here->BSIM4cd);
     esat = 2.0 * pParam->BSIM4vsattemp / here->BSIM4ueff;
-    T0 = ((((Vds - here->BSIM4Vdseff) / pParam->BSIM4litl)
-       + model->BSIM4em) / esat);
-    DelClm = pParam->BSIM4litl * log (MAX(T0, N_MINLOG));
+    if(model->BSIM4em<=0.0) DelClm = 0.0; /* flicker noise modified -JX  */
+    else {
+    	T0 = ((((Vds - here->BSIM4Vdseff) / pParam->BSIM4litl)
+       		+ model->BSIM4em) / esat);
+    	DelClm = pParam->BSIM4litl * log (MAX(T0, N_MINLOG));
+    }
     EffFreq = pow(freq, model->BSIM4ef);
     T1 = CHARGE * CHARGE * CONSTboltz * cd * temp * here->BSIM4ueff;
     T2 = 1.0e10 * EffFreq * here->BSIM4Abulk * model->BSIM4coxe
@@ -72,11 +77,11 @@ BSIM4noise (mode, operation, inModel, ckt, data, OnDens)
 int mode, operation;
 GENmodel *inModel;
 CKTcircuit *ckt;
-register Ndata *data;
+Ndata *data;
 double *OnDens;
 {
-register BSIM4model *model = (BSIM4model *)inModel;
-register BSIM4instance *here;
+BSIM4model *model = (BSIM4model *)inModel;
+BSIM4instance *here;
 struct bsim4SizeDependParam *pParam;
 char name[N_MXVLNTH];
 double tempOnoise;

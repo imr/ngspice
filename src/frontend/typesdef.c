@@ -10,7 +10,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "typesdef.h"
 
 
@@ -32,7 +32,7 @@ struct plotab {
 /* note:  This should correspond to SV_ defined in FTEconstant.h */
 struct type types[NUMTYPES] = {
     { "notype", NULL } ,
-    { "time", "S" } ,
+    { "time", "s" } ,
     { "frequency", "Hz" } ,
     { "voltage", "V" } ,
     { "current", "A" } ,
@@ -42,13 +42,6 @@ struct type types[NUMTYPES] = {
     { "inoise-integrated", "V or A" } ,
     { "output-noise", NULL } ,
     { "input-noise", NULL } ,
-#ifdef notdef
-    { "HD2", NULL } ,
-    { "HD3", NULL } ,
-    { "DIM2", NULL } ,
-    { "SIM2", NULL } ,
-    { "DIM3", NULL } ,
-#endif
     { "pole", NULL } ,
     { "zero", NULL } ,
     { "s-param", NULL } ,

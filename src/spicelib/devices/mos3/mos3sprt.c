@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
     /* Pretty print the sensitivity info for all the MOS3 
@@ -18,12 +19,12 @@ Author: 1985 Thomas L. Quarles
 void
 MOS3sPrint(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
 
-    printf("LEVEL 1 MOSFETS-----------------\n");
+    printf("LEVEL 3 MOSFETS-----------------\n");
     /*  loop through all the MOS3 models */
     for( ; model != NULL; model = model->MOS3nextModel ) {
 
@@ -39,6 +40,8 @@ MOS3sPrint(inModel,ckt)
             CKTnodName(ckt,here->MOS3dNode),CKTnodName(ckt,here->MOS3gNode),
             CKTnodName(ckt,here->MOS3sNode));
 
+            printf("  Multiplier: %g ",here->MOS3m);
+            printf(here->MOS3mGiven ? "(specified)\n" : "(default)\n");
             printf("      Length: %g ",here->MOS3l);
             printf(here->MOS3lGiven ? "(specified)\n" : "(default)\n");
             printf("      Width: %g ",here->MOS3w);

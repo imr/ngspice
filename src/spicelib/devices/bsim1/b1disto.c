@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
+Modified: AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -14,7 +15,7 @@ Author: 1988 Jaijeet S Roychowdhury
 int
 B1disto(mode,genmodel,ckt)
  GENmodel *genmodel;
- register CKTcircuit *ckt;
+ CKTcircuit *ckt;
  int mode;
 
 /* assuming here that ckt->CKTomega has been initialised to 
@@ -40,10 +41,10 @@ B1disto(mode,genmodel,ckt)
  double r2h1m2y,i2h1m2y;
  double r2h1m2z, i2h1m2z;
  double temp, itemp;
- register B1instance *here;
+ B1instance *here;
 
 if (mode == D_SETUP)
- return(B1dSetup(model,ckt));
+ return(B1dSetup((GENmodel *)model,ckt));
 
 if ((mode == D_TWOF1) || (mode == D_THRF1) || 
  (mode == D_F1PF2) || (mode == D_F1MF2) ||

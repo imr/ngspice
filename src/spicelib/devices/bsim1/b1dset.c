@@ -18,11 +18,11 @@ int
 B1dSetup(inModel,ckt)
 
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 
 {
-  register B1model* model = (B1model*)inModel;
-  register B1instance *here;
+  B1model* model = (B1model*)inModel;
+  B1instance *here;
   double DrainSatCurrent;
   double EffectiveLength;
   double GateBulkOverlapCap;

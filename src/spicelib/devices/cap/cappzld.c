@@ -19,12 +19,12 @@ int
 CAPpzLoad(inModel,ckt,s)
     GENmodel *inModel;
     CKTcircuit *ckt;
-    register SPcomplex *s;
+    SPcomplex *s;
 
 {
-    register CAPmodel *model = (CAPmodel*)inModel;
+    CAPmodel *model = (CAPmodel*)inModel;
     double val;
-    register CAPinstance *here;
+    CAPinstance *here;
 
     for( ; model != NULL; model = model->CAPnextModel) {
         for( here = model->CAPinstances;here != NULL; 

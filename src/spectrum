@@ -1,0 +1,83 @@
+* Fourier Series Function for SPICE
+.control
+  begin
+   if ($argc lt 4)
+ 	 echo	Error: Too few arguments.
+	 echo	'      'Spectrum produces a plot containing a fourier series transformation of 
+	 echo   '      'the specified vectors
+	 echo   usage: spectrum startfreq stop step vec [[vec] ...]
+	 goto bottom
+   end
+   
+   if ( time eq time ) 
+      foreach vec $argv[4-len]
+         if ( $vec eq $vec )
+	     else
+            goto bottom
+	     end
+      end
+   else
+      echo '       'Spectrum can not work without a time vector from a transient analysis.
+      goto bottom
+   end
+   
+   set dt=$curplot
+   set title=$curplottitle
+   set curplot=new
+   set scratch=$curplot
+   let span={$dt}.time[length({$dt}.time)-1]-{$dt}.time[0]
+   if ($argv[3] gt 0.999/span)
+       let fpoints= ( $argv[2] - $argv[1] ) / $argv[3] +1
+	   if (fpoints < 2)
+	       echo frequency start stop or step not correctly specified
+		   goto cleanup
+	   end
+   else
+       echo   Error: time span is not long enough for a step frequency of $argv[3] Hz
+	   goto cleanup
+   end
+   let lent = length({$dt}.time)
+   set lent = "$&lent"
+   let nyquist = {$lent}/2/span
+   if ($argv[2] gt nyquist)
+       echo   Error: The nyquist limit is exceeded, try a frequency less than "$&nyquist" Hz
+	   goto cleanup
+   end
+   set fpoints="$&fpoints"
+   set curplot=new
+   set spec=$curplot
+   set curplottitle=$title
+   set curplotname='Spectrum Analysis'
+   let frequency=vector( $fpoints )*$argv[3]
+   dowhile frequency[1] < ( $argv[1] + 1e-9 )
+       let frequency = frequency + $argv[3]
+   end
+   foreach vec $argv[4-len]
+       let $vec = vector( $fpoints ) + j(vector( $fpoints ))
+	   reshape $vec [{$fpoints}]
+   end
+   set curplot=$scratch
+   let npers=1
+   let test = span-2/$argv[3] + 1e-9
+   while test > 0
+       let npers = npers + 1
+       let test = test-1/$argv[3]
+   end
+   let ircle = 2*pi*max(-1,({$dt}.time-{$dt}.time[{$lent}-1])*{$argv[3]}/npers)
+   let win = 1 - cos(ircle)
+   let ircle = npers*ircle
+   let circle = ircle * ({$spec}.frequency[0]/$argv[3] - 1)
+   let k=vector( $fpoints ) 
+   foreach k "$&k"
+      let circle = circle + ircle 
+      foreach vec $argv[4-len]
+	  let tmp = win*{$dt}.{$vec}
+          let {$spec}.{$vec}[{$k}] = 2*(mean(cos(circle)*tmp),mean(sin(circle)*tmp))
+      end
+   end
+   
+   label cleanup
+   destroy $scratch
+   unset fpoints dt scratch spec vec k title lent
+   label bottom
+ end

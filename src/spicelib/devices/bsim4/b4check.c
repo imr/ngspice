@@ -1,10 +1,13 @@
-/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
 
 /**********
- * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4check.c of BSIM4.0.0.
- * Authors: Weidong Liu, Kanyu M. Cao, Xiaodong Jin, Chenming Hu.
+ * Copyright 2001 Regents of the University of California. All rights reserved.
+ * File: b4check.c of BSIM4.2.1.
+ * Author: 2000 Weidong Liu
+ * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
+ * Modified by Xuemei Xi, 04/06/2001.
+ * Modified by Xuemei Xi, 10/05/2001.
  **********/
 
 #include "ngspice.h"
@@ -17,11 +20,10 @@
 #include "sperror.h"
 #include "devdefs.h"
 
-
 int
 BSIM4checkModel(model, here, ckt)
-register BSIM4model *model;
-register BSIM4instance *here;
+BSIM4model *model;
+BSIM4instance *here;
 CKTcircuit *ckt;
 {
 struct bsim4SizeDependParam *pParam;
@@ -31,21 +33,22 @@ FILE *fplog;
     if ((fplog = fopen("bsim4.out", "w")) != NULL)
     {   pParam = here->pParam;
         fprintf(fplog, "BSIM4: Berkeley Short Channel IGFET Model-4\n");
-        fprintf(fplog, "Developed by Dr. Weidong Liu, Xiaodong Jin, Kanyu M. Cao and Prof. Chenming Hu in 2000.\n");
+        fprintf(fplog, "Developed by Weidong Liu, Xuemei Xi , Xiaodong Jin, Kanyu M. Cao and Prof. Chenming Hu in 2001.\n");
         fprintf(fplog, "\n");
 	fprintf(fplog, "++++++++++ BSIM4 PARAMETER CHECKING BELOW ++++++++++\n");
 
-        if (strcmp(model->BSIM4version, "4.0.0") != 0)
-        {  fprintf(fplog, "Warning: This model is BSIM4.0.0; you specified a wrong version number.\n");
-           printf("Warning: This model is BSIM4.0.0; you specified a wrong version number.\n");
+        if (strcmp(model->BSIM4version, "4.2.1") != 0)
+        {  fprintf(fplog, "Warning: This model is BSIM4.2.1; you specified a wrong version number.\n");
+           printf("Warning: This model is BSIM4.2.1; you specified a wrong version number.\n");
         }
 	fprintf(fplog, "Model = %s\n", model->BSIM4modName);
 
 
         if ((here->BSIM4rgateMod == 2) || (here->BSIM4rgateMod == 3))
         {   if ((here->BSIM4trnqsMod == 1) || (here->BSIM4acnqsMod == 1))
-            fprintf(fplog, "Warning: You've selected both Rg and charge deficit NQS; select one only.\n");
-            printf("Warning: You've selected both Rg and charge deficit NQS; select one only.\n");
+            {   fprintf(fplog, "Warning: You've selected both Rg and charge deficit NQS; select one only.\n");
+                printf("Warning: You've selected both Rg and charge deficit NQS; select one only.\n");
+            }
         }
 
 
@@ -207,15 +210,10 @@ FILE *fplog;
             printf("Fatal: Number of finger = %g is smaller than one.\n", here->BSIM4nf);
             Fatal_Flag = 1;
         }
-        if (here->BSIM4nf > 500.0)
-        {   here->BSIM4nf = 20.0;
-            fprintf(fplog, "Warning: Nf = %g is too large; reset to 20.0.\n", here->BSIM4nf);
-            printf("Warning: Nf = %g is too large; reset to 20.0.\n", here->BSIM4nf);
-        }
 
-        if (here->BSIM4l <= model->BSIM4xgl)
-        {   fprintf(fplog, "Fatal: The parameter xgl must be smaller than Ldrawn.\n");
-            printf("Fatal: The parameter xgl must be smaller than Ldrawn.\n");
+        if ((here->BSIM4l + model->BSIM4xl) <= model->BSIM4xgl)
+        {   fprintf(fplog, "Fatal: The parameter xgl must be smaller than Ldrawn+XL.\n");
+            printf("Fatal: The parameter xgl must be smaller than Ldrawn+XL.\n");
             Fatal_Flag = 1;
         }
         if (model->BSIM4ngcon < 1.0)
@@ -274,64 +272,65 @@ FILE *fplog;
                     pParam->BSIM4moin);
             printf("Warning: Moin = %g is too large.\n", pParam->BSIM4moin);
         }
-
-        if (pParam->BSIM4acde < 0.4)
-        {   fprintf(fplog, "Warning:  Acde = %g is too small.\n",
-                    pParam->BSIM4acde);
-            printf("Warning: Acde = %g is too small.\n", pParam->BSIM4acde);
-        }
-        if (pParam->BSIM4acde > 1.6)
-        {   fprintf(fplog, "Warning:  Acde = %g is too large.\n",
-                    pParam->BSIM4acde);
-            printf("Warning: Acde = %g is too large.\n", pParam->BSIM4acde);
-        }
+	if(model->BSIM4capMod ==2) {
+        	if (pParam->BSIM4acde < 0.4)
+        	{   fprintf(fplog, "Warning:  Acde = %g is too small.\n",
+                    	pParam->BSIM4acde);
+            	printf("Warning: Acde = %g is too small.\n", pParam->BSIM4acde);
+        	}
+        	if (pParam->BSIM4acde > 1.6)
+        	{   fprintf(fplog, "Warning:  Acde = %g is too large.\n",
+                    	pParam->BSIM4acde);
+            	printf("Warning: Acde = %g is too large.\n", pParam->BSIM4acde);
+        	}
+	}
 
       if (model->BSIM4paramChk ==1)
       {
 /* Check L and W parameters */ 
-	if (pParam->BSIM4leff <= 5.0e-8)
-	{   fprintf(fplog, "Warning: Leff = %g may be too small.\n",
-	            pParam->BSIM4leff);
-	    printf("Warning: Leff = %g may be too small.\n",
+	if (pParam->BSIM4leff <= 1.0e-9)
+	{   fprintf(fplog, "Warning: Leff = %g <= 1.0e-9. Recommended Leff >= 1e-8 \n", 
+		    pParam->BSIM4leff);
+	    printf("Warning: Leff = %g <= 1.0e-9. Recommended Leff >= 1e-8 \n",
 		    pParam->BSIM4leff);
 	}    
 	
-	if (pParam->BSIM4leffCV <= 5.0e-8)
-	{   fprintf(fplog, "Warning: Leff for CV = %g may be too small.\n",
+	if (pParam->BSIM4leffCV <= 1.0e-9)
+	{   fprintf(fplog, "Warning: Leff for CV = %g <= 1.0e-9. Recommended LeffCV >=1e-8 \n",
 		    pParam->BSIM4leffCV);
-	    printf("Warning: Leff for CV = %g may be too small.\n",
-		   pParam->BSIM4leffCV);
+	    printf("Warning: Leff for CV = %g <= 1.0e-9. Recommended LeffCV >=1e-8 \n",
+		    pParam->BSIM4leffCV);
 	}  
 	
-        if (pParam->BSIM4weff <= 1.0e-7)
-	{   fprintf(fplog, "Warning: Weff = %g may be too small.\n",
+        if (pParam->BSIM4weff <= 1.0e-9)
+	{   fprintf(fplog, "Warning: Weff = %g <= 1.0e-9. Recommended Weff >=1e-7 \n",
 		    pParam->BSIM4weff);
-	    printf("Warning: Weff = %g may be too small.\n",
+	    printf("Warning: Weff = %g <= 1.0e-9. Recommended Weff >=1e-7 \n",
 		   pParam->BSIM4weff);
 	}             
 	
-	if (pParam->BSIM4weffCV <= 1.0e-7)
-	{   fprintf(fplog, "Warning: Weff for CV = %g may be too small.\n",
+	if (pParam->BSIM4weffCV <= 1.0e-9)
+	{   fprintf(fplog, "Warning: Weff for CV = %g <= 1.0e-9. Recommended WeffCV >= 1e-7 \n",
 		    pParam->BSIM4weffCV);
-	    printf("Warning: Weff for CV = %g may be too small.\n",
-		   pParam->BSIM4weffCV);
+	    printf("Warning: Weff for CV = %g <= 1.0e-9. Recommended WeffCV >= 1e-7 \n",
+		    pParam->BSIM4weffCV);
 	}        
 	
         /* Check threshold voltage parameters */
-	if (model->BSIM4toxe < 1.0e-9)
-	{   fprintf(fplog, "Warning: Toxe = %g is less than 10A.\n",
+	if (model->BSIM4toxe < 1.0e-10)
+	{   fprintf(fplog, "Warning: Toxe = %g is less than 1A. Recommended Toxe >= 5A\n",
 	            model->BSIM4toxe);
-	    printf("Warning: Toxe = %g is less than 10A.\n", model->BSIM4toxe);
+	    printf("Warning: Toxe = %g is less than 1A. Recommended Toxe >= 5A\n", model->BSIM4toxe);
         }
-        if (model->BSIM4toxp < 1.0e-9)
-        {   fprintf(fplog, "Warning: Toxp = %g is less than 10A.\n",
+        if (model->BSIM4toxp < 1.0e-10)
+        {   fprintf(fplog, "Warning: Toxp = %g is less than 1A. Recommended Toxp >= 5A\n",
                     model->BSIM4toxp);
-            printf("Warning: Toxp = %g is less than 10A.\n", model->BSIM4toxp);
+            printf("Warning: Toxp = %g is less than 1A. Recommended Toxp >= 5A\n", model->BSIM4toxp);
         }
-        if (model->BSIM4toxm < 1.0e-9)
-        {   fprintf(fplog, "Warning: Toxm = %g is less than 10A.\n",
+        if (model->BSIM4toxm < 1.0e-10)
+        {   fprintf(fplog, "Warning: Toxm = %g is less than 1A. Recommended Toxm >= 5A\n",
                     model->BSIM4toxm);
-            printf("Warning: Toxm = %g is less than 10A.\n", model->BSIM4toxm);
+            printf("Warning: Toxm = %g is less than 1A. Recommended Toxm >= 5A\n", model->BSIM4toxm);
         }
 
         if (pParam->BSIM4ndep <= 1.0e12)

@@ -1,0 +1,15 @@
+MiXeD CaSe
+*
+* This circuit contains a simple gain block to demonstrate
+* that the simulator deck parsing code is case-insensitive.
+*
+.TrAn 1E-5 1e-3
+*
+V1 1 0 0.0 sIn(0 1 1k)
+r1 1 0 1k
+*
+A1 1 2 GaIn_BlOcK
+.MODel gAiN_bLoCk GAin (gaIN=10)
+r2 2 0 1K
+*
+.eNd

@@ -1,9 +1,17 @@
+2000-07-18  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* Makefile.am: Added wlist.c.
+
+	* wlist.c: moved here from src/parser/wlist.c
+
 2000-03-11  Paolo Nenzi <p.nenzi@ieee.org>
 
-   * missing_math.c: as Chris wrote:
-     In missing_math.c line 50: changed the preprocessor directive "#elif" to "#else" because the 
-     elif must have a condition (ie. else if <condition>...). 
-     Again seemingly no adverse side effects.
+	* missing_math.c: as Chris wrote:
+	
+   	In missing_math.c line 50: changed the preprocessor directive
+	"#elif" to "#else" because the elif must have a condition
+	(ie. else if <condition>...).  Again seemingly no adverse side
+	effects.
  
 1999-09-07  Arno  <A.W.Peters@ieee.org>
 

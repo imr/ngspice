@@ -20,11 +20,11 @@ int
 MUTpzLoad(inModel,ckt,s)
     GENmodel *inModel;
     CKTcircuit *ckt;
-    register SPcomplex *s;
+    SPcomplex *s;
 {
-    register MUTmodel *model = (MUTmodel*)inModel;
+    MUTmodel *model = (MUTmodel*)inModel;
     double val;
-    register MUTinstance *here;
+    MUTinstance *here;
 
     for( ; model != NULL; model = model->MUTnextModel) {
         for( here = model->MUTinstances;here != NULL; 

@@ -21,10 +21,10 @@ Author: 1985 Thomas L. Quarles
 void
 CCCSsPrint(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register CCCSmodel *model = (CCCSmodel*)inModel;
-    register CCCSinstance *here;
+    CCCSmodel *model = (CCCSmodel*)inModel;
+    CCCSinstance *here;
 
     printf("CURRENT CONTROLLED CURRENT SOURCES-----------------\n");
     /*  loop through all the voltage source models */

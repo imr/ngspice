@@ -1,31 +1,53 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+Modified: 2000 AlansFixes
 **********/
 
 /*
  * Spice-2 compatibility stuff for .plot, .print, .four, and .width.
  */
+#include <config.h>
+#include <ngspice.h>
+#include <assert.h>
 
-#include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteinp.h"
+#include <sim.h>
+
+#include "circuits.h"
 #include "dotcards.h"
-
-
+#include "variable.h"
+#include "fourier.h"
 
 /* Extract all the .save lines */
 
 static void fixdotplot(wordlist *wl);
 static void fixdotprint(wordlist *wl);
 static char * fixem(char *string);
-static bool setcplot(char *name);
 static wordlist * gettoks(char *s);
 
 
 extern void com_save2 (wordlist *wl, char *name);
+
+
+
+static struct plot *
+setcplot(char *name)
+{
+    struct plot *pl;
+
+    for (pl = plot_list; pl; pl = pl->pl_next) {
+        if (ciprefix(name, pl->pl_typename)) {
+            return pl;
+        }
+    }
+    return NULL;
+}
+
+
 
 void
 ft_dotsaves(void)
@@ -145,21 +167,19 @@ ft_cktcoms(bool terse)
     static wordlist twl = { "col", NULL, NULL } ;
     struct plot *pl;
     int i, found;
+    char numbuf[BSIZE_SP]; /* For printnum*/
 
     all.wl_next = NULL;
     all.wl_word = "all";
 
     if (!ft_curckt)
 	return 1;
-    if (!ft_curckt->ci_commands)
+
+    plot_cur = setcplot("op");
+    if (!ft_curckt->ci_commands && !plot_cur)
         goto nocmds;
     coms = ft_curckt->ci_commands;
     cp_interactive = FALSE;
-
-    /* Circuit name */
-    fprintf(cp_out, "Circuit: %s\nDate: %s\n\n", ft_curckt->ci_name,
-            datestring());
-    fprintf(cp_out, "\n");
 
     /* Listing */
     if (ft_listprint) {
@@ -167,39 +187,45 @@ ft_cktcoms(bool terse)
 	    fprintf(cp_err, ".options: no listing, rawfile was generated.\n");
 	else
 	    inp_list(cp_out, ft_curckt->ci_deck, ft_curckt->ci_options,
-                LS_DECK);
+		     LS_DECK);
     }
 
     /* If there was a .op line, then we have to do the .op output. */
-    if (setcplot("op")) {
-	if (terse) {
-	    fprintf(cp_out, "OP information in rawfile.\n");
-	} else {
-	    fprintf(cp_out, "\nOperating point information:\n\n");
-	    fprintf(cp_out, "\tNode\tVoltage\n");
-	    fprintf(cp_out, "\t----\t-------\n");
-	    for (v = plot_cur->pl_dvecs; v; v = v->v_next) {
-		if (!isreal(v)) {
-		    fprintf(cp_err, 
-		"Internal error: op vector %s not real\n",
-			    v->v_name);
-		    continue;
+    plot_cur = setcplot("op");
+    if (plot_cur != NULL) {
+	assert(plot_cur->pl_dvecs != NULL);
+	if (plot_cur->pl_dvecs->v_realdata!=NULL) {
+	    if (terse) {
+		fprintf(cp_out, "OP information in rawfile.\n");
+	    } else {
+		fprintf(cp_out, "\t%-30s%15s\n", "Node", "Voltage");
+		fprintf(cp_out, "\t%-30s%15s\n", "----", "-------");
+		fprintf(cp_out, "\t----\t-------\n");
+		for (v = plot_cur->pl_dvecs; v; v = v->v_next) {
+		    if (!isreal(v)) {
+			fprintf(cp_err, 
+				"Internal error: op vector %s not real\n",
+				v->v_name);
+			continue;
+		    }
+		    if ((v->v_type == SV_VOLTAGE) && (*(v->v_name)!='@')) {
+			printnum(numbuf, v->v_realdata[0]);
+			fprintf(cp_out, "\t%-30s%15s\n", v->v_name, numbuf);
+				}
 		}
-		if (v->v_type == SV_VOLTAGE)
-		    fprintf(cp_out, "\t%s\t%s\n", v->v_name,
-			printnum(v->v_realdata[0]));
-	    }
-	    fprintf(cp_out, "\n\tSource\tCurrent\n");
-	    fprintf(cp_out, "\t------\t-------\n\n");
-	    for (v = plot_cur->pl_dvecs; v; v = v->v_next)
-		if (v->v_type == SV_CURRENT)
-		    fprintf(cp_out, "\t%s\t%s\n", v->v_name,
-			printnum(v->v_realdata[0]));
-	    fprintf(cp_out, "\n");
+		fprintf(cp_out, "\n\tSource\tCurrent\n");
+		fprintf(cp_out, "\t------\t-------\n\n");
+		for (v = plot_cur->pl_dvecs; v; v = v->v_next)
+		    if (v->v_type == SV_CURRENT) {
+			printnum(numbuf, v->v_realdata[0]);
+			fprintf(cp_out, "\t%-30s%15s\n", v->v_name, numbuf);
+			}
+		fprintf(cp_out, "\n");
 
-	    if (!ft_nomod)
-		com_showmod(&all);
-	    com_show(&all);
+		if (!ft_nomod)
+		    com_showmod(&all);
+		com_show(&all);
+	    }
 	}
     }
 
@@ -238,7 +264,7 @@ ft_cktcoms(bool terse)
         } else if (eq(command->wl_word, ".print")) {
             if (terse) {
                 fprintf(cp_out, 
-            ".print line ignored since rawfile was produced.\n");
+			".print line ignored since rawfile was produced.\n");
             } else {
                 command = command->wl_next;
                 if (!command) {
@@ -261,12 +287,12 @@ ft_cktcoms(bool terse)
 		}
                 if (!found)
                     fprintf(cp_err, "Error: .print: no %s analysis found.\n",
-			plottype);
+			    plottype);
             }
         } else if (eq(command->wl_word, ".plot")) {
             if (terse) {
                 fprintf(cp_out, 
-		    ".plot line ignored since rawfile was produced.\n");
+			".plot line ignored since rawfile was produced.\n");
             } else {
                 command = command->wl_next;
                 if (!command) {
@@ -289,35 +315,40 @@ ft_cktcoms(bool terse)
 		}
                 if (!found)
                     fprintf(cp_err, "Error: .plot: no %s analysis found.\n",
-			plottype);
+			    plottype);
             }
         } else if (ciprefix(".four", command->wl_word)) {
             if (terse) {
                 fprintf(cp_out, 
-		    ".fourier line ignored since rawfile was produced.\n");
-            } else if (setcplot("tran")) {
-		com_fourier(command->wl_next);
-		fprintf(cp_out, "\n\n");
-	    } else
-		fprintf(cp_err,
-			"No transient data available for fourier analysis");
+			".fourier line ignored since rawfile was produced.\n");
+	    } else {
+		int err;
+
+		plot_cur = setcplot("tran");
+		err = fourier(command->wl_next, plot_cur);
+		if (!err)
+		    fprintf(cp_out, "\n\n");
+		else
+		    fprintf(cp_err, "No transient data available for "
+			    "fourier analysis");
+	    }
         } else if (!eq(command->wl_word, ".save")
-		&& !eq(command->wl_word, ".op")
-		&& !eq(command->wl_word, ".tf"))
+		   && !eq(command->wl_word, ".op")
+		   && !eq(command->wl_word, ".tf"))
 	{
             goto bad;
 	}
         coms = coms->wl_next;
     }
 
-nocmds:
+ nocmds:
     /* Now the node table */
     if (ft_nodesprint)
         ;
     
     /* The options */
     if (ft_optsprint) {
-        fprintf(cp_err, "Options:\n\n");
+        fprintf(cp_out, "Options:\n\n");
         cp_vprint();
         (void) putc('\n', cp_out);
     }
@@ -329,10 +360,11 @@ nocmds:
     } else
         com_rusage((wordlist *) NULL);
 
-    (void) putc('\n', cp_out);
+    putc('\n', cp_out);
     return 0;
 
-bad:    fprintf(cp_err, "Internal Error: ft_cktcoms: bad commands\n");
+ bad:
+    fprintf(cp_err, "Internal Error: ft_cktcoms: bad commands\n");
     return 1;
 }
 
@@ -349,6 +381,7 @@ static void
 fixdotplot(wordlist *wl)
 {
     char buf[BSIZE_SP], *s;
+    char numbuf[128]; /* Printnum Fix */
     double *d, d1, d2;
 
     while (wl) {
@@ -379,13 +412,14 @@ fixdotplot(wordlist *wl)
             wl->wl_next = alloc(struct wordlist);
             wl->wl_next->wl_prev = wl;
             wl = wl->wl_next;
-            (void) strcpy(buf, printnum(d1));
-            wl->wl_word = copy(buf);
+            
+            printnum(numbuf, d1);
+            wl->wl_word = copy(numbuf);
             wl->wl_next = alloc(struct wordlist);
             wl->wl_next->wl_prev = wl;
             wl = wl->wl_next;
-            (void) strcpy(buf, printnum(d2));
-            wl->wl_word = copy(buf);
+            printnum(numbuf, d2);
+            wl->wl_word = copy(numbuf);
         }
         wl = wl->wl_next;
     }
@@ -405,7 +439,8 @@ fixdotprint(wordlist *wl)
 static char *
 fixem(char *string)
 {
-    char buf[BSIZE_SP], *s, *t, *ss = string;
+    char buf[BSIZE_SP], *s, *t;
+    char *ss = string;          /* Get rid of ss ? */
 
     if (ciprefix("v(", string) &&strchr(string, ',')) {
         for (s = string; *s && (*s != ','); s++)
@@ -468,94 +503,6 @@ fixem(char *string)
     }
     return (string);
 }
-
-/* Don't bother with ccom strangeness here. */
-
-static bool
-setcplot(char *name)
-{
-    struct plot *pl;
-
-    for (pl = plot_list; pl; pl = pl->pl_next) {
-        if (ciprefix(name, pl->pl_typename)) {
-            plot_cur = pl;
-            return (TRUE);
-        }
-    }
-    return (FALSE);
-}
-
-#ifdef notdef
-static wordlist *
-gettoks(s)
-    char *s;
-{
-    char *t, *r, buf[64];
-    wordlist *wl = NULL, *end = NULL;
-    bool iflag;
-
-    while (t = gettok(&s)) {
-        if (*t == '(' /* ) */) {
-            /* This is a (upper, lower) thing -- ignore. */
-            continue;
-        } else if (!index(t, '(' /*)*/ )) {
-            if (end) {
-                end->wl_next = alloc(struct wordlist);
-                end->wl_next->wl_prev = end;
-                end = end->wl_next;
-            } else
-                wl = end = alloc(struct wordlist);
-            end->wl_word = copy(t);
-        } else if (!index(t, ',')) {
-            iflag = ((*t == 'i') || (*t == 'I')) ? TRUE : FALSE;
-            while (*t != '(' /*)*/)
-                t++;
-            t++;
-            for (r = t; *r && *r != /*(*/ ')'; r++)
-                ;
-            *r = '\0';
-            if (end) {
-                end->wl_next = alloc(struct wordlist);
-                end->wl_next->wl_prev = end;
-                end = end->wl_next;
-            } else
-                wl = end = alloc(struct wordlist);
-            if (iflag) {
-                (void) sprintf(buf, "%s#branch", t);
-                t = buf;
-            }
-            end->wl_word = copy(t);
-        } else {
-            /* The painful case */
-            while (*t != '(' /*)*/)
-                t++;
-            t++;
-            for (r = t; *r && *r != ','; r++)
-                ;
-            *r = '\0';
-            if (end) {
-                end->wl_next = alloc(struct wordlist);
-                end->wl_next->wl_prev = end;
-                end = end->wl_next;
-            } else
-                wl = end = alloc(struct wordlist);
-            end->wl_word = copy(t);
-            t = r + 1;
-            for (r = t; *r && *r != /*(*/ ')'; r++)
-                ;
-            *r = '\0';
-            if (end) {
-                end->wl_next = alloc(struct wordlist);
-                end->wl_next->wl_prev = end;
-                end = end->wl_next;
-            } else
-                wl = end = alloc(struct wordlist);
-            end->wl_word = copy(t);
-        }
-    }
-    return (wl);
-}
-#endif
 
 static wordlist *
 gettoks(char *s)

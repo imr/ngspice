@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -16,10 +17,10 @@ Author: 1985 Thomas L. Quarles
 int
 MOS1acLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MOS1model *model = (MOS1model*)inModel;
-    register MOS1instance *here;
+    MOS1model *model = (MOS1model*)inModel;
+    MOS1instance *here;
     int xnrm;
     int xrev;
     double xgs;
@@ -51,12 +52,14 @@ MOS1acLoad(inModel,ckt)
              *     meyer's model parameters
              */
             EffectiveLength=here->MOS1l - 2*model->MOS1latDiff;
+            
             GateSourceOverlapCap = model->MOS1gateSourceOverlapCapFactor * 
-                    here->MOS1w;
+                    here->MOS1m * here->MOS1w;
             GateDrainOverlapCap = model->MOS1gateDrainOverlapCapFactor * 
-                    here->MOS1w;
+                    here->MOS1m * here->MOS1w;
             GateBulkOverlapCap = model->MOS1gateBulkOverlapCapFactor * 
-                    EffectiveLength;
+                    here->MOS1m * EffectiveLength;
+                    
             capgs = ( *(ckt->CKTstate0+here->MOS1capgs)+ 
                       *(ckt->CKTstate0+here->MOS1capgs) +
                       GateSourceOverlapCap );

@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 /*ARGSUSED*/
 int
 CAPsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
@@ -25,8 +25,8 @@ CAPsetup(matrix,inModel,ckt,states)
          */
 
 {
-    register CAPmodel *model = (CAPmodel*)inModel;
-    register CAPinstance *here;
+    CAPmodel *model = (CAPmodel*)inModel;
+    CAPinstance *here;
 
     /*  loop through all the capacitor models */
     for( ; model != NULL; model = model->CAPnextModel ) {

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 S. Hwang
+Modified: 2000 AlansFixes
 **********/
 
 #ifdef __STDC__
@@ -21,6 +22,8 @@ extern int MEStemp(GENmodel*,CKTcircuit*);
 extern int MEStrunc(GENmodel*,CKTcircuit*,double*);
 extern int MESdisto(int,GENmodel*,CKTcircuit*);
 extern int MESnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+
+extern int MESdSetup(GENmodel*,CKTcircuit*);
 
 #else /* stdc */
 extern int MESacLoad();

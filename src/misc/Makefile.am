@@ -2,7 +2,11 @@
 
 noinst_LIBRARIES = libmisc.a
 
+
 libmisc_a_SOURCES = \
+		getopt1.c	\
+		getopt.c	\
+		getopt.h	\
 		alloc.c		\
 		alloc.h		\
 		dup2.c		\
@@ -16,11 +20,19 @@ libmisc_a_SOURCES = \
 		printnum.c	\
 		printnum.h	\
 		string.c	\
-		string.h	\
+		stringutil.h	\
+		terminal.c	\
+		terminal.h	\
 		tilde.c		\
 		tilde.h		\
-		misc_time.c		\
-		misc_time.h
+		misc_time.c	\
+		misc_time.h	\
+		wlist.c	
+
+## Note that the getopt files get compiled unconditionnaly but some
+## magic #define away the body of their own code if the compilation environment
+## provides an implementation of its own (like GNU libc)
+
 
 
 

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 /* actually load the current sensitivity 
@@ -20,8 +21,8 @@ MOS3sLoad(inModel,ckt)
 GENmodel *inModel;
 CKTcircuit *ckt;
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
     double   SaveState[44];
     int    save_mode;
     int    i;
@@ -76,6 +77,7 @@ CKTcircuit *ckt;
     double sargsw;
     int offset;
     double EffectiveLength;
+    double EffectiveWidth;
     SENstruct *info;
 
 #ifdef SENSDEBUG
@@ -315,8 +317,8 @@ CKTcircuit *ckt;
                 DcsprmDp = ( - DcbsDp - DcdDp - DcbdDp  - DcsprDp);
 
                 if(flag == 0){
-                    EffectiveLength = here->MOS3l 
-                        - 2*model->MOS3latDiff;
+                   EffectiveLength = here->MOS3l 
+                        - 2*model->MOS3latDiff + model->MOS3lengthAdjust;
                     if(EffectiveLength == 0){ 
                         DqgsDp = 0;
                         DqgdDp = 0;
@@ -329,9 +331,11 @@ CKTcircuit *ckt;
                     }
                 }
                 else{
-                    DqgsDp = model->MOS3type * qgs0 / here->MOS3w;
-                    DqgdDp = model->MOS3type * qgd0 / here->MOS3w;
-                    DqgbDp = model->MOS3type * qgb0 / here->MOS3w;
+                    EffectiveWidth = here->MOS3w 
+                        - 2*model->MOS3widthNarrow + model->MOS3widthAdjust;
+                    DqgsDp = model->MOS3type * qgs0 / EffectiveWidth;
+                    DqgdDp = model->MOS3type * qgd0 / EffectiveWidth;
+                    DqgbDp = model->MOS3type * qgb0 / EffectiveWidth;
                 }
 
 

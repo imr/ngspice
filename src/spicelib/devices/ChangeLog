@@ -1,3 +1,67 @@
+2000-08-28  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* asrc/asrcset.c, bjt/bjtsetup.c, bsim1/b1set.c, bsim2/b2set.c,
+	bsim3/b3set.c, bsim3v2/b3v2set.c, bsim4/b4set.c, ccvs/ccvsset.c,
+	dio/diosetup.c, ind/indsetup.c, jfet/jfetset.c, jfet2/jfet2set.c,
+	ltra/ltraset.c, mes/messetup.c, mos1/mos1set.c, mos2/mos2set.c,
+	mos3/mos3set.c, mos6/mos6set.c, tra/trasetup.c, urc/urcsetup.c,
+	vcvs/vcvsset.c, vsrc/vsrcset.c: Removed HAS_BATCHSIM preprocessor
+	checks.
+	
+2000-07-21  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* README: Updated.
+
+2000-07-10  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* asrc/asrcinit.c, asrc/asrcitf.h, bjt/bjtinit.c, bjt/bjtitf.h,
+	bsim1/b1init.c, bsim1/b1itf.h, bsim2/b2init.c, bsim2/b2itf.h,
+	bsim3/b3init.c, bsim3/b3itf.h, bsim3v1/b3v1init.c,
+	bsim3v1/b3v1itf.h, bsim3v2/b3v2init.c, bsim3v2/b3v2itf.h,
+	bsim4/b4init.c, bsim4/b4itf.h, cap/capinit.c, cap/capitf.h,
+	cccs/cccsinit.c, cccs/cccsitf.h, ccvs/ccvsinit.c, ccvs/ccvsitf.h,
+	csw/cswinit.c, csw/cswitf.h, dio/dioinit.c, dio/dioitf.h,
+	ind/indinit.c, ind/inditf.h, isrc/isrcinit.c, isrc/isrcitf.h,
+	jfet/jfetinit.c, jfet/jfetitf.h, jfet2/jfet2init.c,
+	jfet2/jfet2itf.h, ltra/ltrainit.c, ltra/ltraitf.h, mes/mesinit.c,
+	mes/mesitf.h, mos1/mos1init.c, mos1/mos1itf.h, mos2/mos2init.c,
+	mos2/mos2itf.h, mos3/mos3init.c, mos3/mos3itf.h, mos6/mos6init.c,
+	mos6/mos6itf.h, res/resinit.c, res/resitf.h, sw/swinit.c,
+	sw/switf.h, tra/trainit.c, tra/traitf.h, urc/urcinit.c,
+	urc/urcitf.h, vccs/vccsinit.c, vccs/vccsitf.h, vcvs/vcvsinit.c,
+	vcvs/vcvsitf.h, vsrc/vsrcinit.c, vsrc/vsrcitf.h: Moved the device
+	info structure from every devices' *itf.h file into a new *init.c
+	file.  Moved external declaration of addresses into *init.h file.
+	Removed conditional compilation based on the AN_* defines
+	as they were by default defined.  The calling code will only get a
+	pointer to a SPICEdev structure.  This takes us another step
+	closer to loadable devices.
+
+2000-07-09  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* devlist.c, devlist.h, test_devlist.c: Removed.  This idea is not
+	yet ready to be implemented.  The dependency of the analysis code
+	on CKThead for storing the device parameters at the same index as
+	the device model in the DEVices variable caused trouble.
+
+2000-07-08  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* devlist.c, test_devlist.c: Additional checks revealed a bug,
+	first_device() and next_device() should now do what they are
+	supposed to do.
+
+2000-07-07  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* devlist.c, devlist.h: Another step towards
+	dynamically loadable devices.  The first_device() and
+	next_device() functions abstract away the actual
+	implementation of the devices list.  Currently it is a fixed
+	length array, when we start supporting dynamically loaded devices,
+	this is no longer true.
+
+	* test_devlist.c: Checks the implementation of first_device()
+	and next_device().
+
 2000-04-04  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* Makefile.am: Added support for BSIM4

@@ -17,11 +17,11 @@ Author: 1985 Thomas L. Quarles
 
 int
 MOS3sSetup(info,inModel)
-    register SENstruct *info;
+    SENstruct *info;
     GENmodel *inModel;
 {
-    register MOS3model *model = (MOS3model *)inModel;
-    register MOS3instance *here;
+    MOS3model *model = (MOS3model *)inModel;
+    MOS3instance *here;
 
     /*  loop through all the models */
     for( ; model != NULL; model = model->MOS3nextModel ) {

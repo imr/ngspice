@@ -3,12 +3,12 @@
  * 1999 E. Rouat
  ************/
 
-#ifndef DIFF_H_INCLUDED
-#define DIFF_H_INCLUDED
+#ifndef _DIFF_H
+#define _DIFF_H
+
+#include <wordlist.h>
+
 
 void com_diff(wordlist *wl);
-
-
-
 
 #endif

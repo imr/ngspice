@@ -1,0 +1,26 @@
+Polarity of voltages and currents
+*
+* This circuit contains a set of gain blocks to evaluate
+* the polarity of voltages and currents on code models
+*
+.tran 1e-5 1e-3
+*
+v1  1 0  0.0 sin(0 1 1k)
+*
+r1  1 0  1k
+*
+*
+a1  %v 1  %v 10  times10
+r10  10 0  1k
+*
+r1_2  1 2  1k
+a2  %i 2  %v 11  times10
+r11  11 0  1k
+*
+a3  1  %i 12  times10
+r12  12 0  1k
+*
+*
+.model times10 gain (gain=10)
+*
+.end

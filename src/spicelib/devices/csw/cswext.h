@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon M. Jacobs
+Modified: 2000 AlansFixes
 **********/
 
 #ifdef __STDC__
@@ -16,6 +17,9 @@ extern int CSWparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int CSWpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
 extern int CSWsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int CSWnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+
+extern int CSWtrunc(GENmodel*,CKTcircuit*,double*);
+
 #else /* stdc */
 extern int CSWask();
 extern int CSWacLoad();
@@ -29,5 +33,6 @@ extern int CSWparam();
 extern int CSWpzLoad();
 extern int CSWsetup();
 extern int CSWnoise();
+extern int CSWtrunc();
 #endif /* stdc */
 

@@ -16,11 +16,11 @@ Author: 1985 Thomas L. Quarles
 int
 CAPtrunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
-    register double *timeStep;
+    CKTcircuit *ckt;
+    double *timeStep;
 {
-    register CAPmodel *model = (CAPmodel*)inModel;
-    register CAPinstance *here;
+    CAPmodel *model = (CAPmodel*)inModel;
+    CAPinstance *here;
 
     for( ; model!= NULL; model = model->CAPnextModel) {
         for(here = model->CAPinstances ; here != NULL ;

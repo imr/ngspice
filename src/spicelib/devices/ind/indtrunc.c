@@ -16,11 +16,11 @@ Author: 1985 Thomas L. Quarles
 int
 INDtrunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
-    register double *timeStep;
+    CKTcircuit *ckt;
+    double *timeStep;
 {
-    register INDmodel *model = (INDmodel*)inModel;
-    register INDinstance *here;
+    INDmodel *model = (INDmodel*)inModel;
+    INDinstance *here;
     for( ; model!= NULL; model = model->INDnextModel) {
         for(here = model->INDinstances ; here != NULL ;
                 here = here->INDnextInstance) {

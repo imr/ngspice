@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -17,11 +18,11 @@ Author: 1985 Thomas L. Quarles
 int
 MOS2pzLoad(inModel,ckt,s)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     SPcomplex *s;
 {
-    register MOS2model *model = (MOS2model *)inModel;
-    register MOS2instance *here;
+    MOS2model *model = (MOS2model *)inModel;
+    MOS2instance *here;
     int xnrm;
     int xrev;
     double xgs;
@@ -53,12 +54,14 @@ MOS2pzLoad(inModel,ckt,s)
              *     meyer's model parameters
              */
             EffectiveLength=here->MOS2l - 2*model->MOS2latDiff;
+            
             GateSourceOverlapCap = model->MOS2gateSourceOverlapCapFactor * 
-                    here->MOS2w;
+                    here->MOS2m * here->MOS2w;
             GateDrainOverlapCap = model->MOS2gateDrainOverlapCapFactor * 
-                    here->MOS2w;
+                    here->MOS2m * here->MOS2w;
             GateBulkOverlapCap = model->MOS2gateBulkOverlapCapFactor * 
-                    EffectiveLength;
+                    here->MOS2m * EffectiveLength;
+            
             capgs = ( 2* *(ckt->CKTstate0+here->MOS2capgs)+ 
                       GateSourceOverlapCap );
             capgd = ( 2* *(ckt->CKTstate0+here->MOS2capgd)+ 

@@ -2,7 +2,7 @@
 
 SUBDIRS = doc src man tests
 
-EXTRA_DIST = FAQ acconfig.h autogen.sh notes contrib 
+EXTRA_DIST = FAQ acconfig.h autogen.sh NOTES contrib BUGS 
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 			config.h.in config.sub configure install-sh \
@@ -13,3 +13,8 @@ mrproper: maintainer-clean
 	rm -f `find . -type f -name "*~" -print`
 	rm -f `find . -type f -name "*.orig" -print`
 	rm -f `find . -type f -name "*.rej" -print`
+
+tcl:
+	cd src && $(MAKE) tcl
+tcl_install:
+	cd src && $(MAKE) tcl_install

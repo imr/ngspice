@@ -1,3 +1,82 @@
+2001-12-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* maths/cmaths/Makefile.am (noinst_PROGRAMS): test programs
+	shouldnt get installed
+
+2000-10-13  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* ngspice.txt: changes SPICE: to NGSPICE: to restore help
+	functionality.  Thanks go to Michael Widlok for the analysis.
+
+2000-07-21  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/analysis/*: Moved these files into src/devices/analysis.
+	The files in this directory implement the analysis and simulation
+	for electrical circuits.
+
+	This is the final step to separating the Spice sources into a
+	library part and a frontend part.  Now, the devices subdirectory
+	has to be renamed to spicelib and the devices that are now
+	scattered in that directory should be moved into a new devices
+	directory.
+
+	* configure.in, src/Makefile.am, src/devices/Makefile.am: Files
+	affected by the move.
+	
+2000-07-20  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/hlp/*: moved these files into src/frontend/help.  The files
+	in this directory implement the help system for the frontend.
+
+	* configure.in, src/Makefile.am, src/frontend/Makefile.am: Files
+	affected by the move.
+
+	* src/circuit/*: moved these files into src/devices/parser.  The
+	files in this directory take a model line from the input file and
+	add the corresponding element to the representation of
+	the circuit in memory.
+
+	* configure.in, src/Makefile.am, src/devices/Makefile.am: Files
+	affected by the move.
+
+2000-07-18  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* main.c: Added the call to the initialization function of the
+	devices.
+
+2000-07-07  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* parser/cshpar.c: Separated out com_chdir(), com_echo(),
+	com_rehash() and com_shell() and moved them into frontend
+	directory.
+
+	* frontend/com_chdir.c, frontend/com_echo.c, frontend/com_rehash.c,
+	frontend/com_shell.c: Their new homes.
+
+	* parser/quote.c, parser/quote.h: The quote/unquote functions are
+	used exclusively in the frontend, moved them there.
+
+	* frontend/quote.c, frontend/quote.h: Their new location.
+
+	* parser/input.c, parser/input.h: Input, output and error streams
+	handled in the frontend.  Moved to the frontend directory.
+
+	* frontend/streams.c: Its new home.
+	
+	* frontend/Makefile.am: Updates for new files.
+
+	* frontend/breakp2.c, frontend/newcoms.c, frontend/postcoms.c,
+	frontend/resource.c, frontend/terminal.h, frontend/variable.c,
+	frontend/variable.h, frontend/com_compose.c,
+	frontend/com_display.c, frontend/com_setscale.c,
+	frontend/com_strcmp.c: Include files update.
+
+	* parser/var2.c, parser/var2.h: Empty files, removed.
+
+	* parser/Makefile.am: Updates for removed files.
+
+	* parser/lexical.c: Small adjustments
+
 2000-04-04  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* ngspice.c: Added support for BSIM4.

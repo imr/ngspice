@@ -1,3 +1,8 @@
+2000-07-18  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* niconv.c: Removed NEWCONV.  This symbol was defined by default,
+	adjusted the code to this reality.
+
 1999-09-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
 	* *.h: added header file for each .c file 

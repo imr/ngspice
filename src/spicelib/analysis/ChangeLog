@@ -1,0 +1,83 @@
+2001-01-23 Paolo Nenzi <p.nenzi@ieee.org>
+
+	* noisean.c: patched the code with the new one
+	in the bsim4.1.0 distribution. The new noisean.c
+	put some code between #ifdef INT_NOISE. 
+
+2000-01-21 Paolo Nenzi <p.nenzi@ieee.org>
+
+	* cktsgen.c: corrected a bug that caused segfault on sensitivity
+	analysis. 
+
+2000-07-28  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* cktpzstr.c: Reversed a patch that went in between ng-spice-0.2
+	and ng-spice-0.3 that eliminated the following warnings: 'suggest
+	parentheses around && within ||'.  The parenthesis were not placed
+	correctly, leading to incorrect behaviour of the pole-zero
+	analysis.
+
+2000-05-22  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* cktpzstr.c, cktsens.c: Applied Widlok patches.
+
+2000-04-04  Paolo Nenzi <p.nenzi@ieee.org>
+
+	* noisean.c: Merged the previous code with the new one included in
+	             bsim4 distribution. This code originated from Weidong Lu 
+		     (bsim group).
+
+1999-12-20  Paolo Nenzi <p.nenzi@ieee.org>
+	* noisean.c:
+          Bug: The ac noise analysis in Spice3f4 has a serious bug. In 
+	  interactive mode it fails to reproduce frequency dependence known 
+	  to exist.  In batch (Spice2) mode, it works only if a corresponding 
+	  ac analysis has been run first.
+          Fix: This bug is fixed by providing a call to CKTload() in 
+	  noisean.c as shown  by the source code patch which is attached below.
+
+
+1999-09-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* ckt.h: created (and included in Makefile.am) 
+
+1999-09-07  Arno  <A.W.Peters@ieee.org>
+
+	* cktpzstr.c: reformatted and corrected(?) complex if condition.
+
+1999-08-28  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Removed all #includes of misc.h and util.h (now in spice.h)
+
+1999-08-27  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+
+	* Removed GENERIC and #include "suffix.h" from all the files.
+	GENERIC has been replaced by void. ANSIfied all functions with
+	protoize.
+
+1999-08-26  Paolo Nenzi <pnenzi@ieee.ing.uniroma1.it>
+
+	* cktacct.c: added #include "spmatrix.h" to avoid implicit declaration
+	warning at compile time.
+
+	* dctran.c: ansified and substituted void with void.
+	* tranasq.c: same as before.
+	* traninit.c: same as before.
+	* transetp.c: same as before.
+
+	
+1999-08-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
+
+	* Removed all HAS_SHORTMACRO and HAS_FLATINCLUDES code in directory 
+
+	* cktdest.c (and other files): changed HAS_SENSE2 in WANT_SENSE2  
+
+1999-08-04  Paolo Nenzi  <pnenzi@ieee.ing.uniroma1.it>
+
+	* changed dctrcurv.c: added code for temperature sweeps and 
+	resistance sweeps. Now you can execute .dc temp <start> <stop> 
+	<increment> to do a temp sweep, temp is the keyword for temp 
+	sweeps (The code comes from  a patch supplied by Serban-Mihai 
+	Popescu <serbanp@ix.netcom.com>. To do a resitance sweep just 
+	insert resistor name to the .cd line:.dc vin -5 5 1 rin 100 1000 10.
+	Resistance and temperature sweeps can be nested.

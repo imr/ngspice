@@ -1,17 +1,3 @@
-/* $Id$  */
-/*
- $Log$
- Revision 1.1  2000-04-27 20:03:59  pnenzi
- Initial revision
-
- * Revision 3.2 1998/6/16  18:00:00  Weidong 
- * BSIM3v3.2 release
- *
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
@@ -41,13 +27,13 @@ File: b3v2set.c
 
 int
 BSIM3V2setup(matrix,inModel,ckt,states)
-register SMPmatrix *matrix;
-register GENmodel *inModel;
-register CKTcircuit *ckt;
+SMPmatrix *matrix;
+GENmodel *inModel;
+CKTcircuit *ckt;
 int *states;
 {
-register BSIM3V2model *model = (BSIM3V2model*)inModel;
-register BSIM3V2instance *here;
+BSIM3V2model *model = (BSIM3V2model*)inModel;
+BSIM3V2instance *here;
 int error;
 CKTnode *tmp;
 
@@ -982,7 +968,6 @@ BSIM3V2unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     BSIM3V2model *model;
     BSIM3V2instance *here;
 
@@ -1006,6 +991,5 @@ BSIM3V2unsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

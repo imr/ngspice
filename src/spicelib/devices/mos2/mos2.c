@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFIxes
 **********/
 
 #include "ngspice.h"
@@ -11,6 +12,7 @@ Author: 1985 Thomas L. Quarles
 #include "suffix.h"
 
 IFparm MOS2pTable[] = { /* parameters */ 
+ IOPU("m",       MOS2_M,     IF_REAL   , "Multiplier"),
  IOPU("l",       MOS2_L,     IF_REAL   , "Length"),
  IOPU("w",       MOS2_W,     IF_REAL   , "Width"),
  IOPU("ad",      MOS2_AD,    IF_REAL   , "Drain area"),

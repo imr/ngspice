@@ -4,6 +4,12 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 
 #include "ngspice.h"
 #include "ivars.h"
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif /* HAVE_STRING_H */
+
+#include <stdlib.h>
 #include <stdio.h>
 
 char *Spice_Path;
@@ -28,16 +34,39 @@ mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
 
     /* Override by environment variables */
     buffer = getenv(env_var);
+
+#ifdef HAVE_ASPRINTF
     if (buffer)
 	asprintf(p, "%s", buffer);
     else
 	asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir);
+#else /* ~ HAVE_ASPRINTF */
+    if (buffer){
+	if ( (*p = (char *) malloc(strlen(buffer)+1)) == NULL){
+		fprintf(stderr,"malloc failed\n");
+		exit(1);
+	}
+	sprintf(*p,"%s",buffer);
+	/* asprintf(p, "%s", buffer); */
+    }
+    else{
+	if ( (*p = (char *) malloc(strlen(path_prefix) + 
+			strlen(DIR_PATHSEP) + strlen(var_dir) + 1)) == NULL){
+		fprintf(stderr,"malloc failed\n");
+		exit(1);
+	}
+	sprintf(*p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir); 
+	/* asprintf(p, "%s%s%s", path_prefix, DIR_PATHSEP, var_dir); */
+    }
+#endif /* HAVE_ASPRINTF */
 }
 
 void
 ivars(void)
 {
-
+	
+    char *temp=NULL;
+	
     env_overr(&Spice_Exec_Dir, "SPICE_EXEC_DIR");
     env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR");
 
@@ -50,15 +79,19 @@ ivars(void)
     env_overr(&Spice_Host, "SPICE_HOST");
     env_overr(&Bug_Addr, "SPICE_BUGADDR");
     env_overr(&Def_Editor, "SPICE_EDITOR");
-    env_overr(&AsciiRawFile, "SPICE_ASCIIRAWFILE");
+    env_overr(&temp, "SPICE_ASCIIRAWFILE");
+    
+    if(temp)
+       AsciiRawFile = atoi(temp);
+    
 }
 
 void
 cleanvars(void)
 {
-    free(News_File);
-    free(Default_MFB_Cap);
-    free(Help_Path);
-    free(Lib_Path);
-    free(Spice_Path);
+    txfree(News_File);
+    txfree(Default_MFB_Cap);
+    txfree(Help_Path);
+    txfree(Lib_Path);
+    txfree(Spice_Path);
 }

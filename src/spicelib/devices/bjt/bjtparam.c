@@ -27,7 +27,7 @@ BJTparam(param,value,instPtr,select)
     GENinstance *instPtr;
     IFvalue *select;
 {
-    register BJTinstance *here = (BJTinstance*)instPtr;
+    BJTinstance *here = (BJTinstance*)instPtr;
 
     switch(param) {
         case BJT_AREA:

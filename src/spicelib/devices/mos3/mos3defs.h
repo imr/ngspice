@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlanFixes
 **********/
 
 #ifndef MOS3
@@ -30,6 +31,7 @@ typedef struct sMOS3instance {
     int MOS3dNodePrime; /* number of the internal drain node of the mosfet */
     int MOS3sNodePrime; /* number of the internal source node of the mosfet */
 
+    double MOS3m;   /* parallel device multiplier */
     double MOS3l;   /* the length of the channel region */
     double MOS3w;   /* the width of the channel region */
     double MOS3drainArea;   /* the area of the drain diffusion */
@@ -89,6 +91,7 @@ typedef struct sMOS3instance {
 
     unsigned MOS3off :1;/* non-zero to indicate device is off for dc analysis*/
     unsigned MOS3tempGiven :1;  /* instance temperature specified */
+     unsigned MOS3mGiven :1;
     unsigned MOS3lGiven :1;
     unsigned MOS3wGiven :1;
     unsigned MOS3drainAreaGiven :1;
@@ -321,6 +324,10 @@ typedef struct sMOS3model {       /* model structure for a resistor */
     int MOS3type;       /* device type : 1 = nmos,  -1 = pmos */
     double MOS3tnom;        /* temperature at which parameters measured */
     double MOS3latDiff;
+    double MOS3lengthAdjust;    /* New parm: mask adjustment to length */
+    double MOS3widthNarrow;     /* New parm to reduce effective width */
+    double MOS3widthAdjust;     /* New parm: mask adjustment to width */
+    double MOS3delvt0;          /* New parm: adjustment calculated vtO */
     double MOS3jctSatCurDensity;    /* input - use tSatCurDens*/
     double MOS3jctSatCur;   /* input - use tSatCur instead */
     double MOS3drainResistance;
@@ -362,6 +369,10 @@ typedef struct sMOS3model {       /* model structure for a resistor */
 
     unsigned MOS3typeGiven  :1;
     unsigned MOS3latDiffGiven   :1;
+    unsigned MOS3lengthAdjustGiven  :1;
+    unsigned MOS3widthNarrowGiven   :1;
+    unsigned MOS3widthAdjustGiven   :1;
+    unsigned MOS3delvt0Given        :1;
     unsigned MOS3jctSatCurDensityGiven  :1;
     unsigned MOS3jctSatCurGiven :1;
     unsigned MOS3drainResistanceGiven   :1;
@@ -485,6 +496,7 @@ typedef struct sMOS3model {       /* model structure for a resistor */
 #define MOS3_TEMP               77
 #define MOS3_SOURCERESIST       78
 #define MOS3_DRAINRESIST        79
+#define MOS3_M 80
 
 /* model parameters */
 #define MOS3_MOD_VTO 101
@@ -531,6 +543,11 @@ typedef struct sMOS3model {       /* model structure for a resistor */
 #define MOS3_MOD_KF 142
 #define MOS3_MOD_AF 143
 #define MOS3_MOD_TYPE 144
+
+#define MOS3_MOD_XL 145
+#define MOS3_MOD_WD 146
+#define MOS3_MOD_XW 147
+#define MOS3_MOD_DELVTO 148
 
 /* device questions */
 

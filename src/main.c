@@ -5,24 +5,34 @@
    Author: 1985 Wayne A. Christopher
 
    The main routine for ngspice */
+#include <ngspice.h>
+
 #include <stdio.h>
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif /* HAVE_STRING_H */
 #include <setjmp.h>
 #include <signal.h>
 
 #include <sys/types.h>
 
-#define _GNU_SOURCE
-#include <getopt.h>
 
-#include "ngspice.h"
-#include "ifsim.h"
-#include "inpdefs.h"
-#include "iferrmsg.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "ftedev.h"
-#include "ftedebug.h"
-#include "const.h"
+#include <iferrmsg.h>
+#include <ftedefs.h>
+#include <devdefs.h>
+#include <spicelib/devices/dev.h>
+#include <spicelib/analysis/analysis.h>
+#include <misc/ivars.h>
+#include <misc/getopt.h>
+#include <frontend/resource.h>
+#include <frontend/variable.h>
+
+/* saj xspice headers */
+#ifdef XSPICE
+#include "ipctiein.h"
+#include "mif.h"
+#include "enh.h"
+#endif
 
 #ifdef HAVE_PWD_H
 #include <pwd.h>
@@ -143,6 +153,40 @@ if_getstat(char *n, char *c)
     return (NULL);
 }
 
+#ifdef EXPERIMENTAL_CODE
+void com_loadsnap(wordlist *wl) { return; }
+void com_savesnap(wordlist *wl) { return; }
+#endif
+
+
+#ifdef XSPICE
+/* saj to get nutmeg to compile, not nice but necessary */
+Ipc_Tiein_t  g_ipc;
+Ipc_Status_t ipc_send_errchk(void ) {
+  Ipc_Status_t x=0;
+  return(x);
+}
+Ipc_Status_t ipc_get_line(char *str , int *len , Ipc_Wait_t wait ){
+  Ipc_Status_t x=0;
+  return(x);
+}
+struct line *ENHtranslate_poly(struct line *deck){
+  return(NULL);
+}
+int load_opus(char *name){
+  return(1);
+}
+char  *MIFgettok(char **s){
+  return(NULL);
+}
+void EVTprint(wordlist *wl){
+  return;
+}
+struct dvec *EVTfindvec(char *node){
+  return NULL;
+}
+#endif
+
 #endif /* SIMULATOR */
 
 char *hlp_filelist[] = { "ngspice", 0 };
@@ -155,11 +199,19 @@ double CONSTvt0;
 double CONSTKoverQ;
 double CONSTe;
 IFfrontEnd *SPfrontEnd = NULL;
-
+int DEVmaxnum = 0;
 
 
 int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 {
+#ifdef SIMULATOR
+    spice_init_devices();
+    SIMinfo.numDevices = DEVmaxnum = num_devices();
+    SIMinfo.devices = devices_ptr();
+    SIMinfo.numAnalyses = spice_num_analysis();
+    SIMinfo.analyses = spice_analysis_ptr();
+#endif /* SIMULATOR */
+
     SPfrontEnd = frontEnd;
     *simulator = &SIMinfo;
     CONSTroot2 = sqrt(2.);
@@ -227,21 +279,11 @@ append_to_stream(FILE *dest, FILE *source)
     while ((i = fread(buf, 1, BSIZE_SP, source)) > 0)
 	fwrite(buf, i, 1, dest);
 }
-
-int
-main(int argc, char **argv)
-{
-    int c;
-    int		err;
-    bool	gotone = FALSE;
-
 #ifdef SIMULATOR
-    int error2;
-
     extern int OUTpBeginPlot(), OUTpData(), OUTwBeginPlot(), OUTwReference();
     extern int OUTwData(), OUTwEnd(), OUTendPlot(), OUTbeginDomain();
     extern int OUTendDomain(), OUTstopnow(), OUTerror(), OUTattributes();
-    static IFfrontEnd nutmeginfo = {
+    IFfrontEnd nutmeginfo = {
 	IFnewUid,
 	IFdelUid,
 	OUTstopnow,
@@ -258,13 +300,23 @@ main(int argc, char **argv)
 	OUTendDomain,
 	OUTattributes
     };
+#endif
+int
+main(int argc, char **argv)
+{
+    int c;
+    int		err;
+    bool	gotone = FALSE;
+    char*       copystring;/*DG*/
+#ifdef SIMULATOR
+    int error2;
+
 #else  /* ~ SIMULATOR */
     bool gdata = TRUE;
 #endif /* ~ SIMULATOR */
 
 
     char buf[BSIZE_SP];
-    bool ciprefix();
     bool readinit = TRUE;
     bool rflag = FALSE;
     bool istty = TRUE;
@@ -475,7 +527,7 @@ main(int argc, char **argv)
     signal(SIGBUS, sigbus);
 #endif
 #ifdef SIGSEGV
-    signal(SIGSEGV, sigsegv);
+//want core files!    signal(SIGSEGV, sigsegv);
 #endif
 #ifdef SIGSYS
     signal(SIGSYS, sig_sys);
@@ -492,12 +544,20 @@ main(int argc, char **argv)
 	    struct passwd *pw;
 
             pw = getpwuid(getuid());
+
+#ifdef HAVE_ASPRINTF
 	    asprintf(&s, "%s/.spiceinit", pw->pw_dir);
+#else /* ~ HAVE_ASPRINTF */
+#define INITSTR "/.spiceinit"
+if ( (s=(char *) malloc(1 + strlen(pw->pw_dir)+strlen(INITSTR))) == NULL){
+	fprintf(stderr,"malloc failed\n");
+	exit(1);
+		}
+		sprintf(s,"%s%s",pw->pw_dir,INITSTR);
+#endif /* HAVE_ASPRINTF */
+
             if (access(s, 0) == 0)
                 inp_source(s);
-	     /* free(s); */  
-	    /* FIXME: Do we need to free() char* fields in pw as well? */
-	   /* free(pw); */
 	}
 #else /* ~ HAVE_PWD_H */
 	/* Try to source the file "spice.rc" in the current directory.  */
@@ -512,7 +572,9 @@ main(int argc, char **argv)
 	com_version(NULL);
         DevInit( );
 	if (News_File && *News_File) {
-	    fp = fopen(cp_tildexpand(News_File), "r");
+            copystring=cp_tildexpand(News_File);/*DG  Memory leak */
+	    fp = fopen(copystring, "r");
+            tfree(copystring);
 	    if (fp) {
 		while (fgets(buf, BSIZE_SP, fp))
 		    fputs(buf, stdout);
@@ -606,7 +668,7 @@ evl:
          * save too much.  */
         cp_interactive = FALSE;
         if (rflag) {
-	    ft_dotsaves();
+	  /* saj done already in inp_spsource ft_dotsaves();*/
 	    error2 = ft_dorun(ft_rawfile);
 	    if (ft_cktcoms(TRUE) || error2)
 		shutdown(EXIT_BAD);

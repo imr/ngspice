@@ -7,7 +7,6 @@ Author: 1987 Gary W. Ng
 #include <stdio.h>
 #include "jfetdefs.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "suffix.h"
@@ -30,12 +29,12 @@ JFETnoise (mode, operation, genmodel, ckt, data, OnDens)
     int operation;
     GENmodel *genmodel;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     JFETmodel *firstModel = (JFETmodel *) genmodel;
-    register JFETmodel *model;
-    register JFETinstance *inst;
+    JFETmodel *model;
+    JFETinstance *inst;
     char name[N_MXVLNTH];
     double tempOnoise;
     double tempInoise;

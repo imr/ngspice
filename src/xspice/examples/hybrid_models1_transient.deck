@@ -1,0 +1,48 @@
+Code Model Test - Transient: d_osc, dac_bridge, adc_bridge
+*
+*
+*** analysis type ***
+.tran .01s 1s
+*
+*** input sources ***
+*
+v1 1 0 DC PWL( (0 0.0)  (1 1.0) ) 
+*
+v2 2 0 DC PWL( (0 0.0)  (1 5.0) )
+*
+*
+*** d_osc block ***
+a1 1 10 d_osc1 
+.model d_osc1 d_osc (cntl_array=[-1.0 0.0 1.0 2.0] 
++                    freq_array=[1.0 1.0 8.0 8.0]
++                    duty_cycle=0.5 init_phase=0.0
++                    rise_delay=1.0e-6 fall_delay=2.0e-6)
+*
+*** dac_bridge block ***
+a2 [10] [20] dac_bridge1
+.model dac_bridge1 dac_bridge (out_low=0.5 out_high=4.5 out_undef=1.8
++                              input_load=1.0e-12
++                              t_rise=1.0e-6 t_fall=2.0e-6)
+*
+*
+*** adc_bridge block ***
+a3 [2] [30] adc_bridge1
+.model adc_bridge1 adc_bridge (in_low=0.7 in_high=2.4 
++                              rise_delay=1.0e-12 fall_delay=2.0e-12)
+*
+*
+*
+*** resistors to ground ***
+r1 1 0 1k
+r2 2 0 1k
+*
+r20 20 0 1k
+*
+*
+.end
+
+
+
+
+
+

@@ -1,0 +1,337 @@
+.\" RCS Info: $Revision$ on $Date$
+.\"           $Source$
+.\" Copyright (c) 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+.TH SPICE 1 "20 March 1986"
+.ds S \s-2SPICE\s+2\&3
+.UC 4
+.SH NAME
+spice \- circuit simulator
+.SH SYNOPSIS
+\fBspice [ -n ] [ -t term ] [ -r rawfile] [ -b ]
+[ -i ] [ input file ... ]\fR
+.SH DESCRIPTION
+This manual page describes the commands available for interactive
+use of \*S. For details of circuit descriptions and the
+process of simulating a circuit, see the \*S User's Manual.
+The commands available are a superset of those available for
+\fBnutmeg\fR \- only the additional commands available in \*S
+are described here.  You should be familiar with the manual page for
+\fBnutmeg(1)\fR before reading this manual page.
+.PP
+Arguments are:
+.TP
+\fB-n\fR (or \fB--no-spiceinit\fR)
+Don't try to source the file ".spiceinit" upon startup. Normally \*S
+tries to find the file in the current directory, and if it is not found then
+in the user's home directory.
+.TP
+\fB-q\fR (or \fB--completion\fR)
+Enable command completion.
+.TP
+\fB-t term\fR (or \fB--term=term\fR)
+The program is being run on a terminal with \fImfb\fR name \fBterm\fR.
+.TP
+\fB-b\fR (or \fB--batch\fR)
+Run in batch mode. \*S will read the standard input or the specified
+input file and do the simulation. Note that if the standard input
+is not a terminal, \*S will default to batch mode, unless the
+-i flag is given.
+.TP
+\fB-s\fR (or \fB--server\fR)
+Run in server mode. This is like batch mode, except that a temporary
+rawfile is used and then written to the standard output, preceded by
+a line with a single "@", after the simulation is done. This mode
+is used by the spice daemon.
+.TP
+\fB-i\fR (or \fB--interactive\fR)
+Run in interactive mode. This is useful if the standard input is
+not a terminal but interactive mode is desired. Command completion is
+not available unless the standard input is a terminal, however.
+.TP
+\fB-r rawfile\fR (or \fB--rawfile=file\fR)
+Use \fBrawfile\fR as the default file into which the results of
+the simulation are saved.
+.TP
+\fB-c circuitfile\fR (or \fB--circuitfile=circuitfile\fR)
+Use \fBcircuitfile\fR as the default input deck.
+.TP
+\fB-h\fR (or \fB--help\fR)
+Display a verbose help on the arguments available to the program.
+.TP
+\fB-v\fR (or \fB--version\fR)
+Display a version number and copyright information of the program.
+.PP
+Further arguments are taken to be \*S input decks, which are read
+and saved. (If batch mode is requested then they are run immediately.)
+.PP
+\*S will accept any \s-2SPICE\s+2\&2 input decks, and output
+ascii plots, fourier analyses, and node printouts as specified
+in .plot, .four, and .print cards.  If a \fBout\fR parameter
+is given on a .width card, the effect is the same as \fBset width = ...\fR.
+Since \*S ascii plots do not use multiple ranges, however, if vectors
+together on a .plot card have different ranges they will not provide
+as much information as they would in \s-2SPICE\s+2\&2. The output
+of \*S is also much less verbose than \s-2SPICE\s+2\&2, in that the only
+data printed is that requested by the above cards.
+.PP
+Vector names are the same as in \fBnutmeg\fR, with this addition:
+a name such as \fB@name[param]\fR, where \fBname\fR is either
+the name of a device instance or model, denotes the value of the
+\fBparam\fR parameter of the device or model. See the \*S User's
+Manual for details of what parameters are available. The value is a
+vector of length 1.  This function is also available with the
+\fBshow\fR command, and is available with variables for convenience for
+command scripts.
+.PP
+\*S
+commands are as follows (these are only those commands not also
+available in \fBnutmeg\fR \- consult the \fBnutmeg\fR manual page for
+more commands):
+.TP
+\fBsetcirc [circuit name]\fR
+Change the current circuit. The current circuit is the one that is
+used for the simulation commands below. When a circuit is loaded
+with the \fIsource\fR command (see below) it becomes the
+current circuit.
+.TP
+\fBop [.op card args]\fR
+Do an operating point analysis.
+.TP
+\fBtran [.tran card args]\fR
+Do a transient analysis.
+.TP
+\fBac [.ac card args]\fR
+Do an ac analysis.
+.TP
+\fBdc [.dc card args]\fR
+Do a dc transfer curve analysis.
+.TP
+\fBlisting [logical] [physical] [deck] [expand]\fR
+Print a listing of the current circuit. If the \fBlogical\fR argument
+is given, the listing is with all continuation lines collapsed
+into one line, and if the \fBphysical\fR
+argument is given the lines are printed out as they were found in
+the file. The default is \fBlogical\fR. A \fBdeck\fR listing is just like
+the \fBphysical\fR listing, except without the line numbers it recreates
+the input file verbatim (except that it does not preserve case).
+If the word \fBexpand\fR is present, the circuit will be printed with all
+subcircuits expanded.
+.TP
+\fBedit [file]\fR
+Print the current \*S deck into a file, call up the editor on that file
+and allow the user to modify it, and then read it back in, replacing
+the origonal deck. If a \fBfilename\fR is given, then edit that file
+and load it, making the circuit the current one.
+.TP
+\fBresume\fR
+Resume a simulation after a stop.
+.TP
+\fBshow \fR
+Show a device parameter.
+.TP
+\fBalter \fR
+Alter a device parameter.
+.TP
+\fBstate\fR
+Print the state of the circuit.  (This command is largely unimplemented.)
+.TP
+\fBsave [all] [output ...]\fR  or \fB.save [all] [output ...]\fR
+Save a set of outputs, discarding the rest. If a node has been mentioned
+in a \fBsave\fR command, it will appear in the working plot after
+a run has completed, or in the rawfile if spice is run in batch
+mode. If a node is traced or plotted (see below) it will
+also be saved. For backward compatibility, if there are \fBno\fR save
+commands given, all outputs are saved.
+.TP
+\fBstop [ after n] [ when something cond something ] ... \fR
+Set a breakpoint. The argument \fBafter n\fR means stop after \fBn\fR
+iteration number \fBn\fR, and the argument 
+\fBwhen something cond something\fR means
+stop when the first \fBsomething\fR is in the given relation with
+the second \fBsomething\fR, the possible relations being
+\fBeq\fR or = (equal to),
+\fBne\fR or <> (not equal to),
+\fBgt\fR or > (greater than),
+\fBlt\fR or < (less than),
+\fBge\fR or >= (greater than or equal to), and
+\fBle\fR or <= (less than or equal to).
+IO redirection is disabled for the \fBstop\fR command, since the relational
+operations conflict with it (it doesn't produce any output anyway).
+The \fBsomething\fR\&s above may be node names in
+the running circuit, or real values.
+If more than one condition is given, e.g.
+\fBstop after 4 when v(1) > 4 when v(2) < 2\fR, the conjunction of
+the conditions is implied.
+.TP
+\fBtrace [ node ...]\fR
+Trace nodes. Every iteration the value of the node is printed to the
+standard output.
+.TP
+\fBiplot [ node ...]\fR
+Incrementally plot the values of the nodes while \*S runs.
+.TP
+\fBstep [number]\fR
+Iterate \fBnumber\fR times, or once, and then stop.
+.TP
+\fBstatus\fR
+Display all of the traces and breakpoints currently in effect.
+.TP
+\fBdelete [debug number ...]\fR
+Delete the specified breakpoints and traces. The \fBdebug numbers\fR
+are those shown by the \fBstatus\fR command. (Unless you do
+\fBstatus > file\fR, in which case the debug numbers aren't printed.)
+.TP
+\fBreset\fR
+Throw out any intermediate data in the circuit (e.g, after a breakpoint
+or after one or more analyses have been done already), and re-parse
+the deck. The circuit can then be re-run. (\fBNote\fR: this command
+used to be \fBend\fR in \s-2SPICE\s+2 3a5 and earlier versions -- \fBend\fR
+is now used for control structures.)  The \fBrun\fR command will take
+care of this automatically, so this command should not be necessary...
+.TP
+\fBrun [rawfile]\fR
+Run the simulation as specified in the input file. If there were any
+of the control cards .ac, .op, .tran, or .dc, they are executed. The output
+is put in \fBrawfile\fR if it was given, in addition to being available
+interactively.
+.TP
+\fBsource file\fR
+Read the \*S input file \fBfile\fR. \fBNutmeg\fR and \*S commands may be
+included in the file, and must be enclosed between the lines
+\fI.control\fR and \fI.endc\fR.  These commands
+are executed immediately after the circuit is loaded, so a control line
+of \fIac ...\fR will work the same as the corresponding \fI.ac\fR card.
+The first line in any input file is considered a title
+line and not parsed but kept as the name of the circuit. The
+exception to this rule is the file \fI.spiceinit\fR.
+Thus, a \*S command script must begin with a blank line and then with
+a \fI.control\fR line.
+Also, any line beginning with the characters *# is considered a control
+line.  This makes it possible to imbed commands in \*S input files
+that will be ignored by earlier versions of \s-2SPICE\s+2.
+\fINote:\fR in spice3a7 and before, the \fI.control\fR and \fI.endc\fR
+lines were not needed, and any line beginning with the name of a front-end
+command would be executed.
+.TP
+\fBlinearize vec ...\fR
+Create a new plot with all of the vectors in the current plot, or
+only those mentioned if arguments are given.  The new vectors
+will be interpolated onto a linear time scale, which is determined
+by the values of \fBtstep, tstart,\fR and \fBtstop\fR in the
+currently active transient analysis.  The currently loaded deck
+must include a transient analysis (a \fBtran\fR command may be run
+interactively before the last \fBreset\fR, alternately), and the
+current plot must be from this transient analysis.  This command
+is needed because \s-2SPICE\s+2\&3 doesn't output the results
+from a transient analysis in the same manner that \s-2SPICE\s+2\&2 did.
+.PP
+There are several \fBset\fR variables that \*S uses but \fBnutmeg\fR
+does not. They are:
+.IP "" 16
+\fBeditor\fR
+.br
+The editor to use for the \fBedit\fR command.
+.IP
+\fBmodelcard\fR
+.br
+The name of the model card (normally \fB.model\fR).
+.IP
+\fBnoaskquit\fR
+.br
+Do not check to make sure that there are no circuits suspended and
+no plots unsaved.  Normally \*S will warn the user when he tries to
+quit if this is the case.
+.IP
+\fBnobjthack\fR
+.br
+Assume that BJT's have 4 nodes.
+.IP
+\fBnoparse\fR
+.br
+Don't attempt to parse decks when they are read in (useful for
+debugging). Of course, they
+cannot be run if they are not parsed.
+.IP
+\fBnosubckt\fR
+.br
+Don't expand subcircuits.
+.IP
+\fBrenumber\fR
+.br
+Renumber input lines when a deck has \fB.include\fR's.
+.IP
+\fBsubend\fR
+.br
+The card to end subcircuits (normally \fB.ends\fR).
+.IP
+\fBsubinvoke\fR
+.br
+The prefix to invoke subcircuits (normally \fBx\fR).
+.IP
+\fBsubstart\fR
+.br
+The card to begin subcircuits (normally \fB.subckt\fR).
+.PP
+There are a number of \fBrusage\fR parameters available, in addition
+to the ones available in \fBnutmeg\fR:
+.IP "" 16
+.PP
+If there are subcircuits in the input file, \*S expands instances of them.
+A subcircuit is delimited by the cards
+.B .subckt
+and
+.B .ends,
+or whatever the value of the variables
+.B substart
+and
+.B subend
+is, respectively. An instance of a subcircuit is created by specifying
+a device with type 'x' \- the device line is written
+.IP
+\fBxname node1 node2 ... subcktname\fR
+.LP
+where the nodes are the node names that replace the formal parameters
+on the \fB.subckt\fR line. All nodes that are not formal parameters
+are prepended with the name given to the instance and a ':', as are
+the names of the devices in the subcircuit. If there are several nested
+subcircuits, node and device names look like \fBsubckt1:subckt2:...:name\fR.
+If the variable \fBsubinvoke\fR is set, then it is used as the prefix
+that specifies instances of subcircuits, instead of 'x'.
+.SH "VMS NOTES"
+The standard suffix for rawspice files in VMS is ".raw".
+.PP
+You may have to redefine the value EDITOR if you wish to use the \fBedit\fR
+command, since the default for VMS is "vi".
+.SH "SEE ALSO"
+nutmeg(1), sconvert(1), spice(1), mfb(3), writedata(3)
+\*S User's Guide
+.SH AUTHORS
+\*S:  Tom Quarles (quarles@cad.berkeley.edu)
+.br
+\fBnutmeg\fR / User interface: Wayne Christopher (faustus@cad.berkeley.edu)
+.SH BUGS
+.PP
+\*S will recognise all the notations used in \s-2SPICE\s+2\&2 \fB.plot\fR
+cards, and will translate \fBvp(1)\fR into \fBph(v(1))\fR, and so
+forth. However, if there are spaces in these names it won't work. Hence
+\fBv(1, 2)\fR and \fB(-.5, .5)\fR aren't recognised.
+.PP
+BJT's can have either 3 or 4 nodes, which makes it difficult for the subcircuit
+expansion routines to decide what to rename. If the fourth parameter has
+been declared as a model name, then it is assumed that there are 3 nodes,
+otherwise it is considered a node. To disable this kludge, you can set
+the variable "nobjthack", which will force BJT's to have 4 nodes (for the
+purposes of subcircuit expansion, at least).
+.PP
+The \fB@name[param]\fR notation might not work with \fBtrace, iplot,\fR etc.
+yet.
+.PP
+The first line of a command file (except for the \fI.spiceinit\fR file)
+should be a comment.  Otherwise \s-2SPICE\s+2 may create an empty circuit
+structure.
+.SH CAVEATS
+.PP
+\*S files specified on the command line are read in before the\fB .spiceinit\fR
+file is read. Thus if you define aliases there that you call in a
+\*S source file mentioned on the command line, they won't be recognised.
+

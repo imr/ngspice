@@ -13,13 +13,13 @@ Author: 1985 Thomas L. Quarles
 
 int
 VSRCaccept(ckt,inModel)
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     GENmodel *inModel;
         /* set up the breakpoint table.
          */
 {
-    register VSRCmodel *model = (VSRCmodel *)inModel;
-    register VSRCinstance *here;
+    VSRCmodel *model = (VSRCmodel *)inModel;
+    VSRCinstance *here;
     int error;
 
     /*  loop through all the voltage source models */
@@ -148,7 +148,7 @@ VSRCaccept(ckt,inModel)
                 }
                 break;
                 case PWL: {
-                    register int i;
+                    int i;
                     if(ckt->CKTtime < *(here->VSRCcoeffs)) {
                         if(ckt->CKTbreak) {
                             error = CKTsetBreak(ckt,*(here->VSRCcoeffs));

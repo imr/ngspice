@@ -43,9 +43,15 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case RES_LENGTH:
             value->rValue = fast->RESlength;
             return(OK);
-        case RES_WIDTH :
+        case RES_WIDTH:
             value->rValue = fast->RESwidth;
+	    return(OK);
+	case RES_SCALE:
+	    value->rValue = fast->RESscale;
             return(OK);
+	case RES_M:
+	    value->rValue = fast->RESm;
+	    return(OK);
         case RES_QUEST_SENS_DC:
             if(ckt->CKTsenInfo){
                 value->rValue = *(ckt->CKTsenInfo->SEN_Sap[select->iValue + 1]+

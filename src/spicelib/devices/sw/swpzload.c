@@ -18,15 +18,15 @@ Author: 1985 Gordon Jacobs
 int
 SWpzLoad(inModel,ckt,s)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     SPcomplex *s;
         /* load the current values into the 
          * sparse matrix previously provided 
          * during AC analysis.
          */
 {
-    register SWmodel *model = (SWmodel *)inModel;
-    register SWinstance *here;
+    SWmodel *model = (SWmodel *)inModel;
+    SWinstance *here;
     double g_now;
     int current_state;
 

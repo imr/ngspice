@@ -7,9 +7,14 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  */
 
 #include <config.h>
+#include <stdio.h>
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include "ngspice.h"
-#include "stdio.h"
-#include "string.h"
+#include "stringutil.h"
 
 int
 prefix(register char *p, register char *s)

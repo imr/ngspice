@@ -17,11 +17,11 @@ Author: 1985 Thomas L. Quarles
 int
 MUTacLoad(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register MUTmodel *model = (MUTmodel*)inModel;
+    MUTmodel *model = (MUTmodel*)inModel;
     double val;
-    register MUTinstance *here;
+    MUTinstance *here;
 
     for( ; model != NULL; model = model->MUTnextModel) {
         for( here = model->MUTinstances;here != NULL; 

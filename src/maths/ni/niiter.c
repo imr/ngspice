@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2001 AlansFixes
 **********/
 
 /*
@@ -35,6 +36,9 @@ NIiter(register CKTcircuit *ckt, int maxIter)
     double startTime;
     static char *msg = "Too many iterations without convergence";
 
+
+    CKTnode *node; /* current matrix entry */
+    double diff, maxdiff, damp_factor, *OldCKTstate0=NULL;
 
     iterno=0;
     ipass=0;
@@ -81,6 +85,7 @@ NIiter(register CKTcircuit *ckt, int maxIter)
 #ifdef STEPDEBUG
                 printf("load returned error \n");
 #endif
+			 FREE(OldCKTstate0);
                 return(error);
             }
             /*printf("after loading, before solving\n");*/
@@ -93,6 +98,7 @@ NIiter(register CKTcircuit *ckt, int maxIter)
 #ifdef STEPDEBUG
                     printf("pre-order returned error \n");
 #endif
+				 FREE(OldCKTstate0);
                     return(error); /* badly formed matrix */
                 }
                 ckt->CKTniState |= NIDIDPREORDER;
@@ -123,6 +129,7 @@ NIiter(register CKTcircuit *ckt, int maxIter)
 #ifdef STEPDEBUG
                     printf("reorder returned error \n");
 #endif
+                    FREE(OldCKTstate0);
                     return(error); /* can't handle these errors - pass up! */
                 }
                 ckt->CKTniState &= ~NISHOULDREORDER;
@@ -145,10 +152,18 @@ NIiter(register CKTcircuit *ckt, int maxIter)
 #ifdef STEPDEBUG
                     printf("lufac returned error \n");
 #endif
+				FREE(OldCKTstate0);
                     return(error);
                 }
             } 
-
+	    /*moved it to here as if xspice is included then CKTload changes
+	      CKTnumStates the first time it is run */
+	    if(!OldCKTstate0)
+	      OldCKTstate0=(double *)MALLOC((ckt->CKTnumStates+1)*sizeof(double));    
+	    for(i=0;i<ckt->CKTnumStates;i++) {
+	      *(OldCKTstate0+i) = *(ckt->CKTstate0+i);
+            };
+            
             startTime = (*(SPfrontEnd->IFseconds))();
             SMPsolve(ckt->CKTmatrix,ckt->CKTrhs,ckt->CKTrhsSpare);
             ckt->CKTstat->STATsolveTime += (*(SPfrontEnd->IFseconds))()-
@@ -176,6 +191,7 @@ NIiter(register CKTcircuit *ckt, int maxIter)
 #ifdef STEPDEBUG
                     printf("iterlim exceeded \n");
 #endif
+			 FREE(OldCKTstate0);
                 return(E_ITERLIM);
             }
             if(ckt->CKTnoncon==0 && iterno!=1) {
@@ -188,6 +204,36 @@ NIiter(register CKTcircuit *ckt, int maxIter)
 #endif
         }
 
+ if( (ckt->CKTnodeDamping!=0) && (ckt->CKTnoncon!=0) &&
+                ((ckt->CKTmode & MODETRANOP) || (ckt->CKTmode & MODEDCOP)) &&
+                (iterno>1) ) {
+              maxdiff=0;
+              for (node = ckt->CKTnodes->next; node; node = node->next) {
+                if(node->type == NODE_VOLTAGE) {
+                  diff = (ckt->CKTrhs)[node->number] -
+                          (ckt->CKTrhsOld)[node->number];
+                  if (diff>maxdiff) maxdiff=diff;
+                };
+              };
+              if (maxdiff>10) {
+                damp_factor=10/maxdiff;
+                if (damp_factor<0.1) damp_factor=0.1;
+                for (node = ckt->CKTnodes->next; node; node = node->next) {
+                  diff = (ckt->CKTrhs)[node->number] -
+                          (ckt->CKTrhsOld)[node->number];
+                  (ckt->CKTrhs)[node->number]=(ckt->CKTrhsOld)[node->number] +
+                                                (damp_factor * diff);
+                };
+                for(i=0;i<ckt->CKTnumStates;i++) {
+                    diff = *(ckt->CKTstate0+i) - *(OldCKTstate0+i);
+                    *(ckt->CKTstate0+i) = *(OldCKTstate0+i) +
+                                                (damp_factor * diff);
+                };
+              };
+            }
+
+
+
         if(ckt->CKTmode & MODEINITFLOAT) {
             if ((ckt->CKTmode & MODEDC) &&
                     ( ckt->CKThadNodeset)  ) {
@@ -198,6 +244,7 @@ NIiter(register CKTcircuit *ckt, int maxIter)
             }
             if(ckt->CKTnoncon == 0) {
                 ckt->CKTstat->STATnumIter += iterno;
+                FREE(OldCKTstate0);
                 return(OK);
             }
         } else if(ckt->CKTmode & MODEINITJCT) {
@@ -219,6 +266,7 @@ NIiter(register CKTcircuit *ckt, int maxIter)
 #ifdef STEPDEBUG
                 printf("bad initf state \n");
 #endif
+            FREE(OldCKTstate0);
             return(E_INTERN);
             /* impossible - no such INITF flag! */
         }

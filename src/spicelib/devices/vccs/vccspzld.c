@@ -24,8 +24,8 @@ VCCSpzLoad(inModel,ckt,s)
          * sparse matrix previously provided 
          */
 {
-    register VCCSmodel *model = (VCCSmodel *)inModel;
-    register VCCSinstance *here;
+    VCCSmodel *model = (VCCSmodel *)inModel;
+    VCCSinstance *here;
 
     /*  loop through all the source models */
     for( ; model != NULL; model = model->VCCSnextModel ) {

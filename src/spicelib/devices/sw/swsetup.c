@@ -16,7 +16,7 @@ Author: 1985 Gordon Jacobs
 
 int
 SWsetup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
+    SMPmatrix *matrix;
     GENmodel *inModel;
     CKTcircuit *ckt;
     int *states;
@@ -24,8 +24,8 @@ SWsetup(matrix,inModel,ckt,states)
          * for fast matrix loading 
          */
 {
-    register SWmodel *model = (SWmodel *)inModel;
-    register SWinstance *here;
+    SWmodel *model = (SWmodel *)inModel;
+    SWinstance *here;
 
     /*  loop through all the current source models */
     for( ; model != NULL; model = model->SWnextModel ) {

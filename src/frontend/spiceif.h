@@ -18,6 +18,10 @@ int  if_analQbyName(void *ckt, int which, void *anal, char *name, IFvalue *parm)
 bool if_tranparams(struct circ *ci, double *start, double *stop, double *step);
 struct variable * if_getstat(void *ckt, char *name);
 
+#ifdef EXPERIMENTAL_CODE
+void if_loadsnap(wordlist *wl);
+void if_savesnap(wordlist *wl);
+#endif
 
 
 #endif

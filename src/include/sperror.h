@@ -3,15 +3,15 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#ifndef ERRORS
-#define ERRORS
+#ifndef _SPERROR_H
+#define _SPERROR_H
 
 #include "ngspice.h"
 #include "iferrmsg.h"
 
-        /*
-         * definitions for error codes returned by SPICE3 routines.
-         */
+/*
+ * definitions for error codes returned by SPICE3 routines.
+ */
 
 #define E_INTERN E_PANIC
 #define E_BADMATRIX (E_PRIVATE+1)/* ill-formed matrix can't be decomposed */
@@ -35,5 +35,6 @@ Author: 1985 Thomas L. Quarles
 #define E_MULTIERR (E_PRIVATE+18) /* multiple errors from diff. processes */
 #endif /* PARALLEL_ARCH */
 
-char *SPerror();
+const char *SPerror(int type);
+
 #endif

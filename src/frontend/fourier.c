@@ -12,11 +12,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteparse.h"
 #include "sperror.h"
 #include "const.h"
+
 #include "fourier.h"
+#include "variable.h"
 
 
 /* static declarations */
@@ -29,12 +31,15 @@ static int CKTfour(int ndata, int numFreq, double *thd, double *Time, double *Va
 
 #define DEF_FOURGRIDSIZE 200
 
+
 /* CKTfour(ndata,numFreq,thd,Time,Value,FundFreq,Freq,Mag,Phase,nMag,nPhase)
  *         len   10      ?   inp  inp   inp      out  out out   out  out
  */
 
-void
-com_fourier(wordlist *wl)
+/* FIXME: This function leaks memory due to non local exit bypassing
+   freeing of memory at the end of the function. */
+int
+fourier(wordlist *wl, struct plot *current_plot)
 {
     struct dvec *time, *vec;
     struct pnode *names, *first_name;
@@ -47,11 +52,14 @@ com_fourier(wordlist *wl)
     char xbuf[20];
     int shift;
 
+    if (!current_plot)
+	return 1;
+
     sprintf(xbuf, "%1.1e", 0.0);
     shift = strlen(xbuf) - 7;
-    if (!plot_cur || !plot_cur->pl_scale) {
+    if (!current_plot || !current_plot->pl_scale) {
         fprintf(cp_err, "Error: no vectors loaded.\n");
-        return;
+        return 1;
     }
 
     if ((!cp_getvar("nfreqs", VT_NUM, (char *) &nfreqs)) || (nfreqs < 1))
@@ -63,15 +71,15 @@ com_fourier(wordlist *wl)
             (fourgridsize < 1))
         fourgridsize = DEF_FOURGRIDSIZE;
 
-    time = plot_cur->pl_scale;
+    time = current_plot->pl_scale;
     if (!isreal(time)) {
         fprintf(cp_err, "Error: fourier needs real time scale\n");
-        return;
+        return 1;
     }
     s = wl->wl_word;
     if (!(ff = ft_numparse(&s, FALSE)) || (*ff <= 0.0)) {
         fprintf(cp_err, "Error: bad fund freq %s\n", wl->wl_word);
-        return;
+        return 1;
     }
     fundfreq = *ff;
 
@@ -112,8 +120,8 @@ com_fourier(wordlist *wl)
                 d = 1 / fundfreq;   /* The wavelength... */
                 if (dp[1] - dp[0] < d) {
                     fprintf(cp_err, 
-                "Error: wavelength longer than time span\n");
-                    return;
+			    "Error: wavelength longer than time span\n");
+                    return 1;
                 } else if (dp[1] - dp[0] > d) {
                     dp[0] = dp[1] - d;
                 }
@@ -129,7 +137,7 @@ com_fourier(wordlist *wl)
                         polydegree)) {
                     fprintf(cp_err, 
                         "Error: can't interpolate\n");
-                    return;
+                    return 1;
                 }
                 timescale = grid;
             } else {
@@ -143,7 +151,7 @@ com_fourier(wordlist *wl)
                     nphase);
             if (err != OK) {
                 ft_sperror(err, "fourier");
-                return;
+                return 1;
             }
 
             fprintf(cp_out, "Fourier analysis for %s:\n", 
@@ -183,8 +191,17 @@ com_fourier(wordlist *wl)
     tfree(phase);
     tfree(nmag);
     tfree(nphase);
-    return;
+    return 0;
 }
+
+
+void
+com_fourier(wordlist *wl)
+{
+    fourier(wl, plot_cur);
+}
+
+
 
 static char *
 pn(double num)
@@ -196,50 +213,54 @@ pn(double num)
         i = 6;
 
     if (num < 0.0)
-        (void) sprintf(buf, "%.*g", i - 1, num);
+        sprintf(buf, "%.*g", i - 1, num);
     else
-        (void) sprintf(buf, "%.*g", i, num);
+        sprintf(buf, "%.*g", i, num);
     return (copy(buf));
 }
 
-/*
- * CKTfour() - perform fourier analysis of an output vector.
- *  Due to the construction of the program which places all the
- *  output data in the post-processor, the fourier analysis can not
- *  be done directly.  This function allows the post processor to
- *  hand back vectors of time and data values to have the fourier analysis
- *  performed on them.
+
+/* CKTfour() - perform fourier analysis of an output vector.
  *
- */
-
-
+ * Due to the construction of the program which places all the output
+ * data in the post-processor, the fourier analysis can not be done
+ * directly.  This function allows the post processor to hand back
+ * vectors of time and data values to have the fourier analysis
+ * performed on them.  */
 static int
-CKTfour(int ndata, int numFreq, double *thd, double *Time, double *Value, double FundFreq, double *Freq, double *Mag, double *Phase, double *nMag, double *nPhase)
-                /* number of entries in the Time and Value arrays */
-                    /* number of harmonics to calculate */
-                    /* total harmonic distortion (percent) to be returned */
-                    /* times at which the voltage/current values were measured*/
-                    /* voltage or current vector whose transform is desired */
-                        /* the fundamental frequency of the analysis */
-                    /* the frequency value of the various harmonics */
-                    /* the Magnitude of the fourier transform */
-                    /* the Phase of the fourier transform */
-                    /* the normalized magnitude of the transform: nMag(fund)=1*/
-                    /* the normalized phase of the transform: Nphase(fund)=0 */
-    /* note we can consider these as a set of arrays:  The sizes are:
-     *  Time[ndata], Value[ndata]
-     *  Freq[numFreq],Mag[numfreq],Phase[numfreq],nMag[numfreq],nPhase[numfreq]
+CKTfour(int ndata,		/* number of entries in the Time and
+                                   Value arrays */
+	int numFreq,		/* number of harmonics to calculate */
+	double *thd,		/* total harmonic distortion (percent)
+                                   to be returned */
+	double *Time,		/* times at which the voltage/current
+                                   values were measured*/
+	double *Value,		/* voltage or current vector whose
+                                   transform is desired */
+	double FundFreq,	/* the fundamental frequency of the
+                                   analysis */
+	double *Freq,		/* the frequency value of the various
+                                   harmonics */
+	double *Mag,		/* the Magnitude of the fourier
+                                   transform */
+	double *Phase,		/* the Phase of the fourier transform */
+	double *nMag,		/* the normalized magnitude of the
+                                   transform: nMag(fund)=1*/
+	double *nPhase)		/* the normalized phase of the
+                                   transform: Nphase(fund)=0 */
+{
+    /* Note: we can consider these as a set of arrays.  The sizes are:
+     * Time[ndata], Value[ndata], Freq[numFreq], Mag[numfreq],
+     * Phase[numfreq], nMag[numfreq], nPhase[numfreq]
+     *
      * The arrays must all be allocated by the caller.
      * The Time and Value array must be reasonably distributed over at
      * least one full period of the fundamental Frequency for the
      * fourier transform to be useful.  The function will take the
      * last period of the frequency as data for the transform.
-     */
-
-{
-/* we are assuming that the caller has provided exactly one period
- * of the fundamental frequency.
- */
+     *
+     * We are assuming that the caller has provided exactly one period
+     * of the fundamental frequency.  */
     int i;
     int j;
     double tmp;
@@ -272,112 +293,3 @@ CKTfour(int ndata, int numFreq, double *thd, double *Time, double *Value, double
     *thd = 100*sqrt(*thd);
     return(OK);
 }
-
-#ifdef notdef
-    /* What is this code?  An old DFT? */
-    double initial; /*  starting time */
-    double final;   /* final time */
-    double elapsed; /* elapsed time */
-    double tmp;
-    int start=0;
-    int n;
-    int m;
-    int edge;
-
-    *thd = 0;
-    final = Time[ndata-1];
-    initial = Time[0];
-    elapsed = final - initial;
-    if( (elapsed-1/FundFreq)< -.01/FundFreq ){
-        /* not enough data for a full period */
-        return(E_BADPARM);
-    }
-    elapsed = 1/FundFreq;   /* set to desired elapsed time */
-    initial = final - elapsed;  /* set to desired starting time */
-    while(Time[start]<initial) { start++; } /* to find first time in interval*/
-    start++; /* throw away one more point - come back to it later */
-    for(m=0;m<numFreq;m++) {
-        Mag[m]=0;
-        Phase[m]=0;
-    }
-    /* ok - here's the hard part - compute the dft of Data[start::ndata]
-     * temporarily, put the real/imag. parts of the DFT in Mag[] and Phase[]
-     * later we will convert each term to phase-magnitude 
-     */
-
-    for(n=start;n<ndata-1;n++) {
-        for(m=0;m<numFreq;m++) {
-            Mag[m]   += .5 * (Time[n+1]-Time[n-1]) * Value[n] * 
-                    sin(2.0*M_PI*m*((Time[n]-initial)/elapsed));
-            Phase[m] += .5 * (Time[n+1]-Time[n-1]) * Value[n] * 
-                    cos(2.0*M_PI*m*((Time[n]-initial)/elapsed));
-            /* know Time[n+-1] exists because stop at = ndata-2, */
-            /* and did a start++ earlier - come back and clean up ends later */
-        }
-    }
-    /* now to deal with the endpoints.  The (ndata-1)th point has a smaller 
-     * interval 
-     */
-    for(m=0;m<numFreq;m++) {
-        Mag[m]   += 0.5 * (Time[n]-Time[n-1]) * Value[n] * 
-                sin(2.0*M_PI*m*((Time[n]-initial)/elapsed));
-        Phase[m] += 0.5 * (Time[n]-Time[n-1]) * Value[n] * 
-                cos(2.0*M_PI*m*((Time[n]-initial)/elapsed));
-    }
-    /* now to deal with the start of the interval.  first, deal with
-     * the start-1'th point - exactly the same regardless of case 
-     * because of the extra start++ earlier.
-     */
-    for(m=0;m<numFreq;m++) {
-        Mag[m]   += 0.5 * (Time[start]-initial) * Value[start-1] * 
-                sin(2.0*M_PI*m*((Time[start-1]-initial)/elapsed));
-        Phase[m] += 0.5 * (Time[start]-initial) * Value[start-1] * 
-                cos(2.0*M_PI*m*((Time[start-1]-initial)/elapsed));
-    }
-    /* now deal with the possibility that the above point, which was
-     * the first one contained within the interval may have been
-     * inside the interval, or ON the boundry - in the latter case,
-     * we don't want to deal with the previous point at all.
-     */
-    if(Time[start-1]> initial) {
-        /* interesting case - need to handle previous point */
-        /* first, make sure that there is a point on the other side of
-         * the beginning of time.
-         */
-        if(start-2 < 0) { 
-            /* point doesn't exist, so we have to fudge
-             * things slightly - by bumping edge up, we re-use the first
-             * point in the interval for the last point before the 
-             * interval - should be only for very small error in
-             * interval boundaries, so shouldn't be significant, and is
-             * better than ignoring the interval
-             */
-            edge = start-1;
-        } else {
-            edge = start-2;
-        }
-        for(m=0;m<numFreq;m++) {
-            Mag[m]   += .5 * (Time[start-1]-initial) * Value[edge] * 
-                    sin(2.0*M_PI*m*((Time[edge]-initial)/elapsed));
-            Phase[m] += .5 * (Time[start-1]-initial) * Value[edge] * 
-                    cos(2.0*M_PI*m*((Time[edge]-initial)/elapsed));
-        }
-    }
-    
-    Mag[0]=Phase[0]/elapsed;
-    Phase[0]=nMag[0]=nPhase[0]=Freq[0]=0;
-
-    for(m=1;m<numFreq;m++) {
-        tmp = Mag[m] * 2.0 / (elapsed);
-        Phase[m] *= 2.0 / (elapsed);
-        Freq[m] = m * FundFreq;
-        Mag[m] = sqrt(tmp * tmp + Phase[m] * Phase[m]);
-        Phase[m] = atan2(Phase[m],tmp) * 180.0/M_PI;
-        nMag[m] = Mag[m] / Mag[1];
-        nPhase[m] = Phase[m] - Phase[1];
-        if(m>1) *thd += nMag[m] * nMag[m];
-    }
-    *thd = 100 * sqrt(*thd);
-    return(OK);
-
-#endif

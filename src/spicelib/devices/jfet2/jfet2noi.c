@@ -11,7 +11,6 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 #include <stdio.h>
 #include "jfet2defs.h"
 #include "cktdefs.h"
-#include "fteconst.h"
 #include "iferrmsg.h"
 #include "noisedef.h"
 #include "suffix.h"
@@ -34,12 +33,12 @@ JFET2noise (mode, operation, genmodel, ckt, data, OnDens)
     int operation;
     GENmodel *genmodel;
     CKTcircuit *ckt;
-    register Ndata *data;
+    Ndata *data;
     double *OnDens;
 {
     JFET2model *firstModel = (JFET2model *) genmodel;
-    register JFET2model *model;
-    register JFET2instance *inst;
+    JFET2model *model;
+    JFET2instance *inst;
     char name[N_MXVLNTH];
     double tempOnoise;
     double tempInoise;

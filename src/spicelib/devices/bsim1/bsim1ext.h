@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985      Hong June Park, Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #ifdef __STDC__
@@ -26,6 +27,7 @@ extern int B1unsetup(GENmodel*,CKTcircuit*);
 extern int B1temp(GENmodel*,CKTcircuit*);
 extern int B1trunc(GENmodel*,CKTcircuit*,double*);
 extern int B1disto(int,GENmodel*,CKTcircuit*);
+extern int B1dSetup(GENmodel*, register CKTcircuit*);
 #else /* stdc */
 extern int B1acLoad();
 extern int B1ask();

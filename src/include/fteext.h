@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
-Modified: 1999 Paolo Nenzi
+Modified: 1999 Paolo Nenzi - 2000 AlansFixes
 **********/
 
 /*
@@ -15,14 +15,11 @@ Modified: 1999 Paolo Nenzi
 
 /* needed to find out what the interface structures look like */
 #include "ifsim.h"
-#include "fteparse.h"
+#include "dvec.h"
+#include "plot.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "fteinp.h"
-
-/* agraf.c */
-
-extern void ft_agraf();
 
 /* arg.c */
 
@@ -52,6 +49,7 @@ extern bool ft_bpcheck();
 extern void com_delete();
 extern void com_iplot();
 extern void com_save();
+extern void com_save2(wordlist *, char *);
 extern void com_step();
 extern void com_stop();
 extern void com_sttus();
@@ -59,14 +57,18 @@ extern void com_trce();
 extern void ft_trquery();
 extern void dbfree( );
 
+
+/* breakp2.c */
+
+extern int ft_getSaves(struct save_info **);
+
+
 /* circuits.c */
 
 extern struct circ *ft_curckt;
 extern struct circ *ft_circuits;
 extern struct subcirc *ft_subcircuits;
-extern void ft_setccirc();
 extern void ft_newcirc();
-extern void ft_newsubcirc();
 
 /* clip.c */
 
@@ -101,6 +103,11 @@ extern void *cx_mean(void *, short int , int , int *, short int *);
 extern void *cx_length(void *, short int , int , int *, short int *);
 extern void *cx_vector(void *, short int , int , int *, short int *);
 extern void *cx_unitvec(void *, short int , int , int *, short int *);
+ 
+/* Routoure JM : somme useful functions */
+extern void *cx_min(void *, short int , int , int *, short int *);
+extern void *cx_max(void *, short int , int , int *, short int *);
+extern void *cx_d(void *, short int , int , int *, short int *);
 
 extern void *cx_plus(void *, void *, short int , short int , int );
 extern void *cx_minus(void *, void *, short int , short int , int );
@@ -175,7 +182,7 @@ extern bool ft_nopage;
 extern bool ft_nomod;
 extern bool ft_nodesprint;
 extern bool ft_optsprint;
-extern int ft_cktcoms();
+extern int ft_cktcoms(bool terse);
 extern void ft_dotsaves();
 extern int ft_savedotargs();
 
@@ -185,6 +192,10 @@ extern void fatal();
 extern void fperror();
 extern void ft_sperror();
 extern char ErrorMessage[];
+extern void internalerror(char *); 
+extern void externalerror(char *); 
+
+
 
 /* evaluate.c */
 
@@ -209,9 +220,6 @@ extern struct dvec *op_times();
 extern struct dvec *op_uminus();
 extern struct dvec *op_range();
 
-/* fourier.c */
-
-extern void com_fourier();
 
 /* spec.c */
 
@@ -244,7 +252,6 @@ extern void gi_update();
 
 extern bool gr_gmode;
 extern bool gr_hmode;
-extern bool gr_init();
 extern void gr_clean();
 extern void gr_end();
 extern void gr_iplot();
@@ -270,9 +277,10 @@ extern void gr_fixgrid();
 extern void com_edit();
 extern void com_listing();
 extern void com_source();
-extern void inp_dodeck();
+void inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, 
+		struct line *options, char *filename);
 extern void inp_source();
-extern void inp_spsource();
+void inp_spsource(FILE *fp, bool comfile, char *filename);
 extern void inp_casefix();
 extern void inp_list();
 extern void inp_readall();
@@ -280,8 +288,9 @@ extern FILE *inp_pathopen();
 
 /* nutinp.c */
 
-extern void inp_nutsource();
-extern void nutinp_dodeck();
+void inp_nutsource(FILE *fp, bool comfile, char *filename);
+void nutinp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, 
+		   struct line *options, char *filename);
 extern void nutcom_source();
 
 /* interpolate.c */
@@ -313,13 +322,13 @@ extern void com_ghelp();
 extern void com_help();
 extern void com_quit();
 extern void com_version();
-extern int hcomp();
+extern int  hcomp();
 extern void com_where();
 
 /* numparse.c */
 
 extern bool ft_strictnumparse;
-extern double *ft_numparse();
+double * ft_numparse(char **s, bool whole);
 
 /* options.c */
 
@@ -342,14 +351,14 @@ extern int cp_userset();
 extern struct func ft_funcs[];
 extern struct func func_not;
 extern struct func func_uminus;
-extern struct pnode *ft_getpnames();
+extern struct pnode * ft_getpnames(wordlist *wl, bool check);
 extern void free_pnode();
 
 /* plotcurve.c */
 
-extern int ft_findpoint();
-extern double *ft_minmax();
-extern void ft_graf();
+extern int ft_findpoint(double pt, double *lims, int maxp, int minp, bool islog);
+extern double * ft_minmax(struct dvec *v, bool real);
+extern void ft_graf(struct dvec *v, struct dvec *xs, bool nostart);
 
 /* plotinterface.c */
 
@@ -379,9 +388,8 @@ extern void com_setscale();
 extern void com_transpose();
 
 /* rawfile.c */
-
 extern int raw_prec;
-extern void raw_write();
+extern void raw_write(char *name, struct plot *pl, bool app, bool binary);
 extern struct plot *raw_read();
 
 /* resource.c */
@@ -406,6 +414,8 @@ extern void com_scirc();
 extern void com_disto();
 extern void com_noise();
 extern int ft_dorun();
+
+extern bool ft_getOutReq(FILE **, struct plot **, bool *, char *, char *);
 
 /* spice.c & nutmeg.c */
 
@@ -523,9 +533,9 @@ extern void com_clearplot();
 extern void com_reshape();
 
 /* dimens.c */
-extern char *dimstring();
+extern void dimstring();
 extern int atodims();
-extern char *indexstring();
+extern void indexstring();
 extern int incindex( );
 
 #endif /* FTEext_h */

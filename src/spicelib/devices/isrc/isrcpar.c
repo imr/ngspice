@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 /*
  */
@@ -21,6 +22,8 @@ ISRCparam(param,value,inst,select)
     GENinstance *inst;
     IFvalue *select;
 {
+	
+int i;	
     ISRCinstance *here = (ISRCinstance*)inst;
     switch(param) {
         case ISRC_DC:
@@ -83,6 +86,15 @@ ISRCparam(param,value,inst,select)
             here->ISRCcoeffs = value->v.vec.rVec;
             here->ISRCfunctionOrder = value->v.numValue;
             here->ISRCcoeffsGiven = TRUE;
+            
+            for (i=0;i<((here->ISRCfunctionOrder/2)-1);i++) {
+                  if (*(here->ISRCcoeffs+2*(i+1))<=*(here->ISRCcoeffs+2*i)) {
+                     fprintf(stderr, "Warning : current source %s",
+                                                               here->ISRCname);
+                     fprintf(stderr, " has non-increasing PWL time points.\n");
+                  }
+            }
+            
             break;
         case ISRC_SFFM:
             if(value->v.numValue <2) return(E_BADPARM);

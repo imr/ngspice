@@ -16,11 +16,11 @@ Author: 1989 Takayasu Sakurai
 int
 MOS6trunc(inModel,ckt,timeStep)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
     double *timeStep;
 {
-    register MOS6model *model = (MOS6model *)inModel;
-    register MOS6instance *here;
+    MOS6model *model = (MOS6model *)inModel;
+    MOS6instance *here;
 
     for( ; model != NULL; model = model->MOS6nextModel) {
         for(here=model->MOS6instances;here!=NULL;here = here->MOS6nextInstance){

@@ -1,0 +1,22 @@
+2000-07-25  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/spicelib/devices/README: Moved to src/spicelib/README.
+
+	* src/spicelib/Makefile.am, src/spicelib/devices/Makefile.am:
+	Files affected by the move.
+
+	* src/spicelib/devices/parser/*: Moved all files to
+	src/spicelib/parser.
+
+	* configure.in, src/Makefile.am, src/spicelib/Makefile.am,
+	src/spicelib/devices/Makefile.am: Files affected by the move.
+
+2000-07-24  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* src/spicelib/devices/analysis/*: Moved all files to
+	src/spicelib/analysis.
+
+	* configure.in, src/spicelib/Makefile.am,
+	src/spicelib/Makefile.am, src/spicelib/devices/Makefile.am: Files
+	affected by the move.
+	

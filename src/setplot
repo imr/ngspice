@@ -1,0 +1,64 @@
+* set the current working plot
+.control
+
+begin
+	unset resp
+	if $argc
+		set resp = $argv[1]
+	else
+		if $?plots = 0
+			echo Error: there aren\'t any plots currently loaded.
+			goto bottom
+		else
+			if $#plots = 0
+				echo Error: there aren\'t any plots currently loaded.
+				goto bottom
+			end
+		end
+
+		if $?resp = 0
+			set oldplot = $curplot
+			echo '	Type the name of the desired plot:'
+			echo ''
+			echo '	new	New plot'
+			foreach pl $plots
+				set curplot = $pl
+				strcmp i $pl $oldplot
+				if $i = 0
+					echo "Current $pl	$curplottitle ({$curplotname})"
+				else
+					echo "	$pl	$curplottitle ({$curplotname})"
+				end
+			end
+			set curplot = $oldplot
+			echo -n '? '
+			set resp = $<
+		end
+	end
+
+
+	strcmp i $resp ""
+	if $i = 0
+		goto bottom
+	end
+
+	strcmp i $resp new
+	if $i = 0
+		set curplot = new
+		goto bottom
+	end
+
+	foreach pl $plots
+		strcmp i $resp $pl
+		if $i = 0
+			set curplot = $pl
+			goto bottom
+		end
+	end
+
+	echo Error: no such plot name $resp
+
+	label bottom
+
+	unset resp i pl newflag oldplot
+end

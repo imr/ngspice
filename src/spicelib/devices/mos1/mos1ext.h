@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+Modified: 2000 AlansFixes
 **********/
 
 #ifdef __STDC__
@@ -27,6 +28,7 @@ extern int MOS1trunc(GENmodel*,CKTcircuit*,double*);
 extern int MOS1convTest(GENmodel*,CKTcircuit*);
 extern int MOS1disto(int,GENmodel*,CKTcircuit*);
 extern int MOS1noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+extern int MOS1dSetup(GENmodel*,CKTcircuit*);
 
 #else /* stdc */
 extern int MOS1acLoad();

@@ -1,18 +1,20 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+Modified: 2001 Paolo Nenzi (printnum)
 **********/
 
 /*
  * Do a 'diff' of two plots.
  */
 
-#include "ngspice.h"
-#include "cpdefs.h"
-#include "ftedefs.h"
-#include "ftedata.h"
-#include "ftecmath.h"
+#include <ngspice.h>
+#include <ftedefs.h>
+#include <dvec.h>
+#include <sim.h>
+
 #include "diff.h"
+#include "variable.h"
 
 
 /* Determine if two vectors have the 'same' name. */
@@ -21,6 +23,7 @@ static bool
 nameeq(char *n1, char *n2)
 {
     char buf1[BSIZE_SP], buf2[BSIZE_SP];
+    
     int i;
 
     if (eq(n1, n2))
@@ -50,8 +53,9 @@ com_diff(wordlist *wl)
     struct dvec *v1, *v2;
     double d1, d2;
     complex c1, c2, c3;
-    register int i, j;
+    int i, j;
     wordlist *tw;
+    char numbuf[BSIZE_SP],numbuf2[BSIZE_SP] ,numbuf3[BSIZE_SP], numbuf4[BSIZE_SP]; /* For printnum */
 
     if (!cp_getvar("diff_vntol", VT_REAL, (char *) &vntol))
         vntol = 1.0e-6;
@@ -203,14 +207,16 @@ com_diff(wordlist *wl)
                     d2 = v2->v_realdata[i];
                     if (MAX(fabs(d1), fabs(d2)) * reltol +
                             tol < fabs(d1 - d2)) {
+                            	printnum(numbuf, d1);
                         fprintf(cp_out,
                             "%s.%s[%d] = %-15s ",
                         p1->pl_typename, v1->v_name, i,
-                        printnum(d1));
+                        numbuf);
+                        printnum(numbuf, d2);
                         fprintf(cp_out,
                             "%s.%s[%d] = %s\n",
                         p2->pl_typename, v2->v_name, i,
-                        printnum(d2));
+                        numbuf);
                     }
                 } else {
                     c1 = v1->v_compdata[i];
@@ -223,14 +229,20 @@ com_diff(wordlist *wl)
                     cmax = MAX(cm1, cm2);
                     if (cmax * reltol +
                             tol < cmag(&c3)) {
+                        
+                        printnum(numbuf,  realpart(&c1));
+                        printnum(numbuf2, imagpart(&c1));
+                        printnum(numbuf3, realpart(&c2));
+                        printnum(numbuf4, imagpart(&c2));
+                            	
                         fprintf(cp_out,
             "%s.%s[%d] = %-10s, %-10s %s.%s[%d] = %-10s, %s\n",
                         p1->pl_typename, v1->v_name, i,
-                        copy(printnum(realpart(&c1))),
-                        copy(printnum(imagpart(&c1))),
+                        numbuf,
+                        numbuf2,
                         p2->pl_typename, v2->v_name, i,
-                        copy(printnum(realpart(&c2))),
-                        copy(printnum(imagpart(&c2))));
+                        numbuf3,
+                        numbuf4);
                     }
                 }
             }

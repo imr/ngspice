@@ -9,12 +9,13 @@ Author: 1988 Jeffrey M. Hsu
 
 #include "ngspice.h"
 #include "cpdefs.h"
-#include "ftegraph.h"
+#include "graph.h"
 #include "ftedbgra.h"
 #include "ftedev.h"
 #include "fteinput.h"
-#include "postsc.h"
 
+#include "postsc.h"
+#include "variable.h"
 
 #define RAD_TO_DEG	(180.0 / M_PI)
 #define DEVDEP(g) (*((PSdevdep *) (g)->devdep))
@@ -115,16 +116,6 @@ PS_Init(void)
 	ytadj = YTADJ * scale * fontsize / 10;
     }
 
-#ifdef notdef
-    if (fontsize > 11)
-	gridsize = GRIDSIZES;
-    else
-	gridsize = GRIDSIZE;
-
-    dispdev->width  = gridsize+16*fontwidth;	/* was 612, p.w.h. */
-    dispdev->height = gridsize+8*fontheight;	/* was 612, p.w.h. */
-#endif
-
     screenflag = 0;
     dispdev->minx = XOFF / scale;
     dispdev->miny = YOFF / scale;
@@ -149,40 +140,6 @@ PS_NewViewport(GRAPH *graph)
       /* hardcopying from the screen */
 
       screenflag = 1;
-
-      /* scale to fit on 8 1/2 square */
-#ifdef notdef
-    /* Face it, this is bogus */
-#ifdef notdef
-      fprintf(plotfile, "%g %g scale\n",
-        (double) dispdev->width / graph->absolute.width,
-        (double) dispdev->height / graph->absolute.height);
-#endif
-
-      scalex = (double) graph->absolute.width / dispdev->width;
-      scaley = (double) graph->absolute.height / dispdev->width;
-      /* scale left and bottom printer margin */
-      scaleps = ((scalex > scaley) ? scalex : scaley) / scale;
-      xoff = (int) (scaleps * (double) XOFF);
-      yoff = (int) (scaleps * (double) YOFF);
-      xtadj = 0;
-      ytadj = 0;
-      scalex = (double) dispdev->width / graph->absolute.width;
-      scaley = (double) dispdev->width / graph->absolute.height;
-
-      if (gtype == GRID_SMITH || gtype == GRID_SMITHGRID
-        || gtype == GRID_POLAR)
-      {
-	scaleps = scale * ((scalex < scaley) ? scalex : scaley);
-	fprintf(plotfile, "%g %g scale\n", scaleps, scaleps);
-      } else {
-	fprintf(plotfile, "%g %g scale\n", scale*scalex, scale*scaley);
-      }
-
-      /* re-scale linestyles */
-      gr_relinestyle(graph);
-#endif
-
     }
 
     /* reasonable values, used in gr_ for placement */
@@ -202,17 +159,14 @@ PS_NewViewport(GRAPH *graph)
     fprintf(plotfile, "%%!PS-Adobe-3.0 EPSF-3.0\n");
     fprintf(plotfile, "%%%%Creator: nutmeg\n");
     fprintf(plotfile, "%%%%BoundingBox: %d %d %d %d\n",
-	(int) (.75 * 72), (int) (.75 * 72),
-	(int) (8.5 * 72), (int) (8.5 * 72));
+	    (int) (.75 * 72), (int) (.75 * 72),
+	    (int) (8.5 * 72), (int) (8.5 * 72));
 
-#ifdef notdef
-    if (!screenflag)
-#endif
-	fprintf(plotfile, "%g %g scale\n", 1.0 / scale, 1.0 / scale);
+    fprintf(plotfile, "%g %g scale\n", 1.0 / scale, 1.0 / scale);
 
     /* set up a reasonable font */
     fprintf(plotfile, "/%s findfont %d scalefont setfont\n",
-	psfont, (int) (fontsize * scale));
+	    psfont, (int) (fontsize * scale));
 
     graph->devdep = tmalloc(sizeof(PSdevdep));
     DEVDEP(graph).lastlinestyle = -1;

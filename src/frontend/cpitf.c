@@ -3,13 +3,22 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
+/*
+ * SJB 22 May 2001
+ * Corrected freeing of memory in ft_cpinit()
+ */
+
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "ftedata.h"
+#include "dvec.h"
 #include "fteparse.h"
 #include "cpitf.h"
 
+#include <terminal.h>
+
+#include "completion.h"
+#include "variable.h"
 
 /* Set some standard variables and aliases, etc, and init the ccom stuff.  */
 
@@ -19,7 +28,7 @@ ft_cpinit(void)
     wordlist *wl;
     wordlist wl1, wl2, wl3;
     bool found = FALSE, t = TRUE;
-    char buf[BSIZE_SP], **x, *s, *r;
+    char buf[BSIZE_SP], **x, *s, *r,*copys;
     struct comm *c;
     int i;
     FILE *fp;
@@ -202,11 +211,12 @@ ft_cpinit(void)
 
 	/* Now source the standard startup file. */
 	/* XXX strange */
-	for (s = cp_tildexpand(Lib_Path); s && *s; ) {
+	for (copys=s=cp_tildexpand(Lib_Path); s && *s; ) {/*DG*/
 	    while (isspace(*s))
 		s++;
 	    for (r = buf; *s && !isspace(*s); r++, s++)
 		*r = *s;
+	    tfree(copys);	/* sjb - it's safe to free this here */
 	    (void) strcpy(r, DIR_PATHSEP);
 	    (void) strcat(r, "spinit");
 	    if ((fp = fopen(buf, "r"))) {
@@ -232,14 +242,15 @@ ft_cpinit(void)
     }
 
     tcap_init( );
-
+  /*  tfree(copys);*/ /*DG Avoid memory leak*/
+  /* SJB - must not free here as cp_tildexpande() can return NULL */
     return;
 }
 
 /* Decide whether a condition is TRUE or not. */
 
 bool
-cp_isTRUE(wordlist *wl)
+cp_istrue(wordlist *wl)
 {
     int i;
     struct dvec *v;

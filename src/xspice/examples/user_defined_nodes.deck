@@ -1,0 +1,30 @@
+User defined nodes
+*
+* This circuit contains a mix of node types including
+* two 'real' type user-defined nodes and associated
+* node bridges.
+*
+.tran 1e-6 1e-4
+*
+v1  1 0  0.0 pulse(0 1 2e-5)
+r1  1 0  1k
+*
+abridge1  [1] [enable]  node_bridge1
+.model node_bridge1 adc_bridge
+*
+aclk  [enable clk] clk  nand
+.model nand d_nand (rise_delay=1e-5 fall_delay=1e-5)
+*
+abridge2  clk enable real_node1  node_bridge2
+.model node_bridge2 d_to_real (zero=-1 one=1)
+*
+again  real_node1 real_node2  times10
+.model times10 real_gain (gain=10)
+*
+abridge3  real_node2 analog_node  node_bridge3
+.model node_bridge3 real_to_v
+*
+rout  analog_node 0  1k
+*
+*
+.end

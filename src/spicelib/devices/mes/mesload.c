@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 S. Hwang
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -29,8 +30,8 @@ MESload(inModel,ckt)
          * sparse matrix previously provided 
          */
 {
-    register MESmodel *model = (MESmodel*)inModel;
-    register MESinstance *here;
+    MESmodel *model = (MESmodel*)inModel;
+    MESinstance *here;
     double afact;
     double beta;
     double betap;
@@ -80,6 +81,7 @@ MESload(inModel,ckt)
     double vgst;
     double vto;
     double xfact;
+    double arg;
     int icheck;
     int ichk1;
     int error;
@@ -230,22 +232,28 @@ MESload(inModel,ckt)
              *   determine dc current and derivatives 
              */
             vds = vgs-vgd;
-            if (vgs <= -5*CONSTvt0) {
-                ggs = -csat/vgs+ckt->CKTgmin;
-                cg = ggs*vgs;
+            
+            if (vgs <= -3*CONSTvt0) {
+                arg=3*CONSTvt0/(vgs*CONSTe);
+                arg = arg * arg * arg;
+                cg = -csat*(1+arg)+ckt->CKTgmin*vgs;
+                ggs = csat*3*arg/vgs+ckt->CKTgmin;
             } else {
                 evgs = exp(vgs/CONSTvt0);
                 ggs = csat*evgs/CONSTvt0+ckt->CKTgmin;
                 cg = csat*(evgs-1)+ckt->CKTgmin*vgs;
             }
-            if (vgd <= -5*CONSTvt0) {
-                ggd = -csat/vgd+ckt->CKTgmin;
-                cgd = ggd*vgd;
+            if (vgd <= -3*CONSTvt0) {
+                arg=3*CONSTvt0/(vgd*CONSTe);
+                arg = arg * arg * arg;
+                cgd = -csat*(1+arg)+ckt->CKTgmin*vgd;
+                ggd = csat*3*arg/vgd+ckt->CKTgmin;
             } else {
                 evgd = exp(vgd/CONSTvt0);
                 ggd = csat*evgd/CONSTvt0+ckt->CKTgmin;
                 cgd = csat*(evgd-1)+ckt->CKTgmin*vgd;
             }
+            
             cg = cg+cgd;
             /*
              *   compute drain current and derivitives for normal mode 
@@ -399,15 +407,11 @@ MESload(inModel,ckt)
              *  check convergence 
              */
             if( (!(ckt->CKTmode & MODEINITFIX)) | (!(ckt->CKTmode & MODEUIC))) {
-                if( (icheck == 1) 
-#ifndef NEWCONV
-/* XXX */
-#endif /* NEWCONV */
-                        || (fabs(cghat-cg) >= ckt->CKTreltol*
-                            MAX(fabs(cghat),fabs(cg))+ckt->CKTabstol) ||
-                        (fabs(cdhat-cd) > ckt->CKTreltol*
-                            MAX(fabs(cdhat),fabs(cd))+ckt->CKTabstol) 
-                        ) {
+		if((icheck == 1) ||
+		   (fabs(cghat-cg) >= ckt->CKTreltol *
+		    MAX(fabs(cghat),fabs(cg))+ckt->CKTabstol) ||
+		   (fabs(cdhat-cd) > ckt->CKTreltol*
+		    MAX(fabs(cdhat),fabs(cd))+ckt->CKTabstol)) {
                     ckt->CKTnoncon++;
 		    ckt->CKTtroubleElt = (GENinstance *) here;
                 }

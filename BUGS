@@ -1,0 +1,7 @@
+This file contais a list of known but not yet fixed bugs in ngspice.
+====================================================================
+
+Rework 14: 
+   If you run tests in the test tree, you will discover that some 
+   of them fails because of a different value in "Reference Value".
+   Anyway, analyses results are not affected.

@@ -17,12 +17,12 @@ Author: 1985 Thomas L. Quarles
 int
 BJTpzLoad(inModel,ckt,s)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
-    register SPcomplex *s;
+    CKTcircuit *ckt;
+    SPcomplex *s;
 
 {
-    register BJTmodel *model = (BJTmodel*)inModel;
-    register BJTinstance *here;
+    BJTmodel *model = (BJTmodel*)inModel;
+    BJTinstance *here;
     double gcpr;
     double gepr;
     double gpi;

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
+Modified: 2000 AlansFixes
 **********/
 
 #include "ngspice.h"
@@ -17,7 +18,7 @@ Author: 1988 Jaijeet S Roychowdhury
  * the correct value
  */
 int
-BJTdisto(int mode, GENmodel *genmodel, register CKTcircuit *ckt)
+BJTdisto(int mode, GENmodel *genmodel, CKTcircuit *ckt)
 {
     BJTmodel *model = (BJTmodel *) genmodel;
     DISTOAN* job = (DISTOAN*) ckt->CKTcurJob;
@@ -39,13 +40,13 @@ BJTdisto(int mode, GENmodel *genmodel, register CKTcircuit *ckt)
     double r2h1m2y,i2h1m2y;
     double r2h1m2z, i2h1m2z;
     double temp, itemp;
-    register BJTinstance *here;
+    BJTinstance *here;
 #ifdef DISTODEBUG
     double time;
 #endif
 
     if (mode == D_SETUP)
-	return(BJTdSetup(model,ckt));
+	return(BJTdSetup((GENmodel *)model,ckt));
 
     if ((mode == D_TWOF1) || (mode == D_THRF1) || 
 	(mode == D_F1PF2) || (mode == D_F1MF2) ||

@@ -14,17 +14,17 @@ Author: 1988 Min-Chie Jeng, Hong J. Park, Thomas L. Quarles
 
 int
 B2setup(matrix,inModel,ckt,states)
-    register SMPmatrix *matrix;
-    register GENmodel *inModel;
-    register CKTcircuit *ckt;
+    SMPmatrix *matrix;
+    GENmodel *inModel;
+    CKTcircuit *ckt;
     int *states;
         /* load the B2 device structure with those pointers needed later 
          * for fast matrix loading 
          */
 
 {
-    register B2model *model = (B2model*)inModel;
-    register B2instance *here;
+    B2model *model = (B2model*)inModel;
+    B2instance *here;
     int error;
     CKTnode *tmp;
 
@@ -492,8 +492,19 @@ B2setup(matrix,inModel,ckt,states)
                     (here->B2drainSquares != 0.0 ) &&
                     (here->B2dNodePrime == 0) ) {
                 error = CKTmkVolt(ckt,&tmp,here->B2name,"drain");
-                if(error) return(error);
+               if(error) return(error);
                 here->B2dNodePrime = tmp->number;
+                 if (ckt->CKTcopyNodesets) {
+		     CKTnode *tmpNode;
+		     IFuid tmpName;
+            
+		     if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+			 if (tmpNode->nsGiven) {
+			     tmp->nodeset=tmpNode->nodeset; 
+			     tmp->nsGiven=tmpNode->nsGiven; 
+			 }
+		     }
+		 }
             } else {
                     here->B2dNodePrime = here->B2dNode;
             }
@@ -504,8 +515,20 @@ B2setup(matrix,inModel,ckt,states)
                     (here->B2sNodePrime == 0) ) {
                 if(here->B2sNodePrime == 0) {
                     error = CKTmkVolt(ckt,&tmp,here->B2name,"source");
-                    if(error) return(error);
+                    if(error)
+			return(error);
                     here->B2sNodePrime = tmp->number;
+                    if (ckt->CKTcopyNodesets) {
+			CKTnode *tmpNode;
+			IFuid tmpName;
+			
+			if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+			    if (tmpNode->nsGiven) {
+				tmp->nodeset=tmpNode->nodeset; 
+				tmp->nsGiven=tmpNode->nsGiven; 
+			    }
+                  }
+                }
                 }
             } else  {
                 here->B2sNodePrime = here->B2sNode;
@@ -553,7 +576,6 @@ B2unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-#ifndef HAS_BATCHSIM
     B2model *model;
     B2instance *here;
 
@@ -577,6 +599,5 @@ B2unsetup(inModel,ckt)
 	    }
 	}
     }
-#endif
     return OK;
 }

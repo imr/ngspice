@@ -20,11 +20,11 @@ Author: 1985 Thomas L. Quarles
 
 int
 VCVSsSetup(info,inModel)
-    register SENstruct *info;
+    SENstruct *info;
     GENmodel *inModel;
 {
-    register VCVSmodel *model = (VCVSmodel *)inModel;
-    register VCVSinstance *here;
+    VCVSmodel *model = (VCVSmodel *)inModel;
+    VCVSinstance *here;
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->VCVSnextModel ) {

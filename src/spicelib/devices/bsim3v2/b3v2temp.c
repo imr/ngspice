@@ -1,17 +1,3 @@
-/* $Id$  */
-/*
- $Log$
- Revision 1.1  2000-04-27 20:03:59  pnenzi
- Initial revision
-
- * Revision 3.2 1998/6/16  18:00:00  Weidong
- * BSIM3v3.2 release
- *
-*/
-static char rcsid[] = "$Id$";
-
-/*************************************/
-
 /***********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
@@ -47,8 +33,8 @@ BSIM3V2temp(inModel,ckt)
 GENmodel *inModel;
 CKTcircuit *ckt;
 {
-register BSIM3V2model *model = (BSIM3V2model*) inModel;
-register BSIM3V2instance *here;
+BSIM3V2model *model = (BSIM3V2model*) inModel;
+BSIM3V2instance *here;
 struct BSIM3V2SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;
@@ -174,7 +160,7 @@ int Size_Not_Found;
               }
 
 	      if (Size_Not_Found)
-	      {   pParam = (struct BSIM3V2SizeDependParam *)malloc(
+	      {   pParam = (struct BSIM3V2SizeDependParam *)tmalloc(
 	                    sizeof(struct BSIM3V2SizeDependParam));
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;

@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon Jacobs
+Modified: 2001 Jon Englebert
 **********/
 /*
  */
@@ -40,7 +41,8 @@ CSWmParam(param,value,inModel)
             break;
         case CSW_IHYS:
             /* take absolute value of hysteresis voltage */
-            model->CSWiHysteresis = fabs(value->rValue);
+//            model->CSWiHysteresis = fabs(value->rValue);
+            model->CSWiHysteresis = value->rValue;
             model->CSWhystGiven = TRUE;
             break;
         default:

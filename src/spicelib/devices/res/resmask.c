@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 - Paolo Nenzi
+Modified: 2000 AlansFixes
 **********/
 
 
@@ -37,6 +38,9 @@ RESmodAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             return(OK);
         case RES_MOD_NARROW: 
             value->rValue = model->RESnarrow;
+            return(OK);
+        case RES_MOD_SHORT: 
+            value->rValue = model->RESshort;
             return(OK);
         default:
             return(E_BADPARM);

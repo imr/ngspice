@@ -20,7 +20,7 @@ MOS6mParam(param,value,inModel)
     IFvalue *value;
     GENmodel *inModel;
 {
-    register MOS6model *model = (MOS6model *)inModel;
+    MOS6model *model = (MOS6model *)inModel;
     switch(param) {
         case MOS6_MOD_TNOM:
             model->MOS6tnom = value->rValue+CONSTCtoK;

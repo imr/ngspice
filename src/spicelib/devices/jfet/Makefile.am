@@ -2,28 +2,30 @@
 
 pkglib_LTLIBRARIES = libjfet.la
 
-libjfet_la_SOURCES = 		\
-		jfet.c		\
-		jfetacld.c	\
-		jfetask.c	\
-		jfetdefs.h	\
-		jfetdel.c	\
-		jfetdest.c	\
-		jfetdist.c	\
-		jfetdset.c	\
-		jfetext.h	\
-		jfetic.c	\
-		jfetitf.h	\
-		jfetload.c	\
-		jfetmask.c	\
-		jfetmdel.c	\
-		jfetmpar.c	\
-		jfetnoi.c	\
-		jfetpar.c	\
-		jfetpzld.c	\
-		jfetset.c	\
-		jfettemp.c	\
-		jfettrun.c
+libjfet_la_SOURCES = 	\
+	jfet.c		\
+	jfetacld.c	\
+	jfetask.c	\
+	jfetdefs.h	\
+	jfetdel.c	\
+	jfetdest.c	\
+	jfetdist.c	\
+	jfetdset.c	\
+	jfetext.h	\
+	jfetic.c	\
+	jfetinit.c	\
+	jfetinit.h	\
+	jfetitf.h	\
+	jfetload.c	\
+	jfetmask.c	\
+	jfetmdel.c	\
+	jfetmpar.c	\
+	jfetnoi.c	\
+	jfetpar.c	\
+	jfetpzld.c	\
+	jfetset.c	\
+	jfettemp.c	\
+	jfettrun.c
 
 
 

@@ -20,10 +20,10 @@ Author: 1985 Thomas L. Quarles
 void
 VCVSsPrint(inModel,ckt)
     GENmodel *inModel;
-    register CKTcircuit *ckt;
+    CKTcircuit *ckt;
 {
-    register VCVSmodel *model = (VCVSmodel *)inModel;
-    register VCVSinstance *here;
+    VCVSmodel *model = (VCVSmodel *)inModel;
+    VCVSinstance *here;
 
     printf("VOLTAGE CONTROLLED VOLTAGE SOURCES-----------------\n");
     /*  loop through all the voltage source models */
