@@ -804,8 +804,8 @@ static int get_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   char *name;
   char *paramname;
-  GENinstance *devptr=(GENinstance *)NULL;
-  GENmodel *modptr=(GENmodel *)NULL;
+  void *devptr=NULL;
+  void *modptr=NULL;
   IFdevice *device;
   IFparm *opt;
   IFvalue pv;
@@ -836,11 +836,11 @@ int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   
   /* get the unique IFuid for name (device/model) */
   INPretrieve(&name,(INPtables *)ft_curckt->ci_symtab);
-  err = (*(ft_sim->findInstance))(ft_curckt->ci_ckt,&typecode,(void **)&devptr,name,NULL,NULL);
+  err = (*(ft_sim->findInstance))(ft_curckt->ci_ckt,&typecode,&devptr,name,NULL,NULL);
   if (err != OK) {
     typecode = -1;
     devptr   = (void *)NULL;
-    err = (*(ft_sim->findModel))(ft_curckt->ci_ckt,&typecode,(void **)&modptr,name);
+    err = (*(ft_sim->findModel))(ft_curckt->ci_ckt,&typecode,&modptr,name);
   }
   if (err != OK) {
     sprintf(buf,"No such device or model name %s",name);
@@ -857,10 +857,10 @@ int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
       found=TRUE;
     } else if (strcmp(paramname,opt->keyword)==0) {
       if (devptr)
-        err = (*(ft_sim->askInstanceQuest))(ft_curckt->ci_ckt, (void *)devptr, 
+        err = (*(ft_sim->askInstanceQuest))(ft_curckt->ci_ckt, devptr, 
                 opt->id, &pv, (IFvalue *)NULL);
       else
-        err = (*(ft_sim->askModelQuest))(ft_curckt->ci_ckt, (void *)modptr, 
+        err = (*(ft_sim->askModelQuest))(ft_curckt->ci_ckt, modptr, 
                 opt->id, &pv, (IFvalue *)NULL);
       if (err==OK) {
       	sprintf(buf,"%g",pv.rValue); /* dataType is here always real */
@@ -1157,6 +1157,10 @@ struct watch {
   int state; /* pretriggered or not */
   double Vmin; /* the boundaries */
   double Vmax;
+  /* To get the exact trigger time */
+  double Vavg;
+  double oT;
+  double oV;
 };
 
 struct watch *watches=NULL;
@@ -1184,10 +1188,10 @@ int Tcl_ExecutePerLoop() {
       tmp->next = NULL;
       
       if(eventQueue) {
-	eventQueueEnd->next = tmp;
-	eventQueueEnd = tmp;
+          eventQueueEnd->next = tmp;
+          eventQueueEnd = tmp;
       } else {
-	eventQueue = tmp;
+          eventQueue = tmp;
       }
 	
       eventQueueEnd = tmp;
@@ -1195,7 +1199,14 @@ int Tcl_ExecutePerLoop() {
       tmp->vector = current->vector;
       tmp->type = current->type;
       tmp->stepNumber = vectors[0].length;
-      tmp->time = vectors[0].data[vectors[0].length-1];
+
+	  {
+		double T = vectors[0].data[vectors[0].length-1];
+        double V = v->data[v->length-1];
+		  
+		tmp->time = current->oT + 
+		  (current->Vavg - current->oV) * (T - current->oT) / (V - current->oV);
+      }
 
       current->state = 0;
 
@@ -1203,6 +1214,10 @@ int Tcl_ExecutePerLoop() {
       if((current->type > 0 && v->data[v->length-1] < current->Vmin) || 
 	 (current->type < 0 && v->data[v->length-1] > current->Vmax))
 	current->state = 1;
+	
+	current->oT = vectors[0].data[vectors[0].length-1];
+	current->oV = v->data[v->length-1];
+	
 #ifdef HAVE_LIBPTHREAD
     pthread_mutex_unlock(&v->mutex);
 #endif
@@ -1287,6 +1302,7 @@ static int registerTrigger TCL_CMDPROCARGS(clientData,interp,argc,argv){
   watches->state = 0;
   watches->Vmin = atof(argv[2]);
   watches->Vmax = atof(argv[3]);
+  watches->Vavg = (watches->Vmin + watches->Vmax) / 2 ;
   
 #ifdef HAVE_LIBPTHREAD
   pthread_mutex_unlock(&triggerMutex);
