@@ -1,3 +1,8 @@
+2000-10-13  Arno W. Peters  <A.W.Peters@ieee.org>
+
+	* ngspice.txt: changes SPICE: to NGSPICE: to restore help
+	functionality.  Thanks go to Michael Widlok for the analysis.
+
 2000-07-21  Arno W. Peters  <A.W.Peters@ieee.org>
 
 	* src/analysis/*: Moved these files into src/devices/analysis.
