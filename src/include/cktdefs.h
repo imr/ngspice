@@ -339,7 +339,7 @@ extern int NIpzSym2(PZtrial **, PZtrial *);
 extern int NIreinit( CKTcircuit *);
 extern int NIsenReinit( CKTcircuit *);
 extern int NIdIter (CKTcircuit *);             
-extern int NInzIter (CKTcircuit *, int, int ); 
+/*extern int NInzIter (CKTcircuit *, int, int ); */ 
 extern IFfrontEnd *SPfrontEnd;
 
 #endif /*CKT*/

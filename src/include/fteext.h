@@ -49,7 +49,7 @@ extern bool ft_bpcheck();
 extern void com_delete();
 extern void com_iplot();
 extern void com_save();
-extern void com_save2(wordlist *, char *); /* AlansFixes */
+extern void com_save2(wordlist *, char *);
 extern void com_step();
 extern void com_stop();
 extern void com_sttus();
@@ -60,7 +60,7 @@ extern void dbfree( );
 
 /* breakp2.c */
 
-extern int ft_getSaves(struct save_info **); /* AlanFixes */
+extern int ft_getSaves(struct save_info **);
 
 
 /* circuits.c */
@@ -349,11 +349,11 @@ extern int cp_userset();
 extern struct func ft_funcs[];
 extern struct func func_not;
 extern struct func func_uminus;
-struct struct pnode * ft_getpnames(wordlist *wl, bool check);
+extern struct pnode * ft_getpnames(wordlist *wl, bool check);
 extern void free_pnode();
 
 /* plotcurve.c */
-/* AlansFixes */
+
 extern int ft_findpoint(double pt, double *lims, int maxp, int minp, bool islog);
 extern double * ft_minmax(struct dvec *v, bool real);
 extern void ft_graf(struct dvec *v, struct dvec *xs, bool nostart);
