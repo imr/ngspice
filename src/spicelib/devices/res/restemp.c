@@ -64,9 +64,14 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             here->RESconduct = 1.0/(here->RESresist * factor);
 	    
+	    if(here->RESmGiven)
+	      here->RESconduct = here->RESconduct * here->RESm;
+	    
 	    /* Paolo Nenzi: Temperature effects for AC value */
 	    if(here->RESacresGiven) 
 	       here->RESacConduct = 1.0/(here->RESacResist * factor);
+	    if (here->RESmGiven)
+	       here->RESacConduct = here->RESacConduct * here->RESm;
         }
     }
     return(OK);

@@ -39,6 +39,10 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             break;
         case RES_RESIST_SENS:
             here->RESsenParmNo = value->iValue;
+	    break;
+	case RES_M:
+	    here->RESm = value->rValue;
+	    here->RESmGiven = TRUE;
             break;
         default:
             return(E_BADPARM);

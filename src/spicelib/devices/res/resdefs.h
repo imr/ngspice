@@ -36,6 +36,7 @@ typedef struct sRESinstance {
     double RESacConduct; /* AC conductance */
     double RESwidth;    /* width of the resistor */
     double RESlength;   /* length of the resistor */
+    double RESm;        /* Multiplicity factor for this instance */
     double *RESposPosptr;    /* pointer to sparse matrix diagonal at 
                               * (positive,positive) */
     double *RESnegNegptr;    /* pointer to sparse matrix diagonal at 
@@ -49,7 +50,8 @@ typedef struct sRESinstance {
     unsigned RESlengthGiven : 1;    /* flag to indicate length given */
     unsigned REStempGiven   : 1;    /* indicates temperature specified */
 /* serban */
-    unsigned RESacresGiven   : 1;   /* indicates AC value specified */
+    unsigned RESacresGiven  : 1;    /* indicates AC value specified */
+    unsigned RESmGiven      : 1;    /* indicates M parameter specified */
     int    RESsenParmNo;         /* parameter # for sensitivity use;
                 set equal to  0 if not a design parameter*/
 #ifndef NONOISE
@@ -97,6 +99,7 @@ typedef struct sRESmodel {       /* model structure for a resistor */
 /* serban */
 #define RES_ACRESIST 10
 #define RES_ACCONDUCT 11
+#define RES_M 12 /* pn */
 
 
 /* model parameters */

@@ -16,6 +16,7 @@ IFparm RESpTable[] = { /* parameters */
  IOPZU( "temp",        RES_TEMP,   IF_REAL,"Instance operating temperature"),
  IOPQU( "l",          RES_LENGTH, IF_REAL,"Length"),
  IOPZU( "w",          RES_WIDTH,  IF_REAL,"Width"),
+ IOPU( "m", RES_M, IF_REAL, "Multiplication factor"),
  IP(   "sens_resist", RES_RESIST_SENS, IF_FLAG,   
         "flag to request sensitivity WRT resistance"),
  OP( "i",          RES_CURRENT,IF_REAL,"Current"),
