@@ -176,6 +176,8 @@ int INPgetNetTok(char **line, char **token, int gobble)
 	    break;
 	if (*point == ',')
 	    break;
+	if (*point == ')')
+	    break;
     }
 
     /* now copy found token into *token */
