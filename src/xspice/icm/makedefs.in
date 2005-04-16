@@ -8,6 +8,7 @@ top_builddir = ../../..
 top_srcdir = @top_srcdir@
 subdir = src/xspice/icm
 mkdir_p = @mkdir_p@
++uname = $(shell uname)
                                                                                 
 # C compiler to use
 CC = @CC@
@@ -22,7 +23,11 @@ CFLAGS = @CFLAGS@ -fPIC -DCM_LINUX
 CMPP = $(TOPDIR)$(top_builddir)/src/xspice/cmpp/cmpp
 
 # Flags to use when linking shared library
+ifeq "$(strip $(uname))" "Darwin"
+LDFLAGS = -bundle -flat_namespace -undefined suppress
+else
 LDFLAGS = -shared
+endif
 
 # The codemodels to make
 CMDIRS = spice2poly digital analog xtradev xtraevt
