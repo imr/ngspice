@@ -60,6 +60,8 @@ Modified: 2000 AlansFixes
 #include "subckt.h"
 #include "variable.h"
 
+/* Uncomment to turn on tracing for the Numparam */
+//#define TRACE_NUMPARAMS
 
 #ifdef NUMPARAMS
 #define  NUPADECKCOPY 0
@@ -164,12 +166,32 @@ inp_subcktexpand(struct line *deck)
 #ifdef NUMPARAMS
     /*  deck has .control sections already removed, but not comments */
     if ( NumParams == 'y' ) {
+	
+#ifdef TRACE_NUMPARAMS
+	printf("Numparams is processing this deck:\n");
+	c=deck;
+	while( c!=NULL) {
+	    printf("%3d:%s\n",c->li_linenum, c->li_line);
+	    c= c->li_next;
+	}
+#endif	
+	
       ok = nupa_signal( NUPADECKCOPY, NULL);  
       c=deck;
       while ( c != NULL) {  /* first Numparam pass */ 
         c->li_line = nupa_copy(c->li_line, c->li_linenum);
         c= c->li_next;
       }
+      
+#ifdef TRACE_NUMPARAMS
+      printf("Numparams transformed deck:\n");
+      c=deck;
+      while( c!=NULL) {
+	  printf("%3d:%s\n",c->li_linenum, c->li_line);
+	  c= c->li_next;
+      }
+#endif	      
+
     } 
 #endif
     
@@ -259,15 +281,23 @@ inp_subcktexpand(struct line *deck)
 	    return NULL;
 	}
 	
-#ifdef NUMPARAM
+#ifdef NUMPARAMS
    if ( NumParams == 'y' ) {
       /* the NUMPARAM final line translation pass */
       ok= ok && nupa_signal(NUPASUBDONE, NULL); 
       c= ll;
-      while (c != NULL) {
+      while (c != NULL) { 
         ok= ok && nupa_eval( c->li_line, c->li_linenum);
-        c= c->li_next;
+	c= c->li_next;
       }
+#ifdef TRACE_NUMPARAMS
+      printf("Numparams converted deck:\n");
+      c=ll;
+      while( c!=NULL) {
+	  printf("%3d:%s\n",c->li_linenum, c->li_line);
+	  c= c->li_next;
+      }
+#endif	 
       ok= ok && nupa_signal(NUPAEVALDONE, NULL);
     }
 #endif
@@ -1130,7 +1160,8 @@ finishLine(char *dst, char *src, char *scname)
 	    /*
 	     * 
 	     */
-	    if (buf[0] == 'v' || buf[0] == 'V') {
+             if ((which == 'i' || which == 'I') &&
+	        (buf[0] == 'v' || buf[0] == 'V')) {
 		*dst++ = buf[0];
 		*dst++ = ':';
 		i = 1;

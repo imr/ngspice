@@ -797,7 +797,7 @@ EndFunc
 
 #ifndef _MATH_H
 
-Func long round(double x)
+Func long np_round(double x)
 /* using <math.h>, it would be simpler: floor(x+0.5) */
 Begin
   double u; 
@@ -816,9 +816,9 @@ Begin
   return z
 EndFunc
 
-Func long trunc(double x)
+Func long np_trunc(double x)
 Begin
-  long n=round(x);
+  long n=np_round(x);
   If (n>x) And (x>=0.0) Then
     Dec(n) 
   ElsIf (n<x) And (x<0.0) Then
@@ -829,7 +829,7 @@ EndFunc
 
 Func double frac(double x)
 Begin
-  return x- trunc(x) 
+  return x- np_trunc(x) 
 EndFunc
 
 Func double intp(double x)
@@ -838,18 +838,18 @@ Begin
   If (x>u) Or (x< -u) Then
     return x
   Else
-    return trunc(x)
+    return np_trunc(x)
   EndIf
 EndFunc
 
 #else  /* use floor() and ceil() */
 
-Func long round(double r)
+Func long np_round(double r)
 Begin
   return (long)floor(r+0.5)
 EndFunc
 
-Func long trunc(double r)
+Func long np_trunc(double r)
 Begin
   If r>=0.0 Then
     return (long)floor(r)

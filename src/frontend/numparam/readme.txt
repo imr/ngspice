@@ -105,7 +105,7 @@ R1 p2 0    1k
 
 X1 input output myfilter
 V1 input 0 AC 1V
-
+.end
 
 Let us recall what the Spice "front-end" essentially does to your 
 circuit-description (CDL) file whenever it is submitted, either at program
@@ -201,7 +201,7 @@ R1 p2 0    {rval}
 
 X1 input output myfilter 1k 1nF
 V1 input 0 AC {amplitude}
-
+.end
 
 Note:
 Now, there is some possible confusion in Spice because of multiple numerical

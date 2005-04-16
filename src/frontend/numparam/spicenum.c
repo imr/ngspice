@@ -29,6 +29,9 @@ Todo:
 #include "general.h"
 #include "numparam.h"
 
+/* Uncomment this line to allow debug tracing */
+/*#define TRACE_NUMPARAMS */
+
 /*  the nupa_signal arguments sent from Spice:
 
    sig=1: Start of the subckt expansion.
@@ -356,15 +359,28 @@ Intern tdico * dico=Null;
 /*  Darray(refptr, Pchar, Maxline)   pointers to source code lines */
 /*  Darray(category, char, Maxline)  category of each line */
 
+/*
+   Open ouput to a log file.
+   takes no action if logging is disabled.
+   Open the log if not already open.
+*/
 Intern
 Proc putlogfile(char c, int num, Pchar t)
 Begin
   Str(Llen, u);
-  If dologfile And (logfile != Null) Then
-    cadd(u,c); nadd(u,num); 
-    cadd(u,':'); cadd(u,' '); 
-    sadd(u,t); cadd(u,'\n');
-    fputs(u,logfile);
+  Str(20,fname);
+  If dologfile Then
+    If(logfile == Null) Then
+      scopy(fname,"logfile."); 
+      Inc(nblog); nadd(fname,nblog);
+      logfile=fopen(fname, "w");
+    EndIf
+    If(logfile != Null) Then
+      cadd(u,c); nadd(u,num); 
+      cadd(u,':'); cadd(u,' '); 
+      sadd(u,t); cadd(u,'\n');
+      fputs(u,logfile);
+    EndIf
   EndIf
 EndProc
 
@@ -372,18 +388,11 @@ Intern
 Proc nupa_init( Pchar srcfile)
 Begin
   short i;
-  Str(20,fname);
   /* init the symbol table and so on, before the first  nupa_copy. */ 
   evalcount=0;
   linecount= 0;
   incontrol=False;
   placeholder= 0;
-  /* If logfile != Null Then fclose(logfile) EndIf */
-  If dologfile And (logfile==Null) Then
-    scopy(fname,"logfile."); 
-    Inc(nblog); nadd(fname,nblog);
-    logfile=fopen(fname, "w");
-  EndIf
   dico= New(tdico); 
   initdico(dico);
   For i=0; i<Maxline; Inc(i) Do
@@ -411,18 +420,18 @@ Begin
   Done 
   Dispose(dico);
   dico= Null;
- /* debug: ask if spice run really wanted */
-  scopy(rep," Copies=");      nadd(rep,linecount);
-  sadd(rep," Evals=");        nadd(rep,evalcount);
-  sadd(rep," Placeholders="); nadd(rep,placeholder);
-  sadd(rep," Symbols=");      nadd(rep,dictsize); 
-  sadd(rep," Errors=");       nadd(rep,nerrors); 
-  cadd(rep,'\n'); ws(rep);
-  ws("Expansion ");
-  If Zero(nerrors) Then ws("done") Else ws("errors") EndIf
-  ws(": Really run Spice  y/n ? \n"); 
-  rs(rep);
-  If upcase(rep[0]) != 'Y' Then exit(-1) EndIf
+  If NotZ(nerrors) Then
+    /* debug: ask if spice run really wanted */
+    scopy(rep," Copies=");      nadd(rep,linecount);
+    sadd(rep," Evals=");        nadd(rep,evalcount);
+    sadd(rep," Placeholders="); nadd(rep,placeholder);
+    sadd(rep," Symbols=");      nadd(rep,dictsize); 
+    sadd(rep," Errors=");       nadd(rep,nerrors); 
+    cadd(rep,'\n'); ws(rep);	     
+    ws("Numparam expansion errors: Run Spice anyway? y/n ? \n"); 
+    rs(rep);
+    If upcase(rep[0]) != 'Y' Then exit(-1) EndIf
+  EndIf
   linecount= 0; 
   evalcount= 0; 
   placeholder= 0;
@@ -502,6 +511,11 @@ Begin
    Str(80,subname);
    dico->srcline= linenum;
    c= dico->category[linenum];
+#ifdef TRACE_NUMPARAMS
+   printf("** SJB - in nupa_eval()\n");
+   printf("** SJB - processing line %3d: %s\n",linenum,s);	
+   printf("** SJB - category '%c'\n");
+#endif /* TRACE_NUMPARAMS */	     
    If c=='P' Then /* evaluate parameters */
      nupa_assignment( dico, dico->refptr[linenum] , 'N');
    ElsIf c=='B' Then /* substitute braces line */
@@ -519,6 +533,10 @@ Begin
    EndIf
    putlogfile('e',linenum,s);
    Inc(evalcount);
+#ifdef TRACE_NUMPARAMS
+   ws("** SJB -                  --> "); ws(s); wln();
+   ws("** SJB - leaving nupa_eval()"); wln(); wln();
+#endif /* TRACE_NUMPARAMS */
    return 1
 EndFunc
 

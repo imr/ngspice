@@ -32,6 +32,8 @@ Author: 1985 Wayne A. Christopher
 /* gtri - end - 12/12/90 */
 #endif
 
+/* SJB - Uncomment this line for debug tracing */
+/*#define TRACE */
 
 /*-------------------------------------------------------------------------*
  *  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF' *
@@ -132,7 +134,7 @@ inp_readall(FILE *fp, struct line **data)
     char *buffer, *s, *t, c;
     /* segfault fix */
     char *copys=NULL;
-    int line = 1;
+    int line_number = 1; /* sjb - renamed to avoid confusion with struct line */ 
     FILE *newfp;
 
     /*   Must set this to NULL or non-tilde includes segfault. -- Tim Molteno   */
@@ -179,12 +181,12 @@ inp_readall(FILE *fp, struct line **data)
 
 #ifdef TRACE
       /* SDB debug statement */
-      printf ("in inp_readall, just read %s . . .\n", buffer); 
+      printf ("in inp_readall, just read '%s' . . .\n", buffer); 
 #endif
 
-    /* OK -- now we have loaded the next line into 'buffer'.  Process it. */
+	/* OK -- now we have loaded the next line into 'buffer'.  Process it. */
         /* If input line is blank, ignore it & continue looping.  */
-	 if ( (strcmp(buffer,"\n") == 0)
+	if ( (strcmp(buffer,"\n") == 0)
 	      || (strcmp(buffer,"\r\n") == 0) ) {
 	    continue;
         }
@@ -204,7 +206,7 @@ inp_readall(FILE *fp, struct line **data)
             fprintf(cp_err, "Warning: premature EOF\n");
         }
         *s = '\0';      /* Zap the newline. */
-
+	
 	if(*(s-1) == '\r') /* Zop the carriage return under windows */
 	  *(s-1) = '\0';
 
@@ -265,12 +267,13 @@ inp_readall(FILE *fp, struct line **data)
 	    end->li_error = NULL;
 	    end->li_actual = NULL;
             end->li_line = copy(buffer);
-            end->li_linenum = line++;
+            end->li_linenum = line_number++;
             end->li_next = newcard;
 
             /* Renumber the lines */
-            for (end = newcard; end && end->li_next; end = end->li_next)
-                end->li_linenum = line++;
+	    for (end = newcard; end && end->li_next; end = end->li_next)
+                end->li_linenum = line_number++;
+	    end->li_linenum = line_number++;	/* SJB - renumber the last line */
 
             /* Fix the buffer up a bit. */
             (void) strncpy(buffer + 1, "end of:", 7);
@@ -290,7 +293,7 @@ inp_readall(FILE *fp, struct line **data)
         end->li_error = NULL;
         end->li_actual = NULL;
         end->li_line = buffer;
-        end->li_linenum = line++;
+        end->li_linenum = line_number++;
     }
 
     if (!end) { /* No stuff here */
@@ -312,7 +315,7 @@ inp_readall(FILE *fp, struct line **data)
 
 #ifdef TRACE
 	/* SDB debug statement */
-	printf("In inp_readall, processing linked list element s = %s . . . \n", s); 
+	printf("In inp_readall, processing linked list element line = %d, s = %s . . . \n", working->li_linenum,s); 
 #endif
 
         switch (c) {

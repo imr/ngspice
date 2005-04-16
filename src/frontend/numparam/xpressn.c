@@ -126,6 +126,7 @@ Intern
 Proc dicostack(tdico *dico, char op) 
 /* push or pop operation for nested subcircuit locals */
 Begin
+
   If op==Push Then
     If dico->tos < (20-1) Then Inc(dico->tos)
     Else message(dico, " Subckt Stack overflow")
@@ -748,10 +749,10 @@ Begin
   Case '!' Is  /*Not*/ 
     If y==z Then x=u Else x=z EndIf;
   Case '%' Is  /*Mod*/ 
-    t= trunc(x/y); 
+    t= np_trunc(x/y); 
     x= x-y*t
   Case '\\' Is  /*Div*/ 
-    x= trunc(absf(x/y));
+    x= np_trunc(absf(x/y));
   EndSw /*case*/
   return x;
 EndFunc
@@ -986,7 +987,7 @@ Begin
   If numeric Then
     fmt= fmttype(u);
     If fmt=='I' Then 
-      stri(round(u), q) 
+      stri(np_round(u), q) 
     Else 
       strf(u,6,-1,q) 
     EndIf /* strf() arg 2 doesnt work: always >10 significant digits ! */

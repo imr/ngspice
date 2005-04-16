@@ -1,0 +1,28 @@
+* Test circuit for pin.mod
+
+.include pin.mod
+
+* Photodiode supply
+Vbias 	psu  0  10V
+
+* Light input is modeled by a voltage source that we can vary
+Vlight	input  0  2mW
+
+* The pin diode
+Xpin  input cathode anode SIMPLE_PIN 0.7
+
+* monitor resistor
+Rmon  anode  0  1ohm 
+
+* Quench restistor
+Rq  psu cathode 1k
+
+*.dc vlight 0 5mW 0.01mW
+
+.control
+dc vlight 0 10mW 0.01mW
+plot V(anode)
+.endc
+
+.end
+

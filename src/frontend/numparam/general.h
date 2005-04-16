@@ -195,8 +195,8 @@ Func short freadstr(Pfile f, Pchar s, short max);
 Func char freadc(Pfile f);
 Func long freadi(Pfile f);
 
-Func long round(double d);
-Func long trunc(double x);
+Func long np_round(double d);	// sjb to avoid clash with round() in math.h
+Func long np_trunc(double x);	// sjb to avoid clash with trunc() in math.h
 Func double sqr(double x);
 Func double absf(double x); /* abs */
 Func long absi( long i);
