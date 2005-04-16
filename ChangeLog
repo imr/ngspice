@@ -1,3 +1,41 @@
+2005-04-16  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/frontend/{subckt.c, inpcom.c}, src/frontend/numparam/{general.h,
+	     mystring.c, readme.txt, spicenum.c, xpressn.c}: Applied patch from
+	     Steven Borley <steven.borley@virgin.net> that fixed numparam
+	     library. Patch description follow (extracted from Steven's 
+	     message):
+	     
+	     > Fixes problem with logfile not being opened before we have 
+	       something to write to it,
+             > Renamed round() and trunc() to avoid clash with functions in 
+	       math.h,
+             > Numparam now only stops execution when it finds errors,
+             > Added some debug tracing (normally off),
+             > Added some debug tracing (normally off),
+             > Fixes a #ifdef that had a typo and thus stoped numparams,
+	       working,
+             > Renames a local variable to avoid confusion (of the 
+               developer/maintainer),
+             > Fixes the renumbering of lines from a .include file.
+	     
+	*    examples/numparam/{example.cir, pintest.cir,pin.mod}: added
+	     netlists sent with Steven's patch.
+	
+
+	*   src/frontend/subckt.c: Added fix sent by Hitoshi Tanaka 
+	    <HDA01055@nifty.com>. Now nodes starting vith the letter "v"
+	    in subcircuits are translated correctly (as internal nodes)
+	    and not as voltage sources v<NIL>.
+	    
+	*   src/xspice/cmpp/pp_lst.c: malloc did not consider the null
+	    terminating character in "path". Applied patch from Mac OSX
+	    patch file maintained by Khairulmizam Samsudin <kmbs2002@yahoo.com>.
+	    
+	*   src/xspice/icm/makedefs.in: Mac OSX requires different flags 
+	    for shared libraries linking. Applied patch from Mac OSX patch 
+	    file maintained by Khairulmizam Samsudin <kmbs2002@yahoo.com>.      
+
 2005-04-06  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/frontend/subckt.h: Since inp_numnodes has been declared static
