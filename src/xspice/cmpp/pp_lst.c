@@ -306,7 +306,7 @@ static Status_t read_modpath(
         model[n].cfunc_unique = TRUE;
 
         /* Put pathname into info structure */
-        model[n].path_name = malloc(len);
+        model[n].path_name = malloc(len+1);
         strcpy(model[n].path_name, path);
 
         /* Increment count of paths read */
