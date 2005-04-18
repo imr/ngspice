@@ -8,7 +8,7 @@ top_builddir = ../../..
 top_srcdir = @top_srcdir@
 subdir = src/xspice/icm
 mkdir_p = @mkdir_p@
-+uname = $(shell uname)
+uname = $(shell uname)
                                                                                 
 # C compiler to use
 CC = @CC@
