@@ -702,17 +702,17 @@ parmtovar(IFvalue *pv, IFparm *opt)
     return (vv);
 }
 
-/* Extract the IFparm structure from the device. If isdev is TRUE, then get
- * the DEVmodQuest, otherwise get the DEVquest.
+/* Extract the parameter (IFparm structure) from the device or device's model.
+ * If do_mode is TRUE then look in the device's parameters
+ * If do_mode is FALSE then look in the device model's parameters
+ * If inout equals 1 then look only for parameters with the IF_SET type flag
+ * if inout equals 0 then look only for parameters with the IF_ASK type flag
  */
 
 static IFparm *
 parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int inout)
 {
     int i;
-
-    /* fprintf(cp_err, "Called: parmlookup(%x, %c, %s)\n", 
-            dev, isdev, param); */
 
     /* First try the device questions... */
     if (!do_model && dev->numInstanceParms) {
@@ -723,7 +723,7 @@ parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int in
 		continue;
             else if ((((dev->instanceParms[i].dataType & IF_SET) && inout == 1)
 	    	|| ((dev->instanceParms[i].dataType & IF_ASK) && inout == 0))
-	    	&& eq(dev->instanceParms[i].keyword, param))
+	    	&& cieq(dev->instanceParms[i].keyword, param))
 	    {
 		if (dev->instanceParms[i].dataType & IF_REDUNDANT)
 		    i -= 1;

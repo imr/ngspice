@@ -1,3 +1,42 @@
+2005-04-25  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/frontend/numparam/{general.h, numparam.h, nupatest.c, 
+	    spicenum.c, washprog.c, xpressn.c}: Applied patch from Steven
+	    Borley <steven.borley@virgin.net>. The patch removed the numparam
+	    support for end-of-line comments and moved it into frontend code.
+	    Line buffer for numparam is increased from 250 to 1000 to accomodate
+	    large model cards. Fixed compilation on Cygwin and MacOSX.
+	
+	*   src/frontend/subckt.c: numparams, once compiled in, must be 
+	    enabled, during interactive session, using "set numparams". Since
+	    library is experimental and under continuos testing, it is not
+	    yet intended for general use and support is provided for interactive
+	    sessions only (patch from Steven Borley). 
+	    
+	*   src/frontend/{device.c, spiceif.c}: fixed case sensitivity problems 
+	    in key-word identification (patch from Steven Borley).
+	
+	*   src/frontend/inp.c: Fix a bug where the wrong argument to 'listing'
+	    would error, but still produce a listing (patch fron Steven Borley).
+	    
+	*   src/frontend/inpcom.c: From Steven Borley <steven.borley@virgin.net>
+	    patch:
+	      End-of-line comments have been fixed and can be used on a line 
+	      that is followed by a continuation line.  This functionality 
+	      has been moved from the numparams library and in to the front 
+	      end code. All the following can be used to start a comment:
+               ;       for compatibility with PSpice
+               $       for compatibility with HSpice
+               //      like C++, and as per numparams
+               --      as per numparams
+              This was a full re-write of this code, not a conversion of the
+	      numparams code. It is not dependent on the numparams library.
+	
+	*   src/frontend/resource.c:  Fixed a compile bug under window & cygwin
+	    (patch from Steven Borley).
+	    
+	*   src/frontend/plotting/x11.c: Applied patch from Steven Borley.    
+
 2005-04-16  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/frontend/{subckt.c, inpcom.c}, src/frontend/numparam/{general.h,

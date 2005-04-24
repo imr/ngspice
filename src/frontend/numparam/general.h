@@ -85,7 +85,7 @@ Type(Pfile, FILE AT)
 #ifdef __STDIO_H  /* Turbo C */
   Type(Pfile, FILE AT)
 #else
-  Type(Pfile, Pointer)
+  Type(Pfile, FILE*)   /* sjb - was Pointer, now FILE* */
 #endif
 #endif
 

@@ -709,8 +709,6 @@ zoomin(GRAPH *graph)
 	char buf[BSIZE_SP];
 	char buf2[128];
 	char *t;
-	wordlist *wl;
-	int dummy;
 
 	Window rootwindow, childwindow;
 	int rootx, rooty;
@@ -790,11 +788,16 @@ zoomin(GRAPH *graph)
 
 /* don't use the following if using GNU Readline - AV */
 #ifndef HAVE_GNUREADLINE
-	/* hack for Gordon Jacobs */
-	/* add to history list if plothistory is set */
-	if (cp_getvar("plothistory", VT_BOOL, (char *) &dummy)) {
-	  wl = cp_parse(buf);
-	  (void) cp_addhistent(cp_event++, wl);
+	{
+	    wordlist *wl;
+	    int dummy;
+	    
+	    /* hack for Gordon Jacobs */
+	    /* add to history list if plothistory is set */
+	    if (cp_getvar("plothistory", VT_BOOL, (char *) &dummy)) {
+	      wl = cp_parse(buf);
+	      (void) cp_addhistent(cp_event++, wl);
+	    }
 	}
 
 #endif /* HAVE_GNUREADLINE */

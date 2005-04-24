@@ -37,7 +37,6 @@ Author: 1985 Wayne A. Christopher
 static char * upper(register char *string);
 static bool doedit(char *filename);
 
-
 /* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
 
 
@@ -73,6 +72,7 @@ com_listing(wordlist *wl)
                 default:
                     fprintf(cp_err,
                     "Error: bad listing type %s\n", s);
+                    return; /* SJB - don't go on after an error */
             }
             wl = wl->wl_next;
         }

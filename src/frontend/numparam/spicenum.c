@@ -22,6 +22,7 @@ Todo:
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #ifdef __TURBOC__
 #include <process.h>   /* exit() */
 #endif
@@ -30,7 +31,7 @@ Todo:
 #include "numparam.h"
 
 /* Uncomment this line to allow debug tracing */
-/*#define TRACE_NUMPARAMS */
+/* #define TRACE_NUMPARAMS */
 
 /*  the nupa_signal arguments sent from Spice:
 
@@ -55,6 +56,7 @@ Todo:
 #define PlaceHold 1000000000L
 Intern long placeholder= 0;
 
+#ifdef NOT_REQUIRED /* SJB - not required as front-end now does stripping */
 Intern
 Func short stripcomment( Pchar s)
 /* allow end-of-line comments in Spice, like C++ */
@@ -82,6 +84,7 @@ Begin
   EndIf
   return i /* i>=0  if comment stripped at that position */
 EndFunc
+#endif /* NOT_REQUIRED */
 
 Intern
 Proc stripsomespace(Pchar s, Bool incontrol)
@@ -106,7 +109,7 @@ Proc partition(Pchar t)
 /* the Basic preprocessor doesnt understand multiple cmd/line */
 /* bug:  strip trailing spaces */
 Begin
-  Str(Llen,u);
+  Strbig(Llen,u);
   short i,lt,state;
   char c;
   cadd(u,Intro); 
@@ -140,7 +143,7 @@ Func short stripbraces( Pchar s)
 /* puts the funny placeholders. returns the number of {...} substitutions */
 Begin
   short n,i,nest,ls,j;
-  Str(Llen,t);
+  Strbig(Llen,t);
   n=0; ls=length(s); 
   i=0;
   While i<ls Do
@@ -183,7 +186,7 @@ Begin
   Bool found;
   h=0; 
   ls=length(s);
-  k=ls; found=False;
+  k=ls; found=False;		    
   While (k>=0) And (Not found)  Do /* skip space, then non-space */
     While (k>=0) And (s[k]<=' ') Do Dec(k) Done; 
     h=k+1; /* at h: space */
@@ -212,7 +215,7 @@ Begin
       Done
       found=  (getidtype(dico, name) == 'U');
     EndIf 
-  Done
+  Done		    
   If found And (h<ls) Then 
     pscopy(s,s,1,h) 
   EndIf
@@ -223,7 +226,7 @@ Intern
 Proc modernizeex( Pchar s)
 /* old style expressions &(..) and &id --> new style with braces. */
 Begin
-  Str(250,t);
+  Strbig(Llen,t);
   short i,state, ls;
   char c,d;
   i=0; state=0;
@@ -264,7 +267,7 @@ Func char transform(tdico * dico, Pchar s, Bool nostripping, Pchar u)
  * any + line is copied as-is.
  * any & or .param line is commented-out.
  * any .subckt line has params section stripped off
- * any X line loses its arguments after circuit name
+ * any X line loses its arguments after sub-circuit name
  * any &id or &() or {} inside line gets a 10-digit substitute.
  *
  * strip  the new syntax off the codeline s, and
@@ -282,10 +285,10 @@ Func char transform(tdico * dico, Pchar s, Bool nostripping, Pchar u)
  *   'B'  netlist (or .model ?) line that had Braces killed 
  */
 Begin
-  Str(Llen,t);  
+  Strbig(Llen,t);  
   char category; 
   short i,k, a,n;
-  i=stripcomment(s);
+/*  i=stripcomment(s); sjb - not required now that front-end does stripping */
   stripsomespace(s, nostripping);
   modernizeex(s);    /* required for stripbraces count */
   scopy(u,"");
@@ -321,7 +324,7 @@ Begin
     category='P';
   ElsIf upcase(s[0])=='X' Then /* strip actual parameters */
     i=findsubname(dico, s);  /* i= index following last identifier in s */
-    pscopy(s,s,1,i);
+/*    pscopy(s,s,1,i); sjb - this is already done by findsubname() */
     category='X'
   ElsIf s[0]=='+' Then /* continuation line */
     category='+'
@@ -367,7 +370,7 @@ Intern tdico * dico=Null;
 Intern
 Proc putlogfile(char c, int num, Pchar t)
 Begin
-  Str(Llen, u);
+  Strbig(Llen, u);
   Str(20,fname);
   If dologfile Then
     If(logfile == Null) Then
@@ -437,6 +440,14 @@ Begin
   placeholder= 0;
   /* release symbol table data */
 EndProc
+	     
+/* SJB - Scan the line for subcircuits */
+Proc nupa_scan(Pchar s, int linenum)
+Begin
+  If spos(".SUBCKT",s) ==1 Then
+    defsubckt( dico, s, linenum, 'U' );
+  EndIf
+EndProc
 
 Func Pchar nupa_copy(Pchar s, int linenum)
 /* returns a copy (not quite) of s in freshly allocated memory.
@@ -452,8 +463,8 @@ Func Pchar nupa_copy(Pchar s, int linenum)
   - substitute placeholders for all {..} --> 10-digit numeric values.
 */
 Begin
-  Str(250,u);
-  Str(250,keywd);
+  Strbig(Llen,u);
+  Strbig(Llen,keywd);
   Pchar t;
   short i,ls; 
   char c,d; 
@@ -514,7 +525,7 @@ Begin
 #ifdef TRACE_NUMPARAMS
    printf("** SJB - in nupa_eval()\n");
    printf("** SJB - processing line %3d: %s\n",linenum,s);	
-   printf("** SJB - category '%c'\n");
+   printf("** SJB - category '%c'\n",c);
 #endif /* TRACE_NUMPARAMS */	     
    If c=='P' Then /* evaluate parameters */
      nupa_assignment( dico, dico->refptr[linenum] , 'N');
@@ -561,8 +572,10 @@ Begin
   return 1
 EndFunc
 
+#ifdef USING_NUPATEST
+/* This is use only by the nupatest program */
 Func tdico * nupa_fetchinstance(void)
 Begin
   return dico
 EndFunc
-
+#endif /* USING_NUPATEST */

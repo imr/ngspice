@@ -9,7 +9,8 @@
 
 extern char * nupa_copy(char *s, int linenum);
 extern int    nupa_eval(char *s, int linenum);
-extern int    nupa_signal(int sig, char *info); 
+extern int    nupa_signal(int sig, char *info);
+extern void   nupa_scan(char * s, int linenum);	// sjb
 
 /***** numparam internals ********/
 
@@ -23,7 +24,12 @@ Cconst(Comment,'*') /*Spice Comment lines*/
 Cconst(Pspice,'{')  /*Pspice expression */
 Cconst(Maxdico,200) /*size of symbol table*/
 
-Cconst(Llen,250) /* maximum composite input line length */
+/* Composite line length
+   This used to be 250 characters, but this is too easy to exceed with a
+   .model line, especially when spread over several continuation 
+   lines with much white space.  I hope 1000 will be enough. */
+Cconst(Llen,1000)
+
 typedef char str20 [24];
 typedef char str80 [84];
 
@@ -42,7 +48,7 @@ Record(entry)
   Pchar  sbbase; /* string buffer base address if any */
 EndRec(entry)
 
-Record(fumas) /*funtion,macro,string*/
+Record(fumas) /*function,macro,string*/
    Word   start /*,stop*/ ; /*buffer index or location */
 EndRec(fumas)
 

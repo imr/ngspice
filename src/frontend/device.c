@@ -663,7 +663,7 @@ devexpand(char *name)
                     wl = tw;
                 wl->wl_word = devices->wl_word;
             }
-    } else if (eq(name, "all")) {
+    } else if (cieq(name, "all")) {
         wl = cp_cctowl(ft_curckt->ci_devices);
     } else {
         wl = alloc(struct wordlist);

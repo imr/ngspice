@@ -61,7 +61,7 @@ Modified: 2000 AlansFixes
 #include "variable.h"
 
 /* Uncomment to turn on tracing for the Numparam */
-//#define TRACE_NUMPARAMS
+/*#define TRACE_NUMPARAMS*/
 
 #ifdef NUMPARAMS
 #define  NUPADECKCOPY 0
@@ -71,6 +71,7 @@ Modified: 2000 AlansFixes
 extern char * nupa_copy(char *s, int linenum);
 extern int    nupa_eval(char *s, int linenum);
 extern int    nupa_signal(int sig, char *info); 
+extern void   nupa_scan(char * s, int linenum);	// sjb
 #endif
 
 /* ----- static declarations ----- */
@@ -117,12 +118,12 @@ struct subs {
 static wordlist *modnames, *submod;
 static struct subs *subs = NULL;
 static bool nobjthack = FALSE;
+#ifdef NUMPARAMS
+/* flag indicating use of the experimental numparams library */
+static bool use_numparams = FALSE;					
+#endif
 
 static char start[32], sbend[32], invoke[32], model[32];
-
-#ifdef NUMPARAMS
-static char NumParams='y';
-#endif
 
 /*-------------------------------------------------------------------*/
 /* inp_subcktexpand is the top level function which translates       */
@@ -147,7 +148,7 @@ inp_subcktexpand(struct line *deck)
     char *s;
 #ifdef NUMPARAMS
     int ok;
-#endif
+#endif /* NUMPARAMS */
     wordlist *wl;
     modnames = NULL;
 
@@ -162,10 +163,12 @@ inp_subcktexpand(struct line *deck)
     if(!cp_getvar("modelline", VT_STRING, model))
         (void) strcpy(model, ".model");
     (void) cp_getvar("nobjthack", VT_BOOL, (char *) &nobjthack);
-
+    
 #ifdef NUMPARAMS
+    (void) cp_getvar("numparams", VT_BOOL, (char *) &use_numparams);
+
     /*  deck has .control sections already removed, but not comments */
-    if ( NumParams == 'y' ) {
+    if ( use_numparams  ) {
 	
 #ifdef TRACE_NUMPARAMS
 	printf("Numparams is processing this deck:\n");
@@ -174,9 +177,14 @@ inp_subcktexpand(struct line *deck)
 	    printf("%3d:%s\n",c->li_linenum, c->li_line);
 	    c= c->li_next;
 	}
-#endif	
+#endif	/* TRACE_NUMPARAMS */
 	
-      ok = nupa_signal( NUPADECKCOPY, NULL);  
+      ok = nupa_signal( NUPADECKCOPY, NULL);
+      c=deck;
+      while ( c != NULL) {  /* first Numparam pass */ 
+	nupa_scan(c->li_line, c->li_linenum);
+	c= c->li_next;
+      }
       c=deck;
       while ( c != NULL) {  /* first Numparam pass */ 
         c->li_line = nupa_copy(c->li_line, c->li_linenum);
@@ -190,10 +198,10 @@ inp_subcktexpand(struct line *deck)
 	  printf("%3d:%s\n",c->li_linenum, c->li_line);
 	  c= c->li_next;
       }
-#endif	      
+#endif	/* TRACE_NUMPARAMS */      
 
-    } 
-#endif
+    }
+#endif /* NUMPARAMS */
     
     /* Get all the model names so we can deal with BJTs, etc. 
     *  Stick all the model names into the doubly-linked wordlist modnames.
@@ -217,7 +225,7 @@ inp_subcktexpand(struct line *deck)
 	for(w = modnames; w; w = w->wl_next)
 	    printf("%s\n",w->wl_word);
     }
-#endif
+#endif /* TRACE */
 
     
     /* Let's do a few cleanup things... Get rid of ( ) around node
@@ -228,7 +236,7 @@ inp_subcktexpand(struct line *deck)
 #ifdef TRACE
 	/* SDB debug statement */
 	printf("In inp_subcktexpand, found a .subckt: %s\n", c->li_line);
-#endif
+#endif /* TRACE */
 	for (s = c->li_line; *s && (*s != '('); s++)    /* Iterate charwise along line until ( is found */
 	  ;
 	if (*s) {
@@ -264,7 +272,7 @@ inp_subcktexpand(struct line *deck)
 #ifdef TRACE
 	/* SDB debug statement */
 	printf("In inp_subcktexpand, about to call doit.\n");
-#endif
+#endif /* TRACE */
     ll = doit(deck);
 
     // SJB: free up the modnames linked list now we are done with it
@@ -276,13 +284,17 @@ inp_subcktexpand(struct line *deck)
    /* Now check to see if there are still subckt instances undefined... */
     if (ll!=NULL) for (c = ll; c; c = c->li_next)
 	if (ciprefix(invoke, c->li_line)) {
-	    fprintf(cp_err, "Error: unknown subckt: %s\n",
-		    c->li_line);
+	    fprintf(cp_err, "Error: unknown subckt: %s\n", c->li_line);
+#ifdef NUMPARAMS
+	    if ( use_numparams ) {
+	       ok= ok && nupa_signal(NUPAEVALDONE, NULL);
+	    }
+#endif /* NUMPARAMS */	    
 	    return NULL;
 	}
 	
 #ifdef NUMPARAMS
-   if ( NumParams == 'y' ) {
+   if ( use_numparams ) {
       /* the NUMPARAM final line translation pass */
       ok= ok && nupa_signal(NUPASUBDONE, NULL); 
       c= ll;
@@ -297,10 +309,10 @@ inp_subcktexpand(struct line *deck)
 	  printf("%3d:%s\n",c->li_linenum, c->li_line);
 	  c= c->li_next;
       }
-#endif	 
+#endif	/* TRACE_NUMPARAMS */ 
       ok= ok && nupa_signal(NUPAEVALDONE, NULL);
     }
-#endif
+#endif /* NUMPARAMS */
     return (ll);  /* return the spliced deck.  */
 }
 
@@ -322,7 +334,7 @@ doit(struct line *deck)
     struct line *c, *last, *lc, *lcc;
 #ifdef NUMPARAMS
     struct line *savenext;
-#endif    
+#endif /* NUMPARAMS */ 
     struct subs *sss = (struct subs *) NULL, *ks;   /*  *sss and *ks temporarily hold decks to substitute  */
     char *s, *t, *scname, *subname;
     int nest, numpasses = MAXNEST, i;
@@ -388,8 +400,8 @@ doit(struct line *deck)
 	    if (!lcc)               /* if lcc is null, then no .ends was found.  */
 		lcc = last;
 #ifdef NUMPARAMS
-            if ( NumParams != 'y' )
-#endif	     		
+            if ( use_numparams==FALSE )
+#endif	/* NUMPARAMS */     		
             lcc->li_next = NULL;    /* shouldn't we free some memory here????? */
 
 	    /* At this point, last points to the .subckt card, and lcc points to the .ends card */
@@ -424,7 +436,7 @@ doit(struct line *deck)
 #ifdef NUMPARAMS
 /*gp */     c->li_next = NULL;  /* Numparam needs line c */ 
             c->li_line[0] = '*'; /* comment it out */
-#endif        
+#endif /* NUMPARAMS */     
 	} 
 	else {  /*  line is neither .ends nor .subckt.  */
 	  /* make lc point to this card, and advance last to next card. */
@@ -534,12 +546,12 @@ doit(struct line *deck)
                 /* Now splice the decks together. */
 #ifdef NUMPARAMS
 		savenext =  c->li_next;
-                if ( NumParams != 'y') {
-                  /* old style: c will drop a dangling pointer: memory leak  */
-               if (lc)
-                    lc->li_next = lcc;
-                  else
-                    deck = lcc;
+                if ( use_numparams==FALSE ) {
+           	    /* old style: c will drop a dangling pointer: memory leak  */
+		    if (lc)
+            		lc->li_next = lcc;
+                    else
+                    	deck = lcc;
                 } else {
                   /* ifdef NUMPARAMS, keep the invoke line as a comment  */
     		  c->li_next = lcc;
@@ -550,13 +562,13 @@ doit(struct line *deck)
                     lc->li_next = lcc;
                 else
                     deck = lcc;
-#endif
+#endif /* NUMPARAMS */
                 while (lcc->li_next != NULL)
                     lcc = lcc->li_next;
                 lcc->li_next = c->li_next;
 #ifdef NUMPARAMS
                 lcc->li_next = savenext;
-#endif				
+#endif /* NUMPARAMS */			
                 c = lcc->li_next;
                 lc = lcc;
 		tfree(tofree);

@@ -118,7 +118,7 @@ EndProc
 
 Proc saddn( Pchar s, Pchar t, short n)
 Begin
-  Str(250,u);
+  Strbig(Llen,u);
   short lt= length(t);
   If lt<= n Then 
     sadd(s,t) 
@@ -367,7 +367,7 @@ Begin
   Word j,k,dk,ls, lst, lmt, jmax, pj; 
   Bool ok;
   char arg; 
-  Str(250,u); 
+  Strbig(Llen,u); 
   Str(40,st);
 /* returns >0 If comparison Ok == length of compared Pchar */
 /*-StartProc-*/  k=0;
@@ -441,7 +441,7 @@ Begin
   Word j,k,ps,ls; 
   Bool ok;
   char endc; 
-  Str(250,u);
+  Strbig(Llen,u);
 /* returns >0  if comparison Ok = length of compared string */
 /* char comparison, s may have wildcard regions with "æ" BUT 1 valid End */
 /*-StartProc-*/ 
@@ -578,7 +578,7 @@ EndFunc
 Func Bool getSubList(Pchar slist)
 /* read the search and substitution rule list */
 Begin
-  Str(250,s); 
+  Strbig(Llen,s); 
   Pfile f;
   Bool done, ok;
 /*-StartProc-*/
@@ -629,7 +629,7 @@ EndFunc
 */
 
 Bool washmore= True;  /* flag that activates the postprocessor */
-Str(250,obf);         /* output buffer */
+Strbig(Llen,obf);         /* output buffer */
 short iobf=0;         /* its index */   
 short wstate=0;       /* output state machine */
 
@@ -723,7 +723,7 @@ Proc translate(Pchar bf);  /* recursion */
 Proc echoOut(Pchar r, char isWild, string mac[] )
 Begin
   short u; 
-  Str(250,s);
+  Strbig(Llen,s);
 /*-StartProc-*/
   If isWild !=0 Then
      u= cpos(isWild,r) 
@@ -779,7 +779,7 @@ Begin
   char c; 
   short i,j; 
   Bool escape; 
-  Str(250,s);
+  Strbig(Llen,s);
 /*-StartProc-*/ 
   escape=False; 
   For i=0; i<length(r); Inc(i) Do
@@ -799,7 +799,7 @@ EndProc
 Proc translate(Pchar bff)
 Begin /*light version, inside recursion only */
   Bool  done; 
-  Str(250,bf);
+  Strbig(Llen,bf);
   Darray(mac, string, nargs)
   Bool ok; 
   short i,sm; 
@@ -855,7 +855,7 @@ Proc translator( Pchar fname)
    BUG: is very slow.
 */
 Begin
-  Str(250, outname); Str(250,bf);
+  Strbig(Llen, outname); Strbig(Llen,bf);
   Bool done;
   Darray( mac, string, nargs)
   Pfile fin;

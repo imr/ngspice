@@ -57,7 +57,7 @@ Func short runscript( tdico *dico, Pchar prefix,
 /* return value: number of lines included */
 Begin
   short i,j, idef, nnest, nline, dn, myipx;
-  Str(250, subpfx); /* subckt prefix */ 
+  Strbig(Llen, subpfx); /* subckt prefix */ 
   Str(80, subname);
   char c;
   Bool done= False;
@@ -116,7 +116,7 @@ Proc gluepluslines( short imax)
 /* general sweep to eliminate continuation lines */
 Begin
   short i,j,k, ls, p;
-  Str(250,s);
+  Strbig(Llen,s);
   i=1;
   While i<= imax Do
     If (buff[i][0]=='+') And (i>1) Then 
@@ -141,7 +141,7 @@ Begin
   Done
 EndProc
 
-#if 0
+#if 0	// sjb - this is in mystring.c
 Proc rs(Pchar s) /*  78 coumn limit */
 Begin
   short i; 
@@ -185,7 +185,7 @@ EndProc
 Proc wordinsert(Pchar s, Pchar w, short i)
 /* insert w before s[i] */
 Begin
-  Str(250,t);
+  Strbig(Llen,t);
   short ls=length(s);
   pscopy(t,s,i+1,ls); pscopy(s,s,1,i);
   sadd(s,w); sadd(s,t);
@@ -194,7 +194,7 @@ EndProc
 Func short worddelete(Pchar s, short i)
 /* delete word starting at s[i] */
 Begin
-  Str(250,t);
+  Strbig(Llen,t);
   short ls= length(s);
   short j=i;
   While (j<ls) And (s[j]>' ') Do Inc(j) Done
@@ -327,7 +327,7 @@ Proc getnodelist(Pchar form, Pchar act, Pchar s, tdico *dic, short k)
 /* the line s contains the actual node parameters, between 1st & last word */
 Begin
   short j,ls, idef;
-  Str(80,u); Str(250,t);
+  Str(80,u); Strbig(Llen,t);
   ccopy(act,' '); ccopy(form,' ');
   j=0; ls= length(s);
   j= getnextword(s,u,j);
@@ -358,9 +358,9 @@ Proc nupa_test(Pchar fname, char mode)
 Begin
   Pfile tf, fout;
   tdico * dic; /* dictionary data pointer */
-  Str(250,s);
+  Strbig(Llen,s);
   Str(80, prefix);
-  /* Str(250, formals); Str(250,actuals); */
+  /* Strbig(Llen, formals); Strbig(Llen,actuals); */
   Darray(formals, Pchar, 10)
   Darray(actuals, Pchar, 10)
   short i, j, k, nline, parstack;

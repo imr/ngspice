@@ -19,6 +19,14 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #ifdef HAVE__MEMAVL
 #define WIN32_LEAN_AND_MEAN
+/*
+ * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
+ * clashes with the definition obtained from windows.h (via winnt.h).
+ * However, BOOLEAN is not used by this file so we can work round this problem
+ * by undefining BOOLEAN before including windows.h
+ * SJB - April 2005
+ */
+#undef BOOLEAN
 #include <windows.h>
 #endif
 
@@ -199,7 +207,7 @@ printres(char *name)
 #    else
 #      ifdef HAVE_FTIME
 	struct timeb timenow;
-	int sec, msec;
+//	int sec, msec; sjb
 	ftime(&timenow);
 	timediff(&timenow, &timebegin, &total, &totalu);
 //	totalu /= 1000;  hvogt

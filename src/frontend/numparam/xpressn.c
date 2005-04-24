@@ -12,8 +12,9 @@
 
 /************ keywords ************/
 
-Intern Str(Llen, keys); /*all my keywords*/
-Intern Str(Llen, fmath); /* all math functions */
+/* SJB - 150 chars is ample for this - see initkeys() */
+Intern Str(150, keys); /*all my keywords*/
+Intern Str(150, fmath); /* all math functions */
  
 Intern
 Proc initkeys(void)
@@ -54,7 +55,7 @@ Intern
 Func  Bool message( tdico * dic, Pchar s)
 /* record 'dic' should know about source file and line */
 Begin
-  Str(250,t);
+  Strbig(Llen,t);
   Inc( dic->errcount);
   If (dic->srcfile != Null) And NotZ(dic->srcfile[0]) Then  
     scopy(t, dic->srcfile); cadd(t,':')
@@ -166,7 +167,7 @@ Begin
   ok=False;
   i=d->nbd+1;
   While (Not ok) And (i>1) Do
-    Dec(i); 
+    Dec(i);
     ok= steq(d->dat[i].nom, s);
   Done
   If Not ok Then 
@@ -194,7 +195,7 @@ Begin
   Bool err= *perr;
   Word k;
   double u;
-  Str(Llen, s);
+  Strbig(Llen, s);
   k=entrynb(dico,t); /*no keyword*/
   /*dbg -- If k<=0 Then ws("Dico num lookup fails. ") EndIf */
   While (k>0) And (dico->dat[k].tp=='P') Do 
@@ -269,7 +270,7 @@ Begin
   short i;
   char c;
   Bool err, warn;
-  Str(Llen,v);
+  Strbig(Llen,v);
   i=attrib(dico,t,op); 
   err=False;
   If i<=0 Then 
@@ -369,7 +370,7 @@ Begin
    if jumped, return index to existing function
 */
   short i,j;
-  Str(Llen, v);
+  Strbig(Llen, v);
   i=attrib(dico,t,' '); j=0;
   If i<=0 Then
     err=message( dico," Symbol table overflow")
@@ -501,7 +502,7 @@ Begin
   short ls;
   char c;
   Bool ok;
-  Str(Llen, t);
+  Strbig(Llen, t);
   ls=length(s); 
   x=0.0;
   Repeat 
@@ -546,7 +547,7 @@ Begin
   short k,err;
   char d;
   Str(20, t); 
-  Str(Llen, v);
+  Strbig(Llen, v);
   double u;
   k=i;
   Repeat 
@@ -614,7 +615,7 @@ Begin
   Byte level= *plevel;
   Bool error= *perror;
   char c,d;
-  Str(Llen, v);
+  Strbig(Llen, v);
   c=s[i-1];  
   If i<ls Then 
     d=s[i] 
@@ -775,13 +776,13 @@ Begin
   Cconst(nprece,9) /*maximal nb of precedence levels*/
   Bool error= *perror;
   Byte state,oldstate, topop,ustack, level, kw, fu;
-  double u,v;
+  double u=0.0,v;
   double accu[nprece+1];
   char oper[nprece+1];
   char uop[nprece+1];
   short i,k,ls,natom, arg2;
   char c,d;
-  Str(Llen, t);
+  Strbig(Llen, t);
   Bool ok;
   For i=0; i<=nprece; Inc(i) Do 
     accu[i]=0.0; oper[i]=' ' 
@@ -912,7 +913,7 @@ Begin
   astronomic=False;
   If ax<1e-30 Then
     isint=True;
-  ElsIf ax<32000 Then /*detect integers*/ rx=round(x);
+  ElsIf ax<32000 Then /*detect integers*/ rx=np_round(x);
     dx=(x-rx)/ax; 
     isint=(absf(dx)<1e-6);
   EndIf
@@ -936,12 +937,12 @@ Func  Bool evaluate(
  Byte  mode)
 Begin
 /* transform t to result q. mode 0: expression, mode 1: simple variable */
-  double u;
+  double u=0.0;
   short k,j,lq;
   char dt,fmt;
   Bool numeric, done, nolookup;
   Bool err;
-  Str(Llen, v);
+  Strbig(Llen, v);
   scopy(q,""); 
   numeric=False; err=False;
   If mode==1 Then /*string?*/
@@ -1006,8 +1007,8 @@ Begin
   short i,k,ls,level,nd, nnest;
   Bool spice3;
   char c,d;
-  Str(Llen, q);
-  Str(Llen, t);
+  Strbig(Llen, q);
+  Strbig(Llen, t);
   Str(20, u);
   spice3= cpos('3', dico->option) >0; /* we had -3 on the command line */
   i=0; ls=length(s); 
@@ -1190,8 +1191,8 @@ Func Bool nupa_substitute( tdico *dico, Pchar s, Pchar r, Bool err)
 Begin
   short i,k,ls,level, nnest, ir;
   char c,d;
-  Str(Llen, q);
-  Str(Llen, t);
+  Strbig(Llen, q);
+  Strbig(Llen, t);
   i=0; 
   ls=length(s); 
   err=False; 
@@ -1367,8 +1368,8 @@ Func Bool nupa_assignment( tdico *dico, Pchar  s, char mode)
 */
 Begin
 /* s has the format: ident = expression; ident= expression ...  */
-  Str(Llen, t); 
-  Str(Llen,u);
+  Strbig(Llen, t); 
+  Strbig(Llen,u);
   short i,j, ls;
   Byte key;
   Bool error, err;
@@ -1422,12 +1423,13 @@ Func Bool nupa_subcktcall( tdico *dico, Pchar s, Pchar x, Bool err)
    x= a matching subckt call line, with actual params 
 */
 Begin
-  short n,m,i,j,k,g,h, narg, ls, nest;
-  Str(Llen,t);
-  Str(Llen,u);
-  Str(Llen,v);
-  Str(Llen,idlist);
+  short n,m,i,j,k,g,h, narg=0, ls, nest;
+  Strbig(Llen,t);
+  Strbig(Llen,u);
+  Strbig(Llen,v);
+  Strbig(Llen,idlist);
   Str(80,subname);
+	  
   /***** first, analyze the subckt definition line */
   n=0; /* number of parameters if any */
   ls=length(s);
