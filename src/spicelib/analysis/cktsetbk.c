@@ -14,13 +14,18 @@ Author: 1985 Thomas L. Quarles
 #include "ifsim.h"
 #include "sperror.h"
 
-
+/* define to enable breakpoint trace code */
+/ *#define TRACE_BREAKPOINT */
 
 int
 CKTsetBreak(CKTcircuit *ckt, double time)
 {
     double *tmp;
     int i,j;
+
+#ifdef TRACE_BREAKPOINT
+    printf("[t:%e] \t want breakpoint for t = %e\n", ckt->CKTtime, time);
+#endif
 
     if(ckt->CKTtime > time) {
         (*(SPfrontEnd->IFerror))(ERR_PANIC,"breakpoint in the past - HELP!",
@@ -31,11 +36,20 @@ CKTsetBreak(CKTcircuit *ckt, double time)
         if(*(ckt->CKTbreaks+i)>time) { /* passed */
             if((*(ckt->CKTbreaks+i)-time) <= ckt->CKTminBreak) {
                 /* very close together - take earlier point */
+#ifdef TRACE_BREAKPOINT
+                printf("[t:%e] \t %e replaces %e\n", ckt->CKTtime, time,
+		*(ckt->CKTbreaks+i));
+		CKTbreakDump(ckt);
+#endif		
                 *(ckt->CKTbreaks+i) = time;
                 return(OK);
             }
             if(time-*(ckt->CKTbreaks+i-1) <= ckt->CKTminBreak) {
                 /* very close together, but after, so skip */
+#ifdef TRACE_BREAKPOINT
+                printf("[t:%e] \t %e skipped\n", ckt->CKTtime, time);
+		CKTbreakDump(ckt);
+#endif			
                 return(OK);
             }
             /* fits in middle - new array & insert */
@@ -45,18 +59,27 @@ CKTsetBreak(CKTcircuit *ckt, double time)
                 *(tmp+j) = *(ckt->CKTbreaks+j);
             }
             *(tmp+i)=time;
+#ifdef TRACE_BREAKPOINT
+                printf("[t:%e] \t %e added\n", ckt->CKTtime, time);
+		CKTbreakDump(ckt);
+#endif	    
             for(j=i;j<ckt->CKTbreakSize;j++) {
                 *(tmp+j+1) = *(ckt->CKTbreaks+j);
             }
             FREE(ckt->CKTbreaks);
             ckt->CKTbreakSize++;
             ckt->CKTbreaks=tmp;
+
             return(OK);
         }
     }
     /* never found it - beyond end of time - extend out idea of time */
     if(time-ckt->CKTbreaks[ckt->CKTbreakSize-1]<=ckt->CKTminBreak) {
         /* very close tegether - keep earlier, throw out new point */
+#ifdef TRACE_BREAKPOINT
+                printf("[t:%e] \t %e skipped (at the end)\n", ckt->CKTtime, time);
+                CKTbreakDump(ckt);
+#endif	
         return(OK);
     }
     /* fits at end - grow array & add on */
@@ -64,5 +87,9 @@ CKTsetBreak(CKTcircuit *ckt, double time)
             (ckt->CKTbreakSize+1)*sizeof(double));
     ckt->CKTbreakSize++;
     ckt->CKTbreaks[ckt->CKTbreakSize-1]=time;
+#ifdef TRACE_BREAKPOINT
+                printf("[t:%e] \t %e added at end\n", ckt->CKTtime, time);
+		CKTbreakDump(ckt);
+#endif    
     return(OK);
 }
