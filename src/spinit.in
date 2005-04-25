@@ -2,6 +2,7 @@
 alias exit quit
 alias acct rusage all
 set x11lineararcs
+*set numparams
 
 * For SPICE2 POLYs, edit the below line to point to the location 
 * of your codemode.
