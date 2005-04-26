@@ -1,3 +1,22 @@
+2005-04-26  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*   src/main.c, src/frontend{inp.c, nutinp.c}, src/include/defines.h:
+	    New logic for ngspice initialization (patch from Steven Borley 
+	    <steven.borley@diode.demon.co.uk>):
+	    
+              Load the standard start up file 'spinit'
+              Then look for '.spiceinit' in current directory
+              If this fails look for 'spice.rc' in currect directory
+              if this fails the check the HOME environment variable
+              if HOME is set then:
+                Look for for '.spiceinit' in user's home directory
+                If this fails look for 'spice.rc' in user's home directory.
+	     
+	     Fixed a memory leak in main.c 	
+	
+	*  src/include/{complex.h, fteext.h, ngspice.h, sperror.h}:
+	   code cleaning and removed some warning (patch from Steven Borley).
+		
 2005-04-25  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/frontend/numparam/{general.h, numparam.h, nupatest.c, 
@@ -35,7 +54,11 @@
 	*   src/frontend/resource.c:  Fixed a compile bug under window & cygwin
 	    (patch from Steven Borley).
 	    
-	*   src/frontend/plotting/x11.c: Applied patch from Steven Borley.    
+	*   src/frontend/plotting/x11.c: Applied patch from Steven Borley. 
+	
+	*   src/spicelib/analysis/cktsetbk.c: Added some code to track
+	    breakpoints (you need to define TRACE_BREAKPOINT macro).
+	          
 
 2005-04-16  Paolo Nenzi <p.nenzi@ieee.org>
 
