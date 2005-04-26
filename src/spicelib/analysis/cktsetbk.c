@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 
 /* define to enable breakpoint trace code */
-/ *#define TRACE_BREAKPOINT */
+/* #define TRACE_BREAKPOINT */
 
 int
 CKTsetBreak(CKTcircuit *ckt, double time)
