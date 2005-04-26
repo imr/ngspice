@@ -106,17 +106,17 @@ struct timeb timebegin;
 #   define strchr index
 #   define strrchr rindex
 #else /* va: no index, but strchr */
-    #ifdef HAVE_STRCHR
-        #define index  strchr
-        #define rindex strrchr
-    #endif /* va: no index, but strchr */
+#    ifdef HAVE_STRCHR
+#        define index  strchr
+#        define rindex strrchr
+#    endif /* va: no index, but strchr */
 #endif
 
 #ifdef HAS_TIME_H
 #include <time.h>
 #endif
 
-// added for CYGWIN
+/* added for CYGWIN */
 #ifndef HUGE
 #define HUGE HUGE_VAL
 #endif

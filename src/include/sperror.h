@@ -6,7 +6,6 @@ Author: 1985 Thomas L. Quarles
 #ifndef _SPERROR_H
 #define _SPERROR_H
 
-//#include "ngspice.h"
 #include "iferrmsg.h"
 
 /*

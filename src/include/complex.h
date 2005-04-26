@@ -57,15 +57,16 @@ typedef struct {
 
 #define spREAL  double
 
-// /* Begin `realNumber'. */
-// typedef  spREAL  realNumber, *realVector;
+#if 0 /* Can this be deleted? */
+ /* Begin `realNumber'. */
+ typedef  spREAL  realNumber, *realVector;
 
-// /* Begin `ComplexNumber'. */
-// typedef  struct
-// {   RealNumber  Real;
-//    RealNumber  Imag;
-// } ComplexNumber, *ComplexVector;
-
+ /* Begin `ComplexNumber'. */
+ typedef  struct
+ {   RealNumber  Real;
+    RealNumber  Imag;
+ } ComplexNumber, *ComplexVector;
+#endif
 
 /* Some defines used mainly in cmath.c. */
 #define FTEcabs(d)  (((d) < 0.0) ? - (d) : (d))
