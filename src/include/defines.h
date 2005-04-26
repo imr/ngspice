@@ -35,7 +35,7 @@
 #define MAX_EXP_ARG	709.0
 
 #ifndef DBL_EPSILON
-# define DBL_EPSILON	8.9e-15
+# define DBL_EPSILON	2.2204460492503131e-16
 #endif
 #ifndef DBL_MAX
 # define DBL_MAX	1.79769313486231e+308
@@ -68,6 +68,11 @@
 
 #define REFTEMP 300.15 /* 27 degrees C */
 
+/* Standard initialisation file name */
+#define INITSTR		".spiceinit"
+
+/* Alternate initialisation file name */
+#define ALT_INITSTR	"spice.rc"	
 
 #ifdef __MINGW32__
 #define DIR_PATHSEP	"\\"

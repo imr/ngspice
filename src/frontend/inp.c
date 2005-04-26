@@ -857,9 +857,9 @@ com_source(wordlist *wl)
         return;
     }
 
-    /* Don't print the title if this is a .spiceinit file. */
-    if (ft_nutmeg || substring(".spiceinit", owl->wl_word)
-            || substring("spice.rc", owl->wl_word))
+    /* Don't print the title if this is a spice initialisation file. */
+    if (ft_nutmeg || substring(INITSTR, owl->wl_word)
+            || substring(ALT_INITSTR, owl->wl_word))
         inp_spsource(fp, TRUE, tempfile ? (char *) NULL : wl->wl_word);
     else
         inp_spsource(fp, FALSE, tempfile ? (char *) NULL : wl->wl_word);

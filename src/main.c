@@ -64,6 +64,9 @@ static char *application_name;
 #include "numenum.h"
 #endif 
 
+/* Undefine this next line for dubug tracing */
+/* #define TRACE */
+
 extern void DevInit(void);
 
 /* Main options */
@@ -76,7 +79,7 @@ bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt.
 char *ft_rawfile = "rawspice.raw";
 
 bool oflag = FALSE;         /* Output über redefinierte Funktionen */
-FILE *flogp;  // hvogt 15.12.2001
+FILE *flogp;  /* hvogt 15.12.2001 */
 
 /* Frontend and circuit options */
 IFsimulator *ft_sim = NULL;
@@ -146,6 +149,22 @@ sigjmp_buf jbuf;
 
 static int started = FALSE;
 
+/* static functions */
+static int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
+static int shutdown(int exitval);
+#ifdef HAVE_GNUREADLINE
+static char * prompt();
+#endif /* HAVE_GNUREADLINE */
+static void show_help(void);
+static void show_version(void);
+static bool read_initialisation_file(char * dir, char * name);
+#ifdef SIMULATOR
+static void append_to_stream(FILE *dest, FILE *source);
+#ifdef HAVE_GNUREADLINE
+static int rl_event_func() ;
+static void app_rl_readlines();
+#endif /* HAVE_GNUREADLINE */
+#endif /* SIMULATOR */
 
 
 #ifndef HAVE_GETRUSAGE
@@ -288,7 +307,8 @@ IFfrontEnd *SPfrontEnd = NULL;
 int DEVmaxnum = 0;
 
 /* -------------------------------------------------------------------------- */
-int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
+static int
+SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 {
 #ifdef SIMULATOR
     spice_init_devices();
@@ -318,7 +338,7 @@ int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 
 /* -------------------------------------------------------------------------- */
 /* Shutdown gracefully. */
-static int 
+static int
 shutdown(int exitval)
 {
     cleanvars();
@@ -368,10 +388,12 @@ prompt()
     return pbuf;
 }
 
+#ifdef SIMULATOR
 /* -------------------------------------------------------------------------- */
 /* Process device events in Readline's hook since there is no where
    else to do it now - AV */
-int rl_event_func()  
+static int
+rl_event_func()  
 /* called by GNU readline periodically to know what to do about keypresses */
 {
     static REQUEST reqst = { checkup_option, 0 };
@@ -381,7 +403,8 @@ int rl_event_func()
 
 /* -------------------------------------------------------------------------- */
 /* Added GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
-void app_rl_readlines()
+static void
+app_rl_readlines()
 {
     char *line, *expanded_line;
 
@@ -409,11 +432,12 @@ void app_rl_readlines()
     }
     /* History gets written in ../fte/misccoms.c com_quit */
 }
+#endif /* SIMULATOR */
 #endif /* HAVE_GNUREADLINE */
 
 
 /* -------------------------------------------------------------------------- */
-void
+static void
 show_help(void)
 {
     printf("Usage: %s [OPTION]... [FILE]...\n"
@@ -422,7 +446,7 @@ show_help(void)
 	   "  -b, --batch               process FILE in batch mode\n"
 	   "  -c, --circuitfile=FILE    set the circuitfile\n"
 	   "  -i, --interactive         run in interactive mode\n"
-	   "  -n, --no-spiceinit        don't load the .spiceinit configfile\n"
+	   "  -n, --no-spiceinit        don't load the local or user's config file\n"
 	   "  -o, --output=FILE         set the outputfile\n"
 	   "  -q, --completion          activate command completion\n"
 	   "  -r, --rawfile=FILE        set the rawfile output\n"             
@@ -435,7 +459,7 @@ show_help(void)
 }
 
 /* -------------------------------------------------------------------------- */
-void
+static void
 show_version(void)
 {
     printf("%s compiled from %s revision %s\n"
@@ -447,8 +471,9 @@ show_version(void)
 	   "  The NGSpice Project\n", cp_program, PACKAGE, VERSION);
 }
 
+#ifdef SIMULATOR
 /* -------------------------------------------------------------------------- */
-void
+static void
 append_to_stream(FILE *dest, FILE *source)
 {
     char *buf[BSIZE_SP];
@@ -457,6 +482,67 @@ append_to_stream(FILE *dest, FILE *source)
     while ((i = fread(buf, 1, BSIZE_SP, source)) > 0)
 	fwrite(buf, i, 1, dest);
 }
+#endif /* SIMULATOR */
+
+/* -------------------------------------------------------------------------- */
+/* Read an initialisation file.
+   dir    is the directory (use NULL or "" for current directory)
+   name   is the initialisation file's name
+   Return true on success
+   SJB 25th April 2005 */
+static bool
+read_initialisation_file(char * dir, char * name)
+{
+#ifndef HAVE_ASPRINTF
+    FILE * fp = NULL;
+#endif /* not HAVE_ASPRINTF */
+    char * path;
+    bool result = FALSE;
+    
+    /* check name */
+    if(name==NULL || name[0]=='\0')
+    	return FALSE;	/* Fail; name needed */
+    
+    /* contruct the full path */
+    if(dir == NULL || dir[0]=='\0') {
+	path = name;
+    } else {
+#ifdef HAVE_ASPRINTF
+	asprintf(&path, "%s" DIR_PATHSEP "%s", dir,name);
+	if(path==NULL) return FALSE;	/* memory allocation error */
+#else /* ~ HAVE_ASPRINTF */
+	path=(char*)tmalloc(1 + strlen(dir)+strlen(name));
+	if(path==NULL) return FALSE;	/* memory allocation error */
+	sprintf(path,"%s" DIR_PATHSEP "%s",dir,name);
+#endif /* HAVE_ASPRINTF */
+    }
+
+    /* now access the file */
+#ifdef HAVE_UNISTD_H
+    if (access(path, R_OK) == 0) {		
+#else
+    if ((fp = fopen(path, "r")) != NULL) {
+	(void) fclose(fp);
+#endif /* HAVE_UNISTD_H */
+	inp_source(path);
+#ifdef TRACE
+	printf("Init file: '%s'\n",path);
+#endif /* TRACE */	
+	result = TRUE;	/* loaded okay */
+    }
+    
+    /* if dir was not NULL and not empty then we allocated memory above */
+    if(dir!=NULL && dir[0] !='\0')
+#ifdef HAVE_ASPRINTF
+    	free(path);
+#else
+	tfree(path);
+#endif /* HAVE_ASPRINTF */
+    
+    return result;
+}
+
+/* -------------------------------------------------------------------------- */
 
 #ifdef SIMULATOR
 extern int OUTpBeginPlot(), OUTpData(), OUTwBeginPlot(), OUTwReference();
@@ -634,7 +720,7 @@ main(int argc, char **argv)
 	    iflag = TRUE;
 	    break;
 
-	case 'n':		/* Don't read .spiceinit */
+	case 'n':		/* Don't read initialisation file */
 	    readinit = FALSE;
 	    break;
 
@@ -651,13 +737,13 @@ main(int argc, char **argv)
 		    shutdown (EXIT_BAD);
 		}
 #endif		
-//    *** Log-File öffnen *******
+/*    *** Log-File öffnen ******* */
                 if (!(flogp = fopen(buf, "w"))) {
                       perror(buf);
                       shutdown(EXIT_BAD);                    
                 }
-//    ***************************
-                com_version(NULL);  // hvogt 11.11.2001
+/*    *************************** */
+                com_version(NULL);  /* hvogt 11.11.2001 */
                 fprintf(stdout, "\nBatch mode\n\n");
                 fprintf(stdout, "Simulation output goes to rawfile: %s\n\n", ft_rawfile);
                 fprintf(stdout, "Comments and warnings go to log-file: %s\n", buf);
@@ -757,36 +843,29 @@ main(int argc, char **argv)
     signal(SIGSYS, sig_sys);
 #endif
 
-
+    /* load user's initialisation file */
     if (readinit) {
-#ifdef HAVE_PWD_H
-	/* Try to source either .spiceinit or ~/.spiceinit. */
-        if (access(".spiceinit", 0) == 0)
-            inp_source(".spiceinit");
-        else {
-	    char *s;
-	    struct passwd *pw;
-
-            pw = getpwuid(getuid());
-
-#define INITSTR "/.spiceinit"
-#ifdef HAVE_ASPRINTF
-	    asprintf(&s, "%s%s", pw->pw_dir,INITSTR);
-#else /* ~ HAVE_ASPRINTF */
-	    s=(char *) tmalloc(1 + strlen(pw->pw_dir)+strlen(INITSTR));
-	    sprintf(s,"%s%s",pw->pw_dir,INITSTR);
-#endif /* HAVE_ASPRINTF */
-
-            if (access(s, 0) == 0)
-                inp_source(s);
+	bool good;
+	
+	/* Try accessing the initialisation file in the current directory */
+	good = read_initialisation_file("",INITSTR);
+	
+	/* if that fail try the alternate name */
+	if(good == FALSE)
+	    good = read_initialisation_file("",ALT_INITSTR);
+	
+	/* if that failed try in the user's home directory
+	   if their HOME environment variable is set */
+	if(good == FALSE) {
+	    char * homedir;
+	    homedir = getenv("HOME");
+	    if(homedir !=NULL) {
+		good = read_initialisation_file(homedir,INITSTR);
+		if(good == FALSE) {
+		    good = read_initialisation_file(homedir,ALT_INITSTR);
+		}
+    	    }
 	}
-#else /* ~ HAVE_PWD_H */
-	/* Try to source the file "spice.rc" in the current directory.  */
-        if ((fp = fopen("spice.rc", "r")) != NULL) {
-            (void) fclose(fp);
-            inp_source("spice.rc");
-        }
-#endif /* ~ HAVE_PWD_H */
     }
 
     if (!ft_batchmode) {
@@ -955,7 +1034,3 @@ evl:
     shutdown(EXIT_NORMAL);
     return EXIT_NORMAL;
 }
-
-
-
-
