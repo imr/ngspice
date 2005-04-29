@@ -205,7 +205,7 @@ TEXT: H model  parameters.   Spice  calculates  the difference in an
 TEXT: H output variable (either a node voltage or a branch  current)
 TEXT: H by  perturbing  each parameter of each device independently.
 TEXT: H Since the method is a numerical approximation,  the  results
-TEXT: H may  demonstrate  second  order  affects in highly sensitive
+TEXT: H may  demonstrate  second  order  effects in highly sensitive
 TEXT: H parameters, or may fail to show very low but non-zero sensi-
 TEXT: H tivity.   Further, since each variable is perturb by a small
 TEXT: H fraction of its value, zero-valued parameters are not analy-
@@ -3003,8 +3003,8 @@ TEXT: H
 TEXT: H
 TEXT: H _E_x_a_m_p_l_e_s:
 TEXT: H
-TEXT: H     .DISTO DEC 10 1kHz 100Mhz
-TEXT: H     .DISTO DEC 10 1kHz 100Mhz 0.9
+TEXT: H     .DISTO DEC 10 1kHz 100MHz
+TEXT: H     .DISTO DEC 10 1kHz 100MHz 0.9
 TEXT: H
 TEXT: H
 TEXT: H
@@ -3121,7 +3121,7 @@ TEXT: H
 TEXT: H
 TEXT: H _E_x_a_m_p_l_e_s:
 TEXT: H
-TEXT: H     .NOISE V(5) VIN DEC 10 1kHZ 100Mhz
+TEXT: H     .NOISE V(5) VIN DEC 10 1kHz 100MHz
 TEXT: H     .NOISE V(5,3) V1 OCT 8 1.0 1.0e6 1
 TEXT: H
 TEXT: H
@@ -4504,7 +4504,7 @@ TEXT: H      Throw out any  intermediate  data  in  the  circuit
 TEXT: H (e.g,  after  a breakpoint or after one or more analyses
 TEXT: H have been done already), and re-parse  the  input  file.
 TEXT: H The  circuit can then be re-run from it's initial state,
-TEXT: H overriding the affect of any set or alter commands.   In
+TEXT: H overriding the effect of any set or alter commands.   In
 TEXT: H Spice-3e and earlier versions this was done automatical-
 TEXT: H ly by the run command.
 TEXT: H
@@ -4597,9 +4597,9 @@ TEXT: H If  there were any of the control lines .ac, .op, .tran,
 TEXT: H or .dc, they are executed.  The output is put in rawfile
 TEXT: H if it was given, in addition to being available interac-
 TEXT: H tively.  In Spice-3e and  earlier  versions,  the  input
-TEXT: H file  would  be  re-read  and  any affects of the set or
+TEXT: H file  would  be  re-read  and  any effects of the set or
 TEXT: H alter commands would be reversed.  This is no longer the
-TEXT: H affect.
+TEXT: H effect.
 TEXT: H
 TEXT: H
 
