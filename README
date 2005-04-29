@@ -35,19 +35,19 @@ Berkeley's Spice lacks in three directions:
  c) Features in the code.
 
  * The framework:
-   Spice is (and should continue to be) acommand line or a text tool, but
+   Spice is (and should continue to be) a command line or a text tool, but
    this makes very difficult to design large circuits. To overcome this
    difficulty, a schematic entry tool and a waveform viewer tool are
    needed. Nevertheless, there are other tools that can be useful:
-   a parts database, an editor which higlights the syntax, a symbol
+   a parts database, an editor which highlights the syntax, a symbol
    editor, etc. Most of these program already exists in the open source
    world, so they need ony to be integrated in a common EDA environment.
    This is the first direction of development. 
 
  * Documentation: Commercial simulators (hi-end) have very good manuals
    with tutorials, models equation explained, example of use, suggestions,
-   etc. This line of development has the task of provinding the final
-   spice user with an orderd and comprehensive set of information on the
+   etc. This line of development has the task of providing the final
+   spice user with an ordered and comprehensive set of information on the
    program and it's features. The documentation should be useful for the
    student as well as for the circuit professional.
 
@@ -71,7 +71,7 @@ Berkeley's Spice lacks in three directions:
      assumes different values.
 
    - Devices -
-     Behavioral device: enhance the B device of spice3 to accepts IF THEN
+     Behavioural device: enhance the B device of spice3 to accepts IF THEN
      ELSE conditions, and digital keywords like DELAY, HIGHV. LOWV, etc to
      simulate simple digital circuits.
      
@@ -82,7 +82,7 @@ Berkeley's Spice lacks in three directions:
      we do not need BJT or SOI (in most of the situations).  
 
      Code Level Modeling: Let users write their devices in C and use 
-     them in the simulator.  I have discovered a couple of standars
+     them in the simulator.  I have discovered a couple of standards
      for doing this at the Sematech ftp site. 
      
      Improving device: Include additional parameters to some devices:
@@ -95,8 +95,8 @@ Berkeley's Spice lacks in three directions:
      How if we check LKC at every node as convergence test ?
      
      Linearization:
-     Are there better algorithms for nonlinear equations the the Newton
-     raphson ?
+     Are there better algorithms for nonlinear equations than the Newton
+     Raphson ?
 
   - Sparse Matrix - 
     Faster handling of sparse matrices: new processors offers generous
@@ -104,7 +104,7 @@ Berkeley's Spice lacks in three directions:
 
   
   - Options - 
-    Possibility to mesure circuit pameters, like the delay between two
+    Possibility to mesure circuit parameters, like the delay between two
     nodes, etc.
     
 
@@ -119,7 +119,7 @@ Paolo Nenzi (pnenzi@ieee.ing.uniroma.it)
 NOTES:
 ------
 
-This version builds correctly on redhat linux 6.0, and most probably
+This version builds correctly on Redhat linux 6.0, and most probably
 on any glibc2-based linux distribution. The executables have hardly been
 tested, all I know is that they build. The main goal of this release is
 to get autoconf to work.
