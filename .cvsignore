@@ -7,7 +7,7 @@ install-sh
 config.h.in
 mkinstalldirs
 missing
-stamp-h.in
+stamp-h*
 Makefile.in
 configure
 config.log
@@ -15,5 +15,8 @@ config.h
 config.cache
 libtool
 config.status
-stamp-h
 Makefile
+*.cache
+depcomp
+ylwrap
+
