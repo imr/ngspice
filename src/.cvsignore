@@ -2,10 +2,13 @@ Makefile.in
 Makefile
 .deps
 .libs
-help
-sconvert
-proc2mod
+nghelp
+ngsconvert
+ngproc2mod
 multidec
 makeidx
 ngspice
-nutmeg
+ngnutmeg
+ngmultidec
+spinit
+
