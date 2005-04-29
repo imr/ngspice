@@ -84,7 +84,7 @@ DC Convergence Enhancements -
   circuit does not converge, the source-factor is set to the value
   from the previous successful step, the previously stored node
   voltages are restored, the step-factor is reduced, the source
-  factor is increased by this smaller step-factor, and convergance
+  factor is increased by this smaller step-factor, and convergence
   is attempted again.
 
   Same thing done for "Gmin-stepping" algorithm.
@@ -98,12 +98,12 @@ DC Convergence Enhancements -
   The Gmin implementation across the substrate diodes of MOS1, MOS2,
   MOS3, MOS6 and BSIM3 devices, and across BJT base-emitter and
   base-collector diodes, was incorrect. Correcting this dramatically
-  improved DC convergance. (I think this also effects BSIM1 and 2
+  improved DC convergence. (I think this also affects BSIM1 and 2
   but I haven't fixed them yet !)
 
   The gm, gmb and gds calculations in the MOS3 model were all wrong.
   The device equations were fixed, leading to much improved
-  convergance.
+  convergence.
 
   The Vcrit value used for diode voltage limiting was calculated
   without taking into account the device area (and in some cases
@@ -125,7 +125,7 @@ DC Convergence Enhancements -
   is non-zero. A "tweak" has been added for the VMAX=0 case.
 
 
-Transient Convergance Enhancements -
+Transient Convergence Enhancements -
 
   Temperature correction of various diode capacitances was implemented
   slightly incorrectly, leading to capacitance discontinuities in
@@ -159,7 +159,7 @@ Input Read-in and Checking -
   Numbers beginning with a + sign got the input routine confused.
   Fixed now.
 
-  Attempts to nodeset (or .IC) non-existant nodes are flagged with a
+  Attempts to nodeset (or .IC) non-existent nodes are flagged with a
   warning.
 
   PWL statements on Voltage or Current sources are now checked for
@@ -238,8 +238,8 @@ in this simulator. Read it, this file can save you a lot of time.
 Ng-spice-rework-9
 ============
 
-Thanks to Arno Peters now all device models are dynamically loaed on
-demand.  Thay are linked as shared libraries. The next step is the
+Thanks to Arno Peters now all device models are dynamically loaded on
+demand.  They are linked as shared libraries. The next step is the
 dlopen() one which will make possible to link devices without any
 recompilation.
 
@@ -310,7 +310,7 @@ Popescu which understands the M parameter and implements HDIF.
 
 2) BSIM3V3.2 model al Level 50. This is the standard Berkeley version.
 
-3) Now the resistor model can accepts two differents values for DC and
+3) Now the resistor model can accepts two different values for DC and
 AC resistance.
 
 
@@ -333,7 +333,7 @@ supplied the patch).
    
     * Wsw (current controlled switch) in subckt, parsing bug.
     * scale factor in arbitrary source.
-    * bug in noise analisys.
+    * bug in noise analysis.
     * save segmentation faults.
     
     
