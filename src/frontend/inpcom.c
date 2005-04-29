@@ -11,10 +11,12 @@ Author: 1985 Wayne A. Christopher
  * SJB 21 April 2005
  * Added support for end-of-line comments that begin with any of the following:
  *   ';'  (for PSpice compatability)
- *   '$'  (for HSpice compatability)
+ *   '$ ' (for HSpice compatability)
  *   '//' (like in c++ and as per the numparam code)
  *   '--' (as per the numparam code)
  * Any following text to the end of the line is ignored.
+ * Note requirement for $ to be followed by a space. This is to avoid conflict
+ * with use in front of a variable.
  * Comments on a contunuation line (i.e. line begining with '+') are allowed
  * and are removed before lines are stitched.
  * Lines that contain only an end-of-line comment with or withou leading white
@@ -442,8 +444,8 @@ inp_stripcomments_deck(struct line *deck)
 }
 
 /* Strip end of line comment from a string and remove trailing white space
-   supports comments that begin with single characters ';' or '$'
-   or double characters '//' or '--'
+   supports comments that begin with single characters ';'
+   or double characters '$ ' or '//' or '--'
    If there is only white space before the end-of-line comment the
    the whole line is converted to a normal comment line (i.e. one that
    begins with a '*').
@@ -455,10 +457,13 @@ inp_stripcomments_line(char * s)
     char * d = s;
     if(*s=='\0') return;	/* empty line */
     
-    /* look for comment */
+    /* look for comments */
     while((c=*d)!='\0') {
 	d++;
-	if( (*d==';') || (*d=='$') ) {	
+	if (*d==';') {	
+	    break;
+	} else if ((c=='$') && (*d==' ')) {
+	    *d--; /* move d back to first comment character */
 	    break;
 	} else if( (*d==c) && ((c=='/') || (c=='-'))) {
 	    *d--; /* move d back to first comment character */
