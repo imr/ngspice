@@ -81,7 +81,7 @@ ngspice_LDADD = \
 	@WINMAIN@ \
 	spice.o \
 	frontend/libfte.a \
-	frontend/wdisp/libwindisp.a \
+	@WINDISPLIB@ \
 	frontend/plotting/libplotting.a \
 	@XSPICELIB1@ \
 	spicelib/devices/dev.o \
@@ -120,7 +120,7 @@ ngnutmeg_SOURCES = \
 ngnutmeg_LDADD = \
 	@WINMAIN@ \
 	frontend/libfte.a \
-	frontend/wdisp/libwindisp.a \
+	@WINDISPLIB@ \
 	frontend/plotting/libplotting.a \
 	frontend/parser/libparser.a \
 	@NUMPARAMLIB@		\

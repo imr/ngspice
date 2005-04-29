@@ -373,11 +373,14 @@ dnl redefine the path for WINDOWS:
     AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo /spice_win/bin`" )
     AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo /spice_win/lib`" )
     WINMAIN="winmain.o"
+    WINDISPLIB="frontend/wdisp/libwindisp.a"
 else
     WINMAIN=""
+    WINDISPLIB=""
 fi
 
 AC_SUBST(WINMAIN)
+AC_SUBST(WINDISPLIB)
 
 
 # Recapitulate settings:
