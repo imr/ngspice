@@ -9,7 +9,7 @@ DC    : DC-sweep analysis
         + Added resistance sweep as in spice 2.
         * Note: It is possible to perform a generic parametric sweep ?
 
-DISTO : Small signal distorsion analysis
+DISTO : Small signal distortion analysis
 
 NOISE : Noise analysis
 
