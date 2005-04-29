@@ -97,7 +97,7 @@
   development it become apparent that to reach the goal a complete
   rewrite of spice was needed. Since it was almost absurd to rewrite
   Spice and since a new simulator was already under development:
-  ACS (Al's Circuit Simulator), now GNUCap (GNU Circuit Analyis
+  ACS (Al's Circuit Simulator), now GNUCap (GNU Circuit Analysis
   package), the goal of nspice became less utopical: merge
   Spice3f5, Xspice and Cider into a mixed-signal/mixed-level simulator
   that can be used as a reliable engine.  
@@ -147,7 +147,7 @@
   
   + Simulator's analyses: this is a low priority area. Planned improvements
     include the implementation of parametric analyses, to analyse the
-    behavior of the circuit as a parameter changes. Parameter sweep,
+    behaviour of the circuit as a parameter changes. Parameter sweep,
     Monte Carlo and Worst Case fall in this category. Network analysis
     (double bipole parameters extraction) is another planned improvement.       
     
@@ -182,11 +182,11 @@
     here.
     
   
-  + Documentation: Commercial simulators comes woth very good manuals 
+  + Documentation: Commercial simulators comes with very good manuals 
     containing tutorials, description of models equations, example of 
     use, suggestions, etc. Spice came with little documentation. The 
-    Spice3f manual, available on the Internet has been used as the base
-    fot the new manual. It will be constantly improved during ngspice 
+    Spice3f manual, available on the Internet has been used as the basis
+    for the new manual. It will be constantly improved during ngspice 
     development and integrated with the documentation accompanying Xspice 
     and Cider. This is a very time consuming task and probably the 
     documentation will always be left slightly behind.
@@ -242,7 +242,7 @@
  1.7.  Are the mailing lists archived anywhere ?
 
   Yes, the lists are archived. There are two places where to look for
-  archives. The project stareted on the IEEE Central and South Italy
+  archives. The project started on the IEEE Central and South Italy
   web server and then moved to sourceforge. Sourceforge provides an
   archiving service that cam be accessed via the summary page:
   
@@ -282,7 +282,7 @@
          tion?
 
   There are a lot of Internet sites that have information on spice, the
-  best way is to point to your prefererred search engine. Some interesting
+  best way is to point to your preferred search engine. Some interesting
   sites are:
   
   The Spice Home Page:
@@ -375,7 +375,7 @@
   a GNU C compiler and a UNIX environment to compile it. Ngspice can
   be compiled under Windows using  the mingw or cigwin environment.
   
-  In the future a compatiblity table will be written.
+  In the future a compatibility table will be written.
 
 
  3.2.  I get errors when I try to compile the source code, why?
