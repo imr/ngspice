@@ -1,3 +1,38 @@
+Ng-spice-rework-15
+============
+
+Rework-15 release is a giant leap forward for ngspice. It incorporates 
+many (read most) of the improvements implemented in tclspice during the 
+two years long "sleep" of ngspice and adds many others. The incomplete of
+new features incorporated are:  
+
+  - Xspice simulator (with codemodel dynamic loading support):
+     a mixed signal simulator built upon spice3.
+     
+  - Cider simulator:
+     a mixed level simulator built upon spice3.
+     
+  - Numparam library:
+     a library that allows for parameter substitution at netlist level.
+     
+  - Improved models:
+     Diode model includes periphery effects and high level of injection effects,
+     BJT and BJT2 enhanced.
+     BSIM3 now includes ACM.
+     BSIM4 implementation corrected.
+     
+   -New models:
+     VBIC (3 Terminals, no excess phase and thermal network),
+     HiSIM.
+     
+   - Frontend leaks closed.
+      Now frontend works as it should.
+      
+   - Many new example file.
+   
+   - Xgraph plotting program included.
+
+
 Ng-spice-rework-14
 ============
 
