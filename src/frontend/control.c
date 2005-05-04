@@ -533,6 +533,51 @@ doblock(struct control *bl, int *num)
     return (NORMAL_STR);
 }
 
+/* Maxiumum number of cheverons used for the alternative prompt */
+#define MAX_CHEVRONS	16
+
+/* Get the alternate prompt.
+   Number of chevrons indicates stack depth.
+   Returns NULL when there is no alternate prompt.
+   SJB 28th April 2005 */
+char * 
+get_alt_prompt(void)
+{
+    int i = 0, j;
+    static char buf[MAX_CHEVRONS + 2];	/* includes terminating space & null */
+    struct control *c;
+    
+    /* if nothing on the command stack return NULL */
+    if (cend[stackp] <= 0)
+	return NULL;
+    
+    /* measure stack depth */
+    for (c = cend[stackp]->co_parent; c; c = c->co_parent)
+	i++;
+    
+    if (i <= 0)
+	return NULL;
+    
+    /* Avoid overflow of buffer and
+       indicate when we've limited the chevrons by starting with a '+' */
+    if(i > MAX_CHEVRONS) {
+	i = MAX_CHEVRONS;
+	buf[0]='+';
+    } else {
+	buf[0]='>';
+    }
+    
+     /* return one chevron per command stack depth */
+    for (j = 1; j < i; j++)
+	buf[j] = '>';
+    
+    /* Add space and terminate */
+    buf[j] = ' ';
+    buf[j + 1] = '\0';
+    
+    return buf;
+}
+
 
 /* Get a command. This does all the bookkeeping things like turning
  * command completion on and off...  */
@@ -540,27 +585,15 @@ static wordlist *
 getcommand(char *string)
 {
     wordlist *wlist;
-    int i = 0, j;
-    static char buf[64];
-    struct control *c;
 
     if (cp_debug)
-        fprintf(cp_err, "calling getcommand %s\n", 
-                string ? string : "");
-    if (cend[stackp]) {
-        for (c = cend[stackp]->co_parent; c; c = c->co_parent)
-            i++;
-        if (i) {
-            for (j = 0; j < i; j++)
-                buf[j] = '>';
-            buf[j] = ' ';
-            buf[j + 1] = '\0';
-            cp_altprompt = buf;
-        } else
-            cp_altprompt = NULL;
-    } else
-        cp_altprompt = NULL;
+        fprintf(cp_err, "calling getcommand %s\n", string ? string : "");
 
+#ifndef HAVE_GNUREADLINE
+    /* set cp_altprompt for use by the lexer - see parser/lexical.c */
+    cp_altprompt = get_alt_prompt();
+#endif
+    
     cp_cwait = TRUE;
     wlist = cp_parse(string);
     cp_cwait = FALSE;

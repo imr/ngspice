@@ -66,17 +66,21 @@ extern void cp_ioreset();
 extern wordlist *cp_redirect();
 extern wordlist *cp_parse();
 
-/* front.c */
+/* control.c */
 
 extern bool cp_cwait;
 extern bool cp_dounixcom;
 extern char *cp_csep;
+extern char * get_alt_prompt(void);
 extern int cp_evloop(char *string);
-extern void com_cdump(wordlist *wl);
 extern void cp_resetcontrol(void);
 extern void cp_toplevel(void);
 extern void cp_popcontrol(void);
 extern void cp_pushcontrol(void);
+
+/* com_cdump.c */
+
+extern void com_cdump(wordlist *wl);
 
 /* glob.c */
 
