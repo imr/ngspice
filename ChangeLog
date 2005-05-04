@@ -1,3 +1,17 @@
+2005-05-04  Steven Borley <steven.borley@virgin.net>
+
+  *   Fixed issues with the alternate prompt (src/main.c, src/frontent/control.c
+      and src/include/cpextern.h) - a format problem when used with readline and
+      a buffer overrun. Also reduced max number of chevrons to 16 and added + at
+      start when command stack is holding than 16.
+  
+  *   Translations for German comments provided by Dietmar Warning, to fix
+      issue with UTF-8 observed on Windows (src/main.c)
+      
+  *   Fixed readline operation within ngnutmeg (src/main.c). Also include some
+      minor tidy-up to avoid some compiler warnings. Updated copyright date
+      for --help.
+
 2005-04-29  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*   src/frontend/inpcom.c: end-of-line comments starting with

@@ -78,7 +78,7 @@ bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. TRUE = we've b
 bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt. */
 char *ft_rawfile = "rawspice.raw";
 
-bool oflag = FALSE;         /* Output über redefinierte Funktionen */
+bool oflag = FALSE;         /* Output over redefined I/O functions */
 FILE *flogp;  /* hvogt 15.12.2001 */
 
 /* Frontend and circuit options */
@@ -120,8 +120,6 @@ BOOLEAN TWOtranDebug = TRUE;
 BOOLEAN TWOjacDebug  = FALSE; 
  
 /* CIDER Global Variable Declarations */
- 
-char *LogFileName = "cider.log"; /* This will go somewhere else */
   
 int BandGapNarrowing;
 int TempDepMobility, ConcDepMobility, FieldDepMobility, TransDepMobility;
@@ -152,18 +150,16 @@ static int started = FALSE;
 /* static functions */
 static int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 static int shutdown(int exitval);
+static void app_rl_readlines(void);
 #ifdef HAVE_GNUREADLINE
-static char * prompt();
+static char * prompt(void);
+static int rl_event_func(void) ;
 #endif /* HAVE_GNUREADLINE */
 static void show_help(void);
 static void show_version(void);
 static bool read_initialisation_file(char * dir, char * name);
 #ifdef SIMULATOR
 static void append_to_stream(FILE *dest, FILE *source);
-#ifdef HAVE_GNUREADLINE
-static int rl_event_func() ;
-static void app_rl_readlines();
-#endif /* HAVE_GNUREADLINE */
 #endif /* SIMULATOR */
 
 
@@ -357,19 +353,20 @@ shutdown(int exitval)
 #ifdef HAVE_GNUREADLINE
 /* Adapted ../lib/cp/lexical.c:prompt() for GNU Readline -- Andrew Veliath <veliaa@rpi.edu> */
 static char *
-prompt()
+prompt(void)
 {
     static char pbuf[128];
     char *p = pbuf, *s;
 
     if (cp_interactive == FALSE)
         return NULL;	/* NULL means no prompt */
-    if (cp_promptstring == NULL)
-        s = "-> ";
-    else
-        s = cp_promptstring;
-    if (cp_altprompt)
-        s = cp_altprompt;
+    
+    s = get_alt_prompt();
+    if(s==NULL)
+	s = cp_promptstring;
+    if(s==NULL)
+	s = "->";
+    
     while (*s) {
         switch (strip(*s)) {
        case '!':
@@ -388,7 +385,6 @@ prompt()
     return pbuf;
 }
 
-#ifdef SIMULATOR
 /* -------------------------------------------------------------------------- */
 /* Process device events in Readline's hook since there is no where
    else to do it now - AV */
@@ -400,13 +396,35 @@ rl_event_func()
     Input(&reqst, NULL);
     return 0;
 }
+#endif /* HAVE_GNUREADLINE */
 
 /* -------------------------------------------------------------------------- */
-/* Added GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
+/* This is the command processing loop for spice and nutmeg.
+   The function is called even when GNU readline is unavailable, in which
+   case it falls back to repeatable calling cp_evloop()
+   SJB 26th April 2005 */
 static void
 app_rl_readlines()
 {
+#ifdef HAVE_GNUREADLINE
+    /* GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
     char *line, *expanded_line;
+    
+    /* ---  set up readline params --- */
+    strcpy(gnu_history_file, getenv("HOME"));
+    strcat(gnu_history_file, "/.");
+    strcat(gnu_history_file, application_name);
+    strcat(gnu_history_file, "_history");
+    
+    using_history();
+    read_history(gnu_history_file);
+    
+    rl_readline_name = application_name;
+    rl_instream = cp_in;
+    rl_outstream = cp_out;
+    rl_event_hook = rl_event_func;
+    rl_catch_signals = 0;   /* disable readline signal handling  */
+    rl_catch_sigwinch = 1;  /* allow readline to respond to resized windows  */
 
     /* note that we want some mechanism to detect ctrl-D and expand it to exit */
     while (1) {
@@ -431,9 +449,11 @@ app_rl_readlines()
        if (line) free(line);
     }
     /* History gets written in ../fte/misccoms.c com_quit */
+    
+#else
+    while (cp_evloop((char *) NULL) == 1) ;
+#endif /* ifelse HAVE_GNUREADLINE */
 }
-#endif /* SIMULATOR */
-#endif /* HAVE_GNUREADLINE */
 
 
 /* -------------------------------------------------------------------------- */
@@ -467,7 +487,7 @@ show_version(void)
 	   "Currently maintained by the NGSpice Project\n\n"
 	   "Copyright (C) 1985-1996,"
 	   "  The Regents of the University of California\n"
-	   "Copyright (C) 1999-2000,"
+	   "Copyright (C) 1999-2005,"
 	   "  The NGSpice Project\n", cp_program, PACKAGE, VERSION);
 }
 
@@ -737,7 +757,7 @@ main(int argc, char **argv)
 		    shutdown (EXIT_BAD);
 		}
 #endif		
-/*    *** Log-File öffnen ******* */
+/*    *** Open the Log-File ******* */
                 if (!(flogp = fopen(buf, "w"))) {
                       perror(buf);
                       shutdown(EXIT_BAD);                    
@@ -986,30 +1006,7 @@ evl:
     }  /* ---  if (ft_batchmode) ---  */ 
     else {
         cp_interactive = TRUE;
-
-#ifdef HAVE_GNUREADLINE
-        /* ---  set up readline params --- */
-        strcpy(gnu_history_file, getenv("HOME"));
-	strcat(gnu_history_file, "/.");
-	strcat(gnu_history_file, application_name);
-	strcat(gnu_history_file, "_history");
-	
-	using_history();
-	read_history(gnu_history_file);
-	
-	rl_readline_name = application_name;
-	rl_instream = cp_in;
-	rl_outstream = cp_out;
-	rl_event_hook = rl_event_func;
-	rl_catch_signals = 0;   /* disable readline signal handling  */
-	rl_catch_sigwinch = 1;  /* allow readline to respond to resized windows  */
-
-	/*  Here's where we enter the command processing loop  */
-       app_rl_readlines();
-#else
-	while (cp_evloop((char *) NULL) == 1) ;
-#endif /* ifelse HAVE_GNUREADLINE */
-
+        app_rl_readlines();  /*  enter the command processing loop  */
     }  /* --- else (if (ft_batchmode)) --- */
 
 #else  /* ~ SIMULATOR */
@@ -1027,7 +1024,7 @@ evl:
     /* Nutmeg "main" */
     (void) sigsetjmp(jbuf, 1);
     cp_interactive = TRUE;
-    while (cp_evloop((char *) NULL) == 1) ;
+    app_rl_readlines();  /*  enter the command processing loop  */
 
 #endif /* ~ SIMULATOR */
 
