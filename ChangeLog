@@ -1,3 +1,8 @@
+2005-05-05  Steven Borley <steven.borley@virgin.net>
+
+  *  Fixed a compile problem with Xspice on Cygwin. Still will not link, but
+     it's a step in the right direction.
+
 2005-05-04  Steven Borley <steven.borley@virgin.net>
 
   *   Fixed issues with the alternate prompt (src/main.c, src/frontent/control.c
@@ -59,7 +64,7 @@
 	    in key-word identification (patch from Steven Borley).
 	
 	*   src/frontend/inp.c: Fix a bug where the wrong argument to 'listing'
-	    would error, but still produce a listing (patch fron Steven Borley).
+	    would error, but still produce a listing (patch from Steven Borley).
 	    
 	*   src/frontend/inpcom.c: From Steven Borley <steven.borley@virgin.net>
 	    patch:
@@ -98,7 +103,7 @@
              > Numparam now only stops execution when it finds errors,
              > Added some debug tracing (normally off),
              > Added some debug tracing (normally off),
-             > Fixes a #ifdef that had a typo and thus stoped numparams,
+             > Fixes a #ifdef that had a typo and thus stopped numparams,
 	       working,
              > Renames a local variable to avoid confusion (of the 
                developer/maintainer),
@@ -109,7 +114,7 @@
 	
 
 	*   src/frontend/subckt.c: Added fix sent by Hitoshi Tanaka 
-	    <HDA01055@nifty.com>. Now nodes starting vith the letter "v"
+	    <HDA01055@nifty.com>. Now nodes starting with the letter "v"
 	    in subcircuits are translated correctly (as internal nodes)
 	    and not as voltage sources v<NIL>.
 	    
@@ -139,7 +144,7 @@
 
 2005-03-20  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/spicelib/analysis/cktntask.c: The default poarallel
+	*   src/spicelib/analysis/cktntask.c: The default parallel
 	    multiplier (m=1) for  mosfet levels 1, 2, 3 and 9 was not set 
 	    in interactive analyses. Applied fix sent by Steven Borley 
 	    <steven.borley@diode.demon.co.uk>.
@@ -156,8 +161,8 @@
 	    function prompt() when non prompt is passed to readline().
 	    
 	*   src/ngspice.txt: Applied patch sent by Steven Borley 
-	    <steven.borley@diode.demon.co.uk> that fixed a few arrors that 
-	    corrputed text output.
+	    <steven.borley@diode.demon.co.uk> that fixed a few errors that 
+	    corrupted text output.
 	    
 	*   configure.in:   Applied patch sent by Steven Borley 
 	    <steven.borley@diode.demon.co.uk> that fixes compiler warnings
@@ -169,12 +174,12 @@
 	    and a default case for not (yet) supported architectures.
 	    
 	*   src/frontend/aspice.c: Applied patch sent by Steven Borley 
-	    <steven.borley@diode.demon.co.uk> that fixedscompiler warning on 
+	    <steven.borley@diode.demon.co.uk> that fixed compiler warnings on 
 	    Mac OSX in definition of "status".
 	    
 	*   src/spicelib/devices/bsim3/b3set.c: Applied patch sent by Steven 
 	    Borley <steven.borley@diode.demon.co.uk> that remove the compiler
-	    warnings about ambiguos "else".         
+	    warnings about ambiguous "else".
 
 2005-03-13  Paolo Nenzi <p.nenzi@ieee.org>
 
@@ -240,7 +245,7 @@
 	    incorrectly. Declared parameter vt0 as "redundant", since it has
 	    the same meaning of vto.
 	
-	*   tests/mesa/mesa11.out: changed test file output accordind to
+	*   tests/mesa/mesa11.out: changed test file output according to
 	    changes in mesa.c. Now model type ic correct.        
 	     
 
@@ -261,10 +266,10 @@
 	*   src/xspice/enhtrans.c: Removed code introduced by Stuart Brorson to
 	    limit parsing of POLY statements to dimension 2. Now functions 
 	    returns a copy of the error strings that i freed by higher level
-	    code once precessed and write the error on the expanded netlist (as
+	    code once processed and write the error on the expanded netlist (as
 	    comments) instead of expanded lines (this fixes a segmentation fault
 	    since INPpas1() does not check if the returned line is not null and 
-	    makes expandend netlist more informative). 
+	    makes expanded netlist more informative). 
 
 2004-08-20  Paolo Nenzi <p.nenzi@ieee.org>
 	
@@ -599,7 +604,7 @@
 	  
 	* src/spicelib/devices/jfet/jfetload.c: reintroduces the old model
 	  code, superseded by Sydney code (Parker Skellern). The code is
-	  not useed but is left as reference.   
+	  not used but is left as reference.   
 	
 	* DEVICES: Updated jfet status
 	
@@ -748,7 +753,7 @@
 
 	* src/spicelib/devices/res/*, src/spicelib/analysis/nevalsrc.c,
 	  doc/ngspice.texi, DEVICES: Added new features to resistors: 
-	  flicker noise, tempereature difference with the rest of the 
+	  flicker noise, temperature difference with the rest of the 
 	  circuit, noiseless resistors. The implementation of dtemp 
 	  required a change in the nevalsrc.c file in the function that 
 	  computes the noise densities. Updated documentation. 
@@ -788,7 +793,7 @@
 	  src/frontend/signal_handler.c, src/frontend/plotting/x11.c,
 	  src/frontend/parser/glob.c, src/include/ngspice.h:
 	  
-	  Added Andrew Veliath patch fo readline support. Using
+	  Added Andrew Veliath patch for readline support. Using
 	  readline with ngspice IS A VIOLATION OF GPL LICENSE, you
 	  have been warned. The final decision is up to you. The
 	  patch has been applied in the perspective of changing
@@ -827,7 +832,7 @@
 	  is now in bsim3 directory.
        
         * src/spicelib/devices: various enhancements on models. Mainly
-	  code cleaning (removed spurios #include <stdio.h>). Added 
+	  code cleaning (removed spurious #include <stdio.h>). Added 
 	  parallel multiplier on some device and corrected implementation
 	  of cpl an txl devices.
 
@@ -844,7 +849,7 @@
 	  src/spicelib/devices/nbjt2, src/spicelib/devices/numd,
 	  src/spicelib/devices/numd2, src/spicelib/devices/numos:
 	  
-	  Added CIDER simulator routines, support math fnctions and
+	  Added CIDER simulator routines, support math functions and
 	  numerical devices.
 	
 	* src/spicelib/devices/bsim3soi: added bsim3soi v3.x model
@@ -872,7 +877,7 @@
    		Reverted to version 1.1.2.2 so POLY and codemodels work
     
    		* src/Makefile.am:
-   		Fixed libspice.so dependancies
+   		Fixed libspice.so dependencies
    
   
   		* src/frontend/{com_let.c,device.c,evaluate.c}:
@@ -894,7 +899,7 @@
 2003-07-25  Paolo Nenzi <p.nenzi@ieee.org>
 
 	* src/main.c: Studied Vera's main.d and introduced changes
-	following her advices.
+	following her advice.
 	
 	* src/frontend/vectors.c: Applied Vera patch.
 	
@@ -1067,7 +1072,7 @@
 	* configure.in: corrected a bug that broke the on line help system.
 	Help system now works again but its text is a little bit outdated.
 
-	* ???: all binaries now have ng prependend, so ngspice can be installed
+	* ???: all binaries now have ng prepended, so ngspice can be installed
 	with other spice flavours.
 	
 	
@@ -1153,7 +1158,7 @@
 	
 	* src/include/complex.h: Updates of cast from char * to void *
 
-	* src/analysis/cktsens.c: Matrixes cannot be created non-complex.
+	* src/analysis/cktsens.c: Matrices cannot be created non-complex.
 	Also added a check to detect an error condition on delta_Y =
 	spCreate(...).
 
@@ -1247,7 +1252,7 @@
 	avoids long recompile times as less needs to be rebuilt on changes
 	to the header files.  Adjusted all callers to use the new header
 	files.  Left a warning message in the header file to indicate its
-	obsolence.  You will see this message when compiling.
+	obsolescence.  You will see this message when compiling.
 
 	* src/frontend/*: Reorganized part of the frontend commands into
 	their own source file.  Moved plotting parts into new plotting
