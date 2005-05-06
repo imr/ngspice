@@ -20,7 +20,6 @@
 
 #include <sys/types.h>
 
-
 #include <iferrmsg.h>
 #include <ftedefs.h>
 #include <devdefs.h>
@@ -48,11 +47,20 @@
 /* from spice3f4 patch to ng-spice. jmr */
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "fteinput.h"
-
-char gnu_history_file[512];
-static char *application_name;
 #endif  /* HAVE_GNUREADLINE */
+
+#ifdef HAVE_BSDEDITLINE
+/* SJB added editline support 2005-05-05 */
+#include <editline/readline.h>
+extern VFunction *rl_event_hook;    /* missing from editline/readline.h */
+extern int rl_catch_signals;	    /* missing from editline/readline.h */
+#endif /* HAVE_BSDEDITLINE */
+
+#if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
+char history_file[512];
+static char *application_name;
+#endif  /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
+
 
 #ifndef HAVE_GETRUSAGE
 #ifdef HAVE_FTIME
@@ -141,8 +149,6 @@ double EpsNorm, VNorm, NNorm, LNorm, TNorm, JNorm, GNorm, ENorm;
 
 struct variable *(*if_getparam)( );
 
-
-
 sigjmp_buf jbuf;
 
 static int started = FALSE;
@@ -151,10 +157,18 @@ static int started = FALSE;
 static int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 static int shutdown(int exitval);
 static void app_rl_readlines(void);
-#ifdef HAVE_GNUREADLINE
+
+#if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
 static char * prompt(void);
+#endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
+
+#ifdef HAVE_GNUREADLINE
 static int rl_event_func(void) ;
-#endif /* HAVE_GNUREADLINE */
+#endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
+#ifdef HAVE_BSDEDITLINE
+static void rl_event_func(void) ;
+#endif /* HAVE_BSDEDITLINE */
+
 static void show_help(void);
 static void show_version(void);
 static bool read_initialisation_file(char * dir, char * name);
@@ -350,7 +364,7 @@ shutdown(int exitval)
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef HAVE_GNUREADLINE
+#if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
 /* Adapted ../lib/cp/lexical.c:prompt() for GNU Readline -- Andrew Veliath <veliaa@rpi.edu> */
 static char *
 prompt(void)
@@ -370,7 +384,21 @@ prompt(void)
     while (*s) {
         switch (strip(*s)) {
        case '!':
+#ifdef HAVE_BSDEDITLINE
+		   {
+			   /* SJB In the present version of editline (v2.9)
+			      it seems that where_history() is broken.
+			      This is a hack that works round this problem.
+			      WARNING: It may fail to work in the future
+			      as it relies on undocumented structure */
+			   int where = 0;
+			   HIST_ENTRY * he = current_history();
+			   if(he!=NULL) where = *(int*)(he->data);
+			   p += sprintf(p, "%d", where + 1);
+		   }
+#else
            p += sprintf(p, "%d", where_history() + 1);
+#endif	/* HAVE_BSDEDITLINE*/
            break;
        case '\\':
            if (*(s + 1))
@@ -384,7 +412,9 @@ prompt(void)
     *p = 0;
     return pbuf;
 }
+#endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
 
+#ifdef HAVE_GNUREADLINE
 /* -------------------------------------------------------------------------- */
 /* Process device events in Readline's hook since there is no where
    else to do it now - AV */
@@ -398,6 +428,19 @@ rl_event_func()
 }
 #endif /* HAVE_GNUREADLINE */
 
+#ifdef HAVE_BSDEDITLINE
+/* -------------------------------------------------------------------------- */
+/* Process device events in Editline's hook.
+   similar to the readline function above but returns void */
+static void
+rl_event_func()  
+/* called by GNU readline periodically to know what to do about keypresses */
+{
+    static REQUEST reqst = { checkup_option, 0 };
+    Input(&reqst, NULL);
+}
+#endif /* HAVE_BSDEDITLINE */
+
 /* -------------------------------------------------------------------------- */
 /* This is the command processing loop for spice and nutmeg.
    The function is called even when GNU readline is unavailable, in which
@@ -406,26 +449,31 @@ rl_event_func()
 static void
 app_rl_readlines()
 {
-#ifdef HAVE_GNUREADLINE
+#if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
     /* GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
     char *line, *expanded_line;
     
     /* ---  set up readline params --- */
-    strcpy(gnu_history_file, getenv("HOME"));
-    strcat(gnu_history_file, "/.");
-    strcat(gnu_history_file, application_name);
-    strcat(gnu_history_file, "_history");
+    strcpy(history_file, getenv("HOME"));
+    strcat(history_file, "/.");
+    strcat(history_file, application_name);
+    strcat(history_file, "_history");
     
     using_history();
-    read_history(gnu_history_file);
+    read_history(history_file);
     
     rl_readline_name = application_name;
     rl_instream = cp_in;
     rl_outstream = cp_out;
     rl_event_hook = rl_event_func;
-    rl_catch_signals = 0;   /* disable readline signal handling  */
+    rl_catch_signals = 0;   /* disable signal handling  */
+    
+    /* sjb - what to do for editline?
+       This variable is not supported by editline. */   
+#if defined(HAVE_GNUREADLINE) 
     rl_catch_sigwinch = 1;  /* allow readline to respond to resized windows  */
-
+#endif  
+    
     /* note that we want some mechanism to detect ctrl-D and expand it to exit */
     while (1) {
        history_set_pos(history_length);
@@ -452,7 +500,7 @@ app_rl_readlines()
     
 #else
     while (cp_evloop((char *) NULL) == 1) ;
-#endif /* ifelse HAVE_GNUREADLINE */
+#endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
 }
 
 
@@ -637,12 +685,12 @@ main(int argc, char **argv)
     }
     started = TRUE;
 
-#ifdef HAVE_GNUREADLINE
+#if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
     if (!(application_name = strrchr(argv[0],'/')))
         application_name = argv[0];
     else
         ++application_name;
-#endif  /* HAVE_GNUREADLINE  */
+#endif  /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)  */
 
 #ifdef PARALLEL_ARCH
     PBEGIN_(argc, argv);
