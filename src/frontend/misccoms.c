@@ -10,16 +10,19 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ftehelp.h"
 #include "hlpdefs.h"
 #include "misccoms.h"
-
 #include "circuits.h"
 #include "hcomp.h"
 #include "variable.h"
 
-
 #ifdef HAVE_GNUREADLINE
 #include <readline/readline.h>
 #include <readline/history.h>
-#endif
+#endif /* HAVE_GNUREADLINE */
+
+#ifdef HAVE_BSDEDITLINE
+/* SJB added edit line support 2005-05-05 */
+#include <editline/readline.h>
+#endif /* HAVE_BSDEDITLINE */
 
 static void byemesg(void);
 
@@ -117,8 +120,7 @@ com_bug(wordlist *wl)
     return;
 }
 
-#else
-
+#else /* SYSTEM_MAIL */
 
 void
 com_bug(wordlist *wl)
@@ -127,7 +129,7 @@ com_bug(wordlist *wl)
     return;
 }
 
-#endif
+#endif /* SYSTEM_MAIL */
 
 void
 com_version(wordlist *wl)
@@ -230,17 +232,16 @@ static void
 byemesg(void)
 {
 
-#ifdef HAVE_GNUREADLINE
-    extern char gnu_history_file[];
+#if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
+    extern char history_file[];
 
     /*  write out command history only when saying goodbye.  */
     if (cp_interactive && (cp_maxhistlength > 0)) {
       stifle_history(cp_maxhistlength);
-      write_history(gnu_history_file);
+      write_history(history_file);
     }
-#endif /* HAVE_GNUREADLINE */
+#endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
 
     printf("%s-%s done\n", ft_sim->simulator, ft_sim->version);
     return;
 }
-

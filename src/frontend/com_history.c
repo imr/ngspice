@@ -11,12 +11,15 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "com_history.h"
 
 #ifdef HAVE_GNUREADLINE
-
 /* Added GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
 #include <readline/readline.h>
 #include <readline/history.h>
-
 #endif /* HAVE_GNUREADLINE */
+
+#ifdef HAVE_BSDEDITLINE
+/* SJB added edit line support 2005-05-05 */
+#include <editline/readline.h>
+#endif /* HAVE_BSDEDITLINE */
 
 /* static declarations */
 static wordlist * dohsubst(char *string);
@@ -353,7 +356,7 @@ cp_addhistent(int event, wordlist *wlist)
     cp_lastone->hi_next = NULL;
     cp_lastone->hi_event = event;
     cp_lastone->hi_wlist = wl_copy(wlist);
-#ifndef HAVE_GNUREADLINE
+#if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
     freehist(histlength - cp_maxhistlength);
     histlength++;
 #endif
@@ -494,7 +497,7 @@ com_history(wordlist *wl)
         rev = TRUE;
     }
 
-#ifdef HAVE_GNUREADLINE
+#if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
     /* Added GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
     {
        HIST_ENTRY *he;
@@ -523,8 +526,7 @@ com_history(wordlist *wl)
         cp_hprint(cp_event - 1, cp_event - histlength, rev);
     else
         cp_hprint(cp_event - 1, cp_event - 1 - atoi(wl->wl_word), rev);
-#endif /* ifelse HAVE_GNUREADLINE */
+#endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
 
     return;
 }
-

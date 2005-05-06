@@ -7,7 +7,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * The signal routines for spice 3 and nutmeg.
  */
 
-
 #include "ngspice.h"
 #include "ifsim.h"
 #include "iferrmsg.h"
@@ -23,8 +22,12 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* from spice3f4 patch to ng-spice. jmr */
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "fteinput.h"
 #endif
+
+#ifdef HAVE_BSDEDITLINE
+/* SJB added edit line support 2005-05-05 */
+#include <editline/readline.h>
+#endif /* HAVE_BSDEDITLINE */
 
 extern sigjmp_buf jbuf;
 
@@ -59,13 +62,15 @@ ft_sigintr(void)
         return;     /* just return without aborting simulation if ft_setflag = TRUE */
     }
 
-#ifdef HAVE_GNUREADLINE
+	/* sjb - what to do for editline???
+	   The following are not supported in editline */
+#if defined(HAVE_GNUREADLINE) 
 	/*  Clean up readline after catching signals  */
-        /*  One or all of these might be supurfluous  */
+        /*  One or all of these might be superfluous  */
 	(void) rl_free_line_state();
 	(void) rl_cleanup_after_signal();
 	(void) rl_reset_after_signal(); 
-#endif
+#endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
 
     /* To restore screen after an interrupt to a plot for instance */
     cp_interactive = TRUE;

@@ -786,8 +786,8 @@ zoomin(GRAPH *graph)
 	        graph->commandline, fx0, fx1, fy0, fy1);
 	}
 
-/* don't use the following if using GNU Readline - AV */
-#ifndef HAVE_GNUREADLINE
+/* don't use the following if using GNU Readline or BSD EditLine */
+#if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
 	{
 	    wordlist *wl;
 	    int dummy;
@@ -799,8 +799,7 @@ zoomin(GRAPH *graph)
 	      (void) cp_addhistent(cp_event++, wl);
 	    }
 	}
-
-#endif /* HAVE_GNUREADLINE */
+#endif /* !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE) */
 
 	(void) cp_evloop(buf);
 
