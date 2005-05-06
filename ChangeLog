@@ -1,3 +1,12 @@
+2005-05-06  Steven Borley <steven.borley@virgin.net>
+
+	*  Added code by by H.Tanaka for the .global keyword. This is enabled by
+	   supplying the new --enable-dot-global argument to ./configure.
+	   
+	*  Also added configuration for a new --with-editline=yes|no argument to
+	   ./configure for future support of the BSD editline library as an
+	   alternative to the GNU readline library.
+
 2005-05-05  Steven Borley <steven.borley@virgin.net>
 
   *  Fixed a compile problem with Xspice on Cygwin. Still will not link, but
