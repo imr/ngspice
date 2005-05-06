@@ -71,7 +71,7 @@ Modified: 2000 AlansFixes
 extern char * nupa_copy(char *s, int linenum);
 extern int    nupa_eval(char *s, int linenum);
 extern int    nupa_signal(int sig, char *info); 
-extern void   nupa_scan(char * s, int linenum);	// sjb
+extern void   nupa_scan(char * s, int linenum);	/* SJB added */
 #endif
 
 /* ----- static declarations ----- */
@@ -121,9 +121,14 @@ static bool nobjthack = FALSE;
 #ifdef NUMPARAMS
 /* flag indicating use of the experimental numparams library */
 static bool use_numparams = FALSE;					
-#endif
+#endif /* NUMPARAMS */
 
 static char start[32], sbend[32], invoke[32], model[32];
+
+#ifdef GLOBAL_NODE
+static char node[128][128];
+static int numgnode;
+#endif /* GLOBAL_NODE */
 
 /*-------------------------------------------------------------------*/
 /* inp_subcktexpand is the top level function which translates       */
@@ -149,6 +154,10 @@ inp_subcktexpand(struct line *deck)
 #ifdef NUMPARAMS
     int ok;
 #endif /* NUMPARAMS */
+#ifdef GLOBAL_NODE
+    char *t;
+    int i;
+#endif /* GLOBAL_NODE */
     wordlist *wl;
     modnames = NULL;
 
@@ -209,7 +218,7 @@ inp_subcktexpand(struct line *deck)
     for (c = deck; c; c = c->li_next)
         if (ciprefix(model, c->li_line)) {
             s = c->li_line;
-            txfree(gettok(&s));	// discard the model keyword
+            txfree(gettok(&s));	/* discard the model keyword */
             wl = alloc(struct wordlist);
             wl->wl_next = modnames;
             if (modnames)
@@ -227,6 +236,32 @@ inp_subcktexpand(struct line *deck)
     }
 #endif /* TRACE */
 
+/* Added by H.Tanaka to find global nodes */
+#ifdef GLOBAL_NODE
+    for(i=0;i<128;i++) strcpy(node[i],"");/* Clear global node holder */
+    for (c = deck; c; c = c->li_next) {
+	if (ciprefix(".global", c->li_line)) {
+	    s = c->li_line;
+	    txfree(gettok(&s));
+	    numgnode=0;
+	    while(*s) {
+		i=0;
+		t=s;
+		for (/*s*/; *s && !isspace(*s); s++) i++;
+		strncpy(node[numgnode],t,i);
+		while (isspace(*s)) s++;
+		numgnode++;
+	    } /* node[] holds name of global node */
+#ifdef TRACE
+	    printf("***Global node option has been found.***\n");
+	    for(i=0;i<numgnode;i++) 
+	    printf("***Global node no.%d is %s.***\n",i,node[i]);
+	    printf("\n");
+#endif /* TRACE */
+	    c->li_line[0] = '*'; /* comment it out */
+	}/* if(ciprefix.. */
+    } /* for(c=deck.. */
+#endif /* GLOBAL_NODE */
     
     /* Let's do a few cleanup things... Get rid of ( ) around node
      * lists...
@@ -275,7 +310,7 @@ inp_subcktexpand(struct line *deck)
 #endif /* TRACE */
     ll = doit(deck);
 
-    // SJB: free up the modnames linked list now we are done with it
+    /* SJB: free up the modnames linked list now we are done with it */
     if(modnames != NULL) {
 	wl_free(modnames);
 	modnames = NULL;
@@ -1268,6 +1303,12 @@ gettrans(char *name)
     /* gtri - end */
 #endif
 
+/* Added by H.Tanaka to translate global nodes */
+#ifdef GLOBAL_NODE
+    for(i=0;i<numgnode;i++)
+	if(eq(node[i],name)) return (name);
+#endif /* GLOBAL_NODE */
+
     if (eq(name, "0"))
         return (name);
     for (i = 0; table[i].t_old; i++)
@@ -1868,11 +1909,3 @@ inp_numnodes(char c)
             return (2);
     }
 }
-
-
-
-
-
-
-
-
