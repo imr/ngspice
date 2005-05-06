@@ -1,25 +1,198 @@
+Install from CVS
+================
+
+This section describes how to install from source code taken direct
+from CVS.  It is intended more for developers than for users as the code in CVS
+may be unstable. For user install instructions using source from released
+distributions, please see the sections titled 'Basic Install' and 'Advanced 
+Install'.
+
+Download source from CVS as described on the sourceforge project page
+(see http://sourceforge.net/projects/ngspice/ and click on the CVS link)
+
+Now change directories in to the top-level source directory (where this
+INSTALL file can be found).
+
+The project uses the GNU build process. This is still very crude and needs
+work, but basically you should be able to do the following:
+
+$ ./autogen.sh
+$ ./configure
+$ make
+$ sudo make install
+
+At present it is normal for there to be some warning generated during this
+process.
+	
+See the section titled 'Advanced Install' for instructions about arguments that
+can be passed to ./configure to customise the build and installation.
+
+If a problem is found with the build proccess, please submit a report to the
+NGSpice development team.  Please provide information about you system and any
+./configure arguments you are using, together with any error messages.  Ideally
+you would have tried to fix the problem yourself first, and details about this
+and any thought you may has as to the cause of the problem should also be
+provided.  If you have fixed the problem then the development team will love to
+hear from you.
+
+
 Basic Installation
 ==================
 
+This covers installation from a tar-ball (for example ngspice-rework-15.tgz).
 
-The autoconf support is still very crude and needs work, but basically
-you should be able to do:
-./configure
-make
-make install
-(default install dir is /usr/local/bin)
+After downloading the tar ball to a local directory unpack it using:
 
-You can use some extra options to 'configure'
+$ tar -zxvf ngspice-rework-15.tgz
+	
+Now change directories in to the top-level source directory (where this
+INSTALL file can be found).
 
---disable-debug : this option will remove the '-g' option passed to the 
-compiler (speeds up compilation a *lot*)
+You should be able to do:
 
---enable-ansi : configure will try to find an option for your compiler so
-that it expects ansi-C
+$ ./configure
+$ make
+$ sudo make install
+  
+The default install dir is /usr/local/bin
 
-Do a './configure --help' to get all available options.
+See the section titled 'Advanced Install' for instructions about arguments that
+can be passed to ./configure to customise the build and installation.
+
+Advanced Install
+================
+
+Some extra options can be provided to './configure'. To get all available
+options do:
+
+$ ./configure --help
+	
+Some of these options are generic to the GNU build process that is used by
+NGSpice, other are specific to NGSpice.
+
+The following sections provide some guidance and descriptions for many,
+but not all, of these options.
 
 
+Options Specific to Using NGSpice
+=================================
+
+--enable-experimental
+		This enables some experimental code. Specifically it enables:
+			* support for altering options in interactive mod by adding the
+			  interactive keyword 'options'
+			* The ability to save and load snapshots: adds interactive keywords
+			  'savesnap' and 'loadsnap'
+
+--enable-nosqrt
+		Use always log/exp for non-linear capacitances
+	
+--enable-nobypass
+		Don't bypass recalculations of slowly changing variables
+		
+--enable-capbypass
+		Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd voltages
+		are unchanged
+		
+--enable-capzerobypass
+ 		Bypass all the cbd/cbs calculations if Czero is zero
+ 		
+--enable-nodelimiting
+ 		Experimental damping scheme
+ 		
+--enable-predictor
+ 		Enable a predictor method for convergence
+ 		
+--enable-newtrunc
+		Enable the newtrunc option
+		
+--enable-sense2
+		Use spice2 sensitivity analysis
+
+--enable-intnoise
+		Enable noise integration in noise analysis
+		
+--enable-ekv
+		Enable ekv model support.
+		The source code for the this must be obtained from EKV web site
+		(see DEVICE for more info). To enable EKV support you have
+		to obtain the code first and then use this configure switch.
+		
+--enable-xspice
+		Enable XSpice enhancements, (experimental)
+		A mixed signal simulator built upon spice3 with codemodel dynamic loading
+		support.  See src/xspice/README for details
+		
+--enable-cider
+		Enable CIDER enhancements, (experimental)
+		A mixed level simulator built upon spice3.
+		
+--enable-cluster
+		Enable cluster support, (experimental)
+		
+--enable-numparam
+		Enable numparams library support, (experimental)
+		A library that allows for parameter substitution at netlist level.
+		
+--enable-xgraph
+		Compile the Xgraph plotting program.
+		Xgraph is a plotting package for X11 and was once very popular.
+				
+--enable-dot-global
+		Allows the use of the .global keyword.	
+		
+--with-readline=yes
+		Enable GNU readline support for the command line interface.  This requires
+		linking against the GNU readline library and is discouraged.
+		
+--with-editline=yes
+		Enables the use of the BSD editline library (libedit).
+		See http://www.thrysoee.dk/editline/
+		This is preferred over BNU readline due to licensing issues.
+
+
+Options Useful for Debugging NGSpice
+====================================
+
+--disable-debug
+		This option will remove the '-g' option passed to the compiler.
+		This speeds up compilation a *lot*, and is recommended for normal use.
+
+--enable-ansi
+    Configure will try to find an option for your compiler so that it expects 
+    ansi-C
+
+--enable-checkergcc
+		Option for compilation with checkergcc
+		
+--enable-gc
+		Enable the Boehm-Weiser Conservative Garbage Collector
+		
+--enable-ftedebug
+		Enable ngspice frontend debug
+
+--enable-sensdebug
+--enable-asdebug
+		Debug sensitivity code
+		
+--enable-cpdebug
+		Enable ngspice shell debug
+		
+--enable-stepdebug
+		Turns on debugging of convergence stepping??
+		
+--enable-pzdebug
+		Debug pole/zero code
+		
+--enable-blktmsdebug
+--enable-smltmsdebug
+		Debug distortion code
+		
+--enable-smoketest
+		Enable smoketest compile
+		
+--enable-expdevices
+		Enable experimental devices (may not compile)
 
 
 Compilers and Options

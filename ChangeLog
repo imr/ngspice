@@ -1,3 +1,11 @@
+2005-05-07  Steven Borley <steven.borley@virgin.net>
+
+	*  Added support for the BSD licensed editline library
+	   This includes a work-around to fix a problem found in the current version
+	   of this library (see prompt() in src/main.c).
+	   
+	*  Added and updated infomation in the INSTALL file.
+
 2005-05-06  Steven Borley <steven.borley@virgin.net>
 
 	*  Added code by by H.Tanaka for the .global keyword. This is enabled by
