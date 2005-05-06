@@ -133,8 +133,8 @@ dnl --enable-numparams: define NUMPARAMS in the code. This is for .param support
 AC_ARG_ENABLE(numparam,
     [  --enable-numparam       Enable numparams library support, (experimental) ])
 
-dnl --enable-xgraph:   Compile the xgraph plotting program. Default is "no".
-dnl Xgraph is a plotitng package for X11 once very popular.
+dnl --enable-xgraph: Compile the xgraph plotting program. Default is "no".
+dnl Xgraph is a plotting package for X11 once very popular.
 AC_ARG_ENABLE(xgraph,
     [  --enable-xgraph         Enable xgraph compilation.])
  
@@ -143,7 +143,29 @@ dnl Including readline into ngspice is a violation of GPL license. It's use
 dnl is discouraged.
 AC_ARG_WITH(readline,
     [  --with-readline[=yes/no]   Enable GNU readline support for CLI.  Default=no.])
+    
+dnl --with-editline:  Includes BSD Editline support into CLI.  Default is "no".
+AC_ARG_WITH(editline,
+    [  --with-editline[=yes/no]   Enable BSD editline support for CLI.  Default=no.])
+    
+    
+dnl readline and editline cannot both be enabled
+if test "$with_editline" = "yes"; then
+    if test "$with_readline" = "yes"; then
+        AC_MSG_ERROR(Readline and editline cannot both be enabled)
+    fi
+fi
+    
 
+dnl --enable-dot-global: Enable use of the .global keyword (experimental)
+AC_MSG_CHECKING([whether .gobal keyword has been enabled])
+AC_ARG_ENABLE(dot-global,
+    AS_HELP_STRING([--enable-dot-global],[Enable use of the .global keyword (experimental)]),
+    [if test "$enable_dot_global" = "yes"; then
+	AC_DEFINE([GLOBAL_NODE],[1],[Define to enable the .global keyword])
+    fi],
+    [enable_dot_global="no"])
+AC_MSG_RESULT($enable_dot_global)
 
 
 
@@ -598,6 +620,22 @@ else
                      [AC_MSG_ERROR(Couldn't find readline libraries.)])	       
 fi
 
+
+dnl  ----  Option to include BSD editline support in ngspice CLI  ----
+dnl  ----  Default: disabled.                                     ----
+
+if test "$with_editline" != "yes"; then
+    AC_MSG_RESULT(BSD editline disabled.)
+else 
+    AC_MSG_RESULT(Checking for editline:)
+    AC_CHECK_HEADERS([editline/readline.h], 
+                     [AC_DEFINE([HAVE_BSDEDITLINE],[1],[Define to enable BSD editline])],
+                     [AC_MSG_ERROR(Couldn't find BSD editline headers.)]) 
+    AC_CHECK_LIB(edit, readline, 
+                     [LIBS="$LIBS -ledit -lncurses"],
+                     [AC_MSG_ERROR(Couldn't find editline libraries.)],
+                     -lncurses )	       
+fi
 
 
 AC_CONFIG_FILES([\
