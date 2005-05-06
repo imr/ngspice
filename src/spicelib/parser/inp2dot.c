@@ -719,8 +719,14 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
     else if ((strcmp(token, ".options") == 0)||
             (strcmp(token,".option")==0) ||
             (strcmp(token,".opt")==0)) {
-     rtn = dot_options(line, ckt, tab, current, task, gnode, foo);
-     goto quit;
+	rtn = dot_options(line, ckt, tab, current, task, gnode, foo);
+	goto quit;
+    }
+    /* Added by H.Tanaka to find .global option */
+    else if (strcmp(token, ".global") == 0) {
+	rtn = 0;
+	LITERR(" Warning: .global not yet implemented - ignored \n");
+	goto quit;
     }
     LITERR(" unimplemented control card - error \n");
 quit:
