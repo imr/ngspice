@@ -45,6 +45,10 @@ struct type types[NUMTYPES] = {
     { "pole", NULL } ,
     { "zero", NULL } ,
     { "s-param", NULL } ,
+    { "temp-sweep", "Celsius" } ,/* Added by HT */
+
+    { "res-sweep", "Ohm" } ,/* Added by HT */
+
 } ;
 
 /* The stuff for plot names. */
@@ -73,8 +77,8 @@ struct plotab plotabs[NUMPLOTTYPES] = {
     { "spect", "spect" },
 } ;
 
-int notypes = 14;
-int noplotabs = 18;
+int notypes = 15;/* change 14 to 15 by H.T*/
+int noplotabs = 20;/* change 18 to 20 by H.T*/
 
 /* A command to define types for vectors and plots.  This will generally
  * be used in the Command: field of the rawfile.

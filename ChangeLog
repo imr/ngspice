@@ -1,3 +1,14 @@
+2005-05-09  Steven Borley <steven.borley@virgin.net>
+
+	*  Added new syntax to the the resistor card to support HSpice style
+	   temperature dependence (from Hitoshi Tanaka <HDA01055@nifty.com>).
+	   Syntax forms now include:
+	   	Rxxx <n1> n2> <val> TC=<val1>
+	   	Rxxx <n1> n2> <val> TC1=<val1>
+	   	Rxxx <n1> n2> <val> TC1=<val1> TC2=<val2>
+	   	Rxxx <n1> n2> <val> TC=<val1> <val2>
+	   The the first pair are equivalent, and the last pair are equivalent.	   
+
 2005-05-07  Steven Borley <steven.borley@virgin.net>
 
 	*  Added support for the BSD licensed editline library

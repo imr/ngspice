@@ -13,7 +13,9 @@ enum simulation_types {
   SV_INPUT_NOISE,
   SV_POLE,
   SV_ZERO,
-  SV_SPARAM
+  SV_SPARAM,
+  SV_TEMP,
+  SV_RES
 };
 
 #endif

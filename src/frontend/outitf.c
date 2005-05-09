@@ -754,6 +754,10 @@ fileInit_pass2(runDesc *run)
             type = SV_TIME;
         else if (cieq(name, "frequency"))
             type = SV_FREQUENCY;
+        else if (cieq(name, "temp-sweep")) /* Added by H.T */
+            type = SV_TEMP;
+        else if (cieq(name, "res-sweep")) /* Added by H.T */
+            type = SV_RES;
         else
             type = SV_VOLTAGE;
  
@@ -899,6 +903,10 @@ plotInit(runDesc *run)
             v->v_type = SV_TIME;
         else if (cieq(v->v_name, "frequency"))
             v->v_type = SV_FREQUENCY;
+        else if (cieq(v->v_name, "temp-sweep")) /* Added by H.T */
+            v->v_type = SV_TEMP;
+        else if (cieq(v->v_name, "res-sweep")) /* Added by H.T */
+            v->v_type = SV_RES;
         else 
             v->v_type = SV_VOLTAGE;
         v->v_length = 0;

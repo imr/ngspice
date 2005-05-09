@@ -64,6 +64,12 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
 	case RES_M:
 	    value->rValue = fast->RESm;
 	    return(OK);
+	case RES_TC1:
+	    value->rValue = fast->REStc1;
+	    return(OK);
+	case RES_TC2:
+	    value->rValue = fast->REStc2;
+	    return(OK);
 	case RES_NOISY:
 	    value->iValue = fast->RESnoisy;
 	    return(OK);    

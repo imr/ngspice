@@ -616,6 +616,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 d->v_scale = d;
         }
 
+	/* The following line displays the unit at the time of 
+	 temp-sweep and res-sweep. This may not be a so good solution. by H.T */
+	if(!strcmp(vecs->v_scale->v_name,"temp-sweep")) vecs->v_scale->v_type=14;
+	if(!strcmp(vecs->v_scale->v_name,"res-sweep")) vecs->v_scale->v_type=15;
 
     /* See if the log flag is set anywhere... */
     if (!gfound) {

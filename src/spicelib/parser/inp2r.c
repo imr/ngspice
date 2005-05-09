@@ -15,13 +15,16 @@ Remarks:  This code is based on a version written by Serban Popescu which
 #include "fteext.h"
 #include "inp.h"
 
+/* undefine to add tracing to this file */
+/*#define TRACE*/
+
 void INP2R(void *ckt, INPtables * tab, card * current)
 {
 /* parse a resistor card */
 /* Rname <node> <node> [<val>][<mname>][w=<val>][l=<val>][ac=<val>] */
 
     int mytype;			/* the type we determine resistors are */
-    int type = 0;			/* the type the model says it is */
+    int type = 0;		/* the type the model says it is */
     char *line;			/* the part of the current line left to parse */
     char *saveline;		/* ... just in case we need to go back... */
     char *name;			/* the resistor's name */
@@ -41,25 +44,120 @@ void INP2R(void *ckt, INPtables * tab, card * current)
     double leadval;		/* actual value of unlabeled number */
     IFuid uid;			/* uid for default model */
 
+    char *s,*t;/* Temporary buffer and pointer for translation */
+    int i;
+	
+#ifdef TRACE
+    printf("In INP2R()\n");
+    printf("  Current line: %s\n",current->line);
+#endif
+
     mytype = INPtypelook("Resistor");
     if (mytype < 0) {
 	LITERR("Device type Resistor not supported by this binary\n");
 	return;
     }
     line = current->line;
-    INPgetTok(&line, &name, 1);
+    INPgetTok(&line, &name, 1);			/* Rname */
     INPinsert(&name, tab);
-    INPgetNetTok(&line, &nname1, 1);
+    INPgetNetTok(&line, &nname1, 1);		/* <node> */
     INPtermInsert(ckt, &nname1, tab, &node1);
-    INPgetNetTok(&line, &nname2, 1);
+    INPgetNetTok(&line, &nname2, 1);		/* <node> */
     INPtermInsert(ckt, &nname2, tab, &node2);
-    val = INPevaluate(&line, &error1, 1);
+    val = INPevaluate(&line, &error1, 1);	/* [<val>] */
     /* either not a number -> model, or
      * follows a number, so must be a model name
      * -> MUST be a model name (or null)
      */
-
+    
     saveline = line;		/* save then old pointer */
+    
+#ifdef TRACE
+    printf("Begining tc=xxx yyyy search and translation in '%s'\n", line);
+#endif /* TRACE */    
+    
+    /* This routine translates "tc=xxx yyy" to "tc=xxx tc2=yyy".
+       This is a re-write of the routine originally proposed by Hitoshi tanaka.
+       In my version we simply look for the first occurence of 'tc' followed
+       by '=' followed by two numbers. If we find it then we splice in "tc2=".
+       sjb - 2005-05-09 */
+    for(s=line; *s; s++) { /* scan the remainder of the line */
+	
+	/* reject anything other than "tc" */
+	if(*s!='t') continue;
+	s++;
+	if(*s!='c') continue;
+	s++;
+	
+	/* skip any white space */
+	while(isspace(*s)) s++;
+	      
+	/* reject if not '=' */
+	if(*s!='=') continue;
+	s++;
+	
+	/* skip any white space */
+	while(isspace(*s)) s++;
+	
+	/* if we now have +, - or a decimal digit then assume we have a number,
+	   otherwise reject */
+	if((*s!='+') && (*s!='-') && !isdigit(*s)) continue;
+	s++;
+	
+	/* look for next white space or null */
+	while(!isspace(*s) && *s) s++;
+	
+	/* reject whole line if null (i.e not white space) */
+	if(*s==0) break;
+	s++;
+	
+	/* remember this location in the line.
+	   Note that just before this location is a white space character. */
+	t = s;
+	
+	/* skip any additional white space */
+	while(isspace(*s)) s++;
+	
+	/* if we now have +, - or a decimal digit then assume we have the 
+	    second number, otherwise reject */
+	if((*s!='+') && (*s!='-') && !isdigit(*s)) continue;
+	
+	/* if we get this far we have met all are criterea,
+	   so now we splice in a "tc2=" at the location remembered above. */
+	
+	/* first alocate memory for the new longer line */
+	i = strlen(current->line);  /* length of existing line */	
+	line = tmalloc(i + 4 + 1);  /* alocate enough for "tc2=" & terminating NULL */
+	if(line == NULL) {
+	    /* failed to allocate memory so we recover rather crudely
+	       by rejecting the translation */
+	    line = saveline;
+	    break;
+	}
+	
+	/* copy first part of line */
+	i -= strlen(t);
+	strncpy(line,current->line,i);
+	line[i]=0;  /* terminate */
+	
+	/* add "tc2=" */
+	strcat(line, "tc2=");
+	
+	/* add rest of line */
+	strcat(line, t);
+	
+	/* calculate our saveline position in the new line */
+	saveline = line + (saveline - current->line);
+	
+	/* replace old line with new */
+	tfree(current->line);
+	current->line = line;
+	line = saveline;
+    }
+    
+#ifdef TRACE
+    printf("(Translated) Res line: %s\n",current->line);
+#endif
 
     INPgetTok(&line, &model, 1);
 
@@ -72,7 +170,7 @@ void INP2R(void *ckt, INPtables * tab, card * current)
 	    current->error = INPgetMod(ckt, model, &thismodel, tab);
 	    if (thismodel != NULL) {
 		if (mytype != thismodel->INPmodType) {
-		    LITERR("incorrect model type");
+		    LITERR("incorrect model type for resistor");
 		    return;
 		}
 		mdfast = thismodel->INPmodfast;
@@ -116,5 +214,6 @@ void INP2R(void *ckt, INPtables * tab, card * current)
 	ptemp.rValue = leadval;
 	GCA(INPpName, ("resistance", &ptemp, ckt, type, fast));
     }
+
     return;
 }

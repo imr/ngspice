@@ -17,7 +17,8 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
 {
     RESmodel *model = (RESmodel *)inModel;
     double m;
-    
+    double difference;
+    double factor;
 
 		
     /*  loop through all the resistor models */
@@ -26,19 +27,27 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
-	     here = here->RESnextInstance) { 
-	     
-	     if (here->RESowner != ARCHme) continue;
-            
-             here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) - 
-                                *(ckt->CKTrhsOld+here->RESnegNode)) * here->RESconduct;
-	            
-	     m = here->RESm; 
+	    here = here->RESnextInstance) {
 	    
-             *(here->RESposPosptr) += m * here->RESconduct;
-             *(here->RESnegNegptr) += m * here->RESconduct;
-             *(here->RESposNegptr) -= m * here->RESconduct;
-             *(here->RESnegPosptr) -= m * here->RESconduct;
+	    if(!here->REStc1Given) here->REStc1    = 0.0;
+	    if(!here->REStc2Given) here->REStc2    = 0.0;
+	    if(!here->RESmGiven)   here->RESm      = 1.0;
+
+	    if (here->RESowner != ARCHme) continue;
+
+	    here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) - 
+		*(ckt->CKTrhsOld+here->RESnegNode)) * here->RESconduct;
+		
+	    difference = (here->REStemp + here->RESdtemp) - 300.15;
+	    factor = 1.0 + (here->REStc1)*difference + 
+		(here->REStc2)*difference*difference;
+	    
+	    m = (here->RESm)/factor; 
+
+	    *(here->RESposPosptr) += m * here->RESconduct;
+	    *(here->RESnegNegptr) += m * here->RESconduct;
+	    *(here->RESposNegptr) -= m * here->RESconduct;
+	    *(here->RESnegPosptr) -= m * here->RESconduct;
         }
     }
     return(OK);
@@ -52,6 +61,8 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
 {
     RESmodel *model = (RESmodel *)inModel;
     double m;
+    double difference;
+    double factor;
 
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {
@@ -60,10 +71,18 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
 	     here = here->RESnextInstance) {
+	    
+	    if(!here->REStc1Given) here->REStc1    = 0.0;
+	    if(!here->REStc2Given) here->REStc2    = 0.0;
+	    if(!here->RESmGiven)   here->RESm      = 1.0;
             
 	    if (here->RESowner != ARCHme) continue;
 	    
-	    m = here->RESm;
+	    difference = (here->REStemp + here->RESdtemp) - 300.15;
+	    factor = 1.0 + (here->REStc1)*difference + 
+		(here->REStc2)*difference*difference;
+	    
+	    m = (here->RESm)/factor; 
 	    
             if(here->RESacresGiven) {
                 *(here->RESposPosptr) += m * here->RESacConduct;
