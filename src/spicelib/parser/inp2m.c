@@ -51,6 +51,11 @@ INP2M (void *ckt, INPtables * tab, card * current)
   void *mdfast;			/* pointer to the actual model */
   IFuid uid;			/* uid for default model */
 
+#ifdef TRACE
+  /* SJB debug statement */
+  printf("INP2M: Parsing '%s'\n",current->line);
+#endif
+
   nodeflag = 0;			/*  initially specify a 4 terminal device  */
   line = current->line;
   INPgetTok (&line, &name, 1);
@@ -70,23 +75,39 @@ INP2M (void *ckt, INPtables * tab, card * current)
    save = line; /*saj - save the posn for later if 
   	the default mosfet model is used */
   thismodel = (INPmodel *) NULL;
+#ifdef TRACE
+  /* SJB debug statement */
+  printf("INP2M: checking for 4 node device\n");
+#endif
   INPgetMod (ckt, nname5, &thismodel, tab);
   if (thismodel == NULL)
     {				/*  5th token is not a model in the table  */
       nodeflag = 1;		/*  now specify a 5 node device  */
       INPgetNetTok (&line, &nname6, 1);	/*  get next token  */
       thismodel = (INPmodel *) NULL;
+#ifdef TRACE
+      /* SJB debug statement */
+      printf("INP2M: checking for 5 node device\n");
+#endif
       INPgetMod (ckt, nname6, &thismodel, tab);
       if (thismodel == NULL)
 	{			/*  6th token is not a model in the table  */
 	  nodeflag = 2;		/*  now specify a 6 node device  */
 	  INPgetNetTok (&line, &nname7, 1);	/*  get next token  */
 	  thismodel = (INPmodel *) NULL;
+#ifdef TRACE
+	  /* SJB debug statement */
+	  printf("INP2M: checking for 6 node device\n");
+#endif
 	  INPgetMod (ckt, nname7, &thismodel, tab);
 	  if (thismodel == NULL)
 	    {			/*  7th token is not a model in the table  */
 	      nodeflag = 3;	/*  now specify a 7 node device  */
 	      INPgetTok (&line, &model, 1);	/*  get model name  */
+#ifdef TRACE
+	      /* SJB debug statement */
+	      printf("INP2M: checking for 7 node device\n");
+#endif
 	      INPgetMod (ckt, model, &thismodel, tab);	/*  get pointer to the model  */
 	      if (thismodel != NULL)
 		{
@@ -108,6 +129,10 @@ INP2M (void *ckt, INPtables * tab, card * current)
 		}
 	      /*saj unbreak the default model creation*/
 	      else{
+#ifdef TRACE
+		/* SJB debug statement */
+		printf("INP2M: couldn't workout number of nodes, assuming 4\n");
+#endif
 		model = nname5;/*mosfet*/
 		line = save; /* reset the posn to what it sould be */
 	      	      }
@@ -162,6 +187,10 @@ INP2M (void *ckt, INPtables * tab, card * current)
 
   INPinsert (&model, tab);
   thismodel = (INPmodel *) NULL;
+#ifdef TRACE
+  /* SJB debug statement */
+  printf("INP2M: Looking up model\n");
+#endif
   current->error = INPgetMod (ckt, model, &thismodel, tab);
   if (thismodel != NULL)
     {

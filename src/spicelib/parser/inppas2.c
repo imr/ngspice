@@ -16,6 +16,9 @@ Author: 1985 Thomas L. Quarles
 /* gtri - end - wbk - 11/9/90 */
 #endif
 
+/* uncomment to trace in this file */
+/*#define TRACE*/
+
 /* pass 2 - Scan through the lines.  ".model" cards have processed in
  *  pass1 and are ignored here.  */
 
@@ -47,12 +50,20 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 	    INPerrCat(data->error,
 		      INPmkTemp
 		      ("can't insert internal ground node in symbol table!\n"));
+    
+#ifdef TRACE 
+    printf("Examining this deck:\n");
+    for (current = data; current != NULL; current = current->nextcard) {
+	printf("%s\n", current->line);
+    }
+    printf("\n");
+#endif
 
     for (current = data; current != NULL; current = current->nextcard) {
 
 #ifdef TRACE
-      /* SDB debug statement */
-      printf("In INPpas2, examining card %s . . .\n", current->line);
+	/* SDB debug statement */
+	printf("In INPpas2, examining card %s . . .\n", current->line);
 #endif
 
 	c = *(current->line);
@@ -70,8 +81,8 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 	    /* gtri - add - wbk - 10/23/90 - add case for 'A' devices */
 	    
         case 'A':   /* Aname <cm connections> <mname> */
-	  MIF_INP2A(ckt,tab,current);
-	  break;
+	    MIF_INP2A(ckt,tab,current);
+	    break;
 	  
 	  /* gtri - end - wbk - 10/23/90 */
 #endif
