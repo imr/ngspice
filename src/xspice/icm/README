@@ -31,7 +31,7 @@ and does "make".)
 
 6.  Read the codemodel into ngspice in the following way:
 
-ngspice 1 -> codemodel /usr/local/src/tclspice-0.2.10/src/xspice/icm/spice2poly.cm
+ngspice 1 -> codemodel /usr/local/lib/spice/spice2poly.cm
 
 (Of course, you should point to the location where *you* built
 spice2poly.cm!)  You might want to put this invocation into your

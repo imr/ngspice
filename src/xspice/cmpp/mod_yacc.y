@@ -19,6 +19,8 @@ AUTHORS
 MODIFICATIONS
 
     <date> <person name> <nature of modifications>
+  20050420 Steven Borley Renamed strcmpi() to local_strcmpi() to avoid
+                         clash with strcmpi() in a windows header file.
 
 SUMMARY
 
