@@ -42,6 +42,13 @@ typedef struct sISRCinstance {
     double ISRCdF1phase; /* distortion f1 phase */
     double ISRCdF2phase; /* distortion f2 phase */
 
+    /* gtri - begin - add member to hold current source value */
+#ifdef XSPICE
+    /* needed for outputting results */
+    double ISRCcurrent; /* current value */
+#endif
+    /* gtri - end - add member to hold current source value */
+
     unsigned ISRCdcGiven     :1 ;   /* flag to indicate dc value given */
     unsigned ISRCacGiven     :1 ;   /* flag to indicate ac keyword given */
     unsigned ISRCacMGiven    :1 ;   /* flag to indicate ac magnitude given */
@@ -74,6 +81,7 @@ typedef struct sISRCmodel {       /* model structure for a resistor */
 #define EXP 3
 #define SFFM 4
 #define PWL 5
+#define AM 6
 #endif /*PULSE*/
 
 /* device parameters */
@@ -97,6 +105,14 @@ typedef struct sISRCmodel {       /* model structure for a resistor */
 #define ISRC_D_F1 18
 #define ISRC_D_F2 19
 #define ISRC_VOLTS 20
+
+#define ISRC_AM 21
+/* gtri - begin - add define for current source value */
+#ifdef XSPICE
+/* needed for outputting results */
+#define ISRC_CURRENT 22
+#endif
+/* gtri - end - add define for current source value */
 
 /* model parameters */
 

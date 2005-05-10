@@ -41,6 +41,14 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 #define TIMETOL 1e-7
 
 		    double	TD, TR, TF, PW, PER;
+
+/* gtri - begin - wbk - add PHASE parameter */
+#ifdef XSPICE		    
+		    double      PHASE;
+		    double phase;
+                    double deltat;
+                    double basephase;
+#endif		    
                     double time;
                     double basetime = 0;
 
@@ -58,7 +66,25 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 		    PER = here->ISRCfunctionOrder > 6
 			&& here->ISRCcoeffs[6] != 0.0
 			? here->ISRCcoeffs[6] : ckt->CKTfinalTime;
+#ifdef XSPICE
+                    PHASE = here->ISRCfunctionOrder > 8 
+			? here->ISRCcoeffs[7] : 0.0;
+			
+		     /* normalize phase to 0 - 2PI */ 
+                    phase = PHASE * M_PI / 180.0;
+                    basephase = 2 * M_PI * floor(phase / (2 * M_PI));
+                    phase -= basephase;
+
+                    /* compute equivalent delta time and add to time */
+                    deltat = (phase / (2 * M_PI)) * PER;
+                    time += deltat;	
+#endif		    
+/* gtri - end - wbk - add PHASE parameter */
+                
+                    /* offset time by delay */
                     time = ckt->CKTtime - TD;
+
+
 
                     if(time >= PER) {
                         /* repeating signal - figure out where we are */
@@ -66,10 +92,11 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         basetime = PER * floor(time/PER);
                         time -= basetime;
                     }
-                    if( time <= 0 || time >= TR + PW + TF) {
-                        if(ckt->CKTbreak &&  SAMETIME(time,0)) {
+
+                    if( time <= 0.0 || time >= TR + PW + TF) {
+                        if(ckt->CKTbreak &&  SAMETIME(time,0.0)) {
                             /* set next breakpoint */
-                            error = CKTsetBreak(ckt,basetime + TR +TD);
+                            error = CKTsetBreak(ckt,basetime + TR + TD);
                             if(error) return(error);
                         } else if(ckt->CKTbreak && SAMETIME(TR+PW+TF,time) ) {
                             /* set next breakpoint */
@@ -127,6 +154,10 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                 }
                 break;
                 case SFFM:{
+                    /* no  breakpoints (yet) */
+                }
+                break;
+		case AM:{
                     /* no  breakpoints (yet) */
                 }
                 break;

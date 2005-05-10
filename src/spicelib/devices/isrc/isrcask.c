@@ -43,6 +43,7 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case ISRC_EXP:
         case ISRC_PWL:
         case ISRC_SFFM:
+	case ISRC_AM:
         case ISRC_FCN_COEFFS:
             temp = value->v.numValue = here->ISRCfunctionOrder;
             value->v.vec.rVec = (double *) 
@@ -85,6 +86,13 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
                         *(ckt->CKTrhsOld + here->ISRCnegNode));
             }
             return(OK);
+/* gtri - begin - add current value information */
+#ifdef XSPICE
+        case ISRC_CURRENT:
+            value->rValue = here->ISRCcurrent;
+            return (OK);
+#endif	    
+/* gtri - end - add current value information */
         default:
             return (E_BADPARM);
     }

@@ -99,6 +99,14 @@ int i;
             here->ISRCfunctionOrder = value->v.numValue;
             here->ISRCcoeffsGiven = TRUE;
             break;
+	case ISRC_AM:
+	    if(value->v.numValue <2) return(E_BADPARM);
+            here->ISRCfunctionType = AM;
+            here->ISRCfuncTGiven = TRUE;
+            here->ISRCcoeffs = value->v.vec.rVec;
+            here->ISRCfunctionOrder = value->v.numValue;
+            here->ISRCcoeffsGiven = TRUE;
+	    break;
 	case ISRC_D_F1:
 	    here->ISRCdF1given = TRUE;
 	    here->ISRCdGiven = TRUE;

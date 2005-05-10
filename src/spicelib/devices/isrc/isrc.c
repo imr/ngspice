@@ -18,7 +18,8 @@ IFparm ISRCpTable[] = { /* parameters */
  IP ( "sin",     ISRC_SINE,      IF_REALVEC,"Sinusoidal source description"),
  IP ( "exp",     ISRC_EXP,       IF_REALVEC,"Exponential source description"),
  IP ( "pwl",     ISRC_PWL,       IF_REALVEC,"Piecewise linear description"),
- IP ( "sffm",    ISRC_SFFM,      IF_REALVEC,"single freq. FM description"),
+ IP ( "sffm",    ISRC_SFFM,      IF_REALVEC,"Single freq. FM description"),
+ IP ( "am",      ISRC_AM,        IF_REALVEC,"Amplitude modulation description"),
  OPU ( "neg_node",ISRC_NEG_NODE,  IF_INTEGER,"Negative node of source"),
  OPU ( "pos_node",ISRC_POS_NODE,  IF_INTEGER,"Positive node of source"),
  OPU ( "acreal",  ISRC_AC_REAL,   IF_REAL   ,"AC real part"),
@@ -30,6 +31,11 @@ IFparm ISRCpTable[] = { /* parameters */
  OP ( "p",       ISRC_POWER,     IF_REAL,   "Power supplied by the source"),
  IP ( "ac",      ISRC_AC,        IF_REALVEC,"AC magnitude,phase vector"),
  IP ( "c",       ISRC_DC,        IF_REAL,   "Current through current source"),
+/* gtri - begin - add parameter for current source value */
+#ifdef XSPICE
+ OP ( "current", ISRC_CURRENT,   IF_REAL,   "Current in DC or Transient mode"),
+#endif
+/* gtri - end - add parameter for current source value */
  IP ( "distof1", ISRC_D_F1,      IF_REALVEC,"f1 input for distortion"),
  IP ( "distof2", ISRC_D_F2,      IF_REALVEC,"f2 input for distortion")
 };
