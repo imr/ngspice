@@ -1,3 +1,16 @@
+2005-05-10  Steven Borley <steven.borley@virgin.net>
+
+  *  Some minor tidy-up as follows:
+  		- Added missing .cvsignor files in many source directories.
+  		- Added #ifdef CIDER...#endif around fields in structure initialisation
+  		  of nbjt, nbjt2, numd, numd2 and numos - this is strictly unnecessary
+  		  as these devices are only used when CIDER is defined but it keeps
+  		  symmetry with other devices.
+  		- Added some extra TRACE debug statments in in the parser
+  
+  *  Added conditional on the ngspice program to prevent errors when spiceinit
+     file is used with ngnutmeg (spiceinit.in)
+
 2005-05-10  Paolo Nenzi <p.nenzi@ieee.org>
 
 	*  src/spicelib/devices/isrc/*,src/spicelib/devices/vsrc/*: added
