@@ -1,3 +1,22 @@
+2005-05-10  Paolo Nenzi <p.nenzi@ieee.org>
+
+	*  src/spicelib/devices/isrc/*,src/spicelib/devices/vsrc/*: added
+	   XSPICE extensions: PHASE parameter and current in isrc. Added AM
+	   transient function (Amplitude Modulation):
+	   
+	      AM (sig_ampl offset_const mod_freq carrier_freq t_delay)
+	   
+	      The waveform will follow:
+	   
+	      value = sig_ampl*{offset_const + SIN(2*PI*mod_freq*(t-t_delay))}*
+	              SIN(2*PI*carrier_freq*(t-t_delay))
+		   
+	      As an example you can use:
+	    
+              V1 1 0 AM(10 1 1K 100 1M) 
+
+              R1 1 0 1
+	    
 2005-05-09  Steven Borley <steven.borley@virgin.net>
 
 	*  Added new syntax to the the resistor card to support HSpice style
