@@ -88,6 +88,7 @@ typedef struct sVSRCmodel {
 #define EXP 3
 #define SFFM 4
 #define PWL 5
+#define AM 6
 #endif /*PULSE*/
 
 /* device parameters */
@@ -112,6 +113,8 @@ typedef struct sVSRCmodel {
 #define VSRC_POWER 19
 #define VSRC_D_F1 20
 #define VSRC_D_F2 21
+
+#define VSRC_AM 22
 
 /* model parameters */
 

@@ -93,6 +93,14 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCfunctionOrder = value->v.numValue;
             here->VSRCcoeffsGiven = TRUE;
             break;
+	case VSRC_AM:
+	    if(value->v.numValue <2) return(E_BADPARM);
+            here->VSRCfunctionType = AM;
+            here->VSRCfuncTGiven = TRUE;
+            here->VSRCcoeffs = value->v.vec.rVec;
+            here->VSRCfunctionOrder = value->v.numValue;
+            here->VSRCcoeffsGiven = TRUE;	
+	    break;    
 	case VSRC_D_F1:
 	    here->VSRCdF1given = TRUE;
 	    here->VSRCdGiven = TRUE;

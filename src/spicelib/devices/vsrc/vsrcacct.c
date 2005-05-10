@@ -37,7 +37,18 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                 }
                 
                 case PULSE: {
+		
+#define SAMETIME(a,b) (fabs((a)-(b))<= TIMETOL * PW)
+#define TIMETOL 1e-7
+		
 		    double	TD, TR, TF, PW, PER;
+/* gtri - begin - wbk - add PHASE parameter */
+#ifdef XSPICE		    
+		    double      PHASE;
+		    double phase;
+                    double deltat;
+                    double basephase;
+#endif		    		    
                     double time;
                     double basetime = 0;
 
@@ -55,25 +66,27 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 		    PER = here->VSRCfunctionOrder > 6
 			&& here->VSRCcoeffs[6] != 0.0
 			? here->VSRCcoeffs[6] : ckt->CKTfinalTime;
+#ifdef XSPICE
+                    PHASE = here->VSRCfunctionOrder > 8 
+			? here->VSRCcoeffs[7] : 0.0;
+			
+		     /* normalize phase to 0 - 2PI */ 
+                    phase = PHASE * M_PI / 180.0;
+                    basephase = 2 * M_PI * floor(phase / (2 * M_PI));
+                    phase -= basephase;
 
-/*
- #define TD ((here->VSRCfunctionOrder >=3)?(*(here->VSRCcoeffs+2)):\
-    (0.0))
- #define TR ((here->VSRCfunctionOrder >=4)?(*(here->VSRCcoeffs+3)):\
-    (ckt->CKTstep))
- #define TF ((here->VSRCfunctionOrder >=5)?(*(here->VSRCcoeffs+4)):\
-    (ckt->CKTstep))
- #define PW ((here->VSRCfunctionOrder >=6)?(*(here->VSRCcoeffs+5)):\
-    (ckt->CKTfinalTime))
- #define PER ((here->VSRCfunctionOrder>=7)?(*(here->VSRCcoeffs+6)):\
-    (ckt->CKTfinalTime))
-*/
+                    /* compute equivalent delta time and add to time */
+                    deltat = (phase / (2 * M_PI)) * PER;
+                    time += deltat;	
+#endif		    
+/* gtri - end - wbk - add PHASE parameter */			
 
-#define SAMETIME(a,b) (fabs((a)-(b))<= TIMETOL * PW)
-#define TIMETOL 1e-7
 
                     time = ckt->CKTtime - TD;
-                    /* if(ckt->CKTtime >= PER) XXX was this */
+		   
+		   
+		   
+		   
                     if(time >= PER) {
                         /* repeating signal - figure out where we are */
                         /* in period */
@@ -141,6 +154,10 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                 }
                 break;
                 case SFFM:{
+                    /* no  breakpoints (yet) */
+                }
+                break;
+		case AM:{
                     /* no  breakpoints (yet) */
                 }
                 break;

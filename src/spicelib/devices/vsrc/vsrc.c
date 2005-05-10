@@ -19,6 +19,7 @@ IFparm VSRCpTable[] = { /* parameters */
  IP ("exp",     VSRC_EXP,       IF_REALVEC,"Exponential source description"),
  IP ("pwl",     VSRC_PWL,       IF_REALVEC,"Piecewise linear description"),
  IP ("sffm",    VSRC_SFFM,      IF_REALVEC,"Single freq. FM descripton"),
+ IP ("am",      VSRC_AM,        IF_REALVEC,"Amplitude modulation descripton"),
  OPU ("pos_node",VSRC_POS_NODE,  IF_INTEGER,"Positive node of source"),
  OPU ("neg_node",VSRC_NEG_NODE,  IF_INTEGER,"Negative node of source"),
  OPU ("function",VSRC_FCN_TYPE,  IF_INTEGER,"Function of the source"),
