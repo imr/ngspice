@@ -67,9 +67,11 @@ SPICEdev NBJTinfo = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,
     DEVnoise      : NULL,
+#ifdef CIDER
     DEVdump       : NBJTdump,
     DEVacct       : NBJTacct,
-                    
+#endif
+
     DEVinstSize   : &NBJTiSize,
     DEVmodSize    : &NBJTmSize
 

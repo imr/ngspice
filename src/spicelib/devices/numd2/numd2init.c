@@ -67,8 +67,10 @@ SPICEdev NUMD2info = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,
     DEVnoise      : NULL,
+#ifdef CIDER
     DEVdump       : NUMD2dump,
     DEVacct       : NUMD2acct,
+#endif
                     
     DEVinstSize   : &NUMD2iSize,
     DEVmodSize    : &NUMD2mSize

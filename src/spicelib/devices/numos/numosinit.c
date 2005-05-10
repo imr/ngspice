@@ -67,8 +67,10 @@ SPICEdev NUMOSinfo = {
     DEVsenTrunc   : NULL,
     DEVdisto      : NULL,
     DEVnoise      : NULL,
+#ifdef CIDER
     DEVdump       : NUMOSdump,
     DEVacct       : NUMOSacct,
+#endif
                     
     DEVinstSize   : &NUMOSiSize,
     DEVmodSize    : &NUMOSmSize
