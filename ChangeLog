@@ -1,3 +1,16 @@
+2005-05-11  Steven Borley <steven.borley@virgin.net>
+
+  *  Changed line-ending on several files from DOS to UNIX.
+  
+  *  Translated German in to English in comments for several files
+     (where the German was simple and meaning clear from the context
+      - and Babel fish helped too). This also removes the non-ASCII
+      characters from these files, which was giving problems on
+      at least one platform.
+      
+  *  In the above files I have also replaced c++ comment style with
+     c comments (i.e. // go to /* ... */).
+
 2005-05-10  Steven Borley <steven.borley@virgin.net>
 
   *  Some minor tidy-up as follows:
