@@ -303,7 +303,7 @@ ACan(CKTcircuit *ckt, int restart)
         case DECADE:
         case OCTAVE:
 
-// neu eingefügt 14.12.2001  
+/* inserted again 14.12.2001  */
 #ifdef HAS_WINDOWS
 			 {
 				 double endfreq   = ((ACAN*)ckt->CKTcurJob)->ACstopFreq;

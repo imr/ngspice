@@ -4,7 +4,6 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /*
- *
  * Read and write the ascii and binary rawfile formats.
  */
 
@@ -63,7 +62,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
         prec = DEFPREC;
 
 #ifdef __MINGW32__
-// -Binärdatei binär schreiben-  hvogt 15.03.2000 ---------------------
+/* - Binary file binary write -  hvogt 15.03.2000 ---------------------*/
     if (binary) {
         if (!(fp = fopen(name, app ? "ab" : "wb"))) {
             perror(name);
@@ -78,7 +77,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
         }
         fprintf(cp_out,"ASCII raw file\n");
     }
-// --------------------------------------------------------------------
+/* --------------------------------------------------------------------*/
 
 #else
 
@@ -294,11 +293,11 @@ raw_read(char *name)
     }
 
 #ifdef __MINGW32__
-// Test, ob Datei wirklich ASCII, sonst binär annehmen  hvogt 15.3.2000
+/* Test, whether file really ASCII, otherwise assume binary  hvogt 15.3.2000 */
     while (fgets(buf, BSIZE_SP, fp)) {
         if (ciprefix("values:", buf)) {
         	binary = FALSE;
-        	rewind(fp);                // zurückspulen
+        	rewind(fp);                /* rewind */
                 fprintf(cp_err, "\nASCII raw file\n");
         	break;
         }
@@ -312,7 +311,7 @@ raw_read(char *name)
             }
             fprintf(cp_err, "\nbinary raw file\n");
         }
-//--------------------------------------------------------
+/*--------------------------------------------------------*/
 #endif
 
     /* Since we call cp_evloop() from here, we have to do this junk. */

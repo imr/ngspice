@@ -1,21 +1,21 @@
-/* I/O Redirection für Spice 3F4 unter Win32s
-	Autor: Wolfgang Mües
+/* I/O Redirection for Spice 3F4 under Win32s
+	Autor: Wolfgang Muees
 	Stand: 21.05.95
 */
 
-#ifndef W_STDIO_H
-#define W_STDIO_H
-#include <stdio.h>				// originale Definitionen
-#undef getc(f)					// alte macros zurücknehmen
-#undef putc(c,f)
-#undef ungetc(c,f)
-#undef getchar()
-#undef putchar(c)
-#undef feof(f)
-#undef ferror(f)
+#ifndef WSTDIO_H
+#define WSTDIO_H
+#include <stdio.h>				/* original definitions */
 
+#undef getc					/* old macros removed */
+#undef putc
+#undef ungetc
+#undef getchar
+#undef putchar
+#undef feof
+#undef ferror
 
-// -------------------------------<forwards>-----------------------------------
+/* -------------------------------<forwards>----------------------------------*/
 
 int	f_c_l_o_s_e( FILE * __stream);
 int	f_f_l_u_s_h( FILE * __stream);
@@ -39,9 +39,9 @@ int    p_u_t_s(const char * __s);
 int    s_c_a_n_f(const char * __format, ...);
 int    ung_e_t_c(int __c, FILE * __stream);
 int    vfp_r_i_n_t_f(FILE * __stream, const char * __format, void * __arglist);
-//int    vfs_c_a_n_f(FILE * __stream, const char * __format, void * __arglist);
+/*int   vfs_c_a_n_f(FILE * __stream, const char * __format, void * __arglist);*/
 int    vp_r_i_n_t_f(const char * __format, void * __arglist);
-//int    vs_c_a_n_f(const char * __format, void * __arglist);
+/*int   vs_c_a_n_f(const char * __format, void * __arglist); */
 int    r_e_a_d(int fd, char * __buf, int __n);
 int    g_e_t_c(FILE * __fp);
 int    g_e_t_char(void);
@@ -52,7 +52,7 @@ int    f_e_r_r_o_r(FILE * __fp);
 int    fg_e_t_char(void);
 int    fp_u_t_char(int __c);
 
-// ------------------------------<neue macros>---------------------------------
+/* ------------------------------<New macros>---------------------------------*/
 
 #define fclose		f_c_l_o_s_e
 #define fflush 	f_f_l_u_s_h
@@ -76,9 +76,9 @@ int    fp_u_t_char(int __c);
 #define scanf		s_c_a_n_f
 #define ungetc		ung_e_t_c
 #define vfprintf	vfp_r_i_n_t_f
-//#define vfscanf	vfs_c_a_n_f
+/*#define vfscanf	vfs_c_a_n_f*/
 #define vprintf	vp_r_i_n_t_f
-//#define vscanf	vs_c_a_n_f
+/*#define vscanf	vs_c_a_n_f*/
 #define read      r_e_a_d
 #define getc		g_e_t_c
 #define getchar	g_e_t_char
@@ -89,9 +89,7 @@ int    fp_u_t_char(int __c);
 #define fgetchar	fg_e_t_char
 #define fputchar	fp_u_t_char
 
-// ----------------------------------------------------------------------------
+/*----------------------------------------------------------------------------*/
 
-// #include "io_special.h"
-
-#endif /* W_STDIO_H */
+#endif /* WSTDIO_H */
 

@@ -28,8 +28,6 @@ Author: Jim Groves
 
 */
 
-
-
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "graph.h"

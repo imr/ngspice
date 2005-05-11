@@ -31,7 +31,7 @@ extern int  X11_Init(void), X11_NewViewport(GRAPH *graph), X11_Close(void), X11_
 #endif
 
 
-#ifdef HAS_WINDOWS	/* Grafik-IO über MS Windows */
+#ifdef HAS_WINDOWS	/* Graphic-IO under MS Windows */
 extern int WIN_Init(), WIN_NewViewport(), WIN_Close(), WIN_Clear(),
 		WIN_DrawLine(), WIN_Arc(), WIN_Text(), WIN_DefineColor(),
 		WIN_DefineLinestyle(), WIN_SetLinestyle(), WIN_SetColor(),
@@ -78,7 +78,7 @@ DISPDEVICE device[] = {
     gen_DatatoScreen,},
 #endif
 
-#ifdef HAS_WINDOWS	/* Grafik-IO über MS Windows */
+#ifdef HAS_WINDOWS	/* Graphic-IO under MS Windows */
 	{"Windows", 0, 0, 1000, 1000, 0, 0, WIN_Init, WIN_NewViewport,
 	 WIN_Close, WIN_Clear,
 	 WIN_DrawLine, WIN_Arc, WIN_Text, WIN_DefineColor, WIN_DefineLinestyle,
@@ -86,7 +86,7 @@ DISPDEVICE device[] = {
 	 nodev, nodev, nodev, gen_Input,
 	 gen_DatatoScreen, WIN_DiagramReady},
 
-	// Achtung: Namen "WinPrint" nicht ändern!
+	// Warning: name "WinPrint" do not change!
 	{"WinPrint", 0, 0, 1000, 1000, 0, 0, WPRINT_Init, WPRINT_NewViewport,
 	 WPRINT_Close, WPRINT_Clear,
 	 WPRINT_DrawLine, WPRINT_Arc, WPRINT_Text, WPRINT_DefineColor, WPRINT_DefineLinestyle,
@@ -128,7 +128,6 @@ DISPDEVICE device[] = {
 };
 
 DISPDEVICE *dispdev = device + NUMELEMS(device) - 1;
-// DISPDEVICE *dispdev = device ;  /* GCC257 stuertzt hier ab */
 
 #define XtNumber(arr)       (sizeof(arr) / sizeof(arr[0]))
 
