@@ -77,7 +77,16 @@
     times(&buffer);					\
     time = buffer.user / 60.0;				\
 }
- 
- 
- 
+
+#ifdef HAVE_SIGSETJMP
+# define SETJMP(env, save_signals) sigsetjmp(env, save_signals)
+# define LONGJMP(env, retval) siglongjmp(env, retval)
+# define JMP_BUF sigjmp_buf
+#else
+# define SETJMP(env, save_signals) setjmp(env)
+# define LONGJMP(env, retval) longjmp(env, retval)
+# define JMP_BUF jmp_buf
+#endif
+
+
 #endif /* _MACROS_H_ */
