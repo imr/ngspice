@@ -383,6 +383,15 @@ AC_CHECK_LIB(gc,GC_malloc,
 	LIBS="$LIBS -lgc")
 fi
 
+dnl check, if we have sigsetjmp and siglongjmp.
+dnl A trivial AC_CHECK_FUNCS(sigsetjmp) won't do because sigsetjmp() might be a
+dnl macro declared in <setjmp.h>. (joze)
+AC_MSG_CHECKING(for sigsetjmp)
+AC_TRY_LINK([#include <setjmp.h>],[jmp_buf env; sigsetjmp(env, 1);],
+    [AC_MSG_RESULT(yes)
+        AC_DEFINE(HAVE_SIGSETJMP,[],[Define if we have sigsetjmp().])],
+    AC_MSG_RESULT(no) )
+
 dnl Check for the asprintf function:
 AC_CHECK_FUNCS(asprintf,,AC_CHECK_LIB(iberty,asprintf,AC_DEFINE(HAVE_ASPRINTF) LIBS="$LIBS -liberty"))
 
