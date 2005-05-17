@@ -1,0 +1,8 @@
+spice2poly.cm
+cmextrn.h
+cminfo.h
+dlmain.c
+objects.inc
+udnextrn.h
+udninfo.h
+.deps
