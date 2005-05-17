@@ -394,13 +394,13 @@ printres(char *name)
 
 #define LOG2_PAGESIZE	8
 
-static sigjmp_buf	env;
+static JMP_BUF	env;
 
 static RETSIGTYPE
 fault(void)
 {
 	signal(SIGSEGV, (SIGNAL_FUNCTION) fault);	/* SysV style */
-	siglongjmp(env, 1);
+	LONGJMP(env, 1);
 }
 
 static void *
@@ -414,9 +414,9 @@ baseaddr(void)
 	if (getenv("SPICE_NO_DATASEG_CHECK"))
 		return 0;
 
-#if defined(__CYGWIN__) || defined(HAS_WINDOWS) || defined(__APPLE__)
+#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(HAS_WINDOWS) || defined(__APPLE__)
 	return 0;
-#endif
+#else
 
 	low = 0;
 	high = (char *) ((unsigned long) sbrk(0) & ~((1 << LOG2_PAGESIZE) - 1));
@@ -433,13 +433,13 @@ baseaddr(void)
 			break;
 		}
 
-		if (sigsetjmp(env, 1)) {
+		if (SETJMP(env, 1)) {
 			low = at;
 			continue;
 		} else
 			x = *at;
 
-		if (sigsetjmp(env, 1)) {
+		if (SETJMP(env, 1)) {
 			low = at;
 			continue;
 		} else
@@ -451,6 +451,8 @@ baseaddr(void)
 
 	(void) signal(SIGSEGV, (SIGNAL_FUNCTION) orig_signal);
 	return (void *) high;
+
+#endif
 }
 
 #  ifdef notdef

@@ -29,7 +29,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <editline/readline.h>
 #endif /* HAVE_BSDEDITLINE */
 
-extern sigjmp_buf jbuf;
+extern JMP_BUF jbuf;
 
 /* The (void) signal handlers... SIGINT is the only one that gets reset (by
  * cshpar) so it is global. They are ifdef BSD because of the sigmask
@@ -77,7 +77,7 @@ ft_sigintr(void)
     cp_resetcontrol();   
 
     /* here we jump to the start of command processing in main() after resetting everything.  */
-    siglongjmp(jbuf, 1);
+    LONGJMP(jbuf, 1);
 
 }
 
@@ -89,7 +89,7 @@ sigfloat(int sig, int code)
     fperror("Error", code);
     rewind(cp_out);
     (void) signal( SIGFPE, (SIGNAL_FUNCTION) sigfloat );
-    siglongjmp(jbuf, 1);
+    LONGJMP(jbuf, 1);
 }
 
 /* This should give a new prompt if cshpar is waiting for input.  */
@@ -111,7 +111,7 @@ sigcont(void)
 {
     (void) signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
     if (cp_cwait)
-        siglongjmp(jbuf, 1);
+        LONGJMP(jbuf, 1);
 }
 
 #    endif
