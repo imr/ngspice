@@ -1,3 +1,22 @@
+2005-05-17  Steven Borley <steven.borley@virgin.net>
+
+  *  Updates configure.in. Notably this removes the need for acconfig.h (the use
+     of which is deprecated by autoconf). Most of the remaining changes just
+     tidy with the aim of following guidelines in the autoconf manual. Fixed an
+     issue with CFLAGS usage and --disable-debug. Some fixes aimed as support
+     for MinGW (more to follow).
+     
+  *  Removed acconfig.h (see above for reason).
+
+  *  Updated various file to allow build using MinGW. Affected files: src/main.c,
+     src/nghelp.c, src/frontend/evaluate.c, src/frontend/resource.c,
+     src/frontend/signal_handler.c, src/frontend/wdisp/windisp.c,
+     src/frontend/wdisp/winprint.c, src/include/macros.h
+     These changes mostly supplied by Dietmar Warning.
+     Highlights: macros used for sigjmp_buf (JMP_BUF), sigsetjmp (SETJMP) and
+     siglongjmp (LONGJMP); Fixed problem of duplicated definition of BOOL.
+     Adjustments to allow ngnutmeg to compile with a Windows frontend.
+
 2005-05-11  Steven Borley <steven.borley@virgin.net>
 
   *  Changed line-ending on several files from DOS to UNIX.
