@@ -149,7 +149,7 @@ double EpsNorm, VNorm, NNorm, LNorm, TNorm, JNorm, GNorm, ENorm;
 
 struct variable *(*if_getparam)( );
 
-sigjmp_buf jbuf;
+JMP_BUF jbuf;
 
 static int started = FALSE;
 
@@ -478,7 +478,7 @@ app_rl_readlines()
     while (1) {
        history_set_pos(history_length);
 
-       sigsetjmp(jbuf, 1);    /* Set location to jump to after handling SIGINT (ctrl-C)  */
+       SETJMP(jbuf, 1);    /* Set location to jump to after handling SIGINT (ctrl-C)  */
 
        line = readline(prompt());
        if (line && *line) {
@@ -623,7 +623,7 @@ int
 xmain(int argc, char **argv)
 #else
 main(int argc, char **argv)
-#endif
+#endif /* HAS_WINDOWS */
 {
     int c;
     int		err;
@@ -804,7 +804,7 @@ main(int argc, char **argv)
 		    perror (buf);
 		    shutdown (EXIT_BAD);
 		}
-#endif		
+#endif /* HAS_WINDOWS */
 /*    *** Open the Log-File ******* */
                 if (!(flogp = fopen(buf, "w"))) {
                       perror(buf);
@@ -877,7 +877,7 @@ main(int argc, char **argv)
     ft_cpinit();
 
     /* To catch interrupts during .spiceinit... */
-    if (sigsetjmp(jbuf, 1) == 1) {
+    if (SETJMP(jbuf, 1) == 1) {
         fprintf(cp_err, "Warning: error executing .spiceinit.\n");
         if (!ft_batchmode)
             goto bot;
@@ -958,7 +958,7 @@ bot:
      * build a circuit for this file. If this is in server mode, don't
      * process any of these args.  */
 
-    if (sigsetjmp(jbuf, 1) == 1)
+    if (SETJMP(jbuf, 1) == 1)
         goto evl;
 
 
@@ -1015,7 +1015,7 @@ evl:
          * so exit.  */
         bool st = FALSE;
 
-        (void) sigsetjmp(jbuf, 1);
+        (void) SETJMP(jbuf, 1);
 
 
         if (st == TRUE) {
@@ -1070,7 +1070,7 @@ evl:
 
 evl:
     /* Nutmeg "main" */
-    (void) sigsetjmp(jbuf, 1);
+    (void) SETJMP(jbuf, 1);
     cp_interactive = TRUE;
     app_rl_readlines();  /*  enter the command processing loop  */
 
