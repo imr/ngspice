@@ -3,150 +3,171 @@ dnl
 dnl This file is part of ngspice.
 dnl
 dnl (Process this file with autoconf to produce a configure script.)
-AC_INIT
-AC_CONFIG_SRCDIR([src/main.c])
+dnl
+dnl This configure file has been updated to mostly follow the guidence in the
+dnl GNU Autoconf manual for version 2.59
+
+
+dnl Initialisation
+dnl ---------------
+
+dnl Initialisation of configure
+AC_INIT(ng-spice-rework,15,ngspice-bugs@lists.sourceforge.net)
+
+dnl Unique file in the source directory
+AC_CONFIG_SRCDIR([src/ngspice.c])
+
+dnl Ensure a recent version of Autoconf is in use
+dnl Older versions may not work with this script and this will report the
+dnl problem to the user.  (2.52 is a guess and might need some adjustment)
+AC_PREREQ(2.52)
+
+dnl Revison stamp the generated ./configure script
+AC_REVISION($Revision$)
 
 dnl Create a configuration header
 AC_CONFIG_HEADERS([config.h])
 
-dnl Initialize automake stuff
-AM_INIT_AUTOMAKE(ng-spice-rework,15)
+dnl Initialise automake stuff
+AM_INIT_AUTOMAKE
 
+dnl Package Options
+dnl ---------------
     
 dnl --enable-ansi : try to force --ansi option to the compiler
 AC_ARG_ENABLE(ansi,
-    [  --enable-ansi           Force --ansi option for compilation])
+    AS_HELP_STRING([--enable-ansi],[Force --ansi option for compilation]))
 
 dnl --disable-debug : remove -g and -Wall  option to the compiler
 AC_ARG_ENABLE(debug,
-    [  --enable-debug          Add -g option for compilation (default)])
+    AS_HELP_STRING([--enable-debug],[Add -g option for compilation (default)]))
 
 dnl --enable-checker : add --with-checker-debug  option to the compiler
 AC_ARG_ENABLE(checker,
-    [  --enable-checkergcc     Option for compilation with checkergcc])
+    AS_HELP_STRING([--enable-checkergcc],[Option for compilation with checkergcc]))
 
 dnl --enable-gc : Enable Boehm-Weiser Conservative Garbage Collector
 AC_ARG_ENABLE(checker,
-    [  --enable-gc             Use Boehm-Weiser Conservative Garbage Collector. Disabled by default. ])
+    AS_HELP_STRING([--enable-gc],[Use Boehm-Weiser Conservative Garbage Collector. Disabled by default.]))
  
 dnl --enable-nosqrt : define NOSQRT for the code
 AC_ARG_ENABLE(nosqrt,
-    [  --enable-nosqrt         Use always log/exp for nonlinear capacitances])
+    AS_HELP_STRING([--enable-nosqrt],[Use always log/exp for nonlinear capacitances]))
  
 dnl --enable-bypass : define BYPASS for the code
 AC_ARG_ENABLE(nobypass,
-    [  --enable-nobypass       Don't bypass recalculations of slowly changing variables])
+    AS_HELP_STRING([--enable-nobypass],[Don't bypass recalculations of slowly changing variables]))
 
 dnl --enable-capbypass : define CAPBYPASS for the code
 AC_ARG_ENABLE(capbypass,
-    [  --enable-capbypass      Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd voltages are unchanged])
+    AS_HELP_STRING([--enable-capbypass],[Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd voltages are unchanged]))
 
 dnl --enable-capzerobypass : define CAPZEROBYPASS for the code
 AC_ARG_ENABLE(capzerobypass,
-    [  --enable-capzerobypass  Bypass all the cbd/cbs calculations if Czero is zero])
+    AS_HELP_STRING([--enable-capzerobypass],[Bypass all the cbd/cbs calculations if Czero is zero]))
  
 dnl --enable-nodelimiting : define NODELIMITING for the code
 AC_ARG_ENABLE(nodelimiting,
-    [  --enable-nodelimiting   Experimental damping scheme])
+    AS_HELP_STRING([--enable-nodelimiting],[Experimental damping scheme]))
  
 dnl --enable-predictor : define PREDICTOR for the code
 AC_ARG_ENABLE(predictor,
-    [  --enable-predictor      Enable a predictor method for convergence])
+    AS_HELP_STRING([--enable-predictor],[Enable a predictor method for convergence]))
 
 dnl --enable-newpred   : define PREDICTOR for the code
 AC_ARG_ENABLE(newpred,
-    [  --enable-newpred        Enable NEWPRED whatever it is(?)])
+    AS_HELP_STRING([--enable-newpred],[Enable NEWPRED whatever it is(?)]))
 
 dnl --enable-newtrunc : define NEWTRUNC for the code
 AC_ARG_ENABLE(newtrunc,
-    [  --enable-newtrunc       Enable the newtrunc option])
+    AS_HELP_STRING([--enable-newtrunc],[Enable the newtrunc option]))
 
 dnl --enable-sense2 : define WANT_SENSE2 for the code
 AC_ARG_ENABLE(sense2,
-    [  --enable-sense2         Use spice2 sensitivity analysis])
+    AS_HELP_STRING([--enable-sense2],[Use spice2 sensitivity analysis]))
 
 dnl --enable-ftedebug : enable frontend debug macros
 AC_ARG_ENABLE(ftedebug,
-    [  --enable-ftedebug       Enable ngspice frontend debug])
+    AS_HELP_STRING([--enable-ftedebug],[Enable ngspice frontend debug]))
 
 dnl --enable-cpdebug : enable frontend debug macros
 AC_ARG_ENABLE(cpdebug,
-    [  --enable-cpdebug        Enable ngspice shell debug])    
+    AS_HELP_STRING([--enable-cpdebug],[Enable ngspice shell debug]))
 
 dnl --enable-sensdebug : define SENSDEBUG for the code
 AC_ARG_ENABLE(sensdebug,
-    [  --enable-sensdebug      Debug sensitivity code *SENSDEBUG*]) 
+    AS_HELP_STRING([--enable-sensdebug],[Debug sensitivity code *SENSDEBUG*]))
 
 dnl --enable-asdebug : define ASDEBUG for the code
 AC_ARG_ENABLE(asdebug,
-    [  --enable-asdebug        Debug sensitivity code *ASDEBUG*]) 
+    AS_HELP_STRING([--enable-asdebug],[Debug sensitivity code *ASDEBUG*]))
         
 dnl --enable-stepdebug : define STEPDEBUG for the code
 AC_ARG_ENABLE(stepdebug,
-    [  --enable-stepdebug      Unknown debug option])     
+    AS_HELP_STRING([--enable-stepdebug],[Unknown debug option]))
 
 dnl --enable-pzdebug   : define PZDEBUG for the code
 AC_ARG_ENABLE(pzdebug,
-    [  --enable-pzdebug        Debug pole/zero code])     
+    AS_HELP_STRING([--enable-pzdebug],[Debug pole/zero code]))
 
 dnl --enable-blktmsdebug   : define D_DBG_BLOCKTIMES for the code
 AC_ARG_ENABLE(blktmsdebug,
-    [  --enable-blktmsdebug    Debug distortion code *BLOCKTIMES*])     
+    AS_HELP_STRING([--enable-blktmsdebug],[Debug distortion code *BLOCKTIMES*]))
 
 dnl --enable-smltmsdebug   : define D_DBG_SMALLTIMES for the code
 AC_ARG_ENABLE(smltmsdebug,
-    [  --enable-smltmsdebug    Debug distortion code *SMALLTIMES*])     
+    AS_HELP_STRING([--enable-smltmsdebug],[Debug distortion code *SMALLTIMES*]))
 
 dnl --enable-intnoise : define INT_NOISE for the code
 AC_ARG_ENABLE(intnoise,
-    [  --enable-intnoise       Enable noise integration in noise analysis])
+    AS_HELP_STRING([--enable-intnoise],[Enable noise integration in noise analysis]))
 
 dnl --enable-smoketest : a smoketest
 AC_ARG_ENABLE(smoketest,
-    [  --enable-smoketest      Enable smoketest compile])
+    AS_HELP_STRING([--enable-smoketest],[Enable smoketest compile]))
 
 dnl --enable-experimental : define EXPERIMENTAL_CODE for the code
 AC_ARG_ENABLE(experimental,
-    [  --enable-experimental   Enable some experimental code])
+    AS_HELP_STRING([--enable-experimental],[Enable some experimental code]))
 
 dnl --enable-expdevices : Enable the compilation of experimental devices
 AC_ARG_ENABLE(expdevices,
-    [  --enable-expdevices     Enable experimental devices (they do not compile)])
+    AS_HELP_STRING([--enable-expdevices],[Enable experimental devices (they do not compile)]))
 
 dnl --enable-ekv: define HAVE_EKV in the code. This is for EKV model support
 AC_ARG_ENABLE(ekv,
-    [  --enable-ekv            Enable ekv model *not in standard distribution*])
+    AS_HELP_STRING([--enable-ekv],[Enable ekv model *not in standard distribution*]))
 
 dnl --enable-xspice: define XSPICE in the code. This is for xspice support
 AC_ARG_ENABLE(xspice,
-    [  --enable-xspice         Enable XSpice enhancements, (experimental) ])
+    AS_HELP_STRING([--enable-xspice],[Enable XSpice enhancements, (experimental) ]))
 
 dnl --enable-cider: define CIDER in the code. This is for CIDER support
 AC_ARG_ENABLE(cider,
-    [  --enable-cider          Enable CIDER enhancements, (experimental) ])
+    AS_HELP_STRING([--enable-cider],[Enable CIDER enhancements, (experimental) ]))
 
 dnl --enable-cluster: define CLUSTER in the code. This is for cluster support
 AC_ARG_ENABLE(cluster,
-    [  --enable-cluster        Enable cluster support, (experimental) ])
+    AS_HELP_STRING([--enable-cluster],[Enable cluster support, (experimental) ]))
 
 dnl --enable-numparams: define NUMPARAMS in the code. This is for .param support
 AC_ARG_ENABLE(numparam,
-    [  --enable-numparam       Enable numparams library support, (experimental) ])
+    AS_HELP_STRING([--enable-numparam],[Enable numparams library support, (experimental) ]))
 
 dnl --enable-xgraph: Compile the xgraph plotting program. Default is "no".
 dnl Xgraph is a plotting package for X11 once very popular.
 AC_ARG_ENABLE(xgraph,
-    [  --enable-xgraph         Enable xgraph compilation.])
+    AS_HELP_STRING([--enable-xgraph],[Enable xgraph compilation.]))
  
 dnl --with-readline:  Includes GNU readline support into CLI.  Default is "no".
 dnl Including readline into ngspice is a violation of GPL license. It's use
 dnl is discouraged.
 AC_ARG_WITH(readline,
-    [  --with-readline[=yes/no]   Enable GNU readline support for CLI.  Default=no.])
+    AS_HELP_STRING([--with-readline[=yes/no]],[Enable GNU readline support for CLI.  Default=no.]))
     
 dnl --with-editline:  Includes BSD Editline support into CLI.  Default is "no".
 AC_ARG_WITH(editline,
-    [  --with-editline[=yes/no]   Enable BSD editline support for CLI.  Default=no.])
+    AS_HELP_STRING([--with-editline[=yes/no]],[Enable BSD editline support for CLI.  Default=no.]))
     
     
 dnl readline and editline cannot both be enabled
@@ -162,7 +183,7 @@ AC_MSG_CHECKING([whether .gobal keyword has been enabled])
 AC_ARG_ENABLE(dot-global,
     AS_HELP_STRING([--enable-dot-global],[Enable use of the .global keyword (experimental)]),
     [if test "$enable_dot_global" = "yes"; then
-	AC_DEFINE([GLOBAL_NODE],[1],[Define to enable the .global keyword])
+        AC_DEFINE([GLOBAL_NODE],[1],[Define to enable the .global keyword])
     fi],
     [enable_dot_global="no"])
 AC_MSG_RESULT($enable_dot_global)
@@ -172,18 +193,23 @@ AC_MSG_RESULT($enable_dot_global)
 dnl Enable maintainer commands only if requested
 AM_MAINTAINER_MODE
 
+
+dnl Compiler checks
+dnl ---------------
+
 dnl Work on compiler options according to system:
 dnl Set default CFLAG - only use -Wall if we have gcc
 
 AC_PROG_CC
 
-if test "x$GCC" = "xyes"; then
-	CFLAGS="$CFLAGS -Wall "
-fi
-
+dnl the above AC_PROG_CC may set CFLAGS to "-o2 -g"
 if test "$enable_debug" = "no"; then
 	AC_MSG_WARN(Removing debugging option!)
 	CFLAGS=" "
+fi
+
+if test "x$GCC" = "xyes"; then
+	CFLAGS="$CFLAGS -Wall "
 fi
 
 
@@ -232,11 +258,16 @@ AM_PROG_LIBTOOL
 AC_PROG_LIBTOOL
 
 dnl --with-windows : the user wants to use generate the MS WINDOWS executable
+AC_MSG_CHECKING([whether windows code is enabled])
 AC_ARG_WITH(windows,
-    [  --with-windows   MS WINDOWS executable],
-dnl set HAS_WINDOWS flag:
-    AC_DEFINE(HAS_WINDOWS)
+    AS_HELP_STRING([--with-windows],[MS WINDOWS executable]),
+	[if test "$with_windows" = "yes"; then
+    	AC_DEFINE([HAS_WINDOWS],[1],[define to specify MS Windows executable])
+    fi],
+    [with_windows="no"]
 )
+AC_MSG_RESULT($with_windows)
+AM_CONDITIONAL(WINDOWS, test x$with_windows = xyes)
 
 
 case $with_windows in
@@ -251,9 +282,9 @@ case $with_windows in
 dnl Checks for X11 header files and libraries - X11 support can be disabled
 dnl by passing the '--without-x' option to configure:
 
+dnl Try to locate the X-Windows include files and libraries
 AC_PATH_X
 AC_PATH_XTRA
-
 
 
 dnl Checks for X libraries - if X11 wasn't found then don't make following
@@ -288,8 +319,9 @@ AC_TYPE_SIGNAL
 dnl Check for a few libraries and headers:
 
 dnl Look for ncurses first, then termcap
-AC_SEARCH_LIBS(tputs,ncurses termcap,AC_DEFINE(HAVE_TERMCAP),
-               AC_MSG_ERROR(Found neither ncurses or termcap))
+AC_SEARCH_LIBS(tputs,ncurses termcap,
+    AC_DEFINE(HAVE_TERMCAP,[],[Define if we have ncurses or termcap]),
+    AC_MSG_ERROR(Found neither ncurses or termcap))
 
 
 AC_HEADER_DIRENT
@@ -308,17 +340,16 @@ dnl 64 bit processors, but I have only this platform to work with and did not
 dnl find a good way of automatically determining this information.
 case $host in
   x86_64-*-linux*)
-     AC_DEFINE(IS_SIZE_T_LONG, 1)
+     AC_DEFINE(IS_SIZE_T_LONG,[1],[define if size_t is long])
   ;;
   *)
-     AC_DEFINE(IS_SIZE_T_LONG, 0)
   ;;
 esac
 
 case $host_os in
-  *cygwin* )
+  *cygwin* | *mingw* )
 	AC_CHECK_FUNCS(ftime)
-   AC_DEFINE(HAVE__MEMAVL);;
+    AC_DEFINE(HAVE__MEMAVL,[],[Get system memory and time]);;
   * )
 	AC_CHECK_FUNCS(gettimeofday time ftime , break)
 	AC_CHECK_FUNCS(getrusage utimes, break)
@@ -342,12 +373,14 @@ AC_CHECK_LIB(m,sqrt)
 AC_CHECK_HEADERS(float.h limits.h values.h)
 
 dnl Check for a few mathematical functions:
-AC_CHECK_FUNCS(erfc logb scalb scalbn asinh acosh atanh)
+AC_CHECK_FUNCS(erfc logb scalb scalbn asinh acosh atanh isnan)
 
 dnl If user enables garbage collection, look for garbage collector
 if test "$enable_gc" = "yes"; then
 AC_MSG_RESULT(Checking for the presence of the Garbage Collector:)
-AC_CHECK_LIB(gc,GC_malloc,AC_DEFINE(HAVE_LIBGC) LIBS="$LIBS -lgc")
+AC_CHECK_LIB(gc,GC_malloc,
+    AC_DEFINE(HAVE_LIBGC,[],[Define if we want garbage collection enabled ])
+	LIBS="$LIBS -lgc")
 fi
 
 dnl Check for the asprintf function:
@@ -384,9 +417,18 @@ else
 fi
 
 
-AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo $dprefix/bin`" )
-AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice-rework`" )
-AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE, "`date`" )
+AC_DEFINE_UNQUOTED(NGSPICEBINDIR,
+    "`echo $dprefix/bin`",
+	[Define the directory for executables])
+AC_DEFINE_UNQUOTED(NGSPICEDATADIR,
+    "`echo $dprefix/share/ng-spice-rework`",
+	[Define the directory for architecture independent data files] )
+AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE,
+    "`date`",
+	[Define the build date])
+
+# Recapitulate settings:
+AC_MSG_RESULT(Settings which were chosen:)
 
 dnl  with the MS WINDOWS executable we suggest /spice_win/bin as *.exe-path
 if test "$with_windows" = "yes"; then
@@ -404,81 +446,81 @@ fi
 AC_SUBST(WINMAIN)
 AC_SUBST(WINDISPLIB)
 
-
-# Recapitulate settings:
-AC_MSG_RESULT(Settings which were chosen:)
 if test "$enable_sense2" = "yes"; then
-	AC_DEFINE(WANT_SENSE2)
+	AC_DEFINE(WANT_SENSE2,[],[Define if we want spice2 sensitivity analysis])
 	AC_MSG_RESULT(Spice2 sensitivity analysis enabled)	
 fi
 if test "$enable_nobypass" = "yes"; then
-	AC_DEFINE(NOBYPASS)
+	AC_DEFINE(NOBYPASS,[],[Define if we want NOBYPASS])
 	AC_MSG_RESULT(NOBYPASS option enabled)	
 fi
+if test "$enable_nosqrt" = "yes"; then
+    AC_DEFINE(NOSQRT,[],[Define to use always exp/log for bulk diode calculations in mosfetf])
+    AC_MSG_RESULT(NOSQRT option enabled)	
+fi 
 if test "$enable_capbypass" = "yes"; then
-        AC_DEFINE(CAPBYPASS)
-        AC_MSG_RESULT(CAPBYPASS option enabled)	
+    AC_DEFINE(CAPBYPASS,[],[Define if we want to bypass cbd/cbs calculation for non varying vbs/vbd])
+    AC_MSG_RESULT(CAPBYPASS option enabled)	
 fi 
 if test "$enable_capzerobypass" = "yes"; then
-        AC_DEFINE(CAPZEROBYPASS)
-        AC_MSG_RESULT(CAPZEROBYPASS option enabled)	
+    AC_DEFINE(CAPZEROBYPASS,[],[Define if we want to bypass cbd/cbs calculation if Czero is zero])
+    AC_MSG_RESULT(CAPZEROBYPASS option enabled)	
 fi
 if test "$enable_nodelimiting" = "yes"; then
-        AC_DEFINE(NODELIMITING)
-        AC_MSG_RESULT(NODELIMITING option enabled)	
+    AC_DEFINE(NODELIMITING,[],[Experimental code never implemented to damp Newton iterations])
+    AC_MSG_RESULT(NODELIMITING option enabled)	
 fi 
 if test "$enable_predictor" = "yes"; then
-	AC_DEFINE(PREDICTOR)
+	AC_DEFINE(PREDICTOR,[],[Define if we want predictor algorithm])
 	AC_MSG_RESULT(PREDICTOR algorithm enabled)	
 fi
 if test "$enable_newpred" = "yes"; then
-	AC_DEFINE(NEWPRED)
+	AC_DEFINE(NEWPRED,[],[Define if you want to discover :)])
 	AC_MSG_RESULT(NEWPRED enabled)	
 fi
 if test "$enable_newtrunc" = "yes"; then
-        AC_DEFINE(NEWTRUNC)
-        AC_MSG_RESULT(New truncation error calculation enabled)
+    AC_DEFINE(NEWTRUNC,[],[Do not trigger unwanted traps by default])
+    AC_MSG_RESULT(New truncation error calculation enabled)
 fi 
 if test "$enable_intnoise" = "yes"; then
-	AC_DEFINE(INT_NOISE)
+	AC_DEFINE(INT_NOISE,[],[Define if we want noise integration code])
 	AC_MSG_RESULT(Noise integration enabled)
 fi
 if test "$enable_experimental" = "yes"; then
-	AC_DEFINE(EXPERIMENTAL_CODE)
+	AC_DEFINE(EXPERIMENTAL_CODE,[],[Define if we want some experimental code])
 	AC_MSG_RESULT(EXPERIMENTAL_CODE enabled)	
 fi
-
 if test "$enable_cpdebug" = "yes"; then
-	AC_DEFINE(CPDEBUG)
+	AC_DEFINE(CPDEBUG,[],[Define if you want to debug ngspice shell])
 	AC_MSG_RESULT(WARNING: Shell debug is enabled)	
 fi
 if test "$enable_ftedebug" = "yes"; then
-	AC_DEFINE(FTEDEBUG)
+	AC_DEFINE(FTEDEBUG,[],[Define if you want to debug frontend])
 	AC_MSG_RESULT(WARNING: Frontend debug is enabled)	
 fi
 if test "$enable_sensdebug" = "yes"; then
-        AC_DEFINE(SENSDEBUG)
-        AC_MSG_RESULT(WARNING: Sensitivity code debug *SENSDEBUG* is enabled)	
+    AC_DEFINE(SENSDEBUG,[],[Define if we want debug sensititvity analysis])
+    AC_MSG_RESULT(WARNING: Sensitivity code debug *SENSDEBUG* is enabled)	
 fi
 if test "$enable_asdebug" = "yes"; then
-        AC_DEFINE(ASDEBUG)
-        AC_MSG_RESULT(WARNING: Sensitivity code debug *ASDEBUG* is enabled)	
+    AC_DEFINE(ASDEBUG,[],[Define if we want debug sensitivity analysis])
+    AC_MSG_RESULT(WARNING: Sensitivity code debug *ASDEBUG* is enabled)	
 fi
 if test "$enable_stepdebug" = "yes"; then
-        AC_DEFINE(STEPDEBUG)
-        AC_MSG_RESULT(WARNING: STEPDEBUG debug is enabled)	
+    AC_DEFINE(STEPDEBUG,[],[Define if we want stepdebug])
+    AC_MSG_RESULT(WARNING: STEPDEBUG debug is enabled)	
 fi
 if test "$enable_pzdebug" = "yes"; then
-        AC_DEFINE(PZDEBUG)
-        AC_MSG_RESULT(WARNING: Pole/Zero analysis debug is enabled)	
+    AC_DEFINE(PZDEBUG,[],[Define if you want to debug pole-zero analysis])
+    AC_MSG_RESULT(WARNING: Pole/Zero analysis debug is enabled)	
 fi
 if test "$enable_blktmsdebug" = "yes"; then
-        AC_DEFINE(D_DBG_BLOCKTIMES)
-        AC_MSG_RESULT(WARNING: Distortion analysis debug *D_DBG_BLOCKTIMES* is enabled)	
+    AC_DEFINE(D_DBG_BLOCKTIMES,[],[Define if we want debug distortion analysis (BLOCKTIMES)])
+    AC_MSG_RESULT(WARNING: Distortion analysis debug *D_DBG_BLOCKTIMES* is enabled)	
 fi
 if test "$enable_smltmsdebug" = "yes"; then
-        AC_DEFINE(D_DBG_SMALLTIMES)
-        AC_MSG_RESULT(WARNING: Distortion analysis debug *D_DBG_SMALLTIMES* is enabled)	
+    AC_DEFINE(D_DBG_SMALLTIMES,[],[Define if we want debug distortion analysis (SMALLTIMES)])
+    AC_MSG_RESULT(WARNING: Distortion analysis debug *D_DBG_SMALLTIMES* is enabled)	
 fi
 if test "$enable_xgraph" = "yes"; then
     AC_MSG_RESULT(Xgraph compilation enabled.)
@@ -492,7 +534,7 @@ AC_SUBST(XGRAPHDIR)
 
 if test "$enable_ekv" = "yes"; then
     AC_MSG_RESULT(Model EKV included)
-    AC_DEFINE(HAVE_EKV)
+    AC_DEFINE(HAVE_EKV,[],[Define HAVE_EKV when you wank the EVK library (not included in the standard distribution)])
     EKVDIR="ekv"
     EKVLIB="spicelib/devices/ekv/libekv.la"
 else
@@ -506,7 +548,7 @@ AC_SUBST(EKVLIB)
 dnl Add new code models to the build by pointing to them here.
 if test "$enable_xspice" = "yes"; then
     AC_MSG_RESULT(X-Spice features included)
-    AC_DEFINE(XSPICE)
+    AC_DEFINE(XSPICE,[],[The xspice enhancements])
     AC_PROG_YACC
     AM_PROG_LEX
     XSPICEDIR="xspice"
@@ -537,7 +579,7 @@ AC_SUBST(XSPICEINIT)
 dnl Add CIDER enhancements to ngspice.
 if test "$enable_cider" = "yes"; then
      AC_MSG_RESULT(CIDER features enabled)
-     AC_DEFINE(CIDER)
+     AC_DEFINE(CIDER,[],[The CIDER enhancements])
      
      CIDERDIR="ciderlib"
      
@@ -583,18 +625,18 @@ AC_SUBST(CIDERSCRIPTS)
 dnl Cluster option
 if test "$enable_cluster" = "yes"; then
    AC_MSG_RESULT(Cluster version is being compiled)
-   AC_DEFINE(CLUSTER)
+   AC_DEFINE(CLUSTER,[],[Spice cluster support ])
    LIBS="$LIBS -lpthread"   
 fi
 
 if test "$enable_expdevices" = "yes"; then
-	AC_DEFINE(EXP_DEV)
+	AC_DEFINE(EXP_DEV,[],[Define if we want to enable experimental devices])
 	AC_MSG_RESULT(WARNING: Experimental devices enabled)	
 fi
 
 if test "$enable_numparam" = "yes"; then
     AC_MSG_RESULT(Numparam library is enabled)
-    AC_DEFINE(NUMPARAMS)
+    AC_DEFINE(NUMPARAMS,[],[Spice .param support])
     NUMPARAMDIR="numparam"
     NUMPARAMLIB="frontend/numparam/libnumparam.a"
 else
@@ -613,7 +655,7 @@ if test "$with_readline" != "yes"; then
 else 
     AC_MSG_RESULT(Checking for readline:)
     AC_CHECK_HEADERS([readline/readline.h readline/history.h], 
-                     [AC_DEFINE(HAVE_GNUREADLINE)],
+                     [AC_DEFINE(HAVE_GNUREADLINE,[],[Define if we have GNU readline])],
                      [AC_MSG_ERROR(Couldn't find GNU readline headers.)]) 
     AC_CHECK_LIB(readline, readline, 
                      [LIBS="$LIBS -lreadline"],
@@ -637,6 +679,9 @@ else
                      -lncurses )	       
 fi
 
+
+dnl Output Files
+dnl ------------
 
 AC_CONFIG_FILES([\
 Makefile			\
