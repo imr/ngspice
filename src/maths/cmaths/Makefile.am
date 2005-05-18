@@ -13,6 +13,9 @@ libcmaths_a_SOURCES = \
 		cmath4.c	\
 		cmath4.h
 
+## Test programs fail to build on Windows
+if !WINDOWS 
+
 noinst_PROGRAMS = test_cx_mag test_cx_j test_cx_ph
  
 test_cx_ph_SOURCES = \
@@ -37,6 +40,8 @@ test_cx_j_LDADD = \
 		../../misc/libmisc.a
 
 TESTS = test_cx_mag test_cx_j test_cx_ph
+
+endif !WINDOWS
 
 
 INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/maths/poly
