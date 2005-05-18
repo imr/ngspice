@@ -517,7 +517,8 @@ union ieee754_double
       } ieee_nan;
   };
   
-  
+
+#ifndef HAVE_ISNAN
 int
 isnan(double value)
 
@@ -536,4 +537,6 @@ isnan(double value)
 /*
  * end isnan.c
  */
+#endif /* HAVE_ISNAN */
+
 #endif
