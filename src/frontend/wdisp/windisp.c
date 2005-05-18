@@ -1,6 +1,6 @@
 /*
  * Frame buffer for the IDM PC using MS Windows
- * Wolfgang Mües 27.10.97
+ * Wolfgang Muees 27.10.97
  * Holger Vogt  07.12.01
  */
 
@@ -32,7 +32,7 @@
 typedef struct {									// Extra Fensterdaten
 	HWND	wnd;		// Fenster
 	HDC		hDC;		// Device context des Fensters
-	RECT    Area;		// Zeichenfläche
+	RECT    Area;		// Zeichenflaeche
 	int		ColorIndex;	// Index auf die akt. Farbe
 	int		PaintFlag;	// 1 bei WM_PAINT
 	int		FirstFlag;	// 1 vor dem ersten Update
@@ -53,7 +53,7 @@ void WaitForIdle(void);							// Warte, bis keine Events da
 // lokale Variablen
 static int			 	IsRegistered = 0;        	// 1 wenn Fensterkl. reg.
 #define NumWinColors 	23       					// vordef. Farben
-static COLORREF 		ColorTable[NumWinColors];	// Speicher für die Farben
+static COLORREF 		ColorTable[NumWinColors];	// Speicher fuer die Farben
 static char *			WindowName = "Spice Plot";  // Fenstername
 static WNDCLASS 		TheWndClass;				// Plot-Fensterklasse
 static HFONT			PlotFont;					// Font-Merker
@@ -64,14 +64,14 @@ static char *			STR_DRUCKEN   = "Drucken...";	// System-Menu-Strings
 static char *			STR_DRUCKEINR = "Druckereinrichtung...";
 
 /******************************************************************************
-WIN_Init() stellt die Verbindung zur Grafik her. Dazu gehört die Feststellung
+WIN_Init() stellt die Verbindung zur Grafik her. Dazu gehoert die Feststellung
 von
 	dispdev->numlinestyles		(bei Farbschirmen == 1)
 	dispdev->numcolors
-	dispdev->width              (vorläufig, Bildschirmbreite)
-	dispdev->height             (vorläufig, Bildschirmhöhe)
+	dispdev->width              (vorlaeufig, Bildschirmbreite)
+	dispdev->height             (vorlaeufig, Bildschirmhoehe)
 
-WIN_Init() gibt 0 zurück, falls kein Fehler auftrat.
+WIN_Init() gibt 0 zurueck, falls kein Fehler auftrat.
 
 WIN_Init() macht noch kein Fenster auf, dies geschieht erst in WIN_NewViewport()
 ******************************************************************************/
@@ -89,8 +89,8 @@ int WIN_Init( )
 
 		// Farben initialisieren
 		ColorTable[0] = RGB(  0,  0,  0);	// Schwarz 	= Hintergrund
-		ColorTable[1] = RGB(255,255,255);	// Weiß 	= Beschriftung und Gitter
-		ColorTable[2] = RGB(  0,255,  0);   // Grün		= erste Linie
+		ColorTable[1] = RGB(255,255,255);	// Weisz 	= Beschriftung und Gitter
+		ColorTable[2] = RGB(  0,255,  0);   // Gruen		= erste Linie
 		ColorTable[3] = RGB(255,  0,  0);   // Rot
 		ColorTable[4] = RGB(  0,  0,255);   // Blau
 		ColorTable[5] = RGB(255,255,  0);   // Gelb
@@ -101,8 +101,8 @@ int WIN_Init( )
 		ColorTable[10]= RGB(128,  0,255);   // Hellviolett
 		ColorTable[11]= RGB(255,128,128);   // Rosa
 		// 2. Farb-Bank (mit anderem Linientyp
-		ColorTable[12]= RGB(255,255,255);	// Weiß
-		ColorTable[13]= RGB(  0,255,  0);   // Grün
+		ColorTable[12]= RGB(255,255,255);	// Weisz
+		ColorTable[13]= RGB(  0,255,  0);   // Gruen
 		ColorTable[14]= RGB(255,  0,  0);   // Rot
 		ColorTable[15]= RGB(  0,  0,255);   // Blau
 		ColorTable[16]= RGB(255,255,  0);   // Gelb
@@ -136,13 +136,13 @@ int WIN_Init( )
 }
 
 // Zeiger auf den Graphen gewinnen
-// (wird an das Fenster angehängt)
+// (wird an das Fenster angehaengt)
 static GRAPH * pGraph( HWND hwnd)
 {
 	return (GRAPH *) GetWindowLong( hwnd, 0);
 }
 
-// Linientyp zurückgeben zum Zeichnen
+// Linientyp zurueckgeben zum Zeichnen
 static int LType( int ColorIndex)
 {
 	if (ColorIndex >= 12)
@@ -152,7 +152,7 @@ static int LType( int ColorIndex)
 }
  
 // Drucke ein Plotfenster
-// Aufruf durch SystemMenü / Drucken
+// Aufruf durch SystemMenue / Drucken
 LRESULT PrintPlot( HWND hwnd)
 {
 	GRAPH * graph;
@@ -184,11 +184,11 @@ LRESULT PrintPlot( HWND hwnd)
 	gr_resize(temp);
 
 PrintEND2:
-	// temp. Graphen löschen
+	// temp. Graphen loeschen
 	DestroyGraph(temp->graphid);
 
 PrintEND:
-	// zurückschalten auf den Bildschirm
+	// zurueckschalten auf den Bildschirm
 	DevSwitch(NULL);
 
 	// Cursor = normal
@@ -221,7 +221,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 		}
 		goto WIN_DEFAULT;
 
-	case WM_CLOSE:	// Fenster schließen
+	case WM_CLOSE:	// Fenster schlieszen
 		{
 			GRAPH * g = pGraph( hwnd);
 			if (g)
@@ -246,7 +246,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 					if (!wd->PaintFlag && !wd->FirstFlag) {
 						// rekursiven Aufruf verhindern
 						wd->PaintFlag = 1;
-						// Fenstermaße holen
+						// Fenstermasze holen
 						GetClientRect( hwnd, &(wd->Area));
 						g->absolute.width  = wd->Area.right;
 						g->absolute.height = wd->Area.bottom;
@@ -277,7 +277,7 @@ WIN_DEFAULT:
 /******************************************************************************
  WIN_NewViewport() erstellt ein neues Fenster mit einem Graphen drin.
 
- WIN_NewViewport() gibt 0 zurück, falls erfolgreich
+ WIN_NewViewport() gibt 0 zurueck, falls erfolgreich
 
 ******************************************************************************/
 
@@ -317,7 +317,7 @@ int WIN_NewViewport( GRAPH * graph)
 	// Zeige das Fenster
 	ShowWindow( window, SW_SHOWNORMAL);
 
-	// Hole die Maße
+	// Hole die Masze
 	GetClientRect( window, &(wd->Area));
 
 	// Hole den DC
@@ -368,10 +368,10 @@ int WIN_NewViewport( GRAPH * graph)
 }
 
 /******************************************************************************
-WIN_Close ist eigentlich das Gegenstück zu WIN_Init. Dummerweise kann es
-passieren, daß (während gerade ein Plot dargestellt wird) WIN_Close aufgerufen
+WIN_Close ist eigentlich das Gegenstueck zu WIN_Init. Dummerweise kann es
+passieren, dasz (waehrend gerade ein Plot dargestellt wird) WIN_Close aufgerufen
 wird, um auf einen Drucker umzuschalten. Deswegen darf WIN_Close nichts machen,
-sondern das Auflösen der Strukturen erfolgt bei Programmende.
+sondern das Aufloesen der Strukturen erfolgt bei Programmende.
 ******************************************************************************/
 
 int WIN_Close()
@@ -381,7 +381,7 @@ int WIN_Close()
 
 void RealClose(void)
 {
-	// Fensterklasse löschen
+	// Fensterklasse loeschen
 	if (IsRegistered) {
 		if (TheWndClass.hIcon) {
 			DestroyIcon( TheWndClass.hIcon);
@@ -401,7 +401,7 @@ int WIN_Clear()
 	if (!wd) return 0;
 
 	// das macht das Fenster selbst
-	if (!wd->PaintFlag)	// bei WM_PAINT unnötig
+	if (!wd->PaintFlag)	// bei WM_PAINT unnoetig
 		SendMessage( wd->wnd, WM_ERASEBKGND, (WPARAM) wd->hDC, 0);
 
 	return 0;
@@ -461,7 +461,7 @@ int WIN_Arc(int x0, int y0, int radius, double theta1, double theta2)
 	}
 	SetArcDirection( wd->hDC, direction);
 
-	// Geometrische Vorüberlegungen
+	// Geometrische Vorueberlegungen
 	yb   	= wd->Area.bottom;
 	left 	= x0 - radius;
 	right 	= x0 + radius;

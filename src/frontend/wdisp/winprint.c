@@ -1,6 +1,6 @@
 /*
  * Printing Routines for the IBM PC using MS Windows
- * Wolfgang Mües 27.10.97
+ * Wolfgang Muees 27.10.97
  * Holger Vogt 07.12.01
  */
 
@@ -40,12 +40,12 @@ typedef tPrintData * tpPrintData;			// Zeiger darauf
 static HFONT			PlotFont = NULL;		// Font-Merker
 static HFONT			OldFont  = NULL;
 #define NumLines 7								// Anzahl der LineStyles
-static int 			LineTable[NumLines];		// Speicher für die LineStyles
+static int 			LineTable[NumLines];		// Speicher fuer die LineStyles
 static HDC				PrinterDC = NULL;		// Device Context
 #define NumPrintColors 2       				// vordef. Farben
-static COLORREF 		ColorTable[NumPrintColors];// Speicher für die Farben
+static COLORREF 		ColorTable[NumPrintColors];// Speicher fuer die Farben
 static int				PrinterWidth  = 1000;		// Breite des Papiers
-static int				PrinterHeight = 1000;		// Höhe des Papiers
+static int				PrinterHeight = 1000;		// Hoehe des Papiers
 
 /******************************************************************************
  Drucker-Initialisierung
@@ -97,14 +97,14 @@ BOOL CALLBACK WPRINT_Abort( HDC hdc, int iError)
 
 
 /******************************************************************************
-WPRINT_Init() stellt die Verbindung zur Grafik her. Dazu gehört die Feststellung
+WPRINT_Init() stellt die Verbindung zur Grafik her. Dazu gehoert die Feststellung
 von
 	dispdev->numlinestyles
 	dispdev->numcolors
 	dispdev->width
 	dispdev->height
 
-WPRINT_Init() gibt 0 zurück, falls kein Fehler auftrat.
+WPRINT_Init() gibt 0 zurueck, falls kein Fehler auftrat.
 
 ******************************************************************************/
 
@@ -151,13 +151,13 @@ int WPRINT_Init( )
 		PrinterDC = pd.hDC;
 		if (!PrinterDC) return 1;
 
-		// Abmaße bestimmen
+		// Abmasze bestimmen
 		PrinterWidth	= GetDeviceCaps( PrinterDC, HORZRES);
 		PrinterHeight	= GetDeviceCaps( PrinterDC, VERTRES);
 		pWidth  		= GetDeviceCaps( PrinterDC, HORZSIZE);
 		pHeight 		= GetDeviceCaps( PrinterDC, VERTSIZE);
 
-		// Mapping Mode setzen (für Kreise)
+		// Mapping Mode setzen (fuer Kreise)
 		if ( pWidth > pHeight)
 			// Querformat
 			PrinterWidth = (PrinterHeight * pWidth) / pHeight;
@@ -169,7 +169,7 @@ int WPRINT_Init( )
 		SetWindowExtEx( PrinterDC, PrinterWidth, PrinterHeight, NULL);
 		SetViewportExtEx( PrinterDC, PrinterWidth, PrinterHeight, NULL);
 
-		// nicht höher als breit zeichnen
+		// nicht hoeher als breit zeichnen
 		if (pWidth < pHeight) {
 			// Papier im Hochformat
 			PrinterHeight = PrinterWidth;
@@ -182,7 +182,7 @@ int WPRINT_Init( )
 		dispdev->numcolors     = NumPrintColors;
 
 		// Farben initialisieren
-		ColorTable[0] = RGB(255,255,255);	// Weiß
+		ColorTable[0] = RGB(255,255,255);	// Weisz
 		ColorTable[1] = RGB(  0,  0,  0);	// Schwarz
 
 		// LineStyles initialisieren
@@ -210,9 +210,9 @@ int WPRINT_Init( )
 
 
 /******************************************************************************
- WPRINT_NewViewport() öffnet den Drucker
+ WPRINT_NewViewport() oeffnet den Drucker
 
- WPRINT_NewViewport() gibt 0 zurück, falls erfolgreich
+ WPRINT_NewViewport() gibt 0 zurueck, falls erfolgreich
 
 ******************************************************************************/
 
@@ -368,7 +368,7 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta1, double theta2)
 	}
 	SetArcDirection( PrinterDC, direction);
 
-	// Geometrische Vorüberlegungen
+	// Geometrische Vorueberlegungen
 	yb   	= PrinterHeight;
 	left 	= x0 - radius;
 	right 	= x0 + radius;
