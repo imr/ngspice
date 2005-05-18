@@ -17,7 +17,11 @@ double logb(double);
 #ifndef HAVE_SCALB
 #  ifndef HAVE_SCALBN
 double scalb(double, int);
-#endif
+#  endif
 #endif
 
-#endif
+#ifndef HAVE_ISNAN
+int isnan(double value);
+#endif /* HAVE_ISNAN */
+
+#endif /* MISSING_MATH_H_INCLUDED */
