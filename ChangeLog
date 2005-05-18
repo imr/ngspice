@@ -1,5 +1,12 @@
 2005-05-18  Steven Borley <steven.borley@virgin.net>
 
+  *  Reverted src/spicelib/devices/restemp.c to previous version. Changes in
+     this file were intended for temporary debug and should not have been
+     committed to CVS.
+
+
+2005-05-18  Steven Borley <steven.borley@virgin.net>
+
   *  I erroneously ommited a few changes from Dietmar Warning:
      Fix to src/maths/cmaths/Makefile.am to exclude test programs that don't
      compile under MinGW. Fix to src/spicelib/devices/dev.c to exclude local
