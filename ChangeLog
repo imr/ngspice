@@ -3,11 +3,15 @@
   *  Reverted src/spicelib/devices/restemp.c to previous version. Changes in
      this file were intended for temporary debug and should not have been
      committed to CVS.
-
+     
+  *  Moved isnan() to src/misc/missing_math.c from src/spicelib/devices/dev.c
+     following suggestion from Dietmar warning. Also took opportunity to fixed
+     a compiler warning in dev.c
+  	
 
 2005-05-18  Steven Borley <steven.borley@virgin.net>
 
-  *  I erroneously ommited a few changes from Dietmar Warning:
+  *  I erroneously omitted a few changes from Dietmar Warning:
      Fix to src/maths/cmaths/Makefile.am to exclude test programs that don't
      compile under MinGW. Fix to src/spicelib/devices/dev.c to exclude local
      isnan() when it exists as a library function.
