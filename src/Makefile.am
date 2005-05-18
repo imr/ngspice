@@ -76,9 +76,12 @@ ngspice_SOURCES = \
 	conf.c \
 	conf.h \
 	ngspice.c
+	
+if WINDOWS
+ngspice_SOURCES += winmain.c
+endif
 
 ngspice_LDADD = \
-	@WINMAIN@ \
 	spice.o \
 	frontend/libfte.a \
 	@WINDISPLIB@ \
@@ -117,8 +120,11 @@ ngnutmeg_SOURCES = \
 	conf.h \
 	ngnutmeg.c
 
+if WINDOWS
+ngnutmeg_SOURCES += winmain.c
+endif
+
 ngnutmeg_LDADD = \
-	@WINMAIN@ \
 	frontend/libfte.a \
 	@WINDISPLIB@ \
 	frontend/plotting/libplotting.a \
@@ -133,12 +139,19 @@ ngnutmeg_LDADD = \
 
 nghelp_SOURCES = nghelp.c
 
+if WINDOWS
+nghelp_SOURCES += winmain.c
+endif
+
 nghelp_LDADD =  \
 	frontend/help/libhlp.a \
 	frontend/parser/libparser.a \
 	frontend/libfte.a \
 	misc/libmisc.a 
 
+## These programs currently fail to build on Windows
+if !WINDOWS 
+	
 ## sconvert:
 
 ngsconvert_SOURCES =  ngsconvert.c
@@ -178,6 +191,8 @@ makeidx_SOURCES = makeidx.c
 ngspice.idx: makeidx
 	./makeidx $(srcdir)/ngspice.txt
 
+
+endif !WINDOWS
 
 ## General Includes and libraries:
 

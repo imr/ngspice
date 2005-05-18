@@ -1,3 +1,13 @@
+2005-05-18  Steven Borley <steven.borley@virgin.net>
+
+  *  I erroneously ommited a few changes from Dietmar Warning:
+     Fix to src/maths/cmaths/Makefile.am to exclude test programs that don't
+     compile under MinGW. Fix to src/spicelib/devices/dev.c to exclude local
+     isnan() when it exists as a library function.
+     
+  *  Fixes to src/Makefile.am to exclude programs that don't compile under
+     Windows (MinGW). Fix to avoid dependence problem with linking in winmain.o
+
 2005-05-17  Steven Borley <steven.borley@virgin.net>
 
   *  Updates configure.in. Notably this removes the need for acconfig.h (the use
