@@ -1,5 +1,5 @@
-/* Hauptprogramm für Spice 3F5 unter Windows95
-	Autor: Wolfgang Mües
+/* Hauptprogramm fuer Spice 3F5 unter Windows95
+	Autor: Wolfgang Muees
 	Stand: 28.10.97
 	Autor: Holger Vogt
 	Stand: 01.05.2000
@@ -8,7 +8,7 @@
 #include "config.h"
 #ifdef HAS_WINDOWS
 
-#define STRICT				// strikte Typprüfung
+#define STRICT				// strikte Typpruefung
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>    		// normale Windows-Aufrufe
 #include <windowsx.h>			// Win32 Message Cracker
@@ -30,19 +30,19 @@
 
 					// bool defined
 // Konstanten
-#define TBufSize 2048			// Größe des Textbuffers
+#define TBufSize 2048			// Groesze des Textbuffers
 #define CR VK_RETURN			// Carriage Return
 #define LF 10				// Line Feed
 #define SE 0				// StringEnde
 #define BorderSize 8			// Umrandung des Stringfeldes
-#define SBufSize 100			// Größe des Stringbuffers
-#define IOBufSize 1024			// Größe des printf-Buffers
+#define SBufSize 100			// Groesze des Stringbuffers
+#define IOBufSize 1024			// Groesze des printf-Buffers
 #define HistSize 20			// Zeilen History-Buffer
-#define StatusHeight 25			// Höhe des Status Bars
+#define StatusHeight 25			// Hoehe des Status Bars
 #define StatusFrame 2			// Abstand Statusbar / StatusElement
 #define StatusElHeight (StatusHeight - 2 * StatusFrame)
-#define SourceLength 400		// Platz für Source File Name
-#define AnalyseLength 100		// Platz für Analyse
+#define SourceLength 400		// Platz fuer Source File Name
+#define AnalyseLength 100		// Platz fuer Analyse
 
 // Typen
 typedef char SBufLine[SBufSize+1];	// Eingabezeile
@@ -56,7 +56,7 @@ HWND			swString;		// Eingabezeile
 HWND			hwStatus;		// Status-Balken
 HWND			hwSource;		// Anzeige des Source-Namens
 HWND			hwAnalyse;		// Anzeige des Analyse-Fensters
-static int		nReturnCode	= 0;	// Rückgabewert von WinMain
+static int		nReturnCode	= 0;	// Rueckgabewert von WinMain
 static int		nShowState;		// Anzeigemodus des Hauptfensters
 static WNDCLASS hwMainClass;			// Klassendefinition des Hauptfensters
 static LPCTSTR	hwClassName  = "SPICE_TEXT_WND";// Klassenname des Hauptfensters
@@ -75,17 +75,17 @@ static WNDCLASS hwElementClass;			// Klassendefinition der Statusanzeigen
 static LPCTSTR hwElementClassName = "ElementClass";
 static LPCTSTR hwSourceWindowName = "SourceDisplay";
 static LPCTSTR hwAnalyseWindowName = "AnalyseDisplay";
-static int RowHeight = 16;		// Höhe einer Textzeile
-static int LineHeight = 25;		// Höhe der Eingabezeile
+static int RowHeight = 16;		// Hoehe einer Textzeile
+static int LineHeight = 25;		// Hoehe der Eingabezeile
 static int VisibleRows = 10;		// Anzahl der sichtbaren Zeilen im Textfenster
 static BOOL DoUpdate = FALSE;	// Textfenster updaten
 static WNDPROC swProc = NULL;		// originale Stringfenster-Prozedur
 static WNDPROC twProc = NULL;		// originale Textfenster-Prozedur
-static SBufLine HistBuffer[HistSize]; 	// History-Buffer fürs Stringfenster
+static SBufLine HistBuffer[HistSize]; 	// History-Buffer fuers Stringfenster
 static int HistIndex = 0;		// History-Verwaltung
 static int HistPtr   = 0;		// History-Verwaltung
 
-extern BOOL oflag;			// falls 1, Output über stdout in File umgeleitet
+extern BOOL oflag;			// falls 1, Output ueber stdout in File umgeleitet
 extern FILE *flogp;  // siehe xmain.c, hvogt 14.6.2000
 int argc; 
 char *argv[];
@@ -97,7 +97,7 @@ void DisplayText( void);
 
 // --------------------------<History-Verwaltung>------------------------------
 
-// Alle Puffer löschen und Zeiger auf den Anfang setzen
+// Alle Puffer loeschen und Zeiger auf den Anfang setzen
 void HistoryInit(void)
 {
 	int i;
@@ -107,7 +107,7 @@ void HistoryInit(void)
 		HistBuffer[i][0] = SE;
 }
 
-// Erste Zeile des Buffers löschen; alles rückt auf
+// Erste Zeile des Buffers loeschen; alles rueckt auf
 void HistoryScroll(void)
 {
 	memmove( &(HistBuffer[0]), &(HistBuffer[1]), sizeof(SBufLine) * (HistSize-1));
@@ -126,14 +126,14 @@ void HistoryEnter( char * newLine)
 	HistIndex = HistPtr;
 }
 
-// Mit dem Index eine Zeile zurückgehen und den dort stehenden Eintrag zurückgeben
+// Mit dem Index eine Zeile zurueckgehen und den dort stehenden Eintrag zurueckgeben
 char * HistoryGetPrev(void)
 {
 	if (HistIndex) HistIndex--;
 	return &(HistBuffer[HistIndex][0]);
 }
 
-// Mit dem Index eine Zeile vorgehen und den dort stehenden Eintrag zurückgeben
+// Mit dem Index eine Zeile vorgehen und den dort stehenden Eintrag zurueckgeben
 char * HistoryGetNext(void)
 {
 	if (HistIndex < HistPtr) HistIndex++;
@@ -171,7 +171,7 @@ void WaitForMessage(void)
 
 // -----------------------------<Stringfenster>--------------------------------
 
-// Löschen des Stringfensters
+// Loeschen des Stringfensters
 void ClearInput(void)
 {
 	// Darstellen
@@ -228,7 +228,7 @@ void AdjustScroller(void)
 	DoUpdate = FALSE;
 }
 
-// Löschen einer Zeile im Textbuffer
+// Loeschen einer Zeile im Textbuffer
 void _DeleteFirstLine(void)
 {
 	char * cp = strchr( TBuffer, LF);
@@ -244,13 +244,13 @@ void _DeleteFirstLine(void)
 	TBuffer[TBufEnd] = SE;
 }
 
-// Anfügen eines chars an den TextBuffer
+// Anfuegen eines chars an den TextBuffer
 void AppendChar( char c)
 {
-	// Textbuffer nicht zu groß werden lassen
+	// Textbuffer nicht zu grosz werden lassen
 	while ((TBufEnd+4) >= TBufSize)
 		_DeleteFirstLine();
-	// Zeichen anfügen
+	// Zeichen anfuegen
 	TBuffer[TBufEnd++] = c;
 	TBuffer[TBufEnd] = SE;
 	DoUpdate = TRUE;
@@ -259,18 +259,18 @@ void AppendChar( char c)
 	   DisplayText();
 }
 
-// Anfügen eines Strings an den TextBuffer
+// Anfuegen eines Strings an den TextBuffer
 void AppendString( const char * Line)
 {
 	size_t i;
 	if (!Line) return;
 
-	// Zeilenlänge bestimmen
+	// Zeilenlaenge bestimmen
 	i = strlen(Line);
-	// Textbuffer nicht zu groß werden lassen
+	// Textbuffer nicht zu grosz werden lassen
 	while ((i+TBufEnd+3) >= TBufSize)
 		_DeleteFirstLine();
-	// Zeile dranhängen
+	// Zeile dranhaengen
 	strcpy( &TBuffer[TBufEnd], Line);
 	TBufEnd += i;
 	DoUpdate = TRUE;
@@ -285,15 +285,15 @@ void DisplayText( void)
 	AdjustScroller();
 }
 /*
-// Anfügen einer Zeile an den Textbuffer
+// Anfuegen einer Zeile an den Textbuffer
 void AppendLine( const char * Line)
 {
 	if (!Line) return;
 
-	// String anhängen
+	// String anhaengen
 	AppendString( Line);
 
-	// CRLF anhängen
+	// CRLF anhaengen
 	AppendString( CRLF);
 }
 */
@@ -321,7 +321,7 @@ int w_getch(void)
 			WaitForMessage();
 			c = SBuffer[0];
 		} while ( !c );
-		// Zeichen an die Ausgabe anhängen
+		// Zeichen an die Ausgabe anhaengen
 		AppendString( SBuffer);
 		// Cursor = warten
 		SetCursor( LoadCursor( NULL, IDC_WAIT));
@@ -341,7 +341,7 @@ int w_putch( int c)
 
 // -------------------------------<Fensterprozeduren>--------------------------
 
-// Hauptfenster verändert seine Größe
+// Hauptfenster veraendert seine Groesze
 #pragma warn -par
 void Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
@@ -385,26 +385,26 @@ LRESULT CALLBACK MainWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	case WM_CLOSE:
 		// den Spice-Befehl zum Beenden des Programms in den Textbuffer schreiben
 		PostSpiceCommand( "quit");
-		// Unterbrechen, falls Simulation schon läuft, 30.4.2000 hvogt 
+		// Unterbrechen, falls Simulation schon laeuft, 30.4.2000 hvogt 
 		raise (SIGINT);   
 		return 0;
 
-/*	//gedacht für ctrl C , geht noch nicht
+/*	//gedacht fuer ctrl C , geht noch nicht
 	case WM_KEYDOWN:
 		i = (UINT) wParam;
 		if ((i == 0x63) && (GetKeyState(VK_CONTROL) < 0)) {
 		// Interrupt zum Unterbrechen (interaktiv) 
-		// oder Beenden (Batch) des Programms auslösen
+		// oder Beenden (Batch) des Programms ausloesen
 		   raise (SIGINT);
 		   return 0;
 		}		*/
 		
-/*	//gedacht für ctrl C , geht noch nicht
+/*	//gedacht fuer ctrl C , geht noch nicht
 	case WM_CHAR:
 		i = (char) wParam;
 		if ((i == "c") && (GetKeyState(VK_CONTROL) < 0)) {
 		// Interrupt zum Unterbrechen (interaktiv) 
-		// oder Beenden (Batch) des Programms auslösen
+		// oder Beenden (Batch) des Programms ausloesen
 		   raise (SIGINT);
 		   return 0;
 		}   */
@@ -718,7 +718,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 
 
-	// globale Variablen füllen
+	// globale Variablen fuellen
 	hInst = hInstance;
 	nShowState = nCmdShow;
 
@@ -873,7 +873,7 @@ THE_END:
 // -----------------------------------<User-IO>--------------------------------
 
 /* Eigentlich wollte ich die Standard-Streams durch einen Hook in der Library umleiten,
-	aber so etwas gibt es anscheinend nicht. Deswegen muß ich praktisch alle
+	aber so etwas gibt es anscheinend nicht. Deswegen musz ich praktisch alle
 	IO-Funktionen umdefinieren (siehe wstdio.h). Leider geht das nicht bei allen.
 	Man schaue also nach, bevor man eine Funktion benutzt!
 */
@@ -1111,8 +1111,8 @@ void p_e_r_r_o_r(const char * __s)
 	fp_u_t_s( cp, stderr);  */
 	cp = strerror(errno);
 	fp_r_i_n_t_f(stderr, "%s: %s\n", __s, cp);
-	// nur als Test für NT
-//	fp_u_t_s("Test für NT: perror, weiter mit RETURN\n", stderr);
+	// nur als Test fuer NT
+//	fp_u_t_s("Test fuer NT: perror, weiter mit RETURN\n", stderr);
 //	fg_e_t_c(stdin);
 }
 
@@ -1260,7 +1260,7 @@ int fp_u_t_char(int __c)
 	return fp_u_t_c( __c, stdout);
 }
 
-// --------------------------<Verfügbarer Speicher>----------------------------
+// --------------------------<Verfuegbarer Speicher>----------------------------
 /*
 size_t _memavl(void)
 {
@@ -1276,12 +1276,12 @@ size_t _memavl(void)
 
 int system( const char * command)
 {
-	// info-Blöcke
+	// info-Bloecke
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 	DWORD ExitStatus;
 
-	// Datenstrukturen füllen
+	// Datenstrukturen fuellen
 	memset( &si, 0, sizeof( STARTUPINFO));
 	si.cb = sizeof( STARTUPINFO);
 	memset( &pi, 0, sizeof( PROCESS_INFORMATION));
@@ -1300,11 +1300,11 @@ int system( const char * command)
 		&pi 	// address of PROCESS_INFORMATION
 	)) return -1;
 
-	// dieses Handle muß da sein
+	// dieses Handle musz da sein
 	if (!pi.hProcess) return -1;
 
 	do {
-		// Multitasking ermöglichen
+		// Multitasking ermoeglichen
 		WaitForIdle();
 		// hole mir den Exit-Code des Prozesses
 		if (!GetExitCodeProcess( pi.hProcess, &ExitStatus)) return -1;
