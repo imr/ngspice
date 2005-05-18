@@ -9,7 +9,6 @@ Modified: 2000 AlanSfixes
 #include "cktdefs.h"
 #include "resdefs.h"
 #include "sperror.h"
-extern int fbreak;
 
 int
 REStemp(GENmodel *inModel, CKTcircuit *ckt)
@@ -28,10 +27,7 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {
-#ifdef WIN32
-	WaitForIdle();
-	if(fbreak) break;
-#endif
+
         /* Default Value Processing for Resistor Models */
         if(!model->REStnomGiven) model->REStnom         = ckt->CKTnomTemp;
         if(!model->RESsheetResGiven) model->RESsheetRes = 0.0;
