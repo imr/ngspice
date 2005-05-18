@@ -7,6 +7,9 @@
   *  Moved isnan() to src/misc/missing_math.c from src/spicelib/devices/dev.c
      following suggestion from Dietmar warning. Also took opportunity to fixed
      a compiler warning in dev.c
+     
+  *  Conversion of files containing non-ASCII characters (German language
+     comments) to ASCII by Dietmar Warning.
   	
 
 2005-05-18  Steven Borley <steven.borley@virgin.net>
