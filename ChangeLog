@@ -1,3 +1,9 @@
+2005-05-19  Steven Borley <steven.borley@virgin.net>
+
+  *  Fixed declaration of oflag in winmain.c - fix from Dietmar Warning
+  
+  *  Fixed compile of makeidx for MinGW.
+
 2005-05-18  Steven Borley <steven.borley@virgin.net>
 
   *  Reverted src/spicelib/devices/restemp.c to previous version. Changes in
