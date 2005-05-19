@@ -4,13 +4,13 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 /* from FILENAME.txt, make FILENAME.idx */
 
-#include "ngspice.h"
 #include <stdio.h>
+#include <string.h>
 #include "cpdefs.h"
 #include "hlpdefs.h"
 #include "suffix.h"
 
-
+#define BSIZE_SP  512
 
 int
 main(argc, argv)

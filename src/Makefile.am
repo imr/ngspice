@@ -3,8 +3,11 @@
 SUBDIRS = misc maths frontend spicelib include @XSPICEDIR@ @CIDERDIR@
 DIST_SUBDIRS = misc maths frontend spicelib include xspice ciderlib
 
-bin_PROGRAMS =  ngspice ngnutmeg nghelp ngsconvert ngproc2mod ngmultidec \
-	        makeidx
+bin_PROGRAMS =  ngspice ngnutmeg nghelp makeidx
+	        	        
+if !WINDOWS
+bin_PROGRAMS += ngsconvert ngproc2mod ngmultidec
+endif
 
 EXTRA_DIST = ngspice.txt ngspice.idx setplot spectrum \
 	     devload devaxis ciderinit winmain.c
@@ -157,7 +160,6 @@ if !WINDOWS
 ngsconvert_SOURCES =  ngsconvert.c
 
 
-
 ngsconvert_LDADD =  \
 	frontend/libfte.a \
 	frontend/parser/libparser.a \
@@ -173,7 +175,6 @@ ngproc2mod_LDADD =  \
 	misc/libmisc.a 
 
 
-
 ## multidec:
 
 ngmultidec_SOURCES = ngmultidec.c
@@ -181,6 +182,8 @@ ngmultidec_SOURCES = ngmultidec.c
 ngmultidec_LDADD =  \
 	maths/sparse/libsparse.a \
 	misc/libmisc.a 
+	
+endif !WINDOWS
 
 ## makeidx:
 
@@ -191,8 +194,6 @@ makeidx_SOURCES = makeidx.c
 ngspice.idx: makeidx
 	./makeidx $(srcdir)/ngspice.txt
 
-
-endif !WINDOWS
 
 ## General Includes and libraries:
 
