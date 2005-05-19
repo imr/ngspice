@@ -28,7 +28,7 @@
 
 #include <signal.h>
 
-					// bool defined
+#include "bool.h"					// bool defined as unsigned char
 // Konstanten
 #define TBufSize 2048			// Groesze des Textbuffers
 #define CR VK_RETURN			// Carriage Return
@@ -85,7 +85,7 @@ static SBufLine HistBuffer[HistSize]; 	// History-Buffer fuers Stringfenster
 static int HistIndex = 0;		// History-Verwaltung
 static int HistPtr   = 0;		// History-Verwaltung
 
-extern BOOL oflag;			// falls 1, Output ueber stdout in File umgeleitet
+extern bool oflag;			// falls 1, Output ueber stdout in File umgeleitet
 extern FILE *flogp;  // siehe xmain.c, hvogt 14.6.2000
 int argc; 
 char *argv[];
