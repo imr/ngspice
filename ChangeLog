@@ -1,5 +1,18 @@
 2005-05-19  Steven Borley <steven.borley@virgin.net>
 
+  *  nghelp now uses src/conf.c for consistency with ngspice and ngnutmeg.
+  	 Under MinGW the nghelp window is now kept open until a key is pressed.
+     This allows users to see any error messages before the system closes
+     the window.
+     
+  *  src/conf.c now uses PACKAGE_VERSION (was VERSION) and PACKAGE_BUGREPORT
+     (was hard coded in file to "ngspice-bugs@lists.sourceforge.net"). These
+     values are set by the AC_INIT macro in configure.in
+     
+  *  src/winmain.c - changes to fix warning when compiled with gcc
+
+2005-05-19  Steven Borley <steven.borley@virgin.net>
+
   *  Fixed declaration of oflag in winmain.c - fix from Dietmar Warning
   
   *  Fixed compile of makeidx for MinGW.
@@ -11,7 +24,7 @@
      committed to CVS.
      
   *  Moved isnan() to src/misc/missing_math.c from src/spicelib/devices/dev.c
-     following suggestion from Dietmar warning. Also took opportunity to fixed
+     following suggestion from Dietmar Warning. Also took opportunity to fixed
      a compiler warning in dev.c
      
   *  Conversion of files containing non-ASCII characters (German language
