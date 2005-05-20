@@ -140,7 +140,7 @@ ngnutmeg_LDADD = \
 
 ## help:
 
-nghelp_SOURCES = nghelp.c
+nghelp_SOURCES = conf.c nghelp.c
 
 if WINDOWS
 nghelp_SOURCES += winmain.c

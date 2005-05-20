@@ -18,15 +18,8 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 Widget toplevel;
 #endif
 
-FILE *cp_in, *cp_out, *cp_err;
-char	*Spice_Exec_Dir	= NGSPICEBINDIR;
-char	*Spice_Lib_Dir	= NGSPICEDATADIR;
-char	*Def_Editor	= "vi";
-int	AsciiRawFile	= 0;
 
-char	*Bug_Addr	= "";
-char	*Spice_Host	= "";
-char	*Spiced_Log	= "";
+FILE *cp_in, *cp_out, *cp_err;
 
 
 /* dummy declaration so CP.a doesn't pull in lexical.o and other objects */
@@ -56,7 +49,7 @@ main(int ac, char **av)
     char *argv[2];
     int argc = 2;
     char buf[512];
-#endif
+#endif /* X_DISPLAY_MISSING */
 
     ivars( );
 
@@ -77,10 +70,10 @@ main(int ac, char **av)
     argv[1] = displayname;
     /* initialize X toolkit */
     toplevel = XtInitialize("nutmeg", "Nutmeg", NULL, 0, &argc, argv);
-
-#endif
-
+    
 out:
+#endif /* X_DISPLAY_MISSING */
+
     if (ac > 1)
         wl = wl_build(av + 1);
     hlp_main(Help_Path, wl);
@@ -90,7 +83,7 @@ out:
 	printf("Hit control-C when done.\n");		/* sigh */
 	XtMainLoop();
     }
-#endif
+#endif /* X_DISPLAY_MISSING */
 
     exit(EXIT_NORMAL);
 }
@@ -102,7 +95,7 @@ fatal(char *s)
     exit(1);
 }
 
-/* There is a conflict witj another cp_printword in cp/quote.c 
+/* There is a conflict with another cp_printword in cp/quote.c 
 static void
 cp_printword(s)
     char *s;
