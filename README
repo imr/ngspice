@@ -41,7 +41,7 @@ Berkeley's Spice lacks in three directions:
    needed. Nevertheless, there are other tools that can be useful:
    a parts database, an editor which highlights the syntax, a symbol
    editor, etc. Most of these program already exists in the open source
-   world, so they need ony to be integrated in a common EDA environment.
+   world, so they need only to be integrated in a common EDA environment.
    This is the first direction of development. 
 
  * Documentation: Commercial simulators (hi-end) have very good manuals
@@ -104,7 +104,7 @@ Berkeley's Spice lacks in three directions:
 
   
   - Options - 
-    Possibility to mesure circuit parameters, like the delay between two
+    Possibility to measure circuit parameters, like the delay between two
     nodes, etc.
     
 
@@ -148,12 +148,14 @@ ngspice-devel@lists.sourceforge.net: ngspice development issues. Developers and
 
 ngspice-frontend@list.sourceforge.net: issues related to development of
                                          frontends for ngspice.
+                                         
+ngspice-bugs@list.sourceforge.net: Bug report should be posted here.
 
 To subscribe the list(s), send a message to:
    <ngspice-users-subscribe@lists.sourceforge.net>
    <ngspice-devel-subscribe@lists.sourceforge.net>
    <ngspice-frontend-subscribe@lists.sourceforge.net>
-
+   <ngspice-bugs-subscribe@lists.sourceforge.net>
 
 WEB SITE:
 --------
