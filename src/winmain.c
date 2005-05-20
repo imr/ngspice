@@ -24,9 +24,14 @@
 
 #include <errno.h>
 #include <dirent.h>
+
+#ifdef _MSC_VER
+/* Microsoft VC++ specific stuff */
 #pragma hdrstop
+#endif /* _MSC_VER */
 
 #include <signal.h>
+#include <ctype.h>
 
 #include "bool.h"					// bool defined as unsigned char
 // Konstanten
@@ -87,8 +92,8 @@ static int HistPtr   = 0;		// History-Verwaltung
 
 extern bool oflag;			// falls 1, Output ueber stdout in File umgeleitet
 extern FILE *flogp;  // siehe xmain.c, hvogt 14.6.2000
-int argc; 
-char *argv[];
+//int argc; 
+//char *argv[];
 // Forward-Definition von main()
 int xmain( int argc, char * argv[]/*, char * env[]*/);
 // forward der Update-Funktion
@@ -342,7 +347,10 @@ int w_putch( int c)
 // -------------------------------<Fensterprozeduren>--------------------------
 
 // Hauptfenster veraendert seine Groesze
+#ifdef _MSC_VER
+/* Microsoft VC++ specific stuff */
 #pragma warn -par
+#endif /* _MSC_VER */
 void Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
 	int h = cy - LineHeight - StatusHeight;
@@ -371,10 +379,13 @@ void PostSpiceCommand( const char * const cmd)
 }
 
 // HauptfensterProzedur
+#ifdef _MSC_VER
+/* Microsoft VC++ specific stuff */
 #pragma warn -eff
+#endif /* _MSC_VER */
 LRESULT CALLBACK MainWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	UINT i;
+/*	UINT i; */
 	
 	switch (uMsg) {
 
@@ -707,7 +718,10 @@ outahere:
 
 
 // Unser main
+#ifdef _MSC_VER
+/* Microsoft VC++ specific stuff */
 #pragma warn -par
+#endif /* _MSC_VER */
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
 	int i;
@@ -1076,10 +1090,10 @@ size_t f_w_r_i_t_e(const void * __ptr, size_t __size, size_t __n, FILE * __strea
 		return 0;
 	}
 	if ((__stream == stdout) || (__stream == stderr)) {
-		char * __s = __ptr;
+		const char * __s = __ptr;
 		int c = SE;
 		int i = 0;
-		char *out;
+//		char *out;
 
 //		p_r_i_n_t_f("test1 %s\n", __s);
 
