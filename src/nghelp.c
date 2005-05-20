@@ -85,7 +85,13 @@ out:
     }
 #endif /* X_DISPLAY_MISSING */
 
-    exit(EXIT_NORMAL);
+#ifdef HAS_WINDOWS
+	/* Keep window open untill a key is pressed */
+	printf("Press a key to quit\n");
+	while( getchar() == EOF) {}
+#endif /* HAS_WINDOWS */
+
+    return EXIT_NORMAL;
 }
 
 void
