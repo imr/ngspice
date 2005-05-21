@@ -1,4 +1,7 @@
-/**** BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004 ****/
+/****
+ BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004
+ $Id$
+****/
 
 /**********
  * Copyright 2004 Regents of the University of California. All rights reserved.
@@ -64,7 +67,9 @@ double dRs_dvg, dRd_dvg, dRs_dvb, dRd_dvb;
 double dT0_dvg, dT1_dvb, dT3_dvg, dT3_dvb;
 double vses, vdes, vdedo, delvses, delvded, delvdes;
 double Isestot=0.0, cseshat=0.0, Idedtot=0.0, cdedhat=0.0;
-double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
+//#ifndef NEWCONV
+//double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
+//#endif
 
 double geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb, ceqgcrg;
 double vges, vgms, vgedo, vgmdo, vged, vgmd, delvged, delvgmd;

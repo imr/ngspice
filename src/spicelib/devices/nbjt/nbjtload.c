@@ -1,6 +1,7 @@
 /**********
 Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -41,7 +42,7 @@ NBJTload(inModel, ckt)
   double iceq, ieeq;
   double ichat = 0.0, iehat = 0.0;
   double delVce, delVbe;
-  double vce, vbe, vbc;
+  double vce, vbe /*, vbc*/;
   double dIeDVce, dIeDVbe;
   double dIcDVce, dIcDVbe;
   double xfact;
