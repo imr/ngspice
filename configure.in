@@ -318,12 +318,6 @@ AC_TYPE_SIGNAL
 
 dnl Check for a few libraries and headers:
 
-dnl Look for ncurses first, then termcap
-AC_SEARCH_LIBS(tputs,ncurses termcap,
-    AC_DEFINE(HAVE_TERMCAP,[],[Define if we have ncurses or termcap]),
-    AC_MSG_ERROR(Found neither ncurses or termcap))
-
-
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS(ctype.h unistd.h pwd.h fcntl.h string.h)
 AC_HEADER_SYS_WAIT
@@ -334,17 +328,6 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_CHECK_FUNCS(localtime)
-
-dnl Some special AMD64 processor issues. This change may be common to many
-dnl 64 bit processors, but I have only this platform to work with and did not
-dnl find a good way of automatically determining this information.
-case $host in
-  x86_64-*-linux*)
-     AC_DEFINE(IS_SIZE_T_LONG,[1],[define if size_t is long])
-  ;;
-  *)
-  ;;
-esac
 
 case $host_os in
   *cygwin* | *mingw* )
@@ -655,6 +638,7 @@ fi
 AC_SUBST(NUMPARAMDIR)
 AC_SUBST(NUMPARAMLIB)
 
+
 dnl  ----  Option to include GNU readline support in ngspice CLI  ----
 dnl  ----  Default: disabled.                                     ----
 dnl  ----  Hope to see in the future readline replacement.        ----
@@ -665,7 +649,10 @@ else
     AC_MSG_RESULT(Checking for readline:)
     AC_CHECK_HEADERS([readline/readline.h readline/history.h], 
                      [AC_DEFINE(HAVE_GNUREADLINE,[],[Define if we have GNU readline])],
-                     [AC_MSG_ERROR(Couldn't find GNU readline headers.)]) 
+                     [AC_MSG_ERROR(Couldn't find GNU readline headers.)])
+    AC_SEARCH_LIBS(tputs,ncurses termcap,
+                     AC_DEFINE(HAVE_TERMCAP,[],[Define if we have ncurses or termcap]),
+                     AC_MSG_ERROR(Found neither ncurses or termcap))
     AC_CHECK_LIB(readline, readline, 
                      [LIBS="$LIBS -lreadline"],
                      [AC_MSG_ERROR(Couldn't find readline libraries.)])	       
@@ -681,9 +668,12 @@ else
     AC_MSG_RESULT(Checking for editline:)
     AC_CHECK_HEADERS([editline/readline.h], 
                      [AC_DEFINE([HAVE_BSDEDITLINE],[1],[Define to enable BSD editline])],
-                     [AC_MSG_ERROR(Couldn't find BSD editline headers.)]) 
+                     [AC_MSG_ERROR(Couldn't find BSD editline headers.)])
+    AC_SEARCH_LIBS(tputs,ncurses termcap,
+                     AC_DEFINE(HAVE_TERMCAP,[],[Define if we have ncurses or termcap]),
+                     AC_MSG_ERROR(Found neither ncurses or termcap))
     AC_CHECK_LIB(edit, readline, 
-                     [LIBS="$LIBS -ledit -lncurses"],
+                     [LIBS="$LIBS -ledit"],
                      [AC_MSG_ERROR(Couldn't find editline libraries.)],
                      -lncurses )	       
 fi
