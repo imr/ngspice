@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /* Do history substitutions.  */
@@ -27,7 +28,9 @@ static wordlist * dohmod(char **string, wordlist *wl);
 static wordlist * hpattern(char *buf);
 static wordlist * hprefix(char *buf);
 static wordlist * getevent(int num);
+#if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
 static void freehist(int num);
+#endif
 static char * dohs(char *pat, char *str);
 
 
@@ -415,6 +418,8 @@ cp_hprint(int eventhi, int eventlo, bool rev)
     return;
 }
 
+#if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
+
 /* This just gets rid of the first num entries on the history list, and
  * decrements histlength.
  */
@@ -447,6 +452,7 @@ freehist(int num)
     tfree(hi);
     return;
 }
+#endif /* !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE) */
 
 /* Do a :s substitution. */
 
