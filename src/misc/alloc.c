@@ -1,5 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
+$Id$
 **********/
 
 /*
@@ -27,13 +28,7 @@ tmalloc(size_t num)
       return NULL;
     s = calloc(num,1);
     if (!s){
-      fprintf(stderr,
-#if IS_SIZE_T_LONG
-	      "malloc: Internal Error: can't allocate %ld bytes. \n",
-#else
-	      "malloc: Internal Error: can't allocate %d bytes. \n",
-#endif
-              num);
+      fprintf(stderr,"malloc: Internal Error: can't allocate %ld bytes. \n",(long)num);
       exit(EXIT_BAD);
     }
     return(s);
@@ -56,13 +51,7 @@ trealloc(void *ptr, size_t num)
     s = realloc(ptr, num);
 
   if (!s) {
-    fprintf(stderr,
-#if IS_SIZE_T_LONG 
-	    "realloc: Internal Error: can't allocate %ld bytes.\n",
-#else
-	    "realloc: Internal Error: can't allocate %d bytes.\n",
-#endif
-            num);
+    fprintf(stderr,"realloc: Internal Error: can't allocate %ld bytes.\n",(long)num);
     exit(EXIT_BAD);
   }
   return(s);
