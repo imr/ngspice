@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -406,6 +407,9 @@ fault(void)
 static void *
 baseaddr(void)
 {
+#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(HAS_WINDOWS) || defined(__APPLE__)
+	return 0;
+#else
 	char *low, *high, *at;
 	/* char *sbrk(int);  */
 	long x;
@@ -413,11 +417,7 @@ baseaddr(void)
 
 	if (getenv("SPICE_NO_DATASEG_CHECK"))
 		return 0;
-
-#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(HAS_WINDOWS) || defined(__APPLE__)
-	return 0;
-#else
-
+	
 	low = 0;
 	high = (char *) ((unsigned long) sbrk(0) & ~((1 << LOG2_PAGESIZE) - 1));
 
