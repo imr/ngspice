@@ -1,4 +1,5 @@
 ## Process this file with automake to produce Makefile.in
+## $Id$
 
 noinst_HEADERS = 	\
 	acdefs.h 	\
@@ -98,7 +99,6 @@ noinst_HEADERS = 	\
 	spmatrix.h 	\
 	suffix.h 	\
 	swec.h		\
-	terminal.h 	\
 	tfdefs.h 	\
 	trandefs.h 	\
 	trcvdefs.h 	\

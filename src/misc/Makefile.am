@@ -1,4 +1,5 @@
 ## Process this file with automake to produce Makefile.in
+## $Id$
 
 noinst_LIBRARIES = libmisc.a
 
@@ -21,8 +22,6 @@ libmisc_a_SOURCES = \
 		printnum.h	\
 		string.c	\
 		stringutil.h	\
-		terminal.c	\
-		terminal.h	\
 		tilde.c		\
 		tilde.h		\
 		misc_time.c	\
