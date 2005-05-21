@@ -1,6 +1,7 @@
 /**********
 Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -224,7 +225,6 @@ NUMDupdate(ONEdevice *pDevice, double delV, BOOLEAN updateBoundary)
 {
   ONEelem *pElem = pDevice->elemArray[pDevice->numNodes - 1];
   ONEnode *pNode;
-  ONEedge *pEdge;
   double delPsi, delN, delP;
   int i, index;
 
@@ -322,9 +322,9 @@ NBJTsetBCs(ONEdevice *pDevice, double vce, double vbe)
 {
   ONEelem *pLastElem = pDevice->elemArray[pDevice->numNodes - 1];
   ONEelem *pBaseElem = pDevice->elemArray[pDevice->baseIndex - 1];
-  ONEnode *pNode;
+/*  ONEnode *pNode;
   double psi, conc, sign, absConc;
-  double nie, ni, pi;
+  double nie, ni, pi; */
 
   /* normalize the voltages */
   vce = vce / VNorm;

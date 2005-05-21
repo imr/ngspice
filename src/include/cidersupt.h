@@ -2,11 +2,16 @@
  * cidersupt.h
  * 
  * CIDER support library header
+ * $Id$
  */
  
 #ifndef _CIDERSUPT_H
 #define _CIDERSUPT_H
 
+#include "numglobs.h"
+#include "material.h"
+#include "gendev.h"
+#include "profile.h"
 
 /* externals for database.c */
 extern struct plot* DBread( char *);

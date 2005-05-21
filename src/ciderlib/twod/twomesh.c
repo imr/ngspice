@@ -2,6 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -26,7 +27,6 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
 {
   int xIndex, yIndex, eIndex, index;
   int elemType;
-  TWOcoord *pX, *pY;
   TWOelem *pElem, *pElem1;
   TWOnode *pNode, *pNode1, *pNextHNode, *pNextVNode, *pNextDNode;
   TWOnode ***nodeArray = NULL;
@@ -35,14 +35,15 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   TWOdomain *pD;
   TWOelectrode *pE;
   TWOmaterial *pM;
-  BOOLEAN error = FALSE;
   BOOLEAN interiorNode;
   int poiEqn, numEqn, numElem, numNodes, numEdges;
   int numXNodes = pDevice->numXNodes;
   int numYNodes = pDevice->numYNodes;
   double *xScale = pDevice->xScale;
   double *yScale = pDevice->yScale;
+#ifdef NOTDEF
   FILE *meshFile;
+#endif
 
   /* Generate work arrays. */
   XCALLOC(nodeArray, TWOnode **, 1 + numXNodes);

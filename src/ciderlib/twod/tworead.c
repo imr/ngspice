@@ -1,6 +1,7 @@
 /**********
 Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1992 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -30,7 +31,6 @@ TWOreadState(TWOdevice *pDevice, char *fileName, int numVolts, double *pV1,
   TWOnode ***nodeArray = NULL;
   TWOnode *pNode;
   TWOelem *pElem;
-  TWOmaterial *info;
   double refPsi = 0.0;
   double *psiData, *nData, *pData;
   double *vData[3];

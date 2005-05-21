@@ -1,3 +1,10 @@
+/*
+ * vbicinit.c
+ *
+ * $Id$
+ */
+
+
 #include "config.h"
 
 #include "devdefs.h"
@@ -67,7 +74,10 @@ SPICEdev VBICinfo = {
     NULL,         /* DEVsenTrunc    */
     NULL,         /* DEVdisto       */
     VBICnoise,    /* DEVnoise       */
-                                                      
+#ifdef CIDER
+    NULL,         /* DEVdump       */
+    NULL,         /* DEVacct       */
+#endif                                                         
     &VBICiSize,   /* DEVinstSize    */
     &VBICmSize    /* DEVmodSize     */
 

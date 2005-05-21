@@ -2,6 +2,7 @@
 Copyright 1992 Regents of the University of California.  All rights reserved.
 Author: 1992 David A. Gates, U. C. Berkeley CAD Group
 Modified: 2001 Paolo Nenzi
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -24,10 +25,8 @@ extern int MODLsetup( MODLcard * );
 int
   MODLcheck(MODLcard *cardList)
 {
-  MODLcard *card, *card2;
-  int cardNum = 0, cardNum2;
-  int error = OK;
-  char ebuf[512];		/* error message buffer */
+  MODLcard *card;
+  int cardNum = 0;
   
   for ( card = cardList; card != NIL(MODLcard); card = card->MODLnextCard ) {
     cardNum++;

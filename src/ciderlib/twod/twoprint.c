@@ -2,6 +2,7 @@
 Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1992 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -19,11 +20,11 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 void
 TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
 {
-  int i, index, xIndex, yIndex;
+  int index, xIndex, yIndex;
   int numVars = 0;
   TWOnode ***nodeArray = NULL;
   TWOnode *pNode;
-  TWOelem *pElem, *pNextElem;
+  TWOelem *pElem;
   TWOmaterial *info;
   double data[50];
   double ex, ey, refPsi = 0.0, eGap, dGap;
@@ -344,7 +345,7 @@ void
 TWOmemStats(FILE *file, TWOdevice *pDevice)
 {
   static char *memFormat = "%-20s%10d%10d\n";
-  static char *sumFormat = "%20s          %-10d\n";
+/*  static char *sumFormat = "%20s          %-10d\n"; */
   unsigned int size;
   unsigned int memory;
   TWOmaterial *pMaterial;

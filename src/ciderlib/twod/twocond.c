@@ -1,6 +1,7 @@
 /**********
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /* Functions to compute terminal conductances & currents. */
@@ -21,7 +22,6 @@ void
                     double *intCoeff, double *gd)
 {
   TWOcontact *pContact = pDevice->pFirstContact;
-  int index;
   double *incVpn;
   BOOLEAN deltaVContact = FALSE;
   
@@ -47,7 +47,6 @@ void
   TWOcontact *pEmitContact = pDevice->pLastContact;
   TWOcontact *pColContact = pDevice->pFirstContact;
   TWOcontact *pBaseContact = pDevice->pFirstContact->next;
-  int index;
   double width = pDevice->width;
   double *incVce, *incVbe;
   
@@ -86,8 +85,6 @@ void
   TWOcontact *pDContact = pDevice->pFirstContact;
   TWOcontact *pGContact = pDevice->pFirstContact->next;
   TWOcontact *pSContact = pDevice->pFirstContact->next->next;
-  TWOcontact *pBContact = pDevice->pLastContact;
-  int index;
   double width = pDevice->width;
   double *incVdb, *incVsb, *incVgb;
   
@@ -433,7 +430,7 @@ double
   int index, i, numContactNodes;
   TWOnode *pNode, *pHNode = NULL, *pVNode = NULL;
   TWOelem *pElem;
-  double dPsiDv, dnDv, dpDv;
+  double dPsiDv;
   double gTotal = 0.0;
   
   if ( !tranAnalysis ) {
@@ -499,10 +496,9 @@ void
                 double *intCoeff, double *id)
 {
   TWOcontact *pPContact = pDevice->pFirstContact;
-  TWOcontact *pNContact = pDevice->pLastContact;
-  int index;
+/*  TWOcontact *pNContact = pDevice->pLastContact; */
   double ip, ipPrime, *solution;
-  double in;
+/*  double in;*/
   BOOLEAN deltaVContact = FALSE;
   
   solution = pDevice->dcDeltaSolution;
@@ -532,9 +528,9 @@ void
 {
   TWOcontact *pEmitContact = pDevice->pLastContact;
   TWOcontact *pColContact = pDevice->pFirstContact;
-  TWOcontact *pBaseContact = pDevice->pFirstContact->next;
+/*  TWOcontact *pBaseContact = pDevice->pFirstContact->next; */
   double *solution, iePrime, icPrime;
-  double ib;
+/*  double ib; */
   
   solution = pDevice->dcDeltaSolution;
   
@@ -567,9 +563,9 @@ void
   TWOcontact *pDContact = pDevice->pFirstContact;
   TWOcontact *pGContact = pDevice->pFirstContact->next;
   TWOcontact *pSContact = pDevice->pFirstContact->next->next;
-  TWOcontact *pBContact = pDevice->pLastContact;
+/*  TWOcontact *pBContact = pDevice->pLastContact; */
   double *solution, idPrime, isPrime, igPrime;
-  double ib;
+/*  double ib; */
   
   solution = pDevice->dcDeltaSolution;
   

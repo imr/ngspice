@@ -1,6 +1,7 @@
 /**********
 Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -14,7 +15,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 /* Forward Declarations */
-static void ONEresetEvalFlag(ONEdevice *);
+/* static void ONEresetEvalFlag(ONEdevice *); sjb - not used */
 
 void
 ONEbuildMesh(ONEdevice *pDevice, ONEcoord *pCoord, ONEdomain *pDomain,
@@ -24,7 +25,7 @@ ONEbuildMesh(ONEdevice *pDevice, ONEcoord *pCoord, ONEdomain *pDomain,
   int elemType;
   double xPos;
   ONEcoord *pC;
-  ONEnode *pNode, *pNextNode;
+  ONEnode *pNode;
   ONEdomain *pD;
   ONEelem *pElem;
   ONEmaterial *pM;
@@ -314,7 +315,6 @@ ONEprnMesh(ONEdevice *pDevice)
   int eIndex, index;
   ONEelem *pElem;
   ONEnode *pNode;
-  ONEedge *pEdge;
   char *name;
 
 
@@ -354,6 +354,7 @@ ONEprnMesh(ONEdevice *pDevice)
   }
 }
 
+/* sjb - not used
 static void
 ONEresetEvalFlag(ONEdevice *pDevice)
 {
@@ -369,3 +370,4 @@ ONEresetEvalFlag(ONEdevice *pDevice)
     pElem->pEdge->evaluated = FALSE;
   }
 }
+*/

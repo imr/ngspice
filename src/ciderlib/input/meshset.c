@@ -2,6 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 Modified: 2001 Paolo Nenzi
+$Id$
 **********/
 /**********
 Mesh Setup & Query Routines.
@@ -906,10 +907,10 @@ twoSideSpacing(double width, double hStart, double hEnd, double rWanted,
   double remaining;		/* Length of span between hs and he */
   double rTempS, rTempE;	/* For temporarily calc'ed ratios */
   double hsLast, heLast;	/* Used to ensure ratio is valid */
-  double rConnect, rMin, rMax;  /* " */
+  double rConnect;		/* " */
   double hMax, hMin;		/* Max and min between hStart and hEnd */
   double tmp;
-  int i,j;			/* Indices for searching for best ratio */
+  int i;			/* Indices for searching for best ratio */
   int solnFound;		/* For partial search termination */
   int solnError;		/* For partial search termination */
   int nSaveS = 0;		/* Saves best solution so far */
@@ -1180,7 +1181,7 @@ maxLimSpacing(double width, double hStart, double hMax, double rWanted,
   double rSaveS = 0.0;			/* Saves best solution so far */
   int nSaveS = 0;			/* " */
   int nSaveM = 0;			/* " */
-  int i, j;				/* Searching indices */
+  int i;				/* Searching indices */
   int solnFound;			/* For partial search termination */
   int solnError;			/* For partial search termination */
   char errBuf[80];

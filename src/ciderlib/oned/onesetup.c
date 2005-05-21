@@ -2,6 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /**********
@@ -27,7 +28,6 @@ ONEsetup(ONEdevice *pDevice)
   double temp1, deltaEg, avgConc, totalConc, absNetConc;
   double ncv0, dBand, dNie, psiBand[2];
   int index, eIndex;
-  int numContactNodes;
   ONEnode *pNode;
   ONEelem *pElem;
   ONEedge *pEdge;
@@ -120,7 +120,7 @@ ONEcopyBCinfo(ONEdevice *pDevice, ONEelem *pElem, BDRYcard *bdry, int index)
 {
   ONEnode *pNode;
   ONEelem *pNElem;
-  int eIndex, nIndex;
+  int eIndex;
   double length;
 
 
@@ -154,12 +154,9 @@ void
 ONEsetBCparams(ONEdevice *pDevice, BDRYcard *bdryList, CONTcard *contList)
 {
   int index, xIndex;
-  ONEnode *pNode;
   ONEelem *pElem, *pNElem;
   BDRYcard *bdry;
   CONTcard *cont;
-
-
 
   for (bdry = bdryList; bdry != NIL(BDRYcard); bdry = bdry->BDRYnextCard) {
     for (xIndex = bdry->BDRYixLow; xIndex < bdry->BDRYixHigh; xIndex++) {

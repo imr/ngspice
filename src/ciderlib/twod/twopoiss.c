@@ -2,6 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -95,7 +96,7 @@ void
 TWOQsysLoad(TWOdevice *pDevice)
 {
   TWOelem *pElem;
-  TWOnode *pNode, *pNode1;
+  TWOnode *pNode;
   TWOedge *pHEdge, *pVEdge;
   int index, eIndex;
   double *pRhs = pDevice->rhs;
@@ -175,7 +176,7 @@ void
 TWOQrhsLoad(TWOdevice *pDevice)
 {
   TWOelem *pElem;
-  TWOnode *pNode, *pNode1;
+  TWOnode *pNode;
   TWOedge *pHEdge, *pVEdge;
   int index, eIndex;
   double *pRhs = pDevice->rhs;
@@ -240,7 +241,7 @@ TWOQcommonTerms(TWOdevice *pDevice)
 {
   TWOelem *pElem;
   TWOedge *pEdge;
-  TWOnode *pNode, *pNode1;
+  TWOnode *pNode;
   int index, eIndex;
   double psi1, psi2, refPsi;
 

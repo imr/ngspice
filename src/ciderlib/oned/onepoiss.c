@@ -1,6 +1,7 @@
 /**********
 Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -45,7 +46,7 @@ void
 ONEQsysLoad(ONEdevice *pDevice)
 {
   ONEelem *pElem;
-  ONEnode *pNode, *pNode1;
+  ONEnode *pNode;
   int index, i;
   double *pRhs = pDevice->rhs;
   double rDx, dPsi;
@@ -154,7 +155,7 @@ ONEQcommonTerms(ONEdevice *pDevice)
 {
   ONEelem *pElem;
   ONEedge *pEdge;
-  ONEnode *pNode, *pNode1;
+  ONEnode *pNode;
   int i, index;
   double psi1, psi2, refPsi;
   

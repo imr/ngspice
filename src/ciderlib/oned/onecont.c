@@ -1,6 +1,7 @@
 /**********
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -30,7 +31,7 @@ ONE_jacBuild(ONEdevice *pDevice)
 {
   char *matrix = pDevice->matrix;
   ONEelem *pElem;
-  ONEnode *pNode, *pNode1;
+  ONEnode *pNode;
   int index, eIndex;
   int psiEqn, nEqn, pEqn;	/* scratch for deref'd eqn numbers */
   int psiEqnL=0, nEqnL=0, pEqnL=0;
@@ -112,12 +113,12 @@ ONE_sysLoad(ONEdevice *pDevice, BOOLEAN tranAnalysis,
             ONEtranInfo *info)
 {
   ONEelem *pElem;
-  ONEnode *pNode, *pNode1;
+  ONEnode *pNode;
   ONEedge *pEdge;
   int index, eIndex;
   double *pRhs = pDevice->rhs;
   double dx, rDx, dPsi;
-  double rhsN, rhsP, generation;
+  double generation;
   double perTime = 0.0;
   double fNd, fNa, fdNd, fdNa;
   double netConc, dNd, dNa, psi, nConc, pConc;
@@ -271,9 +272,9 @@ ONE_jacLoad(ONEdevice *pDevice)
   ONEedge *pEdge;
   int index, eIndex;
   double dx, rDx, dPsi;
-  double rhsN, rhsP, generation;
+  double generation;
   double fNd, fNa, fdNd, fdNa;
-  double netConc, dNd, dNa, psi, nConc, pConc;
+  double dNd, dNa, psi, nConc, pConc;
 
 
   /* first compute the currents and their derivatives */
@@ -385,12 +386,12 @@ ONE_rhsLoad(ONEdevice *pDevice, BOOLEAN tranAnalysis,
             ONEtranInfo *info)
 {
   ONEelem *pElem;
-  ONEnode *pNode, *pNode1;
+  ONEnode *pNode;
   ONEedge *pEdge;
   int index, eIndex;
   double *pRhs = pDevice->rhs;
   double dx, rDx, dPsi;
-  double rhsN, rhsP, generation;
+  double generation;
   double perTime;
   double fNd, fNa, fdNd, fdNa;
   double netConc, dNd, dNa, psi, nConc, pConc;
@@ -500,13 +501,13 @@ ONE_commonTerms(ONEdevice *pDevice, BOOLEAN currentOnly,
 {
   ONEelem *pElem;
   ONEedge *pEdge;
-  ONEnode *pNode, *pNode1;
+  ONEnode *pNode;
   int index, eIndex;
   double psi1, psi2, psi, nConc=0.0, pConc=0.0, nC, pC, nP1, pP1;
   double dPsiN, dPsiP;
   double bPsiN, dbPsiN, bMPsiN, dbMPsiN;
   double bPsiP, dbPsiP, bMPsiP, dbMPsiP;
-  double mun, dMun, mup, dMup, rDx;
+  double mun, dMun, mup, dMup;
   double conc1, conc2;
   double cnAug, cpAug;
 

@@ -2,6 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -805,7 +806,7 @@ int
 TWOnewDelta(TWOdevice *pDevice, BOOLEAN tranAnalysis, TWOtranInfo *info)
 {
   int index, iterNum = 0;
-  double newNorm, origNorm;
+  double newNorm;
   double fib, lambda, fibn, fibp;
   BOOLEAN acceptable = FALSE, error = FALSE;
 
@@ -940,7 +941,7 @@ TWOtrunc(TWOdevice *pDevice, TWOtranInfo *info, double delta)
   int nIndex, eIndex;
   TWOelem *pElem;
   TWOnode *pNode;
-  double tolN, tolP, lte, relError, temp, relLTE;
+  double tolN, tolP, lte, relError, temp;
   double lteCoeff = info->lteCoeff;
   double mult = 10.0;
   double reltol;

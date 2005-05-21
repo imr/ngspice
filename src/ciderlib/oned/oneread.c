@@ -1,6 +1,7 @@
 /**********
 Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1992 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -29,7 +30,6 @@ ONEreadState(ONEdevice *pDevice, char *fileName, int numVolts,
   ONEnode **nodeArray=NULL;
   ONEnode *pNode;
   ONEelem *pElem;
-  ONEmaterial *info;
   double refPsi = 0.0;
   double *psiData, *nData, *pData;
   double *vData[2];

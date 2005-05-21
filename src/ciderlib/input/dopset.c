@@ -2,6 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 Modifed: 2001 Paolo Nenzi
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -13,6 +14,7 @@ Modifed: 2001 Paolo Nenzi
 #include "gendev.h"
 #include "sperror.h"
 #include "suffix.h"
+#include "cidersupt.h"
 
 extern int DOPnewCard(void**,void*);
 extern int DOPparam(int,IFvalue*,void*);

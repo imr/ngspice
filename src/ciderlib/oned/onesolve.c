@@ -2,6 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -51,7 +52,7 @@ ONEdcSolve(ONEdevice *pDevice, int iterationLimit, BOOLEAN newSolver,
   BOOLEAN quitLoop;
   BOOLEAN debug = FALSE;
   double *rhs = pDevice->rhs;
-  double *intermediate = pDevice->copiedSolution;
+/*  double *intermediate = pDevice->copiedSolution; */
   double *solution = pDevice->dcSolution;
   double *delta = pDevice->dcDeltaSolution;
   double poissNorm, contNorm;
@@ -928,7 +929,7 @@ ONEtrunc(ONEdevice *pDevice, ONEtranInfo *info, double delta)
   int nIndex, eIndex;
   ONEelem *pElem;
   ONEnode *pNode;
-  double tolN, tolP, lte, relError, temp, relLTE;
+  double tolN, tolP, lte, relError, temp;
   double lteCoeff = info->lteCoeff;
   double mult = 10.0;
   double reltol;
@@ -1010,11 +1011,6 @@ ONEsaveState(ONEdevice *pDevice)
 double
 ONEnuNorm(ONEdevice *pDevice)
 {
-  double norm = 0.0;
-  double temp;
-  int index;
-
-
   /* The LU Decomposed matrix is available.  Use it to calculate x. */
   spSolve(pDevice->matrix, pDevice->rhs, pDevice->rhsImag,
       NIL(spREAL), NIL(spREAL));

@@ -2,6 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -556,7 +557,6 @@ void
   TWOnode *pNode;
   TWOedge *pHEdge, *pVEdge;
   TWOedge *pTEdge, *pBEdge, *pLEdge, *pREdge;
-  TWOchannel *pCh;
   int index, eIndex;
   double *pRhs = pDevice->rhs;
   double dx, dy, dxdy, dyOverDx, dxOverDy;
@@ -670,7 +670,7 @@ void
   TWONcommonTerms(TWOdevice *pDevice, BOOLEAN currentOnly, 
                   BOOLEAN tranAnalysis, TWOtranInfo *info)
 {
-  TWOelem *pElem, *pElem1;
+  TWOelem *pElem;
   TWOedge *pEdge;
   TWOnode *pNode;
   int index, eIndex;

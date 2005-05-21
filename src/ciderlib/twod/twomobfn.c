@@ -1,6 +1,7 @@
 /**********
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1990 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -25,7 +26,7 @@ MOBsurfElec(TWOmaterial *info, TWOelem *pElem, double ex, double ey,
   double thetaB = info->thetaB[ELEC];
   double eL, eN, eD, e0, mun;
   double temp1, temp2, temp3, temp4, temp5;
-  double temp6, temp7, temp8, temp9, temp10;
+  double temp6, temp7, temp8, temp9;
   double sgnN, sgnL;
   double dMunDEs;                  /* Surface Field Derivative */
   double dMunDEn;                  /* (Local) Normal Field Derivative */
@@ -225,7 +226,7 @@ MOBsurfHole(TWOmaterial *info, TWOelem *pElem, double ex, double ey,
   double thetaB = info->thetaB[HOLE];
   double eL, eN, eD, mup;
   double temp1, temp2, temp3, temp4, temp5;
-  double temp6, temp7, temp8, temp9, temp10;
+  double temp6, temp7, temp8, temp9;
   double sgnN, sgnL;
   double dMupDEs;                  /* Surface Field Derivative */
   double dMupDEn;                  /* (Local) Normal Field Derivative */

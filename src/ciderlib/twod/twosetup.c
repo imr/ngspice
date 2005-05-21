@@ -2,6 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /**********
@@ -252,9 +253,7 @@ static void TWOcopyBCinfo( pDevice, pElem, card, index )
 void TWOsetBCparams(TWOdevice *pDevice, BDRYcard *cardList)
 {
   int index, xIndex, yIndex;		/* Need to access in X/Y order. */
-  TWOnode *pNode;
   TWOelem *pElem, *pNElem;
-  TWOedge *pEdge;
   BDRYcard *card;
 
   for ( card = cardList; card != NIL(BDRYcard); card = card->BDRYnextCard ) {

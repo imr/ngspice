@@ -1,6 +1,7 @@
 /**********
 Copyright 1991 Regents of the University of California.  All rights reserved.
 Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /* Functions to compute the ac admittances of a device. */
@@ -346,7 +347,7 @@ NUMOSadmittance(TWOdevice *pDevice, double omega, struct mosAdmittances *yAc)
   TWOcontact *pDContact = pDevice->pFirstContact;
   TWOcontact *pGContact = pDevice->pFirstContact->next;
   TWOcontact *pSContact = pDevice->pFirstContact->next->next;
-  TWOcontact *pBContact = pDevice->pLastContact;
+/*  TWOcontact *pBContact = pDevice->pLastContact; */
   TWOnode *pNode;
   TWOelem *pElem;
   int index, eIndex;
@@ -762,7 +763,6 @@ contactAdmittance(TWOdevice *pDevice, TWOcontact *pContact, BOOLEAN delVContact,
   TWOelem *pElem;
   SPcomplex psiAc, nAc, pAc;
   SPcomplex prod1, prod2, sum;
-  double yReal, yImag;
   double temp;
 
   CMPLX_ASSIGN_VALUE(yTotal, 0.0, 0.0);
@@ -961,9 +961,8 @@ oxideAdmittance(TWOdevice *pDevice, TWOcontact *pContact, BOOLEAN delVContact,
   TWOedge *pHEdge, *pVEdge;
   int index, i, indexPsi, numContactNodes;
   TWOelem *pElem;
-  SPcomplex psiAc, nAc, pAc;
-  SPcomplex prod1, prod2, sum;
-  double yReal, yImag;
+  SPcomplex psiAc;
+  SPcomplex prod1, prod2;
 
   CMPLX_ASSIGN_VALUE(yTotal, 0.0, 0.0);
 
@@ -1205,7 +1204,7 @@ NUMOSys(TWOdevice *pDevice, SPcomplex *s, struct mosAdmittances *yAc)
   TWOcontact *pDContact = pDevice->pFirstContact;
   TWOcontact *pGContact = pDevice->pFirstContact->next;
   TWOcontact *pSContact = pDevice->pFirstContact->next->next;
-  TWOcontact *pBContact = pDevice->pLastContact;
+/*  TWOcontact *pBContact = pDevice->pLastContact; */
   TWOnode *pNode;
   TWOelem *pElem;
   int index, eIndex;

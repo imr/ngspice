@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles, 1991 David A. Gates
 Modified: 2001 Paolo Nenzi (Cider Integration)
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -23,6 +24,10 @@ extern IFcardInfo *INPcardTab[];
 extern int INPnumCards;
 #define E_MISSING	-1
 #define E_AMBIGUOUS	-2
+
+static int INPparseNumMod( void* ckt, INPmodel *model, INPtables *tab, char **errMessage );
+static int INPfindCard( char *name, IFcardInfo *table[], int numCards );
+static int INPfindParm( char *name, IFparm *table, int numParms );
 
 /* end Cider Integration */
 #endif /* CIDER */
@@ -189,12 +194,8 @@ char *INPgetMod(void *ckt, char *name, INPmodel ** model, INPtables * tab)
  *    '+'   = continue previous card
  *    other = new card
  */
-int
-INPparseNumMod( ckt, model, tab, errMessage )
-    void* ckt;
-    INPmodel *model;
-    INPtables *tab;
-    char **errMessage;
+static int
+INPparseNumMod( void* ckt, INPmodel *model, INPtables *tab, char **errMessage )
 {
     card *txtCard;	/* Text description of a card */
     GENcard *tmpCard;	/* Processed description of a card */
@@ -344,11 +345,8 @@ INPparseNumMod( ckt, model, tab, errMessage )
 /*
  * Locate the best match to a card name in an IFcardInfo table
  */
-int
-INPfindCard( name, table, numCards )
-    char *name;
-    IFcardInfo *table[];
-    int numCards;
+static int
+INPfindCard( char *name, IFcardInfo *table[], int numCards )
 {
     int test;
     int match, bestMatch;
@@ -375,11 +373,8 @@ INPfindCard( name, table, numCards )
 /*
  * Locate the best match to a parameter name in an IFparm table
  */
-int
-INPfindParm( name, table, numParms )
-    char *name;
-    IFparm *table;
-    int numParms;
+static int
+INPfindParm( char *name, IFparm *table, int numParms )
 {
     int test, best;
     int match, bestMatch;
