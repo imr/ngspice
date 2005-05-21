@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified: 2000 AlansFixes
+$Id$
 **********/
 
 /*
@@ -1068,7 +1069,7 @@ void com_loadsnap(wordlist *wl) {
     
   fread(&tmpI,sizeof(int),1,file);
   if(tmpI != sizeof(CKTcircuit) ) {
-    fprintf(cp_err,"loaded num: %d, expected num: %d\n",tmpI,sizeof(CKTcircuit));
+    fprintf(cp_err,"loaded num: %d, expected num: %ld\n",tmpI,(long)sizeof(CKTcircuit));
     fprintf(cp_err, 
 	    "Error: snapshot saved with different version of spice\n");
     fclose(file);
@@ -1177,7 +1178,7 @@ do {\
       fprintf(cp_err, "size for vector " #name " is 0\n");\
     }\
     if((_size) != -1 && __i != (_size) * sizeof(type)) {\
-      fprintf(cp_err,"expected %d, but got %d for "#name"\n",(_size)*sizeof(type),__i);\
+      fprintf(cp_err,"expected %ld, but got %d for "#name"\n",(long)(_size)*sizeof(type),__i);\
     }\
   } while(0)
   
