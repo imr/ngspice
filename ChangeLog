@@ -1,4 +1,29 @@
-2005-05-19  Steven Borley <steven.borley@virgin.net>
+2005-05-21  Steven Borley <steven.borley@virgin.net>
+
+	*  src/spicelib/devices/vbic/vbicinit.c Fixed a structure initailisation
+	   problem that occurs when cider is enabled. Also fixe lots of warning
+	   within ciderlib related to unused variables.
+	   
+	*  Fixed a compile waring in src/frontend/com_history.c when readline
+	   or editline are used.
+	   
+	*  Removed the files src/misc/terminal.h/.c and src/include/terminal.h
+	   The first two were empty and the last just included the second.
+	   The relavent makefile.am files have been updated, so a ./configure
+	   will need to be re-run before building.
+	   
+	*  Fixed problems where printf format was int yet on some systems the argument
+	   is long (due to size_t being long). Fixed by always using long format and
+	   casting to long. Affected src/frontend/spiceif.c and src/misc/alloc.c
+	   This obsoletes the IS_SIZE_T_LONG macro that defined by configure.in, now
+	   removed -it was not working for all platforms (eg. MacOSX)
+	   
+	*  configure.in - Removed IS_SIZE_T_LONG (see above). Now only test for
+	   ncurses etc., when either Readline or Editline are being used.  This will
+	   fix the basic problem of building on MinGW which does not have these
+	   libraries as standard.  Fixed the typo in the AC_REVISION() macro.
+	   
+2005-05-20  Steven Borley <steven.borley@virgin.net>
 
   *  nghelp now uses src/conf.c for consistency with ngspice and ngnutmeg.
   	 Under MinGW the nghelp window is now kept open until a key is pressed.
