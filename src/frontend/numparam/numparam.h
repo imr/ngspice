@@ -1,4 +1,7 @@
-/* numparam.h  */
+/*
+ * numparam.h 
+ * $Id$
+ */
 
 /*** interface to spice frontend  subckt.c ***/
 
@@ -10,7 +13,7 @@
 extern char * nupa_copy(char *s, int linenum);
 extern int    nupa_eval(char *s, int linenum);
 extern int    nupa_signal(int sig, char *info);
-extern void   nupa_scan(char * s, int linenum);	// sjb
+extern void   nupa_scan(char * s, int linenum);
 
 /***** numparam internals ********/
 
