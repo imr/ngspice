@@ -11,6 +11,8 @@ Georgia Tech Research Corporation
 Atlanta, Georgia 30332
 All Rights Reserved
 
+$Id$
+
 PROJECT A-8503
 
 AUTHORS
@@ -40,8 +42,8 @@ NON-STANDARD FEATURES
 =========================================================================== */
 
 #include "cmtypes.h"
-#include "cmconstants.h" // K.A. wrong name
-//#include "Cmconsta.h"
+#include "cmconstants.h" /* K.A. wrong name */
+/*#include "Cmconsta.h" */
 #include "cmproto.h"
 #include "mifcmdat.h"
 

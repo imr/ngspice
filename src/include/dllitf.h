@@ -1,6 +1,7 @@
 /* 
    DLL load interface
    (c)2000 Arpad Buermen
+   $Id$
 */
 
 #ifndef __DLLITF_H
@@ -10,11 +11,11 @@
 #include "cmproto.h"
 
 
-// This structure contains pointers to core SPICE OPUS functions used in CMs and UDNs.
-// A pointer to this structure is passed to the dll when the dll is loaded.
+/* This structure contains pointers to core SPICE OPUS functions used in CMs and UDNs.
+   A pointer to this structure is passed to the dll when the dll is loaded. */
 
 struct coreInfo_t {
-	// MIF stuff
+	/* MIF stuff */
 	void      ((*dllitf_MIF_INP2A)(void *, INPtables *, card *));
 	char *    ((*dllitf_MIFgetMod)(void *, char *, INPmodel  **, INPtables *));
 	IFvalue * ((*dllitf_MIFgetValue)(void *, char **, int, INPtables *, char **));
@@ -33,7 +34,7 @@ struct coreInfo_t {
 	char *    ((*dllitf_MIFget_token)(char **, Mif_Token_Type_t *));
 	Mif_Cntl_Src_Type_t ((*dllitf_MIFget_cntl_src_type)(Mif_Port_Type_t, Mif_Port_Type_t));
 	char *    ((*dllitf_MIFcopy)(char *));
-	// CM stuff
+	/* CM stuff */
 	void      ((*dllitf_cm_climit_fcn)(double, double, double, double, double, double, 
 		                               double, double, int, double *, double *, double *, 
 								       double *));

@@ -1,6 +1,7 @@
 /* I/O Redirection for Spice 3F4 under Win32s
 	Autor: Wolfgang Muees
 	Stand: 21.05.95
+  $Id$
 */
 
 #ifndef WSTDIO_H
@@ -63,7 +64,7 @@ int    fp_u_t_char(int __c);
 #define fputc		fp_u_t_c
 #define fputs		fp_u_t_s
 #define fread		f_r_e_a_d
-#define afreopen	f_r_e_o_p_e_n    // hvogt  10.05.2000
+#define afreopen	f_r_e_o_p_e_n    /* hvogt  10.05.2000 */
 #define fscanf		fs_c_a_n_f
 #define fseek		f_s_e_e_k
 #define fsetpos	f_s_e_t_p_o_s
