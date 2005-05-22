@@ -1,5 +1,6 @@
 /**********
 Copyright 1991 Regents of the University of California.  All rights reserved.
+$Id$
 **********/
 
 /*
@@ -100,7 +101,7 @@ erfc(double  x)
 
 
 #ifndef HAVE_ISNAN
-// isnan (originally) for SOI devices in MINGW32  hvogt (dev.c)
+/* isnan (originally) for SOI devices in MINGW32  hvogt (dev.c) */
 
 union ieee754_double
 {

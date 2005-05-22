@@ -2,6 +2,7 @@
  *
  *  This file is part of Numparam, see:  readme.txt  
  *  Free software under the terms of the GNU Lesser General Public License 
+ *  $Id$
  */
 
 /****   test executable for the numparam library  ****/
@@ -141,7 +142,7 @@ Begin
   Done
 EndProc
 
-#if 0	// sjb - this is in mystring.c
+#if 0	/* sjb - this is in mystring.c */
 Proc rs(Pchar s) /*  78 coumn limit */
 Begin
   short i; 

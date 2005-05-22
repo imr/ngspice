@@ -1,5 +1,6 @@
 /* Paolo Nenzi 2002 - This program tests function
  * implementations.
+ * $Id$
  */
 
 
@@ -87,11 +88,12 @@ int main (void)
  double x = -100.0;
  double y1= 0.0, y2 = 0.0;
  
-// _FPU_GETCW(prec);
-// prec &= ~_FPU_EXTENDED;
-// prec |= _FPU_DOUBLE;
-// _FPU_SETCW(prec);
-
+#if 0
+ _FPU_GETCW(prec);
+ prec &= ~_FPU_EXTENDED;
+ prec |= _FPU_DOUBLE;
+ _FPU_SETCW(prec);
+#endif
 
 for (;(x <= 100.0);)
 {

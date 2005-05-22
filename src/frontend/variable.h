@@ -1,3 +1,8 @@
+/*
+  variable.h
+  $Id$
+*/
+
 #ifndef _VARIABLE_H
 #define _VARIABLE_H
 
@@ -44,7 +49,7 @@ extern bool cp_noclobber;
 extern bool cp_ignoreeof;
 extern bool cp_echo;
 
-// extern struct variable *variables;
+/* extern struct variable *variables; */
 wordlist * cp_varwl(struct variable *var);
 void cp_vset(char *varname, char type, char *value);
 struct variable * cp_setparse(wordlist *wl);
@@ -55,4 +60,4 @@ wordlist * vareval(char *string);
 void cp_vprint(void);
 
 
-#endif
+#endif /* _VARIABLE_H */

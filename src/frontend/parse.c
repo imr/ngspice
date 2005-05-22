@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -428,7 +429,7 @@ parse(void)
             fprintf(cp_err, "Error: in parse.c(parse) stack understep.\n");
             return (NULL);
         }
-//for (i=0; i<=sp; i++) print_elem(stack+i); printf("next: "); print_elem(next); printf("\n"); 
+/*for (i=0; i<=sp; i++) print_elem(stack+i); printf("next: "); print_elem(next); printf("\n");*/ 
 
         rel = prectable[top->e_token][next->e_token];
         switch (rel) {

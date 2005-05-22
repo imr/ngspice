@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified: 2000 AlansFixes
+$Id$
 **********/
 
 /*
@@ -224,7 +225,7 @@ dosim(char *what, wordlist *wl)
         if (!*wl->wl_word)
 	    rawfileFp = stdout;
 #ifdef __MINGW32__
-// ask if binary or ASCII, open file with w or wb   hvogt 15.3.2000
+/* ask if binary or ASCII, open file with w or wb   hvogt 15.3.2000 */
         else if (ascii) { 
             if(!(rawfileFp = fopen(wl->wl_word, "w"))) {
                 perror(wl->wl_word);
@@ -241,7 +242,7 @@ dosim(char *what, wordlist *wl)
             }
             fprintf(cp_out,"binary raw file\n");
         }
-//-------------------------------------------------------------------------
+/*---------------------------------------------------------------------------*/
 #else	    
         else if (!(rawfileFp = fopen(wl->wl_word, "w"))) {
         	setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);

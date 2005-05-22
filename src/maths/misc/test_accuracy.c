@@ -1,5 +1,6 @@
 /* Paolo Nenzi 2002 - This program tests some machine
  * dependent variables.
+ * $Id$
  */
 
 /* Nota:
@@ -55,7 +56,7 @@ int main (void)
 	    xhold = xh;
 	}
 	xh = 0.5 * (xl + xu);
-//	if (xhold == xh) break;
+/*	if (xhold == xh) break; */
     }
 printf("xu-xl: %e \t cond: %e \t xh: %e\n", (xu-xl), (2.0 * acc * (xu + xl)), xh);
 
