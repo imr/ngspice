@@ -86,7 +86,7 @@ DISPDEVICE device[] = {
 	 nodev, nodev, nodev, gen_Input,
 	 gen_DatatoScreen, WIN_DiagramReady},
 
-	// Warning: name "WinPrint" do not change!
+	/* Warning: name "WinPrint" do not change! */
 	{"WinPrint", 0, 0, 1000, 1000, 0, 0, WPRINT_Init, WPRINT_NewViewport,
 	 WPRINT_Close, WPRINT_Clear,
 	 WPRINT_DrawLine, WPRINT_Arc, WPRINT_Text, WPRINT_DefineColor, WPRINT_DefineLinestyle,
