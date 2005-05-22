@@ -1,7 +1,8 @@
 /*       mystring.c                Copyright (C)  2002    Georg Post
  *
  *  This file is part of Numparam, see:  readme.txt  
- *  Free software under the terms of the GNU Lesser General Public License 
+ *  Free software under the terms of the GNU Lesser General Public License
+ * $Id$
  */
 
 #ifdef __TURBOC__
@@ -11,6 +12,10 @@ extern unsigned _stklen= 32000; /* Turbo C default was only 4 K */
 #include <stdio.h>
 #include <stdlib.h>
 /* #include <math.h>  -- ceil floor */
+#include "config.h"
+#ifdef HAS_WINDOWS
+#include "wstdio.h"
+#endif
 
 #include "general.h"
 
