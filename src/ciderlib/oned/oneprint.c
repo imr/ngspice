@@ -2,6 +2,7 @@
 Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1992 David A. Gates, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -326,7 +327,7 @@ void
 ONEmemStats(FILE *file, ONEdevice *pDevice)
 {
   static char *memFormat = "%-20s%10d%10d\n";
-  static char *sumFormat = "%20s          %-10d\n";
+/*  static char *sumFormat = "%20s          %-10d\n";*/
   unsigned int size;
   unsigned int memory;
   ONEmaterial *pMaterial;

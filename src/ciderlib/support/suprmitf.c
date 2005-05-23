@@ -229,7 +229,6 @@ float *x, *conc;
 int *impId, *numNod;
 {
   int idata;
-  int ldata;
   int i, j;
   float rdata;
   char cdata[21];

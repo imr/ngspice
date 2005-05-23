@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -118,4 +119,5 @@ NUMD2ask(ckt, inInst, which, value, select)
     return (E_BADPARM);
   }
   /* NOTREACHED */
+  return (E_BADPARM);
 }

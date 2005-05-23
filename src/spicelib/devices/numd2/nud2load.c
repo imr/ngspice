@@ -1,6 +1,7 @@
 /**********
 Copyright 1992 Regents of the University of California.  All rights reserved.
 Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -47,7 +48,6 @@ NUMD2load(inModel, ckt)
   double vd;			/* current diode voltage */
   double delVd;
   int Check;
-  int error;
   double deltaNorm[7];
   int devConverged = FALSE;
   int i;
