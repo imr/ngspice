@@ -1,3 +1,9 @@
+2005-05-22  Steven Borley <steven.borley@virgin.net>
+
+ *   src/frontend/numparam/mystring.c - fix for MinGW from Hitoshi Tanaka.
+ 
+ *   various files - removal of more warning due to unused varaiables
+
 2005-05-21  Steven Borley <steven.borley@virgin.net>
 
 	*  src/spicelib/devices/vbic/vbicinit.c Fixed a structure initailisation
