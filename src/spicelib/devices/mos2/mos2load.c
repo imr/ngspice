@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 alansFixes
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -584,6 +585,8 @@ next1:      if(vbs <= -3*vt) {
                 dbrgdb = -0.5/barg;
                 d2bdb2 = 0.5*dbrgdb/(phiMinVbs+lvds);
             } else {
+                sphi = sqrt(here->MOS2tPhi);/* added by HT 050523 */
+                sphi3 = here->MOS2tPhi*sphi;/* added by HT 050523 */
                 barg = sphi/(1.0+0.5*(lvbs-lvds)/here->MOS2tPhi);
                 tmp = barg/sphi3;
                 dbrgdb = -0.5*barg*tmp;
@@ -829,6 +832,8 @@ line500:
                     bsarg = sqrt(vdsat+phiMinVbs);
                     dbsrdb = -0.5/bsarg;
                 } else {
+					sphi = sqrt(here->MOS2tPhi);/* added by HT 050523 */
+					sphi3 = here->MOS2tPhi*sphi;/* added by HT 050523 */
                     bsarg = sphi/(1.0+0.5*(lvbs-vdsat)/here->MOS2tPhi);
                     dbsrdb = -0.5*bsarg*bsarg/sphi3;
                 }

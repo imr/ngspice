@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jaijeet S Roychowdhury
 Modified: 2000 AlansFixes
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -367,6 +368,8 @@ d_p.d3_pqr = 0.0;
 	    InvDeriv(&d_dbrgdb,&d_barg);
 	    TimesDeriv(&d_dbrgdb,&d_dbrgdb,-0.5);
 	} else {
+	    sphi = sqrt(here->MOS2tPhi); /* added by HT 050523 */
+	    sphi3 = here->MOS2tPhi*sphi; /* added by HT 050523 */
 	    barg = sphi/(1.0+0.5*(lvbs-lvds)/here->MOS2tPhi);
 	    EqualDeriv(&d_barg,&d_q); d_barg.value = lvbs - lvds;
 	    d_barg.d1_r -= 1.0;
