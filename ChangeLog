@@ -1,51 +1,56 @@
+2005-05-23  Steven Borley <steven.borley@virgin.net>
+
+  *  Fixed a divide-by-zero bug in the MOS level=2 device model
+     the fix was supplied by Hitoshi Tanaka.
+
 2005-05-22  Steven Borley <steven.borley@virgin.net>
 
- *   src/frontend/numparam/mystring.c - fix for MinGW from Hitoshi Tanaka.
- 
- *   various files - removal of more warning due to unused varaiables
+  *  src/frontend/numparam/mystring.c - fix for MinGW from Hitoshi Tanaka.
+
+  *  various files - removal of more warning due to unused varaiables
 
 2005-05-21  Steven Borley <steven.borley@virgin.net>
 
-	*  src/spicelib/devices/vbic/vbicinit.c Fixed a structure initailisation
-	   problem that occurs when cider is enabled. Also fixes lots of warning
-	   within ciderlib related to unused variables.
-	   
-	*  Fixed a compile warning in src/frontend/com_history.c when readline
-	   or editline are used.
-	   
-	*  Removed the files src/misc/terminal.h/.c and src/include/terminal.h
-	   The first two were empty and the last just included the second.
-	   The relevant makefile.am files have been updated, so a ./configure
-	   will need to be re-run before building.
-	   
-	*  Fixed problems where printf format was int yet on some systems the argument
-	   is long (due to size_t being long). Fixed by always using long format and
-	   casting to long. Affected src/frontend/spiceif.c and src/misc/alloc.c
-	   This makes obsolete the IS_SIZE_T_LONG macro that defined by configure.in,
-	   now removed -it was not working for all platforms (eg. MacOSX)
-	   
-	*  configure.in - Removed IS_SIZE_T_LONG (see above). Now only test for
-	   ncurses etc., when either Readline or Editline are being used.  This will
-	   fix the basic problem of building on MinGW which does not have these
-	   libraries as standard.  Fixed the typo in the AC_REVISION() macro.
-	   
+  *  src/spicelib/devices/vbic/vbicinit.c Fixed a structure initailisation
+     problem that occurs when cider is enabled. Also fixes lots of warning
+     within ciderlib related to unused variables.
+
+  *  Fixed a compile warning in src/frontend/com_history.c when readline
+     or editline are used.
+
+  *  Removed the files src/misc/terminal.h/.c and src/include/terminal.h
+     The first two were empty and the last just included the second.
+     The relevant makefile.am files have been updated, so a ./configure
+     will need to be re-run before building.
+
+  *  Fixed problems where printf format was int yet on some systems the argument
+     is long (due to size_t being long). Fixed by always using long format and
+     casting to long. Affected src/frontend/spiceif.c and src/misc/alloc.c
+     This makes obsolete the IS_SIZE_T_LONG macro that defined by configure.in,
+     now removed -it was not working for all platforms (eg. MacOSX)
+
+  *  configure.in - Removed IS_SIZE_T_LONG (see above). Now only test for
+     ncurses etc., when either Readline or Editline are being used.  This will
+     fix the basic problem of building on MinGW which does not have these
+     libraries as standard.  Fixed the typo in the AC_REVISION() macro.
+
 2005-05-20  Steven Borley <steven.borley@virgin.net>
 
   *  nghelp now uses src/conf.c for consistency with ngspice and ngnutmeg.
-  	 Under MinGW the nghelp window is now kept open until a key is pressed.
+     Under MinGW the nghelp window is now kept open until a key is pressed.
      This allows users to see any error messages before the system closes
      the window.
-     
+
   *  src/conf.c now uses PACKAGE_VERSION (was VERSION) and PACKAGE_BUGREPORT
      (was hard coded in file to "ngspice-bugs@lists.sourceforge.net"). These
      values are set by the AC_INIT macro in configure.in
-     
+
   *  src/winmain.c - changes to fix warning when compiled with gcc
 
 2005-05-19  Steven Borley <steven.borley@virgin.net>
 
   *  Fixed declaration of oflag in winmain.c - fix from Dietmar Warning
-  
+
   *  Fixed compile of makeidx for MinGW.
 
 2005-05-18  Steven Borley <steven.borley@virgin.net>
@@ -53,14 +58,14 @@
   *  Reverted src/spicelib/devices/restemp.c to previous version. Changes in
      this file were intended for temporary debug and should not have been
      committed to CVS.
-     
+
   *  Moved isnan() to src/misc/missing_math.c from src/spicelib/devices/dev.c
      following suggestion from Dietmar Warning. Also took opportunity to fixed
      a compiler warning in dev.c
-     
+
   *  Conversion of files containing non-ASCII characters (German language
      comments) to ASCII by Dietmar Warning.
-  	
+
 
 2005-05-18  Steven Borley <steven.borley@virgin.net>
 
@@ -107,62 +112,62 @@
 2005-05-10  Steven Borley <steven.borley@virgin.net>
 
   *  Some minor tidy-up as follows:
-  		- Added missing .cvsignor files in many source directories.
-  		- Added #ifdef CIDER...#endif around fields in structure initialisation
-  		  of nbjt, nbjt2, numd, numd2 and numos - this is strictly unnecessary
-  		  as these devices are only used when CIDER is defined but it keeps
-  		  symmetry with other devices.
-  		- Added some extra TRACE debug statments in in the parser
+      - Added missing .cvsignor files in many source directories.
+      - Added #ifdef CIDER...#endif around fields in structure initialisation
+        of nbjt, nbjt2, numd, numd2 and numos - this is strictly unnecessary
+        as these devices are only used when CIDER is defined but it keeps
+        symmetry with other devices.
+      - Added some extra TRACE debug statments in in the parser
   
   *  Added conditional on the ngspice program to prevent errors when spiceinit
      file is used with ngnutmeg (spiceinit.in)
 
 2005-05-10  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*  src/spicelib/devices/isrc/*,src/spicelib/devices/vsrc/*: added
-	   XSPICE extensions: PHASE parameter and current in isrc. Added AM
-	   transient function (Amplitude Modulation):
-	   
-	      AM (sig_ampl offset_const mod_freq carrier_freq t_delay)
-	   
-	      The waveform will follow:
-	   
-	      value = sig_ampl*{offset_const + SIN(2*PI*mod_freq*(t-t_delay))}*
-	              SIN(2*PI*carrier_freq*(t-t_delay))
-		   
-	      As an example you can use:
-	    
+  *  src/spicelib/devices/isrc/*,src/spicelib/devices/vsrc/*: added
+     XSPICE extensions: PHASE parameter and current in isrc. Added AM
+     transient function (Amplitude Modulation):
+     
+        AM (sig_ampl offset_const mod_freq carrier_freq t_delay)
+     
+        The waveform will follow:
+     
+        value = sig_ampl*{offset_const + SIN(2*PI*mod_freq*(t-t_delay))}*
+                SIN(2*PI*carrier_freq*(t-t_delay))
+       
+        As an example you can use:
+      
               V1 1 0 AM(10 1 1K 100 1M) 
 
               R1 1 0 1
-	    
+      
 2005-05-09  Steven Borley <steven.borley@virgin.net>
 
-	*  Added new syntax to the the resistor card to support HSpice style
-	   temperature dependence (from Hitoshi Tanaka <HDA01055@nifty.com>).
-	   Syntax forms now include:
-	   	Rxxx <n1> n2> <val> TC=<val1>
-	   	Rxxx <n1> n2> <val> TC1=<val1>
-	   	Rxxx <n1> n2> <val> TC1=<val1> TC2=<val2>
-	   	Rxxx <n1> n2> <val> TC=<val1> <val2>
-	   The the first pair are equivalent, and the last pair are equivalent.	   
+  *  Added new syntax to the the resistor card to support HSpice style
+     temperature dependence (from Hitoshi Tanaka <HDA01055@nifty.com>).
+     Syntax forms now include:
+       Rxxx <n1> n2> <val> TC=<val1>
+       Rxxx <n1> n2> <val> TC1=<val1>
+       Rxxx <n1> n2> <val> TC1=<val1> TC2=<val2>
+       Rxxx <n1> n2> <val> TC=<val1> <val2>
+     The the first pair are equivalent, and the last pair are equivalent.     
 
 2005-05-07  Steven Borley <steven.borley@virgin.net>
 
-	*  Added support for the BSD licensed editline library
-	   This includes a work-around to fix a problem found in the current version
-	   of this library (see prompt() in src/main.c).
-	   
-	*  Added and updated infomation in the INSTALL file.
+  *  Added support for the BSD licensed editline library
+     This includes a work-around to fix a problem found in the current version
+     of this library (see prompt() in src/main.c).
+     
+  *  Added and updated infomation in the INSTALL file.
 
 2005-05-06  Steven Borley <steven.borley@virgin.net>
 
-	*  Added code by by H.Tanaka for the .global keyword. This is enabled by
-	   supplying the new --enable-dot-global argument to ./configure.
-	   
-	*  Also added configuration for a new --with-editline=yes|no argument to
-	   ./configure for future support of the BSD editline library as an
-	   alternative to the GNU readline library.
+  *  Added code by by H.Tanaka for the .global keyword. This is enabled by
+     supplying the new --enable-dot-global argument to ./configure.
+     
+  *  Also added configuration for a new --with-editline=yes|no argument to
+     ./configure for future support of the BSD editline library as an
+     alternative to the GNU readline library.
 
 2005-05-05  Steven Borley <steven.borley@virgin.net>
 
@@ -185,19 +190,19 @@
 
 2005-04-29  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/inpcom.c: end-of-line comments starting with
-	    the "$" (dollar) sign can be confused with a variable. To 
-	    avoid this, the new syntax for such and-of-line comment is:
-	      $ <any comment> (the space is mandatory). 
-	    Patch sent from Steven Borley <steven.borley@diode.demon.co.uk>.
-	    
+  *   src/frontend/inpcom.c: end-of-line comments starting with
+      the "$" (dollar) sign can be confused with a variable. To 
+      avoid this, the new syntax for such and-of-line comment is:
+        $ <any comment> (the space is mandatory). 
+      Patch sent from Steven Borley <steven.borley@diode.demon.co.uk>.
+      
 
 2005-04-26  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/main.c, src/frontend{inp.c, nutinp.c}, src/include/defines.h:
-	    New logic for ngspice initialization (patch from Steven Borley 
-	    <steven.borley@diode.demon.co.uk>):
-	    
+  *   src/main.c, src/frontend{inp.c, nutinp.c}, src/include/defines.h:
+      New logic for ngspice initialization (patch from Steven Borley 
+      <steven.borley@diode.demon.co.uk>):
+      
               Load the standard start up file 'spinit'
               Then look for '.spiceinit' in current directory
               If this fails look for 'spice.rc' in currect directory
@@ -205,1354 +210,1354 @@
               if HOME is set then:
                 Look for for '.spiceinit' in user's home directory
                 If this fails look for 'spice.rc' in user's home directory.
-	     
-	     Fixed a memory leak in main.c 	
-	
-	*  src/include/{complex.h, fteext.h, ngspice.h, sperror.h}:
-	   code cleaning and removed some warning (patch from Steven Borley).
-		
+       
+       Fixed a memory leak in main.c   
+  
+  *  src/include/{complex.h, fteext.h, ngspice.h, sperror.h}:
+     code cleaning and removed some warning (patch from Steven Borley).
+    
 2005-04-25  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/numparam/{general.h, numparam.h, nupatest.c, 
-	    spicenum.c, washprog.c, xpressn.c}: Applied patch from Steven
-	    Borley <steven.borley@virgin.net>. The patch removed the numparam
-	    support for end-of-line comments and moved it into frontend code.
-	    Line buffer for numparam is increased from 250 to 1000 to accomodate
-	    large model cards. Fixed compilation on Cygwin and MacOSX.
-	
-	*   src/frontend/subckt.c: numparams, once compiled in, must be 
-	    enabled, during interactive session, using "set numparams". Since
-	    library is experimental and under continuos testing, it is not
-	    yet intended for general use and support is provided for interactive
-	    sessions only (patch from Steven Borley). 
-	    
-	*   src/frontend/{device.c, spiceif.c}: fixed case sensitivity problems 
-	    in key-word identification (patch from Steven Borley).
-	
-	*   src/frontend/inp.c: Fix a bug where the wrong argument to 'listing'
-	    would error, but still produce a listing (patch from Steven Borley).
-	    
-	*   src/frontend/inpcom.c: From Steven Borley <steven.borley@virgin.net>
-	    patch:
-	      End-of-line comments have been fixed and can be used on a line 
-	      that is followed by a continuation line.  This functionality 
-	      has been moved from the numparams library and in to the front 
-	      end code. All the following can be used to start a comment:
+  *   src/frontend/numparam/{general.h, numparam.h, nupatest.c, 
+      spicenum.c, washprog.c, xpressn.c}: Applied patch from Steven
+      Borley <steven.borley@virgin.net>. The patch removed the numparam
+      support for end-of-line comments and moved it into frontend code.
+      Line buffer for numparam is increased from 250 to 1000 to accomodate
+      large model cards. Fixed compilation on Cygwin and MacOSX.
+  
+  *   src/frontend/subckt.c: numparams, once compiled in, must be 
+      enabled, during interactive session, using "set numparams". Since
+      library is experimental and under continuos testing, it is not
+      yet intended for general use and support is provided for interactive
+      sessions only (patch from Steven Borley). 
+      
+  *   src/frontend/{device.c, spiceif.c}: fixed case sensitivity problems 
+      in key-word identification (patch from Steven Borley).
+  
+  *   src/frontend/inp.c: Fix a bug where the wrong argument to 'listing'
+      would error, but still produce a listing (patch from Steven Borley).
+      
+  *   src/frontend/inpcom.c: From Steven Borley <steven.borley@virgin.net>
+      patch:
+        End-of-line comments have been fixed and can be used on a line 
+        that is followed by a continuation line.  This functionality 
+        has been moved from the numparams library and in to the front 
+        end code. All the following can be used to start a comment:
                ;       for compatibility with PSpice
                $       for compatibility with HSpice
                //      like C++, and as per numparams
                --      as per numparams
               This was a full re-write of this code, not a conversion of the
-	      numparams code. It is not dependent on the numparams library.
-	
-	*   src/frontend/resource.c:  Fixed a compile bug under window & cygwin
-	    (patch from Steven Borley).
-	    
-	*   src/frontend/plotting/x11.c: Applied patch from Steven Borley. 
-	
-	*   src/spicelib/analysis/cktsetbk.c: Added some code to track
-	    breakpoints (you need to define TRACE_BREAKPOINT macro).
-	          
+        numparams code. It is not dependent on the numparams library.
+  
+  *   src/frontend/resource.c:  Fixed a compile bug under window & cygwin
+      (patch from Steven Borley).
+      
+  *   src/frontend/plotting/x11.c: Applied patch from Steven Borley. 
+  
+  *   src/spicelib/analysis/cktsetbk.c: Added some code to track
+      breakpoints (you need to define TRACE_BREAKPOINT macro).
+            
 
 2005-04-16  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/{subckt.c, inpcom.c}, src/frontend/numparam/{general.h,
-	     mystring.c, readme.txt, spicenum.c, xpressn.c}: Applied patch from
-	     Steven Borley <steven.borley@virgin.net> that fixed numparam
-	     library. Patch description follow (extracted from Steven's 
-	     message):
-	     
-	     > Fixes problem with logfile not being opened before we have 
-	       something to write to it,
+  *   src/frontend/{subckt.c, inpcom.c}, src/frontend/numparam/{general.h,
+       mystring.c, readme.txt, spicenum.c, xpressn.c}: Applied patch from
+       Steven Borley <steven.borley@virgin.net> that fixed numparam
+       library. Patch description follow (extracted from Steven's 
+       message):
+       
+       > Fixes problem with logfile not being opened before we have 
+         something to write to it,
              > Renamed round() and trunc() to avoid clash with functions in 
-	       math.h,
+         math.h,
              > Numparam now only stops execution when it finds errors,
              > Added some debug tracing (normally off),
              > Added some debug tracing (normally off),
              > Fixes a #ifdef that had a typo and thus stopped numparams,
-	       working,
+         working,
              > Renames a local variable to avoid confusion (of the 
                developer/maintainer),
              > Fixes the renumbering of lines from a .include file.
-	     
-	*    examples/numparam/{example.cir, pintest.cir,pin.mod}: added
-	     netlists sent with Steven's patch.
-	
+       
+  *    examples/numparam/{example.cir, pintest.cir,pin.mod}: added
+       netlists sent with Steven's patch.
+  
 
-	*   src/frontend/subckt.c: Added fix sent by Hitoshi Tanaka 
-	    <HDA01055@nifty.com>. Now nodes starting with the letter "v"
-	    in subcircuits are translated correctly (as internal nodes)
-	    and not as voltage sources v<NIL>.
-	    
-	*   src/xspice/cmpp/pp_lst.c: malloc did not consider the null
-	    terminating character in "path". Applied patch from Mac OSX
-	    patch file maintained by Khairulmizam Samsudin <kmbs2002@yahoo.com>.
-	    
-	*   src/xspice/icm/makedefs.in: Mac OSX requires different flags 
-	    for shared libraries linking. Applied patch from Mac OSX patch 
-	    file maintained by Khairulmizam Samsudin <kmbs2002@yahoo.com>.      
+  *   src/frontend/subckt.c: Added fix sent by Hitoshi Tanaka 
+      <HDA01055@nifty.com>. Now nodes starting with the letter "v"
+      in subcircuits are translated correctly (as internal nodes)
+      and not as voltage sources v<NIL>.
+      
+  *   src/xspice/cmpp/pp_lst.c: malloc did not consider the null
+      terminating character in "path". Applied patch from Mac OSX
+      patch file maintained by Khairulmizam Samsudin <kmbs2002@yahoo.com>.
+      
+  *   src/xspice/icm/makedefs.in: Mac OSX requires different flags 
+      for shared libraries linking. Applied patch from Mac OSX patch 
+      file maintained by Khairulmizam Samsudin <kmbs2002@yahoo.com>.      
 
 2005-04-06  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/subckt.h: Since inp_numnodes has been declared static
-	    the prototype has been removed.
+  *   src/frontend/subckt.h: Since inp_numnodes has been declared static
+      the prototype has been removed.
 
 2005-04-04  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/subckt.c: Applied patch from Steven Borley
-	    <steven.borley@diode.demon.co.uk> that fixes a bug in model
-	    name translation that shows in nested subckts reported by
-	    Hitoshi Tanaka <HDA01055@nifty.com> (for which he sent a patch that
-	    was supersed by Steven's one).
-	    
-	*   configure.in: As Stuart Brorson suggested now the garbage collector
-	    library is compiled only on explicit request by the user.     
+  *   src/frontend/subckt.c: Applied patch from Steven Borley
+      <steven.borley@diode.demon.co.uk> that fixes a bug in model
+      name translation that shows in nested subckts reported by
+      Hitoshi Tanaka <HDA01055@nifty.com> (for which he sent a patch that
+      was supersed by Steven's one).
+      
+  *   configure.in: As Stuart Brorson suggested now the garbage collector
+      library is compiled only on explicit request by the user.     
 
 2005-03-20  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/spicelib/analysis/cktntask.c: The default parallel
-	    multiplier (m=1) for  mosfet levels 1, 2, 3 and 9 was not set 
-	    in interactive analyses. Applied fix sent by Steven Borley 
-	    <steven.borley@diode.demon.co.uk>.
-	    
-	*   Changed value of trtol to 1 when xspice extensions are compiled
-	    (as in xspice source code).    
+  *   src/spicelib/analysis/cktntask.c: The default parallel
+      multiplier (m=1) for  mosfet levels 1, 2, 3 and 9 was not set 
+      in interactive analyses. Applied fix sent by Steven Borley 
+      <steven.borley@diode.demon.co.uk>.
+      
+  *   Changed value of trtol to 1 when xspice extensions are compiled
+      (as in xspice source code).    
 
 2005-03-17  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/main.c: Applied patch sent by Steven Borley
-	    <steven.borley@diode.demon.co.uk> that removed the duplicate
-	    declaration application_name and gnu_history_file, removed the
-	    "static" keyword in shutdown() and set NULL as return value in
-	    function prompt() when non prompt is passed to readline().
-	    
-	*   src/ngspice.txt: Applied patch sent by Steven Borley 
-	    <steven.borley@diode.demon.co.uk> that fixed a few errors that 
-	    corrupted text output.
-	    
-	*   configure.in:   Applied patch sent by Steven Borley 
-	    <steven.borley@diode.demon.co.uk> that fixes compiler warnings
-	    on MAC OSX (related to the linking order of X libraries). The 
-	    remaining changes fix errors in spelling. 
-	    
-	*   tests/bin/check.sh: Applied patch sent by Steven Borley 
-	    <steven.borley@diode.demon.co.uk> that added support for Mac OSX
-	    and a default case for not (yet) supported architectures.
-	    
-	*   src/frontend/aspice.c: Applied patch sent by Steven Borley 
-	    <steven.borley@diode.demon.co.uk> that fixed compiler warnings on 
-	    Mac OSX in definition of "status".
-	    
-	*   src/spicelib/devices/bsim3/b3set.c: Applied patch sent by Steven 
-	    Borley <steven.borley@diode.demon.co.uk> that remove the compiler
-	    warnings about ambiguous "else".
+  *   src/main.c: Applied patch sent by Steven Borley
+      <steven.borley@diode.demon.co.uk> that removed the duplicate
+      declaration application_name and gnu_history_file, removed the
+      "static" keyword in shutdown() and set NULL as return value in
+      function prompt() when non prompt is passed to readline().
+      
+  *   src/ngspice.txt: Applied patch sent by Steven Borley 
+      <steven.borley@diode.demon.co.uk> that fixed a few errors that 
+      corrupted text output.
+      
+  *   configure.in:   Applied patch sent by Steven Borley 
+      <steven.borley@diode.demon.co.uk> that fixes compiler warnings
+      on MAC OSX (related to the linking order of X libraries). The 
+      remaining changes fix errors in spelling. 
+      
+  *   tests/bin/check.sh: Applied patch sent by Steven Borley 
+      <steven.borley@diode.demon.co.uk> that added support for Mac OSX
+      and a default case for not (yet) supported architectures.
+      
+  *   src/frontend/aspice.c: Applied patch sent by Steven Borley 
+      <steven.borley@diode.demon.co.uk> that fixed compiler warnings on 
+      Mac OSX in definition of "status".
+      
+  *   src/spicelib/devices/bsim3/b3set.c: Applied patch sent by Steven 
+      Borley <steven.borley@diode.demon.co.uk> that remove the compiler
+      warnings about ambiguous "else".
 
 2005-03-13  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   tests/bin/check.sh: Changed the previous check script with the one
-	    supplied by Dietmar warning <warning@danalyse.de>. This new script
-	    adds support for different architectures (MINGW32, Linux, SunOS). 
-	
-	*   src/spicelib/device/vbic/vbicpzld.c: Corrected an error in pole-zero
-	    routine. Dietmar Warning <warning@danalyse.de> sent the fix.
-	     
+  *   tests/bin/check.sh: Changed the previous check script with the one
+      supplied by Dietmar warning <warning@danalyse.de>. This new script
+      adds support for different architectures (MINGW32, Linux, SunOS). 
+  
+  *   src/spicelib/device/vbic/vbicpzld.c: Corrected an error in pole-zero
+      routine. Dietmar Warning <warning@danalyse.de> sent the fix.
+       
 2005-03-07  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/spicelib/devices/bsim4/b4ld.c: commented out NEWCONV section.
+  *   src/spicelib/devices/bsim4/b4ld.c: commented out NEWCONV section.
 
 2005-03-06  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/spicelib/devices/bsim4: removed uninitialized variables in model
-	    files.
-	
-	*   src/spicelib/analysis/dctrcurv.c: Dietmar Warning
-	    <warning@danalyse.de> has changed the way the lst point in a dc
-	    sweep is computed. This new scheme is more accurate.    
-	  
+  *   src/spicelib/devices/bsim4: removed uninitialized variables in model
+      files.
+  
+  *   src/spicelib/analysis/dctrcurv.c: Dietmar Warning
+      <warning@danalyse.de> has changed the way the lst point in a dc
+      sweep is computed. This new scheme is more accurate.    
+    
 
 2005-02-28  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   DEVICES: Updated (again) changing BSIM4 level from 60 to 14 since
-	    older model revisions are not yet in ngspice. This is consistent
-	    with model developers: newer models are compatible with older ones.
-	    
-	*   src/spicelib/devices/bsim4/: updated to revision 4.4.0 with "m"
-	    parallel multiplier enhancements. Thanks to Mick Tooher
-	    <micktooher@yahoo.com> and Dietmar Warning <warning@danalyse.de> for
-	    this update.
-	
-	*   tests/bsim4/: updated test files for bsim4 4.4.0. The old files have
-	    been replaced with new ones coming from BSIM4 site.  There are new
-	    tests: (*_gedl*) and ro_17.cir.         
+  *   DEVICES: Updated (again) changing BSIM4 level from 60 to 14 since
+      older model revisions are not yet in ngspice. This is consistent
+      with model developers: newer models are compatible with older ones.
+      
+  *   src/spicelib/devices/bsim4/: updated to revision 4.4.0 with "m"
+      parallel multiplier enhancements. Thanks to Mick Tooher
+      <micktooher@yahoo.com> and Dietmar Warning <warning@danalyse.de> for
+      this update.
+  
+  *   tests/bsim4/: updated test files for bsim4 4.4.0. The old files have
+      been replaced with new ones coming from BSIM4 site.  There are new
+      tests: (*_gedl*) and ro_17.cir.         
 
 2005-02-25  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   DEVICES: Dietmar Warning (warning@danalyse.de) provided me an
-	    updated and corrected version of this file.
+  *   DEVICES: Dietmar Warning (warning@danalyse.de) provided me an
+      updated and corrected version of this file.
 
 2005-02-08  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/subckt.c: modified the file with the one supplied by
-	    Dietmar Warning's (warning@danalyse.de). This fix the bug that
-	    caused ngspice to crash with long subckt lines.
+  *   src/frontend/subckt.c: modified the file with the one supplied by
+      Dietmar Warning's (warning@danalyse.de). This fix the bug that
+      caused ngspice to crash with long subckt lines.
 
 2004-09-05  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/spicelib/devices/jfet/jfet.c: model type (njf or pjf) was
-	    defined as input/output parameter. Now is an input-only parameter,
-	    as in other models.
-	    
-	*   tests/jfet/jfet_vds-vgs.out: Corrected the output after the change
-	    in jfet.c. With the old code the number associated to njf or pjf
-	    (meaningless) changed each run of ngspice and caused the check
-	    process to fail.
-	    
-	*   src/spicelib/devices/mesa/mesa.c: model type was reported
-	    incorrectly. Declared parameter vt0 as "redundant", since it has
-	    the same meaning of vto.
-	
-	*   tests/mesa/mesa11.out: changed test file output according to
-	    changes in mesa.c. Now model type ic correct.        
-	     
+  *   src/spicelib/devices/jfet/jfet.c: model type (njf or pjf) was
+      defined as input/output parameter. Now is an input-only parameter,
+      as in other models.
+      
+  *   tests/jfet/jfet_vds-vgs.out: Corrected the output after the change
+      in jfet.c. With the old code the number associated to njf or pjf
+      (meaningless) changed each run of ngspice and caused the check
+      process to fail.
+      
+  *   src/spicelib/devices/mesa/mesa.c: model type was reported
+      incorrectly. Declared parameter vt0 as "redundant", since it has
+      the same meaning of vto.
+  
+  *   tests/mesa/mesa11.out: changed test file output according to
+      changes in mesa.c. Now model type ic correct.        
+       
 
 2004-09-01  Paolo Nenzi <p.nenzi@ieee.org>
-	
-	*   src/conf.c: Modified bug reports address. Now it points to a
-	    mailing list dedicated to bug reports.
-	    
+  
+  *   src/conf.c: Modified bug reports address. Now it points to a
+      mailing list dedicated to bug reports.
+      
 
 2004-08-29  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/fronted/aspice.c: Added a define for FreeBSD (from 
-	    FreeBSD ports archive).
+  *   src/fronted/aspice.c: Added a define for FreeBSD (from 
+      FreeBSD ports archive).
 
 
 2004-08-22  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/xspice/enhtrans.c: Removed code introduced by Stuart Brorson to
-	    limit parsing of POLY statements to dimension 2. Now functions 
-	    returns a copy of the error strings that i freed by higher level
-	    code once processed and write the error on the expanded netlist (as
-	    comments) instead of expanded lines (this fixes a segmentation fault
-	    since INPpas1() does not check if the returned line is not null and 
-	    makes expanded netlist more informative). 
+  *   src/xspice/enhtrans.c: Removed code introduced by Stuart Brorson to
+      limit parsing of POLY statements to dimension 2. Now functions 
+      returns a copy of the error strings that i freed by higher level
+      code once processed and write the error on the expanded netlist (as
+      comments) instead of expanded lines (this fixes a segmentation fault
+      since INPpas1() does not check if the returned line is not null and 
+      makes expanded netlist more informative). 
 
 2004-08-20  Paolo Nenzi <p.nenzi@ieee.org>
-	
-	*   src/frontend/{gens.h, gens.c, device.c}: Committed another Vera 
-	    Albrecht's patch for the "show" command. This closes the bug
-	    definitively.
-	    
-	*   src/include/{cktdefs.h, dgen.h, ftedebug.h, missing_math.h, 
-	    ngspice.h, noisedef.h, sensdef.h}, 
-	    src/spicelib/analysis/{ckt.h, ckti2nod.c}: committed Vera 
-	    Albrecht patch to remove some compiler warnings. 
+  
+  *   src/frontend/{gens.h, gens.c, device.c}: Committed another Vera 
+      Albrecht's patch for the "show" command. This closes the bug
+      definitively.
+      
+  *   src/include/{cktdefs.h, dgen.h, ftedebug.h, missing_math.h, 
+      ngspice.h, noisedef.h, sensdef.h}, 
+      src/spicelib/analysis/{ckt.h, ckti2nod.c}: committed Vera 
+      Albrecht patch to remove some compiler warnings. 
 
 
 2004-08-16  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/{device.c, gens.c}: Committed Vera Albrecht's patch
-	    to the "show command" I closed on 2004-08-13. Vera's patch is 
-	    better.
+  *   src/frontend/{device.c, gens.c}: Committed Vera Albrecht's patch
+      to the "show command" I closed on 2004-08-13. Vera's patch is 
+      better.
 
 
 2004-08-15  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   configure.in, src/spinit.in: Added a variable in configure.in
-	    to decomment codemodels lines in spinit if --enable-xspice is
-	    issued in the configure phase. It is a hack but works.
+  *   configure.in, src/spinit.in: Added a variable in configure.in
+      to decomment codemodels lines in spinit if --enable-xspice is
+      issued in the configure phase. It is a hack but works.
 
 2004-08-14  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/main.c: The code for -o option contained an error that
-	    prevented the correct operation of output redirection. The
-	    masking #ifdef has been changed to #ifndef. 
+  *   src/main.c: The code for -o option contained an error that
+      prevented the correct operation of output redirection. The
+      masking #ifdef has been changed to #ifndef. 
 
 2004-08-13  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/device.c: "show" command leaked 28 bytes for each
-	    group of words since an allocated pointer in line 33 of gens.c
-	    was never freed. It is not possible to free allocated memory 
-	    using that pointer since it is used and its value altered. I
-	    used "listdg" copying original pointer value to it and freeing
-	    memory using "listdg" instead. There were sone "tfree" that 
-	    caused problems for incorrect inputs, I have removed them and  
-	    tested against some bad syntax. Results shows no leaks. 
-	
-	*   src/spicelibe/devices/{res/resparam.c, cap/capparam.c,
-	    ind/indparam.c}: Fixed a bug introduced with m and acResistance
-	    parameters. Since show command works as soon as a circuit is 
-	    loaded, before any call to DEVsetup or DEVtemp is made, some
-	    parameters, in this early call showed incorrect results. 
-	    Simulations are not affected by this bug, but it is annoying.
-	    Now principal parameters are display correctly.
-	
-	*   src/spicelib/analysis/cktncdump.c: fixed a typo that prevents
-	    compilation on some systems.      
+  *   src/frontend/device.c: "show" command leaked 28 bytes for each
+      group of words since an allocated pointer in line 33 of gens.c
+      was never freed. It is not possible to free allocated memory 
+      using that pointer since it is used and its value altered. I
+      used "listdg" copying original pointer value to it and freeing
+      memory using "listdg" instead. There were sone "tfree" that 
+      caused problems for incorrect inputs, I have removed them and  
+      tested against some bad syntax. Results shows no leaks. 
+  
+  *   src/spicelibe/devices/{res/resparam.c, cap/capparam.c,
+      ind/indparam.c}: Fixed a bug introduced with m and acResistance
+      parameters. Since show command works as soon as a circuit is 
+      loaded, before any call to DEVsetup or DEVtemp is made, some
+      parameters, in this early call showed incorrect results. 
+      Simulations are not affected by this bug, but it is annoying.
+      Now principal parameters are display correctly.
+  
+  *   src/spicelib/analysis/cktncdump.c: fixed a typo that prevents
+      compilation on some systems.      
 
 2004-08-09  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   Updated and corrected test files in "tests" directory. Added
-	    "examples" directory.
-	    
-	*   src/spicelib/devices/bsim3/b3set.c: Added Dietmar Warning 
-	    <warning@danalyse.de> patch to solve a bug that shows up when 
-	    acm=2 was used. From Dietmar's mail message: 
-	      if we use the acm=2 option we must set the nrd and nrs 
-	      defaults to 0.
-	
-	*   src/spicelib/devices/mos3/mos3temp.c: As suggested by Dietmar 
-	    Warning <warning@danalyse.de> I removed the >1um limit for the 
-	    model.    
+  *   Updated and corrected test files in "tests" directory. Added
+      "examples" directory.
+      
+  *   src/spicelib/devices/bsim3/b3set.c: Added Dietmar Warning 
+      <warning@danalyse.de> patch to solve a bug that shows up when 
+      acm=2 was used. From Dietmar's mail message: 
+        if we use the acm=2 option we must set the nrd and nrs 
+        defaults to 0.
+  
+  *   src/spicelib/devices/mos3/mos3temp.c: As suggested by Dietmar 
+      Warning <warning@danalyse.de> I removed the >1um limit for the 
+      model.    
 
  
 2004-07-08  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   Applied Al Niessner <Al.Niessner@jpl.nasa.gov> negabyte patch
-	    that removed all compiler warnings. 
-	    
-	*   configure.in, src/xspice/icm/makedefs.in, tests/Makefile.am,
-	    xgraph/aclocal.m4, xgraph/configure.in, xgraph/configure: updated 
-	    configuration files for autoconf V2.59 automake V1.8.
+  *   Applied Al Niessner <Al.Niessner@jpl.nasa.gov> negabyte patch
+      that removed all compiler warnings. 
+      
+  *   configure.in, src/xspice/icm/makedefs.in, tests/Makefile.am,
+      xgraph/aclocal.m4, xgraph/configure.in, xgraph/configure: updated 
+      configuration files for autoconf V2.59 automake V1.8.
 
 2004-07-05  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/resource.c: added __APPLE__ for mac osx support as in
-	    patch sent by Khairulmizam Samsudin <kmbs@hotmail.com>
-	
-	*   src/spicelib/parser/inpdomod.c: fixed some typos as in patch
-	    sent by Khairulmizam Samsudin <kmbs@hotmail.com>
-	    
+  *   src/frontend/resource.c: added __APPLE__ for mac osx support as in
+      patch sent by Khairulmizam Samsudin <kmbs@hotmail.com>
+  
+  *   src/spicelib/parser/inpdomod.c: fixed some typos as in patch
+      sent by Khairulmizam Samsudin <kmbs@hotmail.com>
+      
 2004-06-22  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/spicelib/devices/vbic: Vbic code updated. Thanks to Dietmar 
-	    Warning (warning@danalyse.de )now we have the four terminal 
-	    version of the VBIC model. The old three terminal version has 
-	    been discarded.
+  *   src/spicelib/devices/vbic: Vbic code updated. Thanks to Dietmar 
+      Warning (warning@danalyse.de )now we have the four terminal 
+      version of the VBIC model. The old three terminal version has 
+      been discarded.
 
 2004-06-21  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/subckt.c: patch from Stuart Brorson
-	    <sdb@cloud9.net>. This patch adresses the following
-	    problem (as written by Stuart):
-	    Modified modtranslate and devmodtranslate to fix bug noticed 
-	    by Liu:  codemodel names called out in the device instantiation 
-	    line ("A1 1 2 3 4 lim") were not translated correctly if they 
-	    were invoked inside a .subckt.  Fix involved explicitly adding 
-	    code to handle "A" device types when translating the line.  
-	    SDB 6.18.2004.	    
-	    
+  *   src/frontend/subckt.c: patch from Stuart Brorson
+      <sdb@cloud9.net>. This patch adresses the following
+      problem (as written by Stuart):
+      Modified modtranslate and devmodtranslate to fix bug noticed 
+      by Liu:  codemodel names called out in the device instantiation 
+      line ("A1 1 2 3 4 lim") were not translated correctly if they 
+      were invoked inside a .subckt.  Fix involved explicitly adding 
+      code to handle "A" device types when translating the line.  
+      SDB 6.18.2004.      
+      
 
 2004-05-30  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/subckt.c: patch from Dietmar Warning 
-	    (warning@danalyse.de) to fix memory errors when using very 
-	    long model card.
-	    
-	    src/spicelibe/devices/vbic/vbicsetup.c: patch from Dietmar Warning
-	    (warning@danalyse.de) to fix vbic behavior.
+  *   src/frontend/subckt.c: patch from Dietmar Warning 
+      (warning@danalyse.de) to fix memory errors when using very 
+      long model card.
+      
+      src/spicelibe/devices/vbic/vbicsetup.c: patch from Dietmar Warning
+      (warning@danalyse.de) to fix vbic behavior.
 
 
 2004-02-14  Paolo Nenzi <p.nenzi@ieee.ord>
 
-	*   Trimmed the autoconf interfaces. Added dummy ".out" files
-	    into many tests subdirectories and modified many Makefile.amS.
+  *   Trimmed the autoconf interfaces. Added dummy ".out" files
+      into many tests subdirectories and modified many Makefile.amS.
 
 2004-02-05  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/spicelib/analysis/cktntask.c: Bug: not all the values
-	    of TSKtask structure were copied and got a correct default
-	    value. The bug showed as an infinite loop in gmin stepping.
+  *   src/spicelib/analysis/cktntask.c: Bug: not all the values
+      of TSKtask structure were copied and got a correct default
+      value. The bug showed as an infinite loop in gmin stepping.
 
 2004-02-10  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/frontend/inpcom.c: Applied patch from Dietmar Warning 
-	    to solve the bug discovered by Jelle Haandrikman: wrong 
-	    subcircuit expansion when leading spaces are present in the
-	    subcircuit netlist. 
+  *   src/frontend/inpcom.c: Applied patch from Dietmar Warning 
+      to solve the bug discovered by Jelle Haandrikman: wrong 
+      subcircuit expansion when leading spaces are present in the
+      subcircuit netlist. 
 
 2004-01-28  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   configure.in: changed version to rework15.
+  *   configure.in: changed version to rework15.
 
 2004-01-27  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   configure.in: changed version to rework15-pre3 and other
-	    small changes for release.
-	
-	*   AUTHORS, FAQ: Updates
+  *   configure.in: changed version to rework15-pre3 and other
+      small changes for release.
+  
+  *   AUTHORS, FAQ: Updates
 
-	*   src/spicelib/devices/bjt/bjtpzld.c, 
-	    src/spicelib/devices/bjt2/bjt2pzld.c: there was an error
-	    in the pole-zero routine. The collector resistance was
-	    loaded into the matrix instead of the condictance.
+  *   src/spicelib/devices/bjt/bjtpzld.c, 
+      src/spicelib/devices/bjt2/bjt2pzld.c: there was an error
+      in the pole-zero routine. The collector resistance was
+      loaded into the matrix instead of the condictance.
 
         *   inpdomod.c: Updated HiSIM level to 64.
 
-	*   src/spicelib/devices/vbic/*, src/Makefile.am, 
-	    src/spicelib/devices/dev.c, src/spicelibe/parser/inp2q.c,
-	    src/spicelib/parser/inpdomod.c,src/spicelib/devices/Makefile.am,
-	    tests/vbic, contrib/vbic, DEVICES: Added VBIC model from
-	    Dietmar Warning <warning@danalyse.de>. This is the 3 terminal
-	    model without excess phase and termal network.
+  *   src/spicelib/devices/vbic/*, src/Makefile.am, 
+      src/spicelib/devices/dev.c, src/spicelibe/parser/inp2q.c,
+      src/spicelib/parser/inpdomod.c,src/spicelib/devices/Makefile.am,
+      tests/vbic, contrib/vbic, DEVICES: Added VBIC model from
+      Dietmar Warning <warning@danalyse.de>. This is the 3 terminal
+      model without excess phase and termal network.
 
 2004-01-26  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   DEVICES: updated isrc an vsrc status
+  *   DEVICES: updated isrc an vsrc status
 
-	*   src/spicelib/devices{isrc,vsrc}: Cleaned up code
-	    
+  *   src/spicelib/devices{isrc,vsrc}: Cleaned up code
+      
 
-	*   tests/cider: Added example files for cider simulator.
+  *   tests/cider: Added example files for cider simulator.
 
 2004-01-25  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   configure.in, acconfig.h: Added configure options for the
-	    following debug symbols: ASDEBUG, D_DBG_BLOCKTIMES,
-	    D_DBG_SMALLTIMES, NEWPRED.
+  *   configure.in, acconfig.h: Added configure options for the
+      following debug symbols: ASDEBUG, D_DBG_BLOCKTIMES,
+      D_DBG_SMALLTIMES, NEWPRED.
 
 2004-01-23  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   xgraph: Added xgraph plotting program. It can be added to
-	    the ngspice binaries by adding --enable-xgraph in the 
-	    configuration phase. 
+  *   xgraph: Added xgraph plotting program. It can be added to
+      the ngspice binaries by adding --enable-xgraph in the 
+      configuration phase. 
 
 2004-01-21  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/include/ifsim.h, src/include/cktdefs.h, src/frontend/spiceif.c,
-	    src/frontend/shyu.c, src/spicelib/cktntask.c: Applied the options 
-	    patch made by Charles Williams <C.D.H.Williams@exeter.ac.uk>
+  *   src/include/ifsim.h, src/include/cktdefs.h, src/frontend/spiceif.c,
+      src/frontend/shyu.c, src/spicelib/cktntask.c: Applied the options 
+      patch made by Charles Williams <C.D.H.Williams@exeter.ac.uk>
 
 2004-01-20  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/maths/ni/*: Cleaned up code removing unnecessary includes.
+  *   src/maths/ni/*: Cleaned up code removing unnecessary includes.
 
 2004-01-15  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/spicelib/devices/{cccs,ccvs,vccs,vcvs}/*: cleaned up the code.
+  *   src/spicelib/devices/{cccs,ccvs,vccs,vcvs}/*: cleaned up the code.
 
-	*   src/spicelib/devices/csw/*, src/spicelib/devices/sw/*: cleaned
-	    up the code.
-	    
-	*   DEVICES: updated switches status.    
+  *   src/spicelib/devices/csw/*, src/spicelib/devices/sw/*: cleaned
+      up the code.
+      
+  *   DEVICES: updated switches status.    
 
 2004-01-14  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/spicelib/devices/txl/*: Added TXLunsetup function to allow
-	    for multiple simulations. 
-	
-	*   DEVICES: Updated txl status. 
+  *   src/spicelib/devices/txl/*: Added TXLunsetup function to allow
+      for multiple simulations. 
+  
+  *   DEVICES: Updated txl status. 
 
 2004-01-11  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   src/spicelib/analysis/*: Removed redundant includes. File stdio.h
-	    is already included via ngspice.h.
+  *   src/spicelib/analysis/*: Removed redundant includes. File stdio.h
+      is already included via ngspice.h.
 
 2004-01-10  Paolo Nenzi <p.nenzi@ieee.org>
 
-	*   configure.in: changed version to rework-15pre2.
+  *   configure.in: changed version to rework-15pre2.
 
-	*   src/frontend/{com_history.c, cpitf.c, display.h, evaluate.c,
-	    inpcom.c, misccoms.c, parser/glob.c, plotting/x11.c, resource.c,
-	    runcoms.c, signal_handler.c, subckt.c, variable.c}
-	    src/include/{ftedev.h, ngspice.h}
-	    src/misc{ivars.c, Makefile.am, string.c, tilde.c, tilde.h, util.c,
-	    util.h}
-	    src/{main.c, nghelp.c, ngmultidec.c}
-	    configure.in:
-	    
-	    Applied Stuart's patch tclspice-0.2.14_12-03-2003.diff.gz but
-	    with libreadline disabled by default. (Stuart Brorson 
-	    <sdb@cloud9.net>).
+  *   src/frontend/{com_history.c, cpitf.c, display.h, evaluate.c,
+      inpcom.c, misccoms.c, parser/glob.c, plotting/x11.c, resource.c,
+      runcoms.c, signal_handler.c, subckt.c, variable.c}
+      src/include/{ftedev.h, ngspice.h}
+      src/misc{ivars.c, Makefile.am, string.c, tilde.c, tilde.h, util.c,
+      util.h}
+      src/{main.c, nghelp.c, ngmultidec.c}
+      configure.in:
+      
+      Applied Stuart's patch tclspice-0.2.14_12-03-2003.diff.gz but
+      with libreadline disabled by default. (Stuart Brorson 
+      <sdb@cloud9.net>).
 
-	*   Fixed makefiles in src/xspice/icm and src/xspice/cmpp to make 
-	    distclean without barfing. (Stuart Brorson <sdb@cloud9.net>).
+  *   Fixed makefiles in src/xspice/icm and src/xspice/cmpp to make 
+      distclean without barfing. (Stuart Brorson <sdb@cloud9.net>).
 
-	*   configure.in 
-	    src/xspice/cmpp/Makefile src/xspice/cmpp/Makefile.in:
-	    Make configure automatically set paths for lex yacc and 
-	    install dir (Stefan Jones <stefan.jones@multigig.com>).
+  *   configure.in 
+      src/xspice/cmpp/Makefile src/xspice/cmpp/Makefile.in:
+      Make configure automatically set paths for lex yacc and 
+      install dir (Stefan Jones <stefan.jones@multigig.com>).
 
-	*  src/Makefile.am Makefile.am README.Tcl
-	   src/xspice/README src/xspice/icm/README
-	   src/xspice/icm/spice2poly/icm_spice2poly/README:
-	   Updated to reflect codemodel support is now complete
-	   (Stefan Jones <stefan.jones@multigig.com>).
+  *  src/Makefile.am Makefile.am README.Tcl
+     src/xspice/README src/xspice/icm/README
+     src/xspice/icm/spice2poly/icm_spice2poly/README:
+     Updated to reflect codemodel support is now complete
+     (Stefan Jones <stefan.jones@multigig.com>).
 
-	*  src/xspice/ipc/ipc.c:
-	   Remove linux specific includes which are not needed
-	   (Stefan Jones <stefan.jones@multigig.com>).
+  *  src/xspice/ipc/ipc.c:
+     Remove linux specific includes which are not needed
+     (Stefan Jones <stefan.jones@multigig.com>).
 
-	*  src/xspice/{Makefile.am,xspice.c} 
-	   src/xspice/cm/{cmexport.c,Makefile.am}:
-	   Moved the xspice library hooks into the cm directory
-	   (Stefan Jones <stefan.jones@multigig.com>).
+  *  src/xspice/{Makefile.am,xspice.c} 
+     src/xspice/cm/{cmexport.c,Makefile.am}:
+     Moved the xspice library hooks into the cm directory
+     (Stefan Jones <stefan.jones@multigig.com>).
 
-	*  src/xspice/enh/enhtrans.c src/xspice/mif/mif_inp2.c:
-	   Fixed version from Stuart Brorson <sdb@cloud9.net>, 
-	   http://www.brorson.com/gEDA/ngspice/
+  *  src/xspice/enh/enhtrans.c src/xspice/mif/mif_inp2.c:
+     Fixed version from Stuart Brorson <sdb@cloud9.net>, 
+     http://www.brorson.com/gEDA/ngspice/
 
-	*  src/spinit, arc/spinit.in, configure.in: parametrized spinit paths
-	   for codemodel devices.
+  *  src/spinit, arc/spinit.in, configure.in: parametrized spinit paths
+     for codemodel devices.
 
-	*  src/Makefile.am, src/ngspice.idx: removed ngspice.idx
-	   and make it auto-generated and installed 
-	   (Stefan Jones <stefan.jones@multigig.com>).
+  *  src/Makefile.am, src/ngspice.idx: removed ngspice.idx
+     and make it auto-generated and installed 
+     (Stefan Jones <stefan.jones@multigig.com>).
 
-	*  src/frontend/aspice.c: Added #ifdef for SOLARIS.
+  *  src/frontend/aspice.c: Added #ifdef for SOLARIS.
 
-	*  src/include/cktdefs.h: added prototype for NInzIter().
+  *  src/include/cktdefs.h: added prototype for NInzIter().
 
-	*  src/spicelib/devices/cpl/*: Added CPLask and CPLmAsk functions to
-	   access device's internals. Added CPLunsetup function to allow
-	   for multiple simulations.
-	   
-	*  DEVICES: updated with cpl changes.       
+  *  src/spicelib/devices/cpl/*: Added CPLask and CPLmAsk functions to
+     access device's internals. Added CPLunsetup function to allow
+     for multiple simulations.
+     
+  *  DEVICES: updated with cpl changes.       
 
 2003-12-31  Paolo Nenzi <p.nenzi@ieee.org>
 
         *  src/spicelib/devices/tra/*: Cleaned code.
-	
-	*  src/spicelib/devices/ltra/*: Cleaned code.
-	
-	*  src/spicelib/devices/urc/*: Cleaned code.
+  
+  *  src/spicelib/devices/ltra/*: Cleaned code.
+  
+  *  src/spicelib/devices/urc/*: Cleaned code.
 
         *  tests/transmission/{cpl*, txl*, ibm*}: Added test files for the
-	   kspice's cpl and txl devices. 
-	
-	*  src/spicelib/devices/cpl/*: Cleaned the cpl code.
-	
-	*  src/spicelib/devices/txl/*: Cleaned the txl code.
-	
-	*  src/frontend/subckt.c, src/spicelib/analysis/cktdojob.c,
-	   src/spicelib/analysis/dctran.c: added some txl an cpl specific
-	   code from kspice.
+     kspice's cpl and txl devices. 
+  
+  *  src/spicelib/devices/cpl/*: Cleaned the cpl code.
+  
+  *  src/spicelib/devices/txl/*: Cleaned the txl code.
+  
+  *  src/frontend/subckt.c, src/spicelib/analysis/cktdojob.c,
+     src/spicelib/analysis/dctran.c: added some txl an cpl specific
+     code from kspice.
 
         *  src/spicelib/devices/mesa/*: Added parallel multiplier and "dtemp",
-	   pole-zero analysis and parallel code switches.
+     pole-zero analysis and parallel code switches.
 
-	*  src/spicelib/devices/mes/*: Added parallel multiplier.
-	
-	*  tests/mes, tests/mes/subth.cir: added test netlist for mes devices.
+  *  src/spicelib/devices/mes/*: Added parallel multiplier.
+  
+  *  tests/mes, tests/mes/subth.cir: added test netlist for mes devices.
 
-	*  DEVICES: updated documentation including MES, MESA, CPL, TXL, TRA,
-	   LTRA and URC changes.
+  *  DEVICES: updated documentation including MES, MESA, CPL, TXL, TRA,
+     LTRA and URC changes.
 
 2003-12-30  Paolo Nenzi <p.nenzi@ieee.org>
 
         * src/spicelibe/devices/hfet2/*: Added parallel multiplier and "dtemp"
-	  parameters. Added pole-zero analysis and parallel code switches. 
-	
-	* src/spicelib/devices/jfet/jfetpzld.c: gspr and gdpr were initialized
-	  with Resist and not Conduct, corrected!
+    parameters. Added pole-zero analysis and parallel code switches. 
+  
+  * src/spicelib/devices/jfet/jfetpzld.c: gspr and gdpr were initialized
+    with Resist and not Conduct, corrected!
 
-	* src/spicelib/devices/hfet1/*: Added parallel multiplier and "dtemp" to
-	  the code. Added the pole-zero analysis and parallel code checks.
-	  Corrected a bug in the unsetup function that caused a segfault.
-	
-	* tests/hfet/, tests/hfet/id_vgs.cir, tests/inverter.cir: added hfet
-	  test netlists.
-	  
-	* DEVICES: updated hfet1 status.  
+  * src/spicelib/devices/hfet1/*: Added parallel multiplier and "dtemp" to
+    the code. Added the pole-zero analysis and parallel code checks.
+    Corrected a bug in the unsetup function that caused a segfault.
+  
+  * tests/hfet/, tests/hfet/id_vgs.cir, tests/inverter.cir: added hfet
+    test netlists.
+    
+  * DEVICES: updated hfet1 status.  
 
 2003-12-27  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/jfet2/*: Added parallel multiplier and "dtemp"
-	  parameter. Added Alan's CopyNodeSet, and inserted a missing
-	  instruction in JFET2temp (for parallel code).
-	
-	* DEVICES: Updated documentation for JFET2 model
-	  
+  * src/spicelib/devices/jfet2/*: Added parallel multiplier and "dtemp"
+    parameter. Added Alan's CopyNodeSet, and inserted a missing
+    instruction in JFET2temp (for parallel code).
+  
+  * DEVICES: Updated documentation for JFET2 model
+    
 2003-12-26  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/jfet/*: Added parallel multiplier and
-	  "dtemp" parameter.
-	  
-	* src/spicelib/devices/jfet/jfetload.c: reintroduces the old model
-	  code, superseded by Sydney code (Parker Skellern). The code is
-	  not used but is left as reference.   
-	
-	* DEVICES: Updated jfet status
-	
-	* tests/jfet, tests/jfet/jfet_vds-vgs.cir: added jfet directory 
-	  and one netlist.
+  * src/spicelib/devices/jfet/*: Added parallel multiplier and
+    "dtemp" parameter.
+    
+  * src/spicelib/devices/jfet/jfetload.c: reintroduces the old model
+    code, superseded by Sydney code (Parker Skellern). The code is
+    not used but is left as reference.   
+  
+  * DEVICES: Updated jfet status
+  
+  * tests/jfet, tests/jfet/jfet_vds-vgs.cir: added jfet directory 
+    and one netlist.
 
 2003-12-24  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/maths/cmaths/cmath4.c: Applied
-	Vera Albrecht patch to enable interpolate
-	function.
-	
-	* src/frontend/{come_let.c, control.c, evaluate.c, outitf.c, parse.c},
-	  src/frontend/parser/lexical.c: Applied Vera Albrecht patch that
-	  fixes ngspice bugs in its control language (c shell). 
+  * src/maths/cmaths/cmath4.c: Applied
+  Vera Albrecht patch to enable interpolate
+  function.
+  
+  * src/frontend/{come_let.c, control.c, evaluate.c, outitf.c, parse.c},
+    src/frontend/parser/lexical.c: Applied Vera Albrecht patch that
+    fixes ngspice bugs in its control language (c shell). 
 
 2003-12-08  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/mos9/*: Added 
+  * src/spicelib/devices/mos9/*: Added 
           "dtemp" parameters.
 
         * DEVICES: Updated MOS9 status. 
 
 2003-12-08  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/mos6/*: Added "m"
+  * src/spicelib/devices/mos6/*: Added "m"
           "dtemp" parameters.
 
         * DEVICES: Updated MOS6 status. 
 
 2003-11-22  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/bsim2/*: Added "m" 
-	  parameter and noise routine. 
-	
-	* DEVICES: Updated file with bsim2 changes.  
+  * src/spicelib/devices/bsim2/*: Added "m" 
+    parameter and noise routine. 
+  
+  * DEVICES: Updated file with bsim2 changes.  
 
 2003-11-21  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/bsim1/*: Added "m" 
-	  parameter and noise routine. 
-	
-	* DEVICES: Updated file with bsim1 changes.  
+  * src/spicelib/devices/bsim1/*: Added "m" 
+    parameter and noise routine. 
+  
+  * DEVICES: Updated file with bsim1 changes.  
 
 2003-11-12  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/mos2/*: Added "dtemp"
-	  parameter.
-	
-	* src/spicelib/devices/mos3/*: Added "dtemp"
-	  parameter.  
-	  
-	* DEVICES: updated file.  
+  * src/spicelib/devices/mos2/*: Added "dtemp"
+    parameter.
+  
+  * src/spicelib/devices/mos3/*: Added "dtemp"
+    parameter.  
+    
+  * DEVICES: updated file.  
 
 2003-11-11  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/mos1/*: Added "dtemp"
-	  parameter.
-	  
-	* DEVICES: Updated MOS1 status.  
+  * src/spicelib/devices/mos1/*: Added "dtemp"
+    parameter.
+    
+  * DEVICES: Updated MOS1 status.  
 
 2003-11-02  Paolo Nenzi <p.nenzi@ieee.org>
-	
-	* doc/ngspice.texi: updated documentation.
+  
+  * doc/ngspice.texi: updated documentation.
 
 2003-10-29  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/bjt2/*: Enhanced bjt level 2
-	  model adding dtemp, parallel mutliplier "m" and 
-	  support for CIDER multiprocessor compilation.
-	  
-	* DEVICES: Updated status of Diode and BJT's.  
+  * src/spicelib/devices/bjt2/*: Enhanced bjt level 2
+    model adding dtemp, parallel mutliplier "m" and 
+    support for CIDER multiprocessor compilation.
+    
+  * DEVICES: Updated status of Diode and BJT's.  
 
 2003-10-26  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/bjt/*: Improved bjt level 1 model
-	adding dtemp and parallel multiplier.
+  * src/spicelib/devices/bjt/*: Improved bjt level 1 model
+  adding dtemp and parallel multiplier.
 
 2003-10-24  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/dio/*: Improved diode model with code
-	sent by Diermar Warning and mine improvements. Forward/Reverse
-	knee currents, periphery effect, temperature corrections of
-	some parameters and parallel multiplier.
-	
-	* doc/ngspice.texi: updated documentation with new diode model.
+  * src/spicelib/devices/dio/*: Improved diode model with code
+  sent by Diermar Warning and mine improvements. Forward/Reverse
+  knee currents, periphery effect, temperature corrections of
+  some parameters and parallel multiplier.
+  
+  * doc/ngspice.texi: updated documentation with new diode model.
 
 2003-10-01  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/analysis/noisean.c: fixed an arror that caused segfault
-	  when resuming an halted long lasting noise analysis. The source fo
-	  this fix is Vera Albrecht <albrecht@danalyse.de>
-	  
-	* src/spicelib/devices/res/restemp.c: Changed default value for flicker
-	  noise exponent to 1.0 (was 0.0), as in others spice devices. 
+  * src/spicelib/analysis/noisean.c: fixed an arror that caused segfault
+    when resuming an halted long lasting noise analysis. The source fo
+    this fix is Vera Albrecht <albrecht@danalyse.de>
+    
+  * src/spicelib/devices/res/restemp.c: Changed default value for flicker
+    noise exponent to 1.0 (was 0.0), as in others spice devices. 
 
 2003-09-27  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/ind/*, src/spicelib/parser/inp2l.c,
-	  src/spicelib/parser/inpdomod.c, src/include/defines.h,
-	  src/include/const.h: Improved inductor model. Added parallel
-	  multiplier, temperature correction and solenoid/toroid model.
-	  
-	* DEVICES, doc/ngspice.texi: updated documentation to reflect changes
-	  in inductor code.   
+  * src/spicelib/devices/ind/*, src/spicelib/parser/inp2l.c,
+    src/spicelib/parser/inpdomod.c, src/include/defines.h,
+    src/include/const.h: Improved inductor model. Added parallel
+    multiplier, temperature correction and solenoid/toroid model.
+    
+  * DEVICES, doc/ngspice.texi: updated documentation to reflect changes
+    in inductor code.   
 
 2003-09-25  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/bsim3/*: Added new multirevision bsim3 code sent
-	by Dietmar Warning. This model implements bsim 3v3.2 up to 3v3.2.4 and
-	has enahnced with ACM.
-	
-	* DEVICES: updated bsim3 status. 
+  * src/spicelib/devices/bsim3/*: Added new multirevision bsim3 code sent
+  by Dietmar Warning. This model implements bsim 3v3.2 up to 3v3.2.4 and
+  has enahnced with ACM.
+  
+  * DEVICES: updated bsim3 status. 
 
-	* src/spicelib/devices/bjt2/*, DEVICES, Changelog: Added bjt2 code sent
-	by Dietmar Warning, containing some fixes over the original code and
-	a new feature: temperature correction of re,rb,rc. 
-	
-	* src/frontend/numparam/*, src/frontend/Makefile.am, src/Makefile.am,
-	  configure.in, acconfig.h, src/frontend/subckt.c: Added numparam 
-	  library contributed by Georg Post. This library let users to
-	  input parametric netlists in ngspice. Look at readme in library
-	  directory. 
-	  
-	* src/spicelib/analysis/dctrcurv.c: small bug fix. CKTtime was confused
-	  with CKTtemp.
+  * src/spicelib/devices/bjt2/*, DEVICES, Changelog: Added bjt2 code sent
+  by Dietmar Warning, containing some fixes over the original code and
+  a new feature: temperature correction of re,rb,rc. 
+  
+  * src/frontend/numparam/*, src/frontend/Makefile.am, src/Makefile.am,
+    configure.in, acconfig.h, src/frontend/subckt.c: Added numparam 
+    library contributed by Georg Post. This library let users to
+    input parametric netlists in ngspice. Look at readme in library
+    directory. 
+    
+  * src/spicelib/analysis/dctrcurv.c: small bug fix. CKTtime was confused
+    with CKTtemp.
 
 2003-09-25  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/cap/*, src/spicelib/parser/inp2c.c,
-	  src/include/defines.h, src/include/const.h: enhanced
-	  capacitor model. Added temperature dependence, model capacitance
-	  and cj computation based on insulator thickness and relative
-	  dielectric constant.
-	
-	* doc/ngspice.tex, DEVICES: updated documentation reflecting
-	  capacitor model changes.  
+  * src/spicelib/devices/cap/*, src/spicelib/parser/inp2c.c,
+    src/include/defines.h, src/include/const.h: enhanced
+    capacitor model. Added temperature dependence, model capacitance
+    and cj computation based on insulator thickness and relative
+    dielectric constant.
+  
+  * doc/ngspice.tex, DEVICES: updated documentation reflecting
+    capacitor model changes.  
 
 2003-09-24  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/analysis/dctrcurv.c: Fixed resistance sweep. First
-	point is now correct. A call to CKTtemp was needed in the first
-	point.
+  * src/spicelib/analysis/dctrcurv.c: Fixed resistance sweep. First
+  point is now correct. A call to CKTtemp was needed in the first
+  point.
 
 2003-09-20  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/spicelib/devices/res/*, src/spicelib/analysis/nevalsrc.c,
-	  doc/ngspice.texi, DEVICES: Added new features to resistors: 
-	  flicker noise, temperature difference with the rest of the 
-	  circuit, noiseless resistors. The implementation of dtemp 
-	  required a change in the nevalsrc.c file in the function that 
-	  computes the noise densities. Updated documentation. 
-	  
+  * src/spicelib/devices/res/*, src/spicelib/analysis/nevalsrc.c,
+    doc/ngspice.texi, DEVICES: Added new features to resistors: 
+    flicker noise, temperature difference with the rest of the 
+    circuit, noiseless resistors. The implementation of dtemp 
+    required a change in the nevalsrc.c file in the function that 
+    computes the noise densities. Updated documentation. 
+    
 
 2003-09-18  Paolo Nenzi <p.nenzi@ieee.org>
-	
-	* src/spicelib/analysis/dctrcurv.c: Corrected temperature sweep.
-	  Initial temp was the circuit temperature and not the start
-	  value in the input line. There was a missing call to CKTtemp().
+  
+  * src/spicelib/analysis/dctrcurv.c: Corrected temperature sweep.
+    Initial temp was the circuit temperature and not the start
+    value in the input line. There was a missing call to CKTtemp().
 
 2003-08-24  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/maths/sparse/, src/include/complex.h: Added a function
-	  needed by CIDER in sparse library and started to isolate as
-	  much as possible sparse code from spice, reverting some of
-	  the work did in the previous releases. The idea is to design
-	  an interface between spice and a generic matrix library.
-	  In the future the current sparse code will be upgraded to
-	  version 1.4 (http://sparse.sourceforge.net).
-	
-	  src/frontend/misccoms.c, doc/ngspice.texi: Modified "version" 
-	  command to include compilation information when called with
-	  the new "-f" option.
-	  
-	  src/frontend/(parse.c,define.c): Applied Stefan patches
-	  that close a memory leak.
-	  
-	  src/spicelib/parser/inpgmod.c: Patched Stuart INPgetNetTok
-	  function to correct a parsing error emerged in pole-zero 
-	  analysis.  
+  * src/maths/sparse/, src/include/complex.h: Added a function
+    needed by CIDER in sparse library and started to isolate as
+    much as possible sparse code from spice, reverting some of
+    the work did in the previous releases. The idea is to design
+    an interface between spice and a generic matrix library.
+    In the future the current sparse code will be upgraded to
+    version 1.4 (http://sparse.sourceforge.net).
+  
+    src/frontend/misccoms.c, doc/ngspice.texi: Modified "version" 
+    command to include compilation information when called with
+    the new "-f" option.
+    
+    src/frontend/(parse.c,define.c): Applied Stefan patches
+    that close a memory leak.
+    
+    src/spicelib/parser/inpgmod.c: Patched Stuart INPgetNetTok
+    function to correct a parsing error emerged in pole-zero 
+    analysis.  
 
 2003-08-14  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* configure.in, src/main.c, src/misc/tilde.c, src/misc/tilde.h,
-	  src/frontend/com_history.c, src/frontend/misccoms.h,
-	  src/frontend/signal_handler.c, src/frontend/plotting/x11.c,
-	  src/frontend/parser/glob.c, src/include/ngspice.h:
-	  
-	  Added Andrew Veliath patch for readline support. Using
-	  readline with ngspice IS A VIOLATION OF GPL LICENSE, you
-	  have been warned. The final decision is up to you. The
-	  patch has been applied in the perspective of changing
-	  readline library with libedit. Libedit aims to be a
-	  replacement of readline and is covered by BSD license.
-	  Libedit is available at the URL: libedit.sourceforge.net.
-	  
-	  Readline code has been extrapolated from a patch available
-	  on  http://www.btae.mam.gov.tr/~genc/ngspice/. 
-	  
+  * configure.in, src/main.c, src/misc/tilde.c, src/misc/tilde.h,
+    src/frontend/com_history.c, src/frontend/misccoms.h,
+    src/frontend/signal_handler.c, src/frontend/plotting/x11.c,
+    src/frontend/parser/glob.c, src/include/ngspice.h:
+    
+    Added Andrew Veliath patch for readline support. Using
+    readline with ngspice IS A VIOLATION OF GPL LICENSE, you
+    have been warned. The final decision is up to you. The
+    patch has been applied in the perspective of changing
+    readline library with libedit. Libedit aims to be a
+    replacement of readline and is covered by BSD license.
+    Libedit is available at the URL: libedit.sourceforge.net.
+    
+    Readline code has been extrapolated from a patch available
+    on  http://www.btae.mam.gov.tr/~genc/ngspice/. 
+    
 2003-08-11  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* doc/ngspice.texi: updated documentation. Still incomplete
-	  but on the way...
+  * doc/ngspice.texi: updated documentation. Still incomplete
+    but on the way...
 
-	* main.c, ngnutmeg.c, ngspice.c, frontend/resource.c,
-	  include/bool.h, include/cktdefs.h, include/complex.h,
-	  include/defines.h, include/devdefs.h, include/macros.h,
-	  include/ngspice.h, maths/cmaths/cmath1.c, 
-	  maths/cmaths/test_cx_ph.c, maths/ni/nidest.c,  
-	  maths/ni/nipred.h, maths/ni/nireinit.c, misc/misc_time.c,
-	  misc/string.c, misc/stringutil.h, spicelib/analysis/cktdltn.c,
-	  spicelib/analysis/cktdojob.c, spicelib/analysis/cktdump.c,
-	  spicelib/analysis/cktload.c, spicelib/analysis/cktmknod.c,
-	  spicelib/analysis/cktntask.c, spicelib/analysis/cktpzstr.c,
-	  spicelib/analysis/cktsens.c, spicelib/analysis/cktsetup.c,
-	  spicelib/analysis/cktsgen.c, spicelib/analysis/cktsopt.c,
-	  spicelib/parser/inp2d.c, spicelib/parser/inp2m.c,
-	  spicelib/parser/inp2q.c, spicelib/parser/inpdomod.c,
-	  spicelib/parser/inpgmod.c:
-	  
-	  Updated code for CIDER integration.
+  * main.c, ngnutmeg.c, ngspice.c, frontend/resource.c,
+    include/bool.h, include/cktdefs.h, include/complex.h,
+    include/defines.h, include/devdefs.h, include/macros.h,
+    include/ngspice.h, maths/cmaths/cmath1.c, 
+    maths/cmaths/test_cx_ph.c, maths/ni/nidest.c,  
+    maths/ni/nipred.h, maths/ni/nireinit.c, misc/misc_time.c,
+    misc/string.c, misc/stringutil.h, spicelib/analysis/cktdltn.c,
+    spicelib/analysis/cktdojob.c, spicelib/analysis/cktdump.c,
+    spicelib/analysis/cktload.c, spicelib/analysis/cktmknod.c,
+    spicelib/analysis/cktntask.c, spicelib/analysis/cktpzstr.c,
+    spicelib/analysis/cktsens.c, spicelib/analysis/cktsetup.c,
+    spicelib/analysis/cktsgen.c, spicelib/analysis/cktsopt.c,
+    spicelib/parser/inp2d.c, spicelib/parser/inp2m.c,
+    spicelib/parser/inp2q.c, spicelib/parser/inpdomod.c,
+    spicelib/parser/inpgmod.c:
+    
+    Updated code for CIDER integration.
 
-	
+  
         * src/spicelib/devices/bsim3v2: removed because the V3.2 code
-	  is now in bsim3 directory.
+    is now in bsim3 directory.
        
         * src/spicelib/devices: various enhancements on models. Mainly
-	  code cleaning (removed spurious #include <stdio.h>). Added 
-	  parallel multiplier on some device and corrected implementation
-	  of cpl an txl devices.
+    code cleaning (removed spurious #include <stdio.h>). Added 
+    parallel multiplier on some device and corrected implementation
+    of cpl an txl devices.
 
         *  bdrydefs.h, carddefs.h, ciderinp.h, cidersupt.h, contdefs.h,
-	   domndefs.h, dopdefs.h, elctdefs.h, gendev.h, lsort.h, 
-	   material.h,  matldefs.h, meshdefs.h, meshext.h, methdefs.h,
-	   mobdefs.h, modldefs.h, numcards.h, numconst.h, numenum.h,
-	   numgen.h, numglobs.h, onedev.h, onemesh.h, optndefs.h,
-	   outpdefs.h, profile.h, twodev.h, twomesh.h:
-	   new include files imported with CIDER.
+     domndefs.h, dopdefs.h, elctdefs.h, gendev.h, lsort.h, 
+     material.h,  matldefs.h, meshdefs.h, meshext.h, methdefs.h,
+     mobdefs.h, modldefs.h, numcards.h, numconst.h, numenum.h,
+     numgen.h, numglobs.h, onedev.h, onemesh.h, optndefs.h,
+     outpdefs.h, profile.h, twodev.h, twomesh.h:
+     new include files imported with CIDER.
 
-	
-	* src/ciderlib/*, src/maths/misc, src/spicelib/devices/nbjt,
-	  src/spicelib/devices/nbjt2, src/spicelib/devices/numd,
-	  src/spicelib/devices/numd2, src/spicelib/devices/numos:
-	  
-	  Added CIDER simulator routines, support math functions and
-	  numerical devices.
-	
-	* src/spicelib/devices/bsim3soi: added bsim3soi v3.x model
-	
-	* src/spicelib/devices/bsim3v0: added version 3.0 of
-	  bsim model.
-	
-	* src/spicelib/devices/bsim3v1a: version 3.1 of bsim model.
-	  This model has been hacked by Alan Gillespie.
-	
-	* src/spicelib/devices/bsim3v1s: version 3.1 of bsim model.
-	  This model has been hacked by Serban Popescu.
-	
-	* src/spicelib/devices/hisim: added hisim model.       
-		  
+  
+  * src/ciderlib/*, src/maths/misc, src/spicelib/devices/nbjt,
+    src/spicelib/devices/nbjt2, src/spicelib/devices/numd,
+    src/spicelib/devices/numd2, src/spicelib/devices/numos:
+    
+    Added CIDER simulator routines, support math functions and
+    numerical devices.
+  
+  * src/spicelib/devices/bsim3soi: added bsim3soi v3.x model
+  
+  * src/spicelib/devices/bsim3v0: added version 3.0 of
+    bsim model.
+  
+  * src/spicelib/devices/bsim3v1a: version 3.1 of bsim model.
+    This model has been hacked by Alan Gillespie.
+  
+  * src/spicelib/devices/bsim3v1s: version 3.1 of bsim model.
+    This model has been hacked by Serban Popescu.
+  
+  * src/spicelib/devices/hisim: added hisim model.       
+      
 2003-08-06  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* Another big commit: Stefan Jones has worked on the xspice
-	  part and added some fix from Vera Albrecht. Tclspice 0.2.13
-	  Changelog (applicable parts) follows:
-	  
-	  2003-08-01 Stefan Jones <stefan.jones@multigig.com>
-   
-   		* src/xspice/mif/mif_inp2.c:
-   		Reverted to version 1.1.2.2 so POLY and codemodels work
+  * Another big commit: Stefan Jones has worked on the xspice
+    part and added some fix from Vera Albrecht. Tclspice 0.2.13
+    Changelog (applicable parts) follows:
     
-   		* src/Makefile.am:
-   		Fixed libspice.so dependencies
+    2003-08-01 Stefan Jones <stefan.jones@multigig.com>
+   
+       * src/xspice/mif/mif_inp2.c:
+       Reverted to version 1.1.2.2 so POLY and codemodels work
+    
+       * src/Makefile.am:
+       Fixed libspice.so dependencies
    
   
-  		* src/frontend/{com_let.c,device.c,evaluate.c}:
-  		more memory leak fixes by Vera Albrecht <albrecht@danalyse.de>
+      * src/frontend/{com_let.c,device.c,evaluate.c}:
+      more memory leak fixes by Vera Albrecht <albrecht@danalyse.de>
   
-  		* configure.in src/xspice/icm/* src/xspice/lib/*.cm 
-  		src/xspice/Makefile.am :
-  		Added some easy to use makefiles for codemodels and reordered
-  		Removed binary files
-  		Added icm to build list
+      * configure.in src/xspice/icm/* src/xspice/lib/*.cm 
+      src/xspice/Makefile.am :
+      Added some easy to use makefiles for codemodels and reordered
+      Removed binary files
+      Added icm to build list
   
-  		* src/xspice/icm/{analog,digital,xtradev,xtraevt}:
-  		added the codemodels from xspice in the same
-  		structure as spiceopus
-  	
-  		* src/frontend/misccoms.c src/spinit src/conf.c configure.in:
-  		updated email address for bug reports and package version.
-	
+      * src/xspice/icm/{analog,digital,xtradev,xtraevt}:
+      added the codemodels from xspice in the same
+      structure as spiceopus
+    
+      * src/frontend/misccoms.c src/spinit src/conf.c configure.in:
+      updated email address for bug reports and package version.
+  
 2003-07-25  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* src/main.c: Studied Vera's main.d and introduced changes
-	following her advice.
-	
-	* src/frontend/vectors.c: Applied Vera patch.
-	
-	* src/spicelib/devices/bsim3soi_{dd,fd,pd}:
-	Corrected bsim3soi{pd,fd,dd}def.h, owner and states fields
-	were swapped. Thanks to Jon Elngelbert.
-	
+  * src/main.c: Studied Vera's main.d and introduced changes
+  following her advice.
+  
+  * src/frontend/vectors.c: Applied Vera patch.
+  
+  * src/spicelib/devices/bsim3soi_{dd,fd,pd}:
+  Corrected bsim3soi{pd,fd,dd}def.h, owner and states fields
+  were swapped. Thanks to Jon Elngelbert.
+  
 2003-07-23  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* A lot of changes that touched too many files to mention each one. 
-	I have introduced the xspice code into ngspice. I take xspice code 
-	from tclspice (0.2.12). Since tclspice started as a branch of
-	ngspice, I have applied the patches developed for it that correcting
-	some bugs common to tclspice and ngspice. What follows is the
-	extract of tclspice Changelog file that describes the changes:
-	
-	2003-07-18 Vera Albrecht <albrecht@danalyse.de>
+  * A lot of changes that touched too many files to mention each one. 
+  I have introduced the xspice code into ngspice. I take xspice code 
+  from tclspice (0.2.12). Since tclspice started as a branch of
+  ngspice, I have applied the patches developed for it that correcting
+  some bugs common to tclspice and ngspice. What follows is the
+  extract of tclspice Changelog file that describes the changes:
+  
+  2003-07-18 Vera Albrecht <albrecht@danalyse.de>
 
-		* src/{main.c,tclspice.c}
-		src/frontend/{Makefile.am,control.c,control.h,display.c,
-		dotcards.c, hcomp.c,hpgl.c,outitf.c,parse.c,postcoms.c,
-		postsc.c,runcoms.c, spiceif.c,variable.c,variable.h,
-		parser/complete.c,plotting/pvec.c} 
-		src/include/{cktdefs.h,ngspice.h}
-		src/misc/{ivars.c,string.c,stringutil.h}
-		src/spicelib/analysis/{acan.c,ckt.h,dcop.c}
-		src/spicelib/devices/bsim3/b3temp.c
-		src/spicelib/parser/{ifnewuid.c,inp2dot.c,inperror.c} :
-		Memory leaks and some WINDOWS compile fixes.
+    * src/{main.c,tclspice.c}
+    src/frontend/{Makefile.am,control.c,control.h,display.c,
+    dotcards.c, hcomp.c,hpgl.c,outitf.c,parse.c,postcoms.c,
+    postsc.c,runcoms.c, spiceif.c,variable.c,variable.h,
+    parser/complete.c,plotting/pvec.c} 
+    src/include/{cktdefs.h,ngspice.h}
+    src/misc/{ivars.c,string.c,stringutil.h}
+    src/spicelib/analysis/{acan.c,ckt.h,dcop.c}
+    src/spicelib/devices/bsim3/b3temp.c
+    src/spicelib/parser/{ifnewuid.c,inp2dot.c,inperror.c} :
+    Memory leaks and some WINDOWS compile fixes.
 
-	2003-07-17 Stefan Jones <stefan.jones@multigig.com>
+  2003-07-17 Stefan Jones <stefan.jones@multigig.com>
 
-		* src/frontend/{subckt.c,vectors.c} 
-		src/spicelib/analysis/dctran.c 
-		src/spicelib/parser/inperror.c 
-		src/xspice/idn/idndig.c src/xspice/mif/mif_inp2.c :
-		More memory leak fixes
+    * src/frontend/{subckt.c,vectors.c} 
+    src/spicelib/analysis/dctran.c 
+    src/spicelib/parser/inperror.c 
+    src/xspice/idn/idndig.c src/xspice/mif/mif_inp2.c :
+    More memory leak fixes
 
-		* configure.in src/xspice/xspice.c :
-		Fix compile problems with garbage collector
+    * configure.in src/xspice/xspice.c :
+    Fix compile problems with garbage collector
 
 
-	2003-07-17 Steven Borley <sjb@salix.demon.co.uk>
+  2003-07-17 Steven Borley <sjb@salix.demon.co.uk>
 
-		src/spicelib/devices/txl/txlload.c :
-		Fixed duplicate declaration of pool_vi_txl
+    src/spicelib/devices/txl/txlload.c :
+    Fixed duplicate declaration of pool_vi_txl
 
-	2003-07-16 Vera Albrecht <albrecht@danalyse.de>
+  2003-07-16 Vera Albrecht <albrecht@danalyse.de>
 
-		* frontend/{device.c,parse.c,vectors.c,com_compose.c} :
-		More memory leaks closed in utility commands and functions.
+    * frontend/{device.c,parse.c,vectors.c,com_compose.c} :
+    More memory leaks closed in utility commands and functions.
 
-	2003-07-16 Stefan Jones <stefan.jones@multigig.com>
+  2003-07-16 Stefan Jones <stefan.jones@multigig.com>
 
-		* src/frontend/{com_compose.c,cpitf.c,device.c,subckt.c,
-		vectors.c}
-		src/frontend/plotting/plotit.c src/include/ngspice.h
-		src/spicelib/parser/{inp2dot.c,inp2r.c,inpdomod.c,inpdpar.c,
-		inpgmod.c,inppas3.c} :
-		Rest of the serious deck reader leaks, plus fixes for the 
-		last batch.
+    * src/frontend/{com_compose.c,cpitf.c,device.c,subckt.c,
+    vectors.c}
+    src/frontend/plotting/plotit.c src/include/ngspice.h
+    src/spicelib/parser/{inp2dot.c,inp2r.c,inpdomod.c,inpdpar.c,
+    inpgmod.c,inppas3.c} :
+    Rest of the serious deck reader leaks, plus fixes for the 
+    last batch.
 
-	2003-07-15 Stefan Jones <stefan.jones@multigig.com>
+  2003-07-15 Stefan Jones <stefan.jones@multigig.com>
 
-		* /src/frontend/{com_let.c,com_set.c,evaluate.c,parse.c,
-		variable.c}
-		src/frontend/parser/complete.c :
-		Memory leaks plugged
+    * /src/frontend/{com_let.c,com_set.c,evaluate.c,parse.c,
+    variable.c}
+    src/frontend/parser/complete.c :
+    Memory leaks plugged
 
-	2003-04-14 Stefan Jones <stefan.jones@multigig.com>
+  2003-04-14 Stefan Jones <stefan.jones@multigig.com>
 
-		* Make all the devices in src/spicelib/devices be built
-		as archives not shared libraries, and don't install them
+    * Make all the devices in src/spicelib/devices be built
+    as archives not shared libraries, and don't install them
 
-	2003-06-22  Stuart Brorson  <sdb@cloud9.net>
+  2003-06-22  Stuart Brorson  <sdb@cloud9.net>
  
- 		*  Finally got SPICE2 POLY stuff working.  This involved 
-		lots of changes in src/xspice/mif and src/xspice/enh.  
-		Particular changes were made in:
- 	   	--  MIF_INP2A: re-arranged logic to fix parsing problems.
- 	   	--  two2three_translate: fixed some stupid pointer problems.
- 	   	--  etc.
+     *  Finally got SPICE2 POLY stuff working.  This involved 
+    lots of changes in src/xspice/mif and src/xspice/enh.  
+    Particular changes were made in:
+        --  MIF_INP2A: re-arranged logic to fix parsing problems.
+        --  two2three_translate: fixed some stupid pointer problems.
+        --  etc.
  
- 		*  Revamped src/xspice/icm/ and src/xspice/icm/icm_spice2poly
- 		directories to enable build of POLY codemodel.  
-		Makefiles were fixed, and some stuff was added to enable 
-		cmpp (from SPICE Opus) to build the codemodel precursors 
-		correctly.  (Note that you need to download and install 
-		SPICE Opus to rebuild the codemodel stuff.  See  
-		src/xspice/icm/README for more details.)
+     *  Revamped src/xspice/icm/ and src/xspice/icm/icm_spice2poly
+     directories to enable build of POLY codemodel.  
+    Makefiles were fixed, and some stuff was added to enable 
+    cmpp (from SPICE Opus) to build the codemodel precursors 
+    correctly.  (Note that you need to download and install 
+    SPICE Opus to rebuild the codemodel stuff.  See  
+    src/xspice/icm/README for more details.)
  
- 		*  Hacked Makefile.am's for much of the directory hierarchy, 
-		particularly for src/xspice/icm and 
-		src/xspice/icm/icm_spice2poly to build the POLY codemodel 
-		correctly.  Note that top level make still doesn't detect 
- 		changes in the xspice hierarchy; read the NOTES file for 
-		a workaround.
+     *  Hacked Makefile.am's for much of the directory hierarchy, 
+    particularly for src/xspice/icm and 
+    src/xspice/icm/icm_spice2poly to build the POLY codemodel 
+    correctly.  Note that top level make still doesn't detect 
+     changes in the xspice hierarchy; read the NOTES file for 
+    a workaround.
  
- 		*  Added a SPICE netlist incorporating vendor models with 
-		SPICE2 POLYs in tests/TransImpedanceAmp/.  Running this 
-		model successfully demonstrates that you have built the 
-		XSpice POLY codemodel correctly and that life is good 
-		. . . .
+     *  Added a SPICE netlist incorporating vendor models with 
+    SPICE2 POLYs in tests/TransImpedanceAmp/.  Running this 
+    model successfully demonstrates that you have built the 
+    XSpice POLY codemodel correctly and that life is good 
+    . . . .
  
- 		*  Moved #define TRACE out of src/ngspice.h and made it 
-		a compiler option (-DTRACE) invoked in src/Makefile when 
-		making spice.o.
+     *  Moved #define TRACE out of src/ngspice.h and made it 
+    a compiler option (-DTRACE) invoked in src/Makefile when 
+    making spice.o.
 
-	2003-05-02  Stuart Brorson  <sdb@cloud9.net>
+  2003-05-02  Stuart Brorson  <sdb@cloud9.net>
  
- 		*  Added #define TRACE to main.c for use in debugging.  
-		Added lots of printf's in the code which are turned on 
-		by defining TRACE. This is used to help figure out what 
-		the program is doing at each step . . . . .
- 	
- 		*  Added lots of comments all over the source tree.  
-		This should help explain what the prog is doing for 
-		future hackers.
- 	
- 		*  Fixed parser to allow POLY attributes in dependent 
-		sources (major changes  in src/frontend/subckt.c, as 
-		well as move location of call to ENHtranslate_poly in 
-		src/frontend/inp.c)
- 	
- 		*  Fixed bug in device init files 
-		(src/spicelib/devices/*init.c)
- 		so that Deviceinfo structures operated with XSPICE.
+     *  Added #define TRACE to main.c for use in debugging.  
+    Added lots of printf's in the code which are turned on 
+    by defining TRACE. This is used to help figure out what 
+    the program is doing at each step . . . . .
+   
+     *  Added lots of comments all over the source tree.  
+    This should help explain what the prog is doing for 
+    future hackers.
+   
+     *  Fixed parser to allow POLY attributes in dependent 
+    sources (major changes  in src/frontend/subckt.c, as 
+    well as move location of call to ENHtranslate_poly in 
+    src/frontend/inp.c)
+   
+     *  Fixed bug in device init files 
+    (src/spicelib/devices/*init.c)
+     so that Deviceinfo structures operated with XSPICE.
  
- 		*  Fixed nasty malloc problem in src/xspice/mif/mifgetmod.c 
-		which casued frequent segfaults (when compiled with XSPICE).
+     *  Fixed nasty malloc problem in src/xspice/mif/mifgetmod.c 
+    which casued frequent segfaults (when compiled with XSPICE).
 
-	
+  
 2002-01-03  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* acconfig.h: added define needed for Windows and some aesthetic
-	  rework (from Holger Vogt patch).
-	
-	* configure.in: added macros to handle windows related 
-	  issues (Holger patch and me).
-	
-	* INSTALL: added documentation on ngspice compilation under
-	  Windows (Holger Vogt patch).
-	
-	* Makefile.am: added Windows compilation code (Holger Vogt patch and
-	  me).
-	
-	 
+  * acconfig.h: added define needed for Windows and some aesthetic
+    rework (from Holger Vogt patch).
+  
+  * configure.in: added macros to handle windows related 
+    issues (Holger patch and me).
+  
+  * INSTALL: added documentation on ngspice compilation under
+    Windows (Holger Vogt patch).
+  
+  * Makefile.am: added Windows compilation code (Holger Vogt patch and
+    me).
+  
+   
 
 2001-12-05  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* configure.in: removed (unnecessary) macros to handle GNU getopt
-	(I'm an idiot!)
+  * configure.in: removed (unnecessary) macros to handle GNU getopt
+  (I'm an idiot!)
 
 2001-12-04  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* configure.in, main.c: Forgot a bit to handle GNU getopt correctly
+  * configure.in, main.c: Forgot a bit to handle GNU getopt correctly
 
 2001-11-25  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* configure.in: New way (cleaner) to handle GNU getopt.
+  * configure.in: New way (cleaner) to handle GNU getopt.
 
 2001-01-21  Paolo Nenzi <p.nenzi@ieee.org>
 
-	* bsim3soi_dd/*: BSIM3SOI (DD) support added as level 11. Added tests in 
-	  tests directory (tests/bsim3soidd/*).
+  * bsim3soi_dd/*: BSIM3SOI (DD) support added as level 11. Added tests in 
+    tests directory (tests/bsim3soidd/*).
 
-	* ???: Integrated patch form Alan Gillespie <Alan.Gillespie@analog.com>
-	to revert the spice raw format to the spice3 original. 
+  * ???: Integrated patch form Alan Gillespie <Alan.Gillespie@analog.com>
+  to revert the spice raw format to the spice3 original. 
 
-	* configure.in: corrected a bug that broke the on line help system.
-	Help system now works again but its text is a little bit outdated.
+  * configure.in: corrected a bug that broke the on line help system.
+  Help system now works again but its text is a little bit outdated.
 
-	* ???: all binaries now have ng prepended, so ngspice can be installed
-	with other spice flavours.
-	
-	
+  * ???: all binaries now have ng prepended, so ngspice can be installed
+  with other spice flavours.
+  
+  
 2000-10-18  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* Makefile.am: Changes for notes dir -> NOTES file conversion.
+  * Makefile.am: Changes for notes dir -> NOTES file conversion.
 
-	* tests/Makefile.am: Make distcheck target work again.
+  * tests/Makefile.am: Make distcheck target work again.
 
 2000-10-17  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* TODO: Little updates.
+  * TODO: Little updates.
 
 2000-10-14  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* acconfig.h, configure.in, src/frontend/inpcom.c,
-	src/include/complex.h src/include/macros.h, src/include/memory.h
-	src/include/ngspice.h, src/maths/cmaths/Makefile.am
-	src/maths/cmaths/cmath1.c, src/maths/cmaths/cmath2.c
-	src/maths/cmaths/cmath3.c, src/maths/cmaths/cmath4.c
-	src/maths/cmaths/test_cx_j.c, src/maths/cmaths/test_cx_mag.c
-	src/maths/cmaths/test_cx_ph.c, src/misc/alloc.c src/misc/alloc.h:
-	Added support for the Boehm-Weiser conservative garbage collector.
+  * acconfig.h, configure.in, src/frontend/inpcom.c,
+  src/include/complex.h src/include/macros.h, src/include/memory.h
+  src/include/ngspice.h, src/maths/cmaths/Makefile.am
+  src/maths/cmaths/cmath1.c, src/maths/cmaths/cmath2.c
+  src/maths/cmaths/cmath3.c, src/maths/cmaths/cmath4.c
+  src/maths/cmaths/test_cx_j.c, src/maths/cmaths/test_cx_mag.c
+  src/maths/cmaths/test_cx_ph.c, src/misc/alloc.c src/misc/alloc.h:
+  Added support for the Boehm-Weiser conservative garbage collector.
 
-	* NOTES, src/maths/cmaths/cmath.h: Added.
+  * NOTES, src/maths/cmaths/cmath.h: Added.
 
-	* notes/Linux.changes, notes/dbx, notes/internal, notes/mac_port
-	notes/porting, notes/spice2: Removed or incorporated into
-	NOTES.
+  * notes/Linux.changes, notes/dbx, notes/internal, notes/mac_port
+  notes/porting, notes/spice2: Removed or incorporated into
+  NOTES.
 
-	* *: replaced malloc, realloc and free calls to use tmalloc,
-	trealloc and txfree.
+  * *: replaced malloc, realloc and free calls to use tmalloc,
+  trealloc and txfree.
 
 2000-09-05  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* ???: Paolo and I have integrated patches from Alan Gillespie
-	<Alan.Gillespie@analog.com>.
+  * ???: Paolo and I have integrated patches from Alan Gillespie
+  <Alan.Gillespie@analog.com>.
 
 2000-07-28  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* tests/polezero/*.out: Changed the content of these files because
-	the bug that caused the incorrect pole-zero results have been
-	traced to src/spicelib/analysis/cktpzstr.c.
+  * tests/polezero/*.out: Changed the content of these files because
+  the bug that caused the incorrect pole-zero results have been
+  traced to src/spicelib/analysis/cktpzstr.c.
 
 2000-07-05  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* src/devices/dev.c: Added first_device() and next_device() to
-	abstract manipulations to the devices list.  Now change all the
-	code that uses direct access to these functions...
+  * src/devices/dev.c: Added first_device() and next_device() to
+  abstract manipulations to the devices list.  Now change all the
+  code that uses direct access to these functions...
 
 2000-07-03  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* src/parser/alias.c, src/parser/alias.h: contain frontend alias
-	command.  Moved them to src/frontend/com_alias.c and
-	src/frontend/com_alias.h.  Updated Makefile.am's as appropreate.
+  * src/parser/alias.c, src/parser/alias.h: contain frontend alias
+  command.  Moved them to src/frontend/com_alias.c and
+  src/frontend/com_alias.h.  Updated Makefile.am's as appropreate.
 
-	* src/parser/front.c, src/parser/front.h, src/parser/history.c,
-	src/parser/history.h, src/parser/modify.c, src/parser/modify.h,
-	src/parser/variable.c, src/parser/variable.h: Empty files.
-	Removed.
+  * src/parser/front.c, src/parser/front.h, src/parser/history.c,
+  src/parser/history.h, src/parser/modify.c, src/parser/modify.h,
+  src/parser/variable.c, src/parser/variable.h: Empty files.
+  Removed.
 
-	* src/include/spconfig.h: Removed spCOMPLEX,
-	spSEPARATED_COMPLEX_VECTORS and spCOMPATIBILITY defines.  This
-	made including this file from src/include/spmatrix.h unnecessary.
-	Moved this file to src/maths/sparse/spconfig.h.
+  * src/include/spconfig.h: Removed spCOMPLEX,
+  spSEPARATED_COMPLEX_VECTORS and spCOMPATIBILITY defines.  This
+  made including this file from src/include/spmatrix.h unnecessary.
+  Moved this file to src/maths/sparse/spconfig.h.
 
-	* src/include/spmatrix.h: Removed include of
-	src/include/spconfig.h.
-	
-	* src/maths/sparse/spalloc.c, src/maths/sparse/spbuild.c,
-	src/maths/sparse/spcombin.c, src/maths/sparse/spdefs.h,
-	src/maths/sparse/spfactor.c, src/maths/sparse/spoutput.c,
-	src/maths/sparse/spsmp.c, src/maths/sparse/spsolve.c,
-	src/maths/sparse/sputils.c: The other files affected by the
-	removal of spCOMPLEX, spSEPARATED_COMPLEX_VECTORS and
-	spCOMPATIBILITY defines.  Also: assertions are enabled by
-	default.
+  * src/include/spmatrix.h: Removed include of
+  src/include/spconfig.h.
+  
+  * src/maths/sparse/spalloc.c, src/maths/sparse/spbuild.c,
+  src/maths/sparse/spcombin.c, src/maths/sparse/spdefs.h,
+  src/maths/sparse/spfactor.c, src/maths/sparse/spoutput.c,
+  src/maths/sparse/spsmp.c, src/maths/sparse/spsolve.c,
+  src/maths/sparse/sputils.c: The other files affected by the
+  removal of spCOMPLEX, spSEPARATED_COMPLEX_VECTORS and
+  spCOMPATIBILITY defines.  Also: assertions are enabled by
+  default.
 
-	* src/include/smpdefs.h, src/maths/sparse/spsmp.c: SMPmatrix is
-	now a typedef for void, instead of char.  Updated all function
-	declarations to match this.  Also added function prototypes not
-	previously mentioned in src/include/smpdefs.h.
-	
-	* src/include/complex.h: Updates of cast from char * to void *
+  * src/include/smpdefs.h, src/maths/sparse/spsmp.c: SMPmatrix is
+  now a typedef for void, instead of char.  Updated all function
+  declarations to match this.  Also added function prototypes not
+  previously mentioned in src/include/smpdefs.h.
+  
+  * src/include/complex.h: Updates of cast from char * to void *
 
-	* src/analysis/cktsens.c: Matrices cannot be created non-complex.
-	Also added a check to detect an error condition on delta_Y =
-	spCreate(...).
+  * src/analysis/cktsens.c: Matrices cannot be created non-complex.
+  Also added a check to detect an error condition on delta_Y =
+  spCreate(...).
 
 
 2000-06-27  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* src/parser: Refactored commands from the frontend into the
-	frontend directory.  Major changes to organization, but not to
-	functionality.
+  * src/parser: Refactored commands from the frontend into the
+  frontend directory.  Major changes to organization, but not to
+  functionality.
 
 2000-06-19  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* src/analysis/cktask.c: moved to src/devices.
-	
-	* src/analysis/cktbindn.c: moved, renamed to
-	src/devices/cktbindnode.c.
-	
-	* src/analysis/cktfdev.c: moved, renamed to
-	src/devices/cktfinddev.c.
+  * src/analysis/cktask.c: moved to src/devices.
+  
+  * src/analysis/cktbindn.c: moved, renamed to
+  src/devices/cktbindnode.c.
+  
+  * src/analysis/cktfdev.c: moved, renamed to
+  src/devices/cktfinddev.c.
 
 2000-06-18  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* AUTHORS, doc/ngspice.texi: Included an acknowledgements
-	section.
+  * AUTHORS, doc/ngspice.texi: Included an acknowledgements
+  section.
 
 2000-06-16  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* src/frontend/doplot.c: Refactored into the following files:
-	src/frontend/com_asciiplot.c src/frontend/com_asciiplot.h
-	src/frontend/com_hardcopy.c src/frontend/com_hardcopy.h
-	src/frontend/com_plot.c src/frontend/com_plot.h
-	src/frontend/com_xgraph.c src/frontend/com_xgraph.h
-	src/frontend/plotting/plotit.c src/frontend/plotting/plotit.h
+  * src/frontend/doplot.c: Refactored into the following files:
+  src/frontend/com_asciiplot.c src/frontend/com_asciiplot.h
+  src/frontend/com_hardcopy.c src/frontend/com_hardcopy.h
+  src/frontend/com_plot.c src/frontend/com_plot.h
+  src/frontend/com_xgraph.c src/frontend/com_xgraph.h
+  src/frontend/plotting/plotit.c src/frontend/plotting/plotit.h
 
-	* src/frontend/Makefile.am src/frontend/plotting/Makefile.am:
-	Updated to match the new files.
+  * src/frontend/Makefile.am src/frontend/plotting/Makefile.am:
+  Updated to match the new files.
 
 2000-06-15  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* src/frontend/graphdb.c, src/frontend/graphdb.c,
-	src/frontend/Makefile.am, src/frontend/plotting/graphdb.c,
-	src/frontend/plotting/graphdb.c,
-	src/frontend/plotting/Makefile.am: Moved plotting specific files
-	into plotting directory.
+  * src/frontend/graphdb.c, src/frontend/graphdb.c,
+  src/frontend/Makefile.am, src/frontend/plotting/graphdb.c,
+  src/frontend/plotting/graphdb.c,
+  src/frontend/plotting/Makefile.am: Moved plotting specific files
+  into plotting directory.
 
 2000-06-05  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* tests/*: Added a little hierarchy to the tests.  Removed
-	config.sh in favor of check.sh.  This script does all checking.
-	Made names of the tests better reflect the circuit under test.
+  * tests/*: Added a little hierarchy to the tests.  Removed
+  config.sh in favor of check.sh.  This script does all checking.
+  Made names of the tests better reflect the circuit under test.
 
 2000-06-03  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* src/include/complex.h, src/include/macros.h,
-	src/include/memory.h, src/maths/sparse/spdefs.h: Moved definitions
-	of complex into complex.h.  There are three different ways to
-	declare a complex number in Spice.  We need further work to reduce
-	this to only one.
+  * src/include/complex.h, src/include/macros.h,
+  src/include/memory.h, src/maths/sparse/spdefs.h: Moved definitions
+  of complex into complex.h.  There are three different ways to
+  declare a complex number in Spice.  We need further work to reduce
+  this to only one.
 
-	* src/maths/cmaths/Makefile.am, src/maths/cmaths/.cvsignore,
-	src/maths/cmaths/test_cx_ph.c:  Added a new test and updated the
-	corresponding support files.
+  * src/maths/cmaths/Makefile.am, src/maths/cmaths/.cvsignore,
+  src/maths/cmaths/test_cx_ph.c:  Added a new test and updated the
+  corresponding support files.
 
 2000-06-02  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* src/circuit/inp2dot.c: Refactoring introduced a bug in the line
-	parsing.  Passing line as an extra parameter to the refactored
-	functions fixes the bug.
+  * src/circuit/inp2dot.c: Refactoring introduced a bug in the line
+  parsing.  Passing line as an extra parameter to the refactored
+  functions fixes the bug.
 
 2000-05-30  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* TODO: Updated.
+  * TODO: Updated.
 
-	* src/maths/cmaths/Makefile.am, src/maths/cmaths/test_cx_mag.c,
-	src/maths/cmaths/test_cx_j.c: Added first testcases for complex
-	math library.
+  * src/maths/cmaths/Makefile.am, src/maths/cmaths/test_cx_mag.c,
+  src/maths/cmaths/test_cx_j.c: Added first testcases for complex
+  math library.
 
 2000-05-25  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* src/circuit/inp2dot.c: First refactoring of INP2dot into smaller
-	functions.  Still needs work.
+  * src/circuit/inp2dot.c: First refactoring of INP2dot into smaller
+  functions.  Still needs work.
 
-	* src/circuit/sperror.c: Reworked, now much simpler.
+  * src/circuit/sperror.c: Reworked, now much simpler.
 
-	* src/include/inpdefs.h, src/include/sperror.h: Removed redundancy
-	in the definition of function prototypes.
+  * src/include/inpdefs.h, src/include/sperror.h: Removed redundancy
+  in the definition of function prototypes.
 
 2000-05-06  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* src/include/fte*: Broken header files into smaller pieces.  This
-	avoids long recompile times as less needs to be rebuilt on changes
-	to the header files.  Adjusted all callers to use the new header
-	files.  Left a warning message in the header file to indicate its
-	obsolescence.  You will see this message when compiling.
+  * src/include/fte*: Broken header files into smaller pieces.  This
+  avoids long recompile times as less needs to be rebuilt on changes
+  to the header files.  Adjusted all callers to use the new header
+  files.  Left a warning message in the header file to indicate its
+  obsolescence.  You will see this message when compiling.
 
-	* src/frontend/*: Reorganized part of the frontend commands into
-	their own source file.  Moved plotting parts into new plotting
-	directory.
+  * src/frontend/*: Reorganized part of the frontend commands into
+  their own source file.  Moved plotting parts into new plotting
+  directory.
 
-	* src/devices/*: Removed all RCS log and rcsid from the devices
-	source files.  They only give extra clutter and all the
-	information you need is available through CVS.
+  * src/devices/*: Removed all RCS log and rcsid from the devices
+  source files.  They only give extra clutter and all the
+  information you need is available through CVS.
 
 2000-05-04  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* src/maths/ni/nipzmeth.c: Corrected an overeager deletion.
+  * src/maths/ni/nipzmeth.c: Corrected an overeager deletion.
 
 2000-05-03  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* source tree: removed most of `#ifdef notdef' and made converted
-	some function calls from K&R -> ANSI.
+  * source tree: removed most of `#ifdef notdef' and made converted
+  some function calls from K&R -> ANSI.
 
 2000-05-01  Arno W. Peters  <A.W.Peters@ieee.org>
 
-	* Added .cvsignore files to prevent CVS from marking generated
-	files as unknown.
+  * Added .cvsignore files to prevent CVS from marking generated
+  files as unknown.
 
-	* src/devices/Makefile.am, src/devices/dev.c, src/devices/dev.h,
-	src/Makefile.am, src/ngspice.c, src/main.c: Refactored devices
-	initialization code into the devices dir.
+  * src/devices/Makefile.am, src/devices/dev.c, src/devices/dev.h,
+  src/Makefile.am, src/ngspice.c, src/main.c: Refactored devices
+  initialization code into the devices dir.
 
-	* tests/respart.cir, tests/respart.out, tests/respart.sh:
-	additional tests for resistor.
+  * tests/respart.cir, tests/respart.out, tests/respart.sh:
+  additional tests for resistor.
 
 1999-12-07  Arno Peters  <A.W.Peters@ieee.org>
 
-	* source tree: Added MAINTAINERCLEANFILES to Makefile.am to
-	eliminate automatically generated cruft from patches.  To create a
-	minimal patch between two trees, just do `make maintainer-clean'
-	on both trees and run `diff -ruN tree1 tree2'.
+  * source tree: Added MAINTAINERCLEANFILES to Makefile.am to
+  eliminate automatically generated cruft from patches.  To create a
+  minimal patch between two trees, just do `make maintainer-clean'
+  on both trees and run `diff -ruN tree1 tree2'.
 
 1999-10-15  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* source tree: entirely modified by Arno Peters (after discussion
-	on the mailing list)
+  * source tree: entirely modified by Arno Peters (after discussion
+  on the mailing list)
 
 1999-09-06  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* AUTHORS: added list provided by Arno Peters
+  * AUTHORS: added list provided by Arno Peters
 
-	* Applied patch supplied by Arno
+  * Applied patch supplied by Arno
 
 1999-09-01  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* AUTHORS: some additions
+  * AUTHORS: some additions
 
-	* FAQ: a few minor corrections
+  * FAQ: a few minor corrections
 
 1999-08-31  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* configure.in: config.h now in top directory
+  * configure.in: config.h now in top directory
 
-	* All Makefile.am's: removed useless 'DEFS' line
+  * All Makefile.am's: removed useless 'DEFS' line
 
 1999-08-30  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* FAQ: added the FAQ to the distribution
+  * FAQ: added the FAQ to the distribution
 
 1999-08-28  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* Removed mfb from build - nutmeg doesn't use it on Unix.
+  * Removed mfb from build - nutmeg doesn't use it on Unix.
 
 1999-08-23  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* configure.in: added tests ('make check') 
+  * configure.in: added tests ('make check') 
 
-	* ng-spice.patch: added cleanup patch by Arno Peters
+  * ng-spice.patch: added cleanup patch by Arno Peters
 
 1999-08-08  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* configure.in: added some features
+  * configure.in: added some features
 
 1999-08-03  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* configure.in: added a whole bunch of tests!
+  * configure.in: added a whole bunch of tests!
 
 1999-08-02  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* configure.in: added --with-checkergcc option (experimental!)
-	added some maths checks
+  * configure.in: added --with-checkergcc option (experimental!)
+  added some maths checks
 
 1999-07-31  Emmanuel Rouat  <emmanuel.rouat@wanadoo.fr>
 
-	* configure.in: made X11 tests more efficient
+  * configure.in: made X11 tests more efficient
 
 
 ng-spice-0.0:
 -------------
-	* changed HAX_X11 define to XMISSING_DISPLAY supplied in config.h
+  * changed HAX_X11 define to XMISSING_DISPLAY supplied in config.h
 
-	* added 'Changelog' files in all subdirectories
+  * added 'Changelog' files in all subdirectories
 
-	* added '--enable-ansi' option to configure
+  * added '--enable-ansi' option to configure
 
-	* put src/lib/dev/devsup.c into src/lib/dev/devsup/
+  * put src/lib/dev/devsup.c into src/lib/dev/devsup/
 
-	* added header files into Makefile.am's
-	
+  * added header files into Makefile.am's
+  
 Chianti:
 --------
-	(27/07/99)
+  (27/07/99)
 
-	* added some tests to configure.in (ncurses/termcap, xaw....)
+  * added some tests to configure.in (ncurses/termcap, xaw....)
 
-	* cleaned up some directories (examples, patches..)
+  * cleaned up some directories (examples, patches..)
 
-	* removed all .orig files 
-	
+  * removed all .orig files 
+  
 Pizza:
 ------
-	(25/07/99)
+  (25/07/99)
 
-	* added installation of man pages
+  * added installation of man pages
 
-	* emptied 'COPYING' file until we know what to put in it
-	
-	* fixed missing install of help and init files (created tune.c.in
-	to support this)
+  * emptied 'COPYING' file until we know what to put in it
+  
+  * fixed missing install of help and init files (created tune.c.in
+  to support this)
 
-	* added missing -DWANT_X11 and -DWANT_MFB in several compiles
-	(fixed some headers in: src/lib/fte/x11.c
-	                        src/lib/fte/x11disp.c )
-	
-	
+  * added missing -DWANT_X11 and -DWANT_MFB in several compiles
+  (fixed some headers in: src/lib/fte/x11.c
+                          src/lib/fte/x11disp.c )
+  
+  
 Spaghetti:
 ----------
-	(25/07/99)
+  (25/07/99)
 
-	- first attempt at autoconf/automake support
+  - first attempt at autoconf/automake support
 
-	- based on spice3f5-chili, hardly anything touched on it.
+  - based on spice3f5-chili, hardly anything touched on it.
