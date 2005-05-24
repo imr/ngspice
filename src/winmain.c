@@ -4,6 +4,7 @@
 	Autor: Holger Vogt
 	Stand: 01.05.2000
 	Stand: 12.12.2001
+ $Id$
 */
 #include "config.h"
 #ifdef HAS_WINDOWS
@@ -33,12 +34,12 @@
 #include <signal.h>
 #include <ctype.h>
 
-#include "bool.h"					// bool defined as unsigned char
-// Konstanten
+#include "bool.h"			// bool defined as unsigned char
+/* Constants */
 #define TBufSize 2048			// Groesze des Textbuffers
 #define CR VK_RETURN			// Carriage Return
 #define LF 10				// Line Feed
-#define SE 0				// StringEnde
+#define SE 0				// String termination
 #define BorderSize 8			// Umrandung des Stringfeldes
 #define SBufSize 100			// Groesze des Stringbuffers
 #define IOBufSize 1024			// Groesze des printf-Buffers
@@ -49,26 +50,26 @@
 #define SourceLength 400		// Platz fuer Source File Name
 #define AnalyseLength 100		// Platz fuer Analyse
 
-// Typen
+/* Types */
 typedef char SBufLine[SBufSize+1];	// Eingabezeile
 
-// Globale Variablen
-HINSTANCE 		hInst;			// Instanz der Applikation
-int 			WinLineWidth = 640;	// Fensterbreite
-HWND       	hwMain;				// Hauptfenster der Applikation
-HWND       	twText;				// TextFenster
+/* Global variables */
+HINSTANCE 		hInst;			/* Application instance */
+int 			WinLineWidth = 640;	/* Window width */
+HWND       	hwMain;				/* Main Window of the application */
+HWND       	twText;				/* Text window */
 HWND			swString;		// Eingabezeile
 HWND			hwStatus;		// Status-Balken
 HWND			hwSource;		// Anzeige des Source-Namens
 HWND			hwAnalyse;		// Anzeige des Analyse-Fensters
 static int		nReturnCode	= 0;	// Rueckgabewert von WinMain
 static int		nShowState;		// Anzeigemodus des Hauptfensters
-static WNDCLASS hwMainClass;			// Klassendefinition des Hauptfensters
-static LPCTSTR	hwClassName  = "SPICE_TEXT_WND";// Klassenname des Hauptfensters
-static LPCTSTR hwWindowName = "ngspice 14";	// Name des Fensters
-static WNDCLASS twTextClass;			// Klassendefinition des Textfensters
-static LPCTSTR twClassName  = "SPICE_TEXT_BOX";	// Klassenname der Textbox
-static LPCTSTR twWindowName = "TextOut";	// Name des Fensters
+static WNDCLASS hwMainClass;			/* Class definition for the main window */
+static LPCTSTR	hwClassName  = "SPICE_TEXT_WND";/* Class name of the main window */
+static LPCTSTR hwWindowName = PACKAGE_STRING;	/* main window displayed name */
+static WNDCLASS twTextClass;			/* Class definition for the text box */
+static LPCTSTR twClassName  = "SPICE_TEXT_BOX";	/* Class name for the text box */
+static LPCTSTR twWindowName = "TextOut";	/* text box name */
 static size_t	TBufEnd = 0;			// Zeigt auf \0
 static char TBuffer [TBufSize+1];		// Textbuffer
 static SBufLine SBuffer;			// Eingabebuffer
@@ -717,7 +718,7 @@ outahere:
 
 
 
-// Unser main
+/* Main entry point for our Windows application */
 #ifdef _MSC_VER
 /* Microsoft VC++ specific stuff */
 #pragma warn -par
@@ -729,8 +730,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	
 	int argc;
 	char **argv;
-
-
 
 	// globale Variablen fuellen
 	hInst = hInstance;
