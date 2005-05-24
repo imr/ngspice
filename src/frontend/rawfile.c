@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -43,7 +44,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     wordlist *wl;
     struct variable *vv;
     double dd;
-    char *buf[BSIZE_SP];
+    char buf[BSIZE_SP];
 
     if (!cp_getvar("nopadding", VT_BOOL, (char *) &raw_padding))
         raw_padding = FALSE;
@@ -121,7 +122,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     fprintf(fp, "No. Points: %d\n", length);
     if (numdims > 1) {
     	dimstring(dims, numdims, buf);
-	fprintf(fp, "Dimensions: %s\n", *buf);
+	fprintf(fp, "Dimensions: %s\n", buf);
     }
 
     for (wl = pl->pl_commands; wl; wl = wl->wl_next)
@@ -178,7 +179,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 	}
 	if (writedims) {
 	    dimstring(v->v_dims, v->v_numdims, buf);	
-	    fprintf(fp, " dims=%s",*buf);
+	    fprintf(fp, " dims=%s",buf);
         }
         (void) putc('\n', fp);
     }
