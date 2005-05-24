@@ -2,6 +2,11 @@
 
   *  Fixed a divide-by-zero bug in the MOS level=2 device model
      the fix was supplied by Hitoshi Tanaka.
+     
+  *  Fixed a 'core-dump' that could be caused by the interactive 'write' command
+     when the plot contains more than one dimension. This was due to improper
+     use of a buffer in rawfile.c as pointed out by Dietmar Warning. Bug also
+     affected ngsconvert.
 
 2005-05-22  Steven Borley <steven.borley@virgin.net>
 
