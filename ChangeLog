@@ -2,6 +2,9 @@
 
   *  Fixed bug with define (see bug reference [ 999546 ] 'define' is broken 
      in ngspice-15).
+     
+  *  Fixed bug with 'plot title title_name' (see bug [ 557638 ] plot 
+     segmentation fault).
 
 2005-05-23  Steven Borley <steven.borley@virgin.net>
 

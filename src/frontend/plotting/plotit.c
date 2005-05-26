@@ -1,3 +1,4 @@
+/* $Id$ */
 #include <ngspice.h>
 #include <bool.h>
 #include <wordlist.h>
@@ -273,13 +274,18 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* Now extract all the parameters. */
 
     /* In case the parameter is the first on the line, we need a
-     * "buffer" word...
+     * "buffer" word. Use previous word up the chain if available,
+     * Otherwise create one.
      */
-    tw = alloc(struct wordlist);
-    wl->wl_prev = tw;
-    tw->wl_next = wl;
-    wl = tw;
-    tw->wl_word = "";
+    if(wl->wl_prev) {
+	wl = wl->wl_prev;
+    } else {
+	tw = alloc(struct wordlist);
+	wl->wl_prev = tw;
+	tw->wl_next = wl;
+	wl = tw;
+	tw->wl_word = "";
+    }
 
     sameflag = getflag(wl, "samep");
 
@@ -518,7 +524,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         nointerp = TRUE;
 
     wl = wl->wl_next;
-    tfree(tw);
+    if(tw) tfree(tw);
     if (!wl) {
         fprintf(cp_err, "Error: no vectors given\n");
         goto quit1;
