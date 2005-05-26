@@ -66,6 +66,7 @@ ft_getpnames(wordlist *wl, bool check)
 
         if (pn) {
             lpn->pn_next = p;
+	    pn->pn_next->pn_use++;
             lpn = p;
         } else
             pn = lpn = p;
@@ -713,7 +714,7 @@ struct func func_uminus = { "minus", cx_uminus };
 
 struct func func_not = { "not", cx_not };
 
-/* Binop node. */
+/* Binary operator node. */
 
 static struct pnode *
 mkbnode(int opnum, struct pnode *arg1, struct pnode *arg2)
@@ -728,16 +729,20 @@ mkbnode(int opnum, struct pnode *arg1, struct pnode *arg2)
         fprintf(cp_err, "mkbnode: Internal Error: no such op num %d\n",
                     opnum);
     p = alloc(struct pnode);
+    p->pn_use = 0;
     p->pn_value = NULL;
+    p->pn_name = NULL;	/* sjb */
     p->pn_func = NULL;
     p->pn_op = o;
     p->pn_left = arg1;
+    if(p->pn_left) p->pn_left->pn_use++;
     p->pn_right = arg2;
+    if(p->pn_right) p->pn_right->pn_use++;
     p->pn_next = NULL;
     return (p);
 }
 
-/* Unop node. */
+/* Unary operator node. */
 
 static struct pnode *
 mkunode(int op, struct pnode *arg)
@@ -754,9 +759,12 @@ mkunode(int op, struct pnode *arg)
                 op);
 
     p->pn_op = o;
+    p->pn_use = 0;
     p->pn_value = NULL;
+    p->pn_name = NULL;	/* sjb */
     p->pn_func = NULL;
     p->pn_left = arg;
+    if(p->pn_left) p->pn_left->pn_use++;
     p->pn_right = NULL;
     p->pn_next = NULL;
     return (p);
@@ -818,11 +826,13 @@ mkfnode(char *func, struct pnode *arg)
     }
 
     p = alloc(struct pnode);
+    p->pn_use = 0;
     p->pn_name = NULL;
     p->pn_value = NULL;
     p->pn_func = f;
     p->pn_op = NULL;
     p->pn_left = arg;
+    if(p->pn_left) p->pn_left->pn_use++;
     p->pn_right = NULL;
     p->pn_next = NULL;
     return (p);
@@ -840,6 +850,7 @@ mknnode(double number)
     p = alloc(struct pnode);
     v = alloc(struct dvec);
     ZERO(v, struct dvec);
+    p->pn_use = 0;
     p->pn_name = NULL;
     p->pn_value = v;
     p->pn_func = NULL;
@@ -875,6 +886,7 @@ mksnode(char *string)
     struct pnode *p;
 
     p = alloc(struct pnode);
+    p->pn_use = 0;
     p->pn_name = NULL;
     p->pn_func = NULL;
     p->pn_op = NULL;
@@ -910,18 +922,32 @@ mksnode(char *string)
     return (p);
 }
 
-
+/* Don't call this directly, always use the free_pnode() macro. 
+   The linked pnodes do not necessarily form a perfect tree as some nodes get
+   reused.  Hence, in this recursive walk trough the 'tree' we only free node
+   that have their pn_use value at zero. Nodes that have pn_use values above
+   zero have the link severed and their pn_use value decremented.
+   In addition, we don't walk past nodes with pn_use values avoid zero, just
+   in case we have a circular reference (this probable does not happen in
+  practice, but it does no harm playing safe) */
 void
-free_pnode(struct pnode *t)
+free_pnode_x(struct pnode *t)
 {
     if (!t)
 	return;
-    free_pnode(t->pn_left);
-    free_pnode(t->pn_right);
-    free_pnode(t->pn_next);
-    tfree(t->pn_name); /* va: it is a copy() of original string, can be free'd */
-    if (t->pn_value)
-        vec_free(t->pn_value); /* patch by Stefan Jones */
-    tfree(t);
+    
+    /* don't walk past node used elsewhere. We decrement the pn_use value here,
+       but the link gets severed by the action of the free_pnode() macro */
+    if(t->pn_use)
+	t->pn_use--;
+    else {
+	free_pnode(t->pn_left);
+	free_pnode(t->pn_right);
+	free_pnode(t->pn_next);
+	tfree(t->pn_name); /* va: it is a copy() of original string, can be free'd */
+	if (t->pn_value)
+	    vec_free(t->pn_value); /* patch by Stefan Jones */
+	tfree(t);
+    }
 }
 

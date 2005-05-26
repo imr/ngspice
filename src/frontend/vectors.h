@@ -1,6 +1,7 @@
 /*************
  * Header file for vectors.c
  * 1999 E. Rouat
+ * $Id$
  ************/
 
 #ifndef VECTORS_H_INCLUDED
@@ -16,7 +17,8 @@ struct dvec * vec_copy(struct dvec *v);
 struct plot * plot_alloc(char *name);
 void vec_new(struct dvec *d);
 void vec_gc(void);
-void vec_free(struct dvec *v);
+#define vec_free(ptr)  vec_free_x(ptr); ptr=NULL
+void vec_free_x(struct dvec *v);
 bool vec_eq(struct dvec *v1, struct dvec *v2);
 char * vec_basename(struct dvec *v);
 void plot_setcur(char *name);

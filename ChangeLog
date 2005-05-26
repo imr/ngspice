@@ -1,3 +1,8 @@
+2005-05-26  Steven Borley <steven.borley@virgin.net>
+
+  *  Fixed bug with define (see bug reference [ 999546 ] 'define' is broken 
+     in ngspice-15).
+
 2005-05-23  Steven Borley <steven.borley@virgin.net>
 
   *  Fixed a divide-by-zero bug in the MOS level=2 device model

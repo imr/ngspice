@@ -1,3 +1,4 @@
+/* $Id$ */
 #ifndef _PNODE_H
 #define _PNODE_H
 
@@ -9,6 +10,7 @@ struct pnode {
     struct pnode *pn_left;	/* Left branch or function argument. */
     struct pnode *pn_right;	/* Right branch. */
     struct pnode *pn_next;	/* For expression lists. */
+    int pn_use;			/* usage counter */
 } ;
 
 #endif

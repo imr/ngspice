@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -339,25 +340,32 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
     } else if (tree->pn_func) {
 
         pn = alloc(struct pnode);
+	pn->pn_use = 0;
+	pn->pn_name = NULL;
         pn->pn_value = NULL;
         /* pn_func are pointers to a global constant struct */	
         pn->pn_func = tree->pn_func;
         pn->pn_op = NULL;
         pn->pn_left = trcopy(tree->pn_left, args, nn);
+	pn->pn_left->pn_use++;
         pn->pn_right = NULL;
         pn->pn_next = NULL;
 
     } else if (tree->pn_op) {
 
         pn = alloc(struct pnode);
+	pn->pn_use = 0;
+	pn->pn_name = NULL;
         pn->pn_value = NULL;
         pn->pn_func = NULL;
         /* pn_op are pointers to a global constant struct */	
         pn->pn_op = tree->pn_op;
         pn->pn_left = trcopy(tree->pn_left, args, nn);
-        if (pn->pn_op->op_arity == 2)
+	pn->pn_left->pn_use++;
+        if (pn->pn_op->op_arity == 2) {
             pn->pn_right = trcopy(tree->pn_right, args, nn);
-	else
+	    pn->pn_right->pn_use++;
+	} else
             pn->pn_right = NULL;
         pn->pn_next = NULL;
     } else {

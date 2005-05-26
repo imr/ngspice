@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group 
+$Id$
 **********/
 
 /*
@@ -590,7 +591,7 @@ vec_gc(void)
  */
 
 void
-vec_free(struct dvec *v)
+vec_free_x(struct dvec *v)
 {
     struct plot *pl;
     struct dvec *lv;
