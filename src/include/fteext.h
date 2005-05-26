@@ -352,7 +352,8 @@ extern struct func ft_funcs[];
 extern struct func func_not;
 extern struct func func_uminus;
 extern struct pnode * ft_getpnames(wordlist *wl, bool check);
-extern void free_pnode();
+#define free_pnode(ptr)  free_pnode_x(ptr); ptr=NULL
+extern void free_pnode_x();
 
 /* plotcurve.c */
 
@@ -477,7 +478,8 @@ extern struct plot *plot_alloc();
 extern struct plot *plot_list;
 extern int plotl_changed;
 extern void plot_add();
-extern void vec_free();
+#define vec_free(ptr)  vec_free_x(ptr); ptr=NULL
+extern void vec_free_x();
 extern void vec_gc();
 extern void ft_loadfile();
 extern void vec_new();
