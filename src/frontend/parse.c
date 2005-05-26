@@ -936,11 +936,12 @@ free_pnode_x(struct pnode *t)
     if (!t)
 	return;
     
-    /* don't walk past node used elsewhere. We decrement the pn_use value here,
+    /* don't walk past nodes used elsewhere. We decrement the pn_use value here,
        but the link gets severed by the action of the free_pnode() macro */
-    if(t->pn_use)
+    if(t->pn_use>1)
 	t->pn_use--;
     else {
+	/* pn_use is now 1, so its safe to free the pnode */
 	free_pnode(t->pn_left);
 	free_pnode(t->pn_right);
 	free_pnode(t->pn_next);
