@@ -279,6 +279,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
      */
     if(wl->wl_prev) {
 	wl = wl->wl_prev;
+	tw = NULL;  /* Not used, so must be NULL */
     } else {
 	tw = alloc(struct wordlist);
 	wl->wl_prev = tw;
