@@ -4670,19 +4670,19 @@ TEXT: H traced or plotted (see below) it  is  also  saved.   For
 TEXT: H backward  compatibility,  if  there are no save commands
 TEXT: H given, all outputs are saved.
 TEXT: H
-TEXT:  H When the keyword "all" or the keyword "allv", appears in 
-TEXT:  H the  save  command, all  node  voltages, voltage  source 
-TEXT:  H currents and inductor  currents are saved in addition to 
-TEXT:  H any other values listed.  If the keyword  "alli" appears 
-TEXT:  H in  the  save command, all  devices  currents are  saved.
-TEXT:  H 
-TEXT:  H Note: the current implementation saves only the currents 
-TEXT:  H       of devices which have internal nodes, i.e. MOSFETs 
-TEXT:  H       with non zero RD and RS; BJTs with non-zero RC, RB 
-TEXT:  H       and RE; DIODEs with non-zero RS; etc. Resistor and
-TEXT:  H       capacitor currents are not  saved with this option. 
-TEXT:  H       These deficiencies will be addressed in a later 
-TEXT:  H       revision.
+TEXT: H When the keyword "all" or the keyword "allv", appears in
+TEXT: H the  save  command, all  node  voltages, voltage  source
+TEXT: H currents and inductor  currents are saved in addition to
+TEXT: H any other values listed.  If the keyword  "alli" appears
+TEXT: H in  the  save command, all  devices  currents are  saved.
+TEXT: H 
+TEXT: H Note: the current implementation saves only the currents
+TEXT: H       of devices which have internal nodes, i.e. MOSFETs
+TEXT: H       with non zero RD and RS; BJTs with non-zero RC, RB
+TEXT: H       and RE; DIODEs with non-zero RS; etc. Resistor and
+TEXT: H       capacitor currents are not  saved with this option.
+TEXT: H       These deficiencies will be addressed in a later
+TEXT: H       revision.
 
 SUBJECT: Sens
 TITLE: Sens*:  Run a sensitivity analysis
