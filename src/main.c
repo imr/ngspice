@@ -4,7 +4,9 @@
 
    Author: 1985 Wayne A. Christopher
 
-   The main routine for ngspice */
+   The main routine for ngspice
+   $Id$
+*/
 
 #include <ngspice.h>
 
@@ -23,13 +25,14 @@
 #include <iferrmsg.h>
 #include <ftedefs.h>
 #include <devdefs.h>
-#include <spicelib/devices/dev.h>
-#include <spicelib/analysis/analysis.h>
-#include <misc/ivars.h>
-#include <misc/getopt.h>
-#include <frontend/resource.h>
-#include <frontend/variable.h>
-#include <frontend/display.h>  /*  added by SDB to pick up Input() fcn  */
+#include "spicelib/devices/dev.h"
+#include "spicelib/analysis/analysis.h"
+#include "misc/ivars.h"
+#include "misc/getopt.h"
+#include "frontend/resource.h"
+#include "frontend/variable.h"
+#include "frontend/display.h"  /*  added by SDB to pick up Input() fcn  */
+#include "frontend/signal_handler.h"
 
 /* saj xspice headers */
 #ifdef XSPICE
@@ -148,8 +151,6 @@ double EpsNorm, VNorm, NNorm, LNorm, TNorm, JNorm, GNorm, ENorm;
 #endif /* CIDER */
 
 struct variable *(*if_getparam)( );
-
-JMP_BUF jbuf;
 
 static int started = FALSE;
 
@@ -886,21 +887,21 @@ main(int argc, char **argv)
     /* Set up signal handling */
     if (!ft_batchmode) {
         /*  Set up interrupt handler  */
-        (void) signal(SIGINT, ft_sigintr);
+        (void) signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
 
         /* floating point exception  */
-        (void) signal(SIGFPE, sigfloat);
+        (void) signal(SIGFPE, (SIGNAL_FUNCTION) sigfloat);
 
 #ifdef SIGTSTP
-        signal(SIGTSTP, sigstop);
+        signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
 #endif
     }
 
     /* Set up signal handling for fatal errors. */
-    signal(SIGILL, sigill);
+    signal(SIGILL, (SIGNAL_FUNCTION) sigill);
 
 #ifdef SIGBUS
-    signal(SIGBUS, sigbus);
+    signal(SIGBUS, (SIGNAL_FUNCTION) sigbus);
 #endif
 #ifdef SIGSEGV
 /* Want core files!
@@ -908,7 +909,7 @@ main(int argc, char **argv)
  */
 #endif
 #ifdef SIGSYS
-    signal(SIGSYS, sig_sys);
+    signal(SIGSYS, (SIGNAL_FUNCTION) sig_sys);
 #endif
 
     /* load user's initialisation file */
