@@ -1,5 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
+$Id$
 **********/
 
 #include <ngspice.h>
@@ -7,6 +8,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include <ftedev.h>
 
 #include "plot5.h"
+#include "graf.h"
+#include "../error.h"
 
 static FILE *plotfile;
 
@@ -17,10 +20,6 @@ static FILE *plotfile;
 static char *linestyle[] = { "solid", "dotted", "longdashed", "shortdashed",
         "dotdashed" };
 static int currentlinestyle = SOLID;
-
-
-extern void gr_relinestyle (GRAPH *graph);
-extern void internalerror (char *message);
 
 int 
 Plt5_Init(void)

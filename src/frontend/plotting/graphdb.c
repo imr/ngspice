@@ -1,5 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
+$Id$
 **********/
 
 /*
@@ -12,7 +13,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include <fteext.h>
 
 #include "graphdb.h"
-
+#include "../breakp2.h"
 
 
 /* invariant:  currentgraph contains the current graph */
@@ -145,7 +146,6 @@ DestroyGraph(int id)
     LISTGRAPH *list, *lastlist;
     struct _keyed *k, *nextk;
     struct dveclist *d, *nextd;
-    extern struct dbcomm *dbs;
     struct dbcomm *db;
 
     list = GBucket[id % NUMGBUCKETS].list;

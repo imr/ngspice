@@ -1,12 +1,12 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jeffrey M. Hsu
+$Id$
 **********/
 
 /*
 	X11 drivers.
 */
-
 
 #include <ngspice.h>
 
@@ -36,15 +36,15 @@ Author: 1988 Jeffrey M. Hsu
 #  include <X11/Xaw/Form.h>
 #  include <X11/Shell.h>
 
-#include "x11.h"
-
-static void linear_arc(int x0, int y0, int radius, double theta1, double theta2);
-
-
 #  ifdef DEBUG
-extern int _Xdebug;
+#     include <X11/Xlib.h> /* for _Xdebug */
 #  endif
 
+#include "x11.h"
+#include "graphdb.h"
+#include "display.h"
+#include "graf.h"
+#include "../error.h"
 
 #define RAD_TO_DEG	(180.0 / M_PI)
 
@@ -67,7 +67,6 @@ typedef struct x11info {
 
 #define DEVDEP(g) (*((X11devdep *) (g)->devdep))
 
-static void linear_arc(int x0, int y0, int radius, double theta1, double theta2);
 static Display *display;
 static GC xorgc;
 static char *xlinestyles[NUMLINESTYLES] = {	/* test patterns XXX */
@@ -86,23 +85,11 @@ static GRAPH *lasthardcopy; /* graph user selected */
 static int X11_Open = 0;
 static int numdispplanes;
 
-
-extern void internalerror (char *message);
-extern void externalerror (char *message);
+/* static functions */
 static void initlinestyles (void);
 static void initcolors (GRAPH *graph);
-extern void PushGraphContext (GRAPH *graph);
-extern void SetColor (int colorid);
-extern void Text (char *text, int x, int y);
-extern void SaveText (GRAPH *graph, char *text, int x, int y);
-extern void PopGraphContext (void);
-void slopelocation (GRAPH *graph, int x0, int y0);
-void zoomin (GRAPH *graph);
 static void X_ScreentoData (GRAPH *graph, int x, int y, double *fx, double *fy);
-extern int DestroyGraph (int id);
-extern void gr_redraw (GRAPH *graph);
-extern void gr_resize (GRAPH *graph);
-
+static void linear_arc(int x0, int y0, int radius, double theta1, double theta2);
 
 int
 errorhandler(Display *display, XErrorEvent *errorev)

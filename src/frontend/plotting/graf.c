@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jeffrey M. Hsu
+$Id$
 **********/
 
 /*
@@ -8,7 +9,6 @@ Author: 1988 Jeffrey M. Hsu
  *      and gr_point, expect for the gr_ grid routines.
  *
  */
-
 
 #include <ngspice.h>
 #include "cpdefs.h"		/* for VT_ */
@@ -23,23 +23,20 @@ Author: 1988 Jeffrey M. Hsu
 #include "ftedev.h"
 #include <terminal.h>
 #include <variable.h>
-#include "../terminal.h"
 #include "graf.h"
-
+#include "graphdb.h"
+#include "grid.h"
+#include "../terminal.h"
+#include "../breakp2.h"
+#include "../error.h"
+#include "../display.h"
+#include "../runcoms.h"
 
 /* static declarations */
 static void gr_start_internal(struct dvec *dv, bool copyvec);
 static int iplot(struct plot *pl, int id);
 static void set(struct plot *plot, struct dbcomm *db, bool unset, int mode);
 static char * getitright(char *buf, double num);
-
-
-extern struct dbcomm *dbs;  /* for iplot */
-
-/* note: let's try to get rid of these */
-/* global variables */
-/* Graphics mode in progress, so signal handlers know to call gr_clean */
-/* bool gr_gmode = FALSE; */
 
 /* for legends, set in gr_start, reset in gr_iplot and gr_init */
 static int plotno;
@@ -69,23 +66,6 @@ double *readtics(char *string);
  *    leave to lower level routines
  *
  */
-
-extern void SetGraphContext (int graphid);
-extern void internalerror (char *message);
-extern int NewViewport (GRAPH *pgraph);
-extern void DevClear (void);
-extern void gr_redrawgrid (GRAPH *graph);
-extern void DatatoScreen (GRAPH *graph, double x, double y, int *screenx, int *screeny);
-extern void SetLinestyle (int linestyleid);
-extern void SetColor (int colorid);
-extern void DrawLine (int x1, int y1, int x2, int y2);
-extern void Text (char *text, int x, int y);
-extern void SaveText (GRAPH *graph, char *text, int x, int y);
-extern void Update (void);
-extern void PushGraphContext (GRAPH *graph);
-extern void PopGraphContext (void);
-extern void Input (REQUEST *request, RESPONSE *response);
-extern int DestroyGraph (int id);
 
 int
 gr_init(double *xlims, double *ylims, /* The size of the screen. */
@@ -640,8 +620,6 @@ gr_restoretext(GRAPH *graph)
  * vector, namely, that vector has the same color throughout.  This is
  * another reason why we need to pull color and linestyle out of dvec
  * XXX Or maybe even something more drastic ?? */
-
-extern bool resumption;
 
 static int
 iplot(struct plot *pl, int id)
