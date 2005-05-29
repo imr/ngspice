@@ -5,15 +5,7 @@
 
 /*** interface to spice frontend  subckt.c ***/
 
-#define  NUPADECKCOPY 0
-#define  NUPASUBSTART 1
-#define  NUPASUBDONE  2
-#define  NUPAEVALDONE 3
-
-extern char * nupa_copy(char *s, int linenum);
-extern int    nupa_eval(char *s, int linenum);
-extern int    nupa_signal(int sig, char *info);
-extern void   nupa_scan(char * s, int linenum);
+#include "numpaif.h"
 
 /***** numparam internals ********/
 
