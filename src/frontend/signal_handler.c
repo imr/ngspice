@@ -29,16 +29,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <editline/readline.h>
 #endif /* HAVE_BSDEDITLINE */
 
-extern JMP_BUF jbuf;
+JMP_BUF jbuf;
 
 /* The (void) signal handlers... SIGINT is the only one that gets reset (by
  * cshpar) so it is global. They are ifdef BSD because of the sigmask
  * stuff in sigstop. We set the interrupt flag and return if ft_setflag
  * is TRUE.
  */
-
-
-extern pid_t getpid (void);
 
 /*  invoke this function upon keyboard interrupt  */
 RETSIGTYPE
