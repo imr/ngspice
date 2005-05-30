@@ -1,3 +1,28 @@
+2005-05-30
+  
+  *  Corrected return types (where necessary) for the functions that make up the
+     devices[] array initialised in src/frontend/display.c, and used specific
+     #includes rather than extern references. Added new headers as required.
+     
+  *  Moved jbuf from src/main.c to src/frontend/signal_handler.c 
+  
+  *  Tidy up of the header files in src/frontend and sub-directories. Motivation
+     is to remove extern declarations within .c files and place in .h files. New
+     header files where necessary.
+
+2005-05-28  Steven Borley <steven.borley@virgin.net>
+
+  *  Fix bug introduced in my last change. Fix supplied by Hitoshi Tanaka.
+     Bug can cause a segmentation fault.
+     
+  *  Fixed the format of section 5.3.37. Save* in src/ngsoice.txt
+  
+  *  In src/frontend/plotting replaced extern references in .c files wiith
+     #include of suitable header files.
+    
+  *  Added src/frontend/numparam/numpaif.h for the external interface to the
+     numparam library.
+
 2005-05-26  Steven Borley <steven.borley@virgin.net>
 
   *  Fixed bug with define (see bug reference [ 999546 ] 'define' is broken 
