@@ -1,8 +1,13 @@
+/*************
+* com_shell.c
+* $Id$
+************/
+
 #include <config.h>
 #include <ngspice.h>
 #include <wordlist.h>
 
-#include <cpextern.h>
+#include "com_shell.h"
 
 
 /* Fork a shell. */

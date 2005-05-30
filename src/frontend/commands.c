@@ -1,4 +1,5 @@
 /* NG-SPICE -- An electrical circuit simulator
+ * $Id$
  *
  * Copyright (c) 1990 University of California
  * Copyright (c) 2000 Arno W. Peters
@@ -48,12 +49,17 @@
 #include "com_setscale.h"
 #include "com_xgraph.h"
 #include "com_state.h"
+#include "com_chdir.h"
+#include "com_echo.h"
+#include "com_rehash.h"
+#include "com_shell.h"
+#include "com_shift.h"
+#include "com_unset.h"
 #include "fourier.h"
 
 #ifdef EXPERIMENTAL_CODE
 #include "com_option.h"
-void com_loadsnap(wordlist *wl);
-void com_savesnap(wordlist *wl);
+#include "spiceif.h" /* for com_loadsnap() and com_savesnap() */
 #endif
 
 #include "com_dl.h"

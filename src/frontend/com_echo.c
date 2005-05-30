@@ -1,8 +1,14 @@
+/*************
+* com_echo.c
+* $Id$
+************/
+
 #include <config.h>
 #include <ngspice.h>
 #include <wordlist.h>
 #include <bool.h>
 
+#include "com_echo.h"
 #include "quote.h"
 #include "streams.h"
 

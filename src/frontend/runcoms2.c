@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -16,16 +17,14 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "circuits.h"
 #include "runcoms2.h"
+#include "runcoms.h"
 #include "variable.h"
+#include "breakp2.h"
+#include "plotting/graf.h"
 
-extern FILE *rawfileFp;
-extern bool rawfileBinary;
-/*rawfile output saj*/
-extern char *last_used_rawfile;
+
 #define RAWBUF_SIZE 32768
 char rawfileBuf[RAWBUF_SIZE];
-/*end saj*/
-extern struct dbcomm *dbs;
 
 /* Continue a simulation. If there is non in progress, this is the
  * equivalent of "run".
@@ -38,9 +37,6 @@ extern struct dbcomm *dbs;
  */
 
 bool resumption = FALSE;
-
-
-extern void reset_trace (void);
 
 void
 com_resume(wordlist *wl)

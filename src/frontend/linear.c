@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -10,14 +11,12 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "circuits.h"
 #include "linear.h"
+#include "interp.h"
 
 
 /* Interpolate all the vectors in a plot to a linear time scale, which
  * we determine by looking at the transient parameters in the CKT struct.
  */
-
-
-extern void lincopy (struct dvec *ov, double *newscale, int newlen, struct dvec *oldscale);
 
 void
 com_linearize(wordlist *wl)

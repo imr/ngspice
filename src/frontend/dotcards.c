@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 Modified: 2000 AlansFixes
+$Id$
 **********/
 
 /*
@@ -21,6 +22,7 @@ Modified: 2000 AlansFixes
 #include "dotcards.h"
 #include "variable.h"
 #include "fourier.h"
+#include "breakp2.h"
 
 /* Extract all the .save lines */
 
@@ -28,10 +30,6 @@ static void fixdotplot(wordlist *wl);
 static void fixdotprint(wordlist *wl);
 static char * fixem(char *string);
 static wordlist * gettoks(char *s);
-
-
-extern void com_save2 (wordlist *wl, char *name);
-
 
 
 static struct plot *

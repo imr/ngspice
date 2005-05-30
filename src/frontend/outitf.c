@@ -1,7 +1,8 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Wayne A. Christopher, U. C. Berkeley CAD Group 
-Modified: 2000 AlansFixes 
+Modified: 2000 AlansFixes
+$Id$
 **********/
 
 /*
@@ -28,8 +29,10 @@ Modified: 2000 AlansFixes
 #include <time.h>
 #include "cktdefs.h"
 #include <inpdefs.h>
+#include "breakp2.h"
+#include "runcoms.h"
+#include "plotting/graf.h"
 
-extern void gr_end_iplot(void);
 extern char *spice_analysis_get_name(int index);
 extern char *spice_analysis_get_description(int index);
 
@@ -69,10 +72,6 @@ static bool printinfo = FALSE;	/* Print informational "error messages". */
 
 
 /* The two "begin plot" routines share all their internals... */
-
-
-extern int ft_getSaves (struct save_info **savesp);
-extern bool ft_getOutReq (FILE **fpp, struct plot **plotp, bool *binp, char *name, char *title);
 
 int
 OUTpBeginPlot(void *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)

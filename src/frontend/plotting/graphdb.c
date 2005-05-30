@@ -14,6 +14,8 @@ $Id$
 
 #include "graphdb.h"
 #include "../breakp2.h"
+#include "../error.h"
+#include "../display.h"
 
 
 /* invariant:  currentgraph contains the current graph */
@@ -50,9 +52,6 @@ static int RunningId = 1;
 				(pgraph)->linestyle = -1
 
 /* returns NULL on error */
-
-extern void internalerror (char *message);
-extern void SaveText (GRAPH *graph, char *text, int x, int y);
 
 GRAPH *NewGraph(void)
 {

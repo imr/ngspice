@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -13,15 +14,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "dvec.h"
 #include "ftedebug.h"
 #include "breakp.h"
+#include "breakp2.h"
 
 #include "completion.h"
 
 static bool satisfied(struct dbcomm *d, struct plot *plot);
 static void printcond(struct dbcomm *d, FILE *fp);
 
-void dbfree(struct dbcomm *db);
-extern struct dbcomm *dbs;      /* export for iplot */
-extern int debugnumber;
 static int howmanysteps = 0;
 static int steps = 0;
 
@@ -31,9 +30,6 @@ static int steps = 0;
  *
  * If more than one is given on a command line, then this is a conjunction.
  */
-
-
-extern void settrace (wordlist *wl, int what, char *name);
 
 void
 com_stop(wordlist *wl)

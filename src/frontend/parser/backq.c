@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -88,7 +89,6 @@ backeval(char *string)
     FILE *proc, *old;
     wordlist *wl;
     bool intv;
-    extern FILE *popen(const char *, const char *);
 
     proc = popen(string, "r");
     if (proc == NULL) {

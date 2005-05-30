@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Modified: 2001 AlansFixes
+$Id$
 **********/
 
 /*
@@ -14,7 +15,7 @@ Modified: 2001 AlansFixes
 #include <ftedefs.h>
 
 #include "grid.h"
-
+#include "../display.h"
 
 #define RAD_TO_DEG	(180.0 / M_PI)
 #define LABEL_CHARS	20
@@ -36,21 +37,10 @@ static double cliparc(double cx, double cy, double rad, double start, double end
 		      int iclipy, int icliprad, int flag);
 
 
-
-
 /* note: scaleunits is static and never changed in this file
     ie, can get rid of it */
 static bool scaleunits = TRUE;
 
-
-extern void SetColor (int colorid);
-extern void SetLinestyle (int linestyleid);
-extern void Text (char *text, int x, int y);
-void drawloggrid (GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, int pp, Axis axis);
-void drawlingrid (GRAPH *graph, char *units, int spacing, int nsp, double dst, double lmt, double hmt, bool onedec, int mult, double mag, int digits, Axis axis);
-extern void DrawLine (int x1, int y1, int x2, int y2);
-extern void Update (void);
-extern void Arc (int x0, int y0, int radius, double theta1, double theta2);
 
 void
 gr_fixgrid(GRAPH *graph, double xdelta, double ydelta, int xtype, int ytype)

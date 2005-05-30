@@ -34,8 +34,10 @@ Author: Jim Groves
 #include "ftedbgra.h"
 #include "ftedev.h"
 #include "fteinput.h"
-
 #include "variable.h"
+#include "error.h"
+#include "plotting/graphdb.h"
+#include "hpgl.h"
 
 #define RAD_TO_DEG      (180.0 / M_PI)
 #define DEVDEP(g) (*((GLdevdep *) (g)->devdep))
@@ -81,9 +83,6 @@ static int screenflag = 0;
 static double tocm = 0.0025;
 static double scale;    /* Used for fine tuning */
 static int hcopygraphid;
-
-extern int DestroyGraph (int id);
-extern void internalerror (char *message);
 
 int GL_Init()
 {

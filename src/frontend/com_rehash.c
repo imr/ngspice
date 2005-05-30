@@ -1,9 +1,15 @@
+/*************
+* com_rehash.c
+* $Id$
+************/
+
 #include <config.h>
 #include <ngspice.h>
 
 #include <wordlist.h>
-#include <cpextern.h>
-
+#include "com_rehash.h"
+#include "streams.h"
+#include "control.h"
 
 void
 com_rehash(wordlist *wl)
@@ -21,4 +27,3 @@ com_rehash(wordlist *wl)
         fprintf(cp_err, "Error: no PATH in environment.\n");
     return;
 }
-

@@ -1,3 +1,8 @@
+/*************
+* streams.c
+* $Id$
+************/
+
 #include <config.h>
 #include <ngspice.h>
 #include <wordlist.h>
@@ -7,7 +12,6 @@
 #include "terminal.h"
 #include "quote.h"
 #include "streams.h"
-
 
 bool cp_debug = FALSE;
 char cp_gt = '>';
@@ -25,6 +29,8 @@ FILE *cp_curin = NULL;
 FILE *cp_curout = NULL;
 FILE *cp_curerr = NULL;
 
+/* static functions */
+static bool fileexists(char *name);
 
 static bool
 fileexists(char *name)

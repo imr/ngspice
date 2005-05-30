@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -19,6 +20,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "circuits.h"
 #include "options.h"
 #include "variable.h"
+#include "control.h"
 
 
 /* static declarations */

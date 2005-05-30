@@ -1,10 +1,13 @@
 /*************
  * Header file for graf.c
  * 1999 E. Rouat
+ * $Id$
  ************/
 
-#ifndef _GRAF_H
-#define _GRAF_H
+#ifndef GRAF_H
+#define GRAF_H
+
+#include "graph.h"
 
 int gr_init(double *xlims, double *ylims,
 	    char *xname, char *plotname,
@@ -34,4 +37,4 @@ void gr_iplot(struct plot *plot);
 void gr_end_iplot(void);
 double * readtics(char *string);
 
-#endif
+#endif /* GRAF_H */

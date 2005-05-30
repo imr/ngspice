@@ -30,8 +30,6 @@ $Id$
 /* static declarations */
 static int dosim(char *what, wordlist *wl);
 
-extern struct dbcomm *dbs;
-
 /* Routines for the commands op, tran, ac, dc, listing, device, state,
  * resume, stop, trace, run, end.  Op, tran, ac, and dc cause the action
  * to be performed immediately, and run causes whatever actions were

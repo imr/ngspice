@@ -83,7 +83,7 @@ Plt5_NewViewport(GRAPH *graph)
 
 }
 
-void
+int
 Plt5_Close(void)
 {
 
@@ -91,18 +91,18 @@ Plt5_Close(void)
             w/o having reached Plt5_NewViewport */
     if (plotfile)
         fclose(plotfile);
-
+    return 0;
 }
 
-void
+int
 Plt5_Clear(void)
 {
 
     /* do nothing */
-
+    return 0;
 }
 
-void
+int
 Plt5_DrawLine(int x1, int y1, int x2, int y2)
 {
 
@@ -111,18 +111,18 @@ Plt5_DrawLine(int x1, int y1, int x2, int y2)
     putsi(y1);
     putsi(x2);
     putsi(y2);
-
+    return 0;
 }
 
 /* ARGSUSED */ /* until some code gets written */
-void
+int
 Plt5_Arc(int x0, int y0, int radius, double theta1, double theta2)
 {
 
-
+    return 0;
 }
 
-void
+int
 Plt5_Text(char *text, int x, int y)
 {
 
@@ -143,7 +143,7 @@ Plt5_Text(char *text, int x, int y)
 
     /* restore old linestyle */
     Plt5_SetLinestyle(savedlstyle);
-
+    return 0;
 }
 
 int
@@ -152,7 +152,7 @@ Plt5_SetLinestyle(int linestyleid)
 
     if (linestyleid < 0 || linestyleid > dispdev->numlinestyles) {
       internalerror("bad linestyleid");
-      return 0;
+	return 0;
     }
     putc('f', plotfile);
     fprintf(plotfile, "%s\n", linestyle[linestyleid]);
@@ -161,19 +161,19 @@ Plt5_SetLinestyle(int linestyleid)
 }
 
 /* ARGSUSED */
-void
+int
 Plt5_SetColor(int colorid)
 {
 
     /* do nothing */
-
+    return 0;
 }
 
-void
+int
 Plt5_Update(void)
 {
 
     fflush(plotfile);
-
+    return 0;
 }
 

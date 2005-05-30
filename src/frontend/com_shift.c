@@ -1,8 +1,14 @@
+/*************
+* com_shift.c
+* $Id$
+************/
+
 #include <config.h>
 #include <ngspice.h>
 #include <bool.h>
 #include <wordlist.h>
 
+#include "com_shift.h"
 #include "variable.h"
 #include "streams.h"
 

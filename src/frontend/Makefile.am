@@ -1,4 +1,5 @@
 ## Process this file with automake to produce Makefile.in
+## $Id$
 
 SUBDIRS = plotting help parser wdisp @NUMPARAMDIR@
 DIST_SUBDIRS = plotting help parser wdisp numparam
@@ -17,6 +18,7 @@ libfte_a_SOURCES = \
 	com_cdump.c	\
 	com_cdump.h	\
 	com_chdir.c	\
+	com_chdir.h	\
 	com_compose.c	\
 	com_compose.h	\
 	com_dl.c	\
@@ -26,6 +28,7 @@ libfte_a_SOURCES = \
 	com_dump.c	\
 	com_dump.h	\
 	com_echo.c	\
+	com_echo.h	\
 	com_ghelp.c	\
 	com_ghelp.h	\
 	com_hardcopy.c	\
@@ -41,17 +44,21 @@ libfte_a_SOURCES = \
 	com_plot.c	\
 	com_plot.h	\
 	com_rehash.c	\
+	com_rehash.h	\
 	com_set.c	\
 	com_set.h	\
 	com_setscale.c	\
 	com_setscale.h	\
 	com_shell.c	\
+	com_shell.h	\
 	com_shift.c	\
+	com_shift.h	\
 	com_state.c	\
 	com_state.h	\
 	com_strcmp.c	\
 	com_strcmp.h	\
 	com_unset.c	\
+	com_unset.h	\
 	com_xgraph.c	\
 	com_xgraph.h	\
 	completion.h	\
@@ -104,6 +111,7 @@ libfte_a_SOURCES = \
 	gens.c		\
 	gens.h		\
 	hpgl.c		\
+	hpgl.h		\
 	inp.c		\
 	inp.h		\
 	inpcom.c	\

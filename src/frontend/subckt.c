@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group 
 Modified: 2000 AlansFixes
+$Id$
 **********/
 
 /*------------------------------------------------------------------------------
@@ -60,18 +61,11 @@ Modified: 2000 AlansFixes
 #include "subckt.h"
 #include "variable.h"
 
+#ifdef NUMPARAMS
 /* Uncomment to turn on tracing for the Numparam */
 /*#define TRACE_NUMPARAMS*/
 
-#ifdef NUMPARAMS
-#define  NUPADECKCOPY 0
-#define  NUPASUBSTART 1
-#define  NUPASUBDONE  2
-#define  NUPAEVALDONE 3
-extern char * nupa_copy(char *s, int linenum);
-extern int    nupa_eval(char *s, int linenum);
-extern int    nupa_signal(int sig, char *info); 
-extern void   nupa_scan(char * s, int linenum);	/* SJB added */
+#include "numparam/numpaif.h"
 #endif
 
 /* ----- static declarations ----- */

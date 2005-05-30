@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jeffrey M. Hsu
+$Id$
 **********/
 
 /*
@@ -16,6 +17,8 @@ Author: 1988 Jeffrey M. Hsu
 
 #include "postsc.h"
 #include "variable.h"
+#include "error.h"
+#include "plotting/graphdb.h"
 
 #define RAD_TO_DEG	(180.0 / M_PI)
 #define DEVDEP(g) (*((PSdevdep *) (g)->devdep))
@@ -68,8 +71,6 @@ static int ytadj;     /* text adjustment y */
 static int hcopygraphid;
 
 
-extern int DestroyGraph (int id);
-extern void internalerror (char *message);
 void PS_LinestyleColor(int linestyleid, int colorid);
 void PS_SelectColor(int colorid);
 void PS_Stroke(void);
@@ -157,7 +158,7 @@ PS_Init(void)
 int
 PS_NewViewport(GRAPH *graph)
 {
-  int x1,x2,y1,y2;
+    int x1,x2,y1,y2;
     hcopygraphid = graph->graphid;
 
     if (!(plotfile = fopen(graph->devdep, "w"))) {
@@ -185,43 +186,43 @@ PS_NewViewport(GRAPH *graph)
     xoff = scale * XOFF;
     yoff = scale * YOFF;
 
-  x1 = 0.75 * 72;
-  y1 = x1;
-  x2 = graph->absolute.width + .75 * 72;
-  y2 = graph->absolute.height + .75 * 72;
+    x1 = 0.75 * 72;
+    y1 = x1;
+    x2 = graph->absolute.width + .75 * 72;
+    y2 = graph->absolute.height + .75 * 72;
     /* start file off with a % */
     fprintf(plotfile, "%%!PS-Adobe-3.0 EPSF-3.0\n");
     fprintf(plotfile, "%%%%Creator: nutmeg\n");
-  fprintf(plotfile, "%%%%BoundingBox: %d %d %d %d\n",x1,y1,x2,y2);
+    fprintf(plotfile, "%%%%BoundingBox: %d %d %d %d\n",x1,y1,x2,y2);
 
     fprintf(plotfile, "%g %g scale\n", 1.0 / scale, 1.0 / scale);
 
-  if (colorflag == 1){            /* set the background to color0 */
-    PS_SelectColor(0);
-    fprintf(plotfile,"%s setrgbcolor\n",pscolor);
-    fprintf(plotfile,"newpath\n");
-    fprintf(plotfile,"%d %d moveto %d %d lineto\n",x1,y1,x2,y1);
-    fprintf(plotfile,"%d %d lineto %d %d lineto\n",x2,y2,x1,y2);
-    fprintf(plotfile,"closepath fill\n");
-  }
+    if (colorflag == 1){            /* set the background to color0 */
+	PS_SelectColor(0);
+	fprintf(plotfile,"%s setrgbcolor\n",pscolor);
+	fprintf(plotfile,"newpath\n");
+	fprintf(plotfile,"%d %d moveto %d %d lineto\n",x1,y1,x2,y1);
+	fprintf(plotfile,"%d %d lineto %d %d lineto\n",x2,y2,x1,y2);
+	fprintf(plotfile,"closepath fill\n");
+    }
 
     /* set up a reasonable font */
-  fprintf(plotfile, "/%s findfont %d scalefont setfont\n\n",
+    fprintf(plotfile, "/%s findfont %d scalefont setfont\n\n",
 	    psfont, (int) (fontsize * scale));
 
     graph->devdep = tmalloc(sizeof(PSdevdep));
     DEVDEP(graph).lastlinestyle = -1;
-  DEVDEP(graph).lastcolor = -1;
+    DEVDEP(graph).lastcolor = -1;
     DEVDEP(graph).lastx = -1;
     DEVDEP(graph).lasty = -1;
     DEVDEP(graph).linecount = 0;
-  PS_SelectColor(0);
+    PS_SelectColor(0);
     graph->linestyle = -1;
 
     return 0;
 }
 
-void
+int
 PS_Close(void)
 {
 
@@ -230,27 +231,27 @@ PS_Close(void)
     if (plotfile) {
     PS_Stroke();
     fprintf(plotfile, "showpage\n%%%%EOF\n");
-      fclose(plotfile);
-      plotfile = NULL;
+	fclose(plotfile);
+	plotfile = NULL;
     }
     /* In case of hardcopy command destroy the hardcopy graph
      * and reset currentgraph to graphid 1, if possible
      */
     if (!screenflag) {
-      DestroyGraph(hcopygraphid);
-      currentgraph = FindGraph(1);
+	DestroyGraph(hcopygraphid);
+	currentgraph = FindGraph(1);
     }
+    return 0;
 }
 
-void
+int
 PS_Clear(void)
 {
-
     /* do nothing */
-
+    return 0;
 }
 
-void
+int
 PS_DrawLine(int x1, int y1, int x2, int y2)
 {
 
@@ -273,14 +274,15 @@ PS_DrawLine(int x1, int y1, int x2, int y2)
 
     DEVDEP(currentgraph).lastx = x2;
     DEVDEP(currentgraph).lasty = y2;
+    return 0;
 }
 
-void
+int
 PS_Arc(int x0, int y0, int r, double theta1, double theta2)
 {
     double x1, y1;
     double angle1, angle2;
-  PS_Stroke();
+    PS_Stroke();
     while (theta1 >= theta2)
 	theta2 += 2 * M_PI;
 
@@ -295,23 +297,24 @@ PS_Arc(int x0, int y0, int r, double theta1, double theta2)
     fprintf(plotfile, "stroke\n");
 
     DEVDEP(currentgraph).linecount = 0;
+    return 0;
 }
 
-void
+int
 PS_Text(char *text, int x, int y)
 {
-  int savedlstyle, savedcolor;
+    int savedlstyle, savedcolor;
 
     /* set linestyle to solid
-        or may get funny color text on some plotters */
+	or may get funny color text on some plotters */
     savedlstyle = currentgraph->linestyle;
-  savedcolor = currentgraph->currentcolor;
+    savedcolor = currentgraph->currentcolor;
 
     PS_SetLinestyle(SOLID);
-  PS_SetColor(1);
+    PS_SetColor(1);
 
-  /* stroke the path if there's an open one */
-  PS_Stroke();
+    /* stroke the path if there's an open one */
+    PS_Stroke();
     /* move to (x, y) */
     fprintf(plotfile, "%d %d moveto\n", x + xoff + xtadj, y + yoff + ytadj);
     fprintf(plotfile, "(%s) show\n", text);
@@ -321,8 +324,9 @@ PS_Text(char *text, int x, int y)
 
     /* restore old linestyle */
 
-  PS_SetColor(savedcolor);
-  PS_SetLinestyle(savedlstyle);
+    PS_SetColor(savedcolor);
+    PS_SetLinestyle(savedlstyle);
+    return 0;
 }
 
 /* PS_DefineColor */
@@ -335,27 +339,29 @@ PS_SetLinestyle(int linestyleid)
     /* special case
         get it when PS_Text restores a -1 linestyle */
     if (linestyleid == -1) {
-      currentgraph->linestyle = -1;
-      return 0;
+	currentgraph->linestyle = -1;
+	return 0;
     }
     if (linestyleid < 0 || linestyleid > dispdev->numlinestyles) {
-    internalerror("bad linestyleid inside PS_SetLinestyle");
-      return 0;
+	internalerror("bad linestyleid inside PS_SetLinestyle");
+	return 0;
     }
   PS_LinestyleColor(linestyleid, currentgraph->currentcolor);
   return 0;
-      }
-
-void
-PS_SetColor(int colorid)
-{
-  PS_LinestyleColor(currentgraph->linestyle, colorid);
 }
 
-void
+int
+PS_SetColor(int colorid)
+{
+    PS_LinestyleColor(currentgraph->linestyle, colorid);
+    return 0;
+}
+
+int
 PS_Update(void)
 {
-  fflush(plotfile);
+    fflush(plotfile);
+    return 0;
 }
 
 /**************** PRIVAT FUNCTIONS OF PS FRONTEND *****************************/

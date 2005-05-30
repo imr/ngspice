@@ -1,6 +1,7 @@
 /**********
 Copyright 1994 Macquarie University, Sydney Australia.  All rights reserved.
 Author:   1994 Anthony E. Parker, Department of Electronics, Macquarie Uni.
+$Id$
 **********/
 
 /*
@@ -135,7 +136,6 @@ com_spec(wordlist *wl)
        } else if (eq(window, "gaussian")) {
           int order;
           double scale;
-          extern double erfc(double);
           if (!cp_getvar("specwindoworder", VT_NUM, &order)) order = 2;
           if (order < 2) order = 2;
           scale = pow(2*M_PI/order,0.5)*(0.5-erfc(pow(order,0.5)));

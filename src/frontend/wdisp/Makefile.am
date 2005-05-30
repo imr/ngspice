@@ -1,8 +1,13 @@
+## Process this file with automake to produce Makefile.in
+## $Id$
+
 noinst_LIBRARIES = libwindisp.a
 
 libwindisp_a_SOURCES = \
 	windisp.c	\
+	windisp.h	\
 	winprint.c	\
+	winprint.h	\
 	ftegraf.h
 	
 	

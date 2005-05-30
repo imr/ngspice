@@ -1,5 +1,5 @@
 /* Michael Widlok 		2 Jun 1999 */
-
+/* $Id$ */
 /* New commands for unloading circuits */
 
 #include "ngspice.h"
@@ -12,10 +12,7 @@
 #include "circuits.h"
 #include "mw_coms.h"
 #include "variable.h"
-
-extern FILE *rawfileFp;
-extern bool rawfileBinary;
-extern struct dbcomm *dbs;
+#include "runcoms.h"
 
 /* Clears ckt and removes current circ. form database */
  

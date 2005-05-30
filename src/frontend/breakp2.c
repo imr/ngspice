@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -12,14 +13,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ftedefs.h"
 #include "dvec.h"
 #include "ftedebug.h"
-
 #include "quote.h"
 #include "breakp2.h"
 
-
 struct dbcomm *dbs = NULL;      /* export for iplot */
 int debugnumber = 1;
-void settrace(wordlist *wl, int what, char *name);
 
 /* Set a breakpoint. Possible commands are:
  *  stop after n
@@ -126,4 +124,3 @@ ft_getSaves(struct save_info **savesp)
     
     return (count);
 }
-

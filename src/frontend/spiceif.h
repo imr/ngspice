@@ -1,6 +1,7 @@
 /*************
  * Header file for spiceif.c
  * 1999 E. Rouat
+ * $Id$
  ************/
 
 #ifndef SPICEIF_H_INCLUDED
@@ -19,9 +20,8 @@ bool if_tranparams(struct circ *ci, double *start, double *stop, double *step);
 struct variable * if_getstat(void *ckt, char *name);
 
 #ifdef EXPERIMENTAL_CODE
-void if_loadsnap(wordlist *wl);
-void if_savesnap(wordlist *wl);
+void com_loadsnap(wordlist *wl);
+void com_savesnap(wordlist *wl);
 #endif
 
-
-#endif
+#endif /* SPICEIF_H_INCLUDED */

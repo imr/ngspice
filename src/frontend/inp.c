@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher
+$Id$
 **********/
 
 /*
@@ -25,6 +26,7 @@ Author: 1985 Wayne A. Christopher
 #include "circuits.h"
 #include "completion.h"
 #include "variable.h"
+#include "breakp2.h"
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include new stuff */
@@ -38,9 +40,6 @@ static char * upper(register char *string);
 static bool doedit(char *filename);
 
 /* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
-
-
-extern int unlink (const char *);
 
 void
 com_listing(wordlist *wl)
@@ -512,6 +511,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             wl_free(end); 
       }
     }
+
+    /* Hitoshi Tanaka */
+    if(dbs) tfree(dbs); /* Added */
 
     /*saj, to process save commands always, not just in batch mode 
      *(breaks encapsulation of frountend and parsing commands slightly)*/

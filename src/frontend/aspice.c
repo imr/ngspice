@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -54,15 +55,6 @@ struct proc {
 
 static struct proc *running = NULL;
 static int numchanged = 0;  /* How many children have changed in state. */
-
-
-extern pid_t fork (void);
-extern int dup2 (int, int);
-extern int execl (const char *, const char *, ...);
-extern int unlink (const char *);
-extern int pipe (int *);
-extern int close (int);
-extern int execlp (const char *, const char *, ...);
 
 void
 com_aspice(wordlist *wl)

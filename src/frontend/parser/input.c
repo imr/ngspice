@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Jeffrey M. Hsu
+$Id$
 **********/
 
 /*
@@ -14,6 +15,7 @@ Author: 1988 Jeffrey M. Hsu
 #include "fteinput.h"
 #include "input.h"
 #include "cpextern.h"
+#include "../display.h"
 
 /* A special 'getc' so that we can deal with ^D properly. There is no way for
  * stdio to know if we have typed a ^D after some other characters, so
@@ -44,8 +46,6 @@ inchar(FILE *fp)
     return ((int) c);
 }
 
-
-extern void Input(REQUEST *req, RESPONSE *resp);
 
 int 
 input(FILE *fp)

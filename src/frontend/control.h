@@ -1,6 +1,12 @@
-#ifndef _CONTROL_H
-#define _CONTROL_H
+/**********
+ * Header file for control.c
+ * $Id$
+**********/
 
+#ifndef CONTROL_H
+#define CONTROL_H
+
+#include <bool.h>
 
 /* Stuff to do control structures. We keep a history (seperate from
  * the cshpar history, for now at least) of commands and their event
@@ -42,5 +48,6 @@ enum co_command {
 extern struct control *control[CONTROLSTACKSIZE];
 extern struct control *cend[CONTROLSTACKSIZE];
 extern int stackp;
+extern bool cp_dounixcom;
 
-#endif
+#endif /* CONTROL_H */

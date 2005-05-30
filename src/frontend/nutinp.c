@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher
+$Id$
 **********/
 
 /*
@@ -12,7 +13,6 @@ Author: 1985 Wayne A. Christopher
 #include "ftedefs.h"
 #include "dvec.h"
 #include "fteinp.h"
-
 #include "nutinp.h"
 #include "variable.h"
 
@@ -21,9 +21,6 @@ Author: 1985 Wayne A. Christopher
  * the following lines: .save, .width, .four, .print, and .plot, to perform
  * after the run is over.
  */
-
-
-extern int unlink (const char *);
 
 void
 inp_nutsource(FILE *fp, bool comfile, char *filename)

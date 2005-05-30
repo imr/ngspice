@@ -1,5 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
+$Id$
 **********/
 
 
@@ -12,6 +13,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 #include "display.h"
 #include "variable.h"
+#include "error.h"
 
 /* static declarations */
 static void gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny);
@@ -19,46 +21,19 @@ static int gen_Input(REQUEST *request, RESPONSE *response);
 static int nop(void);
 static int nodev(void);
 
-
-
-
 #ifndef X_DISPLAY_MISSING
-extern int  X11_Init(void), X11_NewViewport(GRAPH *graph), X11_Close(void), X11_Clear(void),
-        X11_DrawLine(int x1, int y1, int x2, int y2), X11_Arc(int x0, int y0, int radius, double theta1, double theta2), X11_Text(char *text, int x, int y), X11_DefineColor(int colorid, double red, double green, double blue),
-        X11_DefineLinestyle(int linestyleid, int mask), X11_SetLinestyle(int linestyleid), X11_SetColor(int colorid),
-        X11_Update(void),
-        X11_Input(REQUEST *request, RESPONSE *response);
+#include "plotting/x11.h"
 #endif
-
 
 #ifdef HAS_WINDOWS	/* Graphic-IO under MS Windows */
-extern int WIN_Init(), WIN_NewViewport(), WIN_Close(), WIN_Clear(),
-		WIN_DrawLine(), WIN_Arc(), WIN_Text(), WIN_DefineColor(),
-		WIN_DefineLinestyle(), WIN_SetLinestyle(), WIN_SetColor(),
-		WIN_Update(), WIN_DiagramReady();
-
-extern int WPRINT_Init(), WPRINT_NewViewport(), WPRINT_Close(), WPRINT_Clear(),
-		WPRINT_DrawLine(), WPRINT_Arc(), WPRINT_Text(), WPRINT_DefineColor(),
-		WPRINT_DefineLinestyle(), WPRINT_SetLinestyle(), WPRINT_SetColor(),
-		WPRINT_Update(), WPRINT_DiagramReady();
+#include "windisp/windisp.h"
+#include "windisp/winprint.h"
 #endif
 
+#include "plotting/plot5.h"
+#include "postsc.h"
+#include "hpgl.h"
 
-
-extern int  Plt5_Init(void), Plt5_NewViewport(GRAPH *graph), Plt5_Close(void), Plt5_Clear(void),
-        Plt5_DrawLine(int x1, int y1, int x2, int y2), Plt5_Arc(int x0, int y0, int radius, double theta1, double theta2), Plt5_Text(char *text, int x, int y),
-        Plt5_DefineLinestyle(), Plt5_SetLinestyle(int linestyleid), Plt5_SetColor(int colorid),
-        Plt5_Update(void);
-
-extern int  PS_Init(void), PS_NewViewport(GRAPH *graph), PS_Close(void), PS_Clear(void),
-        PS_DrawLine(int x1, int y1, int x2, int y2), PS_Arc(int x0, int y0, int r, double theta1, double theta2), PS_Text(char *text, int x, int y),
-        PS_DefineLinestyle(), PS_SetLinestyle(int linestyleid), PS_SetColor(int colorid),
-        PS_Update(void);
-
-extern int  GL_Init(void), GL_NewViewport(GRAPH *graph), GL_Close(void), GL_Clear(void),
-        GL_DrawLine(int x1, int y1, int x2, int y2), GL_Arc(int x0, int y0, int r, double theta1, double theta2), GL_Text(char *text, int x, int y),
-        GL_DefineLinestyle(), GL_SetLinestyle(int linestyleid), GL_SetColor(int colorid),
-        GL_Update(void);
 
 DISPDEVICE device[] = {
 
@@ -67,7 +42,7 @@ DISPDEVICE device[] = {
     nop, nop, nop, nop, nop,
     nop, nop, nop,
     nop, nop, nop, gen_Input,
-    (void *)nop,},
+    (void*)nop,},
 
 #ifndef X_DISPLAY_MISSING
     {"X11", 0, 0, 1024, 864, 0, 0, X11_Init, X11_NewViewport,
@@ -79,43 +54,41 @@ DISPDEVICE device[] = {
 #endif
 
 #ifdef HAS_WINDOWS	/* Graphic-IO under MS Windows */
-	{"Windows", 0, 0, 1000, 1000, 0, 0, WIN_Init, WIN_NewViewport,
-	 WIN_Close, WIN_Clear,
-	 WIN_DrawLine, WIN_Arc, WIN_Text, WIN_DefineColor, WIN_DefineLinestyle,
-	 WIN_SetLinestyle, WIN_SetColor, WIN_Update,
-	 nodev, nodev, nodev, gen_Input,
-	 gen_DatatoScreen, WIN_DiagramReady},
+    {"Windows", 0, 0, 1000, 1000, 0, 0, WIN_Init, WIN_NewViewport,
+    WIN_Close, WIN_Clear,
+    WIN_DrawLine, WIN_Arc, WIN_Text, WIN_DefineColor, WIN_DefineLinestyle,
+    WIN_SetLinestyle, WIN_SetColor, WIN_Update,
+    nodev, nodev, nodev, gen_Input,
+    gen_DatatoScreen, WIN_DiagramReady},
 
-	/* Warning: name "WinPrint" do not change! */
-	{"WinPrint", 0, 0, 1000, 1000, 0, 0, WPRINT_Init, WPRINT_NewViewport,
-	 WPRINT_Close, WPRINT_Clear,
-	 WPRINT_DrawLine, WPRINT_Arc, WPRINT_Text, WPRINT_DefineColor, WPRINT_DefineLinestyle,
-	 WPRINT_SetLinestyle, WPRINT_SetColor, WPRINT_Update,
-	 nodev, nodev, nodev, nodev,
-	 gen_DatatoScreen, WPRINT_DiagramReady},
-
+    /* Warning: name "WinPrint" do not change! */
+    {"WinPrint", 0, 0, 1000, 1000, 0, 0, WPRINT_Init, WPRINT_NewViewport,
+    WPRINT_Close, WPRINT_Clear,
+    WPRINT_DrawLine, WPRINT_Arc, WPRINT_Text, WPRINT_DefineColor, WPRINT_DefineLinestyle,
+    WPRINT_SetLinestyle, WPRINT_SetColor, WPRINT_Update,
+    nodev, nodev, nodev, nodev,
+    gen_DatatoScreen, WPRINT_DiagramReady},
 #endif
-
 
     {"plot5", 0, 0, 1000, 1000, 0, 0, Plt5_Init, Plt5_NewViewport,
     Plt5_Close, Plt5_Clear,
-    Plt5_DrawLine, Plt5_Arc, Plt5_Text, nodev, nodev,
+    Plt5_DrawLine, Plt5_Arc, Plt5_Text, (void*)nodev, (void*)nodev,
     Plt5_SetLinestyle, Plt5_SetColor, Plt5_Update,
     nodev, nodev, nodev, nodev,
     gen_DatatoScreen,},
 
     {"postscript", 0, 0, 1000, 1000, 0, 0, PS_Init, PS_NewViewport,
     PS_Close, PS_Clear,
-    PS_DrawLine, PS_Arc, PS_Text, nodev, nodev,
+    PS_DrawLine, PS_Arc, PS_Text, (void*)nodev, (void*)nodev,
     PS_SetLinestyle, PS_SetColor, PS_Update,
-    nodev, nodev, nodev, nodev,
+    nodev, nodev, nodev, (void*)nodev,
     gen_DatatoScreen,},
 
     {"hpgl", 0, 0, 1000, 1000, 0, 0, GL_Init, GL_NewViewport,
     GL_Close, GL_Clear,
-    GL_DrawLine, GL_Arc, GL_Text, nodev, nodev,
+    GL_DrawLine, GL_Arc, GL_Text, (void*)nodev, (void*)nodev,
     GL_SetLinestyle, GL_SetColor, GL_Update,
-    nodev, nodev, nodev, nodev,
+    nodev, nodev, nodev, (void*)nodev,
     gen_DatatoScreen,},
 
     {"printf", 0, 0, 24, 80, 0, 0, nodev, nodev,
@@ -131,9 +104,6 @@ DISPDEVICE *dispdev = device + NUMELEMS(device) - 1;
 
 #define XtNumber(arr)       (sizeof(arr) / sizeof(arr[0]))
 
-
-extern void internalerror (char *message);
-extern void externalerror (char *message);
 
 DISPDEVICE *FindDev(char *name)
 {
@@ -341,7 +311,7 @@ gen_Input(REQUEST *request, RESPONSE *response)
 	    response->option = error_option;
         break;
     }
-return 0;
+    return 0;
 }
 
 /* no operation, do nothing */

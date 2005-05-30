@@ -5,7 +5,7 @@ $Id$
 **********/
 
 /*
-	X11 drivers.
+    X11 drivers.
 */
 
 #include <ngspice.h>
@@ -56,13 +56,13 @@ $Id$
 #define BOXSIZE 30      /* initial size of bounding box for zoomin */
 
 typedef struct x11info {
-	Window window;
-	int	isopen;
-	Widget shell, form, view, buttonbox, buttons[2];
-	XFontStruct *font;
-	GC gc;
-	int lastx, lasty;   /* used in X_DrawLine */
-	int lastlinestyle;  /* used in X_DrawLine */
+    Window window;
+    int	isopen;
+    Widget shell, form, view, buttonbox, buttons[2];
+    XFontStruct *font;
+    GC gc;
+    int lastx, lasty;   /* used in X_DrawLine */
+    int lastlinestyle;  /* used in X_DrawLine */
 } X11devdep;
 
 #define DEVDEP(g) (*((X11devdep *) (g)->devdep))
@@ -70,13 +70,13 @@ typedef struct x11info {
 static Display *display;
 static GC xorgc;
 static char *xlinestyles[NUMLINESTYLES] = {	/* test patterns XXX */
-	"\001\001\001\001",	/* solid */
-	"\001\002\001\002",	/* dots */
-	"\007\007\007\007",	/* longdash */
-	"\003\003\003\003",	/* shortdash */
-	"\007\002\002\002",	/* dots longdash */
-	"\003\002\001\002",	/* dots shortdash */
-	"\003\003\007\003",	/* short/longdash */
+    "\001\001\001\001",	/* solid */
+    "\001\002\001\002",	/* dots */
+    "\007\007\007\007",	/* longdash */
+    "\003\003\003\003",	/* shortdash */
+    "\007\002\002\002",	/* dots longdash */
+    "\003\002\001\002",	/* dots shortdash */
+    "\003\003\007\003",	/* short/longdash */
 };
 
 static Widget toplevel;
@@ -94,9 +94,9 @@ static void linear_arc(int x0, int y0, int radius, double theta1, double theta2)
 int
 errorhandler(Display *display, XErrorEvent *errorev)
 {
-	XGetErrorText(display, errorev->error_code, ErrorMessage, 1024);
-	externalerror(ErrorMessage);
-	return 0;
+    XGetErrorText(display, errorev->error_code, ErrorMessage, 1024);
+    externalerror(ErrorMessage);
+    return 0;
 }
 
 
@@ -105,68 +105,68 @@ int
 X11_Init(void)
 {
 
-	char buf[512];
-	char *displayname;
+    char buf[512];
+    char *displayname;
 
-	XGCValues gcvalues;
+    XGCValues gcvalues;
 
-	/* grrr, Xtk forced contortions */
-	char *argv[2];
-	int argc = 2;
+    /* grrr, Xtk forced contortions */
+    char *argv[2];
+    int argc = 2;
 
-	if (cp_getvar("display", VT_STRING, buf)) {
-	  displayname = buf;
-	} else if (!(displayname = getenv("DISPLAY"))) {
-	  internalerror("Can't open X display.");
-	  return (1);
-	}
+    if (cp_getvar("display", VT_STRING, buf)) {
+      displayname = buf;
+    } else if (!(displayname = getenv("DISPLAY"))) {
+      internalerror("Can't open X display.");
+      return (1);
+    }
 
 #  ifdef DEBUG
-	_Xdebug = 1;
+    _Xdebug = 1;
 #  endif
 
-	argv[0] = "ngspice";
-	argv[1] = displayname;
+    argv[0] = "ngspice";
+    argv[1] = displayname;
 /*
-	argv[2] = "-geometry";
-	argv[3] = "=1x1+2+2";
+    argv[2] = "-geometry";
+    argv[3] = "=1x1+2+2";
 */
 
-	/* initialize X toolkit */
-	toplevel = XtInitialize("ngspice", "Nutmeg", NULL, 0, &argc, argv);
+    /* initialize X toolkit */
+    toplevel = XtInitialize("ngspice", "Nutmeg", NULL, 0, &argc, argv);
 
-	display = XtDisplay(toplevel);
+    display = XtDisplay(toplevel);
 
-	X11_Open = 1;
+    X11_Open = 1;
 
-	/* "invert" works better than "xor" for B&W */
+    /* "invert" works better than "xor" for B&W */
 
-	/* xor gc should be a function of the pixels that are written on */
-	/* gcvalues.function = GXxor; */
-	/* this patch makes lines visible on true color displays
-        Guenther Roehrich 22-Jan-99 */
- 	gcvalues.function = GXinvert;
-	gcvalues.line_width = 1;
-	gcvalues.foreground = 1;
-	gcvalues.background = 0;
+    /* xor gc should be a function of the pixels that are written on */
+    /* gcvalues.function = GXxor; */
+    /* this patch makes lines visible on true color displays
+    Guenther Roehrich 22-Jan-99 */
+    gcvalues.function = GXinvert;
+    gcvalues.line_width = 1;
+    gcvalues.foreground = 1;
+    gcvalues.background = 0;
 
-	xorgc = XCreateGC(display, DefaultRootWindow(display),
-	        GCLineWidth | GCFunction | GCForeground | GCBackground,
-	        &gcvalues);
+    xorgc = XCreateGC(display, DefaultRootWindow(display),
+	    GCLineWidth | GCFunction | GCForeground | GCBackground,
+	    &gcvalues);
 
-	/* set correct information */
-	dispdev->numlinestyles = NUMLINESTYLES;
-	dispdev->numcolors = NUMCOLORS;
+    /* set correct information */
+    dispdev->numlinestyles = NUMLINESTYLES;
+    dispdev->numcolors = NUMCOLORS;
 
-	dispdev->width = DisplayWidth(display, DefaultScreen(display));
-	dispdev->height = DisplayHeight(display, DefaultScreen(display));
+    dispdev->width = DisplayWidth(display, DefaultScreen(display));
+    dispdev->height = DisplayHeight(display, DefaultScreen(display));
 
-	/* we don't want non-fatal X errors to call exit */
-	XSetErrorHandler(errorhandler);
+    /* we don't want non-fatal X errors to call exit */
+    XSetErrorHandler(errorhandler);
 
-	numdispplanes = DisplayPlanes(display, DefaultScreen(display));
+    numdispplanes = DisplayPlanes(display, DefaultScreen(display));
 
-	return (0);
+    return (0);
 
 }
 
@@ -174,14 +174,14 @@ static void
 initlinestyles(void)
 {
 
-	int i;
+    int i;
 
-	if (numdispplanes > 1) {
-	  /* Dotted lines are a distraction when we have colors. */
-	  for (i = 2; i < NUMLINESTYLES; i++) {
-	    xlinestyles[i] = xlinestyles[0];
-	  }
-	}
+    if (numdispplanes > 1) {
+      /* Dotted lines are a distraction when we have colors. */
+      for (i = 2; i < NUMLINESTYLES; i++) {
+	  xlinestyles[i] = xlinestyles[0];
+      }
+    }
 
 }
 
@@ -241,8 +241,8 @@ initcolors(GRAPH *graph)
 	    } */
 	    
 	}
-		/* MW. Set Beackgroound here */
-		XSetWindowBackground(display, DEVDEP(graph).window, graph->colors[0]);
+	/* MW. Set Beackgroound here */
+	XSetWindowBackground(display, DEVDEP(graph).window, graph->colors[0]);
 		
 /*	if (graph->colors[0] != DEVDEP(graph).view->core.background_pixel) {
 	    graph->colors[0] = DEVDEP(graph).view->core.background_pixel;
@@ -259,25 +259,25 @@ void
 handlekeypressed(Widget w, caddr_t clientdata, caddr_t calldata)
 {
 
-	XKeyEvent *keyev = (XKeyPressedEvent *) calldata;
-	GRAPH *graph = (GRAPH *) clientdata;
-	char text[4];
-	int nbytes;
+    XKeyEvent *keyev = (XKeyPressedEvent *) calldata;
+    GRAPH *graph = (GRAPH *) clientdata;
+    char text[4];
+    int nbytes;
 
-	nbytes = XLookupString(keyev, text, 4, NULL, NULL);
-	if (!nbytes) return;
-	/* write it */
-	PushGraphContext(graph);
-	text[nbytes] = '\0';
-	SetColor(1);
-	Text(text, keyev->x, graph->absolute.height - keyev->y);
-	/* save it */
-	SaveText(graph, text, keyev->x, graph->absolute.height - keyev->y);
-	/* warp mouse so user can type in sequence */
-	XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0,
-	    keyev->x + XTextWidth(DEVDEP(graph).font, text, nbytes),
-	    keyev->y);
-	PopGraphContext();
+    nbytes = XLookupString(keyev, text, 4, NULL, NULL);
+    if (!nbytes) return;
+    /* write it */
+    PushGraphContext(graph);
+    text[nbytes] = '\0';
+    SetColor(1);
+    Text(text, keyev->x, graph->absolute.height - keyev->y);
+    /* save it */
+    SaveText(graph, text, keyev->x, graph->absolute.height - keyev->y);
+    /* warp mouse so user can type in sequence */
+    XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0,
+	keyev->x + XTextWidth(DEVDEP(graph).font, text, nbytes),
+	keyev->y);
+    PopGraphContext();
 
 }
 
@@ -286,16 +286,16 @@ void
 handlebuttonev(Widget w, caddr_t clientdata, caddr_t calldata)
 {
 
-	XButtonEvent *buttonev = (XButtonEvent *) calldata;
+    XButtonEvent *buttonev = (XButtonEvent *) calldata;
 
-	switch (buttonev->button) {
-	  case Button1:
-	    slopelocation((GRAPH *) clientdata, buttonev->x, buttonev->y);
-	    break;
-	  case Button3:
-	    zoomin((GRAPH *) clientdata);
-	    break;
-	}
+    switch (buttonev->button) {
+      case Button1:
+	slopelocation((GRAPH *) clientdata, buttonev->x, buttonev->y);
+	break;
+      case Button3:
+	zoomin((GRAPH *) clientdata);
+	break;
+    }
 
 }
 
@@ -310,167 +310,168 @@ int
 X11_NewViewport(GRAPH *graph)
 {
 
-	char fontname[513]; /* who knows . . . */
-	char *p, *q;
-	Cursor cursor;
-	XSetWindowAttributes	w_attrs;
-	XGCValues gcvalues;
-	static Arg formargs[ ] = {
-	    { XtNleft, (XtArgVal) XtChainLeft },
-	    { XtNresizable, (XtArgVal) TRUE }
-	};
-	static Arg bboxargs[ ] = {
-	    { XtNfromHoriz, (XtArgVal) NULL },
-	    { XtNbottom, (XtArgVal) XtChainTop },
-	    { XtNtop, (XtArgVal) XtChainTop },
-	    { XtNleft, (XtArgVal) XtChainRight },
-	    { XtNright, (XtArgVal) XtChainRight }
-	};
-	static Arg buttonargs[ ] = {
-	    { XtNlabel, (XtArgVal) NULL },
-	    { XtNfromVert, (XtArgVal) NULL },
-	    { XtNbottom, (XtArgVal) XtChainTop },
-	    { XtNtop, (XtArgVal) XtChainTop },
-	    { XtNleft, (XtArgVal) XtRubber },
-	    { XtNright, (XtArgVal) XtRubber },
-	    { XtNresizable, (XtArgVal) TRUE }
-	};
-	static Arg viewargs[] = {
-	    { XtNresizable, (XtArgVal) TRUE },
-	    { XtNwidth, (XtArgVal) 300 },
-	    { XtNheight, (XtArgVal) 300 },
-	    { XtNright, (XtArgVal) XtChainRight }
-	};
-	int	trys;
+    char fontname[513]; /* who knows . . . */
+    char *p, *q;
+    Cursor cursor;
+    XSetWindowAttributes	w_attrs;
+    XGCValues gcvalues;
+    static Arg formargs[ ] = {
+	{ XtNleft, (XtArgVal) XtChainLeft },
+	{ XtNresizable, (XtArgVal) TRUE }
+    };
+    static Arg bboxargs[ ] = {
+	{ XtNfromHoriz, (XtArgVal) NULL },
+	{ XtNbottom, (XtArgVal) XtChainTop },
+	{ XtNtop, (XtArgVal) XtChainTop },
+	{ XtNleft, (XtArgVal) XtChainRight },
+	{ XtNright, (XtArgVal) XtChainRight }
+    };
+    static Arg buttonargs[ ] = {
+	{ XtNlabel, (XtArgVal) NULL },
+	{ XtNfromVert, (XtArgVal) NULL },
+	{ XtNbottom, (XtArgVal) XtChainTop },
+	{ XtNtop, (XtArgVal) XtChainTop },
+	{ XtNleft, (XtArgVal) XtRubber },
+	{ XtNright, (XtArgVal) XtRubber },
+	{ XtNresizable, (XtArgVal) TRUE }
+    };
+    static Arg viewargs[] = {
+	{ XtNresizable, (XtArgVal) TRUE },
+	{ XtNwidth, (XtArgVal) 300 },
+	{ XtNheight, (XtArgVal) 300 },
+	{ XtNright, (XtArgVal) XtChainRight }
+    };
+    int	trys;
 
-	graph->devdep = tmalloc(sizeof(X11devdep));
+    graph->devdep = tmalloc(sizeof(X11devdep));
 
-	/* set up new shell */
-	DEVDEP(graph).shell = XtCreateApplicationShell("shell",
-	        topLevelShellWidgetClass, NULL, 0);
+    /* set up new shell */
+    DEVDEP(graph).shell = XtCreateApplicationShell("shell",
+	    topLevelShellWidgetClass, NULL, 0);
 
-	/* set up form widget */
-	DEVDEP(graph).form = XtCreateManagedWidget("form",
-	    formWidgetClass, DEVDEP(graph).shell, formargs, XtNumber(formargs));
+    /* set up form widget */
+    DEVDEP(graph).form = XtCreateManagedWidget("form",
+	formWidgetClass, DEVDEP(graph).shell, formargs, XtNumber(formargs));
 
-	/* set up viewport */
-	DEVDEP(graph).view = XtCreateManagedWidget("viewport", widgetClass,
-						   DEVDEP(graph).form,
-						   viewargs,
-						   XtNumber(viewargs));
-	XtAddEventHandler(DEVDEP(graph).view, ButtonPressMask, FALSE,
-			  (XtEventHandler) handlebuttonev, graph);
-	XtAddEventHandler(DEVDEP(graph).view, KeyPressMask, FALSE,
-			 (XtEventHandler) handlekeypressed, graph);
-	XtAddEventHandler(DEVDEP(graph).view, StructureNotifyMask, FALSE,
-			 (XtEventHandler) resize, graph);
-	XtAddEventHandler(DEVDEP(graph).view, ExposureMask, FALSE,
-	        (XtEventHandler) redraw, graph);
+    /* set up viewport */
+    DEVDEP(graph).view = XtCreateManagedWidget("viewport", widgetClass,
+					       DEVDEP(graph).form,
+					       viewargs,
+					       XtNumber(viewargs));
+    XtAddEventHandler(DEVDEP(graph).view, ButtonPressMask, FALSE,
+		      (XtEventHandler) handlebuttonev, graph);
+    XtAddEventHandler(DEVDEP(graph).view, KeyPressMask, FALSE,
+		     (XtEventHandler) handlekeypressed, graph);
+    XtAddEventHandler(DEVDEP(graph).view, StructureNotifyMask, FALSE,
+		     (XtEventHandler) resize, graph);
+    XtAddEventHandler(DEVDEP(graph).view, ExposureMask, FALSE,
+	    (XtEventHandler) redraw, graph);
 
-	/* set up button box */
-	XtSetArg(bboxargs[1], XtNfromHoriz, DEVDEP(graph).view);
-	DEVDEP(graph).buttonbox = XtCreateManagedWidget("buttonbox",
-	    boxWidgetClass, DEVDEP(graph).form, bboxargs, XtNumber(bboxargs));
+    /* set up button box */
+    XtSetArg(bboxargs[1], XtNfromHoriz, DEVDEP(graph).view);
+    DEVDEP(graph).buttonbox = XtCreateManagedWidget("buttonbox",
+	boxWidgetClass, DEVDEP(graph).form, bboxargs, XtNumber(bboxargs));
 
-	/* set up buttons */
-	XtSetArg(buttonargs[0], XtNlabel, "quit");
-	XtSetArg(bboxargs[1], XtNfromVert, NULL);
-	DEVDEP(graph).buttons[0] = XtCreateManagedWidget("quit",
-	    commandWidgetClass, DEVDEP(graph).buttonbox,
-	    buttonargs, 1);
-	XtAddCallback(DEVDEP(graph).buttons[0], XtNcallback, (XtCallbackProc) killwin, graph);
+    /* set up buttons */
+    XtSetArg(buttonargs[0], XtNlabel, "quit");
+    XtSetArg(bboxargs[1], XtNfromVert, NULL);
+    DEVDEP(graph).buttons[0] = XtCreateManagedWidget("quit",
+	commandWidgetClass, DEVDEP(graph).buttonbox,
+	buttonargs, 1);
+    XtAddCallback(DEVDEP(graph).buttons[0], XtNcallback, (XtCallbackProc) killwin, graph);
 
-	XtSetArg(buttonargs[0], XtNlabel, "hardcopy");
-	XtSetArg(bboxargs[1], XtNfromVert, DEVDEP(graph).buttons[0]);
-	DEVDEP(graph).buttons[1] = XtCreateManagedWidget("hardcopy",
-	    commandWidgetClass, DEVDEP(graph).buttonbox,
-	    buttonargs, 1);
-	XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, (XtCallbackProc) hardcopy, graph);
+    XtSetArg(buttonargs[0], XtNlabel, "hardcopy");
+    XtSetArg(bboxargs[1], XtNfromVert, DEVDEP(graph).buttons[0]);
+    DEVDEP(graph).buttons[1] = XtCreateManagedWidget("hardcopy",
+	commandWidgetClass, DEVDEP(graph).buttonbox,
+	buttonargs, 1);
+    XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, (XtCallbackProc) hardcopy, graph);
 
-	/* set up fonts */
-	if (!cp_getvar("font", VT_STRING, fontname)) {
-	  (void) strcpy(fontname, DEF_FONT);
-	}
+    /* set up fonts */
+    if (!cp_getvar("font", VT_STRING, fontname)) {
+	(void) strcpy(fontname, DEF_FONT);
+    }
 
-	for (p = fontname; *p && *p <= ' '; p++)
+    for (p = fontname; *p && *p <= ' '; p++)
+	;
+    if (p != fontname) {
+	for (q = fontname; *p; *q++ = *p++)
 		;
-	if (p != fontname) {
-		for (q = fontname; *p; *q++ = *p++)
-			;
-		*q = 0;
-	}
+	*q = 0;
+    }
 
-	trys = 1;
-	while (!(DEVDEP(graph).font = XLoadQueryFont(display, fontname))) {
-	  sprintf(ErrorMessage, "can't open font %s", fontname);
-	  strcpy(fontname, "fixed");
-	  if (trys > 1) {
-	      internalerror(ErrorMessage);
-	      RECOVERNEWVIEWPORT();
-	      return(1);
-	  }
-	  trys += 1;
-	}
+    trys = 1;
+    while (!(DEVDEP(graph).font = XLoadQueryFont(display, fontname))) {
+      sprintf(ErrorMessage, "can't open font %s", fontname);
+      strcpy(fontname, "fixed");
+      if (trys > 1) {
+	  internalerror(ErrorMessage);
+	  RECOVERNEWVIEWPORT();
+	  return(1);
+      }
+      trys += 1;
+    }
 
-	graph->fontwidth = DEVDEP(graph).font->max_bounds.rbearing -
-	        DEVDEP(graph).font->min_bounds.lbearing + 1;
-	graph->fontheight = DEVDEP(graph).font->max_bounds.ascent +
-	        DEVDEP(graph).font->max_bounds.descent + 1;
+    graph->fontwidth = DEVDEP(graph).font->max_bounds.rbearing -
+	    DEVDEP(graph).font->min_bounds.lbearing + 1;
+    graph->fontheight = DEVDEP(graph).font->max_bounds.ascent +
+	    DEVDEP(graph).font->max_bounds.descent + 1;
 
-	XtRealizeWidget(DEVDEP(graph).shell);
+    XtRealizeWidget(DEVDEP(graph).shell);
 
-	DEVDEP(graph).window = XtWindow(DEVDEP(graph).view);
-	DEVDEP(graph).isopen = 0;
-	w_attrs.bit_gravity = ForgetGravity;
-	XChangeWindowAttributes(display, DEVDEP(graph).window, CWBitGravity,
-		&w_attrs);
-	/* have to note font and set mask GCFont in XCreateGC, p.w.h. */
-	gcvalues.font = DEVDEP(graph).font->fid;
-	gcvalues.line_width = MW_LINEWIDTH;
-	gcvalues.cap_style = CapNotLast;
-	gcvalues.function = GXcopy;
-	DEVDEP(graph).gc = XCreateGC(display, DEVDEP(graph).window,
-	        GCFont | GCLineWidth | GCCapStyle | GCFunction, &gcvalues);
+    DEVDEP(graph).window = XtWindow(DEVDEP(graph).view);
+    DEVDEP(graph).isopen = 0;
+    w_attrs.bit_gravity = ForgetGravity;
+    XChangeWindowAttributes(display, DEVDEP(graph).window, CWBitGravity,
+	    &w_attrs);
+    /* have to note font and set mask GCFont in XCreateGC, p.w.h. */
+    gcvalues.font = DEVDEP(graph).font->fid;
+    gcvalues.line_width = MW_LINEWIDTH;
+    gcvalues.cap_style = CapNotLast;
+    gcvalues.function = GXcopy;
+    DEVDEP(graph).gc = XCreateGC(display, DEVDEP(graph).window,
+	    GCFont | GCLineWidth | GCCapStyle | GCFunction, &gcvalues);
 
-	/* should absolute.positions really be shell.pos? */
-	graph->absolute.xpos = DEVDEP(graph).view->core.x;
-	graph->absolute.ypos = DEVDEP(graph).view->core.y;
-	graph->absolute.width = DEVDEP(graph).view->core.width;
-	graph->absolute.height = DEVDEP(graph).view->core.height;
+    /* should absolute.positions really be shell.pos? */
+    graph->absolute.xpos = DEVDEP(graph).view->core.x;
+    graph->absolute.ypos = DEVDEP(graph).view->core.y;
+    graph->absolute.width = DEVDEP(graph).view->core.width;
+    graph->absolute.height = DEVDEP(graph).view->core.height;
 
-	initlinestyles();
-	initcolors(graph);
+    initlinestyles();
+    initcolors(graph);
 
-	/* set up cursor */
-	cursor = XCreateFontCursor(display, XC_left_ptr);
-	XDefineCursor(display, DEVDEP(graph).window, cursor);
+    /* set up cursor */
+    cursor = XCreateFontCursor(display, XC_left_ptr);
+    XDefineCursor(display, DEVDEP(graph).window, cursor);
 
-	return (0);
+    return (0);
 }
 
 /* This routine closes the X connection.
 	It is not to be called for finishing a graph. */
-void
+int
 X11_Close(void)
 {
-	XCloseDisplay(display);
+    XCloseDisplay(display);
+    return 0;
 }
 
-void
+int
 X11_DrawLine(int x1, int y1, int x2, int y2)
 {
 
-	if (DEVDEP(currentgraph).isopen)
-		XDrawLine(display, DEVDEP(currentgraph).window,
-			DEVDEP(currentgraph).gc,
-			x1, currentgraph->absolute.height - y1,
-			x2, currentgraph->absolute.height - y2);
+    if (DEVDEP(currentgraph).isopen)
+	XDrawLine(display, DEVDEP(currentgraph).window,
+		DEVDEP(currentgraph).gc,
+		x1, currentgraph->absolute.height - y1,
+		x2, currentgraph->absolute.height - y2);
 
-
+    return 0;
 }
 
 
-void
+int
 X11_Arc(int x0, int y0, int radius, double theta1, double theta2)
 {
 
@@ -486,128 +487,131 @@ X11_Arc(int x0, int y0, int radius, double theta1, double theta2)
 	t1 = 64 * (180.0 / M_PI) * theta1;
 	t2 = 64 * (180.0 / M_PI) * theta2 - t1;
 	if (t2 == 0)
-		return;
+		return 0;
 	XDrawArc(display, DEVDEP(currentgraph).window, DEVDEP(currentgraph).gc,
 		x0 - radius,
 		currentgraph->absolute.height - radius - y0,
 		2 * radius, 2 * radius, t1, t2);		
     }
+    return 0;
 }
 
 /* note: x and y are the LOWER left corner of text */
-void
+int
 X11_Text(char *text, int x, int y)
 {
 
-/* We specify text position by lower left corner, so have to adjust for
+    /* We specify text position by lower left corner, so have to adjust for
 	X11's font nonsense. */
 
-	if (DEVDEP(currentgraph).isopen)
-		XDrawString(display, DEVDEP(currentgraph).window,
-		    DEVDEP(currentgraph).gc, x,
-		    currentgraph->absolute.height
-			- (y + DEVDEP(currentgraph).font->max_bounds.descent),
-		    text, strlen(text));
+    if (DEVDEP(currentgraph).isopen)
+	    XDrawString(display, DEVDEP(currentgraph).window,
+		DEVDEP(currentgraph).gc, x,
+		currentgraph->absolute.height
+		    - (y + DEVDEP(currentgraph).font->max_bounds.descent),
+		text, strlen(text));
 
-	/* note: unlike before, we do not save any text here */
-
+    /* note: unlike before, we do not save any text here */
+    return 0;
 }
 
 
 int
 X11_DefineColor(int colorid, double red, double green, double blue)
 {
-	internalerror("X11_DefineColor not implemented.");
-	return(0);
+    internalerror("X11_DefineColor not implemented.");
+    return 0;
 }
 
 
-void
+int
 X11_DefineLinestyle(int linestyleid, int mask)
 {
-	internalerror("X11_DefineLinestyle not implemented.");
+    internalerror("X11_DefineLinestyle not implemented.");
+    return 0;
 }
 
-void
+int
 X11_SetLinestyle(int linestyleid)
 {
-	XGCValues values;
+    XGCValues values;
 
-	if (currentgraph->linestyle != linestyleid) {
+    if (currentgraph->linestyle != linestyleid) {
 
-	  if ((linestyleid == 0 || numdispplanes > 1) && linestyleid != 1) {
-	    /* solid if linestyle 0 or if has color, allow only one
-	     * dashed linestyle */
-	    values.line_style = LineSolid;
-	  } else {
-	    values.line_style = LineOnOffDash;
-	  }
-	  XChangeGC(display, DEVDEP(currentgraph).gc, GCLineStyle, &values);
+      if ((linestyleid == 0 || numdispplanes > 1) && linestyleid != 1) {
+	/* solid if linestyle 0 or if has color, allow only one
+	 * dashed linestyle */
+	values.line_style = LineSolid;
+      } else {
+	values.line_style = LineOnOffDash;
+      }
+      XChangeGC(display, DEVDEP(currentgraph).gc, GCLineStyle, &values);
 
-	  currentgraph->linestyle = linestyleid;
-	  XSetDashes(display, DEVDEP(currentgraph).gc, 0,
-		xlinestyles[linestyleid], 4);
-	}
+      currentgraph->linestyle = linestyleid;
+      XSetDashes(display, DEVDEP(currentgraph).gc, 0,
+	    xlinestyles[linestyleid], 4);
+    }
+    return 0;
 }
 
-void
+int
 X11_SetColor(int colorid)
 {
 
-	currentgraph->currentcolor = colorid;
-	XSetForeground(display, DEVDEP(currentgraph).gc,
-	        currentgraph->colors[colorid]);
-
+    currentgraph->currentcolor = colorid;
+    XSetForeground(display, DEVDEP(currentgraph).gc,
+	    currentgraph->colors[colorid]);
+    return 0;
 }
 
-void
+int
 X11_Update(void)
 {
 
-	if (X11_Open)
-		XSync(display, 0);
-
+    if (X11_Open)
+	    XSync(display, 0);
+    return 0;
 }
 
-void
+int
 X11_Clear(void)
 {
 
-	if (!noclear) /* hack so exposures look like they're handled nicely */
-	  XClearWindow(display, DEVDEP(currentgraph).window);
-
+    if (!noclear) /* hack so exposures look like they're handled nicely */
+      XClearWindow(display, DEVDEP(currentgraph).window);
+    return 0;
 }
 
 static void
 X_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy)
 {
-	double	lmin, lmax;
+    double	lmin, lmax;
 
-	if (graph->grid.gridtype == GRID_XLOG
-		|| graph->grid.gridtype == GRID_LOGLOG)
-	{
-		lmin = log10(graph->datawindow.xmin);
-		lmax = log10(graph->datawindow.xmax);
-		*fx = exp(((x - graph->viewportxoff)
-			* (lmax - lmin) / graph->viewport.width + lmin)
-			* M_LN10);
-	} else {
-		*fx = (x - graph->viewportxoff) * graph->aspectratiox +
-			graph->datawindow.xmin;
-	}
+    if (graph->grid.gridtype == GRID_XLOG
+	    || graph->grid.gridtype == GRID_LOGLOG)
+    {
+	    lmin = log10(graph->datawindow.xmin);
+	    lmax = log10(graph->datawindow.xmax);
+	    *fx = exp(((x - graph->viewportxoff)
+		    * (lmax - lmin) / graph->viewport.width + lmin)
+		    * M_LN10);
+    } else {
+	    *fx = (x - graph->viewportxoff) * graph->aspectratiox +
+		    graph->datawindow.xmin;
+    }
 
-	if (graph->grid.gridtype == GRID_YLOG
-		|| graph->grid.gridtype == GRID_LOGLOG)
-	{
-		lmin = log10(graph->datawindow.ymin);
-		lmax = log10(graph->datawindow.ymax);
-		*fy = exp(((graph->absolute.height - y - graph->viewportxoff)
-			* (lmax - lmin) / graph->viewport.height + lmin)
-			* M_LN10);
-	} else {
-		*fy = ((graph->absolute.height - y) - graph->viewportyoff)
-			* graph->aspectratioy + graph->datawindow.ymin;
-	}
+    if (graph->grid.gridtype == GRID_YLOG
+	    || graph->grid.gridtype == GRID_LOGLOG)
+    {
+	    lmin = log10(graph->datawindow.ymin);
+	    lmax = log10(graph->datawindow.ymax);
+	    *fy = exp(((graph->absolute.height - y - graph->viewportxoff)
+		    * (lmax - lmin) / graph->viewport.height + lmin)
+		    * M_LN10);
+    } else {
+	    *fy = ((graph->absolute.height - y) - graph->viewportyoff)
+		    * graph->aspectratioy + graph->datawindow.ymin;
+    }
 
 }
 
@@ -619,69 +623,69 @@ slopelocation(GRAPH *graph, int x0, int y0)
                     /* initial position of mouse */
 {
 
-	int x1, y1;
-	int x, y;
-	Window rootwindow, childwindow;
-	int rootx, rooty;
-	unsigned int state;
-	double fx0, fx1, fy0, fy1;
-	double angle;
+    int x1, y1;
+    int x, y;
+    Window rootwindow, childwindow;
+    int rootx, rooty;
+    unsigned int state;
+    double fx0, fx1, fy0, fy1;
+    double angle;
 
-	x1 = x0;
-	y1 = y0;
-	XQueryPointer(display, DEVDEP(graph).window, &rootwindow, &childwindow,
-	        &rootx, &rooty, &x, &y, &state);
+    x1 = x0;
+    y1 = y0;
+    XQueryPointer(display, DEVDEP(graph).window, &rootwindow, &childwindow,
+	    &rootx, &rooty, &x, &y, &state);
+    XDrawLine(display, DEVDEP(graph).window, xorgc, x0, y0, x0, y1-1);
+    XDrawLine(display, DEVDEP(graph).window, xorgc, x0, y1, x1, y1);
+    while (state & Button1Mask) {
+      if (x != x1 || y != y1) {
+	XDrawLine(display, DEVDEP(graph).window, xorgc,
+	    x0, y0, x0, y1-1);
+	XDrawLine(display, DEVDEP(graph).window, xorgc,
+	    x0, y1, x1, y1);
+	x1 = x;
+	y1 = y;
 	XDrawLine(display, DEVDEP(graph).window, xorgc, x0, y0, x0, y1-1);
 	XDrawLine(display, DEVDEP(graph).window, xorgc, x0, y1, x1, y1);
-	while (state & Button1Mask) {
-	  if (x != x1 || y != y1) {
-	    XDrawLine(display, DEVDEP(graph).window, xorgc,
-	        x0, y0, x0, y1-1);
-	    XDrawLine(display, DEVDEP(graph).window, xorgc,
-	        x0, y1, x1, y1);
-	    x1 = x;
-	    y1 = y;
-	    XDrawLine(display, DEVDEP(graph).window, xorgc, x0, y0, x0, y1-1);
-	    XDrawLine(display, DEVDEP(graph).window, xorgc, x0, y1, x1, y1);
-	  }
-	  XQueryPointer(display, DEVDEP(graph).window, &rootwindow,
-	        &childwindow, &rootx, &rooty, &x, &y, &state);
-	}
-	XDrawLine(display, DEVDEP(graph).window, xorgc, x0, y0, x0, y1-1);
-	XDrawLine(display, DEVDEP(graph).window, xorgc, x0, y1, x1, y1);
+      }
+      XQueryPointer(display, DEVDEP(graph).window, &rootwindow,
+	    &childwindow, &rootx, &rooty, &x, &y, &state);
+    }
+    XDrawLine(display, DEVDEP(graph).window, xorgc, x0, y0, x0, y1-1);
+    XDrawLine(display, DEVDEP(graph).window, xorgc, x0, y1, x1, y1);
 
-	X_ScreentoData(graph, x0, y0, &fx0, &fy0);
-	X_ScreentoData(graph, x1, y1, &fx1, &fy1);
+    X_ScreentoData(graph, x0, y0, &fx0, &fy0);
+    X_ScreentoData(graph, x1, y1, &fx1, &fy1);
 
-	/* print it out */
-	if (x1 == x0 && y1 == y0) {     /* only one location */
-	    fprintf(stdout, "\nx0 = %g, y0 = %g\n", fx0, fy0);
-	    if (graph->grid.gridtype == GRID_POLAR
-	        || graph->grid.gridtype == GRID_SMITH
-		|| graph->grid.gridtype == GRID_SMITHGRID)
-	    {
-		angle = RAD_TO_DEG * atan2( fy0, fx0 );
-		fprintf(stdout, "r0 = %g, a0 = %g\n",
-		    sqrt( fx0*fx0 + fy0*fy0 ),
-		    (angle>0)?angle:(double) 360+angle);
-	    }
-
-
-	} else {    /* need to print info about two points */
-	  fprintf(stdout, "\nx0 = %g, y0 = %g    x1 = %g, y1 = %g\n",
-	      fx0, fy0, fx1, fy1);
-	  fprintf(stdout, "dx = %g, dy = %g\n", fx1-fx0, fy1 - fy0);
-	  if (x1 != x0 && y1 != y0) {
-	/* add slope info if both dx and dy are zero,
-	     because otherwise either dy/dx or dx/dy is zero,
-	     which is uninteresting
-	*/
-	    fprintf(stdout, "dy/dx = %g    dx/dy = %g\n",
-	    (fy1-fy0)/(fx1-fx0), (fx1-fx0)/(fy1-fy0));
-	  }
+    /* print it out */
+    if (x1 == x0 && y1 == y0) {     /* only one location */
+	fprintf(stdout, "\nx0 = %g, y0 = %g\n", fx0, fy0);
+	if (graph->grid.gridtype == GRID_POLAR
+	    || graph->grid.gridtype == GRID_SMITH
+	    || graph->grid.gridtype == GRID_SMITHGRID)
+	{
+	    angle = RAD_TO_DEG * atan2( fy0, fx0 );
+	    fprintf(stdout, "r0 = %g, a0 = %g\n",
+		sqrt( fx0*fx0 + fy0*fy0 ),
+		(angle>0)?angle:(double) 360+angle);
 	}
 
-	return;
+
+    } else {    /* need to print info about two points */
+      fprintf(stdout, "\nx0 = %g, y0 = %g    x1 = %g, y1 = %g\n",
+	  fx0, fy0, fx1, fy1);
+      fprintf(stdout, "dx = %g, dy = %g\n", fx1-fx0, fy1 - fy0);
+      if (x1 != x0 && y1 != y0) {
+    /* add slope info if both dx and dy are zero,
+	 because otherwise either dy/dx or dx/dy is zero,
+	 which is uninteresting
+    */
+	fprintf(stdout, "dy/dx = %g    dx/dy = %g\n",
+	(fy1-fy0)/(fx1-fx0), (fx1-fx0)/(fy1-fy0));
+      }
+    }
+
+    return;
 
 }
 
@@ -691,104 +695,104 @@ zoomin(GRAPH *graph)
 {
 /* note: need to add circular boxes XXX */
 
-	int x0, y0, x1, y1;
-	double fx0, fx1, fy0, fy1, ftemp;
-	char buf[BSIZE_SP];
-	char buf2[128];
-	char *t;
+    int x0, y0, x1, y1;
+    double fx0, fx1, fy0, fy1, ftemp;
+    char buf[BSIZE_SP];
+    char buf2[128];
+    char *t;
 
-	Window rootwindow, childwindow;
-	int rootx, rooty;
-	unsigned int state;
-	int x, y, upperx, uppery, lowerx, lowery;
+    Window rootwindow, childwindow;
+    int rootx, rooty;
+    unsigned int state;
+    int x, y, upperx, uppery, lowerx, lowery;
 
-	/* open box and get area to zoom in on */
+    /* open box and get area to zoom in on */
 
-	XQueryPointer(display, DEVDEP(graph).window, &rootwindow,
-	        &childwindow, &rootx, &rooty, &x0, &y0, &state);
+    XQueryPointer(display, DEVDEP(graph).window, &rootwindow,
+	    &childwindow, &rootx, &rooty, &x0, &y0, &state);
 
-	x = lowerx = x1 = x0 + BOXSIZE;
-	y = lowery = y1 = y0 + BOXSIZE;
-	upperx = x0;
-	uppery = y0;
+    x = lowerx = x1 = x0 + BOXSIZE;
+    y = lowery = y1 = y0 + BOXSIZE;
+    upperx = x0;
+    uppery = y0;
 
-	XDrawRectangle(display, DEVDEP(graph).window, xorgc,
-	        upperx, uppery, lowerx - upperx, lowery - uppery);
+    XDrawRectangle(display, DEVDEP(graph).window, xorgc,
+	    upperx, uppery, lowerx - upperx, lowery - uppery);
 
 /* note: what are src_x, src_y, src_width, and src_height for? XXX */
-	XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0, x1, y1);
+    XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0, x1, y1);
 
-	while (state & Button3Mask) {
-	  if (x != x1 || y != y1) {
-	    XDrawRectangle(display, DEVDEP(graph).window, xorgc,
-	        upperx, uppery, lowerx - upperx, lowery - uppery);
-	    x1 = x;
-	    y1 = y;
-	    /* figure out upper left corner */
-	    /* remember X11's (and X10's) demented coordinate system */
-	    if (y0 < y1) {
-	      uppery = y0;
-	      upperx = x0;
-	      lowery = y1;
-	      lowerx = x1;
-	    } else {
-	      uppery = y1;
-	      upperx = x1;
-	      lowery = y0;
-	      lowerx = x0;
-	    }
-	    XDrawRectangle(display, DEVDEP(graph).window, xorgc,
-	        upperx, uppery, lowerx - upperx, lowery - uppery);
-	  }
-	  XQueryPointer(display, DEVDEP(graph).window, &rootwindow,
-	           &childwindow, &rootx, &rooty, &x, &y, &state);
+    while (state & Button3Mask) {
+      if (x != x1 || y != y1) {
+	XDrawRectangle(display, DEVDEP(graph).window, xorgc,
+	    upperx, uppery, lowerx - upperx, lowery - uppery);
+	x1 = x;
+	y1 = y;
+	/* figure out upper left corner */
+	/* remember X11's (and X10's) demented coordinate system */
+	if (y0 < y1) {
+	  uppery = y0;
+	  upperx = x0;
+	  lowery = y1;
+	  lowerx = x1;
+	} else {
+	  uppery = y1;
+	  upperx = x1;
+	  lowery = y0;
+	  lowerx = x0;
 	}
 	XDrawRectangle(display, DEVDEP(graph).window, xorgc,
-	        upperx, uppery, lowerx - upperx, lowery - uppery);
+	    upperx, uppery, lowerx - upperx, lowery - uppery);
+      }
+      XQueryPointer(display, DEVDEP(graph).window, &rootwindow,
+	       &childwindow, &rootx, &rooty, &x, &y, &state);
+    }
+    XDrawRectangle(display, DEVDEP(graph).window, xorgc,
+	    upperx, uppery, lowerx - upperx, lowery - uppery);
 
-	X_ScreentoData(graph, x0, y0, &fx0, &fy0);
-	X_ScreentoData(graph, x1, y1, &fx1, &fy1);
+    X_ScreentoData(graph, x0, y0, &fx0, &fy0);
+    X_ScreentoData(graph, x1, y1, &fx1, &fy1);
 
-	if (fx0 > fx1) {
-	  ftemp = fx0;
-	  fx0 = fx1;
-	  fx1 = ftemp;
-	}
-	if (fy0 > fy1) {
-	  ftemp = fy0;
-	  fy0 = fy1;
-	  fy1 = ftemp;
-	}
+    if (fx0 > fx1) {
+      ftemp = fx0;
+      fx0 = fx1;
+      fx1 = ftemp;
+    }
+    if (fy0 > fy1) {
+      ftemp = fy0;
+      fy0 = fy1;
+      fy1 = ftemp;
+    }
 
-	strncpy(buf2, graph->plotname, sizeof(buf2));
-	if ((t =strchr(buf2, ':')))
-		*t = 0;
+    strncpy(buf2, graph->plotname, sizeof(buf2));
+    if ((t =strchr(buf2, ':')))
+	    *t = 0;
 
-	if (!eq(plot_cur->pl_typename, buf2)) {
-	  (void) sprintf(buf,
+    if (!eq(plot_cur->pl_typename, buf2)) {
+      (void) sprintf(buf,
 "setplot %s; %s xlimit %.20e %.20e ylimit %.20e %.20e; setplot $curplot\n",
-	   buf2, graph->commandline, fx0, fx1, fy0, fy1);
-	} else {
-	  (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e\n",
-	        graph->commandline, fx0, fx1, fy0, fy1);
-	}
+       buf2, graph->commandline, fx0, fx1, fy0, fy1);
+    } else {
+      (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e\n",
+	    graph->commandline, fx0, fx1, fy0, fy1);
+    }
 
 /* don't use the following if using GNU Readline or BSD EditLine */
 #if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
-	{
-	    wordlist *wl;
-	    int dummy;
-	    
-	    /* hack for Gordon Jacobs */
-	    /* add to history list if plothistory is set */
-	    if (cp_getvar("plothistory", VT_BOOL, (char *) &dummy)) {
-	      wl = cp_parse(buf);
-	      (void) cp_addhistent(cp_event++, wl);
-	    }
+    {
+	wordlist *wl;
+	int dummy;
+	
+	/* hack for Gordon Jacobs */
+	/* add to history list if plothistory is set */
+	if (cp_getvar("plothistory", VT_BOOL, (char *) &dummy)) {
+	  wl = cp_parse(buf);
+	  (void) cp_addhistent(cp_event++, wl);
 	}
+    }
 #endif /* !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE) */
 
-	(void) cp_evloop(buf);
+    (void) cp_evloop(buf);
 
 }
 
@@ -796,8 +800,8 @@ void
 hardcopy(Widget w, caddr_t client_data, caddr_t call_data)
 {
 
-	lasthardcopy = (GRAPH *) client_data;
-	com_hardcopy(NULL);
+    lasthardcopy = (GRAPH *) client_data;
+    com_hardcopy(NULL);
 
 }
 
@@ -805,14 +809,13 @@ void
 killwin(Widget w, caddr_t client_data, caddr_t call_data)
 {
 
-	GRAPH *graph = (GRAPH *) client_data;
+    GRAPH *graph = (GRAPH *) client_data;
 
-	/* Iplots are done asynchronously */
-	DEVDEP(graph).isopen = 0;
-/* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */	
-	XtDestroyWidget(DEVDEP(graph).shell);
-	DestroyGraph(graph->graphid);
-	
+    /* Iplots are done asynchronously */
+    DEVDEP(graph).isopen = 0;
+    /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */	
+    XtDestroyWidget(DEVDEP(graph).shell);
+    DestroyGraph(graph->graphid);
 
 }
 
@@ -821,39 +824,39 @@ void
 redraw(Widget w, caddr_t client_data, caddr_t call_data)
 {
 
-	GRAPH *graph = (GRAPH *) client_data;
-	XExposeEvent *pev = (XExposeEvent *) call_data;
-	XEvent ev;
-	XRectangle rects[30];
-	int n = 1;
+    GRAPH *graph = (GRAPH *) client_data;
+    XExposeEvent *pev = (XExposeEvent *) call_data;
+    XEvent ev;
+    XRectangle rects[30];
+    int n = 1;
 
-	DEVDEP(graph).isopen = 1;
+    DEVDEP(graph).isopen = 1;
 
 
-	rects[0].x = pev->x;
-	rects[0].y = pev->y;
-	rects[0].width = pev->width;
-	rects[0].height = pev->height;
+    rects[0].x = pev->x;
+    rects[0].y = pev->y;
+    rects[0].width = pev->width;
+    rects[0].height = pev->height;
 
-	/* XXX */
-	/* pull out all other expose regions that need to be redrawn */
-	while (n < 30 && XCheckWindowEvent(display, DEVDEP(graph).window,
-	        (long) ExposureMask, &ev)) {
-	  pev = (XExposeEvent *) &ev;
-	  rects[n].x = pev->x;
-	  rects[n].y = pev->y;
-	  rects[n].width = pev->width;
-	  rects[n].height = pev->height;
-	  n++;
-	}
-	XSetClipRectangles(display, DEVDEP(graph).gc, 0, 0,
-	        rects, n, Unsorted);
+    /* XXX */
+    /* pull out all other expose regions that need to be redrawn */
+    while (n < 30 && XCheckWindowEvent(display, DEVDEP(graph).window,
+	    (long) ExposureMask, &ev)) {
+      pev = (XExposeEvent *) &ev;
+      rects[n].x = pev->x;
+      rects[n].y = pev->y;
+      rects[n].width = pev->width;
+      rects[n].height = pev->height;
+      n++;
+    }
+    XSetClipRectangles(display, DEVDEP(graph).gc, 0, 0,
+	    rects, n, Unsorted);
 
-	noclear = True;
-	gr_redraw(graph);
-	noclear = False;
+    noclear = True;
+    gr_redraw(graph);
+    noclear = False;
 
-	XSetClipMask(display, DEVDEP(graph).gc, None);
+    XSetClipMask(display, DEVDEP(graph).gc, None);
 
 }
 
@@ -861,107 +864,107 @@ void
 resize(Widget w, caddr_t client_data, caddr_t call_data)
 {
 
-	GRAPH *graph = (GRAPH *) client_data;
-	XEvent ev;
+    GRAPH *graph = (GRAPH *) client_data;
+    XEvent ev;
 
-	/* pull out all other exposure events
-	   Also, get rid of other StructureNotify events on this window. */
+    /* pull out all other exposure events
+       Also, get rid of other StructureNotify events on this window. */
 
-	while (XCheckWindowEvent(display, DEVDEP(graph).window,
-		(long) /* ExposureMask | */ StructureNotifyMask, &ev))
-		;
+    while (XCheckWindowEvent(display, DEVDEP(graph).window,
+	    (long) /* ExposureMask | */ StructureNotifyMask, &ev))
+	    ;
 
-	XClearWindow(display, DEVDEP(graph).window);
-	graph->absolute.width = w->core.width;
-	graph->absolute.height = w->core.height;
-	gr_resize(graph);
+    XClearWindow(display, DEVDEP(graph).window);
+    graph->absolute.width = w->core.width;
+    graph->absolute.height = w->core.height;
+    gr_resize(graph);
 
 }
 
 
 
-void
+int
 X11_Input(REQUEST *request, RESPONSE *response)
 {
 
-	XEvent ev;
-	int nfds;
-        fd_set rfds;
+    XEvent ev;
+    int nfds;
+    fd_set rfds;
 
-	switch (request->option) {
+    switch (request->option) {
+	
 	  case char_option:
+		nfds = ConnectionNumber(display) > fileno(request->fp) ?
+		    ConnectionNumber(display) :
+		    fileno(request->fp);
 
-	    nfds = ConnectionNumber(display) > fileno(request->fp) ?
-	        ConnectionNumber(display) :
-	        fileno(request->fp);
+		while (1) {
 
-	    while (1) {
+		      /* first read off the queue before doing the select */
+		      while (XtPending()) {
+			    XtNextEvent(&ev);
+			    XtDispatchEvent(&ev);
+		      }
 
-	      /* first read off the queue before doing the select */
-	      while (XtPending()) {
-	        XtNextEvent(&ev);
-	        XtDispatchEvent(&ev);
-	      }
+		      /* block on ConnectionNumber and request->fp */
+		      /* PN: added fd_set * casting */
+		      FD_ZERO(&rfds);
+		      FD_SET(fileno(request->fp), &rfds);
+		      FD_SET(ConnectionNumber(display), &rfds);
+		      select (nfds + 1,
+			      &rfds,
+			      (fd_set *)NULL,
+			      (fd_set *)NULL,
+			      NULL);
+		      
+		      /* handle X events first */
+		      if (FD_ISSET (ConnectionNumber(display), &rfds)) {
+			    /* handle ALL X events */
+			    while (XtPending()) {
+				  XtNextEvent(&ev);
+				  XtDispatchEvent(&ev);
+			    }
+		      }
 
-	      /* block on ConnectionNumber and request->fp */
-	      /* PN: added fd_set * casting */
-              FD_ZERO(&rfds);
-              FD_SET(fileno(request->fp), &rfds);
-              FD_SET(ConnectionNumber(display), &rfds);
-	      select (nfds + 1,
-                      &rfds,
-                      (fd_set *)NULL,
-                      (fd_set *)NULL,
-                      NULL);
-              
-	      /* handle X events first */
-              if (FD_ISSET (ConnectionNumber(display), &rfds)) {
-		    /* handle ALL X events */
-		    while (XtPending()) {
-			  XtNextEvent(&ev);
-			  XtDispatchEvent(&ev);
-		    }
-	      }
+		      if (FD_ISSET (fileno(request->fp), &rfds)) {
+			    response->reply.ch = inchar(request->fp);
+			    goto out;
+		      }
 
-	      if (FD_ISSET (fileno(request->fp), &rfds)) {
-		    response->reply.ch = inchar(request->fp);
-		    goto out;
-	      }
-
-	    }
-	    break;
+		}
+		break;
 
 	  case click_option:
-	    /* let's fake this */
-	    response->reply.graph = lasthardcopy;
-	    break;
+		/* let's fake this */
+		response->reply.graph = lasthardcopy;
+		break;
 
 	  case button_option:
-	    /* sit and handle events until get a button selection */
-	    internalerror("button_option not implemented");
-	    response->option = error_option;
-	    return;
-	    break;
+		/* sit and handle events until get a button selection */
+		internalerror("button_option not implemented");
+		response->option = error_option;
+		return 1;
+		break;
 
 	  case checkup_option:
-	    /* first read off the queue before doing the select */
-	    while (XtPending()) {
-	        XtNextEvent(&ev);
-	        XtDispatchEvent(&ev);
-	    }
-	    break;
+		/* first read off the queue before doing the select */
+		while (XtPending()) {
+		    XtNextEvent(&ev);
+		    XtDispatchEvent(&ev);
+		}
+		break;
 
 	  default:
-	    internalerror("unrecognized input type");
-	    response->option = error_option;
-	    return;
-	    break;
-	}
+		internalerror("unrecognized input type");
+		response->option = error_option;
+		return 1;
+		break;
+    }
 
 out:
-	if (response)
-	    response->option = request->option;
-	return;
+    if (response)
+	response->option = request->option;
+    return 0;
 
 }
 
@@ -969,9 +972,9 @@ static void
 linear_arc(int x0, int y0, int radius, double theta1, double theta2)
               /* x coordinate of center */
               /* y coordinate of center */
-                      /* radius of arc */
-                      /* initial angle ( +x axis = 0 rad ) */
-                      /* final angle ( +x axis = 0 rad ) */
+	      /* radius of arc */
+	      /* initial angle ( +x axis = 0 rad ) */
+	      /* final angle ( +x axis = 0 rad ) */
     /*
      * Notes:
      *    Draws an arc of radius and center at (x0,y0) beginning at
@@ -986,21 +989,21 @@ linear_arc(int x0, int y0, int radius, double theta1, double theta2)
     y2 = y0 + (int) (radius * sin(theta1));
 
     while(theta1 >= theta2)
-	    theta2 += 2 * M_PI;
+	theta2 += 2 * M_PI;
     dphi = (theta2 - theta1) / s;
 
     if ((theta1 + dphi) == theta1) {
-	    theta2 += 2 * M_PI;
-	    dphi = (theta2 - theta1) / s;
+	theta2 += 2 * M_PI;
+	dphi = (theta2 - theta1) / s;
     }
 
 
     for(phi = theta1 + dphi; phi < theta2; phi += dphi) {
-	    x1 = x2;
-	    y1 = y2;
-	    x2 = x0 + (int)(radius * cos(phi));
-	    y2 = y0 + (int)(radius * sin(phi));
-	    X11_DrawLine(x1,y1,x2,y2);
+	x1 = x2;
+	y1 = y2;
+	x2 = x0 + (int)(radius * cos(phi));
+	y2 = y0 + (int)(radius * sin(phi));
+	X11_DrawLine(x1,y1,x2,y2);
     }
 
     x1 = x2;

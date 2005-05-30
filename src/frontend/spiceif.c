@@ -1378,4 +1378,4 @@ void com_savesnap(wordlist *wl) {
 
 }
 
-#endif
+#endif /* EXPERIMENTAL_CODE */

@@ -1,12 +1,16 @@
+/*************
+* com_unset.c
+* $Id$
+************/
+
 #include <config.h>
 #include <ngspice.h>
 
 #include <macros.h>
 #include <bool.h>
-#include <wordlist.h>
 
+#include "com_unset.h"
 #include "variable.h"
-
 
 void
 com_unset(wordlist *wl)
