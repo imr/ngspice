@@ -26,8 +26,8 @@ static int nodev(void);
 #endif
 
 #ifdef HAS_WINDOWS	/* Graphic-IO under MS Windows */
-#include "windisp/windisp.h"
-#include "windisp/winprint.h"
+#include "wdisp/windisp.h"
+#include "wdisp/winprint.h"
 #endif
 
 #include "plotting/plot5.h"
