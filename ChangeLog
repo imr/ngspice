@@ -1,4 +1,12 @@
-2005-05-30
+2005-06-31  Steven Borley <steven.borley@virgin.net>
+
+  *  Applied fix for logging supplied by Dietmar Warning (src/main.c)
+  
+  *  Miscellaneous tidying in src.main.c for format, indentation, #include
+     style ("" vis-a-vis <>)  and removal of some compile time warnings.
+
+
+2005-05-30  Steven Borley <steven.borley@virgin.net>
   
   *  Corrected return types (where necessary) for the functions that make up the
      devices[] array initialised in src/frontend/display.c, and used specific

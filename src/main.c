@@ -11,20 +11,45 @@
 #include <ngspice.h>
 
 #include <stdio.h>
+
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
+
 #ifdef __MINGW32__
 #define  srandom(a) srand(a) /* srandom */
 #endif /* __MINGW32__ */
+
 #include <setjmp.h>
 #include <signal.h>
-
 #include <sys/types.h>
 
-#include <iferrmsg.h>
-#include <ftedefs.h>
-#include <devdefs.h>
+#ifdef HAVE_PWD_H
+#include <pwd.h>
+#endif
+#ifdef HAVE_GNUREADLINE
+/* Added GNU Readline Support 11/3/97 -- Andrew Veliath <veliaa@rpi.edu> */
+/* from spice3f4 patch to ng-spice. jmr */
+#include <readline/readline.h>
+#include <readline/history.h>
+#endif  /* HAVE_GNUREADLINE */
+
+#ifdef HAVE_BSDEDITLINE
+/* SJB added editline support 2005-05-05 */
+#include <editline/readline.h>
+extern VFunction *rl_event_hook;    /* missing from editline/readline.h */
+extern int rl_catch_signals;	    /* missing from editline/readline.h */
+#endif /* HAVE_BSDEDITLINE */
+
+#ifndef HAVE_GETRUSAGE
+#ifdef HAVE_FTIME
+#include <sys/timeb.h>
+#endif
+#endif
+
+#include "iferrmsg.h"
+#include "ftedefs.h"
+#include "devdefs.h"
 #include "spicelib/devices/dev.h"
 #include "spicelib/analysis/analysis.h"
 #include "misc/ivars.h"
@@ -41,44 +66,19 @@
 #include "enh.h"
 #endif
 
-#ifdef HAVE_PWD_H
-#include <pwd.h>
-#endif
+#ifdef CIDER
+#include "numenum.h"
+#include "maths/misc/accuracy.h"
+#endif 
 
-#ifdef HAVE_GNUREADLINE
-/* Added GNU Readline Support 11/3/97 -- Andrew Veliath <veliaa@rpi.edu> */
-/* from spice3f4 patch to ng-spice. jmr */
-#include <readline/readline.h>
-#include <readline/history.h>
-#endif  /* HAVE_GNUREADLINE */
-
-#ifdef HAVE_BSDEDITLINE
-/* SJB added editline support 2005-05-05 */
-#include <editline/readline.h>
-extern VFunction *rl_event_hook;    /* missing from editline/readline.h */
-extern int rl_catch_signals;	    /* missing from editline/readline.h */
-#endif /* HAVE_BSDEDITLINE */
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
 char history_file[512];
 static char *application_name;
 #endif  /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
 
-
-#ifndef HAVE_GETRUSAGE
-#ifdef HAVE_FTIME
-#include <sys/timeb.h>
-#endif
-#endif
-
-#ifdef CIDER
-#include "numenum.h"
-#endif 
-
 /* Undefine this next line for dubug tracing */
 /* #define TRACE */
-
-extern void DevInit(void);
 
 /* Main options */
 static bool ft_servermode = FALSE;
@@ -89,17 +89,21 @@ bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. TRUE = we've b
 bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt. */
 char *ft_rawfile = "rawspice.raw";
 
+#ifdef HAS_WINDOWS
 bool oflag = FALSE;         /* Output over redefined I/O functions */
 FILE *flogp;  /* hvogt 15.12.2001 */
+#endif /* HAS_WINDOWS */
 
 /* Frontend and circuit options */
 IFsimulator *ft_sim = NULL;
 
-
-
 /* (Virtual) Machine architecture parameters */
 int ARCHme;
 int ARCHsize;
+
+char *errRtn;
+char *errMsg;
+char *cp_program;
 
 #ifdef CIDER
 /* Globals definitions for Machine Accuracy Limits
@@ -110,13 +114,8 @@ double BMax;                /* upper limit for B(x) */
 double ExpLim;              /* limit for exponential */
 double Accuracy;            /* accuracy of the machine */
 double Acc, MuLim, MutLim;
-#endif
 
-char *errRtn;
-char *errMsg;
-char *cp_program;
 
-#ifdef CIDER
 /* Global debug flags from CIDER, soon they will become
  * spice variables :)
  */ 
@@ -192,7 +191,7 @@ bool ft_nutmeg = FALSE;
 extern struct comm spcp_coms[ ];
 struct comm *cp_coms = spcp_coms;
 
-#else
+#else /* SIMULATOR */
 
 bool ft_nutmeg = TRUE;
 extern struct comm nutcp_coms[ ];
@@ -301,7 +300,7 @@ void EVTprint(wordlist *wl){
 struct dvec *EVTfindvec(char *node){
   return NULL;
 }
-#endif
+#endif /* XSPICE */
 
 #endif /* SIMULATOR */
 
@@ -383,31 +382,31 @@ prompt(void)
 	s = "->";
     
     while (*s) {
-        switch (strip(*s)) {
-       case '!':
+	switch (strip(*s)) {
+	    case '!':
 #ifdef HAVE_BSDEDITLINE
-		   {
-			   /* SJB In the present version of editline (v2.9)
-			      it seems that where_history() is broken.
-			      This is a hack that works round this problem.
-			      WARNING: It may fail to work in the future
-			      as it relies on undocumented structure */
-			   int where = 0;
-			   HIST_ENTRY * he = current_history();
-			   if(he!=NULL) where = *(int*)(he->data);
-			   p += sprintf(p, "%d", where + 1);
-		   }
+		{
+		    /* SJB In the present version of editline (v2.9)
+		      it seems that where_history() is broken.
+		      This is a hack that works round this problem.
+		      WARNING: It may fail to work in the future
+		      as it relies on undocumented structure */
+		    int where = 0;
+		    HIST_ENTRY * he = current_history();
+		    if(he!=NULL) where = *(int*)(he->data);
+		    p += sprintf(p, "%d", where + 1);
+		}
 #else
-           p += sprintf(p, "%d", where_history() + 1);
+		p += sprintf(p, "%d", where_history() + 1);
 #endif	/* HAVE_BSDEDITLINE*/
-           break;
-       case '\\':
-           if (*(s + 1))
-               p += sprintf(p, "%c", strip(*++s));
-       default:
-           *p = strip(*s); ++p;
-           break;
-        }
+		break;
+	    case '\\':
+		if (*(s + 1))
+		    p += sprintf(p, "%c", strip(*++s));
+	    default:
+		*p = strip(*s); ++p;
+		break;
+	}
         s++;
     }
     *p = 0;
@@ -632,7 +631,6 @@ main(int argc, char **argv)
     char*       copystring;/*DG*/
 #ifdef SIMULATOR
     int error2;
-
     
     static IFfrontEnd nutmeginfo = {
 	IFnewUid,
@@ -655,7 +653,6 @@ main(int argc, char **argv)
     bool gdata = TRUE;
 #endif /* ~ SIMULATOR */
 
-
     char buf[BSIZE_SP];
     bool readinit = TRUE;
     bool rflag = FALSE;
@@ -664,8 +661,6 @@ main(int argc, char **argv)
     bool qflag = FALSE;
     FILE *fp;
     FILE *circuit_file;
-
-
 
 #ifdef TRACE
     /* this is used to detect memory leaks during debugging */
@@ -706,7 +701,6 @@ main(int argc, char **argv)
     ARCHsize = 1;
 #endif /* PARALLEL_ARCH */
 
-
     ivars( );
 
     cp_in = stdin;
@@ -715,16 +709,12 @@ main(int argc, char **argv)
 
     circuit_file = stdin;
 
-
-
 #ifdef MALLOCTRACE
     mallocTraceInit("malloc.out");
 #endif
 #if defined(HAVE_ISATTY) && !defined(HAS_WINDOWS)
     istty = (bool) isatty(fileno(stdin));
 #endif
-
-
 
     init_time( );
 
@@ -761,91 +751,95 @@ main(int argc, char **argv)
 	    break;
 
 	switch (c) {
-	case 'h':		/* Help */
-	    show_help();
-	    shutdown (EXIT_NORMAL);
-	    break;
+	    case 'h':		/* Help */
+		show_help();
+		shutdown (EXIT_NORMAL);
+		break;
 
-	case 'v':		/* Version info */
-	    show_version();
-	    shutdown (EXIT_NORMAL);
-	    break;
+	    case 'v':		/* Version info */
+		show_version();
+		shutdown (EXIT_NORMAL);
+		break;
 
-	case 'b':		/* Batch mode */
-	    ft_batchmode = TRUE;
-	    break;
+	    case 'b':		/* Batch mode */
+		ft_batchmode = TRUE;
+		break;
 
-	case 'c':		/* Circuit file */
-	    if (optarg) {
-		if (!(circuit_file = fopen(optarg, "r"))) {
-		    perror("circuit file not available");
-		    shutdown(EXIT_BAD);
+	    case 'c':		/* Circuit file */
+		if (optarg) {
+		    if (!(circuit_file = fopen(optarg, "r"))) {
+			perror("circuit file not available");
+			shutdown(EXIT_BAD);
+		    }
+		    istty = FALSE;
 		}
-		istty = FALSE;
-	    }
-	    break;
+		break;
 
-	case 'i':		/* Interactive mode */
-	    iflag = TRUE;
-	    break;
+	    case 'i':		/* Interactive mode */
+		iflag = TRUE;
+		break;
 
-	case 'n':		/* Don't read initialisation file */
-	    readinit = FALSE;
-	    break;
+	    case 'n':		/* Don't read initialisation file */
+		readinit = FALSE;
+		break;
 
-	case 'o':		/* Output file */
-	    if (optarg) {
+	    case 'o':		/* Output file */
+		if (optarg) {
 #ifdef PARALLEL_ARCH
-		sprintf (buf, "%s%03d", optarg, ARCHme);
+		    sprintf (buf, "%s%03d", optarg, ARCHme);
 #else
-		sprintf (buf, "%s", optarg);
+		    sprintf (buf, "%s", optarg);
 #endif
-#ifndef HAS_WINDOWS
-		if (!(freopen (buf, "w", stdout))) {
-		    perror (buf);
-		    shutdown (EXIT_BAD);
+		    /* Open the log file */
+#ifdef HAS_WINDOWS
+		    /* flogp goes to winmain's putc and writes to file buf */
+		    if (!(flogp = fopen(buf, "w"))) {	
+#else
+		    /* Connect stdout to file buf and log stdout */
+		    if (!(freopen (buf, "w", stdout))) {    
+#endif
+			perror (buf);
+			shutdown (EXIT_BAD);
+		    }
+
+#ifdef HAS_WINDOWS
+		    com_version(NULL);  /* hvogt 11.11.2001 */
+#endif
+		    fprintf(stdout, "\nBatch mode\n\n");
+		    fprintf(stdout, "Simulation output goes to rawfile: %s\n\n", ft_rawfile);
+		    fprintf(stdout, "Comments and warnings go to log-file: %s\n", buf);
+#ifdef HAS_WINDOWS
+		    oflag = TRUE;
+#endif
 		}
-#endif /* HAS_WINDOWS */
-/*    *** Open the Log-File ******* */
-                if (!(flogp = fopen(buf, "w"))) {
-                      perror(buf);
-                      shutdown(EXIT_BAD);                    
-                }
-/*    *************************** */
-                com_version(NULL);  /* hvogt 11.11.2001 */
-                fprintf(stdout, "\nBatch mode\n\n");
-                fprintf(stdout, "Simulation output goes to rawfile: %s\n\n", ft_rawfile);
-                fprintf(stdout, "Comments and warnings go to log-file: %s\n", buf);
-                oflag = TRUE;		
-	    }
-	    break;
+		break;
 
-	case 'q':		/* Command completion */
-	    qflag = TRUE;
-	    break;
+	    case 'q':		/* Command completion */
+		qflag = TRUE;
+		break;
 
-	case 'r':		/* The raw file */
-	    if (optarg) {
-		cp_vset("rawfile", VT_STRING, optarg);
-	    }
-	    rflag = TRUE;
-	    break;
+	    case 'r':		/* The raw file */
+		if (optarg) {
+		    cp_vset("rawfile", VT_STRING, optarg);
+		}
+		rflag = TRUE;
+		break;
 
-	case 's':		/* Server mode */
-	    ft_servermode = TRUE;
-	    break;
+	    case 's':		/* Server mode */
+		ft_servermode = TRUE;
+		break;
 
-	case 't':
-	    if (optarg) {
-		cp_vset("term", VT_STRING, optarg);
-	    }
-	    break;
+	    case 't':
+		if (optarg) {
+		    cp_vset("term", VT_STRING, optarg);
+		}
+		break;
 
-	case '?':
-	    break;
+	    case '?':
+		break;
 
-	default:
-	    printf ("?? getopt returned character code 0%o ??\n", c);
+	    default:
+		printf ("?? getopt returned character code 0%o ??\n", c);
 	}
     }  /* --- End of command line option processing  --- */
 
@@ -1077,6 +1071,5 @@ evl:
 
 #endif /* ~ SIMULATOR */
 
-    shutdown(EXIT_NORMAL);
-    return EXIT_NORMAL;
+    return shutdown(EXIT_NORMAL);
 }
