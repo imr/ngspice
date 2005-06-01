@@ -10,6 +10,7 @@
 #include "com_rehash.h"
 #include "streams.h"
 #include "control.h"
+#include "parser/unixcom.h"
 
 void
 com_rehash(wordlist *wl)
