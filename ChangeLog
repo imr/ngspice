@@ -1,10 +1,21 @@
-2005-06-31  Steven Borley <steven.borley@virgin.net>
+2005-06-09  Steven Borley <steven.borley@virgin.net>
+
+  *  Fixed *# command operation (src/frontend/inp.c)
+  
+  *  Added 'hack' to allow the 'numparams' variable to be set (or unset) before
+     the netlist part of a file is parsed. This is based on code supplied by
+     Dietmar Warning, with  changes to allow it to work with the *# syntax, the
+     unset keyword and variable amounts of white space. (src/frontend/inp.c)
+     
+  *  line_free(line,flag) is now a macro so that line is set to NULL when it is
+     freed. (src/frontend/inp.c) This is a safty mechnism.
+
+2005-05-31  Steven Borley <steven.borley@virgin.net>
 
   *  Applied fix for logging supplied by Dietmar Warning (src/main.c)
   
   *  Miscellaneous tidying in src.main.c for format, indentation, #include
      style ("" vis-a-vis <>)  and removal of some compile time warnings.
-
 
 2005-05-30  Steven Borley <steven.borley@virgin.net>
   

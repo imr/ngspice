@@ -35,9 +35,12 @@ $Id$
 /* gtri - end - 12/12/90 */
 #endif
 
+#define line_free(line,flag)	{ line_free_x(line,flag); line = NULL; }
+
 /* static declarations */
 static char * upper(register char *string);
 static bool doedit(char *filename);
+static void line_free_x(struct line * deck, bool recurse);
 
 /* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
 
@@ -268,8 +271,8 @@ top2:
  * All lines linked via the li_actual field are always recursivly freed.
  * SJB - 22nd May 2001
  */
-void
-line_free(struct line * deck, bool recurse) {
+static void
+line_free_x(struct line * deck, bool recurse) {
     if(!deck)
 	return;
     tfree(deck->li_line);
@@ -301,7 +304,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     wordlist *wl = NULL, *end = NULL, *wl_first = NULL;
     wordlist *controls = NULL;
     FILE *lastin, *lastout, *lasterr;
-    char c;
 
     /* read in the deck from a file */
     inp_readall(fp, &deck);
@@ -358,20 +360,21 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     cp_evloop(dd->li_line);
 	    }
 	    line_free(dd,FALSE); /* SJB - free this line's memory */
- /*         tfree(dd->li_line);
-            tfree(dd); */
         }   
     } /* end if(comfile) */ 
 
     else {    /* must be regular deck . . . . */
-      for (dd = deck->li_next; dd; dd = ld->li_next) {    /* loop through deck and handle control cards */
-	    for (s = dd->li_line; (c = *s) && c <= ' '; s++)
-		;
-            if (c == '*' && (s != deck->li_line || s[1] != '#')) {
+	for (dd = deck->li_next; dd; dd = ld->li_next) {    /* loop through deck and handle control cards */
+
+	    /* Ignore comment lines, but not lines begining with '*#' */
+	    s = dd->li_line;
+	    while(isspace(*s)) s++;
+            if ( (*s == '*') && ( (s != dd->li_line) || (s[1] != '#'))) {
                 ld = dd;
                 continue;
             }
-            strncpy(name, dd->li_line, BSIZE_SP);
+	    
+            strncpy(name, dd->li_line, BSIZE_SP);	    
             for (s = name; *s && isspace(*s); s++)
                 ;
             for (t = s; *t && !isspace(*t); t++)
@@ -381,27 +384,17 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             if (ciprefix(".control", dd->li_line)) {
                 ld->li_next = dd->li_next;
 		line_free(dd,FALSE); /* SJB - free this line's memory */
-
- /*             tfree(dd->li_line);
-                tfree(dd); */
-
                 if (commands)
-                    fprintf(cp_err,
-			    "Warning: redundant .control card\n");
+                    fprintf(cp_err, "Warning: redundant .control card\n");
                 else
                     commands = TRUE;
             } else if (ciprefix(".endc", dd->li_line)) {
                 ld->li_next = dd->li_next;
 		line_free(dd,FALSE); /* SJB - free this line's memory */
-
-/*              tfree(dd->li_line);
-                tfree(dd); */
-
                 if (commands)
                     commands = FALSE;
                 else
-                    fprintf(cp_err, 
-                    "Warning: misplaced .endc card\n");
+                    fprintf(cp_err, "Warning: misplaced .endc card\n");
             } else if (commands || prefix("*#", dd->li_line)) {
                 wl = alloc(struct wordlist);
                 if (controls) {
@@ -410,22 +403,38 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     controls = wl;
                 } else
                     controls = wl;
+		
                 if (prefix("*#", dd->li_line))
                     wl->wl_word = copy(dd->li_line + 2);
                 else {
                     wl->wl_word = dd->li_line;
 		    dd->li_line = 0; /* SJB - prevent line_free() freeing the string (now pointed at by wl->wl_word) */
 		}
+#ifdef NUMPARAMS
+		/* Look for set or unset numparams.
+		   If either are found then we evaluate these lines immediately
+		   so they take effect before netlist parsing */
+		s = wl->wl_word;
+		while(isspace(*s)) s++;	/* step past any white space */
+		if(ciprefix("set", s)) {
+		    s+=3;
+		} else if(ciprefix("unset", s)) {
+		    s+=5;
+		}
+		if(s!=dd->li_line) {	/* one of the above must have matched */
+		    while(isspace(*s)) s++;	/* step past white space */
+		    if(ciprefix("numparams", s)) {
+			cp_evloop(wl->wl_word);
+		    }
+		}
+#endif /* NUMPARAMS */
                 ld->li_next = dd->li_next;
 		line_free(dd,FALSE); /* SJB - free this line's memory */
-/*                tfree(dd); */
             } else if (!*dd->li_line) {
                 /* So blank lines in com files don't get considered as
                  * circuits.  */
                 ld->li_next = dd->li_next;
 		line_free(dd,FALSE); /* SJB - free this line's memory */
-/*              tfree(dd->li_line);
-                tfree(dd); */
             } else {
                 inp_casefix(s);
                 inp_casefix(dd->li_line);
@@ -448,8 +457,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 		    if (!eq(s, ".op") && !eq(s, ".tf")) {
 			ld->li_next = dd->li_next;
 			line_free(dd,FALSE); /* SJB - free this line's memory */
-/*			tfree(dd->li_line);
-			tfree(dd); */
 		    } else
 			ld = dd;
                 } else
