@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -12,7 +13,8 @@ Author: 1985 Thomas L. Quarles
 #include "inpptree.h"
 #include "inp.h"
 
-
+/* Uncomment to allow tracing */
+/*#define TRACE*/
 
 
 extern double PTfudge_factor;
@@ -29,12 +31,12 @@ IFeval(IFparseTree * tree, double gmin, double *result, double *vals,
     int i, err;
     INPparseTree *myTree = (INPparseTree *) tree;;
 
-/*
-INPptPrint("calling PTeval, tree = ", myTree);
-printf("values:");
-for (i = 0; i < myTree->p.numVars; i++)
-printf("\tvar%d = %lg\n", i, vals[i]);
-*/
+#ifdef TRACE
+    INPptPrint("calling PTeval, tree = ", myTree);
+    printf("values:");
+    for (i = 0; i < myTree->p.numVars; i++)
+	printf("\tvar%d = %lg\n", i, vals[i]);
+#endif
 
     if ((err = PTeval(myTree->tree, gmin, result, vals)) != OK)
 	return (err);
@@ -43,11 +45,11 @@ printf("\tvar%d = %lg\n", i, vals[i]);
 	if ((err = PTeval(myTree->derivs[i], gmin, &derivs[i], vals)) !=
 	    OK) return (err);
 
-/*
-printf("results: function = %lg\n", *result);
-for (i = 0; i < myTree->p.numVars; i++)
-printf("\td / d var%d = %lg\n", i, derivs[i]);
-*/
+#ifdef TRACE
+    printf("results: function = %lg\n", *result);
+    for (i = 0; i < myTree->p.numVars; i++)
+	printf("\td / d var%d = %lg\n", i, derivs[i]);
+#endif
 
     return (OK);
 }
