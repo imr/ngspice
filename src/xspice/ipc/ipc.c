@@ -8,6 +8,8 @@ Georgia Tech Research Corporation
 Atlanta, Georgia 30332
 All Rights Reserved
 
+$Id$
+
 PROJECT A-8503
 
 AUTHORS
@@ -69,6 +71,8 @@ SUMMARY
 ============================================================================*/
 
 #ifndef NDEBUG
+#include "config.h"
+
 #include <stdio.h>
 #endif
 #include <fcntl.h>
@@ -179,7 +183,7 @@ Ipc_Status_t ipc_initialize_server (server_name, m, p)
 
    num_records = 0;
    fill_count = 0;
-   
+#ifndef HAS_WINDOWS  
    status = ipc_transport_initialize_server (server_name, m, p,
                                              batch_filename);
 
@@ -199,6 +203,9 @@ Ipc_Status_t ipc_initialize_server (server_name, m, p)
          return IPC_STATUS_ERROR;
       }
    }
+#else  /* ifdef HAS_WINDOWS */
+   status=IPC_STATUS_OK;
+#endif /* ifndef HAS_WINDOWS */
    return status;
 }
 
@@ -215,7 +222,11 @@ Ipc_Status_t ipc_transport_terminate_server ();
 
 Ipc_Status_t ipc_terminate_server ()
 {
+#ifndef HAS_WINDOWS
    return ipc_transport_terminate_server ();
+#else  /* ifdef HAS_WINDOWS */
+   return 0;
+#endif /* ifndef HAS_WINDOWS */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -261,7 +272,7 @@ Ipc_Status_t ipc_get_line (str, len, wait)
 {
    Ipc_Status_t status;
    Ipc_Boolean_t need_another = IPC_TRUE;
-   
+#ifndef HAS_WINDOWS   
    do {
 
       status = ipc_transport_get_line (str, len, wait);
@@ -366,7 +377,9 @@ Ipc_Status_t ipc_get_line (str, len, wait)
          break;
       }
    } while (need_another);
-
+#else  /* ifndef HAS_WINDOWS */
+status=IPC_STATUS_OK;
+#endif /* ifndef HAS_WINDOWS */
    return status;
 }
 
@@ -410,24 +423,27 @@ Ipc_Status_t ipc_flush ()
          if( kw_match("#ERRCHK",  &out_buffer[last]) ||
              kw_match(">ENDANAL", &out_buffer[last]) ||
              kw_match(">ABORTED", &out_buffer[last]) ) {
-
+#ifndef HAS_WINDOWS
             status = ipc_transport_send_line (&out_buffer[last],
                                               end_of_record_index [i] - last);
             if (IPC_STATUS_OK != status) {
                return status;
             }
+#endif /* ifndef HAS_WINDOWS */
          }
          last = end_of_record_index [i];
       }
 
    /* else, must be interactive mode */
    } else {
+#ifndef HAS_WINDOWS
       /* send the full buffer over the ipc channel */
       status = ipc_transport_send_line (&out_buffer[0],
                    end_of_record_index [num_records - 1]);
       if (IPC_STATUS_OK != status) {
          return status;
       }
+#endif /* ifndef HAS_WINDOWS */
    }
 
    /* reset counts to zero and return */

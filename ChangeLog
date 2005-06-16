@@ -1,3 +1,12 @@
+2005-06-12  Steven Borley <steven.borley@virgin.net>
+
+  *  Changes supplied bt Hitoshi Tanaka to allow XSpice to compile using MinGW
+     in Windows. Main change points are as follows:
+       (1) dlopen(), dlsym(), dlclose() and dlerror() were changed
+           to the functions of Windows. (src/spicelib/dev.c)
+       (2) The functions relation to IPC were removed. (src/xspice/ipc/ipc.c,
+           and src/xspice/ipc/ipcsockets.c)
+
 2005-06-09  Steven Borley <steven.borley@virgin.net>
 
   *  Fixed *# command operation (src/frontend/inp.c)

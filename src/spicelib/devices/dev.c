@@ -3,6 +3,8 @@
  * Copyright (c) 1990 University of California
  * Copyright (c) 2000 Arno W. Peters
  *
+ * $Id$
+ *
  * Permission to use, copy, modify, and distribute this software and
  * its documentation without fee, and without a written agreement is
  * hereby granted, provided that the above copyright notice, this
@@ -39,7 +41,20 @@
 #ifdef XSPICE
 /*saj headers for xspice*/
 #include <string.h> /* for strcpy, strcat*/
+#ifndef HAS_WINDOWS
 #include <dlfcn.h> /* to load libraries*/
+#else /* ifdef HAS_WINDOWS */
+#include <windows.h>
+#include "wstdio.h"
+void *dlopen (const char *, int);
+void *dlsym (void *, const char *);
+int dlclose (void *);
+char *dlerror (void);
+#define RTLD_LAZY	1	/* lazy function call binding */
+#define RTLD_NOW	2	/* immediate function call binding */
+#define RTLD_GLOBAL	4	/* symbols in this dlopen'ed obj are visible to other dlopen'ed objs */
+static char errstr[128];
+#endif /* ifndef HAS_WINDOWS */
 #include "dllitf.h" /* the coreInfo Structure*/
 #include "evtudn.h" /*Use defined nodes */
 
@@ -488,3 +503,39 @@ int load_opus(char *name){
 
 #endif
 /*--------------------   end of XSPICE additions  ----------------------*/
+
+
+#ifdef XSPICE
+#if defined(__MINGW32__) || defined(HAS_WINDOWS)
+
+void *dlopen(const char *name,int type)
+{
+	return LoadLibrary(name);
+}
+
+void *dlsym(void *hDll, const char *funcname)
+{
+	return GetProcAddress(hDll, funcname);
+}
+
+char *dlerror(void)
+{
+	LPVOID lpMsgBuf;
+
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		GetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR) &lpMsgBuf,
+		0,
+		NULL
+	);
+	strcpy(errstr,lpMsgBuf);
+	LocalFree(lpMsgBuf);
+	return errstr;
+}
+#endif
+#endif
