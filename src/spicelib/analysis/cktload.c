@@ -83,8 +83,10 @@ CKTload(CKTcircuit *ckt)
         }
     }
 
-   /* gtri - add - wbk - 11/26/90 - reset the MIF init flags */
+   
 #ifdef XSPICE
+/* gtri - add - wbk - 11/26/90 - reset the MIF init flags */
+
     /* init is set by CKTinit and should be true only for first load call */
     g_mif_info.circuit.init = MIF_FALSE;
 
@@ -104,9 +106,9 @@ CKTload(CKTcircuit *ckt)
           *(ckt->enh->rshunt_data.diag[i]) += gshunt;
        }
     }
-#endif
-    /* gtri - end - Put resistors to ground at all nodes */
 
+/* gtri - end - Put resistors to ground at all nodes */
+#endif
 
     if(ckt->CKTmode & MODEDC) {
         /* consider doing nodeset & ic assignments */

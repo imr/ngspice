@@ -110,7 +110,17 @@ DCtran(CKTcircuit *ckt,
         *(ckt->CKTbreaks)=0;
         *(ckt->CKTbreaks+1)=ckt->CKTfinalTime;
         ckt->CKTbreakSize=2;
+
+#ifdef XSPICE
+/* gtri - begin - wbk - 12/19/90 - Modify setting of CKTminBreak */
+/*      if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5; */
+        /* Set to 10 times delmin for ATESSE 1 compatibity */
+        if(ckt->CKTminBreak==0) ckt->CKTminBreak = 10.0 * ckt->CKTdelmin;
+/* gtri - end - wbk - 12/19/90 - Modify setting of CKTminBreak */
+#else
         if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5;
+#endif
+
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add IPC stuff and set anal_init and anal_type */
 
@@ -507,6 +517,15 @@ resume:
 #endif
     ckt->CKTdelta = 
             MIN(ckt->CKTdelta,ckt->CKTmaxStep);
+#ifdef XSPICE
+/* gtri - begin - wbk - Cut integration order if first timepoint after breakpoint */
+    if(ckt->CKTtime == g_mif_info.breakpoint.last)
+        ckt->CKTorder = 1;
+/* gtri - end   - wbk - Cut integration order if first timepoint after breakpoint */
+
+#endif
+
+
 	/* are we at a breakpoint, or indistinguishably close? */
     if ((ckt->CKTtime == *(ckt->CKTbreaks)) || (*(ckt->CKTbreaks) -
     				(ckt->CKTtime) <= ckt->CKTdelmin)) {
@@ -536,6 +555,43 @@ resume:
 #endif
         } 
 
+#ifdef XSPICE
+   }
+
+/* gtri - begin - wbk - Add Breakpoint stuff */
+
+    if(ckt->CKTtime + ckt->CKTdelta >= g_mif_info.breakpoint.current) {
+        /* If next time > temporary breakpoint, force it to the breakpoint */
+        /* And mark that timestep was set by temporary breakpoint */
+        ckt->CKTsaveDelta = ckt->CKTdelta;
+        ckt->CKTdelta = g_mif_info.breakpoint.current - ckt->CKTtime;
+        g_mif_info.breakpoint.last = ckt->CKTtime + ckt->CKTdelta;
+    }
+    else {
+        /* Else, mark that timestep was not set by temporary breakpoint */
+        g_mif_info.breakpoint.last = 1.0e30;
+    }
+
+/* gtri - end - wbk - Add Breakpoint stuff */
+
+/* gtri - begin - wbk - Modify Breakpoint stuff */
+    /* Throw out any permanent breakpoint times <= current time */
+    while(1) {
+        if(*(ckt->CKTbreaks) <= (ckt->CKTtime + ckt->CKTminBreak))
+            CKTclrBreak(ckt);
+        else
+            break;
+    }
+    /* Force the breakpoint if appropriate */
+    if((ckt->CKTtime + ckt->CKTdelta) > *(ckt->CKTbreaks)) {
+        ckt->CKTbreak = 1;
+        ckt->CKTsaveDelta = ckt->CKTdelta;
+        ckt->CKTdelta = *(ckt->CKTbreaks) - ckt->CKTtime;
+    }
+
+/* gtri - end - wbk - Modify Breakpoint stuff */
+#else /* !XSPICE */
+
 	/* don't want to get below delmin for no reason */
 	ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
     }
@@ -557,6 +613,9 @@ resume:
 #ifdef PARALLEL_ARCH
     DGOP_( &type, &(ckt->CKTdelta), &length, "min" );
 #endif /* PARALLEL_ARCH */
+
+#endif /* XSPICE */
+
 #ifdef XSPICE
 /* gtri - begin - wbk - Do event solution */
 
@@ -707,6 +766,24 @@ resume:
                 ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITTRAN;
             }
             ckt->CKTorder = 1;
+
+#ifdef XSPICE
+/* gtri - begin - wbk - Add Breakpoint stuff */
+
+        /* Force backup if temporary breakpoint is < current time */
+        } else if(g_mif_info.breakpoint.current < ckt->CKTtime) {
+            ckt->CKTsaveDelta = ckt->CKTdelta;
+            ckt->CKTtime -= ckt->CKTdelta;
+            ckt->CKTdelta = g_mif_info.breakpoint.current - ckt->CKTtime;
+            g_mif_info.breakpoint.last = ckt->CKTtime + ckt->CKTdelta;
+            if(firsttime) {
+                ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITTRAN;
+            }
+            ckt->CKTorder = 1;
+
+/* gtri - end - wbk - Add Breakpoint stuff */
+#endif
+
         } else {
             if (firsttime) {
 #ifdef WANT_SENSE2

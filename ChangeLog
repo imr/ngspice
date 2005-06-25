@@ -1,3 +1,26 @@
+2005-06-25  Paolo Nenzi <p.nenzi@ieee.org>
+
+  *  src/spicelib/analysis/acan.c: modified original integration of xspice 
+     event driven algorithm into spice3 code. Now CKTncDump() is used by
+     xspice too. 
+
+  *  src/spicelib/analysis/cktdojob.c: added ipc stuff.
+
+  *  src/spicelib/analysis/cktload.c: cosmetics.
+
+  *  src/spicelib/analysis/cktop.c: modularized the source and gmin stepping 
+     algorithm. I have extracted the code for gmin and source stepping to
+     improve CKTop readability and manutenibity.
+     
+  *  src/spicelib/analysis/dcop.c: added event driven algorithm and ipc stuff.
+
+  *  src/spicelib/analysis/dctran.c: added xspice breakpoint control.
+
+  *  src/spicelib/analysis/dctrcurv.c: added event driven algorithm and ipc 
+     stuff.
+
+
+
 2005-06-12  Steven Borley <steven.borley@virgin.net>
 
   *  Changes supplied bt Hitoshi Tanaka to allow XSpice to compile using MinGW

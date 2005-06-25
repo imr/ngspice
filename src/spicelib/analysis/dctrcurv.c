@@ -14,6 +14,14 @@ Modified: 1999 Paolo Nenzi
 #include "const.h"
 #include "sperror.h"
 
+#ifdef XSPICE
+/* gtri - add - wbk - 12/19/90 - Add headers */
+#include "mif.h"
+#include "evtproto.h"
+#include "ipctiein.h"
+/* gtri - end - wbk */
+#endif
+
 #include <devdefs.h>
 extern SPICEdev **DEVices;
 
@@ -151,7 +159,21 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 
 found:;
     }
-    
+
+#ifdef XSPICE
+/* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
+
+        /* Tell the beginPlot routine what mode we're in */
+        g_ipc.anal_type = IPC_ANAL_DCTRCURVE;
+
+        /* Tell the code models what mode we're in */
+        g_mif_info.circuit.anal_type = MIF_DC;
+
+        g_mif_info.circuit.anal_init = MIF_TRUE;
+
+/* gtri - end - wbk */
+#endif
+
     i--; /* PN: This seems to do nothing ??? */ 
     
     error = CKTnames(ckt,&numNames,&nameList);
@@ -292,6 +314,11 @@ resume:
         ckt->CKTstate0 = temp;
 
         /* do operation */
+#ifdef XSPICE
+/* gtri - begin - wbk - Do EVTop if event instances exist */
+    if(ckt->evt->counts.num_insts == 0) {
+        /* If no event-driven instances, do what SPICE normally does */
+#endif
         converged = NIiter(ckt,ckt->CKTdcTrcvMaxIter);
         if(converged != 0) {
             converged = CKTop(ckt,
@@ -302,6 +329,59 @@ resume:
                 return(converged);
             }
         }
+#ifdef XSPICE
+    }
+    else {
+        /* else do new algorithm */
+
+        /* first get the current step in the analysis */
+        if(cv->TRCVvType[0] == vcode) {
+            g_mif_info.circuit.evt_step = ((VSRCinstance *)(cv->TRCVvElt[i]))
+                    ->VSRCdcValue ;
+        } else if(cv->TRCVvType[0] == icode) {
+            g_mif_info.circuit.evt_step = ((ISRCinstance *)(cv->TRCVvElt[i]))
+                    ->ISRCdcValue ;
+        } else if(cv->TRCVvType[0] == rcode) {
+            g_mif_info.circuit.evt_step =  ((RESinstance*)(cv->TRCVvElt[i]->GENmodPtr))
+                    ->RESresist;
+        } else if(cv->TRCVvType[0] == TEMP_CODE) {
+            g_mif_info.circuit.evt_step =  ckt->CKTtemp - CONSTCtoK;
+        }
+
+        /* if first time through, call EVTop immediately and save event results */
+        if(firstTime) {
+            converged = EVTop(ckt,
+                        (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITJCT,
+                        (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITFLOAT,
+                        ckt->CKTdcMaxIter,
+                        MIF_TRUE);
+            EVTdump(ckt, IPC_ANAL_DCOP, g_mif_info.circuit.evt_step);
+            EVTop_save(ckt, MIF_FALSE, g_mif_info.circuit.evt_step);
+            if(converged != 0)
+                return(converged);
+        }
+        /* else, call NIiter first with mode = MODEINITPRED */
+        /* to attempt quick analog solution.  Then call all hybrids and call */
+        /* EVTop only if event outputs have changed, or if non-converged */
+        else {
+            converged = NIiter(ckt,ckt->CKTdcTrcvMaxIter);
+            EVTcall_hybrids(ckt);
+            if((converged != 0) || (ckt->evt->queue.output.num_changed != 0)) {
+                converged = EVTop(ckt,
+                            (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITJCT,
+                            (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITFLOAT,
+                            ckt->CKTdcMaxIter,
+                            MIF_FALSE);
+                EVTdump(ckt, IPC_ANAL_DCTRCURVE, g_mif_info.circuit.evt_step);
+                EVTop_save(ckt, MIF_FALSE, g_mif_info.circuit.evt_step);
+                if(converged != 0)
+                    return(converged);
+            }
+        }
+    }
+/* gtri - end - wbk - Do EVTop if event instances exist */
+#endif
+
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODEDCTRANCURVE | MODEINITPRED ;
         if(cv->TRCVvType[0] == vcode) {
             ckt->CKTtime = ((VSRCinstance *)(cv->TRCVvElt[i]))
@@ -318,6 +398,22 @@ resume:
         {
 	ckt->CKTtime = ckt->CKTtemp - CONSTCtoK ; 
         }
+
+#ifdef XSPICE
+/* gtri - add - wbk - 12/19/90 - Add IPC stuff */
+
+        /* If first time through, call CKTdump to output Operating Point info */
+        /* for Mspice compatibility */
+
+        if(g_ipc.enabled && firstTime) {
+            ipc_send_dcop_prefix();
+            CKTdump(ckt,(double) 0,plot);
+            ipc_send_dcop_suffix();
+        }
+
+/* gtri - end - wbk */
+#endif
+
 #ifdef WANT_SENSE2
 /*
         if(!ckt->CKTsenInfo) printf("sensitivity structure does not exist\n");
@@ -355,8 +451,22 @@ resume:
         }
 #endif
 
+#ifdef XSPICE
+/* gtri - modify - wbk - 12/19/90 - Send IPC delimiters */
+
+        if(g_ipc.enabled)
+            ipc_send_data_prefix(ckt->CKTtime);
+#endif
 
         CKTdump(ckt,ckt->CKTtime,plot);
+
+#ifdef XSPICE
+        if(g_ipc.enabled)
+            ipc_send_data_suffix();
+
+/* gtri - end - wbk */
+#endif
+
         if(firstTime) {
             firstTime=0;
             bcopy((char *)ckt->CKTstate0,(char *)ckt->CKTstate1,

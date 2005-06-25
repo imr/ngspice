@@ -9,6 +9,14 @@ Modified: 2000  AlansFixes
 #include "sperror.h"
 #include "ifsim.h"
 
+#ifdef XSPICE
+/* gtri - add - wbk - 12/19/90 - Add headers */
+#include "mif.h"
+#include "evt.h"
+#include "evtproto.h"
+#include "ipctiein.h"
+/* gtri - end - wbk */
+#endif
 
 int
 DCop(CKTcircuit *ckt, int notused)
@@ -19,7 +27,21 @@ DCop(CKTcircuit *ckt, int notused)
     IFuid *nameList; /* va: tmalloc'ed list */
     int numNames;
     void *plot = NULL;
-    
+  
+#ifdef XSPICE
+/* gtri - add - wbk - 12/19/90 - Add IPC stuff and initialize anal_init and anal_type */
+
+    /* Tell the beginPlot routine what mode we're in */
+    g_ipc.anal_type = IPC_ANAL_DCOP;
+
+    /* Tell the code models what mode we're in */
+    g_mif_info.circuit.anal_type = MIF_DC;
+
+    g_mif_info.circuit.anal_init = MIF_TRUE;
+
+/* gtri - end - wbk */
+#endif  
+
     error = CKTnames(ckt,&numNames,&nameList);
     if(error) return(error);
     error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
@@ -28,10 +50,28 @@ DCop(CKTcircuit *ckt, int notused)
     tfree(nameList); /* va: nameList not used any longer, it was a memory leak */
     if(error) return(error);
 
+
+#ifdef XSPICE
+/* gtri - begin - wbk - 6/10/91 - Call EVTop if event-driven instances exist */
+    if(ckt->evt->counts.num_insts != 0) {
+        /* use new DCOP algorithm */
+        converged = EVTop(ckt,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+                    ckt->CKTdcMaxIter,
+                    MIF_TRUE);
+        EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
+	
+        EVTop_save(ckt, MIF_TRUE, 0.0);
+	/* gtri - end - wbk - 6/10/91 - Call EVTop if event-driven instances exist */
+	} else
+        /* If no event-driven instances, do what SPICE normally does */
+#endif
     converged = CKTop(ckt,
             (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
             (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
             ckt->CKTdcMaxIter);
+	    
      if(converged != 0) {
      	fprintf(stdout,"\nDC solution failed -\n");
      	CKTncDump(ckt);
@@ -63,14 +103,15 @@ DCop(CKTcircuit *ckt, int notused)
                     fprintf(stdout," *");
                }
                fprintf(stdout,"\n");
-             };
+             }
              i++;
-           };
+           }
            fprintf(stdout,"\n");
 	   (*(SPfrontEnd->OUTendPlot))(plot); */
 	   
 	   return(converged);
-	 };
+	 }
+
 
     ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
 
@@ -96,11 +137,25 @@ DCop(CKTcircuit *ckt, int notused)
     }
 #endif
     converged = CKTload(ckt);
+#ifdef XSPICE
+/* gtri - modify - wbk - 12/19/90 - Send IPC data delimiters */
+
+    if(g_ipc.enabled)
+        ipc_send_dcop_prefix();
+
+    CKTdump(ckt,(double)0,plot);
+
+    if(g_ipc.enabled)
+        ipc_send_dcop_suffix();
+
+/* gtri - end - wbk */
+#else
     if(converged == 0) {
 	   CKTdump(ckt,(double)0,plot);
          } else {
            fprintf(stderr,"error: circuit reload failed.\n");
-         };
+         }
+#endif
     (*(SPfrontEnd->OUTendPlot))(plot);
     return(converged);
 }

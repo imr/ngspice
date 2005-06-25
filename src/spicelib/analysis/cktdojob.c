@@ -16,6 +16,9 @@ Modified: 2000 AlansFixes
 #include "mif.h"
 #include "evtproto.h"
 /* gtri - end - wbk - 11/26/90 */
+/* gtri - add - 12/12/90 - wbk - include ipc stuff */
+#include "ipctiein.h"
+/* gtri - end - 12/12/90 */
 #endif
 
 extern SPICEanalysis *analInfo[];
@@ -119,12 +122,52 @@ printf("Doing analysis at TEMP = %f and TNOM = %f\n",
 	/* normal reset */
 	if (!error)
 	    error = CKTunsetup(ckt);
+
+#ifdef XSPICE
+        /* gtri - add - 12/12/90 - wbk - set ipc syntax error flag */
+        if(error)   g_ipc.syntax_error = IPC_TRUE;
+        /* gtri - end - 12/12/90 */
+#endif
+
 	if (!error)
 	    error = CKTsetup(ckt);
+
+#ifdef XSPICE
+        /* gtri - add - 12/12/90 - wbk - set ipc syntax error flag */
+        if(error)   g_ipc.syntax_error = IPC_TRUE;
+        /* gtri - end - 12/12/90 */
+#endif
+
 	if (!error)
 	    error = CKTtemp(ckt);
-	if (error)
-	    return error;
+
+#ifdef XSPICE
+        /* gtri - add - 12/12/90 - wbk - set ipc syntax error flag */
+        if(error)   g_ipc.syntax_error = IPC_TRUE;
+        /* gtri - end - 12/12/90 */
+#endif
+
+	if (error) {
+
+#ifdef XSPICE
+          /* gtri - add - 12/12/90 - wbk - return if syntax errors from parsing */
+          if(g_ipc.enabled) {
+            if(g_ipc.syntax_error)
+              ;
+            else {
+              /* else, send (GO) errchk status if we got this far */
+              /* Caller is responsible for sending NOGO status if we returned earlier */
+              ipc_send_errchk();
+            }
+          }
+          /* gtri - end - 12/12/90 */
+#endif
+
+
+            return error;
+
+
+        }/* if error  */
     }
 
     error2 = OK;
