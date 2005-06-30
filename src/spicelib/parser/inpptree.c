@@ -222,7 +222,8 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 		       mkb(PT_PLUS,
 			   mkb(PT_TIMES, p->right,
 			       mkb(PT_DIVIDE, arg1, p->left)),
-			   mkb(PT_TIMES, arg2, mkf(PTF_LN, arg1))));
+			   mkb(PT_TIMES, arg2, mkf(PTF_LN, /*arg1*/p->left))));
+		                                        /*changed by HT, '05/06/29*/
 
 	}
 	break;
