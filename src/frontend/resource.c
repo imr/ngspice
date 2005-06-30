@@ -18,6 +18,13 @@ $Id$
 #include "resource.h"
 #include "variable.h"
 
+#ifdef XSPICE
+/* gtri - add - 12/12/90 - wbk - include ipc stuff */
+#include "ipctiein.h"
+/* gtri - end - 12/12/90 */
+#endif
+
+
 #ifdef HAVE__MEMAVL
 #define WIN32_LEAN_AND_MEAN
 /*
@@ -185,6 +192,12 @@ printres(char *name)
     struct variable *v;
     char   *cpu_elapsed;
 
+#ifdef XSPICE
+    /* gtri - add - 12/12/90 - wbk - a temp for testing purposes  */
+    double ipc_test;
+    /* gtri - end - 12/12/90 - wbk - */
+#endif
+
     if (!name || eq(name, "totalcputime") || eq(name, "cputime")) {
 	int	total, totalu;
 
@@ -247,6 +260,16 @@ printres(char *name)
 	    lastsec = total;
 	    lastusec = totalu;
 	}
+
+#ifdef XSPICE
+   /* gtri - add - 12/12/90 - wbk - record cpu time used for ipc */
+        g_ipc.cpu_time = lastsec;
+        ipc_test = lastsec;
+        g_ipc.cpu_time = (double) lastusec;
+        g_ipc.cpu_time /= 1.0e6;
+        g_ipc.cpu_time += (double) lastsec;
+        /* gtri - end - 12/12/90 */
+#endif
 
 	yy = TRUE;
 #else
