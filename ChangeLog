@@ -1,5 +1,7 @@
 2005-06-30  Paolo Nenzi <p.nenzi@ieee.org>
 
+  *   src/frontend/resource.c: added IPC stuff
+  
   *   src/spicelib/parser/inpptree.c: fixed bug in power function.
 
 2005-06-25  Paolo Nenzi <p.nenzi@ieee.org>
