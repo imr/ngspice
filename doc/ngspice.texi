@@ -3163,7 +3163,7 @@ of real variables are defined:
 @end multitable
 
 The function "u" is the unit step function, with a value of one for
-arguments greater than one and a value of zero for arguments less than
+arguments greater than zero and a value of zero for arguments less than
 zero.  The function "uramp" is the integral of the unit step: for an
 input x, the value is zero if x is less than zero, or if x is greater
 than zero the value is x. The function "u2" returns a value of zero for
