@@ -6,7 +6,23 @@ Author: 1985 Wayne A. Christopher
 /*
  * For dealing with spice input decks and command scripts
  */
- 
+
+/*
+ * SJB 21 April 2005
+ * Added support for end-of-line comments that begin with any of the following:
+ *   ';'  (for PSpice compatability)
+ *   '$ ' (for HSpice compatability)
+ *   '//' (like in c++ and as per the numparam code)
+ *   '--' (as per the numparam code)
+ * Any following text to the end of the line is ignored.
+ * Note requirement for $ to be followed by a space. This is to avoid conflict
+ * with use in front of a variable.
+ * Comments on a contunuation line (i.e. line begining with '+') are allowed
+ * and are removed before lines are stitched.
+ * Lines that contain only an end-of-line comment with or withou leading white
+ * space are also allowed.
+ */
+
 /*
  * SJB 22 May 2001
  * Fixed memory leaks in inp_readall() when first(?) line of input begins with a '@'.
@@ -32,6 +48,13 @@ Author: 1985 Wayne A. Christopher
 /* gtri - end - 12/12/90 */
 #endif
 
+/* SJB - Uncomment this line for debug tracing */
+/*#define TRACE */
+
+/* static declarations */
+static char * readline(FILE *fd);
+static void inp_stripcomments_deck(struct line *deck);
+static void inp_stripcomments_line(char * s);
 
 /*-------------------------------------------------------------------------*
  *  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF' *
@@ -56,7 +79,7 @@ readline(FILE *fd)
     strptr = tmalloc(memlen);
     memlen -= 1;          /* Save constant -1's in while loop */
     while((c = getc(fd)) != EOF) {
-	if (strlen == 0 && c == '\n')
+	if (strlen == 0 && (c == '\n' || c == ' ')) /* Leading spaces away */
 	    continue;
         strptr[strlen] = c;
         strlen++;
@@ -132,7 +155,7 @@ inp_readall(FILE *fp, struct line **data)
     char *buffer, *s, *t, c;
     /* segfault fix */
     char *copys=NULL;
-    int line = 1;
+    int line_number = 1; /* sjb - renamed to avoid confusion with struct line */ 
     FILE *newfp;
 
     /*   Must set this to NULL or non-tilde includes segfault. -- Tim Molteno   */
@@ -179,12 +202,12 @@ inp_readall(FILE *fp, struct line **data)
 
 #ifdef TRACE
       /* SDB debug statement */
-      printf ("in inp_readall, just read %s . . .\n", buffer); 
+      printf ("in inp_readall, just read '%s' . . .\n", buffer); 
 #endif
 
-    /* OK -- now we have loaded the next line into 'buffer'.  Process it. */
+	/* OK -- now we have loaded the next line into 'buffer'.  Process it. */
         /* If input line is blank, ignore it & continue looping.  */
-	 if ( (strcmp(buffer,"\n") == 0)
+	if ( (strcmp(buffer,"\n") == 0)
 	      || (strcmp(buffer,"\r\n") == 0) ) {
 	    continue;
         }
@@ -204,7 +227,7 @@ inp_readall(FILE *fp, struct line **data)
             fprintf(cp_err, "Warning: premature EOF\n");
         }
         *s = '\0';      /* Zap the newline. */
-
+	
 	if(*(s-1) == '\r') /* Zop the carriage return under windows */
 	  *(s-1) = '\0';
 
@@ -265,12 +288,13 @@ inp_readall(FILE *fp, struct line **data)
 	    end->li_error = NULL;
 	    end->li_actual = NULL;
             end->li_line = copy(buffer);
-            end->li_linenum = line++;
+            end->li_linenum = line_number++;
             end->li_next = newcard;
 
             /* Renumber the lines */
-            for (end = newcard; end && end->li_next; end = end->li_next)
-                end->li_linenum = line++;
+	    for (end = newcard; end && end->li_next; end = end->li_next)
+                end->li_linenum = line_number++;
+	    end->li_linenum = line_number++;	/* SJB - renumber the last line */
 
             /* Fix the buffer up a bit. */
             (void) strncpy(buffer + 1, "end of:", 7);
@@ -290,7 +314,7 @@ inp_readall(FILE *fp, struct line **data)
         end->li_error = NULL;
         end->li_actual = NULL;
         end->li_line = buffer;
-        end->li_linenum = line++;
+        end->li_linenum = line_number++;
     }
 
     if (!end) { /* No stuff here */
@@ -302,9 +326,16 @@ inp_readall(FILE *fp, struct line **data)
     /* tfree(buffer);  */
 
 
-  /* Now clean up li: remove comments & stitch together continuation lines. */
+    /* Now clean up li: remove comments & stitch together continuation lines. */
     working = cc->li_next;      /* cc points to head of deck.  Start with the
 				   next card. */
+
+    /* sjb - strip or convert end-of-line comments.
+       This must be cone before stitching continuation lines.
+       If the line only contains an end-of-line comment then it is converted
+       into a normal comment with a '*' at the start.  This will then get
+       stripped in the following code. */			   		   
+    inp_stripcomments_deck(working);	
 
     while (working) {
 	for (s = working->li_line; (c = *s) && c <= ' '; s++)
@@ -312,11 +343,11 @@ inp_readall(FILE *fp, struct line **data)
 
 #ifdef TRACE
 	/* SDB debug statement */
-	printf("In inp_readall, processing linked list element s = %s . . . \n", s); 
+	printf("In inp_readall, processing linked list element line = %d, s = %s . . . \n", working->li_linenum,s); 
 #endif
 
         switch (c) {
-	    case '#':
+            case '#':
             case '$':
             case '*':
             case '\0':
@@ -398,4 +429,77 @@ inp_casefix(char *string)
 	}
     return;
 #endif
+}
+
+
+/* Strip all end-of-line comments from a deck */
+static void
+inp_stripcomments_deck(struct line *deck)
+{
+    struct line *c=deck;
+    while( c!=NULL) {
+	inp_stripcomments_line(c->li_line);
+	c= c->li_next;
+    }
+}
+
+/* Strip end of line comment from a string and remove trailing white space
+   supports comments that begin with single characters ';'
+   or double characters '$ ' or '//' or '--'
+   If there is only white space before the end-of-line comment the
+   the whole line is converted to a normal comment line (i.e. one that
+   begins with a '*').
+   BUG: comment characters in side of string literals are not ignored. */  
+static void
+inp_stripcomments_line(char * s)
+{
+    char c = ' '; /* anything other than a comment character */
+    char * d = s;
+    if(*s=='\0') return;	/* empty line */
+    
+    /* look for comments */
+    while((c=*d)!='\0') {
+	d++;
+	if (*d==';') {	
+	    break;
+	} else if ((c=='$') && (*d==' ')) {
+	    *d--; /* move d back to first comment character */
+	    break;
+	} else if( (*d==c) && ((c=='/') || (c=='-'))) {
+	    *d--; /* move d back to first comment character */
+	    break;
+	}
+    }
+    /* d now points to the first comment character of the null at the string end */
+    
+    /* check for special case of comment at start of line */
+    if(d==s) {
+	*s = '*'; /* turn into normal comment */
+	return;
+    }
+    
+    if(d>s) {
+	d--;
+	/* d now points to character just before comment */
+	
+	/* eat white space at end of line */
+	while(d>=s) {
+	    if( (*d!=' ') && (*d!='\t' ) )
+		break;
+	    d--;
+	}
+	d++;
+	/* d now points to the first white space character before the
+	   end-of-line or end-of-line comment, or it points to the first
+	   end-of-line comment character, or to the begining of the line */
+    }
+       
+    /* Check for special case of comment at start of line 
+       with or without preceeding white space */
+    if(d<=s) {
+	*s = '*'; /* turn the whole line into normal comment */
+	return;
+    }
+    
+    *d='\0'; /* terminate line in new location */    
 }

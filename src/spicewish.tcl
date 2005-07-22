@@ -27,6 +27,9 @@ namespace eval spicewish {
 		}
 		#eval spice::bltplot $l
 		eval spice::bltplot $args
+
+		return "${::spicewish::viewer::wNames}[expr $::spicewish::viewer::viewCnt -1]"
+
         }
 
 	proc gui { } {
@@ -127,4 +130,5 @@ proc spice_gr_Plot { args } {
 			set ::spicewish::viewer::bltplotCnt $viewerCnt
 		}
 	}
+
 }
