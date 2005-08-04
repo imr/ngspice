@@ -920,7 +920,7 @@ static void  write_SPICEdev(
     fprintf(fp, "MIFmParam,     \n");  /* DEVmodParam */
     fprintf(fp, "MIFload,       \n");  /* DEVload */
     fprintf(fp, "MIFsetup,      \n");  /* DEVsetup */
-    fprintf(fp, "NULL,          \n");  /* DEVunsetup */
+    fprintf(fp, "MIFunsetup,    \n");  /* DEVunsetup */
     fprintf(fp, "NULL,          \n");  /* DEVpzSetup */
     fprintf(fp, "NULL,          \n");  /* DEVtemperature */
     fprintf(fp, "MIFtrunc,      \n");  /* DEVtrunc */

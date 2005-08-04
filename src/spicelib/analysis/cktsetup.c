@@ -118,6 +118,7 @@ int
 CKTunsetup(CKTcircuit *ckt)
 {
     int i, error, e2;
+    CKTnode *node;
 
     error = OK;
     if (!ckt->CKTisSetup)
@@ -125,6 +126,13 @@ CKTunsetup(CKTcircuit *ckt)
 
     for(i=0;i<=ckt->CKTmaxOrder+1;i++) {
         tfree(ckt->CKTstates[i]);
+    }
+
+    /* added by HT 050802*/
+    for(node=ckt->CKTnodes;node;node=node->next){
+        if(node->icGiven || node->nsGiven) {
+            node->ptr=0;
+        }
     }
 
     for (i=0;i<DEVmaxnum;i++) {

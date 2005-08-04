@@ -68,7 +68,9 @@ NIiter(CKTcircuit *ckt, int maxIter)
             return(error);
         }
     }
-    OldCKTstate0=(double *)MALLOC((ckt->CKTnumStates+1)*sizeof(double));    
+    
+//    OldCKTstate0=(double *)MALLOC((ckt->CKTnumStates+1)*sizeof(double));
+    
     for(;;){
         ckt->CKTnoncon=0;
 #ifdef NEWPRED
@@ -162,7 +164,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 	      OldCKTstate0=(double *)MALLOC((ckt->CKTnumStates+1)*sizeof(double));    
 		  for(i=0;i<ckt->CKTnumStates;i++) {
                 *(OldCKTstate0+i) = *(ckt->CKTstate0+i);
-            };
+            }
             
             startTime = (*(SPfrontEnd->IFseconds))();
             SMPsolve(ckt->CKTmatrix,ckt->CKTrhs,ckt->CKTrhsSpare);

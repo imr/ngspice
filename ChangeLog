@@ -1,3 +1,28 @@
+2005-08-04  Paolo Nenzi <p.nenzi@ieee.org>
+
+  *   Fixed a bug in memory management of xspice/ngspice that caused
+      segmentation fault for codemodels that adds their own states to
+      the state vector. Changes supplied by Hitoshi Tanaka 
+      (HDA01055@nifty.com):
+      
+      * src/math/ni/niiter.c: removed the first malloc for OldCKTstate0
+        since the number of states can be alteres by xspice code models.
+	This was already addressed in the past but this line remained.
+	
+      * src/xspice/mif/mifsetup.c: added MIFunsetup() to conform to spice3f
+        devices model interface (xspice was based on spice3c1).
+	
+      * src/xspice/xspice.c, src/xspice/cm/cmexport.c,
+        src/xspice/cmpp/writ_ifs.c: changed the entry corresponding to the
+	unsetup function from NULL to MIFunsetup.
+	
+      * src/include/mifproto.h: added prototype for MIFunsetup.
+      
+      * src/spicelib/analysis/cktsetup.c: cleared node if initial condition
+        o nodeset are given to fix a segfaults on second run of xspice
+	netlists.
+      		 		
+
 2005-06-30  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/frontend/resource.c: added IPC stuff

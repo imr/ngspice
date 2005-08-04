@@ -81,6 +81,11 @@ extern int MIFsetup(
     int           *state 
 );
 
+extern int MIFunsetup(
+    GENmodel      *inModel,
+    CKTcircuit    *ckt
+);
+
 extern int MIFload(
     GENmodel      *inModel,
     CKTcircuit    *ckt 

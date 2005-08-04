@@ -44,8 +44,6 @@ NON-STANDARD FEATURES
 
 /* #include "prefix.h"  */
 #include "ngspice.h"
-#include <stdio.h>
-//#include "util.h"
 #include "smpdefs.h"
 #include "devdefs.h"
 #include "sperror.h"
@@ -61,7 +59,7 @@ NON-STANDARD FEATURES
 
 extern SPICEdev **DEVices;        /* info about all device types */
 
-
+Mif_Boolean_t mif_UNSET=MIF_TRUE;
 
 /* define macro for easy creation of matrix entries/pointers for outputs */
 #define TSTALLOC(ptr,first,second) \
@@ -454,3 +452,77 @@ MIFsetup(
 
     return(OK);
 }
+
+
+int
+MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
+{
+    MIFmodel *model;
+    MIFinstance *here;
+    Mif_Smp_Ptr_t  *smp_data_out;
+    Mif_Smp_Ptr_t  *smp_data_cntl;
+    Mif_Port_Type_t  type,in_type,out_type;
+	Mif_Cntl_Src_Type_t  cntl_src_type;
+	int num_conn,num_port,i,j;
+
+
+	for (model = (MIFmodel *)inModel; model != NULL;
+            model = model->MIFnextModel)
+    {
+        for(here = model->MIFinstances; here != NULL;
+			here = here->MIFnextInstance)
+		{
+            num_conn=here->num_conn;
+			for(i = 0; i < num_conn; i++) {
+
+                // if the connection is null, skip to next connection
+                if(here->conn[i]->is_null) continue;
+
+                // prepare things for convenient access later
+                num_port = here->conn[i]->size;
+
+                // loop through all ports on this connection
+                for(j = 0; j < num_port; j++) {
+
+					// Skip if port is digital or user-defined type
+					type = here->conn[i]->port[j]->type;
+
+					// determine the type of this output port
+                    out_type = here->conn[i]->port[j]->type;
+
+					// create a pointer to the smp data for quick access
+					smp_data_out = &(here->conn[i]->port[j]->smp_data);
+
+					// determine the type of this input port
+					in_type = here->conn[i]->port[j]->type;
+					cntl_src_type = MIFget_cntl_src_type(in_type, out_type);
+
+					switch(cntl_src_type) 
+					{
+					case MIF_VCVS:
+					case MIF_ICVS:
+					case -1:
+						if(smp_data_out->branch)
+						{
+							CKTdltNNum(ckt, smp_data_out->branch);
+							smp_data_out->branch = 0;
+						}
+						
+						if(smp_data_out->ibranch)
+						{
+							CKTdltNNum(ckt, smp_data_out->ibranch);
+							smp_data_out->ibranch = 0;
+						}
+						here->initialized=MIF_FALSE;
+						break;
+					}
+
+				}
+			}
+
+		}
+	}
+	//printf("MIFunsetup completed.\n");
+    return OK;
+}
+

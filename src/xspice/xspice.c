@@ -19,7 +19,7 @@ struct coreInfo_t  coreInfo =
   MIFgetMod,
   MIFgetValue,
   MIFsetup,
-  (int (*)(GENmodel *, CKTcircuit *))empty,
+  MIFunsetup,
   MIFload,
   MIFmParam,
   MIFask,
