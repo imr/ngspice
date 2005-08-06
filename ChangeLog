@@ -1,3 +1,9 @@
+2005-08-06  Paolo Nenzi <p.nenzi@ieee.org>
+
+  *   src/xspice/mif/mifsetup.c: Updated MIFunsetup to the latest version
+      provided by Hitoshi Tanaka.
+
+
 2005-08-04  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   Fixed a bug in memory management of xspice/ngspice that caused

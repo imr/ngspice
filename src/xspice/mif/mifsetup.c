@@ -462,67 +462,76 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
     Mif_Smp_Ptr_t  *smp_data_out;
     Mif_Smp_Ptr_t  *smp_data_cntl;
     Mif_Port_Type_t  type,in_type,out_type;
-	Mif_Cntl_Src_Type_t  cntl_src_type;
-	int num_conn,num_port,i,j;
+    Mif_Cntl_Src_Type_t  cntl_src_type;
+    int num_conn,num_port,i,j,k,l,num_port_k;
 
 
-	for (model = (MIFmodel *)inModel; model != NULL;
-            model = model->MIFnextModel)
+    for (model = (MIFmodel *)inModel; model != NULL;
+                              model = model->MIFnextModel)
     {
-        for(here = model->MIFinstances; here != NULL;
+      for(here = model->MIFinstances; here != NULL;
 			here = here->MIFnextInstance)
-		{
-            num_conn=here->num_conn;
-			for(i = 0; i < num_conn; i++) {
+      {
+        num_conn=here->num_conn;
+        for(i = 0; i < num_conn; i++) {
 
-                // if the connection is null, skip to next connection
-                if(here->conn[i]->is_null) continue;
+           // if the connection is null, skip to next connection
+           if(here->conn[i]->is_null) continue;
 
-                // prepare things for convenient access later
-                num_port = here->conn[i]->size;
+           // prepare things for convenient access later
+           num_port = here->conn[i]->size;
 
-                // loop through all ports on this connection
-                for(j = 0; j < num_port; j++) {
+           // loop through all ports on this connection
+           for(j = 0; j < num_port; j++) {
 
-					// Skip if port is digital or user-defined type
-					type = here->conn[i]->port[j]->type;
+           // determine the type of this output port
+           out_type = here->conn[i]->port[j]->type;
 
-					// determine the type of this output port
-                    out_type = here->conn[i]->port[j]->type;
+           // create a pointer to the smp data for quick access
+           smp_data_out = &(here->conn[i]->port[j]->smp_data);
 
-					// create a pointer to the smp data for quick access
-					smp_data_out = &(here->conn[i]->port[j]->smp_data);
+           for(k = 0; k < num_conn; k++) {
+                // if the connection is null or is not an input
+                // skip to next connection
+                if((here->conn[k]->is_null) || (! here->conn[k]->is_input))
+                            continue;
+                num_port_k = here->conn[k]->size;
+                // determine the type of this input port
+                for(l = 0; l < num_port_k; l++) {
 
-					// determine the type of this input port
-					in_type = here->conn[i]->port[j]->type;
-					cntl_src_type = MIFget_cntl_src_type(in_type, out_type);
+                  // if port is null, skip to next
+                  if(here->conn[k]->port[l]->is_null)
+                                continue;
+                  in_type = here->conn[i]->port[j]->type;
+                  cntl_src_type = MIFget_cntl_src_type(in_type, out_type);
 
-					switch(cntl_src_type) 
-					{
-					case MIF_VCVS:
-					case MIF_ICVS:
-					case -1:
-						if(smp_data_out->branch)
-						{
-							CKTdltNNum(ckt, smp_data_out->branch);
-							smp_data_out->branch = 0;
-						}
-						
-						if(smp_data_out->ibranch)
-						{
-							CKTdltNNum(ckt, smp_data_out->ibranch);
-							smp_data_out->ibranch = 0;
-						}
-						here->initialized=MIF_FALSE;
-						break;
-					}
+                  switch(cntl_src_type) 
+                  {
+                    case MIF_VCVS:
+                    case MIF_ICVS:
+                    case MIF_VCIS:
+                    case MIF_ICIS:
+                    case -1:
+                      if(smp_data_out->branch)
+                      {
+                        CKTdltNNum(ckt, smp_data_out->branch);
+                        smp_data_out->branch = 0;
+                      }
 
-				}
-			}
-
-		}
+                      if(smp_data_out->ibranch)
+                      {
+                        CKTdltNNum(ckt, smp_data_out->ibranch);
+                        smp_data_out->ibranch = 0;
+                      }
+                      here->initialized=MIF_FALSE;
+                      break;
+                  }
+                }
+              }
+             }
+            }
+          }
 	}
-	//printf("MIFunsetup completed.\n");
+    //printf("MIFunsetup completed.\n");
     return OK;
 }
-
