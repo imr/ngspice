@@ -1,3 +1,11 @@
+2005-08-08  Paolo Nenzi <p.nenzi@ieee.org>
+  
+  *    src/frontend/dotcards.c: Applied patch from Mike Waters 
+       <M.Waters@bom.gov.au> to parse probes in the form:
+       vm(4,0) or vm(0,4). Where one of the nodes is ground ie. 0, if 
+       the probe is "v" everything works but anything else ie. "vm", "vp", 
+       etc. fails.
+
 2005-08-06  Paolo Nenzi <p.nenzi@ieee.org>
 
   *   src/xspice/mif/mifsetup.c: Updated MIFunsetup to the latest version

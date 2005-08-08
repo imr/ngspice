@@ -441,64 +441,57 @@ fixem(char *string)
     char *ss = string;          /* Get rid of ss ? */
 
     if (ciprefix("v(", string) &&strchr(string, ',')) {
-        for (s = string; *s && (*s != ','); s++)
-            ;
-        *s++ = '\0';
-        for (t = s; *t && (*t != ')'); t++)
-            ;
-        *t = '\0';
-        if (eq(s, "0"))
-            (void) sprintf(buf, "v(%s)", string + 2);
+        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
+        for (t = s; *t && (*t != ')'); t++) ;      *t   = '\0';
+        if (eq(s, "0")) (void) sprintf(buf, "v(%s)", string + 2);
         else if (eq(string + 2, "0"))
-            (void) sprintf(buf, "-v(%s)", s);
-        else
-            (void) sprintf(buf, "v(%s)-v(%s)", string + 2, s);
-        tfree(ss);
-        string = copy(buf);
+                        (void) sprintf(buf, "-v(%s)", s);
+        else            (void) sprintf(buf, "v(%s)-v(%s)", string + 2, s);
     } else if (ciprefix("vm(", string)) {
-        for (s = string; *s && (*s != ')'); s++)
-            ;
-        *s = '\0';
-        (void) sprintf(buf, "mag(v(%s))", string + 3);
-        tfree(ss);
-        string = copy(buf);
+        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
+        for (t = s;      *t && (*t != ')'); t++) ; *t   = '\0';
+        if (eq(s, "0")) (void) sprintf(buf, "mag(v(%s))", string + 3);
+        else if (eq(string + 2, "0"))
+                        (void) sprintf(buf, "mag(-v(%s))", s);
+        else            (void) sprintf(buf, "mag(v(%s)-v(%s))", string + 3, s);
     } else if (ciprefix("vp(", string)) {
-        for (s = string; *s && (*s != ')'); s++)
-            ;
-        *s = '\0';
-        (void) sprintf(buf, "ph(v(%s))", string + 3);
-        tfree(ss);
-        string = copy(buf);
+        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
+        for (t = s;      *t && (*t != ')'); t++) ; *t   = '\0';
+        if (eq(s, "0")) (void) sprintf(buf, "ph(v(%s))", string + 3);
+        else if (eq(string + 2, "0"))
+                        (void) sprintf(buf, "ph(-v(%s))", s);
+        else            (void) sprintf(buf, "ph(v(%s)-v(%s))", string + 3, s);
     } else if (ciprefix("vi(", string)) {
-        for (s = string; *s && (*s != ')'); s++)
-            ;
-        *s = '\0';
-        (void) sprintf(buf, "imag(v(%s))", string + 3);
-        tfree(ss);
-        string = copy(buf);
+        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
+        for (t = s;      *t && (*t != ')'); t++) ; *t   = '\0';
+        if (eq(s, "0")) (void) sprintf(buf, "imag(v(%s))", string + 3);
+        else if (eq(string + 2, "0"))
+                        (void) sprintf(buf, "imag(-v(%s))", s);
+        else            (void) sprintf(buf, "imag(v(%s)-v(%s))", string + 3, s);
     } else if (ciprefix("vr(", string)) {
-        for (s = string; *s && (*s != ')'); s++)
-            ;
-        *s = '\0';
-        (void) sprintf(buf, "real(v(%s))", string + 3);
-        tfree(ss);
-        string = copy(buf);
+        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
+        for (t = s;      *t && (*t != ')'); t++) ; *t   = '\0';
+        if (eq(s, "0")) (void) sprintf(buf, "real(v(%s))", string + 3);
+        else if (eq(string + 2, "0"))
+                        (void) sprintf(buf, "real(-v(%s))", s);
+        else            (void) sprintf(buf, "real(v(%s)-v(%s))", string + 3, s);
     } else if (ciprefix("vdb(", string)) {
-        for (s = string; *s && (*s != ')'); s++)
-            ;
-        *s = '\0';
-        (void) sprintf(buf, "db(v(%s))", string + 4);
-        tfree(ss);
-        string = copy(buf);
+        for (s = string; *s && (*s != ','); s++) ; *s++ = '\0';
+        for (t = s;      *t && (*t != ')'); t++) ; *t   = '\0';
+        if (eq(s, "0")) (void) sprintf(buf, "db(v(%s))", string + 4);
+        else if (eq(string + 2, "0"))
+                        (void) sprintf(buf, "db(-v(%s))", s);
+        else            (void) sprintf(buf, "db(v(%s)-v(%s))", string + 4, s);
     } else if (ciprefix("i(", string)) {
-        for (s = string; *s && (*s != ')'); s++)
-            ;
-        *s = '\0';
+        for (s = string; *s && (*s != ')'); s++) ; *s = '\0';
         string += 2;
         (void) sprintf(buf, "%s#branch", string);
-        tfree(ss);
-        string = copy(buf);
     }
+    else return (string);
+
+    tfree(ss);
+    string = copy(buf);
+
     return (string);
 }
 
