@@ -807,6 +807,7 @@ tests/sensitivity/Makefile		\
 tests/transient/Makefile		\
 tests/transmission/Makefile		\
 tests/resistance/Makefile		\
-tests/vbic/Makefile
+tests/vbic/Makefile			\
+xgraph/Makefile
 ])
 AC_OUTPUT
