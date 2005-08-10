@@ -3,7 +3,7 @@
 SUBDIRS = @XGRAPHDIR@ doc src man tests
 DIST_SUBDIRS = xgraph doc src man tests
 
-EXTRA_DIST = FAQ acconfig.h autogen.sh Stuarts_Poly_Notes  \
+EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		ANALYSES BUGS AUTHORS ChangeLog \
 		DEVICES NEWS README contrib patches examples
 
