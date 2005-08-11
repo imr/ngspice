@@ -100,7 +100,7 @@ of the program named NGSPICE
 * Introduction::					Description of NGSPICE. Try to answer
 									the question: What NGSPICE is ?     
 * NGSPICE Compilation::			 How to compile NGSPICE.
-* Supported Analyses::			  Describes supoorted analyses and introduces
+* Supported Analyses::			  Describes supported analyses and introduces
 									some convergence issues.
 * Circuit Description::			 How to input a circuit to the simulator.      
 * Circuit Elements and Models::	 Description and use of the devices models 
@@ -142,14 +142,14 @@ Since NGSPICE is an Open Source software, one chapter describing program
 compilation and compilation options have been added to the original 
 text. Since its birth, spice3f had many compilation switches that 
 enabled/disabled some features considered experimental or troublesome. In a 
-"perfect world", most of theese switches would be implemented as runtime 
+"perfect world", most of these switches would be implemented as runtime 
 options, thus allowing users to activate/deactivate the features they want 
 without recompiling the source. Anyway time is never sufficient to implement 
 all the features and, in the end, this is not a "perfect world". 
 
 Trying to keep a record of the "long" history of this piece of software, 
 an entire chapter has been dedicated to the description of the patches 
-publicy made available in the past years through USENET newsgroups. 
+publicly made available in the past years through USENET newsgroups. 
 
 
 As always, errors, omissions and unreadable phrases are only my fault.
@@ -171,10 +171,8 @@ within the limitations of the tools.
 @comment node-name,     next,           previous, up
 @chapter Acknowledgements
 
-@c FIXME: Get this baby to work with make distcheck target.
-@c
-@include ../AUTHORS
-
+@c Include the AUTHORS file from the top directory
+@include @value{top_srcdir}/AUTHORS
 
 @node    Release Notes, Introduction, Acknowledgements, Top
 @comment node-name,     next,           previous, up
@@ -236,7 +234,7 @@ is increased (for the next step). If the step fails, i.e. the
 circuit does not converge, the source-factor is set to the value 
 from the previous successful step, the previously stored node 
 voltages are restored, the step-factor is reduced, the source factor 
-is increased by this smaller step-factor, and convergance is 
+is increased by this smaller step-factor, and convergence is 
 attempted again.
 
 Same thing done for "Gmin-stepping" algorithm.
@@ -249,7 +247,7 @@ This helps for circuits with floating nodes (and for some others too).
 The Gmin implementation across the substrate diodes of MOS1, MOS2, 
 MOS3, MOS6 and BSIM3 devices, and across BJT base-emitter and 
 base-collector diodes, was incorrect. Correcting this dramatically 
-improved DC convergance. (I think this also effects BSIM1 and 2 but 
+improved DC convergence. (I think this also effects BSIM1 and 2 but 
 I haven't fixed them yet! ).
 
 The gm, gmb and gds calculations in the MOS3 model were all wrong. 
@@ -305,7 +303,7 @@ was added to the MOS1,2,3 and BSIM3 mosfet models.
 Numbers beginning with a "+" sign got the input routine confused. 
 Fixed now.
 
-Attempts to nodeset (or .IC) non-existant nodes are flagged with 
+Attempts to nodeset (or .IC) non-existent nodes are flagged with 
 a warning.
 
 PWL statements on Voltage or Current sources are now checked for 
@@ -387,7 +385,7 @@ There are still some harmless bugs in the resistor code.
 @end example
 
 Release notes for older NGSPICE release are not available. For historical 
-pourpose only the following release notes, pertaining to the original Spice3
+purpose only the following release notes, pertaining to the original Spice3
 code have been included into this manual. They have been copied from 
 "SPICE 3 Version 3f5 User's Manual":
 
@@ -407,7 +405,7 @@ in full yet.
 Ascii (printer) plots in spice3f2 did not print bode plots vs log of the
 frequency by default, as in spice2.
 
-You had to explicity request the x-axis to be log; either "@command{plot 
+You had to explicitly request the x-axis to be log; either "@command{plot 
 vdb(2) xlog}" (best) or "@command{plot vdb(2) vs log10(frequency)}" will 
 do. Now, simply "@command{plot vdb(2)}" will work.
 
@@ -427,7 +425,7 @@ in 3f3.
 
 @example
 Sensitivity analysis
-Added a parameter fot fitting JFET models (parameter "@code{B}").
+Added a parameter for fitting JFET models (parameter "@code{B}").
  
 Fixed a discontinuity problem in MOS level 3 (related to the 
 "@code{kappa}" parameter). Working "@command{alter}" command.
@@ -440,7 +438,7 @@ Working "@command{trace}" command.
 Interactive "@command{set}" variable values now the same as
 "@code{.options}" settings.
 
-Improved plotting, including implicity transforming data for smith
+Improved plotting, including implicitly transforming data for smith
 plots.
 
 Added function "@code{deriv()}" (derivative) to the front-end.
@@ -476,7 +474,7 @@ Miscellaneous bug fixes in the front end.
 
 @noindent
 @sc{Some common problems remaining in Spice3f}
-(note that this list is not comlete):
+(note that this list is not complete):
 
 @example
 Models defined within subcircuits are not always handled correctly.
@@ -517,7 +515,7 @@ There are many other small bugs, particularly in the front end.
  
 @section Reporting a bug
 
-Berkeley does not provinding support anymore for Spice3, if you need
+Berkeley does not provide support anymore for Spice3, if you need
 some kind of help you can 
 
 
@@ -571,7 +569,7 @@ technology parameters and circuit performance.
 
 A mixed-level circuit and device simulator can provide greater 
 simulation accuracy than a stand-alone circuit or device  simulator
-by  numerically modeling  the critical devices in a circuit.  Compact 
+by  numerically modelling  the critical devices in a circuit.  Compact 
 models can be used for noncritical devices.
 
 CIDER couples Spice (version3) to an internal C-based device simulator, 
@@ -598,7 +596,7 @@ bipolar  transistors. Temperature dependence has been included over
 the range from -50C to 150C.  The numerical models can be used to 
 simulate all the basic types of semiconductor devices: resistors, MOS 
 capacitors, diodes, BJTs, JFETs and MOSFETs. BJTs and JFETs can be 
-modeled with or without a substrate contact.  Support has been added 
+modelled with or without a substrate contact.  Support has been added 
 for the management of device internal states. Post-processing of 
 device states can be performed using  the NUTMEG user interface of Spice3.  
 Previously computed states can be loaded into the program to provide  
@@ -658,13 +656,13 @@ already faced the @emph{GNU Autoconf} system. If you already know what
 Autoconf is and how it works, you can safely skip the next paragraph.  
 
 GNU Autoconf is a package that automates the task of configuring source 
-code packages. Configuring a source code package means assigning desidered 
+code packages. Configuring a source code package means assigning desired 
 values to compile-time variables, something known as "customization", and
 look at functions, libraries available on the host system to produce the 
 makefiles needed for compilation. As said, this is a very brief introduction 
 to the Autoconf package, if you want to know more, look at its documentation.
          
-NGSPICE uses @emph{GNU Autoconf} configuration tool. To confiugure the 
+NGSPICE uses @emph{GNU Autoconf} configuration tool. To configure the 
 package type: @command{./configure --help} on the command prompt. The
 list of available options will be shown. The list comprises "standard" options
 (the one every Autoconf package has) and options specific to the NGSPICE 
@@ -694,7 +692,7 @@ The options specific to NGSPICE are:
        Again, this is useless for users.   
 @item  @command{--enable-gc}: When enabled, NGSPICE will use the Boehm-Weiser 
        Conservative Garbage Collector. The garbage collector library is not 
-       provided with NGSPICE, you must donwload and install it separately. Most
+       provided with NGSPICE, you must download and install it separately. Most
        distributions provide a binary package of this library.         
 @item  @command{--enable-nosqrt}: When enabled, the faster code using SQRT in
        charge/capacitance calculations of bulk diodes, when the grading 
@@ -711,10 +709,10 @@ The options specific to NGSPICE are:
 @item  @command{--enable-capzerobypass}: When enabled all the calculations
        cbd/cbs calculations if Czero is zero. It is safe to enable this 
        feature.
-@item  @command{--enable-nodelimiting}: Eanable some experimental code that
+@item  @command{--enable-nodelimiting}: Enable some experimental code that
        was intended to do Newton damping by nodes, rather than by branches 
        as is currently done. The flag just turns off the branch limiting code 
-       in a couple of mosfets. Obvioulsy, do not enable this if you are not
+       in a couple of mosfets. Obviously, do not enable this if you are not
        working with the limiting code.              
 @item  @command{--enable-predictor}: When this feature is enabled, NGSPICE 
        (like the orignal Spice3f) uses a predictor-corrector method for 
@@ -747,7 +745,7 @@ complex numerical software whose stability and correctness depends on many
 parameters. Be sure to understand well what you enable/disable otherwise your 
 simulations may converge to a wrong value or do not converge at all. 
 
-Once choosen the options to enable/disable, you will have to issue the 
+Once chosen the options to enable/disable, you will have to issue the 
 @command{configure} command followed by the options you choose, like:
 
 @command{configure --enable-intnoise --enable-nobypass --enable-capzerobypass}
@@ -1109,7 +1107,7 @@ rather an analysis option. Circuit temperature has a default (nominal)
 value of 27°C (300.15 K) that can be changed using the @option{TNOM} 
 option in an @code{.OPTION} control line. All analyses are, thus,  
 performed at circuit temperature, and if you want to simulate circuit
-behaviour at different tempereratures you should prepare a netlist
+behaviour at different temperatures you should prepare a netlist
 for each temperature.
 
 All input data for NGSPICE is assumed to have been measured at the 
@@ -1419,7 +1417,7 @@ Letters immediately following a number that are not scale factors are
 ignored, and letters immediately following a scale factor are ignored.
 Hence, 10, 10V, 10Volts, and 10Hz all represent the same number, and
 M, MA, MSec, and MMhos all represent the same scale factor.  Note that
-1000, 1000.0, 1000Hz, 1e3, 1.0e3, 1KHz, and 1K all represent the same
+1000, 1000.0, 1000Hz, 1e3, 1.0e3, 1kHz, and 1k all represent the same
 number.
 
 Nodes names may be arbitrary character strings.  The datum (ground)
@@ -1798,7 +1796,7 @@ The parallel multiplier is implemented by multiplying by the value of
 @option{m} the element's matrix stamp, thus it cannot be used to accurately
 simulate larger devices in integrated circuits. 
 
-The netlist below show how to correclty use the parallel multiplier: 
+The netlist below show how to correctly use the parallel multiplier: 
 
 @example
 Multiple devices 
@@ -1870,7 +1868,7 @@ Still to be implemented and written.
 Ngspice has a fairly complex model for resistors. It can simulate both
 discrete and semiconductor resistors. Semiconductor resistors in ngspice
 means: resistors described by geometrical parameters. So, do not expect 
-detailed modeling of semiconductor effects.
+detailed modelling of semiconductor effects.
 
 @option{n+} and @option{n-} are the two element nodes, @option{value} is 
 the resistance (in ohms) and may be positive or negative but not zero. 
@@ -1949,7 +1947,7 @@ the following section on semiconductor resistors.
 @end example
 
 This is the more general form of the resistor presented before (@pxref{Resistors}) 
-and allows the modeling of temperature effects and for the calculation 
+and allows the modelling of temperature effects and for the calculation 
 of the  actual resistance value from strictly geometric information and
 the specifications of the process.  If @option{value} is specified, it 
 overrides the geometric information and defines the resistance.  If 
@@ -2046,7 +2044,7 @@ If both @option{temp} and @option{dtemp} are specified, the latter is ignored.
 
 Ngspice improves spice's resistors noise model, adding flicker noise (1/f) to
 it and the @option{noisy} keyword to simulate noiseless resistors. The thermal
-noise in resistors is modeled according to the equation: 
+noise in resistors is modelled according to the equation: 
 
 @tex
 $$
@@ -2388,7 +2386,7 @@ circuit temperature and @option{dtemp}, if present.
 @end example
 
 The inductor device implemented into ngspice has many enhancements over
-the orginal one. @option{n+} and @option{n-} are the positive and negative 
+the original one. @option{n+} and @option{n-} are the positive and negative 
 element nodes, respectively. @option{value} is the inductance in Henries.
 
 Inductance can be specified in the instance line as in the examples above 
@@ -2660,9 +2658,9 @@ situation by taking the following steps:
 First, it is wise to set ideal switch impedances just high or low enough
 to be negligible with respect to other circuit elements.  Using switch
 impedances that are close to "ideal" in all cases aggravates the problem
-of discontinuities mentioned above.  Of course, when modeling real
+of discontinuities mentioned above.  Of course, when modelling real
 devices such as MOSFETS, the on resistance should be adjusted to a
-realistic level depending on the size of the device being modeled.
+realistic level depending on the size of the device being modelled.
 
 If a wide range of ON to OFF resistance must be used in the switches
 (ROFF/RON >1e+12), then the tolerance on errors allowed during transient
@@ -3146,7 +3144,7 @@ through the device, respectively.  If I is given then the device is a
 current source, and if V is given the device is a voltage source.  One
 and only one of these parameters must be given.
 
-The small-signal AC behavior of the nonlinear source is a linear
+The small-signal AC behaviour of the nonlinear source is a linear
 dependent source (or sources) with a proportionality constant equal to
 the derivative (or derivatives) of the source at the DC operating point.
 
@@ -3311,7 +3309,7 @@ implementation details.
 
 The uniform RLC/RC/LC/RG transmission line model (referred to as the
 LTRA model henceforth) models a uniform constant-parameter distributed
-transmission line.  The RC and LC cases may also be modeled using the
+transmission line.  The RC and LC cases may also be modelled using the
 URC and TRA models; however, the newer LTRA model is usually faster and
 more accurate than the others.  The operation of the LTRA model is based
 on the convolution of the transmission line's impulse responses with its
@@ -3421,7 +3419,7 @@ the expense of accuracy.
 N1 and N2 are the two element nodes the RC line connects, while N3 is
 the node to which the capacitances are connected.  MNAME is the model
 name, LEN is the length of the RC line in meters.  LUMPS, if specified,
-is the number of lumped segments to use in modeling the RC line (see the
+is the number of lumped segments to use in modelling the RC line (see the
 model description for the action taken if this parameter is omitted).
 
 
@@ -3558,7 +3556,7 @@ conditions.
 The pn junction (diode) implemented in NGSPICE expands the original 
 spice's implementation. Perimetral effects and high injection level
 have been introduced into the original model and temperature dependence
-of some parameters has beed added. 
+of some parameters has been added. 
 
 @option{n+} and @option{n-} are the positive and negative nodes, respectively.
 @option{mname} is the model name, @option{area} is the area factor, @option{pj}
@@ -3582,7 +3580,7 @@ temperature with the @option{dtemp} option.
 
 The dc characteristics of the diode are determined by the parameters 
 @option{IS} and @option{N}.  An ohmic resistance, @option{RS}, is 
-included. Charge storage effects are modeled by a transit time, 
+included. Charge storage effects are modelled by a transit time, 
 @option{TT}, and a nonlinear depletion layer capacitance which is 
 determined by the parameters @option{CJO}, @option{VJ}, and @option{M}.
 The temperature dependence of the saturation current is defined by the
@@ -3590,7 +3588,7 @@ parameters @option{EG}, the energy and @option{XTI}, the saturation
 current temperature exponent. The nominal temperature at which these 
 parameters were measured is @option{TNOM}, which defaults to the 
 circuit-wide value specified on the @code{.options} control line.
-Reverse breakdown is modeled by an exponential increase in the 
+Reverse breakdown is modelled by an exponential increase in the 
 reverse diode current and is determined by the parameters @option{BV} 
 and @option{IBV} (both of which are positive numbers).
 
@@ -3607,7 +3605,7 @@ and @option{IBV} (both of which are positive numbers).
 @item RS        @tab ohmic resistance     @tab Ohm @tab 0 @tab 100 @tab 1/area
 @end multitable
 
-@sc{Junction capacitance paramters}
+@sc{Junction capacitance parameters}
 @multitable @columnfractions .10 .40 .1 .15 .15 .10 
 @item name @tab parameter @tab units @tab default @tab example @tab scale factor
 @item CJO (CJ0)  @tab zero-bias junction bottowall capacitance @tab F @tab 0.0 @tab 2pF @tab area
@@ -3653,7 +3651,7 @@ and @option{IBV} (both of which are positive numbers).
 
 The junction diode is the the basic semiconductor device and the simplest
 one modeled in NGSPICE, but it's model is quite complex, even if not
-all the physical phenomena affecting a pn junction are modeled. The diode
+all the physical phenomena affecting a pn junction are modelled. The diode
 is modeled in three different regions:
  
 @itemize @bullet
@@ -3664,12 +3662,12 @@ is modeled in three different regions:
      series resistance to limit current with @option{RS} model parameter.
      @item
      Reverse bias: the cathode is more positive than the anode and
-     the diode is "off". A reverse biase diode conducts a small leakage
+     the diode is "off". A reverse bias diode conducts a small leakage
      current.
      @item
-     Brakdown: the breakdown region is modeled only if the @option{BV}
+     Breakdown: the breakdown region is modelled only if the @option{BV}
      model parameter is given. When a diode enters breakdown the current
-     increase expoentially (remember to limit it). @option{BV} is a 
+     increase exponentially (remember to limit it). @option{BV} is a 
      positive value. 
 @end itemize
 
@@ -3717,10 +3715,10 @@ $$
 @end ifnottex
 
 The breakdown region must be described with more depth since the breakdown
-is not modeled in physically.  As written before, the breakdown modeling
+is not modelled in physically.  As written before, the breakdown modelling
 is based on two model parameters: the "nominal breakdown voltage" @option{BV} 
 and the current at the onset of breakdown @option{IBV}. For the diode 
-model to be consistent, the current value cannot be arbitrary choosen,
+model to be consistent, the current value cannot be arbitrary chosen,
 since the reverse bias and breakdown regions must match. 
 
 When the diode enters breakdown region from reverse bias, the current 
@@ -3765,9 +3763,9 @@ END IF
 @end ifnottex
 
 Most real diodes shows a current increase that, at high current levels,
-does not follow the exponential relationship given above. This behavior
+does not follow the exponential relationship given above. This behaviour
 is due to high level of carriers injected into the junction. High
-injection effects (as they are called) are modeled with @option{IK} and
+injection effects (as they are called) are modelled with @option{IK} and
 @option{IKR}. 
 
 @tex
@@ -3845,7 +3843,7 @@ $$
 @end ifnottex
 
 The depletion capacitance is more complex to model, since the function
-used to approximate it diverges vhen the diode voltage become greater 
+used to approximate it diverges when the diode voltage become greater 
 than the junction built-in potential. To avoid function divergence, the 
 capacitance function is approximated with a linear extrapolation for
 applied voltage greater than a fraction of the junction built-in potential.
@@ -3869,7 +3867,7 @@ $$
 @end ifnottex
 
 The temperature affects many of the parameters in the equations above,
-the following equations show how. One of the most significative parameter
+the following equations show how. One of the most significant parameter
 that varies with the temperature for a semiconductor is the band-gap
 energy:
 
@@ -3998,7 +3996,7 @@ $$
 @end example
 @end ifnottex
 
-The junction grading coefficient temperature dependece is:
+The junction grading coefficient temperature dependence is:
 
 @tex
 $$
@@ -4096,11 +4094,11 @@ the forward current gain characteristics, @option{IS}, @option{BR},
 @option{NR}, @option{ISC}, @option{IKR}, and @option{NC} which determine 
 the reverse current gain characteristics, and @option{VAF} and @option{VAR} 
 which determine the output conductance for forward and reverse regions.  
-Level 2 model includes substrate staturation current @option{ISS}.
+Level 2 model includes substrate saturation current @option{ISS}.
 
 Three ohmic resistances @option{RB}, @option{RC}, and @option{RE}
 are included, where @option{RB} can be high current dependent.  Base charge
-storage is modeled by forward and reverse transit times, @option{TF} and 
+storage is modelled by forward and reverse transit times, @option{TF} and 
 @option{TR}, the forward transit time @option{TF} being bias dependent if 
 desired, and nonlinear depletion layer capacitances which are determined by 
 @option{CJE}, @option{VJE}, and @option{NJE} for the B-E junction, @option{CJC},
@@ -4112,7 +4110,7 @@ device's base or collector, to model lateral or vertical devices.
 The temperature dependence of the saturation currents, @option{IS} and  
 @option{ISS} (for level 2 model), is determined by the energy-gap, 
 @option{EG}, and the saturation current temperature exponent, @option{XTI}.  
-Additionally base current temperature dependence is modeled by the beta 
+Additionally base current temperature dependence is modelled by the beta 
 temperature exponent @option{XTB} in the new model.  The values specified 
 are assumed to have been measured at the temperature @option{TNOM}, which 
 can be specified on the @command{.options} control line or overridden by 
@@ -4267,7 +4265,7 @@ The dc characteristics are defined by the parameters VTO and BETA, which
 determine the variation of drain current with gate voltage, LAMBDA,
 which determines the output conductance, and IS, the saturation current
 of the two gate junctions.  Two ohmic resistances, RD and RS, are
-included.  Charge storage is modeled by nonlinear depletion layer
+included.  Charge storage is modelled by nonlinear depletion layer
 capacitances for both gate junctions which vary as the -1/2 power of
 junction voltage and are defined by the parameters CGS, CGD, and PB.
 
@@ -4393,7 +4391,7 @@ model to be used:
 @end multitable
 
 Level 44 model (EKV) is not available in the standard distribution since
-it is not relased in source form. To obtain the code please refer to 
+it is not released in source form. To obtain the code please refer to 
 the @uref{http://legwww.epfl.ch/ekv/, EKV group home page}. 
 
 The dc characteristics of the level 1 through level 3 MOSFETs are
@@ -4401,14 +4399,14 @@ defined by the device parameters VTO, KP, LAMBDA, PHI and GAMMA.  These
 parameters are computed by NGSPICE if process parameters (NSUB, TOX, ...)
 are given, but users specified values always override.  VTO is positive
 (negative) for enhancement mode and negative (positive) for depletion
-mode N-channel (P-channel) devices.  Charge storage is modeled by three
+mode N-channel (P-channel) devices.  Charge storage is modelled by three
 constant capacitors, CGSO, CGDO, and CGBO which represent overlap
 capacitances, by the nonlinear thin-oxide capacitance which is
 distributed among the gate, source, drain, and bulk regions, and by the
 nonlinear depletion-layer capacitances for both substrate junctions
 divided into bottom and periphery, which vary as the MJ and MJSW power
 of junction voltage respectively, and are determined by the parameters
-CBD, CBS, CJ, CJSW, MJ, MJSW and PB.  Charge storage effects are modeled
+CBD, CBS, CJ, CJSW, MJ, MJSW and PB.  Charge storage effects are modelled
 by the piecewise linear voltages-dependent capacitance model proposed by
 Meyer.  The thin-oxide charge-storage effects are treated slightly
 different for the LEVEL=1 model.  These voltage-dependent capacitances
@@ -4527,7 +4525,7 @@ NGSPICE level 1, 2, 3 and 6 parameters:
 
 
 The level 3 model available into ngspice takes into account 
-length and width mask ajdustments (@code{xl} and @code{xw})
+length and width mask adjustments (@code{xl} and @code{xw})
 and device width narrowing due to diffusion (@code{wd}).  
 
 
@@ -4773,7 +4771,7 @@ given or when the default input source is redirected from a file.  In
 batch mode, the analyses specified by the control lines in the input
 file (e.g. ".ac", ".tran", etc.)  are immediately executed (unless
 ".control" lines exists; see the section on the interactive command
-interpretor).  If the -r rawfile option is given then all data generated
+interpreter).  If the -r rawfile option is given then all data generated
 is written to a Ngspice rawfile.  The rawfile may be read by either the
 interactive mode of Ngspice or by nutmeg; see the previous section for
 details.  In this case, the .SAVE line (see below) may be used to record
@@ -5522,7 +5520,7 @@ accepted.  If no .SAVE line is given, then the default set of vectors
 are saved (node voltages and voltage source branch currents).  If .SAVE
 lines are given, only those vectors specified are saved.  For more
 discussion on internal device data, see Appendix B.  See also the
-section on the interactive command interpretor for information on how to
+section on the interactive command interpreter for information on how to
 use the rawfile.
 
 
@@ -5681,7 +5679,7 @@ independent interface (MFB) is used.  If you are using X on a
 workstation, the DISPLAY variable should already be set; if you want to
 display graphics on a system different from the one you are running
 Ngspice or Nutmeg on, DISPLAY should be of the form "machine:0.0".  See
-the appropriate documentation on the X Window Sytem for more details.
+the appropriate documentation on the X Window System for more details.
 
 
  Command Synopsis
@@ -5775,7 +5773,7 @@ may contain any number of data sets from different analyses.
 
 Ngspice and Nutmeg data is in the form of vectors: time, voltage, etc.
 Each vector has a type, and vectors can be operated on and combined
-algebraicly in ways consistent with their types.  Vectors are normally
+algebraically in ways consistent with their types.  Vectors are normally
 created when a data file is read in (see the load command below), and
 when the initial datafile is loaded.  They can also be created with the
 let command.
@@ -5789,7 +5787,7 @@ scalar is a vector of length 1) and the following operations:
 @end example
 
 % is the modulo operator, and the comma operator has two meanings: if it
-is present in the argument list of a userdefinable function, it serves
+is present in the argument list of a user definable function, it serves
 to separate the arguments.  Otherwise, the term @code{x , y} is
 synonymous with @code{x + j(y)}.
 
@@ -5889,7 +5887,7 @@ is 1).
 @item rnd(vector)
 
 A vector with each component a random integer between 0 and the absolute
-value of the vectors's corresponding com ponent.
+value of the vectors's corresponding component.
 
 @item mean(vector)
 
@@ -5900,7 +5898,7 @@ elements of vector.
 
 The result is a vector of length number, with elements 0, 1, ... number
 - 1.  If number is a vector then just the first element is taken, and if
-it isn't an in teger then the floor of the magnitude is used.
+it isn't an integer then the floor of the magnitude is used.
 
 @item length(vector)
 
@@ -5915,10 +5913,10 @@ determine the degree of interpolation.
 @item deriv(vector)
 
 Calculates the derivative of the given vector.  This uses numeric
-differentia tion by interpolating a polynomial and may not produce
+differentiation by interpolating a polynomial and may not produce
 satisfactory results (particularly with iterated differentiation).  The
-implementation only caculates the dirivative with respect to the real
-componant of that vector's scale.
+implementation only calculates the derivative with respect to the real
+component of that vector's scale.
 
 @end ftable
 
@@ -6033,7 +6031,7 @@ line (or whatever else, since it is thrown away) and then a line with
 being used for both circuit input and command file execution.  Note also
 that this allows the user to merely type the name of a circuit file as a
 command and it is automatically run.  The commands are executed
-immediately, without running any analyses that may be spicified in the
+immediately, without running any analyses that may be specified in the
 circuit (to execute the analyses before the script executes, include a
 "run" command in the script).
 
@@ -6349,7 +6347,7 @@ Prints a summary of currently defined vectors, or of the names
 specified.  The vectors are sorted by name unless the variable nosort is
 set.  The information given is the name of the vector, the length, the
 type of the vector, and whether it is real or complex data.
-Additionally, one vector is labeled [scale].  When a command such as
+Additionally, one vector is labelled [scale].  When a command such as
 plot is given without a vs argument, this scale is used for the X-axis.
 It is always the first vector in a rawfile, or the first vector defined
 in a new plot.  If you undefine the scale (i.e, let TIME = []), one of
@@ -6799,7 +6797,7 @@ the usage of that resource.  Most resources require that a circuit be
 loaded.  Currently valid resources are:
 
  elapsed           The amount of  time  elapsed  since  the  last  rusage
-                   elaped call.
+                   elapsed call.
  faults            Number of page faults and context switches (BSD only).
  space             Data space used.
  time              CPU time used so far.
@@ -7223,7 +7221,7 @@ to reform the one-dimensional vectors into two dimensional vectors.  In
 addition, the default scale is incorrect for plotting.  You must plot
 versus the vector corresponding to the second source, but you must also
 refer only to the first segment of this second source vector.  For
-example (circuit to produce the tranfer characteristic of a MOS
+example (circuit to produce the transfer characteristic of a MOS
 transistor):
 
 @example
@@ -7636,8 +7634,8 @@ effect.
 
 @item  hcopydev
 
-If this is set, when the hardcopy com mand is run the resulting file is
-au tomatically printed on the printer named hcopydev with the command
+If this is set, when the hardcopy command is run the resulting file is
+automatically printed on the printer named hcopydev with the command
 @code{lpr -Phcopydev -g file}.
 
 
@@ -7654,7 +7652,7 @@ This is a scaling factor for the font used in hardcopy plots.
 
 This variable specifies the type of the printer output to use in the
 hardcopy command.  If hcopydevtype is not set, plot (5) format is
-assumed.  The stan dard distribution currently recognizes postscript as
+assumed.  The standard distribution currently recognizes postscript as
 an alternative output for mat.  When used in conjunction with hcopydev,
 hcopydevtype should specify a format supported by the printer.
 
@@ -7671,7 +7669,7 @@ The number of events to save in the his tory list.
 This is a printf(3s) style format string used to specify the command to
 use for sending plot(5)-style plots to a printer or plotter.  The first
 parameter sup plied is the printer name, the second parameter supplied
-is a file name con taining the plot.  Both parameters are strings.  It
+is a file name containing the plot.  Both parameters are strings.  It
 is trivial to cause Ngspice to abort by supplying a unreasonable format
 string.
 
@@ -7679,7 +7677,7 @@ string.
 
 This is a printf(3s) style format string used to specify the command to
 use for sending PostScript plots to a printer or plotter.  The first
-parameter supplied is the printer name, the second parame ter supplied
+parameter supplied is the printer name, the second parameter supplied
 is a file name containing the plot.  Both parameters are strings.  It is
 trivial to cause Ngspice to abort by supplying a unreasonable format
 string.
@@ -7723,8 +7721,8 @@ check.
 
 @item nonomatch
 
-If noglob is unset and a global expres sion cannot be matched, use the
-global characters literally instead of com plaining.
+If noglob is unset and a global expression cannot be matched, use the
+global characters literally instead of complaining.
 
 @item nosort
 
@@ -7747,18 +7745,18 @@ fewer digit is printed to ensure constant widths in tables.
 
 This should be one of normal, comb, or point:chars.  normal, the
 default, causes points to be plotted as parts of connected lines.  comb
-causes a comb plot to be done (see the description of the combplot vari
-able above).  point causes each point to be plotted separately - the
+causes a comb plot to be done (see the description of the combplot 
+variable above).  point causes each point to be plotted separately - the
 chars are a list of characters that are used for each vector plotted.
 If they are omitted then a de fault set is used.
 
 @item polydegree
 
 The degree of the polynomial that the plot command should fit to the
-data.  If polyde gree is N, then nutmeg fits a degree N po lynomial to
+data.  If polydegree is N, then nutmeg fits a degree N polynomial to
 every set of N points and draw 10 intermediate points in between each
 end point.  If the points aren't monotonic, then it tries rotating the
-curve and reduc ing the degree until a fit is achieved.
+curve and reducing the degree until a fit is achieved.
 
 @item polysteps
 
@@ -7824,7 +7822,7 @@ of radians.
 @item unixcom
 
 If a command isn't defined, try to execute it as a UNIX command.
-Setting this option has the ef fect of giving a rehash command, below.
+Setting this option has the effect of giving a rehash command, below.
 This is useful for people who want to use nutmeg as a login shell.
 
 @item verbose
@@ -7855,7 +7853,7 @@ The width of the brush to use if X is being run.
 
 @item xfont
 
-The name of the X font to use when plot ting data and entering labels.
+The name of the X font to use when plotting data and entering labels.
 The plot may not look good if this is a variable-width font.
 
 @end vtable
@@ -7938,7 +7936,7 @@ Tenex-style ('set filec' in the 4.3 C-shell) command, filename, and
 keyword completion is possible: If EOF (control-D) is typed after the
 first character on the line, a list of the commands or possible
 arguments is printed (If it is alone on the line it exits nutmeg).  If
-escape is typed, then nutmeg trys to complete what the user has already
+escape is typed, then nutmeg tries to complete what the user has already
 typed.  To get a list of all commands, the user should type <space> ^D.
 
 The values of variables may be used in commands by writing $varname
@@ -8731,17 +8729,17 @@ and model, but are provided as a quick reference guide.
 |lx2u0          Length dependence of x2u0                            |
 |--------------------------------------------------------------------+
 |wx2u0          Width dependence of x2u0                             |
-|u1             VDS depence of mobility, velocity saturation         |
+|u1             VDS dependece of mobility, velocity saturation       |
 |lu1            Length dependence of u1                              |
 |wu1            Width dependence of u1                               |
  ---------------------------------------------------------------------
-|x2u1           VBS depence of u1                                    |
-|lx2u1          Length depence of x2u1                               |
-|wx2u1          Width depence of x2u1                                |
-|x3u1           VDS depence of u1                                    |
+|x2u1           VBS dependence of u1                                 |
+|lx2u1          Length dependence of x2u1                            |
+|wx2u1          Width dependence of x2u1                             |
+|x3u1           VDS dependence of u1                                 |
 |--------------------------------------------------------------------+
 |lx3u1          Length dependence of x3u1                            |
-|wx3u1          Width depence of x3u1                                |
+|wx3u1          Width dependence of x3u1                             |
 |n0             Subthreshold slope                                   |
  ln0            Length dependence of n0
  ---------------------------------------------------------------------
@@ -8753,15 +8751,15 @@ and model, but are provided as a quick reference guide.
 |nd             VDS dependence of subthreshold slope                 |
 |lnd            Length dependence of nd                              |
 |wnd            Width dependence of nd                               |
-|                              continued                    |
+|                              continued                             |
  ---------------------------------------------------------------------
 
  
  ---------------------------------------------------------------------------
-|             BSIM1 - model input-output parameters - continued   |
+|             BSIM1 - model input-output parameters - continued            |
 |--------------------------------------------------------------------------+
 |tox            Gate oxide thickness in um                                 |
-|temp           Temperature in degree Celcius                              |
+|temp           Temperature in degree Celsius                              |
 |vdd            Supply voltage to specify mus                              |
 |cgso           Gate source overlap capacitance per unit channel width(m)  |
  ---------------------------------------------------------------------------
@@ -8919,17 +8917,17 @@ and model, but are provided as a quick reference guide.
 | lubb              Length dependence of ubb                |
 | wubb              Width dependence of ubb                 |
 |-----------------------------------------------------------+
-| u10               VDS depence of mobility                 |
+| u10               VDS dependence of mobility              |
 | lu10              Length dependence of u10                |
-  wu10              Width dependence of u10
-| u1b               VBS depence of u1                       |
+  wu10              Width dependence of u100                |
+| u1b               VBS dependence of u1                    |
  ------------------------------------------------------------
-| lu1b              Length depence of u1b                   |
-| wu1b              Width depence of u1b                    |
-| u1d               VDS depence of u1                       |
-| lu1d              Length depence of u1d                   |
+| lu1b              Length dependence of u1b                |
+| wu1b              Width dependence of u1b                 |
+| u1d               VDS dependence of u1                    |
+| lu1d              Length dependence of u1d                |
 |-----------------------------------------------------------+
-| wu1d              Width depence of u1d                    |
+| wu1d              Width dependence of u1d                 |
 | n0                Subthreshold slope at VDS=0 VBS=0       |
 | ln0               Length dependence of n0                 |
 |                         continued                         |
@@ -9147,7 +9145,7 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | csw               Current controlled switch model         |
 | it                Threshold current                       |
-| ih                Hysterisis current                      |
+| ih                Hysteresis current                      |
 | ron               Closed resistance                       |
 | roff              Open resistance                         |
  ------------------------------------------------------------
@@ -9378,7 +9376,7 @@ and model, but are provided as a quick reference guide.
 | lambda            Channel length modulation param.        |
 | rd                Drain ohmic resistance                  |
 | rs                Source ohmic resistance                 |
-| cgs               G-S junction capactance                 |
+| cgs               G-S junction capacitance                |
 |                         continued                         |
  ------------------------------------------------------------
 
@@ -9389,7 +9387,7 @@ and model, but are provided as a quick reference guide.
 | cgd               G-D junction cap                        |
 | pb                Gate junction potential                 |
 | is                Gate junction saturation current        |
-| fc                Forward bias junction fit parm.         |
+| fc                Forward bias junction fit param.        |
  ------------------------------------------------------------
 | b                 Doping tail parameter                   |
 | tnom              parameter measurement temperature       |
@@ -9544,7 +9542,7 @@ and model, but are provided as a quick reference guide.
 | alpha             Saturation voltage parameter            |
 | beta              Transconductance parameter              |
  ------------------------------------------------------------
-| lambda            Channel length modulation parm.         |
+| lambda            Channel length modulation param.        |
 | b                 Doping tail extending parameter         |
 | rd                Drain ohmic resistance                  |
 | rs                Source ohmic resistance                 |
@@ -9554,7 +9552,7 @@ and model, but are provided as a quick reference guide.
 | pb                Gate junction potential                 |
 | is                Junction saturation current             |
  ------------------------------------------------------------
-| fc                Forward bias junction fit parm.         |
+| fc                Forward bias junction fit param.        |
 | kf                Flicker noise coefficient               |
 | af                Flicker noise exponent                  |
  ------------------------------------------------------------
@@ -9633,7 +9631,7 @@ and model, but are provided as a quick reference guide.
 | sourcevcrit       Critical source voltage                 |
 | drainvcrit        Critical drain voltage                  |
 | rs                Source resistance                       |
-|                         continued                |
+|                         continued                         |
  ------------------------------------------------------------
 
  
@@ -9697,7 +9695,7 @@ and model, but are provided as a quick reference guide.
 | phi               Surface potential                       |
 | lambda            Channel length modulation               |
 | rd                Drain ohmic resistance                  |
-|                         continued                |
+|                         continued                         |
  ------------------------------------------------------------
 
  
@@ -9726,7 +9724,7 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | u0                Surface mobility                        |
 | uo                (null)                                  |
-| fc                Forward bias jct. fit parm.             |
+| fc                Forward bias jct. fit param.           |
 | nsub              Substrate doping                        |
  ------------------------------------------------------------
 | tpg               Gate type                               |
@@ -9806,7 +9804,7 @@ and model, but are provided as a quick reference guide.
 | vdsat             Saturation drain voltage                |
 | sourcevcrit       Critical source voltage                 |
 | drainvcrit        Critical drain voltage                  |
-|                         continued                |
+|                         continued                         |
  ------------------------------------------------------------
 
  
@@ -9895,7 +9893,7 @@ and model, but are provided as a quick reference guide.
 | u0                Surface mobility                        |
 |-----------------------------------------------------------+
 | uo                (null)                                  |
-| fc                Forward bias jct. fit parm.             |
+| fc                Forward bias jct. fit param.            |
 | nsub              Substrate doping                        |
 | tpg               Gate type                               |
  ------------------------------------------------------------
@@ -9980,7 +9978,7 @@ and model, but are provided as a quick reference guide.
 | bnode             Number of bulk node                     |
 | dnodeprime        Number of internal drain node           |
 | snodeprime        Number of internal source node          |
-|                         continued                |
+|                         continued                         |
  ------------------------------------------------------------
 
  
@@ -10076,7 +10074,7 @@ and model, but are provided as a quick reference guide.
 | u0                Surface mobility                        |
 | uo                (null)                                  |
 |-----------------------------------------------------------+
-| fc                Forward bias jct. fit parm.             |
+| fc                Forward bias jct. fit param.            |
 | nsub              Substrate doping                        |
 | tpg               Gate type                               |
 | nss               Surface state density                   |
@@ -10163,7 +10161,7 @@ and model, but are provided as a quick reference guide.
 | bnode             Number of the node                      |
 | dnodeprime        Number of int. drain node               |
 | snodeprime        Number of int. source node              |
-|                         continued                |
+|                         continued                         |
  ------------------------------------------------------------
 
  
@@ -10209,7 +10207,7 @@ and model, but are provided as a quick reference guide.
 |qgb              Gate-Bulk charge storage                    |
 |qbd              Bulk-Drain charge storage                   |
 |qbs              Bulk-Source charge storage                  |
-|p                Instaneous power                            |
+|p                Instantaneous power                         |
  --------------------------------------------------------------
 
  
@@ -10266,7 +10264,7 @@ and model, but are provided as a quick reference guide.
 |-----------------------------------------------------------+
 | u0                Surface mobility                        |
 | uo                (null)                                  |
-| fc                Forward bias jct. fit parm.             |
+| fc                Forward bias jct. fit param.            |
 | tpg               Gate type                               |
  ------------------------------------------------------------
 | nsub              Substrate doping                        |
@@ -10496,7 +10494,7 @@ and model, but are provided as a quick reference guide.
 | exp               Exponential source description          |
  ------------------------------------------------------------
 | pwl               Piecewise linear description            |
-| sffm              Single freq. FM descripton              |
+| sffm              Single freq. FM description             |
 | ac                AC magnitude, phase vector              |
 | distof1           f1 input for distortion                 |
 | distof2           f2 input for distortion                 |
@@ -10633,7 +10631,7 @@ here->DIOtVcrit=vte*
 
 
 @noindent
-@sc{Enhacement Data:}
+@sc{Enhancement Data:}
 
 @table @asis
 
@@ -10655,7 +10653,7 @@ The pn junction diode model.
 @subsection Level 1 MOS model
 
 The Level 1 MOS model (MOS1)now accepts the "M" device 
-parameter (mutiplicity), to simulate "M" paralleled identical
+parameter (multiplicity), to simulate "M" paralleled identical
 devices. The "M" parameter affects the following quantities:
 
 @itemize @bullet
@@ -10695,7 +10693,7 @@ drain critical voltages (@code{MOS1sourceVcrit}, @code{MOS1drainVcrit})
 are multiplied by the value of "M", like the zero-voltage bulk-drain and 
 bulk-source capacitances: @code{czbd}, @code{czbdsw}, @code{czbs}, 
 @code{czbssw}, where "sw" suffix stands for "sidewall" and means perimetral
-capacitsnces and the drain and sources condiuctances (
+capacitsnces and the drain and sources conductances (
 @code{MOS1drainConductance}. @code{MOS1sourceConductance})
 @end itemize
 
@@ -10869,7 +10867,7 @@ to simulate M paralleled identical devices. The affected quantities are:
       gate-source, gate-drain and gate-bulk capacitances, corresponding
       to @code{MOS2_CAPGS}, @code{MOS2_CAPGD}, @code{MOS2_CAPGB} 
       parameters, are multiplied by the value of "M".
-@item In the @code{MOS2dset()} function (distorsion analysis setup) 
+@item In the @code{MOS2dset()} function (distortion analysis setup) 
       the overlap capcitances (@code{GateSourceOverlapCap}, 
       @code{GateDrainOverlapCap}, @code{GateBulkOverlapCap}), 
       the saturation currents (@code{DrainSatCurr}, @code{SourceSatCurr}),
@@ -10911,9 +10909,9 @@ correcting this dramatically improved DC convergence. The original code in
 @example
 ...
 ...
- /* bulk-source and bulk-drain doides
+ /* bulk-source and bulk-drain diodes
   * here we just evaluate the ideal diode current and the
-  * correspoinding derivative (conductance).
+  * corresponding derivative (conductance).
   */
 
 next1:      if(vbs <= 0) @{
@@ -10944,9 +10942,9 @@ Then new code is:
 @example
 ...
 ...
- /* bulk-source and bulk-drain doides
+ /* bulk-source and bulk-drain diodes
   * here we just evaluate the ideal diode current and the
-  * correspoinding derivative (conductance).
+  * corresponding derivative (conductance).
   */
 next1:    if(vbs <= -3*vt) @{
               here->MOS2gbs = ckt->CKTgmin;
@@ -11212,9 +11210,9 @@ case the new variables are:
 @example
 ...
 ...
-double MOS3lengthAdjust;    /* New parm: mask adjustment to length */
-double MOS3widthNarrow;     /* New parm to reduce effective width */
-double MOS3widthAdjust;     /* New parm: mask adjustment to width */
+double MOS3lengthAdjust;    /* New param: mask adjustment to length */
+double MOS3widthNarrow;     /* New param to reduce effective width */
+double MOS3widthAdjust;     /* New param: mask adjustment to width */
 ...
 ...
 unsigned MOS3lengthAdjustGiven  :1;
@@ -11230,12 +11228,12 @@ unsigned MOS3widthAdjustGiven   :1;
 @end example
 
 The single bit field that ends in "Given" are used to indicate 
-wether the parameter has been supplied by the user or must be 
+whether the parameter has been supplied by the user or must be 
 defaulted.
 The last three @code{#define} are needed as a mean to identify the 
 parameters throughout the model, since comparing integers is faster
 than comparing stings. As you may have already imagined, those 
-numbers must be unique. The association between paramter name and
+numbers must be unique. The association between parameter name and
 numerical code appears in @code{MOS3mPTable[]} in @file{mos3.c}:
 
 @example
@@ -11304,7 +11302,7 @@ functions: @code{MOS3acLoad()}, @code{MOS3load()}, @code{MOS3noise()},
 @code{MOS3temp()}.
 
 The @code{MOS3acLoad()} function contains the code used to represent
-the model for AC (small signal) analysis. The orignal code was:
+the model for AC (small signal) analysis. The original code was:
 
 @example
 ...
@@ -11352,7 +11350,7 @@ The values of @code{EffectiveLength} is trimmed with the value of
 are multiplied by @code{EffectiveWidth} instead of @code{MOS3w}. The
 @code{MOS3m} value has been discussed above. 
 
-The @code{MOS3pzLoad()} function is very simiar to @code{MOS3acLoad()}
+The @code{MOS3pzLoad()} function is very similar to @code{MOS3acLoad()}
 and the code affected is almost identical to the one above.
 
  
@@ -11571,7 +11569,7 @@ And the new one:
 @end example
 
 The changes add a check over device width that was not present in the 
-orignal code and rise an error if the result is less than one micrometer, 
+original code and rise an error if the result is less than one micrometer, 
 while the old code checked against zero.
 
 The last (but not least) function that needed some care is the 
@@ -11635,12 +11633,12 @@ And the modified code is:
 ...
 @end example
 
-There was an error in the original implmentation that did not take into
+There was an error in the original implementation that did not take into
 account lateral diffusion @code{MOS3LatDiff}. The other changes take
-into acount the effective (against drawn) device width. 
+into account the effective (against drawn) device width. 
 
 That's all folks! The changes needed to support the new parameters
-are (shorlty and badly) described. This section on MOS3 continues with 
+are (shortly and badly) described. This section on MOS3 continues with 
 other fixes. 
 
 MOS3 device reported only half of the Meyer capacitance without adding the 
@@ -11890,7 +11888,7 @@ convergence:
 @end example
 
 The Spice3 "fix" for the MOS3 gds discontinuity between the linear
-and saturated regions works only if VMAX paramter is set to a 
+and saturated regions works only if VMAX parameter is set to a 
 non-zero value. A tweak has been added for the zero case. The Spice3
 code (in @code{MOS3load()}) was:
 
@@ -12073,7 +12071,7 @@ voltages too, improving convergence on calculations that rely on this
 code.
 
 @noindent
-@sc{Enhacement Data:}
+@sc{Enhancement Data:}
 
 @table @asis
 
@@ -12104,7 +12102,7 @@ vtstlo = vtsthi/2 + 2;
 @end example
 
 @noindent
-@sc{Enhacement Data:}
+@sc{Enhancement Data:}
 
 @table @asis
 
@@ -12164,7 +12162,7 @@ The BSIM3 integration into NGSPICE is the result of the merging of three
 different sources: the original Berkeley's code and two enhanced version, one 
 supplied by Alan Gillespie and the other by Serban Popescu. Both Alan and 
 Serban enhanced the basic model adding multiplicity support, though using two 
-different approaches. Serban added another enhacement, the "hdif" parameter.
+different approaches. Serban added another enhancement, the "hdif" parameter.
 
 NGSPICE provides Berkeley's, Alan's and Serban's models, using Alan's approach
 fot multiplicity support in Berkeley's code.
@@ -12211,7 +12209,7 @@ work on the BSIM model can be summarized in the following points:
 @item Restructuring code for NGSPICE integration.
 @end itemize
 
-The firts item is a necessary step for older models, since the device 
+The first item is a necessary step for older models, since the device 
 interface changed between spice3e (the original interface for BSIM3 model) 
 and spice3f and NGSPICE device interface is based on spice3f. Changes consists 
 is a shift in the position of @code{BSIM3states} in @file{bsim3def.h} and in 
@@ -12222,11 +12220,11 @@ different minor revisions that a release can have (well, this is necessary
 only for release 3.2). 
 
 The result of the two steps is a multirevision BSIM3 model with a spice3f4/5 
-interface. Now we are ready to make the necessary enhacements and the changes
+interface. Now we are ready to make the necessary enhancements and the changes
 for integrating the model into NGSPICE.
 
-The third and fourth items in the list are the model enhacements: the 
-"paralell simulation support" is a feature inherited from the CIDER simulator 
+The third and fourth items in the list are the model enhancements: the 
+"parallel simulation support" is a feature inherited from the CIDER simulator 
 (built on top of NGSPICE) that allow the simulator to use multiple processor 
 elements to evaluate device code (making the simulation faster). The parallel 
 simulation is not yet enabled in NGSPICE, but it will probably in the future. The 
@@ -12248,17 +12246,17 @@ BSIM3 release 3.2 has three minor revisions: 3.2.2, 3.2.3 and 3.2.4. Reserving a
 different level for each is not a good solution, it will be a waste of space and
 memory. The four (including 3.2) revisions differs for a few lines of code only, 
 so the ideai is to merge the code and isolate revision dependent parts with 
-runtime switches (the @code{switch} statement). The modifications needed are mininal,
-but some work is nedded to avoid slow comparison between strings.
+runtime switches (the @code{switch} statement). The modifications needed are minimal,
+but some work is needed to avoid slow comparison between strings.
 
 As written before, the magic of revision selection is done via the "version" model
-paramteter, which appears on the model card. In BSIM3 version 3.2 this parameter
+parameter, which appears on the model card. In BSIM3 version 3.2 this parameter
 is a floating point value, since earlier releases were 3.0 and 3.1 and was easy to
 code revision into a real number. With the release of 3.2.2 it changed to a string,
-for obvious reasons (3.2.2 is not a rela nummber). Since the "version" parameter was
+for obvious reasons (3.2.2 is not a real number). Since the "version" parameter was
 used only for model checking, that was not a problem. In the multirevision model,
 comparisons based on it appears in the device evaluation code, where speed is critical,
-so we added a parameter @code{BSIM3intVersion}, defined in @file{bsim3def.h} as fllows:
+so we added a parameter @code{BSIM3intVersion}, defined in @file{bsim3def.h} as follows:
 
 @example
 ...
@@ -12357,7 +12355,7 @@ by summing the contribution of each instance (another name for "element") in
 the circuit. The contribution of each instance to the circuit matrix is called
 a "matrix stamp", which is itself a matrix containing non zero elements only 
 at positions occupied by the device. It is very important to understand that
-row and coloumn index of the stamp must be consistent with the overall 
+row and column index of the stamp must be consistent with the overall 
 circuit matrix, the elements of the stamp have the same indexes they will
 have in the circuit matrix. Note that all stamps are each other independent,
 and this property can be exploited to add parallelization to the simulator 
@@ -12406,7 +12404,7 @@ factor "m". Another advantage is that this approach does not require a full
 analysis of the device code to isolate the variables (they may be currents, 
 resistances, etc.,  not only conductances) that need to be scaled. The
 most important drawback is that the evaluation code does not know anything
-about "mutiplicity" and then all internal computations are made for the
+about "multiplicity" and then all internal computations are made for the
 "single" device. To correct this, without interfering with the evaluation
 code, you need to correct the routine that exports internal values (it is
 the so called DEVask, where DEV is a placeholder for device's name).
@@ -12475,6 +12473,7 @@ to one. To set the "given" flag the following code should be added to @code{BSIM
 @end example
 
 The last modification nedeed by model bureaucracy must be done in @code{BSIM3ask()}.
+
 The following code should be added:
 
 @example
@@ -12533,7 +12532,7 @@ same method has been applied to @code{BSIM3acLoad()} routine:
 ...
 @end example
 
-The pole-zero anaysis uses a load routine (@code{BSIM3pzLoad()}) very similar to the
+The pole-zero analysis uses a load routine (@code{BSIM3pzLoad()}) very similar to the
 one used by the AC analysis:
 
 @example
@@ -12554,7 +12553,7 @@ one used by the AC analysis:
 
 The noise analysis needs special attention, since it does not directly uses a 
 matrix load  routine. In this case was necessary to study the noise models 
-used by BSIM3 and to scale the paramters affected by multiplicity. The following 
+used by BSIM3 and to scale the parameters affected by multiplicity. The following 
 parameters were multiplied by the value of @code{BSIM3m}: @code{BSIM3cd} (drain 
 current), @code{BSIM3weff} (effective width), @code{BSIM3drainConductance}, 
 @code{BSIM3sourceConductance}, @code{BSIM3gm} (transconductance), @code{BSIM3gds} 
@@ -12566,7 +12565,7 @@ resistance) parameter. Since this is a resistance it has been divided by the
 value of @code{BSIM3m}.
 
 Now that we dealt with analyses code, the last piece of code to modify is
-the @code{BSIM3ask()} routine. Again we have to identify what paramters need
+the @code{BSIM3ask()} routine. Again we have to identify what parameters need
 to be scaled and multiply them by the multiplicity. If you look at the code
 you will clearly see the affected parameters.
 
@@ -12574,10 +12573,10 @@ you will clearly see the affected parameters.
 
 All BSIM3 models, when implemented into Spice3f (NGSPICE), shows a bug that
 affects simulations when the modelcard contains the TNOM keyword. If you
-run consecutivew times a netlist without reloading the deck, you will get
+run consecutive times a netlist without reloading the deck, you will get
 different answers with each run. Mike Smith discovered that the bug
 hides in the functions @code{BSIM3mparam()} and @code{BSIM3setup()}. The 
-solutionis (as extracted from Mike's post to @url{comp.lsi.cad}):
+solutions (as extracted from Mike's post to @url{comp.lsi.cad}):
 
 @example
 In b3mpar.c look for the following code:-

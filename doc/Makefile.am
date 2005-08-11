@@ -9,3 +9,5 @@ CLEANFILES = *.fns *.pg *.tp *.aux  *.cp *.ky *.vr *.fn *.log *.toc *.vrs
 DISTCLEANFILES = $CLEANFILES *.ps *.dvi *.info*
 
 MAINTAINERCLEANFILES = $DISTCLEANFILES Makefile.in
+
+AM_MAKEINFOFLAGS = -D "top_srcdir .."

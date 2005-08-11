@@ -1,3 +1,9 @@
+2005-08-11  Steven Borley <steven.borley@virgin.net>
+
+  *  Fixed problem with text2dvi and makeinfo when running make dist
+
+  *  Corrected many spelling errors in doc/ngspice.texi
+
 2005-08-08  Paolo Nenzi <p.nenzi@ieee.org>
   
   *    src/frontend/dotcards.c: Applied patch from Mike Waters 
