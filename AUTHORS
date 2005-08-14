@@ -4,58 +4,64 @@ Spice was originally written at The University of California at Berkeley (USA).
 Since then, there have been many people working on the software, most of them
 releasing patches to the original code through the Internet. 
 
+
 The following people have contributed in some way:
-Vera Albrecht <albrecht@@danalyse.de>,
-Cecil Aswell <aswell@@netcom.com>,
-Stuart Brorson <sdb@@cloud9.net>,
+
+@verbatim
+Vera Albrecht <albrecht@danalyse.de>,
+Cecil Aswell <aswell@netcom.com>,
+Steven Borley <steven.borley@virgin.net>
+Stuart Brorson <sdb@cloud9.net>,
 Giles C. Billingsley,
 Mansun Chan,
 Wayne A. Christopher,
-Al Davis <aldavis@@ieee.org>,
-Glao S. Dezai <dezai@@hotbot.com>,
-Jon Engelbert <jon@@beigebag.com>,
-Daniele Foci <d.foci@@ieee.ing.uniroma1.it>,
-Noah Friedman <friedman@@prep.ai.mit.edu>,
-Alan Gillespie <Alan.Gillespie@@analog.com>,
+Al Davis <aldavis@ieee.org>,
+Glao S. Dezai <dezai@hotbot.com>,
+Jon Engelbert <jon@beigebag.com>,
+Daniele Foci <d.foci@ieee.ing.uniroma1.it>,
+Noah Friedman <friedman@prep.ai.mit.edu>,
+Alan Gillespie <Alan.Gillespie@analog.com>,
 David A. Gates,
 JianHui Huang,
 Jeffrey M. Hsu,
 S. Hwang,86
-Chris Inbody <cinbody@@cowtown.net>,
+Chris Inbody <cinbody@cowtown.net>,
 Gordon M. Jacobs,
 Min-Chie Jeng,
-Stefan Jones <stefan.jones@@multigig.com>,
-Beorn Johnson <beorn@@eecs.berkeley.edu>,
+Stefan Jones <stefan.jones@multigig.com>,
+Beorn Johnson <beorn@eecs.berkeley.edu>,
 Kenneth H. Keller,
 Mathew Lew,
-Robert Lindsell <robertl@@research.canon.com.au>,
+Robert Lindsell <robertl@research.canon.com.au>,
 Weidong Liu,
 Kartikeya Mayaram,
-Richard D. McRoberts <rdm@@csn.net>,
-Manfred Metzger <ManfredMetzger@@gmx.de>,  
-Paolo Nenzi <pnenzi@@ieee.org>,
+Richard D. McRoberts <rdm@csn.net>,
+Manfred Metzger <ManfredMetzger@gmx.de>,  
+Paolo Nenzi <pnenzi@ieee.org>,
 Gary W. Ng,
+Wolfgang Muees,
 Hong June Park,
-Arno Peters <A.W.Peters@@ieee.org>,
-Serban-Mihai Popescu <serbanp@@ix.netcom.com>,
+Arno Peters <A.W.Peters@ieee.org>,
+Serban-Mihai Popescu <serbanp@ix.netcom.com>,
+Georg Post <georg.post@wanadoo.fr>
 Thomas L. Quarles,
-Emmanuel Rouat <emmanuel.rouat@@wanadoo.fr>,
-Jean-Marc Routure <routoure@@greyc.ismra.fr>,
+Emmanuel Rouat <emmanuel.rouat@wanadoo.fr>,
+Jean-Marc Routure <routoure@greyc.ismra.fr>,
 Jaijeet S. Roychowdhury,
 Takayasu Sakurai,
-AMAKAWA Shuhei <sa264@@cam.ac.uk>,
+AMAKAWA Shuhei <sa264@cam.ac.uk>,
 Kanwar Jit Singh,
-Steve Tell <tell@@cs.unc.edu>
-Andrew Tuckey <Tuckey@@ieee.org>,
-Charles D.H. Williams <C.D.H.Williams@@exeter.ac.uk>,
-Holger Vogt <holger.vogt@@uni-duisburg.de>,
-Dietmar Warning <warning@@danalyse.de>,
-Michael Widlok <widlok@@uci.agh.edu.pl>,
-Antony Wilson <wilsona@@earthlink.net>,
+Steve Tell <tell@cs.unc.edu>
+Andrew Tuckey <Tuckey@ieee.org>,
+Charles D.H. Williams <C.D.H.Williams@exeter.ac.uk>,
+Holger Vogt <holger.vogt@uni-duisburg.de>,
+Dietmar Warning <warning@danalyse.de>,
+Michael Widlok <widlok@uci.agh.edu.pl>,
+Antony Wilson <wilsona@earthlink.net>,
 and many others...
-Quite a long list, isn't it ?
- 
-Well, if someone helped in the development and has 
-not been inserted in this list, it is entirely my (Paolo Nenzi) fault.  
-If you feel you should be on this list,  write to <pnenzi@@ieee.org>.
-Do not be shy, I would like to make a list as complete as possible.
+@end verbatim
+
+If someone helped in the development and has not been inserted in this list
+then this omission was unintentional. If you feel you should be on this list
+then please write to <ngspice-devel@@lists.sourceforge.net>. Do not be shy, we
+would like to make a list as complete as possible.
