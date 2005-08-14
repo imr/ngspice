@@ -1,15 +1,17 @@
 \input texinfo   @c -*-texinfo-*-
+@c $Id$
 @c %**start of header
 @setfilename ngspice.info
+@include version.texi
 @settitle NGSPICE User Manual
 @setchapternewpage odd
 @c %**end of header
 
-@ifinfo
-This file documents NGSPICE.
-
+@c Summary Description and Copyright
+@copying
 Copyright 1996 The Regents of the University of California.
 
+@quotation
 Permission to use, copy, modify, and distribute this software and its
 documentation for educational, research and non-profit purposes,
 without fee, and without a written agreement is hereby granted,
@@ -34,90 +36,59 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS"
 BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE
 MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
-@end ifinfo
+@end quotation
+@end copying
 
-@c  This title page illustrates only one of the
-@c  two methods of forming a title page.
+@c Titlepage, Contents, Copyright and Contents
 
 @titlepage
 @title NGSPICE User Manual
-@subtitle Describes ngspice-rework15
-@subtitle Draft Version 0.1
+@subtitle Describes ngspice-rework-@value{VERSION}
+@subtitle Draft Version 0.2
 @author Many Authors
 
-@c  The following two commands
-@c  start the copyright page.
+@c The following two commands start the copyright page.
 @page
 @vskip 0pt plus 1filll
-Copyright 1996 The Regents of the University of California.
-
-@c Published by ...
-
-Permission to use, copy, modify, and distribute this software and its
-documentation for educational, research and non-profit purposes,
-without fee, and without a written agreement is hereby granted,
-provided that the above copyright notice, this paragraph and the
-following three paragraphs appear in all copies.
-
-This software program and documentation are copyrighted by The Regents
-of the University of California. The software program and
-documentation are supplied "as is", without any accompanying services
-from The Regents. The Regents does not warrant that the operation of
-the program will be uninterrupted or error-free. The end-user
-understands that the program was developed for research purposes and
-is advised not to rely exclusively on the program for any reason.
-
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
-INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND
-ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF CALIFORNIA HAS BEEN
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE UNIVERSITY OF
-CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS"
-BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE
-MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+@insertcopying
 @end titlepage
 
-
-
-@node Top, Preface, (dir), (dir)
-
-@ifinfo
-This document describes the mixed level simulator NGspice
-
-This document applies to version 15 
-of the program named NGSPICE
-@end ifinfo
-
+@c Output the table of contents at the begining
 @contents
 
+@c 'Top' Node and master menu
+
+@ifnottex
+@node Top, Preface, (dir), (dir)
+@top NGSpice User Manual
+This manual describes the mixed level simulator NGspice
+and applies to the version called Rework @value{VERSION}.
+
+@insertcopying
+@end ifnottex
+
 @menu
-* Preface::						 Some words about this manual.
-* Acknowledgements::				Almost all the people who contributed 
-									to NGSPICE development.
-* Release Notes::				   Release notes for the NGSPICE simulator
-* Introduction::					Description of NGSPICE. Try to answer
-									the question: What NGSPICE is ?     
-* NGSPICE Compilation::			 How to compile NGSPICE.
-* Supported Analyses::			  Describes supported analyses and introduces
-									some convergence issues.
-* Circuit Description::			 How to input a circuit to the simulator.      
-* Circuit Elements and Models::	 Description and use of the devices models 
-									built into NGSPICE.
-* Analyses and Output Control::	 How to run analyses and check the results.  
-* Interactive Interpreter::     	The commands recognized by the NGSPICE 
-									interactive frontend.
-* Bibliography::					A small bibliography.  
-* Example Circuits::				Some examples.
-* Model and Device Parameters::	 Equations that makes the models and 
-									parameters.
+* Preface::                     Some words about this manual.
+* Acknowledgements::            Almost all the people who contributed 
+                                  to NGSPICE development.
+* Release Notes::               Release notes for the NGSPICE simulator
+* Introduction::                Description of NGSPICE. Try to answer
+                                  the question: What NGSPICE is ?
+* NGSPICE Compilation::         How to compile NGSPICE.
+* Supported Analyses::          Describes supported analyses and introduces
+                                  some convergence issues.
+* Circuit Description::         How to input a circuit to the simulator.      
+* Circuit Elements and Models:: Description and use of the devices models 
+                                  built into NGSPICE.
+* Analyses and Output Control:: How to run analyses and check the results.  
+* Interactive Interpreter::     The commands recognized by the NGSPICE 
+                                  interactive frontend.
+* Bibliography::                A small bibliography.  
+* Example Circuits::            Some examples.
+* Model and Device Parameters:: Equations that makes the models and parameters.
 @end menu
 
-@c @node    First Chapter, Second Chapter, top,      top
-@c @comment node-name,     next,           previous, up
-@c @chapter First Chapter
-@c @cindex Index entry for First Chapter
+@c Body of the Document
 
 @node    Preface, Acknowledgements, Top, Top
 @comment node-name, next,           previous, up
@@ -172,7 +143,8 @@ within the limitations of the tools.
 @chapter Acknowledgements
 
 @c Include the AUTHORS file from the top directory
-@include @value{top_srcdir}/AUTHORS
+@c include @value{top_srcdir}/AUTHORS
+@include AUTHORS
 
 @node    Release Notes, Introduction, Acknowledgements, Top
 @comment node-name,     next,           previous, up
@@ -834,7 +806,7 @@ Several files have been edited, all above @file{configure.in} to comply with
 the autotools from CYGWIN. Other @file{*.c} have been edited and patched with 
 @code{#ifdef __MINGW32__ ... #endif}. Compared to the CYGWIN port for 
 WINDOWS only minor modifications have been done. Still the WINDOWS port 
-from Wolfgang Mües is used. The resulting source code should still be 
+from Wolfgang M@:ues is used. The resulting source code should still be 
 compatible to LINUX or UNIX porting (including autotools). I have however 
 not tested that.
 
@@ -846,8 +818,8 @@ This is how I made ngspice with CYGWIN and external MINGW32 with the attached
 patches applied to ng-spice-rework-14:
 
 according to 
-@url{http://www.geocrawler.com/lists/3/SourceForge/6013/0/7321042/}
-
+@url{http://www.geocrawler.com/@/lists/3/@/SourceForge/@/6013/0/@/7321042/}
+@c note - the '@/' allows TeX to insert a line break if necessary
 
 CYGWIN is installed in @file{C:\cygwin}.
 
@@ -859,7 +831,8 @@ $ export PATH="/cygdrive/g/gcc_mingw/bin:$PATH"
 $ automake
 $ autoconf
 $ rm config.cache
-$ ./configure --with-windows --prefix="/cygdrive/g/gcc_mingw/bin"
+$ ./configure --with-windows \
+              --prefix="/cygdrive/g/gcc_mingw/bin"
 $ make clean
 $ make 2> make.err
 
@@ -1104,7 +1077,7 @@ stationary gaussian process.
 
 Temperature, in NGSPICE, is a property associated to the entire circuit, 
 rather an analysis option. Circuit temperature has a default (nominal)
-value of 27°C (300.15 K) that can be changed using the @option{TNOM} 
+value of 27@math{^o}C (300.15 K) that can be changed using the @option{TNOM} 
 option in an @code{.OPTION} control line. All analyses are, thus,  
 performed at circuit temperature, and if you want to simulate circuit
 behaviour at different temperatures you should prepare a netlist
@@ -1971,26 +1944,17 @@ The resistor model consists of process-related device data that allow
 the resistance to be calculated from geometric information and to be
 corrected for temperature.  The parameters available are:
 
-@multitable @columnfractions .15 .4 .2 .1 .1
-@item name   @tab parameter @tab units @tab default @tab example
-@item TC1    @tab first order temperature coeff.
-                            @tab Ohm/°C @tab 0.0
-@item TC2    @tab second order temperature coeff.
-                            @tab Ohm/°C@math{^2} @tab 0.0
-@item RSH    @tab sheet resistance
-                            @tab Ohm/[] @tab - @tab 50
-@item DEFW   @tab default width
-                            @tab meters @tab 1e-6 @tab 2e-6
-@item NARROW @tab narrowing due to side etching
-                            @tab meters @tab 0.0 @tab 1e-7
-@item SHORT  @tab shortening due to side etching 
-                            @tab meters @tab 0.0 @tab 1e-7         
-@item TNOM   @tab parameter measurement temperature
-                            @tab °C @tab 27 @tab 50
-@item KF     @tab  flicker noise coefficient 
-                            @tab - @tab 0.0 @tab 1e-25 
-@item AF     @tab  flicker noise exponent 
-                            @tab - @tab 0.0 @tab 1.0
+@multitable {NARROW} {parameter measurement temperature} {ohm/@math{^o}C@math{^2}} {default} {example}
+@item name   @tab parameter                         @tab units              @tab default @tab example
+@item TC1    @tab first order temperature coeff.    @tab ohm/@math{^o}C     @tab 0.0
+@item TC2    @tab second order temperature coeff.   @tab ohm/@math{^o}C@math{^2} @tab 0.0
+@item RSH    @tab sheet resistance                  @tab ohm/[]             @tab -       @tab 50
+@item DEFW   @tab default width                     @tab meters             @tab 1e-6    @tab 2e-6
+@item NARROW @tab narrowing due to side etching     @tab meters             @tab 0.0     @tab 1e-7
+@item SHORT  @tab shortening due to side etching    @tab meters             @tab 0.0     @tab 1e-7         
+@item TNOM   @tab parameter measurement temperature @tab @math{^o}C         @tab 27      @tab 50
+@item KF     @tab flicker noise coefficient         @tab -                  @tab 0.0     @tab 1e-25 
+@item AF     @tab flicker noise exponent            @tab -                  @tab 0.0     @tab 1.0
 @end multitable
 
 
@@ -2205,32 +2169,20 @@ and set the capacitance in the @command{.model} line (@pxref{Capacitors}).
 The capacitor model contains process information that may be used to
 compute the capacitance from strictly geometric information.
 
-@multitable @columnfractions .15 .4 .2 .1 .1
-@item name   @tab parameter @tab units @tab default @tab example
-@item CAP    @tab model capacitance 
-                          @tab F                 @tab 0.0  @tab 1e-6
-@item CJ     @tab junction bottom capacitance
-                          @tab F/meters@math{^2} @tab -    @tab 5e-5
-@item CJSW   @tab junction sidewall capacitance
-                          @tab F/meters          @tab -    @tab 2e-11
-@item DEFW   @tab default device width
-                          @tab meters            @tab 1e-6 @tab 2e-6
-@item DEFL   @tab default device length
-                          @tab meters            @tab 0.0  @tab 1e-6
-@item NARROW @tab narrowing due to side etching
-                          @tab meters            @tab 0.0  @tab 1e-7
-@item SHORT  @tab shorting due to side etching   
-                          @tab meters            @tab 0.0  @tab 1e-7
-@item TC1    @tab first order temperature coeff.
-                          @tab F/°C              @tab 0.0  @tab 0.001
-@item TC2    @tab second order temperature coeff.
-                          @tab F/°C@math{^2}     @tab 0.0  @tab 0.0001
-@item TNOM   @tab parameter measurement temperature
-                          @tab °C                @tab 27   @tab 50			  			  
-@item DI    @tab relative dielectric constant
-                          @tab F/m               @tab 0.0  @tab 1
-@item THICK @tab insulator thickness
-                          @tab meters            @tab 0.0  @tab 1e-9
+@multitable {NARROW} {parameter measurement temperature} {F/@math{^o}C@math{^2}} {default} {example}
+@item name   @tab parameter                         @tab units                  @tab default @tab example
+@item CAP    @tab model capacitance                 @tab F                      @tab 0.0     @tab 1e-6
+@item CJ     @tab junction bottom capacitance       @tab F/meters@math{^2}      @tab -       @tab 5e-5
+@item CJSW   @tab junction sidewall capacitance     @tab F/meters               @tab -       @tab 2e-11
+@item DEFW   @tab default device width              @tab meters                 @tab 1e-6    @tab 2e-6
+@item DEFL   @tab default device length             @tab meters                 @tab 0.0     @tab 1e-6
+@item NARROW @tab narrowing due to side etching     @tab meters                 @tab 0.0     @tab 1e-7
+@item SHORT  @tab shorting due to side etching      @tab meters                 @tab 0.0     @tab 1e-7
+@item TC1    @tab first order temperature coeff.    @tab F/@math{^o}C           @tab 0.0     @tab 0.001
+@item TC2    @tab second order temperature coeff.   @tab F/@math{^o}C@math{^2}  @tab 0.0     @tab 0.0001
+@item TNOM   @tab parameter measurement temperature @tab @math{^o}C             @tab 27      @tab 50
+@item DI     @tab relative dielectric constant      @tab F/m                    @tab 0.0     @tab 1
+@item THICK  @tab insulator thickness               @tab meters                 @tab 0.0     @tab 1e-9
 @end multitable
 
 
@@ -2373,8 +2325,8 @@ circuit temperature and @option{dtemp}, if present.
  General form:
 
 @example
-     LYYYYYYY n+ n- <value> <mname> <nt=val> <m=val> <scale=val> <temp=val> 
-     +        <dtemp=val> <ic=init_condition>
+  LYYYYYYY n+ n- <value> <mname> <nt=val> <m=val> <scale=val> <temp=val> 
+  +        <dtemp=val> <ic=init_condition>
 @end example
 
 
@@ -2451,11 +2403,11 @@ magnetic permeability.
 @item LENGTH  @tab Length
                           @tab meters            @tab 0.0  @tab 1e-2
 @item TC1     @tab first order temperature coeff.
-                          @tab F/°C              @tab 0.0  @tab 0.001
+                          @tab F/@math{^o}C              @tab 0.0  @tab 0.001
 @item TC2     @tab second order temperature coeff.
-                          @tab F/°C@math{^2}     @tab 0.0  @tab 0.0001
+                          @tab F/@math{^o}C@math{^2}     @tab 0.0  @tab 0.0001
 @item TNOM    @tab parameter measurement temperature
-                          @tab °C                @tab 27   @tab 50			  			  
+                          @tab @math{^o}C                @tab 27   @tab 50			  			  
 @item NT      @tab number of turns
                           @tab -                 @tab 0.0  @tab 10
 @item MU      @tab relative magnetic permeability
@@ -3627,13 +3579,13 @@ and @option{IBV} (both of which are positive numbers).
 @item EG   @tab activation energy @tab eV @tab 1.11 @tab 1.11 Si
 @item      @tab                   @tab    @tab      @tab 0.69 Sbd 
 @item      @tab                   @tab    @tab      @tab 0.67 Ge
-@item TM1  @tab 1st order tempco for MJ @tab 1/°C @tab 0.0 @tab -
-@item TM2  @tab 2nd order tempco for MJ @tab 1/°C^2 @tab 0.0 @tab -
+@item TM1  @tab 1st order tempco for MJ @tab 1/@math{^o}C @tab 0.0 @tab -
+@item TM2  @tab 2nd order tempco for MJ @tab 1/@math{^o}C@math{^2} @tab 0.0 @tab -
 @item TNOM @tab parameter measurement temperature @tab C @tab 27 @tab 50
-@item TRS  @tab 1st order tempco for RS @tab 1/°C   @tab 0.0 @tab -
-@item TRS2 @tab 2nd order tempco for RS @tab 1/°C^2 @tab 0.0 @tab -
-@item TTT1 @tab 1st order tempco for TT @tab 1/°C @tab 0.0 @tab -
-@item TTT2 @tab 2nd order tempco for TT @tab 1/°C^2 @tab 0.0 @tab -
+@item TRS  @tab 1st order tempco for RS @tab 1/@math{^o}C   @tab 0.0 @tab -
+@item TRS2 @tab 2nd order tempco for RS @tab 1/@math{^o}C@math{^2} @tab 0.0 @tab -
+@item TTT1 @tab 1st order tempco for TT @tab 1/@math{^o}C @tab 0.0 @tab -
+@item TTT2 @tab 2nd order tempco for TT @tab 1/@math{^o}C@math{^2} @tab 0.0 @tab -
 @item XTI  @tab saturation-current temp. exp @tab - @tab 3.0 @tab 3.0 pn 
 @item      @tab                              @tab   @tab     @tab 2.0 Sbd
 @end multitable
@@ -4201,23 +4153,23 @@ internal base node @tab - @tab 1
 @item AF     @tab flicker-noise exponent @tab - @tab 1
 @item FC     @tab coefficient for forward-bias depletion capacitance formula
              @tab - @tab 0.5 @tab o
-@item TNOM   @tab Parameter measurement temperature @tab °C @tab 27 @tab 50
+@item TNOM   @tab Parameter measurement temperature @tab @math{^o}C @tab 27 @tab 50
 @item TRE1   @tab 1st order temperature coefficient for RE
-                  (level 2 only) @tab 1/°C @tab 0.0 @tab 1e-3
+                  (level 2 only) @tab 1/@math{^o}C @tab 0.0 @tab 1e-3
 @item TRE2   @tab 2nd order temperature coefficient for RE 
-                  (level 2 only) @tab 1/°C^2 @tab 0.0 @tab 1e-5
+                  (level 2 only) @tab 1/@math{^o}C@math{^2} @tab 0.0 @tab 1e-5
 @item TRC1   @tab 1st order temperature coefficient for RC 
-                  (level 2 only )@tab 1/°C @tab 0.0 @tab 1e-3
+                  (level 2 only )@tab 1/@math{^o}C @tab 0.0 @tab 1e-3
 @item TRC2   @tab 2nd order temperature coefficient for RC 
-                  (level 2 only) @tab 1/°C^2 @tab 0.0 @tab 1e-5
+                  (level 2 only) @tab 1/@math{^o}C@math{^2} @tab 0.0 @tab 1e-5
 @item TRB1   @tab 1st order temperature coefficient for RB 
-                  (level 2 only) @tab 1/°C @tab 0.0 @tab 1e-3
+                  (level 2 only) @tab 1/@math{^o}C @tab 0.0 @tab 1e-3
 @item TRB2   @tab 2nd order temperature coefficient for RB
-                  (level 2 only) @tab 1/°C^2 @tab 0.0 @tab 1e-5
+                  (level 2 only) @tab 1/@math{^o}C@math{^2} @tab 0.0 @tab 1e-5
 @item TRB1   @tab 1st order temperature coefficient for RBM 
-                  (level 2 only) @tab 1/°C @tab TRB1 @tab 1e-3
+                  (level 2 only) @tab 1/@math{^o}C @tab TRB1 @tab 1e-3
 @item TRB2   @tab 2nd order temperature coefficient for RBM 
-                  (level 2 only) @tab 1/°C^2 @tab TRB2 @tab 1e-5
+                  (level 2 only) @tab 1/@math{^o}C@math{^2} @tab TRB2 @tab 1e-5
 @end multitable
 
 
@@ -4294,7 +4246,7 @@ For details, see [9].
 @item FC @tab coefficient for forward-bias depletion capacitance formula
         @tab - @tab 0.5
 @item TNOM @tab parameter measurement temperature
-        @tab °C @tab 27 @tab 50
+        @tab @math{^o}C @tab 27 @tab 50
 @end multitable
 
 
@@ -4520,7 +4472,7 @@ NGSPICE level 1, 2, 3 and 6 parameters:
 @item KAPPA @tab saturation field factor (MOS3 only)
                         @tab - @tab 0.2 @tab 0.5
 @item TNOM  @tab parameter measurement temperature
-                        @tab °C @tab 27 @tab 50
+                        @tab @math{^o}C @tab 27 @tab 50
 @end multitable
 
 
@@ -4601,29 +4553,29 @@ For more information on BSIM2, see reference [5].
 @item name  @tab  parameter                                            @tab units       @tab  l/w
 @item VFB   @tab  flat-band voltage                                    @tab   V         @tab   *
 @item PHI   @tab  surface inversion potential                          @tab   V         @tab   *
-@item K1    @tab  body effect coefficient                              @tab  V^(1/2)    @tab   *
+@item K1    @tab  body effect coefficient                              @tab  V@math{^(1/2)}    @tab   *
 @item K2    @tab  drain/source depletion charge-sharing coefficient    @tab   -         @tab   *
 @item ETA   @tab  zero-bias drain-induced barrier-lowering coefficient @tab   -         @tab   *
-@item MUZ   @tab  zero-bias mobility                                   @tab cm^(2)/V-s  @tab   
+@item MUZ   @tab  zero-bias mobility                                   @tab cm@math{^2}/V-s  @tab   
 @item DL    @tab  shortening of channel                                @tab   Mm        @tab
 @item DW    @tab  narrowing of channel                                 @tab   Mm        @tab
 @item U0    @tab  zero-bias transverse-field mobility degradation 
-                  coefficient                                          @tab   V^(-1)    @tab   *
+                  coefficient                                          @tab   V@math{^-1}    @tab   *
 @item U1    @tab  zero-bias velocity saturation coefficient            @tab   Mm/V      @tab   *
-@item X2MZ  @tab  sens. of mobility to substrate bias at V_ds=0        @tab cm^(2)/V-s  @tab   *
+@item X2MZ  @tab  sens. of mobility to substrate bias at V_ds=0        @tab cm@math{^2}/V-s  @tab   *
 @item X2E   @tab  sens. of drain-induced barrier lowering effect to 
-                  substrate bias                                       @tab   V^(-1)    @tab   *
+                  substrate bias                                       @tab   V@math{^-1}    @tab   *
 @item X3E   @tab  sens. of drain-induced barrier lowering effect to 
-                  drain bias at V_ds=V_dd                              @tab   V^(-1)    @tab   *
+                  drain bias at V_ds=V_dd                              @tab   V@math{^-1}    @tab   *
 @item X2U0  @tab  sens. of transverse field mobility degradation 
-                  effect to substrate bias                             @tab   V^(-2)    @tab   *
+                  effect to substrate bias                             @tab   V@math{^2}    @tab   *
 @item X2U1  @tab  sens. of velocity saturation effect to substrate 
-                  bias                                                 @tab  MmV^(-2)   @tab   *
-@item MUS   @tab  mobility at zero substrate bias and at V_ds=V_dd     @tab  cm^2/V^2-s @tab  
-@item X2MS  @tab  sens. of mobility to substrate bias at V_ds=V_dd     @tab  cm^2/V^2-s @tab   *
-@item X3MS  @tab  sens. of mobility to drain bias at V_ds=V_dd         @tab  cm^2/V^2-s @tab   *
+                  bias                                                 @tab  MmV@math{^2}   @tab   *
+@item MUS   @tab  mobility at zero substrate bias and at V_ds=V_dd     @tab  cm@math{^2}/V@math{^2}-s @tab  
+@item X2MS  @tab  sens. of mobility to substrate bias at V_ds=V_dd     @tab  cm@math{^2}/V@math{^2}-s @tab   *
+@item X3MS  @tab  sens. of mobility to drain bias at V_ds=V_dd         @tab  cm@math{^2}/V@math{^2}-s @tab   *
 @item X3U1  @tab  sens. of velocity saturation effect on drain bias 
-                  at V_ds=V_dd                                         @tab  MmV^(-2)   @tab   *
+                  at V_ds=V_dd                                         @tab  MmV@math{^2}   @tab   *
 @item TOX   @tab  gate oxide thickness                                 @tab  Mm         @tab
 @item TEMP  @tab  temperature at which parameters were measured        @tab  C          @tab
 @item VDD   @tab  measurement bias range                               @tab  V          @tab   
@@ -4638,14 +4590,14 @@ For more information on BSIM2, see reference [5].
 @item NB    @tab  sens. of subthreshold slope to substrate bias        @tab   -         @tab   *
 @item ND    @tab  sens. of subthreshold slope to drain bias            @tab   -         @tab   *
 @item RSH   @tab  drain and source diffusion sheet resistance          @tab   Z/[]      @tab
-@item JS    @tab  source drain junction current density                @tab   A/m^2     @tab 
+@item JS    @tab  source drain junction current density                @tab   A/m@math{^2}     @tab 
 @item PB    @tab  built in potential of source drain junction          @tab   V         @tab 
 @item MJ    @tab  Grading coefficient of source drain junction         @tab   -         @tab                  
 @item BSW   @tab  built in potential of source, drain junction 
                   sidewall                                             @tab   V         @tab
 @item MJSW  @tab  grading coefficient of source drain junction 
                   sidewall                                             @tab   -         @tab
-@item CJ    @tab  Source drain junction capacitance per unit area      @tab   F/m^2     @tab
+@item CJ    @tab  Source drain junction capacitance per unit area      @tab   F/m@math{^2}     @tab
 @item CJSW  @tab  source drain junction sidewall capacitance per 
                   unit length                                          @tab   F/m       @tab 
 @item WDF   @tab  source drain junction default width                  @tab   m         @tab 
@@ -4733,28 +4685,23 @@ Two ohmic resistances, RD and RS, are included.  Charge storage is
 modeled by total gate charge as a function of gate-drain and gate-source
 voltages and is defined by the parameters CGS, CGD, and PB.
 
-
-@example
-name     parameter                            units   default   example   area
-
-  1   VTO      pinch-off voltage                    V       -2.0      -2.0
-                                                       2
-  2   BETA     transconductance parameter           A/V     1.0e-4    1.0e-3    *
-  3   B        doping tail extending parameter      1/V     0.3       0.3       *
-  4   ALPHA    saturation voltage parameter         1/V     2         2         *
-  5   LAMBDA   channel-length modulation
-               parameter                            1/V     0         1.0e-4
-  6   RD       drain ohmic resistance               Z       0         100       *
-  7   RS       source ohmic resistance              Z       0         100       *
-  8   CGS      zero-bias G-S junction capacitance   F       0         5pF       *
-  9   CGD      zero-bias G-D junction capacitance   F       0         1pF       *
- 10   PB       gate junction potential              V       1         0.6
- 11   KF       flicker noise coefficient            -       0
- 12   AF       flicker noise exponent               -       1
- 13   FC       coefficient for forward-bias         -       0.5
-               depletion capacitance formula
-@end example
-
+@multitable {LAMBDA} {channel-length modulation parameter} {units} {default} {example} {area}
+@item name   @tab parameter                           @tab units        @tab default @tab example @tab area
+@item VTO    @tab pinch-off voltage                   @tab V            @tab -2.0    @tab -2.0
+@item BETA   @tab transconductance parameter          @tab A/V@math{^2} @tab 1.0e-4  @tab 1.0e-3  @tab *
+@item B      @tab doping tail extending parameter     @tab 1/V          @tab 0.3     @tab 0.3     @tab *
+@item ALPHA  @tab saturation voltage parameter        @tab 1/V          @tab 2       @tab 2       @tab *
+@item LAMBDA @tab channel-length modulation parameter @tab 1/V          @tab 0       @tab 1.0e-4
+@item RD     @tab drain ohmic resistance              @tab Z            @tab 0       @tab 100     @tab *
+@item RS     @tab source ohmic resistance             @tab Z            @tab 0       @tab 100     @tab *
+@item CGS    @tab zero-bias G-S junction capacitance  @tab F            @tab 0       @tab 5pF     @tab *
+@item CGD    @tab zero-bias G-D junction capacitance  @tab F            @tab 0       @tab 1pF     @tab *
+@item PB     @tab gate junction potential             @tab V            @tab 1       @tab 0.6
+@item KF     @tab flicker noise coefficient           @tab -            @tab 0
+@item AF     @tab flicker noise exponent              @tab -            @tab 1
+@item FC     @tab coefficient for forward-bias
+                  depletion capacitance formula       @tab -            @tab 0.5
+@end multitable
 
 
 @node Analyses and Output Control, Interactive Interpreter, Circuit Elements and Models, Top
@@ -5685,12 +5632,10 @@ the appropriate documentation on the X Window System for more details.
  Command Synopsis
 
 @example
-     ngspice [ -n ] [ -t term ] [ -r rawfile] [ -b ] [ -i ] [ input file ... ]
+ngspice [ -n ] [ -t term ] [ -r rawfile] [ -b ] [ -i ] [ input file ... ]
 
-     nutmeg [ - ] [ -n ] [ -t term ] [ datafile ... ]
+nutmeg [ - ] [ -n ] [ -t term ] [ datafile ... ]
 @end example
-
-
 
 Options are:
 
@@ -5982,7 +5927,7 @@ The square root of -1
 
 @item kelvin
 
-Absolute 0 in Centigrade (-273.15 °C)
+Absolute 0 in Centigrade (-273.15 @math{^o}C)
 
 @item echarge
 
@@ -7151,10 +7096,11 @@ Linux janus.wayout.net 2.4.20 #1 SMP Tue Jun 10 18:58:26 CEST 2003 i686
 ngspice 2 -> 
 @end example
 
-@strong{Note:} This command may not be available on your environment, if
+@quotation Note
+This command may not be available on your environment, if
 it is not available, please send analogous information when submitting
 bug reports. 
- 
+@end quotation
 
 @node  Tf, Trace, Stop, Commands
 @subsection  Tf*: Run a Transfer Function analysis
@@ -8756,29 +8702,29 @@ and model, but are provided as a quick reference guide.
 
  
  ---------------------------------------------------------------------------
-|             BSIM1 - model input-output parameters - continued            |
-|--------------------------------------------------------------------------+
-|tox            Gate oxide thickness in um                                 |
-|temp           Temperature in degree Celsius                              |
-|vdd            Supply voltage to specify mus                              |
-|cgso           Gate source overlap capacitance per unit channel width(m)  |
- ---------------------------------------------------------------------------
-|cgdo           Gate drain overlap capacitance per unit channel width(m)   |
-|cgbo           Gate bulk overlap capacitance per unit channel length(m)   |
-|xpart          Flag for channel charge partitioning                       |
-|rsh            Source drain diffusion sheet resistance in ohm per square  |
-|--------------------------------------------------------------------------+
-|js             Source drain junction saturation current per unit area     |
-|pb             Source drain junction built in potential                   |
- mj             Source drain bottom junction capacitance grading coefficient
-|pbsw           Source drain side junction capacitance built in potential  |
- ---------------------------------------------------------------------------
-|mjsw           Source drain side junction capacitance grading coefficient |
-|cj             Source drain bottom junction capacitance per unit area     |
-|cjsw           Source drain side junction capacitance per unit area       |
-|wdf            Default width of source drain diffusion in um              |
-|dell           Length reduction of source drain diffusion                 |
- ---------------------------------------------------------------------------
+|          BSIM1 - model input-output parameters - continued            |
+|-----------------------------------------------------------------------+
+|tox         Gate oxide thickness in um                                 |
+|temp        Temperature in degree Celsius                              |
+|vdd         Supply voltage to specify mus                              |
+|cgso        Gate source overlap capacitance per unit channel width(m)  |
+ ------------------------------------------------------------------------
+|cgdo        Gate drain overlap capacitance per unit channel width(m)   |
+|cgbo        Gate bulk overlap capacitance per unit channel length(m)   |
+|xpart       Flag for channel charge partitioning                       |
+|rsh         Source drain diffusion sheet resistance in ohm per square  |
+|-----------------------------------------------------------------------+
+|js          Source drain junction saturation current per unit area     |
+|pb          Source drain junction built in potential                   |
+|mj          Source drain bottom junction capacitance grading coefficient
+|pbsw        Source drain side junction capacitance built in potential  |
+ ------------------------------------------------------------------------
+|mjsw        Source drain side junction capacitance grading coefficient |
+|cj          Source drain bottom junction capacitance per unit area     |
+|cjsw        Source drain side junction capacitance per unit area       |
+|wdf         Default width of source drain diffusion in um              |
+|dell        Length reduction of source drain diffusion                 |
+ ------------------------------------------------------------------------
 @end example
 
 

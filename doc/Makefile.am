@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = ngspice.ps
+EXTRA_DIST = ngspice.ps ngspice.pdf
 
 info_TEXINFOS = ngspice.texi
 
@@ -10,4 +10,8 @@ DISTCLEANFILES = $CLEANFILES *.ps *.dvi *.info*
 
 MAINTAINERCLEANFILES = $DISTCLEANFILES Makefile.in
 
-AM_MAKEINFOFLAGS = -D "top_srcdir .."
+# This adds the root directory of the ngspice source distribution
+# to be included in the search path for includes in the ngspice.texi file
+# (which is necessary for the AUTHORS file to be found)
+AM_MAKEINFOFLAGS = -I "../"
+TEXI2DVI = texi2dvi -I "../"
