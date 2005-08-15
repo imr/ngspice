@@ -1,3 +1,12 @@
+2005-08-15  Steven Borley <steven.borley@virgin.net>
+
+  *  Yet more changes to the doc build system - see doc/ChangeLog for details
+
+  *  In INSTALL added --enable-maintainer-mode as an argument to ./configure
+     when building straight from CVS.  This is now necessary due to the use of
+     version.texi to allow versioning info to be passed into the documentation
+     system.
+
 2005-08-14  Steven Borley <steven.borley@virgin.net>
 
   *  More changes to the documentation. Specifically the make dist now produces

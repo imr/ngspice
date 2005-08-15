@@ -17,7 +17,7 @@ The project uses the GNU build process. This is still very crude and needs
 work, but basically you should be able to do the following:
 
 $ ./autogen.sh
-$ ./configure
+$ ./configure --enable-maintainer-mode
 $ make
 $ sudo make install
 
