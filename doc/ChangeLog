@@ -1,3 +1,13 @@
+2005-08-15  Steven Borley <steven.borley@virgin.net>
+
+  *  Fixed missing parenthesis around CLEANFILES and DISTCLEANFILES in
+     Makefile.am as reported by David Fang <fang@csl.cornell.edu>
+     
+  *  Fixed the section in ngspice.texi where the use of @/ in a @url{} was
+     giving problems. Actually this whole section on the Windows port is now
+     out-of-date, and date link was broken, so I have replaced it with something
+     more appropriate. thank you to Stuart Brorson for reporting these problems.
+
 2005-08-14  Steven Borley <steven.borley@virgin.net>
 
   *  Fixed the problems of the AUTHORS file not being found by adding its

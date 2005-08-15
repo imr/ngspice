@@ -6,9 +6,9 @@ info_TEXINFOS = ngspice.texi
 
 CLEANFILES = *.fns *.pg *.tp *.aux  *.cp *.ky *.vr *.fn *.log *.toc *.vrs 
 
-DISTCLEANFILES = $CLEANFILES *.ps *.dvi *.info*
+DISTCLEANFILES = $(CLEANFILES) *.ps *.dvi *.info*
 
-MAINTAINERCLEANFILES = $DISTCLEANFILES Makefile.in
+MAINTAINERCLEANFILES = $(DISTCLEANFILES) Makefile.in
 
 # This adds the root directory of the ngspice source distribution
 # to be included in the search path for includes in the ngspice.texi file
