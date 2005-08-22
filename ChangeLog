@@ -1,3 +1,8 @@
+2005-08-22  Paolo Nenzi <p.nenzi@ieee.org>
+
+  *  src/frontend/plotting/x11.c: removed casting in a macro. It conflicts
+     with the strictier syntax of recent gcc compilers. 
+
 2005-08-15  Steven Borley <steven.borley@virgin.net>
 
   *  Yet more changes to the doc build system - see doc/ChangeLog for details
