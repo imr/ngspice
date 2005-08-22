@@ -17,7 +17,11 @@ CC = @CC@
 INCLUDES = -I$(TOPDIR)$(top_srcdir)/src/include -I$(TOPDIR)$(top_builddir)
 
 # CFLAGS to use here
+ifeq "$(strip $(uname))" "MINGW32_NT-5.0" 
+  CFLAGS = @CFLAGS@ -DCM_WINDOWS 
+else  
 CFLAGS = @CFLAGS@ -fPIC -DCM_LINUX
+endif
 
 # Path to the cmpp utility
 CMPP = $(TOPDIR)$(top_builddir)/src/xspice/cmpp/cmpp
