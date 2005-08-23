@@ -9,7 +9,4 @@ of ngspice not included in the main source.
 
 Index:
 
-win32/:         This directory contains a patch to run ngspice under windows.
-                This code is not yet inserted into the main code but will be
-                in the next ones.
                 
