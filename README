@@ -1,143 +1,39 @@
 README for NGSPICE
 ------------------
 
-This long message describes what NGSPICE may become in the (near ?)
-future. I used a question mark because, as you will read, most of the
-features of ngspice are found on Hi-quality commercial products and
-(which is the true reason) I have no idea on how can be implemented.
+Ngspice is a mixed-level/mixed-signal circuit simulator. Its code 
+is based on three open source software packages: Spice3f5, Cider1b1 
+and Xspice.
 
-** Why resurrecting Berkeley's Spice ?
+Spice3 does not need any introduction, is the most popular circuit 
+simulator. In over 30 years of its life Spice3 has become a de-facto 
+standard for simulating circuits.
 
-Berkeley's spice can be considered the father of most circuit simulators
-available today. It is an old but still good piece of software. It may not
-be the fastest or the most reliable, but it's free, it is available in
-source code, and most of the electrical simulators inherited it's syntax.
-On the more technical side, spice3f4(5) uses good numerical algorithms
-(commercial implementations have only strengthened them), implements most
-of the models for MOSFET submicron designs and has a powerful set of
-analyses. On the more "social" side: it's well introduced in the
-academic environment.
+Cider couples Spice3f5 circuit level simulator to DSIM device simulator
+to provide greater simulation accuracy of critical devices. DSIM 
+devices are described in terms of their structures and materials.
 
- 
-** What does NGSPICE mean ?
+Xspice is an extension to Spice3C1 that provides code modeling support 
+and simulation of digital components through an embedded event driven 
+algorithm.
 
-It stands for Next Generation Spice but that's not the official name of
-the project. This projects still lacks a name. NGSPICE is a temporary
-name.  
+Ngspice is, anyway, a little more than the simple sum of the packages 
+above, as many people contributed to the project with their experience,
+their bug fixes and their improvements. If you are interested, browse 
+the site and discover what ngspice offers and what needs. If you think 
+you can help, join the development team.
 
+Ngspice is an ongoing project, growing everyday from users contributions,
+suggestions and reports. What we will be able to do depends mostly on 
+user interests, contributions and feedback. 
 
-** What will NGSPICE be ?
-
-Berkeley's Spice lacks in three directions:
-
- a) Graphical user interface (I prefer to say "the framework").
- b) Documentation.
- c) Features in the code.
-
- * The framework:
-   Spice is (and should continue to be) a command line or a text tool, but
-   this makes very difficult to design large circuits. To overcome this
-   difficulty, a schematic entry tool and a waveform viewer tool are
-   needed. Nevertheless, there are other tools that can be useful:
-   a parts database, an editor which highlights the syntax, a symbol
-   editor, etc. Most of these program already exists in the open source
-   world, so they need only to be integrated in a common EDA environment.
-   This is the first direction of development. 
-
- * Documentation: Commercial simulators (hi-end) have very good manuals
-   with tutorials, models equation explained, example of use, suggestions,
-   etc. This line of development has the task of providing the final
-   spice user with an ordered and comprehensive set of information on the
-   program and it's features. The documentation should be useful for the
-   student as well as for the circuit professional.
-
- * Improvements to the spice code: This is the hard part. The target of
-   this direction is to make ngspice a commercial grade simulator. This
-   means improving it's speed, it's numerical robustness, include the
-   latest models available and some other important features. I will
-   describe some of them briefly:
-
-   - Analyses -
-     Network analysis: given four nodes, extract z,y,s and the other
-     double bipole parameters.  
-     
-     Monte Carlo analysis: statistical simulation based on device
-     parameters tolerances. 
-
-     Worst Case analysis: find the worst case of operation of a given 
-     circuit based on device parameters tolerances.
-
-     Parametric analysis: repeat an analysis when one or more parameters 
-     assumes different values.
-
-   - Devices -
-     Behavioural device: enhance the B device of spice3 to accepts IF THEN
-     ELSE conditions, and digital keywords like DELAY, HIGHV. LOWV, etc to
-     simulate simple digital circuits.
-     
-     Dynamically loading of device: reduce the memory occupied by the
-     simulator using shared object code for devices. Each device
-     is a .so library that is inserted only if the circuit contains
-     an element modeled by the device. If we are simulating CMOS, 
-     we do not need BJT or SOI (in most of the situations).  
-
-     Code Level Modeling: Let users write their devices in C and use 
-     them in the simulator.  I have discovered a couple of standards
-     for doing this at the Sematech ftp site. 
-     
-     Improving device: Include additional parameters to some devices:
-     HDIF, LDIF, etc.
-
-   - Numerical Algs - 
-     Integration: include (if necessary) more stable algorithms for
-     integration. What about Runge-Kutta Methods ?
-     
-     How if we check LKC at every node as convergence test ?
-     
-     Linearization:
-     Are there better algorithms for nonlinear equations than the Newton
-     Raphson ?
-
-  - Sparse Matrix - 
-    Faster handling of sparse matrices: new processors offers generous
-    caches and vectors operations.
-
-  
-  - Options - 
-    Possibility to measure circuit parameters, like the delay between two
-    nodes, etc.
-    
-
-... and others that will emerge during the project.
-
-
-Paolo Nenzi (pnenzi@ieee.ing.uniroma.it)
-
-
-
-
-NOTES:
-------
-
-This version builds correctly on Redhat linux 6.0, and most probably
-on any glibc2-based linux distribution. The executables have hardly been
-tested, all I know is that they build. The main goal of this release is
-to get autoconf to work.
-
-The goal is to put all possible configurations flags into the autoconf support.
-
-It should build on most other unices (especially POSIX ones), please report to me 
-if it does, or if you know how to fix it if it doesn't.
-
-As the -Wall flag is turned on during compilation, you will notice a HUGE
-amount of warnings - our first job should be to work on those to 'sanitize'
-the existing code.
+Ngspice is part of the gEDA project.
 
 
 MAILING LISTS:
 -------------
 
-There are three mailing lists dedicated to the development of ngspice. 
+There are four mailing lists dedicated to the development of ngspice. 
 
 ngspice-users@lists.sourceforge.net: This list is the list for the users of the
                                      ngspice simulator. 
@@ -147,7 +43,7 @@ ngspice-devel@lists.sourceforge.net: ngspice development issues. Developers and
                                      subscribe here.
 
 ngspice-frontend@list.sourceforge.net: issues related to development of
-                                         frontends for ngspice.
+                                       frontends for ngspice.
                                          
 ngspice-bugs@list.sourceforge.net: Bug report should be posted here.
 
@@ -157,13 +53,15 @@ To subscribe the list(s), send a message to:
    <ngspice-frontend-subscribe@lists.sourceforge.net>
    <ngspice-bugs-subscribe@lists.sourceforge.net>
 
-WEB SITE:
+WEB SITEs:
 --------
 
-This project is hosted on Sourceforge. 
+This project is hosted on Sourceforge.net. 
 The home page is http://ngspice.sourceforge.net
+The summary page is http://sf.net/projects/ngspice
+The ngspice page on gEDA site is http://geda.seul.org/tools/ngspice/index.html
 
-Manu (emmanuel.rouat@wanadoo.fr)
+
 Paolo (p.nenzi@ieee.org)
 
 
