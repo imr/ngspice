@@ -518,11 +518,14 @@ if test "$enable_xgraph" = "yes"; then
     AC_MSG_RESULT(Xgraph compilation enabled.)
     AC_CONFIG_SUBDIRS(xgraph)
     XGRAPHDIR="xgraph"
+    NOTXGRAPH=""
 else
     XGRAPHDIR=""
+    NOTXGRAPH="xgraph"
 fi        
 
 AC_SUBST(XGRAPHDIR)
+AC_SUBST(NOTXGRAPH)
 
 if test "$enable_ekv" = "yes"; then
     AC_MSG_RESULT(Model EKV included)
@@ -813,7 +816,6 @@ tests/sensitivity/Makefile		\
 tests/transient/Makefile		\
 tests/transmission/Makefile		\
 tests/resistance/Makefile		\
-tests/vbic/Makefile			\
-xgraph/Makefile
+tests/vbic/Makefile
 ])
 AC_OUTPUT
