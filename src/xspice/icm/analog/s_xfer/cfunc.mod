@@ -215,7 +215,7 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 									denonminator coefficients */
 	double **num_coefficient;    /* dynamic array that holds the numerator
 									coefficients */
-	/*double **old_num_coefficient;?* dynamic array that holds the old numerator
+	double **old_num_coefficient;/* dynamic array that holds the old numerator
 									coefficients */
 	double factor;               /* gain factor in case the highest
 									denominator coefficient is not 1 */
@@ -292,22 +292,23 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 
         /* Allocate storage for coefficient values */
 
-        den_coefficient = (double **) calloc(den_size,sizeof(double));  
+        den_coefficient = (double **) calloc(den_size,sizeof(double *));  
+		old_den_coefficient = (double **) calloc(den_size,sizeof(double *)); 
+
+		num_coefficient = (double **) calloc(num_size,sizeof(double *));  
+		old_num_coefficient = (double **) calloc(num_size,sizeof(double *));  
 
 		for(i=den_size;i<(2*den_size);i++){
-            den_coefficient[i-den_size] = cm_analog_alloc(i,sizeof(double));
+            old_den_coefficient[i-den_size] = den_coefficient[i-den_size] = 
+				cm_analog_alloc(i,sizeof(double));
 		}
 
-        num_coefficient = (double **) calloc(num_size,sizeof(double));  
 
 		for(i=2*den_size;i<(2*den_size + num_size);i++){
-            num_coefficient[i-2*den_size] = cm_analog_alloc(i,sizeof(double));
+            old_num_coefficient[i-2*den_size] = num_coefficient[i-2*den_size] = 
+				cm_analog_alloc(i,sizeof(double));
 		}
 
-/* I don't really need to allocate old_den_coefficient.  It's just that
-   I free it at the end of the model every time through */
-
-        old_den_coefficient = (double **) calloc(den_size,sizeof(double));  
 
         out = cm_analog_alloc(2*den_size+num_size,sizeof(double));   
         in = cm_analog_alloc(2*den_size+num_size+1,sizeof(double));   
@@ -319,6 +320,27 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
      /*   gain = (double *) calloc(1,sizeof(double));  
         ITP_VAR(total_gain) = gain; 
         ITP_VAR_SIZE(total_gain) = 1.0;  */                                    
+
+		// Retrieve pointers
+
+		for (i=0; i<den_size; i++) {
+            integrator[i] = cm_analog_get_ptr(i,0);
+            old_integrator[i] = cm_analog_get_ptr(i,0);
+        }
+		out = cm_analog_get_ptr(2*den_size+num_size,0);   
+        in = cm_analog_get_ptr(2*den_size+num_size+1,0);   
+
+		for(i=den_size;i<2*den_size;i++){
+		    den_coefficient[i-den_size] = cm_analog_get_ptr(i,0);
+			old_den_coefficient[i-den_size] = cm_analog_get_ptr(i,0);
+		} 
+
+		for(i=2*den_size;i<2*den_size+num_size;i++){
+			num_coefficient[i-2*den_size] = cm_analog_get_ptr(i,0);
+			old_num_coefficient[i-2*den_size] = cm_analog_get_ptr(i,0);
+		} 
+
+        gain = cm_analog_get_ptr(2*den_size+num_size+2,0);  
 
     }else { /* Allocation was not necessary...retrieve previous values */
     
@@ -349,9 +371,12 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 		} 
 
         num_coefficient = (double **) calloc(num_size,sizeof(double));  
+		old_num_coefficient = (double **) calloc(num_size,sizeof(double));  
 
 		for(i=2*den_size;i<2*den_size+num_size;i++){
-		    num_coefficient[i-2*den_size] = cm_analog_get_ptr(i,0);
+		    old_num_coefficient[i-2*den_size] = cm_analog_get_ptr(i,1);
+			num_coefficient[i-2*den_size] = cm_analog_get_ptr(i,0);
+			*(num_coefficient[i-2*den_size]) = *(old_num_coefficient[i-2*den_size]);
 		} 
 
         /* gain has to be stored each time since it could possibly change
@@ -379,7 +404,8 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
                                          /* actual highest integrator...it  */
                                          /* is NOT a true state variable.   */
             if ( PARAM_NULL(int_ic) ) {
-                *(integrator[i]) = *(old_integrator[i]) = PARAM(int_ic[0]);
+                // *(integrator[i]) = *(old_integrator[i]) = PARAM(int_ic[0]);
+				*(integrator[i]) = *(old_integrator[i]) = 0;
             }                                                
             else {
                 *(integrator[i]) = *(old_integrator[i]) = 
@@ -411,7 +437,8 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         /* Test denominator highest order coefficient...if that value   */
         /* is other than 1.0, then divide all denominator coefficients  */
         /* and the gain by that value...                                */
-        if ( (factor = PARAM(den_coeff[den_size-1])) != 1.0 ) {
+		// if ( (factor = PARAM(den_coeff[den_size-1])) != 1.0 ) {
+		if ( (factor = *den_coefficient[den_size-1]) != 1.0 ) {
             for (i=0; i<den_size; i++) {
                 *(den_coefficient[i]) = *(den_coefficient[i]) / factor;
             }
@@ -520,6 +547,7 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 
         OUTPUT(out) = *out;          
         PARTIAL(out,in) = pout_pin; 
+        // cm_analog_auto_partial(); // Removed again. Seems to have problems.
 
     }
 
@@ -593,10 +621,12 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
     }
 
 	  /* free all allocated memory */
-		free(integrator);
-		free(old_integrator);
-		free(den_coefficient);
-		free(old_den_coefficient);
+		if(integrator) free(integrator);
+		if(old_integrator) free(old_integrator);
+		if(den_coefficient) free(den_coefficient);
+		if(old_den_coefficient) free(old_den_coefficient);
+		if(num_coefficient) free(num_coefficient);
+		if(old_num_coefficient) free(old_num_coefficient);
 }
 
 
