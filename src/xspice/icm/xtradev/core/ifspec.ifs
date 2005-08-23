@@ -39,7 +39,7 @@ Null_Allowed:          no
 
 PARAMETER_TABLE:
 
-Parameter_Name:     H_array                     B_array 
+Parameter_Name:     h_array                     b_array 
 Description:        "magnetic field array"      "flux density array"
 Data_Type:          real                        real   
 Default_Value:      -                           -   

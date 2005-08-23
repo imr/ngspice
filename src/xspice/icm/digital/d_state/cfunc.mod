@@ -227,7 +227,7 @@ static char  *CNVgettok(char **s)
     switch(**s) {
 
     case '\0':           /* End of string found */
-        free(buf);
+        if(buf) free(buf);
         return(NULL);
 
 
@@ -260,7 +260,7 @@ static char  *CNVgettok(char **s)
     ret_str = (void *) malloc(strlen(buf) + 1);
     ret_str = strcpy(ret_str,buf);
 
-    free(buf);
+    if(buf) free(buf);
 
     return(ret_str);
 }
@@ -1530,7 +1530,9 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                                        state.in file which needs to be stored */
                             /*base;*/   /* holding variable for existing 
                                        non-masked bits[] integer  */
-                     
+	if (!state_file) {
+		return 1;
+	}                 
 
     i = 0;                                 
     s = temp;
@@ -1655,7 +1657,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                                     }
                                     else { /* need to store this value in the inputs[] array */
                                                                                                 
-                                        cm_store_inputs_value(states,i,(j-1),bit_value);
+                                        cm_store_inputs_value(states,i,(j-1-states->num_outputs),bit_value);
     
                                     }
                                 }
@@ -1685,8 +1687,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                     /* set bits values to previous bits values */
                     for (j=0; j<states->num_outputs; j++) {      
     
-                        /*** Retrieve the previous bit value ***/
-/*                              
+                        /*** Retrieve the previous bit value ***?                              
                         cm_get_bits_value(*states,i,j,&out);
     
                         switch (out.state) {
@@ -1755,7 +1756,8 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                             break;
     
                         }
-  */      
+*/
+        
                         /*** Store this bit value ***/
     
                         cm_store_bits_value(states,i,j,bit_value);
@@ -1874,7 +1876,7 @@ void cm_d_state(ARGS)
                          err=0,   /* integer for storage of error status  */
                         test;   /* testing integer  */   
                
-    State_Table_t    *states;   /* pointer to base address structure
+    State_Table_t    *states,   /* pointer to base address structure
                                    for all state arrays. *states
                                    contains the pointers to 
                                    state[], bits[], input[]
@@ -1883,7 +1885,7 @@ void cm_d_state(ARGS)
                                    calloc, so they do not take up
                                    rotational storage space...only
                                    the *states structure does this. */
-                                                              
+                     *states_old;                                        
     FILE         *state_file;   /* pointer to the state.in input
                                    vector file */
 
@@ -1901,9 +1903,12 @@ void cm_d_state(ARGS)
                                        input from state.in */
                               *s;   /* main string variable */ 
 
-    char *loading_error = "\n***ERROR***\nD_STATE: state.in file was not read successfully. \nThe most common cause of this problem is a\ntrailing blank line in the state.in file \n";
+	char *open_error = "\n***ERROR***\nD_STATE: failed to open state file.\n";
+
+	char *loading_error = "\n***ERROR***\nD_STATE: state file was not read successfully. \nThe most common cause of this problem is a\ntrailing blank line in the state.in file \n";
 
     char *index_error = "\n***ERROR***\nD_STATE: An error exists in the ordering of states values\n in the states->state[] array. This is usually caused \nby non-contiguous state definitions in the state.in file \n";
+    char buf[100];
 
 
 
@@ -1916,22 +1921,23 @@ void cm_d_state(ARGS)
 
         /*** open file and count the number of vectors in it ***/
         state_file = fopen( PARAM(state_file), "r");
-    
+
         /* increment counter if not a comment until EOF reached... */
         i = 0;                                                
         s = temp;
-        while ( fgets(s,MAX_STRING_SIZE,state_file) != NULL) {
-            if ( '*' != s[0] ) {
-                while(isspace(*s) || (*s == '*')) 
-                      (s)++;
-                if ( *s != '\0' ) i++;
+        if (state_file!=NULL)
+            while ( fgets(s,MAX_STRING_SIZE,state_file) != NULL) {
+                if ( '*' != s[0] ) {
+                    while(isspace(*s) || (*s == '*')) 
+                        (s)++;
+                    if ( *s != '\0' ) i++;
+                }
+                s = temp;
             }
-            s = temp;
-        }
 
         /*** allocate storage for *states... ***/
 
-        states = (State_Table_t *) cm_event_alloc(0,sizeof(State_Table_t));
+        states = states_old = (State_Table_t *) cm_event_alloc(0,sizeof(State_Table_t));
 
         /* Store depth value */
         states->depth = i;
@@ -1942,10 +1948,10 @@ void cm_d_state(ARGS)
         
 
         /* assign storage for arrays to pointers in states table    */
-        states->state = (int *) calloc(states->depth,sizeof(int));
-        states->bits = (short *) calloc((states->num_outputs * states->depth / 4),sizeof(short));
-        states->inputs = (short *) calloc((states->num_inputs * states->depth / 8),sizeof(short));
-        states->next_state = (int *) calloc(states->depth,sizeof(int));
+        states->state = (int *) calloc(states->depth + 1,sizeof(int));
+        states->bits = (short *) calloc((states->num_outputs * states->depth / 4 + 1),sizeof(short));
+        states->inputs = (short *) calloc((states->num_inputs * states->depth / 8 + 1),sizeof(short));
+        states->next_state = (int *) calloc(states->depth + 1,sizeof(int));
         
 
         /* Initialize *state, *bits, *inputs & *next_state to zero  */
@@ -1963,7 +1969,9 @@ void cm_d_state(ARGS)
 
         reset = reset_old = (Digital_State_t *) cm_event_alloc(2,sizeof(Digital_State_t));
 
-
+        states = states_old = (State_Table_t *) cm_event_get_ptr(0,0);
+        clk = clk_old = (Digital_State_t *) cm_event_get_ptr(1,0);
+        reset = reset_old = (Digital_State_t *) cm_event_get_ptr(2,0);
 
         /*** Send file pointer and the four storage pointers      ***/
         /*** to "cm_read_state_file()". This will return after    ***/
@@ -1973,9 +1981,12 @@ void cm_d_state(ARGS)
         /*** and the num_inputs, num_outputs and depth            ***/
         /*** values supplied.                                     ***/
 
-        rewind(state_file);
-        err = cm_read_state_file(state_file,states);
-               
+        if (state_file) {
+            rewind(state_file);
+            err = cm_read_state_file(state_file,states);
+        } else {
+            err = 1;
+        }
 
         if (err) { /* problem occurred in load...send error msg. */
 
@@ -1993,12 +2004,14 @@ void cm_d_state(ARGS)
         }
 
         /* close state_file */
-        fclose(state_file);
+        if (state_file)
+            fclose(state_file);
                                  
 
         /* declare load values */
        
-        for (i=0; i<states->num_outputs; i++) {
+        // for (i=0; i<states->num_outputs; i++) {
+        for (i=0; i<states->num_inputs; i++) {
             LOAD(in[i]) = PARAM(input_load);
         }              
 
@@ -2010,6 +2023,9 @@ void cm_d_state(ARGS)
     else {  /**** Retrieve previous values ****/
 
         states = (State_Table_t *) cm_event_get_ptr(0,0);
+		states_old = (State_Table_t *) cm_event_get_ptr(0,1);
+		// Copy storage
+		*states = *states_old;
 
         clk = (Digital_State_t *) cm_event_get_ptr(1,0);
         clk_old = (Digital_State_t *) cm_event_get_ptr(1,1);

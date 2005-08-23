@@ -154,6 +154,11 @@ void cm_d_fdiv(ARGS)
         /* declare load values */
         LOAD(freq_in) = PARAM(freq_in_load);
 
+        /* retrieve storage for the outputs */
+        freq_in = freq_in_old = (Digital_State_t *) cm_event_get_ptr(0,0);
+        freq_out = freq_out_old = (Digital_State_t *) cm_event_get_ptr(1,0);
+        count = count_old = (Digital_State_t *) cm_event_get_ptr(2,0);
+
     }
     else {      /* Retrieve previous values */
                                               

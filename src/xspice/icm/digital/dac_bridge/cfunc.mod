@@ -217,6 +217,14 @@ void cm_dac_bridge(ARGS)
         /* allocate output space and obtain adresses */
         out = out_old = cm_analog_alloc(0,size * sizeof(double));
         breakpoint = cm_analog_alloc(1,sizeof(double));
+        
+        /* assign discrete addresses */
+        in = in_old = (Digital_State_t *) cm_event_get_ptr(0,0);
+
+        /* assign analog addresses */
+        out = out_old = cm_analog_get_ptr(0,0);
+        breakpoint = cm_analog_get_ptr(1,0);
+
 
         /* read current input values */
         for (i=0; i<size; i++) {

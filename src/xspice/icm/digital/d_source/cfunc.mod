@@ -167,7 +167,7 @@ static char  *CNVgettok(char **s)
     switch(**s) {
 
     case '\0':           /* End of string found */
-        free(buf);
+        if(buf) free(buf);
         return(NULL);
 
 
@@ -200,7 +200,7 @@ static char  *CNVgettok(char **s)
     ret_str = (void *) malloc(strlen(buf) + 1);
     ret_str = strcpy(ret_str,buf);
 
-    free(buf);
+    if(buf) free(buf);
 
     return(ret_str);
 }
@@ -1071,17 +1071,19 @@ void cm_d_source(ARGS)
 
         /*** open file and count the number of vectors in it ***/
         source = fopen( PARAM(input_file), "r");
-    
+
         /* increment counter if not a comment until EOF reached... */
-        i = 0;                                                
-        s = temp;
-        while ( fgets(s,MAX_STRING_SIZE,source) != NULL) {
-            if ( '*' != s[0] ) {
-                while(isspace(*s) || (*s == '*')) 
-                      (s)++;
-                if ( *s != '\0' ) i++;
-            }
-            s = temp;
+        i = 0;
+        if (source) {
+          s = temp;
+          while ( fgets(s,MAX_STRING_SIZE,source) != NULL) {
+              if ( '*' != s[0] ) {
+                  while(isspace(*s) || (*s == '*')) 
+                        (s)++;
+                  if ( *s != '\0' ) i++;
+              }
+              s = temp;
+          }
         }
 
         /*** allocate storage for *index, *bits & *timepoints ***/
@@ -1100,7 +1102,7 @@ void cm_d_source(ARGS)
                      cm_event_alloc(2,i * sizeof(double));
                                        
 
-        /**** Patch assignment for memory...remove in final version ****/
+        /**** Get all pointers again (to avoid realloc problems) ****/
         info = info_old = (Source_Table_Info_t *) cm_event_get_ptr(0,0);
         bits = bits_old = (short *) cm_event_get_ptr(1,0);
         timepoints = timepoints_old = (double *) cm_event_get_ptr(2,0);
@@ -1135,8 +1137,12 @@ void cm_d_source(ARGS)
         /* vectors will be loaded and the width and depth       */
         /* values supplied.                                     */
 
-        rewind(source);
-        err = cm_read_source(source,bits,timepoints,info);
+        if (source) {
+          rewind(source);
+          err = cm_read_source(source,bits,timepoints,info);
+        } else {
+          err=1;
+        }
 
 
 
@@ -1151,7 +1157,8 @@ void cm_d_source(ARGS)
         }
 
         /* close source file */
-        fclose(source);
+        if (source)
+            fclose(source);
 
     }
     else {      /*** Retrieve previous values ***/
@@ -1196,7 +1203,7 @@ void cm_d_source(ARGS)
     if ( 0.0 == TIME ) {
                                     
         test_double = timepoints[info->index];
-        if ( 0.0 == test_double ) { /* Set DC value */
+        if ( 0.0 == test_double && info->depth > 0 ) { /* Set DC value */
 
             /* reset current breakpoint */
             test_double = timepoints[info->index];
@@ -1231,6 +1238,10 @@ void cm_d_source(ARGS)
             if ( info->index < info->depth ) {
                 test_double = timepoints[info->index] - 1.0e-10;
                 cm_event_queue( test_double );
+            }
+            for(i=0; i<info->width; i++) {
+              OUTPUT_STATE(out[i]) = UNKNOWN;
+              OUTPUT_STRENGTH(out[i]) = UNDETERMINED;
             }
         }
     }

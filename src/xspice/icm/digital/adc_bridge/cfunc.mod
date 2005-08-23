@@ -182,6 +182,11 @@ void cm_adc_bridge(ARGS)
         /* Allocate storage for outputs */
         out = out_old = (Digital_State_t *) cm_event_alloc(1,size * sizeof(Digital_State_t));
 
+        /* Get analog addresses */        
+        in = in_old = cm_analog_get_ptr(0,0);
+
+        /* Get discrete addresses */
+        out = out_old = (Digital_State_t *) cm_event_get_ptr(1,0);
     }
 
     else {    /*** This is not an initialization pass...retrieve storage

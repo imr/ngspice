@@ -214,7 +214,13 @@ void cm_d_osc(ARGS)
         t1 = cm_analog_alloc(1,sizeof(double));
 
         t3 = cm_analog_alloc(2,sizeof(double));
-                                      
+
+        /* assign internal variables */
+        phase = phase_old = cm_analog_get_ptr(0,0);
+
+        t1 = cm_analog_get_ptr(1,0);
+                          
+        t3 = cm_analog_get_ptr(2,0);
 
     }
 
@@ -394,8 +400,8 @@ void cm_d_osc(ARGS)
 
 
             
-            free(x);
-            free(y);
+            if(x) free(x);
+            if(y) free(y);
 
 
         }

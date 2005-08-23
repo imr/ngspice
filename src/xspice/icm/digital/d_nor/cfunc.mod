@@ -148,6 +148,9 @@ void cm_d_nor(ARGS)
 
         for (i=0; i<size; i++) LOAD(in[i]) = PARAM(input_load);
 
+        /* retrieve storage for the outputs */
+        out = out_old = (Digital_State_t *) cm_event_get_ptr(0,0);
+
     }
     else {      /* Retrieve previous values */
                                               

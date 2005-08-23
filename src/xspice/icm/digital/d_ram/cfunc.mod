@@ -944,7 +944,7 @@ void cm_d_ram(ARGS)
     word_width = PORT_SIZE(data_in);
                                                         
 
-    num_of_ram_ints = ram_size * word_width / 8;        
+    num_of_ram_ints = ram_size * word_width / 8 + 1;        
 
 
 
@@ -976,6 +976,14 @@ void cm_d_ram(ARGS)
             LOAD(select[i]) = PARAM(select_load);
         }
 
+        /* retrieve storage for the outputs */
+        address = address_old = (Digital_State_t *) cm_event_get_ptr(0,0);
+        write_en = write_en_old = (Digital_State_t *) cm_event_get_ptr(1,0);
+        select = select_old = (Digital_State_t *) cm_event_get_ptr(2,0);
+
+        /* retrieve ram base addresses */
+        ram = ram_old = (short *) cm_event_get_ptr(3,0);
+
     }
     else {      /* Retrieve previous values */
                                               
@@ -990,6 +998,9 @@ void cm_d_ram(ARGS)
         /* retrieve ram base addresses */
         ram = (short *) cm_event_get_ptr(3,0);
         ram_old = (short *) cm_event_get_ptr(3,1);
+
+        for(i=0;i<num_of_ram_ints;i++)
+          ram[i] = ram_old[i];
     }
                                       
 
@@ -1084,11 +1095,13 @@ void cm_d_ram(ARGS)
                             for (j=0; j<ram_size; j++) {
                                 cm_initialize_ram(UNKNOWN,word_width,i,j,ram);
                             }
+                            OUTPUT_STATE(data_out[i]) = UNKNOWN;
                         }
                         else {
                             out = INPUT_STATE(data_in[i]);
                             cm_store_ram_value(out,word_width,i,address,
                                                address_size,ram);
+                            OUTPUT_STATE(data_out[i]) = out;
                         }
                         OUTPUT_STRENGTH(data_out[i]) = HI_IMPEDANCE;
                         OUTPUT_DELAY(data_out[i]) = PARAM(read_delay);
@@ -1101,6 +1114,7 @@ void cm_d_ram(ARGS)
             case ZERO: /* output goes tristate unless already so... */
                 if ( ZERO == *write_en ) {   /* output needs tristating  */
                     for (i=0; i<word_width; i++) {
+                        OUTPUT_STATE(data_out[i]) = UNKNOWN;
                         OUTPUT_STRENGTH(data_out[i]) = HI_IMPEDANCE;
                         OUTPUT_DELAY(data_out[i]) = PARAM(read_delay);
                     }
@@ -1129,11 +1143,13 @@ void cm_d_ram(ARGS)
                             for (j=0; j<ram_size; j++) {
                                 cm_initialize_ram(UNKNOWN,word_width,i,j,ram);
                             }
+                            OUTPUT_STATE(data_out[i]) = UNKNOWN;
                         }
                         else {
                             out = INPUT_STATE(data_in[i]);
                             cm_store_ram_value(out,word_width,i,address,
                                                address_size,ram);
+                            OUTPUT_STATE(data_out[i]) = out;
                         }
                         OUTPUT_STRENGTH(data_out[i]) = HI_IMPEDANCE;
                         OUTPUT_DELAY(data_out[i]) = PARAM(read_delay);

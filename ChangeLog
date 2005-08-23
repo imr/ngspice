@@ -1,3 +1,13 @@
+2005-08-23  Paolo Nenzi <p.nenzi@ieee.org>
+
+  *  src/xspice/icm/xtradev/aswitch/cfunc.mod: Added minimum on resistance
+     for aswitch to avoid unreasonable high values (due to near zero 
+     resistance) in current of connected voltage source. Change supplied by
+     Hitoshi Tanaka.
+     
+  *  src/xspice/icm/{cfunc.mod}: updated cfunc.mod files. Changes sent by
+     Hitoshi Tanaka.   
+
 2005-08-22  Paolo Nenzi <p.nenzi@ieee.org>
 
   *  src/frontend/plotting/x11.c: removed casting in a macro. It conflicts

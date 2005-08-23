@@ -120,7 +120,7 @@ NON-STANDARD FEATURES
 
     NONE
                                                    
-=============================================================================*/
+/*=============================================================================*/
 
 /*=== CM_TOGGLE_BIT ROUTINE ===*/
 
@@ -188,7 +188,7 @@ NON-STANDARD FEATURES
 
     NONE
                                                    
-=============================================================================*/
+/*=============================================================================*/
 
 /*=== CM_D_XNOR ROUTINE ===*/
 
@@ -227,6 +227,9 @@ void cm_d_xnor(ARGS)
         out = out_old = (Digital_State_t *) cm_event_alloc(0,sizeof(Digital_State_t));
 
         for (i=0; i<size; i++) LOAD(in[i]) = PARAM(input_load);
+
+        /* retrieve storage for the outputs */
+        out = out_old = (Digital_State_t *) cm_event_get_ptr(0,0);
 
     }
     else {      /* Retrieve previous values */

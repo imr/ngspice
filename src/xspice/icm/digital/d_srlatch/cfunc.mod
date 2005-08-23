@@ -329,7 +329,15 @@ void cm_d_srlatch(ARGS)
         }
         if ( !PORT_NULL(reset) ) {
         LOAD(reset) = PARAM(reset_load);
-        }                  
+        }
+
+        /* retrieve storage for the outputs */
+        s = s_old = (Digital_State_t *) cm_event_get_ptr(0,0);
+        r = r_old = (Digital_State_t *) cm_event_get_ptr(1,0);
+        enable = enable_old = (Digital_State_t *) cm_event_get_ptr(2,0);
+        set = set_old = (Digital_State_t *) cm_event_get_ptr(3,0);
+        reset = reset_old = (Digital_State_t *) cm_event_get_ptr(4,0);
+        out = out_old = (Digital_State_t *) cm_event_get_ptr(5,0);
 
     }
     else {      /* Retrieve previous values */
