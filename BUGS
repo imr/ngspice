@@ -1,6 +1,31 @@
 This file contains a list of known but not yet fixed bugs in ngspice.
 ===========================================================================
 
+How to submit a bug report:
+
+There are three ways to report a bug you have discovered in ngspice:
+
+    * Bug tracker: This is the preferred method of reporting a bug. 
+      Using the tracker on Sourceforge.ner site will make your report 
+      open by everyone and the chances of finding a fix will increase.
+      
+    * ngspice-bugs list: If you have used ngspice, you probably noticed 
+      that the banner that appears when ngspice starts says that you can 
+      send bug reports to the ngspice-bugs@lists.sourceforge.net address. 
+      This is the address of a mailing list dedicated to receive bug reports.
+    
+    * ngspice-devel list: If you are a member of this list, you can write 
+      directly to the developers' list. Do not subscribe to the list only 
+      for sending bug reports.
+
+Before sending a bug report please note: all information you send to the bug 
+tracking system or on the mailing lists is public. If you need to send 
+sensitive information, send them to a developer directly but still write non
+sensitive data on the bug tracking system to keep track of bug history.
+
+------------------------------------------------------------------------------
+OPEN BUGS:
+------------------------------------------------------------------------------
 * output redirection:
 
    ngspice 1 -> print v(1) > data.txt
