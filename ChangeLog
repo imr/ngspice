@@ -284,7 +284,7 @@
 2005-05-10  Steven Borley <steven.borley@virgin.net>
 
   *  Some minor tidy-up as follows:
-      - Added missing .cvsignor files in many source directories.
+      - Added missing .cvsignore files in many source directories.
       - Added #ifdef CIDER...#endif around fields in structure initialisation
         of nbjt, nbjt2, numd, numd2 and numos - this is strictly unnecessary
         as these devices are only used when CIDER is defined but it keeps
