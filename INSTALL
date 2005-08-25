@@ -2,10 +2,10 @@ Install from CVS
 ================
 
 This section describes how to install from source code taken direct
-from CVS.  It is intended more for developers than for users as the code in CVS
-may be unstable. For user install instructions using source from released
-distributions, please see the sections titled 'Basic Install' and 'Advanced 
-Install'.
+from CVS.  It is intended more for developers than for users as the code 
+in CVS may be unstable. For user install instructions using source from 
+released distributions, please see the sections titled 'Basic Install' 
+and 'Advanced Install'.
 
 Download source from CVS as described on the sourceforge project page
 (see http://sourceforge.net/projects/ngspice/ and click on the CVS link)
@@ -24,16 +24,16 @@ $ sudo make install
 At present it is normal for there to be some warning generated during this
 process.
 	
-See the section titled 'Advanced Install' for instructions about arguments that
-can be passed to ./configure to customise the build and installation.
+See the section titled 'Advanced Install' for instructions about arguments 
+that can be passed to ./configure to customise the build and installation.
 
-If a problem is found with the build proccess, please submit a report to the
-NGSpice development team.  Please provide information about you system and any
-./configure arguments you are using, together with any error messages.  Ideally
-you would have tried to fix the problem yourself first, and details about this
-and any thought you may has as to the cause of the problem should also be
-provided.  If you have fixed the problem then the development team will love to
-hear from you.
+If a problem is found with the build proccess, please submit a report to 
+the NGSpice development team.  Please provide information about you system 
+and any ./configure arguments you are using, together with any error 
+messages.  Ideally you would have tried to fix the problem yourself first, 
+and details about this and any thought you may has as to the cause of the 
+problem should also be provided.  If you have fixed the problem then the 
+development team will love to hear from you.
 
 
 Basic Installation
@@ -56,8 +56,8 @@ $ sudo make install
   
 The default install dir is /usr/local/bin
 
-See the section titled 'Advanced Install' for instructions about arguments that
-can be passed to ./configure to customise the build and installation.
+See the section titled 'Advanced Install' for instructions about arguments 
+that can be passed to ./configure to customise the build and installation.
 
 Advanced Install
 ================
@@ -79,10 +79,10 @@ Options Specific to Using NGSpice
 
 --enable-experimental
 		This enables some experimental code. Specifically it enables:
-			* support for altering options in interactive mod by adding the
-			  interactive keyword 'options'
-			* The ability to save and load snapshots: adds interactive keywords
-			  'savesnap' and 'loadsnap'
+			* support for altering options in interactive mode 
+			  by adding the interactive keyword 'options'
+			* The ability to save and load snapshots: adds 
+			  interactive keywords 'savesnap' and 'loadsnap'
 
 --enable-nosqrt
 		Use always log/exp for non-linear capacitances
@@ -91,8 +91,8 @@ Options Specific to Using NGSpice
 		Don't bypass recalculations of slowly changing variables
 		
 --enable-capbypass
-		Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd voltages
-		are unchanged
+		Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd 
+		voltages are unchanged
 		
 --enable-capzerobypass
  		Bypass all the cbd/cbs calculations if Czero is zero
@@ -114,14 +114,15 @@ Options Specific to Using NGSpice
 		
 --enable-ekv
 		Enable ekv model support.
-		The source code for the this must be obtained from EKV web site
-		(see DEVICE for more info). To enable EKV support you have
-		to obtain the code first and then use this configure switch.
+		The source code for the this must be obtained from EKV web 
+		site (see DEVICE for more info). To enable EKV support you 
+		have to obtain the code first and then use this configure 
+		switch.
 		
 --enable-xspice
 		Enable XSpice enhancements, (experimental)
-		A mixed signal simulator built upon spice3 with codemodel dynamic loading
-		support.  See src/xspice/README for details
+		A mixed signal simulator built upon spice3 with codemodel 
+		dynamic loading support.  See src/xspice/README for details
 		
 --enable-cider
 		Enable CIDER enhancements, (experimental)
@@ -132,7 +133,8 @@ Options Specific to Using NGSpice
 		
 --enable-numparam
 		Enable numparams library support, (experimental)
-		A library that allows for parameter substitution at netlist level.
+		A library that allows for parameter substitution at netlist
+		level.
 		
 --enable-xgraph
 		Compile the Xgraph plotting program.
@@ -142,13 +144,14 @@ Options Specific to Using NGSpice
 		Allows the use of the .global keyword.	
 		
 --with-readline=yes
-		Enable GNU readline support for the command line interface.  This requires
-		linking against the GNU readline library and is discouraged.
+		Enable GNU readline support for the command line interface.
+		This requires linking against the GNU readline library and 
+		is discouraged.
 		
 --with-editline=yes
 		Enables the use of the BSD editline library (libedit).
 		See http://www.thrysoee.dk/editline/
-		This is preferred over BNU readline due to licensing issues.
+		This is preferred over GNU readline due to licensing issues.
 
 
 Options Useful for Debugging NGSpice
@@ -156,11 +159,12 @@ Options Useful for Debugging NGSpice
 
 --disable-debug
 		This option will remove the '-g' option passed to the compiler.
-		This speeds up compilation a *lot*, and is recommended for normal use.
+		This speeds up compilation a *lot*, and is recommended for 
+		normal use.
 
 --enable-ansi
-    Configure will try to find an option for your compiler so that it expects 
-    ansi-C
+                Configure will try to find an option for your compiler so that
+		it expects ansi-C
 
 --enable-checkergcc
 		Option for compilation with checkergcc
@@ -354,6 +358,7 @@ instead of only LF at each line ending) for allowing proper comparison.
 
 
 make ngspice with CYGWIN and internal MINGW32 (use config.h made above)
+-----------------------------------------------------------------------
 
 $ cd ng-spice-rework-14
 $ rm config.cache
@@ -372,4 +377,55 @@ not o.k.
 ToDo: find appropriate presets for variables ?
       rewrite tests for headers and libs (search exclusively in mingw
       directories)
+
+
+make ngspice with pure CYGWIN
+-----------------------------
+
+If you don't have libdl.a you may need to link libcygwin.a 
+to libdl.a symbolically.
+
+for example:
+
+$ cd /lib
+$ ln -s libcygwin.a libdl.a.
+
+The procedure of compiling is the same as Linux.
+
+
+make ngspice with MINGW and MSYS
+--------------------------------
+
+At first, you need to add the following lines in src/conf.h.
+
+#ifdef __MINGW32__
+#define NGSPICEBINDIR "C:\\msys\\1.0\\local\\bin"
+#define NGSPICEDATADIR "C:\\msys\\1.0\\local\\share\\ng-spice-rework"
+#endif
+
+You can put the directory which you desired inside "".
+
+Next, the line feed code in src/ngspice.txt must be changed from LF to CR/LF.
+
+The procedure of compiling is as follows:
+
+$ ./autogen.sh
+$ ./configure --with-windows ...and other options
+$ make
+$ make install
+
+Next, the directory of the "code model" which is described
+in the "spinit" file must be modified from UNIX form to DOS form.
+(if you use --enable-xspice option.)
+
+For example:
+Change
+codemodel /msys/1.0/local/lib/spice/spice2poly.cm
+to
+codemodel C:\msys\1.0\local\lib\spice\spice2poly.cm
+
+The "spinit" file is in C:\msys\1.0\local\share\ng-spice-rework
+if you did the same setting as the above.
+
+MINGW and MSYS can be downloaded from http://www.mingw.org/.
 
