@@ -1,10 +1,30 @@
+Ng-spice-rework-16
+============
+
+Rework-16 comes out after almost one year of CVS development (from
+15-fixedRC3). This release improves ngspice in three ways:
+
+- Bug fixing: most of the bugs that affected rework-15 have been fixed,
+    thus ngspice is more stable, especially the xspice extension, the 
+    subcircuit (X devices) handling and the numparam library.
+    
+- New features: netlist syntax has been expandend allowing for end-of-line
+    comments. A ".global" card has beed added to define global nodes, i.e. 
+    nodes that are not expanded in subcircuits. It is possible to define TC 
+    for resistors on the instance line. The editline library can be used
+    instead of readline (no more GPL license violation).
+
+- Porting: ngspice now works (with xspice extension) on Windows using 
+           MINGW/MSYS.     
+        
+
 Ng-spice-rework-15
 ============
 
 Rework-15 release is a giant leap forward for ngspice. It incorporates 
 many (read most) of the improvements implemented in tclspice during the 
-two years long "sleep" of ngspice and adds many others. The incomplete of
-new features incorporated are:  
+two years long "sleep" of ngspice and adds many others. The incomplete 
+list of new features incorporated are:  
 
   - Xspice simulator (with codemodel dynamic loading support):
      a mixed signal simulator built upon spice3.

@@ -1,3 +1,7 @@
+2005-08-29  Paolo Nenzi <p.nenzi@ieee.org>
+
+  ============================ Rework-16 ==================================
+
 2005-08-23  Paolo Nenzi <p.nenzi@ieee.org>
 
   *  src/xspice/icm/xtradev/aswitch/cfunc.mod: Added minimum on resistance
@@ -179,11 +183,11 @@
 
   *  src/frontend/numparam/mystring.c - fix for MinGW from Hitoshi Tanaka.
 
-  *  various files - removal of more warning due to unused varaiables
+  *  various files - removal of more warning due to unused variables
 
 2005-05-21  Steven Borley <steven.borley@virgin.net>
 
-  *  src/spicelib/devices/vbic/vbicinit.c Fixed a structure initailisation
+  *  src/spicelib/devices/vbic/vbicinit.c Fixed a structure initialisation
      problem that occurs when cider is enabled. Also fixes lots of warning
      within ciderlib related to unused variables.
 
