@@ -2,6 +2,12 @@
 
   ============================ Rework-16 ==================================
 
+
+2005-08-26  Paolo Nenzi <p.nenzi@ieee.org> 
+
+  *  src/fronted/dotcards.c: expressions were not parsed correctly, the bug
+     was in the offset from string base: corrected.
+     
 2005-08-23  Paolo Nenzi <p.nenzi@ieee.org>
 
   *  src/xspice/icm/xtradev/aswitch/cfunc.mod: Added minimum on resistance
