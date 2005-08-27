@@ -312,6 +312,11 @@ fi ;;
 
 esac
 
+dnl Define variables for YACC and LEX
+AC_PROG_YACC
+AM_PROG_LEX
+
+
 dnl Check for a few typdefs:
 AC_TYPE_PID_T
 AC_TYPE_SIGNAL
@@ -540,12 +545,11 @@ fi
 AC_SUBST(EKVDIR)
 AC_SUBST(EKVLIB)
 
+
 dnl Add new code models to the build by pointing to them here.
 if test "$enable_xspice" = "yes"; then
     AC_MSG_RESULT(X-Spice features included)
     AC_DEFINE(XSPICE,[],[The xspice enhancements])
-    AC_PROG_YACC
-    AM_PROG_LEX
     XSPICEDIR="xspice"
     case $host_os in
      *mingw* | *cygwin* )

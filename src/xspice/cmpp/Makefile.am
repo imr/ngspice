@@ -6,8 +6,7 @@ EXTRA_DIST = ifs_lex.l mod_lex.l ifs_yacc.h mod_yacc.h
 
 MAINTAINERCLEANFILES = Makefile.in
 
-AM_YFLAGS = -d
-
+YACC = @YACC@ -d
 LEX = @LEX@ -t
 
 bin_PROGRAMS = cmpp
