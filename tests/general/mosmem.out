@@ -1,7 +1,5 @@
-Warning: vwb: no DC value, transient time 0 value used
-Warning: vw: no DC value, transient time 0 value used
-Warning: vs: no DC value, transient time 0 value used
 
+Circuit: mosmem - mos memory cell
 
 Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
 
@@ -24,10 +22,7 @@ vw#branch                                    0
 vs#branch                                    0
 vdd#branch                        -2.72229e-05
 
-
-No. of Data Rows : 155
-Error: .print: no dc analysis found.
-Error: .plot: no dc analysis found.
+mosmem - mos memory cell
 * the original line is below
 *.opt acct list node
 .tran 20ns 2us
@@ -53,6 +48,8 @@ m12 9 9 8 0 mod w=5u   l=5u
 .opt abstol=1u
 .end
 --------------------------------------------------------------------------
+                         mosmem - mos memory cell
+               Transient Analysis Sat Aug 27 16:14:56  2005
 
 Legend:  + = v(6)             * = v(5)             = = v(7)             $ = v(1)             % = v(2)             
 --------------------------------------------------------------------------
@@ -85,7 +82,7 @@ Legend:  + = v(6)             * = v(5)             = = v(7)             $ = v(1)
  4.800e-07  1.260e-01 .           %+          $           =      *    .   
  5.000e-07  1.256e-01 .           %+         $.           =      *    .   
  5.200e-07  1.252e-01 .           %+        $ .           =      *    .   
- 5.400e-07 -1.087e-01 .         + X        $  .           .   *       .   
+ 5.400e-07 -1.087e-01 .         +=%        $  .           .   *       .   
  5.600e-07 -1.079e-01 .         + X       $   .           .   *       .   
  5.800e-07 -1.071e-01 .         + X      $    .           .    *      .   
  6.000e-07 -1.063e-01 .         + X     $     .           .    *      .   
@@ -116,7 +113,7 @@ Legend:  + = v(6)             * = v(5)             = = v(7)             $ = v(1)
  time       v(6)    -1.00e+00    0.00e+00    1.00e+00    2.00e+00    3.00e+00   
 ----------------------|-----------|-----------|-----------|-----------|
  1.040e-06 -8.951e-02 .         + X           .           .    *      .   
- 1.060e-06  1.455e-01 .           X+          .           =       *   .   
+ 1.060e-06  1.455e-01 .           X+          .          =.       *   .   
  1.080e-06  1.451e-01 .           X+          .           =       *   .   
  1.100e-06  1.447e-01 .           X+          .           =       *   .   
  1.120e-06  1.443e-01 .           X+          .           =       *   .   
@@ -167,6 +164,10 @@ Legend:  + = v(6)             * = v(5)             = = v(7)             $ = v(1)
 ----------------------|-----------|-----------|-----------|-----------|
  time       v(6)    -1.00e+00    0.00e+00    1.00e+00    2.00e+00    3.00e+00   
 
+CPU time since last call: 0.027 seconds.
 
+Total CPU time: 0.027 seconds.
 
+Current dynamic memory usage = 135168,
+Dynamic memory limit = -491521.
 

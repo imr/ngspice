@@ -3,7 +3,7 @@
 SPICE=$1
 TEST=$2
 
-FILTER="Note|Circuit|Trying|Reference|Date|Doing|---|v-sweep|time|Error|Warning|Data|Index|transfer|transient|acan|Transient|Noise|Analysis|Total|memory|Current"
+FILTER="CPU|Dynamic|Note|Circuit|Trying|Reference|Date|Doing|---|v-sweep|time|Error|Warning|Data|Index|transfer|transient|acan|Transient|Noise|Analysis|Total|memory|Current|Got|Added"
 
 testname=`basename $TEST .cir`
 testdir=`dirname $TEST`

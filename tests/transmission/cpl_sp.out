@@ -1,11 +1,7 @@
-Warning: vs2: no DC value, transient time 0 value used
-Warning: vs1: no DC value, transient time 0 value used
-Warning: v3: no DC value, transient time 0 value used
-Warning: vdd: no DC value, transient time 0 value used
 
 Circuit: ************ test circuit for transmission simulation **************
 
-Warning -- Level not specified on line "vto=-0.8v kp=21u gamma=0.45 phi=0.61 lambda=0.00                  phi=0.61 lambda=0.00 cgso=0 cgdo=0 cgbo=0                  cj=0 cjsw=0 tox=18000n nsub=3e16 ld=0.0u "
+Warning -- Level not specified on line "vto=-0.8v kp=21u gamma=0.45 phi=0.61 lambda=0.00                  phi=0.61 lambda=0.00 cgso=0 cgdo=0 cgbo=0                  cj=0 cjsw=0 tox=18000n nsub=3e16 ld=0.0u"
 Using level 1.
 Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
 
@@ -113,11 +109,8 @@ vs1#branch                                   0
 v3#branch                                    0
 vdd#branch                        -7.40149e-31
 
-doAnalyses: TRAN:  Timestep too small; time = 6.44522e-11, timestep = 1.25e-22: trouble with node "10"
-
-
-run simulation(s) aborted
       ************ test circuit for transmission simulation **************
+      Transient Analysis  Sat Aug 27 16:42:21  2005
 --------------------------------------------------------------------------------
 Index   time            v(5)            v(11)           v(13)           
 --------------------------------------------------------------------------------
@@ -163,6 +156,10 @@ Index   time            v(5)            v(11)           v(13)
 39	6.445224e-11	4.152837e-01	8.675690e-04	3.100871e+00	
 40	6.445224e-11	4.152837e-01	8.675690e-04	3.100871e+00	
 
+CPU time since last call: 0.025 seconds.
 
+Total CPU time: 0.025 seconds.
 
+Current dynamic memory usage = 135168,
+Dynamic memory limit = -491521.
 

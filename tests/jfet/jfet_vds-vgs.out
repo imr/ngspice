@@ -1,8 +1,4 @@
 
-No. of Data Rows : 104
-
-No. of Data Rows : 1
-
 Circuit: * I-V Characteristics of JFET 2N4221
 
 Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
@@ -18,6 +14,7 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
 	vd#branch                        -9.68268e-04
 	vg#branch                        2.882635e-11
 
+ JFET models (Junction Field effect transistor)
       model                  modj
 
        type                   njf
@@ -32,9 +29,10 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
          is                 1e-14
          fc                   0.5
           b                     1
-         kf                     1
-         af                     1
+         kf          2.51987e-312
+         af          2.51987e-312
 
+ JFET: Junction Field effect transistor
      device                    j1
       model                  modj
         vgs                    -2
@@ -56,6 +54,7 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
           p           5.76527e-11             0.0242067
 
                       * I-V Characteristics of JFET 2N4221
+                      DC transfer characteristic  Sat Aug 27 16:23:28  2005
 --------------------------------------------------------------------------------
 Index   v-sweep         vd#branch       
 --------------------------------------------------------------------------------
@@ -167,6 +166,10 @@ Index   v-sweep         vd#branch
 102	2.400000e+01	-5.253027e-03	
 103	2.500000e+01	-5.263052e-03	
 
+CPU time since last call: 0.014 seconds.
 
+Total CPU time: 0.014 seconds.
 
+Current dynamic memory usage = 131072,
+Dynamic memory limit = -491521.
 

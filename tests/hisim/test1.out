@@ -1,36 +1,9 @@
- Ids_dVgse   = -7.73431e-06
- Ids_dVgse   = -7.73431e-06
- Ids_dVgse   = -1.38109e-05
- Ids_dVgse   = -1.38109e-05
- Ids_dVgse   = -1.77007e-05
- Ids_dVgse   = -1.77007e-05
- Ids_dVgse   = -1.97193e-05
- Ids_dVgse   = -1.97193e-05
- Ids_dVgse   = -2.02702e-05
- Ids_dVgse   = -2.02702e-05
- Ids_dVgse   = -1.96812e-05
- Ids_dVgse   = -1.96812e-05
- Ids_dVgse   = -1.82216e-05
- Ids_dVgse   = -1.82216e-05
- Ids_dVgse   = -1.61222e-05
- Ids_dVgse   = -1.61222e-05
- Ids_dVgse   = -1.35850e-05
- Ids_dVgse   = -1.35850e-05
- Ids_dVgse   = -1.07852e-05
- Ids_dVgse   = -1.07852e-05
- Ids_dVgse   = -7.87304e-06
- Ids_dVgse   = -7.87304e-06
- Ids_dVgse   = -4.97411e-06
- Ids_dVgse   = -4.97411e-06
- Ids_dVgse   = -2.19016e-06
- Ids_dVgse   = -2.19016e-06
-
-No. of Data Rows : 505
 
 Circuit: HISIM1 Test nch W=10u L=1u
 
 Doing analysis at TEMP = 298.150000 and TNOM = 300.150000
                            HISIM1 Test nch W=10u L=1u
+                           DC transfer characteristic  Sat Aug 27 16:20:40  2005
 --------------------------------------------------------------------------------
 Index   v-sweep         vds#branch      
 --------------------------------------------------------------------------------
@@ -564,6 +537,10 @@ Index   v-sweep         vds#branch
 503	4.950000e+00	-1.099581e-02	
 504	5.000000e+00	-1.102627e-02	
 
+CPU time since last call: 0.090 seconds.
 
+Total CPU time: 0.090 seconds.
 
+Current dynamic memory usage = 135168,
+Dynamic memory limit = -491521.
 

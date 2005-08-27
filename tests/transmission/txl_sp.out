@@ -1,4 +1,3 @@
-Warning: vs: no DC value, transient time 0 value used
 
 Circuit: corresponding to ckt in swec
 
@@ -18,13 +17,10 @@ Node                                   Voltage
 1                                            5
 3                                            5
 vs#branch                                    0
-vdd#branch                           -5.01e-12
+vdd#branch                        -5.01001e-12
 
-doAnalyses: TRAN:  Timestep too small; time = 1.03678e-09, timestep = 1.25e-21: trouble with node "vs#branch"
-
-
-run simulation(s) aborted
                           corresponding to ckt in swec
+                          Transient Analysis  Sat Aug 27 16:42:29  2005
 --------------------------------------------------------------------------------
 Index   time            v(2)            v(3)            
 --------------------------------------------------------------------------------
@@ -84,6 +80,10 @@ Index   time            v(2)            v(3)
 53	1.036782e-09	5.000000e+00	5.000000e+00	
 54	1.036782e-09	5.000000e+00	5.000000e+00	
 
+CPU time since last call: 0.012 seconds.
 
+Total CPU time: 0.012 seconds.
 
+Current dynamic memory usage = 135168,
+Dynamic memory limit = -491521.
 
