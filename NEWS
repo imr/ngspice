@@ -1,3 +1,9 @@
+Ng-spice-rework-17
+============
+This is a bug fix release. Previous release tarball did not included 
+an include file necessary for compiling numparam library.
+
+
 Ng-spice-rework-16
 ============
 
