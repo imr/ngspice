@@ -9,6 +9,7 @@ libnumparam_a_SOURCES = 		\
 	xpressn.c	\
 	mystring.c	\
 	general.h	\
+	numpaif.h	\
 	numparam.h
 
 INCLUDES = -I$(top_srcdir)/src/include
