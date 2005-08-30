@@ -1,3 +1,10 @@
+2005-08-30  Paolo Nenzi <p.nenzi@ieee.org>
+
+  ============================ Rework-17 ==================================
+  
+  *  src/frontend/numparam/Makefile.am: added missing include that prevented
+     its dist-ribution.
+
 2005-08-29  Paolo Nenzi <p.nenzi@ieee.org>
 
   ============================ Rework-16 ==================================
