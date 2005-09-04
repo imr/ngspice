@@ -19,7 +19,7 @@ LTRAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
   double i5, i6, d1, d2, d3, d4;
   double tmp;
   double tolerance;
-  double current_lte;
+  double current_lte=0.0;
   int maxiter = 2, iterations = 0;
   double x, y, change, deriv, deriv_delta;
 

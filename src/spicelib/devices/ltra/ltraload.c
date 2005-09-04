@@ -19,11 +19,11 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
 {
   LTRAmodel *model = (LTRAmodel *) inModel;
   LTRAinstance *here;
-  double t1, t2, t3;
-  double qf1, qf2, qf3;
+  double t1=0.0, t2=0.0, t3=0.0;
+  double qf1=0.0, qf2=0.0, qf3=0.0;
   double lf2, lf3;
   double v1d = 0.0, v2d = 0.0, i1d = 0.0, i2d = 0.0;
-  double dummy1, dummy2;
+  double dummy1=0.0, dummy2=0.0;
   int isaved = 0;
   unsigned tdover = 0;
   int i;
@@ -144,13 +144,16 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
 	    if (i == ckt->CKTtimeIndex)
 	      i--;
 
-#ifdef LTRADEBUG
+/*#ifdef LTRADEBUG*/
 	    if ((i == -1)) {
+#ifdef LTRADEBUG
 	      printf("LTRAload: mistake: cannot find delayed timepoint\n");
-	    }
+		  return E_INTERN;
+	    /*}*/
 #else
 	    return E_INTERN;
 #endif
+            }
 
 	    isaved = i;
 

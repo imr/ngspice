@@ -1,3 +1,24 @@
+2005-09-04  Paolo Nenzi <p.nenzi@ieee.org>
+
+  *  src/spicelib/devices/ltra/{ltraload.c, ltraacld.c, ltratrun.c}:    
+     Applied Hitoshi's patches to fix ltra code. The bug produced a 
+     "Timestep too small" in simulations and uninitialized variables 
+     produced wrong results in some files under MinGW.
+     
+  *  src/spicelib/parser/inp2d.c:     
+     Fixed a bug that causes an "unknown parameter(save)" error if there 
+     is the expression like the following in the netlist of Cider analysis.
+
+     D1  1 2 M_PN AREA=100 save
+     (Fix from Hitoshi Tanaka).
+
+  *  src/frontend/streams.c:
+     Fix to a bug that caused crush when I input "listing" command after 
+     loading Cider examples under Ngspice compiled by Visual C++. 
+     (Fix from Hitoshi Tanaka).
+          
+      
+
 2005-08-30  Paolo Nenzi <p.nenzi@ieee.org>
 
   ============================ Rework-17 ==================================

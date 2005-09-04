@@ -51,7 +51,8 @@ LTRAacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
       y0_r = model->LTRAadmit;
       y0_i = 0.0;
-      lambda_i = model->LTRAtd * ckt->CKTomega;
+	  /*lambda_i = model->LTRAtd*ckt->CKTomega;*/
+	  lambda_i = sqrt(model->LTRAinduct*model->LTRAcapac) * ckt->CKTomega; /*CDHW*/
       lambda_r = 0.0;
       break;
 
