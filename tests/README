@@ -8,7 +8,7 @@ Some files comes from the original Spice3f5 package and others have been
 contributed by developers and users.
 
 
-File Extensione Convention:
+File Extension Convention:
 
 .cir : Circuit file. This can be a simple circuit description or a spice2
        input file.
@@ -18,7 +18,7 @@ File Extensione Convention:
                
 REPLICATE TESTS
 
-To replicate tests you have to launch configure wuthout any option and
+To replicate tests you have to launch configure without any option and
 compile ngspice. In the future this will change.
 
 TO ADD NEW TESTS
