@@ -1,3 +1,25 @@
+2005-09-06  Steven Borley <steven.borley@virgin.net>
+
+  * Fixed alphabetic order in AUTHORS
+
+  * Adjusted autogen.sh to give more relevant advice when a required
+    program is missing.
+
+  * Added ngspice.idx to MAINTAINERCLEANFILES in src/Makefile.am
+
+  * Added work-round for missing scroll bar in help windows for an X11
+    display (seems to be an X-Windows bug) src/frontend/x11disp.c
+
+  * Fixed memory leak in tilde expansion - src/frontend/parser/glob.c
+
+  * Fixed spelling errors in tests/README
+
+  * Implemented fix as described by Hitoshi Tanaka for the problem
+    that causes "Warning - approaching max data size...." to be
+    erroneously reported when compiled with MinGW/MSYS
+    src/frontend/resource.c
+
+
 2005-09-04  Paolo Nenzi <p.nenzi@ieee.org>
 
   *  src/spicelib/devices/ltra/{ltraload.c, ltraacld.c, ltratrun.c}:    
@@ -13,7 +35,7 @@
      (Fix from Hitoshi Tanaka).
 
   *  src/frontend/streams.c:
-     Fix to a bug that caused crush when I input "listing" command after 
+     Fix to a bug that caused crash when I input "listing" command after 
      loading Cider examples under Ngspice compiled by Visual C++. 
      (Fix from Hitoshi Tanaka).
           
