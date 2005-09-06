@@ -17,6 +17,7 @@ $Id$
 #include "quote.h"
 #include "resource.h"
 #include "variable.h"
+#include "CKTdefs.h"
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include ipc stuff */
@@ -126,40 +127,32 @@ char* copyword;
 void
 ft_ckspace(void)
 {
-    long usage, limit;
+    size_t usage;
+    size_t limit;
 
-    
 #ifdef HAVE__MEMAVL
-         size_t mem_avail_now;
+    size_t mem_avail_now;
          
-         mem_avail_now = _memavl( );
-         usage = mem_avail - mem_avail_now;
-         limit = mem_avail;    
-#else
-
+    mem_avail_now = _memavl( );
+    usage = mem_avail - mem_avail_now;
+    limit = mem_avail;    
+#else /* HAVE__MEMAVL */
     static long old_usage = 0;
     char *hi;
 
 #    ifdef HAVE_GETRLIMIT
-
     struct rlimit rld;
     getrlimit(RLIMIT_DATA, &rld);
     if (rld.rlim_cur == RLIM_INFINITY)
         return;
     limit = rld.rlim_cur - (enddata - startdata); /* rlim_max not used */
-
-#    else
-
-
-
+#    else /* HAVE_GETRLIMIT */
     /* SYSVRLIMIT */
     limit = ulimit(3, 0L) - (enddata - startdata);
-
-#    endif
+#    endif /* HAVE_GETRLIMIT */
+    
     hi=sbrk(0);
     usage = (long) (hi - enddata); 
-
-
 
     if (limit < 0)
 	return;	/* what else do you do? */
@@ -168,12 +161,11 @@ ft_ckspace(void)
 	return;
 
     old_usage = usage;
-
-#endif
+#endif /* HAVE__MEMAVL */
 
     if (usage > limit * 0.9) {
         fprintf(cp_err, "Warning - approaching max data size: ");
-        fprintf(cp_err, "current size = %ld, limit = %ld.\n", usage, limit);
+        fprintf(cp_err, "current size = %ld, limit = %ld.\n", (long)usage, (long)limit);
     }
 
     return;
@@ -386,7 +378,7 @@ printres(char *name)
         /* begin cider integration */
         /* Now print out interesting stuff about numerical devices. */
 	    if (!name || eq(name, "devices")) {
-	       (void) NDEVacct(ft_curckt->ci_ckt, cp_out);
+	       (void) NDEVacct((CKTcircuit*)ft_curckt->ci_ckt, cp_out);
 	        yy = TRUE;
 	} 
 	/* end cider integration */
