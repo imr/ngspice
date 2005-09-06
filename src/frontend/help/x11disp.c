@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: Jeffrey M. Hsu
 Modified 1999 Emmanuel Rouat
+$Id$
 **********/
 
 #include <config.h>
@@ -112,8 +113,8 @@ hlp_xdisplay(topic *top)
     top->chartext = buf;  /* make sure gets deallocated later XXX */
     XtSetArg(htextargs[0], XtNstring, top->chartext);
     XtSetArg(htextargs[1], XtNallowResize, True);
-    XtSetArg(htextargs[2], XtNscrollHorizontal, True );
-    XtSetArg(htextargs[3], XtNscrollVertical, True );
+    XtSetArg(htextargs[2], XtNscrollHorizontal, XawtextScrollWhenNeeded );
+    XtSetArg(htextargs[3], XtNscrollVertical, XawtextScrollAlways );
     XtSetArg(htextargs[4], XtNfromVert, top->titlewidget);
     XtSetArg(htextargs[5], XtNwidth, 660);
     XtSetArg(htextargs[6], XtNheight, 350);
