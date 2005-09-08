@@ -17,7 +17,7 @@ $Id$
 #include "quote.h"
 #include "resource.h"
 #include "variable.h"
-#include "CKTdefs.h"
+#include "cktdefs.h"
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include ipc stuff */
