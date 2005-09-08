@@ -13,12 +13,12 @@ extern bool cp_debug;
 extern char cp_amp;
 extern char cp_gt;
 extern char cp_lt;
-extern FILE *cp_in;
-extern FILE *cp_out;
-extern FILE *cp_err;
-extern FILE *cp_curin;
-extern FILE *cp_curout;
-extern FILE *cp_curerr;
+FILE *cp_in;
+FILE *cp_out;
+FILE *cp_err;
+FILE *cp_curin;
+FILE *cp_curout;
+FILE *cp_curerr;
 
 void cp_ioreset(void);
 void fixdescriptors(void);

@@ -1,3 +1,9 @@
+2005-09-08  Paolo Nenzi <p.nenzi@ieee.org>
+
+  *  src/frontend/streams.{c,h}: applied Hitoshi's fix for undefined 
+     symbols when compiling ngspice under Linux.
+
+
 2005-09-06  Steven Borley <steven.borley@virgin.net>
 
   * Fixed alphabetic order in AUTHORS
