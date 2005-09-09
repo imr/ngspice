@@ -17,18 +17,17 @@ bool cp_debug = FALSE;
 char cp_gt = '>';
 char cp_lt = '<';
 char cp_amp = '&';
-/*
+
 FILE *cp_in=NULL;
 FILE *cp_out=NULL;
 FILE *cp_err=NULL;
-*/
+
 /* These are the fps that cp_ioreset resets the cp_* to.  They are
  * changed by the source routines.  */
-/*
 FILE *cp_curin = NULL;
 FILE *cp_curout = NULL;
 FILE *cp_curerr = NULL;
-*/
+
 /* static functions */
 static bool fileexists(char *name);
 

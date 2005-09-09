@@ -1,3 +1,9 @@
+2005-09-09  Steven Borley <steven.borley@virgin.net>
+
+  *  Reverted to placing the cp_* stream variable definitions back in to
+     src/frontend/streams.c with their extern declarations in
+     src/frontend/streams.h
+
 2005-09-08  Steven Borley <steven.borley@virgin.net>
 
   * Added hard-coded paths for NGSPICEBINDIR and NGSPICEDATADIR for MinGW
