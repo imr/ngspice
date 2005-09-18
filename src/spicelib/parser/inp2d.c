@@ -61,7 +61,7 @@ void INP2D(void *ckt, INPtables * tab, card * current)
 	    LITERR("incorrect model type");
 	    return;
 	}
-	type = mytype;
+	type = thismodel->INPmodType; /*HT 050903*/
 	mdfast = (thismodel->INPmodfast);
     } else {
 	type = mytype;
