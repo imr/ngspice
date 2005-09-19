@@ -102,8 +102,9 @@ DISPDEVICE device[] = {
 
 DISPDEVICE *dispdev = device + NUMELEMS(device) - 1;
 
+#ifndef XtNumber
 #define XtNumber(arr)       (sizeof(arr) / sizeof(arr[0]))
-
+#endif
 
 DISPDEVICE *FindDev(char *name)
 {
