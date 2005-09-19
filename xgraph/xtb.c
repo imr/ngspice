@@ -12,10 +12,11 @@
  * want to use any of the standards yet -- they are too unstable).
  */
 
+#include <stdio.h>  /* for printf() */
 #include <X11/Xos.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <string.h>  /* for strcpy */
+#include <string.h>  /* for strcpy() and strlen() */
 #include "xtb.h"
 
 extern void abort();

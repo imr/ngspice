@@ -7,6 +7,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <X11/Xlib.h>
 #include "hard_devices.h"
 #include "xgout.h"
