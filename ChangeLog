@@ -1,3 +1,16 @@
+2005-19-09  Steven Borley <steven.borley@virgin.net>
+
+  * xgraph/idraw.c, xgraph/tgif.c and xgraph/xtb.c: Added missing system header
+    includes (string.h and stdio.h) to avoid warnings.
+
+  * src/frontend/aspice.c: Used (void*)0 instead of 0  for the terminating
+    vararg, to avoid gcc 4.0 warning about  missing  sentinel in function call.
+    
+  * src/frontend/aspice.c: Resolved Bug 1293746 - Problem with aspice.c(171)
+    in gcc (Solaris).
+    
+  * src/frontend/display.c: Fixed warning about redefinition of XtNumber.
+
 2005-09-09  Steven Borley <steven.borley@virgin.net>
 
   *  Reverted to placing the cp_* stream variable definitions back in to
