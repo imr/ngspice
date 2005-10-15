@@ -41,6 +41,7 @@ $Id$
 
 /* static declarations */
 static void printres(char *name);
+static void fprintmem(FILE* stream, size_t memory);
 static RETSIGTYPE fault(void);
 static void * baseaddr(void);
 
@@ -49,12 +50,12 @@ size_t mem_avail;
 
 size_t _memavl(void)
 {
-	MEMORYSTATUS ms;
-	DWORD sum;
-	ms.dwLength = sizeof(MEMORYSTATUS);
-	GlobalMemoryStatus( &ms);
-	sum = ms.dwAvailPhys + ms.dwAvailPageFile;
-	return (size_t) sum;
+    MEMORYSTATUS ms;
+    DWORD sum;
+    ms.dwLength = sizeof(MEMORYSTATUS);
+    GlobalMemoryStatus( &ms);
+    sum = ms.dwAvailPhys + ms.dwAvailPageFile;
+    return (size_t) sum;
 }
 
 #else
@@ -73,15 +74,11 @@ init_rlimits(void)
     startdata = (char *) baseaddr( );
     enddata = sbrk(0);
 #  endif
-/*    startdata = (char *) baseaddr( );
-      enddata = sbrk(0); */
-
 }
 
 void
 init_time(void)
 {
-
 #ifdef HAVE_GETRUSAGE
 #else
 #  ifdef HAVE_TIMES
@@ -91,7 +88,6 @@ init_time(void)
 #    endif
 #  endif
 #endif
-
 }
 
 
@@ -122,8 +118,9 @@ char* copyword;
     return;
 }
 
-/* Find out if the user is approaching his maximum data size. */
-
+/* Find out if the user is approaching his maximum data size.
+   If usage is withing 90% of total available then a warning message is sent
+   to the error stream (cp_err) */
 void
 ft_ckspace(void)
 {
@@ -137,7 +134,7 @@ ft_ckspace(void)
     usage = mem_avail - mem_avail_now;
     limit = mem_avail;    
 #else /* HAVE__MEMAVL */
-    static long old_usage = 0;
+    static size_t old_usage = 0;
     char *hi;
 
 #    ifdef HAVE_GETRLIMIT
@@ -152,7 +149,7 @@ ft_ckspace(void)
 #    endif /* HAVE_GETRLIMIT */
     
     hi=sbrk(0);
-    usage = (long) (hi - enddata); 
+    usage = (size_t) (hi - enddata); 
 
     if (limit < 0)
 	return;	/* what else do you do? */
@@ -165,7 +162,11 @@ ft_ckspace(void)
 
     if (usage > limit * 0.9) {
         fprintf(cp_err, "Warning - approaching max data size: ");
-        fprintf(cp_err, "current size = %ld, limit = %ld.\n", (long)usage, (long)limit);
+	fprintf(cp_err, "current size = ");
+	fprintmem(cp_err, usage);
+	fprintf(cp_err,", limit = ");	
+	fprintmem(cp_err, limit);
+	fprintf(cp_err,"\n");
     }
 
     return;
@@ -275,7 +276,8 @@ printres(char *name)
     }
 
     if (!name || eq(name, "space")) {
-	long usage = 0, limit = 0;
+	size_t usage = 0;
+	size_t limit = 0;
 	
     
 #ifdef HAVE__MEMAVL
@@ -284,15 +286,14 @@ printres(char *name)
          mem_avail_now = _memavl( );
          usage = mem_avail - mem_avail_now;
          limit = mem_avail;    
-#else
-	
-	
+#else /* HAVE__MEMAVL */
+
 #ifdef ipsc
 	NXINFO cur = nxinfo, start = nxinfo_snap;
 
 	usage = cur.dataend - cur.datastart;
 	limit = start.availmem;
-#else
+#else /* ipsc */
 #  ifdef HAVE_GETRLIMIT
         struct rlimit rld;
         char *hi;
@@ -300,29 +301,27 @@ printres(char *name)
         getrlimit(RLIMIT_DATA, &rld);
 	limit = rld.rlim_cur - (enddata - startdata);
         hi = sbrk(0);
-	usage = (long) (hi - enddata);
-#  else
+	usage = (size_t) (hi - enddata);
+#  else /* HAVE_GETRLIMIT */
 #    ifdef HAVE_ULIMIT
         char *hi;
 
 	limit = ulimit(3, 0L) - (enddata - startdata);
         hi = sbrk(0);
-	usage = (long) (hi - enddata);
-#    endif
-#  endif
-#endif
-#endif
-#ifdef HAVE__MEMAVL
-        if (usage > 1000000)
-             fprintf(cp_out, "Current dynamic memory usage = %8.6f MB,\n", usage/1000000.);
-        else     
-             fprintf(cp_out, "Current dynamic memory usage = %5.3f kB,\n", usage/1000.);
-
-        fprintf(cp_out, "Dynamic memory limit = %8.6f MB.\n", limit/1000000.);
-#else        
-        fprintf(cp_out, "Current dynamic memory usage = %ld,\n", usage);
-        fprintf(cp_out, "Dynamic memory limit = %ld.\n", limit);
-#endif
+	usage = (size_t) (hi - enddata);
+#    endif /* HAVE_ULIMIT */
+#  endif /* HAVE_GETRLIMIT */
+#endif /* ipsc */
+#endif /* HAVE__MEMAVL */
+	
+	fprintf(cp_out, "Current dynamic memory usage = ");
+	fprintmem(cp_out, usage);
+	fprintf(cp_out, ",\n");
+	
+	fprintf(cp_out, "Dynamic memory limit = ");
+	fprintmem(cp_out, limit);
+	fprintf(cp_out, ".\n");
+	
         yy = TRUE;
     }
 
@@ -344,20 +343,20 @@ printres(char *name)
 
 #ifdef CIDER
 /* begin cider integration */	
-  if (!name || eq(name, "circuit") || eq(name, "task")) {
-		paramname = NULL;
-     } else {
-     	paramname = name;
-     }
- 	v = if_getstat(ft_curckt->ci_ckt, paramname);
-         if (paramname && v) {                     
+    if (!name || eq(name, "circuit") || eq(name, "task")) {
+	paramname = NULL;
+    } else {
+	paramname = name;
+    }
+    v = if_getstat(ft_curckt->ci_ckt, paramname);
+    if (paramname && v) {                     
 /* end cider integration */
 #else /* ~CIDER */     
 	if (name && eq(name, "task"))
 	    v = if_getstat(ft_curckt->ci_ckt, NULL);
 	else
 	    v = if_getstat(ft_curckt->ci_ckt, name);
-        if (name && v) {
+	if (name && v) {
 #endif	
             fprintf(cp_out, "%s = ", v->va_name);
             wl_print(cp_varwl(v), cp_out);
@@ -390,9 +389,19 @@ printres(char *name)
         fprintf(cp_err, "Note: no resource usage information for '%s',\n",
 		name);
         fprintf(cp_err, "\tor no active circuit available\n");
-        
     }
     return;
+}
+
+/* Print to stream the given memory size in a human friendly format */
+static void
+fprintmem(FILE* stream, size_t memory) {
+    if (memory > 1000000)
+	fprintf(stream, "%8.6f MB", memory/1000000.);
+    else if (memory > 1000) 
+	fprintf(stream, "%5.3f kB", memory/1000.);
+    else
+	fprintf(stream, "%lu bytes", (unsigned long)memory);
 }
 
 
@@ -415,57 +424,56 @@ static JMP_BUF	env;
 static RETSIGTYPE
 fault(void)
 {
-	signal(SIGSEGV, (SIGNAL_FUNCTION) fault);	/* SysV style */
-	LONGJMP(env, 1);
+    signal(SIGSEGV, (SIGNAL_FUNCTION) fault);	/* SysV style */
+    LONGJMP(env, 1);
 }
 
 static void *
 baseaddr(void)
 {
 #if defined(__CYGWIN__) || defined(__MINGW32__) || defined(HAS_WINDOWS) || defined(__APPLE__)
-	return 0;
+    return 0;
 #else
-	char *low, *high, *at;
-	/* char *sbrk(int);  */
-	long x;
-	RETSIGTYPE	(*orig_signal)( );
+    char *low, *high, *at;
+    long x;
+    RETSIGTYPE	(*orig_signal)( );
 
-	if (getenv("SPICE_NO_DATASEG_CHECK"))
-		return 0;
-	
-	low = 0;
-	high = (char *) ((unsigned long) sbrk(0) & ~((1 << LOG2_PAGESIZE) - 1));
+    if (getenv("SPICE_NO_DATASEG_CHECK"))
+	    return 0;
 
-	orig_signal = signal(SIGSEGV, (SIGNAL_FUNCTION) fault);
+    low = 0;
+    high = (char *) ((unsigned long) sbrk(0) & ~((1 << LOG2_PAGESIZE) - 1));
 
-	do {
+    orig_signal = signal(SIGSEGV, (SIGNAL_FUNCTION) fault);
 
-		at = (char *) ((((long)low >> LOG2_PAGESIZE)
-			+ ((long)high >> LOG2_PAGESIZE))
-			<< (LOG2_PAGESIZE - 1));
+    do {
 
-		if (at == low || at == high) {
-			break;
-		}
+	at = (char *) ((((long)low >> LOG2_PAGESIZE)
+	    + ((long)high >> LOG2_PAGESIZE))
+	    << (LOG2_PAGESIZE - 1));
 
-		if (SETJMP(env, 1)) {
-			low = at;
-			continue;
-		} else
-			x = *at;
+	if (at == low || at == high) {
+	    break;
+	}
 
-		if (SETJMP(env, 1)) {
-			low = at;
-			continue;
-		} else
-			*at = x;
+	if (SETJMP(env, 1)) {
+	    low = at;
+	    continue;
+	} else
+	    x = *at;
 
-		high = at;
+	if (SETJMP(env, 1)) {
+	    low = at;
+	    continue;
+	} else
+	    *at = x;
 
-	} while (1);
+	high = at;
 
-	(void) signal(SIGSEGV, (SIGNAL_FUNCTION) orig_signal);
-	return (void *) high;
+    } while (1);
+
+    (void) signal(SIGSEGV, (SIGNAL_FUNCTION) orig_signal);
+    return (void *) high;
 
 #endif
 }
@@ -473,8 +481,8 @@ baseaddr(void)
 #  ifdef notdef
 main( )
 {
-	printf("testing\n");
-	printf("baseaddr: %#8x  topaddr: %#8x\n", baseaddr( ), sbrk(0));
+    printf("testing\n");
+    printf("baseaddr: %#8x  topaddr: %#8x\n", baseaddr( ), sbrk(0));
 }
 #  endif
 
