@@ -252,6 +252,10 @@ you can set and what kinds of files go in them.
 with an extra prefix or suffix on their names by giving `configure' the
 option `--program-prefix=PREFIX' or `--program-suffix=SUFFIX'.
 
+When installed on MinGW with MSYS alternative paths are not fully supported.
+See 'How to make ngspice with MINGW and MSYS' below for details.
+
+
 Optional Features
 =================
 
@@ -393,36 +397,53 @@ $ ln -s libcygwin.a libdl.a.
 The procedure of compiling is the same as Linux.
 
 
-make ngspice with MINGW and MSYS
---------------------------------
+How to make ngspice with MINGW and MSYS
+---------------------------------------
 
-At first, you need to add the following lines in src/conf.h.
+The default installation location is the Windows path C:\msys\1.0\local
+Normally the install path can be altered by passing --prefix=NEWPATH as an
+argument to ./configure during the build process but when using MinGW and MSYS
+this process is not fully supported.
+
+If you do need to change the install path then you first need to modify the
+following lines in src/conf.h.
 
 #ifdef __MINGW32__
 #define NGSPICEBINDIR "C:\\msys\\1.0\\local\\bin"
 #define NGSPICEDATADIR "C:\\msys\\1.0\\local\\share\\ng-spice-rework"
 #endif
 
-You can put the directory which you desired inside "".
+Put the install path you desire inside "", and then use the unix-style
+equivalent with --prefix=NEWPATH as an argument to ./configure in the normal way.
 
 Next, the line feed code in src/ngspice.txt must be changed from LF to CR/LF.
 
-The procedure of compiling is as follows:
+The procedure of compiling a distribution (for example, a tarball from the
+ngspice website), is as follows:
 
-$ ./autogen.sh
+$ cd ng-spice-rework-17
 $ ./configure --with-windows ...and other options
 $ make
 $ make install
 
-Next, the directory of the "code model" which is described
-in the "spinit" file must be modified from UNIX form to DOS form.
-(if you use --enable-xspice option.)
+However, to compile code extracted from the CVS repository the procedure is
+a little different, thus:
+
+$ cd ng-spice-rework-17
+$ ./autogen.sh
+$ ./configure --enable-maintainer-mode --with-windows ...and other options
+$ make
+$ make install
+
+Finally, if you use xspice (ie. if to ran ./configure with --enable-xspice)
+then the directory of each "code model" referenced in the "spinit" file must
+be modified from UNIX form to DOS form.
 
 For example:
 Change
-codemodel /msys/1.0/local/lib/spice/spice2poly.cm
+  codemodel /msys/1.0/local/lib/spice/spice2poly.cm
 to
-codemodel C:\msys\1.0\local\lib\spice\spice2poly.cm
+  codemodel C:\msys\1.0\local\lib\spice\spice2poly.cm
 
 The "spinit" file is in C:\msys\1.0\local\share\ng-spice-rework
 if you did the same setting as the above.
