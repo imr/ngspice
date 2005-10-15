@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
+$Id$
 **********/
 
 /*
@@ -33,11 +34,12 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 #include "terminal.h"
 
+#ifdef HAVE_TERMCAP
 static char *motion_chars;
 static char *clear_chars;
 static char *home_chars;
 static char *cleol_chars;
-
+#endif /* HAVE_TERMCAP */
 
 #define DEF_SCRHEIGHT   24
 #define DEF_SCRWIDTH    80
@@ -245,13 +247,14 @@ out_printf(char *fmt, char *s1, char *s2, char *s3, char *s4, char *s5, char *s6
     return;
 }
 
+#ifdef HAVE_TERMCAP
 static int
 outfn(int c)
 {
 	putc(c, stdout);
 	return c;
 }
-
+#endif /* HAVE_TERMCAP */
 
 void 
 tcap_init(void)
