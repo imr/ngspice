@@ -1,5 +1,11 @@
 2005-10-15  Steven Borley <steven.borley@virgin.net>
 
+  * src/frontend/spiceif.c: Fixed code to avoid errors (invalid lvalue in 
+    assignment) under gcc v4.0.2 or and warnings under gcc 4.0.0 (target of 
+    assignment not really an lvalue).
+
+2005-10-15  Steven Borley <steven.borley@virgin.net>
+
   * INTALL: Improved notes for MinGW/MSYS
 
   * src/frontend/resource.c: Fixed problems of reporting resource usage for

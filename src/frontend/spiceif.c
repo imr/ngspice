@@ -1156,13 +1156,6 @@ void com_loadsnap(wordlist *wl) {
   _t(CKTabsDv);
   _t(CKTrelDv);
   _t(CKTtroubleNode);
-
-
-  /*     if(name) {\
-	 tfree(name);\
-	 name = NULL;\
-	 }\*/
- 
  
 #undef _foo
 #define _foo(name,type,_size)\
@@ -1172,7 +1165,7 @@ do {\
     if(__i) {\
       if(name)\
 	tfree(name);\
-      name = (type *)tmalloc(__i);\
+      name = tmalloc(__i);\
       fread(name,1,__i,file);\
     } else {\
       fprintf(cp_err, "size for vector " #name " is 0\n");\
@@ -1181,7 +1174,7 @@ do {\
       fprintf(cp_err,"expected %ld, but got %d for "#name"\n",(long)(_size)*sizeof(type),__i);\
     }\
   } while(0)
-  
+
     
     for(i=0;i<=ckt->CKTmaxOrder+1;i++) {
       _foo(ckt->CKTstates[i],double,ckt->CKTnumStates);
@@ -1203,7 +1196,7 @@ do {\
 
     _foo(ckt->CKTbreaks,double,ckt->CKTbreakSize);
     
-    _foo((TSKtask *)ft_curckt->ci_curTask,TSKtask,1);
+    _foo(ft_curckt->ci_curTask,TSKtask,1);
 
     /* To stop the Free */
     ((TSKtask *)ft_curckt->ci_curTask)->TSKname = NULL;
@@ -1211,7 +1204,7 @@ do {\
 
     _foo(((TSKtask *)ft_curckt->ci_curTask)->TSKname,char,-1);
     
-    _foo(((TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs),TRANan,1);
+    _foo(((TSKtask *)ft_curckt->ci_curTask)->jobs,TRANan,1);
     ((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname = NULL;
     ckt->CKTcurJob = (JOB *)((TSKtask *)ft_curckt->ci_curTask)->jobs;
     
