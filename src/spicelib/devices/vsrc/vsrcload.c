@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -69,21 +70,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                     double phase;
                     double deltat;
                     double basephase;
-		    
-		    PHASE = here->VSRCfunctionOrder > 7
-		         ? here->VSRCcoeffs[7] : 0.0;
-			 
-		    /* normalize phase to 0 - 2PI */ 
-                    phase = PHASE * M_PI / 180.0;
-                    basephase = 2 * M_PI * floor(phase / (2 * M_PI));
-                    phase -= basephase;
-
-                    /* compute equivalent delta time and add to time */
-                    deltat = (phase / (2 * M_PI)) * PER;
-                    time += deltat; 
 #endif
-/* gtri - end - wbk - add PHASE parameter */
-
 		    V1 = here->VSRCcoeffs[0];
 		    V2 = here->VSRCcoeffs[1];
 		    TD = here->VSRCfunctionOrder > 2
@@ -100,7 +87,21 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 		    PER = here->VSRCfunctionOrder > 6
 			&& here->VSRCcoeffs[6] != 0.0
 			? here->VSRCcoeffs[6] : ckt->CKTfinalTime;
+#ifdef XSPICE
+		    /* gtri - begin - wbk - add PHASE parameter */
+		    PHASE = here->VSRCfunctionOrder > 7
+		         ? here->VSRCcoeffs[7] : 0.0;
+			 
+		    /* normalize phase to 0 - 2PI */ 
+                    phase = PHASE * M_PI / 180.0;
+                    basephase = 2 * M_PI * floor(phase / (2 * M_PI));
+                    phase -= basephase;
 
+                    /* compute equivalent delta time and add to time */
+                    deltat = (phase / (2 * M_PI)) * PER;
+                    time += deltat;
+		    /* gtri - end - wbk - add PHASE parameter */
+#endif		    
                     time -= TD;
                     if(time > PER) {
                         /* repeating signal - figure out where we are */

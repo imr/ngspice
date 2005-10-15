@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 Alansfixes
+$Id$
 **********/
 
 #include "ngspice.h"
@@ -55,27 +56,12 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                 case PULSE: {
 		    double	V1, V2, TD, TR, TF, PW, PER;		    
                     double	basetime = 0;
-/* gtri - begin - wbk - add PHASE parameter */
 #ifdef XSPICE
                     double PHASE;
                     double phase;
                     double deltat;
                     double basephase;
-		    
-		    PHASE = here->ISRCfunctionOrder > 7
-		         ? here->ISRCcoeffs[7] : 0.0;
-			 
-		    /* normalize phase to 0 - 2PI */ 
-                    phase = PHASE * M_PI / 180.0;
-                    basephase = 2 * M_PI * floor(phase / (2 * M_PI));
-                    phase -= basephase;
-
-                    /* compute equivalent delta time and add to time */
-                    deltat = (phase / (2 * M_PI)) * PER;
-                    time += deltat; 
 #endif
-/* gtri - end - wbk - add PHASE parameter */		    
-
 		    V1 = here->ISRCcoeffs[0];
 		    V2 = here->ISRCcoeffs[1];
 		    TD = here->ISRCfunctionOrder > 2
@@ -92,7 +78,21 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
 		    PER = here->ISRCfunctionOrder > 6
 			&& here->ISRCcoeffs[6] != 0.0
 			? here->ISRCcoeffs[6] : ckt->CKTfinalTime;
-
+#ifdef XSPICE
+		    /* gtri - begin - wbk - add PHASE parameter */
+		    PHASE = here->ISRCfunctionOrder > 7
+			? here->ISRCcoeffs[7] : 0.0;
+		    
+		    /* normalize phase to 0 - 2PI */ 
+                    phase = PHASE * M_PI / 180.0;
+                    basephase = 2 * M_PI * floor(phase / (2 * M_PI));
+                    phase -= basephase;
+		    
+                    /* compute equivalent delta time and add to time */
+                    deltat = (phase / (2 * M_PI)) * PER;
+                    time += deltat;
+		   /* gtri - end - wbk - add PHASE parameter */ 
+#endif
                     time -= TD;
 
                     if(time > PER) {
