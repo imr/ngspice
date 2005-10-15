@@ -1,14 +1,29 @@
-2005-19-09  Steven Borley <steven.borley@virgin.net>
+2005-10-15  Steven Borley <steven.borley@virgin.net>
+
+  * INTALL: Improved notes for MinGW/MSYS
+
+  * src/frontend/resource.c: Fixed problems of reporting resource usage for
+    MacOSX (should help other platforms too).
+
+  * src/frontend/terminal.c: Fixed warning about unused variables and functions
+    that can occur when HAVE_TERMCAP is undefined.
+
+  * src/spicelib/devices/isrc/isrcload.c and vsrcload.c: Implemented patches
+    supplied by Andreas Unger <a_unger@gmx.de>. Fixes XSpice bug; variable PER 
+    was being used before initialisation.
+
+
+2005-09-19  Steven Borley <steven.borley@virgin.net>
 
   * xgraph/idraw.c, xgraph/tgif.c and xgraph/xtb.c: Added missing system header
     includes (string.h and stdio.h) to avoid warnings.
 
   * src/frontend/aspice.c: Used (void*)0 instead of 0  for the terminating
     vararg, to avoid gcc 4.0 warning about  missing  sentinel in function call.
-    
+
   * src/frontend/aspice.c: Resolved Bug 1293746 - Problem with aspice.c(171)
     in gcc (Solaris).
-    
+
   * src/frontend/display.c: Fixed warning about redefinition of XtNumber.
 
 2005-09-09  Steven Borley <steven.borley@virgin.net>
