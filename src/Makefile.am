@@ -1,4 +1,5 @@
 ## Process this file with automake to produce Makefile.in
+# $Id$
 
 SUBDIRS = misc maths frontend spicelib include @XSPICEDIR@ @CIDERDIR@
 DIST_SUBDIRS = misc maths frontend spicelib include xspice ciderlib
@@ -146,11 +147,13 @@ if WINDOWS
 nghelp_SOURCES += winmain.c
 endif
 
-nghelp_LDADD =  \
+# We keep the libraries to a minimum here and link against terminal.o
+# rather than the full front-end library libfte.a to avoid link errors that
+# that would otherwise occur (thanks to Andreas Unger for this fix).
+nghelp_LDADD = \
+	frontend/terminal.o \
 	frontend/help/libhlp.a \
-	frontend/parser/libparser.a \
-	frontend/libfte.a \
-	misc/libmisc.a 
+	misc/libmisc.a
 
 ## These programs currently fail to build on Windows
 if !WINDOWS 
@@ -202,4 +205,4 @@ INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices @X_C
 
 LIBS = @LIBS@ @X_LIBS@ @X_PRE_LIBS@ @X_EXTRA_LIBS@
 
-MAINTAINERCLEANFILES = Makefile.in
+MAINTAINERCLEANFILES = Makefile.in ngspice.idx

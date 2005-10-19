@@ -1,3 +1,9 @@
+2005-10-19  Steven Borley <steven.borley@virgin.net>
+
+ * src/Makefile.am: Implemented fix to prevent 'multiple definition' errors 
+   during link of nghelp when built on systems that use the latest versions of
+   the GNU tools. Solution provided by Andreas Unger <a_unger@gmx.de>. 
+
 2005-10-15  Steven Borley <steven.borley@virgin.net>
 
   * src/frontend/spiceif.c: Fixed code to avoid errors (invalid lvalue in 
@@ -17,7 +23,6 @@
   * src/spicelib/devices/isrc/isrcload.c and vsrcload.c: Implemented patches
     supplied by Andreas Unger <a_unger@gmx.de>. Fixes XSpice bug; variable PER 
     was being used before initialisation.
-
 
 2005-09-19  Steven Borley <steven.borley@virgin.net>
 
