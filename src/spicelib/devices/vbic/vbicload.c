@@ -709,14 +709,14 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     Irbp_Vrbp = *(ckt->CKTstate0 + here->VBICirbp_Vrbp);
                     Irbp_Vbep = *(ckt->CKTstate0 + here->VBICirbp_Vbep);
                     Irbp_Vbci = *(ckt->CKTstate0 + here->VBICirbp_Vbci);
-                    gqbeo     = *(ckt->CKTstate0 + here->VBICgqbeo);
-                    gqbco     = *(ckt->CKTstate0 + here->VBICgqbco);
                     Ibcp      = *(ckt->CKTstate0 + here->VBICibcp);
                     Ibcp_Vbcp = *(ckt->CKTstate0 + here->VBICibcp_Vbcp);
                     Iccp      = *(ckt->CKTstate0 + here->VBICiccp);
                     Iccp_Vbep = *(ckt->CKTstate0 + here->VBICiccp_Vbep);
                     Iccp_Vbci = *(ckt->CKTstate0 + here->VBICiccp_Vbci);
                     Iccp_Vbcp = *(ckt->CKTstate0 + here->VBICiccp_Vbcp);
+                    gqbeo     = *(ckt->CKTstate0 + here->VBICgqbeo);
+                    gqbco     = *(ckt->CKTstate0 + here->VBICgqbco);
                     goto load;
                 }
                 /*
@@ -772,6 +772,9 @@ next1:
             if( (ckt->CKTmode & (MODETRAN | MODEAC)) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) ||
                     (ckt->CKTmode & MODEINITSMSIG)) {
+                /*
+                 *   charge storage elements
+                 */
 
                 *(ckt->CKTstate0 + here->VBICqbe)  = Qbe;
                 *(ckt->CKTstate0 + here->VBICqbex) = Qbex;
@@ -833,14 +836,14 @@ next1:
                             *(ckt->CKTstate0 + here->VBICirbp_Vrbp) = Irbp_Vrbp;
                             *(ckt->CKTstate0 + here->VBICirbp_Vbep) = Irbp_Vbep;
                             *(ckt->CKTstate0 + here->VBICirbp_Vbci) = Irbp_Vbci;
-                            *(ckt->CKTstate0 + here->VBICgqbeo)     = gqbeo;
-                            *(ckt->CKTstate0 + here->VBICgqbco)     = gqbco;
                             *(ckt->CKTstate0 + here->VBICibcp)      = Ibcp;
                             *(ckt->CKTstate0 + here->VBICibcp_Vbcp) = Ibcp_Vbcp;
                             *(ckt->CKTstate0 + here->VBICiccp)      = Iccp;
                             *(ckt->CKTstate0 + here->VBICiccp_Vbep) = Iccp_Vbep;
                             *(ckt->CKTstate0 + here->VBICiccp_Vbci) = Iccp_Vbci;
                             *(ckt->CKTstate0 + here->VBICiccp_Vbcp) = Iccp_Vbcp;
+                            *(ckt->CKTstate0 + here->VBICgqbeo)     = gqbeo;
+                            *(ckt->CKTstate0 + here->VBICgqbco)     = gqbco;
                         }
 #ifdef SENSDEBUG
                         printf("storing small signal parameters for op\n");
@@ -965,15 +968,16 @@ next1:
                 }
             }
 next2:
-            *(ckt->CKTstate0 + here->VBICvbei) = Vbei;
-            *(ckt->CKTstate0 + here->VBICvbex) = Vbex;
-            *(ckt->CKTstate0 + here->VBICvbci) = Vbci;
-            *(ckt->CKTstate0 + here->VBICvbcx) = Vbcx;
-            *(ckt->CKTstate0 + here->VBICvbep) = Vbep;
-            *(ckt->CKTstate0 + here->VBICvrci) = Vrci;
-            *(ckt->CKTstate0 + here->VBICvrbi) = Vrbi;
-            *(ckt->CKTstate0 + here->VBICvrbp) = Vrbp;
-            *(ckt->CKTstate0 + here->VBICvbcp) = Vbcp;
+            *(ckt->CKTstate0 + here->VBICvbei)      = Vbei;
+            *(ckt->CKTstate0 + here->VBICvbex)      = Vbex;
+            *(ckt->CKTstate0 + here->VBICvbci)      = Vbci;
+            *(ckt->CKTstate0 + here->VBICvbcx)      = Vbcx;
+            *(ckt->CKTstate0 + here->VBICvbep)      = Vbep;
+            *(ckt->CKTstate0 + here->VBICvrci)      = Vrci;
+            *(ckt->CKTstate0 + here->VBICvrbi)      = Vrbi;
+            *(ckt->CKTstate0 + here->VBICvrbp)      = Vrbp;
+            *(ckt->CKTstate0 + here->VBICvbcp)      = Vbcp;
+
             *(ckt->CKTstate0 + here->VBICibe)       = Ibe;
             *(ckt->CKTstate0 + here->VBICibe_Vbei)  = Ibe_Vbei;
             *(ckt->CKTstate0 + here->VBICibex)      = Ibex;
@@ -1001,14 +1005,15 @@ next2:
             *(ckt->CKTstate0 + here->VBICirbp_Vrbp) = Irbp_Vrbp;
             *(ckt->CKTstate0 + here->VBICirbp_Vbep) = Irbp_Vbep;
             *(ckt->CKTstate0 + here->VBICirbp_Vbci) = Irbp_Vbci;
-            *(ckt->CKTstate0 + here->VBICgqbeo)     = gqbeo;
-            *(ckt->CKTstate0 + here->VBICgqbco)     = gqbco;
             *(ckt->CKTstate0 + here->VBICibcp)      = Ibcp;
             *(ckt->CKTstate0 + here->VBICibcp_Vbcp) = Ibcp_Vbcp;
             *(ckt->CKTstate0 + here->VBICiccp)      = Iccp;
             *(ckt->CKTstate0 + here->VBICiccp_Vbep) = Iccp_Vbep;
             *(ckt->CKTstate0 + here->VBICiccp_Vbci) = Iccp_Vbci;
             *(ckt->CKTstate0 + here->VBICiccp_Vbcp) = Iccp_Vbcp;
+
+            *(ckt->CKTstate0 + here->VBICgqbeo)     = gqbeo;
+            *(ckt->CKTstate0 + here->VBICgqbco)     = gqbco;
 
             /* Do not load the Jacobian and the rhs if
                perturbation is being carried out */
@@ -1018,7 +1023,7 @@ load:
              *  load current excitation vector and matrix
              */
             rhs_current = model->VBICtype * (*(ckt->CKTstate0 + here->VBICcqbeo) - 
-                    Vbe * gqbeo);
+                          Vbe * gqbeo);
             *(ckt->CKTrhs + here->VBICbaseNode) += -rhs_current;
             *(ckt->CKTrhs + here->VBICemitNode) +=  rhs_current;
             *(here->VBICbaseBasePtr) +=  gqbeo;
@@ -1082,17 +1087,17 @@ c           Stamp element: Itzf
 /*
 c           Stamp element: Itzr
 */
-            rhs_current = model->VBICtype * (Itzr - Itzr_Vbci*Vbci - Itzr_Vbei*Vbei);
+            rhs_current = model->VBICtype * (Itzr - Itzr_Vbei*Vbei - Itzr_Vbci*Vbci);
             *(ckt->CKTrhs + here->VBICemitEINode) += -rhs_current;
-            *(here->VBICemitEIBaseBIPtr) +=  Itzr_Vbci;
-            *(here->VBICemitEICollCIPtr) += -Itzr_Vbci;
             *(here->VBICemitEIBaseBIPtr) +=  Itzr_Vbei;
             *(here->VBICemitEIEmitEIPtr) += -Itzr_Vbei;
+            *(here->VBICemitEIBaseBIPtr) +=  Itzr_Vbci;
+            *(here->VBICemitEICollCIPtr) += -Itzr_Vbci;
             *(ckt->CKTrhs + here->VBICcollCINode) +=  rhs_current;
-            *(here->VBICcollCIBaseBIPtr) += -Itzr_Vbci;
-            *(here->VBICcollCICollCIPtr) +=  Itzr_Vbci;
             *(here->VBICcollCIBaseBIPtr) += -Itzr_Vbei;
             *(here->VBICcollCIEmitEIPtr) +=  Itzr_Vbei;
+            *(here->VBICcollCIBaseBIPtr) += -Itzr_Vbci;
+            *(here->VBICcollCICollCIPtr) +=  Itzr_Vbci;
 /*
 c           Stamp element: Ibc
 */
@@ -1118,7 +1123,7 @@ c           Stamp element: Ibep
             *(here->VBICbaseBPBaseBXPtr) += -Ibep_Vbep;
             *(here->VBICbaseBPBaseBPPtr) +=  Ibep_Vbep;
 /*
-c           Stamp element: Ircx
+c           Stamp element: Rcx
 */
             *(here->VBICcollCollPtr) +=  Ircx_Vrcx;
             *(here->VBICcollCXCollCXPtr) +=  Ircx_Vrcx;
@@ -1143,7 +1148,7 @@ c           Stamp element: Irci
             *(here->VBICcollCIBaseBIPtr) += -Irci_Vbcx;
             *(here->VBICcollCICollCXPtr) +=  Irci_Vbcx;
 /*
-c           Stamp element: Irbx
+c           Stamp element: Rbx
 */
             *(here->VBICbaseBasePtr) +=  Irbx_Vrbx;
             *(here->VBICbaseBXBaseBXPtr) +=  Irbx_Vrbx;
@@ -1168,7 +1173,7 @@ c           Stamp element: Irbi
             *(here->VBICbaseBIBaseBIPtr) += -Irbi_Vbci;
             *(here->VBICbaseBICollCIPtr) +=  Irbi_Vbci;
 /*
-c           Stamp element: Ire
+c           Stamp element: Re
 */
             *(here->VBICemitEmitPtr) +=  Ire_Vre;
             *(here->VBICemitEIEmitEIPtr) +=  Ire_Vre;
@@ -1221,7 +1226,7 @@ c           Stamp element: Iccp
             *(here->VBICsubsSISubsSIPtr) += -Iccp_Vbcp;
             *(here->VBICsubsSIBaseBPPtr) +=  Iccp_Vbcp;
 /*
-c           Stamp element: Irs
+c           Stamp element: Rs
 */
             *(here->VBICsubsSubsPtr) +=  Irs_Vrs;
             *(here->VBICsubsSISubsSIPtr) +=  Irs_Vrs;

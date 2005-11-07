@@ -53,6 +53,19 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
           model->VBICsubstrateConduct = 0.0;
         }
 
+        if(model->VBICtempExpRBGiven && !model->VBICtempExpRBIGiven) {
+          model->VBICtempExpRBI = model->VBICtempExpRB;
+        }
+        if(model->VBICtempExpRBGiven && !model->VBICtempExpRBXGiven) {
+          model->VBICtempExpRBX = model->VBICtempExpRB;
+        }
+        if(model->VBICtempExpRCGiven && !model->VBICtempExpRCIGiven) {
+          model->VBICtempExpRCI = model->VBICtempExpRC;
+        }
+        if(model->VBICtempExpRCGiven && !model->VBICtempExpRCXGiven) {
+          model->VBICtempExpRCX = model->VBICtempExpRC;
+        }
+
         /* loop through all the instances of the model */
         for (here = model->VBICinstances; here != NULL ;
                 here=here->VBICnextInstance) {

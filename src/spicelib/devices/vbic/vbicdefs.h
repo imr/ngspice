@@ -226,13 +226,13 @@ typedef struct sVBICinstance {
 #define VBICRBINOIZ      3
 #define VBICRENOIZ       4
 #define VBICRBPNOIZ      5
-#define VBICICNOIZ       6
-#define VBICIBNOIZ       7
-#define VBICIBEPNOIZ     8
-#define VBICFLBENOIZ     9
-#define VBICFLBEPNOIZ   10
-#define VBICRSNOIZ      11
-#define VBICICCPNOIZ    12
+#define VBICRSNOIZ       6
+#define VBICICNOIZ       7
+#define VBICIBNOIZ       8
+#define VBICIBEPNOIZ     9
+#define VBICICCPNOIZ    10
+#define VBICFLBENOIZ    11
+#define VBICFLBEPNOIZ   12
 #define VBICTOTNOIZ     13
 
 #define VBICNSRCS       14     /* the number of VBIC noise sources */
@@ -333,13 +333,13 @@ typedef struct sVBICinstance {
 
 #define VBICnumStates 62
 
-#define VBICsensxpbe VBICstate+64 /* charge sensitivities and their
-                   derivatives. +65 for the derivatives -
+#define VBICsensxpbe VBICstate+62 /* charge sensitivities and their
+                   derivatives. +63 for the derivatives -
                    pointer to the beginning of the array */
-#define VBICsensxpbex VBICstate+66
-#define VBICsensxpbc VBICstate+68
-#define VBICsensxpbcx VBICstate+70
-#define VBICsensxpbep VBICstate+72
+#define VBICsensxpbex VBICstate+64
+#define VBICsensxpbc VBICstate+66
+#define VBICsensxpbcx VBICstate+68
+#define VBICsensxpbep VBICstate+70
 
 #define VBICnumSenStates 10
 
@@ -422,7 +422,9 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     double VBICfNexpA;
     double VBICfNexpB;
     double VBICtempExpRE;
+    double VBICtempExpRB;
     double VBICtempExpRBI;
+    double VBICtempExpRC;
     double VBICtempExpRCI;
     double VBICtempExpRS;
     double VBICtempExpVO;
@@ -536,7 +538,9 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     unsigned VBICfNexpAGiven : 1;
     unsigned VBICfNexpBGiven : 1;
     unsigned VBICtempExpREGiven : 1;
+    unsigned VBICtempExpRBGiven : 1;
     unsigned VBICtempExpRBIGiven : 1;
+    unsigned VBICtempExpRCGiven : 1;
     unsigned VBICtempExpRCIGiven : 1;
     unsigned VBICtempExpRSGiven : 1;
     unsigned VBICtempExpVOGiven : 1;
@@ -664,47 +668,49 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
 #define VBIC_MOD_AFN    167 
 #define VBIC_MOD_BFN    168 
 #define VBIC_MOD_XRE    169 
-#define VBIC_MOD_XRBI   170 
-#define VBIC_MOD_XRCI   171 
-#define VBIC_MOD_XRS    172 
-#define VBIC_MOD_XVO    173 
-#define VBIC_MOD_EA     174 
-#define VBIC_MOD_EAIE   175 
-#define VBIC_MOD_EAIC   176 
-#define VBIC_MOD_EAIS   177 
-#define VBIC_MOD_EANE   178 
-#define VBIC_MOD_EANC   179 
-#define VBIC_MOD_EANS   180 
-#define VBIC_MOD_XIS    181 
-#define VBIC_MOD_XII    182 
-#define VBIC_MOD_XIN    183 
-#define VBIC_MOD_TNF    184 
-#define VBIC_MOD_TAVC   185 
-#define VBIC_MOD_RTH    186 
-#define VBIC_MOD_CTH    187 
-#define VBIC_MOD_VRT    188 
-#define VBIC_MOD_ART    189 
-#define VBIC_MOD_CCSO   190 
-#define VBIC_MOD_QBM    191 
-#define VBIC_MOD_NKF    192 
-#define VBIC_MOD_XIKF   193 
-#define VBIC_MOD_XRCX   194 
-#define VBIC_MOD_XRBX   195 
-#define VBIC_MOD_XRBP   196 
-#define VBIC_MOD_ISRR   197 
-#define VBIC_MOD_XISR   198 
-#define VBIC_MOD_DEAR   199 
-#define VBIC_MOD_EAP    200 
-#define VBIC_MOD_VBBE   201 
-#define VBIC_MOD_NBBE   202
-#define VBIC_MOD_IBBE   203
-#define VBIC_MOD_TVBBE1 204 
-#define VBIC_MOD_TVBBE2 205 
-#define VBIC_MOD_TNBBE  206 
-#define VBIC_MOD_EBBE   207 
-#define VBIC_MOD_DTEMP  208 
-#define VBIC_MOD_VERS   209
-#define VBIC_MOD_VREF   210
+#define VBIC_MOD_XRB    170 
+#define VBIC_MOD_XRBI   171 
+#define VBIC_MOD_XRC    172 
+#define VBIC_MOD_XRCI   173 
+#define VBIC_MOD_XRS    174 
+#define VBIC_MOD_XVO    175 
+#define VBIC_MOD_EA     176 
+#define VBIC_MOD_EAIE   177 
+#define VBIC_MOD_EAIC   178 
+#define VBIC_MOD_EAIS   179 
+#define VBIC_MOD_EANE   180 
+#define VBIC_MOD_EANC   181 
+#define VBIC_MOD_EANS   182 
+#define VBIC_MOD_XIS    183 
+#define VBIC_MOD_XII    184 
+#define VBIC_MOD_XIN    185 
+#define VBIC_MOD_TNF    186 
+#define VBIC_MOD_TAVC   187 
+#define VBIC_MOD_RTH    188 
+#define VBIC_MOD_CTH    189 
+#define VBIC_MOD_VRT    190 
+#define VBIC_MOD_ART    191 
+#define VBIC_MOD_CCSO   192 
+#define VBIC_MOD_QBM    193 
+#define VBIC_MOD_NKF    194 
+#define VBIC_MOD_XIKF   195 
+#define VBIC_MOD_XRCX   196 
+#define VBIC_MOD_XRBX   197 
+#define VBIC_MOD_XRBP   198 
+#define VBIC_MOD_ISRR   199 
+#define VBIC_MOD_XISR   200 
+#define VBIC_MOD_DEAR   201 
+#define VBIC_MOD_EAP    202 
+#define VBIC_MOD_VBBE   203 
+#define VBIC_MOD_NBBE   204
+#define VBIC_MOD_IBBE   205
+#define VBIC_MOD_TVBBE1 206 
+#define VBIC_MOD_TVBBE2 207 
+#define VBIC_MOD_TNBBE  208 
+#define VBIC_MOD_EBBE   209 
+#define VBIC_MOD_DTEMP  210 
+#define VBIC_MOD_VERS   211
+#define VBIC_MOD_VREF   212
 
                               
 /* device questions */        

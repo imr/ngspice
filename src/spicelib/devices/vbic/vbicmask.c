@@ -172,14 +172,14 @@ VBICmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case VBIC_MOD_IBCNP:
             value->rValue = here->VBICnidealParasitSatCurBC;
             return(OK);
-	case VBIC_MOD_NCNP:
+        case VBIC_MOD_NCNP:
             value->rValue = here->VBICnidealParasitEmissCoeffBC;
             return(OK);
-	case VBIC_MOD_VEF:
-	    value->rValue = here->VBICearlyVoltF;
+        case VBIC_MOD_VEF:
+            value->rValue = here->VBICearlyVoltF;
             return(OK);
         case VBIC_MOD_VER:
-	    value->rValue = here->VBICearlyVoltR;
+            value->rValue = here->VBICearlyVoltR;
             return(OK);
         case VBIC_MOD_IKF:
             value->rValue = here->VBICrollOffF;
@@ -223,8 +223,14 @@ VBICmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case VBIC_MOD_XRE:
             value->rValue = here->VBICtempExpRE;
             return(OK);
+        case VBIC_MOD_XRB:
+            value->rValue = here->VBICtempExpRB;
+            return(OK);
         case VBIC_MOD_XRBI:
             value->rValue = here->VBICtempExpRBI;
+            return(OK);
+        case VBIC_MOD_XRC:
+            value->rValue = here->VBICtempExpRC;
             return(OK);
         case VBIC_MOD_XRCI:
             value->rValue = here->VBICtempExpRCI;
@@ -286,13 +292,13 @@ VBICmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case VBIC_MOD_CCSO:
             value->rValue = here->VBICfixedCapacitanceCS;
             return(OK);
-	case VBIC_MOD_QBM:
-	    value->rValue = here->VBICsgpQBselector;
+        case VBIC_MOD_QBM:
+            value->rValue = here->VBICsgpQBselector;
             return(OK);
-	case VBIC_MOD_NKF:
-	    value->rValue = here->VBIChighCurrentBetaRolloff;
+        case VBIC_MOD_NKF:
+            value->rValue = here->VBIChighCurrentBetaRolloff;
             return(OK);
-         case VBIC_MOD_XIKF:
+        case VBIC_MOD_XIKF:
             value->rValue = here->VBICtempExpIKF;
             return(OK);
         case VBIC_MOD_XRCX:
@@ -346,11 +352,11 @@ VBICmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case VBIC_MOD_VREF:
             value->rValue = here->VBICrefVersion;
             return(OK);
-	case VBIC_MOD_TYPE:
-	    if (here->VBICtype == NPN)
-	        value->sValue = "npn";
-	    else
-	        value->sValue = "pnp";
+        case VBIC_MOD_TYPE:
+            if (here->VBICtype == NPN)
+                value->sValue = "npn";
+            else
+                value->sValue = "pnp";
             return(OK);
         default:
             return(E_BADPARM);

@@ -73,7 +73,7 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case VBIC_MOD_RE:
             mods->VBICemitterResist = value->rValue;
-            if (mods->VBICemitterResist < 0.1) mods->VBICemitterResist = 0.1;
+            if (mods->VBICemitterResist < 0.01) mods->VBICemitterResist = 0.01;
             mods->VBICemitterResistGiven = TRUE;
             break;
         case VBIC_MOD_RS:
@@ -242,17 +242,17 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->VBICnidealParasitSatCurBC = value->rValue;
             mods->VBICnidealParasitSatCurBCGiven = TRUE;
             break;
-	case VBIC_MOD_NCNP:
+        case VBIC_MOD_NCNP:
             mods->VBICnidealParasitEmissCoeffBC = value->rValue;
             mods->VBICnidealParasitEmissCoeffBCGiven = TRUE;
-	    break;
-	case VBIC_MOD_VEF:
-	    mods->VBICearlyVoltF = value->rValue;
-	    mods->VBICearlyVoltFGiven = TRUE;
-	    break;
+            break;
+        case VBIC_MOD_VEF:
+            mods->VBICearlyVoltF = value->rValue;
+            mods->VBICearlyVoltFGiven = TRUE;
+            break;
         case VBIC_MOD_VER:
-	    mods->VBICearlyVoltR = value->rValue;
-	    mods->VBICearlyVoltRGiven = TRUE;
+            mods->VBICearlyVoltR = value->rValue;
+            mods->VBICearlyVoltRGiven = TRUE;
             break;
         case VBIC_MOD_IKF:
             mods->VBICrollOffF = value->rValue;
@@ -310,9 +310,17 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->VBICtempExpRE = value->rValue;
             mods->VBICtempExpREGiven = TRUE;
             break;
+        case VBIC_MOD_XRB:
+            mods->VBICtempExpRB = value->rValue;
+            mods->VBICtempExpRBGiven = TRUE;
+            break;
         case VBIC_MOD_XRBI:
             mods->VBICtempExpRBI = value->rValue;
             mods->VBICtempExpRBIGiven = TRUE;
+            break;
+        case VBIC_MOD_XRC:
+            mods->VBICtempExpRC = value->rValue;
+            mods->VBICtempExpRCGiven = TRUE;
             break;
         case VBIC_MOD_XRCI:
             mods->VBICtempExpRCI = value->rValue;
@@ -394,15 +402,15 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->VBICfixedCapacitanceCS = value->rValue;
             mods->VBICfixedCapacitanceCSGiven = TRUE;
             break;
-	case VBIC_MOD_QBM:
-	    mods->VBICsgpQBselector = value->rValue;
-	    mods->VBICsgpQBselectorGiven = TRUE;
-	    break;
-	case VBIC_MOD_NKF:
-	    mods->VBIChighCurrentBetaRolloff = value->rValue;
-	    mods->VBIChighCurrentBetaRolloffGiven = TRUE;
-	    break;
-         case VBIC_MOD_XIKF:
+        case VBIC_MOD_QBM:
+            mods->VBICsgpQBselector = value->rValue;
+            mods->VBICsgpQBselectorGiven = TRUE;
+            break;
+        case VBIC_MOD_NKF:
+            mods->VBIChighCurrentBetaRolloff = value->rValue;
+            mods->VBIChighCurrentBetaRolloffGiven = TRUE;
+            break;
+        case VBIC_MOD_XIKF:
             mods->VBICtempExpIKF = value->rValue;
             mods->VBICtempExpIKFGiven = TRUE;
             break;

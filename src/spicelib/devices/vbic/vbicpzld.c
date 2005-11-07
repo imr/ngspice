@@ -41,6 +41,7 @@ VBICpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
             if (here->VBICowner != ARCHme) continue;
 
+     
             Ircx_Vrcx = 1.0 / here->VBICtextCollResist * here->VBICarea * here->VBICm;
             Irbx_Vrbx = 1.0 / here->VBICtextBaseResist * here->VBICarea * here->VBICm;
             Ire_Vre = 1.0 / here->VBICtemitterResist * here->VBICarea * here->VBICm;

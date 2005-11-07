@@ -63,7 +63,7 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->VBICintBaseResist = 0.1;
         }
         if(!model->VBICemitterResistGiven) {
-            model->VBICemitterResist = 0.1;
+            model->VBICemitterResist = 0.01;
         }
         if(!model->VBICsubstrateResistGiven) {
             model->VBICsubstrateResist = 0.1;
@@ -149,12 +149,12 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->VBICidealSatCurBCGiven) {
             model->VBICidealSatCurBC = 1e-16;
         }
-	if(!model->VBICidealEmissCoeffBCGiven) {
-	    model->VBICidealEmissCoeffBC = 1.0;
-	}
-	if(!model->VBICnidealSatCurBCGiven) {
-	    model->VBICnidealSatCurBC = 0.0;
-	}
+        if(!model->VBICidealEmissCoeffBCGiven) {
+            model->VBICidealEmissCoeffBC = 1.0;
+        }
+        if(!model->VBICnidealSatCurBCGiven) {
+            model->VBICnidealSatCurBC = 0.0;
+        }
         if(!model->VBICnidealEmissCoeffBCGiven) {
             model->VBICnidealEmissCoeffBC = 2.0;
         }
@@ -239,8 +239,14 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->VBICtempExpREGiven) {
             model->VBICtempExpRE = 0.0;
         }
+        if(!model->VBICtempExpRBGiven) {
+            model->VBICtempExpRB = 0.0;
+        }
         if(!model->VBICtempExpRBIGiven) {
             model->VBICtempExpRBI = 0.0;
+        }
+        if(!model->VBICtempExpRCGiven) {
+            model->VBICtempExpRC = 0.0;
         }
         if(!model->VBICtempExpRCIGiven) {
             model->VBICtempExpRCI = 0.0;
@@ -266,12 +272,12 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->VBICactivEnergyEANEGiven) {
             model->VBICactivEnergyEANE = 1.12;
         }
-	if(!model->VBICactivEnergyEANCGiven) {
-	    model->VBICactivEnergyEANC = 1.12;
-	}
-	if(!model->VBICactivEnergyEANSGiven) {
-	    model->VBICactivEnergyEANS = 1.12;
-	}
+        if(!model->VBICactivEnergyEANCGiven) {
+            model->VBICactivEnergyEANC = 1.12;
+        }
+        if(!model->VBICactivEnergyEANSGiven) {
+            model->VBICactivEnergyEANS = 1.12;
+        }
         if(!model->VBICtempExpISGiven) {
             model->VBICtempExpIS = 3.0;
         }
@@ -462,10 +468,6 @@ matrixpointers:
             if(error) return(error);
             here->VBICbaseBINode = tmp->number;  
 
-            error = CKTmkVolt(ckt, &tmp, here->VBICname, "subsSI");
-            if(error) return(error);
-            here->VBICsubsSINode = tmp->number;  
-
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
@@ -539,54 +541,51 @@ VBICunsetup(inModel,ckt)
     VBICinstance *here;
 
     for (model = (VBICmodel *)inModel; model != NULL;
-	    model = model->VBICnextModel)
+        model = model->VBICnextModel)
     {
         for (here = model->VBICinstances; here != NULL;
                 here=here->VBICnextInstance)
-	{
-	    if (here->VBICcollCXNode
-		    && here->VBICcollCXNode != here->VBICcollNode)
-	    {
-		CKTdltNNum(ckt, here->VBICcollCXNode);
-		here->VBICcollCXNode = 0;
-	    }
-	    if (here->VBICcollCINode
-		    && here->VBICcollCINode != here->VBICcollNode)
-	    {
-		CKTdltNNum(ckt, here->VBICcollCINode);
-		here->VBICcollCINode = 0;
-	    }
-	    if (here->VBICbaseBXNode
-		    && here->VBICbaseBXNode != here->VBICbaseNode)
-	    {
-		CKTdltNNum(ckt, here->VBICbaseBXNode);
-		here->VBICbaseBXNode = 0;
-	    }
-	    if (here->VBICbaseBINode
-		    && here->VBICbaseBINode != here->VBICbaseNode)
-	    {
-		CKTdltNNum(ckt, here->VBICbaseBINode);
-		here->VBICbaseBINode = 0;
-	    }
-	    if (here->VBICbaseBPNode
-		    && here->VBICbaseBPNode != here->VBICbaseNode)
-	    {
-		CKTdltNNum(ckt, here->VBICbaseBPNode);
-		here->VBICbaseBPNode = 0;
-	    }
-	    if (here->VBICemitEINode
-		    && here->VBICemitEINode != here->VBICemitNode)
-	    {
-		CKTdltNNum(ckt, here->VBICemitEINode);
-		here->VBICemitEINode = 0;
-	    }
-	    if (here->VBICsubsSINode
-		    && here->VBICsubsSINode != here->VBICsubsNode)
-	    {
-		CKTdltNNum(ckt, here->VBICsubsSINode);
-		here->VBICsubsSINode = 0;
-	    }
-	}
+        {
+            if (here->VBICcollCXNode
+                && here->VBICcollCXNode != here->VBICcollNode)
+            {
+                CKTdltNNum(ckt, here->VBICcollCXNode);
+                here->VBICcollCXNode = 0;
+            }
+            if (here->VBICbaseBXNode
+                && here->VBICbaseBXNode != here->VBICbaseNode)
+            {
+                CKTdltNNum(ckt, here->VBICbaseBXNode);
+                here->VBICbaseBXNode = 0;
+            }
+            if (here->VBICemitEINode
+                && here->VBICemitEINode != here->VBICemitNode)
+            {
+                CKTdltNNum(ckt, here->VBICemitEINode);
+                here->VBICemitEINode = 0;
+            }
+            if (here->VBICsubsSINode
+                && here->VBICsubsSINode != here->VBICsubsNode)
+            {
+                CKTdltNNum(ckt, here->VBICsubsSINode);
+                here->VBICsubsSINode = 0;
+            }
+            if (here->VBICcollCINode)
+            {
+                CKTdltNNum(ckt, here->VBICcollCINode);
+                here->VBICcollCINode = 0;
+            }
+            if (here->VBICbaseBINode)
+            {
+                CKTdltNNum(ckt, here->VBICbaseBINode);
+                here->VBICbaseBINode = 0;
+            }
+            if (here->VBICbaseBPNode)
+            {
+                CKTdltNNum(ckt, here->VBICbaseBPNode);
+                here->VBICbaseBPNode = 0;
+            }
+        }
     }
     return OK;
 }

@@ -1,3 +1,12 @@
+2005-11-07  Paolo Nenzi <p.nenzi@ieee.org>
+
+ *  src/spicelib/devices/vbic/*: Dietmar Warning sent a patch to his last
+    vbic implementation:
+     - Added temperature dependence for RB and RC, 
+     - fixed a bug in current sign (reversing vbei and vbci),
+     - removed double allocation of substrate node.
+        
+
 2005-10-19  Steven Borley <steven.borley@virgin.net>
 
  * src/Makefile.am: Implemented fix to prevent 'multiple definition' errors 
