@@ -327,7 +327,6 @@ JOB   *job;
         if (!model->BSIM4prwbGiven)
             model->BSIM4prwb = 0.0;      
         if (!model->BSIM4prtGiven)
-        if (!model->BSIM4prtGiven)
             model->BSIM4prt = 0.0;      
         if (!model->BSIM4eta0Given)
             model->BSIM4eta0 = 0.08;      /* no unit  */ 

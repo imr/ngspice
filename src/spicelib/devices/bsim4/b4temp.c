@@ -142,6 +142,8 @@ int Size_Not_Found, i;
          }
          if (!model->BSIM4cgboGiven)
              model->BSIM4cgbo = 2.0 * model->BSIM4dwc * model->BSIM4coxe;
+	 /* va: was memory leakage - free old node, (or better use again?) */
+         FREE(model->pSizeDependParamKnot);    
          model->pSizeDependParamKnot = NULL;
          pLastKnot = NULL;
 

@@ -7,6 +7,25 @@
     - Added NodeSet for internal nodes.
     - Removed #ifdef STDC and non STDC function prototypes
     - Added missing "pParam->BSIM4ku0we" to fprintf in b4temp.c.    
+ 
+ *  src/spicelib/devices/bsim4/b4temp.c: fixed the following bug (Dietmar
+    Warning):
+    
+    - Freed old node adding FREE(model->pSizeDependParamKnot); near line 146.
+     
+ *  src/spicelib/devices/bsim4/b4set.c: fixed the following bug (Dietmar 
+    Warning):
+    
+    - Removed double testing for model->BSIM4prtGiven.  
+ 
+ *  src/spicelib/devices/bsim4/b4ld.c: fixed the following bugs:
+ 
+    - In the computation of ggts and ggtd near line 4014 here->BSIM4gcrgd
+      and here->BSIM4gcrgs were exchanged. (Dietmar Warning).
+    
+    - In the computation of gcqdb and gcqsb near line 4019 here->BSIM4cqsb
+      and here->BSIM4cqdb were exchanged (Hitoshi Tanaka).  
+    
 
 2005-11-07  Paolo Nenzi <p.nenzi@ieee.org>
 
