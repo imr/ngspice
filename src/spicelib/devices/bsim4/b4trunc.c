@@ -1,10 +1,10 @@
-/**** BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004 ****/
+/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
 
 /**********
  * Copyright 2004 Regents of the University of California. All rights reserved.
- * File: b4trunc.c of BSIM4.4.0.
+ * File: b4trunc.c of BSIM4.5.0.
  * Author: 2000 Weidong Liu
- * Authors: 2001- Xuemei Xi, Jin He, Kanyu Cao, Mohan Dunga, Mansun Chan, Ali Niknejad, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
  **********/
 
@@ -13,6 +13,7 @@
 #include "bsim4def.h"
 #include "sperror.h"
 #include "suffix.h"
+
 
 int
 BSIM4trunc(inModel,ckt,timeStep)

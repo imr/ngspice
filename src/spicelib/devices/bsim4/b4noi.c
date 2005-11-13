@@ -1,16 +1,17 @@
-/**** BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004 ****/
+/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2004 Regents of the University of California. All rights reserved.
- * File: b4noi.c of BSIM4.4.0.
+ * Copyright 2005 Regents of the University of California. All rights reserved.
+ * File: b4noi.c of BSIM4.5.0.
  * Author: 2000 Weidong Liu
- * Authors: 2001- Xuemei Xi, Jin He, Kanyu Cao, Mohan Dunga, Mansun Chan, Ali Niknejad, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
  * Modified by Xuemei Xi, 11/15/2002.
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 03/04/2004.
+ * Modified by Xuemei Xi, 07/29/2005.
  **********/
 
 #include "ngspice.h"
@@ -51,6 +52,7 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
     	T0 = ((((Vds - here->BSIM4Vdseff) / pParam->BSIM4litl)
        		+ model->BSIM4em) / esat);
     	DelClm = pParam->BSIM4litl * log (MAX(T0, N_MINLOG));
+    	if (DelClm < 0.0)	DelClm = 0.0;  /* bugfix */
     }
     EffFreq = pow(freq, model->BSIM4ef);
     T1 = CHARGE * CHARGE * CONSTboltz * cd * temp * here->BSIM4ueff;
@@ -65,7 +67,7 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
     T5 = model->BSIM4oxideTrapDensityC * 0.5 * (N0 * N0 - Nl * Nl);
 
     T6 = CONSTboltz * temp * cd * cd;
-    T7 = 1.0e10 * EffFreq * Leffsq * pParam->BSIM4weff;
+    T7 = 1.0e10 * EffFreq * Leffsq * pParam->BSIM4weff * here->BSIM4nf;
     T8 = model->BSIM4oxideTrapDensityA + model->BSIM4oxideTrapDensityB * Nl
        + model->BSIM4oxideTrapDensityC * Nl * Nl;
     T9 = (Nl + here->BSIM4nstar) * (Nl + here->BSIM4nstar);
@@ -93,7 +95,7 @@ double lnNdens[BSIM4NSRCS];
 
 double T0, T1, T2, T5, T10, T11;
 double Vds, Ssi, Swi;
-double tmp=0.0, gdpr, gspr, npart_theta=0.0, npart_beta=0.0, igsquare;
+double tmp=0.0, gdpr, gspr, npart_theta=0.0, npart_beta=0.0, igsquare, bodymode;
 
 double m;
 
@@ -256,28 +258,79 @@ int i;
                                           log(MAX(noizDens[BSIM4RGNOIZ], N_MINLOG));
 			      }
 
+	      		      bodymode = 5;
+	      		      if (here->BSIM4rbodyMod == 2)
+	      		      {	if( ( !model->BSIM4rbps0Given) || 
+		  		    ( !model->BSIM4rbpd0Given) )
+				     	bodymode = 1;
+	      		     	else 
+			     	if( (!model->BSIM4rbsbx0Given && !model->BSIM4rbsby0Given) ||
+		      		    (!model->BSIM4rbdbx0Given && !model->BSIM4rbdby0Given) )
+		  		   	bodymode = 3;
+		  	      }
 
                               if (here->BSIM4rbodyMod)
-                              {   NevalSrc(&noizDens[BSIM4RBPSNOIZ],
-                                       &lnNdens[BSIM4RBPSNOIZ], ckt, THERMNOISE,
-                                       here->BSIM4bNodePrime, here->BSIM4sbNode,
-                                       here->BSIM4grbps * m);
-                                  NevalSrc(&noizDens[BSIM4RBPDNOIZ],
-                                       &lnNdens[BSIM4RBPDNOIZ], ckt, THERMNOISE,
-                                       here->BSIM4bNodePrime, here->BSIM4dbNode,
-                                       here->BSIM4grbpd * m);
-                                  NevalSrc(&noizDens[BSIM4RBPBNOIZ],
-                                       &lnNdens[BSIM4RBPBNOIZ], ckt, THERMNOISE,
-                                       here->BSIM4bNodePrime, here->BSIM4bNode,
-                                       here->BSIM4grbpb * m);
-                                  NevalSrc(&noizDens[BSIM4RBSBNOIZ],
-                                       &lnNdens[BSIM4RBSBNOIZ], ckt, THERMNOISE,
-                                       here->BSIM4bNode, here->BSIM4sbNode,
-                                       here->BSIM4grbsb * m);
-                                  NevalSrc(&noizDens[BSIM4RBDBNOIZ],
-                                       &lnNdens[BSIM4RBDBNOIZ], ckt, THERMNOISE,
-                                       here->BSIM4bNode, here->BSIM4dbNode,
-                                       here->BSIM4grbdb * m);
+                              { 
+				if(bodymode == 5)
+				  {
+				    NevalSrc(&noizDens[BSIM4RBPSNOIZ],
+					     &lnNdens[BSIM4RBPSNOIZ], ckt, THERMNOISE,
+					     here->BSIM4bNodePrime, here->BSIM4sbNode,
+					     here->BSIM4grbps * m);
+				    NevalSrc(&noizDens[BSIM4RBPDNOIZ],
+					     &lnNdens[BSIM4RBPDNOIZ], ckt, THERMNOISE,
+					     here->BSIM4bNodePrime, here->BSIM4dbNode,
+					     here->BSIM4grbpd * m);
+				    NevalSrc(&noizDens[BSIM4RBPBNOIZ],
+					     &lnNdens[BSIM4RBPBNOIZ], ckt, THERMNOISE,
+					     here->BSIM4bNodePrime, here->BSIM4bNode,
+					     here->BSIM4grbpb * m);
+				    NevalSrc(&noizDens[BSIM4RBSBNOIZ],
+					     &lnNdens[BSIM4RBSBNOIZ], ckt, THERMNOISE,
+					     here->BSIM4bNode, here->BSIM4sbNode,
+					     here->BSIM4grbsb * m);
+				    NevalSrc(&noizDens[BSIM4RBDBNOIZ],
+					     &lnNdens[BSIM4RBDBNOIZ], ckt, THERMNOISE,
+					     here->BSIM4bNode, here->BSIM4dbNode,
+					     here->BSIM4grbdb * m);
+				  }
+				if(bodymode == 3)
+				  {
+				    NevalSrc(&noizDens[BSIM4RBPSNOIZ],
+					     &lnNdens[BSIM4RBPSNOIZ], ckt, THERMNOISE,
+					     here->BSIM4bNodePrime, here->BSIM4sbNode,
+					     here->BSIM4grbps * m);
+				    NevalSrc(&noizDens[BSIM4RBPDNOIZ],
+					     &lnNdens[BSIM4RBPDNOIZ], ckt, THERMNOISE,
+					     here->BSIM4bNodePrime, here->BSIM4dbNode,
+					     here->BSIM4grbpd * m);
+				    NevalSrc(&noizDens[BSIM4RBPBNOIZ],
+					     &lnNdens[BSIM4RBPBNOIZ], ckt, THERMNOISE,
+					     here->BSIM4bNodePrime, here->BSIM4bNode,
+					     here->BSIM4grbpb * m);
+				     noizDens[BSIM4RBSBNOIZ] = noizDens[BSIM4RBDBNOIZ] = 0.0;
+				     lnNdens[BSIM4RBSBNOIZ] =
+				       log(MAX(noizDens[BSIM4RBSBNOIZ], N_MINLOG));
+				     lnNdens[BSIM4RBDBNOIZ] =
+				       log(MAX(noizDens[BSIM4RBDBNOIZ], N_MINLOG));				     
+				  }
+				if(bodymode == 1)
+				  {
+				    NevalSrc(&noizDens[BSIM4RBPBNOIZ],
+					     &lnNdens[BSIM4RBPBNOIZ], ckt, THERMNOISE,
+					     here->BSIM4bNodePrime, here->BSIM4bNode,
+					     here->BSIM4grbpb * m);				    
+				    noizDens[BSIM4RBPSNOIZ] = noizDens[BSIM4RBPDNOIZ] = 0.0;                                    
+				    noizDens[BSIM4RBSBNOIZ] = noizDens[BSIM4RBDBNOIZ] = 0.0;
+				    lnNdens[BSIM4RBPSNOIZ] =
+				      log(MAX(noizDens[BSIM4RBPSNOIZ], N_MINLOG));
+				    lnNdens[BSIM4RBPDNOIZ] =
+				      log(MAX(noizDens[BSIM4RBPDNOIZ], N_MINLOG));
+				    lnNdens[BSIM4RBSBNOIZ] =
+				      log(MAX(noizDens[BSIM4RBSBNOIZ], N_MINLOG));
+				    lnNdens[BSIM4RBDBNOIZ] =
+				      log(MAX(noizDens[BSIM4RBDBNOIZ], N_MINLOG));
+				  }
                               }
                               else
                               {   noizDens[BSIM4RBPSNOIZ] = noizDens[BSIM4RBPDNOIZ] = 0.0;   
@@ -308,7 +361,7 @@ int i;
 					       (T0 / T1) * model->BSIM4ntnoi);
 				      break;
 				 case 1:
-				      T0 = m * (here->BSIM4gm + here->BSIM4gmbs + here->BSIM4gds);
+				      T0 = m * here->BSIM4gm + here->BSIM4gmbs + here->BSIM4gds;
 				      T0 *= T0;
 				      igsquare = npart_theta * npart_theta * T0 / here->BSIM4IdovVds;
 				      T1 = npart_beta * (here->BSIM4gm
@@ -345,7 +398,7 @@ int i;
                                           data->freq, ckt->CKTtemp);
                                       T10 = model->BSIM4oxideTrapDensityA
                                           * CONSTboltz * ckt->CKTtemp;
-                                      T11 = pParam->BSIM4weff * pParam->BSIM4leff
+                                      T11 = pParam->BSIM4weff * here->BSIM4nf * pParam->BSIM4leff
                                           * pow(data->freq, model->BSIM4ef) * 1.0e10
 					  * here->BSIM4nstar * here->BSIM4nstar;
                                       Swi = T10 / T11 * here->BSIM4cd

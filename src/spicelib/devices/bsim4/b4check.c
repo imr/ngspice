@@ -1,16 +1,17 @@
-/**** BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004 ****/
+/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2004 Regents of the University of California. All rights reserved.
- * File: b4check.c of BSIM4.4.0.
+ * Copyright 2005 Regents of the University of California. All rights reserved.
+ * File: b4check.c of BSIM4.5.0.
  * Author: 2000 Weidong Liu
- * Authors: 2001- Xuemei Xi, Jin He, Kanyu Cao, Mohan Dunga, Mansun Chan, Ali Niknejad, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
  * Modified by Xuemei Xi, 11/15/2002.
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 03/04/2004.
+ * Modified by Xuemei Xi, 07/29/2005.
  **********/
 
 #include "ngspice.h"
@@ -35,13 +36,13 @@ FILE *fplog;
     if ((fplog = fopen("bsim4.out", "w")) != NULL)
     {   pParam = here->pParam;
         fprintf(fplog, "BSIM4: Berkeley Short Channel IGFET Model-4\n");
-        fprintf(fplog, "Developed by Xuemei (Jane) Xi, Jin He, Mohan Dunga, Prof. Ali Niknejad and Prof. Chenming Hu in 2003.\n");
+        fprintf(fplog, "Developed by Xuemei (Jane) Xi, Mohan Dunga, Prof. Ali Niknejad and Prof. Chenming Hu in 2003.\n");
         fprintf(fplog, "\n");
 	fprintf(fplog, "++++++++++ BSIM4 PARAMETER CHECKING BELOW ++++++++++\n");
 
-        if (strcmp(model->BSIM4version, "4.4.0") != 0)
-        {  fprintf(fplog, "Warning: This model is BSIM4.4.0; you specified a wrong version number.\n");
-           printf("Warning: This model is BSIM4.4.0; you specified a wrong version number.\n");
+        if (strcmp(model->BSIM4version, "4.5.0") != 0)
+        {  fprintf(fplog, "Warning: This model is BSIM4.5.0; you specified a wrong version number.\n");
+           printf("Warning: This model is BSIM4.5.0; you specified a wrong version number.\n");
         }
 	fprintf(fplog, "Model = %s\n", model->BSIM4modName);
 
@@ -209,12 +210,13 @@ FILE *fplog;
 	    printf("Fatal: Drout = %g is negative.\n", pParam->BSIM4drout);
 	    Fatal_Flag = 1;
 	}
-
-        if (here->BSIM4m < 1.0)
+	
+        /*if (here->BSIM4m < 1.0)
         {   fprintf(fplog, "Fatal: Number of multiplier = %g is smaller than one.\n", here->BSIM4m);
             printf("Fatal: Number of multiplier = %g is smaller than one.\n", here->BSIM4m);
             Fatal_Flag = 1;
-        }
+        }*/
+
         if (here->BSIM4nf < 1.0)
         {   fprintf(fplog, "Fatal: Number of finger = %g is smaller than one.\n", here->BSIM4nf);
             printf("Fatal: Number of finger = %g is smaller than one.\n", here->BSIM4nf);
@@ -240,13 +242,13 @@ FILE *fplog;
             printf("Fatal: The parameter xgl must be smaller than Ldrawn+XL.\n");
             Fatal_Flag = 1;
         }
-        if (model->BSIM4ngcon < 1.0)
+        if (here->BSIM4ngcon < 1.0)
         {   fprintf(fplog, "Fatal: The parameter ngcon cannot be smaller than one.\n");
             printf("Fatal: The parameter ngcon cannot be smaller than one.\n");
             Fatal_Flag = 1;
         }
-        if ((model->BSIM4ngcon != 1.0) && (model->BSIM4ngcon != 2.0))
-        {   model->BSIM4ngcon = 1.0;
+        if ((here->BSIM4ngcon != 1.0) && (here->BSIM4ngcon != 2.0))
+        {   here->BSIM4ngcon = 1.0;
             fprintf(fplog, "Warning: Ngcon must be equal to one or two; reset to 1.0.\n");
             printf("Warning: Ngcon must be equal to one or two; reset to 1.0.\n");
         }
@@ -333,6 +335,50 @@ FILE *fplog;
             printf("Warning: ckappad = %g is too small.\n", pParam->BSIM4ckappad);
             pParam->BSIM4ckappad = 0.02;
         }
+
+	if (model->BSIM4vtss < 0.0)
+	{   fprintf(fplog, "Fatal: Vtss = %g is negative.\n",
+			model->BSIM4vtss);
+	    printf("Fatal: Vtss = %g is negative.\n",
+			model->BSIM4vtss);
+	    Fatal_Flag = 1;
+	}
+	if (model->BSIM4vtsd < 0.0)
+	{   fprintf(fplog, "Fatal: Vtsd = %g is negative.\n",
+			model->BSIM4vtsd);
+	    printf("Fatal: Vtsd = %g is negative.\n",
+		    model->BSIM4vtsd);
+	    Fatal_Flag = 1;
+	}
+	if (model->BSIM4vtssws < 0.0)
+	{   fprintf(fplog, "Fatal: Vtssws = %g is negative.\n",
+		    model->BSIM4vtssws);
+	    printf("Fatal: Vtssws = %g is negative.\n",
+		    model->BSIM4vtssws);
+	    Fatal_Flag = 1;
+	}
+	if (model->BSIM4vtsswd < 0.0)
+	{   fprintf(fplog, "Fatal: Vtsswd = %g is negative.\n",
+		    model->BSIM4vtsswd);
+	    printf("Fatal: Vtsswd = %g is negative.\n",
+		    model->BSIM4vtsswd);
+	    Fatal_Flag = 1;
+	}
+	if (model->BSIM4vtsswgs < 0.0)
+	{   fprintf(fplog, "Fatal: Vtsswgs = %g is negative.\n",
+		    model->BSIM4vtsswgs);
+	    printf("Fatal: Vtsswgs = %g is negative.\n",
+		    model->BSIM4vtsswgs);
+	    Fatal_Flag = 1;
+	}
+	if (model->BSIM4vtsswgd < 0.0)
+	{   fprintf(fplog, "Fatal: Vtsswgd = %g is negative.\n",
+		    model->BSIM4vtsswgd);
+	    printf("Fatal: Vtsswgd = %g is negative.\n",
+			model->BSIM4vtsswgd);
+	    Fatal_Flag = 1;
+	}
+
 
       if (model->BSIM4paramChk ==1)
       {
@@ -634,7 +680,11 @@ FILE *fplog;
 	    printf("Warning: cgso = %g is negative. Set to zero.\n", model->BSIM4cgso);
 	    model->BSIM4cgso = 0.0;
         }      
-
+        if (model->BSIM4cgbo < 0.0)
+	{   fprintf(fplog, "Warning: cgbo = %g is negative. Set to zero.\n", model->BSIM4cgbo);
+	    printf("Warning: cgbo = %g is negative. Set to zero.\n", model->BSIM4cgbo);
+	    model->BSIM4cgbo = 0.0;
+        }      
       if (model->BSIM4tnoiMod == 1) { 
         if (model->BSIM4tnoia < 0.0)
         {   fprintf(fplog, "Warning: tnoia = %g is negative. Set to zero.\n", model->BSIM4tnoia);
@@ -689,49 +739,72 @@ FILE *fplog;
 	    printf("Warning: Njtsswg = %g is negative at temperature = %g.\n",
 		    model->BSIM4njtsswgtemp, ckt->CKTtemp);
 	}
-	if (model->BSIM4vtss < 0.0)
-	{   fprintf(fplog, "Warning: Vtss = %g is negative.\n",
-		    model->BSIM4vtss);
-	    printf("Warning: Vtss = %g is negative.\n",
-		    model->BSIM4vtss);
-	}
-	if (model->BSIM4vtsd < 0.0)
-	{   fprintf(fplog, "Warning: Vtsd = %g is negative.\n",
-		    model->BSIM4vtsd);
-	    printf("Warning: Vtsd = %g is negative.\n",
-		    model->BSIM4vtsd);
-	}
-	if (model->BSIM4vtssws < 0.0)
-	{   fprintf(fplog, "Warning: Vtssws = %g is negative.\n",
-		    model->BSIM4vtssws);
-	    printf("Warning: Vtssws = %g is negative.\n",
-		    model->BSIM4vtssws);
-	}
-	if (model->BSIM4vtsswd < 0.0)
-	{   fprintf(fplog, "Warning: Vtsswd = %g is negative.\n",
-		    model->BSIM4vtsswd);
-	    printf("Warning: Vtsswd = %g is negative.\n",
-		    model->BSIM4vtsswd);
-	}
-	if (model->BSIM4vtsswgs < 0.0)
-	{   fprintf(fplog, "Warning: Vtsswgs = %g is negative.\n",
-		    model->BSIM4vtsswgs);
-	    printf("Warning: Vtsswgs = %g is negative.\n",
-		    model->BSIM4vtsswgs);
-	}
-	if (model->BSIM4vtsswgd < 0.0)
-	{   fprintf(fplog, "Warning: Vtsswgd = %g is negative.\n",
-		    model->BSIM4vtsswgd);
-	    printf("Warning: Vtsswgd = %g is negative.\n",
-		    model->BSIM4vtsswgd);
-	}
-
        if (model->BSIM4ntnoi < 0.0)
         {   fprintf(fplog, "Warning: ntnoi = %g is negative. Set to zero.\n", model->BSIM4ntnoi);
             printf("Warning: ntnoi = %g is negative. Set to zero.\n", model->BSIM4ntnoi);
             model->BSIM4ntnoi = 0.0;
         }
 
+        /* diode model */
+       if (model->BSIM4SbulkJctBotGradingCoeff >= 0.99)
+        {   fprintf(fplog, "Warning: MJS = %g is too big. Set to 0.99.\n", model->BSIM4SbulkJctBotGradingCoeff);
+            printf("Warning: MJS = %g is too big. Set to 0.99.\n", model->BSIM4SbulkJctBotGradingCoeff);
+            model->BSIM4SbulkJctBotGradingCoeff = 0.99;
+        }
+       if (model->BSIM4SbulkJctSideGradingCoeff >= 0.99)
+        {   fprintf(fplog, "Warning: MJSWS = %g is too big. Set to 0.99.\n", model->BSIM4SbulkJctSideGradingCoeff);
+            printf("Warning: MJSWS = %g is too big. Set to 0.99.\n", model->BSIM4SbulkJctSideGradingCoeff);
+            model->BSIM4SbulkJctSideGradingCoeff = 0.99;
+        }
+       if (model->BSIM4SbulkJctGateSideGradingCoeff >= 0.99)
+        {   fprintf(fplog, "Warning: MJSWGS = %g is too big. Set to 0.99.\n", model->BSIM4SbulkJctGateSideGradingCoeff);
+            printf("Warning: MJSWGS = %g is too big. Set to 0.99.\n", model->BSIM4SbulkJctGateSideGradingCoeff);
+            model->BSIM4SbulkJctGateSideGradingCoeff = 0.99;
+        }
+
+       if (model->BSIM4DbulkJctBotGradingCoeff >= 0.99)
+        {   fprintf(fplog, "Warning: MJD = %g is too big. Set to 0.99.\n", model->BSIM4DbulkJctBotGradingCoeff);
+            printf("Warning: MJD = %g is too big. Set to 0.99.\n", model->BSIM4DbulkJctBotGradingCoeff);
+            model->BSIM4DbulkJctBotGradingCoeff = 0.99;
+        }
+       if (model->BSIM4DbulkJctSideGradingCoeff >= 0.99)
+        {   fprintf(fplog, "Warning: MJSWD = %g is too big. Set to 0.99.\n", model->BSIM4DbulkJctSideGradingCoeff);
+            printf("Warning: MJSWD = %g is too big. Set to 0.99.\n", model->BSIM4DbulkJctSideGradingCoeff);
+            model->BSIM4DbulkJctSideGradingCoeff = 0.99;
+        }
+       if (model->BSIM4DbulkJctGateSideGradingCoeff >= 0.99)
+        {   fprintf(fplog, "Warning: MJSWGD = %g is too big. Set to 0.99.\n", model->BSIM4DbulkJctGateSideGradingCoeff);
+            printf("Warning: MJSWGD = %g is too big. Set to 0.99.\n", model->BSIM4DbulkJctGateSideGradingCoeff);
+            model->BSIM4DbulkJctGateSideGradingCoeff = 0.99;
+        }
+	if (model->BSIM4wpemod == 1)
+	{
+		if (model->BSIM4scref <= 0.0)
+		{   fprintf(fplog, "Warning: SCREF = %g is not positive. Set to 1e-6.\n", model->BSIM4scref);
+		    printf("Warning: SCREF = %g is not positive. Set to 1e-6.\n", model->BSIM4scref);
+		    model->BSIM4scref = 1e-6;
+		}
+	        if (here->BSIM4sca < 0.0)
+                {   fprintf(fplog, "Warning: SCA = %g is negative. Set to 0.0.\n", here->BSIM4sca);
+                    printf("Warning: SCA = %g is negative. Set to 0.0.\n", here->BSIM4sca);
+                    here->BSIM4sca = 0.0;
+                }
+                if (here->BSIM4scb < 0.0)
+                {   fprintf(fplog, "Warning: SCB = %g is negative. Set to 0.0.\n", here->BSIM4scb);
+                    printf("Warning: SCB = %g is negative. Set to 0.0.\n", here->BSIM4scb);
+                    here->BSIM4scb = 0.0;
+                }
+                if (here->BSIM4scc < 0.0)
+                {   fprintf(fplog, "Warning: SCC = %g is negative. Set to 0.0.\n", here->BSIM4scc);
+                    printf("Warning: SCC = %g is negative. Set to 0.0.\n", here->BSIM4scc);
+                    here->BSIM4scc = 0.0;
+                }
+                if (here->BSIM4sc < 0.0)
+                {   fprintf(fplog, "Warning: SC = %g is negative. Set to 0.0.\n", here->BSIM4sc);
+                    printf("Warning: SC = %g is negative. Set to 0.0.\n", here->BSIM4sc);
+                    here->BSIM4sc = 0.0;
+                }
+	}
      }/* loop for the parameter check for warning messages */      
 	fclose(fplog);
     }

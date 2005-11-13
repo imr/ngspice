@@ -1,3 +1,13 @@
+2005-11-13  Paolo Nenzi <p.nenzi@ieee.org>
+ 
+ *  src/spicelib/devices/bsim4/*: Updated bsim4 to version 4.5.0 using the
+    code hacked by Hitoshi Tanaka and Dietmar Warning. Changes from original
+    Berkeley's device group implementation:
+    - Added multiplier parameter (m parameter).
+    - Added NodeSet for internal nodes.
+    - Removed #ifdef STDC and non STDC function prototypes
+    - Added missing "pParam->BSIM4ku0we" to fprintf in b4temp.c.    
+
 2005-11-07  Paolo Nenzi <p.nenzi@ieee.org>
 
  *  src/spicelib/devices/vbic/*: Dietmar Warning sent a patch to his last

@@ -1,10 +1,10 @@
-/**** BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004 ****/
+/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2004 Regents of the University of California. All rights reserved.
- * File: b4acld.c of BSIM4.4.0.
+ * Copyright 2005 Regents of the University of California. All rights reserved.
+ * File: b4acld.c of BSIM4.5.0.
  * Author: 2000 Weidong Liu
- * Authors: 2001- Xuemei Xi, Jin He, Kanyu Cao, Mohan Dunga, Mansun Chan, Ali Niknejad, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 10/05/2001.
  **********/
@@ -58,8 +58,8 @@ double m;
     for (; model != NULL; model = model->BSIM4nextModel) 
     {    for (here = model->BSIM4instances; here!= NULL;
               here = here->BSIM4nextInstance) 
-         {    if (here->BSIM4owner != ARCHme) continue;
-	            pParam = here->pParam;
+	 {        if (here->BSIM4owner != ARCHme) continue;
+              pParam = here->pParam;
               capbd = here->BSIM4capbd;
               capbs = here->BSIM4capbs;
               cgso = here->BSIM4cgso;
@@ -450,7 +450,6 @@ double m;
               /*
                * Loading AC matrix
                */
-
    	          m = here->BSIM4m;
 
               if (!model->BSIM4rdsMod)

@@ -5,7 +5,6 @@ Author: 2001- Xuemei Xi
 File: bsim4ext.h
 **********/
 
-
 extern int BSIM4acLoad(GENmodel *,CKTcircuit*);
 extern int BSIM4ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int BSIM4convTest(GENmodel *,CKTcircuit*);
@@ -29,5 +28,3 @@ extern int BSIM4temp(GENmodel*,CKTcircuit*);
 extern int BSIM4trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM4noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4unsetup(GENmodel*,CKTcircuit*);
-
-

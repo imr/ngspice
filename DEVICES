@@ -637,7 +637,7 @@ BSIM3 - BSIM model level 3
 
 BSIM4   - BSIM model level 4 (0.18 um)
         Initial Release.
-        Ver:    4.4.0
+        Ver:    4.5.0
         Class:  M
         Level:  14
         Dir:    devices/bsim4
@@ -649,7 +649,7 @@ BSIM4   - BSIM model level 4 (0.18 um)
         Web site:
         http://www-device.eecs.berkeley.edu/~bsim3/bsim4.html
 
-        Updated to 4.4.0 YET UNTESTED.
+        Updated to 4.5.0 YET UNTESTED.
 
 
 HiSIM   - Hiroshima-university STARC IGFET Model

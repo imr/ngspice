@@ -1,15 +1,16 @@
-/**** BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004 ****/
+/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2004 Regents of the University of California. All rights reserved.
- * File: b4mask.c of BSIM4.4.0.
+ * Copyright 2005 Regents of the University of California. All rights reserved.
+ * File: b4mask.c of BSIM4.5.0.
  * Author: 2000 Weidong Liu
- * Authors: 2001- Xuemei Xi, Jin He, Kanyu Cao, Mohan Dunga, Mansun Chan, Ali Niknejad, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
  * Modified by Xuemei Xi, 11/15/2002.
  * Modified by Xuemei Xi, 05/09/2003.
+ * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
  **********/
 
 
@@ -20,7 +21,6 @@
 #include "bsim4def.h"
 #include "sperror.h"
 #include "suffix.h"
-
 
 int
 BSIM4mAsk(ckt,inst,which,value)
@@ -82,6 +82,7 @@ IFvalue *value;
         case  BSIM4_MOD_TEMPMOD :
             value->iValue = model->BSIM4tempMod;
             return(OK);
+
         case  BSIM4_MOD_VERSION :
           value->sValue = model->BSIM4version;
             return(OK);
@@ -269,6 +270,18 @@ IFvalue *value;
         case BSIM4_MOD_UC1:
             value->rValue = model->BSIM4uc1; 
             return(OK);
+        case BSIM4_MOD_UD:
+            value->rValue = model->BSIM4ud; 
+            return(OK);
+        case BSIM4_MOD_UD1:
+            value->rValue = model->BSIM4ud1; 
+            return(OK);
+        case BSIM4_MOD_UP:
+            value->rValue = model->BSIM4up; 
+            return(OK);
+        case BSIM4_MOD_LP:
+            value->rValue = model->BSIM4lp; 
+            return(OK);
         case BSIM4_MOD_U0:
             value->rValue = model->BSIM4u0;
             return(OK);
@@ -277,6 +290,15 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_VOFF:
             value->rValue = model->BSIM4voff;
+            return(OK);
+        case BSIM4_MOD_TVOFF:
+            value->rValue = model->BSIM4tvoff;
+            return(OK);
+        case BSIM4_MOD_VFBSDOFF:
+            value->rValue = model->BSIM4vfbsdoff;
+            return(OK);
+        case BSIM4_MOD_TVFBSDOFF:
+            value->rValue = model->BSIM4tvfbsdoff;
             return(OK);
         case BSIM4_MOD_VOFFL:
             value->rValue = model->BSIM4voffl;
@@ -498,6 +520,79 @@ IFvalue *value;
             value->rValue = model->BSIM4vfb;
             return(OK);
 
+        case BSIM4_MOD_JTSS:
+            value->rValue = model->BSIM4jtss;
+            return(OK);
+        case BSIM4_MOD_JTSD:
+            value->rValue = model->BSIM4jtsd;
+            return(OK);
+        case BSIM4_MOD_JTSSWS:
+            value->rValue = model->BSIM4jtssws;
+            return(OK);
+        case BSIM4_MOD_JTSSWD:
+            value->rValue = model->BSIM4jtsswd;
+            return(OK);
+        case BSIM4_MOD_JTSSWGS:
+            value->rValue = model->BSIM4jtsswgs;
+            return(OK);
+        case BSIM4_MOD_JTSSWGD:
+            value->rValue = model->BSIM4jtsswgd;
+            return(OK);
+        case BSIM4_MOD_NJTS:
+            value->rValue = model->BSIM4njts;
+            return(OK);
+        case BSIM4_MOD_NJTSSW:
+            value->rValue = model->BSIM4njtssw;
+            return(OK);
+        case BSIM4_MOD_NJTSSWG:
+            value->rValue = model->BSIM4njtsswg;
+            return(OK);
+        case BSIM4_MOD_XTSS:
+            value->rValue = model->BSIM4xtss;
+            return(OK);
+        case BSIM4_MOD_XTSD:
+            value->rValue = model->BSIM4xtsd;
+            return(OK);
+        case BSIM4_MOD_XTSSWS:
+            value->rValue = model->BSIM4xtssws;
+            return(OK);
+        case BSIM4_MOD_XTSSWD:
+            value->rValue = model->BSIM4xtsswd;
+            return(OK);
+        case BSIM4_MOD_XTSSWGS:
+            value->rValue = model->BSIM4xtsswgs;
+            return(OK);
+        case BSIM4_MOD_XTSSWGD:
+            value->rValue = model->BSIM4xtsswgd;
+            return(OK);
+        case BSIM4_MOD_TNJTS:
+            value->rValue = model->BSIM4tnjts;
+            return(OK);
+        case BSIM4_MOD_TNJTSSW:
+            value->rValue = model->BSIM4tnjtssw;
+            return(OK);
+        case BSIM4_MOD_TNJTSSWG:
+            value->rValue = model->BSIM4tnjtsswg;
+            return(OK);
+        case BSIM4_MOD_VTSS:
+            value->rValue = model->BSIM4vtss;
+            return(OK);
+        case BSIM4_MOD_VTSD:
+            value->rValue = model->BSIM4vtsd;
+            return(OK);
+        case BSIM4_MOD_VTSSWS:
+            value->rValue = model->BSIM4vtssws;
+            return(OK);
+        case BSIM4_MOD_VTSSWD:
+            value->rValue = model->BSIM4vtsswd;
+            return(OK);
+        case BSIM4_MOD_VTSSWGS:
+            value->rValue = model->BSIM4vtsswgs;
+            return(OK);
+        case BSIM4_MOD_VTSSWGD:
+            value->rValue = model->BSIM4vtsswgd;
+            return(OK);
+
         case BSIM4_MOD_GBMIN:
             value->rValue = model->BSIM4gbmin;
             return(OK);
@@ -516,6 +611,87 @@ IFvalue *value;
         case BSIM4_MOD_RBPD:
             value->rValue = model->BSIM4rbpd;
             return(OK);
+
+        case BSIM4_MOD_RBPS0:
+            value->rValue = model->BSIM4rbps0;
+            return(OK);
+        case BSIM4_MOD_RBPSL:
+            value->rValue = model->BSIM4rbpsl;
+            return(OK);
+        case BSIM4_MOD_RBPSW:
+            value->rValue = model->BSIM4rbpsw;
+            return(OK);
+        case BSIM4_MOD_RBPSNF:
+            value->rValue = model->BSIM4rbpsnf;
+            return(OK);
+        case BSIM4_MOD_RBPD0:
+            value->rValue = model->BSIM4rbpd0;
+            return(OK);
+        case BSIM4_MOD_RBPDL:
+            value->rValue = model->BSIM4rbpdl;
+            return(OK);
+        case BSIM4_MOD_RBPDW:
+            value->rValue = model->BSIM4rbpdw;
+            return(OK);
+        case BSIM4_MOD_RBPDNF:
+            value->rValue = model->BSIM4rbpdnf;
+            return(OK);
+        case BSIM4_MOD_RBPBX0:
+            value->rValue = model->BSIM4rbpbx0;
+            return(OK);
+        case BSIM4_MOD_RBPBXL:
+            value->rValue = model->BSIM4rbpbxl;
+            return(OK);
+        case BSIM4_MOD_RBPBXW:
+            value->rValue = model->BSIM4rbpbxw;
+            return(OK);
+        case BSIM4_MOD_RBPBXNF:
+            value->rValue = model->BSIM4rbpbxnf;
+            return(OK);
+        case BSIM4_MOD_RBPBY0:
+            value->rValue = model->BSIM4rbpby0;
+            return(OK);
+        case BSIM4_MOD_RBPBYL:
+            value->rValue = model->BSIM4rbpbyl;
+            return(OK);
+        case BSIM4_MOD_RBPBYW:
+            value->rValue = model->BSIM4rbpbyw;
+            return(OK);
+        case BSIM4_MOD_RBPBYNF:
+            value->rValue = model->BSIM4rbpbynf;
+            return(OK);
+
+        case BSIM4_MOD_RBSBX0:
+            value->rValue = model->BSIM4rbsbx0;
+            return(OK);
+        case BSIM4_MOD_RBSBY0:
+            value->rValue = model->BSIM4rbsby0;
+            return(OK);
+        case BSIM4_MOD_RBDBX0:
+            value->rValue = model->BSIM4rbdbx0;
+            return(OK);
+        case BSIM4_MOD_RBDBY0:
+            value->rValue = model->BSIM4rbdby0;
+            return(OK);
+        case BSIM4_MOD_RBSDBXL:
+            value->rValue = model->BSIM4rbsdbxl;
+            return(OK);
+        case BSIM4_MOD_RBSDBXW:
+            value->rValue = model->BSIM4rbsdbxw;
+            return(OK);
+        case BSIM4_MOD_RBSDBXNF:
+            value->rValue = model->BSIM4rbsdbxnf;
+            return(OK);
+        case BSIM4_MOD_RBSDBYL:
+            value->rValue = model->BSIM4rbsdbyl;
+            return(OK);
+        case BSIM4_MOD_RBSDBYW:
+            value->rValue = model->BSIM4rbsdbyw;
+            return(OK);
+        case BSIM4_MOD_RBSDBYNF:
+            value->rValue = model->BSIM4rbsdbynf;
+            return(OK);
+
 
         case BSIM4_MOD_CGSL:
             value->rValue = model->BSIM4cgsl;
@@ -591,9 +767,6 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_RSHG:
             value->rValue = model->BSIM4rshg;
-            return(OK);
-        case BSIM4_MOD_NGCON:
-            value->rValue = model->BSIM4ngcon;
             return(OK);
         case BSIM4_MOD_TCJ:
             value->rValue = model->BSIM4tcj;
@@ -762,6 +935,18 @@ IFvalue *value;
         case BSIM4_MOD_LUC1:
             value->rValue = model->BSIM4luc1; 
             return(OK);
+        case BSIM4_MOD_LUD:
+            value->rValue = model->BSIM4lud; 
+            return(OK);
+        case BSIM4_MOD_LUD1:
+            value->rValue = model->BSIM4lud1; 
+            return(OK);
+        case BSIM4_MOD_LUP:
+            value->rValue = model->BSIM4lup; 
+            return(OK);
+        case BSIM4_MOD_LLP:
+            value->rValue = model->BSIM4llp; 
+            return(OK);
         case BSIM4_MOD_LU0:
             value->rValue = model->BSIM4lu0;
             return(OK);
@@ -770,6 +955,9 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_LVOFF:
             value->rValue = model->BSIM4lvoff;
+            return(OK);
+        case BSIM4_MOD_LTVOFF:
+            value->rValue = model->BSIM4ltvoff;
             return(OK);
         case BSIM4_MOD_LMINV:
             value->rValue = model->BSIM4lminv;
@@ -976,6 +1164,12 @@ IFvalue *value;
         case BSIM4_MOD_LVOFFCV:
             value->rValue = model->BSIM4lvoffcv;
             return(OK);
+        case BSIM4_MOD_LVFBSDOFF:
+            value->rValue = model->BSIM4lvfbsdoff;
+            return(OK);
+        case BSIM4_MOD_LTVFBSDOFF:
+            value->rValue = model->BSIM4ltvfbsdoff;
+            return(OK);
 
 	/* Width dependence */
         case  BSIM4_MOD_WCDSC :
@@ -1125,6 +1319,18 @@ IFvalue *value;
         case BSIM4_MOD_WUC1:
             value->rValue = model->BSIM4wuc1; 
             return(OK);
+        case BSIM4_MOD_WUD:
+            value->rValue = model->BSIM4wud; 
+            return(OK);
+        case BSIM4_MOD_WUD1:
+            value->rValue = model->BSIM4wud1; 
+            return(OK);
+        case BSIM4_MOD_WUP:
+            value->rValue = model->BSIM4wup; 
+            return(OK);
+        case BSIM4_MOD_WLP:
+            value->rValue = model->BSIM4wlp; 
+            return(OK);
         case BSIM4_MOD_WU0:
             value->rValue = model->BSIM4wu0;
             return(OK);
@@ -1133,6 +1339,9 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_WVOFF:
             value->rValue = model->BSIM4wvoff;
+            return(OK);
+        case BSIM4_MOD_WTVOFF:
+            value->rValue = model->BSIM4wtvoff;
             return(OK);
         case BSIM4_MOD_WMINV:
             value->rValue = model->BSIM4wminv;
@@ -1339,6 +1548,12 @@ IFvalue *value;
         case BSIM4_MOD_WVOFFCV:
             value->rValue = model->BSIM4wvoffcv;
             return(OK);
+        case BSIM4_MOD_WVFBSDOFF:
+            value->rValue = model->BSIM4wvfbsdoff;
+            return(OK);
+        case BSIM4_MOD_WTVFBSDOFF:
+            value->rValue = model->BSIM4wtvfbsdoff;
+            return(OK);
 
 	/* Cross-term dependence */
         case  BSIM4_MOD_PCDSC :
@@ -1488,6 +1703,18 @@ IFvalue *value;
         case BSIM4_MOD_PUC1:
             value->rValue = model->BSIM4puc1; 
             return(OK);
+        case BSIM4_MOD_PUD:
+            value->rValue = model->BSIM4pud; 
+            return(OK);
+        case BSIM4_MOD_PUD1:
+            value->rValue = model->BSIM4pud1; 
+            return(OK);
+        case BSIM4_MOD_PUP:
+            value->rValue = model->BSIM4pup; 
+            return(OK);
+        case BSIM4_MOD_PLP:
+            value->rValue = model->BSIM4plp; 
+            return(OK);
         case BSIM4_MOD_PU0:
             value->rValue = model->BSIM4pu0;
             return(OK);
@@ -1496,6 +1723,9 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_PVOFF:
             value->rValue = model->BSIM4pvoff;
+            return(OK);
+        case BSIM4_MOD_PTVOFF:
+            value->rValue = model->BSIM4ptvoff;
             return(OK);
         case BSIM4_MOD_PMINV:
             value->rValue = model->BSIM4pminv;
@@ -1701,6 +1931,12 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_PVOFFCV:
             value->rValue = model->BSIM4pvoffcv;
+            return(OK);
+        case BSIM4_MOD_PVFBSDOFF:
+            value->rValue = model->BSIM4pvfbsdoff;
+            return(OK);
+        case BSIM4_MOD_PTVFBSDOFF:
+            value->rValue = model->BSIM4ptvfbsdoff;
             return(OK);
 
         case  BSIM4_MOD_TNOM :
@@ -1935,6 +2171,56 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_LODETA0:
             value->rValue = model->BSIM4lodeta0;
+            return(OK);
+
+        /* Well Proximity Effect  */
+        case BSIM4_MOD_WEB:
+            value->rValue = model->BSIM4web;
+            return(OK);
+        case BSIM4_MOD_WEC:
+            value->rValue = model->BSIM4wec;
+            return(OK);
+        case BSIM4_MOD_KVTH0WE:
+            value->rValue = model->BSIM4kvth0we;
+            return(OK);
+        case BSIM4_MOD_K2WE:
+            value->rValue = model->BSIM4k2we;
+            return(OK);
+        case BSIM4_MOD_KU0WE:
+            value->rValue = model->BSIM4ku0we;
+            return(OK);
+        case BSIM4_MOD_SCREF:
+            value->rValue = model->BSIM4scref;
+            return(OK);
+        case BSIM4_MOD_WPEMOD:
+            value->rValue = model->BSIM4wpemod;
+            return(OK);
+        case BSIM4_MOD_LKVTH0WE:
+            value->rValue = model->BSIM4lkvth0we;
+            return(OK);
+        case BSIM4_MOD_LK2WE:
+            value->rValue = model->BSIM4lk2we;
+            return(OK);
+        case BSIM4_MOD_LKU0WE:
+            value->rValue = model->BSIM4lku0we;
+            return(OK);
+        case BSIM4_MOD_WKVTH0WE:
+            value->rValue = model->BSIM4wkvth0we;
+            return(OK);
+        case BSIM4_MOD_WK2WE:
+            value->rValue = model->BSIM4wk2we;
+            return(OK);
+        case BSIM4_MOD_WKU0WE:
+            value->rValue = model->BSIM4wku0we;
+            return(OK);
+        case BSIM4_MOD_PKVTH0WE:
+            value->rValue = model->BSIM4pkvth0we;
+            return(OK);
+        case BSIM4_MOD_PK2WE:
+            value->rValue = model->BSIM4pk2we;
+            return(OK);
+        case BSIM4_MOD_PKU0WE:
+            value->rValue = model->BSIM4pku0we;
             return(OK);
 
         case BSIM4_MOD_NOIA:

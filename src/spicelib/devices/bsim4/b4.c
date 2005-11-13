@@ -1,16 +1,17 @@
-/**** BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004 ****/
+/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2004 Regents of the University of California. All rights reserved.
- * File: b4.c of BSIM4.4.0.
+ * Copyright 2005 Regents of the University of California. All rights reserved.
+ * File: b4.c of BSIM4.5.0.
  * Author: 2000 Weidong Liu
- * Authors: 2001- Xuemei Xi, Jin He, Kanyu Cao, Mohan Dunga, Mansun Chan, Ali Niknejad, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
  * Modified by Xuemei Xi, 11/15/2002.
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 03/04/2004.
+ * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
  **********/
 
 #include "ngspice.h"
@@ -26,6 +27,10 @@ IOP( "nf",  BSIM4_NF,     IF_REAL   , "Number of fingers"),
 IOP( "sa",  BSIM4_SA,     IF_REAL   , "distance between  OD edge to poly of one side "),
 IOP( "sb",  BSIM4_SB,     IF_REAL   , "distance between  OD edge to poly of the other side"),
 IOP( "sd",  BSIM4_SD,     IF_REAL   , "distance between neighbour fingers"),
+IOP( "sca",  BSIM4_SCA,     IF_REAL   , "Integral of the first distribution function for scattered well dopant"),
+IOP( "scb",  BSIM4_SCB,     IF_REAL   , "Integral of the second distribution function for scattered well dopant"),
+IOP( "scc",  BSIM4_SCC,     IF_REAL   , "Integral of the third distribution function for scattered well dopant"),
+IOP( "sc",  BSIM4_SCA,     IF_REAL   , "Distance to a single well edge "),
 IOP( "min",  BSIM4_MIN,   IF_INTEGER , "Minimize either D or S"),
 IOP( "ad",  BSIM4_AD,     IF_REAL   , "Drain area"),
 IOP( "as",  BSIM4_AS,     IF_REAL   , "Source area"),
@@ -39,6 +44,11 @@ IOP( "rbsb", BSIM4_RBSB,  IF_REAL   , "Body resistance"),
 IOP( "rbpb", BSIM4_RBPB,  IF_REAL   , "Body resistance"),
 IOP( "rbps", BSIM4_RBPS,  IF_REAL   , "Body resistance"),
 IOP( "rbpd", BSIM4_RBPD,  IF_REAL   , "Body resistance"),
+IOP( "delvto", BSIM4_DELVTO,  IF_REAL   , "Zero bias threshold voltage variation"),
+IOP( "xgw",  BSIM4_XGW, IF_REAL, "Distance from gate contact center to device edge"),
+IOP( "ngcon", BSIM4_NGCON, IF_REAL, "Number of gate contacts"),
+
+
 IOP( "trnqsmod", BSIM4_TRNQSMOD, IF_INTEGER, "Transient NQS model selector"),
 IOP( "acnqsmod", BSIM4_ACNQSMOD, IF_INTEGER, "AC NQS model selector"),
 IOP( "rbodymod", BSIM4_RBODYMOD, IF_INTEGER, "Distributed body R model selector"),
@@ -90,6 +100,9 @@ OP( "qb",          BSIM4_QB,         IF_REAL,    "Qbulk"),
 OP( "qd",          BSIM4_QD,         IF_REAL,    "Qdrain"),
 OP( "qs",          BSIM4_QS,         IF_REAL,    "Qsource"),
 OP( "qinv",        BSIM4_QINV,       IF_REAL,    "Qinversion"),
+OP( "qdef",        BSIM4_QDEF,       IF_REAL,    "Qdef"),
+OP( "gcrg",        BSIM4_GCRG,       IF_REAL,    "Gcrg"),
+OP( "gtau",        BSIM4_GTAU,       IF_REAL,    "Gtau"),
 };
 
 IFparm BSIM4mPTable[] = { /* model parameters */
@@ -169,6 +182,10 @@ IOP( "ub", BSIM4_MOD_UB, IF_REAL, "Quadratic gate dependence of mobility"),
 IOP( "ub1", BSIM4_MOD_UB1, IF_REAL, "Temperature coefficient of ub"),
 IOP( "uc", BSIM4_MOD_UC, IF_REAL, "Body-bias dependence of mobility"),
 IOP( "uc1", BSIM4_MOD_UC1, IF_REAL, "Temperature coefficient of uc"),
+IOP( "ud", BSIM4_MOD_UD, IF_REAL, "Coulomb scattering factor of mobility"),
+IOP( "ud1", BSIM4_MOD_UD1, IF_REAL, "Temperature coefficient of ud"),
+IOP( "up", BSIM4_MOD_UP, IF_REAL, "Channel length linear factor of mobility"),
+IOP( "lp", BSIM4_MOD_LP, IF_REAL, "Channel length exponential factor of mobility"),
 IOP( "u0", BSIM4_MOD_U0, IF_REAL, "Low-field mobility at Tnom"),
 IOP( "eu", BSIM4_MOD_EU, IF_REAL, "Mobility exponent"),
 IOP( "ute", BSIM4_MOD_UTE, IF_REAL, "Temperature coefficient of mobility"),
@@ -264,6 +281,9 @@ IOP( "vtl",      BSIM4_MOD_VTL,     IF_REAL, " thermal velocity"),
 IOP( "lc",     BSIM4_MOD_LC,     IF_REAL, " back scattering parameter"),
 IOP( "xn",     BSIM4_MOD_XN,     IF_REAL, " back scattering parameter"),
 IOP( "vfbsdoff",     BSIM4_MOD_VFBSDOFF,     IF_REAL, "S/D flatband voltage offset"),
+IOP( "tvfbsdoff",     BSIM4_MOD_TVFBSDOFF,     IF_REAL, "Temperature parameter for vfbsdoff"),
+IOP( "tvoff",     BSIM4_MOD_TVOFF,     IF_REAL, "Temperature parameter for voff"),
+
 IOP( "lintnoi", BSIM4_MOD_LINTNOI, IF_REAL, "lint offset for noise calculation"),
 IOP( "lint", BSIM4_MOD_LINT, IF_REAL, "Length reduction parameter"),
 IOP( "ll",   BSIM4_MOD_LL, IF_REAL, "Length reduction parameter"),
@@ -313,6 +333,7 @@ IOP( "dwj", BSIM4_MOD_DWJ, IF_REAL, "Delta W for S/D junctions"),
 IOP( "alpha0", BSIM4_MOD_ALPHA0, IF_REAL, "substrate current model parameter"),
 IOP( "alpha1", BSIM4_MOD_ALPHA1, IF_REAL, "substrate current model parameter"),
 IOP( "beta0", BSIM4_MOD_BETA0, IF_REAL, "substrate current model parameter"),
+
 IOP( "agidl", BSIM4_MOD_AGIDL, IF_REAL, "Pre-exponential constant for GIDL"),
 IOP( "bgidl", BSIM4_MOD_BGIDL, IF_REAL, "Exponential constant for GIDL"),
 IOP( "cgidl", BSIM4_MOD_CGIDL, IF_REAL, "Parameter for body-bias dependence of GIDL"),
@@ -378,6 +399,37 @@ IOP( "rbsb", BSIM4_MOD_RBSB, IF_REAL, "Resistance between bNode and sbNode"),
 IOP( "rbps", BSIM4_MOD_RBPS, IF_REAL, "Resistance between bNodePrime and sbNode"),
 IOP( "rbpd", BSIM4_MOD_RBPD, IF_REAL, "Resistance between bNodePrime and bNode"),
 
+IOP( "rbps0",  BSIM4_MOD_RBPS0,   IF_REAL   , "Body resistance RBPS scaling"),
+IOP( "rbpsl",  BSIM4_MOD_RBPSL,   IF_REAL   , "Body resistance RBPS L scaling"),
+IOP( "rbpsw",  BSIM4_MOD_RBPSW,   IF_REAL   , "Body resistance RBPS W scaling"),
+IOP( "rbpsnf", BSIM4_MOD_RBPSNF,  IF_REAL   , "Body resistance RBPS NF scaling"),
+
+IOP( "rbpd0",  BSIM4_MOD_RBPD0,   IF_REAL   , "Body resistance RBPD scaling"),
+IOP( "rbpdl",  BSIM4_MOD_RBPDL,   IF_REAL   , "Body resistance RBPD L scaling"),
+IOP( "rbpdw",  BSIM4_MOD_RBPDW,   IF_REAL   , "Body resistance RBPD W scaling"),
+IOP( "rbpdnf", BSIM4_MOD_RBPDNF,  IF_REAL   , "Body resistance RBPD NF scaling"),
+
+IOP( "rbpbx0", BSIM4_MOD_RBPBX0,  IF_REAL   , "Body resistance RBPBX  scaling"),
+IOP( "rbpbxl", BSIM4_MOD_RBPBXL,  IF_REAL   , "Body resistance RBPBX L scaling"),
+IOP( "rbpbxw", BSIM4_MOD_RBPBXW,  IF_REAL   , "Body resistance RBPBX W scaling"),
+IOP( "rbpbxnf", BSIM4_MOD_RBPBXNF, IF_REAL   , "Body resistance RBPBX NF scaling"),
+IOP( "rbpby0", BSIM4_MOD_RBPBY0,  IF_REAL   , "Body resistance RBPBY  scaling"),
+IOP( "rbpbyl", BSIM4_MOD_RBPBYL,  IF_REAL   , "Body resistance RBPBY L scaling"),
+IOP( "rbpbyw", BSIM4_MOD_RBPBYW,  IF_REAL   , "Body resistance RBPBY W scaling"),
+IOP( "rbpbynf", BSIM4_MOD_RBPBYNF, IF_REAL   , "Body resistance RBPBY NF scaling"),
+
+IOP( "rbsbx0", BSIM4_MOD_RBSBX0,  IF_REAL   , "Body resistance RBSBX  scaling"),
+IOP( "rbsby0", BSIM4_MOD_RBSBY0,  IF_REAL   , "Body resistance RBSBY  scaling"),
+IOP( "rbdbx0", BSIM4_MOD_RBDBX0,  IF_REAL   , "Body resistance RBDBX  scaling"),
+IOP( "rbdby0", BSIM4_MOD_RBDBY0,  IF_REAL   , "Body resistance RBDBY  scaling"),
+
+IOP( "rbsdbxl",  BSIM4_MOD_RBSDBXL,   IF_REAL   , "Body resistance RBSDBX L scaling"),
+IOP( "rbsdbxw",  BSIM4_MOD_RBSDBXW,   IF_REAL   , "Body resistance RBSDBX W scaling"),
+IOP( "rbsdbxnf", BSIM4_MOD_RBSDBXNF,  IF_REAL   , "Body resistance RBSDBX NF scaling"),
+IOP( "rbsdbyl",  BSIM4_MOD_RBSDBYL,   IF_REAL   , "Body resistance RBSDBY L scaling"),
+IOP( "rbsdbyw",  BSIM4_MOD_RBSDBYW,   IF_REAL   , "Body resistance RBSDBY W scaling"),
+IOP( "rbsdbynf", BSIM4_MOD_RBSDBYNF,  IF_REAL   , "Body resistance RBSDBY NF scaling"),
+
 IOP( "lcdsc",  BSIM4_MOD_LCDSC, IF_REAL, "Length dependence of cdsc"),
 IOP( "lcdscb", BSIM4_MOD_LCDSCB, IF_REAL, "Length dependence of cdscb"),
 IOP( "lcdscd", BSIM4_MOD_LCDSCD, IF_REAL, "Length dependence of cdscd"),
@@ -429,6 +481,10 @@ IOP( "lub", BSIM4_MOD_LUB, IF_REAL, "Length dependence of ub"),
 IOP( "lub1", BSIM4_MOD_LUB1, IF_REAL, "Length dependence of ub1"),
 IOP( "luc",  BSIM4_MOD_LUC, IF_REAL, "Length dependence of uc"),
 IOP( "luc1", BSIM4_MOD_LUC1, IF_REAL, "Length dependence of uc1"),
+IOP( "lud",  BSIM4_MOD_LUD, IF_REAL, "Length dependence of ud"),
+IOP( "lud1", BSIM4_MOD_LUD1, IF_REAL, "Length dependence of ud1"),
+IOP( "lup",  BSIM4_MOD_LUP, IF_REAL, "Length dependence of up"),
+IOP( "llp",  BSIM4_MOD_LLP, IF_REAL, "Length dependence of lp"),
 IOP( "lu0",  BSIM4_MOD_LU0, IF_REAL, "Length dependence of u0"),
 IOP( "lute", BSIM4_MOD_LUTE, IF_REAL, "Length dependence of ute"),
 IOP( "lvoff", BSIM4_MOD_LVOFF, IF_REAL, "Length dependence of voff"),
@@ -469,6 +525,7 @@ IOP( "lcle", BSIM4_MOD_LCLE, IF_REAL, "Length dependence of cle"),
 IOP( "lalpha0", BSIM4_MOD_LALPHA0, IF_REAL, "Length dependence of alpha0"),
 IOP( "lalpha1", BSIM4_MOD_LALPHA1, IF_REAL, "Length dependence of alpha1"),
 IOP( "lbeta0", BSIM4_MOD_LBETA0, IF_REAL, "Length dependence of beta0"),
+
 IOP( "lagidl", BSIM4_MOD_LAGIDL, IF_REAL, "Length dependence of agidl"),
 IOP( "lbgidl", BSIM4_MOD_LBGIDL, IF_REAL, "Length dependence of bgidl"),
 IOP( "lcgidl", BSIM4_MOD_LCGIDL, IF_REAL, "Length dependence of cgidl"),
@@ -506,6 +563,8 @@ IOP( "lvtl",      BSIM4_MOD_LVTL,     IF_REAL, " Length dependence of vtl"),
 IOP( "lxn",     BSIM4_MOD_LXN,    IF_REAL, " Length dependence of xn"),
 IOP( "leu",  BSIM4_MOD_LEU, IF_REAL, " Length dependence of eu"),
 IOP( "lvfbsdoff",     BSIM4_MOD_LVFBSDOFF,     IF_REAL, "Length dependence of vfbsdoff"),
+IOP( "ltvfbsdoff",     BSIM4_MOD_LTVFBSDOFF,     IF_REAL, "Length dependence of tvfbsdoff"),
+IOP( "ltvoff",     BSIM4_MOD_LTVOFF,     IF_REAL, "Length dependence of tvoff"),
 
 IOP( "wcdsc",  BSIM4_MOD_WCDSC, IF_REAL, "Width dependence of cdsc"),
 IOP( "wcdscb", BSIM4_MOD_WCDSCB, IF_REAL, "Width dependence of cdscb"),  
@@ -558,6 +617,10 @@ IOP( "wub", BSIM4_MOD_WUB, IF_REAL, "Width dependence of ub"),
 IOP( "wub1", BSIM4_MOD_WUB1, IF_REAL, "Width dependence of ub1"),
 IOP( "wuc",  BSIM4_MOD_WUC, IF_REAL, "Width dependence of uc"),
 IOP( "wuc1", BSIM4_MOD_WUC1, IF_REAL, "Width dependence of uc1"),
+IOP( "wud",  BSIM4_MOD_WUD, IF_REAL, "Width dependence of ud"),
+IOP( "wud1", BSIM4_MOD_WUD1, IF_REAL, "Width dependence of ud1"),
+IOP( "wup",  BSIM4_MOD_WUP, IF_REAL, "Width dependence of up"),
+IOP( "wlp",  BSIM4_MOD_WLP, IF_REAL, "Width dependence of lp"),
 IOP( "wu0",  BSIM4_MOD_WU0, IF_REAL, "Width dependence of u0"),
 IOP( "wute", BSIM4_MOD_WUTE, IF_REAL, "Width dependence of ute"),
 IOP( "wvoff", BSIM4_MOD_WVOFF, IF_REAL, "Width dependence of voff"),
@@ -598,6 +661,7 @@ IOP( "wcle", BSIM4_MOD_WCLE, IF_REAL, "Width dependence of cle"),
 IOP( "walpha0", BSIM4_MOD_WALPHA0, IF_REAL, "Width dependence of alpha0"),
 IOP( "walpha1", BSIM4_MOD_WALPHA1, IF_REAL, "Width dependence of alpha1"),
 IOP( "wbeta0", BSIM4_MOD_WBETA0, IF_REAL, "Width dependence of beta0"),
+
 IOP( "wagidl", BSIM4_MOD_WAGIDL, IF_REAL, "Width dependence of agidl"),
 IOP( "wbgidl", BSIM4_MOD_WBGIDL, IF_REAL, "Width dependence of bgidl"),
 IOP( "wcgidl", BSIM4_MOD_WCGIDL, IF_REAL, "Width dependence of cgidl"),
@@ -634,6 +698,8 @@ IOP( "wvtl",      BSIM4_MOD_WVTL,     IF_REAL, "Width dependence of vtl"),
 IOP( "wxn",     BSIM4_MOD_WXN,    IF_REAL, "Width dependence of xn"),
 IOP( "weu",  BSIM4_MOD_WEU, IF_REAL, "Width dependence of eu"),
 IOP( "wvfbsdoff",     BSIM4_MOD_WVFBSDOFF,     IF_REAL, "Width dependence of vfbsdoff"),
+IOP( "wtvfbsdoff",     BSIM4_MOD_WTVFBSDOFF,     IF_REAL, "Width dependence of tvfbsdoff"),
+IOP( "wtvoff",     BSIM4_MOD_WTVOFF,     IF_REAL, "Width dependence of tvoff"),
 
 IOP( "pcdsc",  BSIM4_MOD_PCDSC, IF_REAL, "Cross-term dependence of cdsc"),
 IOP( "pcdscb", BSIM4_MOD_PCDSCB, IF_REAL, "Cross-term dependence of cdscb"), 
@@ -686,6 +752,10 @@ IOP( "pub", BSIM4_MOD_PUB, IF_REAL, "Cross-term dependence of ub"),
 IOP( "pub1", BSIM4_MOD_PUB1, IF_REAL, "Cross-term dependence of ub1"),
 IOP( "puc",  BSIM4_MOD_PUC, IF_REAL, "Cross-term dependence of uc"),
 IOP( "puc1", BSIM4_MOD_PUC1, IF_REAL, "Cross-term dependence of uc1"),
+IOP( "pud",  BSIM4_MOD_PUD, IF_REAL, "Cross-term dependence of ud"),
+IOP( "pud1", BSIM4_MOD_PUD1, IF_REAL, "Cross-term dependence of ud1"),
+IOP( "pup",  BSIM4_MOD_PUP, IF_REAL, "Cross-term dependence of up"),
+IOP( "plp",  BSIM4_MOD_PLP, IF_REAL, "Cross-term dependence of lp"),
 IOP( "pu0",  BSIM4_MOD_PU0, IF_REAL, "Cross-term dependence of u0"),
 IOP( "pute", BSIM4_MOD_PUTE, IF_REAL, "Cross-term dependence of ute"),
 IOP( "pvoff", BSIM4_MOD_PVOFF, IF_REAL, "Cross-term dependence of voff"),
@@ -726,6 +796,7 @@ IOP( "pcle", BSIM4_MOD_PCLE, IF_REAL, "Cross-term dependence of cle"),
 IOP( "palpha0", BSIM4_MOD_PALPHA0, IF_REAL, "Cross-term dependence of alpha0"),
 IOP( "palpha1", BSIM4_MOD_PALPHA1, IF_REAL, "Cross-term dependence of alpha1"),
 IOP( "pbeta0", BSIM4_MOD_PBETA0, IF_REAL, "Cross-term dependence of beta0"),
+
 IOP( "pagidl", BSIM4_MOD_PAGIDL, IF_REAL, "Cross-term dependence of agidl"),
 IOP( "pbgidl", BSIM4_MOD_PBGIDL, IF_REAL, "Cross-term dependence of bgidl"),
 IOP( "pcgidl", BSIM4_MOD_PCGIDL, IF_REAL, "Cross-term dependence of cgidl"),
@@ -762,6 +833,8 @@ IOP( "pvtl",      BSIM4_MOD_PVTL,     IF_REAL, "Cross-term dependence of vtl"),
 IOP( "pxn",     BSIM4_MOD_PXN,    IF_REAL, "Cross-term dependence of xn"),
 IOP( "peu",  BSIM4_MOD_PEU, IF_REAL, "Cross-term dependence of eu"),
 IOP( "pvfbsdoff",     BSIM4_MOD_PVFBSDOFF,     IF_REAL, "Cross-term dependence of vfbsdoff"),
+IOP( "ptvfbsdoff",     BSIM4_MOD_PTVFBSDOFF,     IF_REAL, "Cross-term dependence of tvfbsdoff"),
+IOP( "ptvoff",     BSIM4_MOD_PTVOFF,     IF_REAL, "Cross-term dependence of tvoff"),
 
 /* stress effect*/
 IOP( "saref", BSIM4_MOD_SAREF, IF_REAL, "Reference distance between OD edge to poly of one side"),
@@ -785,7 +858,23 @@ IOP( "stk2", BSIM4_MOD_STK2, IF_REAL, "K2 shift factor related to stress effect 
 IOP( "lodk2", BSIM4_MOD_LODK2, IF_REAL, "K2 shift modification factor for stress effect"),
 IOP( "steta0", BSIM4_MOD_STETA0, IF_REAL, "eta0 shift factor related to stress effect on vth"),
 IOP( "lodeta0", BSIM4_MOD_LODETA0, IF_REAL, "eta0 shift modification factor for stress effect"),
-
+/* Well Proximity Effect */
+IOP( "web", BSIM4_MOD_WEB, IF_REAL, "Coefficient for SCB"),
+IOP( "wec", BSIM4_MOD_WEC, IF_REAL, "Coefficient for SCC"),
+IOP( "kvth0we", BSIM4_MOD_KVTH0WE, IF_REAL, "Threshold shift factor for well proximity effect"),
+IOP( "k2we", BSIM4_MOD_K2WE, IF_REAL, " K2 shift factor for well proximity effect "),
+IOP( "ku0we", BSIM4_MOD_KU0WE, IF_REAL, " Mobility degradation factor for well proximity effect "),
+IOP( "scref", BSIM4_MOD_SCREF, IF_REAL, " Reference distance to calculate SCA, SCB and SCC"),
+IOP( "wpemod", BSIM4_MOD_WPEMOD, IF_REAL, " Flag for WPE model (WPEMOD=1 to activate this model) "),
+IOP( "lkvth0we", BSIM4_MOD_LKVTH0WE, IF_REAL, "Length dependence of kvth0we"),
+IOP( "lk2we", BSIM4_MOD_LK2WE, IF_REAL, " Length dependence of k2we "),
+IOP( "lku0we", BSIM4_MOD_LKU0WE, IF_REAL, " Length dependence of ku0we "),
+IOP( "wkvth0we", BSIM4_MOD_WKVTH0WE, IF_REAL, "Width dependence of kvth0we"),
+IOP( "wk2we", BSIM4_MOD_WK2WE, IF_REAL, " Width dependence of k2we "),
+IOP( "wku0we", BSIM4_MOD_WKU0WE, IF_REAL, " Width dependence of ku0we "),
+IOP( "pkvth0we", BSIM4_MOD_PKVTH0WE, IF_REAL, "Cross-term dependence of kvth0we"),
+IOP( "pk2we", BSIM4_MOD_PK2WE, IF_REAL, " Cross-term dependence of k2we "),
+IOP( "pku0we", BSIM4_MOD_PKU0WE, IF_REAL, " Cross-term dependence of ku0we "),
 
 IOP( "noia", BSIM4_MOD_NOIA, IF_REAL, "Flicker noise parameter"),
 IOP( "noib", BSIM4_MOD_NOIB, IF_REAL, "Flicker noise parameter"),

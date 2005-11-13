@@ -1,17 +1,18 @@
-/**** BSIM4.4.0  Released by Xuemei (Jane) Xi 03/04/2004 ****/
+/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2004 Regents of the University of California. All rights reserved.
- * File: b4set.c of BSIM4.4.0.
+ * Copyright 2005 Regents of the University of California. All rights reserved.
+ * File: b4set.c of BSIM4.5.0.
  * Author: 2000 Weidong Liu
- * Authors: 2001- Xuemei Xi, Jin He, Kanyu Cao, Mohan Dunga, Mansun Chan, Ali Niknejad, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
  * Modified by Xuemei Xi, 11/15/2002.
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 03/04/2004.
- **********/
+ * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
+**********/
 
 #include "ngspice.h"
 #include "jobdefs.h"  /* Needed because the model searches for noise Analysis */   
@@ -22,7 +23,6 @@
 #include "const.h"
 #include "sperror.h"
 #include "suffix.h"
-
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
@@ -103,7 +103,7 @@ JOB   *job;
 	}
         if (!model->BSIM4rbodyModGiven)
             model->BSIM4rbodyMod = 0;
-        else if ((model->BSIM4rbodyMod != 0) && (model->BSIM4rbodyMod != 1))
+        else if ((model->BSIM4rbodyMod != 0) && (model->BSIM4rbodyMod != 1) && (model->BSIM4rbodyMod != 2))
         {   model->BSIM4rbodyMod = 0;
             printf("Warning: rbodyMod has been set to its default value: 0.\n");
         }
@@ -154,7 +154,8 @@ JOB   *job;
 
         if (!model->BSIM4igcModGiven)
             model->BSIM4igcMod = 0;
-        else if ((model->BSIM4igcMod != 0) && (model->BSIM4igcMod != 1))
+        else if ((model->BSIM4igcMod != 0) && (model->BSIM4igcMod != 1)
+		  && (model->BSIM4igcMod != 2))
         {   model->BSIM4igcMod = 0;
             printf("Warning: igcMod has been set to its default value: 0.\n");
         }
@@ -166,13 +167,14 @@ JOB   *job;
         }
         if (!model->BSIM4tempModGiven)
             model->BSIM4tempMod = 0;
-        else if ((model->BSIM4tempMod != 0) && (model->BSIM4tempMod != 1))
+        else if ((model->BSIM4tempMod != 0) && (model->BSIM4tempMod != 1) 
+		  && (model->BSIM4tempMod != 2))
         {   model->BSIM4tempMod = 0;
             printf("Warning: tempMod has been set to its default value: 0.\n");
         }
 
         if (!model->BSIM4versionGiven) 
-            model->BSIM4version = "4.4.0";
+            model->BSIM4version = "4.5.0";
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4toxeGiven)
@@ -280,6 +282,14 @@ JOB   *job;
             model->BSIM4uc = (model->BSIM4mobMod == 1) ? -0.0465 : -0.0465e-9;   
         if (!model->BSIM4uc1Given)
             model->BSIM4uc1 = (model->BSIM4mobMod == 1) ? -0.056 : -0.056e-9;   
+        if (!model->BSIM4udGiven)
+            model->BSIM4ud = 1.0e14;     /* unit m**(-2) */
+        if (!model->BSIM4ud1Given)
+            model->BSIM4ud1 = 0.0;     
+        if (!model->BSIM4upGiven)
+            model->BSIM4up = 0.0;     
+        if (!model->BSIM4lpGiven)
+            model->BSIM4lp = 1.0e-8;     
         if (!model->BSIM4u0Given)
             model->BSIM4u0 = (model->BSIM4type == NMOS) ? 0.067 : 0.025;
         if (!model->BSIM4uteGiven)
@@ -352,7 +362,7 @@ JOB   *job;
         if (!model->BSIM4alpha1Given)
             model->BSIM4alpha1 = 0.0;
         if (!model->BSIM4beta0Given)  
-            model->BSIM4beta0 = 30.0;
+            model->BSIM4beta0 = 0.0;
         if (!model->BSIM4agidlGiven)
             model->BSIM4agidl = 0.0;
         if (!model->BSIM4bgidlGiven)
@@ -362,27 +372,27 @@ JOB   *job;
         if (!model->BSIM4egidlGiven)
             model->BSIM4egidl = 0.8; /* V */
         if (!model->BSIM4aigcGiven)
-            model->BSIM4aigc = (model->BSIM4type == NMOS) ? 0.43 : 0.31;
+            model->BSIM4aigc = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
         if (!model->BSIM4bigcGiven)
-            model->BSIM4bigc = (model->BSIM4type == NMOS) ? 0.054 : 0.024;
+            model->BSIM4bigc = (model->BSIM4type == NMOS) ? 1.71e-3 : 7.59e-4;
         if (!model->BSIM4cigcGiven)
             model->BSIM4cigc = (model->BSIM4type == NMOS) ? 0.075 : 0.03;
         if (!model->BSIM4aigsdGiven)
-            model->BSIM4aigsd = (model->BSIM4type == NMOS) ? 0.43 : 0.31;
+            model->BSIM4aigsd = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
         if (!model->BSIM4bigsdGiven)
-            model->BSIM4bigsd = (model->BSIM4type == NMOS) ? 0.054 : 0.024;
+            model->BSIM4bigsd = (model->BSIM4type == NMOS) ? 1.71e-3 : 7.59e-4;
         if (!model->BSIM4cigsdGiven)
             model->BSIM4cigsd = (model->BSIM4type == NMOS) ? 0.075 : 0.03;
         if (!model->BSIM4aigbaccGiven)
-            model->BSIM4aigbacc = 0.43;
+            model->BSIM4aigbacc = 1.36e-2;
         if (!model->BSIM4bigbaccGiven)
-            model->BSIM4bigbacc = 0.054;
+            model->BSIM4bigbacc = 1.71e-3;
         if (!model->BSIM4cigbaccGiven)
             model->BSIM4cigbacc = 0.075;
         if (!model->BSIM4aigbinvGiven)
-            model->BSIM4aigbinv = 0.35;
+            model->BSIM4aigbinv = 1.11e-2;
         if (!model->BSIM4bigbinvGiven)
-            model->BSIM4bigbinv = 0.03;
+            model->BSIM4bigbinv = 9.49e-4;
         if (!model->BSIM4cigbinvGiven)
             model->BSIM4cigbinv = 0.006;
         if (!model->BSIM4nigcGiven)
@@ -431,6 +441,11 @@ JOB   *job;
             model->BSIM4lc = 5.0e-9;   
         if (!model->BSIM4vfbsdoffGiven)  
             model->BSIM4vfbsdoff = 0.0;  /* unit v */  
+        if (!model->BSIM4tvfbsdoffGiven)
+            model->BSIM4tvfbsdoff = 0.0;  
+        if (!model->BSIM4tvoffGiven)
+            model->BSIM4tvoff = 0.0;  
+ 
         if (!model->BSIM4lintnoiGiven)
             model->BSIM4lintnoi = 0.0;  /* unit m */  
 
@@ -455,6 +470,65 @@ JOB   *job;
             model->BSIM4rbps = 50.0;
         if (!model->BSIM4rbpdGiven)
             model->BSIM4rbpd = 50.0;
+
+        if (!model->BSIM4rbps0Given)
+            model->BSIM4rbps0 = 50.0;
+        if (!model->BSIM4rbpslGiven)
+            model->BSIM4rbpsl = 0.0;
+        if (!model->BSIM4rbpswGiven)
+            model->BSIM4rbpsw = 0.0;
+        if (!model->BSIM4rbpsnfGiven)
+            model->BSIM4rbpsnf = 0.0;
+
+        if (!model->BSIM4rbpd0Given)
+            model->BSIM4rbpd0 = 50.0;
+        if (!model->BSIM4rbpdlGiven)
+            model->BSIM4rbpdl = 0.0;
+        if (!model->BSIM4rbpdwGiven)
+            model->BSIM4rbpdw = 0.0;
+        if (!model->BSIM4rbpdnfGiven)
+            model->BSIM4rbpdnf = 0.0;
+
+        if (!model->BSIM4rbpbx0Given)
+            model->BSIM4rbpbx0 = 100.0;
+        if (!model->BSIM4rbpbxlGiven)
+            model->BSIM4rbpbxl = 0.0;
+        if (!model->BSIM4rbpbxwGiven)
+            model->BSIM4rbpbxw = 0.0;
+        if (!model->BSIM4rbpbxnfGiven)
+            model->BSIM4rbpbxnf = 0.0;
+        if (!model->BSIM4rbpby0Given)
+            model->BSIM4rbpby0 = 100.0;
+        if (!model->BSIM4rbpbylGiven)
+            model->BSIM4rbpbyl = 0.0;
+        if (!model->BSIM4rbpbywGiven)
+            model->BSIM4rbpbyw = 0.0;
+        if (!model->BSIM4rbpbynfGiven)
+            model->BSIM4rbpbynf = 0.0;
+
+
+        if (!model->BSIM4rbsbx0Given)
+            model->BSIM4rbsbx0 = 100.0;
+        if (!model->BSIM4rbsby0Given)
+            model->BSIM4rbsby0 = 100.0;
+        if (!model->BSIM4rbdbx0Given)
+            model->BSIM4rbdbx0 = 100.0;
+        if (!model->BSIM4rbdby0Given)
+            model->BSIM4rbdby0 = 100.0;
+
+
+        if (!model->BSIM4rbsdbxlGiven)
+            model->BSIM4rbsdbxl = 0.0;
+        if (!model->BSIM4rbsdbxwGiven)
+            model->BSIM4rbsdbxw = 0.0;
+        if (!model->BSIM4rbsdbxnfGiven)
+            model->BSIM4rbsdbxnf = 0.0;
+        if (!model->BSIM4rbsdbylGiven)
+            model->BSIM4rbsdbyl = 0.0;
+        if (!model->BSIM4rbsdbywGiven)
+            model->BSIM4rbsdbyw = 0.0;
+        if (!model->BSIM4rbsdbynfGiven)
+            model->BSIM4rbsdbynf = 0.0;
 
         if (!model->BSIM4cgslGiven)  
             model->BSIM4cgsl = 0.0;
@@ -598,6 +672,14 @@ JOB   *job;
             model->BSIM4luc = 0.0;
         if (!model->BSIM4luc1Given)
             model->BSIM4luc1 = 0.0;
+        if (!model->BSIM4ludGiven)
+            model->BSIM4lud = 0.0;
+        if (!model->BSIM4lud1Given)
+            model->BSIM4lud1 = 0.0;
+        if (!model->BSIM4lupGiven)
+            model->BSIM4lup = 0.0;
+        if (!model->BSIM4llpGiven)
+            model->BSIM4llp = 0.0;
         if (!model->BSIM4lu0Given)
             model->BSIM4lu0 = 0.0;
         if (!model->BSIM4luteGiven)
@@ -722,6 +804,11 @@ JOB   *job;
             model->BSIM4lxn = 0.0;  
         if (!model->BSIM4lvfbsdoffGiven)
             model->BSIM4lvfbsdoff = 0.0;   
+        if (!model->BSIM4ltvfbsdoffGiven)
+            model->BSIM4ltvfbsdoff = 0.0;  
+        if (!model->BSIM4ltvoffGiven)
+            model->BSIM4ltvoff = 0.0;  
+
 
         if (!model->BSIM4lcgslGiven)  
             model->BSIM4lcgsl = 0.0;
@@ -839,6 +926,14 @@ JOB   *job;
             model->BSIM4wuc = 0.0;
         if (!model->BSIM4wuc1Given)
             model->BSIM4wuc1 = 0.0;
+        if (!model->BSIM4wudGiven)
+            model->BSIM4wud = 0.0;
+        if (!model->BSIM4wud1Given)
+            model->BSIM4wud1 = 0.0;
+        if (!model->BSIM4wupGiven)
+            model->BSIM4wup = 0.0;
+        if (!model->BSIM4wlpGiven)
+            model->BSIM4wlp = 0.0;
         if (!model->BSIM4wu0Given)
             model->BSIM4wu0 = 0.0;
         if (!model->BSIM4wuteGiven)
@@ -963,6 +1058,10 @@ JOB   *job;
             model->BSIM4wxn = 0.0;  
         if (!model->BSIM4wvfbsdoffGiven)
             model->BSIM4wvfbsdoff = 0.0;   
+        if (!model->BSIM4wtvfbsdoffGiven)
+            model->BSIM4wtvfbsdoff = 0.0;  
+        if (!model->BSIM4wtvoffGiven)
+            model->BSIM4wtvoff = 0.0;  
 
         if (!model->BSIM4wcgslGiven)  
             model->BSIM4wcgsl = 0.0;
@@ -1081,6 +1180,14 @@ JOB   *job;
             model->BSIM4puc = 0.0;
         if (!model->BSIM4puc1Given)
             model->BSIM4puc1 = 0.0;
+        if (!model->BSIM4pudGiven)
+            model->BSIM4pud = 0.0;
+        if (!model->BSIM4pud1Given)
+            model->BSIM4pud1 = 0.0;
+        if (!model->BSIM4pupGiven)
+            model->BSIM4pup = 0.0;
+        if (!model->BSIM4plpGiven)
+            model->BSIM4plp = 0.0;
         if (!model->BSIM4pu0Given)
             model->BSIM4pu0 = 0.0;
         if (!model->BSIM4puteGiven)
@@ -1205,6 +1312,10 @@ JOB   *job;
             model->BSIM4pxn = 0.0;  
         if (!model->BSIM4pvfbsdoffGiven)
             model->BSIM4pvfbsdoff = 0.0;   
+        if (!model->BSIM4ptvfbsdoffGiven)
+            model->BSIM4ptvfbsdoff = 0.0;  
+        if (!model->BSIM4ptvoffGiven)
+            model->BSIM4ptvoff = 0.0;  
 
         if (!model->BSIM4pcgslGiven)  
             model->BSIM4pcgsl = 0.0;
@@ -1405,7 +1516,7 @@ JOB   *job;
             model->BSIM4xtsd = model->BSIM4xtss;
         if (!model->BSIM4xtsswsGiven)
             model->BSIM4xtssws = 0.02;
-        if (!model->BSIM4jtsswdGiven)
+        if (!model->BSIM4xtsswdGiven)
             model->BSIM4xtsswd = model->BSIM4xtssws;
         if (!model->BSIM4xtsswgsGiven)
             model->BSIM4xtsswgs = 0.02;
@@ -1497,6 +1608,44 @@ JOB   *job;
         if (!model->BSIM4lodeta0Given)
             model->BSIM4lodeta0 = 1.0;
 
+	/* Well Proximity Effect  */
+        if (!model->BSIM4webGiven)
+            model->BSIM4web = 0.0; 
+        if (!model->BSIM4wecGiven)
+            model->BSIM4wec = 0.0;
+        if (!model->BSIM4kvth0weGiven)
+            model->BSIM4kvth0we = 0.0; 
+        if (!model->BSIM4k2weGiven)
+            model->BSIM4k2we = 0.0; 
+        if (!model->BSIM4ku0weGiven)
+            model->BSIM4ku0we = 0.0; 
+        if (!model->BSIM4screfGiven)
+            model->BSIM4scref = 1.0E-6; /* m */
+        if (!model->BSIM4wpemodGiven)
+            model->BSIM4wpemod = 0; 
+        else if ((model->BSIM4wpemod != 0) && (model->BSIM4wpemod != 1))
+        {   model->BSIM4wpemod = 0;
+            printf("Warning: wpemod has been set to its default value: 0.\n");
+        }
+        if (!model->BSIM4lkvth0weGiven)
+            model->BSIM4lkvth0we = 0; 
+        if (!model->BSIM4lk2weGiven)
+            model->BSIM4lk2we = 0;
+        if (!model->BSIM4lku0weGiven)
+            model->BSIM4lku0we = 0;
+        if (!model->BSIM4wkvth0weGiven)
+            model->BSIM4wkvth0we = 0; 
+        if (!model->BSIM4wk2weGiven)
+            model->BSIM4wk2we = 0;
+        if (!model->BSIM4wku0weGiven)
+            model->BSIM4wku0we = 0;
+        if (!model->BSIM4pkvth0weGiven)
+            model->BSIM4pkvth0we = 0; 
+        if (!model->BSIM4pk2weGiven)
+            model->BSIM4pk2we = 0;
+        if (!model->BSIM4pku0weGiven)
+            model->BSIM4pku0we = 0;
+
         DMCGeff = model->BSIM4dmcg - model->BSIM4dmcgt;
         DMCIeff = model->BSIM4dmci;
         DMDGeff = model->BSIM4dmdg - model->BSIM4dmcgt;
@@ -1509,10 +1658,10 @@ JOB   *job;
         for (here = model->BSIM4instances; here != NULL ;
              here=here->BSIM4nextInstance) 
 	{   
-	         if (here->BSIM4owner == ARCHme) {
-		          /* allocate a chunk of the state vector */
-              here->BSIM4states = *states;
-              *states += BSIM4numStates;
+			if (here->BSIM4owner == ARCHme) {
+			/* allocate a chunk of the state vector */
+            here->BSIM4states = *states;
+            *states += BSIM4numStates;
             }
             /* perform the parameter defaulting */
             if (!here->BSIM4lGiven)
@@ -1544,13 +1693,6 @@ JOB   *job;
             if (!here->BSIM4sourceSquaresGiven)
                 here->BSIM4sourceSquares = 1.0;
 
-            if (!here->BSIM4saGiven)
-                here->BSIM4sa = 0.0;
-            if (!here->BSIM4sbGiven)
-                here->BSIM4sb = 0.0;
-            if (!here->BSIM4sdGiven)
-                here->BSIM4sd = 0.0;
-
             if (!here->BSIM4rbdbGiven)
                 here->BSIM4rbdb = model->BSIM4rbdb; /* in ohm */
             if (!here->BSIM4rbsbGiven)
@@ -1561,6 +1703,12 @@ JOB   *job;
                 here->BSIM4rbps = model->BSIM4rbps;
             if (!here->BSIM4rbpdGiven)
                 here->BSIM4rbpd = model->BSIM4rbpd;
+            if (!here->BSIM4delvtoGiven)
+                here->BSIM4delvto = 0.0;
+            if (!here->BSIM4xgwGiven)
+                here->BSIM4xgw = model->BSIM4xgw;
+            if (!here->BSIM4ngconGiven)
+                here->BSIM4ngcon = model->BSIM4ngcon;
 
                     
             /* Process instance model selectors, some
@@ -1568,7 +1716,7 @@ JOB   *job;
 	     */
             if (!here->BSIM4rbodyModGiven)
                 here->BSIM4rbodyMod = model->BSIM4rbodyMod;
-            else if ((here->BSIM4rbodyMod != 0) && (here->BSIM4rbodyMod != 1))
+            else if ((here->BSIM4rbodyMod != 0) && (here->BSIM4rbodyMod != 1) && (here->BSIM4rbodyMod != 2))
             {   here->BSIM4rbodyMod = model->BSIM4rbodyMod;
                 printf("Warning: rbodyMod has been set to its global value %d.\n",
 	        model->BSIM4rbodyMod);
@@ -1609,8 +1757,16 @@ JOB   *job;
             if (!here->BSIM4sbGiven)
                 here->BSIM4sb = 0.0;
             if (!here->BSIM4sdGiven)
-                here->BSIM4sd = 0.0;
-
+                here->BSIM4sd = 2 * model->BSIM4dmcg;
+	    /* Well Proximity Effect  */
+	    if (!here->BSIM4scaGiven)
+                here->BSIM4sca = 0.0;
+	    if (!here->BSIM4scbGiven)
+                here->BSIM4scb = 0.0;
+	    if (!here->BSIM4sccGiven)
+                here->BSIM4scc = 0.0;
+	    if (!here->BSIM4scGiven)
+                here->BSIM4sc = 0.0; /* m */
 
             /* process drain series resistance */
             createNode = 0;
@@ -1639,19 +1795,16 @@ JOB   *job;
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"drain");
                 if(error) return(error);
                 here->BSIM4dNodePrime = tmp->number;
-		
                 if (ckt->CKTcopyNodesets) {
-	          CKTnode *tmpNode;
-		  IFuid tmpName;    
+                  CKTnode *tmpNode;
+                  IFuid tmpName;    
                   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
                        tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
-               
-}
-				
+                }
             }
             else
             {   here->BSIM4dNodePrime = here->BSIM4dNode;
@@ -1684,18 +1837,16 @@ JOB   *job;
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"source");
                 if(error) return(error);
                 here->BSIM4sNodePrime = tmp->number;
-		
-		if (ckt->CKTcopyNodesets) {
-		  CKTnode *tmpNode;
-		  IFuid tmpName;
+                if (ckt->CKTcopyNodesets) {
+                  CKTnode *tmpNode;
+                  IFuid tmpName;
                   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset; 
                        tmp->nsGiven=tmpNode->nsGiven; 
                      }
                   }
-                }				
-		
+                }
             }
             else
                 here->BSIM4sNodePrime = here->BSIM4sNode;
@@ -1704,18 +1855,16 @@ JOB   *job;
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"gate");
                 if(error) return(error);
                    here->BSIM4gNodePrime = tmp->number;
-		   
-		   if (ckt->CKTcopyNodesets) {
-		  CKTnode *tmpNode;
-		  IFuid tmpName;
+                if (ckt->CKTcopyNodesets) {
+                  CKTnode *tmpNode;
+                  IFuid tmpName;
                   if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
+                    if (tmpNode->nsGiven) {
+                      tmp->nodeset=tmpNode->nodeset; 
+                      tmp->nsGiven=tmpNode->nsGiven; 
+                    }
                   }
                 }
-						
             }
             else
                 here->BSIM4gNodePrime = here->BSIM4gNodeExt;
@@ -1730,27 +1879,26 @@ JOB   *job;
             
 
             /* internal body nodes for body resistance model */
-            if (here->BSIM4rbodyMod)
+            if ((here->BSIM4rbodyMod ==1) || (here->BSIM4rbodyMod ==2))
             {   if (here->BSIM4dbNode == 0)
 		{   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"dbody");
                     if(error) return(error);
                     here->BSIM4dbNode = tmp->number;
-		    
-		    if (ckt->CKTcopyNodesets) {
-		  CKTnode *tmpNode;
-		  IFuid tmpName;
-                  if (CKTinst2Node(ckt,here,4,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
-                }				
 		}
 		if (here->BSIM4bNodePrime == 0)
                 {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"body");
                     if(error) return(error);
                     here->BSIM4bNodePrime = tmp->number;
+                    if (ckt->CKTcopyNodesets) {
+                      CKTnode *tmpNode;
+                      IFuid tmpName;
+                      if (CKTinst2Node(ckt,here,4,&tmpNode,&tmpName)==OK) {
+                        if (tmpNode->nsGiven) {
+                          tmp->nodeset=tmpNode->nodeset; 
+                          tmp->nsGiven=tmpNode->nsGiven; 
+                        }
+                      }
+                    }
                 }
 		if (here->BSIM4sbNode == 0)
                 {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"sbody");
@@ -1767,17 +1915,6 @@ JOB   *job;
 	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"charge");
                 if(error) return(error);
                 here->BSIM4qNode = tmp->number;
-		
-		if (ckt->CKTcopyNodesets) {
-		  CKTnode *tmpNode;
-		  IFuid tmpName;
-                  if (CKTinst2Node(ckt,here,5,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
-                }				
             }
 	    else 
 	        here->BSIM4qNode = 0;
@@ -1844,7 +1981,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
                 TSTALLOC(BSIM4BPgmPtr, BSIM4bNodePrime, BSIM4gNodeMid)
             }	
 
-            if (here->BSIM4rbodyMod)
+            if ((here->BSIM4rbodyMod ==1) || (here->BSIM4rbodyMod ==2))
             {   TSTALLOC(BSIM4DPdbPtr, BSIM4dNodePrime, BSIM4dbNode)
                 TSTALLOC(BSIM4SPsbPtr, BSIM4sNodePrime, BSIM4sbNode)
 
@@ -1886,7 +2023,7 @@ BSIM4unsetup(inModel,ckt)
     GENmodel *inModel;
     CKTcircuit *ckt;
 {
-
+#ifndef HAS_BATCHSIM
     BSIM4model *model;
     BSIM4instance *here;
 
@@ -1910,5 +2047,6 @@ BSIM4unsetup(inModel,ckt)
             }
         }
     }
+#endif
     return OK;
 }
