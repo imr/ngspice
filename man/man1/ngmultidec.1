@@ -1,0 +1,104 @@
+.TH NGMULTIDEC 1 ngpice
+.SH NAME
+ngmultidec \- make ngpice sub-circuit for coupled transmission lines
+.SH SYNOPSIS
+.B ngmultidec
+[
+.IR options ...
+]
+.SH DESCRIPTION
+.I ngmultidec
+writes an ngspice input file to standard output which describes a sub-circuit for coupled lines
+using uncoupled simple lossy lines.
+.LP
+Each generated subcircuit models a 4-conductor transmission line with
+the following parameters: length
+.IR l ,
+line capacitance
+.IR c ,
+line resistance
+.IR r ,
+line conductance
+.IR g ,
+inductive_coeff_of_coupling
+.IR k ,
+inter-line capacitance
+.IR cm ,
+length
+.IR l .
+Derived parameters are:
+.IR lm ,
+.IR ctot .
+The values of
+.IR l ,
+.IR c ,
+the model name, the number of conductors and the length of the line
+must be specified.
+.LP
+It is important to note that the model is a simplified one - the
+following assumptions are made: 1. The self-inductance l, the
+self-capacitance ctot (note: not c), the series resistance r and the
+parallel capacitance g are the same for all lines, and 2. Each line
+is coupled only to the two lines adjacent to it, with the same
+coupling parameters cm and lm. The first assumption implies that edge
+effects have to be neglected. The utility of these assumptions is
+that they make the sL+R and sC+G matrices symmetric, tridiagonal and
+Toeplitz, with useful consequences (see the paper referenced below).
+.LP
+It may be noted that a symmetric two-conductor line is
+represented accurately by this model.
+.LP
+Standard C language scientific (exponent) notation may be used for options' numeric values.
+.SH OPTIONS
+.TP
+.BI \-o "subcircuit_name"
+Set the subcircuit name
+.TP
+.BI \-l "line_inductance"
+Set the line inductance.
+.TP
+.BI \-c "line_capacitance"
+Set the line capacitance.
+.TP
+.BI \-r "line_resistance"
+Set the line resistance.
+.TP
+.BI \-g "line_conductance"
+Set the line conductance.
+.TP
+.BI \-k "inductive_coefficient_of_coupling"
+Set the value of the inductive coefficient of coupling, whose
+absolute value
+.I k
+must be less than 1.0.
+.TP
+.BI \-x "line-to-line-capacitance"
+Set the line-to-line capacitance.
+.TP
+.BI \-L "length"
+Set the length of the line.
+.TP
+.BI \-n "number"
+Set the number of conductors.
+.TP
+.B \-u
+Write a usage message to standard error.
+.SH EXAMPLE
+.RS
+.B "ngmultidec -n4 -l9e9 -c20e-12 -r5.3 -x5e12 -k0.7 -otest -L5.4 > test.cir
+.RE
+.SH SEE ALSO
+.nf
+.IR "Efficient Transient Simulation of Lossy Interconnect" ,
+J.S. Roychowdhury and D.O. Pederson,
+Proceedings of the Design Automation Conference,
+pp. 740-745.
+1991.
+.B http://portal.acm.org/citation.cfm?doid=127601.127762
+.fi
+.sp
+.IR ngnutmeg (1),
+.IR ngproc2mod (1),
+.IR ngsconvert (1),
+.IR ngspice (1),
+.IR nghelp (1).

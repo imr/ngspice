@@ -1,3 +1,9 @@
+2005-11-27  Paolo Nenzi <p.nenzi@ieee.org>
+
+ *  Added manual page for ngmultidec. The man page has been written 
+    by John Murdie.
+
+
 2005-11-13  Paolo Nenzi <p.nenzi@ieee.org>
  
  *  src/spicelib/devices/bsim4/*: Updated bsim4 to version 4.5.0 using the
