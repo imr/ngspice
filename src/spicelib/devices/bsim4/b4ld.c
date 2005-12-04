@@ -4011,14 +4011,14 @@ line755:
                         * pParam->BSIM4leffCV;
                   T0 = qdef * ScalingFactor / CoxWL;
                   ggtg = here->BSIM4gtg = T0 * here->BSIM4gcrgg;
-                  ggts = here->BSIM4gts = T0 * here->BSIM4gcrgs;
-                  ggtd = here->BSIM4gtd = T0 * here->BSIM4gcrgd;
+                  ggts = here->BSIM4gts = T0 * here->BSIM4gcrgd;
+                  ggtd = here->BSIM4gtd = T0 * here->BSIM4gcrgs;
                   ggtb = here->BSIM4gtb = T0 * here->BSIM4gcrgb;
 		  gqdef = ScalingFactor * ag0;
 
                   gcqgb = here->BSIM4cqgb * ag0;
-                  gcqdb = here->BSIM4cqdb * ag0;
-                  gcqsb = here->BSIM4cqsb * ag0;
+                  gcqdb = here->BSIM4cqsb * ag0;
+                  gcqsb = here->BSIM4cqdb * ag0;
                   gcqbb = here->BSIM4cqbb * ag0;
 
                   if (fabs(qcheq) <= 1.0e-5 * CoxWL)
