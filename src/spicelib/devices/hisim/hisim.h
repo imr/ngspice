@@ -12,7 +12,7 @@
 #ifndef _HiSIM_H
 #define _HiSIM_H
 
-/*#define HiSIM_TIME   0*/
+/* #define HiSIM_TIME   0*/
 
 /* return value */
 #ifndef OK

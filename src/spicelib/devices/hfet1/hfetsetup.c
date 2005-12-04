@@ -11,8 +11,10 @@ Modified: Paolo Nenzi
 #include "sperror.h"
 #include "suffix.h"
 
-//#define HFETAphibGiven
-//#define CHARGE 1.60219e-19
+/*
+#define HFETAphibGiven
+#define CHARGE 1.60219e-19
+*/
 
 int
 HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
@@ -209,7 +211,7 @@ HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->HFETAd2 = 0.2e-6;
         }
         if(!model->HFETAvt2Given) {
-            // initialized in HFETAtemp
+            /* initialized in HFETAtemp */
             model->HFETAvt2 = 0;
         }
         
@@ -243,7 +245,7 @@ HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
  
             here->HFETAstate = *states;
-            // *states += 24;
+            /* *states += 24; */
             *states += HFETAnumStates;
 
 matrixpointers:

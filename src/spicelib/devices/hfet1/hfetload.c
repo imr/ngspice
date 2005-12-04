@@ -16,7 +16,9 @@ Modified: Paolo Nenzi
 #define false 0
 */
 
-//#define PHIB 0.5
+/*
+#define PHIB 0.5
+*/
 double diode(double);
 
 static void leak(double gmin, double vt, double v, double rs, double is1, 
@@ -510,7 +512,7 @@ static void leak(double gmin, double vt, double v, double rs, double is1, double
     dvdi0 = rs + vt1/(iaprox+is1) + vt2/(iaprox+is2);
     v0    = rs*iaprox;
     v0   += vt1*log(iaprox/is1 + 1) + vt2*log(iaprox/is2 + 1);
-    //*il   = __max(-is1,iaprox + (v - v0)/dvdi0)*0.99999;
+    /* *il   = __max(-is1,iaprox + (v - v0)/dvdi0)*0.99999; */
     *il   = MAX(-is1,iaprox + (v - v0)/dvdi0)*0.99999;
     *gl = 1./(rs + vt1/(*il+is1) + vt2/(*il+is2));
   } else {
@@ -529,7 +531,6 @@ static void hfeta(HFETAmodel *model, HFETAinstance *here, CKTcircuit *ckt,
                   double *gds, double *capgs, double *capgd,
                   double *cgd, double *gmg, double *gmd,
                   double *cgs, double *ggs)
-
 {
            
   double vt;
@@ -650,7 +651,7 @@ static void hfeta(HFETAmodel *model, HFETAinstance *here, CKTcircuit *ckt,
   *gm           = g*delvgtvgs;
   *gds          = delidvds + g*sigma;
 
-  // Capacitance calculations
+  /* Capacitance calculations */
   temp          = ETA1*vt;
   cg1           = 1/(D1/EPSI+temp*exp(-(vgs-IN_VT1)/temp));
   cgc           = W*L*(CHARGE*delnsnsm*delnsmvgt*delvgtvgs+cg1);
@@ -676,7 +677,7 @@ static void hfeta(HFETAmodel *model, HFETAinstance *here, CKTcircuit *ckt,
 cgd_calc:
 
   if(model->HFETAgatemod != 0) {
-    // Gate-drain current calculation
+    /* Gate-drain current calculation */
     double vkneet;
     double vmax;
     double td;
@@ -726,7 +727,7 @@ cgd_calc:
   }  
 
   if(model->HFETAgatemod != 0) {  
-    // Gate-source current calculation
+    /* Gate-source current calculation */
     double evgs;
     double vtn = vt*M2S;
     double csat = ISO*TEMP*TEMP*exp(-PHIB/(CONSTboltz*TEMP));
@@ -741,7 +742,7 @@ cgd_calc:
   }
 
   if(model->HFETAgatemod != 0 && (A1 != 0.0 || A2 != 0.0)) {
-    // Correction current calculations  
+    /* Correction current calculations */  
     double vmax;
     double delvdsevmax;
     double delvdsevds;

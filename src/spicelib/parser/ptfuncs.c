@@ -158,7 +158,7 @@ PTustep2(double arg)
 	return 0.0;
     else if (arg <= 1.0)
 	return arg;
-    else //if (arg > 1.0)
+    else /* if (arg > 1.0) */
 	return 1.0;
 }
 

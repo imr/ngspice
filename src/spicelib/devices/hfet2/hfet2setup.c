@@ -105,10 +105,10 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
     if(!model->HFET2vsigmatGiven)
       VSIGMAT = 0.3;
     if(!model->HFET2vt1Given)
-      // initialized in HFET2temp
+      /* initialized in HFET2temp */
       HFET2_VT1 = 0;
     if(!model->HFET2vt2Given)
-      // initialized in HFET2temp
+      /* initialized in HFET2temp */
       VT2 = 0;
     if(!model->HFET2vtoGiven) {
       if(model->HFET2type == NHFET)

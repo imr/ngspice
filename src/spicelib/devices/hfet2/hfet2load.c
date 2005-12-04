@@ -140,7 +140,7 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
                *(ckt->CKTstate0 + here->HFET2gds)*delvds -
                *(ckt->CKTstate0 + here->HFET2ggd)*delvgd;
 
-         //   bypass if solution has not changed 
+         /*   bypass if solution has not changed */
 
          if((ckt->CKTbypass) &&
            (!(ckt->CKTmode & MODEINITPRED)) &&
@@ -173,7 +173,7 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
             goto load;
           }
   
-          //  limit nonlinear branch voltages 
+          /*  limit nonlinear branch voltages */ 
 
           ichk1=1;
           vgs = DEVpnjlim(vgs,*(ckt->CKTstate0 + here->HFET2vgs),CONSTvt0,vcrit, &icheck);
@@ -220,7 +220,7 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
       cd = cdrain - cgd;
       if((ckt->CKTmode & (MODETRAN|MODEINITSMSIG)) || ((ckt->CKTmode & MODETRANOP) &&
         (ckt->CKTmode & MODEUIC)) ){
-        //    charge storage elements 
+        /*    charge storage elements */ 
         vgs1 = *(ckt->CKTstate1 + here->HFET2vgs);
         vgd1 = *(ckt->CKTstate1 + here->HFET2vgd);
 
@@ -233,7 +233,7 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
         *(ckt->CKTstate0+here->HFET2qgd) = *(ckt->CKTstate1+here->HFET2qgd)
                         + capgd*(vgd-vgd1);
 
-        //   store small-signal parameters 
+        /*   store small-signal parameters */
 
         if( (!(ckt->CKTmode & MODETRANOP)) || (!(ckt->CKTmode & MODEUIC)) ) {
           if(ckt->CKTmode & MODEINITSMSIG) {
@@ -242,7 +242,7 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
             continue; /*go to 1000*/
           }
           
-          //   transient analysis 
+          /*   transient analysis */ 
 
           if(ckt->CKTmode & MODEINITTRAN) {
             *(ckt->CKTstate1 + here->HFET2qgs) = *(ckt->CKTstate0 + here->HFET2qgs);
@@ -265,7 +265,7 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
         }
       }
 
-      //  check convergence 
+      /*  check convergence */ 
 
       if( (!(ckt->CKTmode & MODEINITFIX)) | (!(ckt->CKTmode & MODEUIC))) {
         if((icheck == 1) 
@@ -287,7 +287,7 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
       *(ckt->CKTstate0 + here->HFET2ggs) = ggs;
       *(ckt->CKTstate0 + here->HFET2ggd) = ggd;
       
-      //    load current vector
+      /*    load current vector */
 
 load:
 
@@ -300,7 +300,7 @@ load:
       *(ckt->CKTrhs + here->HFET2drainPrimeNode)  += m * (-cdreq+ceqgd);
       *(ckt->CKTrhs + here->HFET2sourcePrimeNode) += m * (cdreq+ceqgs);
 
-      //   load y matrix 
+      /*   load y matrix */ 
 
       *(here->HFET2drainDrainPrimePtr)          += m * (-gdpr);
       *(here->HFET2gateDrainPrimePtr)           += m * (-ggd);
@@ -449,7 +449,7 @@ static void hfeta2(HFET2model *model, HFET2instance *here, CKTcircuit *ckt,
   *gm           = g*delvgtvgs;
   *gds          = delidvds + g*sigma;
 
-  // Capacitance calculations
+  /* Capacitance calculations */
   temp          = ETA1*vt;
   cg1           = 1/(D1/EPSI+temp*exp(-(vgs-HFET2_VT1)/temp));
   cgc           = W*L*(CHARGE*delnsnsm*delnsmvgt*delvgtvgs+cg1);

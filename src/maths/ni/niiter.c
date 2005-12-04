@@ -69,7 +69,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
         }
     }
     
-//    OldCKTstate0=(double *)MALLOC((ckt->CKTnumStates+1)*sizeof(double));
+/*    OldCKTstate0=(double *)MALLOC((ckt->CKTnumStates+1)*sizeof(double)); */
     
     for(;;){
         ckt->CKTnoncon=0;

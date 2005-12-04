@@ -25,8 +25,10 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
     double i_ctrl;
     double previous_state = -1; 
     double current_state = -1, old_current_state = -1;
-	double REALLY_OFF = 0, REALLY_ON = 1;	// switch is on or off, not in hysteresis region.
-	double HYST_OFF = 2, HYST_ON = 3;	// switch is on or off while control value is in hysteresis region.
+    double REALLY_OFF = 0, REALLY_ON = 1;	
+	/* switch is on or off, not in hysteresis region. */
+    double HYST_OFF = 2, HYST_ON = 3;	
+	/* switch is on or off while control value is in hysteresis region. */
 
     /*  loop through all the switch models */
     for( ; model != NULL; model = model->CSWnextModel ) {
@@ -83,8 +85,11 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 						current_state = REALLY_ON;
 					} else if (i_ctrl < (model->CSWiThreshold +  model->CSWiHysteresis)) {
 						current_state = REALLY_OFF;
-					} else {	// in hysteresis... change value if going from low to hysteresis, or from hi to hysteresis.
-						// if previous state was in hysteresis, then don't change the state..
+					} else {	
+					/* in hysteresis... change value if going from low to hysteresis, 
+					 * or from hi to hysteresis. */
+					 
+						/* if previous state was in hysteresis, then don't change the state.. */
 						if ((previous_state == HYST_OFF) || (previous_state == HYST_ON)) {
 							current_state = previous_state;
 						} else if (previous_state == REALLY_ON) {
@@ -116,8 +121,11 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 						current_state = REALLY_ON;
 					} else if (i_ctrl < (model->CSWiThreshold +  model->CSWiHysteresis)) {
 						current_state = REALLY_OFF;
-					} else {	// in hysteresis... change value if going from low to hysteresis, or from hi to hysteresis.
-						// if previous state was in hysteresis, then don't change the state..
+					} else {	
+					/* in hysteresis... change value if going from low to hysteresis, 
+					 * or from hi to hysteresis. */
+					 
+						/* if previous state was in hysteresis, then don't change the state.. */
 						if ((previous_state == HYST_OFF) || (previous_state == HYST_ON)) {
 							current_state = previous_state;
 						} else if (previous_state == REALLY_ON) {

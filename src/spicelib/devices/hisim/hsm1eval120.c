@@ -68,7 +68,7 @@
 #include <math.h>
 #include <float.h>
 #ifdef __STDC__
-//# include <ieeefp.h>
+/* # include <ieeefp.h> */
 #endif
 
 /*-----------------------------------*
