@@ -908,9 +908,9 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
 	if (Check == 1) {
 	  ckt->CKTnoncon++;
 	  isConv = 0;
-	} 
+/* spice3f4 defined NEWCONV by default, looking to niconv.c
 #ifndef NEWCONV
-//DW	} 
+	} 
 	else {
 	  if (here->HSM1_mode >= 0) 
 	    Idtot = here->HSM1_ids + here->HSM1_isub 
@@ -948,8 +948,9 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
 	  }
 	}
 #endif /* NEWCONV */
+*/
       }
-//DW    }
+    }
     *(ckt->CKTstate0 + here->HSM1vbs) = vbs;
     *(ckt->CKTstate0 + here->HSM1vbd) = vbd;
     *(ckt->CKTstate0 + here->HSM1vgs) = vgs;
