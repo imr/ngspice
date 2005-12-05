@@ -61,7 +61,7 @@ HSM1setup(register SMPmatrix *matrix, register GENmodel *inModel,
 	model->HSM1_version = 120 ;
     }
     else {
-//DW      printf("           %d is selected for VERSION \n", (int)model->HSM1_version);
+/*      printf("           %d is selected for VERSION \n", (int)model->HSM1_version); */
     }
 
     if ( !model->HSM1_corsrd_Given ) model->HSM1_corsrd = 0 ;
