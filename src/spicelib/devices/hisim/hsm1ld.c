@@ -168,10 +168,12 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
 #ifndef NOBYPASS
   double tempv;
 #endif /*NOBYPASS*/
-  double tmp;
+  int tmp;
+/* spice3f4 defined NEWCONV by default, looking to niconv.c
 #ifndef NEWCONV
   double tol, tol2, tol3, tol4;
 #endif
+*/
   int ChargeComputationNeeded =  
     ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
      ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
@@ -384,7 +386,7 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
 			}
 #endif /*NOBYPASS*/
 	
-	/*	von = model->HSM1_type * here->HSM1_von;*/
+	/*	von = model->HSM1_type * here->HSM1_von; */
 	von = here->HSM1_von; 
 	if(*(ckt->CKTstate0 + here->HSM1vds) >= 0.0) {
 	  vgs = DEVfetlim(vgs, *(ckt->CKTstate0 + here->HSM1vgs), von);
@@ -581,9 +583,10 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
       /*
       sMS.ims[0] = 0;
       sMS.dms[0] = 0.0e0;
-      sMS.ims[1] = 0; */
-      /*      sMS.dms[1] = pslot->timepoint; I don't know 
-      * no use in SPICE3f5 */
+      sMS.ims[1] = 0;
+      sMS.dms[1] = pslot->timepoint; I don't know 
+      * no use in SPICE3f5 
+      */
       
       if ( ! strcmp(here->HSM1_called, "yes" ) ) {
 	sIN.has_prv = 1;

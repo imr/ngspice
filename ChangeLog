@@ -1,3 +1,8 @@
+2005-12-06  Dietmar Warning <warning@danalyse.de>
+
+ *   src/spicelib/devices/hisim/hsm1ld.c: Variable tmp is really used only
+     for flag swapping - because make she int. Some better reading in comments.
+
 2005-12-04  Paolo Nenzi <p.nenzi@ieee.org>
 
  *   src/spicelib/devices/bsim4/b4ld.c: As written by Dietmar, the changes 
