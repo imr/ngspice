@@ -42,7 +42,7 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->VBICtnom = 27.0;
         }
         if(!model->VBICextCollResistGiven) {
-            model->VBICextCollResist = 0.1;
+            model->VBICextCollResist = 0.0;
         }
         if(!model->VBICintCollResistGiven) {
             model->VBICintCollResist = 0.1;
@@ -57,16 +57,16 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->VBIChighCurFac = 1.0;
         }
         if(!model->VBICextBaseResistGiven) {
-            model->VBICextBaseResist = 0.1;
+            model->VBICextBaseResist = 0.0;
         }
         if(!model->VBICintBaseResistGiven) {
             model->VBICintBaseResist = 0.1;
         }
         if(!model->VBICemitterResistGiven) {
-            model->VBICemitterResist = 0.01;
+            model->VBICemitterResist = 0.0;
         }
         if(!model->VBICsubstrateResistGiven) {
-            model->VBICsubstrateResist = 0.1;
+            model->VBICsubstrateResist = 0.0;
         }
         if(!model->VBICparBaseResistGiven) {
             model->VBICparBaseResist = 0.1;
