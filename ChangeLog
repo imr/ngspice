@@ -1,3 +1,26 @@
+2006-01-31 Paolo Nenzi <p.nenzi@ieee.org>: 
+
+ *   Committed the admst tree from the adms system. Laurent Lamaitre 
+     <r29173@users.sourceforge.net> sent the XML code needed to generate
+     ready-to-compile C code conforming to ngspice api from Verilog-AMS
+     compact model description.
+     
+     Files changed: src/spicelib/devices/Makefile.am: added adms directory
+                    to DIST_SUBDIRS target.
+     Files added: README.adms, src/spicelib/devices/adms/, 
+                  src/spicelib/devices/adms/admst/,
+		  src/spicelib/devices/adms/admst/{COPYING,
+		  ngspiceMakefile.am.xml,ngspiceMODULEacld.c.xml,
+		  ngspiceMODULEask.c.xml, ngspiceMODULE.c.xml,
+		  ngspiceMODULEdefs.h.xml, ngspiceMODULEext.h.xml,
+		  ngspiceMODULEguesstopology.c.xml, ngspiceMODULEinit.c.xml,
+		  ngspiceMODULEinit.h.xml,ngspiceMODULEitf.h.xml, 
+		  ngspiceMODULEload.c.xml, ngspiceMODULEmask.c.xml,
+		  ngspiceMODULEmpar.c.xml, ngspiceMODULEpar.c.xml,
+		  ngspiceMODULEsetup.c.xml,ngspiceMODULEtemp.c.xml,
+		  ngspiceVersion.xml}	    
+
+
 2005-12-06  Dietmar Warning <warning@danalyse.de>
 
  *   src/spicelib/devices/hisim/hsm1ld.c: Variable tmp is really used only

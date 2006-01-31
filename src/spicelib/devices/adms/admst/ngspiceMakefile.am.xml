@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+  $Id$
+  $Log$
+  Revision 1.1  2006-01-31 17:53:48  pnenzi
+
+  Initial import for admst (Verilog-AMS) translators for ngspice.
+
+-->
+
+<!--
+     Written by Laurent Lemaitre - r29173@users.sourceforge.net
+     Documentation:
+       http://sourceforge.net/docman/display_doc.php?docid=18993&group_id=84289
+     Target Interface: ngspice
+     Supported by adms-1.x.x
+     This file is used by adms - http://sourceforge.net/projects/mot-adms.
+     adms is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation; either version 2 of the License, or
+     (at your option) any later version.
+     adms is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+     You should have received a copy of the GNU General Public License
+     along with adms; if not, write to the Free Software
+     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-->
+
+<!DOCTYPE admst SYSTEM "admst.dtd">
+<admst version="2.1.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+
+
+<admst:template match="code">
+<admst:value-of select="name"/>
+<admst:variable name="module" select="%s"/>
+## Process this file with automake to produce Makefile.in
+
+ADMSXMLINTERFACE:=../admst
+adms:
+	admsXml.exe -Iadmsva admsva/$(module).va \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMakefile.am.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEinit.h.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEext.h.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEdefs.h.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEask.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEmask.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEpar.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEmpar.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEload.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEacld.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEtemp.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEsetup.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
+	perl -p -i -e 's/IOP\\("(\\w+)"/IOP("\\L\\1"/' $(module).c
+
+noinst_LIBRARIES = lib$(module).a
+
+lib$(module)_a_SOURCES = 	\\
+	$(module).c		\\
+	$(module)acld.c	\\
+	$(module)ask.c	\\
+	$(module)defs.h	\\
+	$(module)ext.h	\\
+	$(module)guesstopology.c	\\
+	$(module)init.c	\\
+	$(module)init.h	\\
+	$(module)itf.h	\\
+	$(module)load.c	\\
+	$(module)mask.c	\\
+	$(module)mpar.c	\\
+	$(module)par.c	\\
+	$(module)setup.c	\\
+	$(module)temp.c
+
+#TODO (not implemented) \\
+	$(module)conv.c	\\
+	$(module)del.c	\\
+	$(module)dest.c	\\
+	$(module)getic.c	\\
+	$(module)mdel.c	\\
+	$(module)noise.c	\\
+	$(module)pzld.c	\\
+	$(module)trunc.c
+
+INCLUDES = -I\$(top_srcdir)/src/include
+
+MAINTAINERCLEANFILES = Makefile.in
+
+</admst:template>
+
+<admst:for-each select="/module">
+  <admst:open file="Makefile.am">
+    <admst:value-of select="/simulator/package_string"/>
+    <admst:text format="##\n## Interface: %s\n"/>
+    <admst:value-of select="/simulator/currentdate"/>
+    <admst:value-of select="/simulator/fullname"/>
+    <admst:text format="## created by: %s - %s\n"/>
+    <admst:apply-templates select="." match="code"/>
+  </admst:open>
+  <admst:message format="Makefile.am: file created\n"/>
+</admst:for-each>
+
+</admst>

@@ -51,6 +51,7 @@ SUBDIRS = \
 	@NUMDEVDIR@
 
 DIST_SUBDIRS = \
+	adms	\
 	asrc	\
 	bjt	\
 	bjt2	\
