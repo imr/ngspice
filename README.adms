@@ -29,6 +29,12 @@ In this document we will provide a guideline on how to auto-generate the
 ready-to compile C code for the ngspice API of a compact device model 
 defined in the Verilog-AMS language.
 
+Condition:
+  To compile Verilog-AMS compact models into ngspice-ready C models with
+  admsXml a copy of the latest adms distribution is needed. You get it from
+  the adms Download page http://mot-adms.sourceforge.net as a source code
+  package. (Also use of cvs version is possible, but needs some more effort.)
+
 Version:
   This guideline has been tested on Windows-XP under cygwin using:
     $ admsXml -v
@@ -41,11 +47,12 @@ Goal:
   using the Verilog-AMS source code available at:
     http://www.iee.et.tu-dresden.de/~schroter/Hicum_PD/Hicumna/hicumL0V1p11.va
 
-LIMITATIONS: the adms ngspice interface supports a limited set 
-of Verilog-AMS language constructs. See the home page of adms 
-(http://mot-adms.sourceforge.net/) for more info.
-Feel free to contribute to the adms ngspice interface so that more
-constructs can be supported.
+Limitations: 
+  The adms ngspice interface supports a limited set of Verilog-AMS language 
+  constructs. See the home page of adms (http://mot-adms.sourceforge.net/) 
+  for more info.
+  Feel free to contribute to the adms ngspice interface so that more
+  constructs can be supported.
 
 
 01- ngspice Files
@@ -129,7 +136,7 @@ constructs can be supported.
 05- Create file 'Makefile.am'
 
   In directory ..../hicum0 run the following command in order to create file 'Makefile.am':
-    $ admsXml admsva/hic0_full.va -e ../admst/ngspiceMakefile.am.xml
+    $ admsXml admsva/hic0_full.va -Iadmsva -e ../admst/ngspiceMakefile.am.xml
     [info] admsXml-2.1.2 Jan 27 2006 16:50:59
     [warning] [admsva\hic0_full.va:30]: standard vams file created (not found in -I path) ... 'constants.h'
     [warning] [admsva\hic0_full.va:31]: standard vams file created (not found in -I path) ... 'discipline.h'
@@ -429,4 +436,5 @@ Appendix 01: Comments on spice3-flavoured flags like npn, pnp, nmos, pmos and so
   In section 'Update manually the ngspice parser files' it is recommended
   to use flag 'adms' instead.
   This limitation results from the LRM of VerilogAMS that does not support flags.
+
 
