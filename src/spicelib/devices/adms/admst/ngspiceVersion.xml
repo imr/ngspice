@@ -5,7 +5,11 @@
 -->
 <!--
   $Log$
-  Revision 1.2  2006-02-02 14:26:50  pnenzi
+  Revision 1.3  2006-02-02 17:56:31  pnenzi
+
+  Changed adms required version to 2.1.3 ,J
+
+  Revision 1.2  2006/02/02 14:26:50  pnenzi
 
   Removed nmos and pmos from list of parameters. (Laurent)
 
@@ -15,7 +19,7 @@
 
 -->
 <!DOCTYPE admst SYSTEM "admst.dtd">
-<admst version="2.1.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+<admst version="2.1.3" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 
 <admst:template match=":new:jacobian">
   <admst:value-of select="module"/>
