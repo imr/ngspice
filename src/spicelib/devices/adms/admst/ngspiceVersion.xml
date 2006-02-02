@@ -5,7 +5,11 @@
 -->
 <!--
   $Log$
-  Revision 1.1  2006-01-31 17:53:48  pnenzi
+  Revision 1.2  2006-02-02 14:26:50  pnenzi
+
+  Removed nmos and pmos from list of parameters. (Laurent)
+
+  Revision 1.1  2006/01/31 17:53:48  pnenzi
 
   Initial import for admst (Verilog-AMS) translators for ngspice.
 
@@ -1693,7 +1697,7 @@
   <admst:value-to select="/simulator/package_string" value="ngspice 1.0.0.0"/>
   <admst:value-to select="/simulator/package_bugreport" value="r29173@users.sourceforge.net"/>
   <admst:for-each select="/module">
-    <admst:value-of select="analog"/>
+<!--    <admst:value-of select="analog"/>
     <admst:value-of select="."/>
     <admst:new datatype="variable" arguments="%p,nmos,%p">
       <admst:push into="module/variable" select="." onduplicate="ignore"/>
@@ -1732,7 +1736,7 @@
           <admst:value-to select="../../default" value="%p"/>
         </admst:new>
       </admst:new>
-    </admst:new>
+    </admst:new> -->
   </admst:for-each>
 
 </admst>
