@@ -137,7 +137,7 @@ Limitations:
 
   In directory ..../hicum0 run the following command in order to create file 'Makefile.am':
     $ admsXml admsva/hic0_full.va -Iadmsva -e ../admst/ngspiceMakefile.am.xml
-    [info] admsXml-2.1.3 Jan 27 2006 16:50:59
+    [info] admsXml-2.1.3 Feb 2 2006 19:01:39
     [warning] [admsva\hic0_full.va:30]: standard vams file created (not found in -I path) ... 'constants.h'
     [warning] [admsva\hic0_full.va:31]: standard vams file created (not found in -I path) ... 'discipline.h'
     [info] Makefile.am: file created
@@ -210,7 +210,7 @@ Limitations:
       -e ../admst/ngspiceMODULEsetup.c.xml \
       -e ../admst/ngspiceMODULEguesstopology.c.xml \
       -e ../admst/ngspiceMODULE.c.xml
-      [info] admsXml-2.1.3 Jan 27 2006 16:50:59
+      [info] admsXml-2.1.3 Feb 2 2006 19:01:39
       [info] Makefile.am: file created
       [info] hic0_fullitf.h: file created
       [info] hic0_fullinit.c: file created
