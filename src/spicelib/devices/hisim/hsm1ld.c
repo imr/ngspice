@@ -185,9 +185,9 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
   double m; /* Parallel multiplier */
   
   /*  loop through all the HSM1 device models */
-  for ( ; model != NULL; model = model->HSM1nextModel ) {
+  for (; model != NULL; model = model->HSM1nextModel ) {
     /* loop through all the instances of the model */
-    for (here = model->HSM1instances; here != NULL ;
+    for (here = model->HSM1instances; here != NULL;
 	 here = here->HSM1nextInstance) {
 	 
       if (here->HSM1owner != ARCHme)
@@ -301,7 +301,7 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
 	  cdhat = Idtot + (here->HSM1_gbd + here->HSM1_gmbs) * delvbd
 	    + here->HSM1_gm * delvgd - here->HSM1_gds * delvds
 	    - here->HSM1_gigidlgs * delvgd - here->HSM1_gigidlbs * delvbd 
-	    + here->HSM1_gigidlds * delvds ;
+	    + here->HSM1_gigidlds * delvds;
 	  Ibtot = here->HSM1_ibs + here->HSM1_ibd - here->HSM1_isub
 	    - here->HSM1_igidl - here->HSM1_igisl;
 	  cbhat = Ibtot + here->HSM1_gbs * delvbs
@@ -593,7 +593,7 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
       } 
       else {
 	sIN.has_prv = 0;
-	strcpy( here->HSM1_called , "yes" ) ;
+	strcpy( here->HSM1_called , "yes" );
       }
 
       sIN.corsrd = model->HSM1_corsrd;
@@ -622,7 +622,7 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
 	sIN.pthrou = model->HSM1_pthrou;
 	sIN.vdiffj = model->HSM1_vdiffj;
       }
-      sIN.version = model->HSM1_version ;
+      sIN.version = model->HSM1_version;
 
       sIN.vbsc_prv = here->HSM1_vbsc_prv;
       sIN.vdsc_prv = here->HSM1_vdsc_prv;
@@ -654,22 +654,22 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
 	printf( "vgs    = %12.5e\n" , sIN.vgs );
       }
       if ( sIN.info >= 6 ) { /* input flags */
-	printf( "corsrd = %s\n" , (sIN.corsrd) ? "true" : "false" ) ;
-	printf( "coiprv = %s\n" , (sIN.coiprv) ? "true" : "false" ) ;
-	printf( "copprv = %s\n" , (sIN.copprv) ? "true" : "false" ) ;
-	printf( "cocgso = %s\n" , (sIN.cocgso) ? "true" : "false" ) ;
-	printf( "cocgdo = %s\n" , (sIN.cocgdo) ? "true" : "false" ) ;
-	printf( "cocgbo = %s\n" , (sIN.cocgbo) ? "true" : "false" ) ;
-	printf( "coadov = %s\n" , (sIN.coadov) ? "true" : "false" ) ;
-	printf( "coisub = %s\n" , (sIN.coisub) ? "true" : "false" ) ;
-	printf( "coiigs = %s\n" , (sIN.coiigs) ? "true" : "false" ) ;
-	printf( "cogidl = %s\n" , (sIN.cogidl) ? "true" : "false" ) ;
-	printf( "cogisl = %s\n" , (sIN.cogisl) ? "true" : "false" ) ;
-	printf( "coovlp = %s\n" , (sIN.coovlp) ? "true" : "false" ) ;
-	printf( "conois = %s\n" , (sIN.conois) ? "true" : "false" ) ;
+	printf( "corsrd = %s\n" , (sIN.corsrd) ? "true" : "false" );
+	printf( "coiprv = %s\n" , (sIN.coiprv) ? "true" : "false" );
+	printf( "copprv = %s\n" , (sIN.copprv) ? "true" : "false" );
+	printf( "cocgso = %s\n" , (sIN.cocgso) ? "true" : "false" );
+	printf( "cocgdo = %s\n" , (sIN.cocgdo) ? "true" : "false" );
+	printf( "cocgbo = %s\n" , (sIN.cocgbo) ? "true" : "false" );
+	printf( "coadov = %s\n" , (sIN.coadov) ? "true" : "false" );
+	printf( "coisub = %s\n" , (sIN.coisub) ? "true" : "false" );
+	printf( "coiigs = %s\n" , (sIN.coiigs) ? "true" : "false" );
+	printf( "cogidl = %s\n" , (sIN.cogidl) ? "true" : "false" );
+	printf( "cogisl = %s\n" , (sIN.cogisl) ? "true" : "false" );
+	printf( "coovlp = %s\n" , (sIN.coovlp) ? "true" : "false" );
+	printf( "conois = %s\n" , (sIN.conois) ? "true" : "false" );
 	if (model->HSM1_version == 112 ||
 	    model->HSM1_version == 120) { /* HiSIM 1.1.2 / 1.2.0 */
-	  printf( "coisti = %s\n" , (sIN.coisti) ? "true" : "false" ) ;
+	  printf( "coisti = %s\n" , (sIN.coisti) ? "true" : "false" );
 	}
       }
       /* print inputs ------------AA */
@@ -690,28 +690,28 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
       
       /* store values for next calculation */
       /* note: derivatives are ones w.r.t. internal biases */
-      here->HSM1_vbsc_prv = sOT.vbsc ;
-      here->HSM1_vdsc_prv = sOT.vdsc ;
-      here->HSM1_vgsc_prv = sOT.vgsc ;
-      here->HSM1_ps0_prv = sOT.ps0 ;
-      here->HSM1_ps0_dvbs_prv = sOT.ps0_dvbs ;
-      here->HSM1_ps0_dvds_prv = sOT.ps0_dvds ;
-      here->HSM1_ps0_dvgs_prv = sOT.ps0_dvgs ;
-      here->HSM1_pds_prv = sOT.pds ;
-      here->HSM1_pds_dvbs_prv = sOT.pds_dvbs ;
-      here->HSM1_pds_dvds_prv = sOT.pds_dvds ;
-      here->HSM1_pds_dvgs_prv = sOT.pds_dvgs ;
-      here->HSM1_ids_prv = sOT.ids ;
-      here->HSM1_ids_dvbs_prv = sOT.ids_dvbs ;
-      here->HSM1_ids_dvds_prv = sOT.ids_dvds ;
-      here->HSM1_ids_dvgs_prv = sOT.ids_dvgs ;
+      here->HSM1_vbsc_prv = sOT.vbsc;
+      here->HSM1_vdsc_prv = sOT.vdsc;
+      here->HSM1_vgsc_prv = sOT.vgsc;
+      here->HSM1_ps0_prv = sOT.ps0;
+      here->HSM1_ps0_dvbs_prv = sOT.ps0_dvbs;
+      here->HSM1_ps0_dvds_prv = sOT.ps0_dvds;
+      here->HSM1_ps0_dvgs_prv = sOT.ps0_dvgs;
+      here->HSM1_pds_prv = sOT.pds;
+      here->HSM1_pds_dvbs_prv = sOT.pds_dvbs;
+      here->HSM1_pds_dvds_prv = sOT.pds_dvds;
+      here->HSM1_pds_dvgs_prv = sOT.pds_dvgs;
+      here->HSM1_ids_prv = sOT.ids;
+      here->HSM1_ids_dvbs_prv = sOT.ids_dvbs;
+      here->HSM1_ids_dvds_prv = sOT.ids_dvds;
+      here->HSM1_ids_dvgs_prv = sOT.ids_dvgs;
 
       /* for noise calc */
-      here->HSM1_nfc = sOT.nf ;
+      here->HSM1_nfc = sOT.nf;
       
       /* outputs */
-      here->HSM1_gd = sOT.gd ; /* drain conductance */
-      here->HSM1_gs = sOT.gs ; /* source conductance */
+      here->HSM1_gd = sOT.gd; /* drain conductance */
+      here->HSM1_gs = sOT.gs; /* source conductance */
 
       here->HSM1_von = model->HSM1_type * sOT.von;
       here->HSM1_vdsat = model->HSM1_type * sOT.vdsat;
@@ -719,56 +719,56 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
       here->HSM1_von = sOT.von;
       here->HSM1_vdsat = sOT.vdsat;
       */
-      cdrain = here->HSM1_ids = sOT.ids ; /* cdrain */
+      cdrain = here->HSM1_ids = sOT.ids; /* cdrain */
       
-      here->HSM1_gds = sOT.gds ;
-      here->HSM1_gm = sOT.gm ;
-      here->HSM1_gmbs = sOT.gmbs ;
+      here->HSM1_gds = sOT.gds;
+      here->HSM1_gm = sOT.gm;
+      here->HSM1_gmbs = sOT.gmbs;
 
       /* overlap capacitances */
-      here->HSM1_cgso = sOT.cgso ; /* G-S */
-      here->HSM1_cgdo = sOT.cgdo ; /* G-D */
-      here->HSM1_cgbo = sOT.cgbo ; /* G-B */
+      here->HSM1_cgso = sOT.cgso; /* G-S */
+      here->HSM1_cgdo = sOT.cgdo; /* G-D */
+      here->HSM1_cgbo = sOT.cgbo; /* G-B */
       
       /* intrinsic charge ONLY */
-      qgate = here->HSM1_qg = sOT.qg ; /* gate */
-      qdrn = here->HSM1_qd = sOT.qd ;  /* drain */
-      /*      here->HSM1_qs = sOT.qs ; source */
+      qgate = here->HSM1_qg = sOT.qg; /* gate */
+      qdrn = here->HSM1_qd = sOT.qd;  /* drain */
+      /*      here->HSM1_qs = sOT.qs; source */
       qbulk = here->HSM1_qb = -1.0 * ( sOT.qg + sOT.qd + sOT.qs ); /* bulk */
 
       /* charge caps (intrisic ONLY) */
-      here->HSM1_cggb = sOT.cggb ;
-      here->HSM1_cgsb = sOT.cgsb ;
-      here->HSM1_cgdb = sOT.cgdb ;
-      here->HSM1_cbgb = sOT.cbgb ;
-      here->HSM1_cbsb = sOT.cbsb ;
-      here->HSM1_cbdb = sOT.cbdb ;
-      here->HSM1_cdgb = sOT.cdgb ;
-      here->HSM1_cdsb = sOT.cdsb ;
-      here->HSM1_cddb = sOT.cddb ;
+      here->HSM1_cggb = sOT.cggb;
+      here->HSM1_cgsb = sOT.cgsb;
+      here->HSM1_cgdb = sOT.cgdb;
+      here->HSM1_cbgb = sOT.cbgb;
+      here->HSM1_cbsb = sOT.cbsb;
+      here->HSM1_cbdb = sOT.cbdb;
+      here->HSM1_cdgb = sOT.cdgb;
+      here->HSM1_cdsb = sOT.cdsb;
+      here->HSM1_cddb = sOT.cddb;
 
       /* substrate diode */
-      here->HSM1_ibd = sOT.ibd ;
-      here->HSM1_ibs = sOT.ibs ;
+      here->HSM1_ibd = sOT.ibd;
+      here->HSM1_ibs = sOT.ibs;
       /*
-      here->HSM1_ibd = model->HSM1_type * sOT.ibd ;
-      here->HSM1_ibs = model->HSM1_type * sOT.ibs ;
+      here->HSM1_ibd = model->HSM1_type * sOT.ibd;
+      here->HSM1_ibs = model->HSM1_type * sOT.ibs;
       */
-      here->HSM1_gbd = sOT.gbd ;
-      here->HSM1_gbs = sOT.gbs ;
-      here->HSM1_capbd = sOT.capbd ;
-      here->HSM1_capbs = sOT.capbs ;
-      *(ckt->CKTstate0 + here->HSM1qbd) = sOT.qbd ;
-      *(ckt->CKTstate0 + here->HSM1qbs) = sOT.qbs ;
+      here->HSM1_gbd = sOT.gbd;
+      here->HSM1_gbs = sOT.gbs;
+      here->HSM1_capbd = sOT.capbd;
+      here->HSM1_capbs = sOT.capbs;
+      *(ckt->CKTstate0 + here->HSM1qbd) = sOT.qbd;
+      *(ckt->CKTstate0 + here->HSM1qbs) = sOT.qbs;
 
       /* substrate impact ionization current */
-      here->HSM1_isub = sOT.isub ;
-      here->HSM1_gbgs = sOT.gbgs ;
-      here->HSM1_gbds = sOT.gbds ;
-      here->HSM1_gbbs = sOT.gbbs ;
+      here->HSM1_isub = sOT.isub;
+      here->HSM1_gbgs = sOT.gbgs;
+      here->HSM1_gbds = sOT.gbds;
+      here->HSM1_gbbs = sOT.gbbs;
 
       /* 1/f noise */
-      /*      here->HSM1_nois_idsfl = sOT.nois_idsfl ;*/
+      /*      here->HSM1_nois_idsfl = sOT.nois_idsfl;*/
 
       /* mobility added by K.M. */
       here->HSM1_mu = sOT.mu;
@@ -841,50 +841,50 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
 
       /* print all outputs ------------VV */
       if ( sIN.info >= 4 ) {
-	printf( "--- variables returned from HSM1evaluate() ----\n" ) ;
-	printf( "gd     = %12.5e\n" , sOT.gd ) ;
-	printf( "gs     = %12.5e\n" , sOT.gs ) ;
+	printf( "--- variables returned from HSM1evaluate() ----\n" );
+	printf( "gd     = %12.5e\n" , sOT.gd );
+	printf( "gs     = %12.5e\n" , sOT.gs );
 	
-	printf( "von    = %12.5e\n" , sOT.von ) ;
-	printf( "vdsat  = %12.5e\n" , sOT.vdsat ) ;
-	printf( "ids    = %12.5e\n" , sOT.ids ) ;
+	printf( "von    = %12.5e\n" , sOT.von );
+	printf( "vdsat  = %12.5e\n" , sOT.vdsat );
+	printf( "ids    = %12.5e\n" , sOT.ids );
 	
-	printf( "gds    = %12.5e\n" , sOT.gds ) ;
-	printf( "gm     = %12.5e\n" , sOT.gm ) ;
-	printf( "gmbs   = %12.5e\n" , sOT.gmbs ) ;
+	printf( "gds    = %12.5e\n" , sOT.gds );
+	printf( "gm     = %12.5e\n" , sOT.gm );
+	printf( "gmbs   = %12.5e\n" , sOT.gmbs );
 	
-	printf( "cgbo   = %12.5e\n" , sOT.cgbo ) ;
+	printf( "cgbo   = %12.5e\n" , sOT.cgbo );
 	
-	printf( "qg     = %12.5e\n" , sOT.qg ) ;
-	printf( "qd     = %12.5e\n" , sOT.qd ) ;
-	printf( "qs     = %12.5e\n" , sOT.qs ) ;
+	printf( "qg     = %12.5e\n" , sOT.qg );
+	printf( "qd     = %12.5e\n" , sOT.qd );
+	printf( "qs     = %12.5e\n" , sOT.qs );
 	
-	printf( "cggb   = %12.5e\n" , sOT.cggb ) ;
-	printf( "cgsb   = %12.5e\n" , sOT.cgsb ) ;
-	printf( "cgdb   = %12.5e\n" , sOT.cgdb ) ;
-	printf( "cbgb   = %12.5e\n" , sOT.cbgb ) ;
-	printf( "cbsb   = %12.5e\n" , sOT.cbsb ) ;
-	printf( "cbdb   = %12.5e\n" , sOT.cbdb ) ;
-	printf( "cdgb   = %12.5e\n" , sOT.cdgb ) ;
-	printf( "cdsb   = %12.5e\n" , sOT.cdsb ) ;
-	printf( "cddb   = %12.5e\n" , sOT.cddb ) ;
+	printf( "cggb   = %12.5e\n" , sOT.cggb );
+	printf( "cgsb   = %12.5e\n" , sOT.cgsb );
+	printf( "cgdb   = %12.5e\n" , sOT.cgdb );
+	printf( "cbgb   = %12.5e\n" , sOT.cbgb );
+	printf( "cbsb   = %12.5e\n" , sOT.cbsb );
+	printf( "cbdb   = %12.5e\n" , sOT.cbdb );
+	printf( "cdgb   = %12.5e\n" , sOT.cdgb );
+	printf( "cdsb   = %12.5e\n" , sOT.cdsb );
+	printf( "cddb   = %12.5e\n" , sOT.cddb );
       
-	printf( "ibd    = %12.5e\n" , sOT.ibd ) ;
-	printf( "ibs    = %12.5e\n" , sOT.ibs ) ;
-	printf( "gbd    = %12.5e\n" , sOT.gbd ) ;
-	printf( "gbs    = %12.5e\n" , sOT.gbs ) ;
-	printf( "capbd  = %12.5e\n" , sOT.capbd ) ;
-	printf( "capbs  = %12.5e\n" , sOT.capbs ) ;
-	printf( "qbd    = %12.5e\n" , sOT.qbd ) ;
-	printf( "qbs    = %12.5e\n" , sOT.qbs ) ;
+	printf( "ibd    = %12.5e\n" , sOT.ibd );
+	printf( "ibs    = %12.5e\n" , sOT.ibs );
+	printf( "gbd    = %12.5e\n" , sOT.gbd );
+	printf( "gbs    = %12.5e\n" , sOT.gbs );
+	printf( "capbd  = %12.5e\n" , sOT.capbd );
+	printf( "capbs  = %12.5e\n" , sOT.capbs );
+	printf( "qbd    = %12.5e\n" , sOT.qbd );
+	printf( "qbs    = %12.5e\n" , sOT.qbs );
 
-	printf( "isub   = %12.5e\n" , sOT.isub ) ;
-	printf( "gbgs   = %12.5e\n" , sOT.gbgs ) ;
-	printf( "gbds   = %12.5e\n" , sOT.gbds ) ;
-	printf( "gbbs   = %12.5e\n" , sOT.gbbs ) ;
+	printf( "isub   = %12.5e\n" , sOT.isub );
+	printf( "gbgs   = %12.5e\n" , sOT.gbgs );
+	printf( "gbds   = %12.5e\n" , sOT.gbds );
+	printf( "gbbs   = %12.5e\n" , sOT.gbbs );
       
-	/* 	printf( "flicker noise   = %12.5e\n" , sOT.nois_idsfl ) ;*/
- 	printf( "flicker noise   = %12.5e\n" , sOT.nf ) ;
+	/* 	printf( "flicker noise   = %12.5e\n" , sOT.nois_idsfl );*/
+ 	printf( "flicker noise   = %12.5e\n" , sOT.nf );
       }
       /* print all outputs ------------AA */
 
@@ -950,7 +950,7 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
 	    }
 	  }
 	}
-#endif /* NEWCONV */
+#endif
 */
       }
     }
@@ -1062,11 +1062,11 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
       qbulk + *(ckt->CKTstate0 + here->HSM1qbd) + *(ckt->CKTstate0 + here->HSM1qbs);
 
     /*
-    printf( "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq\n" ) ;
-    printf( "HSM1qg   = %12.5e\n" , *(ckt->CKTstate0 + here->HSM1qg) ) ;    
-    printf( "HSM1qd   = %12.5e\n" , *(ckt->CKTstate0 + here->HSM1qd) ) ;    
-    printf( "HSM1qb   = %12.5e\n" , *(ckt->CKTstate0 + here->HSM1qb) ) ;    
-    printf( "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq\n" ) ;
+    printf( "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq\n" );
+    printf( "HSM1qg   = %12.5e\n" , *(ckt->CKTstate0 + here->HSM1qg) );    
+    printf( "HSM1qd   = %12.5e\n" , *(ckt->CKTstate0 + here->HSM1qd) );    
+    printf( "HSM1qb   = %12.5e\n" , *(ckt->CKTstate0 + here->HSM1qb) );    
+    printf( "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq\n" );
     */
 
     /* store small signal parameters */
@@ -1104,11 +1104,11 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
     cqdrn = *(ckt->CKTstate0 + here->HSM1cqd);
 
     /*
-    printf( "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n" ) ;
-    printf( "cqgate   = %12.5e\n" , cqgate ) ;
-    printf( "cqbulk   = %12.5e\n" , cqbulk ) ;
-    printf( "cqdrn   = %12.5e\n" , cqdrn ) ;
-    printf( "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n" ) ;
+    printf( "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n" );
+    printf( "cqgate   = %12.5e\n" , cqgate );
+    printf( "cqbulk   = %12.5e\n" , cqbulk );
+    printf( "cqdrn   = %12.5e\n" , cqdrn );
+    printf( "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n" );
     */
     
     ceqqg = cqgate - gcggb * vgb + gcgdb * vbd + gcgsb * vbs;
@@ -1290,17 +1290,17 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
     }
 
     /*
-    printf( "----------------------------------------------------\n" ) ;
-    printf( "ceqqg   = %12.5e\n" , ceqqg ) ;
-    printf( "....................................................\n" ) ;
-    printf( "ceqbs   = %12.5e\n" , ceqbs ) ;
-    printf( "ceqbd   = %12.5e\n" , ceqbd ) ;
-    printf( "ceqqb   = %12.5e\n" , ceqqb ) ;
-    printf( "....................................................\n" ) ;
-    printf( "ceqbd   = %12.5e\n" , ceqbd ) ;
-    printf( "cdreq   = %12.5e\n" , cdreq ) ;
-    printf( "ceqqd   = %12.5e\n" , ceqqd ) ;
-    printf( "----------------------------------------------------\n" ) ;
+    printf( "----------------------------------------------------\n" );
+    printf( "ceqqg   = %12.5e\n" , ceqqg );
+    printf( "....................................................\n" );
+    printf( "ceqbs   = %12.5e\n" , ceqbs );
+    printf( "ceqbd   = %12.5e\n" , ceqbd );
+    printf( "ceqqb   = %12.5e\n" , ceqqb );
+    printf( "....................................................\n" );
+    printf( "ceqbd   = %12.5e\n" , ceqbd );
+    printf( "cdreq   = %12.5e\n" , cdreq );
+    printf( "ceqqd   = %12.5e\n" , ceqqd );
+    printf( "----------------------------------------------------\n" );
     */
     
     *(ckt->CKTrhs + here->HSM1gNode)      -= m * (ceqqg + Igtoteq);
@@ -1375,7 +1375,7 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
     *(here->HSM1BbPtr)   -= m * here->HSM1_gigislbd;
 
   line1000:
-    ;
+   ;
     
    } /* End of MOSFET Instance */
   } /* End of Model Instance */
