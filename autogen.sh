@@ -1,19 +1,57 @@
 #!/bin/sh
-# Run this to generate all the initial makefiles, etc.
+# Configuration script for ngspice. 
+#
+# This script performs initial configuration of ngspice source 
+# package.
+#
+#
+# 
+#
 
-PROJECT=ng-spice
+PROJECT=ngspice
 TEST_TYPE=-f
 FILE=DEVICES
 
+# ADMS variables
+
+ADMSDIR=src/spicelib/devices/adms
+XMLPATH=src/spicelib/devices/adms/admst
+ADMSXML=admsXml
+ADMS=0
+
+# Exit variable
 DIE=0
 
+
+
+help()
+{
+ echo
+ echo "$PROJECT autogen.sh help"
+ echo
+ echo "--adms     -a: enables adms feature"
+ echo "--help     -h: print this file"
+ echo "--version  -v: print version"
+ echo
+}
+
+version()
+{
+echo
+echo "$PROJECT autogen.sh 1.0"
+echo
+}
+
+
+check_autoconf()
+{
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have autoconf installed to compile $PROJECT."
 	echo "See http://www.gnu.org/software/automake/"
 	echo "(newest stable release is recommended)"
 	DIE=1
-}
+        }
 
 (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
 	echo
@@ -21,7 +59,7 @@ DIE=0
 	echo "See http://www.gnu.org/software/libtool/"
 	echo "(newest stable release is recommended)"
 	DIE=1
-}
+        }
 
 (automake --version) < /dev/null > /dev/null 2>&1 || {
 	echo
@@ -29,7 +67,44 @@ DIE=0
 	echo "See http://www.gnu.org/software/automake/"
 	echo "(newest stable release is recommended)"
 	DIE=1
+        }
 }
+
+
+check_adms()
+{
+(admsXml --version)   < /dev/null > /dev/null 2>&1 || {
+        echo
+	echo "You must have admsXml installed to compile adms models."
+	echo "See http://mot-adms.sourceforge.net"
+	echo "(newest stable release is recommended)"
+        DIE=1
+}
+}
+
+case "$1" in
+    "--adms" | "-a")
+    check_adms 
+    ADMS=1
+    ;;
+    
+    "--help" | "-h")
+    help
+    exit 0
+    ;;
+    
+    "--version" | "-v")
+    version
+    exit 0
+    ;;
+    
+    *)
+    ;;
+    esac
+
+
+check_autoconf
+check_adms
 
 if test "$DIE" -eq 1; then
 	exit 1
@@ -41,9 +116,56 @@ test $TEST_TYPE $FILE || {
 }
 
 
+
+if test "$ADMS" -eq 1; then
+
+# Build admsXml arguments list
+    for xml in `ls $XMLPATH | grep .xml`; do
+       if [ "$xml" != "ngspiceVersion.xml" ]; then
+	    XMLARG="$XMLARG -e ../admst/$xml"
+	    fi
+    done 
+
+# Prepend ngspiceVersion.xml    
+    XMLARG="-e ../admst/ngspiceVersion.xml $XMLARG"
+
+for file in `ls $ADMSDIR`
+do
+  if [ -d "$ADMSDIR/$file" ]; then
+   
+   case "$file" in
+      "CVS")
+      echo "Skipping CVS"
+      ;;
+      
+      "admst")
+      echo "Skipping scripts dir"
+      
+      ;;
+      
+      *)
+      echo "Entering into directory: $file"
+      cd $ADMSDIR/$file
+      $ADMSXML  admsva/$file.va -Iadmsva -e ../admst/ngspiceVersion.xml \
+      -e ../admst/ngspiceMakefile.am.xml
+      
+       $ADMSXML admsva/$file.va -Iadmsva ${XMLARG}
+      
+      cd -
+      ;;
+   esac
+  fi 
+done
+fi
+
+
 libtoolize --copy --force
 aclocal $ACLOCAL_FLAGS
-# optionally feature autoheader
+# optional feature: autoheader
 (autoheader --version)  < /dev/null > /dev/null 2>&1 && autoheader
 automake -c -a $am_opt
 autoconf
+
+
+  
+
