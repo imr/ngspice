@@ -3,13 +3,9 @@
 <!--
   $Id$
   $Log$
-  Revision 1.2  2006-02-02 17:56:31  pnenzi
+  Revision 1.3  2006-02-09 11:25:24  pnenzi
 
-  Changed adms required version to 2.1.3 ,J
-
-  Revision 1.1  2006/01/31 17:53:48  pnenzi
-
-  Initial import for admst (Verilog-AMS) translators for ngspice.
+  Latest update from Laurent and Dietmar: (empty instances)
 
 -->
 
@@ -272,22 +268,18 @@ typedef struct s$(module)model {         /* model structure */
 
   <admst:text format="  /* flags */\n"/>
   <admst:text format="typedef enum {\n"/>
-  <admst:if test="variable[nilled([parametertype='model' and input='yes'])]">
-    <admst:text format="  DUMMY /* no model parameter found */"/>
-  </admst:if>
-  <admst:join select="variable[parametertype='model' and input='yes']"  separator=",\n">
+  <admst:for-each select="variable[parametertype='model' and input='yes']">
     <admst:value-of select="name"/>
-    <admst:text format="  $(module)_model_%s"/>
-  </admst:join>
+    <admst:text format="  $(module)_model_%s,\n"/>
+  </admst:for-each>
+    <admst:text format="  DUMMY_MODEL"/>
   <admst:text format="\n} e_$(module)_model;\n"/>
   <admst:text format="typedef enum {\n"/>
-  <admst:if test="variable[nilled([parametertype='instance' and input='yes'])]">
-    <admst:text format="  DUMMY /* no instance parameter found */"/>
-  </admst:if>
-  <admst:join select="variable[parametertype='instance' and input='yes']" separator=",\n">
+  <admst:for-each select="variable[parametertype='instance' and input='yes']">
     <admst:value-of select="name"/>
-    <admst:text format="  $(module)_instance_%s"/>
-  </admst:join>
+    <admst:text format="  $(module)_instance_%s,\n"/>
+  </admst:for-each>
+  <admst:text format="  DUMMY_INSTANCE"/>
   <admst:text format="\n} e_$(module)_instance;\n"/>
 
 #include &quot;$(module)ext.h&quot;
