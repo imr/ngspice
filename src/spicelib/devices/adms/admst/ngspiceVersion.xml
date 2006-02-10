@@ -5,7 +5,11 @@
 -->
 <!--
   $Log$
-  Revision 1.6  2006-02-09 11:25:24  pnenzi
+  Revision 1.7  2006-02-10 06:59:56  pnenzi
+
+  Added section for r and c elements (Laurent)
+
+  Revision 1.6  2006/02/09 11:25:24  pnenzi
 
   Latest update from Laurent and Dietmar: (empty instances)
 
@@ -1707,6 +1711,32 @@
 
   <admst:for-each select="/module">
     <admst:choose>
+      <admst:when test="[name='r2_et_cmc' or name='r2_cmc']">
+      </admst:when>
+      <admst:when test="[name='mosvar']">
+        <admst:if test="[nilled(variable[name='c'])]">
+          <admst:value-of select="analog"/>
+          <admst:value-of select="."/>
+          <admst:new datatype="variable" arguments="%p,c,%p">
+            <admst:push into="module/variable" select="." onduplicate="ignore"/>
+            <admst:value-to select="sizetype" value="scalar"/>
+            <admst:value-to select="type" value="integer"/>
+            <admst:value-to select="input" value="yes"/>
+            <admst:value-to select="output" value="yes"/>
+            <admst:value-to select="parametertype" value="model"/>
+            <admst:value-to select="scope" value="global_model"/>
+            <admst:new datatype="number" arguments="1">
+              <admst:value-to select="scalingunit" value="1"/>
+              <admst:value-of select="."/>
+              <admst:value-of select="../module"/>
+              <admst:new datatype="expression" arguments="%p,%p">
+                <admst:value-of select="."/>
+                <admst:value-to select="../../default" value="%p"/>
+              </admst:new>
+            </admst:new>
+          </admst:new>
+        </admst:if>
+      </admst:when>
       <admst:when test="[name='juncap2']">
         <admst:if test="[nilled(variable[name='d'])]">
           <admst:value-of select="analog"/>
