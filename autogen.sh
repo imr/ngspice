@@ -104,7 +104,6 @@ case "$1" in
 
 
 check_autoconf
-check_adms
 
 if test "$DIE" -eq 1; then
 	exit 1
