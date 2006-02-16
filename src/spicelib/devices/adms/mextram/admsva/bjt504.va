@@ -1,0 +1,35 @@
+`include "frontdef.inc" 
+`define SUBSTRATE
+ 
+module bjt504_va (c, b, e, s); 
+  
+  // External ports  
+     inout c, b, e, s; 
+  
+     electrical e, b, c, s; 
+  
+  // Internal nodes  
+     electrical e1, b1, b2, c1, c2; 
+     electrical noi; // For correlated noise implementation 
+ 
+`include "parameters.inc"
+`include "variables.inc"
+
+analog begin 
+  
+`ifdef insideADMS 
+   @(initial_model) begin 
+`else 
+   @(initial_step or initial_step("static")) begin  
+`endif   
+   
+`include "initialize.inc"     
+`include "tscaling.inc"
+
+   end // initial_step   
+
+`include "evaluate.inc"
+  
+end  // analog                                                         
+endmodule                     
+

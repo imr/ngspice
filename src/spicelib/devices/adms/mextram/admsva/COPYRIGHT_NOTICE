@@ -1,0 +1,10 @@
+ 
+Verilog-A implementation of the Philips Mextram (level 504.6) model.
+
+Copyright (c) 2002-2005 Delft University of Technology (TUD).
+All rights reserved.
+
+Permission to modify the code and to distribute modified code is
+granted, provided the file with the copyright notice is retained, 
+and a notice that the code was modified is included.
+
