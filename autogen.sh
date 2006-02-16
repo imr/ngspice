@@ -123,7 +123,7 @@ if test "$ADMS" -eq 1; then
 #       if [ "$xml" != "ngspiceVersion.xml" ]; then
 #	    XMLARG="$XMLARG -e ../admst/$xml"
 #	    fi
-    done 
+#    done 
 
 # Prepend ngspiceVersion.xml    
 #    XMLARG="-e ../admst/ngspiceVersion.xml $XMLARG"
