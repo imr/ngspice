@@ -1,7 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
 SUBDIRS = \
-	adms	\
+	adms/hicum0	\
+	adms/mextram	\
 	asrc	\
 	bjt	\
 	bjt2	\
@@ -51,7 +52,8 @@ SUBDIRS = \
 	@NUMDEVDIR@
 
 DIST_SUBDIRS = \
-	adms	\
+	adms/hicum0	\
+	adms/mextram	\
 	asrc	\
 	bjt	\
 	bjt2	\
