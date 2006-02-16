@@ -70,7 +70,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 
 #define DEVICES_USED "asrc bjt bjt2 bsim1 bsim2 bsim3 bsim3v2 bsim3v1 bsim4 bsim3soipd bsim3soifd   \
                       bsim3soidd cap cccs ccvs csw dio hfet hfet2 ind isrc jfet ltra mes mesa mos1  \
-                      mos2 mos3 mos6 mos9 res soi3 sw tra urc vbic vccs vcvs vsrc (ekv)" 
+                      mos2 mos3 mos6 mos9 res soi3 sw tra urc vbic vccs vcvs vsrc hicum0 mextram"
                       
 
 /*
@@ -89,6 +89,10 @@ int add_udn(int,Evt_Udn_Info_t **);
 #define ANALYSES_USED "op dc tf ac tran pz disto noise sense"
 
 
+#ifdef HAVE_ADMS
+#include "adms/hicum0/hicum0itf.h"
+#include "adms/mextram/mextramitf.h"
+#endif
 #include "asrc/asrcitf.h"
 #include "bjt/bjtitf.h"
 #include "bjt2/bjt2itf.h"
@@ -148,17 +152,43 @@ int add_udn(int,Evt_Udn_Info_t **);
 
 /*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
 #ifdef CIDER
-    #ifdef XSPICE
-        static int DEVNUM = 52;
-    #else
-        #define DEVNUM 52
-    #endif
+
+ #ifdef HAVE_ADMS
+
+   #ifdef XSPICE
+     static int DEVNUM = 54;
+   #else
+     #define DEVNUM 54
+   #endif
+
+ #else	/* NOT ADMS */
+
+   #ifdef XSPICE
+      static int DEVNUM = 52;
+   #else
+      #define DEVNUM 52
+   #endif
+
+ #endif
+
 #else /* NOT CIDER */
-    #ifdef XSPICE
-        static int DEVNUM = 47;
-    #else
-        #define DEVNUM 47
-    #endif
+
+ #ifdef HAVE_ADMS
+
+   #ifdef XSPICE
+     static int DEVNUM = 49;
+   #else
+     #define DEVNUM 49
+   #endif
+
+ #else	/* NOT ADMS */
+
+   #ifdef XSPICE
+       static int DEVNUM = 47;
+   #else
+       #define DEVNUM 47
+   #endif
+
 #endif /* CIDER */
 
 /*Make this dynamic for later attempt to make all devices dynamic*/
@@ -250,10 +280,21 @@ spice_init_devices(void)
     DEVices[49] = get_numd_info();
     DEVices[50] = get_numd2_info();
     DEVices[51] = get_numos_info();    
-    
+  #ifdef HAVE_ADMS
+    DEVices[52] = get_hicum0_info();
+    DEVices[53] = get_mextram_info();
+    assert(54 == DEVNUM);
+  #else                              /* NOT ADMS */
     assert(52 == DEVNUM);
+  #endif                            /* HAVE_ADMS */
 #else                            /* NOT CIDER */
+  #ifdef HAVE_ADMS
+    DEVices[47] = get_hicum0_info();
+    DEVices[48] = get_mextram_info();
+    assert(49 == DEVNUM);
+  #else
     assert(47 == DEVNUM);
+  #endif
 #endif                          /* CIDER */
 return;
 }
@@ -282,6 +323,11 @@ devices(void)
 #ifdef DEVLIB
 /*not yet usable*/
 
+#ifdef HAVE_ADMS
+#define DEVICES_USED {"asrc", "bjt", "bjt2", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
+                      "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \
+                      "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "mextram"}
+#else
 #define DEVICES_USED {"asrc", "bjt", "bjt2", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
                       "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \
                       "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc"}
