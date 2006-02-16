@@ -148,43 +148,17 @@ int add_udn(int,Evt_Udn_Info_t **);
 
 /*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
 #ifdef CIDER
-
- #ifdef HAVE_EKV
- #include "ekv/ekvitf.h"
-
-  #ifdef XSPICE
-   static int DEVNUM = 53;
-  #else
-   #define DEVNUM 53
-  #endif
-
- #else	
-
-  #ifdef XSPICE
-   static int DEVNUM = 52;
-  #else
-   #define DEVNUM 52
-  #endif
-
- #endif
-
+    #ifdef XSPICE
+        static int DEVNUM = 52;
+    #else
+        #define DEVNUM 52
+    #endif
 #else /* NOT CIDER */
- 
- #ifdef HAVE_EKV
-  #include "ekv/ekvitf.h"
-  #ifdef XSPICE
-   static int DEVNUM = 48;
-  #else
-   #define DEVNUM 48
-  #endif
- #else
-  #ifdef XSPICE
-   static int DEVNUM = 47;
-  #else
-   #define DEVNUM 47
-  #endif
- #endif
-
+    #ifdef XSPICE
+        static int DEVNUM = 47;
+    #else
+        #define DEVNUM 47
+    #endif
 #endif /* CIDER */
 
 /*Make this dynamic for later attempt to make all devices dynamic*/
@@ -276,19 +250,10 @@ spice_init_devices(void)
     DEVices[49] = get_numd_info();
     DEVices[50] = get_numd2_info();
     DEVices[51] = get_numos_info();    
-#ifdef HAVE_EKV
-    DEVices[52] = get_ekv_info();
-    assert(53 == DEVNUM);
-#else                              /* NOT EKV */
+    
     assert(52 == DEVNUM);
-#endif                            /* HAVE_EKV */
 #else                            /* NOT CIDER */
-#ifdef HAVE_EKV
-    DEVices[47] = get_ekv_info();
-    assert(48 == DEVNUM);
-#else
     assert(47 == DEVNUM);
-#endif
 #endif                          /* CIDER */
 return;
 }
@@ -316,11 +281,7 @@ devices(void)
 
 #ifdef DEVLIB
 /*not yet usable*/
-#ifdef HAVE_EKV
-#define DEVICES_USED {"asrc", "bjt", "bjt2", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
-                      "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \
-                      "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "ekv" }
-#else
+
 #define DEVICES_USED {"asrc", "bjt", "bjt2", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
                       "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \
                       "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc"}

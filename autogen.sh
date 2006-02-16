@@ -119,14 +119,14 @@ test $TEST_TYPE $FILE || {
 if test "$ADMS" -eq 1; then
 
 # Build admsXml arguments list
-    for xml in `ls $XMLPATH | grep .xml`; do
-       if [ "$xml" != "ngspiceVersion.xml" ]; then
-	    XMLARG="$XMLARG -e ../admst/$xml"
-	    fi
+#    for xml in `ls $XMLPATH | grep .xml`; do
+#       if [ "$xml" != "ngspiceVersion.xml" ]; then
+#	    XMLARG="$XMLARG -e ../admst/$xml"
+#	    fi
     done 
 
 # Prepend ngspiceVersion.xml    
-    XMLARG="-e ../admst/ngspiceVersion.xml $XMLARG"
+#    XMLARG="-e ../admst/ngspiceVersion.xml $XMLARG"
 
 for file in `ls $ADMSDIR`
 do
@@ -148,7 +148,7 @@ do
       $ADMSXML  admsva/$file.va -Iadmsva -e ../admst/ngspiceVersion.xml \
       -e ../admst/ngspiceMakefile.am.xml
       
-       $ADMSXML admsva/$file.va -Iadmsva ${XMLARG}
+#       $ADMSXML admsva/$file.va -Iadmsva ${XMLARG}
       
       cd -
       ;;

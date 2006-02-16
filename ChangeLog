@@ -1,3 +1,9 @@
+2006-02-16 Paolo Nenzi <p.nenzi@ieee.org>
+
+ *   src/spicelib/devices/dev.c: removed EKV ifdefs. In future versions of
+     ngspice EKV (and other models) will be introduced as verilog-a models.
+     
+
 2006-01-31 Paolo Nenzi <p.nenzi@ieee.org>: 
 
  *   Committed the admst tree from the adms system. Laurent Lamaitre 

@@ -134,10 +134,6 @@ dnl --enable-expdevices : Enable the compilation of experimental devices
 AC_ARG_ENABLE(expdevices,
     AS_HELP_STRING([--enable-expdevices],[Enable experimental devices (they do not compile)]))
 
-dnl --enable-ekv: define HAVE_EKV in the code. This is for EKV model support
-AC_ARG_ENABLE(ekv,
-    AS_HELP_STRING([--enable-ekv],[Enable ekv model *not in standard distribution*]))
-
 dnl --enable-xspice: define XSPICE in the code. This is for xspice support
 AC_ARG_ENABLE(xspice,
     AS_HELP_STRING([--enable-xspice],[Enable XSpice enhancements, (experimental) ]))
@@ -145,6 +141,10 @@ AC_ARG_ENABLE(xspice,
 dnl --enable-cider: define CIDER in the code. This is for CIDER support
 AC_ARG_ENABLE(cider,
     AS_HELP_STRING([--enable-cider],[Enable CIDER enhancements, (experimental) ]))
+
+dnl --enable-adms: define ADMS in the code. This is for adms scripts support
+AC_ARG_ENABLE(adms,
+    AS_HELP_STRING([--enable-adms],[Enable ADMS code models, (experimental) ]))
 
 dnl --enable-cluster: define CLUSTER in the code. This is for cluster support
 AC_ARG_ENABLE(cluster,
@@ -532,20 +532,6 @@ fi
 AC_SUBST(XGRAPHDIR)
 AC_SUBST(NOTXGRAPH)
 
-if test "$enable_ekv" = "yes"; then
-    AC_MSG_RESULT(Model EKV included)
-    AC_DEFINE(HAVE_EKV,[],[Define HAVE_EKV when you wank the EVK library (not included in the standard distribution)])
-    EKVDIR="ekv"
-    EKVLIB="spicelib/devices/ekv/libekv.la"
-else
-    EKVDIR=""
-    EKVLIB=""	
-fi
-
-AC_SUBST(EKVDIR)
-AC_SUBST(EKVLIB)
-
-
 dnl Add new code models to the build by pointing to them here.
 if test "$enable_xspice" = "yes"; then
     AC_MSG_RESULT(X-Spice features included)
@@ -627,6 +613,22 @@ AC_SUBST(NUMDEV)
 AC_SUBST(NUMDEVDIR)
 AC_SUBST(CIDERSCRIPTS)
 
+
+dnl adms option
+if test "$enable_adms" = "yes"; then
+   AC_MSG_RESULT(**********************************
+* ADMS  support is  experimental *
+**********************************)
+   AC_CHECK_PROGS(ADMSXML, admsXml admsXml.exe,no)
+   
+   if test "$ADMSXML" = "no"; then
+      AC_MSG_ERROR(If you want adms models you should install admsXml) 
+   fi 
+   AC_DEFINE(ADMS,[],[Support for Verilog-A(MS) models])
+   AC_SUBST(ADMSXML)
+    
+fi   
+
 dnl Cluster option
 if test "$enable_cluster" = "yes"; then
    AC_MSG_RESULT(Cluster version is being compiled)
@@ -705,6 +707,9 @@ src/spinit			\
 src/spicelib/Makefile		\
 src/spicelib/analysis/Makefile	\
 src/spicelib/devices/Makefile		\
+src/spicelib/devices/adms/Makefile	\
+src/spicelib/devices/adms/c/Makefile	\
+src/spicelib/devices/adms/bjt504_va/Makefile	\
 src/spicelib/devices/asrc/Makefile	\
 src/spicelib/devices/bjt/Makefile	\
 src/spicelib/devices/bjt2/Makefile	\

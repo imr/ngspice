@@ -1,6 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 SUBDIRS = \
+	adms	\
 	asrc	\
 	bjt	\
 	bjt2	\
@@ -22,7 +23,6 @@ SUBDIRS = \
 	cpl	\
 	csw	\
 	dio	\
-	@EKVDIR@	\
 	ind	\
 	isrc	\
 	hfet1	\
@@ -73,7 +73,6 @@ DIST_SUBDIRS = \
 	cpl	\
 	csw	\
 	dio	\
-	@EKVDIR@	\
 	ind	\
 	isrc	\
 	hfet1	\
