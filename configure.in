@@ -142,7 +142,7 @@ dnl --enable-cider: define CIDER in the code. This is for CIDER support
 AC_ARG_ENABLE(cider,
     AS_HELP_STRING([--enable-cider],[Enable CIDER enhancements, (experimental) ]))
 
-dnl --enable-adms: define ADMS in the code. This is for adms scripts support
+dnl --enable-adms: define ADMS in the code. This is for the adms Verilog-A compiler support
 AC_ARG_ENABLE(adms,
     AS_HELP_STRING([--enable-adms],[Enable ADMS code models, (experimental) ]))
 
@@ -707,9 +707,9 @@ src/spinit			\
 src/spicelib/Makefile		\
 src/spicelib/analysis/Makefile	\
 src/spicelib/devices/Makefile		\
-src/spicelib/devices/adms/Makefile	\
 src/spicelib/devices/adms/c/Makefile	\
-src/spicelib/devices/adms/bjt504_va/Makefile	\
+src/spicelib/devices/adms/hicum0/Makefile	\
+src/spicelib/devices/adms/mextram/Makefile	\
 src/spicelib/devices/asrc/Makefile	\
 src/spicelib/devices/bjt/Makefile	\
 src/spicelib/devices/bjt2/Makefile	\
