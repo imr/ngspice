@@ -217,7 +217,7 @@ INP2M (void *ckt, INPtables * tab, card * current)
 #ifdef CIDER
           && thismodel->INPmodType != INPtypelook ("NUMOS")
 #endif
-#ifdef HAVE_EKV	  
+#ifdef HAVE_ADMS
 	  && thismodel->INPmodType != INPtypelook ("EKV")
 #endif	
           && thismodel->INPmodType != INPtypelook ("HiSIM1")
