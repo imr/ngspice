@@ -70,6 +70,8 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
 	if((thismodel->INPmodType != INPtypelook("BJT"))
            && (thismodel->INPmodType != INPtypelook("BJT2"))
            && (thismodel->INPmodType != INPtypelook("VBIC"))
+           && (thismodel->INPmodType != INPtypelook("hicum0"))
+           && (thismodel->INPmodType != INPtypelook("mextram"))
 #ifdef CIDER
            && (thismodel->INPmodType != INPtypelook("NBJT"))
            && (thismodel->INPmodType != INPtypelook("NBJT2"))

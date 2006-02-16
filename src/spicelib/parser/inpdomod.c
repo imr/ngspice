@@ -64,9 +64,23 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
                             "Device type VBIC not available in this binary\n");
                 }
                 break;
+		case 6:
+			 type = INPtypelook("mextram");
+                if(type < 0) {
+                    err = INPmkTemp(
+                            "Device type MEXTRAM not available in this binary\n");
+                }
+                break;
+		case 7:
+			 type = INPtypelook("hicum0");
+                if(type < 0) {
+                    err = INPmkTemp(
+                            "Device type HICUM0 not available in this binary\n");
+                }
+                break;
 		default: /* placeholder; use level 4 for the next model */
 		err = INPmkTemp(
-		  "Only BJT levels 1-2, 4 are supported in this binary\n");
+		  "Only BJT levels 1-2, 4,7 are supported in this binary\n");
                 break;
 
 	}	
