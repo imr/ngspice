@@ -193,7 +193,6 @@ int add_udn(int,Evt_Udn_Info_t **);
 
  #endif /* ADMS */
 
->>>>>>> 1.27
 #endif /* CIDER */
 /*Make this dynamic for later attempt to make all devices dynamic*/
 SPICEdev **DEVices=NULL;
