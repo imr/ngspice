@@ -707,7 +707,6 @@ src/spinit			\
 src/spicelib/Makefile		\
 src/spicelib/analysis/Makefile	\
 src/spicelib/devices/Makefile		\
-src/spicelib/devices/adms/c/Makefile	\
 src/spicelib/devices/adms/hicum0/Makefile	\
 src/spicelib/devices/adms/mextram/Makefile	\
 src/spicelib/devices/asrc/Makefile	\

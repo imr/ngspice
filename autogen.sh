@@ -128,11 +128,11 @@ if test "$ADMS" -eq 1; then
 # Prepend ngspiceVersion.xml    
 #    XMLARG="-e ../admst/ngspiceVersion.xml $XMLARG"
 
-for file in `ls $ADMSDIR`
+for adms_dir in `ls $ADMSDIR`
 do
-  if [ -d "$ADMSDIR/$file" ]; then
+  if [ -d "$ADMSDIR/$adms_dir" ]; then
    
-   case "$file" in
+   case "$adms_dir" in
       "CVS")
       echo "Skipping CVS"
       ;;
@@ -143,12 +143,11 @@ do
       ;;
       
       *)
-      echo "Entering into directory: $file"
-      cd $ADMSDIR/$file
-      $ADMSXML  admsva/$file.va -Iadmsva -e ../admst/ngspiceVersion.xml \
+      echo "Entering into directory: $adms_dir"
+      cd $ADMSDIR/$adms_dir
+      file=`ls admsva/*.va`
+      $ADMSXML $file -Iadmsva -e ../admst/ngspiceVersion.xml \
       -e ../admst/ngspiceMakefile.am.xml
-      
-#       $ADMSXML admsva/$file.va -Iadmsva ${XMLARG}
       
       cd -
       ;;
