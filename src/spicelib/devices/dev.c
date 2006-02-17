@@ -186,10 +186,8 @@ int add_udn(int,Evt_Udn_Info_t **);
    #ifdef XSPICE
        static int DEVNUM = 47;
    #else
-       #define DEVNUM 47 */
+       #define DEVNUM 47 
    #endif
-   
- #endif
 
  #endif /* ADMS */
 
