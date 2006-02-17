@@ -625,9 +625,18 @@ if test "$enable_adms" = "yes"; then
       AC_MSG_ERROR(If you want adms models you should install admsXml) 
    fi 
    AC_DEFINE(ADMS,[],[Support for Verilog-A(MS) models])
-   AC_SUBST(ADMSXML)
+   
+   VLADEVDIR=" adms/hicum0 \
+               adms/mextram "
+	       
+   VLADEV=" spicelib/devices/adms/hicum0/libhic0_full.a \
+            spicelib/devices/adms/mextram/libbjt504_va.a "       
     
 fi   
+AC_SUBST(ADMSXML)
+AC_SUBST(VLADEVDIR)
+AC_SUBST(VLADEV)
+
 
 dnl Cluster option
 if test "$enable_cluster" = "yes"; then

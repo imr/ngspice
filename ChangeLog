@@ -1,3 +1,9 @@
+2006-02-17 Paolo Nenzi <p.nenzi@ieee.org>
+
+ *   src/spicelib/devices/dev.c: Added support for adms devices (Dietmar 
+     Warning). Devices implemented: hicum0 and mextram.
+     
+
 2006-02-16 Paolo Nenzi <p.nenzi@ieee.org>
 
  *   src/spicelib/devices/dev.c: removed EKV ifdefs. In future versions of

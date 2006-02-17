@@ -1,8 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
 SUBDIRS = \
-	adms/hicum0	\
-	adms/mextram	\
 	asrc	\
 	bjt	\
 	bjt2	\
@@ -49,9 +47,11 @@ SUBDIRS = \
 	vccs	\
 	vcvs	\
 	vsrc	\
+	@VLADEVDIR@
 	@NUMDEVDIR@
 
 DIST_SUBDIRS = \
+	adms/admst	\
 	adms/hicum0	\
 	adms/mextram	\
 	asrc	\
