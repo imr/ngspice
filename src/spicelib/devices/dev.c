@@ -169,7 +169,7 @@ int add_udn(int,Evt_Udn_Info_t **);
       #define DEVNUM 52
    #endif
 
- #endif
+ #endif /* ADMS */
 
 #else /* NOT CIDER */
 
@@ -188,6 +188,8 @@ int add_udn(int,Evt_Udn_Info_t **);
    #else
        #define DEVNUM 47
    #endif
+
+ #endif /* ADMS */
 
 #endif /* CIDER */
 
