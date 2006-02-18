@@ -52,7 +52,6 @@ INP2M (void *ckt, INPtables * tab, card * current)
   IFuid uid;			/* uid for default model */
 
 #ifdef TRACE
-  /* SJB debug statement */
   printf("INP2M: Parsing '%s'\n",current->line);
 #endif
 
@@ -76,7 +75,6 @@ INP2M (void *ckt, INPtables * tab, card * current)
   	the default mosfet model is used */
   thismodel = (INPmodel *) NULL;
 #ifdef TRACE
-  /* SJB debug statement */
   printf("INP2M: checking for 4 node device\n");
 #endif
   INPgetMod (ckt, nname5, &thismodel, tab);
@@ -86,7 +84,6 @@ INP2M (void *ckt, INPtables * tab, card * current)
       INPgetNetTok (&line, &nname6, 1);	/*  get next token  */
       thismodel = (INPmodel *) NULL;
 #ifdef TRACE
-      /* SJB debug statement */
       printf("INP2M: checking for 5 node device\n");
 #endif
       INPgetMod (ckt, nname6, &thismodel, tab);
@@ -96,7 +93,6 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	  INPgetNetTok (&line, &nname7, 1);	/*  get next token  */
 	  thismodel = (INPmodel *) NULL;
 #ifdef TRACE
-	  /* SJB debug statement */
 	  printf("INP2M: checking for 6 node device\n");
 #endif
 	  INPgetMod (ckt, nname7, &thismodel, tab);
@@ -105,7 +101,6 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	      nodeflag = 3;	/*  now specify a 7 node device  */
 	      INPgetTok (&line, &model, 1);	/*  get model name  */
 #ifdef TRACE
-	      /* SJB debug statement */
 	      printf("INP2M: checking for 7 node device\n");
 #endif
 	      INPgetMod (ckt, model, &thismodel, tab);	/*  get pointer to the model  */
@@ -130,7 +125,6 @@ INP2M (void *ckt, INPtables * tab, card * current)
 	      /*saj unbreak the default model creation*/
 	      else{
 #ifdef TRACE
-		/* SJB debug statement */
 		printf("INP2M: couldn't workout number of nodes, assuming 4\n");
 #endif
 		model = nname5;/*mosfet*/
@@ -188,7 +182,6 @@ INP2M (void *ckt, INPtables * tab, card * current)
   INPinsert (&model, tab);
   thismodel = (INPmodel *) NULL;
 #ifdef TRACE
-  /* SJB debug statement */
   printf("INP2M: Looking up model\n");
 #endif
   current->error = INPgetMod (ckt, model, &thismodel, tab);
@@ -217,7 +210,7 @@ INP2M (void *ckt, INPtables * tab, card * current)
 #ifdef CIDER
           && thismodel->INPmodType != INPtypelook ("NUMOS")
 #endif
-#ifdef HAVE_ADMS
+#ifdef ADMS
 	  && thismodel->INPmodType != INPtypelook ("EKV")
 #endif	
           && thismodel->INPmodType != INPtypelook ("HiSIM1")

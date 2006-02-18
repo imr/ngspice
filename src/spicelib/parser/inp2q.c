@@ -70,7 +70,7 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
 	if((thismodel->INPmodType != INPtypelook("BJT"))
            && (thismodel->INPmodType != INPtypelook("BJT2"))
            && (thismodel->INPmodType != INPtypelook("VBIC"))
-#ifdef HAVE_ADMS
+#ifdef ADMS
            && (thismodel->INPmodType != INPtypelook("hicum0"))
            && (thismodel->INPmodType != INPtypelook("mextram"))
 #endif
@@ -96,7 +96,6 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     }
     
 #ifdef TRACE
-    /* ---  SDB debug statement --- */
     printf ("In INP2Q, just about to dive into newInstance\n");
 #endif
     
