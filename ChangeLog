@@ -1,3 +1,10 @@
+2006-02-19 Paolo Nenzi <p.nenzi@ieee.org>
+
+ *   tests/bin/check.sh: added patch from Gary R. Van Sickle 
+     <g.r.vansickle@worldnet.att.net>. CYGWIN system is recognized as
+     an UNIX flavour (for testing).
+     
+
 2006-02-17 Paolo Nenzi <p.nenzi@ieee.org>
 
  *   src/spicelib/devices/dev.c: Added support for adms devices (Dietmar 
