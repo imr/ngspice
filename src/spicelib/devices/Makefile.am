@@ -47,13 +47,11 @@ SUBDIRS = \
 	vccs	\
 	vcvs	\
 	vsrc	\
-	@VLADEVDIR@
+	@VLADEVDIR@ \
 	@NUMDEVDIR@
 
 DIST_SUBDIRS = \
-	adms/admst	\
-	adms/hicum0	\
-	adms/mextram	\
+	@VLADEVDIR@ \
 	asrc	\
 	bjt	\
 	bjt2	\
