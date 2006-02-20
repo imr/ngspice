@@ -285,18 +285,18 @@ spice_init_devices(void)
     DEVices[52] = get_hic0_full_info();
     DEVices[53] = get_bjt504_va_info();
     assert(54 == DEVNUM);
-  #else                              /* NOT ADMS */
+  #else                             /* NOT ADMS */
     assert(52 == DEVNUM);
-  #endif                            /* HAVE_ADMS */
+  #endif                            /* ADMS */
 #else                            /* NOT CIDER */
   #ifdef ADMS
     DEVices[47] = get_hic0_full_info();
     DEVices[48] = get_bjt504_va_info();
     assert(49 == DEVNUM);
-  #else
+  #else                             /* NOT ADMS */
     assert(47 == DEVNUM);
   #endif
-#endif                          /* CIDER */
+#endif                           /* CIDER */
 return;
 }
 
