@@ -629,8 +629,8 @@ if test "$enable_adms" = "yes"; then
    VLADEVDIR=" adms/hicum0 \
                adms/mextram "
 	       
-   VLADEV=" spicelib/devices/adms/hicum0/libhic0_full.a \
-            spicelib/devices/adms/mextram/libbjt504_va.a "       
+   VLADEV=" spicelib/devices/adms/hicum0/libhicum0.a \
+            spicelib/devices/adms/mextram/libmextram.a "       
     
 fi   
 AC_SUBST(ADMSXML)
