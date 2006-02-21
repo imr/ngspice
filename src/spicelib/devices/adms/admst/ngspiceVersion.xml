@@ -5,7 +5,10 @@
 -->
 <!--
   $Log$
-  Revision 1.8  2006-02-21 08:05:18  dwarning
+  Revision 1.9  2006-02-21 20:06:05  dwarning
+  Set pnp default to 0.
+
+  Revision 1.8  2006/02/21 08:05:18  dwarning
   Introduction of alias names for modules to prevent cryptic naming.
 
   Revision 1.7  2006/02/10 06:59:56  pnenzi
@@ -1831,7 +1834,7 @@
             <admst:value-to select="output" value="yes"/>
             <admst:value-to select="parametertype" value="model"/>
             <admst:value-to select="scope" value="global_model"/>
-            <admst:new datatype="number" arguments="1">
+            <admst:new datatype="number" arguments="0">
               <admst:value-to select="scalingunit" value="1"/>
               <admst:value-of select="."/>
               <admst:value-of select="../module"/>
