@@ -1887,7 +1887,7 @@ inp_numnodes(char c)
         case 'm': return (7); /* This means that 7 is the maximun number of nodes */
         case 'o': return (4);
         case 'p': return (0);
-        case 'q': return (4);
+        case 'q': return (5);
         case 'r': return (2);
         case 's': return (4);
         case 't': return (4);

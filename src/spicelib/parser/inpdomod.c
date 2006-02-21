@@ -28,7 +28,6 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
     line = image->line;
     
 #ifdef TRACE
-    /* SDB debug statement */
     printf("In INPdomodel, examining line %s . . . \n", line); 
 #endif    
     
@@ -64,6 +63,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
                             "Device type VBIC not available in this binary\n");
                 }
                 break;
+#ifdef ADMS
 		case 6:
 			 type = INPtypelook("mextram");
                 if(type < 0) {
@@ -78,9 +78,17 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
                             "Device type HICUM0 not available in this binary\n");
                 }
                 break;
+		case 8:
+			 type = INPtypelook("hicum2");
+                if(type < 0) {
+                    err = INPmkTemp(
+                            "Device type HICUM2 not available in this binary\n");
+                }
+                break;
+#endif
 		default: /* placeholder; use level 4 for the next model */
 		err = INPmkTemp(
-		  "Only BJT levels 1-2, 4,7 are supported in this binary\n");
+		  "Only BJT levels 1-2, 4,6,7,8 are supported in this binary\n");
                 break;
 
 	}	
@@ -614,7 +622,6 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
       /* gtri - modify - wbk - 10/23/90 - modify to look for code models */
 
 #ifdef TRACE
-      /* SDB debug statement */
       printf("In INPdomodel, found unknown model type, typename = %s . . .\n", typename); 
 #endif
 
@@ -625,7 +632,6 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	sprintf(err,"Unknown model type %s - ignored\n",typename);
 
 #ifdef TRACE
-	/* SDB debug statement */
 	printf("In INPdomodel, ignoring unknown model typ typename = %s . . .\n", typename); 
 #endif
 
@@ -633,7 +639,6 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
       else {
 
 #ifdef TRACE
-	/* SDB debug statement */
 	printf("In INPdomodel, adding unknown model typename = %s to model list. . .\n", typename); 
 #endif
 
