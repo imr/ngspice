@@ -3,7 +3,11 @@
 <!--
   $Id$
   $Log$
-  Revision 1.6  2006-02-21 08:05:18  dwarning
+  Revision 1.7  2006-02-21 18:32:04  pnenzi
+
+  Added cleanfile target to remove generated .c and .h and .c.bak
+
+  Revision 1.6  2006/02/21 08:05:18  dwarning
   Introduction of alias names for modules to prevent cryptic naming.
 
   Revision 1.5  2006/02/20 09:07:14  dwarning
@@ -112,6 +116,25 @@ BUILT_SOURCES = 	\\
 	$(module)par.c	\\
 	$(module)setup.c	\\
 	$(module)temp.c
+
+CLEANFILES = 		\\
+	$(module).c		\\
+	$(module).c.bak	\\
+	$(module)acld.c	\\
+	$(module)ask.c	\\
+	$(module)defs.h	\\
+	$(module)ext.h	\\
+	$(module)guesstopology.c	\\
+	$(module)init.c	\\
+	$(module)init.h	\\
+	$(module)itf.h	\\
+	$(module)load.c	\\
+	$(module)mask.c	\\
+	$(module)mpar.c	\\
+	$(module)par.c	\\
+	$(module)setup.c	\\
+	$(module)temp.c
+
 
 #TODO (not implemented) \\
 	$(module)conv.c	\\
