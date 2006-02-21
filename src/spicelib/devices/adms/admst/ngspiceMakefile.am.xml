@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.5  2006-02-20 09:07:14  dwarning
+  Revision 1.6  2006-02-21 08:05:18  dwarning
+  Introduction of alias names for modules to prevent cryptic naming.
+
+  Revision 1.5  2006/02/20 09:07:14  dwarning
   For make adms we don't need make an new Makefile. Is done by autogen.sh.
 
   Revision 1.4  2006/02/16 09:17:40  dwarning
@@ -49,12 +52,12 @@
 
 
 <admst:template match="code">
-<admst:value-of select="name"/>
+<admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>
 ## Process this file with automake to produce Makefile.in
 
 ADMSXMLINTERFACE:=../admst
-adms:
+$(module).c:
 	admsXml -Iadmsva admsva/$(module).va \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
@@ -77,6 +80,23 @@ adms:
 noinst_LIBRARIES = lib$(module).a
 
 lib$(module)_a_SOURCES = 	\\
+	$(module).c		\\
+	$(module)acld.c	\\
+	$(module)ask.c	\\
+	$(module)defs.h	\\
+	$(module)ext.h	\\
+	$(module)guesstopology.c	\\
+	$(module)init.c	\\
+	$(module)init.h	\\
+	$(module)itf.h	\\
+	$(module)load.c	\\
+	$(module)mask.c	\\
+	$(module)mpar.c	\\
+	$(module)par.c	\\
+	$(module)setup.c	\\
+	$(module)temp.c
+
+BUILT_SOURCES = 	\\
 	$(module).c		\\
 	$(module)acld.c	\\
 	$(module)ask.c	\\

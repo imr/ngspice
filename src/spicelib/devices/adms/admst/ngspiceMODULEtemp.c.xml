@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.2  2006-02-02 17:56:31  pnenzi
+  Revision 1.3  2006-02-21 08:05:18  dwarning
+  Introduction of alias names for modules to prevent cryptic naming.
+
+  Revision 1.2  2006/02/02 17:56:31  pnenzi
 
   Changed adms required version to 2.1.3 ,J
 
@@ -51,7 +54,7 @@
 </admst:template>
 
 <admst:template match="code">
-<admst:value-of select="name"/>
+<admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>
 
 #include &quot;ngspice.h&quot;
@@ -85,7 +88,7 @@ int $(module)temp(GENmodel *inModel, CKTcircuit *ckt)
 </admst:template>
 
 <admst:for-each select="/module">
-  <admst:value-of select="name"/>
+  <admst:value-of select="attribute[name='ngspicename']/value"/>
   <admst:open file="%stemp.c">
     <admst:value-of select="/simulator/package_string"/>
     <admst:text format="/***\n*** Interface: %s\n"/>
@@ -94,7 +97,7 @@ int $(module)temp(GENmodel *inModel, CKTcircuit *ckt)
     <admst:text format=" *** created by: %s - %s ***/\n"/>
     <admst:apply-templates select="." match="code"/>
   </admst:open>
-  <admst:value-of select="name"/>
+  <admst:value-of select="attribute[name='ngspicename']/value"/>
   <admst:message format="%stemp.c: file created\n"/>
 </admst:for-each>
 
