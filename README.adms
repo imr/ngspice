@@ -77,9 +77,10 @@ Limitations:
   Once you have found the (device_type, device_level) couple you have
   identified the files you have to edit:  
 
-    <ngspice-data-tree>/src/Makefile.am
-     Here you have to add the entry in DYNAMIC_DEVICELIBS for your new library
-    
+    <ngspice-data-tree>/configure.in
+     Here you have to add the entries in adms section for your new directory 
+     and library. 
+
     <ngspice-data-tree>/src/spicelib/parser/inp2<device_type>.c 
     Substitute <device_type> with the letter corresponding to the
     type of you new model. Here you have to add the interface code for your 
@@ -88,10 +89,8 @@ Limitations:
     
     <ngspice-data-tree>/src/spicelib/parser/inpdomod.c
     Here you have to add a switch for the level of your new device.
-    
+
     <ngspice-data-tree>/src/spicelib/devices/dev.c
-    <ngspice-data-tree>/src/spicelib/devices/Makefile.am
-    <ngspice-data-tree>/configure.in
     Follow the structure of the files and add information on your new 
     model. In dev.c you have to adjust some macro.
     
