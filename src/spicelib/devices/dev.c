@@ -29,14 +29,15 @@
  * HAVE NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
  * ENHANCEMENTS, OR MODIFICATIONS. */
 
-#include <config.h>
-#include <assert.h>
+#include "config.h"
+#include "assert.h"
 
-#include <devdefs.h>
-#include <ifsim.h>
+#include "devdefs.h"
+#include "ifsim.h"
 
 #include "dev.h"
 #include "memory.h" /* to alloc, realloc devices*/
+
 
 #ifdef XSPICE
 /*saj headers for xspice*/
@@ -68,31 +69,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 /*saj*/
 #endif
 
-#define DEVICES_USED "asrc bjt bjt2 bsim1 bsim2 bsim3 bsim3v2 bsim3v1 bsim4 bsim3soipd bsim3soifd   \
-                      bsim3soidd cap cccs ccvs csw dio hfet hfet2 ind isrc jfet ltra mes mesa mos1  \
-                      mos2 mos3 mos6 mos9 res soi3 sw tra urc vbic vccs vcvs vsrc hicum0 mextram"
-                      
 
-/*
- * Analyses
- */
-#define AN_op
-#define AN_dc
-#define AN_tf
-#define AN_ac
-#define AN_tran
-#define AN_pz
-#define AN_disto
-#define AN_noise
-#define AN_sense
-
-#define ANALYSES_USED "op dc tf ac tran pz disto noise sense"
-
-
-#ifdef ADMS
-#include "adms/hicum0/hicum0itf.h"
-#include "adms/mextram/mextramitf.h"
-#endif
 #include "asrc/asrcitf.h"
 #include "bjt/bjtitf.h"
 #include "bjt2/bjt2itf.h"
@@ -139,7 +116,11 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "vccs/vccsitf.h"
 #include "vcvs/vcvsitf.h"
 #include "vsrc/vsrcitf.h"
-
+#ifdef ADMS
+#include "adms/hicum0/hicum0itf.h"
+#include "adms/hicum2/hicum2itf.h"
+#include "adms/mextram/mextramitf.h"
+#endif
 #ifdef CIDER
 /* Numerical devices (Cider integration) */
 #include "nbjt/nbjtitf.h"
@@ -149,16 +130,15 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "numos/numositf.h"
 #endif
 
-
 /*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
 #ifdef CIDER
 
  #ifdef ADMS
 
    #ifdef XSPICE
-     static int DEVNUM = 54;
+     static int DEVNUM = 55;
    #else
-     #define DEVNUM 54
+     #define DEVNUM 55
    #endif
 
  #else	/* NOT ADMS */
@@ -176,9 +156,9 @@ int add_udn(int,Evt_Udn_Info_t **);
  #ifdef ADMS
 
    #ifdef XSPICE
-     static int DEVNUM = 49;
+     static int DEVNUM = 50;
    #else
-     #define DEVNUM 49
+     #define DEVNUM 50
    #endif
 
  #else	/* NOT ADMS */ 
@@ -192,6 +172,7 @@ int add_udn(int,Evt_Udn_Info_t **);
  #endif /* ADMS */
 
 #endif /* CIDER */
+
 /*Make this dynamic for later attempt to make all devices dynamic*/
 SPICEdev **DEVices=NULL;
 
@@ -210,18 +191,17 @@ int DEVflag(int type){
 #endif
 
 
-
 void
 spice_init_devices(void)
 {
 #ifdef XSPICE
-  /*Initilise the structs and add digital node type */
-  g_evt_udn_info = (Evt_Udn_Info_t  **)MALLOC(sizeof(Evt_Udn_Info_t  *));
-  g_evt_num_udn_types = 1;
-  g_evt_udn_info[0] =  &idn_digital_info;
-
-  DEVicesfl = (int *)tmalloc(DEVNUM*sizeof(int));
-  /* tmalloc should automatically zero the array! */
+    /*Initilise the structs and add digital node type */
+    g_evt_udn_info = (Evt_Udn_Info_t  **)MALLOC(sizeof(Evt_Udn_Info_t  *));
+    g_evt_num_udn_types = 1;
+    g_evt_udn_info[0] =  &idn_digital_info;
+    
+    DEVicesfl = (int *)tmalloc(DEVNUM*sizeof(int));
+    /* tmalloc should automatically zero the array! */
 #endif
 
     DEVices = (SPICEdev **)tmalloc(DEVNUM*sizeof(SPICEdev *));
@@ -273,8 +253,6 @@ spice_init_devices(void)
     DEVices[44] = get_vccs_info();
     DEVices[45] = get_vcvs_info();
     DEVices[46] = get_vsrc_info();
-    
-
 #ifdef CIDER
     DEVices[47] = get_nbjt_info();
     DEVices[48] = get_nbjt2_info();
@@ -283,23 +261,24 @@ spice_init_devices(void)
     DEVices[51] = get_numos_info();    
   #ifdef ADMS
     DEVices[52] = get_hicum0_info();
-    DEVices[53] = get_mextram_info();
-    assert(54 == DEVNUM);
-  #else                             /* NOT ADMS */
+    DEVices[53] = get_hicum2_info();
+    DEVices[54] = get_mextram_info();
+    assert(55 == DEVNUM);
+  #else                            /* NOT ADMS */
     assert(52 == DEVNUM);
-  #endif                            /* ADMS */
+  #endif                           /* ADMS */
 #else                            /* NOT CIDER */
   #ifdef ADMS
     DEVices[47] = get_hicum0_info();
-    DEVices[48] = get_mextram_info();
-    assert(49 == DEVNUM);
-  #else                             /* NOT ADMS */
+    DEVices[48] = get_hicum2_info();
+    DEVices[49] = get_mextram_info();
+    assert(50 == DEVNUM);
+  #else                            /* NOT ADMS */
     assert(47 == DEVNUM);
-  #endif                            /* ADMS */
-#endif                           /* CIDER */
-return;
+  #endif                           /* ADMS */
+#endif                          /* CIDER */
+    return;
 }
-
 
 int
 num_devices(void)
@@ -307,13 +286,11 @@ num_devices(void)
     return DEVNUM;
 }
 
-
 IFdevice **
 devices_ptr(void)
 {
     return (IFdevice **) DEVices;
 }
-
 
 SPICEdev **
 devices(void)
@@ -321,13 +298,14 @@ devices(void)
     return DEVices;
 }
 
+
 #ifdef DEVLIB
 /*not yet usable*/
 
 #ifdef ADMS
 #define DEVICES_USED {"asrc", "bjt", "bjt2", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
                       "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \
-                      "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "mextram"}
+                      "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "hicum2", "mextram"}
 #else
 #define DEVICES_USED {"asrc", "bjt", "bjt2", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
                       "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \
@@ -378,11 +356,11 @@ void load_alldevs(void){
 
 /*--------------------   XSPICE additions below  ----------------------*/
 #ifdef XSPICE
-#include <mif.h>
-#include <cm.h>
-#include <cpextern.h>
-#include <fteext.h> /*for ft_sim*/
-#include <cktdefs.h> /*for DEVmaxnum*/
+#include "mif.h"
+#include "cm.h"
+#include "cpextern.h"
+#include "fteext.h"  /* for ft_sim */
+#include "cktdefs.h" /* for DEVmaxnum */
 
 static void relink() {
   /*  added by SDB; DEVmaxnum is an external int defined in cktdefs.h  */
@@ -430,9 +408,7 @@ int add_udn(int n,Evt_Udn_Info_t **udns){
   return 0;
 }
 
-
 extern struct coreInfo_t  coreInfo;
-
 
 int load_opus(char *name){
   void *lib;
@@ -509,11 +485,6 @@ int load_opus(char *name){
   return 0;
 }
 
-#endif
-/*--------------------   end of XSPICE additions  ----------------------*/
-
-
-#ifdef XSPICE
 #if defined(__MINGW32__) || defined(HAS_WINDOWS)
 
 void *dlopen(const char *name,int type)
@@ -546,4 +517,6 @@ char *dlerror(void)
 	return errstr;
 }
 #endif
+
 #endif
+/*--------------------   end of XSPICE additions  ----------------------*/
