@@ -3,7 +3,11 @@
 <!--
   $Id$
   $Log$
-  Revision 1.3  2006-02-21 08:05:18  dwarning
+  Revision 1.4  2006-02-26 22:09:02  pnenzi
+
+  Added support for pole-zero analysis (experimental).
+
+  Revision 1.3  2006/02/21 08:05:18  dwarning
   Introduction of alias names for modules to prevent cryptic naming.
 
   Revision 1.2  2006/02/02 17:56:31  pnenzi
@@ -94,7 +98,7 @@ SPICEdev $(module)info = {
     NULL,    /* DEVsetic       */
     $(module)ask,      /* DEVask         */
     $(module)mAsk,     /* DEVmodAsk      */
-    NULL,   /* DEVpzLoad      */
+    $(module)pzLoad,   /* DEVpzLoad      */
     NULL, /* DEVconvTest    */
     NULL,         /* DEVsenSetup    */
     NULL,         /* DEVsenLoad     */

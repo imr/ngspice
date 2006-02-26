@@ -3,7 +3,11 @@
 <!--
   $Id$
   $Log$
-  Revision 1.7  2006-02-21 18:32:04  pnenzi
+  Revision 1.8  2006-02-26 22:09:01  pnenzi
+
+  Added support for pole-zero analysis (experimental).
+
+  Revision 1.7  2006/02/21 18:32:04  pnenzi
 
   Added cleanfile target to remove generated .c and .h and .c.bak
 
@@ -75,6 +79,7 @@ $(module).c:
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEmpar.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEload.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEacld.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEpzld.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEtemp.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEsetup.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
@@ -97,6 +102,7 @@ lib$(module)_a_SOURCES = 	\\
 	$(module)mask.c	\\
 	$(module)mpar.c	\\
 	$(module)par.c	\\
+	$(module)pzld.c	\\
 	$(module)setup.c	\\
 	$(module)temp.c
 
@@ -114,6 +120,7 @@ BUILT_SOURCES = 	\\
 	$(module)mask.c	\\
 	$(module)mpar.c	\\
 	$(module)par.c	\\
+	$(module)pzld.c	\\
 	$(module)setup.c	\\
 	$(module)temp.c
 
@@ -132,6 +139,7 @@ CLEANFILES = 		\\
 	$(module)mask.c	\\
 	$(module)mpar.c	\\
 	$(module)par.c	\\
+	$(module)pzld.c	\\
 	$(module)setup.c	\\
 	$(module)temp.c
 
@@ -143,7 +151,6 @@ CLEANFILES = 		\\
 	$(module)getic.c	\\
 	$(module)mdel.c	\\
 	$(module)noise.c	\\
-	$(module)pzld.c	\\
 	$(module)trunc.c
 
 INCLUDES = -I\$(top_srcdir)/src/include
