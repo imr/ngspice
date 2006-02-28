@@ -128,6 +128,8 @@ if test "$ADMS" -eq 1; then
 # Prepend ngspiceVersion.xml    
 #    XMLARG="-e ../admst/ngspiceVersion.xml $XMLARG"
 
+currentdir=`pwd`
+
 for adms_dir in `ls $ADMSDIR`
 do
   if [ -d "$ADMSDIR/$adms_dir" ]; then
@@ -144,12 +146,13 @@ do
       
       *)
       echo "Entering into directory: $adms_dir"
+      echo "-->"$ADMSDIR/$adms_dir
       cd $ADMSDIR/$adms_dir
       file=`ls admsva/*.va`
       $ADMSXML $file -Iadmsva -e ../admst/ngspiceVersion.xml \
       -e ../admst/ngspiceMakefile.am.xml
       
-      cd -
+      cd $currentdir
       ;;
    esac
   fi 
