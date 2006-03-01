@@ -3,7 +3,11 @@
 <!--
   $Id$
   $Log$
-  Revision 1.8  2006-02-26 22:09:01  pnenzi
+  Revision 1.9  2006-03-01 14:30:24  pnenzi
+
+  Added mdel, del and dest functions to interface.
+
+  Revision 1.8  2006/02/26 22:09:01  pnenzi
 
   Added support for pole-zero analysis (experimental).
 
@@ -82,6 +86,9 @@ $(module).c:
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEpzld.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEtemp.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEsetup.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEdel.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEmdel.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEdest.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
 	perl -p -i.bak -e 's/IOP\\("(\\w+)"/IOP("\\L\\1"/' $(module).c
@@ -93,6 +100,8 @@ lib$(module)_a_SOURCES = 	\\
 	$(module)acld.c	\\
 	$(module)ask.c	\\
 	$(module)defs.h	\\
+	$(module)del.c	\\
+	$(module)dest.c	\\
 	$(module)ext.h	\\
 	$(module)guesstopology.c	\\
 	$(module)init.c	\\
@@ -100,6 +109,7 @@ lib$(module)_a_SOURCES = 	\\
 	$(module)itf.h	\\
 	$(module)load.c	\\
 	$(module)mask.c	\\
+	$(module)mdel.c	\\
 	$(module)mpar.c	\\
 	$(module)par.c	\\
 	$(module)pzld.c	\\
@@ -111,6 +121,8 @@ BUILT_SOURCES = 	\\
 	$(module)acld.c	\\
 	$(module)ask.c	\\
 	$(module)defs.h	\\
+	$(module)del.c	\\
+	$(module)dest.c	\\
 	$(module)ext.h	\\
 	$(module)guesstopology.c	\\
 	$(module)init.c	\\
@@ -118,6 +130,7 @@ BUILT_SOURCES = 	\\
 	$(module)itf.h	\\
 	$(module)load.c	\\
 	$(module)mask.c	\\
+	$(module)mdel.c	\\
 	$(module)mpar.c	\\
 	$(module)par.c	\\
 	$(module)pzld.c	\\
@@ -130,6 +143,8 @@ CLEANFILES = 		\\
 	$(module)acld.c	\\
 	$(module)ask.c	\\
 	$(module)defs.h	\\
+	$(module)del.c	\\
+	$(module)dest.c	\\
 	$(module)ext.h	\\
 	$(module)guesstopology.c	\\
 	$(module)init.c	\\
@@ -137,6 +152,7 @@ CLEANFILES = 		\\
 	$(module)itf.h	\\
 	$(module)load.c	\\
 	$(module)mask.c	\\
+	$(module)mdel.c	\\
 	$(module)mpar.c	\\
 	$(module)par.c	\\
 	$(module)pzld.c	\\
@@ -146,10 +162,7 @@ CLEANFILES = 		\\
 
 #TODO (not implemented) \\
 	$(module)conv.c	\\
-	$(module)del.c	\\
-	$(module)dest.c	\\
 	$(module)getic.c	\\
-	$(module)mdel.c	\\
 	$(module)noise.c	\\
 	$(module)trunc.c
 
