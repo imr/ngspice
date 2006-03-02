@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.3  2006-02-21 08:05:18  dwarning
+  Revision 1.4  2006-03-02 08:53:51  r29173
+  started implementing of functions $simparam(), $given(), analysis()
+
+  Revision 1.3  2006/02/21 08:05:18  dwarning
   Introduction of alias names for modules to prevent cryptic naming.
 
   Revision 1.2  2006/02/02 17:56:31  pnenzi
@@ -58,24 +61,64 @@
 </admst:template>
 
 <admst:template match="function">
-  <admst:variable name="mycode" select=""/>
-  <admst:if test="[not(nilled(arguments))]">
-    <admst:for-each select="arguments">
-      <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
-      <admst:choose>
-        <admst:when test="[$mycode='']">
-          <admst:variable name="mycode" select="%s"/>
-        </admst:when>
-        <admst:otherwise>
-          <admst:variable name="mycode" select="$mycode,%s"/>
-        </admst:otherwise>
-      </admst:choose>
-    </admst:for-each>
-    <admst:variable name="mycode" select="($mycode)"/>
-  </admst:if>
-  <admst:apply-templates select="." match="function:getname"/>
-  <admst:variable name="mycode" select="%s$mycode"/>
-  <admst:value-to select="/simulator/tmp" value="$mycode"/>
+  <admst:choose>
+    <admst:when test="[name='$simparam']">
+      <admst:error format="$function($args) -- not done\n"/>
+      <admst:value-to select="/simulator/tmp" value="1.0"/>
+    </admst:when>
+    <admst:when test="[name='analysis']">
+      <admst:error format="'$function($args) -- not done\n"/>
+      <admst:value-to select="/simulator/tmp" value="1.0"/>
+    </admst:when>
+    <admst:when test="[name='$given']">
+      <admst:for-each select="arguments[position(.)=1]">
+        <admst:if test="adms[datatypename!='variable']">
+          <admst:error format="$given: argument is not a variable\n"/>
+        </admst:if>
+        <admst:if test="[input='no']">
+          <admst:value-of select="name"/>
+          <admst:error format="$given(%s): argument is not a parameter\n"/>
+        </admst:if>
+        <admst:choose>
+          <admst:when test="[parametertype='model']">
+            <admst:value-of select="name"/>
+            <admst:value-to select="/simulator/tmp" value="model->%s_Given"/>
+          </admst:when>
+          <admst:when test="[parametertype='instance']">
+            <admst:value-of select="name"/>
+            <admst:value-to select="/simulator/tmp" value="here->%s_Given"/>
+          </admst:when>
+          <admst:otherwise>
+            <admst:error format="$given(%s): should not be reached\n"/>
+          </admst:otherwise>
+        </admst:choose>
+      </admst:for-each>
+      <admst:if test="/simulator/probe">
+        <admst:value-to select="/simulator/ddx" value="0.0"/>
+      </admst:if>
+    </admst:when>
+    <admst:otherwise>
+      <admst:variable name="mycode" select=""/>
+      <admst:if test="[not(nilled(arguments))]">
+        <admst:for-each select="arguments">
+          <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
+          <admst:choose>
+            <admst:when test="[$mycode='']">
+              <admst:variable name="mycode" select="%s"/>
+            </admst:when>
+            <admst:otherwise>
+              <admst:variable name="mycode" select="$mycode,%s"/>
+            </admst:otherwise>
+          </admst:choose>
+        </admst:for-each>
+        <admst:variable name="mycode" select="($mycode)"/>
+      </admst:if>
+      <admst:apply-templates select="." match="function:getname"/>
+      <admst:variable name="mycode" select="%s$mycode"/>
+      <admst:value-to select="/simulator/tmp" value="$mycode"/>
+    </admst:otherwise>
+  </admst:choose>
+
 </admst:template>
 
 <admst:template match="guesstopology:variable:declaration">
@@ -103,26 +146,28 @@
     </admst:when>
 
     <admst:when test="adms[datatypename='conditional']">
-      <admst:apply-templates select="if" match="guesstopology"/>
-      <admst:choose>
-        <admst:when test="if/math[dependency='constant']">
-          <admst:apply-templates select="if" match="expression:stringify:noprobe"/>
-          <admst:text format="if\n(%s)\n"/>
-          <admst:text format="{\n"/>
-          <admst:apply-templates select="then" match="guesstopology"/>
-          <admst:text format="}\n"/>
-          <admst:if test="[not(nilled(else))]">
-            <admst:text format="else\n"/>
+      <admst:if test="if[nilled(variable[OPdependent='yes'])]">
+        <admst:apply-templates select="if" match="guesstopology"/>
+        <admst:choose>
+          <admst:when test="if/math[dependency='constant']">
+            <admst:apply-templates select="if" match="expression:stringify:noprobe"/>
+            <admst:text format="if\n(%s)\n"/>
             <admst:text format="{\n"/>
-            <admst:apply-templates select="else" match="guesstopology"/>
+            <admst:apply-templates select="then" match="guesstopology"/>
             <admst:text format="}\n"/>
-          </admst:if>
-        </admst:when>
-        <admst:otherwise>
-          <admst:apply-templates select="then" match="guesstopology"/>
-          <admst:apply-templates select="else" match="guesstopology"/>
-        </admst:otherwise>
-      </admst:choose>
+            <admst:if test="[not(nilled(else))]">
+              <admst:text format="else\n"/>
+              <admst:text format="{\n"/>
+              <admst:apply-templates select="else" match="guesstopology"/>
+              <admst:text format="}\n"/>
+            </admst:if>
+          </admst:when>
+          <admst:otherwise>
+            <admst:apply-templates select="then" match="guesstopology"/>
+            <admst:apply-templates select="else" match="guesstopology"/>
+          </admst:otherwise>
+        </admst:choose>
+      </admst:if>
     </admst:when>
 
     <admst:when test="adms[datatypename='contribution']">
