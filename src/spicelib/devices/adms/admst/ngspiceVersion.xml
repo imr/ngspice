@@ -5,7 +5,10 @@
 -->
 <!--
   $Log$
-  Revision 1.9  2006-02-21 20:06:05  dwarning
+  Revision 1.10  2006-03-02 09:04:38  r29173
+  started handling of adms elements 'case' and 'nilled'
+
+  Revision 1.9  2006/02/21 20:06:05  dwarning
   Set pnp default to 0.
 
   Revision 1.8  2006/02/21 08:05:18  dwarning
@@ -955,7 +958,12 @@
     </admst:when>
     <admst:when test="adms[datatypename='contribution']">
     </admst:when>
+    <admst:when test="adms[datatypename='nilled']">
+    </admst:when>
     <admst:when test="adms[datatypename='callfunction']">
+    </admst:when>
+    <admst:when test="adms[datatypename='case']">
+      <admst:error format="case statement: please implement me! (local declaration)\n"/>
     </admst:when>
     <admst:otherwise>
       <admst:value-of select="admst(.)"/>
@@ -1447,6 +1455,17 @@
       </admst:otherwise>
     </admst:choose>
   </admst:if>
+</admst:template>
+
+<!-- analog//case -->
+<admst:template match="case">
+  <admst:error format="case statement: please implement me! (inside block)\n"/>
+  <admst:text format="CASE=0.0;\n"/>
+</admst:template>
+
+<!-- analog//nilled -->
+<admst:template match="nilled">
+  <admst:text format=";\n"/>
 </admst:template>
 
 <!-- analog//whileloop -->
