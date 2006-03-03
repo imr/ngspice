@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.5  2006-03-02 08:51:08  r29173
+  Revision 1.6  2006-03-03 08:39:31  r29173
+  add simparam definitions when possible
+
+  Revision 1.5  2006/03/02 08:51:08  r29173
   added macro _scale (scaling factor) - always set to 1.0
 
   Revision 1.4  2006/02/21 08:05:18  dwarning
@@ -119,8 +122,35 @@ if(isinf(var)) \\
   exit(1); /*__asm__ __volatile__ (&quot;int \$03&quot;);*/ \\
 }
 
-#define _scale 1.0
-#define _circuit_temp ckt-&gt;CKTtemp
+/* ngspice $simparam variables
+    gdev                (1/Ohms): Additional conductance to be added to nonlinear branches for conductance homotopy convergence algorithm.
+    gmin                (1/Ohms): Minimum conductance placed in parallel with nonlinear branches.
+    imax                (Amps)  : Branch current threshold above which the constitutive relation of a nonlinear branch should be linearized.
+    imelt               (Amps)  : Branch current threshold indicating device failure.
+    iteration                   : Iteration number of the analog solver.
+    scale                       : Scale factor for device instance geometry parameters.
+    shrink                      : Optical linear shrink factor.
+    simulatorSubversion         : The simulator sub-version.
+    simulatorVersion            : The simulator version.
+    sourceScaleFactor           : Multiplicative factor for independent sources for source stepping homotopy convergence algorithm.
+    tnom degrees       (Celsius): Default value of temperature at which model parameters were extracted.
+*/
+
+#define _circuit_gdev                ckt-&gt;CKTgmin
+#define _circuit_gmin                ckt-&gt;CKTgmin
+#define _circuit_imax                1.0
+#define _circuit_imelt               1.0
+#define _circuit_iteration           1.0
+#define _circuit_scale               1.0
+#define _circuit_shrink              1.0
+#define _circuit_simulatorSubversion 0
+#define _circuit_simulatorVersion    3.5
+#define _circuit_sourceScaleFactor   1.0
+#define _circuit_tnom                ckt-&gt;CKTnomTemp
+
+#define _circuit_temp      ckt-&gt;CKTtemp
+#define _scale             1.0
+
 #define _cos(val,arg)            val = cos(arg);
 #define _d_cos(val,dval,arg)     val = cos(arg);     dval = (-sin(arg));
 #define _sin(val,arg)            val = sin(arg);
