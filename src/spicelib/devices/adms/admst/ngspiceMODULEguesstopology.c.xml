@@ -3,7 +3,11 @@
 <!--
   $Id$
   $Log$
-  Revision 1.5  2006-03-03 08:41:41  r29173
+  Revision 1.6  2006-03-05 09:38:41  pnenzi
+
+  Updated version to 2.2.0
+
+  Revision 1.5  2006/03/03 08:41:41  r29173
   add missing xml code (computation of $function)
 
   Revision 1.4  2006/03/02 08:53:51  r29173
@@ -43,7 +47,7 @@
 -->
 
 <!DOCTYPE admst SYSTEM "admst.dtd">
-<admst version="2.1.3" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+<admst version="2.2.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 
 <!-- expression//function: mapping verilog-name == C-name of function -->
 <admst:template match="function:getname">

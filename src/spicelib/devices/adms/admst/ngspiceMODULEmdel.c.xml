@@ -3,7 +3,11 @@
 <!--
   $Id$
   $Log$
-  Revision 1.1  2006-03-01 14:30:24  pnenzi
+  Revision 1.2  2006-03-05 09:38:41  pnenzi
+
+  Updated version to 2.2.0
+
+  Revision 1.1  2006/03/01 14:30:24  pnenzi
 
   Added mdel, del and dest functions to interface.
 
@@ -30,7 +34,7 @@
 -->
 
 <!DOCTYPE admst SYSTEM "admst.dtd">
-<admst version="2.1.3" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+<admst version="2.2.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 
 <admst:template match="dectype">
   <admst:choose>

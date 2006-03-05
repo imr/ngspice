@@ -3,7 +3,11 @@
 <!--
   $Id$
   $Log$
-  Revision 1.6  2006-03-03 08:39:31  r29173
+  Revision 1.7  2006-03-05 09:38:41  pnenzi
+
+  Updated version to 2.2.0
+
+  Revision 1.6  2006/03/03 08:39:31  r29173
   add simparam definitions when possible
 
   Revision 1.5  2006/03/02 08:51:08  r29173
@@ -39,7 +43,7 @@
 -->
 
 <!DOCTYPE admst SYSTEM "admst.dtd">
-<admst version="2.1.3" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+<admst version="2.2.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 
 <admst:template match="dectype">
   <admst:choose>

@@ -5,7 +5,11 @@
 -->
 <!--
   $Log$
-  Revision 1.10  2006-03-02 09:04:38  r29173
+  Revision 1.11  2006-03-05 09:38:41  pnenzi
+
+  Updated version to 2.2.0
+
+  Revision 1.10  2006/03/02 09:04:38  r29173
   started handling of adms elements 'case' and 'nilled'
 
   Revision 1.9  2006/02/21 20:06:05  dwarning
@@ -36,7 +40,7 @@
 
 -->
 <!DOCTYPE admst SYSTEM "admst.dtd">
-<admst version="2.1.3" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+<admst version="2.2.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 
 <admst:template match=":new:jacobian">
   <admst:value-of select="module"/>
