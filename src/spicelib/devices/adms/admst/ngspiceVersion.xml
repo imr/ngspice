@@ -5,7 +5,10 @@
 -->
 <!--
   $Log$
-  Revision 1.11  2006-03-05 09:38:41  pnenzi
+  Revision 1.12  2006-03-06 12:55:02  r29173
+  added support to 'analog functions'
+
+  Revision 1.11  2006/03/05 09:38:41  pnenzi
 
   Updated version to 2.2.0
 
@@ -629,16 +632,13 @@
 <admst:template match="function:getname">
   <admst:choose>
     <admst:when test="[name='abs']"><admst:value-of select="'fabs'"/></admst:when>
-    <admst:when test="[name='$shrinkl']"><admst:value-of select="'shrinkl'"/></admst:when>
-    <admst:when test="[name='$shrinka']"><admst:value-of select="'shrinka'"/></admst:when>
     <admst:when test="[name='log']"><admst:value-of select="'log10'"/></admst:when>
     <admst:when test="[name='ln']"><admst:value-of select="'logE'"/></admst:when>
     <admst:when test="[name='limexp']"><admst:value-of select="'limexp'"/></admst:when>
-    <admst:when test="[name='$limexp']"><admst:value-of select="'limexp'"/></admst:when>
-    <admst:when test="[name='$model']"><admst:value-of select="'_modelname'"/></admst:when>
-    <admst:when test="[name='$instance']"><admst:value-of select="'_instancename'"/></admst:when>
-    <admst:when test="[name='$temperature']"><admst:value-of select="'_circuit_temp'"/></admst:when>
-    <admst:when test="[name='$nominal_temperature']"><admst:value-of select="'_circuit_tnom'"/></admst:when>
+    <admst:when test="[name='\$limexp']"><admst:value-of select="'limexp'"/></admst:when>
+    <admst:when test="[name='\$model']"><admst:value-of select="'_modelname'"/></admst:when>
+    <admst:when test="[name='\$instance']"><admst:value-of select="'_instancename'"/></admst:when>
+    <admst:when test="[name='\$temperature']"><admst:value-of select="'_circuit_temp'"/></admst:when>
     <admst:otherwise><admst:value-of select="name"/></admst:otherwise>
   </admst:choose>
 </admst:template>
@@ -651,7 +651,7 @@
         <admst:value-to select="/simulator/tmp" value="%s"/>
       </admst:for-each>
     </admst:when>
-    <admst:when test="[name='$given']">
+    <admst:when test="[name='\$given']">
       <admst:for-each select="arguments[position(.)=1]">
         <admst:if test="adms[datatypename!='variable']">
           <admst:error format="$given: argument is not a variable\n"/>
@@ -678,7 +678,7 @@
         <admst:value-to select="/simulator/ddx" value="0.0"/>
       </admst:if>
     </admst:when>
-    <admst:when test="[name='$model']">
+    <admst:when test="[name='\$model']">
       <admst:apply-templates select="." match="function:assert:noarg"/>
       <admst:apply-templates select="." match="function:getname"/>
       <admst:value-to select="/simulator/tmp" value="%s"/>
@@ -686,7 +686,7 @@
         <admst:value-to select="/simulator/ddx" value="0.0"/>
       </admst:if>
     </admst:when>
-    <admst:when test="[name='$instance']">
+    <admst:when test="[name='\$instance']">
       <admst:apply-templates select="." match="function:assert:noarg"/>
       <admst:apply-templates select="." match="function:getname"/>
       <admst:value-to select="/simulator/tmp" value="%s"/>
@@ -694,7 +694,7 @@
         <admst:value-to select="/simulator/ddx" value="0.0"/>
       </admst:if>
     </admst:when>
-    <admst:when test="[name='$temperature']">
+    <admst:when test="[name='\$temperature']">
       <admst:apply-templates select="." match="function:assert:noarg"/>
       <admst:apply-templates select="." match="function:getname"/>
       <admst:value-to select="/simulator/tmp" value="%s"/>
@@ -702,7 +702,7 @@
         <admst:value-to select="/simulator/ddx" value="0.0"/>
       </admst:if>
     </admst:when>
-    <admst:when test="[name='$nominal_temperature']">
+    <admst:when test="[name='\$nominal_temperature']">
       <admst:apply-templates select="." match="function:assert:noarg"/>
       <admst:apply-templates select="." match="function:getname"/>
       <admst:value-to select="/simulator/tmp" value="%s"/>
@@ -710,7 +710,7 @@
         <admst:value-to select="/simulator/ddx" value="0.0"/>
       </admst:if>
     </admst:when>
-    <admst:when test="[name='$vt']">
+    <admst:when test="[name='\$vt']">
       <admst:choose>
        <admst:when test="arguments">
         <admst:choose>
@@ -732,21 +732,21 @@
        </admst:otherwise>
       </admst:choose>
     </admst:when>
-    <admst:when test="[name='$scale']">
+    <admst:when test="[name='\$scale']">
       <admst:apply-templates select="." match="function:assert:noarg"/>
       <admst:value-to select="/simulator/tmp" value="_scale"/>
       <admst:if test="/simulator/probe">
         <admst:value-to select="/simulator/ddx" value="0.0"/>
       </admst:if>
     </admst:when>
-    <admst:when test="[name='$abstime']">
+    <admst:when test="[name='\$abstime']">
       <admst:apply-templates select="." match="function:assert:noarg"/>
       <admst:value-to select="/simulator/tmp" value="_abstime"/>
       <admst:if test="/simulator/probe">
         <admst:value-to select="/simulator/ddx" value="0.0"/>
       </admst:if>
     </admst:when>
-    <admst:when test="[name='$options']">
+    <admst:when test="[name='\$options']">
       <admst:for-each select="arguments[position(.)=1]">
         <admst:if test="adms[datatypename!='string']">
           <admst:error format="$given: argument is not a string\n"/>
@@ -755,15 +755,9 @@
           <admst:when test="[value='OPTm_hier']">
             <admst:value-to select="/simulator/tmp" value="_circuit_m_hier"/>
           </admst:when>
-          <admst:when test="[value='OPTgmin']">
-            <admst:value-to select="/simulator/tmp" value="_circuit_gmin"/>
-          </admst:when>
-          <admst:when test="[value='OPTpnjmaxi']">
-            <admst:value-to select="/simulator/tmp" value="_circuit_pnjmaxi"/>
-          </admst:when>
           <admst:otherwise>
             <admst:value-of select="value"/>
-            <admst:error format="$options(%s): bad argument []\n"/>
+            <admst:fatal format="$options(%s): bad argument []\n"/>
           </admst:otherwise>
         </admst:choose>
       </admst:for-each>
@@ -771,7 +765,7 @@
         <admst:value-to select="/simulator/ddx" value="0.0"/>
       </admst:if>
     </admst:when>
-    <admst:when test="[name='ddx' or name='$derivate']">
+    <admst:when test="[name='ddx' or name='\$derivate']">
       <admst:for-each select="arguments"> 
         <admst:if test="[position(.)=2]">
           <admst:if test="adms[datatypename!='probe']">
@@ -864,7 +858,7 @@
       <admst:apply-templates select="." match="function:getname"/>
       <admst:value-to select="/simulator/tmp" value="__%s_$index"/>
     </admst:when>
-    <admst:otherwise>
+    <admst:when test="[class='builtin']">
       <admst:value-of select="index(./subexpression/expression/function,.)"/>
       <admst:variable name="index" select="%s"/>
       <admst:if test="/simulator/probe">
@@ -895,9 +889,140 @@
       </admst:if>
       <admst:apply-templates select="." match="function:getname"/>
       <admst:value-to select="/simulator/tmp" value="__%s_$index"/>
+    </admst:when>
+    <admst:otherwise>
+      <admst:choose>
+        <admst:when test="[name='\$simparam']">
+           <admst:apply-templates select="." match="function:simparam"/>
+        </admst:when>
+        <admst:when test="[name='analysis']">
+           <admst:apply-templates select="." match="function:analysis"/>
+        </admst:when>
+        <admst:otherwise>
+          <admst:value-of select="name"/>
+          <admst:variable name="function" select="%s"/>
+          <admst:variable name="args" select=""/>
+          <admst:for-each select="arguments">
+            <admst:value-of select="position(.)"/>
+            <admst:variable name="index" select="%s"/>
+            <admst:if test="[not($args='')]">
+              <admst:variable name="args" select="$args,"/>
+            </admst:if>
+            <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
+            <admst:variable name="arg$index" select="%s"/>
+            <admst:variable name="args" select="$args$(arg$index)"/>
+          </admst:for-each>
+          <admst:value-to select="/simulator/tmp" value="$function($args)"/>
+          <admst:if test="/simulator/probe">
+            <admst:variable name="dargs" select="$args"/>
+            <admst:for-each select="arguments">
+              <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
+              <admst:variable name="x" select="%s"/>
+              <admst:value-of select="/simulator/ddx"/>
+              <admst:variable name="dargs" select="$dargs,%s"/>
+            </admst:for-each>
+            <admst:value-to select="/simulator/ddx" value="d_$function($dargs)"/>
+          </admst:if>
+        </admst:otherwise>
+      </admst:choose>
     </admst:otherwise>
   </admst:choose>
 </admst:template>
+
+<admst:template match="function:analysis">
+  <admst:value-of select="name"/>
+  <admst:variable name="function" select="%s"/>
+  <admst:variable name="args" select=""/>
+  <admst:for-each select="arguments">
+    <admst:value-of select="position(.)"/>
+    <admst:variable name="index" select="%s"/>
+    <admst:if test="[not($args='')]">
+      <admst:variable name="args" select="$args,"/>
+    </admst:if>
+    <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
+    <admst:variable name="arg$index" select="%s"/>
+    <admst:variable name="args" select="$args$(arg$index)"/>
+  </admst:for-each>
+  <admst:choose>
+    <admst:when test="[$arg1='&quot;noise&quot;']">
+      <admst:value-to select="/simulator/tmp" value="0.0"/>
+      <admst:error format="$function($args): replaced by 0.0\n"/>
+    </admst:when>
+    <admst:otherwise>
+      <admst:error format="$function($args) -- not implemented in ngspice interface\n"/>
+    </admst:otherwise>
+  </admst:choose>
+</admst:template>
+
+<admst:template match="function:simparam">
+  <admst:value-of select="name"/>
+  <admst:variable name="function" select="%s"/>
+  <admst:variable name="args" select=""/>
+  <admst:for-each select="arguments">
+    <admst:value-of select="position(.)"/>
+    <admst:variable name="index" select="%s"/>
+    <admst:if test="[not($args='')]">
+      <admst:variable name="args" select="$args,"/>
+    </admst:if>
+    <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
+    <admst:variable name="arg$index" select="%s"/>
+    <admst:variable name="args" select="$args$(arg$index)"/>
+  </admst:for-each>
+  <admst:choose>
+    <admst:when test="[$arg1='&quot;gdev&quot;']">
+      <admst:value-to select="/simulator/tmp" value="_circuit_gdev"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;gmin&quot;']">
+      <admst:value-to select="/simulator/tmp" value="_circuit_gmin"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;imax&quot;']">
+      <admst:value-to select="/simulator/tmp" value="_circuit_imax"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;imelt&quot;']">
+      <admst:value-to select="/simulator/tmp" value="_circuit_imelt"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;iteration&quot;']">
+      <admst:value-to select="/simulator/tmp" value="_circuit_iteration"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;scale&quot;']">
+      <admst:value-to select="/simulator/tmp" value="_circuit_scale"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;shrink&quot;']">
+      <admst:value-to select="/simulator/tmp" value="_circuit_shrink"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;simulatorSubversion&quot;']">
+      <admst:value-to select="/simulator/tmp" value="_circuit_simulatorSubversion"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;simulatorVersion&quot;']">
+      <admst:value-to select="/simulator/tmp" value="_circuit_simulatorVersion"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;sourceScaleFactor&quot;']">
+      <admst:value-to select="/simulator/tmp" value="_circuit_sourceScaleFactor"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;tnom&quot;']">
+      <admst:value-to select="/simulator/tmp" value="_circuit_tnom"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;checkjcap&quot;']">
+      <admst:value-to select="/simulator/tmp" value="1.0"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;maxmosl&quot;']">
+      <admst:value-to select="/simulator/tmp" value="1.0"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;maxmosw&quot;']">
+      <admst:value-to select="/simulator/tmp" value="1.0"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;minmosl&quot;']">
+      <admst:value-to select="/simulator/tmp" value="1.0e-12"/>
+    </admst:when>
+    <admst:when test="[$arg1='&quot;minmosw&quot;']">
+      <admst:value-to select="/simulator/tmp" value="1.0e-12"/>
+    </admst:when>
+    <admst:otherwise>
+      <admst:error format="$function($args) -- not implemented in ngspice interface\n"/>
+    </admst:otherwise>
+  </admst:choose>
+</admst:template>
+
 
 <admst:template match="variable:declaration">
   <admst:for-each select="module/evaluation/variable">
@@ -1042,7 +1167,7 @@
 
 <!-- analog//function: local assignment handling -->
 <admst:template match="function:assignment">
-  <admst:for-each select="function">
+  <admst:for-each select="function[class='builtin']">
     <admst:choose>
       <admst:when test="arguments[count(.)=1]">
         <admst:value-of select="position(.)-1"/>
@@ -1210,7 +1335,7 @@
 
 <!-- analog//assignment -->
 <admst:template match="assignment">
-  <admst:if test="rhs[not(nilled(function))]">
+  <admst:if test="rhs[not(nilled(function[class='builtin']))]">
     <admst:choose>
       <admst:when test="[dynamic='yes']">
         <admst:text format="#if defined(_DYNAMIC)\n"/>
@@ -1287,7 +1412,7 @@
       </admst:if>
     </admst:if-inside>
   </admst:if>
-  <admst:if test="rhs[not(nilled(function))]">
+  <admst:if test="rhs[not(nilled(function[class='builtin']))]">
     <admst:text format="}\n"/>
     <admst:choose>
       <admst:when test="[dynamic='yes']">
@@ -1310,7 +1435,7 @@
 </admst:template>
 
 <admst:template match="contribution:nonoise">
-  <admst:if test="rhs[not(nilled(function))]">
+  <admst:if test="rhs[not(nilled(function[class='builtin']))]">
     <admst:choose>
       <admst:when test="[dynamic='yes']">
         <admst:text format="#if defined(_DYNAMIC)\n"/>
@@ -1392,7 +1517,7 @@
       </admst:if>
     </admst:if>
   </admst:for-each>
-  <admst:if test="rhs[not(nilled(function))]">
+  <admst:if test="rhs[not(nilled(function[class='builtin']))]">
     <admst:text format="}\n"/>
     <admst:if test="[dynamic='yes']">
       <admst:text format="#endif /* _DYNAMIC */\n"/>
@@ -1412,7 +1537,7 @@
       </admst:otherwise>
     </admst:choose>
   </admst:if>
-  <admst:if test="if[not(nilled(function))]">
+  <admst:if test="if[not(nilled(function[class='builtin']))]">
     <admst:text format="{\n"/>
     <admst:for-each select="if/function">
       <admst:value-of select="position(.)-1"/>
@@ -1446,7 +1571,7 @@
       </admst:otherwise>
     </admst:choose>
   </admst:if>
-  <admst:if test="if[not(nilled(function))]">
+  <admst:if test="if[not(nilled(function[class='builtin']))]">
     <admst:text format="}\n"/>
   </admst:if>
   <admst:if test="if[dynamic='yes']">
@@ -1464,7 +1589,7 @@
 <!-- analog//case -->
 <admst:template match="case">
   <admst:error format="case statement: please implement me! (inside block)\n"/>
-  <admst:text format="CASE=0.0;\n"/>
+  <admst:text format="/*CASE*/;\n"/>
 </admst:template>
 
 <!-- analog//nilled -->
@@ -1477,7 +1602,7 @@
   <admst:if test="while[dynamic='yes']">
     <admst:text format="#ifdef _DYNAMIC /*&lt;dynamic_while&gt;*/\n"/>
   </admst:if>
-  <admst:if test="while[not(nilled(function))]">
+  <admst:if test="while[not(nilled(function[class='builtin']))]">
     <admst:text format="{\n"/>
     <admst:for-each select="while/function">
       <admst:value-of select="position(.)-1"/>
@@ -1496,7 +1621,7 @@
   <admst:if test="whileblock/adms[datatypename!='block']">
     <admst:text format="}\n"/>
   </admst:if>
-  <admst:if test="while[not(nilled(function))]">
+  <admst:if test="while[not(nilled(function[class='builtin']))]">
     <admst:text format="}\n"/>
   </admst:if>
   <admst:if test="while[dynamic='yes']">
@@ -1507,19 +1632,19 @@
 <!-- analog//callfunctions -->
 <admst:template match="callfunction">
   <admst:choose>
-    <admst:when test="function[name='$strobe']">
+    <admst:when test="function[name='\$strobe']">
       <admst:text format="_strobe("/>
     </admst:when>
-    <admst:when test="function[name='$warning']">
+    <admst:when test="function[name='\$warning']">
       <admst:text format="_warning("/>
     </admst:when>
-    <admst:when test="function[name='$error']">
+    <admst:when test="function[name='\$error']">
       <admst:text format="_error("/>
     </admst:when>
-    <admst:when test="function[name='$finish']">
+    <admst:when test="function[name='\$finish']">
       <admst:text format="_finish("/>
     </admst:when>
-    <admst:when test="function[name='$stop']">
+    <admst:when test="function[name='\$stop']">
       <admst:text format="_stop("/>
     </admst:when>
     <admst:otherwise>
@@ -1712,7 +1837,7 @@
 <!-- handle analog//callfunctions -->
 <admst:template match="callfunction">
   <admst:choose>
-    <admst:when test="function[name='$strobe']">
+    <admst:when test="function[name='\$strobe']">
       <admst:text format="fprintf(stdout"/>
     </admst:when>
     <admst:otherwise>
@@ -1721,12 +1846,12 @@
     </admst:otherwise>
   </admst:choose>
   <admst:for-each select="function/arguments">
-    <admst:value-of select="."/>
+    <admst:apply-templates select="." match="expression:stringify:noprobe"/>
     <admst:text format=",%s"/>
   </admst:for-each>
   <admst:text format=");\n"/>
   <admst:choose>
-    <admst:when test="function[name='$strobe']">
+    <admst:when test="function[name='\$strobe']">
       <admst:text format="fprintf(stdout,&quot;\\n&quot;);\n"/>
     </admst:when>
   </admst:choose>

@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.7  2006-03-05 09:38:41  pnenzi
+  Revision 1.8  2006-03-06 12:50:52  r29173
+  added support to 'analog functions'
+
+  Revision 1.7  2006/03/05 09:38:41  pnenzi
 
   Updated version to 2.2.0
 
@@ -126,7 +129,7 @@ if(isinf(var)) \\
   exit(1); /*__asm__ __volatile__ (&quot;int \$03&quot;);*/ \\
 }
 
-/* ngspice $simparam variables
+/* ngspice \$simparam variables
     gdev                (1/Ohms): Additional conductance to be added to nonlinear branches for conductance homotopy convergence algorithm.
     gmin                (1/Ohms): Minimum conductance placed in parallel with nonlinear branches.
     imax                (Amps)  : Branch current threshold above which the constitutive relation of a nonlinear branch should be linearized.
@@ -328,6 +331,9 @@ typedef struct s$(module)model {         /* model structure */
 <admst:variable name="module" select="%s"/>
 
 #include &quot;$(module)ext.h&quot;
+<admst:if test="[not(nilled(analogfunction))]">
+#include &quot;analogfunction.h&quot;
+</admst:if>
 
 #endif /*$(module)*/
 
