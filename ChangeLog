@@ -1,3 +1,28 @@
+2006-08-31 Stefan Jones <stefan.jones@multigig.com>
+
+	* configure.in:
+	Version 0.2.19
+
+	* configure.in
+	src/Makefile.am
+	src/frontend/Makefile.am
+	src/frontend/numparam/{.cvsignore,Makefile.am,downgrad.txt,general.h,
+	mystring.c,ngconfig.sh,numpaif.h,numparam.h,nupatest.c,readme.txt,
+	spicenum.c,washprog.c,xpressn.c} :
+	numparam port from ngspice
+
+	* src/frontend/subckt.h	src/include/fteext.h:
+	gcc-4 compile fixes
+
+	* src/spicelib/analysis/dctran.c:
+	Stop printing initial DC solution if over 30 nodes
+
+	* src/spicelib/devices/bsim4/{.cvsignore,B4TERMS_OF_USE,Makefile.am,
+	b4.c,b4acld.c,b4ask.c,b4check.c,b4cvtest.c,b4del.c,b4dest.c,b4geo.c,
+	b4getic.c,b4ld.c,b4mask.c,b4mdel.c,b4mpar.c,b4noi.c,b4par.c,b4pzld.c,
+	b4set.c,b4temp.c,b4trunc.c,bsim4def.h,bsim4ext.h,bsim4init.c,bsim4itf.h}:
+	Bsim4 update from ngspice
+
 2005-07-22 Stefan Jones <stefan.jones@multigig.com>
 
 	* Changelog:

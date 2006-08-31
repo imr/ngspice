@@ -1,25 +1,24 @@
-/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
+/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b4cvtest.c of BSIM4.2.1.
+ * Copyright 2005 Regents of the University of California. All rights reserved.
+ * File: b4cvtest.c of BSIM4.5.0.
  * Author: 2000 Weidong Liu
- * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
- *
+ * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
+ * Modified by Xuemei Xi, 05/09/2003.
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "cktdefs.h"
 #include "bsim4def.h"
 #include "trandefs.h"
 #include "const.h"
 #include "devdefs.h"
 #include "sperror.h"
-
+#include "suffix.h"
 
 
 int
@@ -43,10 +42,8 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
     for (; model != NULL; model = model->BSIM4nextModel)
     {    for (here = model->BSIM4instances; here != NULL ;
               here=here->BSIM4nextInstance) 
-	 {    
-	      if (here->BSIM4owner != ARCHme) continue; 
-	 
-	      vds = model->BSIM4type
+	 {    if (here->BSIM4owner != ARCHme) continue;
+              vds = model->BSIM4type
                   * (*(ckt->CKTrhsOld + here->BSIM4dNodePrime)
                   - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
               vgs = model->BSIM4type
@@ -113,11 +110,11 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
                          * delvds + here->BSIM4gIgbb * delvbs;
               }
               else
-               {   Idtot = here->BSIM4cd + here->BSIM4cbd - here->BSIM4Igisl;
+               {   Idtot = here->BSIM4cd + here->BSIM4cbd - here->BSIM4Igidl; /* bugfix */
                    cdhat = Idtot + here->BSIM4gbd * delvbd_jct + here->BSIM4gmbs 
                          * delvbd + here->BSIM4gm * delvgd 
-                         - here->BSIM4gds * delvds - here->BSIM4ggislg * vgd 
-                         - here->BSIM4ggislb * vbd + here->BSIM4ggisls * vds;
+                         - (here->BSIM4gds + here->BSIM4ggidls) * delvds 
+                         - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs;
 
                   Igstot = here->BSIM4Igs + here->BSIM4Igcd;
                   cgshat = Igstot + here->BSIM4gIgsg * delvgs + here->BSIM4gIgcdg * delvgd
@@ -182,11 +179,11 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
 			    - here->BSIM4ggislg * delvgd - here->BSIM4ggislb* delvbd + here->BSIM4ggisls * delvds ;
 		  }
 		  else
-		  {   cbhat = Ibtot + here->BSIM4gbs * delvbs_jct + here->BSIM4gbd
-                            * delvbd_jct - (here->BSIM4gbbs + here->BSIM4ggidlb) * delvbd
-                            - (here->BSIM4gbgs + here->BSIM4ggidlg) * delvgd
-                            + (here->BSIM4gbds + here->BSIM4ggidld) * delvds
-			    - here->BSIM4ggislg * delvgs - here->BSIM4ggislb * delvbs + here->BSIM4ggisls * delvds;
+		  {   cbhat = Ibtot + here->BSIM4gbs * delvbs_jct + here->BSIM4gbd 
+                         * delvbd_jct - (here->BSIM4gbbs + here->BSIM4ggislb) * delvbd
+                         - (here->BSIM4gbgs + here->BSIM4ggislg) * delvgd
+			 + (here->BSIM4gbds + here->BSIM4ggisld - here->BSIM4ggidls) * delvds
+			 - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs; 
 		  }
                   tol6 = ckt->CKTreltol * MAX(fabs(cbhat), 
 			fabs(Ibtot)) + ckt->CKTabstol;

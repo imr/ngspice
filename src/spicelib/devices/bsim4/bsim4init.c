@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "bsim4itf.h"
 #include "bsim4ext.h"
@@ -40,36 +40,39 @@ SPICEdev BSIM4info = {
         DEV_DEFAULT
     },
 
-    DEVparam      : BSIM4param,
-    DEVmodParam   : BSIM4mParam,
-    DEVload       : BSIM4load,
-    DEVsetup      : BSIM4setup,
-    DEVunsetup    : BSIM4unsetup,
-    DEVpzSetup    : BSIM4setup,
-    DEVtemperature: BSIM4temp,
-    DEVtrunc      : BSIM4trunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : BSIM4acLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : BSIM4destroy,
-    DEVmodDelete  : BSIM4mDelete,
-    DEVdelete     : BSIM4delete, 
-    DEVsetic      : BSIM4getic,
-    DEVask        : BSIM4ask,
-    DEVmodAsk     : BSIM4mAsk,
-    DEVpzLoad     : BSIM4pzLoad,
-    DEVconvTest   : BSIM4convTest,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : BSIM4noise,
-                    
-    DEVinstSize   : &BSIM4iSize,
-    DEVmodSize    : &BSIM4mSize
+    BSIM4param,    /* DEVparam       */
+    BSIM4mParam,   /* DEVmodParam    */
+    BSIM4load,     /* DEVload        */
+    BSIM4setup,    /* DEVsetup       */
+    BSIM4unsetup,  /* DEVunsetup     */
+    BSIM4setup,    /* DEVpzSetup     */
+    BSIM4temp,     /* DEVtemperature */
+    BSIM4trunc,    /* DEVtrunc       */
+    NULL,          /* DEVfindBranch  */
+    BSIM4acLoad,   /* DEVacLoad      */
+    NULL,          /* DEVaccept      */
+    BSIM4destroy,  /* DEVdestroy     */
+    BSIM4mDelete,  /* DEVmodDelete   */
+    BSIM4delete,   /* DEVdelete      */
+    BSIM4getic,    /* DEVsetic       */
+    BSIM4ask,      /* DEVask         */
+    BSIM4mAsk,     /* DEVmodAsk      */
+    BSIM4pzLoad,   /* DEVpzLoad      */
+    BSIM4convTest, /* DEVconvTest    */
+    NULL,          /* DEVsenSetup    */
+    NULL,          /* DEVsenLoad     */
+    NULL,          /* DEVsenUpdate   */
+    NULL,          /* DEVsenAcLoad   */
+    NULL,          /* DEVsenPrint    */
+    NULL,          /* DEVsenTrunc    */
+    NULL,          /* DEVdisto       */
+    BSIM4noise,    /* DEVnoise       */
+#ifdef CIDER
+    NULL,          /* DEVdump        */
+    NULL,          /* DEVacct        */
+#endif
+    &BSIM4iSize,   /* DEVinstSize    */
+    &BSIM4mSize    /* DEVmodSize     */
 };
 
 

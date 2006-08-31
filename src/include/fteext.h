@@ -454,7 +454,6 @@ extern struct variable *if_getstat();
 
 extern struct line *inp_deckcopy();
 extern struct line *inp_subcktexpand();
-extern int inp_numnodes(char);
 
 /* types.c */
 

@@ -8,7 +8,6 @@
 
 struct line * inp_subcktexpand(struct line *deck);
 struct line * inp_deckcopy(struct line *deck);
-int inp_numnodes(char c);
 
 
 

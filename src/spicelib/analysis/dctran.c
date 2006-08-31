@@ -196,6 +196,7 @@ DCtran(CKTcircuit *ckt,
              i++;
            } */
         } else {
+		   if(SMPmatSize(ckt->CKTmatrix) < 10) {
            fprintf(stdout,"\nInitial Transient Solution\n");
            fprintf(stdout,"--------------------------\n\n");
            fprintf(stdout,"%-30s %15s\n", "Node", "Voltage");
@@ -205,6 +206,7 @@ DCtran(CKTcircuit *ckt,
                  fprintf(stdout,"%-30s %15g\n", node->name,
                                              *(ckt->CKTrhsOld+node->number));
            };
+		   }
         };
         fprintf(stdout,"\n");
         fflush(stdout);

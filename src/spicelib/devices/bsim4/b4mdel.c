@@ -1,18 +1,17 @@
-/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
+/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b4mdel.c of BSIM4.2.1.
+ * Copyright 2005 Regents of the University of California. All rights reserved.
+ * File: b4mdel.c of BSIM4.5.0.
  * Author: 2000 Weidong Liu
- * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "bsim4def.h"
 #include "sperror.h"
-
+#include "suffix.h"
 
 int
 BSIM4mDelete(inModel,modname,kill)

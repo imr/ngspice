@@ -1,18 +1,22 @@
-/**** BSIM4.2.1, Released by Xuemei Xi 10/05/2001 ****/
+/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b4par.c of BSIM4.2.1.
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b4par.c of BSIM4.5.0.
  * Author: 2000 Weidong Liu
- * Authors: Xuemei Xi, Kanyu M. Cao, Hui Wan, Mansun Chan, Chenming Hu.
+ * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
- **********/
+ * Modified by Xuemei Xi, 04/06/2001.
+ * Modified by Xuemei Xi, 11/15/2002.
+ * Modified by Xuemei Xi, 05/09/2003.
+ * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
+**********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "bsim4def.h"
 #include "sperror.h"
+#include "suffix.h"
 
 int
 BSIM4param(param,value,inst,select)
@@ -31,7 +35,11 @@ IFvalue *select;
             here->BSIM4l = value->rValue;
             here->BSIM4lGiven = TRUE;
             break;
-        case BSIM4_NF:
+        case BSIM4_M:
+            here->BSIM4m = value->rValue;
+            here->BSIM4mGiven = TRUE;
+            break;
+       case BSIM4_NF:
             here->BSIM4nf = value->rValue;
             here->BSIM4nfGiven = TRUE;
             break;
@@ -66,6 +74,34 @@ IFvalue *select;
         case BSIM4_OFF:
             here->BSIM4off = value->iValue;
             break;
+        case BSIM4_SA:
+            here->BSIM4sa = value->rValue;
+            here->BSIM4saGiven = TRUE;
+            break;
+        case BSIM4_SB:
+            here->BSIM4sb = value->rValue;
+            here->BSIM4sbGiven = TRUE;
+            break;
+        case BSIM4_SD:
+            here->BSIM4sd = value->rValue;
+            here->BSIM4sdGiven = TRUE;
+            break;
+        case BSIM4_SCA:
+            here->BSIM4sca = value->rValue;
+            here->BSIM4scaGiven = TRUE;
+            break;
+        case BSIM4_SCB:
+            here->BSIM4scb = value->rValue;
+            here->BSIM4scbGiven = TRUE;
+            break;
+        case BSIM4_SCC:
+            here->BSIM4scc = value->rValue;
+            here->BSIM4sccGiven = TRUE;
+            break;
+        case BSIM4_SC:
+            here->BSIM4sc = value->rValue;
+            here->BSIM4scGiven = TRUE;
+            break;
         case BSIM4_RBSB:
             here->BSIM4rbsb = value->rValue;
             here->BSIM4rbsbGiven = TRUE;
@@ -85,6 +121,18 @@ IFvalue *select;
         case BSIM4_RBPD:
             here->BSIM4rbpd = value->rValue;
             here->BSIM4rbpdGiven = TRUE;
+            break;
+        case BSIM4_DELVTO:
+            here->BSIM4delvto = value->rValue;
+            here->BSIM4delvtoGiven = TRUE;
+            break;
+        case BSIM4_XGW:
+            here->BSIM4xgw = value->rValue;
+            here->BSIM4xgwGiven = TRUE;
+            break;
+        case BSIM4_NGCON:
+            here->BSIM4ngcon = value->rValue;
+            here->BSIM4ngconGiven = TRUE;
             break;
         case BSIM4_TRNQSMOD:
             here->BSIM4trnqsMod = value->iValue;
