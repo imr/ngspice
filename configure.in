@@ -124,7 +124,7 @@ dnl
 dnl The tclSpice options
 dnl
 if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
-   AC_DEFINE(TCL_MODULE)
+   AC_DEFINE(TCL_MODULE,1,[Tcl Module])
    with_x=no
    enable_shared=no
 
@@ -275,7 +275,7 @@ AC_TYPE_SIGNAL
 dnl Check for a few libraries and headers:
 
 dnl Look for ncurses first, then termcap
-AC_SEARCH_LIBS(tputs,ncurses termcap,AC_DEFINE(HAVE_TERMCAP),
+AC_SEARCH_LIBS(tputs,ncurses termcap,AC_DEFINE(HAVE_TERMCAP,1,[Termcap]),
                AC_MSG_ERROR(Found neither ncurses or termcap))
 
 
@@ -316,7 +316,7 @@ if test "$TCL_PACKAGE_PATH" = ""
 then
 AC_MSG_RESULT(Checking for the presence of the Garbage Collector:)
 dnl Check for the garbage collector:
-AC_CHECK_LIB(gc,GC_malloc,AC_DEFINE(HAVE_LIBGC) LIBS="$LIBS -lgc")
+AC_CHECK_LIB(gc,GC_malloc,AC_DEFINE(HAVE_LIBGC,1,[Garbage Collector]) LIBS="$LIBS -lgc")
 fi
 
 dnl Check for the asprintf function:
@@ -357,48 +357,48 @@ else
  dprefix=$prefix
 fi
 
-AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo $dprefix/bin`" )
+AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo $dprefix/bin`" ,[Binary Directory])
 
 if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
-AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/tclspice`" )
+AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/tclspice`",[Data dir] )
 else
-AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice-rework`" )
+AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice-rework`",[Data dir] )
 fi
-AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE, "`date`" )
+AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE, "`date`" , [Build Date])
 
 
 # Recapitulate settings:
 AC_MSG_RESULT(Settings which were chosen:)
 if test "$enable_sense2" = "yes"; then
-	AC_DEFINE(WANT_SENSE2)
+	AC_DEFINE(WANT_SENSE2,1,[Sense2 support])
 	AC_MSG_RESULT(Spice2 sensitivity analysis enabled)	
 fi
 if test "$enable_nobypass" = "yes"; then
-	AC_DEFINE(NOBYPASS)
+	AC_DEFINE(NOBYPASS,1,[Nobypass option])
 	AC_MSG_RESULT(NOBYPASS option enabled)	
 fi
 if test "$enable_predictor" = "yes"; then
-	AC_DEFINE(PREDICTOR)
+	AC_DEFINE(PREDICTOR,1,[Predictor support])
 	AC_MSG_RESULT(PREDICTOR algorithm enabled)	
 fi
 if test "$enable_intnoise" = "yes"; then
-	AC_DEFINE(INT_NOISE)
+	AC_DEFINE(INT_NOISE,1,[intnoise support])
 	AC_MSG_RESULT(Noise integration enabled)
 fi
 if test "$enable_experimental" = "yes"; then
-	AC_DEFINE(EXPERIMENTAL_CODE)
+	AC_DEFINE(EXPERIMENTAL_CODE,1,[Experimantal Code])
 	AC_MSG_RESULT(EXPERIMENTAL_CODE enabled)	
 fi
 
 if test "$enable_ftedebug" = "yes"; then
-	AC_DEFINE(FTEDEBUG)
+	AC_DEFINE(FTEDEBUG,1,[Frountend debugging])
 	AC_MSG_RESULT(WARNING: Frontend debug is enabled)	
 fi
 
 
 if test "$enable_ekv" = "yes"; then
     AC_MSG_RESULT(Model EKV included)
-    AC_DEFINE(HAVE_EKV)
+    AC_DEFINE(HAVE_EKV,1,[EKV model])
     EKVDIR="ekv"
     EKVLIB="spicelib/devices/ekv/libekv.la"
 else
@@ -411,7 +411,7 @@ AC_SUBST(EKVLIB)
 dnl Add new code models to the build by pointing to them here.
 if test "$enable_xspice" = "yes"; then
     AC_MSG_RESULT(X-Spice features included)
-    AC_DEFINE(XSPICE)
+    AC_DEFINE(XSPICE,1,[Xspice additions])
     AC_PROG_YACC
     AM_PROG_LEX
     XSPICEDIR="xspice"
@@ -435,13 +435,13 @@ AC_SUBST(XSPICELIB2)
 dnl Cluster option
 if test "$enable_cluster" = "yes"; then
    AC_MSG_RESULT(Cluster version is being compiled)
-   AC_DEFINE(CLUSTER)
+   AC_DEFINE(CLUSTER,1,[Cluster code])
    LIBS="$LIBS -lpthread"   
 fi
 
 if test "$enable_numparam" = "yes"; then
     AC_MSG_RESULT(Numparam library is enabled)
-    AC_DEFINE(NUMPARAMS)
+    AC_DEFINE(NUMPARAMS,1,[Numparam library])
     NUMPARAMDIR="numparam"
     NUMPARAMLIB="frontend/numparam/libnumparam.a"
 else
@@ -456,7 +456,7 @@ if test "$with_readline" != "no" -a \
 	\( "x$with_tcl" == "x" -o "$with_tcl" == "no" \) ; then
     AC_MSG_RESULT(Checking for readline:)
     AC_CHECK_HEADERS([readline/readline.h readline/history.h], 
-                     [AC_DEFINE(HAVE_GNUREADLINE)],
+                     [AC_DEFINE(HAVE_GNUREADLINE,1,[GNUreadline])],
                      [AC_MSG_ERROR(Couldn't find GNU readline headers.)]) 
     AC_CHECK_LIB(readline, readline, 
                      [LIBS="$LIBS -lreadline"],
