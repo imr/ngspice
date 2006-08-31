@@ -7,6 +7,7 @@ srcdir = @srcdir@
 top_builddir = ../../..
 top_srcdir = @top_srcdir@
 subdir = src/xspice/icm
+mkdir_p = @mkdir_p@
                                                                                 
 # C compiler to use
 CC = @CC@
@@ -29,7 +30,7 @@ CMDIRS = spice2poly digital analog xtradev xtraevt
 # Install instructions
 
 # or use mkdir -p
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(mkdir_p)
 
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
