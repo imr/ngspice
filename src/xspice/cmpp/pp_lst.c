@@ -50,10 +50,8 @@ NON-STANDARD FEATURES
 #include  "cmpp.h"
 #include  <ctype.h>
 #include  <string.h>
+#include  <stdlib.h>
 
-
-void    *malloc(unsigned size);
-void    *realloc(void *ptr, unsigned size);
 
 /* *********************************************************************** */
 

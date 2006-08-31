@@ -43,6 +43,7 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 #include <assert.h>
+#include <stdlib.h>
 #include "ifs_yacc.h"
 
 extern int yylineno;
