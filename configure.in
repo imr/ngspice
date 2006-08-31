@@ -358,12 +358,7 @@ else
 fi
 
 AC_DEFINE_UNQUOTED(NGSPICEBINDIR, "`echo $dprefix/bin`" ,[Binary Directory])
-
-if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
-AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/tclspice`",[Data dir] )
-else
-AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/ng-spice-rework`",[Data dir] )
-fi
+AC_DEFINE_UNQUOTED(NGSPICEDATADIR, "`echo $dprefix/share/${PACKAGE}`",[Data dir] )
 AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE, "`date`" , [Build Date])
 
 
