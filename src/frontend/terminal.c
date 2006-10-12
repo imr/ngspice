@@ -15,6 +15,10 @@ $Id$
 #include <sgtty.h>
 #endif
 
+#ifdef HAVE_SYS_IOCTL_H
+#include <sys/ioctl.h>
+#endif
+
 #if 0
 /* Bad interaction with bool type in bool.h because curses also
    defines this symbol. */
