@@ -3,6 +3,15 @@
 @c %**start of header
 @setfilename ngspice.info
 @include version.texi
+@format
+INFO-DIR-SECTION Simulation
+START-INFO-DIR-ENTRY
+* Ngspice: (ngspice).            General-purpose circuit simulation program for
+                                 nonlinear dc, nonlinear transient, and linear
+                                 ac analyses
+END-INFO-DIR-ENTRY
+@end format
+
 @settitle NGSPICE User Manual
 @setchapternewpage odd
 @c %**end of header
