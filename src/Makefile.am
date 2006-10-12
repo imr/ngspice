@@ -4,7 +4,7 @@
 SUBDIRS = misc maths frontend spicelib include @XSPICEDIR@ @CIDERDIR@
 DIST_SUBDIRS = misc maths frontend spicelib include xspice ciderlib
 
-bin_PROGRAMS =  ngspice ngnutmeg nghelp makeidx
+bin_PROGRAMS =  ngspice ngnutmeg nghelp ngmakeidx
 	        	        
 if !WINDOWS
 bin_PROGRAMS += ngsconvert ngproc2mod ngmultidec
@@ -188,14 +188,14 @@ ngmultidec_LDADD =  \
 	
 endif !WINDOWS
 
-## makeidx:
+## ngmakeidx:
 
-makeidx_SOURCES = makeidx.c
+ngmakeidx_SOURCES = makeidx.c
 
 ## create index for online help:
 
-ngspice.idx: makeidx
-	./makeidx $(srcdir)/ngspice.txt
+ngspice.idx: ngmakeidx
+	./ngmakeidx $(srcdir)/ngspice.txt
 
 
 ## General Includes and libraries:
