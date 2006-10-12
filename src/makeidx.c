@@ -5,6 +5,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 /* from FILENAME.txt, make FILENAME.idx */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "cpdefs.h"
 #include "hlpdefs.h"
