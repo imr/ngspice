@@ -1,3 +1,8 @@
+2007-01-21 Paolo Nenzi <p.nenzi@ieee.org>
+
+ *    src/spicelib/parser/inp2q.c: Added patch from Hitoshi Tanaka to
+      fix error in old BJT devices (that do not have fifth node).
+
 2006-02-21 Paolo Nenzi <p.nenzi@ieee.org>
 
  *   src/frontend/subckt.c, src/spicelib/parser/inp2q.c, 

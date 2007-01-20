@@ -145,11 +145,17 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     IFC(bindNode, (ckt, fast, 2, node2));
     IFC(bindNode, (ckt, fast, 3, node3));
     IFC(bindNode, (ckt, fast, 4, node4));
-    if (nodeflag) {
-      IFC(bindNode, (ckt, fast, 5, node5));
-    } else {
-      ((GENinstance *) fast)->GENnode5 = -1;
-    }
+
+     if ((type == INPtypelook ("hicum0")) ||
+        (type == INPtypelook ("hicum2")) ||
+        (type == INPtypelook ("mextram")) )
+        {
+            if (nodeflag) {
+            IFC(bindNode, (ckt, fast, 5, node5));
+            } else {
+              ((GENinstance *) fast)->GENnode5 = -1;
+            }
+     }
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
     if (waslead) {
 #ifdef CIDER
