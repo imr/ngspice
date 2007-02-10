@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.10  2006-03-07 10:12:12  r29173
+  Revision 1.11  2007-02-10 16:08:41  dwarning
+  unification for func and derivative
+
+  Revision 1.10  2006/03/07 10:12:12  r29173
   replaced '<' by xml special sequence '&lt;'
 
   Revision 1.9  2006/03/06 16:36:55  dwarning
@@ -202,7 +205,7 @@ if(isinf(var)) \\
 #define _pow(xy,x,y)             xy = pow(x,y);
 #define _dx_pow(dx,xy,x,y)       dx = (x==0.0)?0.0:((y/x)*xy);
 #define _dy_pow(dy,xy,x,y)       dy = (x==0.0)?0.0:((log(x)/exp(0.0))*xy);
-#define _limexp(val,arg)         val = ((arg)&lt;(50)) ? (exp(arg)) : (exp(50)*(1.0+(arg-50)));
+#define _limexp(val,arg)         val = ((arg)&lt;(80)) ? (exp(arg)) : (exp(80)*(1.0+(arg-80)));
 #define _d_limexp(val,dval,arg)  val = ((arg)&lt;(80)) ? (exp(arg)) : (exp(80)*(1.0+(arg-80))); dval = val;
 #define _fabs(val,arg)           val = fabs(arg);
 #define _d_fabs(val,dval,arg)    val = fabs(arg);    dval = (((val)&gt;=0)?(+1.0):(-1.0));
