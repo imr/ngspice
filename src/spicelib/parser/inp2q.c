@@ -102,7 +102,6 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     if (thismodel != NULL) {
 	if((thismodel->INPmodType != INPtypelook("BJT"))
            && (thismodel->INPmodType != INPtypelook("BJT2"))
-           && (thismodel->INPmodType != INPtypelook("VBIC"))
 #ifdef CIDER
            && (thismodel->INPmodType != INPtypelook("NBJT"))
            && (thismodel->INPmodType != INPtypelook("NBJT2"))
@@ -111,6 +110,7 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
            && (thismodel->INPmodType != INPtypelook("hicum0"))
            && (thismodel->INPmodType != INPtypelook("hicum2"))
            && (thismodel->INPmodType != INPtypelook("mextram"))
+           && (thismodel->INPmodType != INPtypelook("vbic"))
 #endif
           ) {
             LITERR("incorrect model type")
@@ -146,6 +146,7 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     IFC(bindNode, (ckt, fast, 3, node3));
     IFC(bindNode, (ckt, fast, 4, node4));
 
+#ifdef ADMS
      if ((type == INPtypelook ("hicum0")) ||
         (type == INPtypelook ("hicum2")) ||
         (type == INPtypelook ("mextram")) )
@@ -156,6 +157,7 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
               ((GENinstance *) fast)->GENnode5 = -1;
             }
      }
+#endif
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
     if (waslead) {
 #ifdef CIDER
