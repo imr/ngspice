@@ -1,3 +1,7 @@
+2007-03-20 Lionel Sainte Cluque
+
+	* Added spice::vectoblt function
+
 2006-08-31 Stefan Jones <stefan.jones@multigig.com>
 
 	* configure.in:

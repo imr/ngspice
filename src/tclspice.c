@@ -414,6 +414,81 @@ static int get_value TCL_CMDPROCARGS(clientData,interp,argc,argv) {
 		return TCL_OK;
 	}
 }
+/*
+ * arg1: spice vector name
+ * arg2: real data blt vector
+ * arg3: Optional: imaginary data blt vector*/
+static int vectoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
+  Blt_Vector *real_BltVector, *imag_BltVector;
+  char *realBlt, *imagBlt, *var;
+  struct dvec *var_dvec;
+  double *realData, *compData;
+
+  if (argc < 3 || argc > 4){
+    Tcl_SetResult(interp, "Wrong # args. spice::vectoblt spice_variable real_bltVector [imag_bltVector]",TCL_STATIC);
+    return TCL_ERROR;
+  }
+
+  real_BltVector = NULL;
+  imag_BltVector = NULL;
+  var = (char *)argv[1];
+  var_dvec = vec_get(var);
+  if ( var_dvec == NULL ){
+    Tcl_SetResult(interp, "Bad spice vector",TCL_STATIC);
+    Tcl_AppendResult(interp, (char *)var, TCL_STATIC);
+    return TCL_ERROR;
+    }
+  realBlt = (char *)argv[2];
+  if(Blt_GetVector(interp,realBlt,&real_BltVector)){
+    Tcl_SetResult(interp, "Bad real blt vector ",TCL_STATIC);
+    Tcl_AppendResult(interp, (char *)realBlt, TCL_STATIC);
+    return TCL_ERROR;
+  }
+  if (argc == 4) {
+    imagBlt = (char *)argv[3];
+    if(Blt_GetVector(interp,imagBlt,&imag_BltVector)){
+      Tcl_SetResult(interp, "Bad imag blt vector ",TCL_STATIC);
+      Tcl_AppendResult(interp, (char *)imagBlt, TCL_STATIC);
+      return TCL_ERROR;
+    }
+  }
+/*If data is complex, it is harder (more complex :) to export...*/
+  int compIndex; //index to loop inside the vectors' data
+  if (var_dvec->v_realdata==NULL){
+    if (var_dvec->v_compdata==NULL){
+      Tcl_SetResult(interp, "The vector contains no data",TCL_STATIC);
+      Tcl_AppendResult(interp, (char *)var, TCL_STATIC);
+    }
+    else{
+      realData = (double *)tmalloc((unsigned) sizeof(double)*(var_dvec->v_length));
+      for (compIndex=0; compIndex<var_dvec->v_length; compIndex++){
+         realData[compIndex] = ((var_dvec->v_compdata+compIndex)->cx_real);
+      }
+      Blt_ResetVector(real_BltVector, realData, var_dvec->v_length, var_dvec->v_length, TCL_VOLATILE);
+      if (imag_BltVector != NULL) {
+        compData = (double *)tmalloc((unsigned) sizeof(double)*(var_dvec->v_length));
+        for (compIndex=0; compIndex<var_dvec->v_length; compIndex++){
+          compData[compIndex] = ((var_dvec->v_compdata+compIndex)->cx_imag);
+        }
+        Blt_ResetVector(imag_BltVector, compData, var_dvec->v_length, var_dvec->v_length, TCL_VOLATILE);
+      }
+    };
+  } else
+  {
+    Blt_ResetVector(real_BltVector, var_dvec->v_realdata, var_dvec->v_length, var_dvec->v_length, TCL_VOLATILE);
+    if (imag_BltVector != NULL) {
+        compData = (double *)tmalloc((unsigned) sizeof(double)*(var_dvec->v_length));
+        for (compIndex=0; compIndex<var_dvec->v_length; compIndex++){
+          compData[compIndex] = 0;
+        }
+        Blt_ResetVector(imag_BltVector, compData, var_dvec->v_length, var_dvec->v_length, TCL_VOLATILE);
+    }
+  
+  }
+    Tcl_SetResult(interp, "finished!",TCL_STATIC);
+    return TCL_OK;
+
+}
 	
 /*agr1: spice variable name
  *arg2: blt_vector 
@@ -2128,6 +2203,7 @@ bot:
     Tcl_CreateCommand(interp, TCLSPICE_prefix "spice_header", spice_header, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "spice_data", spice_data, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "spicetoblt", spicetoblt, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateCommand(interp, TCLSPICE_prefix "vectoblt", vectoblt, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "lastVector", lastVector, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "get_value", get_value, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
     Tcl_CreateCommand(interp, TCLSPICE_prefix "spice", _spice_dispatch, (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
