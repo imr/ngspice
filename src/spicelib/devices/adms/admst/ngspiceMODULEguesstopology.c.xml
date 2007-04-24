@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.7  2006-03-06 12:51:29  r29173
+  Revision 1.8  2007-04-24 12:26:36  r29173
+  add case 'blockvariable'
+
+  Revision 1.7  2006/03/06 12:51:29  r29173
   added support to 'analog functions'
 
   Revision 1.6  2006/03/05 09:38:41  pnenzi
@@ -284,7 +287,7 @@
     <admst:when test="adms[datatypename='number']"/>
     <admst:when test="adms[datatypename='string']"/>
     <admst:when test="adms[datatypename='nilled']"/>
-
+    <admst:when test="adms[datatypename='blockvariable']"/>
     <admst:otherwise>
       <admst:value-of select="adms/datatypename"/>
       <admst:fatal format="%s: adms element not implemented\n"/>

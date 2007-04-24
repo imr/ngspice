@@ -5,7 +5,10 @@
 -->
 <!--
   $Log$
-  Revision 1.13  2007-04-24 08:59:09  r29173
+  Revision 1.14  2007-04-24 12:28:15  r29173
+  add case 'blockvariable'
+
+  Revision 1.13  2007/04/24 08:59:09  r29173
   added missing new lines (due to changes in adms225)
   renamed pspva to psp102
 
@@ -1098,12 +1101,23 @@
     <admst:when test="adms[datatypename='case']">
       <admst:error format="case statement: please implement me! (local declaration)\n"/>
     </admst:when>
+    <admst:when test="adms[datatypename='blockvariable']"/>
     <admst:otherwise>
       <admst:value-of select="admst(.)"/>
       <admst:value-of select="adms/datatypename"/>
       <admst:error format="'datatypename=%s': should not be reached %s\n"/>
     </admst:otherwise>
   </admst:choose>
+</admst:template>
+
+<!-- analog//blockvariable -->
+<admst:template match="blockvariable">
+  <admst:for-each select="variable">
+    <admst:if test="[type='integer']">int %(name);\n</admst:if>
+    <admst:if test="[type='real']">double %(name);\n</admst:if>
+    <admst:if test="[type='string']">char* %(name);\n</admst:if>
+    <admst:text test="[insource='yes']" select="probe" format="double %(../name)_%(nature/access)%(branch/pnode/name)_%(branch/nnode/name);\n"/>
+  </admst:for-each>
 </admst:template>
 
 <!-- analog//block -->
