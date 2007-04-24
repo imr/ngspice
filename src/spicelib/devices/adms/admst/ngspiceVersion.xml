@@ -5,7 +5,11 @@
 -->
 <!--
   $Log$
-  Revision 1.12  2006-03-06 12:55:02  r29173
+  Revision 1.13  2007-04-24 08:59:09  r29173
+  added missing new lines (due to changes in adms225)
+  renamed pspva to psp102
+
+  Revision 1.12  2006/03/06 12:55:02  r29173
   added support to 'analog functions'
 
   Revision 1.11  2006/03/05 09:38:41  pnenzi
@@ -1794,7 +1798,7 @@
 </admst:template>
 
 <!-- variable:rhs -->
-<admst:template match="variable" mode="rhs">
+<admst:template match="variable">
   <admst:value-of select="name"/>
   <admst:if test="[parametertype='analogfunction']">
     <admst:value-to select="/simulator/tmp" value="%s"/>
@@ -1883,10 +1887,10 @@
           <admst:value-to select="value" value="mextram"/>
         </admst:new>
       </admst:when>
-      <admst:when test="[name='pspva']">
+      <admst:when test="[name='psp102']">
         <admst:new datatype="attribute" arguments="ngspicename">
           <admst:push into="../attribute" select="." onduplicate="abort"/>
-          <admst:value-to select="value" value="psp"/>
+          <admst:value-to select="value" value="psp102"/>
         </admst:new>
       </admst:when>
       <admst:otherwise>
@@ -1994,7 +1998,7 @@
           </admst:new>
         </admst:if>
       </admst:when>
-      <admst:when test="[name='pspva']">
+      <admst:when test="[name='psp102']">
         <admst:if test="[nilled(variable[name='nmos'])]">
           <admst:value-of select="analog"/>
           <admst:value-of select="."/>

@@ -3,7 +3,11 @@
 <!--
   $Id$
   $Log$
-  Revision 1.4  2006-03-05 09:38:41  pnenzi
+  Revision 1.5  2007-04-24 08:59:09  r29173
+  added missing new lines (due to changes in adms225)
+  renamed pspva to psp102
+
+  Revision 1.4  2006/03/05 09:38:41  pnenzi
 
   Updated version to 2.2.0
 
@@ -85,6 +89,7 @@ int $(module)mParam(int param, IFvalue *value, GENmodel *inMod)
   }
   return(OK);
 }
+
 </admst:template>
 
 <admst:for-each select="/module">
