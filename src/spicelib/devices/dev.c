@@ -120,6 +120,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "adms/hicum0/hicum0itf.h"
 #include "adms/hicum2/hicum2itf.h"
 #include "adms/mextram/mextramitf.h"
+#include "adms/psp102/psp102itf.h"
 #endif
 #ifdef CIDER
 /* Numerical devices (Cider integration) */
@@ -136,9 +137,9 @@ int add_udn(int,Evt_Udn_Info_t **);
  #ifdef ADMS
 
    #ifdef XSPICE
-     static int DEVNUM = 55;
+     static int DEVNUM = 56;
    #else
-     #define DEVNUM 55
+     #define DEVNUM 56
    #endif
 
  #else	/* NOT ADMS */
@@ -156,9 +157,9 @@ int add_udn(int,Evt_Udn_Info_t **);
  #ifdef ADMS
 
    #ifdef XSPICE
-     static int DEVNUM = 50;
+     static int DEVNUM = 51;
    #else
-     #define DEVNUM 50
+     #define DEVNUM 51
    #endif
 
  #else	/* NOT ADMS */ 
@@ -263,7 +264,8 @@ spice_init_devices(void)
     DEVices[52] = get_hicum0_info();
     DEVices[53] = get_hicum2_info();
     DEVices[54] = get_mextram_info();
-    assert(55 == DEVNUM);
+    DEVices[55] = get_psp102_info();
+    assert(56 == DEVNUM);
   #else                            /* NOT ADMS */
     assert(52 == DEVNUM);
   #endif                           /* ADMS */
@@ -272,7 +274,8 @@ spice_init_devices(void)
     DEVices[47] = get_hicum0_info();
     DEVices[48] = get_hicum2_info();
     DEVices[49] = get_mextram_info();
-    assert(50 == DEVNUM);
+    DEVices[50] = get_psp102_info();
+    assert(51 == DEVNUM);
   #else                            /* NOT ADMS */
     assert(47 == DEVNUM);
   #endif                           /* ADMS */
@@ -305,7 +308,7 @@ devices(void)
 #ifdef ADMS
 #define DEVICES_USED {"asrc", "bjt", "bjt2", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
                       "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \
-                      "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "hicum2", "mextram"}
+                      "mos2", "mos3", "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "hicum2", "mextram", "psp102"}
 #else
 #define DEVICES_USED {"asrc", "bjt", "bjt2", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v2", "bsim3v1", "bsim4", "bsim3soipd", "bsim3soifd",   \
                       "bsim3soidd", "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1",  \

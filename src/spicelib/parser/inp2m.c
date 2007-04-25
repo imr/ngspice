@@ -212,6 +212,7 @@ INP2M (void *ckt, INPtables * tab, card * current)
 #endif
 #ifdef ADMS
 	  && thismodel->INPmodType != INPtypelook ("EKV")
+	  && thismodel->INPmodType != INPtypelook ("psp102")
 #endif	
           && thismodel->INPmodType != INPtypelook ("HiSIM1")
 	  )

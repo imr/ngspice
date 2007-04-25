@@ -311,6 +311,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    INPmkTemp
 		    ("Device type BSIM6 not available in this binary\n");}
 	    break;
+#ifdef ADMS
 	case 44:
 		type = INPtypelook("EKV");
 		if (type < 0) {
@@ -319,6 +320,15 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Device type EKV not available in this binary\n");
 	    }
 	    break;    
+		case 46:
+			 type = INPtypelook("psp102");
+printf("found psp102 lev=%i\n",lev);
+                if(type < 0) {
+                    err = INPmkTemp(
+                            "Device type PSP102 not available in this binary\n");
+                }
+                break;
+#endif
 	case 49:
 	    type = INPtypelook("BSIM3v1S");
 	    if (type < 0) {
