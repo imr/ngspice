@@ -1,3 +1,13 @@
+2007-04-26 Paolo Nenzi <p.nenzi@ieee.org>
+
+*     src/spicelib/devices/dsim4/: updated bsim4 model to 4.6.0.
+
+2007-04-25 Paolo Nenzi <p.nenzi@ieee.org>
+
+*     src/spicelib/parser/{inp2m.c, inpdomod.c}, 
+      src/spicelib/devices/dev.c, src/spicelib/devices/adms/psp102/: 
+      added support for psp102 model.
+
 2007-01-21 Paolo Nenzi <p.nenzi@ieee.org>
 
  *    src/spicelib/parser/inp2q.c: Added patch from Hitoshi Tanaka to
