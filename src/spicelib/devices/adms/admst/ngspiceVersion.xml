@@ -5,7 +5,10 @@
 -->
 <!--
   $Log$
-  Revision 1.14  2007-04-24 12:28:15  r29173
+  Revision 1.15  2007-04-26 13:04:34  r29173
+  added cases initializeModel, initiliazeInstance (block name used by psp102)
+
+  Revision 1.14  2007/04/24 12:28:15  r29173
   add case 'blockvariable'
 
   Revision 1.13  2007/04/24 08:59:09  r29173
@@ -1131,7 +1134,7 @@
   <admst:text format="}\n"/>
 </admst:template>
 
-<!-- analog/[initial_model|initial_instance|initial_step|noise] -->
+<!-- analog/[initializeModel|initializeInstance|initial_model|initial_instance|initial_step|noise] -->
 <admst:template match="block:initial">
   <admst:assert test="adms[datatypename='block']" format="expecting datatypename=block\n"/>
   <admst:apply-templates select="." match="block:local:declaration"/>
@@ -1143,7 +1146,7 @@
     <admst:if test="code/adms[datatypename='block']">
       <admst:for-each select="code/item">
         <admst:if test="adms[datatypename='block']">
-          <admst:apply-templates select="[name='initial_instance']" match="block:initial"/>
+          <admst:apply-templates select="[name='initial_instance' or name='initializeInstance']" match="block:initial"/>
         </admst:if>
       </admst:for-each>
     </admst:if>
@@ -1154,7 +1157,7 @@
     <admst:if test="code/adms[datatypename='block']">
       <admst:for-each select="code/item">
         <admst:if test="adms[datatypename='block']">
-          <admst:apply-templates select="[name='initial_model']" match="block:initial"/>
+          <admst:apply-templates select="[name='initial_model' or name='initializeModel']" match="block:initial"/>
         </admst:if>
       </admst:for-each>
     </admst:if>

@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.4  2006-03-05 09:38:41  pnenzi
+  Revision 1.5  2007-04-26 13:04:34  r29173
+  added cases initializeModel, initiliazeInstance (block name used by psp102)
+
+  Revision 1.4  2006/03/05 09:38:41  pnenzi
 
   Updated version to 2.2.0
 
@@ -239,7 +242,7 @@ int $(module)load(inModel,ckt)
 
 </admst:template>
 
-<!-- analog/![initial_model|initial_instance|initial_step|noise] -->
+<!-- analog/![initializeModel|initializeInstance|initial_model|initial_instance|initial_step|noise] -->
 <admst:template match="debug:strobe">
 <admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>
@@ -309,7 +312,7 @@ int $(module)load(inModel,ckt)
     <admst:assert test="code/adms[datatypename='block']" format="expecting datatypename=block\n"/>
     <admst:for-each select="code/item">
       <admst:if test="adms[datatypename='block']">
-        <admst:if test="[name!='initial_model' and name!='initial_instance'
+        <admst:if test="[name!='initial_model' and name!='initial_instance' and name!='initializeModel' and name!='initializeInstance'
            and name!='initial_step' and name!='noise']">
           <admst:apply-templates select="." match="block:local:declaration"/>
         </admst:if>
@@ -326,7 +329,7 @@ int $(module)load(inModel,ckt)
           <admst:apply-templates select="." match="%s"/>
         </admst:when>
         <admst:otherwise>
-          <admst:if test="[name!='initial_model' and name!='initial_instance'
+        <admst:if test="[name!='initial_model' and name!='initial_instance' and name!='initializeModel' and name!='initializeInstance'
              and name!='initial_step' and name!='noise']">
             <admst:apply-templates select="." match="block"/>
           </admst:if>

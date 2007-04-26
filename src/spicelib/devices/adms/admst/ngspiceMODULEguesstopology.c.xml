@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.8  2007-04-24 12:26:36  r29173
+  Revision 1.9  2007-04-26 13:04:34  r29173
+  added cases initializeModel, initiliazeInstance (block name used by psp102)
+
+  Revision 1.8  2007/04/24 12:26:36  r29173
   add case 'blockvariable'
 
   Revision 1.7  2006/03/06 12:51:29  r29173
@@ -300,7 +303,7 @@
     <admst:assert test="code/adms[datatypename='block']" format="expecting datatypename=block\n"/>
     <admst:for-each select="code/item">
       <admst:if test="adms[datatypename='block']">
-        <admst:if test="[name!='initial_model' and name!='initial_instance'
+        <admst:if test="[name!='initial_model' and name!='initial_instance' and name!='initializeModel' and name!='initializeInstance'
            and name!='initial_step' and name!='noise']">
           <admst:apply-templates select="." match="block:local:declaration"/>
         </admst:if>
@@ -316,7 +319,7 @@
           <admst:apply-templates select="." match="guesstopology"/>
         </admst:when>
         <admst:otherwise>
-          <admst:if test="[name!='initial_model' and name!='initial_instance'
+          <admst:if test="[name!='initial_model' and name!='initial_instance' and name!='initializeModel' and name!='initializeInstance'
              and name!='initial_step' and name!='noise']">
             <admst:apply-templates select="." match="guesstopology"/>
           </admst:if>
