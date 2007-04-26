@@ -1,10 +1,11 @@
-/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
+/**** BSIM4.6.0 Released by Mohan Dunga 12/13/2006 ****/
 
 /**********
- * Copyright 2005 Regents of the University of California. All rights reserved.
- * File: b4mpar.c of BSIM4.5.0.
+ * Copyright 2006 Regents of the University of California. All rights reserved.
+ * File: b4mpar.c of BSIM4.6.0.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
+ * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
@@ -12,6 +13,7 @@
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 03/04/2004.
  * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
+ * Modified by Mohan Dunga, 12/13/2006
  **********/
 
 #include "ngspice.h"
@@ -547,6 +549,10 @@ GENmodel *inMod;
             mod->BSIM4alpha1 = value->rValue;
             mod->BSIM4alpha1Given = TRUE;
             break;
+        case  BSIM4_MOD_PHIN :
+            mod->BSIM4phin = value->rValue;
+            mod->BSIM4phinGiven = TRUE;
+            break;
         case  BSIM4_MOD_AGIDL :
             mod->BSIM4agidl = value->rValue;
             mod->BSIM4agidlGiven = TRUE;
@@ -559,13 +565,25 @@ GENmodel *inMod;
             mod->BSIM4cgidl = value->rValue;
             mod->BSIM4cgidlGiven = TRUE;
             break;
-        case  BSIM4_MOD_PHIN :
-            mod->BSIM4phin = value->rValue;
-            mod->BSIM4phinGiven = TRUE;
-            break;
         case  BSIM4_MOD_EGIDL :
             mod->BSIM4egidl = value->rValue;
             mod->BSIM4egidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_AGISL :
+            mod->BSIM4agisl = value->rValue;
+            mod->BSIM4agislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_BGISL :
+            mod->BSIM4bgisl = value->rValue;
+            mod->BSIM4bgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_CGISL :
+            mod->BSIM4cgisl = value->rValue;
+            mod->BSIM4cgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_EGISL :
+            mod->BSIM4egisl = value->rValue;
+            mod->BSIM4egislGiven = TRUE;
             break;
         case  BSIM4_MOD_AIGC :
             mod->BSIM4aigc = value->rValue;
@@ -590,6 +608,30 @@ GENmodel *inMod;
         case  BSIM4_MOD_CIGSD :
             mod->BSIM4cigsd = value->rValue;
             mod->BSIM4cigsdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_AIGS :
+            mod->BSIM4aigs = value->rValue;
+            mod->BSIM4aigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_BIGS :
+            mod->BSIM4bigs = value->rValue;
+            mod->BSIM4bigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_CIGS :
+            mod->BSIM4cigs = value->rValue;
+            mod->BSIM4cigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_AIGD :
+            mod->BSIM4aigd = value->rValue;
+            mod->BSIM4aigdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_BIGD :
+            mod->BSIM4bigd = value->rValue;
+            mod->BSIM4bigdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_CIGD :
+            mod->BSIM4cigd = value->rValue;
+            mod->BSIM4cigdGiven = TRUE;
             break;
         case  BSIM4_MOD_AIGBACC :
             mod->BSIM4aigbacc = value->rValue;
@@ -925,6 +967,18 @@ GENmodel *inMod;
             mod->BSIM4njtsswg = value->rValue;
             mod->BSIM4njtsswgGiven = TRUE;
             break;
+        case  BSIM4_MOD_NJTSD :
+            mod->BSIM4njtsd = value->rValue;
+            mod->BSIM4njtsdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_NJTSSWD :
+            mod->BSIM4njtsswd = value->rValue;
+            mod->BSIM4njtsswdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_NJTSSWGD :
+            mod->BSIM4njtsswgd = value->rValue;
+            mod->BSIM4njtsswgdGiven = TRUE;
+            break;
         case  BSIM4_MOD_XTSS :
             mod->BSIM4xtss = value->rValue;
             mod->BSIM4xtssGiven = TRUE;
@@ -960,6 +1014,18 @@ GENmodel *inMod;
         case  BSIM4_MOD_TNJTSSWG :
             mod->BSIM4tnjtsswg = value->rValue;
             mod->BSIM4tnjtsswgGiven = TRUE;
+            break;
+        case  BSIM4_MOD_TNJTSD :
+            mod->BSIM4tnjtsd = value->rValue;
+            mod->BSIM4tnjtsdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_TNJTSSWD :
+            mod->BSIM4tnjtsswd = value->rValue;
+            mod->BSIM4tnjtsswdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_TNJTSSWGD :
+            mod->BSIM4tnjtsswgd = value->rValue;
+            mod->BSIM4tnjtsswgdGiven = TRUE;
             break;
         case  BSIM4_MOD_VTSS :
             mod->BSIM4vtss = value->rValue;
@@ -1172,6 +1238,10 @@ GENmodel *inMod;
         case  BSIM4_MOD_DLCIG :
             mod->BSIM4dlcig = value->rValue;
             mod->BSIM4dlcigGiven = TRUE;
+            break;
+        case  BSIM4_MOD_DLCIGD :
+            mod->BSIM4dlcigd = value->rValue;
+            mod->BSIM4dlcigdGiven = TRUE;
             break;
         case  BSIM4_MOD_DWJ :
             mod->BSIM4dwj = value->rValue;
@@ -1589,6 +1659,10 @@ GENmodel *inMod;
             mod->BSIM4lbeta0 = value->rValue;
             mod->BSIM4lbeta0Given = TRUE;
             break;
+        case  BSIM4_MOD_LPHIN :
+            mod->BSIM4lphin = value->rValue;
+            mod->BSIM4lphinGiven = TRUE;
+            break;
         case  BSIM4_MOD_LAGIDL :
             mod->BSIM4lagidl = value->rValue;
             mod->BSIM4lagidlGiven = TRUE;
@@ -1601,13 +1675,25 @@ GENmodel *inMod;
             mod->BSIM4lcgidl = value->rValue;
             mod->BSIM4lcgidlGiven = TRUE;
             break;
-        case  BSIM4_MOD_LPHIN :
-            mod->BSIM4lphin = value->rValue;
-            mod->BSIM4lphinGiven = TRUE;
-            break;
         case  BSIM4_MOD_LEGIDL :
             mod->BSIM4legidl = value->rValue;
             mod->BSIM4legidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LAGISL :
+            mod->BSIM4lagisl = value->rValue;
+            mod->BSIM4lagislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LBGISL :
+            mod->BSIM4lbgisl = value->rValue;
+            mod->BSIM4lbgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LCGISL :
+            mod->BSIM4lcgisl = value->rValue;
+            mod->BSIM4lcgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LEGISL :
+            mod->BSIM4legisl = value->rValue;
+            mod->BSIM4legislGiven = TRUE;
             break;
         case  BSIM4_MOD_LAIGC :
             mod->BSIM4laigc = value->rValue;
@@ -1632,6 +1718,30 @@ GENmodel *inMod;
         case  BSIM4_MOD_LCIGSD :
             mod->BSIM4lcigsd = value->rValue;
             mod->BSIM4lcigsdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LAIGS :
+            mod->BSIM4laigs = value->rValue;
+            mod->BSIM4laigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LBIGS :
+            mod->BSIM4lbigs = value->rValue;
+            mod->BSIM4lbigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LCIGS :
+            mod->BSIM4lcigs = value->rValue;
+            mod->BSIM4lcigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LAIGD :
+            mod->BSIM4laigd = value->rValue;
+            mod->BSIM4laigdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LBIGD :
+            mod->BSIM4lbigd = value->rValue;
+            mod->BSIM4lbigdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_LCIGD :
+            mod->BSIM4lcigd = value->rValue;
+            mod->BSIM4lcigdGiven = TRUE;
             break;
         case  BSIM4_MOD_LAIGBACC :
             mod->BSIM4laigbacc = value->rValue;
@@ -2105,6 +2215,10 @@ GENmodel *inMod;
             mod->BSIM4wbeta0 = value->rValue;
             mod->BSIM4wbeta0Given = TRUE;
             break;
+        case  BSIM4_MOD_WPHIN :
+            mod->BSIM4wphin = value->rValue;
+            mod->BSIM4wphinGiven = TRUE;
+            break;
         case  BSIM4_MOD_WAGIDL :
             mod->BSIM4wagidl = value->rValue;
             mod->BSIM4wagidlGiven = TRUE;
@@ -2117,13 +2231,25 @@ GENmodel *inMod;
             mod->BSIM4wcgidl = value->rValue;
             mod->BSIM4wcgidlGiven = TRUE;
             break;
-        case  BSIM4_MOD_WPHIN :
-            mod->BSIM4wphin = value->rValue;
-            mod->BSIM4wphinGiven = TRUE;
-            break;
         case  BSIM4_MOD_WEGIDL :
             mod->BSIM4wegidl = value->rValue;
             mod->BSIM4wegidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WAGISL :
+            mod->BSIM4wagisl = value->rValue;
+            mod->BSIM4wagislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WBGISL :
+            mod->BSIM4wbgisl = value->rValue;
+            mod->BSIM4wbgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WCGISL :
+            mod->BSIM4wcgisl = value->rValue;
+            mod->BSIM4wcgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WEGISL :
+            mod->BSIM4wegisl = value->rValue;
+            mod->BSIM4wegislGiven = TRUE;
             break;
         case  BSIM4_MOD_WAIGC :
             mod->BSIM4waigc = value->rValue;
@@ -2148,6 +2274,30 @@ GENmodel *inMod;
         case  BSIM4_MOD_WCIGSD :
             mod->BSIM4wcigsd = value->rValue;
             mod->BSIM4wcigsdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WAIGS :
+            mod->BSIM4waigs = value->rValue;
+            mod->BSIM4waigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WBIGS :
+            mod->BSIM4wbigs = value->rValue;
+            mod->BSIM4wbigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WCIGS :
+            mod->BSIM4wcigs = value->rValue;
+            mod->BSIM4wcigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WAIGD :
+            mod->BSIM4waigd = value->rValue;
+            mod->BSIM4waigdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WBIGD :
+            mod->BSIM4wbigd = value->rValue;
+            mod->BSIM4wbigdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_WCIGD :
+            mod->BSIM4wcigd = value->rValue;
+            mod->BSIM4wcigdGiven = TRUE;
             break;
         case  BSIM4_MOD_WAIGBACC :
             mod->BSIM4waigbacc = value->rValue;
@@ -2621,6 +2771,10 @@ GENmodel *inMod;
             mod->BSIM4pbeta0 = value->rValue;
             mod->BSIM4pbeta0Given = TRUE;
             break;
+        case  BSIM4_MOD_PPHIN :
+            mod->BSIM4pphin = value->rValue;
+            mod->BSIM4pphinGiven = TRUE;
+            break;
         case  BSIM4_MOD_PAGIDL :
             mod->BSIM4pagidl = value->rValue;
             mod->BSIM4pagidlGiven = TRUE;
@@ -2633,13 +2787,25 @@ GENmodel *inMod;
             mod->BSIM4pcgidl = value->rValue;
             mod->BSIM4pcgidlGiven = TRUE;
             break;
-        case  BSIM4_MOD_PPHIN :
-            mod->BSIM4pphin = value->rValue;
-            mod->BSIM4pphinGiven = TRUE;
-            break;
         case  BSIM4_MOD_PEGIDL :
             mod->BSIM4pegidl = value->rValue;
             mod->BSIM4pegidlGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PAGISL :
+            mod->BSIM4pagisl = value->rValue;
+            mod->BSIM4pagislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PBGISL :
+            mod->BSIM4pbgisl = value->rValue;
+            mod->BSIM4pbgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PCGISL :
+            mod->BSIM4pcgisl = value->rValue;
+            mod->BSIM4pcgislGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PEGISL :
+            mod->BSIM4pegisl = value->rValue;
+            mod->BSIM4pegislGiven = TRUE;
             break;
         case  BSIM4_MOD_PAIGC :
             mod->BSIM4paigc = value->rValue;
@@ -2664,6 +2830,30 @@ GENmodel *inMod;
         case  BSIM4_MOD_PCIGSD :
             mod->BSIM4pcigsd = value->rValue;
             mod->BSIM4pcigsdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PAIGS :
+            mod->BSIM4paigs = value->rValue;
+            mod->BSIM4paigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PBIGS :
+            mod->BSIM4pbigs = value->rValue;
+            mod->BSIM4pbigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PCIGS :
+            mod->BSIM4pcigs = value->rValue;
+            mod->BSIM4pcigsGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PAIGD :
+            mod->BSIM4paigd = value->rValue;
+            mod->BSIM4paigdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PBIGD :
+            mod->BSIM4pbigd = value->rValue;
+            mod->BSIM4pbigdGiven = TRUE;
+            break;
+        case  BSIM4_MOD_PCIGD :
+            mod->BSIM4pcigd = value->rValue;
+            mod->BSIM4pcigdGiven = TRUE;
             break;
         case  BSIM4_MOD_PAIGBACC :
             mod->BSIM4paigbacc = value->rValue;

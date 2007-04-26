@@ -1,10 +1,11 @@
-/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
+/**** BSIM4.6.0 Released by Mohan Dunga 12/13/2006 ****/
 
 /**********
- * Copyright 2005 Regents of the University of California. All rights reserved.
- * File: b4temp.c of BSIM4.5.0.
+ * Copyright 2006 Regents of the University of California. All rights reserved.
+ * File: b4temp.c of BSIM4.6.0.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
+ * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
@@ -12,6 +13,7 @@
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 03/04/2004.
  * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
+ * Modified by Mohan Dunga, 12/13/2006
  **********/
 
 #include "ngspice.h"
@@ -841,6 +843,22 @@ int Size_Not_Found, i;
                                      + model->BSIM4legidl * Inv_L
                                      + model->BSIM4wegidl * Inv_W
                                      + model->BSIM4pegidl * Inv_LW;
+                  pParam->BSIM4agisl = model->BSIM4agisl
+                                     + model->BSIM4lagisl * Inv_L
+                                     + model->BSIM4wagisl * Inv_W
+                                     + model->BSIM4pagisl * Inv_LW;
+                  pParam->BSIM4bgisl = model->BSIM4bgisl
+                                     + model->BSIM4lbgisl * Inv_L
+                                     + model->BSIM4wbgisl * Inv_W
+                                     + model->BSIM4pbgisl * Inv_LW;
+                  pParam->BSIM4cgisl = model->BSIM4cgisl
+                                     + model->BSIM4lcgisl * Inv_L
+                                     + model->BSIM4wcgisl * Inv_W
+                                     + model->BSIM4pcgisl * Inv_LW;
+                  pParam->BSIM4egisl = model->BSIM4egisl
+                                     + model->BSIM4legisl * Inv_L
+                                     + model->BSIM4wegisl * Inv_W
+                                     + model->BSIM4pegisl * Inv_LW;
                   pParam->BSIM4aigc = model->BSIM4aigc
                                      + model->BSIM4laigc * Inv_L
                                      + model->BSIM4waigc * Inv_W
@@ -853,18 +871,30 @@ int Size_Not_Found, i;
                                      + model->BSIM4lcigc * Inv_L
                                      + model->BSIM4wcigc * Inv_W
                                      + model->BSIM4pcigc * Inv_LW;
-                  pParam->BSIM4aigsd = model->BSIM4aigsd
-                                     + model->BSIM4laigsd * Inv_L
-                                     + model->BSIM4waigsd * Inv_W
-                                     + model->BSIM4paigsd * Inv_LW;
-                  pParam->BSIM4bigsd = model->BSIM4bigsd
-                                     + model->BSIM4lbigsd * Inv_L
-                                     + model->BSIM4wbigsd * Inv_W
-                                     + model->BSIM4pbigsd * Inv_LW;
-                  pParam->BSIM4cigsd = model->BSIM4cigsd
-                                     + model->BSIM4lcigsd * Inv_L
-                                     + model->BSIM4wcigsd * Inv_W
-                                     + model->BSIM4pcigsd * Inv_LW;
+                  pParam->BSIM4aigs = model->BSIM4aigs
+                                     + model->BSIM4laigs * Inv_L
+                                     + model->BSIM4waigs * Inv_W
+                                     + model->BSIM4paigs * Inv_LW;
+                  pParam->BSIM4bigs = model->BSIM4bigs
+                                     + model->BSIM4lbigs * Inv_L
+                                     + model->BSIM4wbigs * Inv_W
+                                     + model->BSIM4pbigs * Inv_LW;
+                  pParam->BSIM4cigs = model->BSIM4cigs
+                                     + model->BSIM4lcigs * Inv_L
+                                     + model->BSIM4wcigs * Inv_W
+                                     + model->BSIM4pcigs * Inv_LW;
+                  pParam->BSIM4aigd = model->BSIM4aigd
+                                     + model->BSIM4laigd * Inv_L
+                                     + model->BSIM4waigd * Inv_W
+                                     + model->BSIM4paigd * Inv_LW;
+                  pParam->BSIM4bigd = model->BSIM4bigd
+                                     + model->BSIM4lbigd * Inv_L
+                                     + model->BSIM4wbigd * Inv_W
+                                     + model->BSIM4pbigd * Inv_LW;
+                  pParam->BSIM4cigd = model->BSIM4cigd
+                                     + model->BSIM4lcigd * Inv_L
+                                     + model->BSIM4wcigd * Inv_W
+                                     + model->BSIM4pcigd * Inv_LW;
                   pParam->BSIM4aigbacc = model->BSIM4aigbacc
                                        + model->BSIM4laigbacc * Inv_L
                                        + model->BSIM4waigbacc * Inv_W
@@ -1147,8 +1177,10 @@ int Size_Not_Found, i;
                                             / pParam->BSIM4poxedge / pParam->BSIM4poxedge;
                   pParam->BSIM4Aechvb = (model->BSIM4type == NMOS) ? 4.97232e-7 : 3.42537e-7;
                   pParam->BSIM4Bechvb = (model->BSIM4type == NMOS) ? 7.45669e11 : 1.16645e12;
-                  pParam->BSIM4AechvbEdge = pParam->BSIM4Aechvb * pParam->BSIM4weff
+                  pParam->BSIM4AechvbEdgeS = pParam->BSIM4Aechvb * pParam->BSIM4weff
 					  * model->BSIM4dlcig * pParam->BSIM4ToxRatioEdge;
+                  pParam->BSIM4AechvbEdgeD = pParam->BSIM4Aechvb * pParam->BSIM4weff
+					  * model->BSIM4dlcigd * pParam->BSIM4ToxRatioEdge;
                   pParam->BSIM4BechvbEdge = -pParam->BSIM4Bechvb
 					  * model->BSIM4toxe * pParam->BSIM4poxedge;
                   pParam->BSIM4Aechvb *= pParam->BSIM4weff * pParam->BSIM4leff
@@ -1796,9 +1828,12 @@ int Size_Not_Found, i;
 
 		/* GEDL current reverse bias */
 	        T0 = (TRatio - 1.0);
-                model->BSIM4njtstemp = model->BSIM4njts * (1.0 + model->BSIM4tnjts * T0);
-                model->BSIM4njtsswtemp = model->BSIM4njtssw * (1.0 + model->BSIM4tnjtssw * T0);
-                model->BSIM4njtsswgtemp = model->BSIM4njtsswg * (1.0 + model->BSIM4tnjtsswg * T0);
+                model->BSIM4njtsstemp = model->BSIM4njts * (1.0 + model->BSIM4tnjts * T0);
+                model->BSIM4njtsswstemp = model->BSIM4njtssw * (1.0 + model->BSIM4tnjtssw * T0);
+                model->BSIM4njtsswgstemp = model->BSIM4njtsswg * (1.0 + model->BSIM4tnjtsswg * T0);
+                model->BSIM4njtsdtemp = model->BSIM4njtsd * (1.0 + model->BSIM4tnjtsd * T0);
+                model->BSIM4njtsswdtemp = model->BSIM4njtsswd * (1.0 + model->BSIM4tnjtsswd * T0);
+                model->BSIM4njtsswgdtemp = model->BSIM4njtsswgd * (1.0 + model->BSIM4tnjtsswgd * T0);
                 T7 = Eg0 / model->BSIM4vtm * T0;
                 T9 = model->BSIM4xtss * T7;
                 DEXP(T9, T1);
@@ -1826,7 +1861,7 @@ int Size_Not_Found, i;
               {   IFuid namarray[2];
                   namarray[0] = model->BSIM4modName;
                   namarray[1] = here->BSIM4name;
-                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4.5.0 parameter checking for %s in model %s", namarray);
+                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4.6.0 parameter checking for %s in model %s", namarray);
                   return(E_BADPARM);
               }
          } /* End instance */

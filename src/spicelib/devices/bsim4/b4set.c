@@ -1,8 +1,8 @@
-/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
+/**** BSIM4.6.0 Released by Mohan Dunga 12/13/2006 ****/
 
 /**********
- * Copyright 2005 Regents of the University of California. All rights reserved.
- * File: b4set.c of BSIM4.5.0.
+ * Copyright 2006 Regents of the University of California. All rights reserved.
+ * File: b4set.c of BSIM4.6.0.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
@@ -12,6 +12,7 @@
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 03/04/2004.
  * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
+ * Modified by Mohan Dunga, 12/13/2006
 **********/
 
 #include "ngspice.h"
@@ -174,7 +175,7 @@ JOB   *job;
         }
 
         if (!model->BSIM4versionGiven) 
-            model->BSIM4version = "4.5.0";
+            model->BSIM4version = "4.6.0";
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4toxeGiven)
@@ -268,6 +269,8 @@ JOB   *job;
             model->BSIM4dsub = model->BSIM4drout;     
         if (!model->BSIM4vth0Given)
             model->BSIM4vth0 = (model->BSIM4type == NMOS) ? 0.7 : -0.7;
+	if (!model->BSIM4vfbGiven)
+	    model->BSIM4vfb = -1.0;
         if (!model->BSIM4euGiven)
             model->BSIM4eu = (model->BSIM4type == NMOS) ? 1.67 : 1.0;;
         if (!model->BSIM4uaGiven)
@@ -283,7 +286,7 @@ JOB   *job;
         if (!model->BSIM4uc1Given)
             model->BSIM4uc1 = (model->BSIM4mobMod == 1) ? -0.056 : -0.056e-9;   
         if (!model->BSIM4udGiven)
-            model->BSIM4ud = 1.0e14;     /* unit m**(-2) */
+            model->BSIM4ud = 0.0;     /* unit m**(-2) */
         if (!model->BSIM4ud1Given)
             model->BSIM4ud1 = 0.0;     
         if (!model->BSIM4upGiven)
@@ -370,18 +373,76 @@ JOB   *job;
             model->BSIM4cgidl = 0.5; /* V^3 */
         if (!model->BSIM4egidlGiven)
             model->BSIM4egidl = 0.8; /* V */
+        if (!model->BSIM4agislGiven)
+        {
+            if (model->BSIM4agidlGiven)
+                model->BSIM4agisl = model->BSIM4agidl;
+            else
+                model->BSIM4agisl = 0.0;
+        }
+        if (!model->BSIM4bgislGiven)
+        {
+            if (model->BSIM4bgidlGiven)
+                model->BSIM4bgisl = model->BSIM4bgidl;
+            else
+                model->BSIM4bgisl = 2.3e9; /* V/m */
+        }
+        if (!model->BSIM4cgislGiven)
+        {
+            if (model->BSIM4cgidlGiven)
+                model->BSIM4cgisl = model->BSIM4cgidl;
+            else
+                model->BSIM4cgisl = 0.5; /* V^3 */
+        }
+        if (!model->BSIM4egislGiven)
+        {
+            if (model->BSIM4egidlGiven)
+                model->BSIM4egisl = model->BSIM4egidl;
+            else
+                model->BSIM4egisl = 0.8; /* V */
+        }
         if (!model->BSIM4aigcGiven)
             model->BSIM4aigc = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
         if (!model->BSIM4bigcGiven)
             model->BSIM4bigc = (model->BSIM4type == NMOS) ? 1.71e-3 : 7.59e-4;
         if (!model->BSIM4cigcGiven)
             model->BSIM4cigc = (model->BSIM4type == NMOS) ? 0.075 : 0.03;
-        if (!model->BSIM4aigsdGiven)
+        if (model->BSIM4aigsdGiven)
+        {
+            model->BSIM4aigs = model->BSIM4aigd = model->BSIM4aigsd;
+        }
+        else
+        {
             model->BSIM4aigsd = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
-        if (!model->BSIM4bigsdGiven)
+            if (!model->BSIM4aigsGiven)
+                model->BSIM4aigs = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
+            if (!model->BSIM4aigdGiven)
+                model->BSIM4aigd = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
+        }
+        if (model->BSIM4bigsdGiven)
+        {
+            model->BSIM4bigs = model->BSIM4bigd = model->BSIM4bigsd;
+        }
+        else
+        {
             model->BSIM4bigsd = (model->BSIM4type == NMOS) ? 1.71e-3 : 7.59e-4;
-        if (!model->BSIM4cigsdGiven)
-            model->BSIM4cigsd = (model->BSIM4type == NMOS) ? 0.075 : 0.03;
+            if (!model->BSIM4bigsGiven)
+                model->BSIM4bigs = (model->BSIM4type == NMOS) ? 1.71e-3 : 7.59e-4;
+            if (!model->BSIM4bigdGiven)
+                model->BSIM4bigd = (model->BSIM4type == NMOS) ? 1.71e-3 : 7.59e-4;
+        }
+        if (model->BSIM4cigsdGiven)
+        {
+            model->BSIM4cigs = model->BSIM4cigd = model->BSIM4cigsd;
+        }
+        else
+        {
+             model->BSIM4cigsd = (model->BSIM4type == NMOS) ? 0.075 : 0.03;
+           if (!model->BSIM4cigsGiven)
+                model->BSIM4cigs = (model->BSIM4type == NMOS) ? 0.075 : 0.03;
+            if (!model->BSIM4cigdGiven)
+                model->BSIM4cigd = (model->BSIM4type == NMOS) ? 0.075 : 0.03;
+        }
         if (!model->BSIM4aigbaccGiven)
             model->BSIM4aigbacc = 1.36e-2;
         if (!model->BSIM4bigbaccGiven)
@@ -749,18 +810,79 @@ JOB   *job;
             model->BSIM4lcgidl = 0.0;
         if (!model->BSIM4legidlGiven)
             model->BSIM4legidl = 0.0;
+        if (!model->BSIM4lagislGiven)
+        {
+            if (model->BSIM4lagidlGiven)
+                model->BSIM4lagisl = model->BSIM4lagidl;
+            else
+                model->BSIM4lagisl = 0.0;
+        }
+        if (!model->BSIM4lbgislGiven)
+        {
+            if (model->BSIM4lbgidlGiven)
+                model->BSIM4lbgisl = model->BSIM4lbgidl;
+            else
+                model->BSIM4lbgisl = 0.0;
+        }
+        if (!model->BSIM4lcgislGiven)
+        {
+            if (model->BSIM4lcgidlGiven)
+                model->BSIM4lcgisl = model->BSIM4lcgidl;
+            else
+                model->BSIM4lcgisl = 0.0;
+        }
+        if (!model->BSIM4legislGiven)
+        {
+            if (model->BSIM4legidlGiven)
+                model->BSIM4legisl = model->BSIM4legidl;
+            else
+                model->BSIM4legisl = 0.0; 
+        }
         if (!model->BSIM4laigcGiven)
             model->BSIM4laigc = 0.0;
         if (!model->BSIM4lbigcGiven)
             model->BSIM4lbigc = 0.0;
         if (!model->BSIM4lcigcGiven)
             model->BSIM4lcigc = 0.0;
-        if (!model->BSIM4laigsdGiven)
-            model->BSIM4laigsd = 0.0;
-        if (!model->BSIM4lbigsdGiven)
-            model->BSIM4lbigsd = 0.0;
-        if (!model->BSIM4lcigsdGiven)
-            model->BSIM4lcigsd = 0.0;
+	if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
+        {
+            if (!model->BSIM4laigsGiven)
+                model->BSIM4laigs = 0.0;
+            if (!model->BSIM4laigdGiven)
+                model->BSIM4laigd = 0.0;
+        }
+        else
+	{
+	   if (!model->BSIM4laigsdGiven)
+	       model->BSIM4laigsd = 0.0;
+	   model->BSIM4laigs = model->BSIM4laigd = model->BSIM4laigsd;
+        }
+	if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
+        {
+            if (!model->BSIM4lbigsGiven)
+                model->BSIM4lbigs = 0.0;
+            if (!model->BSIM4lbigdGiven)
+                model->BSIM4lbigd = 0.0;
+        }
+        else
+	{
+	   if (!model->BSIM4lbigsdGiven)
+	       model->BSIM4lbigsd = 0.0;
+	   model->BSIM4lbigs = model->BSIM4lbigd = model->BSIM4lbigsd;
+        }
+	if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
+        {
+            if (!model->BSIM4lcigsGiven)
+                model->BSIM4lcigs = 0.0;
+            if (!model->BSIM4lcigdGiven)
+                model->BSIM4lcigd = 0.0;
+        }
+        else
+	{
+	   if (!model->BSIM4lcigsdGiven)
+	       model->BSIM4lcigsd = 0.0;
+	   model->BSIM4lcigs = model->BSIM4lcigd = model->BSIM4lcigsd;
+        }
         if (!model->BSIM4laigbaccGiven)
             model->BSIM4laigbacc = 0.0;
         if (!model->BSIM4lbigbaccGiven)
@@ -1003,18 +1125,79 @@ JOB   *job;
             model->BSIM4wcgidl = 0.0;
         if (!model->BSIM4wegidlGiven)
             model->BSIM4wegidl = 0.0;
+        if (!model->BSIM4wagislGiven)
+        {
+            if (model->BSIM4wagidlGiven)
+                model->BSIM4wagisl = model->BSIM4wagidl;
+            else
+                model->BSIM4wagisl = 0.0;
+        }
+        if (!model->BSIM4wbgislGiven)
+        {
+            if (model->BSIM4wbgidlGiven)
+                model->BSIM4wbgisl = model->BSIM4wbgidl;
+            else
+                model->BSIM4wbgisl = 0.0;
+        }
+        if (!model->BSIM4wcgislGiven)
+        {
+            if (model->BSIM4wcgidlGiven)
+                model->BSIM4wcgisl = model->BSIM4wcgidl;
+            else
+                model->BSIM4wcgisl = 0.0;
+        }
+        if (!model->BSIM4wegislGiven)
+        {
+            if (model->BSIM4wegidlGiven)
+                model->BSIM4wegisl = model->BSIM4wegidl;
+            else
+                model->BSIM4wegisl = 0.0; 
+        }
         if (!model->BSIM4waigcGiven)
             model->BSIM4waigc = 0.0;
         if (!model->BSIM4wbigcGiven)
             model->BSIM4wbigc = 0.0;
         if (!model->BSIM4wcigcGiven)
             model->BSIM4wcigc = 0.0;
-        if (!model->BSIM4waigsdGiven)
-            model->BSIM4waigsd = 0.0;
-        if (!model->BSIM4wbigsdGiven)
-            model->BSIM4wbigsd = 0.0;
-        if (!model->BSIM4wcigsdGiven)
-            model->BSIM4wcigsd = 0.0;
+	if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
+        {
+            if (!model->BSIM4waigsGiven)
+                model->BSIM4waigs = 0.0;
+            if (!model->BSIM4waigdGiven)
+                model->BSIM4waigd = 0.0;
+        }
+        else
+	{
+	   if (!model->BSIM4waigsdGiven)
+	       model->BSIM4waigsd = 0.0;
+	   model->BSIM4waigs = model->BSIM4waigd = model->BSIM4waigsd;
+        }
+	if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
+        {
+            if (!model->BSIM4wbigsGiven)
+                model->BSIM4wbigs = 0.0;
+            if (!model->BSIM4wbigdGiven)
+                model->BSIM4wbigd = 0.0;
+        }
+        else
+	{
+	   if (!model->BSIM4wbigsdGiven)
+	       model->BSIM4wbigsd = 0.0;
+	   model->BSIM4wbigs = model->BSIM4wbigd = model->BSIM4wbigsd;
+        }
+	if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
+        {
+            if (!model->BSIM4wcigsGiven)
+                model->BSIM4wcigs = 0.0;
+            if (!model->BSIM4wcigdGiven)
+                model->BSIM4wcigd = 0.0;
+        }
+        else
+	{
+	   if (!model->BSIM4wcigsdGiven)
+	       model->BSIM4wcigsd = 0.0;
+	   model->BSIM4wcigs = model->BSIM4wcigd = model->BSIM4wcigsd;
+        }
         if (!model->BSIM4waigbaccGiven)
             model->BSIM4waigbacc = 0.0;
         if (!model->BSIM4wbigbaccGiven)
@@ -1257,18 +1440,79 @@ JOB   *job;
             model->BSIM4pcgidl = 0.0;
         if (!model->BSIM4pegidlGiven)
             model->BSIM4pegidl = 0.0;
+        if (!model->BSIM4pagislGiven)
+        {
+            if (model->BSIM4pagidlGiven)
+                model->BSIM4pagisl = model->BSIM4pagidl;
+            else
+                model->BSIM4pagisl = 0.0;
+        }
+        if (!model->BSIM4pbgislGiven)
+        {
+            if (model->BSIM4pbgidlGiven)
+                model->BSIM4pbgisl = model->BSIM4pbgidl;
+            else
+                model->BSIM4pbgisl = 0.0;
+        }
+        if (!model->BSIM4pcgislGiven)
+        {
+            if (model->BSIM4pcgidlGiven)
+                model->BSIM4pcgisl = model->BSIM4pcgidl;
+            else
+                model->BSIM4pcgisl = 0.0;
+        }
+        if (!model->BSIM4pegislGiven)
+        {
+            if (model->BSIM4pegidlGiven)
+                model->BSIM4pegisl = model->BSIM4pegidl;
+            else
+                model->BSIM4pegisl = 0.0; 
+        }
         if (!model->BSIM4paigcGiven)
             model->BSIM4paigc = 0.0;
         if (!model->BSIM4pbigcGiven)
             model->BSIM4pbigc = 0.0;
         if (!model->BSIM4pcigcGiven)
             model->BSIM4pcigc = 0.0;
-        if (!model->BSIM4paigsdGiven)
-            model->BSIM4paigsd = 0.0;
-        if (!model->BSIM4pbigsdGiven)
-            model->BSIM4pbigsd = 0.0;
-        if (!model->BSIM4pcigsdGiven)
-            model->BSIM4pcigsd = 0.0;
+	if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
+        {
+            if (!model->BSIM4paigsGiven)
+                model->BSIM4paigs = 0.0;
+            if (!model->BSIM4paigdGiven)
+                model->BSIM4paigd = 0.0;
+        }
+        else
+	{
+	   if (!model->BSIM4paigsdGiven)
+	       model->BSIM4paigsd = 0.0;
+	   model->BSIM4paigs = model->BSIM4paigd = model->BSIM4paigsd;
+        }
+	if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
+        {
+            if (!model->BSIM4pbigsGiven)
+                model->BSIM4pbigs = 0.0;
+            if (!model->BSIM4pbigdGiven)
+                model->BSIM4pbigd = 0.0;
+        }
+        else
+	{
+	   if (!model->BSIM4pbigsdGiven)
+	       model->BSIM4pbigsd = 0.0;
+	   model->BSIM4pbigs = model->BSIM4pbigd = model->BSIM4pbigsd;
+        }
+	if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
+        {
+            if (!model->BSIM4pcigsGiven)
+                model->BSIM4pcigs = 0.0;
+            if (!model->BSIM4pcigdGiven)
+                model->BSIM4pcigd = 0.0;
+        }
+        else
+	{
+	   if (!model->BSIM4pcigsdGiven)
+	       model->BSIM4pcigsd = 0.0;
+	   model->BSIM4pcigs = model->BSIM4pcigd = model->BSIM4pcigsd;
+        }
         if (!model->BSIM4paigbaccGiven)
             model->BSIM4paigbacc = 0.0;
         if (!model->BSIM4pbigbaccGiven)
@@ -1423,6 +1667,13 @@ JOB   *job;
            model->BSIM4xw = 0.0;
         if (!model->BSIM4dlcigGiven)
            model->BSIM4dlcig = model->BSIM4Lint;
+        if (!model->BSIM4dlcigdGiven)
+        {
+           if (model->BSIM4dlcigGiven) 
+               model->BSIM4dlcigd = model->BSIM4dlcig;
+	   else	     
+               model->BSIM4dlcigd = model->BSIM4Lint;
+        }
         if (!model->BSIM4dwjGiven)
            model->BSIM4dwj = model->BSIM4dwc;
 	if (!model->BSIM4cfGiven)
@@ -1509,6 +1760,27 @@ JOB   *job;
             model->BSIM4njtssw = 20.0;
         if (!model->BSIM4njtsswgGiven)
             model->BSIM4njtsswg = 20.0;
+	if (!model->BSIM4njtsdGiven)
+        {
+            if (model->BSIM4njtsGiven)
+                model->BSIM4njtsd =  model->BSIM4njts;
+	    else
+	      model->BSIM4njtsd = 20.0;
+        }
+	if (!model->BSIM4njtsswdGiven)
+        {
+            if (model->BSIM4njtsswGiven)
+                model->BSIM4njtsswd =  model->BSIM4njtssw;
+	    else
+	      model->BSIM4njtsswd = 20.0;
+        }
+	if (!model->BSIM4njtsswgdGiven)
+        {
+            if (model->BSIM4njtsswgGiven)
+                model->BSIM4njtsswgd =  model->BSIM4njtsswg;
+	    else
+	      model->BSIM4njtsswgd = 20.0;
+        }
         if (!model->BSIM4xtssGiven)
             model->BSIM4xtss = 0.02;
         if (!model->BSIM4xtsdGiven)
@@ -1527,6 +1799,27 @@ JOB   *job;
             model->BSIM4tnjtssw = 0.0;
         if (!model->BSIM4tnjtsswgGiven)
             model->BSIM4tnjtsswg = 0.0;
+	if (!model->BSIM4tnjtsdGiven)
+        {
+            if (model->BSIM4tnjtsGiven)
+                model->BSIM4tnjtsd =  model->BSIM4tnjts;
+	    else
+	      model->BSIM4tnjtsd = 0.0;
+        }
+	if (!model->BSIM4tnjtsswdGiven)
+        {
+            if (model->BSIM4tnjtsswGiven)
+                model->BSIM4tnjtsswd =  model->BSIM4tnjtssw;
+	    else
+	      model->BSIM4tnjtsswd = 0.0;
+        }
+	if (!model->BSIM4tnjtsswgdGiven)
+        {
+            if (model->BSIM4tnjtsswgGiven)
+                model->BSIM4tnjtsswgd =  model->BSIM4tnjtsswg;
+	    else
+	      model->BSIM4tnjtsswgd = 0.0;
+        }
         if (!model->BSIM4vtssGiven)
             model->BSIM4vtss = 10.0;
         if (!model->BSIM4vtsdGiven)
@@ -1733,7 +2026,7 @@ JOB   *job;
             if (!here->BSIM4geoModGiven)
                 here->BSIM4geoMod = model->BSIM4geoMod;
             if (!here->BSIM4rgeoModGiven)
-                here->BSIM4rgeoMod = 0;
+                here->BSIM4rgeoMod = 0.0;
             if (!here->BSIM4trnqsModGiven)
                 here->BSIM4trnqsMod = model->BSIM4trnqsMod;
             else if ((here->BSIM4trnqsMod != 0) && (here->BSIM4trnqsMod != 1))

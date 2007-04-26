@@ -1,10 +1,11 @@
-/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
+/**** BSIM4.6.0 Released by Mohan Dunga 12/13/2006 ****/
 
 /**********
- * Copyright 2005 Regents of the University of California. All rights reserved.
- * File: b4check.c of BSIM4.5.0.
+ * Copyright 2006 Regents of the University of California. All rights reserved.
+ * File: b4check.c of BSIM4.6.0.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
+ * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
@@ -12,6 +13,7 @@
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 03/04/2004.
  * Modified by Xuemei Xi, 07/29/2005.
+ * Modified by Mohan Dunga, 12/13/2006
  **********/
 
 #include "ngspice.h"
@@ -40,9 +42,9 @@ FILE *fplog;
         fprintf(fplog, "\n");
 	fprintf(fplog, "++++++++++ BSIM4 PARAMETER CHECKING BELOW ++++++++++\n");
 
-        if (strcmp(model->BSIM4version, "4.5.0") != 0)
-        {  fprintf(fplog, "Warning: This model is BSIM4.5.0; you specified a wrong version number.\n");
-           printf("Warning: This model is BSIM4.5.0; you specified a wrong version number.\n");
+        if (strcmp(model->BSIM4version, "4.6.0") != 0)
+        {  fprintf(fplog, "Warning: This model is BSIM4.6.0; you specified a wrong version number.\n");
+           printf("Warning: This model is BSIM4.6.0; you specified a wrong version number.\n");
         }
 	fprintf(fplog, "Model = %s\n", model->BSIM4modName);
 
@@ -721,24 +723,45 @@ FILE *fplog;
 	    printf("Warning: Njd = %g is negative.\n",
 		    model->BSIM4DjctEmissionCoeff);
 	}
-	if (model->BSIM4njtstemp < 0.0)
+        
+	if (model->BSIM4njtsstemp < 0.0)
 	{   fprintf(fplog, "Warning: Njts = %g is negative at temperature = %g.\n",
-		    model->BSIM4njtstemp, ckt->CKTtemp);
+                    model->BSIM4njtsstemp, ckt->CKTtemp);
 	    printf("Warning: Njts = %g is negative at temperature = %g.\n",
-		    model->BSIM4njtstemp, ckt->CKTtemp);
+                   model->BSIM4njtsstemp, ckt->CKTtemp);
 	}
-	if (model->BSIM4njtsswtemp < 0.0)
+	if (model->BSIM4njtsswstemp < 0.0)
 	{   fprintf(fplog, "Warning: Njtssw = %g is negative at temperature = %g.\n",
-		    model->BSIM4njtsswtemp, ckt->CKTtemp);
+                    model->BSIM4njtsswstemp, ckt->CKTtemp);
 	    printf("Warning: Njtssw = %g is negative at temperature = %g.\n",
-		    model->BSIM4njtsswtemp, ckt->CKTtemp);
+		    model->BSIM4njtsswstemp, ckt->CKTtemp);
 	}
-	if (model->BSIM4njtsswgtemp < 0.0)
+	if (model->BSIM4njtsswgstemp < 0.0)
 	{   fprintf(fplog, "Warning: Njtsswg = %g is negative at temperature = %g.\n",
-		    model->BSIM4njtsswgtemp, ckt->CKTtemp);
+		    model->BSIM4njtsswgstemp, ckt->CKTtemp);
 	    printf("Warning: Njtsswg = %g is negative at temperature = %g.\n",
-		    model->BSIM4njtsswgtemp, ckt->CKTtemp);
+		    model->BSIM4njtsswgstemp, ckt->CKTtemp);
 	}
+
+	if (model->BSIM4njtsdGiven && model->BSIM4njtsdtemp < 0.0)
+	{   fprintf(fplog, "Warning: Njtsd = %g is negative at temperature = %g.\n",
+		    model->BSIM4njtsdtemp, ckt->CKTtemp);
+	    printf("Warning: Njtsd = %g is negative at temperature = %g.\n",
+		    model->BSIM4njtsdtemp, ckt->CKTtemp);
+	}
+	if (model->BSIM4njtsswdGiven && model->BSIM4njtsswdtemp < 0.0)
+	{   fprintf(fplog, "Warning: Njtsswd = %g is negative at temperature = %g.\n",
+		    model->BSIM4njtsswdtemp, ckt->CKTtemp);
+	    printf("Warning: Njtsswd = %g is negative at temperature = %g.\n",
+		    model->BSIM4njtsswdtemp, ckt->CKTtemp);
+	}
+	if (model->BSIM4njtsswgdGiven && model->BSIM4njtsswgdtemp < 0.0)
+	{   fprintf(fplog, "Warning: Njtsswgd = %g is negative at temperature = %g.\n",
+		    model->BSIM4njtsswgdtemp, ckt->CKTtemp);
+	    printf("Warning: Njtsswgd = %g is negative at temperature = %g.\n",
+		    model->BSIM4njtsswgdtemp, ckt->CKTtemp);
+	}
+
        if (model->BSIM4ntnoi < 0.0)
         {   fprintf(fplog, "Warning: ntnoi = %g is negative. Set to zero.\n", model->BSIM4ntnoi);
             printf("Warning: ntnoi = %g is negative. Set to zero.\n", model->BSIM4ntnoi);

@@ -1,11 +1,16 @@
+/**** BSIM4.6.0 Released by Mohan Dunga 12/13/2006 ****/
+
 /**********
-Copyright 2005 Regents of the University of California.  All rights reserved.
+Copyright 2006 Regents of the University of California.  All rights reserved.
 Author: 2000 Weidong Liu.
+Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
+Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
 Modified by Xuemei Xi, 11/15/2002.
 Modified by Xuemei Xi, 05/09/2003.
 Modified by Xuemei Xi, 03/04/2004.
 Modified by Xuemei Xi, Mohan Dunga, 09/24/2004.
 Modified by Xuemei Xi, 07/29/2005.
+Modified by Mohan Dunga, 12/13/2006
 File: bsim4def.h
 **********/
 
@@ -17,7 +22,7 @@ File: bsim4def.h
 #include "cktdefs.h"
 #include "complex.h"
 #include "noisedef.h"
-         
+
 typedef struct sBSIM4instance
 {
     struct sBSIM4model *BSIM4modPtr;
@@ -545,12 +550,19 @@ struct bsim4SizeDependParam
     double BSIM4bgidl;
     double BSIM4cgidl;
     double BSIM4egidl;
+    double BSIM4agisl;
+    double BSIM4bgisl;
+    double BSIM4cgisl;
+    double BSIM4egisl;
     double BSIM4aigc;
     double BSIM4bigc;
     double BSIM4cigc;
-    double BSIM4aigsd;
-    double BSIM4bigsd;
-    double BSIM4cigsd;
+    double BSIM4aigs;
+    double BSIM4bigs;
+    double BSIM4cigs;
+    double BSIM4aigd;
+    double BSIM4bigd;
+    double BSIM4cigd;
     double BSIM4aigbacc;
     double BSIM4bigbacc;
     double BSIM4cigbacc;
@@ -608,7 +620,6 @@ struct bsim4SizeDependParam
 
     double BSIM4dwc;
     double BSIM4dlc;
-    double BSIM4dlcig;
     double BSIM4dwj;
     double BSIM4leffCV;
     double BSIM4weffCV;
@@ -642,13 +653,13 @@ struct bsim4SizeDependParam
     double BSIM4Aechvb;
     double BSIM4Bechvb;
     double BSIM4ToxRatioEdge;
-    double BSIM4AechvbEdge;
+    double BSIM4AechvbEdgeS;
+    double BSIM4AechvbEdgeD;
     double BSIM4BechvbEdge;
     double BSIM4ldeb;
     double BSIM4k1ox;
     double BSIM4k2ox;
     double BSIM4vfbzbfactor;
-
 
     struct bsim4SizeDependParam  *pNext;
 };
@@ -781,12 +792,22 @@ typedef struct sBSIM4model
     double BSIM4bgidl;
     double BSIM4cgidl;
     double BSIM4egidl;
+    double BSIM4agisl;
+    double BSIM4bgisl;
+    double BSIM4cgisl;
+    double BSIM4egisl;
     double BSIM4aigc;
     double BSIM4bigc;
     double BSIM4cigc;
     double BSIM4aigsd;
     double BSIM4bigsd;
     double BSIM4cigsd;
+    double BSIM4aigs;
+    double BSIM4bigs;
+    double BSIM4cigs;
+    double BSIM4aigd;
+    double BSIM4bigd;
+    double BSIM4cigd;
     double BSIM4aigbacc;
     double BSIM4bigbacc;
     double BSIM4cigbacc;
@@ -819,6 +840,9 @@ typedef struct sBSIM4model
     double BSIM4njts;
     double BSIM4njtssw;
     double BSIM4njtsswg;
+    double BSIM4njtsd;
+    double BSIM4njtsswd;
+    double BSIM4njtsswgd;
     double BSIM4xtss;
     double BSIM4xtsd;
     double BSIM4xtssws;
@@ -828,6 +852,9 @@ typedef struct sBSIM4model
     double BSIM4tnjts;
     double BSIM4tnjtssw;
     double BSIM4tnjtsswg;
+    double BSIM4tnjtsd;
+    double BSIM4tnjtsswd;
+    double BSIM4tnjtsswgd;
     double BSIM4vtss;
     double BSIM4vtsd;
     double BSIM4vtssws;
@@ -904,6 +931,7 @@ typedef struct sBSIM4model
     double BSIM4xw;
     double BSIM4xl;
     double BSIM4dlcig;
+    double BSIM4dlcigd;
     double BSIM4dwj;
     double BSIM4noff;
     double BSIM4voffcv;
@@ -1017,12 +1045,22 @@ typedef struct sBSIM4model
     double BSIM4lbgidl;
     double BSIM4lcgidl;
     double BSIM4legidl;
+    double BSIM4lagisl;
+    double BSIM4lbgisl;
+    double BSIM4lcgisl;
+    double BSIM4legisl;
     double BSIM4laigc;
     double BSIM4lbigc;
     double BSIM4lcigc;
     double BSIM4laigsd;
     double BSIM4lbigsd;
     double BSIM4lcigsd;
+    double BSIM4laigs;
+    double BSIM4lbigs;
+    double BSIM4lcigs;
+    double BSIM4laigd;
+    double BSIM4lbigd;
+    double BSIM4lcigd;
     double BSIM4laigbacc;
     double BSIM4lbigbacc;
     double BSIM4lcigbacc;
@@ -1151,12 +1189,22 @@ typedef struct sBSIM4model
     double BSIM4wbgidl;
     double BSIM4wcgidl;
     double BSIM4wegidl;
+    double BSIM4wagisl;
+    double BSIM4wbgisl;
+    double BSIM4wcgisl;
+    double BSIM4wegisl;
     double BSIM4waigc;
     double BSIM4wbigc;
     double BSIM4wcigc;
     double BSIM4waigsd;
     double BSIM4wbigsd;
     double BSIM4wcigsd;
+    double BSIM4waigs;
+    double BSIM4wbigs;
+    double BSIM4wcigs;
+    double BSIM4waigd;
+    double BSIM4wbigd;
+    double BSIM4wcigd;
     double BSIM4waigbacc;
     double BSIM4wbigbacc;
     double BSIM4wcigbacc;
@@ -1285,12 +1333,22 @@ typedef struct sBSIM4model
     double BSIM4pbgidl;
     double BSIM4pcgidl;
     double BSIM4pegidl;
+    double BSIM4pagisl;
+    double BSIM4pbgisl;
+    double BSIM4pcgisl;
+    double BSIM4pegisl;
     double BSIM4paigc;
     double BSIM4pbigc;
     double BSIM4pcigc;
     double BSIM4paigsd;
     double BSIM4pbigsd;
     double BSIM4pcigsd;
+    double BSIM4paigs;
+    double BSIM4pbigs;
+    double BSIM4pcigs;
+    double BSIM4paigd;
+    double BSIM4pbigd;
+    double BSIM4pcigd;
     double BSIM4paigbacc;
     double BSIM4pbigbacc;
     double BSIM4pcigbacc;
@@ -1363,9 +1421,12 @@ typedef struct sBSIM4model
     double BSIM4DjctEmissionCoeff;
     double BSIM4SjctTempExponent;
     double BSIM4DjctTempExponent;
-    double BSIM4njtstemp;
-    double BSIM4njtsswtemp;
-    double BSIM4njtsswgtemp;
+    double BSIM4njtsstemp;
+    double BSIM4njtsswstemp;
+    double BSIM4njtsswgstemp;
+    double BSIM4njtsdtemp;
+    double BSIM4njtsswdtemp;
+    double BSIM4njtsswgdtemp;
 
     double BSIM4Lint;
     double BSIM4Ll;
@@ -1594,12 +1655,22 @@ typedef struct sBSIM4model
     unsigned  BSIM4bgidlGiven   :1;
     unsigned  BSIM4cgidlGiven   :1;
     unsigned  BSIM4egidlGiven   :1;
+    unsigned  BSIM4agislGiven   :1;
+    unsigned  BSIM4bgislGiven   :1;
+    unsigned  BSIM4cgislGiven   :1;
+    unsigned  BSIM4egislGiven   :1;
     unsigned  BSIM4aigcGiven   :1;
     unsigned  BSIM4bigcGiven   :1;
     unsigned  BSIM4cigcGiven   :1;
     unsigned  BSIM4aigsdGiven   :1;
     unsigned  BSIM4bigsdGiven   :1;
     unsigned  BSIM4cigsdGiven   :1;
+    unsigned  BSIM4aigsGiven   :1;
+    unsigned  BSIM4bigsGiven   :1;
+    unsigned  BSIM4cigsGiven   :1;
+    unsigned  BSIM4aigdGiven   :1;
+    unsigned  BSIM4bigdGiven   :1;
+    unsigned  BSIM4cigdGiven   :1;
     unsigned  BSIM4aigbaccGiven   :1;
     unsigned  BSIM4bigbaccGiven   :1;
     unsigned  BSIM4cigbaccGiven   :1;
@@ -1631,6 +1702,9 @@ typedef struct sBSIM4model
     unsigned  BSIM4njtsGiven   :1;
     unsigned  BSIM4njtsswGiven   :1;
     unsigned  BSIM4njtsswgGiven   :1;
+    unsigned  BSIM4njtsdGiven   :1;
+    unsigned  BSIM4njtsswdGiven   :1;
+    unsigned  BSIM4njtsswgdGiven   :1;
     unsigned  BSIM4xtssGiven   :1;
     unsigned  BSIM4xtsdGiven   :1;
     unsigned  BSIM4xtsswsGiven   :1;
@@ -1640,6 +1714,9 @@ typedef struct sBSIM4model
     unsigned  BSIM4tnjtsGiven   :1;
     unsigned  BSIM4tnjtsswGiven   :1;
     unsigned  BSIM4tnjtsswgGiven   :1;
+    unsigned  BSIM4tnjtsdGiven   :1;
+    unsigned  BSIM4tnjtsswdGiven   :1;
+    unsigned  BSIM4tnjtsswgdGiven   :1;
     unsigned  BSIM4vtssGiven   :1;
     unsigned  BSIM4vtsdGiven   :1;
     unsigned  BSIM4vtsswsGiven   :1;
@@ -1716,6 +1793,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4xwGiven    :1;
     unsigned  BSIM4xlGiven    :1;
     unsigned  BSIM4dlcigGiven   :1;
+    unsigned  BSIM4dlcigdGiven   :1;
     unsigned  BSIM4dwjGiven   :1;
     unsigned  BSIM4noffGiven  :1;
     unsigned  BSIM4voffcvGiven :1;
@@ -1830,12 +1908,22 @@ typedef struct sBSIM4model
     unsigned  BSIM4lbgidlGiven   :1;
     unsigned  BSIM4lcgidlGiven   :1;
     unsigned  BSIM4legidlGiven   :1;
+    unsigned  BSIM4lagislGiven   :1;
+    unsigned  BSIM4lbgislGiven   :1;
+    unsigned  BSIM4lcgislGiven   :1;
+    unsigned  BSIM4legislGiven   :1;
     unsigned  BSIM4laigcGiven   :1;
     unsigned  BSIM4lbigcGiven   :1;
     unsigned  BSIM4lcigcGiven   :1;
     unsigned  BSIM4laigsdGiven   :1;
     unsigned  BSIM4lbigsdGiven   :1;
     unsigned  BSIM4lcigsdGiven   :1;
+    unsigned  BSIM4laigsGiven   :1;
+    unsigned  BSIM4lbigsGiven   :1;
+    unsigned  BSIM4lcigsGiven   :1;
+    unsigned  BSIM4laigdGiven   :1;
+    unsigned  BSIM4lbigdGiven   :1;
+    unsigned  BSIM4lcigdGiven   :1;
     unsigned  BSIM4laigbaccGiven   :1;
     unsigned  BSIM4lbigbaccGiven   :1;
     unsigned  BSIM4lcigbaccGiven   :1;
@@ -1964,12 +2052,22 @@ typedef struct sBSIM4model
     unsigned  BSIM4wbgidlGiven   :1;
     unsigned  BSIM4wcgidlGiven   :1;
     unsigned  BSIM4wegidlGiven   :1;
+    unsigned  BSIM4wagislGiven   :1;
+    unsigned  BSIM4wbgislGiven   :1;
+    unsigned  BSIM4wcgislGiven   :1;
+    unsigned  BSIM4wegislGiven   :1;
     unsigned  BSIM4waigcGiven   :1;
     unsigned  BSIM4wbigcGiven   :1;
     unsigned  BSIM4wcigcGiven   :1;
     unsigned  BSIM4waigsdGiven   :1;
     unsigned  BSIM4wbigsdGiven   :1;
     unsigned  BSIM4wcigsdGiven   :1;
+    unsigned  BSIM4waigsGiven   :1;
+    unsigned  BSIM4wbigsGiven   :1;
+    unsigned  BSIM4wcigsGiven   :1;
+    unsigned  BSIM4waigdGiven   :1;
+    unsigned  BSIM4wbigdGiven   :1;
+    unsigned  BSIM4wcigdGiven   :1;
     unsigned  BSIM4waigbaccGiven   :1;
     unsigned  BSIM4wbigbaccGiven   :1;
     unsigned  BSIM4wcigbaccGiven   :1;
@@ -2098,12 +2196,22 @@ typedef struct sBSIM4model
     unsigned  BSIM4pbgidlGiven   :1;
     unsigned  BSIM4pcgidlGiven   :1;
     unsigned  BSIM4pegidlGiven   :1;
+    unsigned  BSIM4pagislGiven   :1;
+    unsigned  BSIM4pbgislGiven   :1;
+    unsigned  BSIM4pcgislGiven   :1;
+    unsigned  BSIM4pegislGiven   :1;
     unsigned  BSIM4paigcGiven   :1;
     unsigned  BSIM4pbigcGiven   :1;
     unsigned  BSIM4pcigcGiven   :1;
     unsigned  BSIM4paigsdGiven   :1;
     unsigned  BSIM4pbigsdGiven   :1;
     unsigned  BSIM4pcigsdGiven   :1;
+    unsigned  BSIM4paigsGiven   :1;
+    unsigned  BSIM4pbigsGiven   :1;
+    unsigned  BSIM4pcigsGiven   :1;
+    unsigned  BSIM4paigdGiven   :1;
+    unsigned  BSIM4pbigdGiven   :1;
+    unsigned  BSIM4pcigdGiven   :1;
     unsigned  BSIM4paigbaccGiven   :1;
     unsigned  BSIM4pbigbaccGiven   :1;
     unsigned  BSIM4pcigbaccGiven   :1;
@@ -3156,6 +3264,56 @@ typedef struct sBSIM4model
 #define BSIM4_MOD_RBSDBYL             1124
 #define BSIM4_MOD_RBSDBYW             1125
 #define BSIM4_MOD_RBSDBYNF            1126
+
+#define BSIM4_MOD_AGISL               1200
+#define BSIM4_MOD_BGISL               1201
+#define BSIM4_MOD_EGISL               1202
+#define BSIM4_MOD_CGISL               1203
+#define BSIM4_MOD_LAGISL              1204
+#define BSIM4_MOD_LBGISL              1205
+#define BSIM4_MOD_LEGISL              1206
+#define BSIM4_MOD_LCGISL              1207
+#define BSIM4_MOD_WAGISL              1208
+#define BSIM4_MOD_WBGISL              1209
+#define BSIM4_MOD_WEGISL              1210
+#define BSIM4_MOD_WCGISL              1211
+#define BSIM4_MOD_PAGISL              1212
+#define BSIM4_MOD_PBGISL              1213
+#define BSIM4_MOD_PEGISL              1214
+#define BSIM4_MOD_PCGISL              1215
+
+#define BSIM4_MOD_AIGS                1220
+#define BSIM4_MOD_BIGS                1221
+#define BSIM4_MOD_CIGS                1222
+#define BSIM4_MOD_LAIGS               1223
+#define BSIM4_MOD_LBIGS               1224
+#define BSIM4_MOD_LCIGS               1225
+#define BSIM4_MOD_WAIGS               1226
+#define BSIM4_MOD_WBIGS               1227
+#define BSIM4_MOD_WCIGS               1228
+#define BSIM4_MOD_PAIGS               1229
+#define BSIM4_MOD_PBIGS               1230
+#define BSIM4_MOD_PCIGS               1231
+#define BSIM4_MOD_AIGD                1232
+#define BSIM4_MOD_BIGD                1233
+#define BSIM4_MOD_CIGD                1234
+#define BSIM4_MOD_LAIGD               1235
+#define BSIM4_MOD_LBIGD               1236
+#define BSIM4_MOD_LCIGD               1237
+#define BSIM4_MOD_WAIGD               1238
+#define BSIM4_MOD_WBIGD               1239
+#define BSIM4_MOD_WCIGD               1240
+#define BSIM4_MOD_PAIGD               1241
+#define BSIM4_MOD_PBIGD               1242
+#define BSIM4_MOD_PCIGD               1243
+#define BSIM4_MOD_DLCIGD              1244
+
+#define BSIM4_MOD_NJTSD               1250
+#define BSIM4_MOD_NJTSSWD             1251
+#define BSIM4_MOD_NJTSSWGD            1252
+#define BSIM4_MOD_TNJTSD              1253
+#define BSIM4_MOD_TNJTSSWD            1254
+#define BSIM4_MOD_TNJTSSWGD           1255
 
 #include "bsim4ext.h"
 

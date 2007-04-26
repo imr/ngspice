@@ -1,10 +1,11 @@
-/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
+/**** BSIM4.6.0 Released by Mohan Dunga 12/13/2006 ****/
 
 /**********
- * Copyright 2005 Regents of the University of California. All rights reserved.
- * File: b4ld.c of BSIM4.5.0.
+ * Copyright 2006 Regents of the University of California. All rights reserved.
+ * File: b4ld.c of BSIM4.6.0.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
+ * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu 
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
@@ -12,6 +13,7 @@
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 02/06/2004.
  * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
+ * Modified by Mohan Dunga, 12/13/2006.
  **********/
 
 #include "ngspice.h"
@@ -185,7 +187,8 @@ double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Qac0, Qsub0;
 double dQac0_dVg, dQac0_dVb, dQsub0_dVg, dQsub0_dVd, dQsub0_dVb;
 double ggidld, ggidlg, ggidlb, ggislg, ggislb, ggisls;
 double Igisl, Ggislg, Ggislb, Ggisls;
-double Nvtmrs, Nvtmrssw, Nvtmrsswg;
+double Nvtmrss, Nvtmrssws, Nvtmrsswgs;
+double Nvtmrsd, Nvtmrsswd, Nvtmrsswgd;
 
 double vs, Fsevl, dvs_dVg, dvs_dVd, dvs_dVb, dFsevl_dVg, dFsevl_dVd, dFsevl_dVb;
 double vgdx, vgsx;
@@ -199,7 +202,7 @@ ChargeComputationNeeded =
                  ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
                  ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
                  ? 1 : 0;
-ChargeComputationNeeded = 1;
+/* ChargeComputationNeeded = 1; Wrong ??PN */
 
 for (; model != NULL; model = model->BSIM4nextModel)
 {    for (here = model->BSIM4instances; here != NULL; 
@@ -846,84 +849,87 @@ for (; model != NULL; model = model->BSIM4nextModel)
           } 
 
 	   /* trap-assisted tunneling and recombination current for reverse bias  */
-          Nvtmrssw = model->BSIM4vtm0 * model->BSIM4njtsswtemp;
-          Nvtmrsswg = model->BSIM4vtm0 * model->BSIM4njtsswgtemp;
-          Nvtmrs = model->BSIM4vtm0 * model->BSIM4njtstemp;
+          Nvtmrssws = model->BSIM4vtm0 * model->BSIM4njtsswstemp;
+          Nvtmrsswgs = model->BSIM4vtm0 * model->BSIM4njtsswgstemp;
+          Nvtmrss = model->BSIM4vtm0 * model->BSIM4njtsstemp;
+          Nvtmrsswd = model->BSIM4vtm0 * model->BSIM4njtsswdtemp;
+          Nvtmrsswgd = model->BSIM4vtm0 * model->BSIM4njtsswgdtemp;
+          Nvtmrsd = model->BSIM4vtm0 * model->BSIM4njtsdtemp;
 
         if ((model->BSIM4vtss - vbs_jct) < (model->BSIM4vtss * 1e-3))
         { T9 = 1.0e3; 
-          T0 = - vbs_jct / Nvtmrs * T9;
+          T0 = - vbs_jct / Nvtmrss * T9;
           DEXP(T0, T1, T10);
-          dT1_dVb = T10 / Nvtmrs * T9; 
+          dT1_dVb = T10 / Nvtmrss * T9; 
         } else {
           T9 = 1.0 / (model->BSIM4vtss - vbs_jct);
-          T0 = -vbs_jct / Nvtmrs * model->BSIM4vtss * T9;
-          dT0_dVb = model->BSIM4vtss / Nvtmrs * (T9 + vbs_jct * T9 * T9) ;
+          T0 = -vbs_jct / Nvtmrss * model->BSIM4vtss * T9;
+          dT0_dVb = model->BSIM4vtss / Nvtmrss * (T9 + vbs_jct * T9 * T9) ;
           DEXP(T0, T1, T10);
           dT1_dVb = T10 * dT0_dVb;
         }
 
        if ((model->BSIM4vtsd - vbd_jct) < (model->BSIM4vtsd * 1e-3) )
         { T9 = 1.0e3;
-          T0 = -vbd_jct / Nvtmrs * T9;
+          T0 = -vbd_jct / Nvtmrsd * T9;
           DEXP(T0, T2, T10);
-          dT2_dVb = T10 / Nvtmrs * T9; 
+          dT2_dVb = T10 / Nvtmrsd * T9; 
         } else {
           T9 = 1.0 / (model->BSIM4vtsd - vbd_jct);
-          T0 = -vbd_jct / Nvtmrs * model->BSIM4vtsd * T9;
-          dT0_dVb = model->BSIM4vtsd / Nvtmrs * (T9 + vbd_jct * T9 * T9) ;
+          T0 = -vbd_jct / Nvtmrsd * model->BSIM4vtsd * T9;
+          dT0_dVb = model->BSIM4vtsd / Nvtmrsd * (T9 + vbd_jct * T9 * T9) ;
           DEXP(T0, T2, T10);
           dT2_dVb = T10 * dT0_dVb;
         }
 
         if ((model->BSIM4vtssws - vbs_jct) < (model->BSIM4vtssws * 1e-3) )
         { T9 = 1.0e3; 
-          T0 = -vbs_jct / Nvtmrssw * T9;
+          T0 = -vbs_jct / Nvtmrssws * T9;
           DEXP(T0, T3, T10);
-          dT3_dVb = T10 / Nvtmrssw * T9; 
+          dT3_dVb = T10 / Nvtmrssws * T9; 
         } else {
           T9 = 1.0 / (model->BSIM4vtssws - vbs_jct);
-          T0 = -vbs_jct / Nvtmrssw * model->BSIM4vtssws * T9;
-          dT0_dVb = model->BSIM4vtssws / Nvtmrssw * (T9 + vbs_jct * T9 * T9) ;
+          T0 = -vbs_jct / Nvtmrssws * model->BSIM4vtssws * T9;
+          dT0_dVb = model->BSIM4vtssws / Nvtmrssws * (T9 + vbs_jct * T9 * T9) ;
           DEXP(T0, T3, T10);
           dT3_dVb = T10 * dT0_dVb;
         }
 
         if ((model->BSIM4vtsswd - vbd_jct) < (model->BSIM4vtsswd * 1e-3) )
         { T9 = 1.0e3; 
-          T0 = -vbd_jct / Nvtmrssw * T9;
+          T0 = -vbd_jct / Nvtmrsswd * T9;
           DEXP(T0, T4, T10);
-          dT4_dVb = T10 / Nvtmrssw * T9; 
+          dT4_dVb = T10 / Nvtmrsswd * T9; 
         } else {
           T9 = 1.0 / (model->BSIM4vtsswd - vbd_jct);
-          T0 = -vbd_jct / Nvtmrssw * model->BSIM4vtsswd * T9;
-          dT0_dVb = model->BSIM4vtsswd / Nvtmrssw * (T9 + vbd_jct * T9 * T9) ;
+          T0 = -vbd_jct / Nvtmrsswd * model->BSIM4vtsswd * T9;
+          dT0_dVb = model->BSIM4vtsswd / Nvtmrsswd * (T9 + vbd_jct * T9 * T9) ;
           DEXP(T0, T4, T10);
           dT4_dVb = T10 * dT0_dVb;
         }
 
         if ((model->BSIM4vtsswgs - vbs_jct) < (model->BSIM4vtsswgs * 1e-3) )
         { T9 = 1.0e3; 
-          T0 = -vbs_jct / Nvtmrsswg * T9;
+          T0 = -vbs_jct / Nvtmrsswgs * T9;
           DEXP(T0, T5, T10);
-          dT5_dVb = T10 / Nvtmrsswg * T9; 
+          dT5_dVb = T10 / Nvtmrsswgs * T9; 
         } else {
           T9 = 1.0 / (model->BSIM4vtsswgs - vbs_jct);
-          T0 = -vbs_jct / Nvtmrsswg * model->BSIM4vtsswgs * T9;
-          dT0_dVb = model->BSIM4vtsswgs / Nvtmrsswg * (T9 + vbs_jct * T9 * T9) ;
+          T0 = -vbs_jct / Nvtmrsswgs * model->BSIM4vtsswgs * T9;
+          dT0_dVb = model->BSIM4vtsswgs / Nvtmrsswgs * (T9 + vbs_jct * T9 * T9) ;
           DEXP(T0, T5, T10);
           dT5_dVb = T10 * dT0_dVb;
         }
 
         if ((model->BSIM4vtsswgd - vbd_jct) < (model->BSIM4vtsswgd * 1e-3) )
         { T9 = 1.0e3; 
-          T0 = -vbd_jct / Nvtmrsswg * T9;
+          T0 = -vbd_jct / Nvtmrsswgd * T9;
           DEXP(T0, T6, T10);
-          dT6_dVb = T10 / Nvtmrsswg * T9; 
+          dT6_dVb = T10 / Nvtmrsswgd * T9; 
         } else {
           T9 = 1.0 / (model->BSIM4vtsswgd - vbd_jct);
-          T0 = -vbd_jct / Nvtmrsswg * model->BSIM4vtsswgd * T9;
-          dT0_dVb = model->BSIM4vtsswgd / Nvtmrsswg * (T9 + vbd_jct * T9 * T9) ;
+          T0 = -vbd_jct / Nvtmrsswgd * model->BSIM4vtsswgd * T9;
+          dT0_dVb = model->BSIM4vtsswgd / Nvtmrsswgd * (T9 + vbd_jct * T9 * T9) ;
           DEXP(T0, T6, T10);
           dT6_dVb = T10 * dT0_dVb;
         }
@@ -1332,25 +1338,39 @@ for (; model != NULL; model = model->BSIM4nextModel)
           {   T0 = Vgsteff + Vth + Vth;
               T2 = pParam->BSIM4ua + pParam->BSIM4uc * Vbseff;
               T3 = T0 / model->BSIM4toxe;
-              T6 = pParam->BSIM4ud / T3 / T3 * Vth * Vth;
+	      T12 = sqrt(Vth * Vth + 0.0001);
+	      T9 = 1.0/(Vgsteff + 2*T12);
+	      T10 = T9*model->BSIM4toxe;
+	      T8 = pParam->BSIM4ud * T10 * T10 * Vth;
+              T6 = T8 * Vth;
               T5 = T3 * (T2 + pParam->BSIM4ub * T3) + T6;
-              T7 = - 2.0 * T6 / T0;
-              dDenomi_dVg = (T2 + 2.0 * pParam->BSIM4ub * T3) / model->BSIM4toxe + T7;
-              dDenomi_dVd = dDenomi_dVg * 2.0 * dVth_dVd;
-              dDenomi_dVb = dDenomi_dVg * 2.0 * dVth_dVb + pParam->BSIM4uc * T3;
+              T7 = - 2.0 * T6 * T9;
+ 	      T11 = T7 * Vth/T12;
+              dDenomi_dVg = (T2 + 2.0 * pParam->BSIM4ub * T3) / model->BSIM4toxe;
+	      T13 = 2.0 * (dDenomi_dVg + T11 + T8);
+              dDenomi_dVd = T13 * dVth_dVd;
+              dDenomi_dVb = T13 * dVth_dVb + pParam->BSIM4uc * T3;
+	      dDenomi_dVg+= T7;
           }
           else if (model->BSIM4mobMod == 1)
           {   T0 = Vgsteff + Vth + Vth;
               T2 = 1.0 + pParam->BSIM4uc * Vbseff;
               T3 = T0 / model->BSIM4toxe;
               T4 = T3 * (pParam->BSIM4ua + pParam->BSIM4ub * T3);
-              T6 = pParam->BSIM4ud / T3 / T3 * Vth * Vth;
+	      T12 = sqrt(Vth * Vth + 0.0001);
+	      T9 = 1.0/(Vgsteff + 2*T12);
+	      T10 = T9*model->BSIM4toxe;
+	      T8 = pParam->BSIM4ud * T10 * T10 * Vth;
+              T6 = T8 * Vth;
               T5 = T4 * T2 + T6;
-              T7 = - 2.0 * T6 / T0;
+              T7 = - 2.0 * T6 * T9;
+ 	      T11 = T7 * Vth/T12;
               dDenomi_dVg = (pParam->BSIM4ua + 2.0 * pParam->BSIM4ub * T3) * T2
-                          / model->BSIM4toxe + T7;
-              dDenomi_dVd = dDenomi_dVg * 2.0 * dVth_dVd;
-              dDenomi_dVb = dDenomi_dVg * 2.0 * dVth_dVb + pParam->BSIM4uc * T4;
+                          / model->BSIM4toxe;
+	      T13 = 2.0 * (dDenomi_dVg + T11 + T8);
+              dDenomi_dVd = T13 * dVth_dVd;
+              dDenomi_dVb = T13 * dVth_dVb + pParam->BSIM4uc * T4;
+	      dDenomi_dVg+= T7;
           }
 	  else
 	  {   T0 = (Vgsteff + here->BSIM4vtfbphi1) / model->BSIM4toxe;
@@ -1358,12 +1378,18 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	      dT1_dVg = T1 * pParam->BSIM4eu / T0 / model->BSIM4toxe;
 	      T2 = pParam->BSIM4ua + pParam->BSIM4uc * Vbseff;
               T3 = T0 / model->BSIM4toxe;
-              T6 = pParam->BSIM4ud / T3 / T3 * Vth * Vth;
+	      T12 = sqrt(Vth * Vth + 0.0001);
+	      T9 = 1.0/(Vgsteff + 2*T12);
+	      T10 = T9*model->BSIM4toxe;
+	      T8 = pParam->BSIM4ud * T10 * T10 * Vth;
+              T6 = T8 * Vth;
 	      T5 = T1 * T2 + T6;
-              T7 = - 2.0 * T6 / T0;
+              T7 = - 2.0 * T6 * T9;
+ 	      T11 = T7 * Vth/T12;
  	      dDenomi_dVg = T2 * dT1_dVg + T7;
-              dDenomi_dVd = 0.0;
-              dDenomi_dVb = T1 * pParam->BSIM4uc;
+	      T13 = 2.0 * (T11 + T8);
+              dDenomi_dVd = T13 * dVth_dVd;
+              dDenomi_dVb = T13 * dVth_dVb + T1 * pParam->BSIM4uc;
 	  }
 
 	  if (T5 >= -0.8)
@@ -2120,23 +2146,23 @@ for (; model != NULL; model = model->BSIM4nextModel)
           vgd_eff = here->BSIM4vgd_eff;
           dvgd_eff_dvg = here->BSIM4dvgd_eff_dvg;
 
-          T1 = (-vds - vgd_eff - pParam->BSIM4egidl ) / T0;
+          T1 = (-vds - vgd_eff - pParam->BSIM4egisl ) / T0;
 
-          if ((pParam->BSIM4agidl <= 0.0) || (pParam->BSIM4bgidl <= 0.0)
-              || (T1 <= 0.0) || (pParam->BSIM4cgidl <= 0.0) || (vbs > 0.0))
+          if ((pParam->BSIM4agisl <= 0.0) || (pParam->BSIM4bgisl <= 0.0)
+              || (T1 <= 0.0) || (pParam->BSIM4cgisl <= 0.0) || (vbs > 0.0))
               Igisl = Ggisls = Ggislg = Ggislb = 0.0;
           else {
               dT1_dVd = 1.0 / T0;
               dT1_dVg = -dvgd_eff_dvg * dT1_dVd;
-              T2 = pParam->BSIM4bgidl / T1;
+              T2 = pParam->BSIM4bgisl / T1;
               if (T2 < 100.0) 
-              {   Igisl = pParam->BSIM4agidl * pParam->BSIM4weffCJ * T1 * exp(-T2);
+              {   Igisl = pParam->BSIM4agisl * pParam->BSIM4weffCJ * T1 * exp(-T2);
                   T3 = Igisl * (1.0 + T2) / T1;
                   Ggisls = T3 * dT1_dVd;
                   Ggislg = T3 * dT1_dVg;
               }
               else 
-              {   Igisl = pParam->BSIM4agidl * pParam->BSIM4weffCJ * 3.720075976e-44;
+              {   Igisl = pParam->BSIM4agisl * pParam->BSIM4weffCJ * 3.720075976e-44;
                   Ggisls = Igisl * dT1_dVd;
                   Ggislg = Igisl * dT1_dVg;
                   Igisl *= T1;
@@ -2144,9 +2170,9 @@ for (; model != NULL; model = model->BSIM4nextModel)
         
               T4 = vbs * vbs;
               T5 = -vbs * T4;
-              T6 = pParam->BSIM4cgidl + T5;
+              T6 = pParam->BSIM4cgisl + T5;
               T7 = T5 / T6;
-              T8 = 3.0 * pParam->BSIM4cgidl * T4 / T6 / T6;
+              T8 = 3.0 * pParam->BSIM4cgisl * T4 / T6 / T6;
               Ggisls = Ggisls * T7 + Igisl * T8;
               Ggislg = Ggislg * T7;
               Ggislb = -Igisl * T8;
@@ -2363,12 +2389,12 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
               T2 = vgs * vgs_eff;
               dT2_dVg = vgs * dvgs_eff_dvg + vgs_eff;
-              T11 = pParam->BSIM4AechvbEdge;
+              T11 = pParam->BSIM4AechvbEdgeS;
               T12 = pParam->BSIM4BechvbEdge;
-              T3 = pParam->BSIM4aigsd * pParam->BSIM4cigsd
-                 - pParam->BSIM4bigsd;
-              T4 = pParam->BSIM4bigsd * pParam->BSIM4cigsd;
-              T5 = T12 * (pParam->BSIM4aigsd + T3 * vgs_eff
+              T3 = pParam->BSIM4aigs * pParam->BSIM4cigs
+                 - pParam->BSIM4bigs;
+              T4 = pParam->BSIM4bigs * pParam->BSIM4cigs;
+              T5 = T12 * (pParam->BSIM4aigs + T3 * vgs_eff
                  - T4 * vgs_eff * vgs_eff);
               if (T5 > EXP_THRESHOLD)
               {   T6 = MAX_EXP;
@@ -2394,7 +2420,11 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
               T2 = vgd * vgd_eff;
               dT2_dVg = vgd * dvgd_eff_dvg + vgd_eff;
-              T5 = T12 * (pParam->BSIM4aigsd + T3 * vgd_eff
+              T11 = pParam->BSIM4AechvbEdgeD;
+              T3 = pParam->BSIM4aigd * pParam->BSIM4cigd
+                 - pParam->BSIM4bigd;
+              T4 = pParam->BSIM4bigd * pParam->BSIM4cigd;
+              T5 = T12 * (pParam->BSIM4aigd + T3 * vgd_eff
                  - T4 * vgd_eff * vgd_eff);
               if (T5 > EXP_THRESHOLD)
               {   T6 = MAX_EXP;

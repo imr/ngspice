@@ -1,10 +1,11 @@
-/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
+/**** BSIM4.6.0 Released by Mohan Dunga 12/13/2006 ****/
 
 /**********
- * Copyright 2005 Regents of the University of California. All rights reserved.
- * File: b4noi.c of BSIM4.5.0.
+ * Copyright 2006 Regents of the University of California. All rights reserved.
+ * File: b4noi.c of BSIM4.6.0.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
+ * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
@@ -12,6 +13,7 @@
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 03/04/2004.
  * Modified by Xuemei Xi, 07/29/2005.
+ * Modified by Mohan Dunga, 12/13/2006
  **********/
 
 #include "ngspice.h"
@@ -93,7 +95,7 @@ double tempInoise;
 double noizDens[BSIM4NSRCS];
 double lnNdens[BSIM4NSRCS];
 
-double T0, T1, T2, T5, T10, T11;
+double T0, T1, T2, T5,  T10, T11;
 double Vds, Ssi, Swi;
 double tmp=0.0, gdpr, gspr, npart_theta=0.0, npart_beta=0.0, igsquare, bodymode;
 
@@ -240,11 +242,20 @@ int i;
 				       gspr * m);
 
 
-			      if ((here->BSIM4rgateMod == 1) || (here->BSIM4rgateMod == 2))
+			      if (here->BSIM4rgateMod == 1)
 			      {   NevalSrc(&noizDens[BSIM4RGNOIZ],
                                        &lnNdens[BSIM4RGNOIZ], ckt, THERMNOISE,
                                        here->BSIM4gNodePrime, here->BSIM4gNodeExt,
                                        here->BSIM4grgeltd * m);
+			      }
+			      else if (here->BSIM4rgateMod == 2)
+			      {   
+				T0 = 1.0 + here->BSIM4grgeltd/here->BSIM4gcrg;
+				T1 = T0 * T0;
+				  NevalSrc(&noizDens[BSIM4RGNOIZ],
+                                       &lnNdens[BSIM4RGNOIZ], ckt, THERMNOISE,
+                                       here->BSIM4gNodePrime, here->BSIM4gNodeExt,
+                                       here->BSIM4grgeltd * m / T1);
 			      }
 			      else if (here->BSIM4rgateMod == 3)
 			      {   NevalSrc(&noizDens[BSIM4RGNOIZ],
