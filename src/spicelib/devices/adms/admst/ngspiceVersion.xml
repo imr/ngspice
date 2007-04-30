@@ -5,7 +5,12 @@
 -->
 <!--
   $Log$
-  Revision 1.15  2007-04-26 13:04:34  r29173
+  Revision 1.16  2007-04-30 13:10:35  r29173
+  improved 'guesstopology'
+  fixed implementation of macro 'noise'
+  when building 'load' traverse block 'noise'
+
+  Revision 1.15  2007/04/26 13:04:34  r29173
   added cases initializeModel, initiliazeInstance (block name used by psp102)
 
   Revision 1.14  2007/04/24 12:28:15  r29173
@@ -1791,27 +1796,25 @@
 
 <!-- analog//contribution[noise] -->
 <admst:template match="contribution:noise">
-  <admst:message format="noise contribution not implemented - ignored!\n"/>
-  <admst:value-of select="lhs/branch/nnode/name"/>
-  <admst:value-of select="lhs/branch/pnode/name"/>
-  <admst:if test="[whitenoise='yes']">
-    <admst:text format="adms_noiseSAVE(whitenoise,%s,%s"/>
-  </admst:if>
   <admst:if test="[flickernoise='yes']">
-    <admst:text format="adms_noiseSAVE(flickernoise,%s,%s"/>
-  </admst:if>
-  <admst:for-each select="rhs/tree/arguments">
-    <admst:value-of select="./adms/datatypename"/>
-    <admst:apply-templates select="." match="%s"/>
-    <admst:value-of select="/simulator/tmp"/>
-    <admst:text format=",%s"/>
-  </admst:for-each>
-  <admst:if test="[flickernoise='yes']">
-    <admst:text format=",NULL)\n"/>
+    <admst:text format="ngspice_flickernoise(%(lhs/branch/pnode/name),%(lhs/branch/nnode/name)"/>
+    <admst:for-each select="rhs/tree/arguments">
+      <admst:apply-templates select="." match="%(datatypename)"/>
+      <admst:value-of select="/simulator/tmp"/>
+      <admst:text format=",%s"/>
+    </admst:for-each>
+    <admst:text test="[count(rhs/tree/arguments)=2]" format=",NULL"/>
   </admst:if>
   <admst:if test="[whitenoise='yes']">
-    <admst:text format=",0,NULL)\n"/>
+    <admst:text format="ngspice_whitenoise(%(lhs/branch/pnode/name),%(lhs/branch/nnode/name)"/>
+    <admst:for-each select="rhs/tree/arguments">
+      <admst:apply-templates select="." match="%(datatypename)"/>
+      <admst:value-of select="/simulator/tmp"/>
+      <admst:text format=",%s"/>
+    </admst:for-each>
+    <admst:text test="[count(rhs/tree/arguments)=1]" format=",NULL"/>
   </admst:if>
+  <admst:text format=")\n"/>
 </admst:template>
 
 <!-- variable:rhs -->
@@ -1838,22 +1841,11 @@
 </admst:template>
 <!-- variable:lhs -->
 <admst:template match="variable:lhs">
-  <admst:value-of select="name"/>
-  <admst:if test="[input='yes' and parametertype='model']">
-    <admst:text format="model-&gt;%s"/>
-  </admst:if>
-  <admst:if test="[input='yes' and parametertype='instance']">
-    <admst:text format="here-&gt;%s"/>
-  </admst:if>
-  <admst:if test="[input='no' and scope='global_model']">
-    <admst:text format="model-&gt;%s"/>
-  </admst:if>
-  <admst:if test="[input='no' and scope='global_instance']">
-    <admst:text format="here-&gt;%s"/>
-  </admst:if>
-  <admst:if test="[scope='local']">
-    <admst:text format="%s"/>
-  </admst:if>
+  <admst:text test="[input='yes' and parametertype='model']" format="model-&gt;%(name)"/>
+  <admst:text test="[input='yes' and parametertype='instance']" format="here-&gt;%(name)"/>
+  <admst:text test="[input='no' and scope='global_model']" format="model-&gt;%(name)"/>
+  <admst:text test="[input='no' and scope='global_instance']" format="here-&gt;%(name)"/>
+  <admst:text test="[scope='local']" format="%(name)"/>
 </admst:template>
 <!-- handle analog//callfunctions -->
 <admst:template match="callfunction">

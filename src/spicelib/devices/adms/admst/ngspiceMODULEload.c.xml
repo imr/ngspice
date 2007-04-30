@@ -3,7 +3,12 @@
 <!--
   $Id$
   $Log$
-  Revision 1.5  2007-04-26 13:04:34  r29173
+  Revision 1.6  2007-04-30 13:10:35  r29173
+  improved 'guesstopology'
+  fixed implementation of macro 'noise'
+  when building 'load' traverse block 'noise'
+
+  Revision 1.5  2007/04/26 13:04:34  r29173
   added cases initializeModel, initiliazeInstance (block name used by psp102)
 
   Revision 1.4  2006/03/05 09:38:41  pnenzi
@@ -75,7 +80,11 @@
 #include &quot;devdefs.h&quot;
 #include &quot;suffix.h&quot;
 
-#define adms_noiseSAVE(type,p,n,mag,freq,name)\\
+/*fixme: noise not implemented in ngspice*/
+#define ngspice_flickernoise(p,n,mag,freq,info)\\
+{\\
+}
+#define ngspice_whitenoise(p,n,mag,info)\\
 {\\
 }
 
@@ -313,7 +322,7 @@ int $(module)load(inModel,ckt)
     <admst:for-each select="code/item">
       <admst:if test="adms[datatypename='block']">
         <admst:if test="[name!='initial_model' and name!='initial_instance' and name!='initializeModel' and name!='initializeInstance'
-           and name!='initial_step' and name!='noise']">
+           and name!='initial_step']">
           <admst:apply-templates select="." match="block:local:declaration"/>
         </admst:if>
       </admst:if>
@@ -330,7 +339,7 @@ int $(module)load(inModel,ckt)
         </admst:when>
         <admst:otherwise>
         <admst:if test="[name!='initial_model' and name!='initial_instance' and name!='initializeModel' and name!='initializeInstance'
-             and name!='initial_step' and name!='noise']">
+             and name!='initial_step']">
             <admst:apply-templates select="." match="block"/>
           </admst:if>
         </admst:otherwise>
