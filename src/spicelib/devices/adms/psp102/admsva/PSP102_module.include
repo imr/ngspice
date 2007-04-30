@@ -732,7 +732,7 @@
 
     analog begin
 
-        begin : initializeModel
+        begin : initial_model
         // Code independent of bias or instance parameters
         // This block needs to be evaluated only once
 
@@ -826,9 +826,9 @@
             // JUNCAP2
             `include "JUNCAP200_InitModel.include"
 
-        end // initializeModel
+        end // initial_model
 
-        begin : initializeInstance
+        begin : initial_instance
         // Code independent of bias, but dependent on instance parameters,
         //   (including code dependent on parameters which could IN PRINCIPLE be scaled)
         // This block needs to be evaluated only once for each instance
@@ -1285,7 +1285,7 @@
             end
             
 
-        end // initializeInstance
+        end // initial_instance
 
         /////////////////////////////////////////////////////////////////////////////
         //
