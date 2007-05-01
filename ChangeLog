@@ -1,3 +1,19 @@
+2007-04-30 Gong Ding <gdiso@ustc.edu>
+  
+  Add NDEV (numerical device) to device library. It is an interface 
+  to call my 2d semiconductor simulation code via network. 
+  The device simulation code can be found at http://gss-tcad.sourceforge.net
+ 
+ *     src/spicelib/device/ndev/*.*   : The NDEV implement code  
+ *     src/spicelib/device/dev.c      : Add ndev to spice device library
+ *     src/spicelib/parser/inppas2.c  : Add element name 'N' to describe NDEV  
+ *     src/spicelib/parser/inp2n.c    : Routine to parse NDEV element
+ *     src/spicelib/parser/inpdomod.c : Routine to parse NDEV model
+ *     src/frontend/misccoms.c        : When quit, call CKTdestroy function
+ *     src/spicelib/analysis/dctran.c : Show a time process indicator
+ *     src/ciderlib/oned/onedest.c    : Fix a invalid memory read problem
+ *     src/frontend/terminal.c        : change <termcap.h> to <ncurses/termcap.h> 
+  
 2007-04-26 Paolo Nenzi <p.nenzi@ieee.org>
 
 *     src/spicelib/devices/dsim4/: updated bsim4 model to 4.6.0.

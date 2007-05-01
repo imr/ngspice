@@ -146,6 +146,10 @@ dnl --enable-adms: define ADMS in the code. This is for the adms Verilog-A compi
 AC_ARG_ENABLE(adms,
     AS_HELP_STRING([--enable-adms],[Enable ADMS code models, (experimental) ]))
 
+dnl --enable-ndev: define NDEV in the code. An interface for external device i.e. numerical device
+AC_ARG_ENABLE(ndev,
+    AS_HELP_STRING([--enable-ndev],[Enable NDEV interface, (experimental) ]))
+
 dnl --enable-cluster: define CLUSTER in the code. This is for cluster support
 AC_ARG_ENABLE(cluster,
     AS_HELP_STRING([--enable-cluster],[Enable cluster support, (experimental) ]))
@@ -683,20 +687,33 @@ if test "$enable_adms" = "yes"; then
    
    VLADEVDIR=" adms/hicum0 \
                adms/hicum2 \
-               adms/mextram \
-               adms/psp102 "
+               adms/mextram "
 
    VLADEV=" spicelib/devices/adms/hicum0/libhicum0.a \
             spicelib/devices/adms/hicum2/libhicum2.a \      
-            spicelib/devices/adms/mextram/libmextram.a \       
-            spicelib/devices/adms/psp102/libpsp102.a "       
+            spicelib/devices/adms/mextram/libmextram.a "       
     
 fi   
 AC_SUBST(ADMSXML)
 AC_SUBST(VLADEVDIR)
 AC_SUBST(VLADEV)
 
+dnl NDEV option
+if test "$enable_ndev" = "yes"; then
+     AC_MSG_RESULT(NDEV features enabled)
+     AC_DEFINE(NDEV,[],[The NDEV interface])
+     NDEV="" 
+     NDEV_DIR=" ndev "
+     NDEV_LIB=" spicelib/devices/ndev/libndev.a "
+else
+     NDEV=""
+     NDEV_DIR="" 
+     NDEV_LIB=""   
+fi
+AC_SUBST(NDEV_DIR)
+AC_SUBST(NDEV_LIB)
 
+     
 dnl Cluster option
 if test "$enable_cluster" = "yes"; then
    AC_MSG_RESULT(Cluster version is being compiled)
@@ -815,6 +832,7 @@ src/spicelib/devices/mos2/Makefile	\
 src/spicelib/devices/mos3/Makefile	\
 src/spicelib/devices/mos6/Makefile	\
 src/spicelib/devices/mos9/Makefile	\
+src/spicelib/devices/ndev/Makefile	\
 src/spicelib/devices/res/Makefile	\
 src/spicelib/devices/soi3/Makefile	\
 src/spicelib/devices/sw/Makefile	\

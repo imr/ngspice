@@ -127,7 +127,13 @@ Options Specific to Using NGSpice
 --enable-cider
 		Enable CIDER enhancements, (experimental)
 		A mixed level simulator built upon spice3.
-		
+
+--enable-ndev
+		Enable NDEV interface, (experimental)
+		A TCP/IP interface to external device simulator such as GSS.
+		For more information, please visit the homepage of GSS at 
+		http://gss-tcad.sourceforge.net
+
 --enable-cluster
 		Enable cluster support, (experimental)
 		

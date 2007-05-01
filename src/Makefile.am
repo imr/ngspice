@@ -70,6 +70,7 @@ DYNAMIC_DEVICELIBS = 					\
 	spicelib/devices/vccs/libvccs.a			\
 	spicelib/devices/vcvs/libvcvs.a			\
 	spicelib/devices/vsrc/libvsrc.a			\
+	@NDEV_LIB@					\
 	@VLADEV@		\
 	@NUMDEV@
 	
