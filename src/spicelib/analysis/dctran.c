@@ -856,6 +856,17 @@ resume:
                 }
                 /* time point OK  - 630*/
                 ckt->CKTdelta = new;
+#ifdef	NDEV	
+		/* show a time process indicator, by Gong Ding, gdiso@ustc.edu */
+		if(ckt->CKTtime/ckt->CKTfinalTime*100<10.0)
+		  printf("%%%3.2lf\b\b\b\b\b",ckt->CKTtime/ckt->CKTfinalTime*100);
+		else   if(ckt->CKTtime/ckt->CKTfinalTime*100<100.0)
+		  printf("%%%4.2lf\b\b\b\b\b\b",ckt->CKTtime/ckt->CKTfinalTime*100);
+		else
+		  printf("%%%5.2lf\b\b\b\b\b\b\b",ckt->CKTtime/ckt->CKTfinalTime*100);  
+		fflush(stdout);  
+#endif
+		
 #ifdef STEPDEBUG
                (void)printf(
                   "delta set to truncation error result: %g. Point accepted\n",
