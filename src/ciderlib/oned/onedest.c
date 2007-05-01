@@ -53,15 +53,15 @@ ONEdestroy(ONEdevice *pDevice)
 
   /* destroy the mesh */
   if (pDevice->elemArray) {
-    for (eIndex = 1; eIndex < pDevice->numNodes; eIndex++) {
+    for (eIndex = 1; eIndex < pDevice->numNodes-1; eIndex++) {
       pElem = pDevice->elemArray[eIndex];
-      for (index = 0; index <= 2; index++) {
+      pEdge = pElem->pEdge;
+      FREE(pEdge);
+      for (index = 0; index <= 1; index++) {
 	if (pElem->evalNodes[index]) {
 	  pNode = pElem->pNodes[index];
 	  FREE(pNode);
 	}
-	pEdge = pElem->pEdge;
-	FREE(pEdge);
       }
       FREE(pElem);
     }
