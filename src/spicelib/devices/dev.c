@@ -130,45 +130,80 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "numd2/numd2itf.h"
 #include "numos/numositf.h"
 #endif
+#ifdef NDEV
+#include "ndev/ndevitf.h"
+#endif
 
 /*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
+/* the following def is tooooo long, should have nice skill. */
+
 #ifdef CIDER
 
  #ifdef ADMS
-
-   #ifdef XSPICE
-     static int DEVNUM = 56;
-   #else
-     #define DEVNUM 56
-   #endif
-
+ 
+   #ifdef NDEV
+     #ifdef XSPICE
+       static int DEVNUM = 57;
+     #else
+       #define DEVNUM 57
+     #endif
+   #else /* no ndev */
+      #ifdef XSPICE
+       static int DEVNUM = 56;
+     #else
+       #define DEVNUM 56
+     #endif 
+   #endif  /* NDEV */
+ 
  #else	/* NOT ADMS */
-
-   #ifdef XSPICE
-      static int DEVNUM = 52;
+   #ifdef NDEV
+     #ifdef XSPICE
+        static int DEVNUM = 53;
+     #else
+        #define DEVNUM 53
+     #endif
    #else
-      #define DEVNUM 52
-   #endif
-
+     #ifdef XSPICE
+        static int DEVNUM = 52;
+     #else
+        #define DEVNUM 52
+     #endif
+   #endif   /* NDEV */
  #endif /* ADMS */
 
 #else /* NOT CIDER */
 
  #ifdef ADMS
 
-   #ifdef XSPICE
-     static int DEVNUM = 51;
-   #else
-     #define DEVNUM 51
-   #endif
+   #ifdef NDEV
+     #ifdef XSPICE
+       static int DEVNUM = 52;
+     #else
+       #define DEVNUM 52
+     #endif
+   #else /* no ndev */
+      #ifdef XSPICE
+       static int DEVNUM = 51;
+     #else
+       #define DEVNUM 51
+     #endif 
+   #endif  /* NDEV */
 
  #else	/* NOT ADMS */ 
 
-   #ifdef XSPICE
+  #ifdef NDEV
+     #ifdef XSPICE
+       static int DEVNUM = 48;
+     #else
+       #define DEVNUM 48
+     #endif
+   #else /* no ndev */
+      #ifdef XSPICE
        static int DEVNUM = 47;
-   #else
-       #define DEVNUM 47 
-   #endif
+     #else
+       #define DEVNUM 47
+     #endif
+   #endif  /* NDEV */
 
  #endif /* ADMS */
 
@@ -265,9 +300,19 @@ spice_init_devices(void)
     DEVices[53] = get_hicum2_info();
     DEVices[54] = get_mextram_info();
     DEVices[55] = get_psp102_info();
-    assert(56 == DEVNUM);
+   #ifdef NDEV    /* NDEV */
+    DEVices[56] = get_ndev_info();
+    assert(57 == DEVNUM);
+   #else
+    assert(56 == DEVNUM); 
+   #endif 
   #else                            /* NOT ADMS */
-    assert(52 == DEVNUM);
+   #ifdef NDEV    /* NDEV */
+    DEVices[52] = get_ndev_info();
+    assert(53 == DEVNUM);
+   #else
+    assert(52 == DEVNUM); 
+   #endif 
   #endif                           /* ADMS */
 #else                            /* NOT CIDER */
   #ifdef ADMS
@@ -275,9 +320,19 @@ spice_init_devices(void)
     DEVices[48] = get_hicum2_info();
     DEVices[49] = get_mextram_info();
     DEVices[50] = get_psp102_info();
-    assert(51 == DEVNUM);
+   #ifdef NDEV    /* NDEV */
+    DEVices[51] = get_ndev_info();
+    assert(52 == DEVNUM);
+   #else
+    assert(51 == DEVNUM); 
+   #endif 
   #else                            /* NOT ADMS */
-    assert(47 == DEVNUM);
+   #ifdef NDEV    /* NDEV */
+    DEVices[47] = get_ndev_info();
+    assert(48 == DEVNUM);
+   #else
+    assert(47 == DEVNUM); 
+   #endif 
   #endif                           /* ADMS */
 #endif                          /* CIDER */
     return;
