@@ -146,7 +146,12 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 	       [IC=<val>,<val>,<val>] */
 	    INP2M(ckt, tab, current);
 	    break;
-
+#ifdef  NDEV   
+        case 'N':
+	    /* Nname [<node>...]  [<mname>] */
+	    INP2N(ckt, tab, current);
+	    break;
+#endif
 	case 'O':
 	    /* Oname <node> <node> <node> <node> <model>
 	       [IC=<val>,<val>,<val>,<val>] */

@@ -434,7 +434,18 @@ printf("found psp102 lev=%i\n",lev);
 	}
 	INPmakeMod(modname, type, image);
     } 
-    
+#ifdef  NDEV    
+    /*  --------  Check if model is a numerical device --------- */
+    else if (strcmp(typename, "ndev") == 0) {
+	type = INPtypelook("NDEV");
+	if (type < 0) {
+	    err =
+		INPmkTemp
+		("Device type NDEV not available in this binary\n");
+	}
+	INPmakeMod(modname, type, image);
+    } 
+#endif    
     /*  --------  Check if model is a resistor --------- */
     else if (strcmp(typename, "r") == 0) {
 	type = INPtypelook("Resistor");

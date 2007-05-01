@@ -18,6 +18,7 @@ libinp_a_SOURCES = \
 		inp2k.c		\
 		inp2l.c		\
 		inp2m.c		\
+		inp2n.c         \
 		inp2o.c		\
 		inp2p.c		\
 		inp2q.c		\
