@@ -29,7 +29,7 @@ $Id$
 #endif
 
 #ifdef HAVE_TERMCAP
-#include <termcap.h>
+#include <ncurses/termcap.h>
 #endif
 
 #include <ngspice.h>

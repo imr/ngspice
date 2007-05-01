@@ -23,7 +23,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* SJB added edit line support 2005-05-05 */
 #include <editline/readline.h>
 #endif /* HAVE_BSDEDITLINE */
-
+extern IFsimulator SIMinfo;
 static void byemesg(void);
 
 void
@@ -79,6 +79,11 @@ com_quit(wordlist *wl)
                 *buf = 'y';
             }
             if ((*buf == 'y') || (*buf == 'Y') || (*buf == '\n')) {
+#ifdef EXPERIMENTAL_CODE 	    
+	        /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
+	        for (cc = ft_circuits; cc; cc = cc->ci_next) 
+		 if(SIMinfo.deleteCircuit) SIMinfo.deleteCircuit(cc->ci_ckt); 
+#endif
                 byemesg();
 	    }
             else {
