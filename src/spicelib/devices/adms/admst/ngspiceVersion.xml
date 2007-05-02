@@ -5,7 +5,10 @@
 -->
 <!--
   $Log$
-  Revision 1.16  2007-04-30 13:10:35  r29173
+  Revision 1.17  2007-05-02 14:56:49  r29173
+  changed required adms version to 2.2.6
+
+  Revision 1.16  2007/04/30 13:10:35  r29173
   improved 'guesstopology'
   fixed implementation of macro 'noise'
   when building 'load' traverse block 'noise'
@@ -58,7 +61,7 @@
 
 -->
 <!DOCTYPE admst SYSTEM "admst.dtd">
-<admst version="2.2.0" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
+<admst version="2.2.6" xmlns:admst="http://mot-adms.sourceforge.net/xml-files/admst">
 
 <admst:template match=":new:jacobian">
   <admst:value-of select="module"/>
