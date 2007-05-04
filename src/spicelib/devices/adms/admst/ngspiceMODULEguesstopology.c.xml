@@ -3,10 +3,8 @@
 <!--
   $Id$
   $Log$
-  Revision 1.10  2007-04-30 13:10:35  r29173
-  improved 'guesstopology'
-  fixed implementation of macro 'noise'
-  when building 'load' traverse block 'noise'
+  Revision 1.11  2007-05-04 14:48:09  r29173
+  fixed implementation of tempate 'fname' (created unvalid C code)
 
   Revision 1.9  2007/04/26 13:04:34  r29173
   added cases initializeModel, initiliazeInstance (block name used by psp102)
@@ -66,25 +64,25 @@
 <!-- expression//function: mapping verilog-name == C-name of function -->
 <admst:template match="fname">
   <admst:choose>
-    <admst:when test="[name='abs']">fabs</admst:when>
-    <admst:when test="[name='\$shrinkl']">shrinkl</admst:when>
-    <admst:when test="[name='\$shrinka']">shrinka</admst:when>
-    <admst:when test="[name='log']">log10</admst:when>
-    <admst:when test="[name='ln']">log</admst:when>
-    <admst:when test="[name='limexp']">limexp</admst:when>
-    <admst:when test="[name='\$limexp']">limexp</admst:when>
-    <admst:when test="[name='\$model']">_modelname</admst:when>
-    <admst:when test="[name='\$instance']">_instancename</admst:when>
-    <admst:when test="[name='\$temperature']">_circuit_temp</admst:when>
-    <admst:otherwise>%(name)</admst:otherwise>
+    <admst:when test="[name='abs']"><admst:return name="fname" value="fabs"/></admst:when>
+    <admst:when test="[name='\$shrinkl']"><admst:return name="fname" value="shrinkl"/></admst:when>
+    <admst:when test="[name='\$shrinka']"><admst:return name="fname" value="shrinka"/></admst:when>
+    <admst:when test="[name='log']"><admst:return name="fname" value="log10"/></admst:when>
+    <admst:when test="[name='ln']"><admst:return name="fname" value="log"/></admst:when>
+    <admst:when test="[name='limexp']"><admst:return name="fname" value="limexp"/></admst:when>
+    <admst:when test="[name='\$limexp']"><admst:return name="fname" value="limexp"/></admst:when>
+    <admst:when test="[name='\$model']"><admst:return name="fname" value="_modelname"/></admst:when>
+    <admst:when test="[name='\$instance']"><admst:return name="fname" value="_instancename"/></admst:when>
+    <admst:when test="[name='\$temperature']"><admst:return name="fname" value="_circuit_temp"/></admst:when>
+    <admst:otherwise><admst:return name="fname" value="%(name)"/></admst:otherwise>
   </admst:choose>
 </admst:template>
 
 <admst:template match="function">
   <admst:variable name="function" select="%(name)"/>
-  <admst:variable name="args"/>
+  <admst:variable name="args" select=""/>
   <admst:for-each select="arguments">
-    <admst:variable test="[exists($args)]" name="args" select="$args,"/>
+    <admst:variable test="[$args='']" name="args" select="$args,"/>
     <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
     <admst:variable name="args" select="$args%s"/>
   </admst:for-each>
@@ -120,7 +118,7 @@
       </admst:for-each>
     </admst:when>
     <admst:otherwise>
-      <admst:variable name="mycode"/>
+      <admst:variable name="mycode" select=""/>
       <admst:if test="[exists(arguments)]">
         <admst:for-each select="arguments">
           <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
@@ -135,7 +133,7 @@
         </admst:for-each>
         <admst:variable name="mycode" select="($mycode)"/>
       </admst:if>
-      <admst:variable name="mycode" select="%(fname(.))$mycode"/>
+      <admst:variable name="mycode" select="%(fname(.)/[name='fname']/value)$mycode"/>
       <admst:value-to select="/simulator/tmp" value="$mycode"/>
     </admst:otherwise>
   </admst:choose>
