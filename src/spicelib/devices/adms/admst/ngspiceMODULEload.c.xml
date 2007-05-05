@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.6  2007-04-30 13:10:35  r29173
+  Revision 1.7  2007-05-05 21:11:46  dwarning
+  One additional NL prevent problems in vbicload.c
+
+  Revision 1.6  2007/04/30 13:10:35  r29173
   improved 'guesstopology'
   fixed implementation of macro 'noise'
   when building 'load' traverse block 'noise'
@@ -242,6 +245,7 @@ int $(module)load(inModel,ckt)
 </admst:for-each>
 }
 {
+
 <admst:apply-templates select="analog" match="analog:evaluate"/>
 }
     } /* End of MOSFET Instance */
