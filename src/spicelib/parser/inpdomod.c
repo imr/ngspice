@@ -313,20 +313,20 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    break;
 #ifdef ADMS
 	case 44:
-		type = INPtypelook("EKV");
+		type = INPtypelook("ekv");
 		if (type < 0) {
 		err =
 		    INPmkTemp
 		    ("Device type EKV not available in this binary\n");
 	    }
 	    break;    
-		case 46:
-			 type = INPtypelook("psp102");
-printf("found psp102 lev=%i\n",lev);
-                if(type < 0) {
-                    err = INPmkTemp(
-                            "Device type PSP102 not available in this binary\n");
-                }
+	case 45:
+		type = INPtypelook("psp102");
+		if (type < 0) {
+		err =
+		    INPmkTemp
+		    ("Device type PSP102 not available in this binary\n");
+	    }
                 break;
 #endif
 	case 49:
