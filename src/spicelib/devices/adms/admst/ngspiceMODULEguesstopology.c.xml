@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.11  2007-05-04 14:48:09  r29173
+  Revision 1.12  2007-05-07 09:01:18  r29173
+  traverse blocks named 'noise' or 'initial_step' during guesstopology code creation
+
+  Revision 1.11  2007/05/04 14:48:09  r29173
   fixed implementation of tempate 'fname' (created unvalid C code)
 
   Revision 1.9  2007/04/26 13:04:34  r29173
@@ -305,9 +308,8 @@ int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *
 </admst:template>
   <admst:for-each select="analog/code[datatypename='block']/item">
     <admst:if test="[(datatypename!='block') or (datatypename='block'
-         and name!='initial_model' and name!='initializeModel' and name!='initial_instance' and name!='initializeInstance'
-         and name!='initial_step' and name!='noise')]">
-        <admst:apply-templates select="." match="evaluate.localvariables"/>
+         and name!='initial_model' and name!='initializeModel' and name!='initial_instance' and name!='initializeInstance')]">
+      <admst:apply-templates select="." match="evaluate.localvariables"/>
     </admst:if>
   </admst:for-each>
   <admst:for-each select="$localvariables">
@@ -317,9 +319,8 @@ int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *
   </admst:for-each>
   <admst:for-each select="analog/code[datatypename='block']/item">
     <admst:if test="[(datatypename!='block') or (datatypename='block'
-         and name!='initial_model' and name!='initializeModel' and name!='initial_instance' and name!='initializeInstance'
-         and name!='initial_step' and name!='noise')]">
-        <admst:apply-templates select="." match="evaluatetopology"/>
+         and name!='initial_model' and name!='initializeModel' and name!='initial_instance' and name!='initializeInstance')]">
+      <admst:apply-templates select="." match="evaluatetopology"/>
     </admst:if>
   </admst:for-each>
   return(OK);
