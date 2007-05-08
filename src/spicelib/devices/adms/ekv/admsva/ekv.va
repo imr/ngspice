@@ -1,0 +1,110 @@
+
+//`include "std.va" 
+//`include "const.va" 
+//Spice
+`include "constants.h"
+`include "discipline.h"
+
+`ifdef insideADMS
+ `define P(p) (*p*)
+ `define PGIVEN(p)		$given(p)
+ `define INITIAL_MODEL		@(initial_model)
+`else
+ `define P(p)
+ `define PGIVEN(p)		p
+ `define INITIAL_MODEL		@(initial_step)
+`endif
+
+//dw
+`define TMAX		326.85
+`define TMIN		-100.0
+
+
+// **************************************************************** 
+// * EKV MOS model (long channel) based on version 2.6 rev.15 
+// * Function name : ekv26_dc_long for verilog-a implementation 
+// * The model documetation: http://legwww.epfl.ch/ekv 
+// **************************************************************** 
+
+module ekv(d,g,s,b); 
+// 
+// Node definitions 
+// 
+        inout           d,g,s,b ;   // external nodes 
+        electrical      d,g,s,b ;   // external nodes 
+
+
+//dw 
+real VT,Tamb,Tdev,Tnom,dT;
+parameter real tnom	= 27	`P(spice:name="tnom" info="Temperature for which parameters are valid" unit="C");
+parameter real dt	= 0.0	`P(spice:name="dt" type="instance" info="Temperature change for particular transistor" unit="K");                   
+
+// 
+//*** Local variables 
+// 
+real x, VG, VS, VD, VGprime, VP; 
+real beta, n, iff, ir, Ispec, Id; 
+// 
+//*** model parameter definitions 
+// 
+parameter real L      =  10E-6  from[0.0:inf]; 
+parameter real W      =  10E-6  from[0.0:inf]; 
+
+//***  Threshold voltage 
+//     substrate effect parameters (long-channel) 
+parameter real VTO    =  0.5    from[0.0:inf]; 
+parameter real GAMMA  =  0.7    from[0.0:inf]; 
+parameter real PHI    =  0.5    from[0.2:inf]; 
+
+//***  Mobility parameters (long-channel) 
+parameter real KP     =  20E-6   from[0.0:inf]; 
+parameter real THETA  =  50.0E-3 from[0.0:inf]; 
+
+analog begin // EKV v2.6 long-channel 
+
+//dw 
+Tnom	= tnom+273.15;
+Tamb	= $temperature;
+Tdev	= Tamb+dt;   // selfheating instead dT later possible
+// Limit temperature to avoid FPE's in equations
+if(Tdev < `TMIN + 273.15)
+   Tdev = `TMIN + 273.15;
+else
+if (Tdev > `TMAX + 273.15)
+   Tdev = `TMAX + 273.15;
+
+VT      = `P_K*Tdev /`P_Q;
+
+
+VG = V(g); VS = V(s); VD = V(d); 
+
+// Effective gate voltage (33) 
+VGprime = VG - VTO + PHI + GAMMA * sqrt(PHI); 
+
+// Pinch-off voltage (34) 
+VP = VGprime - PHI - GAMMA 
+   * (sqrt(VGprime+(GAMMA/2.0)*(GAMMA/2.0))-(GAMMA/2.0)); 
+
+// Slope factor (39) 
+n = 1.0 + GAMMA / (2.0*sqrt(PHI + VP + 4.0*VT)); 
+
+// Mobility equation (58), (64) 
+beta = KP * (W/L) * (1.0/(1.0 + THETA * VP)); 
+
+// forward (44) and reverse (56) currents 
+x=(VP-VS)/VT; iff = (ln(1.0+exp( x /2.0)))*(ln(1.0+exp( x /2.0))); 
+x=(VP-VD)/VT; ir  = (ln(1.0+exp( x /2.0)))*(ln(1.0+exp( x /2.0))); 
+
+// Specific current (65) 
+Ispec = 2 * n * beta * VT * VT; 
+
+// Drain current (66) 
+Id = Ispec * (iff - ir); 
+
+// 
+// Branch contributions to EKV v2.6 model (long-channel) 
+// 
+I(d,s) <+ Id; 
+
+end // analog 
+endmodule 
