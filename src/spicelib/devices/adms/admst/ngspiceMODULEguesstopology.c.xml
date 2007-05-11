@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.12  2007-05-07 09:01:18  r29173
+  Revision 1.13  2007-05-11 07:19:58  r29173
+  added support to 'div' builtin function
+
+  Revision 1.12  2007/05/07 09:01:18  r29173
   traverse blocks named 'noise' or 'initial_step' during guesstopology code creation
 
   Revision 1.11  2007/05/04 14:48:09  r29173
@@ -67,6 +70,7 @@
 <!-- expression//function: mapping verilog-name == C-name of function -->
 <admst:template match="fname">
   <admst:choose>
+    <admst:when test="[name='div']"><admst:return name="fname" value="_div1"/></admst:when>
     <admst:when test="[name='abs']"><admst:return name="fname" value="fabs"/></admst:when>
     <admst:when test="[name='\$shrinkl']"><admst:return name="fname" value="shrinkl"/></admst:when>
     <admst:when test="[name='\$shrinka']"><admst:return name="fname" value="shrinka"/></admst:when>

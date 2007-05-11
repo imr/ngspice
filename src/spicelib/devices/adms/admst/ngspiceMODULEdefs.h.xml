@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.11  2007-02-10 16:08:41  dwarning
+  Revision 1.12  2007-05-11 07:19:57  r29173
+  added support to 'div' builtin function
+
+  Revision 1.11  2007/02/10 16:08:41  dwarning
   unification for func and derivative
 
   Revision 1.10  2006/03/07 10:12:12  r29173
@@ -205,6 +208,13 @@ if(isinf(var)) \\
 #define _pow(xy,x,y)             xy = pow(x,y);
 #define _dx_pow(dx,xy,x,y)       dx = (x==0.0)?0.0:((y/x)*xy);
 #define _dy_pow(dy,xy,x,y)       dy = (x==0.0)?0.0:((log(x)/exp(0.0))*xy);
+
+#define _div1(x,y)               ((x)/(y))
+#define _div0(xy,x,y)            xy=(x)/(y);
+#define _div(xy,dx,x,y)          dx=1/(y); xy=(x)*dx;
+#define _dx_div(dx,xy,x,y)
+#define _dy_div(dy,dx,xy,x,y)    dy = -xy*dx;
+
 #define _limexp(val,arg)         val = ((arg)&lt;(80)) ? (exp(arg)) : (exp(80)*(1.0+(arg-80)));
 #define _d_limexp(val,dval,arg)  val = ((arg)&lt;(80)) ? (exp(arg)) : (exp(80)*(1.0+(arg-80))); dval = val;
 #define _fabs(val,arg)           val = fabs(arg);

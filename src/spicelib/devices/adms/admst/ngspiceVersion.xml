@@ -5,7 +5,10 @@
 -->
 <!--
   $Log$
-  Revision 1.17  2007-05-02 14:56:49  r29173
+  Revision 1.18  2007-05-11 07:19:58  r29173
+  added support to 'div' builtin function
+
+  Revision 1.17  2007/05/02 14:56:49  r29173
   changed required adms version to 2.2.6
 
   Revision 1.16  2007/04/30 13:10:35  r29173
@@ -876,6 +879,49 @@
       <admst:apply-templates select="." match="function:getname"/>
       <admst:value-to select="/simulator/tmp" value="__%s_$index"/>
     </admst:when>
+    <admst:when test="[name='div']">
+      <admst:value-of select="index(./subexpression/expression/function,.)"/>
+      <admst:variable name="index" select="%s"/>
+      <admst:if test="/simulator/probe">
+        <admst:for-each select="arguments"> 
+          <admst:choose>
+            <admst:when test="[position(.)=1]">
+              <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
+              <admst:variable name="x" select="%s"/>
+              <admst:value-of select="/simulator/ddx"/>
+              <admst:variable name="dx" select="%s"/>
+            </admst:when>
+            <admst:when test="[position(.)=2]">
+              <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
+              <admst:variable name="y" select="%s"/>
+              <admst:value-of select="/simulator/ddx"/>
+              <admst:variable name="dy" select="%s"/>
+            </admst:when>
+            <admst:otherwise>
+              <admst:count select="../arguments"/>
+              <admst:value-of select="../name"/>
+              <admst:error format="%s(...): two arguments expected - %s found(s) \n"/>
+            </admst:otherwise>
+          </admst:choose>
+        </admst:for-each>
+        <admst:choose>
+          <admst:when test="[$dx='0.0' and $dy='0.0']">
+            <admst:value-to select="/simulator/ddx" value="0.0"/>
+          </admst:when>
+          <admst:when test="[$dx='0.0']">
+            <admst:value-to select="/simulator/ddx" value="(__dFy_%(name)_$index*$dy)"/>
+          </admst:when>
+          <admst:when test="[$dy='0.0']">
+            <admst:value-to select="/simulator/ddx" value="(__dFx_%(name)_$index*$dx)"/>
+          </admst:when>
+          <admst:otherwise>
+            <admst:value-to select="/simulator/ddx" value="(__dFx_%(name)_$index*$dx+__dFy_%(name)_$index*$dy)"/>
+          </admst:otherwise>
+        </admst:choose>
+      </admst:if>
+      <admst:apply-templates select="." match="function:getname"/>
+      <admst:value-to select="/simulator/tmp" value="__%s_$index"/>
+    </admst:when>
     <admst:when test="[class='builtin']">
       <admst:value-of select="index(./subexpression/expression/function,.)"/>
       <admst:variable name="index" select="%s"/>
@@ -1216,7 +1262,9 @@
         <admst:value-of select="position(.)-1"/>
         <admst:apply-templates select="." match="function:getname"/>
         <admst:apply-templates select="." match="function:getname"/>
-        <admst:text format="_%s(__%s_%s,"/>
+        <admst:text format="_%s"/>
+        <admst:text test="[name='div']" format="0"/>
+        <admst:text format="(__%s_%s,"/>
         <admst:join select="arguments" separator=",">
           <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
           <admst:text format="%s"/>
@@ -1252,7 +1300,7 @@
         <admst:if test="arguments[count(.)=2]">
           <admst:for-each select="arguments">
             <admst:if test="[position(.)=1]">
-              <admst:if test="math[dependency!='constant']">
+              <admst:if test="[(../name='div') or (math/dependency!='constant')]">
                 <admst:value-of select="../position(.)-1"/>
                 <admst:apply-templates select=".." match="function:getname"/>
                 <admst:text format="double __dFx_%s_%s=0.0;\n"/>
@@ -1303,6 +1351,7 @@
           <admst:apply-templates select="." match="function:getname"/>
           <admst:apply-templates select="." match="function:getname"/>
           <admst:text format="_%s(__%s_%s,"/>
+          <admst:text test="[name='div']" format="__dFx_%(name)_%(position(.)-1),"/>
           <admst:join select="arguments" separator=",">
             <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
             <admst:text format="%s"/>
@@ -1334,7 +1383,9 @@
                 <admst:value-of select="../position(.)-1"/>
                 <admst:apply-templates select=".." match="function:getname"/>
                 <admst:apply-templates select=".." match="function:getname"/>
-                <admst:text format="_dy_%s(__dFy_%s_%s,__%s_%s,"/>
+                <admst:text format="_dy_%s(__dFy_%s_%s,"/>
+                <admst:text test="[../name='div']" format="__dFx_%(../name)_%(../position(.)-1),"/>
+                <admst:text format="__%s_%s,"/>
                 <admst:join select="../arguments" separator=",">
                   <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
                   <admst:text format="%s"/>
