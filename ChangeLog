@@ -1,3 +1,30 @@
+2007-05-13 Paolo Nenzi <p.nenzi@ieee.org>
+
+ * src/spicelib/devices/dev.c: updated NUMDEV to reflect actual situation.
+ * src/spicelib/devices/adms/admst/ngspiceVersion.xml: added code for ekv.
+
+2007-05-11 Laurent Lemaitre <r29173@users.sourceforge.net>
+
+ * src/spicelib/devices/adms/admst/ngspiceMODULEguesstopology.c.xml,
+   src/spicelib/devices/adms/admst/ngspiceVersion.xml,
+   src/spicelib/devices/adms/admst/ngspiceMODULEdefs.h.xml: 
+   added support to "div" builtin function.
+
+
+2007-05-09 Dietmar Warning
+ 
+ * src/spicelib/devices/dev.c: reserved space for ekv model.
+
+2007-05-08 Dietmar Warning
+
+ * src/spicelib/devices/amds/ekv/: Initial import of the ekv model (long
+   channel). 
+
+2007-05-06 Dietmar Warning
+
+ * src/spicelib/parser/inpdomod.c: small adaptation for ekv and psp102.
+
+
 2007-04-30 Gong Ding <gdiso@ustc.edu>
   
   Add NDEV (numerical device) to device library. It is an interface 
@@ -16,13 +43,17 @@
   
 2007-04-26 Paolo Nenzi <p.nenzi@ieee.org>
 
-*     src/spicelib/devices/dsim4/: updated bsim4 model to 4.6.0.
+ *     src/spicelib/devices/bsim4/: updated bsim4 model to 4.6.0.
 
 2007-04-25 Paolo Nenzi <p.nenzi@ieee.org>
 
-*     src/spicelib/parser/{inp2m.c, inpdomod.c}, 
+ *    src/spicelib/parser/{inp2m.c, inpdomod.c}, 
       src/spicelib/devices/dev.c, src/spicelib/devices/adms/psp102/: 
       added support for psp102 model.
+
+2007-04-24 Laurent Lemaitre <r29173@users.sourceforge.net>
+
+ *    src/spicelib/devices/adms/admst/: updated templates for adms 2.2.5.
 
 2007-01-21 Paolo Nenzi <p.nenzi@ieee.org>
 
