@@ -314,7 +314,7 @@ handlebuttonev(Widget w, caddr_t clientdata, caddr_t calldata)
 
 
 /* Recover from bad NewViewPort call. */
-#define RECOVERNEWVIEWPORT()    tfree((char *) graph);\
+#define RECOVERNEWVIEWPORT()    tfree(graph);\
 	            graph = (GRAPH *) NULL; 
 	    /* need to do this or else DestroyGraph will free it again */
 
