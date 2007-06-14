@@ -104,7 +104,7 @@ seconds(void)
     return (TCGTIME_());
 #else
     (void) getrusage(RUSAGE_SELF, &ruse);
-    return (ruse.ru_utime.tv_sec + (double) ruse.ru_utime.tv_usec / 1000000.0);
+    return ((double)ruse.ru_utime.tv_sec + (double) ruse.ru_utime.tv_usec / 1000000.0);
 #endif /* PARALLEL_ARCH */
 #else
 #ifdef HAVE_TIMES
