@@ -35,7 +35,7 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
     /* let each device decide how many and what type of noise sources it has */
 
     for (i=0; i < DEVmaxnum; i++) {
-	if ( ((*DEVices[i]).DEVnoise != NULL) && (ckt->CKThead[i] != NULL) ) {
+	if ( DEVices[i] && ((*DEVices[i]).DEVnoise != NULL) && (ckt->CKThead[i] != NULL) ) {
 	    error = (*((*DEVices[i]).DEVnoise))(mode,operation,ckt->CKThead[i],
 		ckt,data, &outNdens);
             if (error) return (error);

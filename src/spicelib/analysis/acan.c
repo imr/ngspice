@@ -392,7 +392,7 @@ CKTacLoad(CKTcircuit *ckt)
     SMPcClear(ckt->CKTmatrix);
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( ((*DEVices[i]).DEVacLoad != NULL) && (ckt->CKThead[i] != NULL) ){
+        if ( DEVices[i] && ((*DEVices[i]).DEVacLoad != NULL) && (ckt->CKThead[i] != NULL) ){
             error = (*((*DEVices[i]).DEVacLoad))(ckt->CKThead[i],ckt);
 #ifdef PARALLEL_ARCH
 	    if (error) goto combine;

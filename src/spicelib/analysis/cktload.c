@@ -64,7 +64,7 @@ CKTload(CKTcircuit *ckt)
 #endif /* STEPDEBUG */
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( ((*DEVices[i]).DEVload != NULL) && (ckt->CKThead[i] != NULL) ){
+        if ( DEVices[i] && ((*DEVices[i]).DEVload != NULL) && (ckt->CKThead[i] != NULL) ){
             error = (*((*DEVices[i]).DEVload))(ckt->CKThead[i],ckt);
 	    if (ckt->CKTnoncon)
 		ckt->CKTtroubleNode = 0;

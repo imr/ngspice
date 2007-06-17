@@ -136,11 +136,77 @@ int add_udn(int,Evt_Udn_Info_t **);
 #endif
 
 /*saj in xspice the DEVices size can be varied so DEVNUM is an int*/
-#ifdef XSPICE
-   static int DEVNUM = 60;
-#else
-   #define DEVNUM 60
-#endif
+#ifdef CIDER
+
+ #ifdef ADMS
+ 
+   #ifdef NDEV
+     #ifdef XSPICE
+       static int DEVNUM = 57;
+     #else
+       #define DEVNUM 57
+     #endif
+   #else /* no ndev */
+      #ifdef XSPICE
+       static int DEVNUM = 56;
+     #else
+       #define DEVNUM 56
+     #endif 
+   #endif  /* NDEV */
+ 
+ #else	/* NOT ADMS */
+   #ifdef NDEV
+     #ifdef XSPICE
+        static int DEVNUM = 53;
+     #else
+        #define DEVNUM 53
+     #endif
+   #else
+     #ifdef XSPICE
+        static int DEVNUM = 52;
+     #else
+        #define DEVNUM 52
+     #endif
+   #endif   /* NDEV */
+ #endif /* ADMS */
+
+#else /* NOT CIDER */
+
+ #ifdef ADMS
+
+   #ifdef NDEV
+     #ifdef XSPICE
+       static int DEVNUM = 53; /* was 52 */
+     #else
+       #define DEVNUM 53  /* was 52 */
+     #endif
+   #else /* no ndev */
+      #ifdef XSPICE
+       static int DEVNUM = 52; /* was 51 */
+     #else
+       #define DEVNUM 52  /* was 51 */
+     #endif 
+   #endif  /* NDEV */
+
+ #else	/* NOT ADMS */ 
+
+  #ifdef NDEV
+     #ifdef XSPICE
+       static int DEVNUM = 48;
+     #else
+       #define DEVNUM 48
+     #endif
+   #else /* no ndev */
+      #ifdef XSPICE
+       static int DEVNUM = 47;
+     #else
+       #define DEVNUM 47
+     #endif
+   #endif  /* NDEV */
+
+ #endif /* ADMS */
+
+#endif /* CIDER */
 
 /*Make this dynamic for later attempt to make all devices dynamic*/
 SPICEdev **DEVices=NULL;
@@ -227,50 +293,66 @@ spice_init_devices(void)
     DEVices[48] = get_nbjt2_info();
     DEVices[49] = get_numd_info();
     DEVices[50] = get_numd2_info();
-    DEVices[51] = get_numos_info();   
-#else
-    DEVices[47] = NULL;
-    DEVices[48] = NULL;
-    DEVices[49] = NULL;
-    DEVices[50] = NULL;
-    DEVices[51] = NULL;  
-#endif
-          
-#ifdef ADMS
+    DEVices[51] = get_numos_info();    
+  #ifdef ADMS
     DEVices[52] = get_hicum0_info();
     DEVices[53] = get_hicum2_info();
     DEVices[54] = get_mextram_info();
     DEVices[55] = get_ekv_info();
     DEVices[56] = get_psp102_info();
-#else
-    DEVices[52] = NULL;
-    DEVices[53] = NULL;
-    DEVices[54] = NULL;
-    DEVices[55] = NULL;
-    DEVices[56] = NULL;
-#endif
-   
-#ifdef NDEV    /* NDEV */
-   DEVices[57] = get_ndev_info();
-#else
-   DEVices[57] = NULL;
-#endif
-   DEVices[58] = NULL;
-   DEVices[59] = NULL;
-   return;
+   #ifdef NDEV    /* NDEV */
+    DEVices[57] = get_ndev_info();
+    assert(58 == DEVNUM);
+   #else
+    assert(57 == DEVNUM); 
+   #endif 
+  #else                            /* NOT ADMS */
+   #ifdef NDEV    /* NDEV */
+    DEVices[52] = get_ndev_info();
+    assert(53 == DEVNUM);
+   #else
+    assert(52 == DEVNUM); 
+   #endif 
+  #endif                           /* ADMS */
+#else                            /* NOT CIDER */
+  #ifdef ADMS
+    DEVices[47] = get_hicum0_info();
+    DEVices[48] = get_hicum2_info();
+    DEVices[49] = get_mextram_info();
+    DEVices[50] = get_ekv_info();
+    DEVices[51] = get_psp102_info();
+   #ifdef NDEV    /* NDEV */
+    DEVices[52] = get_ndev_info();
+    assert(53 == DEVNUM);
+   #else
+    assert(52 == DEVNUM); 
+   #endif 
+  #else                            /* NOT ADMS */
+   #ifdef NDEV    /* NDEV */
+    DEVices[47] = get_ndev_info();
+    assert(48 == DEVNUM);
+   #else
+    assert(47 == DEVNUM); 
+   #endif 
+  #endif                           /* ADMS */
+#endif                          /* CIDER */
+    return;
 }
 
-int num_devices(void)
+int
+num_devices(void)
 {
     return DEVNUM;
 }
 
-IFdevice ** devices_ptr(void)
+IFdevice **
+devices_ptr(void)
 {
     return (IFdevice **) DEVices;
 }
 
-SPICEdev ** devices(void)
+SPICEdev **
+devices(void)
 {
     return DEVices;
 }

@@ -21,7 +21,7 @@ CKTtypelook(char *type)
 
     int i;
     for(i=0;i<DEVmaxnum;i++) {
-        if(strcmp(type,(*DEVices[i]).DEVpublic.name)==0) {
+        if(DEVices[i] && strcmp(type,(*DEVices[i]).DEVpublic.name)==0) {
             /*found the device - return it */
             return(i);
         }

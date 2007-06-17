@@ -35,7 +35,7 @@ CKTpzSetup(CKTcircuit *ckt, int type)
     ckt->CKTnumStates = 0;
 
     for (i = 0; i < DEVmaxnum; i++) {
-        if (DEVices[i]->DEVpzSetup != NULL && ckt->CKThead[i] != NULL) {
+        if (DEVices[i] && DEVices[i]->DEVpzSetup != NULL && ckt->CKThead[i] != NULL) {
             error = (*DEVices[i]->DEVpzSetup)(matrix, ckt->CKThead[i],
 		ckt, &ckt->CKTnumStates);
             if (error != OK)

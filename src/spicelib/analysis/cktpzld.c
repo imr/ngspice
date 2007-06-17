@@ -31,7 +31,7 @@ CKTpzLoad(CKTcircuit *ckt, SPcomplex *s)
 
     SMPcClear(ckt->CKTmatrix);
     for (i = 0; i < DEVmaxnum; i++) {
-        if (DEVices[i]->DEVpzLoad != NULL && ckt->CKThead[i] != NULL) {
+        if (DEVices[i] && DEVices[i]->DEVpzLoad != NULL && ckt->CKThead[i] != NULL) {
             error = (*DEVices[i]->DEVpzLoad)(ckt->CKThead[i], ckt, s);
 #ifdef PARALLEL_ARCH
 	    if (error) goto combine;

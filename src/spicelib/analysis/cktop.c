@@ -99,7 +99,7 @@ CKTconvTest (CKTcircuit * ckt)
 
   for (i = 0; i < DEVmaxnum; i++)
     {
-      if (((*DEVices[i]).DEVconvTest != NULL) && (ckt->CKThead[i] != NULL))
+      if (DEVices[i] && ((*DEVices[i]).DEVconvTest != NULL) && (ckt->CKThead[i] != NULL))
 	{
 	  error = (*((*DEVices[i]).DEVconvTest)) (ckt->CKThead[i], ckt);
 	}

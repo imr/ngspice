@@ -31,7 +31,7 @@ int INPtypelook(char *type)
       printf("In INPtypelook, checking model type = %s against existing model = %s, . . .\n", type, (*(ft_sim->devices)[i]).name ); 
 #endif
 
-	if (strcmp(type, (*(ft_sim->devices)[i]).name) == 0) {
+	if ((ft_sim->devices)[i] && strcmp(type, (*(ft_sim->devices)[i]).name) == 0) {
 	    /*found the device - return it */
 
 #ifdef TRACE

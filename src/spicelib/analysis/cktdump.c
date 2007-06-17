@@ -56,7 +56,7 @@ CKTdump(CKTcircuit *ckt, double ref, void *plot)
  */
  
   for (i=0; i<DEVmaxnum; i++) {
-    if ( ((*DEVices[i]).DEVdump != NULL) &&
+    if ( DEVices[i] && ((*DEVices[i]).DEVdump != NULL) &&
                 (ckt->CKThead[i] != NULL) ){
                 (*((*DEVices[i]).DEVdump))(ckt->CKThead[i],ckt);
     }
@@ -89,7 +89,7 @@ NDEVacct(CKTcircuit *ckt, FILE *file)
     }
 
      for (i=0; i<DEVmaxnum; i++) {
-        if ( ((*DEVices[i]).DEVacct != NULL) &&
+        if ( DEVices[i] && ((*DEVices[i]).DEVacct != NULL) &&
                 (ckt->CKThead[i] != NULL) ){
                 (*((*DEVices[i]).DEVacct))(ckt->CKThead[i],ckt, file);
     }

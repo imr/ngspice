@@ -1,3 +1,26 @@
+2007-06-17 Gong Ding <gdiso@ustc.edu>
+ * src/spicelib/devices/dev.c: use a more flexiable way to define device.
+ If it doesn't work, one can returen to old version (rename as dev_old.c).
+ 
+These files are modified for avoiding NULL DEVices[] pointer.
+ * spicelib/analysis/acan.c:  
+ * spicelib/analysis/cktdest.c:
+ * spicelib/analysis/cktdisto.c:
+ * spicelib/analysis/cktdump.c:
+ * spicelib/analysis/cktfbran.c:
+ * spicelib/analysis/cktic.c:
+ * spicelib/analysis/cktload.c:
+ * spicelib/analysis/cktnoise.c:
+ * spicelib/analysis/cktop.c:
+ * spicelib/analysis/cktpzld.c:
+ * spicelib/analysis/cktpzset.c:
+ * spicelib/analysis/cktsetup.c:
+ * spicelib/analysis/ckttemp.c:
+ * spicelib/analysis/ckttrunc.c:
+ * spicelib/analysis/ckttyplk.c:
+ * spicelib/parser/inptyplk.c:
+The modifications should not affect ngspice's function. 
+
 2007-06-14 Paolo Nenzi <p.nenzi@ieee.org>
 
  * src/misc/misc_time.c: added a casting to doube in seconds function to

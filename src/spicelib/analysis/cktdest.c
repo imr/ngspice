@@ -40,7 +40,7 @@ CKTdestroy(void *inCkt)
 #endif
 
     for (i=0;i<DEVmaxnum;i++) {
-        if ( ((*DEVices[i]).DEVdestroy != NULL) && (ckt->CKThead[i] != NULL) ){
+        if ( DEVices[i] && ((*DEVices[i]).DEVdestroy != NULL) && (ckt->CKThead[i] != NULL) ){
             (*((*DEVices[i]).DEVdestroy))(&(ckt->CKThead[i]));
         }
     }
