@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.10  2006-03-05 09:38:41  pnenzi
+  Revision 1.11  2007-07-05 09:44:12  r29173
+  added new evaluate function (support of ddx operator used inside contribs)
+
+  Revision 1.10  2006/03/05 09:38:41  pnenzi
 
   Updated version to 2.2.0
 
@@ -72,7 +75,7 @@
 <admst:variable name="module" select="%s"/>
 ## Process this file with automake to produce Makefile.in
 
-ADMSXMLINTERFACE:=../admst
+ADMSXMLINTERFACE=../admst
 $(module).c:
 	admsXml -Iadmsva admsva/$(module).va \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
@@ -94,7 +97,9 @@ $(module).c:
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEdel.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEmdel.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEdest.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEnoise.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
 	perl -p -i.bak -e 's/IOP\\("(\\w+)"/IOP("\\L\\1"/' $(module).c
 
@@ -102,6 +107,7 @@ noinst_LIBRARIES = lib$(module).a
 
 lib$(module)_a_SOURCES = 	\\
 	$(module).c		\\
+	$(module).hxx		\\
 	$(module)acld.c	\\
 	$(module)ask.c	\\
 	$(module)defs.h	\\
@@ -124,6 +130,7 @@ lib$(module)_a_SOURCES = 	\\
 
 BUILT_SOURCES = 	\\
 	$(module).c		\\
+	$(module).hxx		\\
 	$(module)acld.c	\\
 	$(module)ask.c	\\
 	$(module)defs.h	\\
@@ -146,6 +153,7 @@ BUILT_SOURCES = 	\\
 
 CLEANFILES = 		\\
 	$(module).c		\\
+	$(module).hxx		\\
 	$(module).c.bak	\\
 	$(module)acld.c	\\
 	$(module)ask.c	\\
@@ -164,14 +172,14 @@ CLEANFILES = 		\\
 	$(module)par.c	\\
 	$(module)pzld.c	\\
 	$(module)setup.c	\\
-	$(module)temp.c \\
+	$(module)temp.c	\\
+	$(module)noise.c	\\
 	$(module)trunc.c
 
 
 #TODO (not implemented) \\
 	$(module)conv.c	\\
-	$(module)getic.c	\\
-	$(module)noise.c
+	$(module)getic.c
 
 INCLUDES = -I\$(top_srcdir)/src/include
 

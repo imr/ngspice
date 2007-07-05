@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.7  2007-05-05 21:11:46  dwarning
+  Revision 1.8  2007-07-05 09:44:11  r29173
+  added new evaluate function (support of ddx operator used inside contribs)
+
+  Revision 1.7  2007/05/05 21:11:46  dwarning
   One additional NL prevent problems in vbicload.c
 
   Revision 1.6  2007/04/30 13:10:35  r29173
@@ -245,11 +248,10 @@ int $(module)load(inModel,ckt)
 </admst:for-each>
 }
 {
-
-<admst:apply-templates select="analog" match="analog:evaluate"/>
+#include &quot;$module.hxx&quot;
 }
-    } /* End of MOSFET Instance */
-  } /* End of MOSFET Model */
+    } /* End of Instance */
+  } /* End of Model */
   return(OK);
 }
 
