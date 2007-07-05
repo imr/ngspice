@@ -73,6 +73,7 @@
 <admst:template match="wrapper">
 /*wrapper*/
 #define pModel model
+#define pInst here
 #define mint_get_circuit_tempK() _circuit_temp
 #define voltages(n) NP(n)
 #define _DDT(q) q
@@ -2820,31 +2821,6 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
 <!-- Do not create temp variables for functions inside while(), for()-->
 <admst:variable name="SkipFVariable" select="n"/>
 <admst:for-each select="/module">
-  <admst:new datatype="list" arguments="fnoise">
-    <admst:variable name="fnoise" select="%(.)"/>
-  </admst:new>
-  <admst:new datatype="list" arguments="tnoise">
-    <admst:variable name="tnoise" select="%(.)"/>
-  </admst:new>
-  <admst:new datatype="list" arguments="wnoise">
-    <admst:variable name="wnoise" select="%(.)"/>
-  </admst:new>
-
-  <admst:for-each select="contribution">
-    <admst:variable name="contribution" select="%(.)"/>
-    <admst:variable name="dependency" select="%(math/dependency)"/>
-    <admst:choose>
-      <admst:when test="rhs/tree/adms[datatypename='function']/..[name='flicker_noise']">
-        <admst:push into="$fnoise/item" select="$contribution" onduplicate="ignore"/>
-      </admst:when>
-      <admst:when test="[$dependency='constant']/rhs/tree/adms[datatypename='function']/..[name='white_noise']">
-        <admst:push into="$tnoise/item" select="$contribution" onduplicate="ignore"/>
-      </admst:when>
-      <admst:when test="[$dependency!='constant']/rhs/tree/adms[datatypename='function']/..[name='white_noise']">
-        <admst:push into="$wnoise/item" select="$contribution" onduplicate="ignore"/>
-      </admst:when>
-    </admst:choose>
-  </admst:for-each>
   <admst:variable name="module" select="%(name)"/>
   <admst:choose>
     <admst:when test="attribute[name='desc']">

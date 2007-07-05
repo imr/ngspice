@@ -5,7 +5,10 @@
 -->
 <!--
   $Log$
-  Revision 1.19  2007-05-13 09:55:14  pnenzi
+  Revision 1.20  2007-07-05 10:20:48  r29173
+  added declaration of noise variables
+
+  Revision 1.19  2007/05/13 09:55:14  pnenzi
 
   Updated the code for ekv model.
 
@@ -1935,6 +1938,30 @@
   <admst:value-to select="/simulator/package_bugreport" value="r29173@users.sourceforge.net"/>
 
   <admst:for-each select="/module">
+    <admst:new datatype="list" arguments="fnoise">
+      <admst:variable name="fnoise" select="%(.)"/>
+    </admst:new>
+    <admst:new datatype="list" arguments="tnoise">
+      <admst:variable name="tnoise" select="%(.)"/>
+    </admst:new>
+    <admst:new datatype="list" arguments="wnoise">
+      <admst:variable name="wnoise" select="%(.)"/>
+    </admst:new>
+    <admst:for-each select="contribution">
+      <admst:variable name="contribution" select="%(.)"/>
+      <admst:variable name="dependency" select="%(math/dependency)"/>
+      <admst:choose>
+        <admst:when test="rhs/tree/adms[datatypename='function']/..[name='flicker_noise']">
+          <admst:push into="$fnoise/item" select="$contribution" onduplicate="ignore"/>
+        </admst:when>
+        <admst:when test="[$dependency='constant']/rhs/tree/adms[datatypename='function']/..[name='white_noise']">
+          <admst:push into="$tnoise/item" select="$contribution" onduplicate="ignore"/>
+        </admst:when>
+        <admst:when test="[$dependency!='constant']/rhs/tree/adms[datatypename='function']/..[name='white_noise']">
+          <admst:push into="$wnoise/item" select="$contribution" onduplicate="ignore"/>
+        </admst:when>
+      </admst:choose>
+    </admst:for-each>
     <admst:choose>
       <admst:when test="[name='hic0_full']">
         <admst:new datatype="attribute" arguments="ngspicename">
