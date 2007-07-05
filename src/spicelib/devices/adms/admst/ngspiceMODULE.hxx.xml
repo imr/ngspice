@@ -79,7 +79,10 @@
 #define _DDT(q) q
 #define _DDX
 #define _DERIVATEFORDDX
-
+<admst:if test="/module/variable[derivate='yes' and insource='yes']">
+#define _DERIVATE2
+<admst:variable name="requiredderivateforddx" select="yes"/>
+</admst:if>
 </admst:template>
 
 <admst:template match="c:analogfunction:math_h">
@@ -1908,7 +1911,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       <admst:assert test="arguments[count(.)=2]" format="%(name): should have two arguments exactly\n"/>
       <admst:assert test="arguments[2]/adms[datatypename='probe']" format="%(name): second argument is not a probe\n"/>
       <admst:apply-templates select="arguments[1]" match="ddx"/>
-      <admst:variable name="e" select="not-used"/>
+      <admst:variable name="e" select="0.0 /*ddx should be top node of expression!*/"/>
     </admst:when>
     <admst:when test="[name='floor']">
       <admst:assert test="arguments[count(.)=1]" format="%(name): should have one argument exactly\n"/>
@@ -2139,7 +2142,9 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     </admst:when>
     <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max']">
       <admst:variable name="epq" select="fixme"/>
-      <admst:warning format="%(name): ddx dependency not implemented\n"/>
+      <admst:if test="[$requiredderivateforddx='yes']">
+        <admst:warning format="%(name): ddx dependency not implemented\n"/>
+      </admst:if>
     </admst:when>
   </admst:choose>
   </admst:if>
@@ -2217,7 +2222,6 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   <admst:text format=")\n"/>
 </admst:template>
 <admst:template match="function:derivate:precomputation">
-  <admst:apply-templates select="function" match="function:precomputation"/>
   <admst:if test="[hasVoltageDependentFunction='yes']">
         <admst:choose>
           <admst:when test="[$ddxinsidederivate='yes']">
@@ -2283,7 +2287,10 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
             <admst:variable name="ddxinsidederivate" select="yes"/>
           </admst:if>
         </admst:for-each>
-  <admst:apply-templates select="rhs[not(nilled(function))]" match="function:derivate:precomputation"/>
+  <admst:apply-templates select="rhs/function" match="function:precomputation"/>
+  <admst:if test="lhs[insource='yes']">
+    <admst:apply-templates select="rhs[not(nilled(function))]" match="function:derivate:precomputation"/>
+  </admst:if>
   <admst:choose>
     <admst:when test="rhs/tree/adms[datatypename='function']/..[name='ddx']">
       <admst:text format="#if defined(_DDX)\n"/>
@@ -2306,7 +2313,9 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
           </admst:choose>
         </admst:for-each>
         <admst:variable name="pprobe" select="%($qprobe)"/>
-        <admst:text format="%(dxname($lhs)/[name='dxname']/value)=$allepq;\n"/>
+        <admst:if test="[$requiredderivateforddx='yes']">
+          <admst:text format="%(dxname($lhs)/[name='dxname']/value)=$allepq;\n"/>
+        </admst:if>
       </admst:for-each>
       <admst:text test="lhs[insource='yes']/probe" format="#endif\n"/>
       <admst:variable name="allep"/>
@@ -2358,7 +2367,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
           <admst:text test="[$ddxinsidederivate='yes' and $ddxinsidethisprobe='no']" format="#if defined(_DERIVATE)\n"/>
           <admst:text format="%(dxname($lhs)/[name='dxname']/value)=$ep;\n"/>
           <admst:text test="[$ddxinsidederivate='yes' and $ddxinsidethisprobe='no']" format="#endif\n"/>
-          <admst:text test="[$ddxinsidethisprobe='yes']" format="#if defined(_DERIVATE)\n"/>
+          <admst:text test="[$ddxinsidethisprobe='yes']" format="#if defined(_DERIVATE2)\n"/>
           <admst:for-each select="$lhs[$ddxinsidethisprobe='yes']/probe">
             <admst:variable name="epq" select="0.0"/>
             <admst:variable name="qprobe" select="%(.)"/>
@@ -2414,6 +2423,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
 <admst:template match="contribution:nonoise:mint">
   <admst:text test="[dynamic='yes']" format="#if defined(_DYNAMIC)\n"/>
   <admst:text test="rhs/function" format="{\n"/>
+  <admst:apply-templates select="rhs/function" match="function:precomputation"/>
   <admst:apply-templates select="rhs[not(nilled(function))]" match="function:derivate:precomputation"/>
   <admst:variable name="sourcepnode" select="%(lhs/branch/pnode)"/>
   <admst:variable name="sourcennode" select="%(lhs/branch/nnode)"/>
@@ -2657,7 +2667,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
         </admst:otherwise>
       </admst:choose>
       <admst:text select="probe" format="double %(../name)_%(nature/access)%(branch/pnode/name)_%(branch/nnode/name);\n"/>
-      <admst:text test="[$ddxinsidederivate='yes']" format="#if defined(_DERIVATE)\n"/>
+      <admst:text test="[$ddxinsidederivate='yes']" format="#if defined(_DERIVATE2)\n"/>
       <admst:for-each select="$ddxprobes/item">
         <admst:variable name="pprobe" select="%(.)"/>
         <admst:for-each select="$myvariable/probe">
@@ -2819,6 +2829,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
 </admst:template>
 
 <!-- Do not create temp variables for functions inside while(), for()-->
+<admst:variable name="requiredderivateforddx" select="no"/>
 <admst:variable name="SkipFVariable" select="n"/>
 <admst:for-each select="/module">
   <admst:variable name="module" select="%(name)"/>
