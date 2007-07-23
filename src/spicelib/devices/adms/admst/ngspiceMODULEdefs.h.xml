@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.13  2007-07-05 10:20:47  r29173
+  Revision 1.14  2007-07-23 17:24:14  dwarning
+  unique limexp behaviour
+
+  Revision 1.13  2007/07/05 10:20:47  r29173
   added declaration of noise variables
 
   Revision 1.12  2007/05/11 07:19:57  r29173
@@ -218,8 +221,8 @@ if(isinf(var)) \\
 #define _dx_div(dx,xy,x,y)
 #define _dy_div(dy,dx,xy,x,y)    dy = -xy*dx;
 
-#define _limexp(val,arg)         val = ((arg)&lt;(80)) ? (exp(arg)) : (exp(80)*(1.0+(arg-80)));
-#define _d_limexp(val,dval,arg)  val = ((arg)&lt;(80)) ? (exp(arg)) : (exp(80)*(1.0+(arg-80))); dval = val;
+#define _limexp(val,arg)         val = ((arg)&lt;(90)) ? (exp(arg)) : (exp(90)*(1.0+(arg-90)));
+#define _d_limexp(val,dval,arg)  val = ((arg)&lt;(90)) ? (exp(arg)) : (exp(90)*(1.0+(arg-90))); dval = val;
 #define _fabs(val,arg)           val = fabs(arg);
 #define _d_fabs(val,dval,arg)    val = fabs(arg);    dval = (((val)&gt;=0)?(+1.0):(-1.0));
 #define _abs(val)                ((val)&lt;(0) ? (-(val)):(val))
