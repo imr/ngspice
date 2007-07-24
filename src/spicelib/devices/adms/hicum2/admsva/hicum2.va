@@ -502,8 +502,16 @@ module hic2_full (c,b,e,s,tnode);
 //Node definitions
 
 inout 		c,b,e,s,tnode;
-electrical 	c,b,e,s,ci,ei,bp,bi,si;
-electrical 	tnode;
+electrical 	c     `P(info="external collector node");
+electrical 	b     `P(info="external base node");
+electrical 	e     `P(info="external emitter node");
+electrical 	s     `P(info="external substrate node");
+electrical 	tnode `P(info="external temperature node");                            
+electrical 	ci    `P(info="internal collector node");
+electrical 	ei    `P(info="internal emitter node");
+electrical 	bp    `P(info="internal base node p");
+electrical 	bi    `P(info="internal base node i");
+electrical 	si    `P(info="internal substrate node");
 
 //Branch definitions
 branch 		(b,bp) 		br_bbp_i;
