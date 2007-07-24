@@ -12,6 +12,6 @@ plot abs(i(vc))
 plot v(dt)
 .endc
 
-.include model-card-hicumL2V2p21sp.lib
+.include model-card-hicumL2V2p21.lib
 
 .end

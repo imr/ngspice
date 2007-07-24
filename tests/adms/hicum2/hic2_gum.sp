@@ -12,6 +12,6 @@ plot abs(i(vc)) abs(i(vb)) abs(i(vs)) ylog xlimit 0.3 1.6 ylimit 1e-12 0.1
 plot abs(i(vc))/abs(i(vb)) vs abs(-i(vc)) xlog xlimit 1e-09 10e-3 ylimit 0 120
 .endc
 
-.include model-card-hicumL2V2p21sp.lib
+.include model-card-hicumL2V2p21.lib
 
 .end
