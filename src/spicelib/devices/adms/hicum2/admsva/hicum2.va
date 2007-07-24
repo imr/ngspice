@@ -15,10 +15,12 @@
 //Default simulator: Spectre
 
 `ifdef insideADMS
+  `define P(p) (*p*)
   `define MODEL @(initial_model)
   `define NOISE @(noise)
   `define ATTR(txt) (*txt*)
 `else
+  `define P(p)
   `define MODEL
   `define NOISE
   `define ATTR(txt)

@@ -3,6 +3,12 @@
  
 module bjt504_va (c, b, e, s); 
   
+`ifdef insideADMS
+  `define P(p) (*p*)
+`else
+  `define P(p)
+`endif
+
   // External ports  
      inout c, b, e, s; 
 
