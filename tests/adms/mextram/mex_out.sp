@@ -1,4 +1,4 @@
-mextram out test
+MEXTRAM Output Test Ic=f(Vc,Ib)
 
 IB 0 b 200n
 VC C 0 2.0
@@ -6,7 +6,7 @@ VS S 0 0.0
 Q1 C B 0 S BJTRF1
 
 .control
-dc vc 0.0 2.0 0.05 ib 1u 10u 1u
+dc vc 0.0 2.0 0.05 ib 500n 5u 500n
 run
 plot abs(i(vc))
 .endc
