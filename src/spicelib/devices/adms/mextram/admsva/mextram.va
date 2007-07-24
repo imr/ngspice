@@ -5,12 +5,20 @@ module bjt504_va (c, b, e, s);
   
   // External ports  
      inout c, b, e, s; 
-  
-     electrical e, b, c, s; 
+
+     electrical 	c     `P(info="external collector node");
+     electrical 	b     `P(info="external base node");
+     electrical 	e     `P(info="external emitter node");
+     electrical 	s     `P(info="external substrate node");
   
   // Internal nodes  
-     electrical e1, b1, b2, c1, c2; 
-     electrical noi; // For correlated noise implementation 
+     electrical 	c1    `P(info="internal collector node 1");
+     electrical 	e1    `P(info="internal emitter node");
+     electrical 	b1    `P(info="internal base node 1");
+     electrical 	b2    `P(info="internal base node 2");
+     electrical 	c2    `P(info="internal collector node 2");
+  // For correlated noise implementation 
+     electrical 	noi   `P(info="internal noise node");
  
 `include "parameters.inc"
 `include "variables.inc"
