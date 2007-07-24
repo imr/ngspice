@@ -6,10 +6,10 @@
 //======================================================================================
 //======================================================================================
 //
-//  (c) Copyright 2006, All Rights Reserved, NXP Semiconductors
+//  (c) Copyright 2007, All Rights Reserved, NXP Semiconductors
 //
 //
-//  Version: 102.1, October 2006 (Simkit 2.4)
+//  Version: 102.1, April 2007 (Simkit 2.5)
 //
 //======================================================================================
 //======================================================================================
@@ -540,7 +540,7 @@
     real Dnsub;
     real Igidl, Igisl, Vtovd, Vtovs;
     real x_s, sqm, alpha, alpha1, eta_p, phi_inf, za, xitsb, rhob;
-    real thesat1, wsat, ysat, zsat, r1, r2, dL, GdL, dL1, FdL, GR, Gmob, Gmob_dL, Gvsat, QCLM;
+    real thesat1, wsat, ysat, zsat, r1, r2, dL, GdL, dL1, FdL, GR, Gmob, Gmob_dL, Gvsat, Gvsatinv, QCLM;
     real xgm, Voxm, dps, qim, qim1, qim1_1, xgs_ov, xgd_ov, sigVds;
     real Ux, xg;
     real mu, nu, xn_s, delta_ns;
@@ -1312,6 +1312,7 @@
             QCLM       =  0.0;
             thesat1    =  0.0;
             Gvsat      =  1.0;
+            Gvsatinv   =  1.0;
             xgm        =  0.0;
             dps        =  0.0;
             qim        =  0.0;
@@ -1373,7 +1374,7 @@
             Vgb1       =  Vgbstar - VFB_i;
             Vdsx       =  sqrt(Vds * Vds + 0.01) - 0.1;
             Vsbx       =  Vsbstar + 0.5 * (Vds - Vdsx);
-            delVg      =  CF_i * Vdsx * (1 + CFB_i * Vsbx); // DIBL
+            delVg      =  CF_i * (Vdsx * (1 + CFB_i * Vsbx)); // DIBL
             Vgb1       =  Vgb1 + delVg;
             xg         =  Vgb1 * inv_phit1;
             
@@ -1417,32 +1418,30 @@
                 delta_1s   =  0.0;
                 temp       =  1.0 / (2.0 + x_s * x_s);
                 xi0s       =  x_s * x_s * temp;
-                xi1s       =  4.0 * x_s * temp * temp;
+                xi1s       =  4.0 * (x_s * temp * temp);
                 xi2s       =  (8.0 * temp - 12.0 * xi0s) * temp * temp;
                 if (x_s < `se05) begin
                     delta_1s   =  exp(x_s);
                     Es         =  1.0 / delta_1s;
                     delta_1s   =  delta_ns * delta_1s;
-                    Ds         =  delta_ns * (1.0 / Es - x_s - 1.0 - xi0s); 
                 end else if (x_s > (xn_s - `se05)) begin
                     delta_1s   =  exp(x_s - xn_s);
                     Es         =  delta_ns / delta_1s;
-                    Ds         =  delta_1s - delta_ns * (x_s + 1.0 + xi0s);
                 end else begin
                     delta_1s   = `ke05 / `P3(xn_s - x_s - `se05);
                     Es         = `ke05 / `P3(x_s - `se05);
-                    Ds         =  delta_1s - delta_ns * (x_s + 1.0 + xi0s);
                 end
+                Ds         =  delta_1s - delta_ns * (x_s + 1.0 + xi0s); 
                 if (x_s < 1.0e-5) begin
-                    Ps         =  0.5 * x_s * x_s * (1.0 - `oneThird * x_s * (1.0 - 0.25 * x_s));
-                    Ds         =  `oneSixth * delta_ns * x_s * x_s * x_s * (1.0 + 1.75 * x_s);
-                    temp       =  sqrt(1.0 - `oneThird * x_s * (1.0 - 0.25 * x_s));
-                    sqm        =  `invSqrt2 * x_s * temp;
-                    alpha      =  1.0 + Gf * `invSqrt2 * (1.0 - 0.5 * x_s + `oneSixth * x_s * x_s) / temp; 
+                    Ps         =  0.5 * (x_s * x_s * (1.0 - `oneThird * (x_s * (1.0 - 0.25 * x_s))));
+                    Ds         =  `oneSixth * (delta_ns * x_s * x_s * x_s * (1.0 + 1.75 * x_s));
+                    temp       =  sqrt(1.0 - `oneThird * (x_s * (1.0 - 0.25 * x_s)));
+                    sqm        =  `invSqrt2 * (x_s * temp);
+                    alpha      =  1.0 + Gf * `invSqrt2 * (1.0 - 0.5 * x_s + `oneSixth * (x_s * x_s)) / temp; 
                 end else begin
                     Ps         =  x_s - 1.0 + Es;
                     sqm        =  sqrt(Ps);
-                    alpha      =  1.0 + 0.5 * Gf * (1.0 - Es) / sqm; 
+                    alpha      =  1.0 + 0.5 * (Gf * (1.0 - Es) / sqm); 
                 end
                 Em     =  Es;
                 Ed     =  Em;
@@ -1465,9 +1464,9 @@
                     end else begin
                         temp       = 1.0 / (1.0 + RSG_i * qis);
                     end
-                    GR         =  THER_i * rhob * temp * qis;
+                    GR         =  THER_i * (rhob * temp * qis);
                     Eeffm      =  E_eff0 * (qbs + eta_mu * qis);
-                    Mutmp      =  pow(Eeffm * MUE_i, THEMU_i) + CS_i * Ps / (Ps + Ds + 1.0e-14);
+                    Mutmp      =  pow(Eeffm * MUE_i, THEMU_i) + CS_i * (Ps / (Ps + Ds + 1.0e-14));
                     Gmob       =  (1.0 + Mutmp + GR) * Rxcor;
                     if (THESATB_i < 0) begin
                         xitsb      = 1.0 / (1.0 - THESATB_i * Vsbx);
@@ -1475,13 +1474,13 @@
                         xitsb      = 1.0 + THESATB_i * Vsbx;
                     end
                     temp2      =  qis * xitsb;
-                    wsat       =  100.0 * temp2 / (100.0 + temp2);
+                    wsat       =  100.0 * (temp2 / (100.0 + temp2));
                     if (THESATG_i < 0) begin
                         temp       = 1 / (1 - THESATG_i * wsat);
                     end else begin
                         temp       = 1 + THESATG_i * wsat;
                     end
-                    thesat1    =  THESAT_i * temp / Gmob;
+                    thesat1    =  THESAT_i * (temp / Gmob);
                     phi_inf    =  qis / alpha + phit1;
                     ysat       =  thesat1 * phi_inf * `invSqrt2;
                     if (CHNL_TYPE==`PMOS) begin
@@ -1489,11 +1488,11 @@
                     end
                     za         =  2.0 / (1.0 + sqrt(1.0 + 4.0 * ysat));
                     temp1      =  za * ysat;
-                    Phi_0      =  phi_inf * za * (1.0 + 0.86 * temp1 * (1.0 - temp1 * za) / (1.0 + 4.0 * temp1 * temp1 * za));
+                    Phi_0      =  phi_inf * za * (1.0 + 0.86 * (temp1 * (1.0 - temp1 * za) / (1.0 + 4.0 * (temp1 * temp1 * za))));
                     asat       =  xgs + 0.5 * Gf2;
-                    Phi_2      =  Gf2 * Ds * phit1 * 0.98 / (asat + sqrt(asat * asat - Gf2 * Ds * 0.98));
+                    Phi_2      =  0.98 * (Gf2 * Ds * phit1 / (asat + sqrt(asat * asat - Gf2 * Ds * 0.98)));
                     Phi_0_2    =  Phi_0 + Phi_2;
-                    Phi0_Phi2  =  2.0 * Phi_0 * Phi_2;
+                    Phi0_Phi2  =  2.0 * (Phi_0 * Phi_2);
                     Phi_sat    =  Phi0_Phi2 / (Phi_0_2 + sqrt(Phi_0_2 * Phi_0_2 - 1.98 * Phi0_Phi2));
                     Vdsat      =  Phi_sat - phit1 * ln(1.0 + Phi_sat * (Phi_sat - 2.0 * asat * phit1) * inv_Gf2 / (phit1 * phit1 * Ds));
                 end else begin
@@ -1522,8 +1521,8 @@
                     pC          =  2.0 * (xg - x_s) + Gf2 * (1.0 - Es + delta_1s * k_ds - delta_nd * (1.0 + xi1s));
                     qC          =  Gf2 * (1.0 - k_ds) * Ds;
                     temp        =  2.0 - Gf2 * (Es + delta_1s * k_ds - delta_nd * xi2s);
-                    temp        =  pC * pC - 2.0 * temp * qC;
-                    x_ds        =  2.0 * qC / (pC + sqrt(temp));
+                    temp        =  pC * pC - 2.0 * (temp * qC);
+                    x_ds        =  2.0 * (qC / (pC + sqrt(temp)));
                     x_d         =  x_s + x_ds;
                 end
                 dps         =  x_ds * phit1; // deltaPsi
@@ -1556,32 +1555,32 @@
                     Em         =  sqrt(temp);
                 end
                 D_bar      =  0.5 * (Ds + Dd);
-                Dm         =  D_bar + 0.125 * x_ds * x_ds * (Em - 2.0 * inv_Gf2);
+                Dm         =  D_bar + 0.125 * (x_ds * x_ds * (Em - 2.0 * inv_Gf2));
 
                 if (x_m < 1.0e-5) begin
-                    Pm         =  0.5 * x_m * x_m * (1.0 - `oneThird * x_m * (1.0 - 0.25 * x_m));
+                    Pm         =  0.5 * (x_m * x_m * (1.0 - `oneThird * (x_m * (1.0 - 0.25 * x_m))));
                     xgm        =  Gf * sqrt(Dm + Pm);
                     
                     // 4.2.7 Polysilicon depletion
                     if (kp > 0.0) begin
                         eta_p       =  1.0 / sqrt(1.0 + kp * xgm);
                     end // (kp > 0.0)
-                    temp       =  sqrt(1.0 - `oneThird * x_m * (1.0 - 0.25 * x_m));
-                    sqm        =  `invSqrt2 * x_m * temp;
-                    alpha      =  eta_p + Gf * `invSqrt2 * (1.0 - 0.5 * x_m + `oneSixth * x_m * x_m) / temp; 
+                    temp       =  sqrt(1.0 - `oneThird * (x_m * (1.0 - 0.25 * x_m)));
+                    sqm        =  `invSqrt2 * (x_m * temp);
+                    alpha      =  eta_p + `invSqrt2 * (Gf * (1.0 - 0.5 * x_m + `oneSixth * (x_m * x_m)) / temp); 
                 end else begin
                     Pm         =  x_m - 1.0 + Em;
                     xgm        =  Gf * sqrt(Dm + Pm);
                     
                     // 4.2.7 Polysilicon depletion
                     if (kp > 0.0) begin
-                        d0         =  1.0 - Em + 2.0 * xgm * inv_Gf2;
+                        d0         =  1.0 - Em + 2.0 * (xgm * inv_Gf2);
                         eta_p      =  1.0 / sqrt(1.0 + kp * xgm);
                         temp       =  eta_p / (eta_p + 1.0);
-                        x_pm       =  kp * temp * temp * Gf2 * Dm;
+                        x_pm       =  kp * (temp * temp * Gf2 * Dm);
                         p_pd       =  2.0 * (xgm - x_pm) + Gf2 * (1.0 - Em + Dm);
                         q_pd       =  x_pm * (x_pm - 2.0 * xgm);
-                        xi_pd      =  1.0 - 0.5 * Gf2 * (Em + Dm);
+                        xi_pd      =  1.0 - 0.5 * (Gf2 * (Em + Dm));
                         u_pd       =  q_pd * p_pd / (p_pd * p_pd - xi_pd * q_pd);
                         x_m        =  x_m + u_pd;
                         km         =  exp(u_pd);
@@ -1589,16 +1588,16 @@
                         Dm         =  Dm * km;
                         Pm         =  x_m - 1.0 + Em;
                         xgm        =  Gf * sqrt(Dm + Pm);
-                        help       =  1.0 - Em + 2.0 * xgm * eta_p * inv_Gf2;
+                        help       =  1.0 - Em + 2.0 * (xgm * eta_p * inv_Gf2);
                         x_ds       =  x_ds * km * (d0 + D_bar) / (help + km * D_bar);
                         dps        =  x_ds * phit1;
                     end // (kp > 0.0)
                     sqm        =  sqrt(Pm);
-                    alpha      =  eta_p + 0.5 * Gf * (1.0 - Em) / sqm; 
+                    alpha      =  eta_p + 0.5 * (Gf * (1.0 - Em) / sqm); 
                 end
 
                 // 4.2.8 Potential midpoint inversion charge
-                qim        =  Gf2 * Dm * phit1 / (xgm + Gf * sqm);
+                qim        =  phit1 * (Gf2 * Dm / (xgm + Gf * sqm));
 
                 // 4.2.8 Potential midpoint inversion charge (continued)
                 qim1       =  qim + phit1 * alpha;
@@ -1610,54 +1609,55 @@
                 end else begin
                     temp       = 1.0 / (1.0 + RSG_i * qim);
                 end
-                GR         =  THER_i * rhob * temp * qim;
+                GR         =  THER_i * (rhob * temp * qim);
                 // Mobility reduction
                 qeff       =  qbm + eta_mu * qim;
                 Eeffm      =  E_eff0 * qeff;
-                Mutmp      =  pow(Eeffm * MUE_i, THEMU_i) + CS_i * Pm / (Pm + Dm + 1.0e-14);
+                Mutmp      =  pow(Eeffm * MUE_i, THEMU_i) + CS_i * (Pm / (Pm + Dm + 1.0e-14));
                 Gmob       =  (1.0 + Mutmp + GR) * Rxcor;
 
                 // 4.2.9 Drain-source channel current
                 // Channel length modulation
                 r1         =  qim * qim1_1;
-                r2         =  phit1 * alpha * qim1_1;
+                r2         =  phit1 * (alpha * qim1_1);
                 temp       =  ln((1.0 + (Vds - dps) * inv_VP) / (1.0 + (Vdse - dps) * inv_VP));
                 temp1      =  ln(1.0 + Vdsx * inv_VP);
                 dL         =  ALP_i * temp;
                 GdL        =  1.0 / (1.0 + dL + dL * dL);
-                dL1        =  dL + ALP1_i * qim1_1 * r1 * temp + ALP2_i * qbm * r2 * r2 * temp1;
+                dL1        =  dL + ALP1_i * (qim1_1 * r1 * temp) + ALP2_i * (qbm * r2 * r2 * temp1);
                 FdL        =  (1.0 + dL1 + dL1 * dL1) * GdL;
                 // Velocity saturation
                 temp2      =  qim * xitsb;
-                wsat       =  100.0 * temp2 / (100.0 + temp2);
+                wsat       =  100.0 * (temp2 / (100.0 + temp2));
                 Gmob_dL    =  Gmob * GdL;
                 if (THESATG_i < 0) begin
                     temp       = 1 / (1 - THESATG_i * wsat);
                 end else begin
                     temp       = 1 + THESATG_i * wsat;
                 end
-                thesat1    =  THESAT_i * temp / Gmob_dL;
+                thesat1    =  THESAT_i * (temp / Gmob_dL);
                 zsat       =  thesat1 * thesat1 * dps * dps;
                 if (CHNL_TYPE == `PMOS) begin
                     zsat       =  zsat / (1.0 + thesat1 * dps);
                 end
-                Gvsat      =  0.5 * Gmob_dL * (1.0 + sqrt(1.0 + 2.0 * zsat));
+                Gvsat      =  0.5 * (Gmob_dL * (1.0 + sqrt(1.0 + 2.0 * zsat)));
+                Gvsatinv   =  1.0 / Gvsat;
                 // Drain-source current
-                Ids        =  BET_i * FdL * qim1 * dps / Gvsat;
+                Ids        =  BET_i * (FdL * qim1 * dps * Gvsatinv);
 
                 // 4.2.10 Variables for calculation of intrinsic charges and gate current
                 Voxm       =  xgm * phit1;
-                temp       =  Gmob_dL / Gvsat;
-                alpha1     =  alpha * (1.0 + 0.5 * zsat * temp * temp);
+                temp       =  Gmob_dL * Gvsatinv;
+                alpha1     =  alpha * (1.0 + 0.5 * (zsat * temp * temp));
                 H          =  temp * qim1 / alpha1;
 
                 // 4.2.11 Impact-Ionization
                 if (SWIMPACT != 0) begin
                     delVsat       =  Vds - A3_i * dps;
                     if (delVsat > 0) begin
-                        temp2        =  A2_i * (1.0 + A4_i * (sqrt(phib + Vsbstar) - sqrt_phib)) / delVsat;
+                        temp2        =  A2_i * ((1.0 + A4_i * (sqrt(phib + Vsbstar) - sqrt_phib)) / delVsat);
                         `expl_low(-temp2, temp)
-                        mavl         =  A1_i * delVsat * temp;
+                        mavl         =  A1_i * (delVsat * temp);
                         Iimpact      =  Ids * mavl;
                     end
                 end
@@ -1701,7 +1701,7 @@
                     end else begin
                         `expl_low(temp, TP)
                     end
-                    Igsov      =  IGOV_i * TP * ln((1.0 + Dsi) / (1.0 + Dgate));
+                    Igsov      =  IGOV_i * (TP * ln((1.0 + Dsi) / (1.0 + Dgate)));
 
                     // Gate-drain overlap component of gate current
                     arg2mina   =  Vovd + Dov;
@@ -1721,7 +1721,7 @@
                     end else begin
                         `expl_low(temp, TP)
                     end
-                    Igdov      =  IGOV_i * TP * ln((1.0 + Dsi) / (1.0 + Dgate));
+                    Igdov      =  IGOV_i * (TP * ln((1.0 + Dsi) / (1.0 + Dgate)));
                 end
 
                 // Gate-channel component of gate current
@@ -1750,7 +1750,7 @@
                     end else begin
                         `expl_low(temp, TP)
                     end
-                    Igc0       =  IGINV_i * TP * ln((1.0 + Dsi) / (1.0 + Dgate));
+                    Igc0       =  IGINV_i * (TP * ln((1.0 + Dsi) / (1.0 + Dgate)));
 
                     // Source/drain partitioning of gate-channel current
                     if ((xg <= 0) || ((GC2_i == 0) && (GC3_i == 0))) begin
@@ -1759,14 +1759,14 @@
                     end else begin
                         temp       =  GC2_i + 2.0 * GC3_i * zg;
                         u0         =  CHIB_i / (temp * BCH);
-                        x          =  0.5 * dps / u0;
+                        x          =  0.5 * (dps / u0);
                         u0_div_H   =  u0 / H;
                         Bg         =  u0_div_H * (1.0 - u0_div_H) * 0.5;
                         Ag         =  0.5 - 3.0 * Bg;
                         if (x < 1.0e-3) begin
                             xsq        =  x * x;
-                            igc        =  1.0 + xsq * (`oneSixth + u0_div_H * `oneThird + xsq * `oneSixth * (0.05 + 0.2 * u0_div_H));
-                            igcd_h     =  0.5 * igc - `oneSixth * x * (1.0 + xsq * (0.4 * (Bg + 0.25) + 0.0285714285714 * xsq * (0.125 + Bg)));
+                            igc        =  1.0 + xsq * (`oneSixth + u0_div_H * `oneThird + `oneSixth * (xsq * (0.05 + 0.2 * u0_div_H)));
+                            igcd_h     =  0.5 * igc - `oneSixth * (x * (1.0 + xsq * (0.4 * (Bg + 0.25) + 0.0285714285714 * (xsq * (0.125 + Bg)))));
                         end else begin
                             inv_x      =  1.0 / x;
                             `expl(x, ex)
@@ -1794,18 +1794,18 @@
 
                 // GIDL current computation
                 if (Vovd < 0) begin                    
-                    Vtovd        = sqrt(Vovd * Vovd + CGIDL_i * CGIDL_i * Vdb * Vdb + 1.0e-6);
+                    Vtovd        = sqrt(Vovd * Vovd + CGIDL_i * CGIDL_i * (Vdb * Vdb) + 1.0e-6);
                     temp = -BGIDL_i / Vtovd;
                     `expl_low(temp, temp2)
-                    Igidl        = -AGIDL_i * Vdb * Vovd * Vtovd * temp2;
+                    Igidl        = -AGIDL_i * (Vdb * Vovd * Vtovd * temp2);
                 end
 
                 // GISL current computation
                 if (Vovs < 0) begin
-                    Vtovs        = sqrt(Vovs * Vovs + CGIDL_i * CGIDL_i * Vsb * Vsb + 1.0e-6);
+                    Vtovs        = sqrt(Vovs * Vovs + CGIDL_i * CGIDL_i * (Vsb * Vsb) + 1.0e-6);
                     temp = -BGIDL_i / Vtovs;
                     `expl_low(temp, temp2)
-                    Igisl        = -AGIDL_i * Vsb * Vovs * Vtovs * temp2;
+                    Igisl        = -AGIDL_i * (Vsb * Vovs * Vtovs * temp2);
                 end
             end // (SWGIDL != 0)
           
@@ -1833,13 +1833,13 @@
                 QD         =  0.0;
                 QB         =  QG;
             end else begin
-                Fj         =  0.5 * dps / H;
+                Fj         =  0.5 * (dps / H);
                 Fj2        =  Fj * Fj;
-                QCLM       =  (1.0 - GdL) * (qim - alpha * 0.5 * dps);
-                QG         =  Voxm + 0.5 * eta_p * dps * (Fj * GdL * `oneThird - 1.0 + GdL);
+                QCLM       =  (1.0 - GdL) * (qim - 0.5 * (alpha * dps));
+                QG         =  Voxm + 0.5 * (eta_p * dps * (Fj * GdL * `oneThird - 1.0 + GdL));
                 temp       =  alpha * dps * `oneSixth;
                 QI         =  GdL * (qim + temp * Fj) + QCLM;
-                QD         =  0.5 * GdL * GdL * (qim - temp * (1.0 - Fj - 0.2 * Fj2)) + 0.5 * QCLM * (1.0 + GdL);
+                QD         =  0.5 * (GdL * GdL * (qim - temp * (1.0 - Fj - 0.2 * Fj2)) + QCLM * (1.0 + GdL));
                 QB         =  QG - QI;
             end
             Qg         =  QG * COX_qm;
@@ -1867,7 +1867,7 @@
                     pd         =  1.0;
                     Gp         =  Gf; 
                 end else begin
-                    ym         =  0.5 * ( 1.0 + 0.25 * dps / H);
+                    ym         =  0.5 * ( 1.0 + 0.25 * (dps / H));
                     pd         =  xgm / (xg - x_m);
                     Gp         =  Gf / pd;
                 end
@@ -2015,14 +2015,14 @@
                 Qfgs       = temp;
             end
 
-            I(`Gint, S)     <+  CHNL_TYPE * ddt(Qg);
-            I(`Bint, S)     <+  CHNL_TYPE * ddt(Qb);
-            I(D, S)         <+  CHNL_TYPE * ddt(Qd);
-            I(`Gint, S)     <+  CHNL_TYPE * ddt(Qfgs);
-            I(`Gint, D)     <+  CHNL_TYPE * ddt(Qfgd);
-            I(`Gint, `Bint) <+  CHNL_TYPE * ddt(Qgb_ov);
-            I(`Bjs, S)      <+  CHNL_TYPE * ddt(qsjun);
-            I(`Bjd, D)      <+  CHNL_TYPE * ddt(qdjun);
+            I(`Gint, S)     <+  ddt(CHNL_TYPE * Qg);
+            I(`Bint, S)     <+  ddt(CHNL_TYPE * Qb);
+            I(D, S)         <+  ddt(CHNL_TYPE * Qd);
+            I(`Gint, S)     <+  ddt(CHNL_TYPE * Qfgs);
+            I(`Gint, D)     <+  ddt(CHNL_TYPE * Qfgd);
+            I(`Gint, `Bint) <+  ddt(CHNL_TYPE * Qgb_ov);
+            I(`Bjs, S)      <+  ddt(CHNL_TYPE * qsjun);
+            I(`Bjd, D)      <+  ddt(CHNL_TYPE * qdjun);
 
         end // loadDynamic
 
@@ -2047,27 +2047,27 @@
             if ((xg > 0.0) && (MULT_i > 0) && (BET_i > 0)) begin
                 N1         =  Cox_over_q * alpha * phit;
                 Nm1        =  Cox_over_q * qim1;
-                Delta_N1   =  Cox_over_q * alpha * dps;
-                Sfl        =  (NFA_i - NFB_i * N1 + NFC_i * N1 * N1) * ln((Nm1 + 0.5 * Delta_N1) / (Nm1 - 0.5 * Delta_N1));
+                Delta_N1   =  Cox_over_q * (alpha * dps);
+                Sfl        =  (NFA_i - NFB_i * N1 + NFC_i * (N1 * N1)) * ln((Nm1 + 0.5 * Delta_N1) / (Nm1 - 0.5 * Delta_N1));
                 Sfl        =  Sfl + (NFB_i + NFC_i * (Nm1 - 2.0 * N1)) * Delta_N1;
-                Sfl        =  Sfl_prefac * Ids / (Gvsat * N1) * Sfl;
+                Sfl        =  Sfl_prefac * Ids * Gvsatinv * Sfl / N1;
 
                 H0         =  qim1 / alpha;
                 t1         =  qim / qim1;
-                sqt2       =  0.5 * `oneSixth * dps / H0;
+                sqt2       =  0.5 * `oneSixth * (dps / H0);
                 t2         =  sqt2 * sqt2;
                 r          =  H0 / H - 1.0;
-                lc         =  `CLIP_LOW(1.0 - 12 * r * t2, 1e-20);
+                lc         =  `CLIP_LOW(1.0 - 12 * (r * t2), 1e-20);
                 lcinv2     =  1 / (lc * lc);
-                g_ideal    =  BET_i * FdL * qim1 / Gvsat;
+                g_ideal    =  BET_i * (FdL * qim1 * Gvsatinv);
                 CGeff      =  Gvsat * Gvsat * COX_qm * eta_p / (Gmob_dL * Gmob_dL);
-                mid        =  t1 + 12 * t2 - 24 * (1.0 + t1) * t2 * r;
+                mid        =  t1 + 12 * t2 - 24 * ((1.0 + t1) * t2 * r);
                 mid        =  `CLIP_LOW(mid, 1e-40);
                 mid        =  g_ideal * lcinv2 * mid;
-                mig        =  t1 / 12 - t2 * (t1 + 0.2 - 12 * t2) - 1.6 * t2 * (t1 + 1.0 - 12 * t2) * r;
+                mig        =  t1 / 12 - t2 * (t1 + 0.2 - 12 * t2) - 1.6 * (t2 * (t1 + 1.0 - 12 * t2) * r);
                 mig        =  `CLIP_LOW(mig, 1e-40);
                 mig        =  lcinv2 / g_ideal * mig;
-                migid      =  lcinv2 * sqt2 * (1.0 - 12 * t2 - (t1 + 19.2 * t2 - 12 * t1 * t2) * r);
+                migid      =  lcinv2 * sqt2 * (1.0 - 12 * t2 - (t1 + 19.2 * t2 - 12 * (t1 * t2)) * r);
                 sqid       =  sqrt(MULT_i * nt * mid);
                 sqig       =  sqrt(MULT_i * nt / mig);
                 c_igid     =  (sqid == 0) ? 0.0 : (migid * sqig / sqid); // = migid / sqrt(mig * mid);
@@ -2075,7 +2075,7 @@
             end
             shot_igsx  = 2.0 * `QELE * abs(Igse);
             shot_igdx  = 2.0 * `QELE * abs(Igde);
-            shot_iavl  = 2.0 * `QELE * (mavl + 1) * abs(Iimpacte);
+            shot_iavl  = 2.0 * `QELE * ((mavl + 1) * abs(Iimpacte));
             // JUNCAP2
             sjnoisex   = 2.0 * `QELE * abs(isjun);
             djnoisex   = 2.0 * `QELE * abs(idjun);
@@ -2114,8 +2114,8 @@
             I(D,S)    <+  flicker_noise(MULT_i * Sfl, 1.0);
             I(D,S)    <+  white_noise(sqid * sqid * (1.0 - c_igid));
             I(D,S)    <+  sqid * V(NOI2);
-            I(`Gint,S)<+  0.5 * (1.0 + sigVds) * ddt(mig * CGeff * V(NOIC));
-            I(`Gint,D)<+  0.5 * (1.0 - sigVds) * ddt(mig * CGeff * V(NOIC));
+            I(`Gint,S)<+  ddt(0.5 * ((1.0 + sigVds) * mig * CGeff * V(NOIC)));
+            I(`Gint,D)<+  ddt(0.5 * ((1.0 - sigVds) * mig * CGeff * V(NOIC)));
             I(`Gint,S)<+  white_noise(shot_igs);
             I(`Gint,D)<+  white_noise(shot_igd);
             // JUNCAP2
@@ -2154,7 +2154,7 @@
             ig        = Igse + Igde + Igbe;
             ib        = -Iimpacte - Igbe - Igidle - Igisle;
 
-            P_D         = 1 + 0.25 * Gf * kp;
+            P_D         = 1 + 0.25 * (Gf * kp);
             facvsb0    = phib + 2 * phit1;
             facvsb     = Vsbstar + facvsb0;
             sig1k      = 2 * `PI * 1000 * CGeff;

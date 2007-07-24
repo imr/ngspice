@@ -4,10 +4,10 @@
 //======================================================================================
 //======================================================================================
 //
-//  (c) Copyright 2006, All Rights Reserved, NXP Semiconductors
+//  (c) Copyright 2007, All Rights Reserved, NXP Semiconductors
 //
 //
-//  Version: 102.1, October 2006 (Simkit 2.4)
+//  Version: 102.1, April 2007 (Simkit 2.5)
 //
 //======================================================================================
 //======================================================================================
@@ -43,7 +43,7 @@
     `define from(lower,upper)
 //    `define from(lower,upper) from[lower:upper]
 
-// Some functions
+// Some  functions
 `define MAX(x,y)              ((x)>(y)?(x):(y))
 `define MIN(x,y)              ((x)<(y)?(x):(y))
 
@@ -83,7 +83,7 @@
 
 
 //  P3       3rd order polynomial expansion of exp()
-`define P3(u) (1.0 + (u) * (1.0 + 0.5 * (u) * (1.0 + (u) * `oneThird)))
+`define P3(u) (1.0 + (u) * (1.0 + 0.5 * ((u) * (1.0 + (u) * `oneThird))))
 
 
 //  expl     exp() with 3rd order polynomial extrapolation

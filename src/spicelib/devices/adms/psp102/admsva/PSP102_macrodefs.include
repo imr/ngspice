@@ -4,10 +4,10 @@
 //======================================================================================
 //======================================================================================
 //
-//  (c) Copyright 2006, All Rights Reserved, NXP Semiconductors
+//  (c) Copyright 2007, All Rights Reserved, NXP Semiconductors
 //
 //
-//  Version: 102.1, October 2006 (Simkit 2.4)
+//  Version: 102.1, April 2007 (Simkit 2.5)
 //
 //======================================================================================
 //======================================================================================
@@ -73,7 +73,7 @@
 //           around the arguments in the expressions are necessary)
 `define sigma(a,c,tau,eta,y) \
 nu         =  (a) + (c); \
-mu         =  nu * nu / (tau) + 0.5 * (c) * (c) - (a); \
+mu         =  nu * nu / (tau) + 0.5 * ((c) * (c)) - (a); \
 y          =  (eta) + (a) * nu / (mu + (nu / mu) * (c) * ((c) * (c) * `oneThird - (a)));
 
 
@@ -83,7 +83,7 @@ nu = (a) + (c); \
 if (abs(tau) < 1e-120) begin /*sometimes tau is extremely small...*/\
     y              =  (eta); \
 end else begin \
-    mu             =  (nu) * (nu) / (tau) + 0.5 * (c) * (c) - (a) * (b); \
+    mu             =  (nu) * (nu) / (tau) + 0.5 * ((c) * (c)) - (a) * (b); \
     y              =  (eta) + (a) * nu / (mu + (nu / mu) * (c) * ((c) * (c) * `oneThird - (a) * (b))); \
 end
  
@@ -97,7 +97,7 @@ if (abs(xg) <= margin) begin \
 end else begin \
     if (xg < -margin) begin \
         SP_S_yg     = -xg; \
-        SP_S_ysub   = 1.25 * SP_S_yg * inv_xi; \
+        SP_S_ysub   = 1.25 * (SP_S_yg * inv_xi); \
         SP_S_eta    = 0.5 * (SP_S_ysub + 10 - sqrt((SP_S_ysub - 6.0) * (SP_S_ysub - 6.0) + 64.0)); \
         SP_S_temp   = SP_S_yg - SP_S_eta; \
         SP_S_a      = SP_S_temp * SP_S_temp + Gf2*(SP_S_eta + 1.0);\
@@ -108,15 +108,15 @@ end else begin \
         SP_S_delta1 = 1.0 / SP_S_delta0; \
         SP_S_temp   = 1.0 / (2.0 + SP_S_y0 * SP_S_y0); \
         SP_S_xi0    = SP_S_y0 * SP_S_y0 * SP_S_temp; \
-        SP_S_xi1    = 4.0 * SP_S_y0 * SP_S_temp * SP_S_temp; \
+        SP_S_xi1    = 4.0 * (SP_S_y0 * SP_S_temp * SP_S_temp); \
         SP_S_xi2    = (8.0 * SP_S_temp - 12.0 * SP_S_xi0) * SP_S_temp * SP_S_temp; \
         SP_S_temp   = SP_S_yg - SP_S_y0; \
         SP_S_temp1  = (delta) * SP_S_delta1; \
         SP_S_pC     = 2.0 * SP_S_temp + Gf2 * (SP_S_delta0 - 1.0 - SP_S_temp1 + (delta) * (1.0 - SP_S_xi1)); \
         SP_S_qC     = SP_S_temp * SP_S_temp - Gf2 * (SP_S_delta0 - SP_S_y0 - 1.0 + SP_S_temp1 + (delta) * (SP_S_y0 - 1.0 - SP_S_xi0)); \
-        SP_S_temp   = 2.0 - Gf2*(SP_S_delta0 + SP_S_temp1 - (delta) * SP_S_xi2); \
-        SP_S_temp   = SP_S_pC * SP_S_pC - 2.0 * SP_S_qC * SP_S_temp; \
-        sp          = -SP_S_y0 - 2.0 * SP_S_qC / (SP_S_pC + sqrt(SP_S_temp)); \
+        SP_S_temp   = 2.0 - Gf2 * (SP_S_delta0 + SP_S_temp1 - (delta) * SP_S_xi2); \
+        SP_S_temp   = SP_S_pC * SP_S_pC - 2.0 * (SP_S_qC * SP_S_temp); \
+        sp          = -SP_S_y0 - 2.0 * (SP_S_qC / (SP_S_pC + sqrt(SP_S_temp))); \
     end else begin \
         SP_xg1    = 1.0 / (x1 + Gf * 7.324648775608221e-001); \
         SP_S_A_fac= (xi * x1 * SP_xg1 - 1.0) * SP_xg1; \
@@ -130,10 +130,10 @@ end else begin \
         SP_S_temp1= exp(-SP_S_eta); \
         SP_S_temp2= 1.0 / (2.0 + SP_S_eta * SP_S_eta); \
         SP_S_xi0  = SP_S_eta * SP_S_eta * SP_S_temp2; \
-        SP_S_xi1  = 4.0 * SP_S_eta * SP_S_temp2 * SP_S_temp2; \
+        SP_S_xi1  = 4.0 * (SP_S_eta * SP_S_temp2 * SP_S_temp2); \
         SP_S_xi2  = (8.0 * SP_S_temp2 - 12.0 * SP_S_xi0) * SP_S_temp2 * SP_S_temp2; \
         SP_S_a    = max(1.0e-40, SP_S_temp * SP_S_temp - Gf2 * (SP_S_temp1 + SP_S_eta - 1.0 - (delta) * (SP_S_eta + 1.0 + SP_S_xi0))); \
-        SP_S_b    = 1.0 - 0.5 * Gf2 * (SP_S_temp1 - (delta) * SP_S_xi2); \
+        SP_S_b    = 1.0 - 0.5 * (Gf2 * (SP_S_temp1 - (delta) * SP_S_xi2)); \
         SP_S_c    = 2.0 * SP_S_temp + Gf2 * (1.0 - SP_S_temp1 - (delta) * (1.0 + SP_S_xi1)); \
         SP_S_tau  = (xn) - SP_S_eta + ln(SP_S_a / Gf2); \
         `sigma2(SP_S_a, SP_S_b, SP_S_c, SP_S_tau, SP_S_eta, SP_S_x0) \
@@ -152,14 +152,14 @@ end else begin \
         end \
         SP_S_temp   = 1.0 / (2.0 + SP_S_x0 * SP_S_x0); \
         SP_S_xi0    = SP_S_x0 * SP_S_x0 * SP_S_temp; \
-        SP_S_xi1    = 4.0 * SP_S_x0 * SP_S_temp * SP_S_temp; \
+        SP_S_xi1    = 4.0 * (SP_S_x0 * SP_S_temp * SP_S_temp); \
         SP_S_xi2    = (8.0 * SP_S_temp - 12.0 * SP_S_xi0) * SP_S_temp * SP_S_temp; \
         SP_S_temp   = xg - SP_S_x0; \
         SP_S_pC     = 2.0 * SP_S_temp + Gf2 * (1.0 - SP_S_delta1 + SP_S_delta0 - (delta) * (1.0 + SP_S_xi1)); \
         SP_S_qC     = SP_S_temp * SP_S_temp - Gf2 * (SP_S_delta1 + SP_S_x0 - 1.0 + SP_S_delta0 - (delta) * (SP_S_x0 + 1.0 + SP_S_xi0)); \
         SP_S_temp   = 2.0 - Gf2 * (SP_S_delta1 + SP_S_delta0 - (delta) * SP_S_xi2); \
-        SP_S_temp   = SP_S_pC * SP_S_pC - 2.0 * SP_S_qC * SP_S_temp; \
-        sp          = SP_S_x0 + 2.0 * SP_S_qC / (SP_S_pC + sqrt(SP_S_temp)); \
+        SP_S_temp   = SP_S_pC * SP_S_pC - 2.0 * (SP_S_qC * SP_S_temp); \
+        sp          = SP_S_x0 + 2.0 * (SP_S_qC / (SP_S_pC + sqrt(SP_S_temp))); \
     end \
 end
 
@@ -177,10 +177,10 @@ end else begin \
     SP_S_temp1= exp(-SP_S_eta); \
     SP_S_temp2= 1.0 / (2.0 + SP_S_eta * SP_S_eta); \
     SP_S_xi0  = SP_S_eta * SP_S_eta * SP_S_temp2; \
-    SP_S_xi1  = 4.0 * SP_S_eta * SP_S_temp2 * SP_S_temp2; \
+    SP_S_xi1  = 4.0 * (SP_S_eta * SP_S_temp2 * SP_S_temp2); \
     SP_S_xi2  = (8.0 * SP_S_temp2 - 12.0 * SP_S_xi0) * SP_S_temp2 * SP_S_temp2; \
     SP_S_a    = max(1.0e-40, SP_S_temp * SP_S_temp - Gf2 * (SP_S_temp1 + SP_S_eta - 1.0 - (delta) * (SP_S_eta + 1.0 + SP_S_xi0))); \
-    SP_S_b    = 1.0 - 0.5 * Gf2 * (SP_S_temp1 - (delta) * SP_S_xi2); \
+    SP_S_b    = 1.0 - 0.5 * (Gf2 * (SP_S_temp1 - (delta) * SP_S_xi2)); \
     SP_S_c    = 2.0 * SP_S_temp + Gf2 * (1.0 - SP_S_temp1 - (delta) * (1.0 + SP_S_xi1)); \
     SP_S_tau  = (xn) - SP_S_eta + ln(SP_S_a / Gf2); \
     `sigma2(SP_S_a, SP_S_b, SP_S_c, SP_S_tau, SP_S_eta, SP_S_x0) \
@@ -199,14 +199,14 @@ end else begin \
     end \
     SP_S_temp   = 1.0 / (2.0 + SP_S_x0 * SP_S_x0); \
     SP_S_xi0    = SP_S_x0 * SP_S_x0 * SP_S_temp; \
-    SP_S_xi1    = 4.0 * SP_S_x0 * SP_S_temp * SP_S_temp; \
+    SP_S_xi1    = 4.0 * (SP_S_x0 * SP_S_temp * SP_S_temp); \
     SP_S_xi2    = (8.0 * SP_S_temp-12.0 * SP_S_xi0) * SP_S_temp * SP_S_temp; \
     SP_S_temp   = xg - SP_S_x0; \
     SP_S_pC     = 2.0 * SP_S_temp + Gf2 * (1.0 - SP_S_delta1 + SP_S_delta0 - (delta) * (1.0 + SP_S_xi1)); \
     SP_S_qC     = SP_S_temp * SP_S_temp - Gf2 * (SP_S_delta1 + SP_S_x0 - 1.0 + SP_S_delta0 - (delta) * (SP_S_x0 + 1.0 + SP_S_xi0)); \
     SP_S_temp   = 2.0 - Gf2*(SP_S_delta1+SP_S_delta0-(delta)*SP_S_xi2); \
-    SP_S_temp   = SP_S_pC * SP_S_pC - 2.0 * SP_S_qC * SP_S_temp; \
-    sp          = SP_S_x0 + 2.0 * SP_S_qC / (SP_S_pC + sqrt(SP_S_temp));\
+    SP_S_temp   = SP_S_pC * SP_S_pC - 2.0 * (SP_S_qC * SP_S_temp); \
+    sp          = SP_S_x0 + 2.0 * (SP_S_qC / (SP_S_pC + sqrt(SP_S_temp)));\
 end
 
 //
@@ -229,8 +229,8 @@ end else begin \
         SP_OV_p    =  2.0 * SP_OV_temp + GOV2 * (SP_OV_D0 - 1.0); \
         SP_OV_q    =  SP_OV_temp * SP_OV_temp + GOV2 * (SP_OV_y0 + 1.0 - SP_OV_D0); \
         SP_OV_xi   =  1.0 - GOV2 * 0.5 * SP_OV_D0; \
-        SP_OV_temp =  SP_OV_p * SP_OV_p - 4.0 * SP_OV_xi * SP_OV_q; \
-        SP_OV_w    =  2.0 * SP_OV_q / (SP_OV_p + sqrt(SP_OV_temp)); \
+        SP_OV_temp =  SP_OV_p * SP_OV_p - 4.0 * (SP_OV_xi * SP_OV_q); \
+        SP_OV_w    =  2.0 * (SP_OV_q / (SP_OV_p + sqrt(SP_OV_temp))); \
         sp         = -(SP_OV_y0 + SP_OV_w); \
     end else begin \
         SP_OV_Afac =  (xi_ov * x1 * inv_xg1 - 1.0) * inv_xg1; \
@@ -242,8 +242,8 @@ end else begin \
         SP_OV_p    =  2.0 * (xg - SP_OV_x0) + GOV2 * (1 - SP_OV_D0); \
         SP_OV_q    =  (xg - SP_OV_x0) * (xg - SP_OV_x0) - GOV2 * (SP_OV_x0 - 1.0 + SP_OV_D0); \
         SP_OV_xi   =  1.0 - GOV2 * 0.5 * SP_OV_D0; \
-        SP_OV_temp =  SP_OV_p * SP_OV_p - 4.0 * SP_OV_xi * SP_OV_q; \
-        SP_OV_u    =  2.0 * SP_OV_q / (SP_OV_p + sqrt(SP_OV_temp)); \
+        SP_OV_temp =  SP_OV_p * SP_OV_p - 4.0 * (SP_OV_xi * SP_OV_q); \
+        SP_OV_u    =  2.0 * (SP_OV_q / (SP_OV_p + sqrt(SP_OV_temp))); \
         sp         =  SP_OV_x0 + SP_OV_u; \
     end \
     sp         = -sp; \

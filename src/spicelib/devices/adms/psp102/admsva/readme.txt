@@ -6,10 +6,10 @@
   ---------------------------
 
 
-  (c) Copyright 2006, All Rights Reserved, NXP Semiconductors
+  (c) Copyright 2007, All Rights Reserved, NXP Semiconductors
 
 
-  Version: PSP 102.1 (including JUNCAP2 200.2), October 2006 (Simkit 2.4)
+  Version: PSP 102.1 (including JUNCAP2 200.2), April 2007 (Simkit 2.5)
 
 ======================================================================================
 ======================================================================================
@@ -72,40 +72,42 @@ the JUNCAP2-model.
 ======================================================================================
 ======================================================================================
 
-Release notes va-code of PSP 102.1, including JUNCAP2 200.2 (October 2006)
---------------------------------------------------------------------------
+Release notes va-code of PSP 102.1, including JUNCAP2 200.2 (April 2007)
+------------------------------------------------------------------------
 
-PSP 102.1 is backwards compatible with the previous version, PSP 102.0, and
-resolves some minor implementation issues and bugs. Next to the existing
-verilog-A implementation, a test version of the NQS model is now available
-in the SiMKit.
+Focus in this release has been on improving the simulation speed of PSP and JUNCAP2.
+The model equations in this release of PSP 102.1 are identical to those in the
+October 2006 release. This version features some minor impelementation changes
+w.r.t. the previous release.
 
-- Added clipping boundaries for SWNQS.
-- Removed several "empty statements".
-- Resolved SpectreRF hidden state problem
-- Solved minor bugs in stress model
-- Solved minor bug in juncap model
-- Changed the NQS-module names in the verilog-A code
-- Made some implementation changes for optimization and maintenance purposes
-   * Introduced verilog-macro for nodes G/GP, B/BP, B/BS, and B/BD
-   * Make drain junction voltage equal to V(D, B) instead of V(D, S) + V(S, B)
-   * Extra intermediate variables for parasitic resistor noise densities
-   * Modified implementation of NQS-model
+The main changes have been in the SiMKit version generated from this verilog-A
+implementation: improvements in the automatic C-code generation process
+and compilation of the C-code. The result is reflected in the SiMKit 2.5 version of
+PSP, which shows a very significant simulation speed improvement w.r.t SiMKit 2.4.
+
+The minor implementation changes in the verilog-A code will have some positive effect
+on the simulation speed of the verilog-A version as well. Note, however, that the
+simulation speed of the verilog-A version of PSP and the improvement w.r.t. the
+previous version strongly depend on the verilog-A compiler used. 
+
+PSP 102.1 is backwards compatible with the previous version, PSP 102.0.
+
 
 ======================================================================================
 ======================================================================================
 
 The functionality of the Verilog-A code in this package is the same as that of the
-C-code, which is contained in SIMKIT version 2.4. Note that Operating Point information
+C-code, which is contained in SIMKIT version 2.5. Note that Operating Point information
 is available only in the C-code, not in Verilog-A code.
 
 
-The PSP-NQS model is provided as Verilog-A code. In SiMKit 2.4, for the first time a
-test version of the PSP-NQS model is included. This implementation circumvents the
-of the SpectreVerilog-A-generated C-code being too large to compile. Moreover, it is
-computationally more efficient as it uses less rows in the simulator matrix. On the
-other hand, this implementation has some known limitations. More information is
-available from the authors. Further improvements are expected in future releases.
+The PSP-NQS model is provided as Verilog-A code. In SiMKit 2.5, a test version of
+the PSP-NQS model is included (identical to that in SiMKit 2.4). This implementation
+circumvents the problem of the SpectreVerilog-A-generated C-code being too large to
+compile. Moreover, it is computationally more efficient as it uses less rows in the
+simulator matrix. On the other hand, this implementation has some known limitations.
+More information is available from the authors. Further improvements are expected in
+future releases.
 
 
 This Verilog-A code of PSP is primarily intended as a source for C-code generation
@@ -114,5 +116,5 @@ using ADMS. Most of the testing has been done on the C-code which was generated 
 
 The authors want to thank Laurent Lemaitre and Colin McAndrew (Freescale)
 for their help with ADMS and the implementation of the model code. Geoffrey
-Coram (Analog Devices) is acknowledged for his useful comments on the Verilog-A
+Coram (Analog Devices) is acknowledged for useful comments on the Verilog-A
 code.
