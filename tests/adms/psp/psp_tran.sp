@@ -5,7 +5,7 @@ vg  g 0 dc 0.0
 vs  s 0 dc 0.0
 vb  b 0 dc 0.0
 m1  d g s b nch
-+l=10.0e-06
++l=1.0e-06
 +w=10.0e-06
 +sa=0.0e+00
 +sb=0.0e+00
@@ -19,15 +19,17 @@ m1  d g s b nch
 *
 .option temp=21
 .control
-dc vg 0 5 0.02 vb -5 0 1
+dc vg 0 3.5 0.02 vb -3 0 0.5
 plot abs(i(vd))
+dc vg 0 1.5 0.01 vb -3 0 0.5
+plot abs(i(vd)) ylog ylimit 1e-12 1e-03
 .endc
 *
 .model nch nmos level=45
 +type=1.0e+00
 +tr=21.0e+00
 +swigate=0.0e+00
-+swimpact=0.0e+00
++swimpact=1.0e+00
 +swgidl=0.0e+00
 +swjuncap=0.0e+00
 +lvaro=0.0e+00
