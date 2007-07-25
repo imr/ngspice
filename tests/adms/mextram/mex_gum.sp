@@ -16,7 +16,7 @@ plot abs(i(vc))/abs(i(vb)) vs abs(-i(vc)) xlog xlimit 1e-09 10e-3 ylimit 0 150
 +MULT=1.000E+00
 +TREF=25.000E+00
 +DTA=0.000E+00
-+EXMOD=0.000E+00
++EXMOD=1.000E+00
 +EXPHI=0.000E+00
 +EXAVL=1.000E+00
 +IS=23.571E-18
