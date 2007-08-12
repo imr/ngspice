@@ -289,12 +289,13 @@ inp_readall(FILE *fp, struct line **data)
 	    end->li_actual = NULL;
             end->li_line = copy(buffer);
             end->li_linenum = line_number++;
-            end->li_next = newcard;
-
+            if (newcard) {
+                end->li_next = newcard;
             /* Renumber the lines */
 	    for (end = newcard; end && end->li_next; end = end->li_next)
                 end->li_linenum = line_number++;
-	    end->li_linenum = line_number++;	/* SJB - renumber the last line */
+	        end->li_linenum = line_number++;	/* SJB - renumber the last line */
+              }
 
             /* Fix the buffer up a bit. */
             (void) strncpy(buffer + 1, "end of:", 7);

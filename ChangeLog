@@ -1,3 +1,7 @@
+2007-08-12 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/inpcom.c: fixed segmentation fault with empty .include file
+   or directory include. This is a hack the full inpcom shoud be rewritten.
+ 
 2007-06-17 Gong Ding <gdiso@ustc.edu>
  * src/spicelib/devices/dev.c: use a more flexiable way to define device.
  If it doesn't work, one can returen to old version (rename as dev_old.c).
