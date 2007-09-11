@@ -243,11 +243,20 @@ out_send(char *string)
 void
 out_printf(char *fmt, char *s1, char *s2, char *s3, char *s4, char *s5, char *s6, char *s7, char *s8, char *s9, char *s10)
 {
-    char buf[MAXLEN];
-
-    sprintf(buf, fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
-
+#if defined(HAVE_ASPRINTF)
+    char * buf;
+    asprintf(&buf, fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
     out_send(buf);
+    FREE(buf);
+#elif defined(HAVE_SNPRINTF)
+    char buf[MAXLEN];
+    snprintf(buf, MAXLEN, fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+    out_send(buf);
+#else /* guaranteed a bug for long messages */
+    char buf[MAXLEN];
+    sprintf(buf, fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+    out_send(buf);
+#endif
     return;
 }
 
