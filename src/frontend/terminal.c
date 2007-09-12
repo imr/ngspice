@@ -58,7 +58,7 @@ static bool noprint, nopause;
 
 /* out_printf doesn't handle double arguments correctly, so we
     sprintf into this buf and call out_send w/ it */
-char out_pbuf[BSIZE_SP];
+char out_pbuf[8*BSIZE_SP];
 
 /* Start output... */
 
@@ -237,25 +237,20 @@ out_send(char *string)
 
 /* Printf some stuff using more mode. */
 
-#define MAXLEN 4096
-
-
 void
 out_printf(char *fmt, char *s1, char *s2, char *s3, char *s4, char *s5, char *s6, char *s7, char *s8, char *s9, char *s10)
 {
-#if defined(HAVE_ASPRINTF)
-    char * buf;
-    asprintf(&buf, fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
-    out_send(buf);
-    FREE(buf);
-#elif defined(HAVE_SNPRINTF)
-    char buf[MAXLEN];
-    snprintf(buf, MAXLEN, fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
-    out_send(buf);
+#if defined(HAVE_ASPRINTF) /* seems the best solution */
+    char * tbuf;
+    asprintf(&tbuf, fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+    out_send(tbuf);
+    FREE(tbuf);
+#elif defined(HAVE_SNPRINTF) /* the second best */
+    snprintf(out_pbuf, sizeof(out_pbuf), fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+    out_send(out_pbuf);
 #else /* guaranteed a bug for long messages */
-    char buf[MAXLEN];
-    sprintf(buf, fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
-    out_send(buf);
+    sprintf(out_pbuf, fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+    out_send(out_pbuf);
 #endif
     return;
 }
