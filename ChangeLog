@@ -1,3 +1,8 @@
+2007-09-12 Dietmar Warning <dietmar.warning@arcor.de>
+ * src/frontend/terminal.c: fixed segmentation fault occurring when messages 
+   >4096 bytes are sent to out_printf() function. The fix uses asprintf if
+   available.
+
 2007-08-12 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/inpcom.c: fixed segmentation fault with empty .include file
    or directory include. This is a hack the full inpcom shoud be rewritten.
