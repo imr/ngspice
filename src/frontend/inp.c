@@ -135,7 +135,6 @@ top1:
 	for (here = deck; here; here = here->li_next) {
             if (renumber)
                 here->li_linenum = i;
-            i++;
             if (ciprefix(".end", here->li_line) &&
                     !isalpha(here->li_line[4]))
                 continue;
@@ -156,6 +155,7 @@ top1:
                         fprintf(file, "%s\n", here->li_error);
                 }
             }
+			i++;
         }
         if (extras) {
             deck = extras;
@@ -173,7 +173,6 @@ top2:
             if ((here->li_actual == NULL) || (here == deck)) {
                 if (renumber)
                     here->li_linenum = i;
-                i++;
                 if (ciprefix(".end", here->li_line) &&
                         !isalpha(here->li_line[4]))
                     continue;
@@ -240,6 +239,7 @@ top2:
                 }
                 here->li_linenum = i;
             }
+			i++;
         }
         if (extras) {
             deck = extras;
