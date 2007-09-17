@@ -1,3 +1,9 @@
+2007-09-17 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/com_let.c: Applied patch from Friedrich Schmidt to fix
+ the big in let command that prevented the following command to be
+ correctly interpreted: let vec=vector(10)  let vec[2]=5.0 and returning
+ an error instead. The patch has been submitted by Friedrich Schmidt.
+
 2007-09-14 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/inp.c: fixed a bug in com_list() that skipped a line number 
  when in displaying the ".end" line. I just moved the line increment at the 

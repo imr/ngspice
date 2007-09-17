@@ -156,7 +156,7 @@ com_let(wordlist *wl)
 	n->v_flags = (t->v_flags | VF_PERMANENT);
 	n->v_length = t->v_length;
 
-	if (!t->v_numdims) {
+	if ((t->v_numdims)<=1) { // changed from "!t->v_numdims" by Friedrich Schmidt
 	    n->v_numdims = 1;
 	    n->v_dims[0] = n->v_length;
 	} else {
