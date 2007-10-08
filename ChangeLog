@@ -1,3 +1,13 @@
+2207-10-8 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/numparam/{general.h, mystring.c, numpaif.h, numparam.h, 
+   nupatest.c, spicenum.c, washprog.c, xpressn.c}: Applied patch from Phil 
+ Barker that improves the capabilites of numparam library. Now numparam 
+ supports fully parametrized netlists and can handle a larger set of 
+ parameters than the previous implementation. Added 'nupa_add_param' routine 
+ and ability to reevaluate parameter set using 'nupa_eval' by keeping parameter
+ value set. Added support for 'ternary' operators in parameters as well as 'max'
+ and 'min'.
+
 2007-09-17 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/com_let.c: Applied patch from Friedrich Schmidt to fix
  the big in let command that prevented the following command to be

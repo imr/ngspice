@@ -6,30 +6,48 @@
 
 #include <stdio.h>   /* for function message() only. */
 #include <math.h>
+#include <string.h>
 
 #include "general.h"
 #include "numparam.h"
-
+#include "ngspice.h"
 /************ keywords ************/
 
 /* SJB - 150 chars is ample for this - see initkeys() */
 Intern Str(150, keys); /*all my keywords*/
 Intern Str(150, fmath); /* all math functions */
- 
+
+static double
+max( double x, double y )
+{
+  return ( x > y ) ? x : y;
+}
+
+static double
+min( double x, double y )
+{
+  return ( x < y ) ? x : y;
+}
+
+static double
+ternary_fcn( int conditional, double if_value, double else_value )
+{
+  if ( conditional ) return if_value;
+  else               return else_value;
+}
+
 Intern
 Proc initkeys(void)
 /* the list of reserved words */
 Begin
-  scopy(keys,
+  scopy_up(keys,
   "and or not div mod if else end while macro funct defined"
   " include for to downto is var"); 
-  stupcase(keys);
-  scopy(fmath, "sqr sqrt sin cos exp ln arctan abs pwr"); 
-  stupcase(fmath);
+  scopy_up(fmath, "sqr sqrt sin cos exp ln arctan abs pwr max min int log ternary_fcn"); 
 EndProc
 
 Intern
-Func double mathfunction(short f, double z, double x)
+Func double mathfunction(int f, double z, double x)
 /* the list of built-in functions. Patch 'fmath' and here to get more ...*/
 Begin
   double y;
@@ -42,8 +60,12 @@ Begin
   Case    6 Is  y= ln(x)
   Case    7 Is  y= atan(x)
   Case    8 Is  y= fabs(x)
-  Case    9 Is  y= exp( x* ln(fabs(z))) 
+  Case    9 Is  y= exp( x* ln(fabs(z)))
      /* pwr(,): the only one with 2 args */
+  Case   10 Is  y= max( x, z )
+  Case   11 Is  y= min( x, z )
+  Case   12 Is  y= trunc( x )
+  Case   13 Is  y= log(x)
   Default y=x EndSw
   return y
 EndFunc
@@ -88,7 +110,7 @@ Begin
 EndProc
 
 /* Intern
-Func short parsenode(auxtable *n, Pchar s)
+Func int parsenode(auxtable *n, Pchar s)
 Begin
   return 0
 EndFunc
@@ -98,14 +120,14 @@ EndFunc
 
 Proc initdico(tdico * dico)
 Begin
-  short i;
+  int i;
   dico->nbd=0;  
   Sini(dico->option);
   Sini(dico->srcfile);
   dico->srcline= -1;
   dico->errcount= 0;
   For i=0; i<=Maxdico; Inc(i) Do
-    sini(dico->dat[i].nom,20) 
+    sini(dico->dat[i].nom,100) 
   Done
   dico->tos= 0; 
   dico->stack[dico->tos]= 0; /* global data beneath */
@@ -127,12 +149,15 @@ Intern
 Proc dicostack(tdico *dico, char op) 
 /* push or pop operation for nested subcircuit locals */
 Begin
+  char *param_name, *inst_name;
+  int  i, current_stack_size, old_stack_size;
 
   If op==Push Then
     If dico->tos < (20-1) Then Inc(dico->tos)
     Else message(dico, " Subckt Stack overflow")
     EndIf 
     dico->stack [dico->tos]= dico->nbd;
+    dico->inst_name[dico->tos] = nupa_inst_name;
   ElsIf op==Pop Then
     /*       obsolete:  undefine all data items of level dico->tos  
     For i=dico->nbd; i>0; Dec(i) Do 
@@ -143,29 +168,44 @@ Begin
     Done
     */
     If dico->tos >0 Then
+      // keep instance parameters around
+      current_stack_size = dico->nbd;
+      old_stack_size     = dico->stack[dico->tos];
+      inst_name          = dico->inst_name[dico->tos];
+
+      for ( i = old_stack_size+1; i <= current_stack_size; i++ ) {
+	param_name = tmalloc( strlen(inst_name) + strlen(dico->dat[i].nom) + 2 );
+	sprintf( param_name, "%s.%s", inst_name, dico->dat[i].nom );
+	nupa_add_inst_param( param_name, dico->dat[i].vl );
+	tfree(param_name);
+      }
+      tfree(inst_name);
+
       dico->nbd= dico->stack[dico->tos]; /* simply kill all local items */
-      Dec(dico->tos)
+      Dec(dico->tos);
+
     Else message(dico," Subckt Stack underflow.") 
     EndIf 
   EndIf
 EndProc
 
-Func short donedico(tdico * dico)
+Func int donedico(tdico * dico)
 Begin
-  short sze= dico->nbd;
+  int sze= dico->nbd;
   donesymbols(Addr(dico->nodetab));
   return sze;
 EndProc
 
 Intern
-Func  short entrynb( tdico * d, Pchar s)
+Func  int entrynb( tdico * d, Pchar s)
 /* symbol lookup from end to start,  for stacked local symbols .*/
 /* bug: sometimes we need access to same-name symbol, at lower level? */
 Begin
-  short i;
+  int i;
   Bool ok;
   ok=False;
   i=d->nbd+1;
+
   While (Not ok) And (i>1) Do
     Dec(i);
     ok= steq(d->dat[i].nom, s);
@@ -181,7 +221,7 @@ Func char getidtype( tdico *d, Pchar s)
 /* test if identifier s is known. Answer its type, or '?' if not in list */
 Begin
   char itp='?'; /* assume unknown */
-  short i= entrynb(d, s);
+  int i= entrynb(d, s);
   If i >0 Then itp= d->dat[i].tp EndIf
   return itp
 EndFunc
@@ -209,7 +249,8 @@ Begin
   Else
     u=0.0; 
     scopy(s,"Undefined number ["); sadd(s,t); cadd(s,']');
-    err=message( dico, s)
+    err=message( dico, s);
+
   EndIf
   *perr= err;
   return u
@@ -217,13 +258,12 @@ EndFunc
 
 /*******  writing dictionary entries *********/
 
-Intern
-Func  short attrib( tdico * dico, Pchar t, char  op)
+Func  int attrib( tdico * dico, Pchar t, char  op)
 Begin
 /* seek or attribute dico entry number for string t.
    Option  op='N' : force a new entry, if tos>level and old is  valid.
 */
-  short i;
+  int i;
   Bool ok;
   i=dico->nbd+1;
   ok=False;
@@ -267,7 +307,7 @@ Begin
       we already make symbol entries which are dummy globals !
       we mark each id with its subckt level, and warn if write at higher one.
 */
-  short i;
+  int i;
   char c;
   Bool err, warn;
   Strbig(Llen,v);
@@ -275,7 +315,7 @@ Begin
   err=False;
   If i<=0 Then 
     err=message( dico," Symbol table overflow")
-  Else
+     Else
     If dico->dat[i].tp=='P' Then 
       i= dico->dat[i].ivl 
     EndIf; /*pointer indirection*/
@@ -284,6 +324,7 @@ Begin
     Else 
       c=' ' 
     EndIf
+
     If (c=='R') Or (c=='S') Or (c=='?') Then
       dico->dat[i].vl=z; 
       dico->dat[i].tp=tpe; 
@@ -316,7 +357,7 @@ Func Bool defsubckt(tdico *dico, Pchar s, Word w, char categ)
 Begin
   Str(80,u);
   Bool err;
-  short i,j,ls;
+  int i,j,ls;
   ls=length(s);
   i=0; 
   While (i<ls) And (s[i] !='.') Do Inc(i) Done /* skip 1st dotword */
@@ -324,9 +365,8 @@ Begin
   While (i<ls) And (s[i]<=' ') Do Inc(i) Done /* skip blank */
   j=i; 
   While (j<ls) And (s[j]>' ') Do Inc(j) Done
-  If (j>i) And alfa(s[i]) Then
-    pscopy(u,s, i+1, j-i);
-    stupcase(u);
+  If (j>i) Then
+    pscopy_up(u,s, i+1, j-i);
     err= define( dico, u, ' ',categ, 0.0, w, Null);
   Else
     err= message( dico,"Subcircuit or Model without name.");
@@ -334,23 +374,22 @@ Begin
   return err
 EndFunc
 
-Func short findsubckt( tdico *dico, Pchar s, Pchar subname)
+Func int findsubckt( tdico *dico, Pchar s, Pchar subname)
 /* input: s is a subcircuit invocation line.
    returns 0 if not found, else the stored definition line number value
    and the name in string subname  */
 Begin
   Str(80,u); /* u= subckt name is last token in string s */
-  short i,j,k;
+  int i,j,k;
   k=length(s); 
   While (k>=0) And (s[k]<=' ') Do Dec(k) Done
   j=k;
   While (k>=0) And (s[k]>' ') Do Dec(k) Done
-  pscopy(u,s, k+2, j-k);
-  stupcase(u);
+  pscopy_up(u,s, k+2, j-k);
   i= entrynb(dico,u);
   If (i>0) And (dico->dat[i].tp == 'U')  Then 
     i= dico->dat[i].ivl;
-    scopy(subname,u) 
+    scopy(subname,u);
   Else 
     i= 0;
     scopy(subname,"");
@@ -361,7 +400,7 @@ EndFunc
 
 #if 0   /* unused, from the full macro language... */
 Intern
-Func  short deffuma(  /* define function or macro entry. */
+Func  int deffuma(  /* define function or macro entry. */
  tdico * dico, Pchar t, char  tpe, Word bufstart,
  Bool * pjumped, Bool * perr)
 Begin
@@ -369,7 +408,7 @@ Begin
 /* if not jumped, define new function or macro, returns index to buffferstart
    if jumped, return index to existing function
 */
-  short i,j;
+  int i,j;
   Strbig(Llen, v);
   i=attrib(dico,t,' '); j=0;
   If i<=0 Then
@@ -402,7 +441,7 @@ Func  Byte keyword( Pchar keys, Pchar t)
 Begin
 /* return 0 if t not found in list keys, else the ordinal number */
  Byte i,j,k;
- short lt,lk;
+ int lt,lk;
  Bool ok;
   lt=length(t); 
   lk=length(keys); 
@@ -432,7 +471,7 @@ Intern
 Func  double parseunit( double x, Pchar s)
 /* the Spice suffixes */
 Begin
-  double u;
+  double u = 0;
   Str(20, t);
   Bool isunit;
   isunit=True; 
@@ -461,9 +500,9 @@ Begin
 EndFunc
 
 Intern
-Func  short fetchid(
+Func  int fetchid(
  Pchar s, Pchar t,
- short  ls, short i)
+ int  ls, int i)
 /* copy next identifier from s into t, advance and return scan index i */
 Begin
   char c;
@@ -482,7 +521,7 @@ Begin
       c=Nul 
     EndIf
     c= upcase(c);
-    ok= ((c>='0') And (c<='9')) Or ((c>='A') And (c<='Z'));
+    ok= alfanum(c) || c == '.';
     If ok Then cadd(t,c) EndIf
   Until Not ok EndRep
   return i /*return updated i */
@@ -492,14 +531,14 @@ Intern
 Func  double exists(
  tdico * d,
  Pchar  s,
- short * pi,
+ int * pi,
  Bool * perror)
 /* check if s in smboltable 'defined': expect (ident) and return 0 or 1 */
 Begin
   Bool error= *perror; 
-  short i= *pi;
+  int i= *pi;
   double x;
-  short ls;
+  int ls;
   char c;
   Bool ok;
   Strbig(Llen, t);
@@ -537,14 +576,14 @@ EndFunc
 
 Intern
 Func double fetchnumber( tdico *dico,
- Pchar s, short  ls,
- short * pi,
+ Pchar s, int  ls,
+ int * pi,
  Bool * perror)
 /* parse a Spice number in string s */
 Begin
   Bool error= *perror; 
-  short i= *pi;
-  short k,err;
+  int i= *pi;
+  int k,err;
   char d;
   Str(20, t); 
   Strbig(Llen, v);
@@ -602,15 +641,15 @@ EndFunc
 
 Intern
 Func  char fetchoperator( tdico *dico,
- Pchar s, short  ls,
- short * pi,
+ Pchar s, int  ls,
+ int * pi,
  Byte * pstate, Byte * plevel,
  Bool * perror)
 /* grab an operator from string s and advance scan index pi.
    each operator has: one-char alias, precedence level, new interpreter state.
 */
 Begin
-  short i= *pi; 
+  int i= *pi; 
   Byte state= *pstate; 
   Byte level= *plevel;
   Bool error= *perror;
@@ -729,7 +768,7 @@ Begin
     If t<epsi Then 
       x=z 
     Else 
-      x=exp(y*ln(t)) 
+      x=exp(y*ln(t));
     EndIf
   Case '&' Is  /*And*/ 
     If y<x Then x=y EndIf; /*=Min*/
@@ -775,15 +814,17 @@ Begin
 */
   Cconst(nprece,9) /*maximal nb of precedence levels*/
   Bool error= *perror;
+  Bool negate = False;
   Byte state,oldstate, topop,ustack, level, kw, fu;
-  double u=0.0,v;
+  double u=0.0,v,w=0.0;
   double accu[nprece+1];
   char oper[nprece+1];
   char uop[nprece+1];
-  short i,k,ls,natom, arg2;
+  int i,k,ls,natom, arg2, arg3;
   char c,d;
   Strbig(Llen, t);
   Bool ok;
+
   For i=0; i<=nprece; Inc(i) Do 
     accu[i]=0.0; oper[i]=' ' 
   Done
@@ -799,7 +840,7 @@ Begin
       level=1;
       /* new: must support multi-arg functions */
       k=i; 
-      arg2=0; v=1.0;
+      arg2=0; v=1.0; arg3 = 0;
       Repeat 
         Inc(k);
         If k>ls Then 
@@ -812,7 +853,10 @@ Begin
         ElsIf d==')' Then 
           Dec(level) 
         EndIf
-        If (d==',') And (level==1) Then arg2=k EndIf /* comma list? */
+        If (d==',') And (level==1) Then
+	  if ( arg2 == 0 ) { arg2 = k; }
+          else             { arg3 = k; }  // kludge for more than 2 args (ternary expression)
+        EndIf /* comma list? */
       Until (k>ls) Or ((d==')') And (level<=0)) EndRep
       If k>ls Then 
         error=message( dico,"Closing \")\" not found.");
@@ -823,11 +867,17 @@ Begin
 	  v=formula( dico, t, Addr(error));
           i=arg2;
         EndIf
+	if ( arg3 > i ) {
+	  pscopy(t,s,i+1, arg3-i-1);
+	  w=formula( dico, t, Addr(error));
+	  i = arg3;
+	}
         pscopy(t,s,i+1, k-i-1);
-	u=formula( dico, t, Addr(error)); 
+	u=formula( dico, t, Addr(error));
         state=1; /*atom*/
         If fu>0 Then 
-          u= mathfunction(fu,v,u) 
+ 	  if ( fu == 14 ) u= ternary_fcn(v,w,u);
+          else u= mathfunction(fu,v,u);
         EndIf
       EndIf
       i=k; fu=0;
@@ -839,18 +889,22 @@ Begin
       If kw==0 Then 
         fu= keyword(fmath,t); /* numeric function? */
         If fu==0 Then
-          u=fetchnumentry( dico, t, Addr(error))
+	  u=fetchnumentry( dico, t, Addr(error));
         Else 
-          state=0 
+	  state=0;
         EndIf /* state==0 means: ignore for the moment */
       Else 
-        c=opfunctkey( dico, kw,c, Addr(state), Addr(level) ,Addr(error)) 
+	  c=opfunctkey( dico, kw,c, Addr(state), Addr(level) ,Addr(error));
       EndIf
       If kw==Defd Then 
-        u=exists( dico, s, Addr(i), Addr(error)) 
+        u=exists( dico, s, Addr(i), Addr(error));
       EndIf
     ElsIf ((c=='.') Or ((c>='0') And (c<='9'))) Then
       u=fetchnumber( dico, s,ls, Addr(i), Addr(error));
+      if ( negate ) {
+	u = -1*u;
+	negate = False;
+      }
       state=1;
     Else
       c=fetchoperator(dico, s,ls,
@@ -859,6 +913,11 @@ Begin
     EndIf /* control chars <' '  ignored*/
     ok= (oldstate==0) Or (state==0) Or
       ((oldstate==1) And (state==2)) Or ((oldstate!=1)And(state!=2));
+    if ( oldstate == 2 && state == 2 && c == '-' ) {
+      ok     = 1;
+      negate = True;
+      continue;
+    }
     If Not ok Then 
       error=message( dico," Misplaced operator") 
     EndIf
@@ -870,7 +929,7 @@ Begin
         state=4; level=topop 
       EndIf /*close all ops below*/
       For k=ustack; k>=1; Dec(k) Do
-        u=operate(uop[k],u,u) 
+        u=operate(uop[k],u,u);
       Done
       ustack=0;
       accu[0]=u; /* done: all pending unary operators */
@@ -892,11 +951,16 @@ Begin
     sadd(t,s);
     error=message( dico,t) 
   EndIf
+
+  if ( negate == True ) {
+    error = message( dico, " Problem with formula eval -- wrongly determined negation!" );
+  }
+
   *perror= error;
   If error Then
-    return 1.0 
+    return 1.0; 
   Else 
-    return  accu[topop] 
+    return  accu[topop];
   EndIf
 EndFunc /*formula*/
 
@@ -906,7 +970,7 @@ Begin
 /* I=integer, P=fixedpoint F=floatpoint*/
 /*  find out the "natural" type of format for number x*/
   double ax,dx;
-  short rx;
+  int rx;
   Bool isint,astronomic;
   ax=absf(x); 
   isint=False; 
@@ -938,7 +1002,7 @@ Func  Bool evaluate(
 Begin
 /* transform t to result q. mode 0: expression, mode 1: simple variable */
   double u=0.0;
-  short k,j,lq;
+  int k,j,lq;
   char dt,fmt;
   Bool numeric, done, nolookup;
   Bool err;
@@ -990,7 +1054,8 @@ Begin
     If fmt=='I' Then 
       stri(np_round(u), q) 
     Else 
-      strf(u,6,-1,q) 
+    //strf(u,6,-1,q); 
+    strf(u,17,10,q);
     EndIf /* strf() arg 2 doesnt work: always >10 significant digits ! */
   EndIf
   return err;
@@ -1004,7 +1069,7 @@ Func  Bool scanline(
  Bool  err)
 /* scan host code line s for macro substitution.  r=result line */
 Begin
-  short i,k,ls,level,nd, nnest;
+  int i,k,ls,level,nd, nnest;
   Bool spice3;
   char c,d;
   Strbig(Llen, q);
@@ -1120,7 +1185,7 @@ Proc compactfloatnb(Pchar v)
 /* erase superfluous 000 digit streams before E */
 /* bug: truncating, no rounding */ 
 Begin
-  short n,k, lex;
+  int n,k, lex;
   Str(20,expo);
   n=cpos('E',v); /* if too long, try to delete digits */
   If n >3 Then
@@ -1128,28 +1193,28 @@ Begin
     lex= length(expo);
     k=n-2;  /* mantissa is 0...k */
     While (v[k]=='0') And (v[k-1]=='0') Do Dec(k) Done
-    If (k+1+lex) > 10 Then k= 9-lex EndIf
+    If (k+1+lex) > 17 Then k= 17-lex EndIf
     pscopy(v,v, 1,k+1); 
     sadd(v,expo);   
   EndIf
 EndProc
 
 Intern
-Func short insertnumber(tdico *dico, short i, Pchar s, Pchar u)
+Func int insertnumber(tdico *dico, int i, Pchar s, Pchar u)
 /* insert u in string s in place of the next placeholder number */
 Begin
   Str(40,v);
   Str(80,msg);
   Bool found;
-  short ls, k; 
+  int ls, k; 
   long accu;
   ls= length(s);
   scopy(v,u);
   compactfloatnb(v);
-  While length(v)<10 Do 
+  While length(v)<17 Do 
     cadd(v,' ') 
   Done
-  If length(v)>10 Then 
+  If length(v)>17 Then 
     scopy(msg," insertnumber fails: "); 
     sadd(msg,u); 
     message( dico, msg) 
@@ -1167,16 +1232,17 @@ Begin
     Done
     If found Then 
       accu=accu - 1000000000L; /* plausibility test */
-      found= (accu>0) And (accu<2000)
+      found= (accu>0) And (accu<40000)
     EndIf
     Inc(i)
   Done
   If found Then /* substitute at i-1 */
     Dec(i);
-    For k=0; k<10; Inc(k) Do s[i+k]= v[k] Done
-    i= i+10;
+    For k=0; k<17; Inc(k) Do s[i+k]= v[k] Done
+    i= i+17;
   Else 
     i= ls; 
+    fprintf(stderr,"xpressn.c--insertnumber:  i=%d  s=%s  u=%s\n",i,s,u);
     message( dico,"insertnumber: missing slot ");
   EndIf
   return i
@@ -1189,7 +1255,7 @@ Func Bool nupa_substitute( tdico *dico, Pchar s, Pchar r, Bool err)
   bug: wont flag overflow!
 */
 Begin
-  short i,k,ls,level, nnest, ir;
+  int i,k,ls,level, nnest, ir;
   char c,d;
   Strbig(Llen, q);
   Strbig(Llen, t);
@@ -1261,7 +1327,7 @@ Begin
         i= k-1;
       EndIf
       If Not err Then
-        ir= insertnumber(dico, ir, r,q)
+        ir= insertnumber(dico, ir, r,q);
       Else
         message( dico, "Cannot compute &(expression)")
       EndIf
@@ -1273,12 +1339,12 @@ EndFunc
 Intern
 Func Byte getword(
  Pchar  s, Pchar t,
- Byte  after,
- short * pi)
+ int  after,
+ int * pi)
 /* isolate a word from s after position "after". return i= last read+1 */
 Begin
-  short i= *pi;
-  short ls;
+  int i= *pi;
+  int ls;
   Byte key;
   i=after;
   ls=length(s);
@@ -1300,14 +1366,14 @@ Begin
 EndFunc
 
 Intern
-Func char getexpress( Pchar s, Pchar t, short * pi)
+Func char getexpress( Pchar s, Pchar t, int * pi)
 /* returns expression-like string until next separator
  Input  i=position before expr, output  i=just after expr, on separator.
  returns tpe=='R' If numeric, 'S' If string only
 */
 Begin
-  short i= *pi; 
-  short ia,ls,level;
+  int i= *pi; 
+  int ia,ls,level;
   char c,d, tpe;
   Bool comment= False;
   ls=length(s);
@@ -1315,10 +1381,10 @@ Begin
   While (ia<ls) And (s[ia-1]<=' ') Do
     Inc(ia)
   Done /*white space ? */
-  If s[ia-1]=='\"' Then /*string constant*/
+  If s[ia-1]=='"' Then /*string constant*/
     Inc(ia); 
     i=ia;
-    While (i<ls) And (s[i-1]!='\"') Do Inc(i) Done
+    While (i<ls) And (s[i-1]!='"') Do Inc(i) Done
     tpe='S';
     Repeat
       Inc(i)
@@ -1370,7 +1436,7 @@ Begin
 /* s has the format: ident = expression; ident= expression ...  */
   Strbig(Llen, t); 
   Strbig(Llen,u);
-  short i,j, ls;
+  int i,j, ls;
   Byte key;
   Bool error, err;
   char dtype;
@@ -1402,7 +1468,8 @@ Begin
       If dtype=='R' Then 
         rval=formula( dico, u, Addr(error));
         If error Then 
-          message( dico," Formula() error.") 
+	  message( dico," Formula() error.");
+          fprintf(stderr,"      %s\n",s);
         EndIf 
       ElsIf dtype=='S' Then 
         wval= i 
@@ -1423,26 +1490,32 @@ Func Bool nupa_subcktcall( tdico *dico, Pchar s, Pchar x, Bool err)
    x= a matching subckt call line, with actual params 
 */
 Begin
-  short n,m,i,j,k,g,h, narg=0, ls, nest;
+  int n,m,i,j,k,g,h, narg=0, ls, nest;
   Strbig(Llen,t);
   Strbig(Llen,u);
   Strbig(Llen,v);
   Strbig(Llen,idlist);
   Str(80,subname);
 	  
+  /*
+    skip over instance name -- fixes bug where instance 'x1' is
+    same name as subckt 'x1'
+   */
+  while ( *x != ' ' ) x++;
+
   /***** first, analyze the subckt definition line */
   n=0; /* number of parameters if any */
   ls=length(s);
   j=spos("//",s);
-  If j>0 Then pscopy(t,s,1,j-1) Else scopy(t,s) EndIf 
-  stupcase(t); 
+  If j>0 Then pscopy_up(t,s,1,j-1) Else scopy_up(t,s) EndIf 
   j= spos("SUBCKT", t); 
   If j>0 Then
     j= j +6; /* fetch its name */
     While (j<ls) And (t[j]<=' ') Do Inc(j) Done
-    While alfanum(t[j]) Do
-      cadd(subname,t[j]); Inc(j) 
-    Done 
+
+    while ( t[j] != ' ' ) {
+      cadd(subname,t[j]); Inc(j);
+    }
   Else 
     err=message( dico," Not a subckt line!") 
   EndIf;
@@ -1470,10 +1543,15 @@ Begin
   If Not err Then
     narg=0;
     j=spos("//",x);
-    If j>0 Then pscopy(t,x,1,j-1) Else scopy(t,x) EndIf 
-    stupcase(t);
+    If j>0 Then pscopy_up(t,x,1,j-1) Else scopy_up(t,x) EndIf 
     ls=length(t);
-    j= spos(subname,t); 
+    j= spos(subname,t);
+
+    /*  make sure that subname followed by space */
+    while ( j > 0 && *(t+j+length(subname)-1) > ' ' ) {
+      j = j+length(subname)-1 + spos( subname, t+j+length(subname)-1 );
+    }
+
     If j>0 Then
       j=j + length(subname) -1; /* 1st position of arglist: j */
       While (j<ls) And ((t[j]<=' ') Or (t[j]==',')) Do Inc(j) Done 
@@ -1495,7 +1573,7 @@ Begin
             If (g<ls) And (nest==0) Then t[g]='}' EndIf
           EndIf
         EndIf
-        If alfanum(t[k]) Then /* number, identifier */
+        If alfanum(t[k]) || t[k] == '.' Then /* number, identifier */
           h=k; 
           While t[k] > ' ' Do Inc(k) Done
           pscopy(u,t, h+1, k-h); 

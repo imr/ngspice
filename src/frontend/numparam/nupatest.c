@@ -18,10 +18,10 @@ Cconst(pfxsep,'_')  /* official prefix separator is ':' not '_'  ! */
 Darray(buff, Pchar, Maxline) /* input lines */
 Darray(buf2, Pchar, Maxline) /* stripped lines */
 Darray(pxbuf, Pchar, Maxline) /* prefix for subnodes */
-Darray(runbuf, short, Maxckt) /* index list of expanded circuit */
-Darray(pindex, short, Maxckt) /* prefix index list  */
-short irunbuf= 0; /* count lines of runbuf */
-short ipx=0;      /* count prefixes in pxbuf */  
+Darray(runbuf, int, Maxckt) /* index list of expanded circuit */
+Darray(pindex, int, Maxckt) /* prefix index list  */
+int irunbuf= 0; /* count lines of runbuf */
+int ipx=0;      /* count prefixes in pxbuf */  
 
 /*  
    this toy imitates the Spice subcircuit expansion.
@@ -49,15 +49,15 @@ and substitute node/device name arguments.
 
 */
 
-Func short runscript( tdico *dico, Pchar prefix,
-   short istart, short istop, short maxnest)
+Func int runscript( tdico *dico, Pchar prefix,
+   int istart, int istop, int maxnest)
 /* recursive top-down expansion: circuit --> list of line numbers */
 /* keep it simple,stupid  compared to Spice's code */
 /* prefix: inherited string for node & device prefixing */
 /* istart, istop: allowed interval in table buf[], buf2[]. */
 /* return value: number of lines included */
 Begin
-  short i,j, idef, nnest, nline, dn, myipx;
+  int i,j, idef, nnest, nline, dn, myipx;
   Strbig(Llen, subpfx); /* subckt prefix */ 
   Str(80, subname);
   char c;
@@ -113,10 +113,10 @@ Begin
   return nline
 EndProc
 
-Proc gluepluslines( short imax)
+Proc gluepluslines( int imax)
 /* general sweep to eliminate continuation lines */
 Begin
-  short i,j,k, ls, p;
+  int i,j,k, ls, p;
   Strbig(Llen,s);
   i=1;
   While i<= imax Do
@@ -145,10 +145,10 @@ EndProc
 #if 0	/* sjb - this is in mystring.c */
 Proc rs(Pchar s) /*  78 coumn limit */
 Begin
-  short i; 
+  int i; 
   Bool done; 
   char c;
-  short max=maxlen(s);
+  int max=maxlen(s);
   If max>78 Then max=78 EndIf
   i=0; done=False; 
   scopy(s,"");
@@ -173,9 +173,9 @@ Begin
 EndProc
 
 Intern
-Proc freadln(Pfile f, Pchar s, short max)
+Proc freadln(Pfile f, Pchar s, int max)
 Begin 
-  short ls;
+  int ls;
   freadstr(f,s,max); 
   ls=length(s);
   If feof(f) And (ls>0) Then 
@@ -183,21 +183,21 @@ Begin
   EndIf /* kill EOF character */
 EndProc
 
-Proc wordinsert(Pchar s, Pchar w, short i)
+Proc wordinsert(Pchar s, Pchar w, int i)
 /* insert w before s[i] */
 Begin
   Strbig(Llen,t);
-  short ls=length(s);
+  int ls=length(s);
   pscopy(t,s,i+1,ls); pscopy(s,s,1,i);
   sadd(s,w); sadd(s,t);
 EndProc
 
-Func short worddelete(Pchar s, short i)
+Func int worddelete(Pchar s, int i)
 /* delete word starting at s[i] */
 Begin
   Strbig(Llen,t);
-  short ls= length(s);
-  short j=i;
+  int ls= length(s);
+  int j=i;
   While (j<ls) And (s[j]>' ') Do Inc(j) Done
   pscopy(t,s,j+1,ls);
   pscopy(s,s,1,i); 
@@ -205,9 +205,9 @@ Begin
   return j-i /* nb of chars deleted */
 EndProc
 
-Func short getnextword(Pchar s, Pchar u, short j)
+Func int getnextword(Pchar s, Pchar u, int j)
 Begin
-  short ls,k;
+  int ls,k;
   ls= length(s);
   k=j;
   While (j<ls) And (s[j] >  ' ') Do Inc(j) Done /* skip current word */ 
@@ -216,10 +216,10 @@ Begin
   return j
 EndFunc
 
-Func short inwordlist(Pchar u, Pchar wl)
+Func int inwordlist(Pchar u, Pchar wl)
 /* suppose wl is single-space separated, plus 1 space at start and end. */ 
 Begin
-  short n,p,k;
+  int n,p,k;
   Str(80,t);
   n=0;
   ccopy(t,' '); sadd(t,u); cadd(t,' ');
@@ -232,9 +232,9 @@ Begin
   return n
 EndFunc
 
-Proc takewordlist(Pchar u, short k, Pchar wl)
+Proc takewordlist(Pchar u, int k, Pchar wl)
 Begin
-  short i,j,lwl;
+  int i,j,lwl;
   lwl= length(wl);
   i=0; j=0;
   scopy(u,"");
@@ -268,8 +268,8 @@ Reminder on Numparam symbols:
      cannot re-use a model name as a param name elsewhere, for example.
 */
 Begin
-  short i,j,k,ls, jnext, dsize;
-  short dtype, nodes, subdv;
+  int i,j,k,ls, jnext, dsize;
+  int dtype, nodes, subdv;
   Bool done;
   char leadchar;
   Str(80,u); Str(80,v); Str(80,pfx);
@@ -324,10 +324,10 @@ Begin
   EndIf
 EndProc
 
-Proc getnodelist(Pchar form, Pchar act, Pchar s, tdico *dic, short k)
+Proc getnodelist(Pchar form, Pchar act, Pchar s, tdico *dic, int k)
 /* the line s contains the actual node parameters, between 1st & last word */
 Begin
-  short j,ls, idef;
+  int j,ls, idef;
   Str(80,u); Strbig(Llen,t);
   ccopy(act,' '); ccopy(form,' ');
   j=0; ls= length(s);
@@ -364,7 +364,7 @@ Begin
   /* Strbig(Llen, formals); Strbig(Llen,actuals); */
   Darray(formals, Pchar, 10)
   Darray(actuals, Pchar, 10)
-  short i, j, k, nline, parstack;
+  int i, j, k, nline, parstack;
   For i=0; i<Maxline; Inc(i) Do /* allocate string storage */
     buff[i]= newstring(80);
     buf2[i]= Null;

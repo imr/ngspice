@@ -9,7 +9,7 @@
 #define Proc void
 #define Begin {
 #define EndProc ;}
-     /*  Func short ...(...) Begin...EndFunc   */
+     /*  Func int ...(...) Begin...EndFunc   */
 #define Func
 #define EndFunc ;}
      /* If ... Then...ElsIf..Then...Else...EndIf */
@@ -94,7 +94,7 @@ Type(Byte, unsigned char)
 #ifndef Bool
 Type(Bool, unsigned char)
 #endif
-Type(Word, unsigned short)
+Type(Word, unsigned int)
 Type(Pchar, char AT)
 
 #define Intern static
@@ -103,7 +103,7 @@ Type(Pchar, char AT)
 #define Tarray2(a,d,n,m)  typedef d a[n][m];
 #define Darray(a,d,n)     d a[n];
 
-#define Const(x,y)    const short x=y;
+#define Const(x,y)    const int x=y;
 #define Cconst(x,y)   typedef enum {x=y} _n ## x;
 
 #define Aconst(a,tp,sze)  tp a[sze] ={
@@ -136,7 +136,7 @@ Type(Pchar, char AT)
 #define Str(n,a)      char a[n+3]={0,0,(char)n}  /* n<255 ! */
 #define Sini(s)       sini(s,sizeof(s)-4)
 
-Cconst(Maxstr,2004) /* was 255, string maxlen, may be up to 32000 or so */
+Cconst(Maxstr,15000) /* was 255, string maxlen, may be up to 32000 or so */
 
 typedef char string[258];
 
@@ -146,37 +146,39 @@ Cconst(Bs, 8)
 Cconst(Lf, 10)
 Cconst(Cr, 13)
 
-Proc sini( Pchar s, short i);
-Proc sfix(Pchar s, short i, short max);
-Func short maxlen(Pchar s);
-Func Pchar pscopy( Pchar s, Pchar a, short i,short j);
+Proc sini( Pchar s, int i);
+Proc sfix(Pchar s, int i, int max);
+Func int maxlen(Pchar s);
+Func Pchar pscopy( Pchar s, Pchar a, int i,int j);
+Func Pchar pscopy_up( Pchar s, Pchar a, int i,int j);
 Func Bool scopy( Pchar a, Pchar b);
+Func Bool scopy_up( Pchar a, Pchar b);
 Func Bool ccopy( Pchar a, char c);
 Func Bool sadd( Pchar s, Pchar t);
 Func Bool nadd( Pchar s, long n);
 Func Bool cadd( Pchar s, char c);
 Func Bool sins( Pchar s, Pchar t);
 Func Bool cins( Pchar s, char c);
-Func short cpos( char c, Pchar s);
-Func short spos( Pchar sub, Pchar s);
-
-Func short length(Pchar s);
+Func int cpos( char c, Pchar s);
+Func int spos( Pchar sub, Pchar s);
+int ci_prefix( register char *p, register char *s );
+Func int length(Pchar s);
 Func Bool steq(Pchar s, Pchar t);
 Func Bool stne(Pchar s, Pchar t);
-Func short scompare(Pchar a, Pchar b);
-Func short ord(char c);
-Func short pred(short i);
-Func short succ(short i);
+Func int scompare(Pchar a, Pchar b);
+Func int ord(char c);
+Func int pred(int i);
+Func int succ(int i);
 Proc stri(long n, Pchar s);
-Proc strif(long n, short f, Pchar s);
-Proc strf(double x, short a, short b, Pchar s); /* float -> string */
-Func long   ival(Pchar s, short *err);
-Func double rval(Pchar s, short *err);
+Proc strif(long n, int f, Pchar s);
+Proc strf(double x, int a, int b, Pchar s); /* float -> string */
+Func long   ival(Pchar s, int *err);
+Func double rval(Pchar s, int *err);
 
 Func char upcase(char c);
 Func char lowcase(char c);
-Func short hi(long w);
-Func short lo(long w);
+Func int hi(long w);
+Func int lo(long w);
 Func Bool odd(long x);
 Func Bool alfa(char c);
 Func Bool num(char c);
@@ -191,12 +193,12 @@ Proc wi(long i);
 Proc rs( Pchar s);
 Func char rc(void);
 
-Func short freadstr(Pfile f, Pchar s, short max);
+Func int freadstr(Pfile f, Pchar s, int max);
 Func char freadc(Pfile f);
 Func long freadi(Pfile f);
 
-Func long np_round(double d);	/* sjb to avoid clash with round() in math.h */
-Func long np_trunc(double x);	/* sjb to avoid clash with trunc() in math.h */
+Func long np_round(double d);	// sjb to avoid clash with round() in math.h
+Func long np_trunc(double x);	// sjb to avoid clash with trunc() in math.h
 Func double sqr(double x);
 Func double absf(double x); /* abs */
 Func long absi( long i);
@@ -204,8 +206,8 @@ Func double frac(double x);
 
 Func Bool reset(Pfile f);
 Func Bool rewrite(Pfile f);
-Proc rawcopy(Pointer a, Pointer b, short la, short lb);
+Proc rawcopy(Pointer a, Pointer b, int la, int lb);
 Func Pointer new(long sz);
 Proc dispose(Pointer p);
-Func Pchar newstring(short n);
+Func Pchar newstring(int n);
 

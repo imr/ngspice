@@ -15,6 +15,11 @@
 extern char * nupa_copy(char *s, int linenum);
 extern int    nupa_eval(char *s, int linenum);
 extern int    nupa_signal(int sig, char *info);
-extern void   nupa_scan(char * s, int linenum);
+extern void   nupa_scan(char * s, int linenum, int is_subckt);
+extern void   nupa_list_params();
+extern double nupa_get_param(char *param_name, int *found);
+extern void   nupa_add_param(char *param_name, double value);
+extern void   nupa_add_inst_param(char *param_name, double value);
+extern void   nupa_copy_inst_dico();
 
 #endif /* NUMPAIF_H */

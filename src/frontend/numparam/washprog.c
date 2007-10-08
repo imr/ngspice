@@ -59,9 +59,9 @@ Cconst( Recursion, True) /* 20 % slower, re-substitute inside macro args */
 Tarray(macargs, string, nargs) /* 0..9 macro copy args, 10: a wildcard */
 
   /* global vars */
-short isr;     /* nb of substitution rules */
+int isr;     /* nb of substitution rules */
 Bool cMode;    /* a scanning options: c language mode */
-short lookmax; /* input lookahead max size */
+int lookmax; /* input lookahead max size */
 Pfile fout;    /* file filled by: echoOut macroOut translate traduire */
 
 Tarray(str40, char, 44)
@@ -73,25 +73,25 @@ Str(nsub, wildcard);
 
 /********* trivial io ***/
 
-Proc wsf( Pchar s, short fmt)
+Proc wsf( Pchar s, int fmt)
 Begin
-  short k;
+  int k;
   For k=1; k<=fmt-length(s); Inc(k) Do 
     wc(' ') 
   Done
   ws(s)
 EndProc
 
-Proc wcf(char c, short fmt)
+Proc wcf(char c, int fmt)
 Begin
-  short k;
+  int k;
   For k=1; k<=fmt-1; Inc(k) Do 
     wc(' ') 
   Done
   wc(c)
 EndProc
 
-Proc wif(long i, short fmt)
+Proc wif(long i, int fmt)
 Begin /*default fmt=1*/
   Str(30, s);
   nadd(s,i); 
@@ -100,8 +100,8 @@ EndProc
 
 Proc rln(Pchar s) /*  78 column limit */
 Begin
-  short i; Bool done; char c;
-  short max=maxlen(s);
+  int i; Bool done; char c;
+  int max=maxlen(s);
   If max>78 Then max=78 EndIf
   i=0; done=False; 
   scopy(s,"");
@@ -116,10 +116,10 @@ EndProc
 
 /*****************/
 
-Proc saddn( Pchar s, Pchar t, short n)
+Proc saddn( Pchar s, Pchar t, int n)
 Begin
   Strbig(Llen,u);
-  short lt= length(t);
+  int lt= length(t);
   If lt<= n Then 
     sadd(s,t) 
   Else
@@ -130,7 +130,7 @@ EndProc
 
 Proc allocdata(void)
 Begin /* prevent any string overflow */
-  short i;
+  int i;
   For i=0; i<nsub; Inc(i) Do
     Sini(search[i]); 
     Sini(replace[i])
@@ -140,9 +140,9 @@ EndProc
 Proc setOptions(Pchar s)
 /* command-line options c-mode and/or lookahead buffer size */
 Begin
-  short j,k; 
+  int j,k; 
   Bool num; 
-  short z; 
+  int z; 
   char c;
 /*-StartProc-*/
   ws("Options: ");
@@ -152,11 +152,11 @@ Begin
     EndIf
     If s[j]=='L' Then /*redefine max lookahead length */
       z=0; 
-      k= (short)(j+1);
+      k= (int)(j+1);
       Repeat
         Inc(k); c=s[k]; 
         num= (c>='0') And (c<='9');
-	If num Then z= (short)( 10*z+ c - '0') EndIf
+	If num Then z= (int)( 10*z+ c - '0') EndIf
       Until Not num EndRep
       If (z>lookmax) And (z<255) Then 
         lookmax= z 
@@ -169,10 +169,10 @@ EndProc
 
 /******** matching routines *******/
 
-Proc copySpace(Pchar s, Pchar t, short a, short b) /* a,b>0 ! Pascal indexing */
+Proc copySpace(Pchar s, Pchar t, int a, int b) /* a,b>0 ! Pascal indexing */
 Begin
 /*echo any "nontrivial" whitespace t-->s */
-  short lt,i,k, comment; 
+  int lt,i,k, comment; 
   Bool leader; 
   char c;
 /*-StartProc-*/ 
@@ -182,7 +182,7 @@ Begin
   comment=0; /* for C type whitespaces 1 And 2*/
   lt= length(t);
   If b>lt Then b=lt EndIf
-  For i=(short)(a-1); i<b; Inc(i) Do
+  For i=(int)(a-1); i<b; Inc(i) Do
     c=t[i]; 
     If (c>0) And (c<' ') Then leader=True EndIf
     If cMode And (c=='/') And (t[i+1]=='*') Then comment=1 EndIf
@@ -193,12 +193,12 @@ Begin
   Done
 EndProc
 
-Func short skipCwhite(Pchar t, short j, short lt) /* assume C indexing */
+Func int skipCwhite(Pchar t, int j, int lt) /* assume C indexing */
 Begin
 /* skip any C And C++ type whitespace in t, from j to lt */
 /* returns j-1 If current char is no white at all! */
   char c; 
-  short comment; /*types 1 And 2! */
+  int comment; /*types 1 And 2! */
   /*t[j] may already be '/' ? */ comment=0;
   c=t[j]; /*If c>' ', we are done! */
   If (c>0) And (c<=' ') Then
@@ -217,13 +217,13 @@ Begin
       Inc(j); c=t[j];
     Until (j>lt) Or ((comment==0) And (c>' ')) EndRep
   EndIf
-  return (short)(j-1); /* return last white-matching char position */
+  return (int)(j-1); /* return last white-matching char position */
 EndProc
 
 Func  Bool simple(Pchar s)
 Begin /* check if no strange punctuations inside s */
   char c; 
-  short i,ls; 
+  int i,ls; 
   Bool found;
 /*-StartProc-*/
   ls=length(s); 
@@ -235,13 +235,13 @@ Begin /* check if no strange punctuations inside s */
   return Not found;
 EndFunc
 
-Func Bool match(Pchar s, Pchar t, short n, short tstart)
+Func Bool match(Pchar s, Pchar t, int n, int tstart)
 Begin
 /* test if t starts with substring s. 
    returns 0 If tstart is out of range. But n may be 0 ? 
    options:  Singlechar wildcards "?" 
 */
-   short i,j,lt; 
+   int i,j,lt; 
    Bool ok;
 /*-StartProc-*/
   i=0; j=tstart; 
@@ -254,14 +254,14 @@ Begin
   return ok
 EndFunc
 
-Func short posi(Pchar sub, Pchar s)
+Func int posi(Pchar sub, Pchar s)
 Begin /*re-defines Turbo Pos, result Pascal compatible */
-  short a,b,k; 
+  int a,b,k; 
   Bool ok;
 /*-StartProc-*/ 
   ok=False;
   a=length(sub); 
-  b=(short)(length(s)-a); 
+  b=(int)(length(s)-a); 
   k=0;
   If a>0 Then  /*Else return 0*/
     While (k<=b) And (Not ok) Do
@@ -276,10 +276,10 @@ Begin /*re-defines Turbo Pos, result Pascal compatible */
   EndIf
 EndFunc
 
-Func short matchwhite(Pchar s, Pchar t, short n, short tstart)
+Func int matchwhite(Pchar s, Pchar t, int n, int tstart)
 Begin
 /* like match, but any whitespace in t matches space in s*/
-  short i,j,lt; Bool ok;
+  int i,j,lt; Bool ok;
 /*-StartProc-*/ 
   i=0; j=tstart; 
   lt= length(t); 
@@ -302,23 +302,23 @@ Begin
     Inc(i); Inc(j);
   Done
   If ok Then 
-     return (short)(j-tstart) 
+     return (int)(j-tstart) 
   Else 
-    return (short)0 
+    return (int)0 
   EndIf
 EndFunc
 
-Func short posizero(Pchar sub, Pchar s)
+Func int posizero(Pchar sub, Pchar s)
 Begin /*another Pos */
 /* substring search. like posi, but reject quotes & bracketed stuff */
-  short a,b,k; 
+  int a,b,k; 
   Bool ok; 
-  short blevel; 
+  int blevel; 
   char c;
 /*-StartProc-*/ 
   ok=False;
   a=length(sub); 
-  b=(short)(length(s)-a); 
+  b=(int)(length(s)-a); 
   k=0; blevel=0;
   If a>0 Then /*Else return 0*/
     While (k<=b) And (Not ok) Do
@@ -353,7 +353,7 @@ Begin /*another Pos */
   EndIf
 EndFunc
 
-Func short isMacro(Pchar s, char option, Pchar t, short tstart,
+Func int isMacro(Pchar s, char option, Pchar t, int tstart,
   string maccopy[] )
 /* s= macro template, t=buffer, maccopy = arg Array 
    return value: number of characters matched,
@@ -363,7 +363,7 @@ Func short isMacro(Pchar s, char option, Pchar t, short tstart,
    substitute 1 by maccopy[1] etc 
 */
 Begin
-  Darray(ps, short, nargs+1)
+  Darray(ps, int, nargs+1)
   Word j,k,dk,ls, lst, lmt, jmax, pj; 
   Bool ok;
   char arg; 
@@ -371,7 +371,7 @@ Begin
   Str(40,st);
 /* returns >0 If comparison Ok == length of compared Pchar */
 /*-StartProc-*/  k=0;
-  ok= (s[0]==t[tstart]); /* shortcut: how much does it accelerate ? some % */
+  ok= (s[0]==t[tstart]); /* intcut: how much does it accelerate ? some % */
   If ok Then
     ps[0]=0; 
     ps[nargs]=0; /*only 1..9 are valid data, 10 filler templates*/
@@ -381,7 +381,7 @@ Begin
       ps[j]= cpos(arg,s);
     Until (j>=nargs) Or (ps[j]==0) EndRep
     ls= length(s); 
-    ps[j]=(short)(ls+1); /*For last template chunk*/
+    ps[j]=(int)(ls+1); /*For last template chunk*/
     jmax=j; j=1; 
     k=0; lmt=0;
     Repeat
@@ -403,7 +403,7 @@ Begin
       Else
         If option=='u' Then 
           pj= posizero(st,u);
-          If pj>0 Then lmt= matchwhite(st,u, lst, (short)(pj-1)) EndIf
+          If pj>0 Then lmt= matchwhite(st,u, lst, (int)(pj-1)) EndIf
         Else 
           pj= posi(st,u) 
         EndIf  /* qs[j]= k+pj; is position in t*/
@@ -432,8 +432,8 @@ Begin
   return k
 EndFunc
 
-Func short similar(Pchar s, char wilds, Pchar t,
-  short tstart, string maccopy[] )
+Func int similar(Pchar s, char wilds, Pchar t,
+  int tstart, string maccopy[] )
 /* try to match s with t, then save the wildcard parts ins maccopy[] */ 
 /* s=template, t=buffer, wilds= number of wildcards, maccopy=substitute */
 /* return value: number of characters matched */
@@ -466,7 +466,7 @@ Begin
     k= (Word)(ps-1);
     While s[k]==wild Do Inc(k) Done
     endc=s[k]; /*End char to detect, at length */
-    ok= match(s,t, (short)(ps-1), tstart);
+    ok= match(s,t, (int)(ps-1), tstart);
     If ok Then
       pscopy(u,t, (Word)(ps+tstart), (Word)255);
       j= cpos(endc, u); 
@@ -481,10 +481,10 @@ Begin
   return k
 EndProc
 
-Func short addSubList(Pchar s, short isr)  
+Func int addSubList(Pchar s, int isr)  
 /* add the rule s to the Rule list at isr */
 Begin
-  short j,ls; 
+  int j,ls; 
   char c,d,endc;
   Bool start,stop;
 /*-StartProc-*/
@@ -592,7 +592,7 @@ Begin
   done= (f == Null);
   ok= Not done;
   While Not done Do
-    fgets(s,(short)80,f);
+    fgets(s,(int)80,f);
     isr=addSubList(s,isr);
     done= feof(f)
   Done
@@ -630,8 +630,8 @@ EndFunc
 
 Bool washmore= True;  /* flag that activates the postprocessor */
 Strbig(Llen,obf);         /* output buffer */
-short iobf=0;         /* its index */   
-short wstate=0;       /* output state machine */
+int iobf=0;         /* its index */   
+int wstate=0;       /* output state machine */
 
 Proc washinit(void)
 Begin
@@ -641,7 +641,7 @@ EndProc
 
 Proc washchar(char c)
 Begin  /* state machine receives one character */
-  short i;
+  int i;
   If Not washmore Then /* never leave state 0 */
     fputc(c, fout)
   ElsIf wstate==0 Then /* buffer empty */
@@ -698,7 +698,7 @@ EndProc
 
 Proc washflush(void)
 Begin
-  short i;
+  int i;
   If NotZ(wstate) Then
     For i=0; i<iobf; Inc(i) Do 
       fputc(obf[i], fout) 
@@ -710,7 +710,7 @@ EndProc
 
 Proc washstring( Pchar s)
 Begin
-  short i;
+  int i;
   For i=0; i<length(s); Inc(i) Do 
     washchar(s[i]) 
   Done
@@ -722,7 +722,7 @@ Proc translate(Pchar bf);  /* recursion */
 
 Proc echoOut(Pchar r, char isWild, string mac[] )
 Begin
-  short u; 
+  int u; 
   Strbig(Llen,s);
 /*-StartProc-*/
   If isWild !=0 Then
@@ -751,13 +751,13 @@ Proc macroOut(Pchar r, string mac[] )
 Begin
 /* substitutes "1"..."9", uses "0" as escape character*/
   char c; 
-  short i,j; 
+  int i,j; 
   Bool escape;
 /*-StartProc-*/ 
   escape=False;
   For i=0; i<length(r); Inc(i) Do
     c=r[i]; 
-    j= (short)(c-'0');
+    j= (int)(c-'0');
     If j==0 Then 
       escape=True /*And skip*/
     ElsIf ((j>0) And (j<nargs)) And (Not escape) Then
@@ -777,14 +777,14 @@ Proc makeNewRule(Pchar r, string mac[] )
 Begin
 /* substitutes "1"..."9", uses "0" as escape character*/
   char c; 
-  short i,j; 
+  int i,j; 
   Bool escape; 
   Strbig(Llen,s);
 /*-StartProc-*/ 
   escape=False; 
   For i=0; i<length(r); Inc(i) Do
     c=r[i]; 
-    j= (short)(c-'0');
+    j= (int)(c-'0');
     If j==0 Then 
       escape=True /*And skip*/
     ElsIf ((j>0) And (j<nargs)) And (Not escape) Then
@@ -802,7 +802,7 @@ Begin /*light version, inside recursion only */
   Strbig(Llen,bf);
   Darray(mac, string, nargs)
   Bool ok; 
-  short i,sm; 
+  int i,sm; 
   char lastBf1; 
   Word nbrep;
 /*-StartProc-*/
@@ -821,10 +821,10 @@ Begin /*light version, inside recursion only */
         If alfa(lastBf1) And (alfa(search[i][0])) Then 
           sm=0 /*inside word*/
         Else 
-          sm= isMacro(search[i], srule[i], bf, (short)0,mac) 
+          sm= isMacro(search[i], srule[i], bf, (int)0,mac) 
         EndIf
       Else 
-        sm=similar(search[i],wildcard[i],bf, (short)0, mac) 
+        sm=similar(search[i],wildcard[i],bf, (int)0, mac) 
       EndIf
       ok=sm>0;
       If ok And (srule[i]=='w') Then
@@ -860,7 +860,7 @@ Begin
   Darray( mac, string, nargs)
   Pfile fin;
   Bool ok; 
-  short i,sm, exclusion, idot; 
+  int i,sm, exclusion, idot; 
   char c,lastBf1; 
   Word nbrep,nline;
 /*-StartProc-*/
@@ -906,7 +906,7 @@ Begin
     sm=0; i=0;
     If exclusion>0 Then 
       i=exclusion;
-      sm=similar(replace[i], (char)0, bf, (short)0, mac);
+      sm=similar(replace[i], (char)0, bf, (int)0, mac);
       ok= sm>0
     EndIf
     If Zero(exclusion) Then
@@ -916,10 +916,10 @@ Begin
           If alfa(lastBf1) And (alfa(search[i][0])) Then 
             sm=0 /*inside word*/
           Else 
-            sm= isMacro(search[i], srule[i], bf, (short)0,mac) 
+            sm= isMacro(search[i], srule[i], bf, (int)0,mac) 
           EndIf
         Else 
-          sm=similar(search[i],wildcard[i],bf, (short)0, mac) 
+          sm=similar(search[i],wildcard[i],bf, (int)0, mac) 
         EndIf
         ok=sm>0;
         If ok And (srule[i]=='w') Then
@@ -966,7 +966,7 @@ EndProc
 Func int main( int argc, Pchar argv[])
 Begin
   Str(80,dico);
-  short istart= 1;
+  int istart= 1;
   Bool ok= True;
 /*-StartProc-*/
   allocdata();

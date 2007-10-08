@@ -23,15 +23,20 @@ Todo:
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #ifdef __TURBOC__
 #include <process.h>   /* exit() */
 #endif
 
 #include "general.h"
 #include "numparam.h"
+#include "ngspice.h"
+
+extern void txfree(void *ptr);
 
 /* Uncomment this line to allow debug tracing */
-/* #define TRACE_NUMPARAMS */
+/*#define TRACE_NUMPARAMS*/
 
 /*  the nupa_signal arguments sent from Spice:
 
@@ -58,10 +63,10 @@ Intern long placeholder= 0;
 
 #ifdef NOT_REQUIRED /* SJB - not required as front-end now does stripping */
 Intern
-Func short stripcomment( Pchar s)
+Func int stripcomment( Pchar s)
 /* allow end-of-line comments in Spice, like C++ */
 Begin
-  short i,ls;
+  int i,ls;
   char c,d;
   Bool stop;
   ls=length(s); 
@@ -91,7 +96,7 @@ Proc stripsomespace(Pchar s, Bool incontrol)
 Begin
 /* iff s starts with one of some markers, strip leading space */
   Str(12,markers);
-  short i,ls;
+  int i,ls;
   scopy(markers,"*.&+#$"); 
   If Not incontrol Then 
     sadd(markers,"xX") 
@@ -110,7 +115,7 @@ Proc partition(Pchar t)
 /* bug:  strip trailing spaces */
 Begin
   Strbig(Llen,u);
-  short i,lt,state;
+  int i,lt,state;
   char c;
   cadd(u,Intro); 
   state=0; /* a trivial 3-state machine */
@@ -139,10 +144,10 @@ EndProc
 #endif
 
 Intern
-Func short stripbraces( Pchar s)
+Func int stripbraces( Pchar s)
 /* puts the funny placeholders. returns the number of {...} substitutions */
 Begin
-  short n,i,nest,ls,j;
+  int n,i,nest,ls,j;
   Strbig(Llen,t);
   n=0; ls=length(s); 
   i=0;
@@ -162,6 +167,13 @@ Begin
       Inc(placeholder); 
       If t[i-1]>' '  Then cadd(t,' ') EndIf
       nadd(t, PlaceHold + placeholder); 
+      cadd(t,' ');  // add extra character to increase number significant digits for evaluated numbers
+      cadd(t,' ');
+      cadd(t,' ');
+      cadd(t,' ');
+      cadd(t,' ');
+      cadd(t,' ');
+      cadd(t,' ');
       If s[j]>=' ' Then cadd(t,' ') EndIf
       i=length(t);
       pscopy(s,s, j+1, ls); 
@@ -170,19 +182,19 @@ Begin
     Else 
       Inc(i) 
     EndIf 
-    ls=length(s)
+    ls=length(s);
   Done
   return n
 EndFunc
 
 Intern 
-Func short findsubname(tdico * dico,  Pchar s)
+Func int findsubname(tdico * dico,  Pchar s)
 /* truncate the parameterized subckt call to regular old Spice */
 /* scan a string from the end, skipping non-idents and {expressions} */
 /* then truncate s after the last subckt(?) identifier */
 Begin
   Str(80, name);
-  short h,j,k,nest,ls;
+  int h,j,k,nest,ls;
   Bool found;
   h=0; 
   ls=length(s);
@@ -207,7 +219,7 @@ Begin
         Dec(k) 
       EndIf;
     Done
-    found = (k>=0) And alfa(s[k+1]); /* suppose an identifier */
+    found = (k>=0) And alfanum(s[k+1]); /* suppose an identifier */
     If found Then /* check for known subckt name */
       scopy(name,""); j= k+1;
       While alfanum(s[j]) Do 
@@ -227,7 +239,7 @@ Proc modernizeex( Pchar s)
 /* old style expressions &(..) and &id --> new style with braces. */
 Begin
   Strbig(Llen,t);
-  short i,state, ls;
+  int i,state, ls;
   char c,d;
   i=0; state=0;
   ls= length(s);
@@ -287,32 +299,31 @@ Func char transform(tdico * dico, Pchar s, Bool nostripping, Pchar u)
 Begin
   Strbig(Llen,t);  
   char category; 
-  short i,k, a,n;
-/*  i=stripcomment(s); sjb - not required now that front-end does stripping */
+  int i,k, a,n;
+
   stripsomespace(s, nostripping);
   modernizeex(s);    /* required for stripbraces count */
   scopy(u,"");
   If s[0]=='.' Then /* check Pspice parameter format */
-    scopy(t,s); 
-    stupcase(t);
+    scopy_up(t,s); 
     k=1;
     While t[k]>' ' Do 
       cadd(u, t[k]); Inc(k) 
     Done
-    If spos(".PARAM",t) ==1 Then /* comment it out */
-      s[0]='*';
+    If ci_prefix(".PARAM",t) ==1 Then /* comment it out */
+      /*s[0]='*';*/
       category='P'; 
-    ElsIf spos(".SUBCKT",t) ==1 Then /* split off any "params" tail */ 
+    ElsIf ci_prefix(".SUBCKT",t) ==1 Then /* split off any "params" tail */ 
       a= spos("PARAMS:",t);
       If a>0 Then 
         pscopy(s,s,1,a-1);
       EndIf 
       category='S';
-    ElsIf spos(".CONTROL",t) ==1 Then 
+    ElsIf ci_prefix(".CONTROL",t) ==1 Then 
       category='C'
-    ElsIf spos(".ENDC",t) ==1 Then  
+    ElsIf ci_prefix(".ENDC",t) ==1 Then  
       category='E'
-    ElsIf spos(".ENDS",t) ==1 Then  
+    ElsIf ci_prefix(".ENDS",t) ==1 Then  
       category='U'
     Else 
       category='.';
@@ -324,8 +335,7 @@ Begin
     category='P';
   ElsIf upcase(s[0])=='X' Then /* strip actual parameters */
     i=findsubname(dico, s);  /* i= index following last identifier in s */
-/*    pscopy(s,s,1,i); sjb - this is already done by findsubname() */
-    category='X'
+    category='X';
   ElsIf s[0]=='+' Then /* continuation line */
     category='+'
   ElsIf cpos(s[0],"*$#")<=0 Then /* not a comment line! */ 
@@ -352,7 +362,7 @@ Intern int evalcount= 0;  /* number of lines through nupa_eval() */
 Intern int nblog=0;       /* serial number of (debug) logfile */
 Intern Bool inexpansion= False; /* flag subckt expansion phase */
 Intern Bool incontrol= False;  /* flag control code sections */
-Intern Bool dologfile= True; /* for debugging */
+Intern Bool dologfile= False; /* for debugging */
 Intern Bool firstsignal=True;
 Intern Pfile logfile= Null;
 Intern tdico * dico=Null;
@@ -390,14 +400,16 @@ EndProc
 Intern
 Proc nupa_init( Pchar srcfile)
 Begin
-  short i;
+  int i;
   /* init the symbol table and so on, before the first  nupa_copy. */ 
   evalcount=0;
   linecount= 0;
   incontrol=False;
   placeholder= 0;
   dico= New(tdico); 
+  inst_dico = New(tdico);
   initdico(dico);
+  initdico(inst_dico);
   For i=0; i<Maxline; Inc(i) Do
     dico->refptr[i]= Null; 
     dico->category[i]='?';
@@ -409,9 +421,9 @@ EndProc
 Intern
 Proc nupa_done(void)
 Begin
-  short i;
+  int i;
   Str(80,rep);
-  short dictsize, nerrors;
+  int dictsize, nerrors;
   If logfile != Null Then
     fclose(logfile); 
     logfile=Null; 
@@ -442,12 +454,101 @@ Begin
 EndProc
 	     
 /* SJB - Scan the line for subcircuits */
-Proc nupa_scan(Pchar s, int linenum)
+Proc nupa_scan(Pchar s, int linenum, int is_subckt)
 Begin
-  If spos(".SUBCKT",s) ==1 Then
-    defsubckt( dico, s, linenum, 'U' );
-  EndIf
+
+  if ( is_subckt ) defsubckt( dico, s, linenum, 'U' );
+  else             defsubckt( dico, s, linenum, 'O' );
+
 EndProc
+
+static char*
+lower_str( char *str ) {
+  char *s;
+
+  for ( s = str; *s; s++ ) *s = tolower(*s);
+
+  return str;
+}
+
+static char*
+upper_str( char *str ) {
+  char *s;
+
+  for ( s = str; *s; s++ ) *s = toupper(*s);
+
+  return str;
+}
+
+void
+nupa_list_params(FILE *cp_out) {
+  char *name;
+  int  i;
+
+  fprintf( cp_out, "\n\n" );
+  for ( i = 1; i <= dico->nbd+1; i++ ) {
+    if ( dico->dat[i].tp == 'R' ) {
+      name = lower_str( strdup( dico->dat[i].nom ) );
+      fprintf( cp_out, "       ---> %s = %g\n", name, dico->dat[i].vl );
+      txfree(name);
+    }
+  }
+}
+
+double
+nupa_get_param( char *param_name, int *found ) {
+  char   *name  = upper_str(strdup(param_name));
+  double result = 0;
+  int    i;
+
+  *found = 0;
+
+  for ( i = 1; i <= dico->nbd+1; i++ ) {
+    if ( strcmp( dico->dat[i].nom, name ) == 0 ) {
+      result = dico->dat[i].vl;
+      *found = 1;
+      break;
+    }
+  }
+
+  txfree(name);
+  return result;
+}
+
+void
+nupa_add_param( char *param_name, double value ) {
+  char *up_name = upper_str( strdup( param_name ) );
+  int  i        = attrib( dico, up_name, 'N' );
+
+  dico->dat[i].vl     = value;
+  dico->dat[i].tp     = 'R';
+  dico->dat[i].ivl    = 0;
+  dico->dat[i].sbbase = NULL;
+
+  txfree(up_name);
+}
+
+void
+nupa_add_inst_param( char *param_name, double value ) {
+  char *up_name = upper_str( strdup( param_name ) );
+  int  i        = attrib( inst_dico, up_name, 'N' );
+
+  inst_dico->dat[i].vl     = value;
+  inst_dico->dat[i].tp     = 'R';
+  inst_dico->dat[i].ivl    = 0;
+  inst_dico->dat[i].sbbase = NULL;
+
+  txfree( up_name );
+}
+
+void
+nupa_copy_inst_dico() {
+  int i;
+
+  for ( i = 1; i <= inst_dico->nbd; i++ ) {
+    nupa_add_param( inst_dico->dat[i].nom, inst_dico->dat[i].vl );
+  }
+}
 
 Func Pchar nupa_copy(Pchar s, int linenum)
 /* returns a copy (not quite) of s in freshly allocated memory.
@@ -466,8 +567,9 @@ Begin
   Strbig(Llen,u);
   Strbig(Llen,keywd);
   Pchar t;
-  short i,ls; 
+  int ls; 
   char c,d; 
+
   ls= length(s);
   While (ls>0) And (s[ls-1]<=' ') Do Dec(ls) Done
   pscopy(u,s, 1,ls); /* strip trailing space, CrLf and so on */
@@ -484,24 +586,16 @@ Begin
     If incontrol Then c='C' EndIf /* force it */
     d= dico->category[linenum]; /* warning if already some strategic line! */
     If (d=='P') Or (d=='S') Or (d=='X') Then
-      fputs(" Numparam warning: overwriting P,S or X line.\n",stderr);
+      fprintf(stderr," Numparam warning: overwriting P,S or X line (linenum == %d).\n", linenum);
     EndIf
-    If c=='S' Then 
-      defsubckt( dico, s, linenum, 'U' ) 
-    ElsIf steq(keywd,"MODEL") Then
-      defsubckt( dico, s, linenum, 'O' ) 
-    EndIf; /* feed symbol table */
     dico->category[linenum]= c;
   EndIf /* keep a local copy and mangle the string */
   ls=length(u);
-  t= NewArr( char, ls+1);   /* == (Pchar)malloc(ls+1); */
+  t = strdup(u);
   If t==NULL Then
     fputs("Fatal: String malloc crash in nupa_copy()\n", stderr);
     exit(-1)
   Else
-    For i=0;i<=ls; Inc(i) Do 
-      t[i]=u[i] 
-    Done
     If Not inexpansion Then 
       putlogfile(dico->category[linenum],linenum,t) 
     EndIf;
@@ -517,21 +611,29 @@ Func int nupa_eval(Pchar s, int linenum)
    All the X lines are preserved (commented out) in the expanded circuit.
 */
 Begin
-   short idef; /* subckt definition line */
-   char c;
+   int idef; /* subckt definition line */
+   char c, keep, *ptr;
+   int i;
    Str(80,subname);
+   Bool err = True;
+
    dico->srcline= linenum;
    c= dico->category[linenum];
 #ifdef TRACE_NUMPARAMS
-   printf("** SJB - in nupa_eval()\n");
-   printf("** SJB - processing line %3d: %s\n",linenum,s);	
-   printf("** SJB - category '%c'\n",c);
+   fprintf(stderr,"** SJB - in nupa_eval()\n");
+   fprintf(stderr,"** SJB - processing line %3d: %s\n",linenum,s);	
+   fprintf(stderr,"** SJB - category '%c'\n",c);
 #endif /* TRACE_NUMPARAMS */	     
    If c=='P' Then /* evaluate parameters */
      nupa_assignment( dico, dico->refptr[linenum] , 'N');
    ElsIf c=='B' Then /* substitute braces line */
-     nupa_substitute( dico, dico->refptr[linenum], s, False);
+     err = nupa_substitute( dico, dico->refptr[linenum], s, False);
    ElsIf c=='X' Then /* compute args of subcircuit, if required */
+     ptr = s;
+     while ( !isspace(*ptr) ) ptr++; keep = *ptr; *ptr = '\0';
+     nupa_inst_name = strdup(s); *nupa_inst_name = 'x'; *ptr = keep;
+     for ( i = 0; i < strlen(nupa_inst_name); i++ ) nupa_inst_name[i] = toupper(nupa_inst_name[i]);
+
      idef = findsubckt( dico, s, subname);  
      If idef>0 Then
        nupa_subcktcall( dico, 
@@ -545,10 +647,12 @@ Begin
    putlogfile('e',linenum,s);
    Inc(evalcount);
 #ifdef TRACE_NUMPARAMS
+   fprintf(stderr,"** SJB - leaving nupa_eval(): %s   %d\n", s, err);
    ws("** SJB -                  --> "); ws(s); wln();
    ws("** SJB - leaving nupa_eval()"); wln(); wln();
 #endif /* TRACE_NUMPARAMS */
-   return 1
+  if ( err ) return 0;
+  else  return 1;
 EndFunc
 
 Func int nupa_signal(int sig, Pchar info)
@@ -564,7 +668,8 @@ Begin
   ElsIf sig == NUPASUBSTART Then 
     inexpansion=True
   ElsIf sig == NUPASUBDONE  Then 
-    inexpansion=False
+    inexpansion=False;
+    nupa_inst_name = NULL;
   ElsIf sig == NUPAEVALDONE Then 
     nupa_done(); 
     firstsignal=True 
