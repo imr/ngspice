@@ -146,6 +146,7 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
     run->numData = 0;
 
     an_name = spice_analysis_get_name(((JOB *) analysisPtr)->JOBtype);
+    ft_curckt->ci_last_an = an_name;
 
     /* Now let's see which of these things we need.  First toss in the
      * reference vector.  Then toss in anything that getSaves() tells
@@ -725,10 +726,10 @@ fileInit(runDesc *run)
         run->pointPos = i;
     fprintf(run->fp, "0       \n"); /* Save 8 spaces here. */
  
-    fprintf(run->fp, "Command: version %s\n", ft_sim->version);
+    /*fprintf(run->fp, "Command: version %s\n", ft_sim->version);*/
     fprintf(run->fp, "Variables:\n");                                           
 
-    fprintf(stderr, "No. of Data Columns : %d  \n", run->numData);
+    printf("No. of Data Columns : %d  \n", run->numData);
 
     return;
 }
@@ -737,12 +738,12 @@ static void
 fileInit_pass2(runDesc *run)
 {
     int i, type;
-    char *name, buf[BSIZE_SP];
+    char *name, buf[BSIZE_SP], *branch;
 
     for (i = 0; i < run->numData; i++) {
        
         if (isdigit(*run->data[i].name)) {
-        (void) sprintf(buf, "V(%s)", run->data[i].name);
+        (void) sprintf(buf, "v(%s)", run->data[i].name);
           name = buf;
         } else {
           name = run->data[i].name;
@@ -760,8 +761,18 @@ fileInit_pass2(runDesc *run)
         else
             type = SV_VOLTAGE;
  
-        fprintf(run->fp, "\t%d\t%s\t%s", i, name,
-                ft_typenames(type));
+	if ( type == SV_CURRENT ) {
+	  branch = NULL;
+	  if ( (branch = strstr( name, "#branch" )) ) {
+	    *branch = '\0';
+	  }
+	  fprintf(run->fp, "\t%d\ti(%s)\t%s", i, name, ft_typenames(type));
+	  if ( branch != NULL ) *branch = '#';
+	} else if ( type == SV_VOLTAGE ) {
+	  fprintf(run->fp, "\t%d\tv(%s)\t%s", i, name, ft_typenames(type));
+	} else {
+	  fprintf(run->fp, "\t%d\t%s\t%s", i, name, ft_typenames(type));
+	}
         if (run->data[i].gtype == GRID_XLOG)
             fprintf(run->fp, "\tgrid=3");
         fprintf(run->fp, "\n");
@@ -844,7 +855,7 @@ fileEnd(runDesc *run)
 	place = ftell(run->fp);
 	fseek(run->fp, run->pointPos, 0);
         fprintf(run->fp, "%d", run->pointCount);
-	fprintf(stderr, "\nNo. of Data Rows : %d\n", run->pointCount);
+	printf("\nNo. of Data Rows : %d\n", run->pointCount);
 	fseek(run->fp, place, 0);
     } else {
 	/* Yet another hack-around */
@@ -966,8 +977,9 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 static void
 plotEnd(runDesc *run)
 {
-    fprintf(stderr, "\nNo. of Data Rows : %d\n", run->pointCount);
-    return;
+  fprintf(stderr,"\n");
+  printf("\nNo. of Data Rows : %d\n", run->pointCount);
+  return;
 }
 
 

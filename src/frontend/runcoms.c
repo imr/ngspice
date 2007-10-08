@@ -165,7 +165,6 @@ dosim(char *what, wordlist *wl)
     struct circ *ct;
     int err = 0;
     bool ascii = AsciiRawFile;
-
     if (eq(what, "run") && wl)
         dofile = TRUE;
     if (!dofile) {
@@ -258,6 +257,7 @@ dosim(char *what, wordlist *wl)
     } else {
         rawfileFp = NULL;
     }
+
     /*save rawfile name saj*/
     if(last_used_rawfile) 
         tfree(last_used_rawfile);
@@ -304,6 +304,7 @@ dosim(char *what, wordlist *wl)
 	} else
 	    ft_curckt->ci_inprogress = FALSE;
     }
+
     if (rawfileFp){
       if (ftell(rawfileFp)==0) {
 	    (void) fclose(rawfileFp);
@@ -344,9 +345,9 @@ ft_dorun(char *file)
 
     wl.wl_word = file;
     if (file)
-        return dosim("run", &wl);
+      return dosim("run", &wl);
     else
-	return dosim("run", (wordlist *) NULL);
+      return dosim("run", (wordlist *) NULL);
 }
 
 /* ARGSUSED */ /* until the else clause gets put back */

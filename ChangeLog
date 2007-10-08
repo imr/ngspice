@@ -1,4 +1,9 @@
 2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/{rawfile.c, outitf.c, runcoms.c}, src/include/ftedefs.h: 
+ modified current vectors output amd added struct elements for holding the
+ name of the last analysis run (all from Phil Barker patch).
+
+2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
  *src/frontend/{device.c, device.h}: modified 'show' command to match 
  SmartSpice syntax from Phil Barker patch.
 

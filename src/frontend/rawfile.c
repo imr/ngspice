@@ -45,6 +45,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     struct variable *vv;
     double dd;
     char buf[BSIZE_SP];
+    char *branch;
 
     if (!cp_getvar("nopadding", VT_BOOL, (char *) &raw_padding))
         raw_padding = FALSE;
@@ -156,8 +157,18 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 
     fprintf(fp, "Variables:\n");
     for (i = 0, v = pl->pl_dvecs; v; v = v->v_next) {
-        fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name,
-                ft_typenames(v->v_type));
+      if ( strcmp( ft_typenames(v->v_type), "current" ) == 0 ) {
+	branch = NULL;
+	if ( (branch = strstr( v->v_name, "#branch" )) ) {
+	  *branch = '\0';
+	}
+        fprintf(fp, "\t%d\ti(%s)\t%s", i++, v->v_name, ft_typenames(v->v_type));
+	if ( branch != NULL ) *branch = '#';
+      } else if ( strcmp( ft_typenames(v->v_type), "voltage" ) == 0 ) {
+        fprintf(fp, "\t%d\tv(%s)\t%s", i++, v->v_name, ft_typenames(v->v_type));
+      } else {
+        fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
+      }
         if (v->v_flags & VF_MINGIVEN)
             fprintf(fp, " min=%e", v->v_minsignal);
         if (v->v_flags & VF_MAXGIVEN)

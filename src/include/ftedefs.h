@@ -45,6 +45,7 @@ struct circ {
     char *ci_defOpt;    /* the default options anal. for this circuit */
     char *ci_specOpt;   /* the special options anal. for command line jobs */
     char *ci_curOpt;    /* the most recent options anal. for the circuit */
+    char *ci_last_an;   /* name of last analysis run */
 } ;
 
 
