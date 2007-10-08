@@ -15,6 +15,8 @@ $Id$
  * the listing routines.
  */
 
+#include <assert.h>
+#include <libgen.h>
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "inpdefs.h"
@@ -35,6 +37,10 @@ $Id$
 /* gtri - end - 12/12/90 */
 #endif
 
+#ifdef NUMPARAMS
+#include "numparam/numpaif.h"
+#endif
+
 #define line_free(line,flag)	{ line_free_x(line,flag); line = NULL; }
 
 /* static declarations */
@@ -42,47 +48,73 @@ static char * upper(register char *string);
 static bool doedit(char *filename);
 static void line_free_x(struct line * deck, bool recurse);
 
-/* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
+// Initial AlmostEqualULPs version - fast and simple, but
+// some limitations.
+static bool AlmostEqualUlps(float A, float B, int maxUlps)
+{
+    assert(sizeof(float) == sizeof(int));
 
+    if (A == B)
+        return TRUE;
+
+    int intDiff = abs(*(int*)&A - *(int*)&B);
+
+    if (intDiff <= maxUlps)
+        return TRUE;
+
+    return FALSE;
+}
+
+/* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
 void
 com_listing(wordlist *wl)
 {
     int type = LS_LOGICAL;
-    bool expand = FALSE;
+    bool expand = FALSE, do_param_listing = FALSE;
     char *s;
 
     if (ft_curckt) {  /* if there is a current circuit . . . .  */
         while (wl) {
             s = wl->wl_word;
-            switch (*s) {
-                case 'l':
-                case 'L':
-                    type = LS_LOGICAL;
-                    break;
-                case 'p':
-                case 'P':
-                    type = LS_PHYSICAL;
-                    break;
-                case 'd':
-                case 'D':
-                    type = LS_DECK;
-                    break;
-                case 'e':
-                case 'E':
-                    expand = TRUE;
-                    break;
-                default:
-                    fprintf(cp_err,
-                    "Error: bad listing type %s\n", s);
-                    return; /* SJB - don't go on after an error */
-            }
+	    if ( strcmp( s, "param" ) == 0 ) {
+	      do_param_listing = TRUE;
+	    }
+	    else {
+	      switch (*s) {
+	      case 'l':
+	      case 'L':
+		type = LS_LOGICAL;
+		break;
+	      case 'p':
+	      case 'P':
+		type = LS_PHYSICAL;
+		break;
+	      case 'd':
+	      case 'D':
+		type = LS_DECK;
+		break;
+	      case 'e':
+	      case 'E':
+		expand = TRUE;
+		break;
+	      default:
+		fprintf(cp_err,
+			"Error: bad listing type %s\n", s);
+		return; /* SJB - don't go on after an error */
+	      }
+	    }
             wl = wl->wl_next;
         }
-        if (type != LS_DECK)
+	if ( do_param_listing ) {
+	  nupa_list_params(cp_out);
+	}
+	else {
+	  if (type != LS_DECK)
             fprintf(cp_out, "\t%s\n\n", ft_curckt->ci_name);
-        inp_list(cp_out, expand ? ft_curckt->ci_deck :
-                ft_curckt->ci_origdeck, ft_curckt->ci_options,
-                type);
+	  inp_list(cp_out, expand ? ft_curckt->ci_deck :
+		   ft_curckt->ci_origdeck, ft_curckt->ci_options,
+		   type);
+	}
     } else
         fprintf(cp_err, "Error: no circuit loaded.\n");
     return;
@@ -297,16 +329,20 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       *  *filename = 
       */
 {
-    struct line *deck, *dd, *ld;
-    struct line *realdeck, *options = NULL;
-    char *tt = NULL, name[BSIZE_SP], *s, *t;
+    struct line *deck, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
+    struct line *realdeck, *options = NULL, *curr_meas = NULL;
+    char *tt = NULL, name[BSIZE_SP], *s, *t, *temperature = NULL;
     bool nosubckts, commands = FALSE;
     wordlist *wl = NULL, *end = NULL, *wl_first = NULL;
     wordlist *controls = NULL;
     FILE *lastin, *lastout, *lasterr;
+    double temperature_value;
+    bool autostop;
 
     /* read in the deck from a file */
-    inp_readall(fp, &deck);
+    char *filename_dup = ( filename == NULL ) ? strdup(".") : strdup(filename);
+    inp_readall(fp, &deck, 0, dirname(filename_dup));
+    tfree(filename_dup);
 
     /* if nothing came back from inp_readall, just close fp and return to caller */
     if (!deck) {	/* MW. We must close fp always when returning */
@@ -469,6 +505,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       if (deck->li_next) {
             /* There is something left after the controls. */
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
+            fprintf(stderr, "\nCircuit: %s\n\n", tt);
 
 	    /* Old location of ENHtranslate_poly.  This didn't work, because it
 	     * didn't handle models in .SUBCKTs correctly.  Moved to new location below
@@ -484,7 +521,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 		      line_free(deck->li_actual, TRUE);
 		      return;
 		} /* done expanding subcircuit macros */
-
 
 	    /* Now handle translation of spice2c6 POLYs. */
 /* New location of ENHtranslate_poly.  This should handle .SUBCKTs better . . . .
@@ -504,6 +540,63 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
       }     /*  if (deck->li_next) */
 
+      /* look for and set temperature; also store param and .meas statements in circuit struct */
+      ft_curckt->ci_param = NULL;
+      ft_curckt->ci_meas  = NULL;
+
+      for (dd = deck; dd; dd = dd->li_next) {
+	/* get temp after numparam run on deck */
+	if ( ciprefix(".temp", dd->li_line) ) {
+	  s = dd->li_line + 5;
+	  while ( isspace(*s) ) s++;
+	  if ( temperature != NULL ) {
+	    txfree(temperature);
+	  }
+	  temperature = strdup(s);
+	}
+	/*
+	   all parameter lines should be sequentially ordered and placed at
+	   beginning of deck 
+	*/
+	if ( ciprefix( ".param", dd->li_line ) ) {
+	  ft_curckt->ci_param = dd;
+	  /* find end of .param statements */
+	  while ( ciprefix( ".param", dd->li_line ) ) { prev_param = dd; dd = dd->li_next; }
+	  prev_card->li_next  = dd;
+	  prev_param->li_next = NULL;
+	}
+
+	if ( ciprefix( ".meas", dd->li_line ) ) {
+	  if ( cp_getvar( "autostop", VT_BOOL, (bool *) &autostop ) ) {
+	    if ( strstr( dd->li_line, " max " ) || strstr( dd->li_line, " min " ) || strstr( dd->li_line, " avg " ) ||
+		 strstr( dd->li_line, " rms " ) || strstr( dd->li_line, " integ " ) ) {
+	      printf( "Warning: .OPTION AUTOSTOP will not be effective because one of 'max|min|avg|rms|integ' is used in .meas\n" );
+	      printf( "         AUTOSTOP being disabled...\n" );
+	      cp_remvar( "autostop" );
+	    }
+	  }
+
+	  if ( curr_meas == NULL ) {
+	    curr_meas = ft_curckt->ci_meas = dd;
+	  }
+	  else {
+	    curr_meas->li_next = dd;
+	    curr_meas = dd;
+	  }
+	  prev_card->li_next = dd->li_next;
+	  curr_meas->li_next = NULL;
+	  dd                 = prev_card;
+	}
+	prev_card = dd;
+      }
+
+      /* set temperature if defined */
+      if ( temperature != NULL ) {
+	temperature_value = atof(temperature);
+	s = (char *) &temperature_value;
+	cp_vset("temp", VT_REAL, s );
+	txfree(temperature);
+      }
 
 #ifdef TRACE
       /* SDB debug statement */
@@ -512,8 +605,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
       /* Now that the deck is loaded, do the commands, if there are any */
       if (controls) {
-            for (end = wl = wl_reverse(controls); wl; wl = wl->wl_next)
-                cp_evloop(wl->wl_word);
+	for (end = wl = wl_reverse(controls); wl; wl = wl->wl_next)
+	  cp_evloop(wl->wl_word);
 
             wl_free(end); 
       }
@@ -564,6 +657,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
     struct variable *eev = NULL;
     wordlist *wl;
     bool noparse, ii;
+    double brief = 0, i;
 
     /* First throw away any old error messages there might be and fix
      * the case of the lines.  */
@@ -585,6 +679,50 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
         ft_curckt = ct = alloc(struct circ);
     }
     cp_getvar("noparse", VT_BOOL, (char *) &noparse);
+
+    if (!noparse) {
+        for (; options; options = options->li_next) {
+            for (s = options->li_line; *s && !isspace(*s); s++)
+                ;
+
+            ii = cp_interactive;
+            cp_interactive = FALSE;
+            wl = cp_lexer(s);
+            cp_interactive = ii;
+            if (!wl || !wl->wl_word || !*wl->wl_word)
+                continue;
+            if (eev)
+                eev->va_next = cp_setparse(wl);
+            else
+                ct->ci_vars = eev = cp_setparse(wl);
+            while (eev->va_next)
+                eev = eev->va_next;
+        }
+        for (eev = ct->ci_vars; eev; eev = eev->va_next) {
+	    static int one = 1;
+            switch (eev->va_type) {
+                case VT_BOOL:
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, &one);
+		  break;
+                case VT_NUM:
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, (char *) &eev->va_num);
+		  break;
+                case VT_REAL:
+		  if ( strcmp("brief",eev->va_name)==0 ){
+		    cp_vset("brief", VT_REAL, (char*) &eev->va_real );
+		  }
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, (char *) &eev->va_real);
+		  break;
+                case VT_STRING:
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, eev->va_string);
+		  break;
+	    } /* switch  . . . */
+        }
+    } /* if (!noparse)  . . . */
 
     /*----------------------------------------------------
      * Now assuming that we wanna parse this deck, we call 
@@ -611,7 +749,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
       
       if (dd->li_error) {
 	char *p, *q;
-	
+
 #ifdef XSPICE
 	/* gtri - modify - 12/12/90 - wbk - add setting of ipc syntax error flag */
 	g_ipc.syntax_error = IPC_TRUE;
@@ -638,6 +776,22 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
       
     }   /* for (dd = deck; dd; dd = dd->li_next) */
 
+    if ( cp_getvar( "brief", VT_REAL, (char *) &i ) ) {
+      brief = i;
+    }
+    // only print out netlist if brief == 0
+    if(AlmostEqualUlps(brief,0,3)) {
+      /* output deck */
+      out_printf( "\nProcessed Netlist\n" );
+      out_printf( "=================\n" );
+      int print_listing = 1;
+      for (dd = deck; dd; dd = dd->li_next) {
+	if ( ciprefix(".prot", dd->li_line) ) print_listing = 0;
+	if ( print_listing == 1 ) out_printf( "%s\n", dd->li_line );
+	if ( ciprefix(".unprot", dd->li_line) ) print_listing = 1;
+      }
+      out_printf( "\n" );
+    }
 
     /* Add this circuit to the circuit list. If reuse is TRUE then use
      * the ft_curckt structure.  */
@@ -668,46 +822,6 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
         ct->ci_filename = copy(filename);
     else
         ct->ci_filename = NULL;
-
-    if (!noparse) {
-        for (; options; options = options->li_next) {
-            for (s = options->li_line; *s && !isspace(*s); s++)
-                ;
-            ii = cp_interactive;
-            cp_interactive = FALSE;
-            wl = cp_lexer(s);
-            cp_interactive = ii;
-            if (!wl || !wl->wl_word || !*wl->wl_word)
-                continue;
-            if (eev)
-                eev->va_next = cp_setparse(wl);
-            else
-                ct->ci_vars = eev = cp_setparse(wl);
-            while (eev->va_next)
-                eev = eev->va_next;
-        }
-        for (eev = ct->ci_vars; eev; eev = eev->va_next) {
-	    static int one = 1;
-            switch (eev->va_type) {
-                case VT_BOOL:
-		  if_option(ct->ci_ckt, eev->va_name, 
-			    eev->va_type, &one);
-		  break;
-                case VT_NUM:
-		  if_option(ct->ci_ckt, eev->va_name, 
-			    eev->va_type, (char *) &eev->va_num);
-		  break;
-                case VT_REAL:
-		  if_option(ct->ci_ckt, eev->va_name, 
-			    eev->va_type, (char *) &eev->va_real);
-		  break;
-                case VT_STRING:
-		  if_option(ct->ci_ckt, eev->va_name, 
-			    eev->va_type, eev->va_string);
-		  break;
-	    } /* switch  . . . */
-        }
-    } /* if (!noparse)  . . . */
 
     cp_addkword(CT_CKTNAMES, tt);
     return;
@@ -867,11 +981,12 @@ com_source(wordlist *wl)
     }
 
     /* Don't print the title if this is a spice initialisation file. */
-    if (ft_nutmeg || substring(INITSTR, owl->wl_word)
-            || substring(ALT_INITSTR, owl->wl_word))
+    if (ft_nutmeg || substring(INITSTR, owl->wl_word) || substring(ALT_INITSTR, owl->wl_word)) {
         inp_spsource(fp, TRUE, tempfile ? (char *) NULL : wl->wl_word);
-    else
+    }
+    else {
         inp_spsource(fp, FALSE, tempfile ? (char *) NULL : wl->wl_word);
+    }
     cp_interactive = inter;
     if (tempfile)
         unlink(tempfile);

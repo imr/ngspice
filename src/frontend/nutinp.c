@@ -33,7 +33,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
     wordlist *controls = NULL;
     FILE *lastin, *lastout, *lasterr;
     
-    inp_readall(fp, &deck);
+    inp_readall(fp, &deck, 0);
     if (!deck)
         return;
 

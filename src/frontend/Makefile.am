@@ -120,6 +120,7 @@ libfte_a_SOURCES = \
 	interp.h	\
 	linear.c	\
 	linear.h	\
+	measure.c       \
 	misccoms.c	\
 	misccoms.h	\
 	miscvars.c	\
@@ -180,6 +181,6 @@ libfte_a_SOURCES = \
 # testcommands_LDADD = libfte.a plotting/libplotting.a ../misc/libmisc.a
 
 
-INCLUDES = -I$(top_srcdir)/src/include @X_CFLAGS@ 
+INCLUDES = -I$(top_srcdir)/src/include @X_CFLAGS@
 
 MAINTAINERCLEANFILES = Makefile.in

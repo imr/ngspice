@@ -215,7 +215,7 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 	    INP2K(ckt, tab, current);
 	    break;
 
-	case '*':
+	case '*': case '$':
 	    /* *<anything> - a comment - ignore */
 	    break;
 

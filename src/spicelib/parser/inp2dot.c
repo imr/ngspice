@@ -728,6 +728,14 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
 	LITERR(" Warning: .global not yet implemented - ignored \n");
 	goto quit;
     }
+    /* ignore .meas statements -- these will be handled after analysis */
+    /* also ignore .param statements */
+    /* ignore .prot, .unprot */
+    else if (strcmp(token, ".meas") == 0 || strcmp(token, ".param") == 0 || strcmp(token, ".measure") == 0 ||
+	     strcmp(token, ".prot") == 0 || strcmp(token, ".unprot") == 0) {
+      rtn = 0;
+      goto quit;
+    }
     LITERR(" unimplemented control card - error \n");
 quit:
     tfree(token);

@@ -323,6 +323,9 @@ dosim(char *what, wordlist *wl)
             wl->wl_prev = NULL;
         tfree(ww);
     }
+
+    if ( !err ) do_measure( ft_curckt->ci_last_an, FALSE );
+
     return err;
 }
 

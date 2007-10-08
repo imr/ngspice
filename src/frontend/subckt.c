@@ -64,6 +64,7 @@ $Id$
 #ifdef NUMPARAMS
 /* Uncomment to turn on tracing for the Numparam */
 /*#define TRACE_NUMPARAMS*/
+/*#define TRACE*/
 
 #include "numparam/numpaif.h"
 #endif
@@ -170,22 +171,28 @@ inp_subcktexpand(struct line *deck)
 #ifdef NUMPARAMS
     (void) cp_getvar("numparams", VT_BOOL, (char *) &use_numparams);
 
+    use_numparams = TRUE;
+
     /*  deck has .control sections already removed, but not comments */
     if ( use_numparams  ) {
 	
 #ifdef TRACE_NUMPARAMS
-	printf("Numparams is processing this deck:\n");
+	fprintf(stderr,"Numparams is processing this deck:\n");
 	c=deck;
 	while( c!=NULL) {
-	    printf("%3d:%s\n",c->li_linenum, c->li_line);
+	    fprintf(stderr,"%3d:%s\n",c->li_linenum, c->li_line);
 	    c= c->li_next;
 	}
 #endif	/* TRACE_NUMPARAMS */
-	
+
       ok = nupa_signal( NUPADECKCOPY, NULL);
+      /* get the subckt/model names from the deck */ 
       c=deck;
       while ( c != NULL) {  /* first Numparam pass */ 
-	nupa_scan(c->li_line, c->li_linenum);
+	if ( ciprefix( ".subckt", c->li_line ) )
+	  nupa_scan(c->li_line, c->li_linenum, TRUE);
+	if ( ciprefix( ".model", c->li_line ) )
+	  nupa_scan(c->li_line, c->li_linenum, FALSE);
 	c= c->li_next;
       }
       c=deck;
@@ -193,12 +200,13 @@ inp_subcktexpand(struct line *deck)
         c->li_line = nupa_copy(c->li_line, c->li_linenum);
         c= c->li_next;
       }
+      /* now copy instances */
       
 #ifdef TRACE_NUMPARAMS
-      printf("Numparams transformed deck:\n");
+      fprintf(stderr,"Numparams transformed deck:\n");
       c=deck;
       while( c!=NULL) {
-	  printf("%3d:%s\n",c->li_linenum, c->li_line);
+	  fprintf(stderr,"%3d:%s\n",c->li_linenum, c->li_line);
 	  c= c->li_next;
       }
 #endif	/* TRACE_NUMPARAMS */      
@@ -328,18 +336,27 @@ inp_subcktexpand(struct line *deck)
       ok= ok && nupa_signal(NUPASUBDONE, NULL); 
       c= ll;
       while (c != NULL) { 
-        ok= ok && nupa_eval( c->li_line, c->li_linenum);
+	// 'param' .meas statements can have dependencies on measurement values
+	// need to skip evaluating here and evaluate after other .meas statements
+        if ( ciprefix( ".meas", c->li_line ) ) {
+	  if ( !strstr( c->li_line, "param" ) ) nupa_eval( c->li_line, c->li_linenum);
+	} else {
+	  //ok= ok && nupa_eval( c->li_line, c->li_linenum);
+	  nupa_eval( c->li_line, c->li_linenum);
+	}
 	c= c->li_next;
       }
 #ifdef TRACE_NUMPARAMS
-      printf("Numparams converted deck:\n");
+      fprintf(stderr,"Numparams converted deck:\n");
       c=ll;
       while( c!=NULL) {
-	  printf("%3d:%s\n",c->li_linenum, c->li_line);
+	  fprintf(stderr,"%3d:%s\n",c->li_linenum, c->li_line);
 	  c= c->li_next;
       }
 #endif	/* TRACE_NUMPARAMS */ 
-      ok= ok && nupa_signal(NUPAEVALDONE, NULL);
+      //ok= ok && nupa_signal(NUPAEVALDONE, NULL);
+      //nupa_list_params(stdout);
+      nupa_copy_inst_dico();
     }
 #endif /* NUMPARAMS */
     return (ll);  /* return the spliced deck.  */
@@ -385,6 +402,7 @@ doit(struct line *deck)
 #endif
     /* First pass: xtract all the .subckts and stick pointers to them into sss.  */
     for (last = deck, lc = NULL;  last;  ) {
+
         if (ciprefix(sbend, last->li_line)) {         /* if line == .ends  */
             fprintf(cp_err, "Error: misplaced %s line: %s\n", sbend,
                     last->li_line);
@@ -504,6 +522,7 @@ doit(struct line *deck)
         gotone = FALSE;
         for (c = deck, lc = NULL; c; ) {
 	   if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
+
 		char *tofree, *tofree2;
 	        gotone = TRUE;
                 t = tofree = s = copy(c->li_line);       /*  s & t hold copy of component line  */
@@ -512,7 +531,7 @@ doit(struct line *deck)
 		 * e.g. if invocation is Xreference, *scname = reference
 		 */
                 tofree2 = scname = gettok(&s);            
-                scname += strlen(invoke);   
+		/*scname += strlen(invoke);   */
                 while ((*scname == ' ') || (*scname == '\t') ||
                         (*scname == ':'))
                     scname++;
@@ -659,7 +678,7 @@ inp_deckcopy(struct line *deck)
         d->li_linenum = deck->li_linenum;
         d->li_line = copy(deck->li_line);
         if (deck->li_error)
-            d->li_error = copy(deck->li_error);
+	  d->li_error = copy(deck->li_error);
         d->li_actual = inp_deckcopy(deck->li_actual);
         deck = deck->li_next;
     }
@@ -684,7 +703,7 @@ static int
 translate(struct line *deck, char *formal, char *actual, char *scname, char *subname)
 {
     struct line *c;
-    char *buffer, *next_name, dev_type, *name, *s, *t, ch, *nametofree;
+    char *buffer, *next_name, dev_type, *name, *s, *t, ch, *nametofree, *paren_ptr, *new_str;
     int nnodes, i, dim, blen;
     int rtn=0;
     
@@ -705,9 +724,11 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
     /* now iterate through the .subckt deck and translate the cards. */
     for (c = deck; c; c = c->li_next) {  
 
+      dev_type = *(c->li_line);   
+
 #ifdef TRACE
       /* SDB debug statement */
-      printf("\nIn translate, examining line %s \n", c->li_line);
+      printf("\nIn translate, examining line (dev_type: %c, subname: %s, instance: %s) %s \n", dev_type, subname, scname, c->li_line );
 #endif
 
       
@@ -716,7 +737,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
       /* Rename the device. */
         switch (dev_type) {
         case '\0':
-        case '*':
+        case '*': case '$':
         case '.':
             /* Just a pointer to the line into s and then break */
 	  buffer = tmalloc(2000+strlen(c->li_line));    /* DW,VA */
@@ -741,7 +762,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    /* maschmann 
             sprintf(buffer, "%s:%s ", name, scname);   */
             buffer = (char *)tmalloc((strlen(scname)+strlen(name)+5)*sizeof(char));
-            sprintf(buffer, "a:%s:%s ", scname, name+1 );  
+            sprintf(buffer, "a.%s.%s ", scname, name );  
                    
 
 
@@ -808,11 +829,11 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
                       if(name[0]=='v' || name[0]=='V') {
                         blen = strlen(buffer);
                         buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+5)*sizeof(char));
-                        sprintf(buffer + blen, "v:%s:%s ", scname, name+1);
+                        sprintf(buffer + blen, "v.%s.%s ", scname, name);
                       } else { 
                         blen = strlen(buffer);
                         buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
-                        sprintf(buffer + blen, "%s:%s ", scname, name);
+                        sprintf(buffer + blen, "%s.%s ", scname, name);
                       }
                     }
                     break;
@@ -863,19 +884,9 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
  * and stick the translated name into buffer.
  */
 	  ch = *name;           /* ch identifies the type of component */
-	  name++;
-	  if (*name == ':')
-	    name++;             /* now name point to the rest of the refdes */
-	                           
 
-          if (*name) {
-	    buffer = (char *)tmalloc((strlen(scname)+strlen(name)+5)*sizeof(char));
-	    sprintf(buffer, "%c:%s:%s ", ch, scname,  /* F:subcircuitname:refdesname */
-			   name);
-          } else {
-	    buffer = (char *)tmalloc((strlen(scname)+4)*sizeof(char));
-	    sprintf(buffer, "%c:%s ", ch, scname);    /* F:subcircuitname */
-          }
+	  buffer = (char *)tmalloc((strlen(scname)+strlen(name)+5)*sizeof(char));
+	  sprintf(buffer, "%c.%s.%s ", ch, scname, name);
 	  tfree(t);
 	  
 
@@ -903,7 +914,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 		       */
 	      blen = strlen(buffer);
 	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
-	      sprintf(buffer + blen, "%s:%s ", scname, name);
+	      sprintf(buffer + blen, "%s.%s ", scname, name);
 	    }
 	    tfree(name);
 	  }  /* while (nnodes-- . . . . */
@@ -975,12 +986,10 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 #endif
 
 	      ch = *name;         /*  ch is the first char of the token.  */
-	      name++;
-	      if (*name == ':')
-	        name++;           /* name now points to the remainder of the token */
+
 	      blen = strlen(buffer);
 	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+5)*sizeof(char));
-	      sprintf(buffer + blen, "%c:%s:%s ", ch, scname, name);  
+	      sprintf(buffer + blen, "%c.%s.%s ", ch, scname, name);  
 	      /* From Vsense and Urefdes creates V:Urefdes:sense */
 	    }
 	    else {                              /* Handle netname */
@@ -1003,7 +1012,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 			 */
 	        blen = strlen(buffer);
 	        buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
-	        sprintf(buffer + blen, "%s:%s ", scname, name);
+	        sprintf(buffer + blen, "%s.%s ", scname, name);
 		/* From netname and Urefdes creates Urefdes:netname */
 	      }
 	    }
@@ -1034,17 +1043,14 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
  */
 	  ch = *name;
 
-	  name++;
-	  if (*name == ':')
-	    name++;
-
-	  if (*name) {
+	  if ( ch != 'x' ) {
 	    buffer = (char *)tmalloc((strlen(scname)+strlen(name)+5)*sizeof(char));
-	    sprintf(buffer, "%c:%s:%s ", ch, scname, name);
+	    sprintf(buffer, "%c.%s.%s ", ch, scname, name);
 	  } else {
-	    buffer = (char *)tmalloc((strlen(scname)+4)*sizeof(char));
-	    sprintf(buffer, "%c:%s ", ch, scname);
+	    buffer = (char *)tmalloc((strlen(scname)+strlen(name)+3)*sizeof(char));
+	    sprintf(buffer, "%s.%s ", scname, name);
 	  }
+
 	  tfree(nametofree);
 
 
@@ -1071,7 +1077,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 		       */
 	      blen = strlen(buffer);
 	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
-	      sprintf(buffer + blen, "%s:%s ", scname, name);
+	      sprintf(buffer + blen, "%s.%s ", scname, name);
 	    }
 	    tfree(name);
 	  }  /* while (nnodes-- . . . . */
@@ -1089,19 +1095,17 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	      goto quit;
 	    }
 	    ch = *name;
-	    name++;
-	    if (*name == ':')
-	      name++;
 	    
-	    if (*name) {
+	    if ( ch != 'x' ) {
 	      blen = strlen(buffer);
 	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+5)*sizeof(char));
-	      sprintf(buffer + blen, "%c:%s:%s ", ch, scname, name);
+	      sprintf(buffer + blen, "%c.%s.%s ", ch, scname, name);
 	    } else {
 	      blen = strlen(buffer);
-	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+4)*sizeof(char));
-	      sprintf(buffer + blen, "%c:%s ", ch, scname);
+	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+2)*sizeof(char));
+	      sprintf(buffer + blen, "%s ", scname);
 	    }
+
 	    tfree(t);
 	  } /* while (nnodes--. . . . */
 	    
@@ -1204,14 +1208,14 @@ finishLine(char *dst, char *src, char *scname)
              if ((which == 'i' || which == 'I') &&
 	        (buf[0] == 'v' || buf[0] == 'V')) {
 		*dst++ = buf[0];
-		*dst++ = ':';
+		*dst++ = '.';
 		i = 1;
 	    } else {
 		i = 0;
 	    }
             for (s = scname; *s; )
                 *dst++ = *s++;
-            *dst++ = ':';
+            *dst++ = '.';
             for (s = buf + i; *s; )
                 *dst++ = *s++;
         }
@@ -1234,7 +1238,7 @@ finishLine(char *dst, char *src, char *scname)
 		} else {
 		    for (s = scname; *s; )
 			*dst++ = *s++;
-		    *dst++ = ':';
+		    *dst++ = '.';
 		    for (s = buf; *s; )
 			*dst++ = *s++;
 		}
@@ -1870,7 +1874,7 @@ inp_numnodes(char c)
         case '\t':
         case '.':
         case 'x':
-        case '*':
+        case '*': case '$':
         return (0);
 
         case 'b': return (2);

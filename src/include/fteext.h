@@ -393,6 +393,10 @@ extern int raw_prec;
 extern void raw_write(char *name, struct plot *pl, bool app, bool binary);
 extern struct plot *raw_read();
 
+/* meas.c */
+extern void do_measure(char *what, bool chk_only);
+extern bool check_autostop(char *what);
+
 /* resource.c */
 
 extern void com_rusage();

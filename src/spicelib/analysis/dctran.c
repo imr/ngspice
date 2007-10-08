@@ -7,7 +7,8 @@ Modified: 2000  AlansFixes
 /* subroutine to do DC TRANSIENT analysis    
         --- ONLY, unlike spice2 routine with the same name! */
 
-#include<ngspice.h>
+#include <assert.h>
+#include <ngspice.h>
 #include <config.h>
 #include <cktdefs.h>
 #include <cktaccept.h>
@@ -35,6 +36,22 @@ Modified: 2000  AlansFixes
 void SetAnalyse( char * Analyse, int Percent);
 #endif
 
+// Initial AlmostEqualULPs version - fast and simple, but
+// some limitations.
+static bool AlmostEqualUlps(float A, float B, int maxUlps)
+{
+    assert(sizeof(float) == sizeof(int));
+
+    if (A == B)
+        return TRUE;
+
+    int intDiff = abs(*(int*)&A - *(int*)&B);
+
+    if (intDiff <= maxUlps)
+        return TRUE;
+
+    return FALSE;
+}
 
 int
 DCtran(CKTcircuit *ckt,
@@ -458,9 +475,13 @@ nextTime:
 /* gtri - end - wbk - Update event queues/data for accepted timepoint */
 #endif	    
     ckt->CKTstat->STAToldIter = ckt->CKTstat->STATnumIter;
-    if(fabs(ckt->CKTtime - ckt->CKTfinalTime) < ckt->CKTminBreak) {
-        /*printf(" done:  time is %g, final time is %g, and tol is %g\n",*/
-        /*ckt->CKTtime,ckt->CKTfinalTime,ckt->CKTminBreak);*/
+    if(check_autostop("tran") ||
+       fabs(ckt->CKTtime - ckt->CKTfinalTime) < ckt->CKTminBreak ||
+       AlmostEqualUlps( ckt->CKTtime, ckt->CKTfinalTime, 3 ) ) {
+#ifdef STEPDEBUG
+        printf(" done:  time is %g, final time is %g, and tol is %g\n",
+        ckt->CKTtime,ckt->CKTfinalTime,ckt->CKTminBreak);
+#endif
         (*(SPfrontEnd->OUTendPlot))( (((TRANan*)ckt->CKTcurJob)->TRANplot));
         ckt->CKTcurrentAnalysis = 0;
         ckt->CKTstat->STATtranTime += (*(SPfrontEnd->IFseconds))()-startTime;
@@ -522,7 +543,8 @@ resume:
             MIN(ckt->CKTdelta,ckt->CKTmaxStep);
 #ifdef XSPICE
 /* gtri - begin - wbk - Cut integration order if first timepoint after breakpoint */
-    if(ckt->CKTtime == g_mif_info.breakpoint.last)
+    //if(ckt->CKTtime == g_mif_info.breakpoint.last)
+    if ( AlmostEqualUlps( ckt->CKTtime, g_mif_info.breakpoint.last, 3 ) )
         ckt->CKTorder = 1;
 /* gtri - end   - wbk - Cut integration order if first timepoint after breakpoint */
 
@@ -530,7 +552,8 @@ resume:
 
 
 	/* are we at a breakpoint, or indistinguishably close? */
-    if ((ckt->CKTtime == *(ckt->CKTbreaks)) || (*(ckt->CKTbreaks) -
+    //if ((ckt->CKTtime == *(ckt->CKTbreaks)) || (*(ckt->CKTbreaks) -
+    if ( AlmostEqualUlps( ckt->CKTtime, *(ckt->CKTbreaks), 3 ) || (*(ckt->CKTbreaks) -
     				(ckt->CKTtime) <= ckt->CKTdelmin)) {
         /* first timepoint after a breakpoint - cut integration order */
         /* and limit timestep to .1 times minimum of time to next breakpoint,
@@ -581,8 +604,16 @@ resume:
 /* gtri - begin - wbk - Modify Breakpoint stuff */
     /* Throw out any permanent breakpoint times <= current time */
     while(1) {
-        if(*(ckt->CKTbreaks) <= (ckt->CKTtime + ckt->CKTminBreak))
+#ifdef STEPDEBUG
+      printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n",*(ckt->CKTbreaks), ckt->CKTtime, ckt->CKTminBreak);
+#endif
+      if(AlmostEqualUlps(*(ckt->CKTbreaks),ckt->CKTtime,3) || *(ckt->CKTbreaks) <= (ckt->CKTtime + ckt->CKTminBreak)) {
+#ifdef STEPDEBUG
+	printf("throwing out permanent breakpoint times <= current time (brk pt: %g)\n",*(ckt->CKTbreaks));
+	printf("    ckt_time: %g    ckt_min_break: %g\n",ckt->CKTtime, ckt->CKTminBreak);
+#endif
             CKTclrBreak(ckt);
+      }
         else
             break;
     }

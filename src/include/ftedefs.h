@@ -31,6 +31,8 @@ struct circ {
     struct line *ci_deck;   /* The input deck. */
     struct line *ci_origdeck;/* The input deck, before subckt expansion. */
     struct line *ci_options;/* The .option cards from the deck... */
+    struct line *ci_meas;   /* .measure commands to run after simulation */
+    struct line *ci_param;  /* .param statements found in deck */
     struct variable *ci_vars; /* ... and the parsed versions. */
     bool ci_inprogress; /* We are in a break now. */
     bool ci_runonce;    /* So com_run can to a reset if necessary... */
