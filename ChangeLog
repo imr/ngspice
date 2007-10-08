@@ -1,4 +1,8 @@
 2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
+ *src/frontend/{device.c, device.h}: modified 'show' command to match 
+ SmartSpice syntax from Phil Barker patch.
+
+2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/plotting/plotit.c, src/frontend/{nutimp.c, parse.c},
    src/maths/ni/{niconv.c, niiter.c}, src/spicelib/analysis/dctran.c: 
  Applied patch from Phil barker, iproved error/warning reporting.

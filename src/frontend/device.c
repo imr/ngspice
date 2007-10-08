@@ -74,6 +74,7 @@ all_show(wordlist *wl, int mode)
     if (!cp_getvar("width", VT_NUM, (char *) &screen_width))
 	    screen_width = DEF_WIDTH;
     count = (screen_width - LEFT_WIDTH) / (DEV_WIDTH + 1);
+    count = 1;
 
     n = 0;
     do {
@@ -87,6 +88,12 @@ all_show(wordlist *wl, int mode)
 	/* find the parameter list and the nextgroup */
 	for (w = wl; w && !nextgroup; w = next) {
 	    next = w->wl_next;
+
+	    if ( eq(w->wl_word, "*") ) {
+	      tfree(w->wl_word);
+	      w->wl_word = strdup("all");
+	    }
+ 
 	    if (eq(w->wl_word, "++") || eq(w->wl_word, "all")) {
 		if (params) {
 			param_flag = DGEN_ALLPARAMS;
@@ -152,59 +159,222 @@ all_show(wordlist *wl, int mode)
 	    instances = 1;
 	    if (dg->flags & DGEN_INSTANCE) {
 		instances = 2;
-		printf(" %s: %s\n",
+		n += 1;
+
+		fprintf(cp_out,"%s:\n", dg->instance->GENname);
+		fprintf(cp_out,"    %-19s= %s\n", "model", dg->model->GENmodName);
+
+		listdg = dg;
+
+		if (param_flag) {
+		    param_forall(dg, param_flag);
+		}
+		else if (!params) {
+		    param_forall(dg, DGEN_DEFPARAMS);
+		}
+		if (params) {
+		    wl_forall(params, listparam, dg);
+		}
+
+	    } else if (ft_sim->devices[dg->dev_type_no]->numModelParms) {
+		fprintf(cp_out," %s models (%s)\n",
+			ft_sim->devices[dg->dev_type_no]->name,
+			ft_sim->devices[dg->dev_type_no]->description);
+		n += 1;
+		i = 0;
+		do {
+		  fprintf(cp_out,"%*s", LEFT_WIDTH, "model");
+		  j = dgen_for_n(dg, count, printstr, "m", i);
+		  i += 1;
+		  fprintf(cp_out,"\n");
+		} while (j);
+		fprintf(cp_out,"\n");
+
+		if (param_flag)
+		    param_forall(dg, param_flag);
+		else if (!params)
+		    param_forall(dg, DGEN_DEFPARAMS);
+		if (params)
+		    wl_forall(params, listparam, dg);
+		fprintf(cp_out,"\n");
+	    }
+	}
+
+	wl = nextgroup;
+
+    } while (wl);
+
+    if (!n) {
+	    if (instances == 0)
+		printf("No matching instances or models\n");
+	    else if (instances == 1)
+		printf("No matching models\n");
+	    else
+		printf("No matching elements\n");
+    }
+}
+
+static void
+all_show_old(wordlist *wl, int mode)
+{
+    wordlist	*params, *nextgroup, *thisgroup;
+    wordlist	*prev, *next, *w;
+    int		screen_width;
+    dgen	*dg, *listdg;
+    int		instances;
+    int		i, j, n;
+    int		param_flag, dev_flag;
+
+    if (!ft_curckt) {
+        fprintf(cp_err, "Error: no circuit loaded\n");
+        return;
+    }
+
+    if (wl && wl->wl_word && eq(wl->wl_word, "-v")) {
+	old_show(wl->wl_next);
+	return;
+    }
+
+    if (!cp_getvar("width", VT_NUM, (char *) &screen_width))
+	    screen_width = DEF_WIDTH;
+    count = (screen_width - LEFT_WIDTH) / (DEV_WIDTH + 1);
+
+    n = 0;
+    do {
+	prev = NULL;
+	params = NULL;
+	nextgroup = NULL;
+	thisgroup = wl;
+	param_flag = 0;
+	dev_flag = 0;
+
+	/* find the parameter list and the nextgroup */
+	for (w = wl; w && !nextgroup; w = next) {
+	    next = w->wl_next;
+
+	    if ( eq(w->wl_word, "*") ) {
+	      tfree(w->wl_word);
+	      w->wl_word = strdup("all");
+	    }
+ 
+	    if (eq(w->wl_word, "++") || eq(w->wl_word, "all")) {
+		if (params) {
+			param_flag = DGEN_ALLPARAMS;
+			if (prev)
+				prev->wl_next = w->wl_next;
+			else
+				params = next;
+		} else {
+			dev_flag = DGEN_ALLDEVS;
+			if (prev)
+				prev->wl_next = w->wl_next;
+			else
+				thisgroup = next;
+		}
+		/* w must not be freed here */
+		w = NULL;
+	    } else if (eq(w->wl_word, "+")) {
+		if (params) {
+			param_flag = DGEN_DEFPARAMS;
+			if (prev)
+				prev->wl_next = w->wl_next;
+			else
+				params = next;
+		} else {
+			dev_flag = DGEN_DEFDEVS;
+			if (prev)
+				prev->wl_next = w->wl_next;
+			else
+				thisgroup = next;
+		}
+		/* w must not be freed here */
+		w = NULL;
+	    } else if (eq(w->wl_word, ":")) {
+		/* w must not be freed here */
+		w = NULL;
+		if (!params) {
+		    params = next;
+		    if (prev)
+			    prev->wl_next = NULL;
+		    else
+			    thisgroup = NULL;
+		} else {
+		    if (prev)
+			prev->wl_next = next;
+		    else
+			params = next;
+		}
+	    } else if (eq(w->wl_word, ";") || eq(w->wl_word, ",")) {
+		    nextgroup = next;
+		    /* w must not be freed here */
+		    w = NULL;
+		    if (prev)
+			prev->wl_next = NULL;
+		    break;
+	    }
+	    prev = w;
+	}
+
+	instances = 0;
+	for (dg = dgen_init(ft_curckt->ci_ckt, thisgroup, 1, dev_flag, mode);
+		dg; dgen_nth_next(&dg, count))
+	{
+	    instances = 1;
+	    if (dg->flags & DGEN_INSTANCE) {
+		instances = 2;
+		fprintf(cp_out," %s: %s\n",
 			ft_sim->devices[dg->dev_type_no]->name,
 			ft_sim->devices[dg->dev_type_no]->description);
 		n += 1;
 
 		i = 0;
 		do {
-		printf("%*s", LEFT_WIDTH, "device");
-			j = dgen_for_n(dg, count, printstr, "n", i);
-			i += 1;
-			printf("\n");
+		  fprintf(cp_out,"%*s", LEFT_WIDTH, "device");
+		  j = dgen_for_n(dg, count, printstr, "n", i);
+		  i += 1;
+		  fprintf(cp_out,"\n");
 		} while (j);
 
 		if (ft_sim->devices[dg->dev_type_no]->numModelParms) {
 			i = 0;
 			do {
-				printf("%*s", LEFT_WIDTH, "model");
+				fprintf(cp_out,"%*s", LEFT_WIDTH, "model");
 				j = dgen_for_n(dg, count, printstr, "m", i);
 				i += 1;
-				printf("\n");
+				fprintf(cp_out,"\n");
 			} while (j);
 		}
 		listdg = dg;
 
 		if (param_flag)
-		    param_forall(dg, param_flag);
+		    param_forall_old(dg, param_flag);
 		else if (!params)
-		    param_forall(dg, DGEN_DEFPARAMS);
+		    param_forall_old(dg, DGEN_DEFPARAMS);
 		if (params)
 		    wl_forall(params, listparam, dg);
-		printf("\n");
+		fprintf(cp_out,"\n");
 
 	    } else if (ft_sim->devices[dg->dev_type_no]->numModelParms) {
-		printf(" %s models (%s)\n",
+		fprintf(cp_out," %s models (%s)\n",
 			ft_sim->devices[dg->dev_type_no]->name,
 			ft_sim->devices[dg->dev_type_no]->description);
 		n += 1;
 		i = 0;
 		do {
-		printf("%*s", LEFT_WIDTH, "model");
-			j = dgen_for_n(dg, count, printstr, "m", i);
-			i += 1;
-			printf("\n");
+		  fprintf(cp_out,"%*s", LEFT_WIDTH, "model");
+		  j = dgen_for_n(dg, count, printstr, "m", i);
+		  i += 1;
+		  fprintf(cp_out,"\n");
 		} while (j);
-		printf("\n");
+		fprintf(cp_out,"\n");
 
 		if (param_flag)
-		    param_forall(dg, param_flag);
+		    param_forall_old(dg, param_flag);
 		else if (!params)
-		    param_forall(dg, DGEN_DEFPARAMS);
+		    param_forall_old(dg, DGEN_DEFPARAMS);
 		if (params)
 		    wl_forall(params, listparam, dg);
-		printf("\n");
+		fprintf(cp_out,"\n");
 	    }
 	}
 
@@ -228,16 +398,16 @@ printstr(dgen *dg, char *name)
     /* va: ' ' is no flag for %s; \? avoids trigraph warning */
     if (*name == 'n') {
 	if (dg->instance)
-	   printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, dg->instance->GENname);
+	  fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, dg->instance->GENname);
 	else
-	   printf(" %*s", DEV_WIDTH, "<\?\?\?\?\?\?\?>");
+	  fprintf(cp_out," %*s", DEV_WIDTH, "<\?\?\?\?\?\?\?>");
     } else if (*name == 'm') {
 	if (dg->model)
-	   printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, dg->model->GENmodName);
+	  fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, dg->model->GENmodName);
 	else
-	   printf(" %*s", DEV_WIDTH, "<\?\?\?\?\?\?\?>");
+	  fprintf(cp_out," %*s", DEV_WIDTH, "<\?\?\?\?\?\?\?>");
     } else
-	printf(" %*s", DEV_WIDTH, "<error>");
+      fprintf(cp_out," %*s", DEV_WIDTH, "<error>");
 
     return 0;
 }
@@ -269,13 +439,52 @@ param_forall(dgen *dg, int flags)
 	    {
 		j = 0;
 		do {
+		  fprintf(cp_out,"    %-19s=", plist[i].keyword);
+
+		  k = dgen_for_n(dg, count, printvals, (plist + i), j);
+		  fprintf(cp_out,"\n");
+		  j += 1;
+
+		} while (k);
+	    }
+	}
+    }
+}
+
+void
+param_forall_old(dgen *dg, int flags)
+{
+    int	i, j, k, found;
+    int xcount;
+    IFparm *plist;
+
+    found = 0;
+
+    if (dg->flags & DGEN_INSTANCE) {
+	xcount = *ft_sim->devices[dg->dev_type_no]->numInstanceParms;
+	plist = ft_sim->devices[dg->dev_type_no]->instanceParms;
+    } else {
+	xcount = *ft_sim->devices[dg->dev_type_no]->numModelParms;
+	plist = ft_sim->devices[dg->dev_type_no]->modelParms;
+    }
+
+    for (i = 0; i < xcount; i++) {
+	if (plist[i].dataType & IF_ASK) {
+	    if ((((CKTcircuit *) (dg->ckt))->CKTrhsOld
+		|| (plist[i].dataType & IF_SET))
+		&& (!(plist[i].dataType & (IF_REDUNDANT | IF_UNINTERESTING))
+		|| (flags == DGEN_ALLPARAMS
+		&& !(plist[i].dataType & IF_REDUNDANT))))
+	    {
+		j = 0;
+		do {
 			if (!j)
-			   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH,
-                                           plist[i].keyword);
+			   fprintf(cp_out,"%*.*s", LEFT_WIDTH, LEFT_WIDTH,
+				   plist[i].keyword);
 			else
-			   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
-			k = dgen_for_n(dg, count, printvals, (plist + i), j);
-			printf("\n");
+			   fprintf(cp_out,"%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
+			k = dgen_for_n(dg, count, printvals_old, (plist + i), j);
+			fprintf(cp_out,"\n");
 			j += 1;
 		} while (k);
 	    }
@@ -315,10 +524,10 @@ listparam(wordlist *p, dgen *dg)
 	    j = 0;
 	    do {
 		if (!j)
-		   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
+		   fprintf(cp_out,"%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
 		else
-		   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
-		k = dgen_for_n(dg, count, printvals, (plist + i), j);
+		   fprintf(cp_out,"%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
+		k = dgen_for_n(dg, count, printvals_old, (plist + i), j);
 		printf("\n");
 		j += 1;
 	    } while (k > 0);
@@ -326,11 +535,11 @@ listparam(wordlist *p, dgen *dg)
 	    j = 0;
 	    do {
 		if (!j)
-		   printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
+		   fprintf(cp_out,"%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
 		else
-		   printf("%*s", LEFT_WIDTH, " ");
+		   fprintf(cp_out,"%*s", LEFT_WIDTH, " ");
 		k = dgen_for_n(dg, count, bogus1, 0, j);
-		printf("\n");
+		fprintf(cp_out,"\n");
 		j += 1;
 	    } while (k > 0);
 	}
@@ -338,11 +547,11 @@ listparam(wordlist *p, dgen *dg)
 	j = 0;
 	do {
 	    if (!j)
-		printf("%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
+		fprintf(cp_out,"%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
 	    else
-		printf("%*s", LEFT_WIDTH, " ");
+	        fprintf(cp_out,"%*s", LEFT_WIDTH, " ");
 	    k = dgen_for_n(dg, count, bogus2, 0, j);
-	    printf("\n");
+	    fprintf(cp_out,"\n");
 	    j += 1;
 	} while (k > 0);
     }
@@ -350,13 +559,13 @@ listparam(wordlist *p, dgen *dg)
 
 int bogus1(dgen *dg)
 {
-   printf(" %*s", DEV_WIDTH, "---------");
+    fprintf(cp_out," %*s", DEV_WIDTH, "---------");
     return 0;
 }
 
 int bogus2(dgen *dg)
 {
-    printf(" %*s", DEV_WIDTH, "?????????");
+    fprintf(cp_out," %*s", DEV_WIDTH, "?????????");
     return 0;
 }
 
@@ -383,9 +592,9 @@ printvals(dgen *dg, IFparm *p, int i)
 
     if (i >= n) {
 	if (i == 0)
-	    printf("         -");
+	    fprintf(cp_out,"         -");
 	else
-	    printf("          ");
+	    fprintf(cp_out,"          ");
 	return 0;
     }
 
@@ -393,54 +602,141 @@ printvals(dgen *dg, IFparm *p, int i)
         /* va: ' ' is no flag for %s */
 	switch ((p->dataType & IF_VARTYPES) & ~IF_VECTOR) {
 	    case IF_FLAG:
-		    printf(" % *d", DEV_WIDTH, val.v.vec.iVec[i]);
+		    fprintf(cp_out," %d",  val.v.vec.iVec[i]);
 		    break;
 	    case IF_INTEGER:
-		    printf(" % *d", DEV_WIDTH, val.v.vec.iVec[i]);
+		    fprintf(cp_out," %d",  val.v.vec.iVec[i]);
 		    break;
 	    case IF_REAL:
-		    printf(" % *.6g", DEV_WIDTH, val.v.vec.rVec[i]);
+		    fprintf(cp_out," %.6g",  val.v.vec.rVec[i]);
 		    break;
 	    case IF_COMPLEX:
 		    if (!(i % 2))
-			   printf(" % *.6g", DEV_WIDTH, val.v.vec.cVec[i / 2].real);
+			   fprintf(cp_out," %.6g",  val.v.vec.cVec[i / 2].real);
 		    else
-			   printf(" % *.6g", DEV_WIDTH, val.v.vec.cVec[i / 2].imag);
+			   fprintf(cp_out," %.6g",  val.v.vec.cVec[i / 2].imag);
 		    break;
 	    case IF_STRING:
-		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, val.v.vec.sVec[i]);
+		    fprintf(cp_out," %s",   val.v.vec.sVec[i]);
 		    break;
 	    case IF_INSTANCE:
-		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, val.v.vec.uVec[i]);
+		    fprintf(cp_out," %s",   val.v.vec.uVec[i]);
 		    break;
 	    default:
-		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, " ******** ");
+		    fprintf(cp_out," %s",   " ******** ");
 	}
     } else {
 	switch ((p->dataType & IF_VARTYPES) & ~IF_VECTOR) {
 	    case IF_FLAG:
-		    printf(" % *d", DEV_WIDTH, val.iValue);
+		    fprintf(cp_out," %d",  val.iValue);
 		    break;
 	    case IF_INTEGER:
-		    printf(" % *d", DEV_WIDTH, val.iValue);
+		    fprintf(cp_out," %d",  val.iValue);
 		    break;
 	    case IF_REAL:
-		    printf(" % *.6g", DEV_WIDTH, val.rValue);
+		    fprintf(cp_out," %.6g",  val.rValue);
 		    break;
 	    case IF_COMPLEX:
 		    if (i % 2)
-			   printf(" % *.6g", DEV_WIDTH, val.cValue.real);
+			   fprintf(cp_out," %.6g",  val.cValue.real);
 		    else
-			   printf(" % *.6g", DEV_WIDTH, val.cValue.imag);
+			   fprintf(cp_out," %.6g",  val.cValue.imag);
 		    break;
 	    case IF_STRING:
-		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, val.sValue);
+		    fprintf(cp_out," %s",   val.sValue);
 		    break;
 	    case IF_INSTANCE:
-		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, val.uValue);
+		    fprintf(cp_out," %s",   val.uValue);
 		    break;
 	    default:
-		    printf(" %*.*s", DEV_WIDTH, DEV_WIDTH, " ******** ");
+		    fprintf(cp_out," %s",   " ******** ");
+	}
+    }
+
+    return n - 1;
+}
+
+int
+printvals_old(dgen *dg, IFparm *p, int i)
+{
+    IFvalue	val;
+    int		n;
+
+    if (dg->flags & DGEN_INSTANCE)
+	(*ft_sim->askInstanceQuest)(ft_curckt->ci_ckt, dg->instance,
+	    p->id, &val, &val);
+    else
+	(*ft_sim->askModelQuest)(ft_curckt->ci_ckt, dg->model,
+	    p->id, &val, &val);
+
+    if (p->dataType & IF_VECTOR)
+	n = val.v.numValue;
+    else
+	n = 1;
+
+    if (((p->dataType & IF_VARTYPES) & ~IF_VECTOR) == IF_COMPLEX)
+	n *= 2;
+
+    if (i >= n) {
+	if (i == 0)
+	    fprintf(cp_out,"         -");
+	else
+	    fprintf(cp_out,"          ");
+	return 0;
+    }
+
+    if (p->dataType & IF_VECTOR) {
+        /* va: ' ' is no flag for %s */
+	switch ((p->dataType & IF_VARTYPES) & ~IF_VECTOR) {
+	    case IF_FLAG:
+		    fprintf(cp_out," % *d", DEV_WIDTH, val.v.vec.iVec[i]);
+		    break;
+	    case IF_INTEGER:
+		    fprintf(cp_out," % *d", DEV_WIDTH, val.v.vec.iVec[i]);
+		    break;
+	    case IF_REAL:
+		    fprintf(cp_out," % *.6g", DEV_WIDTH, val.v.vec.rVec[i]);
+		    break;
+	    case IF_COMPLEX:
+		    if (!(i % 2))
+			   fprintf(cp_out," % *.6g", DEV_WIDTH, val.v.vec.cVec[i / 2].real);
+		    else
+			   fprintf(cp_out," % *.6g", DEV_WIDTH, val.v.vec.cVec[i / 2].imag);
+		    break;
+	    case IF_STRING:
+		    fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, val.v.vec.sVec[i]);
+		    break;
+	    case IF_INSTANCE:
+		    fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, val.v.vec.uVec[i]);
+		    break;
+	    default:
+		    fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, " ******** ");
+	}
+    } else {
+	switch ((p->dataType & IF_VARTYPES) & ~IF_VECTOR) {
+	    case IF_FLAG:
+		    fprintf(cp_out," % *d", DEV_WIDTH, val.iValue);
+		    break;
+	    case IF_INTEGER:
+		    fprintf(cp_out," % *d", DEV_WIDTH, val.iValue);
+		    break;
+	    case IF_REAL:
+		    fprintf(cp_out," % *.6g", DEV_WIDTH, val.rValue);
+		    break;
+	    case IF_COMPLEX:
+		    if (i % 2)
+			   fprintf(cp_out," % *.6g", DEV_WIDTH, val.cValue.real);
+		    else
+			   fprintf(cp_out," % *.6g", DEV_WIDTH, val.cValue.imag);
+		    break;
+	    case IF_STRING:
+		    fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, val.sValue);
+		    break;
+	    case IF_INSTANCE:
+		    fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, val.uValue);
+		    break;
+	    default:
+		    fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, " ******** ");
 	}
     }
 
