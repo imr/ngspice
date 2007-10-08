@@ -13,5 +13,5 @@ MAINTAINERCLEANFILES = $(DISTCLEANFILES) Makefile.in
 # This adds the root directory of the ngspice source distribution
 # to be included in the search path for includes in the ngspice.texi file
 # (which is necessary for the AUTHORS file to be found)
-AM_MAKEINFOFLAGS = -I "../"
-TEXI2DVI = texi2dvi -I "../"
+AM_MAKEINFOFLAGS = -I $(top_srcdir)
+TEXI2DVI = texi2dvi -I $(top_srcdir)
