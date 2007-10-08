@@ -34,152 +34,257 @@ static int INPfindParm( char *name, IFparm *table, int numParms );
 
 extern INPmodel *modtab;
 
-char *INPgetMod(void *ckt, char *name, INPmodel ** model, INPtables * tab)
+/*
+  code moved from INPgetMod
+ */
+static int
+create_model( void* ckt, INPmodel* modtmp, INPtables* tab )
 {
-    INPmodel *modtmp;
-    IFvalue *val;
-    register int j;
-    char *line;
-    char *parm;
-    char *err = NULL;
-    char *temp;
-    int error;
+  IFvalue* val;
+  char*    err = NULL;
+  char*    line;
+  char*    parm;
+  char*    temp;
+  int      error = 0;
+  int      j;
 
-#ifdef TRACE
-        /* SDB debug statement */
-        printf("In INPgetMod, examining model %s . . . \n", name);
-#endif
+  /* not already defined, so create & give parameters */
+  error = (*(ft_sim->newModel))(ckt, (modtmp)->INPmodType, &((modtmp)->INPmodfast), (modtmp)->INPmodName);
 
-    for (modtmp = modtab; modtmp != (INPmodel *) NULL; modtmp =
-	 ((modtmp)->INPnextModel)) {
+  if (error) return error;
 
-#ifdef TRACE
-        /* SDB debug statement */
-        printf("In INPgetMod, comparing against stored model %s . . . \n", (modtmp)->INPmodName);
-#endif
-
-	if (strcmp((modtmp)->INPmodName, name) == 0) {
-	    /* found the model in question - now instantiate if necessary */
-	    /* and return an appropriate pointer to it */
-
-	  if (modtmp->INPmodType < 0) {    /* First check for illegal model type */
-		/* illegal device type, so can't handle */
-		*model = (INPmodel *) NULL;
-		err = (char *) MALLOC((35 + strlen(name)) * sizeof(char));
-		(void) sprintf(err,
-			       "Unknown device type for model %s \n",
-			       name);
-
-#ifdef TRACE
-		/* SDB debug statement */
-		printf("In INPgetMod, illegal device type for model %s . . . \n", name);
-#endif
-
-		return (err);
-	  }  /* end of checking for illegal model */
-
-	  if (!((modtmp)->INPmodUsed)) {   /* Check if model is already defined */
-		/* not already defined, so create & give parameters */
-		error = (*(ft_sim->newModel)) (ckt, (modtmp)->INPmodType,
-					       &((modtmp)->INPmodfast),
-					       (modtmp)->INPmodName);
-		if (error)
-		    return (INPerror(error));
-		/* parameter isolation, identification, binding */
+  /* parameter isolation, identification, binding */
 
 #ifdef CIDER
-		/* begin cider integration */
-		/* Handle Numerical Models Differently */
-		if ( ((modtmp)->INPmodType == INPtypelook("NUMD")) ||
-		     ((modtmp)->INPmodType == INPtypelook("NBJT")) ||
-		     ((modtmp)->INPmodType == INPtypelook("NUMD2")) ||
-		     ((modtmp)->INPmodType == INPtypelook("NBJT2")) ||
-		     ((modtmp)->INPmodType == INPtypelook("NUMOS")) ) {
-		    error = INPparseNumMod( ckt, modtmp, tab, &err );
-		    if (error) return(INPerror(error));
-		} else {     
-		/* It's an analytical model */
+  /* begin cider integration */
+  /* Handle Numerical Models Differently */
+  if ( ((modtmp)->INPmodType == INPtypelook("NUMD")) ||
+       ((modtmp)->INPmodType == INPtypelook("NBJT")) ||
+       ((modtmp)->INPmodType == INPtypelook("NUMD2")) ||
+       ((modtmp)->INPmodType == INPtypelook("NBJT2")) ||
+       ((modtmp)->INPmodType == INPtypelook("NUMOS")) ) {
+    error = INPparseNumMod( ckt, modtmp, tab, &err );
+    if (error) return error;
+  } else {     
+    /* It's an analytical model */
 #endif /* CIDER */
 
-		line = ((modtmp)->INPmodLine)->line;
-
-#ifdef TRACE
-		/* SDB debug statement */
-		printf("In INPgetMod, inserting new model into table.  line = %s . . . \n", line);
-#endif
-
-
-		INPgetTok(&line, &parm, 1);	/* throw away '.model' */
-		tfree(parm);
-		INPgetTok(&line, &parm, 1);	/* throw away 'modname' */
-		tfree(parm);
-		while (*line != 0) {
-		    INPgetTok(&line, &parm, 1);
-		    if (!*parm)
-			continue;
-
-		    for (j = 0; j < (* (*(ft_sim->devices)[(modtmp)->INPmodType]).numModelParms); j++) {
-
-		      if (strcmp(parm, "txl") == 0) {
-			if (strcmp("cpl", ((*(ft_sim->devices) [ (modtmp)->INPmodType ]).modelParms[j].keyword)) == 0) {
-			  strcpy(parm, "cpl");
-			}
-		      }
-		      
-		      if (strcmp(parm,((*(ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].keyword)) == 0) {
-			
-			val = INPgetValue(ckt, &line, ((* (ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].dataType), tab);
-			
-			error = (*(ft_sim->setModelParm)) (ckt, ((modtmp)->INPmodfast),
-							   (* (ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].id,
-							   val, (IFvalue *) NULL);
-			if (error)
-			  return (INPerror(error));
-			break;
-		      }
-		    } /* end for(j = 0 . . .*/
-
-		    if (strcmp(parm, "level") == 0) {
-		      /* just grab the level number and throw away */
-		      /* since we already have that info from pass1 */
-		      val = INPgetValue(ckt, &line, IF_REAL, tab);
-		    } else if (j >=
-			       (*
-				(*(ft_sim->devices)
-				 [(modtmp)->INPmodType]).numModelParms)) {
-			temp =
-			    (char *) MALLOC((40 + strlen(parm)) *
-					    sizeof(char));
-			(void) sprintf(temp,
-				       "unrecognized parameter (%s) - ignored\n",
-				       parm);
-			err = INPerrCat(err, temp);
-		    }
-		    FREE(parm);
-		}
-#ifdef CIDER
-	} /* analytical vs. numerical model parsing */
-#endif
-		(modtmp)->INPmodUsed = 1;
-		(modtmp)->INPmodLine->error = err;
-	    }
-	    *model = modtmp;
-	    return ((char *) NULL);
-	}
-    }
-    /* didn't find model - ERROR  - return model */
-    *model = (INPmodel *) NULL;
-    err = (char *) MALLOC((60 + strlen(name)) * sizeof(char));
-    (void) sprintf(err,
-		   " unable to find definition of model %s - default assumed \n",
-		   name);
+    line = ((modtmp)->INPmodLine)->line;
 
 #ifdef TRACE
     /* SDB debug statement */
-    printf("In INPgetMod, didn't find model for %s, using default . . . \n", name);
+    printf("In INPgetMod, inserting new model into table.  line = %s . . . \n", line);
 #endif
 
-    return (err);
+    INPgetTok(&line, &parm, 1);	/* throw away '.model' */
+    tfree(parm);
+    INPgetTok(&line, &parm, 1);	/* throw away 'modname' */
+    tfree(parm);
+    while (*line != 0) {
+      INPgetTok(&line, &parm, 1);
+      if (!*parm)
+	continue;
+      
+      for (j = 0; j < (* (*(ft_sim->devices)[(modtmp)->INPmodType]).numModelParms); j++) {
+	
+	if (strcmp(parm, "txl") == 0) {
+	  if (strcmp("cpl", ((*(ft_sim->devices) [ (modtmp)->INPmodType ]).modelParms[j].keyword)) == 0) {
+	    strcpy(parm, "cpl");
+	  }
+	}
+	
+	if (strcmp(parm,((*(ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].keyword)) == 0) {
+	  
+	  val = INPgetValue(ckt, &line, ((* (ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].dataType), tab);
+	  
+	  error = (*(ft_sim->setModelParm)) (ckt, ((modtmp)->INPmodfast),
+					     (* (ft_sim->devices)[(modtmp)->INPmodType]).modelParms[j].id,
+					     val, (IFvalue *) NULL);
+	  if (error)
+	    return error;
+	  break;
+	}
+      } /* end for(j = 0 . . .*/
+      
+      if (strcmp(parm, "level") == 0) {
+	/* just grab the level number and throw away */
+	/* since we already have that info from pass1 */
+	val = INPgetValue(ckt, &line, IF_REAL, tab);
+      } else if (j >=
+		 (*
+		  (*(ft_sim->devices)
+		   [(modtmp)->INPmodType]).numModelParms)) {
+	temp =
+	  (char *) MALLOC((40 + strlen(parm)) *
+			  sizeof(char));
+	(void) sprintf(temp,
+		       "unrecognized parameter (%s) - ignored\n",
+		       parm);
+	err = INPerrCat(err, temp);
+      }
+      FREE(parm);
+    }
+#ifdef CIDER
+  } /* analytical vs. numerical model parsing */
+#endif
+  (modtmp)->INPmodUsed = 1;
+  (modtmp)->INPmodLine->error = err;
+
+  return 0;
+}
+
+static bool
+parse_line( char* line, char* tokens[], int num_tokens, double values[], bool found[] )
+{
+  char*     token;
+  int       get_index = -1;
+  int       i;
+  bool      flag = TRUE;
+  int       error;
+
+  for ( i = 0; i < num_tokens; i++ )
+    found[i] = FALSE;
+
+  while( *line != '\0' ) {
+    
+    if ( get_index != -1 ) {
+      values[get_index] = INPevaluate( &line, &error, 1 );
+      found[get_index]  = TRUE;
+      get_index         = -1;
+      continue;
+    } else {
+      INPgetNetTok( &line, &token, 1 );
+    }
+
+    for ( i = 0; i < num_tokens; i++ )
+      if ( strcmp( tokens[i], token ) == 0 ) get_index = i;
+  }
+
+  for ( i = 0; i < num_tokens; i++ )
+    if ( found[i] == FALSE ) {
+      flag = FALSE;
+      break;
+    }
+  return flag;
+}
+
+static bool
+is_equal( double result, double expectedResult )
+{
+  //if (fabs(result - expectedResult) < 0.00001) return TRUE;
+  if (fabs(result - expectedResult) < 1e-15) return TRUE;
+  else                                       return FALSE;
+}
+
+static bool
+in_range( double value, double min, double max )
+{
+  if ( (is_equal( value, min ) == TRUE) || (is_equal( value, max ) == TRUE) ||
+       (min < value && value < max) ) return TRUE;
+  else                                return FALSE;
+}
+
+char*
+INPgetModBin( void* ckt, char* name, INPmodel** model, INPtables* tab, char* line )
+{
+  INPmodel*    modtmp;
+  double       l, w, lmin, lmax, wmin, wmax;
+  double       parse_values[4];
+  bool         parse_found[4];
+  static char* instance_tokens[] = { "l", "w" };
+  static char* model_tokens[]    = { "lmin", "lmax", "wmin", "wmax" };
+  int          error;
+  double       scale;
+
+  if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
+
+  *model = NULL;
+
+  if ( parse_line( line, instance_tokens, 2, parse_values, parse_found ) != TRUE )
+    return NULL;
+ 
+  l = parse_values[0]*scale;
+  w = parse_values[1]*scale;
+
+  for ( modtmp = modtab; modtmp != (INPmodel*)NULL; modtmp = modtmp->INPnextModel ) {
+    if ( modtmp->INPmodType != INPtypelook( "BSIM3" )   && modtmp->INPmodType != INPtypelook( "BSIM4" ) &&
+	 modtmp->INPmodType != INPtypelook( "BSIM4v5" ) && modtmp->INPmodType != INPtypelook( "BSIM4v6" ) )
+      continue;
+
+    if ( parse_line( modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found ) != TRUE )
+      continue;
+
+    lmin = parse_values[0]; lmax = parse_values[1];
+    wmin = parse_values[2]; wmax = parse_values[3];
+
+    if ( strncmp( modtmp->INPmodName, name, strlen( name ) ) == 0 && 
+	 in_range( l, lmin, lmax ) && in_range( w, wmin, wmax ) ) {
+      if ( !modtmp->INPmodUsed ) {
+	error = create_model( ckt, modtmp, tab );
+	if ( error ) return NULL;
+      }
+      *model = modtmp;
+      return NULL;
+    }
+  }
+  return NULL;
+}
+
+char *INPgetMod(void *ckt, char *name, INPmodel ** model, INPtables * tab)
+{
+  INPmodel *modtmp;
+  char *err = NULL;
+  int error;
+
+#ifdef TRACE
+  /* SDB debug statement */
+  printf("In INPgetMod, examining model %s . . . \n", name);
+#endif
+
+  for (modtmp = modtab; modtmp != (INPmodel *) NULL; modtmp = ((modtmp)->INPnextModel)) {
+
+#ifdef TRACE
+    /* SDB debug statement */
+    printf("In INPgetMod, comparing against stored model %s . . . \n", (modtmp)->INPmodName);
+#endif
+
+    if (strcmp((modtmp)->INPmodName, name) == 0) {
+      /* found the model in question - now instantiate if necessary */
+      /* and return an appropriate pointer to it */
+
+      if (modtmp->INPmodType < 0) {    /* First check for illegal model type */
+	/* illegal device type, so can't handle */
+	*model = (INPmodel *) NULL;
+	err = (char *) MALLOC((35 + strlen(name)) * sizeof(char));
+	(void) sprintf(err,"Unknown device type for model %s \n", name);
+
+#ifdef TRACE
+	/* SDB debug statement */
+	printf("In INPgetMod, illegal device type for model %s . . . \n", name);
+#endif
+
+	return (err);
+      }  /* end of checking for illegal model */
+
+      if (!((modtmp)->INPmodUsed)) {   /* Check if model is already defined */
+	error = create_model( ckt, modtmp, tab );
+	if ( error ) return INPerror(error);
+      }
+      *model = modtmp;
+      return ((char *) NULL);
+    }
+  }
+  /* didn't find model - ERROR  - return model */
+  *model = (INPmodel *) NULL;
+  err = (char *) MALLOC((60 + strlen(name)) * sizeof(char));
+  (void) sprintf(err," unable to find definition of model %s - default assumed \n", name);
+
+#ifdef TRACE
+  /* SDB debug statement */
+  printf("In INPgetMod, didn't find model for %s, using default . . . \n", name);
+#endif
+
+  return (err);
 }
 
 #ifdef CIDER

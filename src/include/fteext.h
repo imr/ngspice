@@ -452,6 +452,7 @@ extern void if_cktfree();
 extern void if_dump();
 extern int if_option();
 extern void if_setndnames();
+extern void if_setparam_model();
 extern void if_setparam();
 extern struct variable *if_getstat();
 

@@ -21,6 +21,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
     char *modname;
     int type = -1;
     int lev;
+    char ver[100];
     char *typename;
     char *err = (char *) NULL;
     char *line;
@@ -213,6 +214,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	       || (strcmp(typename, "nsoi") == 0)
 	       || (strcmp(typename, "psoi") == 0)) {
 	err = INPfindLev(line, &lev);
+	err = INPfindVer(line, ver);
 	switch (lev) {
 	case 0:
 	case 1:

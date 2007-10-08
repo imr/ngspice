@@ -58,6 +58,7 @@ char * INPerrCat(char *a, char *b);
 char * INPerror(int type);
 double INPevaluate(char **line, int *error, int gobble);
 char * INPfindLev(char *line, int *level);
+char * INPfindVer(char *line, char *version);
 char * INPgetMod(void *ckt, char *name, INPmodel **model, INPtables *tab);
 int INPgetStr(char **line, char **token, int gobble);
 int INPgetTitle(void **ckt, card **data);

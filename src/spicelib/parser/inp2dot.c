@@ -642,7 +642,7 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
     /* the part of the current line left to parse */
     char *line = current->line;
     int rtn = 0;
-    
+
     INPgetTok(&line, &token, 1);
     if (strcmp(token, ".model") == 0) {
 	/* don't have to do anything, since models were all done in
@@ -656,7 +656,9 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
     } else if ((strcmp(token, ".temp") == 0)) {
 	/* .temp temp1 temp2 temp3 temp4 ..... */
 	/* not yet implemented - warn & ignore */
+        /*
 	LITERR(" Warning: .TEMP card obsolete - use .options TEMP and TNOM\n");
+	*/
 	goto quit;
     } else if ((strcmp(token, ".op") == 0)) {
 	rtn = dot_op(line, ckt, tab, current, task, gnode, foo);

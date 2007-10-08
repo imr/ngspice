@@ -1,5 +1,15 @@
 2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
- *src/frontend/{inp.c, inpcom.c, inpcom.h, measure.c, nutimp.c, runcoms.c
+ * src/main.c, src/frontend/{spiceif.c, spiceif.h, subckt.c}, 
+   src/include/{fteext.h, inpdefs.h}, 
+   src/spicelib/parser/{inp.h, inp2dot.c, inpdomod.c, inpfindv.c,
+   inpgmod.c}: other improvements by Phil Barker: 
+ - Added model binning function
+ - Added model version function
+ - enhanced the interactive command 'alter' to allow for changing the model
+   of a device
+
+2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/{inp.c, inpcom.c, inpcom.h, measure.c, nutimp.c, runcoms.c
  subckt.c, ftedefs.c, fteext.c, dctran.c, inp2dot.c, inppas2.c}: added
  several improvements mad by Phil Barker:
  - .measure statements: trig/targ, max, min, avg, rms, integral, param
@@ -14,10 +24,6 @@
    reading in additional .include and .lib files defined in other netlist files
  - changed the flattened netlist names created in 'subckt.c' to match other
    spice simulators
- - allow for .ic, .nodeset names to be embedded in a subckt;
-   enhanced subckt.c to created appropriate node names for flattened simulation
-   netlist
-
 
 2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/{rawfile.c, outitf.c, runcoms.c}, src/include/ftedefs.h: 

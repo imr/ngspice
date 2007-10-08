@@ -97,6 +97,7 @@ char *INPerror(int);
 double INPevaluate(char**,int*,int);
 char * INPfindLev(char*,int*);
 char * INPgetMod(void*,char*,INPmodel**,INPtables*);
+char * INPgetModBin(void*,char*,INPmodel**,INPtables*,char*);
 int INPgetTok(char**,char**,int);
 int INPgetNetTok(char**,char**,int);
 void INPgetTree(char**,INPparseTree**,void*,INPtables*);

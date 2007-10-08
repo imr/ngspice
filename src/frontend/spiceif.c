@@ -161,7 +161,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
     INPpas1((void *) ckt, (card *) deck->li_next,(INPtables *)*tab);
     INPpas2((void *) ckt, (card *) deck->li_next,
             (INPtables *) *tab,ft_curckt->ci_defTask);
-    INPkillMods();
+    /* INPkillMods();   PJB 09/29/03 -- keep global set of model descriptors */
 
     /* INPpas2 has been modified to ignore .NODESET and .IC
      * cards. These are left till INPpas3 so that we can check for
@@ -623,6 +623,87 @@ spif_getparam(void *ckt, char **name, char *param, int ind, int do_model)
         return (if_getstat(ckt, *name));
 }
 
+/* 9/26/03 PJB : function to allow setting model of device */
+void
+if_setparam_model( void *ckt, char **name, char *val )
+{
+  GENinstance *dev     = (GENinstance *)NULL;
+  GENinstance *prevDev = (GENinstance *)NULL;
+  GENmodel    *curMod  = (GENmodel *)   NULL;
+  GENmodel    *newMod  = (GENmodel *)   NULL;
+  INPmodel    *inpmod  = (INPmodel *)   NULL;
+  GENinstance *iter;
+  GENmodel    *mods, *prevMod;
+  int         typecode;
+
+  /* retrieve device name from symbol table */
+  INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
+  /* find the specified device */
+  typecode = finddev(ckt, *name, (void**)&dev, (void **)&curMod);
+  if (typecode == -1) {
+    fprintf(cp_err, "Error: no such device or model name %s\n", *name);
+    return;
+  }
+  curMod = dev->GENmodPtr;
+  /* 
+     retrieve the model from the global model table; also add the model to 'ckt'
+     and indicate model is being used
+  */
+  INPgetMod( ckt, val, &inpmod, (INPtables *)ft_curckt->ci_symtab );
+  if ( inpmod == NULL ) {
+    fprintf(cp_err, "Error: no such model %s.\n", val);
+    return;
+  }
+  newMod = (GENmodel*)(inpmod->INPmodfast);
+
+  /* see if new model name same as current model name */
+  if ( newMod->GENmodName == curMod->GENmodName ) {
+    fprintf(cp_err, "Warning: new model same as current model; nothing changed.\n");
+    return;
+  }
+  if ( newMod->GENmodType != curMod->GENmodType ) {
+    fprintf(cp_err, "Error: new model %s must be same type as current model.\n", val); 
+    return;
+  }
+
+  /* fix current model linked list */
+  prevDev = NULL;
+  for( iter = curMod->GENinstances; iter != NULL; iter = iter->GENnextInstance ) {
+    if ( iter->GENname == dev->GENname ) {
+
+      /* see if at beginning of linked list */
+      if ( prevDev == NULL ) curMod->GENinstances     = iter->GENnextInstance;
+      else                   prevDev->GENnextInstance = iter->GENnextInstance;
+
+      /* update model for device */
+      dev->GENmodPtr       = newMod;
+      dev->GENnextInstance = newMod->GENinstances;
+      newMod->GENinstances = dev;
+      break;
+    }
+    prevDev = iter;
+  }
+  /* see if any devices remaining that reference current model */
+  if ( curMod->GENinstances == NULL ) {
+    prevMod = NULL;
+    for( mods = ((CKTcircuit *)ckt)->CKThead[typecode]; mods != NULL; mods = mods->GENnextModel ) {
+      if ( mods->GENmodName == curMod->GENmodName ) {
+
+	/* see if at beginning of linked list */
+	if ( prevMod == NULL ) ((CKTcircuit *)ckt)->CKThead[typecode] = mods->GENnextModel;
+	else 	               prevMod->GENnextModel                  = mods->GENnextModel;
+
+	INPgetMod( ckt, (char *)mods->GENmodName, &inpmod, (INPtables *)ft_curckt->ci_symtab );
+	inpmod->INPmodUsed = 0;
+	FREE(mods);
+
+	break;
+      }
+      prevMod = mods;
+    }
+  }
+}
+
 void
 if_setparam(void *ckt, char **name, char *param, struct dvec *val, int do_model)
 {
@@ -877,7 +958,6 @@ finddev(void *ck, char *name, void **devptr, void **modptr)
     if(err == OK) return(type);
     *modptr = (void *)NULL;
     return(-1);
-
 }
 
 /* get an analysis parameter by name instead of id */
@@ -1165,7 +1245,7 @@ do {\
     if(__i) {\
       if(name)\
 	tfree(name);\
-      name = tmalloc(__i);\
+      name = (type *)tmalloc(__i);\
       fread(name,1,__i,file);\
     } else {\
       fprintf(cp_err, "size for vector " #name " is 0\n");\
@@ -1196,7 +1276,7 @@ do {\
 
     _foo(ckt->CKTbreaks,double,ckt->CKTbreakSize);
     
-    _foo(ft_curckt->ci_curTask,TSKtask,1);
+    _foo((TSKtask *)ft_curckt->ci_curTask,TSKtask,1);
 
     /* To stop the Free */
     ((TSKtask *)ft_curckt->ci_curTask)->TSKname = NULL;
@@ -1204,7 +1284,7 @@ do {\
 
     _foo(((TSKtask *)ft_curckt->ci_curTask)->TSKname,char,-1);
     
-    _foo(((TSKtask *)ft_curckt->ci_curTask)->jobs,TRANan,1);
+    _foo(((TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs),TRANan,1);
     ((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname = NULL;
     ckt->CKTcurJob = (JOB *)((TSKtask *)ft_curckt->ci_curTask)->jobs;
     

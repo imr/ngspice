@@ -1315,6 +1315,31 @@ gettrans(char *name)
     return (NULL);
 }
 
+/*
+  check if current token matches model bin name -- <token>.[0-9]+
+ */
+static bool
+model_bin_match( char* token, char* model_name )
+{
+  char* dot_char;
+  bool  flag = FALSE;
+
+  if ( strncmp( model_name, token, strlen(token) ) == 0 ) {
+    if ( (dot_char = strstr( model_name, "." )) ) {
+      flag = TRUE;
+      dot_char++;
+      while( *dot_char != '\0' ) {
+	if ( !isdigit( *dot_char ) ) {
+	  flag = FALSE;
+	  break;
+	}
+	dot_char++;
+      }
+    }
+  }
+  return flag;
+}
+
 /*-------------------------------------------------------------------*/
 /*-------------------------------------------------------------------*/
 static int
@@ -1375,9 +1400,11 @@ numnodes(char *name)
 		txfree(gettok(&s));	     /* Skip component name */
 		while ((i < n) && (*s) && !gotit) {
 		  t = gettok_node(&s);       /* get nodenames . . .  */
-		  for (wl = modnames; wl; wl = wl->wl_next)
-		    if (eq(t, wl->wl_word)) 
+		  for (wl = modnames; wl; wl = wl->wl_next) {
+		    /* also need to check if binnable device model */
+		    if (eq(t, wl->wl_word) || model_bin_match( t, wl->wl_word ) ) 
 		      gotit = 1;
+		  }
 		  i++;
 		  tfree(t);
 		} /* while . . . . */
