@@ -162,6 +162,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
         if (deck->li_next) {
             /* There is something left after the controls. */
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
+            fprintf(stderr, "\nCircuit: %s\n\n", tt);
 
             /* Now expand subcircuit macros. Note that we have to 
              * fix the case before we do this but after we 

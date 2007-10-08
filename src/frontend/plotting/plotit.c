@@ -591,7 +591,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* Now check for 0-length vectors. */
     for (d = vecs; d; d = d->v_link2)
         if (!d->v_length) {
-            fprintf(cp_err, "Error: %s: no such vector\n",
+            fprintf(cp_err, "Error(plotit.c--plotit): %s: no such vector\n",
                     d->v_name);
             goto quit;
         }

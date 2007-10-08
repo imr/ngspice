@@ -87,6 +87,9 @@ DCtran(CKTcircuit *ckt,
     if(restart || ckt->CKTtime == 0) {
         delta=MIN(ckt->CKTfinalTime/200,ckt->CKTstep)/10;
 
+#ifdef STEPDEBUG
+	printf("delta = %g    finalTime/200: %g    CKTstep: %g\n",delta,ckt->CKTfinalTime/200,ckt->CKTstep);
+#endif
 	/* begin LTRA code addition */
 	if (ckt->CKTtimePoints != NULL)
 	    FREE(ckt->CKTtimePoints);
@@ -371,7 +374,7 @@ nextTime:
  */
 
 #ifdef STEPDEBUG
-   printf("Delta %g accepted at time %g\n",ckt->CKTdelta,ckt->CKTtime);
+   printf("Delta %g accepted at time %g (finaltime: %g)\n",ckt->CKTdelta,ckt->CKTtime,ckt->CKTfinalTime);
    fflush(stdout);
 #endif /* STEPDEBUG */
     ckt->CKTstat->STATaccepted ++;
@@ -508,7 +511,7 @@ resume:
         if(ckt->CKTfinalTime/50<ckt->CKTmaxStep) {
             (void)printf("limited by Tstop/50\n");
         } else {
-            (void)printf("limited by Tmax\n");
+            (void)printf("limited by Tmax == %g\n",ckt->CKTmaxStep);
         }
     }
 #endif
@@ -538,7 +541,8 @@ resume:
         if( (ckt->CKTdelta >.1* ckt->CKTsaveDelta) ||
                 (ckt->CKTdelta > .1*(*(ckt->CKTbreaks+1)-*(ckt->CKTbreaks))) ) {
             if(ckt->CKTsaveDelta < (*(ckt->CKTbreaks+1)-*(ckt->CKTbreaks)))  {
-                (void)printf("limited by pre-breakpoint delta\n");
+                (void)printf("limited by pre-breakpoint delta (saveDelta: %g, nxt_breakpt: %g, curr_breakpt: %g\n",
+			     ckt->CKTsaveDelta, *(ckt->CKTbreaks+1), *(ckt->CKTbreaks));
             } else {
                 (void)printf("limited by next breakpoint\n");
             }
@@ -776,6 +780,7 @@ resume:
             ckt->CKTtime -= ckt->CKTdelta;
             ckt->CKTdelta = g_mif_info.breakpoint.current - ckt->CKTtime;
             g_mif_info.breakpoint.last = ckt->CKTtime + ckt->CKTdelta;
+
             if(firsttime) {
                 ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITTRAN;
             }
@@ -869,8 +874,8 @@ resume:
 		
 #ifdef STEPDEBUG
                (void)printf(
-                  "delta set to truncation error result: %g. Point accepted\n",
-                  ckt->CKTdelta);
+                  "delta set to truncation error result: %g. Point accepted at CKTtime: %g\n",
+                  ckt->CKTdelta,ckt->CKTtime);
                 fflush(stdout);
 #endif
 #ifdef WANT_SENSE2

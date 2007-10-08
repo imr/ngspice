@@ -28,6 +28,13 @@ NIconvTest(CKTcircuit *ckt)
 
     node = ckt->CKTnodes;
     size = SMPmatSize(ckt->CKTmatrix);
+#ifdef STEPDEBUG
+    for (i=1;i<=size;i++) {
+        new =  *((ckt->CKTrhs) + i ) ;
+        old =  *((ckt->CKTrhsOld) + i ) ;
+	printf("chk for convergence:   %s    new: %g    old: %g\n",CKTnodName(ckt,i),new,old);
+    }
+#endif /* STEPDEBUG */
     for (i=1;i<=size;i++) {
         node = node->next;
         new =  *((ckt->CKTrhs) + i ) ;
@@ -37,7 +44,8 @@ NIconvTest(CKTcircuit *ckt)
                     ckt->CKTvoltTol;
             if (fabs(new-old) >tol ) {
 #ifdef STEPDEBUG
-                printf(" non-convergence at node %s\n",CKTnodName(ckt,i));
+                printf(" non-convergence at node (type=3) %s (fabs(new-old)>tol --> fabs(%g-%g)>%g)\n",CKTnodName(ckt,i),new,old,tol);
+		printf("    reltol: %g    voltTol: %g   (tol=reltol*(MAX(fabs(old),fabs(new))) + voltTol)\n",ckt->CKTreltol,ckt->CKTvoltTol);
 #endif /* STEPDEBUG */
 		ckt->CKTtroubleNode = i;
 		ckt->CKTtroubleElt = NULL;
@@ -48,7 +56,8 @@ NIconvTest(CKTcircuit *ckt)
                     ckt->CKTabstol;
             if (fabs(new-old) >tol ) {
 #ifdef STEPDEBUG
-                printf(" non-convergence at node %s\n",CKTnodName(ckt,i));
+                printf(" non-convergence at node (type=%d) %s (fabs(new-old)>tol --> fabs(%g-%g)>%g)\n",node->type,CKTnodName(ckt,i),new,old,tol);
+		printf("    reltol: %g    abstol: %g   (tol=reltol*(MAX(fabs(old),fabs(new))) + abstol)\n",ckt->CKTreltol,ckt->CKTabstol);
 #endif /* STEPDEBUG */
 		ckt->CKTtroubleNode = i;
 		ckt->CKTtroubleElt = NULL;
