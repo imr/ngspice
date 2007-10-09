@@ -17,7 +17,14 @@
    resistors (Phil Barker).
  * src/spicelib/devices/vsrc/{vsrc.c, vsrcacct.c, vsrcask.c, vsrcdefs.h,
    vsrcload.c, vsrcpar.c, vsrctemp.c}: Added "repeat" parameter to the 
-   PWL model. 
+   PWL model.
+ * src/xspice/icm/analog/multi_input_pwl/*: added new element from Phil
+   Barker: added new multi-input gate VCVS using XSPICE extensions that 
+   supports nand, and, nor, or.  Currently only supports 2-inputs (x,y).
+   The x's and y's represent the piecewise linear variation of output as 
+   a function of input.  Only 1 input determines the state of the outputs: 
+   and/nand: controlling input is chosen on the basis of the smallest value,
+   or/nor:   controlling input is chosen on the basis of the largest value.
  
 
 2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
