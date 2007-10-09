@@ -138,7 +138,8 @@ ngnutmeg_LDADD = \
 	frontend/help/libhlp.a \
 	maths/cmaths/libcmaths.a \
 	maths/poly/libpoly.a \
-	misc/libmisc.a
+	misc/libmisc.a \
+	spicelib/parser/libinp.a
 
 ## help:
 
