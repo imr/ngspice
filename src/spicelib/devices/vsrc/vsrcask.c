@@ -75,6 +75,9 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case VSRC_AC_IMAG:
             value->rValue = here->VSRCacImag;
             return (OK);
+        case VSRC_R:
+            value->rValue = here->VSRCr;
+            return (OK);
         case VSRC_FCN_ORDER:
             value->rValue = here->VSRCfunctionOrder;
             return (OK);

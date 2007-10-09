@@ -9,6 +9,16 @@
  * src/frontend/subckt.c: allow for .ic, .nodeset names to be embedded 
    in a subckt;enhanced subckt.c to created appropriate node names for 
    flattened simulation netlist (Phil Barker).
+ * src/spicelib/devices/cap/cap.c: aliased capacitance parameter with "c"
+   and "cap" (patch from Phil Barker).
+ * src/spicelib/devices/res/res.c: aliased some parameters. Originally got
+  the patch from Phil Barker but used IOPR (redundant) instead of IOPZ.
+ * src/spicelib/devices/res/resparam.c: Added fix for zero valued 
+   resistors (Phil Barker).
+ * src/spicelib/devices/vsrc/{vsrc.c, vsrcacct.c, vsrcask.c, vsrcdefs.h,
+   vsrcload.c, vsrcpar.c, vsrctemp.c}: Added "repeat" parameter to the 
+   PWL model. 
+ 
 
 2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
  * src/main.c, src/frontend/{spiceif.c, spiceif.h, subckt.c}, 

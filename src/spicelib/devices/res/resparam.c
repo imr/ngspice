@@ -4,12 +4,29 @@ Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 - Paolo Nenzi
 **********/
 
+#include <assert.h>
 #include "ngspice.h"
 #include "const.h"
 #include "ifsim.h"
 #include "resdefs.h"
 #include "sperror.h"
 
+// Initial AlmostEqualULPs version - fast and simple, but
+// some limitations.
+static bool AlmostEqualUlps(float A, float B, int maxUlps)
+{
+    assert(sizeof(float) == sizeof(int));
+
+    if (A == B)
+        return TRUE;
+
+    int intDiff = abs(*(int*)&A - *(int*)&B);
+
+    if (intDiff <= maxUlps)
+        return TRUE;
+
+    return FALSE;
+}
 
 int
 RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
@@ -25,6 +42,10 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->RESdtempGiven = TRUE;
             break;   
         case RES_RESIST:
+	    /* 0 valued resistor causes ngspice to hang -- can't solve for initial voltage */
+	    if ( AlmostEqualUlps( value->rValue, 0, 3 ) ) value->rValue = 0.001; /* 0.0001 should be sufficiently small */
+                                                                                 /* it's the value that smartspice uses */
+
             here->RESresist = value->rValue;
             here->RESresGiven = TRUE;
             break;

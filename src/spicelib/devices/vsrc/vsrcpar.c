@@ -86,6 +86,21 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             }
             
             break;
+        case VSRC_R:
+            here->VSRCr = value->rValue;
+            here->VSRCrGiven = TRUE;
+	    
+	    for ( i = 0; i < here->VSRCfunctionOrder; i += 2 ) {
+	      here->VSRCrBreakpt = i;
+              if ( here->VSRCr == *(here->VSRCcoeffs+i) ) break;
+	    }
+
+	    if ( here->VSRCr != *(here->VSRCcoeffs+here->VSRCrBreakpt) ) {
+	      fprintf(stderr, "ERROR: repeat value %g for pwl voltage source does not match breakpoint!\n", here->VSRCr );
+	      return ( E_PARMVAL );
+	    }
+
+            break;
         case VSRC_SFFM:
             here->VSRCfunctionType = SFFM;
             here->VSRCfuncTGiven = TRUE;

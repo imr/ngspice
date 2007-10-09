@@ -286,32 +286,39 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 		}
 		break;
                 case PWL: {
-                    int i;
-                    double foo;
+                    int i = 0, num_repeat = 0;
+                    double foo, repeat_time = 0, end_time, breakpt_time;
                     if(time < *(here->VSRCcoeffs)) {
                         foo = *(here->VSRCcoeffs + 1) ;
                         value = foo;
                         goto loadDone;
                     }
-                    for(i=0;i<(here->VSRCfunctionOrder/2)-1;i++) {
-                        if((*(here->VSRCcoeffs+2*i)==time)) {
-                            foo = *(here->VSRCcoeffs+2*i+1);
-                            value = foo;
-                            goto loadDone;
-                        } else if((*(here->VSRCcoeffs+2*i)<time) &&
-                                (*(here->VSRCcoeffs+2*(i+1)) >time)) {
-                            foo = *(here->VSRCcoeffs+2*i+1) +
-                                (((time-*(here->VSRCcoeffs+2*i))/
-                                (*(here->VSRCcoeffs+2*(i+1)) - 
-                                 *(here->VSRCcoeffs+2*i))) *
-                                (*(here->VSRCcoeffs+2*i+3) - 
-                                 *(here->VSRCcoeffs+2*i+1)));
-                            value = foo;
-                            goto loadDone;
+
+		    do {
+		      for( ; i<(here->VSRCfunctionOrder/2)-1; i++ ) {
+
+                        if ( fabs( (*(here->VSRCcoeffs+2*i)+repeat_time) - time ) < 1e-20 ) {
+			  foo   = *(here->VSRCcoeffs+2*i+1);
+			  value = foo;
+			  goto loadDone;
+                        } else if ( (*(here->VSRCcoeffs+2*i)+repeat_time < time) && (*(here->VSRCcoeffs+2*(i+1))+repeat_time > time) ) {
+			  foo   = *(here->VSRCcoeffs+2*i+1) + (((time-(*(here->VSRCcoeffs+2*i)+repeat_time))/
+								(*(here->VSRCcoeffs+2*(i+1)) - *(here->VSRCcoeffs+2*i))) *
+							       (*(here->VSRCcoeffs+2*i+3)    - *(here->VSRCcoeffs+2*i+1)));
+			  value = foo;
+			  goto loadDone;
                         }
-                    }
-                    foo = *(here->VSRCcoeffs+ here->VSRCfunctionOrder-1) ;
-                    value = foo;
+		      }
+		      foo = *(here->VSRCcoeffs+ here->VSRCfunctionOrder-1) ;
+		      value = foo;
+
+		      if ( !here->VSRCrGiven ) goto loadDone;
+		      
+		      end_time     = *(here->VSRCcoeffs + here->VSRCfunctionOrder-2);
+		      breakpt_time = *(here->VSRCcoeffs + here->VSRCrBreakpt);
+		      repeat_time  = end_time + (end_time - breakpt_time)*num_repeat++ - breakpt_time;
+		      i            = here->VSRCrBreakpt - 1;
+		    } while ( here->VSRCrGiven );
                     break;
                 }
                 }

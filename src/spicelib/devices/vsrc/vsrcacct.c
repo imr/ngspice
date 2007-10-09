@@ -3,6 +3,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
+#include <assert.h>
 #include "ngspice.h"
 #include "cktdefs.h"
 #include "vsrcdefs.h"
@@ -10,6 +11,27 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 #include "suffix.h"
 
+#define SAMETIME(a,b)    (fabs((a)-(b))<= TIMETOL * PW)
+#define TIMETOL    1e-7
+
+// Initial AlmostEqualULPs version - fast and simple, but
+// some limitations.
+static bool AlmostEqualUlps(float A, float B, int maxUlps)
+{
+    assert(sizeof(float) == sizeof(int));
+
+    if (A == B)
+        return TRUE;
+
+    int intDiff = abs(*(int*)&A - *(int*)&B);
+
+    if (intDiff <= maxUlps)
+        return TRUE;
+
+    return FALSE;
+}
+
+		
 int
 VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
         /* set up the breakpoint table.
@@ -37,9 +59,6 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                 }
                 
                 case PULSE: {
-		
-#define SAMETIME(a,b) (fabs((a)-(b))<= TIMETOL * PW)
-#define TIMETOL 1e-7
 		
 		    double	TD, TR, TF, PW, PER;
 /* gtri - begin - wbk - add PHASE parameter */
@@ -170,14 +189,13 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         }
                     }
                     for(i=0;i<(here->VSRCfunctionOrder/2)-1;i++) {
-                        if((*(here->VSRCcoeffs+2*i)==ckt->CKTtime)) {
-                            if(ckt->CKTbreak) {
-                                error = CKTsetBreak(ckt,
-                                        *(here->VSRCcoeffs+2*i+2));
-                                if(error) return(error);
-                            }
-                            goto bkptset;
-                        } 
+		      //if((*(here->VSRCcoeffs+2*i)==ckt->CKTtime)) {
+		      //     if(ckt->CKTbreak) {
+		      if ( ckt->CKTbreak && AlmostEqualUlps(*(here->VSRCcoeffs+2*i), ckt->CKTtime, 3 ) ) {
+			error = CKTsetBreak(ckt, *(here->VSRCcoeffs+2*i+2));
+			if(error) return(error);
+			goto bkptset;
+		      } 
                     }
                     break;
                 }

@@ -33,6 +33,7 @@ typedef struct sVSRCinstance {
 
     int VSRCfunctionType;   /* code number of function type for source */
     int VSRCfunctionOrder;  /* order of the function for the source */
+    int VSRCrBreakpt;       /* pwl repeat breakpoint index */
     double *VSRCcoeffs; /* pointer to array of coefficients */
 
     double VSRCdcValue; /* DC and TRANSIENT value of source */
@@ -48,6 +49,7 @@ typedef struct sVSRCinstance {
     double VSRCdF1phase; /* distortion f1 phase */
     double VSRCdF2phase; /* distortion f2 phase */
 
+    double VSRCr;           /* pwl repeat */
     double *VSRCposIbrptr;  /* pointer to sparse matrix element at 
                              * (positive node, branch equation) */
     double *VSRCnegIbrptr;  /* pointer to sparse matrix element at 
@@ -64,9 +66,10 @@ typedef struct sVSRCinstance {
     unsigned VSRCacPGiven    :1 ;   /* flag to indicate ac phase given */
     unsigned VSRCfuncTGiven  :1 ;   /* flag to indicate function type given */
     unsigned VSRCcoeffsGiven :1 ;   /* flag to indicate function coeffs given */
-    unsigned VSRCdGiven  :1 ; /* flag to indicate source is a disto input */
-    unsigned VSRCdF1given :1; /* flag to indicate source is an f1 dist input */
-    unsigned VSRCdF2given :1; /* flag to indicate source is an f2 dist input */
+    unsigned VSRCdGiven      :1 ; /* flag to indicate source is a disto input */
+    unsigned VSRCdF1given    :1; /* flag to indicate source is an f1 dist input */
+    unsigned VSRCdF2given    :1; /* flag to indicate source is an f2 dist input */
+    unsigned VSRCrGiven      :1; /* flag to indicate repeating pwl */
 } VSRCinstance ;
 
 
@@ -115,6 +118,7 @@ typedef struct sVSRCmodel {
 #define VSRC_D_F2 21
 
 #define VSRC_AM 22
+#define VSRC_R 23
 
 /* model parameters */
 
