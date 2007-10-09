@@ -1,0 +1,46 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 2005
+Intrinsity, Inc. Austin, TX 78738
+All Rights Reserved
+
+AUTHORS                      
+
+     20 Oct 2005     Phil Barker
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    analog multi-input gate pwl code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+C_Function_Name:       cm_multi_input_pwl
+Spice_Model_Name:      multi_input_pwl
+Description:           "multi_input_pwl block"
+
+
+PORT_TABLE:
+
+Port_Name:             in                 out
+Description:           "input array"      "output"
+Direction:             in                 out
+Default_Type:          vd                 vd
+Allowed_Types:         [vd,id]            [vd,id]
+Vector:                yes                no
+Vector_Bounds:         [2 -]              -
+Null_Allowed:          no                 no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        x                  y               model
+Description:           "x array"          "y array"       "model type"
+Data_Type:             real               real            string
+Default_Value:         0.0                0.0             "and"
+Limits:                -                  -               -
+Vector:                yes                yes             no
+Vector_Bounds:         [2 -]              [2 -]           -
+Null_Allowed:          no                 no              yes
