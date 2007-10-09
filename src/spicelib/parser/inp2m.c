@@ -50,6 +50,7 @@ INP2M (void *ckt, INPtables * tab, card * current)
   INPmodel *thismodel;		/* pointer to model description for user's model */
   void *mdfast;			/* pointer to the actual model */
   IFuid uid;			/* uid for default model */
+  char* err_msg;
 
 #ifdef TRACE
   printf("INP2M: Parsing '%s'\n",current->line);
@@ -78,6 +79,12 @@ INP2M (void *ckt, INPtables * tab, card * current)
   printf("INP2M: checking for 4 node device\n");
 #endif
   INPgetMod (ckt, nname5, &thismodel, tab);
+  
+  /* check if using model binning -- pass in line since need 'l' and 'w' */
+  if ( thismodel == NULL ) {
+    INPgetModBin( ckt, nname5, &thismodel, tab, line );
+  }
+
   if (thismodel == NULL)
     {				/*  5th token is not a model in the table  */
       nodeflag = 1;		/*  now specify a 5 node device  */
@@ -184,7 +191,13 @@ INP2M (void *ckt, INPtables * tab, card * current)
 #ifdef TRACE
   printf("INP2M: Looking up model\n");
 #endif
-  current->error = INPgetMod (ckt, model, &thismodel, tab);
+
+  err_msg = INPgetMod (ckt, model, &thismodel, tab);
+  if ( thismodel == NULL ) {
+    INPgetModBin( ckt, model, &thismodel, tab, save );
+    if ( thismodel == NULL ) current->error = err_msg;
+  }
+
   if (thismodel != NULL)
     {
       if (thismodel->INPmodType != INPtypelook ("Mos1")

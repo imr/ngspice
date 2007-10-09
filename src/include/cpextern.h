@@ -167,6 +167,13 @@ extern void cp_vset(char *varname, char type, char *value);
 extern struct variable *cp_setparse(wordlist *wl);
 
 /* var2.c */
+enum cp_types {
+  CP_BOOL,
+  CP_NUM,
+  CP_REAL,
+  CP_STRING,
+  CP_LIST
+};
 extern void cp_vprint(void);
 extern void com_set(wordlist *wl);
 extern void com_option(wordlist *wl);

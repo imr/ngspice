@@ -731,8 +731,37 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
       printf("\nIn translate, examining line (dev_type: %c, subname: %s, instance: %s) %s \n", dev_type, subname, scname, c->li_line );
 #endif
 
-      
-      dev_type = *(c->li_line);   
+      if ( ciprefix( ".ic", c->li_line ) || ciprefix( ".nodeset", c->li_line ) ) {
+	paren_ptr = s = c->li_line;
+	while ( ( paren_ptr = strstr( paren_ptr, "(" ) ) ) {
+	  *paren_ptr = '\0';
+	  paren_ptr++;
+	  name       = paren_ptr;
+	  
+	  if ( !( paren_ptr = strstr( paren_ptr, ")" ) ) ) {
+	    *(name-1) = '(';
+	    fprintf(cp_err, "Error: missing closing ')' for .ic|.nodeset statement %s\n", c->li_line);
+	    goto quit;
+	  }
+	  *paren_ptr = '\0';
+	  t          = gettrans(name);
+
+	  if (t) {
+	    new_str = tmalloc( strlen(s) + strlen(t) + strlen(paren_ptr+1) + 3 );
+	    sprintf( new_str, "%s(%s)%s", s, t, paren_ptr+1 ); 
+	  } else {
+	    new_str = tmalloc( strlen(s) + strlen(scname) + strlen(name) + strlen(paren_ptr+1) + 4 );
+	    sprintf( new_str, "%s(%s.%s)%s", s, scname, name, paren_ptr+1 );
+	  }
+
+	  paren_ptr = new_str + strlen(s) + 1;
+
+	  tfree(s);
+	  s = new_str;
+	}
+	c->li_line = s;
+	continue;
+      }
 
       /* Rename the device. */
         switch (dev_type) {

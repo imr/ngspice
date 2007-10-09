@@ -385,13 +385,35 @@ void
 cp_remvar(char *varname)
 {
     struct variable *v, *u, *lv = NULL;
+    struct variable *uv1, *uv2;
     bool found = TRUE;
-    int i;
+    int i, var_index = 0;
+
+    cp_usrvars(&uv1, &uv2);
 
     for (v = variables; v; v = v->va_next) {
+      var_index = 0;
         if (eq(v->va_name, varname))
-            break;
+	  break;
         lv = v;
+    }
+    if (v == NULL) {
+      var_index = 1;
+      lv = NULL;
+      for (v = uv1; v; v = v->va_next) {
+        if (eq(v->va_name, varname))
+	  break;
+        lv = v;
+      }
+    }
+    if (v == NULL) {
+      var_index = 2;
+      lv = NULL;
+      for (v = uv2; v; v = v->va_next) {
+        if (eq(v->va_name, varname))
+	  break;
+        lv = v;
+      }
     }
     if (!v) {
         /* Gotta make up a var struct for cp_usrset()... */
@@ -432,7 +454,14 @@ cp_remvar(char *varname)
             if (lv)
                 lv->va_next = v->va_next;
             else
+	      if ( var_index == 0 ) {
                 variables = v->va_next;
+	      } else if ( var_index == 1 ) {
+		uv1 = v->va_next;
+	      } else {
+		ft_curckt->ci_vars = v->va_next;
+	      }
+	    
         }
         break;
 
@@ -450,6 +479,7 @@ cp_remvar(char *varname)
         break;
 
     case US_SIMVAR:
+      fprintf(stderr,"it's a US_SIMVAR!\n");
 	lv = NULL;
 	if (ft_curckt) {
 	    for (u = ft_curckt->ci_vars; u; u = u->va_next) {
@@ -484,15 +514,19 @@ bool
 cp_getvar(char *name, int type, void *retval)
 {
     struct variable *v;
+    struct variable *uv1, *uv2;
+
+    cp_usrvars(&uv1, &uv2);
 
 #ifdef TRACE
     /* SDB debug statement */
-    printf("in cp_getvar, trying to get value of variable %s.\n", name);
+    fprintf(stderr,"in cp_getvar, trying to get value of variable %s.\n", name);
 #endif
 
-    for (v = variables; v; v = v->va_next)
-        if (eq(name, v->va_name))
-            break;
+    for (v = variables; v && !eq(name, v->va_name); v = v->va_next);
+    if (v == NULL) for (v = uv1; v && !eq(name, v->va_name); v = v->va_next);
+    if (v == NULL) for (v = uv2; v && !eq(name, v->va_name); v = v->va_next);
+
     if (v == NULL) {
         if (type == VT_BOOL)
             * (bool *) retval = FALSE; 

@@ -534,10 +534,10 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #ifndef HAS_WINDOWS
         if ((currclock-lastclock)>(0.25*CLOCKS_PER_SEC)) {
           if (run->isComplex) {
-              fprintf(stderr, " Reference value : % 12.5e\n",
+              fprintf(stderr, " Reference value : % 12.5e\r",
                             refValue->cValue.real);
           } else {
-              fprintf(stderr, " Reference value : % 12.5e\n",
+              fprintf(stderr, " Reference value : % 12.5e\r",
                             refValue->rValue);
           }
           lastclock = currclock;

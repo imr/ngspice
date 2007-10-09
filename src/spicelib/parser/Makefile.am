@@ -40,6 +40,7 @@ libinp_a_SOURCES = \
 		inperror.c	\
 		inpeval.c	\
 		inpfindl.c	\
+		inpfindv.c	\
 		inpgmod.c	\
 		inpgstr.c	\
 		inpgtitl.c	\

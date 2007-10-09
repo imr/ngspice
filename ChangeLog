@@ -1,4 +1,16 @@
-2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
+2007-10-09 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/cktdojob.c: Chenged of reporting analysis temperature
+   from Kelvins to Celsius (as suggested from Phil Barker).
+ * src/spicelib/parser/inp2m.c: Added model binning code left out in the
+   previous commit.
+ * src/frontend/variable.c: Added SIMVARS from Phil Barker.
+ * src/frontend/{outitf.c,runcoms2.c}, src/include/cpextern.h: Patch from 
+   Phil Barker.
+ * src/frontend/subckt.c: allow for .ic, .nodeset names to be embedded 
+   in a subckt;enhanced subckt.c to created appropriate node names for 
+   flattened simulation netlist (Phil Barker).
+
+2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
  * src/main.c, src/frontend/{spiceif.c, spiceif.h, subckt.c}, 
    src/include/{fteext.h, inpdefs.h}, 
    src/spicelib/parser/{inp.h, inp2dot.c, inpdomod.c, inpfindv.c,
@@ -8,7 +20,7 @@
  - enhanced the interactive command 'alter' to allow for changing the model
    of a device
 
-2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
+2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/{inp.c, inpcom.c, inpcom.h, measure.c, nutimp.c, runcoms.c
  subckt.c, ftedefs.c, fteext.c, dctran.c, inp2dot.c, inppas2.c}: added
  several improvements mad by Phil Barker:
@@ -25,21 +37,21 @@
  - changed the flattened netlist names created in 'subckt.c' to match other
    spice simulators
 
-2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
+2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/{rawfile.c, outitf.c, runcoms.c}, src/include/ftedefs.h: 
  modified current vectors output amd added struct elements for holding the
  name of the last analysis run (all from Phil Barker patch).
 
-2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
+2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
  *src/frontend/{device.c, device.h}: modified 'show' command to match 
  SmartSpice syntax from Phil Barker patch.
 
-2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
+2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/plotting/plotit.c, src/frontend/{nutimp.c, parse.c},
    src/maths/ni/{niconv.c, niiter.c}, src/spicelib/analysis/dctran.c: 
  Applied patch from Phil barker, iproved error/warning reporting.
 
-2007-10-8 Paolo Nenzi <p.nenzi@ieee.org>
+2007-10-08 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/numparam/{general.h, mystring.c, numpaif.h, numparam.h, 
    nupatest.c, spicenum.c, washprog.c, xpressn.c}: Applied patch from Phil 
  Barker that improves the capabilites of numparam library. Now numparam 
