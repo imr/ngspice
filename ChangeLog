@@ -1,4 +1,11 @@
 2007-10-09 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/{device.c, miscvars.c}: added "altshow" option to 
+   enable the new (Phil Barker) version of the show command. The 
+   old show command looks better in interactive mode while the
+   new format is more suitable for automatic processing of the
+   data.
+
+2007-10-09 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/cktdojob.c: Chenged of reporting analysis temperature
    from Kelvins to Celsius (as suggested from Phil Barker).
  * src/spicelib/parser/inp2m.c: Added model binning code left out in the

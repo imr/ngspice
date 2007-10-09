@@ -25,6 +25,7 @@ bool ft_asyncdb = FALSE;
 char *ft_setkwords[] = {
 
     "acct",
+    "altshow",
     "appendwrite",
     "bypass",
     "chgtol",

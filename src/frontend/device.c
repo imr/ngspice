@@ -23,6 +23,7 @@ Modified: 2000 AlansFixes
 
 static wordlist *devexpand(char *name);
 static void all_show(wordlist *wl, int mode);
+static void all_show_old(wordlist *wl, int mode);
 
 /*
  *	show: list device operating point info
@@ -41,13 +42,23 @@ static	int	count;
 void
 com_showmod(wordlist *wl)
 {
-    all_show(wl, 1);
+    bool showmode;
+
+    if (cp_getvar("altshow", VT_BOOL, (char *) &showmode))
+        all_show(wl, 1);
+        else
+        all_show_old(wl, 1);
 }
 
 void
 com_show(wordlist *wl)
 {
-    all_show(wl, 0);
+    bool showmode;
+
+    if (cp_getvar("altshow", VT_BOOL, (char *) &showmode))
+        all_show(wl, 0);
+        else
+        all_show_old(wl, 0);
 }
 
 static void
