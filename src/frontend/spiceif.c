@@ -47,6 +47,7 @@ they should be fairly 'safe'. However, ...
 CDHW*/
 
 #include "ngspice.h"
+#include "cktdefs.h"
 #include "cpdefs.h"
 #include "tskdefs.h" /* Is really needed ? */
 #include "ftedefs.h"
