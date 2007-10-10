@@ -4,6 +4,7 @@
    old show command looks better in interactive mode while the
    new format is more suitable for automatic processing of the
    data.
+ * src/maths/ni/niiter.c: added check on iteration numbers (Phil Barker).
 
 2007-10-09 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/cktdojob.c: Chenged of reporting analysis temperature
