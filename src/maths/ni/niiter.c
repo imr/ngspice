@@ -35,6 +35,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
     double startTime;
     static char *msg = "Too many iterations without convergence";
 
+    if ( maxIter < 100 ) maxIter = 100; /* some convergence issues that get resolved by increasing max iter */
 
     CKTnode *node; /* current matrix entry */
     double diff, maxdiff, damp_factor, *OldCKTstate0=NULL;
