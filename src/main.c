@@ -828,7 +828,7 @@ main(int argc, char **argv)
 		if (optarg) {
 		    cp_vset("rawfile", VT_STRING, optarg);
 		}
-		rflag = TRUE;
+		//rflag = TRUE;
 		break;
 
 	    case 's':		/* Server mode */
