@@ -1,3 +1,9 @@
+2007-10-11 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/main.c, src/frontend/{inpcom.c, miscvars.c}: added option -a
+   and --autorun to add the control section ans run the loaded netlist.
+   In the original implementation by Phil Barker, the loaded circuit was
+   always run, both in interactive and batch mode.
+
 2007-10-09 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/{device.c, miscvars.c}: added "altshow" option to 
    enable the new (Phil Barker) version of the show command. The 

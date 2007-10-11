@@ -982,6 +982,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
     bool found_library, found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
     bool dir_name_flag = FALSE;
 
+    struct variable *v;
+
     /*   Must set this to NULL or non-tilde includes segfault. -- Tim Molteno   */
     /* copys = NULL; */   /*  This caused a parse error with gcc 2.96.  Why???  */
 
@@ -1493,7 +1495,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
       inp_fix_inst_calls_for_numparam(working);
       inp_fix_gnd_name(working);
       inp_chk_for_multi_in_vcvs(working, &line_number);
-      inp_add_control_section(working, &line_number);
+
+       if (cp_getvar("addcontrol", VT_BOOL, (char *) &v))
+          inp_add_control_section(working, &line_number);
     }
     *data = cc;
     return;
