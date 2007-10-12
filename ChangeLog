@@ -1,3 +1,10 @@
+2007-10-12 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/{cpitf.c, inp.c, miscvars.c}, src/spinit.in: 
+   reimplemented "brief" option as a boolean and defaulted to
+   TRUE. Now the netlist is not printed anymore when you load 
+   a circuit. For the original behavior uncomment "unset brief"
+   in the spice init file.
+
 2007-10-11 Paolo Nenzi <p.nenzi@ieee.org>
  * src/main.c, src/frontend/{inpcom.c, miscvars.c}: added option -a
    and --autorun to add the control section ans run the loaded netlist.
