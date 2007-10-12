@@ -28,6 +28,7 @@ char *ft_setkwords[] = {
     "addcontrol",
     "altshow",
     "appendwrite",
+    "brief",
     "bypass",
     "chgtol",
     "color<num>",

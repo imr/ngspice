@@ -160,6 +160,7 @@ ft_cpinit(void)
 
     cp_vset("prompt", VT_STRING, buf);
     cp_vset("noglob", VT_BOOL, (char *) &t);
+    cp_vset("brief", VT_BOOL, (char *) &t);
 
     /* Now do a bunch of things that used to be in the spiceinit file
      * but were too slow to read in...

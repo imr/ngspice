@@ -3,6 +3,8 @@ alias exit quit
 alias acct rusage all
 set x11lineararcs
 
+*unset brief
+
 strcmp __flag $program "ngspice"
 if $__flag = 0
 

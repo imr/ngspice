@@ -15,7 +15,6 @@ $Id$
  * the listing routines.
  */
 
-#include <assert.h>
 #include <libgen.h>
 #include "ngspice.h"
 #include "cpdefs.h"
@@ -47,23 +46,6 @@ $Id$
 static char * upper(register char *string);
 static bool doedit(char *filename);
 static void line_free_x(struct line * deck, bool recurse);
-
-// Initial AlmostEqualULPs version - fast and simple, but
-// some limitations.
-static bool AlmostEqualUlps(float A, float B, int maxUlps)
-{
-    assert(sizeof(float) == sizeof(int));
-
-    if (A == B)
-        return TRUE;
-
-    int intDiff = abs(*(int*)&A - *(int*)&B);
-
-    if (intDiff <= maxUlps)
-        return TRUE;
-
-    return FALSE;
-}
 
 /* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
 void
@@ -657,7 +639,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
     struct variable *eev = NULL;
     wordlist *wl;
     bool noparse, ii;
-    double brief = 0, i;
+    bool brief;
 
     /* First throw away any old error messages there might be and fix
      * the case of the lines.  */
@@ -710,9 +692,6 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
 			    eev->va_type, (char *) &eev->va_num);
 		  break;
                 case VT_REAL:
-		  if ( strcmp("brief",eev->va_name)==0 ){
-		    cp_vset("brief", VT_REAL, (char*) &eev->va_real );
-		  }
 		  if_option(ct->ci_ckt, eev->va_name, 
 			    eev->va_type, (char *) &eev->va_real);
 		  break;
@@ -776,11 +755,9 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
       
     }   /* for (dd = deck; dd; dd = dd->li_next) */
 
-    if ( cp_getvar( "brief", VT_REAL, (char *) &i ) ) {
-      brief = i;
-    }
-    // only print out netlist if brief == 0
-    if(AlmostEqualUlps(brief,0,3)) {
+    /* Only print out netlist if brief is FALSE */
+    cp_getvar( "brief", VT_BOOL, (bool *) &brief );
+    if(brief==FALSE) {
       /* output deck */
       out_printf( "\nProcessed Netlist\n" );
       out_printf( "=================\n" );
