@@ -15,7 +15,9 @@ $Id$
  * the listing routines.
  */
 
+#ifndef _MSC_VER
 #include <libgen.h>
+#endif
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "inpdefs.h"
@@ -24,6 +26,7 @@ $Id$
 #include "fteinp.h"
 #include "inp.h"
 
+#include "inpcom.h"
 #include "circuits.h"
 #include "completion.h"
 #include "variable.h"
@@ -640,6 +643,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
     wordlist *wl;
     bool noparse, ii;
     bool brief;
+    int print_listing;
 
     /* First throw away any old error messages there might be and fix
      * the case of the lines.  */
@@ -761,7 +765,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
       /* output deck */
       out_printf( "\nProcessed Netlist\n" );
       out_printf( "=================\n" );
-      int print_listing = 1;
+      print_listing = 1;
       for (dd = deck; dd; dd = dd->li_next) {
 	if ( ciprefix(".prot", dd->li_line) ) print_listing = 0;
 	if ( print_listing == 1 ) out_printf( "%s\n", dd->li_line );

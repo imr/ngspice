@@ -30,8 +30,10 @@ Author: 1985 Wayne A. Christopher
  * Fixed crash where a NULL pointer gets freed in inp_readall()
  */
 
-#include <config.h>
+#ifndef _MSC_VER
 #include <libgen.h>
+#endif
+#include <config.h>
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
@@ -973,7 +975,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
     struct line *end = NULL, *cc = NULL, *prev = NULL, *working, *newcard, *start_lib, *global_card, *tmp_ptr = NULL, *tmp_ptr2 = NULL;
     char *buffer = NULL, *s, *t, *y, *z, c;
     /* segfault fix */
-    char *copys=NULL, big_buff[5000], big_buff2[5000];
+    char *copys=NULL, big_buff2[5000];
     char *global_copy = NULL, keep_char;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */ 
     int line_count = 0;
@@ -983,6 +985,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
     bool dir_name_flag = FALSE;
 
     struct variable *v;
+	char *s_ptr, *s_lower;
 
     /*   Must set this to NULL or non-tilde includes segfault. -- Tim Molteno   */
     /* copys = NULL; */   /*  This caused a parse error with gcc 2.96.  Why???  */
@@ -1030,7 +1033,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
                 break;
             }
             else if(ipc_status == IPC_STATUS_OK) {
-                buffer = (void *) MALLOC(strlen(ipc_buffer) + 3);
+//                buffer = (void *) MALLOC(strlen(ipc_buffer) + 3);
+                buffer = (void *) tmalloc(strlen(ipc_buffer) + 3);
                 strcpy(buffer, ipc_buffer);
                 strcat(buffer, "\n");
             }
@@ -1092,7 +1096,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
 	      }
 	      
 	      /* lower case the file name for later string compares */
-	      char *s_ptr, *s_lower = strdup(s);
+	      s_ptr = strdup(s);
+	      s_lower = strdup(s);
 	      for(s_ptr = s_lower; *s_ptr && (*s_ptr != '\n'); s_ptr++) *s_ptr = tolower(*s_ptr);
 
 	      found_library = FALSE;
@@ -2074,6 +2079,8 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
   int  num_inst_params   = 0;
   int i,j,k;
   bool flag = FALSE;
+  bool found_subckt = FALSE;
+  bool found_param_match = FALSE;
 
   // first iterate through instances and find occurences where 'm' multiplier needs to be
   // added to the subcircuit -- subsequent instances will then need this parameter as well
@@ -2126,7 +2133,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 	  sprintf( name_w_space, "%s ", subckt_name );
 
 	  /* find .subckt line */
-	  bool found_subckt = FALSE;
+	  found_subckt = FALSE;
 
 	  d = deck;
 	  while ( d != NULL ) {
@@ -2140,7 +2147,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 		num_inst_params   = inp_get_params( inst_line,   inst_param_names,   inst_param_values   );
 
 		// make sure that if have inst params that one matches subckt
-		bool found_param_match = FALSE;
+		found_param_match = FALSE;
 		if ( num_inst_params == 0 ) found_param_match = TRUE;
 		else {
 		  for ( j = 0; j < num_inst_params; j++ ) {
@@ -2363,7 +2370,7 @@ inp_expand_macro_in_str( char *str )
   char *open_paren_ptr, *close_paren_ptr, *fcn_name, *comma_ptr, *params[1000];
   char *curr_ptr, *new_str, *macro_str, *curr_str = NULL;
   int  num_parens, num_params;
-  char *orig_ptr = str, *search_ptr = str, *orig_str = strdup(str);;
+  char *orig_ptr = str, *search_ptr = str, *orig_str = strdup(str);
   char keep;
 
   while ( ( open_paren_ptr = strstr( search_ptr, "(" ) ) ) {
@@ -2666,6 +2673,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
   char *param_names[12000], *param_strs[12000], *curr_line;
   char *depends_on[12000][100], *str_ptr, *beg, *end, *new_str;
   int  level[12000], param_skip[12000], skipped = 0;
+  bool found_in_list = FALSE;
 
   if ( start_card == NULL ) return;
 
@@ -2724,7 +2732,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
 		   !isalnum( *(param_ptr+strlen(param_name)) ) && *(param_ptr+strlen(param_name)) != '_' )
 		{
 		  index = 0;
-		  bool found_in_list = FALSE;
+		  found_in_list = FALSE;
 		  while ( depends_on[j][index] != NULL ) {
 		    if ( strcmp( param_name, depends_on[j][index] ) == 0 ) { found_in_list = TRUE; break; }
 		    index++;

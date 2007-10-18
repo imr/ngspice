@@ -30,8 +30,11 @@ Modified: 2002 R. Oktas, <roktas@omu.edu.tr>
 char *
 tildexpand(char *string)
 {
+#ifdef HAVE_PWD_H
     char buf[BSIZE_SP];
-    char *result = NULL, *k, c;
+    char *k, c;
+#endif
+    char *result = NULL;
 
     if (!string)
 	return NULL;

@@ -10,6 +10,9 @@ FILE * inp_pathopen(char *name, char *mode);
 void inp_readall(FILE *fp, struct line **data, int, char *dirname);
 void inp_casefix(register char *string);
 
+char *basename(char *name);
+char *dirname(char *name);
+
 /* globals -- wanted to avoid complicating inp_readall interface */
 static char *library_file[1000];
 static char *library_name[1000][1000];

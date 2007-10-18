@@ -35,7 +35,7 @@ Modified: 1999 Paolo Nenzi
 #include <pwd.h>
 #endif
 
-#ifndef __MINGW32__
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
 	/* MW. We also need ioctl.h here I think */
 #include <sys/ioctl.h>
 #endif

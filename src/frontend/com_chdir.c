@@ -21,7 +21,9 @@ void
 com_chdir(wordlist *wl)
 {
     char *s;
+#ifdef HAVE_PWD_H
     struct passwd *pw;
+#endif
     char localbuf[257];
     int copied = 0;
 

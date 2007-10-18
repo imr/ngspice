@@ -14,6 +14,7 @@ Modified: 2000  AlansFixes
 #include <cktaccept.h>
 #include <trandefs.h>
 #include <sperror.h>
+#include "fteext.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - Add headers */
@@ -40,12 +41,13 @@ void SetAnalyse( char * Analyse, int Percent);
 // some limitations.
 static bool AlmostEqualUlps(float A, float B, int maxUlps)
 {
+    int intDiff;
     assert(sizeof(float) == sizeof(int));
 
     if (A == B)
         return TRUE;
 
-    int intDiff = abs(*(int*)&A - *(int*)&B);
+    intDiff = abs(*(int*)&A - *(int*)&B);
 
     if (intDiff <= maxUlps)
         return TRUE;

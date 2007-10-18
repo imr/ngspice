@@ -135,17 +135,17 @@ extern int scannum(char *str);
 extern int ciprefix(register char *p, register char *s);
 extern int cieq(register char *p, register char *s);
 extern void strtolower(char *str);
-extern char *tildexpand(char *string);
+extern char *tildexpand(char *str);
 
 extern char *canonicalize_pathname(char *path);
-extern char *absolute_pathname(char *string, char *dot_path);
+extern char *absolute_pathname(char *str, char *dot_path);
 
 extern char *smktemp(char *id);
 
 extern char *copy(char *str);
 extern int prefix(char *p, char *str);
 extern int substring(char *sub, char *str);
-extern void cp_printword(char *string, FILE *fp);
+extern void cp_printword(char *str, FILE *fp);
 
 extern char *datestring(void);
 extern double seconds(void);

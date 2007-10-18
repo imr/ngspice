@@ -17,12 +17,13 @@ static bool measures_passed;
 // some limitations.
 static bool AlmostEqualUlps(float A, float B, int maxUlps)
 {
+    int intDiff;
     assert(sizeof(float) == sizeof(int));
 
     if (A == B)
         return TRUE;
 
-    int intDiff = abs(*(int*)&A - *(int*)&B);
+    intDiff = abs(*(int*)&A - *(int*)&B);
 
     if (intDiff <= maxUlps)
         return TRUE;

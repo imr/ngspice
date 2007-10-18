@@ -149,3 +149,84 @@ char * absolute_pathname(char *string, char *dot_path)
 
   return (result);
 }
+
+
+#ifdef _MSC_VER
+
+const char *
+basename(const char *name)
+{
+    const char *base;
+    char *p;
+    static char *tmp = NULL;
+    int len; 
+
+    if (tmp) {
+        free(tmp);
+        tmp = NULL;
+    }
+
+    if (!name || !strcmp(name, ""))
+        return "";
+
+    if (!strcmp(name, "/"))
+        return "/";
+
+    len = strlen(name);
+    if (name[len - 1] == '/') {
+        // ditch the trailing '/'
+        p = tmp = malloc(len);
+        strncpy(p, name, len - 1); 
+    } else {
+        p = (char *) name;
+    }
+
+    for (base = p; *p; p++) 
+        if (*p == '/') 
+            base = p + 1;
+    
+    return base;
+}
+
+const char *
+dirname(const char *name)
+{
+    static char *ret = NULL;
+    int len;
+    int size = 0;
+    const char *p;
+
+    if (ret) {
+        free(ret);
+        ret = NULL;
+    }
+
+    if (!name || !strcmp(name, "") || !strstr(name, "/"))
+        return(".");
+
+    if (!strcmp(name, "/"))
+        return(name);
+
+    // find the last slash in the string
+
+    len = strlen(name);
+    p = &name[len - 1];
+
+    if (*p == '/') p--;  // skip the trailing /
+
+    while (p != name && *p != '/') p--;
+
+    size = p - name;
+    if (size) {
+        ret = malloc(size + 1);
+        memcpy(ret, name, size);
+        ret[size] = '\0';
+    } else if (*p == '/')
+        return "/";
+    else
+        return "";
+    
+    return (const char *) ret;
+}
+
+#endif
