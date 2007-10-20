@@ -3,15 +3,16 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modifed: 2000 AlansFixes
 **********/
-#include <stdlib.h>
-#include <config.h>
+
+#include "config.h"
+
 #include "memory.h"
-#include <cktdefs.h>
-#include <devdefs.h>
-#include <sperror.h>
-#include <fteext.h>
-#include <ifsim.h>
-#include <dev.h>
+#include "cktdefs.h"
+#include "devdefs.h"
+#include "sperror.h"
+#include "fteext.h"
+#include "ifsim.h"
+#include "dev.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - 11/26/90 - add include for MIF global data */
@@ -32,7 +33,7 @@ CKTinit(void **ckt)		/* new circuit to create */
 /* gtri - begin - dynamically allocate the array of model lists */
 /* CKThead used to be statically sized in CKTdefs.h, but has been changed */
 /* to a ** pointer */
-    (sckt)->CKThead = (GENmodel **)MALLOC(DEVmaxnum * sizeof(GENmodel *));
+    (sckt)->CKThead = (GENmodel **)tmalloc(DEVmaxnum * sizeof(GENmodel *));
     if((sckt)->CKThead == NULL) return(E_NOMEM);
 /* gtri - end   - dynamically allocate the array of model lists */
 
