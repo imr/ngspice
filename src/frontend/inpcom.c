@@ -975,6 +975,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
     struct line *end = NULL, *cc = NULL, *prev = NULL, *working, *newcard, *start_lib, *global_card, *tmp_ptr = NULL, *tmp_ptr2 = NULL;
     char *buffer = NULL, *s, *t, *y, *z, c;
     /* segfault fix */
+#ifdef XSPICE
+    char big_buff[5000];
+#endif
     char *copys=NULL, big_buff2[5000];
     char *global_copy = NULL, keep_char;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */ 
