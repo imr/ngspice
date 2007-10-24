@@ -9,7 +9,9 @@
 char *canonicalize_pathname(char *path);
 char *absolute_pathname(char *string, char *dot_path);
 
+#ifdef _MSC_VER
 const char *basename(const char *name);
 const char *dirname(const char *name);
+#endif
 
 #endif
