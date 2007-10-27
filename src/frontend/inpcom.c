@@ -977,11 +977,11 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
     /* segfault fix */
 #ifdef XSPICE
     char big_buff[5000];
+    int line_count = 0;
 #endif
     char *copys=NULL, big_buff2[5000];
     char *global_copy = NULL, keep_char;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */ 
-    int line_count = 0;
     FILE *newfp;
     int i, j;
     bool found_library, found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
@@ -2533,6 +2533,7 @@ inp_fix_param_values( struct line *deck )
     if ( ciprefix( ".endc", line ) )    { control_section = FALSE; c = c->li_next; continue; }
     if ( control_section || ciprefix( ".option", line ) ) { c = c->li_next; continue; }
 
+    if ( *line == 'b' ) { c = c->li_next; continue; }
     while ( ( equal_ptr = strstr( line, "=" ) ) ) {
 
       // skip over equality '=='
