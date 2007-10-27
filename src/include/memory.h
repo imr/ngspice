@@ -1,6 +1,8 @@
 #ifndef _MEMORY_H
 #define _MEMORY_H
 
+#include <stddef.h>
+
 #ifndef HAVE_LIBGC
 extern void *tmalloc(size_t num);
 extern void *trealloc(void *str, size_t num);
