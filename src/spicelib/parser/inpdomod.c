@@ -281,17 +281,18 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Device type BSIM3 not available in this binary\n");
 	    }
 	    break;
-	    
 	case  9:
 	    type = INPtypelook("Mos9");
-         if(type < 0) {
-          err = INPmkTemp
-                ("Device type MOS9 not available in this binary\n");
-        }
-        break;
-	
+	    if(type < 0) {
+		err = INPmkTemp
+		    ("Device type MOS9 not available in this binary\n");
+	    }
+	    break;
 	case 14:
 	    type = INPtypelook("BSIM4");
+	    if ( (strstr( ver, "4.4")) || (strstr( ver, "4.4.0")) ) {
+	      type = INPtypelook("BSIM4v4");
+	    }
 	    if (type < 0) {
 		err =
 		    INPmkTemp
