@@ -1,11 +1,12 @@
-/**** BSIM4.6.0 Released by Mohan Dunga 12/13/2006 ****/
+/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4.c of BSIM4.6.0.
+ * File: b4.c of BSIM4.6.1.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
+ * Authors: 2007- Mohan Dunga, Wenwei Yang, Ali Niknejad, Chenming Hu
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
@@ -13,7 +14,8 @@
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 03/04/2004.
  * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
- * Modified by Mohan Dunga, 12/13/2006
+ * Modified by Mohan Dunga, 12/13/2006.
+ * Modified by Mohan Dunga, Wenwei Yang, 05/18/2007.
  **********/
 
 #include "ngspice.h"
@@ -108,6 +110,7 @@ OP( "gtau",        BSIM4_GTAU,       IF_REAL,    "Gtau"),
 };
 
 IFparm BSIM4mPTable[] = { /* model parameters */
+IOP( "cvchargemod", BSIM4_MOD_CVCHARGEMOD, IF_INTEGER, "Capacitance Charge model selector"),
 IOP( "capmod", BSIM4_MOD_CAPMOD, IF_INTEGER, "Capacitance model selector"),
 IOP( "diomod", BSIM4_MOD_DIOMOD, IF_INTEGER, "Diode IV model selector"),
 IOP( "rdsmod", BSIM4_MOD_RDSMOD, IF_INTEGER, "Bias-dependent S/D resistance model selector"),
@@ -120,12 +123,17 @@ IOP( "permod", BSIM4_MOD_PERMOD, IF_INTEGER, "Pd and Ps model selector"),
 IOP( "geomod", BSIM4_MOD_GEOMOD, IF_INTEGER, "Geometry dependent parasitics model selector"),
 IOP( "fnoimod", BSIM4_MOD_FNOIMOD, IF_INTEGER, "Flicker noise model selector"),
 IOP( "tnoimod", BSIM4_MOD_TNOIMOD, IF_INTEGER, "Thermal noise model selector"),
+IOP( "mtrlmod", BSIM4_MOD_MTRLMOD, IF_INTEGER, "parameter for non-silicon substrate or metal gate selector"),
 IOP( "igcmod", BSIM4_MOD_IGCMOD, IF_INTEGER, "Gate-to-channel Ig model selector"),
 IOP( "igbmod", BSIM4_MOD_IGBMOD, IF_INTEGER, "Gate-to-body Ig model selector"),
 IOP( "tempmod", BSIM4_MOD_TEMPMOD, IF_INTEGER, "Temperature model selector"),
 IOP( "paramchk", BSIM4_MOD_PARAMCHK, IF_INTEGER, "Model parameter checking selector"),
 IOP( "binunit", BSIM4_MOD_BINUNIT, IF_INTEGER, "Bin  unit  selector"),
 IOP( "version", BSIM4_MOD_VERSION, IF_STRING, "parameter for model version"),
+IOP( "eot", BSIM4_MOD_EOT, IF_REAL, "Equivalent gate oxide thickness in meters"),
+IOP( "vddeot", BSIM4_MOD_VDDEOT, IF_REAL, "Voltage for extraction of Equivalent gate oxide thickness"),
+IOP( "ados", BSIM4_MOD_ADOS, IF_REAL, "Charge centroid parameter"),
+IOP( "bdos", BSIM4_MOD_BDOS, IF_REAL, "Charge centroid parameter"),
 IOP( "toxe", BSIM4_MOD_TOXE, IF_REAL, "Electrical gate oxide thickness in meters"),
 IOP( "toxp", BSIM4_MOD_TOXP, IF_REAL, "Physical gate oxide thickness in meters"),
 IOP( "toxm", BSIM4_MOD_TOXM, IF_REAL, "Gate oxide thickness at which parameters are extracted"),
@@ -145,6 +153,14 @@ IOP( "ags", BSIM4_MOD_AGS, IF_REAL, "Gate bias  coefficient of Abulk."),
 IOP( "a1", BSIM4_MOD_A1, IF_REAL, "Non-saturation effect coefficient"),
 IOP( "a2", BSIM4_MOD_A2, IF_REAL, "Non-saturation effect coefficient"),
 IOP( "keta", BSIM4_MOD_KETA, IF_REAL, "Body-bias coefficient of non-uniform depletion width effect."),
+IOP( "phig", BSIM4_MOD_PHIG, IF_REAL, "Work function of gate"),
+IOP( "epsrgate", BSIM4_MOD_EPSRGATE, IF_REAL, "Dielectric constant of gate relative to vacuum"),
+IOP( "easub",BSIM4_MOD_EASUB, IF_REAL, "Electron affinity of substrate"),
+IOP( "epsrsub", BSIM4_MOD_EPSRSUB, IF_REAL, "Dielectric constant of substrate relative to vacuum"),
+IOP( "ni0sub", BSIM4_MOD_NI0SUB, IF_REAL, "Intrinsic carrier concentration of substrate at 300.15K"),
+IOP( "bg0sub", BSIM4_MOD_BG0SUB, IF_REAL, "Band-gap of substrate at T=0K"),
+IOP( "tbgasub", BSIM4_MOD_TBGASUB, IF_REAL, "First parameter of band-gap change due to temperature"),
+IOP( "tbgbsub", BSIM4_MOD_TBGBSUB, IF_REAL, "Second parameter of band-gap change due to temperature"),
 IOP( "nsub", BSIM4_MOD_NSUB, IF_REAL, "Substrate doping concentration"),
 IOP( "ndep", BSIM4_MOD_NDEP, IF_REAL, "Channel doping concentration at the depletion edge"),
 IOP( "nsd", BSIM4_MOD_NSD, IF_REAL, "S/D doping concentration"),
@@ -192,8 +208,10 @@ IOP( "u0", BSIM4_MOD_U0, IF_REAL, "Low-field mobility at Tnom"),
 IOP( "eu", BSIM4_MOD_EU, IF_REAL, "Mobility exponent"),
 IOP( "ute", BSIM4_MOD_UTE, IF_REAL, "Temperature coefficient of mobility"),
 IOP( "voff", BSIM4_MOD_VOFF, IF_REAL, "Threshold voltage offset"),
-IOP( "minv", BSIM4_MOD_MINV, IF_REAL, "Fitting parameter for moderate invversion in Vgsteff"),
+IOP( "minv", BSIM4_MOD_MINV, IF_REAL, "Fitting parameter for moderate inversion in Vgsteff"),
+IOP( "minvcv", BSIM4_MOD_MINVCV, IF_REAL, "Fitting parameter for moderate inversion in Vgsteffcv"),
 IOP( "voffl", BSIM4_MOD_VOFFL, IF_REAL, "Length dependence parameter for Vth offset"),
+IOP( "voffcvl", BSIM4_MOD_VOFFCVL, IF_REAL, "Length dependence parameter for Vth offset in CV"),
 IOP( "tnom", BSIM4_MOD_TNOM, IF_REAL, "Parameter measurement temperature"),
 IOP( "cgso", BSIM4_MOD_CGSO, IF_REAL, "Gate-source overlap capacitance per width"),
 IOP( "cgdo", BSIM4_MOD_CGDO, IF_REAL, "Gate-drain overlap capacitance per width"),
@@ -508,6 +526,7 @@ IOP( "lu0",  BSIM4_MOD_LU0, IF_REAL, "Length dependence of u0"),
 IOP( "lute", BSIM4_MOD_LUTE, IF_REAL, "Length dependence of ute"),
 IOP( "lvoff", BSIM4_MOD_LVOFF, IF_REAL, "Length dependence of voff"),
 IOP( "lminv", BSIM4_MOD_LMINV, IF_REAL, "Length dependence of minv"),
+IOP( "lminvcv", BSIM4_MOD_LMINVCV, IF_REAL, "Length dependence of minvcv"),
 IOP( "ldelta", BSIM4_MOD_LDELTA, IF_REAL, "Length dependence of delta"),
 IOP( "lrdsw", BSIM4_MOD_LRDSW,  IF_REAL, "Length dependence of rdsw "),    
 IOP( "lrsw", BSIM4_MOD_LRSW, IF_REAL, "Length dependence of rsw"),
@@ -654,6 +673,7 @@ IOP( "wu0",  BSIM4_MOD_WU0, IF_REAL, "Width dependence of u0"),
 IOP( "wute", BSIM4_MOD_WUTE, IF_REAL, "Width dependence of ute"),
 IOP( "wvoff", BSIM4_MOD_WVOFF, IF_REAL, "Width dependence of voff"),
 IOP( "wminv", BSIM4_MOD_WMINV, IF_REAL, "Width dependence of minv"),
+IOP( "wminvcv", BSIM4_MOD_WMINVCV, IF_REAL, "Width dependence of minvcv"),
 IOP( "wdelta", BSIM4_MOD_WDELTA, IF_REAL, "Width dependence of delta"),
 IOP( "wrdsw", BSIM4_MOD_WRDSW,  IF_REAL, "Width dependence of rdsw "),
 IOP( "wrsw", BSIM4_MOD_WRSW, IF_REAL, "Width dependence of rsw"),
@@ -799,6 +819,7 @@ IOP( "pu0",  BSIM4_MOD_PU0, IF_REAL, "Cross-term dependence of u0"),
 IOP( "pute", BSIM4_MOD_PUTE, IF_REAL, "Cross-term dependence of ute"),
 IOP( "pvoff", BSIM4_MOD_PVOFF, IF_REAL, "Cross-term dependence of voff"),
 IOP( "pminv", BSIM4_MOD_PMINV, IF_REAL, "Cross-term dependence of minv"),
+IOP( "pminvcv", BSIM4_MOD_PMINVCV, IF_REAL, "Cross-term dependence of minvcv"),
 IOP( "pdelta", BSIM4_MOD_PDELTA, IF_REAL, "Cross-term dependence of delta"),
 IOP( "prdsw", BSIM4_MOD_PRDSW,  IF_REAL, "Cross-term dependence of rdsw "),    
 IOP( "prsw", BSIM4_MOD_PRSW, IF_REAL, "Cross-term dependence of rsw"),

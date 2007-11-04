@@ -1,4 +1,4 @@
-/**** BSIM4.6.0 Released by Mohan Dunga 12/13/2006 ****/
+/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
@@ -6,6 +6,7 @@
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
+ * Authors: 2007- Mohan Dunga, Wenwei Yang, Ali Niknejad, Chenming Hu
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 10/05/2001.
  **********/
@@ -55,7 +56,7 @@ double m;
     {    for (here = model->BSIM4instances; here!= NULL;
               here = here->BSIM4nextInstance) 
 	 {    if (here->BSIM4owner != ARCHme) continue;
-	          pParam = here->pParam;
+              pParam = here->pParam;
               capbd = here->BSIM4capbd;
               capbs = here->BSIM4capbs;
               cgso = here->BSIM4cgso;
@@ -484,7 +485,7 @@ double m;
               /*
                * Loading PZ matrix
                */
-   	          m = here->BSIM4m;
+              m = here->BSIM4m;
 
               if (!model->BSIM4rdsMod)
               {   gdpr = here->BSIM4drainConductance;

@@ -1,10 +1,12 @@
-/**** BSIM4.6.0 Released by Mohan Dunga 12/13/2006 ****/
+/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4set.c of BSIM4.6.0.
+ * File: b4set.c of BSIM4.6.1.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
+ * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
+ * Authors: 2007- Mohan Dunga, Wenwei Yang, Ali Niknejad, Chenming Hu
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
@@ -13,6 +15,7 @@
  * Modified by Xuemei Xi, 03/04/2004.
  * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
  * Modified by Mohan Dunga, 12/13/2006
+ * Modified by Mohan Dunga, Wenwei Yang, 05/18/2007.
 **********/
 
 #include "ngspice.h"
@@ -88,6 +91,8 @@ JOB   *job;
             printf("Warning: dioMod has been set to its default value: 1.\n");
         }
 
+        if (!model->BSIM4cvchargeModGiven) 
+            model->BSIM4cvchargeMod = 0;
         if (!model->BSIM4capModGiven) 
             model->BSIM4capMod = 2;
         else if ((model->BSIM4capMod != 0) && (model->BSIM4capMod != 1)
@@ -153,6 +158,9 @@ JOB   *job;
             printf("Warning: acnqsMod has been set to its default value: 0.\n");
         }
 
+        if (!model->BSIM4mtrlModGiven)
+            model->BSIM4mtrlMod = 0;
+
         if (!model->BSIM4igcModGiven)
             model->BSIM4igcMod = 0;
         else if ((model->BSIM4igcMod != 0) && (model->BSIM4igcMod != 1)
@@ -178,6 +186,14 @@ JOB   *job;
             model->BSIM4version = "4.6.0";
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
+        if (!model->BSIM4eotGiven)
+            model->BSIM4eot = 15.0e-10;
+        if (!model->BSIM4vddeotGiven)
+            model->BSIM4vddeot = (model->BSIM4type == NMOS) ? 1.5 : -1.5;
+        if (!model->BSIM4adosGiven)
+            model->BSIM4ados = 1.0;
+        if (!model->BSIM4bdosGiven)
+            model->BSIM4bdos = 1.0;
         if (!model->BSIM4toxeGiven)
             model->BSIM4toxe = 30.0e-10;
         if (!model->BSIM4toxpGiven)
@@ -217,6 +233,22 @@ JOB   *job;
             model->BSIM4keta = -0.047;    /* unit  / V */
         if (!model->BSIM4nsubGiven)
             model->BSIM4nsub = 6.0e16;   /* unit 1/cm3 */
+        if (!model->BSIM4phigGiven)
+	    model->BSIM4phig = 4.05;  
+        if (!model->BSIM4epsrgateGiven)
+	    model->BSIM4epsrgate = 11.7;  
+        if (!model->BSIM4easubGiven)
+            model->BSIM4easub = 4.05;  
+        if (!model->BSIM4epsrsubGiven)
+  	    model->BSIM4epsrsub = 11.7; 
+        if (!model->BSIM4ni0subGiven)
+            model->BSIM4ni0sub = 1.45e10;   /* unit 1/cm3 */
+        if (!model->BSIM4bg0subGiven)
+            model->BSIM4bg0sub =  1.16;     /* unit eV */
+        if (!model->BSIM4tbgasubGiven)
+  	    model->BSIM4tbgasub = 7.02e-4;  
+        if (!model->BSIM4tbgbsubGiven)
+	    model->BSIM4tbgbsub = 1108.0;  
         if (!model->BSIM4ndepGiven)
             model->BSIM4ndep = 1.7e17;   /* unit 1/cm3 */
         if (!model->BSIM4nsdGiven)
@@ -301,8 +333,12 @@ JOB   *job;
 	    model->BSIM4voff = -0.08;
         if (!model->BSIM4vofflGiven)
             model->BSIM4voffl = 0.0;
+        if (!model->BSIM4voffcvlGiven)
+            model->BSIM4voffcvl = 0.0;
         if (!model->BSIM4minvGiven)
             model->BSIM4minv = 0.0;
+        if (!model->BSIM4minvcvGiven)
+            model->BSIM4minvcv = 0.0;
         if (!model->BSIM4fproutGiven)
             model->BSIM4fprout = 0.0;
         if (!model->BSIM4pditsGiven)
@@ -748,6 +784,8 @@ JOB   *job;
 	    model->BSIM4lvoff = 0.0;
         if (!model->BSIM4lminvGiven)
             model->BSIM4lminv = 0.0;
+        if (!model->BSIM4lminvcvGiven)
+            model->BSIM4lminvcv = 0.0;
         if (!model->BSIM4lfproutGiven)
             model->BSIM4lfprout = 0.0;
         if (!model->BSIM4lpditsGiven)
@@ -961,7 +999,7 @@ JOB   *job;
 	    model->BSIM4wcdsc = 0.0;
         if (!model->BSIM4wcdscbGiven)
 	    model->BSIM4wcdscb = 0.0;  
-	    if (!model->BSIM4wcdscdGiven)
+	if (!model->BSIM4wcdscdGiven)
 	    model->BSIM4wcdscd = 0.0;
         if (!model->BSIM4wcitGiven)
 	    model->BSIM4wcit = 0.0;
@@ -1063,6 +1101,8 @@ JOB   *job;
 	    model->BSIM4wvoff = 0.0;
         if (!model->BSIM4wminvGiven)
             model->BSIM4wminv = 0.0;
+        if (!model->BSIM4wminvcvGiven)
+            model->BSIM4wminvcv = 0.0;
         if (!model->BSIM4wfproutGiven)
             model->BSIM4wfprout = 0.0;
         if (!model->BSIM4wpditsGiven)
@@ -1378,6 +1418,8 @@ JOB   *job;
 	    model->BSIM4pvoff = 0.0;
         if (!model->BSIM4pminvGiven)
             model->BSIM4pminv = 0.0;
+        if (!model->BSIM4pminvcvGiven)
+            model->BSIM4pminvcv = 0.0;
         if (!model->BSIM4pfproutGiven)
             model->BSIM4pfprout = 0.0;
         if (!model->BSIM4ppditsGiven)
@@ -1950,8 +1992,8 @@ JOB   *job;
         for (here = model->BSIM4instances; here != NULL ;
              here=here->BSIM4nextInstance) 
 	{   
-			if (here->BSIM4owner == ARCHme) {
-			/* allocate a chunk of the state vector */
+		if (here->BSIM4owner == ARCHme) {
+		/* allocate a chunk of the state vector */
             here->BSIM4states = *states;
             *states += BSIM4numStates;
             }

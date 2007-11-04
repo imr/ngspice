@@ -1,11 +1,12 @@
-/**** BSIM4.6.0 Released by Mohan Dunga 12/13/2006 ****/
+/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4check.c of BSIM4.6.0.
+ * File: b4check.c of BSIM4.6.1.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
+ * Authors: 2007- Mohan Dunga, Wenwei Yang, Ali Niknejad, Chenming Hu
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
@@ -14,6 +15,7 @@
  * Modified by Xuemei Xi, 03/04/2004.
  * Modified by Xuemei Xi, 07/29/2005.
  * Modified by Mohan Dunga, 12/13/2006
+ * Modified by Mohan Dunga, Wenwei Yang, 05/18/2007.
  **********/
 
 #include "ngspice.h"
@@ -42,9 +44,9 @@ FILE *fplog;
         fprintf(fplog, "\n");
 	fprintf(fplog, "++++++++++ BSIM4 PARAMETER CHECKING BELOW ++++++++++\n");
 
-        if (strcmp(model->BSIM4version, "4.6.0") != 0)
-        {  fprintf(fplog, "Warning: This model is BSIM4.6.0; you specified a wrong version number.\n");
-           printf("Warning: This model is BSIM4.6.0; you specified a wrong version number.\n");
+        if (strcmp(model->BSIM4version, "4.6.1") != 0)
+        {  fprintf(fplog, "Warning: This model is BSIM4.6.1; you specified a wrong version number.\n");
+           printf("Warning: This model is BSIM4.6.1; you specified a wrong version number.\n");
         }
 	fprintf(fplog, "Model = %s\n", model->BSIM4modName);
 
@@ -66,6 +68,36 @@ FILE *fplog;
         {   fprintf(fplog, "Fatal: Toxp = %g is not positive.\n",
                     model->BSIM4toxp);
             printf("Fatal: Toxp = %g is not positive.\n", model->BSIM4toxp);
+            Fatal_Flag = 1;
+        }
+        if (model->BSIM4eot <= 0.0)
+        {   fprintf(fplog, "Fatal: EOT = %g is not positive.\n",
+                    model->BSIM4eot);
+            printf("Fatal: EOT = %g is not positive.\n", model->BSIM4eot);
+            Fatal_Flag = 1;
+        }
+        if (model->BSIM4epsrgate < 0.0)
+        {   fprintf(fplog, "Fatal: Epsrgate = %g is not positive.\n",
+                    model->BSIM4epsrgate);
+            printf("Fatal: Epsrgate = %g is not positive.\n", model->BSIM4epsrgate);
+            Fatal_Flag = 1;
+        }
+        if (model->BSIM4epsrsub < 0.0)
+        {   fprintf(fplog, "Fatal: Epsrsub = %g is not positive.\n",
+                    model->BSIM4epsrsub);
+            printf("Fatal: Epsrsub = %g is not positive.\n", model->BSIM4epsrsub);
+            Fatal_Flag = 1;
+        }
+        if (model->BSIM4easub < 0.0)
+        {   fprintf(fplog, "Fatal: Easub = %g is not positive.\n",
+                    model->BSIM4easub);
+            printf("Fatal: Easub = %g is not positive.\n", model->BSIM4easub);
+            Fatal_Flag = 1;
+        }
+        if (model->BSIM4ni0sub <= 0.0)
+        {   fprintf(fplog, "Fatal: Ni0sub = %g is not positive.\n",
+                    model->BSIM4ni0sub);
+            printf("Fatal: Easub = %g is not positive.\n", model->BSIM4ni0sub);
             Fatal_Flag = 1;
         }
 
@@ -636,18 +668,6 @@ FILE *fplog;
          }
          
 /* Check capacitance parameters */
-        if (pParam->BSIM4noff < 0.1)
-        {   fprintf(fplog, "Warning: Noff = %g is too small.\n",
-                    pParam->BSIM4noff);
-            printf("Warning: Noff = %g is too small.\n", pParam->BSIM4noff);
-        }
-
-        if (pParam->BSIM4voffcv < -0.5)
-        {   fprintf(fplog, "Warning: Voffcv = %g is too small.\n",
-                    pParam->BSIM4voffcv);
-            printf("Warning: Voffcv = %g is too small.\n", pParam->BSIM4voffcv);
-        }
-
         if (pParam->BSIM4moin < 5.0)
         {   fprintf(fplog, "Warning: Moin = %g is too small.\n",
                     pParam->BSIM4moin);
