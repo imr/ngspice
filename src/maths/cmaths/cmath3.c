@@ -15,15 +15,15 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  *  and return a char * that is cast to complex or double.
  */
 
-#include <ngspice.h>
-#include <cpdefs.h>
-#include <dvec.h>
+#include "ngspice.h"
+#include "cpdefs.h"
+#include "dvec.h"
 
 #include "cmath.h"
 #include "cmath3.h"
 
 
-static complex *cexp(complex *c);
+static complex *cexp_sp3(complex *c); /* cexp exist's in some newer compiler */
 static complex *cln(complex *c);
 static complex *ctimes(complex *c1, complex *c2);
 
@@ -150,7 +150,7 @@ cx_power(void *data1, void *data2, short int datatype1, short int datatype2, int
                 imagpart(&c[i]) = 0.0;
             } else { /* if ((imagpart(&c1) != 0.0) && 
                         (imagpart(&c2) != 0.0)) */
-                t = cexp(ctimes(&c2, cln(&c1)));
+                t = cexp_sp3(ctimes(&c2, cln(&c1)));
                 realpart(&c[i]) = realpart(t);
                 imagpart(&c[i]) = imagpart(t);
             /*
@@ -168,7 +168,7 @@ cx_power(void *data1, void *data2, short int datatype1, short int datatype2, int
 /* These are unnecessary... Only cx_power uses them... */
 
 static complex *
-cexp(complex *c)
+cexp_sp3(complex *c)
 {
     static complex r;
     double d;
