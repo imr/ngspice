@@ -183,7 +183,7 @@ JOB   *job;
         }
 
         if (!model->BSIM4versionGiven) 
-            model->BSIM4version = "4.6.0";
+            model->BSIM4version = "4.6.1";
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4eotGiven)
