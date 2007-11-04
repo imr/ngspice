@@ -14,20 +14,20 @@
 #include "suffix.h"
 
 int
-BSIM4V4mDelete(inModel,modname,kill)
+BSIM4v4mDelete(inModel,modname,kill)
 GENmodel **inModel;
 IFuid modname;
 GENmodel *kill;
 {
-BSIM4V4model **model = (BSIM4V4model**)inModel;
-BSIM4V4model *modfast = (BSIM4V4model*)kill;
-BSIM4V4instance *here;
-BSIM4V4instance *prev = NULL;
-BSIM4V4model **oldmod;
+BSIM4v4model **model = (BSIM4v4model**)inModel;
+BSIM4v4model *modfast = (BSIM4v4model*)kill;
+BSIM4v4instance *here;
+BSIM4v4instance *prev = NULL;
+BSIM4v4model **oldmod;
 
     oldmod = model;
-    for (; *model ; model = &((*model)->BSIM4V4nextModel)) 
-    {    if ((*model)->BSIM4V4modName == modname || 
+    for (; *model ; model = &((*model)->BSIM4v4nextModel)) 
+    {    if ((*model)->BSIM4v4modName == modname || 
              (modfast && *model == modfast))
 	     goto delgot;
          oldmod = model;
@@ -35,8 +35,8 @@ BSIM4V4model **oldmod;
     return(E_NOMOD);
 
 delgot:
-    *oldmod = (*model)->BSIM4V4nextModel; /* cut deleted device out of list */
-    for (here = (*model)->BSIM4V4instances; here; here = here->BSIM4V4nextInstance)
+    *oldmod = (*model)->BSIM4v4nextModel; /* cut deleted device out of list */
+    for (here = (*model)->BSIM4v4instances; here; here = here->BSIM4v4nextInstance)
     {    if(prev) FREE(prev);
          prev = here;
     }

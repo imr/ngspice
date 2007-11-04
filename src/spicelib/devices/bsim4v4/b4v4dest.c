@@ -13,20 +13,20 @@
 #include "suffix.h"
 
 void
-BSIM4V4destroy(inModel)
+BSIM4v4destroy(inModel)
 GENmodel **inModel;
 {
-BSIM4V4model **model = (BSIM4V4model**)inModel;
-BSIM4V4instance *here;
-BSIM4V4instance *prev = NULL;
-BSIM4V4model *mod = *model;
-BSIM4V4model *oldmod = NULL;
+BSIM4v4model **model = (BSIM4v4model**)inModel;
+BSIM4v4instance *here;
+BSIM4v4instance *prev = NULL;
+BSIM4v4model *mod = *model;
+BSIM4v4model *oldmod = NULL;
 
-    for (; mod ; mod = mod->BSIM4V4nextModel)
+    for (; mod ; mod = mod->BSIM4v4nextModel)
     {    if(oldmod) FREE(oldmod);
          oldmod = mod;
-         prev = (BSIM4V4instance *)NULL;
-         for (here = mod->BSIM4V4instances; here; here = here->BSIM4V4nextInstance)
+         prev = (BSIM4v4instance *)NULL;
+         for (here = mod->BSIM4v4instances; here; here = here->BSIM4v4nextInstance)
 	 {    if(prev) FREE(prev);
               prev = here;
          }

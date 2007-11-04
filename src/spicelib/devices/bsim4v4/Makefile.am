@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-pkglib_LIBRARIES = libbsim4v4.a
+noinst_LIBRARIES = libbsim4v4.a
 
 libbsim4v4_a_SOURCES = 	\
 	b4v4.c		\

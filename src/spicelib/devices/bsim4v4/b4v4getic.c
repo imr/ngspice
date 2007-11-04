@@ -16,27 +16,27 @@
 
 
 int
-BSIM4V4getic(inModel,ckt)
+BSIM4v4getic(inModel,ckt)
 GENmodel *inModel;
 CKTcircuit *ckt;
 {
-BSIM4V4model *model = (BSIM4V4model*)inModel;
-BSIM4V4instance *here;
+BSIM4v4model *model = (BSIM4v4model*)inModel;
+BSIM4v4instance *here;
 
-    for (; model ; model = model->BSIM4V4nextModel) 
-    {    for (here = model->BSIM4V4instances; here; here = here->BSIM4V4nextInstance)
-	       {   if (here->BSIM4V4owner != ARCHme) continue;
-	           if (!here->BSIM4V4icVDSGiven) 
-	      {   here->BSIM4V4icVDS = *(ckt->CKTrhs + here->BSIM4V4dNode) 
-				   - *(ckt->CKTrhs + here->BSIM4V4sNode);
+    for (; model ; model = model->BSIM4v4nextModel) 
+    {    for (here = model->BSIM4v4instances; here; here = here->BSIM4v4nextInstance)
+	       {   if (here->BSIM4v4owner != ARCHme) continue;
+	           if (!here->BSIM4v4icVDSGiven) 
+	      {   here->BSIM4v4icVDS = *(ckt->CKTrhs + here->BSIM4v4dNode) 
+				   - *(ckt->CKTrhs + here->BSIM4v4sNode);
               }
-              if (!here->BSIM4V4icVGSGiven) 
-	      {   here->BSIM4V4icVGS = *(ckt->CKTrhs + here->BSIM4V4gNodeExt) 
-				   - *(ckt->CKTrhs + here->BSIM4V4sNode);
+              if (!here->BSIM4v4icVGSGiven) 
+	      {   here->BSIM4v4icVGS = *(ckt->CKTrhs + here->BSIM4v4gNodeExt) 
+				   - *(ckt->CKTrhs + here->BSIM4v4sNode);
               }
-              if(!here->BSIM4V4icVBSGiven)
-              {  here->BSIM4V4icVBS = *(ckt->CKTrhs + here->BSIM4V4bNode)
-                                  - *(ckt->CKTrhs + here->BSIM4V4sNode);
+              if(!here->BSIM4v4icVBSGiven)
+              {  here->BSIM4v4icVBS = *(ckt->CKTrhs + here->BSIM4v4bNode)
+                                  - *(ckt->CKTrhs + here->BSIM4v4sNode);
               }
          }
     }

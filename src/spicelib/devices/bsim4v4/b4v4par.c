@@ -19,7 +19,7 @@
 #include "fteext.h"
 
 int
-BSIM4V4param(param,value,inst,select)
+BSIM4v4param(param,value,inst,select)
 int param;
 IFvalue *value;
 GENinstance *inst;
@@ -29,134 +29,134 @@ IFvalue *select;
 
     if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
 
-    BSIM4V4instance *here = (BSIM4V4instance*)inst;
+    BSIM4v4instance *here = (BSIM4v4instance*)inst;
     switch(param) 
-    {   case BSIM4V4_W:
-            here->BSIM4V4w = value->rValue*scale;
-            here->BSIM4V4wGiven = TRUE;
+    {   case BSIM4v4_W:
+            here->BSIM4v4w = value->rValue*scale;
+            here->BSIM4v4wGiven = TRUE;
             break;
-        case BSIM4V4_L:
-            here->BSIM4V4l = value->rValue*scale;
-            here->BSIM4V4lGiven = TRUE;
+        case BSIM4v4_L:
+            here->BSIM4v4l = value->rValue*scale;
+            here->BSIM4v4lGiven = TRUE;
             break;
-        case BSIM4V4_M:
-            here->BSIM4V4m = value->rValue;
-            here->BSIM4V4mGiven = TRUE;
+        case BSIM4v4_M:
+            here->BSIM4v4m = value->rValue;
+            here->BSIM4v4mGiven = TRUE;
             break;
-        case BSIM4V4_NF:
-            here->BSIM4V4nf = value->rValue;
-            here->BSIM4V4nfGiven = TRUE;
+        case BSIM4v4_NF:
+            here->BSIM4v4nf = value->rValue;
+            here->BSIM4v4nfGiven = TRUE;
             break;
-        case BSIM4V4_MIN:
-            here->BSIM4V4min = value->iValue;
-            here->BSIM4V4minGiven = TRUE;
+        case BSIM4v4_MIN:
+            here->BSIM4v4min = value->iValue;
+            here->BSIM4v4minGiven = TRUE;
             break;
-        case BSIM4V4_AS:
-            here->BSIM4V4sourceArea = value->rValue*scale*scale;
-            here->BSIM4V4sourceAreaGiven = TRUE;
+        case BSIM4v4_AS:
+            here->BSIM4v4sourceArea = value->rValue*scale*scale;
+            here->BSIM4v4sourceAreaGiven = TRUE;
             break;
-        case BSIM4V4_AD:
-            here->BSIM4V4drainArea = value->rValue*scale*scale;
-            here->BSIM4V4drainAreaGiven = TRUE;
+        case BSIM4v4_AD:
+            here->BSIM4v4drainArea = value->rValue*scale*scale;
+            here->BSIM4v4drainAreaGiven = TRUE;
             break;
-        case BSIM4V4_PS:
-            here->BSIM4V4sourcePerimeter = value->rValue*scale;
-            here->BSIM4V4sourcePerimeterGiven = TRUE;
+        case BSIM4v4_PS:
+            here->BSIM4v4sourcePerimeter = value->rValue*scale;
+            here->BSIM4v4sourcePerimeterGiven = TRUE;
             break;
-        case BSIM4V4_PD:
-            here->BSIM4V4drainPerimeter = value->rValue*scale;
-            here->BSIM4V4drainPerimeterGiven = TRUE;
+        case BSIM4v4_PD:
+            here->BSIM4v4drainPerimeter = value->rValue*scale;
+            here->BSIM4v4drainPerimeterGiven = TRUE;
             break;
-        case BSIM4V4_NRS:
-            here->BSIM4V4sourceSquares = value->rValue;
-            here->BSIM4V4sourceSquaresGiven = TRUE;
+        case BSIM4v4_NRS:
+            here->BSIM4v4sourceSquares = value->rValue;
+            here->BSIM4v4sourceSquaresGiven = TRUE;
             break;
-        case BSIM4V4_NRD:
-            here->BSIM4V4drainSquares = value->rValue;
-            here->BSIM4V4drainSquaresGiven = TRUE;
+        case BSIM4v4_NRD:
+            here->BSIM4v4drainSquares = value->rValue;
+            here->BSIM4v4drainSquaresGiven = TRUE;
             break;
-        case BSIM4V4_OFF:
-            here->BSIM4V4off = value->iValue;
+        case BSIM4v4_OFF:
+            here->BSIM4v4off = value->iValue;
             break;
-        case BSIM4V4_SA:
-            here->BSIM4V4sa = value->rValue*scale;
-            here->BSIM4V4saGiven = TRUE;
+        case BSIM4v4_SA:
+            here->BSIM4v4sa = value->rValue*scale;
+            here->BSIM4v4saGiven = TRUE;
             break;
-        case BSIM4V4_SB:
-            here->BSIM4V4sb = value->rValue*scale;
-            here->BSIM4V4sbGiven = TRUE;
+        case BSIM4v4_SB:
+            here->BSIM4v4sb = value->rValue*scale;
+            here->BSIM4v4sbGiven = TRUE;
             break;
-        case BSIM4V4_SD:
-            here->BSIM4V4sd = value->rValue*scale;
-            here->BSIM4V4sdGiven = TRUE;
+        case BSIM4v4_SD:
+            here->BSIM4v4sd = value->rValue*scale;
+            here->BSIM4v4sdGiven = TRUE;
             break;
-        case BSIM4V4_RBSB:
-            here->BSIM4V4rbsb = value->rValue;
-            here->BSIM4V4rbsbGiven = TRUE;
+        case BSIM4v4_RBSB:
+            here->BSIM4v4rbsb = value->rValue;
+            here->BSIM4v4rbsbGiven = TRUE;
             break;
-        case BSIM4V4_RBDB:
-            here->BSIM4V4rbdb = value->rValue;
-            here->BSIM4V4rbdbGiven = TRUE;
+        case BSIM4v4_RBDB:
+            here->BSIM4v4rbdb = value->rValue;
+            here->BSIM4v4rbdbGiven = TRUE;
             break;
-        case BSIM4V4_RBPB:
-            here->BSIM4V4rbpb = value->rValue;
-            here->BSIM4V4rbpbGiven = TRUE;
+        case BSIM4v4_RBPB:
+            here->BSIM4v4rbpb = value->rValue;
+            here->BSIM4v4rbpbGiven = TRUE;
             break;
-        case BSIM4V4_RBPS:
-            here->BSIM4V4rbps = value->rValue;
-            here->BSIM4V4rbpsGiven = TRUE;
+        case BSIM4v4_RBPS:
+            here->BSIM4v4rbps = value->rValue;
+            here->BSIM4v4rbpsGiven = TRUE;
             break;
-        case BSIM4V4_RBPD:
-            here->BSIM4V4rbpd = value->rValue;
-            here->BSIM4V4rbpdGiven = TRUE;
+        case BSIM4v4_RBPD:
+            here->BSIM4v4rbpd = value->rValue;
+            here->BSIM4v4rbpdGiven = TRUE;
             break;
-        case BSIM4V4_TRNQSMOD:
-            here->BSIM4V4trnqsMod = value->iValue;
-            here->BSIM4V4trnqsModGiven = TRUE;
+        case BSIM4v4_TRNQSMOD:
+            here->BSIM4v4trnqsMod = value->iValue;
+            here->BSIM4v4trnqsModGiven = TRUE;
             break;
-        case BSIM4V4_ACNQSMOD:
-            here->BSIM4V4acnqsMod = value->iValue;
-            here->BSIM4V4acnqsModGiven = TRUE;
+        case BSIM4v4_ACNQSMOD:
+            here->BSIM4v4acnqsMod = value->iValue;
+            here->BSIM4v4acnqsModGiven = TRUE;
             break;
-        case BSIM4V4_RBODYMOD:
-            here->BSIM4V4rbodyMod = value->iValue;
-            here->BSIM4V4rbodyModGiven = TRUE;
+        case BSIM4v4_RBODYMOD:
+            here->BSIM4v4rbodyMod = value->iValue;
+            here->BSIM4v4rbodyModGiven = TRUE;
             break;
-        case BSIM4V4_RGATEMOD:
-            here->BSIM4V4rgateMod = value->iValue;
-            here->BSIM4V4rgateModGiven = TRUE;
+        case BSIM4v4_RGATEMOD:
+            here->BSIM4v4rgateMod = value->iValue;
+            here->BSIM4v4rgateModGiven = TRUE;
             break;
-        case BSIM4V4_GEOMOD:
-            here->BSIM4V4geoMod = value->iValue;
-            here->BSIM4V4geoModGiven = TRUE;
+        case BSIM4v4_GEOMOD:
+            here->BSIM4v4geoMod = value->iValue;
+            here->BSIM4v4geoModGiven = TRUE;
             break;
-        case BSIM4V4_RGEOMOD:
-            here->BSIM4V4rgeoMod = value->iValue;
-            here->BSIM4V4rgeoModGiven = TRUE;
+        case BSIM4v4_RGEOMOD:
+            here->BSIM4v4rgeoMod = value->iValue;
+            here->BSIM4v4rgeoModGiven = TRUE;
             break;
-        case BSIM4V4_IC_VDS:
-            here->BSIM4V4icVDS = value->rValue;
-            here->BSIM4V4icVDSGiven = TRUE;
+        case BSIM4v4_IC_VDS:
+            here->BSIM4v4icVDS = value->rValue;
+            here->BSIM4v4icVDSGiven = TRUE;
             break;
-        case BSIM4V4_IC_VGS:
-            here->BSIM4V4icVGS = value->rValue;
-            here->BSIM4V4icVGSGiven = TRUE;
+        case BSIM4v4_IC_VGS:
+            here->BSIM4v4icVGS = value->rValue;
+            here->BSIM4v4icVGSGiven = TRUE;
             break;
-        case BSIM4V4_IC_VBS:
-            here->BSIM4V4icVBS = value->rValue;
-            here->BSIM4V4icVBSGiven = TRUE;
+        case BSIM4v4_IC_VBS:
+            here->BSIM4v4icVBS = value->rValue;
+            here->BSIM4v4icVBSGiven = TRUE;
             break;
-        case BSIM4V4_IC:
+        case BSIM4v4_IC:
             switch(value->v.numValue)
             {   case 3:
-                    here->BSIM4V4icVBS = *(value->v.vec.rVec+2);
-                    here->BSIM4V4icVBSGiven = TRUE;
+                    here->BSIM4v4icVBS = *(value->v.vec.rVec+2);
+                    here->BSIM4v4icVBSGiven = TRUE;
                 case 2:
-                    here->BSIM4V4icVGS = *(value->v.vec.rVec+1);
-                    here->BSIM4V4icVGSGiven = TRUE;
+                    here->BSIM4v4icVGS = *(value->v.vec.rVec+1);
+                    here->BSIM4v4icVGSGiven = TRUE;
                 case 1:
-                    here->BSIM4V4icVDS = *(value->v.vec.rVec);
-                    here->BSIM4V4icVDSGiven = TRUE;
+                    here->BSIM4v4icVDS = *(value->v.vec.rVec);
+                    here->BSIM4v4icVDSGiven = TRUE;
                     break;
                 default:
                     return(E_BADPARM);

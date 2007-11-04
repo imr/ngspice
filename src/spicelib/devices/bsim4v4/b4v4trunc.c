@@ -15,41 +15,41 @@
 #include "suffix.h"
 
 int
-BSIM4V4trunc(inModel,ckt,timeStep)
+BSIM4v4trunc(inModel,ckt,timeStep)
 GENmodel *inModel;
 CKTcircuit *ckt;
 double *timeStep;
 {
-BSIM4V4model *model = (BSIM4V4model*)inModel;
-BSIM4V4instance *here;
+BSIM4v4model *model = (BSIM4v4model*)inModel;
+BSIM4v4instance *here;
 
 #ifdef STEPDEBUG
     double debugtemp;
 #endif /* STEPDEBUG */
 
-    for (; model != NULL; model = model->BSIM4V4nextModel)
-    {    for (here = model->BSIM4V4instances; here != NULL;
-	      here = here->BSIM4V4nextInstance)
+    for (; model != NULL; model = model->BSIM4v4nextModel)
+    {    for (here = model->BSIM4v4instances; here != NULL;
+	      here = here->BSIM4v4nextInstance)
 	 {
-	    if (here->BSIM4V4owner != ARCHme) continue;
+	    if (here->BSIM4v4owner != ARCHme) continue;
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
 #endif /* STEPDEBUG */
-            CKTterr(here->BSIM4V4qb,ckt,timeStep);
-            CKTterr(here->BSIM4V4qg,ckt,timeStep);
-            CKTterr(here->BSIM4V4qd,ckt,timeStep);
-            if (here->BSIM4V4trnqsMod)
-                CKTterr(here->BSIM4V4qcdump,ckt,timeStep);
-            if (here->BSIM4V4rbodyMod)
-            {   CKTterr(here->BSIM4V4qbs,ckt,timeStep);
-                CKTterr(here->BSIM4V4qbd,ckt,timeStep);
+            CKTterr(here->BSIM4v4qb,ckt,timeStep);
+            CKTterr(here->BSIM4v4qg,ckt,timeStep);
+            CKTterr(here->BSIM4v4qd,ckt,timeStep);
+            if (here->BSIM4v4trnqsMod)
+                CKTterr(here->BSIM4v4qcdump,ckt,timeStep);
+            if (here->BSIM4v4rbodyMod)
+            {   CKTterr(here->BSIM4v4qbs,ckt,timeStep);
+                CKTterr(here->BSIM4v4qbd,ckt,timeStep);
 	    }
-	    if (here->BSIM4V4rgateMod == 3)
-		CKTterr(here->BSIM4V4qgmid,ckt,timeStep);
+	    if (here->BSIM4v4rgateMod == 3)
+		CKTterr(here->BSIM4v4qgmid,ckt,timeStep);
 #ifdef STEPDEBUG
             if(debugtemp != *timeStep)
 	    {  printf("device %s reduces step from %g to %g\n",
-                       here->BSIM4V4name,debugtemp,*timeStep);
+                       here->BSIM4v4name,debugtemp,*timeStep);
             }
 #endif /* STEPDEBUG */
         }
