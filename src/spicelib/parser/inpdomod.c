@@ -290,8 +290,17 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    break;
 	case 14:
 	    type = INPtypelook("BSIM4");
-	    if ( (strstr( ver, "4.4")) || (strstr( ver, "4.4.0")) ) {
+	    if ( (strstr(ver, "4.2")) || (strstr(ver, "4.2.1")) || (strstr(ver, "4.21")) ) {
+	      type = INPtypelook("BSIM4v2");
+	    }
+	    if ( (strstr(ver, "4.3")) || (strstr(ver, "4.3.0")) || (strstr(ver, "4.30")) ) {
+	      type = INPtypelook("BSIM4v3");
+	    }
+	    if ( (strstr(ver, "4.4")) || (strstr(ver, "4.4.0")) || (strstr(ver, "4.40")) ) {
 	      type = INPtypelook("BSIM4v4");
+	    }
+	    if ( (strstr(ver, "4.5")) || (strstr(ver, "4.5.0")) || (strstr(ver, "4.50")) ) {
+	      type = INPtypelook("BSIM4v5");
 	    }
 	    if (type < 0) {
 		err =

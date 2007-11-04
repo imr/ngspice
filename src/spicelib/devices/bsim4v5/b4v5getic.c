@@ -1,0 +1,44 @@
+/**** BSIM4.5.0 Released by Xuemei (Jane) Xi 07/29/2005 ****/
+
+/**********
+ * Copyright 2005 Regents of the University of California. All rights reserved.
+ * File: b4getic.c of BSIM4.5.0.
+ * Author: 2000 Weidong Liu
+ * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
+ * Project Director: Prof. Chenming Hu.
+ **********/
+
+#include "ngspice.h"
+#include "cktdefs.h"
+#include "bsim4v5def.h"
+#include "sperror.h"
+#include "suffix.h"
+
+
+int
+BSIM4v5getic(inModel,ckt)
+GENmodel *inModel;
+CKTcircuit *ckt;
+{
+BSIM4v5model *model = (BSIM4v5model*)inModel;
+BSIM4v5instance *here;
+
+    for (; model ; model = model->BSIM4v5nextModel) 
+    {    for (here = model->BSIM4v5instances; here; here = here->BSIM4v5nextInstance)
+	       {   if (here->BSIM4v5owner != ARCHme) continue;
+	           if (!here->BSIM4v5icVDSGiven) 
+	      {   here->BSIM4v5icVDS = *(ckt->CKTrhs + here->BSIM4v5dNode) 
+				   - *(ckt->CKTrhs + here->BSIM4v5sNode);
+              }
+              if (!here->BSIM4v5icVGSGiven) 
+	      {   here->BSIM4v5icVGS = *(ckt->CKTrhs + here->BSIM4v5gNodeExt) 
+				   - *(ckt->CKTrhs + here->BSIM4v5sNode);
+              }
+              if(!here->BSIM4v5icVBSGiven)
+              {  here->BSIM4v5icVBS = *(ckt->CKTrhs + here->BSIM4v5bNode)
+                                  - *(ckt->CKTrhs + here->BSIM4v5sNode);
+              }
+         }
+    }
+    return(OK);
+}
