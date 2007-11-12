@@ -283,7 +283,7 @@ top2:
 
 /*
  * Free memory used by a line.
- * If recure is TRUE then recursivly free all lines linked via the li_next field.
+ * If recurse is TRUE then recursively free all lines linked via the li_next field.
  * If recurse is FALSE free only this line.
  * All lines linked via the li_actual field are always recursivly freed.
  * SJB - 22nd May 2001
@@ -666,7 +666,11 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
     }
     cp_getvar("noparse", VT_BOOL, (char *) &noparse);
 
-    if (!noparse) {
+
+/* We check preliminary for the scale option. This special processing
+   is needed because we need the scale info BEFORE building the circuit
+   and seems there is no other way to do this. */
+     if (!noparse) {
         for (; options; options = options->li_next) {
             for (s = options->li_line; *s && !isspace(*s); s++)
                 ;
@@ -688,25 +692,21 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
 	    static int one = 1;
             switch (eev->va_type) {
                 case VT_BOOL:
-		  if_option(ct->ci_ckt, eev->va_name, 
-			    eev->va_type, &one);
 		  break;
                 case VT_NUM:
-		  if_option(ct->ci_ckt, eev->va_name, 
-			    eev->va_type, (char *) &eev->va_num);
 		  break;
                 case VT_REAL:
-		  if_option(ct->ci_ckt, eev->va_name, 
-			    eev->va_type, (char *) &eev->va_real);
+                    if ( strcmp("scale",eev->va_name)==0 ){
+                    cp_vset("scale", VT_REAL, (char*) &eev->va_real );
+                    printf("Scale set\n");
+                    }
 		  break;
                 case VT_STRING:
-		  if_option(ct->ci_ckt, eev->va_name, 
-			    eev->va_type, eev->va_string);
 		  break;
 	    } /* switch  . . . */
         }
     } /* if (!noparse)  . . . */
-
+   
     /*----------------------------------------------------
      * Now assuming that we wanna parse this deck, we call 
      * if_inpdeck which takes the deck and returns a
@@ -714,7 +714,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
      *---------------------------------------------------*/
     if (!noparse)
         ckt = if_inpdeck(deck, &tab);
-    else
+      else
         ckt = NULL;
 
     out_init();
@@ -765,7 +765,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
       /* output deck */
       out_printf( "\nProcessed Netlist\n" );
       out_printf( "=================\n" );
-      print_listing = 1;
+      int print_listing = 1;
       for (dd = deck; dd; dd = dd->li_next) {
 	if ( ciprefix(".prot", dd->li_line) ) print_listing = 0;
 	if ( print_listing == 1 ) out_printf( "%s\n", dd->li_line );
@@ -803,6 +803,48 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
         ct->ci_filename = copy(filename);
     else
         ct->ci_filename = NULL;
+
+    if (!noparse) {
+        for (; options; options = options->li_next) {
+            for (s = options->li_line; *s && !isspace(*s); s++)
+                ;
+
+            ii = cp_interactive;
+            cp_interactive = FALSE;
+            wl = cp_lexer(s);
+            cp_interactive = ii;
+            if (!wl || !wl->wl_word || !*wl->wl_word)
+                continue;
+            if (eev)
+                eev->va_next = cp_setparse(wl);
+            else
+                ct->ci_vars = eev = cp_setparse(wl);
+            while (eev->va_next)
+                eev = eev->va_next;
+        }
+        for (eev = ct->ci_vars; eev; eev = eev->va_next) {
+	    static int one = 1;
+            switch (eev->va_type) {
+                case VT_BOOL:
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, &one);
+		  break;
+                case VT_NUM:
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, (char *) &eev->va_num);
+		  break;
+                case VT_REAL:
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, (char *) &eev->va_real);
+		  break;
+                case VT_STRING:
+		  if_option(ct->ci_ckt, eev->va_name, 
+			    eev->va_type, eev->va_string);
+		  break;
+	    } /* switch  . . . */
+        }
+    } /* if (!noparse)  . . . */
+
 
     cp_addkword(CT_CKTNAMES, tt);
     return;

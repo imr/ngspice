@@ -1,3 +1,8 @@
+2007-11-12 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/inp.c: corrected option processing. Now "scale" option 
+   is special and is processed before netlist parsing. The implementation
+   is not very clean. 
+
 2007-11-04 Dietmar Warning
  * configure.in, src/Makefile.am, src/spicelib/devices/Makefile.am, 
    src/spicelib/parser/inpgmod.c, src/spicelib/parser/inp2m.c
