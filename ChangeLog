@@ -1,3 +1,11 @@
+2007-11-04 Dietmar Warning
+ * configure.in, src/Makefile.am, src/spicelib/devices/Makefile.am, 
+   src/spicelib/parser/inpgmod.c, src/spicelib/parser/inp2m.c
+   BSIM4 has changed (based on Phil Barker patch):
+   version code 4.2.1/4.3.0/4.5.0 added
+   4.4.0 small corrections
+   4.6.0 updated to 4.6.1
+
 2007-10-12 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/{cpitf.c, inp.c, miscvars.c}, src/spinit.in: 
    reimplemented "brief" option as a boolean and defaulted to
@@ -111,7 +119,7 @@
  end of the for cicle (after the instruction that skips the ".end" line).
 
 
-2007-09-12 Dietmar Warning <dietmar.warning@arcor.de>
+2007-09-12 Dietmar Warning
  * src/frontend/terminal.c: fixed segmentation fault occurring when messages 
    >4096 bytes are sent to out_printf() function. The fix uses asprintf if
    available.
