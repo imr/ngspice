@@ -371,7 +371,9 @@ int add_device(int n, SPICEdev **devs, int flag){
   DEVices = (SPICEdev **)trealloc(DEVices,(DEVNUM+n)*sizeof(SPICEdev *));
   DEVicesfl = (int *)trealloc(DEVicesfl,(DEVNUM+n)*sizeof(int));
   for(i = 0; i < n;i++){
-    /*debug*/printf("Added device: %s\n",devs[i]->DEVpublic.name);
+#ifdef TRACE
+      printf("Added device: %s\n",devs[i]->DEVpublic.name);
+#endif
     DEVices[DEVNUM+i] = devs[i];
 
     /* added by SDB on 6.20.2003 */
@@ -388,7 +390,9 @@ int add_udn(int n,Evt_Udn_Info_t **udns){
   int i;
   g_evt_udn_info = (Evt_Udn_Info_t  **)trealloc(g_evt_udn_info,(g_evt_num_udn_types+n)*sizeof(Evt_Udn_Info_t  *));
   for(i = 0; i < n;i++){
-    /*debug*/printf("Added udn: %s\n",udns[i]->name);
+#ifdef TRACE
+      printf("Added udn: %s\n",udns[i]->name);
+#endif
     g_evt_udn_info[g_evt_num_udn_types+i] = udns[i];
   }
   g_evt_num_udn_types += n;
@@ -416,7 +420,9 @@ int load_opus(char *name){
   fetch = dlsym(lib,"CMdevNum");
   if(fetch){
     num = (int *)(*fetch)();
+#ifdef TRACE
     printf("Got %u devices.\n",*num);
+#endif
     fetch = NULL;
   }else{
     msg = dlerror();
@@ -449,7 +455,9 @@ int load_opus(char *name){
   fetch = dlsym(lib,"CMudnNum");
   if(fetch){
     num = (int *)(*fetch)();
+#ifdef TRACE
     printf("Got %u udns.\n",*num);
+#endif
     fetch = NULL;
   }else{
     msg = dlerror();

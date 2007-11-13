@@ -1,3 +1,8 @@
+2007-11-13 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/spicelib/devices/dev.c: As suggested by Alberto Lucchini and
+ Francesco Nizzi I have masked the debug information on xspice device
+ loading with #ifdef TRACE.
+
 2007-11-12 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/inp.c: corrected option processing. Now "scale" option 
    is special and is processed before netlist parsing. The implementation
