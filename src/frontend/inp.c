@@ -765,7 +765,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
       /* output deck */
       out_printf( "\nProcessed Netlist\n" );
       out_printf( "=================\n" );
-      int print_listing = 1;
+      print_listing = 1;
       for (dd = deck; dd; dd = dd->li_next) {
 	if ( ciprefix(".prot", dd->li_line) ) print_listing = 0;
 	if ( print_listing == 1 ) out_printf( "%s\n", dd->li_line );
