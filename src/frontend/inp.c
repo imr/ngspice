@@ -490,7 +490,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       if (deck->li_next) {
             /* There is something left after the controls. */
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
-            fprintf(stderr, "\nCircuit: %s\n\n", tt);
 
 	    /* Old location of ENHtranslate_poly.  This didn't work, because it
 	     * didn't handle models in .SUBCKTs correctly.  Moved to new location below
