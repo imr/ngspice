@@ -68,10 +68,12 @@ static struct ccom *keywords[NCLASSES]; /* Keywords. */
 
 /* static declarations */
 
+#ifdef TIOCSTI /* va, functions used in this branch only */ 
 static struct ccom * getccom(char *first);
 static wordlist * ccfilec(char *buf);
 static wordlist * ccmatch(char *word, struct ccom **dbase);
 static void printem(wordlist *wl);
+#endif
 static wordlist * cctowl(struct ccom *cc, bool sib);
 static struct ccom * clookup(register char *word, struct ccom **dd, bool pref, 
 			     bool create);
