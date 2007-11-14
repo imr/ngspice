@@ -25,13 +25,6 @@ int cinprefix(register char *p, register char *s, register int n);
 int cimatch(register char *p, register char *s); 
 #endif
 
-#if !defined(HAVE_INDEX) && !defined(HAVE_STRCHR)
-
-char * index(register char *s, register char c);
-char * rindex(register char *s,register char c );
-
-#endif /* !defined(HAVE_INDEX) && !defined(HAVE_STRCHR) */
-
 #ifndef HAVE_BCOPY
 
 void bcopy(const void *from, void *to, size_t num);
