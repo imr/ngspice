@@ -442,25 +442,6 @@ AC_TRY_LINK([#include <setjmp.h>],[jmp_buf env; sigsetjmp(env, 1);],
 dnl Check for the asprintf function:
 AC_CHECK_FUNCS(asprintf,,AC_CHECK_LIB(iberty,asprintf,AC_DEFINE(HAVE_ASPRINTF) LIBS="$LIBS -liberty"))
 
-dnl Check for va_copy
-AC_CACHE_CHECK([for va_copy], ac_cv_c_va_copy,
- AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>]], [[va_list ap1, ap2;
-    va_copy(ap1,ap2); 
-   ]])],[ac_cv_c_va_copy="yes"],[ac_cv_c_va_copy="no"])
- )
-if test "$ac_cv_c_va_copy" = "yes"
-then 
-    AC_DEFINE(HAVE_VA_COPY, 1, [Define if we have va_copy])
-fi
-AC_CACHE_CHECK([for __va_copy], ac_cv_c___va_copy,
- AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>]], [[va_list ap1, ap2;
-    __va_copy(ap1,ap2);
-   ]])],[ac_cv_c___va_copy="yes"],[ac_cv_c___va_copy="no"])
- )
-if test "$ac_cv_c___va_copy" = "yes"
-then
-    AC_DEFINE(HAVE___VA_COPY, 1, [Define if we have __va_copy])
-fi
 
 # AC_CHECK_FUNC(getopt_long, getopt_long=true)
 # AM_CONDITIONAL(HAVE_GETOPT_LONG, test "$getopt_long" = "true")
