@@ -370,8 +370,6 @@ bcopy(const void *vfrom, void *vto, size_t num)
 #endif
 
 #ifndef bzero
-/* can't declare void here, because we've already used it in this file */
-/* and haven't declared it void before the use */
 void
 bzero(void *vptr, size_t num)
 {
