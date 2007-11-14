@@ -162,7 +162,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
     INPpas1((void *) ckt, (card *) deck->li_next,(INPtables *)*tab);
     INPpas2((void *) ckt, (card *) deck->li_next,
             (INPtables *) *tab,ft_curckt->ci_defTask);
-    /* INPkillMods();   PJB 09/29/03 -- keep global set of model descriptors */
+    INPkillMods();
 
     /* INPpas2 has been modified to ignore .NODESET and .IC
      * cards. These are left till INPpas3 so that we can check for
