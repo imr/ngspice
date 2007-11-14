@@ -1,3 +1,7 @@
+2007-11-14 Dietmar Warning
+ * src/frontend/inp.c: No title message to stderr - stdout is enough 
+ * src/frontend/spiceif.c: reenable INPkillMods after deck processing 
+
 2007-11-13 Paolo Nenzi <p.nenzi@ieee.org>
  * src/spicelib/devices/dev.c: As suggested by Alberto Lucchini and
  Francesco Nizzi I have masked the debug information on xspice device
