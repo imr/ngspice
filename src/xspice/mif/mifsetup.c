@@ -42,7 +42,6 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 
-/* #include "prefix.h"  */
 #include "ngspice.h"
 #include "smpdefs.h"
 #include "devdefs.h"
@@ -53,7 +52,6 @@ NON-STANDARD FEATURES
 #include "mifdefs.h"
 #include "mifcmdat.h"
 
-/* #include "suffix.h"  */
 
 
 
@@ -453,7 +451,6 @@ MIFsetup(
     return(OK);
 }
 
-
 int
 MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
 {
@@ -475,31 +472,31 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
         num_conn=here->num_conn;
         for(i = 0; i < num_conn; i++) {
 
-           // if the connection is null, skip to next connection
+           /* if the connection is null, skip to next connection */
            if(here->conn[i]->is_null) continue;
 
-           // prepare things for convenient access later
+           /* prepare things for convenient access later */
            num_port = here->conn[i]->size;
 
-           // loop through all ports on this connection
+           /* loop through all ports on this connection */
            for(j = 0; j < num_port; j++) {
 
-           // determine the type of this output port
+           /* determine the type of this output port */
            out_type = here->conn[i]->port[j]->type;
 
-           // create a pointer to the smp data for quick access
+           /* create a pointer to the smp data for quick access */
            smp_data_out = &(here->conn[i]->port[j]->smp_data);
 
            for(k = 0; k < num_conn; k++) {
-                // if the connection is null or is not an input
-                // skip to next connection
+                /* if the connection is null or is not an input
+                   skip to next connection */
                 if((here->conn[k]->is_null) || (! here->conn[k]->is_input))
                             continue;
                 num_port_k = here->conn[k]->size;
-                // determine the type of this input port
+                /* determine the type of this input port */
                 for(l = 0; l < num_port_k; l++) {
 
-                  // if port is null, skip to next
+                  /* if port is null, skip to next */
                   if(here->conn[k]->port[l]->is_null)
                                 continue;
                   in_type = here->conn[i]->port[j]->type;
