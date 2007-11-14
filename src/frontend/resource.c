@@ -8,7 +8,7 @@ $Id$
  * Resource-related routines.
  */
 
-#include <config.h>
+#include "config.h"
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
@@ -18,6 +18,7 @@ $Id$
 #include "resource.h"
 #include "variable.h"
 #include "cktdefs.h"
+#include "src/misc/misc_time.h" /* timediff */
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include ipc stuff */
