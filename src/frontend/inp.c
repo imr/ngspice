@@ -643,6 +643,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
     bool noparse, ii;
     bool brief;
     int print_listing;
+    static int one;
 
     /* First throw away any old error messages there might be and fix
      * the case of the lines.  */
@@ -688,7 +689,6 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
                 eev = eev->va_next;
         }
         for (eev = ct->ci_vars; eev; eev = eev->va_next) {
-	    static int one = 1;
             switch (eev->va_type) {
                 case VT_BOOL:
 		  break;
@@ -822,7 +822,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
                 eev = eev->va_next;
         }
         for (eev = ct->ci_vars; eev; eev = eev->va_next) {
-	    static int one = 1;
+	    one = 1;
             switch (eev->va_type) {
                 case VT_BOOL:
 		  if_option(ct->ci_ckt, eev->va_name, 
