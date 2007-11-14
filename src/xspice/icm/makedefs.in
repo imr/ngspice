@@ -16,11 +16,12 @@ CC = @CC@
 # Spice header include path
 INCLUDES = -I$(TOPDIR)$(top_srcdir)/src/include -I$(TOPDIR)$(top_builddir)
 
+ISMINGW = $(shell uname | grep -c "MINGW32")
 # CFLAGS to use here
-ifeq "$(strip $(uname))" "MINGW32_NT-5.0" 
+ifeq ($(ISMINGW), 1)
   CFLAGS = @CFLAGS@ -DCM_WINDOWS 
 else  
-CFLAGS = @CFLAGS@ -fPIC -DCM_LINUX
+  CFLAGS = @CFLAGS@ -fPIC -DCM_LINUX
 endif
 
 # Path to the cmpp utility
