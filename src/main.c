@@ -657,13 +657,13 @@ main(int argc, char **argv)
 	OUTendDomain,
 	OUTattributes
     };
+    bool rflag = FALSE;
 #else  /* ~ SIMULATOR */
     bool gdata = TRUE;
 #endif /* ~ SIMULATOR */
 
     char buf[BSIZE_SP];
     bool readinit = TRUE;
-    bool rflag = FALSE;
     bool istty = TRUE;
     bool iflag = FALSE;
     bool qflag = FALSE;
