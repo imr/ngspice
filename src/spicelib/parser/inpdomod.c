@@ -214,7 +214,6 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	       || (strcmp(typename, "nsoi") == 0)
 	       || (strcmp(typename, "psoi") == 0)) {
 	err = INPfindLev(line, &lev);
-	err = INPfindVer(line, ver);
 	switch (lev) {
 	case 0:
 	case 1:
@@ -275,6 +274,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    break;
 	case 8:
 	    type = INPtypelook("BSIM3");
+	    err = INPfindVer(line, ver);
 	    if (type < 0) {
 		err =
 		    INPmkTemp
@@ -289,8 +289,9 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    }
 	    break;
 	case 14:
-	    type = INPtypelook("BSIM4");
-	    if ( (strstr(ver, "4.2")) || (strstr(ver, "4.2.1")) || (strstr(ver, "4.21")) ) {
+	    err = INPfindVer(line, ver); /* mapping of minor versions are only placeholder */
+	    if ( (strstr(ver, "4.2")) || (strstr(ver, "4.2.0")) || (strstr(ver, "4.20")) 
+	                              || (strstr(ver, "4.2.1")) || (strstr(ver, "4.21")) ) {
 	      type = INPtypelook("BSIM4v2");
 	    }
 	    if ( (strstr(ver, "4.3")) || (strstr(ver, "4.3.0")) || (strstr(ver, "4.30")) ) {
@@ -301,6 +302,11 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    }
 	    if ( (strstr(ver, "4.5")) || (strstr(ver, "4.5.0")) || (strstr(ver, "4.50")) ) {
 	      type = INPtypelook("BSIM4v5");
+	    }
+	    if ( (strstr(ver, "default")) 
+	        || (strstr(ver, "4.6")) || (strstr(ver, "4.6.0")) || (strstr(ver, "4.60")) 
+	                                || (strstr(ver, "4.6.1")) || (strstr(ver, "4.61")) ) {
+	      type = INPtypelook("BSIM4");
 	    }
 	    if (type < 0) {
 		err =
