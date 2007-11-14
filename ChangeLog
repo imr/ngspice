@@ -1,4 +1,16 @@
 2007-11-14 Dietmar Warning
+ * src/frontend/inp.c: one only "one" times
+ * src/frontend/resource.c: include prototype for timediff
+ * src/frontend/parser/complete.c: functions used in this branch only
+ * src/spicelib/analysis/acan.c: unused variable step
+ * src/spicelib/parser/inp2q.c: 5 nodes only for adms
+ * src/misc/string.c: comment was nonsens
+ * src/misc/stringutil.h: no prototypes index/rindex for non-provided functions 
+ * src/misc/misc_time.h: providing prototype for timediff 
+ * src/main.c: unused variable rflag
+ * src/xspice/mif/mifsetup.c: no c++ comments
+
+2007-11-14 Dietmar Warning
  * src/frontend/inp.c: No title message to stderr - stdout is enough 
  * src/frontend/spiceif.c: reenable INPkillMods after deck processing 
  * src/spicelib/parser/inpdomod.c: til now only bsim4 has version processing
