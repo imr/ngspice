@@ -314,10 +314,10 @@ ACan(CKTcircuit *ckt, int restart)
 			 {
 				 double endfreq   = ((ACAN*)ckt->CKTcurJob)->ACstopFreq;
 				 double startfreq = ((ACAN*)ckt->CKTcurJob)->ACstartFreq;
-				 double step      = ((ACAN*)ckt->CKTcurJob)->ACfreqDelta;
+/*				 double step      = ((ACAN*)ckt->CKTcurJob)->ACfreqDelta; */
 				 endfreq   = log(endfreq);
 				 if (startfreq == 0.0)
-                	startfreq = 1e-12;
+					startfreq = 1e-12;
 				 startfreq = log(startfreq);
 
 				 if (freq > 0.0)
