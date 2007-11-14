@@ -26,12 +26,16 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     char *nname2;		/* the second node's name */
     char *nname3;		/* the third node's name */
     char *nname4;		/* the fourth node's name */
+#ifdef ADMS
     char *nname5;		/* the fifth node's name */
+#endif
     void *node1;		/* the first node's node pointer */
     void *node2;		/* the second node's node pointer */
     void *node3;		/* the third node's node pointer */
     void *node4;		/* the fourth node's node pointer */
+#ifdef ADMS
     void *node5;		/* the fifth node's node pointer */
+#endif
     int error;			/* error code temporary */
     int nodeflag;		/* flag indicating 4 or 5 nodes */
     void *fast;			/* pointer to the actual instance */
