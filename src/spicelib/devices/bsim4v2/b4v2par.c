@@ -9,7 +9,6 @@
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "bsim4v2def.h"
 #include "sperror.h"

@@ -9,18 +9,23 @@ File: b3v0par.c
 #include "bsim3v0def.h"
 #include "sperror.h"
 #include "suffix.h"
+#include "fteext.h"
 
 int
 BSIM3v0param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
+    double scale;
+
+    if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
+
     BSIM3v0instance *here = (BSIM3v0instance*)inst;
     switch(param) 
     {   case BSIM3v0_W:
-            here->BSIM3v0w = value->rValue;
+            here->BSIM3v0w = value->rValue*scale;
             here->BSIM3v0wGiven = TRUE;
             break;
         case BSIM3v0_L:
-            here->BSIM3v0l = value->rValue;
+            here->BSIM3v0l = value->rValue*scale;
             here->BSIM3v0lGiven = TRUE;
             break;
 	case BSIM3v0_M:
@@ -28,19 +33,19 @@ BSIM3v0param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->BSIM3v0mGiven = TRUE;
             break;
         case BSIM3v0_AS:
-            here->BSIM3v0sourceArea = value->rValue;
+            here->BSIM3v0sourceArea = value->rValue*scale*scale;
             here->BSIM3v0sourceAreaGiven = TRUE;
             break;
         case BSIM3v0_AD:
-            here->BSIM3v0drainArea = value->rValue;
+            here->BSIM3v0drainArea = value->rValue*scale*scale;
             here->BSIM3v0drainAreaGiven = TRUE;
             break;
         case BSIM3v0_PS:
-            here->BSIM3v0sourcePerimeter = value->rValue;
+            here->BSIM3v0sourcePerimeter = value->rValue*scale;
             here->BSIM3v0sourcePerimeterGiven = TRUE;
             break;
         case BSIM3v0_PD:
-            here->BSIM3v0drainPerimeter = value->rValue;
+            here->BSIM3v0drainPerimeter = value->rValue*scale;
             here->BSIM3v0drainPerimeterGiven = TRUE;
             break;
         case BSIM3v0_NRS:
