@@ -1,3 +1,7 @@
+2007-11-17 Dietmar Warning
+ * src/spicelib/devices/b*par.c: scale parameter included
+ * src/frontend/numparam/xpressn.c: cast to prevent warning
+
 2007-11-14 Dietmar Warning
  * src/frontend/inp.c: one only "one" times
  * src/frontend/resource.c: include prototype for timediff
