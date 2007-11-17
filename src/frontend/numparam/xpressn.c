@@ -876,7 +876,7 @@ Begin
 	u=formula( dico, t, Addr(error));
         state=1; /*atom*/
         If fu>0 Then 
- 	  if ( fu == 14 ) u= ternary_fcn(v,w,u);
+ 	  if ( fu == 14 ) u= ternary_fcn((int)v,w,u);
           else u= mathfunction(fu,v,u);
         EndIf
       EndIf
