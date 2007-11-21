@@ -30,32 +30,32 @@ FILE *fplog;
     {   pParam = here->pParam;
 
 	fprintf (fplog,
-		 "BSIM3v3.2 Model (Supports: v3.2 and v3.2.{2,3,4}).\n");
+		 "BSIM3 Model (Supports: v3.2, v3.2.2, v3.2.3, v3.2.4)\n");
 	fprintf (fplog, "Parameter Checking.\n");
 	fprintf (fplog, "Model = %s\n", model->BSIM3modName);
 	fprintf (fplog, "W = %g, L = %g, M = %g\n", here->BSIM3w,
 		 here->BSIM3l, here->BSIM3m);
 
-	if ((strcmp (model->BSIM3version, "3.2.4"))
-	    && (strcmp (model->BSIM3version, "3.2.3"))
-	    && (strcmp (model->BSIM3version, "3.2.2"))
-	    && (strcmp (model->BSIM3version, "3.2")))
+	if ((strcmp(model->BSIM3version, "3.2.4")) && (strcmp(model->BSIM3version, "3.24"))
+	 && (strcmp(model->BSIM3version, "3.2.3")) && (strcmp(model->BSIM3version, "3.23"))
+	 && (strcmp(model->BSIM3version, "3.2.2")) && (strcmp(model->BSIM3version, "3.22"))
+	 && (strcmp(model->BSIM3version, "3.2")) && (strcmp(model->BSIM3version, "3.20")))
 	{
-		fprintf (fplog,
-			 "Warning: This model supports BSIM3v3.2 and BSIM3v3.2.{2,3,4}\n");
-		fprintf (fplog,
-			 "You specified a wrong version number.\n");
-		printf ("Warning: This model supports BSIM3v3.2 and BSIM3v3.2.{2,3,4}\n");
-		printf ("You specified a wrong version number.\n");
+	    fprintf (fplog,
+		"Warning: This model supports BSIM3v3.2, BSIM3v3.2.2, BSIM3v3.2.3, BSIM3v3.2.4\n");
+	    fprintf (fplog,
+		"You specified a wrong version number. Working now with BSIM3v3.2.4.\n");
+	    printf ("Warning: This model supports BSIM3v3.2, BSIM3v3.2.2, BSIM3v3.2.3, BSIM3v3.2.4\n");
+	    printf ("You specified a wrong version number. Working now with BSIM3v3.2.4.\n");
 	}
 
-            if (pParam->BSIM3nlx < -pParam->BSIM3leff)
-	    {   fprintf(fplog, "Fatal: Nlx = %g is less than -Leff.\n",
+        if (pParam->BSIM3nlx < -pParam->BSIM3leff)
+	{   fprintf(fplog, "Fatal: Nlx = %g is less than -Leff.\n",
 			pParam->BSIM3nlx);
-	        printf("Fatal: Nlx = %g is less than -Leff.\n",
+	    printf("Fatal: Nlx = %g is less than -Leff.\n",
 			pParam->BSIM3nlx);
-		Fatal_Flag = 1;
-            }
+	    Fatal_Flag = 1;
+        }
 
 	if (model->BSIM3tox <= 0.0)
 	{   fprintf(fplog, "Fatal: Tox = %g is not positive.\n",

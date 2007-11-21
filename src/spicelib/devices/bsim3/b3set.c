@@ -69,13 +69,13 @@ IFuid tmpName;
          * is faster than comparing strings.
          * Paolo Nenzi 2002
          */
-        if (!strcmp (model->BSIM3version, "3.2.4"))
+        if ((!strcmp(model->BSIM3version, "3.2.4"))||(!strcmp(model->BSIM3version, "3.24")))
                 model->BSIM3intVersion = BSIM3V324;
-        else if (!strcmp (model->BSIM3version, "3.2.3"))
+        else if ((!strcmp(model->BSIM3version, "3.2.3"))||(!strcmp(model->BSIM3version, "3.23")))
                 model->BSIM3intVersion = BSIM3V323;
-        else if (!strcmp (model->BSIM3version, "3.2.2"))
+        else if ((!strcmp(model->BSIM3version, "3.2.2"))||(!strcmp(model->BSIM3version, "3.22")))
                 model->BSIM3intVersion = BSIM3V322;
-        else if (!strcmp (model->BSIM3version, "3.2"))
+        else if ((!strcmp(model->BSIM3version, "3.2"))||(!strcmp(model->BSIM3version, "3.20")))
                 model->BSIM3intVersion = BSIM3V32;
         else
                 model->BSIM3intVersion = BSIM3V3OLD;
