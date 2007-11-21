@@ -6,12 +6,28 @@ $Id$
 /*
  * Missing math functions
  */
-#include <config.h>
+#include <assert.h>
+#include "config.h"
 #include "ngspice.h"
-#include <stdio.h>
 #include "missing_math.h"
 
+/* Initial AlmostEqualULPs version - fast and simple, but */
+/* some limitations. */
+bool AlmostEqualUlps(float A, float B, int maxUlps)
+{
+    int intDiff;
+    assert(sizeof(float) == sizeof(int));
 
+    if (A == B)
+        return TRUE;
+
+    intDiff = abs(*(int*)&A - *(int*)&B);
+
+    if (intDiff <= maxUlps)
+        return TRUE;
+
+    return FALSE;
+}
 
 #ifndef HAVE_LOGB
 

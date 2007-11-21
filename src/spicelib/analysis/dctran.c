@@ -7,21 +7,19 @@ Modified: 2000  AlansFixes
 /* subroutine to do DC TRANSIENT analysis    
         --- ONLY, unlike spice2 routine with the same name! */
 
-#include <assert.h>
-#include <ngspice.h>
-#include <config.h>
-#include <cktdefs.h>
-#include <cktaccept.h>
-#include <trandefs.h>
-#include <sperror.h>
+#include "ngspice.h"
+#include "config.h"
+#include "cktdefs.h"
+#include "cktaccept.h"
+#include "trandefs.h"
+#include "sperror.h"
 #include "fteext.h"
+#include "missing_math.h"
 
 #ifdef XSPICE
 /* gtri - add - wbk - Add headers */
 #include "miftypes.h" 
-/* gtri - end - wbk - Add headers */
 
-/* gtri - add - wbk - Add headers */
 #include "evt.h"
 #include "mif.h"
 #include "evtproto.h"
@@ -36,24 +34,6 @@ Modified: 2000  AlansFixes
 #ifdef HAS_WINDOWS    /* hvogt 10.03.99, nach W. Mues */
 void SetAnalyse( char * Analyse, int Percent);
 #endif
-
-// Initial AlmostEqualULPs version - fast and simple, but
-// some limitations.
-static bool AlmostEqualUlps(float A, float B, int maxUlps)
-{
-    int intDiff;
-    assert(sizeof(float) == sizeof(int));
-
-    if (A == B)
-        return TRUE;
-
-    intDiff = abs(*(int*)&A - *(int*)&B);
-
-    if (intDiff <= maxUlps)
-        return TRUE;
-
-    return FALSE;
-}
 
 int
 DCtran(CKTcircuit *ckt,

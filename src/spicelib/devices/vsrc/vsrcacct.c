@@ -3,35 +3,16 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include <assert.h>
 #include "ngspice.h"
 #include "cktdefs.h"
 #include "vsrcdefs.h"
 #include "trandefs.h"
 #include "sperror.h"
 #include "suffix.h"
+#include "missing_math.h"
 
 #define SAMETIME(a,b)    (fabs((a)-(b))<= TIMETOL * PW)
 #define TIMETOL    1e-7
-
-// Initial AlmostEqualULPs version - fast and simple, but
-// some limitations.
-static bool AlmostEqualUlps(float A, float B, int maxUlps)
-{
-    int intDiff;
-    assert(sizeof(float) == sizeof(int));
-
-    if (A == B)
-        return TRUE;
-
-    intDiff = abs(*(int*)&A - *(int*)&B);
-
-    if (intDiff <= maxUlps)
-        return TRUE;
-
-    return FALSE;
-}
-
 		
 int
 VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
@@ -101,12 +82,8 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 #endif		    
 /* gtri - end - wbk - add PHASE parameter */			
 
-
                     time = ckt->CKTtime - TD;
-		   
-		   
-		   
-		   
+		   		   
                     if(time >= PER) {
                         /* repeating signal - figure out where we are */
                         /* in period */
@@ -190,8 +167,8 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         }
                     }
                     for(i=0;i<(here->VSRCfunctionOrder/2)-1;i++) {
-		      //if((*(here->VSRCcoeffs+2*i)==ckt->CKTtime)) {
-		      //     if(ckt->CKTbreak) {
+/*		      if((*(here->VSRCcoeffs+2*i)==ckt->CKTtime)) {
+		           if(ckt->CKTbreak) {*/
 		      if ( ckt->CKTbreak && AlmostEqualUlps(*(here->VSRCcoeffs+2*i), ckt->CKTtime, 3 ) ) {
 			error = CKTsetBreak(ckt, *(here->VSRCcoeffs+2*i+2));
 			if(error) return(error);

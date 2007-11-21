@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <stdlib.h>
 #include "ngspice.h"
 #include "cpdefs.h"
@@ -8,28 +7,11 @@
 #include "rawfile.h"
 #include "variable.h"
 #include "numparam/numpaif.h"
+#include "missing_math.h"
 
 static bool measure_valid[20000];
 static bool just_chk_meas;
 static bool measures_passed;
-
-// Initial AlmostEqualULPs version - fast and simple, but
-// some limitations.
-static bool AlmostEqualUlps(float A, float B, int maxUlps)
-{
-    int intDiff;
-    assert(sizeof(float) == sizeof(int));
-
-    if (A == B)
-        return TRUE;
-
-    intDiff = abs(*(int*)&A - *(int*)&B);
-
-    if (intDiff <= maxUlps)
-        return TRUE;
-
-    return FALSE;
-}
 
 static double
 max( double a, double b ) {

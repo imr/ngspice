@@ -4,30 +4,12 @@ Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 - Paolo Nenzi
 **********/
 
-#include <assert.h>
 #include "ngspice.h"
 #include "const.h"
 #include "ifsim.h"
 #include "resdefs.h"
 #include "sperror.h"
-
-// Initial AlmostEqualULPs version - fast and simple, but
-// some limitations.
-static bool AlmostEqualUlps(float A, float B, int maxUlps)
-{
-    int intDiff;
-    assert(sizeof(float) == sizeof(int));
-
-    if (A == B)
-        return TRUE;
-
-    intDiff = abs(*(int*)&A - *(int*)&B);
-
-    if (intDiff <= maxUlps)
-        return TRUE;
-
-    return FALSE;
-}
+#include "missing_math.h"
 
 int
 RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)

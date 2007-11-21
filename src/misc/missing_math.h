@@ -6,6 +6,8 @@
 #ifndef MISSING_MATH_H_INCLUDED
 #define MISSING_MATH_H_INCLUDED
 
+bool AlmostEqualUlps(float, float, int);
+
 #ifndef HAVE_ERFC
 double erfc(double);
 #endif
@@ -21,7 +23,7 @@ double scalb(double, int);
 #endif
 
 #ifndef HAVE_ISNAN
-int isnan(double value);
-#endif /* HAVE_ISNAN */
+int isnan(double);
+#endif
 
 #endif /* MISSING_MATH_H_INCLUDED */
