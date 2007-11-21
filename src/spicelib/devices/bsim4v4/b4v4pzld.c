@@ -484,7 +484,7 @@ double m;
                * Loading PZ matrix
                */
 
-   	          m = here->BSIM4v4m;
+              m = here->BSIM4v4m;
 
               if (!model->BSIM4v4rdsMod)
               {   gdpr = here->BSIM4v4drainConductance;

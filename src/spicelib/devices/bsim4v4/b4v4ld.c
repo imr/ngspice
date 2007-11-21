@@ -4486,7 +4486,7 @@ line900:
             *  Loading RHS
             */
 
-   	       m = here->BSIM4v4m;
+           m = here->BSIM4v4m;
 
            (*(ckt->CKTrhs + here->BSIM4v4dNodePrime) += m * (ceqjd - ceqbd + ceqgdtot
                                                     - ceqdrn - ceqqd + Idtoteq));
