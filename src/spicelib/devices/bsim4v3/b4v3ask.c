@@ -37,6 +37,9 @@ BSIM4v3instance *here = (BSIM4v3instance*)inst;
         case BSIM4v3_W:
             value->rValue = here->BSIM4v3w;
             return(OK);
+        case BSIM4v3_M:
+            value->rValue = here->BSIM4v3m;
+            return(OK);
         case BSIM4v3_NF:
             value->rValue = here->BSIM4v3nf;
             return(OK);

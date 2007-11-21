@@ -108,6 +108,7 @@ typedef struct sBSIM4v3instance
     double BSIM4v3icVGS;
     double BSIM4v3icVBS;
     double BSIM4v3nf;
+    double BSIM4v3m;  
     int BSIM4v3off;
     int BSIM4v3mode;
     int BSIM4v3trnqsMod;
@@ -241,6 +242,7 @@ typedef struct sBSIM4v3instance
     unsigned BSIM4v3lGiven :1;
     unsigned BSIM4v3wGiven :1;
     unsigned BSIM4v3nfGiven :1;
+    unsigned BSIM4v3mGiven :1;
     unsigned BSIM4v3minGiven :1;
     unsigned BSIM4v3drainAreaGiven :1;
     unsigned BSIM4v3sourceAreaGiven    :1;
@@ -2044,6 +2046,7 @@ typedef struct sBSIM4v3model
 #define BSIM4v3_SA                  28
 #define BSIM4v3_SB                  29
 #define BSIM4v3_SD                  30
+#define BSIM4v3_M                   31
 
 /* Global parameters */
 #define BSIM4v3_MOD_TEMPMOD         89

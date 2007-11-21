@@ -12,7 +12,6 @@
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "bsim4v3def.h"
 #include "sperror.h"
@@ -38,6 +37,10 @@ IFvalue *select;
         case BSIM4v3_L:
             here->BSIM4v3l = value->rValue*scale;
             here->BSIM4v3lGiven = TRUE;
+            break;
+        case BSIM4v3_M:
+            here->BSIM4v3m = value->rValue;
+            here->BSIM4v3mGiven = TRUE;
             break;
         case BSIM4v3_NF:
             here->BSIM4v3nf = value->rValue;

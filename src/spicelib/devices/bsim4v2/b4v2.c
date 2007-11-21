@@ -11,7 +11,6 @@
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "bsim4v2def.h"
 #include "suffix.h"
@@ -19,6 +18,7 @@
 IFparm BSIM4v2pTable[] = { /* parameters */
 IOP( "l",   BSIM4v2_L,      IF_REAL   , "Length"),
 IOP( "w",   BSIM4v2_W,      IF_REAL   , "Width"),
+IOP( "m",   BSIM4v2_M,      IF_REAL   , "Separate Parallel multiplier"),
 IOP( "nf",  BSIM4v2_NF,     IF_REAL   , "Number of fingers"),
 IOP( "min",  BSIM4v2_MIN,   IF_INTEGER , "Minimize either D or S"),
 IOP( "ad",  BSIM4v2_AD,     IF_REAL   , "Drain area"),

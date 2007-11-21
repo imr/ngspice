@@ -1347,6 +1347,8 @@ JOB   *job;
                 here->BSIM4v2l = 5.0e-6;
             if (!here->BSIM4v2wGiven)
                 here->BSIM4v2w = 5.0e-6;
+            if (!here->BSIM4v2mGiven)
+                here->BSIM4v2m = 1.0;
             if (!here->BSIM4v2nfGiven)
                 here->BSIM4v2nf = 1.0;
             if (!here->BSIM4v2minGiven)

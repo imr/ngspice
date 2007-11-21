@@ -10,7 +10,6 @@
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "cktdefs.h"
 #include "bsim4v3def.h"
 #include "sperror.h"
@@ -51,6 +50,8 @@ double FwdSumr, RevSumr, Gmr, Gmbsr, Gdsr;
 double FwdSumi, RevSumi, Gmi, Gmbsi, Gdsi;
 struct bsim4v3SizeDependParam *pParam;
 double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
+
+double m;
 
     omega = ckt->CKTomega;
     for (; model != NULL; model = model->BSIM4v3nextModel) 
@@ -449,6 +450,8 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                * Loading AC matrix
                */
 
+              m = here->BSIM4v3m;
+
               if (!model->BSIM4v3rdsMod)
               {   gdpr = here->BSIM4v3drainConductance;
                   gspr = here->BSIM4v3sourceConductance;
@@ -466,122 +469,122 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
               geltd = here->BSIM4v3grgeltd;
 
               if (here->BSIM4v3rgateMod == 1)
-              {   *(here->BSIM4v3GEgePtr) += geltd;
-                  *(here->BSIM4v3GPgePtr) -= geltd;
-                  *(here->BSIM4v3GEgpPtr) -= geltd;
+              {   *(here->BSIM4v3GEgePtr) += m * geltd;
+                  *(here->BSIM4v3GPgePtr) -= m * geltd;
+                  *(here->BSIM4v3GEgpPtr) -= m * geltd;
 
-                  *(here->BSIM4v3GPgpPtr +1) += xcggbr;
-		  *(here->BSIM4v3GPgpPtr) += geltd + xcggbi + gIgtotg;
-                  *(here->BSIM4v3GPdpPtr +1) += xcgdbr;
-                  *(here->BSIM4v3GPdpPtr) += xcgdbi + gIgtotd;
-                  *(here->BSIM4v3GPspPtr +1) += xcgsbr;
-                  *(here->BSIM4v3GPspPtr) += xcgsbi + gIgtots;
-                  *(here->BSIM4v3GPbpPtr +1) += xcgbbr;
-                  *(here->BSIM4v3GPbpPtr) += xcgbbi + gIgtotb;
+                  *(here->BSIM4v3GPgpPtr +1) += m * xcggbr;
+		  *(here->BSIM4v3GPgpPtr) += m * (geltd + xcggbi + gIgtotg);
+                  *(here->BSIM4v3GPdpPtr +1) += m * xcgdbr;
+                  *(here->BSIM4v3GPdpPtr) += m * (xcgdbi + gIgtotd);
+                  *(here->BSIM4v3GPspPtr +1) += m * xcgsbr;
+                  *(here->BSIM4v3GPspPtr) += m * (xcgsbi + gIgtots);
+                  *(here->BSIM4v3GPbpPtr +1) += m * xcgbbr;
+                  *(here->BSIM4v3GPbpPtr) += m * (xcgbbi + gIgtotb);
               } /* WDLiu: gcrg already subtracted from all gcrgg below */
               else if (here->BSIM4v3rgateMod == 2)
-              {   *(here->BSIM4v3GEgePtr) += gcrg;
-                  *(here->BSIM4v3GEgpPtr) += gcrgg;
-                  *(here->BSIM4v3GEdpPtr) += gcrgd;
-                  *(here->BSIM4v3GEspPtr) += gcrgs;
-                  *(here->BSIM4v3GEbpPtr) += gcrgb;
+              {   *(here->BSIM4v3GEgePtr) += m * gcrg;
+                  *(here->BSIM4v3GEgpPtr) += m * gcrgg;
+                  *(here->BSIM4v3GEdpPtr) += m * gcrgd;
+                  *(here->BSIM4v3GEspPtr) += m * gcrgs;
+                  *(here->BSIM4v3GEbpPtr) += m * gcrgb;
 
-                  *(here->BSIM4v3GPgePtr) -= gcrg;
-                  *(here->BSIM4v3GPgpPtr +1) += xcggbr;
-		  *(here->BSIM4v3GPgpPtr) -= gcrgg - xcggbi - gIgtotg;
-                  *(here->BSIM4v3GPdpPtr +1) += xcgdbr;
-		  *(here->BSIM4v3GPdpPtr) -= gcrgd - xcgdbi - gIgtotd;
-                  *(here->BSIM4v3GPspPtr +1) += xcgsbr;
-		  *(here->BSIM4v3GPspPtr) -= gcrgs - xcgsbi - gIgtots;
-                  *(here->BSIM4v3GPbpPtr +1) += xcgbbr;
-		  *(here->BSIM4v3GPbpPtr) -= gcrgb - xcgbbi - gIgtotb;
+                  *(here->BSIM4v3GPgePtr) -= m * gcrg;
+                  *(here->BSIM4v3GPgpPtr +1) += m * xcggbr;
+		  *(here->BSIM4v3GPgpPtr) -= m * (gcrgg - xcggbi - gIgtotg);
+                  *(here->BSIM4v3GPdpPtr +1) += m * xcgdbr;
+		  *(here->BSIM4v3GPdpPtr) -= m * (gcrgd - xcgdbi - gIgtotd);
+                  *(here->BSIM4v3GPspPtr +1) += m * xcgsbr;
+		  *(here->BSIM4v3GPspPtr) -= m * (gcrgs - xcgsbi - gIgtots);
+                  *(here->BSIM4v3GPbpPtr +1) += m * xcgbbr;
+		  *(here->BSIM4v3GPbpPtr) -= m * (gcrgb - xcgbbi - gIgtotb);
               }
               else if (here->BSIM4v3rgateMod == 3)
-              {   *(here->BSIM4v3GEgePtr) += geltd;
-                  *(here->BSIM4v3GEgmPtr) -= geltd;
-                  *(here->BSIM4v3GMgePtr) -= geltd;
-                  *(here->BSIM4v3GMgmPtr) += geltd + gcrg;
-                  *(here->BSIM4v3GMgmPtr +1) += xcgmgmb;
+              {   *(here->BSIM4v3GEgePtr) += m * geltd;
+                  *(here->BSIM4v3GEgmPtr) -= m * geltd;
+                  *(here->BSIM4v3GMgePtr) -= m * geltd;
+                  *(here->BSIM4v3GMgmPtr) += m * (geltd + gcrg);
+                  *(here->BSIM4v3GMgmPtr +1) += m * xcgmgmb;
    
-                  *(here->BSIM4v3GMdpPtr) += gcrgd;
-                  *(here->BSIM4v3GMdpPtr +1) += xcgmdb;
-                  *(here->BSIM4v3GMgpPtr) += gcrgg;
-                  *(here->BSIM4v3GMspPtr) += gcrgs;
-                  *(here->BSIM4v3GMspPtr +1) += xcgmsb;
-                  *(here->BSIM4v3GMbpPtr) += gcrgb;
-                  *(here->BSIM4v3GMbpPtr +1) += xcgmbb;
+                  *(here->BSIM4v3GMdpPtr) += m * gcrgd;
+                  *(here->BSIM4v3GMdpPtr +1) += m * xcgmdb;
+                  *(here->BSIM4v3GMgpPtr) += m * gcrgg;
+                  *(here->BSIM4v3GMspPtr) += m * gcrgs;
+                  *(here->BSIM4v3GMspPtr +1) += m * xcgmsb;
+                  *(here->BSIM4v3GMbpPtr) += m * gcrgb;
+                  *(here->BSIM4v3GMbpPtr +1) += m * xcgmbb;
    
-                  *(here->BSIM4v3DPgmPtr +1) += xcdgmb;
-                  *(here->BSIM4v3GPgmPtr) -= gcrg;
-                  *(here->BSIM4v3SPgmPtr +1) += xcsgmb;
-                  *(here->BSIM4v3BPgmPtr +1) += xcbgmb;
+                  *(here->BSIM4v3DPgmPtr +1) += m * xcdgmb;
+                  *(here->BSIM4v3GPgmPtr) -= m * gcrg;
+                  *(here->BSIM4v3SPgmPtr +1) += m * xcsgmb;
+                  *(here->BSIM4v3BPgmPtr +1) += m * xcbgmb;
    
-                  *(here->BSIM4v3GPgpPtr) -= gcrgg - xcggbi - gIgtotg;
-                  *(here->BSIM4v3GPgpPtr +1) += xcggbr;
-                  *(here->BSIM4v3GPdpPtr) -= gcrgd - xcgdbi - gIgtotd;
-                  *(here->BSIM4v3GPdpPtr +1) += xcgdbr;
-                  *(here->BSIM4v3GPspPtr) -= gcrgs - xcgsbi - gIgtots;
-                  *(here->BSIM4v3GPspPtr +1) += xcgsbr;
-                  *(here->BSIM4v3GPbpPtr) -= gcrgb - xcgbbi - gIgtotb;
-                  *(here->BSIM4v3GPbpPtr +1) += xcgbbr;
+                  *(here->BSIM4v3GPgpPtr) -= m * (gcrgg - xcggbi - gIgtotg);
+                  *(here->BSIM4v3GPgpPtr +1) += m * xcggbr;
+                  *(here->BSIM4v3GPdpPtr) -= m * (gcrgd - xcgdbi - gIgtotd);
+                  *(here->BSIM4v3GPdpPtr +1) += m * xcgdbr;
+                  *(here->BSIM4v3GPspPtr) -= m * (gcrgs - xcgsbi - gIgtots);
+                  *(here->BSIM4v3GPspPtr +1) += m * xcgsbr;
+                  *(here->BSIM4v3GPbpPtr) -= m * (gcrgb - xcgbbi - gIgtotb);
+                  *(here->BSIM4v3GPbpPtr +1) += m * xcgbbr;
               }
               else
-              {   *(here->BSIM4v3GPgpPtr +1) += xcggbr;
-                  *(here->BSIM4v3GPgpPtr) += xcggbi + gIgtotg;
-                  *(here->BSIM4v3GPdpPtr +1) += xcgdbr;
-                  *(here->BSIM4v3GPdpPtr) += xcgdbi + gIgtotd;
-                  *(here->BSIM4v3GPspPtr +1) += xcgsbr;
-                  *(here->BSIM4v3GPspPtr) += xcgsbi + gIgtots;
-                  *(here->BSIM4v3GPbpPtr +1) += xcgbbr;
-                  *(here->BSIM4v3GPbpPtr) += xcgbbi + gIgtotb;
+              {   *(here->BSIM4v3GPgpPtr +1) += m * xcggbr;
+                  *(here->BSIM4v3GPgpPtr) += m * (xcggbi + gIgtotg);
+                  *(here->BSIM4v3GPdpPtr +1) += m * xcgdbr;
+                  *(here->BSIM4v3GPdpPtr) += m * (xcgdbi + gIgtotd);
+                  *(here->BSIM4v3GPspPtr +1) += m * xcgsbr;
+                  *(here->BSIM4v3GPspPtr) += m * (xcgsbi + gIgtots);
+                  *(here->BSIM4v3GPbpPtr +1) += m * xcgbbr;
+                  *(here->BSIM4v3GPbpPtr) += m * (xcgbbi + gIgtotb);
               }
 
               if (model->BSIM4v3rdsMod)
-              {   (*(here->BSIM4v3DgpPtr) += gdtotg);
-                  (*(here->BSIM4v3DspPtr) += gdtots);
-                  (*(here->BSIM4v3DbpPtr) += gdtotb);
-                  (*(here->BSIM4v3SdpPtr) += gstotd);
-                  (*(here->BSIM4v3SgpPtr) += gstotg);
-                  (*(here->BSIM4v3SbpPtr) += gstotb);
+              {   (*(here->BSIM4v3DgpPtr) += m * gdtotg);
+                  (*(here->BSIM4v3DspPtr) += m * gdtots);
+                  (*(here->BSIM4v3DbpPtr) += m * gdtotb);
+                  (*(here->BSIM4v3SdpPtr) += m * gstotd);
+                  (*(here->BSIM4v3SgpPtr) += m * gstotg);
+                  (*(here->BSIM4v3SbpPtr) += m * gstotb);
               }
 
-              *(here->BSIM4v3DPdpPtr +1) += xcddbr + gdsi + RevSumi;
-              *(here->BSIM4v3DPdpPtr) += gdpr + xcddbi + gdsr + here->BSIM4v3gbd 
-				     - gdtotd + RevSumr + gbdpdp - gIdtotd;
-              *(here->BSIM4v3DPdPtr) -= gdpr + gdtot;
-              *(here->BSIM4v3DPgpPtr +1) += xcdgbr + Gmi;
-              *(here->BSIM4v3DPgpPtr) += Gmr + xcdgbi - gdtotg + gbdpg - gIdtotg;
-              *(here->BSIM4v3DPspPtr +1) += xcdsbr - gdsi - FwdSumi;
-              *(here->BSIM4v3DPspPtr) -= gdsr - xcdsbi + FwdSumr + gdtots - gbdpsp + gIdtots;
-              *(here->BSIM4v3DPbpPtr +1) += xcdbbr + Gmbsi;
-              *(here->BSIM4v3DPbpPtr) -= gjbd + gdtotb - xcdbbi - Gmbsr - gbdpb + gIdtotb;
+              *(here->BSIM4v3DPdpPtr +1) += m * (xcddbr + gdsi + RevSumi);
+              *(here->BSIM4v3DPdpPtr) += m * (gdpr + xcddbi + gdsr + here->BSIM4v3gbd 
+				     - gdtotd + RevSumr + gbdpdp - gIdtotd);
+              *(here->BSIM4v3DPdPtr) -= m * (gdpr + gdtot);
+              *(here->BSIM4v3DPgpPtr +1) += m * (xcdgbr + Gmi);
+              *(here->BSIM4v3DPgpPtr) += m * (Gmr + xcdgbi - gdtotg + gbdpg - gIdtotg);
+              *(here->BSIM4v3DPspPtr +1) += m * (xcdsbr - gdsi - FwdSumi);
+              *(here->BSIM4v3DPspPtr) -= m * (gdsr - xcdsbi + FwdSumr + gdtots - gbdpsp + gIdtots);
+              *(here->BSIM4v3DPbpPtr +1) += m * (xcdbbr + Gmbsi);
+              *(here->BSIM4v3DPbpPtr) -= m * (gjbd + gdtotb - xcdbbi - Gmbsr - gbdpb + gIdtotb);
 
-              *(here->BSIM4v3DdpPtr) -= gdpr - gdtotd;
-              *(here->BSIM4v3DdPtr) += gdpr + gdtot;
+              *(here->BSIM4v3DdpPtr) -= m * (gdpr - gdtotd);
+              *(here->BSIM4v3DdPtr) += m * (gdpr + gdtot);
 
-              *(here->BSIM4v3SPdpPtr +1) += xcsdbr - gdsi - RevSumi;
-              *(here->BSIM4v3SPdpPtr) -= gdsr - xcsdbi + gstotd + RevSumr - gbspdp + gIstotd;
-              *(here->BSIM4v3SPgpPtr +1) += xcsgbr - Gmi;
-              *(here->BSIM4v3SPgpPtr) -= Gmr - xcsgbi + gstotg - gbspg + gIstotg;
-              *(here->BSIM4v3SPspPtr +1) += xcssbr + gdsi + FwdSumi;
-              *(here->BSIM4v3SPspPtr) += gspr + xcssbi + gdsr + here->BSIM4v3gbs
-				     - gstots + FwdSumr + gbspsp - gIstots;
-              *(here->BSIM4v3SPsPtr) -= gspr + gstot;
-              *(here->BSIM4v3SPbpPtr +1) += xcsbbr - Gmbsi;
-              *(here->BSIM4v3SPbpPtr) -= gjbs + gstotb - xcsbbi + Gmbsr - gbspb + gIstotb;
+              *(here->BSIM4v3SPdpPtr +1) += m * (xcsdbr - gdsi - RevSumi);
+              *(here->BSIM4v3SPdpPtr) -= m * (gdsr - xcsdbi + gstotd + RevSumr - gbspdp + gIstotd);
+              *(here->BSIM4v3SPgpPtr +1) += m * (xcsgbr - Gmi);
+              *(here->BSIM4v3SPgpPtr) -= m * (Gmr - xcsgbi + gstotg - gbspg + gIstotg);
+              *(here->BSIM4v3SPspPtr +1) += m * (xcssbr + gdsi + FwdSumi);
+              *(here->BSIM4v3SPspPtr) += m * (gspr + xcssbi + gdsr + here->BSIM4v3gbs
+				     - gstots + FwdSumr + gbspsp - gIstots);
+              *(here->BSIM4v3SPsPtr) -= m * (gspr + gstot);
+              *(here->BSIM4v3SPbpPtr +1) += m * (xcsbbr - Gmbsi);
+              *(here->BSIM4v3SPbpPtr) -= m * (gjbs + gstotb - xcsbbi + Gmbsr - gbspb + gIstotb);
 
-              *(here->BSIM4v3SspPtr) -= gspr - gstots;
-              *(here->BSIM4v3SsPtr) += gspr + gstot;
+              *(here->BSIM4v3SspPtr) -= m * (gspr - gstots);
+              *(here->BSIM4v3SsPtr) += m * (gspr + gstot);
 
-              *(here->BSIM4v3BPdpPtr +1) += xcbdb;
-              *(here->BSIM4v3BPdpPtr) -= gjbd - gbbdp + gIbtotd;
-              *(here->BSIM4v3BPgpPtr +1) += xcbgb;
-              *(here->BSIM4v3BPgpPtr) -= here->BSIM4v3gbgs + gIbtotg;
-              *(here->BSIM4v3BPspPtr +1) += xcbsb;
-              *(here->BSIM4v3BPspPtr) -= gjbs - gbbsp + gIbtots;
-              *(here->BSIM4v3BPbpPtr +1) += xcbbb;
-              *(here->BSIM4v3BPbpPtr) += gjbd + gjbs - here->BSIM4v3gbbs
-				     - gIbtotb;
+              *(here->BSIM4v3BPdpPtr +1) += m * xcbdb;
+              *(here->BSIM4v3BPdpPtr) -= m * (gjbd - gbbdp + gIbtotd);
+              *(here->BSIM4v3BPgpPtr +1) += m * xcbgb;
+              *(here->BSIM4v3BPgpPtr) -= m * (here->BSIM4v3gbgs + gIbtotg);
+              *(here->BSIM4v3BPspPtr +1) += m * xcbsb;
+              *(here->BSIM4v3BPspPtr) -= m * (gjbs - gbbsp + gIbtots);
+              *(here->BSIM4v3BPbpPtr +1) += m * xcbbb;
+              *(here->BSIM4v3BPbpPtr) += m * (gjbd + gjbs - here->BSIM4v3gbbs
+				     - gIbtotb);
            ggidld = here->BSIM4v3ggidld;
            ggidlg = here->BSIM4v3ggidlg;
            ggidlb = here->BSIM4v3ggidlb;
@@ -590,58 +593,58 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
            ggislb = here->BSIM4v3ggislb;
 
            /* stamp gidl */
-           (*(here->BSIM4v3DPdpPtr) += ggidld);
-           (*(here->BSIM4v3DPgpPtr) += ggidlg);
-           (*(here->BSIM4v3DPspPtr) -= (ggidlg + ggidld) + ggidlb);
-           (*(here->BSIM4v3DPbpPtr) += ggidlb);
-           (*(here->BSIM4v3BPdpPtr) -= ggidld);
-           (*(here->BSIM4v3BPgpPtr) -= ggidlg);
-           (*(here->BSIM4v3BPspPtr) += (ggidlg + ggidld) + ggidlb);
-           (*(here->BSIM4v3BPbpPtr) -= ggidlb);
+           (*(here->BSIM4v3DPdpPtr) += m * ggidld);
+           (*(here->BSIM4v3DPgpPtr) += m * ggidlg);
+           (*(here->BSIM4v3DPspPtr) -= m * ((ggidlg + ggidld) + ggidlb));
+           (*(here->BSIM4v3DPbpPtr) += m * ggidlb);
+           (*(here->BSIM4v3BPdpPtr) -= m * ggidld);
+           (*(here->BSIM4v3BPgpPtr) -= m * ggidlg);
+           (*(here->BSIM4v3BPspPtr) += m * ((ggidlg + ggidld) + ggidlb));
+           (*(here->BSIM4v3BPbpPtr) -= m * ggidlb);
             /* stamp gisl */
-           (*(here->BSIM4v3SPdpPtr) -= (ggisls + ggislg) + ggislb);
-           (*(here->BSIM4v3SPgpPtr) += ggislg);
-           (*(here->BSIM4v3SPspPtr) += ggisls);
-           (*(here->BSIM4v3SPbpPtr) += ggislb);
-           (*(here->BSIM4v3BPdpPtr) += (ggislg + ggisls) + ggislb);
-           (*(here->BSIM4v3BPgpPtr) -= ggislg);
-           (*(here->BSIM4v3BPspPtr) -= ggisls);
-           (*(here->BSIM4v3BPbpPtr) -= ggislb);
+           (*(here->BSIM4v3SPdpPtr) -= m * ((ggisls + ggislg) + ggislb));
+           (*(here->BSIM4v3SPgpPtr) += m * ggislg);
+           (*(here->BSIM4v3SPspPtr) += m * ggisls);
+           (*(here->BSIM4v3SPbpPtr) += m * ggislb);
+           (*(here->BSIM4v3BPdpPtr) += m * ((ggislg + ggisls) + ggislb));
+           (*(here->BSIM4v3BPgpPtr) -= m * ggislg);
+           (*(here->BSIM4v3BPspPtr) -= m * ggisls);
+           (*(here->BSIM4v3BPbpPtr) -= m * ggislb);
 
               if (here->BSIM4v3rbodyMod)
-              {   (*(here->BSIM4v3DPdbPtr +1) += xcdbdb);
-                  (*(here->BSIM4v3DPdbPtr) -= here->BSIM4v3gbd);
-                  (*(here->BSIM4v3SPsbPtr +1) += xcsbsb);
-                  (*(here->BSIM4v3SPsbPtr) -= here->BSIM4v3gbs);
+              {   (*(here->BSIM4v3DPdbPtr +1) += m * xcdbdb);
+                  (*(here->BSIM4v3DPdbPtr) -= m * here->BSIM4v3gbd);
+                  (*(here->BSIM4v3SPsbPtr +1) += m * xcsbsb);
+                  (*(here->BSIM4v3SPsbPtr) -= m * here->BSIM4v3gbs);
 
-                  (*(here->BSIM4v3DBdpPtr +1) += xcdbdb);
-                  (*(here->BSIM4v3DBdpPtr) -= here->BSIM4v3gbd);
-                  (*(here->BSIM4v3DBdbPtr +1) -= xcdbdb);
-                  (*(here->BSIM4v3DBdbPtr) += here->BSIM4v3gbd + here->BSIM4v3grbpd 
-                                          + here->BSIM4v3grbdb);
-                  (*(here->BSIM4v3DBbpPtr) -= here->BSIM4v3grbpd);
-                  (*(here->BSIM4v3DBbPtr) -= here->BSIM4v3grbdb);
+                  (*(here->BSIM4v3DBdpPtr +1) += m * xcdbdb);
+                  (*(here->BSIM4v3DBdpPtr) -= m * here->BSIM4v3gbd);
+                  (*(here->BSIM4v3DBdbPtr +1) -= m * xcdbdb);
+                  (*(here->BSIM4v3DBdbPtr) += m * (here->BSIM4v3gbd + here->BSIM4v3grbpd 
+                                          + here->BSIM4v3grbdb));
+                  (*(here->BSIM4v3DBbpPtr) -= m * here->BSIM4v3grbpd);
+                  (*(here->BSIM4v3DBbPtr) -= m * here->BSIM4v3grbdb);
 
-                  (*(here->BSIM4v3BPdbPtr) -= here->BSIM4v3grbpd);
-                  (*(here->BSIM4v3BPbPtr) -= here->BSIM4v3grbpb);
-                  (*(here->BSIM4v3BPsbPtr) -= here->BSIM4v3grbps);
-                  (*(here->BSIM4v3BPbpPtr) += here->BSIM4v3grbpd + here->BSIM4v3grbps 
-					  + here->BSIM4v3grbpb);
+                  (*(here->BSIM4v3BPdbPtr) -= m * here->BSIM4v3grbpd);
+                  (*(here->BSIM4v3BPbPtr) -= m * here->BSIM4v3grbpb);
+                  (*(here->BSIM4v3BPsbPtr) -= m * here->BSIM4v3grbps);
+                  (*(here->BSIM4v3BPbpPtr) += m * (here->BSIM4v3grbpd + here->BSIM4v3grbps 
+					  + here->BSIM4v3grbpb));
 		  /* WDLiu: (-here->BSIM4v3gbbs) already added to BPbpPtr */
 
-                  (*(here->BSIM4v3SBspPtr +1) += xcsbsb);
-                  (*(here->BSIM4v3SBspPtr) -= here->BSIM4v3gbs);
-                  (*(here->BSIM4v3SBbpPtr) -= here->BSIM4v3grbps);
-                  (*(here->BSIM4v3SBbPtr) -= here->BSIM4v3grbsb);
-                  (*(here->BSIM4v3SBsbPtr +1) -= xcsbsb);
-                  (*(here->BSIM4v3SBsbPtr) += here->BSIM4v3gbs
-					  + here->BSIM4v3grbps + here->BSIM4v3grbsb);
+                  (*(here->BSIM4v3SBspPtr +1) += m * xcsbsb);
+                  (*(here->BSIM4v3SBspPtr) -= m * here->BSIM4v3gbs);
+                  (*(here->BSIM4v3SBbpPtr) -= m * here->BSIM4v3grbps);
+                  (*(here->BSIM4v3SBbPtr) -= m * here->BSIM4v3grbsb);
+                  (*(here->BSIM4v3SBsbPtr +1) -= m * xcsbsb);
+                  (*(here->BSIM4v3SBsbPtr) += m * (here->BSIM4v3gbs
+					  + here->BSIM4v3grbps + here->BSIM4v3grbsb));
 
-                  (*(here->BSIM4v3BdbPtr) -= here->BSIM4v3grbdb);
-                  (*(here->BSIM4v3BbpPtr) -= here->BSIM4v3grbpb);
-                  (*(here->BSIM4v3BsbPtr) -= here->BSIM4v3grbsb);
-                  (*(here->BSIM4v3BbPtr) += here->BSIM4v3grbsb + here->BSIM4v3grbdb
-                                        + here->BSIM4v3grbpb);
+                  (*(here->BSIM4v3BdbPtr) -= m * here->BSIM4v3grbdb);
+                  (*(here->BSIM4v3BbpPtr) -= m * here->BSIM4v3grbpb);
+                  (*(here->BSIM4v3BsbPtr) -= m * here->BSIM4v3grbsb);
+                  (*(here->BSIM4v3BbPtr) += m * (here->BSIM4v3grbsb + here->BSIM4v3grbdb
+                                        + here->BSIM4v3grbpb));
               }
 
 
@@ -652,7 +655,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
 	    *        The charge node is isolated from the instance.
 	    */
            if (here->BSIM4v3trnqsMod)
-           {   (*(here->BSIM4v3QqPtr) += 1.0);
+           {   (*(here->BSIM4v3QqPtr) += m * 1.0);
                (*(here->BSIM4v3QgpPtr) += 0.0);
                (*(here->BSIM4v3QdpPtr) += 0.0);
                (*(here->BSIM4v3QspPtr) += 0.0);

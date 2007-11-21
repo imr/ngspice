@@ -13,7 +13,6 @@
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "devdefs.h"
 #include "bsim4v3def.h"
 #include "suffix.h"
@@ -21,6 +20,7 @@
 IFparm BSIM4v3pTable[] = { /* parameters */
 IOP( "l",   BSIM4v3_L,      IF_REAL   , "Length"),
 IOP( "w",   BSIM4v3_W,      IF_REAL   , "Width"),
+IOP( "m",   BSIM4v3_M,      IF_REAL   , "Separate Parallel multiplier"),
 IOP( "nf",  BSIM4v3_NF,     IF_REAL   , "Number of fingers"),
 IOP( "sa",  BSIM4v3_SA,     IF_REAL   , "distance between  OD edge to poly of one side "),
 IOP( "sb",  BSIM4v3_SB,     IF_REAL   , "distance between  OD edge to poly of the other side"),

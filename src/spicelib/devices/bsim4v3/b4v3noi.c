@@ -13,8 +13,6 @@
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "bsim4v3def.h"
 #include "cktdefs.h"
 #include "iferrmsg.h"
@@ -96,7 +94,9 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13;
 double Vds, n, ExpArg, Ssi, Swi;
 double tmp, gdpr, gspr, npart_theta, npart_beta, igsquare;
 
-int error, i;
+double m;
+
+int i;
 
     /* define the names of the noise sources */
     static char *BSIM4v3nNames[BSIM4v3NSRCS] =
@@ -183,6 +183,7 @@ int error, i;
 		      }
 		      break;
 	         case N_CALC:
+		      m = here->BSIM4v3m;
 		      switch (mode)
 		      {  case N_DENS:
 			      if (model->BSIM4v3tnoiMod == 0)
@@ -228,25 +229,25 @@ int error, i;
 		              NevalSrc(&noizDens[BSIM4v3RDNOIZ],
 				       &lnNdens[BSIM4v3RDNOIZ], ckt, THERMNOISE,
 				       here->BSIM4v3dNodePrime, here->BSIM4v3dNode,
-				       gdpr);
+				       gdpr * m);
 
 		              NevalSrc(&noizDens[BSIM4v3RSNOIZ],
 				       &lnNdens[BSIM4v3RSNOIZ], ckt, THERMNOISE,
 				       here->BSIM4v3sNodePrime, here->BSIM4v3sNode,
-				       gspr);
+				       gspr * m);
 
 
 			      if ((here->BSIM4v3rgateMod == 1) || (here->BSIM4v3rgateMod == 2))
 			      {   NevalSrc(&noizDens[BSIM4v3RGNOIZ],
                                        &lnNdens[BSIM4v3RGNOIZ], ckt, THERMNOISE,
                                        here->BSIM4v3gNodePrime, here->BSIM4v3gNodeExt,
-                                       here->BSIM4v3grgeltd);
+                                       here->BSIM4v3grgeltd * m);
 			      }
 			      else if (here->BSIM4v3rgateMod == 3)
 			      {   NevalSrc(&noizDens[BSIM4v3RGNOIZ],
                                        &lnNdens[BSIM4v3RGNOIZ], ckt, THERMNOISE,
                                        here->BSIM4v3gNodeMid, here->BSIM4v3gNodeExt,
-                                       here->BSIM4v3grgeltd);
+                                       here->BSIM4v3grgeltd * m);
 			      }
 			      else
 			      {    noizDens[BSIM4v3RGNOIZ] = 0.0;
@@ -259,23 +260,23 @@ int error, i;
                               {   NevalSrc(&noizDens[BSIM4v3RBPSNOIZ],
                                        &lnNdens[BSIM4v3RBPSNOIZ], ckt, THERMNOISE,
                                        here->BSIM4v3bNodePrime, here->BSIM4v3sbNode,
-                                       here->BSIM4v3grbps);
+                                       here->BSIM4v3grbps * m);
                                   NevalSrc(&noizDens[BSIM4v3RBPDNOIZ],
                                        &lnNdens[BSIM4v3RBPDNOIZ], ckt, THERMNOISE,
                                        here->BSIM4v3bNodePrime, here->BSIM4v3dbNode,
-                                       here->BSIM4v3grbpd);
+                                       here->BSIM4v3grbpd * m);
                                   NevalSrc(&noizDens[BSIM4v3RBPBNOIZ],
                                        &lnNdens[BSIM4v3RBPBNOIZ], ckt, THERMNOISE,
                                        here->BSIM4v3bNodePrime, here->BSIM4v3bNode,
-                                       here->BSIM4v3grbpb);
+                                       here->BSIM4v3grbpb * m);
                                   NevalSrc(&noizDens[BSIM4v3RBSBNOIZ],
                                        &lnNdens[BSIM4v3RBSBNOIZ], ckt, THERMNOISE,
                                        here->BSIM4v3bNode, here->BSIM4v3sbNode,
-                                       here->BSIM4v3grbsb);
+                                       here->BSIM4v3grbsb * m);
                                   NevalSrc(&noizDens[BSIM4v3RBDBNOIZ],
                                        &lnNdens[BSIM4v3RBDBNOIZ], ckt, THERMNOISE,
                                        here->BSIM4v3bNode, here->BSIM4v3dbNode,
-                                       here->BSIM4v3grbdb);
+                                       here->BSIM4v3grbdb * m);
                               }
                               else
                               {   noizDens[BSIM4v3RBPSNOIZ] = noizDens[BSIM4v3RBPDNOIZ] = 0.0;   
@@ -296,7 +297,7 @@ int error, i;
 
                               switch(model->BSIM4v3tnoiMod)
 			      {  case 0:
-				      T0 = here->BSIM4v3ueff * fabs(here->BSIM4v3qinv);
+				      T0 = m * here->BSIM4v3ueff * fabs(here->BSIM4v3qinv);
 				      T1 = T0 * tmp + pParam->BSIM4v3leff
                                          * pParam->BSIM4v3leff;
 		                      NevalSrc(&noizDens[BSIM4v3IDNOIZ],
@@ -306,7 +307,7 @@ int error, i;
 					       (T0 / T1) * model->BSIM4v3ntnoi);
 				      break;
 				 case 1:
-				      T0 = here->BSIM4v3gm + here->BSIM4v3gmbs + here->BSIM4v3gds;
+				      T0 = m * (here->BSIM4v3gm + here->BSIM4v3gmbs + here->BSIM4v3gds);
 				      T0 *= T0;
 				      igsquare = npart_theta * npart_theta * T0 / here->BSIM4v3IdovVds;
 				      T1 = npart_beta * (here->BSIM4v3gm
@@ -325,7 +326,7 @@ int error, i;
 
                               switch(model->BSIM4v3fnoiMod)
 			      {  case 0:
-			              noizDens[BSIM4v3FLNOIZ] *= model->BSIM4v3kf
+			              noizDens[BSIM4v3FLNOIZ] *= m * model->BSIM4v3kf
 					    * exp(model->BSIM4v3af
 					    * log(MAX(fabs(here->BSIM4v3cd),
 					    N_MINLOG)))
@@ -350,7 +351,7 @@ int error, i;
                                           * here->BSIM4v3cd;
                                       T1 = Swi + Ssi;
                                       if (T1 > 0.0)
-                                          noizDens[BSIM4v3FLNOIZ] *= (Ssi * Swi) / T1;
+                                          noizDens[BSIM4v3FLNOIZ] *= m * (Ssi * Swi) / T1;
                                       else
                                           noizDens[BSIM4v3FLNOIZ] *= 0.0;
 				      break;
@@ -364,25 +365,25 @@ int error, i;
                               NevalSrc(&noizDens[BSIM4v3IGSNOIZ],
                                    &lnNdens[BSIM4v3IGSNOIZ], ckt, SHOTNOISE,
                                    here->BSIM4v3gNodePrime, here->BSIM4v3sNodePrime,
-                                   (here->BSIM4v3Igs + here->BSIM4v3Igcs));
+                                   m * (here->BSIM4v3Igs + here->BSIM4v3Igcs));
                               NevalSrc(&noizDens[BSIM4v3IGDNOIZ],
                                    &lnNdens[BSIM4v3IGDNOIZ], ckt, SHOTNOISE,
                                    here->BSIM4v3gNodePrime, here->BSIM4v3dNodePrime,
-                                   (here->BSIM4v3Igd + here->BSIM4v3Igcd));
+                                   m * (here->BSIM4v3Igd + here->BSIM4v3Igcd));
 			} else {
                               NevalSrc(&noizDens[BSIM4v3IGSNOIZ],
                                    &lnNdens[BSIM4v3IGSNOIZ], ckt, SHOTNOISE,
                                    here->BSIM4v3gNodePrime, here->BSIM4v3sNodePrime,
-                                   (here->BSIM4v3Igs + here->BSIM4v3Igcd));
+                                   m * (here->BSIM4v3Igs + here->BSIM4v3Igcd));
                               NevalSrc(&noizDens[BSIM4v3IGDNOIZ],
                                    &lnNdens[BSIM4v3IGDNOIZ], ckt, SHOTNOISE,
                                    here->BSIM4v3gNodePrime, here->BSIM4v3dNodePrime,
-                                   (here->BSIM4v3Igd + here->BSIM4v3Igcs));
+                                   m * (here->BSIM4v3Igd + here->BSIM4v3Igcs));
                         }
                               NevalSrc(&noizDens[BSIM4v3IGBNOIZ],
                                    &lnNdens[BSIM4v3IGBNOIZ], ckt, SHOTNOISE,
                                    here->BSIM4v3gNodePrime, here->BSIM4v3bNodePrime,
-                                   here->BSIM4v3Igb);
+                                   m * here->BSIM4v3Igb);
 
 
 		              noizDens[BSIM4v3TOTNOIZ] = noizDens[BSIM4v3RDNOIZ]

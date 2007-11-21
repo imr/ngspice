@@ -13,8 +13,6 @@
  **********/
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <math.h>
 #include "jobdefs.h"
 #include "ftedefs.h"
 #include "smpdefs.h"
@@ -1428,6 +1426,8 @@ JOB   *job;
                 here->BSIM4v3l = 5.0e-6;
             if (!here->BSIM4v3wGiven)
                 here->BSIM4v3w = 5.0e-6;
+            if (!here->BSIM4v3mGiven)
+                here->BSIM4v3m = 1.0;
             if (!here->BSIM4v3nfGiven)
                 here->BSIM4v3nf = 1.0;
             if (!here->BSIM4v3minGiven)
