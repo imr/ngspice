@@ -1,5 +1,13 @@
+2007-11-21 Dietmar Warning
+ * src/spicelib/devices/bsim3/b3check.c,b3set.c: accept version 3.xx form
+ * src/spicelib/devices/bsim4v2,3: multiplier included
+ * src/spicelib/devices/bsim4v4: no std header
+ * src/spicelib/analysis/dctran.c: AlmostEqualUlps on central place
+ * src/misc/missing_math.x: AlmostEqualUlps on central place
+ * src/include/missing_math.x: AlmostEqualUlps on central place
+
 2007-11-17 Dietmar Warning
- * src/spicelib/devices/b*par.c: scale parameter included
+ * src/spicelib/devices/bsim4vX/b*par.c: scale parameter included
  * src/frontend/numparam/xpressn.c: cast to prevent warning
 
 2007-11-14 Dietmar Warning
