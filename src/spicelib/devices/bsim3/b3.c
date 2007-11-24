@@ -1,12 +1,11 @@
-/**** BSIM3v3.2.4, Released by Xuemei Xi 12/14/2001 ****/
+/**** BSIM3v3.3.0 beta, Released by Xuemei Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b3.c of BSIM3v3.2.4
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b3.c of BSIM3v3.3.0
  * Author: 1995 Min-Chie Jeng and Mansun Chan
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
- * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
  **********/
 
 #include "ngspice.h"
@@ -26,6 +25,7 @@ IOP( "nrd", BSIM3_NRD,    IF_REAL   , "Number of squares in drain"),
 IOP( "nrs", BSIM3_NRS,    IF_REAL   , "Number of squares in source"),
 IOP( "off", BSIM3_OFF,    IF_FLAG   , "Device is initially off"),
 IOP( "nqsmod", BSIM3_NQSMOD, IF_INTEGER, "Non-quasi-static model selector"),
+IOP( "acnqsmod", BSIM3_ACNQSMOD, IF_INTEGER, "AC NQS model selector"),
 IP( "ic",  BSIM3_IC,     IF_REALVEC , "Vector of DS,GS,BS initial voltages"),
 OP( "gmbs",         BSIM3_GMBS,       IF_REAL,    "Gmb"),
 OP( "gm",           BSIM3_GM,         IF_REAL,    "Gm"),
@@ -42,7 +42,7 @@ IFparm BSIM3mPTable[] = { /* model parameters */
 IOP( "capmod", BSIM3_MOD_CAPMOD, IF_INTEGER, "Capacitance model selector"),
 IOP( "mobmod", BSIM3_MOD_MOBMOD, IF_INTEGER, "Mobility model selector"),
 IOP( "noimod", BSIM3_MOD_NOIMOD, IF_INTEGER, "Noise model selector"),
-IOP( "acm", BSIM3_MOD_ACMMOD, IF_INTEGER, "Area calculation method selector"),
+IOP( "acnqsmod", BSIM3_MOD_ACNQSMOD, IF_INTEGER, "AC NQS model selector"),
 IOP( "paramchk", BSIM3_MOD_PARAMCHK, IF_INTEGER, "Model parameter checking selector"),
 IOP( "binunit", BSIM3_MOD_BINUNIT, IF_INTEGER, "Bin  unit  selector"),
 IOP( "version", BSIM3_MOD_VERSION, IF_STRING, " parameter for model version"),
@@ -147,6 +147,7 @@ IOP( "acde", BSIM3_MOD_ACDE, IF_REAL, "Exponential coefficient for finite charge
 IOP( "moin", BSIM3_MOD_MOIN, IF_REAL, "Coefficient for gate-bias dependent surface potential"),
 IOP( "noff", BSIM3_MOD_NOFF, IF_REAL, "C-V turn-on/off parameter"),
 IOP( "voffcv", BSIM3_MOD_VOFFCV, IF_REAL, "C-V lateral-shift parameter"),
+IOP( "lintnoi", BSIM3_MOD_LINTNOI, IF_REAL, "lint offset for noise calculation"),
 IOP( "lint", BSIM3_MOD_LINT, IF_REAL, "Length reduction parameter"),
 IOP( "ll",   BSIM3_MOD_LL, IF_REAL, "Length reduction parameter"),
 IOP( "llc",  BSIM3_MOD_LLC, IF_REAL, "Length reduction parameter for CV"),
@@ -158,10 +159,6 @@ IOP( "lwl",  BSIM3_MOD_LWL, IF_REAL, "Length reduction parameter"),
 IOP( "lwlc", BSIM3_MOD_LWLC, IF_REAL, "Length reduction parameter for CV"),
 IOP( "lmin", BSIM3_MOD_LMIN, IF_REAL, "Minimum length for the model"),
 IOP( "lmax", BSIM3_MOD_LMAX, IF_REAL, "Maximum length for the model"),
-
-IOP( "xl", BSIM3_MOD_XL, IF_REAL, "Length correction parameter"),
-IOP( "xw", BSIM3_MOD_XW, IF_REAL, "Width correction parameter"),
-
 IOP( "wr",   BSIM3_MOD_WR, IF_REAL, "Width dependence of rds"),
 IOP( "wint", BSIM3_MOD_WINT, IF_REAL, "Width reduction parameter"),
 IOP( "dwg",  BSIM3_MOD_DWG, IF_REAL, "Width reduction parameter"),
@@ -189,14 +186,6 @@ IOP( "clc", BSIM3_MOD_CLC, IF_REAL, "Vdsat parameter for C-V model"),
 IOP( "cle", BSIM3_MOD_CLE, IF_REAL, "Vdsat parameter for C-V model"),
 IOP( "dwc", BSIM3_MOD_DWC, IF_REAL, "Delta W for C-V model"),
 IOP( "dlc", BSIM3_MOD_DLC, IF_REAL, "Delta L for C-V model"),
-
-IOP( "hdif", BSIM3_MOD_HDIF, IF_REAL, "ACM Parameter: Distance Gate - contact"),
-IOP( "ldif", BSIM3_MOD_LDIF, IF_REAL, "ACM Parameter: Length of LDD Gate-Source/Drain"),
-IOP( "ld", BSIM3_MOD_LD, IF_REAL, "ACM Parameter: Length of LDD under Gate"),
-IOP( "rd", BSIM3_MOD_RD, IF_REAL, "ACM Parameter: Resistance of LDD drain side"),
-IOP( "rs", BSIM3_MOD_RS, IF_REAL, "ACM Parameter: Resistance of LDD source side"),
-IOP( "rdc", BSIM3_MOD_RS, IF_REAL, "ACM Parameter: Resistance contact drain side"),
-IOP( "rsc", BSIM3_MOD_RS, IF_REAL, "ACM Parameter: Resistance contact source side"),
 
 IOP( "alpha0", BSIM3_MOD_ALPHA0, IF_REAL, "substrate current model parameter"),
 IOP( "alpha1", BSIM3_MOD_ALPHA1, IF_REAL, "substrate current model parameter"),

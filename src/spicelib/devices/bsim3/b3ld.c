@@ -1,14 +1,14 @@
-/**** BSIM3v3.2.4, Released by Xuemei Xi 12/21/2001 ****/
+/**** BSIM3v3.3.0, Released by Xuemei Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b3ld.c of BSIM3v3.2.4
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b3ld.c of BSIM3v3.3.0
  * Author: 1991 JianHui Huang and Min-Chie Jeng.
  * Modified by Mansun Chan (1995).
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001 Xuemei Xi
  * Modified by Xuemei Xi, 10/05, 12/21, 2001.
- * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
+ * Modified by Xuemei Xi, 07/29/2005.
  **********/
 
 #include "ngspice.h"
@@ -33,7 +33,9 @@
 
 
 int
-BSIM3load (GENmodel *inModel, CKTcircuit *ckt)
+BSIM3load(inModel,ckt)
+GENmodel *inModel;
+CKTcircuit *ckt;
 {
 BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;
@@ -42,56 +44,60 @@ double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
 double cdrain, cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
 double czbd, czbdsw, czbdswg, czbs, czbssw, czbsswg, evbd, evbs, arg, sarg;
 double delvbd, delvbs, delvds, delvgd, delvgs;
-double Vfbeff, dVfbeff_dVg, dVfbeff_dVd = 0.0, dVfbeff_dVb, V3, V4;
+double Vfbeff, dVfbeff_dVg, dVfbeff_dVb, V3, V4;
 double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb, gcgdb, gcggb, gcgsb, gcsdb;
-double gcsgb, gcssb, MJ, MJSW, MJSWG;
+double gcsgb, gcssb, tol, MJ, MJSW, MJSWG;
 double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
-double qgate = 0.0, qbulk = 0.0, qdrn = 0.0, qsrc;
-double qinoi, cqgate, cqbulk, cqdrn;
+double qgate, qbulk, qdrn, qsrc, qinoi, cqgate, cqbulk, cqdrn;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
-double Vgs_eff, Vfb, dVfb_dVb = 0.0, dVfb_dVd = 0.0;
+double Vgs_eff, Vfb, dVbs_dVb;
 double Phis, dPhis_dVb, sqrtPhis, dsqrtPhis_dVb, Vth, dVth_dVb, dVth_dVd;
 double Vgst, dVgst_dVg, dVgst_dVb, dVgs_eff_dVg, Nvtm;
-double Vtm;
+double Vgdt, Vgsaddvth, Vgsaddvth2, Vgsaddvth1o3, Vtm;
 double n, dn_dVb, dn_dVd, voffcv, noff, dnoff_dVd, dnoff_dVb;
-double ExpArg, V0, CoxWLcen, QovCox, LINK;
-double DeltaPhi, dDeltaPhi_dVg, dDeltaPhi_dVd, dDeltaPhi_dVb;
+double ExpArg, ExpArg1, V0, CoxWLcen, QovCox, LINK;
+double DeltaPhi, dDeltaPhi_dVg, VgDP, dVgDP_dVg;
 double Cox, Tox, Tcen, dTcen_dVg, dTcen_dVd, dTcen_dVb;
 double Ccen, Coxeff, dCoxeff_dVg, dCoxeff_dVd, dCoxeff_dVb;
 double Denomi, dDenomi_dVg, dDenomi_dVd, dDenomi_dVb;
 double ueff, dueff_dVg, dueff_dVd, dueff_dVb; 
-double Esat, Vdsat;
+double Esat, dEsat_dVg, dEsat_dVd, dEsat_dVb, Vdsat, Vdsat0;
 double EsatL, dEsatL_dVg, dEsatL_dVd, dEsatL_dVb;
+double Ilimit, Iexp, dIexp_dVg, dIexp_dVd, dIexp_dVb;
 double dVdsat_dVg, dVdsat_dVb, dVdsat_dVd, Vasat, dAlphaz_dVg, dAlphaz_dVb; 
-double dVasat_dVg, dVasat_dVb, dVasat_dVd, Va, dVa_dVd, dVa_dVg, dVa_dVb; 
+double dVasat_dVg, dVasat_dVb, dVasat_dVd, Va, Va2, dVa_dVd, dVa_dVg, dVa_dVb; 
 double Vbseff, dVbseff_dVb, VbseffCV, dVbseffCV_dVb; 
-double Arg1, One_Third_CoxWL, Two_Third_CoxWL, Alphaz, CoxWL; 
+double Arg1, Arg2, One_Third_CoxWL, Two_Third_CoxWL, Alphaz, CoxWL; 
+double dqbulk_dVb, dVgdt_dVg, dVgdt_dVd, dVgdt_dVb; 
 double T0, dT0_dVg, dT0_dVd, dT0_dVb;
 double T1, dT1_dVg, dT1_dVd, dT1_dVb;
 double T2, dT2_dVg, dT2_dVd, dT2_dVb;
 double T3, dT3_dVg, dT3_dVd, dT3_dVb;
-double T4;
-double T5;
-double T6;
-double T7;
-double T8;
-double T9;
-double T10; 
+double T4, dT4_dVg, dT4_dVd, dT4_dVb;
+double T5, dT5_dVg, dT5_dVd, dT5_dVb;
+double T6, dT6_dVg, dT6_dVd, dT6_dVb;
+double T7, dT7_dVg, dT7_dVd, dT7_dVb;
+double T8, dT8_dVg, dT8_dVd, dT8_dVb;
+double T9, dT9_dVg, dT9_dVd, dT9_dVb;
+double T10, dT10_dVg, dT10_dVb, dT10_dVd; 
 double T11, T12;
 double tmp, Abulk, dAbulk_dVb, Abulk0, dAbulk0_dVb;
+double T100, T101;  
 double VACLM, dVACLM_dVg, dVACLM_dVd, dVACLM_dVb;
 double VADIBL, dVADIBL_dVg, dVADIBL_dVd, dVADIBL_dVb;
+double VAHCE,  dVAHCE_dVg, dVAHCE_dVd, dVAHCE_dVb;
 double Xdep, dXdep_dVb, lt1, dlt1_dVb, ltw, dltw_dVb, Delt_vth, dDelt_vth_dVb;
-double Theta0, dTheta0_dVb;
-double TempRatio, tmp1, tmp2, tmp3, tmp4;
-double DIBL_Sft, dDIBL_Sft_dVd, Lambda, dLambda_dVg;
-double Idtot, Ibtot;
+double Theta0, dTheta0_dVb, Theta1, dTheta1_dVb;
+double Thetarout, dThetarout_dVb, TempRatio, tmp1, tmp2, tmp3, tmp4;
+double DIBL_Sft, dDIBL_Sft_dVd, DIBL_fact, Lambda, dLambda_dVg;
+double Rout_Vgs_factor, dRout_Vgs_factor_dVg, dRout_Vgs_factor_dVb;
+double dRout_Vgs_factor_dVd, Idtot, Ibtot;
 double tempv, a1, ScalingFactor;
 
 double Vgsteff, dVgsteff_dVg, dVgsteff_dVd, dVgsteff_dVb; 
 double Vdseff, dVdseff_dVg, dVdseff_dVd, dVdseff_dVb; 
 double VdseffCV, dVdseffCV_dVg, dVdseffCV_dVd, dVdseffCV_dVb; 
-double diffVds, dAbulk_dVg;
+double diffVds, diffVdsCV, dAbulk_dVg;
 double beta, dbeta_dVg, dbeta_dVd, dbeta_dVb;
 double gche, dgche_dVg, dgche_dVd, dgche_dVb;
 double fgche1, dfgche1_dVg, dfgche1_dVd, dfgche1_dVb;
@@ -99,46 +105,47 @@ double fgche2, dfgche2_dVg, dfgche2_dVd, dfgche2_dVb;
 double Idl, dIdl_dVg, dIdl_dVd, dIdl_dVb;
 double Idsa, dIdsa_dVg, dIdsa_dVd, dIdsa_dVb;
 double Ids, Gm, Gds, Gmb;
-double Isub, Gbd, Gbg, Gbb;
+double Isub, Isubd, Isubs, Gbd, Gbg, Gbb;
 double VASCBE, dVASCBE_dVg, dVASCBE_dVd, dVASCBE_dVb;
 double CoxWovL;
 double Rds, dRds_dVg, dRds_dVb, WVCox, WVCoxRds;
-double Vgst2Vtm, VdsatCV, dVdsatCV_dVg, dVdsatCV_dVb;
+double Vgst2Vtm, VdsatCV, dVdsatCV_dVd, dVdsatCV_dVg, dVdsatCV_dVb;
 double Leff, Weff, dWeff_dVg, dWeff_dVb;
 double AbulkCV, dAbulkCV_dVb;
 double qgdo, qgso, cgdo, cgso;
 
-double qcheq = 0.0, qdef, gqdef = 0.0, cqdef, cqcheq, gtau_diff, gtau_drift;
-double gcqdb = 0.0,gcqsb = 0.0, gcqgb = 0.0,gcqbb = 0.0;
+double qcheq, qdef, gqdef, cqdef, cqcheq, gtau_diff, gtau_drift, csreq;
+double gcqdb,gcqsb,gcqgb,gcqbb,vss;
 double dxpart, sxpart, ggtg, ggtd, ggts, ggtb;
 double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
 double dsxpart_dVd, dsxpart_dVg, dsxpart_dVb, dsxpart_dVs;
 
 double gbspsp, gbbdp, gbbsp, gbspg, gbspb, gbspdp; 
 double gbdpdp, gbdpg, gbdpb, gbdpsp; 
-double Cgg, Cgd, Cgb, Cdg, Cdd, Cds;
-double Csg, Csd, Css, Csb, Cbg, Cbd, Cbb;
-double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Qac0, Qsub0;
-double dQac0_dVg, dQac0_dVd = 0.0, dQac0_dVb, dQsub0_dVg;
-double dQsub0_dVd, dQsub0_dVb;
+double Cgg, Cgd, Cgs, Cgb, Cdg, Cdd, Cds, Cdb, Qg, Qd;
+double Csg, Csd, Css, Csb, Cbg, Cbd, Cbs, Cbb, Qs, Qb;
+double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Csg1, Csd1, Csb1, Qac0, Qsub0;
+double dQac0_dVg, dQac0_dVb, dQsub0_dVg, dQsub0_dVd, dQsub0_dVb;
    
 double m;
 
 struct bsim3SizeDependParam *pParam;
-int ByPass, Check, ChargeComputationNeeded, error;
+int ByPass, Check, ChargeComputationNeeded, J, error, I;
+double junk[50];
 
 ScalingFactor = 1.0e-9;
 ChargeComputationNeeded =  
                  ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
                  ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
                  ? 1 : 0;
+
 for (; model != NULL; model = model->BSIM3nextModel)
 {    for (here = model->BSIM3instances; here != NULL; 
           here = here->BSIM3nextInstance)
      {    
 	  if (here->BSIM3owner != ARCHme)
 	    continue;
-     	  Check = 1;
+          Check = 1;
           ByPass = 0;
 	  pParam = here->pParam;
           if ((ckt->CKTmode & MODEINITSMSIG))
@@ -329,37 +336,15 @@ for (; model != NULL; model = model->BSIM3nextModel)
 
           /* Source/drain junction diode DC model begins */
           Nvtm = model->BSIM3vtm * model->BSIM3jctEmissionCoeff;
-          /* acm model */
-          if (model->BSIM3acmMod == 0)
-          {
-	    if ((here->BSIM3sourceArea <= 0.0)
-	        && (here->BSIM3sourcePerimeter <= 0.0))
-	      {
-	        SourceSatCurrent = 1.0e-14;
-	      }
-	    else
-	      {
-	        SourceSatCurrent = here->BSIM3sourceArea
-		  * model->BSIM3jctTempSatCurDensity
-		  + here->BSIM3sourcePerimeter
-		  * model->BSIM3jctSidewallTempSatCurDensity;
-	      }
+	  if ((here->BSIM3sourceArea <= 0.0) && (here->BSIM3sourcePerimeter <= 0.0))
+	  {   SourceSatCurrent = 1.0e-14;
 	  }
-          else
-          {
-            SourceSatCurrent = 0.0;
-            if (!here->BSIM3sourceAreaGiven)
-            {   
-              here->BSIM3sourceArea = 2.0 * model->BSIM3hdif * pParam->BSIM3weff;
-            }
-            SourceSatCurrent = here->BSIM3sourceArea * model->BSIM3jctTempSatCurDensity;
-            if (!here->BSIM3sourcePerimeterGiven)
-            {   
-              here->BSIM3sourcePerimeter = 4.0 * model->BSIM3hdif + 2.0 * pParam->BSIM3weff;
-            }
-            SourceSatCurrent = SourceSatCurrent + here->BSIM3sourcePerimeter * model->BSIM3jctSidewallTempSatCurDensity;
-            if (SourceSatCurrent <= 0.0) SourceSatCurrent = 1.0e-14;
-          }
+	  else
+	  {   SourceSatCurrent = here->BSIM3sourceArea 
+                               * model->BSIM3jctTempSatCurDensity
+			       + here->BSIM3sourcePerimeter
+			       * model->BSIM3jctSidewallTempSatCurDensity;
+	  }
 	  if (SourceSatCurrent <= 0.0)
 	  {   here->BSIM3gbs = ckt->CKTgmin;
               here->BSIM3cbs = here->BSIM3gbs * vbs;
@@ -379,56 +364,24 @@ for (; model != NULL; model = model->BSIM3nextModel)
                                      + ckt->CKTgmin * vbs;
                   }
                   else
-                  {   
-		      /* Added revision dependent code */
-		      switch (model->BSIM3intVersion) {
-			case BSIM3V324:
-			case BSIM3V323:
-			case BSIM3V322:
-			  T0 = here->BSIM3IsEvjsm / Nvtm;
-			  here->BSIM3gbs = T0 + (ckt->CKTgmin);
-			  here->BSIM3cbs = here->BSIM3IsEvjsm - SourceSatCurrent
-			    + T0 * (vbs - here->BSIM3vjsm) + (ckt->CKTgmin) * vbs;
-			  break;
-			case BSIM3V32:
-			default:
-			  T0 = (SourceSatCurrent + model->BSIM3ijth) / Nvtm;
-			  here->BSIM3gbs = T0 + (ckt->CKTgmin);
-			  here->BSIM3cbs = model->BSIM3ijth + (ckt->CKTgmin) * vbs 
-			    + T0 * (vbs - here->BSIM3vjsm);
-		      }
+                  {   T0 = here->BSIM3IsEvjsm / Nvtm;
+                      here->BSIM3gbs = T0 + ckt->CKTgmin;
+                      here->BSIM3cbs = here->BSIM3IsEvjsm - SourceSatCurrent
+                                     + T0 * (vbs - here->BSIM3vjsm)
+                                     + ckt->CKTgmin * vbs;
                   }
               }
           }
 
-          /* acm model */
-          if (model->BSIM3acmMod == 0)
-          {
-            if ((here->BSIM3drainArea <= 0.0) && (here->BSIM3drainPerimeter <= 0.0))
-            {   DrainSatCurrent = 1.0e-14;
-            }
-            else
-            {   DrainSatCurrent = here->BSIM3drainArea
-                                * model->BSIM3jctTempSatCurDensity
-                                + here->BSIM3drainPerimeter
-                                * model->BSIM3jctSidewallTempSatCurDensity;
-            }
-          }
-          else
-          {
-            DrainSatCurrent = 0.0;
-            if (!here->BSIM3drainAreaGiven)
-            {   
-              here->BSIM3drainArea = 2.0 * model->BSIM3hdif * pParam->BSIM3weff;
-            }
-            DrainSatCurrent = here->BSIM3drainArea * model->BSIM3jctTempSatCurDensity;
-            if (!here->BSIM3drainPerimeterGiven)
-            {   
-              here->BSIM3drainPerimeter = 4.0 * model->BSIM3hdif + 2.0 * pParam->BSIM3weff;
-            }
-            DrainSatCurrent = DrainSatCurrent + here->BSIM3drainPerimeter * model->BSIM3jctSidewallTempSatCurDensity;
-            if (DrainSatCurrent <= 0.0) DrainSatCurrent = 1.0e-14;
-          }
+	  if ((here->BSIM3drainArea <= 0.0) && (here->BSIM3drainPerimeter <= 0.0))
+	  {   DrainSatCurrent = 1.0e-14;
+	  }
+	  else
+	  {   DrainSatCurrent = here->BSIM3drainArea
+			      * model->BSIM3jctTempSatCurDensity
+			      + here->BSIM3drainPerimeter
+			      * model->BSIM3jctSidewallTempSatCurDensity;
+	  }
 	  if (DrainSatCurrent <= 0.0)
 	  {   here->BSIM3gbd = ckt->CKTgmin;
               here->BSIM3cbd = here->BSIM3gbd * vbd;
@@ -448,24 +401,11 @@ for (; model != NULL; model = model->BSIM3nextModel)
                                      + ckt->CKTgmin * vbd;
                   }
                   else
-                  {   
-		      /* Added revision dependent code */
-		      switch (model->BSIM3intVersion) {
-			case BSIM3V324:
-			case BSIM3V323:
-			case BSIM3V322:
-			  T0 = here->BSIM3IsEvjdm / Nvtm;
-			  here->BSIM3gbd = T0 + (ckt->CKTgmin);
-			  here->BSIM3cbd = here->BSIM3IsEvjdm - DrainSatCurrent
-			    + T0 * (vbd - here->BSIM3vjdm) + (ckt->CKTgmin) * vbd;
-			  break;
-			case BSIM3V32:
-			default:
-			  T0 = (DrainSatCurrent + model->BSIM3ijth) / Nvtm;
-			  here->BSIM3gbd = T0 + (ckt->CKTgmin);
-			  here->BSIM3cbd = model->BSIM3ijth + (ckt->CKTgmin) * vbd
-			    + T0 * (vbd - here->BSIM3vjdm);
-		      }
+                  {   T0 = here->BSIM3IsEvjdm / Nvtm;
+                      here->BSIM3gbd = T0 + ckt->CKTgmin;
+                      here->BSIM3cbd = here->BSIM3IsEvjdm - DrainSatCurrent
+                                     + T0 * (vbd - here->BSIM3vjdm)
+                                     + ckt->CKTgmin * vbd;
                   }
               }
           }
@@ -698,10 +638,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
               dVgsteff_dVd = (T2 * dT1_dVd - T1 * dT2_dVd) / T3;
               dVgsteff_dVb = (T2 * dT1_dVb - T1 * dT2_dVb) / T3;
 	  }
-	  /* Added revision dependent code */
-          if (model->BSIM3intVersion > BSIM3V323) {
-	    here->BSIM3Vgsteff = Vgsteff;
-	  }
+	  here->BSIM3Vgsteff = Vgsteff;	  
 
 /* Calculate Effective Channel Geometry */
           T9 = sqrtPhis - pParam->BSIM3sqrtPhi;
@@ -733,10 +670,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
               dRds_dVb = pParam->BSIM3rds0 * pParam->BSIM3prwb * dsqrtPhis_dVb
 		       * T1;
 	  }
-	  /* Added revision dependent code */
-          if (model->BSIM3intVersion > BSIM3V323) {
-	    here->BSIM3rds = Rds;	/* Noise Bugfix */
-          }
+	  here->BSIM3rds = Rds; /* Noise Bugfix */
 	  
 /* Calculate Abulk */
           T1 = 0.5 * pParam->BSIM3k1ox / sqrtPhis;
@@ -772,19 +706,11 @@ for (; model != NULL; model = model->BSIM3nextModel)
           /* added to avoid the problems caused by Abulk */
 	  {   T9 = 1.0 / (3.0 - 20.0 * Abulk);
 	      Abulk = (0.2 - Abulk) * T9;
-	      /* Added revision dependent code */
-              if (model->BSIM3intVersion > BSIM3V32) {
-	        T10 = T9 * T9;
-	        dAbulk_dVb *= T10;
-	        dAbulk_dVg *= T10;
-	      } else {
-	      	dAbulk_dVb *= T9 * T9;
-	      }
+              T10 = T9 * T9;
+	      dAbulk_dVb *= T10;
+              dAbulk_dVg *= T10;
 	  }
-	  /* Added revision dependent code */
-          if (model->BSIM3intVersion > BSIM3V323) {
-	    here->BSIM3Abulk = Abulk;
-          }
+	  here->BSIM3Abulk = Abulk;
 
           T2 = pParam->BSIM3keta * Vbseff;
 	  if (T2 >= -0.9)
@@ -888,10 +814,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
 	  }
 
           Vgst2Vtm = Vgsteff + 2.0 * Vtm;
-	  /* Added revision dependent code */
-          if (model->BSIM3intVersion > BSIM3V323) {
-            here->BSIM3AbovVgst2Vtm = Abulk / Vgst2Vtm;
-          }
+          here->BSIM3AbovVgst2Vtm = Abulk / Vgst2Vtm;
 
           if (Rds > 0)
           {   tmp2 = dRds_dVg / Rds + dWeff_dVg / Weff;
@@ -980,24 +903,12 @@ for (; model != NULL; model = model->BSIM3nextModel)
           dVdseff_dVg = dVdsat_dVg - 0.5 * (dT1_dVg + dT2_dVg); 
           dVdseff_dVd = dVdsat_dVd - 0.5 * (dT1_dVd + dT2_dVd); 
           dVdseff_dVb = dVdsat_dVb - 0.5 * (dT1_dVb + dT2_dVb); 
-	  /* Added revision dependent code */
-	  switch (model->BSIM3intVersion) {
-	    case BSIM3V324:
-	    case BSIM3V323:
-	    case BSIM3V322:
-	      /* Added to eliminate non-zero Vdseff at Vds=0.0 */
-	      if (Vds == 0.0)
-		{
-		  Vdseff = 0.0;
-		  dVdseff_dVg = 0.0;
-		  dVdseff_dVb = 0.0;
-		}
-	      break;
-	    case BSIM3V32:
-	    default:
-	      /* Do nothing */
-	      break;
-	  }
+          /* Added to eliminate non-zero Vdseff at Vds=0.0 */
+          if (Vds == 0.0)
+          {  Vdseff = 0.0;
+             dVdseff_dVg = 0.0;
+             dVdseff_dVb = 0.0; 
+          }
 
 /* Calculate VAsat */
           tmp4 = 1.0 - 0.5 * Abulk * Vdsat / Vgst2Vtm;
@@ -1027,10 +938,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
           if (Vdseff > Vds)
              Vdseff = Vds;
           diffVds = Vds - Vdseff;
-	  /* Added revision dependent code */
-          if (model->BSIM3intVersion > BSIM3V323) {
-	    here->BSIM3Vdseff = Vdseff;
-	  }
+          here->BSIM3Vdseff = Vdseff;  
 
 /* Calculate VACLM */
           if ((pParam->BSIM3pclm > 0.0) && (diffVds > 1.0e-10))
@@ -1649,42 +1557,14 @@ for (; model != NULL; model = model->BSIM3nextModel)
               } /* End of VgsteffCV */
 
 	      if (model->BSIM3capMod == 1)
-	      {   
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      Vfb = pParam->BSIM3vfbzb;
-		      break;
-		    case BSIM3V32:
-		      Vfb = pParam->BSIM3vfbzb;
-		      dVfb_dVb = dVfb_dVd = 0.0;
-		      break;
-		    default:
-		      Vfb = Vth - pParam->BSIM3phi - pParam->BSIM3k1ox * sqrtPhis;
-		      dVfb_dVb = dVth_dVb - pParam->BSIM3k1ox * dsqrtPhis_dVb;
-		      dVfb_dVd = dVth_dVd;
-		  }
-
+	      {   Vfb = pParam->BSIM3vfbzb;
                   Arg1 = Vgs_eff - VbseffCV - Vfb - Vgsteff;
 
                   if (Arg1 <= 0.0)
 	          {   qgate = CoxWL * Arg1;
                       Cgg = CoxWL * (dVgs_eff_dVg - dVgsteff_dVg);
-		      /* Added revision dependent code */
-		      switch (model->BSIM3intVersion) {
-			case BSIM3V324:
-			case BSIM3V323:
-			case BSIM3V322:
-			  Cgd = -CoxWL * dVgsteff_dVd;
-			  Cgb = -CoxWL * (dVbseffCV_dVb + dVgsteff_dVb);
-			  break;
-			case BSIM3V32:
-			default:
-			  Cgd = -CoxWL * (dVfb_dVd + dVgsteff_dVd);
-			  Cgb = -CoxWL * (dVfb_dVb + dVbseffCV_dVb + dVgsteff_dVb);
-		      }
+                      Cgd = -CoxWL * dVgsteff_dVd;
+                      Cgb = -CoxWL * (dVbseffCV_dVb + dVgsteff_dVb);
                   }
 	          else
 	          {   T0 = 0.5 * pParam->BSIM3k1ox;
@@ -1694,19 +1574,8 @@ for (; model != NULL; model = model->BSIM3nextModel)
                       qgate = CoxWL * pParam->BSIM3k1ox * (T1 - T0);
 
                       Cgg = T2 * (dVgs_eff_dVg - dVgsteff_dVg);
-		      /* Added revision dependent code */
-		      switch (model->BSIM3intVersion) {
-			case BSIM3V324:
-			case BSIM3V323:
-			case BSIM3V322:
-			  Cgd = -T2 * dVgsteff_dVd;
-			  Cgb = -T2 * (dVbseffCV_dVb + dVgsteff_dVb);
-			  break;
-			case BSIM3V32:
-			default:
-			  Cgd = -T2 * (dVfb_dVd + dVgsteff_dVd);
-			  Cgb = -T2 * (dVfb_dVb + dVbseffCV_dVb + dVgsteff_dVb);
-		      }
+                      Cgd = -T2 * dVgsteff_dVd;
+                      Cgb = -T2 * (dVbseffCV_dVb + dVgsteff_dVb);
                   }
 	          qbulk = -qgate;
 	          Cbg = -Cgg;
@@ -1850,24 +1719,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
 	      }
 
 	      else if (model->BSIM3capMod == 2)
-	      {   
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      Vfb = pParam->BSIM3vfbzb;
-		      break;
-		    case BSIM3V32:
-		      Vfb = pParam->BSIM3vfbzb;
-		      dVfb_dVb = dVfb_dVd = 0.0;
-		      break;
-		    default:	/*  old code prior to v3.2 */
-		      Vfb = Vth - pParam->BSIM3phi - pParam->BSIM3k1ox * sqrtPhis;
-		      dVfb_dVb = dVth_dVb - pParam->BSIM3k1ox * dsqrtPhis_dVb;
-		      dVfb_dVd = dVth_dVd;
-		  }
-
+	      {   Vfb = pParam->BSIM3vfbzb;
                   V3 = Vfb - Vgs_eff + VbseffCV - DELTA_3;
 		  if (Vfb <= 0.0)
 		  {   T0 = sqrt(V3 * V3 - 4.0 * DELTA_3 * Vfb);
@@ -1880,53 +1732,11 @@ for (; model != NULL; model = model->BSIM3nextModel)
 
 		  T1 = 0.5 * (1.0 + V3 / T0);
 		  Vfbeff = Vfb - 0.5 * (V3 + T0);
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      /* Do nothing */
-		      break;
-		    case BSIM3V32:
-		    default:
-		      dVfbeff_dVd = (1.0 - T1 - T2) * dVfb_dVd;
-		  }
 		  dVfbeff_dVg = T1 * dVgs_eff_dVg;
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      dVfbeff_dVb = -T1 * dVbseffCV_dVb;
-		      break;
-		    case BSIM3V32:
-		    default:
-		      dVfbeff_dVb = (1.0 - T1 - T2) * dVfb_dVb - T1 * dVbseffCV_dVb;
-		  }
+		  dVfbeff_dVb = -T1 * dVbseffCV_dVb;
 		  Qac0 = CoxWL * (Vfbeff - Vfb);
 		  dQac0_dVg = CoxWL * dVfbeff_dVg;
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      /* Do nothing */
-		      break;
-		    case BSIM3V32:
-		    default:
-		      dQac0_dVd = CoxWL * (dVfbeff_dVd - dVfb_dVd);
-		  }
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      dQac0_dVb = CoxWL * dVfbeff_dVb;
-		      break;
-		    case BSIM3V32:
-		    default:
-		      dQac0_dVb = CoxWL * (dVfbeff_dVb - dVfb_dVb);
-		  }
+		  dQac0_dVb = CoxWL * dVfbeff_dVb;
 
                   T0 = 0.5 * pParam->BSIM3k1ox;
 		  T3 = Vgs_eff - Vfbeff - VbseffCV - Vgsteff;
@@ -1946,17 +1756,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
 		  Qsub0 = CoxWL * pParam->BSIM3k1ox * (T1 - T0);
 
                   dQsub0_dVg = T2 * (dVgs_eff_dVg - dVfbeff_dVg - dVgsteff_dVg);
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      dQsub0_dVd = -T2 * dVgsteff_dVd;
-		      break;
-		    case BSIM3V32:
-		    default:
-		      dQsub0_dVd = -T2 * (dVfbeff_dVd + dVgsteff_dVd);
-		  }
+                  dQsub0_dVd = -T2 * dVgsteff_dVd;
                   dQsub0_dVb = -T2 * (dVfbeff_dVb + dVbseffCV_dVb 
                              + dVgsteff_dVb);
 
@@ -1973,24 +1773,12 @@ for (; model != NULL; model = model->BSIM3nextModel)
 		  dVdseffCV_dVg = T3;
 		  dVdseffCV_dVd = T1;
 		  dVdseffCV_dVb = -T3 * VdsatCV * dAbulkCV_dVb;
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      /* Added to eliminate non-zero VdseffCV at Vds=0.0 */
-		      if (Vds == 0.0)
-			{
-			  VdseffCV = 0.0;
-			  dVdseffCV_dVg = 0.0;
-			  dVdseffCV_dVb = 0.0;
-			}
-		      break;
-		    case BSIM3V32:
-		    default:
-		      /* Do nothing */
-		      break;
-		  }
+                  /* Added to eliminate non-zero VdseffCV at Vds=0.0 */
+                  if (Vds == 0.0)
+                  {  VdseffCV = 0.0;
+                     dVdseffCV_dVg = 0.0;
+                     dVdseffCV_dVb = 0.0;
+                  }
 
 	          T0 = AbulkCV * VdseffCV;
                   T1 = 12.0 * (Vgsteff - 0.5 * T0 + 1e-20);
@@ -2069,31 +1857,11 @@ for (; model != NULL; model = model->BSIM3nextModel)
                   qdrn = -(qgate + qbulk + qsrc);
 
 		  Cgg = dQac0_dVg + dQsub0_dVg + Cgg1;
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      Cgd = dQsub0_dVd + Cgd1;
-		      break;
-		    case BSIM3V32:
-		    default:
-		      Cgd = dQac0_dVd + dQsub0_dVd + Cgd1;
-		  }
+		  Cgd = dQsub0_dVd + Cgd1;
 		  Cgb = dQac0_dVb + dQsub0_dVb + Cgb1;
 
 		  Cbg = Cbg1 - dQac0_dVg - dQsub0_dVg;
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      Cbd = Cbd1 - dQsub0_dVd;
-		      break;
-		    case BSIM3V32:
-		    default:
-		      Cbd = Cbd1 - dQac0_dVd - dQsub0_dVd;
-		  }
+		  Cbd = Cbd1 - dQsub0_dVd;
 		  Cbb = Cbb1 - dQac0_dVb - dQsub0_dVb;
 
 		  Cgb *= dVbseff_dVb;
@@ -2213,63 +1981,35 @@ for (; model != NULL; model = model->BSIM3nextModel)
 
 		  DeltaPhi = Vtm * log(1.0 + T1 * Vgsteff / Denomi);
 		  dDeltaPhi_dVg = 2.0 * Vtm * (T1 -T0) / (Denomi + T1 * Vgsteff);
-		  dDeltaPhi_dVd = dDeltaPhi_dVg * dVgsteff_dVd;
-		  dDeltaPhi_dVb = dDeltaPhi_dVg * dVgsteff_dVb;
 		  /* End of delta Phis */
+
+                  /* VgDP = Vgsteff - DeltaPhi */
+                  T0 = Vgsteff - DeltaPhi - 0.001;
+                  dT0_dVg = 1.0 - dDeltaPhi_dVg;
+                  T1 = sqrt(T0 * T0 + Vgsteff * 0.004);
+                  VgDP = 0.5 * (T0 + T1);
+                  dVgDP_dVg = 0.5 * (dT0_dVg + (T0 * dT0_dVg + 0.002) / T1);
 
                   T3 = 4.0 * (Vth - pParam->BSIM3vfbzb - pParam->BSIM3phi);
                   Tox += Tox;
                   if (T3 >= 0.0)
-                  {  
-		      /* Added revision dependent code */
-		      switch (model->BSIM3intVersion) {
-			case BSIM3V324:
-			case BSIM3V323:
-			case BSIM3V322:
-			  T0 = (Vgsteff + T3) / Tox;
-			  dT0_dVd = (dVgsteff_dVd + 4.0 * dVth_dVd) / Tox;
-			  dT0_dVb = (dVgsteff_dVb + 4.0 * dVth_dVb) / Tox;
-			  break;
-			case BSIM3V32:
-			default:
-			  T0 = (Vgsteff + T3) / Tox;
-		      }
+                  {  T0 = (Vgsteff + T3) / Tox;
+                     dT0_dVd = (dVgsteff_dVd + 4.0 * dVth_dVd) / Tox;
+                     dT0_dVb = (dVgsteff_dVb + 4.0 * dVth_dVb) / Tox;
                   }
                   else
-                  {  
-		      /* Added revision dependent code */
-		      switch (model->BSIM3intVersion) {
-			case BSIM3V324:
-			case BSIM3V323:
-			case BSIM3V322:
-			  T0 = (Vgsteff + 1.0e-20) / Tox;
-			  dT0_dVd = dVgsteff_dVd / Tox;
-			  dT0_dVb = dVgsteff_dVb / Tox;
-			  break;
-			case BSIM3V32:
-			default:
-			  T0 = (Vgsteff + 1.0e-20) / Tox;
-		      }
+                  {  T0 = (Vgsteff + 1.0e-20) / Tox;
+                     dT0_dVd = dVgsteff_dVd / Tox;
+                     dT0_dVb = dVgsteff_dVb / Tox;
                   }
                   tmp = exp(0.7 * log(T0));
                   T1 = 1.0 + tmp;
                   T2 = 0.7 * tmp / (T0 * Tox);
                   Tcen = 1.9e-9 / T1;
                   dTcen_dVg = -1.9e-9 * T2 / T1 /T1;
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      dTcen_dVd = Tox * dTcen_dVg;
-		      dTcen_dVb = dTcen_dVd * dT0_dVb;
-		      dTcen_dVd *= dT0_dVd;
-		      break;
-		    case BSIM3V32:
-		    default:
-		      dTcen_dVd = dTcen_dVg * (4.0 * dVth_dVd + dVgsteff_dVd);
-		      dTcen_dVb = dTcen_dVg * (4.0 * dVth_dVb + dVgsteff_dVb);
-		  }
+                  dTcen_dVd = Tox * dTcen_dVg;
+                  dTcen_dVb = dTcen_dVd * dT0_dVb;
+                  dTcen_dVd *= dT0_dVd;
                   dTcen_dVg *= dVgsteff_dVg;
 
 		  Ccen = EPSSI / Tcen;
@@ -2284,38 +2024,40 @@ for (; model != NULL; model = model->BSIM3nextModel)
 
 		  AbulkCV = Abulk0 * pParam->BSIM3abulkCVfactor;
 		  dAbulkCV_dVb = pParam->BSIM3abulkCVfactor * dAbulk0_dVb;
-		  VdsatCV = (Vgsteff - DeltaPhi) / AbulkCV;
-		  V4 = VdsatCV - Vds - DELTA_4;
-		  T0 = sqrt(V4 * V4 + 4.0 * DELTA_4 * VdsatCV);
-		  VdseffCV = VdsatCV - 0.5 * (V4 + T0);
-		  T1 = 0.5 * (1.0 + V4 / T0);
-		  T2 = DELTA_4 / T0;
-		  T3 = (1.0 - T1 - T2) / AbulkCV;
-		  T4 = T3 * ( 1.0 - dDeltaPhi_dVg);
-		  dVdseffCV_dVg = T4;
-		  dVdseffCV_dVd = T1;
-		  dVdseffCV_dVb = -T3 * VdsatCV * dAbulkCV_dVb;
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		    case BSIM3V322:
-		      /* Added to eliminate non-zero VdseffCV at Vds=0.0 */
-		      if (Vds == 0.0)
-			{
-			  VdseffCV = 0.0;
-			  dVdseffCV_dVg = 0.0;
-			  dVdseffCV_dVb = 0.0;
-			}
-		      break;
-		    case BSIM3V32:
-		    default:
-		      /* Do nothing */
-		      break;
-		  }
+		  VdsatCV =  VgDP / AbulkCV;
+                  T0 = VdsatCV - Vds - DELTA_4;
+                  dT0_dVg = dVgDP_dVg / AbulkCV;
+                  dT0_dVb = -VdsatCV * dAbulkCV_dVb / AbulkCV;
+                  T1 = sqrt(T0 * T0 + 4.0 * DELTA_4 * VdsatCV);
+                  dT1_dVg = (T0 + DELTA_4 + DELTA_4) / T1;
+                  dT1_dVd = -T0 / T1;
+                  dT1_dVb = dT1_dVg * dT0_dVb;
+                  dT1_dVg *= dT0_dVg;
+                  if (T0 >= 0.0)
+                  {   VdseffCV = VdsatCV - 0.5 * (T0 + T1);
+                      dVdseffCV_dVg = 0.5 * (dT0_dVg - dT1_dVg);
+                      dVdseffCV_dVd = 0.5 * (1.0 - dT1_dVd);
+                      dVdseffCV_dVb = 0.5 * (dT0_dVb - dT1_dVb);
+                  }
+                  else
+                  {   T3 = (DELTA_4 + DELTA_4) / (T1 - T0);
+                      T4 = 1.0 - T3;
+                      T5 = VdsatCV * T3 / (T1 - T0);
+                      VdseffCV = VdsatCV * T4;
+                      dVdseffCV_dVg = dT0_dVg * T4 + T5 * (dT1_dVg - dT0_dVg);
+                      dVdseffCV_dVd = T5 * (dT1_dVd + 1.0);
+                      dVdseffCV_dVb = dT0_dVb * (1.0 - T5) + T5 * dT1_dVb;
+                  }
+
+                  /* Added to eliminate non-zero VdseffCV at Vds=0.0 */
+                  if (Vds == 0.0)
+                  {  VdseffCV = 0.0;
+                     dVdseffCV_dVg = 0.0;
+                     dVdseffCV_dVb = 0.0;
+                  }
 
                   T0 = AbulkCV * VdseffCV;
-		  T1 = Vgsteff - DeltaPhi;
+		  T1 = VgDP;
                   T2 = 12.0 * (T1 - 0.5 * T0 + 1.0e-20);
                   T3 = T0 / T2;
                   T4 = 1.0 - 12.0 * T3 * T3;
@@ -2324,7 +2066,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
 
                   qgate = qinoi = CoxWLcen * (T1 - T0 * (0.5 - T3));
 		  QovCox = qgate / Coxeff;
-		  Cgg1 = CoxWLcen * (T4 * (1.0 - dDeltaPhi_dVg) 
+		  Cgg1 = CoxWLcen * (T4 * dVgDP_dVg 
 		       + T5 * dVdseffCV_dVg);
 		  Cgd1 = CoxWLcen * T5 * dVdseffCV_dVd + Cgg1 
 		       * dVgsteff_dVd + QovCox * dCoxeff_dVd;
@@ -2336,7 +2078,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
                   T7 = 1.0 - AbulkCV;
                   T8 = T2 * T2;
                   T9 = 12.0 * T7 * T0 * T0 / (T8 * AbulkCV);
-                  T10 = T9 * (1.0 - dDeltaPhi_dVg);
+                  T10 = T9 * dVgDP_dVg;
                   T11 = -T7 * T5 / AbulkCV;
                   T12 = -(T9 * T1 / AbulkCV + VdseffCV * (0.5 - T0 / T2));
 
@@ -2357,7 +2099,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
 		      T2 += T2;
 		      T3 = T2 * T2;
 		      T7 = -(0.25 - 12.0 * T0 * (4.0 * T1 - T0) / T3);
-		      T4 = -(0.5 + 24.0 * T0 * T0 / T3) * (1.0 - dDeltaPhi_dVg);
+		      T4 = -(0.5 + 24.0 * T0 * T0 / T3) * dVgDP_dVg;
 		      T5 = T7 * AbulkCV;
 		      T6 = T7 * VdseffCV;
 
@@ -2382,7 +2124,7 @@ for (; model != NULL; model = model->BSIM3nextModel)
 		      T6 = AbulkCV * (qsrc / T2 + T3 * T8);
 		      T7 = T6 * VdseffCV / AbulkCV; 
 
-		      Csg = T5 * (1.0 - dDeltaPhi_dVg) + T6 * dVdseffCV_dVg; 
+		      Csg = T5 * dVgDP_dVg + T6 * dVdseffCV_dVg; 
 		      Csd = Csg * dVgsteff_dVd + T6 * dVdseffCV_dVd 
 			  + QovCox * dCoxeff_dVd;
 		      Csb = Csg * dVgsteff_dVb + T6 * dVdseffCV_dVb 
@@ -2453,35 +2195,12 @@ finished:
 			   along gate side
                */
 
-	      /* Added revision dependent code */
-	      switch (model->BSIM3intVersion) {
-		case BSIM3V324:
-		case BSIM3V323:
-		  czbd = model->BSIM3unitAreaTempJctCap * here->BSIM3drainArea;	/*bug fix */
-		  czbs = model->BSIM3unitAreaTempJctCap * here->BSIM3sourceArea;
-		  break;
-		case BSIM3V322:
-		case BSIM3V32:
-		default:
-		  czbd = model->BSIM3unitAreaJctCap * here->BSIM3drainArea;
-		  czbs = model->BSIM3unitAreaJctCap * here->BSIM3sourceArea;
-	      }
-
+              czbd = model->BSIM3unitAreaTempJctCap * here->BSIM3drainArea; /*bug fix */
+              czbs = model->BSIM3unitAreaTempJctCap * here->BSIM3sourceArea;
               if (here->BSIM3drainPerimeter < pParam->BSIM3weff)
               { 
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		      czbdswg = model->BSIM3unitLengthGateSidewallTempJctCap
-			* here->BSIM3drainPerimeter;
-		      break;
-		    case BSIM3V322:
-		    case BSIM3V32:
-		    default:
-		      czbdswg = model->BSIM3unitLengthGateSidewallJctCap
-			* here->BSIM3drainPerimeter;
-		  }
+              czbdswg = model->BSIM3unitLengthGateSidewallTempJctCap 
+		      * here->BSIM3drainPerimeter;
               czbdsw = 0.0;
               }
               else
@@ -2494,39 +2213,15 @@ finished:
               if (here->BSIM3sourcePerimeter < pParam->BSIM3weff)
               {
               czbssw = 0.0; 
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		      czbsswg = model->BSIM3unitLengthGateSidewallTempJctCap
-			* here->BSIM3sourcePerimeter;
-		      break;
-		    case BSIM3V322:
-		    case BSIM3V32:
-		    default:
-		      czbsswg =	model->BSIM3unitLengthGateSidewallJctCap
-			* here->BSIM3sourcePerimeter;
-		  }
+	      czbsswg = model->BSIM3unitLengthGateSidewallTempJctCap
+		      * here->BSIM3sourcePerimeter;
               }
               else
               {
-		  /* Added revision dependent code */
-		  switch (model->BSIM3intVersion) {
-		    case BSIM3V324:
-		    case BSIM3V323:
-		      czbssw = model->BSIM3unitLengthSidewallTempJctCap
-			* (here->BSIM3sourcePerimeter - pParam->BSIM3weff);
-		      czbsswg = model->BSIM3unitLengthGateSidewallTempJctCap
-			* pParam->BSIM3weff;
-		      break;
-		    case BSIM3V322:
-		    case BSIM3V32:
-		    default:
-		      czbssw = model->BSIM3unitLengthSidewallJctCap
-			* (here->BSIM3sourcePerimeter - pParam->BSIM3weff);
-		      czbsswg = model->BSIM3unitLengthGateSidewallJctCap
-		        * pParam->BSIM3weff;
-		  }
+              czbssw = model->BSIM3unitLengthSidewallTempJctCap 
+		     * (here->BSIM3sourcePerimeter - pParam->BSIM3weff);
+	      czbsswg = model->BSIM3unitLengthGateSidewallTempJctCap
+		      *  pParam->BSIM3weff;
               }
 
               MJ = model->BSIM3bulkJctBotGradingCoeff;
@@ -2639,29 +2334,29 @@ finished:
           if ((here->BSIM3off == 0) || (!(ckt->CKTmode & MODEINITFIX)))
 	  {   if (Check == 1)
 	      {   ckt->CKTnoncon++;
-//#ifndef NEWCONV
-//              } 
-//	      else
-//              {   if (here->BSIM3mode >= 0)
-//                  {   Idtot = here->BSIM3cd + here->BSIM3csub - here->BSIM3cbd;
-//                  }
-//                  else
-//                  {   Idtot = here->BSIM3cd - here->BSIM3cbd;
-//                  }
-//                  tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(Idtot))
-//                      + ckt->CKTabstol;
-//                  if (fabs(cdhat - Idtot) >= tol)
-//                  {   ckt->CKTnoncon++;
-//                  }
-//                  else
-//                  {   Ibtot = here->BSIM3cbs + here->BSIM3cbd - here->BSIM3csub;
-//                      tol = ckt->CKTreltol * MAX(fabs(cbhat), fabs(Ibtot))
-//                          + ckt->CKTabstol;
-//                      if (fabs(cbhat - Ibtot) > tol)
-//		      {   ckt->CKTnoncon++;
-//                      }
-//                  }
-//#endif /* NEWCONV */
+#ifndef NEWCONV
+              } 
+	      else
+              {   if (here->BSIM3mode >= 0)
+                  {   Idtot = here->BSIM3cd + here->BSIM3csub - here->BSIM3cbd;
+                  }
+                  else
+                  {   Idtot = here->BSIM3cd - here->BSIM3cbd;
+                  }
+                  tol = ckt->CKTreltol * MAX(fabs(cdhat), fabs(Idtot))
+                      + ckt->CKTabstol;
+                  if (fabs(cdhat - Idtot) >= tol)
+                  {   ckt->CKTnoncon++;
+                  }
+                  else
+                  {   Ibtot = here->BSIM3cbs + here->BSIM3cbd - here->BSIM3csub;
+                      tol = ckt->CKTreltol * MAX(fabs(cbhat), fabs(Ibtot))
+                          + ckt->CKTabstol;
+                      if (fabs(cbhat - Ibtot) > tol)
+		      {   ckt->CKTnoncon++;
+                      }
+                  }
+#endif /* NEWCONV */
               }
           }
           *(ckt->CKTstate0 + here->BSIM3vbs) = vbs;
@@ -2677,7 +2372,7 @@ finished:
          
 line755:
           /* NQS begins */
-          if (here->BSIM3nqsMod)
+          if ((here->BSIM3nqsMod) || (here->BSIM3acnqsMod))
           {   qcheq = -(qbulk + qgate);
 
               here->BSIM3cqgb = -(here->BSIM3cggb + here->BSIM3cbgb);
@@ -2691,45 +2386,17 @@ line755:
               gtau_diff = 16.0 * pParam->BSIM3u0temp * model->BSIM3vtm / T0
 			* ScalingFactor;
               here->BSIM3gtau =  gtau_drift + gtau_diff;
+              if (here->BSIM3acnqsMod)
+                  here->BSIM3taunet = ScalingFactor / here->BSIM3gtau;
+
           }
 
-	  if (model->BSIM3capMod == 0)
+	  if (model->BSIM3capMod == 0) /* code merge -JX */
 	  {    
-	      /* Added revision dependent code */
-	      switch (model->BSIM3intVersion) {
-		case BSIM3V324:
-		case BSIM3V323:
-		  /* code merge -JX */
-		  cgdo = pParam->BSIM3cgdo;
-		  qgdo = pParam->BSIM3cgdo * vgd;
-		  cgso = pParam->BSIM3cgso;
-		  qgso = pParam->BSIM3cgso * vgs;
-		  break;
-		case BSIM3V322:
-		case BSIM3V32:
-		default:
-		  if (vgd < 0.0)
-		    {
-		      cgdo = pParam->BSIM3cgdo;
-		      qgdo = pParam->BSIM3cgdo * vgd;
-		    }
-		  else
-		    {
-		      cgdo = pParam->BSIM3cgdo;
-		      qgdo = pParam->BSIM3cgdo * vgd;
-		    }
-
-		  if (vgs < 0.0)
-		    {
-		      cgso = pParam->BSIM3cgso;
-		      qgso = pParam->BSIM3cgso * vgs;
-		    }
-		  else
-		    {
-		      cgso = pParam->BSIM3cgso;
-		      qgso = pParam->BSIM3cgso * vgs;
-		    }
-	      }
+	          cgdo = pParam->BSIM3cgdo;
+	          qgdo = pParam->BSIM3cgdo * vgd;
+	          cgso = pParam->BSIM3cgso;
+	          qgso = pParam->BSIM3cgso * vgs;
 	  }
 	  else if (model->BSIM3capMod == 1)
 	  {   if (vgd < 0.0)
@@ -3219,72 +2886,71 @@ line900:
                cqcheq = -cqcheq;
 	   }
 
-	  m = here->BSIM3m;
+           m = here->BSIM3m;
 
-	  (*(ckt->CKTrhs + here->BSIM3gNode) -= m * ceqqg);
-	  (*(ckt->CKTrhs + here->BSIM3bNode) -= m * (ceqbs + ceqbd + ceqqb));
-	  (*(ckt->CKTrhs + here->BSIM3dNodePrime) += m * (ceqbd - cdreq - ceqqd));
-	  (*(ckt->CKTrhs + here->BSIM3sNodePrime) += m * (cdreq + ceqbs + ceqqg 
-	  					   + ceqqb + ceqqd));
-	  if (here->BSIM3nqsMod)
-	    *(ckt->CKTrhs + here->BSIM3qNode) += m * (cqcheq - cqdef);
+           (*(ckt->CKTrhs + here->BSIM3gNode) -= m * ceqqg);
+           (*(ckt->CKTrhs + here->BSIM3bNode) -= m * (ceqbs + ceqbd + ceqqb));
+           (*(ckt->CKTrhs + here->BSIM3dNodePrime) += m * (ceqbd - cdreq - ceqqd));
+           (*(ckt->CKTrhs + here->BSIM3sNodePrime) += m * (cdreq + ceqbs + ceqqg
+						    + ceqqb + ceqqd));
+           if (here->BSIM3nqsMod)
+           *(ckt->CKTrhs + here->BSIM3qNode) += m * (cqcheq - cqdef);
 
-	  /*
-	   *  load y matrix
-	   */
+           /*
+            *  load y matrix
+            */
 
-	  T1 = qdef * here->BSIM3gtau;
-	  (*(here->BSIM3DdPtr) += m * here->BSIM3drainConductance);
-	  (*(here->BSIM3GgPtr) += m * (gcggb - ggtg));
-	  (*(here->BSIM3SsPtr) += m * here->BSIM3sourceConductance);
-	  (*(here->BSIM3BbPtr) += m * (here->BSIM3gbd + here->BSIM3gbs
-	                       - gcbgb - gcbdb - gcbsb - here->BSIM3gbbs));
-	  (*(here->BSIM3DPdpPtr) += m * (here->BSIM3drainConductance
-	                         + here->BSIM3gds + here->BSIM3gbd
-	                         + RevSum + gcddb + dxpart * ggtd 
-	                         + T1 * ddxpart_dVd + gbdpdp));
-	  (*(here->BSIM3SPspPtr) += m * (here->BSIM3sourceConductance 
-	                         + here->BSIM3gds + here->BSIM3gbs 
-	                         + FwdSum + gcssb + sxpart * ggts 
-	                         + T1 * dsxpart_dVs + gbspsp));
-	  (*(here->BSIM3DdpPtr) -= m * here->BSIM3drainConductance);
-	  (*(here->BSIM3GbPtr) -= m * (gcggb + gcgdb + gcgsb + ggtb));
-	  (*(here->BSIM3GdpPtr) += m * (gcgdb - ggtd));
-	  (*(here->BSIM3GspPtr) += m * (gcgsb - ggts));
-	  (*(here->BSIM3SspPtr) -= m * here->BSIM3sourceConductance);
-	  (*(here->BSIM3BgPtr) += m * (gcbgb - here->BSIM3gbgs));
-	  (*(here->BSIM3BdpPtr) += m * (gcbdb - here->BSIM3gbd + gbbdp));
-	  (*(here->BSIM3BspPtr) += m * (gcbsb - here->BSIM3gbs + gbbsp));
-	  (*(here->BSIM3DPdPtr) -= m * here->BSIM3drainConductance);
-	  (*(here->BSIM3DPgPtr) += m * (Gm + gcdgb + dxpart * ggtg 
-	                        + T1 * ddxpart_dVg + gbdpg));
-	  (*(here->BSIM3DPbPtr) -= m * (here->BSIM3gbd - Gmbs + gcdgb + gcddb 
-	                        + gcdsb - dxpart * ggtb 
-	                        - T1 * ddxpart_dVb - gbdpb));
-	  (*(here->BSIM3DPspPtr) -= m * (here->BSIM3gds + FwdSum - gcdsb
-				- dxpart * ggts - T1 * ddxpart_dVs - gbdpsp));
-	  (*(here->BSIM3SPgPtr) += m * (gcsgb - Gm + sxpart * ggtg 
-	                        + T1 * dsxpart_dVg + gbspg));
-	  (*(here->BSIM3SPsPtr) -= m * here->BSIM3sourceConductance);
-	  (*(here->BSIM3SPbPtr) -= m * (here->BSIM3gbs + Gmbs + gcsgb + gcsdb 
-	                        + gcssb - sxpart * ggtb 
-	                        - T1 * dsxpart_dVb - gbspb));
-	  (*(here->BSIM3SPdpPtr) -= m * (here->BSIM3gds + RevSum - gcsdb
-				- sxpart * ggtd - T1 * dsxpart_dVd - gbspdp));
+	   T1 = qdef * here->BSIM3gtau;
+           (*(here->BSIM3DdPtr) += m * here->BSIM3drainConductance);
+           (*(here->BSIM3GgPtr) += m * (gcggb - ggtg));
+           (*(here->BSIM3SsPtr) += m * here->BSIM3sourceConductance);
+           (*(here->BSIM3BbPtr) += m * (here->BSIM3gbd + here->BSIM3gbs
+                                - gcbgb - gcbdb - gcbsb - here->BSIM3gbbs));
+           (*(here->BSIM3DPdpPtr) += m * (here->BSIM3drainConductance
+                                  + here->BSIM3gds + here->BSIM3gbd
+                                  + RevSum + gcddb + dxpart * ggtd 
+				  + T1 * ddxpart_dVd + gbdpdp));
+           (*(here->BSIM3SPspPtr) += m * (here->BSIM3sourceConductance
+                                  + here->BSIM3gds + here->BSIM3gbs
+                                  + FwdSum + gcssb + sxpart * ggts
+				  + T1 * dsxpart_dVs + gbspsp));
+           (*(here->BSIM3DdpPtr) -= m * here->BSIM3drainConductance);
+           (*(here->BSIM3GbPtr) -= m * (gcggb + gcgdb + gcgsb + ggtb));
+           (*(here->BSIM3GdpPtr) += m * (gcgdb - ggtd));
+           (*(here->BSIM3GspPtr) += m * (gcgsb - ggts));
+           (*(here->BSIM3SspPtr) -= m * here->BSIM3sourceConductance);
+           (*(here->BSIM3BgPtr) += m * (gcbgb - here->BSIM3gbgs));
+           (*(here->BSIM3BdpPtr) += m * (gcbdb - here->BSIM3gbd + gbbdp));
+           (*(here->BSIM3BspPtr) += m * (gcbsb - here->BSIM3gbs + gbbsp));
+           (*(here->BSIM3DPdPtr) -= m * here->BSIM3drainConductance);
+           (*(here->BSIM3DPgPtr) += m * (Gm + gcdgb + dxpart * ggtg 
+				 + T1 * ddxpart_dVg + gbdpg));
+           (*(here->BSIM3DPbPtr) -= m * (here->BSIM3gbd - Gmbs + gcdgb + gcddb
+                                 + gcdsb - dxpart * ggtb
+				 - T1 * ddxpart_dVb - gbdpb));
+           (*(here->BSIM3DPspPtr) -= m * (here->BSIM3gds + FwdSum - gcdsb
+				  - dxpart * ggts - T1 * ddxpart_dVs - gbdpsp));
+           (*(here->BSIM3SPgPtr) += m * (gcsgb - Gm + sxpart * ggtg 
+				 + T1 * dsxpart_dVg + gbspg));
+           (*(here->BSIM3SPsPtr) -= m * here->BSIM3sourceConductance);
+           (*(here->BSIM3SPbPtr) -= m * (here->BSIM3gbs + Gmbs + gcsgb + gcsdb
+                                 + gcssb - sxpart * ggtb
+				 - T1 * dsxpart_dVb - gbspb));
+           (*(here->BSIM3SPdpPtr) -= m * (here->BSIM3gds + RevSum - gcsdb
+                                  - sxpart * ggtd - T1 * dsxpart_dVd - gbspdp));
 
-	  if (here->BSIM3nqsMod)
-	    {
-	      *(here->BSIM3QqPtr) += m * (gqdef + here->BSIM3gtau);
+           if (here->BSIM3nqsMod)
+           {   *(here->BSIM3QqPtr) += m * (gqdef + here->BSIM3gtau);
 
-	      *(here->BSIM3DPqPtr) += m * (dxpart * here->BSIM3gtau);
-	      *(here->BSIM3SPqPtr) += m * (sxpart * here->BSIM3gtau);
-	      *(here->BSIM3GqPtr) -= m * here->BSIM3gtau;
+               *(here->BSIM3DPqPtr) += m * (dxpart * here->BSIM3gtau);
+               *(here->BSIM3SPqPtr) += m * (sxpart * here->BSIM3gtau);
+               *(here->BSIM3GqPtr) -= m * here->BSIM3gtau;
 
-	      *(here->BSIM3QgPtr) += m * (ggtg - gcqgb);
-	      *(here->BSIM3QdpPtr) += m * (ggtd - gcqdb);
-	      *(here->BSIM3QspPtr) += m * (ggts - gcqsb);
-	      *(here->BSIM3QbPtr) += m * (ggtb - gcqbb);
-	    }
+               *(here->BSIM3QgPtr) += m * (ggtg - gcqgb);
+               *(here->BSIM3QdpPtr) += m * (ggtd - gcqdb);
+               *(here->BSIM3QspPtr) += m * (ggts - gcqsb);
+               *(here->BSIM3QbPtr) += m * (ggtb - gcqbb);
+           }
 
 line1000:  ;
 

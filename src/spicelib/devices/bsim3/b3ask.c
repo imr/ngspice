@@ -1,12 +1,11 @@
-/**** BSIM3v3.2.4, Released by Xuemei Xi 12/14/2001 ****/
+/**** BSIM3v3.3.0, Released by Xuemei Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b3ask.c of BSIM3v3.2.4
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b3ask.c of BSIM3v3.3.0
  * Author: 1995 Min-Chie Jeng and Mansun Chan
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
- * Modified bt Paolo Nenzi 2002 and Dietmar Warning 2003
  **********/
 
 #include "ngspice.h"
@@ -18,8 +17,12 @@
 #include "suffix.h"
 
 int
-BSIM3ask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
-	  IFvalue *select)
+BSIM3ask(ckt,inst,which,value,select)
+CKTcircuit *ckt;
+GENinstance *inst;
+int which;
+IFvalue *value;
+IFvalue *select;
 {
 BSIM3instance *here = (BSIM3instance*)inst;
 
@@ -30,9 +33,9 @@ BSIM3instance *here = (BSIM3instance*)inst;
         case BSIM3_W:
             value->rValue = here->BSIM3w;
             return(OK);
-	case BSIM3_M:
-	    value->rValue = here->BSIM3m;
-	    return (OK);
+        case BSIM3_M:
+            value->rValue = here->BSIM3m;
+            return(OK);
         case BSIM3_AS:
             value->rValue = here->BSIM3sourceArea;
             return(OK);
@@ -56,6 +59,9 @@ BSIM3instance *here = (BSIM3instance*)inst;
             return(OK);
         case BSIM3_NQSMOD:
             value->iValue = here->BSIM3nqsMod;
+            return(OK);
+        case BSIM3_ACNQSMOD:
+            value->iValue = here->BSIM3acnqsMod;
             return(OK);
         case BSIM3_IC_VBS:
             value->rValue = here->BSIM3icVBS;

@@ -1,12 +1,11 @@
-/**** BSIM3v3.2.4, Released by Xuemei Xi 12/21/2001 ****/
+/**** BSIM3v3.3.0, Released by Xuemei Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b3pzld.c of BSIM3v3.2.4
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b3pzld.c of BSIM3v3.3.0
  * Author: 1995 Min-Chie Jeng and Mansun Chan. 
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
- * Modified by Paolo Nenzi 2002
  **********/
 
 #include "ngspice.h"
@@ -17,7 +16,10 @@
 #include "suffix.h"
 
 int
-BSIM3pzLoad (GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
+BSIM3pzLoad(inModel,ckt,s)
+GENmodel *inModel;
+CKTcircuit *ckt;
+SPcomplex *s;
 {
 BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;
@@ -26,13 +28,12 @@ double xcdgb, xcddb, xcdsb, xcdbb, xcsgb, xcsdb, xcssb, xcsbb;
 double gdpr, gspr, gds, gbd, gbs, capbd, capbs, FwdSum, RevSum, Gm, Gmbs;
 double cggb, cgdb, cgsb, cbgb, cbdb, cbsb, cddb, cdgb, cdsb;
 double GSoverlapCap, GDoverlapCap, GBoverlapCap;
-double dxpart, sxpart, xgtg, xgtd, xgts, xgtb;
-double xcqgb = 0.0, xcqdb = 0.0, xcqsb = 0.0, xcqbb = 0.0;
+double dxpart, sxpart, xgtg, xgtd, xgts, xgtb, xcqgb, xcqdb, xcqsb, xcqbb;
 double gbspsp, gbbdp, gbbsp, gbspg, gbspb;
 double gbspdp, gbdpdp, gbdpg, gbdpb, gbdpsp;
 double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
 double dsxpart_dVd, dsxpart_dVg, dsxpart_dVb, dsxpart_dVs;
-double T1, CoxWL, qcheq, Cdg, Cdd, Cds, Csg, Csd, Css;
+double T1, CoxWL, qcheq, Cdg, Cdd, Cds, Cdb, Csg, Csd, Css, Csb;
 double ScalingFactor = 1.0e-9;
 double m;
 
@@ -61,7 +62,7 @@ double m;
                   gbspb = 0.0;
                   gbspsp = 0.0;
 
-                  if (here->BSIM3nqsMod == 0)
+                  if (here->BSIM3nqsMod == 0 && here->BSIM3acnqsMod == 0)
                   {   cggb = here->BSIM3cggb;
                       cgsb = here->BSIM3cgsb;
                       cgdb = here->BSIM3cgdb;
@@ -158,7 +159,7 @@ double m;
                   gbspb = here->BSIM3gbbs;
                   gbspdp = -(gbspg + gbspsp + gbspb);
 
-		  if (here->BSIM3nqsMod == 0)
+		  if (here->BSIM3nqsMod == 0 && here->BSIM3acnqsMod == 0)
                   {   cggb = here->BSIM3cggb;
                       cgsb = here->BSIM3cgdb;
                       cgdb = here->BSIM3cgsb;
@@ -320,30 +321,30 @@ double m;
               *(here->BSIM3BdpPtr) -= m * (gbd - gbbdp);
               *(here->BSIM3BspPtr) -= m * (gbs - gbbsp);
 
-              *(here->BSIM3DPgPtr) += Gm + dxpart * xgtg 
-				   + T1 * ddxpart_dVg + gbdpg;
-              *(here->BSIM3DPdpPtr) += gdpr + gds + gbd + RevSum
-                                    + dxpart * xgtd + T1 * ddxpart_dVd + gbdpdp;
-              *(here->BSIM3DPspPtr) -= gds + FwdSum - dxpart * xgts
-				    - T1 * ddxpart_dVs - gbdpsp;
-              *(here->BSIM3DPbPtr) -= gbd - Gmbs - dxpart * xgtb
-				   - T1 * ddxpart_dVb - gbdpb;
+              *(here->BSIM3DPgPtr) += m * (Gm + dxpart * xgtg 
+				   + T1 * ddxpart_dVg + gbdpg);
+              *(here->BSIM3DPdpPtr) += m * (gdpr + gds + gbd + RevSum
+                                    + dxpart * xgtd + T1 * ddxpart_dVd + gbdpdp);
+              *(here->BSIM3DPspPtr) -= m * (gds + FwdSum - dxpart * xgts
+				    - T1 * ddxpart_dVs - gbdpsp);
+              *(here->BSIM3DPbPtr) -= m * (gbd - Gmbs - dxpart * xgtb
+				   - T1 * ddxpart_dVb - gbdpb);
 
-              *(here->BSIM3SPgPtr) -= Gm - sxpart * xgtg
-				   - T1 * dsxpart_dVg - gbspg;
-              *(here->BSIM3SPspPtr) += gspr + gds + gbs + FwdSum
-                                   + sxpart * xgts + T1 * dsxpart_dVs + gbspsp;
-              *(here->BSIM3SPbPtr) -= gbs + Gmbs - sxpart * xgtb
-				   - T1 * dsxpart_dVb - gbspb;
-              *(here->BSIM3SPdpPtr) -= gds + RevSum - sxpart * xgtd
-				    - T1 * dsxpart_dVd - gbspdp;
+              *(here->BSIM3SPgPtr) -= m * (Gm - sxpart * xgtg
+				   - T1 * dsxpart_dVg - gbspg);
+              *(here->BSIM3SPspPtr) += m * (gspr + gds + gbs + FwdSum
+                                   + sxpart * xgts + T1 * dsxpart_dVs + gbspsp);
+              *(here->BSIM3SPbPtr) -= m * (gbs + Gmbs - sxpart * xgtb
+				   - T1 * dsxpart_dVb - gbspb);
+              *(here->BSIM3SPdpPtr) -= m * (gds + RevSum - sxpart * xgtd
+				    - T1 * dsxpart_dVd - gbspdp);
 
-              *(here->BSIM3GgPtr) -= xgtg;
-              *(here->BSIM3GbPtr) -= xgtb;
-              *(here->BSIM3GdpPtr) -= xgtd;
-              *(here->BSIM3GspPtr) -= xgts;
+              *(here->BSIM3GgPtr) -= m * xgtg;
+              *(here->BSIM3GbPtr) -= m * xgtb;
+              *(here->BSIM3GdpPtr) -= m * xgtd;
+              *(here->BSIM3GspPtr) -= m * xgts;
 
-              if (here->BSIM3nqsMod)
+              if (here->BSIM3nqsMod || here->BSIM3acnqsMod)
               {   *(here->BSIM3QqPtr ) += m * (s->real * ScalingFactor);
                   *(here->BSIM3QqPtr +1) += m * (s->imag * ScalingFactor);
                   *(here->BSIM3QgPtr ) -= m * (xcqgb * s->real);
@@ -353,7 +354,7 @@ double m;
                   *(here->BSIM3QbPtr ) -= m * (xcqbb * s->real);
                   *(here->BSIM3QbPtr +1) -= m * (xcqbb * s->imag);
                   *(here->BSIM3QspPtr ) -= m * (xcqsb * s->real);
-                  *(here->BSIM3QspPtr +1) -= xcqsb * s->imag;
+                  *(here->BSIM3QspPtr +1) -= m * (xcqsb * s->imag);
 
                   *(here->BSIM3GqPtr) -= m * (here->BSIM3gtau);
                   *(here->BSIM3DPqPtr) += m * (dxpart * here->BSIM3gtau);

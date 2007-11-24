@@ -1,12 +1,11 @@
-/**** BSIM3v3.2.4, Released by Xuemei Xi 12/21/2001 ****/
+/**** BSIM3v3.3.0, Released by Xuemei Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b3trunc.c of BSIM3v3.2.4
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b3trunc.c of BSIM3v3.3.0
  * Author: 1995 Min-Chie Jeng and Mansun Chan. 
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
- * Modified by Poalo Nenzi 2002
  **********/
 
 #include "ngspice.h"
@@ -17,7 +16,10 @@
 
 
 int
-BSIM3trunc (GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
+BSIM3trunc(inModel,ckt,timeStep)
+GENmodel *inModel;
+CKTcircuit *ckt;
+double *timeStep;
 {
 BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;
@@ -48,3 +50,6 @@ BSIM3instance *here;
     }
     return(OK);
 }
+
+
+

@@ -1,13 +1,14 @@
-/**** BSIM3v3.2.4, Released by Xuemei Xi 12/21/2001 ****/
+/**** BSIM3v3.3.0, Released by Xuemei Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b3temp.c of BSIM3v3.2.4
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b3temp.c of BSIM3v3.3.0
  * Author: 1995 Min-Chie Jeng and Mansun Chan. 
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
- * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
  **********/
+
+/* Lmin, Lmax, Wmin, Wmax */
 
 #include "ngspice.h"
 #include "smpdefs.h"
@@ -30,13 +31,15 @@
 
 /* ARGSUSED */
 int
-BSIM3temp (GENmodel *inModel, CKTcircuit *ckt)
+BSIM3temp(inModel,ckt)
+GENmodel *inModel;
+CKTcircuit *ckt;
 {
 BSIM3model *model = (BSIM3model*) inModel;
 BSIM3instance *here;
 struct bsim3SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
-double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
+double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;
 double Nvtm, SourceSatCurrent, DrainSatCurrent;
 int Size_Not_Found;
 
@@ -55,8 +58,6 @@ int Size_Not_Found;
 	 {   model->BSIM3GatesidewallJctPotential = 0.1;
 	     fprintf(stderr, "Given pbswg is less than 0.1. Pbswg is set to 0.1.\n");
 	 }
-	 /* va: was memory leakage - free old node, (or better use again?) */
-	 FREE(model->pSizeDependParamKnot);
          model->pSizeDependParamKnot = NULL;
 	 pLastKnot = NULL;
 
@@ -97,95 +98,26 @@ int Size_Not_Found;
 	 delTemp = ckt->CKTtemp - model->BSIM3tnom;
 	 T0 = model->BSIM3tcj * delTemp;
 	 if (T0 >= -1.0)
-	 {   
-		/* Added revision dependent code */
-		switch (model->BSIM3intVersion) {
-		case BSIM3V324:
-		case BSIM3V323:
-			model->BSIM3unitAreaTempJctCap =
-				model->BSIM3unitAreaJctCap * (1.0 + T0);
-			break;
-		case BSIM3V322:
-		case BSIM3V32:
-		default:
-			model->BSIM3unitAreaJctCap *= 1.0 + T0;
-		}
+	 {   model->BSIM3unitAreaTempJctCap = model->BSIM3unitAreaJctCap * (1.0 + T0);
 	 }
 	 else if (model->BSIM3unitAreaJctCap > 0.0)
-	 {   
-		/* Added revision dependent code */
-		switch (model->BSIM3intVersion) {
-		case BSIM3V324:
-		case BSIM3V323:
-			model->BSIM3unitAreaTempJctCap = 0.0;
-			break;
-		case BSIM3V322:
-		case BSIM3V32:
-		default:
-			model->BSIM3unitAreaJctCap = 0.0;
-		}
+	 {   model->BSIM3unitAreaTempJctCap = 0.0;
 	     fprintf(stderr, "Temperature effect has caused cj to be negative. Cj is clamped to zero.\n");
 	 }
          T0 = model->BSIM3tcjsw * delTemp;
 	 if (T0 >= -1.0)
-	 {   
-		/* Added revision dependent code */
-		switch (model->BSIM3intVersion) {
-		case BSIM3V324:
-		case BSIM3V323:
-			model->BSIM3unitLengthSidewallTempJctCap =
-				model->BSIM3unitLengthSidewallJctCap * (1.0 + T0);
-			break;
-		case BSIM3V322:
-		case BSIM3V32:
-		default:
-			model->BSIM3unitLengthSidewallJctCap *= 1.0 + T0;
-		}
+	 {   model->BSIM3unitLengthSidewallTempJctCap = model->BSIM3unitLengthSidewallJctCap * (1.0 + T0);
 	 }
 	 else if (model->BSIM3unitLengthSidewallJctCap > 0.0)
-	 {   
-		/* Added revision dependent code */
-		switch (model->BSIM3intVersion) {
-		case BSIM3V324:
-		case BSIM3V323:
-			model->BSIM3unitLengthSidewallTempJctCap = 0.0;
-			break;
-		case BSIM3V322:
-		case BSIM3V32:
-		default:
-			model->BSIM3unitLengthSidewallJctCap = 0.0;
-		}
+	 {   model->BSIM3unitLengthSidewallTempJctCap = 0.0;
 	     fprintf(stderr, "Temperature effect has caused cjsw to be negative. Cjsw is clamped to zero.\n");
 	 }
          T0 = model->BSIM3tcjswg * delTemp;
 	 if (T0 >= -1.0)
-	 {   
-		/* Added revision dependent code */
-		switch (model->BSIM3intVersion) {
-		case BSIM3V324:
-		case BSIM3V323:
-			model->BSIM3unitLengthGateSidewallTempJctCap =
-				model->BSIM3unitLengthGateSidewallJctCap * (1.0 + T0);
-			break;
-		case BSIM3V322:
-		case BSIM3V32:
-		default:
-			model->BSIM3unitLengthGateSidewallJctCap *= 1.0 + T0;
-		}
+	 {   model->BSIM3unitLengthGateSidewallTempJctCap = model->BSIM3unitLengthGateSidewallJctCap * (1.0 + T0);
 	 }
 	 else if (model->BSIM3unitLengthGateSidewallJctCap > 0.0)
-	 {   
-		/* Added revision dependent code */
-		switch (model->BSIM3intVersion) {
-		case BSIM3V324:
-		case BSIM3V323:
-			model->BSIM3unitLengthGateSidewallTempJctCap = 0.0;
-			break;
-		case BSIM3V322:
-		case BSIM3V32:
-		default:
-			model->BSIM3unitLengthGateSidewallJctCap = 0.0;
-		}
+	 {   model->BSIM3unitLengthGateSidewallTempJctCap = 0.0;
 	     fprintf(stderr, "Temperature effect has caused cjswg to be negative. Cjswg is clamped to zero.\n");
 	 }
 
@@ -215,17 +147,14 @@ int Size_Not_Found;
               here = here->BSIM3nextInstance) 
 	 {    
 	      if (here->BSIM3owner != ARCHme) continue;
-	      pSizeDependParamKnot = model->pSizeDependParamKnot;
+              pSizeDependParamKnot = model->pSizeDependParamKnot;
 	      Size_Not_Found = 1;
 	      while ((pSizeDependParamKnot != NULL) && Size_Not_Found)
 	      {   if ((here->BSIM3l == pSizeDependParamKnot->Length)
 		      && (here->BSIM3w == pSizeDependParamKnot->Width))
                   {   Size_Not_Found = 0;
 		      here->pParam = pSizeDependParamKnot;
-		      if (model->BSIM3intVersion > BSIM3V322)
-                      {
-		        pParam = here->pParam; /*bug-fix  */
-		      }
+		      pParam = here->pParam; /*bug-fix  */
 		  }
 		  else
 		  {   pLastKnot = pSizeDependParamKnot;
@@ -266,7 +195,7 @@ int Size_Not_Found;
                        + model->BSIM3Wwlc / (T2 * T3);
                   pParam->BSIM3dwc = model->BSIM3dwc + tmp2;
 
-                  pParam->BSIM3leff = here->BSIM3l + model->BSIM3xl - 2.0 * pParam->BSIM3dl;
+                  pParam->BSIM3leff = here->BSIM3l - 2.0 * pParam->BSIM3dl;
                   if (pParam->BSIM3leff <= 0.0)
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
@@ -277,7 +206,7 @@ int Size_Not_Found;
                       return(E_BADPARM);
                   }
 
-                  pParam->BSIM3weff = here->BSIM3w + model->BSIM3xw - 2.0 * pParam->BSIM3dw;
+                  pParam->BSIM3weff = here->BSIM3w - 2.0 * pParam->BSIM3dw;
                   if (pParam->BSIM3weff <= 0.0)
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
@@ -288,7 +217,7 @@ int Size_Not_Found;
                       return(E_BADPARM);
                   }
 
-                  pParam->BSIM3leffCV = here->BSIM3l + model->BSIM3xl - 2.0 * pParam->BSIM3dlc;
+                  pParam->BSIM3leffCV = here->BSIM3l - 2.0 * pParam->BSIM3dlc;
                   if (pParam->BSIM3leffCV <= 0.0)
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
@@ -299,7 +228,7 @@ int Size_Not_Found;
                       return(E_BADPARM);
                   }
 
-                  pParam->BSIM3weffCV = here->BSIM3w + model->BSIM3xw - 2.0 * pParam->BSIM3dwc;
+                  pParam->BSIM3weffCV = here->BSIM3w - 2.0 * pParam->BSIM3dwc;
                   if (pParam->BSIM3weffCV <= 0.0)
 	          {   IFuid namarray[2];
                       namarray[0] = model->BSIM3modName;
@@ -862,179 +791,59 @@ int Size_Not_Found;
                                      * pParam->BSIM3sqrtPhi;
                   /* End of vfbzb */
               }
-	      else /* !Size_Not_Found */
-	      {
-	          /* va: pParam might be uninitialized, if !Size_Not_Found */
-	          pParam = here->pParam;
-	      }
 
               /* process source/drain series resistance */
-              /* acm model */
-              if (model->BSIM3acmMod == 0)
-              {
-	        here->BSIM3drainConductance = model->BSIM3sheetResistance 
-			                              * here->BSIM3drainSquares;
-	        here->BSIM3sourceConductance = model->BSIM3sheetResistance 
-			                           * here->BSIM3sourceSquares;
-              } 
-              else 
-              {
-                if (here->BSIM3drainSquaresGiven)
-                {
-                  here->BSIM3drainConductance = (model->BSIM3ld + model->BSIM3ldif)/(here->BSIM3w + model->BSIM3xw)*model->BSIM3rd
-                                               + model->BSIM3sheetResistance * here->BSIM3drainSquares + model->BSIM3rdc;
-                }
-                else
-                {
-                  here->BSIM3drainConductance = ((model->BSIM3ld + model->BSIM3ldif)*model->BSIM3rd 
-                                               + model->BSIM3hdif*model->BSIM3sheetResistance)/(here->BSIM3w + model->BSIM3xw) + model->BSIM3rdc;
-                }
-                if (here->BSIM3sourceSquaresGiven)
-                {
-                  here->BSIM3sourceConductance = (model->BSIM3ld + model->BSIM3ldif)/(here->BSIM3w + model->BSIM3xw)*model->BSIM3rs
-                                               + model->BSIM3sheetResistance * here->BSIM3sourceSquares + model->BSIM3rsc;
-                }
-                else
-                {
-                  here->BSIM3sourceConductance = ((model->BSIM3ld + model->BSIM3ldif)*model->BSIM3rs 
-                                               + model->BSIM3hdif*model->BSIM3sheetResistance)/(here->BSIM3w + model->BSIM3xw) + model->BSIM3rsc;
-                }
-              }
+              here->BSIM3drainConductance = model->BSIM3sheetResistance 
+		                              * here->BSIM3drainSquares;
               if (here->BSIM3drainConductance > 0.0)
                   here->BSIM3drainConductance = 1.0
-		  			      / here->BSIM3drainConductance;
+					      / here->BSIM3drainConductance;
 	      else
                   here->BSIM3drainConductance = 0.0;
-
+                  
+              here->BSIM3sourceConductance = model->BSIM3sheetResistance 
+		                           * here->BSIM3sourceSquares;
               if (here->BSIM3sourceConductance > 0.0) 
                   here->BSIM3sourceConductance = 1.0
 					       / here->BSIM3sourceConductance;
 	      else
                   here->BSIM3sourceConductance = 0.0;
-
 	      here->BSIM3cgso = pParam->BSIM3cgso;
 	      here->BSIM3cgdo = pParam->BSIM3cgdo;
 
               Nvtm = model->BSIM3vtm * model->BSIM3jctEmissionCoeff;
-              if (model->BSIM3acmMod == 0)
-              {
-                if ((here->BSIM3sourceArea <= 0.0) &&
-                    (here->BSIM3sourcePerimeter <= 0.0))
-                {   SourceSatCurrent = 1.0e-14;
-                }
-                else
-                {   SourceSatCurrent = here->BSIM3sourceArea
-                                     * model->BSIM3jctTempSatCurDensity
-                                     + here->BSIM3sourcePerimeter
-                                     * model->BSIM3jctSidewallTempSatCurDensity;
-                }
-                if ((SourceSatCurrent > 0.0) && (model->BSIM3ijth > 0.0))
-                {   here->BSIM3vjsm = Nvtm * log(model->BSIM3ijth
-                                    / SourceSatCurrent + 1.0);
-  			/* Added revision dependent code */
-  			switch (model->BSIM3intVersion) {
-  			case BSIM3V324:
-  			case BSIM3V323:
-  			case BSIM3V322:
-  				here->BSIM3IsEvjsm =
-  					SourceSatCurrent * exp(here->BSIM3vjsm / Nvtm);
-  				break;
-  			case BSIM3V32:
-  			default:
-  				/* Do nothing */
-  				break;
-  			}
-                }
-  
-                if ((here->BSIM3drainArea <= 0.0) &&
-                    (here->BSIM3drainPerimeter <= 0.0))
-                {   DrainSatCurrent = 1.0e-14;
-                }
-                else
-                {   DrainSatCurrent = here->BSIM3drainArea
-                                    * model->BSIM3jctTempSatCurDensity
-                                    + here->BSIM3drainPerimeter
-                                    * model->BSIM3jctSidewallTempSatCurDensity;
-                }
-                if ((DrainSatCurrent > 0.0) && (model->BSIM3ijth > 0.0))
-                {   here->BSIM3vjdm = Nvtm * log(model->BSIM3ijth
-                                    / DrainSatCurrent + 1.0);
-  			/* Added revision dependent code */
-  			switch (model->BSIM3intVersion) {
-  			case BSIM3V324:
-  			case BSIM3V323:
-  			case BSIM3V322:
-  				here->BSIM3IsEvjdm = 
-  					DrainSatCurrent * exp(here->BSIM3vjdm / Nvtm);
-  				break;
-  			case BSIM3V32:
-  			default:
-  				/* Do nothing */
-  				break;
-  			}
-                }
+              if ((here->BSIM3sourceArea <= 0.0) &&
+                  (here->BSIM3sourcePerimeter <= 0.0))
+              {   SourceSatCurrent = 1.0e-14;
               }
               else
-              {
-                SourceSatCurrent = 0.0;
-                if (!here->BSIM3sourceAreaGiven)
-                {   
-                  here->BSIM3sourceArea = 2.0 * model->BSIM3hdif * pParam->BSIM3weff;
-                }
-                SourceSatCurrent = here->BSIM3sourceArea * model->BSIM3jctTempSatCurDensity;
-                if (!here->BSIM3sourcePerimeterGiven)
-                {   
-                  here->BSIM3sourcePerimeter = 4.0 * model->BSIM3hdif + 2.0 * pParam->BSIM3weff;
-                }
-                SourceSatCurrent = SourceSatCurrent + here->BSIM3sourcePerimeter * model->BSIM3jctSidewallTempSatCurDensity;
-                if (SourceSatCurrent <= 0.0) SourceSatCurrent = 1.0e-14;
-                if ((SourceSatCurrent > 0.0) && (model->BSIM3ijth > 0.0))
-                {   here->BSIM3vjsm = Nvtm * log(model->BSIM3ijth
-                                    / SourceSatCurrent + 1.0);
-  		    /* Added revision dependent code */
-  		    switch (model->BSIM3intVersion) {
-  		    case BSIM3V324:
-  		    case BSIM3V323:
-  		    case BSIM3V322:
-  		    	here->BSIM3IsEvjsm =
-  		    		SourceSatCurrent * exp(here->BSIM3vjsm / Nvtm);
-  		    	break;
-  		    case BSIM3V32:
-  		    default:
-  		    	/* Do nothing */
-  			break;
-  		    }
-                }
+              {   SourceSatCurrent = here->BSIM3sourceArea
+                                   * model->BSIM3jctTempSatCurDensity
+                                   + here->BSIM3sourcePerimeter
+                                   * model->BSIM3jctSidewallTempSatCurDensity;
+              }
+              if ((SourceSatCurrent > 0.0) && (model->BSIM3ijth > 0.0))
+              {   here->BSIM3vjsm = Nvtm * log(model->BSIM3ijth
+                                  / SourceSatCurrent + 1.0);
+                  here->BSIM3IsEvjsm = SourceSatCurrent * exp(here->BSIM3vjsm
+                                     / Nvtm);
+              }
 
-                DrainSatCurrent = 0.0;
-                if (!here->BSIM3drainAreaGiven)
-                {   
-                  here->BSIM3drainArea = 2.0 * model->BSIM3hdif * pParam->BSIM3weff;
-                }
-                DrainSatCurrent = here->BSIM3drainArea * model->BSIM3jctTempSatCurDensity;
-                if (!here->BSIM3drainPerimeterGiven)
-                {   
-                  here->BSIM3drainPerimeter = 4.0 * model->BSIM3hdif + 2.0 * pParam->BSIM3weff;
-                }
-                DrainSatCurrent = DrainSatCurrent + here->BSIM3drainPerimeter * model->BSIM3jctSidewallTempSatCurDensity;
-                if (DrainSatCurrent <= 0.0) DrainSatCurrent = 1.0e-14;
-                if ((DrainSatCurrent > 0.0) && (model->BSIM3ijth > 0.0))
-                {   here->BSIM3vjdm = Nvtm * log(model->BSIM3ijth
-                                    / DrainSatCurrent + 1.0);
-  		    /* Added revision dependent code */
-  		    switch (model->BSIM3intVersion) {
-  		    case BSIM3V324:
-  		    case BSIM3V323:
-  		    case BSIM3V322:
-  		    	here->BSIM3IsEvjdm = 
-  		    		DrainSatCurrent * exp(here->BSIM3vjdm / Nvtm);
-  		    	break;
-  		    case BSIM3V32:
-  		    default:
-  		    	/* Do nothing */
-  			break;
-  		    }
-                }
+              if ((here->BSIM3drainArea <= 0.0) &&
+                  (here->BSIM3drainPerimeter <= 0.0))
+              {   DrainSatCurrent = 1.0e-14;
+              }
+              else
+              {   DrainSatCurrent = here->BSIM3drainArea
+                                  * model->BSIM3jctTempSatCurDensity
+                                  + here->BSIM3drainPerimeter
+                                  * model->BSIM3jctSidewallTempSatCurDensity;
+              }
+              if ((DrainSatCurrent > 0.0) && (model->BSIM3ijth > 0.0))
+              {   here->BSIM3vjdm = Nvtm * log(model->BSIM3ijth
+                                  / DrainSatCurrent + 1.0);
+                  here->BSIM3IsEvjdm = DrainSatCurrent * exp(here->BSIM3vjdm
+                                     / Nvtm);
               }
          }
     }

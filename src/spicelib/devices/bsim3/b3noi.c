@@ -1,13 +1,12 @@
-/**** BSIM3v3.2.4, Released by Xuemei Xi 12/21/2001 ****/
+/**** BSIM3v3.3.0, Released by Xuemei Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b3noi.c of BSIM3v3.2.4
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b3noi.c of BSIM3v3.3.0
  * Author: 1995 Gary W. Ng and Min-Chie Jeng.
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001 Xuemei Xi
- * Modified by Xuemei Xi, 10/05, 12/21, 2001.
- * Modified bt Paolo Nenzi 2002 and Dietmar Warning 2003
+ * Modified by Xuemei Xi, 10/05/2001.
  **********/
 
 #include "ngspice.h"
@@ -42,48 +41,47 @@
  If model->BSIM3noiMod = 4,
     Channel thermal noise = BSIM3 model
     Flicker noise         = SPICE2 model
+ If model->BSIM3noiMod = 5,
+    Channel thermal noise = SPICE2 model with linear/sat fix
+    Flicker noise         = SPICE2 model
+ If model->BSIM3noiMod = 6,
+    Channel thermal noise = SPICE2 model with linear/sat fix
+    Flicker noise         = BSIM3 model
  */
 
 extern void   NevalSrc();
 extern double Nintegrate();
 
-/* 
- * The StrongInversionNoiseEval function has been modified in
- * the release 3.2.4 of BSIM3 model. To accomodate both the old
- * and the new code, I have renamed according to the following:
- *
- *
- * BSIM3v3.2.4 -> StrongInversionNoiseEvalNew
- * Previous    -> StrongInversionNoiseEvalOld
- *
- * 2002 Paolo Nenzi
- */
-
 /*
  * JX: 1/f noise model is smoothed out 12/18/01.
  */
 
+
 double
-StrongInversionNoiseEvalNew(double Vds, BSIM3model *model,
-			    BSIM3instance *here, double freq, double temp)
+StrongInversionNoiseEval(Vds, model, here, freq, temp)
+double Vds, freq, temp;
+BSIM3model *model;
+BSIM3instance *here;
 {
 struct bsim3SizeDependParam *pParam;
-double cd, esat, DelClm, EffFreq, N0, Nl;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
+double cd, esat, DelClm, EffFreq, N0, Nl, Vgst, Leff, Leffsq;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Ssi;
 
     pParam = here->pParam;
     cd = fabs(here->BSIM3cd);
+    Leff = pParam->BSIM3leff - 2.0 * model->BSIM3lintnoi;
+    Leffsq = Leff * Leff;
     esat = 2.0 * pParam->BSIM3vsattemp / here->BSIM3ueff;
     if(model->BSIM3em<=0.0) DelClm = 0.0; 
     else { 
 	    T0 = ((((Vds - here->BSIM3Vdseff) / pParam->BSIM3litl) 
 	    	+ model->BSIM3em) / esat);
             DelClm = pParam->BSIM3litl * log (MAX(T0, N_MINLOG));
+            if (DelClm < 0.0)       DelClm = 0.0;  /* bugfix */
     }
     EffFreq = pow(freq, model->BSIM3ef);
     T1 = CHARGE * CHARGE * 8.62e-5 * cd * temp * here->BSIM3ueff;
-    T2 = 1.0e8 * EffFreq * here->BSIM3Abulk * model->BSIM3cox
-       * pParam->BSIM3leff * pParam->BSIM3leff;
+    T2 = 1.0e8 * EffFreq * here->BSIM3Abulk * model->BSIM3cox * Leffsq;
     N0 = model->BSIM3cox * here->BSIM3Vgsteff / CHARGE;
     Nl = model->BSIM3cox * here->BSIM3Vgsteff
     	  * (1.0 - here->BSIM3AbovVgst2Vtm * here->BSIM3Vdseff) / CHARGE;
@@ -94,8 +92,7 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
     T5 = model->BSIM3oxideTrapDensityC * 0.5 * (N0 * N0 - Nl * Nl);
 
     T6 = 8.62e-5 * temp * cd * cd;
-    T7 = 1.0e8 * EffFreq * pParam->BSIM3leff
-       * pParam->BSIM3leff * pParam->BSIM3weff;
+    T7 = 1.0e8 * EffFreq * Leffsq * pParam->BSIM3weff;
     T8 = model->BSIM3oxideTrapDensityA + model->BSIM3oxideTrapDensityB * Nl
        + model->BSIM3oxideTrapDensityC * Nl * Nl;
     T9 = (Nl + 2.0e14) * (Nl + 2.0e14);
@@ -104,81 +101,13 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
     return Ssi;
 }
 
-/*
- * The code for releases: BSIM3V32, BSIM3V322, BSIM3V323
- * follows
- */
-
-double
-StrongInversionNoiseEvalOld(double vgs, double vds, BSIM3model *model,
-			    BSIM3instance *here, double freq, double temp)
-{
-  struct bsim3SizeDependParam *pParam;
-  double cd, esat, DelClm, EffFreq, N0, Nl, Vgst;
-  double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
-
-  pParam = here->pParam;
-  cd = fabs (here->BSIM3cd);
-  /* Added revision dependent code */
-  if (model->BSIM3intVersion < BSIM3V323)
-  {
-    if (vds > here->BSIM3vdsat)
-    {
-      esat = 2.0 * pParam->BSIM3vsattemp / here->BSIM3ueff;
-      T0 = ((((vds - here->BSIM3vdsat) / pParam->BSIM3litl) +
-  	   model->BSIM3em) / esat);
-      DelClm = pParam->BSIM3litl * log (MAX (T0, N_MINLOG));
-    }
-    else
-      DelClm = 0.0;
-  }
-  else
-  {
-    if (model->BSIM3em <= 0.0)	/* flicker noise modified -JX */
-      DelClm = 0.0;
-    else if (vds > here->BSIM3vdsat)
-    {
-      esat = 2.0 * pParam->BSIM3vsattemp / here->BSIM3ueff;
-      T0 = ((((vds - here->BSIM3vdsat) / pParam->BSIM3litl) +
-  	   model->BSIM3em) / esat);
-      DelClm = pParam->BSIM3litl * log (MAX (T0, N_MINLOG));
-    }
-    else
-      DelClm = 0.0;
-  }
-  EffFreq = pow (freq, model->BSIM3ef);
-  T1 = CHARGE * CHARGE * 8.62e-5 * cd * temp * here->BSIM3ueff;
-  T2 = 1.0e8 * EffFreq * model->BSIM3cox
-     * pParam->BSIM3leff * pParam->BSIM3leff;
-  Vgst = vgs - here->BSIM3von;
-  N0 = model->BSIM3cox * Vgst / CHARGE;
-  if (N0 < 0.0)
-      N0 = 0.0;
-  Nl = model->BSIM3cox * (Vgst - MIN (vds, here->BSIM3vdsat)) / CHARGE;
-  if (Nl < 0.0)
-      Nl = 0.0;
-
-  T3 = model->BSIM3oxideTrapDensityA
-     * log (MAX (((N0 + 2.0e14) / (Nl + 2.0e14)), N_MINLOG));
-  T4 = model->BSIM3oxideTrapDensityB * (N0 - Nl);
-  T5 = model->BSIM3oxideTrapDensityC * 0.5 * (N0 * N0 - Nl * Nl);
-
-  T6 = 8.62e-5 * temp * cd * cd;
-  T7 = 1.0e8 * EffFreq * pParam->BSIM3leff
-     * pParam->BSIM3leff * pParam->BSIM3weff;
-  T8 = model->BSIM3oxideTrapDensityA + model->BSIM3oxideTrapDensityB * Nl
-     + model->BSIM3oxideTrapDensityC * Nl * Nl;
-  T9 = (Nl + 2.0e14) * (Nl + 2.0e14);
-
-  Ssi = T1 / T2 * (T3 + T4 + T5) + T6 / T7 * DelClm * T8 / T9;
-  return Ssi;
-}
-
-
-
 int
-BSIM3noise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
-	    Ndata *data, double *OnDens)
+BSIM3noise (mode, operation, inModel, ckt, data, OnDens)
+int mode, operation;
+GENmodel *inModel;
+CKTcircuit *ckt;
+Ndata *data;
+double *OnDens;
 {
 BSIM3model *model = (BSIM3model *)inModel;
 BSIM3instance *here;
@@ -190,8 +119,9 @@ double noizDens[BSIM3NSRCS];
 double lnNdens[BSIM3NSRCS];
 
 double vgs, vds, Slimit;
-double T1, T10, T11;
-double Ssi, Swi;
+double N0, Nl;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13;
+double n, ExpArg, Ssi, Swi;
 
 double m;
 
@@ -291,40 +221,39 @@ int i;
                               switch( model->BSIM3noiMod )
 			      {  case 1:
 			         case 3:
-			              NevalSrc(&noizDens[BSIM3IDNOIZ],
-				               &lnNdens[BSIM3IDNOIZ], ckt, 
-					       THERMNOISE, here->BSIM3dNodePrime,
-				               here->BSIM3sNodePrime,
-                                               (2.0 / 3.0 * fabs(here->BSIM3gm
-				               + here->BSIM3gds
-					       + here->BSIM3gmbs)) * m);
+                                     NevalSrc(&noizDens[BSIM3IDNOIZ],
+                                              &lnNdens[BSIM3IDNOIZ], ckt, 
+                                              THERMNOISE, here->BSIM3dNodePrime,
+                                              here->BSIM3sNodePrime,
+                                              2.0 * fabs(here->BSIM3gm
+				              + here->BSIM3gds
+                                              + here->BSIM3gmbs) / 3.0 * m);
+
+				      break;
+			         case 5:
+			         case 6:
+                                     vds = MIN(*(ckt->CKTstates[0] + here->BSIM3vds), here->BSIM3vdsat);
+                                     NevalSrc(&noizDens[BSIM3IDNOIZ],
+                                              &lnNdens[BSIM3IDNOIZ], ckt, 
+                                              THERMNOISE, here->BSIM3dNodePrime,
+                                              here->BSIM3sNodePrime,
+                                              (3.0 - vds / here->BSIM3vdsat) 
+                                              * fabs(here->BSIM3gm
+				              + here->BSIM3gds
+					      + here->BSIM3gmbs) / 3.0 * m);
+
 				      break;
 			         case 2:
 			         case 4:
-		      		      /* Added revision dependent code */
-		      		      if (model->BSIM3intVersion == BSIM3V324)
-				      {
-		                        NevalSrc(&noizDens[BSIM3IDNOIZ],
+		                      NevalSrc(&noizDens[BSIM3IDNOIZ],
 				               &lnNdens[BSIM3IDNOIZ], ckt,
 					       THERMNOISE, here->BSIM3dNodePrime,
                                                here->BSIM3sNodePrime,
 					       (m * here->BSIM3ueff
 					       * fabs(here->BSIM3qinv)
-					       / (pParam->BSIM3leff * pParam->BSIM3leff
-						+ here->BSIM3ueff * fabs(here->BSIM3qinv)
+					       / (pParam->BSIM3leff * pParam->BSIM3leff 
+						+ here->BSIM3ueff *fabs(here->BSIM3qinv) 
 						* here->BSIM3rds)));    /* bugfix */
-				      }
-		      		      else
-				      {	/* for all versions lower then 3.2.4 */
-		                        NevalSrc(&noizDens[BSIM3IDNOIZ],
-				               &lnNdens[BSIM3IDNOIZ], ckt,
-					       THERMNOISE, here->BSIM3dNodePrime,
-                                               here->BSIM3sNodePrime,
-					       (m * here->BSIM3ueff
-					       * fabs(here->BSIM3qinv
-					       / (pParam->BSIM3leff
-					       * pParam->BSIM3leff))));
-				      }
 				      break;
 			      }
 		              NevalSrc(&noizDens[BSIM3FLNOIZ], (double*) NULL,
@@ -334,6 +263,7 @@ int i;
                               switch( model->BSIM3noiMod )
 			      {  case 1:
 			         case 4:
+			         case 5:
 			              noizDens[BSIM3FLNOIZ] *= m * model->BSIM3kf
 					    * exp(model->BSIM3af
 					    * log(MAX(fabs(here->BSIM3cd),
@@ -345,66 +275,32 @@ int i;
 				      break;
 			         case 2:
 			         case 3:
-		                      vgs = *(ckt->CKTstates[0] + here->BSIM3vgs);
-		      		      vds = *(ckt->CKTstates[0] + here->BSIM3vds);
+			         case 6:
+		                      vds = *(ckt->CKTstates[0] + here->BSIM3vds);
 			              if (vds < 0.0)
 			              {   vds = -vds;
-			                  vgs = vgs + vds;
 			              }
-		      		      /* Added revision dependent code */
-		      		      if (model->BSIM3intVersion == BSIM3V324)
-				      {
-			                Ssi = StrongInversionNoiseEvalNew(vds, model, 
+			              Ssi = StrongInversionNoiseEval(vds, model, 
 			              		here, data->freq, ckt->CKTtemp);
-				        T10 = model->BSIM3oxideTrapDensityA
-					    * 8.62e-5 * ckt->CKTtemp;
-		                        T11 = pParam->BSIM3weff
-					    * pParam->BSIM3leff
-				            * pow(data->freq, model->BSIM3ef)
-				            * 4.0e36;
-		                        Swi = T10 / T11 * here->BSIM3cd
-				            * here->BSIM3cd;
-				        T1 = Swi + Ssi;
-				        if (T1 > 0.0)
-                                            noizDens[BSIM3FLNOIZ] *= m * (Ssi * Swi) / T1; 
-				        else
-                                            noizDens[BSIM3FLNOIZ] *= 0.0;
-				      }
-		      		      else
-				      {	/* for all versions lower then 3.2.4 */
-					if (vgs >= here->BSIM3von + 0.1)
-					  {
-					    Ssi = StrongInversionNoiseEvalOld(vgs, vds, model,
-							here, data->freq, ckt->CKTtemp);
-					    noizDens[BSIM3FLNOIZ] *= m * Ssi;
-					  }
-					else
-					  {
-					    pParam = here->pParam;
-					    T10 = model->BSIM3oxideTrapDensityA
-					  	* 8.62e-5 * ckt->CKTtemp;
-					    T11 = pParam->BSIM3weff
-					  	* pParam-> BSIM3leff
-					  	* pow (data->freq, model->BSIM3ef) 
-					  	* 4.0e36;
-					    Swi = T10 / T11 * here->BSIM3cd * here->BSIM3cd;
+				          T10 = model->BSIM3oxideTrapDensityA
+					      * 8.62e-5 * ckt->CKTtemp;
+		                          T11 = pParam->BSIM3weff
+					      * pParam->BSIM3leff
+				              * pow(data->freq, model->BSIM3ef)
+				              * 4.0e36;
+		                          Swi = T10 / T11 * here->BSIM3cd
+				              * here->BSIM3cd;
+				          T1 = Swi + Ssi;
+				          if (T1 > 0.0)
+                                              noizDens[BSIM3FLNOIZ] *= m * (Ssi * Swi) / T1; 
+				          else
+                                              noizDens[BSIM3FLNOIZ] *= 0.0;
+				      break;
+			      }
 
-					    Slimit = StrongInversionNoiseEvalOld(
-					         here->BSIM3von + 0.1, vds, model,
-					         here, data->freq, ckt->CKTtemp);
-					    T1 = Swi + Slimit;
-					    if (T1 > 0.0)
-					        	noizDens[BSIM3FLNOIZ] *= m * (Slimit * Swi) / T1;
-					    else
-					        	noizDens[BSIM3FLNOIZ] *= 0.0;
-					  }
-					}
-					break;
-			              }
-                        	
 		              lnNdens[BSIM3FLNOIZ] =
-			        	     log(MAX(noizDens[BSIM3FLNOIZ], N_MINLOG));
-                                
+				     log(MAX(noizDens[BSIM3FLNOIZ], N_MINLOG));
+
 		              noizDens[BSIM3TOTNOIZ] = noizDens[BSIM3RDNOIZ]
 						     + noizDens[BSIM3RSNOIZ]
 						     + noizDens[BSIM3IDNOIZ]

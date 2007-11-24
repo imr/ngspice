@@ -1,12 +1,11 @@
-/**** BSIM3v3.2.4, Released by Xuemei Xi 12/14/2001 ****/
+/**** BSIM3v3.3.0, Released by Xuemei Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b3dest.c of BSIM3v3.2.4
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b3dest.c of BSIM3v3.3.0
  * Author: 1995 Min-Chie Jeng and Mansun Chan. 
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
- * Modified by Paolo Nenzi 2002
  **********/
 
 #include "ngspice.h"
@@ -14,7 +13,8 @@
 #include "suffix.h"
 
 void
-BSIM3destroy (GENmodel **inModel)
+BSIM3destroy(inModel)
+GENmodel **inModel;
 {
 BSIM3model **model = (BSIM3model**)inModel;
 BSIM3instance *here;
@@ -36,3 +36,6 @@ BSIM3model *oldmod = NULL;
     *model = NULL;
     return;
 }
+
+
+

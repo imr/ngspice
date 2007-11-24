@@ -1,8 +1,8 @@
-/**** BSIM3v3.2.4, Released by Xuemei Xi 12/21/2001 ****/
+/**** BSIM3v3.3.0, Released by Xuemei Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b3set.c of BSIM3v3.2.4
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b3set.c of BSIM3v3.3.0
  * Author: 1995 Min-Chie Jeng and Mansun Chan.
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
@@ -27,16 +27,18 @@
 #define Meter2Micron 1.0e6
 
 int
-BSIM3setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
-            int *states)
+BSIM3setup(matrix,inModel,ckt,states)
+SMPmatrix *matrix;
+GENmodel *inModel;
+CKTcircuit *ckt;
+int *states;
 {
 BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;
 int error;
 CKTnode *tmp;
- 
-CKTnode *tmpNode;
-IFuid tmpName;
+
+double tmp1, tmp2;
 
     /*  loop through all the BSIM3 device models */
     for( ; model != NULL; model = model->BSIM3nextModel )
@@ -52,37 +54,16 @@ IFuid tmpName;
             model->BSIM3paramChk = 0;
         if (!model->BSIM3capModGiven) 
             model->BSIM3capMod = 3;
-        if (!model->BSIM3acmModGiven)
-            model->BSIM3acmMod = 0;
         if (!model->BSIM3noiModGiven) 
             model->BSIM3noiMod = 1;
-
-        /* If the user does not provide the model revision,
-         * we always choose the most recent.
-         */
-        if (!model->BSIM3versionGiven)
-                model->BSIM3version = "3.2.4";
-
-        /* I have added below the code that translate model string
-         * into an integer. This trick is meant to speed up the 
-         * revision testing instruction, since comparing integer
-         * is faster than comparing strings.
-         * Paolo Nenzi 2002
-         */
-        if ((!strcmp(model->BSIM3version, "3.2.4"))||(!strcmp(model->BSIM3version, "3.24")))
-                model->BSIM3intVersion = BSIM3V324;
-        else if ((!strcmp(model->BSIM3version, "3.2.3"))||(!strcmp(model->BSIM3version, "3.23")))
-                model->BSIM3intVersion = BSIM3V323;
-        else if ((!strcmp(model->BSIM3version, "3.2.2"))||(!strcmp(model->BSIM3version, "3.22")))
-                model->BSIM3intVersion = BSIM3V322;
-        else if ((!strcmp(model->BSIM3version, "3.2"))||(!strcmp(model->BSIM3version, "3.20")))
-                model->BSIM3intVersion = BSIM3V32;
-        else
-                model->BSIM3intVersion = BSIM3V3OLD;
-        /* BSIM3V3OLD is a placeholder for pre 3.2 revision 
-         * This model should not be used for pre 3.2 models. 
-         */
-
+        if (!model->BSIM3acnqsModGiven)
+            model->BSIM3acnqsMod = 0;
+        else if ((model->BSIM3acnqsMod != 0) && (model->BSIM3acnqsMod != 1))
+        {   model->BSIM3acnqsMod = 0;
+            printf("Warning: acnqsMod has been set to its default value: 0.\n");
+        }
+        if (!model->BSIM3versionGiven) 
+            model->BSIM3version = "3.3.0";
         if (!model->BSIM3toxGiven)
             model->BSIM3tox = 150.0e-10;
         model->BSIM3cox = 3.453133e-11 / model->BSIM3tox;
@@ -90,15 +71,15 @@ IFuid tmpName;
             model->BSIM3toxm = model->BSIM3tox;
 
         if (!model->BSIM3cdscGiven)
-            model->BSIM3cdsc = 2.4e-4;   /* unit Q/V/m^2  */
+	    model->BSIM3cdsc = 2.4e-4;   /* unit Q/V/m^2  */
         if (!model->BSIM3cdscbGiven)
-            model->BSIM3cdscb = 0.0;   /* unit Q/V/m^2  */    
-            if (!model->BSIM3cdscdGiven)
-            model->BSIM3cdscd = 0.0;   /* unit Q/V/m^2  */
+	    model->BSIM3cdscb = 0.0;   /* unit Q/V/m^2  */    
+	    if (!model->BSIM3cdscdGiven)
+	    model->BSIM3cdscd = 0.0;   /* unit Q/V/m^2  */
         if (!model->BSIM3citGiven)
-            model->BSIM3cit = 0.0;   /* unit Q/V/m^2  */
+	    model->BSIM3cit = 0.0;   /* unit Q/V/m^2  */
         if (!model->BSIM3nfactorGiven)
-            model->BSIM3nfactor = 1;
+	    model->BSIM3nfactor = 1;
         if (!model->BSIM3xjGiven)
             model->BSIM3xj = .15e-6;
         if (!model->BSIM3vsatGiven)
@@ -122,9 +103,9 @@ IFuid tmpName;
         if (!model->BSIM3ngateGiven)
             model->BSIM3ngate = 0;   /* unit 1/cm3 */
         if (!model->BSIM3vbmGiven)
-            model->BSIM3vbm = -3.0;
+	    model->BSIM3vbm = -3.0;
         if (!model->BSIM3xtGiven)
-            model->BSIM3xt = 1.55e-7;
+	    model->BSIM3xt = 1.55e-7;
         if (!model->BSIM3kt1Given)
             model->BSIM3kt1 = -0.11;      /* unit V */
         if (!model->BSIM3kt1lGiven)
@@ -174,9 +155,9 @@ IFuid tmpName;
         if (!model->BSIM3u0Given)
             model->BSIM3u0 = (model->BSIM3type == NMOS) ? 0.067 : 0.025;
         if (!model->BSIM3uteGiven)
-            model->BSIM3ute = -1.5;    
+	    model->BSIM3ute = -1.5;    
         if (!model->BSIM3voffGiven)
-            model->BSIM3voff = -0.08;
+	    model->BSIM3voff = -0.08;
         if (!model->BSIM3deltaGiven)  
            model->BSIM3delta = 0.01;
         if (!model->BSIM3rdswGiven)
@@ -260,33 +241,17 @@ IFuid tmpName;
         if (!model->BSIM3tpbswgGiven)
             model->BSIM3tpbswg = 0.0;
 
-        /* acm model */
-        if (!model->BSIM3hdifGiven)
-          model->BSIM3hdif = 0.0;
-        if (!model->BSIM3ldifGiven)
-          model->BSIM3ldif = 0.0;
-        if (!model->BSIM3ldGiven)
-          model->BSIM3ld = 0.0;
-        if (!model->BSIM3rdGiven)
-          model->BSIM3rd = 0.0;
-        if (!model->BSIM3rsGiven)
-          model->BSIM3rs = 0.0;
-        if (!model->BSIM3rdcGiven)
-          model->BSIM3rdc = 0.0;
-        if (!model->BSIM3rscGiven)
-          model->BSIM3rsc = 0.0;
-
-        /* Length dependence */
+	/* Length dependence */
         if (!model->BSIM3lcdscGiven)
-            model->BSIM3lcdsc = 0.0;
+	    model->BSIM3lcdsc = 0.0;
         if (!model->BSIM3lcdscbGiven)
-            model->BSIM3lcdscb = 0.0;
-            if (!model->BSIM3lcdscdGiven) 
-            model->BSIM3lcdscd = 0.0;
+	    model->BSIM3lcdscb = 0.0;
+	    if (!model->BSIM3lcdscdGiven) 
+	    model->BSIM3lcdscd = 0.0;
         if (!model->BSIM3lcitGiven)
-            model->BSIM3lcit = 0.0;
+	    model->BSIM3lcit = 0.0;
         if (!model->BSIM3lnfactorGiven)
-            model->BSIM3lnfactor = 0.0;
+	    model->BSIM3lnfactor = 0.0;
         if (!model->BSIM3lxjGiven)
             model->BSIM3lxj = 0.0;
         if (!model->BSIM3lvsatGiven)
@@ -310,9 +275,9 @@ IFuid tmpName;
         if (!model->BSIM3lngateGiven)
             model->BSIM3lngate = 0.0;
         if (!model->BSIM3lvbmGiven)
-            model->BSIM3lvbm = 0.0;
+	    model->BSIM3lvbm = 0.0;
         if (!model->BSIM3lxtGiven)
-            model->BSIM3lxt = 0.0;
+	    model->BSIM3lxt = 0.0;
         if (!model->BSIM3lkt1Given)
             model->BSIM3lkt1 = 0.0; 
         if (!model->BSIM3lkt1lGiven)
@@ -360,9 +325,9 @@ IFuid tmpName;
         if (!model->BSIM3lu0Given)
             model->BSIM3lu0 = 0.0;
         if (!model->BSIM3luteGiven)
-            model->BSIM3lute = 0.0;    
+	    model->BSIM3lute = 0.0;    
         if (!model->BSIM3lvoffGiven)
-            model->BSIM3lvoff = 0.0;
+	    model->BSIM3lvoff = 0.0;
         if (!model->BSIM3ldeltaGiven)  
             model->BSIM3ldelta = 0.0;
         if (!model->BSIM3lrdswGiven)
@@ -435,17 +400,17 @@ IFuid tmpName;
         if (!model->BSIM3lvoffcvGiven)
             model->BSIM3lvoffcv = 0.0;
 
-        /* Width dependence */
+	/* Width dependence */
         if (!model->BSIM3wcdscGiven)
-            model->BSIM3wcdsc = 0.0;
+	    model->BSIM3wcdsc = 0.0;
         if (!model->BSIM3wcdscbGiven)
-            model->BSIM3wcdscb = 0.0;  
-            if (!model->BSIM3wcdscdGiven)
-            model->BSIM3wcdscd = 0.0;
+	    model->BSIM3wcdscb = 0.0;  
+	    if (!model->BSIM3wcdscdGiven)
+	    model->BSIM3wcdscd = 0.0;
         if (!model->BSIM3wcitGiven)
-            model->BSIM3wcit = 0.0;
+	    model->BSIM3wcit = 0.0;
         if (!model->BSIM3wnfactorGiven)
-            model->BSIM3wnfactor = 0.0;
+	    model->BSIM3wnfactor = 0.0;
         if (!model->BSIM3wxjGiven)
             model->BSIM3wxj = 0.0;
         if (!model->BSIM3wvsatGiven)
@@ -469,9 +434,9 @@ IFuid tmpName;
         if (!model->BSIM3wngateGiven)
             model->BSIM3wngate = 0.0;
         if (!model->BSIM3wvbmGiven)
-            model->BSIM3wvbm = 0.0;
+	    model->BSIM3wvbm = 0.0;
         if (!model->BSIM3wxtGiven)
-            model->BSIM3wxt = 0.0;
+	    model->BSIM3wxt = 0.0;
         if (!model->BSIM3wkt1Given)
             model->BSIM3wkt1 = 0.0; 
         if (!model->BSIM3wkt1lGiven)
@@ -519,9 +484,9 @@ IFuid tmpName;
         if (!model->BSIM3wu0Given)
             model->BSIM3wu0 = 0.0;
         if (!model->BSIM3wuteGiven)
-            model->BSIM3wute = 0.0;    
+	    model->BSIM3wute = 0.0;    
         if (!model->BSIM3wvoffGiven)
-            model->BSIM3wvoff = 0.0;
+	    model->BSIM3wvoff = 0.0;
         if (!model->BSIM3wdeltaGiven)  
             model->BSIM3wdelta = 0.0;
         if (!model->BSIM3wrdswGiven)
@@ -594,17 +559,17 @@ IFuid tmpName;
         if (!model->BSIM3wvoffcvGiven)
             model->BSIM3wvoffcv = 0.0;
 
-        /* Cross-term dependence */
+	/* Cross-term dependence */
         if (!model->BSIM3pcdscGiven)
-            model->BSIM3pcdsc = 0.0;
+	    model->BSIM3pcdsc = 0.0;
         if (!model->BSIM3pcdscbGiven)
-            model->BSIM3pcdscb = 0.0;   
-            if (!model->BSIM3pcdscdGiven)
-            model->BSIM3pcdscd = 0.0;
+	    model->BSIM3pcdscb = 0.0;   
+	    if (!model->BSIM3pcdscdGiven)
+	    model->BSIM3pcdscd = 0.0;
         if (!model->BSIM3pcitGiven)
-            model->BSIM3pcit = 0.0;
+	    model->BSIM3pcit = 0.0;
         if (!model->BSIM3pnfactorGiven)
-            model->BSIM3pnfactor = 0.0;
+	    model->BSIM3pnfactor = 0.0;
         if (!model->BSIM3pxjGiven)
             model->BSIM3pxj = 0.0;
         if (!model->BSIM3pvsatGiven)
@@ -629,9 +594,9 @@ IFuid tmpName;
         if (!model->BSIM3pngateGiven)
             model->BSIM3pngate = 0.0;
         if (!model->BSIM3pvbmGiven)
-            model->BSIM3pvbm = 0.0;
+	    model->BSIM3pvbm = 0.0;
         if (!model->BSIM3pxtGiven)
-            model->BSIM3pxt = 0.0;
+	    model->BSIM3pxt = 0.0;
         if (!model->BSIM3pkt1Given)
             model->BSIM3pkt1 = 0.0; 
         if (!model->BSIM3pkt1lGiven)
@@ -679,9 +644,9 @@ IFuid tmpName;
         if (!model->BSIM3pu0Given)
             model->BSIM3pu0 = 0.0;
         if (!model->BSIM3puteGiven)
-            model->BSIM3pute = 0.0;    
+	    model->BSIM3pute = 0.0;    
         if (!model->BSIM3pvoffGiven)
-            model->BSIM3pvoff = 0.0;
+	    model->BSIM3pvoff = 0.0;
         if (!model->BSIM3pdeltaGiven)  
             model->BSIM3pdelta = 0.0;
         if (!model->BSIM3prdswGiven)
@@ -756,9 +721,11 @@ IFuid tmpName;
 
         /* unit degree celcius */
         if (!model->BSIM3tnomGiven)  
-            model->BSIM3tnom = ckt->CKTnomTemp; 
-/*        else
-            model->BSIM3tnom = model->BSIM3tnom + 273.15;    */
+	    model->BSIM3tnom = ckt->CKTnomTemp; 
+        else
+            model->BSIM3tnom = model->BSIM3tnom + 273.15;    
+        if (!model->BSIM3lintnoiGiven)
+            model->BSIM3lintnoi = 0.0;  /* unit m */  
         if (!model->BSIM3LintGiven)  
            model->BSIM3Lint = 0.0;
         if (!model->BSIM3LlGiven)  
@@ -807,35 +774,29 @@ IFuid tmpName;
            model->BSIM3dwc = model->BSIM3Wint;
         if (!model->BSIM3dlcGiven)  
            model->BSIM3dlc = model->BSIM3Lint;
-
-        if (!model->BSIM3xlGiven)
-           model->BSIM3xl = 0.0;
-        if (!model->BSIM3xwGiven)
-           model->BSIM3xw = 0.0;
-
-        if (!model->BSIM3cfGiven)
+	if (!model->BSIM3cfGiven)
             model->BSIM3cf = 2.0 * EPSOX / PI
-                           * log(1.0 + 0.4e-6 / model->BSIM3tox);
+			   * log(1.0 + 0.4e-6 / model->BSIM3tox);
         if (!model->BSIM3cgdoGiven)
-        {   if (model->BSIM3dlcGiven && (model->BSIM3dlc > 0.0))
-            {   model->BSIM3cgdo = model->BSIM3dlc * model->BSIM3cox
-                                 - model->BSIM3cgdl ;
-            }
-            else
-                model->BSIM3cgdo = 0.6 * model->BSIM3xj * model->BSIM3cox; 
-        }
+	{   if (model->BSIM3dlcGiven && (model->BSIM3dlc > 0.0))
+	    {   model->BSIM3cgdo = model->BSIM3dlc * model->BSIM3cox
+				 - model->BSIM3cgdl ;
+	    }
+	    else
+	        model->BSIM3cgdo = 0.6 * model->BSIM3xj * model->BSIM3cox; 
+	}
         if (!model->BSIM3cgsoGiven)
-        {   if (model->BSIM3dlcGiven && (model->BSIM3dlc > 0.0))
-            {   model->BSIM3cgso = model->BSIM3dlc * model->BSIM3cox
-                                 - model->BSIM3cgsl ;
-            }
-            else
-                model->BSIM3cgso = 0.6 * model->BSIM3xj * model->BSIM3cox; 
-        }
+	{   if (model->BSIM3dlcGiven && (model->BSIM3dlc > 0.0))
+	    {   model->BSIM3cgso = model->BSIM3dlc * model->BSIM3cox
+				 - model->BSIM3cgsl ;
+	    }
+	    else
+	        model->BSIM3cgso = 0.6 * model->BSIM3xj * model->BSIM3cox; 
+	}
 
         if (!model->BSIM3cgboGiven)
-        {   model->BSIM3cgbo = 2.0 * model->BSIM3dwc * model->BSIM3cox;
-        }
+	{   model->BSIM3cgbo = 2.0 * model->BSIM3dwc * model->BSIM3cox;
+	}
         if (!model->BSIM3xpartGiven)
             model->BSIM3xpart = 0.0;
         if (!model->BSIM3sheetResistanceGiven)
@@ -867,24 +828,24 @@ IFuid tmpName;
         if (!model->BSIM3jctTempExponentGiven)
             model->BSIM3jctTempExponent = 3.0;
         if (!model->BSIM3oxideTrapDensityAGiven)
-        {   if (model->BSIM3type == NMOS)
+	{   if (model->BSIM3type == NMOS)
                 model->BSIM3oxideTrapDensityA = 1e20;
             else
                 model->BSIM3oxideTrapDensityA=9.9e18;
-        }
+	}
         if (!model->BSIM3oxideTrapDensityBGiven)
-        {   if (model->BSIM3type == NMOS)
+	{   if (model->BSIM3type == NMOS)
                 model->BSIM3oxideTrapDensityB = 5e4;
             else
                 model->BSIM3oxideTrapDensityB = 2.4e3;
-        }
+	}
         if (!model->BSIM3oxideTrapDensityCGiven)
-        {   if (model->BSIM3type == NMOS)
+	{   if (model->BSIM3type == NMOS)
                 model->BSIM3oxideTrapDensityC = -1.4e-12;
             else
                 model->BSIM3oxideTrapDensityC = 1.4e-12;
 
-        }
+	}
         if (!model->BSIM3emGiven)
             model->BSIM3em = 4.1e7; /* V/m */
         if (!model->BSIM3efGiven)
@@ -896,26 +857,20 @@ IFuid tmpName;
         /* loop through all the instances of the model */
         for (here = model->BSIM3instances; here != NULL ;
              here=here->BSIM3nextInstance) 
-        {   
+	{   
             if (here->BSIM3owner == ARCHme)
             {
               /* allocate a chunk of the state vector */
               here->BSIM3states = *states;
               *states += BSIM3numStates;
             }
-
             /* perform the parameter defaulting */
             if (!here->BSIM3drainAreaGiven)
                 here->BSIM3drainArea = 0.0;
             if (!here->BSIM3drainPerimeterGiven)
                 here->BSIM3drainPerimeter = 0.0;
             if (!here->BSIM3drainSquaresGiven)
-			{
-                if (model->BSIM3acmMod == 0)
-                  here->BSIM3drainSquares = 1.0;
-                else
-                  here->BSIM3drainSquares = 0.0;
-			}
+                here->BSIM3drainSquares = 1.0;
             if (!here->BSIM3icVBSGiven)
                 here->BSIM3icVBS = 0.0;
             if (!here->BSIM3icVDSGiven)
@@ -929,86 +884,56 @@ IFuid tmpName;
             if (!here->BSIM3sourcePerimeterGiven)
                 here->BSIM3sourcePerimeter = 0.0;
             if (!here->BSIM3sourceSquaresGiven)
-			{
-                if (model->BSIM3acmMod == 0)
-                  here->BSIM3sourceSquares = 1.0;
-                else
-                  here->BSIM3sourceSquares = 0.0;
-			}
+                here->BSIM3sourceSquares = 1.0;
             if (!here->BSIM3wGiven)
                 here->BSIM3w = 5.0e-6;
             if (!here->BSIM3nqsModGiven)
                 here->BSIM3nqsMod = 0;
+            if (!here->BSIM3acnqsModGiven)
+                here->BSIM3acnqsMod = model->BSIM3acnqsMod;
+            else if ((here->BSIM3acnqsMod != 0) && (here->BSIM3acnqsMod != 1))
+            {   here->BSIM3acnqsMod = model->BSIM3acnqsMod;
+                printf("Warning: acnqsMod has been set to its global value %d.\n",
+                model->BSIM3acnqsMod);
+            }
 
+                   
             if (!here->BSIM3mGiven)
                 here->BSIM3m = 1;
 
             /* process drain series resistance */
-            if (  ((model->BSIM3sheetResistance > 0.0) &&
-                 (here->BSIM3drainSquares > 0.0) && (here->BSIM3dNodePrime == 0))
-                ||((model->BSIM3sheetResistance > 0.0) &&
-                 (model->BSIM3hdif > 0.0) && (here->BSIM3dNodePrime == 0))
-                ||((model->BSIM3rd > 0.0) &&
-                 (model->BSIM3ldif > 0.0) && (here->BSIM3dNodePrime == 0))
-                ||((model->BSIM3rd > 0.0) &&
-                 (model->BSIM3ld > 0.0) && (here->BSIM3dNodePrime == 0))
-                ||((model->BSIM3rsc > 0.0) && (here->BSIM3dNodePrime == 0))
-               )
-            {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"drain");
+            if ((model->BSIM3sheetResistance > 0.0) && 
+                (here->BSIM3drainSquares > 0.0 ) &&
+                (here->BSIM3dNodePrime == 0))
+	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"drain");
                 if(error) return(error);
                 here->BSIM3dNodePrime = tmp->number;
-		 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
-                }
-		
             }
-            else
-            {   here->BSIM3dNodePrime = here->BSIM3dNode;
+	    else
+	    {   here->BSIM3dNodePrime = here->BSIM3dNode;
             }
                    
             /* process source series resistance */
-            if (  ((model->BSIM3sheetResistance > 0.0) &&
-                 (here->BSIM3sourceSquares > 0.0) && (here->BSIM3sNodePrime == 0))
-                ||((model->BSIM3sheetResistance > 0.0) &&
-                 (model->BSIM3hdif > 0.0) && (here->BSIM3sNodePrime == 0))
-                ||((model->BSIM3rs > 0.0) &&
-                 (model->BSIM3ldif > 0.0) && (here->BSIM3sNodePrime == 0))
-                ||((model->BSIM3rs > 0.0) &&
-                 (model->BSIM3ld > 0.0) && (here->BSIM3sNodePrime == 0))
-                ||((model->BSIM3rsc > 0.0) && (here->BSIM3sNodePrime == 0))
-               )
-            {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"source");
+            if ((model->BSIM3sheetResistance > 0.0) && 
+                (here->BSIM3sourceSquares > 0.0 ) &&
+                (here->BSIM3sNodePrime == 0)) 
+	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"source");
                 if(error) return(error);
                 here->BSIM3sNodePrime = tmp->number;
-		
-		 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
-                }
-
             }
-            else 
-            {   here->BSIM3sNodePrime = here->BSIM3sNode;
+	    else 
+	    {   here->BSIM3sNodePrime = here->BSIM3sNode;
             }
 
  /* internal charge node */
                    
             if ((here->BSIM3nqsMod) && (here->BSIM3qNode == 0)) 
-            {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"charge");
+	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"charge");
                 if(error) return(error);
                 here->BSIM3qNode = tmp->number;
             }
-            else 
-            {   here->BSIM3qNode = 0;
+	    else 
+	    {   here->BSIM3qNode = 0;
             }
 
         /* set Sparse Matrix Pointers */

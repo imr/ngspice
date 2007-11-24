@@ -1,9 +1,8 @@
 /**********
-Copyright 2001 Regents of the University of California.  All rights reserved.
+Copyright 2004 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
 Author: 1997-1999 Weidong Liu.
-Author: 2001 Xuemei Xi
-Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
+Author: 2001- Xuemei Xi
 File: bsim3def.h
 **********/
 
@@ -21,7 +20,7 @@ typedef struct sBSIM3instance
     struct sBSIM3model *BSIM3modPtr;
     struct sBSIM3instance *BSIM3nextInstance;
     IFuid BSIM3name;
-    int BSIM3owner;      /* number of owner process */   
+    int BSIM3owner;   /* number of owner process */   
     int BSIM3states;     /* index into state table for this device */
     int BSIM3dNode;
     int BSIM3gNode;
@@ -61,6 +60,7 @@ typedef struct sBSIM3instance
     int BSIM3off;
     int BSIM3mode;
     int BSIM3nqsMod;
+    int BSIM3acnqsMod;
 
     /* OP point */
     double BSIM3qinv;
@@ -109,6 +109,7 @@ typedef struct sBSIM3instance
     double BSIM3Vdseff;
     double BSIM3Abulk;
     double BSIM3AbovVgst2Vtm;
+    double BSIM3taunet;
 
     struct bsim3SizeDependParam  *pParam;
 
@@ -127,6 +128,7 @@ typedef struct sBSIM3instance
     unsigned BSIM3icVDSGiven :1;
     unsigned BSIM3icVGSGiven :1;
     unsigned BSIM3nqsModGiven :1;
+    unsigned BSIM3acnqsModGiven :1;
 
     double *BSIM3DdPtr;
     double *BSIM3GgPtr;
@@ -352,20 +354,11 @@ typedef struct sBSIM3model
 
     int    BSIM3mobMod;
     int    BSIM3capMod;
-    int    BSIM3acmMod;
     int    BSIM3noiMod;
+    int    BSIM3acnqsMod;
     int    BSIM3binUnit;
     int    BSIM3paramChk;
     char   *BSIM3version;             
-    /* The following field is an integer coding
-     * of BSIM3version.
-     */     
-    int    BSIM3intVersion;             
-#define BSIM3V324  324       /* BSIM3 V3.2.4 */
-#define BSIM3V323  323       /* BSIM3 V3.2.3 */
-#define BSIM3V322  322       /* BSIM3 V3.2.2 */
-#define BSIM3V32   32        /* BSIM3 V3.2   */
-#define BSIM3V3OLD 0         /* Old model    */
     double BSIM3tox;             
     double BSIM3toxm;
     double BSIM3cdsc;           
@@ -462,15 +455,6 @@ typedef struct sBSIM3model
     double BSIM3tpb;
     double BSIM3tpbsw;
     double BSIM3tpbswg;
-
-    /* acm model */
-    double BSIM3hdif;
-    double BSIM3ldif;
-    double BSIM3ld;
-    double BSIM3rd;
-    double BSIM3rs;
-    double BSIM3rdc;
-    double BSIM3rsc;
 
     /* Length Dependence */
     double BSIM3lcdsc;           
@@ -780,9 +764,6 @@ typedef struct sBSIM3model
     double BSIM3Wmin;
     double BSIM3Wmax;
 
-    /* acm model */
-    double BSIM3xl;
-    double BSIM3xw;
 
 /* Pre-calculated constants */
     /* MCJ: move to size-dependent param. */
@@ -810,6 +791,7 @@ typedef struct sBSIM3model
     double BSIM3ef;  
     double BSIM3af;  
     double BSIM3kf;  
+    double BSIM3lintnoi;  /* lint offset for noise calculation  */
 
     struct bsim3SizeDependParam *pSizeDependParamKnot;
 
@@ -817,9 +799,9 @@ typedef struct sBSIM3model
     unsigned  BSIM3mobModGiven :1;
     unsigned  BSIM3binUnitGiven :1;
     unsigned  BSIM3capModGiven :1;
-    unsigned  BSIM3acmModGiven :1;
     unsigned  BSIM3paramChkGiven :1;
     unsigned  BSIM3noiModGiven :1;
+    unsigned  BSIM3acnqsModGiven :1;
     unsigned  BSIM3typeGiven   :1;
     unsigned  BSIM3toxGiven   :1;
     unsigned  BSIM3versionGiven   :1;
@@ -919,14 +901,6 @@ typedef struct sBSIM3model
     unsigned  BSIM3tpbswGiven  :1;
     unsigned  BSIM3tpbswgGiven :1;
 
-    /* acm model */
-    unsigned  BSIM3hdifGiven  :1;     
-    unsigned  BSIM3ldifGiven   :1;
-    unsigned  BSIM3ldGiven   :1;
-    unsigned  BSIM3rdGiven   :1;
-    unsigned  BSIM3rsGiven   :1;
-    unsigned  BSIM3rdcGiven   :1;
-    unsigned  BSIM3rscGiven   :1;
 
     /* Length dependence */
     unsigned  BSIM3lcdscGiven   :1;
@@ -1218,6 +1192,7 @@ typedef struct sBSIM3model
     unsigned  BSIM3efGiven  :1;     
     unsigned  BSIM3afGiven  :1;     
     unsigned  BSIM3kfGiven  :1;     
+    unsigned  BSIM3lintnoiGiven  :1;
 
     unsigned  BSIM3LintGiven   :1;
     unsigned  BSIM3LlGiven   :1;
@@ -1243,10 +1218,6 @@ typedef struct sBSIM3model
     unsigned  BSIM3WminGiven   :1;
     unsigned  BSIM3WmaxGiven   :1;
 
-    /* acm model */
-    unsigned  BSIM3xlGiven   :1;
-    unsigned  BSIM3xwGiven   :1;
-
 } BSIM3model;
 
 
@@ -1259,7 +1230,7 @@ typedef struct sBSIM3model
 /* device parameters */
 #define BSIM3_W 1
 #define BSIM3_L 2
-#define BSIM3_M 15
+#define BSIM3_M 16
 #define BSIM3_AS 3
 #define BSIM3_AD 4
 #define BSIM3_PS 5
@@ -1272,10 +1243,10 @@ typedef struct sBSIM3model
 #define BSIM3_IC_VGS 12
 #define BSIM3_IC 13
 #define BSIM3_NQSMOD 14
+#define BSIM3_ACNQSMOD 15
 
 /* model parameters */
 #define BSIM3_MOD_CAPMOD          101
-#define BSIM3_MOD_ACMMOD          102
 #define BSIM3_MOD_MOBMOD          103    
 #define BSIM3_MOD_NOIMOD          104    
 
@@ -1386,6 +1357,8 @@ typedef struct sBSIM3model
 #define BSIM3_MOD_TPBSW           206
 #define BSIM3_MOD_TPBSWG          207
 #define BSIM3_MOD_VOFFCV          208
+#define BSIM3_MOD_LINTNOI         209
+#define BSIM3_MOD_ACNQSMOD        210
 
 /* Length dependence */
 #define BSIM3_MOD_LCDSC            251
@@ -1740,18 +1713,6 @@ typedef struct sBSIM3model
 #define BSIM3_MOD_WWC              701
 #define BSIM3_MOD_WWLC             702
 
-/* acm parameters */
-#define BSIM3_MOD_XL               703
-#define BSIM3_MOD_XW               704
-
-#define BSIM3_MOD_HDIF             711
-#define BSIM3_MOD_LDIF             712
-#define BSIM3_MOD_LD               713
-#define BSIM3_MOD_RD               714
-#define BSIM3_MOD_RS               715
-#define BSIM3_MOD_RDC              716
-#define BSIM3_MOD_RSC              717
-
 /* device questions */
 #define BSIM3_DNODE                751
 #define BSIM3_GNODE                752
@@ -1800,11 +1761,18 @@ typedef struct sBSIM3model
 
 #include "bsim3ext.h"
 
+#ifdef __STDC__
 extern void BSIM3evaluate(double,double,double,BSIM3instance*,BSIM3model*,
         double*,double*,double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, CKTcircuit*);
 extern int BSIM3debug(BSIM3model*, BSIM3instance*, CKTcircuit*, int);
 extern int BSIM3checkModel(BSIM3model*, BSIM3instance*, CKTcircuit*);
+#else /* stdc */
+extern void BSIM3evaluate();
+extern int BSIM3debug();
+extern int BSIM3checkModel();
+#endif /* stdc */
 
 #endif /*BSIM3*/
+

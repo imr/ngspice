@@ -1,12 +1,11 @@
-/**** BSIM3v3.2.4, Released by Xuemei Xi 12/21/2001 ****/
+/**** BSIM3v3.3.0, Released by Xuemei Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b3mask.c of BSIM3v3.2.4
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b3mask.c of BSIM3v3.3.0
  * Author: 1995 Min-Chie Jeng and Mansun Chan.
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
- * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
  **********/
 
 #include "ngspice.h"
@@ -18,7 +17,11 @@
 #include "suffix.h"
 
 int
-BSIM3mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
+BSIM3mAsk(ckt,inst,which,value)
+CKTcircuit *ckt;
+GENmodel *inst;
+int which;
+IFvalue *value;
 {
     BSIM3model *model = (BSIM3model *)inst;
     switch(which) 
@@ -37,8 +40,8 @@ BSIM3mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case BSIM3_MOD_NOIMOD:
             value->iValue = model->BSIM3noiMod; 
             return(OK);
-        case BSIM3_MOD_ACMMOD:
-            value->iValue = model->BSIM3acmMod; 
+        case BSIM3_MOD_ACNQSMOD:
+            value->iValue = model->BSIM3acnqsMod; 
             return(OK);
         case  BSIM3_MOD_VERSION :
           value->sValue = model->BSIM3version;
@@ -330,29 +333,6 @@ BSIM3mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case BSIM3_MOD_TPBSWG:
             value->rValue = model->BSIM3tpbswg;
             return(OK);
-
-	/* acm model */
-	case BSIM3_MOD_HDIF:
-	    value->rValue = model->BSIM3hdif; 
-	    return(OK);
-	case BSIM3_MOD_LDIF:
-	    value->rValue = model->BSIM3ldif; 
-	    return(OK);
-	case BSIM3_MOD_LD:
-	    value->rValue = model->BSIM3ld; 
-	    return(OK);
-	case BSIM3_MOD_RD:
-	    value->rValue = model->BSIM3rd; 
-	    return(OK);
-	case BSIM3_MOD_RS:
-	    value->rValue = model->BSIM3rs; 
-	    return(OK);
-	case BSIM3_MOD_RDC:
-	    value->rValue = model->BSIM3rdc; 
-	    return(OK);
-	case BSIM3_MOD_RSC:
-	    value->rValue = model->BSIM3rsc; 
-	    return(OK);
 
 	/* Length dependence */
         case  BSIM3_MOD_LCDSC :
@@ -1167,6 +1147,9 @@ BSIM3mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case BSIM3_MOD_XTI:
             value->rValue = model->BSIM3jctTempExponent; 
             return(OK);
+        case BSIM3_MOD_LINTNOI:
+            value->rValue = model->BSIM3lintnoi; 
+            return(OK);
         case BSIM3_MOD_LINT:
             value->rValue = model->BSIM3Lint; 
             return(OK);
@@ -1233,14 +1216,6 @@ BSIM3mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case BSIM3_MOD_WMAX:
             value->rValue = model->BSIM3Wmax;
             return(OK);
-
-        case BSIM3_MOD_XL:
-	    value->rValue = model->BSIM3xl; 
-	    return(OK);
-        case BSIM3_MOD_XW:
-	    value->rValue = model->BSIM3xw; 
-	    return(OK);
-
         case BSIM3_MOD_NOIA:
             value->rValue = model->BSIM3oxideTrapDensityA;
             return(OK);
@@ -1267,3 +1242,6 @@ BSIM3mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
     }
     /* NOTREACHED */
 }
+
+
+

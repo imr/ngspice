@@ -1,13 +1,13 @@
-/**** BSIM3v3.2.4, Released by Xuemei Xi 12/14/2001 ****/
+/**** BSIM3v3.3.0, Released by Xuemei Xi 07/29/2005 ****/
 
 /**********
- * Copyright 2001 Regents of the University of California. All rights reserved.
- * File: b3check.c of BSIM3v3.2.4
+ * Copyright 2004 Regents of the University of California. All rights reserved.
+ * File: b3check.c of BSIM3v3.3.0
  * Author: 1995 Min-Chie Jeng 
  * Author: 1997-1999 Weidong Liu.
- * Author: 2001 Xuemei Xi
+ * Author: 2001 Xuemei Xi.
  * Modified by Xuemei Xi, 10/05, 12/14, 2001.
- * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
+ * Modified by Xuemei Xi, 07/29/2005.
  **********/
 
 #include "ngspice.h"
@@ -20,7 +20,10 @@
 #include "suffix.h"
 
 int
-BSIM3checkModel (BSIM3model *model, BSIM3instance *here, CKTcircuit *ckt)
+BSIM3checkModel(model, here, ckt)
+BSIM3model *model;
+BSIM3instance *here;
+CKTcircuit *ckt;
 {
 struct bsim3SizeDependParam *pParam;
 int Fatal_Flag = 0;
@@ -28,34 +31,20 @@ FILE *fplog;
     
     if ((fplog = fopen("b3v3check.log", "w")) != NULL)
     {   pParam = here->pParam;
-
-	fprintf (fplog,
-		 "BSIM3 Model (Supports: v3.2, v3.2.2, v3.2.3, v3.2.4)\n");
-	fprintf (fplog, "Parameter Checking.\n");
-	fprintf (fplog, "Model = %s\n", model->BSIM3modName);
-	fprintf (fplog, "W = %g, L = %g, M = %g\n", here->BSIM3w,
-		 here->BSIM3l, here->BSIM3m);
-
-	if ((strcmp(model->BSIM3version, "3.2.4")) && (strcmp(model->BSIM3version, "3.24"))
-	 && (strcmp(model->BSIM3version, "3.2.3")) && (strcmp(model->BSIM3version, "3.23"))
-	 && (strcmp(model->BSIM3version, "3.2.2")) && (strcmp(model->BSIM3version, "3.22"))
-	 && (strcmp(model->BSIM3version, "3.2")) && (strcmp(model->BSIM3version, "3.20")))
-	{
-	    fprintf (fplog,
-		"Warning: This model supports BSIM3v3.2, BSIM3v3.2.2, BSIM3v3.2.3, BSIM3v3.2.4\n");
-	    fprintf (fplog,
-		"You specified a wrong version number. Working now with BSIM3v3.2.4.\n");
-	    printf ("Warning: This model supports BSIM3v3.2, BSIM3v3.2.2, BSIM3v3.2.3, BSIM3v3.2.4\n");
-	    printf ("You specified a wrong version number. Working now with BSIM3v3.2.4.\n");
-	}
-
-        if (pParam->BSIM3nlx < -pParam->BSIM3leff)
-	{   fprintf(fplog, "Fatal: Nlx = %g is less than -Leff.\n",
-			pParam->BSIM3nlx);
-	    printf("Fatal: Nlx = %g is less than -Leff.\n",
-			pParam->BSIM3nlx);
-	    Fatal_Flag = 1;
+	fprintf(fplog, "BSIM3v3.3.0 Parameter Checking.\n");
+        if (strcmp(model->BSIM3version, "3.3.0"))
+        {  fprintf(fplog, "Warning: This model is BSIM3v3.3.0; you specified a wrong version number.\n");
+           printf("Warning: This model is BSIM3v3.3.0; you specified a wrong version number.\n"); 
         }
+	fprintf(fplog, "Model = %s\n", model->BSIM3modName);
+
+            if (pParam->BSIM3nlx < -pParam->BSIM3leff)
+	    {   fprintf(fplog, "Fatal: Nlx = %g is less than -Leff.\n",
+			pParam->BSIM3nlx);
+	        printf("Fatal: Nlx = %g is less than -Leff.\n",
+			pParam->BSIM3nlx);
+		Fatal_Flag = 1;
+            }
 
 	if (model->BSIM3tox <= 0.0)
 	{   fprintf(fplog, "Fatal: Tox = %g is not positive.\n",
@@ -68,6 +57,14 @@ FILE *fplog;
         {   fprintf(fplog, "Fatal: Toxm = %g is not positive.\n",
                     model->BSIM3toxm);
             printf("Fatal: Toxm = %g is not positive.\n", model->BSIM3toxm);
+            Fatal_Flag = 1;
+        }
+
+        if (model->BSIM3lintnoi > pParam->BSIM3leff/2)
+        {   fprintf(fplog, "Fatal: Lintnoi = %g is too large - Leff for noise is negative.\n",
+                    model->BSIM3lintnoi);
+            printf("Fatal: Lintnoi = %g is too large - Leff for noise is negative.\n",
+                    model->BSIM3lintnoi);
             Fatal_Flag = 1;
         }
 
@@ -176,25 +173,22 @@ FILE *fplog;
             printf("Warning: Pscbe2 = %g is not positive.\n", pParam->BSIM3pscbe2);
         }
 
-       /* acm model */
-       if (model->BSIM3acmMod == 0) {
-         if (model->BSIM3unitLengthSidewallJctCap > 0.0 || 
-               model->BSIM3unitLengthGateSidewallJctCap > 0.0)
-         {
-           if (here->BSIM3drainPerimeter < pParam->BSIM3weff)
-           {   fprintf(fplog, "Warning: Pd = %g is less than W.\n",
-                    here->BSIM3drainPerimeter);
-               printf("Warning: Pd = %g is less than W.\n",
-                    here->BSIM3drainPerimeter);
-           }
-           if (here->BSIM3sourcePerimeter < pParam->BSIM3weff)
-           {   fprintf(fplog, "Warning: Ps = %g is less than W.\n",
-                    here->BSIM3sourcePerimeter);
-               printf("Warning: Ps = %g is less than W.\n",
-                    here->BSIM3sourcePerimeter);
-           }
-         }
-       }
+      if (model->BSIM3unitLengthSidewallJctCap > 0.0 || 
+            model->BSIM3unitLengthGateSidewallJctCap > 0.0)
+      {
+	if (here->BSIM3drainPerimeter < pParam->BSIM3weff)
+	{   fprintf(fplog, "Warning: Pd = %g is less than W.\n",
+		    here->BSIM3drainPerimeter);
+	   printf("Warning: Pd = %g is less than W.\n",
+		    here->BSIM3drainPerimeter);
+	}
+	if (here->BSIM3sourcePerimeter < pParam->BSIM3weff)
+	{   fprintf(fplog, "Warning: Ps = %g is less than W.\n",
+		    here->BSIM3sourcePerimeter);
+	   printf("Warning: Ps = %g is less than W.\n",
+		    here->BSIM3sourcePerimeter);
+	}
+      }
 
         if (pParam->BSIM3noff < 0.1)
         {   fprintf(fplog, "Warning: Noff = %g is too small.\n",
@@ -387,7 +381,6 @@ FILE *fplog;
 		   pParam->BSIM3a2);
 	    pParam->BSIM3a2 = 1.0;
 	    pParam->BSIM3a1 = 0.0;
-
 	}
 
 	if (pParam->BSIM3rdsw < 0.0)
@@ -398,13 +391,14 @@ FILE *fplog;
 	    pParam->BSIM3rdsw = 0.0;
 	    pParam->BSIM3rds0 = 0.0;
 	}
-	else if ((pParam->BSIM3rds0 > 0.0) && (pParam->BSIM3rds0 < 0.001))
-	{   fprintf(fplog, "Warning: Rds at current temperature = %g is less than 0.001 ohm. Set to zero.\n",
-		    pParam->BSIM3rds0);
-	    printf("Warning: Rds at current temperature = %g is less than 0.001 ohm. Set to zero.\n",
-		   pParam->BSIM3rds0);
-	    pParam->BSIM3rds0 = 0.0;
-	}
+        if (pParam->BSIM3rds0 < 0.0)
+        {   fprintf(fplog, "Warning: Rds at current temperature = %g is negative. Set to zero.\n",
+                    pParam->BSIM3rds0);
+            printf("Warning: Rds at current temperature = %g is negative. Set to zero.\n",
+                   pParam->BSIM3rds0);
+            pParam->BSIM3rds0 = 0.0;
+        }
+
 	 if (pParam->BSIM3vsattemp < 1.0e3)
 	{   fprintf(fplog, "Warning: Vsat at current temperature = %g may be too small.\n", pParam->BSIM3vsattemp);
 	   printf("Warning: Vsat at current temperature = %g may be too small.\n", pParam->BSIM3vsattemp);
