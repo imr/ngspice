@@ -787,11 +787,12 @@ src/spicelib/devices/bjt/Makefile	\
 src/spicelib/devices/bjt2/Makefile	\
 src/spicelib/devices/bsim1/Makefile	\
 src/spicelib/devices/bsim2/Makefile	\
+src/spicelib/devices/bsim3/Makefile	\
 src/spicelib/devices/bsim3v0/Makefile	\
 src/spicelib/devices/bsim3v1/Makefile	\
 src/spicelib/devices/bsim3v1a/Makefile	\
 src/spicelib/devices/bsim3v1s/Makefile	\
-src/spicelib/devices/bsim3/Makefile	\
+src/spicelib/devices/bsim3v32/Makefile	\
 src/spicelib/devices/bsim4/Makefile	\
 src/spicelib/devices/bsim4v2/Makefile	\
 src/spicelib/devices/bsim4v3/Makefile	\

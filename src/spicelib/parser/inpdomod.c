@@ -273,8 +273,15 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    }
 	    break;
 	case 8:
-	    type = INPtypelook("BSIM3");
 	    err = INPfindVer(line, ver);
+	    if ( (strstr(ver, "3.2.2")) || (strstr(ver, "3.22")) ||
+	         (strstr(ver, "3.2.3")) || (strstr(ver, "3.23")) ||
+	         (strstr(ver, "3.2.4")) || (strstr(ver, "3.24")) ) {
+	      type = INPtypelook("BSIM3v32");
+	    }
+	    if ( (strstr(ver, "3.3")) || (strstr(ver, "3.3.0")) || (strstr(ver, "3.30")) ) {
+	      type = INPtypelook("BSIM3");
+	    }
 	    if (type < 0) {
 		err =
 		    INPmkTemp
