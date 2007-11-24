@@ -26,7 +26,7 @@ extern double Nintegrate();
 
 
 double
-StrongInversionNoiseEval(double vgs, double vds, BSIM3v0model *model, 
+StrongInversionNoiseEval3v0(double vgs, double vds, BSIM3v0model *model, 
                          BSIM3v0instance *here, double freq, double temp)
 {
 struct bsim3v0SizeDependParam *pParam;
@@ -215,7 +215,7 @@ int i;
 				      vgs = vgs + vds;
 			          }
                                   if (vgs >= here->BSIM3v0von + 0.1)
-			          {   Ssi = StrongInversionNoiseEval(vgs, vds,
+			          {   Ssi = StrongInversionNoiseEval3v0(vgs, vds,
 					    model, here, data->freq,
 					    ckt->CKTtemp);
                                       noizDens[BSIM3v0FLNOIZ] *= Ssi;
@@ -229,7 +229,7 @@ int i;
 				          * 4.0e36;
 		                      Swi = T10 / T11 * here->BSIM3v0cd * here->BSIM3v0m
 				          * here->BSIM3v0cd * here->BSIM3v0m;
-                                      Slimit = StrongInversionNoiseEval(
+                                      Slimit = StrongInversionNoiseEval3v0(
 				           here->BSIM3v0von + 0.1,
 				           vds, model, here,
 				           data->freq, ckt->CKTtemp);
