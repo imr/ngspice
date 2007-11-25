@@ -30,7 +30,7 @@ Author: 1985 Wayne A. Christopher
  * Fixed crash where a NULL pointer gets freed in inp_readall()
  */
 
-#ifndef _MSC_VER
+#ifdef HAVE_LIBGEN_H /* dirname() */
 #include <libgen.h>
 #endif
 #include <config.h>

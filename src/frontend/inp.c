@@ -15,7 +15,7 @@ $Id$
  * the listing routines.
  */
 
-#ifndef _MSC_VER
+#ifdef HAVE_LIBGEN_H /* dirname() */
 #include <libgen.h>
 #endif
 #include "ngspice.h"
