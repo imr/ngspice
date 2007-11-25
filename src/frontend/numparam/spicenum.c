@@ -25,10 +25,6 @@ Todo:
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#ifdef __TURBOC__
-#include <process.h>   /* exit() */
-#endif
-
 #include "general.h"
 #include "numparam.h"
 #include "ngspice.h"
@@ -36,7 +32,7 @@ Todo:
 extern void txfree(void *ptr);
 
 /* Uncomment this line to allow debug tracing */
-/*#define TRACE_NUMPARAMS*/
+/* #define TRACE_NUMPARAMS */
 
 /*  the nupa_signal arguments sent from Spice:
 
@@ -225,7 +221,7 @@ Begin
       While alfanum(s[j]) Do 
         cadd(name, upcase(s[j])); Inc(j) 
       Done
-      found=  (getidtype(dico, name) == 'U');
+      found = (getidtype(dico, name) == 'U');
     EndIf 
   Done		    
   If found And (h<ls) Then 

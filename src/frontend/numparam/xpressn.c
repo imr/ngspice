@@ -14,7 +14,7 @@
 /************ keywords ************/
 
 /* SJB - 150 chars is ample for this - see initkeys() */
-Intern Str(150, keys); /*all my keywords*/
+Intern Str(150, keys); /* all my keywords */
 Intern Str(150, fmath); /* all math functions */
 
 static double
@@ -43,7 +43,7 @@ Begin
   scopy_up(keys,
   "and or not div mod if else end while macro funct defined"
   " include for to downto is var"); 
-  scopy_up(fmath, "sqr sqrt sin cos exp ln arctan abs pwr max min int log ternary_fcn"); 
+  scopy_up(fmath, "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log ternary_fcn"); 
 EndProc
 
 Intern
@@ -60,12 +60,12 @@ Begin
   Case    6 Is  y= ln(x)
   Case    7 Is  y= atan(x)
   Case    8 Is  y= fabs(x)
-  Case    9 Is  y= exp( x* ln(fabs(z)))
-     /* pwr(,): the only one with 2 args */
-  Case   10 Is  y= max( x, z )
-  Case   11 Is  y= min( x, z )
-  Case   12 Is  y= trunc( x )
-  Case   13 Is  y= log(x)
+  Case    9 Is  y= pow(x,z)
+  Case   10 Is  y= exp( x* ln(fabs(z)))
+  Case   11 Is  y= max( x, z )
+  Case   12 Is  y= min( x, z )
+  Case   13 Is  y= trunc( x )
+  Case   14 Is  y= log(x)
   Default y=x EndSw
   return y
 EndFunc
@@ -977,7 +977,8 @@ Begin
   astronomic=False;
   If ax<1e-30 Then
     isint=True;
-  ElsIf ax<32000 Then /*detect integers*/ rx=np_round(x);
+  ElsIf ax<32000 Then /*detect integers*/ 
+    rx=np_round(x);
     dx=(x-rx)/ax; 
     isint=(absf(dx)<1e-6);
   EndIf

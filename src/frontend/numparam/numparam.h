@@ -28,7 +28,7 @@ Cconst(Llen,15000)
 typedef char str50 [54];
 typedef char str80 [84];
 
-Cconst(Maxline, 40000) /* size of initial unexpanded circuit code */
+Cconst(Maxline, 20000) /* size of initial unexpanded circuit code */
 Cconst(Maxckt,  40000)  /* size of expanded circuit code */
 
 

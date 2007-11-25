@@ -136,7 +136,7 @@ Type(Pchar, char AT)
 #define Str(n,a)      char a[n+3]={0,0,(char)n}  /* n<255 ! */
 #define Sini(s)       sini(s,sizeof(s)-4)
 
-Cconst(Maxstr,15000) /* was 255, string maxlen, may be up to 32000 or so */
+Cconst(Maxstr,25004) /* was 255, string maxlen, may be up to 32000 or so */
 
 typedef char string[258];
 
