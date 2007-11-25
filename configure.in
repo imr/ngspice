@@ -182,18 +182,6 @@ if test "$with_editline" = "yes"; then
 fi
     
 
-dnl --enable-dot-global: Enable use of the .global keyword (experimental)
-AC_MSG_CHECKING([whether .gobal keyword has been enabled])
-AC_ARG_ENABLE(dot-global,
-    AS_HELP_STRING([--enable-dot-global],[Enable use of the .global keyword (experimental)]),
-    [if test "$enable_dot_global" = "yes"; then
-        AC_DEFINE([GLOBAL_NODE],[1],[Define to enable the .global keyword])
-    fi],
-    [enable_dot_global="no"])
-AC_MSG_RESULT($enable_dot_global)
-
-
-
 dnl Enable maintainer commands only if requested
 AM_MAINTAINER_MODE
 
@@ -393,15 +381,16 @@ AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_CHECK_FUNCS(localtime)
 
-case $host_os in
-  *cygwin* | *mingw* )
-	AC_CHECK_FUNCS(ftime)
-    AC_DEFINE(HAVE__MEMAVL,[],[Get system memory and time]);;
-  * )
-	AC_CHECK_FUNCS(gettimeofday time ftime , break)
-	AC_CHECK_FUNCS(getrusage utimes, break)
-	AC_CHECK_FUNCS(getrlimit ulimit, break);;
-esac
+AC_CHECK_FUNCS(ftime)
+AC_CHECK_FUNCS(gettimeofday time)
+AC_CHECK_FUNCS(getrusage utimes)
+AC_CHECK_FUNCS(getrlimit ulimit , break)
+if test "$with_windows" = "yes"; then
+	AC_DEFINE(HAVE__MEMAVL,[1],[Get system memory from windows API])
+fi
+
+dnl Check for some headers (asprintf, basename, etc.)
+AC_CHECK_HEADERS(libiberty.h libgen.h)
 
 dnl Look for termios first (posix)
 AC_CHECK_HEADERS(termios.h termio.h sgtty.h , break)
@@ -411,6 +400,7 @@ dnl Check for a few functions:
 AC_FUNC_FORK([])
 AC_CHECK_FUNCS(access bcopy qsort dup2 popen)
 AC_CHECK_FUNCS(strchr index , break)
+AC_CHECK_FUNCS(strrchr rindex , break)
 AC_CHECK_FUNCS(getcwd getwd , break)
 
 
@@ -441,6 +431,9 @@ AC_TRY_LINK([#include <setjmp.h>],[jmp_buf env; sigsetjmp(env, 1);],
 
 dnl Check for the asprintf function:
 AC_CHECK_FUNCS(asprintf,,AC_CHECK_LIB(iberty,asprintf,AC_DEFINE(HAVE_ASPRINTF) LIBS="$LIBS -liberty"))
+
+dnl Check for the snprintf function:
+AC_CHECK_FUNCS(snprintf)
 
 
 # AC_CHECK_FUNC(getopt_long, getopt_long=true)
@@ -575,7 +568,7 @@ AC_SUBST(NOTXGRAPH)
 dnl Add new code models to the build by pointing to them here.
 if test "$enable_xspice" = "yes"; then
     AC_MSG_RESULT(X-Spice features included)
-    AC_DEFINE(XSPICE,[],[The xspice enhancements])
+    AC_DEFINE(XSPICE,[1],[The xspice enhancements])
     XSPICEDIR="xspice"
     case $host_os in
      *mingw* | *cygwin* )
@@ -610,7 +603,7 @@ AC_SUBST(XSPICEINIT)
 dnl Add CIDER enhancements to ngspice.
 if test "$enable_cider" = "yes"; then
      AC_MSG_RESULT(CIDER features enabled)
-     AC_DEFINE(CIDER,[],[The CIDER enhancements])
+     AC_DEFINE(CIDER,[1],[The CIDER enhancements])
      
      CIDERDIR="ciderlib"
      
@@ -664,7 +657,7 @@ if test "$enable_adms" = "yes"; then
    if test "$ADMSXML" = "no"; then
       AC_MSG_ERROR(If you want adms models you should install admsXml) 
    fi 
-   AC_DEFINE(ADMS,[],[Support for Verilog-A(MS) models])
+   AC_DEFINE(ADMS,[1],[Support for Verilog-A(MS) models])
    
    VLADEVDIR=" adms/hicum0 \
                adms/hicum2 \
@@ -711,9 +704,19 @@ if test "$enable_expdevices" = "yes"; then
 	AC_MSG_RESULT(WARNING: Experimental devices enabled)	
 fi
 
+dnl --enable-dot-global: Enable use of the .global keyword (experimental)
+AC_MSG_CHECKING([whether .gobal keyword has been enabled])
+AC_ARG_ENABLE(dot-global,
+    AS_HELP_STRING([--enable-dot-global],[Enable use of the .global keyword (experimental)]),
+    [if test "$enable_dot_global" = "yes"; then
+        AC_DEFINE([GLOBAL_NODE],[1],[Define to enable the .global keyword])
+    fi],
+    [enable_dot_global="no"])
+AC_MSG_RESULT($enable_dot_global)
+
 if test "$enable_numparam" = "yes"; then
     AC_MSG_RESULT(Numparam library is enabled)
-    AC_DEFINE(NUMPARAMS,[],[Spice .param support])
+    AC_DEFINE(NUMPARAMS,[1],[Spice .param support])
     NUMPARAMDIR="numparam"
     NUMPARAMLIB="frontend/numparam/libnumparam.a"
 else
