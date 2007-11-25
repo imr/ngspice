@@ -1,3 +1,11 @@
+2007-11-24 Dietmar Warning
+ * configure.in: memory display independent from ftime under windows
+ * src/frontend/numparam: pow function included
+
+2007-11-22 Dietmar Warning
+ * src/spicelib/devices/bsim3: update version 3.3.0
+ * src/spicelib/devices/bsim3v32: now version 3.2.x
+
 2007-11-21 Dietmar Warning
  * src/spicelib/devices/bsim3/b3check.c,b3set.c: accept version 3.xx form
  * src/spicelib/devices/bsim4v2,3: multiplier included
