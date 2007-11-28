@@ -9,7 +9,7 @@ $Id$
  * dependencies in here, and it isn't clear that versions of this stuff
  * can be written for every possible machine...
  */
-#include <config.h>
+#include "config.h"
 
 #ifdef HAVE_SGTTY_H
 #include <sgtty.h>
@@ -17,6 +17,10 @@ $Id$
 
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
+#endif
+
+#ifdef HAVE_LIBIBERTY_H /* asprintf */
+#include <libiberty.h>
 #endif
 
 #if 0
@@ -32,7 +36,7 @@ $Id$
 #include <ncurses/termcap.h>
 #endif
 
-#include <ngspice.h>
+#include "ngspice.h"
 #include <cpdefs.h>
 
 #include "variable.h"

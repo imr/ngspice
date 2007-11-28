@@ -31,7 +31,9 @@ com_hardcopy(wordlist *wl)
     char buf[BSIZE_SP], device[BSIZE_SP];
     bool tempf = FALSE;
     char *devtype;
+#if defined(SYSTEM_PLOT5LPR) || defined(SYSTEM_PSLPR)
     char format[513];
+#endif
     int	printed;
     int hc_button;
     int foundit;

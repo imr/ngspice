@@ -43,8 +43,10 @@ $Id$
 /* static declarations */
 static void printres(char *name);
 static void fprintmem(FILE* stream, size_t memory);
+#ifndef HAVE__MEMAVL
 static RETSIGTYPE fault(void);
 static void * baseaddr(void);
+#endif
 
 #ifdef HAVE__MEMAVL
 size_t mem_avail;
@@ -125,8 +127,7 @@ char* copyword;
 void
 ft_ckspace(void)
 {
-    size_t usage;
-    size_t limit;
+    size_t usage, limit;
 
 #ifdef HAVE__MEMAVL
     size_t mem_avail_now;
@@ -277,10 +278,8 @@ printres(char *name)
     }
 
     if (!name || eq(name, "space")) {
-	size_t usage = 0;
-	size_t limit = 0;
+	size_t usage = 0, limit = 0;
 	
-    
 #ifdef HAVE__MEMAVL
          size_t mem_avail_now;
          
@@ -406,6 +405,8 @@ fprintmem(FILE* stream, size_t memory) {
 }
 
 
+#ifndef HAVE__MEMAVL
+
 #include <signal.h>
 #include <setjmp.h>
 
@@ -478,6 +479,7 @@ baseaddr(void)
 
 #endif
 }
+#endif
 
 #  ifdef notdef
 main( )
