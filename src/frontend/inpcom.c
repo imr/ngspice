@@ -30,16 +30,22 @@ Author: 1985 Wayne A. Christopher
  * Fixed crash where a NULL pointer gets freed in inp_readall()
  */
 
-#ifdef HAVE_LIBGEN_H /* dirname() */
-#include <libgen.h>
-#endif
-#include <config.h>
 #include "ngspice.h"
+
+#ifdef HAVE_LIBGEN_H /* dirname */
+#include <libgen.h>
+#define HAVE_DECL_BASENAME 1
+#endif
+
+#ifdef HAVE_LIBIBERTY_H /* asprintf etc. */
+#include <libiberty.h>
+#undef AND /* obsolete macro in ansidecl.h */
+#endif
+
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "dvec.h"
 #include "fteinp.h"
-
 
 #include "inpcom.h"
 #include "variable.h"
@@ -53,6 +59,22 @@ Author: 1985 Wayne A. Christopher
 
 /* SJB - Uncomment this line for debug tracing */
 /*#define TRACE*/
+
+/* globals -- wanted to avoid complicating inp_readall interface */
+static char *library_file[1000];
+static char *library_name[1000][1000];
+struct line *library_ll_ptr[1000][1000];
+struct line *libraries[1000];
+int         num_libraries;
+int         num_lib_names[1000];
+static      char *global;
+static char *subckt_w_params[1000];
+static int  num_subckt_w_params;
+static char *func_names[1000];
+static char *func_params[1000][1000];
+static char *func_macro[5000];
+static int  num_functions;
+static int  num_parameters[1000];
 
 /* static declarations */
 static char * readline(FILE *fd);

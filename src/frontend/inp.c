@@ -15,10 +15,18 @@ $Id$
  * the listing routines.
  */
 
-#ifdef HAVE_LIBGEN_H /* dirname() */
-#include <libgen.h>
-#endif
 #include "ngspice.h"
+
+#ifdef HAVE_LIBGEN_H /* dirname */
+#include <libgen.h>
+#define HAVE_DECL_BASENAME 1
+#endif
+
+#ifdef HAVE_LIBIBERTY_H /* asprintf etc. */
+#include <libiberty.h>
+#undef AND /* obsolete macro in ansidecl.h */
+#endif
+
 #include "cpdefs.h"
 #include "inpdefs.h"
 #include "ftedefs.h"
