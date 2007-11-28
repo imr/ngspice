@@ -216,12 +216,12 @@ AC_HEADER_STDC
 
 if test "$enable_ansi" = "yes"; then
 	AC_PROG_CC()
-AC_DIAGNOSE([obsolete],[AM_PROG_CC_STDC:
+	AC_DIAGNOSE([obsolete],[AM_PROG_CC_STDC:
 	your code should no longer depend upon `am_cv_prog_cc_stdc', but upon
 	`ac_cv_prog_cc_stdc'.  Remove this warning and the assignment when
 	you adjust the code.  You can also remove the above call to
 	AC_PROG_CC if you already called it elsewhere.])
-am_cv_prog_cc_stdc=$ac_cv_prog_cc_stdc
+	am_cv_prog_cc_stdc=$ac_cv_prog_cc_stdc
 
 	if test ! "$am_cv_prog_cc_stdc"="yes"; then
 	AC_MSG_WARN(Failed to find Ansi flag!)
@@ -260,7 +260,6 @@ AC_ARG_WITH(windows,
 )
 AC_MSG_RESULT($with_windows)
 AM_CONDITIONAL(WINDOWS, test x$with_windows = xyes)
-
 
 case $with_windows in
 
@@ -389,9 +388,6 @@ if test "$with_windows" = "yes"; then
 	AC_DEFINE(HAVE__MEMAVL,[1],[Get system memory from windows API])
 fi
 
-dnl Check for some headers (asprintf, basename, etc.)
-AC_CHECK_HEADERS(libiberty.h libgen.h)
-
 dnl Look for termios first (posix)
 AC_CHECK_HEADERS(termios.h termio.h sgtty.h , break)
 AC_CHECK_FUNCS(isatty tcgetattr tcsetattr)
@@ -406,7 +402,7 @@ AC_CHECK_FUNCS(getcwd getwd , break)
 
 AC_MSG_RESULT(Checking mathematical features of the system:)
 dnl Look for math library:
-AC_CHECK_LIB(m,sqrt)
+AC_CHECK_LIB(m, sqrt)
 AC_CHECK_HEADERS(float.h limits.h values.h)
 
 dnl Check for a few mathematical functions:
@@ -429,12 +425,19 @@ AC_TRY_LINK([#include <setjmp.h>],[jmp_buf env; sigsetjmp(env, 1);],
         AC_DEFINE(HAVE_SIGSETJMP,[],[Define if we have sigsetjmp().])],
     AC_MSG_RESULT(no) )
 
+dnl Check for some headers (asprintf, dirname, etc.)
+AC_CHECK_HEADERS(libiberty.h libgen.h)
+
 dnl Check for the asprintf function:
 AC_CHECK_FUNCS(asprintf,,AC_CHECK_LIB(iberty,asprintf,AC_DEFINE(HAVE_ASPRINTF) LIBS="$LIBS -liberty"))
 
 dnl Check for the snprintf function:
-AC_CHECK_FUNCS(snprintf)
+if test "$ac_cv_func_asprintf" = no ; then
+    AC_CHECK_FUNCS(snprintf)
+fi
 
+dnl Check for the dirname function:
+AC_CHECK_FUNCS(dirname,,AC_CHECK_LIB(gen,dirname,AC_DEFINE(HAVE_DIRNAME) LIBS="$LIBS -lgen"))
 
 # AC_CHECK_FUNC(getopt_long, getopt_long=true)
 # AM_CONDITIONAL(HAVE_GETOPT_LONG, test "$getopt_long" = "true")
