@@ -52,20 +52,20 @@ Func double mathfunction(int f, double z, double x)
 Begin
   double y;
   Switch f
-  CaseOne 1 Is  y= x*x
-  Case    2 Is  y= sqrt(x)
-  Case    3 Is  y= sin(x)
-  Case    4 Is  y= cos(x)
-  Case    5 Is  y= exp(x)
-  Case    6 Is  y= ln(x)
-  Case    7 Is  y= atan(x)
-  Case    8 Is  y= fabs(x)
-  Case    9 Is  y= pow(x,z)
-  Case   10 Is  y= exp( x* ln(fabs(z)))
-  Case   11 Is  y= max( x, z )
-  Case   12 Is  y= min( x, z )
-  Case   13 Is  y= trunc( x )
-  Case   14 Is  y= log(x)
+  CaseOne 1 Is  y = x*x
+  Case    2 Is  y = sqrt(x)
+  Case    3 Is  y = sin(x)
+  Case    4 Is  y = cos(x)
+  Case    5 Is  y = exp(x)
+  Case    6 Is  y = ln(x)
+  Case    7 Is  y = atan(x)
+  Case    8 Is  y = fabs(x)
+  Case    9 Is  y = pow(z,x)
+  Case   10 Is  y = exp(x*ln(fabs(z)))
+  Case   11 Is  y = max(x,z)
+  Case   12 Is  y = min(x,z)
+  Case   13 Is  y = trunc(x)
+  Case   14 Is  y = log(x)
   Default y=x EndSw
   return y
 EndFunc
@@ -876,7 +876,7 @@ Begin
 	u=formula( dico, t, Addr(error));
         state=1; /*atom*/
         If fu>0 Then 
- 	  if ( fu == 14 ) u= ternary_fcn((int)v,w,u);
+ 	  if ( fu == 15 ) u= ternary_fcn((int)v,w,u);
           else u= mathfunction(fu,v,u);
         EndIf
       EndIf
