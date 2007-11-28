@@ -151,7 +151,7 @@ char * absolute_pathname(char *string, char *dot_path)
 }
 
 
-#ifdef _MSC_VER
+#ifndef HAVE_DIRNAME
 
 const char *
 basename(const char *name)
