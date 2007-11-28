@@ -8,9 +8,12 @@
    $Id$
 */
 
-#include <ngspice.h>
+#include "ngspice.h"
 
-#include <stdio.h>
+#ifdef HAVE_LIBIBERTY_H /* asprintf */
+#include <libiberty.h>
+#undef AND /* obsolete macro in ansidecl.h */
+#endif
 
 #ifdef HAVE_STRING_H
 #include <string.h>

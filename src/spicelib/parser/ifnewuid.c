@@ -4,10 +4,10 @@ Author: 1988 Thomas L. Quarles
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 
-#ifdef HAVE_STRING_H
-#include <string.h>
+#ifdef HAVE_LIBIBERTY_H /* asprintf */
+#include <libiberty.h>
+#undef AND /* obsolete macro in ansidecl.h */
 #endif
 
 #include <wordlist.h>

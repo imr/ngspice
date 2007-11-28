@@ -5,12 +5,9 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #include "ngspice.h"
 #include "ivars.h"
 
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif /* HAVE_STRING_H */
-
-#include <stdlib.h>
-#include <stdio.h>
+#ifdef HAVE_LIBIBERTY_H /* asprintf */
+#include <libiberty.h>
+#endif
 
 char *Spice_Path;
 char *News_File;
