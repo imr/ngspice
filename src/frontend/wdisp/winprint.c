@@ -12,6 +12,7 @@
 #include "graph.h"
 #include "ftedev.h"
 #include "ftedbgra.h"
+#include "fteext.h"
 
 /*
  * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
@@ -28,24 +29,27 @@
 #include "suffix.h"
 #pragma hdrstop
 
-// Typen
-typedef struct {									// Extra Printdaten
-	int		ColorIndex;							// Index auf die akt. Farbe
-	int     LineIndex;  							// Index auf den akt. Linientyp
+/* Typen */
+typedef struct {						/* Extra Printdaten */
+	int		ColorIndex;				/* Index auf die akt. Farbe */
+	int     LineIndex;  					/* Index auf den akt. Linientyp */
 } tPrintData;
-typedef tPrintData * tpPrintData;			// Zeiger darauf
+typedef tPrintData * tpPrintData;			/* Zeiger darauf */
 #define pPrintData(g) ((tpPrintData)(g->devdep))
 
-// lokale Variablen
-static HFONT			PlotFont = NULL;		// Font-Merker
+/* externals */
+void WaitForIdle(void);						/* Warte, bis keine Events da */
+
+/* lokale Variablen */
+static HFONT			PlotFont = NULL;		/* Font-Merker */
 static HFONT			OldFont  = NULL;
-#define NumLines 7								// Anzahl der LineStyles
-static int 			LineTable[NumLines];		// Speicher fuer die LineStyles
-static HDC				PrinterDC = NULL;		// Device Context
-#define NumPrintColors 2       				// vordef. Farben
-static COLORREF 		ColorTable[NumPrintColors];// Speicher fuer die Farben
-static int				PrinterWidth  = 1000;		// Breite des Papiers
-static int				PrinterHeight = 1000;		// Hoehe des Papiers
+#define NumLines 7						/* Anzahl der LineStyles */
+static int 			LineTable[NumLines];		/* Speicher fuer die LineStyles */
+static HDC				PrinterDC = NULL;	/* Device Context */
+#define NumPrintColors 2       				/* vordef. Farben */
+static COLORREF 		ColorTable[NumPrintColors];/* Speicher fuer die Farben */
+static int				PrinterWidth  = 1000;		/* Breite des Papiers */
+static int				PrinterHeight = 1000;		/* Hoehe des Papiers */
 
 /******************************************************************************
  Drucker-Initialisierung
@@ -53,10 +57,10 @@ static int				PrinterHeight = 1000;		// Hoehe des Papiers
 
 void WPRINT_PrintInit(HWND hwnd)
 {
-	// Parameter-Block
+	/* Parameter-Block */
 	PRINTDLG pd;
 
-	// Initialisieren
+	/* Initialisieren */
 	pd.lStructSize = sizeof(PRINTDLG);
 	pd.hwndOwner = hwnd;
 	pd.hDevMode = NULL;
@@ -77,21 +81,21 @@ void WPRINT_PrintInit(HWND hwnd)
 	pd.hPrintTemplate = NULL;
 	pd.hSetupTemplate = NULL;
 
-	// Default-Drucker initialisieren
+	/* Default-Drucker initialisieren */
 	(void) PrintDlg( &pd);
 
-	// Speicher freigeben
+	/* Speicher freigeben */
 	if( pd.hDevMode)  GlobalFree( pd.hDevMode);
 	if( pd.hDevNames) GlobalFree( pd.hDevNames);
 }
 
-// Abort-Procedur zum Drucken
+/* Abort-Procedur zum Drucken */
 BOOL CALLBACK WPRINT_Abort( HDC hdc, int iError)
 {
-	// Multitasking
+	/* Multitasking */
 	WaitForIdle();
 
-	// Warten
+	/* Warten */
 	return TRUE;
 }
 
@@ -113,13 +117,13 @@ int WPRINT_Init( )
 	int    pWidth;
 	int	 pHeight;
 
-	// Printer-DC holen
+	/* Printer-DC holen */
 	if (!PrinterDC) {
 
-		// Parameter-Block
+		/* Parameter-Block */
 		PRINTDLG pd;
 
-		// Initialisieren
+		/* Initialisieren */
 		pd.lStructSize = sizeof(PRINTDLG);
 		pd.hwndOwner = NULL;
 		pd.hDevMode = NULL;
@@ -140,71 +144,71 @@ int WPRINT_Init( )
 		pd.hPrintTemplate = NULL;
 		pd.hSetupTemplate = NULL;
 
-		// Default-Drucker initialisieren
+		/* Default-Drucker initialisieren */
 		(void) PrintDlg( &pd);
 
-		// Speicher freigeben
+		/* Speicher freigeben */
 		if( pd.hDevMode)  GlobalFree( pd.hDevMode);
 		if( pd.hDevNames) GlobalFree( pd.hDevNames);
 
-		// DC holen
+		/* DC holen */
 		PrinterDC = pd.hDC;
 		if (!PrinterDC) return 1;
 
-		// Abmasze bestimmen
+		/* Abmasze bestimmen */
 		PrinterWidth	= GetDeviceCaps( PrinterDC, HORZRES);
 		PrinterHeight	= GetDeviceCaps( PrinterDC, VERTRES);
 		pWidth  		= GetDeviceCaps( PrinterDC, HORZSIZE);
 		pHeight 		= GetDeviceCaps( PrinterDC, VERTSIZE);
 
-		// Mapping Mode setzen (fuer Kreise)
+		/* Mapping Mode setzen (fuer Kreise) */
 		if ( pWidth > pHeight)
-			// Querformat
+			/* Querformat */
 			PrinterWidth = (PrinterHeight * pWidth) / pHeight;
 		else
-			// Hochformat
+			/* Hochformat */
 			PrinterHeight = (PrinterWidth * pHeight) / pWidth;
 
 		SetMapMode( PrinterDC, MM_ISOTROPIC);
 		SetWindowExtEx( PrinterDC, PrinterWidth, PrinterHeight, NULL);
 		SetViewportExtEx( PrinterDC, PrinterWidth, PrinterHeight, NULL);
 
-		// nicht hoeher als breit zeichnen
+		/* nicht hoeher als breit zeichnen */
 		if (pWidth < pHeight) {
-			// Papier im Hochformat
+			/* Papier im Hochformat */
 			PrinterHeight = PrinterWidth;
 		}
 
-		// Initialisierungen des Display-Descriptors
+		/* Initialisierungen des Display-Descriptors */
 		dispdev->width         = PrinterWidth;
 		dispdev->height 	   = PrinterHeight;
 		dispdev->numlinestyles = NumLines;
 		dispdev->numcolors     = NumPrintColors;
 
-		// Farben initialisieren
-		ColorTable[0] = RGB(255,255,255);	// Weisz
-		ColorTable[1] = RGB(  0,  0,  0);	// Schwarz
+		/* Farben initialisieren */
+		ColorTable[0] = RGB(255,255,255);	/* Weisz */
+		ColorTable[1] = RGB(  0,  0,  0);	/* Schwarz */
 
-		// LineStyles initialisieren
+		/* LineStyles initialisieren */
 		LineTable[0] = PS_SOLID;
-		LineTable[1] = PS_DOT;   	// Gitter
-		LineTable[2] = PS_SOLID;    // Erste Linie
-		LineTable[3] = PS_DOT;   	// Zweite Linie
-		LineTable[4] = PS_DASH;     // usw
+		LineTable[1] = PS_DOT;   	/* Gitter */
+		LineTable[2] = PS_SOLID;    /* Erste Linie */
+		LineTable[3] = PS_DOT;   	/* Zweite Linie */
+		LineTable[4] = PS_DASH;     /* usw */
 		LineTable[5] = PS_DASHDOT;
 		LineTable[6] = PS_DASHDOTDOT;
 
-		// Font
+		/* Font */
 		if (!PlotFont) {
 			PlotFont = CreateFont( 0,0,0,0, FW_DONTCARE, FALSE, FALSE, FALSE,
 				ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 				PROOF_QUALITY, FIXED_PITCH, NULL);
 		}
 
-		// Abort-Prozedur setzen
+		/* Abort-Prozedur setzen */
 		SetAbortProc( PrinterDC, WPRINT_Abort);
 	}
-	// fertig
+	/* fertig */
 	return (0);
 }
 
@@ -222,53 +226,53 @@ int WPRINT_NewViewport( GRAPH * graph)
 	tpPrintData 	pd;
 	DOCINFO			di;
 
-	// Parameter testen
+	/* Parameter testen */
 	if (!graph) return 1;
 
-	// Initialisiere, falls noch nicht geschehen
+	/* Initialisiere, falls noch nicht geschehen */
 	if (WPRINT_Init() != 0) {
 		externalerror("Can't initialize Printer.");
 		return(1);
 	}
 
-	// Device dep. Info allocieren
+	/* Device dep. Info allocieren */
 	pd = calloc(1, sizeof(tPrintData));
 	if (!pd) return 1;
 	graph->devdep = (char *)pd;
 
-	// Setze den Color-Index
+	/* Setze den Color-Index */
 	pd->ColorIndex = 0;
 
-	// Font setzen
+	/* Font setzen */
 	OldFont = SelectObject( PrinterDC, PlotFont);
 
-	// Font-Parameter abfragen
+	/* Font-Parameter abfragen */
 	if (GetTextMetrics( PrinterDC, &tm)) {
 		graph->fontheight = tm.tmHeight;
 		graph->fontwidth  = tm.tmAveCharWidth;
 	}
 
-	// Setze den Linien-Index
+	/* Setze den Linien-Index */
 	pd->LineIndex = 0;
 
-	// Viewport-Parameter setzen
+	/* Viewport-Parameter setzen */
 	graph->viewport.height 	= PrinterHeight;
 	graph->viewport.width  	= PrinterWidth;
 
-	// Absolut-Parameter setzen
+	/* Absolut-Parameter setzen */
 	graph->absolute.xpos 	= 0;
 	graph->absolute.ypos 	= 0;
 	graph->absolute.width 	= PrinterWidth;
 	graph->absolute.height 	= PrinterHeight;
 
-	// Druckauftrag anmelden
+	/* Druckauftrag anmelden */
 	di.cbSize 		= sizeof( DOCINFO);
 	di.lpszDocName 	= graph->plotname;
 	di.lpszOutput	= NULL;
 	if (StartDoc( PrinterDC, &di) <= 0) return 1;
 	if (StartPage( PrinterDC) <= 0) return 1;
 
-	// titel drucken
+	/* titel drucken */
 	if (graph->plotname) {
 		UINT align;
 		align = GetTextAlign( PrinterDC);
@@ -278,7 +282,7 @@ int WPRINT_NewViewport( GRAPH * graph)
 		SetTextAlign( PrinterDC, align);
 	}
 
-	// fertig
+	/* fertig */
 	return(0);
 }
 
@@ -316,7 +320,7 @@ int WPRINT_DrawLine(int x1, int y1, int x2, int y2)
 	pd = pPrintData(currentgraph);
 	if (!pd) return 0;
 
-	// Farben/Dicke
+	/* Farben/Dicke */
 	ColIndex = pd->ColorIndex;
 	if (ColIndex > 1)
 		ColIndex = 1;
@@ -368,7 +372,7 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta1, double theta2)
 	}
 	SetArcDirection( PrinterDC, direction);
 
-	// Geometrische Vorueberlegungen
+	/* Geometrische Vorueberlegungen */
 	yb   	= PrinterHeight;
 	left 	= x0 - radius;
 	right 	= x0 + radius;
@@ -383,7 +387,7 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta1, double theta2)
 	xe = (dx0 + (r * cos(theta2)));
 	ye = (dy0 + (r * sin(theta2)));
 
-	// Zeichnen
+	/* Zeichnen */
 	NewPen = CreatePen( LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
 	OldPen = SelectObject(PrinterDC, NewPen);
 	Arc( PrinterDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
@@ -415,13 +419,13 @@ int WPRINT_Text( char * text, int x, int y, int degrees)
 
 int WPRINT_DefineColor(int red, int green, int blue, int num)
 {
-	// nix
+	/* nix */
 	return (0);
 }
 
 int WPRINT_DefineLinestyle(int num, int mask)
 {
-	// nix
+	/* nix */
 	return (0);
 }
 
