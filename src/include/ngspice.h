@@ -15,7 +15,7 @@
  */
 #define _GNU_SOURCE
 
-#include <config.h>
+#include "config.h"
 #include <stddef.h>
 
 #ifdef HAVE_LIMITS_H
