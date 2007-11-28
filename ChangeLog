@@ -1,3 +1,16 @@
+2007-11-28 Dietmar Warning
+ * configure.in: memory display independent from ftime under windows
+ * src/frontend/numparam/xpression.c: fix the arg order for pow
+ * src/frontend/wdisp/windisp.c, wprint.c: Prototypes and C comments
+ * src/frontend/com_hardcopy.c, resource.c, terminal.c: prevent ext. warnings
+ * src/frontend/inpcom.h: move arrays to the files there are needed
+ * src/frontend/inpcom.c, inp.c: prototypes for dirname and asprintf
+ * src/spicelib/parser/ifnewuid.c, inperror.c: prototype for asprintf
+ * src/misc/ivars.c: prototype for asprintf
+ * src/misc/util.c: better macro request to HAVE_DIRNAME
+ * src/main.c: prototype for asprintf
+ * configure.in: check for dirname and asprintf
+
 2007-11-24 Dietmar Warning
  * configure.in: memory display independent from ftime under windows
  * src/frontend/numparam: pow function included
