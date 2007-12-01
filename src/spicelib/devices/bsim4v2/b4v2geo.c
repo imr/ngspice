@@ -12,6 +12,11 @@
 #include <stdio.h>
 #include <math.h>
 
+int
+BSIM4v2RdsEndIso(double, double, double, double, double, double, int, int, double *);
+int
+BSIM4v2RdsEndSha(double, double, double, double, double, double, int, int, double *);
+
 /*
  * WDLiu:
  * This subrutine is a special module to process the geometry dependent

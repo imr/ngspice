@@ -30,6 +30,12 @@
 #define Charge_q 1.60219e-19
 
 int
+BSIM4v2RdseffGeo(double nf, int geo, int rgeo, int minSD, double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG, int Type,double *Rtot);
+
+int
+BSIM4v2PAeffGeo(double nf, int geo, int minSD, double Weffcj, double DMCG, double DMCI, double DMDG, double *Ps, double *Pd, double *As, double *Ad);
+
+int
 BSIM4v2DioIjthVjmEval(Nvtm, Ijth, Isb, XExpBV, Vjm)
 double Nvtm, Ijth, Isb, XExpBV;
 double *Vjm;
@@ -55,7 +61,7 @@ BSIM4v2instance *here;
 struct bsim4SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni;
 double T0, T1, T2, T3, T4, T5, T8, T9, Lnew, Wnew;
-double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Dw, Dl, Vtm0, Tnom;
+double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double dumPs, dumPd, dumAs, dumAd, PowWeffWr;
 double DMCGeff, DMCIeff, DMDGeff;
 double Nvtms, Nvtmd, SourceSatCurrent, DrainSatCurrent;

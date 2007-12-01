@@ -41,15 +41,15 @@ double gIgtotg, gIgtotd, gIgtots, gIgtotb;
 double cgso, cgdo, cgbo;
 double gbspsp, gbbdp, gbbsp, gbspg, gbspb;
 double gbspdp, gbdpdp, gbdpg, gbdpb, gbdpsp;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11;
-double Csg, Csd, Css, Csb;
+double T0, T1, T2, T3;
+double Csg, Csd, Css;
 double Cdgr, Cddr, Cdsr, Cdbr, Csgr, Csdr, Cssr, Csbr;
 double Cdgi, Cddi, Cdsi, Cdbi, Csgi, Csdi, Cssi, Csbi;
 double gmr, gmi, gmbsr, gmbsi, gdsr, gdsi;
-double FwdSumr, RevSumr, Gmr, Gmbsr, Gdsr;
-double FwdSumi, RevSumi, Gmi, Gmbsi, Gdsi;
+double FwdSumr, RevSumr, Gmr, Gmbsr;
+double FwdSumi, RevSumi, Gmi, Gmbsi;
 struct bsim4v3SizeDependParam *pParam;
-double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
+double ggidld, ggidlg, ggidlb, ggislg, ggislb, ggisls;
 
 double m;
 

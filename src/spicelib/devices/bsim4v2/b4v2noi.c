@@ -35,7 +35,7 @@ BSIM4v2instance *here;
 {
 struct bsim4SizeDependParam *pParam;
 double cd, esat, DelClm, EffFreq, N0, Nl;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Ssi;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
 
     pParam = here->pParam;
     cd = fabs(here->BSIM4v2cd);
@@ -87,14 +87,14 @@ double tempInoise;
 double noizDens[BSIM4v2NSRCS];
 double lnNdens[BSIM4v2NSRCS];
 
-double N0, Nl;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13;
-double Vds, n, ExpArg, Ssi, Swi;
+
+double T0, T1, T2, T5, T10, T11;
+double Vds, Ssi, Swi;
 double tmp, gdpr, gspr, npart_theta, npart_beta, igsquare;
 
 double m;
 
-int error, i;
+int i;
 
     /* define the names of the noise sources */
     static char *BSIM4v2nNames[BSIM4v2NSRCS] =

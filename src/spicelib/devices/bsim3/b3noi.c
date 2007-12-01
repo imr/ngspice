@@ -64,8 +64,8 @@ BSIM3model *model;
 BSIM3instance *here;
 {
 struct bsim3SizeDependParam *pParam;
-double cd, esat, DelClm, EffFreq, N0, Nl, Vgst, Leff, Leffsq;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Ssi;
+double cd, esat, DelClm, EffFreq, N0, Nl, Leff, Leffsq;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
 
     pParam = here->pParam;
     cd = fabs(here->BSIM3cd);
@@ -118,10 +118,10 @@ double tempInoise;
 double noizDens[BSIM3NSRCS];
 double lnNdens[BSIM3NSRCS];
 
-double vgs, vds, Slimit;
-double N0, Nl;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13;
-double n, ExpArg, Ssi, Swi;
+double vds;
+
+double T1, T10, T11;
+double Ssi, Swi;
 
 double m;
 
