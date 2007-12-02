@@ -353,6 +353,35 @@ get_r_paren(char **s)
         return 0;
 }
 
+/*-------------------------------------------------------------------------*
+ * this function strips all white space inside parens
+ * is needed in gettoks (dotcards.c) for right processing of expressions
+ * like ".plot v( 5,4) v(6)"
+ *-------------------------------------------------------------------------*/
+char *
+stripWhiteSpacesInsideParens(char *str)
+{
+    char buf[BSIZE_SP];
+    int i = 0, j = 0;
+
+    while ( (str[i] == ' ') || (str[i] == '\t') )
+        i++;
+
+    for(i=i; str[i]!='\0'; i++) 
+    {
+        if ( str[i] != '(' ) {
+            buf[j++] = str[i];
+        } else {
+            buf[j++] = str[i];
+            while ( (str[i++] != ')') ) {
+                if ( str[i] != ' ' ) buf[j++] = str[i];
+            }
+            i--;
+        }
+    }
+    buf[j] = '\0';
+    return copy(buf);
+}
 
 
 #ifndef HAVE_BCOPY

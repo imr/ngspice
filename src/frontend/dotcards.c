@@ -8,8 +8,8 @@ $Id$
 /*
  * Spice-2 compatibility stuff for .plot, .print, .four, and .width.
  */
-#include <config.h>
-#include <ngspice.h>
+
+#include "ngspice.h"
 #include <assert.h>
 
 #include "cpdefs.h"
@@ -495,6 +495,7 @@ fixem(char *string)
     return (string);
 }
 
+
 static wordlist *
 gettoks(char *s)
 {
@@ -506,6 +507,7 @@ gettoks(char *s)
     list = NULL;
     prevp = &list;
 
+    s = stripWhiteSpacesInsideParens(s);
     while ((t = gettok(&s))) {
 	if (*t == '(')
 	    continue;
