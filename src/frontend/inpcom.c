@@ -49,6 +49,7 @@ Author: 1985 Wayne A. Christopher
 
 #include "inpcom.h"
 #include "variable.h"
+#include "../misc/util.h" /* dirname() */
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include new stuff */

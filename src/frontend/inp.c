@@ -39,6 +39,7 @@ $Id$
 #include "completion.h"
 #include "variable.h"
 #include "breakp2.h"
+#include "../misc/util.h" /* dirname() */
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include new stuff */

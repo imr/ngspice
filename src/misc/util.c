@@ -153,7 +153,7 @@ char * absolute_pathname(char *string, char *dot_path)
 
 #ifndef HAVE_DIRNAME
 
-const char *
+char *
 basename(const char *name)
 {
     const char *base;
@@ -188,7 +188,7 @@ basename(const char *name)
     return base;
 }
 
-const char *
+char *
 dirname(const char *name)
 {
     static char *ret = NULL;
