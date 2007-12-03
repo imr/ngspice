@@ -1,3 +1,9 @@
+2007-12-02 Dietmar Warning
+ * src/spicelib/devices/bsimX: div. unused variables and prototypes
+ * src/frontend/inpcom.c, inp.c: fix prototype of dirname if not available
+ * src/frontend/dotcards.c, src/misc/string.c: strip WhiteSpaces inside parens of dot cards
+ * src/frontend/display.c: no WINX_DiagramReady parameter
+
 2007-11-28 Dietmar Warning
  * configure.in: memory display independent from ftime under windows
  * src/frontend/numparam/xpression.c: fix the arg order for pow
