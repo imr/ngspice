@@ -1,3 +1,6 @@
+2007-12-06 Holger Vogt
+ * src/frontend/wdisp/windisp.c: show coordinates and gradients, zooming
+
 2007-12-02 Dietmar Warning
  * src/spicelib/devices/bsimX: div. unused variables and prototypes
  * src/frontend/inpcom.c, inp.c: fix prototype of dirname if not available
