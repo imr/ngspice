@@ -271,7 +271,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 		    /* get new end point */
                     xe = LOWORD (lParam);
                     ye = HIWORD (lParam);
-                    /* draw new lines
+                    /* draw new lines */
 		    MoveToEx (hdc, x0, y0, NULL) ;
 		    LineTo   (hdc, x0, ye) ;
 		    LineTo   (hdc, xe, ye);
