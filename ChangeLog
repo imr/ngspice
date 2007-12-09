@@ -1,3 +1,10 @@
+2007-12-09 Dietmar Warning
+ * src/frontend/numparam/xpression.c: placeholder for agauss (y=nominal_value)
+
+2007-12-09 Holger Vogt
+ * src/frontend/wdisp/windisp.c: better prototypes and some cosmetics
+ * src/frontend/inpcom.c: change local index to ind to prevent conflict with index function
+
 2007-12-06 Holger Vogt
  * src/frontend/wdisp/windisp.c: show coordinates and gradients, zooming
 
