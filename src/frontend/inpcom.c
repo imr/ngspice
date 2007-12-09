@@ -430,26 +430,16 @@ chk_for_line_continuation( char *line ) {
 //        v(1,11)         --> 0
 //        x1 (1 2 3)      --> x1 1 2 3
 //        .param func1(x,y) = {x*y} --> .func func1(x,y) {x*y}
-//        agauss( ... )   --> 0     no monte carlo analysis
 //
 static void
 inp_fix_macro_param_func_paren_io( struct line *begin_card ) {
   struct line *card;
-  char        *str_ptr, *new_str, *open_paren_ptr, *search_ptr, *fcn_name, *agauss;
+  char        *str_ptr, *new_str, *open_paren_ptr, *search_ptr, *fcn_name;
   bool        is_func = FALSE;
 
   for ( card = begin_card; card != NULL; card = card->li_next ) {
 
     if ( *card->li_line == '*' ) continue;
-
-    // zero out agauss fcn references
-    search_ptr = card->li_line;
-    while( ( agauss = strstr( search_ptr, "agauss(" ) ) ) {
-      *agauss = '0'; agauss++;
-      while( *agauss != ')' ) { *agauss = ' '; agauss++; }
-      *agauss = ' ';
-      search_ptr = agauss;
-    }
 
     // zero out any voltage node references on .param lines
     if ( ciprefix( ".param", card->li_line ) ) {
@@ -1001,6 +991,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
 #ifdef XSPICE
     char big_buff[5000];
     int line_count = 0;
+    Ipc_Status_t    ipc_status;
+    char            ipc_buffer[1025];  /* Had better be big enough */
+    int             ipc_len;
 #endif
     char *copys=NULL, big_buff2[5000];
     char *global_copy = NULL, keep_char;
@@ -1011,16 +1004,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
     bool dir_name_flag = FALSE;
 
     struct variable *v;
-	char *s_ptr, *s_lower;
+    char *s_ptr, *s_lower;
 
     /*   Must set this to NULL or non-tilde includes segfault. -- Tim Molteno   */
     /* copys = NULL; */   /*  This caused a parse error with gcc 2.96.  Why???  */
-
-/*   gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled   */
-#ifdef XSPICE
-    Ipc_Status_t    ipc_status;
-    char            ipc_buffer[1025];  /* Had better be big enough */
-    int             ipc_len;
 
     if ( call_depth == 0 ) {
       num_subckt_w_params = 0;
@@ -1029,6 +1016,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
       global              = NULL;
       found_end           = FALSE;
     }
+
+/*   gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled   */
+#ifdef XSPICE
 
   /* First read in all lines & put them in the struct cc */
     while (1) {
@@ -1059,7 +1049,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
                 break;
             }
             else if(ipc_status == IPC_STATUS_OK) {
-//                buffer = (void *) MALLOC(strlen(ipc_buffer) + 3);
                 buffer = (void *) tmalloc(strlen(ipc_buffer) + 3);
                 strcpy(buffer, ipc_buffer);
                 strcat(buffer, "\n");
@@ -2694,7 +2683,7 @@ static void
 inp_sort_params( struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c )
 {
   char *param_name = NULL, *param_str = NULL, *param_ptr = NULL;
-  int  i, j, num_params = 0, index = 0, max_level = 0, num_terminals = 0;
+  int  i, j, num_params = 0, ind = 0, max_level = 0, num_terminals = 0;
   bool in_control = FALSE;
   struct line *ptr_array[12000], *ptr_array_ordered[12000], *ptr;
   char *param_names[12000], *param_strs[12000], *curr_line;
@@ -2758,15 +2747,15 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
 	      if ( !isalnum( *(param_ptr-1) )                  && *(param_ptr-1) != '_'     &&
 		   !isalnum( *(param_ptr+strlen(param_name)) ) && *(param_ptr+strlen(param_name)) != '_' )
 		{
-		  index = 0;
+		  ind = 0;
 		  found_in_list = FALSE;
-		  while ( depends_on[j][index] != NULL ) {
-		    if ( strcmp( param_name, depends_on[j][index] ) == 0 ) { found_in_list = TRUE; break; }
-		    index++;
+		  while ( depends_on[j][ind] != NULL ) {
+		    if ( strcmp( param_name, depends_on[j][ind] ) == 0 ) { found_in_list = TRUE; break; }
+		    ind++;
 		  }
 		  if ( !found_in_list ) {
-		    depends_on[j][index++] = param_name;
-		    depends_on[j][index]   = NULL;
+		    depends_on[j][ind++] = param_name;
+		    depends_on[j][ind]   = NULL;
 		  }
 		  break;
 		}
@@ -2843,21 +2832,21 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
       ptr = ptr->li_next;
     }
 
-  index = 0;
+  ind = 0;
   for ( i = 0; i <= max_level; i++ )
     for ( j = num_params-1; j >= 0; j-- )
       {
 	if ( level[j] == i ) {
 	  if ( param_skip[j] == 0 ) {
-	    ptr_array_ordered[index++] = ptr_array[j];
+	    ptr_array_ordered[ind++] = ptr_array[j];
 	  }
 	}
       }
 
   num_params -= skipped;
-  if ( index != num_params )
+  if ( ind != num_params )
     {
-      fprintf( stderr, "ERROR: found wrong number of parameters during levelization ( %d instead of %d parameter s)!\n", index, num_params );
+      fprintf( stderr, "ERROR: found wrong number of parameters during levelization ( %d instead of %d parameter s)!\n", ind, num_params );
       exit(-1);
     }
 
