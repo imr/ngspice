@@ -47,7 +47,8 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd, 		/* window procedure */
 	UINT uMsg, WPARAM wParam, LPARAM lParam);
 void WPRINT_PrintInit( HWND hwnd);			/* Windows printer init */
 void WaitForIdle(void);					/* wait until no more events */
-static void WIN_ScreentoData();               		/* hvogt */
+static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy);
+							/* get new plot size coordinates */
 
 /* externals */
 extern HINSTANCE		hInst;			/* application instance */
@@ -67,9 +68,9 @@ static COLORREF 		ColorTable[NumWinColors];	/* color memory */
 static char *			WindowName = "Spice Plot";  	/* window name */
 static WNDCLASS 		TheWndClass;			/* Plot-window class */
 static HFONT			PlotFont;			/* which font */
-#define 			ID_DRUCKEN 	    0xEFF0	/* System Menue: print */
+#define 			ID_DRUCKEN 	0xEFF0		/* System Menue: print */
 #define				ID_DRUCKEINR    0xEFE0		/* System Menue: printer setup */
-static const int		ID_MASK		  = 0xFFF0;	/* System-Menue: mask */
+static const int		ID_MASK	      = 0xFFF0;		/* System-Menue: mask */
 static char *			STR_DRUCKEN   = "Printer...";	/* System menue strings */
 static char *			STR_DRUCKEINR = "Printer setup...";
 
@@ -88,16 +89,16 @@ WIN_Init() does not yet open a window, this happens only in WIN_NewViewport()
 
 int WIN_Init( )
 {
-	/* Initialisierungen des Display-Descriptors */
+	/* Initialization of display descriptor */
 	dispdev->width         = GetSystemMetrics( SM_CXSCREEN);
 	dispdev->height        = GetSystemMetrics( SM_CYSCREEN);
-	dispdev->numlinestyles = 5;	/* siehe Auswirkungen in WinPrint! */
+	dispdev->numlinestyles = 5;	/* see implications in WinPrint! */
 	dispdev->numcolors     = NumWinColors;
 
-	/* nur beim ersten Mal: */
+	/* only for the first time: */
 	if (!IsRegistered) {
 
-		/* Farben initialisieren */
+		/* Initialize colors */
 		ColorTable[0] = RGB(  0,  0,  0);   /* black 	= background */
 		ColorTable[1] = RGB(255,255,255);   /* white 	= text and grid */
 		ColorTable[2] = RGB(  0,255,  0);   /* green	= first line */
@@ -243,7 +244,6 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 		}
 		goto WIN_DEFAULT;
 
-	/* hvogt 05.12.2007 */
 	case WM_LBUTTONDOWN:
 	        {
 		GRAPH * gr = pGraph( hwnd);                      
@@ -384,7 +384,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 		WIN_ScreentoData(gr, xe, ye, &fxe, &fye);
 		
 		strncpy(buf2, gr->plotname, sizeof(buf2));
-		if (t = index(buf2, ':')) /* == ?? */
+		if ((t = index(buf2, ':'))) /* strchr */
 			*t = 0;
 
 		if (!eq(plot_cur->pl_typename, buf2)) {
@@ -436,7 +436,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 						/* plot anew */
 						gr_resize(g);
 						/* switch DC */
-                       wd->hDC = saveDC;
+						wd->hDC = saveDC;
 						/* ready */
 						wd->PaintFlag = 0;
 					}
@@ -463,12 +463,12 @@ WIN_DEFAULT:
 
 int WIN_NewViewport( GRAPH * graph)
 {
-	int 			i;
-	HWND 			window;
-	HDC 			dc;
-	TEXTMETRIC 		tm;
+	int 		i;
+	HWND 		window;
+	HDC 		dc;
+	TEXTMETRIC 	tm;
 	tpWindowData 	wd;
-	HMENU			sysmenu;
+	HMENU		sysmenu;
 
 	/* test the parameters */
 	if (!graph) return 1;
@@ -616,10 +616,10 @@ int WIN_Arc(int x0, int y0, int radius, double theta1, double theta2)
 	tpWindowData wd;
 	HPEN   	OldPen;
 	HPEN   	NewPen;
-	int		left, right, top, bottom;
-	int		xs, ys, xe, ye;
+	int	left, right, top, bottom;
+	int	xs, ys, xe, ye;
 	int    	yb;
-	int		direction;
+	int	direction;
 	double	temp;
 	double	r;
 	double  dx0;
@@ -679,19 +679,19 @@ int WIN_Text( char * text, int x, int y, int degrees)
 
 int WIN_DefineColor(int red, int green, int blue, int num)
 {
-	/* nix */
+	/* nothing */
 	return (0);
 }
 
 int WIN_DefineLinestyle(int num, int mask)
 {
-	/* nix */
+	/* nothing */
 	return (0);
 }
 
 int WIN_SetLinestyle(int style)
 {
-	/* nix */
+	/* nothing */
 	return (0);
 }
 
@@ -726,11 +726,8 @@ int WIN_DiagramReady()
 	return 0;
 }
 
-
-static void WIN_ScreentoData(graph, x, y, fx, fy)
-GRAPH *graph;
-int x,y;
-double *fx, *fy;
+/* Function borrowed from x11.c */
+static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy)
 {
 	double	lmin, lmax;
 
