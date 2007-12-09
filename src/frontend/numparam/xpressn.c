@@ -36,6 +36,13 @@ ternary_fcn( int conditional, double if_value, double else_value )
   else               return else_value;
 }
 
+static double
+agauss( double nominal_val, double variation, double sigma )
+{
+/* just a placeholder */
+  return nominal_val;
+}
+
 Intern
 Proc initkeys(void)
 /* the list of reserved words */
@@ -43,12 +50,12 @@ Begin
   scopy_up(keys,
   "and or not div mod if else end while macro funct defined"
   " include for to downto is var"); 
-  scopy_up(fmath, "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log ternary_fcn"); 
+  scopy_up(fmath, "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log ternary_fcn agauss"); 
 EndProc
 
 Intern
 Func double mathfunction(int f, double z, double x)
-/* the list of built-in functions. Patch 'fmath' and here to get more ...*/
+/* the list of built-in functions. Patch 'fmath', here and near line 888 to get more ...*/
 Begin
   double y;
   Switch f
@@ -876,8 +883,13 @@ Begin
 	u=formula( dico, t, Addr(error));
         state=1; /*atom*/
         If fu>0 Then 
- 	  if ( fu == 15 ) u= ternary_fcn((int)v,w,u);
-          else u= mathfunction(fu,v,u);
+ 	  If ( fu == 15 ) Then
+ 	    u=ternary_fcn((int)v,w,u)
+ 	  ElsIf ( fu == 16 ) Then
+ 	    u=agauss(v,w,u)
+          Else 
+            u=mathfunction(fu,v,u)
+          EndIf
         EndIf
       EndIf
       i=k; fu=0;
