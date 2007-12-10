@@ -1,5 +1,6 @@
 2007-12-09 Dietmar Warning
  * src/frontend/numparam/xpression.c: placeholder for agauss (y=nominal_value)
+ * src/spicelib/parser/inpdomod.c: if no bsim3 version given then use 3.30
 
 2007-12-09 Holger Vogt
  * src/frontend/wdisp/windisp.c: better prototypes and some cosmetics
