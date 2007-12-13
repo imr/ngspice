@@ -769,6 +769,9 @@ else
                      -lncurses )	       
 fi
 
+dnl Use AC_CHECK_HEADERS so the HAVE_*_H symbol gets defined
+AC_CHECK_HEADERS(ncurses/termcap.h termcap.h)
+
 
 dnl Output Files
 dnl ------------
@@ -783,11 +786,6 @@ src/spinit			\
 src/spicelib/Makefile		\
 src/spicelib/analysis/Makefile	\
 src/spicelib/devices/Makefile		\
-src/spicelib/devices/adms/hicum0/Makefile	\
-src/spicelib/devices/adms/hicum2/Makefile	\
-src/spicelib/devices/adms/mextram/Makefile	\
-src/spicelib/devices/adms/ekv/Makefile	\
-src/spicelib/devices/adms/psp102/Makefile	\
 src/spicelib/devices/asrc/Makefile	\
 src/spicelib/devices/bjt/Makefile	\
 src/spicelib/devices/bjt2/Makefile	\

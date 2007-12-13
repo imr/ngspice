@@ -1,3 +1,10 @@
+2007-12-13 Steven Borley
+ * Fixed(?) missing files error when autogen.sh is run (with no adms)
+  - configure.in:  removed adms directors from AC_CONFIG_FILES list
+ * Fixed inclusion of termcap header
+  - configure.in:  add check for <termcap.h> to <ncurses/termcap.h>
+  - frontend/terminal.c: select either <termcap.h> or <ncurses/termcap.h>
+
 2007-12-09 Dietmar Warning
  * src/frontend/numparam/xpression.c: placeholder for agauss (y=nominal_value)
  * src/spicelib/parser/inpdomod.c: if no bsim3 version given then use 3.30

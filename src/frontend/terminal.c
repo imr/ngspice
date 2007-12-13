@@ -32,7 +32,9 @@ $Id$
 #endif
 #endif
 
-#ifdef HAVE_TERMCAP
+#ifdef HAVE_TERMCAP_H
+#include <termcap.h>
+#elif HAVE_NCURSES_TERMCAP_H
 #include <ncurses/termcap.h>
 #endif
 
