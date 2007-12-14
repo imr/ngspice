@@ -1,3 +1,7 @@
+2007-12-14  Steven Borley
+ * Added missing .cvsignore file to the tests directories and some
+   devices directories, and updated for change from makeidx to ngmakeidx
+
 2007-12-13 Steven Borley
  * Fixed(?) missing files error when autogen.sh is run (with no adms)
   - configure.in:  removed adms directors from AC_CONFIG_FILES list
