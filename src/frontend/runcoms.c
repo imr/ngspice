@@ -176,9 +176,9 @@ dosim(char *what, wordlist *wl)
     }
 
     if (cp_getvar("filetype", VT_STRING, buf)) {
-        if (eq(buf, "binary"))
+        if (eq(buf, "binary") || eq(buf, "{binary}"))
             ascii = FALSE;
-        else if (eq(buf, "ascii"))
+        else if (eq(buf, "ascii") || eq(buf, "{ascii}"))
 	    ascii = TRUE;
 	else
             fprintf(cp_err,
