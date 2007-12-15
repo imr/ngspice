@@ -1277,7 +1277,10 @@ do {\
 
     _foo(ckt->CKTbreaks,double,ckt->CKTbreakSize);
     
-    _foo((TSKtask *)ft_curckt->ci_curTask,TSKtask,1);
+    {	/* avoid invalid lvalue assignment errors in the macro _foo() */
+    	TSKtask * lname = (TSKtask *)ft_curckt->ci_curTask;
+    	_foo(lname,TSKtask,1);
+    }
 
     /* To stop the Free */
     ((TSKtask *)ft_curckt->ci_curTask)->TSKname = NULL;
@@ -1285,7 +1288,10 @@ do {\
 
     _foo(((TSKtask *)ft_curckt->ci_curTask)->TSKname,char,-1);
     
-    _foo(((TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs),TRANan,1);
+    {	/* avoid invalid lvalue assignment errors in the macro _foo() */
+    	TRANan * lname = (TRANan *)((TSKtask *)ft_curckt->ci_curTask)->jobs;
+    	_foo(lname,TRANan,1);
+    }
     ((TSKtask *)ft_curckt->ci_curTask)->jobs->JOBname = NULL;
     ckt->CKTcurJob = (JOB *)((TSKtask *)ft_curckt->ci_curTask)->jobs;
     

@@ -1,5 +1,8 @@
 2007-12-15 Steven Borley
  * Added automake warning and output verbosity to autogen.sh
+ * src/frontend/spiceif.c: Avoid invalid lvalue assignment errors when
+   calling the macro _foo(). Needed for gcc4 which no longer supports
+   lvalue cast bogosity.
 
 2007-12-14  Steven Borley
  * Added missing .cvsignore file to the tests directories and some
