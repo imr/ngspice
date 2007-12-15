@@ -54,10 +54,8 @@ NON-STANDARD FEATURES
 
 
 
-
 extern SPICEdev **DEVices;        /* info about all device types */
 
-Mif_Boolean_t mif_UNSET=MIF_TRUE;
 
 /* define macro for easy creation of matrix entries/pointers for outputs */
 #define TSTALLOC(ptr,first,second) \
@@ -457,8 +455,9 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
     MIFmodel *model;
     MIFinstance *here;
     Mif_Smp_Ptr_t  *smp_data_out;
-    Mif_Smp_Ptr_t  *smp_data_cntl;
-    Mif_Port_Type_t  type,in_type,out_type;
+/*    Mif_Smp_Ptr_t  *smp_data_cntl;*/
+/*    Mif_Port_Type_t  type, in_type, out_type;*/
+    Mif_Port_Type_t  in_type, out_type;
     Mif_Cntl_Src_Type_t  cntl_src_type;
     int num_conn,num_port,i,j,k,l,num_port_k;
 
@@ -529,6 +528,6 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
             }
           }
 	}
-    //printf("MIFunsetup completed.\n");
+    /* printf("MIFunsetup completed.\n");*/
     return OK;
 }

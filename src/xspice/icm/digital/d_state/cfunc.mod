@@ -55,6 +55,7 @@ NON-STANDARD FEATURES
 #include <ctype.h>
 #include <math.h>
 #include <string.h>
+#include <stdlib.h>
 
                                       
 
@@ -150,8 +151,6 @@ typedef char line_t[82]; /* A SPICE size line. <= 80 characters plus '\n\0' */
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 
-
-
                    
 
                                       
@@ -192,7 +191,7 @@ NON-STANDARD FEATURES
     NONE
 
 ==============================================================================*/
-#include <stdlib.h>
+
 
 /*=== Static CNVgettok ROUTINE ================*/
 /*
@@ -1903,12 +1902,12 @@ void cm_d_state(ARGS)
                                        input from state.in */
                               *s;   /* main string variable */ 
 
-	char *open_error = "\n***ERROR***\nD_STATE: failed to open state file.\n";
+/*    char *open_error = "\n***ERROR***\nD_STATE: failed to open state file.\n";*/
 
-	char *loading_error = "\n***ERROR***\nD_STATE: state file was not read successfully. \nThe most common cause of this problem is a\ntrailing blank line in the state.in file \n";
+    char *loading_error = "\n***ERROR***\nD_STATE: state file was not read successfully. \nThe most common cause of this problem is a\ntrailing blank line in the state.in file \n";
 
     char *index_error = "\n***ERROR***\nD_STATE: An error exists in the ordering of states values\n in the states->state[] array. This is usually caused \nby non-contiguous state definitions in the state.in file \n";
-    char buf[100];
+/*    char buf[100];*/
 
 
 
