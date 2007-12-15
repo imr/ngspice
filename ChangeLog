@@ -1,3 +1,6 @@
+2007-12-14 Dietmar Warning
+ * configure.in, src/spicelib/devices/dev.c: allow mingw build w/o GUI
+
 2007-12-14 Holger Vogt
  * src/frontend/runcoms.c, runcoms2.c: fix the filetype problem if set in spinit
 

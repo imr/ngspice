@@ -384,9 +384,11 @@ AC_CHECK_FUNCS(ftime)
 AC_CHECK_FUNCS(gettimeofday time)
 AC_CHECK_FUNCS(getrusage utimes)
 AC_CHECK_FUNCS(getrlimit ulimit , break)
-if test "$with_windows" = "yes"; then
-	AC_DEFINE(HAVE__MEMAVL,[1],[Get system memory from windows API])
-fi
+
+case $host_os in
+  *mingw* )
+	AC_DEFINE(HAVE__MEMAVL,1,[Get system memory from windows API])
+esac   
 
 dnl Look for termios first (posix)
 AC_CHECK_HEADERS(termios.h termio.h sgtty.h , break)

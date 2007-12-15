@@ -42,11 +42,13 @@
 #ifdef XSPICE
 /*saj headers for xspice*/
 #include <string.h> /* for strcpy, strcat*/
-#ifndef HAS_WINDOWS
+#if (!defined HAS_WINDOWS) && (!defined __MINGW32__)
 #include <dlfcn.h> /* to load libraries*/
 #else /* ifdef HAS_WINDOWS */
 #include <windows.h>
+#ifdef HAS_WINDOWS
 #include "wstdio.h"
+#endif
 void *dlopen (const char *, int);
 void *dlsym (void *, const char *);
 int dlclose (void *);
