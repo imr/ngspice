@@ -5,7 +5,7 @@
 # package.
 #
 #
-# 
+# $Id$
 #
 
 PROJECT=ngspice
@@ -159,14 +159,28 @@ do
 done
 fi
 
-
+echo "Running libtoolize"
 libtoolize --copy --force
+if [ $? -ne 0 ];then  echo "libtoolize failed"; exit 1 ; fi
+
+echo "Running aclocal $ACLOCAL_FLAGS"
 aclocal $ACLOCAL_FLAGS
+if [ $? -ne 0 ]; then  echo "aclocal failed"; exit 1 ; fi
+
 # optional feature: autoheader
-(autoheader --version)  < /dev/null > /dev/null 2>&1 && autoheader
-automake -c -a $am_opt
+(autoheader --version)  < /dev/null > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+  echo "Running autoheader"
+  autoheader
+  if [ $? -ne 0 ]; then  echo "autoheader failed"; exit 1 ; fi
+fi
+
+echo "Running automake -Wall --copy --add-missing"
+automake -Wall --copy --add-missing $am_opt
+if [ $? -ne 0 ]; then  echo "automake failed"; exit 1 ; fi
+
+echo "Running autoconf"
 autoconf
+if [ $? -ne 0 ]; then  echo "autoconf failed"; exit 1 ; fi
 
-
-  
-
+echo "Success."
