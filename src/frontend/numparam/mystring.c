@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <math.h>  /* -- ceil floor */
+#include <math.h>		/* -- ceil floor */
 #include "config.h"
 #ifdef HAS_WINDOWS
 #include "wstdio.h"
@@ -17,74 +17,94 @@
 
 #include "general.h"
 
-#define Getmax(s,ls)  (((Byte)(s[ls+1])) Shl 8) + (Byte)(s[ls+2])
+#define Getmax(s,ls)  (((unsigned char)(s[ls+1])) << 8) + (unsigned char)(s[ls+2])
 
 /***** primitive input-output ***/
 
 int
-ci_prefix(register char *p, register char *s)
+ci_prefix (register char *p, register char *s)
 {
-    while (*p) {
-        if ((isupper(*p) ? tolower(*p) : *p) !=
-            (isupper(*s) ? tolower(*s) : *s))
-            return(0);
-        p++;
-        s++;
+  while (*p)
+    {
+      if ((isupper (*p) ? tolower (*p) : *p) !=
+	  (isupper (*s) ? tolower (*s) : *s))
+	return (0);
+      p++;
+      s++;
     }
-    return (1);
+  return (1);
 }
 
-Proc wc(char c)
-Begin 
-  fputc(c, stdout)
-EndProc
+void
+wc (char c)
+{
+  fputc (c, stdout);
+}
 
-Proc wln(void)
-Begin wc('\n') EndProc
+void
+wln (void)
+{
+  wc ('\n');
+}
 
-Proc ws( Pchar s)
-Begin
-  int k=0;
-  While s[k] !=0 Do
-    wc(s[k]); Inc(k)
-  Done
-EndProc
+void
+ws (char *s)
+{
+  int k = 0;
 
-Proc wi(long i)
-Begin
-  Str(16,s);
-  nadd(s,i);
-  ws(s)
-EndProc
+  while (s[k] != 0)
+    {
+      wc (s[k]);
+      k++;
+    }
+}
 
-Proc rs( Pchar s)
-Begin /*basic line input, limit= 80 chars */
-  int max,i;
+void
+wi (long i)
+{
+  Str (16, s);
+  nadd (s, i);
+  ws (s);
+}
+
+void
+rs (char *s)
+{				/*basic line input, limit= 80 chars */
+  int max, i;
   char c;
-  exit(-1);
-  max=maxlen(s); 
-  i=0; sini(s,max);
-  If max>80 Then max=80 EndIf
-  Repeat
-    c=fgetc(stdin);
-    If (i<max) And (c>=' ') Then 
-      cadd(s,c); Inc(i)
-    EndIf
-  Until (c==Cr) Or (c=='\n') EndRep
-  /* return i */
-EndFunc
+  exit (-1);
+  max = maxlen (s);
+  i = 0;
+  sini (s, max);
+  if (max > 80)
+    max = 80;
 
-Func char rc(void)
-Begin
+  do
+    {
+      c = fgetc (stdin);
+      if ((i < max) && (c >= ' '))
+	{
+	  cadd (s, c);
+	  i++;
+	}
+    }
+  while (!((c == Cr) || (c == '\n')));
+  /* return i */ ;
+}
+
+char
+rc (void)
+{
   int ls;
-  Str(80,s);
-  rs(s); ls=length(s);
-  If ls>0 Then
-    return s[ls-1] 
-  Else 
-    return 0 
-  EndIf
-EndProc
+  Str (80, s);
+  rs (s);
+  ls = length (s);
+  if (ls > 0)
+    return s[ls - 1];
+  else
+    return 0;
+
+}
 
 /*******  Strings ************
  *  are 0-terminated char arrays with a 2-byte trailer: max length.
@@ -102,842 +122,1084 @@ EndProc
  *    MUST die. 
  */
 
-Intern 
-Proc stringbug(Pchar op, Pchar s, Pchar t, char c)
+static void
+stringbug (char *op, char *s, char *t, char c)
 /* we brutally stop the program on string overflow */
-Begin
-  char rep=' ';
-  fprintf( stderr, " STRING overflow %s\n", op );
-  fprintf( stderr, " Operand1: %s\n", s );
-  If t != Null Then 
-    fprintf( stderr, " Operand2: %s\n", t );
-  EndIf
-  If c != 0 Then 
-    fprintf( stderr, "{%c}\n", c );
-  EndIf
-  fprintf( stderr, "Aborting...\n" );
-  exit(1);
-  ws(" [A]bort [I]gnore ? "); 
-  rep=rc();
-  If upcase(rep)=='A' Then exit(1) EndIf
-EndProc
+{
+  char rep = ' ';
+  fprintf (stderr, " STRING overflow %s\n", op);
+  fprintf (stderr, " Operand1: %s\n", s);
+  if (t != NULL)
+    fprintf (stderr, " Operand2: %s\n", t);
 
-Proc sini(Pchar s, int max) /* suppose s is allocated */
-Begin
-  If max<1 Then 
-    max=1 
-  ElsIf max>Maxstr Then 
-    max=Maxstr 
-  EndIf
-  s[0]=0; 
-  s[1]= Hi(max); s[2]= Lo(max);
-EndProc
+  if (c != 0)
+    fprintf (stderr, "{%c}\n", c);
 
-Proc sfix(Pchar s, int i, int max)
+  fprintf (stderr, "Aborting...\n");
+  exit (1);
+
+/* The code below cannot be reached */
+/* Remnants of old interface ?*/
+
+  ws (" [A]bort [I]gnore ? ");
+  rep = rc ();
+  if (upcase (rep) == 'A')
+    exit (1);
+}
+
+void
+sini (char *s, int max)		/* suppose s is allocated */
+{
+  if (max < 1)
+    max = 1;
+  else if (max > Maxstr)
+    max = Maxstr;
+
+  s[0] = 0;
+  s[1] = Hi (max);
+  s[2] = Lo (max);
+}
+
+void
+sfix (char *s, int i, int max)
 /* suppose s is allocated and filled with non-zero stuff */
-Begin
+{
   int j;
-  If max<1 Then 
-    max=1 
-  ElsIf max>Maxstr Then 
-    max=Maxstr 
-  EndIf
-  If i>max Then
-    i=max 
-  ElsIf i<0 Then 
-    i=0 
-  EndIf
-  s[i]=0; 
-  s[i+1]= Hi(max); s[i+2]= Lo(max);
-  For j=0;j<i; Inc(j) Do /* eliminate null characters ! */
-    If s[j]==0 Then s[j]=1 EndIf
-  Done
-EndProc
+  if (max < 1)
+    max = 1;
+  else if (max > Maxstr)
+    max = Maxstr;
 
-Intern
-Proc inistring(Pchar s, char c, int max)
+  if (i > max)
+    i = max;
+  else if (i < 0)
+    i = 0;
+
+  s[i] = 0;
+  s[i + 1] = Hi (max);
+  s[i + 2] = Lo (max);
+
+  for (j = 0; j < i; j++)	/* eliminate null characters ! */
+    if (s[j] == 0)
+      s[j] = 1;
+
+}
+
+static void
+inistring (char *s, char c, int max)
 /* suppose s is allocated. empty it if c is zero ! */
-Begin
-  int i=0;
-  s[i]=c;
-  If c!=0 Then 
-    Inc(i); s[i]=0 
-  EndIf
-  If max<1 Then 
-    max=1 
-  ElsIf max>Maxstr Then 
-    max=Maxstr 
-  EndIf
-  s[i+1]= Hi(max); s[i+2]= Lo(max);
-EndProc
+{
+  int i = 0;
+  s[i] = c;
+  if (c != 0)
+    {
+      i++;
+      s[i] = 0;
+    }
 
-Func int length(Pchar s)
-Begin
-  int lg=0;
-  While NotZ(s[lg]) Do Inc(lg) Done
-  return lg
-EndFunc
+  if (max < 1)
+    max = 1;
+  else if (max > Maxstr)
+    max = Maxstr;
 
-Func int maxlen(Pchar s)
-Begin
-  int ls= length(s);
-  return Getmax(s,ls)
-EndFunc
+  s[i + 1] = Hi (max);
+  s[i + 2] = Lo (max);
+}
 
-Func Bool sadd( Pchar s, Pchar t)
-Begin
-  Bool ok;
-  int i=0, max, ls= length(s);
-  max= Getmax(s,ls);
-  While (t[i] !=0) And (ls<max) Do
-    s[ls]= t[i]; 
-    Inc(i); Inc(ls);
-  Done
-  s[ls]=0; 
-  s[ls+1]= Hi(max); s[ls+2]= Lo(max);
-  ok= (t[i]==0); /* end of t is reached */
-  If Not ok Then
-    stringbug("sadd",s,t,0) 
-  EndIf
-  return ok
-EndProc
+int
+length (char *s)
+{
+  int lg = 0;
 
-Func Bool cadd( Pchar s, char c)
-Begin
-  int max, ls= length(s);
-  Bool ok;
-  max= Getmax(s,ls);
-  ok= (ls<max);
-  If ok Then
-    s[ls+3]= s[ls+2]; s[ls+2]=s[ls+1]; 
-    s[ls+1]=0; s[ls]=c
-  EndIf
-  If Not ok Then
-    stringbug("cadd",s, Null,c)
-  EndIf
-  return ok
-EndProc
+  while (s[lg])
+    lg++;
 
-Func Bool cins( Pchar s, char c)
-Begin
-  int i, max, ls= length(s);
-  Bool ok;
-  max= Getmax(s,ls);
-  ok= (ls<max);
-  If ok Then
-    For i=ls+2; i>=0; Dec(i) Do s[i+1]=s[i] Done;
-    s[0]=c;
-  EndIf
-  If Not ok Then
-    stringbug("cins",s, Null,c)
-  EndIf
-  return ok
-EndProc
+  return lg;
+}
 
-Func Bool sins( Pchar s, Pchar t)
-Begin
-  int i, max, ls= length(s), lt=length(t);
-  Bool ok;
-  max= Getmax(s,ls);
-  ok= ((ls+lt) < max);
-  If ok Then
-    For i=ls+2; i>=0; Dec(i) Do s[i+lt]=s[i] Done;
-    For i=0; i<lt; Inc(i) Do s[i]=t[i] Done;
-  EndIf
-  If Not ok Then
-    stringbug("sins",s, t,0)
-  EndIf
-  return ok
-EndProc
+int
+maxlen (char *s)
+{
+  int ls = length (s);
 
-Func int cpos(char c, Pchar s)
+  return Getmax (s, ls);
+}
+
+unsigned char
+sadd (char *s, char *t)
+{
+  unsigned char ok;
+  int i = 0, max, ls = length (s);
+  max = Getmax (s, ls);
+
+  while ((t[i] != 0) && (ls < max))
+    {
+      s[ls] = t[i];
+      i++;
+      ls++;
+    }
+
+  s[ls] = 0;
+  s[ls + 1] = Hi (max);
+  s[ls + 2] = Lo (max);
+  ok = (t[i] == 0);		/* end of t is reached */
+
+  if (!ok)
+    stringbug ("sadd", s, t, 0);
+
+  return ok;
+}
+
+unsigned char
+cadd (char *s, char c)
+{
+  int max, ls = length (s);
+  unsigned char ok;
+  max = Getmax (s, ls);
+  ok = (ls < max);
+  if (ok)
+    {
+      s[ls + 3] = s[ls + 2];
+      s[ls + 2] = s[ls + 1];
+      s[ls + 1] = 0;
+      s[ls] = c;
+    }
+  if (!ok)
+    stringbug ("cadd", s, NULL, c);
+
+  return ok;
+}
+
+unsigned char
+cins (char *s, char c)
+{
+  int i, max, ls = length (s);
+  unsigned char ok;
+  max = Getmax (s, ls);
+  ok = (ls < max);
+
+  if (ok)
+    {
+      for (i = ls + 2; i >= 0; i--)
+	s[i + 1] = s[i];
+      s[0] = c;
+    }
+
+  if (!ok)
+    stringbug ("cins", s, NULL, c);
+
+  return ok;
+}
+
+unsigned char
+sins (char *s, char *t)
+{
+  int i, max, ls = length (s), lt = length (t);
+  unsigned char ok;
+  max = Getmax (s, ls);
+  ok = ((ls + lt) < max);
+
+  if (ok)
+    {
+      for (i = ls + 2; i >= 0; i--)
+	s[i + lt] = s[i];
+
+      for (i = 0; i < lt; i++)
+	s[i] = t[i];
+    }
+
+  if (!ok)
+    stringbug ("sins", s, t, 0);
+
+  return ok;
+}
+
+int
+cpos (char c, char *s)
 /* return position of c in s, or 0 if not found.
  * BUG, Pascal inherited: first char is at 1, not 0 !
  */
-Begin
-  int i=0;
-  While (s[i] !=c) And (s[i] !=0) Do Inc(i) Done
-  If s[i]==c Then
-    return (i+1)
-  Else
-    return 0
-  EndIf
-EndFunc
+{
+  int i = 0;
+  while ((s[i] != c) && (s[i] != 0))
+    i++;
 
-Func char upcase(char c)
-Begin
-  If (c>='a')And(c<='z') Then
-    return c+'A'-'a'
-  Else
-    return c
-  EndIf
-EndFunc
+  if (s[i] == c)
+    return (i + 1);
+  else
+    return 0;
+}
 
-Func Bool scopy(Pchar s, Pchar t) /* returns success flag */
-Begin
-  Bool ok;
-  int i,max, ls= length(s);
-  max= Getmax(s,ls);
-  i=0;
-  While (t[i] !=0) And (i<max) Do
-    s[i]= t[i]; Inc(i);
-  Done
-  s[i]=0; 
-  s[i+1]= Hi(max); s[i+2]= Lo(max);
-  ok= (t[i]==0); /* end of t is reached */
-  If Not ok Then
-    stringbug("scopy",s, t,0)
-  EndIf
-  return ok
-EndProc
+char
+upcase (char c)
+{
+  if ((c >= 'a') && (c <= 'z'))
+    return c + 'A' - 'a';
+  else
+    return c;
+}
 
-Func Bool scopy_up(Pchar s, Pchar t) /* returns success flag */
-Begin
-  Bool ok;
-  int i,max, ls= length(s);
-  max= Getmax(s,ls);
-  i=0;
-  While (t[i] !=0) And (i<max) Do
-    s[i]= upcase(t[i]); Inc(i);
-  Done
-  s[i]=0; 
-  s[i+1]= Hi(max); s[i+2]= Lo(max);
-  ok= (t[i]==0); /* end of t is reached */
-  If Not ok Then
-    stringbug("scopy_up",s, t,0)
-  EndIf
-  return ok
-EndProc
+unsigned char
+scopy (char *s, char *t)	/* returns success flag */
+{
+  unsigned char ok;
+  int i, max, ls = length (s);
+  max = Getmax (s, ls);
+  i = 0;
 
-Func Bool ccopy(Pchar s, char c) /* returns success flag */
-Begin
-  int max, ls= length(s);
-  Bool ok=False;
-  max= Getmax(s,ls);
-  If max>0 Then
-    s[0]=c; sfix(s,1,max);
-    ok=True
-  EndIf
-  If Not ok Then
-    stringbug("ccopy",s, Null,c)
-  EndIf
-  return ok
-EndProc
+  while ((t[i] != 0) && (i < max))
+    {
+      s[i] = t[i];
+      i++;
+    }
 
-Func Pchar pscopy(Pchar s, Pchar t, int start, int leng)
+  s[i] = 0;
+  s[i + 1] = Hi (max);
+  s[i + 2] = Lo (max);
+  ok = (t[i] == 0);		/* end of t is reached */
+
+  if (!ok)
+    stringbug ("scopy", s, t, 0);
+
+  return ok;
+}
+
+unsigned char
+scopy_up (char *s, char *t)	/* returns success flag */
+{
+  unsigned char ok;
+  int i, max, ls = length (s);
+  max = Getmax (s, ls);
+  i = 0;
+  while ((t[i] != 0) && (i < max))
+    {
+      s[i] = upcase (t[i]);
+      i++;
+    }
+
+  s[i] = 0;
+  s[i + 1] = Hi (max);
+  s[i + 2] = Lo (max);
+  ok = (t[i] == 0);		/* end of t is reached */
+
+  if (!ok)
+    stringbug ("scopy_up", s, t, 0);
+
+  return ok;
+}
+
+unsigned char
+ccopy (char *s, char c)		/* returns success flag */
+{
+  int max, ls = length (s);
+  unsigned char ok = 0;
+  max = Getmax (s, ls);
+
+  if (max > 0)
+    {
+      s[0] = c;
+      sfix (s, 1, max);
+      ok = 1;
+    }
+
+  if (!ok)
+    stringbug ("ccopy", s, NULL, c);
+
+  return ok;
+}
+
+char *
+pscopy (char *s, char *t, int start, int leng)
 /* partial string copy, with Turbo Pascal convention for "start" */
 /* BUG: position count starts at 1, not 0 ! */
-Begin
-  int max= maxlen(s); /* keep it for later */
-  int stop= length(t);
+{
+  int max = maxlen (s);		/* keep it for later */
+  int stop = length (t);
   int i;
-  Bool ok= (max>=0) And (max<=Maxstr);
-  If Not ok Then
-    stringbug("copy target non-init", s, t, 0)
-  EndIf 
-  If leng>max Then
-    leng=max; ok=False
-  EndIf
-  If start>stop Then /* nothing! */
-    ok=False; 
-    inistring(s,0,max)
-  Else
-    If (start+leng-1)>stop Then
-      leng = stop-start+1; 
-      ok=False
-    EndIf
-    For i=0; i<leng; Inc(i) Do s[i]= t[start+i -1] Done
-    i=leng; s[i]=0;  
-    s[i+1]= Hi(max); s[i+2]= Lo(max);
-  EndIf
-  /* If Not ok Then stringbug("copy",s, t, 0) EndIf */
-  /* If ok Then return s Else return Null EndIf */
-  ok=ok;
-  return s
-EndProc
+  unsigned char ok = (max >= 0) && (max <= Maxstr);
 
-Func Pchar pscopy_up(Pchar s, Pchar t, int start, int leng)
+  if (!ok)
+    stringbug ("copy target non-init", s, t, 0);
+
+  if (leng > max)
+    {
+      leng = max;
+      ok = 0;
+    }
+
+  if (start > stop)
+    {				/* nothing! */
+      ok = 0;
+      inistring (s, 0, max);
+    }
+  else
+    {
+      if ((start + leng - 1) > stop)
+	{
+	  leng = stop - start + 1;
+	  ok = 0;
+	}
+      for (i = 0; i < leng; i++)
+	s[i] = t[start + i - 1];
+
+      i = leng;
+      s[i] = 0;
+      s[i + 1] = Hi (max);
+      s[i + 2] = Lo (max);
+    }
+  /* if ( ! ok ) { stringbug("copy",s, t, 0) ;} */
+  /* if ( ok ) { return s ;} else { return NULL ;} */
+  ok = ok;
+  return s;
+}
+
+char *
+pscopy_up (char *s, char *t, int start, int leng)
 /* partial string copy, with Turbo Pascal convention for "start" */
 /* BUG: position count starts at 1, not 0 ! */
-Begin
-  int max= maxlen(s); /* keep it for later */
-  int stop= length(t);
+{
+  int max = maxlen (s);		/* keep it for later */
+  int stop = length (t);
   int i;
-  Bool ok= (max>=0) And (max<=Maxstr);
-  If Not ok Then
-    stringbug("copy target non-init", s, t, 0)
-  EndIf 
-  If leng>max Then
-    leng=max; ok=False
-  EndIf
-  If start>stop Then /* nothing! */
-    ok=False; 
-    inistring(s,0,max)
-  Else
-    If (start+leng-1)>stop Then
-      leng = stop-start+1; 
-      ok=False
-    EndIf
-    For i=0; i<leng; Inc(i) Do s[i]= upcase(t[start+i -1]) Done
-    i=leng; s[i]=0;  
-    s[i+1]= Hi(max); s[i+2]= Lo(max);
-  EndIf
-  /* If Not ok Then stringbug("copy",s, t, 0) EndIf */
-  /* If ok Then return s Else return Null EndIf */
-  ok=ok;
-  return s
-EndProc
+  unsigned char ok = (max >= 0) && (max <= Maxstr);
 
-Func int ord(char c)
-Begin
-  return c AND 0xff
-EndFunc /* strip high byte */
+  if (!ok)
+    stringbug ("copy target non-init", s, t, 0);
 
-Func int pred(int i)
-Begin
- return (--i)
-EndFunc
+  if (leng > max)
+    {
+      leng = max;
+      ok = 0;
+    }
 
-Func int succ(int i)
-Begin
-  return (++i)
-EndFunc
+  if (start > stop)
+    {				/* nothing! */
+      ok = 0;
+      inistring (s, 0, max);
+    }
+  else
+    {
+      if ((start + leng - 1) > stop)
+	{
+	  leng = stop - start + 1;
+	  ok = 0;
+	}
+      for (i = 0; i < leng; i++)
+	s[i] = upcase (t[start + i - 1]);
 
-Func Bool nadd( Pchar s, long n)
+      i = leng;
+      s[i] = 0;
+      s[i + 1] = Hi (max);
+      s[i + 2] = Lo (max);
+    }
+  /* if ( ! ok ) { stringbug("copy",s, t, 0) ;} */
+  /* if ( ok ) { return s ;} else { return NULL ;} */
+  ok = ok;
+  return s;
+}
+
+int
+ord (char c)
+{
+  return (c & 0xff);
+}				/* strip high byte */
+
+int
+pred (int i)
+{
+  return (--i);
+}
+
+int
+succ (int i)
+{
+  return (++i);
+}
+
+unsigned char
+nadd (char *s, long n)
 /* append a decimal integer to a string */
-Begin
+{
   int d[25];
-  int j,k,ls,len;
-  char sg;  /* the sign */
-  Bool ok;
-  k=0;
-  len=maxlen(s);
-  If n<0 Then
-    n= -n; sg='-' 
-  Else
-    sg='+'
-  EndIf
-  While n>0 Do 
-    d[k]=n Mod 10; Inc(k); 
-    n= n Div 10
-  Done
-  If k==0 Then 
-    ok=cadd(s,'0')
-  Else
-    ls=length(s);
-    ok= (len-ls)>k;
-    If ok Then
-      If sg=='-' Then
-        s[ls]=sg; Inc(ls)
-      EndIf
-      For j=k-1; j>=0; Dec(j) Do
-        s[ls]=d[j]+'0'; Inc(ls)
-      Done
-      sfix(s,ls,len);
-    EndIf
-  EndIf
-  If Not ok Then
-    stringbug("nadd",s, Null,sg)
-  EndIf
-  return ok
-EndProc
+  int j, k, ls, len;
+  char sg;			/* the sign */
+  unsigned char ok;
+  k = 0;
+  len = maxlen (s);
 
-Proc stri( long n, Pchar s)
+  if (n < 0)
+    {
+      n = -n;
+      sg = '-';
+    }
+  else
+    sg = '+';
+
+  while (n > 0)
+    {
+      d[k] = n % 10;
+      k++;
+      n = n / 10;
+    }
+
+  if (k == 0)
+    ok = cadd (s, '0');
+  else
+    {
+      ls = length (s);
+      ok = (len - ls) > k;
+      if (ok)
+	{
+	  if (sg == '-')
+	    {
+	      s[ls] = sg;
+	      ls++;
+	    }
+	  for (j = k - 1; j >= 0; j--)
+	    {
+	      s[ls] = d[j] + '0';
+	      ls++;
+	    }
+	  sfix (s, ls, len);
+	}
+    }
+
+  if (!ok)
+    stringbug ("nadd", s, NULL, sg);
+
+  return ok;
+}
+
+void
+stri (long n, char *s)
 /* convert integer to string */
-Begin
-  sini(s, maxlen(s));
-  nadd(s,n)
-EndProc
+{
+  sini (s, maxlen (s));
+  nadd (s, n);
+}
 
-Proc rawcopy(Pointer a, Pointer b, int la, int lb)
+void
+rawcopy (void *a, void *b, int la, int lb)
 /* dirty binary copy */
-Begin
-  int j,n;
-  If lb<la Then
-    n=lb 
-  Else
-    n=la
-  EndIf
-  For j=0; j<n; Inc(j) Do
-    ((Pchar)a)[j]=((Pchar)b)[j]
-  Done
-EndProc
+{
+  int j, n;
+  if (lb < la)
+    n = lb;
+  else
+    n = la;
 
-Func int scompare(Pchar a, Pchar b)
-Begin
-  Word j=0; 
-  int k=0;
-  While (a[j]==b[j]) And (a[j]!=0) And (b[j]!=0) Do Inc(j) Done;
-  If a[j]<b[j] Then
-    k= -1 
-  ElsIf a[j]>b[j] Then
-    k=1
-  EndIf
-  return k
-EndFunc
+  for (j = 0; j < n; j++)
+    ((char *) a)[j] = ((char *) b)[j];
+}
 
-Func Bool steq(Pchar a, Pchar b) /* string a==b test */
-Begin
-  Word j=0;
-  While (a[j]==b[j]) And (a[j]!=0) And (b[j]!=0) Do Inc(j) Done;
-  return ((a[j]==0) And (b[j]==0)) /* string equality test */
-EndFunc
+int
+scompare (char *a, char *b)
+{
+  unsigned short j = 0;
+  int k = 0;
+  while ((a[j] == b[j]) && (a[j] != 0) && (b[j] != 0))
+    j++;
 
-Func Bool stne(Pchar s, Pchar t)
-Begin
-  return scompare(s,t) !=0
-EndFunc
+  if (a[j] < b[j])
+    k = -1;
+  else if (a[j] > b[j])
+    k = 1;
 
-Func int hi(long w)
-Begin
-  return (w AND 0xff00) Shr 8
-EndFunc
+  return k;
+}
 
-Func int lo(long w)
-Begin
-  return (w AND 0xff)
-EndFunc
+unsigned char
+steq (char *a, char *b)		/* string a==b test */
+{
+  unsigned short j = 0;
+  while ((a[j] == b[j]) && (a[j] != 0) && (b[j] != 0))
+    j++;
 
-Func char lowcase(char c)
-Begin
-  If (c>='A')And(c<='Z') Then
-    return (char)(c-'A' +'a')
-  Else
-    return c
-  EndIf
-EndFunc
+  return ((a[j] == 0) && (b[j] == 0)) /* string equality test */ ;
+}
 
-Func Bool alfa( char  c)
-Begin
-  return ((c>='a') And (c<='z')) Or ((c>='A') And (c<='Z')) || c == '_' || c == '[' || c == ']';
-EndFunc
+unsigned char
+stne (char *s, char *t)
+{
+  return scompare (s, t) != 0;
+}
 
-Func  Bool num( char  c)
-Begin
-  return (c>='0') And (c<='9');
-EndFunc
+int
+hi (long w)
+{
+  return (w & 0xff00) >> 8;
+}
 
-Func Bool alfanum(char c)
-Begin 
-  return
-  alfa(c) 
-  Or ((c>='0')And(c<='9'))
-EndFunc
+int
+lo (long w)
+{
+  return (w & 0xff);
+}
 
-Func int freadstr(Pfile f, Pchar s, int max)
+char
+lowcase (char c)
+{
+  if ((c >= 'A') && (c <= 'Z'))
+    return (char) (c - 'A' + 'a');
+  else
+    return c;
+}
+
+unsigned char
+alfa (char c)
+{
+  return ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || c == '_'
+    || c == '[' || c == ']';
+}
+
+unsigned char
+num (char c)
+{
+  return (c >= '0') && (c <= '9');
+}
+
+unsigned char
+alfanum (char c)
+{
+  return alfa (c) || ((c >= '0') && (c <= '9'));
+}
+
+int
+freadstr (FILE * f, char *s, int max)
 /* read a line from a file. 
    BUG: long lines truncated without warning, ctrl chars are dumped.
 */
-Begin 
-  char c; 
-  int i=0, mxlen=maxlen(s); 
-  If mxlen<max Then max=mxlen EndIf
-  Repeat 
-     c=fgetc(f); /*  tab is the only control char accepted */
-    If ((c>=' ') Or (c<0) Or (c==Tab)) And (i<max) Then
-      s[i]=c; Inc(i)
-    EndIf
-  Until feof(f) Or (c=='\n') EndRep
-  s[i]=0; 
-  s[i+1]= Hi(mxlen); s[i+2]= Lo(mxlen);
-  return i
-EndProc
-
-Func char freadc(Pfile f)
-Begin
-  return fgetc(f)
-EndFunc
-
-Func long freadi(Pfile f)
-/* reads next integer, but returns 0 if none found. */
-Begin 
-  long z=0;
-  Bool minus=False;
+{
   char c;
-  Repeat c=fgetc(f) 
-  Until feof(f) Or  Not ((c>0) And (c<=' ')) EndRep /* skip space */
-  If c=='-' Then
-    minus=True; c=fgetc(f)
-  EndIf
-  While num(c) Do
-    z= 10*z + c-'0'; c=fgetc(f)
-  Done
-  ungetc(c,f) ; /* re-push character lookahead */
-  If minus Then z= -z EndIf;
-  return z
-EndFunc
+  int i = 0, mxlen = maxlen (s);
 
-Func Pchar stupcase( Pchar s)
-Begin
-  int i=0; 
-  While s[i] !=0 Do
-    s[i]= upcase(s[i]); Inc(i)
-  Done
-  return s
-EndFunc
+  if (mxlen < max)
+    max = mxlen;
+
+  do
+    {
+      c = fgetc (f);		/*  tab is the only control char accepted */
+      if (((c >= ' ') || (c < 0) || (c == Tab)) && (i < max))
+	{
+	  s[i] = c;
+	  i++;
+	}
+    }
+  while (!(feof (f) || (c == '\n')));
+
+  s[i] = 0;
+  s[i + 1] = Hi (mxlen);
+  s[i + 2] = Lo (mxlen);
+
+  return i;
+}
+
+char
+freadc (FILE * f)
+{
+  return fgetc (f);
+}
+
+long
+freadi (FILE * f)
+/* reads next integer, but returns 0 if none found. */
+{
+  long z = 0;
+  unsigned char minus = 0;
+  char c;
+
+  do
+    {
+      c = fgetc (f);
+    }
+  while (!(feof (f) || !((c > 0) && (c <= ' '))));	/* skip space */
+
+  if (c == '-')
+    {
+      minus = 1;
+      c = fgetc (f);
+    }
+
+  while (num (c))
+    {
+      z = 10 * z + c - '0';
+      c = fgetc (f);
+    }
+
+  ungetc (c, f);		/* re-push character lookahead */
+
+  if (minus)
+    z = -z;
+
+  return z;
+}
+
+char *
+stupcase (char *s)
+{
+  int i = 0;
+
+  while (s[i] != 0)
+    {
+      s[i] = upcase (s[i]);
+      i++;
+    }
+
+  return s;
+}
 
 /*****  pointer tricks: app won't use naked malloc(), free() ****/
 
-Proc dispose(Pointer p)
-Begin 
-  If p != Null Then free(p) EndIf 
-EndProc
+void
+dispose (void *p)
+{
+  if (p != NULL)
+    free (p);
+}
 
-Func Pointer new(long sz)
-Begin
-  Pointer p;
-  If sz<=0 Then
-    return Null
-  Else
-    p= malloc(sz);
-    If p==Null Then /* fatal error */
-      ws(" new() failure. Program halted.\n");
-      exit(1);
-    EndIf
-    return p
-  EndIf
-EndFunc
+void *
+new (long sz)
+{
+  void *p;
+  if (sz <= 0)
+    return NULL;
+  else
+    {
+      p = malloc (sz);
+      if (p == NULL)
+	{			/* fatal error */
+	  ws (" new() failure. Program halted.\n");
+	  exit (1);
+	}
+      return p;
+    }
+}
 
-Func Pchar newstring(int n)
-Begin
-  Pchar s= (Pchar)new(n+4);
-  sini(s, n); 
-  return s
-EndFunc
+char *
+newstring (int n)
+{
+  char *s = (char *) new (n + 4);
+
+  sini (s, n);
+  return s;
+}
 
 /***** elementary math *******/
 
-Func double sqr(double x)
-Begin
-  return x*x
-EndFunc
+double
+sqr (double x)
+{
+  return x * x;
+}
 
-Func double absf(double x)
-Begin
-  If x<0.0 Then
-    return -x
-  Else
-    return x
-  EndIf
-EndFunc
+double
+absf (double x)
+{
+  if (x < 0.0)
+    return -x;
+  else
+    return x;
+}
 
-Func long  absi(long i)
-Begin
-  If i>=0 Then
-    return(i)
-  Else
-    return(-i)
-  EndIf
-EndFunc
+long
+absi (long i)
+{
+  if (i >= 0)
+    return (i);
+  else
+    return (-i);
+}
 
-Proc strif(long i, int f, Pchar s)
+void
+strif (long i, int f, char *s)
 /* formatting like str(i:f,s) in Turbo Pascal */
-Begin
-  int j,k,n,max;
+{
+  int j, k, n, max;
   char cs;
   char t[32];
-  k=0;
-  max=maxlen(s);
-  If i<0 Then
-    i= -i; cs='-'
-  Else
-    cs=' '
-  EndIf;
-  While i>0 Do
-    j=(int)(i Mod 10);
-    i=(long)(i Div 10);
-    t[k]=chr('0'+j); Inc(k)
-  Done
-  If k==0 Then
-    t[k]='0'; Inc(k)
-  EndIf
-  If cs=='-' Then
-    t[k]=cs
-  Else
-    Dec(k)
-  EndIf;
-    /* now the string  is in 0...k in reverse order */
-  For j=1; j<=k; Inc(j) Do t[k+j]=t[k-j] Done /* mirror image */
-  t[2*k+1]=0; /* null termination */
-  n=0;
-  If (f>k) And (f<40) Then /* reasonable format */
-    For j=k+2; j<=f; Inc(j) Do
-      s[n]=' '; Inc(n)
-    Done
-  EndIf
-  For j=0; j<=k+1; Inc(j) Do s[n+j]=t[k+j] Done; /* shift t down */
-  k=length(s); 
-  sfix(s,k,max);
-EndProc
+  k = 0;
+  max = maxlen (s);
 
-Func Bool odd(long x)
-Begin
-  return NotZ(x AND 1)
-EndFunc
+  if (i < 0)
+    {
+      i = -i;
+      cs = '-';
+    }
+  else
+    {
+      cs = ' ';
+    }
 
-Func int vali(Pchar s, long * i)
+  while (i > 0)
+    {
+      j = (int) (i % 10);
+      i = (long) (i / 10);
+      t[k] = (char)('0' + j);
+      k++;
+    }
+
+  if (k == 0)
+    {
+      t[k] = '0';
+      k++;
+    }
+
+  if (cs == '-')
+    t[k] = cs;
+  else
+    k--;
+
+  /* now the string  is in 0...k in reverse order */
+  for (j = 1; j <= k; j++)
+    t[k + j] = t[k - j];	/* mirror image */
+
+  t[2 * k + 1] = 0;		/* null termination */
+  n = 0;
+
+  if ((f > k) && (f < 40))
+    {				/* reasonable format */
+      for (j = k + 2; j <= f; j++)
+	{
+	  s[n] = ' ';
+	  n++;
+	}
+    }
+
+  for (j = 0; j <= k + 1; j++)
+    s[n + j] = t[k + j];	/* shift t down */
+
+  k = length (s);
+  sfix (s, k, max);
+}
+
+unsigned char
+odd (long x)
+{
+  return (x & 1);
+}
+
+int
+vali (char *s, long *i)
 /* convert s to integer i. returns error code 0 if Ok */
 /* BUG: almost identical to ival() with arg/return value swapped ... */
-Begin
-  int k=0, digit=0, ls;
-  long z=0;
-  Bool minus=False, ok=True;
+{
+  int k = 0, digit = 0, ls;
+  long z = 0;
+  unsigned char minus = 0, ok = 1;
   char c;
-  ls=length(s);
-  Repeat 
-    c=s[k]; Inc(k) 
-  Until (k>=ls) Or  Not ((c>0) And (c<=' ')) EndRep /* skip space */
-  If c=='-' Then
-    minus=True; 
-    c=s[k]; Inc(k)
-  EndIf
-  While num(c) Do
-    z= 10*z + c-'0';
-    c=s[k]; Inc(k);
-    Inc(digit)
-  Done
-  If minus Then z= -z EndIf;
-  *i= z; 
-  ok= (digit>0) And (c==0); /* successful end of string */
-  If ok Then
-    return 0
-  Else
-    return k /* one beyond error position */
-  EndIf
-EndFunc
+  ls = length (s);
 
-Intern 
-Func Bool match
-  (Pchar s, Pchar t, int n, int tstart, Bool testcase)
-Begin
-/* returns 0 If tstart is out of range. But n may be 0 ? */
-/* True if s matches t[tstart...tstart+n]  */
-  int i,j,lt;
-  Bool ok;
-  char a,b;
-  i=0; j=tstart;
-  lt= length(t);
-  ok=(tstart<lt);
-  While ok And (i<n) Do
-    a=s[i]; b=t[j];
-    If Not testcase Then
-      a=upcase(a); b=upcase(b)
-    EndIf
-    ok= (j<lt) And (a==b);
-    Inc(i); Inc(j);
-  Done
-  return ok
-EndFunc
- 
-Func int posi(Pchar sub, Pchar s, int opt)
+  do
+    {
+      c = s[k];
+      k++;
+    }
+  while (!((k >= ls) || !((c > 0) && (c <= ' '))));	/* skip space */
+
+  if (c == '-')
+    {
+      minus = 1;
+      c = s[k];
+      k++;
+    }
+
+  while (num (c))
+    {
+      z = 10 * z + c - '0';
+      c = s[k];
+      k++;
+      digit++;
+    }
+
+  if (minus)
+    z = -z;
+
+  *i = z;
+  ok = (digit > 0) && (c == 0);	/* successful end of string */
+
+  if (ok)
+    return 0;
+  else
+    return k;			/* one beyond error position */
+}
+
+static unsigned char
+match (char *s, char *t, int n, int tstart, unsigned char testcase)
+{
+/* returns 0 if ( tstart is out of range. But n may be 0 ? */
+/* 1 if s matches t[tstart...tstart+n]  */
+  int i, j, lt;
+  unsigned char ok;
+  char a, b;
+  i = 0;
+  j = tstart;
+  lt = length (t);
+  ok = (tstart < lt);
+
+  while (ok && (i < n))
+    {
+      a = s[i];
+      b = t[j];
+      if (!testcase)
+	{
+	  a = upcase (a);
+	  b = upcase (b);
+	}
+      ok = (j < lt) && (a == b);
+      i++;
+      j++;
+    }
+  return ok;
+}
+
+int
+posi (char *sub, char *s, int opt)
 /* find position of substring in s */
-Begin
+{
   /* opt=0: like Turbo Pascal */
- /*  opt=1: like Turbo Pascal Pos, but case insensitive */
- /*  opt=2: position in space separated wordlist for scanners */
-  int a,b,k,j;
-  Bool ok, tstcase;
-  Str(250,t);
-  ok=False;
-  tstcase=( opt==0);
-  If opt<=1 Then
-    scopy(t,sub)
-  Else
-    cadd(t,' '); sadd(t,sub); cadd(t,' ');
-  EndIf
-  a= length(t); 
-  b= (int)(length(s)-a);
-  k=0; j=1;
-  If a>0 Then  /*Else return 0*/
-    While (k<=b) And (Not ok) Do
-      ok=match(t,s, a,k, tstcase); /* we must start at k=0 ! */
-      Inc(k);
-      If s[k]==' ' Then Inc(j) EndIf /* word counter */
-    Done
-  EndIf
-  If opt==2 Then k=j EndIf
-  If ok Then
-    return k
-  Else
-    return 0
-  EndIf
-EndFunc
+  /*  opt=1: like Turbo Pascal Pos, but case insensitive */
+  /*  opt=2: position in space separated wordlist for scanners */
+  int a, b, k, j;
+  unsigned char ok, tstcase;
+  Str (250, t);
+  ok = 0;
+  tstcase = (opt == 0);
 
-Func int spos(Pchar sub, Pchar s)
+  if (opt <= 1)
+    scopy (t, sub);
+  else
+    {
+      cadd (t, ' ');
+      sadd (t, sub);
+      cadd (t, ' ');
+    }
+
+  a = length (t);
+  b = (int) (length (s) - a);
+  k = 0;
+  j = 1;
+
+  if (a > 0)			/*;} else { return 0 */
+    while ((k <= b) && (!ok))
+      {
+	ok = match (t, s, a, k, tstcase);	/* we must start at k=0 ! */
+	k++;
+	if (s[k] == ' ')
+	  j++; /* word counter */ ;
+      }
+
+  if (opt == 2)
+    k = j;
+
+  if (ok)
+    return k;
+  else
+    return 0;
+
+}
+
+int
+spos (char *sub, char *s)
 /* equivalent to Turbo Pascal pos().
    BUG: counts 1 ... length(s), not from 0 like C  
 */
-Begin
-      char *ptr;
+{
+  char *ptr;
 
-      if ( ( ptr = strstr( s, sub ) ) )	return strlen(s) - strlen(ptr) + 1;
-      else                              return 0;
+  if ((ptr = strstr (s, sub)))
+    return strlen (s) - strlen (ptr) + 1;
+  else
+    return 0;
 
-EndFunc
+}
 
 /**** float formatting with printf/scanf ******/
 
-Func int valr(Pchar s, double *r)
+int
+valr (char *s, double *r)
 /* returns 0 if ok, else length of partial string ? */
-Begin
-  int n=sscanf(s, "%lG", r);
-  If n==1 Then
-    return(0)
-  Else
-    return(1)
-  EndIf
-EndFunc
+{
+  int n = sscanf (s, "%lG", r);
+  if (n == 1)
+    return (0);
+  else
+    return (1);
+}
 
-Proc strf( double x, int f1, int f2, Pchar t)
+void
+strf (double x, int f1, int f2, char *t)
 /* e-format if f2<0, else f2 digits after the point, total width=f1 */
 /* if f1=0, also e-format with f2 digits */
-Begin /*default f1=17, f2=-1*/
-  Str(30,fmt);
-  int n,mlt;
-  mlt=maxlen(t);
-  cadd(fmt,'%');
-  If f1>0 Then
-    nadd(fmt , f1); /* f1 is the total width */
-    If f2<0 Then
-      sadd(fmt,"lE") /* exponent format */
-    Else
-      cadd(fmt,'.');
-      nadd(fmt,f2);
-      sadd(fmt,"lg")
-    EndIf
-  Else
-    cadd(fmt,'.');
-    nadd(fmt, absi(f2-6)); /* note the 6 surplus positions */
-    cadd(fmt,'e');
-  EndIf
-  n=sprintf(t, fmt, x);
-  sfix(t,n, mlt);
-EndProc
+{				/*default f1=17, f2=-1 */
+  Str (30, fmt);
+  int n, mlt;
+  mlt = maxlen (t);
+  cadd (fmt, '%');
+  if (f1 > 0)
+    {
+      nadd (fmt, f1);		/* f1 is the total width */
+      if (f2 < 0)
+	sadd (fmt, "lE");	/* exponent format */
+      else
+	{
+	  cadd (fmt, '.');
+	  nadd (fmt, f2);
+	  sadd (fmt, "lg");
+	}
+    }
+  else
+    {
+      cadd (fmt, '.');
+      nadd (fmt, absi (f2 - 6));	/* note the 6 surplus positions */
+      cadd (fmt, 'e');
+    }
+  n = sprintf (t, fmt, x);
+  sfix (t, n, mlt);
+}
 
-Func double rval(Pchar s, int *err)
+double
+rval (char *s, int *err)
 /* returns err=0 if ok, else length of partial string ? */
-Begin
-  double r= 0.0;
-  int n=sscanf(s, "%lG", &r);
-  If n==1 Then
-    (*err)=0
-  Else
-    (*err)=1
-  EndIf
-  return r;
-EndFunc
+{
+  double r = 0.0;
+  int n = sscanf (s, "%lG", &r);
 
-Func long ival(Pchar s, int *err) 
+  if (n == 1)
+    (*err) = 0;
+  else
+    (*err) = 1;
+
+  return r;
+}
+
+long
+ival (char *s, int *err)
 /* value of s as integer string.  error code err= 0 if Ok */
-Begin 
-  int k=0, digit=0, ls; 
-  long z=0;
-  Bool minus=False, ok=True;
+{
+  int k = 0, digit = 0, ls;
+  long z = 0;
+  unsigned char minus = 0, ok = 1;
   char c;
-  ls=length(s);
-  Repeat
-    c=s[k]; Inc(k) 
-  Until (k>=ls) Or  Not ((c>0) And (c<=' ')) EndRep /* skip space */
-  If c=='-' Then
-    minus=True;
-    c=s[k]; Inc(k)
-  EndIf
-  While num(c) Do
-    z= 10*z + c-'0';
-    c=s[k]; Inc(k);
-    Inc(digit)
-  Done
-  If minus Then z= -z EndIf;
-  ok= (digit>0) And (c==0); /* successful end of string */
-  If ok Then
-    (*err)= 0
-  Else
-    (*err)= k /* one beyond error position */
-  EndIf
-  return z
-EndFunc
+  ls = length (s);
+
+  do
+    {
+      c = s[k];
+      k++;
+    }
+  while (!((k >= ls) || !((c > 0) && (c <= ' '))));	/* skip space */
+
+  if (c == '-')
+    {
+      minus = 1;
+      c = s[k];
+      k++;
+    }
+
+  while (num (c))
+    {
+      z = 10 * z + c - '0';
+      c = s[k];
+      k++;
+      digit++;
+    }
+
+  if (minus)
+    z = -z;
+
+  ok = (digit > 0) && (c == 0);	/* successful end of string */
+
+  if (ok)
+    (*err) = 0;
+  else
+    (*err) = k;			/* one beyond error position */
+
+  return z;
+}
 
 #ifndef _MATH_H
 
-Func long np_round(double x)
+long
+np_round (double x)
 /* using <math.h>, it would be simpler: floor(x+0.5) */
-Begin
-  double u; 
-  long z; 
+{
+  double u;
+  long z;
   int n;
-  Str(40,s);
-  u=2e9; 
-  If x>u Then
-    x=u
-  ElsIf x< -u Then
-    x= -u
-  EndIf
-  n=sprintf(s,"%-12.0f", x);
-  s[n]=0; 
-  sscanf(s,"%ld", Addr(z));
-  return z
-EndFunc
+  Str (40, s);
+  u = 2e9;
+  if (x > u)
+    x = u;
+  else if (x < -u)
+    x = -u;
 
-Func long np_trunc(double x)
-Begin
-  long n=np_round(x);
-  If (n>x) And (x>=0.0) Then
-    Dec(n) 
-  ElsIf (n<x) And (x<0.0) Then
-    Inc(n)
-  EndIf
-  return n
-EndFunc
+  n = sprintf (s, "%-12.0f", x);
+  s[n] = 0;
+  sscanf (s, "%ld", &z);
+  return z;
+}
 
-Func double frac(double x)
-Begin
-  return x- np_trunc(x) 
-EndFunc
+long
+np_trunc (double x)
+{
+  long n = np_round (x);
+  if ((n > x) && (x >= 0.0))
+    n--;
+  else if ((n < x) && (x < 0.0))
+    n++;
 
-Func double intp(double x)
-Begin
-  double u=2e9;
-  If (x>u) Or (x< -u) Then
-    return x
-  Else
-    return np_trunc(x)
-  EndIf
-EndFunc
+  return n;
+}
 
-#else  /* use floor() and ceil() */
+double
+frac (double x)
+{
+  return x - np_trunc (x);
+}
 
-Func long np_round(double r)
-Begin
-  return (long)floor(r+0.5)
-EndFunc
+double
+intp (double x)
+{
+  double u = 2e9;
+  if ((x > u) || (x < -u))
+    return x;
+  else
+    return np_trunc (x);
+}
 
-Func long np_trunc(double r)
-Begin
-  If r>=0.0 Then
-    return (long)floor(r)
-  Else
-    return (long)ceil(r)
-  EndIf
-EndFunc
+#else /* use floor() and ceil() */
 
-Func double frac(double x)
-Begin
-  If x>=0.0 Then
-    return(x - floor(x))
-  Else
-    return(x - ceil(x))
-  EndIf
-EndFunc
+long
+np_round (double r)
+{
+  return (long) floor (r + 0.5);
+}
 
-Func double intp(double x) /* integral part */
-Begin
-  If x>=0.0 Then
-    return floor(x)
-  Else
-    return ceil(x)
-  EndIf
-EndFunc
+long
+np_trunc (double r)
+{
+  if (r >= 0.0)
+    return (long) floor (r);
+  else
+    return (long) ceil (r);
+}
 
-#endif  /* _MATH_H */
+double
+frac (double x)
+{
+  if (x >= 0.0)
+    return (x - floor (x));
+  else
+    return (x - ceil (x));
+}
 
+double
+intp (double x)			/* integral part */
+{
+  if (x >= 0.0)
+    return floor (x);
+  else
+    return ceil (x);
+}
 
+#endif /* _MATH_H */

@@ -15,9 +15,9 @@
 
 Cconst(pfxsep,'_')  /* official prefix separator is ':' not '_'  ! */
 
-Darray(buff, Pchar, Maxline) /* input lines */
-Darray(buf2, Pchar, Maxline) /* stripped lines */
-Darray(pxbuf, Pchar, Maxline) /* prefix for subnodes */
+Darray(buff, char *, Maxline) /* input lines */
+Darray(buf2, char *, Maxline) /* stripped lines */
+Darray(pxbuf, char *, Maxline) /* prefix for subnodes */
 Darray(runbuf, int, Maxckt) /* index list of expanded circuit */
 Darray(pindex, int, Maxckt) /* prefix index list  */
 int irunbuf= 0; /* count lines of runbuf */
@@ -49,211 +49,211 @@ and substitute node/device name arguments.
 
 */
 
-Func int runscript( tdico *dico, Pchar prefix,
+ int runscript( tdico *dico, char * prefix,
    int istart, int istop, int maxnest)
 /* recursive top-down expansion: circuit --> list of line numbers */
 /* keep it simple,stupid  compared to Spice's code */
 /* prefix: inherited string for node & device prefixing */
 /* istart, istop: allowed interval in table buf[], buf2[]. */
 /* return value: number of lines included */
-Begin
+{
   int i,j, idef, nnest, nline, dn, myipx;
   Strbig(Llen, subpfx); /* subckt prefix */ 
   Str(80, subname);
   char c;
-  Bool done= False;
+  unsigned char done= 0;
   i=istart; 
   nline=0;
   Inc(ipx); myipx= ipx; /* local copy */
   pxbuf[ipx]= newstring( length(prefix));
   scopy( pxbuf[ipx], prefix);
-  While (maxnest>0) And (i<istop) And (Not done) Do
+  while ( (maxnest>0) && (i<istop) && (! done) ) {
     c= dico->category[i];
-    If c=='U' Then 
-      done=True; /* subcircuit end. Keep as a comment? */
+    if ( c=='U' ) { 
+      done=1; /* subcircuit end. Keep as a comment? */
       buf2[i][0]='#';
-    EndIf
-    If c=='S' Then        /* skip nested subcircuits */
+    }
+    if ( c=='S' ) {        /* skip nested subcircuits */
       nnest=1;
-      Repeat 
+      do { 
         Inc(i); c= dico->category[i];
-        If c=='S' Then 
-          Inc(nnest) 
-        ElsIf c=='U' Then 
-          Dec(nnest) 
-        EndIf
-      Until (nnest<=0) Or (i>=istop) EndRep
-    ElsIf c=='X' Then                   /* recursion here ! */
+        if ( c=='S' ) { 
+          Inc(nnest); 
+        } else if ( c=='U' ) { 
+          Dec(nnest); 
+        }
+      } while ( !( (nnest<=0) || (i>=istop) ));
+    } else if ( c=='X' ) {                   /* recursion here ! */
       runbuf[irunbuf]= i;
       pindex[irunbuf]= myipx;
       Inc(irunbuf); Inc(nline);
       /* keep out-commented X line for parameter passing */
       idef = findsubckt( dico, buf2[i], subname); 
       buf2[i][0]= '*'; 
-      If idef>0 Then
+      if ( idef>0 ) {
         scopy(subpfx, prefix); 
         cadd(subpfx, pfxsep);
         j=1; /* add the instance name from buf2[i] */
-        While buf2[i][j] > ' ' Do
-          cadd( subpfx, buf2[i][j]); Inc(j)
-        Done 
+        while ( buf2[i][j] > ' ' ) {
+          cadd( subpfx, buf2[i][j]); Inc(j);
+        } 
         dn= runscript(dico, subpfx, idef+1, istop, maxnest-1);
         nline= nline+dn; 
-      Else /* FIXME: error message here! */
+      } else { /* FIXME: error message here! */
         ws("cannot find subckt "); ws(buf2[i]); wln(); 
-      EndIf
-    ElsIf (c != '?') And NotZ(buf2[i][0]) Then         
+      }
+    } else if ( (c != '?') && NotZ(buf2[i][0]) ) {         
       /*  keep any other valid non-empty line, and its prefix pointer */
       runbuf[irunbuf]= i;
       pindex[irunbuf]= myipx;
       Inc(irunbuf); Inc(nline);
-    EndIf 
+    } 
     Inc(i);
-  Done  
-  return nline
-EndProc
+  }  
+  return nline;
+}
 
-Proc gluepluslines( int imax)
+void gluepluslines( int imax)
 /* general sweep to eliminate continuation lines */
-Begin
+{
   int i,j,k, ls, p;
   Strbig(Llen,s);
   i=1;
-  While i<= imax Do
-    If (buff[i][0]=='+') And (i>1) Then 
+  while ( i<= imax ) {
+    if ( (buff[i][0]=='+') && (i>1) ) { 
       j= i-1; 
-      While (i < imax) And (buff[i+1][0]=='+') Do Inc(i) Done
+      while ( (i < imax) && (buff[i+1][0]=='+') ) { Inc(i) ;}
       /* the lines j+1 ... i are continuation lines to j */
-      For k=j; k<=i; Inc(k) Do 
+      for ( k=j; k<=i; Inc(k) ) { 
         ls=length(s);
         sadd(s, buff[k]);
         p= spos("//",s);
-        If p>0 Then pscopy(s,s, 1,p-1) EndIf
-        If ls>0 Then s[ls]=' ' EndIf /* erase the + */
-      Done
+        if ( p>0 ) { pscopy(s,s, 1,p-1) ;}
+        if ( ls>0 ) { s[ls]=' ' ;} /* erase the + */;
+      }
       ls= length(s);
-      If ls> 80 Then
+      if ( ls> 80 ) {
         Dispose(buff[j]);
-        buff[j]=newstring(ls)
-      EndIf
-      scopy(buff[j], s)
-    EndIf  
-    Inc(i)
-  Done
-EndProc
+        buff[j]=newstring(ls);
+      }
+      scopy(buff[j], s);
+    }  
+    Inc(i);
+  }
+}
 
 #if 0	/* sjb - this is in mystring.c */
-Proc rs(Pchar s) /*  78 coumn limit */
-Begin
+void rs(char * s) /*  78 coumn limit */
+{
   int i; 
-  Bool done; 
+  unsigned char done; 
   char c;
   int max=maxlen(s);
-  If max>78 Then max=78 EndIf
-  i=0; done=False; 
+  if ( max>78 ) { max=78 ;}
+  i=0; done=0; 
   scopy(s,"");
-  While Not done Do
+  while ( ! done ) {
     c=fgetc(stdin);
-    If (c>=' ')And(c<='~') And (i<max) Then 
-      cadd(s,c); Inc(i) 
-    EndIf
-    done= (c==Lf) Or (c==Cr)
-  Done
-EndProc
+    if ( (c>=' ')&&(c<='~') && (i<max) ) { 
+      cadd(s,c); Inc(i); 
+    }
+    done= (c==Lf) || (c==Cr);
+  }
+}
 #endif
 
-Proc fwrites(Pfile f, Pchar s)
-Begin 
-  fputs(s,f) 
-EndProc
+void fwrites(FILE * f, char * s)
+{ 
+  fputs(s,f); 
+}
 
-Proc fwriteln(Pfile f)
-Begin 
-  fputc('\n',f) 
-EndProc
+void fwriteln(FILE * f)
+{ 
+  fputc('\n',f); 
+}
 
-Intern
-Proc freadln(Pfile f, Pchar s, int max)
-Begin 
+static
+void freadln(FILE * f, char * s, int max)
+{ 
   int ls;
   freadstr(f,s,max); 
   ls=length(s);
-  If feof(f) And (ls>0) Then 
-    pscopy(s,s,1,ls-1) 
-  EndIf /* kill EOF character */
-EndProc
+  if ( feof(f) && (ls>0) ) { 
+    pscopy(s,s,1,ls-1); 
+  } /* kill EOF character */;
+}
 
-Proc wordinsert(Pchar s, Pchar w, int i)
+void wordinsert(char * s, char * w, int i)
 /* insert w before s[i] */
-Begin
+{
   Strbig(Llen,t);
   int ls=length(s);
   pscopy(t,s,i+1,ls); pscopy(s,s,1,i);
   sadd(s,w); sadd(s,t);
-EndProc
+}
 
-Func int worddelete(Pchar s, int i)
+ int worddelete(char * s, int i)
 /* delete word starting at s[i] */
-Begin
+{
   Strbig(Llen,t);
   int ls= length(s);
   int j=i;
-  While (j<ls) And (s[j]>' ') Do Inc(j) Done
+  while ( (j<ls) && (s[j]>' ') ) { Inc(j) ;}
   pscopy(t,s,j+1,ls);
   pscopy(s,s,1,i); 
   sadd(s,t);
-  return j-i /* nb of chars deleted */
-EndProc
+  return j-i /* nb of chars deleted */;
+}
 
-Func int getnextword(Pchar s, Pchar u, int j)
-Begin
+ int getnextword(char * s, char * u, int j)
+{
   int ls,k;
   ls= length(s);
   k=j;
-  While (j<ls) And (s[j] >  ' ') Do Inc(j) Done /* skip current word */ 
+  while ( (j<ls) && (s[j] >  ' ') ) { Inc(j) ;} /* skip current word */ 
   pscopy(u, s,  k+1, j-k);
-  While (j<ls) And (s[j] <= ' ') Do Inc(j) Done
-  return j
-EndFunc
+  while ( (j<ls) && (s[j] <= ' ') ) { Inc(j) ;}
+  return j;
+}
 
-Func int inwordlist(Pchar u, Pchar wl)
+ int inwordlist(char * u, char * wl)
 /* suppose wl is single-space separated, plus 1 space at start and end. */ 
-Begin
+{
   int n,p,k;
   Str(80,t);
   n=0;
   ccopy(t,' '); sadd(t,u); cadd(t,' ');
   p= spos(t,wl);
-  If p>0 Then
-    For k=0; k<p; Inc(k) Do
-      If wl[k] <= ' ' Then Inc(n) EndIf
-    Done
-  EndIf
-  return n
-EndFunc
+  if ( p>0 ) {
+    for ( k=0; k<p; Inc(k) ) {
+      if ( wl[k] <= ' ' ) { Inc(n) ;}
+    }
+  }
+  return n;
+}
 
-Proc takewordlist(Pchar u, int k, Pchar wl)
-Begin
+void takewordlist(char * u, int k, char * wl)
+{
   int i,j,lwl;
   lwl= length(wl);
   i=0; j=0;
   scopy(u,"");
-  While (i<lwl) And (j<k ) Do
-    If wl[i] <= ' ' Then Inc(j) EndIf
-    Inc(i)
-  Done
-  If j==k Then /* word has been found and starts at i */
-    While wl[i]>' ' Do
-      cadd(u,wl[i]); Inc(i)
-    Done
-  EndIf
-EndProc
+  while ( (i<lwl) && (j<k ) ) {
+    if ( wl[i] <= ' ' ) { Inc(j) ;}
+    Inc(i);
+  }
+  if ( j==k ) { /* word has been found and starts at i */
+    while ( wl[i]>' ' ) {
+      cadd(u,wl[i]); Inc(i);
+    }
+  }
+}
 
-Pchar deviceletter= "RLCVIBSGETOUWFHDQKJZM";
-Pchar nbofnodes   = "222222444443222240334";
-Pchar nbsubdevice = "000000000000111002000";
+char * deviceletter= "RLCVIBSGETOUWFHDQKJZM";
+char * nbofnodes   = "222222444443222240334";
+char * nbsubdevice = "000000000000111002000";
 
-Proc prefixing(Pchar s, Pchar p, Pchar formals, Pchar actuals,
+void prefixing(char * s, char * p, char * formals, char * actuals,
    char categ, tdico *dic)
 /* s is a line in expanded subcircuit. 
    p is the prefix to be glued anywhere .
@@ -267,188 +267,189 @@ Reminder on Numparam symbols:
      naming convention: subckt,model,numparam and node names must be unique.
      cannot re-use a model name as a param name elsewhere, for example.
 */
-Begin
+{
   int i,j,k,ls, jnext, dsize;
   int dtype, nodes, subdv;
-  Bool done;
+  unsigned char done;
   char leadchar;
   Str(80,u); Str(80,v); Str(80,pfx);
   i=0; ls=length(s);
-  While (i<ls) And (s[i]<=' ') Do Inc(i) Done
-  If alfa(s[i]) Or (categ=='X') Then /* splice in the prefix and nodelist */
+  while ( (i<ls) && (s[i]<=' ') ) { Inc(i) ;}
+  if ( alfa(s[i]) || (categ=='X') ) { /* splice in the prefix and nodelist */
     wordinsert(s,p, i+1);
     j= getnextword(s,u,i); 
-    done=False;
-    If p[0]== pfxsep Then
-      pscopy(pfx,p, 2, length(p)) 
-    Else 
-      scopy(pfx,p)
-    EndIf
+    done=0;
+    if ( p[0]== pfxsep ) {
+      pscopy(pfx,p, 2, length(p)); 
+    } else { 
+      scopy(pfx,p);
+    }
     leadchar=upcase(s[i]); 
     dtype= cpos( leadchar, deviceletter) -1 ;
-    If dtype >= 0 Then 
+    if ( dtype >= 0 ) { 
       nodes= nbofnodes[dtype] - '0';
       subdv= nbsubdevice[dtype] - '0';
-    Else
+    } else {
       nodes=999; subdv=0;
-    EndIf
-    While Not done Do
+    }
+    while ( ! done ) {
       jnext= getnextword(s,u,j);
       done=(jnext >= length(s)); /* was the last one, do not transform */
        /* bug: are there semilocal nodes ? in nested subckt declarations ? */
-      If (leadchar=='Q') And (Not done) Then /* BJT: watch non-node name */
+      if ( (leadchar=='Q') && (! done) ) { /* BJT: watch non-node name */
         scopy(v,u); stupcase(v);
-        done=  getidtype(dic, v) == 'O'; /* a model name stops the node list */
-      EndIf 
-      If (Not done) And (nodes>0) Then /* transform a node name */
+        done=  getidtype(dic, v) == 'O'; /* a model name stops the node list */;
+      } 
+      if ( (! done) && (nodes>0) ) { /* transform a node name */
         k= inwordlist(u, formals);
-        If (k>0) Then   /* parameter node */
+        if ( (k>0) ) {   /* parameter node */
           dsize= - worddelete(s,j);
           takewordlist(u,k, actuals);
           wordinsert(s,u,j); 
           dsize= dsize + length(u);
-        ElsIf stne(u,"0") Then  /* local node */
+        } else if ( stne(u,"0") ) {  /* local node */
           wordinsert(s,pfx,j);
           dsize= length(pfx);
-        Else dsize=0 EndIf
-      ElsIf (Not done) And (subdv >0) Then /* splice a subdevice name */
+        } else { dsize=0 ;}
+      } else if ( (! done) && (subdv >0) ) { /* splice a subdevice name */
         wordinsert(s,p,j+1);
         dsize= length(p);
-      EndIf
+      }
       j= jnext + dsize; /*  jnext did shift ...*/
-      If nodes >0 Then Dec(nodes)
-      ElsIf subdv >0 Then Dec(subdv)
-      EndIf
-      done= done Or (Zero(nodes) And Zero(subdv));
-    Done
-  EndIf
-EndProc
+      if ( nodes >0 ) { Dec(nodes);
+      } else if ( subdv >0 ) { Dec(subdv);
+      }
+      done= done || (Zero(nodes) && Zero(subdv));
+    }
+  }
+}
 
-Proc getnodelist(Pchar form, Pchar act, Pchar s, tdico *dic, int k)
+void getnodelist(char * form, char * act, char * s, tdico *dic, int k)
 /* the line s contains the actual node parameters, between 1st & last word */
-Begin
+{
   int j,ls, idef;
   Str(80,u); Strbig(Llen,t);
   ccopy(act,' '); ccopy(form,' ');
   j=0; ls= length(s);
   j= getnextword(s,u,j);
-  While j<ls Do
+  while ( j<ls ) {
     j= getnextword(s,u,j); 
-    If j<ls Then sadd(act,u); cadd(act,' ') EndIf
-  Done
+    if ( j<ls ) { sadd(act,u); cadd(act,' ') ;}
+  }
   /* now u already holds the subckt name if all is ok ? */
   idef = findsubckt( dic, buf2[k], u); 
   /* line buf2[idef] contains: .subckt name < formal list > */ 
-  If idef>0 Then 
-    scopy(t, buf2[idef]) 
-  Else
+  if ( idef>0 ) { 
+    scopy(t, buf2[idef]); 
+  } else {
     ws("Subckt call error: "); ws(s); wln();
-  EndIf
+  }
   j=0; ls= length(t);
   j= getnextword(t,u,j); 
   j= getnextword(t,u,j); 
-  While j<ls Do
+  while ( j<ls ) {
     j= getnextword(t,u,j); 
     sadd(form,u); cadd(form,' ');
-  Done
-EndProc
+  }
+}
 
-Proc nupa_test(Pchar fname, char mode)
+void nupa_test(char * fname, char mode)
 /* debugging circuit expansion run. mode='w': write ouput file */
 /* bugs in nupa_eval(), and for nested subckt definitions !?! */
-Begin
-  Pfile tf, fout;
+{
+  FILE * tf, fout;
   tdico * dic; /* dictionary data pointer */
   Strbig(Llen,s);
   Str(80, prefix);
   /* Strbig(Llen, formals); Strbig(Llen,actuals); */
-  Darray(formals, Pchar, 10)
-  Darray(actuals, Pchar, 10)
+  Darray(formals, char *, 10)
+  Darray(actuals, char *, 10)
   int i, j, k, nline, parstack;
-  For i=0; i<Maxline; Inc(i) Do /* allocate string storage */
+  for ( i=0; i<Maxline; Inc(i) ) { /* allocate string storage */
     buff[i]= newstring(80);
-    buf2[i]= Null;
-    pxbuf[i]= Null 
-  Done
-  For i=0; i<10; Inc(i) Do
+    buf2[i]= NULL;
+    pxbuf[i]= NULL; 
+  }
+  for ( i=0; i<10; Inc(i) ) {
     formals[i]= newstring(250);
     actuals[i]= newstring(250);
-  Done
+  }
   i=0; parstack=0;
   tf=fopen( fname, "r");
-  If tf != Null Then
-    While (Not feof(tf)) And ((i+1) < Maxline) Do
+  if ( tf != NULL ) {
+    while ( (! feof(tf)) && ((i+1) < Maxline) ) {
       Inc(i);
-      freadln(tf, buff[i], 80); /* original data */
-    Done
+      freadln(tf, buff[i], 80); /* original data */;
+    }
     fclose(tf);
-  Else
+  } else {
     ws("Cannot find "); ws(fname); wln();
-  EndIf
+  }
   /* continuation lines are glued at this stage, so they can be ignored
      in all the subsequent manipulations.
   */
   gluepluslines(i); /* must re-allocate certain buff[i]  */ 
   nupa_signal(NUPADECKCOPY, fname);
   dic= nupa_fetchinstance(); /* bug: should have a task handle as arg */
-  For j=1; j<=i; Inc(j) Do
-    buf2[j]= nupa_copy(buff[j], j); /* transformed data */
-  Done
-  nupa_signal(NUPASUBDONE, Null);
+  for ( j=1; j<=i; Inc(j) ) {
+    buf2[j]= nupa_copy(buff[j], j); /* transformed data */;
+  }
+  nupa_signal(NUPASUBDONE, NULL);
   nline= runscript(dic, "", 1,i, 20); /* our own subckt expansion */
   /* putlogfile(' ',nline," expanded lines"); */
-  If mode=='w' Then
+  if ( mode=='w' ) {
     i= cpos('.', fname); 
     pscopy(s, fname, 1, i);
     sadd(s,"out");
     fout= fopen(s, "w");
-  Else
-    fout= Null
-  EndIf
-  For j=0; j<irunbuf; Inc(j) Do
+  } else {
+    fout= NULL;
+  }
+  for ( j=0; j<irunbuf; Inc(j) ) {
     k= runbuf[j]; 
-    If buf2[k] != Null Then 
+    if ( buf2[k] != NULL ) { 
       scopy(s, buf2[k]);
       nupa_eval(s, k);
       scopy(prefix,pxbuf[pindex[j]]); 
-      If NotZ(prefix[0]) Then cadd(prefix, pfxsep) EndIf 
+      if ( NotZ(prefix[0]) ) { cadd(prefix, pfxsep) ;} 
       prefixing(s, prefix, formals[parstack], actuals[parstack],
            dic->category[k], dic);  
-      If dic->category[k] == 'X' Then 
-        If parstack< (10-1) Then Inc(parstack) EndIf
+      if ( dic->category[k] == 'X' ) { 
+        if ( parstack< (10-1) ) { Inc(parstack) ;}
         getnodelist(formals[parstack], actuals[parstack], s, dic,k);
         /*dbg: ws("Form: "); ws(formals[parstack] ); wln(); */
-        /*dbg: ws("Actu: "); ws(actuals[parstack]); wln(); */
-      ElsIf dic->category[k]=='U' Then /* return from subckt */
-        If parstack>0 Then Dec(parstack) EndIf
-      EndIf
-      If fout != Null Then
-        fwrites(fout, s); fwriteln(fout)
-      EndIf
-    EndIf
-  Done 
-  If fout != Null Then fclose(fout) EndIf
-  nupa_signal(NUPAEVALDONE, Null); /* frees the buff[i] */
-  For i= 10-1; i>=0; Dec(i) Do
+        /*dbg: ws("Actu: "); ws(actuals[parstack]); wln(); */;
+      } else if ( dic->category[k]=='U' ) { /* return from subckt */
+        if ( parstack>0 ) { Dec(parstack) ;}
+      }
+      if ( fout != NULL ) {
+        fwrites(fout, s); fwriteln(fout);
+      }
+    }
+  } 
+  if ( fout != NULL ) { fclose(fout) ;}
+  nupa_signal(NUPAEVALDONE, NULL); /* frees the buff[i] */
+  for ( i= 10-1; i>=0; Dec(i) ) {
     Dispose(actuals[i]);
     Dispose(formals[i]);
-  Done
-  For i= Maxline -1; i>=0; Dec(i) Do
+  }
+  for ( i= Maxline -1; i>=0; Dec(i) ) {
     Dispose(pxbuf[i]);  
     Dispose(buf2[i]); 
-    /* Dispose(buff[i]) done elsewhere */
-  Done
-EndProc
+    /* Dispose(buff[i]) done elsewhere */;
+  }
+}
 
-Func int main(int argc, Pchar argv[])
-Begin
+ int main(int argc, char * argv[])
+{
   Str(80,fname);
-  If argc>1 Then 
-    scopy(fname, argv[1])
-  Else 
-    scopy(fname,"testfile.nup") 
-  EndIf
+  if ( argc>1 ) { 
+    scopy(fname, argv[1]);
+  } else { 
+    scopy(fname,"testfile.nup"); 
+  }
   nupa_test(fname, 'w');
-  return 0
-EndFunc
+  return 0;
+}
 
+ 

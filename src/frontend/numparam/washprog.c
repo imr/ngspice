@@ -49,7 +49,7 @@ Format of  substitution rules:
 
 #include <stdio.h>   /* NULL FILE fopen feof fgets fclose fputs fputc gets */
 #include "general.h"
-
+Cconst(Llen, 15000)
 Cconst(nsub, 100+1)   /*max nbr of substitution rules */
 Cconst(nargs, 11)     /*max number of macro args + 1*/
 Cconst(wild,'æ')      /* wildcard character in patterns */
@@ -254,18 +254,18 @@ Begin
   return ok
 EndFunc
 
-Func int posi(Pchar sub, Pchar s)
-Begin /*re-defines Turbo Pos, result Pascal compatible */
+/* Func int posi(Pchar sub, Pchar s)
+Begin re-defines Turbo Pos, result Pascal compatible 
   int a,b,k; 
   Bool ok;
-/*-StartProc-*/ 
+  -StartProc- 
   ok=False;
   a=length(sub); 
   b=(int)(length(s)-a); 
   k=0;
-  If a>0 Then  /*Else return 0*/
+  If a>0 Then  Else return 0
     While (k<=b) And (Not ok) Do
-      ok=match(sub,s, a,k); /*remark we must start at k=0 ! */
+      ok=match(sub,s, a,k); remark we must start at k=0 ! 
       Inc(k);
     Done
   EndIf
@@ -274,7 +274,7 @@ Begin /*re-defines Turbo Pos, result Pascal compatible */
   Else 
     return 0 
   EndIf
-EndFunc
+EndFunc */
 
 Func int matchwhite(Pchar s, Pchar t, int n, int tstart)
 Begin

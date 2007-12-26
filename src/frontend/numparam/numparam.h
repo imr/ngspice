@@ -12,42 +12,42 @@
 #define ln(x) log(x)
 #define trunc(x) floor(x)
 
-Cconst(Nul, 0)
-Cconst(Nodekey,'#') /*introduces node symbol*/
-Cconst(Intro  ,'&') /*introduces preprocessor tokens*/
-Cconst(Comment,'*') /*Spice Comment lines*/
-Cconst(Pspice,'{')  /*Pspice expression */
-Cconst(Maxdico,40000) /*size of symbol table*/
+typedef enum {Nul=0} _nNul;
+typedef enum {Nodekey='#'} _nNodekey;   /* Introduces node symbol */
+typedef enum {Intro='&'} _nIntro;       /* Introduces preprocessor tokens */
+typedef enum {Comment='*'} _nComment;   /* Spice Comment lines*/
+typedef enum {Pspice='{'} _nPspice;     /* Pspice expression */
+typedef enum {Maxdico=40000} _nMaxdico; /* Size of symbol table*/
 
 /* Composite line length
    This used to be 250 characters, but this is too easy to exceed with a
    .model line, especially when spread over several continuation 
    lines with much white space.  I hope 1000 will be enough. */
-Cconst(Llen,15000)
+typedef enum {Llen=15000} _nLlen;
 
 typedef char str50 [54];
 typedef char str80 [84];
 
-Cconst(Maxline, 20000) /* size of initial unexpanded circuit code */
-Cconst(Maxckt,  40000)  /* size of expanded circuit code */
+typedef enum {Maxline=20000} _nMaxline; /* Size of initial unexpanded circuit code */
+typedef enum {Maxckt=40000} _nMaxckt;   /* Size of expanded circuit code */
 
 
-typedef Pchar auxtable; /* dummy */
+typedef char * auxtable; /* dummy */
 
-Record(entry)
+typedef struct _tentry {
   char   tp; /* type:  I)nt R)eal S)tring F)unction M)acro P)ointer */
   char   nom[100];
   int  level; /* subckt nesting level */
   double vl;    /* float value if defined */
-  Word   ivl;   /*int value or string buffer index*/
-  Pchar  sbbase; /* string buffer base address if any */
-EndRec(entry)
+  unsigned short   ivl;   /*int value or string buffer index*/
+  char *  sbbase; /* string buffer base address if any */
+} entry;
 
-Record(fumas) /*function,macro,string*/
-   Word   start /*,stop*/ ; /*buffer index or location */
-EndRec(fumas)
+typedef struct _tfumas { /*function,macro,string*/
+   unsigned short   start /*,stop*/ ; /*buffer index or location */
+} fumas;
 
-Record(tdico)
+typedef struct _ttdico {
 /* the input scanner data structure */
   str80   srcfile; /* last piece of source file name */
   int   srcline;
@@ -61,21 +61,22 @@ Record(tdico)
   int   tos;    /* top of stack index for symbol mark/release mechanics */
   str80   option; /* one-character translator options */
   auxtable nodetab;
-  Darray(refptr,  Pchar, Maxline)  /* pointers to source code lines */
-  Darray(category, char, Maxline) /* category of each line */
-EndRec(tdico)
+  char * refptr[Maxline]; /* pointers to source code lines */
+  char category[Maxline]; /* category of each line */
+} tdico;
 
-Proc initdico(tdico * dico);
-Func int donedico(tdico * dico);
-Func Bool defsubckt( tdico *dico, Pchar s, Word w, char categ);
-Func int findsubckt( tdico *dico, Pchar s, Pchar subname);  
-Func Bool nupa_substitute( tdico *dico, Pchar s, Pchar r, Bool err);
-Func Bool nupa_assignment( tdico *dico, Pchar  s, char mode);
-Func Bool nupa_subcktcall( tdico *dico, Pchar s, Pchar x, Bool err);
-Proc nupa_subcktexit( tdico *dico);
-Func tdico * nupa_fetchinstance(void);
-Func char getidtype( tdico *d, Pchar s);
-Func int attrib( tdico *dico, Pchar t, char op );
+void initdico(tdico * dico);
+ int donedico(tdico * dico);
+ unsigned char defsubckt( tdico *dico, char * s, unsigned short w, char categ);
+ int findsubckt( tdico *dico, char * s, char * subname);  
+ unsigned char nupa_substitute( tdico *dico, char * s, char * r, unsigned char err);
+ unsigned char nupa_assignment( tdico *dico, char *  s, char mode);
+ unsigned char nupa_subcktcall( tdico *dico, char * s, char * x, unsigned char err);
+void nupa_subcktexit( tdico *dico);
+ tdico * nupa_fetchinstance(void);
+ char getidtype( tdico *d, char * s);
+ int attrib( tdico *dico, char * t, char op );
 
 char *nupa_inst_name;
 tdico *inst_dico;
+ 

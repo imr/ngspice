@@ -1,124 +1,4 @@
 /*   general.h    */
-
-/*** Part 1: the C language redefined for quiche eaters ****
- *
- *  Real Hackers: undo all these macros with the 'washprog.c' utility ! 
- */
-
-      /*  Proc ...... Begin .... EndProc  */
-#define Proc void
-#define Begin {
-#define EndProc ;}
-     /*  Func int ...(...) Begin...EndFunc   */
-#define Func
-#define EndFunc ;}
-     /* If ... Then...ElsIf..Then...Else...EndIf */
-#define If if(
-#define Then ){
-#define Else ;}else{
-#define ElsIf ;}else if(
-#define EndIf ;}
-      /*  While...Do...Done */
-#define While while(
-#define Do ){
-#define Done ;}
-      /* Repeat...Until...EndRep */
-#define Repeat do{
-#define Until ;}while(!(
-#define EndRep ));
-     /*  For i=1;i<=10; Inc(i)  Do...Done  */
-#define For for(
-     /* Switch...CaseOne...Is...Case..Is...Default...EndSw */
-#define Switch switch(
-#define CaseOne ){ case
-#define Case ;break;}case
-#define AndCase :; case
-#define Is :{
-#define Default ;break;}default:{
-#define EndSw ;break;}}
-
-#define Record(x) typedef struct _t ## x {
-#define RecPtr(x) typedef struct _t ## x *
-#define EndRec(x) } x;
-#define Addr(x) &x
-
-#define False 0
-#define True 1
-#define Not !
-#define And &&
-#define Or ||
-#define Div /
-#define Mod %
-
-#define Shl <<
-#define Shr >>
-#define AND &
-#define OR  |
-#define XOR ^
-#define NOT ~
-#define AT  *
-
-#define Inc(p) (p)++
-#define Dec(p) (p)--
-
-/* see screened versions below:
-#define New(t) (t*)malloc(sizeof(t))
-#define Dispose(p) free((void*)p)
-*/
-
-#ifdef NULL
-#define Null NULL
-#else
-#define Null (void *)0L
-#endif
-
-#define chr(x) (char)(x)
-#define Zero(x) (!(x))
-#define NotZ(x) (x)
-
-typedef void* Pointer;
-#define Type(a,b) typedef b a;
-
-#ifdef _STDIO_H  /* somebody pulled stdio */
-Type(Pfile, FILE AT)
-#else
-#ifdef __STDIO_H  /* Turbo C */
-  Type(Pfile, FILE AT)
-#else
-  Type(Pfile, FILE*)   /* sjb - was Pointer, now FILE* */
-#endif
-#endif
-
-Type(Char, unsigned char)
-Type(Byte, unsigned char)
-#ifndef Bool
-Type(Bool, unsigned char)
-#endif
-Type(Word, unsigned int)
-Type(Pchar, char AT)
-
-#define Intern static
-#define Extern extern
-#define Tarray(a,d,n)     typedef d a[n];
-#define Tarray2(a,d,n,m)  typedef d a[n][m];
-#define Darray(a,d,n)     d a[n];
-
-#define Const(x,y)    const int x=y;
-#define Cconst(x,y)   typedef enum {x=y} _n ## x;
-
-#define Aconst(a,tp,sze)  tp a[sze] ={
-#define EndAco        };
-
-/* the following require the 'mystring' mini-library */
-
-#define Mcopy(a,b)    rawcopy((Pchar)a, (Pchar)b, sizeof(a),sizeof(b))
-#define Rcopy(a,b)    rawcopy((Pchar)(&a), (Pchar)(&b), sizeof(&a),sizeof(&b))
-#define New(tp)       (tp *)new(sizeof(tp))
-#define Dispose(p)    dispose((void *)p)
-#define NewArr(t,n)   (t *)new(sizeof(t)*n)
-
-
-/*** Part 2: common 'foolproof' string library  ******/
 /*
    include beforehand  the following:
 #include <stdio.h>   // NULL FILE fopen feof fgets fclose fputs fputc gets 
@@ -129,85 +9,87 @@ Type(Pchar, char AT)
 #define Use(x)  x=0;x=x
 #define Uses(s) s=s 
 #define Usep(x) x=x
-#define Hi(x) (((x) Shr 8) AND 0xff)
-#define Lo(x) ((x) AND 0xff)
+#define Hi(x) (((x) >> 8) & 0xff)
+#define Lo(x) ((x) & 0xff)
 
 #define Strbig(n,a)   char a[n+4]={0, (char)Hi(n), (char)Lo(n)}
 #define Str(n,a)      char a[n+3]={0,0,(char)n}  /* n<255 ! */
 #define Sini(s)       sini(s,sizeof(s)-4)
 
-Cconst(Maxstr,25004) /* was 255, string maxlen, may be up to 32000 or so */
+
+typedef enum {Maxstr=25004} _nMaxstr;  /* was 255, string maxlen, may be up to 32000 or so */
+typedef enum {Esc=27} _nEsc;
+typedef enum {Tab=9} _nTab;
+typedef enum {Bs=8} _nBs;
+typedef enum {Lf=10} _nLf;
+typedef enum {Cr=13} _nCr;
 
 typedef char string[258];
 
-Cconst(Esc, 27)
-Cconst(Tab, 9)
-Cconst(Bs, 8)
-Cconst(Lf, 10)
-Cconst(Cr, 13)
 
-Proc sini( Pchar s, int i);
-Proc sfix(Pchar s, int i, int max);
-Func int maxlen(Pchar s);
-Func Pchar pscopy( Pchar s, Pchar a, int i,int j);
-Func Pchar pscopy_up( Pchar s, Pchar a, int i,int j);
-Func Bool scopy( Pchar a, Pchar b);
-Func Bool scopy_up( Pchar a, Pchar b);
-Func Bool ccopy( Pchar a, char c);
-Func Bool sadd( Pchar s, Pchar t);
-Func Bool nadd( Pchar s, long n);
-Func Bool cadd( Pchar s, char c);
-Func Bool sins( Pchar s, Pchar t);
-Func Bool cins( Pchar s, char c);
-Func int cpos( char c, Pchar s);
-Func int spos( Pchar sub, Pchar s);
+void sini( char * s, int i);
+void sfix(char * s, int i, int max);
+ int maxlen(char * s);
+ char * pscopy( char * s, char * a, int i,int j);
+ char * pscopy_up( char * s, char * a, int i,int j);
+ unsigned char scopy( char * a, char * b);
+ unsigned char scopy_up( char * a, char * b);
+ unsigned char ccopy( char * a, char c);
+ unsigned char sadd( char * s, char * t);
+ unsigned char nadd( char * s, long n);
+ unsigned char cadd( char * s, char c);
+ unsigned char sins( char * s, char * t);
+ unsigned char cins( char * s, char c);
+ int cpos( char c, char * s);
+ int spos( char * sub, char * s);
 int ci_prefix( register char *p, register char *s );
-Func int length(Pchar s);
-Func Bool steq(Pchar s, Pchar t);
-Func Bool stne(Pchar s, Pchar t);
-Func int scompare(Pchar a, Pchar b);
-Func int ord(char c);
-Func int pred(int i);
-Func int succ(int i);
-Proc stri(long n, Pchar s);
-Proc strif(long n, int f, Pchar s);
-Proc strf(double x, int a, int b, Pchar s); /* float -> string */
-Func long   ival(Pchar s, int *err);
-Func double rval(Pchar s, int *err);
+ int length(char * s);
+ unsigned char steq(char * s, char * t);
+ unsigned char stne(char * s, char * t);
+ int scompare(char * a, char * b);
+ int ord(char c);
+ int pred(int i);
+ int succ(int i);
+void stri(long n, char * s);
+void strif(long n, int f, char * s);
+void strf(double x, int a, int b, char * s); /* float -> string */
+ long   ival(char * s, int *err);
+ double rval(char * s, int *err);
 
-Func char upcase(char c);
-Func char lowcase(char c);
-Func int hi(long w);
-Func int lo(long w);
-Func Bool odd(long x);
-Func Bool alfa(char c);
-Func Bool num(char c);
-Func Bool alfanum(char c);
-Func Pchar stupcase( Pchar s);
+ char upcase(char c);
+ char lowcase(char c);
+ int hi(long w);
+ int lo(long w);
+ unsigned char odd(long x);
+ unsigned char alfa(char c);
+ unsigned char num(char c);
+ unsigned char alfanum(char c);
+ char * stupcase( char * s);
 
 /***** primitive input-output ***/
-Proc wc(char c);
-Proc wln(void);
-Proc ws( Pchar s);
-Proc wi(long i);
-Proc rs( Pchar s);
-Func char rc(void);
+void wc(char c);
+void wln(void);
+void ws( char * s);
+void wi(long i);
+void rs( char * s);
+ char rc(void);
 
-Func int freadstr(Pfile f, Pchar s, int max);
-Func char freadc(Pfile f);
-Func long freadi(Pfile f);
+ int freadstr(FILE * f, char * s, int max);
+ char freadc(FILE * f);
+ long freadi(FILE * f);
 
-Func long np_round(double d);	// sjb to avoid clash with round() in math.h
-Func long np_trunc(double x);	// sjb to avoid clash with trunc() in math.h
-Func double sqr(double x);
-Func double absf(double x); /* abs */
-Func long absi( long i);
-Func double frac(double x);
+ long np_round(double d);	// sjb to avoid clash with round() in math.h
+ long np_trunc(double x);	// sjb to avoid clash with trunc() in math.h
+ double sqr(double x);
+ double absf(double x); /* abs */
+ long absi( long i);
+ double frac(double x);
 
-Func Bool reset(Pfile f);
-Func Bool rewrite(Pfile f);
-Proc rawcopy(Pointer a, Pointer b, int la, int lb);
-Func Pointer new(long sz);
-Proc dispose(Pointer p);
-Func Pchar newstring(int n);
+ unsigned char reset(FILE * f);
+ unsigned char rewrite(FILE * f);
+void rawcopy(void * a, void * b, int la, int lb);
+ void * new(long sz);
+void dispose(void * p);
+ char * newstring(int n);
 
+ 

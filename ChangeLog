@@ -1,3 +1,7 @@
+2007-12-26 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/numparam/*: downgraded all files to standard C syntax with 
+   the included washprog.c tool.
+
 2007-12-14 Dietmar Warning
  * configure.in, src/spicelib/devices/dev.c: allow mingw build w/o GUI
 
