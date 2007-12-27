@@ -1,6 +1,9 @@
 2007-12-27 Dietmar Warning
  * src/spicelib/devices/*/*init.c: No usage of C99 Designated Initializers
  * src/spicelib/devices/*/*par.c: only formatting issues
+ * src/frontend/numparam/*.c: fixing memory problems in nupa_substitute and other
+ * src/frontend/dotcard.c: strip white spaces only inside parens
+ * src/misc/missing_math.*: AlmostEqualUlps in double is needed
 
 2007-12-26 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/numparam/*: downgraded all files to standard C syntax with 
