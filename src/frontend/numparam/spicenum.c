@@ -22,9 +22,7 @@ Todo:
 */
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+
 #include "general.h"
 #include "numparam.h"
 #include "ngspice.h"
@@ -195,14 +193,12 @@ stripbraces (char *s)
 	  if (t[i - 1] > ' ')
 	    cadd (t, ' ');
 
-	  nadd (t, PlaceHold + placeholder);
-	  cadd (t, ' ');	// add extra character to increase number significant digits for evaluated numbers
-	  cadd (t, ' ');
-	  cadd (t, ' ');
-	  cadd (t, ' ');
-	  cadd (t, ' ');
-	  cadd (t, ' ');
-	  cadd (t, ' ');
+          cadd (t, ' ');        // add extra character to increase number significant digits for evaluated numbers
+          cadd (t, ' ');
+          cadd (t, ' ');
+          cadd (t, ' ');
+          nadd (t, PlaceHold + placeholder);
+          cadd (t, ' ');
 
 	  if (s[j] >= ' ')
 	    cadd (t, ' ');
@@ -754,7 +750,7 @@ nupa_eval (char *s, int linenum)
 {
   int idef;			/* subckt definition line */
   char c, keep, *ptr;
-  int i;
+  unsigned int i;
   Str (80, subname);
   unsigned char err = 1;
 

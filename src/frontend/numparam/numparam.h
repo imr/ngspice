@@ -67,7 +67,7 @@ typedef struct _ttdico {
 
 void initdico(tdico * dico);
  int donedico(tdico * dico);
- unsigned char defsubckt( tdico *dico, char * s, unsigned short w, char categ);
+ unsigned char defsubckt( tdico *dico, char * s, int w, char categ);
  int findsubckt( tdico *dico, char * s, char * subname);  
  unsigned char nupa_substitute( tdico *dico, char * s, char * r, unsigned char err);
  unsigned char nupa_assignment( tdico *dico, char *  s, char mode);

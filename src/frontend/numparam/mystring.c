@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <math.h>		/* -- ceil floor */
+
 #include "config.h"
 #ifdef HAS_WINDOWS
 #include "wstdio.h"
