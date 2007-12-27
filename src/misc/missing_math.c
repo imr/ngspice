@@ -13,15 +13,15 @@ $Id$
 
 /* Initial AlmostEqualULPs version - fast and simple, but */
 /* some limitations. */
-bool AlmostEqualUlps(float A, float B, int maxUlps)
+bool AlmostEqualUlps(double A, double B, long int maxUlps)
 {
-    int intDiff;
-    assert(sizeof(float) == sizeof(int));
+    long int intDiff;
+    assert(sizeof(double) == sizeof(long int));
 
     if (A == B)
         return TRUE;
 
-    intDiff = abs(*(int*)&A - *(int*)&B);
+    intDiff = abs(*(long int*)&A - *(long int*)&B);
 
     if (intDiff <= maxUlps)
         return TRUE;

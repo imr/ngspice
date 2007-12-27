@@ -6,7 +6,7 @@
 #ifndef MISSING_MATH_H_INCLUDED
 #define MISSING_MATH_H_INCLUDED
 
-bool AlmostEqualUlps(float, float, int);
+bool AlmostEqualUlps(double, double, long int);
 
 #ifndef HAVE_ERFC
 double erfc(double);
