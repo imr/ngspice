@@ -1,3 +1,7 @@
+2007-12-27 Dietmar Warning
+ * src/spicelib/devices/*/*init.c: No usage of C99 Designated Initializers
+ * src/spicelib/devices/*/*par.c: only formatting issues
+
 2007-12-26 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/numparam/*: downgraded all files to standard C syntax with 
    the included washprog.c tool.
