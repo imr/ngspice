@@ -1,7 +1,7 @@
 /* Modified: Alansfixes */
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "switf.h"
 #include "swext.h"
@@ -41,39 +41,39 @@ SPICEdev SWinfo = {
 	0
     },
 
-    DEVparam      : SWparam,
-    DEVmodParam   : SWmParam,
-    DEVload       : SWload,
-    DEVsetup      : SWsetup,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : SWsetup,
-    DEVtemperature: NULL,
-    DEVtrunc      : SWtrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : SWacLoad,   
-    DEVaccept     : NULL,
-    DEVdestroy    : SWdestroy,
-    DEVmodDelete  : SWmDelete,
-    DEVdelete     : SWdelete,
-    DEVsetic      : NULL,
-    DEVask        : SWask,
-    DEVmodAsk     : SWmAsk,
-    DEVpzLoad     : SWpzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL, /* DISTO */
-    DEVnoise      : SWnoise,
+ /* DEVparam      */ SWparam,
+ /* DEVmodParam   */ SWmParam,
+ /* DEVload       */ SWload,
+ /* DEVsetup      */ SWsetup,
+ /* DEVunsetup    */ NULL,
+ /* DEVpzSetup    */ SWsetup,
+ /* DEVtemperature*/ NULL,
+ /* DEVtrunc      */ SWtrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ SWacLoad,   
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ SWdestroy,
+ /* DEVmodDelete  */ SWmDelete,
+ /* DEVdelete     */ SWdelete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ SWask,
+ /* DEVmodAsk     */ SWmAsk,
+ /* DEVpzLoad     */ SWpzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL, /* DISTO */
+ /* DEVnoise      */ SWnoise,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif /* CIDER */                        
-    DEVinstSize   : &SWiSize,
-    DEVmodSize    : &SWmSize
+ /* DEVinstSize   */ &SWiSize,
+ /* DEVmodSize    */ &SWmSize
 
 };
 

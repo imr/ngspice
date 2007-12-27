@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "bsim3v1itf.h"
 #include "bsim3v1ext.h"
@@ -38,39 +38,39 @@ SPICEdev B3v1info = {
         DEV_DEFAULT
     },
 
-    DEVparam      : BSIM3v1param,
-    DEVmodParam   : BSIM3v1mParam,
-    DEVload       : BSIM3v1load,
-    DEVsetup      : BSIM3v1setup,  
-    DEVunsetup    : BSIM3v1unsetup,
-    DEVpzSetup    : BSIM3v1setup,
-    DEVtemperature: BSIM3v1temp,
-    DEVtrunc      : BSIM3v1trunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : BSIM3v1acLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : BSIM3v1destroy, 
-    DEVmodDelete  : BSIM3v1mDelete,
-    DEVdelete     : BSIM3v1delete,  
-    DEVsetic      : BSIM3v1getic,
-    DEVask        : BSIM3v1ask,
-    DEVmodAsk     : BSIM3v1mAsk, 
-    DEVpzLoad     : BSIM3v1pzLoad,    
-    DEVconvTest   : BSIM3v1convTest,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,        
-    DEVnoise      : BSIM3v1noise,
+ /* DEVparam      */ BSIM3v1param,
+ /* DEVmodParam   */ BSIM3v1mParam,
+ /* DEVload       */ BSIM3v1load,
+ /* DEVsetup      */ BSIM3v1setup,  
+ /* DEVunsetup    */ BSIM3v1unsetup,
+ /* DEVpzSetup    */ BSIM3v1setup,
+ /* DEVtemperature*/ BSIM3v1temp,
+ /* DEVtrunc      */ BSIM3v1trunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ BSIM3v1acLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ BSIM3v1destroy, 
+ /* DEVmodDelete  */ BSIM3v1mDelete,
+ /* DEVdelete     */ BSIM3v1delete,  
+ /* DEVsetic      */ BSIM3v1getic,
+ /* DEVask        */ BSIM3v1ask,
+ /* DEVmodAsk     */ BSIM3v1mAsk, 
+ /* DEVpzLoad     */ BSIM3v1pzLoad,    
+ /* DEVconvTest   */ BSIM3v1convTest,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,        
+ /* DEVnoise      */ BSIM3v1noise,
 #ifdef CIDER    
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                    
-    DEVinstSize   : &BSIM3v1iSize,
-    DEVmodSize    : &BSIM3v1mSize
+ /* DEVinstSize   */ &BSIM3v1iSize,
+ /* DEVmodSize    */ &BSIM3v1mSize
 
 };
 

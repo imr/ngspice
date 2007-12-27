@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "b3soifditf.h"
 #include "b3soifdext.h"
@@ -39,39 +39,39 @@ SPICEdev B3SOIFDinfo = {
 	
     },
 
-    DEVparam      : B3SOIFDparam,
-    DEVmodParam   : B3SOIFDmParam,
-    DEVload       : B3SOIFDload,
-    DEVsetup      : B3SOIFDsetup,
-    DEVunsetup    : B3SOIFDunsetup,
-    DEVpzSetup    : B3SOIFDsetup,
-    DEVtemperature: B3SOIFDtemp,
-    DEVtrunc      : B3SOIFDtrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : B3SOIFDacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : B3SOIFDdestroy,
-    DEVmodDelete  : B3SOIFDmDelete,
-    DEVdelete     : B3SOIFDdelete, 
-    DEVsetic      : B3SOIFDgetic,
-    DEVask        : B3SOIFDask,
-    DEVmodAsk     : B3SOIFDmAsk,
-    DEVpzLoad     : B3SOIFDpzLoad,
-    DEVconvTest   : B3SOIFDconvTest,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : B3SOIFDnoise,
+ /* DEVparam      */ B3SOIFDparam,
+ /* DEVmodParam   */ B3SOIFDmParam,
+ /* DEVload       */ B3SOIFDload,
+ /* DEVsetup      */ B3SOIFDsetup,
+ /* DEVunsetup    */ B3SOIFDunsetup,
+ /* DEVpzSetup    */ B3SOIFDsetup,
+ /* DEVtemperature*/ B3SOIFDtemp,
+ /* DEVtrunc      */ B3SOIFDtrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ B3SOIFDacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ B3SOIFDdestroy,
+ /* DEVmodDelete  */ B3SOIFDmDelete,
+ /* DEVdelete     */ B3SOIFDdelete, 
+ /* DEVsetic      */ B3SOIFDgetic,
+ /* DEVask        */ B3SOIFDask,
+ /* DEVmodAsk     */ B3SOIFDmAsk,
+ /* DEVpzLoad     */ B3SOIFDpzLoad,
+ /* DEVconvTest   */ B3SOIFDconvTest,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ B3SOIFDnoise,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif    
-    DEVinstSize:	&B3SOIFDiSize,
-    DEVmodSize:	&B3SOIFDmSize
+ /* DEVinstSize*/	&B3SOIFDiSize,
+ /* DEVmodSize*/	&B3SOIFDmSize
 };
 
 

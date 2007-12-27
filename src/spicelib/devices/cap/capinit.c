@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "capitf.h"
 #include "capext.h"
@@ -39,39 +39,39 @@ SPICEdev CAPinfo = {
 	0
     },
 
-    DEVparam      : CAPparam,
-    DEVmodParam   : CAPmParam,
-    DEVload       : CAPload,
-    DEVsetup      : CAPsetup,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : CAPsetup,
-    DEVtemperature: CAPtemp,
-    DEVtrunc      : CAPtrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : CAPacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : CAPdestroy,
-    DEVmodDelete  : CAPmDelete,
-    DEVdelete     : CAPdelete,
-    DEVsetic      : CAPgetic,
-    DEVask        : CAPask,
-    DEVmodAsk     : CAPmAsk,
-    DEVpzLoad     : CAPpzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : CAPsSetup,
-    DEVsenLoad    : CAPsLoad,
-    DEVsenUpdate  : CAPsUpdate,
-    DEVsenAcLoad  : CAPsAcLoad,
-    DEVsenPrint   : CAPsPrint,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,	/* DISTO */
-    DEVnoise      : NULL,	/* NOISE */
+ /* DEVparam      */ CAPparam,
+ /* DEVmodParam   */ CAPmParam,
+ /* DEVload       */ CAPload,
+ /* DEVsetup      */ CAPsetup,
+ /* DEVunsetup    */ NULL,
+ /* DEVpzSetup    */ CAPsetup,
+ /* DEVtemperature*/ CAPtemp,
+ /* DEVtrunc      */ CAPtrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ CAPacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ CAPdestroy,
+ /* DEVmodDelete  */ CAPmDelete,
+ /* DEVdelete     */ CAPdelete,
+ /* DEVsetic      */ CAPgetic,
+ /* DEVask        */ CAPask,
+ /* DEVmodAsk     */ CAPmAsk,
+ /* DEVpzLoad     */ CAPpzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ CAPsSetup,
+ /* DEVsenLoad    */ CAPsLoad,
+ /* DEVsenUpdate  */ CAPsUpdate,
+ /* DEVsenAcLoad  */ CAPsAcLoad,
+ /* DEVsenPrint   */ CAPsPrint,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,	/* DISTO */
+ /* DEVnoise      */ NULL,	/* NOISE */
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif    
-    DEVinstSize   : &CAPiSize,
-    DEVmodSize    : &CAPmSize
+ /* DEVinstSize   */ &CAPiSize,
+ /* DEVmodSize    */ &CAPmSize
 };
 
 

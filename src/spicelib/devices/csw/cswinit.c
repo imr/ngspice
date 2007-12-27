@@ -1,8 +1,8 @@
 /* Modified: 2000 AlansFixes */
 
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "cswitf.h"
 #include "cswext.h"
@@ -42,39 +42,39 @@ SPICEdev CSWinfo = {
 	0
     },
 
-    DEVparam      : CSWparam,
-    DEVmodParam   : CSWmParam,
-    DEVload       : CSWload,
-    DEVsetup      : CSWsetup,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : CSWsetup,
-    DEVtemperature: NULL,
-    DEVtrunc      :CSWtrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : CSWacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : CSWdestroy,
-    DEVmodDelete  : CSWmDelete,
-    DEVdelete     : CSWdelete,
-    DEVsetic      : NULL,
-    DEVask        : CSWask,
-    DEVmodAsk     : CSWmAsk,
-    DEVpzLoad     : CSWpzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,	/* DISTO */
-    DEVnoise      : CSWnoise,
+ /* DEVparam      */ CSWparam,
+ /* DEVmodParam   */ CSWmParam,
+ /* DEVload       */ CSWload,
+ /* DEVsetup      */ CSWsetup,
+ /* DEVunsetup    */ NULL,
+ /* DEVpzSetup    */ CSWsetup,
+ /* DEVtemperature*/ NULL,
+ /* DEVtrunc      */ CSWtrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ CSWacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ CSWdestroy,
+ /* DEVmodDelete  */ CSWmDelete,
+ /* DEVdelete     */ CSWdelete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ CSWask,
+ /* DEVmodAsk     */ CSWmAsk,
+ /* DEVpzLoad     */ CSWpzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,	/* DISTO */
+ /* DEVnoise      */ CSWnoise,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif
-    DEVinstSize   : &CSWiSize,
-    DEVmodSize    : &CSWmSize
+ /* DEVinstSize   */ &CSWiSize,
+ /* DEVmodSize    */ &CSWmSize
 
 };
 

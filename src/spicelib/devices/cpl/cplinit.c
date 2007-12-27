@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "cplitf.h"
 #include "cplext.h"
@@ -40,39 +40,39 @@ SPICEdev CPLinfo = {
   },
 
  
-  DEVparam       : CPLparam,
-  DEVmodParam    : CPLmParam,
-  DEVload        : CPLload,
-  DEVsetup       : CPLsetup,
-  DEVunsetup     : CPLunsetup,
-  DEVpzSetup     : NULL,
-  DEVtemperature : NULL,
-  DEVtrunc       : NULL,
-  DEVfindBranch  : NULL, /* CPLfindBranch, */
-  DEVacLoad      : NULL, 
-  DEVaccept      : NULL,
-  DEVdestroy     : CPLdestroy,
-  DEVmodDelete   : CPLmDelete,
-  DEVdelete      : CPLdelete,
-  DEVsetic       : NULL,
-  DEVask         : CPLask,
-  DEVmodAsk      : CPLmAsk,
-  DEVpzLoad      : NULL,
-  DEVconvTest    : NULL,
-  DEVsenSetup    : NULL,
-  DEVsenLoad     : NULL,
-  DEVsenUpdate   : NULL,
-  DEVsenAcLoad   : NULL,
-  DEVsenPrint    : NULL,
-  DEVsenTrunc    : NULL,
-  DEVdisto       : NULL,
-  DEVnoise       : NULL,
+/* DEVparam       */ CPLparam,
+/* DEVmodParam    */ CPLmParam,
+/* DEVload        */ CPLload,
+/* DEVsetup       */ CPLsetup,
+/* DEVunsetup     */ CPLunsetup,
+/* DEVpzSetup     */ NULL,
+/* DEVtemperature */ NULL,
+/* DEVtrunc       */ NULL,
+/* DEVfindBranch  */ NULL, /* CPLfindBranch, */
+/* DEVacLoad      */ NULL, 
+/* DEVaccept      */ NULL,
+/* DEVdestroy     */ CPLdestroy,
+/* DEVmodDelete   */ CPLmDelete,
+/* DEVdelete      */ CPLdelete,
+/* DEVsetic       */ NULL,
+/* DEVask         */ CPLask,
+/* DEVmodAsk      */ CPLmAsk,
+/* DEVpzLoad      */ NULL,
+/* DEVconvTest    */ NULL,
+/* DEVsenSetup    */ NULL,
+/* DEVsenLoad     */ NULL,
+/* DEVsenUpdate   */ NULL,
+/* DEVsenAcLoad   */ NULL,
+/* DEVsenPrint    */ NULL,
+/* DEVsenTrunc    */ NULL,
+/* DEVdisto       */ NULL,
+/* DEVnoise       */ NULL,
 #ifdef CIDER
-  DEVdump        : NULL,
-  DEVacct        : NULL,
+/* DEVdump        */ NULL,
+/* DEVacct        */ NULL,
 #endif   
-  DEVinstSize    : &CPLiSize,
-  DEVmodSize     : &CPLmSize
+/* DEVinstSize    */ &CPLiSize,
+/* DEVmodSize     */ &CPLmSize
 
 };
 

@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "numositf.h"
 #include "numosext.h"
@@ -40,40 +40,40 @@ SPICEdev NUMOSinfo = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : NUMOSparam,
-    DEVmodParam   : NUMOSmParam,
-    DEVload       : NUMOSload,
-    DEVsetup      : NUMOSsetup,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : NUMOSsetup,
-    DEVtemperature: NUMOStemp,
-    DEVtrunc      : NUMOStrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : NUMOSacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : NUMOSdestroy,
-    DEVmodDelete  : NUMOSmDelete,
-    DEVdelete     : NUMOSdelete,
-    DEVsetic      : NULL,
-    DEVask        : NUMOSask,
-    DEVmodAsk     : NULL,
-    DEVpzLoad     : NUMOSpzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : NULL,
+ /* DEVparam      */ NUMOSparam,
+ /* DEVmodParam   */ NUMOSmParam,
+ /* DEVload       */ NUMOSload,
+ /* DEVsetup      */ NUMOSsetup,
+ /* DEVunsetup    */ NULL,
+ /* DEVpzSetup    */ NUMOSsetup,
+ /* DEVtemperature*/ NUMOStemp,
+ /* DEVtrunc      */ NUMOStrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ NUMOSacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ NUMOSdestroy,
+ /* DEVmodDelete  */ NUMOSmDelete,
+ /* DEVdelete     */ NUMOSdelete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ NUMOSask,
+ /* DEVmodAsk     */ NULL,
+ /* DEVpzLoad     */ NUMOSpzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ NULL,
 #ifdef CIDER
-    DEVdump       : NUMOSdump,
-    DEVacct       : NUMOSacct,
+ /* DEVdump       */ NUMOSdump,
+ /* DEVacct       */ NUMOSacct,
 #endif
                     
-    DEVinstSize   : &NUMOSiSize,
-    DEVmodSize    : &NUMOSmSize
+ /* DEVinstSize   */ &NUMOSiSize,
+ /* DEVmodSize    */ &NUMOSmSize
 
 };
 

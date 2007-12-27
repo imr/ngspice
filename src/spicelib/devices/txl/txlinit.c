@@ -3,9 +3,9 @@ Copyright 1992 Regents of the University of California.  All rights
 reserved.
 Author: 1992 Charles Hough
 **********/
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "txlitf.h"
 #include "txlext.h"
@@ -45,39 +45,39 @@ SPICEdev TXLinfo = {
     0
   },
 
-  DEVparam      : TXLparam,
-  DEVmodParam   : TXLmParam,
-  DEVload       : TXLload,
-  DEVsetup      : TXLsetup,
-  DEVunsetup    : TXLunsetup,
-  DEVpzSetup    : NULL,
-  DEVtemperature: NULL,
-  DEVtrunc      : NULL,
-  DEVfindBranch : NULL, /* TXLfindBranch default: disabled */
-  DEVacLoad     : TXLload, /* ac load */
-  DEVaccept     : NULL, /* TXLaccept default: disabled */
-  DEVdestroy    : TXLdestroy,
-  DEVmodDelete  : TXLmDelete,
-  DEVdelete     : TXLdelete,
-  DEVsetic      : NULL,
-  DEVask        : TXLask,
-  DEVmodAsk     : TXLmodAsk,
-  DEVpzLoad     : NULL,
-  DEVconvTest   : NULL,
-  DEVsenSetup   : NULL,
-  DEVsenLoad    : NULL,
-  DEVsenUpdate  : NULL,
-  DEVsenAcLoad  : NULL,
-  DEVsenPrint   : NULL,
-  DEVsenTrunc   : NULL,
-  DEVdisto      : NULL,
-  DEVnoise      : NULL,
+ /* DEVparam      */ TXLparam,
+ /* DEVmodParam   */ TXLmParam,
+ /* DEVload       */ TXLload,
+ /* DEVsetup      */ TXLsetup,
+ /* DEVunsetup    */ TXLunsetup,
+ /* DEVpzSetup    */ NULL,
+ /* DEVtemperature*/ NULL,
+ /* DEVtrunc      */ NULL,
+ /* DEVfindBranch */ NULL, /* TXLfindBranch default disabled */
+ /* DEVacLoad     */ TXLload, /* ac load */
+ /* DEVaccept     */ NULL, /* TXLaccept default disabled */
+ /* DEVdestroy    */ TXLdestroy,
+ /* DEVmodDelete  */ TXLmDelete,
+ /* DEVdelete     */ TXLdelete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ TXLask,
+ /* DEVmodAsk     */ TXLmodAsk,
+ /* DEVpzLoad     */ NULL,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ NULL,
 #ifdef CIDER
-  DEVdump       : NULL,
-  DEVacct       : NULL,  
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,  
 #endif
-  &TXLiSize,
-  &TXLmSize
+    &TXLiSize,
+    &TXLmSize
 
 };
 

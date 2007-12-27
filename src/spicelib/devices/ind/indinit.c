@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "inditf.h"
 #include "indext.h"
@@ -39,39 +39,39 @@ SPICEdev INDinfo = {
 	0
     },
 
-    DEVparam      : INDparam,
-    DEVmodParam   : INDmParam,
-    DEVload       : INDload,
-    DEVsetup      : INDsetup,
-    DEVunsetup    : INDunsetup,
-    DEVpzSetup    : INDsetup,
-    DEVtemperature: INDtemp,
-    DEVtrunc      : INDtrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : INDacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : INDdestroy,
-    DEVmodDelete  : INDmDelete,
-    DEVdelete     : INDdelete,
-    DEVsetic      : NULL,
-    DEVask        : INDask,
-    DEVmodAsk     : INDmAsk,
-    DEVpzLoad     : INDpzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : INDsSetup,
-    DEVsenLoad    : INDsLoad,
-    DEVsenUpdate  : INDsUpdate,
-    DEVsenAcLoad  : INDsAcLoad,
-    DEVsenPrint   : INDsPrint,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,	/* DISTO */
-    DEVnoise      : NULL,	/* NOISE */
+ /* DEVparam      */ INDparam,
+ /* DEVmodParam   */ INDmParam,
+ /* DEVload       */ INDload,
+ /* DEVsetup      */ INDsetup,
+ /* DEVunsetup    */ INDunsetup,
+ /* DEVpzSetup    */ INDsetup,
+ /* DEVtemperature*/ INDtemp,
+ /* DEVtrunc      */ INDtrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ INDacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ INDdestroy,
+ /* DEVmodDelete  */ INDmDelete,
+ /* DEVdelete     */ INDdelete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ INDask,
+ /* DEVmodAsk     */ INDmAsk,
+ /* DEVpzLoad     */ INDpzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ INDsSetup,
+ /* DEVsenLoad    */ INDsLoad,
+ /* DEVsenUpdate  */ INDsUpdate,
+ /* DEVsenAcLoad  */ INDsAcLoad,
+ /* DEVsenPrint   */ INDsPrint,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,	/* DISTO */
+ /* DEVnoise      */ NULL,	/* NOISE */
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                       
-    DEVinstSize   : &INDiSize,
-    DEVmodSize    : &INDmSize
+ /* DEVinstSize   */ &INDiSize,
+ /* DEVmodSize    */ &INDmSize
 
 };
 
@@ -108,36 +108,36 @@ SPICEdev MUTinfo = {
 	0
     },
 
-    DEVparam      : MUTparam,
-    DEVmodParam   : NULL,
-    DEVload       : NULL,/* load handled by INDload */
-    DEVsetup      : MUTsetup,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : MUTsetup,
-    DEVtemperature: MUTtemp,
-    DEVtrunc      : NULL,
-    DEVfindBranch : NULL,
-    DEVacLoad     : MUTacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : MUTdestroy,
-    DEVmodDelete  : MUTmDelete,
-    DEVdelete     : MUTdelete,
-    DEVsetic      : NULL,
-    DEVask        : MUTask,
-    DEVmodAsk     : NULL,
-    DEVpzLoad     : MUTpzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : MUTsSetup,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : MUTsPrint,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,	/* DISTO */
-    DEVnoise      :NULL,	/* NOISE */
+ /* DEVparam      */ MUTparam,
+ /* DEVmodParam   */ NULL,
+ /* DEVload       */ NULL,/* load handled by INDload */
+ /* DEVsetup      */ MUTsetup,
+ /* DEVunsetup    */ NULL,
+ /* DEVpzSetup    */ MUTsetup,
+ /* DEVtemperature*/ MUTtemp,
+ /* DEVtrunc      */ NULL,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ MUTacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ MUTdestroy,
+ /* DEVmodDelete  */ MUTmDelete,
+ /* DEVdelete     */ MUTdelete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ MUTask,
+ /* DEVmodAsk     */ NULL,
+ /* DEVpzLoad     */ MUTpzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ MUTsSetup,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ MUTsPrint,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,	/* DISTO */
+ /* DEVnoise      */ NULL,	/* NOISE */
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif  
     &MUTiSize,
     &MUTmSize

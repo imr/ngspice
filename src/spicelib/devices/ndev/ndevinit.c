@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "ndevitf.h"
 #include "ndevext.h"
@@ -40,40 +40,40 @@ SPICEdev NDEVinfo = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : NDEVparam,
-    DEVmodParam   : NDEVmParam,
-    DEVload       : NDEVload,
-    DEVsetup      : NDEVsetup,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : NDEVsetup,
-    DEVtemperature: NDEVtemp,
-    DEVtrunc      : NDEVtrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : NDEVacLoad,
-    DEVaccept     : NDEVaccept,
-    DEVdestroy    : NDEVdestroy,
-    DEVmodDelete  : NDEVmDelete,
-    DEVdelete     : NDEVdelete,
-    DEVsetic      : NDEVgetic,
-    DEVask        : NDEVask,
-    DEVmodAsk     : NULL,
-    DEVpzLoad     : NDEVpzLoad,
-    DEVconvTest   : NDEVconvTest,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : NULL,
+ /* DEVparam      */ NDEVparam,
+ /* DEVmodParam   */ NDEVmParam,
+ /* DEVload       */ NDEVload,
+ /* DEVsetup      */ NDEVsetup,
+ /* DEVunsetup    */ NULL,
+ /* DEVpzSetup    */ NDEVsetup,
+ /* DEVtemperature*/ NDEVtemp,
+ /* DEVtrunc      */ NDEVtrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ NDEVacLoad,
+ /* DEVaccept     */ NDEVaccept,
+ /* DEVdestroy    */ NDEVdestroy,
+ /* DEVmodDelete  */ NDEVmDelete,
+ /* DEVdelete     */ NDEVdelete,
+ /* DEVsetic      */ NDEVgetic,
+ /* DEVask        */ NDEVask,
+ /* DEVmodAsk     */ NULL,
+ /* DEVpzLoad     */ NDEVpzLoad,
+ /* DEVconvTest   */ NDEVconvTest,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ NULL,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif               
                     
-    DEVinstSize   : &NDEViSize,
-    DEVmodSize    : &NDEVmSize
+ /* DEVinstSize   */ &NDEViSize,
+ /* DEVmodSize    */ &NDEVmSize
 
 };
 

@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "numd2itf.h"
 #include "numd2ext.h"
@@ -40,40 +40,40 @@ SPICEdev NUMD2info = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : NUMD2param,
-    DEVmodParam   : NUMD2mParam,
-    DEVload       : NUMD2load,
-    DEVsetup      : NUMD2setup,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : NUMD2setup,
-    DEVtemperature: NUMD2temp,
-    DEVtrunc      : NUMD2trunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : NUMD2acLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : NUMD2destroy,
-    DEVmodDelete  : NUMD2mDelete,
-    DEVdelete     : NUMD2delete,
-    DEVsetic      : NULL,
-    DEVask        : NUMD2ask,
-    DEVmodAsk     : NULL,
-    DEVpzLoad     : NUMD2pzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : NULL,
+ /* DEVparam      */ NUMD2param,
+ /* DEVmodParam   */ NUMD2mParam,
+ /* DEVload       */ NUMD2load,
+ /* DEVsetup      */ NUMD2setup,
+ /* DEVunsetup    */ NULL,
+ /* DEVpzSetup    */ NUMD2setup,
+ /* DEVtemperature*/ NUMD2temp,
+ /* DEVtrunc      */ NUMD2trunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ NUMD2acLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ NUMD2destroy,
+ /* DEVmodDelete  */ NUMD2mDelete,
+ /* DEVdelete     */ NUMD2delete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ NUMD2ask,
+ /* DEVmodAsk     */ NULL,
+ /* DEVpzLoad     */ NUMD2pzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ NULL,
 #ifdef CIDER
-    DEVdump       : NUMD2dump,
-    DEVacct       : NUMD2acct,
+ /* DEVdump       */ NUMD2dump,
+ /* DEVacct       */ NUMD2acct,
 #endif
                     
-    DEVinstSize   : &NUMD2iSize,
-    DEVmodSize    : &NUMD2mSize
+ /* DEVinstSize   */ &NUMD2iSize,
+ /* DEVmodSize    */ &NUMD2mSize
 
 };
 

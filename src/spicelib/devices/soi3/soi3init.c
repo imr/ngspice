@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "soi3itf.h"
 #include "soi3ext.h"
@@ -40,39 +40,39 @@ SPICEdev SOI3info = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : SOI3param,
-    DEVmodParam   : SOI3mParam,
-    DEVload       : SOI3load,
-    DEVsetup      : SOI3setup,
-    DEVunsetup    : SOI3unsetup,
-    DEVpzSetup    : SOI3setup,
-    DEVtemperature: SOI3temp,
-    DEVtrunc      : SOI3trunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : SOI3acLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : SOI3destroy,
-    DEVmodDelete  : SOI3mDelete,
-    DEVdelete     : SOI3delete,
-    DEVsetic      : SOI3getic,
-    DEVask        : SOI3ask,
-    DEVmodAsk     : SOI3mAsk,
-    DEVpzLoad     : NULL,
-    DEVconvTest   : SOI3convTest,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : SOI3noise,
+ /* DEVparam      */ SOI3param,
+ /* DEVmodParam   */ SOI3mParam,
+ /* DEVload       */ SOI3load,
+ /* DEVsetup      */ SOI3setup,
+ /* DEVunsetup    */ SOI3unsetup,
+ /* DEVpzSetup    */ SOI3setup,
+ /* DEVtemperature*/ SOI3temp,
+ /* DEVtrunc      */ SOI3trunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ SOI3acLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ SOI3destroy,
+ /* DEVmodDelete  */ SOI3mDelete,
+ /* DEVdelete     */ SOI3delete,
+ /* DEVsetic      */ SOI3getic,
+ /* DEVask        */ SOI3ask,
+ /* DEVmodAsk     */ SOI3mAsk,
+ /* DEVpzLoad     */ NULL,
+ /* DEVconvTest   */ SOI3convTest,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ SOI3noise,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                        
-    DEVinstSize   : &SOI3iSize,
-    DEVmodSize    : &SOI3mSize
+ /* DEVinstSize   */ &SOI3iSize,
+ /* DEVmodSize    */ &SOI3mSize
 
 };
 

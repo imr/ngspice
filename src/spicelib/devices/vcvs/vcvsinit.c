@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "vcvsitf.h"
 #include "vcvsext.h"
@@ -40,39 +40,39 @@ SPICEdev VCVSinfo = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : VCVSparam,
-    DEVmodParam   : NULL,
-    DEVload       : VCVSload,
-    DEVsetup      : VCVSsetup,
-    DEVunsetup    : VCVSunsetup,
-    DEVpzSetup    : VCVSsetup,
-    DEVtemperature: NULL,
-    DEVtrunc      : NULL,
-    DEVfindBranch : VCVSfindBr,
-    DEVacLoad     : VCVSload,   /* AC and normal loads are identical */
-    DEVaccept     : NULL,
-    DEVdestroy    : VCVSdestroy,
-    DEVmodDelete  : VCVSmDelete,
-    DEVdelete     : VCVSdelete,
-    DEVsetic      : NULL,
-    DEVask        : VCVSask,
-    DEVmodAsk     : NULL,
-    DEVpzLoad     : VCVSpzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : VCVSsSetup,
-    DEVsenLoad    : VCVSsLoad,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : VCVSsAcLoad,
-    DEVsenPrint   : VCVSsPrint,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,	/* DISTO */
-    DEVnoise      : NULL,	/* NOISE */
+ /* DEVparam      */ VCVSparam,
+ /* DEVmodParam   */ NULL,
+ /* DEVload       */ VCVSload,
+ /* DEVsetup      */ VCVSsetup,
+ /* DEVunsetup    */ VCVSunsetup,
+ /* DEVpzSetup    */ VCVSsetup,
+ /* DEVtemperature*/ NULL,
+ /* DEVtrunc      */ NULL,
+ /* DEVfindBranch */ VCVSfindBr,
+ /* DEVacLoad     */ VCVSload,   /* AC and normal loads are identical */
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ VCVSdestroy,
+ /* DEVmodDelete  */ VCVSmDelete,
+ /* DEVdelete     */ VCVSdelete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ VCVSask,
+ /* DEVmodAsk     */ NULL,
+ /* DEVpzLoad     */ VCVSpzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ VCVSsSetup,
+ /* DEVsenLoad    */ VCVSsLoad,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ VCVSsAcLoad,
+ /* DEVsenPrint   */ VCVSsPrint,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,	/* DISTO */
+ /* DEVnoise      */ NULL,	/* NOISE */
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                          
-    DEVinstSize   : &VCVSiSize,
-    DEVmodSize    : &VCVSmSize
+ /* DEVinstSize   */ &VCVSiSize,
+ /* DEVmodSize    */ &VCVSmSize
 
 };
 

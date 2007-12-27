@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "mos1itf.h"
 #include "mos1ext.h"
@@ -40,39 +40,39 @@ SPICEdev MOS1info = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : MOS1param,
-    DEVmodParam   : MOS1mParam,
-    DEVload       : MOS1load,
-    DEVsetup      : MOS1setup,
-    DEVunsetup    : MOS1unsetup,
-    DEVpzSetup    : MOS1setup,
-    DEVtemperature: MOS1temp,
-    DEVtrunc      : MOS1trunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : MOS1acLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : MOS1destroy,
-    DEVmodDelete  : MOS1mDelete,
-    DEVdelete     : MOS1delete,
-    DEVsetic      : MOS1getic,
-    DEVask        : MOS1ask,
-    DEVmodAsk     : MOS1mAsk,
-    DEVpzLoad     : MOS1pzLoad,
-    DEVconvTest   : MOS1convTest,
-    DEVsenSetup   : MOS1sSetup,
-    DEVsenLoad    : MOS1sLoad,
-    DEVsenUpdate  : MOS1sUpdate,
-    DEVsenAcLoad  : MOS1sAcLoad,
-    DEVsenPrint   : MOS1sPrint,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : MOS1disto,
-    DEVnoise      : MOS1noise,
+ /* DEVparam      */ MOS1param,
+ /* DEVmodParam   */ MOS1mParam,
+ /* DEVload       */ MOS1load,
+ /* DEVsetup      */ MOS1setup,
+ /* DEVunsetup    */ MOS1unsetup,
+ /* DEVpzSetup    */ MOS1setup,
+ /* DEVtemperature*/ MOS1temp,
+ /* DEVtrunc      */ MOS1trunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ MOS1acLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ MOS1destroy,
+ /* DEVmodDelete  */ MOS1mDelete,
+ /* DEVdelete     */ MOS1delete,
+ /* DEVsetic      */ MOS1getic,
+ /* DEVask        */ MOS1ask,
+ /* DEVmodAsk     */ MOS1mAsk,
+ /* DEVpzLoad     */ MOS1pzLoad,
+ /* DEVconvTest   */ MOS1convTest,
+ /* DEVsenSetup   */ MOS1sSetup,
+ /* DEVsenLoad    */ MOS1sLoad,
+ /* DEVsenUpdate  */ MOS1sUpdate,
+ /* DEVsenAcLoad  */ MOS1sAcLoad,
+ /* DEVsenPrint   */ MOS1sPrint,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ MOS1disto,
+ /* DEVnoise      */ MOS1noise,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                       
-    DEVinstSize   : &MOS1iSize,
-    DEVmodSize    : &MOS1mSize
+ /* DEVinstSize   */ &MOS1iSize,
+ /* DEVmodSize    */ &MOS1mSize
 };
 
 

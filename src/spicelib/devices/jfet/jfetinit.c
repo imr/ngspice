@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "jfetitf.h"
 #include "jfetext.h"
@@ -40,39 +40,39 @@ SPICEdev JFETinfo = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : JFETparam,
-    DEVmodParam   : JFETmParam,
-    DEVload       : JFETload,
-    DEVsetup      : JFETsetup,
-    DEVunsetup    : JFETunsetup,
-    DEVpzSetup    : JFETsetup,
-    DEVtemperature: JFETtemp,
-    DEVtrunc      : JFETtrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : JFETacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : JFETdestroy,
-    DEVmodDelete  : JFETmDelete,
-    DEVdelete     : JFETdelete,
-    DEVsetic      : JFETgetic,
-    DEVask        : JFETask,
-    DEVmodAsk     : JFETmAsk,
-    DEVpzLoad     : JFETpzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : JFETdisto,
-    DEVnoise      : JFETnoise,
+ /* DEVparam      */ JFETparam,
+ /* DEVmodParam   */ JFETmParam,
+ /* DEVload       */ JFETload,
+ /* DEVsetup      */ JFETsetup,
+ /* DEVunsetup    */ JFETunsetup,
+ /* DEVpzSetup    */ JFETsetup,
+ /* DEVtemperature*/ JFETtemp,
+ /* DEVtrunc      */ JFETtrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ JFETacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ JFETdestroy,
+ /* DEVmodDelete  */ JFETmDelete,
+ /* DEVdelete     */ JFETdelete,
+ /* DEVsetic      */ JFETgetic,
+ /* DEVask        */ JFETask,
+ /* DEVmodAsk     */ JFETmAsk,
+ /* DEVpzLoad     */ JFETpzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ JFETdisto,
+ /* DEVnoise      */ JFETnoise,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                        
-    DEVinstSize   : &JFETiSize,
-    DEVmodSize    : &JFETmSize
+ /* DEVinstSize   */ &JFETiSize,
+ /* DEVmodSize    */ &JFETmSize
 
 };
 

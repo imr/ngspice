@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "bsim4v3itf.h"
 #include "bsim4v3ext.h"
@@ -40,36 +40,36 @@ SPICEdev BSIM4v3info = {
         DEV_DEFAULT
     },
 
-    DEVparam      : BSIM4v3param,
-    DEVmodParam   : BSIM4v3mParam,
-    DEVload       : BSIM4v3load,
-    DEVsetup      : BSIM4v3setup,
-    DEVunsetup    : BSIM4v3unsetup,
-    DEVpzSetup    : BSIM4v3setup,
-    DEVtemperature: BSIM4v3temp,
-    DEVtrunc      : BSIM4v3trunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : BSIM4v3acLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : BSIM4v3destroy,
-    DEVmodDelete  : BSIM4v3mDelete,
-    DEVdelete     : BSIM4v3delete, 
-    DEVsetic      : BSIM4v3getic,
-    DEVask        : BSIM4v3ask,
-    DEVmodAsk     : BSIM4v3mAsk,
-    DEVpzLoad     : BSIM4v3pzLoad,
-    DEVconvTest   : BSIM4v3convTest,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : BSIM4v3noise,
+ /* DEVparam      */ BSIM4v3param,
+ /* DEVmodParam   */ BSIM4v3mParam,
+ /* DEVload       */ BSIM4v3load,
+ /* DEVsetup      */ BSIM4v3setup,
+ /* DEVunsetup    */ BSIM4v3unsetup,
+ /* DEVpzSetup    */ BSIM4v3setup,
+ /* DEVtemperature*/ BSIM4v3temp,
+ /* DEVtrunc      */ BSIM4v3trunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ BSIM4v3acLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ BSIM4v3destroy,
+ /* DEVmodDelete  */ BSIM4v3mDelete,
+ /* DEVdelete     */ BSIM4v3delete, 
+ /* DEVsetic      */ BSIM4v3getic,
+ /* DEVask        */ BSIM4v3ask,
+ /* DEVmodAsk     */ BSIM4v3mAsk,
+ /* DEVpzLoad     */ BSIM4v3pzLoad,
+ /* DEVconvTest   */ BSIM4v3convTest,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ BSIM4v3noise,
                     
-    DEVinstSize   : &BSIM4v3iSize,
-    DEVmodSize    : &BSIM4v3mSize
+ /* DEVinstSize   */ &BSIM4v3iSize,
+ /* DEVmodSize    */ &BSIM4v3mSize
 };
 
 

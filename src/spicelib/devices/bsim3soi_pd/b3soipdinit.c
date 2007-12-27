@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "b3soipditf.h"
 #include "b3soipdext.h"
@@ -36,43 +36,43 @@ SPICEdev B3SOIPDinfo = {
 /*---------------------------  End of SDB fix   -------------------------*/
 #endif	
    
-   DEV_DEFAULT
+  DEV_DEFAULT
    
     },
 
-    DEVparam:       B3SOIPDparam,
-    DEVmodParam:    B3SOIPDmParam,
-    DEVload:        B3SOIPDload,
-    DEVsetup:       B3SOIPDsetup,
-    DEVunsetup:     B3SOIPDunsetup,
-    DEVpzSetup:     B3SOIPDsetup,
-    DEVtemperature: B3SOIPDtemp,
-    DEVtrunc:       B3SOIPDtrunc,
-    DEVfindBranch:  NULL,
-    DEVacLoad:      B3SOIPDacLoad,
-    DEVaccept:      NULL,
-    DEVdestroy:     B3SOIPDdestroy,
-    DEVmodDelete:   B3SOIPDmDelete,
-    DEVdelete:      B3SOIPDdelete,
-    DEVsetic:       B3SOIPDgetic,
-    DEVask:         B3SOIPDask,
-    DEVmodAsk:      B3SOIPDmAsk,
-    DEVpzLoad:      B3SOIPDpzLoad,
-    DEVconvTest:    B3SOIPDconvTest,
-    DEVsenSetup:    NULL,
-    DEVsenLoad:     NULL,
-    DEVsenUpdate:   NULL,
-    DEVsenAcLoad:   NULL,
-    DEVsenPrint:    NULL,
-    DEVsenTrunc:    NULL,
-    DEVdisto:       NULL,
-    DEVnoise:       B3SOIPDnoise,
+ /* DEVparam*/       B3SOIPDparam,
+ /* DEVmodParam*/    B3SOIPDmParam,
+ /* DEVload*/        B3SOIPDload,
+ /* DEVsetup*/       B3SOIPDsetup,
+ /* DEVunsetup*/     B3SOIPDunsetup,
+ /* DEVpzSetup*/     B3SOIPDsetup,
+ /* DEVtemperature*/ B3SOIPDtemp,
+ /* DEVtrunc*/       B3SOIPDtrunc,
+ /* DEVfindBranch*/  NULL,
+ /* DEVacLoad*/      B3SOIPDacLoad,
+ /* DEVaccept*/      NULL,
+ /* DEVdestroy*/     B3SOIPDdestroy,
+ /* DEVmodDelete*/   B3SOIPDmDelete,
+ /* DEVdelete*/      B3SOIPDdelete,
+ /* DEVsetic*/       B3SOIPDgetic,
+ /* DEVask*/         B3SOIPDask,
+ /* DEVmodAsk*/      B3SOIPDmAsk,
+ /* DEVpzLoad*/      B3SOIPDpzLoad,
+ /* DEVconvTest*/    B3SOIPDconvTest,
+ /* DEVsenSetup*/    NULL,
+ /* DEVsenLoad*/     NULL,
+ /* DEVsenUpdate*/   NULL,
+ /* DEVsenAcLoad*/   NULL,
+ /* DEVsenPrint*/    NULL,
+ /* DEVsenTrunc*/    NULL,
+ /* DEVdisto*/       NULL,
+ /* DEVnoise*/       B3SOIPDnoise,
 #ifdef CIDER
-    DEVdump:        NULL,
-    DEVacct:        NULL,
+ /* DEVdump*/        NULL,
+ /* DEVacct*/        NULL,
 #endif
-    DEVinstSize:   &B3SOIPDiSize,
-    DEVmodSize:    &B3SOIPDmSize
+ /* DEVinstSize*/   &B3SOIPDiSize,
+ /* DEVmodSize*/    &B3SOIPDmSize
 };
 
 SPICEdev *

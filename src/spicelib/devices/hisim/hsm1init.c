@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "hsm1def.h"
 #include "hsm1itf.h"
@@ -39,40 +39,39 @@ SPICEdev HSM1info = {
 	DEV_DEFAULT
   },
 
-  DEVparam      : HSM1param,
-  DEVmodParam   : HSM1mParam,
-  DEVload       : HSM1load,
-  DEVsetup      : HSM1setup,
-  DEVunsetup    : HSM1unsetup,
-  DEVpzSetup    : HSM1setup,
-  DEVtemperature: HSM1temp,
-  DEVtrunc      : HSM1trunc,
-  DEVfindBranch : NULL,
-  DEVacLoad     : HSM1acLoad,
-  DEVaccept     : NULL,
-  DEVdestroy    : HSM1destroy,
-  DEVmodDelete  : HSM1mDelete,
-  DEVdelete     : HSM1delete, 
-  DEVsetic      : HSM1getic,
-  DEVask        : HSM1ask,
-  DEVmodAsk     : HSM1mAsk,
-  DEVpzLoad     : HSM1pzLoad,
-  DEVconvTest   : HSM1convTest,
-  DEVsenSetup   : NULL,
-  DEVsenLoad    : NULL,
-  DEVsenUpdate  : NULL,
-  DEVsenAcLoad  : NULL,
-  DEVsenPrint   : NULL,
-  DEVsenTrunc   : NULL,
-  DEVdisto      : NULL,
-
-  DEVnoise      : HSM1noise,
+ /* DEVparam      */ HSM1param,
+ /* DEVmodParam   */ HSM1mParam,
+ /* DEVload       */ HSM1load,
+ /* DEVsetup      */ HSM1setup,
+ /* DEVunsetup    */ HSM1unsetup,
+ /* DEVpzSetup    */ HSM1setup,
+ /* DEVtemperature*/ HSM1temp,
+ /* DEVtrunc      */ HSM1trunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ HSM1acLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ HSM1destroy,
+ /* DEVmodDelete  */ HSM1mDelete,
+ /* DEVdelete     */ HSM1delete, 
+ /* DEVsetic      */ HSM1getic,
+ /* DEVask        */ HSM1ask,
+ /* DEVmodAsk     */ HSM1mAsk,
+ /* DEVpzLoad     */ HSM1pzLoad,
+ /* DEVconvTest   */ HSM1convTest,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ HSM1noise,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif
-  DEVinstSize   : &HSM1iSize,
-  DEVmodSize    : &HSM1mSize
+ /* DEVinstSize   */ &HSM1iSize,
+ /* DEVmodSize    */ &HSM1mSize
 
 };
 

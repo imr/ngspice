@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "jfet2itf.h"
 #include "jfet2ext.h"
@@ -40,39 +40,39 @@ SPICEdev JFET2info = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : JFET2param,
-    DEVmodParam   : JFET2mParam,
-    DEVload       : JFET2load,
-    DEVsetup      : JFET2setup,
-    DEVunsetup    : JFET2unsetup,
-    DEVpzSetup    : JFET2setup,
-    DEVtemperature: JFET2temp,
-    DEVtrunc      : JFET2trunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : JFET2acLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : JFET2destroy,
-    DEVmodDelete  : JFET2mDelete,
-    DEVdelete     : JFET2delete,
-    DEVsetic      : JFET2getic,
-    DEVask        : JFET2ask,
-    DEVmodAsk     : JFET2mAsk,
-    DEVpzLoad     : NULL, /* AN_pz */
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL, /* AN_disto */
-    DEVnoise      : JFET2noise,
+ /* DEVparam      */ JFET2param,
+ /* DEVmodParam   */ JFET2mParam,
+ /* DEVload       */ JFET2load,
+ /* DEVsetup      */ JFET2setup,
+ /* DEVunsetup    */ JFET2unsetup,
+ /* DEVpzSetup    */ JFET2setup,
+ /* DEVtemperature*/ JFET2temp,
+ /* DEVtrunc      */ JFET2trunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ JFET2acLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ JFET2destroy,
+ /* DEVmodDelete  */ JFET2mDelete,
+ /* DEVdelete     */ JFET2delete,
+ /* DEVsetic      */ JFET2getic,
+ /* DEVask        */ JFET2ask,
+ /* DEVmodAsk     */ JFET2mAsk,
+ /* DEVpzLoad     */ NULL, /* AN_pz */
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL, /* AN_disto */
+ /* DEVnoise      */ JFET2noise,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                        
-    DEVinstSize   : &JFET2iSize,
-    DEVmodSize    : &JFET2mSize
+ /* DEVinstSize   */ &JFET2iSize,
+ /* DEVmodSize    */ &JFET2mSize
 
 };
 

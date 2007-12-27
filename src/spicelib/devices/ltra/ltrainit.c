@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "ltraitf.h"
 #include "ltraext.h"
@@ -40,39 +40,39 @@ SPICEdev LTRAinfo = {
 	0
     },
 
-    DEVparam      : LTRAparam,
-    DEVmodParam   : LTRAmParam,
-    DEVload       : LTRAload,
-    DEVsetup      : LTRAsetup,
-    DEVunsetup    : LTRAunsetup,
-    DEVpzSetup    : LTRAsetup,
-    DEVtemperature: LTRAtemp,
-    DEVtrunc      : LTRAtrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : LTRAacLoad /*LTRAacLoad*/,
-    DEVaccept     : LTRAaccept,
-    DEVdestroy    : LTRAdestroy,
-    DEVmodDelete  : LTRAmDelete,
-    DEVdelete     : LTRAdelete,
-    DEVsetic      : NULL, 	/* getic */
-    DEVask        : LTRAask,
-    DEVmodAsk     : LTRAmAsk, 	/* */
-    DEVpzLoad     : NULL,	/* pzLoad */
-    DEVconvTest   : NULL,	/* convTest */
-    DEVsenSetup   : NULL,	/* sSetup */
-    DEVsenLoad    : NULL,	/* sLoad */
-    DEVsenUpdate  : NULL,	/* sUpdate */
-    DEVsenAcLoad  : NULL,	/* sAcLoad */
-    DEVsenPrint   : NULL,	/* sPrint */
-    DEVsenTrunc   : NULL,	/* */
-    DEVdisto      : NULL,	/* disto */
-    DEVnoise      : NULL,	/* noise */
+ /* DEVparam      */ LTRAparam,
+ /* DEVmodParam   */ LTRAmParam,
+ /* DEVload       */ LTRAload,
+ /* DEVsetup      */ LTRAsetup,
+ /* DEVunsetup    */ LTRAunsetup,
+ /* DEVpzSetup    */ LTRAsetup,
+ /* DEVtemperature*/ LTRAtemp,
+ /* DEVtrunc      */ LTRAtrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ LTRAacLoad /*LTRAacLoad*/,
+ /* DEVaccept     */ LTRAaccept,
+ /* DEVdestroy    */ LTRAdestroy,
+ /* DEVmodDelete  */ LTRAmDelete,
+ /* DEVdelete     */ LTRAdelete,
+ /* DEVsetic      */ NULL, 	/* getic */
+ /* DEVask        */ LTRAask,
+ /* DEVmodAsk     */ LTRAmAsk, 	/* */
+ /* DEVpzLoad     */ NULL,	/* pzLoad */
+ /* DEVconvTest   */ NULL,	/* convTest */
+ /* DEVsenSetup   */ NULL,	/* sSetup */
+ /* DEVsenLoad    */ NULL,	/* sLoad */
+ /* DEVsenUpdate  */ NULL,	/* sUpdate */
+ /* DEVsenAcLoad  */ NULL,	/* sAcLoad */
+ /* DEVsenPrint   */ NULL,	/* sPrint */
+ /* DEVsenTrunc   */ NULL,	/* */
+ /* DEVdisto      */ NULL,	/* disto */
+ /* DEVnoise      */ NULL,	/* noise */
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                        
-    DEVinstSize   : &LTRAiSize,
-    DEVmodSize    : &LTRAmSize
+ /* DEVinstSize   */ &LTRAiSize,
+ /* DEVmodSize    */ &LTRAmSize
 
 };
 

@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "mesaitf.h"
 #include "mesaext.h"
@@ -40,39 +40,39 @@ SPICEdev MESAinfo = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : MESAparam,
-    DEVmodParam   : MESAmParam,
-    DEVload       : MESAload,
-    DEVsetup      : MESAsetup,
-    DEVunsetup    : MESAunsetup,
-    DEVpzSetup    : MESAsetup,
-    DEVtemperature: MESAtemp,
-    DEVtrunc      : MESAtrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : MESAacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : MESAdestroy,
-    DEVmodDelete  : MESAmDelete,
-    DEVdelete     : MESAdelete,
-    DEVsetic      : MESAgetic,
-    DEVask        : MESAask,
-    DEVmodAsk     : MESAmAsk,
-    DEVpzLoad     : MESApzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : NULL,
+ /* DEVparam      */ MESAparam,
+ /* DEVmodParam   */ MESAmParam,
+ /* DEVload       */ MESAload,
+ /* DEVsetup      */ MESAsetup,
+ /* DEVunsetup    */ MESAunsetup,
+ /* DEVpzSetup    */ MESAsetup,
+ /* DEVtemperature*/ MESAtemp,
+ /* DEVtrunc      */ MESAtrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ MESAacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ MESAdestroy,
+ /* DEVmodDelete  */ MESAmDelete,
+ /* DEVdelete     */ MESAdelete,
+ /* DEVsetic      */ MESAgetic,
+ /* DEVask        */ MESAask,
+ /* DEVmodAsk     */ MESAmAsk,
+ /* DEVpzLoad     */ MESApzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ NULL,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                        
-    DEVinstSize   : &MESAiSize,
-    DEVmodSize    : &MESAmSize
+ /* DEVinstSize   */ &MESAiSize,
+ /* DEVmodSize    */ &MESAmSize
 
 };
 

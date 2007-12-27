@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "mesitf.h"
 #include "mesext.h"
@@ -40,39 +40,39 @@ SPICEdev MESinfo = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : MESparam,
-    DEVmodParam   : MESmParam,
-    DEVload       : MESload,
-    DEVsetup      : MESsetup,
-    DEVunsetup    : MESunsetup,
-    DEVpzSetup    : MESsetup,
-    DEVtemperature: MEStemp,
-    DEVtrunc      : MEStrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : MESacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : MESdestroy,
-    DEVmodDelete  : MESmDelete,
-    DEVdelete     : MESdelete,
-    DEVsetic      : MESgetic,
-    DEVask        : MESask,
-    DEVmodAsk     : MESmAsk,
-    DEVpzLoad     : MESpzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : MESdisto,
-    DEVnoise      : MESnoise,
+ /* DEVparam      */ MESparam,
+ /* DEVmodParam   */ MESmParam,
+ /* DEVload       */ MESload,
+ /* DEVsetup      */ MESsetup,
+ /* DEVunsetup    */ MESunsetup,
+ /* DEVpzSetup    */ MESsetup,
+ /* DEVtemperature*/ MEStemp,
+ /* DEVtrunc      */ MEStrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ MESacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ MESdestroy,
+ /* DEVmodDelete  */ MESmDelete,
+ /* DEVdelete     */ MESdelete,
+ /* DEVsetic      */ MESgetic,
+ /* DEVask        */ MESask,
+ /* DEVmodAsk     */ MESmAsk,
+ /* DEVpzLoad     */ MESpzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ MESdisto,
+ /* DEVnoise      */ MESnoise,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                        
-    DEVinstSize   : &MESiSize,
-    DEVmodSize    : &MESmSize
+ /* DEVinstSize   */ &MESiSize,
+ /* DEVmodSize    */ &MESmSize
 
 };
 

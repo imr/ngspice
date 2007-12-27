@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "numditf.h"
 #include "numdext.h"
@@ -40,40 +40,40 @@ SPICEdev NUMDinfo = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : NUMDparam,
-    DEVmodParam   : NUMDmParam,
-    DEVload       : NUMDload,
-    DEVsetup      : NUMDsetup,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : NUMDsetup,
-    DEVtemperature: NUMDtemp,
-    DEVtrunc      : NUMDtrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : NUMDacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : NUMDdestroy,
-    DEVmodDelete  : NUMDmDelete,
-    DEVdelete     : NUMDdelete,
-    DEVsetic      : NULL,
-    DEVask        : NUMDask,
-    DEVmodAsk     : NULL,
-    DEVpzLoad     : NUMDpzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : NULL,
+ /* DEVparam      */ NUMDparam,
+ /* DEVmodParam   */ NUMDmParam,
+ /* DEVload       */ NUMDload,
+ /* DEVsetup      */ NUMDsetup,
+ /* DEVunsetup    */ NULL,
+ /* DEVpzSetup    */ NUMDsetup,
+ /* DEVtemperature*/ NUMDtemp,
+ /* DEVtrunc      */ NUMDtrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ NUMDacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ NUMDdestroy,
+ /* DEVmodDelete  */ NUMDmDelete,
+ /* DEVdelete     */ NUMDdelete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ NUMDask,
+ /* DEVmodAsk     */ NULL,
+ /* DEVpzLoad     */ NUMDpzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ NULL,
 #ifdef CIDER
-    DEVdump	  : NUMDdump,
-    DEVacct       : NUMDacct,
+ /* DEVdump	  */ NUMDdump,
+ /* DEVacct       */ NUMDacct,
 #endif
                     
-    DEVinstSize   : &NUMDiSize,
-    DEVmodSize    : &NUMDmSize
+ /* DEVinstSize   */ &NUMDiSize,
+ /* DEVmodSize    */ &NUMDmSize
 
 };
 

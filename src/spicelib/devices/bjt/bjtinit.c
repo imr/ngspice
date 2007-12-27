@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "bjtitf.h"
 #include "bjtext.h"
@@ -40,39 +40,39 @@ SPICEdev BJTinfo = {                  /* description from struct IFdevice  */
       DEV_DEFAULT                     /*  int flags                */
     },
     
-    DEVparam      : BJTparam,
-    DEVmodParam   : BJTmParam,
-    DEVload       : BJTload,
-    DEVsetup      : BJTsetup,
-    DEVunsetup    : BJTunsetup,
-    DEVpzSetup    : BJTsetup,
-    DEVtemperature: BJTtemp,
-    DEVtrunc      : BJTtrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : BJTacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : BJTdestroy,
-    DEVmodDelete  : BJTmDelete,
-    DEVdelete     : BJTdelete,
-    DEVsetic      : BJTgetic,
-    DEVask        : BJTask,
-    DEVmodAsk     : BJTmAsk,
-    DEVpzLoad     : BJTpzLoad,
-    DEVconvTest   : BJTconvTest,
-    DEVsenSetup   : BJTsSetup,
-    DEVsenLoad    : BJTsLoad,
-    DEVsenUpdate  : BJTsUpdate,
-    DEVsenAcLoad  : BJTsAcLoad,
-    DEVsenPrint   : BJTsPrint,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : BJTdisto,
-    DEVnoise      : BJTnoise,
+ /* DEVparam      */ BJTparam,
+ /* DEVmodParam   */ BJTmParam,
+ /* DEVload       */ BJTload,
+ /* DEVsetup      */ BJTsetup,
+ /* DEVunsetup    */ BJTunsetup,
+ /* DEVpzSetup    */ BJTsetup,
+ /* DEVtemperature*/ BJTtemp,
+ /* DEVtrunc      */ BJTtrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ BJTacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ BJTdestroy,
+ /* DEVmodDelete  */ BJTmDelete,
+ /* DEVdelete     */ BJTdelete,
+ /* DEVsetic      */ BJTgetic,
+ /* DEVask        */ BJTask,
+ /* DEVmodAsk     */ BJTmAsk,
+ /* DEVpzLoad     */ BJTpzLoad,
+ /* DEVconvTest   */ BJTconvTest,
+ /* DEVsenSetup   */ BJTsSetup,
+ /* DEVsenLoad    */ BJTsLoad,
+ /* DEVsenUpdate  */ BJTsUpdate,
+ /* DEVsenAcLoad  */ BJTsAcLoad,
+ /* DEVsenPrint   */ BJTsPrint,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ BJTdisto,
+ /* DEVnoise      */ BJTnoise,
 #ifdef CIDER
-    DEVdump	  : NULL,
-    DEVacct       : NULL,
+ /* DEVdump	  */ NULL,
+ /* DEVacct       */ NULL,
 #endif                     
-    DEVinstSize   : &BJTiSize,
-    DEVmodSize    : &BJTmSize
+ /* DEVinstSize   */ &BJTiSize,
+ /* DEVmodSize    */ &BJTmSize
 
 };
 

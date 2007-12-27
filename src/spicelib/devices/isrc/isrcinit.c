@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "isrcitf.h"
 #include "isrcext.h"
@@ -40,39 +40,39 @@ SPICEdev ISRCinfo = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : ISRCparam,
-    DEVmodParam   : NULL,
-    DEVload       : ISRCload,
-    DEVsetup      : NULL,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : NULL,
-    DEVtemperature: ISRCtemp,
-    DEVtrunc      : NULL,
-    DEVfindBranch : NULL,
-    DEVacLoad     : ISRCacLoad,
-    DEVaccept     : ISRCaccept,
-    DEVdestroy    : ISRCdestroy,
-    DEVmodDelete  : ISRCmDelete,
-    DEVdelete     : ISRCdelete,
-    DEVsetic      : NULL,
-    DEVask        : ISRCask,
-    DEVmodAsk     : NULL,
-    DEVpzLoad     : NULL,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,	/* DISTO */
-    DEVnoise      : NULL,	/* NOISE */
+ /* DEVparam      */ ISRCparam,
+ /* DEVmodParam   */ NULL,
+ /* DEVload       */ ISRCload,
+ /* DEVsetup      */ NULL,
+ /* DEVunsetup    */ NULL,
+ /* DEVpzSetup    */ NULL,
+ /* DEVtemperature*/ ISRCtemp,
+ /* DEVtrunc      */ NULL,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ ISRCacLoad,
+ /* DEVaccept     */ ISRCaccept,
+ /* DEVdestroy    */ ISRCdestroy,
+ /* DEVmodDelete  */ ISRCmDelete,
+ /* DEVdelete     */ ISRCdelete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ ISRCask,
+ /* DEVmodAsk     */ NULL,
+ /* DEVpzLoad     */ NULL,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,	/* DISTO */
+ /* DEVnoise      */ NULL,	/* NOISE */
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                        
-    DEVinstSize   : &ISRCiSize,
-    DEVmodSize    : &ISRCmSize
+ /* DEVinstSize   */ &ISRCiSize,
+ /* DEVmodSize    */ &ISRCmSize
 };
 
 

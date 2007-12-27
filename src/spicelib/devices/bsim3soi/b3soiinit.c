@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "b3soiitf.h"
 #include "b3soiext.h"
@@ -39,39 +39,39 @@ SPICEdev B3SOIinfo = {
 	
     },
 
-    DEVparam      : B3SOIparam,
-    DEVmodParam   : B3SOImParam,
-    DEVload       : B3SOIload,
-    DEVsetup      : B3SOIsetup,
-    DEVunsetup    : B3SOIunsetup,
-    DEVpzSetup    : B3SOIsetup,
-    DEVtemperature: B3SOItemp,
-    DEVtrunc      : B3SOItrunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : B3SOIacLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : B3SOIdestroy,
-    DEVmodDelete  : B3SOImDelete,
-    DEVdelete     : B3SOIdelete, 
-    DEVsetic      : B3SOIgetic,
-    DEVask        : B3SOIask,
-    DEVmodAsk     : B3SOImAsk,
-    DEVpzLoad     : B3SOIpzLoad,
-    DEVconvTest   : B3SOIconvTest,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : B3SOInoise,
+ /* DEVparam      */ B3SOIparam,
+ /* DEVmodParam   */ B3SOImParam,
+ /* DEVload       */ B3SOIload,
+ /* DEVsetup      */ B3SOIsetup,
+ /* DEVunsetup    */ B3SOIunsetup,
+ /* DEVpzSetup    */ B3SOIsetup,
+ /* DEVtemperature*/ B3SOItemp,
+ /* DEVtrunc      */ B3SOItrunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ B3SOIacLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ B3SOIdestroy,
+ /* DEVmodDelete  */ B3SOImDelete,
+ /* DEVdelete     */ B3SOIdelete, 
+ /* DEVsetic      */ B3SOIgetic,
+ /* DEVask        */ B3SOIask,
+ /* DEVmodAsk     */ B3SOImAsk,
+ /* DEVpzLoad     */ B3SOIpzLoad,
+ /* DEVconvTest   */ B3SOIconvTest,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ B3SOInoise,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif
-    DEVinstSize   : &B3SOIiSize,
-    DEVmodSize    : &B3SOImSize
+ /* DEVinstSize   */ &B3SOIiSize,
+ /* DEVmodSize    */ &B3SOImSize
 };
 
 SPICEdev *

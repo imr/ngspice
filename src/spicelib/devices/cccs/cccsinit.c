@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "cccsitf.h"
 #include "cccsext.h"
@@ -39,39 +39,39 @@ SPICEdev CCCSinfo = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : CCCSparam,
-    DEVmodParam   : NULL,
-    DEVload       : CCCSload,
-    DEVsetup      : CCCSsetup,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : CCCSsetup,
-    DEVtemperature: NULL,
-    DEVtrunc      : NULL,
-    DEVfindBranch : NULL,
-    DEVacLoad     : CCCSload,
-    DEVaccept     : NULL,
-    DEVdestroy    : CCCSdestroy,
-    DEVmodDelete  : CCCSmDelete,
-    DEVdelete     : CCCSdelete,
-    DEVsetic      : NULL,
-    DEVask        : CCCSask,
-    DEVmodAsk     : NULL,
-    DEVpzLoad     : CCCSpzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : CCCSsSetup,
-    DEVsenLoad    : CCCSsLoad,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : CCCSsAcLoad,
-    DEVsenPrint   : CCCSsPrint,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,	/* DISTO */
-    DEVnoise      : NULL,	/* NOISE */
+ /* DEVparam      */ CCCSparam,
+ /* DEVmodParam   */ NULL,
+ /* DEVload       */ CCCSload,
+ /* DEVsetup      */ CCCSsetup,
+ /* DEVunsetup    */ NULL,
+ /* DEVpzSetup    */ CCCSsetup,
+ /* DEVtemperature*/ NULL,
+ /* DEVtrunc      */ NULL,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ CCCSload,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ CCCSdestroy,
+ /* DEVmodDelete  */ CCCSmDelete,
+ /* DEVdelete     */ CCCSdelete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ CCCSask,
+ /* DEVmodAsk     */ NULL,
+ /* DEVpzLoad     */ CCCSpzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ CCCSsSetup,
+ /* DEVsenLoad    */ CCCSsLoad,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ CCCSsAcLoad,
+ /* DEVsenPrint   */ CCCSsPrint,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,	/* DISTO */
+ /* DEVnoise      */ NULL,	/* NOISE */
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif    
-    DEVinstSize   : &CCCSiSize,
-    DEVmodSize    : &CCCSmSize
+ /* DEVinstSize   */ &CCCSiSize,
+ /* DEVmodSize    */ &CCCSmSize
 
 };
 

@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "hfet2itf.h"
 #include "hfet2ext.h"
@@ -40,39 +40,39 @@ SPICEdev HFET2info = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : HFET2param,
-    DEVmodParam   : HFET2mParam,
-    DEVload       : HFET2load,
-    DEVsetup      : HFET2setup,
-    DEVunsetup    : HFET2unsetup,
-    DEVpzSetup    : HFET2setup,
-    DEVtemperature: HFET2temp,
-    DEVtrunc      : HFET2trunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : HFET2acLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : HFET2destroy,
-    DEVmodDelete  : HFET2mDelete,
-    DEVdelete     : HFET2delete,
-    DEVsetic      : HFET2getic,
-    DEVask        : HFET2ask,
-    DEVmodAsk     : HFET2mAsk,
-    DEVpzLoad     : HFET2pzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : NULL,
+ /* DEVparam      */ HFET2param,
+ /* DEVmodParam   */ HFET2mParam,
+ /* DEVload       */ HFET2load,
+ /* DEVsetup      */ HFET2setup,
+ /* DEVunsetup    */ HFET2unsetup,
+ /* DEVpzSetup    */ HFET2setup,
+ /* DEVtemperature*/ HFET2temp,
+ /* DEVtrunc      */ HFET2trunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ HFET2acLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ HFET2destroy,
+ /* DEVmodDelete  */ HFET2mDelete,
+ /* DEVdelete     */ HFET2delete,
+ /* DEVsetic      */ HFET2getic,
+ /* DEVask        */ HFET2ask,
+ /* DEVmodAsk     */ HFET2mAsk,
+ /* DEVpzLoad     */ HFET2pzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ NULL,
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif    
-    DEVinstSize   : &HFET2iSize,
-    DEVmodSize    : &HFET2mSize
+ /* DEVinstSize   */ &HFET2iSize,
+ /* DEVmodSize    */ &HFET2mSize
 
 };
 

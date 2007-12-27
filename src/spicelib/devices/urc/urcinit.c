@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "urcitf.h"
 #include "urcext.h"
@@ -40,39 +40,39 @@ SPICEdev URCinfo = {
 	0
     },
 
-    DEVparam      : URCparam,
-    DEVmodParam   : URCmParam,
-    DEVload       : NULL,
-    DEVsetup      : URCsetup,
-    DEVunsetup    : URCunsetup,
-    DEVpzSetup    : URCsetup,
-    DEVtemperature: NULL,
-    DEVtrunc      : NULL,
-    DEVfindBranch : NULL,
-    DEVacLoad     : NULL,
-    DEVaccept     : NULL,
-    DEVdestroy    : URCdestroy,
-    DEVmodDelete  : URCmDelete,
-    DEVdelete     : URCdelete,
-    DEVsetic      : NULL,
-    DEVask        : URCask,
-    DEVmodAsk     : URCmAsk,
-    DEVpzLoad     : NULL,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,	/* DISTO */
-    DEVnoise      : NULL,	/* NOISE */
+ /* DEVparam      */ URCparam,
+ /* DEVmodParam   */ URCmParam,
+ /* DEVload       */ NULL,
+ /* DEVsetup      */ URCsetup,
+ /* DEVunsetup    */ URCunsetup,
+ /* DEVpzSetup    */ URCsetup,
+ /* DEVtemperature*/ NULL,
+ /* DEVtrunc      */ NULL,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ NULL,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ URCdestroy,
+ /* DEVmodDelete  */ URCmDelete,
+ /* DEVdelete     */ URCdelete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ URCask,
+ /* DEVmodAsk     */ URCmAsk,
+ /* DEVpzLoad     */ NULL,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,	/* DISTO */
+ /* DEVnoise      */ NULL,	/* NOISE */
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                        
-    DEVinstSize   : &URCiSize,
-    DEVmodSize    : &URCmSize
+ /* DEVinstSize   */ &URCiSize,
+ /* DEVmodSize    */ &URCmSize
 
 };
 

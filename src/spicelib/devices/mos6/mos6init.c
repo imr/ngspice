@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "mos6itf.h"
 #include "mos6ext.h"
@@ -40,39 +40,39 @@ SPICEdev MOS6info = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : MOS6param,
-    DEVmodParam   : MOS6mParam,
-    DEVload       : MOS6load,
-    DEVsetup      : MOS6setup,
-    DEVunsetup    : MOS6unsetup,
-    DEVpzSetup    : NULL, /* PZsetup routine */
-    DEVtemperature: MOS6temp,
-    DEVtrunc      : MOS6trunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : NULL, /* MOS6acLoad, XXX */
-    DEVaccept     : NULL,
-    DEVdestroy    : MOS6destroy,
-    DEVmodDelete  : NULL,
-    DEVdelete     : NULL,
-    DEVsetic      : MOS6getic,
-    DEVask        : MOS6ask,
-    DEVmodAsk     : MOS6mAsk,
-    DEVpzLoad     : NULL, /*MOS6pzLoad, XXX */
-    DEVconvTest   : MOS6convTest,
-    DEVsenSetup   : NULL /* MOS6sSetup */,
-    DEVsenLoad    : NULL /* MOS6sLoad */,
-    DEVsenUpdate  : NULL /* MOS6sUpdate */,
-    DEVsenAcLoad  : NULL /* MOS6sAcLoad */,
-    DEVsenPrint   : NULL /* MOS6sPrint */,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL, /* Distortion routine */
-    DEVnoise      : NULL, /* Noise routine */
+ /* DEVparam      */ MOS6param,
+ /* DEVmodParam   */ MOS6mParam,
+ /* DEVload       */ MOS6load,
+ /* DEVsetup      */ MOS6setup,
+ /* DEVunsetup    */ MOS6unsetup,
+ /* DEVpzSetup    */ NULL, /* PZsetup routine */
+ /* DEVtemperature*/ MOS6temp,
+ /* DEVtrunc      */ MOS6trunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ NULL, /* MOS6acLoad, XXX */
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ MOS6destroy,
+ /* DEVmodDelete  */ NULL,
+ /* DEVdelete     */ NULL,
+ /* DEVsetic      */ MOS6getic,
+ /* DEVask        */ MOS6ask,
+ /* DEVmodAsk     */ MOS6mAsk,
+ /* DEVpzLoad     */ NULL, /*MOS6pzLoad, XXX */
+ /* DEVconvTest   */ MOS6convTest,
+ /* DEVsenSetup   */ NULL /* MOS6sSetup */,
+ /* DEVsenLoad    */ NULL /* MOS6sLoad */,
+ /* DEVsenUpdate  */ NULL /* MOS6sUpdate */,
+ /* DEVsenAcLoad  */ NULL /* MOS6sAcLoad */,
+ /* DEVsenPrint   */ NULL /* MOS6sPrint */,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL, /* Distortion routine */
+ /* DEVnoise      */ NULL, /* Noise routine */
 #ifdef CIDER
-    DEVdump       : NULL,
-    DEVacct       : NULL,
+ /* DEVdump       */ NULL,
+ /* DEVacct       */ NULL,
 #endif                        
-    DEVinstSize   : &MOS6iSize,
-    DEVmodSize    : &MOS6mSize
+ /* DEVinstSize   */ &MOS6iSize,
+ /* DEVmodSize    */ &MOS6mSize
 };
 
 

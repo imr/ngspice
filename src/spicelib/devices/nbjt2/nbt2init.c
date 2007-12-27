@@ -1,6 +1,6 @@
-#include <config.h>
+#include "config.h"
 
-#include <devdefs.h>
+#include "devdefs.h"
 
 #include "nbjt2itf.h"
 #include "nbjt2ext.h"
@@ -40,40 +40,40 @@ SPICEdev NBJT2info = {
 	DEV_DEFAULT
     },
 
-    DEVparam      : NBJT2param,
-    DEVmodParam   : NBJT2mParam,
-    DEVload       : NBJT2load,
-    DEVsetup      : NBJT2setup,
-    DEVunsetup    : NULL,
-    DEVpzSetup    : NBJT2setup,
-    DEVtemperature: NBJT2temp,
-    DEVtrunc      : NBJT2trunc,
-    DEVfindBranch : NULL,
-    DEVacLoad     : NBJT2acLoad,
-    DEVaccept     : NULL,
-    DEVdestroy    : NBJT2destroy,
-    DEVmodDelete  : NBJT2mDelete,
-    DEVdelete     : NBJT2delete,
-    DEVsetic      : NULL,
-    DEVask        : NBJT2ask,
-    DEVmodAsk     : NULL,
-    DEVpzLoad     : NBJT2pzLoad,
-    DEVconvTest   : NULL,
-    DEVsenSetup   : NULL,
-    DEVsenLoad    : NULL,
-    DEVsenUpdate  : NULL,
-    DEVsenAcLoad  : NULL,
-    DEVsenPrint   : NULL,
-    DEVsenTrunc   : NULL,
-    DEVdisto      : NULL,
-    DEVnoise      : NULL,
+ /* DEVparam      */ NBJT2param,
+ /* DEVmodParam   */ NBJT2mParam,
+ /* DEVload       */ NBJT2load,
+ /* DEVsetup      */ NBJT2setup,
+ /* DEVunsetup    */ NULL,
+ /* DEVpzSetup    */ NBJT2setup,
+ /* DEVtemperature*/ NBJT2temp,
+ /* DEVtrunc      */ NBJT2trunc,
+ /* DEVfindBranch */ NULL,
+ /* DEVacLoad     */ NBJT2acLoad,
+ /* DEVaccept     */ NULL,
+ /* DEVdestroy    */ NBJT2destroy,
+ /* DEVmodDelete  */ NBJT2mDelete,
+ /* DEVdelete     */ NBJT2delete,
+ /* DEVsetic      */ NULL,
+ /* DEVask        */ NBJT2ask,
+ /* DEVmodAsk     */ NULL,
+ /* DEVpzLoad     */ NBJT2pzLoad,
+ /* DEVconvTest   */ NULL,
+ /* DEVsenSetup   */ NULL,
+ /* DEVsenLoad    */ NULL,
+ /* DEVsenUpdate  */ NULL,
+ /* DEVsenAcLoad  */ NULL,
+ /* DEVsenPrint   */ NULL,
+ /* DEVsenTrunc   */ NULL,
+ /* DEVdisto      */ NULL,
+ /* DEVnoise      */ NULL,
 #ifdef CIDER
-    DEVdump       : NBJT2dump,
-    DEVacct       : NBJT2acct,
+ /* DEVdump       */ NBJT2dump,
+ /* DEVacct       */ NBJT2acct,
 #endif  
                     
-    DEVinstSize   : &NBJT2iSize,
-    DEVmodSize    : &NBJT2mSize
+ /* DEVinstSize   */ &NBJT2iSize,
+ /* DEVmodSize    */ &NBJT2mSize
 
 };
 
