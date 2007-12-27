@@ -11,17 +11,18 @@ $Id$
 #include "ngspice.h"
 #include "missing_math.h"
 
+
 /* Initial AlmostEqualULPs version - fast and simple, but */
 /* some limitations. */
-bool AlmostEqualUlps(double A, double B, long int maxUlps)
+bool AlmostEqualUlps(float A, float B, int maxUlps)
 {
-    long int intDiff;
-    assert(sizeof(double) == sizeof(long int));
+    int intDiff;
+    assert(sizeof(float) == sizeof(int));
 
     if (A == B)
         return TRUE;
 
-    intDiff = abs(*(long int*)&A - *(long int*)&B);
+    intDiff = abs(*(int*)&A - *(int*)&B);
 
     if (intDiff <= maxUlps)
         return TRUE;

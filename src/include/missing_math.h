@@ -8,7 +8,7 @@ Copyright 1999 Emmanuel Rouat
 #ifndef MISSING_MATH_H_INCLUDED
 #define MISSING_MATH_H_INCLUDED
 
-bool AlmostEqualUlps(double, double, long int);
+bool AlmostEqualUlps(float, float, int);
 
 #ifndef HAVE_ERFC
 extern double erfc(double);
