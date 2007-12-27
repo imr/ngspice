@@ -5,8 +5,6 @@
  */
 
 #include <stdio.h>		/* for function message() only. */
-#include <math.h>
-#include <string.h>
 
 #include "general.h"
 #include "numparam.h"
@@ -111,7 +109,7 @@ mathfunction (int f, double z, double x)
   return y;
 }
 
-typedef enum {Defd=12} _nDefd;
+typedef enum {Defd=15} _nDefd;
 /* serial numb. of 'defined' keyword. The others are not used (yet) */
      static unsigned char message (tdico * dic, char *s)
 /* record 'dic' should know about source file and line */
@@ -369,7 +367,7 @@ define (tdico * dico, char *t,	/* identifier to define */
 	char op,		/* option */
 	char tpe,		/* type marker */
 	double z,		/* float value if any */
-	unsigned short w,	/* integer value if any */
+	int w,			/* integer value if any */
 	char *base)		/* string pointer if any */
 {
 /*define t as real or integer, 
@@ -430,7 +428,7 @@ define (tdico * dico, char *t,	/* identifier to define */
 }
 
 unsigned char
-defsubckt (tdico * dico, char *s, unsigned short w, char categ)
+defsubckt (tdico * dico, char *s, int w, char categ)
 /* called on 1st pass of spice source code, 
    to enter subcircuit (categ=U) and model (categ=O) names 
 */
@@ -1570,25 +1568,62 @@ compactfloatnb (char *v)
 /* erase superfluous 000 digit streams before E */
 /* bug: truncating, no rounding */
 {
-  int n, k, lex;
+  int n, k, m, lex, lem;
   Str (20, expo);
-  n = cpos ('E', v);		/* if too long, try to delete digits */
+  Str (10, expn);
+  n = cpos ('E', v);            /* if too long, try to delete digits */
+  if (n==0) n = cpos ('e', v);
 
-  if (n > 3)
-    {
-      pscopy (expo, v, n, length (v));
-      lex = length (expo);
-      k = n - 2;		/* mantissa is 0...k */
-
-      while ((v[k] == '0') && (v[k - 1] == '0'))
-	k--;
-
-      if ((k + 1 + lex) > 17)
-	  k = 17 - lex;
-
-      pscopy (v, v, 1, k + 1);
-      sadd (v, expo);
+  if (n > 0) {
+    pscopy (expo, v, n, length (v));
+    lex = length (expo);
+    if (lex > 4) {            /* exponent only 2 digits */
+      pscopy (expn, expo, 2, 4);
+      if (atoi(expn) < -99) scopy(expo, "e-099"); /* brutal */
+      if (atoi(expn) > +99) scopy(expo, "e+099");
+      expo[2] = expo[3];
+      expo[3] = expo[4];
+      expo[4] = '\0';
+      lex = 4;
     }
+    k = n - 1;                /* mantissa is 0...k */
+
+    m = 17;
+    while (v[m] != ' ')
+      m--;
+    m++;
+    while ((v[k] == '0') && (v[k - 1] == '0'))
+      k--;
+
+    lem = k - m;
+
+    if ((lem + lex) > 10)
+      lem = 10 - lex;
+
+    pscopy (v, v, m+1, lem);      
+    if (cpos('.', v) > 0) {
+      while (lem < 6) {
+        cadd(v, '0');
+        lem++;
+      }
+    } else {
+      cadd(v, '.');
+      lem++;
+      while (lem < 6) {
+        cadd(v, '0');
+        lem++;
+      }
+    }
+    sadd (v, expo);
+  } else {
+    m = 0;
+    while (v[m] == ' ')
+      m++;
+
+    lem = length(v) - m;
+    if (lem > 10) lem = 10;
+    pscopy (v, v, m+1, lem);      
+  }
 }
 
 static int
@@ -1644,7 +1679,7 @@ insertnumber (tdico * dico, int i, char *s, char *u)
   if (found)
     {				/* substitute at i-1 */
       i--;
-      for (k = 0; k < 17; k++)
+      for (k = 0; k < 11; k++)
 	s[i + k] = v[k];
 
       i = i + 17;
@@ -1896,7 +1931,7 @@ nupa_assignment (tdico * dico, char *s, char mode)
   unsigned char key;
   unsigned char error, err;
   char dtype;
-  unsigned short wval = 0;
+  int wval = 0;
   double rval = 0.0;
   ls = length (s);
   error = 0;
