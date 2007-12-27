@@ -162,7 +162,8 @@ putline(char *s)
 static int
 putstuff(toplink *tl, int base)
 {
-    int maxwidth = 0, ncols, nrows, nbuts = 0, i, j, k;
+    unsigned int maxwidth = 0;
+    int ncols, nrows, nbuts = 0, i, j, k;
     toplink *tt;
 
     for (tt = tl; tt; tt = tt->next) {
