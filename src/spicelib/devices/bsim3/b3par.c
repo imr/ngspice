@@ -16,17 +16,14 @@
 #include "fteext.h"
 
 int
-BSIM3param(param,value,inst,select)
-int param;
-IFvalue *value;
-GENinstance *inst;
-IFvalue *select;
+BSIM3param (int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     double scale;
 
+    BSIM3instance *here = (BSIM3instance*)inst;
+
     if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
 
-    BSIM3instance *here = (BSIM3instance*)inst;
     switch(param) 
     {   case BSIM3_W:
             here->BSIM3w = value->rValue*scale;

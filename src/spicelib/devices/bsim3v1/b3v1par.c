@@ -22,9 +22,10 @@ BSIM3v1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     double scale;
 
+    BSIM3v1instance *here = (BSIM3v1instance*)inst;
+
     if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
 
-    BSIM3v1instance *here = (BSIM3v1instance*)inst;
     switch(param) 
     {   case BSIM3v1_W:
             here->BSIM3v1w = value->rValue*scale;

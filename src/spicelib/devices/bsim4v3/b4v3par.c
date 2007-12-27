@@ -26,9 +26,10 @@ IFvalue *select;
 {
     double scale;
 
+    BSIM4v3instance *here = (BSIM4v3instance*)inst;
+
     if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
 
-    BSIM4v3instance *here = (BSIM4v3instance*)inst;
     switch(param) 
     {   case BSIM4v3_W:
             here->BSIM4v3w = value->rValue*scale;
