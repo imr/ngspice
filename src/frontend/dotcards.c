@@ -507,7 +507,7 @@ gettoks(char *s)
     list = NULL;
     prevp = &list;
 
-    s = stripWhiteSpacesInsideParens(s);
+    if (strstr( s, "(" )) s = stripWhiteSpacesInsideParens(s);
     while ((t = gettok(&s))) {
 	if (*t == '(')
 	    continue;
