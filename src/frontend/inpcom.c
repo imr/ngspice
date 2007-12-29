@@ -50,6 +50,7 @@ Author: 1985 Wayne A. Christopher
 #include "inpcom.h"
 #include "variable.h"
 #include "../misc/util.h" /* dirname() */
+#include "../misc/stringutil.h" /* gettok_instance() */
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include new stuff */
@@ -80,7 +81,7 @@ static int  num_parameters[1000];
 /* static declarations */
 static char * readline(FILE *fd);
 static bool is_arith_char(char c);
-static int  get_number_terminals( char c );
+static int  get_number_terminals( char *c );
 static void inp_stripcomments_deck(struct line *deck);
 static void inp_stripcomments_line(char * s);
 static void inp_fix_for_numparam(struct line *deck);
@@ -657,7 +658,7 @@ get_subckts_for_subckt( struct line *start_card, char *subckt_name,
 	else  tfree( model_name );
       }
       else if ( has_models ) {
-	num_terminals = get_number_terminals( *line );
+	num_terminals = get_number_terminals( line );
 
 	if ( num_terminals != 0 ) {
 	  model_name = get_model_name( line, num_terminals );
@@ -757,7 +758,7 @@ comment_out_unused_subckt_models( struct line *start_card )
 	else  tfree( model_name );
       }
       else if ( has_models ) {
-	num_terminals = get_number_terminals( *line );
+	num_terminals = get_number_terminals( line );
 
 	if ( num_terminals != 0 ) {
 	  model_name = get_model_name( line, num_terminals );
@@ -2543,7 +2544,8 @@ inp_fix_param_values( struct line *deck )
 
     if ( ciprefix( ".control", line ) ) { control_section = TRUE;  c = c->li_next; continue; }
     if ( ciprefix( ".endc", line ) )    { control_section = FALSE; c = c->li_next; continue; }
-    if ( control_section || ciprefix( ".option", line ) ) { c = c->li_next; continue; }
+    if ( control_section || ciprefix( ".option", line ) ) { c = c->li_next; continue; } /* no handling of params in "option" lines */
+    if ( ciprefix( "set", line ) ) { c = c->li_next; continue; } /* no handling of params in "set" lines */
 
     if ( *line == 'b' ) { c = c->li_next; continue; }
     while ( ( equal_ptr = strstr( line, "=" ) ) ) {
@@ -2659,9 +2661,13 @@ inp_get_param_level( int param_num, char *depends_on[12000][100], char *param_na
 }
 
 static int
-get_number_terminals( char c )
+get_number_terminals( char *c )
 {
-  switch (c) {
+  int i, j, k;
+  char *name[10];
+  bool area_found = FALSE;
+
+  switch (*c) {
   case 'r': case 'c': case 'l': case 'k': case 'f': case 'h': case 'b':
   case 'v': case 'i': case 'w': case 'd':
     return 2;
@@ -2669,8 +2675,26 @@ get_number_terminals( char c )
   case 'u': case 'j': case 'z':
     return 3;
     break;
-  case 't': case 'o': case 'g': case 'e': case 's': case 'q': case 'm':
+  case 't': case 'o': case 'g': case 'e': case 's': case 'm':
     return 4;
+    break;
+  case 'q': /* recognition of 3/4 terminal bjt's needed */
+    i = j = 0;
+    while ( (i < 10) && (*c != '\0') ) {
+      name[i] = gettok_instance(&c);
+      if (strstr(name[i], "off") || strstr(name[i], "=")) j++;
+      i++;
+    }
+    i--;
+    area_found = FALSE;
+    for (k = i; k > i-j-1; k--) {
+      if (isdigit(*name[k])) area_found = TRUE;
+    }
+    if (area_found) {
+        return i-j-2;
+    } else {
+        return i-j-1;
+    }
     break;
   default:
     return 0;
@@ -2781,7 +2805,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
       if ( ciprefix( ".endc", curr_line ) ) { in_control = FALSE; ptr = ptr->li_next; continue; }
       if ( in_control || curr_line[0] == '.' || curr_line[0] == '*' ) { ptr = ptr->li_next; continue; }
 
-      num_terminals = get_number_terminals( curr_line[0] );
+      num_terminals = get_number_terminals( curr_line );
 
       if ( num_terminals == 0 ) { ptr = ptr->li_next; continue; }
 

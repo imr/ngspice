@@ -1,3 +1,11 @@
+2007-12-29 Dietmar Warning
+ * src/frontend/inpcom.c: 3/4 terminal recognition for bjt's
+ * src/misc/string.c, stringutil.h: token function for bjt instance
+
+2007-12-29 Holger Vogt
+ * src/frontend/runcoms.c, runcoms2.c: backup the filetype problem if set in spinit
+ * src/frontend/inpcom.c: no param handling for "set" commands
+
 2007-12-27 Dietmar Warning
  * src/spicelib/devices/*/*init.c: No usage of C99 Designated Initializers
  * src/spicelib/devices/*/*par.c: only formatting issues
