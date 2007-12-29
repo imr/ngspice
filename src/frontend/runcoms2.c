@@ -82,10 +82,10 @@ com_resume(wordlist *wl)
       dofile = TRUE;
     
     if (cp_getvar("filetype", VT_STRING, buf)) {
-      if (eq(buf, "binary") || eq(buf, "{binary}"))
+      if (eq(buf, "binary"))
 	ascii = FALSE;
-      else if (eq(buf, "ascii") || eq(buf, "{ascii}"))
-	    ascii = TRUE;
+      else if (eq(buf, "ascii"))
+	ascii = TRUE;
       else
 	fprintf(cp_err,
 		"Warning: strange file type \"%s\" (using \"ascii\")\n",
