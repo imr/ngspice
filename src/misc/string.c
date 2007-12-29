@@ -264,6 +264,35 @@ gettok_noparens(char **s)
     return (copy(buf));
 }
 
+char *
+gettok_instance(char **s)
+{
+    char buf[BSIZE_SP];
+    int i = 0;
+    char c;
+
+    while ( isspace(**s) )
+        (*s)++;   /* iterate over whitespace */
+
+    if (!**s)
+        return (NULL);  /* return NULL if we come to end of line */
+
+    while ((c = **s) && 
+         !isspace(c) && 
+         ( **s != '(' ) &&
+         ( **s != ')' )
+        )  {
+        buf[i++] = *(*s)++;
+    }
+    buf[i] = '\0';
+
+    /* Now iterate up to next non-whitespace char */
+    while ( isspace(**s) )
+        (*s)++;  
+
+    return (copy(buf));
+}
+
 /*-------------------------------------------------------------------------*
  * gettok_node was added by SDB on 12.3.2003
  * It acts like gettok, except that it treats parens and commas like

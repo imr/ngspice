@@ -18,6 +18,8 @@ int ciprefix(register char *p, register char *s);
 void strtolower(char *str);
 char * stripWhiteSpacesInsideParens(char *str);
 char * gettok(char **s);
+char * gettok_instance(char **);
+
 
 #ifdef CIDER
 /* cider integration */ 
