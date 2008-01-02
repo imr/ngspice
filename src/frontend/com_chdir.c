@@ -3,10 +3,9 @@
 * $Id$
 ************/
 
-#include <config.h>
-#include <ngspice.h>
+#include "ngspice.h"
 
-#include <wordlist.h>
+#include "wordlist.h"
 
 #ifdef HAVE_PWD_H
 #include <pwd.h>
@@ -24,7 +23,9 @@ com_chdir(wordlist *wl)
 #ifdef HAVE_PWD_H
     struct passwd *pw;
 #endif
+#ifdef HAVE_GETCWD
     char localbuf[257];
+#endif
     int copied = 0;
 
     s = NULL;
@@ -50,8 +51,8 @@ com_chdir(wordlist *wl)
 
 
     if (s != NULL)
-       if (chdir(s) == -1)
-           perror(s);
+        if (chdir(s) == -1)
+            perror(s);
 
     if (copied)
 	tfree(s);
