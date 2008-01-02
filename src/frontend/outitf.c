@@ -26,9 +26,8 @@ $Id$
 #include "outitf.h"
 #include "variable.h"
 #include <fcntl.h>
-#include <time.h>
 #include "cktdefs.h"
-#include <inpdefs.h>
+#include "inpdefs.h"
 #include "breakp2.h"
 #include "runcoms.h"
 #include "plotting/graf.h"
@@ -738,16 +737,12 @@ static void
 fileInit_pass2(runDesc *run)
 {
     int i, type;
-    char *name, buf[BSIZE_SP], *branch;
+    char *name, *branch;
 
     for (i = 0; i < run->numData; i++) {
-       
-        if (isdigit(*run->data[i].name)) {
-        (void) sprintf(buf, "v(%s)", run->data[i].name);
-          name = buf;
-        } else {
-          name = run->data[i].name;
-        }
+
+        name = run->data[i].name;
+
         if (substring("#branch", name))
             type = SV_CURRENT;
         else if (cieq(name, "time"))
@@ -761,18 +756,18 @@ fileInit_pass2(runDesc *run)
         else
             type = SV_VOLTAGE;
  
-	if ( type == SV_CURRENT ) {
-	  branch = NULL;
-	  if ( (branch = strstr( name, "#branch" )) ) {
-	    *branch = '\0';
-	  }
-	  fprintf(run->fp, "\t%d\ti(%s)\t%s", i, name, ft_typenames(type));
-	  if ( branch != NULL ) *branch = '#';
-	} else if ( type == SV_VOLTAGE ) {
-	  fprintf(run->fp, "\t%d\tv(%s)\t%s", i, name, ft_typenames(type));
-	} else {
-	  fprintf(run->fp, "\t%d\t%s\t%s", i, name, ft_typenames(type));
-	}
+        if ( type == SV_CURRENT ) {
+          branch = NULL;
+          if ( (branch = strstr( name, "#branch" )) ) {
+            *branch = '\0';
+          }
+          fprintf(run->fp, "\t%d\ti(%s)\t%s", i, name, ft_typenames(type));
+          if ( branch != NULL ) *branch = '#';
+        } else if ( type == SV_VOLTAGE ) {
+          fprintf(run->fp, "\t%d\tv(%s)\t%s", i, name, ft_typenames(type));
+        } else {
+          fprintf(run->fp, "\t%d\t%s\t%s", i, name, ft_typenames(type));
+        }
         if (run->data[i].gtype == GRID_XLOG)
             fprintf(run->fp, "\tgrid=3");
         fprintf(run->fp, "\n");
