@@ -165,7 +165,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
         fprintf(fp, "\t%d\ti(%s)\t%s", i++, v->v_name, ft_typenames(v->v_type));
 	if ( branch != NULL ) *branch = '#';
       } else if ( strcmp( ft_typenames(v->v_type), "voltage" ) == 0 ) {
-        fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type)); /* XXX*/
+        fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
       } else {
         fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
       }
