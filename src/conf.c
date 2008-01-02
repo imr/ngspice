@@ -1,6 +1,6 @@
 /* Common configuration file for ng-spice and nutmeg */
 
-#include <config.h>
+#include "config.h"
 #include "conf.h"
 
 /*  The GNU configure system should set PACKAGE_BUGREPORT
@@ -20,11 +20,10 @@ char	*Spice_Lib_Dir	= NGSPICEDATADIR;
 
 #ifdef __MINGW32__
 char	*Def_Editor	= "notepad.exe";
-int	AsciiRawFile	= 1;
 #else
 char	*Def_Editor	= "vi";
-int	AsciiRawFile	= 0;
 #endif
+int	AsciiRawFile	= 0;
 
 char	*Bug_Addr	= BUG_ADDRESS;
 char	*Spice_Host	= "";
