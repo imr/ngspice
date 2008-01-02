@@ -459,7 +459,7 @@ nextTime:
     ckt->CKTstat->STAToldIter = ckt->CKTstat->STATnumIter;
     if(check_autostop("tran") ||
        fabs(ckt->CKTtime - ckt->CKTfinalTime) < ckt->CKTminBreak ||
-       AlmostEqualUlps( ckt->CKTtime, ckt->CKTfinalTime, 3 ) ) {
+       AlmostEqualUlps( ckt->CKTtime, ckt->CKTfinalTime, 100 ) ) {
 #ifdef STEPDEBUG
         printf(" done:  time is %g, final time is %g, and tol is %g\n",
         ckt->CKTtime,ckt->CKTfinalTime,ckt->CKTminBreak);
@@ -526,7 +526,7 @@ resume:
 #ifdef XSPICE
 /* gtri - begin - wbk - Cut integration order if first timepoint after breakpoint */
     //if(ckt->CKTtime == g_mif_info.breakpoint.last)
-    if ( AlmostEqualUlps( ckt->CKTtime, g_mif_info.breakpoint.last, 3 ) )
+    if ( AlmostEqualUlps( ckt->CKTtime, g_mif_info.breakpoint.last, 100 ) )
         ckt->CKTorder = 1;
 /* gtri - end   - wbk - Cut integration order if first timepoint after breakpoint */
 
@@ -535,7 +535,7 @@ resume:
 
 	/* are we at a breakpoint, or indistinguishably close? */
     //if ((ckt->CKTtime == *(ckt->CKTbreaks)) || (*(ckt->CKTbreaks) -
-    if ( AlmostEqualUlps( ckt->CKTtime, *(ckt->CKTbreaks), 3 ) || (*(ckt->CKTbreaks) -
+    if ( AlmostEqualUlps( ckt->CKTtime, *(ckt->CKTbreaks), 100 ) || (*(ckt->CKTbreaks) -
     				(ckt->CKTtime) <= ckt->CKTdelmin)) {
         /* first timepoint after a breakpoint - cut integration order */
         /* and limit timestep to .1 times minimum of time to next breakpoint,
@@ -589,7 +589,7 @@ resume:
 #ifdef STEPDEBUG
       printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n",*(ckt->CKTbreaks), ckt->CKTtime, ckt->CKTminBreak);
 #endif
-      if(AlmostEqualUlps(*(ckt->CKTbreaks),ckt->CKTtime,3) || *(ckt->CKTbreaks) <= (ckt->CKTtime + ckt->CKTminBreak)) {
+      if(AlmostEqualUlps(*(ckt->CKTbreaks),ckt->CKTtime, 100) || *(ckt->CKTbreaks) <= (ckt->CKTtime + ckt->CKTminBreak)) {
 #ifdef STEPDEBUG
 	printf("throwing out permanent breakpoint times <= current time (brk pt: %g)\n",*(ckt->CKTbreaks));
 	printf("    ckt_time: %g    ckt_min_break: %g\n",ckt->CKTtime, ckt->CKTminBreak);

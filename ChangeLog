@@ -1,9 +1,16 @@
+2008-01-02 Dietmar Warning
+ * src/frontend/outitf.c: Fixed rawfile ascii generation. Same like below.
+ * src/frontend/inp.c: don't need local buffer w/o getcwd
+ * src/conf.c: belong spice3 manual ascii is default anyway
+ * src/misc/missing_math.*, src/include/missig_math.h, /src/frontend/measure.c,
+   src/spicelib/analysis/dctran.c: Using a real double compare to equal.
+
 2008-01-02 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/rawfile.c: Fixed rawfile ascii generation. The prevoius patch
    produced incorrect string like v(v(1)) for v(1) in the output file. 
 
 2007-12-31 Holger Vogt
- * src/frontend/com_chdir.c: fix for the crashing of ngspice under Windows when
+don't need buffer w/o getcwd fix for the crashing of ngspice under Windows when
    started from windows explorer.
  * src/frontend/inp.c: ngspice crashed when executing a file consisting of a simple
    control section. Fixed.

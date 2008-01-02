@@ -74,7 +74,7 @@ get_volt_time( struct dvec *time, struct dvec *values, double value, char polari
       *failed = TRUE;
     }
   }
-  if ( AlmostEqualUlps( comp_time, 0, 3 ) ) *failed = TRUE;
+  if ( AlmostEqualUlps( comp_time, 0, 100 ) ) *failed = TRUE;
 
   return comp_time;
 }
@@ -139,7 +139,7 @@ measure2( char *meas_type, char *vec_name, char vec_type, double from, double to
 	  *result_time = time->v_realdata[i];
 	} else {
 	  *result = ( strcmp( meas_type, "max" ) == 0 ) ? max( *result, vec->v_realdata[i] ) : min( *result, vec->v_realdata[i] );
-	  if ( !AlmostEqualUlps( prev_result, *result, 3 ) ) *result_time = time->v_realdata[i];
+	  if ( !AlmostEqualUlps( prev_result, *result, 100 ) ) *result_time = time->v_realdata[i];
 	}
       }
     }
@@ -164,23 +164,23 @@ measure2( char *meas_type, char *vec_name, char vec_type, double from, double to
 
     // see if y-value constant
     for ( i = 0; i < xy_size-1; i++ )
-      if ( !AlmostEqualUlps( *(y+i), *(y+i+1), 3 ) ) constant_y = FALSE;
+      if ( !AlmostEqualUlps( *(y+i), *(y+i+1), 100 ) ) constant_y = FALSE;
 
     // Compute Integral (area under curve)
     i = 0;
     while ( i < xy_size-1 ) {
       // Simpson's 3/8 Rule
-      if ( AlmostEqualUlps( *(width+i), *(width+i+1), 3 ) && AlmostEqualUlps( *(width+i), *(width+i+2), 3 ) ) {
+      if ( AlmostEqualUlps( *(width+i), *(width+i+1), 100 ) && AlmostEqualUlps( *(width+i), *(width+i+2), 100 ) ) {
 	sum1 += 3*(*(width+i))*(*(y+i) + 3*(*(y+i+1) + *(y+i+2)) + *(y+i+3))/8;
 	i += 3;
       }
       // Simpson's 1/3 Rule
-      else if ( AlmostEqualUlps( *(width+i), *(width+i+1), 3 ) ) {
+      else if ( AlmostEqualUlps( *(width+i), *(width+i+1), 100 ) ) {
 	sum2 += *(width+i)*(*(y+i) + 4*(*(y+i+1)) + *(y+i+2))/3;
 	i += 2;
       }
       // Trapezoidal Rule
-      else if ( !AlmostEqualUlps( *(width+i), *(width+i+1), 3 ) ) {
+      else if ( !AlmostEqualUlps( *(width+i), *(width+i+1), 100 ) ) {
 	sum3 += *(width+i)*(*(y+i) + *(y+i+1))/2;
 	i++;
       }
