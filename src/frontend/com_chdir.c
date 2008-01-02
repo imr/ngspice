@@ -49,9 +49,9 @@ com_chdir(wordlist *wl)
     }
 
 
-
-    if (*s && chdir(s) == -1)
-        perror(s);
+    if (s != NULL)
+       if (chdir(s) == -1)
+           perror(s);
 
     if (copied)
 	tfree(s);

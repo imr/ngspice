@@ -534,8 +534,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       }     /*  if (deck->li_next) */
 
       /* look for and set temperature; also store param and .meas statements in circuit struct */
-      ft_curckt->ci_param = NULL;
-      ft_curckt->ci_meas  = NULL;
+      if (ft_curckt) {
+          ft_curckt->ci_param = NULL;
+          ft_curckt->ci_meas  = NULL;
+      }
 
       for (dd = deck; dd; dd = dd->li_next) {
 	/* get temp after numparam run on deck */

@@ -1,3 +1,9 @@
+2007-12-31 Holger Vogt
+ * src/frontend/com_chdir.c: fix for the crashing of ngspice under Windows when
+   started from windows explorer.
+ * src/frontend/inp.c: ngspice crashed when executing a file consisting of a simple
+   control section. Fixed.
+
 2007-12-29 Dietmar Warning
  * src/frontend/inpcom.c: 3/4 terminal recognition for bjt's
  * src/misc/string.c, stringutil.h: token function for bjt instance
