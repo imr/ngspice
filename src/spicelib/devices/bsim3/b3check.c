@@ -32,7 +32,7 @@ FILE *fplog;
     if ((fplog = fopen("b3v3check.log", "w")) != NULL)
     {   pParam = here->pParam;
 	fprintf(fplog, "BSIM3v3.3.0 Parameter Checking.\n");
-        if (strcmp(model->BSIM3version, "3.3.0"))
+        if ((strcmp(model->BSIM3version, "3.3.0")) && (strcmp(model->BSIM3version, "3.30")))
         {  fprintf(fplog, "Warning: This model is BSIM3v3.3.0; you specified a wrong version number.\n");
            printf("Warning: This model is BSIM3v3.3.0; you specified a wrong version number.\n"); 
         }
