@@ -1,3 +1,6 @@
+2008-01-03 Dietmar Warning
+ * src/main.c: rflag still needed.
+
 2008-01-02 Dietmar Warning
  * src/frontend/outitf.c: Fixed rawfile ascii generation. Same like below.
  * src/frontend/inp.c: don't need local buffer w/o getcwd
