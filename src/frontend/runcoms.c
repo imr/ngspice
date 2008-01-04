@@ -358,13 +358,16 @@ bool
 ft_getOutReq(FILE **fpp, struct plot **plotp, bool *binp, char *name, char *title)
 {
     /*struct plot *pl;*/
-#ifndef BATCH
 
+/* PN: the following code prevents operating point an AC analysis 
+ * dump in the rawfile -- it is still needed ?
+ */
+/* #ifndef BATCH
     if ( (strcmp(name, "Operating Point")==0) ||
-         (strcmp(name, "AC Operating Point")==0) ) {
+        (strcmp(name, "AC Operating Point")==0) ) {
         return (FALSE);
     };
-#endif
+#endif */
 
     if (rawfileFp) {
         *fpp = rawfileFp;

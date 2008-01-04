@@ -1,3 +1,9 @@
+2008-01-04 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/runcoms.c: commented out code that did not allow rawfile
+   generation for OP and AC analyses. Now rawfile is generated even for
+   OP and AC. I do not know if this is consistent with spice philosopy but
+   I think is nice to have.
+
 2008-01-03 Dietmar Warning
  * src/main.c: rflag still needed.
 
