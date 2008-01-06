@@ -574,27 +574,16 @@ BSIM3v0 - BSIM model level 3
         Initial Release.
         Ver:    3.0
         Class:  M
-        Level:  52
+        Level:  8 & 49, version = 3.0
         Dir:    devices/bsim3v0
         Status: TO BE TESTED AND IMPROVED
-
-
-BSIM3v0 - BSIM model level 3
-        Initial Release.
-        Ver:    3.0
-        Class:  M
-        Level:  51
-        Dir:    devices/bsim3v1a
-        Status: TO BE TESTED AND IMPROVED
-
-        This is the BSIM3v3.0 model modified by Alan Gillespie.
 
 
 BSIM3v1 - BSIM model level 3
         Initial Release.
         Ver:    3.1
         Class:  M
-        Level:  50
+        Level:  8 & 49, version = 3.1
         Dir:    devices/bsim3v1
         Status: TO BE TESTED
 
@@ -603,7 +592,18 @@ BSIM3v1 - BSIM model level 3
         Initial Release.
         Ver:    3.1
         Class:  M
-        Level:  49
+        Level:  8 & 49, version = 3.1a
+        Dir:    devices/bsim3v1a
+        Status: TO BE TESTED AND IMPROVED
+
+        This is the BSIM3v3.1 model modified by Alan Gillespie.
+
+
+BSIM3v1 - BSIM model level 3
+        Initial Release.
+        Ver:    3.1
+        Class:  M
+        Level:  8 & 49, version = 3.1s
         Dir:    devices/bsim3v1s
         Status: TO BE TESTED AND IMPROVED
 
@@ -614,9 +614,9 @@ BSIM3v1 - BSIM model level 3
 
 BSIM3 - BSIM model level 3
         Initial Release.
-        Ver:    3.2.4
+        Ver:    3.2.4 - 3.3.0
         Class:  M
-        Level:  8
+        Level:  8 & 49, version = 3.2.2, 3.2.3, 3.2.4, 3.3.0
         Dir:    devices/bsim3
         Status: TO BE TESTED
 
@@ -637,9 +637,9 @@ BSIM3 - BSIM model level 3
 
 BSIM4   - BSIM model level 4 (0.18 um)
         Initial Release.
-        Ver:    4.5.0
+        Ver:    4.2.0 - 4.6.1
         Class:  M
-        Level:  14
+        Level:  14 & 54, version = 4.2, 4.3, 4.4, 4.5, 4.6.1
         Dir:    devices/bsim4
         Status: TO BE TESTED
 

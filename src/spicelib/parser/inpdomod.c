@@ -161,7 +161,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
         			err = INPmkTemp("Device type MESA not availabe\n");
         		}
         		break;
-			case 3:
+		case 3:
         		type = INPtypelook("MESA");
         		if (type < 0)
         		{
@@ -272,8 +272,21 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Device type MOS7 not available in this binary\n");
 	    }
 	    break;
-	case 8:
+	case 8: case 49:
 	    err = INPfindVer(line, ver);
+
+	    if ( strcmp(ver, "3.0") == 0 ) {
+	      type = INPtypelook("BSIM3v0");
+	    }
+	    if ( strcmp(ver, "3.1") == 0 ) {
+	      type = INPtypelook("BSIM3v1");
+	    }
+	    if ( strcmp(ver, "3.1s") == 0 ) {
+	      type = INPtypelook("BSIM3v1S");
+	    }
+	    if ( strcmp(ver, "3.1a") == 0 ) {
+	      type = INPtypelook("BSIM3v1A");
+	    }
 	    if ( (strstr(ver, "3.2.2")) || (strstr(ver, "3.22")) ||
 	         (strstr(ver, "3.2.3")) || (strstr(ver, "3.23")) ||
 	         (strstr(ver, "3.2.4")) || (strstr(ver, "3.24")) ) {
@@ -284,9 +297,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	      type = INPtypelook("BSIM3");
 	    }
 	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Device type BSIM3 not available in this binary\n");
+	      err = INPmkTemp("Device type BSIM3 not available in this binary\n");
 	    }
 	    break;
 	case  9:
@@ -296,7 +307,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Device type MOS9 not available in this binary\n");
 	    }
 	    break;
-	case 14:
+	case 14: case 54:
 	    err = INPfindVer(line, ver); /* mapping of minor versions are only placeholder */
 	    if ( (strstr(ver, "4.2")) || (strstr(ver, "4.2.0")) || (strstr(ver, "4.20")) 
 	                              || (strstr(ver, "4.2.1")) || (strstr(ver, "4.21")) ) {
@@ -355,38 +366,6 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    }
                 break;
 #endif
-	case 49:
-	    type = INPtypelook("BSIM3v1S");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Device type BSIM3v1S not available in this binary\n");
-	    }
-	    break;
-	case 50:
-	    type = INPtypelook("BSIM3v1");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Device type BSIM3v1 not available in this binary\n");
-	    }
-	    break;
-	case 51:
-	    type = INPtypelook("BSIM3v1A");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Device type BSIM3v1A not available in this binary\n");
-	    }
-	    break;	    
-	case 52:
-	    type = INPtypelook("BSIM3v0");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Device type BSIM3v0 not available in this binary\n");
-	    }
-	    break;
 	case 55:
 	    type = INPtypelook("B3SOIFD");
 	    if (type < 0) {

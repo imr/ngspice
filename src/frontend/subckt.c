@@ -1607,6 +1607,8 @@ devmodtranslate(struct line *deck, char *subname)
     char *buffer, *name, *t, c;
     wordlist *wlsub;
     bool found;
+    char* dot_char;
+    int i, j;
 #ifdef XSPICE
     char *next_name;
 #endif /* XSPICE */
@@ -1836,17 +1838,26 @@ devmodtranslate(struct line *deck, char *subname)
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
             name = gettok(&t);
-
             /* Now, is this a subcircuit model? */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
-                if (eq(name, wlsub->wl_word)) {
-		    (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
-			    subname, name);
-		    found = TRUE;
-		    break;
+                i = strlen(wlsub->wl_word);
+                j = 0; /* Now, have we a binned model? */
+                if ( (dot_char = strstr( wlsub->wl_word, "." )) ) {
+                   dot_char++; j++;
+                   while( *dot_char != '\0' ) {
+                     if ( !isdigit( *dot_char ) ) {
+                       break;
+                     }
+                     dot_char++; j++;
+                   }
+                }
+                if ( strncmp( name, wlsub->wl_word, i - j ) == 0 ) {
+                   (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
+                   subname, name);
+                   found = TRUE;
+                   break;
                 }
             }
-
             if (!found)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
             (void) strcat(buffer, t);

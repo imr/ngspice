@@ -1,3 +1,10 @@
+2008-01-06 Dietmar Warning
+ * src/frontend/subckt.c: correct compare of binned model names. Fixed a bug 
+   of incorrect subckt expansion when MOS model inside.
+ * src/spicelib/parser/inpdomod.c, DEVICES: Compatibility issue - now all 
+   bsim3 models running under level 8 and 49 and all bsim4 models under 
+   level 14 and 54. Distinction must be made by version parameter.
+
 2008-01-04 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/runcoms.c: commented out code that did not allow rawfile
    generation for OP and AC analyses. Now rawfile is generated even for
