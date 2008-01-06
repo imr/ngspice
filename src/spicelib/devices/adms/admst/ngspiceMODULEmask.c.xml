@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.4  2006-03-05 09:38:41  pnenzi
+  Revision 1.5  2008-01-06 17:45:33  dwarning
+  add NL at the EOF
+
+  Revision 1.4  2006/03/05 09:38:41  pnenzi
 
   Updated version to 2.2.0
 
@@ -84,6 +87,7 @@ int $(module)mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
   }
   return(-1);
 }
+
 </admst:template>
 
 <admst:for-each select="/module">
