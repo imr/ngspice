@@ -7,7 +7,7 @@
  *
  */
 
-//#include <port.h>
+#include "ngspice.h"
 
 #ifdef IPC_DEBUG_VIA_STDIO
 

@@ -43,6 +43,10 @@
 #  include <ctype.h>
 #endif
 
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+
 #ifdef HAVE_TERMIOS_H
 #include <termios.h>
 #else
@@ -63,13 +67,27 @@
 #include <pwd.h>
 #endif
 
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
+#endif
+
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
 
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif
 
-#ifdef HAVE_SYS_DIR_H
+#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
+#endif
+
+#ifdef HAVE_SYS_DIR_H
 #include <sys/dir.h>
 #else
 #  ifdef HAVE_DIRENT_H
@@ -102,6 +120,19 @@ struct timeb timebegin;
 #  endif
 #endif
 
+#ifdef HAS_TIME_H
+#include <time.h>
+#endif
+
+#ifdef HAS_WINDOWS
+#include "wstdio.h"
+#endif
+
+#ifndef HAVE_RANDOM
+#define random rand
+#define srandom srand
+#endif
+
 #ifdef HAVE_INDEX
 #   define strchr index
 #   define strrchr rindex
@@ -112,17 +143,9 @@ struct timeb timebegin;
 #    endif /* va: no index, but strchr */
 #endif
 
-#ifdef HAS_TIME_H
-#include <time.h>
-#endif
-
 /* added for CYGWIN */
 #ifndef HUGE
 #define HUGE HUGE_VAL
-#endif
-
-#ifdef HAS_WINDOWS
-#include "wstdio.h"
 #endif
 
 extern char *gettok(char **s);

@@ -38,7 +38,6 @@ NON-STANDARD FEATURES
 
 #ifdef IPC_AEGIS_MAILBOXES 
 
-#include <stdio.h>
 #include <assert.h>
 #include <apollo/base.h>
 #include <apollo/mbx.h>
@@ -87,7 +86,7 @@ Ipc_Status_t ipc_transport_initialize_server (server_name, m, p,
      char               *batch_filename; /* Batch filename returned */
 {
    int len;
-   //   extern void *malloc();
+/*   extern void *malloc(); */
 
    assert (p == IPC_PROTOCOL_V1);
    

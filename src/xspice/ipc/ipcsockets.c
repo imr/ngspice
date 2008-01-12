@@ -90,27 +90,17 @@
 
 =============================================================================*/
 
+#include "ngspice.h"
 
-/* #ifdef IPC_UNIX_SOCKETS */
-#include "config.h"
-#ifndef HAS_WINDOWS
+#ifdef IPC_UNIX_SOCKETS
 
 /*=== INCLUDE FILES ===*/
-#include "ngspice.h"
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
+
 #include <assert.h>
 #include <errno.h>
-#include <fcntl.h>
-#include <math.h>
 
 #include "ipc.h"
 #include "ipctiein.h"
-
-
 
 
 /*=== TYPE DEFINITIONS ===*/  
@@ -210,7 +200,7 @@ Ipc_Status_t ipc_transport_initialize_server (server_name, mode, protocol,
   
   server.sin_family      = AF_INET;
   server.sin_addr.s_addr = INADDR_ANY;
-  server.sin_port        = port_num;    /* SOCKET_PORT; */
+  server.sin_port        = SOCKET_PORT;
      
   server_length = sizeof (server);
   if (bind (sock_desc, (struct sockaddr *)&server, server_length)
@@ -308,7 +298,8 @@ static u_long bytes_to_integer (str, start)
     buff[index] = str[index+start];
     index++;
   }
-  u = ntohl (*((u_long *) buff));
+/*  u = ntohl (*((u_long *) buff)); */
+  u = strtoul(buff, (char **) NULL, 10);
 
   return u;
 }   /* end bytes_to_integer */
@@ -744,5 +735,4 @@ Ipc_Status_t ipc_transport_terminate_server ()
    return status;
 }
 
-/* #endif   IPC_UNIX_SOCKETS */
-#endif /* ifndef HAS_WINDOWS */
+#endif /* IPC_UNIX_SOCKETS */

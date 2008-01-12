@@ -70,17 +70,15 @@ SUMMARY
 
 ============================================================================*/
 
-#ifndef NDEBUG
-#include "config.h"
+#include "ngspice.h"
 
-#include <stdio.h>
+#if defined (__MINGW32__) || defined (__CYGWIN__)
+#include <io.h>
+#else
+#include <sys/io.h>
 #endif
-#include <fcntl.h>
-#include <unistd.h>
 
 #include <assert.h>
-#include <ctype.h>
-#include <string.h>
 #include <memory.h>     /* NOTE: I think this is a Sys5ism (there is not man
                          * page for it under Bsd, but it's in /usr/include
                          * and it has a BSD copyright header. Go figure.
@@ -94,20 +92,16 @@ SUMMARY
 /*
  * Conditional compilation sanity check:
  */
-
-/*
 #if !defined (IPC_AEGIS_MAILBOXES) && !defined (IPC_UNIX_SOCKETS)\
    && !defined (IPC_DEBUG_VIA_STDIO)
 "       compiler error - must specify a transport mechanism";
 #endif
 
-*///ka removed
-
 /*
  * static 'globals'
  */
 
-/*typedef unsigned char Buffer_Char_t;*/
+/* typedef unsigned char Buffer_Char_t; */
 typedef char Buffer_Char_t;
 
 #define OUT_BUFFER_SIZE 1000
@@ -183,7 +177,7 @@ Ipc_Status_t ipc_initialize_server (server_name, m, p)
 
    num_records = 0;
    fill_count = 0;
-#ifndef HAS_WINDOWS  
+
    status = ipc_transport_initialize_server (server_name, m, p,
                                              batch_filename);
 
@@ -198,14 +192,11 @@ Ipc_Status_t ipc_initialize_server (server_name, m, p)
 #endif
       batch_fd = open (batch_filename, O_WRONLY | O_CREAT, 0666);
       if (batch_fd < 0) {
-    //     fprintf (stderr, "ERROR: IPC: Error opening batch output file: %s\n",batch_filename);
+    /*     fprintf (stderr, "ERROR: IPC: Error opening batch output file: %s\n",batch_filename); */
          perror ("IPC");
          return IPC_STATUS_ERROR;
       }
    }
-#else  /* ifdef HAS_WINDOWS */
-   status=IPC_STATUS_OK;
-#endif /* ifndef HAS_WINDOWS */
    return status;
 }
 
@@ -222,11 +213,7 @@ Ipc_Status_t ipc_transport_terminate_server ();
 
 Ipc_Status_t ipc_terminate_server ()
 {
-#ifndef HAS_WINDOWS
    return ipc_transport_terminate_server ();
-#else  /* ifdef HAS_WINDOWS */
-   return 0;
-#endif /* ifndef HAS_WINDOWS */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -272,7 +259,7 @@ Ipc_Status_t ipc_get_line (str, len, wait)
 {
    Ipc_Status_t status;
    Ipc_Boolean_t need_another = IPC_TRUE;
-#ifndef HAS_WINDOWS   
+
    do {
 
       status = ipc_transport_get_line (str, len, wait);
@@ -377,9 +364,7 @@ Ipc_Status_t ipc_get_line (str, len, wait)
          break;
       }
    } while (need_another);
-#else  /* ifndef HAS_WINDOWS */
-status=IPC_STATUS_OK;
-#endif /* ifndef HAS_WINDOWS */
+
    return status;
 }
 
@@ -413,7 +398,7 @@ Ipc_Status_t ipc_flush ()
          /* write the records to the .log file */
          if ((end_of_record_index [i] - last) !=
              write (batch_fd, &out_buffer[last], end_of_record_index [i] - last)) {
-	//		 fprintf (stderr,"ERROR: IPC: Error writing to batch output file\n");
+	/*		 fprintf (stderr,"ERROR: IPC: Error writing to batch output file\n"); */
             perror ("IPC");
             return IPC_STATUS_ERROR;
          }
@@ -423,27 +408,24 @@ Ipc_Status_t ipc_flush ()
          if( kw_match("#ERRCHK",  &out_buffer[last]) ||
              kw_match(">ENDANAL", &out_buffer[last]) ||
              kw_match(">ABORTED", &out_buffer[last]) ) {
-#ifndef HAS_WINDOWS
+
             status = ipc_transport_send_line (&out_buffer[last],
                                               end_of_record_index [i] - last);
             if (IPC_STATUS_OK != status) {
                return status;
             }
-#endif /* ifndef HAS_WINDOWS */
          }
          last = end_of_record_index [i];
       }
 
    /* else, must be interactive mode */
    } else {
-#ifndef HAS_WINDOWS
       /* send the full buffer over the ipc channel */
       status = ipc_transport_send_line (&out_buffer[0],
                    end_of_record_index [num_records - 1]);
       if (IPC_STATUS_OK != status) {
          return status;
       }
-#endif /* ifndef HAS_WINDOWS */
    }
 
    /* reset counts to zero and return */
@@ -486,7 +468,7 @@ Ipc_Status_t ipc_send_line_binary (str, len)
     * make sure that the str will fit:
     */
    if (length + fill_count > OUT_BUFFER_SIZE) {
-     // fprintf (stderr,"ERROR: IPC: String too long to fit in output buffer (> %d bytes) - truncated\n",OUT_BUFFER_SIZE);
+     /* fprintf (stderr,"ERROR: IPC: String too long to fit in output buffer (> %d bytes) - truncated\n",OUT_BUFFER_SIZE); */
       length = OUT_BUFFER_SIZE - fill_count;
    }
 

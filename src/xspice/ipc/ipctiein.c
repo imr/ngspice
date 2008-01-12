@@ -53,10 +53,6 @@ NON-STANDARD FEATURES
 #define CONFIG
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-//#include "util.h"
 #include "inpdefs.h"
 #include "gendefs.h"
 #include "cktdefs.h"
