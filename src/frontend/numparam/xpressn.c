@@ -1,10 +1,10 @@
 /*       xpressn.c                Copyright (C)  2002    Georg Post
  *
- *  This file is part of Numparam, see:  readme.txt  
- *  Free software under the terms of the GNU Lesser General Public License 
+ *  This file is part of Numparam, see:  readme.txt
+ *  Free software under the terms of the GNU Lesser General Public License
  */
 
-#include <stdio.h>		/* for function message() only. */
+#include <stdio.h>                /* for function message() only. */
 
 #include "general.h"
 #include "numparam.h"
@@ -12,8 +12,8 @@
 /************ keywords ************/
 
 /* SJB - 150 chars is ample for this - see initkeys() */
-static Str (150, keys);		/* all my keywords */
-static Str (150, fmath);	/* all math functions */
+static Str (150, keys);                /* all my keywords */
+static Str (150, fmath);        /* all math functions */
 
 static double
 max (double x, double y)
@@ -48,10 +48,10 @@ initkeys (void)
 /* the list of reserved words */
 {
   scopy_up (keys,
-	    "and or not div mod if else end while macro funct defined"
-	    " include for to downto is var");
+            "and or not div mod if else end while macro funct defined"
+            " include for to downto is var");
   scopy_up (fmath,
-	    "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log ternary_fcn agauss");
+            "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log ternary_fcn agauss");
 }
 
 static double
@@ -61,50 +61,50 @@ mathfunction (int f, double z, double x)
   double y;
   switch (f) {
     case 1:
-	y = x * x;
-	break;
+        y = x * x;
+        break;
     case 2:
-	y = sqrt (x);
-	break;
+        y = sqrt (x);
+        break;
     case 3:
-	y = sin (x);
-	break;
+        y = sin (x);
+        break;
     case 4:
-	y = cos (x);
-	break;
+        y = cos (x);
+        break;
     case 5:
-	y = exp (x);
-	break;
+        y = exp (x);
+        break;
     case 6:
-	y = ln (x);
-	break;
+        y = ln (x);
+        break;
     case 7:
-	y = atan (x);
-	break;
+        y = atan (x);
+        break;
     case 8:
-	y = fabs (x);
-	break;
+        y = fabs (x);
+        break;
     case 9:
-	y = pow (z, x);
-	break;
+        y = pow (z, x);
+        break;
     case 10:
-	y = exp (x * ln (fabs (z)));
-	break;
+        y = exp (x * ln (fabs (z)));
+        break;
     case 11:
-	y = max (x, z);
-	break;
+        y = max (x, z);
+        break;
     case 12:
-	y = min (x, z);
-	break;
+        y = min (x, z);
+        break;
     case 13:
-	y = trunc (x);
-	break;
+        y = trunc (x);
+        break;
     case 14:
-	y = log (x);
-	break;
+        y = log (x);
+        break;
     default:
-	y = x;
-	break;
+        y = x;
+        break;
     }
   return y;
 }
@@ -176,7 +176,7 @@ initdico (tdico * dico)
     sini (dico->dat[i].nom, 100);
 
   dico->tos = 0;
-  dico->stack[dico->tos] = 0;	/* global data beneath */
+  dico->stack[dico->tos] = 0;        /* global data beneath */
   initsymbols (&dico->nodetab);
   initkeys ();
 }
@@ -188,7 +188,7 @@ initdico (tdico * dico)
    redefinition of old symbols gives a warning message.
 */
 
-typedef enum {Push='u'} _nPush; 
+typedef enum {Push='u'} _nPush;
 typedef enum {Pop='o'} _nPop;
 
      static void
@@ -201,48 +201,48 @@ typedef enum {Pop='o'} _nPop;
   if (op == Push)
     {
       if (dico->tos < (20 - 1))
-	dico->tos++;
+        dico->tos++;
       else
-	message (dico, " Subckt Stack overflow");
+        message (dico, " Subckt Stack overflow");
 
       dico->stack[dico->tos] = dico->nbd;
       dico->inst_name[dico->tos] = nupa_inst_name;
     }
   else if (op == Pop)
     {
-      /*       obsolete:  undefine all data items of level dico->tos  
-         for ( i=dico->nbd; i>0; i--) ) { 
+      /*       obsolete:  undefine all data items of level dico->tos
+         for ( i=dico->nbd; i>0; i--) ) {
          c= dico->dat[i].tp;
-         if ( ((c=='R') || (c=='S')) && (dico->dat[i].level == dico->tos) ) { 
-         dico->dat[i].tp= '?'; 
-         } 
+         if ( ((c=='R') || (c=='S')) && (dico->dat[i].level == dico->tos) ) {
+         dico->dat[i].tp= '?';
+         }
          }
        */
       if (dico->tos > 0)
-	{
-	  // keep instance parameters around
-	  current_stack_size = dico->nbd;
-	  old_stack_size = dico->stack[dico->tos];
-	  inst_name = dico->inst_name[dico->tos];
+        {
+          // keep instance parameters around
+          current_stack_size = dico->nbd;
+          old_stack_size = dico->stack[dico->tos];
+          inst_name = dico->inst_name[dico->tos];
 
-	  for (i = old_stack_size + 1; i <= current_stack_size; i++)
-	    {
-	      param_name =
-		tmalloc (strlen (inst_name) + strlen (dico->dat[i].nom) + 2);
-	      sprintf (param_name, "%s.%s", inst_name, dico->dat[i].nom);
-	      nupa_add_inst_param (param_name, dico->dat[i].vl);
-	      tfree (param_name);
-	    }
-	  tfree (inst_name);
+          for (i = old_stack_size + 1; i <= current_stack_size; i++)
+            {
+              param_name =
+                tmalloc (strlen (inst_name) + strlen (dico->dat[i].nom) + 2);
+              sprintf (param_name, "%s.%s", inst_name, dico->dat[i].nom);
+              nupa_add_inst_param (param_name, dico->dat[i].vl);
+              tfree (param_name);
+            }
+          tfree (inst_name);
 
-	  dico->nbd = dico->stack[dico->tos];	/* simply kill all local items */
-	  dico->tos--;
+          dico->nbd = dico->stack[dico->tos];        /* simply kill all local items */
+          dico->tos--;
 
-	}
+        }
       else
-	{
-	  message (dico, " Subckt Stack underflow.");
-	}
+        {
+          message (dico, " Subckt Stack underflow.");
+        }
     }
 }
 
@@ -279,7 +279,7 @@ char
 getidtype (tdico * d, char *s)
 /* test if identifier s is known. Answer its type, or '?' if not in list */
 {
-  char itp = '?';		/* assume unknown */
+  char itp = '?';                /* assume unknown */
   int i = entrynb (d, s);
 
   if (i > 0)
@@ -295,11 +295,11 @@ fetchnumentry (tdico * dico, char *t, unsigned char *perr)
   unsigned short k;
   double u;
   Strbig (Llen, s);
-  k = entrynb (dico, t);	/*no keyword */
+  k = entrynb (dico, t);        /*no keyword */
   /*dbg -- if ( k<=0 ) { ws("Dico num lookup fails. ") ;} */
 
   while ((k > 0) && (dico->dat[k].tp == 'P'))
-    k = dico->dat[k].ivl;	/*pointer chain */
+    k = dico->dat[k].ivl;        /*pointer chain */
 
   if (k > 0)
     if (dico->dat[k].tp != 'R')
@@ -334,7 +334,7 @@ attrib (tdico * dico, char *t, char op)
   i = dico->nbd + 1;
   ok = 0;
   while ((!ok) && (i > 1))
-    {				/*search old */
+    {                                /*search old */
       i--;
       ok = steq (dico->dat[i].nom, t);
     }
@@ -351,27 +351,27 @@ attrib (tdico * dico, char *t, char op)
       i = dico->nbd;
 
       if (dico->nbd > Maxdico)
-	  i = 0;
+          i = 0;
       else
-	{
-	  scopy (dico->dat[i].nom, t);
-	  dico->dat[i].tp = '?';	/*signal Unknown */
-	  dico->dat[i].level = dico->tos;
-	}
+        {
+          scopy (dico->dat[i].nom, t);
+          dico->dat[i].tp = '?';        /*signal Unknown */
+          dico->dat[i].level = dico->tos;
+        }
     }
   return i;
 }
 
 static unsigned char
-define (tdico * dico, char *t,	/* identifier to define */
-	char op,		/* option */
-	char tpe,		/* type marker */
-	double z,		/* float value if any */
-	int w,			/* integer value if any */
-	char *base)		/* string pointer if any */
+define (tdico * dico, char *t,        /* identifier to define */
+        char op,                /* option */
+        char tpe,                /* type marker */
+        double z,                /* float value if any */
+        int w,                        /* integer value if any */
+        char *base)                /* string pointer if any */
 {
-/*define t as real or integer, 
-  opcode= 'N' impose a new item under local conditions. 
+/*define t as real or integer,
+  opcode= 'N' impose a new item under local conditions.
   check for pointers, too, in full macrolanguage version:
      Call with 'N','P',0.0, ksymbol ... for VAR parameter passing.
   Overwrite warning, beware: During 1st pass (macro definition),
@@ -389,48 +389,48 @@ define (tdico * dico, char *t,	/* identifier to define */
   else
     {
       if (dico->dat[i].tp == 'P')
-	  i = dico->dat[i].ivl; /*pointer indirection */
+          i = dico->dat[i].ivl; /*pointer indirection */
 
       if (i > 0)
-	  c = dico->dat[i].tp;
+          c = dico->dat[i].tp;
       else
-	  c = ' ';
+          c = ' ';
 
       if ((c == 'R') || (c == 'S') || (c == '?'))
-	{
-	  dico->dat[i].vl = z;
-	  dico->dat[i].tp = tpe;
-	  dico->dat[i].ivl = w;
-	  dico->dat[i].sbbase = base;
-	  /* if ( (c !='?') && (i<= dico->stack[dico->tos]) ) {  */
+        {
+          dico->dat[i].vl = z;
+          dico->dat[i].tp = tpe;
+          dico->dat[i].ivl = w;
+          dico->dat[i].sbbase = base;
+          /* if ( (c !='?') && (i<= dico->stack[dico->tos]) ) {  */
 
-	  if (c == '?')
-	      dico->dat[i].level = dico->tos; /* promote! */
+          if (c == '?')
+              dico->dat[i].level = dico->tos; /* promote! */
 
-	  if (dico->dat[i].level < dico->tos)
-	    {
-	      /* warn about re-write to a global scope! */
-	      scopy (v, t);
-	      cadd (v, ':');
-	      nadd (v, dico->dat[i].level);
-	      sadd (v, " overwritten.");
-	      warn = message (dico, v);
-	    }
-	}
+          if (dico->dat[i].level < dico->tos)
+            {
+              /* warn about re-write to a global scope! */
+              scopy (v, t);
+              cadd (v, ':');
+              nadd (v, dico->dat[i].level);
+              sadd (v, " overwritten.");
+              warn = message (dico, v);
+            }
+        }
       else
-	{
-	  scopy (v, t);
-	  sadd (v, ": cannot redefine");
-	  err = message (dico, v);
-	}
+        {
+          scopy (v, t);
+          sadd (v, ": cannot redefine");
+          err = message (dico, v);
+        }
     }
   return err;
 }
 
 unsigned char
 defsubckt (tdico * dico, char *s, int w, char categ)
-/* called on 1st pass of spice source code, 
-   to enter subcircuit (categ=U) and model (categ=O) names 
+/* called on 1st pass of spice source code,
+   to enter subcircuit (categ=U) and model (categ=O) names
 */
 {
   Str (80, u);
@@ -440,13 +440,13 @@ defsubckt (tdico * dico, char *s, int w, char categ)
   i = 0;
 
   while ((i < ls) && (s[i] != '.'))
-    i++;			/* skip 1st dotword */
+    i++;                        /* skip 1st dotword */
 
   while ((i < ls) && (s[i] > ' '))
     i++;
 
   while ((i < ls) && (s[i] <= ' '))
-    i++;			/* skip blank */
+    i++;                        /* skip blank */
 
   j = i;
 
@@ -470,7 +470,7 @@ findsubckt (tdico * dico, char *s, char *subname)
    returns 0 if not found, else the stored definition line number value
    and the name in string subname  */
 {
-  Str (80, u);			/* u= subckt name is last token in string s */
+  Str (80, u);                        /* u= subckt name is last token in string s */
   int i, j, k;
   k = length (s);
 
@@ -500,11 +500,11 @@ findsubckt (tdico * dico, char *s, char *subname)
   return i;
 }
 
-#if 0				/* unused, from the full macro language... */
+#if 0                                /* unused, from the full macro language... */
 static int
-deffuma (			/* define function or macro entry. */
-	  tdico * dico, char *t, char tpe, unsigned short bufstart,
-	  unsigned char *pjumped, unsigned char *perr)
+deffuma (                        /* define function or macro entry. */
+          tdico * dico, char *t, char tpe, unsigned short bufstart,
+          unsigned char *pjumped, unsigned char *perr)
 {
   unsigned char jumped = *pjumped;
   unsigned char err = *perr;
@@ -522,27 +522,27 @@ deffuma (			/* define function or macro entry. */
   else
     {
       if (dico->dat[i].tp != '?')
-	{			/*old item! */
-	  if (jumped)
-	    {
-	      j = dico->dat[i].ivl;
-	    }
-	  else
-	    {
-	      scopy (v, t);
-	      sadd (v, " already defined");
-	      err = message (dico, v);
-	    }
-	}
+        {                        /*old item! */
+          if (jumped)
+            {
+              j = dico->dat[i].ivl;
+            }
+          else
+            {
+              scopy (v, t);
+              sadd (v, " already defined");
+              err = message (dico, v);
+            }
+        }
       else
-	{
-	  dico->dat[i].tp = tpe;
-	  dico->nfms++;
-	  j = dico->nfms;
-	  dico->dat[i].ivl = j;
-	  dico->fms[j].start = bufstart;
-	    /* =ibf->bufaddr = start addr in buffer */ ;
-	}
+        {
+          dico->dat[i].tp = tpe;
+          dico->nfms++;
+          j = dico->nfms;
+          dico->dat[i].ivl = j;
+          dico->fms[j].start = bufstart;
+            /* =ibf->bufaddr = start addr in buffer */ ;
+        }
     }
   *pjumped = jumped;
   *perr = err;
@@ -568,19 +568,19 @@ keyword (char *keys, char *t)
       j++;
       i = 0;
       ok = 1;
-     
+
       do{
-	  i++;
-	  k++;
-	  ok = (k <= lk) && (t[i - 1] == keys[k - 1]);
-	} while (!((!ok) || (i >= lt)));
+          i++;
+          k++;
+          ok = (k <= lk) && (t[i - 1] == keys[k - 1]);
+        } while (!((!ok) || (i >= lt)));
 
       if (ok)
-	  ok = (k == lk) || (keys[k] <= ' ');
+          ok = (k == lk) || (keys[k] <= ' ');
 
       if (!ok && (k < lk))    /*skip to next item */
-	  while ((k <= lk) && (keys[k - 1] > ' '))
-	    k++;
+          while ((k <= lk) && (keys[k - 1] > ' '))
+            k++;
     } while (!(ok || (k >= lk)));
 
   if (ok)
@@ -644,15 +644,15 @@ fetchid (char *s, char *t, int ls, int i)
   do {
       i++;
       if (i <= ls)
-	  c = s[i - 1];
+          c = s[i - 1];
       else
-	  c = Nul;
+          c = Nul;
 
       c = upcase (c);
       ok = alfanum (c) || c == '.';
 
       if (ok)
-	cadd (t, c);
+        cadd (t, c);
 
     } while (ok);
   return i /*return updated i */ ;
@@ -671,13 +671,13 @@ exists (tdico * d, char *s, int *pi, unsigned char *perror)
   Strbig (Llen, t);
   ls = length (s);
   x = 0.0;
-  
+
   do {
       i++;
       if (i > ls)
-	  c = Nul;
+          c = Nul;
       else
-	  c = s[i - 1];
+          c = s[i - 1];
 
       ok = (c == '(');
     } while (!(ok || (c == Nul)));
@@ -687,18 +687,18 @@ exists (tdico * d, char *s, int *pi, unsigned char *perror)
       i = fetchid (s, t, ls, i);
       i--;
       if (entrynb (d, t) > 0)
-	x = 1.0;
+        x = 1.0;
 
       do {
-	  i++;
+          i++;
 
-	  if (i > ls)
-	      c = Nul;
-	  else
-	      c = s[i - 1];
+          if (i > ls)
+              c = Nul;
+          else
+              c = s[i - 1];
 
-	  ok = (c == ')');
-	} while (!(ok || (c == Nul)));
+          ok = (c == ')');
+        } while (!(ok || (c == Nul)));
     }
   if (!ok)
       error = message (d, " Defined() syntax");
@@ -726,26 +726,26 @@ fetchnumber (tdico * dico, char *s, int ls, int *pi, unsigned char *perror)
   do {
       k++;
       if (k > ls)
-	  d = (char)(0);
+          d = (char)(0);
       else
-	  d = s[k - 1];
+          d = s[k - 1];
     } while (!(!((d == '.') || ((d >= '0') && (d <= '9')))));
 
   if ((d == 'e') || (d == 'E'))
-    {				/*exponent follows */
+    {                                /*exponent follows */
       k++;
       d = s[k - 1];
 
       if ((d == '+') || (d == '-'))
-	k++;
+        k++;
 
       do {
-	  k++;
-	  if (k > ls)
-	      d = (char)(0);
-	  else
-	      d = s[k - 1];
-	} while (!(!((d >= '0') && (d <= '9'))));
+          k++;
+          if (k > ls)
+              d = (char)(0);
+          else
+              d = s[k - 1];
+        } while (!(!((d >= '0') && (d <= '9'))));
     }
 
   pscopy (t, s, i, k - i);
@@ -767,15 +767,15 @@ fetchnumber (tdico * dico, char *s, int ls, int *pi, unsigned char *perror)
     {
       scopy (t, "");
       while (alfa (d))
-	{
-	  cadd (t, upcase (d));
-	  k++;
+        {
+          cadd (t, upcase (d));
+          k++;
 
-	  if (k > ls)
-	      d = Nul;
-	  else
-	      d = s[k - 1];
-	}
+          if (k > ls)
+              d = Nul;
+          else
+              d = s[k - 1];
+        }
 
       u = parseunit (u, t);
     }
@@ -789,10 +789,10 @@ fetchnumber (tdico * dico, char *s, int ls, int *pi, unsigned char *perror)
 
 static char
 fetchoperator (tdico * dico,
-	       char *s, int ls,
-	       int *pi,
-	       unsigned char *pstate, unsigned char *plevel,
-	       unsigned char *perror)
+               char *s, int ls,
+               int *pi,
+               unsigned char *pstate, unsigned char *plevel,
+               unsigned char *perror)
 /* grab an operator from string s and advance scan index pi.
    each operator has: one-char alias, precedence level, new interpreter state.
 */
@@ -849,7 +849,7 @@ fetchoperator (tdico * dico,
     }
   if ((c == '+') || (c == '-'))
     {
-      state = 2;		/*pending operator */
+      state = 2;                /*pending operator */
       level = 4;
     }
   else if ((c == '*') || (c == '/') || (c == '%') || (c == '\\'))
@@ -885,12 +885,12 @@ fetchoperator (tdico * dico,
     {
       state = 0;
       if (c > ' ')
-	{
-	  scopy (v, "Syntax error: letter [");
-	  cadd (v, c);
-	  cadd (v, ']');
-	  error = message (dico, v);
-	}
+        {
+          scopy (v, "Syntax error: letter [");
+          cadd (v, c);
+          cadd (v, ']');
+          error = message (dico, v);
+        }
     }
   *pi = i;
   *pstate = state;
@@ -901,9 +901,9 @@ fetchoperator (tdico * dico,
 
 static char
 opfunctkey (tdico * dico,
-	    unsigned char kw, char c,
-	    unsigned char *pstate, unsigned char *plevel,
-	    unsigned char *perror)
+            unsigned char kw, char c,
+            unsigned char *pstate, unsigned char *plevel,
+            unsigned char *perror)
 /* handle operator and built-in keywords */
 {
   unsigned char state = *pstate;
@@ -911,7 +911,7 @@ opfunctkey (tdico * dico,
   unsigned char error = *perror;
 /*if kw operator keyword, c=token*/
   switch (kw)
-    {				/*& | ~ DIV MOD  Defined */
+    {                                /*& | ~ DIV MOD  Defined */
     case 1:
       c = '&';
       state = 2;
@@ -946,7 +946,7 @@ opfunctkey (tdico * dico,
       state = 0;
       error = message (dico, " Unexpected Keyword");
       break;
-    }				/*case */
+    }                                /*case */
 
   *pstate = state;
   *plevel = level;
@@ -979,89 +979,89 @@ operate (char op, double x, double y)
       break;
     case '/':
       if (absf (y) > epsi)
-	x = x / y;
+        x = x / y;
       break;
-    case '^':			/*power */
+    case '^':                        /*power */
       t = absf (x);
       if (t < epsi)
-	x = z;
+        x = z;
       else
-	x = exp (y * ln (t));
+        x = exp (y * ln (t));
       break;
-    case '&':			/*&& */
+    case '&':                        /*&& */
       if (y < x)
-	x = y; /*=Min*/ ;
+        x = y; /*=Min*/ ;
       break;
-    case '|':			/*|| */
+    case '|':                        /*|| */
       if (y > x)
-	x = y; /*=Max*/ ;
+        x = y; /*=Max*/ ;
       break;
     case '=':
       if (x == y)
-	x = u;
+        x = u;
       else
-	x = z;
+        x = z;
       break;
-    case '#':			/*<> */
+    case '#':                        /*<> */
       if (x != y)
-	x = u;
+        x = u;
       else
-	x = z;
+        x = z;
       break;
     case '>':
       if (x > y)
-	x = u;
+        x = u;
       else
-	x = z;
+        x = z;
       break;
     case '<':
       if (x < y)
-	x = u;
+        x = u;
       else
-	x = z;
+        x = z;
       break;
-    case 'G':			/*>= */
+    case 'G':                        /*>= */
       if (x >= y)
-	x = u;
+        x = u;
       else
-	x = z;
+        x = z;
       break;
-    case 'L':			/*<= */
+    case 'L':                        /*<= */
       if (x <= y)
-	x = u;
+        x = u;
       else
-	x = z;
+        x = z;
       break;
-    case '!':			/*! */
+    case '!':                        /*! */
       if (y == z)
-	x = u;
+        x = u;
       else
-	x = z;
+        x = z;
       break;
-    case '%':			/*% */
+    case '%':                        /*% */
       t = np_trunc (x / y);
       x = x - y * t;
       break;
-    case '\\':			/*/ */
+    case '\\':                        /*/ */
       x = np_trunc (absf (x / y));
       break;
-    }				/*case */
+    }                                /*case */
   return x;
 }
 
 static double
 formula (tdico * dico, char *s, unsigned char *perror)
 {
-/* Expression parser. 
+/* Expression parser.
   s is a formula with parentheses and math ops +-* / ...
   State machine and an array of accumulators handle operator precedence.
   Parentheses handled by recursion.
   Empty expression is forbidden: must find at least 1 atom.
   Syntax error if no toggle between binoperator && (unop/state1) !
-  States : 1=atom, 2=binOp, 3=unOp, 4= stop-codon. 
+  States : 1=atom, 2=binOp, 3=unOp, 4= stop-codon.
   Allowed transitions:  1->2->(3,1) and 3->(3,1).
 */
-  typedef enum {nprece=9} _nnprece;		/*maximal nb of precedence levels */
+  typedef enum {nprece=9} _nnprece;                /*maximal nb of precedence levels */
   unsigned char error = *perror;
   unsigned char negate = 0;
   unsigned char state, oldstate, topop, ustack, level, kw, fu;
@@ -1083,7 +1083,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
   ls = length (s);
 
   while ((ls > 0) && (s[ls - 1] <= ' '))
-    ls--;			/*clean s */
+    ls--;                        /*clean s */
 
   state = 0;
   natom = 0;
@@ -1099,158 +1099,158 @@ formula (tdico * dico, char *s, unsigned char *perror)
       i++;
       c = s[i - 1];
       if (c == '(')
-	{			/*sub-formula or math function */
-	  level = 1;
-	  /* new: must support multi-arg functions */
-	  k = i;
-	  arg2 = 0;
-	  v = 1.0;
-	  arg3 = 0;
+        {                        /*sub-formula or math function */
+          level = 1;
+          /* new: must support multi-arg functions */
+          k = i;
+          arg2 = 0;
+          v = 1.0;
+          arg3 = 0;
 
-	  do {
-	      k++;
-	      if (k > ls)
-		  d = (char)(0);
-	      else
-		  d = s[k - 1];
+          do {
+              k++;
+              if (k > ls)
+                  d = (char)(0);
+              else
+                  d = s[k - 1];
 
-	      if (d == '(')
-		  level++;
-	      else if (d == ')')
-		  level--;
+              if (d == '(')
+                  level++;
+              else if (d == ')')
+                  level--;
 
-	      if ((d == ',') && (level == 1))
-		{
-		  if (arg2 == 0)
-		    arg2 = k;
-		  else
-		    arg3 = k;	// kludge for more than 2 args (ternary expression);
-		} /* comma list? */ ;
-	    }
-	  while (!((k > ls) || ((d == ')') && (level <= 0))));
+              if ((d == ',') && (level == 1))
+                {
+                  if (arg2 == 0)
+                    arg2 = k;
+                  else
+                    arg3 = k;        // kludge for more than 2 args (ternary expression);
+                } /* comma list? */ ;
+            }
+          while (!((k > ls) || ((d == ')') && (level <= 0))));
 
-	  if (k > ls)
-	    {
-	      error = message (dico, "Closing \")\" not found.");
-	      natom++; /*shut up other error message */ ;
-	    }
-	  else
-	    {
-	      if (arg2 > i)
-		{
-		  pscopy (t, s, i + 1, arg2 - i - 1);
-		  v = formula (dico, t, &error);
-		  i = arg2;
-		}
-	      if (arg3 > i)
-		{
-		  pscopy (t, s, i + 1, arg3 - i - 1);
-		  w = formula (dico, t, &error);
-		  i = arg3;
-		}
-	      pscopy (t, s, i + 1, k - i - 1);
-	      u = formula (dico, t, &error);
-	      state = 1;	/*atom */
-	      if (fu > 0)
-		{
-		  if ((fu == 15))
-		      u = ternary_fcn ((int) v, w, u);
-		  else if ((fu == 16))
-		      u = agauss (v, w, u);
-		  else
-		      u = mathfunction (fu, v, u);
+          if (k > ls)
+            {
+              error = message (dico, "Closing \")\" not found.");
+              natom++; /*shut up other error message */ ;
+            }
+          else
+            {
+              if (arg2 > i)
+                {
+                  pscopy (t, s, i + 1, arg2 - i - 1);
+                  v = formula (dico, t, &error);
+                  i = arg2;
+                }
+              if (arg3 > i)
+                {
+                  pscopy (t, s, i + 1, arg3 - i - 1);
+                  w = formula (dico, t, &error);
+                  i = arg3;
+                }
+              pscopy (t, s, i + 1, k - i - 1);
+              u = formula (dico, t, &error);
+              state = 1;        /*atom */
+              if (fu > 0)
+                {
+                  if ((fu == 15))
+                      u = ternary_fcn ((int) v, w, u);
+                  else if ((fu == 16))
+                      u = agauss (v, w, u);
+                  else
+                      u = mathfunction (fu, v, u);
 
-		}
-	    }
-	  i = k;
-	  fu = 0;
-	}
+                }
+            }
+          i = k;
+          fu = 0;
+        }
       else if (alfa (c))
-	{
-	  i = fetchid (s, t, ls, i);	/*user id, but sort out keywords */
-	  state = 1;
-	  i--;
-	  kw = keyword (keys, t);	/*debug ws('[',kw,']'); */
-	  if (kw == 0)
-	    {
-	      fu = keyword (fmath, t);	/* numeric function? */
-	      if (fu == 0)
-		  u = fetchnumentry (dico, t, &error);
-	      else
-		  state = 0; /* state==0 means: ignore for the moment */
-	    }
-	  else
-	      c = opfunctkey (dico, kw, c, &state, &level, &error);
+        {
+          i = fetchid (s, t, ls, i);        /*user id, but sort out keywords */
+          state = 1;
+          i--;
+          kw = keyword (keys, t);        /*debug ws('[',kw,']'); */
+          if (kw == 0)
+            {
+              fu = keyword (fmath, t);        /* numeric function? */
+              if (fu == 0)
+                  u = fetchnumentry (dico, t, &error);
+              else
+                  state = 0; /* state==0 means: ignore for the moment */
+            }
+          else
+              c = opfunctkey (dico, kw, c, &state, &level, &error);
 
-	  if (kw == Defd)
-	      u = exists (dico, s, &i, &error);
-	}
+          if (kw == Defd)
+              u = exists (dico, s, &i, &error);
+        }
       else if (((c == '.') || ((c >= '0') && (c <= '9'))))
-	{
-	  u = fetchnumber (dico, s, ls, &i, &error);
-	  if (negate)
-	    {
-	      u = -1 * u;
-	      negate = 0;
-	    }
-	  state = 1;
-	}
+        {
+          u = fetchnumber (dico, s, ls, &i, &error);
+          if (negate)
+            {
+              u = -1 * u;
+              negate = 0;
+            }
+          state = 1;
+        }
       else
-	  c = fetchoperator (dico, s, ls, &i, &state, &level, &error);
-	  /* may change c to some other operator char! */ 			
+          c = fetchoperator (dico, s, ls, &i, &state, &level, &error);
+          /* may change c to some other operator char! */
           /* control chars <' '  ignored */
 
       ok = (oldstate == 0) || (state == 0) ||
-	((oldstate == 1) && (state == 2)) || ((oldstate != 1)
-					      && (state != 2));
+        ((oldstate == 1) && (state == 2)) || ((oldstate != 1)
+                                              && (state != 2));
       if (oldstate == 2 && state == 2 && c == '-')
-	{
-	  ok = 1;
-	  negate = 1;
-	  continue;
-	}
+        {
+          ok = 1;
+          negate = 1;
+          continue;
+        }
 
       if (!ok)
-	  error = message (dico, " Misplaced operator");
+          error = message (dico, " Misplaced operator");
 
       if (state == 3)
-	{			/*push unary operator */
-	  ustack++;
-	  uop[ustack] = c;
-	}
+        {                        /*push unary operator */
+          ustack++;
+          uop[ustack] = c;
+        }
       else if (state == 1)
-	{			/*atom pending */
-	  natom++;
-	  if (i >= ls)
-	    {
-	      state = 4;
-	      level = topop;
-	    }			/*close all ops below */
-	  for (k = ustack; k >= 1; k--)
-	      u = operate (uop[k], u, u);
+        {                        /*atom pending */
+          natom++;
+          if (i >= ls)
+            {
+              state = 4;
+              level = topop;
+            }                        /*close all ops below */
+          for (k = ustack; k >= 1; k--)
+              u = operate (uop[k], u, u);
 
-	  ustack = 0;
-	  accu[0] = u; /* done: all pending unary operators */ ;
-	}
+          ustack = 0;
+          accu[0] = u; /* done: all pending unary operators */ ;
+        }
 
       if ((state == 2) || (state == 4))
-	{
-	  /* do pending binaries of priority Upto "level" */
-	  for (k = 1; k <= level; k++)
-	    {			/* not yet speed optimized! */
-	      accu[k] = operate (oper[k], accu[k], accu[k - 1]);
-	      accu[k - 1] = 0.0;
-	      oper[k] = ' '; /*reset intermediates */ ;
-	    }
-	  oper[level] = c;
+        {
+          /* do pending binaries of priority Upto "level" */
+          for (k = 1; k <= level; k++)
+            {                        /* not yet speed optimized! */
+              accu[k] = operate (oper[k], accu[k], accu[k - 1]);
+              accu[k - 1] = 0.0;
+              oper[k] = ' '; /*reset intermediates */ ;
+            }
+          oper[level] = c;
 
-	  if (level > topop)
-	      topop = level;
-	}
+          if (level > topop)
+              topop = level;
+        }
       if ((state > 0))
-	{
-	  oldstate = state;
-	}
+        {
+          oldstate = state;
+        }
     } /*while */ ;
   if ((natom == 0) || (oldstate != 4))
     {
@@ -1262,8 +1262,8 @@ formula (tdico * dico, char *s, unsigned char *perror)
   if (negate == 1)
     {
       error =
-	message (dico,
-		 " Problem with formula eval -- wrongly determined negation!");
+        message (dico,
+                 " Problem with formula eval -- wrongly determined negation!");
     }
 
   *perror = error;
@@ -1272,7 +1272,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
       return 1.0;
   else
       return accu[topop];
-}				/*formula */
+}                                /*formula */
 
 static char
 fmttype (double x)
@@ -1289,7 +1289,7 @@ fmttype (double x)
   if (ax < 1e-30)
       isint = 1;
   else if (ax < 32000)
-    {				/*detect integers */
+    {                                /*detect integers */
       rx = np_round (x);
       dx = (x - rx) / ax;
       isint = (absf (dx) < 1e-6);
@@ -1321,58 +1321,58 @@ evaluate (tdico * dico, char *q, char *t, unsigned char mode)
   err = 0;
 
   if (mode == 1)
-    {				/*string? */
+    {                                /*string? */
       stupcase (t);
       k = entrynb (dico, t);
       nolookup = (k <= 0);
       while ((k > 0) && (dico->dat[k].tp == 'P'))
-	  k = dico->dat[k].ivl;
+          k = dico->dat[k].ivl;
 
       /*pointer chain */
       if (k > 0)
-	  dt = dico->dat[k].tp;
+          dt = dico->dat[k].tp;
       else
-	  dt = ' ';
+          dt = ' ';
 
       /*data type: Real or String */
       if (dt == 'R')
-	{
-	  u = dico->dat[k].vl;
-	  numeric = 1;
-	}
+        {
+          u = dico->dat[k].vl;
+          numeric = 1;
+        }
       else if (dt == 'S')
-	{			/*suppose source text "..." at */
-	  j = dico->dat[k].ivl;
-	  lq = 0;
-	  do {
-	      j++;
-	      lq++;
-	      dt = /*ibf->bf[j]; */ dico->dat[k].sbbase[j];
+        {                        /*suppose source text "..." at */
+          j = dico->dat[k].ivl;
+          lq = 0;
+          do {
+              j++;
+              lq++;
+              dt = /*ibf->bf[j]; */ dico->dat[k].sbbase[j];
 
-	      if (cpos ('3', dico->option) <= 0)
-		  dt = upcase (dt); /* spice-2 */
+              if (cpos ('3', dico->option) <= 0)
+                  dt = upcase (dt); /* spice-2 */
 
-	      done = (dt == '\"') || (dt < ' ') || (lq > 99);
+              done = (dt == '\"') || (dt < ' ') || (lq > 99);
 
-	      if (!done)
-		  cadd (q, dt);
-	    } while (!(done));
-	}
+              if (!done)
+                  cadd (q, dt);
+            } while (!(done));
+        }
       else
-	k = 0;
+        k = 0;
 
       if (k <= 0)
-	{
-	  scopy (v, "");
-	  cadd (v, '\"');
-	  sadd (v, t);
-	  sadd (v, "\" not evaluated. ");
+        {
+          scopy (v, "");
+          cadd (v, '\"');
+          sadd (v, t);
+          sadd (v, "\" not evaluated. ");
 
-	  if (nolookup)
-	      sadd (v, "Lookup failure.");
+          if (nolookup)
+              sadd (v, "Lookup failure.");
 
-	  err = message (dico, v);
-	}
+          err = message (dico, v);
+        }
     }
   else
     {
@@ -1383,12 +1383,12 @@ evaluate (tdico * dico, char *q, char *t, unsigned char mode)
     {
       fmt = fmttype (u);
       if (fmt == 'I')
-	  stri (np_round (u), q);
+          stri (np_round (u), q);
       else
-	{
-	  //strf(u,6,-1,q); 
-	  strf (u, 17, 10, q);
-	} /* strf() arg 2 doesnt work: always >10 significant digits ! */ ;
+        {
+          //strf(u,6,-1,q);
+          strf (u, 17, 10, q);
+        } /* strf() arg 2 doesnt work: always >10 significant digits ! */ ;
     }
   return err;
 }
@@ -1404,14 +1404,14 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
   Strbig (Llen, q);
   Strbig (Llen, t);
   Str (20, u);
-  spice3 = cpos ('3', dico->option) > 0;	/* we had -3 on the command line */
+  spice3 = cpos ('3', dico->option) > 0;        /* we had -3 on the command line */
   i = 0;
   ls = length (s);
   scopy (r, "");
   err = 0;
   pscopy (u, s, 1, 3);
   if ((ls > 7) && steq (u, "**&"))
-    {				/*special Comment **&AC #... */
+    {                                /*special Comment **&AC #... */
       pscopy (r, s, 1, 7);
       i = 7;
     }
@@ -1420,142 +1420,142 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
       i++;
       c = s[i - 1];
       if (c == Pspice)
-	{			/* try pspice expression syntax */
-	  k = i;
-	  nnest = 1;
-	  do
-	    {
-	      k++;
-	      d = s[k - 1];
-	      if (d == '{')
-		{
-		  nnest++;
-		}
-	      else if (d == '}')
-		{
-		  nnest--;
-		}
-	    }
-	  while (!((nnest == 0) || (d == 0)));
-	  if (d == 0)
-	    {
-	      err = message (dico, "Closing \"}\" not found.");
-	    }
-	  else
-	    {
-	      pscopy (t, s, i + 1, k - i - 1);
-	      err = evaluate (dico, q, t, 0);
-	    }
-	  i = k;
-	  if (!err)
-	    {			/*insert number */
-	      sadd (r, q);
-	    }
-	  else
-	    {
-	      err = message (dico, s);
-	    }
-	}
+        {                        /* try pspice expression syntax */
+          k = i;
+          nnest = 1;
+          do
+            {
+              k++;
+              d = s[k - 1];
+              if (d == '{')
+                {
+                  nnest++;
+                }
+              else if (d == '}')
+                {
+                  nnest--;
+                }
+            }
+          while (!((nnest == 0) || (d == 0)));
+          if (d == 0)
+            {
+              err = message (dico, "Closing \"}\" not found.");
+            }
+          else
+            {
+              pscopy (t, s, i + 1, k - i - 1);
+              err = evaluate (dico, q, t, 0);
+            }
+          i = k;
+          if (!err)
+            {                        /*insert number */
+              sadd (r, q);
+            }
+          else
+            {
+              err = message (dico, s);
+            }
+        }
       else if (c == Intro)
-	{
-	  Inc (i);
-	  while ((i < ls) && (s[i - 1] <= ' '))
-	    i++;
-	  k = i;
-	  if (s[k - 1] == '(')
-	    {			/*sub-formula */
-	      level = 1;
-	      do
-		{
-		  k++;
-		  if (k > ls)
-		    {
-		      d = chr (0);
-		    }
-		  else
-		    {
-		      d = s[k - 1];
-		    }
-		  if (d == '(')
-		    {
-		      level++;
-		    }
-		  else if (d == ')')
-		    {
-		      level--;
-		    }
-		}
-	      while (!((k > ls) || ((d == ')') && (level <= 0))));
-	      if (k > ls)
-		{
-		  err = message (dico, "Closing \")\" not found.");
-		}
-	      else
-		{
-		  pscopy (t, s, i + 1, k - i - 1);
-		  err = evaluate (dico, q, t, 0);
-		}
-	      i = k;
-	    }
-	  else
-	    {			/*simple identifier may also be string */
-	      do
-		{
-		  k++;
-		  if (k > ls)
-		    {
-		      d = chr (0);
-		    }
-		  else
-		    {
-		      d = s[k - 1];
-		    }
-		}
-	      while (!((k > ls) || (d <= ' ')));
-	      pscopy (t, s, i, k - i);
-	      err = evaluate (dico, q, t, 1);
-	      i = k - 1;
-	    }
-	  if (!err)
-	    {			/*insert the number */
-	      sadd (r, q);
-	    }
-	  else
-	    {
-	      message (dico, s);
-	    }
-	}
+        {
+          Inc (i);
+          while ((i < ls) && (s[i - 1] <= ' '))
+            i++;
+          k = i;
+          if (s[k - 1] == '(')
+            {                        /*sub-formula */
+              level = 1;
+              do
+                {
+                  k++;
+                  if (k > ls)
+                    {
+                      d = chr (0);
+                    }
+                  else
+                    {
+                      d = s[k - 1];
+                    }
+                  if (d == '(')
+                    {
+                      level++;
+                    }
+                  else if (d == ')')
+                    {
+                      level--;
+                    }
+                }
+              while (!((k > ls) || ((d == ')') && (level <= 0))));
+              if (k > ls)
+                {
+                  err = message (dico, "Closing \")\" not found.");
+                }
+              else
+                {
+                  pscopy (t, s, i + 1, k - i - 1);
+                  err = evaluate (dico, q, t, 0);
+                }
+              i = k;
+            }
+          else
+            {                        /*simple identifier may also be string */
+              do
+                {
+                  k++;
+                  if (k > ls)
+                    {
+                      d = chr (0);
+                    }
+                  else
+                    {
+                      d = s[k - 1];
+                    }
+                }
+              while (!((k > ls) || (d <= ' ')));
+              pscopy (t, s, i, k - i);
+              err = evaluate (dico, q, t, 1);
+              i = k - 1;
+            }
+          if (!err)
+            {                        /*insert the number */
+              sadd (r, q);
+            }
+          else
+            {
+              message (dico, s);
+            }
+        }
       else if (c == Nodekey)
-	{			/*follows: a node keyword */
-	  do
-	    {
-	      i++;
-	    }
-	  while (!(s[i - 1] > ' '));
-	  k = i;
-	  do
-	    {
-	      k++;
-	    }
-	  while (!((k > ls) || !alfanum (s[k - 1])));
-	  pscopy (q, s, i, k - i);
-	  nd = parsenode (Addr (dico->nodetab), q);
-	  if (!spice3)
-	    {
-	      stri (nd, q);
-	    }			/* substitute by number */
-	  sadd (r, q);
-	  i = k - 1;
-	}
+        {                        /*follows: a node keyword */
+          do
+            {
+              i++;
+            }
+          while (!(s[i - 1] > ' '));
+          k = i;
+          do
+            {
+              k++;
+            }
+          while (!((k > ls) || !alfanum (s[k - 1])));
+          pscopy (q, s, i, k - i);
+          nd = parsenode (Addr (dico->nodetab), q);
+          if (!spice3)
+            {
+              stri (nd, q);
+            }                        /* substitute by number */
+          sadd (r, q);
+          i = k - 1;
+        }
       else
-	{
-	  if (!spice3)
-	    {
-	      c = upcase (c);
-	    }
-	  cadd (r, c); /*c<>Intro */ ;
-	}
-    }				/*while */
+        {
+          if (!spice3)
+            {
+              c = upcase (c);
+            }
+          cadd (r, c); /*c<>Intro */ ;
+        }
+    }                                /*while */
   return err;
 }
 #endif
@@ -1600,7 +1600,7 @@ compactfloatnb (char *v)
     if ((lem + lex) > 10)
       lem = 10 - lex;
 
-    pscopy (v, v, m+1, lem);      
+    pscopy (v, v, m+1, lem);
     if (cpos('.', v) > 0) {
       while (lem < 6) {
         cadd(v, '0');
@@ -1622,7 +1622,7 @@ compactfloatnb (char *v)
 
     lem = length(v) - m;
     if (lem > 10) lem = 10;
-    pscopy (v, v, m+1, lem);      
+    pscopy (v, v, m+1, lem);
   }
 }
 
@@ -1659,28 +1659,28 @@ insertnumber (tdico * dico, int i, char *s, char *u)
       accu = 0;
 
       while (found && (k < 10))
-	{			/* parse a 10-digit number */
-	  found = num (s[i + k]);
+        {                        /* parse a 10-digit number */
+          found = num (s[i + k]);
 
-	  if (found)
-	      accu = 10 * accu + s[i + k] - '0';
+          if (found)
+              accu = 10 * accu + s[i + k] - '0';
 
-	  k++;
-	}
+          k++;
+        }
 
       if (found)
-	{
-	  accu = accu - 1000000000L;	/* plausibility test */
-	  found = (accu > 0) && (accu < 40000);
-	}
+        {
+          accu = accu - 1000000000L;        /* plausibility test */
+          found = (accu > 0) && (accu < 40000);
+        }
       i++;
     }
 
   if (found)
-    {				/* substitute at i-1 */
+    {                                /* substitute at i-1 */
       i--;
       for (k = 0; k < 11; k++)
-	s[i + k] = v[k];
+        s[i + k] = v[k];
 
       i = i + 17;
 
@@ -1689,7 +1689,7 @@ insertnumber (tdico * dico, int i, char *s, char *u)
     {
       i = ls;
       fprintf (stderr, "xpressn.c--insertnumber:  i=%d  s=%s  u=%s\n", i, s,
-	       u);
+               u);
       message (dico, "insertnumber: missing slot ");
     }
   return i;
@@ -1698,7 +1698,7 @@ insertnumber (tdico * dico, int i, char *s, char *u)
 unsigned char
 nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
 /* s: pointer to original source line.
-   r: pointer to result line, already heavily modified wrt s 
+   r: pointer to result line, already heavily modified wrt s
    anywhere we find a 10-char numstring in r, substitute it.
   bug: wont flag overflow!
 */
@@ -1717,86 +1717,86 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
       i++;
       c = s[i - 1];
       if (c == Pspice)
-	{			/* try pspice expression syntax */
-	  k = i;
-	  nnest = 1;
-	  do {
-	      k++;
-	      d = s[k - 1];
-	      if (d == '{')
-		  nnest++;
-	      else if (d == '}')
-		  nnest--;
-	    } while (!((nnest == 0) || (d == 0)));
+        {                        /* try pspice expression syntax */
+          k = i;
+          nnest = 1;
+          do {
+              k++;
+              d = s[k - 1];
+              if (d == '{')
+                  nnest++;
+              else if (d == '}')
+                  nnest--;
+            } while (!((nnest == 0) || (d == 0)));
 
-	  if (d == 0)
-	      err = message (dico, "Closing \"}\" not found.");
-	  else
-	    {
-	      pscopy (t, s, i + 1, k - i - 1);
-	      err = evaluate (dico, q, t, 0);
-	    }
+          if (d == 0)
+              err = message (dico, "Closing \"}\" not found.");
+          else
+            {
+              pscopy (t, s, i + 1, k - i - 1);
+              err = evaluate (dico, q, t, 0);
+            }
 
-	  i = k;
-	  if (!err)
-	      ir = insertnumber (dico, ir, r, q);
-	  else
-	      err = message (dico, "Cannot compute substitute");
-	}
+          i = k;
+          if (!err)
+              ir = insertnumber (dico, ir, r, q);
+          else
+              err = message (dico, "Cannot compute substitute");
+        }
       else if (c == Intro)
-	{
-	  i++;
-	  while ((i < ls) && (s[i - 1] <= ' '))
-	    i++;
+        {
+          i++;
+          while ((i < ls) && (s[i - 1] <= ' '))
+            i++;
 
-	  k = i;
+          k = i;
 
-	  if (s[k - 1] == '(')
-	    {			/*sub-formula */
-	      level = 1;
-	      do {
-		  k++;
-		  if (k > ls)
-		      d = (char)(0);
-		  else
-		      d = s[k - 1];
-
-		  if (d == '(')
-		      level++;
-		  else if (d == ')')
-		      level--;
-		} while (!((k > ls) || ((d == ')') && (level <= 0))));
-
-	      if (k > ls)
-		  err = message (dico, "Closing \")\" not found.");
-	      else
-		{
-		  pscopy (t, s, i + 1, k - i - 1);
-		  err = evaluate (dico, q, t, 0);
-		}
-	      i = k;
-	    }
-	  else
-	    {			/*simple identifier may also be string? */
-	      do {
-		  k++;
-		  if (k > ls)
+          if (s[k - 1] == '(')
+            {                        /*sub-formula */
+              level = 1;
+              do {
+                  k++;
+                  if (k > ls)
                       d = (char)(0);
-		  else
-		      d = s[k - 1];
-		} while (!((k > ls) || (d <= ' ')));
+                  else
+                      d = s[k - 1];
 
-	      pscopy (t, s, i, k - i);
-	      err = evaluate (dico, q, t, 1);
-	      i = k - 1;
-	    }
+                  if (d == '(')
+                      level++;
+                  else if (d == ')')
+                      level--;
+                } while (!((k > ls) || ((d == ')') && (level <= 0))));
 
-	  if (!err)
-	      ir = insertnumber (dico, ir, r, q);
-	  else
-	      message (dico, "Cannot compute &(expression)");
-	}
-    }				/*while */
+              if (k > ls)
+                  err = message (dico, "Closing \")\" not found.");
+              else
+                {
+                  pscopy (t, s, i + 1, k - i - 1);
+                  err = evaluate (dico, q, t, 0);
+                }
+              i = k;
+            }
+          else
+            {                        /*simple identifier may also be string? */
+              do {
+                  k++;
+                  if (k > ls)
+                      d = (char)(0);
+                  else
+                      d = s[k - 1];
+                } while (!((k > ls) || (d <= ' ')));
+
+              pscopy (t, s, i, k - i);
+              err = evaluate (dico, q, t, 1);
+              i = k - 1;
+            }
+
+          if (!err)
+              ir = insertnumber (dico, ir, r, q);
+          else
+              message (dico, "Cannot compute &(expression)");
+        }
+    }                                /*while */
   return err;
 }
 
@@ -1809,7 +1809,7 @@ getword (char *s, char *t, int after, int *pi)
   unsigned char key;
   i = after;
   ls = length (s);
- 
+
  do
     {
       i++;
@@ -1850,55 +1850,55 @@ getexpress (char *s, char *t, int *pi)
       ia++; /*white space ? */
 
   if (s[ia - 1] == '"')
-    {				/*string constant */
+    {                                /*string constant */
       ia++;
       i = ia;
 
       while ((i < ls) && (s[i - 1] != '"'))
-	i++;
+        i++;
 
       tpe = 'S';
 
       do {
-	  i++;
-	} while (!((i > ls) || (s[i - 1] > ' ')));
+          i++;
+        } while (!((i > ls) || (s[i - 1] > ' ')));
     }
   else
     {
 
       if (s[ia - 1] == '{')
-	ia++;
+        ia++;
 
       i = ia - 1;
 
       do {
-	  i++;
+          i++;
 
-	  if (i > ls)
-	      c = ';';
-	  else
-	      c = s[i - 1];
+          if (i > ls)
+              c = ';';
+          else
+              c = s[i - 1];
 
-	  if (c == '(')
-	    {			/*sub-formula */
-	      level = 1;
-	      do {
-		  i++;
+          if (c == '(')
+            {                        /*sub-formula */
+              level = 1;
+              do {
+                  i++;
 
-		  if (i > ls)
-		      d = Nul;
-		  else
-		      d = s[i - 1];
+                  if (i > ls)
+                      d = Nul;
+                  else
+                      d = s[i - 1];
 
-		  if (d == '(')
-		      level++;
-		  else if (d == ')')
-		      level--;
-		} while (!((i > ls) || ((d == ')') && (level <= 0))));
-	    }
-	  /* buggy? */ if ((c == '/') || (c == '-'))
-	      comment = (s[i] == c);
-	} while (!((cpos (c, ",;)}") > 0) || comment));	/*legal separators */
+                  if (d == '(')
+                      level++;
+                  else if (d == ')')
+                      level--;
+                } while (!((i > ls) || ((d == ')') && (level <= 0))));
+            }
+          /* buggy? */ if ((c == '/') || (c == '-'))
+              comment = (s[i] == c);
+        } while (!((cpos (c, ",;)}") > 0) || comment));        /*legal separators */
 
       tpe = 'R';
 
@@ -1910,7 +1910,7 @@ getexpress (char *s, char *t, int *pi)
     i++;
 
   if (tpe == 'S')
-    i++;			/* beyond quote */
+    i++;                        /* beyond quote */
 
   *pi = i;
   return tpe;
@@ -1936,7 +1936,7 @@ nupa_assignment (tdico * dico, char *s, char mode)
   ls = length (s);
   error = 0;
   i = 0;
-  j = spos ("//", s);		/* stop before comment if any */
+  j = spos ("//", s);                /* stop before comment if any */
 
   if (j > 0)
     ls = j - 1;
@@ -1950,45 +1950,45 @@ nupa_assignment (tdico * dico, char *s, char mode)
     i++;
 
   if (s[i] == '.')
-    {				/* skip any dot keyword */
+    {                                /* skip any dot keyword */
       while (s[i] > ' ')
-	i++;
+        i++;
     }
 
   while ((i < ls) && (!error))
     {
       key = getword (s, t, i, &i);
       if ((t[0] == 0) || (key > 0))
-	  error = message (dico, " Identifier expected");
+          error = message (dico, " Identifier expected");
 
       if (!error)
-	{			/* assignment expressions */
-	  while ((i <= ls) && (s[i - 1] != '='))
-	    i++;
+        {                        /* assignment expressions */
+          while ((i <= ls) && (s[i - 1] != '='))
+            i++;
 
-	  if (i > ls)
-	      error = message (dico, " = sign expected .");
+          if (i > ls)
+              error = message (dico, " = sign expected .");
 
-	  dtype = getexpress (s, u, &i);
+          dtype = getexpress (s, u, &i);
 
-	  if (dtype == 'R')
-	    {
-	      rval = formula (dico, u, &error);
-	      if (error)
-		{
-		  message (dico, " Formula() error.");
-		  fprintf (stderr, "      %s\n", s);
-		}
-	    }
-	  else if (dtype == 'S')
-	      wval = i;
+          if (dtype == 'R')
+            {
+              rval = formula (dico, u, &error);
+              if (error)
+                {
+                  message (dico, " Formula() error.");
+                  fprintf (stderr, "      %s\n", s);
+                }
+            }
+          else if (dtype == 'S')
+              wval = i;
 
-	  err = define (dico, t, mode /*was ' ' */ , dtype, rval, wval, NULL);
-	  error = error || err;
-	}
+          err = define (dico, t, mode /*was ' ' */ , dtype, rval, wval, NULL);
+          error = error || err;
+        }
 
       if ((i < ls) && (s[i - 1] != ';'))
-	  error = message (dico, " ; sign expected.");
+          error = message (dico, " ; sign expected.");
       else
         /* i++ */;
     }
@@ -1998,7 +1998,7 @@ nupa_assignment (tdico * dico, char *s, char mode)
 unsigned char
 nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
 /* s= a subckt define line, with formal params.
-   x= a matching subckt call line, with actual params 
+   x= a matching subckt call line, with actual params
 */
 {
   int n, m, i, j, k, g, h, narg = 0, ls, nest;
@@ -2007,6 +2007,8 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
   Strbig (Llen, v);
   Strbig (Llen, idlist);
   Str (80, subname);
+  char *buf, *token;
+  unsigned char found;
 
   /*
      skip over instance name -- fixes bug where instance 'x1' is
@@ -2016,7 +2018,7 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
     x++;
 
   /***** first, analyze the subckt definition line */
-  n = 0;			/* number of parameters if any */
+  n = 0;                        /* number of parameters if any */
   ls = length (s);
   j = spos ("//", s);
 
@@ -2029,15 +2031,15 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
 
   if (j > 0)
     {
-      j = j + 6;		/* fetch its name */
+      j = j + 6;                /* fetch its name */
       while ((j < ls) && (t[j] <= ' '))
-	j++;
+        j++;
 
       while (t[j] != ' ')
-	{
-	  cadd (subname, t[j]);
-	  j++;
-	}
+        {
+          cadd (subname, t[j]);
+          j++;
+        }
     }
   else
     err = message (dico, " ! a subckt line!");
@@ -2048,29 +2050,29 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
     {
       pscopy (t, t, i + 7, length (t));
       while (j = cpos ('=', t), j > 0)
-	{			/* isolate idents to the left of =-signs */
-	  k = j - 2;
-	  while ((k >= 0) && (t[k] <= ' '))
-	    k--;
+        {                        /* isolate idents to the left of =-signs */
+          k = j - 2;
+          while ((k >= 0) && (t[k] <= ' '))
+            k--;
 
-	  h = k;
+          h = k;
 
-	  while ((h >= 0) && alfanum (t[h]))
-	    h--;
+          while ((h >= 0) && alfanum (t[h]))
+            h--;
 
-	  if (alfa (t[h + 1]) && (k > h))
-	    {			/* we have some id */
-	      for (m = (h + 1); m <= k; m++)
-		cadd (idlist, t[m]);
+          if (alfa (t[h + 1]) && (k > h))
+            {                        /* we have some id */
+              for (m = (h + 1); m <= k; m++)
+                cadd (idlist, t[m]);
 
-	      sadd (idlist, "=$;");
-	      n++;
-	    }
-	  else
-	    message (dico, "identifier expected.");
+              sadd (idlist, "=$;");
+              n++;
+            }
+          else
+            message (dico, "identifier expected.");
 
-	  pscopy (t, t, j + 1, length (t));
-	}
+          pscopy (t, t, j + 1, length (t));
+        }
     }
   /***** next, analyze the circuit call line */
   if (!err)
@@ -2079,102 +2081,112 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
       j = spos ("//", x);
 
       if (j > 0)
-	pscopy_up (t, x, 1, j - 1);
+        pscopy_up (t, x, 1, j - 1);
       else
-	scopy_up (t, x);
+        scopy_up (t, x);
 
       ls = length (t);
-      j = spos (subname, t);
+
+      buf = (char*) malloc(strlen(t) + 1);
+      strcpy(buf, t);
+
+      found = 0;
+      token = strtok(buf, " ");       /* a bit more exact - but not sufficient everytime */
+      j = j + strlen(token) + 1;
+      if (strcmp(token, subname)) {
+        while ((token = strtok(NULL, " "))) {
+          if (!strcmp(token, subname)) {
+            found = 1;
+            break;
+          }
+          j = j + strlen(token) + 1;
+        }
+      }
+      free(buf);
 
       /*  make sure that subname followed by space */
-      while (j > 0 && *(t + j + length (subname) - 1) > ' ')
-	j =
-	  j + length (subname) - 1 + spos (subname,
-					   t + j + length (subname) - 1);
+      if (found)
+        {
+          j = j + length (subname) + 1;        /* 1st position of arglist: j */
 
-      if (j > 0)
-	{
-	  j = j + length (subname) - 1;	/* 1st position of arglist: j */
+          while ((j < ls) && ((t[j] <= ' ') || (t[j] == ',')))
+            j++;
 
-	  while ((j < ls) && ((t[j] <= ' ') || (t[j] == ',')))
-	    j++;
+          while (j < ls)
+            {                        /* try to fetch valid arguments */
+              k = j;
+              scopy (u, "");
+              if ((t[k] == Intro))
+                {                /* handle historical syntax... */
+                  if (alfa (t[k + 1]))
+                      k++;
+                  else if (t[k + 1] == '(')
+                    {                /* transform to braces... */
+                      k++;
+                      t[k] = '{';
+                      g = k;
+                      nest = 1;
+                      while ((nest > 0) && (g < ls))
+                        {
+                          g++;
+                          if (t[g] == '(')
+                            nest++;
+                          else if (t[g] == ')')
+                            nest--;
+                        }
 
-	  while (j < ls)
-	    {			/* try to fetch valid arguments */
-	      k = j;
-	      scopy (u, "");
-	      if ((t[k] == Intro))
-		{		/* handle historical syntax... */
-		  if (alfa (t[k + 1]))
-		      k++;
-		  else if (t[k + 1] == '(')
-		    {		/* transform to braces... */
-		      k++;
-		      t[k] = '{';
-		      g = k;
-		      nest = 1;
-		      while ((nest > 0) && (g < ls))
-			{
-			  g++;
-			  if (t[g] == '(')
-			    nest++;
-			  else if (t[g] == ')')
-			    nest--;
-			}
+                      if ((g < ls) && (nest == 0))
+                        t[g] = '}';
+                    }
+                }
 
-		      if ((g < ls) && (nest == 0))
-			t[g] = '}';
-		    }
-		}
+              if (alfanum (t[k]) || t[k] == '.')
+                {                /* number, identifier */
+                  h = k;
+                  while (t[k] > ' ')
+                    k++;
 
-	      if (alfanum (t[k]) || t[k] == '.')
-		{		/* number, identifier */
-		  h = k;
-		  while (t[k] > ' ')
-		    k++;
+                  pscopy (u, t, h + 1, k - h);
+                  j = k;
+                }
+              else if (t[k] == '{')
+                {
+                  getexpress (t, u, &j);
+                  j--; /* confusion: j was in Turbo Pascal convention */ ;
+                }
+              else
+                {
+                  j++;
+                  if (t[k] > ' ')
+                    {
+                      scopy (v, "Subckt call, symbol ");
+                      cadd (v, t[k]);
+                      sadd (v, " not understood");
+                      message (dico, v);
+                    }
+                }
 
-		  pscopy (u, t, h + 1, k - h);
-		  j = k;
-		}
-	      else if (t[k] == '{')
-		{
-		  getexpress (t, u, &j);
-		  j--; /* confusion: j was in Turbo Pascal convention */ ;
-		}
-	      else
-		{
-		  j++;
+              if (u[0])
+                {
+                  narg++;
+                  k = cpos ('$', idlist);
 
-		  if (t[k] > ' ')
-		    {
-		      scopy (v, "Subckt call, symbol ");
-		      cadd (v, t[k]);
-		      sadd (v, " not understood");
-		      message (dico, v);
-		    }
-		}
-
-	      if (u[0])
-		{
-		  narg++;
-		  k = cpos ('$', idlist);
-
-		  if (k > 0)
-		    {		/* replace dollar with expression string u */
-		      pscopy (v, idlist, 1, k - 1);
-		      sadd (v, u);
-		      pscopy (u, idlist, k + 1, length (idlist));
-		      scopy (idlist, v);
-		      sadd (idlist, u);
-		    }
-		}
-	    }
-	}
+                  if (k > 0)
+                    {                /* replace dollar with expression string u */
+                      pscopy (v, idlist, 1, k - 1);
+                      sadd (v, u);
+                      pscopy (u, idlist, k + 1, length (idlist));
+                      scopy (idlist, v);
+                      sadd (idlist, u);
+                    }
+                }
+            }
+        }
       else
-	  message (dico, "Cannot find called subcircuit");
+          message (dico, "Cannot find called subcircuit");
     }
   /***** finally, execute the multi-assignment line */
-  dicostack (dico, Push);	/* create local symbol scope */
+  dicostack (dico, Push);        /* create local symbol scope */
   if (narg != n)
     {
       scopy (t, " Mismatch: ");
