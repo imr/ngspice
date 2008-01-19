@@ -1,3 +1,7 @@
+2008-01-19 Dietmar Warning
+ * configure.in: w/o optimization better debug
+ * src/frontend/numparam/xpressn.c: more precise recognition of subckt names
+
 2008-01-12 Dietmar Warning
  * configure.in, src/xspice/ipc/*.c: xspice ipc is possible
  * src/include/ngspice.h: reflect the extended autoconfigure 

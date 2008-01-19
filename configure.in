@@ -194,10 +194,12 @@ dnl Set default CFLAG - only use -Wall if we have gcc
 
 AC_PROG_CC
 
-dnl the above AC_PROG_CC may set CFLAGS to "-o2 -g"
+dnl the above AC_PROG_CC may set CFLAGS to "-O2 -g"
 if test "$enable_debug" = "no"; then
 	AC_MSG_WARN(Removing debugging option!)
 	CFLAGS=" "
+else
+	CFLAGS="-O0 -g"
 fi
 
 if test "x$GCC" = "xyes"; then
