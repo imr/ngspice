@@ -158,7 +158,7 @@ static int started = FALSE;
 
 /* static functions */
 static int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
-static int shutdown(int exitval);
+static int sp_shutdown(int exitval);
 static void app_rl_readlines(void);
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
@@ -356,7 +356,7 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 /* -------------------------------------------------------------------------- */
 /* Shutdown gracefully. */
 static int
-shutdown(int exitval)
+sp_shutdown(int exitval)
 {
     cleanvars();
 #ifdef PARALLEL_ARCH
@@ -688,7 +688,7 @@ main(int argc, char **argv)
     /* MFB tends to jump to 0 on errors.  This tends to catch it. */
     if (started) {
         fprintf(cp_err, "main: Internal Error: jump to zero\n");
-        shutdown(EXIT_BAD);
+        sp_shutdown(EXIT_BAD);
     }
     started = TRUE;
 
@@ -732,7 +732,7 @@ main(int argc, char **argv)
     err = SIMinit(&nutmeginfo,&ft_sim);
     if(err != OK) {
         ft_sperror(err,"SIMinit");
-        shutdown(EXIT_BAD);
+        sp_shutdown(EXIT_BAD);
     }
     cp_program = ft_sim->simulator;
 
@@ -765,12 +765,12 @@ main(int argc, char **argv)
 	switch (c) {
 	    case 'h':		/* Help */
 		show_help();
-		shutdown (EXIT_NORMAL);
+		sp_shutdown (EXIT_NORMAL);
 		break;
 
 	    case 'v':		/* Version info */
 		show_version();
-		shutdown (EXIT_NORMAL);
+		sp_shutdown (EXIT_NORMAL);
 		break;
 
 	    case 'b':		/* Batch mode */
@@ -790,7 +790,7 @@ main(int argc, char **argv)
 		if (optarg) {
 		    if (!(circuit_file = fopen(optarg, "r"))) {
 			perror("circuit file not available");
-			shutdown(EXIT_BAD);
+			sp_shutdown(EXIT_BAD);
 		    }
 		    istty = FALSE;
 		}
@@ -822,7 +822,7 @@ main(int argc, char **argv)
 		    if (!(freopen (buf, "w", stdout))) {    
 #endif
 			perror (buf);
-			shutdown (EXIT_BAD);
+			sp_shutdown (EXIT_BAD);
 		    }
 
 #ifdef HAS_WINDOWS
@@ -1021,7 +1021,7 @@ bot:
             gotone = TRUE;
         }
 	if (ft_batchmode && err)
-	    shutdown(EXIT_BAD);
+	    sp_shutdown(EXIT_BAD);
     }   /* ---  if (!ft_servermode && !ft_nutmeg) --- */
 
     if (!gotone && ft_batchmode && !ft_nutmeg)
@@ -1037,17 +1037,17 @@ evl:
 
 
         if (st == TRUE) {
-            shutdown(EXIT_BAD);
+            sp_shutdown(EXIT_BAD);
 	}
         st = TRUE;
         if (ft_servermode) {
             if (ft_curckt == NULL) {
                 fprintf(cp_err, "Error: no circuit loaded!\n");
-                shutdown(EXIT_BAD);
+                sp_shutdown(EXIT_BAD);
             }
             if (ft_dorun(""))
-		shutdown(EXIT_BAD);
-            shutdown(EXIT_NORMAL);
+		sp_shutdown(EXIT_BAD);
+            sp_shutdown(EXIT_NORMAL);
         }
 
         /* If -r is specified, then we don't bother with the dot
@@ -1058,16 +1058,16 @@ evl:
 	  /* saj done already in inp_spsource ft_dotsaves();*/
 	    error2 = ft_dorun(ft_rawfile);
 	    if (ft_cktcoms(TRUE) || error2)
-		shutdown(EXIT_BAD);
+		sp_shutdown(EXIT_BAD);
         } else if (ft_savedotargs()) {
 	    error2 = ft_dorun(NULL);
 	    if (ft_cktcoms(FALSE) || error2)
-		shutdown(EXIT_BAD);
+		sp_shutdown(EXIT_BAD);
 	} else {
 	    fprintf(stderr,
 		    "Note: No \".plot\", \".print\", or \".fourier\" lines; "
 		    "no simulations run\n");
-	    shutdown(EXIT_BAD);
+	    sp_shutdown(EXIT_BAD);
         }
     }  /* ---  if (ft_batchmode) ---  */ 
     else {
@@ -1094,5 +1094,5 @@ evl:
 
 #endif /* ~ SIMULATOR */
 
-    return shutdown(EXIT_NORMAL);
+    return sp_shutdown(EXIT_NORMAL);
 }

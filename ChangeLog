@@ -1,5 +1,6 @@
 2008-01-19 Dietmar Warning
  * configure.in: w/o optimization better debug
+ * src/main.c: fix conflict for own shutdown function
  * src/frontend/numparam/xpressn.c: more precise recognition of subckt names
  * src/frontend/numparam/spicenum.c: avoid access to uninitialized memory 
    because of pascal convention
