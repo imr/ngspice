@@ -599,7 +599,7 @@ nupa_list_params (FILE * cp_out)
   int i;
 
   fprintf (cp_out, "\n\n");
-  for (i = 1; i <= dico->nbd + 1; i++)
+  for (i = 1; i <= dico->nbd; i++)
     {
       if (dico->dat[i].tp == 'R')
 	{
