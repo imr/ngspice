@@ -31,6 +31,8 @@ libfte_a_SOURCES = \
 	com_echo.h	\
 	com_ghelp.c	\
 	com_ghelp.h	\
+	com_gnuplot.h	\
+	com_gnuplot.c	\
 	com_hardcopy.c	\
 	com_hardcopy.h	\
 	com_help.c	\

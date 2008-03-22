@@ -14,6 +14,7 @@
 #include "plotit.h"
 #include "agraf.h"
 #include "xgraph.h"
+#include "gnuplot.h"
 #include "graf.h"
 
 static wordlist *wl_root;
@@ -960,6 +961,20 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 	rtn = TRUE;
 	goto quit;
     }
+
+
+   if (devname && eq(devname, "gnuplot")) {
+	/* Interface to XGraph-11 Plot Program */
+	ft_gnuplot(xlims, ylims, hcopy,
+	    title ? title : vecs->v_plot->pl_title,
+	    xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
+	    ylabel ? ylabel : ft_typabbrev(j),
+	    gtype, ptype, vecs);
+	rtn = TRUE;
+	goto quit;
+    }
+
+    
     for (d = vecs, i = 0; d; d = d->v_link2)
         i++;
 

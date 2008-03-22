@@ -1,3 +1,9 @@
+2008-03-22 Paolo Nenzi <p.nenzi@ieee.org>
+ * src/frontend/{commands.c, com_gnuplot.c, com_gnuplot.h}, 
+ * src/frontend/plotting/{gnuplot.c, gnuplot.h,plotit.c}: added 
+   initial support for gnuplot plotting of simulation outputs.
+   Gnuplot interface code has been sent by Stefano Pedretti.
+
 2008-01-19 Dietmar Warning
  * configure.in: w/o optimization better debug
  * src/main.c: fix conflict for own shutdown function

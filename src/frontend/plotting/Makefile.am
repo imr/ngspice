@@ -7,6 +7,8 @@ libplotting_a_SOURCES = \
 	agraf.h		\
 	clip.c		\
 	clip.h		\
+	gnuplot.c	\
+	gnuplot.h	\
 	graf.c		\
 	graf.h		\
 	graphdb.c	\
