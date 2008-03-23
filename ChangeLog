@@ -1,3 +1,8 @@
+2008-03-23 Holger Vogt
+ * src/frontend/inpcom.c: Nodes for SOI devices not detected correct
+ * src/spicelib/parser/inptyplk.c, inpptree.c, ifeval.c: better TRACEing
+ * src/winmain.c: larger printf buffer
+
 2008-03-22 Paolo Nenzi <p.nenzi@ieee.org>
  * src/frontend/{commands.c, com_gnuplot.c, com_gnuplot.h}, 
  * src/frontend/plotting/{gnuplot.c, gnuplot.h,plotit.c}: added 
