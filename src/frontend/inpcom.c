@@ -2675,8 +2675,18 @@ get_number_terminals( char *c )
   case 'u': case 'j': case 'z':
     return 3;
     break;
-  case 't': case 'o': case 'g': case 'e': case 's': case 'm':
+  case 't': case 'o': case 'g': case 'e': case 's':
     return 4;
+    break;
+  case 'm': /* recognition of 4, 5, 6, or 7 nodes for SOI devices needed */
+    i = 0;
+    /* find the first token with "off" or "=" in the line*/
+    while ( (i < 20) && (*c != '\0') ) {
+      strncpy(nam_buf, gettok_instance(&c), 32);
+      if (strstr(nam_buf, "off") || strstr(nam_buf, "=")) break;
+      i++;
+    }
+    return i-2;
     break;
   case 'q': /* recognition of 3/4 terminal bjt's needed */
     i = j = 0;
