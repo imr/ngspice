@@ -32,7 +32,7 @@ IFeval(IFparseTree * tree, double gmin, double *result, double *vals,
     INPparseTree *myTree = (INPparseTree *) tree;;
 
 #ifdef TRACE
-    INPptPrint("calling PTeval, tree = ", myTree);
+    INPptPrint("calling PTeval, tree = ", tree);
     printf("values:");
     for (i = 0; i < myTree->p.numVars; i++)
 	printf("\tvar%d = %lg\n", i, vals[i]);

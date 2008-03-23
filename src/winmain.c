@@ -42,7 +42,7 @@
 #define SE 0				// String termination
 #define BorderSize 8			// Umrandung des Stringfeldes
 #define SBufSize 100			// Groesze des Stringbuffers
-#define IOBufSize 1024			// Groesze des printf-Buffers
+#define IOBufSize 4096			// Groesze des printf-Buffers
 #define HistSize 20			// Zeilen History-Buffer
 #define StatusHeight 25			// Hoehe des Status Bars
 #define StatusFrame 2			// Abstand Statusbar / StatusElement

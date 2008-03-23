@@ -1027,10 +1027,9 @@ static PTelement *PTlexer(char **line)
     return (&el);
 }
 
-#ifdef notdef
+#ifdef TRACE
 
 /* Debugging stuff. */
-
 
 void printTree(INPparseNode *);
 

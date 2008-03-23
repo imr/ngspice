@@ -27,12 +27,15 @@ int INPtypelook(char *type)
     for (i = 0; i < ft_sim->numDevices; i++) {
 
 #ifdef TRACE
-      /* SDB debug statement */
-      printf("In INPtypelook, checking model type = %s against existing model = %s, . . .\n", type, (*(ft_sim->devices)[i]).name ); 
+       /* SDB debug statement */
+       if ((ft_sim->devices[i]) == NULL)
+             printf("In INPtypelook, checking model type = %s against existing model = %s, . . .\n", type, "NULL");		
+       else
+             printf("In INPtypelook, checking model type = %s against existing model = %s, . . .\n", type, (*(ft_sim->devices)[i]).name );	
 #endif
 
 	if ((ft_sim->devices)[i] && strcmp(type, (*(ft_sim->devices)[i]).name) == 0) {
-	    /*found the device - return it */
+	    /* found the device - return it */
 
 #ifdef TRACE
 	/* SDB debug statement */
@@ -47,6 +50,6 @@ int INPtypelook(char *type)
     /* SDB debug statement */
     printf("In INPtypelook, device not found!\n"); 
 #endif
-	  
+
     return -1;
 }
