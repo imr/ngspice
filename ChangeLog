@@ -1,3 +1,8 @@
+2008-04-05 Dietmar Warning
+ * src/frontend/inpcom.c: define the missing buffer nam_buf for mos devices
+ * src/misc/string.c, stringutil.h: moving some string functions from inpcom.c
+ * src/include/bool.h: removing BOOLEAN definition (checked under mingw)
+
 2008-03-23 Holger Vogt
  * src/frontend/inpcom.c: Nodes for SOI devices not detected correct
  * src/spicelib/parser/inptyplk.c, inpptree.c, ifeval.c: better TRACEing
