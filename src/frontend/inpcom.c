@@ -50,7 +50,7 @@ Author: 1985 Wayne A. Christopher
 #include "inpcom.h"
 #include "variable.h"
 #include "../misc/util.h" /* dirname() */
-#include "../misc/stringutil.h" /* gettok_instance() */
+#include "../misc/stringutil.h"
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include new stuff */
@@ -80,7 +80,6 @@ static int  num_parameters[1000];
 
 /* static declarations */
 static char * readline(FILE *fd);
-static bool is_arith_char(char c);
 static int  get_number_terminals( char *c );
 static void inp_stripcomments_deck(struct line *deck);
 static void inp_stripcomments_line(char * s);
@@ -183,12 +182,6 @@ inp_pathopen(char *name, char *mode)
     return (NULL);
 }
 
-static bool
-isquote( char ch )
-{
-  return ( ch == '\'' || ch == '"' );
-}
-
 static void
 inp_fix_gnd_name( struct line *deck ) {
   struct line *c = deck;
@@ -220,24 +213,6 @@ create_new_card( char *card_str, int *line_number ) {
   *line_number = *line_number + 1;
 
   return newcard;
-}
-
-static int
-get_comma_seperated_values( char *values[], char *str ) {
-  int count = 0;
-  char *ptr, *comma_ptr, keep;
-  
-  while ( ( comma_ptr = strstr( str, "," ) ) ) {
-    ptr = comma_ptr - 1;
-    while ( isspace(*ptr) ) ptr--;
-    ptr++; keep = *ptr; *ptr = '\0';
-    values[count++] = strdup(str);
-    *ptr = keep;
-    str = comma_ptr + 1;
-    while ( isspace(*str) ) str++;
-  }
-  values[count++] = strdup(str);
-  return count;
 }
 
 static void
@@ -301,11 +276,11 @@ inp_chk_for_multi_in_vcvs( struct line *deck, int *line_number ) {
 	  while ( !isspace(*str_ptr1) ) str_ptr1++;
 	}
 	keep = *str_ptr1; *str_ptr1 = '\0';
-	xy_count1 = get_comma_seperated_values( xy_values1, xy_str1 );
+	xy_count1 = get_comma_separated_values( xy_values1, xy_str1 );
 	*str_ptr1 = keep;
 
 	while ( isspace(*str_ptr1) ) str_ptr1++;
-	xy_count2 = get_comma_seperated_values( xy_values2, str_ptr1 );
+	xy_count2 = get_comma_separated_values( xy_values2, str_ptr1 );
 
 	// place restrictions on only having 2 point values; this can change later
 	if ( xy_count1 != 2 && xy_count2 != 2 ) {
@@ -2292,26 +2267,6 @@ inp_grab_subckt_func( struct line *subckt )
   }
 }
 
-static bool
-is_arith_char( char c )
-{
-  if ( c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == '<' ||
-       c == '>' || c == '?' || c == '|' || c == '&' )
-    return TRUE;
-  else
-    return FALSE;
-}
-
-static bool
-str_has_arith_char( char *s )
-{
-  while ( *s && *s != '\0' ) {
-    if ( is_arith_char(*s) ) return TRUE;
-    s++;
-  }
-  return FALSE;
-}
-
 static char*
 inp_do_macro_param_replace( int fcn_number, char *params[] )
 {
@@ -2665,6 +2620,7 @@ get_number_terminals( char *c )
 {
   int i, j, k;
   char *name[10];
+  char nam_buf[33];
   bool area_found = FALSE;
 
   switch (*c) {
