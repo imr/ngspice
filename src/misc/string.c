@@ -439,3 +439,49 @@ bzero(void *vptr, size_t num)
 
 #endif
 #endif
+
+
+bool
+isquote( char ch )
+{
+  return ( ch == '\'' || ch == '"' );
+}
+
+bool
+is_arith_char( char c )
+{
+  if ( c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == '<' ||
+       c == '>' || c == '?' || c == '|' || c == '&' )
+    return TRUE;
+  else
+    return FALSE;
+}
+
+bool
+str_has_arith_char( char *s )
+{
+  while ( *s && *s != '\0' ) {
+    if ( is_arith_char(*s) ) return TRUE;
+    s++;
+  }
+  return FALSE;
+}
+
+int
+get_comma_separated_values( char *values[], char *str ) {
+  int count = 0;
+  char *ptr, *comma_ptr, keep;
+  
+  while ( ( comma_ptr = strstr( str, "," ) ) ) {
+    ptr = comma_ptr - 1;
+    while ( isspace(*ptr) ) ptr--;
+    ptr++; keep = *ptr; *ptr = '\0';
+    values[count++] = strdup(str);
+    *ptr = keep;
+    str = comma_ptr + 1;
+    while ( isspace(*str) ) str++;
+  }
+  values[count++] = strdup(str);
+  return count;
+}
+

@@ -4,6 +4,7 @@
  ************/
 
 #include "config.h"
+#include "bool.h"
 
 #ifndef STRING_H_INCLUDED
 #define STRING_H_INCLUDED
@@ -34,5 +35,10 @@ void bcopy(const void *from, void *to, size_t num);
 void bzero(void *ptr, size_t num);
 
 #endif /* HAVE_BCOPY */
+
+bool isquote(char ch);
+bool is_arith_char(char c);
+bool str_has_arith_char(char *s);
+int get_comma_separated_values( char *values[], char *str );
 
 #endif
