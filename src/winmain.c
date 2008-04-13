@@ -2,8 +2,7 @@
 	Autor: Wolfgang Muees
 	Stand: 28.10.97
 	Autor: Holger Vogt
-	Stand: 01.05.2000
-	Stand: 12.12.2001
+	Stand: 01.03.2008
  $Id$
 */
 #include "config.h"
@@ -13,22 +12,19 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>    		// normale Windows-Aufrufe
 #include <windowsx.h>			// Win32 Message Cracker
-//#include <ctl3d.h>			// 3D-Steuerelemente
 #include <stdio.h>			// sprintf und co
 #include <stdlib.h>			// exit-codes
 #include <stdarg.h>			// var. argumente
 #include <assert.h>			// assert-macro
-// #include <shellapi.h>		// shellexecute
-//#include <dir.h>			// Verzeichnis-Funktionen hvogt 09.12.01
-//#include <dos.h>			// argc, argv
-
+#include "misc/stringutil.h"		// copy
+#include <io.h>			// _read
 
 #include <errno.h>
-#include <dirent.h>
 
 #ifdef _MSC_VER
 /* Microsoft VC++ specific stuff */
 #pragma hdrstop
+#define strdup _strdup
 #endif /* _MSC_VER */
 
 #include <signal.h>
@@ -36,7 +32,7 @@
 
 #include "bool.h"			// bool defined as unsigned char
 /* Constants */
-#define TBufSize 2048			// Groesze des Textbuffers
+#define TBufSize 8192			// Groesze des Textbuffers
 #define CR VK_RETURN			// Carriage Return
 #define LF 10				// Line Feed
 #define SE 0				// String termination
@@ -56,8 +52,8 @@ typedef char SBufLine[SBufSize+1];	// Eingabezeile
 /* Global variables */
 HINSTANCE 		hInst;			/* Application instance */
 int 			WinLineWidth = 640;	/* Window width */
-HWND       	hwMain;				/* Main Window of the application */
-HWND       	twText;				/* Text window */
+HWND       		hwMain;			/* Main Window of the application */
+HWND       		twText;			/* Text window */
 HWND			swString;		// Eingabezeile
 HWND			hwStatus;		// Status-Balken
 HWND			hwSource;		// Anzeige des Source-Namens
@@ -84,7 +80,7 @@ static LPCTSTR hwAnalyseWindowName = "AnalyseDisplay";
 static int RowHeight = 16;		// Hoehe einer Textzeile
 static int LineHeight = 25;		// Hoehe der Eingabezeile
 static int VisibleRows = 10;		// Anzahl der sichtbaren Zeilen im Textfenster
-static BOOL DoUpdate = FALSE;	// Textfenster updaten
+static BOOL DoUpdate = FALSE;		// Textfenster updaten
 static WNDPROC swProc = NULL;		// originale Stringfenster-Prozedur
 static WNDPROC twProc = NULL;		// originale Textfenster-Prozedur
 static SBufLine HistBuffer[HistSize]; 	// History-Buffer fuers Stringfenster
@@ -93,13 +89,13 @@ static int HistPtr   = 0;		// History-Verwaltung
 
 extern bool oflag;			// falls 1, Output ueber stdout in File umgeleitet
 extern FILE *flogp;  // siehe xmain.c, hvogt 14.6.2000
-//int argc; 
-//char *argv[];
+
 // Forward-Definition von main()
 int xmain( int argc, char * argv[]/*, char * env[]*/);
 // forward der Update-Funktion
 void DisplayText( void);
-
+char* rlead(char*);
+void winmessage(char*);
 
 // --------------------------<History-Verwaltung>------------------------------
 
@@ -143,7 +139,7 @@ char * HistoryGetPrev(void)
 char * HistoryGetNext(void)
 {
 	if (HistIndex < HistPtr) HistIndex++;
-	if (HistIndex == HistPtr) HistIndex--;
+	if (HistIndex == HistPtr) return ""; //HistIndex--;
 	return &(HistBuffer[HistIndex][0]);
 }
 
@@ -348,10 +344,6 @@ int w_putch( int c)
 // -------------------------------<Fensterprozeduren>--------------------------
 
 // Hauptfenster veraendert seine Groesze
-#ifdef _MSC_VER
-/* Microsoft VC++ specific stuff */
-#pragma warn -par
-#endif /* _MSC_VER */
 void Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
 	int h = cy - LineHeight - StatusHeight;
@@ -380,10 +372,6 @@ void PostSpiceCommand( const char * const cmd)
 }
 
 // HauptfensterProzedur
-#ifdef _MSC_VER
-/* Microsoft VC++ specific stuff */
-#pragma warn -eff
-#endif /* _MSC_VER */
 LRESULT CALLBACK MainWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 /*	UINT i; */
@@ -591,16 +579,16 @@ LRESULT CALLBACK ElementWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 int MakeArgcArgv(char *cmdline,int *argc,char ***argv)
 {
 	char  *pC1;			/*	a temporary character pointer */
-	char  *pC2;			/*	a temporary character pointer */
 	char  *pWorkString=NULL;		/*	a working copy of cmdline */
 	int    i;				/*	a loop counter */
-	int    j;				/*	a loop counter */
 	int    quoteflag=0;			/*	for the finite state machine parsing cmdline */
+	bool   firstspace = TRUE;  /*	count only the first space */
 	int    numargs=1;			/*	the number of command line arguments, later
 						copied to *argc */
 	char **tmpargv;			/*	the temporary argv, later copied to *argv */
 	int    status = ERROR_SUCCESS; 	/* status */
 	char   buffer[MAX_PATH+1];
+	char deli[2];
 
 
 	/* make sure we aren't dealing with any NULL pointers */
@@ -632,6 +620,10 @@ int MakeArgcArgv(char *cmdline,int *argc,char ***argv)
 				pWorkString[i] = '\0';
 			else
 				break;
+#if defined(__CYGWIN__)
+		/* for CYGWIN: trim off the leading white space delivered by lpszCmdLine. */
+		pWorkString = rlead(pWorkString);			
+#endif
 		/*	If we still have a string left, parse it for all
 			the arguments. */
 		if (strlen(pWorkString))
@@ -648,11 +640,15 @@ int MakeArgcArgv(char *cmdline,int *argc,char ***argv)
 					if (!quoteflag)
 					{
 						pWorkString[i] = DELIMITER;  /* change space to delimiter */
-						numargs++;
+						if (firstspace) numargs++; /* count only the first space */
+						firstspace = FALSE;
 					}
 					break;
 				case QUOTE:
 					quoteflag = !quoteflag; /* turns on and off as we pass quotes */
+					break;
+				default:
+					firstspace = TRUE;
 					break;
 				}
 			}
@@ -673,38 +669,26 @@ int MakeArgcArgv(char *cmdline,int *argc,char ***argv)
 		status = -1;
 		goto outahere;
 	}
-	/*	you can put your program name here or find an API to give it
-		to you if you want.  I am just giving a name to fill the space */
+	/*	API to give the program name */
 	GetModuleFileName(NULL, buffer, sizeof(buffer));
 
+	tmpargv[0] = buffer; /* add program name to argv */
 
-//	tmpargv[0] = strdup("ngspice");
-	tmpargv[0] = buffer;
+    deli[0] = DELIMITER;
+	deli[1] = '\0'; /* delimiter for strtok */
 	
 	pC1 = NULL;
-	/*	Now actually strdup all the arguments out of the sting
+	/*	Now actually strdup all the arguments out of the string
 		and store them in the argv */
 	for (i=1; i < numargs; i++)
 	{
 		if (NULL == pC1)
 			pC1 = pWorkString;
-		for (j=0; j < (signed)strlen(pC1); j++)
-		{
-			if (DELIMITER == pC1[j])
-			{
-				pC1[j] = '\0';
-				pC2    = &pC1[j+1];
-				break;
-			}
-		}
-		tmpargv[i] = strdup(pC1);
-		if (NULL == tmpargv[i])
-		{
-			status = -1;
-			goto outahere;
-		}
-		pC1 = pC2;
+
+		if (i == 1) tmpargv[i] = strdup(strtok(pC1, deli));
+		else tmpargv[i] = strdup(strtok(NULL, deli));
 	}
+
 	/*	copy the working values over to the arguments */
 	*argc = numargs;
 	*argv = tmpargv;
@@ -719,10 +703,6 @@ outahere:
 
 
 /* Main entry point for our Windows application */
-#ifdef _MSC_VER
-/* Microsoft VC++ specific stuff */
-#pragma warn -par
-#endif /* _MSC_VER */
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
 	int i;
@@ -1011,7 +991,7 @@ size_t f_r_e_a_d(void * __ptr, size_t __size, size_t __n, FILE * __stream)
 	}
 	
 	if (__stream == stdin) {
-		int i = 0;
+		size_t i = 0;
 		int c;
 		char s [IOBufSize];
 		while ( i < (__size * __n - 1)) {
@@ -1025,7 +1005,7 @@ size_t f_r_e_a_d(void * __ptr, size_t __size, size_t __n, FILE * __stream)
 		}
 //		s[i] = SE;
 		__ptr = &s[0];
-		return (int)(i/__size);
+		return (size_t)(i/__size);
 	}	
 	return fread( __ptr, __size, __n, __stream);
 }
@@ -1091,7 +1071,7 @@ size_t f_w_r_i_t_e(const void * __ptr, size_t __size, size_t __n, FILE * __strea
 	if ((__stream == stdout) || (__stream == stderr)) {
 		const char * __s = __ptr;
 		int c = SE;
-		int i = 0;
+		size_t i = 0;
 //		char *out;
 
 //		p_r_i_n_t_f("test1 %s\n", __s);
@@ -1120,13 +1100,12 @@ char * g_e_t_s(char * __s)
 void p_e_r_r_o_r(const char * __s)
 {
 	const char * cp;
-/*	cp = _strerror( __s);
-	fp_u_t_s( cp, stderr);  */
+//	char s [IOBufSize];
 	cp = strerror(errno);
 	fp_r_i_n_t_f(stderr, "%s: %s\n", __s, cp);
-	// nur als Test fuer NT
-//	fp_u_t_s("Test fuer NT: perror, weiter mit RETURN\n", stderr);
-//	fg_e_t_c(stdin);
+	/* output to message box 
+	sprintf(s, "%s: %s\n", __s, cp);
+	if (!oflag) winmessage(s);*/
 }
 
 int p_r_i_n_t_f(const char * __format, ...)
@@ -1222,7 +1201,7 @@ int r_e_a_d(int fd, char * __buf, int __n)
 		return (i);
 	} 
 	else {
-	   return read(fd, __buf, __n);
+	   return _read(fd, __buf, __n);
 	}
 }
 int g_e_t_c(FILE * __fp)
@@ -1286,7 +1265,7 @@ size_t _memavl(void)
 }
 */
 // ---------------------<Aufruf eines anderen Programms>-----------------------
-
+#ifndef _MSC_VER
 int system( const char * command)
 {
 	// info-Bloecke
@@ -1331,6 +1310,35 @@ int system( const char * command)
 	// fertig
 	return 0;
 } // system Windows95
+#endif
+// ---------------------<Strip leading spaces>-----------------------
+
+char* rlead(char *s)
+{
+   int i,j=0;
+   static char temp[512];
+   bool has_space = TRUE;
+   for(i=0;s[i] != '\0';i++)
+   {
+      if(isspace(s[i]) && has_space)
+      {
+         ; //Do nothing
+      }
+      else
+      {
+         temp[j] = s[i];
+         j++;
+         has_space = FALSE;
+      }
+   }
+   temp[j] = '\0';
+   return copy(temp);
+} 
+
+void winmessage(char* new_msg)
+{
+	MessageBox(NULL, new_msg, "Ngspice error", MB_OK|MB_ICONERROR);
+}
 
 #endif /* HAS_WINDOWS */
 
