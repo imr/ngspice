@@ -45,6 +45,7 @@
 #if (!defined HAS_WINDOWS) && (!defined __MINGW32__)
 #include <dlfcn.h> /* to load libraries*/
 #else /* ifdef HAS_WINDOWS */
+#undef BOOLEAN
 #include <windows.h>
 #ifdef HAS_WINDOWS
 #include "wstdio.h"

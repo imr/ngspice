@@ -1,3 +1,7 @@
+2008-04-13 Holger Vogt
+ * src/include/bool.h: BOOLEAN definition added again  
+   src/spicelib/devices/dev.c: #undef BOOLEAN added
+   
 2008-04-05 Dietmar Warning
  * src/frontend/inpcom.c: define the missing buffer nam_buf for mos devices
  * src/misc/string.c, stringutil.h: moving some string functions from inpcom.c
