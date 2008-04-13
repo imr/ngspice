@@ -975,6 +975,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
     char *global_copy = NULL, keep_char;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */ 
     FILE *newfp;
+    FILE *fdo;
+    struct line *tmp_ptr1 = NULL;    
     int i, j;
     bool found_library, found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
     bool dir_name_flag = FALSE;
@@ -1496,6 +1498,15 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
           inp_add_control_section(working, &line_number);
     }
     *data = cc;
+#ifdef _DEBUG
+	/*debug: print into file*/
+	if (tmp_ptr1) tfree(tmp_ptr1);
+	fdo = fopen("debug-out.txt", "w");
+    for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
+       fprintf(fdo, "%s\n", tmp_ptr1->li_line);        
+         ;
+    (void) fclose(fdo);  
+#endif
     return;
 }
 
@@ -2501,8 +2512,15 @@ inp_fix_param_values( struct line *deck )
     if ( ciprefix( ".endc", line ) )    { control_section = FALSE; c = c->li_next; continue; }
     if ( control_section || ciprefix( ".option", line ) ) { c = c->li_next; continue; } /* no handling of params in "option" lines */
     if ( ciprefix( "set", line ) ) { c = c->li_next; continue; } /* no handling of params in "set" lines */
+    if ( *line == 'b' ) { c = c->li_next; continue; } /* no handling of params in B source lines */
 
-    if ( *line == 'b' ) { c = c->li_next; continue; }
+    /* exclude CIDER models */
+    if ( ciprefix( ".model", line ) && ( strstr(line, "numos") || strstr(line, "numd") || strstr(line, "nbjt") || 
+		strstr(line, "nbjt2") || strstr(line, "numd2") ) )
+	   { c = c->li_next; continue; }
+    /* exclude CIDER devices with ic.file parameter */
+    if ( strstr(line, "ic.file")) { c = c->li_next; continue; }
+
     while ( ( equal_ptr = strstr( line, "=" ) ) ) {
 
       // skip over equality '=='
@@ -2515,6 +2533,10 @@ inp_fix_param_values( struct line *deck )
       if ( isdigit(*beg_of_str) || *beg_of_str == '{' || *beg_of_str == '.' ||
 	   ( *beg_of_str == '-' && isdigit(*(beg_of_str+1)) ) ) {
 	line = equal_ptr + 1;
+      } else if (*beg_of_str == '[') {
+      	/* fill in some code to put curly brackets around all params inside a pair of square brackets */
+      	/* for now skip [...] and go to next '=' token in line*/
+      	line = equal_ptr + 1; 	
       } else {
 	end_of_str = beg_of_str;
 	while ( *end_of_str != '\0' && (!isspace(*end_of_str) || has_paren) ) {
@@ -2622,7 +2644,9 @@ get_number_terminals( char *c )
   char *name[10];
   char nam_buf[33];
   bool area_found = FALSE;
-
+#ifdef TRACE
+  char first_toc[32];
+#endif
   switch (*c) {
   case 'r': case 'c': case 'l': case 'k': case 'f': case 'h': case 'b':
   case 'v': case 'i': case 'w': case 'd':
@@ -2631,7 +2655,7 @@ get_number_terminals( char *c )
   case 'u': case 'j': case 'z':
     return 3;
     break;
-  case 't': case 'o': case 'g': case 'e': case 's':
+  case 't': case 'o': case 'g': case 'e': case 's': case 'y':
     return 4;
     break;
   case 'm': /* recognition of 4, 5, 6, or 7 nodes for SOI devices needed */
@@ -2644,6 +2668,17 @@ get_number_terminals( char *c )
     }
     return i-2;
     break;
+  case 'p': /* recognition of up to 100 cpl nodes */
+    i = j = 0;
+    /* find the last token in the line*/
+    while ( (i < 100) && (*c != '\0') ) {
+      strncpy(nam_buf, gettok_instance(&c), 32);
+      if (strstr(nam_buf, "=")) j++;      
+      i++;
+    }
+    if (i == 100) return 0;    
+    return i-j-2;
+    break;    
   case 'q': /* recognition of 3/4 terminal bjt's needed */
     i = j = 0;
     while ( (i < 10) && (*c != '\0') ) {
