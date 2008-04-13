@@ -1,4 +1,12 @@
 2008-04-13 Holger Vogt
+ * src/frontend/inpcom.c: get_number_terminals(): support for cpl lines,
+   inp_readall(): debug ouput of input data after processing
+   inp_fix_param_values(): CIDER models excluded from getting {}, xspice
+   model vectors [] excluded from getting {}
+ * src/winmain.c: larger text buffer, MakeArgcArgv() allows multiple spaces
+   between arguments, allows CYGWIN handling, winmessage() for error messages
+ * src/main.c: temporary file for Windows non admin users, printed info independent
+   from sequence of options
  * src/include/bool.h: BOOLEAN definition added again  
    src/spicelib/devices/dev.c: #undef BOOLEAN added
    
