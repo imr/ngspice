@@ -19,7 +19,7 @@
 #include <string.h>
 #endif /* HAVE_STRING_H */
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_MSC_VER)
 #define  srandom(a) srand(a) /* srandom */
 #endif /* __MINGW32__ */
 
@@ -543,7 +543,7 @@ show_version(void)
 	   "Currently maintained by the NGSpice Project\n\n"
 	   "Copyright (C) 1985-1996,"
 	   "  The Regents of the University of California\n"
-	   "Copyright (C) 1999-2005,"
+	   "Copyright (C) 1999-2008,"
 	   "  The NGSpice Project\n", cp_program, PACKAGE, VERSION);
 }
 
@@ -672,6 +672,7 @@ main(int argc, char **argv)
     bool rflag = FALSE;
     FILE *fp;
     FILE *circuit_file;
+	bool orflag = FALSE;
 
 #ifdef TRACE
     /* this is used to detect memory leaks during debugging */
@@ -813,27 +814,7 @@ main(int argc, char **argv)
 #else
 		    sprintf (buf, "%s", optarg);
 #endif
-		    /* Open the log file */
-#ifdef HAS_WINDOWS
-		    /* flogp goes to winmain's putc and writes to file buf */
-		    if (!(flogp = fopen(buf, "w"))) {	
-#else
-		    /* Connect stdout to file buf and log stdout */
-		    if (!(freopen (buf, "w", stdout))) {    
-#endif
-			perror (buf);
-			sp_shutdown (EXIT_BAD);
-		    }
-
-#ifdef HAS_WINDOWS
-		    com_version(NULL);  /* hvogt 11.11.2001 */
-#endif
-		    fprintf(stdout, "\nBatch mode\n\n");
-		    fprintf(stdout, "Simulation output goes to rawfile: %s\n\n", ft_rawfile);
-		    fprintf(stdout, "Comments and warnings go to log-file: %s\n", buf);
-#ifdef HAS_WINDOWS
-		    oflag = TRUE;
-#endif
+			orflag = TRUE;
 		}
 		break;
 
@@ -866,7 +847,28 @@ main(int argc, char **argv)
 	}
     }  /* --- End of command line option processing  --- */
 
-
+    if (orflag) {	/* -o option has been set */
+        com_version(NULL);
+        if (ft_batchmode && !ft_servermode) fprintf(stdout, "\nBatch mode\n\n");
+        else if (ft_servermode) fprintf(stdout, "\nServer mode\n\n");
+        else fprintf(stdout, "\nInteractive mode, better used without -o option\n\n");
+        if (rflag) fprintf(stdout, "Simulation output goes to rawfile: %s\n", ft_rawfile);
+        fprintf(stdout, "Comments and warnings go to log-file: %s\n\n", buf);
+        /* Open the log file */
+#ifdef HAS_WINDOWS
+        /* flogp goes to winmain's putc and writes to file buf */
+        if (!(flogp = fopen(buf, "w"))) {	
+#else
+            /* Connect stdout to file buf and log stdout */
+        if (!(freopen (buf, "w", stdout))) {    
+#endif
+            perror (buf);
+            sp_shutdown (EXIT_BAD);
+        }
+#ifdef HAS_WINDOWS
+        oflag = TRUE; /* All further output to -o log file */
+#endif
+    } /* orflag */
 #ifdef SIMULATOR
     if_getparam = spif_getparam;
 #else
@@ -994,8 +996,23 @@ bot:
 	   current algorithm is uniform at the expense of a little
 	   startup time.  */
 	FILE *tempfile;
-
+	char *tpf;
+	bool has_smk = FALSE;
 	tempfile = tmpfile();
+/*	tmpfile() returns NULL, if in MS Windows as non admin user
+        then we add a tempfile in the local directory */
+#ifdef HAS_WINDOWS
+	if (tempfile == NULL) {
+		tpf = smktemp("sp");
+		tempfile = fopen(tpf, "w+b");
+		if (tempfile == NULL) {
+			fprintf(stderr, "Could not open a temporary file to save and use optional arguments.");
+			sp_shutdown(EXIT_BAD);
+		}		
+		has_smk = TRUE;
+	}	
+#endif	
+
 	if (optind == argc && !istty) {
 	    append_to_stream(tempfile, stdin);
 	}
@@ -1020,6 +1037,12 @@ bot:
             inp_spsource(tempfile, FALSE, NULL);
             gotone = TRUE;
         }
+#ifdef HAS_WINDOWS
+	if (tempfile && has_smk) {
+	    if (remove(tpf))
+	       perror("Could not delete temp file");
+	} 
+#endif	
 	if (ft_batchmode && err)
 	    sp_shutdown(EXIT_BAD);
     }   /* ---  if (!ft_servermode && !ft_nutmeg) --- */
