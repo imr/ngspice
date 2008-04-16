@@ -730,9 +730,9 @@ BSIM3SOI_PD     - SOI model (partially depleted devices)
                 *) rework-14: removed #ifndef NEWCONV code.
 
 
-BSIMSOI          - SOI model (partially/full depleted devices)
+BSIM3SOI        - SOI model (partially/full depleted devices)
                 Initial Release.
-                Ver:    3.0
+                Ver:    4.0
                 Class:  M
                 Level:  58
                 Dir:    devices/bsim3soi

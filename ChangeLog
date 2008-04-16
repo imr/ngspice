@@ -1,3 +1,9 @@
+2008-04-16 Dietmar Warning
+ * src/spicelib/devices/bsim3soi/*.c,*.h, src/spicelib/parser/inpdomod.c, inp2m.c,
+   src/spicelib/devices/dev.c, DEVICES: New bsim3soi version 4.0
+ * src/include/macros.h: redefine NEWCONV because we are using Berkeley spice3f4 code 
+   for bsim models.
+
 2008-04-13 Holger Vogt
  * src/frontend/inpcom.c: get_number_terminals(): support for cpl lines,
    inp_readall(): debug ouput of input data after processing
