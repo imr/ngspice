@@ -975,8 +975,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
     char *global_copy = NULL, keep_char;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */ 
     FILE *newfp;
+#ifdef _DEBUG
     FILE *fdo;
     struct line *tmp_ptr1 = NULL;    
+#endif
     int i, j;
     bool found_library, found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
     bool dir_name_flag = FALSE;
@@ -2644,9 +2646,7 @@ get_number_terminals( char *c )
   char *name[10];
   char nam_buf[33];
   bool area_found = FALSE;
-#ifdef TRACE
-  char first_toc[32];
-#endif
+
   switch (*c) {
   case 'r': case 'c': case 'l': case 'k': case 'f': case 'h': case 'b':
   case 'v': case 'i': case 'w': case 'd':
