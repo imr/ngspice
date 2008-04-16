@@ -12,6 +12,12 @@
 #ifndef _MACROS_H_
 #define _MACROS_H_
 
+/*
+ *  #define-s that are always on
+ */
+
+#define NEWCONV
+
 #define	NUMELEMS(ARRAY)	(sizeof(ARRAY)/sizeof(*ARRAY))
 
 /* String macros */

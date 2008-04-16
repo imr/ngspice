@@ -169,11 +169,10 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
   double tempv;
 #endif /*NOBYPASS*/
   int tmp;
-/* spice3f4 defined NEWCONV by default, looking to niconv.c
 #ifndef NEWCONV
   double tol, tol2, tol3, tol4;
 #endif
-*/
+
   int ChargeComputationNeeded =  
     ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
      ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
@@ -911,7 +910,6 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
 	if (Check == 1) {
 	  ckt->CKTnoncon++;
 	  isConv = 0;
-/* spice3f4 defined NEWCONV by default, looking to niconv.c
 #ifndef NEWCONV
 	} 
 	else {
@@ -951,7 +949,6 @@ int HSM1load(GENmodel *inModel, register CKTcircuit *ckt)
 	  }
 	}
 #endif
-*/
       }
     }
     *(ckt->CKTstate0 + here->HSM1vbs) = vbs;
