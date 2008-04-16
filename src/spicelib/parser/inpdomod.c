@@ -391,11 +391,11 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    }
 	    break;	        
 	case 58:
-	    type = INPtypelook("B3SOI");
+	    type = INPtypelook("B4SOI");
 	    if (type < 0) {
 		err =
 		    INPmkTemp
-		    ("Device type B3SOI V3.0 not available in this binary\n");
+		    ("Device type B4SOI V4.0 not available in this binary\n");
 	    }
 	    break;  	    
 	case 60:

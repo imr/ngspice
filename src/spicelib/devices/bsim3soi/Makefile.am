@@ -3,29 +3,29 @@
 noinst_LIBRARIES = libbsim3soi.a
 
 libbsim3soi_a_SOURCES = 	\
-	b3soi.c	\
-	b3soiacld.c	\
-	b3soiask.c	\
-	b3soicheck.c	\
-	b3soicvtest.c	\
-	b3soidel.c	\
-	b3soidest.c	\
-	b3soigetic.c	\
-	b3soild.c	\
-	b3soimask.c	\
-	b3soimdel.c	\
-	b3soimpar.c	\
-	b3soinoi.c	\
-	b3soipar.c	\
-	b3soipzld.c	\
-	b3soiset.c	\
-	b3soitemp.c	\
-	b3soitrunc.c	\
-	b3soidef.h	\
-	b3soiext.h	\
-	b3soiinit.c	\
-	b3soiinit.h	\
-	b3soiitf.h
+	b4soi.c	\
+	b4soiacld.c	\
+	b4soiask.c	\
+	b4soicheck.c	\
+	b4soicvtest.c	\
+	b4soidel.c	\
+	b4soidest.c	\
+	b4soigetic.c	\
+	b4soild.c	\
+	b4soimask.c	\
+	b4soimdel.c	\
+	b4soimpar.c	\
+	b4soinoi.c	\
+	b4soipar.c	\
+	b4soipzld.c	\
+	b4soiset.c	\
+	b4soitemp.c	\
+	b4soitrunc.c	\
+	b4soidef.h	\
+	b4soiext.h	\
+	b4soiinit.c	\
+	b4soiinit.h	\
+	b4soiitf.h
 
 
 
