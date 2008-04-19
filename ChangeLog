@@ -1,3 +1,7 @@
+2008-04-19 Holger Vogt
+ * src/frontend/inpcom.c: inp_fix_param_values(): retain ..=true as boolean,
+   retain ="xxx" as string, allow numparams without {} inside xpsice input vectors
+
 2008-04-16 Dietmar Warning
  * src/spicelib/devices/bsim3soi/*.c,*.h, src/spicelib/parser/inpdomod.c, inp2m.c,
    src/spicelib/devices/dev.c, DEVICES: New bsim3soi version 4.0
