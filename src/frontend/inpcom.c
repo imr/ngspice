@@ -51,6 +51,7 @@ Author: 1985 Wayne A. Christopher
 #include "variable.h"
 #include "../misc/util.h" /* dirname() */
 #include "../misc/stringutil.h"
+#include <wordlist.h>
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include new stuff */
@@ -2503,8 +2504,11 @@ inp_fix_param_values( struct line *deck )
 {
   struct line *c = deck;
   char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
+  char *vec_str, *natok, *buffer, *newvec;
   bool control_section = FALSE, has_paren = FALSE;
-
+  int n = 0;
+  wordlist *wl, *nwl;
+  
   while ( c != NULL ) {
     line = c->li_line;
 
@@ -2532,14 +2536,62 @@ inp_fix_param_values( struct line *deck )
 
       beg_of_str = equal_ptr + 1;
       while ( isspace(*beg_of_str) ) beg_of_str++;
+      /* all cases where no {} have to be put around selected token */
       if ( isdigit(*beg_of_str) || *beg_of_str == '{' || *beg_of_str == '.' ||
-	   ( *beg_of_str == '-' && isdigit(*(beg_of_str+1)) ) ) {
-	line = equal_ptr + 1;
+         *beg_of_str == '"' || ( *beg_of_str == '-' && isdigit(*(beg_of_str+1)) ) ||
+         ciprefix("true", beg_of_str) || ciprefix("false", beg_of_str) ) {
+         line = equal_ptr + 1;
       } else if (*beg_of_str == '[') {
-      	/* fill in some code to put curly brackets around all params inside a pair of square brackets */
-      	/* for now skip [...] and go to next '=' token in line*/
-      	line = equal_ptr + 1; 	
+      	/* code to put curly brackets around all params inside a pair of square brackets */
+      	end_of_str = beg_of_str;
+      	n = 0;
+      	while (*end_of_str != ']') {
+      	  end_of_str++;
+          n++;
+        }     
+      	vec_str = tmalloc(n); /* string xx yyy from vector [xx yyy] */
+      	*vec_str = '\0';
+      	strncat(vec_str, beg_of_str + 1, n - 1);
+
+      	/* work on vector elements inside [] */
+        nwl = NULL;
+        for (;;) {
+           natok = gettok(&vec_str);
+           if (!natok) break;
+           wl = alloc(struct wordlist);
+
+           buffer = tmalloc(strlen(natok) + 4);  
+           if ( isdigit(*natok) || *natok == '{' || *natok == '.' ||
+            *natok == '"' || ( *natok == '-' && isdigit(*(natok+1)) ) ||
+            ciprefix("true", natok) || ciprefix("false", natok)) {
+              (void) sprintf(buffer, "%s", natok);	
+           } else { 	 
+              (void) sprintf(buffer, "{%s}", natok);       	       
+           }
+           tfree(natok);
+           wl->wl_word = copy(buffer);
+           tfree(buffer);
+           wl->wl_next = nwl;
+           if (nwl)
+              nwl->wl_prev = wl;
+           nwl = wl;   
+        }
+        nwl = wl_reverse(nwl);
+        /* new vector elements */
+        newvec = wl_flatten(nwl);
+        wl_free(nwl);
+        /* insert new vector into actual line */
+	*equal_ptr  = '\0';	
+	new_str = tmalloc( strlen(c->li_line) + strlen(newvec) + strlen(end_of_str+1) + 5 );
+	sprintf( new_str, "%s=[%s] %s", c->li_line, newvec, end_of_str+1 );        
+        tfree(newvec);
+        
+	old_str    = c->li_line;
+	c->li_line = new_str;
+	line = new_str + strlen(old_str) + 1;
+	tfree(old_str);        
       } else {
+      /* put {} around token to accepted as numparam */	
 	end_of_str = beg_of_str;
 	while ( *end_of_str != '\0' && (!isspace(*end_of_str) || has_paren) ) {
 	  if ( *end_of_str == '(' ) has_paren = TRUE; 
