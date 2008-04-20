@@ -907,6 +907,7 @@ AC_CONFIG_FILES([Makefile
                  tests/bsim3/Berkeley/3v2/ac_sim/Makefile
                  tests/bsim3/Berkeley/3v2/dc_sim/Makefile
                  tests/bsim3/Berkeley/3v2/tran_sim/Makefile
+                 tests/bsim3soi/Makefile
                  tests/bsim3soidd/Makefile
                  tests/bsim3soifd/Makefile
                  tests/bsim3soipd/Makefile

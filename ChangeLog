@@ -1,3 +1,12 @@
+2008-04-20 Dietmar Warning
+ * src/spicelib/devices/bsim*/b*ld.c, src/math/ni/niconv.c: Reconstruct NEWCONV
+   macro for better bsim3,4,soi transfer from Berkeley, macro is defined by
+   default in spice3f4 which is used by UCB for testing. Now same behaviour in ngspice
+   - tested and should not impact convergence behaviour.
+ * src/frontend/winprint.c: pragmas only for MSC.
+ * configure.in tests/Makefile.am, tests/bsim3soi/*.cir, *.out, *.mod: new testcase 
+   for bsim3soi (origin UCB small modifications).
+
 2008-04-19 Holger Vogt
  * src/frontend/inpcom.c: inp_fix_param_values(): retain ..=true as boolean,
    retain ="xxx" as string, allow numparams without {} inside xpsice input vectors

@@ -3,6 +3,7 @@
 SUBDIRS = bsim1			\
 	bsim2			\
 	bsim3			\
+	bsim3soi		\
 	bsim3soidd		\
 	bsim3soifd		\
 	bsim3soipd		\
@@ -26,6 +27,7 @@ SUBDIRS = bsim1			\
 DIST_SUBDIRS = 	bsim1	\
 	bsim2		\
 	bsim3		\
+	bsim3soi		\
 	bsim3soidd	\
 	bsim3soifd	\
 	bsim3soipd	\
