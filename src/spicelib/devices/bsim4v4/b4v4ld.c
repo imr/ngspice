@@ -67,9 +67,9 @@ double dRs_dvg, dRd_dvg, dRs_dvb, dRd_dvb;
 double dT0_dvg, dT1_dvb, dT3_dvg, dT3_dvb;
 double vses, vdes, vdedo, delvses, delvded, delvdes;
 double Isestot=0.0, cseshat=0.0, Idedtot=0.0, cdedhat=0.0;
-//#ifndef NEWCONV
-//double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
-//#endif
+#ifndef NEWCONV
+double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
+#endif
 
 double geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb, ceqgcrg;
 double vges, vgms, vgedo, vgmdo, vged, vgmd, delvged, delvgmd;
@@ -3576,46 +3576,46 @@ finished:
           if ((here->BSIM4v4off == 0) || (!(ckt->CKTmode & MODEINITFIX)))
 	  {   if (Check == 1)
 	      {   ckt->CKTnoncon++;
-// #ifndef NEWCONV
-//              } 
-//	      else
-//              {   if (here->BSIM4v4mode >= 0)
-//                  {   Idtot = here->BSIM4v4cd + here->BSIM4v4csub
-//			    + here->BSIM4v4Igidl - here->BSIM4v4cbd;
-//                  }
-//                  else
-//                  {   Idtot = here->BSIM4v4cd + here->BSIM4v4cbd - here->BSIM4v4Igidl; /* bugfix */
-//                  }
-//                  tol0 = ckt->CKTreltol * MAX(fabs(cdhat), fabs(Idtot))
-//                       + ckt->CKTabstol;
-//		  tol1 = ckt->CKTreltol * MAX(fabs(cseshat), fabs(Isestot))
-//                       + ckt->CKTabstol;
-//                  tol2 = ckt->CKTreltol * MAX(fabs(cdedhat), fabs(Idedtot))
-//                       + ckt->CKTabstol;
-//                  tol3 = ckt->CKTreltol * MAX(fabs(cgshat), fabs(Igstot))
-//                       + ckt->CKTabstol;
-//                  tol4 = ckt->CKTreltol * MAX(fabs(cgdhat), fabs(Igdtot))
-//                       + ckt->CKTabstol;
-//                  tol5 = ckt->CKTreltol * MAX(fabs(cgbhat), fabs(Igbtot))
-//                       + ckt->CKTabstol;
-//                  if ((fabs(cdhat - Idtot) >= tol0) || (fabs(cseshat - Isestot) >= tol1)
-//		      || (fabs(cdedhat - Idedtot) >= tol2))
-//                  {   ckt->CKTnoncon++;
-//                  }
-//		  else if ((fabs(cgshat - Igstot) >= tol3) || (fabs(cgdhat - Igdtot) >= tol4)
-//		      || (fabs(cgbhat - Igbtot) >= tol5))
-//                  {   ckt->CKTnoncon++;
-//                  }
-//                  else
-//                  {   Ibtot = here->BSIM4v4cbs + here->BSIM4v4cbd
-//			    - here->BSIM4v4Igidl - here->BSIM4v4Igisl - here->BSIM4v4csub;
-//                      tol6 = ckt->CKTreltol * MAX(fabs(cbhat), fabs(Ibtot))
-//                          + ckt->CKTabstol;
-//                      if (fabs(cbhat - Ibtot) > tol6)
-//		      {   ckt->CKTnoncon++;
-//                      }
-//                  }
-// #endif /* NEWCONV */
+#ifndef NEWCONV
+              } 
+	      else
+              {   if (here->BSIM4v4mode >= 0)
+                  {   Idtot = here->BSIM4v4cd + here->BSIM4v4csub
+			    + here->BSIM4v4Igidl - here->BSIM4v4cbd;
+                  }
+                  else
+                  {   Idtot = here->BSIM4v4cd + here->BSIM4v4cbd - here->BSIM4v4Igidl; /* bugfix */
+                  }
+                  tol0 = ckt->CKTreltol * MAX(fabs(cdhat), fabs(Idtot))
+                       + ckt->CKTabstol;
+		  tol1 = ckt->CKTreltol * MAX(fabs(cseshat), fabs(Isestot))
+                       + ckt->CKTabstol;
+                  tol2 = ckt->CKTreltol * MAX(fabs(cdedhat), fabs(Idedtot))
+                       + ckt->CKTabstol;
+                  tol3 = ckt->CKTreltol * MAX(fabs(cgshat), fabs(Igstot))
+                       + ckt->CKTabstol;
+                  tol4 = ckt->CKTreltol * MAX(fabs(cgdhat), fabs(Igdtot))
+                       + ckt->CKTabstol;
+                  tol5 = ckt->CKTreltol * MAX(fabs(cgbhat), fabs(Igbtot))
+                       + ckt->CKTabstol;
+                  if ((fabs(cdhat - Idtot) >= tol0) || (fabs(cseshat - Isestot) >= tol1)
+		      || (fabs(cdedhat - Idedtot) >= tol2))
+                  {   ckt->CKTnoncon++;
+                  }
+		  else if ((fabs(cgshat - Igstot) >= tol3) || (fabs(cgdhat - Igdtot) >= tol4)
+		      || (fabs(cgbhat - Igbtot) >= tol5))
+                  {   ckt->CKTnoncon++;
+                  }
+                  else
+                  {   Ibtot = here->BSIM4v4cbs + here->BSIM4v4cbd
+			    - here->BSIM4v4Igidl - here->BSIM4v4Igisl - here->BSIM4v4csub;
+                      tol6 = ckt->CKTreltol * MAX(fabs(cbhat), fabs(Ibtot))
+                          + ckt->CKTabstol;
+                      if (fabs(cbhat - Ibtot) > tol6)
+		      {   ckt->CKTnoncon++;
+                      }
+                  }
+#endif /* NEWCONV */
               }
           }
           *(ckt->CKTstate0 + here->BSIM4v4vds) = vds;

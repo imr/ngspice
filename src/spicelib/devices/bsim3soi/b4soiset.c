@@ -1853,7 +1853,7 @@ IFuid tmpName;
                 printf("Warning: soiMod has been set to its global value %d.\n", model->B4SOIsoiMod);
             }
 
-            if (here->B4SOIsoiMod == 3) /* auto selection */
+            if (here->B4SOIsoiMod == 3) { /* auto selection */
                if (Vbs0t > model->B4SOIvbs0fd)
                   here->B4SOIsoiMod = 2; /* ideal FD mode */
                else
@@ -1861,7 +1861,7 @@ IFuid tmpName;
                      here->B4SOIsoiMod = 0; /* BSIMPD */
                   else
                      here->B4SOIsoiMod = 1;
-
+            }
 
             here->B4SOIfloat = 0;
             if (here->B4SOIsoiMod == 2) /* v3.2 */

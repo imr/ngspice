@@ -38,7 +38,10 @@ double czbd, czbdsw, czbs, czbssw, evbd, evbs, arg, sarg;
 double delvbd, delvbs, delvds, delvgd, delvgs;
 double Vfbeff, dVfbeff_dVg, dVfbeff_dVd, dVfbeff_dVb, V3, V4;
 double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb, gcgdb, gcggb, gcgsb, gcsdb;
-double gcsgb, gcssb, tol, PhiB, PhiBSW, MJ, MJSW;
+#ifndef NEWCONV
+double tol;
+#endif
+double gcsgb, gcssb, PhiB, PhiBSW, MJ, MJSW;
 double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
 double qgate = 0.0, qbulk = 0.0, qdrn = 0.0, qsrc, cqgate, cqbulk, cqdrn;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;

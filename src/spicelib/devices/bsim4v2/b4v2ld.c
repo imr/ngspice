@@ -3376,6 +3376,46 @@ finished:
           if ((here->BSIM4v2off == 0) || (!(ckt->CKTmode & MODEINITFIX)))
 	  {   if (Check == 1)
 	      {   ckt->CKTnoncon++;
+#ifndef NEWCONV
+              } 
+	      else
+              {   if (here->BSIM4v2mode >= 0)
+                  {   Idtot = here->BSIM4v2cd + here->BSIM4v2csub
+			    + here->BSIM4v2Igidl - here->BSIM4v2cbd;
+                  }
+                  else
+                  {   Idtot = here->BSIM4v2cd + here->BSIM4v2cbd;
+                  }
+                  tol0 = ckt->CKTreltol * MAX(FABS(cdhat), FABS(Idtot))
+                       + ckt->CKTabstol;
+		  tol1 = ckt->CKTreltol * MAX(FABS(cseshat), FABS(Isestot))
+                       + ckt->CKTabstol;
+                  tol2 = ckt->CKTreltol * MAX(FABS(cdedhat), FABS(Idedtot))
+                       + ckt->CKTabstol;
+                  tol3 = ckt->CKTreltol * MAX(FABS(cgshat), FABS(Igstot))
+                       + ckt->CKTabstol;
+                  tol4 = ckt->CKTreltol * MAX(FABS(cgdhat), FABS(Igdtot))
+                       + ckt->CKTabstol;
+                  tol5 = ckt->CKTreltol * MAX(FABS(cgbhat), FABS(Igbtot))
+                       + ckt->CKTabstol;
+                  if ((FABS(cdhat - Idtot) >= tol0) || (FABS(cseshat - Isestot) >= tol1)
+		      || (FABS(cdedhat - Idedtot) >= tol2))
+                  {   ckt->CKTnoncon++;
+                  }
+		  else if ((FABS(cgshat - Igstot) >= tol3) || (FABS(cgdhat - Igdtot) >= tol4)
+		      || (FABS(cgbhat - Igbtot) >= tol5))
+                  {   ckt->CKTnoncon++;
+                  }
+                  else
+                  {   Ibtot = here->BSIM4v2cbs + here->BSIM4v2cbd
+			    - here->BSIM4v2Igidl - here->BSIM4v2csub;
+                      tol6 = ckt->CKTreltol * MAX(FABS(cbhat), FABS(Ibtot))
+                          + ckt->CKTabstol;
+                      if (FABS(cbhat - Ibtot) > tol6)
+		      {   ckt->CKTnoncon++;
+                      }
+                  }
+#endif /* NEWCONV */
               }
           }
           *(ckt->CKTstate0 + here->BSIM4v2vds) = vds;
