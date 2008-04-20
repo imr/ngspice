@@ -23,11 +23,15 @@
  */
 #undef BOOLEAN
 
+#ifdef _MSC_VER
 #pragma warn -dup
+#endif /* _MSC_VER */
 #include <windows.h>
 #include <windowsx.h>
 #include "suffix.h"
+#ifdef _MSC_VER
 #pragma hdrstop
+#endif /* _MSC_VER */
 
 /* Typen */
 typedef struct {						/* Extra Printdaten */
