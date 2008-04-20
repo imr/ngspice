@@ -7,6 +7,13 @@ Author: 1985 Wayne A. Christopher
  * For dealing with spice input decks and command scripts
  */
 
+/* h_vogt 20 April 2008
+ * For xspice and num_pram compatibility .cmodel added
+ * .cmodel will be replaced by .model in inp_fix_param_values()
+ * and then the entire line is skipped (will not be changed by this function).
+ * Usage of numparam requires {} around the parameters in the .cmodel line.
+ */
+
 /*
  * SJB 21 April 2005
  * Added support for end-of-line comments that begin with any of the following:
@@ -702,6 +709,7 @@ comment_out_unused_subckt_models( struct line *start_card )
 
   for ( card = start_card; card != NULL; card = card->li_next ) {
     if ( ciprefix( ".model", card->li_line ) ) has_models = TRUE;
+    if ( ciprefix( ".cmodel", card->li_line ) ) has_models = TRUE;    
     if ( ciprefix( ".param", card->li_line ) && !strstr( card->li_line, "=" ) ) *card->li_line = '*';
   }
   
@@ -774,7 +782,7 @@ comment_out_unused_subckt_models( struct line *start_card )
       remove_subckt = FALSE;
     }
     if ( remove_subckt ) *line = '*';
-    else if ( has_models && ciprefix( ".model", line ) ) {
+    else if ( has_models && (ciprefix( ".model", line ) || ciprefix( ".cmodel", line )) ) {
       model_name = get_subckt_model_name( line );
 
       found_model = FALSE;
@@ -2519,6 +2527,16 @@ inp_fix_param_values( struct line *deck )
     if ( control_section || ciprefix( ".option", line ) ) { c = c->li_next; continue; } /* no handling of params in "option" lines */
     if ( ciprefix( "set", line ) ) { c = c->li_next; continue; } /* no handling of params in "set" lines */
     if ( *line == 'b' ) { c = c->li_next; continue; } /* no handling of params in B source lines */
+    
+    /* for xspice .cmodel: replace .cmodel with .model and skip entire line) */
+    if ( ciprefix( ".cmodel", line ) ) { 
+    	*(++line) = 'm';
+    	*(++line) = 'o';
+    	*(++line) = 'd';
+    	*(++line) = 'e';
+    	*(++line) = 'l';
+    	*(++line) = ' ';
+    	c = c->li_next; continue; }
 
     /* exclude CIDER models */
     if ( ciprefix( ".model", line ) && ( strstr(line, "numos") || strstr(line, "numd") || strstr(line, "nbjt") || 

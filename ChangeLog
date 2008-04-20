@@ -1,3 +1,8 @@
+2008-04-20 Holger Vogt
+ * src/frontend/inpcom.c: .cmodel added for xspice compatibility: in
+   inp_fix_param_values() replaces .cmodel with .model and then skips entire
+   line, thus no numparam search and setting of {} will happen.
+
 2008-04-20 Dietmar Warning
  * src/spicelib/devices/bsim*/b*ld.c, src/math/ni/niconv.c: Reconstruct NEWCONV
    macro for better bsim3,4,soi transfer from Berkeley, macro is defined by
