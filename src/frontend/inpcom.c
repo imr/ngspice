@@ -2560,7 +2560,8 @@ inp_fix_param_values( struct line *deck )
          ciprefix("true", beg_of_str) || ciprefix("false", beg_of_str) ) {
          line = equal_ptr + 1;
       } else if (*beg_of_str == '[') {
-      	/* code to put curly brackets around all params inside a pair of square brackets */
+      	/* A vector following the '=' token: code to put curly brackets around all params 
+      	inside a pair of square brackets */
       	end_of_str = beg_of_str;
       	n = 0;
       	while (*end_of_str != ']') {
@@ -2582,7 +2583,11 @@ inp_fix_param_values( struct line *deck )
            if ( isdigit(*natok) || *natok == '{' || *natok == '.' ||
             *natok == '"' || ( *natok == '-' && isdigit(*(natok+1)) ) ||
             ciprefix("true", natok) || ciprefix("false", natok)) {
-              (void) sprintf(buffer, "%s", natok);	
+              (void) sprintf(buffer, "%s", natok);
+           } else if (*natok == '<') {   
+           /* A complex value found inside a vector [< x1 y1> <x2 y2>] */
+           /* Code is still missing ! */
+              (void) sprintf(buffer, "{%s}", natok);                 	
            } else { 	 
               (void) sprintf(buffer, "{%s}", natok);       	       
            }
@@ -2607,9 +2612,59 @@ inp_fix_param_values( struct line *deck )
 	old_str    = c->li_line;
 	c->li_line = new_str;
 	line = new_str + strlen(old_str) + 1;
+	tfree(old_str);
+      } else if (*beg_of_str == '<') {
+      	/* A complex value following the '=' token: code to put curly brackets around all params 
+      	inside a pair < > */
+      	end_of_str = beg_of_str;
+      	n = 0;
+      	while (*end_of_str != '>') {
+      	  end_of_str++;
+          n++;
+        }     
+      	vec_str = tmalloc(n); /* string xx yyy from vector [xx yyy] */
+      	*vec_str = '\0';
+      	strncat(vec_str, beg_of_str + 1, n - 1);
+
+      	/* work on tokens inside <> */
+        nwl = NULL;
+        for (;;) {
+           natok = gettok(&vec_str);
+           if (!natok) break;
+           wl = alloc(struct wordlist);
+
+           buffer = tmalloc(strlen(natok) + 4);  
+           if ( isdigit(*natok) || *natok == '{' || *natok == '.' ||
+            *natok == '"' || ( *natok == '-' && isdigit(*(natok+1)) ) ||
+            ciprefix("true", natok) || ciprefix("false", natok)) {
+              (void) sprintf(buffer, "%s", natok);
+           } else { 	 
+              (void) sprintf(buffer, "{%s}", natok);       	       
+           }
+           tfree(natok);
+           wl->wl_word = copy(buffer);
+           tfree(buffer);
+           wl->wl_next = nwl;
+           if (nwl)
+              nwl->wl_prev = wl;
+           nwl = wl;   
+        }
+        nwl = wl_reverse(nwl);
+        /* new elements of complex variable */
+        newvec = wl_flatten(nwl);
+        wl_free(nwl);
+        /* insert new complex value into actual line */
+	*equal_ptr  = '\0';	
+	new_str = tmalloc( strlen(c->li_line) + strlen(newvec) + strlen(end_of_str+1) + 5 );
+	sprintf( new_str, "%s=<%s> %s", c->li_line, newvec, end_of_str+1 );        
+        tfree(newvec);
+        
+	old_str    = c->li_line;
+	c->li_line = new_str;
+	line = new_str + strlen(old_str) + 1;
 	tfree(old_str);        
       } else {
-      /* put {} around token to accepted as numparam */	
+      /* put {} around token to be accepted as numparam */	
 	end_of_str = beg_of_str;
 	while ( *end_of_str != '\0' && (!isspace(*end_of_str) || has_paren) ) {
 	  if ( *end_of_str == '(' ) has_paren = TRUE; 

@@ -1,5 +1,9 @@
+2008-04-23 Holger Vogt
+ * src/frontend/inpcom.c: In inp_fix_param_values() xspice variables of type 
+   complex are recognized. Vectors of complex variables still missing.
+   
 2008-04-20 Holger Vogt
- * src/frontend/inpcom.c: .cmodel added for xspice compatibility: in
+ * src/frontend/inpcom.c: .cmodel added for xspice compatibility:
    inp_fix_param_values() replaces .cmodel with .model and then skips entire
    line, thus no numparam search and setting of {} will happen.
 
