@@ -1,3 +1,7 @@
+2008-04-25 Holger Vogt
+ * src/frontend/inpcom.c: In inp_fix_param_values() xspice variables of type 
+   complex are recognized also in vectors.
+
 2008-04-23 Holger Vogt
  * src/frontend/inpcom.c: In inp_fix_param_values() xspice variables of type 
    complex are recognized. Vectors of complex variables still missing.

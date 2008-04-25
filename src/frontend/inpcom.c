@@ -2512,7 +2512,7 @@ inp_fix_param_values( struct line *deck )
 {
   struct line *c = deck;
   char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
-  char *vec_str, *natok, *buffer, *newvec;
+  char *vec_str, *natok, *buffer, *newvec, *whereisgt;
   bool control_section = FALSE, has_paren = FALSE;
   int n = 0;
   wordlist *wl, *nwl;
@@ -2582,12 +2582,30 @@ inp_fix_param_values( struct line *deck )
            buffer = tmalloc(strlen(natok) + 4);  
            if ( isdigit(*natok) || *natok == '{' || *natok == '.' ||
             *natok == '"' || ( *natok == '-' && isdigit(*(natok+1)) ) ||
-            ciprefix("true", natok) || ciprefix("false", natok)) {
+            ciprefix("true", natok) || ciprefix("false", natok) ||
+            eq(natok, "<") || eq(natok, ">")) {
               (void) sprintf(buffer, "%s", natok);
-           } else if (*natok == '<') {   
-           /* A complex value found inside a vector [< x1 y1> <x2 y2>] */
-           /* Code is still missing ! */
-              (void) sprintf(buffer, "{%s}", natok);                 	
+           /* A complex value found inside a vector [< x1 y1> <x2 y2>] */ 
+           /* < xx and yy > have been dealt with before */
+           /* <xx */             	
+           } else if (*natok == '<') {  
+              if (isdigit(*(natok + 1)) || ( *(natok + 1) == '-' && 
+                isdigit(*(natok + 2)) )) {
+                 (void) sprintf(buffer, "%s", natok);
+              } else {
+              	*natok = '{';
+                (void) sprintf(buffer, "<%s}", natok);
+              } 
+           /* yy> */
+           } else if (strchr(natok, '>')) {   
+              if (isdigit(*natok) || ( *natok == '-' && isdigit(*(natok+1))) ) {
+                 (void) sprintf(buffer, "%s", natok);
+              } else {
+                 whereisgt = strchr(natok, '>');
+                 *whereisgt = '}';
+                 (void) sprintf(buffer, "{%s>", natok);
+              }
+           /* all other tokens */
            } else { 	 
               (void) sprintf(buffer, "{%s}", natok);       	       
            }
