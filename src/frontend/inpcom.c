@@ -2863,14 +2863,15 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
   int  skipped = 0;
   int arr_size = 12000;
 
-  // dynamic memory allocation
   int *level;
   int *param_skip;
   char **param_names;
   char **param_strs;
   char ***depends_on;
   struct line **ptr_array;
-  struct line **ptr_array_ordered;  
+  struct line **ptr_array_ordered;
+  
+  if ( start_card == NULL ) return;    
 
   /* determine the number of lines with .param */
   ptr = start_card;
@@ -2884,7 +2885,8 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
 
   arr_size = num_params;
   num_params = 0; /* This is just to keep the code in row 2907ff. */
-        
+  
+  // dynamic memory allocation        
   level = (int *) tmalloc(arr_size*sizeof(int));
   param_skip = (int *) tmalloc(arr_size*sizeof(int));
   param_names = (char **) tmalloc(arr_size*sizeof(char*));
@@ -2901,8 +2903,6 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
 
   ptr_array = (struct line **) tmalloc(arr_size*sizeof(struct line *));
   ptr_array_ordered = (struct line **) tmalloc(arr_size*sizeof(struct line *));
-  
-  if ( start_card == NULL ) return;
 
   ptr = start_card;
   while ( ptr != NULL )
