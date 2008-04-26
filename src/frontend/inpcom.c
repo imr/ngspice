@@ -2755,7 +2755,8 @@ get_param_str( char *line )
 }
 
 static int
-inp_get_param_level( int param_num, char *depends_on[12000][100], char *param_names[12000], char *param_strs[12000], int total_params, int *level )
+//inp_get_param_level( int param_num, char *depends_on[12000][100], char *param_names[12000], char *param_strs[12000], int total_params, int *level )
+inp_get_param_level( int param_num, char ***depends_on, char **param_names, char **param_strs, int total_params, int *level )
 {
   int index1 = 0, comp_level = 0, temp_level = 0;
   int index2 = 0;
@@ -2853,14 +2854,25 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
   char *param_name = NULL, *param_str = NULL, *param_ptr = NULL;
   int  i, j, num_params = 0, ind = 0, max_level = 0, num_terminals = 0;
   bool in_control = FALSE;
-  struct line *ptr_array[12000], *ptr_array_ordered[12000], *ptr;
-  char *param_names[12000], *param_strs[12000], *curr_line;
-  char *depends_on[12000][100], *str_ptr, *beg, *end, *new_str;
-  int  level[12000], param_skip[12000], skipped = 0;
+
   bool found_in_list = FALSE;
 
-  if ( start_card == NULL ) return;
+  struct line *ptr;
+  char *curr_line;
+  char *str_ptr, *beg, *end, *new_str;
+  int  skipped = 0;
+  int arr_size = 12000;
 
+  // dynamic memory allocation
+  int *level;
+  int *param_skip;
+  char **param_names;
+  char **param_strs;
+  char ***depends_on;
+  struct line **ptr_array;
+  struct line **ptr_array_ordered;  
+
+  /* determine the number of lines with .param */
   ptr = start_card;
   while ( ptr != NULL )
     {
@@ -2869,7 +2881,28 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
       }
       ptr = ptr->li_next;
     }
-  num_params = 0;
+
+  arr_size = num_params;
+  num_params = 0; /* This is just to keep the code in row 2907ff. */
+        
+  level = (int *) tmalloc(arr_size*sizeof(int));
+  param_skip = (int *) tmalloc(arr_size*sizeof(int));
+  param_names = (char **) tmalloc(arr_size*sizeof(char*));
+  param_strs = (char **) tmalloc(arr_size*sizeof(char*));
+  
+  /* array[row][column] -> depends_on[array_size][100] */
+  /* rows */
+  depends_on = (char ***) tmalloc(sizeof(char **) * arr_size);
+  /* columns */
+   for (i = 0; i < arr_size; i++)
+   {
+       depends_on[i] = (char **) tmalloc(sizeof(char *) * 100);
+   }  
+
+  ptr_array = (struct line **) tmalloc(arr_size*sizeof(struct line *));
+  ptr_array_ordered = (struct line **) tmalloc(arr_size*sizeof(struct line *));
+  
+  if ( start_card == NULL ) return;
 
   ptr = start_card;
   while ( ptr != NULL )
@@ -3031,6 +3064,19 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
       tfree( param_names[i] );
       tfree( param_strs[i] );
     }
+    
+  tfree(level);
+  tfree(param_skip);
+  tfree(param_names);
+  tfree(param_strs);  
+
+   for (i = 0; i< arr_size; i++)
+       tfree(depends_on[i]);
+   tfree(depends_on);  
+   
+   tfree(ptr_array);  
+   tfree(ptr_array_ordered);   
+  
 }
 
 static void

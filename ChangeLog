@@ -1,3 +1,7 @@
+2008-04-26 Holger Vogt
+ * src/frontend/inpcom.c: inp_sort_params() now uses dynamic memory allocation
+   on the heap: no enlargement of stack size is necessary. 
+
 2008-04-25 Holger Vogt
  * src/frontend/inpcom.c: In inp_fix_param_values() xspice variables of type 
    complex are recognized also in vectors.
