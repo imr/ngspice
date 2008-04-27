@@ -17,7 +17,7 @@
 #include "fteparse.h"
 #include "gnuplot.h"
 
-#include <variable.h>
+#include "variable.h"
 
 #define GP_MAXVECTORS 64
 
@@ -33,8 +33,10 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text;
 
     char filename_data[15];
-    sprintf(filename_data, "%s.data", filename);
+    char filename_plt[15];
 
+    sprintf(filename_data, "%s.data", filename);
+    sprintf(filename_plt, "%s.plt", filename);
 
     /* Sanity checking. */
     for ( v = vecs, numVecs = 0; v; v = v->v_link2 ) {
@@ -88,7 +90,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     }
 
     /* Open the output gnuplot file. */
-    if (!(file = fopen(filename, "w"))) {
+    if (!(file = fopen(filename_plt, "w"))) {
 	perror(filename);
 	return;
     }
@@ -115,23 +117,23 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     if (xlog) {
     	fprintf( file, "set logscale x\n" );
 	if (xlims) {
-	    fprintf( file, "set xrange [% e: % e]\n", log10(xlims[0]),log10(xlims[1]) );
+	    fprintf( file, "set xrange [%e:%e]\n", xlims[0], xlims[1] );
 	}
     } else {
     	fprintf( file, "unset logscale x \n" );
 	if (xlims) {
-	    fprintf( file, "set xrange [% e: % e]\n", xlims[0],xlims[1] );
+	    fprintf( file, "set xrange [%e:%e]\n", xlims[0], xlims[1] );
 	}
     }
     if (ylog) {
     	fprintf( file, "set logscale y \n" );
 	if (ylims) {
-	    fprintf( file, "set yrange [% e: % e]\n", log10(ylims[0]),log10(ylims[1]) );
+	    fprintf( file, "set yrange [%e:%e]\n", ylims[0], ylims[1] );
 	}
     } else {
     	fprintf( file, "unset logscale y \n" );
 	if (ylims) {
-	    fprintf( file, "set yrange [% e: % e]\n", ylims[0],ylims[1] );
+	    fprintf( file, "set yrange [%e:%e]\n", ylims[0], ylims[1] );
 	}
     }
 
@@ -156,46 +158,50 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 */
 
     /* Open the output gnuplot data file. */
-
     if (!(file_data = fopen(filename_data, "w"))) {
 	perror(filename);
 	return;
     }
 
-    fprintf( file, "plot ", v->v_name ); 
+    fprintf( file, "plot " ); 
     i = 0;
 
-    /* Write out the data and setup arrays */
+    /* Write out the gnuplot command */
     for ( v = vecs; v; v = v->v_link2 ) {
 	scale = v->v_scale;
 	if (v->v_name) {
-	    i= i+2;
-	    fprintf( file, "\'%s\' using %d:%d with lines t \"%s\" ,", filename_data , i , i+1 ,  v->v_name );
+	    i = i + 2;
+	    if (i > 2) fprintf(file, ",\\\n");
+	    fprintf(file, "\'%s\' using %d:%d with lines title \"%s\" ", filename_data, i-1, i, v->v_name);
 	}
     }
     fprintf( file, "\n");
-    fprintf (file, "set terminal postscript eps\nset out %s.eps\nreplot\nset term pop", filename);
+    fprintf (file, "set terminal postscript eps color\nset out \'%s.eps\'\nreplot\nset term pop", filename);
 
-   for ( i = 0; i < scale->v_length; i++ ) {
+    /* Write out the data and setup arrays */
+    for ( i = 0; i < scale->v_length; i++ ) {
 	for ( v = vecs; v; v = v->v_link2 ) {
         	scale = v->v_scale;
 
 	        xval = isreal(scale) ?
-		scale->v_realdata[i] : realpart(&scale->v_compdata[i]);
+	        scale->v_realdata[i] : realpart(&scale->v_compdata[i]);
 
-        	yval = isreal(v) ?
-		v->v_realdata[i] : realpart(&v->v_compdata[i]);
+	        yval = isreal(v) ?
+	        v->v_realdata[i] : realpart(&v->v_compdata[i]);
 
         	fprintf( file_data, "% e % e ", xval, yval );
       	}
-    fprintf( file_data, "\n");
+      	fprintf( file_data, "\n");
     }
-    
 
     (void) fclose( file );
     (void) fclose( file_data );
 
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    (void) sprintf( buf, "wgnuplot -persist %s", filename_plt );
+#else
     (void) sprintf( buf, "gnuplot %s &", filename );
+#endif
     (void) system( buf );
 
 
