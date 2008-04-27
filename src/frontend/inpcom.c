@@ -984,7 +984,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
     char *global_copy = NULL, keep_char;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */ 
     FILE *newfp;
-#ifdef _DEBUG
+#ifdef TRACE
     FILE *fdo;
     struct line *tmp_ptr1 = NULL;    
 #endif
@@ -1509,7 +1509,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
           inp_add_control_section(working, &line_number);
     }
     *data = cc;
-#ifdef _DEBUG
+#ifdef TRACE
 	/*debug: print into file*/
 	if (tmp_ptr1) tfree(tmp_ptr1);
 	fdo = fopen("debug-out.txt", "w");
