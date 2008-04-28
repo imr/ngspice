@@ -683,7 +683,7 @@ iplot(struct plot *pl, int id)
 	/* note: have command options for iplot to specify xdelta,
 	   etc.  So don't need static variables hack.  Assume default
 	   values for now.  */
-	sprintf(commandline, "iplot %s", xs->v_name);
+	sprintf(commandline, "plot %s", yl);
 
         (void) gr_init(xlims, ylims, xs->v_name,
             pl->pl_title, (char *) NULL, j, 0.0, 0.0,

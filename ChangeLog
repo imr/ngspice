@@ -1,3 +1,6 @@
+2008-04-28 Holger Vogt
+ * src/frontend/plotting/graf.c: remove iplot bug by changing line 686. 
+
 2008-04-27 Dietmar Warning
  * src/frontend/inpcom.c: change _DEBUG to TRACE - unique debug switches
  * src/frontend/plotting/gnuplot.c: adding windows gnuplot, some modifications
