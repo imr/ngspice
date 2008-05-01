@@ -1,3 +1,7 @@
+2008-05-01 Holger Vogt
+ * src/frontend/com_hardcopy.c: bug no. 1885979 removed: currentgraph saved 
+   and restored after hardcopy. 
+
 2008-04-28 Holger Vogt
  * src/frontend/plotting/graf.c: remove iplot bug by changing line 686. 
 
