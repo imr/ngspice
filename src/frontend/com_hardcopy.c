@@ -8,6 +8,7 @@
 #include <cpdefs.h>
 #include <fteinput.h>
 #include <ftedev.h>
+#include "ftedbgra.h"
 
 #include "plotting/plotit.h"
 #include "plotting/graphdb.h"
@@ -59,6 +60,10 @@ com_hardcopy(wordlist *wl)
 
     /* enable screen plot selection for these display types */
     foundit = 0;
+
+    /* save current graphics context, because plotit() will create a new
+     currentgraph */
+    PushGraphContext(currentgraph);
 
 #ifndef X_DISPLAY_MISSING
     if (!wl && hc_button) {
@@ -165,6 +170,9 @@ com_hardcopy(wordlist *wl)
 
     if (tempf && *device)
         (void) unlink(fname);
+
+    /* restore previous graphics context by retrieving the previous currentgraph */
+    PopGraphContext();
 
     return;
 }
