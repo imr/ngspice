@@ -19,10 +19,6 @@
 #include <string.h>
 #endif /* HAVE_STRING_H */
 
-#if defined(__MINGW32__) || defined(_MSC_VER)
-#define  srandom(a) srand(a) /* srandom */
-#endif /* __MINGW32__ */
-
 #include <setjmp.h>
 #include <signal.h>
 #include <sys/types.h>

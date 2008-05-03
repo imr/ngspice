@@ -1,3 +1,7 @@
+2008-05-03 Dietmar Warning
+ * src/include/ngspice.h, src/main.c: srandom has a macro in ngspice.h as a 
+   central place - should be sufficient also under windows
+
 2008-05-01 Holger Vogt
  * src/frontend/com_hardcopy.c: bug no. 1885979 removed: currentgraph saved 
    and restored after hardcopy. 

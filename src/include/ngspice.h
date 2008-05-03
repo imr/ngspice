@@ -129,8 +129,8 @@ struct timeb timebegin;
 #endif
 
 #ifndef HAVE_RANDOM
+#define srandom(a) srand(a)
 #define random rand
-#define srandom srand
 #endif
 
 #ifdef HAVE_INDEX
