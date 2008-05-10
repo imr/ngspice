@@ -197,9 +197,9 @@ AC_PROG_CC
 dnl the above AC_PROG_CC may set CFLAGS to "-O2 -g"
 if test "$enable_debug" = "no"; then
 	AC_MSG_WARN(Removing debugging option!)
-	CFLAGS=" "
+	CFLAGS="-O2"
 else
-	CFLAGS="-O0 -g"
+	CFLAGS="-g -O0"
 fi
 
 if test "x$GCC" = "xyes"; then
@@ -269,6 +269,8 @@ case $with_windows in
 		CFLAGS="$CFLAGS -mwindows";;
 	* )
 
+dnl Check for /proc (virtual process information file system)
+AC_CHECK_HEADERS( /proc/meminfo)
 
 dnl Checks for X11 header files and libraries - X11 support can be disabled
 dnl by passing the '--without-x' option to configure:
@@ -395,11 +397,6 @@ AC_CHECK_FUNCS(getrusage utimes)
 AC_CHECK_FUNCS(getrlimit ulimit, break)
 
 AC_CHECK_FUNCS([endpwent gethostbyname memset select socket strdup strerror strncasecmp strstr strtol])
-
-case $host_os in
-  *mingw* )
-	AC_DEFINE(HAVE__MEMAVL,1,[Get system memory from windows API])
-esac
 
 dnl Look for termios first (posix)
 AC_CHECK_HEADERS(termios.h termio.h sgtty.h, break)

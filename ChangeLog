@@ -1,3 +1,9 @@
+2008-05-10 Holger Vogt
+ * src/frontend/resource.c: Memory information is now stemming from the 
+   /proc file system (LINUX) or using GlobalMemoryStatusEx and 
+   GetProcessMemoryInfo (Windows).
+   The old info system with sbrk(0) may still be used.  
+
 2008-05-06 Holger Vogt
  * src/frontend/outitf.c: suppress printing of "Reference value" into log-file
    under Windows 

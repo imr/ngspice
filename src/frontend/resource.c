@@ -6,6 +6,11 @@ $Id$
 
 /*
  * Resource-related routines.
+ *
+ * New operation systems information options added:
+ * Windows 2000 and newer: Use GlobalMemoryStatusEx and GetProcessMemoryInfo
+ * LINUX (and maybe some others): Use the /proc virtual file information system
+ * Others: Use original code with sbrk(0) and some "ugly hacks"
  */
 
 #include "config.h"
@@ -26,9 +31,13 @@ $Id$
 /* gtri - end - 12/12/90 */
 #endif
 
-
-#ifdef HAVE__MEMAVL
+#ifdef HAS_WINDOWS
 #define WIN32_LEAN_AND_MEAN
+/* At least Windows 2000 is needed 
+ * Undefine _WIN32_WINNT 0x0500 if you want to compile under Windows ME 
+ * and older (not tested under Windows ME or 98!)
+ */
+#define _WIN32_WINNT 0x0500
 /*
  * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
  * clashes with the definition obtained from windows.h (via winnt.h).
@@ -38,41 +47,40 @@ $Id$
  */
 #undef BOOLEAN
 #include <windows.h>
+#if ( _WIN32_WINNT >= 0x0500)
+#include <psapi.h>
 #endif
+#endif
+
+/* Uncheck the following definition if you want to get the old  usage information 
+#undef HAVE__PROC_MEMINFO
+*/
 
 /* static declarations */
 static void printres(char *name);
-static void fprintmem(FILE* stream, size_t memory);
-#ifndef HAVE__MEMAVL
+static void fprintmem(FILE* stream, unsigned long int memory);
+
+#if defined(HAS_WINDOWS) || defined(HAVE__PROC_MEMINFO) 
+static size_t get_procm(struct proc_mem *memall);
+static size_t get_sysmem(struct sys_mem *memall);
+
+struct sys_mem mem_t, mem_t_act; 
+struct proc_mem mem_ng, mem_ng_act;
+
+#else
 static RETSIGTYPE fault(void);
 static void * baseaddr(void);
 #endif
 
-#ifdef HAVE__MEMAVL
-size_t mem_avail;
-
-size_t _memavl(void)
-{
-    MEMORYSTATUS ms;
-    DWORD sum;
-    ms.dwLength = sizeof(MEMORYSTATUS);
-    GlobalMemoryStatus( &ms);
-    sum = ms.dwAvailPhys + ms.dwAvailPageFile;
-    return (size_t) sum;
-}
-
-#else
-
 char *startdata;
 char *enddata;
-
-#endif
 
 void
 init_rlimits(void)
 {
-#  ifdef HAVE__MEMAVL   /* hvogt */
-    mem_avail = _memavl( );
+#  if defined(HAS_WINDOWS) || defined(HAVE__PROC_MEMINFO) 
+    get_procm(&mem_ng);
+    get_sysmem(&mem_t);
 #  else
     startdata = (char *) baseaddr( );
     enddata = sbrk(0);
@@ -127,31 +135,29 @@ char* copyword;
 void
 ft_ckspace(void)
 {
-    size_t usage, limit;
+    unsigned long int usage, limit;
 
-#ifdef HAVE__MEMAVL
-    size_t mem_avail_now;
-         
-    mem_avail_now = _memavl( );
-    usage = mem_avail - mem_avail_now;
-    limit = mem_avail;    
-#else /* HAVE__MEMAVL */
-    static size_t old_usage = 0;
+#if defined(HAS_WINDOWS) || defined(HAVE__PROC_MEMINFO) 
+    get_procm(&mem_ng_act);
+    usage = mem_ng_act.size*1024;
+    limit = mem_t.free;    
+#else 
+    static unsigned long int old_usage = 0;
     char *hi;
 
-#    ifdef HAVE_GETRLIMIT
+#ifdef HAVE_GETRLIMIT
     struct rlimit rld;
     getrlimit(RLIMIT_DATA, &rld);
     if (rld.rlim_cur == RLIM_INFINITY)
         return;
     limit = rld.rlim_cur - (enddata - startdata); /* rlim_max not used */
-#    else /* HAVE_GETRLIMIT */
+#else /* HAVE_GETRLIMIT */
     /* SYSVRLIMIT */
     limit = ulimit(3, 0L) - (enddata - startdata);
-#    endif /* HAVE_GETRLIMIT */
+#endif /* HAVE_GETRLIMIT */
     
     hi=sbrk(0);
-    usage = (size_t) (hi - enddata); 
+    usage = (unsigned long int) (hi - enddata); 
 
     if (limit < 0)
 	return;	/* what else do you do? */
@@ -160,7 +166,7 @@ ft_ckspace(void)
 	return;
 
     old_usage = usage;
-#endif /* HAVE__MEMAVL */
+#endif /* not HAS_WINDOWS */
 
     if (usage > limit * 0.9) {
         fprintf(cp_err, "Warning - approaching max data size: ");
@@ -248,7 +254,7 @@ printres(char *name)
 		lastusec -= 1000;
 		lastsec += 1;
 	    }
-#ifndef HAVE__MEMAVL
+#ifndef HAS_WINDOWS
 	    fprintf(cp_out, "%s time since last call: %lu.%03lu seconds.\n",
 		cpu_elapsed, lastsec, lastusec);
 #endif
@@ -278,15 +284,7 @@ printres(char *name)
     }
 
     if (!name || eq(name, "space")) {
-	size_t usage = 0, limit = 0;
-	
-#ifdef HAVE__MEMAVL
-         size_t mem_avail_now;
-         
-         mem_avail_now = _memavl( );
-         usage = mem_avail - mem_avail_now;
-         limit = mem_avail;    
-#else /* HAVE__MEMAVL */
+	unsigned long int usage = 0, limit = 0;
 
 #ifdef ipsc
 	NXINFO cur = nxinfo, start = nxinfo_snap;
@@ -301,19 +299,62 @@ printres(char *name)
         getrlimit(RLIMIT_DATA, &rld);
 	limit = rld.rlim_cur - (enddata - startdata);
         hi = sbrk(0);
-	usage = (size_t) (hi - enddata);
+	usage = (unsigned long int) (hi - enddata);
 #  else /* HAVE_GETRLIMIT */
 #    ifdef HAVE_ULIMIT
         char *hi;
 
 	limit = ulimit(3, 0L) - (enddata - startdata);
         hi = sbrk(0);
-	usage = (size_t) (hi - enddata);
+	usage = (unsigned long int) (hi - enddata);
 #    endif /* HAVE_ULIMIT */
 #  endif /* HAVE_GETRLIMIT */
 #endif /* ipsc */
-#endif /* HAVE__MEMAVL */
+
+#if defined(HAS_WINDOWS) || defined(HAVE__PROC_MEMINFO) 	
 	
+	get_procm(&mem_ng_act);
+	get_sysmem(&mem_t_act);
+	
+        /* get_sysmem returns bytes */
+	fprintf(cp_out, "Total DRAM available = ");
+	fprintmem(cp_out, mem_t_act.size);
+	fprintf(cp_out, ".\n");
+	
+	fprintf(cp_out, "DRAM currently available = ");
+	fprintmem(cp_out, mem_t_act.free);
+	fprintf(cp_out, ".\n");
+	
+        /* get_procm returns Kilobytes */
+	fprintf(cp_out, "Total ngspice program size = ");
+	fprintmem(cp_out, mem_ng_act.size*1024);
+	fprintf(cp_out, ".\n");
+#if defined(HAVE__PROC_MEMINFO) 	
+	fprintf(cp_out, "Resident set size = ");
+	fprintmem(cp_out, mem_ng_act.resident*1024);
+	fprintf(cp_out, ".\n");
+	
+	fprintf(cp_out, "Shared ngspice pages = ");
+	fprintmem(cp_out, mem_ng_act.shared*1024);
+	fprintf(cp_out, ".\n");
+	
+	fprintf(cp_out, "Text (code) pages = ");
+	fprintmem(cp_out, mem_ng_act.trs*1024);
+	fprintf(cp_out, ".\n");
+	
+	fprintf(cp_out, "Stack = ");
+	fprintmem(cp_out, mem_ng_act.drs*1024);
+	fprintf(cp_out, ".\n");
+	
+	fprintf(cp_out, "Library pages = ");
+	fprintmem(cp_out, mem_ng_act.lrs*1024);
+	fprintf(cp_out, ".\n");
+/* not used	
+	fprintf(cp_out, "Dirty pages = ");
+	fprintmem(cp_out, all_memory.dt * 1024);
+	fprintf(cp_out, ".\n"); */
+#endif 	/* HAVE__PROC_MEMINFO */
+#else   /* HAS_WINDOWS or HAVE__PROC_MEMINFO */
 	fprintf(cp_out, "Current dynamic memory usage = ");
 	fprintmem(cp_out, usage);
 	fprintf(cp_out, ",\n");
@@ -321,7 +362,7 @@ printres(char *name)
 	fprintf(cp_out, "Dynamic memory limit = ");
 	fprintmem(cp_out, limit);
 	fprintf(cp_out, ".\n");
-	
+#endif
         yy = TRUE;
     }
 
@@ -395,17 +436,139 @@ printres(char *name)
 
 /* Print to stream the given memory size in a human friendly format */
 static void
-fprintmem(FILE* stream, size_t memory) {
-    if (memory > 1000000)
-	fprintf(stream, "%8.6f MB", memory/1000000.);
-    else if (memory > 1000) 
-	fprintf(stream, "%5.3f kB", memory/1000.);
+fprintmem(FILE* stream, unsigned long int memory) {
+    if (memory > 1048576)
+	fprintf(stream, "%8.6f MB", memory/1048576.);
+    else if (memory > 1024) 
+	fprintf(stream, "%5.3f kB", memory/1024.);
     else
-	fprintf(stream, "%lu bytes", (unsigned long)memory);
+	fprintf(stream, "%lu bytes", memory);
+}
+
+#  if defined(HAS_WINDOWS) || defined(HAVE__PROC_MEMINFO) 
+
+static size_t get_procm(struct proc_mem *memall) {
+#ifdef HAS_WINDOWS
+#if ( _WIN32_WINNT >= 0x0500)
+/* Use Windows Api function to obtain size of memory */
+    HANDLE hProcess;
+    PROCESS_MEMORY_COUNTERS pmc;
+    DWORD procid = GetCurrentProcessId();
+
+    hProcess = OpenProcess(  PROCESS_QUERY_INFORMATION |
+                                    PROCESS_VM_READ,
+                                    FALSE, procid );
+    if (NULL == hProcess)
+        return 0;
+
+    /* psapi library required */
+    if ( GetProcessMemoryInfo( hProcess, &pmc, sizeof(pmc)) ) {
+        memall->size = pmc.WorkingSetSize/1024;
+        memall->resident = pmc.QuotaNonPagedPoolUsage/1024;
+        memall->trs = pmc.QuotaPagedPoolUsage/1024;
+    }
+    else {
+        CloseHandle( hProcess ); 
+        return 0;
+    }
+    CloseHandle( hProcess );
+#else
+   /* ngspice size is just the difference between free memory at start time and now */
+   get_sysmem(&mem_t_act);
+   memall->size = mem_t.free - mem_t_act.free;
+   memall->resident = 0;
+   memall->trs = 0;
+#endif /* _WIN32_WINNT 0x0500 */
+#else
+/* Use /proc/<pid>/statm file information */
+   FILE *fp;
+   char buffer[1024], fibuf[100];
+   size_t bytes_read;
+  
+   (void) sprintf(fibuf, "/proc/%d/statm", getpid()); 
+
+   if((fp = fopen(fibuf, "r")) == NULL) {
+      perror("fopen()");
+      return 0;
+   }
+   bytes_read = fread (buffer, 1, sizeof (buffer), fp);
+   fclose (fp);
+   if (bytes_read == 0 || bytes_read == sizeof (buffer))
+      return 0;
+   buffer[bytes_read] = '\0';
+
+   sscanf (buffer, "%d %d %d %d %d %d %d", &memall->size, &memall->resident, &memall->shared, &memall->trs, &memall->drs, &memall->lrs, &memall->dt);
+#endif
+   return 1;
+}
+
+static size_t get_sysmem(struct sys_mem *memall) {
+#ifdef HAS_WINDOWS
+#if ( _WIN32_WINNT >= 0x0500)
+   MEMORYSTATUSEX ms;
+   ms.dwLength = sizeof(MEMORYSTATUSEX);
+   GlobalMemoryStatusEx( &ms);
+   memall->size = ms.ullTotalPhys; 
+   memall->free = ms.ullAvailPhys;
+   memall->swap_t = ms.ullTotalPageFile;
+   memall->swap_f = ms.ullAvailPageFile;
+#else
+   MEMORYSTATUS ms;
+   ms.dwLength = sizeof(MEMORYSTATUS);
+   GlobalMemoryStatus( &ms);
+   memall->size = ms.dwTotalPhys; 
+   memall->free = ms.dwAvailPhys;
+   memall->swap_t = ms.dwTotalPageFile;
+   memall->swap_f = ms.dwAvailPageFile;
+#endif /*_WIN32_WINNT 0x0500*/
+#else
+   FILE *fp;
+   char buffer[1024];
+   size_t bytes_read;
+   char *match;
+   long mem_got;
+
+   if((fp = fopen("/proc/meminfo", "r")) == NULL) {
+      perror("fopen()");
+      return 0;
+   }
+   
+   bytes_read = fread (buffer, 1, sizeof (buffer), fp);
+   fclose (fp);
+   if (bytes_read == 0 || bytes_read == sizeof (buffer))
+      return 0;
+   buffer[bytes_read] = '\0';
+
+   /* Search for string "MemTotal" */
+   match = strstr (buffer, "MemTotal");
+   if (match == NULL) /* not found */
+      return 0;
+   sscanf (match, "MemTotal: %ld", &mem_got);
+   memall->size = mem_got*1024; /* 1MB = 1024KB */
+   /* Search for string "MemFree" */
+   match = strstr (buffer, "MemFree");
+   if (match == NULL) /* not found */
+      return 0;
+   sscanf (match, "MemFree: %ld", &mem_got);
+   memall->free = mem_got*1024; /* 1MB = 1024KB */  
+   /* Search for string "SwapTotal" */
+   match = strstr (buffer, "SwapTotal");
+   if (match == NULL) /* not found */
+      return 0;
+   sscanf (match, "SwapTotal: %ld", &mem_got);
+   memall->swap_t = mem_got*1024; /* 1MB = 1024KB */
+   /* Search for string "SwapFree" */
+   match = strstr (buffer, "SwapFree");
+   if (match == NULL) /* not found */
+      return 0;
+   sscanf (match, "SwapFree: %ld", &mem_got);
+   memall->swap_f = mem_got*1024; /* 1MB = 1024KB */
+#endif   
+   return 1;     
 }
 
 
-#ifndef HAVE__MEMAVL
+#else
 
 #include <signal.h>
 #include <setjmp.h>
@@ -479,7 +642,11 @@ baseaddr(void)
 
 #endif
 }
+
+
 #endif
+
+
 
 #  ifdef notdef
 main( )
@@ -488,4 +655,5 @@ main( )
     printf("baseaddr: %#8x  topaddr: %#8x\n", baseaddr( ), sbrk(0));
 }
 #  endif
+
 

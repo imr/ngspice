@@ -212,4 +212,8 @@ INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices @X_C
 
 LIBS = @LIBS@ @X_LIBS@ @X_PRE_LIBS@ @X_EXTRA_LIBS@
 
+if WINDOWS
+LIBS += -lpsapi
+endif
+
 MAINTAINERCLEANFILES = Makefile.in ngspice.idx
