@@ -4,12 +4,12 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
 #include "ngspice.h"
-#include "numglobs.h"
 #include "numconst.h"
 
-/* erfc computes the erfc(x) the code is from sedan's derfc.f */
+#ifndef HAVE_ERFC
 
-double erfc ( double x)
+/* erfc computes the erfc(x) the code is from sedan's derfc.f */
+double erfc (double x)
 {
     double sqrtPi, n, temp1, xSq, sum1, sum2;
     sqrtPi = sqrt( PI );
@@ -45,3 +45,27 @@ double erfc ( double x)
     }
 }
 
+/* From C. Hastings, Jr., Approximations for digital computers,
+	Princeton Univ. Press, 1955.
+   Approximation accurate to within 1.5E-7
+   (making some assumptions about your machine's floating point mechanism)
+*/
+double
+ierfc(double  x)     
+{
+  double t, z;
+  
+  t =  1/(1 + 0.3275911*x);
+  z =  1.061405429;
+  z = -1.453152027 + t * z;
+  z =  1.421413741 + t * z;
+  z = -0.284496736 + t * z;
+  z =  0.254829592 + t * z;
+  z =  exp(-x*x) * t * z;
+  
+  return(z);
+}
+
+#else
+int Dummy_Symbol_5;
+#endif
