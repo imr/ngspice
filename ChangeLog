@@ -1,3 +1,9 @@
+2008-05-11 Dietmar Warning
+ * src/misc/missing_math.c,h, src/math/misc/*.*: move math function to one place
+ * src/include/ngspice.h, src/main.c, src/Makefile.am, src/maths/Makefile.am, 
+   src/maths/misc/Makefile.am, src/misc/Makefile.am, configure.in: organization of libmathmisc.a
+ * src/maths/misc/erfc.c: better erfc for lossy transmission line
+
 2008-05-10 Holger Vogt
  * src/frontend/resource.c: Memory information is now stemming from the 
    /proc file system (LINUX) or using GlobalMemoryStatusEx and 

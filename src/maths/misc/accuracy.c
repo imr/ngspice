@@ -69,6 +69,9 @@ evalAccLimits(void)
     double xhold, dif;  /* Introduced to avoid numerical trap if
                       using non IEEE754 FPU */
 
+#ifndef CIDER
+    double Acc, BMin, BMax, ExpLim, MuLim, MutLim;
+#endif
 
 /* First we compute accuracy */ 
  
@@ -148,7 +151,6 @@ evalAccLimits(void)
     }
     muLim *= 2.0;
     MutLim = muLim;
-
 
 }
 

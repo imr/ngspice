@@ -109,7 +109,7 @@ ngspice_LDADD = \
 	@CIDERSIM@		\
 	maths/deriv/libderiv.a \
 	maths/cmaths/libcmaths.a \
-	@CIDERMATHDIR@          \
+	maths/misc/libmathmisc.a \
 	maths/poly/libpoly.a \
 	maths/ni/libni.a \
 	maths/sparse/libsparse.a \
@@ -142,6 +142,7 @@ ngnutmeg_LDADD = \
 	@NUMPARAMLIB@		\
 	frontend/help/libhlp.a \
 	maths/cmaths/libcmaths.a \
+	maths/misc/libmathmisc.a \
 	maths/poly/libpoly.a \
 	misc/libmisc.a \
 	spicelib/parser/libinp.a
@@ -173,6 +174,7 @@ ngsconvert_SOURCES =  ngsconvert.c
 ngsconvert_LDADD =  \
 	frontend/libfte.a \
 	frontend/parser/libparser.a \
+	maths/misc/libmathmisc.a \
 	misc/libmisc.a
 	
 ## proc2mod:

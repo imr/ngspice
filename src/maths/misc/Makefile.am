@@ -8,6 +8,10 @@ libmathmisc_a_SOURCES = \
 	bernoull.h	\
 	bernoull.c 	\
 	erfc.c		\
+	equality.c	\
+	isnan.c		\
+	logb.c		\
+	scalb.c		\
 	norm.h		\
 	norm.c		 
 

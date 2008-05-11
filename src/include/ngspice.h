@@ -31,6 +31,7 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "missing_math.h"
 
 #ifdef STDC_HEADERS
 #  include <stdlib.h>

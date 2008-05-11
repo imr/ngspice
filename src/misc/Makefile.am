@@ -14,8 +14,6 @@ libmisc_a_SOURCES = \
 		dup2.h		\
 		ivars.c		\
 		ivars.h		\
-		missing_math.c	\
-		missing_math.h	\
 		mktemp.c	\
 		mktemp.h	\
 		printnum.c	\
