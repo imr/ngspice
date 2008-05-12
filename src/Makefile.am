@@ -103,7 +103,7 @@ ngspice_LDADD = \
 	spicelib/devices/libdev.a \
 	@XSPICELIB2@		  \
 	frontend/parser/libparser.a \
-	@NUMPARAMLIB@           \
+	frontend/numparam/libnumparam.a \
 	frontend/help/libhlp.a \
 	spicelib/parser/libinp.a \
 	@CIDERSIM@		\
@@ -139,7 +139,7 @@ ngnutmeg_LDADD = \
 	@WINDISPLIB@ \
 	frontend/plotting/libplotting.a \
 	frontend/parser/libparser.a \
-	@NUMPARAMLIB@		\
+	frontend/numparam/libnumparam.a \
 	frontend/help/libhlp.a \
 	maths/cmaths/libcmaths.a \
 	maths/misc/libmathmisc.a \

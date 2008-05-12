@@ -1,3 +1,8 @@
+2008-05-12 Dietmar Warning
+ * src/frontend/inp.c, src/frontend/inp.c, src/frontend/Makefile.am, src/Makefile.am,
+   configure.in: global nodes and numparams now as default - configure switches not needed
+   tested so far - but sure that some problems will raise.
+
 2008-05-11 Dietmar Warning
  * src/misc/missing_math.c,h, src/math/misc/*.*: move math function to one place
  * src/include/ngspice.h, src/main.c, src/Makefile.am, src/maths/Makefile.am, 

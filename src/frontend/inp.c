@@ -48,9 +48,7 @@ $Id$
 /* gtri - end - 12/12/90 */
 #endif
 
-#ifdef NUMPARAMS
 #include "numparam/numpaif.h"
-#endif
 
 #define line_free(line,flag)	{ line_free_x(line,flag); line = NULL; }
 
@@ -440,7 +438,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     wl->wl_word = dd->li_line;
 		    dd->li_line = 0; /* SJB - prevent line_free() freeing the string (now pointed at by wl->wl_word) */
 		}
-#ifdef NUMPARAMS
 		/* Look for set or unset numparams.
 		   If either are found then we evaluate these lines immediately
 		   so they take effect before netlist parsing */
@@ -457,7 +454,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 			cp_evloop(wl->wl_word);
 		    }
 		}
-#endif /* NUMPARAMS */
                 ld->li_next = dd->li_next;
 		line_free(dd,FALSE); /* SJB - free this line's memory */
             } else if (!*dd->li_line) {
