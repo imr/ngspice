@@ -77,7 +77,7 @@ BSIM4model *model = (BSIM4model*) inModel;
 BSIM4instance *here;
 struct bsim4SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, epssub;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Lnew, Wnew;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Lnew=0.0, Wnew;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double dumPs, dumPd, dumAs, dumAd, PowWeffWr;
 double DMCGeff, DMCIeff, DMDGeff;

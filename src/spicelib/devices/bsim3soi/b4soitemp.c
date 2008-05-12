@@ -49,11 +49,11 @@ register B4SOImodel *model = (B4SOImodel*) inModel;
 register B4SOIinstance *here;
 struct b4soiSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
 double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5;
-double Ldrn, Wdrn;
+double Ldrn=0.0, Wdrn;
 double Temp, TempRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom, TRatio;
 double SDphi, SDgamma;
 double Inv_saref, Inv_sbref, Inv_sa, Inv_sb, rho, dvth0_lod;
-double W_tmp, Inv_ODeff, OD_offset, dk2_lod, deta0_lod, kvsat;
+double W_tmp, Inv_ODeff, OD_offset, dk2_lod, deta0_lod, kvsat=0.0;
 int Size_Not_Found, i;
 double PowWeffWr, T10; /*v4.0 */
 

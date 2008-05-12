@@ -51,7 +51,7 @@ double tol;
 #endif
 double gcsgb, gcssb, MJ, MJSW, MJSWG;
 double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
-double qgate, qbulk, qdrn, qsrc, qinoi, cqgate, cqbulk, cqdrn;
+double qgate=0.0, qbulk=0.0, qdrn=0.0, qsrc, qinoi, cqgate, cqbulk, cqdrn;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
 double Vgs_eff, Vfb;
 double Phis, dPhis_dVb, sqrtPhis, dsqrtPhis_dVb, Vth, dVth_dVb, dVth_dVd;
@@ -117,8 +117,8 @@ double Leff, Weff, dWeff_dVg, dWeff_dVb;
 double AbulkCV, dAbulkCV_dVb;
 double qgdo, qgso, cgdo, cgso;
 
-double qcheq, qdef, gqdef, cqdef, cqcheq, gtau_diff, gtau_drift;
-double gcqdb,gcqsb,gcqgb,gcqbb;
+double qcheq=0.0, qdef, gqdef=0.0, cqdef, cqcheq, gtau_diff, gtau_drift;
+double gcqdb=0.0,gcqsb=0.0,gcqgb=0.0,gcqbb=0.0;
 double dxpart, sxpart, ggtg, ggtd, ggts, ggtb;
 double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
 double dsxpart_dVd, dsxpart_dVg, dsxpart_dVb, dsxpart_dVs;

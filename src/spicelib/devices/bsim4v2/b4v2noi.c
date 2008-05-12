@@ -90,7 +90,7 @@ double lnNdens[BSIM4v2NSRCS];
 
 double T0, T1, T2, T5, T10, T11;
 double Vds, Ssi, Swi;
-double tmp, gdpr, gspr, npart_theta, npart_beta, igsquare;
+double tmp=0.0, gdpr, gspr, npart_theta=0.0, npart_beta=0.0, igsquare;
 
 double m;
 
