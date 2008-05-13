@@ -1,4 +1,4 @@
-/* Paolo Nenzi 2002 - This program tests function
+/* Paolo Nenzi 2002 - This program tests erfc function
  * implementations.
  * $Id$
  */
@@ -9,29 +9,30 @@
  *
  * First we have the ierfc in spice, a sort of interpolation, which is
  * fast to compute but gives is not so "good"
- * Then we have derfc from cider, which is accurate but slow
- * then we have glibc implementation.
+ * Then we have derfc from cider, which is accurate but slow, the code is from sedan's derfc.f .
+ * Both above are only valid for x > 0.0
+ * Then we have glibc/os specific implementation.
  *
  * Proposal: 
  *
- * Use Linux implementation as defualt and then test cider one.
+ * Use glibc/os specific implementation as default and then test cider one.
  */
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#ifdef HAVE_FPU_CTRL
 #include <fpu_control.h>
-
-
+#endif
 
 
 double 
-derfc ( double x)
+derfc(double x)
 {
     double sqrtPi, n, temp1, xSq, sum1, sum2;
     sqrtPi = sqrt( M_PI );
-    x = fabs( x );
+    x = fabs( x ); /* only x > 0 interested */
     n = 1.0;
     xSq = 2.0 * x * x;
     sum1 = 0.0;
@@ -65,7 +66,6 @@ derfc ( double x)
 
 double
 ierfc(double  x)
-     
 {
   double t, z;
   
@@ -84,23 +84,23 @@ ierfc(double  x)
 
 int main (void)
 {
- fpu_control_t prec;
- double x = -100.0;
+ double x = -30.0;
  double y1= 0.0, y2 = 0.0;
  
-#if 0
+#ifdef HAVE_FPU_CTRL
+ fpu_control_t prec;
  _FPU_GETCW(prec);
  prec &= ~_FPU_EXTENDED;
  prec |= _FPU_DOUBLE;
  _FPU_SETCW(prec);
 #endif
 
-for (;(x <= 100.0);)
-{
-    y1 = ierfc(x);
-    y2 = derfc(x);
-    printf("A: %e \t s: %e \t c: %e \t (c-lin): %e\n", x, y1, y2, y2-erfc(x) );
-     x = x + 0.1;
-    } 
+for (;(x <= 30.0);)
+   {
+     y1 = ierfc(x);
+     y2 = derfc(x);
+     printf("x: %f \t ierfc: %e \t derfc: %e \t erfc: %e\n", x, y1, y2, erfc(x) );
+     x = x + 1.0;
+   }
  exit(1);
 }
