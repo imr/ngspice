@@ -11,7 +11,7 @@ typedef __int64 long64;
 typedef long long long64;
 #endif
 
-#define Abs(x)	((x) < 0 ? -(x) : (x))
+#define Abs(x) ((x) < 0 ? -(x) : (x))
 
 /* From Bruce Dawson, Comparing floating point numbers,
    http://www.cygnus-software.com/papers/comparingfloats/Comparing%20floating%20point%20numbers.htm

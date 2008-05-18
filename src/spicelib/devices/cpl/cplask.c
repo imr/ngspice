@@ -38,5 +38,4 @@ CPLask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
         default:
             return(E_BADPARM);
     }
-    return(OK);
 }

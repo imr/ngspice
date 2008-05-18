@@ -36,8 +36,8 @@ SOI3acLoad(GENmodel *inModel, CKTcircuit *ckt)
     int xnrm;
     int xrev;
 
-	 double cgfgf,cgfd,cgfs,cgfdeltaT,cgfgb;
-	 double cdgf,cdd,cds,cddeltaT,cdgb;
+    double cgfgf,cgfd,cgfs,cgfdeltaT,cgfgb;
+    double cdgf,cdd,cds,cddeltaT,cdgb;
     double csgf,csd,css,csdeltaT,csgb;
     double cbgf,cbd,cbs,cbdeltaT,cbgb;
     double cgbgf,cgbd,cgbs,cgbdeltaT,cgbgb;

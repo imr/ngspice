@@ -36,7 +36,9 @@
 #ifdef STDC_HEADERS
 #  include <stdlib.h>
 #  include <string.h>
-#else
+#endif
+
+#ifdef HAVE_STRINGS_H
 #  include <strings.h>
 #endif
 
@@ -58,10 +60,6 @@
 #      include <termio.h>
 #    endif
 #  endif
-#endif
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
 #endif
 
 #ifdef HAVE_PWD_H
@@ -121,12 +119,24 @@ struct timeb timebegin;
 #  endif
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #ifdef HAS_TIME_H
 #include <time.h>
 #endif
 
 #ifdef HAS_WINDOWS
 #include "wstdio.h"
+#endif
+
+#if defined (__MINGW32__) || defined (__CYGWIN__)
+#include <io.h>
+#else
+#  ifdef HAVE_SYS_IO_H
+#    include <sys/io.h>
+#  endif
 #endif
 
 #ifndef HAVE_RANDOM

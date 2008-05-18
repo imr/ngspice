@@ -1,3 +1,16 @@
+2008-05-18 Dietmar Warning
+ * Small changes to compile under Sun Studio 11 for Solaris - may be useful in other 
+   configurations too
+ * configure.in
+ * src/frontend/control.c
+ * src/include/ngspice.h
+ * src/maths/misc/equality.c
+ * src/spicelib/devices/cpl/cplask.c
+ * src/spicelib/devices/hisim/hsm1eval102.c
+ * src/spicelib/devices/hisim/hsm1eval112.c
+ * src/spicelib/devices/hisim/hsm1eval120.c
+ * src/spicelib/devices/soi3/soi3acld.c
+
 2008-05-12 Dietmar Warning
  * src/frontend/inp.c, src/frontend/inp.c, src/frontend/Makefile.am, src/Makefile.am,
    configure.in: global nodes and numparams now as default - configure switches not needed
