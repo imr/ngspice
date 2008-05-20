@@ -185,10 +185,13 @@ AM_MAINTAINER_MODE
 dnl Compiler checks
 dnl ---------------
 
+if test -z "$CC"; then
+# No C compiler specified... We rely on Autoconf to find the best
+   AC_PROG_CC
+fi
+
 dnl Work on compiler options according to system:
 dnl Set default CFLAG - only use -Wall if we have gcc
-
-AC_PROG_CC(cc gcc)
 
 dnl the above AC_PROG_CC may set CFLAGS to "-O2 -g"
 if test "$enable_debug" = "no"; then
