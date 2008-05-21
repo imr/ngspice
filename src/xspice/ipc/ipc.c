@@ -72,12 +72,6 @@ SUMMARY
 
 #include "ngspice.h"
 
-#if defined (__MINGW32__) || defined (__CYGWIN__)
-#include <io.h>
-#else
-#include <sys/io.h>
-#endif
-
 #include <assert.h>
 #include <memory.h>     /* NOTE: I think this is a Sys5ism (there is not man
                          * page for it under Bsd, but it's in /usr/include

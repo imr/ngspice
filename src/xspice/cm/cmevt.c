@@ -41,16 +41,12 @@ NON-STANDARD FEATURES
 
 #include "ngspice.h"
 #include "cktdefs.h"
-//#include "util.h"
 
 #include "cm.h"
 #include "mif.h"
 #include "evt.h"
 
 #include "evtproto.h"
-
-
-
 
 
 /*
