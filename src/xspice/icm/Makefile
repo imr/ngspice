@@ -65,7 +65,7 @@ dlmain.o: cmextrn.h cminfo.h udnextrn.h udninfo.h
 	@for x in `cat udnpath.lst` ; do \
 	echo $$x/udnfunc.o \\ >> .deps/cm.P ; done
 	@echo "" >> .deps/cm.P
-	$(COMPILE) $(LDFLAGS) -o $@ `awk '{ print $$1 }' objects.inc` dlmain.o
+	$(CC) $(LDFLAGS) -o $@ `awk '{ print $$1 }' objects.inc` dlmain.o
 
 %-mods: modpath.lst udnpath.lst
 	@for x in `cat modpath.lst` ; do \

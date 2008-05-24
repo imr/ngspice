@@ -16,22 +16,35 @@ CC = @CC@
 # Spice header include path
 INCLUDES = -I$(TOPDIR)$(top_srcdir)/src/include -I$(TOPDIR)$(top_builddir)
 
-ISMINGW = $(shell uname | grep -c "MINGW32")
 # CFLAGS to use here
+CFLAGS = @CFLAGS@ -fPIC -DCM_LINUX
+ISMINGW = $(shell uname | grep -c "MINGW32")
 ifeq ($(ISMINGW), 1)
-  CFLAGS = @CFLAGS@ -DCM_WINDOWS 
-else  
-  CFLAGS = @CFLAGS@ -fPIC -DCM_LINUX
+  CFLAGS = @CFLAGS@ -DCM_WINDOWS
+endif
+ISCYGWIN = $(shell uname | grep -c "CYGWIN")
+ifeq ($(ISCYGWIN), 1)
+  CFLAGS = @CFLAGS@ -DCM_WINDOWS
+endif
+ISSUNCC = $(shell uname | grep -c "SunOS")
+ifeq ($(ISSUNCC), 1)
+  ifneq "$(CC)" "gcc"
+    CFLAGS = @CFLAGS@ -KPIC -DCM_LINUX
+  endif
 endif
 
 # Path to the cmpp utility
 CMPP = $(TOPDIR)$(top_builddir)/src/xspice/cmpp/cmpp
 
 # Flags to use when linking shared library
-ifeq "$(strip $(uname))" "Darwin"
-LDFLAGS = -bundle -flat_namespace -undefined suppress
-else
 LDFLAGS = -shared
+ifeq "$(strip $(uname))" "Darwin"
+  LDFLAGS = -bundle -flat_namespace -undefined suppress
+endif
+ifeq "$(strip $(uname))" "SunOS"
+  ifneq "$(CC)" "gcc"
+    LDFLAGS = -G
+  endif
 endif
 
 # The codemodels to make
