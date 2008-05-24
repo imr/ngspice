@@ -55,6 +55,8 @@ libfte_a_SOURCES = \
 	com_shell.h	\
 	com_shift.c	\
 	com_shift.h	\
+	com_fft.c	\
+	com_fft.h	\
 	com_state.c	\
 	com_state.h	\
 	com_strcmp.c	\

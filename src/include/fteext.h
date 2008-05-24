@@ -220,10 +220,11 @@ extern struct dvec *op_times();
 extern struct dvec *op_uminus();
 extern struct dvec *op_range();
 
-
 /* spec.c */
-
 extern void com_spec();
+
+/* com_fft.c */
+extern void com_fft(wordlist*);
 
 /* ginterface.c */
 

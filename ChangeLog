@@ -1,3 +1,6 @@
+2008-05-24 Holger Vogt
+ * src/frontend/com_fft.c: Fast fourier transform added for transient data analysis.
+
 2008-05-18 Dietmar Warning
  * Small changes to compile under Sun Studio 11 for Solaris - may be useful in other 
    configurations too

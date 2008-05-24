@@ -22,3 +22,6 @@ ylwrap
 *.tar.gz
 
 
+visualc
+autogen-new.log
+make.log
