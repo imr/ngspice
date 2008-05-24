@@ -257,6 +257,9 @@ com_spec(wordlist *wl)
 	         fdvec[i][j].cx_imag += value*sina;
           }
        }
+#ifdef HAS_WINDOWS
+       SetAnalyse( "spec", (int)(j * 100/ fpts));
+#endif          
     }
     if (startf==0) {
        freq[0] = 0;
