@@ -1,3 +1,6 @@
+2008-05-31 Dietmar Warning
+ * src/frontend/aspice.c: compliant processing of pid and wait() also under solaris
+
 2008-05-24 Holger Vogt
  * src/frontend/com_fft.c: Fast fourier transform added for transient data analysis.
  * src/frontend/spec.c: Progress status display for Windows added

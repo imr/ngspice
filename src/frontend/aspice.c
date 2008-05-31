@@ -177,9 +177,9 @@ sigchild(void)
  * whether the exit was normal or not.
  */
 
-#if defined(__NetBSD__) || defined(SOLARIS)
+#if defined(__NetBSD__)
     pid_t status;
-#elif defined(__FreeBSD__) || defined(__APPLE__)
+#elif defined(__FreeBSD__) || defined(__APPLE__) || defined(SOLARIS)
     int status;    
 #else
     union wait status;
@@ -193,7 +193,7 @@ ft_checkkids(void)
     struct proc *p = NULL, *lp = NULL;
     char buf[BSIZE_SP];
     FILE *fp;
-    int pid = 0;
+    pid_t pid = 0;
     static bool here = FALSE;   /* Don't want to be re-entrant. */
 
     if (!numchanged || here)
@@ -220,7 +220,7 @@ ft_checkkids(void)
         if (p == NULL) {
             fprintf(cp_err,
             "ft_checkkids: Internal Error: Process %d not a job!\n",
-                    pid);
+                    (int) pid);
             here = FALSE;
             return;
         }
