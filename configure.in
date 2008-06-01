@@ -188,22 +188,22 @@ dnl ---------------
 AC_PROG_CC
 
 dnl Work on compiler options according to system:
-dnl Set default CFLAG - only use -Wall if we have gcc
+dnl Set default CFLAGS - only use -Wall if we have gcc
 
 dnl the above AC_PROG_CC may set CFLAGS to "-O2 -g"
 if test "$enable_debug" = "no"; then
 	if test "x$GCC" = "xyes"; then
 		AC_MSG_WARN(Removing debugging option!)
-		CFLAGS="-O2 -Wall"
+		CFLAGS="$CFLAGS -O2 -Wall"
 	else
 		AC_MSG_WARN(Removing debugging option!)
-		CFLAGS=""
+		CFLAGS="$CFLAGS"
 	fi
 else
 	if test "x$GCC" = "xyes"; then
-		CFLAGS="-g -O0 -Wall"
+		CFLAGS="$CFLAGS -g -O0 -Wall"
 	else
-		CFLAGS="-g"
+		CFLAGS="$CFLAGS -g"
 	fi
 fi
 
