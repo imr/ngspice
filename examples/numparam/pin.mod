@@ -10,7 +10,7 @@
 *
 
 * -- Model ----------------------------------
-.subckt	SIMPLE_PIN input cathode anode params: resp=0.5
+.subckt	SIMPLE_PIN input cathode anode resp=0.5
 
 * Input photocurrent is modled by a voltage
 * This generates a current using a linear voltage-controlled current source

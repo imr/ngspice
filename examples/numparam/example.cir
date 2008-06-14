@@ -1,8 +1,7 @@
 * Param-example
 .param amplitude= 1V
 
-.subckt myfilter in out
-+ params: rval=100k  cval= 100nF
+.subckt myfilter in out rval=100k  cval=100nF
 Ra in p1   {2*rval}
 Rb p1 out  {2*rval}
 C1 p1 0    {2*cval}
@@ -11,7 +10,7 @@ Cb p2 out  {cval}
 R1 p2 0    {rval}
 .ends myfilter
 
-X1 input output myfilter 1k 1nF
+X1 input output myfilter rval=1k cval=1n
 V1 input 0 AC {amplitude}
 
 .end
