@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.11  2007-07-05 09:44:12  r29173
+  Revision 1.12  2008-08-19 08:48:26  r29173
+  add dependency $module.c: admsva/$module.va
+
+  Revision 1.11  2007/07/05 09:44:12  r29173
   added new evaluate function (support of ddx operator used inside contribs)
 
   Revision 1.10  2006/03/05 09:38:41  pnenzi
@@ -76,7 +79,7 @@
 ## Process this file with automake to produce Makefile.in
 
 ADMSXMLINTERFACE=../admst
-$(module).c:
+$(module).c: admsva/$(module).va
 	admsXml -Iadmsva admsva/$(module).va \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
