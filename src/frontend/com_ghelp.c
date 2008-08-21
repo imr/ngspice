@@ -1,14 +1,17 @@
+#ifndef X_DISPLAY_MISSING
 #include <ngspice.h>
 #include <wordlist.h>
 #include <bool.h>
 #include <variable.h>
-#include <hlpdefs.h>
 
-#include "com_ghelp.h"
-#include "com_help.h"
 #include "variable.h"
 #include "streams.h"
 #include "cpextern.h"
+#include <hlpdefs.h>
+#endif
+
+#include "com_ghelp.h"
+#include "com_help.h"
 
 void
 com_ghelp(wordlist *wl)
@@ -31,6 +34,7 @@ com_ghelp(wordlist *wl)
         com_help(wl);
         return;
     }
+#ifndef X_DISPLAY_MISSING /* 1 */ 
     path = npath;
     if (cp_getvar("helpregfont", VT_STRING, buf))
         hlp_regfontname = copy(buf);
@@ -67,4 +71,5 @@ com_ghelp(wordlist *wl)
         hlp_displayname = NULL;
     hlp_main(path, wl);
     return;
+#endif /* X_DISPLAY_MISSING 1  */
 }

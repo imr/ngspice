@@ -4,12 +4,15 @@
 SUBDIRS = misc maths frontend spicelib include @XSPICEDIR@ @CIDERDIR@
 DIST_SUBDIRS = misc maths frontend spicelib include xspice ciderlib
 
-bin_PROGRAMS =  ngspice ngnutmeg nghelp ngmakeidx
+bin_PROGRAMS =  ngspice ngnutmeg ngmakeidx
 	        	        
 if !WINDOWS
 bin_PROGRAMS += ngsconvert ngproc2mod ngmultidec
 endif
 
+if !NO_HELP
+bin_PROGRAMS += nghelp
+endif
 EXTRA_DIST = ngspice.txt ngspice.idx setplot spectrum \
 	     devload devaxis ciderinit winmain.c
 
@@ -104,7 +107,6 @@ ngspice_LDADD = \
 	@XSPICELIB2@		  \
 	frontend/parser/libparser.a \
 	frontend/numparam/libnumparam.a \
-	frontend/help/libhlp.a \
 	spicelib/parser/libinp.a \
 	@CIDERSIM@		\
 	maths/deriv/libderiv.a \
@@ -114,7 +116,10 @@ ngspice_LDADD = \
 	maths/ni/libni.a \
 	maths/sparse/libsparse.a \
 	misc/libmisc.a
-
+if !NO_X
+ngspice_LDADD += \
+	frontend/help/libhlp.a 
+endif
 
 winmain.o: winmain.c
 		$(COMPILE) -DSIMULATOR -o winmain.o  -c $(srcdir)/winmain.c
@@ -140,17 +145,21 @@ ngnutmeg_LDADD = \
 	frontend/plotting/libplotting.a \
 	frontend/parser/libparser.a \
 	frontend/numparam/libnumparam.a \
-	frontend/help/libhlp.a \
 	maths/cmaths/libcmaths.a \
 	maths/misc/libmathmisc.a \
 	maths/poly/libpoly.a \
 	misc/libmisc.a \
 	spicelib/parser/libinp.a
+if !NO_X
+ngnutmeg_LDADD += \
+	frontend/help/libhlp.a 
+endif
 
 ## help:
 
 nghelp_SOURCES = conf.c nghelp.c
 
+if !NO_HELP
 if WINDOWS
 nghelp_SOURCES += winmain.c
 endif
@@ -160,8 +169,12 @@ endif
 # that would otherwise occur (thanks to Andreas Unger for this fix).
 nghelp_LDADD = \
 	frontend/terminal.o \
-	frontend/help/libhlp.a \
 	misc/libmisc.a
+if !NO_X
+nghelp_LDADD += \
+	frontend/help/libhlp.a 
+endif
+endif
 
 ## These programs currently fail to build on Windows
 if !WINDOWS 

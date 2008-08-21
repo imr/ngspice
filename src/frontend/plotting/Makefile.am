@@ -22,11 +22,15 @@ libplotting_a_SOURCES = \
 	plotcurv.c	\
 	plotcurv.h	\
 	plotit.c	\
-	plotit.h	\
+	plotit.h	
+
+if !NO_X
+libplotting_a_SOURCES += \
 	x11.c		\
 	x11.h		\
 	xgraph.c	\
 	xgraph.h
+endif
 
 INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend @X_CFLAGS@ 
 

@@ -1,5 +1,6 @@
 /* $Id$ */
 #include <ngspice.h>
+#include <config.h>
 #include <bool.h>
 #include <wordlist.h>
 #include <graph.h>
@@ -951,6 +952,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             break;
         }
 
+#ifndef X_DISPLAY_MISSING
     if (devname && eq(devname, "xgraph")) {
 	/* Interface to XGraph-11 Plot Program */
 	ft_xgraph(xlims, ylims, hcopy,
@@ -961,7 +963,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 	rtn = TRUE;
 	goto quit;
     }
-
+#endif
 
    if (devname && eq(devname, "gnuplot")) {
 	/* Interface to XGraph-11 Plot Program */

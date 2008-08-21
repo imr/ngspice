@@ -154,10 +154,18 @@ dnl --enable-cluster: define CLUSTER in the code. This is for cluster support
 AC_ARG_ENABLE(cluster,
     AS_HELP_STRING([--enable-cluster],[Enable cluster support, (experimental) ]))
 
+dnl --enable-help: try to force --ansi option to the compiler
+AC_ARG_ENABLE(help,
+    AS_HELP_STRING([--enable-help],[Force building nghelp (deprecated)]))
+
 dnl --enable-xgraph: Compile the xgraph plotting program. Default is "no".
 dnl Xgraph is a plotting package for X11 once very popular.
 AC_ARG_ENABLE(xgraph,
     AS_HELP_STRING([--enable-xgraph],[Enable xgraph compilation.]))
+
+dnl --enable-x: Compile software using x libraries. A GUI will be provided then. 
+AC_ARG_ENABLE(x,
+    AS_HELP_STRING([--enable-x],[Enable X11 gui]))
 
 dnl --with-readline:  Includes GNU readline support into CLI.  Default is "no".
 dnl Including readline into ngspice is a violation of GPL license. It's use
@@ -267,6 +275,12 @@ case $with_windows in
 	yes )
 		AC_DEFINE(X_DISPLAY_MISSING)
 		AC_MSG_RESULT(No X display!)
+		AM_CONDITIONAL(NO_X, test x$with_windows = xyes)
+		if test "x$enable_help" = "xyes"; then
+		  AM_CONDITIONAL(NO_HELP, test ! x$with_windows = xyes)
+		else
+		  AM_CONDITIONAL(NO_HELP, true)
+		fi
 		CFLAGS="$CFLAGS -mwindows";;
 	* )
 
@@ -361,14 +375,26 @@ dnl for MacOSX or Linux, but
 dnl			-lXaw -lXmu -lXt -lXext -lX11
 dnl seems to be the popular choice.
 dnl (The previous order was -lX11 -lXt -lXext -lXmu -lXaw)
-
+if test "x$enable_x" = "xno"; then 
+	no_x = "no"	
+fi
 if test ! "$no_x" = "yes" ; then
 	AC_CHECK_LIB(Xaw,main,X_LIBS="$X_LIBS -lXaw",AC_MSG_ERROR(Couldn't find Xaw library),$X_LIBS  $X_EXTRA_LIBS)
 	AC_CHECK_LIB(Xmu,main,X_LIBS="$X_LIBS -lXmu",AC_MSG_ERROR(Couldn't find Xmu library), $X_LIBS $X_EXTRA_LIBS)
 	X_LIBS="$X_LIBS -lXt"
 	AC_CHECK_LIB(Xext, XShmAttach,X_LIBS="$X_LIBS -lXext",AC_MSG_ERROR(Couldn't find Xext library), $X_LIBS $X_EXTRA_LIBS)
 	X_LIBS="$X_LIBS -lX11"
-
+	AM_CONDITIONAL(NO_X, false)
+else
+	AC_DEFINE(X_DISPLAY_MISSING)
+	AC_MSG_RESULT(No X display!)
+	AM_CONDITIONAL(NO_X, true)
+fi 
+  
+if ( test "x$enable_help" = "xyes" ) && ! ( test "$no_x" = "yes" ) ; then
+	AM_CONDITIONAL(NO_HELP, false)
+else
+	AM_CONDITIONAL(NO_HELP, true)
 fi ;;
 
 esac

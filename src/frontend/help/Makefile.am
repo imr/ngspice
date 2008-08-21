@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+if !NO_X
+
 noinst_LIBRARIES = libhlp.a
 
 libhlp_a_SOURCES = \
@@ -14,5 +16,6 @@ libhlp_a_SOURCES = \
 
 INCLUDES = -I$(top_srcdir)/src/include @X_CFLAGS@
 
+endif 
 
 MAINTAINERCLEANFILES = Makefile.in
