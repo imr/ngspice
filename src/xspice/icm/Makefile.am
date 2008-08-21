@@ -68,7 +68,6 @@ LOCAL_LIB_DIRS = \
 	-L$(top_srcdir)/src/spicelib/devices/bsim3soi_dd/   \
 	-L$(top_srcdir)/src/spicelib/devices/cccs/		\
 	-L$(top_srcdir)/src/spicelib/devices/ccvs/		\
-	-L$(top_srcdir)/src/spicelib/devices/ccvs/		\
 	-L$(top_srcdir)/src/spicelib/devices/cpl/		  \
 	-L$(top_srcdir)/src/spicelib/devices/csw/		  \
 	-L$(top_srcdir)/src/spicelib/devices/dio/		  \
@@ -135,7 +134,6 @@ EXTRA_LIB_DIRS = \
 	-L$(top_srcdir)/src/spicelib/devices/bsim3soi_dd/.libs/   \
 	-L$(top_srcdir)/src/spicelib/devices/cccs/.libs/	       \
 	-L$(top_srcdir)/src/spicelib/devices/ccvs/.libs/	   \
-	-L$(top_srcdir)/src/spicelib/devices/ccvs/.libs/	  \
 	-L$(top_srcdir)/src/spicelib/devices/cpl/.libs/	   \
 	-L$(top_srcdir)/src/spicelib/devices/csw/.libs/	    \
 	-L$(top_srcdir)/src/spicelib/devices/dio/.libs/	    \
