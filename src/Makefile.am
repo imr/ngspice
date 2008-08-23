@@ -49,7 +49,6 @@ DYNAMIC_DEVICELIBS = 					\
 	spicelib/devices/bsim3soi_dd/libbsim3soidd.a	\
 	spicelib/devices/cccs/libcccs.a			\
 	spicelib/devices/ccvs/libccvs.a			\
-	spicelib/devices/ccvs/libccvs.a			\
 	spicelib/devices/cpl/libcpl.a			\
 	spicelib/devices/csw/libcsw.a			\
 	spicelib/devices/dio/libdio.a			\

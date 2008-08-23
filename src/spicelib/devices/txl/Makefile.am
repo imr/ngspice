@@ -15,7 +15,6 @@ libtxl_a_SOURCES = 	\
 	txlload.c  \
 	txlmdel.c  \
 	txlparam.c \
-	txlacct.c  \
 	txldel.c   \
 	txlmask.c  \
 	txlmpar.c  \

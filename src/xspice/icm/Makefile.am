@@ -27,7 +27,7 @@ SYSTEM_LIBS = -lm -lncurses -L/usr/X11R6/lib -lX11 -lXt -lXext -lXmu -lXaw  -lSM
 
 LOCAL_LIBS = -lcmxsp,-levtxsp,-lidnxsp,-lipcxsp,-lenhxsp,-lmifxsp,-ldev,-lckt,-linp,-lparser,-lhlp,-linp,-lderiv,-lcmaths,-lpoly,-lni,-lsparse,-lmisc,-lfte,-lplotting
 
-DEVICE_LIBS = -lasrc,-lbjt,-lbsim1,-lbsim2,-lbsim3,-lbsim3v1,-lbsim3v2,-lbsim4,-lcap,-lbsim3soipd,-lbsim3soifd,-lbsim3soidd,-lcccs,-lccvs,-lccvs,-lcpl,-lcsw,-ldio,-lind,-lisrc,-lhfet,-lhfet2,-ljfet,-ljfet2,-lltra,-lmes,-lmesa,-lmos1,-lmos2,-lmos3,-lmos6,-lmos9,-lres,-lsoi3,-lsw,-ltxl,-ltra,-lurc,-lvccs,-lvcvs,-lvsrc
+DEVICE_LIBS = -lasrc,-lbjt,-lbsim1,-lbsim2,-lbsim3,-lbsim3v1,-lbsim3v2,-lbsim4,-lcap,-lbsim3soipd,-lbsim3soifd,-lbsim3soidd,-lcccs,-lccvs,-lcpl,-lcsw,-ldio,-lind,-lisrc,-lhfet,-lhfet2,-ljfet,-ljfet2,-lltra,-lmes,-lmesa,-lmos1,-lmos2,-lmos3,-lmos6,-lmos9,-lres,-lsoi3,-lsw,-ltxl,-ltra,-lurc,-lvccs,-lvcvs,-lvsrc
 
 
 
