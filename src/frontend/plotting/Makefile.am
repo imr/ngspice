@@ -32,6 +32,6 @@ libplotting_a_SOURCES += \
 	xgraph.h
 endif
 
-INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend @X_CFLAGS@ 
+AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend @X_CFLAGS@ 
 
 MAINTAINERCLEANFILES = Makefile.in

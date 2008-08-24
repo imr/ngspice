@@ -3,7 +3,11 @@
 <!--
   $Id$
   $Log$
-  Revision 1.12  2008-08-19 08:48:26  r29173
+  Revision 1.13  2008-08-24 17:12:59  pnenzi
+
+  Updated to new automake standard. Replaced all INCLUDES with AM_CPPFLAGS
+
+  Revision 1.12  2008/08/19 08:48:26  r29173
   add dependency $module.c: admsva/$module.va
 
   Revision 1.11  2007/07/05 09:44:12  r29173
@@ -184,7 +188,7 @@ CLEANFILES = 		\\
 	$(module)conv.c	\\
 	$(module)getic.c
 
-INCLUDES = -I\$(top_srcdir)/src/include
+AM_CPPFLAGS = -I\$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in
 

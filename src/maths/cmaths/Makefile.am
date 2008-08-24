@@ -44,6 +44,6 @@ TESTS = test_cx_mag test_cx_j test_cx_ph
 endif !WINDOWS
 
 
-INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/maths/poly
+AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/maths/poly
 
 MAINTAINERCLEANFILES = Makefile.in

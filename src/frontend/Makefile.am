@@ -185,6 +185,6 @@ libfte_a_SOURCES = \
 # testcommands_LDADD = libfte.a plotting/libplotting.a ../misc/libmisc.a
 
 
-INCLUDES = -I$(top_srcdir)/src/include @X_CFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/src/include @X_CFLAGS@
 
 MAINTAINERCLEANFILES = Makefile.in

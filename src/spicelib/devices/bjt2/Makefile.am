@@ -40,6 +40,6 @@ libbjt2_a_SOURCES = 	\
 
 
 
-INCLUDES = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

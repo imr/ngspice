@@ -11,6 +11,6 @@ ipcsockets.c \
 ipcstdio.c   \
 ipctiein.c
 
-INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
+AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 
 MAINTAINERCLEANFILES = Makefile.in

@@ -7,6 +7,6 @@ noinst_LIBRARIES = libidnxsp.a
 libidnxsp_a_SOURCES = \
 	idndig.c
 
-INCLUDES = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

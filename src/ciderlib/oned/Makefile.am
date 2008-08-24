@@ -21,5 +21,5 @@ libcideroned_a_SOURCES = 	\
 		onesolve.c	
 
 EXTRA_DIST = notes readme
-INCLUDES = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_srcdir)/src/include
 MAINTAINERCLEANFILES = Makefile.in

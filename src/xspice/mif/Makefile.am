@@ -21,6 +21,6 @@ libmifxsp_a_SOURCES = \
 	mifdestr.c \
 	mif.c
 
-INCLUDES = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

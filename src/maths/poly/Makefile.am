@@ -13,6 +13,6 @@ libpoly_a_SOURCES = \
 	polyeval.h
 
 
-INCLUDES = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

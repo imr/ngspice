@@ -33,6 +33,6 @@ libhisim_a_SOURCES = 	hisim.h		\
 			hsm1trunc.c
 
 
-INCLUDES = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

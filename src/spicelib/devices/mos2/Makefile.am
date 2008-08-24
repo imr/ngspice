@@ -34,5 +34,5 @@ libmos2_a_SOURCES = 	\
 	mos2trun.c
 
 
-INCLUDES = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_srcdir)/src/include
 MAINTAINERCLEANFILES = Makefile.in

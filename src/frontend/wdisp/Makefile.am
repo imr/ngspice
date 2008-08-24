@@ -11,6 +11,6 @@ libwindisp_a_SOURCES = \
 	ftegraf.h
 	
 	
-INCLUDES = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend/wdisp
+AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend/wdisp
 
 MAINTAINERCLEANFILES = Makefile.in

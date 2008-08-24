@@ -21,6 +21,6 @@ libtxl_a_SOURCES = 	\
 	txlsetup.c \
 	txlinit.c
     
-INCLUDES = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in

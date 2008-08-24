@@ -8,6 +8,6 @@ libenhxsp_a_SOURCES = \
 enh.c  \
 enhtrans.c
 
-INCLUDES = -I$(top_srcdir)/src/include
+AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in
