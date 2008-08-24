@@ -104,7 +104,7 @@ char *errRtn;
 char *errMsg;
 char *cp_program;
 
-#ifdef CIDER
+
 /* Globals definitions for Machine Accuracy Limits
  * (needed by CIDER)
  */   
@@ -114,7 +114,7 @@ double ExpLim;              /* limit for exponential */
 double Accuracy;            /* accuracy of the machine */
 double Acc, MuLim, MutLim;
 
-
+#ifdef CIDER
 /* Global debug flags from CIDER, soon they will become
  * spice variables :)
  */ 

@@ -1,5 +1,10 @@
+2008-08-24 Paolo Nenzi
+ * src/main.c: Moved the #ifdef CIDER declaration. Machine accuracy limits now are
+   defined even if CIDER is not compiled. This is needed for the subsequent integration
+   of TCL patch.  
+
 2008-06-14 Holger Vogt
- * eamples/numparam: adapt examples to new numparam code
+ * examples/numparam: adapt examples to new numparam code
 
 2008-05-31 Dietmar Warning
  * src/frontend/aspice.c: compliant processing of pid and wait() also under solaris
