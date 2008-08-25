@@ -1,3 +1,8 @@
+008-08-25 Paolo Nenzi
+ * configure.in, src/spicelib/analysis/noisean.c: removed the compilation switch 
+   --enable-intnoise. Noise analyses now generate two plot, the first one for
+   spectrum and the second one the integrated noise.
+
 2008-08-24 Paolo Nenzi
  * src/main.c: Moved the #ifdef CIDER declaration. Machine accuracy limits now are
    defined even if CIDER is not compiled. This is needed for the subsequent integration

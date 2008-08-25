@@ -271,7 +271,6 @@ NOISEan (CKTcircuit *ckt, int restart)
     error = CKTnoise(ckt,N_DENS,N_CLOSE,data);
     if (error) return(error);
     
-#ifdef INT_NOISE
     data->numPlots = 0;
     data->outNumber = 0;
 
@@ -291,7 +290,6 @@ NOISEan (CKTcircuit *ckt, int restart)
 	error = CKTnoise(ckt,INT_NOIZ,N_CLOSE,data);
 	if (error) return(error);
     }
-#endif
 
     FREE(data);
     return(OK);

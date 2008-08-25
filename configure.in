@@ -118,10 +118,6 @@ dnl --enable-smltmsdebug: define D_DBG_SMALLTIMES for the code
 AC_ARG_ENABLE(smltmsdebug,
     AS_HELP_STRING([--enable-smltmsdebug],[Debug distortion code *SMALLTIMES*]))
 
-dnl --enable-intnoise: define INT_NOISE for the code
-AC_ARG_ENABLE(intnoise,
-    AS_HELP_STRING([--enable-intnoise],[Enable noise integration in noise analysis]))
-
 dnl --enable-smoketest: a smoketest
 AC_ARG_ENABLE(smoketest,
     AS_HELP_STRING([--enable-smoketest],[Enable smoketest compile]))
@@ -548,10 +544,6 @@ fi
 if test "$enable_newtrunc" = "yes"; then
     AC_DEFINE(NEWTRUNC,[],[Do not trigger unwanted traps by default])
     AC_MSG_RESULT(New truncation error calculation enabled)
-fi
-if test "$enable_intnoise" = "yes"; then
-    AC_DEFINE(INT_NOISE,[],[Define if we want noise integration code])
-    AC_MSG_RESULT(Noise integration enabled)
 fi
 if test "$enable_experimental" = "yes"; then
     AC_DEFINE(EXPERIMENTAL_CODE,[],[Define if we want some experimental code])
