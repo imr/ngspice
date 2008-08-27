@@ -1,7 +1,7 @@
 2008-08-27 Paolo Nenzi
  * --- TCLSPICE initial integration (Lionel Sainte Cluque) ---
  * Makefile.am: Makefiles changed for libtool. We use still .a files but we let
-   libtool to created them in a portable manner. This slows compilation a little
+   libtool to create them in a portable manner. This slows compilation a little
    bit but improves portability of ngspice/tclspice.
  * src/tclspice.c, src/tclspice.map, pkgIndex.tcl.in, src/include/tclspice.h: 
    tclspice main and include file. (Readded files).
