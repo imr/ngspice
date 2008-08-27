@@ -1,10 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 ## $Id$
 
-noinst_LIBRARIES = libmisc.a
+noinst_LTLIBRARIES = libmisc.la
 
 
-libmisc_a_SOURCES = \
+libmisc_la_SOURCES = \
 		getopt1.c	\
 		getopt.c	\
 		getopt.h	\

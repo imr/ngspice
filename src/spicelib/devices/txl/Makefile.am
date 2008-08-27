@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libtxl.a
+noinst_LTLIBRARIES = libtxl.la
 
-libtxl_a_SOURCES = 	\
+libtxl_la_SOURCES = 	\
 	txl.c      \
 	txlacct.c  \
 	txlask.c   \

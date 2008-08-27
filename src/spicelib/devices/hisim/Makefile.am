@@ -2,9 +2,9 @@
 
 EXTRA_DIST = hsm1eval1_0.c hsm1eval1_1.c
 
-noinst_LIBRARIES = libhisim.a
+noinst_LTLIBRARIES = libhisim.la
 
-libhisim_a_SOURCES = 	hisim.h		\
+libhisim_la_SOURCES = 	hisim.h		\
 			hsm1.c		\
 			hsm1acld.c	\
 			hsm1ask.c 	\

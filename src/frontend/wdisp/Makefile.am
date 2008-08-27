@@ -1,9 +1,9 @@
 ## Process this file with automake to produce Makefile.in
 ## $Id$
 
-noinst_LIBRARIES = libwindisp.a
+noinst_LTLIBRARIES = libwindisp.la
 
-libwindisp_a_SOURCES = \
+libwindisp_la_SOURCES = \
 	windisp.c	\
 	windisp.h	\
 	winprint.c	\

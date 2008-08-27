@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libbjt.a
+noinst_LTLIBRARIES = libbjt.la
 
-libbjt_a_SOURCES = 	\
+libbjt_la_SOURCES = 	\
 	bjt.c		\
 	bjtacld.c	\
 	bjtask.c	\

@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libcmaths.a
+noinst_LTLIBRARIES = libcmaths.la
 
-libcmaths_a_SOURCES = \
+libcmaths_la_SOURCES = \
 		cmath.h		\
 		cmath1.c	\
 		cmath1.h	\
@@ -22,22 +22,25 @@ test_cx_ph_SOURCES = \
 		test_cx_ph.c
 
 test_cx_ph_LDADD = \
-		libcmaths.a \
-		../../misc/libmisc.a
+		libcmaths.la \
+		../../misc/libmisc.la \
+ 		$(TCL_LIB_SPEC)
 
 test_cx_mag_SOURCES = \
 		test_cx_mag.c
 
 test_cx_mag_LDADD = \
-		libcmaths.a \
-		../../misc/libmisc.a
+		libcmaths.la \
+		../../misc/libmisc.la \
+ 		$(TCL_LIB_SPEC)
 
 test_cx_j_SOURCES = \
 		test_cx_j.c
 
 test_cx_j_LDADD = \
-		libcmaths.a \
-		../../misc/libmisc.a
+		libcmaths.la \
+		../../misc/libmisc.la \
+ 		$(TCL_LIB_SPEC)
 
 TESTS = test_cx_mag test_cx_j test_cx_ph
 

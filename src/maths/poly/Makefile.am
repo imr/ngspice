@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libpoly.a
+noinst_LTLIBRARIES = libpoly.la
 
-libpoly_a_SOURCES = \
+libpoly_la_SOURCES = \
 	interpolate.c \
 	interpolate.h \
 	polyfit.c \

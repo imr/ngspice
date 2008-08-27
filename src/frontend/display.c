@@ -11,6 +11,10 @@ $Id$
 #include <cpdefs.h>     /* for VT_STRING */
 #include <ftedefs.h>        /* for mylog() */
 
+#ifdef TCL_MODULE
+#include <tclspice.h>
+#endif
+
 #include "display.h"
 #include "variable.h"
 #include "error.h"
@@ -68,6 +72,15 @@ DISPDEVICE device[] = {
     WPRINT_SetLinestyle, WPRINT_SetColor, WPRINT_Update,
     nodev, nodev, nodev, nodev,
     gen_DatatoScreen,}, /* WPRINT_DiagramReady */
+#endif
+
+#ifdef TCL_MODULE
+    {"Tk", 0, 0, 1024, 864, 0, 0, sp_Tk_Init, sp_Tk_NewViewport,
+    sp_Tk_Close, sp_Tk_Clear,
+    sp_Tk_DrawLine, sp_Tk_Arc, sp_Tk_Text, sp_Tk_DefineColor, sp_Tk_DefineLinestyle,
+    sp_Tk_SetLinestyle, sp_Tk_SetColor, sp_Tk_Update,
+    nodev, nodev, nodev, nodev,
+    gen_DatatoScreen,},
 #endif
 
     {"plot5", 0, 0, 1000, 1000, 0, 0, Plt5_Init, Plt5_NewViewport,
@@ -149,6 +162,10 @@ DevInit(void)
 	 if (!dispdev) {
       dispdev = FindDev("Windows");
     }
+#endif
+
+#ifdef TCL_MODULE
+    dispdev = FindDev("Tk");
 #endif
 
     if (!dispdev) {

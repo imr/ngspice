@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libcsw.a
+noinst_LTLIBRARIES = libcsw.la
 
-libcsw_a_SOURCES = 		\
+libcsw_la_SOURCES = 		\
 	csw.c		\
 	cswacld.c	\
 	cswask.c	\

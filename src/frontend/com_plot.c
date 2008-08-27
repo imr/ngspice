@@ -16,3 +16,14 @@ com_plot(wordlist *wl)
     plotit(wl, (char *) NULL, (char *) NULL);
     return;
 }
+
+#ifdef TCL_MODULE
+void
+com_bltplot(wordlist *wl)
+{
+    plotit(wl, (char *) NULL, "blt");
+    return;
+}
+
+#endif
+

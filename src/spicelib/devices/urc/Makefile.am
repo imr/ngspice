@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = liburc.a
+noinst_LTLIBRARIES = liburc.la
 
-liburc_a_SOURCES = 	\
+liburc_la_SOURCES = 	\
 	urc.c		\
 	urcask.c	\
 	urcdefs.h	\

@@ -4,9 +4,9 @@
 ## work.
 ## Sensitivity analysis not compiled in.
 
-noinst_LIBRARIES = libbjt2.a
+noinst_LTLIBRARIES = libbjt2.la
 
-libbjt2_a_SOURCES = 	\
+libbjt2_la_SOURCES = 	\
 	bjt2.c		\
 	bjt2acld.c	\
 	bjt2ask.c	\

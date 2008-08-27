@@ -1,4 +1,25 @@
-008-08-25 Paolo Nenzi
+2008-08-27 Paolo Nenzi
+ * --- TCLSPICE initial integration (Lionel Sainte Cluque) ---
+ * Makefile.am: Makefiles changed for libtool. We use still .a files but we let
+   libtool to created them in a portable manner. This slows compilation a little
+   bit but improves portability of ngspice/tclspice.
+ * src/tclspice.c, src/tclspice.map, pkgIndex.tcl.in, src/include/tclspice.h: 
+   tclspice main and include file. (Readded files).
+ * src/tests/tcl/, src/tests/tcl-testbench1/, src/tests/tcl-testbench2/, 
+   src/tests/tcl-testbench3/, src/tests/tcl-testbench4/: testbenches for 
+   the tclspice simulator. (New dirs).
+ * src/frontend/plotit.c: added blt_plot for blt output device if TCL defined.
+ * src/frontend/com_plot.c, src/frontend/com_plot.h: added com_bltplot.
+ * src/frontend/commands.c: redefined plot command to combltplot if TCL is enabled.
+ * src/frontend/display.c: defined Tk display device.
+ * src/frontend/outitf.c: added blt support.
+ * src/frontend/terminal.c: if TCL is defined, interactive terminal stubs are copiled in.
+ * src/include/ngspice.h: added definitions for TCL functions.
+ * src/misc/alloc.c: Using TCL allocation functions when tclspice is enabled.
+ * src/frontend/com_measure2.c,.h: new measure command (to link and test)
+ * src/main.c: some static function moved for TCL interface (nutmeginfo, etc.) 
+
+2008-08-25 Paolo Nenzi
  * configure.in, src/spicelib/analysis/noisean.c: removed the compilation switch 
    --enable-intnoise. Noise analyses now generate two plot, the first one for
    spectrum and the second one the integrated noise.

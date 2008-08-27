@@ -2,9 +2,9 @@
 #
 # JW 3/9/01 - had a go and makeing an   autoconf script.
 
-noinst_LIBRARIES = libcmxsp.a
+noinst_LTLIBRARIES = libcmxsp.la
 
-libcmxsp_a_SOURCES = \
+libcmxsp_la_SOURCES = \
 cm.c       \
 cmevt.c    \
 cmmeters.c \

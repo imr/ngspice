@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libtra.a
+noinst_LTLIBRARIES = libtra.la
 
-libtra_a_SOURCES = 	\
+libtra_la_SOURCES = 	\
 	tra.c		\
 	traacct.c	\
 	traacld.c	\

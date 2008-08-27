@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libnumos.a
+noinst_LTLIBRARIES = libnumos.la
 
-libnumos_a_SOURCES = 	\
+libnumos_la_SOURCES = 	\
 	numm.c		\
 	nummacld.c	\
 	nummask.c	\

@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libcpl.a
+noinst_LTLIBRARIES = libcpl.la
 
-libcpl_a_SOURCES = 	\
+libcpl_la_SOURCES = 	\
 	cpl.c	   \
 	cplask.c   \
 	cpldefs.h  \

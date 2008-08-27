@@ -1,0 +1,9 @@
+Banc de test pour la Capa variable sur la base de la thèse de Marc KODRNJA
+
+.INCLUDE capa.cir
+
+Valim	4 0	DC 12
+Vex	6 5	DC 0 AC 0.01 0
+Vd	7 8	DC 0.0
+xcapa 4 6 5 7 8 0 capa
+.END

@@ -2,6 +2,7 @@
 ## $Id$
 
 noinst_HEADERS = 	\
+	tclspice.h	\
 	acdefs.h 	\
 	bdrydefs.h	\
 	bool.h 		\

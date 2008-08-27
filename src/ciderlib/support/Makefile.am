@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libcidersuprt.a
+noinst_LTLIBRARIES = libcidersuprt.la
 
-libcidersuprt_a_SOURCES = 	\
+libcidersuprt_la_SOURCES = 	\
 		database.c	\
 		devprint.c	\
 		geominfo.c	\

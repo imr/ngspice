@@ -21,7 +21,9 @@
 static wordlist *wl_root;
 static bool sameflag;
 
-
+#ifdef TCL_MODULE
+#include <tclspice.h>
+#endif
 
 /* This routine gets parameters from the command line, which are of
  * the form "name number ..." It returns a pointer to the parameter
@@ -976,7 +978,17 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 	goto quit;
     }
 
-    
+#ifdef TCL_MODULE
+    if (devname && eq(devname, "blt")) {
+    /* Just send the pairs to Tcl/Tk */
+      for (d = vecs; d; d = d->v_link2) {
+        blt_plot(d, oneval ? (struct dvec *) NULL : d->v_scale,(d==vecs?1:0));
+      }
+      rtn = TRUE;
+      goto quit;
+    }
+#endif
+
     for (d = vecs, i = 0; d; d = d->v_link2)
         i++;
 

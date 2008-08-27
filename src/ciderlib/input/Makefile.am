@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libciderinput.a
+noinst_LTLIBRARIES = libciderinput.la
 
-libciderinput_a_SOURCES = 	\
+libciderinput_la_SOURCES = 	\
 		bdryset.c	\
 		boundary.c	\
 		cards.c		\

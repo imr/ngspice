@@ -1,6 +1,6 @@
-noinst_LIBRARIES = libplotting.a
+noinst_LTLIBRARIES = libplotting.la
 
-libplotting_a_SOURCES = \
+libplotting_la_SOURCES = \
 	plotting.c	\
 	plotting.h	\
 	agraf.c		\
@@ -25,7 +25,7 @@ libplotting_a_SOURCES = \
 	plotit.h	
 
 if !NO_X
-libplotting_a_SOURCES += \
+libplotting_la_SOURCES += \
 	x11.c		\
 	x11.h		\
 	xgraph.c	\

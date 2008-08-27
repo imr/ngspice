@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libsparse.a
+noinst_LTLIBRARIES = libsparse.la
 
-libsparse_a_SOURCES = \
+libsparse_la_SOURCES = \
 	spalloc.c	\
 	spbuild.c	\
 	spcombin.c	\

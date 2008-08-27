@@ -2,9 +2,9 @@
 #
 # JW 3/9/01 - had a go and makeing an   autoconf script.
 
-noinst_LIBRARIES = libenhxsp.a
+noinst_LTLIBRARIES = libenhxsp.la
 
-libenhxsp_a_SOURCES = \
+libenhxsp_la_SOURCES = \
 enh.c  \
 enhtrans.c
 

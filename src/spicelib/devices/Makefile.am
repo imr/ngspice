@@ -117,9 +117,9 @@ DIST_SUBDIRS = \
 	numos
 
 
-noinst_LIBRARIES = libdev.a
+noinst_LTLIBRARIES = libdev.la
 
-libdev_a_SOURCES = 	\
+libdev_la_SOURCES = 	\
 	dev.c		\
 	dev.h		\
 	devsup.c	\

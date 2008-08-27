@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libdio.a
+noinst_LTLIBRARIES = libdio.la
 
-libdio_a_SOURCES = 	\
+libdio_la_SOURCES = 	\
 	dio.c		\
 	dioacld.c	\
 	dioask.c	\

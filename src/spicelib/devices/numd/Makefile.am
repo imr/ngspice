@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libnumd.a
+noinst_LTLIBRARIES = libnumd.la
 
-libnumd_a_SOURCES = 	\
+libnumd_la_SOURCES = 	\
 	numd.c		\
 	numdacld.c	\
 	numdask.c	\

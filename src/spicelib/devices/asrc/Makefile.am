@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libasrc.a
+noinst_LTLIBRARIES = libasrc.la
 
-libasrc_a_SOURCES = 	\
+libasrc_la_SOURCES = 	\
 	asrc.c		\
 	asrcacld.c	\
 	asrcask.c	\

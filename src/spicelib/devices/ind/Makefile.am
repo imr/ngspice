@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libind.a
+noinst_LTLIBRARIES = libind.la
 
-libind_a_SOURCES = 	\
+libind_la_SOURCES = 	\
 	ind.c		\
 	indacld.c	\
 	indask.c	\

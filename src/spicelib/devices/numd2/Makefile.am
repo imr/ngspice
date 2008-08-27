@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libnumd2.a
+noinst_LTLIBRARIES = libnumd2.la
 
-libnumd2_a_SOURCES = 	\
+libnumd2_la_SOURCES = 	\
 	nud2.c		\
 	nud2acld.c	\
 	nud2ask.c	\

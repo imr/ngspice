@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libnbjt2.a
+noinst_LTLIBRARIES = libnbjt2.la
 
-libnbjt2_a_SOURCES = 	\
+libnbjt2_la_SOURCES = 	\
 	nbt2.c		\
 	nbt2acld.c	\
 	nbt2ask.c	\

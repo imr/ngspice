@@ -22,4 +22,3 @@ mrproper: maintainer-clean
 	rm -f `find . -type f -name "*.orig" -print`
 	rm -f `find . -type f -name "*.rej" -print`
 
-

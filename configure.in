@@ -173,6 +173,11 @@ dnl --with-editline:  Includes BSD Editline support into CLI.  Default is "no".
 AC_ARG_WITH(editline,
     AS_HELP_STRING([--with-editline[=yes/no]],[Enable BSD editline support for CLI. Default=no.]))
 
+dnl --with-tcl: define TCL_MODULE in the code. This is for tcl support
+AC_ARG_WITH(tcl,
+    [  --with-tcl[=tcldir]         Compiles the tcl module instead, experimental, see README.Tcl])
+
+
 
 dnl readline and editline cannot both be enabled
 if test "$with_editline" = "yes"; then
@@ -279,6 +284,133 @@ case $with_windows in
 		fi
 		CFLAGS="$CFLAGS -mwindows";;
 	* )
+
+##########################################################################
+#
+# tcl libraries test
+#
+##########################################################################
+
+dnl
+dnl The tclSpice options
+dnl
+AM_CONDITIONAL(TCL_MODULE, false)
+if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
+   AM_CONDITIONAL(TCL_MODULE, true)
+   AC_DEFINE(TCL_MODULE,1,[Tcl Module])
+   with_x=no
+   enable_shared=no
+
+  AC_MSG_CHECKING([for tclConfig.sh])
+  tcl_config_sh=""
+  if test "x$with_tcl" != "xyes" ; then
+  for dir in \
+      $with_tcl
+    do
+      if test -r "$dir/tclConfig.sh" ; then
+        tcl_config_sh="$dir/tclConfig.sh"
+        break
+      elif test -r "$dir/lib/tclConfig.sh" ; then
+        tcl_config_sh="$dir/lib/tclConfig.sh"
+        break
+      elif test -r "$dir/unix/tclConfig.sh" ; then
+        tcl_config_sh="$dir/unix/tclConfig.sh"
+        break
+      fi
+    done
+  else
+    for dir in \
+     $prefix \
+     $exec_prefix
+    do
+      if test -r "$dir/tclConfig.sh" ; then
+        tcl_config_sh="$dir/tclConfig.sh"
+        break
+      elif test -r "$dir/lib/tclConfig.sh" ; then
+        tcl_config_sh="$dir/lib/tclConfig.sh"
+        break
+      elif test -r "$dir/unix/tclConfig.sh" ; then
+        tcl_config_sh="$dir/unix/tclConfig.sh"
+        break
+      fi
+    done
+
+
+    if test "x$tcl_config_sh" = "x" ; then
+      for dir in \
+       `ls -dr /usr/local/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+       /usr/local/tcl \
+       /usr/local \
+       /usr
+      do
+        if test -r "$dir/tclConfig.sh" ; then
+          tcl_config_sh="$dir/tclConfig.sh"
+          break
+        elif test -r "$dir/lib/tclConfig.sh" ; then
+          tcl_config_sh="$dir/lib/tclConfig.sh"
+          break
+        fi
+      done
+    fi
+  fi
+
+AC_MSG_RESULT([${tcl_config_sh}])
+
+
+
+if test "x$tcl_config_sh" = "x" ; then
+  echo "can't find Tcl configuration script \"tclConfig.sh\""
+  find /usr/lib/ -name 'tclConfig.sh' -exec echo "Should you add --with-tcl={} to ./configure arguments?" \;
+  exit 1
+fi
+
+. $tcl_config_sh
+
+CFLAGS="$CFLAGS $TCL_INCLUDE_SPEC"
+CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC"
+
+AC_CHECK_HEADERS(tcl.h blt.h,,AC_MSG_ERROR(Couldn't find Tcl/BLT headers),)
+
+if test ! -x "$TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION" ; then
+AC_MSG_ERROR(Couldn't find $TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION)
+fi
+
+AC_MSG_CHECKING(for TCL module BLT)
+rm -f conftest.tcl
+cat > conftest.tcl << EOF
+package require BLT;
+exit;
+EOF
+if ($TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION conftest.tcl; exit) 2>/dev/null
+then
+   AC_MSG_RESULT(Found)
+else
+   AC_MSG_ERROR(Couldn't find BLT)
+fi
+rm -f conftest.tcl
+
+AC_CHECK_LIB(pthread,pthread_create)
+for TCL_PACKAGE_PATH_ELEMENT in $TCL_PACKAGE_PATH ; do
+  if test -a $TCL_PACKAGE_PATH_ELEMENT ; then
+    libdir=$TCL_PACKAGE_PATH_ELEMENT
+    AC_SUBST(libdir)
+    break
+  fi
+done
+
+else
+  TCL_PACKAGE_PATH=""
+  TCL_LIB_SPEC=""
+fi
+
+AC_SUBST(TCL_PACKAGE_PATH)
+AC_SUBST(TCL_LIB_SPEC)
+##################################################################
+#
+#
+#End of tcl libraries test
+#
+#################################################################
 
 dnl Check for /proc (virtual process information file system)
 AC_CHECK_HEADERS( /proc/meminfo)
@@ -445,13 +577,14 @@ dnl Check for the random function:
 AC_CHECK_FUNCS(random,,AC_CHECK_LIB(iberty,random,AC_DEFINE([HAVE_RANDOM],1,[Have random in libiberty]) LIBS="$LIBS -liberty"))
 
 dnl If user enables garbage collection, look for garbage collector
-if test "$enable_gc" = "yes"; then
-  AC_MSG_RESULT(Checking for the presence of the Garbage Collector:)
-  AC_CHECK_LIB(gc,GC_malloc,
-    AC_DEFINE(HAVE_LIBGC,[],[Define if we want garbage collection enabled])
-	LIBS="$LIBS -lgc")
+if test "$TCL_PACKAGE_PATH" = ""; then
+  if test "$enable_gc" = "yes"; then
+    AC_MSG_RESULT(Checking for the presence of the Garbage Collector:)
+    AC_CHECK_LIB(gc,GC_malloc,
+      AC_DEFINE(HAVE_LIBGC,[],[Define if we want garbage collection enabled])
+  	  LIBS="$LIBS -lgc")
+  fi
 fi
-
 dnl check, if we have sigsetjmp and siglongjmp.
 dnl A trivial AC_CHECK_FUNCS(sigsetjmp) won't do because sigsetjmp() might be a
 dnl macro declared in <setjmp.h>. (joze)
@@ -497,7 +630,7 @@ AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE,"`date`",[Define the build date])
 if test "$with_windows" = "yes"; then
     AC_MSG_RESULT(WINDOWS code enabled)
     WINMAIN="winmain.o"
-    WINDISPLIB="frontend/wdisp/libwindisp.a"
+    WINDISPLIB="frontend/wdisp/libwindisp.la"
     AC_CHECK_FUNCS([memmove])
 else
     WINMAIN=""
@@ -613,12 +746,12 @@ dnl Define variables for YACC and LEX
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
         DLLIBS="-ldl";;
     esac
-    XSPICELIB1="$XSPICEDIR/cm/libcmxsp.a \
-    		$XSPICEDIR/mif/libmifxsp.a"
-    XSPICELIB2="$XSPICEDIR/evt/libevtxsp.a \
-                $XSPICEDIR/enh/libenhxsp.a \
-	        $XSPICEDIR/ipc/libipcxsp.a \
-		$XSPICEDIR/idn/libidnxsp.a \
+    XSPICELIB1="$XSPICEDIR/cm/libcmxsp.la \
+    		$XSPICEDIR/mif/libmifxsp.la"
+    XSPICELIB2="$XSPICEDIR/evt/libevtxsp.la \
+                $XSPICEDIR/enh/libenhxsp.la \
+	        $XSPICEDIR/ipc/libipcxsp.la \
+		$XSPICEDIR/idn/libidnxsp.la \
 		$DLLIBS"
     XSPICEINIT=""
     XSPICETESTS=""
@@ -644,16 +777,16 @@ if test "$enable_cider" = "yes"; then
 
      CIDERDIR="ciderlib"
 
-     CIDERSIM="	$CIDERDIR/twod/libcidertwod.a     \
-		$CIDERDIR/oned/libcideroned.a     \
-		$CIDERDIR/input/libciderinput.a   \
-		$CIDERDIR/support/libcidersuprt.a"
+     CIDERSIM="	$CIDERDIR/twod/libcidertwod.la     \
+		$CIDERDIR/oned/libcideroned.la     \
+		$CIDERDIR/input/libciderinput.la   \
+		$CIDERDIR/support/libcidersuprt.la"
 
-     NUMDEV="	spicelib/devices/nbjt/libnbjt.a   \
-		spicelib/devices/nbjt2/libnbjt2.a \
-		spicelib/devices/numd/libnumd.a   \
-		spicelib/devices/numd2/libnumd2.a \
-		spicelib/devices/numos/libnumos.a"
+     NUMDEV="	spicelib/devices/nbjt/libnbjt.la   \
+		spicelib/devices/nbjt2/libnbjt2.la \
+		spicelib/devices/numd/libnumd.la   \
+		spicelib/devices/numd2/libnumd2.la \
+		spicelib/devices/numos/libnumos.la"
      NUMDEVDIR="  nbjt \
    		nbjt2 \
 		numd  \
@@ -694,11 +827,11 @@ if test "$enable_adms" = "yes"; then
                adms/ekv \
                adms/psp102 "
 
-   VLADEV=" spicelib/devices/adms/hicum0/libhicum0.a \
-            spicelib/devices/adms/hicum2/libhicum2.a \
-            spicelib/devices/adms/mextram/libmextram.a \
-            spicelib/devices/adms/ekv/libekv.a \
-            spicelib/devices/adms/psp102/libpsp102.a "
+   VLADEV=" spicelib/devices/adms/hicum0/libhicum0.la \
+            spicelib/devices/adms/hicum2/libhicum2.la \
+            spicelib/devices/adms/mextram/libmextram.la \
+            spicelib/devices/adms/ekv/libekv.la \
+            spicelib/devices/adms/psp102/libpsp102.la "
 
 fi
 AC_SUBST(ADMSXML)
@@ -711,7 +844,7 @@ if test "$enable_ndev" = "yes"; then
     AC_DEFINE(NDEV,[],[The NDEV interface])
     NDEV=""
     NDEV_DIR=" ndev "
-    NDEV_LIB=" spicelib/devices/ndev/libndev.a "
+    NDEV_LIB=" spicelib/devices/ndev/libndev.la "
 else
     NDEV=""
     NDEV_DIR=""
@@ -740,6 +873,7 @@ dnl  ----  Hope to see in the future readline replacement.        ----
 if test "$with_readline" != "yes"; then
     AC_MSG_RESULT(GNU readline disabled.)
 else
+  if test "x$with_tcl" == "x" -o "$with_tcl" == "no" ; then
     AC_MSG_RESULT(Checking for readline:)
     AC_CHECK_HEADERS([readline/readline.h readline/history.h],
                      [AC_DEFINE(HAVE_GNUREADLINE,[],[Define if we have GNU readline])],
@@ -750,6 +884,7 @@ else
     AC_CHECK_LIB(readline, readline,
                      [LIBS="$LIBS -lreadline"],
                      [AC_MSG_ERROR(Couldn't find readline libraries.)])
+  fi
 fi
 
 

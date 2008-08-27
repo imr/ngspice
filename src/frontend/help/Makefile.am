@@ -2,9 +2,9 @@
 
 if !NO_X
 
-noinst_LIBRARIES = libhlp.a
+noinst_LTLIBRARIES = libhlp.la
 
-libhlp_a_SOURCES = \
+libhlp_la_SOURCES = \
 		help.c	\
 		provide.c	\
 		readhelp.c	\

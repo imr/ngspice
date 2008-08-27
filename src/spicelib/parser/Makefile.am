@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libinp.a
+noinst_LTLIBRARIES = libinp.la
 
-libinp_a_SOURCES = \
+libinp_la_SOURCES = \
 		ifeval.c	\
 		ifnewuid.c	\
 		inp2b.c		\

@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libhfet2.a
+noinst_LTLIBRARIES = libhfet2.la
 
-libhfet2_a_SOURCES = 	\
+libhfet2_la_SOURCES = 	\
 	hfet2.c		\
 	hfet2acl.c	\
 	hfet2ask.c	\

@@ -58,6 +58,12 @@ static bool name_eq(char *n1, char *n2);
 static bool getSpecial(dataDesc *desc, runDesc *run, IFvalue *val);
 static void freeRun(runDesc *run);
 
+/*Output data to spice module saj*/
+#ifdef TCL_MODULE
+#include "tclspice.h"
+#endif
+/*saj*/
+
 
 #define DOUBLE_PRECISION    15
 
@@ -354,6 +360,10 @@ beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, ch
 	    run->runPlot->pl_ndims = 1;
     }
    }
+    /*Start BLT, initilises the blt vectors saj*/
+#ifdef TCL_MODULE 
+    blt_init(run);
+#endif
     return (OK);
 }
 
@@ -435,6 +445,9 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #endif /* PARALLEL_ARCH */
 
     run->pointCount++;
+#ifdef TCL_MODULE
+    steps_completed = run->pointCount;
+#endif
 
     if (run->writeOut) {
 	if (run->pointCount == 1)
@@ -473,6 +486,9 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
         for (i = 0; i < run->numData; i++) {
             /* we've already printed reference vec first */
             if (run->data[i].outIndex == -1) continue;
+#ifdef TCL_MODULE
+	    blt_add(i,refValue->rValue);
+#endif
 
             if (run->data[i].regular) {
                 if(run->data[i].type == IF_REAL)
@@ -518,6 +534,10 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 else
                   fprintf(stderr, "OUTpData: unsupported data type\n");
             }
+#ifdef TCL_MODULE
+            blt_add(i,valuePtr->v.vec.rVec
+	            [run->data[i].outIndex]);
+#endif
         }
         fileEndPoint(run->fp, run->binary);
 
@@ -546,6 +566,10 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
         }
 #endif
         for (i = 0; i < run->numData; i++) {
+#ifdef TCL_MODULE
+           /*Locks the blt vector to stop access*/
+	   blt_lockvec(i);
+#endif
             if (run->data[i].outIndex == -1) {
 	      if (run->data[i].type == IF_REAL)
 		plotAddRealValue(&run->data[i],
@@ -575,12 +599,21 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 	      else 
 		fprintf(stderr, "OUTpData: unsupported data type\n");
             }
+#ifdef TCL_MODULE
+	    /*relinks and unlocks vector*/
+	    blt_relink(i,(run->data[i]).vec);
+#endif
         }
         gr_iplot(run->runPlot);
     }
 
     if (ft_bpcheck(run->runPlot, run->pointCount) == FALSE)
         shouldstop = TRUE;
+
+#ifdef TCL_MODULE
+    Tcl_ExecutePerLoop();
+#endif
+
 
     return (OK);
 }

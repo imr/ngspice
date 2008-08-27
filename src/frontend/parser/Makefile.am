@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libparser.a
+noinst_LTLIBRARIES = libparser.la
 
-libparser_a_SOURCES = \
+libparser_la_SOURCES = \
 		backq.c		\
 		backq.h		\
 		complete.c	\

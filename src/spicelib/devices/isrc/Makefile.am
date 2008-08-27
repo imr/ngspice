@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libisrc.a
+noinst_LTLIBRARIES = libisrc.la
 
-libisrc_a_SOURCES = 	\
+libisrc_la_SOURCES = 	\
 	isrc.c		\
 	isrcacct.c	\
 	isrcacld.c	\

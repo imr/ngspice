@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libsw.a
+noinst_LTLIBRARIES = libsw.la
 
-libsw_a_SOURCES = 	\
+libsw_la_SOURCES = 	\
 	sw.c		\
 	swacload.c	\
 	swask.c		\

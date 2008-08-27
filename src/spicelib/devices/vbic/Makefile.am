@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libvbic.a
+noinst_LTLIBRARIES = libvbic.la
 
-libvbic_a_SOURCES = 	\
+libvbic_la_SOURCES = 	\
 	vbic.c		\
 	vbicacld.c	\
 	vbicask.c	\

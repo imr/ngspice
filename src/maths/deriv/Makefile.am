@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libderiv.a
+noinst_LTLIBRARIES = libderiv.la
 
-libderiv_a_SOURCES = 		\
+libderiv_la_SOURCES = 		\
 		atander.c	\
 		cosderiv.c	\
 		cubeder.c	\

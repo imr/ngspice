@@ -1,0 +1,122 @@
+
+proc Loadspice { version dir } {
+
+    package require BLT
+ 
+    set suffix [info sharedlibextension]
+
+    set library spice${suffix}
+
+    global tcl_platform
+    if { $tcl_platform(platform) == "unix" } {
+        set library [file join $dir lib${library}]
+    } 
+    load $library spice
+    
+    blt::vector create ::spice::X_Data
+    blt::vector create ::spice::Y_Data
+
+    namespace eval spice {
+	namespace export ac help save alias sens alter altermod iplot setcirc asciiplot jobs setplot aspice setscale bg let settype linearize shell bug listing shift show cdump maxstep showmod compose newhelp noise spec cross oldhelp spice dc op spice_data define spice_header deftype plot state delete plot_datapoints status delta plot_date step plot_get_value stop diff plot_name strcmp display plot_nvars tf disto plot_title dowhile plot_variables tran dump print transpose echo pz tutorial edit quit unalias else rehash undefine end repeat unlet reset fourier reshape version spicetoblt resume where get_output rspice get_param run write goto running xgraph hardcopy rusage steps_completed blt_vnum codemodel halt loadsnap savesnap getplot
+	
+    }
+    
+    # Callback functions for the plot command
+    # Warning: if any of these functions return an error then
+    # spice will probably segfault as tcl/tk will overflow somewhere
+    # Note: color is actually spelt COLOUR, which looks much better
+    # Note: they don't work in namespace so have to make global    
+
+    proc spice_gr_NewViewport { } { 
+	set width 1000
+	set height 400
+	set fontwidth 12
+	set fontheight 24
+	canvas .c  -width $width -height $height -background white
+	pack .c
+	return "$width $height $fontwidth $fontheight"
+    }
+    proc spice_gr_Close { } { 
+    }
+    proc spice_gr_Clear { } {
+    }	
+    proc spice_gr_DrawLine { x1 y1 x2 y2 } {
+	puts "draw"
+	.c create line [expr $x1 + 25] [expr 375 - $y1] [expr $x2 + 25] [expr 375 - $y2] 	
+    }
+    proc spice_gr_Arc { x0 y0 radius theta1 theta2 } { 
+	.c create arc [expr $x0 - $radius + 25] [expr 375 - $y0 - $radius] \
+	    [expr $x1 + $radius + 25 ] [expr 375 - $y1 + $radius] \
+	    -start $theta1 -extent $theta2 
+    }
+    proc spice_gr_Text {text x y} { 
+	.c create text [expr $x + 25] [expr 375 - $y] -text $text
+    }
+    
+    proc spice_gr_SetLinestyle {linestyleid} {
+	puts "SetLinestyle $linestyleid"
+    }
+    proc spice_gr_SetColor {colorid } { 
+	puts "SetColor $colorid $color"
+    }
+    
+    proc spice_gr_Update { } {
+    }
+    
+    
+    # These seem to never be called /*
+    proc spice_gr_DefineColor {colorid red green blue} {
+	puts "DefineColor $colorid $red $green $blue"
+    }
+    proc spice_gr_DefineLinestyle {linestyleid mask} {
+	puts "DefineLinestyle $linestyleid $mask"
+    }
+
+    proc spice_init_gui { fileName {gui 0} {batchMode 0} {rawFileName ""}} {
+
+	# source tclcode
+	if {[info procs spicewish::plot] == ""} {
+		source [file join $::spice_library "spice/spicewish.tcl"]
+	}	
+
+        if {!$batchMode} { spice::version }
+
+        if {$fileName != ""} {
+
+                switch [file extension $fileName] {
+                        ".tcl" {
+                                source $fileName
+                        }
+                        ".raw" {
+                                spice::load $fileName
+                        }
+                        default {
+                                spice::source $fileName
+
+                                if {$batchMode} {
+					spice::run
+					if {$rawFileName != ""} {
+					      spice::set filetype=binary
+  	                                      spice::write $rawFileName
+					}
+                                        exit
+                                }
+                        }
+                }
+        }
+        if {$gui == 1} { spicewish::gui }
+        wm withdraw .
+    }
+
+    set ::spice_version $version
+    set ::spice_library $dir
+}
+
+proc q { } { exit }
+
+
+set version "%VERSION%"
+set libdir  "%LIB_DIR%"
+
+package ifneeded spice $version [list Loadspice $version $libdir]
+

@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libmes.a
+noinst_LTLIBRARIES = libmes.la
 
-libmes_a_SOURCES = 	\
+libmes_la_SOURCES = 	\
 	mes.c		\
 	mesacl.c	\
 	mesask.c	\

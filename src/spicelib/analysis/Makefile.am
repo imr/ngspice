@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libckt.a
+noinst_LTLIBRARIES = libckt.la
 
-libckt_a_SOURCES = \
+libckt_la_SOURCES = \
 		acan.c		\
 		acaskq.c	\
 		acsetp.c	\

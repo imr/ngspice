@@ -4,9 +4,11 @@
 SUBDIRS = plotting help parser wdisp numparam
 DIST_SUBDIRS = plotting help parser wdisp numparam
 
-noinst_LIBRARIES = libfte.a
+noinst_LTLIBRARIES = libfte.la
 
-libfte_a_SOURCES = \
+libfte_la_SOURCES = \
+	com_measure2.c	\
+	com_measure2.h	\
 	commands.c	\
 	commands.h	\
 	com_ahelp.c	\

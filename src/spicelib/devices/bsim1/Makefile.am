@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libbsim1.a
+noinst_LTLIBRARIES = libbsim1.la
 
-libbsim1_a_SOURCES = 	\
+libbsim1_la_SOURCES = 	\
 	b1.c		\
 	b1acld.c	\
 	b1ask.c		\

@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libcidertwod.a
+noinst_LTLIBRARIES = libcidertwod.la
 
-libcidertwod_a_SOURCES = 	\
+libcidertwod_la_SOURCES = 	\
 		twoadmit.c	\
 		twoaval.c	\
 		twocond.c	\

@@ -44,7 +44,17 @@ $Id$
 #include "variable.h"
 #include "terminal.h"
 
+/* out_printf doesn't handle double arguments correctly, so we
+    sprintf into this buf and call out_send w/ it */
+char out_pbuf[8*BSIZE_SP];
+
+bool out_moremode = TRUE;
+bool out_isatty = TRUE;
+
+#ifndef TCL_MODULE
+
 #ifdef HAVE_TERMCAP
+
 static char *motion_chars;
 static char *clear_chars;
 static char *home_chars;
@@ -54,17 +64,11 @@ static char *cleol_chars;
 #define DEF_SCRHEIGHT   24
 #define DEF_SCRWIDTH    80
 
-bool out_moremode = TRUE;
-bool out_isatty = TRUE;
-
 static int xsize, ysize;
 static int xpos, ypos;
 static bool noprint, nopause;
 
 
-/* out_printf doesn't handle double arguments correctly, so we
-    sprintf into this buf and call out_send w/ it */
-char out_pbuf[8*BSIZE_SP];
 
 /* Start output... */
 
@@ -345,3 +349,23 @@ term_cleol(void)
 	tputs(cleol_chars, 1, outfn);
 #endif
 }
+
+#else
+
+void out_init(void) {}
+void outbufputc(void) {}
+void promptreturn(void) {}
+void term_clear(void) {}
+void term_home(void) {}
+void term_cleol(void) {}
+void tcap_init(void) {}
+
+void out_send(char *string) {fprintf(cp_out,string);}
+
+void
+out_printf(char *fmt, char *s1, char *s2, char *s3, char *s4, char *s5, 
+		char *s6, char *s7, char *s8, char *s9, char *s10) {
+	fprintf(cp_out,fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+}
+
+#endif /* TCL_MODULE */

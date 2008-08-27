@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libndev.a
+noinst_LTLIBRARIES = libndev.la
 
-libndev_a_SOURCES = 	\
+libndev_la_SOURCES = 	\
 	ndev.c		\
 	ndevacld.c	\
 	ndevaccept.c	\

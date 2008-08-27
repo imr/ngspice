@@ -13,6 +13,11 @@ $Id$
 #include <stdio.h>
 #include <memory.h>
 
+/*saj For Tcl module locking*/
+#ifdef TCL_MODULE
+#include <tcl.h>
+//#include <tclDecls.h>
+#endif
 
 /* Malloc num bytes and initialize to zero. Fatal error if the space can't
  * be tmalloc'd.   Return NULL for a request for 0 bytes.
@@ -24,9 +29,22 @@ void *
 tmalloc(size_t num)
 {
   void *s;
+/*saj*/
+#ifdef TCL_MODULE
+  Tcl_Mutex *alloc;
+  alloc = Tcl_GetAllocMutex();
+#endif
     if (!num)
       return NULL;
+/*saj*/
+#ifdef TCL_MODULE
+  Tcl_MutexLock(alloc);
+#endif
     s = calloc(num,1);
+/*saj*/
+#ifdef TCL_MODULE
+  Tcl_MutexUnlock(alloc);
+#endif
     if (!s){
       fprintf(stderr,"malloc: Internal Error: can't allocate %ld bytes. \n",(long)num);
       exit(EXIT_BAD);
@@ -38,7 +56,11 @@ void *
 trealloc(void *ptr, size_t num)
 {
   void *s;
-
+/*saj*/
+#ifdef TCL_MODULE
+  Tcl_Mutex *alloc;
+  alloc = Tcl_GetAllocMutex();
+#endif
   if (!num) {
     if (ptr)
       free(ptr);
@@ -47,9 +69,17 @@ trealloc(void *ptr, size_t num)
 
   if (!ptr)
     s = tmalloc(num);
-  else
+  else {
+/*saj*/
+#ifdef TCL_MODULE
+    Tcl_MutexLock(alloc);
+#endif
     s = realloc(ptr, num);
-
+/*saj*/
+#ifdef TCL_MODULE
+  Tcl_MutexUnlock(alloc);
+#endif
+  }
   if (!s) {
     fprintf(stderr,"realloc: Internal Error: can't allocate %ld bytes.\n",(long)num);
     exit(EXIT_BAD);
@@ -111,8 +141,18 @@ trealloc(void *str, size_t num)
 void
 txfree(void *ptr)
 {
+/*saj*/
+#ifdef TCL_MODULE
+  Tcl_Mutex *alloc;
+  alloc = Tcl_GetAllocMutex();
+  Tcl_MutexLock(alloc);
+#endif
 	if (ptr)
 		free(ptr);
+/*saj*/
+#ifdef TCL_MODULE
+  Tcl_MutexUnlock(alloc);
+#endif
 }
 
 #endif

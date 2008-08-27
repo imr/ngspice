@@ -2,9 +2,9 @@
 
 EXTRA_DIST = downgrad.txt ngconfig.sh readme.txt nupatest.c washprog.c
 
-noinst_LIBRARIES = libnumparam.a
+noinst_LTLIBRARIES = libnumparam.la
 
-libnumparam_a_SOURCES = 		\
+libnumparam_la_SOURCES = 		\
 	spicenum.c	\
 	xpressn.c	\
 	mystring.c	\

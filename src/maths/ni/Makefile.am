@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libni.a
+noinst_LTLIBRARIES = libni.la
 
-libni_a_SOURCES = \
+libni_la_SOURCES = \
 		niaciter.c	\
 		niaciter.h	\
 		nicomcof.c	\

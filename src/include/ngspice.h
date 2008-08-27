@@ -207,6 +207,21 @@ extern char *Lib_Path;
 extern int ARCHme;	/* My logical process number */
 extern int ARCHsize;	/* Total number of processes */
 
+#ifdef TCL_MODULE
+
+#include <errno.h>
+
+extern int tcl_printf(const char *format, ...);
+extern int tcl_fprintf(FILE *f, const char *format, ...);
+
+#undef printf
+#define printf tcl_printf
+
+#undef perror
+#define perror(string) fprintf(stderr,"%s: %s\n",string,sys_errlist[errno])
+
+#endif
+
 #ifdef CIDER
 /* Definitions of globals for Machine Accuracy Limits 
  * Imported from cider

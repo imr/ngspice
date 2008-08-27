@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libcideroned.a
+noinst_LTLIBRARIES = libcideroned.la
 
-libcideroned_a_SOURCES = 	\
+libcideroned_la_SOURCES = 	\
 		oneadmit.c	\
 		oneaval.c	\
 		onecond.c	\

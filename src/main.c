@@ -153,7 +153,7 @@ struct variable *(*if_getparam)( );
 static int started = FALSE;
 
 /* static functions */
-static int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
+int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 static int sp_shutdown(int exitval);
 static void app_rl_readlines(void);
 
@@ -190,12 +190,37 @@ bool ft_nutmeg = FALSE;
 extern struct comm spcp_coms[ ];
 struct comm *cp_coms = spcp_coms;
 
+
+extern int OUTpBeginPlot(), OUTpData(), OUTwBeginPlot(), OUTwReference();
+extern int OUTwData(), OUTwEnd(), OUTendPlot(), OUTbeginDomain();
+extern int OUTendDomain(), OUTstopnow(), OUTerror(), OUTattributes();
+   
+
+
+IFfrontEnd nutmeginfo = {
+	IFnewUid,
+	IFdelUid,
+	OUTstopnow,
+	seconds,
+	OUTerror,
+	OUTpBeginPlot,
+	OUTpData,
+	OUTwBeginPlot,
+	OUTwReference,
+	OUTwData,
+	OUTwEnd,
+	OUTendPlot,
+	OUTbeginDomain,
+	OUTendDomain,
+	OUTattributes
+    };;
+
 #else /* SIMULATOR */
 
 bool ft_nutmeg = TRUE;
 extern struct comm nutcp_coms[ ];
 struct comm *cp_coms = nutcp_coms;
-static IFfrontEnd nutmeginfo;
+IFfrontEnd nutmeginfo;
 
 /* -------------------------------------------------------------------------- */
 int
@@ -320,7 +345,7 @@ IFfrontEnd *SPfrontEnd = NULL;
 int DEVmaxnum = 0;
 
 /* -------------------------------------------------------------------------- */
-static int
+int
 SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 {
 #ifdef SIMULATOR
@@ -616,11 +641,6 @@ read_initialisation_file(char * dir, char * name)
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef SIMULATOR
-extern int OUTpBeginPlot(), OUTpData(), OUTwBeginPlot(), OUTwReference();
-extern int OUTwData(), OUTwEnd(), OUTendPlot(), OUTbeginDomain();
-extern int OUTendDomain(), OUTstopnow(), OUTerror(), OUTattributes();
-#endif /* SIMULATOR */    
 
 int
 #ifdef HAS_WINDOWS
@@ -639,23 +659,7 @@ main(int argc, char **argv)
 #ifdef SIMULATOR
     int error2;
     
-    static IFfrontEnd nutmeginfo = {
-	IFnewUid,
-	IFdelUid,
-	OUTstopnow,
-	seconds,
-	OUTerror,
-	OUTpBeginPlot,
-	OUTpData,
-	OUTwBeginPlot,
-	OUTwReference,
-	OUTwData,
-	OUTwEnd,
-	OUTendPlot,
-	OUTbeginDomain,
-	OUTendDomain,
-	OUTattributes
-    };
+     
 #else  /* ~ SIMULATOR */
     bool gdata = TRUE;
 #endif /* ~ SIMULATOR */
