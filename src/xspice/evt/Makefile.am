@@ -2,9 +2,9 @@
 #
 # JW 3/9/01 - had a go and makeing an   autoconf script.
 
-noinst_LIBRARIES = libevtxsp.a
+noinst_LTLIBRARIES = libevtxsp.la
 
-libevtxsp_a_SOURCES = \
+libevtxsp_la_SOURCES = \
 evtaccept.c  \
 evtcall_hybrids.c  \
 evtdump.c  \

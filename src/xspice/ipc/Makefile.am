@@ -2,9 +2,9 @@
 #
 # JW 3/9/01 - had a go and makeing an   autoconf script.
 
-noinst_LIBRARIES = libipcxsp.a
+noinst_LTLIBRARIES = libipcxsp.la
 
-libipcxsp_a_SOURCES = \
+libipcxsp_la_SOURCES = \
 ipcaegis.c   \
 ipc.c        \
 ipcsockets.c \

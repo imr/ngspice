@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LIBRARIES = libmathmisc.a
+noinst_LTLIBRARIES = libmathmisc.la
 
-libmathmisc_a_SOURCES = \
+libmathmisc_la_SOURCES = \
 	accuracy.c 	\
 	accuracy.h 	\
 	bernoull.h	\

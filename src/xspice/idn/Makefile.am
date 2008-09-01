@@ -2,9 +2,9 @@
 #
 # JW 3/9/01 - had a go and makeing an   autoconf script.
 
-noinst_LIBRARIES = libidnxsp.a
+noinst_LTLIBRARIES = libidnxsp.la
 
-libidnxsp_a_SOURCES = \
+libidnxsp_la_SOURCES = \
 	idndig.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include

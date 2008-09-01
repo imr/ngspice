@@ -2,9 +2,9 @@
 #
 # JW 3/9/01 - had a go and makeing an   autoconf script.
 
-noinst_LIBRARIES = libmifxsp.a
+noinst_LTLIBRARIES = libmifxsp.la
 
-libmifxsp_a_SOURCES = \
+libmifxsp_la_SOURCES = \
 	mif_inp2.c \
 	mifgetmod.c \
 	mifgetvalue.c \
