@@ -1,3 +1,7 @@
+2008-09-01
+ * configure.in: CAPZEROBYPASS is enabled by default now. To disable it you
+   can add --disable-capzerobypass to configure command.  
+
 2008-08-27 Paolo Nenzi
  * --- TCLSPICE initial integration (Lionel Sainte Cluque) ---
  * Makefile.am: Makefiles changed for libtool. We use still .a files but we let
