@@ -272,6 +272,134 @@ AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 AC_PROG_LIBTOOL
 
+
+##########################################################################
+#
+# tcl libraries test
+#
+##########################################################################
+
+dnl
+dnl The tclSpice options
+dnl
+AM_CONDITIONAL(TCL_MODULE, false)
+if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
+   AM_CONDITIONAL(TCL_MODULE, true)
+   AC_DEFINE(TCL_MODULE,1,[Tcl Module])
+   with_x=no
+   enable_shared=no
+
+  AC_MSG_CHECKING([for tclConfig.sh])
+  tcl_config_sh=""
+  if test "x$with_tcl" != "xyes" ; then
+  for dir in \
+      $with_tcl
+    do
+      if test -r "$dir/tclConfig.sh" ; then
+        tcl_config_sh="$dir/tclConfig.sh"
+        break
+      elif test -r "$dir/lib/tclConfig.sh" ; then
+        tcl_config_sh="$dir/lib/tclConfig.sh"
+        break
+      elif test -r "$dir/unix/tclConfig.sh" ; then
+        tcl_config_sh="$dir/unix/tclConfig.sh"
+        break
+      fi
+    done
+  else
+    for dir in \
+     $prefix \
+     $exec_prefix
+    do
+      if test -r "$dir/tclConfig.sh" ; then
+        tcl_config_sh="$dir/tclConfig.sh"
+        break
+      elif test -r "$dir/lib/tclConfig.sh" ; then
+        tcl_config_sh="$dir/lib/tclConfig.sh"
+        break
+      elif test -r "$dir/unix/tclConfig.sh" ; then
+        tcl_config_sh="$dir/unix/tclConfig.sh"
+        break
+      fi
+    done
+
+
+    if test "x$tcl_config_sh" = "x" ; then
+      for dir in \
+       `ls -dr /usr/local/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+       /usr/local/tcl \
+       /usr/local \
+       /usr
+      do
+        if test -r "$dir/tclConfig.sh" ; then
+          tcl_config_sh="$dir/tclConfig.sh"
+          break
+        elif test -r "$dir/lib/tclConfig.sh" ; then
+          tcl_config_sh="$dir/lib/tclConfig.sh"
+          break
+        fi
+      done
+    fi
+  fi
+
+AC_MSG_RESULT([${tcl_config_sh}])
+
+
+
+if test "x$tcl_config_sh" = "x" ; then
+  echo "can't find Tcl configuration script \"tclConfig.sh\""
+  find /usr/lib/ -name 'tclConfig.sh' -exec echo "Should you add --with-tcl={} to ./configure arguments?" \;
+  exit 1
+fi
+
+. $tcl_config_sh
+
+CFLAGS="$CFLAGS $TCL_INCLUDE_SPEC"
+CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC"
+
+AC_CHECK_HEADERS(tcl.h blt.h,,AC_MSG_ERROR(Couldn't find Tcl/BLT headers),)
+
+if test ! -x "$TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION" ; then
+AC_MSG_ERROR(Couldn't find $TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION)
+fi
+
+AC_MSG_CHECKING(for TCL module BLT)
+rm -f conftest.tcl
+cat > conftest.tcl << EOF
+package require BLT;
+exit;
+EOF
+if ($TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION conftest.tcl; exit) 2>/dev/null
+then
+   AC_MSG_RESULT(Found)
+else
+   AC_MSG_ERROR(Couldn't find BLT)
+fi
+rm -f conftest.tcl
+
+AC_CHECK_LIB(pthread,pthread_create)
+for TCL_PACKAGE_PATH_ELEMENT in $TCL_PACKAGE_PATH ; do
+  if test -a $TCL_PACKAGE_PATH_ELEMENT ; then
+    libdir=$TCL_PACKAGE_PATH_ELEMENT
+    AC_SUBST(libdir)
+    break
+  fi
+done
+
+else
+  TCL_PACKAGE_PATH=""
+  TCL_LIB_SPEC=""
+fi
+
+AC_SUBST(TCL_PACKAGE_PATH)
+AC_SUBST(TCL_LIB_SPEC)
+##################################################################
+#
+#
+#End of tcl libraries test
+#
+#################################################################
+
 dnl --with-windows : the user wants to use generate the MS WINDOWS executable
 AC_MSG_CHECKING([whether windows code is enabled])
 AC_ARG_WITH(windows,
@@ -412,134 +540,6 @@ else
 fi ;;
 
 esac
-
-##########################################################################
-#
-# tcl libraries test
-#
-##########################################################################
-
-dnl
-dnl The tclSpice options
-dnl
-AM_CONDITIONAL(TCL_MODULE, false)
-if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
-   AM_CONDITIONAL(TCL_MODULE, true)
-   AC_DEFINE(TCL_MODULE,1,[Tcl Module])
-   with_x=no
-   enable_shared=no
-
-  AC_MSG_CHECKING([for tclConfig.sh])
-  tcl_config_sh=""
-  if test "x$with_tcl" != "xyes" ; then
-  for dir in \
-      $with_tcl
-    do
-      if test -r "$dir/tclConfig.sh" ; then
-        tcl_config_sh="$dir/tclConfig.sh"
-        break
-      elif test -r "$dir/lib/tclConfig.sh" ; then
-        tcl_config_sh="$dir/lib/tclConfig.sh"
-        break
-      elif test -r "$dir/unix/tclConfig.sh" ; then
-        tcl_config_sh="$dir/unix/tclConfig.sh"
-        break
-      fi
-    done
-  else
-    for dir in \
-     $prefix \
-     $exec_prefix
-    do
-      if test -r "$dir/tclConfig.sh" ; then
-        tcl_config_sh="$dir/tclConfig.sh"
-        break
-      elif test -r "$dir/lib/tclConfig.sh" ; then
-        tcl_config_sh="$dir/lib/tclConfig.sh"
-        break
-      elif test -r "$dir/unix/tclConfig.sh" ; then
-        tcl_config_sh="$dir/unix/tclConfig.sh"
-        break
-      fi
-    done
-
-
-    if test "x$tcl_config_sh" = "x" ; then
-      for dir in \
-       `ls -dr /usr/local/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
-       /usr/local/tcl \
-       /usr/local \
-       /usr
-      do
-        if test -r "$dir/tclConfig.sh" ; then
-          tcl_config_sh="$dir/tclConfig.sh"
-          break
-        elif test -r "$dir/lib/tclConfig.sh" ; then
-          tcl_config_sh="$dir/lib/tclConfig.sh"
-          break
-        fi
-      done
-    fi
-  fi
-
-AC_MSG_RESULT([${tcl_config_sh}])
-
-
-
-if test "x$tcl_config_sh" = "x" ; then
-  echo "can't find Tcl configuration script \"tclConfig.sh\""
-  find /usr/lib/ -name 'tclConfig.sh' -exec echo "Should you add --with-tcl={} to ./configure arguments?" \;
-  exit 1
-fi
-
-. $tcl_config_sh
-
-CFLAGS="$CFLAGS $TCL_INCLUDE_SPEC"
-CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC"
-
-AC_CHECK_HEADERS(tcl.h blt.h,,AC_MSG_ERROR(Couldn't find Tcl/BLT headers),)
-
-if test ! -x "$TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION" ; then
-AC_MSG_ERROR(Couldn't find $TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION)
-fi
-
-AC_MSG_CHECKING(for TCL module BLT)
-rm -f conftest.tcl
-cat > conftest.tcl << EOF
-package require BLT;
-exit;
-EOF
-if ($TCL_EXEC_PREFIX/bin/tclsh$TCL_VERSION conftest.tcl; exit) 2>/dev/null
-then
-   AC_MSG_RESULT(Found)
-else
-   AC_MSG_ERROR(Couldn't find BLT)
-fi
-rm -f conftest.tcl
-
-AC_CHECK_LIB(pthread,pthread_create)
-for TCL_PACKAGE_PATH_ELEMENT in $TCL_PACKAGE_PATH ; do
-  if test -a $TCL_PACKAGE_PATH_ELEMENT ; then
-    libdir=$TCL_PACKAGE_PATH_ELEMENT
-    AC_SUBST(libdir)
-    break
-  fi
-done
-
-else
-  TCL_PACKAGE_PATH=""
-  TCL_LIB_SPEC=""
-fi
-
-AC_SUBST(TCL_PACKAGE_PATH)
-AC_SUBST(TCL_LIB_SPEC)
-##################################################################
-#
-#
-#End of tcl libraries test
-#
-#################################################################
-
 
 
 dnl Check for a few typdefs:

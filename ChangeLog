@@ -1,3 +1,8 @@
+2008-09-09 Lionel Sainte Cluque
+ * configure.in: tclspice checks moved before Operating System checks: To set
+ no_x flag before it is used.
+ * tests/tcl-testbench*: chmod a+x tcl-testbench*.tcl
+
 2008-09-01
  * configure.in: CAPZEROBYPASS is enabled by default now. To disable it you
    can add --disable-capzerobypass to configure command.  
