@@ -1,4 +1,8 @@
 2008-09-13 Holger Vogt
+ * configure.in: add AC_LIBTOOL_WIN32_DLL
+ * src/makefile.am correct typo
+
+2008-09-13 Holger Vogt
  * configure.in: add /mingw as search path for tcl
  * tclspice.c: replace sigsetjump and sigjmp_buf with macros from macros.h
  

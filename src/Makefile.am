@@ -267,7 +267,7 @@ libspice_la_LIBADD = ngspice.lo conf.lo \
 	misc/libmisc.la \
 	tclspice.lo $(LIBS) 
 libspice_la_CFLAGS = $(AM_CFLAGS)
-libspice_la_LDFALGS =  -shared -Wl,--version-script=tclspice.map
+libspice_la_LDFLAGS =  -shared -Wl,--version-script=tclspice.map -no-undefined
 
 CLEANFILES = pkgIndex.tcl libspice.so
 
