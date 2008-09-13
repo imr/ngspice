@@ -329,7 +329,8 @@ if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
        `ls -dr /usr/local/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
        /usr/local/tcl \
        /usr/local \
-       /usr
+       /usr \
+       /mingw
       do
         if test -r "$dir/tclConfig.sh" ; then
           tcl_config_sh="$dir/tclConfig.sh"

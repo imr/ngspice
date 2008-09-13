@@ -54,6 +54,8 @@ typedef pthread_t threadId_t;
 #endif /* HAVE_STRING_H */
 #ifdef __MINGW32__
     #include <stdarg.h>
+    /* remove type incompatibility with winnt.h*/
+    #undef BOOLEAN
     #include <windef.h>
     #include <winbase.h>  /* Sleep */
 	#ifndef srandom
@@ -89,7 +91,7 @@ typedef pthread_t threadId_t;
 typedef void (*sighandler)(int);
 
 #include <setjmp.h>
-extern sigjmp_buf jbuf;
+extern JMP_BUF jbuf;
 
 /*Included for the module to access data*/
 #include <dvec.h>
@@ -635,7 +637,7 @@ static int _run(int argc,char **argv){
 
   /* Catch Ctrl-C to break simulations */
   oldHandler = signal(SIGINT,ft_sigintr);
-  if(sigsetjmp(jbuf, 1)!=0) {
+  if(SETJMP(jbuf, 1)!=0) {
       signal(SIGINT,oldHandler);
       return TCL_OK;
   }
@@ -2141,7 +2143,7 @@ int Spice_Init(Tcl_Interp *interp) {
     /* Read the user config files */
     /* To catch interrupts during .spiceinit... */
     old_sigint = signal(SIGINT, ft_sigintr);
-    if (sigsetjmp(jbuf, 1) == 1) {
+    if (SETJMP(jbuf, 1) == 1) {
         fprintf(cp_err, "Warning: error executing .spiceinit.\n");
         goto bot;
     }
@@ -2341,7 +2343,7 @@ int tcl_fprintf(FILE *f, const char *format, ...)
 }
 
 /*----------------------------------------------------------------------*/
-/* Reimplement fprintf() as a call to Tcl_Eval().                       */
+/* Reimplement printf() as a call to Tcl_Eval().                       */
 /*----------------------------------------------------------------------*/
 
 int tcl_printf(const char *format, ...)

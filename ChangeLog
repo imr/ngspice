@@ -1,3 +1,7 @@
+2008-09-13 Holger Vogt
+ * configure.in: add /mingw as search path for tcl
+ * tclspice.c: replace sigsetjump and sigjmp_buf with macros from macros.h
+ 
 2008-09-09 Lionel Sainte Cluque
  * configure.in: tclspice checks moved before Operating System checks: To set
  no_x flag before it is used.
