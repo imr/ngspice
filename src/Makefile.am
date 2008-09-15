@@ -281,7 +281,7 @@ TCL_FILES = libspice.la  pkgIndex.tcl
 
 pkgIndex.tcl: pkgIndex.tcl.in
 	rm -f $@
-	sed -e 's;%LIB_DIR%;$(libdir);g' $< | \
+	sed -e 's;%LIB_DIR%;$(DESTDIR)$(libdir);g' $< | \
 	sed -e 's;%VERSION%;$(TCLSPICE_VERSION);g' > $@
 
 all: $(TCL_FILES) 
@@ -294,8 +294,8 @@ install-tcl-recursive:
 	done; 
 
 install-tclspice: 
-	$(mkinstalldirs) $(libdir)/spice
-	$(INSTALL_DATA) pkgIndex.tcl $(libdir)/spice
+	$(mkinstalldirs) $(DESTDIR)$(libdir)/spice
+	$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(libdir)/spice
 
 tclspice.lo: tclspice.c
 	$(LTCOMPILE) -DTCLSPICE_version="\"$(TCLSPICE_VERSION)\"" -MT tclspice.lo -MD -MP -MF $(DEPDIR)/tclspice.Tpo -c -o tclspice.o $<

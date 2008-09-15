@@ -1,3 +1,7 @@
+2008-09-15 Lionel Sainte Cluque
+  * src/Makefile.am: Add $(DESTDIR) in tclspice installation, required by
+  debian package.
+
 2008-09-13 Holger Vogt
  * configure.in: add AC_LIBTOOL_WIN32_DLL
  * src/makefile.am correct typo
