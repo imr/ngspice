@@ -15,6 +15,7 @@
 static Str (150, keys);                /* all my keywords */
 static Str (150, fmath);        /* all math functions */
 
+#ifndef _MSC_VER
 static double
 max (double x, double y)
 {
@@ -26,6 +27,7 @@ min (double x, double y)
 {
   return (x < y) ? x : y;
 }
+#endif
 
 static double
 ternary_fcn (int conditional, double if_value, double else_value)

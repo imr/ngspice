@@ -43,7 +43,11 @@ int    vfp_r_i_n_t_f(FILE * __stream, const char * __format, void * __arglist);
 /*int   vfs_c_a_n_f(FILE * __stream, const char * __format, void * __arglist);*/
 int    vp_r_i_n_t_f(const char * __format, void * __arglist);
 /*int   vs_c_a_n_f(const char * __format, void * __arglist); */
+#ifdef _MSC_VER
+_CRTIMP int __cdecl read(int fd, _Out_bytecap_(_MaxCharCount) void * __buf, _In_ unsigned int __n);
+#else
 int    r_e_a_d(int fd, char * __buf, int __n);
+#endif
 int    g_e_t_c(FILE * __fp);
 int    g_e_t_char(void);
 int    p_u_t_char(const int __c);
@@ -89,6 +93,14 @@ int    fp_u_t_char(int __c);
 #define ferror		f_e_r_r_o_r
 #define fgetchar	fg_e_t_char
 #define fputchar	fp_u_t_char
+
+#if defined (_MSC_VER)
+#define strdup _strdup
+#define unlink _unlink
+#define fileno _fileno
+#define getcwd _getcwd
+#define isnan _isnan
+#endif
 
 /*----------------------------------------------------------------------------*/
 

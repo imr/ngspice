@@ -131,7 +131,7 @@ struct timeb timebegin;
 #include "wstdio.h"
 #endif
 
-#if defined (__MINGW32__) || defined (__CYGWIN__)
+#if defined (__MINGW32__) || defined (__CYGWIN__) || defined (_MSC_VER)
 #include <io.h>
 #else
 #  ifdef HAVE_SYS_IO_H
@@ -157,6 +157,10 @@ struct timeb timebegin;
 /* added for CYGWIN */
 #ifndef HUGE
 #define HUGE HUGE_VAL
+#endif
+
+#if defined (_MSC_VER)
+#define finite _finite
 #endif
 
 extern char *gettok(char **s);

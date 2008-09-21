@@ -13,6 +13,7 @@ static bool measure_valid[20000];
 static bool just_chk_meas;
 static bool measures_passed;
 
+#if !defined(_MSC_VER)
 static double
 max( double a, double b ) {
   if ( a > b ) return a;
@@ -24,6 +25,7 @@ min( double a, double b ) {
   if ( a < b ) return a;
   else         return b;
 }
+#endif
 
 static int
 get_measure_precision()

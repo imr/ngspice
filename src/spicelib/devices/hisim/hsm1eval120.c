@@ -71,6 +71,9 @@
 #ifdef HAVE_IEEEFP_H
 # include <ieeefp.h>
 #endif
+#ifdef _MSC_VER
+#define finite _finite
+#endif
 
 /*-----------------------------------*
 * HiSIM macros and structures.

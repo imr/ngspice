@@ -60,6 +60,9 @@ extern int NewViewport(GRAPH *pgraph);
 
 /* defines */
 #define RAD_TO_DEG	(180.0 / M_PI)
+#ifndef M_LN10
+#define M_LN10  2.30258509299404568402
+#endif
 
 /* local variables */
 static int			IsRegistered = 0;        	/* 1 if window class is registered */

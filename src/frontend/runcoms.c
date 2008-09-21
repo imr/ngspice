@@ -221,7 +221,7 @@ dosim(char *what, wordlist *wl)
 #endif /* PARALLEL_ARCH */
         if (!*wl->wl_word)
 	    rawfileFp = stdout;
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_MSC_VER)
 /* ask if binary or ASCII, open file with w or wb   hvogt 15.3.2000 */
         else if (ascii) { 
             if(!(rawfileFp = fopen(wl->wl_word, "w"))) {

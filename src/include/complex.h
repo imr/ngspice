@@ -12,6 +12,10 @@ struct _complex1 {   /* IBM portability... renamed due to double definition in M
     double cx_imag;
 } ;
 
+#ifdef _MSC_VER
+typedef struct _complex1 _complex;
+#endif
+
 typedef struct _complex1 complex;
 
 #define realpart(cval)  ((struct _complex1 *) (cval))->cx_real

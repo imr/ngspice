@@ -63,7 +63,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     else
         prec = DEFPREC;
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_MSC_VER)
 /* - Binary file binary write -  hvogt 15.03.2000 ---------------------*/
     if (binary) {
         if (!(fp = fopen(name, app ? "ab" : "wb"))) {
@@ -295,7 +295,7 @@ raw_read(char *name)
     FILE *fp, *lastin, *lastout, *lasterr;
 
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_MSC_VER)
     bool binary = TRUE;
 #endif
 
@@ -304,7 +304,7 @@ raw_read(char *name)
         return (NULL);
     }
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_MSC_VER)
 /* Test, whether file really ASCII, otherwise assume binary  hvogt 15.3.2000 */
     while (fgets(buf, BSIZE_SP, fp)) {
         if (ciprefix("values:", buf)) {
