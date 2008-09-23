@@ -1,3 +1,8 @@
+2008-09-24 Holger Vogt
+ * wstdio.h, scalb.c, complex.h
+   Small changes to allow compilation with MS Visual C++ 2008
+   main.c, util.c: path of *.cir input file as search path for .include files (Windows only)
+
 2008-09-22 Holger Vogt
  * complex.h, measure.c, resource.c, windisp.c, xpressn.c, rawfile.c, runcoms.c, readhelp.c,
    defines.h, ngspice.h, b4soild.c, hsm1eval102.c, hsm1eval112.c, hsm1eval120.c, wstdio.h

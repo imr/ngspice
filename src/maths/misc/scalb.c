@@ -7,7 +7,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #ifndef HAVE_SCALB
 #  ifdef HAVE_SCALBN
 #    define scalb scalbn
-#else                       /* Chris Inbody */
+#  else                       /* Chris Inbody */
 
 double
 scalb(double x, int n)
@@ -30,5 +30,12 @@ scalb(double x, int n)
 }
 #   endif /* HAVE_SCALBN */
 #else /* HAVE_SCALB */
+#  ifndef HAVE_SCALBN
+extern scalb(double x, long n);
+scalbn(double x, int n)
+{
+	return scalb(x, (long)n);
+}
+#  endif
 int Dummy_Symbol_1;
 #endif /* HAVE_SCALB */
