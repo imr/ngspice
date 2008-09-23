@@ -50,7 +50,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     double deltat;
                     double basephase;
 #endif		    		    
-                    double time;
+                    double time = 0.; //hvogt
                     double basetime = 0;
 
 		    TD = here->VSRCfunctionOrder > 2
