@@ -997,7 +997,8 @@ bot:
 	   startup time.  */
 	FILE *tempfile;
 #ifdef HAS_WINDOWS
-	char *tpf;
+	char *tpf; /* temporary file */
+	char *dname = NULL; /* directory of input file*/
 	bool has_smk = FALSE;
 #endif	
 	tempfile = tmpfile();
@@ -1030,13 +1031,24 @@ bot:
 		err = 1;
 		break;
 	    }
+#ifdef HAS_WINDOWS
+            /* Copy the input file name which otherwise will be lost due to the
+               temporary file */
+            dname = copy(arg);
+#endif		    
 	    append_to_stream(tempfile, tp);
 	    fclose(tp);
 	}
 	fseek(tempfile, (long) 0, 0);
 
         if (tempfile && (!err || !ft_batchmode)) {
+#ifdef HAS_WINDOWS
+            /* Copy the input file name for adding another file search path */
+            inp_spsource(tempfile, FALSE, dname);
+            tfree(dname);
+#else        	
             inp_spsource(tempfile, FALSE, NULL);
+#endif
             gotone = TRUE;
         }
 #ifdef HAS_WINDOWS
