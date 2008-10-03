@@ -1,3 +1,12 @@
+2008-10-03 Paolo Nenzi --espice-integration
+ * src/frontend/{spiceif.c, spiceif.h, vectors.c}, src/include/fteext.h, src/main.c:
+   3: A new function finddev_special() has been introduced to look for references
+      like @BC107[is] and to verify if we asked for a model or a device and thus 
+      call the spif_getparam_special() correctly in vectors.c. The new @ syntax is
+      @{model,device}[parameter]. - A Roldan - Espice
+      Note: I have modified the implmentation putting the spif_getparam_special() in
+            the if_getparam definition in main.c - P. Nenzi
+
 2008-09-24 Holger Vogt
  * wstdio.h, scalb.c, complex.h
    Small changes to allow compilation with MS Visual C++ 2008

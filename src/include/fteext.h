@@ -449,6 +449,7 @@ extern int if_sens_run();
 extern struct variable *(*if_getparam)();
 extern struct variable *nutif_getparam();
 extern struct variable *spif_getparam();
+extern struct variable *spif_getparam_special();
 extern void if_cktfree();
 extern void if_dump();
 extern int if_option();

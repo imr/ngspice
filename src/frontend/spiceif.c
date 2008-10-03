@@ -81,6 +81,8 @@ static int doset(void *ckt, int typecode, GENinstance *dev, GENmodel *mod,
 		 IFparm *opt, struct dvec *val);
 static int finddev(void *ck, char *name, void **devptr, void **modptr);
 
+/*espice fix integration */
+static int finddev_special(char *ck, char *name, void **devptr, void **modptr, int *device_or_model);
 
 /* Input a single deck, and return a pointer to the circuit. */
 
@@ -549,6 +551,180 @@ if_errstring(int code)
 {
     return (INPerror(code));
 }
+
+/* Get pointers to a device, its model, and its type number given the name. If
+ * there is no such device, try to find a model with that name
+   Por referencia dice si es un modelo o dispositivo: device_or_model
+   
+   finddev_special(ck, name, devptr, modptr,device_or_model):
+   
+   Introducido para que al buscar la referencia print @BC107[is] y averigua si es un modelo o un dispositivo para llamar correctamente en la funci�n  spif_getparam_special(ckt, name, param, ind, do_model)
+   que es llamada por  \fte\vector.c  struct dvec *vec_get(char *word) al ejecutar
+      print @modelo/dispositivo[parametro]  y funcione sin distinci�n de modelo/dispositivo
+      utilizado.
+
+ */
+static int 
+finddev_special(
+    char *ck,
+    char *name,
+    void **devptr,
+    void **modptr,
+    int *device_or_model)
+{
+    int err;
+    int type = -1;
+
+    err = (*(ft_sim->findInstance))((void *)ck,&type,devptr,name,NULL,NULL);
+    if(err == OK)
+    {
+     *device_or_model=0;
+     return(type);
+    }
+    type = -1;
+    *devptr = (void *)NULL;
+    err = (*(ft_sim->findModel))((void *)ck,&type,modptr,name);
+    if(err == OK)
+    {
+     *device_or_model=1;
+     return(type);
+    }
+    *modptr = (void *)NULL;
+    *device_or_model=2;
+    return(-1);
+
+}
+
+/* Get a parameter value from the circuit. If name is left unspecified,
+ * we want a circuit parameter
+ * Entrega el valor del par�metro tanto si es modelo como dispositivo
+ * A.Roldan
+ */
+struct variable *
+spif_getparam_special(void *ckt,char **name,char *param,int ind,int do_model)    
+{
+    struct variable *vv = NULL, *tv;
+    IFvalue *pv;
+    IFparm *opt;
+    int typecode, i, modelo_dispositivo;
+    GENinstance *dev=(GENinstance *)NULL;
+    GENmodel *mod=(GENmodel *)NULL;
+    IFdevice *device;
+
+    //fprintf(cp_err, "Calling if_getparam(%s, %s)\n", *name, param);
+
+    if (!param || (param && eq(param, "all")))
+     {
+        INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
+        typecode = finddev_special(ckt, *name, (void**)&dev, (void**)&mod,&modelo_dispositivo);
+        if (typecode == -1)
+        {
+            fprintf(cp_err,"Error: no such device or model name %s\n",*name);
+            return (NULL);
+        }
+        device = ft_sim->devices[typecode];
+        if(!modelo_dispositivo)
+        {
+          //Es un Dispositivo
+          for (i = 0; i < *(device->numInstanceParms); i++)
+          {
+            opt = &device->instanceParms[i];
+            if(opt->dataType & IF_REDUNDANT || !opt->description) continue;
+            if(!(opt->dataType & IF_ASK)) continue;
+            pv = doask(ckt, typecode, dev, mod, opt, ind);
+            if (pv)
+            {
+             tv = parmtovar(pv, opt);
+
+	     //Con esto empaquetamos el Nombre del par�metro de la instancia y su acr�nimo
+	     {
+		char auxiliar[70],*aux_pointer;
+		sprintf(auxiliar,"%s [%s]",tv->va_name, device->instanceParms[i].keyword);
+		aux_pointer=tv->va_name;
+		free(aux_pointer);
+		tv->va_name = copy(auxiliar);
+	     }
+             if (vv) tv->va_next = vv;
+             vv = tv;
+          }
+          else
+           fprintf(cp_err,"Internal Error: no parameter '%s' on device '%s'\n",
+			   device->instanceParms[i].keyword,device->name);
+         }
+         return (vv);
+        }
+        else  // Es modelo o dispositivo ?
+        {
+         //Es un Modelo
+         for (i = 0; i < *(device->numModelParms); i++)
+         {
+            opt = &device->modelParms[i];
+            if(opt->dataType & IF_REDUNDANT || !opt->description) continue;
+        
+            //Comprobamos que el par�metro a listar es interesante y por lo tanto est� implementado en la funcion ModelAsk correspondiente. Originalmente el if ten�a || (opt->dataType & IF_STRING)) continue; por lo que un par�metro de modelo como podr�a ser el caso de  OP("type",   MOS_SGT_MOD_TYPE,  IF_STRING, "N-channel or P-channel MOS") no saldr�a por pantalla.
+
+            //if(!(opt->dataType & IF_ASK ) || (opt->dataType & IF_UNINTERESTING ) || (opt->dataType & IF_STRING)) continue;
+	    if(!(opt->dataType & IF_ASK ) || (opt->dataType & IF_UNINTERESTING )) continue;
+            pv = doask(ckt, typecode, dev, mod, opt, ind);
+            if (pv)
+            {
+                tv = parmtovar(pv, opt);
+		//Dentro de parmtovar se:
+		//1.tv->va_name = copy(opt->description);
+		//2-Se copia el tipo de variable de estructura IFparm a variable. Esto lo hace "parmtovar"
+		//vv->va_type = opt->dataType
+		//El texto de ayuda del par�metro:
+		// IFparm MOS_SGTmPTable[] = { /* model parameters */
+		// OP("type",   MOS_SGT_MOD_TYPE,  IF_STRING, "N-channel or P-channel MOS") va ya dentro de tv->va_name falta por meter en un corchete el par�metro del modelo
+		//tv->va_name += device->modelParms[i].keyword;	//pero con cademas de texto
+		{
+		 char auxiliar[70],*aux_pointer;
+		 sprintf(auxiliar,"%s [%s]",tv->va_name,device->modelParms[i].keyword);
+		 aux_pointer=tv->va_name;
+		 free(aux_pointer);
+		 tv->va_name = copy(auxiliar);
+		// strcpy(aux_pointer,auxiliar);
+		}
+		//tv->va_string=device->modelParms[i].keyword;	//Meter el nombre de la variable
+
+                if (vv)
+                {
+                  tv->va_next = vv;
+                }
+                vv = tv;
+            }
+            else
+                fprintf(cp_err,"Internal Error: no parameter '%s' on device '%s'\n",device->modelParms[i].keyword,device->name);
+        }
+        return (vv);
+        } 
+    }
+    else if (param)
+    {
+        INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
+        typecode = finddev_special(ckt, *name, (void**)&dev, (void**)&mod,&modelo_dispositivo);
+        if (typecode == -1)
+        {
+            fprintf(cp_err,"Error: no such device or model name %s\n",*name);
+            return (NULL);
+        }
+        device = ft_sim->devices[typecode];
+        opt = parmlookup(device, &dev, param, modelo_dispositivo, 0);
+        if (!opt)
+        {
+            fprintf(cp_err, "Error: no such parameter %s.\n",param);
+            return (NULL);
+        }
+        pv = doask(ckt, typecode, dev, mod, opt, ind);
+        if (pv)
+            vv = parmtovar(pv, opt);
+        return (vv);
+    } else
+        return (if_getstat(ckt, *name));
+}
+
+
+
 
 /* Get a parameter value from the circuit. If name is left unspecified,
  * we want a circuit parameter.

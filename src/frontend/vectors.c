@@ -386,8 +386,14 @@ vec_get(char *word)
             
 	
 	if (ft_curckt) {
-	
-	    vv = (*if_getparam)(ft_curckt->ci_ckt, &name, param, 0, 0);
+             //
+             // Esto es lo que se hace en caso de "alter r1 resistance = 1234
+             //                                r1    resistance, 0
+             // if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
+            
+
+            //vv = (*if_getparam)(ft_curckt->ci_ckt, &name, param, 0, 0);
+	    vv = (*if_getparam)(ft_curckt->ci_ckt, &name, param, 0, 0);	
 	    if (!vv) {
 	        tfree(whole);
 		tfree(wd);

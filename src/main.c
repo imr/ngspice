@@ -870,7 +870,7 @@ main(int argc, char **argv)
 #endif
     } /* orflag */
 #ifdef SIMULATOR
-    if_getparam = spif_getparam;
+    if_getparam = spif_getparam_special;
 #else
     if_getparam = nutif_getparam;
 
