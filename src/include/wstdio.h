@@ -97,16 +97,6 @@ int    fp_u_t_char(int __c);
 #define fgetchar	fg_e_t_char
 #define fputchar	fp_u_t_char
 
-#if defined (_MSC_VER)
-#define strdup _strdup
-#define unlink _unlink
-#define fileno _fileno
-#define getcwd _getcwd
-#define isnan _isnan
-
-#define scalb _scalb
-
-#endif
 
 /*----------------------------------------------------------------------------*/
 

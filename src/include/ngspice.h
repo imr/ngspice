@@ -139,6 +139,17 @@ struct timeb timebegin;
 #  endif
 #endif
 
+#if defined (_MSC_VER)
+#define strdup _strdup
+#define unlink _unlink
+#define fileno _fileno
+#define getcwd _getcwd
+#define isnan _isnan
+#define finite _finite
+#define scalb _scalb
+//#define logb _logb /* not available in spsmp.c */
+#endif
+
 #ifndef HAVE_RANDOM
 #define srandom(a) srand(a)
 #define random rand
@@ -157,10 +168,6 @@ struct timeb timebegin;
 /* added for CYGWIN */
 #ifndef HUGE
 #define HUGE HUGE_VAL
-#endif
-
-#if defined (_MSC_VER)
-#define finite _finite
 #endif
 
 extern char *gettok(char **s);
@@ -219,7 +226,9 @@ extern int tcl_printf(const char *format, ...);
 extern int tcl_fprintf(FILE *f, const char *format, ...);
 
 #undef printf
+//#undef fprintf
 #define printf tcl_printf
+//#define fprintf tcl_fprintf
 
 #undef perror
 #define perror(string) fprintf(stderr,"%s: %s\n",string,sys_errlist[errno])

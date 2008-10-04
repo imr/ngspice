@@ -42,7 +42,7 @@
 #ifdef XSPICE
 /*saj headers for xspice*/
 #include <string.h> /* for strcpy, strcat*/
-#if (!defined HAS_WINDOWS) && (!defined __MINGW32__)
+#if (!defined HAS_WINDOWS) && (!defined __MINGW32__) && (!defined _MSC_VER)
 #include <dlfcn.h> /* to load libraries*/
 #else /* ifdef HAS_WINDOWS */
 #undef BOOLEAN
@@ -485,7 +485,7 @@ int load_opus(char *name){
   return 0;
 }
 
-#if defined(__MINGW32__) || defined(HAS_WINDOWS)
+#if defined(__MINGW32__) || defined(HAS_WINDOWS) || defined(_MSC_VER)
 
 void *dlopen(const char *name,int type)
 {

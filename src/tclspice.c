@@ -11,6 +11,12 @@
 #define TCLSPICE_name    "spice"
 #define TCLSPICE_prefix  "spice::"
 #define TCLSPICE_namespace "spice"
+#ifdef _MSC_VER
+#define TCLSPICE_version "17.1"
+#define	STDIN_FILENO	0
+#define	STDOUT_FILENO	1
+#define	STDERR_FILENO	2
+#endif
 
 /**********************************************************************/
 /*              Header files for C functions                          */
@@ -22,7 +28,7 @@
 /*Use Tcl threads if on W32 without pthreads*/
 #ifndef HAVE_LIBPTHREAD
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_MSC_VER)
 
 #define mutex_lock(a) Tcl_MutexLock(a)
 #define mutex_unlock(a) Tcl_MutexUnlock(a)
@@ -52,12 +58,20 @@ typedef pthread_t threadId_t;
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
-#ifdef __MINGW32__
+#if defined(__MINGW32__)
     #include <stdarg.h>
     /* remove type incompatibility with winnt.h*/
     #undef BOOLEAN
     #include <windef.h>
     #include <winbase.h>  /* Sleep */
+	#ifndef srandom
+	    #define  srandom(a) srand(a) /* srandom */
+	#endif
+#elif defined(_MSC_VER)
+    #include <stdarg.h>
+    /* remove type incompatibility with winnt.h*/
+    #undef BOOLEAN
+    #include <windows.h> /* Sleep */
 	#ifndef srandom
 	    #define  srandom(a) srand(a) /* srandom */
 	#endif
@@ -74,10 +88,14 @@ typedef pthread_t threadId_t;
 #include <spicelib/analysis/analysis.h>
 #include <misc/ivars.h>
 #include <frontend/resource.h>
+#ifndef _MSC_VER /* avoid second definition of VT_BOOL */
 #include <frontend/variable.h>
+#else
+#include <stdio.h>
+#define snprintf _snprintf
+#endif
 #include <frontend/outitf.h>
 #include <memory.h>
-
 #include <frontend/com_measure2.h>
 
 #ifndef HAVE_GETRUSAGE
@@ -117,6 +135,10 @@ extern JMP_BUF jbuf;
 #include <fcntl.h>
 #include <sys/stat.h>
 
+#ifdef _MSC_VER
+#define S_IRWXU _S_IWRITE
+#endif
+
 //#include <stdarg.h>     /* for va_copy() */
 
 extern IFfrontEnd nutmeginfo;
@@ -155,7 +177,7 @@ do {\
 /****************************************************************************/
 
 /*helper function*/
-inline static struct plot * get_plot(int plot){
+/*inline*/ static struct plot * get_plot(int plot){
   struct plot *pl;
   pl = plot_list;
   for(;0 < plot;plot--){
@@ -428,6 +450,7 @@ static int vectoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   char *realBlt, *imagBlt, *var;
   struct dvec *var_dvec;
   double *realData, *compData;
+  int compIndex; //index to loop inside the vectors' data
 
   if (argc < 3 || argc > 4){
     Tcl_SetResult(interp, "Wrong # args. spice::vectoblt spice_variable real_bltVector [imag_bltVector]",TCL_STATIC);
@@ -458,7 +481,7 @@ static int vectoblt TCL_CMDPROCARGS(clientData,interp,argc,argv) {
     }
   }
 /*If data is complex, it is harder (more complex :) to export...*/
-  int compIndex; //index to loop inside the vectors' data
+//  int compIndex; //index to loop inside the vectors' data
   if (var_dvec->v_realdata==NULL){
     if (var_dvec->v_compdata==NULL){
       Tcl_SetResult(interp, "The vector contains no data",TCL_STATIC);
@@ -591,7 +614,7 @@ static int _thread_stop(){
     while(!fl_exited && timeout < 100){
       ft_intrpt = TRUE;
       timeout++;
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_MSC_VER)
       Sleep(10); /* va: windows native */
 #else
       usleep(10000);
@@ -2089,7 +2112,7 @@ static int tmeasure TCL_CMDPROCARGS(clientData,interp,argc,argv){
 /*  Initialise spice and setup native methods          */
 /*******************************************************/
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_MSC_VER)
 __declspec(dllexport)
 #endif
 int Spice_Init(Tcl_Interp *interp) {
@@ -2101,7 +2124,7 @@ int Spice_Init(Tcl_Interp *interp) {
 	return TCL_ERROR;
 #endif
 
-  Tcl_PkgProvide(interp, (char*)TCLSPICE_name, (char*)TCLSPICE_version);
+  Tcl_PkgProvide(interp, (char*) TCLSPICE_name, (char*) TCLSPICE_version);
     
   Tcl_Eval(interp, "namespace eval " TCLSPICE_namespace " { }");
 

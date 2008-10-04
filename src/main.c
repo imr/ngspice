@@ -996,7 +996,7 @@ bot:
 	   current algorithm is uniform at the expense of a little
 	   startup time.  */
 	FILE *tempfile;
-#ifdef HAS_WINDOWS
+#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
 	char *tpf; /* temporary file */
 	char *dname = NULL; /* directory of input file*/
 	bool has_smk = FALSE;
@@ -1004,7 +1004,7 @@ bot:
 	tempfile = tmpfile();
 /*	tmpfile() returns NULL, if in MS Windows as non admin user
         then we add a tempfile in the local directory */
-#ifdef HAS_WINDOWS
+#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
 	if (tempfile == NULL) {
 		tpf = smktemp("sp");
 		tempfile = fopen(tpf, "w+b");
@@ -1031,7 +1031,7 @@ bot:
 		err = 1;
 		break;
 	    }
-#ifdef HAS_WINDOWS
+#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
             /* Copy the input file name which otherwise will be lost due to the
                temporary file */
             dname = copy(arg);
@@ -1042,7 +1042,7 @@ bot:
 	fseek(tempfile, (long) 0, 0);
 
         if (tempfile && (!err || !ft_batchmode)) {
-#ifdef HAS_WINDOWS
+#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
             /* Copy the input file name for adding another file search path */
             inp_spsource(tempfile, FALSE, dname);
             tfree(dname);
@@ -1051,7 +1051,7 @@ bot:
 #endif
             gotone = TRUE;
         }
-#ifdef HAS_WINDOWS
+#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
 	if (tempfile && has_smk) {
 	    if (remove(tpf))
 	       perror("Could not delete temp file");

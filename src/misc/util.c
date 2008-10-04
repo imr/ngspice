@@ -188,7 +188,7 @@ basename(const char *name)
     return base;
 }
 
-#ifdef HAS_WINDOWS
+#if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
 /* allow back slashes \\ */
 char *
 dirname(const char *name)

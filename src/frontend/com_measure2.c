@@ -7,6 +7,10 @@
 #include "vectors.h"
 #include <math.h>
 
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
+#endif
+
 typedef struct measure
 {
   char *result;

@@ -24,6 +24,7 @@ $Id$
 #include "variable.h"
 #include "cktdefs.h"
 
+/* not apply top directory searcpath because config.h should not be used */
 #ifdef _MSC_VER
 #include "../misc/misc_time.h" /* timediff */
 #else
@@ -36,7 +37,12 @@ $Id$
 /* gtri - end - 12/12/90 */
 #endif
 
-#ifdef HAS_WINDOWS
+/* We  might compile for Windows, but only as a console application (e.g. tcl) */
+#if defined (HAS_WINDOWS) || defined(__MINGW32) || defined(_MSC_VER)
+#define HAVE_WIN32
+#endif
+
+#ifdef HAVE_WIN32
 #define WIN32_LEAN_AND_MEAN
 /* At least Windows 2000 is needed 
  * Undefine _WIN32_WINNT 0x0500 if you want to compile under Windows ME 
@@ -65,7 +71,7 @@ $Id$
 static void printres(char *name);
 static void fprintmem(FILE* stream, unsigned long int memory);
 
-#if defined(HAS_WINDOWS) || defined(HAVE__PROC_MEMINFO) 
+#if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
 static size_t get_procm(struct proc_mem *memall);
 static size_t get_sysmem(struct sys_mem *memall);
 
@@ -83,7 +89,7 @@ char *enddata;
 void
 init_rlimits(void)
 {
-#  if defined(HAS_WINDOWS) || defined(HAVE__PROC_MEMINFO) 
+#  if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
     get_procm(&mem_ng);
     get_sysmem(&mem_t);
 #  else
@@ -142,7 +148,7 @@ ft_ckspace(void)
 {
     unsigned long int usage, limit;
 
-#if defined(HAS_WINDOWS) || defined(HAVE__PROC_MEMINFO) 
+#if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
     get_procm(&mem_ng_act);
     usage = mem_ng_act.size*1024;
     limit = mem_t.free;    
@@ -259,7 +265,7 @@ printres(char *name)
 		lastusec -= 1000;
 		lastsec += 1;
 	    }
-#ifndef HAS_WINDOWS
+#ifndef HAVE_WIN32
 	    fprintf(cp_out, "%s time since last call: %lu.%03lu seconds.\n",
 		cpu_elapsed, lastsec, lastusec);
 #endif
@@ -316,7 +322,7 @@ printres(char *name)
 #  endif /* HAVE_GETRLIMIT */
 #endif /* ipsc */
 
-#if defined(HAS_WINDOWS) || defined(HAVE__PROC_MEMINFO) 	
+#if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 	
 	
 	get_procm(&mem_ng_act);
 	get_sysmem(&mem_t_act);
@@ -450,7 +456,7 @@ fprintmem(FILE* stream, unsigned long int memory) {
 	fprintf(stream, "%lu bytes", memory);
 }
 
-#  if defined(HAS_WINDOWS) || defined(HAVE__PROC_MEMINFO) 
+#  if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
 
 static size_t get_procm(struct proc_mem *memall) {
 #ifdef HAS_WINDOWS
@@ -508,7 +514,7 @@ static size_t get_procm(struct proc_mem *memall) {
 }
 
 static size_t get_sysmem(struct sys_mem *memall) {
-#ifdef HAS_WINDOWS
+#ifdef HAVE_WIN32
 #if ( _WIN32_WINNT >= 0x0500)
    MEMORYSTATUSEX ms;
    ms.dwLength = sizeof(MEMORYSTATUSEX);
@@ -601,7 +607,7 @@ fault(void)
 static void *
 baseaddr(void)
 {
-#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(HAS_WINDOWS) || defined(__APPLE__)
+#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(HAVE_WIN32) || defined(__APPLE__)
     return 0;
 #else
     char *low, *high, *at;

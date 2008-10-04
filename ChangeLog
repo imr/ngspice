@@ -1,3 +1,6 @@
+2008-10-05 Holger Vogt
+ * Macros added to allow compilation of tclspice with MS Visual C++ 2008
+
 2008-09-24 Holger Vogt
  * wstdio.h, scalb.c, complex.h
    Small changes to allow compilation with MS Visual C++ 2008
