@@ -85,9 +85,7 @@ static int numeofs = 0;
 /* CDHW Debug function */
 
 static void
-pwlist_echo(wlist, name)   /*CDHW used to perform function of set echo */
-    wordlist *wlist;
-    char *name;
+pwlist_echo(wordlist *wlist, char *name)   /*CDHW used to perform function of set echo */
 {
     wordlist *wl;
 
@@ -282,27 +280,35 @@ gotchar:
                 goto nloop;
             } goto ldefault; /* else continue with default ... */
 	case ',':
-	    if (paren < 1 && i > 0) {
+	    if (paren < 1 && i > 0) 
+       {
 		newword;
 		break;
 	    } goto ldefault; 
 	case ';':  /*CDHW semicolon inside parentheses is part of expression CDHW*/
-	    if (paren > 0) {
+	    if (paren > 0) 
+       {
 	        buf[i++]=c;
 		break;
 	    } goto ldefault; 
 	case '&':  /* va: $&name is one word */
-	    if (i==1 && buf[i-1]=='$' && c=='&') {
+	    if (i==1 && buf[i-1]=='$' && c=='&') 
+       {
 	        buf[i++]=c;
 	        break;
-	    } goto ldefault; /* else continue with default ... */
-	case '<':
-	case '>':  /* va: <=, >= are unbreakable words */
-	    if (i==0 && *string=='=') {
-	        buf[i++]=c;
-	        break;
-	    } goto ldefault; /* else continue with default ... */
-	default:
+	    } 
+       goto ldefault; /* else continue with default ... */
+   case '<':
+   case '>':  /* va: <=, >= are unbreakable words */
+	      /* detectado un PETE al comparar *string=="=" con esto vuelven a funcionar los redireccionamietos */
+     if(string)
+	     if (i==0 && (*string=='=')) //strcmp(string,'=')) 
+       {
+           buf[i++]=c;
+           break;
+       } 
+       goto ldefault; // else continue with default ... 
+   default:
             /* We have to remember the special case $<
              * here
              */
