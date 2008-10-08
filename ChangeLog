@@ -1,3 +1,8 @@
+2008-10-08 Paolo Nenzi --espice-integration
+ * src/frontend/vectors.c:
+   57: Fixed  I(vx), before the if I(*) (upper case) was not recognized as the
+       function to plot the current of vx. A. Roldan - Espice 
+
 2008-10-06 Paolo Nenzi --espice-integration
  * src/frontend/parser/lexer.c: 
    53: Fixed the problem of segmentation fault when redirecting output putting spaces
