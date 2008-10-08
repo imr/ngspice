@@ -100,6 +100,7 @@ extern void *cx_norm(void *, short int , int , int *, short int *, ...);
 extern void *cx_uminus(void *, short int , int , int *, short int *, ...);
 extern void *cx_rnd(void *, short int , int , int *, short int *, ...);
 extern void *cx_mean(void *, short int , int , int *, short int *, ...);
+extern void *cx_avg(void *, short int , int , int *, short int *, ...);
 extern void *cx_length(void *, short int , int , int *, short int *, ...);
 extern void *cx_vector(void *, short int , int , int *, short int *, ...);
 extern void *cx_unitvec(void *, short int , int , int *, short int *, ...);
@@ -133,6 +134,8 @@ extern void *cx_or(void *, void *, short int , short int , int, ...);
 extern void *cx_not(void *, short int , int , int *, short int * , ...);
 extern void *cx_interpolate(void *, short int , int , int *, short int *, ...); /* struct plot *, struct plot *, int ); */
 extern void *cx_deriv(void *, short int , int , int *, short int *, ...); /*struct plot *, struct plot *, int );*/
+extern void *cx_group_delay(void *, short int , int , int *, short int *, ...); /*struct plot *, struct plot *, int );*/
+
 
 /* cmdtab.c */
 

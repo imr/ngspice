@@ -698,6 +698,8 @@ struct func ft_funcs[] = {
         { "rnd",    cx_rnd } ,
         { "pos",    cx_pos } ,
         { "mean",   cx_mean } ,
+        { "avg",   cx_avg } ,     //A.Rroldan 03/06/05 incremental average  new function
+        { "group_delay",  cx_group_delay } , //A.Rroldan 10/06/05 group delay new function
         { "vector", cx_vector } ,
         { "unitvec",    cx_unitvec } ,
         { "length", cx_length } ,

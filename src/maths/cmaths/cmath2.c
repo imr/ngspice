@@ -235,6 +235,52 @@ cx_rnd(void *data, short int type, int length, int *newlength, short int *newtyp
     }
 }
 
+
+/* Compute the avg of a vector.
+   Created by A.M.Roldan 2005-05-21  */
+   
+void 
+*cx_avg(void *data, short int type, int length, int *newlength, short int *newtype, ...)
+{
+    complex *c;
+    double *d, sum_real = 0.0,sum_imag = 0.0;
+    complex *cc = (complex *) data;
+    double *dd = (double *) data;
+    int i;
+
+    if (type == VF_REAL) {
+        d = alloc_d(length);
+        *newtype = VF_REAL;
+    } else {
+        c = alloc_c(length);
+        *newtype = VF_COMPLEX;
+    }
+    *newlength = length;
+
+    if (type == VF_COMPLEX)
+    {
+       for (i = 0; i < length; i++)
+       {
+        sum_real= sum_real + realpart(&cc[i]);
+        realpart(&c[i]) = sum_real / (double)(i+1);
+
+        sum_imag = sum_imag + imagpart(&cc[i]);
+        imagpart(&c[i]) = sum_imag / (double)(i+1);
+       }
+       return ((char *) c);
+    }
+    else
+    {      //VF_REAL
+       for (i = 0; i < length; i++)
+       {
+        sum_real= sum_real + dd[i];
+        d[i] = sum_real / (double)(i+1);
+       }
+       return ((char *) d);
+    }
+}
+
+
 /* Compute the mean of a vector. */
 
 void *

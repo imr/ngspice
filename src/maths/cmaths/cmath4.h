@@ -13,6 +13,8 @@ void * cx_interpolate(void *data, short int type, int length, int *newlength,
 		      short int *newtype, struct plot *pl, struct plot *newpl, int grouping);
 void * cx_deriv(void *data, short int type, int length, int *newlength, short int *newtype, 
 		struct plot *pl, struct plot *newpl, int grouping);
+void * cx_group_delay(void *data, short int type, int length, int *newlength, short int *newtype, 
+		struct plot *pl, struct plot *newpl, int grouping);
 
 
 #endif

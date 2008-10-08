@@ -707,8 +707,8 @@ apply_func(struct func *func, struct pnode *arg)
         }
         (void) signal(SIGILL, (SIGNAL_FUNCTION) sig_matherr);
 
-        if (eq(func->fu_name, "interpolate")
-            || eq(func->fu_name, "deriv"))       /* Ack */
+        //Modificado para que le pase los parámetros necesarios a la función derive A.Roldan
+	if (eq(func->fu_name, "interpolate") || eq(func->fu_name, "deriv") || eq(func->fu_name, "group_delay"))       /* Ack */
 	{
 	    void *(*f)(void *data, short int type, int length,
                        int *newlength, short int *newtype, ...)=func->fu_func;
