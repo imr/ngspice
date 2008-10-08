@@ -582,7 +582,13 @@ com_destroy(wordlist *wl)
         for (pl = plot_list; pl; pl = npl) {
             npl = pl->pl_next;
             if (!eq(pl->pl_typename, "const"))
-                killplot(pl);
+	    {
+             killplot(pl);
+	    }
+	    else
+	    {
+	     plot_num=1;
+	    } 
         }
     } else {
         while (wl) {
@@ -590,7 +596,10 @@ com_destroy(wordlist *wl)
                 if (eq(pl->pl_typename, wl->wl_word))
                     break;
             if (pl)
+	    {
                 killplot(pl);
+		plot_num--;
+	    }
             else
                 fprintf(cp_err, "Error: no such plot %s\n",
                         wl->wl_word);
