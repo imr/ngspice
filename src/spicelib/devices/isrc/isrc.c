@@ -13,13 +13,16 @@ IFparm ISRCpTable[] = { /* parameters */
  IOPP( "dc",      ISRC_DC,        IF_REAL   ,"DC value of source"),
  IOPPA( "acmag",   ISRC_AC_MAG,    IF_REAL   ,"AC magnitude"),
  IOPAAU( "acphase", ISRC_AC_PHASE,  IF_REAL   ,"AC phase"),
- IP ( "pulse",   ISRC_PULSE,     IF_REALVEC,"Pulse description"),
- IP ( "sine",    ISRC_SINE,      IF_REALVEC,"Sinusoidal source description"),
- IP ( "sin",     ISRC_SINE,      IF_REALVEC,"Sinusoidal source description"),
- IP ( "exp",     ISRC_EXP,       IF_REALVEC,"Exponential source description"),
- IP ( "pwl",     ISRC_PWL,       IF_REALVEC,"Piecewise linear description"),
- IP ( "sffm",    ISRC_SFFM,      IF_REALVEC,"Single freq. FM description"),
- IP ( "am",      ISRC_AM,        IF_REALVEC,"Amplitude modulation description"),
+ 
+  //Modificación para poder ejecutar print @Iin[sin] A.Roldan 
+  
+ IOP ( "pulse",   ISRC_PULSE,     IF_REALVEC,"Pulse description"),
+ IOP ( "sine",    ISRC_SINE,      IF_REALVEC,"Sinusoidal source description"),
+ IOP ( "sin",     ISRC_SINE,      IF_REALVEC,"Sinusoidal source description"),
+ IOP ( "exp",     ISRC_EXP,       IF_REALVEC,"Exponential source description"),
+ IOP ( "pwl",     ISRC_PWL,       IF_REALVEC,"Piecewise linear description"),
+ IOP ( "sffm",    ISRC_SFFM,      IF_REALVEC,"Single freq. FM description"),
+ IOP ( "am",      ISRC_AM,        IF_REALVEC,"Amplitude modulation description"),
  OPU ( "neg_node",ISRC_NEG_NODE,  IF_INTEGER,"Negative node of source"),
  OPU ( "pos_node",ISRC_POS_NODE,  IF_INTEGER,"Positive node of source"),
  OPU ( "acreal",  ISRC_AC_REAL,   IF_REAL   ,"AC real part"),

@@ -414,7 +414,111 @@ vec_get(char *word)
         d->v_flags |= VF_REAL;  /* No complex values yet... */
         d->v_realdata = (double *) tmalloc(sizeof (double));
         d->v_length = 1;
-        *d->v_realdata = vv->va_real;
+    
+    // En el caso de que la variable a representar sea un Vector de REALES esto coge
+    //el valor real del primer elemento de la lista enlazada que no tiene sentido
+    // ninguno.
+    // Esto es un error.
+
+   //Esto copia los contenidos de la estructura variable vv en otra estructura
+   // dvec (FTEDATA.H) que ya no tiene INTEGER por lo tanto aquellos par�metros definidos
+   // como IF_INTEGER no sacar�a su valor cuando se utilice print @pot[pos_node]
+   // Para arreglar esto es necesario definir en:
+   //
+   //  OPU( "pos_node",    POT_QUEST_POS_NODE, IF_REAL,"Positive node of potenciometer"),
+   //  int POTnegNode;     // number of negative node of potenciometer (Nodo_3)
+   //  case POT_QUEST_POS_NODE:
+   //    value->rValue = (double)fast->POTposNode;
+   //  return(OK);
+   //  Y as� funciona aunque se ve en formato 1.00000E0
+
+   // Hay que hacer un cambio de formato entre los datos que los lleva en una Variable para
+   // meterlos en un dvec.
+
+   //#define va_bool  va_V.vV_bool
+   //#define va_num    va_V.vV_num
+   //#define va_real  va_V.vV_real
+   //#define va_string   va_V.vV_string
+   //#define va_vlist     va_V.vV_list
+   //enum vt_types {
+   //  VT_BOOL,
+   //  VT_NUM,
+   //  VT_REAL,
+   //  VT_STRING,
+   //  VT_LIST
+   // };
+
+
+   //La variable es un Vector
+    if (vv->va_type == VT_LIST)
+    {
+     //Voy a calcular la longitud del VECTOR
+     //Se utliza con los par�etros de una VSRC o ISRC
+     struct variable *nv;
+     double *list;
+     list = (double *)MALLOC(sizeof(double));
+     nv = alloc(struct variable);
+
+     nv = vv->va_vlist;
+     for(i=1; ;i++)
+      {
+       list=(double *)REALLOC((char *)list,i*sizeof(double));
+       *(list+i-1) = nv->va_real;
+       nv = nv->va_next;
+       if (nv==NULL) break;
+      }
+     d->v_realdata=list;
+     d->v_length = i;
+     //Para poder identificar que el vector a representar
+     //pertenece a un conunto especial y se debe imprimir de una forma
+     //especial.
+     d->v_dims[1]=1;
+    }
+    else if (vv->va_type == VT_NUM)   //La variable es un Integer
+    {
+     *d->v_realdata =  (double) vv->va_num;
+    }
+    else if (vv->va_type == VT_REAL)  //La variable es un Real
+    {
+     if (!(vv->va_next))
+     { //Solo un dato real
+       //Suele ser lo normal
+     *d->v_realdata = vv->va_real;
+     }
+     else
+     { //Conjunto de datos reales
+       //Cuando se hace un print @model[all]
+       // Solo se imprimen los valores num�ricos, no los string
+       struct variable *nv;       
+       //Vamos a imprimir la lista de valores
+       //nv->va_name=Explicacion del parametro
+       //nv->va_string=Par�metro
+       //nv->va_real= Valor 
+       nv=vv;  
+       for(i=1; ;i++)
+       {
+	switch(nv->va_type)
+	{
+		case  VT_REAL:
+			fprintf(stdout,"%s=%g\n",nv->va_name,nv->va_real);
+			break;
+		case  VT_STRING:
+			fprintf(stdout,"%s=%s\n",nv->va_name,nv->va_string);
+			break;	
+		case  VT_NUM:
+			fprintf(stdout,"%s=%d\n",nv->va_name,nv->va_num);
+			break;	
+	}
+	nv = nv->va_next;
+	
+        if (nv==NULL) break;
+       }
+
+
+      //Para distinguir que print no saque nada por pantalla al hacer un print @M1 o @M1[all] solo salgan los datos correctos y no el �ltimo	
+      d->v_rlength=1;
+      }
+    }
         
         tfree(vv->va_name);
         tfree(vv); /* va: tfree vv->va_name and vv (avoid memory leakages) */
@@ -483,7 +587,14 @@ vec_copy(struct dvec *v)
     nv->v_gridtype = v->v_gridtype;
     nv->v_plottype = v->v_plottype;
     nv->v_length = v->v_length;
-    nv->v_rlength = 0; /*XXX???*/
+    
+    //Modificado para que copie el rlength del vecor origen al destino en vez de ponerlo siempre a 0.
+    //As� cuando se venga de hacer un print @M1 no salga @M1= 0.0, para ello en el caso de que Rlength =0 no se imprima nada en pantalla
+    //nv->v_rlength = 0;
+     
+    //Por defecto ->v_rlength=0 y solo en el caso de venir de un print @M1 o @M1[all] rlength=1, despu�s se pone un control de if (v->v_rlength == 0) en com_print(wordlist *wl)	
+    nv->v_rlength = v->v_rlength;
+    
     nv->v_outindex = 0; /*XXX???*/
     nv->v_linestyle = 0; /*XXX???*/
     nv->v_color = 0; /*XXX???*/
@@ -628,7 +739,7 @@ vec_free_x(struct dvec *v)
                 pl->pl_scale = NULL;
         }
     }
-    tfree(v->v_name);
+    if (v->v_name) tfree(v->v_name);
     if (v->v_realdata) tfree(v->v_realdata);
     if (v->v_compdata) tfree(v->v_compdata);
     tfree(v);

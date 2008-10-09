@@ -940,14 +940,34 @@ parmtovar(IFvalue *pv, IFparm *opt)
             break;
         case IF_REALVEC:
             vv->va_type = VT_LIST;
-            for (i = 0; i < pv->v.numValue; i++) {
+            for (i = 0; i < pv->v.numValue; i++) 
+       {
                 nv = alloc(struct variable);
                 nv->va_next = vv->va_vlist;
                 vv->va_vlist = nv;
                 nv->va_type = VT_REAL;
-                nv->va_real = pv->v.vec.rVec[i];
-            }
-            break;
+                // Modifico esto para que los valores salgan en orden por la pantalla
+                //que en el proceso de conversion a variable se invierten
+                // Originalmente era  nv->va_real = pv->v.vec.rVec[i];
+                nv->va_real = pv->v.vec.rVec[pv->v.numValue-i-1];
+      }
+            // Es una lista enlazada donde el primer nodo es una variable
+            // que apunta a los diferentes valores de las variables.
+            //
+            // para acceder a los valores de la variable vector real hay que
+            //
+            // vv->va_V.vV_real=valor nodo ppal que no sirve
+            //
+            // Para el caso de un Vin_sin 1 0 sin (0 2 2000)
+            // y un print @vin_sin[sin]
+            //
+            // vv->va_V.vV_list->va_V.vV_real=2000
+            // vv->va_V.vV_list->va_next->va_V.vV_real=2
+            // vv->va_V.vV_list->va_next->va_next->va_V.vV_real=0
+            // por lo que se ve la lista empieza por detr�s pero no hay problema
+            // Esto funciona correctamente         
+       
+       break;
         default:
             fprintf(cp_err,  
             "parmtovar: Internal Error: bad PARM type %d.\n",

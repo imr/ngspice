@@ -120,8 +120,17 @@ com_print(wordlist *wl)
         for (v = vecs; v; v = v->v_link2)
             if (v->v_length > 1) {
                 col = TRUE;
+                //Mejora realizada para poder imprimir los casos @[sin] = (0 12 13 100K)
+		if ( (v->v_length != v->v_plot->pl_scale->v_length) && ( (*(v->v_name))=='@') )
+                {
+                 col = FALSE;
+                }
                 break;
             }
+            //Con esto he detectado que el vector tiene menos datos que el vector SCALE que hay en el PLOT vinculado
+            //Pero deber�a asegurarme ahora que estoy en un caso de print @vin[sin] o @vin[pulse]
+            //para ello comprobar�a que el v->v_name comienza por '@' 
+            // y entonces estar�a en este caso.
     }
 
     out_init();
@@ -141,8 +150,17 @@ com_print(wordlist *wl)
                 s--;
             }
             ll = 10;
-            if (v->v_length == 1) {
-                if (isreal(v)) {
+
+	   // v->v_rlength = 1 cuando se viene de hacer un print @M1 y no se quiere que salga por pantalla
+	   //  Multiplier factor [m]=1
+	   //  @M1 = 0,00e+00
+	   // En cualquier otro caso rlength no se utiliza para nada y solo se aplica en el la copia de vectores.
+	   if (v->v_rlength == 0)
+	   {	   
+            if (v->v_length == 1) 
+	     {
+                if (isreal(v))
+		{
                 	printnum(numbuf, *v->v_realdata);
                     out_printf("%s = %s\n", buf, numbuf);
                 } else {
@@ -194,7 +212,8 @@ com_print(wordlist *wl)
                             out_send("\t");
                     }
                 out_send(")\n");
-            }
+	      } //end if (v->v_length == 1)
+	   }  //end  if (v->v_rlength == 1)
         }
     } else {    /* Print in columns. */
         if (cp_getvar("width", VT_NUM, (char *) &i))
@@ -260,7 +279,20 @@ nextpage:
             if (isreal(v))
                 (void) sprintf(buf2, "%-16.15s", v->v_name);
             else
-                (void) sprintf(buf2, "%-32.31s", v->v_name);
+		{
+		 //El vector de frecuencia es complejo aunque con parte imaginaria = 0, con esto se evita que ocupe 2 columnas del print.
+		 if(eq(v->v_name, "frequency"))
+		 {
+		  if(imagpart(&v->v_compdata[0])==0.0)
+		  {
+                   (void) sprintf(buf2, "%-16.15s", v->v_name);
+		  }
+		  else
+                   (void) sprintf(buf2, "%-32.31s", v->v_name);
+		 }
+		 else
+                  (void) sprintf(buf2, "%-32.31s", v->v_name);
+		}
             (void) strcat(buf, buf2);   
         }
         lineno = 3;
@@ -290,14 +322,33 @@ loop:
                     else
                         out_send("\t\t\t\t");
                 } else {
-                    if (isreal(v)) {
-                        sprintf(out_pbuf, "%e\t", 
-                        	v->v_realdata[j]);
+                    if (isreal(v)) 
+		    {
+                        printnum(numbuf,  v->v_realdata[j]);
+                        //sprintf(out_pbuf, "%e\t",v->v_realdata[j]);
+                        (void) sprintf(out_pbuf, "%s\t",numbuf);
 			out_send(out_pbuf);
-                    } else {
-                        sprintf(out_pbuf, "%e,\t%e\t",
-                        	realpart(&v->v_compdata[j]),
-                        	imagpart(&v->v_compdata[j]));
+                    }
+		    else
+		    {
+			//En caso de ser frecuencia y tener solo parte real evita  imprimir una parte imaginaria igual a 0.
+			if(eq(v->v_name, "frequency"))
+			{
+			 if(imagpart(&v->v_compdata[j])==0.0)
+			 {
+                          printnum(numbuf,  realpart(&v->v_compdata[j]));
+                          (void) sprintf(out_pbuf, "%s\t",numbuf);
+			 }
+			}
+			else
+			{
+                          printnum(numbuf,  realpart(&v->v_compdata[j]));
+                          printnum(numbuf2, imagpart(&v->v_compdata[j]));
+                          (void) sprintf(out_pbuf, "%s,\t%s\t",numbuf,numbuf2);
+//                       sprintf(out_pbuf, "%e,\t%e\t",
+//                        	realpart(&v->v_compdata[j]),
+//                        	imagpart(&v->v_compdata[j]));
+			}
 			out_send(out_pbuf);
 		    }
                 }
