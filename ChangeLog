@@ -1,3 +1,7 @@
+2008-10-11 Holger Vogt
+ * /frontend/resource.c line 41 correct __MINGW32__
+   /ciderlib/input/options.c renamed to optionsc.c to avoid double options.obj in VC++ 2008
+
 2008-10-05 Holger Vogt
  * Macros added to allow compilation of tclspice with MS Visual C++ 2008
 
