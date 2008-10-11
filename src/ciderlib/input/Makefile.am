@@ -23,7 +23,7 @@ libciderinput_la_SOURCES = 	\
 		mobset.c	\
 		models.c	\
 		modlset.c	\
-		options.c	\
+		optionsc.c	\
 		outpset.c	\
 		output.c	
 
