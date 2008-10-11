@@ -38,7 +38,7 @@ $Id$
 #endif
 
 /* We  might compile for Windows, but only as a console application (e.g. tcl) */
-#if defined (HAS_WINDOWS) || defined(__MINGW32) || defined(_MSC_VER)
+#if defined (HAS_WINDOWS) || defined(__MINGW32__) || defined(_MSC_VER)
 #define HAVE_WIN32
 #endif
 
