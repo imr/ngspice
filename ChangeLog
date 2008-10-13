@@ -9,12 +9,16 @@
        Note: I have changed the code to eliminate GTK functions and tested.
        Things work but in ngspice there is a problem due to model redefinitions,
        as it seems that in ngspice models are globals. Need further 
-       investigation. P. Nenzi 
+       investigation. P. Nenzi
 
  * src/frontend/commands.c, src/frontend/misccomms.c:
    24: Added the parameter "noask" to quit command to avoid the question
        before exiting ngspice. A. Roldan - Espice
-  
+ 
+ * src/frontend/evaluate.c, src/frontend/typedefs.c, src/include/sim.h:
+   Added some vector types from Espice (impedance, admittance, power etc.)
+   The original implementation by A. Roldan did not fit immediatly. I had
+   to comment two definitions. I could not test "plotab". 
    
 2008-10-09 Paolo Nenzi --espice-integration
  * src/spicelib/devices/vsrc/vsrc.c,

@@ -14,7 +14,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "typesdef.h"
 
 
-#define NUMTYPES 128        /* If this is too little we can use a list. */
+#define NUMTYPES 128+4      /* If this is too little we can use a list. */
 #define NUMPLOTTYPES 512    /* Since there may be more than 1 pat/type. */
 
 struct type {
@@ -40,14 +40,18 @@ struct type types[NUMTYPES] = {
     { "onoise-integrated", "V or A" } ,
     { "inoise-spectrum", "(V or A)^2/Hz" } ,
     { "inoise-integrated", "V or A" } ,
-    { "output-noise", NULL } ,
-    { "input-noise", NULL } ,
+    // { "output-noise", NULL } ,
+    // { "input-noise", NULL } ,
     { "pole", NULL } ,
     { "zero", NULL } ,
     { "s-param", NULL } ,
     { "temp-sweep", "Celsius" } ,/* Added by HT */
-
-    { "res-sweep", "Ohm" } ,/* Added by HT */
+    { "res-sweep", "Ohms" } ,/* Added by HT */
+    { "impedance", "Ohms" } ,/* Added by A.Roldan */
+    { "admittance", "Mhos" } ,/* Added by A.Roldan */
+    { "power", "W" } ,          /* Added by A.Roldan */
+    { "phase", "Degree" } ,     /* Added by A.Roldan */
+    { "decibel", "dB" } ,     /* Added by A.Roldan */
 
 } ;
 
@@ -77,7 +81,7 @@ struct plotab plotabs[NUMPLOTTYPES] = {
     { "spect", "spect" },
 } ;
 
-int notypes = 15;/* change 14 to 15 by H.T*/
+int notypes = 15 ;/* change 14 to 15 by H.T*/
 int noplotabs = 20;/* change 18 to 20 by H.T*/
 
 /* A command to define types for vectors and plots.  This will generally
