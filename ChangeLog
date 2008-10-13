@@ -1,3 +1,16 @@
+2008-10-13 Paolo Nenzi --espice-integration
+ * src/frontend/mw_coms.c, src/frontend/commands.c, 
+ * src/frontend/runcoms.c, src/include/fteext.h:
+   34, 
+   36, 
+   38: Added the removecirc command. This command removes the current        
+       circuit and its associated plots. This comes from an old function
+       written by M. Widlok and updated by A. Roldan for espice.
+       Note: I have changed the code to eliminate GTK functions and tested.
+       Things work but in ngspice there is a problem due to model redefinitions,
+       as it seems that in ngspice models are globals. Need further 
+       investigation. P. Nenzi 
+   
 2008-10-09 Paolo Nenzi --espice-integration
  * src/spicelib/devices/vsrc/vsrc.c,
  * src/spicelib/devices/isrc/isrc.c,
@@ -10,7 +23,7 @@
        of parameters defining the sinusoidal source (it works with both the 
        sources type). It is possible to alter the parameters with the command
        alter @vin_sin[sin] = ( 1 1 3000Hz ). A. Roldan -Espice
-       None: alter syntax does not work in full yet, it still generate an
+       Note: alter syntax does not work in full yet, it still generate an
        error but modifies the parameters. P. Nenzi  
 
 2008-10-08 Paolo Nenzi --espice-integration

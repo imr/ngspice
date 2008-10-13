@@ -21,7 +21,16 @@ com_removecirc(wordlist *wl)
 {
     struct variable *v, *next;
     struct circ *ct;
-    
+    struct circ *caux=NULL;
+    struct plot *p;
+    struct plot *paux;
+    struct wordlist *wlist;
+    int auxCir=1,i,auxPlot;
+
+    /* Allocation of a temp wordlist */
+    wlist = (struct wordlist *)malloc(sizeof(struct wordlist));
+    char buf[80];
+
     if (ft_curckt == NULL) {
         fprintf(cp_err, "Error: there is no circuit loaded.\n");
         return;
@@ -36,8 +45,85 @@ com_removecirc(wordlist *wl)
     }
     
     ct->ci_vars = NULL;
+    caux=ft_circuits;
+    char* namecircuit = strdup(ft_curckt->ci_name);
+    //El circuito a borrar es el primero cargado y hay mas circuitos
+    if(ft_curckt==ft_circuits&&ft_circuits->ci_next!=NULL)
+    	ft_circuits=ft_circuits->ci_next;
 
-
+    //El circuito es el primero cargado y no hay mas circuitos
+    else if(ft_circuits->ci_next==NULL)
+	   ft_circuits=NULL;
+    
+    else {
+	
+	   
+       //Recorremos los circuitos para saber el numero de circuitos que hay antes del circuito a quitar
+	   for (; ft_curckt != caux&&caux; caux = caux->ci_next)
+		  auxCir++;
+	
+	   caux=ft_circuits;
+	   //Quitamos el circuito apuntando al circuito siguiente
+	   for(i=1;i<auxCir-1;i++)
+	       caux=caux->ci_next;
+	   caux->ci_next=caux->ci_next->ci_next;
+	   //ft_curckt=ft_circuits;
+        
+    }
+    
+    //Si el plot es el primero y no hay mas
+    if(plot_list->pl_next==NULL&&strcmp(plot_list->pl_title,namecircuit)==0)
+        plot_list=NULL;
+    
+        
+    else if(plot_list&&plot_list->pl_next!=NULL){
+	p = plot_list;
+	while(p){
+        auxPlot=1;
+        //Si el plot esta en la primera posicion
+        if(plot_list->pl_next&&strcmp(plot_list->pl_title,namecircuit)==0)
+	       plot_list=plot_list->pl_next;
+	    //sino recorremos la lista de plots hasta dar con el
+        else {
+            for (; strcmp(p->pl_title,namecircuit)!=0&&p->pl_next!=NULL; p = p->pl_next)
+		        auxPlot++;
+                if(strcmp(p->pl_title,namecircuit)==0){
+                    paux = plot_list;
+	            for(i=1;i<auxPlot-1;i++)
+		            paux=paux->pl_next;
+	            paux->pl_next=paux->pl_next->pl_next;		
+        }
+      }
+    p=p->pl_next;
+    }
+    }
+    
+    /*if (ft_curckt) {
+       
+        ft_curckt->ci_devices = cp_kwswitch(CT_DEVNAMES, ft_circuits->ci_devices);
+        ft_curckt->ci_nodes = cp_kwswitch(CT_NODENAMES, ft_circuits->ci_nodes);
+    }*/
+if(ft_circuits&&caux->ci_next){
+	sprintf(buf,"%d",auxCir);
+    wlist->wl_next = NULL;
+    wlist->wl_prev = NULL;
+    wlist->wl_word = buf;
+    
+	com_scirc(wlist);
+	free(wlist);
+}
+else if(ft_circuits){
+    sprintf(buf,"%d",(auxCir-1));
+    wlist->wl_next = NULL;
+    wlist->wl_prev = NULL;
+    wlist->wl_word = buf;
+    
+	com_scirc(wlist);
+	free(wlist);
+    
+}
+else
+	ft_curckt=NULL;
     return;
 }
 
