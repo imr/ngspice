@@ -10,6 +10,11 @@
        Things work but in ngspice there is a problem due to model redefinitions,
        as it seems that in ngspice models are globals. Need further 
        investigation. P. Nenzi 
+
+ * src/frontend/commands.c, src/frontend/misccomms.c:
+   24: Added the parameter "noask" to quit command to avoid the question
+       before exiting ngspice. A. Roldan - Espice
+  
    
 2008-10-09 Paolo Nenzi --espice-integration
  * src/spicelib/devices/vsrc/vsrc.c,

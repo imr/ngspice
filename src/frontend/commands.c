@@ -381,7 +381,7 @@ struct comm spcp_coms[] = {
       (void (*)()) NULL,
       "[circuit name] : Remove the current circuit from memory." } ,
     { "quit", com_quit, FALSE, FALSE, TRUE,
-      { 0, 0, 0, 0 }, E_BEGINNING, 0, 0,
+      { 0, 0, 0, 0 }, E_BEGINNING, 0, 1,
       (void (*)()) NULL,
       ": Quit %s." } ,
     { "source", com_source, FALSE, FALSE, TRUE,
@@ -730,7 +730,7 @@ struct comm nutcp_coms[] = {
       (void (*)()) NULL,
       "[command name] ... : Print help." } ,
     { "quit", com_quit, FALSE, FALSE, TRUE,
-      { 0, 0, 0, 0 }, E_BEGINNING, 0, 0,
+      { 0, 0, 0, 0 }, E_BEGINNING, 0, 1,
       (void (*)()) NULL,
       ": Quit %s." } ,
       //Para borrar circuitos cargados

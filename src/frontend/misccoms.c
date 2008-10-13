@@ -38,7 +38,14 @@ com_quit(wordlist *wl)
     (void) cp_getvar("noaskquit", VT_BOOL, (char *) &noask);
     gr_clean();
     cp_ccon(FALSE);
-    
+    if(wl)
+      if(wl->wl_word)
+    if(cieq(wl->wl_word,"noask"))
+         {
+           byemesg();
+           exit(EXIT_NORMAL);
+     }
+
     /* Make sure the guy really wants to quit. */
     if (!ft_nutmeg && !noask) {
         for (cc = ft_circuits; cc; cc = cc->ci_next)
@@ -246,7 +253,6 @@ byemesg(void)
       write_history(history_file);
     }
 #endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
-
-    printf("%s-%s done\n", ft_sim->simulator, ft_sim->version);
+    fprintf(cp_out,"%s-%s done\n", ft_sim->simulator, ft_sim->version);
     return;
 }
