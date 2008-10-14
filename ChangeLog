@@ -1,3 +1,6 @@
+2008-10-14 Dietmar Warning
+ * src/main.c, src/misc/util.c polish to prevent warnings
+
 2008-10-11 Holger Vogt
  * /frontend/resource.c line 41 correct __MINGW32__
    /ciderlib/input/options.c renamed to optionsc.c to avoid double options.obj in VC++ 2008

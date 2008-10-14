@@ -217,9 +217,9 @@ dirname(const char *name)
     len = strlen(name);
     p = &name[len - 1];
 
-    if (*p == '/') p--;  // skip the trailing /
+    if (*p == '/') p--;  /* skip the trailing / */
 
-    if (*p == '\\') p--;  // skip the trailing \
+    if (*p == '\\') p--; /* skip the trailing \ */
 
     while (p != name && *p != '/' && *p != '\\') p--;
 
@@ -264,7 +264,7 @@ dirname(const char *name)
     len = strlen(name);
     p = &name[len - 1];
 
-    if (*p == '/') p--;  // skip the trailing /
+    if (*p == '/') p--;  /* skip the trailing / */
 
     while (p != name && *p != '/') p--;
 
