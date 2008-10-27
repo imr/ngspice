@@ -49,13 +49,13 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
         "_rbi",             /* noise due to rbi */
         "_re",              /* noise due to re */
         "_rbp",             /* noise due to rbp */
+        "_rs",              /* noise due to rs */
         "_ic",              /* noise due to ic */
         "_ib",              /* noise due to ib */
         "_ibep",            /* noise due to ibep */
+        "_iccp",            /* noise due to iccp */
         "_1overfbe",        /* flicker (1/f) noise ibe */
         "_1overfbep",       /* flicker (1/f) noise ibep */
-        "_rs",              /* noise due to rs */
-        "_iccp",            /* noise due to iccp */
         ""                  /* total transistor noise */
     };
 

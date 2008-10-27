@@ -1,3 +1,7 @@
+2008-10-27 Dietmar Warning
+ * src/spicelib/parser/inp2q.c VBIC is standard - not ADMS (yet)
+ * src/spicelib/devices/vbic/vbicnoise.c correct naming array order according vbicdefs.h
+
 2008-10-14 Dietmar Warning
  * src/main.c, src/misc/util.c polish to prevent warnings
 

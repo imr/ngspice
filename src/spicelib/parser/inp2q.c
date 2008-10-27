@@ -104,7 +104,7 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     printf("INP2Q: Looking up model\n");
 #endif
     if (thismodel != NULL) {
-	if((thismodel->INPmodType != INPtypelook("BJT"))
+           if((thismodel->INPmodType != INPtypelook("BJT"))
            && (thismodel->INPmodType != INPtypelook("BJT2"))
 #ifdef CIDER
            && (thismodel->INPmodType != INPtypelook("NBJT"))
@@ -114,8 +114,8 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
            && (thismodel->INPmodType != INPtypelook("hicum0"))
            && (thismodel->INPmodType != INPtypelook("hicum2"))
            && (thismodel->INPmodType != INPtypelook("mextram"))
-           && (thismodel->INPmodType != INPtypelook("vbic"))
 #endif
+           && (thismodel->INPmodType != INPtypelook("VBIC"))
           ) {
             LITERR("incorrect model type")
             return;
