@@ -1,3 +1,8 @@
+2008-11-02 Lionel Sainte Cluque
+ * src/tclspice.c : tcl_vfprintf corrects the stou bug
+ * README.tcl : Creation
+ * tests/tcl/test_vectoblt.tcl : modified invocation and package loading
+
 2008-10-27 Dietmar Warning
  * src/spicelib/parser/inp2q.c VBIC is standard - not ADMS (yet)
  * src/spicelib/devices/vbic/vbicnoise.c correct naming array order according vbicdefs.h

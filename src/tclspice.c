@@ -2289,7 +2289,11 @@ bot:
 
 int tcl_vfprintf(FILE *f, const char *fmt, ...)
 {
-  static char outstr[128] = "puts -nonewline std";
+#define ostr_sz 128
+   static char outstr[ostr_sz] = "puts -nonewline std";
+   //outstr a buffer initialised with tcl print command 
+   // offset for out: 19
+#define ostr_off 19
   char *outptr, *bigstr = NULL, *finalstr = NULL;
   int i, nchars, result, escapes = 0;
   va_list arg;
@@ -2303,10 +2307,11 @@ int tcl_vfprintf(FILE *f, const char *fmt, ...)
 	)
       return fprintf(f,fmt, arg);
 
-  strcpy (outstr + 18, (f == stderr) ? "err \"" : "out \"");
+  strcpy (outstr + ostr_off, (f == stderr) ? "err \"" : "out \"");
+  //5 characters for ->out "<-
   outptr = outstr;
-  nchars = snprintf(outptr + 20, 102, fmt, arg);
-  if (nchars >= 102)
+  nchars = snprintf(outptr + ostr_off + 5, ostr_sz - 5 - ostr_off, fmt, arg);
+  if (nchars >= ostr_sz - 5 - ostr_off)
     {
       bigstr = Tcl_Alloc(nchars + 26);
       strncpy(bigstr, outptr, 24);

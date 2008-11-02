@@ -1,4 +1,10 @@
-package require spice
+#!/bin/sh
+# WishFix \
+        exec wish -f "$0" ${1+"$@"}
+        ###
+
+package require BLT
+load ../../src/.libs/libspice.so
 
 spice::source "diffpair.cir"
 spice::op
