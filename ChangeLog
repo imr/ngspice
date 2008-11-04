@@ -1,3 +1,8 @@
+2008-11-04 Paolo Nenzi
+ * src/frontend/parser/lexical.c: 
+   53: Fixed the problem of segmentation fault when redirecting output putting spaces
+       around "<" or ">". A. Roldan - Espice
+
 2008-11-02 Lionel Sainte Cluque
  * src/tclspice.c : tcl_vfprintf corrects the stou bug
  * README.tcl : Creation

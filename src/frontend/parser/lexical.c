@@ -298,7 +298,8 @@ gotchar:
 	    } goto ldefault; /* else continue with default ... */
 	case '<':
 	case '>':  /* va: <=, >= are unbreakable words */
-	    if (i==0 && *string=='=') {
+       if(string)
+	    if (i==0 && (*string=='=')) {
 	        buf[i++]=c;
 	        break;
 	    } goto ldefault; /* else continue with default ... */
