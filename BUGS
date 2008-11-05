@@ -26,17 +26,6 @@ sensitive data on the bug tracking system to keep track of bug history.
 ------------------------------------------------------------------------------
 OPEN BUGS:
 ------------------------------------------------------------------------------
-* output redirection:
-
-   ngspice 1 -> print v(1) > data.txt
-
-  This syntax does not work anymore (it worked in rework-14). If you 
-  want to use output redirection you have to remove spaces around ">":
-
-   ngspice 1 -> print v(1)>data.txt
-
----------------------------------------------------------------------------
-
 * return value:
 
   When ngspice is called in batch mode it returns 1 even if the simulations
