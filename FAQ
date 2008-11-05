@@ -1,6 +1,6 @@
-  Ngspice F.A.Q.Version 1.4
-  Maintained by Paolo Nenzi <p.nenzi@ieee.org>
-  Last update: 27-01-2004
+  Ngspice F.A.Q.Version 1.5 (rework-18 release)
+  Maintained by Paolo Nenzi
+  Last update: 5-11-2008
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -11,16 +11,17 @@
 
   1. INTRODUCTION AND GENERAL INFORMATION
      1.1 What is ngspice?
-     1.2 Why resurrecting Berkeley's Spice?
-     1.3 What is the project's goal?
-     1.4 What you are going to do?
-     1.5 Legal issues
-     1.6 What mailing lists exist for ngspice?
-     1.7 Are the mailing lists archived anywhere?
-     1.8 What newsgroups exist for ngspice?
-     1.9 Where can I get a copy of ngspice?
-     1.10 Where should I look on the World Wide Web for ngspice stuff?
-     1.11 Where should I look on the World Wide Web for Spice documentation?
+     1.2 What is tclspice ?
+     1.3 Why resurrecting Berkeley's Spice?
+     1.4 What is the project's goal?
+     1.5 What you are going to do?
+     1.6 Legal issues
+     1.7 What mailing lists exist for ngspice?
+     1.8 Are the mailing lists archived anywhere?
+     1.9 What newsgroups exist for ngspice?
+     1.10 Where can I get a copy of ngspice?
+     1.11 Where should I look on the World Wide Web for ngspice stuff?
+     1.12 Where should I look on the World Wide Web for Spice documentation?
 
   2. DEVELOPMENT
      2.1 What is the current version?
@@ -49,14 +50,14 @@
 
 
 
- 1.1 What is ngspice?
+ 1.1 What is ngspice ?
 
   Ngspice is a mixed-level/mixed-signal circuit simulator based on three 
   open source software packages: Spice3f5, Cider1b1 and Xspice: 
   
-  - Spice3 is the most famous and used circuit simulator. It was 
-    developed University of California at Berkeley (UCB), by "a cast of 
-    thousand" (as they say).
+  - Spice3 is a widely used circuit simulator. It was developed by the 
+    University of California at Berkeley (UCB), by "a cast of thousand" 
+    (as they say) initially under the guide of Donald O. Peterson.
   
   - Cider is a mixed-level simulator that already includes Spice3f5 and 
     adds a device simulator to it: DSIM. Cider couples the circuit level 
@@ -75,113 +76,59 @@
   ngspice program.
 
 
- 1.2 Why resurrecting Berkeley's Spice?
+ 1.2 What is tclspice ?
+
+  Tclspice is a circuit simulator that embeds ngspice and provides a 
+  tcl/tk interface to the user. Tclspice is both a batch and interactive
+  simulator and a building block for simulator applications. Analyses can 
+  be run from a tcl script and vector plotted or post processed using tcl
+  or a small GUI can be built to analyze a circuit or a set of circuits.
+  Tclspice is obtained compiling ngspice activating an additional option.
+
+  
+ 1.3 Why resurrecting Berkeley's Spice?
   
   Berkeley's Spice can be considered the father of most circuit
   simulators available today. It is an old but still good piece of
   software, it may not be the fastest or the most reliable but it's
   free, it's available in source code and most of the electrical
-  simulators inherited it's syntax. On the more technical side, spice3
-  uses good numerical algorithms (most commercial implementations have
-  only strengthened them), implements most of the models for MOSFET
-  submicron designs and has a powerful set of analyses. On the more
-  "social" side, spice3 it's well introduced in the academic
-  environment.
+  simulators inherited it's syntax. Spice3 is based on proven numerical 
+  algorithms (most commercial implementations have only strengthened 
+  them), implements most of the models for MOSFET submicron design 
+  and has a powerful set of analyses. The readily availability of
+  its source code in the past made this simulator the de-facto standard.
 
  
- 1.3 What is the project's goal?
+ 1.4 What is the project's goal?
 
-  The project goal evolved during project development, at first the
-  final goal was to develop a reliable, fast and friendly circuit 
-  simulator for mixed signal/mixed level simulation. During 
-  development it become apparent that to reach the goal a complete
-  rewrite of spice was needed. Since it was almost absurd to rewrite
-  Spice and since a new simulator was already under development:
-  ACS (Al's Circuit Simulator), now GNUCap (GNU Circuit Analysis
-  package), the goal of nspice became less utopical: merge
-  Spice3f5, Xspice and Cider into a mixed-signal/mixed-level simulator
-  that can be used as a reliable engine.  
+  Ngspice is both a maintenance and enhancement project. It is a maintenance
+  project because it aims to provide the free EDA community the best spice3
+  simulator available. This means fixing bugs, adding new features but always
+  in the spice3 framework. Achieving compatibility with commercial spice based 
+  simulators and provide users the latest devices models are important goals
+  of the project. Improvements in the postprocessing (data handling 
+  capabilities) and user interface are other goals.  
 
 
- 1.4 What you are going to do?  
+ 1.5 What you are going to do?  
 
-  We are going to develop a mixed-signal/mixed-level circuit simulation
-  program integrating three different spice based simulators:
-  Spice, Xspice and Cider.
-  
-  Xspice is a mixed-signal circuit simulator developed by GTRI (Georgia 
-  Tech Research Institute) at Georgia Institute of Technology. Xspice
-  was originally developed as an extension over Spice3c1. Xspice
-  introduces code modeling and a digital simulator into ngspice.
-  The "home site" of Xspice is: 
-  
-           http://users.ece.gatech.edu/~mrichard/Xspice/
-  
-  Cider is a mixed-level circuit and device simulator based on Spice3f5
-  that couples a device simulator (DSIM) to Spice. More information can
-  be found at:
-  
-        http://www-cad.eecs.berkeley.edu/Software/cider.html 
-  
-  The merging process is done in parallel with bug fixing and improvement
-  of the three simulators. The improvements are concentrated into 6
-  directions:
-  
-  
-  + Compact models:  the improvements in compact models will address
-    mainly the implementation of additional effects not available
-    in the original code. Device specific improvements are documented
-    on ngspice's documentation and in the DEVICE file in project's
-    tarball.
-    Improvements that affects all devices already implemented are:
-    "dtemp" option to set instance's temperature relative to the circuit 
-    one and "m" parallel multiplier to simulate an arbitrary number of
-    instances of the same kind connected in parallel.
-    
-    Planned improvements are the development of a dynamic loading
-    mechanism for compact models, to avoid loading in memory devices
-    that are not needed, and SOAR (Safe Operating ARea) checks to 
-    identify situations in which devices are used out of their
-    safety areas.  
-  
-  
-  + Simulator's analyses: this is a low priority area. Planned improvements
-    include the implementation of parametric analyses, to analyse the
-    behaviour of the circuit as a parameter changes. Parameter sweep,
-    Monte Carlo and Worst Case fall in this category. Network analysis
-    (double bipole parameters extraction) is another planned improvement.       
-    
-  
-  + Numerical analysis code: the improvements within the numerical code
-    must be done with extreme care. Planned improvements are, the 
-    replacement of the Sparse library with the latest code Kenneth Kundert
-    has released, available at:
+  An official roadmap for ngspice was never drawn. Contributions made by
+  developers drive ngspice development and the roadmap is built day by 
+  day by developers writing on the lists. Ngspice development activity
+  can be summarized in 3 points:
 
-               http://sourceforge.net/projects/sparse
-   
-   Other planned improvements, but with very low priority, includes the
-   use SuperLU library as possible Sparse library replacement (the 
-   library is available at http://crd.lbl.gov/~xiaoye/SuperLU) and the
-   introduction of continuation metohds to aid DC convergence. 
+  + Compatibility: Ngspice should be compatible with commercial products,
+    thus allowing people to use the netlist generated for such tools. As 
+    most of the commercial simulators avaiable tracked each other in netlist
+    language, this should not be an impossible task. The most important goal
+    here is to provide a reliable support for model libraries coming from
+    foundries.  
   
-  
-  + Spice language: The language used to input the circuit to the simulator
-    has been extended and now allows the user to input parametric values
-    for components (the numparam library). This is an experimental feature 
-    that will be improved in the future. Planned improvements includes the
-    support for loading more than one circuit, netlist manipulation via
-    command line (adding and removing instances) and the implementation
-    of a command history using the libedit library, available at:
-     
-                 http://sourceforge.net/projects/libedit
-    
-  
-  + Frontend: The design of a new spice frontend has not been successful
-    and now is orphaned, since the is no interests and many free and
-    commercial frontends are available. There is no planned improvement
-    here.
-    
-  
+  + Compact models:  The interest in using ngspice is intimately connected
+    to the available models. To provide the latest models available for 
+    active and passive devices is a fundamental goal of the project. In
+    this direction we are integrating ADMS model compiler into ngspice.
+
   + Documentation: Commercial simulators come with very good manuals 
     containing tutorials, description of models equations, example of 
     use, suggestions, etc. Spice came with little documentation. The 
@@ -192,54 +139,35 @@
     documentation will always be left slightly behind.
    
 
- 1.5 Legal issues
+ 1.6 Legal issues
 
-  Ngspice merges three different simulators: spice and cider are covered
-  with the "old" BSD license, Xspice by its own license. The ngspice 
-  license will be then the BSD license. 
-  
-  Since the "old" BSD license is not compatible with the GPL library
-  it is not possible to link the ngspice with GPL'ed code, as is
-  written in:
-  
-             http://www.gnu.org/philosophy/bsd.html
-   
-  The group developing ngspice has written to Berkeley's copyright 
-  holders asking to change the license to the new BSD, which has the 
-  incompatibility removed, but without success. 
-  
-  Ngspice will not be released under GPL license and, no GPL code can be 
-  linked into ngspice (as in the original Spice3f) without breaking GPL.
+  Ngspice, starting from release rework-18 is released under BSD/LGPL 
+  license. Part of the code are covered by other compatible licenses:
+  spice3 and cider are BSD, xspice is Public Domain and TCLSPICE is 
+  LGPL and the copyright is of their respective owners (need to write better)
 
 
- 1.6.  What mailing lists exist for ngspice?
+ 1.7.  What mailing lists exist for ngspice?
 
-  There are three mailing lists dedicated to the ngspice project. 
+  There are two general mailing lists dedicated to the ngspice project. 
   
   Users mailing list: <ngspice-users@lists.sourceforge.net>
   This list is for ngspice users, examples, problems, bug reports
-  and general discussion on ngspice can be sent here
+  and general discussion on ngspice can be sent here. 
   
   Developers mailing list: <ngspice-devel@lists.sourceforge.net>
   The list dedicated to ngspice development. Developers shold 
   subscribe here, to follow the program development. May be used
   to send patches, and technical discussion on ngspice. 
   
-  Frontend mailing list: <ngspice-frontends@lists.sourceforge.net>
-  Almost orphaned, this list should be used to discuss issues about 
-  the realization of a graphical frontend to ngspice. 
-  
   Send an empty message to the following addresses to get information 
   on subscription.  
   
   <ngspice-users-help@lists.sourceforge.net>
-
   <ngspice-devel-help@lists.sourceforge.net>
 
-  <ngspice-frontends-help@lists.sourceforge.net>
 
-
- 1.7.  Are the mailing lists archived anywhere ?
+ 1.8.  Are the mailing lists archived anywhere ?
 
   Yes, the lists are archived. There are two places where to look for
   archives. The project started on the IEEE Central and South Italy
@@ -254,7 +182,7 @@
                     http://ngspice.sourceforge.net/lists.html    
 
 
- 1.8.  What newsgroups exist for ngspice?
+ 1.9.  What newsgroups exist for ngspice?
 
   There is no ngspice specific newsgroup. Anyway ngspice threads appear
   on newsgroups dedicated to circuit simulation and electronic design.
@@ -264,39 +192,37 @@
   comp.lsi.cad 
 
 
- 1.9.  Where can I get a copy of ngspice?
+ 1.10.  Where can I get a copy of ngspice?
 
   You can download ngspice from:
 
                       http://sourceforge.net/projects/ngspice
 
 
- 1.10.  Where should I look on the World Wide Web for ngspice stuff?
+ 1.11.  Where should I look on the World Wide Web for ngspice stuff?
 
   Look at the official Ngpice Web Page:
   
                            http://ngspice.sourceforge.net
 
 
- 1.11.  Where should I look on the World Wide Web for Spice documenta-
-         tion?
+ 1.12.  Where should I look on the World Wide Web for Spice documenta-
+        tion?
 
   There are a lot of Internet sites that have information on spice, the
   best way is to point to your preferred search engine. Some interesting
   sites are:
   
-  The Spice Home Page:
+  Pages on Spice:
    http://bwrc.eecs.berkeley.edu/Classes/IcBook/SPICE/
+   http://embedded.eecs.berkeley.edu/pubs/downloads/spice/index.htm
   
   Xspice Page:
-   http://users.ece.gatech.edu/~mrichard/Xspic
+   http://users.ece.gatech.edu/~mrichard/Xspice
 
   Cider Page:
-   http://www-cad.eecs.barkeley.edu/Software/cider.html
-   
-  Spice benchmarks:
-   http://www.cbl.ncsu.edu/pub/Benchmark_dirs
-    
+   http://embedded.eecs.berkeley.edu/pubs/downloads/cider/index.htm
+
 
 
   2.  DEVELOPMENT
@@ -306,29 +232,23 @@
 
   The latest version released is: 
   
-  * ngspice-rework-15 (released on 10/12/2001)
+  * ngspice-rework-18 (released on 1/12/2008)
   
-  The development version is:
-  
-  * ngspice-rework-15pre3 (released on 28/01/2004)
-
 
  2.2.  What are the latest features in the current release?
 
   New features:
 
 
-    + Improved bipolar devices (Diode and bjt)
-    + Improved BSIM3 and BSIM4
-    + VBIC and HiSIM compact models
-    + Cider and Xspice inclusion
-    + More flexibility in net names
-    + Parameter substitution in netlist
+    + Support for .lib and .param statements
+    + Improved netlisting capabilites to support more complex model cards
+    + Global net names
+    + Mosfet model binning
 
   Bug fixes:
 
-    + Many memory leaks closed
-    + Control language works as expected
+    + Fixes in the control language
+
 
 
  2.3.  What does it looks like?
