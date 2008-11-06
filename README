@@ -1,5 +1,5 @@
 README for NGSPICE
-------------------
+==================
 
 Ngspice is a mixed-level/mixed-signal circuit simulator. Its code 
 is based on three open source software packages: Spice3f5, Cider1b1 
@@ -33,24 +33,21 @@ Ngspice is part of the gEDA project.
 MAILING LISTS:
 -------------
 
-There are four mailing lists dedicated to the development of ngspice. 
+ There are three mailing lists dedicated to the development of ngspice. 
 
-ngspice-users@lists.sourceforge.net: This list is the list for the users of the
-                                     ngspice simulator. 
+ * ngspice-users@lists.sourceforge.net: 
+   This list is the list for the users of the ngspice simulator. 
 
-ngspice-devel@lists.sourceforge.net: ngspice development issues. Developers and
-                                     "want to be" developers should 
-                                     subscribe here.
-
-ngspice-frontend@list.sourceforge.net: issues related to development of
-                                       frontends for ngspice.
+ * ngspice-devel@lists.sourceforge.net: 
+   ngspice development issues. Developers and "want to be" developers should 
+   subscribe here.
                                          
-ngspice-bugs@list.sourceforge.net: Bug report should be posted here.
+ * ngspice-bugs@list.sourceforge.net: 
+   Bug reports should be posted here.
 
-To subscribe the list(s), send a message to:
+ To subscribe the list(s), send a message to:
    <ngspice-users-subscribe@lists.sourceforge.net>
    <ngspice-devel-subscribe@lists.sourceforge.net>
-   <ngspice-frontend-subscribe@lists.sourceforge.net>
    <ngspice-bugs-subscribe@lists.sourceforge.net>
 
 WEB SITEs:
@@ -60,8 +57,5 @@ This project is hosted on Sourceforge.net.
 The home page is http://ngspice.sourceforge.net
 The summary page is http://sf.net/projects/ngspice
 The ngspice page on gEDA site is http://geda.seul.org/tools/ngspice/index.html
-
-
-Paolo (p.nenzi@ieee.org)
 
 
