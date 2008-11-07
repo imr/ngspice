@@ -2,18 +2,22 @@ Ng-spice-rework-18
 ============
 
 Rework-18 is introduces several new features into ngspice. This is a major
-release that comes after more then three years. During the silent years
+release that comes after more than three years. During the silent years
 ngspice developers worked in CVS to stabilize and introduce new features
 into the simulator.
 
 - Tclspice simulator library has been merged with ngspice. Now you can
-  compile ngapice or tclspice by asserting a configure switch. 
+  compile ngapice or tclspice by asserting a configure switch. See README.tcl
+- New options have been introduced: brief, listing, autostop and scale
 - Support for .lib file has been introduced. This allows the use of
   third party model libraries in ngspice.
-- Support for global node names. A list of nodes that are not expanded in
-  subcircuits can be defined using the .global directive. 
-- Numparam library is by default compiled into ngspice.
-
+- .measure statements: avg, integ, rms, max, min, delay, param
+- .global statements t support for global nodes whose name is not expanded
+  when flattening the netlist.
+- .func macros for inlining functions into netlists.
+- Improved the numparam library to support fully parametrized netlists.
+- BSIM model binning.
+- new multi-input gate VCVS using XSPICE extensions.
 
 Ng-spice-rework-17
 ============
