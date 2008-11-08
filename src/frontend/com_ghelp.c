@@ -72,4 +72,9 @@ com_ghelp(wordlist *wl)
     hlp_main(path, wl);
     return;
 #endif /* X_DISPLAY_MISSING 1  */
+#ifdef HAS_WINDOWS
+    printf("Internal help is no longer avaialable!\n");
+    printf("Please check for\n");
+    printf("http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/\n"); 
+#endif
 }
