@@ -1,0 +1,83 @@
+H. Vogt 09.11.08
+(Translation of some commands from German to English is required)
+
+This this directory (visualc) with its files 
+vngspice.sln (project starter) and
+vngspice.vcproj (project contents)
+allows to compile and link ngspice with MS Visual Studio 2008.
+The project is probably not compatible with Visual Studio 2005.
+
+CIDER and XSPICE are included, but the code models for XSPICE
+(*.cm) are not (yet) made. You may however use the code models
+created with MINGW (which in fact are dlls), as e.g. found in 
+the ngspice binary distribution.
+
+There is currently no installation procedure provided, you may
+however install the executable manually as described in the
+installation tree below.
+
+/visualc/include contains a dedicated config.h file. It contains the
+preprocessor definitions required to properly compile the code.
+strings.h has been necessary during setting up the project.
+
+
+Install Microsoft Visual Studio 2008 C++
+
+Goto 
+/ng-spice-rework/visualc
+
+Start MS Visual Studio 2008 by double click onto 
+vngspice.sln
+
+After MS Visual Studio has opened up, select debug or release version 
+by checking 'Erstellen' , 'Konfigurations-Manager' 'Debug' or 'Release'
+
+Start making ngspice (called vngspice.exe) by selecting 'Erstellen' and 
+'vngspice neu erstellen'.
+
+Object files will be created and stored in visualc/debug or visualc/release.
+The executable will be stored to visualc/debug/bin or visualc/release/bin.
+
+Installation tree (as provided with MINGW make install) and also used by
+vngspice:
+
+C:\Spice\
+	bin\
+		ngspice.exe
+		nghelp.exe
+		ngmakeidx.exe
+		ngnutmeg.exe
+		cmpp.exe
+	lib\
+		spice\
+			analog.cm
+			digital.cm
+			spice2poly.cm
+			extradev.cm
+			extravt.cm
+	share\
+		info\
+			dir
+			ngspice.info
+			ngspice.info-1
+			..
+			ngspice.info-10
+		man\
+			man1\
+				ngmultidec.1
+				ngnutmeg.1
+				ngsconvert.1
+				ngspice.1
+		ng-spice-rework\
+			helpdir\
+				ngspice.idx
+				ngspice.txt
+			scripts\
+				ciderinit
+				devaxis
+				devload
+				setplot
+				spectrum
+				spinit
+		
+		
