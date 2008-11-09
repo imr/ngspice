@@ -1,8 +1,8 @@
-/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4par.c of BSIM4.6.1.
+ * File: b4par.c of BSIM4.6.2.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
@@ -47,7 +47,7 @@ IFvalue *select;
             here->BSIM4m = value->rValue;
             here->BSIM4mGiven = TRUE;
             break;
-       case BSIM4_NF:
+        case BSIM4_NF:
             here->BSIM4nf = value->rValue;
             here->BSIM4nfGiven = TRUE;
             break;

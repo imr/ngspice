@@ -1,20 +1,21 @@
-/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4noi.c of BSIM4.6.1.
+ * File: b4noi.c of BSIM4.6.2.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
  * Authors: 2007- Mohan Dunga, Wenwei Yang, Ali Niknejad, Chenming Hu
+  * Authors: 2008- Wenwei Yang,  Ali Niknejad, Chenming Hu 
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
- * Modified by Xuemei Xi, 11/15/2002.
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, 03/04/2004.
  * Modified by Xuemei Xi, 07/29/2005.
  * Modified by Mohan Dunga, 12/13/2006
+  * Modified by Wenwei Yang, 07/31/2008.
  **********/
 
 #include "ngspice.h"
@@ -96,7 +97,7 @@ double tempInoise;
 double noizDens[BSIM4NSRCS];
 double lnNdens[BSIM4NSRCS];
 
-double T0, T1, T2, T5,  T10, T11;
+double T0, T1, T2, T5, T10, T11;
 double Vds, Ssi, Swi;
 double tmp=0.0, gdpr, gspr, npart_theta=0.0, npart_beta=0.0, igsquare, bodymode;
 
@@ -214,6 +215,10 @@ int i;
 					     * model->BSIM4tnoia * pParam->BSIM4leff);
 				  npart_theta = model->BSIM4rnoib * (1.0 + T5
                                               * model->BSIM4tnoib * pParam->BSIM4leff);
+				  if(npart_theta > 0.9)
+				     npart_theta = 0.9;
+				  if(npart_theta > 0.9 * npart_beta)
+				     npart_theta = 0.9 * npart_beta; //4.6.2
 
 				  if (model->BSIM4rdsMod == 0)
                                   {   gspr = here->BSIM4sourceConductance;

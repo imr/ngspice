@@ -1,4 +1,4 @@
-/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
@@ -16,6 +16,7 @@
  * Modified by Xuemei Xi, 07/29/2005.
  * Modified by Mohan Dunga, 12/13/2006
  * Modified by Mohan Dunga, Wenwei Yang, 05/18/2007.
+ * Modified by  Wenwei Yang, 07/31/2008 .
  **********/
 
 #include "ngspice.h"
@@ -244,12 +245,12 @@ FILE *fplog;
 	    printf("Fatal: Drout = %g is negative.\n", pParam->BSIM4drout);
 	    Fatal_Flag = 1;
 	}
-	
-        /*if (here->BSIM4m < 1.0)
+
+        if (here->BSIM4m < 1.0)
         {   fprintf(fplog, "Fatal: Number of multiplier = %g is smaller than one.\n", here->BSIM4m);
             printf("Fatal: Number of multiplier = %g is smaller than one.\n", here->BSIM4m);
             Fatal_Flag = 1;
-        }*/
+        }
 
         if (here->BSIM4nf < 1.0)
         {   fprintf(fplog, "Fatal: Number of finger = %g is smaller than one.\n", here->BSIM4nf);
@@ -668,6 +669,17 @@ FILE *fplog;
          }
          
 /* Check capacitance parameters */
+        if (pParam->BSIM4noff < 0.1)
+        {   fprintf(fplog, "Warning: Noff = %g is too small.\n",
+                    pParam->BSIM4noff);
+            printf("Warning: Noff = %g is too small.\n", pParam->BSIM4noff);
+        }
+
+        if (pParam->BSIM4voffcv < -0.5)
+        {   fprintf(fplog, "Warning: Voffcv = %g is too small.\n",
+                    pParam->BSIM4voffcv);
+            printf("Warning: Voffcv = %g is too small.\n", pParam->BSIM4voffcv);
+        }
         if (pParam->BSIM4moin < 5.0)
         {   fprintf(fplog, "Warning: Moin = %g is too small.\n",
                     pParam->BSIM4moin);
@@ -827,7 +839,9 @@ FILE *fplog;
 		    printf("Warning: SCREF = %g is not positive. Set to 1e-6.\n", model->BSIM4scref);
 		    model->BSIM4scref = 1e-6;
 		}
-	        if (here->BSIM4sca < 0.0)
+	        /*Move these checks to temp.c for sceff calculation*/
+			/*
+			if (here->BSIM4sca < 0.0)
                 {   fprintf(fplog, "Warning: SCA = %g is negative. Set to 0.0.\n", here->BSIM4sca);
                     printf("Warning: SCA = %g is negative. Set to 0.0.\n", here->BSIM4sca);
                     here->BSIM4sca = 0.0;
@@ -847,6 +861,8 @@ FILE *fplog;
                     printf("Warning: SC = %g is negative. Set to 0.0.\n", here->BSIM4sc);
                     here->BSIM4sc = 0.0;
                 }
+				*/
+				
 	}
      }/* loop for the parameter check for warning messages */      
 	fclose(fplog);

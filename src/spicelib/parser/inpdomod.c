@@ -324,7 +324,9 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    }
 	    if ( (strstr(ver, "default")) 
 	        || (strstr(ver, "4.6")) || (strstr(ver, "4.6.0")) || (strstr(ver, "4.60")) 
-	                                || (strstr(ver, "4.6.1")) || (strstr(ver, "4.61")) ) {
+	                                || (strstr(ver, "4.6.1")) || (strstr(ver, "4.61"))
+	                                || (strstr(ver, "4.6.2")) || (strstr(ver, "4.62"))
+	                                || (strstr(ver, "4.6.3")) || (strstr(ver, "4.63")) ) {
 	      type = INPtypelook("BSIM4");
 	    }
 	    if (type < 0) {

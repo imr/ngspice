@@ -1,8 +1,8 @@
-/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4geo.c of BSIM4.6.1.
+ * File: b4geo.c of BSIM4.6.2.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
@@ -159,7 +159,7 @@ int geo, rgeo, minSD, Type;
 double nf, Weffcj, Rsh, DMCG, DMCI, DMDG;
 double *Rtot;
 {
-double Rint=0.0, Rend = 0.0;
+double Rint = 0.0, Rend = 0.0;
 double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
 
         if (geo < 9) /* since geo = 9 and 10 only happen when nf = even */
@@ -292,7 +292,7 @@ double nuEnd, *Rend;
                 case 6:
 		    if ((DMCG + DMCI) == 0.0)
                          printf("(DMCG + DMCI) can not be equal to zero\n");
-                    if (nuEnd == 0.0)
+                    if ((nuEnd == 0.0)||((DMCG+DMCI)==0.0))
                         *Rend = 0.0;
                     else
                         *Rend = Rsh * Weffcj / (3.0 * nuEnd * (DMCG + DMCI));
@@ -316,7 +316,7 @@ double nuEnd, *Rend;
                 case 8:
                     if ((DMCG + DMCI) == 0.0)
                          printf("(DMCG + DMCI) can not be equal to zero\n");
-                    if (nuEnd == 0.0)
+                    if ((nuEnd == 0.0)||((DMCG + DMCI)==0.0))
                         *Rend = 0.0;
                     else
                         *Rend = Rsh * Weffcj / (3.0 * nuEnd * (DMCG + DMCI));

@@ -1,4 +1,4 @@
-/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
@@ -7,6 +7,7 @@
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
  * Authors: 2007- Mohan Dunga, Wenwei Yang, Ali Niknejad, Chenming Hu
+ * Authors: 2008- Wenwei Yang, Ali Niknejad, Chenming Hu 
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
@@ -16,6 +17,7 @@
  * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
  * Modified by Mohan Dunga, 12/13/2006
  * Modified by Mohan Dunga, Wenwei Yang, 05/18/2007.
+ * Modified by Wenwei Yang, 07/31/2008.
  **********/
 
 #include "ngspice.h"
@@ -23,6 +25,7 @@
 #include "ifsim.h"
 #include "sperror.h"
 #include "suffix.h"
+#include "const.h"
 
 int
 BSIM4mParam(param,value,inMod)
@@ -124,6 +127,18 @@ GENmodel *inMod;
         case  BSIM4_MOD_VDDEOT :
             mod->BSIM4vddeot = value->rValue;
             mod->BSIM4vddeotGiven = TRUE;
+            break;
+		  case  BSIM4_MOD_TEMPEOT :
+            mod->BSIM4tempeot = value->rValue;
+            mod->BSIM4tempeotGiven = TRUE;
+            break;
+		  case  BSIM4_MOD_LEFFEOT :
+            mod->BSIM4leffeot = value->rValue;
+            mod->BSIM4leffeotGiven = TRUE;
+            break;
+		  case  BSIM4_MOD_WEFFEOT :
+            mod->BSIM4weffeot = value->rValue;
+            mod->BSIM4weffeotGiven = TRUE;
             break;
          case  BSIM4_MOD_ADOS :
             mod->BSIM4ados = value->rValue;
@@ -372,6 +387,10 @@ GENmodel *inMod;
             mod->BSIM4eu = value->rValue;
             mod->BSIM4euGiven = TRUE;
             break;
+		case BSIM4_MOD_UCS:
+            mod->BSIM4ucs = value->rValue;
+            mod->BSIM4ucsGiven = TRUE;
+            break;
         case BSIM4_MOD_UA:
             mod->BSIM4ua = value->rValue;
             mod->BSIM4uaGiven = TRUE;
@@ -404,7 +423,10 @@ GENmodel *inMod;
             mod->BSIM4ute = value->rValue;
             mod->BSIM4uteGiven = TRUE;
             break;
-
+        case  BSIM4_MOD_UCSTE :
+            mod->BSIM4ucste = value->rValue;
+            mod->BSIM4ucsteGiven = TRUE;
+            break;
         case BSIM4_MOD_UD:
             mod->BSIM4ud = value->rValue;
             mod->BSIM4udGiven = TRUE;
@@ -1021,6 +1043,9 @@ GENmodel *inMod;
             mod->BSIM4jtsswgd = value->rValue;
             mod->BSIM4jtsswgdGiven = TRUE;
             break;
+		case BSIM4_MOD_JTWEFF :
+		    mod->BSIM4jtweff = value->rValue;
+			mod->BSIM4jtweffGiven = TRUE;
         case  BSIM4_MOD_NJTS :
             mod->BSIM4njts = value->rValue;
             mod->BSIM4njtsGiven = TRUE;
@@ -1605,6 +1630,10 @@ GENmodel *inMod;
             mod->BSIM4lute = value->rValue;
             mod->BSIM4luteGiven = TRUE;
             break;
+		case  BSIM4_MOD_LUCSTE :
+            mod->BSIM4lucste = value->rValue;
+            mod->BSIM4lucsteGiven = TRUE;
+            break;
         case BSIM4_MOD_LVOFF:
             mod->BSIM4lvoff = value->rValue;
             mod->BSIM4lvoffGiven = TRUE;
@@ -1897,6 +1926,10 @@ GENmodel *inMod;
             mod->BSIM4leu = value->rValue;
             mod->BSIM4leuGiven = TRUE;
             break;
+		case  BSIM4_MOD_LUCS :
+            mod->BSIM4lucs = value->rValue;
+            mod->BSIM4lucsGiven = TRUE;
+            break;
         case  BSIM4_MOD_LVFB :
             mod->BSIM4lvfb = value->rValue;
             mod->BSIM4lvfbGiven = TRUE;
@@ -2164,6 +2197,10 @@ GENmodel *inMod;
         case  BSIM4_MOD_WUTE :
             mod->BSIM4wute = value->rValue;
             mod->BSIM4wuteGiven = TRUE;
+            break;
+		case  BSIM4_MOD_WUCSTE :
+            mod->BSIM4wucste = value->rValue;
+            mod->BSIM4wucsteGiven = TRUE;
             break;
         case BSIM4_MOD_WVOFF:
             mod->BSIM4wvoff = value->rValue;
@@ -2457,6 +2494,10 @@ GENmodel *inMod;
             mod->BSIM4weu = value->rValue;
             mod->BSIM4weuGiven = TRUE;
             break;
+		 case  BSIM4_MOD_WUCS :
+            mod->BSIM4wucs = value->rValue;
+            mod->BSIM4wucsGiven = TRUE;
+            break;
         case  BSIM4_MOD_WVFB :
             mod->BSIM4wvfb = value->rValue;
             mod->BSIM4wvfbGiven = TRUE;
@@ -2724,6 +2765,10 @@ GENmodel *inMod;
         case  BSIM4_MOD_PUTE :
             mod->BSIM4pute = value->rValue;
             mod->BSIM4puteGiven = TRUE;
+            break;
+		 case  BSIM4_MOD_PUCSTE :
+            mod->BSIM4pucste = value->rValue;
+            mod->BSIM4pucsteGiven = TRUE;
             break;
         case BSIM4_MOD_PVOFF:
             mod->BSIM4pvoff = value->rValue;
@@ -3016,6 +3061,10 @@ GENmodel *inMod;
         case  BSIM4_MOD_PEU :
             mod->BSIM4peu = value->rValue;
             mod->BSIM4peuGiven = TRUE;
+            break;
+		case  BSIM4_MOD_PUCS :
+            mod->BSIM4pucs = value->rValue;
+            mod->BSIM4pucsGiven = TRUE;
             break;
         case  BSIM4_MOD_PVFB :
             mod->BSIM4pvfb = value->rValue;

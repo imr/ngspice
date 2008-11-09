@@ -1,8 +1,8 @@
-/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4ask.c of BSIM4.6.1.
+ * File: b4ask.c of BSIM4.6.2.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
@@ -42,7 +42,7 @@ BSIM4instance *here = (BSIM4instance*)inst;
         case BSIM4_M:
             value->rValue = here->BSIM4m;
             return(OK);
-       case BSIM4_NF:
+        case BSIM4_NF:
             value->rValue = here->BSIM4nf;
             return(OK);
         case BSIM4_MIN:

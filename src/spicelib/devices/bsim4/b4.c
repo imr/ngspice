@@ -1,12 +1,13 @@
-/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
+/**** BSIM4.6.2 Released  by Wenwei Yang 07/31/2008 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4.c of BSIM4.6.1.
+ * File: b4.c of BSIM4.6.2.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
  * Authors: 2007- Mohan Dunga, Wenwei Yang, Ali Niknejad, Chenming Hu
+  * Authors: 2008- Wenwei Yang, Ali Niknejad, Chenming Hu 
  * Project Director: Prof. Chenming Hu.
  * Modified by Xuemei Xi, 04/06/2001.
  * Modified by Xuemei Xi, 10/05/2001.
@@ -16,6 +17,7 @@
  * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
  * Modified by Mohan Dunga, 12/13/2006.
  * Modified by Mohan Dunga, Wenwei Yang, 05/18/2007.
+ * Modified by Wenwei Yang, 07/31/2008.
  **********/
 
 #include "ngspice.h"
@@ -34,7 +36,7 @@ IOP( "sd",  BSIM4_SD,     IF_REAL   , "distance between neighbour fingers"),
 IOP( "sca",  BSIM4_SCA,     IF_REAL   , "Integral of the first distribution function for scattered well dopant"),
 IOP( "scb",  BSIM4_SCB,     IF_REAL   , "Integral of the second distribution function for scattered well dopant"),
 IOP( "scc",  BSIM4_SCC,     IF_REAL   , "Integral of the third distribution function for scattered well dopant"),
-IOP( "sc",  BSIM4_SCA,     IF_REAL   , "Distance to a single well edge "),
+IOP( "sc",  BSIM4_SC,     IF_REAL   , "Distance to a single well edge "),
 IOP( "min",  BSIM4_MIN,   IF_INTEGER , "Minimize either D or S"),
 IOP( "ad",  BSIM4_AD,     IF_REAL   , "Drain area"),
 IOP( "as",  BSIM4_AS,     IF_REAL   , "Source area"),
@@ -132,6 +134,9 @@ IOP( "binunit", BSIM4_MOD_BINUNIT, IF_INTEGER, "Bin  unit  selector"),
 IOP( "version", BSIM4_MOD_VERSION, IF_STRING, "parameter for model version"),
 IOP( "eot", BSIM4_MOD_EOT, IF_REAL, "Equivalent gate oxide thickness in meters"),
 IOP( "vddeot", BSIM4_MOD_VDDEOT, IF_REAL, "Voltage for extraction of Equivalent gate oxide thickness"),
+IOP( "tempeot", BSIM4_MOD_TEMPEOT, IF_REAL, " Temperature for extraction of EOT"),
+IOP( "leffeot", BSIM4_MOD_LEFFEOT, IF_REAL, " Effective length for extraction of EOT"),
+IOP( "weffeot", BSIM4_MOD_WEFFEOT, IF_REAL, "Effective width for extraction of EOT"),
 IOP( "ados", BSIM4_MOD_ADOS, IF_REAL, "Charge centroid parameter"),
 IOP( "bdos", BSIM4_MOD_BDOS, IF_REAL, "Charge centroid parameter"),
 IOP( "toxe", BSIM4_MOD_TOXE, IF_REAL, "Electrical gate oxide thickness in meters"),
@@ -206,7 +211,9 @@ IOP( "up", BSIM4_MOD_UP, IF_REAL, "Channel length linear factor of mobility"),
 IOP( "lp", BSIM4_MOD_LP, IF_REAL, "Channel length exponential factor of mobility"),
 IOP( "u0", BSIM4_MOD_U0, IF_REAL, "Low-field mobility at Tnom"),
 IOP( "eu", BSIM4_MOD_EU, IF_REAL, "Mobility exponent"),
+IOP( "ucs", BSIM4_MOD_UCS, IF_REAL, "Colombic scattering exponent"),
 IOP( "ute", BSIM4_MOD_UTE, IF_REAL, "Temperature coefficient of mobility"),
+IOP( "ucste", BSIM4_MOD_UCSTE, IF_REAL,"Temperature coefficient of colombic mobility"),
 IOP( "voff", BSIM4_MOD_VOFF, IF_REAL, "Threshold voltage offset"),
 IOP( "minv", BSIM4_MOD_MINV, IF_REAL, "Fitting parameter for moderate inversion in Vgsteff"),
 IOP( "minvcv", BSIM4_MOD_MINVCV, IF_REAL, "Fitting parameter for moderate inversion in Vgsteffcv"),
@@ -404,6 +411,7 @@ IOP( "jtssws", BSIM4_MOD_JTSSWS, IF_REAL, "Source STI sidewall trap-assisted sat
 IOP( "jtsswd", BSIM4_MOD_JTSSWD, IF_REAL, "Drain STI sidewall trap-assisted saturation current density"),
 IOP( "jtsswgs", BSIM4_MOD_JTSSWGS, IF_REAL, "Source gate-edge sidewall trap-assisted saturation current density"),
 IOP( "jtsswgd", BSIM4_MOD_JTSSWGD, IF_REAL, "Drain gate-edge sidewall trap-assisted saturation current density"),
+IOP( "jtweff", BSIM4_MOD_JTWEFF, IF_REAL, "TAT current width dependance"),
 IOP( "njts", BSIM4_MOD_NJTS, IF_REAL, "Non-ideality factor for bottom junction"),
 IOP( "njtssw", BSIM4_MOD_NJTSSW, IF_REAL, "Non-ideality factor for STI sidewall junction"),
 IOP( "njtsswg", BSIM4_MOD_NJTSSWG, IF_REAL, "Non-ideality factor for gate-edge sidewall junction"),
@@ -524,6 +532,7 @@ IOP( "lup",  BSIM4_MOD_LUP, IF_REAL, "Length dependence of up"),
 IOP( "llp",  BSIM4_MOD_LLP, IF_REAL, "Length dependence of lp"),
 IOP( "lu0",  BSIM4_MOD_LU0, IF_REAL, "Length dependence of u0"),
 IOP( "lute", BSIM4_MOD_LUTE, IF_REAL, "Length dependence of ute"),
+IOP( "lucste", BSIM4_MOD_LUCSTE, IF_REAL, "Length dependence of ucste"),
 IOP( "lvoff", BSIM4_MOD_LVOFF, IF_REAL, "Length dependence of voff"),
 IOP( "lminv", BSIM4_MOD_LMINV, IF_REAL, "Length dependence of minv"),
 IOP( "lminvcv", BSIM4_MOD_LMINVCV, IF_REAL, "Length dependence of minvcv"),
@@ -610,6 +619,7 @@ IOP( "llambda",  BSIM4_MOD_LLAMBDA, IF_REAL, "Length dependence of lambda"),
 IOP( "lvtl",      BSIM4_MOD_LVTL,     IF_REAL, " Length dependence of vtl"),
 IOP( "lxn",     BSIM4_MOD_LXN,    IF_REAL, " Length dependence of xn"),
 IOP( "leu",  BSIM4_MOD_LEU, IF_REAL, " Length dependence of eu"),
+IOP( "lucs",  BSIM4_MOD_LUCS, IF_REAL, "Length dependence of lucs"),
 IOP( "lvfbsdoff",     BSIM4_MOD_LVFBSDOFF,     IF_REAL, "Length dependence of vfbsdoff"),
 IOP( "ltvfbsdoff",     BSIM4_MOD_LTVFBSDOFF,     IF_REAL, "Length dependence of tvfbsdoff"),
 IOP( "ltvoff",     BSIM4_MOD_LTVOFF,     IF_REAL, "Length dependence of tvoff"),
@@ -671,6 +681,7 @@ IOP( "wup",  BSIM4_MOD_WUP, IF_REAL, "Width dependence of up"),
 IOP( "wlp",  BSIM4_MOD_WLP, IF_REAL, "Width dependence of lp"),
 IOP( "wu0",  BSIM4_MOD_WU0, IF_REAL, "Width dependence of u0"),
 IOP( "wute", BSIM4_MOD_WUTE, IF_REAL, "Width dependence of ute"),
+IOP( "wucste", BSIM4_MOD_WUCSTE, IF_REAL, "Width dependence of ucste"),
 IOP( "wvoff", BSIM4_MOD_WVOFF, IF_REAL, "Width dependence of voff"),
 IOP( "wminv", BSIM4_MOD_WMINV, IF_REAL, "Width dependence of minv"),
 IOP( "wminvcv", BSIM4_MOD_WMINVCV, IF_REAL, "Width dependence of minvcv"),
@@ -756,6 +767,7 @@ IOP( "wlambda",  BSIM4_MOD_WLAMBDA, IF_REAL, "Width dependence of lambda"),
 IOP( "wvtl",      BSIM4_MOD_WVTL,     IF_REAL, "Width dependence of vtl"),
 IOP( "wxn",     BSIM4_MOD_WXN,    IF_REAL, "Width dependence of xn"),
 IOP( "weu",  BSIM4_MOD_WEU, IF_REAL, "Width dependence of eu"),
+IOP( "wucs",  BSIM4_MOD_WUCS, IF_REAL, "Width dependence of ucs"),
 IOP( "wvfbsdoff",     BSIM4_MOD_WVFBSDOFF,     IF_REAL, "Width dependence of vfbsdoff"),
 IOP( "wtvfbsdoff",     BSIM4_MOD_WTVFBSDOFF,     IF_REAL, "Width dependence of tvfbsdoff"),
 IOP( "wtvoff",     BSIM4_MOD_WTVOFF,     IF_REAL, "Width dependence of tvoff"),
@@ -817,6 +829,7 @@ IOP( "pup",  BSIM4_MOD_PUP, IF_REAL, "Cross-term dependence of up"),
 IOP( "plp",  BSIM4_MOD_PLP, IF_REAL, "Cross-term dependence of lp"),
 IOP( "pu0",  BSIM4_MOD_PU0, IF_REAL, "Cross-term dependence of u0"),
 IOP( "pute", BSIM4_MOD_PUTE, IF_REAL, "Cross-term dependence of ute"),
+IOP( "pucste", BSIM4_MOD_PUCSTE, IF_REAL, "Cross-term dependence of ucste"),
 IOP( "pvoff", BSIM4_MOD_PVOFF, IF_REAL, "Cross-term dependence of voff"),
 IOP( "pminv", BSIM4_MOD_PMINV, IF_REAL, "Cross-term dependence of minv"),
 IOP( "pminvcv", BSIM4_MOD_PMINVCV, IF_REAL, "Cross-term dependence of minvcv"),
@@ -902,6 +915,7 @@ IOP( "plambda",  BSIM4_MOD_PLAMBDA, IF_REAL, "Cross-term dependence of lambda"),
 IOP( "pvtl",      BSIM4_MOD_PVTL,     IF_REAL, "Cross-term dependence of vtl"),
 IOP( "pxn",     BSIM4_MOD_PXN,    IF_REAL, "Cross-term dependence of xn"),
 IOP( "peu",  BSIM4_MOD_PEU, IF_REAL, "Cross-term dependence of eu"),
+IOP( "pucs",  BSIM4_MOD_PUCS, IF_REAL, "Cross-term dependence of ucs"),
 IOP( "pvfbsdoff",     BSIM4_MOD_PVFBSDOFF,     IF_REAL, "Cross-term dependence of vfbsdoff"),
 IOP( "ptvfbsdoff",     BSIM4_MOD_PTVFBSDOFF,     IF_REAL, "Cross-term dependence of tvfbsdoff"),
 IOP( "ptvoff",     BSIM4_MOD_PTVOFF,     IF_REAL, "Cross-term dependence of tvoff"),

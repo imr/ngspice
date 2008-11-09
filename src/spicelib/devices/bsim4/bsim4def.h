@@ -1,11 +1,13 @@
-/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
 
 /**********
 Copyright 2006 Regents of the University of California.  All rights reserved.
+File: bsim4def.h
 Author: 2000 Weidong Liu.
 Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
 Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
 Authors: 2007- Mohan Dunga, Wenwei Yang, Ali Niknejad, Chenming Hu
+Authors: 2008- Wenwei Yang, Ali Niknejad, Chenming Hu 
 Modified by Xuemei Xi, 11/15/2002.
 Modified by Xuemei Xi, 05/09/2003.
 Modified by Xuemei Xi, 03/04/2004.
@@ -13,7 +15,7 @@ Modified by Xuemei Xi, Mohan Dunga, 09/24/2004.
 Modified by Xuemei Xi, 07/29/2005.
 Modified by Mohan Dunga, 12/13/2006
 Modified by Mohan Dunga, Wenwei Yang, 05/18/2007.
-File: bsim4def.h
+Modified by Wenwei Yang, 07/31/2008.
 **********/
 
 #ifndef BSIM4
@@ -513,7 +515,9 @@ struct bsim4SizeDependParam
     double BSIM4lp;
     double BSIM4u0;
     double BSIM4eu;
+	double BSIM4ucs;
     double BSIM4ute;
+	double BSIM4ucste;
     double BSIM4voff;
     double BSIM4tvoff;
     double BSIM4minv;
@@ -641,6 +645,7 @@ struct bsim4SizeDependParam
     double BSIM4theta0vb0;
     double BSIM4thetaRout; 
     double BSIM4mstar;
+	double BSIM4VgsteffVth;
     double BSIM4mstarcv;
     double BSIM4voffcbn;
     double BSIM4voffcbncv;
@@ -700,6 +705,9 @@ typedef struct sBSIM4model
     char   *BSIM4version;
     double BSIM4eot;
     double BSIM4vddeot;
+	double BSIM4tempeot;
+	double BSIM4leffeot;
+	double BSIM4weffeot;
     double BSIM4ados;
     double BSIM4bdos;
     double BSIM4toxe;             
@@ -760,6 +768,7 @@ typedef struct sBSIM4model
     double BSIM4dsub;      
     double BSIM4vth0;
     double BSIM4eu;
+	double BSIM4ucs;
     double BSIM4ua;
     double BSIM4ua1;
     double BSIM4ub;
@@ -772,6 +781,7 @@ typedef struct sBSIM4model
     double BSIM4lp;
     double BSIM4u0;
     double BSIM4ute;
+	double BSIM4ucste;
     double BSIM4voff;
     double BSIM4tvoff;
     double BSIM4minv;
@@ -858,6 +868,7 @@ typedef struct sBSIM4model
     double BSIM4jtsswd;
     double BSIM4jtsswgs;
     double BSIM4jtsswgd;
+	double BSIM4jtweff;
     double BSIM4njts;
     double BSIM4njtssw;
     double BSIM4njtsswg;
@@ -1030,7 +1041,9 @@ typedef struct sBSIM4model
     double BSIM4llp;
     double BSIM4lu0;
     double BSIM4leu;
+	double BSIM4lucs;
     double BSIM4lute;
+	double BSIM4lucste;
     double BSIM4lvoff;
     double BSIM4ltvoff;
     double BSIM4lminv;
@@ -1175,7 +1188,9 @@ typedef struct sBSIM4model
     double BSIM4wlp;
     double BSIM4wu0;
     double BSIM4weu;
+	double BSIM4wucs;
     double BSIM4wute;
+	double BSIM4wucste;
     double BSIM4wvoff;
     double BSIM4wtvoff;
     double BSIM4wminv;
@@ -1320,7 +1335,9 @@ typedef struct sBSIM4model
     double BSIM4plp;
     double BSIM4pu0;
     double BSIM4peu;
+	double BSIM4pucs;
     double BSIM4pute;
+	double BSIM4pucste;
     double BSIM4pvoff;
     double BSIM4ptvoff;
     double BSIM4pminv;
@@ -1582,6 +1599,9 @@ typedef struct sBSIM4model
     unsigned  BSIM4toxrefGiven   :1;
     unsigned  BSIM4eotGiven   :1;
     unsigned  BSIM4vddeotGiven   :1;
+	unsigned  BSIM4tempeotGiven  :1;
+	unsigned  BSIM4leffeotGiven  :1;
+	unsigned  BSIM4weffeotGiven  :1;
     unsigned  BSIM4adosGiven   :1;
     unsigned  BSIM4bdosGiven   :1;
     unsigned  BSIM4toxeGiven   :1;
@@ -1640,9 +1660,10 @@ typedef struct sBSIM4model
     unsigned  BSIM4dvt1wGiven   :1;     
     unsigned  BSIM4dvt2wGiven   :1;     
     unsigned  BSIM4droutGiven   :1;     
-    unsigned  BSIM4dsubGiven   :1;     
+    unsigned  BSIM4dsubGiven   :1;    
     unsigned  BSIM4vth0Given   :1;
     unsigned  BSIM4euGiven   :1;
+	unsigned  BSIM4ucsGiven  :1;
     unsigned  BSIM4uaGiven   :1;
     unsigned  BSIM4ua1Given   :1;
     unsigned  BSIM4ubGiven   :1;
@@ -1655,6 +1676,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4lpGiven     :1;
     unsigned  BSIM4u0Given   :1;
     unsigned  BSIM4uteGiven   :1;
+	unsigned  BSIM4ucsteGiven :1;
     unsigned  BSIM4voffGiven   :1;
     unsigned  BSIM4tvoffGiven   :1;
     unsigned  BSIM4vofflGiven  :1;
@@ -1740,6 +1762,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4jtsswdGiven   :1;
     unsigned  BSIM4jtsswgsGiven   :1;
     unsigned  BSIM4jtsswgdGiven   :1;
+	unsigned  BSIM4jtweffGiven    :1;
     unsigned  BSIM4njtsGiven   :1;
     unsigned  BSIM4njtsswGiven   :1;
     unsigned  BSIM4njtsswgGiven   :1;
@@ -1913,7 +1936,9 @@ typedef struct sBSIM4model
     unsigned  BSIM4llpGiven     :1;
     unsigned  BSIM4lu0Given   :1;
     unsigned  BSIM4leuGiven   :1;
+	unsigned  BSIM4lucsGiven   :1;
     unsigned  BSIM4luteGiven   :1;
+	unsigned  BSIM4lucsteGiven  :1;
     unsigned  BSIM4lvoffGiven   :1;
     unsigned  BSIM4ltvoffGiven   :1;
     unsigned  BSIM4lminvGiven   :1;
@@ -2058,7 +2083,9 @@ typedef struct sBSIM4model
     unsigned  BSIM4wlpGiven     :1;
     unsigned  BSIM4wu0Given   :1;
     unsigned  BSIM4weuGiven   :1;
+	unsigned  BSIM4wucsGiven  :1;
     unsigned  BSIM4wuteGiven   :1;
+	unsigned  BSIM4wucsteGiven  :1;
     unsigned  BSIM4wvoffGiven   :1;
     unsigned  BSIM4wtvoffGiven   :1;
     unsigned  BSIM4wminvGiven   :1;
@@ -2203,7 +2230,9 @@ typedef struct sBSIM4model
     unsigned  BSIM4plpGiven     :1;
     unsigned  BSIM4pu0Given   :1;
     unsigned  BSIM4peuGiven   :1;
+	unsigned  BSIM4pucsGiven   :1;
     unsigned  BSIM4puteGiven   :1;
+	unsigned  BSIM4pucsteGiven  :1;
     unsigned  BSIM4pvoffGiven   :1;
     unsigned  BSIM4ptvoffGiven   :1;
     unsigned  BSIM4pminvGiven   :1;
@@ -2452,6 +2481,17 @@ typedef struct sBSIM4model
 #define BSIM4_M                   38
 
 /* Global parameters */
+#define BSIM4_MOD_TEMPEOT         66
+#define BSIM4_MOD_LEFFEOT         67
+#define BSIM4_MOD_WEFFEOT         68
+#define BSIM4_MOD_UCSTE           69
+#define BSIM4_MOD_LUCSTE          70
+#define BSIM4_MOD_WUCSTE          71
+#define BSIM4_MOD_PUCSTE          72
+#define BSIM4_MOD_UCS             73
+#define BSIM4_MOD_LUCS            74
+#define BSIM4_MOD_WUCS            75
+#define BSIM4_MOD_PUCS            76
 #define BSIM4_MOD_CVCHARGEMOD     77
 #define BSIM4_MOD_ADOS            78
 #define BSIM4_MOD_BDOS            79
@@ -3208,6 +3248,7 @@ typedef struct sBSIM4model
 #define BSIM4_MOD_PUD1             925
 #define BSIM4_MOD_PUP              926
 #define BSIM4_MOD_PLP              927
+#define BSIM4_MOD_JTWEFF           928
 
 /* device questions */
 #define BSIM4_DNODE                945

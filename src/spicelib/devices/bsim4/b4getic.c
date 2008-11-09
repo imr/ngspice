@@ -1,8 +1,8 @@
-/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4getic.c of BSIM4.6.1.
+ * File: b4getic.c of BSIM4.6.2.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
@@ -27,8 +27,8 @@ BSIM4instance *here;
 
     for (; model ; model = model->BSIM4nextModel) 
     {    for (here = model->BSIM4instances; here; here = here->BSIM4nextInstance)
-	 	{   if (here->BSIM4owner != ARCHme) continue; 
-	          if (!here->BSIM4icVDSGiven) 
+          {   if (here->BSIM4owner != ARCHme) continue; 
+	      if (!here->BSIM4icVDSGiven) 
 	      {   here->BSIM4icVDS = *(ckt->CKTrhs + here->BSIM4dNode) 
 				   - *(ckt->CKTrhs + here->BSIM4sNode);
               }

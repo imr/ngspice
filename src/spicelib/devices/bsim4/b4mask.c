@@ -1,8 +1,8 @@
-/**** BSIM4.6.1 Released by Mohan Dunga, Wenwei Yang 05/18/2007 ****/
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
- * File: b4mask.c of BSIM4.6.1.
+ * File: b4mask.c of BSIM4.6.2.
  * Author: 2000 Weidong Liu
  * Authors: 2001- Xuemei Xi, Mohan Dunga, Ali Niknejad, Chenming Hu.
  * Authors: 2006- Mohan Dunga, Ali Niknejad, Chenming Hu
@@ -14,7 +14,7 @@
  * Modified by Xuemei Xi, 05/09/2003.
  * Modified by Xuemei Xi, Mohan Dunga, 07/29/2005.
  * Modified by Mohan Dunga, 12/13/2006
- * Modified by Mohan Dunga, Wenwei Yang, 05/18/2007.
+ * Modified by Mohan Dunga, Wenwei Yang, 07/31/2008.
  **********/
 
 
@@ -105,6 +105,15 @@ IFvalue *value;
             return(OK);
         case  BSIM4_MOD_VDDEOT :
           value->rValue = model->BSIM4vddeot;
+            return(OK);
+        case  BSIM4_MOD_TEMPEOT :
+          value->rValue = model->BSIM4tempeot;
+            return(OK);
+        case  BSIM4_MOD_LEFFEOT :
+          value->rValue = model->BSIM4leffeot;
+            return(OK);
+        case  BSIM4_MOD_WEFFEOT :
+          value->rValue = model->BSIM4weffeot;
             return(OK);
         case  BSIM4_MOD_ADOS :
           value->rValue = model->BSIM4ados;
@@ -299,6 +308,9 @@ IFvalue *value;
         case BSIM4_MOD_EU:
             value->rValue = model->BSIM4eu;
             return(OK);
+        case BSIM4_MOD_UCS:
+            value->rValue = model->BSIM4ucs;
+            return(OK);
         case BSIM4_MOD_UA:
             value->rValue = model->BSIM4ua; 
             return(OK);
@@ -334,6 +346,9 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_UTE:
             value->rValue = model->BSIM4ute;
+            return(OK);
+        case BSIM4_MOD_UCSTE:
+            value->rValue = model->BSIM4ucste;
             return(OK);
         case BSIM4_MOD_VOFF:
             value->rValue = model->BSIM4voff;
@@ -620,6 +635,9 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_JTSSWGD:
             value->rValue = model->BSIM4jtsswgd;
+            return(OK);
+        case BSIM4_MOD_JTWEFF:
+            value->rValue = model->BSIM4jtweff;
             return(OK);
         case BSIM4_MOD_NJTS:
             value->rValue = model->BSIM4njts;
@@ -1057,6 +1075,9 @@ IFvalue *value;
         case BSIM4_MOD_LUTE:
             value->rValue = model->BSIM4lute;
             return(OK);
+        case BSIM4_MOD_LUCSTE:
+            value->rValue = model->BSIM4lucste;
+            return(OK);
         case BSIM4_MOD_LVOFF:
             value->rValue = model->BSIM4lvoff;
             return(OK);
@@ -1260,6 +1281,9 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_LEU:
             value->rValue = model->BSIM4leu;
+            return(OK);
+        case BSIM4_MOD_LUCS:
+            value->rValue = model->BSIM4lucs;
             return(OK);
         case BSIM4_MOD_LVFB:
             value->rValue = model->BSIM4lvfb;
@@ -1474,6 +1498,9 @@ IFvalue *value;
         case BSIM4_MOD_WUTE:
             value->rValue = model->BSIM4wute;
             return(OK);
+        case BSIM4_MOD_WUCSTE:
+            value->rValue = model->BSIM4wucste;
+            return(OK);
         case BSIM4_MOD_WVOFF:
             value->rValue = model->BSIM4wvoff;
             return(OK);
@@ -1677,6 +1704,9 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_WEU:
             value->rValue = model->BSIM4weu;
+            return(OK);
+        case BSIM4_MOD_WUCS:
+            value->rValue = model->BSIM4wucs;
             return(OK);
         case BSIM4_MOD_WVFB:
             value->rValue = model->BSIM4wvfb;
@@ -1891,6 +1921,9 @@ IFvalue *value;
         case BSIM4_MOD_PUTE:
             value->rValue = model->BSIM4pute;
             return(OK);
+        case BSIM4_MOD_PUCSTE:
+            value->rValue = model->BSIM4pucste;
+            return(OK);
         case BSIM4_MOD_PVOFF:
             value->rValue = model->BSIM4pvoff;
             return(OK);
@@ -2094,6 +2127,9 @@ IFvalue *value;
             return(OK);
         case BSIM4_MOD_PEU:
             value->rValue = model->BSIM4peu;
+            return(OK);
+        case BSIM4_MOD_PUCS:
+            value->rValue = model->BSIM4pucs;
             return(OK);
         case BSIM4_MOD_PVFB:
             value->rValue = model->BSIM4pvfb;
