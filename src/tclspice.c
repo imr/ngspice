@@ -1,6 +1,11 @@
-/* Copied and written by Stefan Jones (stefan.jones@multigig.com) at Multigig Ltd
- * Under GPL licence
+/* Copyright 2003-2008 Multigig Ltd 
+ *
+ * Copied and written by Stefan Jones (stefan.jones@multigig.com) at Multigig Ltd
+ *
  * Code based on and copied from ScriptEDA ( http://www-cad.eecs.berkeley.edu/~pinhong/scriptEDA )
+ *
+ * Under LGPL licence since 2008, December 1st
+ *
  * $Id$	
  */
 
