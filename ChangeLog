@@ -1,3 +1,8 @@
+2008-11-16 Dietmar Warning
+ * src/spicelib/devices/bsim4/bsim4itf.h: adapting the ngspice scheme regarding info structure
+ * src/spicelib/devices/bsim4/b4check.c: This is really UCB version 4.6.3 - see below
+   (but will cover all 4.6.x versions)
+
 2008-11-09 Dietmar Warning
  * src/spicelib/devices/bsim4/*.c,*.h src/spicelib/parser/inpdomod.c: 
    This is the new and actual BSIM4 version 4.6.3 from UCB. All files are 4.6.2 except
