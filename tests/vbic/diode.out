@@ -1,26 +1,28 @@
 
+Circuit: vbic diode test
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+
+
 No. of Data Rows : 1
 
-Circuit: VBIC diode test
-
-Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
 	Node                                  Voltage
 	----                                  -------
 	----	-------
-	q1#subsSI                        1.961187e-11
-	q1#collCI                        8.483758e-01
-	q1#substrate                     0.000000e+00
+	q1#collCI                        1.000000e+00
+	q1#substrate                     2.000000e-11
 	vcc                              1.000000e+00
 
 	Source	Current
 	------	-------
 
-	v1#branch                        -2.13290e-02
+	v1#branch                        -3.00513e-12
 
  VBIC models (Vertical Bipolar Inter-Company Model)
-      model                    p1
+      model                    n1
 
-       type                   pnp
+       type                   npn
        tnom                    27
         rcx                    10
         rci                    60
@@ -88,7 +90,9 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
         afn                     1
         bfn                     1
         xre                     0
+        xrb                     0
        xrbi                     0
+        xrc                     0
        xrci                     0
         xrs                     0
         xvo                     0
@@ -132,33 +136,37 @@ Doing analysis at TEMP = 300.150000 and TNOM = 300.150000
 
  VBIC: Vertical Bipolar Inter-Company Model
      device                    q1
-      model                    p1
-        vbe               0.91612
-        vbc              0.807154
-         ic             0.0182022
-         ib            0.00312671
-         ie             -0.021329
-         is          -9.80594e-13
-         gm              0.439271
-         go             -0.045008
-        gpi             0.0932675
-        gmu              0.027613
-         gx              0.314082
-        cbe           9.60805e-11
+      model                    n1
+        vbe           6.28572e-11
+        vbc                    -1
+         ic           1.00513e-12
+         ib          -2.00502e-12
+         ie          -1.09355e-16
+         is                 1e-12
+         gm            4.2279e-15
+         go          -2.19727e-26
+        gpi           1.09669e-12
+        gmu                 1e-12
+         gx             0.0228614
+        cbe                 1e-13
        cbex                     0
-        cbc           5.30126e-10
-       cbcx           8.94218e-20
-       cbep           1.07686e-13
-       cbcp           4.38431e-13
-          p            0.00484787
+        cbc           1.51216e-14
+       cbcx           6.25823e-39
+       cbep            7.5608e-14
+       cbcp           3.02432e-13
+          p           2.00513e-12
 
  Vsource: Independent voltage source
      device                    v1
          dc                     1
       acmag                     0
-          i             -0.021329
-          p              0.021329
+          i          -3.00513e-12
+          p           3.00513e-12
 
 
+Total elapsed time: 0.040 seconds.
 
+Total DRAM available = 255.484375 MB.
+DRAM currently available = 134.417969 MB.
+Total ngspice program size = 13.886719 MB.
 
