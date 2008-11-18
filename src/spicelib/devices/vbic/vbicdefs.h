@@ -331,15 +331,20 @@ typedef struct sVBICinstance {
 #define VBICqbcp VBICstate+60
 #define VBICcqbcp VBICstate+61
 
-#define VBICnumStates 62
+#define VBICircx_Vrcx VBICstate+62
+#define VBICirbx_Vrbx VBICstate+63
+#define VBICirs_Vrs VBICstate+64
+#define VBICire_Vre VBICstate+65
 
-#define VBICsensxpbe VBICstate+62 /* charge sensitivities and their
-                   derivatives. +63 for the derivatives -
-                   pointer to the beginning of the array */
-#define VBICsensxpbex VBICstate+64
-#define VBICsensxpbc VBICstate+66
-#define VBICsensxpbcx VBICstate+68
-#define VBICsensxpbep VBICstate+70
+#define VBICnumStates 66
+
+#define VBICsensxpbe VBICstate+66 /* charge sensitivities and their
+                              derivatives. +67 for the derivatives -
+                              pointer to the beginning of the array */
+#define VBICsensxpbex VBICstate+68
+#define VBICsensxpbc VBICstate+70
+#define VBICsensxpbcx VBICstate+72
+#define VBICsensxpbep VBICstate+74
 
 #define VBICnumSenStates 10
 

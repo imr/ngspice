@@ -127,7 +127,7 @@ if (!data->namelist) return(E_NOMEM);
                 case N_DENS:
                     NevalSrc(&noizDens[VBICRCNOIZ],&lnNdens[VBICRCNOIZ],
                                  ckt,THERMNOISE,inst->VBICcollCXNode,inst->VBICcollNode,
-                                 model->VBICcollectorConduct * inst->VBICarea * inst->VBICm);
+                                 *(ckt->CKTstate0 + inst->VBICircx_Vrcx));
 
                     NevalSrc(&noizDens[VBICRCINOIZ],&lnNdens[VBICRCINOIZ],
                                  ckt,THERMNOISE,inst->VBICcollCXNode,inst->VBICcollCINode,
@@ -135,7 +135,7 @@ if (!data->namelist) return(E_NOMEM);
 
                     NevalSrc(&noizDens[VBICRBNOIZ],&lnNdens[VBICRBNOIZ],
                                  ckt,THERMNOISE,inst->VBICbaseBXNode,inst->VBICbaseNode,
-                                 model->VBICbaseConduct * inst->VBICarea * inst->VBICm);
+                                 *(ckt->CKTstate0 + inst->VBICirbx_Vrbx));
 
                     NevalSrc(&noizDens[VBICRBINOIZ],&lnNdens[VBICRBINOIZ],
                                  ckt,THERMNOISE,inst->VBICbaseBXNode,inst->VBICbaseBINode,
@@ -143,7 +143,7 @@ if (!data->namelist) return(E_NOMEM);
 
                     NevalSrc(&noizDens[VBICRENOIZ],&lnNdens[VBICRENOIZ],
                                  ckt,THERMNOISE,inst->VBICemitEINode,inst->VBICemitNode,
-                                 model->VBICemitterConduct * inst->VBICarea * inst->VBICm);
+                                 *(ckt->CKTstate0 + inst->VBICire_Vre));
 
                     NevalSrc(&noizDens[VBICRBPNOIZ],&lnNdens[VBICRBPNOIZ],
                                  ckt,THERMNOISE,inst->VBICemitEINode,inst->VBICemitNode,
@@ -151,7 +151,7 @@ if (!data->namelist) return(E_NOMEM);
 
                     NevalSrc(&noizDens[VBICRSNOIZ],&lnNdens[VBICRSNOIZ],
                                  ckt,THERMNOISE,inst->VBICsubsSINode,inst->VBICsubsNode,
-                                 model->VBICsubstrateConduct * inst->VBICarea * inst->VBICm);
+                                 *(ckt->CKTstate0 + inst->VBICirs_Vrs));
 
 
                     NevalSrc(&noizDens[VBICICNOIZ],&lnNdens[VBICICNOIZ],

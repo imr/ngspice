@@ -41,11 +41,6 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
      
             if (here->VBICowner != ARCHme) continue;
 
-            Ircx_Vrcx = 1.0 / here->VBICtextCollResist * here->VBICarea * here->VBICm;
-            Irbx_Vrbx = 1.0 / here->VBICtextBaseResist * here->VBICarea * here->VBICm;
-            Ire_Vre = 1.0 / here->VBICtemitterResist * here->VBICarea * here->VBICm;
-            Irs_Vrs = 1.0 / here->VBICtsubstrateResist * here->VBICarea * here->VBICm;
-
             Ibe_Vbei  = *(ckt->CKTstate0 + here->VBICibe_Vbei);
             Ibex_Vbex = *(ckt->CKTstate0 + here->VBICibex_Vbex);
             Itzf_Vbei = *(ckt->CKTstate0 + here->VBICitzf_Vbei);
@@ -68,6 +63,10 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
             Iccp_Vbep = *(ckt->CKTstate0 + here->VBICiccp_Vbep);
             Iccp_Vbci = *(ckt->CKTstate0 + here->VBICiccp_Vbci);
             Iccp_Vbcp = *(ckt->CKTstate0 + here->VBICiccp_Vbcp);
+            Ircx_Vrcx = *(ckt->CKTstate0 + here->VBICircx_Vrcx);
+            Irbx_Vrbx = *(ckt->CKTstate0 + here->VBICirbx_Vrbx);
+            Irs_Vrs   = *(ckt->CKTstate0 + here->VBICirs_Vrs);
+            Ire_Vre   = *(ckt->CKTstate0 + here->VBICire_Vre);
 
 /*
 c           The real part

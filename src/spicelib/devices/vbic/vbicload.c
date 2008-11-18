@@ -17,7 +17,6 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 #include "trandefs.h"
 #include "sperror.h"
 #include "devdefs.h"
-#include "suffix.h"
 
 int
 VBICload(GENmodel *inModel, CKTcircuit *ckt)
@@ -505,6 +504,18 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->VBICiccp_Vbci);
                     *(ckt->CKTstate0 + here->VBICiccp_Vbcp) = 
                             *(ckt->CKTstate1 + here->VBICiccp_Vbcp);
+                    *(ckt->CKTstate0 + here->VBICgqbeo) = 
+                            *(ckt->CKTstate1 + here->VBICgqbeo);
+                    *(ckt->CKTstate0 + here->VBICgqbco) = 
+                            *(ckt->CKTstate1 + here->VBICgqbco);
+                    *(ckt->CKTstate0 + here->VBICircx_Vrcx) = 
+                            *(ckt->CKTstate1 + here->VBICircx_Vrcx);
+                    *(ckt->CKTstate0 + here->VBICirbx_Vrbx) = 
+                            *(ckt->CKTstate1 + here->VBICirbx_Vrbx);
+                    *(ckt->CKTstate0 + here->VBICirs_Vrs) = 
+                            *(ckt->CKTstate1 + here->VBICirs_Vrs);
+                    *(ckt->CKTstate0 + here->VBICire_Vre) = 
+                            *(ckt->CKTstate1 + here->VBICire_Vre);
                 } else {
 #endif /* PREDICTOR */
                     /*
@@ -717,6 +728,10 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     Iccp_Vbcp = *(ckt->CKTstate0 + here->VBICiccp_Vbcp);
                     gqbeo     = *(ckt->CKTstate0 + here->VBICgqbeo);
                     gqbco     = *(ckt->CKTstate0 + here->VBICgqbco);
+                    Ircx_Vrcx = *(ckt->CKTstate0 + here->VBICircx_Vrcx);
+                    Irbx_Vrbx = *(ckt->CKTstate0 + here->VBICirbx_Vrbx);
+                    Irs_Vrs   = *(ckt->CKTstate0 + here->VBICirs_Vrs);
+                    Ire_Vre   = *(ckt->CKTstate0 + here->VBICire_Vre);
                     goto load;
                 }
                 /*
@@ -844,6 +859,10 @@ next1:
                             *(ckt->CKTstate0 + here->VBICiccp_Vbcp) = Iccp_Vbcp;
                             *(ckt->CKTstate0 + here->VBICgqbeo)     = gqbeo;
                             *(ckt->CKTstate0 + here->VBICgqbco)     = gqbco;
+                            *(ckt->CKTstate0 + here->VBICircx_Vrcx) = Ircx_Vrcx;
+                            *(ckt->CKTstate0 + here->VBICirbx_Vrbx) = Irbx_Vrbx;
+                            *(ckt->CKTstate0 + here->VBICirs_Vrs)   = Irs_Vrs;  
+                            *(ckt->CKTstate0 + here->VBICire_Vre)   = Ire_Vre;  
                         }
 #ifdef SENSDEBUG
                         printf("storing small signal parameters for op\n");
@@ -1011,9 +1030,12 @@ next2:
             *(ckt->CKTstate0 + here->VBICiccp_Vbep) = Iccp_Vbep;
             *(ckt->CKTstate0 + here->VBICiccp_Vbci) = Iccp_Vbci;
             *(ckt->CKTstate0 + here->VBICiccp_Vbcp) = Iccp_Vbcp;
-
             *(ckt->CKTstate0 + here->VBICgqbeo)     = gqbeo;
             *(ckt->CKTstate0 + here->VBICgqbco)     = gqbco;
+            *(ckt->CKTstate0 + here->VBICircx_Vrcx) = Ircx_Vrcx;
+            *(ckt->CKTstate0 + here->VBICirbx_Vrbx) = Irbx_Vrbx;
+            *(ckt->CKTstate0 + here->VBICirs_Vrs)   = Irs_Vrs;  
+            *(ckt->CKTstate0 + here->VBICire_Vre)   = Ire_Vre;  
 
             /* Do not load the Jacobian and the rhs if
                perturbation is being carried out */
@@ -1022,8 +1044,7 @@ load:
             /*
              *  load current excitation vector and matrix
              */
-            rhs_current = model->VBICtype * (*(ckt->CKTstate0 + here->VBICcqbeo) - 
-                          Vbe * gqbeo);
+            rhs_current = model->VBICtype * (*(ckt->CKTstate0 + here->VBICcqbeo) - Vbe * gqbeo);
             *(ckt->CKTrhs + here->VBICbaseNode) += -rhs_current;
             *(ckt->CKTrhs + here->VBICemitNode) +=  rhs_current;
             *(here->VBICbaseBasePtr) +=  gqbeo;
@@ -1031,8 +1052,7 @@ load:
             *(here->VBICbaseEmitPtr) += -gqbeo;
             *(here->VBICemitBasePtr) += -gqbeo;
 
-            rhs_current = model->VBICtype * (*(ckt->CKTstate0 + here->VBICcqbco) - 
-                    Vbc * gqbco);
+            rhs_current = model->VBICtype * (*(ckt->CKTstate0 + here->VBICcqbco) - Vbc * gqbco);
             *(ckt->CKTrhs + here->VBICbaseNode) += -rhs_current;
             *(ckt->CKTrhs + here->VBICcollNode) +=  rhs_current;
             *(here->VBICbaseBasePtr) +=  gqbco;
