@@ -1,3 +1,9 @@
+2008-11-18 Dietmar Warning
+ * src/spicelib/devices/vbic/*.c, *.h: Repair a uninitialized state of some local variables
+   by using the state vector, bug reported by Muris Mujagic, NI.
+ * test/vbic/*.cir: Correct use of pnp transistors substrate connection - VBIC is a vertical
+   transistor model. Collector connection as workaround for pnp Lateral's.
+
 2008-11-16 Dietmar Warning
  * src/spicelib/devices/bsim4/bsim4itf.h: adapting the ngspice scheme regarding info structure
  * src/spicelib/devices/bsim4/b4check.c: This is really UCB version 4.6.3 - see below
