@@ -15,20 +15,6 @@
 static Str (150, keys);                /* all my keywords */
 static Str (150, fmath);        /* all math functions */
 
-#ifndef _MSC_VER
-static double
-max (double x, double y)
-{
-  return (x > y) ? x : y;
-}
-
-static double
-min (double x, double y)
-{
-  return (x < y) ? x : y;
-}
-#endif
-
 static double
 ternary_fcn (int conditional, double if_value, double else_value)
 {
@@ -93,10 +79,10 @@ mathfunction (int f, double z, double x)
         y = exp (x * ln (fabs (z)));
         break;
     case 11:
-        y = max (x, z);
+        y = MAX (x, z);
         break;
     case 12:
-        y = min (x, z);
+        y = MIN (x, z);
         break;
     case 13:
         y = trunc (x);

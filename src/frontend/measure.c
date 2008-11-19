@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
@@ -13,19 +12,6 @@ static bool measure_valid[20000];
 static bool just_chk_meas;
 static bool measures_passed;
 
-#if !defined(_MSC_VER)
-static double
-max( double a, double b ) {
-  if ( a > b ) return a;
-  else         return b;
-}
-
-static double
-min( double a, double b ) {
-  if ( a < b ) return a;
-  else         return b;
-}
-#endif
 
 static int
 get_measure_precision()
@@ -140,7 +126,7 @@ measure2( char *meas_type, char *vec_name, char vec_type, double from, double to
 	  *result      = vec->v_realdata[i];
 	  *result_time = time->v_realdata[i];
 	} else {
-	  *result = ( strcmp( meas_type, "max" ) == 0 ) ? max( *result, vec->v_realdata[i] ) : min( *result, vec->v_realdata[i] );
+	  *result = ( strcmp( meas_type, "max" ) == 0 ) ? MAX( *result, vec->v_realdata[i] ) : MIN( *result, vec->v_realdata[i] );
 	  if ( !AlmostEqualUlps( prev_result, *result, 100 ) ) *result_time = time->v_realdata[i];
 	}
       }
