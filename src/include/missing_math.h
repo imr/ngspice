@@ -19,9 +19,11 @@ extern double logb(double);
 #endif
 
 #ifndef HAVE_SCALB
-#  ifndef HAVE_SCALBN
-extern double scalb(double, int);
+extern double scalb(double, double);
 #endif
+
+#ifndef HAVE_SCALBN
+extern double scalbn(double, int);
 #endif
 
 #ifndef HAVE_ISNAN

@@ -4,13 +4,10 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 
 #include "ngspice.h"
 
-#ifndef HAVE_SCALB
-#  ifdef HAVE_SCALBN
-#    define scalb scalbn
-#  else                       /* Chris Inbody */
+#ifndef HAVE_SCALBN
 
 double
-scalb(double x, int n)
+scalbn(double x, int n)
 {
   double y, z = 1.0, k = 2.0;
   
@@ -28,14 +25,24 @@ scalb(double x, int n)
   
   return x * z;
 }
-#   endif /* HAVE_SCALBN */
-#else /* HAVE_SCALB */
-#  ifndef HAVE_SCALBN
-extern scalb(double x, long n);
-scalbn(double x, int n)
-{
-	return scalb(x, (long)n);
-}
-#  endif
+
+#else /* HAVE_SCALBN */
+
 int Dummy_Symbol_1;
+
+#endif /* HAVE_SCALBN */
+
+
+#ifndef HAVE_SCALB
+
+double
+scalb(double x, double n)
+{
+  return scalbn(x, (int) n);
+}
+
+#else /* HAVE_SCALB */
+
+int Dummy_Symbol_2;
+
 #endif /* HAVE_SCALB */

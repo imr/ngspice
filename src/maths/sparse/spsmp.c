@@ -102,6 +102,10 @@
 #include "spdefs.h"
 #include <smpdefs.h>
 
+#if defined (_MSC_VER)
+extern double scalbn(double, int);
+#endif
+
 static void LoadGmin(SMPmatrix *eMatrix, double Gmin);
 
 
