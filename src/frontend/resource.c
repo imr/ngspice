@@ -24,7 +24,7 @@ $Id$
 #include "variable.h"
 #include "cktdefs.h"
 
-/* not apply top directory searcpath because config.h should not be used */
+/* not apply top directory searchpath because config.h should not be used */
 #ifdef _MSC_VER
 #include "../misc/misc_time.h" /* timediff */
 #else
@@ -48,7 +48,9 @@ $Id$
  * Undefine _WIN32_WINNT 0x0500 if you want to compile under Windows ME 
  * and older (not tested under Windows ME or 98!)
  */
+#if (_MSC_VER > 1200) || defined(__MINGW32__) /* Exclude VC++ 6.0 from using the psapi */
 #define _WIN32_WINNT 0x0500
+#endif
 /*
  * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
  * clashes with the definition obtained from windows.h (via winnt.h).
@@ -295,15 +297,16 @@ printres(char *name)
     }
 
     if (!name || eq(name, "space")) {
-	unsigned long int usage = 0, limit = 0;
 
 #ifdef ipsc
+	unsigned long int usage = 0, limit = 0;
 	NXINFO cur = nxinfo, start = nxinfo_snap;
 
 	usage = cur.dataend - cur.datastart;
 	limit = start.availmem;
 #else /* ipsc */
 #  ifdef HAVE_GETRLIMIT
+	unsigned long int usage = 0, limit = 0;
         struct rlimit rld;
         char *hi;
 
@@ -313,6 +316,7 @@ printres(char *name)
 	usage = (unsigned long int) (hi - enddata);
 #  else /* HAVE_GETRLIMIT */
 #    ifdef HAVE_ULIMIT
+	unsigned long int usage = 0, limit = 0;
         char *hi;
 
 	limit = ulimit(3, 0L) - (enddata - startdata);
