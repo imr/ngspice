@@ -147,7 +147,6 @@ struct timeb timebegin;
 #define isnan _isnan
 #define finite _finite
 #define scalb _scalb
-//#define logb _logb /* not available in spsmp.c */
 #endif
 
 #ifndef HAVE_RANDOM
