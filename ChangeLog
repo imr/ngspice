@@ -1,3 +1,12 @@
+2008-11-19 Dietmar Warning
+ * src/frontend/resource.c: found a way to compile w/o psapi under MS VC++ 6.0, prevent some warnings
+ * src/frontend/com_ghelp.c: prevent warnings
+ * src/frontend/measure.c, src/frontend/numparam/xpressn.c: use well defined macros for min/max instead of fct's
+ * src/frontend/miscoms.c: no more INT_NOISE
+ * src/include/ngspice.h: polishing
+ * src/include/missing_math.h, src/math/misc/scalb.c, src/math/sparse/spsmp.c,: hopefull better scalb handling
+   tested under different OS's, but needs more tests
+
 2008-11-18 Dietmar Warning
  * src/spicelib/devices/vbic/*.c, *.h: Repair a uninitialized state of some local variables
    by using the state vector, bug reported by Muris Mujagic, NI.
