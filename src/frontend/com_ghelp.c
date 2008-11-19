@@ -19,7 +19,9 @@ com_ghelp(wordlist *wl)
     char *npath;
     char *path = Help_Path;
     char buf[BSIZE_SP];
+#ifndef X_DISPLAY_MISSING
     int i;
+#endif /* X_DISPLAY_MISSING 1  */
 
     if (cp_getvar("helppath", VT_STRING, buf))
         path = copy(buf);
