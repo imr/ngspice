@@ -187,6 +187,9 @@ com_version(wordlist *wl)
             fprintf(cp_out,"** XSPICE extensions included\n");
 #endif
             fprintf(cp_out,"** Relevant compilation options (refer to user's manual):\n");
+#ifdef NOSQRT
+            fprintf(cp_out,"** --enable-nosqrt\n");
+#endif
 #ifdef NOBYPASS
             fprintf(cp_out,"** --enable-nobypass\n");
 #endif   
@@ -204,12 +207,6 @@ com_version(wordlist *wl)
 #endif
 #ifdef NEWTRUNC
             fprintf(cp_out,"** --enable-newtrunc\n");
-#endif
-#ifdef NOSQRT
-            fprintf(cp_out,"** --enable-nosqrt\n");
-#endif
-#ifdef INT_NOISE
-            fprintf(cp_out,"** --enable-intnoise\n");
 #endif
 #ifdef WANT_SENSE2
             fprintf(cp_out,"** --enable-sense2\n");
