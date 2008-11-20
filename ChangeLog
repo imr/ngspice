@@ -1,3 +1,8 @@
+2008-11-20 Paolo Nenzi
+ * src/frontend/diff.c: currents in rawfiles are written as i(xxx) and no more as xxx#branch. The diff 
+   interactive command (used to compare plots) did not work anymore. This new version traslates back
+   i(xxx) to xxx#branch.
+
 2008-11-19 Dietmar Warning
  * src/frontend/resource.c: found a way to compile w/o psapi under MS VC++ 6.0, prevent some warnings
  * src/frontend/com_ghelp.c: prevent warnings

@@ -23,19 +23,46 @@ static bool
 nameeq(char *n1, char *n2)
 {
     char buf1[BSIZE_SP], buf2[BSIZE_SP];
+    char *tmp;
     
     int i;
 
     if (eq(n1, n2))
         return (TRUE);
-    if (isdigit(*n1))
-        (void) sprintf(buf1, "v(%s)", n1);
-    else
-        (void) strcpy(buf1, n1);
-    if (isdigit(*n2))
-        (void) sprintf(buf2, "v(%s)", n2);
-    else
-        (void) strcpy(buf2, n2);
+
+    
+    /* n1 or n2 is in the form i(...) or I(...) 
+     * This happens in the saved rawfile
+     */
+
+    if(ciprefix("i(",n1)) { 
+        tmp = n1;
+        while ( *tmp != '(' ) tmp++;
+        tmp++;
+        (void) strcpy(buf1, tmp);        
+        tmp = buf1;
+        while ( *tmp != ')' ) tmp++;
+        *tmp ='\0';
+        (void) strcat(buf1, "#branch");
+         } else if (isdigit(*n1))
+               (void) sprintf(buf1, "v(%s)", n1);
+                   else
+                      (void) strcpy(buf1, n1);
+
+    if(ciprefix("i(",n2)) { 
+        tmp = n2;
+        while ( *tmp != '(' ) tmp++;
+        tmp++;
+        (void) strcpy(buf2, tmp);        
+        tmp = buf2;
+        while ( *tmp != ')' ) tmp++;
+        *tmp ='\0';  
+        (void) strcat(buf2, "#branch");
+        } else if (isdigit(*n2))
+              (void) sprintf(buf2, "v(%s)", n2);
+                  else
+                     (void) strcpy(buf2, n2);
+
     for (i = 0; buf1[i]; i++)
         if (isupper(buf1[i]))
             buf1[i] = tolower(buf1[i]);
