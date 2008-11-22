@@ -2099,7 +2099,7 @@ static int tmeasure TCL_CMDPROCARGS(clientData,interp,argc,argv){
     return TCL_ERROR;
   }
 
-  wl =wl_build(argv);
+  wl =wl_build((char **)argv);
 
   mvalue = get_measure2(wl);
 
@@ -2185,7 +2185,6 @@ int Spice_Init(Tcl_Interp *interp) {
     struct passwd *pw;
     pw = getpwuid(getuid());
 
-#define INITSTR "/.spiceinit"
 #ifdef HAVE_ASPRINTF
     asprintf(&s, "%s%s", pw->pw_dir,INITSTR);
 #else /* ~ HAVE_ASPRINTF */

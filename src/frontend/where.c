@@ -22,7 +22,7 @@ com_where(void)
     if (!ft_curckt) {
       fprintf(cp_err, "There is no current circuit\n");
 	  return; }
-	else if (ft_curckt->ci_ckt != "") {
+	else if (*ft_curckt->ci_ckt != 0) {
       fprintf(cp_err, "No unconverged node found.\n");
 	  return;
 	}

@@ -1582,10 +1582,10 @@ inp_stripcomments_line(char * s)
 	if (*d==';') {	
 	    break;
 	} else if ((c=='$') && (*d==' ')) {
-	    *d--; /* move d back to first comment character */
+	    d--; /* move d back to first comment character */
 	    break;
 	} else if( (*d==c) && ((c=='/') || (c=='-'))) {
-	    *d--; /* move d back to first comment character */
+	    d--; /* move d back to first comment character */
 	    break;
 	}
     }

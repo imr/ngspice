@@ -168,7 +168,7 @@ Ipc_Status_t ipc_transport_initialize_server (server_name, mode, protocol,
      /* with version 1 (mailboxes) functions of the same names.            */
 {
   struct        sockaddr_in server;     /* Server specifications for socket*/
-  int           server_length;          /* Size of server structure        */
+  unsigned int  server_length;          /* Size of server structure        */
   unsigned int  port_num;        /* Port number converted from server_name */
 
   Ipc_Status_t  ipc_get_line ();
@@ -497,7 +497,7 @@ Ipc_Status_t ipc_transport_get_line (str, len, wait)
   if (sock_state == IPC_SOCK_INITIALIZED) {
     /* We have an open socket but have not connected to a client.          */
     /* Accept a connection from a client.                                  */
-    msg_stream = accept (sock_desc, (struct sockaddr *)0, (int *)0);
+    msg_stream = accept (sock_desc, (struct sockaddr *)0, (unsigned int *)0);
 
     if (msg_stream == -1) {
       fprintf (stderr, "ERROR: IPC: Server accepting request\n");

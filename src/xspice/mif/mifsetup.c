@@ -353,7 +353,7 @@ MIFsetup(
                     if(is_input && (type == MIF_VSOURCE_CURRENT)) {
                         smp_data_out->ibranch = CKTfndBranch(ckt,
                                                  here->conn[i]->port[j]->vsource_str);
-                        if(smp_data_out->ibranch == (int)NULL) {
+                        if(smp_data_out->ibranch == 0) {
                             IFuid names[2];
                             names[0] = here->MIFname;
                             names[1] = (IFuid) here->conn[i]->port[j]->vsource_str;

@@ -38,7 +38,7 @@ int lengthWanted;
     return(NULL);
   }
 
-  data = (double *) malloc(sizeof (double) * v->v_length);
+  data = (double *) tmalloc(sizeof (double) * v->v_length);
   if (isreal(v)) {
     bcopy((char *) v->v_realdata, (char *) data, sizeof (double) * v->v_length);
   } else {

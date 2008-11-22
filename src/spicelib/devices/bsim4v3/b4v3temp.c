@@ -351,7 +351,7 @@ int Size_Not_Found, i;
 	      Ldrn = here->BSIM4v3l;
 
 	      if (Size_Not_Found)
-	      {   pParam = (struct bsim4v3SizeDependParam *)malloc(
+	      {   pParam = (struct bsim4v3SizeDependParam *)tmalloc(
 	                    sizeof(struct bsim4v3SizeDependParam));
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;

@@ -211,8 +211,8 @@ com_fft(wordlist *wl)
     sign = 1;
     isreal = 1;
     
-    reald = (float*)malloc(size*sizeof(float));
-    imagd = (float*)malloc(size*sizeof(float));
+    reald = (float*)tmalloc(size*sizeof(float));
+    imagd = (float*)tmalloc(size*sizeof(float));
     
     printf("CPU: Delta Freq %f Hz, input length %d, output length %d\n", 1./span*tlen/size, size, fpts);
    

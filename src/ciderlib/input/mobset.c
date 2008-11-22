@@ -12,6 +12,7 @@ Modified: 2001 Paolo Nenzi
 #include "material.h"
 #include "sperror.h"
 #include "suffix.h"
+#include <cidersupt.h>
 
 extern int MOBcheck( MOBcard *, MaterialInfo * );
 extern int MOBsetup( MOBcard *, MaterialInfo * );

@@ -69,7 +69,7 @@ INPpas3(void *ckt, card *data, INPtables *tab, void *task,
 		INPgetTok(&line,&name,1);
 
 		/* check to see if in the form V(xxx) and grab the xxx */
-		if( *name == (char)NULL) break; /* end of line */
+		if( *name == 0) break; /* end of line */
 		length = strlen(name);
 		if( (*name == 'V' || *(name) == 'v') && (length == 1)){
 		    /* looks like V - must be V(xx) - get xx now*/

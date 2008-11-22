@@ -81,7 +81,7 @@ int NDEVmodelConnect(GENmodel *inModel)
                                the resolved address to
                                a readable format. */
   struct sockaddr_in sa;    /* Connection address. */
-  void * buf = malloc(128);
+  void * buf = tmalloc(128);
 
   /* Look up the hostname with DNS. gethostbyname
   (at least most UNIX versions of it) properly

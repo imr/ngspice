@@ -123,7 +123,7 @@ int lenvalgiven = 0;
 				type = INPtypelook("Resistor");
 
 				/* resistor between node1 and internal1 */
-				internal1 = (char *) malloc (10);
+				internal1 = (char *) tmalloc (10);
 				strcpy(internal1, "txlnd1");   
 				INPtermInsert(ckt, &internal1, tab, &inode1);
 				if(!tab->defRmod) {
@@ -140,7 +140,7 @@ int lenvalgiven = 0;
 				GCA(INPpName,("resistance",&ptemp,ckt,type,fast))
 
 				/* resistor between internal1 and internal2 */
-				internal2 = (char *) malloc (10);
+				internal2 = (char *) tmalloc (10);
 				strcpy(internal2, "txlnd2");
 				INPtermInsert(ckt, &internal2, tab, &inode2);
 				strcpy(rname2, "txlres2");

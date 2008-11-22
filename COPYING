@@ -1,31 +1,268 @@
+Ngspice rework-18
+Copyright (c) 2008, 
+All rights reserved.
 
-(The original copyright for Spice3f5.)
+
+Forewords:
+Spice's name was originally choosen at Berkeley's University. iAs it is the basis of almost all circuit simulator, the major part of the analogue and mixed signals simulation's code is designed to fit with it. *spices (generic name for its forks) are heterogenous in many points due to the work of researchers, electronic designers,  software editors, etc Ngspice team tryies to collect work from the different sources and contribute new functionalities. Then, the material we manipulate is heterogenous in licenses. Keeping the licenses as is, or relicensing is a constant debate at ngspice.
+
+Copyleft is a fundamental question in FOSS developpement. The choice of a copylefted contribution, or a non copylefted contribution is an important choice that should be respected. Ngspice team wants to encourage contributions to spice. For this reason, we let each developper choose its status regarding copyleft. Ngspice branch will not be covered by a specific license. Each piece of code will be kept under its original contributor's license. As for any project, modifications made in sources covered by a less restrictive license can be covered by GPL. We do not encourage it. We encourage restrictive licenses to be choosen for new functinonalities, writtent in distinct files, leading to distinct libraries that links depending on a specific configure flag. We encourage copyrightable modifications in BSD source files to be released under the same license. We encourage non proliferation of licenses, (eg choosing either GPL, LGPL or new BSD). 
+
+The reason for these guidelines it to mark respect to the original contributors, and to keep license status clear to ease collaboration between developpers and between projects. Try always to respect the license of the piece of code you are working on. When conveying versions of ngspice, try to determine the right license that applies to the package. Try not to commit license infrigements, especially to GPL and LGPL, which are quite restrictive
+
+please notice than on 2007, July 17th spice 3f5 changed from its original license to the new bsd license.
+Since 2008, December 1st, tclspice changes license from GPL to LGPL, in accordance with multigig Ltd.
+
+ 
+---------------------------------- Cider -----------------------------------
+  
+                    RESEARCH SOFTWARE AGREEMENT
+  
+         This file specifies the terms under which the software and
+    documentation provided with this distribution are provided.
+  
+         Software is distributed as is, completely without warranty
+    or service support.  The University of California and its employ-
+    ees are not liable for the condition or performance of the
+    software.
+  
+         The University does not warrant that it owns the copyright
+    or other proprietary rights to all software and documentation
+    provided under this agreement, notwithstanding any copyright
+    notice, and shall not be liable for any infringement of copyright
+    or proprietary rights brought by third parties against the reci-
+    pient of the software and documentation provided under this
+    agreement.
+  
+         THE UNIVERSITY OF CALIFORNIA HEREBY DISCLAIMS ALL IMPLIED
+    WARRANTIES, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS FOR A PARTICULAR PURPOSE.  THE UNIVERSITY IS NOT
+    LIABLE FOR ANY DAMAGES INCURRED BY THE RECIPIENT IN USE OF THE
+    SOFTWARE AND DOCUMENTATION, INCLUDING DIRECT, INDIRECT, SPECIAL,
+    INCIDENTAL, OR CONSEQUENTIAL DAMAGES.
+  
+         The University of California grants the recipient the right
+    to modify, copy, and redistribute the software and documentation,
+    both within the recipient's organization and externally, subject
+    to the following restrictions:
+  
+  
+    (a)  The recipient agrees not to charge for the University of
+         California code itself.  The recipient may, however, charge
+         for additions, extensions, or support.
+  
+    (b)  In any product based on the software, the recipient agrees
+         to acknowledge the research group that developed the
+         software.  This acknowledgement shall appear in the product
+         documentation.
+  
+    (c)  The recipient agrees to obey all U.S. Government restric-
+         tions governing redistribution or export of the software and
+         documentation.
 
 
-Copyright (C) 1996 The Regents of the University of California.
-All Rights Reserved.
+---------------------------------- Spice3f5 -------------------------------- 
 
-Permission to use, copy, modify, and distribute this software and its
-documentation for educational, research and non-profit purposes,
-without fee, and without a written agreement is hereby granted,
-provided that the above copyright notice, this paragraph and the
-following three paragraphs appear in all copies.
+Copyright (c) 1985-1991 The Regents of the University of California.
+All rights reserved.
 
-This software program and documentation are copyrighted by The Regents
-of the University of California. The software program and
-documentation are supplied "as is", without any accompanying services
-from The Regents. The Regents does not warrant that the operation of
-the program will be uninterrupted or error-free. The end-user
-understands that the program was developed for research purposes and
-is advised not to rely exclusively on the program for any reason.
+Permission is hereby granted, without written agreement and without license
+or royalty fees, to use, copy, modify, and distribute this software and its
+documentation for any purpose, provided that the above copyright notice and
+the following two paragraphs appear in all copies of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
-INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND
-ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF CALIFORNIA HAS BEEN
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE UNIVERSITY OF
-CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS"
-BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE
+IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN
+"AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO PROVIDE
 MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+
+-------------------------------- Tclspice --------------------------------
+
+		   GNU LESSER GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+
+  This version of the GNU Lesser General Public License incorporates
+the terms and conditions of version 3 of the GNU General Public
+License, supplemented by the additional permissions listed below.
+
+  0. Additional Definitions. 
+
+  As used herein, "this License" refers to version 3 of the GNU Lesser
+General Public License, and the "GNU GPL" refers to version 3 of the GNU
+General Public License.
+
+  "The Library" refers to a covered work governed by this License,
+other than an Application or a Combined Work as defined below.
+
+  An "Application" is any work that makes use of an interface provided
+by the Library, but which is not otherwise based on the Library.
+Defining a subclass of a class defined by the Library is deemed a mode
+of using an interface provided by the Library.
+
+  A "Combined Work" is a work produced by combining or linking an
+Application with the Library.  The particular version of the Library
+with which the Combined Work was made is also called the "Linked
+Version".
+
+  The "Minimal Corresponding Source" for a Combined Work means the
+Corresponding Source for the Combined Work, excluding any source code
+for portions of the Combined Work that, considered in isolation, are
+based on the Application, and not on the Linked Version.
+
+  The "Corresponding Application Code" for a Combined Work means the
+object code and/or source code for the Application, including any data
+and utility programs needed for reproducing the Combined Work from the
+Application, but excluding the System Libraries of the Combined Work.
+
+  1. Exception to Section 3 of the GNU GPL.
+
+  You may convey a covered work under sections 3 and 4 of this License
+without being bound by section 3 of the GNU GPL.
+
+  2. Conveying Modified Versions.
+
+  If you modify a copy of the Library, and, in your modifications, a
+facility refers to a function or data to be supplied by an Application
+that uses the facility (other than as an argument passed when the
+facility is invoked), then you may convey a copy of the modified
+version:
+
+   a) under this License, provided that you make a good faith effort to
+   ensure that, in the event an Application does not supply the
+   function or data, the facility still operates, and performs
+   whatever part of its purpose remains meaningful, or
+
+   b) under the GNU GPL, with none of the additional permissions of
+   this License applicable to that copy.
+
+  3. Object Code Incorporating Material from Library Header Files.
+
+  The object code form of an Application may incorporate material from
+a header file that is part of the Library.  You may convey such object
+code under terms of your choice, provided that, if the incorporated
+material is not limited to numerical parameters, data structure
+layouts and accessors, or small macros, inline functions and templates
+(ten or fewer lines in length), you do both of the following:
+
+   a) Give prominent notice with each copy of the object code that the
+   Library is used in it and that the Library and its use are
+   covered by this License.
+
+   b) Accompany the object code with a copy of the GNU GPL and this license
+   document.
+
+  4. Combined Works.
+
+  You may convey a Combined Work under terms of your choice that,
+taken together, effectively do not restrict modification of the
+portions of the Library contained in the Combined Work and reverse
+engineering for debugging such modifications, if you also do each of
+the following:
+
+   a) Give prominent notice with each copy of the Combined Work that
+   the Library is used in it and that the Library and its use are
+   covered by this License.
+
+   b) Accompany the Combined Work with a copy of the GNU GPL and this license
+   document.
+
+   c) For a Combined Work that displays copyright notices during
+   execution, include the copyright notice for the Library among
+   these notices, as well as a reference directing the user to the
+   copies of the GNU GPL and this license document.
+
+   d) Do one of the following:
+
+       0) Convey the Minimal Corresponding Source under the terms of this
+       License, and the Corresponding Application Code in a form
+       suitable for, and under terms that permit, the user to
+       recombine or relink the Application with a modified version of
+       the Linked Version to produce a modified Combined Work, in the
+       manner specified by section 6 of the GNU GPL for conveying
+       Corresponding Source.
+
+       1) Use a suitable shared library mechanism for linking with the
+       Library.  A suitable mechanism is one that (a) uses at run time
+       a copy of the Library already present on the user's computer
+       system, and (b) will operate properly with a modified version
+       of the Library that is interface-compatible with the Linked
+       Version. 
+
+   e) Provide Installation Information, but only if you would otherwise
+   be required to provide such information under section 6 of the
+   GNU GPL, and only to the extent that such information is
+   necessary to install and execute a modified version of the
+   Combined Work produced by recombining or relinking the
+   Application with a modified version of the Linked Version. (If
+   you use option 4d0, the Installation Information must accompany
+   the Minimal Corresponding Source and Corresponding Application
+   Code. If you use option 4d1, you must provide the Installation
+   Information in the manner specified by section 6 of the GNU GPL
+   for conveying Corresponding Source.)
+
+  5. Combined Libraries.
+
+  You may place library facilities that are a work based on the
+Library side by side in a single library together with other library
+facilities that are not Applications and are not covered by this
+License, and convey such a combined library under terms of your
+choice, if you do both of the following:
+
+   a) Accompany the combined library with a copy of the same work based
+   on the Library, uncombined with any other library facilities,
+   conveyed under the terms of this License.
+
+   b) Give prominent notice with the combined library that part of it
+   is a work based on the Library, and explaining where to find the
+   accompanying uncombined form of the same work.
+
+  6. Revised Versions of the GNU Lesser General Public License.
+
+  The Free Software Foundation may publish revised and/or new versions
+of the GNU Lesser General Public License from time to time. Such new
+versions will be similar in spirit to the present version, but may
+differ in detail to address new problems or concerns.
+
+  Each version is given a distinguishing version number. If the
+Library as you received it specifies that a certain numbered version
+of the GNU Lesser General Public License "or any later version"
+applies to it, you have the option of following the terms and
+conditions either of that published version or of any later version
+published by the Free Software Foundation. If the Library as you
+received it does not specify a version number of the GNU Lesser
+General Public License, you may choose any version of the GNU Lesser
+General Public License ever published by the Free Software Foundation.
+
+  If the Library as you received it specifies that a proxy can decide
+whether future versions of the GNU Lesser General Public License shall
+apply, that proxy's public statement of acceptance of any version is
+permanent authorization for you to choose that version for the
+Library.
+
+
+---------------------------------- Xspice --------------------------------
+THE SOFTWARE PROGRAMS BELOW ARE IN THE PUBLIC DOMAIN AND ARE PROVIDED FREE OF 
+ANY CHARGE. THE GEORGIA TECH RESEARCH CORPORATION, THE GEORGIA INSTITUTE OF 
+TECHNOLOGY, AND/OR OTHER PARTIES PROVIDE THIS SOFTWARE "AS IS" WITHOUT WARRANTY
+OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE 
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE 
+ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH THE USER. 
+SHOULD THE PROGRAM PROVE DEFECTIVE, THE USER ASSUMES THE ENTIRE COST OF ALL 
+NECESSARY SERVICING, REPAIR OR CORRECTION. IN NO EVENT WILL THE GEORGIA TECH 
+RESEARCH CORPORATION, THE GEORGIA INSTITUTE OF TECHNOLOGY, AND/OR OTHER PARTIES 
+PROVIDING THE PROGRAMS BELOW BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, 
+SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY 
+TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED 
+INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM 
+TO OPERATE WITH ANY OTHER PROGRAMS).

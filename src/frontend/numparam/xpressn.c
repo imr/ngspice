@@ -2075,7 +2075,7 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
 
       ls = length (t);
 
-      buf = (char*) malloc(strlen(t) + 1);
+      buf = (char*) tmalloc(strlen(t) + 1);
       strcpy(buf, t);
 
       found = 0;

@@ -297,8 +297,8 @@ NUMD2load(inModel, ckt)
 	  }
 	}
       }
-      if ((ckt->CKTmode & (MODETRAN | MODEAC | MODEINITSMSIG)) ||
-	  (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
+      if ( (ckt->CKTmode & (MODETRAN | MODEAC | MODEINITSMSIG)) ||
+	  ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
 	/*
 	 * store small-signal parameters
 	 */

@@ -1,5 +1,6 @@
 #include <config.h>
 #include <ngspice.h>
+#include <memory.h>
 
 #include <fteext.h>
 #include <wordlist.h>
@@ -424,7 +425,7 @@ int measure_parse_find (struct measure *meas, wordlist *wl, wordlist *wlBreak, c
 		p = wl->wl_word;
 		
 		if (pCnt == 0 ) {
-//			meas->m_vec =(char *)malloc(strlen(wl->wl_word)+1);
+//			meas->m_vec =(char *)tmalloc(strlen(wl->wl_word)+1);
   //                      strcpy(meas->m_vec, cp_unquote(wl->wl_word));
      		meas->m_vec= cp_unquote(wl->wl_word);
 		} else if (pCnt == 1) {
@@ -531,7 +532,7 @@ int measure_parse_trigtarg (struct measure *meas, wordlist *words, wordlist *wlT
                 p = words->wl_word;
 
                 if (pcnt ==0) {
-//                        meas->m_vec =(char *)malloc(strlen(words->wl_word)+1);
+//                        meas->m_vec =(char *)tmalloc(strlen(words->wl_word)+1);
   //                      strcpy(meas->m_vec, cp_unquote(words->wl_word));
 			meas->m_vec= cp_unquote(words->wl_word);
                 } else {
@@ -695,8 +696,8 @@ get_measure2(wordlist *wl)
 		{		
 			// trig parameters
 			measure *measTrig, *measTarg;
-			measTrig = (struct measure*)malloc(sizeof(struct measure));           
-	                measTarg = (struct measure*)malloc(sizeof(struct measure));
+			measTrig = (struct measure*)tmalloc(sizeof(struct measure));           
+	                measTarg = (struct measure*)tmalloc(sizeof(struct measure));
 									
 			if (measure_parse_trigtarg(measTrig, words , wlTarg, "trig", errbuf)==0) {
 				measure_errMessage(mName, mFunction, "TRIG", errbuf);
@@ -755,8 +756,8 @@ get_measure2(wordlist *wl)
                 case AT_FIND:
 		{
                         measure *meas, *measFind;
-                        meas = (struct measure*)malloc(sizeof(struct measure));
-			measFind = (struct measure*)malloc(sizeof(struct measure));
+                        meas = (struct measure*)tmalloc(sizeof(struct measure));
+			measFind = (struct measure*)tmalloc(sizeof(struct measure));
 
 			if (measure_parse_find(meas, words, wlWhen, errbuf) == 0) {
 				measure_errMessage(mName, mFunction, "FIND", errbuf);
@@ -805,7 +806,7 @@ get_measure2(wordlist *wl)
                 case AT_WHEN:
 		{
 			measure *meas;
-			meas = (struct measure*)malloc(sizeof(struct measure));
+			meas = (struct measure*)tmalloc(sizeof(struct measure));
 
 			if (measure_parse_when(meas, words, errbuf) ==0) {
                      	      	measure_errMessage(mName, mFunction, "WHEN", errbuf);
@@ -834,7 +835,7 @@ get_measure2(wordlist *wl)
 		{
 			// trig parameters
                         measure *meas;
-                        meas = (struct measure*)malloc(sizeof(struct measure));
+                        meas = (struct measure*)tmalloc(sizeof(struct measure));
 
                         if (measure_parse_trigtarg(meas, words , NULL, "trig", errbuf)==0) {
                                 measure_errMessage(mName, mFunction, "TRIG", errbuf);
@@ -863,7 +864,7 @@ get_measure2(wordlist *wl)
 		{
 		        // trig parameters
                         measure *measTrig;
-                        measTrig = (struct measure*)malloc(sizeof(struct measure));
+                        measTrig = (struct measure*)tmalloc(sizeof(struct measure));
 
                         if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf)==0) {
                                 measure_errMessage(mName, mFunction, "TRIG", errbuf);
@@ -892,7 +893,7 @@ get_measure2(wordlist *wl)
 		        float minValue, maxValue;
 
                         measure *measTrig;
-                        measTrig = (struct measure*)malloc(sizeof(struct measure));
+                        measTrig = (struct measure*)tmalloc(sizeof(struct measure));
 
                         if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf)==0) {
                                 measure_errMessage(mName, mFunction, "TRIG", errbuf);

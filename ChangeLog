@@ -1,3 +1,37 @@
+2008-11-22 Lionel Sainte Cluque
+ * COPYING: license clarifications
+ * frontend/inpcom.c: minor changes (correct warning)
+ * frontend/misccoms.c: minor changes (correct warning)
+ * frontend/where.c: minor changes (correct warning)
+ * spicelib/parser/inpgmod.c: minor changes (correct warning)
+ * spicelib/parser/inppas3.c: minor changes (correct warning)
+ * spicelib/devices/numd/numdload.c: minor changes (correct warning)
+ * spicelib/devices/numd2/nud2load.c: minor changes (correct warning)
+ * xspice/mif/mifsetup.c: minor changes (correct warning)
+ * xspice/ipc/ipcsockets.c: minor changes (correct warning)
+ * ciderlib/input/mobset.c: minor changes (correct warning)
+ * include/spmatrix.h: minor changes (correct warning)
+ * tclspice.c: minor changes (correct warning)
+ * frontend/com_fft.c : changed some malloc into tmalloc
+ * frontend/com_measure2.c : changed some malloc into tmalloc
+ * spicelib/devices/bsim3/b3temp.c: changed some malloc into tmalloc
+ * spicelib/devices/bsim3soi/b4soitemp.c: changed some malloc into tmalloc
+ * spicelib/devices/bsim3v32/b3v32temp.c: changed some malloc into tmalloc
+ * spicelib/devices/bsim4/b4temp.c: changed some malloc into tmalloc
+ * spicelib/devices/bsim4v2/b4v2temp.c: changed some malloc into tmalloc
+ * spicelib/devices/bsim4v3/b4v3temp.c: changed some malloc into tmalloc
+ * spicelib/devices/bsim4v4/b4v4temp.c: changed some malloc into tmalloc
+ * spicelib/devices/bsim4v5/b4v5temp.c: changed some malloc into tmalloc
+ * spicelib/devices/cpl/cplload.c: changed some malloc into tmalloc
+ * spicelib/devices/ndev/ndevset.c: changed some malloc into tmalloc
+ * ciderlib/support/database.c : changed some malloc into tmalloc
+ * frontend/numparam/mystring.c : changed some malloc into tmalloc
+ * frontend/numparam/xpressn.c : changed some malloc into tmalloc
+ * spicelib/parser/inp2p.c : changed some malloc into tmalloc
+ * xspice/mif/mif_inp2.c: changed some malloc into tmalloc
+ * misc/util.c: changed some malloc into tmalloc
+ * spicelib/parser/inp2y.c: changed some malloc into tmalloc
+
 2008-11-20 Paolo Nenzi
  * src/frontend/diff.c: currents in rawfiles are written as i(xxx) and no more as xxx#branch. The diff 
    interactive command (used to compare plots) did not work anymore. This new version traslates back

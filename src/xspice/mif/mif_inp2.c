@@ -916,7 +916,7 @@ MIFget_port(
         /* These are single ended types, so default other node to ground */
 	 // This don't work dickhead, INPtermInsert tries to FREE(&node) K.A. Feb 27, 2000
          // which was not allocted
-		node = (char*)malloc(2);// added by K.A. march 5th 2000
+		node = (char*)tmalloc(2);// added by K.A. march 5th 2000
 
 		*node = '0';	// added by K.A. March 5th 2000
 		node[1] ='\0';	// added by K.A. March 5th 2000

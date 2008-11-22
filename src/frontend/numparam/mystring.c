@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <memory.h>
 
 #include "config.h"
 #ifdef HAS_WINDOWS
@@ -765,7 +766,7 @@ new (long sz)
     return NULL;
   else
     {
-      p = malloc (sz);
+      p = tmalloc (sz);
       if (p == NULL)
 	{			/* fatal error */
 	  ws (" new() failure. Program halted.\n");

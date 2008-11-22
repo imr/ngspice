@@ -264,6 +264,7 @@ extern  int      spFileMatrix( void *, char *, char *, int, int, int );
 extern  int      spFileStats( void *, char *, char * );
 extern  int      spFillinCount( void * );
 extern  int      spGetAdmittance( void *, int, int, struct spTemplate* );
+extern  spREAL  *spFindElement( void *eMatrix, int Row, int Col );
 extern  spREAL  *spGetElement( void *, int, int );
 extern  char    *spGetInitInfo( spREAL* );
 extern  int      spGetOnes( void *, int, int, int, struct spTemplate* );

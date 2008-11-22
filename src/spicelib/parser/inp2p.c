@@ -63,10 +63,10 @@ int num, i;
 	line = current->line;
 	INPgetTok(&line,&name,1);
 
-	nname1 = (char **) malloc(num * sizeof(char *));
-	nname2 = (char **) malloc(num * sizeof(char *));
-	node1 = (void **) malloc(num * sizeof(void *));
-	node2 = (void **) malloc(num * sizeof(void *));
+	nname1 = (char **) tmalloc(num * sizeof(char *));
+	nname2 = (char **) tmalloc(num * sizeof(char *));
+	node1 = (void **) tmalloc(num * sizeof(void *));
+	node2 = (void **) tmalloc(num * sizeof(void *));
 
 
 	for (i = 0; i < num; i++) {

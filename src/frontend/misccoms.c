@@ -149,9 +149,9 @@ com_version(wordlist *wl)
 	fprintf(cp_out, "** The U. C. Berkeley CAD Group\n");
 	fprintf(cp_out,
 	  "** Copyright 1985-1994, Regents of the University of California.\n");
-	if (Spice_Notice && *Spice_Notice)
+	if (Spice_Notice != NULL && *Spice_Notice != 0)
 	    fprintf(cp_out, "** %s\n", Spice_Notice);
-	if (Spice_Build_Date && *Spice_Build_Date)
+	if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
 	    fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
 	fprintf(cp_out, "******\n");
 
@@ -161,9 +161,9 @@ com_version(wordlist *wl)
 	    fprintf(cp_out, "******\n");
 	    fprintf(cp_out, "** %s-%s\n", ft_sim->simulator,
 		    ft_sim->version);
-	    if (Spice_Notice && *Spice_Notice)
+	    if (Spice_Notice != NULL && *Spice_Notice != 0)
 		fprintf(cp_out, "** %s\n", Spice_Notice);
-	    if (Spice_Build_Date && *Spice_Build_Date)
+	    if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
 		fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
 	    fprintf(cp_out, "******\n");
 	} else if (!strncmp(s, "-f", 2) || !strncmp(s, "-F", 2) )  { 
@@ -175,9 +175,9 @@ com_version(wordlist *wl)
 	    fprintf(cp_out, "** The U. C. Berkeley CAD Group\n");
 	    fprintf(cp_out,
 	            "** Copyright 1985-1994, Regents of the University of California.\n");
-	    if (Spice_Notice && *Spice_Notice)
+	    if (Spice_Notice != NULL && *Spice_Notice != 0)
 	        fprintf(cp_out, "** %s\n", Spice_Notice);
-	    if (Spice_Build_Date && *Spice_Build_Date)
+	    if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
 	        fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
             fprintf(cp_out,"**\n");
 #ifdef CIDER

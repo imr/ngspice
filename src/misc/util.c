@@ -175,7 +175,7 @@ basename(const char *name)
     len = strlen(name);
     if (name[len - 1] == '/') {
         // ditch the trailing '/'
-        p = tmp = malloc(len);
+        p = tmp = tmalloc(len);
         strncpy(p, name, len - 1); 
     } else {
         p = (char *) name;
@@ -225,7 +225,7 @@ dirname(const char *name)
 
     size = p - name;
     if (size) {
-        ret = malloc(size + 1);
+        ret = tmalloc(size + 1);
         memcpy(ret, name, size);
         ret[size] = '\0';
     } else if (*p == '/')
@@ -270,7 +270,7 @@ dirname(const char *name)
 
     size = p - name;
     if (size) {
-        ret = malloc(size + 1);
+        ret = tmalloc(size + 1);
         memcpy(ret, name, size);
         ret[size] = '\0';
     } else if (*p == '/')

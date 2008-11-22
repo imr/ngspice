@@ -396,7 +396,7 @@ INPparseNumMod( void* ckt, INPmodel *model, INPtables *tab, char **errMessage )
 		    /* Strip leading carat from booleans */
 		    if (*line == '^') {
 		      invert = TRUE;
-		      *line++;	/* Skip the '^' */
+		      line++;	/* Skip the '^' */
 		    } else {
 		      invert = FALSE;
 		    }
