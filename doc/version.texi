@@ -1,0 +1,4 @@
+@set UPDATED 01 December 2008
+@set UPDATED-MONTH December 2008
+@set EDITION 18
+@set VERSION 18

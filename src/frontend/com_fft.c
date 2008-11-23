@@ -235,8 +235,8 @@ com_fft(wordlist *wl)
         }    		
     }
         
-    free(reald);
-    free(imagd);
+    tfree(reald);
+    tfree(imagd);
     
     tfree(tdvec);
     tfree(fdvec);    
@@ -249,6 +249,7 @@ static void fftext(float* x, float* y, long int n, int dir)
 /*
    http://local.wasp.uwa.edu.au/~pbourke/other/dft/
    download 22.05.08
+   Used with permission from the author Paul Bourke
 */   
 
 /*
