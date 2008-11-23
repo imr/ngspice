@@ -241,6 +241,7 @@ if TCL_MODULE
 lib_LTLIBRARIES = libspice.la
 install: install-libLTLIBRARIES install-tcl-recursive install-tclspice install-data-am
 EXTRA_DIST += tclspice.c
+initdata_DATA += tclspinit
 
 libspice_la_SOURCES =
 libspice_la_LIBADD = ngspice.lo conf.lo \

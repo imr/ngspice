@@ -1,3 +1,10 @@
+2008-11-23
+ * configure.in: modified for tclspinit.in
+ * src/tclspinit.in: spinit file for tclspice (at least until installation of
+  codemodels is solved)
+ * src/Makefile.am: modified for tclspinit installation
+ * src/frontend/cpitf.c: modified for use of tclspinit in tclspice
+
 2008-11-04 Holger Vogt
  * /doc/version.texi committed again
  * /visualc/include/config.h: version no. 18

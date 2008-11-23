@@ -219,7 +219,11 @@ ft_cpinit(void)
 		*r = *s;
 	    tfree(copys);	/* sjb - it's safe to free this here */
 	    (void) strcpy(r, DIR_PATHSEP);
+#ifdef TCL_MODULE
+            (void) strcat(r, "tclspinit");
+#else
 	    (void) strcat(r, "spinit");
+#endif
 	    if ((fp = fopen(buf, "r"))) {
 		cp_interactive = FALSE;
 		inp_spsource(fp, TRUE, buf);
