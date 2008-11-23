@@ -1,4 +1,8 @@
-2008-11-23
+2008-11-23 Lionel Sainte Cluque
+ * COPYING: update many details and tclspice LGPLv2
+ * src/tclspice.c: changed headers for LGPLv2
+
+2008-11-23 Lionel Sainte Cluque
  * configure.in: modified for tclspinit.in
  * src/tclspinit.in: spinit file for tclspice (at least until installation of
   codemodels is solved)

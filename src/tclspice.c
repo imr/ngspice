@@ -4,7 +4,7 @@
  *
  * Code based on and copied from ScriptEDA ( http://www-cad.eecs.berkeley.edu/~pinhong/scriptEDA )
  *
- * Under LGPL licence since 2008, December 1st
+ * Under LGPLv2 licence since 2008, December 1st
  *
  * $Id$	
  */
