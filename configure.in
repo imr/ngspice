@@ -66,16 +66,6 @@ AC_ARG_ENABLE(capzerobypass,
     AS_HELP_STRING([--enable-capzerobypass],[Bypass all the cbd/cbs calculations if Czero is zero. (default=enabled)]),
             [],[enable_capzerobypass=yes])            
 
-
-dnl if test x"$enable_capzerobypass" = "xyes"
-dnl then   AC_MSG_RESULT([yes])
-dnl         AC_DEFINE(CAPZEROBYPASS, 1, [Use capzerobypass.])
-dnl else
-dnl        AC_MSG_RESULT([not yet])
-dnl         AC_DEFINE(CAPZEROBYPASS, 0, [Use capzerobypass.])
- dnl fi
- dnl ])
-
 dnl --enable-nodelimiting: define NODELIMITING for the code
 AC_ARG_ENABLE(nodelimiting,
     AS_HELP_STRING([--enable-nodelimiting],[Experimental damping scheme]))
