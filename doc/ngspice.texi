@@ -7770,6 +7770,42 @@ begin subcircuits (normally
 
 @end vtable
 
+@section INIT FILES
+
+Ngspice reads some initialization information and paths from a file called
+"spinit" or "tclspinit" (the latter if you have compiled tclspice). The init
+file is read by ngspice or ngnutmeg as they start. The init script contains
+spice commands (interactive commands). The following example show the standard
+ngspice init file.
+
+@example
+* Standard spice and nutmeg init file
+alias exit quit
+alias acct rusage all
+set x11lineararcs
+
+*unset brief
+
+strcmp __flag $program "ngspice"
+if $__flag = 0
+
+*set numparams
+
+* For SPICE2 POLYs, edit the below line to point to the location 
+* of your codemode.
+ codemodel /usr/local/lib/spice/spice2poly.cm
+
+* The other codemodels
+ codemodel /usr/local/lib/spice/analog.cm
+ codemodel /usr/local/lib/spice/digital.cm
+ codemodel /usr/local/lib/spice/xtradev.cm
+ codemodel /usr/local/lib/spice/xtraevt.cm
+
+end
+unset __flag
+@end example
+
+
 
 @section  MISCELLANEOUS
 
