@@ -1,3 +1,4 @@
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
 Ngspice rework-18
 Copyright (c) 2008, 
 All rights reserved.
@@ -7,57 +8,60 @@ Foreword:
 Spice's name was originally chosen at the University of California, Berkeley. 
 As it is the basis of almost all circuit simulators, the major part of the 
 analogue and mixed signals simulation's code is designed to fit with it. 
-The *spices (generic name for its forks) are heterogeneous in many points due to
-the work of researchers, electronic designers, software editors, etc.
-The Ngspice team tries to collect work from the different sources and contribute
-new functionalities. Thus, the material we manipulate is heterogeneous in 
-licenses. Keeping the licenses as is, or re-licensing is a constant debate at 
-ngspice. For release 18, we choose not to relicense.
+The *spices (generic name for its forks) are heterogeneous in many points due
+to the work of researchers, electronic designers, software editors, etc.
+The Ngspice team tries to collect work from the different sources and 
+contribute new functionalities. Thus, the material we manipulate is 
+heterogeneous in licenses. Keeping the licenses as is, or re-licensing is a 
+constant debate at ngspice. For release 18, we choose not to relicense.
 
 Copyleft is a fundamental question in FOSS development. The choice of a 
-copylefted contribution, or a non copylefted contribution is an important choice
-that should be respected. Ngspice branch as a whole will not be covered by a 
-specific license. The Ngspice team wants to encourage contributions to ngspice. 
-We let each new developper choose its position regarding copyleft, as we respect 
-the position of the former developpers. In order to keep things clear ngspice 
-team proposes to follow the following guidelines:
+copylefted contribution, or a non copylefted contribution is an important
+choice that should be respected. Ngspice branch as a whole will not be covered
+by a specific license. The Ngspice team wants to encourage contributions to 
+ngspice. We let each new developper choose its position regarding copyleft, 
+as we respect the position of the former developpers. In order to keep things 
+clear ngspice team proposes to follow the following guidelines:
 
   Each piece of code should be kept under its original contributor's license. 
-  As for any project, modifications made in sources covered by a less restrictive
-  license can be covered by a more restrictive license, such as GPL. We do not
-  encourage it.
+  As for any project, modifications made in sources covered by a less
+  restrictive license can be covered by a more restrictive license, such as 
+  GPL. We do not encourage it.
 
   If you feel to add code in a file under a different license than the rest of
   the file, please use comments to mark the boundaries of the modification, and
-  edit the comments at the begining of the file with correct license and copyright
-  information.
+  edit the comments at the begining of the file with correct license and 
+  copyright information.
 
   We encourage restrictive licenses to be chosen only for new functionalities, 
-  written in distinct files, leading to distinct libraries that links depending on
-  a specific configure flag.
+  written in distinct files, leading to distinct libraries that links depending 
+  on a specific configure flag.
 
   We encourage non proliferation of licenses (e.g. choosing either GPL, LGPL or
   new BSD). 
 
-This heterogenous license status makes it difficult to know which license applies.
-Please take care of knowing which license aplies to the code you are editing, or
-conveying and not to commit license infringements, especially to GPL and LGPL
-which are quite restrictive.
+This heterogenous license status makes it difficult to know which license 
+applies. Please take care of knowing which license aplies to the code you are 
+editing, or conveying and not to commit license infringements, especially to 
+GPL and LGPL which are quite restrictive.
 
 On 2007, July 17th spice 3f5 changed from its original license to the new BSD 
 license. (http://embedded.eecs.berkeley.edu/pubs/downloads/spice/index.htm)
 
-On 2008, December 1st, tclspice changes license from GPL to LGPLv2, in accordance
-with Multigig Ltd, the copyright holder.
+On 2008, December 1st, tclspice changes license from GPL to LGPLv2, in 
+accordance with Multigig Ltd, the copyright holder.
 
-The following table is just a reminder on license status, please don't rely on it: 
+The following table is just a reminder on license status, please don't rely
+on it: 
           Author            License  Notes		
 			
-numparam  Georg Post        LGPL     Applies to the code in frontend/numparam		
-adms      Laurent Lemaitre  LGPL     Applies to scripts in the spicelib/dev/adms
+numparam  Georg Post        LGPL     Applies to the code in 
+                                     frontend/numparam		
+adms      Laurent Lemaitre  LGPL     Applies to scripts in the 
+                                     spicelib/dev/adms
 tclspice  Stefan Jones 	    LGPL     TCL integration 
-cider     U. of California  Old BSD  Device modeling
-xspice    Georgia Tech.     Public D Mixed level, Mixed signals   
+cider     U. of California  Old BSD  Device level simulator
+xspice    Georgia Tech.     Public D Mixed signals   
 spice     U. of California  New BSD  Analog circuit simulation
 			
  
@@ -598,8 +602,8 @@ ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH THE USER.
 SHOULD THE PROGRAM PROVE DEFECTIVE, THE USER ASSUMES THE ENTIRE COST OF ALL 
 NECESSARY SERVICING, REPAIR OR CORRECTION. IN NO EVENT WILL THE GEORGIA TECH 
 RESEARCH CORPORATION, THE GEORGIA INSTITUTE OF TECHNOLOGY, AND/OR OTHER PARTIES 
-PROVIDING THE PROGRAMS BELOW BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, 
-SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY 
-TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED 
-INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM 
-TO OPERATE WITH ANY OTHER PROGRAMS).
+PROVIDING THE PROGRAMS BELOW BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY 
+GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR 
+INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA 
+BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A 
+FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS).
