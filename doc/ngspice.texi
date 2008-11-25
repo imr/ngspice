@@ -7805,6 +7805,11 @@ end
 unset __flag
 @end example
 
+The spice init file location depends of the operating system you are running 
+and the configuration parameters.
+
+The init file is the best place to put commands you always input when the
+simulator starts.
 
 
 @section  MISCELLANEOUS
