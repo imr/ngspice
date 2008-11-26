@@ -9,12 +9,37 @@
 #include "general.h"
 #include "numparam.h"
 #include "ngspice.h"
+
+/* MINGW: random in libiberty.a, but not in libiberty.h */
+#if defined(__MINGW32__) && defined(HAVE_RANDOM)
+extern long int random (void);
+#endif
+
+/* agauss added by Stephan Thiel June 2008 */
+#define Rand_Call random
+#define Rand_Seed srandom
+#define Rand_Range 1073741824
+
 /************ keywords ************/
 
 /* SJB - 150 chars is ample for this - see initkeys() */
 static Str (150, keys);                /* all my keywords */
 static Str (150, fmath);        /* all math functions */
 
+
+/*
+static double
+max (double x, double y)
+{
+  return (x > y) ? x : y;
+}
+
+static double
+min (double x, double y)
+{
+  return (x < y) ? x : y;
+}
+*/
 static double
 ternary_fcn (int conditional, double if_value, double else_value)
 {
@@ -24,11 +49,45 @@ ternary_fcn (int conditional, double if_value, double else_value)
     return else_value;
 }
 
+
+double drand()
+{
+  /* uniform random number generator, interval -1 .. +1 */
+   return ( 2.0*((double) (RAND_MAX-abs(Rand_Call())) / (double)RAND_MAX-0.5));
+}
+
+
+/***  gauss  ***/
+
+ double gauss()
+{
+  static bool gliset = TRUE;
+  static double glgset = 0.0;
+  double fac,r,v1,v2;
+  if (gliset) {
+    do {
+      v1 = drand();  v2 = drand();
+      r = v1*v1 + v2*v2;
+    } while (r >= 1.0);
+    fac = sqrt(-2.0 * log(r) / r);
+    glgset = v1 * fac;
+    gliset = FALSE;
+    return v2 * fac;
+  } else {
+    gliset = TRUE;
+    return glgset;
+  }
+}
+
+
+
+
 static double
 agauss (double nominal_val, double variation, double sigma)
 {
-/* just a placeholder */
-  return nominal_val;
+  double stdvar;
+  stdvar=variation/sigma;
+  return (nominal_val+stdvar*gauss());
 }
 
 static void
@@ -39,7 +98,7 @@ initkeys (void)
             "and or not div mod if else end while macro funct defined"
             " include for to downto is var");
   scopy_up (fmath,
-            "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log ternary_fcn agauss");
+            "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh tanh ternary_fcn agauss");
 }
 
 static double
@@ -89,6 +148,15 @@ mathfunction (int f, double z, double x)
         break;
     case 14:
         y = log (x);
+        break;
+    case 15:
+        y = sinh (x);
+        break;
+    case 16:
+        y = cosh (x);
+        break;
+    case 17: 
+        y=sinh(x)/cosh(x);
         break;
     default:
         y = x;
@@ -1141,9 +1209,9 @@ formula (tdico * dico, char *s, unsigned char *perror)
               state = 1;        /*atom */
               if (fu > 0)
                 {
-                  if ((fu == 15))
+                  if ((fu == 18))
                       u = ternary_fcn ((int) v, w, u);
-                  else if ((fu == 16))
+                  else if ((fu == 19))
                       u = agauss (v, w, u);
                   else
                       u = mathfunction (fu, v, u);
