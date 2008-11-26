@@ -780,27 +780,27 @@ FILE *fplog;
 	{
 		if (model->BSIM4v5scref <= 0.0)
 		{   fprintf(fplog, "Warning: SCREF = %g is not positive. Set to 1e-6.\n", model->BSIM4v5scref);
-		    //printf("Warning: SCREF = %g is not positive. Set to 1e-6.\n", model->BSIM4v5scref);
+		    printf("Warning: SCREF = %g is not positive. Set to 1e-6.\n", model->BSIM4v5scref);
 		    model->BSIM4v5scref = 1e-6;
 		}
 	        if (here->BSIM4v5sca < 0.0)
 		{   fprintf(fplog, "Warning: SCA = %g is negative. Set to 0.0.\n", here->BSIM4v5sca);
-                    //printf("Warning: SCA = %g is negative. Set to 0.0.\n", here->BSIM4v5sca);
+                    printf("Warning: SCA = %g is negative. Set to 0.0.\n", here->BSIM4v5sca);
                     here->BSIM4v5sca = 0.0;
                 }
                 if (here->BSIM4v5scb < 0.0)
                 {   fprintf(fplog, "Warning: SCB = %g is negative. Set to 0.0.\n", here->BSIM4v5scb);
-                    //printf("Warning: SCB = %g is negative. Set to 0.0.\n", here->BSIM4v5scb);
+                    printf("Warning: SCB = %g is negative. Set to 0.0.\n", here->BSIM4v5scb);
                     here->BSIM4v5scb = 0.0;
                 }
                 if (here->BSIM4v5scc < 0.0)
                 {   fprintf(fplog, "Warning: SCC = %g is negative. Set to 0.0.\n", here->BSIM4v5scc);
-                    //printf("Warning: SCC = %g is negative. Set to 0.0.\n", here->BSIM4v5scc);
+                    printf("Warning: SCC = %g is negative. Set to 0.0.\n", here->BSIM4v5scc);
                     here->BSIM4v5scc = 0.0;
                 }
                 if (here->BSIM4v5sc < 0.0)
                 {   fprintf(fplog, "Warning: SC = %g is negative. Set to 0.0.\n", here->BSIM4v5sc);
-                    //printf("Warning: SC = %g is negative. Set to 0.0.\n", here->BSIM4v5sc);
+                    printf("Warning: SC = %g is negative. Set to 0.0.\n", here->BSIM4v5sc);
                     here->BSIM4v5sc = 0.0;
                 }
 	}

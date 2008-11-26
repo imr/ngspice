@@ -1373,21 +1373,9 @@ typedef struct sBSIM4v4model
     double BSIM4v4af;  
     double BSIM4v4kf;  
 
-    int    BSIM4v4rgeomod;
-
-    /* strain parameters */
-    double BSIM4v4stimod;
-    double BSIM4v4sa0;
-    double BSIM4v4sb0;
-
     struct bsim4SizeDependParam *pSizeDependParamKnot;
 
     /* Flags */
-    unsigned BSIM4v4rgeomodGiven :1;
-    unsigned BSIM4v4stimodGiven :1;
-    unsigned BSIM4v4sa0Given :1;
-    unsigned BSIM4v4sb0Given :1;
-
     unsigned  BSIM4v4mobModGiven :1;
     unsigned  BSIM4v4binUnitGiven :1;
     unsigned  BSIM4v4capModGiven :1;
@@ -2846,12 +2834,6 @@ typedef struct sBSIM4v4model
 #define BSIM4v4_MOD_VTSSWD	   921
 #define BSIM4v4_MOD_VTSSWGS	   922
 #define BSIM4v4_MOD_VTSSWGD	   923
-
-#define BSIM4v4_MOD_STIMOD	   930
-#define BSIM4v4_MOD_SA0	           931
-#define BSIM4v4_MOD_SB0	           932
-
-#define BSIM4v4_MOD_RGEOMOD	   933
 
 /* device questions */
 #define BSIM4v4_DNODE                945

@@ -1452,14 +1452,6 @@ JOB   *job;
             model->BSIM4v4af = 1.0;
         if (!model->BSIM4v4kfGiven)
             model->BSIM4v4kf = 0.0;
-        if (!model->BSIM4v4stimodGiven)
-            model->BSIM4v4stimod = 0.0;
-        if (!model->BSIM4v4rgeomodGiven)
-            model->BSIM4v4rgeomod = 0;
-        if (!model->BSIM4v4sa0Given)
-            model->BSIM4v4sa0 = 0.0;
-        if (!model->BSIM4v4sb0Given)
-            model->BSIM4v4sb0 = 0.0;
 
         /* stress effect */
         if (!model->BSIM4v4sarefGiven)
@@ -1516,9 +1508,9 @@ JOB   *job;
 
         for (here = model->BSIM4v4instances; here != NULL ;
              here=here->BSIM4v4nextInstance) 
-	{   
-	         if (here->BSIM4v4owner == ARCHme) {
-		          /* allocate a chunk of the state vector */
+        {   
+            if (here->BSIM4v4owner == ARCHme) {
+              /* allocate a chunk of the state vector */
               here->BSIM4v4states = *states;
               *states += BSIM4v4numStates;
             }
@@ -1594,7 +1586,7 @@ JOB   *job;
             if (!here->BSIM4v4geoModGiven)
                 here->BSIM4v4geoMod = model->BSIM4v4geoMod;
             if (!here->BSIM4v4rgeoModGiven)
-                here->BSIM4v4rgeoMod = model->BSIM4v4rgeomod;
+                here->BSIM4v4rgeoMod = 0.0;
             if (!here->BSIM4v4trnqsModGiven)
                 here->BSIM4v4trnqsMod = model->BSIM4v4trnqsMod;
             else if ((here->BSIM4v4trnqsMod != 0) && (here->BSIM4v4trnqsMod != 1))

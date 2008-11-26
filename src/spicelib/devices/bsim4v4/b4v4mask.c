@@ -1957,18 +1957,6 @@ IFvalue *value;
         case BSIM4v4_MOD_KF:
             value->rValue = model->BSIM4v4kf;
             return(OK);
-        case BSIM4v4_MOD_STIMOD:
-            value->rValue = model->BSIM4v4stimod;
-            return(OK);
-        case BSIM4v4_MOD_RGEOMOD:
-            value->rValue = model->BSIM4v4rgeomod;
-            return(OK);
-        case BSIM4v4_MOD_SA0:
-            value->rValue = model->BSIM4v4sa0;
-            return(OK);
-        case BSIM4v4_MOD_SB0:
-            value->rValue = model->BSIM4v4sb0;
-            return(OK);
         default:
             return(E_BADPARM);
     }

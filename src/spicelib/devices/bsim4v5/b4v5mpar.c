@@ -3056,22 +3056,6 @@ GENmodel *inMod;
             mod->BSIM4v5kf = value->rValue;
             mod->BSIM4v5kfGiven = TRUE;
             break;
-        case  BSIM4v5_MOD_STIMOD :
-            mod->BSIM4v5stimod = value->rValue;
-            mod->BSIM4v5stimodGiven = TRUE;
-            break;
-        case  BSIM4v5_MOD_RGEOMOD :
-            mod->BSIM4v5rgeomod = value->rValue;
-            mod->BSIM4v5rgeomodGiven = TRUE;
-            break;
-        case  BSIM4v5_MOD_SA0 :
-            mod->BSIM4v5sa0 = value->rValue;
-            mod->BSIM4v5sa0Given = TRUE;
-            break;
-        case  BSIM4v5_MOD_SB0 :
-            mod->BSIM4v5sb0 = value->rValue;
-            mod->BSIM4v5sb0Given = TRUE;
-            break;
         case  BSIM4v5_MOD_NMOS  :
             if(value->iValue) {
                 mod->BSIM4v5type = 1;

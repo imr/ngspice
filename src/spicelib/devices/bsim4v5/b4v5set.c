@@ -1561,14 +1561,6 @@ JOB   *job;
             model->BSIM4v5af = 1.0;
         if (!model->BSIM4v5kfGiven)
             model->BSIM4v5kf = 0.0;
-        if (!model->BSIM4v5stimodGiven)
-            model->BSIM4v5stimod = 0.0;
-        if (!model->BSIM4v5rgeomodGiven)
-            model->BSIM4v5rgeomod = 0;
-        if (!model->BSIM4v5sa0Given)
-            model->BSIM4v5sa0 = 0.0;
-        if (!model->BSIM4v5sb0Given)
-            model->BSIM4v5sb0 = 0.0;
 
         /* stress effect */
         if (!model->BSIM4v5sarefGiven)
@@ -1663,9 +1655,9 @@ JOB   *job;
 
         for (here = model->BSIM4v5instances; here != NULL ;
              here=here->BSIM4v5nextInstance) 
-	{   
-	         if (here->BSIM4v5owner == ARCHme) {
-		          /* allocate a chunk of the state vector */
+        {   
+            if (here->BSIM4v5owner == ARCHme) {
+              /* allocate a chunk of the state vector */
               here->BSIM4v5states = *states;
               *states += BSIM4v5numStates;
             }

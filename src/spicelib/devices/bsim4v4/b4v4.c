@@ -93,7 +93,6 @@ OP( "qinv",        BSIM4v4_QINV,       IF_REAL,    "Qinversion"),
 };
 
 IFparm BSIM4v4mPTable[] = { /* model parameters */
-IOP( "rgeomod", BSIM4v4_MOD_RGEOMOD, IF_INTEGER, "S/D resistance and contact model selector"),
 IOP( "capmod", BSIM4v4_MOD_CAPMOD, IF_INTEGER, "Capacitance model selector"),
 IOP( "diomod", BSIM4v4_MOD_DIOMOD, IF_INTEGER, "Diode IV model selector"),
 IOP( "rdsmod", BSIM4v4_MOD_RDSMOD, IF_INTEGER, "Bias-dependent S/D resistance model selector"),
@@ -800,10 +799,6 @@ IOP( "em", BSIM4v4_MOD_EM, IF_REAL, "Flicker noise parameter"),
 IOP( "ef", BSIM4v4_MOD_EF, IF_REAL, "Flicker noise frequency exponent"),
 IOP( "af", BSIM4v4_MOD_AF, IF_REAL, "Flicker noise exponent"),
 IOP( "kf", BSIM4v4_MOD_KF, IF_REAL, "Flicker noise coefficient"),
-
-IOP( "stimod", BSIM4v4_MOD_STIMOD, IF_REAL, "Stress effect model selector"),
-IOP( "sa0", BSIM4v4_MOD_SA0, IF_REAL, "Distance between OD edge to poly of one side"),
-IOP( "sb0", BSIM4v4_MOD_SB0, IF_REAL, "Distance between OD edge to poly of other side"),
 
 IP( "nmos", BSIM4v4_MOD_NMOS,  IF_FLAG, "Flag to indicate NMOS"),
 IP( "pmos", BSIM4v4_MOD_PMOS,  IF_FLAG, "Flag to indicate PMOS"),

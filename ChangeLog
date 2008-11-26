@@ -1,4 +1,10 @@
-2008-11-04 Holger Vogt
+2008-11-26 Dietmar Warning
+ * src/spicelib/devices/bsim4v4, bsim4v5: this is a backup because the patch of 
+ Phil Barker are providing only a placeholder for propriarity sti stress model - 
+ not any equation. If the stimod feature is some time published we can implement
+ it again.
+
+2008-11-26 Holger Vogt
  * frontend/numparam/xpressn.c: agauss, sinh, cosh tanh, added (source: S. Thiel)
  * b3soi*ld.c: _isnan defined for _MSC_VER
  * main.c, cmath2.c, xpressn.c: random, srandom defined extern for _MSC_VER

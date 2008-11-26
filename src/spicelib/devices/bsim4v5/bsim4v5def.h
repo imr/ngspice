@@ -1470,13 +1470,6 @@ typedef struct sBSIM4v5model
     double BSIM4v5af;  
     double BSIM4v5kf;  
 
-    int    BSIM4v5rgeomod;
-
-    /* strain parameters */
-    double BSIM4v5stimod;
-    double BSIM4v5sa0;
-    double BSIM4v5sb0;
-
     struct bsim4v5SizeDependParam *pSizeDependParamKnot;
 
     /* Flags */
@@ -3049,12 +3042,6 @@ typedef struct sBSIM4v5model
 #define BSIM4v5_MOD_PUD1             925
 #define BSIM4v5_MOD_PUP              926
 #define BSIM4v5_MOD_PLP              927
-
-#define BSIM4v5_MOD_STIMOD	   930
-#define BSIM4v5_MOD_SA0	           931
-#define BSIM4v5_MOD_SB0	           932
-
-#define BSIM4v5_MOD_RGEOMOD	   933
 
 /* device questions */
 #define BSIM4v5_DNODE                945

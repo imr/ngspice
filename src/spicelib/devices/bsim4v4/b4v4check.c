@@ -444,12 +444,11 @@ FILE *fplog;
 	    printf("Warning: Cdscd = %g is negative.\n", pParam->BSIM4v4cdscd);
 	}
 /* Check DIBL parameters */
-/*	if (here->BSIM4v4eta0 < 0.0)
+	if (here->BSIM4v4eta0 < 0.0)
 	{   fprintf(fplog, "Warning: Eta0 = %g is negative.\n",
 		    here->BSIM4v4eta0); 
 	    printf("Warning: Eta0 = %g is negative.\n", here->BSIM4v4eta0); 
 	}
-*/
 	      
 /* Check Abulk parameters */	    
 	 if (fabs(1.0e-8 / (pParam->BSIM4v4b1 + pParam->BSIM4v4weff)) > 10.0)
@@ -551,12 +550,11 @@ FILE *fplog;
 		    pParam->BSIM4v4pdibl1);
 	    printf("Warning: Pdibl1 = %g is negative.\n", pParam->BSIM4v4pdibl1);
 	}
-/*	if (pParam->BSIM4v4pdibl2 < 0.0)
+	if (pParam->BSIM4v4pdibl2 < 0.0)
 	{   fprintf(fplog, "Warning: Pdibl2 = %g is negative.\n",
 		    pParam->BSIM4v4pdibl2);
 	    printf("Warning: Pdibl2 = %g is negative.\n", pParam->BSIM4v4pdibl2);
 	}
-*/
 
 /* Check stress effect parameters */        
         if((here->BSIM4v4sa > 0.0) && (here->BSIM4v4sb > 0.0) && 

@@ -106,7 +106,6 @@ OP( "gtau",        BSIM4v5_GTAU,       IF_REAL,    "Gtau"),
 };
 
 IFparm BSIM4v5mPTable[] = { /* model parameters */
-IOP( "rgeomod", BSIM4v5_MOD_RGEOMOD, IF_INTEGER, "S/D resistance and contact model selector"),
 IOP( "capmod", BSIM4v5_MOD_CAPMOD, IF_INTEGER, "Capacitance model selector"),
 IOP( "diomod", BSIM4v5_MOD_DIOMOD, IF_INTEGER, "Diode IV model selector"),
 IOP( "rdsmod", BSIM4v5_MOD_RDSMOD, IF_INTEGER, "Bias-dependent S/D resistance model selector"),
@@ -889,10 +888,6 @@ IOP( "em", BSIM4v5_MOD_EM, IF_REAL, "Flicker noise parameter"),
 IOP( "ef", BSIM4v5_MOD_EF, IF_REAL, "Flicker noise frequency exponent"),
 IOP( "af", BSIM4v5_MOD_AF, IF_REAL, "Flicker noise exponent"),
 IOP( "kf", BSIM4v5_MOD_KF, IF_REAL, "Flicker noise coefficient"),
-
-IOP( "stimod", BSIM4v5_MOD_STIMOD, IF_REAL, "Stress effect model selector"),
-IOP( "sa0", BSIM4v5_MOD_SA0, IF_REAL, "Distance between OD edge to poly of one side"),
-IOP( "sb0", BSIM4v5_MOD_SB0, IF_REAL, "Distance between OD edge to poly of other side"),
 
 IP( "nmos", BSIM4v5_MOD_NMOS,  IF_FLAG, "Flag to indicate NMOS"),
 IP( "pmos", BSIM4v5_MOD_PMOS,  IF_FLAG, "Flag to indicate PMOS"),

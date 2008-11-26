@@ -343,29 +343,29 @@ int Size_Not_Found, i;
          /* loop through all the instances of the model */
          for (here = model->BSIM4v5instances; here != NULL;
               here = here->BSIM4v5nextInstance) 
-      { if (here->BSIM4v5owner != ARCHme) continue;
-	      pSizeDependParamKnot = model->pSizeDependParamKnot;
-	      Size_Not_Found = 1;
-	      while ((pSizeDependParamKnot != NULL) && Size_Not_Found)
-	      {   if ((here->BSIM4v5l == pSizeDependParamKnot->Length)
-		      && (here->BSIM4v5w == pSizeDependParamKnot->Width)
-		      && (here->BSIM4v5nf == pSizeDependParamKnot->NFinger))
+            { if (here->BSIM4v5owner != ARCHme) continue;
+              pSizeDependParamKnot = model->pSizeDependParamKnot;
+              Size_Not_Found = 1;
+              while ((pSizeDependParamKnot != NULL) && Size_Not_Found)
+              {   if ((here->BSIM4v5l == pSizeDependParamKnot->Length)
+                      && (here->BSIM4v5w == pSizeDependParamKnot->Width)
+                      && (here->BSIM4v5nf == pSizeDependParamKnot->NFinger))
                   {   Size_Not_Found = 0;
-		      here->pParam = pSizeDependParamKnot;
-		      pParam = here->pParam; /*bug-fix  */
-		  }
-		  else
-		  {   pLastKnot = pSizeDependParamKnot;
-		      pSizeDependParamKnot = pSizeDependParamKnot->pNext;
-		  }
+                      here->pParam = pSizeDependParamKnot;
+                      pParam = here->pParam; /*bug-fix  */
+                  }
+                  else
+                  {   pLastKnot = pSizeDependParamKnot;
+                      pSizeDependParamKnot = pSizeDependParamKnot->pNext;
+                  }
               }
 
-	      /* stress effect */
-	      Ldrn = here->BSIM4v5l;
-	      Wdrn = here->BSIM4v5w / here->BSIM4v5nf;
+              /* stress effect */
+              Ldrn = here->BSIM4v5l;
+              Wdrn = here->BSIM4v5w / here->BSIM4v5nf;
 
-	      if (Size_Not_Found)
-	      {   pParam = (struct bsim4v5SizeDependParam *)tmalloc(
+              if (Size_Not_Found)
+              {   pParam = (struct bsim4v5SizeDependParam *)tmalloc(
                             sizeof(struct bsim4v5SizeDependParam));
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;
