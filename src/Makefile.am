@@ -17,7 +17,8 @@ endif
 endif
 
 EXTRA_DIST = ngspice.txt ngspice.idx setplot spectrum \
-	     devload devaxis ciderinit winmain.c 
+	     devload devaxis ciderinit winmain.c unsupported \
+	     tclspice.c tclspice.map pkgIndex.tcl.in tclspinit.in
 
 helpdatadir = $(pkgdatadir)/helpdir
 

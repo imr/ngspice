@@ -3,6 +3,7 @@
 
 SUBDIRS = plotting help parser wdisp numparam
 DIST_SUBDIRS = plotting help parser wdisp numparam
+EXTRA_DIST = testcommands.c
 
 noinst_LTLIBRARIES = libfte.la
 

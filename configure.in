@@ -833,6 +833,8 @@ if test "$enable_adms" = "yes"; then
                adms/mextram \
                adms/ekv \
                adms/psp102 "
+   
+   NOTVLADEVDIR=""
 
    VLADEV=" spicelib/devices/adms/hicum0/libhicum0.la \
             spicelib/devices/adms/hicum2/libhicum2.la \
@@ -840,10 +842,15 @@ if test "$enable_adms" = "yes"; then
             spicelib/devices/adms/ekv/libekv.la \
             spicelib/devices/adms/psp102/libpsp102.la "
 
+else
+
+    VLADEVDIR=""
+    NOTVLADEVDIR="adms"
 fi
 AC_SUBST(ADMSXML)
 AC_SUBST(VLADEVDIR)
 AC_SUBST(VLADEV)
+AC_SUBST(NOTVLADEVDIR)
 
 dnl NDEV option
 if test "$enable_ndev" = "yes"; then
@@ -851,14 +858,18 @@ if test "$enable_ndev" = "yes"; then
     AC_DEFINE(NDEV,[],[The NDEV interface])
     NDEV=""
     NDEV_DIR=" ndev "
+    NOTNDEV_DIR=""
     NDEV_LIB=" spicelib/devices/ndev/libndev.la "
+    
 else
     NDEV=""
     NDEV_DIR=""
     NDEV_LIB=""
+    NOTNDEV_DIR="ndev"
 fi
 AC_SUBST(NDEV_DIR)
 AC_SUBST(NDEV_LIB)
+AC_SUBST(NOTNDEV_DIR)
 
 
 dnl Cluster option
@@ -1052,6 +1063,7 @@ AC_CONFIG_FILES([Makefile
                  tests/sensitivity/Makefile
                  tests/transient/Makefile
                  tests/transmission/Makefile
+		 tests/TransImpedanceAmp/Makefile
                  tests/resistance/Makefile
                  tests/vbic/Makefile])
 AC_OUTPUT

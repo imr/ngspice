@@ -20,6 +20,7 @@ SUBDIRS = bsim1			\
 	resistance		\
 	sensitivity		\
 	transient		\
+	TransImpedanceAmp	\
 	transmission		\
 	vbic
 		
@@ -44,12 +45,15 @@ DIST_SUBDIRS = 	bsim1	\
 	resistance	\
 	sensitivity	\
 	transient	\
+	TransImpedanceAmp \
 	transmission	\
 	vbic
 
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
-	README bin
+	README bin adms \
+	tcl tcl-testbench1 tcl-testbench2 tcl-testbench3 tcl-testbench4
+ 
 
 MAINTAINERCLEANFILES = Makefile.in

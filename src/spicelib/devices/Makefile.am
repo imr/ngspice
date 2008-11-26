@@ -132,6 +132,8 @@ libdev_la_SOURCES = 	\
 	cktinit.c	\
 	limit.c
 
+EXTRA_DIST = @NOTNDEV_DIR@ @NOTVLADEVDIR@
+
 AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 
 MAINTAINERCLEANFILES = Makefile.in

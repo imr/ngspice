@@ -5,7 +5,9 @@ DIST_SUBDIRS = @XGRAPHDIR@ doc src man tests
 
 EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		ANALYSES BUGS AUTHORS ChangeLog \
-		DEVICES NEWS README contrib patches examples @NOTXGRAPH@
+		DEVICES NEWS README README.tcl \
+		README.adms contrib patches \
+		examples visualc @NOTXGRAPH@
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 			config.h.in config.sub configure install-sh \
