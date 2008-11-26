@@ -21,6 +21,10 @@ File: b3soifdld.c          98/5/01
 #include "devdefs.h"
 #include "suffix.h"
 
+#ifdef _MSC_VER
+extern int _isnan(double);
+#endif
+
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
 #define EXP_THRESHOLD 34.0

@@ -1,3 +1,9 @@
+2008-11-04 Holger Vogt
+ * frontend/numparam/xpressn.c: agauss, sinh, cosh tanh, added (source: S. Thiel)
+ * b3soi*ld.c: _isnan defined for _MSC_VER
+ * main.c, cmath2.c, xpressn.c: random, srandom defined extern for _MSC_VER
+ * math/misc/equality.c: llabs defined extern
+
 2008-11-23 Lionel Sainte Cluque
  * COPYING: update many details and tclspice LGPLv2
  * src/tclspice.c: changed headers for LGPLv2

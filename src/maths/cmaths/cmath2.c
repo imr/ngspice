@@ -23,6 +23,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cmath.h"
 #include "cmath2.h"
 
+
+/* MINGW: random, srandom in libiberty.a, but not in libiberty.h */
+#if defined(__MINGW32__) && defined(HAVE_RANDOM)
+extern long int random (void);
+extern void srandom (unsigned int seed);
+#endif
+
 static double *
 d_tan(double *dd, int length)
 {
@@ -212,8 +219,8 @@ cx_rnd(void *data, short int type, int length, int *newlength, short int *newtyp
         for (i = 0; i < length; i++) {
 	    int j, k;
 
-            j = floor(realpart(&cc[i]));
-            k = floor(imagpart(&cc[i]));
+            j = (int)floor(realpart(&cc[i]));
+            k = (int)floor(imagpart(&cc[i]));
             realpart(&c[i]) = j ? random() % j : 0;
             imagpart(&c[i]) = k ? random() % k : 0;
         }
@@ -228,7 +235,7 @@ cx_rnd(void *data, short int type, int length, int *newlength, short int *newtyp
         for (i = 0; i < length; i++) {
 	    int j;
 
-            j = floor(dd[i]);
+            j = (int)floor(dd[i]);
             d[i] = j ? random() % j : 0;
         }
         return ((void *) d);
@@ -297,9 +304,9 @@ cx_vector(void *data, short int type, int length, int *newlength, short int *new
     double *d;
 
     if (type == VF_REAL)
-        len = FTEcabs(*dd);
+        len = (int)FTEcabs(*dd);
     else
-        len = cmag(cc);
+        len = (int)cmag(cc);
     if (len == 0)
         len = 1;
     d = alloc_d(len);
@@ -322,9 +329,9 @@ cx_unitvec(void *data, short int type, int length, int *newlength, short int *ne
     double *d;
 
     if (type == VF_REAL)
-        len = FTEcabs(*dd);
+        len = (int)FTEcabs(*dd);
     else
-        len = cmag(cc);
+        len = (int)cmag(cc);
     if (len == 0)
         len = 1;
     d = alloc_d(len);
@@ -479,9 +486,9 @@ cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int l
     if ((datatype1 == VF_REAL) && (datatype2 == VF_REAL)) {
         d = alloc_d(length);
         for (i = 0; i < length; i++) {
-            r1 = floor(FTEcabs(dd1[i]));
+            r1 = (int)floor(FTEcabs(dd1[i]));
             rcheck(r1 > 0, "mod");
-            r2 = floor(FTEcabs(dd2[i]));
+            r2 = (int)floor(FTEcabs(dd2[i]));
             rcheck(r2 > 0, "mod");
             r3 = r1 % r2;
             d[i] = (double) r3;
@@ -504,13 +511,13 @@ cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int l
                 realpart(&c2) = realpart(&cc2[i]);
                 imagpart(&c2) = imagpart(&cc2[i]);
             }
-            r1 = floor(FTEcabs(realpart(&c1)));
+            r1 = (int)floor(FTEcabs(realpart(&c1)));
             rcheck(r1 > 0, "mod");
-            r2 = floor(FTEcabs(realpart(&c2)));
+            r2 = (int)floor(FTEcabs(realpart(&c2)));
             rcheck(r2 > 0, "mod");
-            i1 = floor(FTEcabs(imagpart(&c1)));
+            i1 = (int)floor(FTEcabs(imagpart(&c1)));
             rcheck(i1 > 0, "mod");
-            i2 = floor(FTEcabs(imagpart(&c2)));
+            i2 = (int)floor(FTEcabs(imagpart(&c2)));
             rcheck(i2 > 0, "mod");
             r3 = r1 % r2;
             i3 = i1 % i2;

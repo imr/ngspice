@@ -147,6 +147,7 @@ struct timeb timebegin;
 #define isnan _isnan
 #define finite _finite
 #define scalb _scalb
+#define getpid _getpid
 #endif
 
 #ifndef HAVE_RANDOM
