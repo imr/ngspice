@@ -47,7 +47,7 @@ B4SOItemp(GENmodel *inModel, CKTcircuit *ckt)
 {
 register B4SOImodel *model = (B4SOImodel*) inModel;
 register B4SOIinstance *here;
-struct b4soiSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
+struct b4soiSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
 double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5;
 double Ldrn=0.0, Wdrn;
 double Temp, TempRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom, TRatio;

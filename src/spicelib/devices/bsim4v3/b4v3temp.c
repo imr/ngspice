@@ -60,7 +60,7 @@ CKTcircuit *ckt;
 {
 BSIM4v3model *model = (BSIM4v3model*) inModel;
 BSIM4v3instance *here;
-struct bsim4v3SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
+struct bsim4v3SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni;
 double T0, T1, T2, T3, T4, T5, T8, T9, Lnew=0.0, Wnew;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
