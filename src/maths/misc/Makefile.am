@@ -13,7 +13,8 @@ libmathmisc_la_SOURCES = \
 	logb.c		\
 	scalb.c		\
 	norm.h		\
-	norm.c		 
+	norm.c		\
+	randnumb.c 
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 

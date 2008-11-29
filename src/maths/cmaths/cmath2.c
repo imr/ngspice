@@ -30,6 +30,8 @@ extern long int random (void);
 extern void srandom (unsigned int seed);
 #endif
 
+extern void checkseed(); /* seed random or set by 'set rndseed=value'*/
+
 static double *
 d_tan(double *dd, int length)
 {
@@ -209,37 +211,37 @@ void *
 cx_rnd(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     *newlength = length;
+    checkseed();
     if (type == VF_COMPLEX) {
-	complex *c;
-	complex *cc = (complex *) data;
-	int i;
+      complex *c;
+      complex *cc = (complex *) data;
+      int i;
 
-        c = alloc_c(length);
-        *newtype = VF_COMPLEX;
-        for (i = 0; i < length; i++) {
-	    int j, k;
-
-            j = (int)floor(realpart(&cc[i]));
-            k = (int)floor(imagpart(&cc[i]));
-            realpart(&c[i]) = j ? random() % j : 0;
-            imagpart(&c[i]) = k ? random() % k : 0;
-        }
-        return ((void *) c);
+      c = alloc_c(length);
+      *newtype = VF_COMPLEX;
+      for (i = 0; i < length; i++) {
+        int j, k;
+        j = (int)floor(realpart(&cc[i]));
+        k = (int)floor(imagpart(&cc[i]));
+        realpart(&c[i]) = j ? random() % j : 0;
+        imagpart(&c[i]) = k ? random() % k : 0;
+      }
+      return ((void *) c);
     } else {
-	double *d;
-	double *dd = (double *) data;
-	int i;
+      double *d;
+      double *dd = (double *) data;
+      int i;
 
-        d = alloc_d(length);
-        *newtype = VF_REAL;
-        for (i = 0; i < length; i++) {
-	    int j;
+      d = alloc_d(length);
+      *newtype = VF_REAL;
+      for (i = 0; i < length; i++) {
+      int j;
 
-            j = (int)floor(dd[i]);
-            d[i] = j ? random() % j : 0;
-        }
-        return ((void *) d);
+      j = (int)floor(dd[i]);
+      d[i] = j ? random() % j : 0;
     }
+    return ((void *) d);
+  }
 }
 
 /* Compute the mean of a vector. */

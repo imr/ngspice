@@ -10,15 +10,8 @@
 #include "numparam.h"
 #include "ngspice.h"
 
-/* MINGW: random in libiberty.a, but not in libiberty.h */
-#if defined(__MINGW32__) && defined(HAVE_RANDOM)
-extern long int random (void);
-#endif
-
-/* agauss added by Stephan Thiel June 2008 */
-#define Rand_Call random
-#define Rand_Seed srandom
-#define Rand_Range 1073741824
+/* random numbers in /maths/misc/randnumb.c */
+extern double gauss();
 
 /************ keywords ************/
 
@@ -27,19 +20,6 @@ static Str (150, keys);                /* all my keywords */
 static Str (150, fmath);        /* all math functions */
 
 
-/*
-static double
-max (double x, double y)
-{
-  return (x > y) ? x : y;
-}
-
-static double
-min (double x, double y)
-{
-  return (x < y) ? x : y;
-}
-*/
 static double
 ternary_fcn (int conditional, double if_value, double else_value)
 {
@@ -48,38 +28,6 @@ ternary_fcn (int conditional, double if_value, double else_value)
   else
     return else_value;
 }
-
-
-double drand()
-{
-  /* uniform random number generator, interval -1 .. +1 */
-   return ( 2.0*((double) (RAND_MAX-abs(Rand_Call())) / (double)RAND_MAX-0.5));
-}
-
-
-/***  gauss  ***/
-
- double gauss()
-{
-  static bool gliset = TRUE;
-  static double glgset = 0.0;
-  double fac,r,v1,v2;
-  if (gliset) {
-    do {
-      v1 = drand();  v2 = drand();
-      r = v1*v1 + v2*v2;
-    } while (r >= 1.0);
-    fac = sqrt(-2.0 * log(r) / r);
-    glgset = v1 * fac;
-    gliset = FALSE;
-    return v2 * fac;
-  } else {
-    gliset = TRUE;
-    return glgset;
-  }
-}
-
-
 
 
 static double

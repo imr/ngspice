@@ -153,6 +153,9 @@ struct timeb timebegin;
 #ifndef HAVE_RANDOM
 #define srandom(a) srand(a)
 #define random rand
+#define RR_MAX RAND_MAX
+#else
+#define RR_MAX LONG_MAX
 #endif
 
 #ifdef HAVE_INDEX

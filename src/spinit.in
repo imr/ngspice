@@ -1,7 +1,9 @@
-* Standard spice and nutmeg init file
+* Standard ngspice init file
 alias exit quit
 alias acct rusage all
 set x11lineararcs
+*set rndseed=12
+*set filetype=ascii
 
 *unset brief
 
@@ -11,7 +13,7 @@ if $__flag = 0
 *set numparams
 
 * For SPICE2 POLYs, edit the below line to point to the location 
-* of your codemode.
+* of your codemodel.
 @XSPICEINIT@ codemodel @prefix@/lib/spice/spice2poly.cm
 
 * The other codemodels

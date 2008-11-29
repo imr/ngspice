@@ -1,3 +1,10 @@
+2008-11-29 Holger Vogt
+ * frontend/numparam/xpressn.c: rand() and gauss() moved to 
+   math/misc/randnumb.c
+ * 'set rndseed=value' value = integer > 0 in spinit will yield
+   deterministic pseudo random number sequence.
+ * random() and rand() with correspongding max value  
+
 2008-11-26 Dietmar Warning
  * src/spicelib/devices/bsim4v4, bsim4v5: this is a backup because the patch of 
  Phil Barker are providing only a placeholder for propriarity sti stress model - 
