@@ -18,11 +18,12 @@ Table of contents
   7 Sharing Defaults
   8 Operation Controls
   9 NGSPICE COMPILATION UNDER WINDOWS OS
-   9.1 make ngspice with CYGWIN and external MINGW32
-   9.2 make ngspice with CYGWIN and internal MINGW32 (use config.h made above)
+   9.1 How to make ngspice with MINGW and MSYS
+   9.2 make ngspice with MS Visual Studio 2008
    9.3 make ngspice with pure CYGWIN
-   9.4 How to make ngspice with MINGW and MSYS
- 
+   9.4 make ngspice with CYGWIN and external MINGW32
+   9.5 make ngspice with CYGWIN and internal MINGW32 (use config.h made above)
+    
 
 This file describes the procedures to install ngspice from sources.
 
@@ -394,8 +395,190 @@ This file describes the procedures to install ngspice from sources.
 9 NGSPICE COMPILATION UNDER WINDOWS OS
   ====================================
 
+9.1 How to make ngspice with MINGW and MSYS
+  
+     Creating ngspice with MINGW is now a straight forward procedure,
+ if you have MSYS/MINGW installed properly. Unfortunately this is rather 
+ tedious because you will need several enhancements to the standard install,
+ especially if you want to include XSpice. Some links are given below which 
+ describe the procedures.
+  
+     The default installation location of ngspice is the Windows path
+ C:\spice. The install path can be altered by passing --prefix=NEWPATH
+ as an argument to ./configure during the build process.
 
- 9.1 make ngspice with CYGWIN and external MINGW32
+     Put the install path you desire inside "", e.g. "D:/NewSpice". Be  
+ careful to use forward slashes "/", not backward slashes "\" (something 
+ still to be fixed).  Then add --prefix="D:/NewSpice" as an argument to 
+ ./configure in the normal way.
+
+ The procedure of compiling a distribution (for example, a tarball from
+ the ngspice website), is as follows:
+
+ $ cd ng-spice-rework-18
+ $ ./configure --with-windows ...and other options
+ $ make
+ $ make install
+
+ The useful options are:
+ --enable-xspice (this requires FLEX and BISON available in MSYS, see below).
+ --enable-cider
+ --disable-debug (-O2 optimization, no debug information)
+
+ However, to compile code extracted from the CVS repository the procedure is
+ a little different, thus:
+
+ $ cd ng-spice-rework-18
+ $ ./autogen.sh
+ $ ./configure --enable-maintainer-mode --with-windows ...and other options
+ $ make
+ $ make install
+
+ MINGW and MSYS can be downloaded from http://www.mingw.org/. The making of 
+ the code models *.cm for XSpice requires installation of BISON and FLEX to
+ MSYS. A typical installation was tested with:
+ 
+ bison-2.0-MSYS.tar.gz
+ flex-2.5.4a-1-bin.zip
+ libiconv-1.9.2-1-bin.zip
+ libintl-0.14.4-bin.zip
+
+ Bison 2.0 is now superseeded by newer releases (Bison 2.3, see 
+ http://sourceforge.net/project/showfiles.php?group_id=2435&package_id=67879)
+
+ The last three are from 
+ http://sourceforge.net/project/showfiles.php?group_id=23617.
+
+ You may also look at 
+ http://www.mingw.org/wiki/HOWTO_Install_the_MinGW_GCC_Compiler_Suite
+ http://www.mingw.org/wiki/MSYS
+ http://www.mingw.org/wiki/HOWTO_Create_an_MSYS_Build_Environment.
+
+
+9.2 make ngspice with MS Visual Studio 2008
+
+ ngspice may now be compiled with MS Visual Studio 2008.
+
+ CIDER and XSPICE are included, but the code models for XSPICE
+ (*.cm) are not (yet) made. You may however use the code models
+ created with MINGW (which in fact are dlls), as e.g. found in
+ the ngspice binary distribution.
+  
+ There is currently no installation procedure provided, you may
+ however install the executable manually as described below:
+ 
+     The directory (visualc) with its files 
+ vngspice.sln (project starter) and
+ vngspice.vcproj (project contents)
+ allows to compile and link ngspice with MS Visual Studio 2008.
+ The project is probably not compatible with Visual Studio 2005.
+ 
+ CIDER and XSPICE are included, but the code models for XSPICE
+ (*.cm) are not (yet) made. You may however use the code models
+ created with MINGW (which in fact are dlls), as e.g. found in 
+ the ngspice binary distribution.
+ 
+ There is currently no installation procedure provided, you may
+ however install the executable manually as described in the
+ installation tree below.
+ 
+ /visualc/include contains a dedicated config.h file. It contains the
+ preprocessor definitions required to properly compile the code.
+ strings.h has been necessary during setting up the project.
+ 
+ Install Microsoft Visual Studio 2008 C++ . The
+ MS VS 2008 C++ Express Edition (which is available at no cost from
+ http://www.microsoft.com/express/product/default.aspx) is adequate.
+ 
+ Goto  /ng-spice-rework/visualc.
+ 
+ Start MS Visual Studio 2008 by double click onto vngspice.sln.
+ 
+ After MS Visual Studio has opened up, select debug or release version 
+ by checking 'Erstellen' , 'Konfigurations-Manager' 'Debug' or 'Release'.
+ 
+ Start making ngspice (called vngspice.exe) by selecting 'Erstellen' and 
+ 'vngspice neu erstellen'.
+ 
+ Object files will be created and stored in visualc/debug or visualc/release.
+ The executable will be stored to visualc/debug/bin or visualc/release/bin.
+ 
+ An installation tree (as provided with MINGW make install) and also used by
+ vngspice is (maybe created manually):
+ 
+ C:\Spice\
+	bin\
+		ngspice.exe
+		nghelp.exe
+		ngmakeidx.exe
+		ngnutmeg.exe
+		cmpp.exe
+	lib\
+		spice\
+			analog.cm
+			digital.cm
+			spice2poly.cm
+			extradev.cm
+			extravt.cm
+	share\
+		info\
+			dir
+			ngspice.info
+			ngspice.info-1
+			..
+			ngspice.info-10
+		man\
+			man1\
+				ngmultidec.1
+				ngnutmeg.1
+				ngsconvert.1
+				ngspice.1
+		ng-spice-rework\
+			helpdir\
+				ngspice.idx
+				ngspice.txt
+			scripts\
+				ciderinit
+				devaxis
+				devload
+				setplot
+				spectrum
+				spinit
+		
+ If you intend to install vngspice into another directory, e.g. D:\MySpice,
+ you have to edit  /visualc/include/config.h and alter the entries:
+ #define NGSPICEBINDIR "C:/Spice/bin"
+ #define NGSPICEDATADIR "C:/Spice/share/ng-spice-rework"
+ to
+ #define NGSPICEBINDIR "D:/MySpice/bin"
+ #define NGSPICEDATADIR "D:/MySpice/share/ng-spice-rework" 
+  
+ nghelp.exe is deprecated and no longer offered, but still available in the binary
+ distribution.
+ 
+ If the code model files *.cm are not available, you will get warning messages,
+ but you may use ngspice in the normal way (of course without XSPICE extensions). 
+ 
+ ToDo: Some commands in how-to-ngspice-vstudio.txt and mentioned above
+ have to be translated to English.
+
+
+9.3 make ngspice with pure CYGWIN
+
+ If you don't have libdl.a you may need to link libcygwin.a 
+ to libdl.a symbolically.
+
+ for example:
+
+ $ cd /lib
+ $ ln -s libcygwin.a libdl.a.
+
+ The procedure of compiling is the same as Linux.
+
+
+The next two compilation options (9.4, and 9.5) are deprecated and not tested. 
+ 
+ 9.4 make ngspice with CYGWIN and external MINGW32
 
  according to http://www.geocrawler.com/lists/3/SourceForge/6013/0/7321042/
 
@@ -416,7 +599,7 @@ This file describes the procedures to install ngspice from sources.
  (CR/LF instead of only LF at each line ending) for allowing proper comparison.
 
 
- 9.2 make ngspice with CYGWIN and internal MINGW32 (use config.h made above)
+ 9.5 make ngspice with CYGWIN and internal MINGW32 (use config.h made above)
 
  $ cd ng-spice-rework-18
  $ rm config.cache
@@ -435,71 +618,3 @@ This file describes the procedures to install ngspice from sources.
  ToDo: find appropriate presets for variables ?
        rewrite tests for headers and libs (search exclusively in mingw
        directories)
-
-
- 9.3 make ngspice with pure CYGWIN
-
- If you don't have libdl.a you may need to link libcygwin.a 
- to libdl.a symbolically.
-
- for example:
-
- $ cd /lib
- $ ln -s libcygwin.a libdl.a.
-
- The procedure of compiling is the same as Linux.
-
-
- 9.4 How to make ngspice with MINGW and MSYS
-
-     The default installation location is the Windows path C:\msys\1.0\local
- Normally the install path can be altered by passing --prefix=NEWPATH as an
- argument to ./configure during the build process but when using MinGW and MSYS
- this process is not fully supported.
-
- If you do need to change the install path then you first need to modify the
- following lines in src/conf.h.
-
- #ifdef __MINGW32__
- #define NGSPICEBINDIR "C:\\msys\\1.0\\local\\bin"
- #define NGSPICEDATADIR "C:\\msys\\1.0\\local\\share\\ng-spice-rework"
- #endif
-
-     Put the install path you desire inside "", and then use the unix-style
- equivalent with --prefix=NEWPATH as an argument to ./configure in the 
- normal way.
-
- Next, the line feed code in src/ngspice.txt must be changed from LF to CR/LF.
-
- The procedure of compiling a distribution (for example, a tarball from the
- ngspice website), is as follows:
-
- $ cd ng-spice-rework-18
- $ ./configure --with-windows ...and other options
- $ make
- $ make install
-
- However, to compile code extracted from the CVS repository the procedure is
- a little different, thus:
-
- $ cd ng-spice-rework-18
- $ ./autogen.sh
- $ ./configure --enable-maintainer-mode --with-windows ...and other options
- $ make
- $ make install
-
-     Finally, if you use xspice (ie. if to ran ./configure with --enable-
- xspice) then the directory of each "code model" referenced in the "spinit" 
- file must be modified from UNIX form to DOS form.
-
- For example:
- Change
-   codemodel /msys/1.0/local/lib/spice/spice2poly.cm
- to
-   codemodel C:\msys\1.0\local\lib\spice\spice2poly.cm
-
- The "spinit" file is in C:\msys\1.0\local\share\ng-spice-rework
- if you did the same setting as the above.
-
- MINGW and MSYS can be downloaded from http://www.mingw.org/.
-
