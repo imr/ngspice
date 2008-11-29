@@ -8,9 +8,7 @@ TESTS = CEamp.cir		\
 	diffamp.cir 		\
 	diode.cir 		\
 	noise_scale_test.cir 	\
-	temp.cir 		\
-	tran_aplac_test.cir 	\
-	vbic.cir
+	temp.cir
 
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
