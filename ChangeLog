@@ -1,3 +1,7 @@
+2008-11-30 Lionel Sainte Cluque
+ * tests/tcl tests/tcltestbench* : moved to example directory, as there are no
+ Makefiles to automate those tests now.
+
 2008-11-29 Holger Vogt
  * frontend/numparam/xpressn.c: rand() and gauss() moved to 
    math/misc/randnumb.c
