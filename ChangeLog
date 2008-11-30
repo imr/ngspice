@@ -1,4 +1,12 @@
 2008-11-30 Lionel Sainte Cluque
+  * Due to my little knowledge of CVS previous action was not take into
+  account, files did not move. I let thet files in their actual (tests/)
+  directory for the moment.
+
+2008-11-30 Lionel Sainte Cluque
+/***
+This was not taken into account
+/***
  * tests/tcl tests/tcltestbench* : moved to example directory, as there are no
  Makefiles to automate those tests now.
 
