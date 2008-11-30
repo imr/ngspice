@@ -52,8 +52,7 @@ DIST_SUBDIRS = 	bsim1	\
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
-	README bin adms \
-	tcl tcl-testbench1 tcl-testbench2 tcl-testbench3 tcl-testbench4
+	README bin adms
  
 
 MAINTAINERCLEANFILES = Makefile.in
