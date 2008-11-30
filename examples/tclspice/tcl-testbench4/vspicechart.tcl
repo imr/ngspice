@@ -7,7 +7,7 @@
 
 
 package require BLT
-load "../../src/.libs/libspice.so"
+load "../../../src/.libs/libspice.so"
 
 source selectfromlist.tcl
 source bltGraph.tcl

@@ -5,7 +5,7 @@
 
 # old name:  analyse-20070504-0.tcl
 package require BLT
-load ../../src/.libs/libspice.so
+load ../../../src/.libs/libspice.so
 
 # Test of virtual capacitore circuit
 # Vary the control voltage and log the resulting capacitance

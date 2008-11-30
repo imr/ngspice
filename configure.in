@@ -317,16 +317,25 @@ if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
 
     if test "x$tcl_config_sh" = "x" ; then
       for dir in \
+       `ls -dr /usr/local/tcltk/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
        `ls -dr /usr/local/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+       `ls -dr /usr/local/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+       `ls -dr /usr/share/tcltk/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+       `ls -dr /usr/share/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+       `ls -dr /usr/share/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+       `ls -dr /usr/lib/tcl/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
+       `ls -dr /usr/lib/tcl[[7-9]].[[0-9]]* 2>/dev/null` \
        /usr/local/tcl \
        /usr/local \
        /usr \
        /mingw
       do
         if test -r "$dir/tclConfig.sh" ; then
+          echo "Automatic research of tclConfig.sh Found one, accepting it and stopping research."
           tcl_config_sh="$dir/tclConfig.sh"
           break
         elif test -r "$dir/lib/tclConfig.sh" ; then
+          echo "Automatic research of tclConfig.sh Found one, accepting it and stopping research."
           tcl_config_sh="$dir/lib/tclConfig.sh"
           break
         fi
@@ -340,7 +349,7 @@ AC_MSG_RESULT([${tcl_config_sh}])
 
 if test "x$tcl_config_sh" = "x" ; then
   echo "can't find Tcl configuration script \"tclConfig.sh\""
-  find /usr/lib/ -name 'tclConfig.sh' -exec echo "Should you add --with-tcl={} to ./configure arguments?" \;
+  find /usr/ -name 'tclConfig.sh' -exec echo "Should you add --with-tcl={} to ./configure arguments?" \; | sed -re "s/\/tclConfig.sh/ /"
   exit 1
 fi
 

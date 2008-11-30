@@ -1,3 +1,10 @@
+2008-11-30
+ * configure.in: --with-tcl search path make broader to limit the need of the
+        optional argument. Message in case of tclConfig.sh file not found
+	fixed by sed.
+ * examples/tclspice/*/*.tcl: fixed load libspice lines due to the
+        directories hierarchy. (One level more)
+
 2008-11-29 Holger Vogt
  * frontend/numparam/xpressn.c: rand() and gauss() moved to 
    math/misc/randnumb.c

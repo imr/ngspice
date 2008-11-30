@@ -4,7 +4,7 @@
 	###
 
 package require BLT
-load ../../src/.libs/libspice.so
+load ../../../src/.libs/libspice.so
 source differentiate.tcl
 spice::codemodel ../../src/xspice/icm/spice2poly/spice2poly.cm 
 proc temperatures_calc {temp_inf temp_sup points} {

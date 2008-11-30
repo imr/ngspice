@@ -4,7 +4,7 @@
         ###
 
 package require BLT
-load ../../src/.libs/libspice.so
+load ../../../src/.libs/libspice.so
 
 spice::source "diffpair.cir"
 spice::op
