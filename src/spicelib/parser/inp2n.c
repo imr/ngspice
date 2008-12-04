@@ -124,5 +124,8 @@ void INP2N(void *ckt, INPtables * tab, card * current)
     
     return;
 }
+#else
+
+int Dummy1;
 
 #endif
