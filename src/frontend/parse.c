@@ -952,3 +952,17 @@ free_pnode_x(struct pnode *t)
     }
 }
 
+/* here is the original free_node, which is needed in spec.c and com_fft.c */
+void
+free_pnode_o(struct pnode *t)
+{
+  if (!t)
+    return;
+  free_pnode(t->pn_left);
+  free_pnode(t->pn_right);
+  free_pnode(t->pn_next);
+  tfree(t);
+}
+
+
+

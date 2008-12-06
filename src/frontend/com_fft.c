@@ -166,7 +166,7 @@ com_fft(wordlist *wl)
             ngood++;
         }
     }
-
+    free_pnode_o(first_name); /* h_vogt 081206 */
     if (!ngood) {
        return;
     }
@@ -240,7 +240,6 @@ com_fft(wordlist *wl)
     
     tfree(tdvec);
     tfree(fdvec);    
-    free_pnode(first_name);    
 }
 
 
