@@ -188,7 +188,7 @@ com_spec(wordlist *wl)
             ngood++;
         }
     }
-    free_pnode(first_name);
+/*    free_pnode(first_name);  h_vogt 081206 */
     if (!ngood) {
        tfree(win);
        return;
@@ -272,6 +272,7 @@ com_spec(wordlist *wl)
     tfree(dc);
     tfree(tdvec);
     tfree(fdvec);
+    free_pnode(first_name);
 
 #ifdef KEEPWINDOW
     f = alloc(struct dvec);
