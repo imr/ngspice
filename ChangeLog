@@ -1,3 +1,7 @@
+2008-12-06 Holger Vogt
+ * frontend/spec.c, com_fft.c: free_pnode(first_name); moved further down to allow
+   'fft vout' instead of only 'fft v(vout)'
+
 2008-11-30
  * configure.in: --with-tcl search path make broader to limit the need of the
         optional argument. Message in case of tclConfig.sh file not found
