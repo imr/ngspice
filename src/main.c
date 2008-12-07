@@ -196,13 +196,10 @@ bool ft_nutmeg = FALSE;
 extern struct comm spcp_coms[ ];
 struct comm *cp_coms = spcp_coms;
 
-
 extern int OUTpBeginPlot(), OUTpData(), OUTwBeginPlot(), OUTwReference();
 extern int OUTwData(), OUTwEnd(), OUTendPlot(), OUTbeginDomain();
 extern int OUTendDomain(), OUTstopnow(), OUTerror(), OUTattributes();
    
-
-
 IFfrontEnd nutmeginfo = {
 	IFnewUid,
 	IFdelUid,
@@ -219,7 +216,7 @@ IFfrontEnd nutmeginfo = {
 	OUTbeginDomain,
 	OUTendDomain,
 	OUTattributes
-    };;
+    };
 
 #else /* SIMULATOR */
 
