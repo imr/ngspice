@@ -1,4 +1,4 @@
-# The master makefile to make spiceopuse (TM) like codemodels
+# The master makefile to make spiceopus (TM) like codemodels
 # Under the GPLV2 or later license 
 # 2003 - Stefan Jones <stefan.jones@multigig.com>
 
@@ -106,8 +106,8 @@ uobjs-clean:
 	-rm -rf .deps
 
 %.o: %.c
-	@echo '$(COMPILE) -c $<'; \
-	$(COMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@echo '$(COMPILE) $(DEPFLAGS) .deps/$(*F).pp -c $<'; \
+	$(COMPILE) $(DEPFLAGS) .deps/$(*F).pp -c $<
 	@-cp .deps/$(*F).pp .deps/$(*F).P; \
 	tr ' ' '\012' < .deps/$(*F).pp \
 	| sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
