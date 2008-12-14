@@ -2,8 +2,8 @@
  * src/Makefile.am: "hard wired" makefile dependency generation compiler options 
    removed for main.c - this should be done by libtool, left it for tclspice and 
    xspice codemodels (see below)
- * src/xspice/icm: removed Makefile.am and makedefs - not used, configuration 
-   relays on makedefs.in and fixed Makefile, these files have now sun compiler 
+ * src/xspice/icm: removed Makefile.am - not used, configuration relays
+   on makedefs.in and fixed Makefile, these files have now sun compiler 
    specific options DEPFLAGS added
  * src/xspice/ipc/ipc*.c: prevent some warnings under sun compiler
  
