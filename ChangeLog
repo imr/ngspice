@@ -1,3 +1,12 @@
+2008-12-14 Dietmar Warning
+ * src/Makefile.am: "hard wired" makefile dependency generation compiler options 
+   removed for main.c - this should be done by libtool, left it for tclspice and 
+   xspice codemodels (see below)
+ * src/xspice/icm: removed Makefile.am and makedefs - not used, configuration 
+   relays on makedefs.in and fixed Makefile, these files have now sun compiler 
+   specific options DEPFLAGS added
+ * src/xspice/ipc/ipc*.c: prevent some warnings under sun compiler
+ 
 2008-12-07 Dietmar Warning
  * src/main.c: double semikolon in nutmeginfo decl. gives:
                "syntax error:  empty declaration" under solaris ss12 
