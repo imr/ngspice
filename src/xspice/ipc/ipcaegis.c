@@ -303,4 +303,8 @@ Ipc_Status_t ipc_transport_send_line (str, len)
    return IPC_STATUS_OK;
 }
 
+#else
+
+int intDummy1;
+
 #endif  /* IPC_AEGIS_MAILBOXES */

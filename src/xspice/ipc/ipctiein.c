@@ -363,7 +363,6 @@ Ipc_Boolean_t ipc_screen_name(char *name, char *mapped_name)
         return(IPC_TRUE);
     }
 
-    return(IPC_TRUE);
 }
 
 
