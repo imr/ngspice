@@ -125,11 +125,10 @@ ngspice_LDADD += \
 endif
 
 winmain.o: winmain.c
-		$(COMPILE) -DSIMULATOR -o winmain.o  -c $(srcdir)/winmain.c
+	$(COMPILE) -DSIMULATOR -o winmain.o  -c $(srcdir)/winmain.c
 
 spice.lo: main.c
-	$(LTCOMPILE) -DSIMULATOR -MT spice.lo -MD -MP -MF $(DEPDIR)/spice.Tpo -c -o spice.o $<
-	mv -f $(DEPDIR)/spice.Tpo $(DEPDIR)/spice.Plo
+	$(LTCOMPILE) -DSIMULATOR -c -o spice.o $<
 
 
 ## nutmeg:
