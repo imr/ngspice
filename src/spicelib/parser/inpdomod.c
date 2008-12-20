@@ -289,7 +289,8 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    }
 	    if ( (strstr(ver, "3.2.2")) || (strstr(ver, "3.22")) ||
 	         (strstr(ver, "3.2.3")) || (strstr(ver, "3.23")) ||
-	         (strstr(ver, "3.2.4")) || (strstr(ver, "3.24")) ) {
+	         (strstr(ver, "3.2.4")) || (strstr(ver, "3.24")) ||
+	         (strstr("3.2", ver)) || (strstr(ver, "3.20"))) {
 	      type = INPtypelook("BSIM3v32");
 	    }
 	    if ( (strstr(ver, "default")) 
