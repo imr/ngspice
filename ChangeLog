@@ -1,3 +1,7 @@
+2008-12-22 Holger Vogt
+ * /spicelib/parser/inpdomod.c: checks for BSIM3 and BSIM4 look for
+   major versions 3.2, 3.3, 4.2 - 4.6   
+ 
 2008-12-22 Dietmar Warning
  * adms/admst/ngspiceMakefile.am.xml: switch to libtool (unfortunately!)
 

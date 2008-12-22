@@ -287,18 +287,16 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    if ( strcmp(ver, "3.1a") == 0 ) {
 	      type = INPtypelook("BSIM3v1A");
 	    }
-	    if ( (strstr(ver, "3.2.2")) || (strstr(ver, "3.22")) ||
-	         (strstr(ver, "3.2.3")) || (strstr(ver, "3.23")) ||
-	         (strstr(ver, "3.2.4")) || (strstr(ver, "3.24")) ||
-	         (strstr("3.2", ver)) || (strstr(ver, "3.20"))) {
+	    if ( prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
 	      type = INPtypelook("BSIM3v32");
 	    }
 	    if ( (strstr(ver, "default")) 
-	        || (strstr(ver, "3.3")) || (strstr(ver, "3.3.0")) || (strstr(ver, "3.30")) ) {
+	        || (prefix("3.3", ver)) ) {
 	      type = INPtypelook("BSIM3");
 	    }
 	    if (type < 0) {
-	      err = INPmkTemp("Device type BSIM3 not available in this binary\n");
+	       err = (char *) tmalloc(sizeof(char) * (60 + strlen(ver)));
+	       sprintf(err,"Device type BSIM3 version %s not available in this binary\n",ver);
 	    }
 	    break;
 	case  9:
@@ -309,31 +307,26 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    }
 	    break;
 	case 14: case 54:
-	    err = INPfindVer(line, ver); /* mapping of minor versions are only placeholder */
-	    if ( (strstr(ver, "4.2")) || (strstr(ver, "4.2.0")) || (strstr(ver, "4.20")) 
-	                              || (strstr(ver, "4.2.1")) || (strstr(ver, "4.21")) ) {
+	    err = INPfindVer(line, ver); /* mapping of minor versions are included */
+	    if (prefix("4.2", ver)) {
 	      type = INPtypelook("BSIM4v2");
 	    }
-	    if ( (strstr(ver, "4.3")) || (strstr(ver, "4.3.0")) || (strstr(ver, "4.30")) ) {
+	    if (prefix("4.3", ver)) {
 	      type = INPtypelook("BSIM4v3");
 	    }
-	    if ( (strstr(ver, "4.4")) || (strstr(ver, "4.4.0")) || (strstr(ver, "4.40")) ) {
+	    if (prefix("4.4", ver)) {
 	      type = INPtypelook("BSIM4v4");
 	    }
-	    if ( (strstr(ver, "4.5")) || (strstr(ver, "4.5.0")) || (strstr(ver, "4.50")) ) {
+	    if (prefix("4.5", ver)) {
 	      type = INPtypelook("BSIM4v5");
 	    }
 	    if ( (strstr(ver, "default")) 
-	        || (strstr(ver, "4.6")) || (strstr(ver, "4.6.0")) || (strstr(ver, "4.60")) 
-	                                || (strstr(ver, "4.6.1")) || (strstr(ver, "4.61"))
-	                                || (strstr(ver, "4.6.2")) || (strstr(ver, "4.62"))
-	                                || (strstr(ver, "4.6.3")) || (strstr(ver, "4.63")) ) {
+	        || (prefix("4.6", ver)) ) {
 	      type = INPtypelook("BSIM4");
 	    }
 	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Device type BSIM4 not available in this binary\n");
+	       err = (char *) tmalloc(sizeof(char) * (60 + strlen(ver)));
+	       sprintf(err,"Device type BSIM4 version %s not available in this binary\n",ver);
 	    }
 	    break;
 	case 15:
