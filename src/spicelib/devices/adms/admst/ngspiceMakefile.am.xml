@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.13  2008-08-24 17:12:59  pnenzi
+  Revision 1.14  2008-12-22 08:16:59  dwarning
+  switch to libtool
+
+  Revision 1.13  2008/08/24 17:12:59  pnenzi
 
   Updated to new automake standard. Replaced all INCLUDES with AM_CPPFLAGS
 
@@ -110,9 +113,9 @@ $(module).c: admsva/$(module).va
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
 	perl -p -i.bak -e 's/IOP\\("(\\w+)"/IOP("\\L\\1"/' $(module).c
 
-noinst_LIBRARIES = lib$(module).a
+noinst_LTLIBRARIES = lib$(module).la
 
-lib$(module)_a_SOURCES = 	\\
+lib$(module)_la_SOURCES = 	\\
 	$(module).c		\\
 	$(module).hxx		\\
 	$(module)acld.c	\\
