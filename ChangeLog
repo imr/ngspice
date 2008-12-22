@@ -1,3 +1,6 @@
+2008-12-22 Dietmar Warning
+ * adms/admst/ngspiceMakefile.am.xml: switch to libtool (unfortunately!)
+
 2008-12-20 Holger Vogt
  * bug 2449483 removed: inpdomod.c:293 added as in b3v32check.c:42
 
