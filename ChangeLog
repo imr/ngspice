@@ -1,3 +1,9 @@
+2008-12-23 Holger Vogt
+  * resource.c: for tclspice HAS_WINDOWS replaced by _MSC_VER and __MINGW32__
+  * outitf.c, cktdojob.c: printf replaced by fprintf
+  * cpitf.c:216 s replaced by copys
+  * tclspice.c:2168 init_rlimits( ) added to get startup system info
+  
 2008-12-22 Holger Vogt
  * /spicelib/parser/inpdomod.c: checks for BSIM3 and BSIM4 look for
    major versions 3.2, 3.3, 4.2 - 4.6   

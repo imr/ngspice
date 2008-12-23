@@ -17,7 +17,7 @@
 #define TCLSPICE_prefix  "spice::"
 #define TCLSPICE_namespace "spice"
 #ifdef _MSC_VER
-#define TCLSPICE_version "18.0"
+#define TCLSPICE_version "18.1"
 #define	STDIN_FILENO	0
 #define	STDOUT_FILENO	1
 #define	STDERR_FILENO	2
@@ -2164,6 +2164,9 @@ int Spice_Init(Tcl_Interp *interp) {
     /*parameter fetcher, used in show*/
     if_getparam = spif_getparam;
     
+    /* Get startup system limits */
+    init_rlimits( );
+
     /*Command prompt stuff */
     ft_cpinit();
     
