@@ -463,7 +463,7 @@ fprintmem(FILE* stream, unsigned long int memory) {
 #  if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
 
 static size_t get_procm(struct proc_mem *memall) {
-#ifdef HAS_WINDOWS
+#if defined (_MSC_VER)|| defined(__MINGW32__)
 #if ( _WIN32_WINNT >= 0x0500)
 /* Use Windows Api function to obtain size of memory */
     HANDLE hProcess;
@@ -503,7 +503,7 @@ static size_t get_procm(struct proc_mem *memall) {
    (void) sprintf(fibuf, "/proc/%d/statm", getpid()); 
 
    if((fp = fopen(fibuf, "r")) == NULL) {
-      perror("fopen()");
+      perror("fopen(\"/proc/%d/statm\")");
       return 0;
    }
    bytes_read = fread (buffer, 1, sizeof (buffer), fp);
@@ -544,7 +544,7 @@ static size_t get_sysmem(struct sys_mem *memall) {
    long mem_got;
 
    if((fp = fopen("/proc/meminfo", "r")) == NULL) {
-      perror("fopen()");
+      perror("fopen(\"/proc/meminfo\")");
       return 0;
    }
    

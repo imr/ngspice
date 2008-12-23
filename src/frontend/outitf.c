@@ -886,7 +886,7 @@ fileEnd(runDesc *run)
 	place = ftell(run->fp);
 	fseek(run->fp, run->pointPos, 0);
         fprintf(run->fp, "%d", run->pointCount);
-	printf("\nNo. of Data Rows : %d\n", run->pointCount);
+	fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
 	fseek(run->fp, place, 0);
     } else {
 	/* Yet another hack-around */
@@ -1009,7 +1009,7 @@ static void
 plotEnd(runDesc *run)
 {
   fprintf(stderr,"\n");
-  printf("\nNo. of Data Rows : %d\n", run->pointCount);
+  fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
   return;
 }
 
