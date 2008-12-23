@@ -212,7 +212,8 @@ ft_cpinit(void)
 
 	/* Now source the standard startup file. */
 	/* XXX strange */
-	for (copys=s=cp_tildexpand(Lib_Path); s && *s; ) {/*DG*/
+
+	for (copys=s=cp_tildexpand(Lib_Path); copys && *copys; ) {/*DG*/
 	    while (isspace(*s))
 		s++;
 	    for (r = buf; *s && !isspace(*s); r++, s++)
