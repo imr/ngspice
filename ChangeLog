@@ -1,3 +1,10 @@
+2008-12-26 Dietmar Warning
+ * autogen.sh, configure.in: A hopeful way to integrate adms - ugly, but tested
+   under linux, sunOS and msys with and w/o adms enabled.
+ * src/spicelib/devices/adms/hicum0: updated verilog code with small adaption
+   to actual hicum0 version 1.2
+ * tests/adms/hicum0: using one library file for tests
+
 2008-12-23 Holger Vogt
   * resource.c: for tclspice HAS_WINDOWS replaced by _MSC_VER and __MINGW32__
   * outitf.c, cktdojob.c: printf replaced by fprintf
