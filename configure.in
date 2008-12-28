@@ -843,6 +843,12 @@ if test "$enable_adms" = "yes"; then
                adms/ekv \
                adms/psp102 "
    
+   VLAMKF=" src/spicelib/devices/adms/ekv/Makefile \
+            src/spicelib/devices/adms/hicum0/Makefile \
+            src/spicelib/devices/adms/hicum2/Makefile \
+            src/spicelib/devices/adms/mextram/Makefile \
+            src/spicelib/devices/adms/psp102/Makefile "
+
    NOTVLADEVDIR=""
 
    VLADEV=" spicelib/devices/adms/hicum0/libhicum0.la \
@@ -853,11 +859,15 @@ if test "$enable_adms" = "yes"; then
 
 else
 
+    VLAMKF=""
     VLADEVDIR=""
     NOTVLADEVDIR="adms"
+
 fi
+
 AC_SUBST(ADMSXML)
 AC_SUBST(VLADEVDIR)
+AC_SUBST(VLAMKF)
 AC_SUBST(VLADEV)
 AC_SUBST(NOTVLADEVDIR)
 
@@ -951,6 +961,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/Makefile
                  src/spicelib/analysis/Makefile
                  src/spicelib/devices/Makefile
+                 ${VLAMKF}
                  src/spicelib/devices/asrc/Makefile
                  src/spicelib/devices/bjt/Makefile
                  src/spicelib/devices/bjt2/Makefile

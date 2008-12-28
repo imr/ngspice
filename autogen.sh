@@ -23,7 +23,6 @@ ADMS=0
 DIE=0
 
 
-
 help()
 {
  echo
@@ -115,48 +114,51 @@ test $TEST_TYPE $FILE || {
 }
 
 
+cp -p configure.in configure.tmp
 
 if test "$ADMS" -eq 1; then
 
-# Build admsXml arguments list
-#    for xml in `ls $XMLPATH | grep .xml`; do
-#       if [ "$xml" != "ngspiceVersion.xml" ]; then
-#	    XMLARG="$XMLARG -e ../admst/$xml"
-#	    fi
-#    done 
+  # automake needs these entries in configure.in for adms enabled
+  sed 's/${VLAMKF}/src\/spicelib\/devices\/adms\/ekv\/Makefile\
+                   src\/spicelib\/devices\/adms\/hicum0\/Makefile\
+                   src\/spicelib\/devices\/adms\/hicum2\/Makefile\
+                   src\/spicelib\/devices\/adms\/mextram\/Makefile\
+                   src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.tmp >configure.in
+  
+  currentdir=`pwd`
+  
+  for adms_dir in `ls $ADMSDIR`
+  do
+    if [ -d "$ADMSDIR/$adms_dir" ]; then
+     
+     case "$adms_dir" in
+        "CVS")
+        echo "Skipping CVS"
+        ;;
+        
+        "admst")
+        echo "Skipping scripts dir"
+        
+        ;;
+        
+        *)
+        echo "Entering into directory: $adms_dir"
+        echo "-->"$ADMSDIR/$adms_dir
+        cd $ADMSDIR/$adms_dir
+        file=`ls admsva/*.va`
+        $ADMSXML $file -Iadmsva -e ../admst/ngspiceVersion.xml \
+        -e ../admst/ngspiceMakefile.am.xml
+        
+        cd $currentdir
+        ;;
+     esac
+    fi 
+  done
 
-# Prepend ngspiceVersion.xml    
-#    XMLARG="-e ../admst/ngspiceVersion.xml $XMLARG"
+else
 
-currentdir=`pwd`
+  sed '/${VLAMKF}/d' configure.tmp >configure.in
 
-for adms_dir in `ls $ADMSDIR`
-do
-  if [ -d "$ADMSDIR/$adms_dir" ]; then
-   
-   case "$adms_dir" in
-      "CVS")
-      echo "Skipping CVS"
-      ;;
-      
-      "admst")
-      echo "Skipping scripts dir"
-      
-      ;;
-      
-      *)
-      echo "Entering into directory: $adms_dir"
-      echo "-->"$ADMSDIR/$adms_dir
-      cd $ADMSDIR/$adms_dir
-      file=`ls admsva/*.va`
-      $ADMSXML $file -Iadmsva -e ../admst/ngspiceVersion.xml \
-      -e ../admst/ngspiceMakefile.am.xml
-      
-      cd $currentdir
-      ;;
-   esac
-  fi 
-done
 fi
 
 echo "Running libtoolize"
@@ -182,5 +184,7 @@ if [ $? -ne 0 ]; then  echo "automake failed"; exit 1 ; fi
 echo "Running autoconf"
 autoconf
 if [ $? -ne 0 ]; then  echo "autoconf failed"; exit 1 ; fi
+
+mv configure.tmp configure.in
 
 echo "Success."
