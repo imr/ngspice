@@ -1,8 +1,38 @@
-//  HICUM Level_0: A Verilog-A description
+//  HICUM Level_0 Version_1.12: A Verilog-A description
 //  (A simplified version of HICUM Level2 model for BJT) 
 //  ## It is modified after the first version of HICUM/L0 code    ##
 
-//  Changed VT0 in Vt0 to prevent conflict in compiled C version. DW
+//  12/08: Modifications for ngspice and adms2.2.7 DW 
+//  Changed VT0 in Vt0 to prevent conflict in compiled C version.
+//  Made a temporary variable cjei_i for cjei output purpose only.
+
+// Minor code related changes
+// 12/06: Upper limit of FGEO is changed to infinity
+//  06/06:  Thermal node "tnode" set as external
+//  Flag FLSH introduced for controlling Self-heating calculation
+//  all if-else blocks marked with begin-end
+//  all series resistors and RTH are allowed to have a minimum value MIN_R
+//  07/06: QCJMOD deleted, QJMODF introduced along with with HICJQ
+//  ddx() operator used with QJMOD and QJMODF wherever needed
+//  aj is kept at 2.4 except BE depletion charge
+//  Substrate transistor transfer current added.
+//  Gmin added to (bi,ei) and (bi,ci) branches.
+//  hyperbolic smoothing used in rbi computation to avoid devide-by-zero.
+
+// *********************************************************************************
+// 06/06: Comment on NODE COLLAPSING:
+// Presently this verilog code permits a minimum of 1 milli-Ohm resistance for any
+// series resistance as well as for thermal resistance RTH. If any of the resistance
+// values drops below this minimum value, the corresponding nodes are shorted with
+// zero voltage contribution. We want the model compilers/simulators deal this 
+// situation in such a manner that the corresponding node is COLLAPSED.
+// We expect that the simulators should permit current contribution statement
+// for any branch with resistance value more than (or equal to) 1 milli-Ohm without
+// any convergence problem. In fact, we wish NOT to have to use a voltage contribution
+// statement in our Verilog code, except as an indication for the model compiler/simulator
+// to interprete a zero branch voltage as NODE-COLLAPSING action.
+// **********************************************************************************
+
 
 //Default simulator: Spectre
 
@@ -30,63 +60,43 @@
 `define	NPN	+1
 `define	PNP	-1
 
-
+`define VPT_thresh   	1.0e2
 `define EXPLIM		80.0
 `define INF		1.0e6
 `define TMAX		326.85
 `define TMIN		-100.0
+`define MIN_R		0.001
+`define Gmin 		1.0e-12
 
-// Depletion Charge and capacitance
-// Use of ddx() operator would help omit this macro
-`define QCJMOD(vj,cj0,vd,z,vpt,aj,qjf,cjf)\
+`define QCMODF(vj,cj0,vd,z,aj,cjf)\
   if(cj0 > 0.0) begin\
-	zr	= z/4.0;\
-	vp	= vpt-vd;\
-	vf	= vd*(1.0-exp(-ln(aj)/z));\
-	cmax	= aj*cj0;\
-	cr	= cj0*exp((z-zr)*ln(vd/vpt));\
-	a	= VT;\
-	ve	= (vf-vj)/a;\
-	if (ve <= `EXPLIM) begin\
-		ex1	= exp(ve);\
-		ee1	= 1.0+ex1;\
-		e1	= ex1/ee1;\
-		vj1	= vf-a*ln(ee1);\
-	end else begin\
-		e1	= 1.0;\
-		vj1	= vj;\
-	end\
-	a	= 0.1*vp+4.0*VT;\
-	vr	= (vp+vj1)/a;\
-	if (vr <= `EXPLIM) begin\
-		ex1	= exp(vr);\
-		ee1	= 1.0+ex1;\
-		e2	= ex1/ee1;\
-		vj2	= -vp+a*ln(ee1);\
-	end else begin\
-		e2	= 1.0;\
-		vj2	= vj1;\
-	end\
-	vj4	= vj-vj1;\
-	ez	= 1.0-z;\
-	ezr	= 1.0-zr;\
-	vdj1	= ln(1.0-vj1/vd);\
-	vdj2	= ln(1.0-vj2/vd);\
-	qj1	= cj0*(1.0-exp(vdj2*ez))/ez;\
-	qj2	= cr*(1.0-exp(vdj1*ezr))/ezr;\
-	qj3	= cr*(1.0-exp(vdj2*ezr))/ezr;\
-	qjf	= (qj1+qj2-qj3)*vd+cmax*vj4;\
-	cj1	= cj0*exp(vdj2*(-z))*e1*e2;\
-	cj2	= cr*exp(vdj1*(-zr))*(1.0-e2);\
-	cj3	= cmax*(1.0-e1);\
-	cjf	= cj1+cj2+cj3;\
+      vf	= vd*(1.0-exp(-ln(aj)/z));\
+      xvf	= (vf-vj)/VT;\
+      xvf2	= sqrt(xvf*xvf+1.921812);\
+      v_j	= vf-VT*(xvf+xvf2)*0.5;\
+      dvj	= 0.5*(xvf+xvf2)/xvf2;\
+      cjf	= cj0*exp(-z*ln(1-v_j/vd))*dvj+aj*cj0*(1-dvj);\
   end else begin\
-  	qjf	= 0.0;\
-  	cjf	= 0.0;\
+      cjf	= 0.0;\
   end
-  
 
-// Depletion Charge
+// DEPLETION CHARGE CALCULATION
+// Hyperbolic smoothing used; no punch-through
+`define QJMODF(vj,cj0,vd,z,aj,qjf)\
+  if(cj0 > 0.0) begin\
+      vf	= vd*(1.0-exp(-ln(aj)/z));\
+      xvf	= (vf-vj)/VT;\
+      xvf2	= sqrt(xvf*xvf+1.921812);\
+      v_j	= vf-VT*(xvf+xvf2)*0.5;\
+      x		= 1.0-z;\
+      y		= 1.0-exp(x*ln(1.0-v_j/vd));\
+      qjf	= cj0*vd*y/x+aj*cj0*(vj-v_j);\
+  end else begin\
+      qjf	= 0.0;\
+  end
+
+
+// Depletion Charge : with punch through
 `define QJMOD(vj,cj0,vd,z,vpt,aj,qjf)\
   if(cj0 > 0.0) begin\
 	zr	= z/4.0;\
@@ -99,10 +109,8 @@
 	if (ve <= `EXPLIM) begin\
 		ex1	= exp(ve);\
 		ee1	= 1.0+ex1;\
-		e1	= ex1/(ee1);\
 		vj1	= vf-a*ln(ee1);\
 	end else begin\
-		e1	= 1.0;\
 		vj1	= vj;\
 	end\
 	a	= 0.1*vp+4.0*VT;\
@@ -110,10 +118,8 @@
 	if (vr <= `EXPLIM) begin\
 		ex1	= exp(vr);\
 		ee1	= 1.0+ex1;\
-		e2	= ex1/(ee1);\
 		vj2	= -vp+a*ln(ee1);\
 	end else begin\
-		e2	= 1.0;\
 		vj2	= vj1;\
 	end\
 	vj4	= vj-vj1;\
@@ -128,15 +134,26 @@
   end else begin\
   	qjf	= 0.0;\
   end
-	
+
+
+// DEPLETION CHARGE CALCULATION SELECTOR:
+// Dependent on junction punch-through voltage
+// Important for collector related junctions
+`define HICJQ(vj,cj0,vd,z,vpt,qjf)\
+    if(vpt < `VPT_thresh) begin\
+        `QJMOD(vj,cj0,vd,z,vpt,2.4,qjf)\
+    end else begin\
+        `QJMODF(vj,cj0,vd,z,2.4,qjf)\
+    end
+    
 //Temperature dependence of depletion capacitance parameters
-`define TMPHICJ(cj0,vd,z,aj,vg,cj0_t,vd_t,aj_t)\
+`define TMPHICJ(cj0,vd,z,vg,cj0_t,vd_t)\
 	arg	= 0.5*vd/Vt0;\
 	vdj0	= 2*Vt0*ln(exp(arg)-exp(-arg));\
 	vdjt	= vdj0*qtt0+vg*(1-qtt0)-mg*VT*ln_qtt0;\
 	vd_t	= vdjt+2*VT*ln(0.5*(1+sqrt(1+4*exp(-vdjt/VT))));\
-	cj0_t	= cj0*exp(z*ln(vd/vd_t));\
-	aj_t	= aj*vd_t/vd;
+	cj0_t	= cj0*exp(z*ln(vd/vd_t));
+
 
 //Limiting exponential
 `define LIN_EXP(le, arg)\
@@ -177,12 +194,12 @@
         end
         
 
-module hic0_full (c,b,e,s);                    
+module hic0_full (c,b,e,s,tnode);                    
                                                
                                             
 //Node definitions 
                       
-	inout		c,b,e,s;                                                  
+	inout		c,b,e,s,tnode;                                                  
 	electrical 	c     `P(info="external collector node");
 	electrical 	b     `P(info="external base node");
 	electrical 	e     `P(info="external emitter node");
@@ -190,14 +207,25 @@ module hic0_full (c,b,e,s);
 	electrical 	ci    `P(info="internal collector node");
 	electrical 	bi    `P(info="internal base node");
 	electrical 	ei    `P(info="internal emitter node");
-	electrical 	tnode `P(info="local temperature rise node");                            
-
-	branch 		(ci,c) 	irescx;
-	branch 		(ci,c) 	vrescx;
-	branch 		(ei,e) 	iresex;
-	branch 		(ei,e) 	vresex;
-	branch 		(b,bi)  irescb;  
-	branch 		(b,bi)  vrescb;                                         
+	electrical 	tnode `P(info="local temperature rise node");
+	
+	
+	//Branch definitions
+	branch 		(ci,c) 		br_cic_i;
+	branch 		(ci,c) 		br_cic_v;
+	branch 		(ei,e) 		br_eie_i;
+	branch 		(ei,e) 		br_eie_v;
+	branch		(bi,ei)		br_biei;
+	branch		(bi,ci)		br_bici;
+	branch		(ci,ei)		br_ciei;
+	branch 		(b,bi)  	br_bbi_i;  
+	branch 		(b,bi)  	br_bbi_v; 	
+	branch		(b,e)		br_be;
+	branch		(b,ci)		br_bci;
+	branch		(b,s)		br_bs;
+	branch		(s,ci)		br_sci;
+	branch		(tnode )	br_sht;                          
+                                        
 //                                             
 // Parameter initialization with default values            
                                                
@@ -258,14 +286,16 @@ module hic0_full (c,b,e,s);
 	parameter real rbi0   		= 0.0		from [0:`INF)	`P(spice:name="rbi0"  info="Internal base resistance at zero-bias" test:value="100" unit="Ohm" m:inverse_factor="yes");   
 	parameter real vr0e   		= 2.5		from (0:`INF]	`P(spice:name="vr0e"  info="forward Early voltage (normalization volt.)" unit="V");                 
 	parameter real vr0c   		= `INF		from (0:`INF]	`P(spice:name="vr0c" info="forward Early voltage (normalization volt.)" unit="V" default="infinity" test:value="25.0");                  
-	parameter real fgeo   		= 0.656		from [0:1]	`P(spice:name="fgeo"  info="Geometry factor" test:value="0.73"); 
+	parameter real fgeo   		= 0.656		from [0:`INF]	`P(spice:name="fgeo"  info="Geometry factor" test:value="0.73"); 
                                                
 // Series resistances                        
 	parameter real rbx    		= 0.0		from [0:`INF)	`P(spice:name="rbx"   info="External base series resistance" test:value="8.8" unit="Ohm" m:inverse_factor="yes"); 
 	parameter real rcx    		= 0.0		from [0:`INF)	`P(spice:name="rcx"   info="Emitter series resistance" test:value="12.5" unit="Ohm" m:inverse_factor="yes");        
 	parameter real re     		= 0.0		from [0:`INF)	`P(spice:name="re"    info="External collector series resistance" test:value="9.16" unit="Ohm" m:inverse_factor="yes");      
                                                
-// Substrate diode current and cap                   
+// Substrate transfer current, diode current and cap                   
+	parameter real itss   		= 0.0		from [0:1.0]	`P(spice:name="itss" info="Substrate transistor transfer saturation current" unit="A" test:value="1e-17" m:factor="yes");    
+	parameter real msf    		= 1.0		from (0:10]	`P(spice:name="msf"  info="Substrate transistor transfer current non-ideality factor");   
 	parameter real iscs   		= 0.0		from [0:1.0]	`P(spice:name="iscs" info="SC saturation current" unit="A" test:value="1e-17" m:factor="yes");    
 	parameter real msc    		= 1.0		from (0:10]	`P(spice:name="msc"  info="SC non-ideality factor");   
 	parameter real cjs0   		= 1.0e-20	from [0:`INF)	`P(spice:name="cjs0" info="Zero-bias SC depletion capacitance" unit="F" test:value="1e-15" m:factor="yes");    
@@ -307,6 +337,7 @@ module hic0_full (c,b,e,s);
 	parameter real aleav		= 0.0				`P(spice:name="aleav" info="TC of avalanche exponential factor" unit="1/K");
 	
 // Self-heating                              
+ 	parameter integer flsh		= 0		from [0:2]	`P(spice:name="flsh"  info="Flag for self-heating calculation" test:value="2");            
  	parameter real rth		= 0.0		from [0:`INF)	`P(spice:name="rth"  info="Thermal resistance" test:value="200.0" unit="K/W" m:inverse_factor="yes");            
 	parameter real cth		= 0.0		from [0:`INF)	`P(spice:name="cth"  info="Thermal capacitance" test:value="0.1" unit="Ws/K" m:factor="yes");
 	
@@ -344,21 +375,21 @@ module hic0_full (c,b,e,s);
 	real VT,Tamb,Tdev,Tnom,dT,qtt0,ln_qtt0;
 	real vde_t,vdci_t,vdcx_t,vds_t;
 	real is_t,ires_t,ibes_t,ibcs_t;
-	real iscs_t,cje0_t,cjci0_t,cjcx0_t;
+	real itss_t,iscs_t,cje0_t,cjci0_t,cjcx0_t;
 	real cjs0_t,rci0_t,vlim_t;
 	real vces_t,thcs_t,tef0_t,rbi0_t;
 	real rbx_t,rcx_t,re_t,t0_t,eavl_t,kavl_t;
-	real aje_t,ajci_t,ajcx_t,ajs_t;
+	real aje_t;
 
 	// bc charge and cap
 	real qjci `P(ask="yes" info="B-C internal junction charge" unit="C");
 	real qjcx,qjcii,cjcii,qjcxi,qjciii; //cjcx
-	real cjci0_t_ii,cjcx0_t_ii,cjcx0_t_i;
+	real cjci0_t_ii,cjcx0_t_ii,cjcx0_t_i,v_j;
 
 	// be junction
 	real qjei `P(ask="yes" info="B-E internal junction charge" unit="C");
-	real cjei `P(ask="yes" info="B-E internal junction capacitance" unit="F");
-	real vf,vj,x,y,e1,e2;  
+	real cjei_i `P(ask="yes" info="B-E internal junction capacitance" unit="F"); // dw: adms2.2.7 problem
+	real cjei,vf,vj,x,y,e1,e2;  
 	 
 	// transfer and internal base current
 	real cc,qj_2,facl;
@@ -380,10 +411,10 @@ module hic0_full (c,b,e,s);
 	real v_bord,a_iavl,lncc;
 	
 	// base resistance
-	real rb,ri,eta,fac_ri,rbi,qje; 
+	real rb,eta,rbi,qje,Qz_nom,fQz; 
 
-	// substrate diode and cap
-	real qjs;
+	// substrate transistor, diode and cap
+	real qjs,HSa,HSb,HSI_Tsu,HSUM;
 
 	// self heating
 	real pterm;
@@ -403,7 +434,7 @@ module hic0_full (c,b,e,s);
   	real	IS,IST,UM1,U,Iz,DIOY;
   	
   	// branch voltages
-  	real   Vbci,Vbici,Vbiei,Vciei,Vsci,Veie,Vbbi,Vcic,Vbe,Vrth, Vrth_ext;
+  	real   Vbci,Vbici,Vbiei,Vciei,Vsci,Veie,Vbbi,Vcic,Vbe,Vrth;
 	
 	//Output to be seen
 	real	ijbc `P(ask="yes" info="Base-collector diode current" unit="A");
@@ -437,16 +468,16 @@ analog begin
 	     HICUMtype	=  `NPN;
          end
 
-	Vbci  = HICUMtype*V(b,ci);
-	Vbici = HICUMtype*V(bi,ci);
-	Vbiei = HICUMtype*V(bi,ei);
-	Vciei = HICUMtype*V(ci,ei);
-	Vsci  = HICUMtype*V(s,ci);
-	Veie  = V(vresex);
-	Vcic  = V(vrescx);
-	Vbbi  = V(vrescb);
-	Vbe   = HICUMtype*V(b,e);
-	Vrth  = V(tnode);
+	Vbci  = HICUMtype*V(br_bci);
+	Vbici = HICUMtype*V(br_bici);
+	Vbiei = HICUMtype*V(br_biei);
+	Vciei = HICUMtype*V(br_ciei);
+	Vsci  = HICUMtype*V(br_sci);
+	Veie  = V(br_eie_v);
+	Vcic  = V(br_cic_v);
+	Vbbi  = V(br_bbi_v);
+	Vbe   = HICUMtype*V(br_be);
+	Vrth  = V(br_sht);
 
 
 
@@ -456,14 +487,16 @@ analog begin
 
 	Tnom	= tnom+273.15;
 	Tamb	= $temperature;
-	Tdev	= Tamb+dt+Vrth;   // selfheating instead dT later possible
+	Tdev	= Tamb+dt+Vrth;
 	
 // Limit temperature to avoid FPE's in equations
-	if(Tdev < `TMIN + 273.15)
+	if(Tdev < `TMIN + 273.15) begin
 	   Tdev = `TMIN + 273.15;
-	else
- 	if (Tdev > `TMAX + 273.15)
+	end else begin
+ 	if (Tdev > `TMAX + 273.15) begin
 	   Tdev = `TMAX + 273.15;
+	end
+	end
 
 	Vt0     = `P_K*Tnom /`P_Q;
 	VT      = `P_K*Tdev /`P_Q;
@@ -483,11 +516,13 @@ analog begin
 	ibes_t  = ibes*exp(zetabet*ln_qtt0+vge/VT*(qtt0-1));
 	ires_t  = ires*exp(0.5*mg*ln_qtt0+0.5*vgbe/VT*(qtt0-1));
 	ibcs_t  = ibcs*exp(zetabci*ln_qtt0+vgc/VT*(qtt0-1));
+	itss_t	= itss*exp(zetasct*ln_qtt0+vgc/VT*(qtt0-1));
 	iscs_t  = iscs*exp(zetasct*ln_qtt0+vgs/VT*(qtt0-1));
-	`TMPHICJ(cje0,vde,ze,aje,vgbe,cje0_t,vde_t,aje_t)
-	`TMPHICJ(cjci0,vdci,zci,2.4,vgbc,cjci0_t,vdci_t,ajci_t)
-	`TMPHICJ(cjcx0,vdcx,zcx,2.4,vgbc,cjcx0_t,vdcx_t,ajcx_t)
-	`TMPHICJ(cjs0,vds,zs,2.4,vgsc,cjs0_t,vds_t,ajs_t)
+	`TMPHICJ(cje0,vde,ze,vgbe,cje0_t,vde_t)
+	aje_t	= aje*vde_t/vde;
+	`TMPHICJ(cjci0,vdci,zci,vgbc,cjci0_t,vdci_t)
+	`TMPHICJ(cjcx0,vdcx,zcx,vgbc,cjcx0_t,vdcx_t)
+	`TMPHICJ(cjs0,vds,zs,vgsc,cjs0_t,vds_t)
 	rci0_t  = rci0*exp(zetaci*ln_qtt0);
 	vlim_t  = vlim*exp((zetaci-avs)*ln_qtt0);
 	vces_t  = vces*(1+alces*dT);
@@ -501,7 +536,8 @@ analog begin
 	rbi0_t  = rbi0*exp(zetarbi*ln_qtt0);
 	re_t    = re*exp(zetare*ln_qtt0);
 	eavl_t  = eavl*exp(aleav*dT);
-	kavl_t  = kavl*exp(alkav*dT);	
+	kavl_t  = kavl*exp(alkav*dT);
+
 
 //
 // Calculation of intrinsic transistor elements
@@ -517,42 +553,28 @@ analog begin
 		cjci0_t_ii	= cjci0_t*fbc;             // zero bias internal portion
 		qjcxi		= 0;
 		cjcx0_t_i	= cjci0_t*(1-fbc);         // zero bias external portion
-		`QJMOD(Vbci,cjcx0_t_i,vdci_t,zci,vptci,ajci_t,qjcx)
+		`HICJQ(Vbci,cjcx0_t_i,vdci_t,zci,vptci,qjcx)
 	end else begin  
 		cjci0_t_ii	= cjci0_t;                 // zero bias internal portion
 		cjcx0_t_ii	= cjcx0_t*fbc;
-		`QJMOD(Vbici,cjcx0_t_ii,vdcx_t,zcx,vptcx,ajcx_t,qjcxi);
+		`HICJQ(Vbici,cjcx0_t_ii,vdcx_t,zcx,vptcx,qjcxi)
 		cjcx0_t_i	= cjcx0_t*(1-fbc);         // zero bias external portion
-		`QJMOD(Vbci,cjcx0_t_i,vdcx_t,zcx,vptcx,ajcx_t,qjcx)
+		`HICJQ(Vbci,cjcx0_t_i,vdcx_t,zcx,vptcx,qjcx)
 	end
-	`QJMOD(Vbici,cjci0_t_ii,vdci_t,zci,vptci,ajci_t,qjci)
+	`HICJQ(Vbici,cjci0_t_ii,vdci_t,zci,vptci,qjci)
 	qjcii	= qjci+qjcxi;
 		
 //Internal bc cap without punch through for cc
  
-	`QCJMOD(Vbici,cjci0_t_ii,vdci_t,zci,100,ajci_t,qjciii,cjcii)
-//	cjcii	= ddx(qjciii,Vbici);	//cap needful only here: ddx() not supported
+	//`HICJQ(Vbici,cjci0_t_ii,vdci_t,zci,100,qjciii)
+	`QCMODF(Vbici,cjci0_t_ii,vdci_t,zci,2.4,cjcii)
+	//cjcii	= ddx(qjciii,V(bi));
 
 //Internal be cap and charge
 
-// Preprocessing
-	vf	= vde_t*(1-exp(-ln(aje_t)/ze));
-
-// Smoothing terms
-	xvf	= (vf-Vbiei)/VT;
-	xvf2	= sqrt(xvf*xvf+1.921812);
-	vj	= vf-VT*0.5*(xvf+xvf2);
-	dvj	= 0.5*(xvf+xvf2)/xvf2;
-
-// BE cap
-	cjei	= cje0_t*exp(-ze*ln(1-vj/vde_t))*dvj+aje_t*cje0_t*(1-dvj);
-
-// Preprocessing
-	x	= 1-ze;
-	y	= 1-exp(x*ln(1-vj/vde_t));
-
-// BE charge
-	qjei	= cje0_t*vde_t/x*y+aje_t*cje0_t*(Vbiei-vj);
+	`QJMODF(Vbiei,cje0_t,vde_t,ze,aje_t,qjei)
+	cjei	= ddx(qjei,V(bi));
+	cjei_i	= cjei; // dw: adms2.2.7 problem
 
 // Critical current: ick
 	vc	= Vciei-vces_t;
@@ -590,8 +612,9 @@ analog begin
 
 // Normalized total hole charge
 	qpt	= qj_2+sqrt((qj_2)*(qj_2)+qm);
-	if (qpt<=1e-20)
-		qpt=1e-20;	
+	if (qpt<=1e-20) begin
+		qpt=1e-20;
+	end	
 
 // Low transfer current
 	itfl	= itfi/qpt; 
@@ -599,8 +622,9 @@ analog begin
 
 // Normalized injection width with low transfer current
 // and normalized charge component
-	if (itfl<=1e-20)
+	if (itfl<=1e-20) begin
 		itfl	= 1e-20;
+	end
 	al	= 1-ick/itfl;
 	s3l	= sqrt(al*al+ahc);
 	wl	= (al+s3l)/(1+sqrt(1+ahc));
@@ -610,8 +634,9 @@ analog begin
 	facl	= 1/(1+d_qfh/qpt);
 	itf	= itfl*facl;
 	itr	= itrl*facl;
-	if (itf<=1e-20)
+	if (itf<=1e-20) begin
 		itf	= 1e-20;
+	end
 	it	= itf-itr;
 
 // BE diffusion charge
@@ -653,8 +678,8 @@ analog begin
 
 // Avalanche current	
 
-	v_bord	= eavl_t*vdci_t;
-	if (Vbici < 0) begin
+	if (Vbici < 0) begin : HICAVL
+		v_bord	= eavl_t*vdci_t;
 		if (vdci_t-Vbici>v_bord) begin
 			a_iavl	= kavl_t/vdci_t*exp(-cc);
 			iavl	= itf*a_iavl*(v_bord+(1+cc)*(vdci_t-Vbici-v_bord));
@@ -671,32 +696,58 @@ analog begin
 //
 
 // Base resistance
-
-	qje	= qjei/cje0_t;
-	ri	= rbi0_t/(1+qje/vr0e+itf/ickf+itr/ickr+qjci/vr0c);
-	if (ibi > 0.0) begin
-		eta	= fgeo*ri*ibi/VT;
-		if (eta < 1e-6) begin
-			fac_ri=1-eta/2;
-		end else begin
-			fac_ri=ln(eta+1)/eta;
+	if(rbi0_t > 0.0) begin : HICRBI
+		// Conductivity modulation with hyperbolic smoothing
+		qje	= qjei/cje0_t;
+		Qz_nom	= 1+qje/vr0e+qjci/vr0c+itf/ickf+itr/ickr;
+		fQz	= 0.5*(Qz_nom+sqrt(Qz_nom*Qz_nom+0.01));;
+		rbi	= rbi0_t/fQz;
+		// Emitter current crowding
+		if (ibi > 0.0) begin
+			eta	= fgeo*rbi*ibi/VT;
+			if (eta < 1e-6) begin
+				rbi	= rbi*(1-0.5*eta);
+			end else begin
+				rbi	= rbi*ln(eta+1)/eta;
+			end
 		end
 	end else begin
-		fac_ri	= 1.0;
+		rbi	= 0.0;
 	end
-	rbi	= ri*fac_ri;  
-	rb	= rbi+rbx_t; 
+	// Total base resistance 
+	rb	= rbi+rbx_t;
+
+// Parasitic substrate transistor transfer current
+ 	if(itss > 0.0) begin : Sub_Transfer
+ 		HSUM	= msf*VT;
+        	HSa	= limexp(Vbci/HSUM);
+        	HSb	= limexp(Vsci/HSUM);
+        	HSI_Tsu	= itss_t*(HSa-HSb);
+      	end else begin
+        	HSI_Tsu	= 0.0;
+      	end
 
 // Substrate diode and cap and charge
 
 	`HICDIO(iscs,iscs_t,msc,Vsci,ijsc)
 
-	`QJMOD(Vsci,cjs0_t,vds_t,zs,vpts,ajs_t,qjs);    // aj=2.4 assumed
+	`HICJQ(Vsci,cjs0_t,vds_t,zs,vpts,qjs)
 
 // Self heating
 
-	if (rth > 0.0) begin
+	if (flsh == 1 && rth >= `MIN_R) begin
 		pterm	= it*Vciei+iavl*(vdci_t-Vbici); 
+	end else if (flsh == 2 && rth >= `MIN_R) begin
+		pterm	=  Vciei*it + (vdci_t-Vbici)*iavl + ijbe*Vbiei + ijbc*Vbici + ijsc*Vsci;
+		if (rb >= `MIN_R) begin
+		pterm	= pterm + Vbbi*Vbbi/rb;
+		end
+		if (re_t >= `MIN_R) begin
+		pterm	= pterm + Veie*Veie/re_t;
+		end
+		if (rcx_t >= `MIN_R) begin
+		pterm	= pterm + Vcic*Vcic/rcx_t;
+		end
 	end
 
 //
@@ -724,59 +775,79 @@ analog begin
 	
 //
 // Define branch sources
-//	
-
-	I(s,ci)		<+ ijsc					`P(spectre:gmin="add" spectre:pwl_passive="1e10");
-	I(s,ci)		<+ ddt(qjs);
-	I(b,ci)		<+ ddt(qjcx);
-	I(b,ci)  	<+ ddt(Qbci);
-	I(b,e)		<+ ddt(Qbe);
-	if (re > 0.0) begin
-	I(iresex)  	<+ Veie/re_t					`P(spectre:gmin="add");
+//
+	I(br_biei)	<+ `Gmin*V(br_biei);
+	I(br_bici)	<+ `Gmin*V(br_bici);
+		
+	I(br_bs) 		<+ HSI_Tsu;
+	I(br_sci)		<+ ijsc					`P(spectre:gmin="add" spectre:pwl_passive="1e10");
+	I(br_sci)		<+ ddt(qjs);
+	I(br_bci)		<+ ddt(qjcx);
+	I(br_bci)	  	<+ ddt(Qbci);
+	I(br_be)		<+ ddt(Qbe);
+	if (re >= `MIN_R) begin
+	I(br_eie_i)	  	<+ Veie/re_t					`P(spectre:gmin="add");
 	end else begin
-	V(vresex)	<+ 0.0;
+	V(br_eie_v)		<+ 0.0;
 	end
-	if (rcx > 0.0) begin
-	I(irescx)  	<+ Vcic/rcx_t					`P(spectre:gmin="add");
+	if (rcx >= `MIN_R) begin
+	I(br_cic_i)	  	<+ Vcic/rcx_t					`P(spectre:gmin="add");
 	end else begin
-	V(vrescx)	<+ 0.0;
+	V(br_cic_v)		<+ 0.0;
 	end
-	if (rbi0 > 0.0 || rbx > 0.0) begin
-	I(irescb)  	<+ Vbbi/rb				`P(spectre:gmin="add");
+	if (rbi0 >= `MIN_R || rbx >= `MIN_R) begin
+	I(br_bbi_i)	  	<+ Vbbi/rb				`P(spectre:gmin="add");
 	end else begin
-	V(vrescb)	<+ 0.0;
+	V(br_bbi_v)		<+ 0.0;
 	end
-	I(bi,ci)	<+ Ibici				`P(spectre:gmin="add" spectre:pwl_sat_current="IMAX" spectre:pwl_sat_cond="imax/0.025" spectre:pwl_rev_current="imax" spectre:pwl_rev_cond="IMAX/0.025");
-	I(bi,ci)	<+ ddt(Qbici);
-	I(bi,ei)	<+ ijbe					`P(spectre:gmin="add" spectre:pwl_fwd_current="IBEIS*exp(25.0)" spectre:pwl_fwd_node="bi" spectre:pwl_fwd_cond="IBEIS*exp(25.0)/0.025" spectre:pwl_sat_current="IMAX" spectre:pwl_sat_cond="IMAX/0.025" spectre:pwl_passive="1e10");
-	I(bi,ei)	<+ ddt(Qbiei);
-	I(ci,ei)	<+ it					`P(spectre:pwl_fwd_current="IS*exp(25.0)" spectre:pwl_fwd_node="bi" spectre:pwl_fwd_cond="IS*exp(25.0)/0.025"   spectre:pwl_rev_current="IMAX" spectre:pwl_rev_cond="IMAX/0.025" spectre:pwl_passive="1e10");
+	I(br_bici)	<+ Ibici				`P(spectre:gmin="add" spectre:pwl_sat_current="IMAX" spectre:pwl_sat_cond="imax/0.025" spectre:pwl_rev_current="imax" spectre:pwl_rev_cond="IMAX/0.025");
+	I(br_bici)	<+ ddt(Qbici);
+	I(br_biei)	<+ ijbe					`P(spectre:gmin="add" spectre:pwl_fwd_current="IBEIS*exp(25.0)" spectre:pwl_fwd_node="bi" spectre:pwl_fwd_cond="IBEIS*exp(25.0)/0.025" spectre:pwl_sat_current="IMAX" spectre:pwl_sat_cond="IMAX/0.025" spectre:pwl_passive="1e10");
+	I(br_biei)	<+ ddt(Qbiei);
+	I(br_ciei)	<+ it					`P(spectre:pwl_fwd_current="IS*exp(25.0)" spectre:pwl_fwd_node="bi" spectre:pwl_fwd_cond="IS*exp(25.0)/0.025"   spectre:pwl_rev_current="IMAX" spectre:pwl_rev_cond="IMAX/0.025" spectre:pwl_passive="1e10");
 	
-	if(rth == 0) begin
-		V(tnode)	<+ 0.0;
+	// Following code is an intermediate solution:
+	// ******************************************
+	//if(flsh == 0 || rth < `MIN_R) begin
+	//	I(br_sht) 	<+ Vrth/`MIN_R;
+	//end else begin
+	//	I(br_sht) 	<+ Vrth/rth-pterm			`P(spectre:gmin="add");
+	//	I(br_sht) 	<+ ddt(cth*Vrth);
+	//end
+	// ******************************************
+	// For simulators having no problem with V(br_sht) <+ 0.0 
+	// with external thermal node, follwing code may be used.
+	// This external thermal node should remain accessible.
+	// ********************************************
+	if(flsh == 0 || rth < `MIN_R) begin
+		V(br_sht)	<+ 0.0;
 	end else begin
-		I(tnode) 	<+ Vrth/rth-pterm		`P(spectre:gmin="add");
-		I(tnode) 	<+ ddt(cth*Vrth);
+		I(br_sht) 	<+ Vrth/rth-pterm		`P(spectre:gmin="add");
+		I(br_sht) 	<+ ddt(cth*Vrth);
 	end
-
+	// ********************************************
+	
 // Noise sources
 // Thermal noise
 	fourkt 	= 4.0 * `P_K * Tdev;
-	if(rbx > 0.0 || rbi0 > 0.0)
-		I(irescb)		<+ white_noise(fourkt/rb);
-	if(rcx > 0.0)
-		I(irescx)		<+ white_noise(fourkt/rcx_t);
-	if(re > 0.0)
-		I(iresex)		<+ white_noise(fourkt/re_t);
+	if(rbx >= `MIN_R || rbi0 >= `MIN_R) begin
+		I(br_bbi_i)		<+ white_noise(fourkt/rb);
+	end
+	if(rcx >= `MIN_R) begin
+		I(br_cic_i)		<+ white_noise(fourkt/rcx_t);
+	end
+	if(re >= `MIN_R) begin
+		I(br_eie_i)		<+ white_noise(fourkt/re_t);
+	end
 
 // Shot noise
 	twoq	= 2.0 * `P_Q;
-	I(bi,ei)	<+ white_noise(twoq*ijbe);
-	I(ci,ei)	<+ white_noise(twoq*it);
+	I(br_biei)	<+ white_noise(twoq*ijbe);
+	I(br_ciei)	<+ white_noise(twoq*it);
    
 // Flicker noise   
 	flicker_Pwr	= kf*pow(ijbe,af);
-	I(bi,ei)	<+ flicker_noise(flicker_Pwr,1.0);
+	I(br_biei)	<+ flicker_noise(flicker_Pwr,1.0);
 
 end  // analog
 endmodule
