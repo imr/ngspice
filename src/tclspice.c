@@ -177,6 +177,13 @@ do {\
     spice_interp = interp;\
 } while(0)
 
+
+/* global handle for the output heap */
+#if defined(_MSC_VER) || defined(__MINGW32__)
+HANDLE outheap;
+#endif
+
+
 /****************************************************************************/
 /*                          BLT and data routines                           */
 /****************************************************************************/
@@ -601,26 +608,33 @@ static threadId_t tid, bgtid=(threadId_t)0;
 static bool fl_running = FALSE;
 static bool fl_exited = TRUE;
 
-
-static void *_thread_run(void *string){
+#if defined(__MINGW32__) || defined(_MSC_VER)
+static void * WINAPI _thread_run(void *string){
+#else
+static void * _thread_run(void *string){
+#endif
   fl_exited = FALSE;
   bgtid = thread_self();
   cp_evloop((char *)string);
   FREE(string);
   bgtid = (threadId_t)0;
   fl_exited = TRUE;
-  return 0;
+  return;
 }
 
 /*Stops a running thread, hopefully */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+static int WINAPI _thread_stop(){
+#else
 static int _thread_stop(){
+#endif
   int timeout = 0;
   if(fl_running) {
     while(!fl_exited && timeout < 100){
       ft_intrpt = TRUE;
       timeout++;
 #if defined(__MINGW32__) || defined(_MSC_VER)
-      Sleep(10); /* va: windows native */
+      Sleep(100); /* va: windows native */
 #else
       usleep(10000);
 #endif
@@ -663,12 +677,17 @@ static int _run(int argc,char **argv){
   }
 #endif
 
+
   /* Catch Ctrl-C to break simulations */
+#ifndef _MSC_VER_
   oldHandler = signal(SIGINT,ft_sigintr);
   if(SETJMP(jbuf, 1)!=0) {
       signal(SIGINT,oldHandler);
       return TCL_OK;
   }
+#else
+  oldHandler = SIG_IGN;
+#endif
 
   /*build a char * to pass to cp_evloop */
   for(i=0;i<argc;i++) {
@@ -1665,6 +1684,7 @@ void triggerEventCheck(ClientData clientData,int flags) {
 #endif	
 }
 
+
 int Tcl_ExecutePerLoop() {
 
   struct watch *current;
@@ -2134,6 +2154,16 @@ int Spice_Init(Tcl_Interp *interp) {
   Tcl_Eval(interp, "namespace eval " TCLSPICE_namespace " { }");
 
   save_interp();
+
+
+#if defined(_MSC_VER) || defined(__MINGW32__)
+  /* create private heap for current process*/
+  outheap = HeapCreate(0, 10000000, 0);
+  if (!outheap) {
+    fprintf(stderr,"HeapCreate: Internal Error: can't allocate private output heap");
+    exit(EXIT_BAD);
+  }
+#endif
 
   {
     extern void DevInit();

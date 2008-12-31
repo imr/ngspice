@@ -274,9 +274,18 @@ dnl
 dnl The tclSpice options
 dnl
 AM_CONDITIONAL(TCL_MODULE, false)
+AM_CONDITIONAL(TCLWIN, false)
 if test "x$with_tcl" != "x" -a "$with_tcl" != "no" ; then
    AM_CONDITIONAL(TCL_MODULE, true)
    AC_DEFINE(TCL_MODULE,1,[Tcl Module])
+   case $host_os in
+     *mingw* )
+       AM_CONDITIONAL(TCLWIN, true)
+       AC_DEFINE(HAS_TCLWIN,1,[Tcl Windows]);;
+     *)
+     ;;  
+   esac   
+   
    with_x=no
    enable_shared=no
 

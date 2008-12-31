@@ -19,6 +19,13 @@ $Id$
 //#include <tclDecls.h>
 #endif
 
+
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#undef BOOLEAN
+#include <windows.h>
+extern HANDLE outheap;
+#endif
+
 /* Malloc num bytes and initialize to zero. Fatal error if the space can't
  * be tmalloc'd.   Return NULL for a request for 0 bytes.
  */
@@ -81,11 +88,52 @@ trealloc(void *ptr, size_t num)
 #endif
   }
   if (!s) {
-    fprintf(stderr,"realloc: Internal Error: can't allocate %ld bytes.\n",(long)num);
+    fprintf(stderr,"realloc: Internal Error: can't allocate %ld bytes.\n", (long)num);
     exit(EXIT_BAD);
   }
   return(s);
 }
+
+/* realloc using the output heap. 
+   Function is used in outitf.c to prevent heap fragmentation 
+   An additional heap outheap is used to store the plot output data.
+*/
+#if defined(_MSC_VER) || defined(__MINGW32__)
+void *
+hrealloc(void *ptr, size_t num)
+{
+  void *s;
+/*saj*/
+#ifdef TCL_MODULE
+  Tcl_Mutex *alloc;
+  alloc = Tcl_GetAllocMutex();
+#endif
+  if (!num) {
+    if (ptr)
+      free(ptr);
+    return NULL;
+  }
+
+  if (!ptr)
+    s = HeapAlloc(outheap, HEAP_ZERO_MEMORY, num);
+  else {
+/*saj*/
+#ifdef TCL_MODULE
+    Tcl_MutexLock(alloc);
+#endif
+   s = HeapReAlloc(outheap, HEAP_ZERO_MEMORY, ptr, num);
+/*saj*/
+#ifdef TCL_MODULE
+  Tcl_MutexUnlock(alloc);
+#endif
+  }
+  if (!s) {
+    fprintf(stderr,"HeapReAlloc: Internal Error: can't allocate %ld bytes.\n", (long)num);
+    exit(EXIT_BAD);
+  }
+  return(s);
+}
+#endif
 
 
 

@@ -39,16 +39,16 @@ char *INPfindLev(char *line, int *level)
 	sscanf(where, "%2d", level);	/* We get the level number */
 	if (*level < 0) {
 	    *level = 1;
-	    printf("Illegal value for level.\n");
-	    printf("Level must be >0 (Setting level to 1)\n");
+	    fprintf(stderr,"Illegal value for level.\n");
+	    fprintf(stderr,"Level must be >0 (Setting level to 1)\n");
 	    return (INPmkTemp
 		    (" illegal (negative) argument to level parameter - level=1 assumed"));
 	}
 
 	if (*level > 99) {	/* Limit to change in the future */
 	    *level = 1;
-	    printf("Illegal value for level.\n");
-	    printf("Level must be <99 (Setting Level to 1)\n");
+	    fprintf(stderr,"Illegal value for level.\n");
+	    fprintf(stderr,"Level must be <99 (Setting Level to 1)\n");
 	    return (INPmkTemp
 		    (" illegal (too high) argument to level parameter - level=1 assumed"));
 	}
@@ -60,7 +60,7 @@ char *INPfindLev(char *line, int *level)
 
     else {			/* no level on the line => default */
 	*level = 1;
-	printf("Warning -- Level not specified on line \"%s\"\nUsing level 1.\n", line);
+	fprintf(stderr,"Warning -- Level not specified on line \"%s\"\nUsing level 1.\n", line);
 	return ((char *) NULL);
     }
 

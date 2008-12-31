@@ -1,3 +1,13 @@
+2008-12-31 Holger Vogt
+  * resource.c: streamline resource info under Windows
+  * tclspice integration under Windows: dctran.c, inpfindl.c, outitf.c, alloc.c,
+    tclspice.c, winmain.c: type definitions, printf -> fprintf,
+    new heap for plot data to prevent memory fragmentation
+  * configure.in: new flags for TCL under Windows: HAS_TCLWIN 
+    (is set instead of HAS_WINDOWS), TCLWIN (for generating makefiles, 
+    instead of WINDOWS)
+  * cmath/makefile.am: prevent making test executables under TCL/Windows
+    
 2008-12-26 Dietmar Warning
  * autogen.sh, configure.in: A hopeful way to integrate adms - ugly, but tested
    under linux, sunOS and msys with and w/o adms enabled.

@@ -14,7 +14,8 @@ libcmaths_la_SOURCES = \
 		cmath4.h
 
 ## Test programs fail to build on Windows
-if !WINDOWS 
+if !WINDOWS
+if !TCLWIN 
 
 noinst_PROGRAMS = test_cx_mag test_cx_j test_cx_ph
  
@@ -44,6 +45,7 @@ test_cx_j_LDADD = \
 
 TESTS = test_cx_mag test_cx_j test_cx_ph
 
+endif !TCLWIN
 endif !WINDOWS
 
 

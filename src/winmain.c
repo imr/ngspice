@@ -97,6 +97,9 @@ void DisplayText( void);
 char* rlead(char*);
 void winmessage(char*);
 
+/* private heap for storing plot data */
+HANDLE outheap;
+
 // --------------------------<History-Verwaltung>------------------------------
 
 // Alle Puffer loeschen und Zeiger auf den Anfang setzen
@@ -844,10 +847,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	UpdateWindow( hwMain);
 	SetFocus( swString);
 
-        status = MakeArgcArgv(lpszCmdLine,&argc,&argv);
+   status = MakeArgcArgv(lpszCmdLine,&argc,&argv);
 
+  /* create private heap for current process */
+  outheap = HeapCreate(0, 10000000, 0);
+  if (!outheap) {
+    fprintf(stderr,"HeapCreate: Internal Error: can't allocate private output heap");
+    exit(1);
+  }
 
-	// Warten, bis alles klar ist
+	// Wait util everything is settled
 	WaitForIdle();
 
 	// Ab nach main()
@@ -855,8 +864,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	
 
 THE_END:
-	// 3D abschalten
-//	Ctl3dUnregister( hInstance);
 
 	// terminate
 	return nReturnCode;
