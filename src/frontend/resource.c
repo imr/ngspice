@@ -38,29 +38,32 @@ $Id$
 #endif
 
 /* We  might compile for Windows, but only as a console application (e.g. tcl) */
-#if defined (HAS_WINDOWS) || defined(__MINGW32__) || defined(_MSC_VER)
+#if defined(HAS_WINDOWS) || defined(__MINGW32__) || defined(_MSC_VER)
 #define HAVE_WIN32
 #endif
 
 #ifdef HAVE_WIN32
 #define WIN32_LEAN_AND_MEAN
-/* At least Windows 2000 is needed 
- * Undefine _WIN32_WINNT 0x0500 if you want to compile under Windows ME 
- * and older (not tested under Windows ME or 98!)
- */
-#if (_MSC_VER > 1200) || defined(__MINGW32__) /* Exclude VC++ 6.0 from using the psapi */
-#define _WIN32_WINNT 0x0500
+ 
+#ifdef __MINGW32__  /* access to GlobalMemoryStatusEx in winbase.h:1558 */
+#define WINVER 0x0500
 #endif
+
 /*
  * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
  * clashes with the definition obtained from windows.h (via winnt.h).
  * However, BOOLEAN is not used by this file so we can work round this problem
  * by undefining BOOLEAN before including windows.h
  * SJB - April 2005
- */
+ */ 
+ 
 #undef BOOLEAN
 #include <windows.h>
-#if ( _WIN32_WINNT >= 0x0500)
+/* At least Windows 2000 is needed 
+ * Undefine _WIN32_WINNT 0x0500 if you want to compile under Windows ME 
+ * and older (not tested under Windows ME or 98!)
+ */
+#if defined(__MINGW32__) ||  (_MSC_VER > 1200)/* Exclude VC++ 6.0 from using the psapi */
 #include <psapi.h>
 #endif
 #endif
