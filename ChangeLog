@@ -1,4 +1,4 @@
-2008-01-01 Dietmar Warning
+2009-01-01 Dietmar Warning
  * configure.in, include/missing_math.h, src/math/misc/isnan.c: POSIX conform 
    configure isnan, isinf macros and finite function
  * admst/ngspiceMODULEdefs.h.xml: some cc needs double cast for isinf macro
