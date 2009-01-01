@@ -596,7 +596,17 @@ AC_CHECK_LIB(m, sqrt)
 AC_CHECK_HEADERS(float.h limits.h values.h ieeefp.h)
 
 dnl Check for a few mathematical functions:
-AC_CHECK_FUNCS(erfc logb scalb scalbn asinh acosh atanh isnan)
+AC_CHECK_FUNCS(erfc logb scalb scalbn asinh acosh atanh finite)
+dnl According POSIX we should look for macros first
+AC_CHECK_DECLS([isinf], [], [], [[#include <math.h>]])
+AC_CHECK_DECLS([isnan], [], [], [[#include <math.h>]])
+dnl But may be we have still functions
+if test "$ac_cv_have_decl_isinf" != yes; then
+  AC_CHECK_FUNC(isinf)
+fi
+if test "$ac_cv_have_decl_isnan" != yes; then
+  AC_CHECK_FUNC(isnan)
+fi
 
 dnl Check for the random function:
 AC_CHECK_FUNCS(random,,AC_CHECK_LIB(iberty,random,AC_DEFINE([HAVE_RANDOM],1,[Have random in libiberty]) LIBS="$LIBS -liberty"))
@@ -846,10 +856,10 @@ if test "$enable_adms" = "yes"; then
    fi
    AC_DEFINE(ADMS,[1],[Support for Verilog-A(MS) models])
 
-   VLADEVDIR=" adms/hicum0 \
+   VLADEVDIR=" adms/ekv \
+               adms/hicum0 \
                adms/hicum2 \
                adms/mextram \
-               adms/ekv \
                adms/psp102 "
    
    VLAMKF=" src/spicelib/devices/adms/ekv/Makefile \
@@ -860,10 +870,10 @@ if test "$enable_adms" = "yes"; then
 
    NOTVLADEVDIR=""
 
-   VLADEV=" spicelib/devices/adms/hicum0/libhicum0.la \
+   VLADEV=" spicelib/devices/adms/ekv/libekv.la \
+            spicelib/devices/adms/hicum0/libhicum0.la \
             spicelib/devices/adms/hicum2/libhicum2.la \
             spicelib/devices/adms/mextram/libmextram.la \
-            spicelib/devices/adms/ekv/libekv.la \
             spicelib/devices/adms/psp102/libpsp102.la "
 
 else

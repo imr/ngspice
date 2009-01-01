@@ -1,9 +1,6 @@
-/**********
-Copyright 1991 Regents of the University of California.  All rights reserved.
-**********/
-
 #include "ngspice.h"
 
+#ifndef HAVE_DECL_ISNAN
 #ifndef HAVE_ISNAN
 
 /* isnan (originally) for SOI devices in MINGW32  hvogt (dev.c) */
@@ -51,3 +48,4 @@ isnan(double value)
 #else /* HAVE_ISNAN */
 int Dummy_Symbol_4;
 #endif /* HAVE_ISNAN */
+#endif /* HAVE_DECL_ISNAN */
