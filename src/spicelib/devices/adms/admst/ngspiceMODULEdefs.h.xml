@@ -3,7 +3,10 @@
 <!--
   $Id$
   $Log$
-  Revision 1.14  2007-07-23 17:24:14  dwarning
+  Revision 1.15  2009-01-01 20:48:48  dwarning
+  some cc needs double for isinf macro
+
+  Revision 1.14  2007/07/23 17:24:14  dwarning
   unique limexp behaviour
 
   Revision 1.13  2007/07/05 10:20:47  r29173
@@ -132,14 +135,14 @@
 #endif
 
 #define EXIT_IF_ISNAN(var) \\
-if(isnan(var)) \\
+if(isnan((double) var)) \\
 { \\
   printf(&quot;%%s:%%i:bug:isnan:&quot;#var&quot;\\n&quot;,__FILE__,__LINE__); \\
   printf(&quot;Please send this message to laurent.lemaitre@freescale.com\\n&quot;); \\
   NGSPICE_DEBUG \\
   exit(1); /*__asm__ __volatile__ (&quot;int \$03&quot;);*/ \\
 } \\
-if(isinf(var)) \\
+if(isinf((double) var)) \\
 { \\
   printf(&quot;%%s:%%i:bug:isinf:&quot;#var&quot;\\n&quot;,__FILE__,__LINE__); \\
   printf(&quot;Please send this message to laurent.lemaitre@freescale.com\\n&quot;); \\
