@@ -1,3 +1,8 @@
+2009-01-02 Dietmar Warning
+ * adms/ekv/amsva/ekv.va: EPFL-EKV version 2.63, replacement of the long channel 
+   version with a code according to the official manual (revision II) available 
+   at http://legwww.epfl.ch/ekv, contribution of Ivan Riis Nielsen 11/2006.
+
 2009-01-01 Dietmar Warning
  * configure.in, include/missing_math.h, src/math/misc/isnan.c: POSIX conform 
    configure isnan, isinf macros and finite function
