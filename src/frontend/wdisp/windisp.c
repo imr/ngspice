@@ -395,7 +395,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 			"setplot %s; %s xlimit %1.20e %1.20e ylimit %1.20e %1.20e; setplot $curplot\n",
 			buf2, gr->commandline, fx0, fxe, fy0, fye);
 		} else {
-			(void) sprintf(buf, "%s xlimit %le %le ylimit %le %le\n",
+			(void) sprintf(buf, "%s xlimit %e %e ylimit %e %e\n",
 			gr->commandline, fx0, fxe, fy0, fye);
 		}
 
