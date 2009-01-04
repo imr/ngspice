@@ -386,22 +386,24 @@ module ekv (d,g,s,b);
 	 // Forward  current (43-44)
    	 fv=(vp-vs)/vt;
 	 
-     	 if (fv >= -0.35)
-           z0=2.0/(1.3 + fv - ln(fv+1.6));
-
-    	 if (fv>=-15 && fv<-0.35) begin
+     	 if (fv > -0.35) begin
+           z0 = 2.0/(1.3 + fv - ln(fv+1.6));
+    	   z1 = (2.0 + z0) / (1.0 + fv + ln(z0));
+	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
+         end
+    	 else if (fv > -15) begin
 	   `expl(-fv,tmp);
-           z0= 1.55 + tmp;
-         end else
-	   z0=1;
-	 
-    	 z1=(2.0 + z0) / (1.0 + fv + ln(z0));
-	 
-   	 if (fv > -15.0)
-	   y=(1.0 + fv + ln(z1)) / (2.0 + z1);
+           z0 = 1.55 + tmp;
+    	   z1 = (2.0 + z0) / (1.0 + fv + ln(z0));
+	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
+         end 
+         else if (fv > -23.0) begin
+	   `expl(-fv,tmp);
+	   y = 1.0 / (2.0 + tmp);
+         end
    	 else begin
-	   `expl(-fv,tmp);
-	   y= 1.0 / (2.0 + tmp);
+ 	   `expl(fv,tmp);
+	   y = tmp + 1.0e-64;
 	 end
 	 
    	 ifwd = y*(1.0 + y);
@@ -430,22 +432,24 @@ module ekv (d,g,s,b);
          // eq. 56
    	 fv=(vp-vds-vs-sqrt(`SQR(vdssprime)+`SQR(dv))+sqrt(`SQR(vds-vdssprime)+`SQR(dv)))/vt;
 	 
-     	 if (fv >= -0.35)
-           z0=2.0/(1.3 + fv - ln(fv+1.6));
-
-    	 if (fv>=-15 && fv<-0.35) begin
+     	 if (fv > -0.35) begin
+           z0 = 2.0/(1.3 + fv - ln(fv+1.6));
+    	   z1 = (2.0 + z0) / (1.0 + fv + ln(z0));
+	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
+         end
+    	 else if (fv > -15) begin
 	   `expl(-fv,tmp);
-           z0= 1.55 + tmp;
-         end else
-	   z0=1;
-	 
-    	 z1=(2.0 + z0) / (1.0 + fv + ln(z0));
-	 
-   	 if (fv > -15.0)
-	   y=(1.0 + fv + ln(z1)) / (2.0 + z1);
+           z0 = 1.55 + tmp;
+    	   z1 = (2.0 + z0) / (1.0 + fv + ln(z0));
+	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
+         end 
+         else if (fv > -23.0) begin
+	   `expl(-fv,tmp);
+	   y = 1.0 / (2.0 + tmp);
+         end
    	 else begin
-	   `expl(-fv,tmp);
-	   y= 1.0 / (2.0 + tmp);
+ 	   `expl(fv,tmp);
+	   y = tmp + 1.0e-64;
 	 end
 	 
    	 irprime = y*(1.0 + y);
@@ -455,22 +459,24 @@ module ekv (d,g,s,b);
          // eq. 57
    	 fv=(vp-vd)/vt;
 	 
-     	 if (fv >= -0.35)
-           z0=2.0/(1.3 + fv - ln(fv+1.6));
-
-    	 if (fv>=-15 && fv<-0.35) begin
+     	 if (fv > -0.35) begin
+           z0 = 2.0/(1.3 + fv - ln(fv+1.6));
+    	   z1 = (2.0 + z0) / (1.0 + fv + ln(z0));
+	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
+         end
+    	 else if (fv > -15) begin
 	   `expl(-fv,tmp);
-           z0= 1.55 + tmp;
-         end else
-	   z0=1;
-	 
-    	 z1=(2.0 + z0) / (1.0 + fv + ln(z0));
-	 
-   	 if (fv > -15.0)
-	   y=(1.0 + fv + ln(z1)) / (2.0 + z1);
+           z0 = 1.55 + tmp;
+    	   z1 = (2.0 + z0) / (1.0 + fv + ln(z0));
+	   y = (1.0 + fv + ln(z1)) / (2.0 + z1);
+         end 
+         else if (fv > -23.0) begin
+	   `expl(-fv,tmp);
+	   y = 1.0 / (2.0 + tmp);
+         end
    	 else begin
-	   `expl(-fv,tmp);
-	   y= 1.0 / (2.0 + tmp);
+ 	   `expl(fv,tmp);
+	   y = tmp + 1.0e-64;
 	 end
 	 
    	 irev = y*(1.0 + y);
@@ -532,7 +538,7 @@ module ekv (d,g,s,b);
                if (-vs>vexp_s)
                  ibsj = IMAX+gexp_s*(-vs-vexp_s);
                else begin
-                 `expl(-vs/vt,tmp);
+                 `expl(-vs/(N*vt),tmp);
                  ibsj = isat_s*(tmp-1);
                end
             end else
@@ -542,7 +548,7 @@ module ekv (d,g,s,b);
                if (-vd>vexp_d)
                  ibdj = IMAX+gexp_d*(-vd-vexp_d);
                else begin
-                 `expl(-vd/vt,tmp);
+                 `expl(-vd/(N*vt),tmp);
                  ibdj = isat_d*(tmp-1);
                end
             end else
@@ -553,7 +559,7 @@ module ekv (d,g,s,b);
                if (-vd>vexp_s)
                  ibsj = IMAX+gexp_s*(-vd-vexp_s);
                else begin
-                 `expl(-vd/vt,tmp);
+                 `expl(-vd/(N*vt),tmp);
                  ibsj = isat_s*(tmp-1);
                end
             end else
@@ -563,7 +569,7 @@ module ekv (d,g,s,b);
                if (-vs>vexp_d)
                  ibdj = IMAX+gexp_d*(-vs-vexp_d);
                else begin
-                 `expl(-vs/vt,tmp);
+                 `expl(-vs/(N*vt),tmp);
                  ibdj = isat_d*(tmp-1);
                end
             end else
