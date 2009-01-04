@@ -1,6 +1,7 @@
 2009-01-04 Dietmar Warning
  * src/math/misc/isinf.c, Makefile.am: a simple (but ugly) workaround for isinf 
    needed by some adms generated models
+ * src/iclude/ngspice.h, missing_math.h: try to catch isinf by ieeefp.h
  * adms/ekv/amsva/ekv.va: compatibility regarding S/D diode behaviour
 
 2009-01-02 Dietmar Warning

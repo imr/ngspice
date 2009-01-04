@@ -31,6 +31,10 @@
 #include <math.h>
 #include <stdio.h>
 
+#ifdef HAVE_IEEEFP_H
+#include <ieeefp.h>
+#endif
+
 #include "missing_math.h"
 
 #ifdef STDC_HEADERS
