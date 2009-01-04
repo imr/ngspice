@@ -1,6 +1,6 @@
 #include "ngspice.h"
 
-#ifndef HAVE_DECL_ISINF
+#if (HAVE_DECL_ISINF < 1)
 
 #ifndef HAVE_ISINF
 

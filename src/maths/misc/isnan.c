@@ -1,6 +1,6 @@
 #include "ngspice.h"
 
-#ifndef HAVE_DECL_ISNAN
+#if (HAVE_DECL_ISNAN < 1)
 #ifndef HAVE_ISNAN
 
 /* isnan (originally) for SOI devices in MINGW32  hvogt (dev.c) */
