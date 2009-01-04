@@ -9,6 +9,7 @@ libmathmisc_la_SOURCES = \
 	bernoull.c 	\
 	erfc.c		\
 	equality.c	\
+	isinf.c		\
 	isnan.c		\
 	logb.c		\
 	scalb.c		\
