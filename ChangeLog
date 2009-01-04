@@ -1,3 +1,8 @@
+2009-01-04 Dietmar Warning
+ * src/math/misc/isinf.c, Makefile.am: a simple (but ugly) workaround for isinf 
+   needed by some adms generated models
+ * adms/ekv/amsva/ekv.va: compatibility regarding S/D diode behaviour
+
 2009-01-02 Dietmar Warning
  * adms/ekv/amsva/ekv.va: EPFL-EKV version 2.63, replacement of the long channel 
    version with a code according to the official manual (revision II) available 
