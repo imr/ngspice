@@ -27,8 +27,12 @@ extern void txfree(void *ptr);
 #define REALLOC(x,y) trealloc((char *)(x),(unsigned)(y))
 #define ZERO(PTR,TYPE)	(bzero((PTR),sizeof(TYPE)))
 
-#ifdef CIDER
+#if defined(_MSC_VER) || defined(__MINGW32__)
+void *
+hrealloc(void *ptr, size_t num);
+#endif
 
+#ifdef CIDER
 
 #define RALLOC(ptr,type,number)\
 if ((number) && (!(ptr = (type *)calloc((number), (unsigned)(sizeof(type)))))) {\
