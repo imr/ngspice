@@ -1,3 +1,6 @@
+2009-01-09 Dietmar Warning
+ * src/misc/alloc.c, src/frontend/outitf.c: heap only needed under windows for zoom
+
 2009-01-05 Dietmar Warning
  * src/math/misc/isinf.c, isnan.c, src/include/missing_math.h: small polish for 
    HAVE_DECL_XXX macros, more elaborate isinf function

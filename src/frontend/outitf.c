@@ -66,7 +66,7 @@ static void freeRun(runDesc *run);
 
 /* plot output data shall go into extra heap 
    to prevent massive memory fragmentation of standard process heap */
-#if defined(_MSC_VER) || defined(__MINGW32__)
+#if defined HAS_WINDOWS && (defined(_MSC_VER) || defined(__MINGW32__))
 #define newrealloc hrealloc
 #else
 #define newrealloc trealloc
