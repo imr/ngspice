@@ -1,3 +1,6 @@
+2009-01-10 Holger Vogt
+ * windisp.c: improve plot window handling, still not yet perfect
+
 2009-01-09 Dietmar Warning
  * src/misc/alloc.c, src/frontend/outitf.c: heap only needed under windows for zoom
 

@@ -392,7 +392,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 
 		if (!eq(plot_cur->pl_typename, buf2)) {
 			(void) sprintf(buf,
-			"setplot %s; %s xlimit %1.20e %1.20e ylimit %1.20e %1.20e; setplot $curplot\n",
+			"setplot %s; %s xlimit %e %e ylimit %e %e; setplot $curplot\n",
 			buf2, gr->commandline, fx0, fxe, fy0, fye);
 		} else {
 			(void) sprintf(buf, "%s xlimit %e %e ylimit %e %e\n",
@@ -407,9 +407,15 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 	case WM_CLOSE:	/* close window */
 		{
 			GRAPH * g = pGraph( hwnd);
-			if (g)
+
+         if (g) {
+            /* if g equals currentgraph, set a new currentgraph. 
+            Otherwise gr_resize(g) might fail. */
+            if (g == currentgraph)
+               currentgraph = FindGraph(g->graphid - 1);
 				DestroyGraph(g->graphid);
-		}
+         }
+      }
 		goto WIN_DEFAULT;
 
 	case WM_PAINT:	/* replot window (e.g. after Resize) */
@@ -436,7 +442,9 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 						/* switch DC */
 						saveDC = wd->hDC;
 						wd->hDC = newDC;
-						/* plot anew */
+//						currentgraph = g;
+                  
+                  /* plot anew */
 						gr_resize(g);
 						/* switch DC */
 						wd->hDC = saveDC;
