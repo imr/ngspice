@@ -153,7 +153,7 @@ int WIN_Init( )
 /* (attach to window) */
 static GRAPH * pGraph( HWND hwnd)
 {
-	return (GRAPH *) GetWindowLong( hwnd, 0);
+    return (GRAPH *) GetWindowLong( hwnd, 0);
 }
 
 /* return line style for plotting */
@@ -375,7 +375,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 	/* start plot loop with argument buf	*/
 	case WM_RBUTTONUP:
 	        {
-		GRAPH * gr = pGraph( hwnd);  
+		GRAPH * gr = pGraph( hwnd);
 		InvalidateRect (hwnd, NULL, TRUE) ;
 		xe = LOWORD (lParam);
 		ye = HIWORD (lParam);
@@ -392,7 +392,8 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
 
 		if (!eq(plot_cur->pl_typename, buf2)) {
 			(void) sprintf(buf,
-			"setplot %s; %s xlimit %e %e ylimit %e %e; setplot $curplot\n",
+//			"setplot %s; %s xlimit %e %e ylimit %e %e; setplot $curplot\n",
+         "setplot %s; %s xlimit %e %e ylimit %e %e\n",
 			buf2, gr->commandline, fx0, fxe, fy0, fye);
 		} else {
 			(void) sprintf(buf, "%s xlimit %e %e ylimit %e %e\n",
