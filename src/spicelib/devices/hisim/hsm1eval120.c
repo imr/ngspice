@@ -63,17 +63,7 @@
 /*---------------------------------------------------*
 * Header files.
 *-----------------*/
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <float.h>
-#include "config.h"
-#ifdef HAVE_IEEEFP_H
-# include <ieeefp.h>
-#endif
-#ifdef _MSC_VER
-#define finite _finite
-#endif
+#include "ngspice.h"
 
 /*-----------------------------------*
 * HiSIM macros and structures.
