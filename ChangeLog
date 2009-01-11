@@ -1,5 +1,6 @@
 2009-01-11 Dietmar Warning
- * src/spicelib/devices/hisim/hsm1eval1xx.c: using ngspice.h as a central place
+ * src/spicelib/devices/hisim/hsm1eval1xx.c, 
+   src/spicelib/devices/bsim3soi_x/b3soild.c: using ngspice.h as a central place
 
 2009-01-10 Holger Vogt
  * windisp.c: improve plot window handling, still not yet perfect

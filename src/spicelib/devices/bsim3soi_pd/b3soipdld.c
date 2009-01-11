@@ -26,10 +26,6 @@ Modified by Paolo Nenzi 2002
 #include "devdefs.h"
 #include "suffix.h"
 
-#ifdef _MSC_VER
-extern int _isnan(double);
-#endif
-
 #define EPSOX 3.453133e-11
 #define EPSSI 1.03594e-10
 #define Charge_q 1.60219e-19
