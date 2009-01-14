@@ -155,7 +155,7 @@ ft_ckspace(void)
 
 #if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
     get_procm(&mem_ng_act);
-    usage = mem_ng_act.size*1024;
+    usage = mem_ng_act.size;
     limit = mem_t.free;    
 #else 
     static unsigned long int old_usage = 0;
@@ -493,7 +493,10 @@ static size_t get_procm(struct proc_mem *memall) {
 #else
    /* ngspice size is just the difference between free memory at start time and now */
    get_sysmem(&mem_t_act);
-   memall->size = mem_t.free - mem_t_act.free;
+   if (mem_t.free > mem_t_act.free)                     /* it can happen that that ngspice is */
+     memall->size = (mem_t.free - mem_t_act.free)/1024; /* to small compared to os memory usage */
+   else
+     memall->size = 0;                                  /* sure, it is more */
    memall->resident = 0;
    memall->trs = 0;
 #endif /* _WIN32_WINNT 0x0500 */
