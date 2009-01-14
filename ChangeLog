@@ -1,3 +1,8 @@
+2009-01-15 Dietmar Warning
+ * src/include/wstdio.h: read fct. prototype for older MSC compiler
+ * src/misc/alloc.c: heap also needed under windows with tcl
+ * src/frontend/resource.c: resource info under Windows w/o psapi, still not yet perfect 
+
 2009-01-11 Dietmar Warning
  * src/spicelib/devices/hisim/hsm1eval1xx.c, 
    src/spicelib/devices/bsim3soi_x/b3soild.c: using ngspice.h as a central place
