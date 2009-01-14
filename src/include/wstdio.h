@@ -44,10 +44,13 @@ int    vfp_r_i_n_t_f(FILE * __stream, const char * __format, void * __arglist);
 int    vp_r_i_n_t_f(const char * __format, void * __arglist);
 /*int   vs_c_a_n_f(const char * __format, void * __arglist); */
 #ifdef _MSC_VER 
+#if _MSC_VER < 1500
+/* VC++ 6.0, VC++ 2005 */
+_CRTIMP int __cdecl read(int fd,  void * __buf, unsigned int __n);
+#else
 /* VC++ 2008 */
 _CRTIMP int __cdecl read(int fd, _Out_bytecap_(_MaxCharCount) void * __buf, _In_ unsigned int __n);
-/* VC++ 2005 */
-//_CRTIMP int __cdecl read(int fd,  void * __buf, unsigned int __n);
+#endif
 #else
 int    r_e_a_d(int fd, char * __buf, int __n);
 #endif
