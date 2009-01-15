@@ -120,8 +120,19 @@ com_print(wordlist *wl)
         for (v = vecs; v; v = v->v_link2)
             if (v->v_length > 1) {
                 col = TRUE;
+                /* Improvement made to print cases @[sin] = (0 12 13 100K) */
+		if ( (v->v_length != v->v_plot->pl_scale->v_length) && ( (*(v->v_name))=='@') )
+                {
+                 col = FALSE;
+                }
                 break;
             }
+            /* With this I have found that the vector has less elements than the SCALE vector
+             * in the linked PLOT. But now I must make sure in case of a print @vin[sin] or 
+             * @vin[pulse]
+             * for it appear that the v->v_name begins with '@'
+             * And then be in this case.
+             */
     }
 
     out_init();
@@ -141,8 +152,18 @@ com_print(wordlist *wl)
                 s--;
             }
             ll = 10;
-            if (v->v_length == 1) {
-                if (isreal(v)) {
+
+	   /* v->v_rlength = 1 when it comes to make a print @ M1 and does not want to come out on screen
+	    * Multiplier factor [m]=1
+	    *  @M1 = 0,00e+00
+	    * In any other case rlength not used for anything and only applies in the copy of the vectors.
+        */
+	   if (v->v_rlength == 0)
+	   {	   
+            if (v->v_length == 1) 
+	     {
+                if (isreal(v))
+		{
                 	printnum(numbuf, *v->v_realdata);
                     out_printf("%s = %s\n", buf, numbuf);
                 } else {
@@ -194,7 +215,8 @@ com_print(wordlist *wl)
                             out_send("\t");
                     }
                 out_send(")\n");
-            }
+	      } //end if (v->v_length == 1)
+	   }  //end  if (v->v_rlength == 1)
         }
     } else {    /* Print in columns. */
         if (cp_getvar("width", VT_NUM, (char *) &i))

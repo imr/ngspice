@@ -931,8 +931,53 @@ com_alter_common(wordlist *wl, int do_model)
     words = eqword->wl_next;
     names = ft_getpnames(words, FALSE);
     if (!names) {
-	fprintf(cp_err, "Error: cannot parse new parameter value.\n");
-	return;
+     /* Put this to try to resolve the case of 
+      * alter vin_sin@[sin] = (10 12 3000)
+      */
+     char *xsbuf;
+     int type = IF_REALVEC,i=0;
+
+
+      double *list;
+      double tmp;
+      int error;
+
+      xsbuf = wl_flatten(words);
+      /* fprintf(cp_err, "Chain    converted  %s \n",xsbuf); */
+      dv=(struct dvec *)MALLOC(sizeof(struct dvec));
+      dv->v_name = (char *)MALLOC(sizeof("real vector"));
+      dv->v_name = "real vector";
+       type &= IF_VARTYPES;
+       if (type == IF_REALVEC)
+       {
+        list = (double *)MALLOC(sizeof(double));
+        tmp = INPevaluate(&xsbuf,&error,1);
+        while (error == 0)
+        {
+            /*printf(" returning vector value %g\n",tmp); */
+            i++;
+            list=(double *)REALLOC((char *)list,i*sizeof(double));
+            *(list+i-1) = tmp;
+            tmp = INPevaluate(&xsbuf,&error,1);
+        }
+        dv->v_realdata=list;
+       }
+       dv->v_length=i;
+
+       if (!dv)
+          return;
+       if (dv->v_length < 1)
+       {
+        fprintf(cp_err, "Error: cannot evaluate new parameter value.\n");
+        return;
+       }
+
+       /*  	Here I was, to change the inclusion in the circuit.
+        * will have to revise that dv is right for its insertion.
+        */
+       if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
+
+    return;
     }
     dv = ft_evaluate(names);
     if (!dv)

@@ -387,8 +387,14 @@ vec_get(char *word)
             
 	
 	if (ft_curckt) {
-	
-	    vv = (*if_getparam)(ft_curckt->ci_ckt, &name, param, 0, 0);
+             /*
+              *  This is what is done in case of "alter r1 resistance = 1234"
+              *                                r1    resistance, 0
+              * if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
+              */
+
+            /* vv = (*if_getparam)(ft_curckt->ci_ckt, &name, param, 0, 0); */
+	    vv = (*if_getparam)(ft_curckt->ci_ckt, &name, param, 0, 0);	
 	    if (!vv) {
 	        tfree(whole);
 		tfree(wd);
@@ -408,7 +414,124 @@ vec_get(char *word)
         d->v_flags |= VF_REAL;  /* No complex values yet... */
         d->v_realdata = (double *) tmalloc(sizeof (double));
         d->v_length = 1;
-        *d->v_realdata = vv->va_real;
+    
+    /* In case the represented variable is a REAL vector this takes
+     * the actual value of the first element of the linked list which 
+     * does not make sense.
+     * This is an error.
+     */
+   
+    /* This will copy the contents of the structure vv in another structure
+     * dvec (FTEDATA.H) that do not have INTEGER so that those parameters
+     * defined as IF_INTEGER are not given their value when using 
+     * print @pot[pos_node]
+     * To fix this, it is necessary to define:
+     * OPU( "pos_node",    POT_QUEST_POS_NODE, IF_REAL,"Positive node of potenciometer"),
+     * int POTnegNode;     // number of negative node of potenciometer (Nodo_3)
+     *  case POT_QUEST_POS_NODE:
+     *  value->rValue = (double)fast->POTposNode;
+     *  return(OK);
+     *  Works but with the format 1.00000E0
+     */
+
+    /* We must make a change in format between the data that carries a variable to
+     * put in a dvec.
+     */
+   
+   /*
+    * #define va_bool  va_V.vV_bool
+    * #define va_num    va_V.vV_num
+    *#define va_real  va_V.vV_real
+    *#define va_string   va_V.vV_string
+    *#define va_vlist     va_V.vV_list
+    *enum vt_types {
+    *  VT_BOOL,
+    *  VT_NUM,
+    *  VT_REAL,
+    *  VT_STRING,
+    *  VT_LIST
+    ° };
+    */
+
+   /* The variable is a vector */
+    if (vv->va_type == VT_LIST)
+    {
+     /* Compute the length of the vector, 
+      * used with the parameters of isrc and vsrc
+      */
+     struct variable *nv;
+     double *list;
+     list = (double *)MALLOC(sizeof(double));
+     nv = alloc(struct variable);
+
+     nv = vv->va_vlist;
+     for(i=1; ;i++)
+      {
+       list=(double *)REALLOC((char *)list,i*sizeof(double));
+       *(list+i-1) = nv->va_real;
+       nv = nv->va_next;
+       if (nv==NULL) break;
+      }
+     d->v_realdata=list;
+     d->v_length = i;
+     /* To be able to identify the vector to represent
+      * belongs to a special "conunto" and should be printed in a
+      * special way.
+      */
+     d->v_dims[1]=1;
+    }
+    else if (vv->va_type == VT_NUM)   /* Variable is an integer */
+    {
+     *d->v_realdata =  (double) vv->va_num;
+    }
+    else if (vv->va_type == VT_REAL)  /* Variable is a real */
+    {
+     if (!(vv->va_next))
+     { 
+       /* Only a real data
+        * usually normal 
+        */
+     *d->v_realdata = vv->va_real;
+     }
+     else
+     { 
+       /* Real data set
+        * When you print a model @ [all]
+        * Just print numerical values, not the string
+        */
+       struct variable *nv;       
+       /* We go to print the list of values
+        * nv->va_name = Parameter description
+        * nv->va_string = Parameter
+        * nv->va_real= Value
+        */ 
+       nv=vv;  
+       for(i=1; ;i++)
+       {
+	switch(nv->va_type)
+	{
+		case  VT_REAL:
+			fprintf(stdout,"%s=%g\n",nv->va_name,nv->va_real);
+			break;
+		case  VT_STRING:
+			fprintf(stdout,"%s=%s\n",nv->va_name,nv->va_string);
+			break;	
+		case  VT_NUM:
+			fprintf(stdout,"%s=%d\n",nv->va_name,nv->va_num);
+			break;	
+	}
+	nv = nv->va_next;
+	
+        if (nv==NULL) break;
+       }
+
+      /* To distinguish those does not take anything for print screen to 
+       * make a print or M1 @ @ M1 [all] leaving only the correct data 
+       * and not the last
+       */	
+      d->v_rlength=1;
+      }
+    }
         
         tfree(vv->va_name);
         tfree(vv); /* va: tfree vv->va_name and vv (avoid memory leakages) */

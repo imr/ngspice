@@ -1,4 +1,19 @@
 2009-01-15 Paolo Nenzi
+ * src/spicelib/devices/vsrc/vsrc.c,
+ * src/spicelib/devices/isrc/isrc.c,
+ * src/frontend/spiceif.c,
+ * src/frontend/device.c,
+ * src/frontend/postcoms.c,
+ * src/frontend/vectors.c:
+   17: New capability of print command. It is now possible to print and
+       alter vectors of reals like print @vin_sin[sin] to print the vector
+       of parameters defining the sinusoidal source (it works with both the 
+       sources type). It is possible to alter the parameters with the command
+       alter @vin_sin[sin] = ( 1 1 3000Hz ). A. Roldan -Espice
+       Note: alter syntax does not work in full yet, it still generate an
+       error but modifies the parameters. P. Nenzi  
+
+2009-01-15 Paolo Nenzi
  * src/frontend/vectors.c:
    57: Fixed  I(vx), before the if I(*) (upper case) was not recognized as the
        function to plot the current of vx. A. Roldan - Espice
