@@ -81,6 +81,8 @@ static int doset(void *ckt, int typecode, GENinstance *dev, GENmodel *mod,
 		 IFparm *opt, struct dvec *val);
 static int finddev(void *ck, char *name, void **devptr, void **modptr);
 
+/*espice fix integration */
+static int finddev_special(char *ck, char *name, void **devptr, void **modptr, int *device_or_model);
 
 /* Input a single deck, and return a pointer to the circuit. */
 
@@ -550,6 +552,182 @@ if_errstring(int code)
     return (INPerror(code));
 }
 
+/* Get pointers to a device, its model, and its type number given the name. If
+ * there is no such device, try to find a model with that name
+ * device_or_model says if we are referencing a device or a model.
+ *  finddev_special(ck, name, devptr, modptr,device_or_model):
+ *  Introduced to look for correct reference in expression like  print @BC107 [is] 
+ * and find out  whether a model or a device parameter is referenced and properly 
+ * call the spif_getparam_special (ckt, name, param, ind, do_model) function in
+ * vector.c - A. Roldan (espice).
+ */
+static int 
+finddev_special(
+    char *ck,
+    char *name,
+    void **devptr,
+    void **modptr,
+    int *device_or_model)
+{
+    int err;
+    int type = -1;
+
+    err = (*(ft_sim->findInstance))((void *)ck,&type,devptr,name,NULL,NULL);
+    if(err == OK)
+    {
+     *device_or_model=0;
+     return(type);
+    }
+    type = -1;
+    *devptr = (void *)NULL;
+    err = (*(ft_sim->findModel))((void *)ck,&type,modptr,name);
+    if(err == OK)
+    {
+     *device_or_model=1;
+     return(type);
+    }
+    *modptr = (void *)NULL;
+    *device_or_model=2;
+    return(-1);
+
+}
+
+/* Get a parameter value from the circuit. If name is left unspecified,
+ * we want a circuit parameter. Now works both for devices and models.
+ * A.Roldan (espice)
+ */
+struct variable *
+spif_getparam_special(void *ckt,char **name,char *param,int ind,int do_model)    
+{
+    struct variable *vv = NULL, *tv;
+    IFvalue *pv;
+    IFparm *opt;
+    int typecode, i, modelo_dispositivo;
+    GENinstance *dev=(GENinstance *)NULL;
+    GENmodel *mod=(GENmodel *)NULL;
+    IFdevice *device;
+
+    /* fprintf(cp_err, "Calling if_getparam(%s, %s)\n", *name, param); */
+
+    if (!param || (param && eq(param, "all")))
+     {
+        INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
+        typecode = finddev_special(ckt, *name, (void**)&dev, (void**)&mod,&modelo_dispositivo);
+        if (typecode == -1)
+        {
+            fprintf(cp_err,"Error: no such device or model name %s\n",*name);
+            return (NULL);
+        }
+        device = ft_sim->devices[typecode];
+        if(!modelo_dispositivo)
+        {
+          /* It is a device */
+          for (i = 0; i < *(device->numInstanceParms); i++)
+          {
+            opt = &device->instanceParms[i];
+            if(opt->dataType & IF_REDUNDANT || !opt->description) continue;
+            if(!(opt->dataType & IF_ASK)) continue;
+            pv = doask(ckt, typecode, dev, mod, opt, ind);
+            if (pv)
+            {
+             tv = parmtovar(pv, opt);
+
+	     /* With the following we pack the name and the acronym of the parameter */
+	     {
+		char auxiliar[70],*aux_pointer;
+		sprintf(auxiliar,"%s [%s]",tv->va_name, device->instanceParms[i].keyword);
+		aux_pointer=tv->va_name;
+		free(aux_pointer);
+		tv->va_name = copy(auxiliar);
+	     }
+             if (vv) tv->va_next = vv;
+             vv = tv;
+          }
+          else
+           fprintf(cp_err,"Internal Error: no parameter '%s' on device '%s'\n",
+			   device->instanceParms[i].keyword,device->name);
+         }
+         return (vv);
+        }
+        else  /* Is it a model or a device ? */
+        {
+         /* It is a model */
+         for (i = 0; i < *(device->numModelParms); i++)
+         {
+            opt = &device->modelParms[i];
+            if(opt->dataType & IF_REDUNDANT || !opt->description) continue;
+        
+            /* We check that the parameter is interesting and therefore is 
+             * implemented in the corresponding function ModelAsk. Originally
+             * the argument of "if" was: || (opt->dataType & IF_STRING)) continue;
+             * so, a model parameter defined like  OP("type",   MOS_SGT_MOD_TYPE,  
+             * IF_STRING, N-channel or P-channel MOS") would not be printed.
+             */
+
+        /* if(!(opt->dataType & IF_ASK ) || (opt->dataType & IF_UNINTERESTING ) || (opt->dataType & IF_STRING)) continue; */
+	    if(!(opt->dataType & IF_ASK ) || (opt->dataType & IF_UNINTERESTING )) continue;
+            pv = doask(ckt, typecode, dev, mod, opt, ind);
+            if (pv)
+            {
+                tv = parmtovar(pv, opt);
+		/* Inside parmtovar:
+		 * 1. tv->va_name = copy(opt->description);
+		 * 2. Copy the type of variable of IFparm into a variable (thus parm-to-var)
+		 * vv->va_type = opt->dataType
+		 * The long description of the parameter:
+		 * IFparm MOS_SGTmPTable[] = { /* model parameters */
+		 * OP("type",   MOS_SGT_MOD_TYPE,  IF_STRING, "N-channel or P-channel MOS") 
+         * goes into tv->va_name to put braces around the parameter of the model
+		 * tv->va_name += device->modelParms[i].keyword;
+         */
+		{
+		 char auxiliar[70],*aux_pointer;
+		 sprintf(auxiliar,"%s [%s]",tv->va_name,device->modelParms[i].keyword);
+		 aux_pointer=tv->va_name;
+		 free(aux_pointer);
+		 tv->va_name = copy(auxiliar);
+		/* strcpy(aux_pointer,auxiliar); */
+		}
+		/* tv->va_string=device->modelParms[i].keyword;	Put the name of the variable */
+                if (vv)
+                {
+                  tv->va_next = vv;
+                }
+                vv = tv;
+            }
+            else
+                fprintf(cp_err,"Internal Error: no parameter '%s' on device '%s'\n",device->modelParms[i].keyword,device->name);
+        }
+        return (vv);
+        } 
+    }
+    else if (param)
+    {
+        INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
+        typecode = finddev_special(ckt, *name, (void**)&dev, (void**)&mod,&modelo_dispositivo);
+        if (typecode == -1)
+        {
+            fprintf(cp_err,"Error: no such device or model name %s\n",*name);
+            return (NULL);
+        }
+        device = ft_sim->devices[typecode];
+        opt = parmlookup(device, &dev, param, modelo_dispositivo, 0);
+        if (!opt)
+        {
+            fprintf(cp_err, "Error: no such parameter %s.\n",param);
+            return (NULL);
+        }
+        pv = doask(ckt, typecode, dev, mod, opt, ind);
+        if (pv)
+            vv = parmtovar(pv, opt);
+        return (vv);
+    } else
+        return (if_getstat(ckt, *name));
+}
+
+
+
+
 /* Get a parameter value from the circuit. If name is left unspecified,
  * we want a circuit parameter.
  */
@@ -764,14 +942,35 @@ parmtovar(IFvalue *pv, IFparm *opt)
             break;
         case IF_REALVEC:
             vv->va_type = VT_LIST;
-            for (i = 0; i < pv->v.numValue; i++) {
+            for (i = 0; i < pv->v.numValue; i++) 
+       {
                 nv = alloc(struct variable);
                 nv->va_next = vv->va_vlist;
                 vv->va_vlist = nv;
                 nv->va_type = VT_REAL;
-                nv->va_real = pv->v.vec.rVec[i];
-            }
-            break;
+                /* Change this so that the values are printed in order and
+                 * not in inverted order as happens in the conversion process.
+                 * Originally was  nv->va_real = pv->v.vec.rVec[i];
+                 */
+                nv->va_real = pv->v.vec.rVec[pv->v.numValue-i-1];
+      }
+            /* It is a linked list where the first node is a variable
+             * pointing to the different values of the variables.
+             *
+             * To access the values of the real variable vector must be
+             * vv->va_V.vV_real=valor node ppal that is of no use.
+             *
+             * In the case of Vin_sin 1 0 sin (0 2 2000)
+             * and of print @vin_sin[sin]
+             *
+             * vv->va_V.vV_list->va_V.vV_real=2000
+             * vv->va_V.vV_list->va_next->va_V.vV_real=2
+             * vv->va_V.vV_list->va_next->va_next->va_V.vV_real=0
+             * So the list is starting from behind, but no problem
+             * This works fine
+             */        
+       
+       break;
         default:
             fprintf(cp_err,  
             "parmtovar: Internal Error: bad PARM type %d.\n",

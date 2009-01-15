@@ -542,7 +542,7 @@ show_help(void)
     printf("Usage: %s [OPTION]... [FILE]...\n"
 	   "Simulate the electical circuits in FILE.\n"
 	   "\n"
-           "  -a  --autorun             run the loaded netlist\n"
+       "  -a  --autorun             run the loaded netlist\n"
 	   "  -b, --batch               process FILE in batch mode\n"
 	   "  -c, --circuitfile=FILE    set the circuitfile\n"
 	   "  -i, --interactive         run in interactive mode\n"
@@ -749,7 +749,7 @@ main(int argc, char **argv)
 	    {"help", 0, 0, 'h'},
 	    {"version", 0, 0, 'v'},
 	    {"batch", 0, 0, 'b'},
-            {"autorun", 0, 0, 'a'},
+        {"autorun", 0, 0, 'a'},
 	    {"circuitfile", 0, 0, 'c'},
 	    {"interactive", 0, 0, 'i'},
 	    {"no-spiceinit", 0, 0, 'n'},
@@ -873,7 +873,7 @@ main(int argc, char **argv)
 #endif
     } /* orflag */
 #ifdef SIMULATOR
-    if_getparam = spif_getparam;
+    if_getparam = spif_getparam_special;
 #else
     if_getparam = nutif_getparam;
 

@@ -476,7 +476,18 @@ vec_copy(struct dvec *v)
     nv->v_gridtype = v->v_gridtype;
     nv->v_plottype = v->v_plottype;
     nv->v_length = v->v_length;
-    nv->v_rlength = 0; /*XXX???*/
+    
+    /* Modified to copy the rlength of origin to destination vecor 
+     * instead of always putting it to 0. 
+     * As when it comes to make a print does not leave M1 @ @ M1 = 0.0, 
+     * to do so in the event that rlength = 0 not print anything on screen
+     * nv-> v_rlength = 0; 
+     * Default -> v_rlength = 0 and only if you come from a print or M1 @ 
+     * @ M1 [all] rlength = 1, after control is one of 
+     * if (v-> v_rlength == 0) com_print (wordlist * wl)
+     */	
+    nv->v_rlength = v->v_rlength;
+    
     nv->v_outindex = 0; /*XXX???*/
     nv->v_linestyle = 0; /*XXX???*/
     nv->v_color = 0; /*XXX???*/
@@ -621,7 +632,7 @@ vec_free_x(struct dvec *v)
                 pl->pl_scale = NULL;
         }
     }
-    tfree(v->v_name);
+    if (v->v_name) tfree(v->v_name);
     if (v->v_realdata) tfree(v->v_realdata);
     if (v->v_compdata) tfree(v->v_compdata);
     tfree(v);
