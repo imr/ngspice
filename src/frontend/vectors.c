@@ -275,7 +275,8 @@ vec_fromplot(char *word, struct plot *plot)
         /* ( */ ((s =strrchr(buf, ')')) != NULL) &&
             (*(s + 1) == '\0')) {
         *s = '\0';
-        if (prefix("i(", /* ) */ word)) {
+	if (prefix("i(", /* ) */ word) || prefix("I(", /* ) */ word))
+	{
             /* Spice dependency... */
             (void) sprintf(buf2, "%s#branch", buf);
             (void) strcpy(buf, buf2);

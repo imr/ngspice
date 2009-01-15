@@ -675,7 +675,7 @@ spif_getparam_special(void *ckt,char **name,char *param,int ind,int do_model)
 		 * 2. Copy the type of variable of IFparm into a variable (thus parm-to-var)
 		 * vv->va_type = opt->dataType
 		 * The long description of the parameter:
-		 * IFparm MOS_SGTmPTable[] = { /* model parameters */
+		 * IFparm MOS_SGTmPTable[] = { // model parameters //
 		 * OP("type",   MOS_SGT_MOD_TYPE,  IF_STRING, "N-channel or P-channel MOS") 
          * goes into tv->va_name to put braces around the parameter of the model
 		 * tv->va_name += device->modelParms[i].keyword;

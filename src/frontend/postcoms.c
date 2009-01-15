@@ -260,7 +260,22 @@ nextpage:
             if (isreal(v))
                 (void) sprintf(buf2, "%-16.15s", v->v_name);
             else
-                (void) sprintf(buf2, "%-32.31s", v->v_name);
+		{
+         /* The frequency vector is complex but often with imaginary part = 0, 
+          * this prevents to print two columns.
+          */
+		 if(eq(v->v_name, "frequency"))
+		 {
+		  if(imagpart(&v->v_compdata[0])==0.0)
+		  {
+                   (void) sprintf(buf2, "%-16.15s", v->v_name);
+		  }
+		  else
+                   (void) sprintf(buf2, "%-32.31s", v->v_name);
+		 }
+		 else
+                  (void) sprintf(buf2, "%-32.31s", v->v_name);
+		}
             (void) strcat(buf, buf2);   
         }
         lineno = 3;
@@ -290,14 +305,34 @@ loop:
                     else
                         out_send("\t\t\t\t");
                 } else {
-                    if (isreal(v)) {
-                        sprintf(out_pbuf, "%e\t", 
-                        	v->v_realdata[j]);
+                    if (isreal(v)) 
+		    {
+                        printnum(numbuf,  v->v_realdata[j]);
+                        //sprintf(out_pbuf, "%e\t",v->v_realdata[j]);
+                        (void) sprintf(out_pbuf, "%s\t",numbuf);
 			out_send(out_pbuf);
-                    } else {
-                        sprintf(out_pbuf, "%e,\t%e\t",
-                        	realpart(&v->v_compdata[j]),
-                        	imagpart(&v->v_compdata[j]));
+                    }
+		    else
+		    {
+            /* In case of a single frequency and have a real part avoids print imaginary part equals 0. */
+			if(eq(v->v_name, "frequency"))
+			{
+			 if(imagpart(&v->v_compdata[j])==0.0)
+			 {
+                          printnum(numbuf,  realpart(&v->v_compdata[j]));
+                          (void) sprintf(out_pbuf, "%s\t",numbuf);
+			 }
+			}
+			else
+			{
+                          printnum(numbuf,  realpart(&v->v_compdata[j]));
+                          printnum(numbuf2, imagpart(&v->v_compdata[j]));
+                          (void) sprintf(out_pbuf, "%s,\t%s\t",numbuf,numbuf2);
+/*                       sprintf(out_pbuf, "%e,\t%e\t",
+ *                        	realpart(&v->v_compdata[j]),
+ *                        	imagpart(&v->v_compdata[j]));
+ */
+			}
 			out_send(out_pbuf);
 		    }
                 }
@@ -582,7 +617,13 @@ com_destroy(wordlist *wl)
         for (pl = plot_list; pl; pl = npl) {
             npl = pl->pl_next;
             if (!eq(pl->pl_typename, "const"))
-                killplot(pl);
+	    {
+             killplot(pl);
+	    }
+	    else
+	    {
+	     plot_num=1;
+	    } 
         }
     } else {
         while (wl) {
@@ -590,7 +631,10 @@ com_destroy(wordlist *wl)
                 if (eq(pl->pl_typename, wl->wl_word))
                     break;
             if (pl)
+	    {
                 killplot(pl);
+		plot_num--;
+	    }
             else
                 fprintf(cp_err, "Error: no such plot %s\n",
                         wl->wl_word);

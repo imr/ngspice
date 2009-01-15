@@ -1,4 +1,21 @@
 2009-01-15 Paolo Nenzi
+ * src/frontend/vectors.c:
+   57: Fixed  I(vx), before the if I(*) (upper case) was not recognized as the
+       function to plot the current of vx. A. Roldan - Espice
+ * src/frontend/postcoms.c:
+   7:  Fixed plot number after "destroy all" command. A. Roldan - Espice 
+ * src/include/fteext.h
+ * src/frontend/evaluate.c, src/frontend/cpitf.c, src/frontend/parse.c 
+ * src/maths/cmaths/cmath2.c, src/cmaths/cmath4.c, src/cmaths/cmath4.h:
+   16: New function to compute the group delay has been implemented.
+       Group delay is defined as -(dphase/dfrequency) and can be printed or
+       plotted by writing vg(x), where x is a complex vector. A. Roldan - Espice
+   15: Fixed existing problems in this function due to the complex nature of 
+       the frequency vector. To get the data from frequency[i], the real part
+       must be accessed. A. Roldan - Espice
+   14: New function to compute the moving average. A. Roldan - Espice
+
+2009-01-15 Paolo Nenzi
  * src/frontend/{spiceif.c, spiceif.h, vectors.c}, src/include/fteext.h,
  * src/main.c: 
    3: A new function finddev_special() has been introduced to look for

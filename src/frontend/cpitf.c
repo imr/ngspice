@@ -55,7 +55,9 @@ ft_cpinit(void)
         "vi(x,y)",  "im(v(x) - v(y))",
         "vm(x)",    "mag(v(x))",
         "vm(x,y)",  "mag(v(x) - v(y))",
-        "vp(x)",    "ph(v(x))",
+        "vg(x)",    "group_delay(v(x))", //A.Rroldan 10/06/05 group delay new function
+        "gd(x)",    "group_delay(v(x))", //A.Rroldan 10/06/05 group delay new function        
+	    "vp(x)",    "ph(v(x))",
         "vp(x,y)",  "ph(v(x) - v(y))",
         "vr(x)",    "re(v(x))",
         "vr(x,y)",  "re(v(x) - v(y))"
