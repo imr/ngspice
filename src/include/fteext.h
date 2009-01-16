@@ -329,6 +329,9 @@ extern void com_version();
 extern int  hcomp();
 extern void com_where();
 
+/* mw_coms.c */
+extern void com_removecirc();
+
 /* numparse.c */
 
 extern bool ft_strictnumparse;

@@ -38,7 +38,14 @@ com_quit(wordlist *wl)
     (void) cp_getvar("noaskquit", VT_BOOL, (char *) &noask);
     gr_clean();
     cp_ccon(FALSE);
-    
+    if(wl)
+      if(wl->wl_word)
+    if(cieq(wl->wl_word,"noask"))
+         {
+           byemesg();
+           exit(EXIT_NORMAL);
+     }
+
     /* Make sure the guy really wants to quit. */
     if (!ft_nutmeg && !noask) {
         for (cc = ft_circuits; cc; cc = cc->ci_next)

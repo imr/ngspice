@@ -1,4 +1,26 @@
 2009-01-16 Paolo Nenzi
+ * src/frontend/mw_coms.c, src/frontend/commands.c, 
+ * src/frontend/runcoms.c, src/include/fteext.h:
+   34, 
+   36, 
+   38: Added the removecirc command. This command removes the current        
+       circuit and its associated plots. This comes from an old function
+       written by M. Widlok and updated by A. Roldan for espice.
+       Note: I have changed the code to eliminate GTK functions and tested.
+       Things work but in ngspice there is a problem due to model redefinitions,
+       as it seems that in ngspice models are globals. Need further 
+       investigation. P. Nenzi
+
+ * src/frontend/commands.c, src/frontend/misccomms.c:
+   24: Added the parameter "noask" to quit command to avoid the question
+       before exiting ngspice. A. Roldan - Espice
+ 
+ * src/frontend/evaluate.c, src/frontend/typedefs.c, src/include/sim.h:
+   Added some vector types from Espice (impedance, admittance, power etc.)
+   The original implementation by A. Roldan did not fit immediatly. I had
+   to comment two definitions. I could not test "plotab". 
+
+2009-01-16 Paolo Nenzi
  * src/frontend/evaluate.c, src/frontend/typedefs.c, src/include/sim.h:
    Added some vector types from Espice (impedance, admittance, power etc.)
    The original implementation by A. Roldan did not fit immediatly. I had
