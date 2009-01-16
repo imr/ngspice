@@ -16,6 +16,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "evaluate.h"
 
+#include "sim.h"  /* To get SV_VOLTAGE definition */
 
 /* static declarations */
 static RETSIGTYPE sig_matherr(void);
@@ -277,8 +278,89 @@ doop(char what,
 	    res->v_dims[i] = v2->v_dims[i];
     }
 
-    /* This depends somewhat on what the operation is.  XXX Should fix */
-    res->v_type = v1->v_type;
+    /* This depends somewhat on what the operation is.  XXX Should fix 
+     * res->v_type = v1->v_type;
+     * Introduced to show the real units coming out from an
+     * operation. A.Roldán
+     */
+    switch (what)
+    {
+	  case '*':  /* Multiplication of two vectors */
+               switch(v1->v_type)
+               {
+                case SV_VOLTAGE:
+                      switch(v2->v_type)
+                      {
+                        case SV_VOLTAGE:
+                               res->v_type = SV_VOLTAGE;
+                               break;
+                        case SV_CURRENT:
+                               res->v_type = SV_POWER;
+                               break;
+                        default:
+                             break;
+                      }
+
+                 break;
+                case SV_CURRENT:
+
+                      switch(v2->v_type)
+                      {
+                        case SV_VOLTAGE:
+                               res->v_type = SV_POWER;
+                               break;
+                        case SV_CURRENT:
+                               res->v_type = SV_CURRENT;
+                               break;
+                        default:
+                             break;
+                      }
+                      break;
+
+                default:
+
+                 break;
+               }
+               break;
+	  case '/':   //Multiplicación de 2 vectores
+               switch(v1->v_type)
+               {
+                case SV_VOLTAGE:
+                     switch(v2->v_type)
+                      {
+                        case SV_VOLTAGE:
+                               res->v_type = SV_NOTYPE;
+                               break;
+                        case SV_CURRENT:
+                               res->v_type = SV_IMPEDANCE;
+                               break;
+                        default:
+                             break;
+                      }
+                      break;
+                case SV_CURRENT:
+
+                      switch(v2->v_type)
+                      {
+                        case SV_VOLTAGE:
+                               res->v_type = SV_ADMITANCE;
+                               break;
+                        case SV_CURRENT:
+                               res->v_type = SV_NOTYPE;
+                               break;
+                        default:
+                             break;
+                      }
+                      break;
+
+                default:
+
+                 break;
+               }
+
+      default:
+          break;
+    }
     vec_new(res);
 
     /* Free the temporary data areas we used, if we allocated any. */

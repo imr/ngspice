@@ -1,3 +1,9 @@
+2009-01-16 Paolo Nenzi
+ * src/frontend/evaluate.c, src/frontend/typedefs.c, src/include/sim.h:
+   Added some vector types from Espice (impedance, admittance, power etc.)
+   The original implementation by A. Roldan did not fit immediatly. I had
+   to comment two definitions. I could not test "plotab". 
+
 2009-01-15 Paolo Nenzi
  * src/spicelib/devices/vsrc/vsrc.c,
  * src/spicelib/devices/isrc/isrc.c,

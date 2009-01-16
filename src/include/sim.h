@@ -15,7 +15,10 @@ enum simulation_types {
   SV_ZERO,
   SV_SPARAM,
   SV_TEMP,
-  SV_RES
+  SV_RES,
+  SV_IMPEDANCE,	//Añadido por A.Roldán
+  SV_ADMITANCE,	//Añadido por A.Roldán
+  SV_POWER	    //Añadido por A.Roldán
 };
 
 #endif
