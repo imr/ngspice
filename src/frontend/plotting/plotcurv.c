@@ -108,9 +108,10 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
                  * something useful.
                  */
                 gr_point(v, v->v_realdata[i],
-                    v->v_realdata[i],
+                    0.0, /* v->v_realdata[i], */
                     v->v_realdata[j],
-                    v->v_realdata[j], (j==i ? 1 : i));
+                    0.0, /* v->v_realdata[j], */ 
+		    (j==i ? 1 : i));
             } else {
                 gr_point(v, realpart(&v->v_compdata[i]),
                     imagpart(&v->v_compdata[i]),

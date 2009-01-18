@@ -1,3 +1,15 @@
+2009-01-18 Paolo Nenzi
+ * src/frontend/plotting/plotit.c,
+ * src/frontend/plotting/plotcurv.c:
+   33: Fixed some of the existing problemass SMITH PLOT. There were 2 errors:
+       one in plotit() to calculate the transformation line (r-1) / (r +1) 
+       where a mistake was made in the process of plotting a single real point
+       and the other in ft_graf() that would print imaginary part = real part
+       for real data. A. Roldan - espice
+   32: Fixed some problems the existing polar PLOT. To summarize the 
+       problems were in the wrong calculation of the size of x and y axes 
+       for the plot. A. Roldan - espice		
+
 2009-01-18 Holger Vogt
  * src/frontend/mw_coms.c: variable declarations to top of function
  * outif.c, alloc.c: add HAS_TCLWIN flag to allow coimpilation of 
