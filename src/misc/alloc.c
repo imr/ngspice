@@ -15,7 +15,7 @@ $Id$
 #include <tcl.h>
 #endif
 
-#ifdef HAS_WINDOWS
+#if defined(HAS_WINDOWS) || defined(HAS_TCLWIN)
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #undef BOOLEAN
 #include <windows.h>

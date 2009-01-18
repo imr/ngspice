@@ -1,5 +1,7 @@
 2009-01-18 Holger Vogt
  * src/frontend/mw_coms.c: variable declarations to top of function
+ * outif.c, alloc.c: add HAS_TCLWIN flag to allow coimpilation of 
+   tclspice under MS VC++
 
 2009-01-16 Paolo Nenzi
  * src/frontend/mw_coms.c, src/frontend/commands.c, 

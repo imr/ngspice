@@ -65,8 +65,10 @@ static void freeRun(runDesc *run);
 /*saj*/
 
 /* plot output data shall go into extra heap 
-   to prevent massive memory fragmentation of standard process heap */
-#if defined HAS_WINDOWS && (defined(_MSC_VER) || defined(__MINGW32__))
+   to prevent massive memory fragmentation of standard process heap.
+   This is especially required by TCL for Windows, but may help
+   also under standard Windows GUI. */
+#if (defined(HAS_WINDOWS) || defined(HAS_TCLWIN)) && (defined(_MSC_VER) || defined(__MINGW32__))
 #define newrealloc hrealloc
 #else
 #define newrealloc trealloc
