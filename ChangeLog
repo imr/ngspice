@@ -1,3 +1,6 @@
+2009-01-18 Holger Vogt
+ * src/frontend/mw_coms.c: variable declarations to top of function
+
 2009-01-16 Paolo Nenzi
  * src/frontend/mw_coms.c, src/frontend/commands.c, 
  * src/frontend/runcoms.c, src/include/fteext.h:
