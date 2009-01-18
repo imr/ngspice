@@ -27,9 +27,11 @@ com_removecirc(wordlist *wl)
     struct wordlist *wlist;
     int auxCir=1,i,auxPlot;
 
+    char* namecircuit;
+    char buf[80];
+
     /* Allocation of a temp wordlist */
     wlist = (struct wordlist *)malloc(sizeof(struct wordlist));
-    char buf[80];
 
     if (ft_curckt == NULL) {
         fprintf(cp_err, "Error: there is no circuit loaded.\n");
@@ -46,7 +48,7 @@ com_removecirc(wordlist *wl)
     
     ct->ci_vars = NULL;
     caux=ft_circuits;
-    char* namecircuit = strdup(ft_curckt->ci_name);
+    namecircuit = strdup(ft_curckt->ci_name);
     /* The circuit  being removed is the first loaded and you have more circuits */
     if(ft_curckt==ft_circuits&&ft_circuits->ci_next!=NULL)
     	ft_circuits=ft_circuits->ci_next;
@@ -74,7 +76,7 @@ com_removecirc(wordlist *wl)
         
     }
     
-    /* If the plot is ther first one and there are no other plots */
+    /* If the plot is the first one and there are no other plots */
     if(plot_list->pl_next==NULL&&strcmp(plot_list->pl_title,namecircuit)==0)
         plot_list=NULL;
     
