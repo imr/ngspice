@@ -766,7 +766,11 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         ylims[0] = HUGE;
         ylims[1] = - ylims[0];
         for (d = vecs; d; d = d->v_link2) {
-		dd = ft_minmax(d, TRUE);
+		/* dd = ft_minmax(d, TRUE); */
+		/* With this we seek the maximum and minimum of imaginary part
+         * that will go to Y axis 
+         */
+		dd = ft_minmax(d, FALSE);
             if (dd[0] < ylims[0])
                 ylims[0] = dd[0];
             if (dd[1] > ylims[1])
@@ -801,7 +805,11 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         xlims[0] = HUGE;
         xlims[1] = - xlims[0];
         for (d = vecs; d; d = d->v_link2) {
-		dd = ft_minmax(d, FALSE);
+		/* dd = ft_minmax(d, FALSE); */
+		/* With this we seek the maximum and minimum of imaginary part
+         * that will go to Y axis 
+         */
+		dd = ft_minmax(d, TRUE);
 
             if (dd[0] < xlims[0])
                 xlims[0] = dd[0];
@@ -878,8 +886,13 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                 fabs(xlims[1]);
         my = (fabs(ylims[0]) > fabs(ylims[1])) ? fabs(ylims[0]) :
                 fabs(ylims[1]);
-        rad = (mx > my) ? mx : my;
-        /* rad = sqrt(mx * mx + my * my); */
+       /* rad = (mx > my) ? mx : my; */
+	   /* AM.Roldán
+        * Change this reason that this was discussed, as in the case of 1 + i want to plot point 
+        * is outside the drawing area so I'll stay as the maximum size of the hypotenuse of 
+        * the complex value
+        */
+        rad = sqrt(mx * mx + my * my);
         xlims[0] = - rad;
         xlims[1] = rad;
         ylims[0] = - rad;
