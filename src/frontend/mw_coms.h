@@ -6,7 +6,7 @@
 #ifndef MW_COMS_H_INCLUDED
 #define MW_COMS_H_INCLUDED
 
-void com_removecirc(wordlist *wl);
+void com_removecirc(void);
 
 
 #endif
