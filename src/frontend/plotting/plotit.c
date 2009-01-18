@@ -707,7 +707,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* Transform for smith plots */
     if (gtype == GRID_SMITH) {
 	double	re, im, rex, imx;
-	double	r, i, x;
+	double	r;
 	struct dvec **prevvp, *n;
 	int	j;
 
@@ -743,12 +743,16 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 		    re = re - 1;
 
 		    /* (re, im) / (rex, imx) */
-		    x = 1 - (imx / rex) * (imx / rex);
-		    r = re / rex + im / rex * imx / rex;
-		    i = im / rex - re / rex * imx / rex;
-
-		    realpart(d->v_compdata + j) = r / x;
-		    imagpart(d->v_compdata + j) = i / x;
+		    /* x = 1 - (imx / rex) * (imx / rex);
+		     * r = re / rex + im / rex * imx / rex;
+		     * i = im / rex - re / rex * imx / rex;
+             *
+             *
+		     * realpart(d->v_compdata + j) = r / x;
+		     * imagpart(d->v_compdata + j) = i / x;
+             */
+		    realpart(d->v_compdata + j) = (rex*re+imx*imx) / (rex*rex+imx*imx);
+		    imagpart(d->v_compdata + j) = (2*imx) / (rex*rex+imx*imx);
 		}
 	    }
 	}
