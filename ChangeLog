@@ -1,3 +1,8 @@
+2009-01-26 Lionel Sainte Cluque
+ * man/man1/ngspice.1,
+ * man/man1/nutmeg.1:
+   apply Ahmed El-Mahmoudy's patch on hyphens in manpages.
+
 2009-01-18 Paolo Nenzi
  * src/frontend/plotting/plotit.c,
  * src/frontend/plotting/plotcurv.c:

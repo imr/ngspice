@@ -6,12 +6,12 @@
 .SH NAME
 nutmeg \- spice post-processor
 .SH SYNOPSIS
-\fBnutmeg [ - ] [ -n ] [ -t term ] [ datafile ... ]\fR
+\fBnutmeg [ \- ] [ \-n ] [ \-t term ] [ datafile ... ]\fR
 .SH DESCRIPTION
 .B Nutmeg
 is a post processor for \s-2SPICE\s+2 \- it takes the raw 
 output file created 
-by \fBspice -r\fR
+by \fBspice \-r\fR
 and plots the data on a graphics terminal or a workstation display.
 Note that the raw output file is different from the
 data that \s-2SPICE\s+2 writes to the standard output.
@@ -92,7 +92,7 @@ The magnitude of vector.
 The phase of vector.
 .IP
 \fBj(vector) \-\fR
-\fIi\fR (sqrt(-1)) times vector.
+\fIi\fR (sqrt(\-1)) times vector.
 .IP
 \fBreal(vector) \-\fR
 The real component of vector.
@@ -439,12 +439,12 @@ in the \fIplottype\fR option, below.
 \fBcpdebug\fR
 .br
 Print \fIcshpar\fR debugging information. (Must be complied with the
--DCPDEBUG flag.)
+\-DCPDEBUG flag.)
 .IP
 \fBdebug\fR 
 .br
 If set then a lot of debugging information is printed. (Must be
-compiled with the -DFTEDEBUG flag.)
+compiled with the \-DFTEDEBUG flag.)
 .IP
 \fBdevice\fR
 .br
@@ -508,7 +508,7 @@ no effect.
 .br
 If this is set, when the \fBhardcopy\fR command is run the resulting file
 is automatically printed on the printer named \fBhcopydev\fR with the
-command \fIlpr -P\fBhcopydev\fI -g \fBfile\fR.
+command \fIlpr \-P\fBhcopydev\fI \-g \fBfile\fR.
 .IP
 \fBhcopydevtype\fR 
 .br
@@ -925,7 +925,7 @@ There are a number of pre-defined constants in \fBnutmeg\fR. They are:
 	pi		pi
 	e		The base of natural logarithms
 	c		The speed of light
-	i		The square root of -1
+	i		The square root of \-1
 	kelvin		Absolute 0 in Centigrade
 	echarge		The charge on an electron
 	boltz		Boltzman's constant
