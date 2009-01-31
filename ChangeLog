@@ -1,7 +1,8 @@
 2009-01-31 Holger Vogt
  * xpressn.c, spicenum.c, numparam.h, runcoms.c, runcoms2.c:
    Incompatibilty to MAC OSX removed by proper variable declarations
-
+ * subckt.c: bug no. 2293284: preliminary change, further tests required
+ 
 2009-01-26 Lionel Sainte Cluque
  * man/man1/ngspice.1,
  * man/man1/nutmeg.1:

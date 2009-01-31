@@ -1195,20 +1195,20 @@ finishLine(char *dst, char *src, char *scname)
         } 
 	else {    /* just a normal netname . . . . */
 	    /*
-	     * 
+	     * i(vname) -> i(v.subckt.vname)
 	     */
              if ((which == 'i' || which == 'I') &&
 	        (buf[0] == 'v' || buf[0] == 'V')) {
 		*dst++ = buf[0];
 		*dst++ = '.';
-		i = 1;
-	    } else {
+		/*i = 1; */
+	    } /* else {
 		i = 0;
-	    }
+	    } */
             for (s = scname; *s; )
                 *dst++ = *s++;
             *dst++ = '.';
-            for (s = buf + i; *s; )
+            for (s = buf/* + i*/; *s; )
                 *dst++ = *s++;
         }
 
