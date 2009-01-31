@@ -25,7 +25,7 @@ $Id$
 #include "inpdefs.h"
 
 #define RAWBUF_SIZE 32768
-char rawfileBuf[RAWBUF_SIZE];
+extern char rawfileBuf[RAWBUF_SIZE];
 
 /* Continue a simulation. If there is non in progress, this is the
  * equivalent of "run".

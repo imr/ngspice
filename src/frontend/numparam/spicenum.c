@@ -29,6 +29,9 @@ Todo:
 
 extern void txfree (void *ptr);
 
+char *nupa_inst_name;
+static tdico *inst_dico;
+
 /* Uncomment this line to allow debug tracing */
 /* #define TRACE_NUMPARAMS */
 

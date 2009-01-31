@@ -75,7 +75,7 @@ static char *linestyle[] = {
                 };
 
 static FILE *plotfile;
-char psfont[128], psfontsize[32], psscale[32];
+extern char psscale[32];
 static int fontwidth  = FONTWIDTH;
 static int fontheight = FONTHEIGHT;
 static int   jgmult      = 10;

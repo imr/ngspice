@@ -76,7 +76,3 @@ void nupa_subcktexit( tdico *dico);
  tdico * nupa_fetchinstance(void);
  char getidtype( tdico *d, char * s);
  int attrib( tdico *dico, char * t, char op );
-
-char *nupa_inst_name;
-tdico *inst_dico;
- 

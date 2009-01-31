@@ -19,6 +19,7 @@ extern double gauss();
 static Str (150, keys);                /* all my keywords */
 static Str (150, fmath);        /* all math functions */
 
+extern char *nupa_inst_name; /* see spicenum.c */
 
 static double
 ternary_fcn (int conditional, double if_value, double else_value)
