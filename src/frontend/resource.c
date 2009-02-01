@@ -37,18 +37,18 @@ $Id$
 /* gtri - end - 12/12/90 */
 #endif
 
-/* We  might compile for Windows, but only as a console application (e.g. tcl) */
+/* We might compile for Windows, but only as a console application (e.g. tcl) */
 #if defined(HAS_WINDOWS) || defined(__MINGW32__) || defined(_MSC_VER)
 #define HAVE_WIN32
 #endif
 
 #ifdef HAVE_WIN32
+
 #define WIN32_LEAN_AND_MEAN
  
 #ifdef __MINGW32__  /* access to GlobalMemoryStatusEx in winbase.h:1558 */
 #define WINVER 0x0500
 #endif
-
 /*
  * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
  * clashes with the definition obtained from windows.h (via winnt.h).
@@ -56,19 +56,19 @@ $Id$
  * by undefining BOOLEAN before including windows.h
  * SJB - April 2005
  */ 
- 
 #undef BOOLEAN
 #include <windows.h>
 /* At least Windows 2000 is needed 
  * Undefine _WIN32_WINNT 0x0500 if you want to compile under Windows ME 
  * and older (not tested under Windows ME or 98!)
  */
-#if defined(__MINGW32__) ||  (_MSC_VER > 1200)/* Exclude VC++ 6.0 from using the psapi */
+#if defined(__MINGW32__) || (_MSC_VER > 1200) /* Exclude VC++ 6.0 from using the psapi */
 #include <psapi.h>
 #endif
-#endif
 
-/* Uncheck the following definition if you want to get the old  usage information 
+#endif /* HAVE_WIN32 */
+
+/* Uncheck the following definition if you want to get the old usage information 
 #undef HAVE__PROC_MEMINFO
 */
 
@@ -456,19 +456,19 @@ printres(char *name)
 static void
 fprintmem(FILE* stream, unsigned long int memory) {
     if (memory > 1048576)
-	fprintf(stream, "%8.6f MB", memory/1048576.);
+      fprintf(stream, "%8.6f MB", memory/1048576.);
     else if (memory > 1024) 
-	fprintf(stream, "%5.3f kB", memory/1024.);
+      fprintf(stream, "%5.3f kB", memory/1024.);
     else
-	fprintf(stream, "%lu bytes", memory);
+      fprintf(stream, "%lu bytes", memory);
 }
 
-#  if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
+#if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO) 
 
 static size_t get_procm(struct proc_mem *memall) {
-#if defined (_MSC_VER)|| defined(__MINGW32__)
-#if ( _WIN32_WINNT >= 0x0500)
-/* Use Windows Api function to obtain size of memory */
+#if defined (_MSC_VER) || defined(__MINGW32__)
+#if (_WIN32_WINNT >= 0x0500) && defined(HAS_WINDOWS)
+/* Use Windows API function to obtain size of memory - more accurate */
     HANDLE hProcess;
     PROCESS_MEMORY_COUNTERS pmc;
     DWORD procid = GetCurrentProcessId();
@@ -490,35 +490,35 @@ static size_t get_procm(struct proc_mem *memall) {
         return 0;
     }
     CloseHandle( hProcess );
+#else 
+/* Use Windows GlobalMemoryStatus or /proc/memory to obtain size of memory - not accurate */
+    get_sysmem(&mem_t_act); /* size is the difference between free memory at start time and now */
+    if (mem_t.free > mem_t_act.free)                     /* it can happen that that ngspice is */
+      memall->size = (mem_t.free - mem_t_act.free)/1024; /* to small compared to os memory usage */
+    else
+      memall->size = 0;                                  /* sure, it is more */
+    memall->resident = 0;
+    memall->trs = 0;
+#endif /* _WIN32_WINNT 0x0500 && HAS_WINDOWS */
 #else
-   /* ngspice size is just the difference between free memory at start time and now */
-   get_sysmem(&mem_t_act);
-   if (mem_t.free > mem_t_act.free)                     /* it can happen that that ngspice is */
-     memall->size = (mem_t.free - mem_t_act.free)/1024; /* to small compared to os memory usage */
-   else
-     memall->size = 0;                                  /* sure, it is more */
-   memall->resident = 0;
-   memall->trs = 0;
-#endif /* _WIN32_WINNT 0x0500 */
-#else
-/* Use /proc/<pid>/statm file information */
-   FILE *fp;
-   char buffer[1024], fibuf[100];
-   size_t bytes_read;
-  
-   (void) sprintf(fibuf, "/proc/%d/statm", getpid()); 
-
-   if((fp = fopen(fibuf, "r")) == NULL) {
-      perror("fopen(\"/proc/%d/statm\")");
-      return 0;
-   }
-   bytes_read = fread (buffer, 1, sizeof (buffer), fp);
-   fclose (fp);
-   if (bytes_read == 0 || bytes_read == sizeof (buffer))
-      return 0;
-   buffer[bytes_read] = '\0';
-
-   sscanf (buffer, "%d %d %d %d %d %d %d", &memall->size, &memall->resident, &memall->shared, &memall->trs, &memall->drs, &memall->lrs, &memall->dt);
+/* Use Linux/UNIX /proc/<pid>/statm file information */
+    FILE *fp;
+    char buffer[1024], fibuf[100];
+    size_t bytes_read;
+    
+    (void) sprintf(fibuf, "/proc/%d/statm", getpid()); 
+    
+    if((fp = fopen(fibuf, "r")) == NULL) {
+       perror("fopen(\"/proc/%d/statm\")");
+       return 0;
+    }
+    bytes_read = fread (buffer, 1, sizeof (buffer), fp);
+    fclose (fp);
+    if (bytes_read == 0 || bytes_read == sizeof (buffer))
+       return 0;
+    buffer[bytes_read] = '\0';
+    
+    sscanf (buffer, "%d %d %d %d %d %d %d", &memall->size, &memall->resident, &memall->shared, &memall->trs, &memall->drs, &memall->lrs, &memall->dt);
 #endif
    return 1;
 }
@@ -676,5 +676,4 @@ main( )
     printf("baseaddr: %#8x  topaddr: %#8x\n", baseaddr( ), sbrk(0));
 }
 #  endif
-
 
