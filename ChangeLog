@@ -1,3 +1,7 @@
+2009-02-01 Dietmar Warning
+ * alloc.c, outitf.c: exclude heap usage for windows compile under __MINGW__
+ * resource.c: meminfo api usage not for commandline version
+
 2009-02-01 Holger Vogt
  * alloc.c, outitf.c: Use the new heap only for tclspice in Windows 
    (HAS_TCLWIN defined) because of a crash in the 'destroy' command  
