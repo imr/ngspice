@@ -1338,9 +1338,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
 	    working->li_next = tmp_ptr;
 	    working          = tmp_ptr2;
 
-	    //end          = working;
-	    //working      = working->li_next;
-	    //end->li_next = NULL;
+	    /* end          = working;
+	     * working      = working->li_next;
+	     * end->li_next = NULL; */
 
 	    continue;
 	  }
@@ -1369,13 +1369,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
 		tmp_ptr = library_ll_ptr[i][j]->li_next;
 		library_ll_ptr[i][j]->li_next = working;
 
-		// renumber lines
+		/* renumber lines */
 		for ( start_lib = working; !ciprefix(".endl", start_lib->li_line); start_lib = start_lib->li_next )
-		  start_lib->li_linenum = line_number++;
+		   start_lib->li_linenum = line_number++;
 		start_lib->li_linenum = line_number++;  // renumber endl line
-
-		//end->li_next = working;
-
 		break;
 	      }
 	    }
@@ -1804,7 +1801,6 @@ inp_remove_excess_ws(struct line *deck )
   struct line *c = deck;
   while ( c != NULL ) {
     if ( *c->li_line == '*' ) { c = c->li_next; continue; }
-    if ( ciprefix( "alter", c->li_line ) ) { c = c->li_next; continue; } 
     c->li_line = inp_remove_ws(c->li_line);
     c = c->li_next;
   }
