@@ -13,6 +13,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <dvec.h>
 #include <sim.h>
 #include <plot.h>
+#include <graph.h>
+#include "plotting/graphdb.h"
 
 #include "completion.h"
 #include "postcoms.h"
@@ -22,9 +24,14 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 /* static declarations */
 static void killplot(struct plot *pl);
+static void DelPlotWindows(struct plot *pl);
 
-
-/* Undefine vectors. */
+/* External function */
+/* Either defined in windisp.c or in x11.c */
+/* Do this only if Windows or X11 is defined. */
+#if defined(HAS_WINDOWS) || !defined(X_DISPLAY_MISSING)
+extern void RemoveWindow(GRAPH*);
+#endif
 
 void
 com_unlet(wordlist *wl)
@@ -633,19 +640,22 @@ com_destroy(wordlist *wl)
 {
     struct plot *pl, *npl = NULL;
 
-    if (!wl)
-        killplot(plot_cur);
+    if (!wl) {
+       DelPlotWindows(plot_cur);
+       killplot(plot_cur);
+    }
     else if (eq(wl->wl_word, "all")) {
         for (pl = plot_list; pl; pl = npl) {
             npl = pl->pl_next;
             if (!eq(pl->pl_typename, "const"))
-	    {
-             killplot(pl);
-	    }
-	    else
-	    {
-	     plot_num=1;
-	    } 
+	         {
+                DelPlotWindows(pl);   
+                killplot(pl);
+            }
+            else
+            {
+                plot_num=1;
+            } 
         }
     } else {
         while (wl) {
@@ -653,13 +663,13 @@ com_destroy(wordlist *wl)
                 if (eq(pl->pl_typename, wl->wl_word))
                     break;
             if (pl)
-	    {
+            {
+                DelPlotWindows(pl);
                 killplot(pl);
-		plot_num--;
-	    }
+                plot_num--;
+            }
             else
-                fprintf(cp_err, "Error: no such plot %s\n",
-                        wl->wl_word);
+                fprintf(cp_err, "Error: no such plot %s\n", wl->wl_word);
             wl = wl->wl_next;
         }
     }
@@ -715,6 +725,29 @@ killplot(struct plot *pl)
     tfree(pl); /* va: also tfree pl itself (memory leak) */
     
     return;
+}
+
+/* delete all windows with graphs dedrived from a given plot */ 
+static void
+DelPlotWindows(struct plot *pl)
+{
+/* do this only if windows or X11 is defined */
+#if defined(HAS_WINDOWS) || !defined(X_DISPLAY_MISSING)
+   GRAPH *dgraph;
+   int n;
+   /* find and remove all graph structures derived from a given plot */
+   for (n=1; n < 100; n++) { /* should be no more than 100 */
+      dgraph = FindGraph(n);
+      if(dgraph) {
+         if (ciprefix(pl->pl_typename, dgraph->plotname))
+            RemoveWindow(dgraph);
+      }
+/* We have to run through all potential graph ids. If some numbers are
+   already missing, 'else break;' might miss the plotwindow to be removed. */
+/*      else
+         break; */
+   }
+#endif
 }
 
 void

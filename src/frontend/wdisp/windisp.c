@@ -47,6 +47,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd, 		/* window procedure */
 	UINT uMsg, WPARAM wParam, LPARAM lParam);
 void WPRINT_PrintInit( HWND hwnd);			/* Windows printer init */
 void WaitForIdle(void);					/* wait until no more events */
+void RemoveWindow(GRAPH *pgraph);
 static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy);
 							/* get new plot size coordinates */
 
@@ -736,6 +737,14 @@ int WIN_Update()
 int WIN_DiagramReady()
 {
 	return 0;
+}
+
+void RemoveWindow(GRAPH* dgraph)
+{
+   tpWindowData wd;
+	wd = pWindowData(dgraph);
+	if (!wd) return 0;
+	SendMessage( wd->wnd, WM_CLOSE, (WPARAM) wd->hDC, 0);
 }
 
 /* Function borrowed from x11.c */

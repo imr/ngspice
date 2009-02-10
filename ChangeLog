@@ -1,3 +1,9 @@
+2009-02-10 Holger Vogt
+ * windisp.c, X11.c, postcom.c
+   'destroy plot1' now deletes all graphs (plot windows)
+   associated with the plot 'plot1' before the data of plot1
+   are deleted, to prevent a crash due to unsuccessful redrawing  
+ 
 2009-02-07 Holger Vogt
  * device.c, inpcom.c
    alter and altermod commands reinstated and improved

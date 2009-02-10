@@ -819,6 +819,20 @@ killwin(Widget w, caddr_t client_data, caddr_t call_data)
 
 }
 
+/* called from postcoms.c 
+   In the command 'destroy ac2' Will remove window associated with 
+   the plot (e.g. ac2) just before data of the plot are deleted.*/
+void 
+RemoveWindow(GRAPH *graph)
+{
+    /* Iplots are done asynchronously */
+    DEVDEP(graph).isopen = 0;
+    /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */	
+    XtDestroyWidget(DEVDEP(graph).shell);
+    DestroyGraph(graph->graphid);
+}
+
+
 /* call higher gr_redraw routine */
 void
 redraw(Widget w, caddr_t client_data, caddr_t call_data)
