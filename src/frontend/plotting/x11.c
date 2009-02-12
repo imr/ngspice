@@ -79,6 +79,10 @@ static char *xlinestyles[NUMLINESTYLES] = {	/* test patterns XXX */
     "\003\003\007\003",	/* short/longdash */
 };
 
+/* atoms for catching window delet by WM x-button */
+static Atom atom_wm_delete_window;
+static Atom atom_wm_protocols;
+
 static Widget toplevel;
 static Bool noclear = False;
 static GRAPH *lasthardcopy; /* graph user selected */
@@ -299,6 +303,22 @@ handlebuttonev(Widget w, caddr_t clientdata, caddr_t calldata)
 
 }
 
+/* callback function for catching window deletion by WM x-button */
+static void handle_wm_messages(Widget w, XtPointer client_data, XEvent *event, Boolean *cont) {
+    GRAPH *graph = (GRAPH *) client_data;
+
+    if (event->type == ClientMessage
+            && event->xclient.message_type == atom_wm_protocols
+            && event->xclient.data.l[0] == atom_wm_delete_window) {
+
+    /* Iplots are done asynchronously */
+    DEVDEP(graph).isopen = 0;
+    /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */	
+    XtDestroyWidget(DEVDEP(graph).shell);
+    DestroyGraph(graph->graphid);
+    }
+}
+
 
 /* Recover from bad NewViewPort call. */
 #define RECOVERNEWVIEWPORT()    tfree(graph);\
@@ -315,6 +335,8 @@ X11_NewViewport(GRAPH *graph)
     Cursor cursor;
     XSetWindowAttributes	w_attrs;
     XGCValues gcvalues;
+
+
     static Arg formargs[ ] = {
 	{ XtNleft, (XtArgVal) XtChainLeft },
 	{ XtNresizable, (XtArgVal) TRUE }
@@ -445,8 +467,17 @@ X11_NewViewport(GRAPH *graph)
     cursor = XCreateFontCursor(display, XC_left_ptr);
     XDefineCursor(display, DEVDEP(graph).window, cursor);
 
+    /* WM_DELETE_WINDOW protocol */
+    atom_wm_protocols = XInternAtom(display, "WM_PROTOCOLS", False);
+    atom_wm_delete_window = XInternAtom(display, "WM_DELETE_WINDOW", False);
+    XtAddEventHandler(DEVDEP(graph).shell, NoEventMask, True, handle_wm_messages,graph);
+    XSetWMProtocols(display, XtWindow(DEVDEP(graph).shell), &atom_wm_delete_window, 1);
+
+
     return (0);
 }
+
+
 
 /* This routine closes the X connection.
 	It is not to be called for finishing a graph. */
