@@ -1,3 +1,7 @@
+2009-02-12 Dietmar Warning
+ * src/include/missing_math.h, src/maths/misc/isinf.c: fix a conflict under
+   certain conditions 
+
 2009-02-12 Holger Vogt
  * device.c:908 remove bug: reset i to 0
 
