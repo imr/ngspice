@@ -35,6 +35,7 @@ extern int isnan(double);
 #ifndef HAVE_ISINF
 #if defined(HAVE_FINITE) && (HAVE_DECL_ISNAN || defined (HAVE_ISNAN))
 #define isinf(x) (!finite(x) && !isnan(x))
+#define HAVE_ISINF
 #else
 #ifdef HAVE_IEEEFP_H
 extern int isinf(double);
