@@ -2,11 +2,13 @@
 
 #if !HAVE_DECL_ISINF
 #ifndef HAVE_ISINF
-#ifdef HAVE_IEEEFP_H
+#if defined(HAVE_FINITE)
+
+/* not the best replacement - see missing_math.h */
 
 int isinf(double x) { return !finite(x) && x==x; }
 
-#else /* HAVE_IEEEFP_H */
+#else /* HAVE_FINITE */
 
 /* this is really ugly - but it is a emergency case */
 
@@ -24,7 +26,7 @@ isinf (const double x)
     return 0;
 }
 
-#endif /* HAVE_IEEEFP_H */
+#endif /* HAVE_FINITE */
 #else /* HAVE_ISINF */
 int Dummy_Symbol_5;
 #endif /* HAVE_ISINF */
