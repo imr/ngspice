@@ -1,3 +1,6 @@
+2009-02-12 Holger Vogt
+ * device.c:908 remove bug: reset i to 0
+
 2009-02-10 Holger Vogt
  * windisp.c, X11.c, postcom.c
    'destroy plot1' now deletes all graphs (plot windows)

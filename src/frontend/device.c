@@ -905,6 +905,7 @@ com_alter_common(wordlist *wl, int do_model)
     while(wl){         
             argument = wl->wl_word;
             /* searching for '=' ... */
+            i = 0;
             while(argument[i]!='=' && argument[i]!='\0'){
                     i++;
             }
