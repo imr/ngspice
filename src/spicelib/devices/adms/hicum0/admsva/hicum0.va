@@ -7,6 +7,7 @@
 //  Made a temporary variable cjei_i for cjei output purpose only.
 
 // Minor code related changes
+// 03/08: Quick Fix: Default value of TFH has been changed from infinity to zero and modified the default value limits to [0, inf) to include zero
 // 12/06: Upper limit of FGEO is changed to infinity
 //  06/06:  Thermal node "tnode" set as external
 //  Flag FLSH introduced for controlling Self-heating calculation
@@ -237,7 +238,7 @@ module hic0_full (c,b,e,s,tnode);
 	parameter real iqf    		= `INF		from (0:`INF]	`P(spice:name="iqf" info="forward d.c. high-injection toll-off current" unit="A" m:factor="yes" default:value="infinity");        
 	parameter real iqr    		= `INF		from (0:`INF]	`P(spice:name="iqr" info="inverse d.c. high-injection roll-off current" unit="A" m:factor="yes" default:value="infinity");               
 	parameter real iqfh   		= `INF		from (0:`INF]	`P(spice:name="iqfh" info="high-injection correction current" unit="A" m:factor="yes");              
-	parameter real tfh    		= `INF		from (0:`INF]	`P(spice:name="tfh" info="high-injection correction factor" test:value="2e-9" m:factor="yes");                
+	parameter real tfh    		= 0.0		from [0:`INF)	`P(spice:name="tfh" info="high-injection correction factor" test:value="2e-9" m:factor="yes");                
                                                
 // Base current                              
 	parameter real ibes   		= 1e-18		from [0:1]	`P(spice:name="ibes" info="BE saturation current" unit="A" m:factor="yes");                 
