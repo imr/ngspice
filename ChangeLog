@@ -2,6 +2,8 @@
  * src/spicelib/parser/inpdomod.c: map level 10 to bsimsoi4 and map ancient 
    version 4.0 and 4.1 of bsim4 to available version 4.2
  * DEVICES: corrections and actualizations, add short adms model descriptions
+ * adms/hicum0/admsva/hicum0.va: a slight fix of TFH in version 1.12
+ * adms/hicum2/admsva/hicum2.va: general update to version 2.23
 
 2009-02-12 Dietmar Warning
  * src/include/missing_math.h, src/maths/misc/isinf.c: fix a conflict under
