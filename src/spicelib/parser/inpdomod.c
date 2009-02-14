@@ -308,7 +308,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	    break;
 	case 14: case 54:
 	    err = INPfindVer(line, ver); /* mapping of minor versions are included */
-	    if (prefix("4.2", ver)) {
+	    if ((prefix("4.0", ver)) || (prefix("4.1", ver)) || (prefix("4.2", ver))) {
 	      type = INPtypelook("BSIM4v2");
 	    }
 	    if (prefix("4.3", ver)) {
@@ -386,7 +386,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Placeholder: Device type B3SOIPD not available in this binary\n");
 	    }
 	    break;	        
-	case 58:
+	case 10: case 58:
 	    type = INPtypelook("B4SOI");
 	    if (type < 0) {
 		err =
