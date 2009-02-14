@@ -60,8 +60,12 @@ Table of contents
  12.3 BSIM3SOI_PD - SOI model (partially depleted devices)
  12.4 BSIM3SOI - SOI model (partially/full depleted devices)
  12.5 SOI3 - STAG SOI3 Model
-13. Other devices
- 13.1 EKV - EKV model
+13. Verilog-A models
+ 13.1 EKV MOS model
+ 13.2 PSP MOS model
+ 13.3 HICUM0 Bipolar Model
+ 13.4 HICUM2 Bipolar Model
+ 13.5 Mextram Bipolar Model
 
                              ------------------
 
@@ -352,11 +356,11 @@ will be updated every time the device specific code is altered or changed to ref
 
      This is the BJT model written by Alan Gillespie to support lateral
      devices. The model has been hacked by Dietmar Warning fixing some bugs
-     and adding some features (temp. correction on resistors).
+     and adding some features (temp. dependency on resistors).
 
      Enhancements over the original model:
-     - Temperature correction on rc,rb,re
      - Parallel Multiplier
+     - Temperature dependency on rc,rb,re
      - Temperature difference from circuit temperature
      - Different area parameters for collector, base and emitter
 
@@ -558,6 +562,9 @@ will be updated every time the device specific code is altered or changed to ref
       Dir:    devices/mos9
       Status:
 
+      This is a slightly modified Level 3 MOSFET model. 
+      (Whatever the implementer have had in mind.)
+      Not to confuse with Philips level 9. 
       Enhancements over the original model:
       - Temperature difference from circuit temperature
 
@@ -658,9 +665,9 @@ will be updated every time the device specific code is altered or changed to ref
 
  11.13 BSIM4 - BSIM model level 4
  
-       Ver:    4.2.0 - 4.6.1
+       Ver:    4.2.0 - 4.6.3
        Class:  M
-       Level:  14 & 54, version = 4.2, 4.3, 4.4, 4.5, 4.6.1
+       Level:  14 & 54, version = 4.2, 4.3, 4.4, 4.5, 4.6.3
        Dir:    devices/bsim4
        Status:
 
@@ -739,15 +746,16 @@ will be updated every time the device specific code is altered or changed to ref
       *) rework-14: removed #ifndef NEWCONV code.
 
 
- 12.4 BSIM3SOI - SOI model (partially/full depleted devices)
+ 12.4 BSIMSOI - Berkeley SOI model (partially/full depleted devices)
                
       Ver:    4.0
       Class:  M
-      Level:  58
+      Level:  10 & 58
       Dir:    devices/bsim3soi
       Status: TO BE TESTED.
 
-      This is the newer version from Berkeley.
+      This is the actual version from Berkeley. This version is fully 
+      backward compatible with its previous versions BSIMSOI3.x.
       Usable for partially/full depleted devices.
 
       Web site at: http://www-device.eecs.berkeley.edu/~bsimsoi
@@ -763,17 +771,60 @@ will be updated every time the device specific code is altered or changed to ref
 
 
 
-13. Other devices
+13. Verilog-A models
 
- 13.1 EKV - EKV model
-     
+      Configuring ngspice with ADMS (see Readme.adms) following 
+      devices are available:
+      
+ 13.1 EKV MOS Model
+
       Ver:    2.6
-      Class:  M
       Level:  44
-      Dir:    devices/ekv
+      Dir:    devices/adms/ekv
       Status: TO BE TESTED
 
-      Note: This model is not released in source code.
-      You have to obtain the source code from the address below.
+      EKV version based on a contribution of Ivan Riis Nielsen 11/2006
 
-      Web site at: http://legwww.epfl.ch/ekv/
+      Web site at: http://legwww.epfl.ch/ekv/ 
+      (but EPFL is not publishing any usefull code)
+      
+
+ 13.2 PSP MOS Model
+
+      Ver:    102.1
+      Level:  45
+      Dir:    devices/adms/psp102
+      Status: TO BE TESTED
+
+      Philips SimKit 2.5.
+
+
+ 13.3 HICUM0 Bipolar Model
+
+      Ver:    Level_0 Version_1.12
+      Level:  7
+      Dir:    devices/adms/hicum0
+      Status: TO BE TESTED
+
+      A simplified version of HICUM Level2 model for BJT
+      Web site at: http://www.iee.et.tu-dresden.de/iee/eb/hic_new
+
+
+ 13.4 HICUM2 Bipolar Model
+
+      Ver:    Level_2 Version_2.22
+      Level:  8
+      Dir:    devices/adms/hicum2
+      Status: TO BE TESTED
+
+      Web site at: http://www.iee.et.tu-dresden.de/iee/eb/hic_new/hic_start.html
+
+
+ 13.5 Mextram Bipolar Model
+
+      Ver:    504.6.1
+      Level:  6
+      Dir:    devices/adms/mextram
+      Status: TO BE TESTED
+
+      Web site at: http://mextram.ewi.tudelft.nl/ and http://mextram.sourceforge.net/
