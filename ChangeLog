@@ -1,3 +1,6 @@
+2009-02-20 Holger Vogt
+ * x11disp.c: allow closing of help windows with WM x-button
+
 2009-02-14 Dietmar Warning
  * src/spicelib/parser/inpdomod.c: map level 10 to bsimsoi4 and map ancient 
    version 4.0 and 4.1 of bsim4 to available version 4.2

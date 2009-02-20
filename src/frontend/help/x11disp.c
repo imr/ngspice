@@ -25,6 +25,24 @@ static bool started = FALSE;
 static topic *topics = NULL;
 void newtopic(Widget w, caddr_t client_data, caddr_t call_data), delete(Widget w, caddr_t client_data, caddr_t call_data), quit(Widget w, caddr_t client_data, caddr_t call_data); 
 static void sputline(char *buf, char *s);
+/* atoms for catching window delet by WM x-button */
+static Atom atom_wm_delete_window;
+static Atom atom_wm_protocols;
+static Display *display;
+
+/* callback function for catching window deletion by WM x-button */
+static void handle_wm_messages(Widget w, XtPointer client_data, XEvent *event, Boolean *cont) {
+    topic *top = (topic *) client_data;
+
+    if (event->type == ClientMessage
+            && event->xclient.message_type == atom_wm_protocols
+            && event->xclient.data.l[0] == atom_wm_delete_window) 
+    {
+        hlp_killfamily(top);
+        hlp_fixchildren(top);
+    }
+}
+
 
 /* Create a new window... */
 bool
@@ -190,6 +208,14 @@ hlp_xdisplay(topic *top)
 
     top->winlink = topics;
     topics = top;
+
+
+    /* WM_DELETE_WINDOW protocol */
+    display = XtDisplay(top->shellwidget);
+    atom_wm_protocols = XInternAtom(display, "WM_PROTOCOLS", False);
+    atom_wm_delete_window = XInternAtom(display, "WM_DELETE_WINDOW", False);
+    XtAddEventHandler(top->shellwidget, NoEventMask, True, handle_wm_messages, top);
+    XSetWMProtocols(display, XtWindow(top->shellwidget), &atom_wm_delete_window, 1);
 
     return (TRUE);
 
