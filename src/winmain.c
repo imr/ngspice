@@ -2,7 +2,7 @@
 	Autor: Wolfgang Muees
 	Stand: 28.10.97
 	Autor: Holger Vogt
-	Stand: 01.03.2008
+	Stand: 21.02.2009
  $Id$
 */
 #include "config.h"
@@ -51,7 +51,7 @@ typedef char SBufLine[SBufSize+1];	// Eingabezeile
 
 /* Global variables */
 HINSTANCE 		hInst;			/* Application instance */
-int 			WinLineWidth = 640;	/* Window width */
+int 			WinLineWidth = 690;	/* Window width */
 HWND       		hwMain;			/* Main Window of the application */
 HWND       		twText;			/* Text window */
 HWND			swString;		// Eingabezeile
@@ -708,27 +708,24 @@ outahere:
 /* Main entry point for our Windows application */
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
-	int i;
+	int ix, iy; /* width and height of screen */
+   int iyt; /* height of screen divided by 3 */
 	int status;
 	
 	int argc;
 	char **argv;
 
-	// globale Variablen fuellen
+	/* fill global variables */
 	hInst = hInstance;
 	nShowState = nCmdShow;
 
-	// Textbuffer initialisieren
+	/* Initialize text buffer */
 	TBufEnd = 0;
 	TBuffer[TBufEnd] = SE;
 	SBuffer[0] = SE;
 	HistoryInit();
 
-	// 3D-Elemente registrieren
-//	Ctl3dRegister( hInstance);
-//	Ctl3dAutoSubclass( hInstance);
-
-	// Hauptfensterklasse definieren
+	/* Define main window class */
 	hwMainClass.style 			= CS_HREDRAW | CS_VREDRAW;
 	hwMainClass.lpfnWndProc		= MainWindowProc;
 	hwMainClass.cbClsExtra		= 0;
@@ -741,7 +738,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	hwMainClass.lpszClassName 	= hwClassName;
 	if (!RegisterClass( &hwMainClass)) goto THE_END;
 
-	// Textfensterklasse definieren
+	/* Define text window class */
 	if (!GetClassInfo( NULL, "EDIT", &twTextClass)) goto THE_END;
 	twProc = twTextClass.lpfnWndProc;
 	twTextClass.lpfnWndProc		= TextWindowProc;
@@ -750,7 +747,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	twTextClass.lpszClassName 	= twClassName;
 	if (!RegisterClass( &twTextClass)) goto THE_END;
 
-	// Stringfensterklasse definieren
+	/* Define string window class */
 	if (!GetClassInfo( NULL, "EDIT", &swStringClass)) goto THE_END;
 	swProc = swStringClass.lpfnWndProc;
 	swStringClass.lpfnWndProc   = StringWindowProc;
@@ -759,7 +756,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	swStringClass.lpszClassName = swClassName;
 	if (!RegisterClass( &swStringClass)) goto THE_END;
 
-	// StatusElementklasse definieren
+	/* Define status element class */
 	hwElementClass.style 			= CS_HREDRAW | CS_VREDRAW;
 	hwElementClass.lpfnWndProc		= ElementWindowProc;
 	hwElementClass.cbClsExtra		= 0;
@@ -772,18 +769,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	hwElementClass.lpszClassName 	= hwElementClassName;
 	if (!RegisterClass( &hwElementClass)) goto THE_END;
 
-	// Hauptfenster kreieren
-	i = GetSystemMetrics( SM_CYSCREEN) / 3;
+	/*Create main window */
+   iy = GetSystemMetrics( SM_CYSCREEN);
+   iyt = GetSystemMetrics( SM_CYSCREEN) / 3;
+   ix = GetSystemMetrics( SM_CXSCREEN);
 	hwMain = CreateWindow( hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
-		0, i * 2, GetSystemMetrics( SM_CXSCREEN), i, NULL, NULL, hInst, NULL);
+		0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
 	if (!hwMain) goto THE_END;
 
-	// Textfenster kreieren
+	/* Create text window */
 	twText = CreateWindowEx(WS_EX_NOPARENTNOTIFY, twClassName, twWindowName,
 		ES_LEFT | ES_MULTILINE | ES_READONLY | WS_CHILD | WS_BORDER | WS_VSCROLL,
 		20,20,300,100, hwMain, NULL, hInst, NULL);
 	if (!twText) goto THE_END;
-	// Ansii fixed font
+	/* Ansii fixed font */
 	{
 		HDC textDC;
 		HFONT font;
@@ -801,7 +800,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 		}
 	}
 
-	// Stringfenster kreieren
+	/* Create string window */
 	swString = CreateWindowEx(WS_EX_NOPARENTNOTIFY, swClassName, swWindowName,
 		ES_LEFT | WS_CHILD | WS_BORDER, 20,20,300,100, hwMain, NULL, hInst, NULL);
 	if (!swString) goto THE_END;
@@ -816,24 +815,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 		}
 	}
 
-	// Sourcefenster kreieren
+	/* Create source window */
 	hwSource = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName,
 		hwSourceWindowName, WS_CHILD, 0,0, SourceLength, StatusElHeight, hwMain,
 		NULL, hInst, NULL);
 	if (!hwSource) goto THE_END;
 
 
-	// Analysefenster kreieren
+	/* Create analysis window */
 	hwAnalyse = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName,
 		hwAnalyseWindowName, WS_CHILD, 0,0, AnalyseLength, StatusElHeight, hwMain,
 		NULL, hInst, NULL);
 	if (!hwAnalyse) goto THE_END;
 
 
-	// Hauptfenster mit Unterfenstern sichtbar machen
-	if (WinLineWidth > 600) WinLineWidth = 600;
-	MoveWindow( hwMain, 0, ((GetSystemMetrics( SM_CYSCREEN) / 3) * 2 - 22), WinLineWidth,
-				GetSystemMetrics( SM_CYSCREEN) / 3, FALSE);
+	/* Make visible main window and subwindows
+      Size of windows allows display of 80 character line */
+   /* limit window to screen size (if only VGA) */
+   if (ix < WinLineWidth) WinLineWidth = ix;
+	MoveWindow( hwMain, 0, (iyt * 2 - 22), WinLineWidth, iyt, FALSE);
 	ShowWindow( hwMain,   nShowState);
 	ShowWindow( twText,   SW_SHOWNORMAL);
 	ShowWindow( swString, SW_SHOWNORMAL);
@@ -856,16 +856,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     exit(1);
   }
 
-	// Wait util everything is settled
+	/* Wait util everything is settled */
 	WaitForIdle();
 
-	// Ab nach main()
+	/* Ab nach main() */
 	nReturnCode = xmain(argc, argv/*, _environ*/);
 	
 
 THE_END:
 
-	// terminate
+	/* terminate */
 	return nReturnCode;
 }
 

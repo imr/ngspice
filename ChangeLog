@@ -1,5 +1,7 @@
 2009-02-21 Holger Vogt
  * parse.c:922 prevent automtic deletion of @xxx[par]
+   winmain.c: increased width of ngspice window to allow display
+   of 80 characters per line (e.g. for command 'show'
 
 2009-02-20 Holger Vogt
  * x11disp.c: allow closing of help windows with WM x-button
