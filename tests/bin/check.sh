@@ -23,7 +23,7 @@ case $HOST_TYPE in
       sed -e 's/e-000/e+000/g' $testname.test | sed 's/e-0/e-/g' | sed 's/e+0/e+/g' > $testname.test_tmp
       mv $testname.test_tmp $testname.test
       ;;
-    Linux*|Darwin*|CYGWIN)
+    Linux*|Darwin*|CYGWIN*)
       $SPICE --batch $testdir/$testname.cir >$testname.test &&\
       egrep -v $FILTER $testname.test > $testname.test_tmp &&\
       egrep -v $FILTER $testdir/$testname.out > $testname.out_tmp

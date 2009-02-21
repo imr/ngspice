@@ -2,6 +2,7 @@
  * parse.c:922 prevent automtic deletion of @xxx[par]
    winmain.c: increased width of ngspice window to allow display
    of 80 characters per line (e.g. for command 'show'
+   /tests/bin/check.sh: allow make check for CYGWIN (will fail though)
 
 2009-02-20 Holger Vogt
  * x11disp.c: allow closing of help windows with WM x-button
