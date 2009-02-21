@@ -1,3 +1,6 @@
+2009-02-21 Holger Vogt
+ * parse.c:922 prevent automtic deletion of @xxx[par]
+
 2009-02-20 Holger Vogt
  * x11disp.c: allow closing of help windows with WM x-button
 

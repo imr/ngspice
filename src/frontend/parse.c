@@ -918,9 +918,12 @@ mksnode(char *string)
     
     /* va: tfree v in case of @xxx[par], because vec_get created a new vec and
        nobody will free it elsewhere */
-    if (v && v->v_name && *v->v_name=='@' && isreal(v) && v->v_realdata) {
+    /*if (v && v->v_name && *v->v_name=='@' && isreal(v) && v->v_realdata) {
     	vec_free(v);
-    }
+    } */
+    /* The two lines above have been commented out to prevent deletion of @xxx[par]
+    after execution of only a single command like plot @xxx[par] or write. We need to 
+    monitor if this will lead to excessive memory usage. h_vogt 090221 */
     return (p);
 }
 
