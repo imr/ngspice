@@ -3,7 +3,7 @@ MEXTRAM Gummel Test Ic,b,s=f(Vc,Ib)
 VB B 0 0.5
 VC C 0 2.0
 VS S 0 0.0
-Q1 C B 0 S BJTRF1
+Q1 C B 0 S DT BJTRF1
 
 .control
 dc vb 0.2 1.4 0.01

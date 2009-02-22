@@ -3,7 +3,7 @@ MEXTRAM Output Test Ic=f(Vc,Ib)
 IB 0 b 200n
 VC C 0 2.0
 VS S 0 0.0
-Q1 C B 0 S BJTRF1
+Q1 C B 0 S DT BJTRF1
 
 .control
 dc vc 0.0 2.0 0.05 ib 500n 5u 500n
