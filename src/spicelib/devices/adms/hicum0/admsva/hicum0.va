@@ -809,23 +809,23 @@ analog begin
 	
 	// Following code is an intermediate solution:
 	// ******************************************
-	//if(flsh == 0 || rth < `MIN_R) begin
-	//	I(br_sht) 	<+ Vrth/`MIN_R;
-	//end else begin
-	//	I(br_sht) 	<+ Vrth/rth-pterm			`P(spectre:gmin="add");
-	//	I(br_sht) 	<+ ddt(cth*Vrth);
-	//end
+	if(flsh == 0 || rth < `MIN_R) begin
+		I(br_sht) 	<+ Vrth/`MIN_R;
+	end else begin
+		I(br_sht) 	<+ Vrth/rth-pterm			`P(spectre:gmin="add");
+		I(br_sht) 	<+ ddt(cth*Vrth);
+	end
 	// ******************************************
 	// For simulators having no problem with V(br_sht) <+ 0.0 
 	// with external thermal node, follwing code may be used.
 	// This external thermal node should remain accessible.
 	// ********************************************
-	if(flsh == 0 || rth < `MIN_R) begin
-		V(br_sht)	<+ 0.0;
-	end else begin
-		I(br_sht) 	<+ Vrth/rth-pterm		`P(spectre:gmin="add");
-		I(br_sht) 	<+ ddt(cth*Vrth);
-	end
+	//if(flsh == 0 || rth < `MIN_R) begin
+	//	V(br_sht)	<+ 0.0;
+	//end else begin
+	//	I(br_sht) 	<+ Vrth/rth-pterm		`P(spectre:gmin="add");
+	//	I(br_sht) 	<+ ddt(cth*Vrth);
+	//end
 	// ********************************************
 	
 // Noise sources

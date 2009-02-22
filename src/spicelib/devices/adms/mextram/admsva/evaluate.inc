@@ -8,32 +8,72 @@ begin  // Currents and sharges
    Vb2e1 = TYPE * V(b2, e1);  
    Vb1e1 = TYPE * V(b1, e1);  
    Vb1b2 = TYPE * V(b1, b2);  
-   Vb1c1 = TYPE * V(b1, c1);  
-   Vbc1  = TYPE * V(b,  c1);  
 `ifdef SUBSTRATE
    Vsc1  = TYPE * V(s,  c1);  
 `endif
    Vc1c2 = TYPE * V(c1, c2);  
    Vee1  = TYPE * V(e,  e1);  
    Vbb1  = TYPE * V(b,  b1);  
-   Vcc1  = TYPE * V(c,  c1);  
    Vbe   = TYPE * V(b,  e);  
    Vbc   = TYPE * V(b,  c);   
-  
+
+/* RvdT, 03-12-2007, voltage differences 
+ associated with distributed parasitic collector.
+ Evaluated taking values of resistances into account:
+ in case of vanishing resistance corresponding node 
+ is not addressed: */
+
+if (RCBLX > 0.0)
+ begin
+  if (RCBLI > 0.0)
+    begin
+     Vc4c1 = TYPE * V(c4, c1);  
+     Vc3c4 = TYPE * V(c3, c4);  
+    end
+   else
+    begin
+     Vc4c1 = 0 ;  
+     Vc3c4 = TYPE * V(c3, c1);  
+    end
+ end
+else
+ begin
+  if (RCBLI > 0.0)
+    begin
+     Vc4c1 = TYPE * V(c4, c1);  
+     Vc3c4 = 0 ;  
+    end
+   else
+    begin
+     Vc4c1 = 0 ;  
+     Vc3c4 = 0 ;  
+    end
+ end
+
+   Vb1c4 = Vb1b2 + Vb2c2 - Vc1c2 - Vc4c1 ;  
+   Vcc3  = - Vbc + Vbb1 + Vb1c4 - Vc3c4 ;  
+   Vbc3  = Vbc + Vcc3 ;
+
+`ifdef  SUBSTRATE
+Vsc4 = Vsc1 - Vc4c1 ;
+Vsc3 = Vsc4 - Vc3c4 ;
+`endif
+
+
 // Exponential bias terms  
   
    `expLin(eVb2c2,Vb2c2 * VtINV)  
    `expLin(eVb2e1,Vb2e1 * VtINV)    
    `expLin(eVb1e1,Vb1e1 * VtINV)   
-   `expLin(eVb1c1,Vb1c1 * VtINV)  
+   `expLin(eVb1c4,Vb1c4 * VtINV)  
    `expLin(eVb1b2,Vb1b2 * VtINV)  
-   `expLin(eVbc1,Vbc1  * VtINV)  
+   `expLin(eVbc3,Vbc3  * VtINV)  
 `ifdef SUBSTRATE
    `expLin(eVsc1,Vsc1  * VtINV)  
 `endif
      
-   `expLin(eVbc1VDC,(Vbc1  - VDC_T) * VtINV)                      
-   `expLin(eVb1c1VDC,(Vb1c1 - VDC_T) * VtINV)  
+   `expLin(eVbc3VDC,(Vbc3  - VDC_T) * VtINV)                      
+   `expLin(eVb1c4VDC,(Vb1c4 - VDC_T) * VtINV)  
    `expLin(eVb2c2VDC,(Vb2c2 - VDC_T) * VtINV)  
    `expLin(eVb2c1VDC,(Vb2c1 - VDC_T) * VtINV)  
   
@@ -164,22 +204,22 @@ begin  // Currents and sharges
    Ib1_s = XIBI * Ibf0 * (eVb1e1 - 1.0);   
    `expLin(tmpExp,Vb2e1 * VtINV / MLF)
    Ib2 = IBF_TM * (tmpExp - 1.0) + GMIN * Vb2e1;       
-   `expLin(tmpExp,0.5 * Vb1c1 * VtINV)
-   Ib3 = IBR_TM * (eVb1c1 - 1.0) /   
+   `expLin(tmpExp,0.5 * Vb1c4 * VtINV)
+   Ib3 = IBR_TM * (eVb1c4 - 1.0) /   
          (tmpExp + exp(0.5 * VLR * VtINV)) +    
-         GMIN  * Vb1c1;    
+         GMIN  * Vb1c4;    
       
    // Iex, Isub (XIex, XIsub)   
   
-   g1 = If0 * eVb1c1;                   
-   g2 = 4.0 * eVb1c1VDC;     
+   g1 = If0 * eVb1c4;                   
+   g2 = 4.0 * eVb1c4VDC;     
    nBex = g1 / (1.0 + sqrt(1.0 + g1));    
    pWex = g2 / (1.0 + sqrt(1.0 + g2));    
    Iex = (1.0 / BRI_T) * (0.5 * IK_TM * nBex - IS_TM);    
 
 `ifdef SUBSTRATE
-   Isub = 2.0 * ISS_TM * (eVb1c1 - 1.0) /   
-          (1.0 + sqrt(1.0 + 4.0 * (IS_TM / IKS_TM) * eVb1c1));     
+   Isub = 2.0 * ISS_TM * (eVb1c4 - 1.0) /   
+          (1.0 + sqrt(1.0 + 4.0 * (IS_TM / IKS_TM) * eVb1c4));     
    Isf =  ISS_TM * (eVsc1 - 1.0);   
 `endif
   
@@ -189,7 +229,8 @@ begin  // Currents and sharges
    XIsub = 0.0;    
 `endif
 
-   if (EXMOD == 1) begin   
+   if (EXMOD == 1) 
+    begin   
   
       Iex =   Iex *  Xext1;     
 
@@ -197,32 +238,36 @@ begin  // Currents and sharges
       Isub  = Isub * Xext1;    
 `endif
   
-      Xg1 = If0 * eVbc1;    
+      Xg1 = If0 * eVbc3;    
       XnBex = Xg1 / (1.0 + sqrt(1.0 + Xg1));    
       XIMex = XEXT * (0.5 * IK_TM * XnBex - IS_TM) / BRI_T;   
 
 `ifdef SUBSTRATE
-      XIMsub = XEXT * 2.0 * ISS_TM * (eVbc1 - 1.0) /   
-               (1.0 + sqrt(1.0 + 4.0 * IS_T / IKS_T * eVbc1));    
-      Vex_bias = XEXT * (IS_TM / BRI_T + ISS_TM) * RCC_TM;  
+      XIMsub = XEXT * 2.0 * ISS_TM * (eVbc3 - 1.0) /   
+               (1.0 + sqrt(1.0 + 4.0 * IS_T / IKS_T * eVbc3));    
+      Vex_bias = XEXT * (IS_TM / BRI_T + ISS_TM) * RCCxx_TM;  
 `else
       XIMsub = 0.0;
-      Vex_bias = XEXT * (IS_TM / BRI_T) * RCC_TM;  
+      Vex_bias = XEXT * (IS_TM / BRI_T) * RCCxx_TM;  
 `endif
       
       Vex = Vt * (2.0 - ln( Vex_bias * VtINV));    
-      vdif = Vbc1 - Vex;  
+      vdif = Vbc3 - Vex;  
       `max_hyp0(VBex, vdif, 0.11);  
   
-      Fex = VBex /(Vex_bias + (XIMex + XIMsub) * RCC_TM + VBex);     
+      Fex = VBex /(Vex_bias + (XIMex + XIMsub) * RCCxx_TM + VBex);     
       XIex = Fex * XIMex;   
 
 `ifdef SUBSTRATE
       XIsub = Fex * XIMsub;     
 `endif
-  
-   end     
-   
+    end     
+   else
+    begin
+     Fex = 0;
+     XnBex = 0 ;
+    end
+
    // Variable base resistance   
         
    q0Q = 1.0 + Vte / VER_T + Vtc / VEF_T;    
@@ -277,30 +322,35 @@ begin  // Currents and sharges
              RE_TM / (RBC_TM + Rb2);   
       Iavl = Ic1c2 * Gem  / (Gem +Gem / Gmax + 1.0);   
    end    
-    
-`ifdef SELFHEATING
-   // Power dissipation   
-    
+
    if (eVb2c2star > 0.0)   
       Vb2c2star = Vt * ln(eVb2c2star);   
    else  
       Vb2c2star = Vb2c2;  
+    
+`ifdef SELFHEATING
+   // Power dissipation   
  
+// RvdT 03-12-2007, modified power equation due to distribution collector resistance
+
    power =  In * (Vb2e1 - Vb2c2star) +    
             Ic1c2 * (Vb2c2star - Vb2c1) -   
-            Iavl * Vb2c2star +   
-            Vee1 * Vee1 / RE_TM +   
-            Vcc1 * Vcc1 / RCC_TM +   
-            Vbb1 * Vbb1 / RBC_TM +   
+            Iavl  * Vb2c2star +   
+            Vee1  * Vee1  / RE_TM +   
+            Vcc3  * Vcc3  * GCCxx_TM +   
+            Vc3c4 * Vc3c4 * GCCex_TM +   
+            Vc4c1 * Vc4c1 * GCCin_TM +   
+            Vbb1  * Vbb1  / RBC_TM +   
             Ib1b2 * Vb1b2 +   
             (Ib1 + Ib2) * Vb2e1 +   
             Ib1_s * Vb1e1 +   
 `ifdef SUBSTRATE
-            (Iex + Isub + Ib3) * Vb1c1 +    
-            (XIex + XIsub) * Vbc1 -  
-            (XIsub + Isub - Isf) * Vsc1;   
+            (Iex + Ib3) * Vb1c4 + XIex  * Vbc3 + 
+              Isub * (Vb1c4 - Vsc4) +   
+             XIsub * (Vbc3 - Vsc3) +   
+              Isf * Vsc1;   
 `else
-            (Iex + Ib3) * Vb1c1 + XIex * Vbc1;   
+            (Iex + Ib3) * Vb1c4 + XIex * Vbc3;   
 `endif
     
 `endif 
@@ -320,16 +370,16 @@ begin  // Currents and sharges
    Qbc_qs = 0.5 * Qb0 * nB * q1Q;    
     
    a_VDC = 0.1 * VDC_T;  
-   `min_logexp(Vjcex, Vb1c1, Vfc, a_VDC);  
+   `min_logexp(Vjcex, Vb1c4, Vfc, a_VDC);  
    Vtexv = VDC_T / (1.0 - PC) * (1.0 - pow(1.0 - Vjcex / VDC_T, 1.0 - PC)) +   
-           bjc * (Vb1c1 - Vjcex);   
-   Qtex = CJC_TM * ((1.0 - XP_T) * Vtexv + XP_T * Vb1c1) *    
+           bjc * (Vb1c4 - Vjcex);   
+   Qtex = CJC_TM * ((1.0 - XP_T) * Vtexv + XP_T * Vb1c4) *    
           (1.0 - XCJC) * (1.0 - XEXT);      
   
-   `min_logexp(XVjcex, Vbc1, Vfc, a_VDC);  
+   `min_logexp(XVjcex, Vbc3, Vfc, a_VDC);  
    XVtexv = VDC_T / (1.0 - PC) * (1.0 - pow(1.0 - XVjcex / VDC_T, 1.0 - PC)) +   
-            bjc * (Vbc1 - XVjcex);   
-   XQtex = CJC_TM * ((1.0 - XP_T) * XVtexv + XP_T * Vbc1) *    
+            bjc * (Vbc3 - XVjcex);   
+   XQtex = CJC_TM * ((1.0 - XP_T) * XVtexv + XP_T * Vbc3) *    
            (1.0 - XCJC) * XEXT;    
     
 `ifdef SUBSTRATE
@@ -353,7 +403,7 @@ begin  // Currents and sharges
    if (EXMOD == 1) begin       
   
       Qex = Qex * (1.0 - XEXT);    
-      Xg2 = 4.0 * eVbc1VDC;    
+      Xg2 = 4.0 * eVbc3VDC;    
       XpWex = Xg2 / (1.0 + sqrt(1.0 + Xg2));    
       XQex = 0.5 * Fex * XEXT * TAUR_T *   
              (Qb0 * XnBex + Qepi0 * XpWex) / (TAUB_T + TEPI_T);   
@@ -397,8 +447,6 @@ begin  // Currents and sharges
    I(c2, e1) <+ TYPE * In;   
    I(b1, e1) <+ TYPE * Ib1_s;    
    I(b2, e1) <+ TYPE * (Ib1 + Ib2);   
-   I(b1, c1) <+ TYPE * (Ib3 + Iex);    
-   I(b,  c1) <+ TYPE * XIex;   
 `ifdef SUBSTRATE
    I(b1, s)  <+ TYPE * Isub;   
    I(b,  s)  <+ TYPE * XIsub;    
@@ -407,9 +455,8 @@ begin  // Currents and sharges
    I(b1, b2) <+ TYPE * Ib1b2;    
    I(b2, c2) <+ TYPE * (-1.0 * Iavl);  
    I(e,  e1) <+ TYPE * Vee1 / RE_TM;   
-   I(b,  b1) <+ TYPE * Vbb1 / RBC_TM;   
-   I(c,  c1) <+ TYPE * Vcc1 / RCC_TM;    
- 
+   I(b,  b1) <+ TYPE * Vbb1 / RBC_TM;
+
 `ifdef SELFHEATING
    // Electrical equivalent for the thermal network 
    I(dt) <+ V(dt) / RTH_Tamb_M;     
@@ -428,8 +475,6 @@ begin  // Currents and sharges
    I(b2, e1) <+ ddt(TYPE * (Qte + Qbe + Qe));   
    I(b1, e1) <+ ddt(TYPE * (Qte_s));   
    I(b2, c2) <+ ddt(TYPE * (Qtc + Qbc + Qepi));   
-   I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));        
-   I(b,  c1) <+ ddt(TYPE * (XQtex + XQex));    
 `ifdef SUBSTRATE
    I(s,  c1) <+ ddt(TYPE * Qts);   
 `endif
@@ -438,6 +483,57 @@ begin  // Currents and sharges
    I(b,   c) <+ ddt(TYPE * CBCO_M * Vbc);  
  
    end  // Currents and charges 
+
+
+/* RvdT, Delft Univ. Tech. 03-12-2007.
+Distribution of parasitic collector resistance.
+This construct supports the case 
+RCBLI = 0.0 and or RCBLX = 0.0 .
+It is up to the compiler to adjust the circuit topology
+and perform a node-collapse in such cases. */
+if (RCBLX > 0.0)
+ begin
+  I(b,  c3) <+ TYPE * XIex;   
+  I(c,  c3) <+ TYPE * Vcc3  * GCCxx_TM ;
+  I(b,  c3) <+ ddt(TYPE * (XQtex + XQex));    
+  if (RCBLI > 0.0)
+   begin
+     I(c4, c1) <+ TYPE * Vc4c1 * GCCin_TM;    
+     I(b1, c4) <+ TYPE * (Ib3 + Iex);    
+     I(c3, c4) <+ TYPE * Vc3c4 * GCCex_TM ;    
+     I(b1, c4) <+ ddt(TYPE * (Qtex + Qex));        
+   end
+  else
+   begin
+     V(c4, c1) <+ 0.0 ;    
+     I(b1, c1) <+ TYPE * (Ib3 + Iex);
+     I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));            
+     I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;    
+   end
+ end
+else
+ begin
+  V(c3, c4) <+ 0 ;    
+       if (RCBLI > 0.0)
+          begin
+            I(b,  c4) <+ TYPE * XIex;   
+            I(c,  c4) <+ TYPE * Vcc3  * GCCxx_TM ;
+            I(c4, c1) <+ TYPE * Vc4c1 * GCCin_TM;    
+            I(b1, c4) <+ TYPE * (Ib3 + Iex);    
+            I(b1, c4) <+ ddt(TYPE * (Qtex + Qex)); 
+            I(b,  c4) <+ ddt(TYPE * (XQtex + XQex));    
+          end  
+       else
+          begin 
+            I(b,  c1) <+ TYPE * XIex;   
+            I(c,  c1) <+ TYPE * Vcc3  * GCCxx_TM ;
+            V(c4, c1) <+ 0.0 ;    
+            I(b1, c1) <+ TYPE * (Ib3 + Iex);
+            I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));
+            I(b,  c1) <+ ddt(TYPE * (XQtex + XQex));                
+            I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;
+          end
+ end
  
 // Noise sources 
   
@@ -447,7 +543,10 @@ begin  // Currents and sharges
    common = 4.0 * `KB * Tk;  
    powerREC = common / RE_TM;  // Emitter resistance 
    powerRBC = common / RBC_TM; // Base resistance 
-   powerRCC = common / RCC_TM; // Collector resistance 
+ // RvdT, 03-12-2007: distributed collector resistance
+   powerRCCxx = common * GCCxx_TM; // Collector resistance 
+   powerRCCex = common * GCCex_TM; // Collector resistance 
+   powerRCCin = common * GCCin_TM; // Collector resistance 
    powerRBV = common / Rb2 * (4.0 * eVb1b2 + 5.0) / 3.0; // Variable base resistance  
  
    // Collector current shot noise 
@@ -486,15 +585,17 @@ begin  // Currents and sharges
    powerSubsCS_BS  = 2.0 * `QQ * abs(XIsub); 
 `endif
  
+
    // Noise due to the avalanche 
-   twoqIavl = KAVL * 2.0 * `QQ * Iavl; 
+ //   twoqIavl = KAVL * 2.0 * `QQ * Iavl; 
+    twoqIavl  = KAVL*Gem*powerCCS;
    powerCCS_A  = powerCCS + twoqIavl * (3.0 + 2.0 * Gem 
                  - (2.0 + 2.0 * Gem)*(2.0 + 2.0 * Gem)/(1.0 + 2.0 * Gem) ); 
  
    // Add noise sources 
    I(e, e1)   <+ white_noise(powerREC);           // "emitter resistance" 
    I(b, b1)   <+ white_noise(powerRBC);           // "base resistance" 
-   I(c, c1)   <+ white_noise(powerRCC);           // "collector resistance" 
+
    I(b1, b2)  <+ white_noise(powerRBV);           // "variable baseresistance"  
     
    I(noi, e1) <+ white_noise(twoqIavl);           // "avalanche" 
@@ -515,5 +616,41 @@ begin  // Currents and sharges
    I(b1, s)   <+ white_noise(powerSubsCS_B1S);    // "bas_sub_current" 
    I(b, s)    <+ white_noise(powerSubsCS_BS);     // "bas_sub_current" 
 `endif
+
+/* RvdT, Delft University of Technology 03-12-2007, 
+Noise voltage associated with distributed parasitic collector.
+In case of vanishing resistance corresponding node 
+is not addressed: */
+
+ // RvdT, 31-01-2007: distributed collector resistance
+
+if (RCBLX > 0.0)
+ begin
+  if (RCBLI > 0.0)
+    begin /* all branches exist */
+      I(c,  c3)  <+ white_noise(powerRCCxx); // "collector plug resistance" 
+      I(c3, c4)  <+ white_noise(powerRCCex); // "extrinsic collector BL resistance" 
+      I(c4, c1)  <+ white_noise(powerRCCin); // "intrinsic collector BL resistance" 
+    end
+   else
+    begin  /* only Rcblx exists */
+      I(c,  c3)  <+ white_noise(powerRCCxx); // "collector plug resistance" 
+      I(c3, c1)  <+ white_noise(powerRCCex); // "extrinsic collector BL resistance" 
+    end
+ end
+else
+ begin
+  if (RCBLI > 0.0)
+    begin   /* only Rcbli exists */
+      I(c,  c4)  <+ white_noise(powerRCCxx); // "collector plug resistance" 
+      I(c4, c1)  <+ white_noise(powerRCCin); // "intrinsic collector BL resistance" 
+    end
+   else
+    begin /* neither Rcblx nor Rcbli exists */
+      I(c,  c1)  <+ white_noise(powerRCCxx); // "collector plug resistance" 
+    end
+ end
+
   
 end // Noise sources 
+

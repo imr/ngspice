@@ -14,7 +14,18 @@
 `define AJC     2.0
 `define AJS     2.0
 `define VEXLIM  200.0
- 
+`define PI      3.1415926
+
+// Desriptions and units
+`ifdef __VAMS_COMPACT_MODELING__
+  `define OPP(nam,uni,des) (* desc="des", units="uni" *) real nam;
+  `define PAR(des,uni) (* desc="des", units="uni" *) parameter real
+  `define PAI(des,uni) (* desc="des", units="uni" *) parameter integer
+`else
+  `define OPP(nam,uni,des)
+  `define PAR(des,uni) parameter real
+  `define PAI(des,uni) parameter integer
+`endif 
  
 // ADMS specific definitions 
 `ifdef insideADMS 

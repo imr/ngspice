@@ -1,8 +1,9 @@
 `include "frontdef.inc" 
+`define SELFHEATING 
 `define SUBSTRATE
  
-module bjt504_va (c, b, e, s); 
-  
+module bjt504_va (c, b, e, s, dt); 
+
 `ifdef insideADMS
   `define P(p) (*p*)
 `else
@@ -10,12 +11,13 @@ module bjt504_va (c, b, e, s);
 `endif
 
   // External ports  
-     inout c, b, e, s; 
-
+     inout c, b, e, s, dt; 
+  
      electrical 	c     `P(info="external collector node");
      electrical 	b     `P(info="external base node");
      electrical 	e     `P(info="external emitter node");
      electrical 	s     `P(info="external substrate node");
+     electrical 	dt    `P(info="external thermal node");
   
   // Internal nodes  
      electrical 	c1    `P(info="internal collector node 1");
@@ -23,26 +25,30 @@ module bjt504_va (c, b, e, s);
      electrical 	b1    `P(info="internal base node 1");
      electrical 	b2    `P(info="internal base node 2");
      electrical 	c2    `P(info="internal collector node 2");
+     electrical 	c3    `P(info="internal collector node 3");
+     electrical 	c4    `P(info="internal collector node 4");
   // For correlated noise implementation 
      electrical 	noi   `P(info="internal noise node");
- 
+
 `include "parameters.inc"
 `include "variables.inc"
+`include "opvars.inc"
 
 analog begin 
   
-`ifdef insideADMS 
-   @(initial_model) begin 
-`else 
-   @(initial_step or initial_step("static")) begin  
-`endif   
+//`ifdef insideADMS 
+//   @(initial_model) begin 
+//`else 
+//   @(initial_step or initial_step("static")) begin  
+//`endif   
    
 `include "initialize.inc"     
 `include "tscaling.inc"
 
-   end // initial_step   
+//   end // initial_step   
 
 `include "evaluate.inc"
+`include "opinfo.inc"
   
 end  // analog                                                         
 endmodule                     

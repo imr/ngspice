@@ -61,7 +61,12 @@
    RE_T  = RE  * pow(tN, AE);   
    RBV_T = RBV * pow(tN, AB - AQBO);   
    RBC_T = RBC * pow(tN, AEX);   
-   RCC_T = RCC * pow(tN, AC);   
+
+// RvdT, 30-11-2007: new collector resistances RCCxx_T, RCCex_T, RCCin_T
+   RCCxx_T = RCC * pow(tN, AC);   
+   RCCex_T = RCBLX * pow(tN, ACBL);   
+   RCCin_T = RCBLI * pow(tN, ACBL);   
+
    RCV_T = RCV * pow(tN, AEPI);    
    
    // Current gains   
@@ -80,7 +85,7 @@
 
 `ifdef SUBSTRATE
    ISS_T = ISS * pow(tN, 4.0 - AS) * exp(-VGS * VdtINV);    
-   if (ISS_T > 0.0)    
+   if ((ISS_T > 0.0))    
       IKS_T = IKS * pow(tN, 1.0 - AS) * (IS_T / IS) * (ISS / ISS_T);   
    else    
       IKS_T = IKS * pow(tN, 1.0 - AS);   
@@ -95,9 +100,17 @@
       
    // Avalanche constant      
                              
-   Tk300 = Tk - 300.0;   
-   BnT = Bn * (1.0 + 7.2e-4 * Tk300 - 1.6e-6 * Tk300 * Tk300);   
-   
+   Tk300 = Tk - 300.0;
+// RvdT, 15-02-2008: prevent division by zero and overflow at high temperatures:
+   if (Tk < 525.0)
+    begin
+     BnT = Bn * (1.0 + 7.2e-4 * Tk300 - 1.6e-6 * Tk300 * Tk300) ;   
+    end
+   else
+    begin
+     BnT = Bn * 1.081 ;
+    end
+  
    // Heterojunction features   
    
    DEG_T = DEG * pow(tN, AQBO);      
@@ -129,11 +142,41 @@
    RE_TM      = RE_T     * invMULT;       
    RBC_TM     = RBC_T    * invMULT;   
    RBV_TM     = RBV_T    * invMULT;    
-   RCC_TM     = RCC_T    * invMULT;    
+// RvdT, 30-01-2007: new collector resistances:
+   RCCxx_TM   = RCCxx_T  * invMULT;    
+   RCCex_TM   = RCCex_T  * invMULT;    
+   RCCin_TM   = RCCin_T  * invMULT;    
    RCV_TM     = RCV_T    * invMULT;    
  
+
+// RvdT, 03-12-2007: new collector conductances
+   if (RCC > 0.0) 
+    begin 
+     GCCxx_TM = 1.0 / RCCxx_TM ;   
+    end
+   else
+    begin
+     GCCxx_TM = 0 ;   
+    end 
+
+   if (RCBLX > 0.0) 
+    begin 
+     GCCex_TM = 1.0 / RCCex_TM ;   
+    end
+   else
+    begin
+     GCCex_TM = 0 ;   
+    end 
+
+   if (RCBLI > 0.0) 
+    begin 
+     GCCin_TM = 1.0 / RCCin_TM ;   
+    end
+   else
+    begin
+     GCCin_TM = 0 ;   
+    end 
+
 `ifdef SELFHEATING
    RTH_Tamb_M = RTH_Tamb * invMULT;    
 `endif
-   
- 

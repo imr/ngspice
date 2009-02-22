@@ -469,9 +469,9 @@ module hic2_full (c,b,e,s,tnode);
 
 inout           c,b,e,s,tnode;
 electrical      c,b,e,s,ci,ei,bp,bi,si;
-electrical	    xf1,xf2,xf3,xf4;
+electrical      xf1,xf2,xf3,xf4;
 electrical      tnode;
-electrical 	    n1,n2;
+electrical      n1,n2;
 
 //Branch definitions
 branch          (b,bp)          br_bbp_i;
@@ -1558,20 +1558,18 @@ begin : Load_sources
              I(br_sht)       <+ V(br_sht)/rth-pterm;
              I(br_sht)       <+ ddt(cth*V(br_sht));
        end
-
        // ******************************************
-
        // For simulators having no problem with V(br_sht) <+ 0.0
        // with external thermal node, follwing code may be used.
        // Note that external thermal node should remain accessible
        // even without self-heating.
        // ********************************************
-        //if(flsh == 0 || rth < `MIN_R) begin
-        //       V(br_sht)       <+ 0.0;
-        //end else begin
-        //       I(br_sht)       <+ V(br_sht)/rth-pterm;
-        //       I(br_sht)       <+ ddt(cth*V(br_sht));
-        //end
+       //if(flsh == 0 || rth < `MIN_R) begin
+       //       V(br_sht)       <+ 0.0;
+       //end else begin
+       //       I(br_sht)       <+ V(br_sht)/rth-pterm;
+       //       I(br_sht)       <+ ddt(cth*V(br_sht));
+       //end
        // ********************************************
 
 	// NQS effect

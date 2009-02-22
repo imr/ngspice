@@ -37,6 +37,8 @@ plot abs(i(vc))/abs(i(vb)) vs abs(-i(vc)) xlog xlimit 1e-09 10e-3 ylimit 0 150
 +RE=949.668E-03
 +RBC=27.769E+00
 +RBV=32.004E+00
++RCBLX=1.0
++RCBLI=1.0
 +RCC=18.026E+00
 +RCV=237.417E+00
 +SCRCV=882.839E+00

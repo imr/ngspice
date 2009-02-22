@@ -5,7 +5,7 @@ parameter integer LEVEL = 504      from [504:505)
 parameter real    TREF  = 25.0     from [-273.0:inf)   
                  `ATTR(info="Reference temperature");   
 parameter real    DTA   = 0.0                          
-                 `ATTR(info="Difference between the local and global ambient temperatures");          
+                 `ATTR(info="Difference between the local and global ambient temperatures");
 parameter integer EXMOD = 1        from [0:1]          
                  `ATTR(info="Flag for extended modeling of the reverse current gain");   
 parameter integer EXPHI = 1        from [0:1]          
@@ -44,18 +44,20 @@ parameter real    VAVL  = 3.0      from [0.01:inf)
                  `ATTR(info="Voltage determining curvature of avalanche current");   
 parameter real    SFH   = 0.3      from [0.0:inf)      
                  `ATTR(info="Current spreading factor of avalanche model when EXAVL=1");   
-   
-parameter real    RE    = 5.0      from [1.0u:inf)     
+// RvdT, 22-02-2008: for MXT 504.7
+// increased lower clipping values RE, RBC, RBV, RCC, RCV, SCRCV 
+// from 1u to 1m: 
+parameter real    RE    = 5.0      from [1.0m:inf)     
                  `ATTR(info="Emitter resistance");   
-parameter real    RBC   = 23.0     from [1.0u:inf)     
+parameter real    RBC   = 23.0     from [1.0m:inf)     
                  `ATTR(info="Constant part of the base resistance");   
-parameter real    RBV   = 18.0     from [1.0u:inf)     
+parameter real    RBV   = 18.0     from [1.0m:inf)     
                  `ATTR(info="Zero-bias value of the variable part of the base resistance");   
-parameter real    RCC   = 12.0     from [1.0u:inf)     
+parameter real    RCC   = 12.0     from [1.0m:inf)     
                  `ATTR(info="Constant part of the collector resistance");   
-parameter real    RCV   = 150.0    from [1.0u:inf)     
+parameter real    RCV   = 150.0    from [1.0m:inf)     
                  `ATTR(info="Resistance of the un-modulated epilayer");   
-parameter real    SCRCV = 1250.0   from [1.0u:inf)     
+parameter real    SCRCV = 1250.0   from [1.0m:inf)     
                  `ATTR(info="Space charge resistance of the epilayer");   
 parameter real    IHC   = 4.0m     from [1.0p:inf)     
                  `ATTR(info="Critical current for velocity saturation in the epilayer");   
@@ -85,6 +87,12 @@ parameter real    MC     = 0.5     from [0.0:1.0)
                  `ATTR(info="Coefficient for current modulation of CB depletion capacitance");     
 parameter real    XCJC   = 32.0m   from [0.0:1.0]      
                  `ATTR(info="Fraction of CB depletion capacitance under the emitter");   
+// RvdT, 30-11-2007: introduced RCBLX and RCBLI:
+//dw clipped to 1m and default to 1 Ohm as long adms-ngspice has no working node-collapsing
+parameter real    RCBLX   = 1.0    from [1.0m:inf)      
+                 `ATTR(info="Resistance Collector Buried Layer eXtrinsic");   
+parameter real    RCBLI   = 1.0    from [1.0m:inf)      
+                 `ATTR(info="Resistance Collector Buried Layer Intrinsic");   
 parameter real    CBCO   = 0.0     from [0.0:inf)      
                  `ATTR(info="Collector-base overlap capacitance");    
   
@@ -94,7 +102,7 @@ parameter real    TAUE    = 2.0p   from [0.0:inf)
                  `ATTR(info="Minimum transit time of stored emitter charge");   
 parameter real    TAUB    = 4.2p   from (0.0:inf)      
                  `ATTR(info="Transit time of stored base sharge");   
-parameter real    TEPI    = 41.0p  from (0.0:inf)      
+parameter real    TEPI    = 41.0p  from [0.0:inf)      
                  `ATTR(info="Transit time of stored epilayer charge");   
 parameter real    TAUR    = 520.0p from [0.0:inf)      
                  `ATTR(info="Transit time of reverse extrinsic stored base charge");    
@@ -115,7 +123,10 @@ parameter real    AEPI    = 2.5
 parameter real    AEX     = 0.62                       
                  `ATTR(info="Temperature coefficient of the resistivity of the extrinsic base");     
 parameter real    AC      = 2.0                        
-                 `ATTR(info="Temperature coefficient of the resistivity of the buried layer");   
+                 `ATTR(info="Temperature coefficient of the resistivity of the collector contact");   
+// RvdT, 30-01-2007: introduced ACBL
+parameter real    ACBL    = 2.0    from [0.0:inf)                            
+                 `ATTR(info="Temperature coefficient of the resistivity of the collector buried layer");   
 parameter real    DVGBF   = 50.0m                      
                  `ATTR(info="Band-gap voltage difference of the forward current gain");    
 parameter real    DVGBR   = 45.0m                      
