@@ -26,7 +26,7 @@ $Id$
 /* static declarations */
 static void setdb(char *str);
 
-bool ft_acctprint = FALSE, ft_listprint = FALSE;
+bool ft_acctprint = FALSE, ft_noacctprint = FALSE, ft_listprint = FALSE;
 bool ft_nodesprint = FALSE, ft_optsprint = FALSE;
 
 /* The user-supplied routine to query the values of variables. This
@@ -247,6 +247,8 @@ cp_usrset(struct variable *var, bool isset)
         ft_rawfile = copy(var->va_string);
     } else if (eq(var->va_name, "acct")) {
         ft_acctprint = isset;
+    } else if (eq(var->va_name, "noacct")) {
+        ft_noacctprint = isset;        
     } else if (eq(var->va_name, "list")) {
         ft_listprint = isset;
     } else if (eq(var->va_name, "nopage")) {

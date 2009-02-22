@@ -355,9 +355,10 @@ ft_cktcoms(bool terse)
     if (ft_acctprint) {
         static wordlist ww = { "everything", NULL, NULL } ;
         com_rusage(&ww);
-    } else
+    } else if ((!ft_noacctprint) && (!ft_acctprint))
         com_rusage((wordlist *) NULL);
-
+    /* absolutely no accounting if noacct is given */
+    
     putc('\n', cp_out);
     return 0;
 

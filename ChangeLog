@@ -1,6 +1,7 @@
 2009-02-22 Holger Vogt
  * xspice/icm/makefile: *.cm for CYGWIN need to be made executable 
    (755 instead of 644)
+ *  fteext.h spiceif.c options.c dotcards.c: .options NOACCT added
 
 2009-02-22 Dietmar Warning
  * devices/adms/mextram: Update to release version 504.7 now with selfheating

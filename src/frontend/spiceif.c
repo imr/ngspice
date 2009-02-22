@@ -393,6 +393,9 @@ if_option(void *ckt, char *name, int type, char *value)
     if (eq(name, "acct")) {
         ft_acctprint = TRUE;
 	return 0;
+    } else if (eq(name, "noacct")) {
+        ft_noacctprint = TRUE;
+	return 0;	
     } else if (eq(name, "list")) {
         ft_listprint = TRUE;
 	return 0;

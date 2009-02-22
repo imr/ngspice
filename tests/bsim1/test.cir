@@ -18,7 +18,8 @@ VBS3 6 0 -2
 VBS4 7 0 -3
 VBS5 8 0 -4     
 *************************************************************** 
-*.OPTIONS LIMPTS=5000 ACCT       
+*.OPTIONS LIMPTS=5000 ACCT
+.OPTIONS NOACCT       
 .DC VGS 0 5 0.01
 .PRINT DC I(V1) I(V2) I(V3) I(V4) I(V5) 
 *.PLOT DC I(V1) I(V2) I(V3) I(V4) I(V5) 
