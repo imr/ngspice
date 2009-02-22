@@ -20,6 +20,10 @@ COMPILE = $(CC) $(INCLUDES) $(CFLAGS)
 
 INSTALL_DATA = ${INSTALL} -m 644
 
+ifeq ($(ISCYGWIN), 1)
+  INSTALL_DATA = ${INSTALL} -m 755
+endif
+
 all: 
 	@for x in $(CMDIRS) ; do \
 	( cd $$x && $(UPMAKE) $$x-mods ) \

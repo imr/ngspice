@@ -1,3 +1,7 @@
+2009-02-22 Holger Vogt
+ * xspice/icm/makefile: *.cm for CYGWIN need to be made executable 
+   (755 instead of 644)
+
 2009-02-22 Dietmar Warning
  * devices/adms/mextram: Update to release version 504.7 now with selfheating
    as a 5 terminal version
