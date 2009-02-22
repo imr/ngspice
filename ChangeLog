@@ -3,6 +3,7 @@
    (755 instead of 644)
  *  fteext.h spiceif.c options.c dotcards.c: .options NOACCT added
  * /tests/.../*.cir  .options noacct added (except BSIM3 files)
+ * main.c:614 allow null terminator in string
 
 2009-02-22 Dietmar Warning
  * devices/adms/mextram: Update to release version 504.7 now with selfheating
