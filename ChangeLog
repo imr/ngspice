@@ -1,3 +1,9 @@
+2009-02-22 Dietmar Warning
+ * devices/adms/mextram: Update to release version 504.7 now with selfheating
+   as a 5 terminal version
+ * tests/adms/mextram/*.sp: additional parameters for new mextram version needed
+ * spicelib/parser/inpgmod.c, inp2q.c: Correct handling of adms 5 terminal models
+
 2009-02-21 Holger Vogt
  * parse.c:922 prevent automtic deletion of @xxx[par]
    winmain.c: increased width of ngspice window to allow display
