@@ -6,7 +6,6 @@ $Id$
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "inpdefs.h"
 #include "ifsim.h"
 #include "cpstd.h"
@@ -171,7 +170,6 @@ parse_line( char* line, char* tokens[], int num_tokens, double values[], bool fo
 static bool
 is_equal( double result, double expectedResult )
 {
-  //if (fabs(result - expectedResult) < 0.00001) return TRUE;
   if (fabs(result - expectedResult) < 1e-15) return TRUE;
   else                                       return FALSE;
 }
@@ -247,10 +245,10 @@ char *INPgetMod(void *ckt, char *name, INPmodel ** model, INPtables * tab)
 
 #ifdef TRACE
     /* SDB debug statement */
-    printf("In INPgetMod, comparing against stored model %s . . . \n", (modtmp)->INPmodName);
+    printf("In INPgetMod, comparing %s against stored model %s . . . \n", name, (modtmp)->INPmodName);
 #endif
 
-    if (strcmp((modtmp)->INPmodName, name) == 0) {
+    if (strstr((modtmp)->INPmodName, name) >= 0) {
       /* found the model in question - now instantiate if necessary */
       /* and return an appropriate pointer to it */
 
@@ -269,8 +267,8 @@ char *INPgetMod(void *ckt, char *name, INPmodel ** model, INPtables * tab)
       }  /* end of checking for illegal model */
 
       if (!((modtmp)->INPmodUsed)) {   /* Check if model is already defined */
-	error = create_model( ckt, modtmp, tab );
-	if ( error ) return INPerror(error);
+        error = create_model( ckt, modtmp, tab );
+        if ( error ) return INPerror(error);
       }
       *model = modtmp;
       return ((char *) NULL);
@@ -279,7 +277,7 @@ char *INPgetMod(void *ckt, char *name, INPmodel ** model, INPtables * tab)
   /* didn't find model - ERROR  - return model */
   *model = (INPmodel *) NULL;
   err = (char *) MALLOC((60 + strlen(name)) * sizeof(char));
-  (void) sprintf(err," unable to find definition of model %s - default assumed \n", name);
+  (void) sprintf(err, "Unable to find definition of model %s - default assumed \n", name);
 
 #ifdef TRACE
   /* SDB debug statement */

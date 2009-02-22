@@ -5,7 +5,6 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "inpdefs.h"
 #include "inpmacs.h"
@@ -121,7 +120,9 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
             return;
         }
 #ifdef ADMS
-	if (nodeflag && (thismodel->INPmodType != INPtypelook("hicum2")))
+	if ((nodeflag && (thismodel->INPmodType != INPtypelook("hicum0")))
+	 && (nodeflag && (thismodel->INPmodType != INPtypelook("hicum2")))
+	 && (nodeflag && (thismodel->INPmodType != INPtypelook("mextram"))))
         {
             LITERR("Too much nodes for this model type")
             return;
@@ -151,12 +152,10 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     IFC(bindNode, (ckt, fast, 4, node4));
 
 #ifdef ADMS
-     if ((type == INPtypelook ("hicum0")) ||
-        (type == INPtypelook ("hicum2")) ||
-        (type == INPtypelook ("mextram")) )
-        {
-            if (nodeflag) {
-            IFC(bindNode, (ckt, fast, 5, node5));
+     if (type) /* the type is set above - must be for adms models something like 57-59 */
+     {
+            if (nodeflag) { /* was the string a node ? */
+              IFC(bindNode, (ckt, fast, 5, node5));
             } else {
               ((GENinstance *) fast)->GENnode5 = -1;
             }
@@ -165,13 +164,13 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
     if (waslead) {
 #ifdef CIDER
-    if( type == INPtypelook("NBJT2") ) {
+        if( type == INPtypelook("NBJT2") ) {
             LITERR(" error:  no unlabeled parameter permitted on NBJT2\n")
- 	} else {
+        } else {
 #endif
-	ptemp.rValue = leadval;
-	GCA(INPpName, ("area", &ptemp, ckt, type, fast));
-    }
+            ptemp.rValue = leadval;
+            GCA(INPpName, ("area", &ptemp, ckt, type, fast));
+        }
 #ifdef CIDER
    }
 #endif   
