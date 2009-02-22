@@ -20,7 +20,6 @@ SUBDIRS = bsim1			\
 	resistance		\
 	sensitivity		\
 	transient		\
-	TransImpedanceAmp	\
 	transmission		\
 	vbic
 		
@@ -45,7 +44,6 @@ DIST_SUBDIRS = 	bsim1	\
 	resistance	\
 	sensitivity	\
 	transient	\
-	TransImpedanceAmp \
 	transmission	\
 	vbic
 
