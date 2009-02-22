@@ -4,6 +4,8 @@ simple differential pair - CM and DM dc sensitivity
 .model qnl npn(bf=80 rb=100 ccs=2pf tf=0.3ns tr=6ns cje=3pf cjc=2pf va=50)
 .model qnr npn(bf=80 rb=100 ccs=2pf tf=0.3ns tr=6ns cje=3pf cjc=2pf va=50)
 
+.options noacct
+
 * Circuit description:
 q1 4 2 6 qnr
 q2 5 3 6 qnl

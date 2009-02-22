@@ -7,6 +7,8 @@ vgs 1 0 dc 0
 vig 1 2 dc 0
 .model mesmod nmf(level=2 rd=31 rs=31 rg=10)
 
+.options noacct
+
 .dc vgs -3 0.4 0.05
 .print vig#branch
 

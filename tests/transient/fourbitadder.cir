@@ -4,6 +4,7 @@
 .MODEL dmod D
 .MODEL qmod NPN(BF=75 RB=100 CJE=1PF CJC=3PF)
 
+.options noacct
 
 .SUBCKT NAND 1 2 3 4
 * noeuds: entrees(2) sortie vcc

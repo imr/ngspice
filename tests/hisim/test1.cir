@@ -1,5 +1,5 @@
 HISIM1 Test nch W=10u L=1u
-.options temp=25
+.options temp=25 noacct
 *
 vds 1 0 dc 0.05
 vgs 2 0 dc 3

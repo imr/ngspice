@@ -11,6 +11,8 @@ z2 1 2 2 depl l=1u w=10u
 .model enha nmf level=2 rd=31 rs=31 vto=0.1
 .model depl nmf level=2 rd=31 rs=31 vto=-1.0
 
+.options noacct
+
 .dc vin 0 3.0 0.05
 .print DC V(2)
 

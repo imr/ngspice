@@ -1,7 +1,7 @@
 schmitt ckt - ecl compatible schmitt trigger
 .width in=72
 
-.opt list node lvlcod=2
+.opt list node lvlcod=2 noacct
 * The original line is below
 *.opt acct list node lvlcod=2
 

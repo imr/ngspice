@@ -27,6 +27,8 @@ vid 2 3 dc 0
 + tf=100000
 + lambdahf=120
 
+.options noacct
+
 .ac DEC 10 0.001 1e6
 
 .print ac V(3)

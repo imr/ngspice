@@ -28,7 +28,7 @@ Vb B 0 0
 .include modelcard.pmos
 
 .tran 1ns 60ns
-.option reltol=1e-5 post
+.option reltol=1e-5 post noacct
 .print tran a b v(9) v(8) 
 
 .end

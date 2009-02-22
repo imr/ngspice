@@ -4,7 +4,7 @@ V1 1 0 1.0
 VC 1 Q1_C 0.0
 VB 1 Q1_B 0.0
 Q1 Q1_C Q1_B 0 N1
-.OPTIONS TEMP=150
+.OPTIONS TEMP=150 NOACCT
 .DC V1 0.2 1.2 10m
 
 .print dc i(vc) i(vb)

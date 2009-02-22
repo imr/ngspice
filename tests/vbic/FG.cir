@@ -4,7 +4,7 @@ VC Q1_C 0 0.0
 VB Q1_B 0 0.0
 Q1 Q1_C Q1_B Q1_E P1
 .DC V1 0.2 1.2 10m
-.OPTIONS GMIN=1e-13
+.OPTIONS GMIN=1e-13 NOACCT
 
 .print dc abs(i(vc)) abs(i(vb)) 
 

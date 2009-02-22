@@ -10,7 +10,7 @@ vg g 0 dc 3
 
 m1 d g s e n1 w=10u l=0.25u
 
-.option gmin=1e-25 itl1=500
+.option gmin=1e-25 itl1=500 noacct
 .dc vg 0 1.5 0.01 ve -4 4 1
 .print dc i(vs)
 .include nmospd.mod

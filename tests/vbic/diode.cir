@@ -3,6 +3,8 @@ VBIC diode test
 Q1 VCC 0 0 N1
 V1 VCC 0 1.0
 
+.OPTIONS NOACCT
+
 .OP
 
 .MODEL N1 NPN LEVEL=4 

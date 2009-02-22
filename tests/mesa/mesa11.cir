@@ -6,6 +6,7 @@ vids 1 2 dc 0
 vgs 3 0 dc 0
 z1 2 3 0 mesmod l=1u w=20u
 
+.options noacct
 .op
 .dc vds 0 2 0.05 vgs -1.2 0 0.4
 .print  DC vids#branch

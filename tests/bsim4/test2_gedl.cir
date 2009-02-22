@@ -10,6 +10,7 @@ vbs b 0 0.0
 .dc vbs -0.5 2 0.02
 *.options Temp=300
 
+.options noacct
 .print dc v(1) i(vds)
 
 .include modelcard.pmos 

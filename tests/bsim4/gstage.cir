@@ -7,6 +7,7 @@ Rload 3 vdd 25k
 Vdd vdd 0 1.8 
 Vin 1 0 1.2 ac 0.1
 
+.option noacct
 .ac dec 10 100 1000Meg 
 .print ac vdb(3)
 

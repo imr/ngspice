@@ -53,7 +53,7 @@ x3 3 4 10 dioload
 *.model diod2 d(1.0 tt=0.5ns vj=0.3 rs=100 bv=10)
 .model diod2 d(tt=0.5ns vj=0.3 rs=100 bv=10)
 
-.options itl5=0 acct
+.options itl5=0 noacct
 +reltol=1e-3 abstol=1e-14
 .tran 0.1ns 60ns
 .save v(1) v(2) v(3)

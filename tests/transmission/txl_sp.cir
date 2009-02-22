@@ -7,6 +7,7 @@ o1  2 0 3 0  lline
 vdd    1    0   dc 	5.0
 VS 168  0  PULSE (0 5 15.9NS 0.2NS 0.2NS 15.8NS 32NS )
 *VS 168  0  PWL(15.9N 0.0 16.1n 5.0 31.9n 5.0 32.1n 0.0)
+.OPTIONS NOACCT
 .TRAN 0.2N 47N 0 1N
 .print tran v(2) v(3)
 *.nodeset v(2)=5.0 v(3)=5.0

@@ -39,6 +39,8 @@ vig  1000 2 dc 0
 *.nodeset v(10)=1.6 v(40)=1.6 v(70)=1.6 v(20)=0.2 v(50)=0.2
 *+ v(80)=0.2
 
+.options noacct
+
 .dc vin 0 1 0.01
 
 .print dc v(70)

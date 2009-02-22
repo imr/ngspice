@@ -2,7 +2,7 @@ mosmem - mos memory cell
 .width in=72
 .opt abstol=1u
 
-.opt list node
+.opt list node noacct
 * The original line is below
 *.opt acct list node
 

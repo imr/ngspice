@@ -9,8 +9,10 @@ Q1 VOUT R3_N Q1_E N1 M=2
 R1 R3_P VOUT 100k
 R2 Q1_E 0 10k
 R3 R3_P R3_N 500k
-.NOISE v(vout) V2 DEC 25 1k 100Meg
 
+.OPTIONS NOACCT
+
+.NOISE v(vout) V2 DEC 25 1k 100Meg
 
 .print noise sqrt(onoise_spectrum)
 

@@ -33,6 +33,6 @@ vin in 0 pulse 0 1.8 1ns .1ns .1ns .8ns 5ns
 
 .tran 1ns 10ns
 .print tran in out
-.option post reltol=1e-3
+.option post reltol=1e-3 noacct
 
 .end

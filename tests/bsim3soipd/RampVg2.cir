@@ -10,7 +10,7 @@ Vb   b 0 0.0
 
 m1 d g s e n1 w=10u l=0.25u debug=-1
 
-.option gmin=1e-20 itl1=200 itl2=200 abstol=1e-9
+.option gmin=1e-20 itl1=200 itl2=200 abstol=1e-9 noacct
 .tran 1p 1.0ns
 .save @m1[Vbs], V(g)/10
 .print tran v(g)/10

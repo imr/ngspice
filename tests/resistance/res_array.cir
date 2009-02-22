@@ -18,6 +18,7 @@ R4  5 0 10K ac=5k m=2
 VR5 1 6 DC 0
 R5  6 0 10 ac=5 scale=1K
 
+.options noacct
 .OP
 .TRAN 1ns 10ns
 .AC DEC 100 1MEG 100MEG

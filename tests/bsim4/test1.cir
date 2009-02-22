@@ -9,6 +9,8 @@ Vb b 0 0.0
 
 .dc vds 0.0 1.2 0.02 vgs 0.2 1.2 0.2
 
+.options noacct
+
 .print dc i(vds)
 
 .include modelcard.nmos

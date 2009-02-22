@@ -8,7 +8,7 @@ vbs 3 0 0.0
 
 .dc vgs 0.6 -1.2 -0.02 vbs 0 1.2 0.3
 
-.options Temp=-55.0
+.options Temp=-55.0 noacct
 
 .print dc v(2) i(vds)
 

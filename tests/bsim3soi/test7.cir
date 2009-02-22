@@ -1,6 +1,6 @@
 ** PMOSFET: Benchmarking of B4SOI Id-Vg by Jane Xi 05/09/2003.
 
-.option post nopage brief
+.option post nopage brief noacct
 .option ingold=1
 .option gmin=0
 

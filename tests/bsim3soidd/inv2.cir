@@ -10,7 +10,7 @@ ve  e  0 dc 1.25
 m1 out in dd e p1 w=20u l=0.25u 
 m2 out in ss e n1 w=10u l=0.25u
 
-.option itl1=500 gmin=1e-25
+.option itl1=500 gmin=1e-25 noacct
 .dc vin 0 2.5 0.01 
 .print dc v(in), v(out)
 .include nmosdd.mod

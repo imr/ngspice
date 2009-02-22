@@ -9,6 +9,8 @@ Cshunt 4 0 .1u
 
 Q1  2 1 0 0 N1
 
+.OPTIONS NOACCT
+
 .ac dec 100 0.1Meg 10G
 .print ac db(i(vmeas))
 .print ac ph(i(vmeas))

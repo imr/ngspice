@@ -13,6 +13,7 @@ zd 3 20 0 driver l=0.7u w=20u
 ci 3 0 20f
 .ends mesinv
 
+.options noacct
 .model driver nmf level=2 n=1.44 rd=20 rs=20 vs=1.9e5
 + mu=0.25 d=1e-7 vto=0.15 m=2 lambda=0.15 sigma0=0.02
 + vsigmat=0.5

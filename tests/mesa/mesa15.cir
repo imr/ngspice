@@ -8,6 +8,8 @@ vgs 3 0 dc 0
 z1 2 3 0 mesmod l=1u w=20u ts=400 td=400
 .model mesmod nmf level=2 rd=31 rs=31
 
+.options noacct
+
 .dc vgs -3 0 0.05
 .print DC vids#branch
 

@@ -19,6 +19,7 @@ l4	4	0	1H
 *r5	5	0	10Ohms
 *l5	5	0	0.66mH
 
+.options noacct
 .pz	1 0	4 0	cur pol
 .print pz all
 .end

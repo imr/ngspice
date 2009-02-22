@@ -49,7 +49,7 @@ c1 18 0 .1p
 .ic v(13)=0.0 v(14)=2.0 v(15)=0.0 v(16)=2.0 v(17)=0.0 v(18)=2.0
 *.ic V(10)=5 v(2)=5 v(3)=5 v(4)=5 v(5)=5 v(6)=5
 .tran .1ns 10ns
-.options acct reltol=1e-3 
+.options reltol=1e-3 noacct 
 .print tran v(2) 
 .plot tran v(5)
 .end

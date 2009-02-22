@@ -10,6 +10,8 @@ vgs 2 0 dc 0 pulse(-3 0 0 0.5n 0.5n 2n 4n)
 vdd  1 0 5v
 .model mesa1 nmf(level=2 rd=31 rs=31)
 
+.options noacct
+
 .dc vgs -2 0 0.02
 .tran 0.1n 5n
 .print v(3) v(2)

@@ -5,6 +5,7 @@ C2 2 3 1U
 R3 2 0 1K
 R4 1 3 1K
 *
+.options noacct
 .OP
 .PZ 1 0 3 0 VOL PZ
 .PRINT PZ ALL

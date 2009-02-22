@@ -23,6 +23,8 @@ Vdd vdd 0 1.8
 .ac dec 10 100 100Meg 
 .print ac vdb(8)
 
+.option noacct
+
 .include modelcard.nmos
 .include modelcard.pmos
 

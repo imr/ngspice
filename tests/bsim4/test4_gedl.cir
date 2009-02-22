@@ -9,6 +9,7 @@ vbs b 0 0.0
 *.dc vds 0 -1.2 -0.02 vgs 0 -1.2 -0.3
 .dc vbs -0.5 2 0.02
 *.options Temp=300
+.options noacct
 
 .print dc v(1) i(vds)
 

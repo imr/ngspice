@@ -1,4 +1,5 @@
 rca3040 ckt - rca 3040 wideband amplifier
+.options noacct
 .ac dec 10 1 10ghz
 .dc vin -0.25 0.25 0.005
 .tran 2.0ns 200ns

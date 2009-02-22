@@ -55,6 +55,9 @@ x1 2 3 xonecm
 * 10cm
 * 12cm
 *.tran 0.001ns 15ns 0 0.1ns
+
+.OPTIONS NOACCT
+
 * 24cm
 .tran 0.001ns 10ns 0 0.1ns
 * onecm10
