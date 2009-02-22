@@ -1,0 +1,250 @@
+********************************************************************************
+********************************************************************************
+* HICUM Level2 Version 2.2 model cards for testing
+********************************************************************************
+********************************************************************************
+* 1D transistor: Isothermal Simulation and Temperature dependence
+********************************************************************************
+.model hicumL2V2p2_1D npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=0.0
++ mbep=1.015 ireps=0.0 mrep=2.0 mcf=1.0 tbhrec=0.0 ibcis=1.16e-20 mbci=1.015 ibcxs=0.0
++ mbcx=1.03 ibets=0.0 abet=40.0 tunode=1.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=0.0 rbx=0.0 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=0.0 rcx=0.0 itss=0.0 msf=1.05 iscs=0.0 msc=1.0 tsf=1.05 rsu=0.0 
++ csu=0.0 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=1.0e-20 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=1.0e-20 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=0.0 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=0.0 cbcpar=0.0 
++ alqf=0.225 alit=0.45 flnqs=0.0 kf=1.43e-8 af=2.0 latb=0.0 latl=0.0 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=0.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* 1D transistor: Electrothermal Simulation to test self-heating
+********************************************************************************
+.model hicumL2V2p2_1D_slh npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=0.0
++ mbep=1.015 ireps=0.0 mrep=2.0 mcf=1.0 tbhrec=0.0 ibcis=1.16e-20 mbci=1.015 ibcxs=0.0
++ mbcx=1.03 ibets=0.0 abet=40.0 tunode=1.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=0.0 rbx=0.0 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=0.0 rcx=0.0 itss=0.0 msf=1.05 iscs=0.0 msc=1.0 tsf=1.05 rsu=0.0 
++ csu=0.0 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=1.0e-20 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=1.0e-20 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=0.0 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=0.0 cbcpar=0.0 
++ alqf=0.225 alit=0.45 flnqs=0.0 kf=1.43e-8 af=2.0 latb=0.0 latl=0.0 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=1.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* 1D transistor: Isothermal Simulation with NQS Effect: future
+********************************************************************************
+.model hicumL2V2p2_1D_nqs npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=0.0
++ mbep=1.015 ireps=0.0 mrep=2.0 mcf=1.0 tbhrec=0.0 ibcis=1.16e-20 mbci=1.015 ibcxs=0.0
++ mbcx=1.03 ibets=0.0 abet=40.0 tunode=1.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=0.0 rbx=0.0 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=0.0 rcx=0.0 itss=0.0 msf=1.05 iscs=0.0 msc=1.0 tsf=1.05 rsu=0.0 
++ csu=0.0 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=1.0e-20 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=1.0e-20 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=0.0 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=0.0 cbcpar=0.0 
++ alqf=0.225 alit=0.45 flnqs=1.0 kf=1.43e-8 af=2.0 latb=0.0 latl=0.0 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=0.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* 1D transistor: Isothermal Simulation to test collector current spreading
+********************************************************************************
+.model hicumL2V2p2_1D_ccs npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=0.0
++ mbep=1.015 ireps=0.0 mrep=2.0 mcf=1.0 tbhrec=0.0 ibcis=1.16e-20 mbci=1.015 ibcxs=0.0
++ mbcx=1.03 ibets=0.0 abet=40.0 tunode=1.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=0.0 rbx=0.0 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=0.0 rcx=0.0 itss=0.0 msf=1.05 iscs=0.0 msc=1.0 tsf=1.05 rsu=0.0 
++ csu=0.0 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=1.0e-20 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=1.0e-20 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=0.0 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=0.0 cbcpar=0.0 
++ alqf=0.225 alit=0.45 flnqs=0.0 kf=1.43e-8 af=2.0 latb=3.765 latl=0.342 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=0.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* Internal transistor (with Itun at peripheral node): Isothermal Simulation and Temperature dependence
+********************************************************************************
+.model hicumL2V2p2_i_tnp npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=0.0
++ mbep=1.015 ireps=0.0 mrep=2.0 mcf=1.0 tbhrec=0.0 ibcis=1.16e-20 mbci=1.015 ibcxs=0.0
++ mbcx=1.03 ibets=1.0e-20 abet=40.0 tunode=1.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=71.76 rbx=0.0 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=0.0 rcx=0.0 itss=0.0 msf=1.05 iscs=0.0 msc=1.0 tsf=1.05 rsu=0.0 
++ csu=0.0 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=1.0e-20 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=1.0e-20 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=0.0 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=0.0 cbcpar=0.0 
++ alqf=0.225 alit=0.45 flnqs=0.0 kf=1.43e-8 af=2.0 latb=0.0 latl=0.0 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=0.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* Internal transistor (with Itun at internal node): Isothermal Simulation and Temperature dependence
+********************************************************************************
+.model hicumL2V2p2_i_tni npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=0.0
++ mbep=1.015 ireps=0.0 mrep=2.0 mcf=1.0 tbhrec=0.0 ibcis=1.16e-20 mbci=1.015 ibcxs=0.0
++ mbcx=1.03 ibets=1.0e-20 abet=40.0 tunode=0.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=71.76 rbx=0.0 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=0.0 rcx=0.0 itss=0.0 msf=1.05 iscs=0.0 msc=1.0 tsf=1.05 rsu=0.0 
++ csu=0.0 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=1.0e-20 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=1.0e-20 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=0.0 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=0.0 cbcpar=0.0 
++ alqf=0.225 alit=0.45 flnqs=0.0 kf=1.43e-8 af=2.0 latb=0.0 latl=0.0 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=0.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* Complete transistor: Isothermal Simulation and Temperature dependence
+********************************************************************************
+.model hicumL2V2p2_c npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=3.72e-21
++ mbep=1.015 ireps=1.0e-30 mrep=2.0 mcf=1.0 tbhrec=250.0 ibcis=1.16e-20 mbci=1.015 ibcxs=4.39e-20
++ mbcx=1.03 ibets=1.0e-20 abet=40.0 tunode=1.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=71.76 rbx=8.83 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=12.534 rcx=9.165 itss=0.0 msf=1.05 iscs=0.0 msc=1.0 tsf=1.05 rsu=0.0 
++ csu=0.0 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=2.07e-15 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=5.4e-15 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=0.0 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=1.13e-15 cbcpar=2.97e-15 
++ alqf=0.225 alit=0.45 flnqs=0.0 kf=1.43e-8 af=2.0 latb=0.0 latl=0.0 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=0.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* Complete transistor: Electrothermal Simulation to test self-heating
+********************************************************************************
+.model hicumL2V2p2_c_slh npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=3.72e-21
++ mbep=1.015 ireps=1.0e-30 mrep=2.0 mcf=1.0 tbhrec=250.0 ibcis=1.16e-20 mbci=1.015 ibcxs=4.39e-20
++ mbcx=1.03 ibets=1.0e-20 abet=40.0 tunode=1.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=71.76 rbx=8.83 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=12.534 rcx=9.165 itss=0.0 msf=1.05 iscs=0.0 msc=1.0 tsf=1.05 rsu=0.0 
++ csu=0.0 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=2.07e-15 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=5.4e-15 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=0.0 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=1.13e-15 cbcpar=2.97e-15 
++ alqf=0.225 alit=0.45 flnqs=0.0 kf=1.43e-8 af=2.0 latb=0.0 latl=0.0 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=2.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* Complete transistor: Isothermal Simulation with NQS Effect: future
+********************************************************************************
+.model hicumL2V2p2_c_nqs npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=3.72e-21
++ mbep=1.015 ireps=1.0e-30 mrep=2.0 mcf=1.0 tbhrec=250.0 ibcis=1.16e-20 mbci=1.015 ibcxs=4.39e-20
++ mbcx=1.03 ibets=1.0e-20 abet=40.0 tunode=1.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=71.76 rbx=8.83 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=12.534 rcx=9.165 itss=0.0 msf=1.05 iscs=0.0 msc=1.0 tsf=1.05 rsu=0.0 
++ csu=0.0 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=2.07e-15 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=5.4e-15 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=0.0 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=1.13e-15 cbcpar=2.97e-15 
++ alqf=0.225 alit=0.45 flnqs=1.0 kf=1.43e-8 af=2.0 latb=0.0 latl=0.0 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=0.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* Complete transistor: Isothermal Simulation to test collector current spreading
+********************************************************************************
+.model hicumL2V2p2_c_ccs npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=3.72e-21
++ mbep=1.015 ireps=1.0e-30 mrep=2.0 mcf=1.0 tbhrec=250.0 ibcis=1.16e-20 mbci=1.015 ibcxs=4.39e-20
++ mbcx=1.03 ibets=1.0e-20 abet=40.0 tunode=1.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=71.76 rbx=8.83 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=12.534 rcx=9.165 itss=0.0 msf=1.05 iscs=0.0 msc=1.0 tsf=1.05 rsu=0.0 
++ csu=0.0 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=2.07e-15 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=5.4e-15 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=0.0 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=1.13e-15 cbcpar=2.97e-15 
++ alqf=0.225 alit=0.45 flnqs=0.0 kf=1.43e-8 af=2.0 latb=3.765 latl=0.342 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=0.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* Complete transistor: Isothermal Simulation with substrate transistor
+********************************************************************************
+.model hicumL2V2p2_c_sbt npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=3.72e-21
++ mbep=1.015 ireps=1.0e-30 mrep=2.0 mcf=1.0 tbhrec=250.0 ibcis=1.16e-20 mbci=1.015 ibcxs=4.39e-20
++ mbcx=1.03 ibets=1.0e-20 abet=40.0 tunode=1.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=71.76 rbx=8.83 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=12.534 rcx=9.165 itss=1.0e-16 msf=1.05 iscs=1.0e-17 msc=1.0 tsf=1.05 rsu=0.0 
++ csu=0.0 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=2.07e-15 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=5.4e-15 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=3.64e-14 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=1.13e-15 cbcpar=2.97e-15 
++ alqf=0.225 alit=0.45 flnqs=0.0 kf=1.43e-8 af=2.0 latb=0.0 latl=0.0 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=1.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* Complete transistor: Isothermal Simulation with substrate network
+********************************************************************************
+.model hicumL2V2p2_c_sbn npn level=8
++ c10=3.76E-32 qp0=2.78e-14 ich=2.09e-2 hfe=1.0 hfc=1.0 hjei=1.0 
++ hjci=1.0 tr=0.0 ibeis=1.16E-20 mbei=1.015 ireis=1.16e-16 mrei=2.0 ibeps=3.72e-21
++ mbep=1.015 ireps=1.0e-30 mrep=2.0 mcf=1.0 tbhrec=250.0 ibcis=1.16e-20 mbci=1.015 ibcxs=4.39e-20
++ mbcx=1.03 ibets=1.0e-20 abet=40.0 tunode=1.0 favl=1.186 qavl=11.1e-5 alfav=0.825e-4
++ alqav=0.196e-3 rbi0=71.76 rbx=8.83 fgeo=0.73 fdqr0=0.2 fcrbi=0.0 flcomp=1
++ fqi=1.0 re=12.534 rcx=9.165 itss=1.0e-16 msf=1.05 iscs=1.0e-17 msc=1.0 tsf=1.05 rsu=10.0 
++ csu=2.1e-15 cjei0=8.11e-15 vdei=0.95 zei=0.5 ajei=1.8 cjep0=2.07e-15 vdep=1.05  
++ zep=0.4 ajep=2.4 cjci0=1.16e-15 vdci=0.8 zci=0.333 vptci=46 cjcx0=5.4e-15 
++ vdcx=0.7 zcx=0.333 vptcx=100 fbcpar=0.1526 fbepar=0.5 cjs0=3.64e-14 vds=0.6 zs=0.447 
++ vpts=100 t0=4.75e-12 dt0h=2.1e-12 tbvl=4.0e-12 tef0=1.8e-12 gtfe=1.4 thcs=30.0e-12 
++ ahc=0.75 fthc=0.6 rci0=127.8 vlim=0.7 vces=0.1 vpt=5 cbepar=1.13e-15 cbcpar=2.97e-15 
++ alqf=0.225 alit=0.45 flnqs=0.0 kf=1.43e-8 af=2.0 latb=0.0 latl=0.0 vgb=1.17 
++ alt0=0.0 kt0=0.0 zetaci=1.6 alvs=1.0e-3 alces=0.4e-3 zetarbi=0.588 zetarbx=0.206 
++ zetarcx=0.223 zetare=0.0 zetacx=2.2 vge=1.1386 vgc=1.1143 vgs=1.15 f1vg=-1.02377e-4 
++ f2vg=4.3215e-4 zetact=3.5 zetabet=4.0 flsh=0.0 rth=1000.0 cth=1.0e-10 tnom=27.0 dt=0.0
+
+********************************************************************************
+* Complete test transistor: default
+********************************************************************************
+.model hicumL2V2p2_default npn level=8
+
+********************************************************************************

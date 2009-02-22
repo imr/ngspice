@@ -1,0 +1,155 @@
+**********************************************************************
+*  EKV v2.6 parameters for 0.5um CMOS		C. EPFL-LEG, 1999
+*  ----------------------------------
+*
+*  ELDO (LEVEL = 44) / PSPICE (LEVEL = 5) example parameter set
+*  for the EKV v2.6 model is provided for NMOS and PMOS.
+*
+*
+*  IMPORTANT NOTES:
+*  ----------------
+*
+*  Parameters do not correspond to a particular technology but
+*  have reasonable values for standard 0.5um CMOS.
+*  Not intended for use in real design.
+*
+*  Includes all intrinsic model parameters. An example set for
+*  extrinsic model parameters is provided.
+*
+*  Geometry range:  W >= 0.8um, L >= 0.5um
+*  Voltage range:   |Vgb| < 3.3V, |Vdb| < 3.3V,  |Vsb| < 2V
+*  
+*  For use with either simulator, comment/uncomment respective lines.
+*  Use of extrinsic model parameters and models (series resistance,
+*  junction currents/capacitances) is in general simulator-dependent.
+*
+**********************************************************************
+
+*  EKV v2.6 NMOS
+*---------------
+.MODEL NCH NMOS
++ LEVEL  = 44
+*** Setup Parameters
+*+ UPDATE = 2.6
+*+ XQC    = 0.4
+*** Process Related Model Parameters
++ COX    = 3.45E-3
++ XJ     = 0.15E-6
+*** Intrinsic Model Parameters
++ VTO    = 0.6
++ GAMMA  = 0.71
++ PHI    = 0.97
++ KP     = 150E-6
++ E0     = 88.0E6
++ UCRIT  = 4.5E6
++ DL     = -0.05E-6
++ DW     = -0.02E-6
++ LAMBDA = 0.23
++ LETA   = 0.28
++ WETA   = 0.05
++ Q0     = 280E-6
++ LK     = 0.5E-6
+*** Substrate Current Parameters
++ IBN    = 1.0
++ IBA    = 200E6
++ IBB    = 350E6
+*** Intrinsic Model Temperature Parameters
++ TNOM   = 25.0
++ TCV    = 1.5E-3
++ BEX    = -1.5
++ UCEX   = 1.7
++ IBBT   = 0.0
+*** 1/f Noise Model Parameters
++ KF     = 1E-27
++ AF     = 1
+*** Short-Distance Matching Statistical Parameters (for MC simulation only)
+*+ AVTO   = 0		DEV = 10.0E-3	; ELDO v4.6 
+*+ AGAMMA = 0		DEV = 10.0E-3	; ELDO v4.6
+*+ AKP    = 0		DEV = 25.0E-3	; ELDO v4.6
+*** Series Resistance and Area Calulation Parameters
+*+ RLEV   = 3
++ HDIF   = 0.9E-6
++ RSH    = 510
+*** Junction Current Parameters
+*+ ALEV   = 3
++ JS     = 8.0E-6
++ JSW    = 1.5E-10
++ XTI    = 0
++ N      = 1.5
+*** Junction Capacitances Parameters
++ CJ     = 8.0E-4
++ CJSW   = 3.0E-10
++ MJ     = 0.5
++ MJSW   = 0.3
++ PB     = 0.9
++ PBSW   = 0.5
++ FC     = 0.5
+*** Gate Overlap Capacitances
++ CGSO   = 1.5E-10
++ CGDO   = 1.5E-10
++ CGBO   = 4.0E-10
+
+
+*  EKV v2.6 PMOS
+*---------------
+.MODEL PCH PMOS
++ LEVEL  = 44
+*** Setup Parameters
+*+ UPDATE = 2.6
+*+ XQC    = 0.4
+*** Process Related Model Parameters
++ COX    = 3.45E-3
++ XJ     = 0.15E-6
+*** Intrinsic Model Parameters
++ VTO    = -0.55
++ GAMMA  = 0.69
++ PHI    = 0.87
++ KP     = 35.0E-6
++ E0     = 51.0E6
++ UCRIT  = 18.0E6
++ DL     = -0.05E-6
++ DW     = -0.03E-6
++ LAMBDA = 1.1
++ LETA   = 0.45
++ WETA   = 0.0
++ Q0     = 200E-6
++ LK     = 0.6E-6
+*** Substrate Current Parameters
++ IBN    = 1.0
++ IBA    = 10E6
++ IBB    = 300E6
+*** Intrinsic Model Temperature Parameters
++ TNOM   = 25.0
++ TCV    = -1.4E-3
++ BEX    = -1.4
++ UCEX   = 2.0
++ IBBT   = 0.0
+*** 1/f Noise Model Parameters
++ KF     = 1.0E-28
++ AF     = 1
+*** Short-Distance Matching Statistical Parameters (for MC simulation only)
+*+ AVTO   = 0		DEV = 10.0E-3	; ELDO v4.6
+*+ AGAMMA = 0		DEV = 10.0E-3	; ELDO v4.6
+*+ AKP    = 0		DEV = 25.0E-3	; ELDO v4.6
+*** Series Resistance and Area Calulation Parameters
+*+ RLEV   = 3
++ HDIF   = 0.9E-6
++ RSH    = 990
+*** Junction Current Parameters
+*+ ALEV   = 3
++ JS     = 4.0E-5
++ JSW    = 7.0E-10
++ XTI    = 0
++ N      = 1.8
+*** Junction Capacitances Parameters
++ CJ     = 8.0E-4
++ CJSW   = 4.0E-10
++ MJ     = 0.5
++ MJSW   = 0.35
++ PB     = 0.9
++ PBSW   = 0.8
++ FC     = 0.5
+*** Gate Overlap Capacitances
++ CGSO   = 1.5E-10
++ CGDO   = 1.5E-10
++ CGBO   = 4.0E-10
