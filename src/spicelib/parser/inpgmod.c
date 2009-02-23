@@ -248,7 +248,7 @@ char *INPgetMod(void *ckt, char *name, INPmodel ** model, INPtables * tab)
     printf("In INPgetMod, comparing %s against stored model %s . . . \n", name, (modtmp)->INPmodName);
 #endif
 
-    if (strstr((modtmp)->INPmodName, name) >= 0) {
+    if (strstr((modtmp)->INPmodName, name) != NULL) {
       /* found the model in question - now instantiate if necessary */
       /* and return an appropriate pointer to it */
 
