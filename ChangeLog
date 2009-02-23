@@ -2,6 +2,7 @@
  * spicelib/parser/inpgmod.c: correct strstr compare
  * /tests/bsim3/*.cir: .options noacct added
  * /tests/bsim3/modelcard.*mos: correct level=8 and set version
+ * /tests/.../*.cir: add level parameter for bjts to suppress the long line warning
 
 2009-02-22 Holger Vogt
  * xspice/icm/makefile: *.cm for CYGWIN need to be made executable 
