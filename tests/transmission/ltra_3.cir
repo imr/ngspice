@@ -54,15 +54,15 @@ rt2 5 0 50
 
 
 
-*.model qmodn npn(bf=100 rb=100 cje=0.09375pF cjc=0.28125pF is=1e-12
+*.model qmodn npn(level=1 bf=100 rb=100 cje=0.09375pF cjc=0.28125pF is=1e-12
 *+pe=0.5 pc=0.5)
-.model qmodn npn(bf=100 rb=100 cje=0.09375pF cjc=0.28125pF is=1e-12
+.model qmodn npn(level=1 bf=100 rb=100 cje=0.09375pF cjc=0.28125pF is=1e-12
 +pe=0.5 pc=0.5)
 
-.model qmodpd npn(bf=100 rb=100 cje=0.08187pF cjc=0.2525pF is=1e-12
+.model qmodpd npn(level=1 bf=100 rb=100 cje=0.08187pF cjc=0.2525pF is=1e-12
 +pe=0.5 pc=0.5)
 *.model qmodpd npn(bf=100 rb=100  cje=0.08187pF cjc=0.15pF is=1e-12
-.model qmodpdmine npn(bf=100 rb=100  cje=0.08187pF cjc=0.05pF is=1e-12
+.model qmodpdmine npn(level=1 bf=100 rb=100 cje=0.08187pF cjc=0.05pF is=1e-12
 +pe=0.5 pc=0.5)
 
 .model dmod1 d(n=2.25 is=1.6399e-4 bv=10)

@@ -108,9 +108,9 @@ FSC 15 4 VSC 1
 VSC 2 22 DC 0
 QSC 22 2 17 QN
 *
-.MODEL QT NPN(IS=1.68E-16 BF=1E4)
-.MODEL QN NPN(IS=1E-15 BF=1E3)
-.MODEL QP PNP(IS=1E-15 BF=1E3)
+.MODEL QT NPN(level=1 IS=1.68E-16 BF=1E4)
+.MODEL QN NPN(level=1 IS=1E-15 BF=1E3)
+.MODEL QP PNP(level=1 IS=1E-15 BF=1E3)
 .MODEL DX D(IS=1E-15)
 .MODEL DEN D(IS=1E-12 RS=2.425E+05 AF=1 KF=6.969E-16)
 .ENDS AD780A
@@ -258,7 +258,7 @@ D14  50 38     DY
 *
 * MODELS USED
 *
-.MODEL QX NPN(BF=333.3E6)
+.MODEL QX NPN(level=1 BF=333.3E6)
 .MODEL DX   D(IS=1E-15)
 .MODEL DY   D(IS=1E-15 BV=50)
 .MODEL DEN  D(IS=1E-12, RS=14.61K, KF=2E-17, AF=1)
@@ -426,10 +426,10 @@ dcl4 12 13 d1
 vcl3 11 10 -0.445
 vcl4 10 12 -0.445
 
-.model qp1 pnp()
-.model qp2 pnp()
-.model qn1 npn()
-.model qn2 npn()
+.model qp1 pnp(level=1)
+.model qp2 pnp(level=1)
+.model qn1 npn(level=1)
+.model qn2 npn(level=1)
 .model d1  d()
 .model dn  d(af=1 kf=1e-8)
 .ends

@@ -15,8 +15,8 @@ q1 3 2 0 qnd
 rb2 3 4 10k
 q2 5 4 0 qnd
 rc2 6 5 1k
-.model qnd npn(bf=50 rb=70 rc=40 ccs=2pf tf=0.1ns tr=10ns cje=0.9pf
-+   cjc=1.5pf pc=0.85 va=50)
+.model qnd npn(level=1 bf=50 rb=70 rc=40 ccs=2pf tf=0.1ns tr=10ns cje=0.9pf
++  cjc=1.5pf pc=0.85 va=50)
 .print dc v(3) v(5)
 .plot dc v(3)
 .print tran v(3) v(5)

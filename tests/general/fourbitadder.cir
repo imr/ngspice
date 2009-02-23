@@ -2,7 +2,7 @@
 
 * Models:
 .MODEL dmod D
-.MODEL qmod NPN(BF=75 RB=100 CJE=1PF CJC=3PF)
+.MODEL qmod NPN(level=1 BF=75 RB=100 CJE=1PF CJC=3PF)
 
 .options noacct
 
