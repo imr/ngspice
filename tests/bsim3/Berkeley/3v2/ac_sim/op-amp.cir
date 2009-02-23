@@ -23,11 +23,12 @@ vss vss 0 -5
 Vdd vdd 0 5 
 
 *AC analysis
+.options noacct
 .ac dec 10 100 100Meg 
 .print ac vdb(8)
 
-.model nmos nmos level=8
-.model pmos pmos level=8
+.model nmos nmos level=8 version=3.2.2
+.model pmos pmos level=8 version=3.2.2
 
 .end
 

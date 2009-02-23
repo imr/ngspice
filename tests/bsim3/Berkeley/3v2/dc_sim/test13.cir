@@ -9,7 +9,7 @@ vbs 3 0 0.0
 
 
 .dc vgs 0 -3.5 -0.05 vbs 0 3. 0.5
-.options Temp=-55.0
+.options Temp=-55.0 noacct
 
 .print dc v(2) i(vds)
 .include modelcard.pmos 

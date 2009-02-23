@@ -34,12 +34,12 @@ M13 3 Lnot 0 0 NMOS w=1.8u l=1.2u
 Vcc vdd 0 5
 vin in 0 pulse 0 5 1ns .1ns .1ns .8ns 5ns
 
-.model nmos nmos level=8
-.model pmos pmos level=8
+.model nmos nmos level=8 version=3.2.2
+.model pmos pmos level=8 version=3.2.2
 
 .tran 1ns 10ns
 .print tran in out
-.option post
+.options noacct
 
 .END
 
