@@ -1,3 +1,8 @@
+2009-02-23 Dietmar Warning
+ * spicelib/parser/inpgmod.c: correct strstr compare
+ * /tests/bsim3/*.cir: .options noacct added
+ * /tests/bsim3/modelcard.*mos: correct level=8 and set version
+
 2009-02-22 Holger Vogt
  * xspice/icm/makefile: *.cm for CYGWIN need to be made executable 
    (755 instead of 644)
