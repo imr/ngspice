@@ -1,3 +1,7 @@
+2009-02-24 Dietmar Warning
+ * configure.in: removed Makefile for tests/TransImpedanceAmp
+ * tests/bsim3/.../ac_sim/*.out: removed the imaginary part of frequency on x-axis
+
 2009-02-23 Dietmar Warning
  * spicelib/parser/inpgmod.c: correct strstr compare
  * /tests/bsim3/*.cir: .options noacct added
