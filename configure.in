@@ -1102,7 +1102,6 @@ AC_CONFIG_FILES([Makefile
                  tests/sensitivity/Makefile
                  tests/transient/Makefile
                  tests/transmission/Makefile
-		 tests/TransImpedanceAmp/Makefile
                  tests/resistance/Makefile
                  tests/vbic/Makefile])
 AC_OUTPUT
