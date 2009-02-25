@@ -70,6 +70,10 @@ Author: 1985 Wayne A. Christopher
 /* SJB - Uncomment this line for debug tracing */
 /*#define TRACE*/
 
+/* uncomment this line for getting deck output after all
+   manipulations into debug-out.txt */
+/* #define OUTDECK */
+
 /* globals -- wanted to avoid complicating inp_readall interface */
 static char *library_file[1000];
 static char *library_name[1000][1000];
@@ -984,7 +988,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
     char *global_copy = NULL, keep_char;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */ 
     FILE *newfp;
-#ifdef TRACE
+#if defined(TRACE) || defined(OUTDECK)
     FILE *fdo;
     struct line *tmp_ptr1 = NULL;    
 #endif
@@ -1506,7 +1510,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
           inp_add_control_section(working, &line_number);
     }
     *data = cc;
-#ifdef TRACE
+#if defined(TRACE) || defined(OUTDECK)
 	/*debug: print into file*/
 	if (tmp_ptr1) tfree(tmp_ptr1);
 	fdo = fopen("debug-out.txt", "w");

@@ -17,7 +17,9 @@
 #define Sini(s)       sini(s,sizeof(s)-4)
 
 
-typedef enum {Maxstr=25004} _nMaxstr;  /* was 255, string maxlen, may be up to 32000 or so */
+/* was 255, then 15000, string maxlen, 40000 to catch really big 
+   macros in .model lines */
+typedef enum {Maxstr=40000} _nMaxstr;  
 typedef enum {Esc=27} _nEsc;
 typedef enum {Tab=9} _nTab;
 typedef enum {Bs=8} _nBs;

@@ -1,6 +1,10 @@
 2009-02-25 Holger Vogt
  * inpdomod.c:436 error message adapted to existing devices
-
+ * /frontend/numparam/numparam.h, general.h: length of char arrays
+   set to 40000
+ * inpcom.c: preprocessor flag OUTDECK, if set will save complete 
+   deck into debug-out.txt
+     
 2009-02-25 Dietmar Warning
  * spicelib/parser/inp2q.c,155: 5-terminal only for adms bipolars
 

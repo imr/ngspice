@@ -22,8 +22,9 @@ typedef enum {Maxdico=40000} _nMaxdico; /* Size of symbol table*/
 /* Composite line length
    This used to be 250 characters, but this is too easy to exceed with a
    .model line, especially when spread over several continuation 
-   lines with much white space.  I hope 1000 will be enough. */
-typedef enum {Llen=15000} _nLlen;
+   lines with much white space.  Set to 40000 to catch really big
+   macros in .model lines. Will add 100k of memory compared to previous 25004*/
+typedef enum {Llen=40000} _nLlen;
 
 typedef char str50 [54];
 typedef char str80 [84];
