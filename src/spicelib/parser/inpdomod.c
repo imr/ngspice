@@ -430,7 +430,11 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 	default:		/* placeholder; use level xxx for the next model */
 	    err =
 		INPmkTemp
-		("Only MOS device levels 1-6,8,9,14,44,49-52,55-58,62,64 are supported in this binary\n");
+#ifdef ADMS
+		("Only MOS device levels 1-6,8-10,14,44,45,49,54-58,62,64 are supported in this binary\n");
+#else
+		("Only MOS device levels 1-6,8-10,14,49,54-58,62,64 are supported in this binary\n");
+#endif		
 	    break;
 	}
 	INPmakeMod(modname, type, image);

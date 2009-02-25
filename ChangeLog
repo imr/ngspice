@@ -1,3 +1,6 @@
+2009-02-25 Holger Vogt
+ * inpdomod.c:436 error message adapted to existing devices
+
 2009-02-25 Dietmar Warning
  * spicelib/parser/inp2q.c,155: 5-terminal only for adms bipolars
 
