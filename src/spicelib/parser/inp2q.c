@@ -17,45 +17,45 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     /* Qname <node> <node> <node> [<node>] <model> [<val>] [OFF]
      *       [IC=<val>,<val>] */
 
-    int mytype;			/* the type we looked up */
-    int type;			/* the type the model says it is */
-    char *line;			/* the part of the current line left to parse */
-    char *name;			/* the resistor's name */
-    char *nname1;		/* the first node's name */
-    char *nname2;		/* the second node's name */
-    char *nname3;		/* the third node's name */
-    char *nname4;		/* the fourth node's name */
+    int mytype;                 /* the type we looked up */
+    int type;                   /* the type the model says it is */
+    char *line;                 /* the part of the current line left to parse */
+    char *name;                 /* the resistor's name */
+    char *nname1;               /* the first node's name */
+    char *nname2;               /* the second node's name */
+    char *nname3;               /* the third node's name */
+    char *nname4;               /* the fourth node's name */
 #ifdef ADMS
-    char *nname5;		/* the fifth node's name */
+    char *nname5;               /* the fifth node's name */
 #endif
-    void *node1;		/* the first node's node pointer */
-    void *node2;		/* the second node's node pointer */
-    void *node3;		/* the third node's node pointer */
-    void *node4;		/* the fourth node's node pointer */
+    void *node1;                /* the first node's node pointer */
+    void *node2;                /* the second node's node pointer */
+    void *node3;                /* the third node's node pointer */
+    void *node4;                /* the fourth node's node pointer */
 #ifdef ADMS
-    void *node5;		/* the fifth node's node pointer */
+    void *node5;                /* the fifth node's node pointer */
 #endif
-    int error;			/* error code temporary */
-    int nodeflag;		/* flag indicating 4 or 5 nodes */
-    void *fast;			/* pointer to the actual instance */
-    IFvalue ptemp;		/* a value structure to package resistance into */
-    int waslead;		/* flag to indicate that funny unlabeled number was found */
-    double leadval;		/* actual value of unlabeled number */
-    char *model;		/* the name of the model */
-    INPmodel *thismodel;	/* pointer to model description for user's model */
-    void *mdfast;		/* pointer to the actual model */
-    IFuid uid;			/* uid of default model */
+    int error;                  /* error code temporary */
+    int nodeflag;               /* flag indicating 4 or 5 nodes */
+    void *fast;                 /* pointer to the actual instance */
+    IFvalue ptemp;              /* a value structure to package resistance into */
+    int waslead;                /* flag to indicate that funny unlabeled number was found */
+    double leadval;             /* actual value of unlabeled number */
+    char *model;                /* the name of the model */
+    INPmodel *thismodel;        /* pointer to model description for user's model */
+    void *mdfast;               /* pointer to the actual model */
+    IFuid uid;                  /* uid of default model */
 
     mytype = INPtypelook("BJT");
     if (mytype < 0) {
-	LITERR("Device type BJT not supported by this binary\n");
-	return;
+        LITERR("Device type BJT not supported by this binary\n");
+        return;
     }
 #ifdef TRACE
     printf("INP2Q: Parsing '%s'\n",current->line);
 #endif
 
-    nodeflag = 0;		/*  initially specify a 4 terminal device  */
+    nodeflag = 0;               /*  initially specify a 4 terminal device  */
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
@@ -69,27 +69,27 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
 
     /*  See if 4th token after device specification is a model name  */
     if (INPlookMod(model)) {
-	/* 3-terminal device - substrate to ground */
-	node4 = gnode;
+        /* 3-terminal device - substrate to ground */
+        node4 = gnode;
         INPinsert(&model, tab);
     } else {
-	nname4 = model;
-	INPtermInsert(ckt, &nname4, tab, &node4);
-	INPgetTok(&line, &model, 1);
+        nname4 = model;
+        INPtermInsert(ckt, &nname4, tab, &node4);
+        INPgetTok(&line, &model, 1);
         /*  See if 5th token after device specification is a model name  */
 #ifdef TRACE
         printf("INP2Q: checking for 4 node device\n");
 #endif
         if (INPlookMod(model)) {
-	   /* 4-terminal device - special case with tnodeout flag not handled */
+           /* 4-terminal device - special case with tnodeout flag not handled */
            INPinsert(&model, tab);
 #ifdef ADMS
         } else {
-	   /* 5-terminal device */
+           /* 5-terminal device */
 #ifdef TRACE
            printf("INP2Q: checking for 5 node device\n");
 #endif
-           nodeflag = 1;		/*  now specify a 5 node device  */
+           nodeflag = 1;                /*  now specify a 5 node device  */
            nname5 = model;
            INPtermInsert(ckt, &nname5, tab, &node5);
            INPgetTok(&line, &model, 1);
@@ -120,9 +120,9 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
             return;
         }
 #ifdef ADMS
-	if ((nodeflag && (thismodel->INPmodType != INPtypelook("hicum0")))
-	 && (nodeflag && (thismodel->INPmodType != INPtypelook("hicum2")))
-	 && (nodeflag && (thismodel->INPmodType != INPtypelook("mextram"))))
+        if ((nodeflag && (thismodel->INPmodType != INPtypelook("hicum0")))
+         && (nodeflag && (thismodel->INPmodType != INPtypelook("hicum2")))
+         && (nodeflag && (thismodel->INPmodType != INPtypelook("mextram"))))
         {
             LITERR("Too much nodes for this model type")
             return;
@@ -131,14 +131,14 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
         type = (thismodel->INPmodType);
         mdfast = (thismodel->INPmodfast);    
     } else {
-	type = mytype;
-	if (!tab->defQmod) {
-	    /* create default Q model */
-	    IFnewUid(ckt, &uid, (IFuid) NULL, "Q", UID_MODEL,
-		     (void **) NULL);
-	    IFC(newModel, (ckt, type, &(tab->defQmod), uid));
-	}
-	mdfast = tab->defQmod;
+        type = mytype;
+        if (!tab->defQmod) {
+            /* create default Q model */
+            IFnewUid(ckt, &uid, (IFuid) NULL, "Q", UID_MODEL,
+                     (void **) NULL);
+            IFC(newModel, (ckt, type, &(tab->defQmod), uid));
+        }
+        mdfast = tab->defQmod;
     }
     
 #ifdef TRACE
@@ -152,13 +152,13 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     IFC(bindNode, (ckt, fast, 4, node4));
 
 #ifdef ADMS
-     if (type) /* the type is set above - must be for adms models something like 57-59 */
+     if (type >= 57) /* the type is set above - must be for adms models something like 57-59 */
      {
-            if (nodeflag) { /* was the string a node ? */
-              IFC(bindNode, (ckt, fast, 5, node5));
-            } else {
-              ((GENinstance *) fast)->GENnode5 = -1;
-            }
+        if (nodeflag) { /* was the string a node ? */
+          IFC(bindNode, (ckt, fast, 5, node5));
+        } else {
+          ((GENinstance *) fast)->GENnode5 = -1;
+        }
      }
 #endif
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
