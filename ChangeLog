@@ -1,3 +1,6 @@
+2009-02-25 Dietmar Warning
+ * spicelib/parser/inp2q.c,155: 5-terminal only for adms bipolars
+
 2009-02-24 Dietmar Warning
  * configure.in: removed Makefile for tests/TransImpedanceAmp
  * tests/bsim3/.../ac_sim/*.out: removed the imaginary part of frequency on x-axis
