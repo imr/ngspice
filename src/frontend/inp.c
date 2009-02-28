@@ -57,6 +57,13 @@ static char * upper(register char *string);
 static bool doedit(char *filename);
 static void line_free_x(struct line * deck, bool recurse);
 
+
+/* uncomment this line for getting deck output after all
+   manipulations into debug-out2.txt.
+   Used to check numpram substitution, compare to debug.out.txt
+   retrieved from inpcom.c, fcn inp_readall()*/
+/* #define OUTDECK */
+
 /* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
 void
 com_listing(wordlist *wl)
@@ -592,6 +599,20 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 #ifdef TRACE
       /* SDB debug statement */
       printf("In inp_spsource, done with dodeck.\n");
+#endif
+
+/* print out the expanded deck into debug-out2.txt */
+#if defined(TRACE) || defined(OUTDECK)
+   {
+    FILE *fdo;
+    struct line *tmp_ptr1 = NULL;   
+   /*debug: print into file*/
+	fdo = fopen("debug-out2.txt", "w");
+    for(tmp_ptr1 = deck; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
+       fprintf(fdo, "%s\n", tmp_ptr1->li_line);        
+         ;
+    (void) fclose(fdo);
+   }
 #endif
 
       /* Now that the deck is loaded, do the commands, if there are any */

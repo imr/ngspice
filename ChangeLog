@@ -1,3 +1,7 @@
+2009-02-28 Holger Vogt
+ * inp.c:605 ff, fcn inp_spsource(), if preproc. flag OUTDECK defined,
+   the deck is saved as debug-out2.txt, here after parameter substitution
+
 2009-02-25 Holger Vogt
  * inpdomod.c:436 error message adapted to existing devices
  * /frontend/numparam/numparam.h, general.h: length of char arrays
