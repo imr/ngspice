@@ -203,11 +203,11 @@ Vsc3 = Vsc4 - Vc3c4 ;
   
    Ib1_s = XIBI * Ibf0 * (eVb1e1 - 1.0);   
    `expLin(tmpExp,Vb2e1 * VtINV / MLF)
-   Ib2 = IBF_TM * (tmpExp - 1.0) + GMIN * Vb2e1;       
+   Ib2 = IBF_TM * (tmpExp - 1.0) + _circuit_gmin * Vb2e1;       
    `expLin(tmpExp,0.5 * Vb1c4 * VtINV)
    Ib3 = IBR_TM * (eVb1c4 - 1.0) /   
          (tmpExp + exp(0.5 * VLR * VtINV)) +    
-         GMIN  * Vb1c4;    
+         _circuit_gmin  * Vb1c4;    
       
    // Iex, Isub (XIex, XIsub)   
   

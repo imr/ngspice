@@ -189,6 +189,6 @@ parameter integer TYPE    = 1      from [-1:1]
 `else 
 parameter integer TYPE    = 1      from [-1:1] exclude 0;   
 `endif 
-parameter real    GMIN    = 1.0e-12  from (0:1e-10]  
-                 `ATTR(info="Minimum conductance");  
- 
+//parameter real    GMIN    = 1.0e-12  from (0:1e-10]  
+//                 `ATTR(info="Minimum conductance");  
+// 

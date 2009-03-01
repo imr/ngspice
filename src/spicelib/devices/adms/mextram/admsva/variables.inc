@@ -1,5 +1,7 @@
 // Declaration of variables 
 
+real _circuit_gmin;
+
 // Model constants   
       
 real An, Bn;   
