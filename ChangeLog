@@ -1,3 +1,11 @@
+2009-03-01 Dietmar Warning
+ * spicelib/parser/inp2q.c: allow 4-terminal instances for adms, then the fifth
+   node will be set to ground (same as substrate node for gp if fourth node 
+   isn't set). Checked with lots of examples but not 100% waterproof.
+ * tests/bsim3: reorganized the entire directory structure with focus only to the
+   latest published Berkeley testbench for bsim3. ac and tran test included but
+   there are still problems in comparing their spice3 results to ngspice.
+
 2009-02-28 Holger Vogt
  * inp.c:605 ff, fcn inp_spsource(), if preproc. flag OUTDECK defined,
    the deck is saved as debug-out2.txt, here after parameter substitution
