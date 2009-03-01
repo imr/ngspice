@@ -1072,19 +1072,9 @@ AC_CONFIG_FILES([Makefile
                  tests/bsim1/Makefile
                  tests/bsim2/Makefile
                  tests/bsim3/Makefile
-                 tests/bsim3/Berkeley/Makefile
-                 tests/bsim3/Berkeley/3v0/Makefile
-                 tests/bsim3/Berkeley/3v0/ac_sim/Makefile
-                 tests/bsim3/Berkeley/3v0/dc_sim/Makefile
-                 tests/bsim3/Berkeley/3v0/tran_sim/Makefile
-                 tests/bsim3/Berkeley/3v1/Makefile
-                 tests/bsim3/Berkeley/3v1/ac_sim/Makefile
-                 tests/bsim3/Berkeley/3v1/dc_sim/Makefile
-                 tests/bsim3/Berkeley/3v1/tran_sim/Makefile
-                 tests/bsim3/Berkeley/3v2/Makefile
-                 tests/bsim3/Berkeley/3v2/ac_sim/Makefile
-                 tests/bsim3/Berkeley/3v2/dc_sim/Makefile
-                 tests/bsim3/Berkeley/3v2/tran_sim/Makefile
+                 tests/bsim3/ac_sim/Makefile
+                 tests/bsim3/dc_sim/Makefile
+                 tests/bsim3/tran_sim/Makefile
                  tests/bsim3soi/Makefile
                  tests/bsim3soidd/Makefile
                  tests/bsim3soifd/Makefile
