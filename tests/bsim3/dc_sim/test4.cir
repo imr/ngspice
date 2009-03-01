@@ -1,0 +1,20 @@
+***  For BSIM3V3  general purpose check (Id-Vg) for Nmosfet***
+******************************************
+
+*** circuit description ***
+m1 2 1 0 0 n1 L=0.35u W=10.0u
+vgs 1 0 3.5 
+vds 2 0 3.5 
+
+.options noacct
+.dc vgs 0 3.5 0.05 vds 0.1 3.1 1
+
+
+.print dc v(2) i(vds)
+
+.include modelcard.nmos
+.end
+
+
+
+

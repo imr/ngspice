@@ -1,0 +1,21 @@
+*****Single NMOS Transistor For BSIM3V3  general purpose check (Id-Vd) ***
+
+*** circuit description ***
+m1 2 1 0 0 n1 L=0.35u W=10.0u
+vgs 1 0 3.5 
+vds 2 0 3.5 
+
+
+.dc vds 0 3.5 0.05 vgs 0 3.5 0.5 
+.options Temp=100.0 noacct
+
+.print dc v(1) i(vds)
+
+.include modelcard.nmos
+
+.end
+
+
+
+
+
