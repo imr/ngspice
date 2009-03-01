@@ -17,7 +17,6 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     /* Qname <node> <node> <node> [<node>] <model> [<val>] [OFF]
      *       [IC=<val>,<val>] */
 
-    int mytype;                 /* the type we looked up */
     int type;                   /* the type the model says it is */
     char *line;                 /* the part of the current line left to parse */
     char *name;                 /* the resistor's name */
@@ -46,13 +45,8 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     void *mdfast;               /* pointer to the actual model */
     IFuid uid;                  /* uid of default model */
 
-    mytype = INPtypelook("BJT");
-    if (mytype < 0) {
-        LITERR("Device type BJT not supported by this binary\n");
-        return;
-    }
 #ifdef TRACE
-    printf("INP2Q: Parsing '%s'\n",current->line);
+    printf("INP2Q: Parsing '%s'\n", current->line);
 #endif
 
     nodeflag = 0;               /*  initially specify a 4 terminal device  */
@@ -67,11 +61,16 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     INPtermInsert(ckt, &nname3, tab, &node3);
     INPgetTok(&line, &model, 1);
 
+    thismodel = (INPmodel *) NULL;
     /*  See if 4th token after device specification is a model name  */
     if (INPlookMod(model)) {
         /* 3-terminal device - substrate to ground */
         node4 = gnode;
         INPinsert(&model, tab);
+#ifdef TRACE
+        printf("INP2Q: 3-terminal device - substrate to ground\n");
+#endif
+        current->error = INPgetMod(ckt, model, &thismodel, tab);
     } else {
         nname4 = model;
         INPtermInsert(ckt, &nname4, tab, &node4);
@@ -83,7 +82,17 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
         if (INPlookMod(model)) {
            /* 4-terminal device - special case with tnodeout flag not handled */
            INPinsert(&model, tab);
+           current->error = INPgetMod(ckt, model, &thismodel, tab);
 #ifdef ADMS
+           if ((thismodel->INPmodType == INPtypelook("hicum0"))
+            || (thismodel->INPmodType == INPtypelook("hicum2"))
+            || (thismodel->INPmodType == INPtypelook("mextram")))
+           {
+               node5 = gnode; /* 4-terminal adms device - thermal node to ground */
+               nname5 = "0";
+               INPtermInsert(ckt, &nname5, tab, &node5);
+               nodeflag = 1;  /* now specify a 5 node device  */
+           }
         } else {
            /* 5-terminal device */
 #ifdef TRACE
@@ -94,28 +103,29 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
            INPtermInsert(ckt, &nname5, tab, &node5);
            INPgetTok(&line, &model, 1);
            INPinsert(&model, tab);
+           current->error = INPgetMod(ckt, model, &thismodel, tab);
 #endif
         }
     }
 
-    current->error = INPgetMod(ckt, model, &thismodel, tab);
 #ifdef TRACE
     printf("INP2Q: Looking up model\n");
 #endif
+
     if (thismodel != NULL) {
-           if((thismodel->INPmodType != INPtypelook("BJT"))
-           && (thismodel->INPmodType != INPtypelook("BJT2"))
+        if ((thismodel->INPmodType != INPtypelook("BJT"))
+         && (thismodel->INPmodType != INPtypelook("BJT2"))
 #ifdef CIDER
-           && (thismodel->INPmodType != INPtypelook("NBJT"))
-           && (thismodel->INPmodType != INPtypelook("NBJT2"))
+         && (thismodel->INPmodType != INPtypelook("NBJT"))
+         && (thismodel->INPmodType != INPtypelook("NBJT2"))
 #endif
 #ifdef ADMS
-           && (thismodel->INPmodType != INPtypelook("hicum0"))
-           && (thismodel->INPmodType != INPtypelook("hicum2"))
-           && (thismodel->INPmodType != INPtypelook("mextram"))
+         && (thismodel->INPmodType != INPtypelook("hicum0"))
+         && (thismodel->INPmodType != INPtypelook("hicum2"))
+         && (thismodel->INPmodType != INPtypelook("mextram"))
 #endif
-           && (thismodel->INPmodType != INPtypelook("VBIC"))
-          ) {
+         && (thismodel->INPmodType != INPtypelook("VBIC")))
+        {
             LITERR("incorrect model type")
             return;
         }
@@ -131,20 +141,22 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
         type = (thismodel->INPmodType);
         mdfast = (thismodel->INPmodfast);    
     } else {
-        type = mytype;
+        type = INPtypelook("BJT");
+        if (type < 0) {
+            LITERR("Device type BJT not supported by this binary\n");
+            return;
+        }
         if (!tab->defQmod) {
             /* create default Q model */
-            IFnewUid(ckt, &uid, (IFuid) NULL, "Q", UID_MODEL,
-                     (void **) NULL);
+            IFnewUid(ckt, &uid, (IFuid) NULL, "Q", UID_MODEL, (void **) NULL);
             IFC(newModel, (ckt, type, &(tab->defQmod), uid));
         }
         mdfast = tab->defQmod;
     }
     
 #ifdef TRACE
-    printf ("INP2Q: Just about to dive into newInstance\n");
+    printf("INP2Q: Type: %d nodeflag: %d instancename: %s\n", type, nodeflag, name);
 #endif
-    
     IFC(newInstance, (ckt, mdfast, &fast, name));
     IFC(bindNode, (ckt, fast, 1, node1));
     IFC(bindNode, (ckt, fast, 2, node2));
@@ -152,20 +164,16 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
     IFC(bindNode, (ckt, fast, 4, node4));
 
 #ifdef ADMS
-     if (type >= 57) /* the type is set above - must be for adms models something like 57-59 */
-     {
-        if (nodeflag) { /* was the string a node ? */
-          IFC(bindNode, (ckt, fast, 5, node5));
-        } else {
-          ((GENinstance *) fast)->GENnode5 = -1;
-        }
-     }
+    if (nodeflag) { /* 5-node device */
+        IFC(bindNode, (ckt, fast, 5, node5));
+    }
 #endif
+
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
     if (waslead) {
 #ifdef CIDER
         if( type == INPtypelook("NBJT2") ) {
-            LITERR(" error:  no unlabeled parameter permitted on NBJT2\n")
+            LITERR(" error: no unlabeled parameter permitted on NBJT2\n")
         } else {
 #endif
             ptemp.rValue = leadval;
