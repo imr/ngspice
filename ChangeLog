@@ -1,3 +1,8 @@
+2009-03-03 Dietmar Warning
+ * tests/bsim3/*_sim/*.out: adapt output format to spice3 numdgt convention, most 
+   tests are running except tran tests and op-amp ac test.
+ * test/bin/check.sh: extend the filter rules by two keywords, not nice but works
+
 2009-03-01 Dietmar Warning
  * spicelib/parser/inp2q.c: allow 4-terminal instances for adms, then the fifth
    node will be set to ground (same as substrate node for gp if fourth node 
