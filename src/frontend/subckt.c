@@ -300,16 +300,24 @@ inp_subcktexpand(struct line *deck)
 	modnames = NULL;
     }
 
+   /* Count numbers of line in deck after expansion */
+   if (ll!=NULL) {
+      dynMaxckt = 0; /* number of lines in deck after expansion */
+      for (c = ll; c; c = c->li_next)
+         dynMaxckt++;
+   }
    /* Now check to see if there are still subckt instances undefined... */
-    if (ll!=NULL) for (c = ll; c; c = c->li_next)
-	if (ciprefix(invoke, c->li_line)) {
-	    fprintf(cp_err, "Error: unknown subckt: %s\n", c->li_line);
-	    if ( use_numparams ) {
-	       ok= ok && nupa_signal(NUPAEVALDONE, NULL);
-	    }
-	    return NULL;
-	}
-	
+   if (ll!=NULL) {
+      for (c = ll; c; c = c->li_next) {
+         if (ciprefix(invoke, c->li_line)) {
+            fprintf(cp_err, "Error: unknown subckt: %s\n", c->li_line);
+            if ( use_numparams ) {
+               ok= ok && nupa_signal(NUPAEVALDONE, NULL);
+            }
+            return NULL;
+         }
+      }
+   }
    if ( use_numparams ) {
       /* the NUMPARAM final line translation pass */
       ok= ok && nupa_signal(NUPASUBDONE, NULL); 

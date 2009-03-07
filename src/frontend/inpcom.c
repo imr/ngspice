@@ -90,6 +90,16 @@ static char *func_macro[5000];
 static int  num_functions;
 static int  num_parameters[1000];
 
+/* Collect information for dynamic allocation of numparam arrays */
+/* number of lines in input deck */
+int dynmaxline;  /* inpcom.c 1524 */
+/* max. line length in input deck */
+int dynnLen; /* inpcom.c 1526 */
+ /* number of lines in deck after expansion */
+int dynMaxckt = 0; /* subckt.c 307 */
+/* number of parameter substitutions */
+long dynsubst; /* spicenum.c 221 */
+
 /* static declarations */
 static char * readline(FILE *fd);
 static int  get_number_terminals( char *c );
@@ -990,8 +1000,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
     FILE *newfp;
 #if defined(TRACE) || defined(OUTDECK)
     FILE *fdo;
+#endif    
     struct line *tmp_ptr1 = NULL;    
-#endif
+
     int i, j;
     bool found_library, found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
     bool dir_name_flag = FALSE;
@@ -1510,15 +1521,25 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
           inp_add_control_section(working, &line_number);
     }
     *data = cc;
+
+    /* get max. line length and number of lines in input deck*/
+    dynmaxline = 0;
+    dynnLen = 0;
+    for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
+       dynmaxline++;
+       if (dynnLen < strlen(tmp_ptr1->li_line))
+          dynnLen = strlen(tmp_ptr1->li_line);        
+    }
 #if defined(TRACE) || defined(OUTDECK)
-	/*debug: print into file*/
-	if (tmp_ptr1) tfree(tmp_ptr1);
-	fdo = fopen("debug-out.txt", "w");
+    /*debug: print into file*/
+    fdo = fopen("debug-out.txt", "w");
     for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
        fprintf(fdo, "%s\n", tmp_ptr1->li_line);        
          ;
     (void) fclose(fdo);  
+    fprintf(stdout, "lLen %d, maxline %d\n", dynnLen, dynmaxline);
 #endif
+
     return;
 }
 

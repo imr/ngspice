@@ -22,4 +22,6 @@ extern void   nupa_add_param(char *param_name, double value);
 extern void   nupa_add_inst_param(char *param_name, double value);
 extern void   nupa_copy_inst_dico();
 
+extern int dynMaxckt; /* number of lines in deck after expansion */
+
 #endif /* NUMPAIF_H */

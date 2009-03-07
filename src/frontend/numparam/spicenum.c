@@ -32,6 +32,8 @@ extern void txfree (void *ptr);
 char *nupa_inst_name;
 static tdico *inst_dico;
 
+extern long dynsubst; /* inpcom.c */
+
 /* Uncomment this line to allow debug tracing */
 /* #define TRACE_NUMPARAMS */
 
@@ -216,7 +218,7 @@ stripbraces (char *s)
 
       ls = length (s);
     }
-
+  dynsubst = placeholder;
   return n;
 }
 
@@ -702,43 +704,43 @@ nupa_copy (char *s, int linenum)
   dico->srcline = linenum;
 
   if ((!inexpansion) && (linenum >= 0) && (linenum < Maxline))
-    {
-      linecount++;
-      dico->refptr[linenum] = s;
-      c = transform (dico, u, incontrol, keywd);
-      if (c == 'C')
-	incontrol = 1;
-      else if (c == 'E')
-	incontrol = 0;
+  {
+    linecount++;
+    dico->refptr[linenum] = s;
+    c = transform (dico, u, incontrol, keywd);
+    if (c == 'C')
+      incontrol = 1;
+    else if (c == 'E')
+      incontrol = 0;
 
-      if (incontrol)
-	c = 'C';		/* force it */
+    if (incontrol)
+      c = 'C';  /* force it */
 
-      d = dico->category[linenum];	/* warning if already some strategic line! */
+    d = dico->category[linenum];	/* warning if already some strategic line! */
 
-      if ((d == 'P') || (d == 'S') || (d == 'X'))
-	fprintf (stderr,
-		 " Numparam warning: overwriting P,S or X line (linenum == %d).\n",
-		 linenum);
+    if ((d == 'P') || (d == 'S') || (d == 'X'))
+      fprintf (stderr,
+		  " Numparam warning: overwriting P,S or X line (linenum == %d).\n",
+		  linenum);
 
-      dico->category[linenum] = c;
-    }				/* keep a local copy and mangle the string */
+    dico->category[linenum] = c;
+  }				/* keep a local copy and mangle the string */
 
   ls = length (u);
   t = strdup (u);
 
   if (t == NULL)
-    {
-      fputs ("Fatal: String malloc crash in nupa_copy()\n", stderr);
-      exit (-1);
-    }
+  {
+    fputs ("Fatal: String malloc crash in nupa_copy()\n", stderr);
+    exit (-1);
+  }
   else
+  {
+    if (!inexpansion)
     {
-      if (!inexpansion)
-	{
-	  putlogfile (dico->category[linenum], linenum, t);
-	};
-    }
+      putlogfile (dico->category[linenum], linenum, t);
+    };
+  }
   return t;
 }
 

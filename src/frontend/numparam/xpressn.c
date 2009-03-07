@@ -20,6 +20,7 @@ static Str (150, keys);                /* all my keywords */
 static Str (150, fmath);        /* all math functions */
 
 extern char *nupa_inst_name; /* see spicenum.c */
+extern long dynsubst; /* see inpcom.c */
 
 static double
 ternary_fcn (int conditional, double if_value, double else_value)
@@ -1676,7 +1677,7 @@ insertnumber (tdico * dico, int i, char *s, char *u)
       if (found)
         {
           accu = accu - 1000000000L;        /* plausibility test */
-          found = (accu > 0) && (accu < 40000);
+          found = (accu > 0) && (accu < dynsubst + 1); /* dynsubst numbers have been allocated */
         }
       i++;
     }

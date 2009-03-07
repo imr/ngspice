@@ -29,7 +29,7 @@ typedef enum {Llen=40000} _nLlen;
 typedef char str50 [54];
 typedef char str80 [84];
 
-typedef enum {Maxline=20000} _nMaxline; /* Size of initial unexpanded circuit code */
+typedef enum {Maxline=70000} _nMaxline; /* Size of initial unexpanded circuit code */
 typedef enum {Maxckt=40000} _nMaxckt;   /* Size of expanded circuit code */
 
 
