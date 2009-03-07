@@ -1,4 +1,4 @@
-** NMOSFET: Benchmarking Implementation of BSIM4 by Jane Xi 05/09/2003.
+** NMOSFET: Benchmarking Implementation of BSIM4.6.1 by Mohan V. Dunga 12/13/2006.
 
 ** Circuit Description **
 m1 2 1  0 3 n1 L=0.09u W=10.0u rgeoMod=1
