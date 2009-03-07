@@ -1,10 +1,14 @@
+2009-03-07 Holger Vogt
+  * inpcom.c fcn inp_fix_for_numparam(): no quotes changed for plot lines within
+    control section, e.g. plot v(2) xlabel 'my input' ylabel 'output'
+
 2009-03-07 Dietmar Warning
  * tests/bsim4/*.out: same as below for bsim3
 
 2009-03-07 Holger Vogt
   * spicenum.c inpcom.c subckt.c xpressn.c numpaif.h numparam.h general.h
     Collect information to allow dynamic memory allocation for numparam
-    ( Still to be implementd ! )
+    ( Still to be implemented ! )
     Defined in inpcom.c: dynmaxline dynnLen dynMaxckt dynsubst
 
 2009-03-03 Dietmar Warning

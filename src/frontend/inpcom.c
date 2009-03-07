@@ -1801,23 +1801,32 @@ inp_remove_ws( char *s )
 static void
 inp_fix_for_numparam(struct line *deck)
 {
-    struct line *c=deck;
-    while( c!=NULL) {
+   bool found_control = FALSE;
+   struct line *c=deck;
+   while( c!=NULL) {
       if ( ciprefix( ".modif", c->li_line ) ) *c->li_line = '*';
       if ( ciprefix( "*lib", c->li_line ) ) {
-	c = c->li_next;
-	continue;
+         c = c->li_next;
+         continue;
       }
+ 
+      /* exclude plot line between .control and .endc from getting quotes changed */
+      if ( ciprefix( ".control", c->li_line ) ) found_control = TRUE;
+      if ( ciprefix( ".endc",    c->li_line ) ) found_control = FALSE; 
+      if ((found_control) && (ciprefix( "plot", c->li_line ))) {
+         c = c->li_next;
+         continue;
+      }      	 
       
       if ( !ciprefix( "*lib", c->li_line ) && !ciprefix( "*inc", c->li_line ) )
-	inp_change_quotes(c->li_line);
+         inp_change_quotes(c->li_line);
 
       if ( ciprefix( ".subckt", c->li_line ) ) {
-	c->li_line = inp_fix_subckt(c->li_line);
+         c->li_line = inp_fix_subckt(c->li_line);
       }
 
-      c= c->li_next;
-    }
+      c = c->li_next;
+   }
 }
 
 static void
