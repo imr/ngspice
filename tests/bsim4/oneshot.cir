@@ -1,4 +1,4 @@
-** One-Shot Trigger (Tran): Benchmarking Implementation of BSIM4 by Jane Xi 05/09/2003.
+** One-Shot Trigger (Tran): Benchmarking Implementation of BSIM4.6.1 by Mohan V. Dunga 12/13/2006.
 
 Md1 4 in Vdd Vdd  P1 W=3.6u L=0.2u rgeomod=1
 Md2 4 in 0 0 N1 W=1.8u L=0.2u rgeomod=1
@@ -33,6 +33,6 @@ vin in 0 pulse 0 1.8 1ns .1ns .1ns .8ns 5ns
 
 .tran 1ns 10ns
 .print tran in out
-.option post reltol=1e-3 noacct
+.option post reltol=1e-2 noacct
 
 .end
