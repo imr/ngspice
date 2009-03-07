@@ -1,3 +1,6 @@
+2009-03-07 Dietmar Warning
+ * tests/bsim4/*.out: same as below for bsim3
+
 2009-03-07 Holger Vogt
   * spicenum.c inpcom.c subckt.c xpressn.c numpaif.h numparam.h general.h
     Collect information to allow dynamic memory allocation for numparam
