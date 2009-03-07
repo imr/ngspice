@@ -1,4 +1,4 @@
-** Operational Amplifier (AC): Benchmarking Implementation of BSIM4 by Jane Xi 05/09/2003.
+** Operational Amplifier (AC): Benchmarking Implementation of BSIM4.6.1 by Mohan V. Dunga 12/13/2006.
 
 M1 bias1 1 cm cm N1 L=0.09u W=10u
 M2 bias2 in2 cm cm N1 L=0.09u W=10u
@@ -20,10 +20,9 @@ vic c 0 dc 0
 vss vss 0 -1.8
 Vdd vdd 0 1.8 
 
+.option noacct
 .ac dec 10 100 100Meg 
 .print ac vdb(8)
-
-.option noacct
 
 .include modelcard.nmos
 .include modelcard.pmos
