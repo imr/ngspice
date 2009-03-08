@@ -3,8 +3,8 @@ VBIC Pole Zero Test
 Vcc    3 0 5
 Rc     2 3 1k
 Rb     3 1 200k
-I1     0 1 AC 1
-Vmeas  4 2
+I1     0 1 AC 1 DC 0
+Vmeas  4 2 DC 0
 Cshunt 4 0 .1u
 
 Q1  2 1 0 0 N1
