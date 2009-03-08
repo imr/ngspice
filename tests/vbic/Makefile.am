@@ -6,7 +6,6 @@ TESTS = CEamp.cir		\
 	FG.cir 			\
 	FO.cir 			\
 	diffamp.cir 		\
-	diode.cir 		\
 	noise_scale_test.cir 	\
 	temp.cir
 
