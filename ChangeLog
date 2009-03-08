@@ -1,3 +1,7 @@
+2009-03-08 Holger Vogt
+  * plotit.c fcn plotit(): add quotes again for xlabel, ylabel, title
+   in cline
+
 2009-03-07 Holger Vogt
   * inpcom.c fcn inp_fix_for_numparam(): no quotes changed for plot lines within
     control section, e.g. plot v(2) xlabel 'my input' ylabel 'output'

@@ -250,6 +250,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     double tt, mx, my, rad;
     wordlist *wwl, *tw;
     char cline[BSIZE_SP], buf[BSIZE_SP], *pname;
+    char *nxlabel = NULL, *nylabel = NULL, *ntitle = NULL;
 
     int newlen;
     struct dvec *v, *newv_scale;
@@ -260,20 +261,37 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     bool rtn = FALSE;
 
     if (!wl)
-	goto quit1;
+    goto quit1;
     wl_root = wl;
 
-    /* First get the command line, without the limits. */
+    /* First get the command line, without the limits. 
+       Wii be used for zoomed windows */
     wwl = wl_copy(wl);
     (void) getlims(wwl, "xl", 2);
     (void) getlims(wwl, "xlimit", 2);
     (void) getlims(wwl, "yl", 2);
     (void) getlims(wwl, "ylimit", 2);
+    /* remove tile, xlabel, ylabel */
+    nxlabel = getword(wwl, "xlabel");
+    nylabel = getword(wwl, "ylabel");
+    ntitle = getword(wwl, "title");
     pname = wl_flatten(wwl);
     (void) sprintf(cline, "plot %s", pname);
     tfree(pname);
-
     wl_free(wwl);
+    /* add title, xlabel or ylabel, if available, with quotes '' */
+    if (nxlabel) {
+       sprintf(cline, "%s xlabel '%s'", cline, nxlabel);
+       tfree (nxlabel);
+    }
+    if (nylabel) {
+       sprintf(cline, "%s ylabel '%s'", cline, nylabel);
+       tfree (nylabel);
+    }
+    if (ntitle) {
+       sprintf(cline, "%s title '%s'", cline, ntitle);
+       tfree (ntitle);
+    }
 
     /* Now extract all the parameters. */
 
