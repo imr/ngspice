@@ -14,7 +14,7 @@ R3 R3_P R3_N 500k
 
 .NOISE v(vout) V2 DEC 25 1k 100Meg
 
-.print noise sqrt(onoise_spectrum)
+.print noise v(inoise_spectrum)
 
 
 .MODEL N1 NPN LEVEL=4 
