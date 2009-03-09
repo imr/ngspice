@@ -181,8 +181,8 @@ DCtran(CKTcircuit *ckt,
                 ckt->CKTdcMaxIter);
                 
          if(converged != 0) {
-			fprintf(stdout,"\nTransient solution failed -\n");
-			CKTncDump(ckt);
+            fprintf(stdout,"\nTransient solution failed -\n");
+            CKTncDump(ckt);
      /*      CKTnode *node;
            double new, old, tol;
            int i=1;
@@ -213,7 +213,9 @@ DCtran(CKTcircuit *ckt,
              };
              i++;
            } */
-        } else {
+           fprintf(stdout,"\n");
+           fflush(stdout);   
+        } else if (!ft_noacctprint) {
            fprintf(stdout,"\nInitial Transient Solution\n");
            fprintf(stdout,"--------------------------\n\n");
            fprintf(stdout,"%-30s %15s\n", "Node", "Voltage");
@@ -223,9 +225,10 @@ DCtran(CKTcircuit *ckt,
                  fprintf(stdout,"%-30s %15g\n", node->name,
                                              *(ckt->CKTrhsOld+node->number));
            };
+           fprintf(stdout,"\n");
+           fflush(stdout);        
         };
-        fprintf(stdout,"\n");
-        fflush(stdout);
+
         if(converged != 0) return(converged);
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add IPC stuff */
