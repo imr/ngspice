@@ -92,9 +92,9 @@ static int  num_parameters[1000];
 
 /* Collect information for dynamic allocation of numparam arrays */
 /* number of lines in input deck */
-int dynmaxline;  /* inpcom.c 1524 */
+int dynmaxline;  /* inpcom.c 1529 */
 /* max. line length in input deck */
-int dynnLen; /* inpcom.c 1526 */
+int dynLlen; /* inpcom.c 1526 */
  /* number of lines in deck after expansion */
 int dynMaxckt = 0; /* subckt.c 307 */
 /* number of parameter substitutions */
@@ -1524,11 +1524,11 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
 
     /* get max. line length and number of lines in input deck*/
     dynmaxline = 0;
-    dynnLen = 0;
+    dynLlen = 0;
     for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
        dynmaxline++;
-       if (dynnLen < strlen(tmp_ptr1->li_line))
-          dynnLen = strlen(tmp_ptr1->li_line);        
+       if (dynLlen < strlen(tmp_ptr1->li_line))
+          dynLlen = strlen(tmp_ptr1->li_line);        
     }
 #if defined(TRACE) || defined(OUTDECK)
     /*debug: print into file*/
@@ -1537,7 +1537,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
        fprintf(fdo, "%s\n", tmp_ptr1->li_line);        
          ;
     (void) fclose(fdo);  
-    fprintf(stdout, "lLen %d, maxline %d\n", dynnLen, dynmaxline);
+    fprintf(stdout, "lLen %d, maxline %d\n", dynLlen, dynmaxline);
 #endif
 
     return;

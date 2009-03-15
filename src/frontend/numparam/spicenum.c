@@ -32,7 +32,14 @@ extern void txfree (void *ptr);
 char *nupa_inst_name;
 static tdico *inst_dico;
 
-extern long dynsubst; /* inpcom.c */
+/* number of parameter substitutions, available only after the substitution */
+extern long dynsubst; /* spicenum.c:144 */
+
+/* number of lines in input deck */
+extern int dynmaxline; /* inpcom.c:1529 */
+
+/* max. line length in input deck */
+int dynLlen; /* inpcom.c:1531 */
 
 /* Uncomment this line to allow debug tracing */
 /* #define TRACE_NUMPARAMS */
@@ -60,49 +67,11 @@ extern long dynsubst; /* inpcom.c */
 #define PlaceHold 1000000000L
 static long placeholder = 0;
 
-#ifdef NOT_REQUIRED		/* SJB - not required as front-end now does stripping */
-static int
-stripcomment (char *s)
-/* allow end-of-line comments in Spice, like C++ */
-{
-  int i, ls;
-  char c, d;
-  unsigned char stop;
-  ls = length (s);
-  c = ' ';
-  i = 0;
-  stop = 0;
-
-  while ((i < ls) && !stop)
-    {
-      d = c;
-      i++;
-      c = s[i - 1];
-      stop = (c == d) && ((c == '/') || (c == '-'));
-      /* comments after // or -- */ ;
-    }
-  if (stop)
-    {
-      i = i - 2;		/*last valid character before Comment */
-      while ((i > 0) && (s[i - 1] <= ' '))
-	i--;			/*strip blank space */
-
-      if (i <= 0)
-	scopy (s, "");
-      else
-	pscopy (s, s, 1, i);
-    }
-  else
-    i = -1;
-
-  return i /* i>=0  if comment stripped at that position */ ;
-}
-#endif /* NOT_REQUIRED */
 
 static void
 stripsomespace (char *s, unsigned char incontrol)
 {
-/* iff s starts with one of some markers, strip leading space */
+/* if s starts with one of some markers, strip leading space */
   Str (12, markers);
   int i, ls;
   scopy (markers, "*.&+#$");
@@ -120,106 +89,60 @@ stripsomespace (char *s, unsigned char incontrol)
 
 }
 
-#if 0				/* unused? */
-void
-partition (char *t)
-/* t is a list val=expr val=expr .... Insert Lf-& before any val= */
-/* the Basic preprocessor doesnt understand multiple cmd/line */
-/* bug:  strip trailing spaces */
-{
-  Strbig (Llen, u);
-  int i, lt, state;
-  char c;
-  cadd (u, Intro);
-  state = 0;			/* a trivial 3-state machine */
-  lt = length (t);
-  while (t[lt - 1] <= ' ')
-    lt--;
-
-  for (i = 0; i < lt; i++)
-    {
-      c = t[i];
-      if (c == '=')
-	{
-	  state = 1;
-	}
-      else if ((state == 1) && (c == ' '))
-	{
-	  state = 2;
-	}
-      if (state == 2)
-	{
-	  cadd (u, Lf);
-	  cadd (u, Intro);
-	  state = 0;
-	}
-      cadd (u, c);
-    }
-  scopy (t, u);
-  for (i = 0; i < length (t); i++)
-    {				/* kill braces inside */
-      if ((t[i] == '{') || (t[i] == '}'))
-	{
-	  t[i] = ' ';
-	}
-    }
-}
-#endif
-
 static int
 stripbraces (char *s)
 /* puts the funny placeholders. returns the number of {...} substitutions */
 {
-  int n, i, nest, ls, j;
-  Strbig (Llen, t);
-  n = 0;
-  ls = length (s);
-  i = 0;
+   int n, i, nest, ls, j;
+   Strbig (Llen, t);
+   n = 0;
+   ls = length (s);
+   i = 0;
 
-  while (i < ls)
-    {
+   while (i < ls)
+   {
       if (s[i] == '{')
-	{			/* something to strip */
-	  j = i + 1;
-	  nest = 1;
-	  n++;
+      {   /* something to strip */
+         j = i + 1;
+         nest = 1;
+         n++;
 
-	  while ((nest > 0) && (j < ls))
-	    {
-	      if (s[j] == '{')
-		nest++;
-	      else if (s[j] == '}')
-		nest--;
-	      j++;
-	    }
-	  pscopy (t, s, 1, i);
-	  placeholder++;
+         while ((nest > 0) && (j < ls))
+         {
+            if (s[j] == '{')
+               nest++;
+            else if (s[j] == '}')
+               nest--;
+            j++;
+         }
+         pscopy (t, s, 1, i);
+	      placeholder++;
 
-	  if (t[i - 1] > ' ')
-	    cadd (t, ' ');
+         if (t[i - 1] > ' ')
+            cadd (t, ' ');
 
-          cadd (t, ' ');        // add extra character to increase number significant digits for evaluated numbers
-          cadd (t, ' ');
-          cadd (t, ' ');
-          cadd (t, ' ');
-          nadd (t, PlaceHold + placeholder);
-          cadd (t, ' ');
+         cadd (t, ' ');  /* add extra character to increase number significant digits for evaluated numbers */
+         cadd (t, ' ');
+         cadd (t, ' ');
+         cadd (t, ' ');
+         nadd (t, PlaceHold + placeholder);
+         cadd (t, ' ');
 
-	  if (s[j] >= ' ')
-	    cadd (t, ' ');
+         if (s[j] >= ' ')
+            cadd (t, ' ');
 
-	  i = length (t);
-	  pscopy (s, s, j + 1, ls);
-	  sadd (t, s);
-	  scopy (s, t);
-	}
+         i = length (t);
+         pscopy (s, s, j + 1, ls);
+         sadd (t, s);
+         scopy (s, t);
+      }
       else
-	i++;
+         i++;
 
       ls = length (s);
-    }
-  dynsubst = placeholder;
-  return n;
+   }
+   dynsubst = placeholder;
+   return n;
 }
 
 static int
@@ -364,76 +287,75 @@ transform (tdico * dico, char *s, unsigned char nostripping, char *u)
  *   'B'  netlist (or .model ?) line that had Braces killed 
  */
 {
-  Strbig (Llen, t);
-  char category;
-  int i, k, a, n;
+   Strbig (Llen, t);
+   char category;
+   int i, k, a, n;
 
-  stripsomespace (s, nostripping);
-  modernizeex (s);		/* required for stripbraces count */
-  scopy (u, "");
+   stripsomespace (s, nostripping);
+   modernizeex (s);		/* required for stripbraces count */
+   scopy (u, "");
 
-  if (s[0] == '.')
-    {				/* check Pspice parameter format */
+   if (s[0] == '.')
+   {				/* check Pspice parameter format */
       scopy_up (t, s);
       k = 1;
 
       while (t[k] > ' ')
-	{
-	  cadd (u, t[k]);
-	  k++;
-	}
+      {
+         cadd (u, t[k]);
+         k++;
+      }
 
       if (ci_prefix (".PARAM", t) == 1)
-	{			/* comment it out */
-	  /*s[0]='*'; */
-	  category = 'P';
-	}
+      {   /* comment it out */
+         /*s[0]='*'; */
+         category = 'P';
+      }
       else if (ci_prefix (".SUBCKT", t) == 1)
-	{			/* split off any "params" tail */
-	  a = spos ("PARAMS:", t);
-	  if (a > 0)
-	    pscopy (s, s, 1, a - 1);
-
-	  category = 'S';
-	}
+      {   /* split off any "params" tail */
+         a = spos ("PARAMS:", t);
+         if (a > 0)
+         pscopy (s, s, 1, a - 1);
+         category = 'S';
+      }
       else if (ci_prefix (".CONTROL", t) == 1)
-	category = 'C';
+         category = 'C';
       else if (ci_prefix (".ENDC", t) == 1)
-	category = 'E';
+         category = 'E';
       else if (ci_prefix (".ENDS", t) == 1)
-	category = 'U';
+         category = 'U';
       else
-	{
-	  category = '.';
-	  n = stripbraces (s);
-	  if (n > 0)
-	    category = 'B';	/* priority category ! */
-	}
-    }
-  else if (s[0] == Intro)
-    {				/* private style preprocessor line */
+      {
+         category = '.';
+         n = stripbraces (s);
+         if (n > 0)
+         category = 'B';	/* priority category ! */
+      }
+   }
+   else if (s[0] == Intro)
+   {				/* private style preprocessor line */
       s[0] = '*';
       category = 'P';
-    }
-  else if (upcase (s[0]) == 'X')
-    {				/* strip actual parameters */
+   }
+   else if (upcase (s[0]) == 'X')
+   {				/* strip actual parameters */
       i = findsubname (dico, s);	/* i= index following last identifier in s */
       category = 'X';
-    }
-  else if (s[0] == '+')		/* continuation line */
-    category = '+';
-  else if (cpos (s[0], "*$#") <= 0)
-    {				/* not a comment line! */
+   }
+   else if (s[0] == '+')		/* continuation line */
+      category = '+';
+   else if (cpos (s[0], "*$#") <= 0)
+   {				/* not a comment line! */
       n = stripbraces (s);
       if (n > 0)
-	category = 'B';		/* line that uses braces */
+         category = 'B';		/* line that uses braces */
       else
-	category = ' ';		/* ordinary code line */
-    }
-  else
-    category = '*';
+         category = ' ';		/* ordinary code line */
+   }
+   else
+      category = '*';
 
-  return category;
+   return category;
 }
 
 /************ core of numparam **************/
@@ -454,8 +376,6 @@ static tdico *dico = NULL;
 
 /*  already part of dico : */
 /*  Str(80, srcfile);   source file */
-/*  Darray(refptr, char *, Maxline)   pointers to source code lines */
-/*  Darray(category, char, Maxline)  category of each line */
 
 /*
    Open ouput to a log file.
@@ -505,12 +425,16 @@ nupa_init (char *srcfile)
   initdico (dico);
   initdico (inst_dico);
 
-  for (i = 0; i < Maxline; i++)
+  dico->dynrefptr = (char**)tmalloc(dynmaxline*sizeof(char*) + 1);
+  dico->dyncategory = (char*)tmalloc(dynmaxline*sizeof(char) + 1);
+
+  for (i = 0; i <= dynmaxline; i++)
     {
-      dico->refptr[i] = NULL;
-      dico->category[i] = '?';
+      dico->dynrefptr[i] = NULL;
+      dico->dyncategory[i] = '?';
     }
-  sini (dico->srcfile, sizeof (dico->srcfile) - 4);
+
+    sini (dico->srcfile, sizeof (dico->srcfile) - 4);
 
   if (srcfile != NULL)
     scopy (dico->srcfile, srcfile);
@@ -531,11 +455,14 @@ nupa_done (void)
   nerrors = dico->errcount;
   dictsize = donedico (dico);
 
-  for (i = Maxline - 1; i >= 0; i--)
-    dispose ((void *) dico->refptr[i]);
-
+  for (i = dynmaxline ; i >= 0; i--) {
+    dispose ((void *) dico->dynrefptr[i]);
+    dispose ((void *) dico->dyncategory[i]);
+  }
   dispose ((void *) dico);
   dico = NULL;
+  dispose ((void *) inst_dico);
+  inst_dico = NULL;  
   if (nerrors)
     {
       /* debug: ask if spice run really wanted */
@@ -600,42 +527,42 @@ upper_str (char *str)
 void
 nupa_list_params (FILE * cp_out)
 {
-  char *name;
-  int i;
+   char *name;
+   int i;
 
-  fprintf (cp_out, "\n\n");
-  for (i = 1; i <= dico->nbd; i++)
-    {
-      if (dico->dat[i].tp == 'R')
-	{
-	  name = lower_str (strdup (dico->dat[i].nom));
-	  fprintf (cp_out, "       ---> %s = %g\n", name, dico->dat[i].vl);
-	  txfree (name);
-	}
-    }
+   fprintf (cp_out, "\n\n");
+   for (i = 1; i <= dico->nbd; i++)
+   {
+      if (dico->dyndat[i].tp == 'R')
+      {
+         name = lower_str (strdup (dico->dyndat[i].nom));
+         fprintf (cp_out, "       ---> %s = %g\n", name, dico->dyndat[i].vl);
+         txfree (name);
+      }
+   }
 }
 
 double
 nupa_get_param (char *param_name, int *found)
 {
-  char *name = upper_str (strdup (param_name));
-  double result = 0;
-  int i;
+   char *name = upper_str (strdup (param_name));
+   double result = 0;
+   int i;
 
-  *found = 0;
+   *found = 0;
 
-  for (i = 1; i <= dico->nbd + 1; i++)
-    {
-      if (strcmp (dico->dat[i].nom, name) == 0)
-	{
-	  result = dico->dat[i].vl;
-	  *found = 1;
-	  break;
-	}
-    }
+   for (i = 1; i <= dico->nbd + 1; i++)
+   {
+      if (strcmp (dico->dyndat[i].nom, name) == 0)
+      {
+         result = dico->dyndat[i].vl;
+         *found = 1;
+         break;
+      } 
+   }
 
-  txfree (name);
-  return result;
+   txfree (name);
+   return result;
 }
 
 void
@@ -644,11 +571,10 @@ nupa_add_param (char *param_name, double value)
   char *up_name = upper_str (strdup (param_name));
   int i = attrib (dico, up_name, 'N');
 
-  dico->dat[i].vl = value;
-  dico->dat[i].tp = 'R';
-  dico->dat[i].ivl = 0;
-  dico->dat[i].sbbase = NULL;
-
+  dico->dyndat[i].vl = value;
+  dico->dyndat[i].tp = 'R';
+  dico->dyndat[i].ivl = 0;
+  dico->dyndat[i].sbbase = NULL;
   txfree (up_name);
 }
 
@@ -658,10 +584,11 @@ nupa_add_inst_param (char *param_name, double value)
   char *up_name = upper_str (strdup (param_name));
   int i = attrib (inst_dico, up_name, 'N');
 
-  inst_dico->dat[i].vl = value;
-  inst_dico->dat[i].tp = 'R';
-  inst_dico->dat[i].ivl = 0;
-  inst_dico->dat[i].sbbase = NULL;
+  inst_dico->dyndat[i].vl = value;
+  inst_dico->dyndat[i].tp = 'R';
+  inst_dico->dyndat[i].ivl = 0;
+  inst_dico->dyndat[i].sbbase = NULL;
+
 
   txfree (up_name);
 }
@@ -672,7 +599,7 @@ nupa_copy_inst_dico ()
   int i;
 
   for (i = 1; i <= inst_dico->nbd; i++)
-    nupa_add_param (inst_dico->dat[i].nom, inst_dico->dat[i].vl);
+     nupa_add_param (inst_dico->dyndat[i].nom, inst_dico->dyndat[i].vl);
 }
 
 char *
@@ -703,10 +630,10 @@ nupa_copy (char *s, int linenum)
   pscopy (u, s, 1, ls);		/* strip trailing space, CrLf and so on */
   dico->srcline = linenum;
 
-  if ((!inexpansion) && (linenum >= 0) && (linenum < Maxline))
+  if ((!inexpansion) && (linenum >= 0) && (linenum < dynmaxline))
   {
     linecount++;
-    dico->refptr[linenum] = s;
+    dico->dynrefptr[linenum] = s;
     c = transform (dico, u, incontrol, keywd);
     if (c == 'C')
       incontrol = 1;
@@ -716,14 +643,13 @@ nupa_copy (char *s, int linenum)
     if (incontrol)
       c = 'C';  /* force it */
 
-    d = dico->category[linenum];	/* warning if already some strategic line! */
+    d = dico->dyncategory[linenum];	/* warning if already some strategic line! */
 
     if ((d == 'P') || (d == 'S') || (d == 'X'))
       fprintf (stderr,
 		  " Numparam warning: overwriting P,S or X line (linenum == %d).\n",
 		  linenum);
-
-    dico->category[linenum] = c;
+    dico->dyncategory[linenum] = c;
   }				/* keep a local copy and mangle the string */
 
   ls = length (u);
@@ -738,7 +664,7 @@ nupa_copy (char *s, int linenum)
   {
     if (!inexpansion)
     {
-      putlogfile (dico->category[linenum], linenum, t);
+       putlogfile (dico->dyncategory[linenum], linenum, t);
     };
   }
   return t;
@@ -760,16 +686,16 @@ nupa_eval (char *s, int linenum)
   unsigned char err = 1;
 
   dico->srcline = linenum;
-  c = dico->category[linenum];
+  c = dico->dyncategory[linenum];
 #ifdef TRACE_NUMPARAMS
   fprintf (stderr, "** SJB - in nupa_eval()\n");
   fprintf (stderr, "** SJB - processing line %3d: %s\n", linenum, s);
   fprintf (stderr, "** SJB - category '%c'\n", c);
 #endif /* TRACE_NUMPARAMS */
   if (c == 'P')			/* evaluate parameters */
-    nupa_assignment (dico, dico->refptr[linenum], 'N');
+    nupa_assignment (dico, dico->dynrefptr[linenum], 'N');
   else if (c == 'B')		/* substitute braces line */
-    err = nupa_substitute (dico, dico->refptr[linenum], s, 0);
+    err = nupa_substitute (dico, dico->dynrefptr[linenum], s, 0);
   else if (c == 'X')
     {				/* compute args of subcircuit, if required */
       ptr = s;
@@ -786,7 +712,7 @@ nupa_eval (char *s, int linenum)
 
       idef = findsubckt (dico, s, subname);
       if (idef > 0)
-	nupa_subcktcall (dico, dico->refptr[idef], dico->refptr[linenum], 0);
+	nupa_subcktcall (dico, dico->dynrefptr[idef], dico->dynrefptr[linenum], 0);
       else
 	putlogfile ('?', linenum, "  illegal subckt call.");
     }

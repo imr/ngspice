@@ -16,11 +16,11 @@ extern double gauss();
 /************ keywords ************/
 
 /* SJB - 150 chars is ample for this - see initkeys() */
-static Str (150, keys);                /* all my keywords */
-static Str (150, fmath);        /* all math functions */
+static Str (150, keys);      /* all my keywords */
+static Str (150, fmath);     /* all math functions */
 
 extern char *nupa_inst_name; /* see spicenum.c */
-extern long dynsubst; /* see inpcom.c */
+extern long dynsubst;        /* see inpcom.c */
 
 static double
 ternary_fcn (int conditional, double if_value, double else_value)
@@ -115,76 +115,57 @@ mathfunction (int f, double z, double x)
   return y;
 }
 
-typedef enum {Defd=15} _nDefd;
-/* serial numb. of 'defined' keyword. The others are not used (yet) */
-     static unsigned char message (tdico * dic, char *s)
+static unsigned char 
+message (tdico * dic, char *s)
 /* record 'dic' should know about source file and line */
 {
-  Strbig (Llen, t);
-  dic->errcount++;
-  if ((dic->srcfile != NULL) && dic->srcfile[0])
-    {
+   Strbig (Llen, t);
+   dic->errcount++;
+   if ((dic->srcfile != NULL) && dic->srcfile[0])
+   {
       scopy (t, dic->srcfile);
       cadd (t, ':');
-    }
-  if (dic->srcline >= 0)
-    {
+   }
+   if (dic->srcline >= 0)
+   {
       nadd (t, dic->srcline);
       sadd (t, ": ");
-    }
-  sadd (t, s);
-  cadd (t, '\n');
-  fputs (t, stderr);
+   }
+   sadd (t, s);
+   cadd (t, '\n');
+   fputs (t, stderr);
 
-  return 1 /*error! */ ;
+   return 1 /*error! */ ;
 }
 
 void
 debugwarn (tdico * d, char *s)
 {
-  message (d, s);
-  d->errcount--;
+   message (d, s);
+   d->errcount--;
 }
 
-/************* historical: stubs for nodetable manager ************/
-/* in the full preprocessor version there was a node translator for spice2 */
-
-static void
-initsymbols (auxtable * n)
-{;
-}
-
-static void
-donesymbols (auxtable * n)
-{;
-}
-
-/* static
- int parsenode(auxtable *n, char * s)
-{
-  return 0;
-}
-*/
 
 /************ the input text symbol table (dictionary) *************/
 
 void
 initdico (tdico * dico)
 {
-  int i;
-  dico->nbd = 0;
-  sini(dico->option,sizeof(dico->option)-4);
-  sini(dico->srcfile,sizeof(dico->srcfile)-4);
-  dico->srcline = -1;
-  dico->errcount = 0;
+   int i;
+   dico->nbd = 0;
+   sini(dico->option,sizeof(dico->option)-4);
+   sini(dico->srcfile,sizeof(dico->srcfile)-4);
+   dico->srcline = -1;
+   dico->errcount = 0;
 
-  for (i = 0; i <= Maxdico; i++)
-    sini (dico->dat[i].nom, 100);
+   dico->dyndat = (entry*)tmalloc(3 * sizeof(entry));
+  
+   for (i = 0; i < 3; i++)
+      sini (dico->dyndat[i].nom, 100);
 
-  dico->tos = 0;
-  dico->stack[dico->tos] = 0;        /* global data beneath */
-  initsymbols (&dico->nodetab);
-  initkeys ();
+   dico->tos = 0;
+   dico->stack[dico->tos] = 0;        /* global data beneath */
+   initkeys ();
 }
 
 /*  local semantics for parameters inside a subckt */
@@ -197,67 +178,58 @@ initdico (tdico * dico)
 typedef enum {Push='u'} _nPush;
 typedef enum {Pop='o'} _nPop;
 
-     static void
-     dicostack (tdico * dico, char op)
+static void
+dicostack (tdico * dico, char op)
 /* push or pop operation for nested subcircuit locals */
 {
-  char *param_name, *inst_name;
-  int i, current_stack_size, old_stack_size;
+   char *param_name, *inst_name;
+   int i, current_stack_size, old_stack_size;
 
-  if (op == Push)
-    {
+   if (op == Push)
+   {
       if (dico->tos < (20 - 1))
-        dico->tos++;
+         dico->tos++;
       else
-        message (dico, " Subckt Stack overflow");
+         message (dico, " Subckt Stack overflow");
 
       dico->stack[dico->tos] = dico->nbd;
       dico->inst_name[dico->tos] = nupa_inst_name;
-    }
-  else if (op == Pop)
-    {
-      /*       obsolete:  undefine all data items of level dico->tos
-         for ( i=dico->nbd; i>0; i--) ) {
-         c= dico->dat[i].tp;
-         if ( ((c=='R') || (c=='S')) && (dico->dat[i].level == dico->tos) ) {
-         dico->dat[i].tp= '?';
-         }
-         }
-       */
+   }
+   else if (op == Pop)
+   {
       if (dico->tos > 0)
-        {
-          // keep instance parameters around
-          current_stack_size = dico->nbd;
-          old_stack_size = dico->stack[dico->tos];
-          inst_name = dico->inst_name[dico->tos];
+      {
+         /* keep instance parameters around */
+         current_stack_size = dico->nbd;
+         old_stack_size = dico->stack[dico->tos];
+         inst_name = dico->inst_name[dico->tos];
 
-          for (i = old_stack_size + 1; i <= current_stack_size; i++)
-            {
-              param_name =
-                tmalloc (strlen (inst_name) + strlen (dico->dat[i].nom) + 2);
-              sprintf (param_name, "%s.%s", inst_name, dico->dat[i].nom);
-              nupa_add_inst_param (param_name, dico->dat[i].vl);
-              tfree (param_name);
-            }
-          tfree (inst_name);
+         for (i = old_stack_size + 1; i <= current_stack_size; i++)
+         {
+            param_name =
+               tmalloc (strlen (inst_name) + strlen (dico->dyndat[i].nom) + 2);
+            sprintf (param_name, "%s.%s", inst_name, dico->dyndat[i].nom);
+            nupa_add_inst_param (param_name, dico->dyndat[i].vl); 
+            tfree (param_name);
+         }
+         tfree (inst_name);
 
-          dico->nbd = dico->stack[dico->tos];        /* simply kill all local items */
-          dico->tos--;
-
-        }
+         dico->nbd = dico->stack[dico->tos];        /* simply kill all local items */
+         dico->tos--;
+      }
       else
-        {
-          message (dico, " Subckt Stack underflow.");
-        }
-    }
+      {
+         message (dico, " Subckt Stack underflow.");
+      }
+   }
 }
 
 int
 donedico (tdico * dico)
 {
-  int sze = dico->nbd;
-  donesymbols (&dico->nodetab);
-  return sze;
+   int sze = dico->nbd;
+   if (dico->dyndat) tfree(dico->dyndat);
+   return sze;
 }
 
 static int
@@ -265,19 +237,19 @@ entrynb (tdico * d, char *s)
 /* symbol lookup from end to start,  for stacked local symbols .*/
 /* bug: sometimes we need access to same-name symbol, at lower level? */
 {
-  int i;
-  unsigned char ok;
-  ok = 0;
-  i = d->nbd + 1;
+   int i;
+   unsigned char ok;
+   ok = 0;
+   i = d->nbd + 1;
 
-  while ((!ok) && (i > 1))
-    {
+   while ((!ok) && (i > 1))
+   {
       i--;
-      ok = steq (d->dat[i].nom, s);
-    }
-  if (!ok)
+      ok = steq (d->dyndat[i].nom, s);
+   }
+   if (!ok)
       return 0;
-  else
+   else
       return i;
 }
 
@@ -285,46 +257,45 @@ char
 getidtype (tdico * d, char *s)
 /* test if identifier s is known. Answer its type, or '?' if not in list */
 {
-  char itp = '?';                /* assume unknown */
-  int i = entrynb (d, s);
+   char itp = '?';                /* assume unknown */
+   int i = entrynb (d, s);
 
-  if (i > 0)
-    itp = d->dat[i].tp;
-
-  return itp;
+   if (i > 0)
+      itp = d->dyndat[i].tp;
+   return itp;
 }
 
 static double
 fetchnumentry (tdico * dico, char *t, unsigned char *perr)
 {
-  unsigned char err = *perr;
-  unsigned short k;
-  double u;
-  Strbig (Llen, s);
-  k = entrynb (dico, t);        /*no keyword */
-  /*dbg -- if ( k<=0 ) { ws("Dico num lookup fails. ") ;} */
+   unsigned char err = *perr;
+   unsigned short k;
+   double u;
+   Strbig (Llen, s);
+   k = entrynb (dico, t);        /*no keyword */
+   /*dbg -- if ( k<=0 ) { ws("Dico num lookup fails. ") ;} */
 
-  while ((k > 0) && (dico->dat[k].tp == 'P'))
-    k = dico->dat[k].ivl;        /*pointer chain */
+   while ((k > 0) && (dico->dyndat[k].tp == 'P'))
+      k = dico->dyndat[k].ivl;        /*pointer chain */
 
-  if (k > 0)
-    if (dico->dat[k].tp != 'R')
-      k = 0;
+   if (k > 0)
+      if (dico->dyndat[k].tp != 'R')
+         k = 0;
 
-  if (k > 0)
-      u = dico->dat[k].vl;
-  else
-    {
+   if (k > 0)
+      u = dico->dyndat[k].vl;
+   else
+   {
       u = 0.0;
       scopy (s, "Undefined number [");
       sadd (s, t);
       cadd (s, ']');
       err = message (dico, s);
-    }
+   }
 
-  *perr = err;
+   *perr = err;
 
-  return u;
+   return u;
 }
 
 /*******  writing dictionary entries *********/
@@ -335,46 +306,43 @@ attrib (tdico * dico, char *t, char op)
 /* seek or attribute dico entry number for string t.
    Option  op='N' : force a new entry, if tos>level and old is  valid.
 */
-  int i;
-  unsigned char ok;
-  i = dico->nbd + 1;
-  ok = 0;
-  while ((!ok) && (i > 1))
-    {                                /*search old */
+   int i;
+   unsigned char ok;
+   i = dico->nbd + 1;
+   ok = 0;
+   while ((!ok) && (i > 1))
+   {                                /*search old */
       i--;
-      ok = steq (dico->dat[i].nom, t);
-    }
+      ok = steq (dico->dyndat[i].nom, t);
+   }
 
-  if (ok && (op == 'N')
-      && (dico->dat[i].level < dico->tos) && (dico->dat[i].tp != '?'))
-    {
+   if (ok && (op == 'N')
+     && (dico->dyndat[i].level < dico->tos) && (dico->dyndat[i].tp != '?'))
+   {
       ok = 0;
-    }
+   }
 
-  if (!ok)
-    {
+   if (!ok)
+   {
       dico->nbd++;
       i = dico->nbd;
-
-      if (dico->nbd > Maxdico)
-          i = 0;
-      else
-        {
-          scopy (dico->dat[i].nom, t);
-          dico->dat[i].tp = '?';        /*signal Unknown */
-          dico->dat[i].level = dico->tos;
-        }
-    }
-  return i;
+      dico->dyndat = trealloc(dico->dyndat, (i+1) * sizeof(entry));
+      sini (dico->dyndat[i].nom, 100);
+      scopy (dico->dyndat[i].nom, t);
+      dico->dyndat[i].tp = '?';        /*signal Unknown */
+      dico->dyndat[i].level = dico->tos;
+   }
+   return i;
 }
 
 static unsigned char
-define (tdico * dico, char *t,        /* identifier to define */
-        char op,                /* option */
-        char tpe,                /* type marker */
-        double z,                /* float value if any */
-        int w,                        /* integer value if any */
-        char *base)                /* string pointer if any */
+define (tdico * dico, 
+        char *t,        /* identifier to define */
+        char op,        /* option */
+        char tpe,       /* type marker */
+        double z,       /* float value if any */
+        int w,          /* integer value if any */
+        char *base)     /* string pointer if any */
 {
 /*define t as real or integer,
   opcode= 'N' impose a new item under local conditions.
@@ -384,53 +352,52 @@ define (tdico * dico, char *t,        /* identifier to define */
       we already make symbol entries which are dummy globals !
       we mark each id with its subckt level, and warn if write at higher one.
 */
-  int i;
-  char c;
-  unsigned char err, warn;
-  Strbig (Llen, v);
-  i = attrib (dico, t, op);
-  err = 0;
-  if (i <= 0)
+   int i;
+   char c;
+   unsigned char err, warn;
+   Strbig (Llen, v);
+   i = attrib (dico, t, op);
+   err = 0;
+   if (i <= 0)
       err = message (dico, " Symbol table overflow");
-  else
-    {
-      if (dico->dat[i].tp == 'P')
-          i = dico->dat[i].ivl; /*pointer indirection */
+   else
+   {
+      if (dico->dyndat[i].tp == 'P')
+         i = dico->dyndat[i].ivl; /*pointer indirection */
 
       if (i > 0)
-          c = dico->dat[i].tp;
+         c = dico->dyndat[i].tp;
       else
-          c = ' ';
+         c = ' ';
 
       if ((c == 'R') || (c == 'S') || (c == '?'))
-        {
-          dico->dat[i].vl = z;
-          dico->dat[i].tp = tpe;
-          dico->dat[i].ivl = w;
-          dico->dat[i].sbbase = base;
-          /* if ( (c !='?') && (i<= dico->stack[dico->tos]) ) {  */
+      {
+         dico->dyndat[i].vl = z;
+         dico->dyndat[i].tp = tpe;
+         dico->dyndat[i].ivl = w;
+         dico->dyndat[i].sbbase = base;
+         /* if ( (c !='?') && (i<= dico->stack[dico->tos]) ) {  */
+         if (c == '?')
+            dico->dyndat[i].level = dico->tos; /* promote! */
 
-          if (c == '?')
-              dico->dat[i].level = dico->tos; /* promote! */
-
-          if (dico->dat[i].level < dico->tos)
-            {
-              /* warn about re-write to a global scope! */
-              scopy (v, t);
-              cadd (v, ':');
-              nadd (v, dico->dat[i].level);
-              sadd (v, " overwritten.");
-              warn = message (dico, v);
-            }
-        }
+         if (dico->dyndat[i].level < dico->tos)
+         {
+            /* warn about re-write to a global scope! */
+            scopy (v, t);
+            cadd (v, ':');
+            nadd (v, dico->dyndat[i].level);
+            sadd (v, " overwritten.");
+            warn = message (dico, v);
+         }
+      }
       else
-        {
-          scopy (v, t);
-          sadd (v, ": cannot redefine");
-          err = message (dico, v);
-        }
-    }
-  return err;
+      {
+         scopy (v, t);
+         sadd (v, ": cannot redefine");
+         err = message (dico, v);
+      }
+   }
+   return err;
 }
 
 unsigned char
@@ -439,35 +406,35 @@ defsubckt (tdico * dico, char *s, int w, char categ)
    to enter subcircuit (categ=U) and model (categ=O) names
 */
 {
-  Str (80, u);
-  unsigned char err;
-  int i, j, ls;
-  ls = length (s);
-  i = 0;
+   Str (80, u);
+   unsigned char err;
+   int i, j, ls;
+   ls = length (s);
+   i = 0;
 
-  while ((i < ls) && (s[i] != '.'))
-    i++;                        /* skip 1st dotword */
+   while ((i < ls) && (s[i] != '.'))
+      i++;                        /* skip 1st dotword */
 
-  while ((i < ls) && (s[i] > ' '))
-    i++;
+   while ((i < ls) && (s[i] > ' '))
+      i++;
 
-  while ((i < ls) && (s[i] <= ' '))
-    i++;                        /* skip blank */
+   while ((i < ls) && (s[i] <= ' '))
+      i++;                        /* skip blank */
 
-  j = i;
+   j = i;
 
-  while ((j < ls) && (s[j] > ' '))
-    j++;
+   while ((j < ls) && (s[j] > ' '))
+      j++;
 
-  if ((j > i))
-    {
+   if ((j > i))
+   {
       pscopy_up (u, s, i + 1, j - i);
       err = define (dico, u, ' ', categ, 0.0, w, NULL);
-    }
-  else
+   }
+   else
       err = message (dico, "Subcircuit or Model without name.");
 
-  return err;
+   return err;
 }
 
 int
@@ -476,34 +443,34 @@ findsubckt (tdico * dico, char *s, char *subname)
    returns 0 if not found, else the stored definition line number value
    and the name in string subname  */
 {
-  Str (80, u);                        /* u= subckt name is last token in string s */
-  int i, j, k;
-  k = length (s);
+   Str (80, u);                        /* u= subckt name is last token in string s */
+   int i, j, k;
+   k = length (s);
 
-  while ((k >= 0) && (s[k] <= ' '))
-    k--;
+   while ((k >= 0) && (s[k] <= ' '))
+      k--;
 
-  j = k;
+   j = k;
 
-  while ((k >= 0) && (s[k] > ' '))
-    k--;
+   while ((k >= 0) && (s[k] > ' '))
+      k--;
 
-  pscopy_up (u, s, k + 2, j - k);
-  i = entrynb (dico, u);
+   pscopy_up (u, s, k + 2, j - k);
+   i = entrynb (dico, u);
 
-  if ((i > 0) && (dico->dat[i].tp == 'U'))
-    {
-      i = dico->dat[i].ivl;
+   if ((i > 0) && (dico->dyndat[i].tp == 'U'))
+   {
+      i = dico->dyndat[i].ivl;
       scopy (subname, u);
-    }
-  else
-    {
+   }
+   else
+   {
       i = 0;
       scopy (subname, "");
       message (dico, "Cannot find subcircuit.");
-    }
+   }
 
-  return i;
+   return i;
 }
 
 #if 0                                /* unused, from the full macro language... */
@@ -562,36 +529,36 @@ static unsigned char
 keyword (char *keys, char *t)
 {
 /* return 0 if t not found in list keys, else the ordinal number */
-  unsigned char i, j, k;
-  int lt, lk;
-  unsigned char ok;
-  lt = length (t);
-  lk = length (keys);
-  k = 0;
-  j = 0;
+   unsigned char i, j, k;
+   int lt, lk;
+   unsigned char ok;
+   lt = length (t);
+   lk = length (keys);
+   k = 0;
+   j = 0;
 
-  do {
+   do {
       j++;
       i = 0;
       ok = 1;
 
-      do{
-          i++;
-          k++;
-          ok = (k <= lk) && (t[i - 1] == keys[k - 1]);
-        } while (!((!ok) || (i >= lt)));
+      do {
+         i++;
+         k++;
+         ok = (k <= lk) && (t[i - 1] == keys[k - 1]);
+      } while (!((!ok) || (i >= lt)));
 
       if (ok)
-          ok = (k == lk) || (keys[k] <= ' ');
+         ok = (k == lk) || (keys[k] <= ' ');
 
       if (!ok && (k < lk))    /*skip to next item */
-          while ((k <= lk) && (keys[k - 1] > ' '))
+         while ((k <= lk) && (keys[k - 1] > ' '))
             k++;
-    } while (!(ok || (k >= lk)));
+   } while (!(ok || (k >= lk)));
 
-  if (ok)
+   if (ok)
       return j;
-  else
+   else
       return 0;
 }
 
@@ -1331,29 +1298,29 @@ evaluate (tdico * dico, char *q, char *t, unsigned char mode)
       stupcase (t);
       k = entrynb (dico, t);
       nolookup = (k <= 0);
-      while ((k > 0) && (dico->dat[k].tp == 'P'))
-          k = dico->dat[k].ivl;
+      while ((k > 0) && (dico->dyndat[k].tp == 'P'))
+          k = dico->dyndat[k].ivl;
 
       /*pointer chain */
       if (k > 0)
-          dt = dico->dat[k].tp;
+          dt = dico->dyndat[k].tp;
       else
           dt = ' ';
 
       /*data type: Real or String */
       if (dt == 'R')
         {
-          u = dico->dat[k].vl;
+          u = dico->dyndat[k].vl;
           numeric = 1;
         }
       else if (dt == 'S')
         {                        /*suppose source text "..." at */
-          j = dico->dat[k].ivl;
+          j = dico->dyndat[k].ivl;
           lq = 0;
           do {
               j++;
               lq++;
-              dt = /*ibf->bf[j]; */ dico->dat[k].sbbase[j];
+              dt = /*ibf->bf[j]; */ dico->dyndat[k].sbbase[j];
 
               if (cpos ('3', dico->option) <= 0)
                   dt = upcase (dt); /* spice-2 */
