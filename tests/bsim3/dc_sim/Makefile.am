@@ -20,7 +20,6 @@ TESTS = \
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
-	model.card		\
 	modelcard.nmos		\
 	modelcard.pmos		\
 	$(TESTS)		\
