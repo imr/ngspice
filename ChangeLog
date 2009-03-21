@@ -1,3 +1,8 @@
+2009-03-21 Holger Vogt
+  * inpcom.c, fteinp.h, inpdefs.h: line renumbering of input deck added
+    to the end of fcn inp_readall(). cc->li_line_original now contains
+    the line numbering of the input file
+
 2009-03-15 Holger Vogt
   * cktfinddev.c: some (optical) cleanup
   * numparam.h, xpressn.c, spicenum.c, inpcom.c: dynamic memory

@@ -58,6 +58,7 @@ typedef struct sINPtables{
 
 typedef struct card{
     int linenum;
+    int linenum_orig;    
     char *line;
     char *error;
     struct card *nextcard;

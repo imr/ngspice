@@ -16,6 +16,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* This struct defines a linked list of lines from a SPICE file. */
 struct line {
     int li_linenum;
+    int li_linenum_orig;
     char *li_line;
     char *li_error;
     struct line *li_next;
