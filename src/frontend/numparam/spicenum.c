@@ -94,7 +94,7 @@ stripbraces (char *s)
 /* puts the funny placeholders. returns the number of {...} substitutions */
 {
    int n, i, nest, ls, j;
-   Strbig (Llen, t);
+   Strbig (dynLlen, t);
    n = 0;
    ls = length (s);
    i = 0;
@@ -142,6 +142,7 @@ stripbraces (char *s)
       ls = length (s);
    }
    dynsubst = placeholder;
+   Strrem(t);
    return n;
 }
 
@@ -211,9 +212,10 @@ static void
 modernizeex (char *s)
 /* old style expressions &(..) and &id --> new style with braces. */
 {
-  Strbig (Llen, t);
+//  Strbig (Llen, t);
   int i, state, ls;
   char c, d;
+  Strbig (dynLlen, t);
   i = 0;
   state = 0;
   ls = length (s);
@@ -259,6 +261,7 @@ modernizeex (char *s)
       i++;
     }
   scopy (s, t);
+  Strrem(t);
 }
 
 static char
@@ -287,10 +290,10 @@ transform (tdico * dico, char *s, unsigned char nostripping, char *u)
  *   'B'  netlist (or .model ?) line that had Braces killed 
  */
 {
-   Strbig (Llen, t);
+//   Strbig (Llen, t);
    char category;
    int i, k, a, n;
-
+   Strbig (dynLlen, t);
    stripsomespace (s, nostripping);
    modernizeex (s);		/* required for stripbraces count */
    scopy (u, "");
@@ -355,6 +358,7 @@ transform (tdico * dico, char *s, unsigned char nostripping, char *u)
    else
       category = '*';
 
+   Strrem(t);
    return category;
 }
 
@@ -385,30 +389,31 @@ static tdico *dico = NULL;
 static void
 putlogfile (char c, int num, char *t)
 {
-  Strbig (Llen, u);
-  Str (20, fname);
-
-  if (dologfile)
-    {
+//  Strbig (Llen, u);
+   Str (20, fname);
+   Strbig (dynLlen, u);
+   if (dologfile)
+   {
       if ((logfile == NULL))
-	{
-	  scopy (fname, "logfile.");
-	  nblog++;
-	  nadd (fname, nblog);
-	  logfile = fopen (fname, "w");
-	}
+      {
+         scopy (fname, "logfile.");
+         nblog++;
+         nadd (fname, nblog);
+         logfile = fopen (fname, "w");
+      }
 
       if ((logfile != NULL))
-	{
-	  cadd (u, c);
-	  nadd (u, num);
-	  cadd (u, ':');
-	  cadd (u, ' ');
-	  sadd (u, t);
-	  cadd (u, '\n');
-	  fputs (u, logfile);
-	}
-    }
+      {
+         cadd (u, c);
+         nadd (u, num);
+         cadd (u, ':');
+         cadd (u, ' ');
+         sadd (u, t);
+         cadd (u, '\n');
+         fputs (u, logfile);
+      }
+   }
+   Strrem(u);
 }
 
 static void
@@ -425,8 +430,8 @@ nupa_init (char *srcfile)
   initdico (dico);
   initdico (inst_dico);
 
-  dico->dynrefptr = (char**)tmalloc(dynmaxline*sizeof(char*) + 1);
-  dico->dyncategory = (char*)tmalloc(dynmaxline*sizeof(char) + 1);
+  dico->dynrefptr = (char**)tmalloc((dynmaxline + 1)*sizeof(char*));
+  dico->dyncategory = (char*)tmalloc((dynmaxline + 1)*sizeof(char));
 
   for (i = 0; i <= dynmaxline; i++)
     {
@@ -434,7 +439,7 @@ nupa_init (char *srcfile)
       dico->dyncategory[i] = '?';
     }
 
-    sini (dico->srcfile, sizeof (dico->srcfile) - 4);
+//    sini (dico->srcfile, sizeof (dico->srcfile) - 4);
 
   if (srcfile != NULL)
     scopy (dico->srcfile, srcfile);
@@ -617,11 +622,12 @@ nupa_copy (char *s, int linenum)
   - substitute placeholders for all {..} --> 10-digit numeric values.
 */
 {
-  Strbig (Llen, u);
-  Strbig (Llen, keywd);
+//  Strbig (Llen, u);
+//  Strbig (Llen, keywd);
   char *t;
   int ls;
   char c, d;
+  Strdbig (dynLlen, u, keywd);
   ls = length (s);
 
   while ((ls > 0) && (s[ls - 1] <= ' '))
@@ -667,6 +673,7 @@ nupa_copy (char *s, int linenum)
        putlogfile (dico->dyncategory[linenum], linenum, t);
     };
   }
+  Strdrem(u, keywd);
   return t;
 }
 

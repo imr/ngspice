@@ -21,6 +21,7 @@ static Str (150, fmath);     /* all math functions */
 
 extern char *nupa_inst_name; /* see spicenum.c */
 extern long dynsubst;        /* see inpcom.c */
+extern int dynLlen;
 
 static double
 ternary_fcn (int conditional, double if_value, double else_value)
@@ -119,7 +120,7 @@ static unsigned char
 message (tdico * dic, char *s)
 /* record 'dic' should know about source file and line */
 {
-   Strbig (Llen, t);
+   Strbig (dynLlen, t);
    dic->errcount++;
    if ((dic->srcfile != NULL) && dic->srcfile[0])
    {
@@ -134,6 +135,7 @@ message (tdico * dic, char *s)
    sadd (t, s);
    cadd (t, '\n');
    fputs (t, stderr);
+   Strrem(t);
 
    return 1 /*error! */ ;
 }
@@ -271,7 +273,7 @@ fetchnumentry (tdico * dico, char *t, unsigned char *perr)
    unsigned char err = *perr;
    unsigned short k;
    double u;
-   Strbig (Llen, s);
+   Strbig (dynLlen, s);
    k = entrynb (dico, t);        /*no keyword */
    /*dbg -- if ( k<=0 ) { ws("Dico num lookup fails. ") ;} */
 
@@ -294,6 +296,8 @@ fetchnumentry (tdico * dico, char *t, unsigned char *perr)
    }
 
    *perr = err;
+
+   Strrem(s);
 
    return u;
 }
@@ -355,7 +359,7 @@ define (tdico * dico,
    int i;
    char c;
    unsigned char err, warn;
-   Strbig (Llen, v);
+   Strbig (dynLlen, v);
    i = attrib (dico, t, op);
    err = 0;
    if (i <= 0)
@@ -397,6 +401,7 @@ define (tdico * dico,
          err = message (dico, v);
       }
    }
+   Strrem(v);
    return err;
 }
 
@@ -641,7 +646,7 @@ exists (tdico * d, char *s, int *pi, unsigned char *perror)
   int ls;
   char c;
   unsigned char ok;
-  Strbig (Llen, t);
+  Strbig (dynLlen, t);
   ls = length (s);
   x = 0.0;
 
@@ -680,6 +685,7 @@ exists (tdico * d, char *s, int *pi, unsigned char *perror)
 
   *perror = error;
   *pi = i;
+  Strrem(t);
   return x;
 }
 
@@ -692,8 +698,9 @@ fetchnumber (tdico * dico, char *s, int ls, int *pi, unsigned char *perror)
   int k, err;
   char d;
   Str (20, t);
-  Strbig (Llen, v);
+//  Strbig (Llen, v);
   double u;
+  Strbig (dynLlen, v);
   k = i;
 
   do {
@@ -756,7 +763,7 @@ fetchnumber (tdico * dico, char *s, int ls, int *pi, unsigned char *perror)
   i = k - 1;
   *perror = error;
   *pi = i;
-
+  Strrem(v);
   return u;
 }
 
@@ -775,7 +782,7 @@ fetchoperator (tdico * dico,
   unsigned char level = *plevel;
   unsigned char error = *perror;
   char c, d;
-  Strbig (Llen, v);
+  Strbig (dynLlen, v);
   c = s[i - 1];
 
   if (i < ls)
@@ -869,6 +876,7 @@ fetchoperator (tdico * dico,
   *pstate = state;
   *plevel = level;
   *perror = error;
+  Strrem(v);
   return c;
 }
 
@@ -1044,8 +1052,9 @@ formula (tdico * dico, char *s, unsigned char *perror)
   char uop[nprece + 1];
   int i, k, ls, natom, arg2, arg3;
   char c, d;
-  Strbig (Llen, t);
+//  Strbig (Llen, t);
   unsigned char ok;
+  Strbig (dynLlen, t);
 
   for (i = 0; i <= nprece; i++)
     {
@@ -1241,6 +1250,8 @@ formula (tdico * dico, char *s, unsigned char *perror)
 
   *perror = error;
 
+  Strrem(t);
+
   if (error)
       return 1.0;
   else
@@ -1288,7 +1299,7 @@ evaluate (tdico * dico, char *q, char *t, unsigned char mode)
   char dt, fmt;
   unsigned char numeric, done, nolookup;
   unsigned char err;
-  Strbig (Llen, v);
+  Strbig (dynLlen, v);
   scopy (q, "");
   numeric = 0;
   err = 0;
@@ -1363,6 +1374,7 @@ evaluate (tdico * dico, char *q, char *t, unsigned char mode)
           strf (u, 17, 10, q);
         } /* strf() arg 2 doesnt work: always >10 significant digits ! */ ;
     }
+  Strrem(v);
   return err;
 }
 
@@ -1678,8 +1690,9 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
 {
   int i, k, ls, level, nnest, ir;
   char c, d;
-  Strbig (Llen, q);
-  Strbig (Llen, t);
+//  Strbig (Llen, q);
+//  Strbig (Llen, t);
+  Strdbig (dynLlen, q, t);
   i = 0;
   ls = length (s);
   err = 0;
@@ -1769,7 +1782,9 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
           else
               message (dico, "Cannot compute &(expression)");
         }
-    }                                /*while */
+    } 
+                               /*while */
+  Strdrem(q,t);
   return err;
 }
 
@@ -1898,14 +1913,15 @@ nupa_assignment (tdico * dico, char *s, char mode)
 */
 {
 /* s has the format: ident = expression; ident= expression ...  */
-  Strbig (Llen, t);
-  Strbig (Llen, u);
+//  Strbig (Llen, t);
+//  Strbig (Llen, u);
   int i, j, ls;
   unsigned char key;
   unsigned char error, err;
   char dtype;
   int wval = 0;
   double rval = 0.0;
+  Strdbig (dynLlen, t, u);
   ls = length (s);
   error = 0;
   i = 0;
@@ -1965,6 +1981,7 @@ nupa_assignment (tdico * dico, char *s, char mode)
       else
         /* i++ */;
     }
+  Strdrem(t,u);
   return error;
 }
 
@@ -1975,14 +1992,14 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
 */
 {
   int n, m, i, j, k, g, h, narg = 0, ls, nest;
-  Strbig (Llen, t);
-  Strbig (Llen, u);
-  Strbig (Llen, v);
-  Strbig (Llen, idlist);
+//  Strbig (Llen, t);
+//  Strbig (Llen, u);
+//  Strbig (Llen, v);
+//  Strbig (Llen, idlist);
   Str (80, subname);
   char *buf, *token;
   unsigned char found;
-
+  Strfbig (dynLlen, t, u, v, idlist);
   /*
      skip over instance name -- fixes bug where instance 'x1' is
      same name as subckt 'x1'
@@ -2172,6 +2189,7 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
       /* ;} else { debugwarn(dico, idlist) */ ;
     }
   err = nupa_assignment (dico, idlist, 'N');
+  Strfrem(t,u,v,idlist);
   return err;
 }
 

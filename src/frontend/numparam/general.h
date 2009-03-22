@@ -12,14 +12,37 @@
 #define Hi(x) (((x) >> 8) & 0xff)
 #define Lo(x) ((x) & 0xff)
 
-#define Strbig(n,a)   char a[n+4]={0, (char)Hi(n), (char)Lo(n)}
+//#define Strbig(n,a)   char a[n+4]={0, (char)Hi(n), (char)Lo(n)}
+#define Strbig(n,a)   char*(a)=(char*)tmalloc((n+4)*sizeof(char)); \
+                      (a)[0]=0; (a)[1]=(char)Hi(n); (a)[2]=(char)Lo(n)
+#define Strdbig(n,a,b)   char*(a); char*(b); \
+                      (a)=(char*)tmalloc((n+4)*sizeof(char)); \
+                      (a)[0]=0; (a)[1]=(char)Hi(n); (a)[2]=(char)Lo(n);\
+                      (b)=(char*)tmalloc((n+4)*sizeof(char)); \
+                      (b)[0]=0; (b)[1]=(char)Hi(n); (b)[2]=(char)Lo(n)
+
+#define Strfbig(n,a,b,c,d)   char*(a); char*(b); char*(c); char*(d);\
+                      (a)=(char*)tmalloc((n+4)*sizeof(char)); \
+                      (a)[0]=0; (a)[1]=(char)Hi(n); (a)[2]=(char)Lo(n);\
+                      (b)=(char*)tmalloc((n+4)*sizeof(char)); \
+                      (b)[0]=0; (b)[1]=(char)Hi(n); (b)[2]=(char)Lo(n);\
+                      (c)=(char*)tmalloc((n+4)*sizeof(char)); \
+                      (c)[0]=0; (c)[1]=(char)Hi(n); (c)[2]=(char)Lo(n);\
+                      (d)=(char*)tmalloc((n+4)*sizeof(char)); \
+                      (d)[0]=0; (d)[1]=(char)Hi(n); (d)[2]=(char)Lo(n)
+
+#define Strrem(a)     tfree(a)
+#define Strdrem(a,b)  tfree(a); tfree(b)
+#define Strfrem(a,b,c,d)  tfree(a); tfree(b); tfree(c); tfree(d)
+
 #define Str(n,a)      char a[n+3]={0,0,(char)n}  /* n<255 ! */
 #define Sini(s)       sini(s,sizeof(s)-4)
 
 
 /* was 255, then 15000, string maxlen, 40000 to catch really big 
-   macros in .model lines */
-typedef enum {Maxstr=40000} _nMaxstr;  
+   macros in .model lines, now just a big number, a line length
+   which never should be exceeded, may be removed later*/
+typedef enum {Maxstr=4000000} _nMaxstr;  
 typedef enum {Esc=27} _nEsc;
 typedef enum {Tab=9} _nTab;
 typedef enum {Bs=8} _nBs;

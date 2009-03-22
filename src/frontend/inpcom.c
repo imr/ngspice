@@ -130,39 +130,39 @@ static void inp_sort_params( struct line *start_card, struct line *end_card, str
 static char *
 readline(FILE *fd)
 {
-    int c;
-    int memlen;
-    char *strptr;
-    int strlen;
+   int c;
+   int memlen;
+   char *strptr;
+   int strlen;
     
-    strptr = NULL;
-    strlen = 0;
-    memlen = STRGROW; 
-    strptr = tmalloc(memlen);
-    memlen -= 1;          /* Save constant -1's in while loop */
-    while((c = getc(fd)) != EOF) {
-	if (strlen == 0 && (c == '\n' || c == ' ')) /* Leading spaces away */
-	    continue;
-        strptr[strlen] = c;
-        strlen++;
-        if( strlen >= memlen ) {
-            memlen += STRGROW;
-            if( !(strptr = trealloc(strptr, memlen + 1))) {
-                return (NULL);
-            }
-        }
-        if (c == '\n') {
-            break;
-        }
-    }
-    if (!strlen) {
-        tfree(strptr);
-        return (NULL);
-    }
-    strptr[strlen] = '\0'; 
-    /* Trim the string */
-    strptr = trealloc(strptr, strlen + 1);
-    return (strptr);
+   strptr = NULL;
+   strlen = 0;
+   memlen = STRGROW; 
+   strptr = tmalloc(memlen);
+   memlen -= 1;          /* Save constant -1's in while loop */
+   while((c = getc(fd)) != EOF) {
+      if (strlen == 0 && (c == '\t' || c == ' ')) /* Leading spaces away */
+         continue;
+      strptr[strlen] = c;
+      strlen++;
+      if( strlen >= memlen ) {
+         memlen += STRGROW;
+         if( !(strptr = trealloc(strptr, memlen + 1))) {
+            return (NULL);
+         }
+      }
+      if (c == '\n') {
+         break;
+      }
+   }
+   if (!strlen) {
+      tfree(strptr);
+      return (NULL);
+   }
+   strptr[strlen] = '\0'; 
+   /* Trim the string */
+   strptr = trealloc(strptr, strlen + 1);
+   return (strptr);
 }
 
 
@@ -997,7 +997,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
    char *copys=NULL, big_buff2[5000];
    char *global_copy = NULL, keep_char;
    int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
-   int line_number_orig = 0;
+   int line_number_orig = 1, line_number_lib = 1, line_number_inc = 1;
+   int no_braces = 0; /* number of '{' */
    FILE *newfp;
 #if defined(TRACE) || defined(OUTDECK)
    FILE *fdo;
@@ -1079,6 +1080,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
       /* If input line is blank, ignore it & continue looping.  */
       if ( (strcmp(buffer,"\n") == 0) || (strcmp(buffer,"\r\n") == 0) ) {
          if ( call_depth != 0 || (call_depth == 0 && cc != NULL) ) {
+            line_number_orig++;
             continue;
          }
       }
@@ -1237,13 +1239,13 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
          if (newcard) {
             end->li_next = newcard;
             /* Renumber the lines */
-            line_number_orig = 1;
+            line_number_inc = 1;
             for (end = newcard; end && end->li_next; end = end->li_next) {
-               end->li_linenum = line_number_orig++;
-               end->li_linenum_orig = line_number++;
+               end->li_linenum = line_number++;
+               end->li_linenum_orig = line_number_inc++;
             }
             end->li_linenum = line_number++;	/* SJB - renumber the last line */
-            end->li_linenum_orig = line_number_orig++;	/* SJB - renumber the last line */
+            end->li_linenum_orig = line_number_inc++;	/* SJB - renumber the last line */
          }
 
          /* Fix the buffer up a bit. */
@@ -1307,7 +1309,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
       end->li_error = NULL;
       end->li_actual = NULL;
       end->li_line = buffer;
-      end->li_linenum = end->li_linenum_orig = line_number++;
+      end->li_linenum = line_number++;
+      end->li_linenum_orig = line_number_orig++;
    }  /* end while ((buffer = readline(fp))) */
 
    if (!end) { /* No stuff here */
@@ -1389,13 +1392,13 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
                      library_ll_ptr[i][j]->li_next = working;
 
                      /* renumber lines */
-                     line_number_orig = 1;
+                     line_number_lib = 1;
                      for ( start_lib = working; !ciprefix(".endl", start_lib->li_line); start_lib = start_lib->li_next ) {
                         start_lib->li_linenum = line_number++;
-                        start_lib->li_linenum_orig = line_number_orig++;
+                        start_lib->li_linenum_orig = line_number_lib++;
                      }
                      start_lib->li_linenum = line_number++;  // renumber endl line
-                     start_lib->li_linenum_orig = line_number_orig++; 
+                     start_lib->li_linenum_orig = line_number_lib++; 
                      break;
                   }
                }
@@ -1424,6 +1427,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
          end->li_actual = NULL;
          end->li_line = buffer;
          end->li_linenum = end->li_linenum_orig = line_number++;
+         end->li_linenum_orig = line_number_orig++;
       }
    }
 
@@ -1531,16 +1535,26 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
    *data = cc;
     
    /* get max. line length and number of lines in input deck,
-   * and renumber the lines */
+      and renumber the lines,
+      count the number of '{' per line as an upper estimate of the number
+      of parameter substitutions in a line*/
    dynmaxline = 0;
    dynLlen = 0;
    for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
+      char *s;
+      int braces_per_line = 0;
+      /* count number of lines */
       dynmaxline++;
       /* renumber the lines of the processed input deck */
       tmp_ptr1->li_linenum = dynmaxline;
       if (dynLlen < strlen(tmp_ptr1->li_line))
-         dynLlen = strlen(tmp_ptr1->li_line);        
+         dynLlen = strlen(tmp_ptr1->li_line);
+      /* count '{' */
+      for (s = tmp_ptr1->li_line; *s; s++)
+         if (*s == '{') braces_per_line++;
+      if (no_braces <  braces_per_line) no_braces = braces_per_line;
    }
+
 #if defined(TRACE) || defined(OUTDECK)
    /*debug: print into file*/
    fdo = fopen("debug-out.txt", "w");
@@ -1548,9 +1562,15 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
       fprintf(fdo, "%d  %d  %s\n", tmp_ptr1->li_linenum_orig, tmp_ptr1->li_linenum, tmp_ptr1->li_line);        
 
    (void) fclose(fdo);  
-   fprintf(stdout, "lLen %d, maxline %d\n", dynLlen, dynmaxline);
+   fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n", 
+      dynLlen, no_braces, dynmaxline);
 #endif
-
+   /* max line length increased by maximum number of parameter substitutions per line 
+      times parameter string length (25) */
+   dynLlen += no_braces * 25;
+   /* several times a string of length dynLlen is used for messages, thus give it a
+      minimum length */
+   if (dynLlen < 512) dynLlen = 512;
    return;
 }
 
@@ -3026,7 +3046,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
 
       num_terminals = get_number_terminals( curr_line );
 
-      if ( num_terminals == 0 ) { ptr = ptr->li_next; continue; }
+      if ( num_terminals <= 0 ) { ptr = ptr->li_next; continue; }
 
       for ( i = 0; i < num_params; i++ )
 	{

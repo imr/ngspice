@@ -25,7 +25,7 @@ typedef enum {Defd=15} _nDefd; /* serial numb. of 'defined' keyword. The others 
    .model line, especially when spread over several continuation 
    lines with much white space.  Set to 40000 to catch really big
    macros in .model lines. Will add 100k of memory compared to previous 25004*/
-typedef enum {Llen=40000} _nLlen;
+//typedef enum {Llen=40000} _nLlen;
 
 typedef char str50 [54];
 typedef char str80 [84];

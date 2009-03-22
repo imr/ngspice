@@ -1,3 +1,11 @@
+2009-03-22 Holger Vogt
+  * inpcom.c: readline() now returns /n for an empty line, dynLlen consists of
+    maximum line length plus some space for parameter substitution and has a
+    minimum size of 512.
+  * spicenum.c, xpressn.c, general.h, numparam.h: dynamic memory allocation 
+    also for all string manipultions, Strbig now is a macro using tmalloc, 
+    the macro Strrem deallocates the memory, the size of the arrays is dynLlen.
+      
 2009-03-21 Holger Vogt
   * inpcom.c, fteinp.h, inpdefs.h: line renumbering of input deck added
     to the end of fcn inp_readall(). cc->li_line_original now contains
