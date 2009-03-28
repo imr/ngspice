@@ -159,9 +159,10 @@ readline(FILE *fd)
       tfree(strptr);
       return (NULL);
    }
-   strptr[strlen] = '\0'; 
+//   strptr[strlen] = '\0'; 
    /* Trim the string */
    strptr = trealloc(strptr, strlen + 1);
+   strptr[strlen] = '\0'; 
    return (strptr);
 }
 
@@ -803,6 +804,7 @@ comment_out_unused_subckt_models( struct line *start_card )
       for ( i = 0; i < num_used_model_names; i++ )
 	if ( strcmp( used_model_names[i], model_name ) == 0 || model_bin_match( used_model_names[i], model_name ) ) found_model = TRUE;
       if ( !found_model ) *line = '*';
+      tfree(model_name);
     }
   }
   for ( i = 0; i < num_used_subckt_names; i++ ) tfree(used_subckt_names[i]);
@@ -1065,7 +1067,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
 
 /* gtri - end - 12/12/90 */
 #else
-      while ((buffer = readline(fp))) {
+   while ((buffer = readline(fp))) {
 #endif
 
 #ifdef TRACE
@@ -1081,6 +1083,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
       if ( (strcmp(buffer,"\n") == 0) || (strcmp(buffer,"\r\n") == 0) ) {
          if ( call_depth != 0 || (call_depth == 0 && cc != NULL) ) {
             line_number_orig++;
+            tfree(buffer);      /* was allocated by readline() */
             continue;
          }
       }
@@ -1308,18 +1311,16 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
       end->li_next = NULL;
       end->li_error = NULL;
       end->li_actual = NULL;
-      end->li_line = buffer;
+      end->li_line = copy(buffer);
       end->li_linenum = line_number++;
       end->li_linenum_orig = line_number_orig++;
+      tfree(buffer);
    }  /* end while ((buffer = readline(fp))) */
 
    if (!end) { /* No stuff here */
       *data = NULL;
       return;
    }
-
-   /* This should be freed because we are done with it. */
-   /* tfree(buffer);  */
 
    if ( call_depth == 0 && found_end == TRUE) {
       if ( global == NULL ) {
@@ -1519,8 +1520,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
       inp_expand_macros_in_deck(working);
       inp_fix_param_values(working);
 
-      // get end card as last card in list; end card pntr does not appear to always
-      // be correct at this point
+      /* get end card as last card in list; end card pntr does not appear to always
+         be correct at this point */
       for(newcard = working; newcard != NULL; newcard = newcard->li_next)
          end = newcard;
 
@@ -1788,45 +1789,47 @@ inp_fix_subckt( char *s )
 static char*
 inp_remove_ws( char *s )
 {
-  char *big_buff = tmalloc( strlen(s) + 1 );
-  int  big_buff_index = 0;
-  char *buffer, *curr;
-  bool is_expression = FALSE;
-  curr = s;
+   char *big_buff;
+   int  big_buff_index = 0;
+   char *buffer, *curr;
+   bool is_expression = FALSE;
+  
+   big_buff = tmalloc( strlen(s) + 1 );
+   curr = s;
 
-  while ( *curr != '\0' ) {
-    if ( *curr == '{' ) is_expression = TRUE;
-    if ( *curr == '}' ) is_expression = FALSE;
-
-    big_buff[big_buff_index++] = *curr;
-    if ( *curr == '=' || (is_expression && (is_arith_char(*curr) || *curr == ',')) ) {
-      curr++;
-      while ( isspace(*curr) ) curr++;
-
+   while ( *curr != '\0' ) {
       if ( *curr == '{' ) is_expression = TRUE;
       if ( *curr == '}' ) is_expression = FALSE;
 
       big_buff[big_buff_index++] = *curr;
-    }
-    curr++;
-    if ( isspace(*curr) ) {
-      while ( isspace(*curr) ) curr++;
-      if ( is_expression ) {
-	if ( *curr != '=' && !is_arith_char(*curr) && *curr != ',' ) big_buff[big_buff_index++] = ' ';
-      } else {
-	if ( *curr != '=' ) big_buff[big_buff_index++] = ' ';
+      if ( *curr == '=' || (is_expression && (is_arith_char(*curr) || *curr == ',')) ) {
+         curr++;
+         while ( isspace(*curr) ) curr++;
+
+         if ( *curr == '{' ) is_expression = TRUE;
+         if ( *curr == '}' ) is_expression = FALSE;
+
+         big_buff[big_buff_index++] = *curr;
       }
-    }
-  }
-  big_buff[big_buff_index++] = *curr;
+      curr++;
+      if ( isspace(*curr) ) {
+         while ( isspace(*curr) ) curr++;
+         if ( is_expression ) {
+            if ( *curr != '=' && !is_arith_char(*curr) && *curr != ',' )    big_buff[big_buff_index++] = ' ';
+         } else {
+            if ( *curr != '=' ) big_buff[big_buff_index++] = ' ';
+         }
+      }
+   }
+//  big_buff[big_buff_index++] = *curr;
+   big_buff[big_buff_index] = '\0';
 
-  buffer = tmalloc( strlen(big_buff) + 1 );
-  sprintf( buffer, "%s", big_buff );
+   buffer = copy(big_buff);
 
-  tfree(s);
-  tfree(big_buff);
+   tfree(s);
+   tfree(big_buff);
 
-  return buffer;
+   return buffer;
 }
 
 static void
@@ -1866,7 +1869,7 @@ inp_remove_excess_ws(struct line *deck )
   struct line *c = deck;
   while ( c != NULL ) {
     if ( *c->li_line == '*' ) { c = c->li_next; continue; }
-    c->li_line = inp_remove_ws(c->li_line);
+    c->li_line = inp_remove_ws(c->li_line); /* freed in fcn */
     c = c->li_next;
   }
 }
@@ -2185,14 +2188,16 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 	  }
 	  d = d->li_next;
 	}
-	if ( flag ) {
+        if ( flag ) {
 	  num_subckt_params = inp_get_params( p->li_line, subckt_param_names, subckt_param_values );
 
 	  if ( num_subckt_params == 0 || !found_mult_param( num_subckt_params, subckt_param_names ) ) {
 	    inp_fix_subckt_multiplier( p, num_subckt_params, subckt_param_names, subckt_param_values );
 	  }
-	}
+	
+        }
       }
+      tfree(subckt_name );
     }
   }
 
@@ -2254,6 +2259,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 	  break;
 	}
       }
+      tfree(subckt_name);
     }
     c = c->li_next;
   }
@@ -2868,7 +2874,9 @@ get_number_terminals( char *c )
     i = 0;
     /* find the first token with "off" or "=" in the line*/
     while ( (i < 20) && (*c != '\0') ) {
-      strncpy(nam_buf, gettok_instance(&c), 32);
+      char *inst = gettok_instance(&c);
+      strncpy(nam_buf, inst, 32);
+      txfree(inst);
       if (strstr(nam_buf, "off") || strstr(nam_buf, "=")) break;
       i++;
     }
@@ -2973,7 +2981,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
       if ( strstr( ptr->li_line, "=" ) ) {
 	depends_on[num_params][0] = NULL;
 	level[num_params]         = -1;
-	param_names[num_params]   = strdup( get_param_name( ptr->li_line ) );
+	param_names[num_params]   = get_param_name( ptr->li_line ); /* strdup in fcn */
 	param_strs[num_params]    = strdup( get_param_str( ptr->li_line )  );
 
 	ptr_array[num_params++]   = ptr;

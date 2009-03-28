@@ -508,6 +508,23 @@ cp_remvar(char *varname)
 }
 
 
+/* free the struct variable. The type of the union is given by va_type */
+void
+free_struct_variable(struct variable *v)
+{
+   struct variable *tv, *tvv;
+   
+   if(!v) return;
+   tv = v;
+   while(tv) {
+      tvv = tv->va_next;
+      if(tv->va_type == VT_LIST) free_struct_variable(tv->va_vlist);
+      if(tv->va_type == VT_STRING) tfree(tv->va_string);
+      tfree(tv);
+      tv = tvv;
+   }
+}
+
 /* Determine the value of a variable.  Fail if the variable is unset,
  * and if the type doesn't match, try and make it work...  */
 bool
@@ -530,6 +547,7 @@ cp_getvar(char *name, int type, void *retval)
     if (v == NULL) {
         if (type == VT_BOOL)
             * (bool *) retval = FALSE; 
+        free_struct_variable(uv1);
         return (FALSE);
     }
     if (v->va_type == type) {
@@ -569,6 +587,8 @@ cp_getvar(char *name, int type, void *retval)
                         type);
                 break;
         }
+        free_struct_variable(uv1); 
+//        tfree(uv2);
         return (TRUE);
     } else {
         /* Try to coerce it.. */
@@ -576,19 +596,24 @@ cp_getvar(char *name, int type, void *retval)
             int *i;
             i = (int *) retval;
             *i = (int) v->va_real;
+            free_struct_variable(uv1); 
             return (TRUE);
         } else if ((type == VT_REAL) && (v->va_type == VT_NUM)) {
             double *d;
             d = (double *) retval;
             *d = (double) v->va_num;
+            free_struct_variable(uv1); 
             return (TRUE);
         } else if ((type == VT_STRING) && (v->va_type == VT_NUM)) {
             (void) sprintf(retval, "%d", v->va_num);
+            free_struct_variable(uv1); 
             return (TRUE);
         } else if ((type == VT_STRING) && (v->va_type == VT_REAL)) {
             (void) sprintf(retval, "%f", v->va_real);
+            free_struct_variable(uv1); 
             return (TRUE);
         }
+        free_struct_variable(uv1); 
         return (FALSE);
     }
 }

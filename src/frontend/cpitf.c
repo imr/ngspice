@@ -208,10 +208,10 @@ ft_cpinit(void)
 
     if (Lib_Path && *Lib_Path) {
 	(void) sprintf(buf, "sourcepath = ( %s %s )", DIR_CWD, Lib_Path);
-	wl = cp_doglob(cp_lexer(buf));
+        wl = cp_doglob(cp_lexer(buf));
 	cp_striplist(wl);
 	com_set(wl);
-
+        wl_free(wl);
 	/* Now source the standard startup file. */
 	/* XXX strange */
 

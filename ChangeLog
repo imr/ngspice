@@ -1,3 +1,7 @@
+2009-03-27 Holger Vogt
+  * inpcom.c, variable.c, cpitf.c: memory leaks removed, which were detected by
+    valgrind-3.4.1 under SUSE 11.1
+
 2009-03-22 Holger Vogt
   * inpcom.c: readline() now returns /n for an empty line, dynLlen consists of
     maximum line length plus some space for parameter substitution and has a
