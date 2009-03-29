@@ -1,3 +1,6 @@
+2009-03-29 Holger Vogt
+  * inp.c, variable.c: some more memory leaks removed
+
 2009-03-27 Holger Vogt
   * inpcom.c, variable.c, cpitf.c: memory leaks removed, which were detected by
     valgrind-3.4.1 under SUSE 11.1

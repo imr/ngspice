@@ -89,7 +89,7 @@ cp_vset(char *varname, char type, char *value)
 {
     struct variable *v, *u, *w;
     int i;
-    bool alreadythere = FALSE;
+    bool alreadythere = FALSE, v_free = FALSE;
     char* copyvarname;
     
    
@@ -109,11 +109,16 @@ cp_vset(char *varname, char type, char *value)
         v = alloc(struct variable);
         v->va_name = copy(copyvarname);
         v->va_next = NULL;
+        v_free = TRUE;
     }
     switch (type) {
     case VT_BOOL:
         if (* ((bool *) value) == FALSE) {
             cp_remvar(copyvarname);
+            if(v_free) {
+               tfree(v->va_name);
+               tfree(v);
+            }
             return;
         } else
             v->va_bool = TRUE;
@@ -238,7 +243,8 @@ cp_vset(char *varname, char type, char *value)
 
     case US_NOSIMVAR:
 	/* What do you do? */
-	tfree(v);
+	tfree(v->va_name);
+        tfree(v);
 	
 	break;
 
@@ -502,7 +508,7 @@ cp_remvar(char *varname)
         fprintf(cp_err, "cp_remvar: Internal Error: US val %d\n", i);
         break;
     }
-
+    tfree(v->va_name);
     tfree(v);
     return;
 }
@@ -679,6 +685,7 @@ cp_variablesubst(wordlist *wlist)
             	(void) strcpy(tbuf, t); /* MW. Save t*/
 	    if (!(wl = wl_splice(wl, nwl))) /*CDHW this frees wl CDHW*/
                 return (NULL);
+
             /* This is bad... */
             for (wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev)
                 ;
@@ -692,8 +699,10 @@ cp_variablesubst(wordlist *wlist)
             s = wl->wl_word;
             for (i = 0; s < t; s++)
                 wbuf[i++] = *s;
+
         }
     }
+
     return (wlist);
 }
 
@@ -725,6 +734,7 @@ vareval(char *string)
         (void) sprintf(buf, "%d", getpid());
 
         wl->wl_word = copy(buf);
+        tfree(oldstring);
         return (wl);
 
         case '<':
@@ -740,6 +750,7 @@ vareval(char *string)
         /* This is a hack. */
         if (!wl->wl_word)
             wl->wl_word = copy("");
+        tfree(oldstring);
         return (wl);
     
         case '?':
@@ -752,6 +763,7 @@ vareval(char *string)
         if (!v)
             v = cp_enqvar(string);
         wl->wl_word = copy(v ? "1" : "0");
+        tfree(oldstring);
         return (wl);
         
         case '#':
@@ -766,6 +778,7 @@ vareval(char *string)
         if (!v) {
             fprintf(cp_err, "Error: %s: no such variable.\n",
                     string);
+            tfree(oldstring);
             return (NULL);
         }
         if (v->va_type == VT_LIST)
@@ -775,12 +788,14 @@ vareval(char *string)
             i = (v->va_type != VT_BOOL);
         (void) sprintf(buf, "%d", i);
         wl->wl_word = copy(buf);
+        tfree(oldstring);
         return (wl);
 
         case '\0':
         wl = alloc(struct wordlist);
         wl->wl_next = wl->wl_prev = NULL;
         wl->wl_word = copy("$");
+        tfree(oldstring);
         return (wl);
     }
 
@@ -806,10 +821,12 @@ vareval(char *string)
         wl = alloc(struct wordlist);
         wl->wl_next = wl->wl_prev = NULL;
         wl->wl_word = copy(s);
+        tfree(oldstring);
         return (wl);
     }
     if (!v) {
         fprintf(cp_err, "Error: %s: no such variable.\n", string);
+        tfree(oldstring);
         return (NULL);
     }
     wl = cp_varwl(v);
@@ -828,7 +845,7 @@ vareval(char *string)
         up--, low--;
         wl = wl_range(wl, low, up);
     }
-
+    tfree(oldstring);
     return (wl);
 }
 

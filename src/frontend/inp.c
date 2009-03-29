@@ -349,12 +349,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
         return;
     }
     
-    if (!comfile)
+    if (!comfile) {
         options = inp_getopts(deck);
 
-    realdeck = inp_deckcopy(deck);
+        realdeck = inp_deckcopy(deck);
 
-    if (!comfile) {
         /* Save the title before INPgetTitle gets it. */
         tt = copy(deck->li_line);
         if (!deck->li_next)
@@ -394,8 +393,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 else
                     cp_evloop(dd->li_line);
 	    }
-	    line_free(dd,FALSE); /* SJB - free this line's memory */
-        }   
+        }
+        line_free(deck,TRUE);
     } /* end if(comfile) */ 
 
     else {    /* must be regular deck . . . . */
@@ -615,6 +614,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
    }
 #endif
 
+      line_free(deck, TRUE);
+
       /* Now that the deck is loaded, do the commands, if there are any */
       if (controls) {
 	for (end = wl = wl_reverse(controls); wl; wl = wl->wl_next)
@@ -638,6 +639,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     cp_curin = lastin;
     cp_curout = lastout;
     cp_curerr = lasterr;
+
     return;
 }
 
