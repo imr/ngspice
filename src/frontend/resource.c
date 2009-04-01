@@ -223,8 +223,12 @@ printres(char *name)
 #else
 
 #  ifdef HAVE_GETRUSAGE
-        struct rusage ruse;
-        (void) getrusage(RUSAGE_SELF, &ruse);
+        int ret;
+        struct rusage ruse = {{NULL, NULL}};
+        ret = getrusage(RUSAGE_SELF, &ruse);
+        if(ret == -1) {
+          perror("getrusage(): ");
+        }
 	total = ruse.ru_utime.tv_sec + ruse.ru_stime.tv_sec;
 	totalu = (ruse.ru_utime.tv_usec + ruse.ru_stime.tv_usec) / 1000;
 	cpu_elapsed = "CPU";
@@ -386,9 +390,12 @@ printres(char *name)
 
     if (!name || eq(name, "faults")) {
 #ifdef HAVE_GETRUSAGE
-        struct rusage ruse;
-
-        (void) getrusage(RUSAGE_SELF, &ruse);
+        int ret;
+        struct rusage ruse = {{NULL, NULL}};
+        ret = getrusage(RUSAGE_SELF, &ruse);
+        if(ret == -1) {
+          perror("getrusage(): ");
+        }
         fprintf(cp_out, 
         "%lu page faults, %lu vol + %lu invol = %lu context switches.\n",
                 ruse.ru_majflt, ruse.ru_nvcsw, ruse.ru_nivcsw, 

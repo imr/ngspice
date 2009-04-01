@@ -98,12 +98,17 @@ double
 seconds(void)
 {
 #ifdef HAVE_GETRUSAGE
-    struct rusage ruse;
+    int ret;
+    struct rusage ruse = {{NULL, NULL}};
 
 #ifdef PARALLEL_ARCH
     return (TCGTIME_());
 #else
-    (void) getrusage(RUSAGE_SELF, &ruse);
+    ret = getrusage(RUSAGE_SELF, &ruse);
+    if(ret == -1) {
+      perror("getrusage(): ");
+      return 1;
+    }
     return ((double)ruse.ru_utime.tv_sec + (double) ruse.ru_utime.tv_usec / 1000000.0);
 #endif /* PARALLEL_ARCH */
 #else
