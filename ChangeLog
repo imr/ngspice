@@ -3,6 +3,7 @@
     plotit.c, inpgtok.c: 
     some more memory leaks removed
     spicenum.c: release of memory for dico->dyncategory corrected
+    subckt.c, inp.c, inpcom.c more on memory leaks
 
 2009-04-01 Dietmar Warning
   * frontend/resource.c, misc/misc_time.c: init of rusage structure to prevent

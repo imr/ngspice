@@ -63,6 +63,9 @@ $Id$
 
 #include "numparam/numpaif.h"
 
+extern void line_free_x(struct line * deck, bool recurse);
+#define line_free(line,flag)	{ line_free_x(line,flag); line = NULL; }
+
 /* ----- static declarations ----- */
 static struct line * doit(struct line *deck);
 static int translate(struct line *deck, char *formal, char *actual, char *scname, 
@@ -365,7 +368,7 @@ doit(struct line *deck)
 {
     struct line *c, *last, *lc, *lcc;
     struct line *savenext;
-    struct subs *sss = (struct subs *) NULL, *ks;   /*  *sss and *ks temporarily hold decks to substitute  */
+    struct subs *sssfree, *sss = (struct subs *) NULL, *ks;   /*  *sss and *ks temporarily hold decks to substitute  */
     char *s, *t, *scname, *subname;
     int nest, numpasses = MAXNEST, i;
     bool gotone;
@@ -427,7 +430,7 @@ doit(struct line *deck)
             }
 
 
-            sss = alloc(struct subs);
+            sssfree = sss = alloc(struct subs);
 	    if (!lcc)               /* if lcc is null, then no .ends was found.  */
 		lcc = last;
             if ( use_numparams==FALSE )
@@ -626,6 +629,23 @@ doit(struct line *deck)
     subs = ts;
     modnames = tmodnames;
     submod = tsubmod;
+/*
+struct subs {
+    char *su_name;          
+    char *su_args;          
+    int su_numargs;
+    struct line *su_def;  
+    struct subs *su_next;
+} ;
+*/
+    while(sssfree) {
+        struct subs *sss2 = sssfree;
+        sssfree = sssfree->su_next;
+        tfree(sss2->su_name);
+        tfree(sss2->su_args);
+        line_free(sss2->su_def, TRUE);
+        tfree(sss2);
+    }
 
     return (deck);
 }

@@ -1119,11 +1119,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
                   s = copys;		  /* reuse s, but remember, buffer still points to allocated memory */
                }
             }
-	      
-	         /* lower case the file name for later string compares */
-	         s_ptr = strdup(s);
-	         s_lower = strdup(s);
-	         for(s_ptr = s_lower; *s_ptr && (*s_ptr != '\n'); s_ptr++) *s_ptr = tolower(*s_ptr);
+           /* lower case the file name for later string compares */
+/*           s_ptr = strdup(s); */
+            s_lower = strdup(s);
+            for(s_ptr = s_lower; *s_ptr && (*s_ptr != '\n'); s_ptr++) *s_ptr = tolower(*s_ptr);
 
             found_library = FALSE;
             for ( i = 0; i < num_libraries; i++ ) {

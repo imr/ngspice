@@ -55,7 +55,8 @@ $Id$
 /* static declarations */
 static char * upper(register char *string);
 static bool doedit(char *filename);
-static void line_free_x(struct line * deck, bool recurse);
+
+void line_free_x(struct line * deck, bool recurse);
 
 
 /* uncomment this line for getting deck output after all
@@ -302,7 +303,7 @@ top2:
  * All lines linked via the li_actual field are always recursivly freed.
  * SJB - 22nd May 2001
  */
-static void
+void
 line_free_x(struct line * deck, bool recurse) {
     if(!deck)
 	return;
@@ -394,7 +395,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     cp_evloop(dd->li_line);
 	    }
         }
+        /* free the control deck */
         line_free(deck,TRUE);
+/*         printf("Command deck freed\n"); */
     } /* end if(comfile) */ 
 
     else {    /* must be regular deck . . . . */
@@ -614,7 +617,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
    }
 #endif
 
-      line_free(deck, TRUE);
+ /*     line_free(deck, TRUE); // have to keep this to allow listing
+      printf("Real deck freed\n"); */ 
 
       /* Now that the deck is loaded, do the commands, if there are any */
       if (controls) {
