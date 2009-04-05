@@ -1035,8 +1035,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
          if ( call_depth == 0 && line_count == 0 ) {
             line_count++;
             if ( fgets( big_buff, 5000, fp ) ) {
-               buffer = tmalloc( strlen(big_buff) + 1 ); 
-               strcpy(buffer, big_buff);
+/*               buffer = tmalloc( strlen(big_buff) + 1 ); 
+               strcpy(buffer, big_buff); */
+               buffer = copy(big_buff);
             }
          }
          else {
@@ -2143,126 +2144,140 @@ inp_fix_subckt_multiplier( struct line *subckt_card,
 static void
 inp_fix_inst_calls_for_numparam(struct line *deck)
 {
-  struct line *c = deck;
-  struct line *d, *p = NULL;
-  char *inst_line;
-  char *subckt_line;
-  char *subckt_name;
-  char *subckt_param_names[1000];
-  char *subckt_param_values[1000];
-  char *inst_param_names[1000];
-  char *inst_param_values[1000];
-  char name_w_space[1000];
-  int  num_subckt_params = 0;
-  int  num_inst_params   = 0;
-  int i,j,k;
-  bool flag = FALSE;
-  bool found_subckt = FALSE;
-  bool found_param_match = FALSE;
+   struct line *c = deck;
+   struct line *d, *p = NULL;
+   char *inst_line;
+   char *subckt_line;
+   char *subckt_name;
+   char *subckt_param_names[1000];
+   char *subckt_param_values[1000];
+   char *inst_param_names[1000];
+   char *inst_param_values[1000];
+   char name_w_space[1000];
+   int  num_subckt_params = 0;
+   int  num_inst_params   = 0;
+   int i,j,k;
+   bool flag = FALSE;
+   bool found_subckt = FALSE;
+   bool found_param_match = FALSE;
 
-  // first iterate through instances and find occurences where 'm' multiplier needs to be
-  // added to the subcircuit -- subsequent instances will then need this parameter as well
-  for ( c = deck; c != NULL; c = c->li_next ) {
-    inst_line = c->li_line;
+   // first iterate through instances and find occurences where 'm' multiplier needs to be
+   // added to the subcircuit -- subsequent instances will then need this parameter as well
+   for ( c = deck; c != NULL; c = c->li_next ) {
+      inst_line = c->li_line;
 
-    if ( *inst_line == '*' ) { continue; }
-    if ( ciprefix( "x", inst_line ) ) {
-      num_inst_params = inp_get_params( inst_line,   inst_param_names,   inst_param_values   );
-      subckt_name     = inp_get_subckt_name( inst_line );
+      if ( *inst_line == '*' ) { continue; }
+      if ( ciprefix( "x", inst_line ) ) {
+         num_inst_params = inp_get_params( inst_line,   inst_param_names,   inst_param_values   );
+         subckt_name     = inp_get_subckt_name( inst_line );
 
-      if ( found_mult_param( num_inst_params, inst_param_names ) ) {
-	flag = FALSE;
-	// iterate through the deck to find the subckt (last one defined wins)
-	d = deck;
-	while ( d != NULL ) {
-	  subckt_line = d->li_line;
-	  if ( ciprefix( ".subckt", subckt_line ) ) {
-	    for ( ; *subckt_line && !isspace(*subckt_line); subckt_line++ );
-	    while ( isspace(*subckt_line) ) subckt_line++;
+         if ( found_mult_param( num_inst_params, inst_param_names ) ) {
+            flag = FALSE;
+            // iterate through the deck to find the subckt (last one defined wins)
+            d = deck;
+            while ( d != NULL ) {
+               subckt_line = d->li_line;
+               if ( ciprefix( ".subckt", subckt_line ) ) {
+                  for ( ; *subckt_line && !isspace(*subckt_line); subckt_line++ );
+                  while ( isspace(*subckt_line) ) subckt_line++;
 
-	    sprintf( name_w_space, "%s ", subckt_name );
-	    if ( strncmp( subckt_line, name_w_space, strlen(name_w_space) ) == 0 ) {
-	      p = d;
-	      flag = TRUE;
-	    }
-	  }
-	  d = d->li_next;
-	}
-        if ( flag ) {
-	  num_subckt_params = inp_get_params( p->li_line, subckt_param_names, subckt_param_values );
+                  sprintf( name_w_space, "%s ", subckt_name );
+                  if ( strncmp( subckt_line, name_w_space, strlen(name_w_space) ) == 0 ) {
+                     p = d;
+                     flag = TRUE;
+                  }
+               }
+               d = d->li_next;
+            }
+            if ( flag ) {
+               num_subckt_params = inp_get_params( p->li_line, subckt_param_names, subckt_param_values );
 
-	  if ( num_subckt_params == 0 || !found_mult_param( num_subckt_params, subckt_param_names ) ) {
-	    inp_fix_subckt_multiplier( p, num_subckt_params, subckt_param_names, subckt_param_values );
-	  }
-	
-        }
+               if ( num_subckt_params == 0 || !found_mult_param( num_subckt_params, subckt_param_names ) ) {
+                  inp_fix_subckt_multiplier( p, num_subckt_params, subckt_param_names, subckt_param_values );
+               }
+            }
+         }
+         tfree(subckt_name );
+         if ( flag )
+            for (i=0; i < num_subckt_params; i++) {
+               tfree(subckt_param_names[i]);
+               tfree(subckt_param_values[i]);
+            }
+         for (i=0; i < num_inst_params; i++) {
+            tfree(inst_param_names[i]);
+            tfree(inst_param_values[i]);
+         }
       }
-      tfree(subckt_name );
-    }
-  }
+   }
 
-  c = deck;
-  while ( c != NULL ) {
-    inst_line = c->li_line;
+   c = deck;
+   while ( c != NULL ) {
+      inst_line = c->li_line;
 
-    if ( *inst_line == '*' ) { c = c->li_next; continue; }
-    if ( ciprefix( "x", inst_line ) ) {
-      subckt_name = inp_get_subckt_name( inst_line );
-      for ( i = 0; i < num_subckt_w_params; i++ ) {
-	if ( strcmp( subckt_w_params[i], subckt_name ) == 0 ) {
-	  sprintf( name_w_space, "%s ", subckt_name );
+      if ( *inst_line == '*' ) { c = c->li_next; continue; }
+      if ( ciprefix( "x", inst_line ) ) {
+         subckt_name = inp_get_subckt_name( inst_line );
+         for ( i = 0; i < num_subckt_w_params; i++ ) {
+            if ( strcmp( subckt_w_params[i], subckt_name ) == 0 ) {
+               sprintf( name_w_space, "%s ", subckt_name );
 
-	  /* find .subckt line */
-	  found_subckt = FALSE;
+               /* find .subckt line */
+               found_subckt = FALSE;
 
-	  d = deck;
-	  while ( d != NULL ) {
-	    subckt_line = d->li_line;
-	    if ( ciprefix( ".subckt", subckt_line ) ) {
-	      for ( ; *subckt_line && !isspace(*subckt_line); subckt_line++ );
-	      while ( isspace(*subckt_line) ) subckt_line++;
+               d = deck;
+               while ( d != NULL ) {
+                  subckt_line = d->li_line;
+                  if ( ciprefix( ".subckt", subckt_line ) ) {
+                     for ( ; *subckt_line && !isspace(*subckt_line); subckt_line++ );
+                     while ( isspace(*subckt_line) ) subckt_line++;
 
-	      if ( strncmp( subckt_line, name_w_space, strlen(name_w_space) ) == 0 ) {
-		num_subckt_params = inp_get_params( subckt_line, subckt_param_names, subckt_param_values );
-		num_inst_params   = inp_get_params( inst_line,   inst_param_names,   inst_param_values   );
+                     if ( strncmp( subckt_line, name_w_space, strlen(name_w_space) ) == 0 ) {
+                        num_subckt_params = inp_get_params( subckt_line, subckt_param_names, subckt_param_values );
+                        num_inst_params   = inp_get_params( inst_line,   inst_param_names,   inst_param_values   );
 
-		// make sure that if have inst params that one matches subckt
-		found_param_match = FALSE;
-		if ( num_inst_params == 0 ) found_param_match = TRUE;
-		else {
-		  for ( j = 0; j < num_inst_params; j++ ) {
-		    for ( k = 0; k < num_subckt_params; k++ ) {
-		      if ( strcmp( subckt_param_names[k], inst_param_names[j] ) == 0 ) {
-			found_param_match = TRUE;
-			break;
-		      }
-		    }
-		    if ( found_param_match ) break;
-		  }
-		}
+                        // make sure that if have inst params that one matches subckt
+                        found_param_match = FALSE;
+                        if ( num_inst_params == 0 ) found_param_match = TRUE;
+                        else {
+                           for ( j = 0; j < num_inst_params; j++ ) {
+                              for ( k = 0; k < num_subckt_params; k++ ) {
+                                 if ( strcmp( subckt_param_names[k], inst_param_names[j] ) == 0 ) {
+                                    found_param_match = TRUE;
+                                    break;
+                                 }
+                              }
+                              if ( found_param_match ) break;
+                           }
+                        }
 
-		if ( !found_param_match ) {
-		  // comment out .subckt and continue
-		  while ( d != NULL && !ciprefix( ".ends", d->li_line ) ) { *(d->li_line) = '*'; d = d->li_next; }
-		  *(d->li_line) = '*'; d = d->li_next; continue;
-		}
+                        if ( !found_param_match ) {
+                        // comment out .subckt and continue
+                           while ( d != NULL && !ciprefix( ".ends", d->li_line ) ) { *(d->li_line) = '*'; d = d->li_next; }
+                           *(d->li_line) = '*'; d = d->li_next; continue;
+                        }
 
-		c->li_line = inp_fix_inst_line( inst_line,
-						num_subckt_params, subckt_param_names, subckt_param_values,
-						num_inst_params,   inst_param_names,   inst_param_values );
-		found_subckt = TRUE;
-	      }
-	    }
-	    if ( found_subckt ) break;
-	    d = d->li_next;
-	  }
-	  break;
-	}
+                        c->li_line = inp_fix_inst_line( inst_line, num_subckt_params, subckt_param_names, subckt_param_values, num_inst_params,   inst_param_names,   inst_param_values );
+                        found_subckt = TRUE;
+                        for (i=0; i < num_subckt_params; i++) {
+                           tfree(subckt_param_names[i]);
+                           tfree(subckt_param_values[i]);
+                        }
+                        for (i=0; i < num_inst_params; i++) {
+                           tfree(inst_param_names[i]);
+                           tfree(inst_param_values[i]);
+                        }
+                     }
+                  }
+                  if ( found_subckt ) break;
+                  d = d->li_next;
+               }
+               break;
+            }
+         }
+         tfree(subckt_name);
       }
-      tfree(subckt_name);
-    }
-    c = c->li_next;
-  }
+      c = c->li_next;
+   }
 }
 
 static void

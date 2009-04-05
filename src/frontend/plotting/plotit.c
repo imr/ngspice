@@ -234,7 +234,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 {
     /* All these things are static so that "samep" will work. */
     static double *xcompress = NULL, *xindices = NULL;
-    static double *xlim = NULL, *ylim = NULL;
+    static double *xlim = NULL, *ylim = NULL, *xynull;
     static double *xdelta = NULL, *ydelta = NULL;
     static char *xlabel = NULL, *ylabel = NULL, *title = NULL;
     static bool nointerp = FALSE;
@@ -267,10 +267,14 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     /* First get the command line, without the limits. 
        Wii be used for zoomed windows */
     wwl = wl_copy(wl);
-    (void) getlims(wwl, "xl", 2);
-    (void) getlims(wwl, "xlimit", 2);
-    (void) getlims(wwl, "yl", 2);
-    (void) getlims(wwl, "ylimit", 2);
+    xynull = getlims(wwl, "xl", 2); /*  (void) getlims(wwl, "xl", 2); */
+    tfree(xynull); /*memory leak, if return value is not freed */
+    xynull = getlims(wwl, "xlimit", 2);
+    tfree(xynull); /*memory leak, if return value is not freed */
+    xynull = getlims(wwl, "yl", 2);
+    tfree(xynull); /*memory leak, if return value is not freed */
+    xynull = getlims(wwl, "ylimit", 2);
+    tfree(xynull); /*memory leak, if return value is not freed */
     /* remove tile, xlabel, ylabel */
     nxlabel = getword(wwl, "xlabel");
     nylabel = getword(wwl, "ylabel");

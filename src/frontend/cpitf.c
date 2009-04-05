@@ -272,6 +272,7 @@ cp_istrue(wordlist *wl)
     cp_striplist(wl);
 
     pn = ft_getpnames(wl, TRUE);
+    wl_free(wl);
     v = ft_evaluate(pn);
 
     /* It makes no sense to say while (all), but what the heck... */

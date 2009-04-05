@@ -206,7 +206,7 @@ printres(char *name)
 #endif    
     bool yy = FALSE;
     static long lastsec = 0, lastusec = 0;
-    struct variable *v;
+    struct variable *v, *vfree;
     char   *cpu_elapsed;
 
 #ifdef XSPICE
@@ -414,14 +414,14 @@ printres(char *name)
     } else {
 	paramname = name;
     }
-    v = if_getstat(ft_curckt->ci_ckt, paramname);
+    vfree = v = if_getstat(ft_curckt->ci_ckt, paramname);
     if (paramname && v) {                     
 /* end cider integration */
 #else /* ~CIDER */     
 	if (name && eq(name, "task"))
-	    v = if_getstat(ft_curckt->ci_ckt, NULL);
+	    vfree = v = if_getstat(ft_curckt->ci_ckt, NULL);
 	else
-	    v = if_getstat(ft_curckt->ci_ckt, name);
+	    vfree = v = if_getstat(ft_curckt->ci_ckt, name);
 	if (name && v) {
 #endif	
             fprintf(cp_out, "%s = ", v->va_name);
@@ -431,8 +431,10 @@ printres(char *name)
         } else if (v) {
             (void) putc('\n', cp_out);
             while (v) {
+                wordlist *wlpr = cp_varwl(v);
                 fprintf(cp_out, "%s = ", v->va_name);
-                wl_print(cp_varwl(v), cp_out);
+                wl_print(wlpr, cp_out);
+                wl_free(wlpr);
                 (void) putc('\n', cp_out);
                 v = v->va_next;
             }
@@ -456,6 +458,7 @@ printres(char *name)
 		name);
         fprintf(cp_err, "\tor no active circuit available\n");
     }
+    if(vfree) free_struct_variable(vfree);
     return;
 }
 

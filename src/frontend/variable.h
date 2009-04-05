@@ -58,6 +58,6 @@ bool cp_getvar(char *name, int type, void *retval);
 wordlist * cp_variablesubst(wordlist *wlist);
 wordlist * vareval(char *string);
 void cp_vprint(void);
-
+void free_struct_variable(struct variable *v);
 
 #endif /* _VARIABLE_H */

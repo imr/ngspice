@@ -230,7 +230,7 @@ cp_vset(char *varname, char type, char *value)
                 /* va_name is the same string */
                 u->va_type = v->va_type;
                 /* va_next left unchanged */
-                tfree(v->va_name);
+//                tfree(v->va_name);
                 tfree(v);
 /* va: old version with memory leaks
 		w = u->va_next;
@@ -252,6 +252,10 @@ cp_vset(char *varname, char type, char *value)
         fprintf(cp_err, "cp_vset: Internal Error: bad US val %d\n", i);
         break;
     }
+/*    if (v_free) {
+        tfree(v->va_name);
+        tfree(v);
+    } */
     tfree(copyvarname);
     return;
 }
@@ -387,6 +391,24 @@ cp_setparse(wordlist *wl)
 }
 
 
+/* free the struct variable. The type of the union is given by va_type */
+void
+free_struct_variable(struct variable *v)
+{
+   struct variable *tv, *tvv;
+   
+   if(!v) return;
+   tv = v;
+   while(tv) {
+      tvv = tv->va_next;
+      if(tv->va_type == VT_LIST) free_struct_variable(tv->va_vlist);
+      if(tv->va_type == VT_STRING) tfree(tv->va_string);
+      tfree(tv);
+      tv = tvv;
+   }
+}
+
+
 void
 cp_remvar(char *varname)
 {
@@ -510,26 +532,10 @@ cp_remvar(char *varname)
     }
     tfree(v->va_name);
     tfree(v);
+    free_struct_variable(uv1);
     return;
 }
 
-
-/* free the struct variable. The type of the union is given by va_type */
-void
-free_struct_variable(struct variable *v)
-{
-   struct variable *tv, *tvv;
-   
-   if(!v) return;
-   tv = v;
-   while(tv) {
-      tvv = tv->va_next;
-      if(tv->va_type == VT_LIST) free_struct_variable(tv->va_vlist);
-      if(tv->va_type == VT_STRING) tfree(tv->va_string);
-      tfree(tv);
-      tv = tvv;
-   }
-}
 
 /* Determine the value of a variable.  Fail if the variable is unset,
  * and if the type doesn't match, try and make it work...  */
@@ -682,10 +688,11 @@ cp_variablesubst(wordlist *wlist)
                 nwl->wl_word = copy(buf);
             }
 	    
-            	(void) strcpy(tbuf, t); /* MW. Save t*/
-	    if (!(wl = wl_splice(wl, nwl))) /*CDHW this frees wl CDHW*/
+            (void) strcpy(tbuf, t); /* MW. Save t*/
+	    if (!(wl = wl_splice(wl, nwl))) {/*CDHW this frees wl CDHW*/
+                wl_free(nwl);
                 return (NULL);
-
+            }
             /* This is bad... */
             for (wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev)
                 ;

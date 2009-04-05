@@ -1,3 +1,8 @@
+2009-04-05 Holger Vogt
+  * com_fft.c, inpcom.c, variable.c, variable.h, resource.c, cpitf.c, 
+    plotit.c: 
+    some more memory leaks removed
+
 2009-04-01 Dietmar Warning
   * frontend/resource.c, misc/misc_time.c: init of rusage structure to prevent
     read of uninitialized memory, found with dbx under solaris
