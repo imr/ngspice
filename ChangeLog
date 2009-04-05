@@ -1,7 +1,8 @@
 2009-04-05 Holger Vogt
   * com_fft.c, inpcom.c, variable.c, variable.h, resource.c, cpitf.c, 
-    plotit.c: 
+    plotit.c, inpgtok.c: 
     some more memory leaks removed
+    spicenum.c: release of memory for dico->dyncategory corrected
 
 2009-04-01 Dietmar Warning
   * frontend/resource.c, misc/misc_time.c: init of rusage structure to prevent

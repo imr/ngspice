@@ -27,6 +27,7 @@ int INPgetTok(char **line, char **token, int gobble)
 {
     char *point;
     int signstate;
+    int diffpoints;    
 
     /* scan along throwing away garbage characters until end of line
        or a separation char is found */
@@ -94,7 +95,17 @@ int INPgetTok(char **line, char **token, int gobble)
 
     }
 
-    if (point == *line && *point)	/* Weird items, 1 char */
+    diffpoints = point - *line;
+    if ((diffpoints < 1) && *point)
+        diffpoints = 1;	/* Weird items, 1 char */
+    *token = (char *) tmalloc((1 + diffpoints)*sizeof(char));
+    if (!*token)
+        return (E_NOMEM);
+    (void) strncpy(*token, *line, diffpoints);
+    *(*token + diffpoints) = '\0';
+    *line = point;
+/*
+    if (point == *line && *point)
 	point++;
     *token = (char *) MALLOC(1 + point - *line);
     if (!*token)
@@ -102,7 +113,7 @@ int INPgetTok(char **line, char **token, int gobble)
     (void) strncpy(*token, *line, point - *line);
     *(*token + (point - *line)) = '\0';
     *line = point;
-
+ */
     /* gobble garbage to next token */
     for (; **line != '\0'; (*line)++) {
 	if (**line == ' ')
@@ -139,6 +150,7 @@ int INPgetNetTok(char **line, char **token, int gobble)
 {
     char *point;
     int signstate;
+    int diffpoints;
 
     /* scan along throwing away garbage characters until end of line
        or a separation char is found */
@@ -181,7 +193,18 @@ int INPgetNetTok(char **line, char **token, int gobble)
     }
 
     /* now copy found token into *token */
-    if (point == *line && *point)	/* Weird items, 1 char */
+    diffpoints = point - *line;
+    if ((diffpoints < 1) && *point)
+        diffpoints = 1;	/* Weird items, 1 char */
+    *token = (char *) tmalloc((1 + diffpoints)*sizeof(char));
+    if (!*token)
+        return (E_NOMEM);
+    (void) strncpy(*token, *line, diffpoints);
+    *(*token + diffpoints) = '\0';
+    *line = point;
+
+/*
+    if (point == *line && *point)
 	point++;
     *token = (char *) MALLOC(1 + point - *line);
     if (!*token)
@@ -189,7 +212,7 @@ int INPgetNetTok(char **line, char **token, int gobble)
     (void) strncpy(*token, *line, point - *line);
     *(*token + (point - *line)) = '\0';
     *line = point;
-
+*/
     /* gobble garbage to next token */
     for (; **line != '\0'; (*line)++) {
 	if (**line == ' ')

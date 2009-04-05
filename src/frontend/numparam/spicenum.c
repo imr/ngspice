@@ -212,7 +212,6 @@ static void
 modernizeex (char *s)
 /* old style expressions &(..) and &id --> new style with braces. */
 {
-//  Strbig (Llen, t);
   int i, state, ls;
   char c, d;
   Strbig (dynLlen, t);
@@ -290,7 +289,6 @@ transform (tdico * dico, char *s, unsigned char nostripping, char *u)
  *   'B'  netlist (or .model ?) line that had Braces killed 
  */
 {
-//   Strbig (Llen, t);
    char category;
    int i, k, a, n;
    Strbig (dynLlen, t);
@@ -389,7 +387,6 @@ static tdico *dico = NULL;
 static void
 putlogfile (char c, int num, char *t)
 {
-//  Strbig (Llen, u);
    Str (20, fname);
    Strbig (dynLlen, u);
    if (dologfile)
@@ -439,8 +436,6 @@ nupa_init (char *srcfile)
       dico->dyncategory[i] = '?';
     }
 
-//    sini (dico->srcfile, sizeof (dico->srcfile) - 4);
-
   if (srcfile != NULL)
     scopy (dico->srcfile, srcfile);
 }
@@ -462,8 +457,9 @@ nupa_done (void)
 
   for (i = dynmaxline ; i >= 0; i--) {
     dispose ((void *) dico->dynrefptr[i]);
-    dispose ((void *) dico->dyncategory[i]);
   }
+  dispose ((void *) dico->dynrefptr);  
+  dispose ((void *) dico->dyncategory);
   dispose ((void *) dico);
   dico = NULL;
   dispose ((void *) inst_dico);
@@ -622,8 +618,6 @@ nupa_copy (char *s, int linenum)
   - substitute placeholders for all {..} --> 10-digit numeric values.
 */
 {
-//  Strbig (Llen, u);
-//  Strbig (Llen, keywd);
   char *t;
   int ls;
   char c, d;
