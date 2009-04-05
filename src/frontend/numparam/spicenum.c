@@ -630,7 +630,7 @@ nupa_copy (char *s, int linenum)
   pscopy (u, s, 1, ls);		/* strip trailing space, CrLf and so on */
   dico->srcline = linenum;
 
-  if ((!inexpansion) && (linenum >= 0) && (linenum < dynmaxline))
+  if ((!inexpansion) && (linenum >= 0) && (linenum <= dynmaxline))
   {
     linecount++;
     dico->dynrefptr[linenum] = s;

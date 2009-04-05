@@ -184,7 +184,7 @@ inp_subcktexpand(struct line *deck)
 	c= c->li_next;
       }
       c=deck;
-      while ( c != NULL) {  /* first Numparam pass */ 
+      while ( c != NULL) {  /* first Numparam pass */
         c->li_line = nupa_copy(c->li_line, c->li_linenum);
         c= c->li_next;
       }
@@ -344,9 +344,10 @@ inp_subcktexpand(struct line *deck)
 	  c= c->li_next;
       }
 #endif	/* TRACE */ 
-      //ok= ok && nupa_signal(NUPAEVALDONE, NULL);
+
       //nupa_list_params(stdout);
       nupa_copy_inst_dico();
+      ok= ok && nupa_signal(NUPAEVALDONE, NULL);
     }
     return (ll);  /* return the spliced deck.  */
 }
