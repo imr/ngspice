@@ -1,3 +1,6 @@
+2009-04-10 Holger Vogt
+  * spicenum.c: memory leak removed
+  
 2009-04-05 Holger Vogt
   * com_fft.c, inpcom.c, variable.c, variable.h, resource.c, cpitf.c, 
     plotit.c, inpgtok.c: 

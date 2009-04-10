@@ -460,10 +460,12 @@ nupa_done (void)
   }
   dispose ((void *) dico->dynrefptr);  
   dispose ((void *) dico->dyncategory);
+  dispose ((void *) dico->dyndat);
   dispose ((void *) dico);
   dico = NULL;
+  dispose ((void *) inst_dico->dyndat);
   dispose ((void *) inst_dico);
-  inst_dico = NULL;  
+  inst_dico = NULL;
   if (nerrors)
     {
       /* debug: ask if spice run really wanted */
