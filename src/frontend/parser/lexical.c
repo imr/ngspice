@@ -42,6 +42,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #endif
 #endif
 
+#define NEW_BSIZE_SP 2*BSIZE_SP
 
 #include "fteinput.h"
 #include "lexical.h"
@@ -78,7 +79,7 @@ static int numeofs = 0;
         cw->wl_next->wl_prev = cw; \
         cw = cw->wl_next; \
         cw->wl_next = NULL; \
-        bzero(buf, BSIZE_SP); \
+        bzero(buf, NEW_BSIZE_SP); \
         i = 0;
 
 
@@ -108,7 +109,7 @@ cp_lexer(char *string)
     int c;
     int i, j;
     wordlist *wlist = NULL, *cw = NULL;
-    char buf[BSIZE_SP], linebuf[BSIZE_SP], d;
+    char buf[NEW_BSIZE_SP], linebuf[NEW_BSIZE_SP], d;
     int paren;
 
    if (cp_inp_cur == NULL)
@@ -121,8 +122,8 @@ cp_lexer(char *string)
 nloop:  i = 0;
     j = 0;
     paren = 0;
-    bzero(linebuf, BSIZE_SP);
-    bzero(buf, BSIZE_SP);
+    bzero(linebuf, NEW_BSIZE_SP);
+    bzero(buf, NEW_BSIZE_SP);
     wlist = cw = alloc(struct wordlist);
     cw->wl_next = cw->wl_prev = NULL;
     for (;;) {
@@ -140,11 +141,11 @@ gotchar:
 	    linebuf[j++] = c;
         if (c != EOF)
             numeofs = 0;
-        if (i == BSIZE_SP - 1) {
+        if (i == NEW_BSIZE_SP - 1) {
             fprintf(cp_err, "Warning: word too long.\n");
             c = ' ';
         }
-        if (j == BSIZE_SP - 1) {
+        if (j == NEW_BSIZE_SP - 1) {
             fprintf(cp_err, "Warning: line too long.\n");
             if (cp_bqflag)
                 c = EOF;
@@ -197,7 +198,7 @@ gotchar:
 	case '\'':
             while (((c = (string ? *string++ : 
                     input(cp_inp_cur))) != '\'')
-                    && (i < BSIZE_SP - 1)) {
+                    && (i < NEW_BSIZE_SP - 1)) {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
                 else {
@@ -213,7 +214,7 @@ gotchar:
             d = c;
             buf[i++] = d;
             while (((c = (string ? *string++ : input(cp_inp_cur)))
-                    != d) && (i < BSIZE_SP - 2)) {
+                    != d) && (i < NEW_BSIZE_SP - 2)) {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
                 else if (c == '\\') {
