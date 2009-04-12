@@ -1,11 +1,23 @@
 2009-04-12 Holger Vogt
-  * spicenum.c, xpressn.c: dico and inst_dico not removed in nupa_done 
+  * spicenum.c, xpressn.c: dico and inst_dico no longer removed in nupa_done 
     because they are needed in .measure
   * lexical.c: size of arrays doubled in cp_lexer() to avoid "line too long"
     message
   * runcoms.c: enter do_measure() only if ft_curckt->ci_last_an has a value
     (bug no. 2751855) 
-  * winmain.c: winmessage() only if message not into log file   
+  * winmain.c: winmessage() only if message not into log file
+  * windisp.c: WIN_Text() now uses True Type Fonts and may display text
+    vertically
+  * misc/getopt_long_bsd.c getopt_bsd.h: add a BSD version of getopt_long()
+    getopt.c, getopt1.c, getopt.h removed
+  * misc/makefile.am: add (remove) files  
+  * configure.in: check for getopt.h and getopt_long(), if not found, use 
+    internal functions in getopt_long_bsd.c 
+    Replace package name ng-spice-rework with ngspice
+    Change version number to 19
+  * main.c: chosse proper getopt_long(), winmessage()
+  * visualc/vngspice.vcproj: files added (removed)
+  * visualc/include/config.h: new version 19      
 
 2009-04-10 Holger Vogt
   * spicenum.c: memory leak removed

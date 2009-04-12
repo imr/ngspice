@@ -460,22 +460,22 @@
 /* #undef NOSQRT */
 
 /* Name of package */
-#define PACKAGE "ng-spice-rework"
+#define PACKAGE "ngspice"
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "ngspice-bugs@lists.sourceforge.net"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "ng-spice-rework"
+#define PACKAGE_NAME "ngspice"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "ng-spice-rework 18"
+#define PACKAGE_STRING "ngspice 19"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "ng-spice-rework"
+#define PACKAGE_TARNAME "ngspice"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "18"
+#define PACKAGE_VERSION "19"
 
 /* Define if we want predictor algorithm */
 /* #undef PREDICTOR */
@@ -530,7 +530,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "18"
+#define VERSION "19"
 
 /* Define if we want spice2 sensitivity analysis */
 /* #undef WANT_SENSE2 */

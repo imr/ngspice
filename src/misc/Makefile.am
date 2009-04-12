@@ -5,9 +5,8 @@ noinst_LTLIBRARIES = libmisc.la
 
 
 libmisc_la_SOURCES = \
-		getopt1.c	\
-		getopt.c	\
-		getopt.h	\
+		getopt_long_bsd.c	\
+		getopt_bsd.h	\
 		alloc.c		\
 		alloc.h		\
 		dup2.c		\

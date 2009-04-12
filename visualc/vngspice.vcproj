@@ -40,7 +40,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;OUTDECK"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -1076,7 +1076,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\misc\getopt.h"
+				RelativePath="..\src\misc\getopt_bsd.h"
 				>
 			</File>
 			<File
@@ -4964,11 +4964,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\misc\getopt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\getopt1.c"
+				RelativePath="..\src\misc\getopt_long_bsd.c"
 				>
 			</File>
 			<File

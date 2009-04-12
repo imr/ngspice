@@ -675,7 +675,7 @@ int WIN_Arc(int x0, int y0, int radius, double theta1, double theta2)
 
 	return 0;
 }
-
+/*
 int WIN_Text_old( char * text, int x, int y, int degrees)
 {
 	tpWindowData wd;
@@ -688,7 +688,7 @@ int WIN_Text_old( char * text, int x, int y, int degrees)
 
 	return (0);
 }
-
+*/
 
 int WIN_Text( char * text, int x, int y, int CentiDegrees)
 {

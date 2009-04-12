@@ -43,7 +43,7 @@ extern void srandom (unsigned int seed);
 /* SJB added editline support 2005-05-05 */
 #include <editline/readline.h>
 extern VFunction *rl_event_hook;    /* missing from editline/readline.h */
-extern int rl_catch_signals;	    /* missing from editline/readline.h */
+extern int rl_catch_signals;        /* missing from editline/readline.h */
 #endif /* HAVE_BSDEDITLINE */
 
 #ifndef HAVE_GETRUSAGE
@@ -58,7 +58,11 @@ extern int rl_catch_signals;	    /* missing from editline/readline.h */
 #include "spicelib/devices/dev.h"
 #include "spicelib/analysis/analysis.h"
 #include "misc/ivars.h"
-#include "misc/getopt.h"
+#if defined(HAVE_GETOPT_LONG) && defined(HAVE_GETOPT_H)
+#include <getopt.h>
+#else
+#include "misc/getopt_bsd.h"
+#endif
 #include "frontend/resource.h"
 #include "frontend/variable.h"
 #include "frontend/display.h"  /*  added by SDB to pick up Input() fcn  */
@@ -95,6 +99,7 @@ bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt.
 char *ft_rawfile = "rawspice.raw";
 
 #ifdef HAS_WINDOWS
+extern void winmessage(char* new_msg);
 bool oflag = FALSE;         /* Output over redefined I/O functions */
 FILE *flogp;  /* hvogt 15.12.2001 */
 #endif /* HAS_WINDOWS */
@@ -184,7 +189,7 @@ static void append_to_stream(FILE *dest, FILE *source);
 
 #ifndef HAVE_GETRUSAGE
 #ifdef HAVE_FTIME
-extern struct timeb timebegin;		/* for use w/ ftime */
+extern struct timeb timebegin;      /* for use w/ ftime */
 #endif
 #endif
 
@@ -201,21 +206,21 @@ extern int OUTwData(), OUTwEnd(), OUTendPlot(), OUTbeginDomain();
 extern int OUTendDomain(), OUTstopnow(), OUTerror(), OUTattributes();
    
 IFfrontEnd nutmeginfo = {
-	IFnewUid,
-	IFdelUid,
-	OUTstopnow,
-	seconds,
-	OUTerror,
-	OUTpBeginPlot,
-	OUTpData,
-	OUTwBeginPlot,
-	OUTwReference,
-	OUTwData,
-	OUTwEnd,
-	OUTendPlot,
-	OUTbeginDomain,
-	OUTendDomain,
-	OUTattributes
+    IFnewUid,
+    IFdelUid,
+    OUTstopnow,
+    seconds,
+    OUTerror,
+    OUTpBeginPlot,
+    OUTpData,
+    OUTwBeginPlot,
+    OUTwReference,
+    OUTwData,
+    OUTwEnd,
+    OUTendPlot,
+    OUTbeginDomain,
+    OUTendDomain,
+    OUTattributes
     };
 
 #else /* SIMULATOR */
@@ -335,6 +340,13 @@ struct dvec *EVTfindvec(char *node){
 
 #endif /* SIMULATOR */
 
+#ifndef HAS_WINDOWS
+/* dummy of MS Windows message function */
+void winmessage(char* new_msg) { 
+   return;
+}
+#endif
+
 char *hlp_filelist[] = { "ngspice", 0 };
 
 
@@ -358,13 +370,13 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
     SIMinfo.numAnalyses = spice_num_analysis();
     SIMinfo.analyses = (IFanalysis **)spice_analysis_ptr(); /* va: we recast, because we use 
                                                              * only the public part 
-							     */
-							
+                                 */
+                            
 #ifdef CIDER
 /* Evaluates limits of machine accuracy for CIDER */
     evalAccLimits();
 #endif /* CIDER */  
-   						     
+                             
 #endif /* SIMULATOR */
 
     SPfrontEnd = frontEnd;
@@ -384,12 +396,18 @@ sp_shutdown(int exitval)
 {
     cleanvars();
 #ifdef PARALLEL_ARCH
-    if (exitval == EXIT_BAD) {
-	Error("Fatal error in SPICE", -1);
+     {
+    Error("Fatal error in SPICE", -1);
     } else {
-	PEND_();
+    PEND_();
     }
 #endif /* PARALLEL_ARCH */
+#ifdef HAS_WINDOWS
+    if (exitval == EXIT_BAD)
+        winmessage("Fatal error in SPICE");
+    else
+        winmessage("Information during setup, see text window!");
+#endif
     exit (exitval);
 }
 
@@ -404,40 +422,40 @@ prompt(void)
     char *p = pbuf, *s;
 
     if (cp_interactive == FALSE)
-        return NULL;	/* NULL means no prompt */
+        return NULL;    /* NULL means no prompt */
     
     s = get_alt_prompt();
     if(s==NULL)
-	s = cp_promptstring;
+    s = cp_promptstring;
     if(s==NULL)
-	s = "->";
+    s = "->";
     
     while (*s) {
-	switch (strip(*s)) {
-	    case '!':
+    switch (strip(*s)) {
+        case '!':
 #ifdef HAVE_BSDEDITLINE
-		{
-		    /* SJB In the present version of editline (v2.9)
-		      it seems that where_history() is broken.
-		      This is a hack that works round this problem.
-		      WARNING: It may fail to work in the future
-		      as it relies on undocumented structure */
-		    int where = 0;
-		    HIST_ENTRY * he = current_history();
-		    if(he!=NULL) where = *(int*)(he->data);
-		    p += sprintf(p, "%d", where + 1);
-		}
+        {
+            /* SJB In the present version of editline (v2.9)
+              it seems that where_history() is broken.
+              This is a hack that works round this problem.
+              WARNING: It may fail to work in the future
+              as it relies on undocumented structure */
+            int where = 0;
+            HIST_ENTRY * he = current_history();
+            if(he!=NULL) where = *(int*)(he->data);
+            p += sprintf(p, "%d", where + 1);
+        }
 #else
-		p += sprintf(p, "%d", where_history() + 1);
-#endif	/* HAVE_BSDEDITLINE*/
-		break;
-	    case '\\':
-		if (*(s + 1))
-		    p += sprintf(p, "%c", strip(*++s));
-	    default:
-		*p = strip(*s); ++p;
-		break;
-	}
+        p += sprintf(p, "%d", where_history() + 1);
+#endif  /* HAVE_BSDEDITLINE*/
+        break;
+        case '\\':
+        if (*(s + 1))
+            p += sprintf(p, "%c", strip(*++s));
+        default:
+        *p = strip(*s); ++p;
+        break;
+    }
         s++;
     }
     *p = 0;
@@ -540,22 +558,22 @@ static void
 show_help(void)
 {
     printf("Usage: %s [OPTION]... [FILE]...\n"
-	   "Simulate the electical circuits in FILE.\n"
-	   "\n"
+       "Simulate the electical circuits in FILE.\n"
+       "\n"
        "  -a  --autorun             run the loaded netlist\n"
-	   "  -b, --batch               process FILE in batch mode\n"
-	   "  -c, --circuitfile=FILE    set the circuitfile\n"
-	   "  -i, --interactive         run in interactive mode\n"
-	   "  -n, --no-spiceinit        don't load the local or user's config file\n"
-	   "  -o, --output=FILE         set the outputfile\n"
-	   "  -q, --completion          activate command completion\n"
-	   "  -r, --rawfile=FILE        set the rawfile output\n"             
-	   "  -s, --server              run spice as a server process\n"
-	   "  -t, --term=TERM           set the terminal type\n"
- 	   "  -h, --help                display this help and exit\n"
-	   "  -v, --version             output version information and exit\n"
-	   "\n"
-	   "Report bugs to %s.\n", cp_program, Bug_Addr);
+       "  -b, --batch               process FILE in batch mode\n"
+       "  -c, --circuitfile=FILE    set the circuitfile\n"
+       "  -i, --interactive         run in interactive mode\n"
+       "  -n, --no-spiceinit        don't load the local or user's config file\n"
+       "  -o, --output=FILE         set the outputfile\n"
+       "  -q, --completion          activate command completion\n"
+       "  -r, --rawfile=FILE        set the rawfile output\n"             
+       "  -s, --server              run spice as a server process\n"
+       "  -t, --term=TERM           set the terminal type\n"
+       "  -h, --help                display this help and exit\n"
+       "  -v, --version             output version information and exit\n"
+       "\n"
+       "Report bugs to %s.\n", cp_program, Bug_Addr);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -563,12 +581,12 @@ static void
 show_version(void)
 {
     printf("%s compiled from %s revision %s\n"
-	   "Written originally by Berkeley University\n"
-	   "Currently maintained by the NGSpice Project\n\n"
-	   "Copyright (C) 1985-1996,"
-	   "  The Regents of the University of California\n"
-	   "Copyright (C) 1999-2008,"
-	   "  The NGSpice Project\n", cp_program, PACKAGE, VERSION);
+       "Written originally by Berkeley University\n"
+       "Currently maintained by the NGSpice Project\n\n"
+       "Copyright (C) 1985-1996,"
+       "  The Regents of the University of California\n"
+       "Copyright (C) 1999-2008,"
+       "  The NGSpice Project\n", cp_program, PACKAGE, VERSION);
 }
 
 #ifdef SIMULATOR
@@ -580,7 +598,7 @@ append_to_stream(FILE *dest, FILE *source)
     int i;
 
     while ((i = fread(buf, 1, BSIZE_SP, source)) > 0)
-	fwrite(buf, i, 1, dest);
+    fwrite(buf, i, 1, dest);
 }
 #endif /* SIMULATOR */
 
@@ -593,7 +611,7 @@ append_to_stream(FILE *dest, FILE *source)
 static bool
 read_initialisation_file(char * dir, char * name)
 {
-#ifndef HAVE_ASPRINTF
+#ifndef HAVE_UNISTD_H
     FILE * fp = NULL;
 #endif /* not HAVE_ASPRINTF */
     char * path;
@@ -601,42 +619,42 @@ read_initialisation_file(char * dir, char * name)
     
     /* check name */
     if(name==NULL || name[0]=='\0')
-    	return FALSE;	/* Fail; name needed */
+        return FALSE;   /* Fail; name needed */
     
     /* contruct the full path */
     if(dir == NULL || dir[0]=='\0') {
-	path = name;
+    path = name;
     } else {
 #ifdef HAVE_ASPRINTF
-	asprintf(&path, "%s" DIR_PATHSEP "%s", dir,name);
-	if(path==NULL) return FALSE;	/* memory allocation error */
+    asprintf(&path, "%s" DIR_PATHSEP "%s", dir,name);
+    if(path==NULL) return FALSE;    /* memory allocation error */
 #else /* ~ HAVE_ASPRINTF */
-	path=(char*)tmalloc(2 + strlen(dir)+strlen(name));
-	if(path==NULL) return FALSE;	/* memory allocation error */
-	sprintf(path,"%s" DIR_PATHSEP "%s",dir,name);
+    path=(char*)tmalloc(2 + strlen(dir)+strlen(name));
+    if(path==NULL) return FALSE;    /* memory allocation error */
+    sprintf(path,"%s" DIR_PATHSEP "%s",dir,name);
 #endif /* HAVE_ASPRINTF */
     }
 
     /* now access the file */
 #ifdef HAVE_UNISTD_H
-    if (access(path, R_OK) == 0) {		
+    if (access(path, R_OK) == 0) {      
 #else
     if ((fp = fopen(path, "r")) != NULL) {
-	(void) fclose(fp);
+        (void) fclose(fp);
 #endif /* HAVE_UNISTD_H */
-	inp_source(path);
+        inp_source(path);
 #ifdef TRACE
-	printf("Init file: '%s'\n",path);
-#endif /* TRACE */	
-	result = TRUE;	/* loaded okay */
+        printf("Init file: '%s'\n",path);
+#endif /* TRACE */  
+        result = TRUE;  /* loaded okay */
     }
     
     /* if dir was not NULL and not empty then we allocated memory above */
     if(dir!=NULL && dir[0] !='\0')
 #ifdef HAVE_ASPRINTF
-    	free(path);
+        free(path);
 #else
-	tfree(path);
+    tfree(path);
 #endif /* HAVE_ASPRINTF */
     
     return result;
@@ -653,10 +671,10 @@ main(int argc, char **argv)
 #endif /* HAS_WINDOWS */
 {
     int c;
-    int		err;
-    bool	gotone = FALSE;
-    char*       copystring;/*DG*/
-    char        addctrlsect = TRUE; /* PN: for autorun */
+    int   err;
+    bool  gotone = FALSE;
+    char* copystring;/*DG*/
+    char  addctrlsect = TRUE; /* PN: for autorun */
 
 
 #ifdef SIMULATOR
@@ -675,7 +693,7 @@ main(int argc, char **argv)
     bool rflag = FALSE;
     FILE *fp;
     FILE *circuit_file;
-	bool orflag = FALSE;
+    bool orflag = FALSE;
 
 #ifdef TRACE
     /* this is used to detect memory leaks during debugging */
@@ -710,7 +728,7 @@ main(int argc, char **argv)
     SETDBG_(&debug_flag);
     fprintf( stderr, "On-line: process %d of %d total.\n", ARCHme, ARCHsize );
     evlog(EVKEY_ENABLE, EVKEY_EVENT, "On-line", EVKEY_DUMP, EVKEY_DISABLE,
-	  EVKEY_LAST_ARG);
+      EVKEY_LAST_ARG);
 #else
     ARCHme = 0;
     ARCHsize = 1;
@@ -744,113 +762,113 @@ main(int argc, char **argv)
 
     /* --- Process command line options --- */
     while (1) {
-	int option_index = 0;
-	static struct option long_options[] = {
-	    {"help", 0, 0, 'h'},
-	    {"version", 0, 0, 'v'},
-	    {"batch", 0, 0, 'b'},
-        {"autorun", 0, 0, 'a'},
-	    {"circuitfile", 0, 0, 'c'},
-	    {"interactive", 0, 0, 'i'},
-	    {"no-spiceinit", 0, 0, 'n'},
-	    {"output", 0, 0, 'o'},
-	    {"completion", 0, 0, 'q'},
-	    {"rawfile", 1, 0, 'r'},
-	    {"server", 0, 0, 's'},
-	    {"terminal", 1, 0, 't'},
-	    {0, 0, 0, 0}
-	};
+        int option_index = 0;
+        static struct option long_options[] = {
+            {"help", 0, 0, 'h'},
+            {"version", 0, 0, 'v'},
+            {"batch", 0, 0, 'b'},
+            {"autorun", 0, 0, 'a'},
+            {"circuitfile", 1, 0, 'c'},
+            {"interactive", 0, 0, 'i'},
+            {"no-spiceinit", 0, 0, 'n'},
+            {"output", 1, 0, 'o'},
+            {"completion", 0, 0, 'q'},
+            {"rawfile", 1, 0, 'r'},
+            {"server", 0, 0, 's'},
+            {"terminal", 1, 0, 't'},
+            {0, 0, 0, 0}
+        };
 
-	c = getopt_long (argc, argv, "hvbac:ihno:qr:st:",
-			 long_options, &option_index);
-	if (c == -1)
-	    break;
+        c = getopt_long (argc, argv, "hvbac:ihno:qr:st:",
+             long_options, &option_index);
+        if (c == -1)
+            break;
 
-	switch (c) {
-	    case 'h':		/* Help */
-		show_help();
-		sp_shutdown (EXIT_NORMAL);
-		break;
+        switch (c) {
+            case 'h':       /* Help */
+            show_help();
+            sp_shutdown (EXIT_NORMAL);
+            break;
 
-	    case 'v':		/* Version info */
-		show_version();
-		sp_shutdown (EXIT_NORMAL);
-		break;
+            case 'v':       /* Version info */
+            show_version();
+            sp_shutdown (EXIT_NORMAL);
+            break;
 
-	    case 'b':		/* Batch mode */
-		ft_batchmode = TRUE;
-                addctrlsect = FALSE;
-                cp_vset("addcontrol",VT_BOOL,&addctrlsect);
-		break;
+            case 'b':       /* Batch mode */
+            ft_batchmode = TRUE;
+            addctrlsect = FALSE;
+            cp_vset("addcontrol",VT_BOOL,&addctrlsect);
+            break;
 
             case 'a':           /* Add control section for autorun */
-                if (!ft_batchmode) {
-                    addctrlsect = TRUE;
-                    cp_vset("addcontrol",VT_BOOL, &addctrlsect);
-                    }
-                break;
+            if (!ft_batchmode) {
+                addctrlsect = TRUE;
+                cp_vset("addcontrol",VT_BOOL, &addctrlsect);
+            }
+            break;
 
-	    case 'c':		/* Circuit file */
-		if (optarg) {
-		    if (!(circuit_file = fopen(optarg, "r"))) {
-			  perror("circuit file not available");
-			  sp_shutdown(EXIT_BAD);
-		    }
-		    istty = FALSE;
-		}
-		break;
+            case 'c':       /* Circuit file */
+            if (optarg) {
+                if (!(circuit_file = fopen(optarg, "r"))) {
+                   perror(optarg);
+                   sp_shutdown(EXIT_BAD);
+                }
+                istty = FALSE;
+            }
+            break;
 
-	    case 'i':		/* Interactive mode */
-		iflag = TRUE;
-		break;
+            case 'i':       /* Interactive mode */
+            iflag = TRUE;
+            break;
 
-	    case 'n':		/* Don't read initialisation file */
-		readinit = FALSE;
-		break;
+            case 'n':       /* Don't read initialisation file */
+            readinit = FALSE;
+            break;
 
-	    case 'o':		/* Output file */
-		if (optarg) {
-		    /* turn off buffering for stdout */
-		    setbuf(stdout, NULL);
+            case 'o':       /* Output file */
+            if (optarg) {
+                /* turn off buffering for stdout */
+                setbuf(stdout, NULL);
 #ifdef PARALLEL_ARCH
-		    sprintf (buf, "%s%03d", optarg, ARCHme);
+                sprintf (buf, "%s%03d", optarg, ARCHme);
 #else
-		    sprintf (buf, "%s", optarg);
+                sprintf (buf, "%s", optarg);
 #endif
-			orflag = TRUE;
-		}
-		break;
+                orflag = TRUE;
+            }
+            break;
 
-	    case 'q':		/* Command completion */
-		qflag = TRUE;
-		break;
+            case 'q':       /* Command completion */
+            qflag = TRUE;
+            break;
 
-	    case 'r':		/* The raw file */
-		if (optarg) {
-		    cp_vset("rawfile", VT_STRING, optarg);
-		}
-		rflag = TRUE;
-		break;
+            case 'r':       /* The raw file */
+            if (optarg) {
+                cp_vset("rawfile", VT_STRING, optarg);
+            }
+            rflag = TRUE;
+            break;
 
-	    case 's':		/* Server mode */
-		ft_servermode = TRUE;
-		break;
+            case 's':       /* Server mode */
+            ft_servermode = TRUE;
+            break;
 
-	    case 't':
-		if (optarg) {
-		    cp_vset("term", VT_STRING, optarg);
-		}
-		break;
+            case 't':
+            if (optarg) {
+                cp_vset("term", VT_STRING, optarg);
+            }
+            break;
 
-	    case '?':
-		break;
+            case '?':
+            break;
 
-	    default:
-		printf ("?? getopt returned character code 0%o ??\n", c);
-	}
-    }  /* --- End of command line option processing  --- */
+            default:
+            printf ("?? getopt returned character code 0%o ??\n", c);
+        }
+    }  /* --- End of command line option processing (While(1)-loop) --- */
 
-    if (orflag) {	/* -o option has been set */
+    if (orflag) {   /* -o option has been set */
         com_version(NULL);
         if (ft_batchmode && !ft_servermode) fprintf(stdout, "\nBatch mode\n\n");
         else if (ft_servermode) fprintf(stdout, "\nServer mode\n\n");
@@ -860,9 +878,9 @@ main(int argc, char **argv)
         /* Open the log file */
 #ifdef HAS_WINDOWS
         /* flogp goes to winmain's putc and writes to file buf */
-        if (!(flogp = fopen(buf, "w"))) {	
+        if (!(flogp = fopen(buf, "w"))) {   
 #else
-            /* Connect stdout to file buf and log stdout */
+        /* Connect stdout to file buf and log stdout */
         if (!(freopen (buf, "w", stdout))) {    
 #endif
             perror (buf);
@@ -878,8 +896,8 @@ main(int argc, char **argv)
     if_getparam = nutif_getparam;
 
     if (optind == argc) {
-	/* No raw file */
-	gdata = FALSE;
+    /* No raw file */
+    gdata = FALSE;
     }
 #endif
 
@@ -936,42 +954,42 @@ main(int argc, char **argv)
 
     /* load user's initialisation file */
     if (readinit) {
-	bool good;
-	
-	/* Try accessing the initialisation file in the current directory */
-	good = read_initialisation_file("",INITSTR);
-	
-	/* if that fail try the alternate name */
-	if(good == FALSE)
-	    good = read_initialisation_file("",ALT_INITSTR);
-	
-	/* if that failed try in the user's home directory
-	   if their HOME environment variable is set */
-	if(good == FALSE) {
-	    char * homedir;
-	    homedir = getenv("HOME");
-	    if(homedir !=NULL) {
-		good = read_initialisation_file(homedir,INITSTR);
-		if(good == FALSE) {
-		    good = read_initialisation_file(homedir,ALT_INITSTR);
-		}
-    	    }
-	}
+        bool good;
+    
+        /* Try accessing the initialisation file in the current directory */
+        good = read_initialisation_file("",INITSTR);
+    
+        /* if that fail try the alternate name */
+        if(good == FALSE)
+            good = read_initialisation_file("",ALT_INITSTR);
+    
+        /* if that failed try in the user's home directory
+           if their HOME environment variable is set */
+        if(good == FALSE) {
+            char * homedir;
+            homedir = getenv("HOME");
+            if(homedir !=NULL) {
+                good = read_initialisation_file(homedir,INITSTR);
+                if(good == FALSE) {
+                    good = read_initialisation_file(homedir,ALT_INITSTR);
+                }
+            }
+        }
     }
 
     if (!ft_batchmode) {
-	com_version(NULL);
+        com_version(NULL);
         DevInit( );
-	if (News_File && *News_File) {
+        if (News_File && *News_File) {
             copystring=cp_tildexpand(News_File);/*DG  Memory leak */
-	    fp = fopen(copystring, "r");
+            fp = fopen(copystring, "r");
             tfree(copystring);
-	    if (fp) {
-		while (fgets(buf, BSIZE_SP, fp))
-		    fputs(buf, stdout);
-		(void) fclose(fp);
-	    }
-	}
+            if (fp) {
+                while (fgets(buf, BSIZE_SP, fp))
+                    fputs(buf, stdout);
+                (void) fclose(fp);
+            }
+        }
     }
 
 
@@ -990,78 +1008,80 @@ bot:
 
 #ifdef SIMULATOR
     if (!ft_servermode && !ft_nutmeg) {
-	/* Concatenate all non-option arguments into a temporary file
-	   and load that file into the spice core.
-	   
-	   The original routine took a special path if there was only
-	   one non-option argument.  In that case, it didn't create
-	   the temporary file but used the original file instead.  The
-	   current algorithm is uniform at the expense of a little
-	   startup time.  */
-	FILE *tempfile;
+    /* Concatenate all non-option arguments into a temporary file
+       and load that file into the spice core.
+       
+       The original routine took a special path if there was only
+       one non-option argument.  In that case, it didn't create
+       the temporary file but used the original file instead.  The
+       current algorithm is uniform at the expense of a little
+       startup time.  */
+        FILE *tempfile;
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-	char *tpf; /* temporary file */
-	char *dname = NULL; /* directory of input file*/
-	bool has_smk = FALSE;
-#endif	
-	tempfile = tmpfile();
-/*	tmpfile() returns NULL, if in MS Windows as non admin user
+        char *tpf; /* temporary file */
+        char *dname = NULL; /* directory of input file*/
+        bool has_smk = FALSE;
+#endif  
+        tempfile = tmpfile();
+/*  tmpfile() returns NULL, if in MS Windows as non admin user
         then we add a tempfile in the local directory */
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-	if (tempfile == NULL) {
-		tpf = smktemp("sp");
-		tempfile = fopen(tpf, "w+b");
-		if (tempfile == NULL) {
-			fprintf(stderr, "Could not open a temporary file to save and use optional arguments.");
-			sp_shutdown(EXIT_BAD);
-		}		
-		has_smk = TRUE;
-	}	
-#endif	
+        if (tempfile == NULL) {
+            tpf = smktemp("sp");
+            tempfile = fopen(tpf, "w+b");
+            if (tempfile == NULL) {
+                fprintf(stderr, "Could not open a temporary file to save and use optional arguments.");
+                sp_shutdown(EXIT_BAD);
+            }       
+            has_smk = TRUE;
+        }   
+#endif  
 
-	if (optind == argc && !istty) {
-	    append_to_stream(tempfile, stdin);
-	}
-	while (optind < argc) {
-	    char *arg;
-	    FILE *tp;
+        if (optind == argc && !istty) {
+            append_to_stream(tempfile, stdin);
+        }
 
-	    /* Copy all the arguments into the temporary file */
-	    arg = argv[optind++];
-	    tp = fopen(arg, "r");
-	    if (!tp) {
-		perror(arg);
-		err = 1;
-		break;
-	    }
+        while (optind < argc) {
+            char *arg;
+            FILE *tp;
+
+            /* Copy all the arguments into the temporary file */
+            arg = argv[optind++];
+            tp = fopen(arg, "r");
+            if (!tp) {
+                perror(arg);
+                err = 1;
+                break;
+            }
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
             /* Copy the input file name which otherwise will be lost due to the
                temporary file */
             dname = copy(arg);
-#endif		    
-	    append_to_stream(tempfile, tp);
-	    fclose(tp);
-	}
-	fseek(tempfile, (long) 0, 0);
+#endif          
+            append_to_stream(tempfile, tp);
+            fclose(tp);
+        }
+        fseek(tempfile, (long) 0, 0);
 
         if (tempfile && (!err || !ft_batchmode)) {
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
             /* Copy the input file name for adding another file search path */
             inp_spsource(tempfile, FALSE, dname);
             tfree(dname);
-#else        	
+#else           
             inp_spsource(tempfile, FALSE, NULL);
 #endif
             gotone = TRUE;
         }
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-	if (tempfile && has_smk) {
-	    if (remove(tpf))
-	       perror("Could not delete temp file");
-	} 
-#endif	
-	if (ft_batchmode && err)
-	    sp_shutdown(EXIT_BAD);
+        if (tempfile && has_smk) {
+            if (remove(tpf))
+               perror("Could not delete temp file");
+        } 
+#endif  
+        if (ft_batchmode && err) {
+            sp_shutdown(EXIT_BAD);
+        }
     }   /* ---  if (!ft_servermode && !ft_nutmeg) --- */
 
     if (!gotone && ft_batchmode && !ft_nutmeg)
@@ -1078,7 +1098,7 @@ evl:
 
         if (st == TRUE) {
             sp_shutdown(EXIT_BAD);
-	}
+        }
         st = TRUE;
         if (ft_servermode) {
             if (ft_curckt == NULL) {
@@ -1086,7 +1106,7 @@ evl:
                 sp_shutdown(EXIT_BAD);
             }
             if (ft_dorun(""))
-		sp_shutdown(EXIT_BAD);
+                sp_shutdown(EXIT_BAD);
             sp_shutdown(EXIT_NORMAL);
         }
 
@@ -1095,19 +1115,19 @@ evl:
          * save too much.  */
         cp_interactive = FALSE;
         if (rflag) {
-	  /* saj done already in inp_spsource ft_dotsaves();*/
-	    error2 = ft_dorun(ft_rawfile);
-	    if (ft_cktcoms(TRUE) || error2)
-		sp_shutdown(EXIT_BAD);
+      /* saj done already in inp_spsource ft_dotsaves();*/
+            error2 = ft_dorun(ft_rawfile);
+            if (ft_cktcoms(TRUE) || error2)
+                sp_shutdown(EXIT_BAD);
         } else if (ft_savedotargs()) {
-	    error2 = ft_dorun(NULL);
-	    if (ft_cktcoms(FALSE) || error2)
-		sp_shutdown(EXIT_BAD);
-	} else {
-	    fprintf(stderr,
-		    "Note: No \".plot\", \".print\", or \".fourier\" lines; "
-		    "no simulations run\n");
-	    sp_shutdown(EXIT_BAD);
+            error2 = ft_dorun(NULL);
+            if (ft_cktcoms(FALSE) || error2)
+                sp_shutdown(EXIT_BAD);
+        } else {
+            fprintf(stderr,
+                "Note: No \".plot\", \".print\", or \".fourier\" lines; "
+                "no simulations run\n");
+            sp_shutdown(EXIT_BAD);
         }
     }  /* ---  if (ft_batchmode) ---  */ 
     else {
@@ -1118,10 +1138,10 @@ evl:
 #else  /* ~ SIMULATOR */
 
     if (ft_nutmeg && gdata) {
-	while (optind < argc) {
-	  ft_loadfile(argv[optind++]);
-	  gotone = TRUE;
-	}
+    while (optind < argc) {
+      ft_loadfile(argv[optind++]);
+      gotone = TRUE;
+    }
         if (!gotone)
             ft_loadfile(ft_rawfile);
     }

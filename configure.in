@@ -12,7 +12,7 @@ dnl Initialisation
 dnl ---------------
 
 dnl Initialisation of configure
-AC_INIT(ng-spice-rework,18,ngspice-bugs@lists.sourceforge.net)
+AC_INIT(ngspice,19,ngspice-bugs@lists.sourceforge.net)
 
 dnl Unique file in the source directory
 AC_CONFIG_SRCDIR([src/ngspice.c])
@@ -643,8 +643,12 @@ fi
 dnl Check for the dirname function:
 AC_CHECK_FUNCS(dirname,,AC_CHECK_LIB(gen,dirname,AC_DEFINE(HAVE_DIRNAME,1,[Have dirname in libgen]) LIBS="$LIBS -lgen"))
 
-# AC_CHECK_FUNC(getopt_long, getopt_long=true)
+AC_CHECK_HEADERS(getopt.h)
+AC_CHECK_FUNC(getopt_long, getopt_long=true)
 # AM_CONDITIONAL(HAVE_GETOPT_LONG, test "$getopt_long" = "true")
+if test "$getopt_long" = "true"; then
+  AC_DEFINE(HAVE_GETOPT_LONG,1,[Have fcn getopt_long()])
+fi
 
 # Expand the prefix variable (this is really annoying!)
 if eval "test x$prefix = xNONE"; then
