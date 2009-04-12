@@ -230,7 +230,6 @@ int
 donedico (tdico * dico)
 {
    int sze = dico->nbd;
-   if (dico->dyndat) tfree(dico->dyndat);
    return sze;
 }
 

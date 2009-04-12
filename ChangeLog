@@ -1,3 +1,11 @@
+2009-04-12 Holger Vogt
+  * spicenum.c, xpressn.c: dico and inst_dico not removed in nupa_done 
+    because they are needed in .measure
+  * lexical.c: size of arrays doubled in cp_lexer() to avoid "line too long"
+    message
+  * runcoms.c: enter do_measure() only if ft_curckt->ci_last_an has a value
+    (bug no. 2751855) 
+
 2009-04-10 Holger Vogt
   * spicenum.c: memory leak removed
   

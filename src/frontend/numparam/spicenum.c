@@ -454,7 +454,10 @@ nupa_done (void)
     }
   nerrors = dico->errcount;
   dictsize = donedico (dico);
-
+  /* We cannot remove dico here because numparam is usedby
+  the .measure statement, which is invoked only after the 
+  simulation has finished */
+  /*
   for (i = dynmaxline ; i >= 0; i--) {
     dispose ((void *) dico->dynrefptr[i]);
   }
@@ -466,6 +469,7 @@ nupa_done (void)
   dispose ((void *) inst_dico->dyndat);
   dispose ((void *) inst_dico);
   inst_dico = NULL;
+*/
   if (nerrors)
     {
       /* debug: ask if spice run really wanted */
