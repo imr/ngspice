@@ -676,7 +676,7 @@ int WIN_Arc(int x0, int y0, int radius, double theta1, double theta2)
 	return 0;
 }
 
-int WIN_Text( char * text, int x, int y, int degrees)
+int WIN_Text_old( char * text, int x, int y, int degrees)
 {
 	tpWindowData wd;
 	if (!currentgraph) return 0;
@@ -685,6 +685,46 @@ int WIN_Text( char * text, int x, int y, int degrees)
 
 	SetTextColor( wd->hDC, ColorTable[wd->ColorIndex]);
 	TextOut( wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, strlen(text));
+
+	return (0);
+}
+
+
+int WIN_Text( char * text, int x, int y, int CentiDegrees)
+{
+	tpWindowData wd;
+   HFONT hfont;
+   LOGFONT lf;
+  
+   CentiDegrees = 0;
+
+	if (!currentgraph) return 0;
+	wd = pWindowData(currentgraph);
+	if (!wd) return 0;
+
+   lf.lfHeight         = (int) (1.1 * currentgraph->fontheight) ; 
+   lf.lfWidth          = 0 ;
+   lf.lfEscapement     = CentiDegrees ;
+   lf.lfOrientation    = CentiDegrees ;
+   lf.lfWeight         = 500 ;
+   lf.lfItalic         = 0 ;
+   lf.lfUnderline      = 0 ;
+   lf.lfStrikeOut      = 0 ;
+   lf.lfCharSet        = 0 ;
+   lf.lfOutPrecision   = 0 ;
+   lf.lfClipPrecision  = 0 ;
+   lf.lfQuality        = 0 ;
+   lf.lfPitchAndFamily = 0 ;
+     
+   lstrcpy (lf.lfFaceName, "Courier"/*"Times New Roman"*/) ;
+
+   hfont = CreateFontIndirect (&lf);
+   SelectObject(wd->hDC, hfont);
+
+	SetTextColor( wd->hDC, ColorTable[wd->ColorIndex]);
+	TextOut( wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, strlen(text));
+
+   DeleteObject(SelectObject(wd->hDC, GetStockObject(SYSTEM_FONT)));
 
 	return (0);
 }

@@ -853,6 +853,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
   outheap = HeapCreate(0, 10000000, 0);
   if (!outheap) {
     fprintf(stderr,"HeapCreate: Internal Error: can't allocate private output heap");
+    winmessage("HeapCreate: Internal Error: can't allocate private output heap");
     exit(1);
   }
 
@@ -1344,7 +1345,9 @@ char* rlead(char *s)
 
 void winmessage(char* new_msg)
 {
-	MessageBox(NULL, new_msg, "Ngspice error", MB_OK|MB_ICONERROR);
+	/* open a message box only if message is not written into -o xxx.log */
+   if (oflag == FALSE)
+      MessageBox(NULL, new_msg, "Ngspice Info", MB_OK|MB_ICONERROR);
 }
 
 #endif /* HAS_WINDOWS */

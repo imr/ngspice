@@ -5,6 +5,7 @@
     message
   * runcoms.c: enter do_measure() only if ft_curckt->ci_last_an has a value
     (bug no. 2751855) 
+  * winmain.c: winmessage() only if message not into log file   
 
 2009-04-10 Holger Vogt
   * spicenum.c: memory leak removed
