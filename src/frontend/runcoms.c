@@ -332,7 +332,7 @@ dosim(char *what, wordlist *wl)
         tfree(ww);
     }
 
-    if ( !err ) do_measure( ft_curckt->ci_last_an, FALSE );
+    if ( !err && ft_curckt->ci_last_an) do_measure( ft_curckt->ci_last_an, FALSE );
 
     return err;
 }
