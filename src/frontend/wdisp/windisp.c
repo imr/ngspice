@@ -783,8 +783,8 @@ void RemoveWindow(GRAPH* dgraph)
 {
    tpWindowData wd;
 	wd = pWindowData(dgraph);
-	if (!wd) return 0;
-	SendMessage( wd->wnd, WM_CLOSE, (WPARAM) wd->hDC, 0);
+	if (wd)
+		SendMessage(wd->wnd, WM_CLOSE, (WPARAM) wd->hDC, 0);
 }
 
 /* Function borrowed from x11.c */

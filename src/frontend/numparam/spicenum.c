@@ -443,7 +443,7 @@ nupa_init (char *srcfile)
 static void
 nupa_done (void)
 {
-  int i;
+  /* int i; not needed so far, see below */
   Str (80, rep);
   int dictsize, nerrors;
 
