@@ -90,9 +90,7 @@ pwlist(wordlist *wlist, char *name)
 /* CDHW defined functions */
 
 static void
-pwlist_echo(wlist, name)   /*CDHW used to perform function of set echo */
-    wordlist *wlist;
-    char *name;
+pwlist_echo(wordlist *wlist, char *name)   /*CDHW used to perform function of set echo */
 {
     wordlist *wl;
 
@@ -370,16 +368,14 @@ doblock(struct control *bl, int *num)
           fprintf(cp_err, "         (Use a label statement as a no-op to suppress this warning.)\n");
         }
 	if (!bl->co_timestodo) bl->co_timestodo = bl->co_numtimes;
-        /*...CDHW*/
+        /*bl->co_numtimes: total repeat count 
+          bl->co_numtimes = -1: repeat forever 
+          bl->co_timestodo: remaining repeats*/
         while ((bl->co_timestodo > 0) ||
 	       (bl->co_timestodo == -1)) {
-            if (bl->co_numtimes != -1)
-                bl->co_numtimes--;
-            
             if (!bl->co_children) cp_periodic();  /*CDHW*/
-
             if (bl->co_timestodo != -1) bl->co_timestodo--;
-
+            /* loop through all stements inside rpeat ... end */
             for (ch = bl->co_children; ch; ch = cn) {
                 cn = ch->co_next;
                 i = doblock(ch, &nn);
@@ -389,6 +385,8 @@ doblock(struct control *bl, int *num)
                     break;
 
 		case BROKEN:    /* Break. */
+                    /* before leaving repeat loop set remaining timestodo to 0 */
+                    bl->co_timestodo = 0;
                     if (nn < 2)
                         return (NORMAL_STR);
                     else {
@@ -401,14 +399,21 @@ doblock(struct control *bl, int *num)
                         cn = NULL;
                         break;
                     } else {
+                        /* before leaving repeat loop set remaining timestodo to 0 */
+                        bl->co_timestodo = 0;
                         *num = nn - 1;
                         return (CONTINUED_STR);
                     }
 
 		default:
                     cn = findlabel(i, bl->co_children);
-                    if (!cn)
+
+                    if (!cn) {
+                    /* no label found inside repeat loop: 
+                       before leaving loop set remaining timestodo to 0 */
+                        bl->co_timestodo = 0;
                         return (i);
+                    }
                 }
             }
         }
@@ -658,8 +663,7 @@ cp_evloop(char *string)
 	    cend[stackp]->co_next = alloc(struct control);
 	    ZERO(cend[stackp]->co_next, struct control);
 	    cend[stackp]->co_next->co_prev = cend[stackp];
-	    cend[stackp]->co_next->co_parent = 
-		cend[stackp]->co_parent;
+	    cend[stackp]->co_next->co_parent = cend[stackp]->co_parent;
 	    cend[stackp] = cend[stackp]->co_next;
 	} else if (!cend[stackp]) {
 	    control[stackp] = cend[stackp] = alloc(struct control);

@@ -1,3 +1,6 @@
+2009-04-14 Holger Vogt
+  * control.c: remove bug no. 2724127 repeat loop inside another loop 
+
 2009-04-12 Holger Vogt
   * spicenum.c, xpressn.c: dico and inst_dico no longer removed in nupa_done 
     because they are needed in .measure
