@@ -387,13 +387,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             ld = dd->li_next;
             if ((dd->li_line[0] == '*') && (dd->li_line[1] != '#'))
                 continue;
-            if (!ciprefix(".control", dd->li_line) &&
-		!ciprefix(".endc", dd->li_line)) {
+            if (!ciprefix(".control", dd->li_line) && !ciprefix(".endc", dd->li_line)) {
                 if (dd->li_line[0] == '*')
                     cp_evloop(dd->li_line + 2);
                 else
                     cp_evloop(dd->li_line);
-	    }
+            }
         }
         /* free the control deck */
         line_free(deck,TRUE);
@@ -401,11 +400,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     } /* end if(comfile) */ 
 
     else {    /* must be regular deck . . . . */
-	for (dd = deck->li_next; dd; dd = ld->li_next) {    /* loop through deck and handle control cards */
+        for (dd = deck->li_next; dd; dd = ld->li_next) {    /* loop through deck and handle control cards */
 
-	    /* Ignore comment lines, but not lines begining with '*#' */
-	    s = dd->li_line;
-	    while(isspace(*s)) s++;
+        /* Ignore comment lines, but not lines begining with '*#' */
+            s = dd->li_line;
+            while(isspace(*s)) s++;
             if ( (*s == '*') && ( (s != dd->li_line) || (s[1] != '#'))) {
                 ld = dd;
                 continue;
@@ -420,14 +419,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 
             if (ciprefix(".control", dd->li_line)) {
                 ld->li_next = dd->li_next;
-		line_free(dd,FALSE); /* SJB - free this line's memory */
+                line_free(dd,FALSE); /* SJB - free this line's memory */
                 if (commands)
                     fprintf(cp_err, "Warning: redundant .control card\n");
                 else
                     commands = TRUE;
             } else if (ciprefix(".endc", dd->li_line)) {
                 ld->li_next = dd->li_next;
-		line_free(dd,FALSE); /* SJB - free this line's memory */
+                line_free(dd,FALSE); /* SJB - free this line's memory */
                 if (commands)
                     commands = FALSE;
                 else
@@ -479,6 +478,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 		    || eq(s, ".print")
 		    || eq(s, ".save")
 		    || eq(s, ".op")
+          || eq(s, ".measure")
 		    || eq(s, ".tf"))
 		{
                     if (end) {
@@ -489,7 +489,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                         wl_first = end = alloc(struct wordlist);
                     end->wl_word = copy(dd->li_line);
 
-		    if (!eq(s, ".op") && !eq(s, ".tf")) {
+		    if (!eq(s, ".op") && !eq(s, ".tf") && !eq(s, ".measure")) {
 			ld->li_next = dd->li_next;
 			line_free(dd,FALSE); /* SJB - free this line's memory */
 		    } else

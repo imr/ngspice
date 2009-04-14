@@ -83,71 +83,78 @@ static char *plot_opts[ ] = {
 int
 ft_savedotargs(void)
 {
-    wordlist *w, *wl = NULL, *iline, **prev_wl, *w_next;
-    char *name;
-    char *s;
-    int some = 0;
-    static wordlist all = { "all", NULL };
-    int isaplot;
-    int i;
+   wordlist *w, *wl = NULL, *iline, **prev_wl, *w_next;
+   char *name;
+   char *s;
+   int some = 0;
+   static wordlist all = { "all", NULL };
+   int isaplot;
+   int i;
 
-    if (!ft_curckt) /* Shouldn't happen. */
-        return 0;
+   if (!ft_curckt) /* Shouldn't happen. */
+      return 0;
 
-    for (iline = ft_curckt->ci_commands; iline; iline = iline->wl_next) {
-        s = iline->wl_word;
-	if (ciprefix(".plot", s))
-	    isaplot = 1;
-	else
-	    isaplot = 0;
+   for (iline = ft_curckt->ci_commands; iline; iline = iline->wl_next) {
+      s = iline->wl_word;
+      if (ciprefix(".plot", s))
+         isaplot = 1;
+      else
+         isaplot = 0;
 
-        if (isaplot || ciprefix(".print", s)) {
-            (void) gettok(&s);
-            name = gettok(&s);
+      if (isaplot || ciprefix(".print", s)) {
+         (void) gettok(&s);
+         name = gettok(&s);
 
-            if (!(w = gettoks(s))) {
-                fprintf(cp_err, "Warning: no nodes given: %s\n",
-                        iline->wl_word);
-	    } else {
-		if (isaplot) {
-		    prev_wl = &w;
-		    for (wl = w; wl; wl = w_next) {
-			w_next = wl->wl_next;
-			for (i = 0; i < NUMELEMS(plot_opts); i++) {
-			    if (!strcmp(wl->wl_word, plot_opts[i])) {
-				/* skip it */
-				*prev_wl = w_next;
-				tfree(wl);
-				break;
-			    }
-			}
-			if (i == NUMELEMS(plot_opts))
-			    prev_wl = &wl->wl_next;
-		    }
-		}
-		some = 1;
-		com_save2(w, name);
-	    }
-        } else if (ciprefix(".four", s)) {
-            (void) gettok(&s);
-            (void) gettok(&s);
-            if (!(w = gettoks(s)))
-                fprintf(cp_err, "Warning: no nodes given: %s\n",
-                        iline->wl_word);
-	    else {
-		some = 1;
-		com_save2(w, "TRAN");	/* A hack */
-	    }
-        } else if (ciprefix(".op", s)) {
-		some = 1;
-		com_save2(&all, "OP");
-        } else if (ciprefix(".tf", s)) {
-		some = 1;
-		com_save2(&all, "TF");
-	}
-    }
-
-    return some;
+         if (!(w = gettoks(s))) {
+            fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
+         } else {
+            if (isaplot) {
+               prev_wl = &w;
+               for (wl = w; wl; wl = w_next) {
+                  w_next = wl->wl_next;
+                  for (i = 0; i < NUMELEMS(plot_opts); i++) {
+                     if (!strcmp(wl->wl_word, plot_opts[i])) {
+                        /* skip it */
+                        *prev_wl = w_next;
+                        tfree(wl);
+                        break;
+                     }
+                  }
+                  if (i == NUMELEMS(plot_opts))
+                     prev_wl = &wl->wl_next;
+               }
+            }
+            some = 1;
+            com_save2(w, name);
+         }
+      } else if (ciprefix(".four", s)) {
+         (void) gettok(&s);
+         (void) gettok(&s);
+         if (!(w = gettoks(s)))
+            fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
+         else {
+            some = 1;
+            com_save2(w, "TRAN");	/* A hack */
+         }
+      } else if (ciprefix(".measure", s)) {
+         (void) gettok(&s);
+         name = gettok(&s);
+         (void) gettok(&s);
+         (void) gettok(&s);
+         if (!(w = gettoks(s))) {
+            fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
+         }
+         some = 1;
+         com_save2(w, name);
+      } else if (ciprefix(".op", s)) {
+         some = 1;
+         com_save2(&all, "OP");
+      } else if (ciprefix(".tf", s)) {
+         some = 1;
+         com_save2(&all, "TF");
+      }
+   }
+   return some;
 }
 
 /* Execute the .whatever lines found in the deck, after we are done running.
@@ -332,6 +339,7 @@ ft_cktcoms(bool terse)
 	    }
         } else if (!eq(command->wl_word, ".save")
 		   && !eq(command->wl_word, ".op")
+         && !eq(command->wl_word, ".measure")
 		   && !eq(command->wl_word, ".tf"))
 	{
             goto bad;
