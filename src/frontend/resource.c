@@ -24,12 +24,7 @@ $Id$
 #include "variable.h"
 #include "cktdefs.h"
 
-/* not apply top directory searchpath because config.h should not be used */
-#ifdef _MSC_VER
 #include "../misc/misc_time.h" /* timediff */
-#else
-#include "src/misc/misc_time.h" /* timediff */
-#endif
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include ipc stuff */

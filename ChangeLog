@@ -1,3 +1,6 @@
+2009-04-17 Holger Vogt
+ * resource.c: 27 allow compilation into a build directory
+
 2009-04-14 Holger Vogt
   * control.c: remove bug no. 2724127 repeat loop inside another loop
   * dotcards.c, inp.c, measure.c: patch submitted by Bill Swartz added 
