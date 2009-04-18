@@ -10,6 +10,7 @@ Table of contents
    1.4 Advanced Install
     1.4.1 Options Specific to Using Ngspice
     1.4.2 Options Useful for Debugging Ngspice
+   1.5 Compilation using an user defined directory tree for object files
   2 Compilers and Options
   3 Compiling For Multiple Architectures
   4 Installation Names
@@ -255,6 +256,37 @@ This file describes the procedures to install ngspice from sources.
  --enable-stepdebug
 		Turns on debugging of convergence stepping??
 		
+		
+1.5 Compilation using an user defined directory tree for object files	
+
+	The procedures described above will store the *.o files (output  
+ of the compilation step) into the directories where the sources (*.c) 
+ are located. This may not be the best option if you want for example 
+ to have a debug version and in parallel a release version of ngspice
+ (./configure option --disable-debug). 
+ 
+ So if you intend to create a separate object file tree like 
+ ng-spice-rework/ngbuild/release, you may do the following, starting 
+ from the default directory ng-spice-rework:
+ 
+ mkdir -p ngbuild/release
+ cd ngbuild/release
+ ../../configure <some options>	
+ make install
+ 
+ This will create an object file directory tree, similar to the source 
+ file directory tree, the object files are now separated from the source 
+ files. For the debug version, you may do the same as described above, 
+ replacing 'release' by 'debug', and obtain another separated object 
+ file directory tree. 
+ 
+ If you already have run ./configure in ng-spice-rework, you have to do a
+ maintainer-clean, before the above procedure will work.
+ 
+ Unfortunately this procedure will not work with Xspice enabled, so your 
+ options should not include --enable-xspice. This bug will be removed in a 
+ future version of ngspice.
+ 
 
 2 Compilers and Options
   =====================

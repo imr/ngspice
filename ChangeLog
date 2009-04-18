@@ -1,3 +1,6 @@
+2009-04-18 Holger Vogt
+ * INSTALL: chapter 1.5 added (separate object file directory tree)
+
 2009-04-17 Holger Vogt
  * resource.c: 27 allow compilation into a build directory
 
