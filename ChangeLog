@@ -1,3 +1,10 @@
+2009-04-18 Dietmar Warning
+ * devices/bsim3soi/*.c, *.h, tests/bsim3soi/*.cir, *.out, *.mod, DEVICES: 
+   Update to actual version 4.1, contrary to the comment in Berkeley doc's the model
+   is not full downward compatibel to version 4.0
+ * spicelib/parser/inpgmod.c, 251: using strcmp again, instead of strstr - 
+   we need absolute equality to distinguish between node and model names.
+
 2009-04-18 Holger Vogt
  * INSTALL: chapter 1.5 added (separate object file directory tree)
 
