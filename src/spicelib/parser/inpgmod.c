@@ -248,22 +248,22 @@ char *INPgetMod(void *ckt, char *name, INPmodel ** model, INPtables * tab)
     printf("In INPgetMod, comparing %s against stored model %s . . . \n", name, (modtmp)->INPmodName);
 #endif
 
-    if (strstr((modtmp)->INPmodName, name) != NULL) {
+    if (strcmp((modtmp)->INPmodName, name) == 0) {
       /* found the model in question - now instantiate if necessary */
       /* and return an appropriate pointer to it */
 
       if (modtmp->INPmodType < 0) {    /* First check for illegal model type */
-	/* illegal device type, so can't handle */
-	*model = (INPmodel *) NULL;
-	err = (char *) MALLOC((35 + strlen(name)) * sizeof(char));
-	(void) sprintf(err,"Unknown device type for model %s \n", name);
+        /* illegal device type, so can't handle */
+        *model = (INPmodel *) NULL;
+        err = (char *) MALLOC((35 + strlen(name)) * sizeof(char));
+        (void) sprintf(err,"Unknown device type for model %s \n", name);
 
 #ifdef TRACE
-	/* SDB debug statement */
-	printf("In INPgetMod, illegal device type for model %s . . . \n", name);
+        /* SDB debug statement */
+        printf("In INPgetMod, illegal device type for model %s . . . \n", name);
 #endif
 
-	return (err);
+        return (err);
       }  /* end of checking for illegal model */
 
       if (!((modtmp)->INPmodUsed)) {   /* Check if model is already defined */
