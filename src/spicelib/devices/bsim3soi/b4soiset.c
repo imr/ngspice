@@ -1,12 +1,14 @@
-/***  B4SOI 11/30/2005 Xuemei (Jane) Xi Release   ***/
+/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
 
 /**********
- * Copyright 2005 Regents of the University of California.  All rights reserved.
+ * Copyright 2009 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soiset.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
+ * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
  * File: b4soiset.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
+ * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  **********/
 
 #include "ngspice.h"
@@ -23,6 +25,9 @@
 #define PI 3.141592654
 #define Charge_q 1.60219e-19
 #define Meter2Micron 1.0e6
+#define EPS0 8.85418e-12
+
+double epsrox, toxe, epssub; 
 
 int
 B4SOIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
@@ -36,10 +41,6 @@ double Cboxt;
 
 /* v3.2 */
 double Vbs0t, Qsi;
-
-/* Alan's Nodeset Fix */
-CKTnode *tmpNode;
-IFuid tmpName;
 
     /*  loop through all the B4SOI device models */
     for( ; model != NULL; model = model->B4SOInextModel )
@@ -56,6 +57,46 @@ IFuid tmpName;
             model->B4SOIparamChk = 0;
         if (!model->B4SOIcapModGiven) 
             model->B4SOIcapMod = 2;
+			
+		if (!model->B4SOImtrlModGiven)
+            model->B4SOImtrlMod = 0; /*4.1*/
+		if (!model->B4SOIvgstcvModGiven)
+            model->B4SOIvgstcvMod = 0; 
+		if (!model->B4SOIgidlModGiven)
+            model->B4SOIgidlMod = 0;			
+		if (!model->B4SOIeotGiven)
+            model->B4SOIeot = 100.0e-10;
+		if (!model->B4SOIepsroxGiven)
+            model->B4SOIepsrox = 3.9;
+		if (!model->B4SOIepsrsubGiven)
+  	        model->B4SOIepsrsub = 11.7; 
+        if (!model->B4SOIni0subGiven)
+            model->B4SOIni0sub = 1.45e10;   /* unit 1/cm3 */
+        if (!model->B4SOIbg0subGiven)
+            model->B4SOIbg0sub =  1.16;     /* unit eV */
+        if (!model->B4SOItbgasubGiven)
+  	    model->B4SOItbgasub = 7.02e-4;  
+        if (!model->B4SOItbgbsubGiven)
+	    model->B4SOItbgbsub = 1108.0;  			
+        if (!model->B4SOIleffeotGiven)
+            model->B4SOIleffeot = 1.0;
+		if (!model->B4SOIweffeotGiven)
+            model->B4SOIweffeot = 10.0;
+	    if (!model->B4SOIvddeotGiven)
+            model->B4SOIvddeot = (model->B4SOItype == NMOS) ? 1.5 : -1.5;
+		if (!model->B4SOItempeotGiven)
+		    model->B4SOItempeot = 300.15;
+        if (!model->B4SOIadosGiven)
+            model->B4SOIados = 1.0;
+        if (!model->B4SOIbdosGiven)
+            model->B4SOIbdos = 1.0;
+        if (!model->B4SOIepsrgateGiven)
+	        model->B4SOIepsrgate = 11.7;  
+        if (!model->B4SOIphigGiven)
+	        model->B4SOIphig = 4.05;
+        if (!model->B4SOIeasubGiven)
+            model->B4SOIeasub = 4.05; 
+			
 /*        if (!model->B4SOInoiModGiven) 
             model->B4SOInoiMod = 1; 	v3.2 */
         if (!model->B4SOIshModGiven) 
@@ -64,8 +105,30 @@ IFuid tmpName;
             model->B4SOIversion = 4.00;
         if (!model->B4SOItoxGiven)
             model->B4SOItox = 100.0e-10;
-        model->B4SOIcox = 3.453133e-11 / model->B4SOItox;
+       /*model->B4SOIcox = 3.453133e-11 / model->B4SOItox;*/
+	   if(model->B4SOImtrlMod)
+	         {
+	     epsrox = 3.9;
+	     toxe = model->B4SOIeot;
+	     epssub = EPS0 * model->B4SOIepsrsub;
+         //model->B4SOIcox = 3.453133e-11 / model->B4SOItox;
+		 model->B4SOIcox = epsrox * EPS0 / toxe;
+	         }
+	      else
+	         {
+	     epsrox = model->B4SOIepsrox;
+	     toxe = model->B4SOItox;
+	     epssub = EPSSI;
+		 //model->B4SOIcox = epsrox * EPS0 / toxe;
+		 model->B4SOIcox = 3.453133e-11 / model->B4SOItox;
+	         }
+		 
+		 
+	    if (!model->B4SOItoxpGiven)
+            model->B4SOItoxp = model->B4SOItox;
+			
 
+			
         if (!model->B4SOItoxmGiven)
             model->B4SOItoxm = model->B4SOItox; /* v3.2 */
 
@@ -98,7 +161,7 @@ IFuid tmpName;
  
 	if (!model->B4SOItnoiModGiven)
 	    model->B4SOItnoiMod = 0;
-	else if ((model->B4SOItnoiMod != 0) && (model->B4SOItnoiMod != 1))
+	else if ((model->B4SOItnoiMod != 0) && (model->B4SOItnoiMod != 1)&& (model->B4SOItnoiMod != 2))
 	{    model->B4SOItnoiMod = 0;
 	     printf("Waring: tnoiMod has been set to default value:0.\n");
 	}
@@ -173,6 +236,8 @@ IFuid tmpName;
             model->B4SOInpeak = 1.7e17;   /* unit 1/cm3 */
         if (!model->B4SOIngateGiven)
             model->B4SOIngate = 0;   /* unit 1/cm3 */
+	    if (!model->B4SOInsdGiven)
+		    model->B4SOInsd = 1.0e20;
         if (!model->B4SOIvbmGiven)
 	    model->B4SOIvbm = -3.0;
         if (!model->B4SOIxtGiven)
@@ -211,6 +276,8 @@ IFuid tmpName;
             model->B4SOIdsub = model->B4SOIdrout;     
         if (!model->B4SOIvth0Given)
             model->B4SOIvth0 = (model->B4SOItype == NMOS) ? 0.7 : -0.7;
+        if (!model->B4SOIvfbGiven)    
+            model->B4SOIvfb = -1.0;       /* v4.1 */  		
         if (!model->B4SOIuaGiven)
             model->B4SOIua = 2.25e-9;      /* unit m/V */
         if (!model->B4SOIua1Given)
@@ -227,6 +294,49 @@ IFuid tmpName;
             model->B4SOIu0 = (model->B4SOItype == NMOS) ? 0.067 : 0.025;
         if (!model->B4SOIuteGiven)
 	    model->B4SOIute = -1.5;    
+		
+		/*4.1		mobmod =4	*/
+         if (!model->B4SOIudGiven)
+		    model->B4SOIud = 0.0;
+		 if (!model->B4SOIludGiven)
+		    model->B4SOIlud = 0.0;
+		 if (!model->B4SOIwudGiven)
+		    model->B4SOIwud = 0.0;
+         if (!model->B4SOIpudGiven)
+		    model->B4SOIpud1 = 0.0;
+         if (!model->B4SOIud1Given)
+		    model->B4SOIud1 = 0.0;
+		 if (!model->B4SOIlud1Given)
+		    model->B4SOIlud1 = 0.0;
+		 if (!model->B4SOIwud1Given)
+		    model->B4SOIwud1 = 0.0;
+         if (!model->B4SOIpud1Given)
+		    model->B4SOIpud1 = 0.0;
+         if (!model->B4SOIeuGiven)
+            model->B4SOIeu = (model->B4SOItype == NMOS) ? 1.67 : 1.0;	
+         if (!model->B4SOIleuGiven)
+            model->B4SOIleu = 0.0;	
+         if (!model->B4SOIweuGiven)
+            model->B4SOIweu = 0.0;	
+         if (!model->B4SOIpeuGiven)
+            model->B4SOIpeu = 0.0;				
+		if (!model->B4SOIucsGiven)
+            model->B4SOIucs = (model->B4SOItype == NMOS) ? 1.67 : 1.0;
+		if (!model->B4SOIlucsGiven)
+            model->B4SOIlucs =0.0;
+		if (!model->B4SOIwucsGiven)
+            model->B4SOIwucs =0.0;
+		if (!model->B4SOIpucsGiven)
+            model->B4SOIpucs =0.0;
+	    if (!model->B4SOIucsteGiven)
+		    model->B4SOIucste = -4.775e-3;	
+	    if (!model->B4SOIlucsteGiven)
+		    model->B4SOIlucste = 0.0;
+        if (!model->B4SOIwucsteGiven)
+		    model->B4SOIwucste = 0.0;				
+        if (!model->B4SOIpucsteGiven)
+		    model->B4SOIpucste = 0.0;
+			
         if (!model->B4SOIvoffGiven)
 	    model->B4SOIvoff = -0.08;
         if (!model->B4SOIdeltaGiven)  
@@ -288,6 +398,8 @@ IFuid tmpName;
             model->B4SOItbox = 3e-7;
         if (!model->B4SOItsiGiven)  
             model->B4SOItsi = 1e-7;
+		if (!model->B4SOIetsiGiven)  
+            model->B4SOIetsi = 1e-7;
         if (!model->B4SOIxjGiven)  
             model->B4SOIxj = model->B4SOItsi;
         if (!model->B4SOIrbodyGiven)  
@@ -307,6 +419,25 @@ IFuid tmpName;
             model->B4SOIbgidl = 2.3e9; 	/* v4.0 */
         if (!model->B4SOIcgidlGiven)  	/* v4.0 */
             model->B4SOIcgidl = 0.0;
+		if (!model->B4SOIrgidlGiven)  	/* v4.1 */
+            model->B4SOIrgidl = 1.0;
+	    if (!model->B4SOIkgidlGiven)  	/* v4.1 */
+            model->B4SOIkgidl = 0.0;
+		if (!model->B4SOIfgidlGiven)  	/* v4.1 */
+            model->B4SOIfgidl = 0.0;
+		        if (!model->B4SOIagislGiven)  
+            model->B4SOIagisl = model->B4SOIagidl;
+        if (!model->B4SOIbgislGiven)  
+            model->B4SOIbgisl = model->B4SOIbgidl; 	/* v4.0 */
+        if (!model->B4SOIcgislGiven)  	/* v4.0 */
+            model->B4SOIcgisl = model->B4SOIcgidl;
+		if (!model->B4SOIrgislGiven)  	/* v4.1 */
+            model->B4SOIrgisl = model->B4SOIrgidl;
+	    if (!model->B4SOIkgislGiven)  	/* v4.1 */
+            model->B4SOIkgisl = model->B4SOIkgidl;
+		if (!model->B4SOIfgislGiven)  	/* v4.1 */
+            model->B4SOIfgisl = model->B4SOIfgidl;	
+			
         if (!model->B4SOIndiodeGiven)	/* v4.0 */ 
             model->B4SOIndiode = 1.0;
         if (!model->B4SOIndiodedGiven)	/* v4.0 */ 
@@ -400,6 +531,7 @@ IFuid tmpName;
            else
                model->B4SOIegidl =  model->B4SOIngidl;
         }
+		        
         if(model->B4SOIegidlGiven && model->B4SOIngidlGiven)
            printf("Warning: both egidl and ngidl are given. Egidl value is taken \n");
         if (!model->B4SOIlegidlGiven) {
@@ -427,6 +559,18 @@ IFuid tmpName;
         if(model->B4SOIpegidlGiven && model->B4SOIpngidlGiven)
            printf("Warning: both pegidl and pngidl are given. Pegidl value is taken \n");
 
+		if (!model->B4SOIegislGiven) {
+                model->B4SOIegisl = model->B4SOIegidl;
+                   }
+	    if (!model->B4SOIlegislGiven) {
+                model->B4SOIlegisl = model->B4SOIlegidl;
+                   }	
+	    if (!model->B4SOIwegislGiven) {
+                model->B4SOIwegisl = model->B4SOIwegidl;
+                   }	
+	    if (!model->B4SOIpegislGiven) {
+                model->B4SOIpegisl = model->B4SOIpegidl;
+                   }				   
         /* unit degree celcius */
         if (!model->B4SOItnomGiven)  
 	    model->B4SOItnom = ckt->CKTnomTemp; 
@@ -548,6 +692,12 @@ IFuid tmpName;
            model->B4SOIvecb = 0.026;
         if (!model->B4SOIvgb2Given)
            model->B4SOIvgb2 = 17;
+        if (!model->B4SOIaigbcp2Given)
+            model->B4SOIaigbcp2 = 0.043;
+        if (!model->B4SOIbigbcp2Given)
+            model->B4SOIbigbcp2 = 0.0054;
+        if (!model->B4SOIcigbcp2Given)
+            model->B4SOIcigbcp2 = 0.0075;
         if (!model->B4SOItoxqmGiven)
            model->B4SOItoxqm = model->B4SOItox;
         if (!model->B4SOIvoxhGiven)
@@ -612,6 +762,20 @@ IFuid tmpName;
            model->B4SOIsiid = 0.0;
         if (!model->B4SOIfbjtiiGiven)
            model->B4SOIfbjtii = 0.0;
+		 /*4.1 Iii model*/
+		if (!model->B4SOIebjtiiGiven)
+           model->B4SOIebjtii = 0.0;
+        if (!model->B4SOIcbjtiiGiven)
+           model->B4SOIcbjtii = 0.0;
+        if (!model->B4SOIvbciGiven)
+           model->B4SOIvbci = 0.0;
+	    if (!model->B4SOItvbciGiven)
+           model->B4SOItvbci = 0.0;
+        if (!model->B4SOIabjtiiGiven)
+           model->B4SOIabjtii = 0.0;
+        if (!model->B4SOImbjtiiGiven)
+           model->B4SOImbjtii = 0.4;
+		   
         if (!model->B4SOIesatiiGiven)
             model->B4SOIesatii = 1e7;
         if (!model->B4SOIlnGiven)
@@ -686,6 +850,12 @@ IFuid tmpName;
             model->B4SOIlbetaGB1 = 0.0;
         if (!model->B4SOIlbetaGB2Given)
             model->B4SOIlbetaGB2 = 0.0;
+        if (!model->B4SOIlaigbcp2Given)
+            model->B4SOIlaigbcp2 = 0.0;
+        if (!model->B4SOIlbigbcp2Given)
+            model->B4SOIlbigbcp2 = 0.0;
+        if (!model->B4SOIlcigbcp2Given)
+            model->B4SOIlcigbcp2 = 0.0;
         if (!model->B4SOIlndifGiven)
             model->B4SOIlndif = 0.0;
         if (!model->B4SOIlntrecfGiven)
@@ -757,8 +927,12 @@ IFuid tmpName;
             model->B4SOIlnsub = 0.0;
         if (!model->B4SOIlngateGiven)
             model->B4SOIlngate = 0.0;
+        if (!model->B4SOIlnsdGiven)
+            model->B4SOIlnsd = 0.0;		
         if (!model->B4SOIlvth0Given)
            model->B4SOIlvth0 = 0.0;
+        if (!model->B4SOIlvfbGiven)    
+            model->B4SOIlvfb = 0.0;   /* v4.1 */
         if (!model->B4SOIlk1Given)
             model->B4SOIlk1 = 0.0;
         if (!model->B4SOIlk1w1Given)
@@ -867,6 +1041,18 @@ IFuid tmpName;
             model->B4SOIlalpha0 = 0.0;
         if (!model->B4SOIlfbjtiiGiven)
             model->B4SOIlfbjtii = 0.0;
+			/*4.1 Iii model*/
+		if (!model->B4SOIlebjtiiGiven)
+           model->B4SOIlebjtii = 0.0;
+        if (!model->B4SOIlcbjtiiGiven)
+           model->B4SOIlcbjtii = 0.0;
+        if (!model->B4SOIlvbciGiven)
+           model->B4SOIlvbci = 0.0;
+        if (!model->B4SOIlabjtiiGiven)
+           model->B4SOIlabjtii = 0.0;
+        if (!model->B4SOIlmbjtiiGiven)
+           model->B4SOIlmbjtii = 0.0;
+		   
         if (!model->B4SOIlbeta0Given)
             model->B4SOIlbeta0 = 0.0;
         if (!model->B4SOIlbeta1Given)
@@ -893,6 +1079,25 @@ IFuid tmpName;
             model->B4SOIlbgidl = 0.0;
         if (!model->B4SOIlcgidlGiven)
             model->B4SOIlcgidl = 0.0;
+        if (!model->B4SOIlrgidlGiven)
+            model->B4SOIlrgidl = 0.0;
+        if (!model->B4SOIlkgidlGiven)
+            model->B4SOIlkgidl = 0.0;
+        if (!model->B4SOIlfgidlGiven)
+            model->B4SOIlfgidl = 0.0;
+			
+		        if (!model->B4SOIlagislGiven)
+            model->B4SOIlagisl = 0.0;
+        if (!model->B4SOIlbgislGiven)
+            model->B4SOIlbgisl = 0.0;
+        if (!model->B4SOIlcgislGiven)
+            model->B4SOIlcgisl = 0.0;
+        if (!model->B4SOIlrgislGiven)
+            model->B4SOIlrgisl = 0.0;
+        if (!model->B4SOIlkgislGiven)
+            model->B4SOIlkgisl = 0.0;
+        if (!model->B4SOIlfgislGiven)
+            model->B4SOIlfgisl = 0.0;	
         if (!model->B4SOIlntunGiven)	/* v4.0 */
             model->B4SOIlntun = 0.0;
         if (!model->B4SOIlntundGiven)	/* v4.0 */
@@ -978,6 +1183,12 @@ IFuid tmpName;
             model->B4SOIwbetaGB1 = 0.0;
         if (!model->B4SOIwbetaGB2Given)
             model->B4SOIwbetaGB2 = 0.0;
+        if (!model->B4SOIwaigbcp2Given)
+            model->B4SOIwaigbcp2 = 0.0;
+        if (!model->B4SOIwbigbcp2Given)
+            model->B4SOIwbigbcp2 = 0.0;
+        if (!model->B4SOIwcigbcp2Given)
+            model->B4SOIwcigbcp2 = 0.0;
         if (!model->B4SOIwndifGiven)
             model->B4SOIwndif = 0.0;
         if (!model->B4SOIwntrecfGiven)
@@ -1050,8 +1261,12 @@ IFuid tmpName;
             model->B4SOIwnsub = 0.0;
         if (!model->B4SOIwngateGiven)
             model->B4SOIwngate = 0.0;
+        if (!model->B4SOIwnsdGiven)
+            model->B4SOIwnsd = 0.0;
         if (!model->B4SOIwvth0Given)
            model->B4SOIwvth0 = 0.0;
+        if (!model->B4SOIwvfbGiven)
+            model->B4SOIwvfb = 0.0;   /* v4.1 */
         if (!model->B4SOIwk1Given)
             model->B4SOIwk1 = 0.0;
         if (!model->B4SOIwk1w1Given)
@@ -1160,6 +1375,17 @@ IFuid tmpName;
             model->B4SOIwalpha0 = 0.0;
         if (!model->B4SOIwfbjtiiGiven)
             model->B4SOIwfbjtii = 0.0;
+	/*4.1 Iii model*/
+		if (!model->B4SOIwebjtiiGiven)
+           model->B4SOIwebjtii = 0.0;
+        if (!model->B4SOIwcbjtiiGiven)
+           model->B4SOIwcbjtii = 0.0;
+        if (!model->B4SOIwvbciGiven)
+           model->B4SOIwvbci = 0.0;
+        if (!model->B4SOIwabjtiiGiven)
+           model->B4SOIwabjtii = 0.0;
+        if (!model->B4SOIwmbjtiiGiven)
+           model->B4SOIwmbjtii = 0.0;
         if (!model->B4SOIwbeta0Given)
             model->B4SOIwbeta0 = 0.0;
         if (!model->B4SOIwbeta1Given)
@@ -1186,6 +1412,25 @@ IFuid tmpName;
             model->B4SOIwbgidl = 0.0;
         if (!model->B4SOIwcgidlGiven)
             model->B4SOIwcgidl = 0.0;
+        if (!model->B4SOIwrgidlGiven)
+            model->B4SOIwrgidl = 0.0;
+        if (!model->B4SOIwkgidlGiven)
+            model->B4SOIwkgidl = 0.0;
+        if (!model->B4SOIwfgidlGiven)
+            model->B4SOIwfgidl = 0.0;
+			
+		if (!model->B4SOIwagislGiven)
+            model->B4SOIwagisl = 0.0;
+        if (!model->B4SOIwbgislGiven)
+            model->B4SOIwbgisl = 0.0;
+        if (!model->B4SOIwcgislGiven)
+            model->B4SOIwcgisl = 0.0;
+        if (!model->B4SOIwrgislGiven)
+            model->B4SOIwrgisl = 0.0;
+        if (!model->B4SOIwkgislGiven)
+            model->B4SOIwkgisl = 0.0;
+        if (!model->B4SOIwfgislGiven)
+            model->B4SOIwfgisl = 0.0;	
         if (!model->B4SOIwntunGiven)	/* v4.0 */
             model->B4SOIwntun = 0.0;
         if (!model->B4SOIwntundGiven)	/* v4.0 */
@@ -1272,6 +1517,12 @@ IFuid tmpName;
             model->B4SOIpbetaGB1 = 0.0;
         if (!model->B4SOIpbetaGB2Given)
             model->B4SOIpbetaGB2 = 0.0;
+        if (!model->B4SOIpaigbcp2Given)
+            model->B4SOIpaigbcp2 = 0.0;
+        if (!model->B4SOIpbigbcp2Given)
+            model->B4SOIpbigbcp2 = 0.0;
+        if (!model->B4SOIpcigbcp2Given)
+            model->B4SOIpcigbcp2 = 0.0;
         if (!model->B4SOIpndifGiven)
             model->B4SOIpndif = 0.0;
         if (!model->B4SOIpntrecfGiven)
@@ -1344,8 +1595,12 @@ IFuid tmpName;
             model->B4SOIpnsub = 0.0;
         if (!model->B4SOIpngateGiven)
             model->B4SOIpngate = 0.0;
+        if (!model->B4SOIpnsdGiven)
+            model->B4SOIpnsd = 0.0;
         if (!model->B4SOIpvth0Given)
            model->B4SOIpvth0 = 0.0;
+        if (!model->B4SOIpvfbGiven)
+            model->B4SOIpvfb = 0.0;   /* v4.1 */
         if (!model->B4SOIpk1Given)
             model->B4SOIpk1 = 0.0;
         if (!model->B4SOIpk1w1Given)
@@ -1454,6 +1709,17 @@ IFuid tmpName;
             model->B4SOIpalpha0 = 0.0;
         if (!model->B4SOIpfbjtiiGiven)
             model->B4SOIpfbjtii = 0.0;
+	/*4.1 Iii model*/
+	    if (!model->B4SOIpebjtiiGiven)
+           model->B4SOIpebjtii = 0.0;
+        if (!model->B4SOIpcbjtiiGiven)
+           model->B4SOIpcbjtii = 0.0;
+        if (!model->B4SOIpvbciGiven)
+           model->B4SOIpvbci = 0.0;
+        if (!model->B4SOIpabjtiiGiven)
+           model->B4SOIpabjtii = 0.0;
+        if (!model->B4SOIpmbjtiiGiven)
+           model->B4SOIpmbjtii = 0.0;
         if (!model->B4SOIpbeta0Given)
             model->B4SOIpbeta0 = 0.0;
         if (!model->B4SOIpbeta1Given)
@@ -1480,6 +1746,25 @@ IFuid tmpName;
             model->B4SOIpbgidl = 0.0;
         if (!model->B4SOIpcgidlGiven)
             model->B4SOIpcgidl = 0.0;
+        if (!model->B4SOIprgidlGiven)
+            model->B4SOIprgidl = 0.0;
+        if (!model->B4SOIpkgidlGiven)
+            model->B4SOIpkgidl = 0.0;
+        if (!model->B4SOIpfgidlGiven)
+            model->B4SOIpfgidl = 0.0;
+			
+		if (!model->B4SOIpagislGiven)
+            model->B4SOIpagisl = 0.0;
+        if (!model->B4SOIpbgislGiven)
+            model->B4SOIpbgisl = 0.0;
+        if (!model->B4SOIpcgislGiven)
+            model->B4SOIpcgisl = 0.0;
+        if (!model->B4SOIprgislGiven)
+            model->B4SOIprgisl = 0.0;
+        if (!model->B4SOIpkgislGiven)
+            model->B4SOIpkgisl = 0.0;
+        if (!model->B4SOIpfgislGiven)
+            model->B4SOIpfgisl = 0.0;	
         if (!model->B4SOIpntunGiven)	/* v4.0 */
             model->B4SOIpntun = 0.0;
         if (!model->B4SOIpntundGiven)	/* v4.0 */
@@ -1631,18 +1916,42 @@ IFuid tmpName;
             model->B4SOIdvtp0 = 0.0;
         if (!model->B4SOIdvtp1Given)	/* v4.0 for Vth */
             model->B4SOIdvtp1 = 0.0;
+        if (!model->B4SOIdvtp2Given)	/* v4.1 for Vth */
+            model->B4SOIdvtp2 = 0.0;
+        if (!model->B4SOIdvtp3Given)	/* v4.1 for Vth */
+            model->B4SOIdvtp3 = 0.0;
+        if (!model->B4SOIdvtp4Given)	/* v4.1 for Vth */
+            model->B4SOIdvtp4 = 0.0;
         if (!model->B4SOIldvtp0Given)	/* v4.0 for Vth */
             model->B4SOIldvtp0 = 0.0;
         if (!model->B4SOIldvtp1Given)	/* v4.0 for Vth */
             model->B4SOIldvtp1 = 0.0;
+        if (!model->B4SOIldvtp2Given)	/* v4.1 for Vth */
+            model->B4SOIldvtp2 = 0.0;
+        if (!model->B4SOIldvtp3Given)	/* v4.1 for Vth */
+            model->B4SOIldvtp3 = 0.0;
+        if (!model->B4SOIldvtp4Given)	/* v4.1 for Vth */
+            model->B4SOIldvtp4 = 0.0;
         if (!model->B4SOIwdvtp0Given)	/* v4.0 for Vth */
             model->B4SOIwdvtp0 = 0.0;
         if (!model->B4SOIwdvtp1Given)	/* v4.0 for Vth */
             model->B4SOIwdvtp1 = 0.0;
+        if (!model->B4SOIwdvtp2Given)	/* v4.1 for Vth */
+            model->B4SOIwdvtp2 = 0.0;
+        if (!model->B4SOIwdvtp3Given)	/* v4.1 for Vth */
+            model->B4SOIwdvtp3 = 0.0;
+        if (!model->B4SOIwdvtp4Given)	/* v4.1 for Vth */
+            model->B4SOIwdvtp4 = 0.0;
         if (!model->B4SOIpdvtp0Given)	/* v4.0 for Vth */
             model->B4SOIpdvtp0 = 0.0;
         if (!model->B4SOIpdvtp1Given)	/* v4.0 for Vth */
             model->B4SOIpdvtp1 = 0.0;
+        if (!model->B4SOIpdvtp2Given)	/* v4.1 for Vth */
+            model->B4SOIpdvtp2 = 0.0;
+        if (!model->B4SOIpdvtp3Given)	/* v4.1 for Vth */
+            model->B4SOIpdvtp3 = 0.0;
+        if (!model->B4SOIpdvtp4Given)	/* v4.1 for Vth */
+            model->B4SOIpdvtp4 = 0.0;
         if (!model->B4SOIminvGiven)	/* v4.0 for Vgsteff */
             model->B4SOIminv = 0.0;
         if (!model->B4SOIlminvGiven)	/* v4.0 for Vgsteff */
@@ -1722,17 +2031,35 @@ IFuid tmpName;
         if (!model->B4SOIlodeta0Given)
             model->B4SOIlodeta0 = 1.0;
 /* stress effect end */
-
+        if (!model->B4SOIfdModGiven)
+            model->B4SOIfdMod = 0; 
+        if (!model->B4SOIvsceGiven)
+            model->B4SOIvsce = 0.0; 
+        if (!model->B4SOIcdsbsGiven)
+            model->B4SOIcdsbs = 0.0;
+	
+       if (!model->B4SOIminvcvGiven)     /* v4.1 for Vgsteffcv */
+            model->B4SOIminvcv = 0.0;
+        if (!model->B4SOIlminvcvGiven)    /* v4.1 for Vgsteffcv */
+            model->B4SOIlminvcv = 0.0;
+        if (!model->B4SOIwminvcvGiven)    /* v4.1 for Vgsteffcv */
+            model->B4SOIwminvcv = 0.0;
+        if (!model->B4SOIpminvcvGiven)    /* v4.1 for Vgsteffcv */
+            model->B4SOIpminvcv = 0.0;
+        if (!model->B4SOIvoffcvGiven)
+            model->B4SOIvoffcv = -0.08;
+        if (!model->B4SOIlvoffcvGiven)
+            model->B4SOIlvoffcv = 0.0;
+        if (!model->B4SOIwvoffcvGiven)
+            model->B4SOIwvoffcv = 0.0;
+        if (!model->B4SOIpvoffcvGiven)
+            model->B4SOIpvoffcv = 0.0;			
         /* loop through all the instances of the model */
         for (here = model->B4SOIinstances; here != NULL ;
              here=here->B4SOInextInstance) 
-	{
-            if (here->B4SOIowner == ARCHme)
-            {
-               /* allocate a chunk of the state vector */
-               here->B4SOIstates = *states;
-               *states += B4SOInumStates;
-            }
+	{   /* allocate a chunk of the state vector */
+            here->B4SOIstates = *states;
+            *states += B4SOInumStates;
             /* perform the parameter defaulting */
             if (!here->B4SOIdrainAreaGiven)
                 here->B4SOIdrainArea = 0.0;
@@ -1772,8 +2099,9 @@ IFuid tmpName;
                 here->B4SOIsourceSquares = 1;
             if (!here->B4SOIwGiven)
                 here->B4SOIw = 5e-6;
+
             if (!here->B4SOImGiven)
-                here->B4SOIm = 1;  
+                here->B4SOIm = 1;
 
 /* v2.0 release */
             if (!here->B4SOInbcGiven)
@@ -1786,6 +2114,8 @@ IFuid tmpName;
                 here->B4SOIpsbcp = 0;
             if (!here->B4SOIagbcpGiven)
                 here->B4SOIagbcp = 0;
+			if (!here->B4SOIagbcp2Given)
+                here->B4SOIagbcp2 = 0;   /* v4.1 */
             if (!here->B4SOIagbcpdGiven)
                 here->B4SOIagbcpd = here->B4SOIagbcp;
             if (!here->B4SOIaebcpGiven)
@@ -1795,20 +2125,13 @@ IFuid tmpName;
                 here->B4SOIoff = 0;
 
             /* process drain series resistance */
+
             if ( ((model->B4SOIsheetResistance > 0.0) && 
                 (here->B4SOIdrainSquares > 0.0 ) &&
                 (here->B4SOIdNodePrime == 0)) ) 
 	    {   error = CKTmkVolt(ckt,&tmp,here->B4SOIname,"drain");
                 if(error) return(error);
                 here->B4SOIdNodePrime = tmp->number;
-                if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
-                }
             }
 	    else
 	    {   here->B4SOIdNodePrime = here->B4SOIdNode;
@@ -1821,14 +2144,6 @@ IFuid tmpName;
 	    {   error = CKTmkVolt(ckt,&tmp,here->B4SOIname,"source");
                 if(error) return(error);
                 here->B4SOIsNodePrime = tmp->number;
-                if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
-                     }
-                  }
-                }
             }
 	    else 
 	    {   here->B4SOIsNodePrime = here->B4SOIsNode;
@@ -1836,13 +2151,28 @@ IFuid tmpName;
 
             /* process effective silicon film thickness */
             model->B4SOIcbox = 3.453133e-11 / model->B4SOItbox;
-            model->B4SOIcsi = 1.03594e-10 / model->B4SOItsi;
+			if(model->B4SOImtrlMod)
+			{
+            model->B4SOIcsi = 1.03594e-10 / model->B4SOIetsi;
+			}
+			else
+			{
+			model->B4SOIcsi = 1.03594e-10 / model->B4SOItsi;
+			}
             Cboxt = model->B4SOIcbox * model->B4SOIcsi / (model->B4SOIcbox + model->B4SOIcsi);
 
 
 /* v3.2 */
+            if(model->B4SOImtrlMod)
+			{
             Qsi = Charge_q * model->B4SOInpeak
+                * (1.0 + model->B4SOIlpe0 / here->B4SOIl) * 1e6 * model->B4SOIetsi;
+		    }
+			else
+			{
+			Qsi = Charge_q * model->B4SOInpeak
                 * (1.0 + model->B4SOIlpe0 / here->B4SOIl) * 1e6 * model->B4SOItsi;
+			}
             Vbs0t = 0.8 - 0.5 * Qsi / model->B4SOIcsi + model->B4SOIvbsa;
 
             if (!here->B4SOIsoiModGiven)
@@ -2179,7 +2509,12 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             TSTALLOC(B4SOIBpPtr, B4SOIbNode, B4SOIpNode)
             TSTALLOC(B4SOIPbPtr, B4SOIpNode, B4SOIbNode)
             TSTALLOC(B4SOIPpPtr, B4SOIpNode, B4SOIpNode)
+
+	    /* 4.1 for Igb2_agbcp2 */
+            TSTALLOC(B4SOIPgPtr , B4SOIpNode, B4SOIgNode)
+            TSTALLOC(B4SOIGpPtr , B4SOIgNode, B4SOIpNode)
         }
+
 
 /* v3.1 added for RF */
             if (here->B4SOIrgateMod != 0)
@@ -2347,4 +2682,3 @@ B4SOIunsetup(GENmodel *inModel, CKTcircuit *ckt)
 #endif
     return OK;
 }
-

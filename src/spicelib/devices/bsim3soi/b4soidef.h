@@ -1,8 +1,9 @@
 /**********
-Copyright 2005 Regents of the University of California.  All rights reserved.
+Copyright 2009 Regents of the University of California.  All rights reserved.
 Author: 1998 Samuel Fung
 authors:1999-2004 Pin Su, Hui Wan b3soidef.h
 Authors:2005-  Hui Wan, Jane Xi
+Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
 File: b4soidef.h
 **********/
 
@@ -10,7 +11,10 @@ File: b4soidef.h
 #define B4SOI
 
 #define SOICODE
-/*  #define BULKCODE  */
+
+/* Uncomment the following line to activate debugging variable output */
+/* debug1, debug2, debug3, ... */
+/* #define B4SOI_DEBUG_OUT */
 
 #include "ifsim.h"
 #include "gendefs.h"
@@ -115,7 +119,12 @@ typedef struct sB4SOIinstance
     double B4SOIgdtots;         /* v4.0 for rdsmod */
     double B4SOIgdtotb;         /* v4.0 for rdsmod */
 
+    double B4SOIigp;            /* v4.1 for Igb in the AGBCP2 region */
+    double B4SOIgigpg;          /* v4.1 for Igb in the AGBCP2 region */
+    double B4SOIgigpp;          /* v4.1 for Igb in the AGBCP2 region */
+
     double B4SOIigidl;
+	double B4SOIigisl;
     double B4SOIitun;
     double B4SOIibp;
     double B4SOIabeff;
@@ -158,7 +167,14 @@ typedef struct sB4SOIinstance
     double B4SOIk2ox;
     double B4SOIeta0;
 /* end of v4.0 stress effect instance param */
+    /*4.1 mobmod=4*/
+	double B4SOIvtfbphi1;
+	double B4SOIvgsteffvth;
+	
 
+	
+	
+	
     double B4SOIicVBS;
     double B4SOIicVDS;
     double B4SOIicVGS;
@@ -180,6 +196,7 @@ typedef struct sB4SOIinstance
     double B4SOIpdbcp;
     double B4SOIpsbcp;
     double B4SOIagbcp;
+    double B4SOIagbcp2; /* v4.1 improvement on BC */
     double B4SOIagbcpd; /* v4.0 */
     double B4SOIaebcp;
     double B4SOIvbsusr;
@@ -241,6 +258,12 @@ typedef struct sB4SOIinstance
     double B4SOIgds;
     double B4SOIgmbs;
     double B4SOIgmT;
+
+#ifdef B4SOI_DEBUG_OUT
+    double B4SOIdebug1;
+    double B4SOIdebug2;
+    double B4SOIdebug3;
+#endif
 
     double B4SOIgbbs;
     double B4SOIgbgs;
@@ -339,6 +362,7 @@ typedef struct sB4SOIinstance
     unsigned B4SOIlGiven :1;
     unsigned B4SOIwGiven :1;
     unsigned B4SOImGiven :1;
+    
     unsigned B4SOIdrainAreaGiven :1;
     unsigned B4SOIsourceAreaGiven    :1;
     unsigned B4SOIdrainSquaresGiven  :1;
@@ -371,6 +395,7 @@ typedef struct sB4SOIinstance
     unsigned B4SOIpdbcpGiven :1;
     unsigned B4SOIpsbcpGiven :1;
     unsigned B4SOIagbcpGiven :1;
+	unsigned B4SOIagbcp2Given :1;       /* v4.1 improvement on BC */
     unsigned B4SOIagbcpdGiven :1;	/* v4.0 */
     unsigned B4SOIaebcpGiven :1;
     unsigned B4SOIvbsusrGiven :1;
@@ -407,6 +432,9 @@ typedef struct sB4SOIinstance
     double *B4SOISgPtr;		/* v4.0 for rdsMod =1 */
     double *B4SOISbPtr;		/* v4.0 for rdsMod =1 */		
 /* v4.0 end */
+
+    double *B4SOIPgPtr;		/* v4.1 for Ig_agbcp2 */		
+    double *B4SOIGpPtr;		/* v4.1 for Ig_agbcp2 */		
 
 /* v3.1  added for RF */
     double *B4SOIGgmPtr;
@@ -602,7 +630,8 @@ struct b4soiSizeDependParam
     double B4SOIketa;     
     double B4SOInpeak;        
     double B4SOInsub;
-    double B4SOIngate;        
+    double B4SOIngate;
+    double B4SOInsd;	
     double B4SOIgamma1;      
     double B4SOIgamma2;     
     double B4SOIvbx;      
@@ -638,6 +667,15 @@ struct b4soiSizeDependParam
     double B4SOIuc1;
     double B4SOIu0;
     double B4SOIute;
+		 /*4.1 high k mobility*/
+	double B4SOIud;
+    double B4SOIud1;
+    double B4SOIeu;
+	double B4SOIucs;
+    double B4SOIucste;
+	
+	
+	
     double B4SOIvoff;
     double B4SOIvfb;
     double B4SOIuatemp;
@@ -733,6 +771,9 @@ struct b4soiSizeDependParam
     double B4SOIbetaGB1;
     double B4SOIalphaGB2;
     double B4SOIbetaGB2;
+    double B4SOIaigbcp2;  /* 4.1 */
+    double B4SOIbigbcp2;  /* 4.1 */
+    double B4SOIcigbcp2;  /* 4.1 */
     double B4SOIndif;
     double B4SOIntrecf;
     double B4SOIntrecr;
@@ -749,6 +790,13 @@ struct b4soiSizeDependParam
     double B4SOIk1w2;
     double B4SOIketas;
     double B4SOIfbjtii;
+	/*4.1 Iii model*/
+    double B4SOIebjtii;
+	double B4SOIcbjtii;
+	double B4SOIvbci;
+	double B4SOIabjtii;
+	double B4SOImbjtii;
+	
     double B4SOIbeta1;
     double B4SOIbeta2;
     double B4SOIvdsatii0;
@@ -762,6 +810,18 @@ struct b4soiSizeDependParam
     double B4SOIbgidl;
     double B4SOIcgidl; /* v4.0 */
     double B4SOIegidl;
+	double B4SOIrgidl;
+	double B4SOIkgidl;
+	double B4SOIfgidl;
+	double B4SOIagisl;
+    double B4SOIbgisl;
+    double B4SOIcgisl; /* v4.0 */
+    double B4SOIegisl;
+	double B4SOIrgisl;
+	double B4SOIkgisl;
+	double B4SOIfgisl;
+	
+	
     double B4SOIntun;	/* v4.0 */
     double B4SOIntund;	/* v4.0 */
     double B4SOIndiode; /* v4.0 */
@@ -866,11 +926,20 @@ struct b4soiSizeDependParam
     double B4SOIlpeb; 	/* v4.0 for Vth */
     double B4SOIdvtp0; 	/* v4.0 for Vth */
     double B4SOIdvtp1; 	/* v4.0 for Vth */
+    double B4SOIdvtp2;  /* v4.1 for Vth */
+    double B4SOIdvtp3;  /* v4.1 for Vth */
+    double B4SOIdvtp4;  /* v4.1 for Vth */
     double B4SOIminv;   /* v4.0 for Vgsteff */
     double B4SOImstar;  /* v4.0 for Vgsteff */
     double B4SOIfprout; /* v4.0 for DITS in Id */
     double B4SOIpdits;  /* v4.0 for DITS in Id */
     double B4SOIpditsd;  /* v4.0 for DITS in Id */
+
+    /*4.1*/
+    double B4SOImstarcv;
+    double B4SOIminvcv;
+    double B4SOIvoffcv;
+    double B4SOIdvtp2factor;
 
     struct b4soiSizeDependParam  *pNext;
 };
@@ -891,7 +960,32 @@ typedef struct sB4SOImodel
     int    B4SOIshMod;
     int    B4SOIbinUnit;
     int    B4SOIparamChk;
-    double B4SOIversion;             
+	int    B4SOImtrlMod;  /*4.1*/
+	int    B4SOIvgstcvMod;
+	int    B4SOIgidlMod;
+	int    B4SOIiiiMod;
+	
+    double B4SOIversion; 
+	
+	double B4SOIeot;  /*4.1*/
+	double B4SOIepsrox;
+	double B4SOIepsrsub;
+	double B4SOItoxp;
+	double B4SOIleffeot;
+	double B4SOIweffeot;
+	double B4SOIvddeot;
+	double B4SOItempeot;
+	double B4SOIados;
+	double B4SOIbdos;
+	double B4SOIepsrgate;
+	double B4SOIni0sub;
+	double B4SOIbg0sub;
+	double B4SOItbgasub;
+	double B4SOItbgbsub;
+	double B4SOIphig;
+	double B4SOIeasub;
+    double B4SOItvbci;
+	
     double B4SOItox;             
     double B4SOItoxm; /* v3.2 */
     double B4SOIdtoxcv; /* v2.2.3 */
@@ -909,7 +1003,11 @@ typedef struct sB4SOImodel
     double B4SOIketa;     
     double B4SOInsub;
     double B4SOInpeak;        
-    double B4SOIngate;        
+    double B4SOIngate;
+    double B4SOInsd;
+    double B4SOIlnsd;
+    double B4SOIwnsd;
+    double B4SOIpnsd;	
     double B4SOIgamma1;      
     double B4SOIgamma2;     
     double B4SOIvbx;      
@@ -941,6 +1039,32 @@ typedef struct sB4SOImodel
     double B4SOIuc1;
     double B4SOIu0;
     double B4SOIute;
+		/*4.1 high k mobility*/
+    double B4SOIud;
+	double B4SOIlud;
+	double B4SOIwud;
+	double B4SOIpud;
+	
+	double B4SOIud1;
+	double B4SOIlud1;
+	double B4SOIwud1;
+	double B4SOIpud1;
+	
+    double B4SOIeu;
+	double B4SOIleu;
+	double B4SOIweu;
+	double B4SOIpeu;
+	
+	double B4SOIucs;
+	double B4SOIlucs;
+	double B4SOIwucs;
+	double B4SOIpucs;
+	
+	double B4SOIucste;
+	double B4SOIlucste;
+	double B4SOIwucste;
+	double B4SOIpucste;
+	
     double B4SOIvoff;
     double B4SOIdelta;
     double B4SOIrdsw;       
@@ -966,6 +1090,7 @@ typedef struct sB4SOImodel
     double B4SOIalpha0;
     double B4SOItbox;
     double B4SOItsi;
+	double B4SOIetsi;
     double B4SOIxj;
     double B4SOIkb1;
     double B4SOIrth0;
@@ -974,6 +1099,16 @@ typedef struct sB4SOImodel
     double B4SOIagidl;
     double B4SOIbgidl;
     double B4SOIcgidl; 	 /* v4.0 */
+	double B4SOIrgidl;
+	double B4SOIkgidl;
+	double B4SOIfgidl;
+	double B4SOIegisl;
+    double B4SOIagisl;
+    double B4SOIbgisl;
+    double B4SOIcgisl; 	 
+	double B4SOIrgisl;
+	double B4SOIkgisl;
+	double B4SOIfgisl;
     double B4SOIndiode; /* v4.0 */
     double B4SOIndioded; /* v4.0 */
     double B4SOIistun;
@@ -1043,9 +1178,21 @@ typedef struct sB4SOImodel
     int B4SOIrdsMod;	/* v4.0 */
  
     /* v4.0 end */
-
-    /* vfb added */
+    /* v4.1 */
+    int B4SOIfdMod;
     double B4SOIvfb;
+    double B4SOIvsce;  
+    double B4SOIcdsbs; 
+    double B4SOIminvcv;
+    double B4SOIlminvcv;
+    double B4SOIwminvcv;
+    double B4SOIpminvcv;
+	double B4SOIvoffcv;
+    double B4SOIlvoffcv;
+    double B4SOIwvoffcv;
+    double B4SOIpvoffcv;
+
+
     /* added end */
 
 /* v2.2 release */
@@ -1062,6 +1209,9 @@ typedef struct sB4SOImodel
     double B4SOIalphaGB2;
     double B4SOIbetaGB2;
     double B4SOIvgb2;
+    double B4SOIaigbcp2;  /* 4.1 */
+    double B4SOIbigbcp2;  /* 4.1 */
+    double B4SOIcigbcp2;  /* 4.1 */
     double B4SOItoxqm;
     double B4SOIvoxh;
     double B4SOIdeltavox;
@@ -1083,6 +1233,13 @@ typedef struct sB4SOImodel
     double B4SOIsii2;
     double B4SOIsiid;
     double B4SOIfbjtii;
+	/*4.1 Iii model*/
+    double B4SOIebjtii;
+	double B4SOIcbjtii;
+	double B4SOIvbci;
+	double B4SOIabjtii;
+	double B4SOImbjtii;
+	
     double B4SOIesatii;
     double B4SOIntun;		/* v4.0 */
     double B4SOIntund;		/* v4.0 */
@@ -1191,6 +1348,9 @@ typedef struct sB4SOImodel
     double B4SOIlbetaGB1;
     double B4SOIlalphaGB2;
     double B4SOIlbetaGB2;
+    double B4SOIlaigbcp2;  /* 4.1 */
+    double B4SOIlbigbcp2;  /* 4.1 */
+    double B4SOIlcigbcp2;  /* 4.1 */
     double B4SOIlndif;
     double B4SOIlntrecf;	
     double B4SOIlntrecr;
@@ -1229,6 +1389,7 @@ typedef struct sB4SOImodel
     double B4SOIlnsub;
     double B4SOIlngate;        
     double B4SOIlvth0;
+    double B4SOIlvfb;  /* v4.1 */	
     double B4SOIlk1;
     double B4SOIlk1w1;
     double B4SOIlk1w2;
@@ -1283,6 +1444,13 @@ typedef struct sB4SOImodel
     double B4SOIldelta;
     double B4SOIlalpha0;
     double B4SOIlfbjtii;
+	/*4.1 Iii model*/
+	double B4SOIlebjtii;
+	double B4SOIlcbjtii;
+	double B4SOIlvbci;
+	double B4SOIlabjtii;
+	double B4SOIlmbjtii;
+	
     double B4SOIlbeta0;
     double B4SOIlbeta1;
     double B4SOIlbeta2;         
@@ -1297,6 +1465,16 @@ typedef struct sB4SOImodel
     double B4SOIlbgidl;
     double B4SOIlcgidl;
     double B4SOIlegidl;
+	double B4SOIlrgidl;
+	double B4SOIlkgidl;
+	double B4SOIlfgidl;
+	    double B4SOIlagisl;
+    double B4SOIlbgisl;
+    double B4SOIlcgisl;
+    double B4SOIlegisl;
+	double B4SOIlrgisl;
+	double B4SOIlkgisl;
+	double B4SOIlfgisl;
     double B4SOIlntun;	   /* v4.0 */
     double B4SOIlntund;	   /* v4.0 */
     double B4SOIlndiode;  /* v4.0 */
@@ -1344,6 +1522,9 @@ typedef struct sB4SOImodel
     double B4SOIwbetaGB1;
     double B4SOIwalphaGB2;
     double B4SOIwbetaGB2;
+    double B4SOIwaigbcp2;  /* 4.1 */
+    double B4SOIwbigbcp2;  /* 4.1 */
+    double B4SOIwcigbcp2;  /* 4.1 */
     double B4SOIwndif;
     double B4SOIwntrecf;
     double B4SOIwntrecr;
@@ -1382,6 +1563,7 @@ typedef struct sB4SOImodel
     double B4SOIwnsub;
     double B4SOIwngate;        
     double B4SOIwvth0;
+	double B4SOIwvfb;   /* v4.1 */
     double B4SOIwk1;
     double B4SOIwk1w1;
     double B4SOIwk1w2;
@@ -1436,6 +1618,13 @@ typedef struct sB4SOImodel
     double B4SOIwdelta;
     double B4SOIwalpha0;
     double B4SOIwfbjtii;
+	/*4.1 Iii model*/
+	double B4SOIwebjtii;
+	double B4SOIwcbjtii;
+	double B4SOIwvbci;
+	double B4SOIwabjtii;
+	double B4SOIwmbjtii;
+	
     double B4SOIwbeta0;
     double B4SOIwbeta1;
     double B4SOIwbeta2;         
@@ -1450,6 +1639,16 @@ typedef struct sB4SOImodel
     double B4SOIwbgidl;
     double B4SOIwcgidl;
     double B4SOIwegidl;
+	double B4SOIwrgidl;
+	double B4SOIwkgidl;
+	double B4SOIwfgidl;
+	    double B4SOIwagisl;
+    double B4SOIwbgisl;
+    double B4SOIwcgisl;
+    double B4SOIwegisl;
+	double B4SOIwrgisl;
+	double B4SOIwkgisl;
+	double B4SOIwfgisl;
     double B4SOIwntun;		/* v4.0 */
     double B4SOIwntund;		/* v4.0 */
     double B4SOIwndiode;  	/* v4.0 */
@@ -1497,6 +1696,9 @@ typedef struct sB4SOImodel
     double B4SOIpbetaGB1;
     double B4SOIpalphaGB2;
     double B4SOIpbetaGB2;
+    double B4SOIpaigbcp2;  /* 4.1 */
+    double B4SOIpbigbcp2;  /* 4.1 */
+    double B4SOIpcigbcp2;  /* 4.1 */
     double B4SOIpndif;
     double B4SOIpntrecf;      
     double B4SOIpntrecr; 
@@ -1535,6 +1737,7 @@ typedef struct sB4SOImodel
     double B4SOIpnsub;
     double B4SOIpngate;        
     double B4SOIpvth0;
+    double B4SOIpvfb;  /* v4.1 */
     double B4SOIpk1;
     double B4SOIpk1w1;
     double B4SOIpk1w2;
@@ -1589,6 +1792,13 @@ typedef struct sB4SOImodel
     double B4SOIpdelta;
     double B4SOIpalpha0;
     double B4SOIpfbjtii;
+	/*4.1 Iii model*/
+	double B4SOIpebjtii;
+	double B4SOIpcbjtii;
+	double B4SOIpvbci;
+	double B4SOIpabjtii;
+	double B4SOIpmbjtii;
+	
     double B4SOIpbeta0;
     double B4SOIpbeta1;
     double B4SOIpbeta2;         
@@ -1603,6 +1813,16 @@ typedef struct sB4SOImodel
     double B4SOIpbgidl;
     double B4SOIpcgidl;
     double B4SOIpegidl;
+	double B4SOIprgidl;
+	double B4SOIpkgidl;
+	double B4SOIpfgidl;
+	double B4SOIpagisl;
+    double B4SOIpbgisl;
+    double B4SOIpcgisl;
+    double B4SOIpegisl;
+	double B4SOIprgisl;
+	double B4SOIpkgisl;
+	double B4SOIpfgisl;
     double B4SOIpntun;		/* v4.0 */
     double B4SOIpntund;		/* v4.0 */
     double B4SOIpndiode;  	/* v4.0 */
@@ -1651,6 +1871,7 @@ typedef struct sB4SOImodel
     double B4SOInfb;
     double B4SOIadice;
     double B4SOIeg0;
+	
 
     /* v4.0 added for stress effect */
     double B4SOIsaref;
@@ -1708,6 +1929,18 @@ typedef struct sB4SOImodel
     double B4SOIldvtp1;	/* v4.0 for Vth */
     double B4SOIwdvtp1;	/* v4.0 for Vth */
     double B4SOIpdvtp1;	/* v4.0 for Vth */
+    double B4SOIdvtp2;  /* v4.1 for Vth */
+    double B4SOIldvtp2; /* v4.1 for Vth */
+    double B4SOIwdvtp2; /* v4.1 for Vth */
+    double B4SOIpdvtp2; /* v4.1 for Vth */
+    double B4SOIdvtp3;  /* v4.1 for Vth */
+    double B4SOIldvtp3; /* v4.1 for Vth */
+    double B4SOIwdvtp3; /* v4.1 for Vth */
+    double B4SOIpdvtp3; /* v4.1 for Vth */
+    double B4SOIdvtp4;  /* v4.1 for Vth */
+    double B4SOIldvtp4; /* v4.1 for Vth */
+    double B4SOIwdvtp4; /* v4.1 for Vth */
+    double B4SOIpdvtp4; /* v4.1 for Vth */
     double B4SOIminv;	/* v4.0 for Vgsteff */
     double B4SOIlminv;	/* v4.0 for Vgsteff */
     double B4SOIwminv;	/* v4.0 for Vgsteff */
@@ -1746,7 +1979,19 @@ typedef struct sB4SOImodel
     struct b4soiSizeDependParam *pSizeDependParamKnot;
 
     /* Flags */
-
+	unsigned B4SOIepsrgateGiven:1;
+	unsigned B4SOIadosGiven    :1;
+	unsigned B4SOIbdosGiven    :1;
+	unsigned B4SOIleffeotGiven :1;
+	unsigned B4SOIweffeotGiven :1;
+	unsigned B4SOIvddeotGiven  :1;
+	unsigned B4SOItempeotGiven :1;
+	
+	unsigned B4SOItoxpGiven    :1;
+    unsigned B4SOImtrlModGiven :1; /*4.1*/
+	unsigned B4SOIvgstcvModGiven :1;
+	unsigned B4SOIgidlModGiven :1;
+	unsigned B4SOIiiiModGiven  :1;
     unsigned B4SOIrdsModGiven :1; /* v4.0 */
     unsigned B4SOIrbodyModGiven :1; /* v4.0 */
     unsigned B4SOIrgateModGiven :1; /* v3.1 */
@@ -1764,10 +2009,11 @@ typedef struct sB4SOImodel
     unsigned B4SOIdvbd0Given:  1;
     unsigned B4SOIdvbd1Given:  1;
     unsigned B4SOImoinFDGiven: 1;
-
+    
 
     unsigned B4SOItboxGiven:1;
     unsigned B4SOItsiGiven :1;
+	unsigned B4SOIetsiGiven :1;
     unsigned B4SOIxjGiven :1;
     unsigned B4SOIkb1Given :1;
     unsigned B4SOIrth0Given :1;
@@ -1776,6 +2022,16 @@ typedef struct sB4SOImodel
     unsigned B4SOIagidlGiven :1;
     unsigned B4SOIbgidlGiven :1;
     unsigned B4SOIcgidlGiven :1;
+	unsigned B4SOIrgidlGiven :1;
+	unsigned B4SOIkgidlGiven :1;
+	unsigned B4SOIfgidlGiven :1;
+	unsigned B4SOIegislGiven :1;
+    unsigned B4SOIagislGiven :1;
+    unsigned B4SOIbgislGiven :1;
+    unsigned B4SOIcgislGiven :1;
+	unsigned B4SOIrgislGiven :1;
+	unsigned B4SOIkgislGiven :1;
+	unsigned B4SOIfgislGiven :1;
     unsigned B4SOIndiodeGiven :1;  /* v4.0 */
     unsigned B4SOIndiodedGiven :1;  /* v4.0 */
     unsigned B4SOIxbjtGiven :1;
@@ -1818,6 +2074,7 @@ typedef struct sB4SOImodel
     unsigned  B4SOInsubGiven   :1;
     unsigned  B4SOInpeakGiven   :1;
     unsigned  B4SOIngateGiven   :1;
+	unsigned  B4SOInsdGiven     :1;
     unsigned  B4SOIgamma1Given   :1;
     unsigned  B4SOIgamma2Given   :1;
     unsigned  B4SOIvbxGiven   :1;
@@ -1849,6 +2106,32 @@ typedef struct sB4SOImodel
     unsigned  B4SOIuc1Given   :1;
     unsigned  B4SOIu0Given   :1;
     unsigned  B4SOIuteGiven   :1;
+	/*4.1 mobmod=4*/
+	unsigned  B4SOIudGiven    :1;
+	unsigned  B4SOIludGiven   :1;
+	unsigned  B4SOIwudGiven   :1;
+	unsigned  B4SOIpudGiven   :1;
+	
+	unsigned  B4SOIud1Given   :1;
+	unsigned  B4SOIlud1Given  :1;
+	unsigned  B4SOIwud1Given  :1;
+	unsigned  B4SOIpud1Given  :1;
+	
+	unsigned  B4SOIeuGiven    :1;
+	unsigned  B4SOIleuGiven   :1;
+	unsigned  B4SOIweuGiven   :1;
+	unsigned  B4SOIpeuGiven   :1;
+	
+	unsigned  B4SOIucsGiven   :1;
+	unsigned  B4SOIlucsGiven  :1;
+	unsigned  B4SOIwucsGiven  :1;
+	unsigned  B4SOIpucsGiven  :1;
+	
+	unsigned  B4SOIucsteGiven :1;
+	unsigned  B4SOIlucsteGiven:1;
+	unsigned  B4SOIwucsteGiven:1;
+	unsigned  B4SOIpucsteGiven:1;
+	
     unsigned  B4SOIvoffGiven   :1;
     unsigned  B4SOIrdswGiven   :1;      
     unsigned  B4SOIrdwGiven   :1;	/* v4.0 for rdsMod = 1 */
@@ -1872,7 +2155,18 @@ typedef struct sB4SOImodel
     unsigned  B4SOIb0Given   :1;
     unsigned  B4SOIb1Given   :1;
     unsigned  B4SOIalpha0Given   :1;
-
+	
+	
+	/*4.1*/
+	unsigned  B4SOIepsroxGiven :1;
+    unsigned  B4SOIeotGiven    :1;
+	unsigned  B4SOIepsrsubGiven   :1;
+    unsigned  B4SOIni0subGiven :1;
+	unsigned  B4SOIbg0subGiven :1;
+	unsigned  B4SOItbgasubGiven:1;
+	unsigned  B4SOItbgbsubGiven:1;
+	unsigned  B4SOIphigGiven   :1;
+	unsigned  B4SOIeasubGiven  :1;
 
     /* v3.1 added for RF */
     unsigned  B4SOIxrcrg1Given   :1;
@@ -1899,8 +2193,18 @@ typedef struct sB4SOImodel
     unsigned  B4SOIrbdbGiven	 :1;
     unsigned  B4SOIrbsbGiven	 :1;
     /* v4.0 end */
-
-
+    /* v4.1 */
+    unsigned  B4SOIfdModGiven        :1; 
+	unsigned  B4SOIvsceGiven         :1;
+    unsigned  B4SOIcdsbsGiven        :1;
+	unsigned  B4SOIminvcvGiven       :1;
+    unsigned  B4SOIlminvcvGiven      :1;
+    unsigned  B4SOIwminvcvGiven      :1;
+    unsigned  B4SOIpminvcvGiven      :1;
+    unsigned  B4SOIvoffcvGiven       :1;
+    unsigned  B4SOIlvoffcvGiven      :1;
+    unsigned  B4SOIwvoffcvGiven      :1;
+    unsigned  B4SOIpvoffcvGiven      :1;
 /* v2.2 release */
     unsigned  B4SOIwth0Given   :1;
     unsigned  B4SOIrhaloGiven  :1;
@@ -1915,6 +2219,9 @@ typedef struct sB4SOImodel
     unsigned  B4SOIalphaGB2Given    :1;
     unsigned  B4SOIbetaGB2Given     :1;
     unsigned  B4SOIvgb2Given        :1;
+    unsigned  B4SOIaigbcp2Given    :1;  /* 4.1 */
+    unsigned  B4SOIbigbcp2Given    :1;  /* 4.1 */
+    unsigned  B4SOIcigbcp2Given    :1;  /* 4.1 */
     unsigned  B4SOItoxqmGiven  :1;
     unsigned  B4SOIigbModGiven  :1; /* v3.0 */
     unsigned  B4SOIvoxhGiven   :1;
@@ -1943,12 +2250,20 @@ typedef struct sB4SOImodel
     unsigned  B4SOIbeta2Given  :1;
     unsigned  B4SOIvdsatii0Given  :1;
     unsigned  B4SOItiiGiven  :1;
+	unsigned  B4SOItvbciGiven :1;
     unsigned  B4SOIliiGiven  :1;
     unsigned  B4SOIsii0Given  :1;
     unsigned  B4SOIsii1Given  :1;
     unsigned  B4SOIsii2Given  :1;
     unsigned  B4SOIsiidGiven  :1;
     unsigned  B4SOIfbjtiiGiven :1;
+	/*4.1 Iii model*/
+	unsigned  B4SOIebjtiiGiven :1;
+	unsigned  B4SOIcbjtiiGiven :1;
+	unsigned  B4SOIvbciGiven   :1;
+	unsigned  B4SOIabjtiiGiven :1;
+	unsigned  B4SOImbjtiiGiven :1;
+	
     unsigned  B4SOIesatiiGiven :1;
     unsigned  B4SOIntunGiven  :1;      /* v4.0 */
     unsigned  B4SOIntundGiven  :1;      /* v4.0 */
@@ -2012,6 +2327,9 @@ typedef struct sB4SOImodel
     unsigned B4SOIlbetaGB1Given :1;
     unsigned B4SOIlalphaGB2Given :1;
     unsigned B4SOIlbetaGB2Given :1;
+    unsigned B4SOIlaigbcp2Given :1;  /* 4.1 */
+    unsigned B4SOIlbigbcp2Given :1;  /* 4.1 */
+    unsigned B4SOIlcigbcp2Given :1;  /* 4.1 */
     unsigned B4SOIlndifGiven :1;
     unsigned B4SOIlntrecfGiven  :1;   
     unsigned B4SOIlntrecrGiven  :1; 
@@ -2048,8 +2366,10 @@ typedef struct sB4SOImodel
 
     unsigned  B4SOIlnpeakGiven   :1;        
     unsigned  B4SOIlnsubGiven   :1;
-    unsigned  B4SOIlngateGiven   :1;        
+    unsigned  B4SOIlngateGiven   :1;  
+    unsigned  B4SOIlnsdGiven     :1;	
     unsigned  B4SOIlvth0Given   :1;
+    unsigned  B4SOIlvfbGiven   :1;   /* v4.1 */
     unsigned  B4SOIlk1Given   :1;
     unsigned  B4SOIlk1w1Given   :1;
     unsigned  B4SOIlk1w2Given   :1;
@@ -2104,6 +2424,13 @@ typedef struct sB4SOImodel
     unsigned  B4SOIldeltaGiven   :1;
     unsigned  B4SOIlalpha0Given   :1;
     unsigned  B4SOIlfbjtiiGiven   :1;
+	/*4.1 Iii model*/
+	unsigned  B4SOIlebjtiiGiven :1;
+	unsigned  B4SOIlcbjtiiGiven :1;
+	unsigned  B4SOIlvbciGiven   :1;
+	unsigned  B4SOIlabjtiiGiven :1;
+	unsigned  B4SOIlmbjtiiGiven :1;
+	
     unsigned  B4SOIlbeta0Given   :1;
     unsigned  B4SOIlbeta1Given   :1;
     unsigned  B4SOIlbeta2Given   :1;         
@@ -2118,6 +2445,16 @@ typedef struct sB4SOImodel
     unsigned  B4SOIlbgidlGiven   :1;
     unsigned  B4SOIlcgidlGiven   :1;
     unsigned  B4SOIlegidlGiven   :1;
+	unsigned  B4SOIlrgidlGiven   :1;
+	unsigned  B4SOIlkgidlGiven   :1;
+	unsigned  B4SOIlfgidlGiven   :1;
+	    unsigned  B4SOIlagislGiven   :1;
+    unsigned  B4SOIlbgislGiven   :1;
+    unsigned  B4SOIlcgislGiven   :1;
+    unsigned  B4SOIlegislGiven   :1;
+	unsigned  B4SOIlrgislGiven   :1;
+	unsigned  B4SOIlkgislGiven   :1;
+	unsigned  B4SOIlfgislGiven   :1;
     unsigned  B4SOIlntunGiven   :1;	/* v4.0 */
     unsigned  B4SOIlntundGiven   :1;	/* v4.0 */
     unsigned  B4SOIlndiodeGiven   :1;	/* v4.0 */
@@ -2164,6 +2501,9 @@ typedef struct sB4SOImodel
     unsigned B4SOIwbetaGB1Given :1;
     unsigned B4SOIwalphaGB2Given :1;
     unsigned B4SOIwbetaGB2Given :1;
+    unsigned B4SOIwaigbcp2Given :1;  /* 4.1 */
+    unsigned B4SOIwbigbcp2Given :1;  /* 4.1 */
+    unsigned B4SOIwcigbcp2Given :1;  /* 4.1 */
     unsigned B4SOIwndifGiven :1;
     unsigned B4SOIwntrecfGiven  :1;    
     unsigned B4SOIwntrecrGiven  :1;    
@@ -2200,8 +2540,10 @@ typedef struct sB4SOImodel
 
     unsigned  B4SOIwnpeakGiven   :1;        
     unsigned  B4SOIwnsubGiven   :1;
-    unsigned  B4SOIwngateGiven   :1;        
+    unsigned  B4SOIwngateGiven   :1; 
+    unsigned  B4SOIwnsdGiven     :1;	
     unsigned  B4SOIwvth0Given   :1;
+    unsigned  B4SOIwvfbGiven   :1;   /* v4.1 */
     unsigned  B4SOIwk1Given   :1;
     unsigned  B4SOIwk1w1Given   :1;
     unsigned  B4SOIwk1w2Given   :1;
@@ -2256,6 +2598,13 @@ typedef struct sB4SOImodel
     unsigned  B4SOIwdeltaGiven   :1;
     unsigned  B4SOIwalpha0Given   :1;
     unsigned  B4SOIwfbjtiiGiven   :1;
+	/*4.1 Iii model*/
+	unsigned  B4SOIwebjtiiGiven :1;
+	unsigned  B4SOIwcbjtiiGiven :1;
+	unsigned  B4SOIwvbciGiven   :1;
+	unsigned  B4SOIwabjtiiGiven :1;
+	unsigned  B4SOIwmbjtiiGiven :1;
+	
     unsigned  B4SOIwbeta0Given   :1;
     unsigned  B4SOIwbeta1Given   :1;
     unsigned  B4SOIwbeta2Given   :1;         
@@ -2270,6 +2619,16 @@ typedef struct sB4SOImodel
     unsigned  B4SOIwbgidlGiven   :1;
     unsigned  B4SOIwcgidlGiven   :1;
     unsigned  B4SOIwegidlGiven   :1;
+	unsigned  B4SOIwrgidlGiven   :1;
+	unsigned  B4SOIwkgidlGiven   :1;
+	unsigned  B4SOIwfgidlGiven   :1;
+	    unsigned  B4SOIwagislGiven   :1;
+    unsigned  B4SOIwbgislGiven   :1;
+    unsigned  B4SOIwcgislGiven   :1;
+    unsigned  B4SOIwegislGiven   :1;
+	unsigned  B4SOIwrgislGiven   :1;
+	unsigned  B4SOIwkgislGiven   :1;
+	unsigned  B4SOIwfgislGiven   :1;
     unsigned  B4SOIwntunGiven   :1;	/* v4.0 */
     unsigned  B4SOIwntundGiven   :1;	/* v4.0 */
     unsigned  B4SOIwndiodeGiven   :1;	/* v4.0 */
@@ -2316,6 +2675,9 @@ typedef struct sB4SOImodel
     unsigned B4SOIpbetaGB1Given :1;
     unsigned B4SOIpalphaGB2Given :1;
     unsigned B4SOIpbetaGB2Given :1;
+    unsigned B4SOIpaigbcp2Given :1;  /* 4.1 */
+    unsigned B4SOIpbigbcp2Given :1;  /* 4.1 */
+    unsigned B4SOIpcigbcp2Given :1;  /* 4.1 */
     unsigned B4SOIpndifGiven :1;
     unsigned B4SOIpntrecfGiven  :1;
     unsigned B4SOIpntrecrGiven  :1;  
@@ -2352,8 +2714,10 @@ typedef struct sB4SOImodel
 
     unsigned  B4SOIpnpeakGiven   :1;        
     unsigned  B4SOIpnsubGiven   :1;
-    unsigned  B4SOIpngateGiven   :1;        
+    unsigned  B4SOIpngateGiven   :1; 
+    unsigned  B4SOIpnsdGiven     :1;	
     unsigned  B4SOIpvth0Given   :1;
+    unsigned  B4SOIpvfbGiven   :1;  /* v4.1 */
     unsigned  B4SOIpk1Given   :1;
     unsigned  B4SOIpk1w1Given   :1;
     unsigned  B4SOIpk1w2Given   :1;
@@ -2408,6 +2772,13 @@ typedef struct sB4SOImodel
     unsigned  B4SOIpdeltaGiven   :1;
     unsigned  B4SOIpalpha0Given   :1;
     unsigned  B4SOIpfbjtiiGiven   :1;
+	/*4.1 Iii model*/
+	unsigned  B4SOIpebjtiiGiven :1;
+	unsigned  B4SOIpcbjtiiGiven :1;
+	unsigned  B4SOIpvbciGiven   :1;
+	unsigned  B4SOIpabjtiiGiven :1;
+	unsigned  B4SOIpmbjtiiGiven :1;
+	
     unsigned  B4SOIpbeta0Given   :1;
     unsigned  B4SOIpbeta1Given   :1;
     unsigned  B4SOIpbeta2Given   :1;         
@@ -2422,6 +2793,16 @@ typedef struct sB4SOImodel
     unsigned  B4SOIpbgidlGiven   :1;
     unsigned  B4SOIpcgidlGiven   :1;
     unsigned  B4SOIpegidlGiven   :1;
+	unsigned  B4SOIprgidlGiven   :1;
+	unsigned  B4SOIpkgidlGiven   :1;
+	unsigned  B4SOIpfgidlGiven   :1;
+	unsigned  B4SOIpagislGiven   :1;
+    unsigned  B4SOIpbgislGiven   :1;
+    unsigned  B4SOIpcgislGiven   :1;
+    unsigned  B4SOIpegislGiven   :1;
+	unsigned  B4SOIprgislGiven   :1;
+	unsigned  B4SOIpkgislGiven   :1;
+	unsigned  B4SOIpfgislGiven   :1;
     unsigned  B4SOIpntunGiven   :1;	/* v4.0 */
     unsigned  B4SOIpntundGiven   :1;	/* v4.0 */
     unsigned  B4SOIpndiodeGiven   :1;	/* v4.0 */
@@ -2551,6 +2932,18 @@ typedef struct sB4SOImodel
     unsigned  B4SOIldvtp1Given 	:1; /* v4.0 for vth */	
     unsigned  B4SOIwdvtp1Given 	:1; /* v4.0 for vth */	
     unsigned  B4SOIpdvtp1Given 	:1; /* v4.0 for vth */	
+    unsigned  B4SOIdvtp2Given   :1; /* v4.1 for vth */  
+    unsigned  B4SOIldvtp2Given  :1; /* v4.1 for vth */  
+    unsigned  B4SOIwdvtp2Given  :1; /* v4.1 for vth */  
+    unsigned  B4SOIpdvtp2Given  :1; /* v4.1 for vth */  
+    unsigned  B4SOIdvtp3Given   :1; /* v4.1 for vth */  
+    unsigned  B4SOIldvtp3Given  :1; /* v4.1 for vth */  
+    unsigned  B4SOIwdvtp3Given  :1; /* v4.1 for vth */  
+    unsigned  B4SOIpdvtp3Given  :1; /* v4.1 for vth */  
+    unsigned  B4SOIdvtp4Given   :1; /* v4.1 for vth */  
+    unsigned  B4SOIldvtp4Given  :1; /* v4.1 for vth */  
+    unsigned  B4SOIwdvtp4Given  :1; /* v4.1 for vth */  
+    unsigned  B4SOIpdvtp4Given  :1; /* v4.1 for vth */  
     unsigned  B4SOIminvGiven 	:1; /* v4.0 for Vgsteff */	
     unsigned  B4SOIlminvGiven 	:1; /* v4.0 for Vgsteff */	
     unsigned  B4SOIwminvGiven 	:1; /* v4.0 for Vgsteff */	
@@ -2581,7 +2974,7 @@ typedef struct sB4SOImodel
 /* device parameters */
 #define B4SOI_W 1
 #define B4SOI_L 2
-#define B4SOI_M 46
+#define B4SOI_M 47
 #define B4SOI_AS 3
 #define B4SOI_AD 4
 #define B4SOI_PS 5
@@ -2625,9 +3018,48 @@ typedef struct sB4SOImodel
 #define B4SOI_SD       43	/* v4.0 */ 
 #define B4SOI_DELVTO   44	/* v4.0 */
 #define B4SOI_AGBCPD   45	/* v4.0 */
+#define B4SOI_AGBCP2   46       /* v4.1 improvement on BC */
 
 
 /* model parameters */
+
+
+#define B4SOI_MOD_PFGIDL           65
+#define B4SOI_MOD_WFGIDL           66
+#define B4SOI_MOD_LFGIDL           67
+#define B4SOI_MOD_FGIDL            68
+#define B4SOI_MOD_PKGIDL           69
+#define B4SOI_MOD_WKGIDL           70
+#define B4SOI_MOD_LKGIDL           71
+#define B4SOI_MOD_KGIDL            72
+#define B4SOI_MOD_PRGIDL           73
+#define B4SOI_MOD_WRGIDL           74
+#define B4SOI_MOD_LRGIDL           75
+#define B4SOI_MOD_RGIDL            76
+#define B4SOI_MOD_GIDLMOD          77
+#define B4SOI_MOD_PNSD             78
+#define B4SOI_MOD_WNSD             79
+#define B4SOI_MOD_LNSD             80
+#define B4SOI_MOD_NSD              81
+#define B4SOI_MOD_PHIG             82
+#define B4SOI_MOD_EASUB            83
+#define B4SOI_MOD_TBGBSUB          84
+#define B4SOI_MOD_TBGASUB          85
+#define B4SOI_MOD_BG0SUB           86
+#define B4SOI_MOD_NI0SUB           87
+#define B4SOI_MOD_EPSRGATE         88
+#define B4SOI_MOD_ADOS             89
+#define B4SOI_MOD_BDOS             90
+#define B4SOI_MOD_LEFFEOT          91
+#define B4SOI_MOD_WEFFEOT          92    
+#define B4SOI_MOD_VDDEOT           93
+#define B4SOI_MOD_TEMPEOT          94
+#define B4SOI_MOD_TOXP             95
+#define B4SOI_MOD_ETSI             96
+#define B4SOI_MOD_EOT              97
+#define B4SOI_MOD_EPSROX           98
+#define B4SOI_MOD_EPSRSUB          99
+#define B4SOI_MOD_MTRLMOD         100 /*4.1*/
 #define B4SOI_MOD_CAPMOD          101
 #define B4SOI_MOD_NQSMOD          102
 #define B4SOI_MOD_MOBMOD          103    
@@ -3024,6 +3456,7 @@ typedef struct sB4SOImodel
 /* v3.1 added for RF end */
 
 /* Cross-term dependence */
+
 #define B4SOI_MOD_PNPEAK           501
 #define B4SOI_MOD_PNSUB            502
 #define B4SOI_MOD_PNGATE           503
@@ -3210,6 +3643,31 @@ typedef struct sB4SOImodel
 #define B4SOI_MOD_LAHLID           684 	/* v4.0 */
 #define B4SOI_MOD_WAHLID           685 	/* v4.0 */
 #define B4SOI_MOD_PAHLID           686 	/* v4.0 */
+#define B4SOI_MOD_DVTP2            687  /* v4.1 for Vth */
+#define B4SOI_MOD_LDVTP2           688  /* v4.1 for Vth */
+#define B4SOI_MOD_WDVTP2           689  /* v4.1 for Vth */
+#define B4SOI_MOD_PDVTP2           690  /* v4.1 for Vth */
+#define B4SOI_MOD_DVTP3            691  /* v4.1 for Vth */
+#define B4SOI_MOD_LDVTP3           692  /* v4.1 for Vth */
+#define B4SOI_MOD_WDVTP3           693  /* v4.1 for Vth */
+#define B4SOI_MOD_PDVTP3           694  /* v4.1 for Vth */
+#define B4SOI_MOD_DVTP4            695  /* v4.1 for Vth */
+#define B4SOI_MOD_LDVTP4           696  /* v4.1 for Vth */
+#define B4SOI_MOD_WDVTP4           697  /* v4.1 for Vth */
+#define B4SOI_MOD_PDVTP4           698  /* v4.1 for Vth */
+#define B4SOI_MOD_AIGBCP2        10001  /* v4.1 for Ig in AGBCP2 Region */
+#define B4SOI_MOD_LAIGBCP2       10002  /* v4.1 for Ig in AGBCP2 Region */
+#define B4SOI_MOD_WAIGBCP2       10003  /* v4.1 for Ig in AGBCP2 Region */
+#define B4SOI_MOD_PAIGBCP2       10004  /* v4.1 for Ig in AGBCP2 Region */
+#define B4SOI_MOD_BIGBCP2        10005  /* v4.1 for Ig in AGBCP2 Region */
+#define B4SOI_MOD_LBIGBCP2       10006  /* v4.1 for Ig in AGBCP2 Region */
+#define B4SOI_MOD_WBIGBCP2       10007  /* v4.1 for Ig in AGBCP2 Region */
+#define B4SOI_MOD_PBIGBCP2       10008  /* v4.1 for Ig in AGBCP2 Region */
+#define B4SOI_MOD_CIGBCP2        10009  /* v4.1 for Ig in AGBCP2 Region */
+#define B4SOI_MOD_LCIGBCP2       10010  /* v4.1 for Ig in AGBCP2 Region */
+#define B4SOI_MOD_WCIGBCP2       10011  /* v4.1 for Ig in AGBCP2 Region */
+#define B4SOI_MOD_PCIGBCP2       10012  /* v4.1 for Ig in AGBCP2 Region */
+
 
 /* Added for binning - END3 */
 
@@ -3339,6 +3797,12 @@ typedef struct sB4SOImodel
 #define B4SOI_GMID                 946
 #define B4SOI_QS                   955 
 
+/* For debugging only */
+#define B4SOI_DEBUG1               956
+#define B4SOI_DEBUG2               957
+#define B4SOI_DEBUG3               958
+/* End debugging */
+
 /* v3.1 added for RF */
 #define B4SOI_GNODEEXT             947
 #define B4SOI_GNODEMID             948
@@ -3348,6 +3812,92 @@ typedef struct sB4SOImodel
 #define B4SOI_DBNODE               949
 #define B4SOI_SBNODE               950
 /* v4.0 end */
+
+/*4.1 mobmod=4*/
+/*#define B4SOI_VGSTEFFVTH          3300*/
+/*#define B4SOI_VTFBPHI1            3301*/
+/*#define B4SOI_EG                  3350*/
+
+#define B4SOI_MOD_UD              3400
+#define B4SOI_MOD_LUD             3401
+#define B4SOI_MOD_WUD             3402
+#define B4SOI_MOD_PUD             3403
+#define B4SOI_MOD_UD1             3404
+#define B4SOI_MOD_LUD1            3405
+#define B4SOI_MOD_WUD1            3406
+#define B4SOI_MOD_PUD1            3407
+#define B4SOI_MOD_EU              3500
+#define B4SOI_MOD_LEU             3501
+#define B4SOI_MOD_WEU             3502
+#define B4SOI_MOD_PEU             3503
+#define B4SOI_MOD_UCS             3504
+#define B4SOI_MOD_LUCS            3505
+#define B4SOI_MOD_WUCS            3506
+#define B4SOI_MOD_PUCS            3507
+#define B4SOI_MOD_UCSTE           3508
+#define B4SOI_MOD_LUCSTE          3509
+#define B4SOI_MOD_WUCSTE          3510
+#define B4SOI_MOD_PUCSTE          3511
+
+
+
+
+/*4.1 Iii model*/
+#define B4SOI_MOD_IIIMOD          4000
+#define B4SOI_MOD_TVBCI           4001
+#define B4SOI_MOD_EBJTII          4002
+#define B4SOI_MOD_CBJTII          4003
+#define B4SOI_MOD_VBCI            4004
+#define B4SOI_MOD_ABJTII          4005
+#define B4SOI_MOD_MBJTII          4006
+#define B4SOI_MOD_LEBJTII         4007
+#define B4SOI_MOD_LCBJTII         4008
+#define B4SOI_MOD_LVBCI           4009 
+#define B4SOI_MOD_LABJTII         4010
+#define B4SOI_MOD_LMBJTII         4011
+#define B4SOI_MOD_WEBJTII         4012
+#define B4SOI_MOD_WCBJTII         4013
+#define B4SOI_MOD_WVBCI           4014
+#define B4SOI_MOD_WABJTII         4015
+#define B4SOI_MOD_WMBJTII         4016
+#define B4SOI_MOD_PEBJTII         4017
+#define B4SOI_MOD_PCBJTII         4018
+#define B4SOI_MOD_PVBCI           4019
+#define B4SOI_MOD_PABJTII         4020
+#define B4SOI_MOD_PMBJTII         4021
+
+
+#define B4SOI_MOD_EGISL           2500
+#define B4SOI_MOD_AGISL           2501
+#define B4SOI_MOD_BGISL           2502
+#define B4SOI_MOD_CGISL           2503
+#define B4SOI_MOD_RGISL           2504
+#define B4SOI_MOD_KGISL           2505
+#define B4SOI_MOD_FGISL           2506
+#define B4SOI_MOD_LEGISL          2507
+#define B4SOI_MOD_WEGISL          2508
+#define B4SOI_MOD_PEGISL          2509
+#define B4SOI_MOD_LAGISL          2510
+#define B4SOI_MOD_WAGISL          2511
+#define B4SOI_MOD_PAGISL          2512
+#define B4SOI_MOD_LBGISL          2513
+#define B4SOI_MOD_WBGISL          2514
+#define B4SOI_MOD_PBGISL          2515
+#define B4SOI_MOD_LCGISL          2516
+#define B4SOI_MOD_WCGISL          2517
+#define B4SOI_MOD_PCGISL          2518
+#define B4SOI_MOD_LRGISL          2519
+#define B4SOI_MOD_WRGISL          2520
+#define B4SOI_MOD_PRGISL          2521
+#define B4SOI_MOD_LKGISL          2522
+#define B4SOI_MOD_WKGISL          2523
+#define B4SOI_MOD_PKGISL          2524
+#define B4SOI_MOD_LFGISL          2525
+#define B4SOI_MOD_WFGISL          2526
+#define B4SOI_MOD_PFGISL          2527
+
+#define B4SOI_IGISL                3001
+
 #define B4SOI_IBS                  3002
 #define B4SOI_IBD                  3003
 #define B4SOI_ISUB                 3004
@@ -3404,8 +3954,25 @@ typedef struct sB4SOImodel
 #define B4SOI_MOD_MJSWGD           989 /* v4.0 */
 #define B4SOI_MOD_CJSWGD           990	/* v4.0 */
 #define B4SOI_MOD_PBSWGD           991	/* v4.0 */
+/*4.1*/
 
+#define B4SOI_MOD_VFB              1201  /* v4.1 */
+#define B4SOI_MOD_LVFB             1202  /* v4.1 */
+#define B4SOI_MOD_WVFB             1203  /* v4.1 */
+#define B4SOI_MOD_PVFB             1204  /* v4.1 */
 
+#define B4SOI_MOD_FDMOD            1221
+#define B4SOI_MOD_VSCE             1222
+#define B4SOI_MOD_CDSBS            1223
+#define B4SOI_MOD_VGSTCVMOD        1224
+#define B4SOI_MOD_MINVCV           1225
+#define B4SOI_MOD_LMINVCV          1226 
+#define B4SOI_MOD_WMINVCV          1227 
+#define B4SOI_MOD_PMINVCV          1228 
+#define B4SOI_MOD_VOFFCV           1229 
+#define B4SOI_MOD_LVOFFCV          1230
+#define B4SOI_MOD_WVOFFCV          1231
+#define B4SOI_MOD_PVOFFCV          1232
 /* v3.0 */
 #define B4SOI_MOD_SOIMOD           1001
 #define B4SOI_MOD_VBSA             1002

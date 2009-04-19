@@ -1,12 +1,14 @@
-/***  B4SOI 11/30/2005 Xuemei (Jane) Xi Release   ***/
+/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
 
 /**********
- * Copyright 2005 Regents of the University of California.  All rights reserved.
+ * Copyright 2009 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soipzld.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
+ * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
  * File: b4soipzld.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
+ * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  **********/
 
 #include "ngspice.h"
@@ -22,9 +24,9 @@ B4SOIpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;
 double xcggb, xcgdb, xcgsb, xcbgb, xcbdb, xcbsb, xcddb, xcssb, xcdgb;
-double gdpr, gspr, gds, gbd, gbs, capbd = 0.0, capbs = 0.0, xcsgb, xcdsb, xcsdb;
+double gdpr, gspr, gds, gbd, gbs, capbd=0.0, capbs=0.0, xcsgb, xcdsb, xcsdb;
 double cggb, cgdb, cgsb, cbgb, cbdb, cbsb, cddb, cdgb, cdsb;
-double GSoverlapCap, GDoverlapCap, GBoverlapCap = 0.0;
+double GSoverlapCap, GDoverlapCap, GBoverlapCap=0.0;
 double FwdSum, RevSum, Gm, Gmbs;
 
 double m;
@@ -32,15 +34,17 @@ double m;
     for (; model != NULL; model = model->B4SOInextModel) 
     {    for (here = model->B4SOIinstances; here!= NULL;
               here = here->B4SOInextInstance) 
-	 {
-	    if (here->B4SOIowner != ARCHme)
+         {
+            if (here->B4SOImode >= 0) 
+            {   
+
+                if (here->B4SOIowner != ARCHme)
                     continue;
 
-            if (here->B4SOImode >= 0) 
-	    {   Gm = here->B4SOIgm;
-		Gmbs = here->B4SOIgmbs;
-		FwdSum = Gm + Gmbs;
-		RevSum = 0.0;
+                Gm = here->B4SOIgm;
+                Gmbs = here->B4SOIgmbs;
+                FwdSum = Gm + Gmbs;
+                RevSum = 0.0;
                 cggb = here->B4SOIcggb;
                 cgsb = here->B4SOIcgsb;
                 cgdb = here->B4SOIcgdb;
@@ -53,11 +57,11 @@ double m;
                 cdsb = here->B4SOIcdsb;
                 cddb = here->B4SOIcddb;
             }
-	    else
-	    {   Gm = -here->B4SOIgm;
-		Gmbs = -here->B4SOIgmbs;
-		FwdSum = 0.0;
-		RevSum = -Gm - Gmbs;
+            else
+            {   Gm = -here->B4SOIgm;
+                Gmbs = -here->B4SOIgmbs;
+                FwdSum = 0.0;
+                RevSum = -Gm - Gmbs;
                 cggb = here->B4SOIcggb;
                 cgsb = here->B4SOIcgdb;
                 cgdb = here->B4SOIcgsb;
@@ -79,10 +83,10 @@ double m;
             capbd= here->B4SOIcapbd;
             capbs= here->B4SOIcapbs;
 #endif
-	    GSoverlapCap = here->B4SOIcgso;
-	    GDoverlapCap = here->B4SOIcgdo;
+            GSoverlapCap = here->B4SOIcgso;
+            GDoverlapCap = here->B4SOIcgdo;
 #ifdef BULKCODE
-	    GBoverlapCap = here->pParam->B4SOIcgbo;
+            GBoverlapCap = here->pParam->B4SOIcgbo;
 #endif
 
             xcdgb = (cdgb - GDoverlapCap);

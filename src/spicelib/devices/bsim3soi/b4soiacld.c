@@ -1,12 +1,14 @@
-/***  B4SOI 11/30/2005 Xuemei (Jane) Xi Release   ***/
+/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
 
 /**********
- * Copyright 2005 Regents of the University of California.  All rights reserved.
+ * Copyright 2009 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soiacld.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
+ * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
  * File: b4soiacld.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
+ * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  **********/
 
 #include "ngspice.h"
@@ -52,6 +54,7 @@ double gcrgd, gcrgg, gcrgs, gcrgb, gcrg;
 double xcgmgmb, xcgmdb, xcgmsb, xcgmeb, xcdgmb, xcsgmb, xcegmb;
 double geltd;
 double gigg, gigd, gigs, gigb, gige, gigT;
+double gigpg=0.0, gigpp=0.0;
 
 /* v3.1.1 bug fix */
 double gIstotg, gIstotd, gIstotb, gIstots;
@@ -117,6 +120,10 @@ double m;
                   gigs = here->B4SOIgigs;
                   gigd = here->B4SOIgigd;
                   gigT = model->B4SOItype * here->B4SOIgigT;
+
+		  /* v4.1 */
+                  gigpg = here->B4SOIgigpg;
+                  gigpp = here->B4SOIgigpp;
 
                   gbbg  = -here->B4SOIgbgs;
                   gbbdp = -here->B4SOIgbds;
@@ -751,6 +758,20 @@ double m;
                  (*(here->B4SOIBpPtr) -= m * gppp);
                  (*(here->B4SOIPbPtr) += m * gppb);
                  (*(here->B4SOIPpPtr) += m * gppp);
+              }
+
+              /* v4.1  Ig_agbcp2 stamping */
+              (*(here->B4SOIGgPtr) += gigpg);
+              if (here->B4SOIbodyMod == 1)  {
+                  (*(here->B4SOIPpPtr) -= m * gigpp);
+                  (*(here->B4SOIPgPtr) -= m * gigpg);
+                  (*(here->B4SOIGpPtr) += m * gigpp);
+              }
+              else if(here->B4SOIbodyMod == 2)
+              {
+                  (*(here->B4SOIBbPtr) -= m * gigpp);
+                  (*(here->B4SOIBgPtr) -= m * gigpg);
+                  (*(here->B4SOIGbPtr) += m * gigpp);
               }
 
 

@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LTLIBRARIES = libbsim3soi.la
+noinst_LTLIBRARIES = libbsim4soi.la
 
-libbsim3soi_la_SOURCES = 	\
+libbsim4soi_la_SOURCES = 	\
 	b4soi.c	\
 	b4soiacld.c	\
 	b4soiask.c	\

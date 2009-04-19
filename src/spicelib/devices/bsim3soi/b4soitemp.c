@@ -1,12 +1,14 @@
-/***  B4SOI 11/30/2005 Xuemei (Jane) Xi Release   ***/
+/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
 
 /**********
- * Copyright 2005 Regents of the University of California.  All rights reserved.
+ * Copyright 2009 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soitemp.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
+ * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
  * File: b4soitemp.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
+ * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  **********/
 
 /* Lmin, Lmax, Wmin, Wmax */
@@ -23,6 +25,7 @@
 #define KboQ 8.617087e-5  /* Kb / q  where q = 1.60219e-19 */
 #define EPSOX 3.453133e-11
 #define EPSSI 1.03594e-10
+#define EPS0 8.85418e-12
 #define PI 3.141592654
 #define Charge_q 1.60219e-19
 #define Eg300 1.115   /*  energy gap at 300K  */
@@ -48,20 +51,30 @@ B4SOItemp(GENmodel *inModel, CKTcircuit *ckt)
 register B4SOImodel *model = (B4SOImodel*) inModel;
 register B4SOIinstance *here;
 struct b4soiSizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
-double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5;
+double tmp, tmp1, tmp2, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, T6;
 double Ldrn=0.0, Wdrn;
-double Temp, TempRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom, TRatio;
+double Temp, TempRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double SDphi, SDgamma;
 double Inv_saref, Inv_sbref, Inv_sa, Inv_sb, rho, dvth0_lod;
-double W_tmp, Inv_ODeff, OD_offset, dk2_lod, deta0_lod, kvsat=0.0;
+double W_tmp, Inv_ODeff, OD_offset, dk2_lod, deta0_lod, kvsat;
 int Size_Not_Found, i;
 double PowWeffWr, T10; /*v4.0 */
+double Vtm0eot, Vtmeot,vbieot,phieot,sqrtphieot,vddeot;
+double Vgs_eff,Vgsteff, V0, Vth,Vgst;
+double lt1,ltw;
+double TempRatioMinus1;
+double n, VgstNVt,  ExpArg, sqrtPhisExt,ExpVgst,Vgst2Vtm,vtfbphi2eot;
+double DIBL_Sft,Lpe_Vb,DITS_Sft,DeltVthtemp, DITS_Sft2;
+double Theta0,Delt_vth,DeltVthw;
+double niter,toxpf,toxpi, Tcen;
+double n0;
 
 
 
 /* v2.0 release */
 double tmp3, T7;
-
+/*4.1*/
+double epsrox, toxe, epssub;
 
     /*  loop through all the B4SOI device models */
     for (; model != NULL; model = model->B4SOInextModel)
@@ -75,29 +88,64 @@ double tmp3, T7;
 
 	 Tnom = model->B4SOItnom;
 	 TempRatio = Temp / Tnom;
-
+	 
+	 if(model->B4SOImtrlMod)
+	         {
+	     epsrox = 3.9;
+	     toxe = model->B4SOIeot;
+	     epssub = EPS0 * model->B4SOIepsrsub;
+       
+	         }
+	      else
+	         {
+	     epsrox = model->B4SOIepsrox;
+	     toxe = model->B4SOItox;
+	     epssub = EPSSI;
+		
+	         }
+			 
+			 
+	 /*model->B4SOIcox = epsrox * EPS0 / toxe;*/
+	     
 	 model->B4SOIvcrit = CONSTvt0 * log(CONSTvt0 / (CONSTroot2 * 1.0e-14));
-         model->B4SOIfactor1 = sqrt(EPSSI / EPSOX * model->B4SOItox);
+	      if(model->B4SOImtrlMod == 0)
+		  model->B4SOIfactor1 = sqrt(EPSSI / EPSOX * model->B4SOItox);
+		  else
+          model->B4SOIfactor1 = sqrt(epssub / (epsrox*EPS0) * toxe);/*4.1*/
 
+		 if (model->B4SOImtrlMod==0)
+		 {
          Vtm0 = KboQ * Tnom;
          Eg0 = 1.16 - 7.02e-4 * Tnom * Tnom / (Tnom + 1108.0);
          model->B4SOIeg0 = Eg0; 
          model->B4SOIvtm = KboQ * Temp;
 
          Eg = 1.16 - 7.02e-4 * Temp * Temp / (Temp + 1108.0);
+		 
          /* ni is in cm^-3 */
          ni = 1.45e10 * (Temp / 300.15) * sqrt(Temp / 300.15) 
             * exp(21.5565981 - Eg / (2.0 * model->B4SOIvtm));
-
+         }
+		 else
+		 { Vtm0 = KboQ * Tnom;
+         Eg0 = model->B4SOIbg0sub - model->B4SOItbgasub * Tnom * Tnom 
+                                      / (Tnom + model->B4SOItbgbsub);
+		 model->B4SOIeg0 = Eg0; 
+         model->B4SOIvtm = KboQ * Temp;
+		 Eg = model->B4SOIbg0sub - model->B4SOItbgasub * Temp * Temp 
+                                      / (Temp + model->B4SOItbgbsub);
+		 
+		 ni = model->B4SOIni0sub * (Temp / Tnom) * sqrt(Temp / Tnom) 
+            * exp(Eg0/(2.0*Vtm0) - Eg / (2.0 * model->B4SOIvtm));
+			
+	 
+		 }
 
          /* loop through all the instances of the model */
 	 /* MCJ: Length and Width not initialized */
          for (here = model->B4SOIinstances; here != NULL;
               here = here->B4SOInextInstance) 
 	 {    
-	      if (here->B4SOIowner != ARCHme)
-                      continue;
-
               here->B4SOIrbodyext = here->B4SOIbodySquares *
                                     model->B4SOIrbsh;
 	      pSizeDependParamKnot = model->pSizeDependParamKnot;
@@ -119,7 +167,7 @@ double tmp3, T7;
               }
 
 	      if (Size_Not_Found)
-	      {   pParam = (struct b4soiSizeDependParam *)tmalloc(
+	      {   pParam = (struct b4soiSizeDependParam *)malloc(
 	                    sizeof(struct b4soiSizeDependParam));
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;
@@ -289,10 +337,22 @@ double tmp3, T7;
 				     + model->B4SOIlngate * Inv_L
 				     + model->B4SOIwngate * Inv_W
 				     + model->B4SOIpngate * Inv_LW;
+/*4.1*/
+          pParam->B4SOInsd = model->B4SOInsd
+                                   + model->B4SOIlnsd * Inv_L
+                                   + model->B4SOIwnsd * Inv_W
+                                   + model->B4SOIpnsd * Inv_LW;
+								   
+								   
+								   
 		  pParam->B4SOIvth0 = model->B4SOIvth0
 				    + model->B4SOIlvth0 * Inv_L
 				    + model->B4SOIwvth0 * Inv_W
 				    + model->B4SOIpvth0 * Inv_LW;
+		 pParam->B4SOIvfb = model->B4SOIvfb
+                                   + model->B4SOIlvfb * Inv_L
+                                   + model->B4SOIwvfb * Inv_W
+                                   + model->B4SOIpvfb * Inv_LW;   /* v4.1 */
 		  pParam->B4SOIk1 = model->B4SOIk1
 				  + model->B4SOIlk1 * Inv_L
 				  + model->B4SOIwk1 * Inv_W
@@ -513,6 +573,29 @@ double tmp3, T7;
 				      + model->B4SOIlfbjtii * Inv_L
 				      + model->B4SOIwfbjtii * Inv_W
 				      + model->B4SOIpfbjtii * Inv_LW;
+					  /*4.1 Iii model*/ 
+		  pParam->B4SOIebjtii = model->B4SOIebjtii
+				      + model->B4SOIlebjtii * Inv_L
+				      + model->B4SOIwebjtii * Inv_W
+				      + model->B4SOIpebjtii * Inv_LW;
+		  pParam->B4SOIcbjtii = model->B4SOIcbjtii
+				      + model->B4SOIlcbjtii * Inv_L
+				      + model->B4SOIwcbjtii * Inv_W
+				      + model->B4SOIpcbjtii * Inv_LW;
+		  pParam->B4SOIvbci = model->B4SOIvbci
+				      + model->B4SOIlvbci * Inv_L
+				      + model->B4SOIwvbci * Inv_W
+				      + model->B4SOIpvbci * Inv_LW;
+
+		  pParam->B4SOIabjtii = model->B4SOIabjtii
+				      + model->B4SOIlabjtii * Inv_L
+				      + model->B4SOIwabjtii * Inv_W
+				      + model->B4SOIpabjtii * Inv_LW;
+		  pParam->B4SOImbjtii = model->B4SOImbjtii
+				      + model->B4SOIlmbjtii * Inv_L
+				      + model->B4SOIwmbjtii * Inv_W
+				      + model->B4SOIpmbjtii * Inv_LW;
+					  
 		  pParam->B4SOIbeta0 = model->B4SOIbeta0
 				     + model->B4SOIlbeta0 * Inv_L
 				     + model->B4SOIwbeta0 * Inv_W
@@ -569,6 +652,47 @@ double tmp3, T7;
 				      + model->B4SOIlegidl * Inv_L
 				      + model->B4SOIwegidl * Inv_W
 				      + model->B4SOIpegidl * Inv_LW;
+		   pParam->B4SOIrgidl = model->B4SOIrgidl
+				      + model->B4SOIlrgidl * Inv_L
+				      + model->B4SOIwrgidl * Inv_W
+				      + model->B4SOIprgidl * Inv_LW;
+		 pParam->B4SOIkgidl = model->B4SOIkgidl
+				      + model->B4SOIlkgidl * Inv_L
+				      + model->B4SOIwkgidl * Inv_W
+				      + model->B4SOIpkgidl * Inv_LW;
+		  pParam->B4SOIfgidl = model->B4SOIfgidl
+				      + model->B4SOIlfgidl * Inv_L
+				      + model->B4SOIwfgidl * Inv_W
+				      + model->B4SOIpfgidl * Inv_LW;
+				  pParam->B4SOIagisl = model->B4SOIagisl
+				      + model->B4SOIlagisl * Inv_L
+				      + model->B4SOIwagisl * Inv_W
+				      + model->B4SOIpagisl * Inv_LW;
+		  pParam->B4SOIbgisl = model->B4SOIbgisl
+				      + model->B4SOIlbgisl * Inv_L
+				      + model->B4SOIwbgisl * Inv_W
+				      + model->B4SOIpbgisl * Inv_LW;
+		  pParam->B4SOIcgisl = model->B4SOIcgisl
+				      + model->B4SOIlcgisl * Inv_L
+				      + model->B4SOIwcgisl * Inv_W
+				      + model->B4SOIpcgisl * Inv_LW;
+		  pParam->B4SOIegisl = model->B4SOIegisl
+				      + model->B4SOIlegisl * Inv_L
+				      + model->B4SOIwegisl * Inv_W
+				      + model->B4SOIpegisl * Inv_LW;
+		   pParam->B4SOIrgisl = model->B4SOIrgisl
+				      + model->B4SOIlrgisl * Inv_L
+				      + model->B4SOIwrgisl * Inv_W
+				      + model->B4SOIprgisl * Inv_LW;
+		 pParam->B4SOIkgisl = model->B4SOIkgisl
+				      + model->B4SOIlkgisl * Inv_L
+				      + model->B4SOIwkgisl * Inv_W
+				      + model->B4SOIpkgisl * Inv_LW;
+		  pParam->B4SOIfgisl = model->B4SOIfgisl
+				      + model->B4SOIlfgisl * Inv_L
+				      + model->B4SOIwfgisl * Inv_W
+				      + model->B4SOIpfgisl * Inv_LW;			  
+					  
 		  pParam->B4SOIntun = model->B4SOIntun	/* v4.0 */
 				      + model->B4SOIlntun * Inv_L
 				      + model->B4SOIwntun * Inv_W
@@ -752,6 +876,29 @@ double tmp3, T7;
                                      + model->B4SOIlute * Inv_L
                                      + model->B4SOIwute * Inv_W
                                      + model->B4SOIpute * Inv_LW;
+									 
+					/*4.1 mobmod=4*/
+					 pParam->B4SOIud = model->B4SOIud
+				  + model->B4SOIud * Inv_L
+				  + model->B4SOIwud * Inv_W
+				  + model->B4SOIpud * Inv_LW;
+		  pParam->B4SOIud1 = model->B4SOIud1
+				  + model->B4SOIlud1 * Inv_L
+				  + model->B4SOIwud1 * Inv_W
+				  + model->B4SOIpud1 * Inv_LW;
+          pParam->B4SOIeu = model->B4SOIeu
+                                  + model->B4SOIleu * Inv_L
+                                  + model->B4SOIweu * Inv_W
+                                  + model->B4SOIpeu * Inv_LW;
+		 pParam->B4SOIucs = model->B4SOIucs
+				  + model->B4SOIlucs * Inv_L
+				  + model->B4SOIwucs * Inv_W
+				  + model->B4SOIpucs * Inv_LW;
+		  pParam->B4SOIucste = model->B4SOIucste
+		           + model->B4SOIlucste * Inv_L
+				   + model->B4SOIwucste * Inv_W
+				   + model->B4SOIpucste * Inv_LW;
+				   
                   pParam->B4SOIkt1 = model->B4SOIkt1
                                      + model->B4SOIlkt1 * Inv_L
                                      + model->B4SOIwkt1 * Inv_W
@@ -875,10 +1022,26 @@ double tmp3, T7;
                                      + model->B4SOIldvtp1 * Inv_L
                                      + model->B4SOIwdvtp1 * Inv_W
                                      + model->B4SOIpdvtp1 * Inv_LW; /* v4.0 */
+                  pParam->B4SOIdvtp2 = model->B4SOIdvtp2
+                                     + model->B4SOIldvtp2 * Inv_L
+                                     + model->B4SOIwdvtp2 * Inv_W
+                                     + model->B4SOIpdvtp2 * Inv_LW; /* v4.1 */
+                  pParam->B4SOIdvtp3 = model->B4SOIdvtp3
+                                     + model->B4SOIldvtp3 * Inv_L
+                                     + model->B4SOIwdvtp3 * Inv_W
+                                     + model->B4SOIpdvtp3 * Inv_LW; /* v4.1 */
+                  pParam->B4SOIdvtp4 = model->B4SOIdvtp4
+                                     + model->B4SOIldvtp4 * Inv_L
+                                     + model->B4SOIwdvtp4 * Inv_W
+                                     + model->B4SOIpdvtp4 * Inv_LW; /* v4.1 */
                   pParam->B4SOIminv = model->B4SOIminv
                                     + model->B4SOIlminv * Inv_L
                                     + model->B4SOIwminv * Inv_W
                                     + model->B4SOIpminv * Inv_LW; /* v4.0 */
+				pParam->B4SOIminvcv = model->B4SOIminvcv
+                                      + model->B4SOIlminvcv * Inv_L
+                                      + model->B4SOIwminvcv * Inv_W   
+                                      + model->B4SOIpminvcv * Inv_LW; /* v4.1 */
                   pParam->B4SOIfprout = model->B4SOIfprout
                                      + model->B4SOIlfprout * Inv_L
                                      + model->B4SOIwfprout * Inv_W
@@ -891,11 +1054,27 @@ double tmp3, T7;
                                       + model->B4SOIlpditsd * Inv_L
                                       + model->B4SOIwpditsd * Inv_W
                                       + model->B4SOIppditsd * Inv_LW; /* v4.0 */
+                  pParam->B4SOIaigbcp2 = model->B4SOIaigbcp2
+                                      + model->B4SOIlaigbcp2 * Inv_L
+                                      + model->B4SOIwaigbcp2 * Inv_W
+                                      + model->B4SOIpaigbcp2 * Inv_LW; /* v4.0 */
+                  pParam->B4SOIbigbcp2 = model->B4SOIbigbcp2
+                                      + model->B4SOIlbigbcp2 * Inv_L
+                                      + model->B4SOIwbigbcp2 * Inv_W
+                                      + model->B4SOIpbigbcp2 * Inv_LW; /* v4.0 */
+                  pParam->B4SOIcigbcp2 = model->B4SOIcigbcp2
+                                      + model->B4SOIlcigbcp2 * Inv_L
+                                      + model->B4SOIwcigbcp2 * Inv_W
+                                      + model->B4SOIpcigbcp2 * Inv_LW; /* v4.0 */
 
                   /* Added for binning - END */
 
 		  /* v4.0 add mstar for Vgsteff */
                   pParam->B4SOImstar = 0.5 + atan(pParam->B4SOIminv) / PI;
+				 if (model->B4SOIvgstcvMod == 0)
+                 printf("vgstcvMod = 0, users are suggested to use vgstcvMod = 1 or 2.\n");				 
+         /* v4.1 add mstarcv for Vgsteffcv */
+                  pParam->B4SOImstarcv = 0.5 + atan(pParam->B4SOIminvcv) / PI;
 
 	          T0 = (TempRatio - 1.0);
 
@@ -1032,7 +1211,7 @@ double tmp3, T7;
                   pParam->B4SOIjrecd = pParam->B4SOIidrec * T2;
                   T7 = pParam->B4SOIxtund * (TempRatio - 1);
                   DEXP(T7, T0);
-                  pParam->B4SOIjtund = pParam->B4SOIistun * T0;
+                  pParam->B4SOIjtund = pParam->B4SOIidtun * T0;
 
                   if (pParam->B4SOInsub > 0)
                      pParam->B4SOIvfbb = -model->B4SOItype * model->B4SOIvtm *
@@ -1071,9 +1250,9 @@ double tmp3, T7;
 
                   if (!model->B4SOIcsdminGiven) {
                      /* Cdmin */
-                     tmp = sqrt(2.0 * EPSSI * SDphi / (Charge_q * 
+                     tmp = sqrt(2.0 * epssub * SDphi / (Charge_q * 
                                 fabs(pParam->B4SOInsub) * 1.0e6));
-                     tmp1 = EPSSI / tmp;
+                     tmp1 = epssub / tmp;
                      model->B4SOIcsdmin = tmp1 * model->B4SOIcbox /
                                           (tmp1 + model->B4SOIcbox);
                   } 
@@ -1085,26 +1264,44 @@ double tmp3, T7;
 	          pParam->B4SOIsqrtPhi = sqrt(pParam->B4SOIphi);
 	          pParam->B4SOIphis3 = pParam->B4SOIsqrtPhi * pParam->B4SOIphi;
 
-                  pParam->B4SOIXdep0 = sqrt(2.0 * EPSSI / (Charge_q
+                  pParam->B4SOIXdep0 = sqrt(2.0 * epssub / (Charge_q
 				     * pParam->B4SOInpeak * 1.0e6))
                                      * pParam->B4SOIsqrtPhi; 
                   pParam->B4SOIsqrtXdep0 = sqrt(pParam->B4SOIXdep0);
-                  pParam->B4SOIlitl = sqrt(3.0 * pParam->B4SOIxj
+             /*4.1*/
+			 if (model->B4SOImtrlMod==0)
+                  pParam->B4SOIlitl = sqrt(3.0 *3.9/epsrox* pParam->B4SOIxj
 				    * model->B4SOItox);
+				else
+			pParam->B4SOIlitl = sqrt(epssub * pParam->B4SOIxj * model->B4SOItox/(epsrox*EPS0));
                   pParam->B4SOIvbi = model->B4SOIvtm * log(1.0e20
 			           * pParam->B4SOInpeak / (ni * ni));
-                  pParam->B4SOIcdep0 = sqrt(Charge_q * EPSSI
+                  pParam->B4SOIcdep0 = sqrt(Charge_q * epssub
 				     * pParam->B4SOInpeak * 1.0e6 / 2.0
 				     / pParam->B4SOIphi);
 
 /* v3.0 */
+/*4.1  */                                 
+             if (model->B4SOImtrlMod ==0)
+			 {
                   if (pParam->B4SOIngate > 0.0)
                   {   pParam->B4SOIvfbsd = Vtm0 * log(pParam->B4SOIngate
                                          / 1.0e20);
                   }
                   else
                       pParam->B4SOIvfbsd = 0.0;
-
+             }
+			 else
+	   	     {
+			  T0 = Vtm0 * log(pParam->B4SOInsd/ni);
+		      T1 = 0.5 * Eg0;
+		    if(T0 > T1)
+		      T0 = T1;
+		      T2 = model->B4SOIeasub + T1 - model->B4SOItype * T0;
+		      pParam->B4SOIvfbsd = model->B4SOIphig - T2;
+				  
+				  
+			 }
                   pParam->B4SOIToxRatio = exp(model->B4SOIntox
                                         * log(model->B4SOItoxref /model->B4SOItoxqm))
                                         /model->B4SOItoxqm /model->B4SOItoxqm;
@@ -1195,7 +1392,7 @@ double tmp3, T7;
                   if ((T0 = pParam->B4SOIweff + pParam->B4SOIk1w2) < 1e-8)
                      T0 = 1e-8;
                   pParam->B4SOIk1eff = pParam->B4SOIk1 * (1 + pParam->B4SOIk1w1/T0);
-
+/*4.0
 	          if (model->B4SOIvth0Given)
 		  {   pParam->B4SOIvfb = model->B4SOItype * pParam->B4SOIvth0 
                                        - pParam->B4SOIphi - pParam->B4SOIk1eff 
@@ -1207,12 +1404,31 @@ double tmp3, T7;
                                         + pParam->B4SOIphi + pParam->B4SOIk1eff 
 					* pParam->B4SOIsqrtPhi); 
 		  }
-
+*/
+/* v4.1 */
+                  if (!model->B4SOIvfbGiven)
+                  {   if (model->B4SOIvth0Given)
+                      {   pParam->B4SOIvfb = model->B4SOItype * pParam->B4SOIvth0
+                                           - pParam->B4SOIphi - pParam->B4SOIk1eff
+                                           * pParam->B4SOIsqrtPhi;
+                      }
+                      else
+                      {   pParam->B4SOIvfb = -1.0;
+                      }
+                  }
+                   if (!model->B4SOIvth0Given)
+                  {   pParam->B4SOIvth0 = model->B4SOItype * (pParam->B4SOIvfb
+                                        + pParam->B4SOIphi + pParam->B4SOIk1eff
+                                        * pParam->B4SOIsqrtPhi);
+                  }
 /* v4.0 */
                   pParam->B4SOIk1ox = pParam->B4SOIk1eff * model->B4SOItox
 				    / model->B4SOItoxm;
-
+					if(model->B4SOImtrlMod == 0)
                   T1 = sqrt(EPSSI / EPSOX * model->B4SOItox
+		     * pParam->B4SOIXdep0); 
+			         else
+                  T1 = sqrt(epssub / (epsrox*EPS0) * model->B4SOItox
 		     * pParam->B4SOIXdep0);
                   T0 = exp(-0.5 * pParam->B4SOIdsub * pParam->B4SOIleff / T1);
                   pParam->B4SOItheta0vb0 = (T0 + 2.0 * T0 * T0);
@@ -1221,6 +1437,9 @@ double tmp3, T7;
                   T2 = (T0 + 2.0 * T0 * T0);
                   pParam->B4SOIthetaRout = pParam->B4SOIpdibl1 * T2
 				         + pParam->B4SOIpdibl2;
+
+                  /* New DITS term (added in 4.1) */
+		  pParam->B4SOIdvtp2factor = pParam->B4SOIdvtp2 / exp(pParam->B4SOIdvtp3 * log(pParam->B4SOIleff));
 
 /* stress effect */
                   T0 = pow(Ldrn, model->B4SOIllodku0);
@@ -1238,9 +1457,8 @@ double tmp3, T7;
                   pParam->B4SOIkvth0 = sqrt( pParam->B4SOIkvth0 
 					   * pParam->B4SOIkvth0 + DELTA);
 
-/*dw init of TRatio is missing */
-TRatio = TempRatio;
-                  T0 = (TRatio - 1.0);
+                  /*T0 = (TRatio - 1.0);*/
+				  T0 = (TempRatio - 1.0);  /* bug fix v4.1 */
                   pParam->B4SOIku0temp = pParam->B4SOIku0 * (1.0 
 				       + model->B4SOItku0 * T0) + DELTA;
 
@@ -1343,6 +1561,235 @@ TRatio = TempRatio;
 
               if ((pParam->B4SOIvearly = pParam->B4SOIvabjt + pParam->B4SOIaely * pParam->B4SOIleff) < 1) 
                  pParam->B4SOIvearly = 1; 
+				 
+/*4.1 toxp calculation*/
+        if(model->B4SOImtrlMod==0)
+        {
+		 model->B4SOItoxp = model->B4SOItox - model->B4SOIdtoxcv;
+        }	 
+           else
+               {
+			   /* Calculate TOXP from EOT */
+		    /* Calculate Vgs_eff @ Vgs = VDD with Poly Depletion Effect */		
+            Vtm0eot = KboQ * model->B4SOItempeot;
+			Vtmeot  = Vtm0eot;
+			vbieot = Vtm0eot * log(1.0e20
+			           * pParam->B4SOInpeak / (ni * ni));
+		    phieot = 2.0 * Vtm0eot 
+			           * log(pParam->B4SOInpeak / ni);	
+            sqrtphieot = sqrt(phieot);					   
+		    tmp2 = here->B4SOIvfb + phieot;
+		    vddeot = model->B4SOItype * model->B4SOIvddeot;
+			
+		    T0 = model->B4SOIepsrgate * EPS0;
+		    if ((pParam->B4SOIngate > 1.0e18) && (pParam->B4SOIngate < 1.0e25) 
+			&& (vddeot > tmp2) && (T0!=0))
+		    {   T1 = 1.0e6 * Charge_q * epssub * pParam->B4SOIngate
+			 / (model->B4SOIcox * model->B4SOIcox);
+		      T4 = sqrt(1.0 + 2.0 * (vddeot - T0) / T1);
+		      T2 = T1 * (T4 - 1.0);
+		      T3 = 0.5 * T2 * T2 / T1; /* T3 = Vpoly */
+		      T7 = 1.12 - T3 - 0.05;
+		      T6 = sqrt(T7 * T7 + 0.224);
+		      T5 = 1.12 - 0.5 * (T7 + T6);
+		      Vgs_eff = vddeot - T5;
+		      
+		     }
+		  else
+		  {   Vgs_eff = vddeot;
+		      
+		  }
+		  
+		  		  
+		    
+		    /* Calculate Vth @ Vds=Vbs=0 */
+			
+		    V0 = vbieot - phieot;
+			
+			T3 = sqrt(pParam->B4SOIXdep0);
+			
+                  
+		
+		  
+		  lt1 = model->B4SOIfactor1 * T3;
+		 
+
+		 
+		  ltw= model->B4SOIfactor1 * T3 ;
+		  
+
+		  T0 = -0.5 * pParam->B4SOIdvt1 * model->B4SOIleffeot / lt1;
+		  if (T0 > -EXPL_THRESHOLD)
+		  {   T1 = exp(T0);
+		      Theta0 = T1 * (1.0 + 2.0 * T1);
+		     
+		  }
+		  else
+		  {   T1 = MIN_EXPL;
+		      Theta0 = T1 * (1.0 + 2.0 * T1);
+		     
+		  }
+
+                  /* Calculate n */
+                  T2 = pParam->B4SOInfactor * epssub / pParam->B4SOIXdep0;
+                  T3 = pParam->B4SOIcdsc ;
+                  T4 = (T2 + T3 * Theta0 + pParam->B4SOIcit) / model->B4SOIcox;
+                  
+
+                  if (T4 >= -0.5)
+                  {   n = 1.0 + T4;
+                      
+                  }
+                  else
+                   /* avoid  discontinuity problems caused by T4 */
+                  {   T0 = 1.0 / (3.0 + 8.0 * T4);
+                      n = (1.0 + 3.0 * T4) * T0;
+                                         
+                  }
+
+		  /* v4.0 DITS */
+                  if (pParam->B4SOIdvtp0 > 0.0) {
+                        T0 = 0.0;
+                        if (T0 < -EXPL_THRESHOLD) {
+                                T2 = MIN_EXPL;
+                               
+                        }
+                        else {
+                                T2 = exp(T0);
+                                
+                        }
+
+                        T3 = model->B4SOIleffeot + pParam->B4SOIdvtp0 * (1.0 + T2);
+                        
+                        T4 = Vtmeot * log(model->B4SOIleffeot / T3);
+                        
+                        DITS_Sft = n * T4;
+                        
+                        
+                  }
+                  else {
+                        DITS_Sft=0.0;
+                        
+                  }
+
+		  here->B4SOIthetavth = pParam->B4SOIdvt0 * Theta0;
+		  Delt_vth = here->B4SOIthetavth * V0;
+		  
+		  T0 = -0.5 * pParam->B4SOIdvt1w * model->B4SOIweffeot
+		     * model->B4SOIleffeot / ltw;
+		  if (T0 > -EXPL_THRESHOLD)
+		  {   T1 = exp(T0);
+		      T2 = T1 * (1.0 + 2.0 * T1);
+		      
+		  }
+		  else
+		  {   T1 = MIN_EXPL;
+		      T2 = T1 * (1.0 + 2.0 * T1);
+		     
+		  }
+
+		  T0 = pParam->B4SOIdvt0w * T2;
+		  DeltVthw = T0 * V0;
+		  
+		  TempRatioMinus1 = model->B4SOItempeot / model->B4SOItnom - 1.0;
+
+		  T0 = sqrt(1.0 + pParam->B4SOIlpe0 / model->B4SOIleffeot);
+                  T1 = (pParam->B4SOIkt1 + pParam->B4SOIkt1l / model->B4SOIleffeot);
+                  DeltVthtemp = pParam->B4SOIk1ox * (T0 - 1.0) * sqrtphieot
+			      + T1 * TempRatioMinus1; /* v4.0 */
+                 
+
+		  tmp2 = toxe * phieot
+		       / (model->B4SOIweffeot + pParam->B4SOIw0);
+
+		 
+		  DIBL_Sft = 0.0;
+		  DITS_Sft2 = 0.0;
+		  
+
+		  Lpe_Vb = sqrt(1.0 + pParam->B4SOIlpeb / model->B4SOIleffeot); 
+ 
+                 
+                  sqrtPhisExt = sqrtphieot;
+                  
+
+                  Vth = model->B4SOItype * here->B4SOIvth0 
+		      + (pParam->B4SOIk1ox * sqrtPhisExt 
+		      - pParam->B4SOIk1eff * sqrtphieot) * Lpe_Vb 
+		      - Delt_vth - DeltVthw 
+		      +pParam->B4SOIk3 * tmp2 
+		      + DeltVthtemp - DIBL_Sft -DITS_Sft - DITS_Sft2;
+			  
+			  
+			   Vgst = Vgs_eff - Vth;
+                 
+
+		  T10 = n * Vtmeot; /* v4.0 */
+		  VgstNVt = pParam->B4SOImstar * Vgst / T10; /* v4.0 */
+		  ExpArg = (pParam->B4SOIvoff - (1- pParam->B4SOImstar) * Vgst)
+			 / T10;		/* v4.0 */
+
+		  /* MCJ: Very small Vgst */
+		  if (VgstNVt > EXPL_THRESHOLD)
+		  {   Vgsteff = Vgst;
+                      /* T0 is dVgsteff_dVbseff */
+                     
+		  }
+		  else if (ExpArg > EXPL_THRESHOLD)
+		  {   T0 = (Vgst - pParam->B4SOIvoff) / (n * Vtmeot);
+		      ExpVgst = exp(T0);
+		      Vgsteff = Vtmeot * pParam->B4SOIcdep0 / model->B4SOIcox * ExpVgst;
+		      
+		      
+		  }
+		  else
+		  {   ExpVgst = exp(VgstNVt);
+		      T1 = T10 * log(1.0 + ExpVgst);
+		    
+               T3 = (1.0 / model->B4SOItempeot);
+                     
+
+		      T4 = -model->B4SOIcox / (Vtm0eot * pParam->B4SOIcdep0)
+			      * exp(ExpArg) * (1 - pParam->B4SOImstar);
+		      T2 = pParam->B4SOImstar - T10 * T4 
+			 / (1.0 - pParam->B4SOImstar);
+		     
+		      Vgsteff = T1 / T2;
+
+		  }
+		  Vgst2Vtm = Vgsteff + 2.0 * Vtmeot;
+                  
+		 
+			
+		    
+
+		    /* calculating Toxp */
+			T3 = model->B4SOItype * here->B4SOIvth0
+               - here->B4SOIvfb - phieot;
+           
+            
+            vtfbphi2eot = 4.0 * T3;
+            if (vtfbphi2eot < 0.0)
+                vtfbphi2eot = 0.0;
+
+		
+		    niter = 0;
+		    toxpf = toxe;
+		    do 
+		      {
+			toxpi = toxpf;
+			tmp2 = 2.0e8 * toxpf;
+			T0 = (Vgsteff + vtfbphi2eot) / tmp2;
+			T1 = 1.0 + exp(model->B4SOIbdos * 0.7 * log(T0));
+			Tcen = model->B4SOIados * 1.9e-9 / T1;
+			toxpf = toxe - epsrox/model->B4SOIepsrsub * Tcen;
+			niter++;
+		      } while ((niter<=4)&&(ABS(toxpf-toxpi)>1e-12));
+		      model->B4SOItoxp = toxpf;
+		      /*model->B4SOIcoxp = epsrox * EPS0 / model->B4SOItoxp;*/
+			  		   
+			   
+               }/*End of Toxp*/		
 
               /* vfbzb calculation for capMod 3 */
               tmp = sqrt(pParam->B4SOIXdep0);
@@ -1374,9 +1821,12 @@ TRatio = TempRatio;
               T3 = pParam->B4SOIdvt0 * T3 * tmp1;
 
 /* v2.2.3 */
-              T4 = (model->B4SOItox - model->B4SOIdtoxcv) * pParam->B4SOIphi
+             /*4.1*/
+			 /* T4 = (model->B4SOItox - model->B4SOIdtoxcv) * pParam->B4SOIphi
                  / (pParam->B4SOIweff + pParam->B4SOIw0);
-
+*/
+             T4 = model->B4SOItoxp * pParam->B4SOIphi
+                 / (pParam->B4SOIweff + pParam->B4SOIw0);
               T0 = sqrt(1.0 + pParam->B4SOIlpe0 / pParam->B4SOIleff); /*v4.0*/
               T5 = pParam->B4SOIk1ox * (T0 - 1.0) * pParam->B4SOIsqrtPhi
                  + (pParam->B4SOIkt1 + pParam->B4SOIkt1l / pParam->B4SOIleff)
@@ -1424,8 +1874,7 @@ TRatio = TempRatio;
 				       + 1.0 / here->B4SOIrbsb;
               }
 	      /* v4.0 rbodyMod end */
-
-              /*  v4.0 stress effect */
+		  /*  v4.0 stress effect */
               if( (here->B4SOIsa > 0.0) && (here->B4SOIsb > 0.0) &&
                   ( (here->B4SOInf == 1.0) || 
 		    ((here->B4SOInf > 1.0) && (here->B4SOIsd > 0.0))
@@ -1439,7 +1888,7 @@ TRatio = TempRatio;
                       model->B4SOIwlod = 0.0;
                   }
 		  
-                  if (model->B4SOIkvsat < -1.0 )
+                 if (model->B4SOIkvsat < -1.0 )
                   {   fprintf(stderr, "Warning: KVSAT = %g is too small; Reset to -1.0.\n",model->B4SOIkvsat);
                       here->B4SOIkvsat = kvsat = -1.0;
                   }
@@ -1464,7 +1913,7 @@ TRatio = TempRatio;
                   T0 = (1.0 + rho)/(1.0 + pParam->B4SOIrho_ref);
                   here->B4SOIu0temp = pParam->B4SOIu0temp * T0;
 
-                  T1 = (1.0 + kvsat * rho)/(1.0 + kvsat * pParam->B4SOIrho_ref);
+                  T1 = (1.0 + here->B4SOIkvsat * rho)/(1.0 + here->B4SOIkvsat * pParam->B4SOIrho_ref);/*self-heating bug fix*/
                   here->B4SOIvsattemp = pParam->B4SOIvsattemp * T1;
 
                   OD_offset = Inv_ODeff - pParam->B4SOIinv_od_ref;
@@ -1488,8 +1937,13 @@ TRatio = TempRatio;
                       here->B4SOIvsattemp = pParam->B4SOIvsattemp;
                       here->B4SOIk2 = pParam->B4SOIk2;
                       here->B4SOIeta0 = pParam->B4SOIeta0;
-		      here->B4SOIInv_ODeff = 0;
+		              here->B4SOIInv_ODeff = 0;
+					  pParam->B4SOIinv_od_ref = 0; /*Stress bug fix*/
+					  here->B4SOIkvsat = 0; /*Stress bug fix*/
               } /* v4.0 stress effect end */
+			  
+
+			  
 
               here->B4SOIk2ox = here->B4SOIk2 * model->B4SOItox
                               / model->B4SOItoxm;	/* v4.0 */
@@ -1497,8 +1951,71 @@ TRatio = TempRatio;
 	      here->B4SOIvfb = pParam->B4SOIvfb + model->B4SOItype * here->B4SOIdelvto;
               here->B4SOIvfbzb = pParam->B4SOIvfbzb + model->B4SOItype * here->B4SOIdelvto; 
 
-              pParam->B4SOIldeb = sqrt(EPSSI * Vtm0 /
+              pParam->B4SOIldeb = sqrt(epssub * Vtm0 /
 				 (Charge_q * pParam->B4SOInpeak * 1.0e6)) / 3.0;
+				 
+					  /*For high k mobility*/
+			  T1 = model->B4SOItype * here->B4SOIvth0
+               - here->B4SOIvfb - pParam->B4SOIphi;
+			  T2 = T1 + T1;
+			  T3 = 2.5 * T1;
+			  here->B4SOIvtfbphi1 = (model->B4SOItype == NMOS) ? T2 : T3;
+			  if (here->B4SOIvtfbphi1 < 0.0)
+                here->B4SOIvtfbphi1 = 0.0;						        
+			/*Calculate VgsteffVth for mobMod=4*/
+		if(model->B4SOImobMod == 4)
+         {		
+			/*Calculate n @ Vbs=Vds=0*/
+            V0 = pParam->B4SOIvbi - pParam->B4SOIphi;
+		    lt1 = model->B4SOIfactor1* pParam->B4SOIsqrtXdep0;
+		    ltw = lt1;
+		    T0 = pParam->B4SOIdvt1 * pParam->B4SOIleff / lt1;
+		    if (T0 < EXPL_THRESHOLD)
+		      {   
+			T1 = exp(T0);
+			T2 = T1 - 1.0;
+			T3 = T2 * T2;
+			T4 = T3 + 2.0 * T1 * MIN_EXPL;
+			Theta0 = T1 / T4;
+		      }
+		    else
+		      Theta0 = 1.0 / (MAX_EXPL - 2.0);
+		
+     		tmp1 = epssub / pParam->B4SOIXdep0;
+		    here->B4SOInstar = model->B4SOIvtm / Charge_q * 
+		      (model->B4SOIcox	+ tmp1 + pParam->B4SOIcit);  
+		    tmp2 = pParam->B4SOInfactor * tmp1;
+		    tmp3 = (tmp2 + pParam->B4SOIcdsc * Theta0 + pParam->B4SOIcit) / model->B4SOIcox;
+		    if (tmp3 >= -0.5)
+		      n0 = 1.0 + tmp3;
+		    else
+		      {   
+			T0 = 1.0 / (3.0 + 8.0 * tmp3);
+			n0 = (1.0 + 3.0 * tmp3) * T0;
+		      }
+		
+		 T0 = n0 * Vtm0;
+	     T1 = pParam->B4SOIvoff;
+	     T2 = T1/T0;
+		   if (T2 < -EXPL_THRESHOLD)
+          {   T3 = model->B4SOIcox * MIN_EXPL / pParam->B4SOIcdep0;
+	      T4 = pParam->B4SOImstar + T3 * n0;
+          }
+          else if (T2 > EXPL_THRESHOLD)
+          {   T3 = model->B4SOIcox * MAX_EXPL / pParam->B4SOIcdep0;
+              T4 = pParam->B4SOImstar + T3 * n0;
+          }
+          else
+          {  T3 = exp(T2)* model->B4SOIcox / pParam->B4SOIcdep0;
+	      	 T4 = pParam->B4SOImstar + T3 * n0;
+              
+          }
+		  
+		 here->B4SOIvgsteffvth = T0 * log(2.0)/T4; 
+	   
+		}		   
+				 
+				 
          }
     }
     return(OK);

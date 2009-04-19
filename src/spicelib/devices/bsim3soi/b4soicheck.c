@@ -1,12 +1,14 @@
-/***  B4SOI 11/30/2005 Xuemei (Jane) Xi Release   ***/
+/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
 
 /**********
- * Copyright 2005 Regents of the University of California.  All rights reserved.
+ * Copyright 2009 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soicheck.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
+ * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
  * File: b4soicheck.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
+ * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  **********/
 
 #include "ngspice.h"
@@ -91,7 +93,30 @@ FILE *fplog;
 	    printf("Fatal: Tox = %g is not positive.\n", model->B4SOItox);
 	    Fatal_Flag = 1;
 	}
-
+		if (model->B4SOIleffeot <= 0.0)
+	{   fprintf(fplog, "Fatal: leffeot = %g is not positive.\n",
+		    model->B4SOIleffeot);
+	    printf("Fatal: Leffeot = %g is not positive.\n", model->B4SOIleffeot);
+	    Fatal_Flag = 1;
+	}
+			if (model->B4SOIweffeot <= 0.0)
+	{   fprintf(fplog, "Fatal: weffeot = %g is not positive.\n",
+		    model->B4SOIweffeot);
+	    printf("Fatal: Weffeot = %g is not positive.\n", model->B4SOIweffeot);
+	    Fatal_Flag = 1;
+	}
+	if (model->B4SOItoxp <= 0.0)
+	{   fprintf(fplog, "Fatal: Toxp = %g is not positive.\n",
+		    model->B4SOItoxp);
+	    printf("Fatal: Toxp = %g is not positive.\n", model->B4SOItoxp);
+	    Fatal_Flag = 1;
+	}
+	if (model->B4SOIepsrgate < 0.0)
+        {   fprintf(fplog, "Fatal: Epsrgate = %g is not positive.\n",
+                    model->B4SOIepsrgate);
+            printf("Fatal: Epsrgate = %g is not positive.\n", model->B4SOIepsrgate);
+            Fatal_Flag = 1;
+        }
 
         if (model->B4SOItoxm <= 0.0)
         {   fprintf(fplog, "Fatal: Toxm = %g is not positive.\n",
@@ -893,11 +918,35 @@ FILE *fplog;
                     model->B4SOIegidl);
             printf("Warning:  Egidl = %g is negative.\n", model->B4SOIegidl);
         }
+		
+	        if (model->B4SOIagisl < 0.0)
+        {   fprintf(fplog, "Warning: AGISL = %g is negative.\n",
+                    model->B4SOIagisl);
+            printf("Warning:  Agidl = %g is negative.\n", model->B4SOIagidl);
+        }
+        if (model->B4SOIbgisl < 0.0)
+        {   fprintf(fplog, "Warning: BGISL = %g is negative.\n",
+                    model->B4SOIbgisl);
+            printf("Warning:  Bgisl = %g is negative.\n", model->B4SOIbgisl);
+        }
+        if (fabs(model->B4SOIcgisl) < 1e-9)
+        {   fprintf(fplog, "Warning: CGISL = %g is smaller than 1e-9.\n",
+                    model->B4SOIcgisl);
+            printf("Warning:  Cgisl = %g is smaller than 1e-9.\n", 
+		    model->B4SOIcgisl);
+        }
+        if (model->B4SOIegisl < 0.0)
+        {   fprintf(fplog, "Warning: EGISL = %g is negative.\n",
+                    model->B4SOIegisl);
+            printf("Warning:  Egisl = %g is negative.\n", model->B4SOIegisl);
+        }	
+		
         if (model->B4SOIesatii < 0.0)
         {   fprintf(fplog, "Warning: Esatii = %g should be within positive.\n",
                     model->B4SOIesatii);
             printf("Warning: Esatii = %g should be within (0, 1).\n", model->B4SOIesatii);
         }
+		       
 
 
 	if (pParam->B4SOIxj > model->B4SOItsi)

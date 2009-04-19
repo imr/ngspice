@@ -1,12 +1,14 @@
-/***  B4SOI 11/30/2005 Xuemei (Jane) Xi Release   ***/
+/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
 
 /**********
- * Copyright 2005 Regents of the University of California.  All rights reserved.
+ * Copyright 2009 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soiask.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
+ * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
  * File: b4soiask.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
+ * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  **********/
 
 #include "ngspice.h"
@@ -18,8 +20,7 @@
 #include "suffix.h"
 
 int
-B4SOIask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
-         IFvalue *select)
+B4SOIask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
 B4SOIinstance *here = (B4SOIinstance*)inst;
 
@@ -30,7 +31,9 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
         case B4SOI_W:
             value->rValue = here->B4SOIw;
             return(OK);
-
+        case B4SOI_M:
+            value->rValue = here->B4SOIm;
+            return(OK);
         case B4SOI_AS:
             value->rValue = here->B4SOIsourceArea;
             return(OK);
@@ -172,6 +175,9 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
         case B4SOI_AGBCP:
             value->rValue = here->B4SOIagbcp;
             return(OK);
+        case B4SOI_AGBCP2:
+            value->rValue = here->B4SOIagbcp2;
+            return(OK);         /* v4.1 for BC improvement */
         case B4SOI_AGBCPD:	/* v4.0 */
             value->rValue = here->B4SOIagbcpd;
             return(OK);
@@ -269,6 +275,9 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
         case B4SOI_IGIDL:
             value->rValue = here->B4SOIigidl;
             return(OK);
+        case B4SOI_IGISL:
+            value->rValue = here->B4SOIigisl;
+            return(OK);
         case B4SOI_IGS:
             value->rValue = here->B4SOIIgs;
             return(OK);
@@ -329,6 +338,17 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
         case B4SOI_QBD:
             value->rValue = *(ckt->CKTstate0 + here->B4SOIqbd); 
             return(OK);
+#ifdef B4SOI_DEBUG_OUT
+        case B4SOI_DEBUG1:
+            value->rValue = here->B4SOIdebug1; 
+            return(OK);
+        case B4SOI_DEBUG2:
+            value->rValue = here->B4SOIdebug2; 
+            return(OK);
+        case B4SOI_DEBUG3:
+            value->rValue = here->B4SOIdebug3; 
+            return(OK);
+#endif
         default:
             return(E_BADPARM);
     }

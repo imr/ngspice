@@ -1,12 +1,14 @@
-/***  B4SOI 11/30/2005 Xuemei (Jane) Xi Release   ***/
+/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
 
 /**********
- * Copyright 2005 Regents of the University of California.  All rights reserved.
+ * Copyright 2009 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soimask.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
+ * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
  * File: b4soimask.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
+ * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  **********/
 
 #include "ngspice.h"
@@ -48,11 +50,63 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case  B4SOI_MOD_TOX :
           value->rValue = model->B4SOItox;
             return(OK);
-
+	    case  B4SOI_MOD_TOXP :
+          value->rValue = model->B4SOItoxp;
+            return(OK);
+	    case  B4SOI_MOD_LEFFEOT :
+          value->rValue = model->B4SOIleffeot;
+            return(OK);
+	    case  B4SOI_MOD_WEFFEOT :
+          value->rValue = model->B4SOIweffeot;
+            return(OK);
+	    case  B4SOI_MOD_VDDEOT :
+          value->rValue = model->B4SOIvddeot;
+            return(OK);
+	    case  B4SOI_MOD_TEMPEOT :
+          value->rValue = model->B4SOItempeot;
+            return(OK);
+	    case  B4SOI_MOD_ADOS :
+          value->rValue = model->B4SOIados;
+            return(OK);
+	    case  B4SOI_MOD_BDOS :
+          value->rValue = model->B4SOIbdos;
+            return(OK);
+        case B4SOI_MOD_EPSRGATE:
+	    value->rValue = model->B4SOIepsrgate;
+	        return(OK);
+        case B4SOI_MOD_PHIG:
+	    value->rValue = model->B4SOIphig;
+	        return(OK);		
+        case B4SOI_MOD_EASUB:
+            value->rValue = model->B4SOIeasub;
+            return(OK);		
+		
         case  B4SOI_MOD_TOXM :
           value->rValue = model->B4SOItoxm;
             return(OK); /* v3.2 */
-
+			
+	    /*4.1*/
+		case  B4SOI_MOD_EOT :
+          value->rValue = model->B4SOIeot;
+		  return(OK);
+		case  B4SOI_MOD_EPSROX :
+          value->rValue = model->B4SOIepsrox;
+            return(OK);
+	    case B4SOI_MOD_EPSRSUB:
+            value->rValue = model->B4SOIepsrsub;
+            return(OK);
+	    case B4SOI_MOD_NI0SUB:
+            value->rValue = model->B4SOIni0sub;
+            return(OK);
+	    case B4SOI_MOD_BG0SUB:
+            value->rValue = model->B4SOIbg0sub;
+            return(OK);
+	    case B4SOI_MOD_TBGASUB:
+            value->rValue = model->B4SOItbgasub;
+            return(OK);
+	    case B4SOI_MOD_TBGBSUB:
+            value->rValue = model->B4SOItbgbsub;
+            return(OK);
 /* v2.2.3 */
         case  B4SOI_MOD_DTOXCV :
           value->rValue = model->B4SOIdtoxcv;
@@ -106,6 +160,9 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case B4SOI_MOD_NGATE:
             value->rValue = model->B4SOIngate;
+            return(OK);
+        case B4SOI_MOD_NSD:
+            value->rValue = model->B4SOInsd;
             return(OK);
         case B4SOI_MOD_GAMMA1:
             value->rValue = model->B4SOIgamma1;
@@ -179,6 +236,9 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_VTH0:
             value->rValue = model->B4SOIvth0; 
             return(OK);
+        case B4SOI_MOD_VFB:
+            value->rValue = model->B4SOIvfb;
+            return(OK); /* v4.1 */
         case B4SOI_MOD_UA:
             value->rValue = model->B4SOIua; 
             return(OK);
@@ -203,6 +263,69 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_UTE:
             value->rValue = model->B4SOIute;
             return(OK);
+			
+			/*4.1 mobmod=4*/
+        case B4SOI_MOD_UD:
+		    value->rValue = model->B4SOIud;
+            return(OK);	
+        case B4SOI_MOD_LUD:
+		    value->rValue = model->B4SOIlud;
+            return(OK);	
+        case B4SOI_MOD_WUD:
+		    value->rValue = model->B4SOIwud;
+            return(OK);	
+        case B4SOI_MOD_PUD:
+		    value->rValue = model->B4SOIpud;
+            return(OK);	
+        case B4SOI_MOD_UD1:
+		    value->rValue = model->B4SOIud1;
+            return(OK);	
+        case B4SOI_MOD_LUD1:
+		    value->rValue = model->B4SOIlud1;
+            return(OK);	
+        case B4SOI_MOD_WUD1:
+		    value->rValue = model->B4SOIwud1;
+            return(OK);	
+        case B4SOI_MOD_PUD1:
+		    value->rValue = model->B4SOIpud1;
+            return(OK);				
+	    case B4SOI_MOD_EU:
+		    value->rValue = model->B4SOIeu;
+            return(OK);
+	    case B4SOI_MOD_LEU:
+		    value->rValue = model->B4SOIleu;
+            return(OK);
+	    case B4SOI_MOD_WEU:
+		    value->rValue = model->B4SOIweu;
+            return(OK);
+	    case B4SOI_MOD_PEU:
+		    value->rValue = model->B4SOIpeu;
+            return(OK);
+	    case B4SOI_MOD_UCS:
+		    value->rValue = model->B4SOIucs;
+            return(OK);
+		case B4SOI_MOD_LUCS:
+		    value->rValue = model->B4SOIlucs;
+            return(OK);
+		case B4SOI_MOD_WUCS:
+		    value->rValue = model->B4SOIwucs;
+            return(OK);
+		case B4SOI_MOD_PUCS:
+		    value->rValue = model->B4SOIpucs;
+            return(OK);
+		case B4SOI_MOD_UCSTE:
+            value->rValue = model->B4SOIucste;
+            return(OK);
+		case B4SOI_MOD_LUCSTE:
+            value->rValue = model->B4SOIlucste;
+            return(OK);
+		case B4SOI_MOD_WUCSTE:
+            value->rValue = model->B4SOIwucste;
+            return(OK);
+		case B4SOI_MOD_PUCSTE:
+            value->rValue = model->B4SOIpucste;
+            return(OK);			
+			
         case B4SOI_MOD_VOFF:
             value->rValue = model->B4SOIvoff;
             return(OK);
@@ -304,6 +427,9 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case B4SOI_MOD_TSI:
             value->rValue = model->B4SOItsi; 
+            return(OK);
+		case B4SOI_MOD_ETSI:
+            value->rValue = model->B4SOIetsi; 
             return(OK);
         case B4SOI_MOD_RTH0:
             value->rValue = model->B4SOIrth0; 
@@ -591,6 +717,10 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_TII:
             value->rValue = model->B4SOItii;
             return(OK);
+			/*4.1 Iii model*/
+		case B4SOI_MOD_TVBCI:
+            value->rValue = model->B4SOItvbci;
+            return(OK);	
         case B4SOI_MOD_LII:
             value->rValue = model->B4SOIlii;
             return(OK);
@@ -608,6 +738,22 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case B4SOI_MOD_FBJTII:
             value->rValue = model->B4SOIfbjtii;
+            return(OK);
+	/*4.1 Iii model*/
+	case B4SOI_MOD_EBJTII:
+            value->rValue = model->B4SOIebjtii;
+            return(OK);
+        case B4SOI_MOD_CBJTII:
+            value->rValue = model->B4SOIcbjtii;
+            return(OK);
+        case B4SOI_MOD_VBCI:
+            value->rValue = model->B4SOIvbci;
+            return(OK);
+        case B4SOI_MOD_ABJTII:
+            value->rValue = model->B4SOIabjtii;
+            return(OK);
+        case B4SOI_MOD_MBJTII:
+            value->rValue = model->B4SOImbjtii;
             return(OK);
         case B4SOI_MOD_ESATII:
             value->rValue = model->B4SOIesatii;
@@ -754,7 +900,72 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_CGIDL:
             value->rValue = model->B4SOIcgidl;
             return(OK);
+        case B4SOI_MOD_RGIDL:
+            value->rValue = model->B4SOIrgidl;
+            return(OK);
+        case B4SOI_MOD_KGIDL:
+            value->rValue = model->B4SOIkgidl;
+            return(OK);
+        case B4SOI_MOD_FGIDL:
+            value->rValue = model->B4SOIfgidl;
+            return(OK);
+			
+		 case B4SOI_MOD_EGISL:
+            value->rValue = model->B4SOIegisl;
+            return(OK);
+        case B4SOI_MOD_AGISL:
+            value->rValue = model->B4SOIagisl;
+            return(OK);
+        case B4SOI_MOD_BGISL:
+            value->rValue = model->B4SOIbgisl;
+            return(OK);
+        case B4SOI_MOD_CGISL:
+            value->rValue = model->B4SOIcgisl;
+            return(OK);
+        case B4SOI_MOD_RGISL:
+            value->rValue = model->B4SOIrgisl;
+            return(OK);
+        case B4SOI_MOD_KGISL:
+            value->rValue = model->B4SOIkgisl;
+            return(OK);
+        case B4SOI_MOD_FGISL:
+            value->rValue = model->B4SOIfgisl;
+            return(OK);	
+			
+        case B4SOI_MOD_FDMOD:
+            value->rValue = model->B4SOIfdMod;
+            return(OK);
+        case B4SOI_MOD_VSCE:
+            value->rValue = model->B4SOIvsce;
+            return(OK);
+        case B4SOI_MOD_CDSBS:
+            value->rValue = model->B4SOIcdsbs;
+            return(OK);	
 
+        case B4SOI_MOD_MINVCV:
+            value->rValue = model->B4SOIminvcv;
+            return(OK);
+        case B4SOI_MOD_LMINVCV:
+            value->rValue = model->B4SOIlminvcv;
+            return(OK);
+        case B4SOI_MOD_WMINVCV:
+            value->rValue = model->B4SOIwminvcv;
+            return(OK);
+        case B4SOI_MOD_PMINVCV:
+            value->rValue = model->B4SOIpminvcv;
+            return(OK);			
+        case B4SOI_MOD_VOFFCV:
+            value->rValue = model->B4SOIvoffcv;
+            return(OK);
+        case B4SOI_MOD_LVOFFCV:
+            value->rValue = model->B4SOIlvoffcv;                              
+            return(OK);
+        case B4SOI_MOD_WVOFFCV:
+            value->rValue = model->B4SOIwvoffcv;                              
+            return(OK); 
+        case B4SOI_MOD_PVOFFCV:
+            value->rValue = model->B4SOIpvoffcv;
+            return(OK);			
 /* v3.0 */
         case B4SOI_MOD_SOIMOD:
             value->iValue = model->B4SOIsoiMod;
@@ -835,6 +1046,15 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_VGB2:
             value->rValue = model->B4SOIvgb2;
             return(OK);
+        case B4SOI_MOD_AIGBCP2:
+            value->rValue = model->B4SOIaigbcp2;
+            return(OK);
+        case B4SOI_MOD_BIGBCP2:
+            value->rValue = model->B4SOIbigbcp2;
+            return(OK);
+        case B4SOI_MOD_CIGBCP2:
+            value->rValue = model->B4SOIcigbcp2;
+            return(OK);
         case B4SOI_MOD_TOXQM:
             value->rValue = model->B4SOItoxqm;
             return(OK);
@@ -869,11 +1089,29 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case  B4SOI_MOD_DVTP1:
           value->rValue = model->B4SOIdvtp1;
             return(OK);
+        case  B4SOI_MOD_DVTP2:
+          value->rValue = model->B4SOIdvtp2;
+            return(OK);
+        case  B4SOI_MOD_DVTP3:
+          value->rValue = model->B4SOIdvtp3;
+            return(OK);
+        case  B4SOI_MOD_DVTP4:
+          value->rValue = model->B4SOIdvtp4;
+            return(OK);
         case  B4SOI_MOD_LDVTP0:
           value->rValue = model->B4SOIldvtp0;
             return(OK);
         case  B4SOI_MOD_LDVTP1:
           value->rValue = model->B4SOIldvtp1;
+            return(OK);
+        case  B4SOI_MOD_LDVTP2:
+          value->rValue = model->B4SOIldvtp2;
+            return(OK);
+        case  B4SOI_MOD_LDVTP3:
+          value->rValue = model->B4SOIldvtp3;
+            return(OK);
+        case  B4SOI_MOD_LDVTP4:
+          value->rValue = model->B4SOIldvtp4;
             return(OK);
         case  B4SOI_MOD_WDVTP0:
           value->rValue = model->B4SOIwdvtp0;
@@ -881,11 +1119,29 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case  B4SOI_MOD_WDVTP1:
           value->rValue = model->B4SOIwdvtp1;
             return(OK);
+        case  B4SOI_MOD_WDVTP2:
+          value->rValue = model->B4SOIwdvtp2;
+            return(OK);
+        case  B4SOI_MOD_WDVTP3:
+          value->rValue = model->B4SOIwdvtp3;
+            return(OK);
+        case  B4SOI_MOD_WDVTP4:
+          value->rValue = model->B4SOIwdvtp4;
+            return(OK);
         case  B4SOI_MOD_PDVTP0:
           value->rValue = model->B4SOIpdvtp0;
             return(OK);
         case  B4SOI_MOD_PDVTP1:
           value->rValue = model->B4SOIpdvtp1;
+            return(OK);
+        case  B4SOI_MOD_PDVTP2:
+          value->rValue = model->B4SOIpdvtp2;
+            return(OK);
+        case  B4SOI_MOD_PDVTP3:
+          value->rValue = model->B4SOIpdvtp3;
+            return(OK);
+        case  B4SOI_MOD_PDVTP4:
+          value->rValue = model->B4SOIpdvtp4;
             return(OK);
         case B4SOI_MOD_MINV:
             value->rValue = model->B4SOIminv;
@@ -987,7 +1243,20 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->B4SOIxgl;
             return(OK);
 /* v3.1 added for RF end */
+/*4.1*/
 
+        case B4SOI_MOD_MTRLMOD :
+            value->iValue = model->B4SOImtrlMod;
+            return(OK);
+		case B4SOI_MOD_VGSTCVMOD:
+            value->iValue = model->B4SOIvgstcvMod;
+            return(OK);
+        case B4SOI_MOD_GIDLMOD :
+            value->iValue = model->B4SOIgidlMod;
+            return(OK);
+	   case B4SOI_MOD_IIIMOD :
+            value->iValue = model->B4SOIiiiMod;
+            return(OK);	
 /* v3.0 */
         case B4SOI_MOD_IGBMOD:
             value->iValue = model->B4SOIigbMod;
@@ -1045,6 +1314,15 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case B4SOI_MOD_LBETAGB2:
             value->rValue = model->B4SOIlbetaGB2;
+            return(OK);
+        case B4SOI_MOD_LAIGBCP2:
+            value->rValue = model->B4SOIlaigbcp2;
+            return(OK);
+        case B4SOI_MOD_LBIGBCP2:
+            value->rValue = model->B4SOIlbigbcp2;
+            return(OK);
+        case B4SOI_MOD_LCIGBCP2:
+            value->rValue = model->B4SOIlcigbcp2;
             return(OK);
         case B4SOI_MOD_LNDIF:
             value->rValue = model->B4SOIlndif;
@@ -1152,9 +1430,15 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_LNGATE:
             value->rValue = model->B4SOIlngate;
             return(OK);
+        case B4SOI_MOD_LNSD:
+            value->rValue = model->B4SOIlnsd;
+            return(OK);		
         case B4SOI_MOD_LVTH0:
             value->rValue = model->B4SOIlvth0;
             return(OK);
+        case B4SOI_MOD_LVFB: 
+            value->rValue = model->B4SOIlvfb; 
+            return(OK);  /* v4.1 */
         case  B4SOI_MOD_LK1:
           value->rValue = model->B4SOIlk1;
             return(OK);
@@ -1320,6 +1604,22 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_LFBJTII:
             value->rValue = model->B4SOIlfbjtii;
             return(OK);
+			/*4.1 Iii model*/
+			case B4SOI_MOD_LEBJTII:
+            value->rValue = model->B4SOIlebjtii;
+            return(OK);
+        case B4SOI_MOD_LCBJTII:
+            value->rValue = model->B4SOIlcbjtii;
+            return(OK);
+        case B4SOI_MOD_LVBCI:
+            value->rValue = model->B4SOIlvbci;
+            return(OK);
+        case B4SOI_MOD_LABJTII:
+            value->rValue = model->B4SOIlabjtii;
+            return(OK);
+        case B4SOI_MOD_LMBJTII:
+            value->rValue = model->B4SOIlmbjtii;
+            return(OK);
         case B4SOI_MOD_LBETA0:
             value->rValue = model->B4SOIlbeta0;
             return(OK);
@@ -1362,6 +1662,37 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_LEGIDL:
             value->rValue = model->B4SOIlegidl;
             return(OK);
+        case B4SOI_MOD_LRGIDL:
+            value->rValue = model->B4SOIlrgidl;
+            return(OK);
+        case B4SOI_MOD_LKGIDL:
+            value->rValue = model->B4SOIlkgidl;
+            return(OK);
+        case B4SOI_MOD_LFGIDL:
+            value->rValue = model->B4SOIlfgidl;
+            return(OK);
+			
+		case B4SOI_MOD_LAGISL:
+            value->rValue = model->B4SOIlagisl;
+            return(OK);
+        case B4SOI_MOD_LBGISL:
+            value->rValue = model->B4SOIlbgisl;
+            return(OK);
+        case B4SOI_MOD_LCGISL:
+            value->rValue = model->B4SOIlcgisl;
+            return(OK);
+        case B4SOI_MOD_LEGISL:
+            value->rValue = model->B4SOIlegisl;
+            return(OK);
+        case B4SOI_MOD_LRGISL:
+            value->rValue = model->B4SOIlrgisl;
+            return(OK);
+        case B4SOI_MOD_LKGISL:
+            value->rValue = model->B4SOIlkgisl;
+            return(OK);
+        case B4SOI_MOD_LFGISL:
+            value->rValue = model->B4SOIlfgisl;
+            return(OK);	
         case B4SOI_MOD_LNTUNS:	/* v4.0 */
             value->rValue = model->B4SOIlntun;
             return(OK);
@@ -1477,6 +1808,15 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_WBETAGB2:
             value->rValue = model->B4SOIwbetaGB2;
             return(OK);
+        case B4SOI_MOD_WAIGBCP2:
+            value->rValue = model->B4SOIwaigbcp2;
+            return(OK);
+        case B4SOI_MOD_WBIGBCP2:
+            value->rValue = model->B4SOIwbigbcp2;
+            return(OK);
+        case B4SOI_MOD_WCIGBCP2:
+            value->rValue = model->B4SOIwcigbcp2;
+            return(OK);
         case B4SOI_MOD_WNDIF:
             value->rValue = model->B4SOIwndif;
             return(OK);
@@ -1582,9 +1922,15 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_WNGATE:
             value->rValue = model->B4SOIwngate;
             return(OK);
+        case B4SOI_MOD_WNSD:
+            value->rValue = model->B4SOIwnsd;
+            return(OK);
         case B4SOI_MOD_WVTH0:
             value->rValue = model->B4SOIwvth0;
             return(OK);
+       case B4SOI_MOD_WVFB: 
+            value->rValue = model->B4SOIwvfb; 
+            return(OK);  /* v4.1 */
         case  B4SOI_MOD_WK1:
           value->rValue = model->B4SOIwk1;
             return(OK);
@@ -1750,6 +2096,22 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_WFBJTII:
             value->rValue = model->B4SOIwfbjtii;
             return(OK);
+	/*4.1 Iii model*/
+	 case B4SOI_MOD_WEBJTII:
+            value->rValue = model->B4SOIwebjtii;
+            return(OK);
+        case B4SOI_MOD_WCBJTII:
+            value->rValue = model->B4SOIwcbjtii;
+            return(OK);
+        case B4SOI_MOD_WVBCI:
+            value->rValue = model->B4SOIwvbci;
+            return(OK);
+        case B4SOI_MOD_WABJTII:
+            value->rValue = model->B4SOIwabjtii;
+            return(OK);
+        case B4SOI_MOD_WMBJTII:
+            value->rValue = model->B4SOIwmbjtii;
+            return(OK);
         case B4SOI_MOD_WBETA0:
             value->rValue = model->B4SOIwbeta0;
             return(OK);
@@ -1792,6 +2154,45 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_WEGIDL:
             value->rValue = model->B4SOIwegidl;
             return(OK);
+        case B4SOI_MOD_WRGIDL:
+            value->rValue = model->B4SOIwrgidl;
+            return(OK);	
+        case B4SOI_MOD_WKGIDL:
+            value->rValue = model->B4SOIwkgidl;
+            return(OK);
+        case B4SOI_MOD_WFGIDL:
+            value->rValue = model->B4SOIwfgidl;
+            return(OK);
+		
+		case B4SOI_MOD_WAGISL:
+            value->rValue = model->B4SOIwagisl;
+            return(OK);
+			
+        case B4SOI_MOD_WBGISL:
+            value->rValue = model->B4SOIwbgisl;
+            return(OK);
+			
+        case B4SOI_MOD_WCGISL:
+            value->rValue = model->B4SOIwcgisl;
+            return(OK);
+			
+        case B4SOI_MOD_WEGISL:
+            value->rValue = model->B4SOIwegisl;
+            return(OK);
+			
+        case B4SOI_MOD_WRGISL:
+            value->rValue = model->B4SOIwrgisl;
+            return(OK);	
+			
+        case B4SOI_MOD_WKGISL:
+            value->rValue = model->B4SOIwkgisl;
+            return(OK);
+			
+        case B4SOI_MOD_WFGISL:
+            value->rValue = model->B4SOIwfgisl;
+            return(OK);
+			
+			
         case B4SOI_MOD_WNTUNS:	/* v4.0 */
             value->rValue = model->B4SOIwntun;
             return(OK);
@@ -1907,6 +2308,15 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_PBETAGB2:
             value->rValue = model->B4SOIpbetaGB2;
             return(OK);
+        case B4SOI_MOD_PAIGBCP2:
+            value->rValue = model->B4SOIpaigbcp2;
+            return(OK);
+        case B4SOI_MOD_PBIGBCP2:
+            value->rValue = model->B4SOIpbigbcp2;
+            return(OK);
+        case B4SOI_MOD_PCIGBCP2:
+            value->rValue = model->B4SOIpcigbcp2;
+            return(OK);
         case B4SOI_MOD_PNDIF:
             value->rValue = model->B4SOIpndif;
             return(OK);
@@ -2013,9 +2423,15 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_PNGATE:
             value->rValue = model->B4SOIpngate;
             return(OK);
+        case B4SOI_MOD_PNSD:
+            value->rValue = model->B4SOIpnsd;
+            return(OK);
         case B4SOI_MOD_PVTH0:
             value->rValue = model->B4SOIpvth0;
             return(OK);
+        case B4SOI_MOD_PVFB: 
+            value->rValue = model->B4SOIpvfb; 
+            return(OK); /* v4.1 */
         case  B4SOI_MOD_PK1:
           value->rValue = model->B4SOIpk1;
             return(OK);
@@ -2181,6 +2597,23 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_PFBJTII:
             value->rValue = model->B4SOIpfbjtii;
             return(OK);
+	/*4.1 Iii model*/
+	    case B4SOI_MOD_PEBJTII:
+            value->rValue = model->B4SOIpebjtii;
+            return(OK);
+        case B4SOI_MOD_PCBJTII:
+            value->rValue = model->B4SOIpcbjtii;
+            return(OK);
+        case B4SOI_MOD_PVBCI:
+            value->rValue = model->B4SOIpvbci;
+            return(OK);
+        case B4SOI_MOD_PABJTII:
+            value->rValue = model->B4SOIpabjtii;
+            return(OK);
+        case B4SOI_MOD_PMBJTII:
+            value->rValue = model->B4SOIpmbjtii;
+            return(OK);
+			
         case B4SOI_MOD_PBETA0:
             value->rValue = model->B4SOIpbeta0;
             return(OK);
@@ -2223,6 +2656,38 @@ B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case B4SOI_MOD_PEGIDL:
             value->rValue = model->B4SOIpegidl;
             return(OK);
+        case B4SOI_MOD_PRGIDL:
+            value->rValue = model->B4SOIprgidl;
+            return(OK);
+        case B4SOI_MOD_PKGIDL:
+            value->rValue = model->B4SOIpkgidl;
+            return(OK);
+        case B4SOI_MOD_PFGIDL:
+            value->rValue = model->B4SOIpfgidl;
+            return(OK);
+			
+		case B4SOI_MOD_PAGISL:
+            value->rValue = model->B4SOIpagisl;
+            return(OK);
+        case B4SOI_MOD_PBGISL:
+            value->rValue = model->B4SOIpbgisl;
+            return(OK);
+        case B4SOI_MOD_PCGISL:
+            value->rValue = model->B4SOIpcgisl;
+            return(OK);
+        case B4SOI_MOD_PEGISL:
+            value->rValue = model->B4SOIpegisl;
+            return(OK);
+        case B4SOI_MOD_PRGISL:
+            value->rValue = model->B4SOIprgisl;
+            return(OK);
+        case B4SOI_MOD_PKGISL:
+            value->rValue = model->B4SOIpkgisl;
+            return(OK);
+        case B4SOI_MOD_PFGISL:
+            value->rValue = model->B4SOIpfgisl;
+            return(OK);	
+			
         case B4SOI_MOD_PNTUNS:		/* v4.0 */
             value->rValue = model->B4SOIpntun;
             return(OK);

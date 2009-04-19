@@ -1,12 +1,14 @@
-/***  B4SOI 11/30/2005 Xuemei (Jane) Xi Release   ***/
+/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
 
 /**********
- * Copyright 2005 Regents of the University of California.  All rights reserved.
+ * Copyright 2009 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soimpar.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
+ * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
  * File: b4soimpar.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
+ * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  **********/
 
 #include "ngspice.h"
@@ -53,16 +55,100 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIversion = value->rValue;
             mod->B4SOIversionGiven = TRUE;
             break;
+		case  B4SOI_MOD_MTRLMOD :
+            mod->B4SOImtrlMod = value->iValue;
+            mod->B4SOImtrlModGiven = TRUE;
+            break;
+		case  B4SOI_MOD_VGSTCVMOD :
+            mod->B4SOIvgstcvMod = value->iValue;
+            mod->B4SOIvgstcvModGiven = TRUE;
+            break;	
+		case  B4SOI_MOD_GIDLMOD :
+            mod->B4SOIgidlMod = value->iValue;
+            mod->B4SOIgidlModGiven = TRUE;
+            break;
+		case  B4SOI_MOD_IIIMOD :
+            mod->B4SOIiiiMod = value->iValue;
+            mod->B4SOIiiiModGiven = TRUE;
+            break;
         case  B4SOI_MOD_TOX :
             mod->B4SOItox = value->rValue;
             mod->B4SOItoxGiven = TRUE;
             break;
-
+        case  B4SOI_MOD_TOXP :
+            mod->B4SOItoxp = value->rValue;
+            mod->B4SOItoxpGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LEFFEOT :
+            mod->B4SOIleffeot = value->rValue;
+            mod->B4SOIleffeotGiven = TRUE;
+            break;
+        case  B4SOI_MOD_WEFFEOT :
+            mod->B4SOIweffeot = value->rValue;
+            mod->B4SOIweffeotGiven = TRUE;
+            break;
+        case  B4SOI_MOD_VDDEOT :
+            mod->B4SOIvddeot = value->rValue;
+            mod->B4SOIvddeotGiven = TRUE;
+            break;
+        case  B4SOI_MOD_TEMPEOT :
+            mod->B4SOItempeot = value->rValue;
+            mod->B4SOItempeotGiven = TRUE;
+            break;
+        case  B4SOI_MOD_ADOS :
+            mod->B4SOIados = value->rValue;
+            mod->B4SOIadosGiven = TRUE;
+            break;
+        case  B4SOI_MOD_BDOS :
+            mod->B4SOIbdos = value->rValue;
+            mod->B4SOIbdosGiven = TRUE;
+            break;
+        case B4SOI_MOD_EPSRGATE:
+	    mod->B4SOIepsrgate = value->rValue;
+	    mod->B4SOIepsrgateGiven = TRUE;
+	        break;
+        case B4SOI_MOD_PHIG:
+	    mod->B4SOIphig = value->rValue;
+	    mod->B4SOIphigGiven = TRUE;
+	        break;
+        case B4SOI_MOD_EASUB:
+            mod->B4SOIeasub = value->rValue;
+            mod->B4SOIeasubGiven = TRUE;
+            break;		
+		
         case  B4SOI_MOD_TOXM :
             mod->B4SOItoxm = value->rValue;
             mod->B4SOItoxmGiven = TRUE;
             break; /* v3.2 */
-
+		/*4.1	*/
+	    case  B4SOI_MOD_EOT :
+            mod->B4SOIeot = value->rValue;
+            mod->B4SOIeotGiven = TRUE;
+            break;
+		case  B4SOI_MOD_EPSROX :
+            mod->B4SOIepsrox = value->rValue;
+            mod->B4SOIepsroxGiven = TRUE;
+            break;
+		case B4SOI_MOD_EPSRSUB:
+            mod->B4SOIepsrsub = value->rValue;
+            mod->B4SOIepsrsubGiven = TRUE;
+            break;
+		case B4SOI_MOD_NI0SUB:
+            mod->B4SOIni0sub = value->rValue;
+            mod->B4SOIni0subGiven = TRUE;
+            break;
+		case B4SOI_MOD_BG0SUB:
+            mod->B4SOIbg0sub = value->rValue;
+            mod->B4SOIbg0subGiven = TRUE;
+            break;
+		case B4SOI_MOD_TBGASUB:
+            mod->B4SOItbgasub = value->rValue;
+            mod->B4SOItbgasubGiven = TRUE;
+            break;
+		case B4SOI_MOD_TBGBSUB:
+            mod->B4SOItbgbsub = value->rValue;
+            mod->B4SOItbgbsubGiven = TRUE;
+            break;
 /* v2.2.3 */
         case  B4SOI_MOD_DTOXCV :
             mod->B4SOIdtoxcv = value->rValue;
@@ -130,6 +216,12 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOInpeakGiven = TRUE;
 	    if (mod->B4SOInpeak > 1.0e20)
 		mod->B4SOInpeak *= 1.0e-6;
+            break;
+        case B4SOI_MOD_NSD:
+            mod->B4SOInsd = value->rValue;
+            mod->B4SOInsdGiven = TRUE;
+            if (mod->B4SOInsd > 1.0e23)
+                mod->B4SOInsd *= 1.0e-6;
             break;
         case B4SOI_MOD_NGATE:
             mod->B4SOIngate = value->rValue;
@@ -233,6 +325,10 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIvth0 = value->rValue;
             mod->B4SOIvth0Given = TRUE;
             break;
+        case B4SOI_MOD_VFB:
+            mod->B4SOIvfb = value->rValue;
+            mod->B4SOIvfbGiven = TRUE;
+            break; /* v4.1 */
         case B4SOI_MOD_UA:
             mod->B4SOIua = value->rValue;
             mod->B4SOIuaGiven = TRUE;
@@ -265,6 +361,86 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIute = value->rValue;
             mod->B4SOIuteGiven = TRUE;
             break;
+/*4.1 mobmod=4*/
+case B4SOI_MOD_UD:
+            mod->B4SOIud = value->rValue;
+            mod->B4SOIudGiven = TRUE;
+            break;
+		case B4SOI_MOD_LUD:
+            mod->B4SOIlud = value->rValue;
+            mod->B4SOIludGiven = TRUE;
+            break;
+		case B4SOI_MOD_WUD:
+            mod->B4SOIwud = value->rValue;
+            mod->B4SOIwudGiven = TRUE;
+            break;
+		case B4SOI_MOD_PUD:
+            mod->B4SOIpud = value->rValue;
+            mod->B4SOIpudGiven = TRUE;
+            break;
+		case B4SOI_MOD_UD1:
+            mod->B4SOIud1 = value->rValue;
+            mod->B4SOIud1Given = TRUE;
+            break;
+		case B4SOI_MOD_LUD1:
+            mod->B4SOIlud1 = value->rValue;
+            mod->B4SOIlud1Given = TRUE;
+            break;
+		case B4SOI_MOD_WUD1:
+            mod->B4SOIwud1 = value->rValue;
+            mod->B4SOIwud1Given = TRUE;
+            break;
+		case B4SOI_MOD_PUD1:
+            mod->B4SOIpud1 = value->rValue;
+            mod->B4SOIpud1Given = TRUE;
+            break;
+		case B4SOI_MOD_EU:
+            mod->B4SOIeu = value->rValue;
+            mod->B4SOIeuGiven = TRUE;
+            break;
+		case B4SOI_MOD_LEU:
+            mod->B4SOIleu = value->rValue;
+            mod->B4SOIleuGiven = TRUE;
+            break;
+		case B4SOI_MOD_WEU:
+            mod->B4SOIweu = value->rValue;
+            mod->B4SOIweuGiven = TRUE;
+            break;
+		case B4SOI_MOD_PEU:
+            mod->B4SOIpeu = value->rValue;
+            mod->B4SOIpeuGiven = TRUE;
+            break;
+		case B4SOI_MOD_UCS:
+            mod->B4SOIucs = value->rValue;
+            mod->B4SOIucsGiven = TRUE;
+			break;
+		case B4SOI_MOD_LUCS:
+            mod->B4SOIlucs = value->rValue;
+            mod->B4SOIlucsGiven = TRUE;
+			break;
+		case B4SOI_MOD_WUCS:
+            mod->B4SOIwucs = value->rValue;
+            mod->B4SOIwucsGiven = TRUE;
+			break;
+		case B4SOI_MOD_PUCS:
+            mod->B4SOIpucs = value->rValue;
+            mod->B4SOIpucsGiven = TRUE;
+		case B4SOI_MOD_UCSTE:
+            mod->B4SOIucste = value->rValue;
+            mod->B4SOIucsteGiven = TRUE;
+			break;
+	    case B4SOI_MOD_LUCSTE:
+            mod->B4SOIlucste = value->rValue;
+            mod->B4SOIlucsteGiven = TRUE;
+			break;
+	    case B4SOI_MOD_WUCSTE:
+            mod->B4SOIwucste = value->rValue;
+            mod->B4SOIwucsteGiven = TRUE;
+			break;
+	    case B4SOI_MOD_PUCSTE:
+            mod->B4SOIpucste = value->rValue;
+            mod->B4SOIpucsteGiven = TRUE;
+			break;
         case B4SOI_MOD_VOFF:
             mod->B4SOIvoff = value->rValue;
             mod->B4SOIvoffGiven = TRUE;
@@ -398,6 +574,10 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOItsi = value->rValue;
             mod->B4SOItsiGiven = TRUE;
             break;
+		case  B4SOI_MOD_ETSI :
+            mod->B4SOIetsi = value->rValue;
+            mod->B4SOIetsiGiven = TRUE;
+            break;
         case  B4SOI_MOD_XJ :
             mod->B4SOIxj = value->rValue;
             mod->B4SOIxjGiven = TRUE;
@@ -434,6 +614,92 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIcgidl = value->rValue;
             mod->B4SOIcgidlGiven = TRUE;
             break;
+        case  B4SOI_MOD_RGIDL :
+            mod->B4SOIrgidl = value->rValue;
+            mod->B4SOIrgidlGiven = TRUE;
+            break;
+        case  B4SOI_MOD_KGIDL :
+            mod->B4SOIkgidl = value->rValue;
+            mod->B4SOIkgidlGiven = TRUE;
+            break;
+        case  B4SOI_MOD_FGIDL :
+            mod->B4SOIfgidl = value->rValue;
+            mod->B4SOIfgidlGiven = TRUE;
+            break;
+			
+			case  B4SOI_MOD_EGISL :
+            mod->B4SOIegisl = value->rValue;
+            mod->B4SOIegislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_AGISL :
+            mod->B4SOIagisl = value->rValue;
+            mod->B4SOIagislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_BGISL :
+            mod->B4SOIbgisl = value->rValue;
+            mod->B4SOIbgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_CGISL :
+            mod->B4SOIcgisl = value->rValue;
+            mod->B4SOIcgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_RGISL :
+            mod->B4SOIrgisl = value->rValue;
+            mod->B4SOIrgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_KGISL :
+            mod->B4SOIkgisl = value->rValue;
+            mod->B4SOIkgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_FGISL :
+            mod->B4SOIfgisl = value->rValue;
+            mod->B4SOIfgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_FDMOD :
+            mod->B4SOIfdMod = value->rValue;
+            mod->B4SOIfdModGiven = TRUE;
+            break; 
+        case  B4SOI_MOD_VSCE :
+            mod->B4SOIvsce = value->rValue;
+            mod->B4SOIvsceGiven = TRUE;
+            break;        
+        case  B4SOI_MOD_CDSBS :
+            mod->B4SOIcdsbs = value->rValue;
+            mod->B4SOIcdsbsGiven = TRUE;
+            break; 	
+        case B4SOI_MOD_MINVCV:
+            mod->B4SOIminvcv = value->rValue;
+            mod->B4SOIminvcvGiven = TRUE;
+            break;
+        case B4SOI_MOD_LMINVCV:
+            mod->B4SOIlminvcv = value->rValue;
+            mod->B4SOIlminvcvGiven = TRUE;
+            break;
+        case B4SOI_MOD_WMINVCV:
+            mod->B4SOIwminvcv = value->rValue;
+            mod->B4SOIwminvcvGiven = TRUE; 
+            break;
+        case B4SOI_MOD_PMINVCV:
+            mod->B4SOIpminvcv = value->rValue;
+            mod->B4SOIpminvcvGiven = TRUE;
+            break;
+        case B4SOI_MOD_VOFFCV:  
+            mod->B4SOIvoffcv = value->rValue; 
+            mod->B4SOIvoffcvGiven = TRUE; 
+            break;
+        case B4SOI_MOD_LVOFFCV:  
+            mod->B4SOIlvoffcv = value->rValue; 
+            mod->B4SOIlvoffcvGiven = TRUE; 
+            break;
+        case B4SOI_MOD_WVOFFCV:  
+            mod->B4SOIwvoffcv = value->rValue; 
+            mod->B4SOIwvoffcvGiven = TRUE; 
+            break;
+        case B4SOI_MOD_PVOFFCV:  
+            mod->B4SOIpvoffcv = value->rValue; 
+            mod->B4SOIpvoffcvGiven = TRUE; 
+            break;
+			
         case  B4SOI_MOD_NDIODES : /* v4.0 */
             mod->B4SOIndiode = value->rValue;
             mod->B4SOIndiodeGiven = TRUE;
@@ -776,6 +1042,18 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIvgb2 = value->rValue;
             mod->B4SOIvgb2Given = TRUE;
             break;
+        case  B4SOI_MOD_AIGBCP2 :
+            mod->B4SOIaigbcp2 = value->rValue;
+            mod->B4SOIaigbcp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_BIGBCP2 :
+            mod->B4SOIbigbcp2 = value->rValue;
+            mod->B4SOIbigbcp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_CIGBCP2 :
+            mod->B4SOIcigbcp2 = value->rValue;
+            mod->B4SOIcigbcp2Given = TRUE;
+            break;
         case  B4SOI_MOD_TOXQM :
             mod->B4SOItoxqm = value->rValue;
             mod->B4SOItoxqmGiven = TRUE;
@@ -902,6 +1180,18 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIdvtp1 = value->rValue;
             mod->B4SOIdvtp1Given = TRUE;
             break;
+        case  B4SOI_MOD_DVTP2:
+            mod->B4SOIdvtp2 = value->rValue;
+            mod->B4SOIdvtp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_DVTP3:
+            mod->B4SOIdvtp3 = value->rValue;
+            mod->B4SOIdvtp3Given = TRUE;
+            break;
+        case  B4SOI_MOD_DVTP4:
+            mod->B4SOIdvtp4 = value->rValue;
+            mod->B4SOIdvtp4Given = TRUE;
+            break;
         case  B4SOI_MOD_LDVTP0:
             mod->B4SOIldvtp0 = value->rValue;
             mod->B4SOIldvtp0Given = TRUE;
@@ -909,6 +1199,18 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
         case  B4SOI_MOD_LDVTP1:
             mod->B4SOIldvtp1 = value->rValue;
             mod->B4SOIldvtp1Given = TRUE;
+            break;
+        case  B4SOI_MOD_LDVTP2:
+            mod->B4SOIldvtp2 = value->rValue;
+            mod->B4SOIldvtp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_LDVTP3:
+            mod->B4SOIldvtp3 = value->rValue;
+            mod->B4SOIldvtp3Given = TRUE;
+            break;
+        case  B4SOI_MOD_LDVTP4:
+            mod->B4SOIldvtp4 = value->rValue;
+            mod->B4SOIldvtp4Given = TRUE;
             break;
         case  B4SOI_MOD_WDVTP0:
             mod->B4SOIwdvtp0 = value->rValue;
@@ -918,6 +1220,18 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIwdvtp1 = value->rValue;
             mod->B4SOIwdvtp1Given = TRUE;
             break;
+        case  B4SOI_MOD_WDVTP2:
+            mod->B4SOIwdvtp2 = value->rValue;
+            mod->B4SOIwdvtp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_WDVTP3:
+            mod->B4SOIwdvtp3 = value->rValue;
+            mod->B4SOIwdvtp3Given = TRUE;
+            break;
+        case  B4SOI_MOD_WDVTP4:
+            mod->B4SOIwdvtp4 = value->rValue;
+            mod->B4SOIwdvtp4Given = TRUE;
+            break;
         case  B4SOI_MOD_PDVTP0:
             mod->B4SOIpdvtp0 = value->rValue;
             mod->B4SOIpdvtp0Given = TRUE;
@@ -925,6 +1239,18 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
         case  B4SOI_MOD_PDVTP1:
             mod->B4SOIpdvtp1 = value->rValue;
             mod->B4SOIpdvtp1Given = TRUE;
+            break;
+        case  B4SOI_MOD_PDVTP2:
+            mod->B4SOIpdvtp2 = value->rValue;
+            mod->B4SOIpdvtp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_PDVTP3:
+            mod->B4SOIpdvtp3 = value->rValue;
+            mod->B4SOIpdvtp3Given = TRUE;
+            break;
+        case  B4SOI_MOD_PDVTP4:
+            mod->B4SOIpdvtp4 = value->rValue;
+            mod->B4SOIpdvtp4Given = TRUE;
             break;
         case B4SOI_MOD_MINV:
             mod->B4SOIminv = value->rValue;
@@ -1153,6 +1479,10 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOItii = value->rValue;
             mod->B4SOItiiGiven = TRUE;
             break;
+		 case  B4SOI_MOD_TVBCI :
+            mod->B4SOItvbci = value->rValue;
+            mod->B4SOItvbciGiven = TRUE;
+            break;
         case  B4SOI_MOD_LII :
             mod->B4SOIlii = value->rValue;
             mod->B4SOIliiGiven = TRUE;
@@ -1176,6 +1506,27 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
         case  B4SOI_MOD_FBJTII :
             mod->B4SOIfbjtii = value->rValue;
             mod->B4SOIfbjtiiGiven = TRUE;
+            break;
+	/*4.1 Iii model*/
+	   case  B4SOI_MOD_EBJTII :
+            mod->B4SOIebjtii = value->rValue;
+            mod->B4SOIebjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_CBJTII :
+            mod->B4SOIcbjtii = value->rValue;
+            mod->B4SOIcbjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_VBCI :
+            mod->B4SOIvbci = value->rValue;
+            mod->B4SOIvbciGiven = TRUE;
+            break;
+        case  B4SOI_MOD_ABJTII :
+            mod->B4SOIabjtii = value->rValue;
+            mod->B4SOIabjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_MBJTII :
+            mod->B4SOImbjtii = value->rValue;
+            mod->B4SOImbjtiiGiven = TRUE;
             break;
         case  B4SOI_MOD_ESATII :
             mod->B4SOIesatii = value->rValue;
@@ -1371,6 +1722,18 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIlbetaGB2 = value->rValue;
             mod->B4SOIlbetaGB2Given = TRUE;
             break;
+        case  B4SOI_MOD_LAIGBCP2 :
+            mod->B4SOIlaigbcp2 = value->rValue;
+            mod->B4SOIlaigbcp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_LBIGBCP2 :
+            mod->B4SOIlbigbcp2 = value->rValue;
+            mod->B4SOIlbigbcp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_LCIGBCP2 :
+            mod->B4SOIlcigbcp2 = value->rValue;
+            mod->B4SOIlcigbcp2Given = TRUE;
+            break;
         case  B4SOI_MOD_LNDIF :
             mod->B4SOIlndif = value->rValue;
             mod->B4SOIlndifGiven = TRUE;
@@ -1511,10 +1874,18 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIlngate = value->rValue;
             mod->B4SOIlngateGiven = TRUE;
             break;
+        case B4SOI_MOD_LNSD:
+            mod->B4SOIlnsd = value->rValue;
+            mod->B4SOIlnsdGiven = TRUE;
+            break;
         case B4SOI_MOD_LVTH0:
             mod->B4SOIlvth0 = value->rValue;
             mod->B4SOIlvth0Given = TRUE;
             break;
+        case B4SOI_MOD_LVFB:
+            mod->B4SOIlvfb = value->rValue;   
+            mod->B4SOIlvfbGiven = TRUE;   
+            break; /* v4.1 */ 
         case  B4SOI_MOD_LK1:
             mod->B4SOIlk1 = value->rValue;
             mod->B4SOIlk1Given = TRUE;
@@ -1735,6 +2106,28 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIlfbjtii = value->rValue;
             mod->B4SOIlfbjtiiGiven = TRUE;
             break;
+	/*4.1 Iii model*/
+	 case  B4SOI_MOD_LEBJTII :
+            mod->B4SOIlebjtii = value->rValue;
+            mod->B4SOIlebjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LCBJTII :
+            mod->B4SOIlcbjtii = value->rValue;
+            mod->B4SOIlcbjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LVBCI :
+            mod->B4SOIlvbci = value->rValue;
+            mod->B4SOIlvbciGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LABJTII :
+            mod->B4SOIlabjtii = value->rValue;
+            mod->B4SOIlabjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LMBJTII :
+            mod->B4SOIlmbjtii = value->rValue;
+            mod->B4SOIlmbjtiiGiven = TRUE;
+            break;
+			
         case  B4SOI_MOD_LBETA0 :
             mod->B4SOIlbeta0 = value->rValue;
             mod->B4SOIlbeta0Given = TRUE;
@@ -1790,6 +2183,47 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
         case  B4SOI_MOD_LEGIDL :
             mod->B4SOIlegidl = value->rValue;
             mod->B4SOIlegidlGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LRGIDL :
+            mod->B4SOIlrgidl = value->rValue;
+            mod->B4SOIlrgidlGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LKGIDL :
+            mod->B4SOIlkgidl = value->rValue;
+            mod->B4SOIlkgidlGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LFGIDL :
+            mod->B4SOIlfgidl = value->rValue;
+            mod->B4SOIlfgidlGiven = TRUE;
+            break;
+			
+			case  B4SOI_MOD_LAGISL :
+            mod->B4SOIlagisl = value->rValue;
+            mod->B4SOIlagislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LBGISL :
+            mod->B4SOIlbgisl = value->rValue;
+            mod->B4SOIlbgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LCGISL :
+            mod->B4SOIlcgisl = value->rValue;
+            mod->B4SOIlcgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LEGISL :
+            mod->B4SOIlegisl = value->rValue;
+            mod->B4SOIlegislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LRGISL :
+            mod->B4SOIlrgisl = value->rValue;
+            mod->B4SOIlrgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LKGISL :
+            mod->B4SOIlkgisl = value->rValue;
+            mod->B4SOIlkgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_LFGISL :
+            mod->B4SOIlfgisl = value->rValue;
+            mod->B4SOIlfgislGiven = TRUE;
             break;
         case  B4SOI_MOD_LNTUNS :	/* v4.0 */
             mod->B4SOIlntun = value->rValue;
@@ -1955,6 +2389,18 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIwbetaGB2 = value->rValue;
             mod->B4SOIwbetaGB2Given = TRUE;
             break;
+        case  B4SOI_MOD_WAIGBCP2 :
+            mod->B4SOIwaigbcp2 = value->rValue;
+            mod->B4SOIwaigbcp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_WBIGBCP2 :
+            mod->B4SOIwbigbcp2 = value->rValue;
+            mod->B4SOIwbigbcp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_WCIGBCP2 :
+            mod->B4SOIwcigbcp2 = value->rValue;
+            mod->B4SOIwcigbcp2Given = TRUE;
+            break;
         case  B4SOI_MOD_WNDIF :
             mod->B4SOIwndif = value->rValue;
             mod->B4SOIwndifGiven = TRUE;
@@ -2094,10 +2540,18 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIwngate = value->rValue;
             mod->B4SOIwngateGiven = TRUE;
             break;
+        case B4SOI_MOD_WNSD:
+            mod->B4SOIwnsd = value->rValue;
+            mod->B4SOIwnsdGiven = TRUE;
+            break;
         case B4SOI_MOD_WVTH0:
             mod->B4SOIwvth0 = value->rValue;
             mod->B4SOIwvth0Given = TRUE;
             break;
+        case B4SOI_MOD_WVFB:
+            mod->B4SOIwvfb = value->rValue;   
+            mod->B4SOIwvfbGiven = TRUE;   
+            break; /* v4.1 */ 
         case  B4SOI_MOD_WK1:
             mod->B4SOIwk1 = value->rValue;
             mod->B4SOIwk1Given = TRUE;
@@ -2318,6 +2772,28 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIwfbjtii = value->rValue;
             mod->B4SOIwfbjtiiGiven = TRUE;
             break;
+		/*4.1 Iii model*/
+		case  B4SOI_MOD_WEBJTII :
+            mod->B4SOIwebjtii = value->rValue;
+            mod->B4SOIwebjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_WCBJTII :
+            mod->B4SOIwcbjtii = value->rValue;
+            mod->B4SOIwcbjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_WVBCI :
+            mod->B4SOIwvbci = value->rValue;
+            mod->B4SOIwvbciGiven = TRUE;
+            break;
+        case  B4SOI_MOD_WABJTII :
+            mod->B4SOIwabjtii = value->rValue;
+            mod->B4SOIwabjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_WMBJTII :
+            mod->B4SOIwmbjtii = value->rValue;
+            mod->B4SOIwmbjtiiGiven = TRUE;
+            break;
+			
         case  B4SOI_MOD_WBETA0 :
             mod->B4SOIwbeta0 = value->rValue;
             mod->B4SOIwbeta0Given = TRUE;
@@ -2374,6 +2850,56 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIwegidl = value->rValue;
             mod->B4SOIwegidlGiven = TRUE;
             break;
+        case  B4SOI_MOD_WRGIDL :
+            mod->B4SOIwrgidl = value->rValue;
+            mod->B4SOIwrgidlGiven = TRUE;
+            break;
+        case  B4SOI_MOD_WKGIDL :
+            mod->B4SOIwkgidl = value->rValue;
+            mod->B4SOIwkgidlGiven = TRUE;
+            break;
+        case  B4SOI_MOD_WFGIDL :
+            mod->B4SOIwfgidl = value->rValue;
+            mod->B4SOIwfgidlGiven = TRUE;
+            break;
+			
+			
+		case  B4SOI_MOD_WAGISL :
+            mod->B4SOIwagisl = value->rValue;
+            mod->B4SOIwagislGiven = TRUE;
+            break;
+			
+        case  B4SOI_MOD_WBGISL :
+            mod->B4SOIwbgisl = value->rValue;
+            mod->B4SOIwbgislGiven = TRUE;
+            break;
+			
+        case  B4SOI_MOD_WCGISL :
+            mod->B4SOIwcgisl = value->rValue;
+            mod->B4SOIwcgislGiven = TRUE;
+            break;
+			
+        case  B4SOI_MOD_WEGISL :
+            mod->B4SOIwegisl = value->rValue;
+            mod->B4SOIwegislGiven = TRUE;
+            break;
+			
+        case  B4SOI_MOD_WRGISL :
+            mod->B4SOIwrgisl = value->rValue;
+            mod->B4SOIwrgislGiven = TRUE;
+            break;
+			
+        case  B4SOI_MOD_WKGISL :
+            mod->B4SOIwkgisl = value->rValue;
+            mod->B4SOIwkgislGiven = TRUE;
+            break;
+			
+        case  B4SOI_MOD_WFGISL :
+            mod->B4SOIwfgisl = value->rValue;
+            mod->B4SOIwfgislGiven = TRUE;
+            break;
+			
+			
         case  B4SOI_MOD_WNTUNS :   /* v4.0 */
             mod->B4SOIwntun = value->rValue;
             mod->B4SOIwntunGiven = TRUE;
@@ -2538,6 +3064,18 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIpbetaGB2 = value->rValue;
             mod->B4SOIpbetaGB2Given = TRUE;
             break;
+        case  B4SOI_MOD_PAIGBCP2 :
+            mod->B4SOIpaigbcp2 = value->rValue;
+            mod->B4SOIpaigbcp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_PBIGBCP2 :
+            mod->B4SOIpbigbcp2 = value->rValue;
+            mod->B4SOIpbigbcp2Given = TRUE;
+            break;
+        case  B4SOI_MOD_PCIGBCP2 :
+            mod->B4SOIpcigbcp2 = value->rValue;
+            mod->B4SOIpcigbcp2Given = TRUE;
+            break;
         case  B4SOI_MOD_PNDIF :
             mod->B4SOIpndif = value->rValue;
             mod->B4SOIpndifGiven = TRUE;
@@ -2677,10 +3215,18 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIpngate = value->rValue;
             mod->B4SOIpngateGiven = TRUE;
             break;
+        case B4SOI_MOD_PNSD:
+            mod->B4SOIpnsd = value->rValue;
+            mod->B4SOIpnsdGiven = TRUE;
+            break;
         case B4SOI_MOD_PVTH0:
             mod->B4SOIpvth0 = value->rValue;
             mod->B4SOIpvth0Given = TRUE;
             break;
+        case B4SOI_MOD_PVFB:
+            mod->B4SOIpvfb = value->rValue;   
+            mod->B4SOIpvfbGiven = TRUE;   
+            break; /* v4.1 */ 
         case  B4SOI_MOD_PK1:
             mod->B4SOIpk1 = value->rValue;
             mod->B4SOIpk1Given = TRUE;
@@ -2901,6 +3447,27 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIpfbjtii = value->rValue;
             mod->B4SOIpfbjtiiGiven = TRUE;
             break;
+			/*4.1 Iii model*/
+       case  B4SOI_MOD_PEBJTII :
+            mod->B4SOIpebjtii = value->rValue;
+            mod->B4SOIpebjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PCBJTII :
+            mod->B4SOIpcbjtii = value->rValue;
+            mod->B4SOIpcbjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PVBCI :
+            mod->B4SOIpvbci = value->rValue;
+            mod->B4SOIpvbciGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PABJTII :
+            mod->B4SOIpabjtii = value->rValue;
+            mod->B4SOIpabjtiiGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PMBJTII :
+            mod->B4SOIpmbjtii = value->rValue;
+            mod->B4SOIpmbjtiiGiven = TRUE;
+            break;
         case  B4SOI_MOD_PBETA0 :
             mod->B4SOIpbeta0 = value->rValue;
             mod->B4SOIpbeta0Given = TRUE;
@@ -2957,6 +3524,47 @@ B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
             mod->B4SOIpegidl = value->rValue;
             mod->B4SOIpegidlGiven = TRUE;
             break;
+        case  B4SOI_MOD_PRGIDL :
+            mod->B4SOIprgidl = value->rValue;
+            mod->B4SOIprgidlGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PKGIDL :
+            mod->B4SOIpkgidl = value->rValue;
+            mod->B4SOIpkgidlGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PFGIDL :
+            mod->B4SOIpfgidl = value->rValue;
+            mod->B4SOIpfgidlGiven = TRUE;
+            break;
+			
+		case  B4SOI_MOD_PAGISL :
+            mod->B4SOIpagisl = value->rValue;
+            mod->B4SOIpagislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PBGISL :
+            mod->B4SOIpbgisl = value->rValue;
+            mod->B4SOIpbgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PCGISL :
+            mod->B4SOIpcgisl = value->rValue;
+            mod->B4SOIpcgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PEGISL :
+            mod->B4SOIpegisl = value->rValue;
+            mod->B4SOIpegislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PRGISL :
+            mod->B4SOIprgisl = value->rValue;
+            mod->B4SOIprgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PKGISL :
+            mod->B4SOIpkgisl = value->rValue;
+            mod->B4SOIpkgislGiven = TRUE;
+            break;
+        case  B4SOI_MOD_PFGISL :
+            mod->B4SOIpfgisl = value->rValue;
+            mod->B4SOIpfgislGiven = TRUE;
+            break;	
         case  B4SOI_MOD_PNTUNS :	/* v4.0 */
             mod->B4SOIpntun = value->rValue;
             mod->B4SOIpntunGiven = TRUE;

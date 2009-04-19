@@ -1,12 +1,14 @@
-/***  B4SOI 11/30/2005 Xuemei (Jane) Xi Release   ***/
+/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
 
 /**********
- * Copyright 2005 Regents of the University of California.  All rights reserved.
+ * Copyright 2009 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soinoi.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
+ * Authors: 2009- Wenwei Yang, Chung-Hsun Lin, Ali Niknejad, Chenming Hu.
  * File: b4soinoi.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
+ * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  **********/
 
 #include "ngspice.h"
@@ -108,7 +110,7 @@ double T0, T1, T2, T5, T10, T11;
 double Ssi, Swi;
 
 /* v3.2 */
-double npart_theta, npart_beta, igsquare, esat=0.0;
+double npart_theta, npart_beta, igsquare, esat;
 /* v3.2 end */
 double gspr, gdpr;
 
@@ -139,11 +141,10 @@ int i;
     for (; model != NULL; model = model->B4SOInextModel)
     {    for (here = model->B4SOIinstances; here != NULL;
 	      here = here->B4SOInextInstance)
-	 {
+	 {    
 	      if (here->B4SOIowner != ARCHme)
 	              continue;
-	 
-	      pParam = here->pParam;
+              pParam = here->pParam;
 	      switch (operation)
 	      {  case N_OPEN:
 		     /* see if we have to to produce a summary report */
@@ -219,7 +220,9 @@ int i;
                                   }
                               }
                               else
-                              {   T5 = here->B4SOIVgsteff / esat
+                              {  
+				esat = 2.0 * pParam->B4SOIvsattemp / here->B4SOIueff;
+				T5 = here->B4SOIVgsteff / esat
 				     / pParam->B4SOIleff;
 				  T5 *= T5;
 				  npart_beta = model->B4SOIrnoia * (1.0 +
@@ -239,11 +242,11 @@ int i;
                                   }
                                   if ( (*(ckt->CKTstates[0] + here->B4SOIvds))
 					 >= 0.0 )
-                                      gspr = gspr / (1.0 + npart_theta 
+                                      gspr = gspr * (1.0 + npart_theta 
 					   * npart_theta * gspr
                                            / here->B4SOIidovVds);
                                   else
-                                      gdpr = gdpr / (1.0 + npart_theta
+                                      gdpr = gdpr * (1.0 + npart_theta
 					   * npart_theta * gdpr
                                            / here->B4SOIidovVds);
                               }
@@ -305,8 +308,8 @@ int i;
 			 	 NevalSrc(&noizDens[B4SOIRBODYNOIZ],
                                       &lnNdens[B4SOIRBODYNOIZ], ckt, THERMNOISE,
                                       here->B4SOIbNode, here->B4SOIpNode,
-                                      1/ here->B4SOIrbodyext + 
-				      1/ pParam->B4SOIrbody);
+                                      1/ (here->B4SOIrbodyext + 
+				       pParam->B4SOIrbody));
 			      }
                               else
                               {    noizDens[B4SOIRBODYNOIZ] = 0.0;
