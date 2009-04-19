@@ -1,9 +1,9 @@
-*BSIMSOI4.0 example modelcard
-.Model P1 PMOS Level= 58
+*BSIMSOI4.1 example modelcard
+.Model P1 PMOS Level= 10
 
-+MOBMOD  = 2             SHMOD    = 1           CAPMOD   = 2
-+SOIMOD  = 0		 IGBMOD	  = 1 		IGCMOD	 = 1
-+RDSMOD  = 0
++MOBMOD  = 2             SHMOD     =  0         CAPMOD   = 2
++SOIMOD  = 0		 IGBMOD	   =  1         IGCMOD   = 1
++RDSMOD  = 0             VGSTCVMOD =  1
 
 +TNOM    = 25            TOX      = 3e-9        TOXM 	 = 3e-9
 +TBOX	 = 4e-7		 TSI 	  = 41e-9	VTH0     = -0.15
@@ -47,8 +47,8 @@
 +NTUND   = 2.05          IDDIF    = 1.5e-4       IDREC    = 1.8e-2
 +ISTUN   = 1.7e-5        VREC0   = 1.6          VTUN0   = 1.40
 +IDTUN   = 1.7e-5        VREC0D   = 1.6          VTUN0D   = 1.40
-+ISBJT   = .13           LBJT0    = 1e-8         VABJT    = -0.9
-+IDBJT	 = .13		 AHLID	  = 0.7E-09
++ISBJT   = 1e-6           LBJT0    = 1e-8         VABJT    = -0.9
++IDBJT	 = 1e-6		 AHLID	  = 0.7E-09
 +AELY    = 2E+07         AHLI    = 0.7E-09      NBJT     = .9      
 +FBJTII  = 0             LN       = .00001    
 +NTRECF  = .05           NTRECR   = 0.03         XDIF     = 1.00

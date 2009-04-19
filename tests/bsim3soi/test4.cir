@@ -1,4 +1,5 @@
 ** NMOSFET: Benchmarking of B4SOI Id-Vg stress effect by Jane Xi 05/09/2003.
+* Modified by Darsen Lu 03/11/2009
 
 .option post nopage brief noacct
 .option ingold=1
@@ -13,7 +14,7 @@ vs s 0 		0.0
 vp p 0 		0.0
 
 .dc vg 0 1.2 0.02 vd 0.05 1.2 0.5 
-.include ./nmos4p0.mod
+.include ./nmos4p1.mod
 .print dc i(vd)
 .end
 

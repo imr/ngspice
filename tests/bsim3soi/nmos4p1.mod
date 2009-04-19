@@ -1,9 +1,9 @@
-* BSIMSOI4.0 example modelcard
-.Model N1 NMOS Level= 58 
+* BSIMSOI4.1 example modelcard
+.Model N1 NMOS Level= 10 
 
-+MOBMOD  = 2             SHMOD    =  1           CAPMOD   = 2
++MOBMOD  = 2             SHMOD    =  0          CAPMOD   = 2
 +SOIMOD  = 0		 IGBMOD   =  1		 IGCMOD   = 1
-+RDSMOD  = 0
++RDSMOD  = 0             VGSTCVMOD=  1
 
 +TNOM    = 25            TOX      = 3.e-9     	 TSI      = 41e-9
 +TBOX	 = 100e-9	 TOXM 	  = 3.e-9	 VTH0	  = 0.29
@@ -46,8 +46,8 @@
 +NTUND   = 25            IDDIF    = 2e-6         IDREC    = 13
 +ISTUN   = 1e-5          VREC0   = 2.8          VTUN0   = 1      
 +IDTUN   = 1e-5          VREC0D   = 2.8          VTUN0D   = 1      
-+IDBJT   = 1e-5		 AHLID    = 1.5e-10
-+ISBJT   = 4e-3          LBJT0    = 8e-8         VABJT    = -0.4
++IDBJT   = 1e-6		 AHLID    = 1.5e-10
++ISBJT   = 1e-6          LBJT0    = 8e-8         VABJT    = -0.4
 +AELY    = 5.5e7         AHLI    = 1.5e-10      NBJT     = .6
 +FBJTII  = 0.06          LN       = .00001    
 +NTRECF  = 0.60          NTRECR   = 1.2          XDIF     = 1.15
@@ -77,6 +77,7 @@
 
 +AIGC	 = 0.043  	 BIGC 	  = 0.0054	 CIGC 	  = 0.0075 
 +AIGSD 	 = 0.043	 BIGSD	  = 0.0054	 CIGSD    = 0.0075 
++AIGBCP2 = 0.043         BIGBCP2  = 0.054        CIGBCP2  = 0.0075
 +DLCIG   = 2e-8		 NIGC     = 1	   	 PIGCD    = 1.0
 +POXEDGE = 1
 
