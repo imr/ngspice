@@ -243,6 +243,10 @@ install: install-libLTLIBRARIES install-tcl-recursive install-tclspice install-d
 EXTRA_DIST += tclspice.c
 initdata_DATA += tclspinit
 
+if TCLWIN
+LIBS += -lpsapi  -ltcl84 -lBLT24.dll
+endif
+
 libspice_la_SOURCES =
 libspice_la_LIBADD = ngspice.lo conf.lo \
 	spice.lo \
@@ -269,8 +273,9 @@ libspice_la_LIBADD = ngspice.lo conf.lo \
 	tclspice.lo $(LIBS) 
 libspice_la_CFLAGS = $(AM_CFLAGS)
 libspice_la_LDFLAGS =  -shared -Wl,--version-script=tclspice.map 
-if WINDOWS
+if TCLWIN
 libspice_la_LDFLAGS +=  -no-undefined
+libspice_la_LDFLAGS += --def spice.def @TCL_LIB_SPEC@
 endif
 
 CLEANFILES = pkgIndex.tcl libspice.so

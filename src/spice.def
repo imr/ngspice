@@ -1,0 +1,5 @@
+LIBRARY	spice
+DESCRIPTION "tclspice"
+EXPORTS
+	_Spice_Init
+	
