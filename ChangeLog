@@ -1,3 +1,8 @@
+2009-04-20 Holger Vogt
+ * src/spice.def: for creating dll
+ * src/makefile.am: libs for tclspice MINGW added
+ * configure.in: automatically select building shared or static libraries
+
 2009-04-18 Dietmar Warning
  * devices/bsim3soi/*.c, *.h, tests/bsim3soi/*.cir, *.out, *.mod, DEVICES: 
    Update to actual version 4.1, contrary to the comment in Berkeley doc's the model
