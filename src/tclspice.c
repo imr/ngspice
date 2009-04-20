@@ -73,13 +73,18 @@ typedef pthread_t threadId_t;
 	    #define  srandom(a) srand(a) /* srandom */
 	#endif
 #elif defined(_MSC_VER)
-    #include <stdarg.h>
-    /* remove type incompatibility with winnt.h*/
-    #undef BOOLEAN
-    #include <windows.h> /* Sleep */
+   #include <stdarg.h>
+   /* remove type incompatibility with winnt.h*/
+   #undef BOOLEAN
+   #include <windows.h> /* Sleep */
 	#ifndef srandom
 	    #define  srandom(a) srand(a) /* srandom */
 	#endif
+   #include <process.h> /* _getpid */
+   #define dup _dup
+   #define dup2 _dup2
+   #define open _open
+   #define close _close
 #else
     #include <unistd.h> /* usleep */
 #endif /* __MINGW32__ */
@@ -149,8 +154,9 @@ extern JMP_BUF jbuf;
 extern IFfrontEnd nutmeginfo;
 
 extern struct comm spcp_coms[ ];
- 
+extern void DevInit(); 
 extern int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
+extern wordlist * cp_varwl(struct variable *var);
 
 /*For blt spice to use*/
 typedef struct {
@@ -619,7 +625,7 @@ static void * _thread_run(void *string){
   FREE(string);
   bgtid = (threadId_t)0;
   fl_exited = TRUE;
-  return;
+  return NULL;
 }
 
 /*Stops a running thread, hopefully */
@@ -2166,7 +2172,6 @@ int Spice_Init(Tcl_Interp *interp) {
 #endif
 
   {
-    extern void DevInit();
     int i;
     char *key;
     Tcl_CmdInfo infoPtr;
