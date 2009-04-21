@@ -27,11 +27,7 @@
 #include "suffix.h"
 
 int
-BSIM4mAsk(ckt,inst,which,value)
-CKTcircuit *ckt;
-GENmodel *inst;
-int which;
-IFvalue *value;
+BSIM4mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
     BSIM4model *model = (BSIM4model *)inst;
     switch(which) 

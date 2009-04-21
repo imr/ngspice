@@ -18,10 +18,7 @@
 
 
 int
-BSIM4trunc(inModel,ckt,timeStep)
-GENmodel *inModel;
-CKTcircuit *ckt;
-double *timeStep;
+BSIM4trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
 BSIM4model *model = (BSIM4model*)inModel;
 BSIM4instance *here;

@@ -29,10 +29,7 @@
 #include "suffix.h"
 
 int
-BSIM4checkModel(model, here, ckt)
-BSIM4model *model;
-BSIM4instance *here;
-CKTcircuit *ckt;
+BSIM4checkModel(BSIM4model *model, BSIM4instance *here, CKTcircuit *ckt)
 {
 struct bsim4SizeDependParam *pParam;
 int Fatal_Flag = 0;

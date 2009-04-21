@@ -16,10 +16,7 @@
 #include "suffix.h"
 
 int
-BSIM4mDelete(inModel,modname,kill)
-GENmodel **inModel;
-IFuid modname;
-GENmodel *kill;
+BSIM4mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
 BSIM4model **model = (BSIM4model**)inModel;
 BSIM4model *modfast = (BSIM4model*)kill;

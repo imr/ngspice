@@ -22,11 +22,7 @@
 #include "fteext.h"
 
 int
-BSIM4param(param,value,inst,select)
-int param;
-IFvalue *value;
-GENinstance *inst;
-IFvalue *select;
+BSIM4param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     double scale;
 

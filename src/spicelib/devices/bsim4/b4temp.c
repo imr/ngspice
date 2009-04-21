@@ -56,9 +56,7 @@ int
 BSIM4RdseffGeo(double, int, int, int, double, double, double, double, double, int, double *);
 
 int
-BSIM4DioIjthVjmEval(Nvtm, Ijth, Isb, XExpBV, Vjm)
-double Nvtm, Ijth, Isb, XExpBV;
-double *Vjm;
+BSIM4DioIjthVjmEval(double Nvtm, double Ijth, double Isb, double XExpBV, double *Vjm)
 {
 double Tb, Tc, EVjmovNv;
 
@@ -72,9 +70,7 @@ return 0;
 
 
 int
-BSIM4temp(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM4temp(GENmodel *inModel, CKTcircuit *ckt)
 {
 BSIM4model *model = (BSIM4model*) inModel;
 BSIM4instance *here;

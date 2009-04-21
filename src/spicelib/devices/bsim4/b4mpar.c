@@ -28,10 +28,7 @@
 #include "const.h"
 
 int
-BSIM4mParam(param,value,inMod)
-int param;
-IFvalue *value;
-GENmodel *inMod;
+BSIM4mParam(int param, IFvalue *value, GENmodel *inMod)
 {
     BSIM4model *mod = (BSIM4model*)inMod;
     switch(param)

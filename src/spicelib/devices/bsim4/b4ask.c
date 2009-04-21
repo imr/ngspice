@@ -23,12 +23,7 @@
 #include "suffix.h"
 
 int
-BSIM4ask(ckt,inst,which,value,select)
-CKTcircuit *ckt;
-GENinstance *inst;
-int which;
-IFvalue *value;
-IFvalue *select;
+BSIM4ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
 BSIM4instance *here = (BSIM4instance*)inst;
 
