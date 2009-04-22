@@ -1,3 +1,6 @@
+2009-04-21 Dietmar Warning
+ * devices/bsim4/*.c, /vbic/*.c: Parameter declaration in function header
+ 
 2009-04-20 Holger Vogt
  * src/spice.def: for creating dll
  * src/makefile.am: libs for tclspice MINGW added
