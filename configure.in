@@ -999,6 +999,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/Makefile
                  src/spicelib/analysis/Makefile
                  src/spicelib/devices/Makefile
+                 ${VLAMKF}
                  src/spicelib/devices/asrc/Makefile
                  src/spicelib/devices/bjt/Makefile
                  src/spicelib/devices/bjt2/Makefile
