@@ -18,6 +18,19 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 #include "sperror.h"
 #include "devdefs.h"
 
+int vbic_4T_it_cf_fj(double *,
+    double *,double *,double *,double *,double *,double *,
+    double *,double *,double *,double *,double *,double *, double *,
+    double *,double *,double *,double *,double *,double *, double *,
+    double *,double *,double *,double *,double *,double *, double *,
+    double *,double *,double *,double *,double *,double *, double *,
+    double *,double *,double *,double *,double *,double *, double *,
+    double *,double *,double *,double *,double *,double *, double *,
+    double *,double *,double *,double *,double *,double *, double *,
+    double *,double *,double *,double *,double *,double *, double *,
+    double *,double *,double *,double *,double *,double *, double *,
+    double *,double *,double *,double *,double *,double *);
+
 int
 VBICload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the 
@@ -39,18 +52,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     ,Qbco,Qbco_Vbc,Ibcp,Ibcp_Vbcp,Iccp,Iccp_Vbep,Iccp_Vbci
     ,Iccp_Vbcp,Irs,Irs_Vrs,Qbcp,Qbcp_Vbcp,SCALE;
     int iret;
-    int vbic_4T_it_cf_fj(double *
-        ,double *,double *,double *,double *,double *,double *
-        ,double *,double *,double *,double *,double *,double *, double *
-        ,double *,double *,double *,double *,double *,double *, double *
-        ,double *,double *,double *,double *,double *,double *, double *
-        ,double *,double *,double *,double *,double *,double *, double *
-        ,double *,double *,double *,double *,double *,double *, double *
-        ,double *,double *,double *,double *,double *,double *, double *
-        ,double *,double *,double *,double *,double *,double *, double *
-        ,double *,double *,double *,double *,double *,double *, double *
-        ,double *,double *,double *,double *,double *,double *, double *
-        ,double *,double *,double *,double *,double *,double *);
     double vce, xfact;
     double vt;
     double delvbei;

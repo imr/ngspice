@@ -16,6 +16,9 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 
 
 /* ARGSUSED */
+
+int iret, vbic_4T_it_cf_t(double *, double *, double *);
+
 int
 VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* Pre-compute many useful parameters
@@ -24,7 +27,6 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
     VBICmodel *model = (VBICmodel *)inModel;
     VBICinstance *here;
     double p[108], pnom[108], TAMB;
-    int iret, vbic_4T_it_cf_t(double *, double *, double *);
     double vt;
 
     /*  loop through all the bipolar models */
