@@ -28,6 +28,7 @@ Todo:
 #include "ngspice.h"
 
 extern void txfree (void *ptr);
+extern void winmessage(char* new_msg);
 
 char *nupa_inst_name;
 static tdico *inst_dico;
@@ -664,6 +665,7 @@ nupa_copy (char *s, int linenum)
   if (t == NULL)
   {
     fputs ("Fatal: String malloc crash in nupa_copy()\n", stderr);
+    winmessage("Fatal error in SPICE");
     exit (-1);
   }
   else

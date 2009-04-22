@@ -18,6 +18,8 @@
 
 #include "general.h"
 
+extern void winmessage(char* new_msg);
+
 #define Getmax(s,ls)  (((unsigned char)(s[ls+1])) << 8) + (unsigned char)(s[ls+2])
 
 /***** primitive input-output ***/

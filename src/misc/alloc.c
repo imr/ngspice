@@ -22,6 +22,7 @@ $Id$
 extern HANDLE outheap;
 #endif
 #endif
+extern void winmessage(char* new_msg);
 
 /* Malloc num bytes and initialize to zero. Fatal error if the space can't
  * be tmalloc'd.   Return NULL for a request for 0 bytes.
