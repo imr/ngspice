@@ -20,9 +20,10 @@ $Id$
 #undef BOOLEAN
 #include <windows.h>
 extern HANDLE outheap;
-#endif
-#endif
 extern void winmessage(char* new_msg);
+#endif
+#endif
+
 
 /* Malloc num bytes and initialize to zero. Fatal error if the space can't
  * be tmalloc'd.   Return NULL for a request for 0 bytes.
@@ -52,7 +53,9 @@ tmalloc(size_t num)
 #endif
     if (!s){
       fprintf(stderr,"malloc: Internal Error: can't allocate %ld bytes. \n",(long)num);
+#ifdef HAS_WINDOWS
       winmessage("Fatal error in SPICE");
+#endif
       exit(EXIT_BAD);
     }
     return(s);
@@ -136,7 +139,9 @@ trealloc(void *ptr, size_t num)
   }
   if (!s) {
     fprintf(stderr,"realloc: Internal Error: can't allocate %ld bytes.\n", (long)num);
+#ifdef HAS_WINDOWS
     winmessage("Fatal error in SPICE");
+#endif
     exit(EXIT_BAD);
   }
   return(s);
