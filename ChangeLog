@@ -1,3 +1,7 @@
+2009-04-22 Holger Vogt
+ * inpcom.c measure.c mystring.c alloc.c: show Windows error 
+   message before exiting
+
 2009-04-21 Dietmar Warning
  * devices/bsim4/*.c, /vbic/*.c: Parameter declaration in function header
  

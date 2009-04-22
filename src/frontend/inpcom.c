@@ -1371,6 +1371,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
             if ( ciprefix(".lib", buffer) ) {
                if ( found_lib_name == TRUE ) {
                   fprintf( stderr, "ERROR: .lib is missing .endl!\n" );
+                  winmessage("Fatal error in SPICE");
                   exit(-1);
                }
 
@@ -2475,6 +2476,7 @@ inp_expand_macro_in_str( char *str )
 	  }
 	  if ( close_paren_ptr == NULL ) {
 	    fprintf( stderr, "ERROR: did not find closing parenthesis for function call in str: %s\n", orig_str );
+	    winmessage("Fatal error in SPICE");
 	    exit( -1 );
 	  }
 	  *close_paren_ptr = '\0';
@@ -2502,6 +2504,7 @@ inp_expand_macro_in_str( char *str )
 	  
 	  if ( num_parameters[i] != num_params ) {
 	    fprintf( stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_ptr );
+	    winmessage("Fatal error in SPICE");
 	    exit( -1 );
 	  }
 
@@ -2818,6 +2821,7 @@ get_param_name( char *line )
   else
     {
       fprintf( stderr, "ERROR: could not find '=' on parameter line '%s'!\n", line );
+      winmessage("Fatal error in SPICE");
       exit(-1);
     }
   return name;
@@ -2853,6 +2857,7 @@ inp_get_param_level( int param_num, char ***depends_on, char **param_names, char
       if ( index2 > total_params )
 	{
 	  fprintf( stderr, "ERROR: unable to find dependency parameter for %s!\n", param_names[param_num] );
+	  winmessage("Fatal error in SPICE");
 	  exit( -1 );
 	}
       temp_level = inp_get_param_level( index2, depends_on, param_names, param_strs, total_params, level );
@@ -3132,6 +3137,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
   if ( ind != num_params )
     {
       fprintf( stderr, "ERROR: found wrong number of parameters during levelization ( %d instead of %d parameter s)!\n", ind, num_params );
+      winmessage("Fatal error in SPICE");
       exit(-1);
     }
 

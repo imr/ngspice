@@ -591,6 +591,7 @@ do_measure( char *what, bool chk_only ) {
     // see if number of measurements exceeds fixed array size of 20,000
     if ( index >= 20000 ) {
       fprintf( stderr, "ERROR: number of measurements exceeds 20,000!\nAborting...\n" );
+      winmessage("Fatal error in SPICE");
       exit(-1);
     }
   }

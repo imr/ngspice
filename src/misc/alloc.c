@@ -51,6 +51,7 @@ tmalloc(size_t num)
 #endif
     if (!s){
       fprintf(stderr,"malloc: Internal Error: can't allocate %ld bytes. \n",(long)num);
+      winmessage("Fatal error in SPICE");
       exit(EXIT_BAD);
     }
     return(s);
@@ -134,6 +135,7 @@ trealloc(void *ptr, size_t num)
   }
   if (!s) {
     fprintf(stderr,"realloc: Internal Error: can't allocate %ld bytes.\n", (long)num);
+    winmessage("Fatal error in SPICE");
     exit(EXIT_BAD);
   }
   return(s);
@@ -175,6 +177,7 @@ hrealloc(void *ptr, size_t num)
   }
   if (!s) {
     fprintf(stderr,"HeapReAlloc: Internal Error: can't allocate %ld bytes.\n", (long)num);
+    winmessage("Fatal error in SPICE");
     exit(EXIT_BAD);
   }
   return(s);

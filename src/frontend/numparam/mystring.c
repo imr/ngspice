@@ -73,7 +73,7 @@ rs (char *s)
 {				/*basic line input, limit= 80 chars */
   int max, i;
   char c;
-  exit (-1);
+/*  exit (-1); */
   max = maxlen (s);
   i = 0;
   sini (s, max);
@@ -137,6 +137,7 @@ stringbug (char *op, char *s, char *t, char c)
     fprintf (stderr, "{%c}\n", c);
 
   fprintf (stderr, "Aborting...\n");
+  winmessage("Fatal error in SPICE");
   exit (1);
 
 /* The code below cannot be reached */
@@ -770,6 +771,7 @@ new (long sz)
       if (p == NULL)
 	{			/* fatal error */
 	  ws (" new() failure. Program halted.\n");
+	  winmessage("Fatal error in SPICE");
 	  exit (1);
 	}
       return p;
