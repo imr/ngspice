@@ -344,6 +344,7 @@ static char*
 get_vector_name( char **line ) {
   char *token, *name;
 
+//  token = name = gettok(line);
   token = name = gettok_paren(line);
 
 //  *(name + strlen(name) - 1) = '\0';
@@ -366,6 +367,9 @@ do_delay_measurement( char *resname, char *out_line, char *line, char *o_line, i
 
   trig_type = *line; line += 2;           /* skip over vector type and open paren */
   trig_name = get_vector_name( &line );
+  while(*line && !(*line == ')')) line++; /* find ')' */
+  line++; /* move on beyond ')' */
+
   if ( trig_type != 'v' && trig_type != 'i' ) {
     if ( just_chk_meas != TRUE ) {
       fprintf( cp_err, "Error: unexpected vector type '%c' for .meas!\n", trig_type );
@@ -404,6 +408,9 @@ do_delay_measurement( char *resname, char *out_line, char *line, char *o_line, i
 
   targ_type = *line; line += 2;           /* skip over vector type and open paren */
   targ_name = get_vector_name( &line );
+  while(*line && !(*line == ')')) line++; /* find ')' */
+  line++; /* move on beyond ')' */
+
   if ( targ_type != 'v' && targ_type != 'i' ) {
     if ( just_chk_meas != TRUE ) {
       fprintf( cp_err, "Error: unexpected vector type '%c' for .meas!\n", targ_type );
@@ -458,6 +465,9 @@ do_other_measurement( char *resname, char *out_line, char *meas_type, char *line
 
    vec_type = *line; line += 2;           /* skip over vector type and open paren */
    vec_name = get_vector_name( &line );
+   while(*line && !(*line == ')')) line++; /* find ')' */
+   line++; /* move on beyond ')' */
+      
    if ( vec_type != 'v' && vec_type != 'i' ) {
       if ( just_chk_meas != TRUE ) {
          fprintf( cp_err, "Error: unexpected vector type '%c' for .meas!\n", vec_type );

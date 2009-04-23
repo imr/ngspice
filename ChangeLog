@@ -1,3 +1,6 @@
+2009-04-23 Holger Vogt
+ * measure.c: .measure broken for trig, targ
+
 2009-04-22 Holger Vogt
  * bsim4v2init.c, bsim4v3init.c: CIDER added
    
