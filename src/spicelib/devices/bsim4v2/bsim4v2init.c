@@ -67,7 +67,10 @@ SPICEdev BSIM4v2info = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,
  /* DEVnoise      */ BSIM4v2noise,
-                    
+#ifdef CIDER
+    NULL,          /* DEVdump        */
+    NULL,          /* DEVacct        */
+#endif                    
  /* DEVinstSize   */ &BSIM4v2iSize,
  /* DEVmodSize    */ &BSIM4v2mSize
 };

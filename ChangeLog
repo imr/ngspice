@@ -1,4 +1,7 @@
 2009-04-22 Holger Vogt
+ * bsim4v2init.c, bsim4v3init.c: CIDER added
+   
+2009-04-22 Holger Vogt
  * inpcom.c measure.c mystring.c alloc.c: show Windows error 
    message before exiting
 
