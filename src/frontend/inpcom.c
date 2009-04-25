@@ -74,6 +74,8 @@ Author: 1985 Wayne A. Christopher
    manipulations into debug-out.txt */
 /* #define OUTDECK */
 
+extern void winmessage(char* new_msg);
+
 /* globals -- wanted to avoid complicating inp_readall interface */
 static char *library_file[1000];
 static char *library_name[1000][1000];

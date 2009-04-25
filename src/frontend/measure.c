@@ -8,6 +8,8 @@
 #include "numparam/numpaif.h"
 #include "missing_math.h"
 
+extern void winmessage(char* new_msg);
+
 static bool measure_valid[20000];
 static bool just_chk_meas;
 static bool measures_passed;
