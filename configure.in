@@ -678,7 +678,7 @@ else
   dprefix=$prefix
 fi
 AC_DEFINE_UNQUOTED(NGSPICEBINDIR,"`echo $dprefix/bin`",[Define the directory for executables])
-AC_DEFINE_UNQUOTED(NGSPICEDATADIR,"`echo $dprefix/share/ng-spice-rework`",[Define the directory for architecture independent data files])
+AC_DEFINE_UNQUOTED(NGSPICEDATADIR,"`echo $dprefix/share/ngspice`",[Define the directory for architecture independent data files])
 AC_DEFINE_UNQUOTED(NGSPICEBUILDDATE,"`date`",[Define the build date])
 
 if test "$with_windows" = "yes"; then
