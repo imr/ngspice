@@ -448,7 +448,7 @@
 #define NGSPICEBUILDDATE "Tue Sep 23 22:09:55 GMT 2008"
 
 /* Define the directory for architecture independent data files */
-#define NGSPICEDATADIR "C:/Spice/share/ng-spice-rework"
+#define NGSPICEDATADIR "C:/Spice/share/ngspice"
 
 /* Define if we want NOBYPASS */
 /* #undef NOBYPASS */
