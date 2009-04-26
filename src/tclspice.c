@@ -27,7 +27,7 @@
 /*              Header files for C functions                          */
 /**********************************************************************/
 
-#include <ngspice.h>
+#include "ngspice.h"
 #include <tcl.h>
 
 /*Use Tcl threads if on W32 without pthreads*/
@@ -60,9 +60,6 @@ typedef pthread_t threadId_t;
 
 /* Copied from main.c in ngspice*/
 #include <stdio.h>
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif /* HAVE_STRING_H */
 #if defined(__MINGW32__)
     #include <stdarg.h>
     /* remove type incompatibility with winnt.h*/

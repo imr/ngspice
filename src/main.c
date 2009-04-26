@@ -21,10 +21,6 @@ extern long int random (void);
 extern void srandom (unsigned int seed);
 #endif
 
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif /* HAVE_STRING_H */
-
 #include <setjmp.h>
 #include <signal.h>
 #include <sys/types.h>

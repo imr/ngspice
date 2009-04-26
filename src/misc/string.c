@@ -6,13 +6,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  * String functions
  */
 
-#include <config.h>
-#include <stdio.h>
-
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-
 #include "ngspice.h"
 #include "stringutil.h"
 
