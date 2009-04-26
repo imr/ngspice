@@ -1,5 +1,8 @@
+2009-04-26 Holger Vogt
+
+
 2009-04-25 Holger Vogt
- * configure.in: NGSPICEDATADIR set to $dprefix/share/ngspice
+ * configure.in, visualc/include/config.h: NGSPICEDATADIR set to $dprefix/share/ngspice
 
 2009-04-23 Holger Vogt
  * measure.c, inpcom.c, : winmessage() header added

@@ -397,7 +397,12 @@ define (tdico * dico,
       {
          scopy (v, t);
          sadd (v, ": cannot redefine");
-         err = message (dico, v);
+         /* suppress error message, resulting from multiple definition of
+         symbols (devices) in .model lines with same name, but in different subcircuits.
+         Subcircuit expansion is o.k., we have to deal with this numparam
+         behaviour later. (H. Vogt 090426) 
+         */
+         /*err = message (dico, v);*/
       }
    }
    Strrem(v);
