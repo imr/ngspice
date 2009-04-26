@@ -1,6 +1,8 @@
 2009-04-26 Dietmar Warning
  * measure.c, inpcom.c: winmessage only for windows
  * misc/util.c, tilde.c, math/poly/ployfit.c: relay to ngspice.h
+ * main.c, tclspice.c, misc/mktemp.c, misc/string.c: don't need include string.h because
+   it comes from central place ngspice.h
 
 2009-04-26 Holger Vogt
  * xpressn.c:400 Suppress message "cannot redefine"
