@@ -1,3 +1,7 @@
+2009-04-26 Dietmar Warning
+ * measure.c, inpcom.c: winmessage only for windows
+ * misc/util.c, tilde.c, math/poly/ployfit.c: relay to ngspice.h
+
 2009-04-26 Holger Vogt
  * xpressn.c:400 Suppress message "cannot redefine"
 
