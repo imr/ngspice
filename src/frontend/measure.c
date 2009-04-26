@@ -8,7 +8,9 @@
 #include "numparam/numpaif.h"
 #include "missing_math.h"
 
-extern void winmessage(char* new_msg);
+#ifdef HAS_WINDOWS
+void winmessage(char* new_msg);
+#endif
 
 static bool measure_valid[20000];
 static bool just_chk_meas;
@@ -603,7 +605,9 @@ do_measure( char *what, bool chk_only ) {
     // see if number of measurements exceeds fixed array size of 20,000
     if ( index >= 20000 ) {
       fprintf( stderr, "ERROR: number of measurements exceeds 20,000!\nAborting...\n" );
+#ifdef HAS_WINDOWS
       winmessage("Fatal error in SPICE");
+#endif
       exit(-1);
     }
   }

@@ -74,7 +74,9 @@ Author: 1985 Wayne A. Christopher
    manipulations into debug-out.txt */
 /* #define OUTDECK */
 
-extern void winmessage(char* new_msg);
+#ifdef HAS_WINDOWS
+void winmessage(char* new_msg);
+#endif
 
 /* globals -- wanted to avoid complicating inp_readall interface */
 static char *library_file[1000];
@@ -1373,7 +1375,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
             if ( ciprefix(".lib", buffer) ) {
                if ( found_lib_name == TRUE ) {
                   fprintf( stderr, "ERROR: .lib is missing .endl!\n" );
+#ifdef HAS_WINDOWS
                   winmessage("Fatal error in SPICE");
+#endif
                   exit(-1);
                }
 
@@ -2478,7 +2482,9 @@ inp_expand_macro_in_str( char *str )
 	  }
 	  if ( close_paren_ptr == NULL ) {
 	    fprintf( stderr, "ERROR: did not find closing parenthesis for function call in str: %s\n", orig_str );
+#ifdef HAS_WINDOWS
 	    winmessage("Fatal error in SPICE");
+#endif
 	    exit( -1 );
 	  }
 	  *close_paren_ptr = '\0';
@@ -2506,7 +2512,9 @@ inp_expand_macro_in_str( char *str )
 	  
 	  if ( num_parameters[i] != num_params ) {
 	    fprintf( stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_ptr );
+#ifdef HAS_WINDOWS
 	    winmessage("Fatal error in SPICE");
+#endif
 	    exit( -1 );
 	  }
 
@@ -2823,7 +2831,9 @@ get_param_name( char *line )
   else
     {
       fprintf( stderr, "ERROR: could not find '=' on parameter line '%s'!\n", line );
+#ifdef HAS_WINDOWS
       winmessage("Fatal error in SPICE");
+#endif
       exit(-1);
     }
   return name;
@@ -2859,7 +2869,9 @@ inp_get_param_level( int param_num, char ***depends_on, char **param_names, char
       if ( index2 > total_params )
 	{
 	  fprintf( stderr, "ERROR: unable to find dependency parameter for %s!\n", param_names[param_num] );
+#ifdef HAS_WINDOWS
 	  winmessage("Fatal error in SPICE");
+#endif
 	  exit( -1 );
 	}
       temp_level = inp_get_param_level( index2, depends_on, param_names, param_strs, total_params, level );
@@ -3139,7 +3151,9 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
   if ( ind != num_params )
     {
       fprintf( stderr, "ERROR: found wrong number of parameters during levelization ( %d instead of %d parameter s)!\n", ind, num_params );
+#ifdef HAS_WINDOWS
       winmessage("Fatal error in SPICE");
+#endif
       exit(-1);
     }
 
