@@ -1,9 +1,5 @@
-#include <config.h>
-#include <math.h>
+#include "ngspice.h"
 
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
 #include "polyfit.h"
 #include "polyeval.h"
 

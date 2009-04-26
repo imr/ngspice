@@ -3,10 +3,6 @@
  * 2002 R. Oktas, <roktas@omu.edu.tr>
  ************/
 
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-
 #include "ngspice.h"
 #include "util.h"
 

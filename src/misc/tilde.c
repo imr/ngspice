@@ -3,11 +3,6 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 Modified: 2002 R. Oktas, <roktas@omu.edu.tr>
 **********/
 
-#include <config.h>
-#include <stdio.h> 
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
 #include "ngspice.h"
 #include "tilde.h"
 
