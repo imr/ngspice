@@ -1,5 +1,5 @@
 2009-04-26 Holger Vogt
-
+ * xpressn.c:400 Suppress message "cannot redefine"
 
 2009-04-25 Holger Vogt
  * configure.in, visualc/include/config.h: NGSPICEDATADIR set to $dprefix/share/ngspice
