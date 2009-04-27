@@ -21,6 +21,9 @@
 #ifdef HAVE_LIMITS_H
 #  include <limits.h>
 #endif
+#ifdef HAVE_FLOAT_H
+#  include <float.h>
+#endif
 
 #include "memory.h"
 #include "defines.h"
@@ -144,14 +147,22 @@ struct timeb timebegin;
 #endif
 
 #if defined (_MSC_VER)
+#include <direct.h>
+#include <process.h>
 #define strdup _strdup
 #define unlink _unlink
 #define fileno _fileno
 #define getcwd _getcwd
+#define chdir _chdir
 #define isnan _isnan
 #define finite _finite
 #define scalb _scalb
+#define logb _logb
 #define getpid _getpid
+#define access _access
+#define dup2 _dup2
+#define open _open
+#define write _write
 #endif
 
 #ifndef HAVE_RANDOM
