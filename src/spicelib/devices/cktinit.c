@@ -23,7 +23,6 @@ Modifed: 2000 AlansFixes
 int
 CKTinit(void **ckt)		/* new circuit to create */
 {
-    extern void load_alldevs(void);
     int i;
     CKTcircuit *sckt;
     *ckt = (void *) tmalloc(sizeof(CKTcircuit));
