@@ -1,4 +1,8 @@
 2009-04-26 Dietmar Warning
+ * devices/cktinit.c: prototype load_alldevs not needed
+ * ngspice.h: float.h before defines.h, some more function mapping in _MSC_VER section
+
+2009-04-26 Dietmar Warning
  * measure.c, inpcom.c: winmessage only for windows
  * misc/util.c, tilde.c, math/poly/ployfit.c: relay to ngspice.h
  * main.c, tclspice.c, misc/mktemp.c, misc/string.c: don't need include string.h because
