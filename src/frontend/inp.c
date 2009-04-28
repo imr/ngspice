@@ -58,6 +58,9 @@ static bool doedit(char *filename);
 
 void line_free_x(struct line * deck, bool recurse);
 
+#ifdef HAS_WINDOWS
+void SetAnalyse( char * Analyse, int Percent);
+#endif
 
 /* uncomment this line for getting deck output after all
    manipulations into debug-out2.txt.
@@ -504,7 +507,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       if (deck->li_next) {
             /* There is something left after the controls. */
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
-
+#ifdef HAS_WINDOWS
+            SetAnalyse( "Circuit", 0);
+#endif
 	    /* Old location of ENHtranslate_poly.  This didn't work, because it
 	     * didn't handle models in .SUBCKTs correctly.  Moved to new location below
 	     * by SDB on 4.13.2003

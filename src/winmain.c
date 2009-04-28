@@ -200,10 +200,13 @@ void SetSource( char * Name)
 static int OldPercent = -2;
 void SetAnalyse( char * Analyse, int Percent)
 {
-	char s[128];
+   static int OldPercent = -2;
+   static char Olds[128];
+   char s[128];
 
-	if (Percent == OldPercent) return;
+	if ((Percent == OldPercent) && !strcmp(Olds, Analyse)) return;
    OldPercent = Percent;
+   strncpy(Olds, Analyse, 127);
 	if (hwAnalyse) {
 		if (Percent < 0)
 			sprintf( s, "--ready--");
@@ -211,7 +214,7 @@ void SetAnalyse( char * Analyse, int Percent)
 			sprintf( s, "%s : %3u%%", Analyse, Percent);
 		SetWindowText( hwAnalyse, s);
 		InvalidateRgn( hwAnalyse, NULL, TRUE);
-       WaitForIdle();
+      WaitForIdle();
 	}
 }
 
@@ -320,7 +323,7 @@ int w_getch(void)
 		// Cursor = normal
 		SetCursor( LoadCursor( NULL, IDC_IBEAM));
 		// Analyse ist fertig
-       SetAnalyse( NULL, -1);
+       SetAnalyse("", -1);
 		// Warten auf die Eingabe
 		do {
 			WaitForMessage();
@@ -842,8 +845,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	ClearInput();
 	DisplayText();
 	SetSource( "");
-//   SetAnalyse( NULL, -1);
-        SetAnalyse(" ", 0);
+   SetAnalyse("Start", 0);
 	UpdateWindow( hwMain);
 	SetFocus( swString);
 

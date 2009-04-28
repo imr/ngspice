@@ -52,6 +52,11 @@ CKTdoJob(void *inCkt, int reset, void *inTask)
 
     ckt->CKTtemp  = task->TSKtemp;
     ckt->CKTnomTemp  = task->TSKnomTemp;
+    /* Check options method and maxorder for consistency */
+    if (task->TSKmaxOrder < 2) {
+       task->TSKmaxOrder = 2;
+       fprintf(stderr,"\nWarning -- Option maxord < 2 not allowed in this build\nSet to 2\n\n");
+    }   
     ckt->CKTmaxOrder  = task->TSKmaxOrder;
     ckt->CKTintegrateMethod  = task->TSKintegrateMethod;
     ckt->CKTbypass  = task->TSKbypass;
