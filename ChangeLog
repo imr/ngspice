@@ -1,4 +1,8 @@
-2009-04-26 Holger Vogt
+2009-05-01 Holger Vogt
+ * cktdojob.c, cktsopt.c: moved to cktsopt.c:
+   maxord set to min 2 or max 6
+  
+2009-04-28 Holger Vogt
  * winmain.c, inp.c, cktop.c: SetAnalyse() modified/added
    cktdojob.c: maxord set to minimum 2 (prevent crash in dctran.c:774) 
 

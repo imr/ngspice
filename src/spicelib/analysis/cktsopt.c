@@ -112,6 +112,15 @@ CKTsetOpt(CKTcircuit *ckt, void *anal, int opt, IFvalue *val)
         break;
     case OPT_MAXORD:
         task->TSKmaxOrder = val->iValue;
+        /* Check options method and maxorder for consistency */
+        if (task->TSKmaxOrder < 2) {
+            task->TSKmaxOrder = 2;
+            fprintf(stderr,"\nWarning -- Option maxord < 2 not allowed in ngspice\nSet to 2\n\n");
+        }   
+        else if (task->TSKmaxOrder > 6) {
+            task->TSKmaxOrder = 6;
+            fprintf(stderr,"\nWarning -- Option maxord > 6 not allowed in ngspice\nSet to 6\n\n");
+        } 
         break;
     case OPT_OLDLIMIT:
         task->TSKfixLimit = val->iValue;
