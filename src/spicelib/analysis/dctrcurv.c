@@ -25,6 +25,11 @@ Modified: 1999 Paolo Nenzi
 #include <devdefs.h>
 extern SPICEdev **DEVices;
 
+#ifdef HAS_WINDOWS
+void SetAnalyse( char * Analyse, int Percent);
+static double actval, actdiff; 
+#endif
+
 int
 DCtrCurv(CKTcircuit *ckt, int restart) 
                 
@@ -61,10 +66,10 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     if(!restart && cv->TRCVnestState >= 0) {
         /* continuing */
         i = cv->TRCVnestState;
-	/* resume to work? saj*/
-	error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
-		      (void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
-	              varUid,IF_REAL,666,nameList, 666,&plot);	
+        /* resume to work? saj*/
+        error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
+           (void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
+           varUid,IF_REAL,666,nameList, 666,&plot);	
         goto resume;
     }
     ckt->CKTtime = 0;
@@ -85,17 +90,17 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             RESmodel *model;
 
             for(model = (RESmodel *)ckt->CKThead[rcode];model != NULL;
-                    model=model->RESnextModel){
+               model=model->RESnextModel){
                 for(here=model->RESinstances;here!=NULL;
-                        here=here->RESnextInstance) {
+                   here=here->RESnextInstance) {
                     if(here->RESname == cv->TRCVvName[i]) {
                         cv->TRCVvElt[i]   = (GENinstance *)here;
                         cv->TRCVvSave[i]  = here->RESresist;
-			cv->TRCVgSave[i]  = here->RESresGiven;
+                        cv->TRCVgSave[i]  = here->RESresGiven;
                         cv->TRCVvType[i]  = rcode;
                         here->RESresist   = cv->TRCVvStart[i];
                         here->RESresGiven = 1;
-			CKTtemp(ckt);
+                        CKTtemp(ckt);
                         goto found;
                     }
                 }
@@ -113,7 +118,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                     if(here->VSRCname == cv->TRCVvName[i]) {
                         cv->TRCVvElt[i]   = (GENinstance *)here;
                         cv->TRCVvSave[i]  = here->VSRCdcValue;
-			cv->TRCVgSave[i]  = here->VSRCdcGiven;
+                        cv->TRCVgSave[i]  = here->VSRCdcGiven;
                         cv->TRCVvType[i]  = vcode;
                         here->VSRCdcValue = cv->TRCVvStart[i];
                         here->VSRCdcGiven = 1;
@@ -134,7 +139,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                     if(here->ISRCname == cv->TRCVvName[i]) {
                         cv->TRCVvElt[i]   = (GENinstance *)here;
                         cv->TRCVvSave[i]  = here->ISRCdcValue;
-			cv->TRCVgSave[i]  = here->ISRCdcGiven;
+                        cv->TRCVgSave[i]  = here->ISRCdcGiven;
                         cv->TRCVvType[i]  = icode;
                         here->ISRCdcValue = cv->TRCVvStart[i];
                         here->ISRCdcGiven = 1;
@@ -143,16 +148,16 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                 }
             }
         }
-	
+   
         if(!strcmp(cv->TRCVvName[i], "temp"))
         {
             cv->TRCVvSave[i]=ckt->CKTtemp; /* Saves the old circuit temperature */
             cv->TRCVvType[i]=TEMP_CODE;    /* Set the sweep type code */
             ckt->CKTtemp = cv->TRCVvStart[i] + CONSTCtoK; /* Set the new circuit temp */
-	    CKTtemp(ckt);
+            CKTtemp(ckt);
             goto found;
         }
-	
+   
         (*(SPfrontEnd->IFerror))(ERR_FATAL, 
                 "DCtrCurv: source / resistor %s not in circuit", &(cv->TRCVvName[i]));
         return(E_NODEV);
@@ -160,16 +165,21 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 found:;
     }
 
+#ifdef HAS_WINDOWS
+    actval = cv->TRCVvStart[cv->TRCVnestLevel];
+    actdiff = cv->TRCVvStart[cv->TRCVnestLevel] - cv->TRCVvStop[cv->TRCVnestLevel];
+#endif
+
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
 
-        /* Tell the beginPlot routine what mode we're in */
-        g_ipc.anal_type = IPC_ANAL_DCTRCURVE;
+    /* Tell the beginPlot routine what mode we're in */
+    g_ipc.anal_type = IPC_ANAL_DCTRCURVE;
 
-        /* Tell the code models what mode we're in */
-        g_mif_info.circuit.anal_type = MIF_DC;
+    /* Tell the code models what mode we're in */
+    g_mif_info.circuit.anal_type = MIF_DC;
 
-        g_mif_info.circuit.anal_init = MIF_TRUE;
+    g_mif_info.circuit.anal_init = MIF_TRUE;
 
 /* gtri - end - wbk */
 #endif
@@ -180,35 +190,35 @@ found:;
     if(error) return(error);
     
     
-        if (cv->TRCVvType[i]==vcode)
-    	   (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+    if (cv->TRCVvType[i]==vcode)
+         (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
             "v-sweep", UID_OTHER, (void **)NULL);
         
-	else {
-	      if (cv->TRCVvType[i]==icode)
-    	         (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+    else {
+        if (cv->TRCVvType[i]==icode)
+            (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
                  "i-sweep", UID_OTHER, (void **)NULL);
                      
-                 else {
-		       if (cv->TRCVvType[i]==TEMP_CODE)
-    	                  (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
-                          "temp-sweep", UID_OTHER, (void **)NULL);
-	    
-                           else {
-			         if (cv->TRCVvType[i]==rcode)
-    	                            (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
-                                    "res-sweep", UID_OTHER, (void **)NULL);
+        else {
+            if (cv->TRCVvType[i]==TEMP_CODE)
+                (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+                   "temp-sweep", UID_OTHER, (void **)NULL);
+       
+            else {
+                if (cv->TRCVvType[i]==rcode)
+                    (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+                        "res-sweep", UID_OTHER, (void **)NULL);
                                 
-				    else
-    	                                  (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
-                                          "?-sweep", UID_OTHER, (void **)NULL);	    
-                           } /* icode */
-                 } /* TEMP_CODE */
-        } /* rcode*/
+                else
+                    (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+                        "?-sweep", UID_OTHER, (void **)NULL);	    
+            } /* icode */
+        } /* TEMP_CODE */
+    } /* rcode*/
     
     error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
-	(void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
-	varUid,IF_REAL,numNames,nameList, IF_REAL,&plot);
+        (void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
+        varUid,IF_REAL,numNames,nameList, IF_REAL,&plot);
     
     if(error) return(error);
     /* now have finished the initialization - can start doing hard part */
@@ -221,58 +231,58 @@ resume:
 
         if(cv->TRCVvType[i]==vcode) { /* voltage source */
             if((((VSRCinstance*)(cv->TRCVvElt[i]))->VSRCdcValue)*
-                    SIGN(1.,cv->TRCVvStep[i]) - 
-                    SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] >
-		    DBL_EPSILON*1e+03)
-                { 
-                    i++ ; 
-                    firstTime=1;
-                    ckt->CKTmode = (ckt->CKTmode & MODEUIC) | 
-                            MODEDCTRANCURVE | MODEINITJCT ;
-                    if (i > cv->TRCVnestLevel ) break ; 
-                    goto nextstep;
-                }
+                  SIGN(1.,cv->TRCVvStep[i]) - 
+                  SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] >
+                  DBL_EPSILON*1e+03)
+            { 
+                i++ ; 
+                firstTime=1;
+                ckt->CKTmode = (ckt->CKTmode & MODEUIC) | 
+                        MODEDCTRANCURVE | MODEINITJCT ;
+                if (i > cv->TRCVnestLevel ) break ; 
+                goto nextstep;
+            }
         } else if(cv->TRCVvType[i]==icode) { /* current source */
             if((((ISRCinstance*)(cv->TRCVvElt[i]))->ISRCdcValue)*
                     SIGN(1.,cv->TRCVvStep[i]) -
                     SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] >
-		    DBL_EPSILON*1e+03)
-                { 
-                    i++ ; 
-                    firstTime=1;
-                    ckt->CKTmode = (ckt->CKTmode & MODEUIC) | 
-                            MODEDCTRANCURVE | MODEINITJCT ;
-                    if (i > cv->TRCVnestLevel ) break ; 
-                    goto nextstep;
-                } 
-		
-	} else if(cv->TRCVvType[i]==rcode) { /* resistance */
+                    DBL_EPSILON*1e+03)
+            { 
+                i++ ; 
+                firstTime=1;
+                ckt->CKTmode = (ckt->CKTmode & MODEUIC) | 
+                       MODEDCTRANCURVE | MODEINITJCT ;
+                if (i > cv->TRCVnestLevel ) break ; 
+                goto nextstep;
+            } 
+      
+        } else if(cv->TRCVvType[i]==rcode) { /* resistance */
             if((((RESinstance*)(cv->TRCVvElt[i]))->RESresist)*
                     SIGN(1.,cv->TRCVvStep[i]) -
                     SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] 
-		    > DBL_EPSILON*1e+03)
-                { 
-                    i++ ; 
-                    firstTime=1;
-                    ckt->CKTmode = (ckt->CKTmode & MODEUIC) | 
-                            MODEDCTRANCURVE | MODEINITJCT ;
-                    if (i > cv->TRCVnestLevel ) break ; 
-                    goto nextstep;
-                } 
+                    > DBL_EPSILON*1e+03)
+            { 
+                i++ ; 
+                firstTime=1;
+                ckt->CKTmode = (ckt->CKTmode & MODEUIC) | 
+                        MODEDCTRANCURVE | MODEINITJCT ;
+                if (i > cv->TRCVnestLevel ) break ; 
+                goto nextstep;
+            } 
         } else if(cv->TRCVvType[i]==TEMP_CODE) { /* temp sweep */
             if(((ckt->CKTtemp) - CONSTCtoK) * SIGN(1.,cv->TRCVvStep[i]) -
-	            SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] >
-		    DBL_EPSILON*1e+03)
-		  {
-		     i++ ;
-		     firstTime=1;
-		     ckt->CKTmode = (ckt->CKTmode & MODEUIC) |
-		            MODEDCTRANCURVE | MODEINITJCT ;
-		     if (i > cv->TRCVnestLevel ) break ;
-		     goto nextstep;
-		  
-		  }
-	   
+               SIGN(1.,cv->TRCVvStep[i]) * cv->TRCVvStop[i] >
+               DBL_EPSILON*1e+03)
+            {
+                i++ ;
+                firstTime=1;
+                ckt->CKTmode = (ckt->CKTmode & MODEUIC) |
+                   MODEDCTRANCURVE | MODEINITJCT ;
+                if (i > cv->TRCVnestLevel ) break ;
+                goto nextstep;
+        
+            }
+      
         } /* else  not possible */
         while (i > 0) { 
             /* init(i); */
@@ -280,30 +290,30 @@ resume:
             if(cv->TRCVvType[i]==vcode) { /* voltage source */
                 ((VSRCinstance *)(cv->TRCVvElt[i]))->VSRCdcValue =
                         cv->TRCVvStart[i];
-			
+         
             } else if(cv->TRCVvType[i]==icode) { /* current source */
                 ((ISRCinstance *)(cv->TRCVvElt[i]))->ISRCdcValue =
                         cv->TRCVvStart[i];
-			
+         
             } else if(cv->TRCVvType[i]==TEMP_CODE) { 
                 ckt->CKTtemp = cv->TRCVvStart[i] + CONSTCtoK;
                 CKTtemp(ckt); 
-	    
-	    } else if(cv->TRCVvType[i]==rcode) { 
+       
+            } else if(cv->TRCVvType[i]==rcode) { 
                 ((RESinstance *)(cv->TRCVvElt[i]))->RESresist =
                         cv->TRCVvStart[i];
-		((RESinstance *)(cv->TRCVvElt[i]))->RESconduct =	
-		  1/(((RESinstance *)(cv->TRCVvElt[i]))->RESresist); 
-                                                     /* Note: changing the resistance does nothing */
-		                                     /* changing the conductance 1/r instead */
-		DEVices[rcode]->DEVload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 		
-		
-		/*
-		 * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 
-		 */
-	     
-	     
-	     } /* else not possible */
+                ((RESinstance *)(cv->TRCVvElt[i]))->RESconduct =	
+                         1/(((RESinstance *)(cv->TRCVvElt[i]))->RESresist); 
+                         /* Note: changing the resistance does nothing */
+                         /* changing the conductance 1/r instead */
+                DEVices[rcode]->DEVload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 		
+      
+      /*
+       * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 
+       */
+        
+        
+            } /* else not possible */
         }
 
         /* Rotate state vectors. */
@@ -316,69 +326,69 @@ resume:
         /* do operation */
 #ifdef XSPICE
 /* gtri - begin - wbk - Do EVTop if event instances exist */
-    if(ckt->evt->counts.num_insts == 0) {
+        if(ckt->evt->counts.num_insts == 0) {
         /* If no event-driven instances, do what SPICE normally does */
 #endif
-        converged = NIiter(ckt,ckt->CKTdcTrcvMaxIter);
-        if(converged != 0) {
-            converged = CKTop(ckt,
-                (ckt->CKTmode&MODEUIC)|MODEDCTRANCURVE | MODEINITJCT,
-                (ckt->CKTmode&MODEUIC)|MODEDCTRANCURVE | MODEINITFLOAT,
-                ckt->CKTdcMaxIter);
+            converged = NIiter(ckt,ckt->CKTdcTrcvMaxIter);
             if(converged != 0) {
-                return(converged);
+                converged = CKTop(ckt,
+                   (ckt->CKTmode&MODEUIC)|MODEDCTRANCURVE | MODEINITJCT,
+                   (ckt->CKTmode&MODEUIC)|MODEDCTRANCURVE | MODEINITFLOAT,
+                   ckt->CKTdcMaxIter);
+                if(converged != 0) {
+                    return(converged);
+                }
             }
-        }
 #ifdef XSPICE
-    }
-    else {
+        }
+        else {
         /* else do new algorithm */
 
         /* first get the current step in the analysis */
-        if(cv->TRCVvType[0] == vcode) {
-            g_mif_info.circuit.evt_step = ((VSRCinstance *)(cv->TRCVvElt[i]))
+            if(cv->TRCVvType[0] == vcode) {
+                g_mif_info.circuit.evt_step = ((VSRCinstance *)(cv->TRCVvElt[i]))
                     ->VSRCdcValue ;
-        } else if(cv->TRCVvType[0] == icode) {
-            g_mif_info.circuit.evt_step = ((ISRCinstance *)(cv->TRCVvElt[i]))
+            } else if(cv->TRCVvType[0] == icode) {
+                g_mif_info.circuit.evt_step = ((ISRCinstance *)(cv->TRCVvElt[i]))
                     ->ISRCdcValue ;
-        } else if(cv->TRCVvType[0] == rcode) {
-            g_mif_info.circuit.evt_step =  ((RESinstance*)(cv->TRCVvElt[i]->GENmodPtr))
+            } else if(cv->TRCVvType[0] == rcode) {
+                g_mif_info.circuit.evt_step =  ((RESinstance*)(cv->TRCVvElt[i]->GENmodPtr))
                     ->RESresist;
-        } else if(cv->TRCVvType[0] == TEMP_CODE) {
-            g_mif_info.circuit.evt_step =  ckt->CKTtemp - CONSTCtoK;
-        }
+            } else if(cv->TRCVvType[0] == TEMP_CODE) {
+                g_mif_info.circuit.evt_step =  ckt->CKTtemp - CONSTCtoK;
+            }
 
-        /* if first time through, call EVTop immediately and save event results */
-        if(firstTime) {
-            converged = EVTop(ckt,
+            /* if first time through, call EVTop immediately and save event results */
+            if(firstTime) {
+                converged = EVTop(ckt,
                         (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITJCT,
                         (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITFLOAT,
                         ckt->CKTdcMaxIter,
                         MIF_TRUE);
-            EVTdump(ckt, IPC_ANAL_DCOP, g_mif_info.circuit.evt_step);
-            EVTop_save(ckt, MIF_FALSE, g_mif_info.circuit.evt_step);
-            if(converged != 0)
-                return(converged);
-        }
-        /* else, call NIiter first with mode = MODEINITPRED */
-        /* to attempt quick analog solution.  Then call all hybrids and call */
-        /* EVTop only if event outputs have changed, or if non-converged */
-        else {
-            converged = NIiter(ckt,ckt->CKTdcTrcvMaxIter);
-            EVTcall_hybrids(ckt);
-            if((converged != 0) || (ckt->evt->queue.output.num_changed != 0)) {
-                converged = EVTop(ckt,
-                            (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITJCT,
-                            (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITFLOAT,
-                            ckt->CKTdcMaxIter,
-                            MIF_FALSE);
-                EVTdump(ckt, IPC_ANAL_DCTRCURVE, g_mif_info.circuit.evt_step);
+                EVTdump(ckt, IPC_ANAL_DCOP, g_mif_info.circuit.evt_step);
                 EVTop_save(ckt, MIF_FALSE, g_mif_info.circuit.evt_step);
                 if(converged != 0)
                     return(converged);
             }
+            /* else, call NIiter first with mode = MODEINITPRED */
+            /* to attempt quick analog solution.  Then call all hybrids and call */
+            /* EVTop only if event outputs have changed, or if non-converged */
+            else {
+                converged = NIiter(ckt,ckt->CKTdcTrcvMaxIter);
+                EVTcall_hybrids(ckt);
+                if((converged != 0) || (ckt->evt->queue.output.num_changed != 0)) {
+                    converged = EVTop(ckt,
+                            (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITJCT,
+                            (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITFLOAT,
+                            ckt->CKTdcMaxIter,
+                            MIF_FALSE);
+                    EVTdump(ckt, IPC_ANAL_DCTRCURVE, g_mif_info.circuit.evt_step);
+                    EVTop_save(ckt, MIF_FALSE, g_mif_info.circuit.evt_step);
+                    if(converged != 0)
+                        return(converged);
+                }
+            }
         }
-    }
 /* gtri - end - wbk - Do EVTop if event instances exist */
 #endif
 
@@ -394,9 +404,9 @@ resume:
                     ->RESresist;
         } 
         /* PN Temp sweep */
-	else 
+        else 
         {
-	ckt->CKTtime = ckt->CKTtemp - CONSTCtoK ; 
+            ckt->CKTtime = ckt->CKTtemp - CONSTCtoK ; 
         }
 
 #ifdef XSPICE
@@ -419,7 +429,7 @@ resume:
         if(!ckt->CKTsenInfo) printf("sensitivity structure does not exist\n");
     */
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode&DCSEN) ){
-	    int senmode;
+       int senmode;
 
 #ifdef SENSDEBUG
             if(cv->TRCVvType[i]==vcode) { /* voltage source */
@@ -430,15 +440,15 @@ resume:
                 printf("Current Source Value : %.5e A\n",
                         ((ISRCinstance*)(cv->TRCVvElt[i]))->ISRCdcValue);
             }
-	    if(cv->TRCVvType[i]==rcode) { /* resistance */
+       if(cv->TRCVvType[i]==rcode) { /* resistance */
                 printf("Current Resistance Value : %.5e Ohm\n",
                         ((RESinstance*)(cv->TRCVvElt[i]->GENmodPtr))->RESresist);
             }
-	    if(cv->TRCVvType[i]==TEMP_CODE) { /* Temperature */
+       if(cv->TRCVvType[i]==TEMP_CODE) { /* Temperature */
                 printf("Current Circuit Temperature : %.5e C\n",
                         ckt-CKTtemp - CONSTCtoK);
             }
-	    
+       
 #endif /* SENSDEBUG */
 
             senmode = ckt->CKTsenInfo->SENmode;
@@ -474,35 +484,42 @@ resume:
         }
 
 nextstep:;
+
         if(cv->TRCVvType[i]==vcode) { /* voltage source */
             ((VSRCinstance*)(cv->TRCVvElt[i]))->VSRCdcValue +=
                     cv->TRCVvStep[i];
         } else if(cv->TRCVvType[i]==icode) { /* current source */
             ((ISRCinstance*)(cv->TRCVvElt[i]))->ISRCdcValue +=
                     cv->TRCVvStep[i];
-	} else if(cv->TRCVvType[i]==rcode) { /* resistance */
+        } else if(cv->TRCVvType[i]==rcode) { /* resistance */
             ((RESinstance*)(cv->TRCVvElt[i]))->RESresist +=
                     cv->TRCVvStep[i];
-	    /* This code should update resistance and conductance */    
-	    ((RESinstance*)(cv->TRCVvElt[i]))->RESconduct =
-	    1/(((RESinstance*)(cv->TRCVvElt[i]))->RESresist);
+            /* This code should update resistance and conductance */    
+            ((RESinstance*)(cv->TRCVvElt[i]))->RESconduct =
+                1/(((RESinstance*)(cv->TRCVvElt[i]))->RESresist);
             DEVices[rcode]->DEVload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 	    
             /*
-	     * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt);
-	     */ 
-	}
-	/* PN Temp Sweep - serban */
+        * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt);
+        */ 
+        }
+        /* PN Temp Sweep - serban */
         else if (cv->TRCVvType[i]==TEMP_CODE)
         {
-    	    ckt->CKTtemp += cv->TRCVvStep[i];
+            ckt->CKTtemp += cv->TRCVvStep[i];
             CKTtemp(ckt);	    
         } /* else not possible */
         
-	if( (*(SPfrontEnd->IFpauseTest))() ) {
+        if( (*(SPfrontEnd->IFpauseTest))() ) {
             /* user asked us to pause, so save state */
             cv->TRCVnestState = i;
             return(E_PAUSE);
         }
+#ifdef HAS_WINDOWS
+        if (i == cv->TRCVnestLevel) {
+            actval += cv->TRCVvStep[cv->TRCVnestLevel];
+            SetAnalyse( "dc", (int)abs(((actval * 100.) / actdiff)));
+        } 
+#endif
     }
 
     /* all done, lets put everything back */
@@ -519,21 +536,21 @@ nextstep:;
         } else  if(cv->TRCVvType[i] == rcode) /* Resistance */ {
             ((RESinstance*)(cv->TRCVvElt[i]))->RESresist = 
                     cv->TRCVvSave[i];
-	    /* We restore both resistance and conductance */
-	    ((RESinstance*)(cv->TRCVvElt[i]))->RESconduct =
-	    1/(((RESinstance*)(cv->TRCVvElt[i]))->RESresist);
-	    
+            /* We restore both resistance and conductance */
+            ((RESinstance*)(cv->TRCVvElt[i]))->RESconduct =
+                1/(((RESinstance*)(cv->TRCVvElt[i]))->RESresist);
+       
             ((RESinstance*)(cv->TRCVvElt[i]))->RESresGiven = cv->TRCVgSave[i];
-	    DEVices[rcode]->DEVload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 
-	    
-	    /*
-	     * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt);
-	     */ 
+            DEVices[rcode]->DEVload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt); 
+       
+       /*
+        * RESload((GENmodel*)(cv->TRCVvElt[i]->GENmodPtr),ckt);
+        */ 
         }
-	 else if(cv->TRCVvType[i] == TEMP_CODE) {
+        else if(cv->TRCVvType[i] == TEMP_CODE) {
             ckt->CKTtemp = cv->TRCVvSave[i];
-	    CKTtemp(ckt);
-	} /* else not possible */
+            CKTtemp(ckt);
+        } /* else not possible */
     }
     (*(SPfrontEnd->OUTendPlot))(plot);
 

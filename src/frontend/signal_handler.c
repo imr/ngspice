@@ -17,6 +17,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <signal.h>
 #include "signal_handler.h"
 
+#ifdef HAS_WINDOWS
+void winmessage(char* new_msg);
+#endif
+
 #ifdef HAVE_GNUREADLINE
 /* Added GNU Readline Support 11/3/97 -- Andrew Veliath <veliaa@rpi.edu> */
 /* from spice3f4 patch to ng-spice. jmr */
@@ -133,6 +137,9 @@ RETSIGTYPE
 sigsegv(void)
 {
     fprintf(cp_err, "\ninternal error -- segmentation violation\n");
+#ifdef HAS_WINDOWS
+    winmessage("Fatal error in NGSPICE");
+#endif    
     fatal();
 }
 

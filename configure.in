@@ -211,6 +211,7 @@ if test "$enable_debug" = "no"; then
 		CFLAGS="$ext_CFLAGS -O2"
 	fi
 else
+    AC_DEFINE(NGDEBUG,1,[Compile with debug info])
 	if test "x$GCC" = "xyes"; then
 		CFLAGS="$ext_CFLAGS -g -O0 -Wall"
 	else

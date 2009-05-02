@@ -1,3 +1,10 @@
+2009-05-02 Holger Vogt
+ * configure.in: new flag NGDEBUG
+   main.c, signal_handler.c, visualc/vngspice.vcproj:
+   restore SIGSEGV signal handling for error message after seg fault
+   (not in debug mode, now only for Windows)
+   dctrcurv: winmessage about dc
+   
 2009-05-01 Holger Vogt
  * cktdojob.c, cktsopt.c: moved to cktsopt.c:
    maxord set to min 2 or max 6

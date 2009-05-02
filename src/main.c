@@ -939,10 +939,9 @@ main(int argc, char **argv)
 #ifdef SIGBUS
     signal(SIGBUS, (SIGNAL_FUNCTION) sigbus);
 #endif
-#ifdef SIGSEGV
-/* Want core files!
- *   signal(SIGSEGV, sigsegv);
- */
+#if defined(SIGSEGV) && !defined(NGDEBUG) && defined(HAS_WINDOWS)
+/* Allow a comment and graceful shutdown after seg fault */
+    signal(SIGSEGV, sigsegv);
 #endif
 #ifdef SIGSYS
     signal(SIGSYS, (SIGNAL_FUNCTION) sig_sys);
