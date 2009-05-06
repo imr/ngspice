@@ -425,7 +425,7 @@ static Status_t read_udnpath(
         node[n].unique = TRUE;
 
         /* Put pathname into info structure */
-        node[n].path_name = malloc(len);
+        node[n].path_name = malloc(len+1);
         strcpy(node[n].path_name, path);
 
         /* Increment count of paths read */
