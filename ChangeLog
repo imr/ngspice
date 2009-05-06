@@ -1,8 +1,9 @@
 2009-05-06 Holger Vogt
- * bug report 2787072 pp_lst.c:428 malloc(len+1) +1 added
+ * pp_lst.c:428 malloc(len+1) +1 added (bug report 2787072) 
+   configure.in: (bug reports 2787076 and 2787079)
 
 2009-05-02 Holger Vogt
- * configure.in: new flag NGDEBUG
+ *  new flag NGDEBUG
    main.c, signal_handler.c, visualc/vngspice.vcproj:
    restore SIGSEGV signal handling for error message after seg fault
    (not in debug mode, now only for Windows)

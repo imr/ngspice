@@ -797,6 +797,9 @@ dnl Define variables for YACC and LEX
      *cygwin* )
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
         DLLIBS="" ;;
+     *freebsd* )
+        AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
+        DLLIBS="";;        
      * )
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
         DLLIBS="-ldl";;
@@ -949,7 +952,7 @@ dnl  ----  Hope to see in the future readline replacement.        ----
 if test "$with_readline" != "yes"; then
     AC_MSG_RESULT(GNU readline disabled.)
 else
-  if test "x$with_tcl" == "x" -o "$with_tcl" == "no" ; then
+  if test "x$with_tcl" = "x" -o "$with_tcl" = "no" ; then
     AC_MSG_RESULT(Checking for readline:)
     AC_CHECK_HEADERS([readline/readline.h readline/history.h],
                      [AC_DEFINE(HAVE_GNUREADLINE,[],[Define if we have GNU readline])],
