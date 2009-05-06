@@ -799,6 +799,9 @@ dnl Define variables for YACC and LEX
         DLLIBS="" ;;
      *freebsd* )
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
+        DLLIBS="";;     
+     *openbsd* )
+        AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
         DLLIBS="";;        
      * )
         AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])

@@ -1,6 +1,6 @@
 2009-05-06 Holger Vogt
  * pp_lst.c:428 malloc(len+1) +1 added (bug report 2787072) 
-   configure.in: (bug reports 2787076 and 2787079)
+   configure.in:803, 958 (bug reports 1834772, 2787076 and 2787079)
 
 2009-05-02 Holger Vogt
  *  new flag NGDEBUG
