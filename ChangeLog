@@ -1,3 +1,7 @@
+2009-05-09 Holger Vogt
+ * graf.c: graphics scaling during iplot mad ea little more 
+   convenient
+
 2009-05-06 Holger Vogt
  * pp_lst.c:428 malloc(len+1) +1 added (bug report 2787072) 
    configure.in:803, 958 (bug reports 1834772, 2787076 and 2787079)

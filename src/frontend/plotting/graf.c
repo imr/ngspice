@@ -55,8 +55,8 @@ static char *ticlist = ticbuf;
 #define MAXTICS 100
 double *readtics(char *string);
 
-#define XFACTOR 2       /* How much to expand the X scale during iplot. */
-#define YFACTOR 1.5     /* How much to expand the Y scale during iplot. */
+#define XFACTOR 1       /* How much to expand the X scale during iplot. */
+#define YFACTOR 0.2     /* How much to expand the Y scale during iplot. */
 
 /*
  *  Start of a new graph.
@@ -649,7 +649,7 @@ iplot(struct plot *pl, int id)
         /* Nothing yet */
         return(0);
     } else if (len == IPOINTMIN || !id) {
-	resumption = FALSE;
+        resumption = FALSE;
         /* Draw the grid for the first time, and plot everything. */
         lims = ft_minmax(xs, TRUE);
         xlims[0] = lims[0];
@@ -683,7 +683,7 @@ iplot(struct plot *pl, int id)
 	/* note: have command options for iplot to specify xdelta,
 	   etc.  So don't need static variables hack.  Assume default
 	   values for now.  */
-	sprintf(commandline, "plot %s", yl);
+        sprintf(commandline, "plot %s", yl);
 
         (void) gr_init(xlims, ylims, xs->v_name,
             pl->pl_title, (char *) NULL, j, 0.0, 0.0,
@@ -696,7 +696,8 @@ iplot(struct plot *pl, int id)
             }
         inited = 1;
     } else {
-	Input(&reqst, 0);
+    /* plot the last points and resize if needed */
+        Input(&reqst, 0);
         /* First see if we have to make the screen bigger */
         dy = (isreal(xs) ? xs->v_realdata[len - 1] :
                 realpart(&xs->v_compdata[len - 1]));
@@ -707,6 +708,7 @@ iplot(struct plot *pl, int id)
             stop = HUGE;
             start = - stop;
         }
+        /* checking for x lo */
         while (dy < currentgraph->data.xmin) {
             changed = TRUE;
             if (ft_grdb)
@@ -716,6 +718,7 @@ iplot(struct plot *pl, int id)
                     (currentgraph->data.xmax -
                     currentgraph->data.xmin)
                 * XFACTOR);
+            /* set the new x lo value */
             currentgraph->data.xmin -=
               (currentgraph->data.xmax -
               currentgraph->data.xmin)
@@ -729,6 +732,7 @@ iplot(struct plot *pl, int id)
                 currentgraph->data.xmin)
             currentgraph->data.xmax =
                     currentgraph->data.xmin;
+        /* checking for x hi */
         while (dy > currentgraph->data.xmax) {
             changed = TRUE;
             if (ft_grdb)
@@ -737,6 +741,7 @@ iplot(struct plot *pl, int id)
                   currentgraph->data.xmax +
                     (currentgraph->data.xmax - 
                     currentgraph->data.xmin) * XFACTOR);
+            /* set the new x hi value */
             currentgraph->data.xmax +=
                     (currentgraph->data.xmax -
                     currentgraph->data.xmin) *
@@ -746,6 +751,7 @@ iplot(struct plot *pl, int id)
                 break;
             }
         }
+        /* checking for all y values */
         for (v = pl->pl_dvecs; v; v = v->v_next) {
             if (!(v->v_flags & VF_PLOT))
                 continue;
@@ -753,6 +759,7 @@ iplot(struct plot *pl, int id)
                     realpart(&v->v_compdata[len - 1]));
             if (ft_grdb)
                 fprintf(cp_err, "y = %G\n\r", dy);
+            /* checking for y lo */
             while (dy < currentgraph->data.ymin) {
                 changed = TRUE;
                 if (ft_grdb)
@@ -761,14 +768,18 @@ iplot(struct plot *pl, int id)
                     currentgraph->data.ymin -
                     (currentgraph->data.ymax - 
                     currentgraph->data.ymin) * YFACTOR);
+                /* set the new y lo value */
                 currentgraph->data.ymin -=
                   (currentgraph->data.ymax -
-                  currentgraph->data.ymin) * YFACTOR;
+                  currentgraph->data.ymin) * YFACTOR; 
+/*                currentgraph->data.ymin +=
+                  (dy - currentgraph->data.ymin) * YFACTOR;*/
             }
             if (currentgraph->data.ymax <
                     currentgraph->data.ymin)
                 currentgraph->data.ymax =
                         currentgraph->data.ymin;
+            /* checking for y hi */
             while (dy > currentgraph->data.ymax) {
                 changed = TRUE;
                 if (ft_grdb)
@@ -777,16 +788,21 @@ iplot(struct plot *pl, int id)
                     currentgraph->data.ymax +
                       (currentgraph->data.ymax -
                       currentgraph->data.ymin) * YFACTOR);
+                /* set the new y hi value */
                 currentgraph->data.ymax +=
                   (currentgraph->data.ymax -
-                  currentgraph->data.ymin) * YFACTOR;
+                  currentgraph->data.ymin) * YFACTOR; 
+/*                currentgraph->data.ymax +=
+                  (dy - currentgraph->data.ymax) * YFACTOR;*/
             }
         }
         if (changed) {
             /* Redraw everything. */
             gr_pmsg("Resizing screen");
             gr_resize(currentgraph);
+#ifndef X_DISPLAY_MISSING
             gr_redraw(currentgraph);
+#endif
         } else {
             /* Just connect the last two points. This won't be done
              * with curve interpolation, so it might look funny.  */

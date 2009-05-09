@@ -53,9 +53,9 @@ ft_sigintr(void)
     gr_clean();  /* Clean up plot window */
 
     if (ft_intrpt)     /* check to see if we're being interrupted repeatedly */
-        fprintf(cp_err, "Interrupted again (ouch)\n"); 
+        fprintf(cp_err, "\nInterrupted again (ouch)\n"); 
     else {
-        fprintf(cp_err, "Interrupted once . . .\n"); 
+        fprintf(cp_err, "\nInterrupted once . . .\n"); 
         ft_intrpt = TRUE;
     }
 
