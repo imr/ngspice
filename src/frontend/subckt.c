@@ -1340,23 +1340,24 @@ gettrans(char *name)
 static bool
 model_bin_match( char* token, char* model_name )
 {
-  char* dot_char;
-  bool  flag = FALSE;
-
-  if ( strncmp( model_name, token, strlen(token) ) == 0 ) {
-    if ( (dot_char = strstr( model_name, "." )) ) {
-      flag = TRUE;
-      dot_char++;
-      while( *dot_char != '\0' ) {
-	if ( !isdigit( *dot_char ) ) {
-	  flag = FALSE;
-	  break;
-	}
-	dot_char++;
+   char* dot_char;
+   bool  flag = FALSE;
+   /* continue evaluation if toeken is part of model_name */ 
+   if ( strncmp( model_name, token, strlen(token) ) == 0 ) {
+      /* find last dot in model_name */
+      if ( (dot_char = strrchr( model_name, '.' )) ) {
+         flag = TRUE;
+         dot_char++;
+         while( *dot_char != '\0' ) {
+            if ( !isdigit( *dot_char ) ) {
+               flag = FALSE;
+               break;
+            }
+            dot_char++;
+         }
       }
-    }
-  }
-  return flag;
+   }
+   return flag;
 }
 
 /*-------------------------------------------------------------------*/
