@@ -1,8 +1,11 @@
+2009-05-11 Holger Vogt
+ * src/makefile.am replace -lBLT24.dll by -lBLT24 in line 247
+ 
 2009-05-10 Holger Vogt
  * subckt.c:1348 find last dot, not first dot in model_name
 
 2009-05-09 Holger Vogt
- * graf.c: graphics scaling during iplot mad ea little more 
+ * graf.c: graphics scaling during iplot made a little more 
    convenient
 
 2009-05-06 Holger Vogt

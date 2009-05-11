@@ -244,7 +244,7 @@ EXTRA_DIST += tclspice.c
 initdata_DATA += tclspinit
 
 if TCLWIN
-LIBS += -lpsapi  -ltcl84 -lBLT24.dll
+LIBS += -lpsapi  -ltcl84 -lBLT24
 endif
 
 libspice_la_SOURCES =
