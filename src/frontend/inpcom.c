@@ -121,6 +121,7 @@ static void inp_fix_param_values( struct line *deck );
 static void inp_reorder_params( struct line *deck, struct line *list_head, struct line *end );
 static int  inp_split_multi_param_lines( struct line *deck, int line_number );
 static void inp_sort_params( struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c );
+static char* inp_remove_ws( char *s );
 
 /*-------------------------------------------------------------------------*
  *  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF' *
@@ -209,21 +210,31 @@ inp_pathopen(char *name, char *mode)
     return (NULL);
 }
 
+
+/* replace " gnd " by " 0   " 
+   and then remove excessive white spaces */
 static void
 inp_fix_gnd_name( struct line *deck ) {
   struct line *c = deck;
   char *gnd;
+  bool found_gnd = FALSE;
 
   while ( c != NULL ) {
     gnd = c->li_line;
     if ( *gnd == '*' ) { c = c->li_next; continue; }
-    while ( (gnd = strstr( gnd, "gnd " ) ) ) {
+    /* replace " gnd " by " 0   " */
+	while ( (gnd = strstr( gnd, "gnd " ) ) ) {
       if ( isspace(*(gnd-1)) ) {
-	memcpy( gnd, "0   ", 4 );
+        memcpy( gnd, "0   ", 4 );
       }
       gnd += 4;
+	  found_gnd = TRUE;
     }
+	/* remove white spaces after replacement, retain " 0 " */
+	if (found_gnd) 
+      c->li_line = inp_remove_ws(c->li_line);
     c = c->li_next;
+	found_gnd = FALSE;
   }
 }
 
