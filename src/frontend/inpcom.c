@@ -2899,7 +2899,7 @@ static int
 get_number_terminals( char *c )
 {
   int i, j, k;
-  char *name[10];
+  char *name[12];
   char nam_buf[33];
   bool area_found = FALSE;
 
@@ -2938,16 +2938,32 @@ get_number_terminals( char *c )
     return i-j-2;
     break;    
   case 'q': /* recognition of 3/4 terminal bjt's needed */
+    /* QXXXXXXX NC NB NE <NS> MNAME <AREA> <OFF> <IC=VBE, VCE> <TEMP=T> */
+     /* 12 tokens maximum */
     i = j = 0;
-    while ( (i < 10) && (*c != '\0') ) {
+    while ( (i < 12) && (*c != '\0') ) {
+      char* comma;
       name[i] = gettok_instance(&c);
       if (strstr(name[i], "off") || strstr(name[i], "=")) j++;
+      /* If we have IC=VBE, VCE instead of IC=VBE,VCE we need to inc j */
+      if ((comma = strstr(name[i], ",")) && ( *(++comma) == NULL)) j++;
+      /* If we have IC=VBE , VCE we need to inc j */
+      if (eq(name[i], ",")) j++;
       i++;
     }
     i--;
     area_found = FALSE;
     for (k = i; k > i-j-1; k--) {
-      if (isdigit(*name[k])) area_found = TRUE;
+        bool only_digits = TRUE;
+        char* nametmp = name[k];
+        /* MNAME has to contain at least one alpha character. AREA may be assumed
+        if we have a token with only digits, and where the previous token does not
+        end with a ',' */
+        while (*nametmp) {
+            if (isalpha(*nametmp) || (*nametmp == ',')) only_digits = FALSE;
+            nametmp++;
+        }
+        if (only_digits && (strstr(name[k-1],",") == NULL)) area_found = TRUE;
     }
     if (area_found) {
         return i-j-2;

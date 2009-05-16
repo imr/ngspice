@@ -141,15 +141,21 @@ void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
         type = (thismodel->INPmodType);
         mdfast = (thismodel->INPmodfast);    
     } else {
-        type = INPtypelook("BJT");
+       /* no model found */ 
+       type = INPtypelook("BJT");
         if (type < 0) {
             LITERR("Device type BJT not supported by this binary\n");
             return;
         }
         if (!tab->defQmod) {
             /* create default Q model */
+            char *err;
             IFnewUid(ckt, &uid, (IFuid) NULL, "Q", UID_MODEL, (void **) NULL);
             IFC(newModel, (ckt, type, &(tab->defQmod), uid));
+            err = (char *) MALLOC((70 + strlen(model)) * sizeof(char));
+            (void) sprintf(err, "Unable to find definition of model %s - default BJT assumed \n", model);
+            LITERR(err);
+            tfree(err);
         }
         mdfast = tab->defQmod;
     }

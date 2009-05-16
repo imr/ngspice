@@ -785,7 +785,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
 
 		if (p == dd->li_error)
 		    out_printf("Error on line %d : %s\n\t%s\n",
-			dd->li_linenum, dd->li_line, dd->li_error);
+			dd->li_linenum_orig, dd->li_line, dd->li_error);
 		else
 		    out_printf("\t%s\n", p);
 

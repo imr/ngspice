@@ -1,3 +1,10 @@
+2009-05-16 Holger Vogt
+ * inpcom.c  lines 2940ff fix case 'q'
+ * inp.c:788 error message with original line number from 
+   input deck 
+ * inp2q.c:155 error message if no model is found and default
+   BJT is selected instead 
+
 2009-05-12 Holger Vogt
  * inpcom.c  fcn inp_fix_gnd_name() remove excessive white
    spaces after replacing gnd by 0
