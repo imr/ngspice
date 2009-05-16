@@ -732,98 +732,111 @@ model_bin_match( char* token, char* model_name )
 static void
 comment_out_unused_subckt_models( struct line *start_card )
 {
-  struct line *card;
-  char *used_subckt_names[1000], *used_model_names[1000], *line = NULL, *subckt_name, *model_name;
-  int  num_used_subckt_names = 0, num_used_model_names = 0, i = 0, num_terminals = 0, tmp_cnt = 0;
-  bool processing_subckt = FALSE, found_subckt = FALSE, remove_subckt = FALSE, found_model = FALSE, has_models = FALSE;
+   struct line *card;
+   char *used_subckt_names[1000], *used_model_names[1000], *line = NULL, *subckt_name, *model_name;
+   int  num_used_subckt_names = 0, num_used_model_names = 0, i = 0, num_terminals = 0, tmp_cnt = 0;
+   bool processing_subckt = FALSE, found_subckt = FALSE, remove_subckt = FALSE, found_model = FALSE, has_models = FALSE;
 
-  for ( card = start_card; card != NULL; card = card->li_next ) {
-    if ( ciprefix( ".model", card->li_line ) ) has_models = TRUE;
-    if ( ciprefix( ".cmodel", card->li_line ) ) has_models = TRUE;    
-    if ( ciprefix( ".param", card->li_line ) && !strstr( card->li_line, "=" ) ) *card->li_line = '*';
-  }
+   for ( card = start_card; card != NULL; card = card->li_next ) {
+      if ( ciprefix( ".model", card->li_line ) ) has_models = TRUE;
+      if ( ciprefix( ".cmodel", card->li_line ) ) has_models = TRUE;    
+      if ( ciprefix( ".param", card->li_line ) && !strstr( card->li_line, "=" ) ) *card->li_line = '*';
+   }
   
-  for ( card = start_card; card != NULL; card = card->li_next ) {
-    line = card->li_line;
+   for ( card = start_card; card != NULL; card = card->li_next ) {
+      line = card->li_line;
 
-    if ( *line == '*' ) continue;
+      if ( *line == '*' ) continue;
 
-    if ( ciprefix( ".subckt", line ) || ciprefix( ".macro", line ) ) processing_subckt = TRUE;
-    if ( ciprefix( ".ends",   line ) || ciprefix( ".eom",   line ) ) processing_subckt = FALSE;
-    if ( !processing_subckt ) {
-      if ( *line == 'x' ) {
-	subckt_name = get_instance_subckt( line );
+      if ( ciprefix( ".subckt", line ) || ciprefix( ".macro", line ) ) processing_subckt = TRUE;
+      if ( ciprefix( ".ends",   line ) || ciprefix( ".eom",   line ) ) processing_subckt = FALSE;
+      if ( !processing_subckt ) {
+         if ( *line == 'x' ) {
+            subckt_name = get_instance_subckt( line );
+            found_subckt = FALSE;
+            for ( i = 0; i < num_used_subckt_names; i++ )
+               if ( strcmp( used_subckt_names[i], subckt_name ) == 0 ) found_subckt = TRUE;
+            if ( !found_subckt ) {
+               used_subckt_names[num_used_subckt_names++] = subckt_name;
+               tmp_cnt++;
+            }
+            else  tfree( subckt_name );
+         }
+         else if ( *line == 'a' ) {
+            model_name = get_adevice_model_name( line );
+            found_model = FALSE;
+            for ( i = 0; i < num_used_model_names; i++ )
+               if ( strcmp( used_model_names[i], model_name ) == 0 ) found_model = TRUE;
+            if ( !found_model ) used_model_names[num_used_model_names++] = model_name;
+            else  tfree( model_name );
+         }
+         else if ( has_models ) {
+            /* This is a preliminary version, until we have found a reliable
+            method to detect the model name out of the input line (Many 
+            options have to be taken into account.). */
+            num_terminals = get_number_terminals( line );
+            if ( num_terminals != 0 ) {
+               bool model_ok = FALSE;
+               char *tmp_name, *tmp_name1;
+               tmp_name = tmp_name1 = model_name = get_model_name( line, num_terminals );
+               /* first character of model name is character from alphabet */
+               if ( isalpha( *model_name ) ) model_ok = TRUE;
+               /* first character is digit, second is alpha, third is digit,
+               e.g. 1N4002 */
+               else if ((strlen(model_name) > 2) && isdigit(*tmp_name) && isalpha(*(++tmp_name)) &&
+                  isdigit(*(++tmp_name))) model_ok = TRUE;
+               /* first character is is digit, second is alpha, third is alpha, fourth is digit
+               e.g. 2SK456 */
+               else if ((strlen(model_name) > 3) && isdigit(*tmp_name1) && isalpha(*(++tmp_name1)) &&
+                  isalpha(*(++tmp_name1)) && isdigit(*(++tmp_name1))) model_ok = TRUE;               
+               /* Check if model has already been recognized, if not, add its name to
+               list used_model_names[i] */
+               if (model_ok) {
+                  found_model = FALSE;
+                  for ( i = 0; i < num_used_model_names; i++ )
+                     if ( strcmp( used_model_names[i], model_name ) == 0 ) found_model = TRUE;
+                  if ( !found_model ) used_model_names[num_used_model_names++] = model_name;
+                  else  tfree( model_name );
+               } else {
+                  tfree( model_name );
+               }
+            }
+         } /* if ( has_models )  */
+      } /* if ( !processing_subckt ) */
+   } /* for loop through all cards */
+   for ( i = 0; i < tmp_cnt; i++ )
+      get_subckts_for_subckt( start_card, used_subckt_names[i], used_subckt_names,
+			 &num_used_subckt_names, used_model_names, &num_used_model_names, has_models );
 
-	found_subckt = FALSE;
-	for ( i = 0; i < num_used_subckt_names; i++ )
-	  if ( strcmp( used_subckt_names[i], subckt_name ) == 0 ) found_subckt = TRUE;
-	if ( !found_subckt ) {
-	  used_subckt_names[num_used_subckt_names++] = subckt_name;
-	  tmp_cnt++;
-	}
-	else  tfree( subckt_name );
+   /* comment out any unused subckts */
+   for ( card = start_card; card != NULL; card = card->li_next ) {
+      line = card->li_line;
+
+      if ( *line == '*' ) continue;
+
+      if ( ciprefix( ".subckt", line ) || ciprefix( ".macro", line ) ) {
+         subckt_name = get_subckt_model_name( line );
+         remove_subckt = TRUE;
+         for ( i = 0; i < num_used_subckt_names; i++ )
+            if ( strcmp( used_subckt_names[i], subckt_name ) == 0 ) remove_subckt = FALSE;
+         tfree(subckt_name);
       }
-      else if ( *line == 'a' ) {
-	model_name = get_adevice_model_name( line );
-	found_model = FALSE;
-	for ( i = 0; i < num_used_model_names; i++ )
-	  if ( strcmp( used_model_names[i], model_name ) == 0 ) found_model = TRUE;
-	if ( !found_model ) used_model_names[num_used_model_names++] = model_name;
-	else  tfree( model_name );
+      if ( ciprefix( ".ends", line ) || ciprefix( ".eom", line ) ) {
+         if ( remove_subckt ) *line = '*';
+         remove_subckt = FALSE;
       }
-      else if ( has_models ) {
-	num_terminals = get_number_terminals( line );
-
-	if ( num_terminals != 0 ) {
-	  model_name = get_model_name( line, num_terminals );
-
-	  if ( isalpha( *model_name ) ) {
-	    found_model = FALSE;
-	    for ( i = 0; i < num_used_model_names; i++ )
-	      if ( strcmp( used_model_names[i], model_name ) == 0 ) found_model = TRUE;
-	    if ( !found_model ) used_model_names[num_used_model_names++] = model_name;
-	    else  tfree( model_name );
-	  } else {
-	    tfree( model_name );
-	  }
-	}
-      }
-    }
-  }
-  for ( i = 0; i < tmp_cnt; i++ )
-    get_subckts_for_subckt( start_card, used_subckt_names[i], used_subckt_names,
-			    &num_used_subckt_names, used_model_names, &num_used_model_names, has_models );
-
-  // comment out any unused subckts
-  for ( card = start_card; card != NULL; card = card->li_next ) {
-    line = card->li_line;
-
-    if ( *line == '*' ) continue;
-
-    if ( ciprefix( ".subckt", line ) || ciprefix( ".macro", line ) ) {
-      subckt_name = get_subckt_model_name( line );
-      remove_subckt = TRUE;
-      for ( i = 0; i < num_used_subckt_names; i++ )
-	if ( strcmp( used_subckt_names[i], subckt_name ) == 0 ) remove_subckt = FALSE;
-      tfree(subckt_name);
-    }
-    if ( ciprefix( ".ends", line ) || ciprefix( ".eom", line ) ) {
       if ( remove_subckt ) *line = '*';
-      remove_subckt = FALSE;
-    }
-    if ( remove_subckt ) *line = '*';
-    else if ( has_models && (ciprefix( ".model", line ) || ciprefix( ".cmodel", line )) ) {
-      model_name = get_subckt_model_name( line );
-
-      found_model = FALSE;
-      for ( i = 0; i < num_used_model_names; i++ )
-	if ( strcmp( used_model_names[i], model_name ) == 0 || model_bin_match( used_model_names[i], model_name ) ) found_model = TRUE;
-      if ( !found_model ) *line = '*';
-      tfree(model_name);
-    }
-  }
-  for ( i = 0; i < num_used_subckt_names; i++ ) tfree(used_subckt_names[i]);
-  for ( i = 0; i < num_used_model_names;  i++ ) tfree(used_model_names[i]);
+      else if ( has_models && (ciprefix( ".model", line ) || ciprefix( ".cmodel", line )) ) {
+         model_name = get_subckt_model_name( line );
+         found_model = FALSE;
+         for ( i = 0; i < num_used_model_names; i++ )
+            if ( strcmp( used_model_names[i], model_name ) == 0 || model_bin_match( used_model_names[i], model_name ) ) found_model = TRUE;
+         if ( !found_model ) *line = '*';
+         tfree(model_name);
+      }
+   }
+   for ( i = 0; i < num_used_subckt_names; i++ ) tfree(used_subckt_names[i]);
+   for ( i = 0; i < num_used_model_names;  i++ ) tfree(used_model_names[i]);
 }
 
 static char*
@@ -2946,8 +2959,8 @@ get_number_terminals( char *c )
       name[i] = gettok_instance(&c);
       if (strstr(name[i], "off") || strstr(name[i], "=")) j++;
       /* If we have IC=VBE, VCE instead of IC=VBE,VCE we need to inc j */
-      if ((comma = strstr(name[i], ",")) && ( *(++comma) == NULL)) j++;
-      /* If we have IC=VBE , VCE we need to inc j */
+      if ((comma = strstr(name[i], ",")) && ( *(++comma) == '\0')) j++;
+      /* If we have IC=VBE , VCE ("," is a token) we need to inc j */
       if (eq(name[i], ",")) j++;
       i++;
     }

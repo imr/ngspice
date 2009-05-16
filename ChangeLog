@@ -1,4 +1,10 @@
 2009-05-16 Holger Vogt
+ * inpcom.c  lines 778ff: allow the following .model names:
+   First character is alphabetical
+   First character is digit, second alpha, third digit
+   First character is digit, second alpha, third alpha, fourth digit
+
+2009-05-16 Holger Vogt
  * inpcom.c  lines 2940ff fix case 'q'
  * inp.c:788 error message with original line number from 
    input deck 
