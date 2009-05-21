@@ -112,7 +112,11 @@
 
 
 #ifndef SIGNAL_FUNCTION
+#if defined(_MSC_VER)
+#  define SIGNAL_FUNCTION RETSIGTYPE (*)(int)
+#else
 #  define SIGNAL_FUNCTION RETSIGTYPE (*)( )
+#endif
 #endif
 
 #define BSIZE_SP      512

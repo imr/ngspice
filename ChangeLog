@@ -1,3 +1,7 @@
+2009-05-21 Holger Vogt
+ * evaluate.c, outitf.c, sim.h: use SV_ADMITTANCE for plotting @dev[gxx]
+ * defines.h change signal prototype for _MSC_VER
+ 
 2009-05-21 Paolo Nenzi
  * src/frontend/postcoms.c: Fix from Lemaitre Laurent to avoid a segmentation
    fault when v->v_plot->pl_scale is NULL.
@@ -3100,6 +3104,7 @@ Spaghetti:
 
   - based on spice3f5-chili, hardly anything touched on it.
 =======
+>>>>>>> 1.417
 2009-05-16 Holger Vogt
  * inpcom.c  lines 778ff: allow the following .model names:
    First character is alphabetical

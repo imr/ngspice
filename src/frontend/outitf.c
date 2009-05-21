@@ -441,7 +441,7 @@ addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
     return (OK);
 }
 
-
+
 
 int
 OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
@@ -580,37 +580,31 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 	   blt_lockvec(i);
 #endif
             if (run->data[i].outIndex == -1) {
-	      if (run->data[i].type == IF_REAL)
-		plotAddRealValue(&run->data[i],
-				 refValue->rValue);
-	      else if (run->data[i].type == IF_COMPLEX)
-		plotAddComplexValue(&run->data[i],
-				    refValue->cValue);
+                if (run->data[i].type == IF_REAL)
+                    plotAddRealValue(&run->data[i], refValue->rValue);
+                else if (run->data[i].type == IF_COMPLEX)
+                    plotAddComplexValue(&run->data[i], refValue->cValue);
             } else if (run->data[i].regular) {
-	      if (run->data[i].type == IF_REAL)
-		plotAddRealValue(&run->data[i],
-				 valuePtr->v.vec.rVec
-				 [run->data[i].outIndex]);
-	      else if (run->data[i].type == IF_COMPLEX)
-		plotAddComplexValue(&run->data[i],
-				    valuePtr->v.vec.cVec
-				    [run->data[i].outIndex]);
+                if (run->data[i].type == IF_REAL)
+                    plotAddRealValue(&run->data[i], 
+                        valuePtr->v.vec.rVec[run->data[i].outIndex]);
+                else if (run->data[i].type == IF_COMPLEX)
+                    plotAddComplexValue(&run->data[i],
+                        valuePtr->v.vec.cVec[run->data[i].outIndex]);
             } else {
-	      /* should pre-check instance */
-	      if (!getSpecial(&run->data[i], run, &val))
-		continue;
-	      if (run->data[i].type == IF_REAL)
-		plotAddRealValue(&run->data[i],
-				 val.rValue);
-	      else if (run->data[i].type == IF_COMPLEX)
-		plotAddComplexValue(&run->data[i],
-                            val.cValue);
-	      else 
-		fprintf(stderr, "OUTpData: unsupported data type\n");
+            /* should pre-check instance */
+                if (!getSpecial(&run->data[i], run, &val))
+                    continue;
+                if (run->data[i].type == IF_REAL)
+                    plotAddRealValue(&run->data[i], val.rValue);
+                else if (run->data[i].type == IF_COMPLEX)
+                    plotAddComplexValue(&run->data[i], val.cValue);
+                else 
+                    fprintf(stderr, "OUTpData: unsupported data type\n");
             }
 #ifdef TCL_MODULE
-	    /*relinks and unlocks vector*/
-	    blt_relink(i,(run->data[i]).vec);
+            /*relinks and unlocks vector*/
+            blt_relink(i,(run->data[i]).vec);
 #endif
         }
         gr_iplot(run->runPlot);
@@ -627,7 +621,6 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
     return (OK);
 }
 
-
 
 /* ARGSUSED */ /* until some code gets written */
 int
@@ -649,7 +642,7 @@ OUTwEnd(void *plotPtr)
     return (OK);
 }
 
-
+
 
 int
 OUTendPlot(void *plotPtr)
@@ -672,7 +665,7 @@ OUTendPlot(void *plotPtr)
     return (OK);
 }
 
-
+
 
 /* ARGSUSED */ /* until some code gets written */
 int
@@ -688,7 +681,7 @@ OUTendDomain(void *plotPtr)
     return (OK);
 }
 
-
+
 
 /* ARGSUSED */ /* until some code gets written */
 int
@@ -727,7 +720,7 @@ OUTattributes(void *plotPtr, char *varName, int param, IFvalue *value)
     return (OK);
 }
 
-
+
 
 /* The file writing routines. */
 
@@ -794,10 +787,12 @@ fileInit_pass2(runDesc *run)
             type = SV_TIME;
         else if (cieq(name, "frequency"))
             type = SV_FREQUENCY;
-        else if (cieq(name, "temp-sweep")) /* Added by H.T */
+        else if (cieq(name, "temp-sweep"))
             type = SV_TEMP;
-        else if (cieq(name, "res-sweep")) /* Added by H.T */
+        else if (cieq(name, "res-sweep"))
             type = SV_RES;
+        else if ((*name == '@') && (substring("[g", name)))
+            type = SV_ADMITTANCE;    
         else
             type = SV_VOLTAGE;
  
@@ -911,7 +906,7 @@ fileEnd(runDesc *run)
     return;
 }
 
-
+
 
 /* The plot maintenance routines. */
 
@@ -953,10 +948,12 @@ plotInit(runDesc *run)
             v->v_type = SV_TIME;
         else if (cieq(v->v_name, "frequency"))
             v->v_type = SV_FREQUENCY;
-        else if (cieq(v->v_name, "temp-sweep")) /* Added by H.T */
+        else if (cieq(v->v_name, "temp-sweep"))
             v->v_type = SV_TEMP;
-        else if (cieq(v->v_name, "res-sweep")) /* Added by H.T */
+        else if (cieq(v->v_name, "res-sweep"))
             v->v_type = SV_RES;
+        else if ((*(v->v_name) == '@') && (substring("[g", v->v_name)))
+            v->v_type = SV_ADMITTANCE;  
         else 
             v->v_type = SV_VOLTAGE;
         v->v_length = 0;
@@ -1022,7 +1019,7 @@ plotEnd(runDesc *run)
   return;
 }
 
-
+
 
 /* ParseSpecial takes something of the form "@name[param,index]" and rips
  * out name, param, andstrchr.

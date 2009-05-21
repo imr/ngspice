@@ -68,7 +68,7 @@ ft_evaluate(struct pnode *node)
     }
 
     if (d==NULL) {
-	return NULL;
+        return NULL;
     }
 
     if (node->pn_name && !ft_evdb && d && !d->v_link2) {
@@ -107,117 +107,115 @@ doop(char what,
     v1 = ft_evaluate(arg1);
     v2 = ft_evaluate(arg2);
     if (!v1 || !v2)
-	return (NULL);
+        return (NULL);
 
     /* Now the question is, what do we do when one or both of these
      * has more than one vector?  This is definitely not a good
      * thing.  For the time being don't do anything.
      */
     if (v1->v_link2 || v2->v_link2) {
-	fprintf(cp_err, "Warning: no operations on wildcards yet.\n");
-	if (v1->v_link2 && v2->v_link2)
-	    fprintf(cp_err, "\t(You couldn't do that one anyway)\n");
-	return (NULL);
+        fprintf(cp_err, "Warning: no operations on wildcards yet.\n");
+        if (v1->v_link2 && v2->v_link2)
+            fprintf(cp_err, "\t(You couldn't do that one anyway)\n");
+        return (NULL);
     }
 
     /* How do we handle operations on multi-dimensional vectors?
      * For now, we only allow operations between one-D vectors,
      * equivalently shaped multi-D vectors, or a multi-D vector and
      * a one-D vector.  It's not at all clear what to do in the other cases.
-     * So only check shape requirement if its an operation between two multi-D
+     * So only check shape requirement if it is an operation between two multi-D
      * arrays.
      */
     if ((v1->v_numdims > 1) && (v2->v_numdims > 1)) {
-	if (v1->v_numdims != v2->v_numdims) {
-	    fprintf(cp_err,
-		"Warning: operands %s and %s have incompatible shapes.\n",
-		v1->v_name, v2->v_name);
-	    return (NULL);
-	}
-	for (i = 1; i < v1->v_numdims; i++) {
-	    if ((v1->v_dims[i] != v2->v_dims[i])) {
-		fprintf(cp_err,
-		    "Warning: operands %s and %s have incompatible shapes.\n",
-		    v1->v_name, v2->v_name);
-		return (NULL);
-	    }
-	}
+        if (v1->v_numdims != v2->v_numdims) {
+            fprintf(cp_err,
+            "Warning: operands %s and %s have incompatible shapes.\n",
+            v1->v_name, v2->v_name);
+            return (NULL);
+        }
+        for (i = 1; i < v1->v_numdims; i++) {
+            if ((v1->v_dims[i] != v2->v_dims[i])) {
+                fprintf(cp_err,
+                    "Warning: operands %s and %s have incompatible shapes.\n",
+                    v1->v_name, v2->v_name);
+                return (NULL);
+            }
+        }
     }
 
     /* This is a bad way to do this. */
     switch (what) {
-	case '=':
-	case '>':
-	case '<':
-	case 'G':
-	case 'L':
-	case 'N':
-	case '&':
-	case '|':
-	case '~':
-	    relflag = TRUE;
+        case '=':
+        case '>':
+        case '<':
+        case 'G':
+        case 'L':
+        case 'N':
+        case '&':
+        case '|':
+        case '~':
+            relflag = TRUE;
     }
 
-    /* Don't bother to do type checking.  Maybe this should go in at
-     * some point.
-     */
+    /* Type checking is done later */
 
     /* Make sure we have data of the same length. */
     length = ((v1->v_length > v2->v_length) ? v1->v_length : v2->v_length);
     if (v1->v_length < length) {
-	free1 = TRUE;
-	if (isreal(v1)) {
-	    ld = 0.0;
-	    d1 = (double *) tmalloc(length * sizeof (double));
-	    for (i = 0; i < v1->v_length; i++)
-		d1[i] = v1->v_realdata[i];
-	    if (length > 0)
-		ld = v1->v_realdata[v1->v_length - 1];
-	    for ( ; i < length; i++)
-		d1[i] = ld;
-	} else {
-	    realpart(&lc) = 0.0;
-	    imagpart(&lc) = 0.0;
-	    c1 = (complex *) tmalloc(length * sizeof (complex));
-	    for (i = 0; i < v1->v_length; i++)
-		c1[i] = v1->v_compdata[i];
-	    if (length > 0)
-		lc = v1->v_compdata[v1->v_length - 1];
-	    for ( ; i < length; i++)
-		c1[i] = lc;
-	}
+        free1 = TRUE;
+        if (isreal(v1)) {
+            ld = 0.0;
+            d1 = (double *) tmalloc(length * sizeof (double));
+            for (i = 0; i < v1->v_length; i++)
+                d1[i] = v1->v_realdata[i];
+            if (length > 0)
+                ld = v1->v_realdata[v1->v_length - 1];
+            for ( ; i < length; i++)
+                d1[i] = ld;
+        } else {
+            realpart(&lc) = 0.0;
+            imagpart(&lc) = 0.0;
+            c1 = (complex *) tmalloc(length * sizeof (complex));
+            for (i = 0; i < v1->v_length; i++)
+                c1[i] = v1->v_compdata[i];
+            if (length > 0)
+                lc = v1->v_compdata[v1->v_length - 1];
+            for ( ; i < length; i++)
+                c1[i] = lc;
+        }
     } else
-	if (isreal(v1))
-	    d1 = v1->v_realdata;
-	else
-	    c1 = v1->v_compdata;
+        if (isreal(v1))
+            d1 = v1->v_realdata;
+        else
+            c1 = v1->v_compdata;
     if (v2->v_length < length) {
-	free2 = TRUE;
-	if (isreal(v2)) {
-	    ld = 0.0;
-	    d2 = (double *) tmalloc(length * sizeof (double));
-	    for (i = 0; i < v2->v_length; i++)
-		d2[i] = v2->v_realdata[i];
-	    if (length > 0)
-		ld = v2->v_realdata[v2->v_length - 1];
-	    for ( ; i < length; i++)
-		d2[i] = ld;
-	} else {
-	    realpart(&lc) = 0.0;
-	    imagpart(&lc) = 0.0;
-	    c2 = (complex *) tmalloc(length * sizeof (complex));
-	    for (i = 0; i < v2->v_length; i++)
-		c2[i] = v2->v_compdata[i];
-	    if (length > 0)
-		lc = v2->v_compdata[v1->v_length - 1];
-	    for ( ; i < length; i++)
-		c2[i] = lc;
-	}
+        free2 = TRUE;
+        if (isreal(v2)) {
+            ld = 0.0;
+            d2 = (double *) tmalloc(length * sizeof (double));
+            for (i = 0; i < v2->v_length; i++)
+                d2[i] = v2->v_realdata[i];
+            if (length > 0)
+                ld = v2->v_realdata[v2->v_length - 1];
+            for ( ; i < length; i++)
+                d2[i] = ld;
+        } else {
+            realpart(&lc) = 0.0;
+            imagpart(&lc) = 0.0;
+            c2 = (complex *) tmalloc(length * sizeof (complex));
+            for (i = 0; i < v2->v_length; i++)
+                c2[i] = v2->v_compdata[i];
+            if (length > 0)
+                lc = v2->v_compdata[v1->v_length - 1];
+            for ( ; i < length; i++)
+                c2[i] = lc;
+        }
     } else
-	if (isreal(v2))
-	    d2 = v2->v_realdata;
-	else
-	    c2 = v2->v_compdata;
+        if (isreal(v2))
+            d2 = v2->v_realdata;
+        else
+            c2 = v2->v_compdata;
 
     /* Some of the math routines generate SIGILL if the argument is
      * out of range.  Catch this here.
@@ -237,7 +235,7 @@ doop(char what,
     (void) signal(SIGILL, SIG_DFL);
 
     if (!data)
-	return (NULL);
+        return (NULL);
     /* Make up the new vector. */
     res = alloc(struct dvec);
     ZERO(res,struct dvec);
@@ -269,97 +267,93 @@ doop(char what,
 
     /* Copy dimensions. */
     if (v1->v_numdims > v2->v_numdims) {
-	res->v_numdims = v1->v_numdims;
-	for (i = 0; i < v1->v_numdims; i++)
-	    res->v_dims[i] = v1->v_dims[i];
+        res->v_numdims = v1->v_numdims;
+        for (i = 0; i < v1->v_numdims; i++)
+            res->v_dims[i] = v1->v_dims[i];
     } else {
-	res->v_numdims = v2->v_numdims;
-	for (i = 0; i < v2->v_numdims; i++)
-	    res->v_dims[i] = v2->v_dims[i];
+        res->v_numdims = v2->v_numdims;
+        for (i = 0; i < v2->v_numdims; i++)
+            res->v_dims[i] = v2->v_dims[i];
     }
 
-    /* This depends somewhat on what the operation is.  XXX Should fix 
-     * res->v_type = v1->v_type;
-     * Introduced to show the real units coming out from an
-     * operation. A.Roldán
+    /* ** Type checking for multiplication and division of vectors **
+     * Determines the units resulting from the operation.
+     * A.Roldán
      */
     switch (what)
     {
-	  case '*':  /* Multiplication of two vectors */
-               switch(v1->v_type)
-               {
-                case SV_VOLTAGE:
-                      switch(v2->v_type)
-                      {
+	    case '*':  /* Multiplication of two vectors */
+           switch(v1->v_type)
+           {
+               case SV_VOLTAGE:
+                   switch(v2->v_type)
+                   {
+                       case SV_VOLTAGE:
+                           res->v_type = SV_VOLTAGE;
+                           break;
+                       case SV_CURRENT:
+                           res->v_type = SV_POWER;
+                           break;
+                       default:
+                           break;
+                    }
+                    break;
+
+               case SV_CURRENT:
+                    switch(v2->v_type)
+                    {
                         case SV_VOLTAGE:
-                               res->v_type = SV_VOLTAGE;
-                               break;
+                            res->v_type = SV_POWER;
+                            break;
                         case SV_CURRENT:
-                               res->v_type = SV_POWER;
-                               break;
+                            res->v_type = SV_CURRENT;
+                            break;
                         default:
-                             break;
-                      }
+                            break;
+                     }
+                     break;
 
-                 break;
-                case SV_CURRENT:
+               default:
+                   break;
+           }
+           break;
+       case '/':   /* division of two vectors */
+           switch(v1->v_type)
+           {
+               case SV_VOLTAGE:
+                   switch(v2->v_type)
+                   {
+                       case SV_VOLTAGE:
+                           res->v_type = SV_NOTYPE;
+                           break;
+                       case SV_CURRENT:
+                           res->v_type = SV_IMPEDANCE;
+                           break;
+                       default:
+                           break;
+                    }
+                    break;
 
-                      switch(v2->v_type)
-                      {
-                        case SV_VOLTAGE:
-                               res->v_type = SV_POWER;
-                               break;
-                        case SV_CURRENT:
-                               res->v_type = SV_CURRENT;
-                               break;
-                        default:
-                             break;
-                      }
-                      break;
+               case SV_CURRENT:
+                   switch(v2->v_type)
+                   {
+                       case SV_VOLTAGE:
+                           res->v_type = SV_ADMITTANCE;
+                           break;
+                       case SV_CURRENT:
+                           res->v_type = SV_NOTYPE;
+                           break;
+                       default:
+                           break;
+                    }
+                    break;
 
-                default:
+               default:
+                   break;
+           }
 
-                 break;
-               }
-               break;
-	  case '/':   //Multiplicación de 2 vectores
-               switch(v1->v_type)
-               {
-                case SV_VOLTAGE:
-                     switch(v2->v_type)
-                      {
-                        case SV_VOLTAGE:
-                               res->v_type = SV_NOTYPE;
-                               break;
-                        case SV_CURRENT:
-                               res->v_type = SV_IMPEDANCE;
-                               break;
-                        default:
-                             break;
-                      }
-                      break;
-                case SV_CURRENT:
-
-                      switch(v2->v_type)
-                      {
-                        case SV_VOLTAGE:
-                               res->v_type = SV_ADMITANCE;
-                               break;
-                        case SV_CURRENT:
-                               res->v_type = SV_NOTYPE;
-                               break;
-                        default:
-                             break;
-                      }
-                      break;
-
-                default:
-
-                 break;
-               }
-
-      default:
-          break;
+       default:
+           break;
     }
     vec_new(res);
 
@@ -637,7 +631,7 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
     blocksize = v->v_length / majsize;
 
     /* Now figure out if we should put the dim down by one.  Because of the
-     * way we parse thestrchr, we figure that if the value is complex
+     * way we parse the strchr, we figure that if the value is complex
      * (e.g, "[1,2]"), the guy meant a range.  This is sort of bad though.
      */
     if (isreal(ind)) {
