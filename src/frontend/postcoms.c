@@ -128,7 +128,7 @@ com_print(wordlist *wl)
             if (v->v_length > 1) {
                 col = TRUE;
                 /* Improvement made to print cases @[sin] = (0 12 13 100K) */
-		if ( (v->v_length != v->v_plot->pl_scale->v_length) && ( (*(v->v_name))=='@') )
+		if ( (v->v_plot->pl_scale && v->v_length != v->v_plot->pl_scale->v_length) && ( (*(v->v_name))=='@') )
                 {
                  col = FALSE;
                 }
