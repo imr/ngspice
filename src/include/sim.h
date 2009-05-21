@@ -1,4 +1,4 @@
-﻿#ifndef _SIM_H
+#ifndef _SIM_H
 #define _SIM_H
 
 enum simulation_types {
@@ -16,9 +16,9 @@ enum simulation_types {
   SV_SPARAM,
   SV_TEMP,
   SV_RES,
-  SV_IMPEDANCE,	//Añadido por A.Roldán
-  SV_ADMITTANCE,	//Añadido por A.Roldán
-  SV_POWER	    //Añadido por A.Roldán
+  SV_IMPEDANCE,
+  SV_ADMITTANCE,
+  SV_POWER
 };
 
 #endif
