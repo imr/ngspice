@@ -1,3 +1,7 @@
+2009-05-24 Dietmar Warning
+ * tcl-testbench4.tcl: correct path to codemodel
+ * FB14.cir: better breakthrough current in bas70
+
 2009-05-21 Holger Vogt
  * evaluate.c, outitf.c, sim.h: use SV_ADMITTANCE for plotting @dev[gxx]
  * defines.h change signal prototype for _MSC_VER
