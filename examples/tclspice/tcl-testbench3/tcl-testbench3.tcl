@@ -6,7 +6,7 @@
 package require BLT
 load ../../../src/.libs/libspice.so
 source differentiate.tcl
-spice::codemodel ../../src/xspice/icm/spice2poly/spice2poly.cm 
+spice::codemodel ../../../src/xspice/icm/spice2poly/spice2poly.cm 
 proc temperatures_calc {temp_inf temp_sup points} {
   set tstep [ expr " ( $temp_sup - $temp_inf ) / $points " ]
   set t $temp_inf
@@ -39,7 +39,7 @@ proc tref_calc { points } {
 
 proc iteration { t } {
   set tzero 273.15
-  spice::alter r11 = [ thermistance_calc 10000 3900 $t ]
+  spice::alter r11=[ thermistance_calc 10000 3900 $t ]
   #spice::set temp = [ expr " $tzero + $t " ]
   spice::op
   spice::vectoblt vref_temp tref_tmp
@@ -50,8 +50,8 @@ proc iteration { t } {
 proc cost_square { r10 r12 } {
   tref_blt length 0
 
-  spice::alter r10 = $r10
-  spice::alter r12 = $r12
+  spice::alter r10=$r10
+  spice::alter r12=$r12
   
   foreach point [ temperatures_blt range 0 [ expr " [temperatures_blt length ] - 1" ] ] {
     tref_blt append [ iteration $point ]
@@ -66,8 +66,8 @@ proc cost_square { r10 r12 } {
 proc cost_sup { r10 r12 } {
   tref_blt length 0
 
-  spice::alter r10 = $r10
-  spice::alter r12 = $r12
+  spice::alter r10=$r10
+  spice::alter r12=$r12
   
   foreach point [ temperatures_blt range 0 [ expr " [temperatures_blt length ] - 1" ] ] {
     tref_blt append [ iteration $point ]
@@ -116,8 +116,8 @@ puts "result sup with : r10 = $r10 r12 = $r12 "
 #
 
 
-spice::alter r10 = $r10
-spice::alter r12 = $r12
+spice::alter r10=$r10
+spice::alter r12=$r12
 foreach point [ temperatures_blt range 0 [ expr " [temperatures_blt length ] - 1" ] ] {
   tref_blt append [ iteration $point ]
 }
