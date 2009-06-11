@@ -326,24 +326,25 @@ ft_cktcoms(bool terse)
             if (terse) {
                 fprintf(cp_out, 
 			".fourier line ignored since rawfile was produced.\n");
-	    } else {
-		int err;
+            } else {
+                int err;
 
-		plot_cur = setcplot("tran");
-		err = fourier(command->wl_next, plot_cur);
-		if (!err)
-		    fprintf(cp_out, "\n\n");
-		else
-		    fprintf(cp_err, "No transient data available for "
-			    "fourier analysis");
-	    }
+                plot_cur = setcplot("tran");
+                err = fourier(command->wl_next, plot_cur);
+                if (!err)
+                    fprintf(cp_out, "\n\n");
+                else
+                    fprintf(cp_err, "No transient data available for "
+                        "fourier analysis");
+            }
         } else if (!eq(command->wl_word, ".save")
-		   && !eq(command->wl_word, ".op")
-         && !eq(command->wl_word, ".measure")
-		   && !eq(command->wl_word, ".tf"))
-	{
+            && !eq(command->wl_word, ".op")
+//          && !eq(command->wl_word, ".measure")
+            && !ciprefix(".meas", command->wl_word)
+            && !eq(command->wl_word, ".tf"))
+        {
             goto bad;
-	}
+        }
         coms = coms->wl_next;
     }
 

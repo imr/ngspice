@@ -481,7 +481,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 		    || eq(s, ".print")
 		    || eq(s, ".save")
 		    || eq(s, ".op")
-          || eq(s, ".measure")
+		    || ciprefix(".meas", s)
+//          || eq(s, ".measure")
 		    || eq(s, ".tf"))
 		{
                     if (end) {
@@ -492,7 +493,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                         wl_first = end = alloc(struct wordlist);
                     end->wl_word = copy(dd->li_line);
 
-		    if (!eq(s, ".op") && !eq(s, ".tf") && !eq(s, ".measure")) {
+		    if (!eq(s, ".op") && !eq(s, ".tf") && !ciprefix(".meas", s)/*eq(s, ".measure")*/) {
 			ld->li_next = dd->li_next;
 			line_free(dd,FALSE); /* SJB - free this line's memory */
 		    } else

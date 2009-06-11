@@ -49,6 +49,7 @@ Inverter example circuit
 .param trise  = 100ps
 .param tfall  = 100ps
 .param period = 1ns
+.param skew_meas = 'vp/2'
 
 * parameterized subckt
 .subckt inv in out pw='wpmin' pl='plmin' nw='wnmin' nl='nlmin'
@@ -77,9 +78,10 @@ c1 out gnd 220fF
 
 .tran 1ps 4ns
 
-.measure tran inv_delay trig v(in)  val='vp/2'   fall=1 targ v(out) val='vp/2'   rise=1
-.measure tran out_slew  trig v(out) val='0.2*vp' rise=1 targ v(out) val='0.8*vp' rise=1
-.measure tran delay_chk param='(inv_delay < 100ps) ? 1 : 0'
+.meas tran inv_delay trig v(in)  val='vp/2'   fall=1 targ v(out) val='vp/2'   rise=1
+.meas tran out_slew  trig v(out) val='0.2*vp' rise=1 targ v(out) val='0.8*vp' rise=1
+.meas tran delay_chk param='(inv_delay < 100ps) ? 1 : 0'
+.meas tran skew when v(out)=skew_meas
 
 .control
 run
