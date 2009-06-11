@@ -18,7 +18,7 @@ char	Spice_Build_Date[] = NGSPICEBUILDDATE;
 char	*Spice_Exec_Dir	= NGSPICEBINDIR;
 char	*Spice_Lib_Dir	= NGSPICEDATADIR;
 
-#ifdef __MINGW32__
+#if defined (__MINGW32__) || defined (_MSC_VER)
 char	*Def_Editor	= "notepad.exe";
 #else
 char	*Def_Editor	= "vi";

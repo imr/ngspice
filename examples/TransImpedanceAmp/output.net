@@ -5,7 +5,8 @@
 * Documentation at http://www.brorson.com/gEDA/SPICE/   *
 *********************************************************
 * Command stuff
-.options gmin=1e-9 noacct
+.options gmin=1e-9 noacct 
+.options method=gear
 .options abstol=1e-11
 * .ac dec 10 10MegHz 10 Ghz
 * Remainder of file

@@ -206,47 +206,46 @@ ft_cpinit(void)
     /* Reset this for the front end. */
     cp_hash = '*';
 
+    /* NGSPICEDATADIR has been set to path "$dprefix/share/ngspice" in configure.in, 
+       Spice_Lib_Dir has been set to NGSPICEDATADIR in conf.c, 
+       Lib_Path has been set to Spice_Lib_Dir adding /scripts in ivars() */
     if (Lib_Path && *Lib_Path) {
-	(void) sprintf(buf, "sourcepath = ( %s %s )", DIR_CWD, Lib_Path);
+        (void) sprintf(buf, "sourcepath = ( %s %s )", DIR_CWD, Lib_Path);
         wl = cp_doglob(cp_lexer(buf));
-	cp_striplist(wl);
-	com_set(wl);
+        cp_striplist(wl);
+        com_set(wl);
         wl_free(wl);
-	/* Now source the standard startup file. */
-	/* XXX strange */
+        
+        /* Now source the standard startup file. */
 
-	for (copys=s=cp_tildexpand(Lib_Path); copys && *copys; ) {/*DG*/
-	    while (isspace(*s))
-		s++;
-	    for (r = buf; *s && !isspace(*s); r++, s++)
-		*r = *s;
-	    tfree(copys);	/* sjb - it's safe to free this here */
-	    (void) strcpy(r, DIR_PATHSEP);
+        /* remove leading spaces */
+        for (copys=s=cp_tildexpand(Lib_Path); copys && *copys; ) {
+            while (isspace(*s))
+                s++;
+        /* copy s into buf until space is seen, r is the actual position */
+        for (r = buf; *s && !isspace(*s); r++, s++)
+            *r = *s;
+        tfree(copys);	/* sjb - it's safe to free this here */
+	     /* add a path separator to buf at actual position */
+        (void) strcpy(r, DIR_PATHSEP);
 #ifdef TCL_MODULE
-            (void) strcat(r, "tclspinit");
+        /* add "tclspinit" to buf after actual position */
+        (void) strcat(r, "tclspinit");
 #else
-	    (void) strcat(r, "spinit");
+        /* add "spinit" to buf after actual position */
+        (void) strcat(r, "spinit");
 #endif
-	    if ((fp = fopen(buf, "r"))) {
-		cp_interactive = FALSE;
-		inp_spsource(fp, TRUE, buf);
-		cp_interactive = TRUE;
-		
-                /* the following caused me SIGSEGV's since inp_spsource
-                   already closes fp - A. Veliath 12/7/97
-                    
-                   MW. Its really needed - I changed inp_spsource to
-                   	close fp always.   */
-                   
-		/* (void) fclose(fp); */
-		
-		found = TRUE;
-		break;
-	    } else if (ft_controldb)
-		fprintf(cp_err, "Note: can't open \"%s\".\n", buf);
-	}
-	if (!found)
-	    fprintf(cp_err, "Note: can't find init file.\n");
+        if ((fp = fopen(buf, "r"))) {
+            cp_interactive = FALSE;
+            inp_spsource(fp, TRUE, buf);
+            cp_interactive = TRUE;
+            found = TRUE;
+            break;
+        } else if (ft_controldb)
+            fprintf(cp_err, "Note: can't open \"%s\".\n", buf);
+        }
+        if (!found)
+            fprintf(cp_err, "Note: can't find init file.\n");
     }
 
     tcap_init( );
