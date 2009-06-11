@@ -3,6 +3,8 @@
  * /examples/TransImpedanceAmp/output.net: change integration method
    to 'gear' for achieving convergence
  * cpitf.c, ivars.c: add some comments
+ * inp.c, dotcard.c: allow .meas
+ * example/inverter.sp: add .meas .. WHEN ...
 
 2009-05-24 Dietmar Warning
  * tcl-testbench4.tcl: correct path to codemodel
