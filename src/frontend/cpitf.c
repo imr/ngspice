@@ -210,7 +210,8 @@ ft_cpinit(void)
        Spice_Lib_Dir has been set to NGSPICEDATADIR in conf.c, 
        Lib_Path has been set to Spice_Lib_Dir adding /scripts in ivars() */
     if (Lib_Path && *Lib_Path) {
-        (void) sprintf(buf, "sourcepath = ( %s %s )", DIR_CWD, Lib_Path);
+       /* set variable 'sourcepath' */ 
+       (void) sprintf(buf, "sourcepath = ( %s %s )", DIR_CWD, Lib_Path);
         wl = cp_doglob(cp_lexer(buf));
         cp_striplist(wl);
         com_set(wl);
@@ -218,39 +219,37 @@ ft_cpinit(void)
         
         /* Now source the standard startup file. */
 
-        /* remove leading spaces */
+        /* jump over leading spaces */
         for (copys=s=cp_tildexpand(Lib_Path); copys && *copys; ) {
             while (isspace(*s))
                 s++;
-        /* copy s into buf until space is seen, r is the actual position */
-        for (r = buf; *s && !isspace(*s); r++, s++)
-            *r = *s;
-        tfree(copys);	/* sjb - it's safe to free this here */
-	     /* add a path separator to buf at actual position */
-        (void) strcpy(r, DIR_PATHSEP);
+            /* copy s into buf until space is seen, r is the actual position */
+            for (r = buf; *s && !isspace(*s); r++, s++)
+                *r = *s;
+            tfree(copys);
+	         /* add a path separator to buf at actual position */
+            (void) strcpy(r, DIR_PATHSEP);
 #ifdef TCL_MODULE
-        /* add "tclspinit" to buf after actual position */
-        (void) strcat(r, "tclspinit");
+            /* add "tclspinit" to buf after actual position */
+            (void) strcat(r, "tclspinit");
 #else
-        /* add "spinit" to buf after actual position */
-        (void) strcat(r, "spinit");
+            /* add "spinit" to buf after actual position */
+            (void) strcat(r, "spinit");
 #endif
-        if ((fp = fopen(buf, "r"))) {
-            cp_interactive = FALSE;
-            inp_spsource(fp, TRUE, buf);
-            cp_interactive = TRUE;
-            found = TRUE;
-            break;
-        } else if (ft_controldb)
-            fprintf(cp_err, "Note: can't open \"%s\".\n", buf);
+            if ((fp = fopen(buf, "r"))) {
+                cp_interactive = FALSE;
+                inp_spsource(fp, TRUE, buf);
+                cp_interactive = TRUE;
+                found = TRUE;
+                break;
+            } else if (ft_controldb)
+                fprintf(cp_err, "Note: can't open \"%s\".\n", buf);
         }
         if (!found)
             fprintf(cp_err, "Note: can't find init file.\n");
     }
 
     tcap_init( );
-  /*  tfree(copys);*/ /*DG Avoid memory leak*/
-  /* SJB - must not free here as cp_tildexpande() can return NULL */
     return;
 }
 
