@@ -146,6 +146,10 @@ struct timeb timebegin;
 #  endif
 #endif
 
+#if defined (__MINGW32__)
+#include <process.h> /* getpid() */
+#endif
+
 #if defined (_MSC_VER)
 #include <direct.h>
 #include <process.h>
