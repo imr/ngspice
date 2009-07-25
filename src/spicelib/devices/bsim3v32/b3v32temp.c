@@ -34,7 +34,7 @@ BSIM3v32temp (GENmodel *inModel, CKTcircuit *ckt)
 {
 BSIM3v32model *model = (BSIM3v32model*) inModel;
 BSIM3v32instance *here;
-struct bsim3SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam;
+struct bsim3SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double Nvtm, SourceSatCurrent, DrainSatCurrent;
