@@ -197,7 +197,6 @@ void SetSource( char * Name)
 // ------------------------------<Analyse-Fenster>-----------------------------
 
 // Neuer Text ins Analysefenster
-static int OldPercent = -2;
 void SetAnalyse( char * Analyse, int Percent)
 {
    static int OldPercent = -2;

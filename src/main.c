@@ -941,7 +941,7 @@ main(int argc, char **argv)
 #endif
 #if defined(SIGSEGV) && !defined(NGDEBUG) && defined(HAS_WINDOWS)
 /* Allow a comment and graceful shutdown after seg fault */
-    signal(SIGSEGV, sigsegv);
+    signal(SIGSEGV, (SIGNAL_FUNCTION) sigsegv);
 #endif
 #ifdef SIGSYS
     signal(SIGSYS, (SIGNAL_FUNCTION) sig_sys);
@@ -1013,7 +1013,7 @@ bot:
        startup time.  */
         FILE *tempfile;
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
-        char *tpf; /* temporary file */
+        char *tpf = NULL; /* temporary file */
         char *dname = NULL; /* directory of input file*/
         bool has_smk = FALSE;
 #endif  
