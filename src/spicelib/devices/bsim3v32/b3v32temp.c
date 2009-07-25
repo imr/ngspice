@@ -860,11 +860,6 @@ int Size_Not_Found;
                                      * pParam->BSIM3v32sqrtPhi;
                   /* End of vfbzb */
               }
-	      else /* !Size_Not_Found */
-	      {
-	          /* va: pParam might be uninitialized, if !Size_Not_Found */
-	          pParam = here->pParam;
-	      }
 
               /* process source/drain series resistance */
               /* acm model */
