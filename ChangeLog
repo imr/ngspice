@@ -1,3 +1,8 @@
+2009-07-25 Dietmar Warning
+ * bsim3v32/b3v32temp.c: init struct pParam
+ * ngspice.h: prototype for getpid under mingw
+ * main.c, winmain.c: small cosmetics
+
 2009-07-21 Dietmar Warning
  * bsim3v32/b3v32temp.c, bsim4/b4temp.c: backup to the original code - 
    without the FREE(model->pSizeDependParamKnot), if we want call models in a loop,
