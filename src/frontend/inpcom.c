@@ -582,12 +582,18 @@ get_model_name( char *line, int num_terminals )
   char *beg_ptr = line, *end_ptr, keep, *model_name = NULL;
   int  i = 0;
 
-  while ( !isspace( *beg_ptr ) && *beg_ptr != '\0' ) beg_ptr++;   // eat device name
+  while ( !isspace( *beg_ptr ) && *beg_ptr != '\0' ) beg_ptr++; /* eat device name */
   while ( isspace( *beg_ptr )  && *beg_ptr != '\0' ) beg_ptr++;
 
-  for ( i = 0; i < num_terminals; i++ ) {
+  for ( i = 0; i < num_terminals; i++ ) { /* skip the terminals */
     while ( !isspace( *beg_ptr ) && *beg_ptr != '\0' ) beg_ptr++;
     while ( isspace( *beg_ptr )  && *beg_ptr != '\0' ) beg_ptr++;
+  }
+  if ( *line == 'r' ) { /* special dealing for r models */
+    if((*beg_ptr=='+') || (*beg_ptr=='-') || isdigit(*beg_ptr)) { /* looking for a value before model */ 
+      while ( !isspace( *beg_ptr ) && *beg_ptr != '\0' ) beg_ptr++; /* skip the value */
+      while ( isspace( *beg_ptr )  && *beg_ptr != '\0' ) beg_ptr++;
+	  }
   }
   end_ptr = beg_ptr;
   while ( *end_ptr != '\0' && !isspace( *end_ptr ) ) end_ptr++;
