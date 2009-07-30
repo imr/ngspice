@@ -4,11 +4,10 @@ Author: 1988 Thomas L. Quarles
 Modified: Paolo Nenzi 2000
 Remarks:  This code is based on a version written by Serban Popescu which
           accepted an optional parameter ac. I have adapted his code
-	  to conform to INP standard. (PN)
+          to conform to INP standard. (PN)
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
 #include "ifsim.h"
 #include "inpdefs.h"
 #include "inpmacs.h"
@@ -16,7 +15,7 @@ Remarks:  This code is based on a version written by Serban Popescu which
 #include "inp.h"
 
 /* undefine to add tracing to this file */
-/*#define TRACE*/
+/* #define TRACE */
 
 void INP2R(void *ckt, INPtables * tab, card * current)
 {
@@ -46,16 +45,15 @@ void INP2R(void *ckt, INPtables * tab, card * current)
 
     char *s,*t;/* Temporary buffer and pointer for translation */
     int i;
-	
+
 #ifdef TRACE
-    printf("In INP2R()\n");
-    printf("  Current line: %s\n",current->line);
+    printf("In INP2R, Current line: %s\n", current->line);
 #endif
 
     mytype = INPtypelook("Resistor");
     if (mytype < 0) {
-	LITERR("Device type Resistor not supported by this binary\n");
-	return;
+      LITERR("Device type Resistor not supported by this binary\n");
+      return;
     }
     line = current->line;
     INPgetTok(&line, &name, 1);			/* Rname */
@@ -69,150 +67,159 @@ void INP2R(void *ckt, INPtables * tab, card * current)
      * follows a number, so must be a model name
      * -> MUST be a model name (or null)
      */
-    
+
     saveline = line;		/* save then old pointer */
-    
+
+    if (strstr( line, "tc=" )) { /* looking for tc= there are no spaces between */
 #ifdef TRACE
     printf("Begining tc=xxx yyyy search and translation in '%s'\n", line);
 #endif /* TRACE */    
-    
     /* This routine translates "tc=xxx yyy" to "tc=xxx tc2=yyy".
-       This is a re-write of the routine originally proposed by Hitoshi tanaka.
+       This is a re-write of the routine originally proposed by Hitoshi Tanaka.
        In my version we simply look for the first occurence of 'tc' followed
        by '=' followed by two numbers. If we find it then we splice in "tc2=".
        sjb - 2005-05-09 */
-    for(s=line; *s; s++) { /* scan the remainder of the line */
-	
-	/* reject anything other than "tc" */
-	if(*s!='t') continue;
-	s++;
-	if(*s!='c') continue;
-	s++;
-	
-	/* skip any white space */
-	while(isspace(*s)) s++;
-	      
-	/* reject if not '=' */
-	if(*s!='=') continue;
-	s++;
-	
-	/* skip any white space */
-	while(isspace(*s)) s++;
-	
-	/* if we now have +, - or a decimal digit then assume we have a number,
-	   otherwise reject */
-	if((*s!='+') && (*s!='-') && !isdigit(*s)) continue;
-	s++;
-	
-	/* look for next white space or null */
-	while(!isspace(*s) && *s) s++;
-	
-	/* reject whole line if null (i.e not white space) */
-	if(*s==0) break;
-	s++;
-	
-	/* remember this location in the line.
-	   Note that just before this location is a white space character. */
-	t = s;
-	
-	/* skip any additional white space */
-	while(isspace(*s)) s++;
-	
-	/* if we now have +, - or a decimal digit then assume we have the 
-	    second number, otherwise reject */
-	if((*s!='+') && (*s!='-') && !isdigit(*s)) continue;
-	
-	/* if we get this far we have met all are criterea,
-	   so now we splice in a "tc2=" at the location remembered above. */
-	
-	/* first alocate memory for the new longer line */
-	i = strlen(current->line);  /* length of existing line */	
-	line = tmalloc(i + 4 + 1);  /* alocate enough for "tc2=" & terminating NULL */
-	if(line == NULL) {
-	    /* failed to allocate memory so we recover rather crudely
-	       by rejecting the translation */
-	    line = saveline;
-	    break;
-	}
-	
-	/* copy first part of line */
-	i -= strlen(t);
-	strncpy(line,current->line,i);
-	line[i]=0;  /* terminate */
-	
-	/* add "tc2=" */
-	strcat(line, "tc2=");
-	
-	/* add rest of line */
-	strcat(line, t);
-	
-	/* calculate our saveline position in the new line */
-	saveline = line + (saveline - current->line);
-	
-	/* replace old line with new */
-	tfree(current->line);
-	current->line = line;
-	line = saveline;
-    }
-    
+      for(s=line; *s; s++) { /* scan the remainder of the line */
+        
+        /* reject anything other than "tc" */
+        if(*s!='t') continue;
+        s++;
+        if(*s!='c') continue;
+        s++;
+        
+        /* skip any white space */
+        while(isspace(*s)) s++;
+              
+        /* reject if not '=' */
+        if(*s!='=') continue;
+        s++;
+        
+        /* skip any white space */
+        while(isspace(*s)) s++;
+        
+        /* if we now have +, - or a decimal digit then assume we have a number,
+           otherwise reject */
+        if((*s!='+') && (*s!='-') && !isdigit(*s)) continue;
+        s++;
+        
+        /* look for next white space or null */
+        while(!isspace(*s) && *s) s++;
+        
+        /* reject whole line if null (i.e not white space) */
+        if(*s==0) break;
+        s++;
+        
+        /* remember this location in the line.
+           Note that just before this location is a white space character. */
+        t = s;
+        
+        /* skip any additional white space */
+        while(isspace(*s)) s++;
+        
+        /* if we now have +, - or a decimal digit then assume we have the 
+            second number, otherwise reject */
+        if((*s!='+') && (*s!='-') && !isdigit(*s)) continue;
+        
+        /* if we get this far we have met all are criterea,
+           so now we splice in a "tc2=" at the location remembered above. */
+        
+        /* first alocate memory for the new longer line */
+        i = strlen(current->line);  /* length of existing line */	
+        line = tmalloc(i + 4 + 1);  /* alocate enough for "tc2=" & terminating NULL */
+        if(line == NULL) {
+            /* failed to allocate memory so we recover rather crudely
+               by rejecting the translation */
+            line = saveline;
+            break;
+        }
+        
+        /* copy first part of line */
+        i -= strlen(t);
+        strncpy(line,current->line,i);
+        line[i]=0;  /* terminate */
+        
+        /* add "tc2=" */
+        strcat(line, "tc2=");
+        
+        /* add rest of line */
+        strcat(line, t);
+        
+        /* calculate our saveline position in the new line */
+        saveline = line + (saveline - current->line);
+        
+        /* replace old line with new */
+        tfree(current->line);
+        current->line = line;
+        line = saveline;
+      }
 #ifdef TRACE
-    printf("(Translated) Res line: %s\n",current->line);
+    printf("(Translated) Resistor line: %s\n", current->line);
 #endif
+    }
 
     INPgetTok(&line, &model, 1);
 
-    if (*model) {
-	/* token isn't null */
-	if (INPlookMod(model)) {
-	    /* If this is a valid model connect it */
-	    INPinsert(&model, tab);
-	    thismodel = (INPmodel *) NULL;
-	    current->error = INPgetMod(ckt, model, &thismodel, tab);
-	    if (thismodel != NULL) {
-		if (mytype != thismodel->INPmodType) {
-		    LITERR("incorrect model type for resistor");
-		    return;
-		}
-		mdfast = thismodel->INPmodfast;
-		type = thismodel->INPmodType;
-	    }
-	} else {
-	    tfree(model);
-	    /* It is not a model */
-	    line = saveline;	/* go back */
-	    type = mytype;
-	    if (!tab->defRmod) {	/* create default R model */
-		IFnewUid(ckt, &uid, (IFuid) NULL, "R", UID_MODEL,
-			 (void **) NULL);
-		IFC(newModel, (ckt, type, &(tab->defRmod), uid));
-	    }
-	    mdfast = tab->defRmod;
-	}
-	IFC(newInstance, (ckt, mdfast, &fast, name));
+    if (*model && (strcmp(model, "r") != 0)) {
+      /* token isn't null */
+      if (INPlookMod(model)) {
+          /* If this is a valid model connect it */
+#ifdef TRACE
+          printf("In INP2R, Valid R Model: %s\n", model);
+#endif
+          INPinsert(&model, tab);
+          thismodel = (INPmodel *) NULL;
+          current->error = INPgetMod(ckt, model, &thismodel, tab);
+          if (thismodel != NULL) {
+            if (mytype != thismodel->INPmodType) {
+                LITERR("incorrect model type for resistor");
+                return;
+            }
+            mdfast = thismodel->INPmodfast;
+            type = thismodel->INPmodType;
+          }
+      } else {
+          tfree(model);
+          /* It is not a model */
+          line = saveline;	/* go back */
+          type = mytype;
+          if (!tab->defRmod) {	/* create default R model */
+            IFnewUid(ckt, &uid, (IFuid) NULL, "R", UID_MODEL,
+                (void **) NULL);
+            IFC(newModel, (ckt, type, &(tab->defRmod), uid));
+          }
+          mdfast = tab->defRmod;
+      }
+      IFC(newInstance, (ckt, mdfast, &fast, name));
     } else {
-	tfree(model);
-	/* The token is null and a default model will be created */
-	type = mytype;
-	if (!tab->defRmod) {
-	    /* create default R model */
-	    IFnewUid(ckt, &uid, (IFuid) NULL, "R", UID_MODEL,
-		     (void **) NULL);
-	    IFC(newModel, (ckt, type, &(tab->defRmod), uid));
-	}
-	IFC(newInstance, (ckt, tab->defRmod, &fast, name));
+      tfree(model);
+      /* The token is null or we have r=val - a default model will be created */
+      type = mytype;
+      if (!tab->defRmod) {
+          /* create default R model */
+          IFnewUid(ckt, &uid, (IFuid) NULL, "R", UID_MODEL,
+              (void **) NULL);
+          IFC(newModel, (ckt, type, &(tab->defRmod), uid));
+      }
+      IFC(newInstance, (ckt, tab->defRmod, &fast, name));
+      if (error1 == 1) {		/* was a r=val construction */
+        val = INPevaluate(&line, &error1, 1);	/* [<val>] */
+#ifdef TRACE
+        printf ("In INP2R, R=val construction: val=%g\n", val);
+#endif
+      }
     }
 
     if (error1 == 0) {		/* got a resistance above */
-	ptemp.rValue = val;
-	GCA(INPpName, ("resistance", &ptemp, ckt, type, fast))
+      ptemp.rValue = val;
+      GCA(INPpName, ("resistance", &ptemp, ckt, type, fast))
     }
 
     IFC(bindNode, (ckt, fast, 1, node1));
     IFC(bindNode, (ckt, fast, 2, node2));
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
     if (waslead) {
-	ptemp.rValue = leadval;
-	GCA(INPpName, ("resistance", &ptemp, ckt, type, fast));
+      ptemp.rValue = leadval;
+      GCA(INPpName, ("resistance", &ptemp, ckt, type, fast));
     }
 
     return;
