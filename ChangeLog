@@ -1,5 +1,10 @@
-2009-07-28
- * changlog repaired (broken since rev. 1.417)
+2009-07-30 Dietmar Warning
+ * frontend/inpcom.c: refurbish spice3 syntax for r models with alternative 
+   value like: "r1 a b 2k rmodel"
+ * parser/inp2r.c, inp2l.c, inp2c.c: allow r,l,c element instantiation e.g. r=50
+
+2009-07-28 Holger Vogt
+ * ChangLog repaired (broken since rev. 1.417)
  * inpcom.c repaired (broken in CVS)
 
 2009-07-25 Dietmar Warning
