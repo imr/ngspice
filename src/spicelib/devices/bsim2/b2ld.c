@@ -117,7 +117,7 @@ B2load(GENmodel *inModel, CKTcircuit *ckt)
     double cqbulk;
     double cqdrn;
     double vt0;
-    double args[7];
+    double args[8];
     int    ByPass;
 #ifndef NOBYPASS    
     double tempv;
