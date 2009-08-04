@@ -127,6 +127,7 @@ struct timeb timebegin;
 #endif
 
 #ifdef HAVE_UNISTD_H
+#include <sys/types.h>
 #include <unistd.h>
 #endif
 
