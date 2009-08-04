@@ -1,3 +1,9 @@
+2009-08-04 Dietmar Warning
+ * configure.in: looking for unistd.h
+ * bsim2/b2ld.c: correct args size
+ * bsim3soi/b4soild.c: init Cbg1
+ * cmath2.c: init vector d
+
 2009-07-30 Dietmar Warning
  * frontend/inpcom.c: refurbish spice3 syntax for r models with alternative 
    value like: "r1 a b 2k rmodel"
