@@ -1,5 +1,5 @@
 2009-08-04 Dietmar Warning
- * configure.in: looking for unistd.h
+ * configure.in, ngspice.h: looking for unistd.h & usage
  * bsim2/b2ld.c: correct args size
  * bsim3soi/b4soild.c: init Cbg1
  * cmath2.c: init vector d
