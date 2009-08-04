@@ -197,7 +197,7 @@ double dVfbeff_dVrg;
 double qinv, qgate=0.0, qbody=0.0, qdrn=0.0, qsrc, qsub=0.0, cqgate, cqbody, cqdrn, cqsub, cqtemp;
 double Cgg, Cgd, Cgb;
 double Csg, Csd, Csb, Cbg=0.0, Cbd=0.0, Cbb=0.0;
-double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Csg1, Csd1, Csb1;
+double Cgg1, Cgb1, Cgd1, Cbg1=0.0, Cbb1, Cbd1, Csg1, Csd1, Csb1;
 double Vdsatii;
 double Ibs1 ,dIbs1_dVb ,dIbs1_dT;
 double Ibs2 ,dIbs2_dVb ,dIbs2_dT;
