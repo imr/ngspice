@@ -251,7 +251,7 @@ void
 *cx_avg(void *data, short int type, int length, int *newlength, short int *newtype, ...)
 {
     complex *c;
-    double *d, sum_real = 0.0,sum_imag = 0.0;
+    double *d = NULL, sum_real = 0.0,sum_imag = 0.0;
     complex *cc = (complex *) data;
     double *dd = (double *) data;
     int i;
