@@ -1,3 +1,6 @@
+2009-08-05 Holger Vogt
+ * measure.c: add comments (not yet complete)
+
 2009-08-04 Dietmar Warning
  * configure.in, ngspice.h: looking for unistd.h & usage
  * bsim2/b2ld.c: correct args size

@@ -1,3 +1,10 @@
+/* Routines to evaluate the .measure cards.
+   Entry point is function do_measure(), called by fcn dosim() 
+   from runcoms.c:335, after simulation is finished.
+   
+   $Id&   
+*/
+   
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
@@ -16,7 +23,7 @@ static bool measure_valid[20000];
 static bool just_chk_meas;
 static bool measures_passed;
 
-
+/** return precision (either 5 or environment variable NGSPICE_MEAS_PRECISION) */
 static int
 get_measure_precision()
 {
@@ -43,7 +50,7 @@ interpolate( struct dvec *time, struct dvec *values, int i, int j, double var_va
 }
 
 static double
-get_volt_time( struct dvec *time, struct dvec *values, double value, char polarity, int index, bool *failed )
+get_volt_time( struct dvec *time, struct dvec *values, double value, char polarity, int mindex, bool *failed )
 {
   int    i = 0, count = 0;
   double comp_time = 0;
@@ -52,13 +59,13 @@ get_volt_time( struct dvec *time, struct dvec *values, double value, char polari
     if ( polarity == 'r' ) {
       if ( values->v_realdata[i] < value && value <= values->v_realdata[i+1] ) {
 	count++;
-	if ( count == index ) comp_time = interpolate( time, values, i, i+1, value, 'x' );
+	if ( count == mindex ) comp_time = interpolate( time, values, i, i+1, value, 'x' );
       }
     }
     else if ( polarity == 'f' ) {
       if ( values->v_realdata[i] >= value && value > values->v_realdata[i+1] ) {
 	count++;
-	if ( count == index ) comp_time = interpolate( time, values, i, i+1, value, 'x' );
+	if ( count == mindex ) comp_time = interpolate( time, values, i, i+1, value, 'x' );
       }
     }
     else {
@@ -71,10 +78,25 @@ get_volt_time( struct dvec *time, struct dvec *values, double value, char polari
   return comp_time;
 }
 
+/* Evaluate the delay between time values at trig and targ i or v levels. 
+   Called by fcn do_delay_measurement().
+   Returns FALSE if successful.*/
 static bool
-measure( char *trig_name, double trig_value, char trig_polarity, int trig_index,
-  char *targ_name, double targ_value, char targ_polarity, int targ_index, double *result,
-  double *trig_time, double *targ_time ) {
+measure( 
+  char *trig_name,   /*in: name (e.g. in) of vector (e.g. v(in)) following trig parameter */
+  double trig_value, /*in: i or v level following trig parameter */
+  char trig_polarity, /*in: r for rising slope, f for falling slope */
+  int trig_index,    /*in: time is measured only after this number of rising (
+                       falling) slopes with trigvalue has been detected*/
+  char *targ_name,   /*in: name (e.g. in) of vector (e.g. v(in)) following targ parameter */
+  double targ_value, /*in: i or v level following targ parameter */
+  char targ_polarity, /*in: r for rising slope, f for falling slope */
+  int targ_index,    /*in: time is measured only after this number of rising (
+                       falling) slopes with targvalue has been detected */
+  double *result,    /*out: difference between *targ_time and *trig_time*/
+  double *trig_time, /*out: time at given i or v level following trig parameter*/
+  double *targ_time  /*out: time at given i or v level following targ parameter*/
+) {
   struct dvec *time  = vec_get("time");
   struct dvec *trig  = vec_get(trig_name);
   struct dvec *targ  = vec_get(targ_name);
@@ -307,12 +329,11 @@ get_double_value( char **line, char *name, double *value ) {
 }
 
  /*-------------------------------------------------------------------------*
-  * gettok skips over whitespace and returns the next token found.  This is 
-  * the original version.  It does not "do the right thing" when you have 
-  * parens or commas anywhere in the nodelist.  Note that I left this unmodified
-  * since I didn't want to break any fcns which called it from elsewhere than
-  * subckt.c.  -- SDB 12.3.2003.
-  * Since gettok doesn't work right try a new version that does. WPS.
+  gettok_paren skips over whitespace and returns the next token found. Here it
+  is used only to return part of a vector, eg V(in) or I(mynode). 
+  For example v(in) has already been stripped to in) when gettok_paren is called. 
+  gettok_paren returns 'in', leaving ')' as the next character of s.
+  Only called from fcn get_vector_name().
   *-------------------------------------------------------------------------*/
  static char *
  gettok_paren(char **s)
@@ -323,22 +344,26 @@ get_double_value( char **line, char *name, double *value ) {
      int paren;
  
      paren = 0;
+     /* skip over leading white spaces */
      while (isspace(**s))
          (*s)++;
+     /* if nothing left (end of line), return NULL */
      if (!**s)
          return (NULL);
+     
      while ((c = **s) && !isspace(c)) {
  	if (c == '('/*)*/)
  	    paren += 1;
  	else if (c == /*(*/')'){
  	    paren -= 1;
- 	    if( paren <= 0 ) 
+ 	    if( paren <= 0 ) /* added over gettok */
  	      break ;
  	} else if (c == ',' && paren < 1)
  	    break;
          buf[i++] = *(*s)++;
      }
      buf[i] = '\0';
+     /* skip over trailing white spaces and commas*/
      while (isspace(**s) || **s == ',')
          (*s)++;
      return (copy(buf));
@@ -357,8 +382,18 @@ get_vector_name( char **line ) {
   return name;
 }
 
+/* Evaluate measurement types trig|delay .
+   Called by do_measure(). 
+   Calls measure(). */
 static bool
-do_delay_measurement( char *resname, char *out_line, char *line, char *o_line, int meas_index, double *result ) {
+do_delay_measurement( 
+  char *resname,  /*in: name of result parameter, defined by user*/
+  char *out_line, /*out: output for printing */
+  char *line,     /*in: .meas card, first four parameters stripped */
+  char *o_line,   /*in: .meas card, complete */
+  int meas_index, /*in: number of measurements */
+  double *result  /*out: delay value returned by measure() */
+ ) {
   char   *trig_name, *targ_name, *token;
   char   trig_type, targ_type, trig_polarity, targ_polarity;
   double targ_value, trig_value;
@@ -521,20 +556,46 @@ do_other_measurement( char *resname, char *out_line, char *meas_type, char *line
    return ( failed ) ? FALSE : TRUE;
 }
 
+/* Entry point for .meas evaluation. 
+   Called in fcn dosim() from runcoms.c:335, after simulation is finished
+   with chk_only set to FALSE.
+   Called from fcn check_autostop()
+   with chk_only set to TRUE (no printouts, no params set). */
 void
-do_measure( char *what, bool chk_only ) {
+do_measure( 
+  char *what,   /*in: analysis type*/
+  bool chk_only /*in: TRUE if checking for "autostop", FALSE otherwise*/
+                /*global variable measure_type
+                  out: */ 
+) {
   struct line *meas_card, *meas_results = NULL, *end = NULL, *newcard;
   char        *line, *an_name, *an_type, *resname, *meastype, *str_ptr, out_line[1000];
-  int         index  = 0, ok = 0;
+  int         mindex  = 0, ok = 0;
   double      result = 0;
   bool        first_time = TRUE;
   int         precision = get_measure_precision();
 
-  just_chk_meas = chk_only;
+  just_chk_meas = chk_only; 
 
-  an_name = strdup( what );
+  an_name = strdup( what ); /* analysis type, e.g. "tran" */
   strtolower( an_name );
 
+  /* Evaluating the linked list of .meas cards, assembled from the input deck
+     by fcn inp_spsource() in inp.c:575.
+     A typical .meas card will contain:
+     parameter        value
+     nameof card      .meas(ure) 
+     analysis type    tran        only tran available currently
+     result name      myout       defined by user
+     measurement type trig|delay|param|expr|avg|mean|max|min|rms|integ(ral)|when
+
+     The measurement type determines how to continue the .meas card. 
+     trig|delay are handled in fcn do_delay_measurement(), param|expr are skipped 
+     in first pass through .meas cards and are treated in second pass, 
+     all others are treated in fcn do_other_measurement().
+     */
+  
+  /* first pass through .meas cards: evaluate everything except param|expr */
   for ( meas_card = ft_curckt->ci_meas; meas_card != NULL; meas_card = meas_card->li_next ) {
     line = meas_card->li_line;
 
@@ -551,6 +612,7 @@ do_measure( char *what, bool chk_only ) {
       txfree(an_type); txfree(resname); txfree(meastype);
       continue;
     }
+    /* print header before evaluating first .meas line */
     else if ( first_time ) {
       first_time = FALSE;
 
@@ -563,13 +625,14 @@ do_measure( char *what, bool chk_only ) {
     /* skip param|expr measurement types for now -- will be done after other measurements */
     if ( strncmp( meastype, "param", 5 ) == 0 || strncmp( meastype, "expr", 4 ) == 0 ) continue;
 
+    /* skip .meas line, if analysis type from line and name of analysis performed differ */
     if ( strcmp( an_name, an_type ) != 0 ) {
       txfree(an_type); txfree(resname); txfree(meastype);
-      continue;
+      continue; 
     }
 
-    if      ( strcmp( meastype, "trig"  ) == 0 || strcmp( meastype, "delay" ) == 0 ) {
-      if ( do_delay_measurement( resname, out_line, line, meas_card->li_line, index++, &result ) && just_chk_meas != TRUE ) {
+    if ( strcmp( meastype, "trig"  ) == 0 || strcmp( meastype, "delay" ) == 0 ) {
+      if ( do_delay_measurement( resname, out_line, line, meas_card->li_line, mindex++, &result ) && just_chk_meas != TRUE ) {
         nupa_add_param( resname, result );
       }
     }
@@ -577,7 +640,7 @@ do_measure( char *what, bool chk_only ) {
 	      strcmp( meastype, "max"   ) == 0 || strcmp( meastype, "min"   ) == 0 ||
 	      strcmp( meastype, "rms"   ) == 0 || strcmp( meastype, "integ" ) == 0 ||
 	      strcmp( meastype, "integral" ) == 0 || strcmp( meastype, "when" ) == 0 ) {
-      if ( do_other_measurement( resname, out_line, meastype, line, meas_card->li_line, index++, &result ) && just_chk_meas != TRUE ) {
+      if ( do_other_measurement( resname, out_line, meastype, line, meas_card->li_line, mindex++, &result ) && just_chk_meas != TRUE ) {
         nupa_add_param( resname, result );
       }
     }
@@ -603,16 +666,16 @@ do_measure( char *what, bool chk_only ) {
     txfree(an_type); txfree(resname); txfree(meastype);
 
     // see if number of measurements exceeds fixed array size of 20,000
-    if ( index >= 20000 ) {
+    if ( mindex >= 20000 ) {
       fprintf( stderr, "ERROR: number of measurements exceeds 20,000!\nAborting...\n" );
 #ifdef HAS_WINDOWS
       winmessage("Fatal error in SPICE");
 #endif
       exit(-1);
     }
-  }
+  } /* end of for loop (first pass through .meas lines) */
 
-  // now do param|expr .meas statements
+  /* second pass through .meas cards: now do param|expr .meas statements */
   newcard = meas_results;
   for ( meas_card = ft_curckt->ci_meas; meas_card != NULL; meas_card = meas_card->li_next ) {
     line = meas_card->li_line;
@@ -678,6 +741,11 @@ do_measure( char *what, bool chk_only ) {
 
   //nupa_list_params();
 }
+
+
+/* called from dctran.c:470, if TRUE is returned, transient simulation is stopped.
+   Returns TRUE if "autostop" has been set as an option and if measures_passed not
+   set to FALSE during calling do_measure. what is set to "tran".*/
 
 bool
 check_autostop( char* what ) {
