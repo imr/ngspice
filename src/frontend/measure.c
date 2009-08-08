@@ -2,7 +2,7 @@
    Entry point is function do_measure(), called by fcn dosim() 
    from runcoms.c:335, after simulation is finished.
    
-   $Id&   
+   $Id$   
 */
    
 #include "ngspice.h"
@@ -19,11 +19,13 @@
 void winmessage(char* new_msg);
 #endif
 
-static bool measure_valid[20000];
-static bool just_chk_meas;
-static bool measures_passed;
+static bool measure_valid[20000];/* TRUE: if measurement no. [xxx] has been done successfully
+                                 (not used anywhere)*/
+static bool just_chk_meas;   /* TRUE: only check if measurement can be done successfully,
+                             no output generated (if option autostop is set)*/
+static bool measures_passed; /* TRUE: stop simulation (if option autostop is set)*/
 
-/** return precision (either 5 or environment variable NGSPICE_MEAS_PRECISION) */
+/** return precision (either 5 or value of environment variable NGSPICE_MEAS_PRECISION) */
 static int
 get_measure_precision()
 {
@@ -37,8 +39,17 @@ get_measure_precision()
   return precision;
 }
 
+/* returns interpolated time point (char x_or_y='x') or interpolated data value */
 static double
-interpolate( struct dvec *time, struct dvec *values, int i, int j, double var_value, char x_or_y ) {
+interpolate( 
+  struct dvec *time, /*in: vector of time points */
+  struct dvec *values, /*in: vector of corresponding data points */
+  int i, /*in: index to first time/data couple */
+  int j, /*in: index to second time/data couple, i nad j setting the interval */
+  double var_value, /*in: either time or data value */
+  char x_or_y /*in: set to 'x': requires var_value to be data point, returns time; 
+              otherwise expects var_value to be time, returns data value */
+) {
   double slope = (values->v_realdata[j] - values->v_realdata[i])/(time->v_realdata[j] - time->v_realdata[i]);
   double yint  = values->v_realdata[i] - slope*time->v_realdata[i];
   double result;
@@ -49,22 +60,36 @@ interpolate( struct dvec *time, struct dvec *values, int i, int j, double var_va
   return result;
 }
 
+/* Takes a data value and returns corresponding time, but only after the number of
+data crossings given by e.g. 'rise=3' have passed. */
 static double
-get_volt_time( struct dvec *time, struct dvec *values, double value, char polarity, int mindex, bool *failed )
-{
+get_volt_time( 
+  struct dvec *time, /*in: vector of time points */
+  struct dvec *values, /*in: vector of corresponding data points */
+  double value, /*in: data value, for which time is sought */
+  char polarity, /*in: 'r' (rise) or 'f' (fall) */
+  int mindex, /*in: no. of times the data sequence has to cross 'value', before measurement commences */  
+  bool *failed /*out: TRUE if syntax error or time point not found */
+) {
   int    i = 0, count = 0;
   double comp_time = 0;
 
   for ( i = 0; i < values->v_length-1; i++ ) {
     if ( polarity == 'r' ) {
       if ( values->v_realdata[i] < value && value <= values->v_realdata[i+1] ) {
-	count++;
+	/* increase 'count' if rising slope data cross 'value' */
+        count++; 
+        /* return interpolated time value only after the data sequence has crossed 
+        'value' mindex times*/
 	if ( count == mindex ) comp_time = interpolate( time, values, i, i+1, value, 'x' );
       }
     }
     else if ( polarity == 'f' ) {
       if ( values->v_realdata[i] >= value && value > values->v_realdata[i+1] ) {
-	count++;
+	/* increase 'count' if falling slope data cross 'value' */
+        count++;
+        /* return interpolated time value only after the data sequence has crossed 
+        'value' mindex times*/
 	if ( count == mindex ) comp_time = interpolate( time, values, i, i+1, value, 'x' );
       }
     }
@@ -84,7 +109,7 @@ get_volt_time( struct dvec *time, struct dvec *values, double value, char polari
 static bool
 measure( 
   char *trig_name,   /*in: name (e.g. in) of vector (e.g. v(in)) following trig parameter */
-  double trig_value, /*in: i or v level following trig parameter */
+  double trig_value, /*in: i or v value following trig parameter */
   char trig_polarity, /*in: r for rising slope, f for falling slope */
   int trig_index,    /*in: time is measured only after this number of rising (
                        falling) slopes with trigvalue has been detected*/
@@ -113,14 +138,26 @@ measure(
   return failed;
 }
 
-/*
+/*Do any other measurements:
   avg: (average) calculates the area under the out_var divided by the periods of interest
   rms: (root mean squared) calculates the square root of the area under the out_var^2 curve 
        divided by the period of interest
-  integral: calculate the integral
+  integ(ral): calculate the integral in period of interest
+  min|max: find min or max value in period of interest
+  when: get time when an vetor reaches a value. 
+  Called by fcn do_other_measurement().
+  Returns FALSE if successful.
 */
 static bool
-measure2( char *meas_type, char *vec_name, char vec_type, double from, double to, double *result, double *result_time ) {
+measure2( 
+  char *meas_type, /* one of avg|rms|integ(ral)|min|max|when*/ 
+  char *vec_name, /*in: name (e.g. 'v0') of vector (e.g. i(v0) )*/
+  char vec_type,  /*in: type (e.g. 'i') of vector (e.g. i(v0) ), may be 'v' or 'i'*/
+  double from, /*in: start value (e.g. of time) defining region of interest */
+  double to,   /*in: stop value */
+  double *result, /*out: measurement result */
+  double *result_time /*out: time value where *result occurs (not valid for avg, rms, integ) */
+) {
    struct dvec *time  = vec_get("time");
    struct dvec *vec;
    int         xy_size = 0;
@@ -214,6 +251,7 @@ measure2( char *meas_type, char *vec_name, char vec_type, double from, double to
    }
    else if ( strcmp( meas_type, "when"      ) == 0 ){
       init_val = vec->v_realdata[0] ;
+      /* 'from' is used as input value */
       if ( AlmostEqualUlps( init_val, from, 100 ) ){
          /* match right out of the gate. */
          *result      = vec->v_realdata[0];
@@ -266,8 +304,15 @@ chkAnalysisType( char *an_type ) {
   else return TRUE;
 }
 
+/* Gets pointer to integer value after 'xxx=' and advances pointer of *line. 
+   On error returns FALSE. */ 
 static bool
-get_int_value( char **line, char *name, int *value ) {
+get_int_value( 
+  char **line, /*in|out: pointer to line to be parsed */
+  char *name,  /*in: xxx e.g. 'fall' from example 'fall=2' */
+  int *value   /*out: return value (e.g. 2 from 'fall=2' */
+) {
+  /*get token (e.g. 'fall=1' and advance pointer*/
   char *token     = gettok(line);
   bool return_val = TRUE;
   char *equal_ptr;
@@ -295,12 +340,19 @@ get_int_value( char **line, char *name, int *value ) {
   return return_val;
 }
 
+
+/* Gets pointer to double value after 'xxx=' and advances pointer of *line. 
+   On error returns FALSE. */ 
 static bool
-get_double_value( char **line, char *name, double *value ) {
+get_double_value( 
+   char **line, /*in|out: pointer to line to be parsed */
+   char *name, /*in: xxx e.g. 'val' from 'val=0.5' */
+   double *value /*out: return value (e.g. 0.5) from 'val=0.5'*/
+) {
   char *token     = gettok(line);
   bool return_val = TRUE;
   char *equal_ptr, *junk;
-  int  err;
+  int  err=0;
 
   if ( name && ( strncmp( token, name, strlen(name) ) != 0 ) ) {
     if ( just_chk_meas != TRUE ) fprintf( cp_err, "Error: syntax error for measure statement; expecting next field to be '%s'.\n", name );
@@ -391,8 +443,10 @@ do_delay_measurement(
   char *out_line, /*out: output for printing */
   char *line,     /*in: .meas card, first four parameters stripped */
   char *o_line,   /*in: .meas card, complete */
-  int meas_index, /*in: number of measurements */
+  int meas_index, /*in: number of actual measurement */
   double *result  /*out: delay value returned by measure() */
+                  /*global variable measures_passed
+                  out: set to FALSE if measurement failed (used with autostop)*/ 
  ) {
   char   *trig_name, *targ_name, *token;
   char   trig_type, targ_type, trig_polarity, targ_polarity;
@@ -565,8 +619,8 @@ void
 do_measure( 
   char *what,   /*in: analysis type*/
   bool chk_only /*in: TRUE if checking for "autostop", FALSE otherwise*/
-                /*global variable measure_type
-                  out: */ 
+                /*global variable measures_passed
+                  out: set to FALSE if .meas syntax is violated (used with autostop)*/ 
 ) {
   struct line *meas_card, *meas_results = NULL, *end = NULL, *newcard;
   char        *line, *an_name, *an_type, *resname, *meastype, *str_ptr, out_line[1000];
@@ -743,9 +797,11 @@ do_measure(
 }
 
 
-/* called from dctran.c:470, if TRUE is returned, transient simulation is stopped.
+/* called from dctran.c:470, if timepoint is accepted.
+   Returns TRUE if measurement (just a check, no output) has been successful. 
+   If TRUE is returned, transient simulation is stopped.
    Returns TRUE if "autostop" has been set as an option and if measures_passed not
-   set to FALSE during calling do_measure. what is set to "tran".*/
+   set to FALSE during calling do_measure. 'what' is set to "tran".*/
 
 bool
 check_autostop( char* what ) {
