@@ -22,7 +22,7 @@ Inverter example circuit
 * device listing and parameter listing
 * You can run the example circuit with this command:
 *
-* ngspice -b -o ngspice.out inverter2.sp
+* ngspice inverter2.sp
 
 
 * global nodes

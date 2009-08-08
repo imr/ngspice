@@ -19,7 +19,7 @@ Inverter example circuit
 * device listing and parameter listing
 * You can run the example circuit with this command:
 *
-* ngspice -b -o ngspice.out inverter.sp
+* ngspice inverter.sp
 
 
 * global nodes
@@ -81,7 +81,10 @@ c1 out gnd 220fF
 .meas tran inv_delay trig v(in)  val='vp/2'   fall=1 targ v(out) val='vp/2'   rise=1
 .meas tran out_slew  trig v(out) val='0.2*vp' rise=1 targ v(out) val='0.8*vp' rise=1
 .meas tran delay_chk param='(inv_delay < 100ps) ? 1 : 0'
-.meas tran skew when v(out)=skew_meas
+.meas tran skew when v(out)=0.6
+.meas tran skew2 when v(out)=skew_meas
+.meas tran skew3 when v(out)=skew_meas fall=2 *fall is ignored
+*.meas tran skew when v(out)=v(in)   not implemented
 
 .control
 run
