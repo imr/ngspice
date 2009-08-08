@@ -768,6 +768,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\frontend\com_measure2.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\com_option.h"
 				>
 			</File>
@@ -1208,11 +1212,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp.h"
+				RelativePath="..\src\frontend\inp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\inp.h"
+				RelativePath="..\src\spicelib\parser\inp.h"
 				>
 			</File>
 			<File
@@ -4445,6 +4449,10 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\com_let.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_measure2.c"
 				>
 			</File>
 			<File

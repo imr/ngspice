@@ -10,6 +10,10 @@
 #include "numparam.h"
 #include "ngspice.h"
 
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
+#endif
+
 /* random numbers in /maths/misc/randnumb.c */
 extern double gauss();
 
@@ -1724,8 +1728,13 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
           else
             {
               pscopy (t, s, i + 1, k - i - 1);
-              err = evaluate (dico, q, t, 0);
-            }
+              /* exeption made for .meas */
+              if( strcasecmp(t,"LAST")==0) {
+                 strcpy(q,"last") ;
+                 err=0;
+              } else 
+		err = evaluate (dico, q, t, 0);
+          }
 
           i = k;
           if (!err)

@@ -14,9 +14,18 @@
 #include "variable.h"
 #include "numparam/numpaif.h"
 #include "missing_math.h"
+#include "com_measure2.h"
+ 
+#define EOS  '\0'
 
 #ifdef HAS_WINDOWS
 void winmessage(char* new_msg);
+#endif
+
+#define OLD_WAY   /* do not use functions from com_measure2.c */
+
+#ifndef OLD_WAY
+static wordlist *measure_parse_line( char *line ) ;
 #endif
 
 static bool measure_valid[20000];/* TRUE: if measurement no. [xxx] has been done successfully
@@ -24,20 +33,6 @@ static bool measure_valid[20000];/* TRUE: if measurement no. [xxx] has been done
 static bool just_chk_meas;   /* TRUE: only check if measurement can be done successfully,
                              no output generated (if option autostop is set)*/
 static bool measures_passed; /* TRUE: stop simulation (if option autostop is set)*/
-
-/** return precision (either 5 or value of environment variable NGSPICE_MEAS_PRECISION) */
-static int
-get_measure_precision()
-{
-  char *env_ptr;
-  int  precision = 5;
-  
-  if ( ( env_ptr = getenv("NGSPICE_MEAS_PRECISION") ) ) {
-    precision = atoi(env_ptr);
-  }
-
-  return precision;
-}
 
 /* returns interpolated time point (char x_or_y='x') or interpolated data value */
 static double
@@ -624,15 +619,18 @@ do_measure(
 ) {
   struct line *meas_card, *meas_results = NULL, *end = NULL, *newcard;
   char        *line, *an_name, *an_type, *resname, *meastype, *str_ptr, out_line[1000];
-  int         mindex  = 0, ok = 0;
+  int         idx  = 0, ok = 0;
+  int	      fail;
   double      result = 0;
   bool        first_time = TRUE;
+  wordlist    *measure_word_list ;
   int         precision = get_measure_precision();
 
   just_chk_meas = chk_only; 
 
   an_name = strdup( what ); /* analysis type, e.g. "tran" */
   strtolower( an_name );
+  measure_word_list = NULL ;
 
   /* Evaluating the linked list of .meas cards, assembled from the input deck
      by fcn inp_spsource() in inp.c:575.
@@ -685,8 +683,9 @@ do_measure(
       continue; 
     }
 
+#ifdef OLD_WAY
     if ( strcmp( meastype, "trig"  ) == 0 || strcmp( meastype, "delay" ) == 0 ) {
-      if ( do_delay_measurement( resname, out_line, line, meas_card->li_line, mindex++, &result ) && just_chk_meas != TRUE ) {
+      if ( do_delay_measurement( resname, out_line, line, meas_card->li_line, idx++, &result ) && just_chk_meas != TRUE ) {
         nupa_add_param( resname, result );
       }
     }
@@ -694,7 +693,7 @@ do_measure(
 	      strcmp( meastype, "max"   ) == 0 || strcmp( meastype, "min"   ) == 0 ||
 	      strcmp( meastype, "rms"   ) == 0 || strcmp( meastype, "integ" ) == 0 ||
 	      strcmp( meastype, "integral" ) == 0 || strcmp( meastype, "when" ) == 0 ) {
-      if ( do_other_measurement( resname, out_line, meastype, line, meas_card->li_line, mindex++, &result ) && just_chk_meas != TRUE ) {
+      if ( do_other_measurement( resname, out_line, meastype, line, meas_card->li_line, idx++, &result ) && just_chk_meas != TRUE ) {
         nupa_add_param( resname, result );
       }
     }
@@ -706,7 +705,20 @@ do_measure(
         fprintf( cp_err, "       %s\n", meas_card->li_line );
       }
     }
-
+  
+#else  /* NEW_WAY */
+     out_line[0] = EOS ;
+     measure_word_list = measure_parse_line( meas_card->li_line) ;
+     fail = get_measure2(measure_word_list,&result,out_line,chk_only) ;
+     if( fail ){
+       measure_valid[idx++] = FALSE;
+       measures_passed = FALSE;
+     } else {
+       nupa_add_param( resname, result );
+       measure_valid[idx++] = TRUE;
+     }
+ #endif /* OLD_WAY */
+ 
     newcard          = alloc(struct line);
     newcard->li_line = strdup(out_line);
     newcard->li_next = NULL;
@@ -720,7 +732,7 @@ do_measure(
     txfree(an_type); txfree(resname); txfree(meastype);
 
     // see if number of measurements exceeds fixed array size of 20,000
-    if ( mindex >= 20000 ) {
+    if ( idx >= 20000 ) {
       fprintf( stderr, "ERROR: number of measurements exceeds 20,000!\nAborting...\n" );
 #ifdef HAS_WINDOWS
       winmessage("Fatal error in SPICE");
@@ -817,3 +829,44 @@ check_autostop( char* what ) {
 
   return flag;
 }
+
+ static wordlist *measure_parse_line( char *line )
+ {
+   int len ;				/* length of string */
+   wordlist *wl ;			/* build a word list - head of list */
+   wordlist *new_item ;			/* single item of a list */
+   char *item ;				/* parsed item */
+   char *long_str ;			/* concatenated string */
+   char *extra_item ;			/* extra item */
+ 
+   wl = NULL ;
+   (void) gettok(&line) ;
+   do { 
+     item = gettok(&line) ;
+     if(!(item)){
+       break ;
+     }
+     len = strlen(item) ;
+     if( item[len-1] == '=' ){
+       /* We can't end on an equal append the next piece */
+       extra_item = gettok(&line) ;
+       if(!(extra_item)){
+ 	break ;
+       }
+       len += strlen( extra_item ) + 2 ;
+       long_str = MALLOC(len) ;
+       sprintf( long_str, "%s%s", item, extra_item ) ;
+       txfree( item ) ;
+       txfree( extra_item ) ;
+       item = long_str ;
+     }
+     new_item = alloc(struct wordlist) ;
+     new_item->wl_word = item ;
+     new_item->wl_next = NULL ;
+     new_item->wl_prev = NULL ;
+     wl = wl_append(wl, new_item) ;
+   } while( line && *line ) ;
+ 
+   return(wl) ;
+ 
+} /* end measure_parse_line() */

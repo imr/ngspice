@@ -3,7 +3,8 @@
 
 #include <config.h>
 
-void com_measure2(wordlist *wl);
-float get_measure2(wordlist *wl);
+  int get_measure_precision(void) ;
+/*  void com_measure2(wordlist *wl); */
+  int get_measure2(wordlist *wl,double *result,char *out_line, bool auto_check) ;
 
 #endif

@@ -3,6 +3,11 @@
    the limit warning.
 
 2009-08-08 Holger Vogt
+ * measure.c, com_measure2.c, com_measure2.h, xpressn.c: 
+   Patches from Bill Swartz added
+ * examples/inverter3.sp: test of new features  
+
+2009-08-08 Holger Vogt
  * measure.c: add more comments
  * example/func_cap.sp, inverter.sp, inverter2.sp: hint to
    start examples only in interactive mode.

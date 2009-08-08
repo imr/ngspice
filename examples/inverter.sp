@@ -79,12 +79,15 @@ c1 out gnd 220fF
 .tran 1ps 4ns
 
 .meas tran inv_delay trig v(in)  val='vp/2'   fall=1 targ v(out) val='vp/2'   rise=1
-.meas tran out_slew  trig v(out) val='0.2*vp' rise=1 targ v(out) val='0.8*vp' rise=1
+*.meas tran test_data1 trig AT = 1n targ v(out) val='vp/2'   rise=3
+*not yet implemented
+*.meas tran test_data2 trig v(in)  val='vp/2'  fall=1 targ AT = 2n
+.meas tran out_slew  trig v(out) val='0.2*vp' rise=2 targ v(out) val='0.8*vp' rise=2
 .meas tran delay_chk param='(inv_delay < 100ps) ? 1 : 0'
 .meas tran skew when v(out)=0.6
 .meas tran skew2 when v(out)=skew_meas
-.meas tran skew3 when v(out)=skew_meas fall=2 *fall is ignored
-*.meas tran skew when v(out)=v(in)   not implemented
+*.meas tran skew3 when v(out)=skew_meas fall=2
+*.meas tran skew4 FIND v(out) AT=2n
 
 .control
 run

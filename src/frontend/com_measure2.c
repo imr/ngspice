@@ -1,3 +1,10 @@
+/* New routines to evaluate the .measure cards.
+   Entry point is function get_measure2(), called by fcn do_measure() 
+   from measure.c, if line measure.c:25 is commented out.
+   Patches by Bill Swartz from 2009-05-18 are included.
+   
+   $Id$ 
+*/
 #include <config.h>
 #include <ngspice.h>
 #include <memory.h>
@@ -7,10 +14,19 @@
 
 #include "vectors.h"
 #include <math.h>
+#include "com_measure2.h"
 
 #ifdef _MSC_VER
 #define strcasecmp _stricmp
 #endif
+
+typedef enum {
+   MEASUREMENT_OK = 0,
+   MEASUREMENT_FAILURE = 1
+ } MEASURE_VAL_T ;
+ 
+#define MEASURE_DEFAULT -1
+#define MEASURE_LAST_TRANSITION  -2
 
 typedef struct measure
 {
@@ -21,13 +37,13 @@ typedef struct measure
   int m_rise;
   int m_fall;
   int m_cross;
-  float m_val;		// value of the m_ver at which the counter for crossing, rises or falls is incremented by one
-  float m_td;		// amount of delay before the measurement should start
-  float m_from;
-  float m_to;
-  float m_at;
-  float m_measured;
-  float m_measured_at;
+  double m_val;		// value of the m_ver at which the counter for crossing, rises or falls is incremented by one
+  double m_td;		// amount of delay before the measurement should start
+  double m_from;
+  double m_to;
+  double m_at;
+  double m_measured;
+  double m_measured_at;
 
 } measure;
 
@@ -39,15 +55,30 @@ enum AnalysisType {
 	AT_ERR, AT_ERR1, AT_ERR2, AT_ERR3
 };
 
+/** return precision (either 5 or value of environment variable NGSPICE_MEAS_PRECISION) */
+int get_measure_precision(void)
+{
+   char *env_ptr;
+   int  precision = 5;
+   
+   if ( ( env_ptr = getenv("NGSPICE_MEAS_PRECISION") ) ) {
+     precision = atoi(env_ptr);
+   }
+ 
+   return precision;
+} /* end measure_get_precision() */
+
 void com_measure_when(struct measure *meas) {
 
 	int i, first;
-        int riseCnt =0;
-        int fallCnt =0;
-        int crossCnt =0;
+        int riseCnt = 0;
+        int fallCnt = 0;
+        int crossCnt = 0;
         int section = -1;
-	float value, prevValue;
-	float timeValue, prevTimeValue;
+ 	int measurement_pending;
+ 	int init_measured_value;
+	double value, prevValue;
+	double timeValue, prevTimeValue;
 	
 	enum ValSide { S_ABOVE_VAL, S_BELOW_VAL };
 	enum ValEdge { E_RISING, E_FALLING };
@@ -70,6 +101,8 @@ void com_measure_when(struct measure *meas) {
 	prevValue =0;
 	prevTimeValue =0;
 	first =0;
+ 	measurement_pending=0;
+ 	init_measured_value=1;
 
 	for (i=0; i < d->v_length; i++) {
 
@@ -105,18 +138,41 @@ void com_measure_when(struct measure *meas) {
 					section = S_ABOVE_VAL;
 					crossCnt++;
 					riseCnt++;
+ 					if( meas->m_fall != MEASURE_LAST_TRANSITION ){
+ 					  /* we can measure rise/cross transition if the user
+ 					   * has not requested a last fall transition */
+ 					  measurement_pending=1;
+ 					}
 
 			} else if ( (section == S_ABOVE_VAL) && (value <= meas->m_val) ) {
 					section = S_BELOW_VAL;
 					crossCnt++;
 					fallCnt++;
+ 					if( meas->m_rise != MEASURE_LAST_TRANSITION ){
+ 					  /* we can measure fall/cross transition if the user
+					   * has not requested a last rise transition */
+ 					  measurement_pending=1;
+ 					}
 			} 
 
 			if  ((crossCnt == meas->m_cross) || (riseCnt == meas->m_rise) || (fallCnt == meas->m_fall)) {
-					meas->m_measured = prevTimeValue + (meas->m_val - prevValue) * (timeValue - prevTimeValue) / (value - prevValue);
-                                        return;
-
+ 		  		/* user requested an exact match of cross, rise, or fall
+				 * exit when we meet condition */ 
+                                meas->m_measured = prevTimeValue + (meas->m_val - prevValue) * (timeValue - prevTimeValue) / (value - prevValue);
+                                return;
 			}
+ 			if  ( measurement_pending ){
+ 			    if( (meas->m_cross == MEASURE_DEFAULT) && (meas->m_rise == MEASURE_DEFAULT) && (meas->m_fall == MEASURE_DEFAULT) ){
+ 			  		/* user didn't request any option, return the first possible case */
+ 					meas->m_measured = prevTimeValue + (meas->m_val - prevValue) * (timeValue - prevTimeValue) / (value - prevValue);
+                                         return;
+ 			    } else if( (meas->m_cross == MEASURE_LAST_TRANSITION) || (meas->m_rise == MEASURE_LAST_TRANSITION) || (meas->m_fall == MEASURE_LAST_TRANSITION) ){
+ 					meas->m_measured = prevTimeValue + (meas->m_val - prevValue) * (timeValue - prevTimeValue) / (value - prevValue);
+ 					/* no return - look for last */
+ 					init_measured_value=0;
+ 			    }
+ 			    measurement_pending=0;
+  			}
 		}
 		first ++;
 
@@ -124,14 +180,16 @@ void com_measure_when(struct measure *meas) {
 		prevTimeValue = timeValue;
 	}
 
-	meas->m_measured = 0.0e0;
+ 	if ( init_measured_value ){
+ 	  meas->m_measured = 0.0e0;
+ 	}
         return;      
 }
 
-void measure_at(struct measure *meas, float at) {
+void measure_at(struct measure *meas, double at) {
 	
 	int i;
-	float value, pvalue, svalue, psvalue;
+	double value, pvalue, svalue, psvalue;
 	struct dvec *d, *dScale;
 
 	psvalue = pvalue = 0;
@@ -176,7 +234,7 @@ void measure_minMaxAvg( struct measure *meas, int minMax ) {
       
         int i, avgCnt;
         struct dvec *d, *dScale;
-        float value, svalue, mValue, mValueAt;
+        double value, svalue, mValue, mValueAt;
         int first;
 
         mValue =0;
@@ -298,8 +356,8 @@ void measure_ERR3( ) {
         return;
 }
 
-void measure_errMessage(char *mName, char *mFunction, char *trigTarg, char *errMsg) {
-
+void measure_errMessage(char *mName, char *mFunction, char *trigTarg, char *errMsg, bool autocheck) {
+        if (autocheck) return;
 	printf("\tmeasure '%s'  failed\n", mName);
 	printf("Error: measure  %s  %s(%s) :\n", mName, mFunction, trigTarg);
 	printf("\t%s\n",errMsg);
@@ -318,7 +376,9 @@ void com_dotmeasure( ) {
 int measure_valid_vector(char *vec) {
 
         struct dvec *d;
-
+        
+        if(vec == NULL)
+                return 1;
         d = vec_get(vec);
         if (d == NULL)
                 return 0;
@@ -332,34 +392,46 @@ int measure_parse_stdParams (struct measure *meas, wordlist *wl, wordlist *wlBre
 	char *p, *pName, *pValue;
         double *engVal, engVal1;
 
-	pCnt =0;
+	pCnt = 0;
 	while (wl != wlBreak) {
 		p = wl->wl_word;
 		pName = strtok(p, "=");
 		pValue = strtok(NULL, "=");
 
-		if (pValue == NULL) {
-			sprintf(errbuf,"bad syntax of ??\n");
-			return 0;
-		}
-
-		if (!(engVal = ft_numparse(&pValue, FALSE))) {
-			sprintf(errbuf,"bad syntax of ??\n");
-			return 0;
-        	}
-
-		engVal1 = *engVal;
+  		if (pValue == NULL) {
+ 			if( strcasecmp(pName,"LAST")==0) {
+ 			  meas->m_cross = MEASURE_LAST_TRANSITION;
+ 			  meas->m_rise = -1;
+ 			  meas->m_fall = -1;
+ 			  pCnt ++;
+ 			  wl = wl->wl_next;
+ 			  continue ;
+ 			} else {
+ 			  sprintf(errbuf,"bad syntax of ??\n");
+ 			  return 0;
+ 			}
+  		}
+  
+ 		if( strcasecmp(pValue,"LAST")==0) {
+ 			engVal1 = MEASURE_LAST_TRANSITION;
+ 		} else {
+ 			if (!(engVal = ft_numparse(&pValue, FALSE))) {
+ 				sprintf(errbuf,"bad syntax of ??\n");
+ 				return 0;
+ 			}
+ 			engVal1 = *engVal;  // What is this ??
+ 		}
 
 		if(strcasecmp(pName,"RISE")==0) {
-          		meas->m_rise = engVal1;
+          		meas->m_rise = (int)engVal1;
             		meas->m_fall = -1;
            		meas->m_cross = -1;
 		} else if(strcasecmp(pName,"FALL")==0) {
-               		meas->m_fall = engVal1;
+               		meas->m_fall = (int)engVal1;
                  	meas->m_rise = -1;
 			meas->m_cross = -1;
 		} else if(strcasecmp(pName,"CROSS")==0) {
-           		meas->m_cross = engVal1;
+           		meas->m_cross = (int)engVal1;
                  	meas->m_rise = -1;
              		meas->m_fall = -1;
               	} else if(strcasecmp(pName,"VAL")==0) {
@@ -531,10 +603,11 @@ int measure_parse_trigtarg (struct measure *meas, wordlist *words, wordlist *wlT
         while (words != wlTarg) {
                 p = words->wl_word;
 
-                if (pcnt ==0) {
-//                        meas->m_vec =(char *)tmalloc(strlen(words->wl_word)+1);
-  //                      strcpy(meas->m_vec, cp_unquote(words->wl_word));
+                if ((pcnt == 0) && !ciprefix("at", p)) {
 			meas->m_vec= cp_unquote(words->wl_word);
+                } else if (ciprefix("at", p)) {
+			if (measure_parse_stdParams(meas, words, wlTarg, errbuf) == 0)
+                                return 0;
                 } else {
 
 			if (measure_parse_stdParams(meas, words, wlTarg, errbuf) == 0)
@@ -561,32 +634,34 @@ int measure_parse_trigtarg (struct measure *meas, wordlist *words, wordlist *wlT
 	return 1;
 }
 
-float
-get_measure2(wordlist *wl)
+int
+get_measure2(wordlist *wl,double *result,char *out_line, bool autocheck)
 {
 	wordlist *words, *wlTarg, *wlWhen;
  	char errbuf[100];
         char *mType = NULL;             // analysis type
 	char *mName = NULL;             // name given to the measured output
 	char *mFunction = NULL;
+        int precision;			// measurement precision
 	int mFunctionType, wl_cnt;
 	char *p;
 	
 	mFunctionType = -1;
-		
+	*result = 0.0e0; 		/* default result */
+
 	if (!wl) {
 	    printf("usage: measure .....\n");
-	    return 0.0e0;
+	    return MEASUREMENT_FAILURE;
 	}
 
 	if (!plot_cur || !plot_cur->pl_dvecs || !plot_cur->pl_scale) {
         	fprintf(cp_err, "Error: no vectors available\n");
-	        return 0.0e0;
+	        return MEASUREMENT_FAILURE;
 	}
 
 	if (!ciprefix("tran", plot_cur->pl_typename)) {
      	   	fprintf(cp_err, "Error: measure limited to transient analysis\n");
-	        return 0.0e0;
+	        return MEASUREMENT_FAILURE;
 	}
 
 	words =wl;
@@ -595,10 +670,11 @@ get_measure2(wordlist *wl)
 
 	if (!words) {
                 fprintf(cp_err, "Error: no assignment found.\n");
-                return 0.0e0;
+                return MEASUREMENT_FAILURE;
         }
 
-	wl_cnt = 0;
+	precision = get_measure_precision() ;
+        wl_cnt = 0;
 	while (words) {
 
 		switch(wl_cnt)
@@ -647,7 +723,7 @@ get_measure2(wordlist *wl)
 		                        printf("\tmeasure '%s'  failed\n", mName);
 		                        printf("Error: measure  %s  :\n", mName);
 		                        printf("\tno such function as '%s'\n", mFunction);
-		                        return 0.0e0;
+		                        return MEASUREMENT_FAILURE;
 		                }
 				break;
 			}
@@ -672,7 +748,7 @@ get_measure2(wordlist *wl)
 		printf("\tmeasure '%s'  failed\n", mName);
 		printf("Error: measure  %s  :\n", mName);
 		printf("\tinvalid num params\n");
-		return 0.0e0;
+		return MEASUREMENT_FAILURE;
 	}
 
 	//------------------------
@@ -700,14 +776,14 @@ get_measure2(wordlist *wl)
 	                measTarg = (struct measure*)tmalloc(sizeof(struct measure));
 									
 			if (measure_parse_trigtarg(measTrig, words , wlTarg, "trig", errbuf)==0) {
-				measure_errMessage(mName, mFunction, "TRIG", errbuf);
-				return 0.0e0;
+				measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
+				return MEASUREMENT_FAILURE;
 			}
 
-			if ((measTrig->m_rise == -1) && (measTrig->m_fall == -1) && (measTrig->m_cross == -1)) {
-                		sprintf(errbuf,"rise, fall or cross must be given\n");
-				measure_errMessage(mName, mFunction, "TRIG", errbuf);
-                		return 0.0e0;
+			if ((measTrig->m_rise == -1) && (measTrig->m_fall == -1) && (measTrig->m_cross == -1) && (measTrig->m_at == -1)) {
+                		sprintf(errbuf,"at, rise, fall or cross must be given\n");
+				measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
+                		return MEASUREMENT_FAILURE;
         		}
 
 			while (words != wlTarg)
@@ -717,14 +793,14 @@ get_measure2(wordlist *wl)
 				words = words->wl_next; // skip targ
 				
 		        if (measure_parse_trigtarg(measTarg, words , NULL, "targ", errbuf)==0) {
-				measure_errMessage(mName, mFunction, "TARG", errbuf);
-		                return 0.0e0;
+				measure_errMessage(mName, mFunction, "TARG", errbuf, autocheck);
+		                return MEASUREMENT_FAILURE;
 		       	}
 
-	        	if ((measTarg->m_rise == -1) && (measTarg->m_fall == -1) && (measTarg->m_cross == -1)) {
-                                sprintf(errbuf,"rise, fall or cross must be given\n");
-                                measure_errMessage(mName, mFunction, "TARG", errbuf);
-                                return 0.0e0;
+	        	if ((measTarg->m_rise == -1) && (measTarg->m_fall == -1) && (measTarg->m_cross == -1)&& (measTarg->m_at == -1)) {
+                                sprintf(errbuf,"at, rise, fall or cross must be given\n");
+                                measure_errMessage(mName, mFunction, "TARG", errbuf, autocheck);
+                                return MEASUREMENT_FAILURE;
                         }
 
 			// measure trig
@@ -736,22 +812,27 @@ get_measure2(wordlist *wl)
 
 			if (measTrig->m_measured == 0.0e0) {
 				sprintf(errbuf,"out of interval\n");
-		                measure_errMessage(mName, mFunction, "TRIG", errbuf);
-		                return 0.0e0;
+		                measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
+		                return MEASUREMENT_FAILURE;
 			}
 			// measure targ
 			com_measure_when(measTarg);
 		
 			if (measTarg->m_measured == 0.0e0) {
 				sprintf(errbuf,"out of interval\n");
-		                measure_errMessage(mName, mFunction, "TARG", errbuf);
-		                return 0.0e0;
+		                measure_errMessage(mName, mFunction, "TARG", errbuf, autocheck);
+		                return MEASUREMENT_FAILURE;
 		        }
 		
 			// print results
-		        printf("%-20s=  %e targ=  %e trig=  %e\n", mName, (measTarg->m_measured - measTrig->m_measured), measTarg->m_measured, measTrig->m_measured);
-		
-			return (measTarg->m_measured - measTrig->m_measured);
+ 		        if( out_line ){
+ 			  sprintf(out_line,"%-20s=  %e targ=  %e trig=  %e\n", mName, (measTarg->m_measured - measTrig->m_measured), measTarg->m_measured, measTrig->m_measured);
+ 			} else {
+ 			  printf("%-20s=  %e targ=  %e trig=  %e\n", mName, (measTarg->m_measured - measTrig->m_measured), measTarg->m_measured, measTrig->m_measured);
+ 			}
+  		
+ 			*result = (measTarg->m_measured - measTrig->m_measured);
+ 			return MEASUREMENT_OK;
 		}
                 case AT_FIND:
 		{
@@ -760,8 +841,8 @@ get_measure2(wordlist *wl)
 			measFind = (struct measure*)tmalloc(sizeof(struct measure));
 
 			if (measure_parse_find(meas, words, wlWhen, errbuf) == 0) {
-				measure_errMessage(mName, mFunction, "FIND", errbuf);
-                                return 0.0e0;
+				measure_errMessage(mName, mFunction, "FIND", errbuf, autocheck);
+                                return MEASUREMENT_FAILURE;
 			}
 
 			if (meas->m_at == -1 ) { 
@@ -774,16 +855,16 @@ get_measure2(wordlist *wl)
                                 	words = words->wl_next; // skip targ
 
 				if (measure_parse_when(measFind, words, errbuf) ==0) {
-                                	measure_errMessage(mName, mFunction, "WHEN", errbuf);
-                                	return 0.0e0;
+                                	measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
+                                	return MEASUREMENT_FAILURE;
 				}
 
 				com_measure_when(measFind);
 
                  		if (measFind->m_measured == 0.0e0) {
                               		sprintf(errbuf,"out of interval\n");
-                        		measure_errMessage(mName, mFunction, "WHEN", errbuf);
-                           		return 0.0e0;
+                        		measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
+                           		return MEASUREMENT_FAILURE;
                         	}
 				
 				measure_at(measFind, measFind->m_measured);
@@ -795,13 +876,18 @@ get_measure2(wordlist *wl)
 			
                         if (meas->m_measured == 0.0e0) {
                                 sprintf(errbuf,"out of interval\n");
-                                measure_errMessage(mName, mFunction, "WHEN", errbuf);
-                                return 0.0e0;
+                                measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
+                                return MEASUREMENT_FAILURE;
                         }
 
                         // print results
-                        printf("%-20s=  %e\n", mName, meas->m_measured);
-			return meas->m_measured;
+ 		        if( out_line ){
+ 			  sprintf(out_line,"%-20s=  %e\n", mName, meas->m_measured);
+ 			} else {
+ 			  printf("%-20s=  %e\n", mName, meas->m_measured);
+ 			}
+ 			*result = meas->m_measured;
+ 			return MEASUREMENT_OK;
 		}
                 case AT_WHEN:
 		{
@@ -809,22 +895,27 @@ get_measure2(wordlist *wl)
 			meas = (struct measure*)tmalloc(sizeof(struct measure));
 
 			if (measure_parse_when(meas, words, errbuf) ==0) {
-                     	      	measure_errMessage(mName, mFunction, "WHEN", errbuf);
-                        	return 0.0e0;
+                     	      	measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
+                        	return MEASUREMENT_FAILURE;
 			}
 
 			com_measure_when(meas);
 
 			if (meas->m_measured == 0.0e0) {
                                 sprintf(errbuf,"out of interval\n");
-                                measure_errMessage(mName, mFunction, "WHEN", errbuf);
-                                return 0.0e0;
+                                measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
+                                return MEASUREMENT_FAILURE;
                         }
 			
 			// print results
-                        printf("%-20s=  %e\n", mName, meas->m_measured);
-
-			return (meas->m_measured);
+                         if( out_line ){
+ 			  sprintf(out_line,"%-20s=   %.*e\n", mName, precision, meas->m_measured);
+ 			} else {
+ 			  printf("%-20s=  %e\n", mName, meas->m_measured);
+ 			}
+  
+ 			*result = meas->m_measured;
+ 			return MEASUREMENT_OK;
 	        }
 		case AT_RMS:
                         printf("\tmeasure '%s'  failed\n", mName);
@@ -838,8 +929,8 @@ get_measure2(wordlist *wl)
                         meas = (struct measure*)tmalloc(sizeof(struct measure));
 
                         if (measure_parse_trigtarg(meas, words , NULL, "trig", errbuf)==0) {
-                                measure_errMessage(mName, mFunction, "TRIG", errbuf);
-                                return 0.0e0;
+                                measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
+                                return MEASUREMENT_FAILURE;
                         }
 
                         // measure
@@ -847,16 +938,21 @@ get_measure2(wordlist *wl)
 
                         if (meas->m_measured == 0.0e0) {
                                 sprintf(errbuf,"out of interval\n");
-                                measure_errMessage(mName, mFunction, "TRIG", errbuf); // ??
-                                return 0.0e0;
+                                measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
+                                return MEASUREMENT_FAILURE;
                         }
 
 			if (meas->m_at == -1)
 				meas->m_at = 0.0e0;
 
                         // print results
-                        printf("%-20s=  %e from=  %e to=  %e\n", mName, meas->m_measured, meas->m_at, meas->m_measured_at);
-                        return meas->m_measured;
+ 		        if( out_line ){
+ 			  sprintf(out_line,"%-20s=  %e from=  %e to=  %e\n", mName, meas->m_measured, meas->m_at, meas->m_measured_at);
+ 			} else {
+ 			  printf("%-20s=  %e from=  %e to=  %e\n", mName, meas->m_measured, meas->m_at, meas->m_measured_at);
+ 			}
+                         *result=meas->m_measured;
+ 			return MEASUREMENT_OK;
 
 		}
                 case AT_MIN:
@@ -867,8 +963,8 @@ get_measure2(wordlist *wl)
                         measTrig = (struct measure*)tmalloc(sizeof(struct measure));
 
                         if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf)==0) {
-                                measure_errMessage(mName, mFunction, "TRIG", errbuf);
-                                return 0.0e0;
+                                measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
+                                return MEASUREMENT_FAILURE;
                         }
 			
 			// measure
@@ -880,32 +976,37 @@ get_measure2(wordlist *wl)
 
                         if (measTrig->m_measured == 0.0e0) {
                                 sprintf(errbuf,"out of interval\n");
-                                measure_errMessage(mName, mFunction, "TRIG", errbuf); // ??
-                                return 0.0e0;
+                                measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
+                                return MEASUREMENT_FAILURE;
                         }
 
                         // print results
-                        printf("%-20s=  %e at=  %e\n", mName, measTrig->m_measured, measTrig->m_measured_at);
-			return measTrig->m_measured;
+ 		        if( out_line ){
+ 			  sprintf(out_line,"%-20s=  %e at=  %e\n", mName, measTrig->m_measured, measTrig->m_measured_at);
+ 			} else {
+ 			  printf("%-20s=  %e at=  %e\n", mName, measTrig->m_measured, measTrig->m_measured_at);
+ 			}
+ 			*result=measTrig->m_measured;
+ 			return MEASUREMENT_OK;
 		}
                 case AT_PP:
 		{			
-		        float minValue, maxValue;
+		        double minValue, maxValue;
 
                         measure *measTrig;
                         measTrig = (struct measure*)tmalloc(sizeof(struct measure));
 
                         if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf)==0) {
-                                measure_errMessage(mName, mFunction, "TRIG", errbuf);
-                                return 0.0e0;
+                                measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
+                                return MEASUREMENT_FAILURE;
                         }
 
 			// measure min
                         measure_minMaxAvg(measTrig, AT_MIN);
                         if (measTrig->m_measured == 0.0e0) {
                                 sprintf(errbuf,"out of interval\n");
-                                measure_errMessage(mName, mFunction, "TRIG", errbuf); // ??
-                                return 0.0e0;
+                                measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
+                                return MEASUREMENT_FAILURE;
                         }
 			minValue = measTrig->m_measured;
 
@@ -913,14 +1014,19 @@ get_measure2(wordlist *wl)
                         measure_minMaxAvg(measTrig, AT_MAX);
    	                if (measTrig->m_measured == 0.0e0) {
                                 sprintf(errbuf,"out of interval\n");
-                                measure_errMessage(mName, mFunction, "TRIG", errbuf); // ??
-                                return 0.0e0;
+                                measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
+                                return MEASUREMENT_FAILURE;
                         }
                         maxValue = measTrig->m_measured;
 
                         // print results
-                        printf("%-20s=  %e from=  %e to=  %e\n", mName, (maxValue - minValue), measTrig->m_from, measTrig->m_to);
-			return (maxValue - minValue);
+ 		        if( out_line ){
+ 			  sprintf(out_line,"%-20s=  %e from=  %e to=  %e\n", mName, (maxValue - minValue), measTrig->m_from, measTrig->m_to);
+ 			} else {
+ 			  printf("%-20s=  %e from=  %e to=  %e\n", mName, (maxValue - minValue), measTrig->m_from, measTrig->m_to);
+ 			}
+ 			*result = (maxValue - minValue);
+ 			return MEASUREMENT_OK;
 		}
                 case AT_INTEG:
                 case AT_DERIV:
@@ -935,11 +1041,14 @@ get_measure2(wordlist *wl)
                         break;
 		}
         }
-	return 0.0e0;
+	return MEASUREMENT_FAILURE;
 }
 
-void com_measure2(wordlist *wl) {
-	get_measure2(wl);
-	return;
-}
+ /* I don't know where this routine is called... I want to eliminate it. */
+/*  void com_measure2(wordlist *wl) {
+        double result ;
+ 	get_measure2(wl,&result,NULL,FALSE);
+  	return;
+  }
+*/
 
