@@ -549,7 +549,7 @@ static size_t get_sysmem(struct sys_mem *memall) {
 #endif /*_WIN32_WINNT 0x0500*/
 #else
    FILE *fp;
-   char buffer[1024];
+   char buffer[2048];
    size_t bytes_read;
    char *match;
    long mem_got;

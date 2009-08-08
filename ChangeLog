@@ -1,3 +1,7 @@
+2009-08-08 Paolo Nenzi
+ * src/frontend/resource.c: applied patch from Thomas D. Dean to remove
+   the limit warning.
+
 2009-08-08 Holger Vogt
  * measure.c: add more comments
  * example/func_cap.sp, inverter.sp, inverter2.sp: hint to
