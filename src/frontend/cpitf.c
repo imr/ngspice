@@ -1,12 +1,10 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
-**********/
+***********
+$Id$
+*/
 
-/*
- * SJB 22 May 2001
- * Corrected freeing of memory in ft_cpinit()
- */
 
 #include "ngspice.h"
 #include "cpdefs.h"
@@ -64,10 +62,16 @@ ft_cpinit(void)
         "vr(x,y)",  "re(v(x) - v(y))"
     } ;
 
-    cp_ccon(TRUE);  /* So the user can type ahead... */
+    /* if TIOCSTI is defined (not available in MS Windows:
+       Make escape the break character.
+       So the user can type ahead...
+       fcn defined in complete.c. */
+    cp_ccon(TRUE);
     /* Initialize io, cp_chars[], variable "history" in init.c. */
     cp_init();
 
+    /* If command completion is available (global variable cp_nocc
+       set in main.c by command line option -q)   */ 
     if (!cp_nocc) {
         /* Add commands... */
         for (c = cp_coms; c->co_func; c++) {

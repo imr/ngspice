@@ -900,17 +900,23 @@ main(int argc, char **argv)
 
     if ((!iflag && !istty) || ft_servermode)
         ft_batchmode = TRUE;
+    /* set command completion */
     if ((iflag && !istty) || qflag)
+        cp_nocc = FALSE;
+    else
         cp_nocc = TRUE;
     if (ft_servermode)
         readinit = FALSE;
     if (!istty || ft_batchmode)
         out_moremode = FALSE;
 
-    /* Would like to do this later, but cpinit evals commands */
+    /* Get information on memory status upon startup.
+       Would like to do this later, but cpinit evals commands.
+       fcn is in resource.c */
     init_rlimits( );
 
-    /* Have to initialize cp now. */
+    /* Have to initialize cp now. 
+       fcn is in cpitf.c*/
     ft_cpinit();
 
     /* To catch interrupts during .spiceinit... */
