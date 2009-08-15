@@ -20,7 +20,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "completion.h"
 #include "variable.h"
 
-/* Set some standard variables and aliases, etc, and init the ccom stuff.  */
+/* Set some standard variables and aliases, etc, and init the ccom stuff.  
+   Called by fcn main() */
 
 void
 ft_cpinit(void)
@@ -57,13 +58,14 @@ ft_cpinit(void)
         "vm(x,y)",  "mag(v(x) - v(y))",
         "vg(x)",    "group_delay(v(x))", //A.Rroldan 10/06/05 group delay new function
         "gd(x)",    "group_delay(v(x))", //A.Rroldan 10/06/05 group delay new function        
-	    "vp(x)",    "ph(v(x))",
+        "vp(x)",    "ph(v(x))",
         "vp(x,y)",  "ph(v(x) - v(y))",
         "vr(x)",    "re(v(x))",
         "vr(x,y)",  "re(v(x) - v(y))"
     } ;
 
     cp_ccon(TRUE);  /* So the user can type ahead... */
+    /* Initialize io, cp_chars[], variable "history" in init.c. */
     cp_init();
 
     if (!cp_nocc) {
@@ -208,6 +210,7 @@ ft_cpinit(void)
 
     /* NGSPICEDATADIR has been set to path "$dprefix/share/ngspice" in configure.in, 
        Spice_Lib_Dir has been set to NGSPICEDATADIR in conf.c, 
+       may be overridden by environmental variable SPICE_LIB_DIR in ivars().
        Lib_Path has been set to Spice_Lib_Dir adding /scripts in ivars() */
     if (Lib_Path && *Lib_Path) {
        /* set variable 'sourcepath' */ 
@@ -217,7 +220,7 @@ ft_cpinit(void)
         com_set(wl);
         wl_free(wl);
         
-        /* Now source the standard startup file. */
+        /* Now source the standard startup file spinit or tclspinit. */
 
         /* jump over leading spaces */
         for (copys=s=cp_tildexpand(Lib_Path); copys && *copys; ) {
@@ -242,6 +245,15 @@ ft_cpinit(void)
                 cp_interactive = TRUE;
                 found = TRUE;
                 break;
+#ifdef HAS_WINDOWS
+            /* search in local directory where ngspice.exe resides */
+            } else if ((fp = fopen("./spinit", "r"))) {
+                cp_interactive = FALSE;
+                inp_spsource(fp, TRUE, buf);
+                cp_interactive = TRUE;
+                found = TRUE;
+                break;
+#endif                
             } else if (ft_controldb)
                 fprintf(cp_err, "Note: can't open \"%s\".\n", buf);
         }
