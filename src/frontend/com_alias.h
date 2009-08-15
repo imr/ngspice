@@ -1,5 +1,5 @@
 /*************
- * Header file for alias.c
+ * Header file for com_alias.c
  * 1999 E. Rouat
  ************/
 

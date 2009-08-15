@@ -95,9 +95,9 @@ bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt.
 char *ft_rawfile = "rawspice.raw";
 
 #ifdef HAS_WINDOWS
-extern void winmessage(char* new_msg);
+extern void winmessage(char* new_msg); /* display a message box */
 bool oflag = FALSE;         /* Output over redefined I/O functions */
-FILE *flogp;  /* hvogt 15.12.2001 */
+FILE *flogp;                /* log file ('-o logfile' command line option) */
 #endif /* HAS_WINDOWS */
 
 /* Frontend and circuit options */
@@ -107,9 +107,9 @@ IFsimulator *ft_sim = NULL;
 int ARCHme;
 int ARCHsize;
 
-char *errRtn;
-char *errMsg;
-char *cp_program;
+char *errRtn;     /* name of the routine declaring error */
+char *errMsg;     /* descriptive message about what went wrong */
+char *cp_program; /* program name 'ngspice' */
 
 
 /* Globals definitions for Machine Accuracy Limits
@@ -873,7 +873,7 @@ main(int argc, char **argv)
         fprintf(stdout, "Comments and warnings go to log-file: %s\n\n", buf);
         /* Open the log file */
 #ifdef HAS_WINDOWS
-        /* flogp goes to winmain's putc and writes to file buf */
+        /* flogp used by winmain's putc which writes to file 'buf' */
         if (!(flogp = fopen(buf, "w"))) {   
 #else
         /* Connect stdout to file buf and log stdout */

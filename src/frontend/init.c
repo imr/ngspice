@@ -3,7 +3,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
-/* Initialize stuff. */
+/* Initialize io, cp_chars[], variable "history". */
 
 #include <ngspice.h>
 #include <cpdefs.h>
@@ -12,25 +12,35 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 
 
-char cp_chars[128];
+char cp_chars[128]; /* used in fcn cp_lexer() from lexical.c */
 
 static char *singlec = "<>;&";
 
 void
 cp_init(void)
+/* called from ft_cpinit() in cpitf.c.
+   Uses global variables:
+   cp_chars[128]
+   cp_maxhistlength (set to 10000 in com_history.c)
+   cp_curin, cp_curout, cp_curerr (defined in streams.c)
+*/
 {
-    char *s, *getenv(const char *);
+    char *s;
 
     bzero(cp_chars, 128);
     for (s = singlec; *s; s++)
+        /* break word to right or left of characters <>;&*/
         cp_chars[(int) *s] = (CPC_BRR | CPC_BRL);
+
     cp_vset("history", VT_NUM, (char *) &cp_maxhistlength);
 
     cp_curin = stdin;
     cp_curout = stdout;
     cp_curerr = stderr;
 
-    cp_ioreset();
+    /* io redirection in streams.c: 
+       cp_in set to cp_curin etc. */
+    cp_ioreset(); 
 
     return;
 }

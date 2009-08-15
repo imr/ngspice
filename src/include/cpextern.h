@@ -15,16 +15,16 @@ Modified: 2000  AlansFixes
 #include "bool.h"
 
 
-/* alias.c */
+/* com_alias.c */
 
 extern struct alias *cp_aliases;
-extern void com_alias();
-extern void com_unalias();
-extern void cp_paliases();
-extern void cp_setalias();
-extern void cp_unalias();
+extern void com_alias(wordlist *wl);
+extern void com_unalias(wordlist *wl);
+extern void cp_paliases(char *word);
+extern void cp_setalias(char *word, wordlist *wlist);
+extern void cp_unalias(char *word);
 
-extern wordlist *cp_doalias();
+extern wordlist *cp_doalias(wordlist *wlist);
 
 /* backquote.c */
 
