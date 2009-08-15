@@ -166,8 +166,8 @@ ft_cpinit(void)
     cp_vset("noglob", VT_BOOL, (char *) &t);
     cp_vset("brief", VT_BOOL, (char *) &t);
 
-    /* Now do a bunch of things that used to be in the spiceinit file
-     * but were too slow to read in...
+    /* Make vectors from values in predefs[] for the current plot. 
+     Define functions from entries in udfs[] (like user defined functions).
      */
     wl1.wl_next = &wl2;
     wl1.wl_prev = NULL;
@@ -307,16 +307,17 @@ cp_istrue(wordlist *wl)
    return (FALSE);
 }
 
-/* This gets called before every command is executed... */
+/* This gets called before every command is executed... 
+   from fcns do_command() or do_block() in control.c */
 
 void
 cp_periodic(void)
 {
     ft_setflag = FALSE;
     ft_intrpt = FALSE;
-    ft_ckspace();
-    ft_checkkids();
-    vec_gc();
+    ft_ckspace();   /* check for max. data size (resource.c) */
+    ft_checkkids(); /* check for jobs (only if OK_ASPICE is defined, apsice.c) */
+    vec_gc();       /* remove vectors which do not have permanent flag set (vectors.c) */
     return;
 }
 
