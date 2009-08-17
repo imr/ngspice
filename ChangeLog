@@ -1,7 +1,10 @@
+2009-08-17 Holger Vogt
+ * inp.c: some comments added
+  
 2009-08-15 Holger Vogt
  * cpitf.c: MS Windows: search for spinit also in local (ngspice.exe) directory
-   cpextern.h: function parameters added in declaration
-   com_alias.h, init.c, cpitf.c, main.c: comments added
+ * cpextern.h: function parameters added in declaration
+ * com_alias.h, init.c, cpitf.c, main.c: comments added
 
 2009-08-08 Paolo Nenzi
  * src/frontend/resource.c: applied patch from Thomas D. Dean to remove

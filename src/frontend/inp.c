@@ -5,12 +5,6 @@ $Id$
 **********/
 
 /*
- * SJB 22 May 2001
- * Fixed memory leaks accociated with freeing memory used by lines in the input deck
- * in inp_spsource(). New line_free() routine added to help with this.
- */
-
-/*
  * Stuff for dealing with spice input decks and command scripts, and
  * the listing routines.
  */
@@ -42,10 +36,10 @@ $Id$
 #include "../misc/util.h" /* dirname() */
 
 #ifdef XSPICE
-/* gtri - add - 12/12/90 - wbk - include new stuff */
+/* include new stuff */
 #include "ipctiein.h"
 #include "enh.h"
-/* gtri - end - 12/12/90 */
+/* */
 #endif
 
 #include "numparam/numpaif.h"
@@ -403,7 +397,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     } /* end if(comfile) */ 
 
     else {    /* must be regular deck . . . . */
-        for (dd = deck->li_next; dd; dd = ld->li_next) {    /* loop through deck and handle control cards */
+        /* loop through deck and handle control cards */
+        for (dd = deck->li_next; dd; dd = ld->li_next) {    
 
         /* Ignore comment lines, but not lines begining with '*#' */
             s = dd->li_line;
@@ -413,6 +408,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 continue;
             }
 	    
+            /* Put the first token from line into s */
             strncpy(name, dd->li_line, BSIZE_SP);	    
             for (s = name; *s && isspace(*s); s++)
                 ;
@@ -442,7 +438,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                     controls = wl;
                 } else
                     controls = wl;
-		
+		/* more control lines */
                 if (prefix("*#", dd->li_line))
                     wl->wl_word = copy(dd->li_line + 2);
                 else {
@@ -473,7 +469,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                 ld->li_next = dd->li_next;
 		line_free(dd,FALSE); /* SJB - free this line's memory */
             } else {
-                inp_casefix(s);
+                /* lines .width, .four, .plot, .print,. save added to wl_first, removed from deck */
+                /* lines .op, .meas, .tf added to wl_first */
+                inp_casefix(s); /* s: first token from line */
                 inp_casefix(dd->li_line);
                 if (eq(s, ".width")
 		    || ciprefix(".four", s)
@@ -482,7 +480,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 		    || eq(s, ".save")
 		    || eq(s, ".op")
 		    || ciprefix(".meas", s)
-//          || eq(s, ".measure")
 		    || eq(s, ".tf"))
 		{
                     if (end) {
@@ -493,9 +490,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
                         wl_first = end = alloc(struct wordlist);
                     end->wl_word = copy(dd->li_line);
 
-		    if (!eq(s, ".op") && !eq(s, ".tf") && !ciprefix(".meas", s)/*eq(s, ".measure")*/) {
+		    if (!eq(s, ".op") && !eq(s, ".tf") && !ciprefix(".meas", s)) {
 			ld->li_next = dd->li_next;
-			line_free(dd,FALSE); /* SJB - free this line's memory */
+			line_free(dd,FALSE);
 		    } else
 			ld = dd;
                 } else
@@ -504,42 +501,32 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       }  /* end for(dd=deck->li_next . . . .  */
 
 
-      /* we are done handling the control stuff.  Now process remainder of deck  */
+      /* We are done handling the control stuff.  Now process remainder of deck.
+         Go on if there is something left after the controls.*/
       if (deck->li_next) {
-            /* There is something left after the controls. */
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
 #ifdef HAS_WINDOWS
             SetAnalyse( "Circuit", 0);
 #endif
-	    /* Old location of ENHtranslate_poly.  This didn't work, because it
-	     * didn't handle models in .SUBCKTs correctly.  Moved to new location below
-	     * by SDB on 4.13.2003
-	     */
-
-            /* Now expand subcircuit macros. Note that we have to fix
-             * the case before we do this but after we deal with the
-             * commands.  */
+            /* Now expand subcircuit macros and substitute numparams.*/
             if (!cp_getvar("nosubckt", VT_BOOL, (char *) &nosubckts))
                 if( (deck->li_next = inp_subcktexpand(deck->li_next)) == NULL ){
 		      line_free(realdeck,TRUE);
 		      line_free(deck->li_actual, TRUE);
 		      return;
-		} /* done expanding subcircuit macros */
+		}
 
 	    /* Now handle translation of spice2c6 POLYs. */
-/* New location of ENHtranslate_poly.  This should handle .SUBCKTs better . . . .
- * SDB 4.13.2003.   Comments? mailto:sdb@cloud9.net
- */
 #ifdef XSPICE
-/* gtri - wbk - Translate all SPICE 2G6 polynomial type sources */
+            /* Translate all SPICE 2G6 polynomial type sources */
             deck->li_next = ENHtranslate_poly(deck->li_next);
-/* gtri - end - Translate all SPICE 2G6 polynomial type sources */
+
 #endif
 
-	    line_free(deck->li_actual,FALSE); /* SJB - free memory used by old li_actual (if any) */
+	    line_free(deck->li_actual,FALSE);
             deck->li_actual = realdeck;
 
-	    /* now call inp_dodeck, which loads deck into ft_curckt -- the current circuit. */
+	    /* now load deck into ft_curckt -- the current circuit. */
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
 
       }     /*  if (deck->li_next) */
@@ -636,10 +623,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     }
 
     /* Hitoshi Tanaka */
-    if(dbs) tfree(dbs); /* Added */
+    if(dbs) tfree(dbs);
 
     /*saj, to process save commands always, not just in batch mode 
-     *(breaks encapsulation of frountend and parsing commands slightly)*/
+     *(breaks encapsulation of frontend and parsing commands slightly)*/
     ft_dotsaves();
 
     /* Now reset everything.  Pop the control stack, and fix up the IO
@@ -663,17 +650,15 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
  * to the current circuit (ft_curckt).  
  *-----------------------------------------------------------------*/
 void
-inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
-	   struct line *options, char *filename)
-     /*fcn arguments:
-      *  *deck = the spice deck
-      *  *tt = the title of the deck
-      *  *end = pointer to the wordlist
-      *  reuse
-      *  *options
-      *  *filename
-      */
-{
+inp_dodeck(
+  struct line *deck,     /*in: the spice deck */
+  char *tt,              /*in: the title of the deck */
+  wordlist *end,         /*in: all lines with .width, .plot, .print, .save, .op, .meas, .tf */
+  bool reuse,            /*in: TRUE if called from runcoms2.c com_rset, 
+                               FALSE if called from inp_spsource() */
+  struct line *options,  /*in: all .option lines from deck */
+  char *filename         /*in: input file of deck */
+) {
     struct circ *ct;
     struct line *dd;
     char *ckt, *s;
@@ -686,7 +671,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
     static int one;
 
     /* First throw away any old error messages there might be and fix
-     * the case of the lines.  */
+       the case of the lines.  */
     for (dd = deck; dd; dd = dd->li_next) {
         if (dd->li_error) {
             tfree(dd->li_error);
@@ -773,11 +758,9 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
 	char *p, *q;
 
 #ifdef XSPICE
-	/* gtri - modify - 12/12/90 - wbk - add setting of ipc syntax error flag */
+	/* add setting of ipc syntax error flag */
 	g_ipc.syntax_error = IPC_TRUE;
 #endif
-/* gtri - end - 12/12/90 */
-
 	    p = dd->li_error;
 	    do {
 		q =strchr(p, '\n');
@@ -884,7 +867,7 @@ inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
         }
     } /* if (!noparse)  . . . */
 
-
+    /* add title of deck to data base */
     cp_addkword(CT_CKTNAMES, tt);
     return;
 }

@@ -118,21 +118,26 @@ static char start[32], sbend[32], invoke[32], model[32];
 static char node[128][128];
 static int numgnode;
 
-/*-------------------------------------------------------------------*/
-/* inp_subcktexpand is the top level function which translates       */
-/* .subckts into mainlined code.   Note that there are two things    */
-/* we need to do:  1. Find all .subckt definitions & stick them      */
-/* into a list.  2. Find all subcircuit invocations (refdes X)       */
-/* and replace them with the .subckt definition stored earlier.      */
-/*                                                                   */
-/* The algorithm is as follows:                                      */
-/* 1.  Define some aliases for .subckt, .ends, etc.                  */
-/* 2.  Clean up parens around netnames                               */
-/* 3.  Call doit, which does the actual translation.                 */
-/* 4.  Check the results & return.                                   */
-/* inp_subcktexpand takes as argument a pointer to deck, and         */
-/* it returns a pointer to the same deck after the new subcircuits   */
-/* are spliced in.                                                   */
+/*------------------------------------------------------------------- 
+   inp_subcktexpand is the top level function which translates        
+   .subckts into mainlined code.   Note that there are several things     
+   we need to do:  1. Find all .subckt definitions & stick them       
+   into a list.  2. Find all subcircuit invocations (refdes X)        
+   and replace them with the .subckt definition stored earlier.
+   3. Do parameter substitution.
+                                                                      
+   The algorithm is as follows:                                       
+   1.  Define some aliases for .subckt, .ends, etc. 
+   2.  First numparam pass: substitute paramterized tokens by 
+       intermediate values 1000000001 etc.
+   3.  Make a list node[] of global nodes
+   4.  Clean up parens around netnames                                
+   5.  Call doit, which does the actual translation.
+   6.  Second numparam pass: Do final substitution
+   7.  Check the results & return.                                    
+   inp_subcktexpand takes as argument a pointer to deck, and          
+   it returns a pointer to the same deck after the new subcircuits    
+   are spliced in.                                                    
 /*-------------------------------------------------------------------*/
 struct line *
 inp_subcktexpand(struct line *deck)
