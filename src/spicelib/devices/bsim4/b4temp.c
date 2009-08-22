@@ -1,5 +1,5 @@
-/**** BSIM4.6.3 Released by Wenwei Yang 07/31/2008 ****/
-
+/**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
+/**** BSIM4.6.4 Update ngspice 08/22/2009 ****/
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
  * File: b4temp.c of BSIM4.6.3.
@@ -76,18 +76,18 @@ BSIM4model *model = (BSIM4model*) inModel;
 BSIM4instance *here;
 struct bsim4SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, epssub;
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T11, Lnew=0.0, Wnew;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Lnew=0.0, Wnew;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double dumPs, dumPd, dumAs, dumAd, PowWeffWr;
 double DMCGeff, DMCIeff, DMDGeff;
 double Nvtms, Nvtmd, SourceSatCurrent, DrainSatCurrent;
-double T10;
+double T10, T11;
 double Inv_saref, Inv_sbref, Inv_sa, Inv_sb, rho, Ldrn, dvth0_lod;
 double W_tmp, Inv_ODeff, OD_offset, dk2_lod, deta0_lod;
 double lnl, lnw, lnnf, rbpbx, rbpby, rbsbx, rbsby, rbdbx, rbdby,bodymode;
 double kvsat, wlod, sceff, Wdrn;
 double V0, lt1, ltw, Theta0, Delt_vth, Vth_NarrowW, Lpe_Vb, Vth;
-double n, n0, Vtm=0.0, Vgsteff, Vgs_eff, niter, toxpf, toxpi, Tcen, toxe, epsrox, vddeot;
+double n, n0, Vgsteff, Vgs_eff, niter, toxpf, toxpi, Tcen, toxe, epsrox, vddeot;
 double vtfbphi2eot, phieot, TempRatioeot, Vtm0eot, Vtmeot,vbieot;
 
 int Size_Not_Found, i;
@@ -722,16 +722,6 @@ int Size_Not_Found, i;
 				   + model->BSIM4luc1 * Inv_L
 				   + model->BSIM4wuc1 * Inv_W
 				   + model->BSIM4puc1 * Inv_LW;
-				   
-				    /*high k mobility*/
-		  pParam->BSIM4ucs = model->BSIM4ucs
-				  + model->BSIM4lucs * Inv_L
-				  + model->BSIM4wucs * Inv_W
-				  + model->BSIM4pucs * Inv_LW;
-				 
-		  
-				   
-				   
 		  pParam->BSIM4ud = model->BSIM4ud
 				  + model->BSIM4lud * Inv_L
 				  + model->BSIM4wud * Inv_W
@@ -1135,18 +1125,18 @@ int Size_Not_Found, i;
 		  	pParam->BSIM4rdswmin = (model->BSIM4rdswmin + T10)
 				       	* here->BSIM4nf / PowWeffWr;
                   } else { 
-				  if (model->BSIM4tempMod == 3)
-				  {pParam->BSIM4ua = pParam->BSIM4ua * pow(TRatio, pParam->BSIM4ua1) ;
+			if (model->BSIM4tempMod == 3)
+			  {pParam->BSIM4ua = pParam->BSIM4ua * pow(TRatio, pParam->BSIM4ua1) ;
 	          	   pParam->BSIM4ub = pParam->BSIM4ub * pow(TRatio, pParam->BSIM4ub1);
 	          	   pParam->BSIM4uc = pParam->BSIM4uc * pow(TRatio, pParam->BSIM4uc1);
 	          	   pParam->BSIM4ud = pParam->BSIM4ud * pow(TRatio, pParam->BSIM4ud1);
-				  }
-				  else{  /* tempMod = 1, 2 */
-	          	pParam->BSIM4ua = pParam->BSIM4ua * (1.0 + pParam->BSIM4ua1 * delTemp) ;
-	          	pParam->BSIM4ub = pParam->BSIM4ub * (1.0 + pParam->BSIM4ub1 * delTemp);
-	          	pParam->BSIM4uc = pParam->BSIM4uc * (1.0 + pParam->BSIM4uc1 * delTemp);
-	          	pParam->BSIM4ud = pParam->BSIM4ud * (1.0 + pParam->BSIM4ud1 * delTemp);
-				      }
+			}
+			else{  /* tempMod = 1, 2 */
+	          	   pParam->BSIM4ua = pParam->BSIM4ua * (1.0 + pParam->BSIM4ua1 * delTemp) ;
+	          	   pParam->BSIM4ub = pParam->BSIM4ub * (1.0 + pParam->BSIM4ub1 * delTemp);
+	          	   pParam->BSIM4uc = pParam->BSIM4uc * (1.0 + pParam->BSIM4uc1 * delTemp);
+	          	   pParam->BSIM4ud = pParam->BSIM4ud * (1.0 + pParam->BSIM4ud1 * delTemp);
+			}
                   	pParam->BSIM4vsattemp = pParam->BSIM4vsat * (1.0 - pParam->BSIM4at * delTemp);
 		  	T10 = 1.0 + pParam->BSIM4prt * delTemp;
 		     if(model->BSIM4rdsMod) {
@@ -1161,13 +1151,6 @@ int Size_Not_Found, i;
 	          	pParam->BSIM4rds0 = pParam->BSIM4rdsw * T10 * here->BSIM4nf / PowWeffWr;
 		  	pParam->BSIM4rdswmin = model->BSIM4rdswmin * T10 * here->BSIM4nf / PowWeffWr;
                   }
-			/*high k mobility*/	  
-			if (model->BSIM4mobMod == 3)
-                {
-			pParam->BSIM4ua = pParam->BSIM4ua * pow(TRatio, pParam->BSIM4ua1) ;	
-			pParam->BSIM4uc = pParam->BSIM4uc * pow(TRatio, pParam->BSIM4uc1) ;	
-			pParam->BSIM4ud = pParam->BSIM4ud * pow(TRatio, pParam->BSIM4ud1) ;		
-                }				
 		  if (T1 < 0.0)
 		  {   T1 = 0.0;
 		      printf("Warning: Rdw at current temperature is negative; set to 0.\n");
@@ -1240,7 +1223,7 @@ int Size_Not_Found, i;
                   pParam->BSIM4sqrtXdep0 = sqrt(pParam->BSIM4Xdep0);
 
 		  if(model->BSIM4mtrlMod == 0)
-		    pParam->BSIM4litl = sqrt(3.0 * 3.9/epsrox * pParam->BSIM4xj * toxe);
+		    pParam->BSIM4litl = sqrt(3.0 * 3.9 / epsrox * pParam->BSIM4xj * toxe);
 		  else
 		    pParam->BSIM4litl = sqrt(model->BSIM4epsrsub/epsrox * pParam->BSIM4xj * toxe);
 
@@ -2041,7 +2024,7 @@ int Size_Not_Found, i;
 			n0 = (1.0 + 3.0 * tmp3) * T0;
 		      }
 		
-		 T0 = n0 * Vtm;
+		 T0 = n0 * model->BSIM4vtm;
 	     T1 = pParam->BSIM4voffcbn;
 	     T2 = T1/T0;
 		   if (T2 < -EXP_THRESHOLD)
@@ -2186,7 +2169,7 @@ int Size_Not_Found, i;
               {   IFuid namarray[2];
                   namarray[0] = model->BSIM4modName;
                   namarray[1] = here->BSIM4name;
-                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4.6.3 parameter checking for %s in model %s", namarray);
+                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4.6.4 parameter checking for %s in model %s", namarray);
                   return(E_BADPARM);
               }
          } /* End instance */

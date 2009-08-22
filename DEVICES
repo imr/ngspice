@@ -650,13 +650,13 @@ will be updated every time the device specific code is altered or changed to ref
        Dir:    devices/bsim3
        Status: TO BE TESTED
 
-       This is the BSIM3v3.2.4 model from Berkeley device group.
+       This is the actual BSIM3 model from Berkeley Device Group.
        You can find some test netlists with results for this model
        on its web site.
 
-        Web site: http://www-device.eecs.berkeley.edu/~bsim3
+       Web site: http://www-device.eecs.berkeley.edu/~bsim3
 
-        Enhancements over the original model:
+       Enhancements over the original model:
         - Parallel Multiplier
         - ACM Area Calculation Method
         - Multirevision code (supports all 3v3.2 minor revisions)
@@ -665,16 +665,20 @@ will be updated every time the device specific code is altered or changed to ref
 
  11.13 BSIM4 - BSIM model level 4
  
-       Ver:    4.2.0 - 4.6.3
+       Ver:    4.2.0 - 4.6.4
        Class:  M
-       Level:  14 & 54, version = 4.2, 4.3, 4.4, 4.5, 4.6.3
+       Level:  14 & 54, version = 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6
        Dir:    devices/bsim4
        Status:
 
-       This is the BSIM4 device model from Berkeley Device Group.
+       This is the actual BSIM4 model from Berkeley Device Group.
        Test are available on its web site.
 
        Web site: http://www-device.eecs.berkeley.edu/~bsim3/bsim4.html
+
+       Enhancements over the original model:
+        - Parallel Multiplier
+        - NodesetFix
 
 
  11.14 HiSIM - Hiroshima-university STARC IGFET Model

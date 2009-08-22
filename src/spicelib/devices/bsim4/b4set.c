@@ -1,5 +1,5 @@
 /**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
-
+/**** BSIM4.6.4 Update ngspice 08/22/2009 ****/
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
  * File: b4set.c of BSIM4.6.2.
@@ -175,13 +175,13 @@ JOB   *job;
         if (!model->BSIM4tempModGiven)
             model->BSIM4tempMod = 0;
         else if ((model->BSIM4tempMod != 0) && (model->BSIM4tempMod != 1) 
-		  && (model->BSIM4tempMod != 2))
+		  && (model->BSIM4tempMod != 2) && (model->BSIM4tempMod != 3))
         {   model->BSIM4tempMod = 0;
             printf("Warning: tempMod has been set to its default value: 0.\n");
         }
 
         if (!model->BSIM4versionGiven) 
-            model->BSIM4version = "4.6.3";
+            model->BSIM4version = "4.6.4";
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4eotGiven)

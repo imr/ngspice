@@ -1,5 +1,5 @@
 /**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
-
+/**** BSIM4.6.4 Update ngspice 08/22/2009 ****/
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
  * File: b4noi.c of BSIM4.6.2.
@@ -222,10 +222,10 @@ int i;
                                   }
 
 				  if ((*(ckt->CKTstates[0] + here->BSIM4vds)) >= 0.0)
-			              gspr = gspr / (1.0 + npart_theta * npart_theta * gspr
+			              gspr = gspr * (1.0 + npart_theta * npart_theta * gspr
 				 	   / here->BSIM4IdovVds);  /* bugfix */
 				  else
-				      gdpr = gdpr / (1.0 + npart_theta * npart_theta * gdpr
+				      gdpr = gdpr * (1.0 + npart_theta * npart_theta * gdpr
                                            / here->BSIM4IdovVds);
 			      } 
 

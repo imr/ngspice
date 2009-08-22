@@ -1,5 +1,5 @@
 /**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008****/
-
+/**** BSIM4.6.4 Update ngspice 08/22/2009 ****/
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
  * File: b4ld.c of BSIM4.6.2.
@@ -1651,6 +1651,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
           dEsatL_dVb *= T10;
           dEsatL_dVb += EsatL * dT10_dVb;
           EsatL *= T10;
+          Esat = EsatL / Leff;  /* bugfix by Wenwei Yang (4.6.4) */
           here->BSIM4EsatL = EsatL;
         }
 
