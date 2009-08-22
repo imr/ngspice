@@ -138,7 +138,7 @@ static int numgnode;
    inp_subcktexpand takes as argument a pointer to deck, and          
    it returns a pointer to the same deck after the new subcircuits    
    are spliced in.                                                    
-/*-------------------------------------------------------------------*/
+-------------------------------------------------------------------*/
 struct line *
 inp_subcktexpand(struct line *deck)
 {
