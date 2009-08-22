@@ -27,7 +27,7 @@ $Id$
 static void setdb(char *str);
 
 bool ft_acctprint = FALSE, ft_noacctprint = FALSE, ft_listprint = FALSE;
-bool ft_nodesprint = FALSE, ft_optsprint = FALSE;
+bool ft_nodesprint = FALSE, ft_optsprint = FALSE, ft_noinitprint = FALSE;
 
 /* The user-supplied routine to query the values of variables. This
  * recognises the $&varname notation, and also searches the values of
@@ -248,7 +248,9 @@ cp_usrset(struct variable *var, bool isset)
     } else if (eq(var->va_name, "acct")) {
         ft_acctprint = isset;
     } else if (eq(var->va_name, "noacct")) {
-        ft_noacctprint = isset;        
+        ft_noacctprint = isset;  
+    } else if (eq(var->va_name, "noinit")) {
+        ft_noinitprint = isset;               
     } else if (eq(var->va_name, "list")) {
         ft_listprint = isset;
     } else if (eq(var->va_name, "nopage")) {

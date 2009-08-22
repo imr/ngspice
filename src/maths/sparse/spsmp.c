@@ -104,6 +104,8 @@
 
 #if defined (_MSC_VER)
 extern double scalbn(double, int);
+#define logb _logb
+extern double logb(double);
 #endif
 
 static void LoadGmin(SMPmatrix *eMatrix, double Gmin);
@@ -358,7 +360,7 @@ SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
     if (y < z)
 	y = z;
 
-    *pExponent = x + y;
+    *pExponent = (int)(x + y);
     x = scalbn(re, (int) -y);
     z = scalbn(im, (int) -y);
 #ifdef debug_print

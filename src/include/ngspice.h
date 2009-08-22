@@ -168,6 +168,7 @@ struct timeb timebegin;
 #define dup2 _dup2
 #define open _open
 #define write _write
+#define strcasecmp _stricmp
 #endif
 
 #ifndef HAVE_RANDOM

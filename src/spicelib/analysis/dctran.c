@@ -215,7 +215,7 @@ DCtran(CKTcircuit *ckt,
            } */
            fprintf(stdout,"\n");
            fflush(stdout);   
-        } else if (!ft_noacctprint) {
+        } else if (!ft_noacctprint && !ft_noinitprint) {
            fprintf(stdout,"\nInitial Transient Solution\n");
            fprintf(stdout,"--------------------------\n\n");
            fprintf(stdout,"%-30s %15s\n", "Node", "Voltage");

@@ -1,4 +1,10 @@
 2009-08-17 Holger Vogt
+ * dctran.c, spiceif.c, options.c, fteext.h: option noinit added.
+   This option suppresses the printout of "Initial Transient Solution".
+   noinit may be combined with acct. noacct will suppress both printouts.
+ * spsmp.c, ngspice.h: reference to _logb added for _MSC_VER  
+
+2009-08-17 Holger Vogt
  * inp.c: some comments added
   
 2009-08-15 Holger Vogt
