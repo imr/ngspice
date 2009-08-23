@@ -9,10 +9,36 @@
 #include "general.h"
 #include "numparam.h"
 #include "ngspice.h"
-#include "../compatmode.h"
+
+/* preliminary, until upload problem h_vogt is solved */
+//#include "../compatmode.h"
+#include "cpdefs.h"
+#include "ftedefs.h"
+#include "dvec.h"
+#include "../frontend/variable.h"
+/* end preliminary */
 
 /* random numbers in /maths/misc/randnumb.c */
 extern double gauss();
+
+/* preliminary until upload problem h_vogt is solved */
+typedef enum {
+  COMPATMODE_NATIVE = 0,
+  COMPATMODE_HSPICE = 1
+} COMPATMODE_T ;
+
+
+COMPATMODE_T ngpsice_compat_mode(void)
+{
+    char behaviour[80] ;
+
+    if( cp_getvar("ngbehavior", VT_STRING, behaviour)){
+      if (strcasecmp(behaviour,"hspice")==0)
+	return( COMPATMODE_HSPICE ) ;
+    }
+    return(COMPATMODE_NATIVE) ;
+} /* end ngspice_compat_mode() */
+/* end preliminary */
 
 /************ keywords ************/
 

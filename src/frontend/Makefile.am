@@ -95,8 +95,6 @@ libfte_la_SOURCES = \
 	breakp2.h	\
 	circuits.c	\
 	circuits.h	\
-	compatmode.c	\
-	compatmode.h	\
 	cpitf.c		\
 	cpitf.h		\
 	define.c	\

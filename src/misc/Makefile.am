@@ -11,12 +11,8 @@ libmisc_la_SOURCES = \
 		alloc.h		\
 		dup2.c		\
 		dup2.h		\
-		hash.h		\
-		hash.c		\
 		ivars.c		\
 		ivars.h		\
-		mempool.c	\
-		mempool.h	\
 		mktemp.c	\
 		mktemp.h	\
 		printnum.c	\

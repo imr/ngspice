@@ -1,4 +1,12 @@
 2009-08-23 Holger Vogt
+ * upload of /frontend/compatmode.c, compatmode.h  /misc/hash.c, hash.h
+   failed.
+ * xpressn.c: contaents of compatmode.c and compatmode.h added as a 
+   preliminary solution.
+ * misc/makefile.am: hash.c, mempool.c removed again
+ * forntend/makefile.am: compatmode.c removed again
+ 
+2009-08-23 Holger Vogt
  * /frontend/compatmode.c, compatmode.h  /misc/hash.c, hash.h,
    --> new .measurement code
    
