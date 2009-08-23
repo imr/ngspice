@@ -1,7 +1,7 @@
 /* New routines to evaluate the .measure cards.
    Entry point is function get_measure2(), called by fcn do_measure() 
    from measure.c, if line measure.c:25 is commented out.
-   Patches by Bill Swartz from 2009-05-18 are included.
+   Patches by Bill Swartz from 2009-05-18 and 2009-08-21 are included.
    
    $Id$ 
 */
@@ -14,11 +14,8 @@
 
 #include "vectors.h"
 #include <math.h>
+#include "dotcards.h"
 #include "com_measure2.h"
-
-#ifdef _MSC_VER
-#define strcasecmp _stricmp
-#endif
 
 typedef enum {
    MEASUREMENT_OK = 0,
@@ -33,42 +30,225 @@ typedef struct measure
   char *result;
 
   char *m_vec;		// name of the output variable which determines the beginning of the measurement
-  char *m_vec2;
-  int m_rise;
-  int m_fall;
-  int m_cross;
+  char *m_vec2;		// second output variable to measure if applicable
+  int m_rise;		// count number of rise events
+  int m_fall;		// count number of fall events
+  int m_cross;		// count number of rise/fall aka cross  events
   double m_val;		// value of the m_ver at which the counter for crossing, rises or falls is incremented by one
   double m_td;		// amount of delay before the measurement should start
-  double m_from;
-  double m_to;
-  double m_at;
-  double m_measured;
-  double m_measured_at;
+  double m_from;	// measure only in a time window - starting time of window
+  double m_to;		// measurement window - ending time
+  double m_at;		// measure at the specified time
+  double m_measured;	// what we measured
+  double m_measured_at; //* what we measured at the given time
 
-} measure;
+} MEASURE, *MEASUREPTR ;
 
-enum AnalysisType {
-	AT_DELAY, AT_TRIG,	
+typedef enum AnalysisType {
+	AT_UNKNOWN, AT_DELAY, AT_TRIG,	
 	AT_FIND, AT_WHEN,
 	AT_AVG, AT_MIN, AT_MAX, AT_RMS, AT_PP,
 	AT_INTEG, AT_DERIV,
 	AT_ERR, AT_ERR1, AT_ERR2, AT_ERR3
-};
+} ANALYSIS_TYPE_T ;
 
 /** return precision (either 5 or value of environment variable NGSPICE_MEAS_PRECISION) */
-int get_measure_precision(void)
+int
+measure_get_precision(void)
 {
-   char *env_ptr;
-   int  precision = 5;
-   
-   if ( ( env_ptr = getenv("NGSPICE_MEAS_PRECISION") ) ) {
-     precision = atoi(env_ptr);
-   }
- 
-   return precision;
+  char *env_ptr;
+  int  precision = 5;
+  
+  if ( ( env_ptr = getenv("NGSPICE_MEAS_PRECISION") ) ) {
+    precision = atoi(env_ptr);
+  }
+
+  return precision;
 } /* end measure_get_precision() */
 
-void com_measure_when(struct measure *meas) {
+static void measure_errMessage(char *mName, char *mFunction, char *trigTarg, char *errMsg, int chk_only)
+{
+
+    if(!(chk_only)){
+	printf("\tmeasure '%s'  failed\n", mName);
+	printf("Error: measure  %s  %s(%s) :\n", mName, mFunction, trigTarg);
+	printf("\t%s\n",errMsg);
+    }
+    return;
+} /* end measure_errMessage() */
+
+static double
+measure_interpolate( struct dvec *time, struct dvec *values, int i, int j, double var_value, char x_or_y )
+{
+  double slope;
+  double yint;
+  double result;
+
+  slope = (values->v_realdata[j] - values->v_realdata[i]) / 
+          (time->v_realdata[j] - time->v_realdata[i]);
+
+  yint  = values->v_realdata[i] - slope*time->v_realdata[i];
+  
+  if ( x_or_y == 'x' ) result = (var_value - yint)/slope;
+  else                 result = slope*var_value + yint;
+
+  return result;
+} /* end measure_interpolate() */
+
+/* -----------------------------------------------------------------
+ * Function: Given an operation string returns back the measure type - one of 
+ * the enumerated type ANALSYS_TYPE_T.
+ * ----------------------------------------------------------------- */
+static ANALYSIS_TYPE_T measure_function_type( char *operation )
+{
+    char *mFunction ;			/* operation */
+    ANALYSIS_TYPE_T mFunctionType ;	/* type of requested function */
+
+    mFunction = cp_unquote(operation);
+    // Functions
+    if (strcasecmp(mFunction,"DELAY")==0)
+	    mFunctionType = AT_DELAY;
+    else if (strcasecmp(mFunction,"TRIG")==0)
+	    mFunctionType = AT_DELAY;
+    else if (strcasecmp(mFunction,"TARG")==0)
+	    mFunctionType = AT_DELAY;
+    else if (strcasecmp(mFunction,"FIND")==0)
+	    mFunctionType = AT_FIND;
+    else if (strcasecmp(mFunction,"WHEN")==0)
+	    mFunctionType = AT_WHEN;
+    else if (strcasecmp(mFunction,"AVG")==0)
+	    mFunctionType = AT_AVG;
+    else if (strcasecmp(mFunction,"MIN")==0)
+	    mFunctionType = AT_MIN;
+    else if (strcasecmp(mFunction,"MAX")==0)
+	    mFunctionType = AT_MAX;
+    else if (strcasecmp(mFunction,"RMS")==0)
+	    mFunctionType = AT_RMS;
+    else if (strcasecmp(mFunction,"PP")==0)
+	    mFunctionType = AT_PP;
+    else if (strcasecmp(mFunction,"INTEG")==0)
+	    mFunctionType = AT_INTEG;
+    else if (strcasecmp(mFunction,"DERIV")==0)
+	    mFunctionType = AT_DERIV;
+    else if (strcasecmp(mFunction,"ERR")==0)
+	    mFunctionType = AT_ERR;
+    else if (strcasecmp(mFunction,"ERR1")==0)
+	    mFunctionType = AT_ERR1;
+    else if (strcasecmp(mFunction,"ERR2") == 0)
+	    mFunctionType = AT_ERR2;
+    else if (strcasecmp(mFunction,"ERR3") == 0)
+	    mFunctionType = AT_ERR3;
+    else 
+	    mFunctionType = AT_UNKNOWN;
+
+    return( mFunctionType) ;
+
+} /* end measure_function_type() */
+
+/* -----------------------------------------------------------------
+ * Function: Parse the measurement line and extract any variables in
+ * the statement and call com_save2 to instantiate the variable as a
+ * measurement vector in the transient analysis.
+ * ----------------------------------------------------------------- */
+int measure_extract_variables( char *line )
+{
+  /* Various formats for measure statement:
+   * .MEASURE {DC|AC|TRAN} result TRIG trig_variable VAL=val 
+   * + <TD=td> <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   * + <TRIG AT=time> 
+   * + TARG targ_variable VAL=val 
+   * + <TD=td> <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   * + <TRIG AT=time>
+   *
+   * .MEASURE {DC|AC|TRAN} result WHEN out_variable=val 
+   * + <TD=td> <FROM=val> <TO=val>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   *
+   * .MEASURE {DC|AC|TRAN} result WHEN out_variable=out_variable2 
+   * + <TD=td> <FROM=val> <TO=val>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   *
+   * .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=val
+   * + <TD=td> <FROM=val> <TO=val>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   *
+   * .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=out_variable3
+   * + <TD=td>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   *
+   * .MEASURE {DC|AC|TRAN} result FIND out_variable AT=val
+   * + <FROM=val> <TO=val>
+   *
+   * .MEASURE {DC|AC|TRAN} result {AVG|MIN|MAX|PP|RMS} out_variable 
+   * + <TD=td> <FROM=val> <TO=val>
+   *
+   * .MEASURE {DC|AC|TRAN} result INTEG<RAL> out_variable 
+   * + <TD=td> <FROM=val> <TO=val>
+   *
+   * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable 
+   * + <TD=td> <FROM=val> <TO=val> <AT=val>
+   *
+   * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable 
+   * + <TD=td> <FROM=val> <TO=val> <AT=val>
+   * ----------------------------------------------------------------- */
+
+    int len ;					/* length of string */
+    int status ;				/* return status */
+    char *item ;				/* parsing item */
+    char *measure ;				/* measure keyword */
+    char *analysis ;				/* analysis option */
+    char *variable ;				/* variable to trace */
+    wordlist *measure_var ;			/* wordlist of measurable */
+    ANALYSIS_TYPE_T op ;			/* measure function type */
+
+    status = TRUE;
+    measure = gettok(&line);
+    if(!(measure)){
+      return(status) ;
+    }
+    analysis = gettok(&line);
+    if(!(analysis)){
+      return(status) ;
+    }
+    if( (strcasecmp(analysis,"DC")==0) ||
+        (strcasecmp(analysis,"AC")==0) ||
+        (strcasecmp(analysis,"TRAN")==0) ){
+      analysis = copy(analysis) ;
+    } else {
+      /* sometimes operation is optional - for now just pick trans */
+      analysis = copy("TRAN") ;
+    }
+    do {
+      item = gettok(&line) ;
+      if( item ){
+	op = measure_function_type(item) ;
+	if( op != AT_UNKNOWN ){
+	  /* We have a variable/complex variable coming next */
+	  variable = gettok(&line) ;
+	  if( variable ){
+	    len = strlen(item) ;
+	    if( item[len-1] == '=' ){
+	    } else {
+	      measure_var = gettoks(variable) ;
+	      com_save2(measure_var, analysis);
+	      status = FALSE;
+	    }
+	  }
+	}
+      }
+    } while(line && *line) ;
+    /* 
+    */
+    return( status ) ;
+} /* end measure_extract_variables() */
+
+/* -----------------------------------------------------------------
+ * Function: process a WHEN measurement statement which has been
+ * parsed into a measurement structure.
+ * ----------------------------------------------------------------- */
+static void com_measure_when( 
+    MEASUREPTR meas		/* in : parsed measurement structure */
+) {
 
 	int i, first;
         int riseCnt = 0;
@@ -129,7 +309,7 @@ void com_measure_when(struct measure *meas) {
 					crossCnt =1;
 				}
 			}
-			printf("");
+			fflush( stdout ) ;
 		}
 	
 		if (first > 1) {
@@ -186,7 +366,15 @@ void com_measure_when(struct measure *meas) {
         return;      
 }
 
-void measure_at(struct measure *meas, double at) {
+/* -----------------------------------------------------------------
+ * Function: process an AT measurement statement which has been
+ * parsed into a measurement structure.  We make sure to interpolate
+ * the value when appropriate.
+ * ----------------------------------------------------------------- */
+static void measure_at(
+    MEASUREPTR meas,	    /* in : parsed "at" data */
+    double at		    /* in: time to perform measurement */
+) {
 	
 	int i;
 	double value, pvalue, svalue, psvalue;
@@ -224,13 +412,17 @@ void measure_at(struct measure *meas, double at) {
         return;
 }
 
-void measure_avg( ) {
-	// AVG (Average):
-	// Calculates the area under the 'out_var' divided by the periods of intrest
-	return;
-}
 
-void measure_minMaxAvg( struct measure *meas, int minMax ) {
+/* -----------------------------------------------------------------
+ * Function: process an MIN, MAX, or AVG statement which has been
+ * parsed into a measurement structure.  We should make sure to interpolate
+ * the value here when we have m_from and m_to constraints * so this
+ * function is slightly wrong.   Need to fix in future rev.
+ * ----------------------------------------------------------------- */
+static void measure_minMaxAvg( 
+    MEASUREPTR meas,	        	/* in : parsed measurement data request */
+    ANALYSIS_TYPE_T mFunctionType 	/* in: one of AT_AVG, AT_MIN, AT_MAX */
+) {
       
         int i, avgCnt;
         struct dvec *d, *dScale;
@@ -272,7 +464,7 @@ void measure_minMaxAvg( struct measure *meas, int minMax ) {
                         first =1;
 			
 		} else  {
-			switch (minMax) {
+			switch (mFunctionType) {
 				case AT_MIN: {
 		                        if (value <= mValue) {
                 		                mValue = value;
@@ -287,28 +479,23 @@ void measure_minMaxAvg( struct measure *meas, int minMax ) {
 		                        }
 					break;
 				}
-				case AT_AVG:
-				case AT_RMS: {
+				case AT_AVG: {
 					mValue = mValue + value;
 					avgCnt ++;			
 					break;
 				}
+				default :
+				  fprintf(cp_err, "Error: improper min/max/avg call.\n");
 			}
 			
 		}
         }
 
-	switch (minMax)
+	switch (mFunctionType)
 	{	
 		case AT_AVG: {
 			meas->m_measured = (mValue / avgCnt);
 	                meas->m_measured_at = svalue;
-			break;
-		}
-		case AT_RMS: {
-	//		printf(" mValue %e svalue %e avgCnt %i, ", mValue, svalue, avgCnt);
-                        meas->m_measured = sqrt(mValue) / avgCnt;
-                        meas->m_measured_at = svalue;					
 			break;
 		}
 		case AT_MIN:
@@ -317,23 +504,170 @@ void measure_minMaxAvg( struct measure *meas, int minMax ) {
         	        meas->m_measured_at = mValueAt;
 			break;
 		}
+		default :
+		  fprintf(cp_err, "Error: improper min/max/avg call.\n");
 	}
 
         return;
 }
 
-void measure_rms( ) {
+/* -----------------------------------------------------------------
+ * Function: process an RMS or INTEG statement which has been
+ * parsed into a measurement structure.  Here we do interpolate
+ * the starting and stopping time window so the answer is correct.
+ * ----------------------------------------------------------------- */
+static void measure_rms_integral(
+    MEASUREPTR meas,	                /* in : parsed measurement data request */
+    ANALYSIS_TYPE_T mFunctionType 	/* in: one of AT_RMS, or AT_INTEG */
+) {
+        int i;				/* counter */
+	int xy_size ;			/* # of temp array elements */
+        struct dvec *d, *time;		/* value and time vectors */
+        float value, tvalue;		/* current value and time value */
+	double *x ;			/* temp x array */
+	double *y ;			/* temp y array */
+	double toVal ;			/* to time value */
+	double *width ;			/* temp width array */
+	double sum1 ;			/* first sum */
+	double sum2 ;			/* second sum */
+	double sum3 ;			/* third sum */
+        int first;
+
+        tvalue =0;
+        meas->m_measured = 0.0e0;
+        meas->m_measured_at = 0.0e0;
+        first =0;
+
+        d = vec_get(meas->m_vec);
+        if (d == NULL) {
+                fprintf(cp_err, "Error: no such vector as %s.\n", meas->m_vec);
+                return;
+        }
+
+        time = vec_get("time");
+        if (time == NULL) {
+                fprintf(cp_err, "Error: no such vector as time.\n");
+                return;
+        }
+
+	// Allocate buffers for calculation.
+	x     = (double *) tmalloc(time->v_length * sizeof(double));
+	y     = (double *) tmalloc(time->v_length * sizeof(double));
+	width = (double *) tmalloc(time->v_length * sizeof(double));
+
+	xy_size = 0 ;
+	toVal = -1 ;
+	// create new set of values over interval [from, to] -- interpolate if necessary
+        for (i=0; i < d->v_length; i++) {
+                value = d->v_realdata[i];
+                tvalue = time->v_realdata[i];
+
+                if (tvalue < meas->m_from)
+                        continue;
+
+                if ((meas->m_to != 0.0e0) && (tvalue > meas->m_to) ){
+		    // interpolate ending value if necessary.
+		    if (!(AlmostEqualUlps( tvalue, meas->m_to, 100))){
+		      value = measure_interpolate( time, d, i-1, i, meas->m_to, 'y' ); 
+		      tvalue = meas->m_to ;
+		    }
+		    x[xy_size] = tvalue ;
+		    if (mFunctionType == AT_RMS)
+		      y[xy_size++] = value * value ;
+		    else 
+		      y[xy_size++] = value ;
+		    toVal = tvalue ;
+		    break;
+		}
+
+		if (first == 0) {
+		  if( meas->m_from != 0.0e0 && (i > 0) ){
+		    // interpolate starting value.
+		    if (!(AlmostEqualUlps( tvalue, meas->m_from, 100))){
+		      value = measure_interpolate( time, d, i-1, i, meas->m_from, 'y' ); 
+		      tvalue = meas->m_from ;
+		    }
+		  }
+		  meas->m_measured_at = tvalue ;
+		  first = 1;
+		}
+		x[xy_size] = tvalue ;
+		if (mFunctionType == AT_RMS)
+		  y[xy_size++] = value * value ;
+		else 
+		  y[xy_size++] = value ;
+        }
+
+	// evaluate segment width
+	for ( i = 0; i < xy_size-1; i++ ) width[i] = x[i+1] - x[i] ;
+	width[i++] = 0;
+	width[i++] = 0;
+
+	// Compute Integral (area under curve)
+	i = 0;
+	sum1 = sum2 = sum3 = 0.0 ;
+	while ( i < xy_size-1 ) {
+	   // Simpson's 3/8 Rule
+	   if ( AlmostEqualUlps( width[i], width[i+1], 100 ) && 
+	        AlmostEqualUlps( width[i], width[i+2], 100 ) ) {
+	      sum1 += 3*width[i] * (y[i] + 3*(y[i+1] + y[i+2]) + y[i+3]) / 8.0;
+	      i += 3;
+	   }
+	   // Simpson's 1/3 Rule
+	   else if ( AlmostEqualUlps( width[i], width[i+1], 100 ) ) {
+	      sum2 += width[i] * (y[i] + 4*y[i+1] + y[i+2]) / 3.0 ;
+	      i += 2;
+	   }
+	   // Trapezoidal Rule
+	   else if ( !AlmostEqualUlps( width[i], width[i+1], 100 ) ) {
+	      sum3 += width[i] * (y[i] + y[i+1]) / 2;
+	      i++;
+	   }
+	}
+
+	/* Now set the measurement values if not set */
+	if( toVal < 0.0 ){
+	  toVal = time->v_realdata[d->v_length-1];
+	}
+	meas->m_from = meas->m_measured_at ;
+	meas->m_to = toVal ;
+
+	if (mFunctionType == AT_RMS) {
+	   meas->m_measured = (sum1 + sum2 + sum3)/ (toVal - meas->m_measured_at) ;
+	   meas->m_measured = sqrt(meas->m_measured);
+
+	} else {
+	   meas->m_measured = ( sum1 + sum2 + sum3 );
+	}
+	txfree(x); txfree(y); txfree(width);
+
+} /* end measure_rms_integral() */
+
+/* -----------------------------------------------------------------
+ * Function: Wrapper function to process a RMS measurement.
+ * ----------------------------------------------------------------- */
+static void measure_rms(
+    MEASUREPTR meas	                /* in : parsed measurement data request */
+) {
 	// RMS (root mean squared):
 	// Calculates the square root of the area under the 'out_var2' curve
 	//  divided be the period of interest
+	measure_rms_integral(meas,AT_RMS) ;
 	return;
 }
 
-void measure_integ( ) {
+/* -----------------------------------------------------------------
+ * Function: Wrapper function to process a integration measurement.
+ * ----------------------------------------------------------------- */
+static void measure_integ(
+    MEASUREPTR meas	                /* in : parsed measurement data request */
+) {
 	// INTEGRAL INTEG
+	measure_rms_integral(meas,AT_INTEG) ;
 	return;
 }
 
+/* still some more work to do.... */
 void measure_deriv( ) {
 	// DERIVATIVE DERIV
 	return;
@@ -356,13 +690,6 @@ void measure_ERR3( ) {
         return;
 }
 
-void measure_errMessage(char *mName, char *mFunction, char *trigTarg, char *errMsg, bool autocheck) {
-        if (autocheck) return;
-	printf("\tmeasure '%s'  failed\n", mName);
-	printf("Error: measure  %s  %s(%s) :\n", mName, mFunction, trigTarg);
-	printf("\t%s\n",errMsg);
-	return;
-}
 
 void com_dotmeasure( ) {
 
@@ -373,20 +700,38 @@ void com_dotmeasure( ) {
 	return;
 }
 
-int measure_valid_vector(char *vec) {
+/* -----------------------------------------------------------------
+ * Function: Given a measurement variable name, see if the analysis
+ * has generated a measure vector for it.  Returns TRUE if it exists
+ * or varname is NULL,  Return FALSE otherwise
+ * ----------------------------------------------------------------- */
+static int measure_valid_vector(
+      char *varname			/* in: requested variable name */
+) {
 
-        struct dvec *d;
+        struct dvec *d;			/* measurement vector */
         
-        if(vec == NULL)
-                return 1;
-        d = vec_get(vec);
+        if(varname == NULL)
+                return TRUE;
+        d = vec_get(varname);
         if (d == NULL)
-                return 0;
+                return FALSE;
         
-	return 1;
+	return TRUE;
 }
 
-int measure_parse_stdParams (struct measure *meas, wordlist *wl, wordlist *wlBreak, char *errbuf) {
+/* -----------------------------------------------------------------
+ * Function: Given a wordlist and measurement structure, parse the
+ * standard parameters such as RISE, FALL, VAL, TD, FROM, TO, etc.
+ * in a measurement statement.   We also check the appropriate
+ * variables found in the measurement statement.
+ * ----------------------------------------------------------------- */
+static int measure_parse_stdParams (
+    MEASUREPTR meas,		/* in : measurement structure */ 
+    wordlist *wl, 		/* in : word list to parse */
+    wordlist *wlBreak, 		/* out: where we stopped parsing */
+    char *errbuf		/* in/out: buffer where we write error messages */
+) {
 	
 	int pCnt;	
 	char *p, *pName, *pValue;
@@ -475,7 +820,17 @@ int measure_parse_stdParams (struct measure *meas, wordlist *wl, wordlist *wlBre
 	return 1;
 }
 
-int measure_parse_find (struct measure *meas, wordlist *wl, wordlist *wlBreak, char *errbuf) {
+/* -----------------------------------------------------------------
+ * Function: Given a wordlist and measurement structure, parse a
+ * FIND measurement statement.   Most of the work is done by calling
+ * measure_parse_stdParams.
+ * ----------------------------------------------------------------- */
+static int measure_parse_find (
+    MEASUREPTR meas,		/* in : measurement structure */ 
+    wordlist *wl, 		/* in : word list to parse */
+    wordlist *wlBreak, 		/* out: where we stopped parsing */
+    char *errbuf		/* in/out: buffer where we write error messages */
+) {
 	
 	int pCnt;
 	char *p, *pName, *pVal;
@@ -497,9 +852,7 @@ int measure_parse_find (struct measure *meas, wordlist *wl, wordlist *wlBreak, c
 		p = wl->wl_word;
 		
 		if (pCnt == 0 ) {
-//			meas->m_vec =(char *)tmalloc(strlen(wl->wl_word)+1);
-  //                      strcpy(meas->m_vec, cp_unquote(wl->wl_word));
-     		meas->m_vec= cp_unquote(wl->wl_word);
+		  meas->m_vec= cp_unquote(wl->wl_word);
 		} else if (pCnt == 1) {
 
 			pName = strtok(p, "=");
@@ -537,7 +890,16 @@ int measure_parse_find (struct measure *meas, wordlist *wl, wordlist *wlBreak, c
 	return 1;
 }
 
-int measure_parse_when (struct measure *meas, wordlist *wl, char *errBuf) {
+/* -----------------------------------------------------------------
+ * Function: Given a wordlist and measurement structure, parse a
+ * WHEN measurement statement.   Most of the work is done by calling
+ * measure_parse_stdParams.
+ * ----------------------------------------------------------------- */
+static int measure_parse_when (
+    MEASUREPTR meas,		/* in : measurement structure */ 
+    wordlist *wl, 		/* in : word list to parse */
+    char *errBuf		/* in/out: buffer where we write error messages */
+) {
 
         int pCnt;
         char *p, *pVar1, *pVar2;
@@ -584,7 +946,18 @@ int measure_parse_when (struct measure *meas, wordlist *wl, char *errBuf) {
 }
 
 
-int measure_parse_trigtarg (struct measure *meas, wordlist *words, wordlist *wlTarg, char *trigTarg, char *errbuf) {
+/* -----------------------------------------------------------------
+ * Function: Given a wordlist and measurement structure, parse a
+ * TRIGGER or TARGET clause of a measurement statement.   Most of the
+ * work is done by calling measure_parse_stdParams.
+ * ----------------------------------------------------------------- */
+static int measure_parse_trigtarg (
+    MEASUREPTR meas,		/* in : measurement structure */ 
+    wordlist *words, 		/* in : word list to parse */
+    wordlist *wlTarg, 		/* out : where we stopped parsing target clause */
+    char *trigTarg, 		/* in : type of clause */
+    char *errbuf		/* in/out: buffer where we write error messages */
+) {
 
 	int pcnt;
 	char *p;
@@ -634,9 +1007,21 @@ int measure_parse_trigtarg (struct measure *meas, wordlist *words, wordlist *wlT
 	return 1;
 }
 
+/* -----------------------------------------------------------------
+ * Function: Given a wordlist, extract the measurement statement,
+ * process it, and return a result.  If out_line is furnished, we
+ * format and copy the result it this string buffer.  The autocheck
+ * variable allows us to check for "autostop".  This function is 
+ * called from measure.c.    We use the functions in this file because
+ * the parsing is much more complete and thorough.
+* ----------------------------------------------------------------- */
 int
-get_measure2(wordlist *wl,double *result,char *out_line, bool autocheck)
-{
+get_measure2(
+    wordlist *wl,		/* in: a word list for us to process */
+    double *result,		/* out : the result of the measurement */
+    char *out_line, 		/* out: formatted result - may be NULL */
+    bool autocheck		/* in: TRUE if checking for "autostop"; FALSE otherwise */
+) {
 	wordlist *words, *wlTarg, *wlWhen;
  	char errbuf[100];
         char *mType = NULL;             // analysis type
@@ -673,7 +1058,7 @@ get_measure2(wordlist *wl,double *result,char *out_line, bool autocheck)
                 return MEASUREMENT_FAILURE;
         }
 
-	precision = get_measure_precision() ;
+	precision = measure_get_precision() ;
         wl_cnt = 0;
 	while (words) {
 
@@ -687,43 +1072,14 @@ get_measure2(wordlist *wl,double *result,char *out_line, bool autocheck)
 				break;
 			case 2:
 			{
-				mFunction = cp_unquote(words->wl_word);
-		                // Functions
-		                if (strcasecmp(mFunction,"DELAY")==0)
-		                        mFunctionType = AT_DELAY;
-		                else if (strcasecmp(mFunction,"TRIG")==0)
-		                        mFunctionType = AT_DELAY;
-		                else if (strcasecmp(mFunction,"FIND")==0)
-		                        mFunctionType = AT_FIND;
-		                else if (strcasecmp(mFunction,"WHEN")==0)
-		                        mFunctionType = AT_WHEN;
-		                else if (strcasecmp(mFunction,"AVG")==0)
-		                        mFunctionType = AT_AVG;
-		                else if (strcasecmp(mFunction,"MIN")==0)
-		                        mFunctionType = AT_MIN;
-		                else if (strcasecmp(mFunction,"MAX")==0)
-		                        mFunctionType = AT_MAX;
-		                else if (strcasecmp(mFunction,"RMS")==0)
-		                        mFunctionType = AT_RMS;
-		                else if (strcasecmp(mFunction,"PP")==0)
-		                        mFunctionType = AT_PP;
-		                else if (strcasecmp(mFunction,"INTEG")==0)
-		                        mFunctionType = AT_INTEG;
-		                else if (strcasecmp(mFunction,"DERIV")==0)
-		                        mFunctionType = AT_DERIV;
-		                else if (strcasecmp(mFunction,"ERR")==0)
-		                        mFunctionType = AT_ERR;
-		                else if (strcasecmp(mFunction,"ERR1")==0)
-		                        mFunctionType = AT_ERR1;
-		                else if (strcasecmp(mFunction,"ERR2") == 0)
-		                        mFunctionType = AT_ERR2;
-		                else if (strcasecmp(mFunction,"ERR3") == 0)
-		                        mFunctionType = AT_ERR3;
-		                else {
-		                        printf("\tmeasure '%s'  failed\n", mName);
-		                        printf("Error: measure  %s  :\n", mName);
-		                        printf("\tno such function as '%s'\n", mFunction);
-		                        return MEASUREMENT_FAILURE;
+				mFunctionType = measure_function_type(words->wl_word);
+				if ( mFunctionType == AT_UNKNOWN ){
+				  if(!(autocheck)){
+				    printf("\tmeasure '%s'  failed\n", mName);
+				    printf("Error: measure  %s  :\n", mName);
+				    printf("\tno such function as '%s'\n", words->wl_word);
+				  }
+				  return MEASUREMENT_FAILURE;
 		                }
 				break;
 			}
@@ -771,7 +1127,7 @@ get_measure2(wordlist *wl,double *result,char *out_line, bool autocheck)
 		case AT_TRIG: 
 		{		
 			// trig parameters
-			measure *measTrig, *measTarg;
+			MEASUREPTR measTrig, measTarg;
 			measTrig = (struct measure*)tmalloc(sizeof(struct measure));           
 	                measTarg = (struct measure*)tmalloc(sizeof(struct measure));
 									
@@ -836,7 +1192,7 @@ get_measure2(wordlist *wl,double *result,char *out_line, bool autocheck)
 		}
                 case AT_FIND:
 		{
-                        measure *meas, *measFind;
+                        MEASUREPTR meas, measFind;
                         meas = (struct measure*)tmalloc(sizeof(struct measure));
 			measFind = (struct measure*)tmalloc(sizeof(struct measure));
 
@@ -891,7 +1247,7 @@ get_measure2(wordlist *wl,double *result,char *out_line, bool autocheck)
 		}
                 case AT_WHEN:
 		{
-			measure *meas;
+			MEASUREPTR meas;
 			meas = (struct measure*)tmalloc(sizeof(struct measure));
 
 			if (measure_parse_when(meas, words, errbuf) ==0) {
@@ -918,14 +1274,43 @@ get_measure2(wordlist *wl,double *result,char *out_line, bool autocheck)
  			return MEASUREMENT_OK;
 	        }
 		case AT_RMS:
-                        printf("\tmeasure '%s'  failed\n", mName);
-                        printf("Error: measure  %s  :\n", mName);
-                        printf("\tfunction '%s' currently not supported\n", mFunction);
-                        break;
+                case AT_INTEG:
+		{
+			// trig parameters
+                        MEASUREPTR meas;
+                        meas = (struct measure*)tmalloc(sizeof(struct measure));
+
+                        if (measure_parse_trigtarg(meas, words , NULL, "trig", errbuf)==0) {
+                                measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
+                                return MEASUREMENT_FAILURE;
+                        }
+
+                        // measure
+			measure_rms_integral(meas,mFunctionType);
+
+                        if (meas->m_measured == 0.0e0) {
+                                sprintf(errbuf,"out of interval\n");
+                                measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
+                                return MEASUREMENT_FAILURE;
+                        }
+
+			if (meas->m_at == -1)
+				meas->m_at = 0.0e0;
+
+                        // print results
+		        if( out_line ){
+			  sprintf(out_line,"%-20s=   %.*e from=  %.*e to=  %.*e\n", mName, precision, meas->m_measured, precision, meas->m_from, precision, meas->m_to);
+			} else {
+			  printf("%-20s=  %.*e from=  %.*e to=  %.*e\n", mName, precision, meas->m_measured, precision, meas->m_from, precision, meas->m_to);
+			}
+                        *result=meas->m_measured;
+			return MEASUREMENT_OK;
+
+		}
                 case AT_AVG:
 		{
 			// trig parameters
-                        measure *meas;
+                        MEASUREPTR meas;
                         meas = (struct measure*)tmalloc(sizeof(struct measure));
 
                         if (measure_parse_trigtarg(meas, words , NULL, "trig", errbuf)==0) {
@@ -959,7 +1344,7 @@ get_measure2(wordlist *wl,double *result,char *out_line, bool autocheck)
 		case AT_MAX:
 		{
 		        // trig parameters
-                        measure *measTrig;
+                        MEASUREPTR measTrig;
                         measTrig = (struct measure*)tmalloc(sizeof(struct measure));
 
                         if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf)==0) {
@@ -993,7 +1378,7 @@ get_measure2(wordlist *wl,double *result,char *out_line, bool autocheck)
 		{			
 		        double minValue, maxValue;
 
-                        measure *measTrig;
+                        MEASUREPTR measTrig;
                         measTrig = (struct measure*)tmalloc(sizeof(struct measure));
 
                         if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf)==0) {
@@ -1028,7 +1413,6 @@ get_measure2(wordlist *wl,double *result,char *out_line, bool autocheck)
  			*result = (maxValue - minValue);
  			return MEASUREMENT_OK;
 		}
-                case AT_INTEG:
                 case AT_DERIV:
                 case AT_ERR:
                 case AT_ERR1:

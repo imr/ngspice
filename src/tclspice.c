@@ -95,6 +95,7 @@ typedef pthread_t threadId_t;
 #include <spicelib/analysis/analysis.h>
 #include <misc/ivars.h>
 #include <frontend/resource.h>
+#include <frontend/com_measure2.h>
 #ifndef _MSC_VER /* avoid second definition of VT_BOOL */
 #include <frontend/variable.h>
 #else
@@ -2115,7 +2116,7 @@ static int listTriggers TCL_CMDPROCARGS(clientData,interp,argc,argv){
 static int tmeasure TCL_CMDPROCARGS(clientData,interp,argc,argv){
 
   wordlist *wl= NULL;
-  float mvalue;
+  double mvalue;
 
   if (argc <= 2) {
     Tcl_SetResult(interp, "Wrong # args. spice::listTriggers",TCL_STATIC);
@@ -2124,7 +2125,7 @@ static int tmeasure TCL_CMDPROCARGS(clientData,interp,argc,argv){
 
   wl =wl_build((char **)argv);
 
-  mvalue = get_measure2(wl);
+  get_measure2(wl,&mvalue,NULL,FALSE);
 
   printf(" %e \n", mvalue);
 

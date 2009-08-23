@@ -9,10 +9,7 @@
 #include "general.h"
 #include "numparam.h"
 #include "ngspice.h"
-
-#ifdef _MSC_VER
-#define strcasecmp _stricmp
-#endif
+#include "../compatmode.h"
 
 /* random numbers in /maths/misc/randnumb.c */
 extern double gauss();
@@ -158,6 +155,8 @@ void
 initdico (tdico * dico)
 {
    int i;
+   COMPATMODE_T compat_mode;
+
    dico->nbd = 0;
    sini(dico->option,sizeof(dico->option)-4);
    sini(dico->srcfile,sizeof(dico->srcfile)-4);
@@ -172,6 +171,12 @@ initdico (tdico * dico)
    dico->tos = 0;
    dico->stack[dico->tos] = 0;        /* global data beneath */
    initkeys ();
+
+   compat_mode = ngpsice_compat_mode() ;
+   if( compat_mode == COMPATMODE_HSPICE )
+     dico->hspice_compatibility = 1 ;
+   else 
+     dico->hspice_compatibility = 0 ;
 }
 
 /*  local semantics for parameters inside a subckt */
@@ -1437,7 +1442,11 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
           else
             {
               pscopy (t, s, i + 1, k - i - 1);
-              err = evaluate (dico, q, t, 0);
+	      if( dico->hspice_compatibility && (strcasecmp(t,"LAST")==0) ) {
+		strcpy(q,"last") ;
+		err=0;
+	      } else 
+		err = evaluate (dico, q, t, 0);
             }
           i = k;
           if (!err)

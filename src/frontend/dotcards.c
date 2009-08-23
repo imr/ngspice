@@ -23,13 +23,13 @@ $Id$
 #include "variable.h"
 #include "fourier.h"
 #include "breakp2.h"
+#include "com_measure2.h"
 
 /* Extract all the .save lines */
 
 static void fixdotplot(wordlist *wl);
 static void fixdotprint(wordlist *wl);
 static char * fixem(char *string);
-static wordlist * gettoks(char *s);
 
 
 static struct plot *
@@ -90,6 +90,7 @@ ft_savedotargs(void)
    static wordlist all = { "all", NULL };
    int isaplot;
    int i;
+   int status;
 
    if (!ft_curckt) /* Shouldn't happen. */
       return 0;
@@ -137,15 +138,10 @@ ft_savedotargs(void)
             com_save2(w, "TRAN");	/* A hack */
          }
       } else if (ciprefix(".measure", s)) {
-         (void) gettok(&s);
-         name = gettok(&s);
-         (void) gettok(&s);
-         (void) gettok(&s);
-         if (!(w = gettoks(s))) {
-            fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
-         }
-         some = 1;
-         com_save2(w, name);
+	 status = measure_extract_variables( s ) ;
+	 if(!(status)){
+	   some = 1;
+	 }
       } else if (ciprefix(".op", s)) {
          some = 1;
          com_save2(&all, "OP");
@@ -155,6 +151,24 @@ ft_savedotargs(void)
       }
    }
    return some;
+}
+
+void
+ft_savemeasure(void)
+{
+   char *s;
+   wordlist *iline;
+
+   if (!ft_curckt) /* Shouldn't happen. */
+      return ;
+
+   for (iline = ft_curckt->ci_commands; iline; iline = iline->wl_next) {
+      s = iline->wl_word;
+      if (ciprefix(".measure", s)) {
+	 (void) measure_extract_variables( s ) ;
+      }
+   }
+   return ;
 }
 
 /* Execute the .whatever lines found in the deck, after we are done running.
@@ -506,7 +520,7 @@ fixem(char *string)
 }
 
 
-static wordlist *
+wordlist *
 gettoks(char *s)
 {
     char	*t;

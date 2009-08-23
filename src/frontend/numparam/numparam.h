@@ -68,6 +68,7 @@ typedef struct _ttdico {
   char **dynrefptr;
 //  char category[Maxline]; /* category of each line */
   char *dyncategory;
+  int hspice_compatibility;	/* allow hspice keywords */
 } tdico;
 
 void initdico(tdico * dico);

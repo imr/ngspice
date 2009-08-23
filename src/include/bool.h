@@ -2,6 +2,7 @@
 #define _BOOL_H
 
 typedef unsigned char bool;
+typedef int BOOL ;
 
 #define BOOLEAN int
 #define TRUE  1

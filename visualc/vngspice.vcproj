@@ -820,6 +820,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\frontend\compatmode.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\parser\complete.h"
 				>
 			</File>
@@ -1104,11 +1108,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\frontend\plotting\grid.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\include\grid.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\grid.h"
+				RelativePath="..\src\misc\hash.h"
 				>
 			</File>
 			<File
@@ -1212,11 +1220,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\inp.h"
+				RelativePath="..\src\spicelib\parser\inp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp.h"
+				RelativePath="..\src\frontend\inp.h"
 				>
 			</File>
 			<File
@@ -1373,6 +1381,10 @@
 			</File>
 			<File
 				RelativePath="..\src\include\memory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\mempool.h"
 				>
 			</File>
 			<File
@@ -4504,6 +4516,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\frontend\compatmode.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\parser\complete.c"
 				>
 			</File>
@@ -4997,6 +5013,10 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\plotting\grid.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\hash.c"
 				>
 			</File>
 			<File
@@ -5873,6 +5893,10 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\measure.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\mempool.c"
 				>
 			</File>
 			<File

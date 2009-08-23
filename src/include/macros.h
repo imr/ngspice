@@ -71,9 +71,17 @@
 
 #ifdef DEBUG
 #define DEBUGMSG(textargs) printf(textargs)
-#else
+#define DS(name_xz)  { name_xz }
+#define DBGDEFINE(func_xz)  func_xz
+#else  /* ! DEBUG */
 #define DEBUGMSG(testargs) 
-#endif
+#define DS(name_xz)
+#define DBGDEFINE(func_xz)  
+#endif /* DEBUG */
+
+/* A few useful macros - string eq just makes the code easier to read */
+#define STRINGEQ 0
+#define FUNC_NAME(x_xz) char *routine = x_xz
 
 /* Macro that queries the system to find the process time. */
  
