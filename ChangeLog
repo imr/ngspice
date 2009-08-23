@@ -1,8 +1,19 @@
+2009-08-23 Holger Vogt
+ * /frontend/compatmode.c, compatmode.h  /misc/hash.c, hash.h,
+   --> new .measurement code
+   
+2009-08-23 Holger Vogt
+ * /frontend/makefile.am, com_measure2.c, com_measure2.h, dotcards.c, dotcards.h, measure.c
+   /numparam/numparam.h, xpressn.c, /include/bool.h, macros.h, misc/makefile.am, tclspice.c,
+   visualc/vngspice.sln, vngspice.vcproj, compat
+   --> new .measurement code
+   tested for .tran simulation
+
 2009-08-22 Dietmar Warning
  * devices/bsim4/b4ld.c, b4noi.c, b4set.c, b4temp.c: Update to version 4.6.4
  * subckt.c, 141: "/*" within comment
 
-2009-08-17 Holger Vogt
+2009-08-12 Holger Vogt
  * dctran.c, spiceif.c, options.c, fteext.h: option noinit added.
    This option suppresses the printout of "Initial Transient Solution".
    noinit may be combined with acct. noacct will suppress both printouts.
