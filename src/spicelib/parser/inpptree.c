@@ -372,8 +372,13 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	    break;
 
 	    /* MW. PTF_CIF for new cif function */
-	case PTF_USTEP2:
-	    arg1 = mkcon((double) 0.0);
+	case PTF_USTEP2: /* ustep2=uramp(x)-uramp(x-1) ustep2'=ustep(x)-ustep(x-1) */
+            arg1 = mkb(PT_MINUS,
+                       mkf(PTF_USTEP, p->left),
+                       mkf(PTF_USTEP,
+                           mkb(PT_MINUS,
+                               p->left,
+                               mkcon((double) 1.0))));
 	    break;
 	    
         case PTF_UMINUS:    /* - 1 ; like a constant (was 0 !) */
