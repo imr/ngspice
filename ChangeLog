@@ -1,3 +1,7 @@
+2009-08-25 Dietmar Warning
+ * src/spicelib/parser/inpptree.c: wrong derivative for u2 function - 
+   bug reported and corrected by Robert Larice
+
 2009-08-23 Holger Vogt
  * upload of /frontend/compatmode.c, compatmode.h  /misc/hash.c, hash.h
    failed.
