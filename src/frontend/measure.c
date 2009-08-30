@@ -40,7 +40,8 @@ chkAnalysisType( char *an_type ) {
        strcmp( an_type, "fft"   ) != 0 && strcmp( an_type, "four" ) != 0 )
   */
   /* only support tran analysis type for now */
-  if ( strcmp( an_type, "tran" ) != 0 )
+  if ( strcmp( an_type, "tran" ) != 0 && strcmp( an_type, "ac" ) != 0 &&
+	  strcmp( an_type, "dc"   ) != 0)
     return FALSE;
   else return TRUE;
 }

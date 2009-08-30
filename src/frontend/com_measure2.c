@@ -1,6 +1,6 @@
 /* New routines to evaluate the .measure cards.
    Entry point is function get_measure2(), called by fcn do_measure() 
-   from measure.c, if line measure.c:25 is commented out.
+   from measure.c.
    Patches by Bill Swartz from 2009-05-18 and 2009-08-21 are included.
    
    $Id$ 
@@ -31,6 +31,7 @@ typedef struct measure
 
   char *m_vec;		// name of the output variable which determines the beginning of the measurement
   char *m_vec2;		// second output variable to measure if applicable
+  char *m_analysis; // analysis type (tran, dc or ac)
   int m_rise;		// count number of rise events
   int m_fall;		// count number of fall events
   int m_cross;		// count number of rise/fall aka cross  events
@@ -40,7 +41,7 @@ typedef struct measure
   double m_to;		// measurement window - ending time
   double m_at;		// measure at the specified time
   double m_measured;	// what we measured
-  double m_measured_at; //* what we measured at the given time
+  double m_measured_at; // what we measured at the given time
 
 } MEASURE, *MEASUREPTR ;
 
@@ -78,16 +79,24 @@ static void measure_errMessage(char *mName, char *mFunction, char *trigTarg, cha
 } /* end measure_errMessage() */
 
 static double
-measure_interpolate( struct dvec *time, struct dvec *values, int i, int j, double var_value, char x_or_y )
+measure_interpolate( struct dvec *xScale, struct dvec *values, int i, int j, double var_value, char x_or_y , char* analysis)
 {
   double slope;
   double yint;
   double result;
 
-  slope = (values->v_realdata[j] - values->v_realdata[i]) / 
-          (time->v_realdata[j] - time->v_realdata[i]);
+		if (cieq (analysis,"ac")) {
+           slope = (values->v_compdata[j].cx_real - values->v_compdata[i].cx_real) / 
+              (xScale->v_compdata[j].cx_real - xScale->v_compdata[i].cx_real);
 
-  yint  = values->v_realdata[i] - slope*time->v_realdata[i];
+           yint  = values->v_compdata[i].cx_real - slope*xScale->v_compdata[i].cx_real;
+		}
+		else {
+           slope = (values->v_realdata[j] - values->v_realdata[i]) / 
+              (xScale->v_realdata[j] - xScale->v_realdata[i]);
+
+           yint  = values->v_realdata[i] - slope*xScale->v_realdata[i];
+		}
   
   if ( x_or_y == 'x' ) result = (var_value - yint)/slope;
   else                 result = slope*var_value + yint;
@@ -264,7 +273,7 @@ static void com_measure_when(
 	enum ValEdge { E_RISING, E_FALLING };
 	
 	struct dvec *d, *dTime;
-	
+
 	d = vec_get(meas->m_vec);
 	dTime = plot_cur->pl_scale;
 
@@ -286,8 +295,17 @@ static void com_measure_when(
 
 	for (i=0; i < d->v_length; i++) {
 
-		value = d->v_realdata[i];
-		timeValue = dTime->v_realdata[i];
+//		value = d->v_realdata[i];
+//		timeValue = dTime->v_realdata[i];
+
+		if (cieq (meas->m_analysis,"ac")) {
+		    value = d->v_compdata[i].cx_real;
+            timeValue = dTime->v_compdata[i].cx_real;
+		}
+		else {
+		    value = d->v_realdata[i];
+            timeValue = dTime->v_realdata[i];
+		}
 
 		if (timeValue < meas->m_td)
 			continue;
@@ -390,13 +408,19 @@ static void measure_at(
         }
 
         if (dScale == NULL) {
-                fprintf(cp_err, "Error: no such vector time.\n");
+                fprintf(cp_err, "Error: no such vector time, frequency or dc.\n");
                 return;
         }
 
 	for (i=0; i < d->v_length; i++) {
-                value = d->v_realdata[i];
+			if (cieq (meas->m_analysis,"ac")) {
+			    value = d->v_compdata[i].cx_real;
+                svalue = dScale->v_compdata[i].cx_real;
+			}
+			else {
+			    value = d->v_realdata[i];
                 svalue = dScale->v_realdata[i];
+			}
 
   		if ( (i > 0) && (psvalue <= at) && (svalue >= at) ) {
 			meas->m_measured = pvalue + (at - psvalue) * (value - pvalue) / (svalue - psvalue);
@@ -442,15 +466,30 @@ static void measure_minMaxAvg(
                 return;
         }
 
-        dScale = vec_get("time");
-        if (d == NULL) {
-                fprintf(cp_err, "Error: no such vector as time.\n");
+        if (cieq (meas->m_analysis,"ac"))
+            dScale = vec_get("frequency");
+        else if (cieq (meas->m_analysis,"tran"))
+			dScale = vec_get("time");
+        else if (cieq (meas->m_analysis,"dc"))
+            dScale = vec_get("v-sweep");
+		else {/* error */
+                fprintf(cp_err, "Error: no such analysis type as %s.\n", meas->m_analysis);
+                return;
+		}
+        if (dScale == NULL) {
+                fprintf(cp_err, "Error: no such vector as time, frquency or dc.\n");
                 return;
         }
 
         for (i=0; i < d->v_length; i++) {
-                value = d->v_realdata[i];
+			if (cieq (meas->m_analysis,"ac")) {
+			    value = d->v_compdata[i].cx_real;
+                svalue = dScale->v_compdata[i].cx_real;
+			}
+			else {
+			    value = d->v_realdata[i];
                 svalue = dScale->v_realdata[i];
+			}
 
                 if (svalue < meas->m_from)
                         continue;
@@ -522,8 +561,8 @@ static void measure_rms_integral(
 ) {
         int i;				/* counter */
 	int xy_size ;			/* # of temp array elements */
-        struct dvec *d, *time;		/* value and time vectors */
-        float value, tvalue;		/* current value and time value */
+        struct dvec *d, *xScale;		/* value and indpendent (x-axis) vectors */
+        double value, xvalue;		/* current value and independent value */
 	double *x ;			/* temp x array */
 	double *y ;			/* temp y array */
 	double toVal ;			/* to time value */
@@ -533,7 +572,7 @@ static void measure_rms_integral(
 	double sum3 ;			/* third sum */
         int first;
 
-        tvalue =0;
+        xvalue =0;
         meas->m_measured = 0.0e0;
         meas->m_measured_at = 0.0e0;
         first =0;
@@ -544,54 +583,71 @@ static void measure_rms_integral(
                 return;
         }
 
-        time = vec_get("time");
-        if (time == NULL) {
+        if (cieq (meas->m_analysis,"ac"))
+            xScale = vec_get("frequency");
+        else if (cieq (meas->m_analysis,"tran"))
+			xScale = vec_get("time");
+        else if (cieq (meas->m_analysis,"dc"))
+            xScale = vec_get("v-sweep");
+		else {/* error */
+                fprintf(cp_err, "Error: no such analysis type as %s.\n", meas->m_analysis);
+                return;
+		}
+
+//        time = vec_get("time");
+        if (xScale == NULL) {
                 fprintf(cp_err, "Error: no such vector as time.\n");
                 return;
         }
 
 	// Allocate buffers for calculation.
-	x     = (double *) tmalloc(time->v_length * sizeof(double));
-	y     = (double *) tmalloc(time->v_length * sizeof(double));
-	width = (double *) tmalloc(time->v_length * sizeof(double));
+	x     = (double *) tmalloc(xScale->v_length * sizeof(double));
+	y     = (double *) tmalloc(xScale->v_length * sizeof(double));
+	width = (double *) tmalloc((xScale->v_length + 1) * sizeof(double));
 
 	xy_size = 0 ;
 	toVal = -1 ;
 	// create new set of values over interval [from, to] -- interpolate if necessary
         for (i=0; i < d->v_length; i++) {
-                value = d->v_realdata[i];
-                tvalue = time->v_realdata[i];
+			if (cieq (meas->m_analysis,"ac")) {
+			    value = d->v_compdata[i].cx_real;
+                xvalue = xScale->v_compdata[i].cx_real;
+			}
+			else {
+			    value = d->v_realdata[i];
+                xvalue = xScale->v_realdata[i];
+			}
 
-                if (tvalue < meas->m_from)
+			if (xvalue < meas->m_from)
                         continue;
 
-                if ((meas->m_to != 0.0e0) && (tvalue > meas->m_to) ){
+                if ((meas->m_to != 0.0e0) && (xvalue > meas->m_to) ){
 		    // interpolate ending value if necessary.
-		    if (!(AlmostEqualUlps( tvalue, meas->m_to, 100))){
-		      value = measure_interpolate( time, d, i-1, i, meas->m_to, 'y' ); 
-		      tvalue = meas->m_to ;
+		    if (!(AlmostEqualUlps( xvalue, meas->m_to, 100))){
+		      value = measure_interpolate( xScale, d, i-1, i, meas->m_to, 'y', meas->m_analysis ); 
+		      xvalue = meas->m_to ;
 		    }
-		    x[xy_size] = tvalue ;
+		    x[xy_size] = xvalue ;
 		    if (mFunctionType == AT_RMS)
 		      y[xy_size++] = value * value ;
 		    else 
 		      y[xy_size++] = value ;
-		    toVal = tvalue ;
+		    toVal = xvalue ;
 		    break;
 		}
 
 		if (first == 0) {
 		  if( meas->m_from != 0.0e0 && (i > 0) ){
 		    // interpolate starting value.
-		    if (!(AlmostEqualUlps( tvalue, meas->m_from, 100))){
-		      value = measure_interpolate( time, d, i-1, i, meas->m_from, 'y' ); 
-		      tvalue = meas->m_from ;
+		    if (!(AlmostEqualUlps( xvalue, meas->m_from, 100))){
+		      value = measure_interpolate( xScale, d, i-1, i, meas->m_from, 'y' , meas->m_analysis); 
+		      xvalue = meas->m_from ;
 		    }
 		  }
-		  meas->m_measured_at = tvalue ;
+		  meas->m_measured_at = xvalue ;
 		  first = 1;
 		}
-		x[xy_size] = tvalue ;
+		x[xy_size] = xvalue ;
 		if (mFunctionType == AT_RMS)
 		  y[xy_size++] = value * value ;
 		else 
@@ -627,7 +683,16 @@ static void measure_rms_integral(
 
 	/* Now set the measurement values if not set */
 	if( toVal < 0.0 ){
-	  toVal = time->v_realdata[d->v_length-1];
+			if (cieq (meas->m_analysis,"ac")) {
+			    value = d->v_compdata[i].cx_real;
+                xvalue = xScale->v_compdata[i].cx_real;
+                toVal = xScale->v_compdata[d->v_length-1].cx_real;
+			}
+			else {
+	  toVal = xScale->v_realdata[d->v_length-1];
+			}
+
+
 	}
 	meas->m_from = meas->m_measured_at ;
 	meas->m_to = toVal ;
@@ -1024,7 +1089,7 @@ get_measure2(
 ) {
 	wordlist *words, *wlTarg, *wlWhen;
  	char errbuf[100];
-        char *mType = NULL;             // analysis type
+        char *mAnalysis = NULL;             // analysis type
 	char *mName = NULL;             // name given to the measured output
 	char *mFunction = NULL;
         int precision;			// measurement precision
@@ -1044,8 +1109,9 @@ get_measure2(
 	        return MEASUREMENT_FAILURE;
 	}
 
-	if (!ciprefix("tran", plot_cur->pl_typename)) {
-     	   	fprintf(cp_err, "Error: measure limited to transient analysis\n");
+	if (!ciprefix("tran", plot_cur->pl_typename) && !ciprefix("ac", plot_cur->pl_typename) &&
+		!ciprefix("dc", plot_cur->pl_typename)) {
+     	   	fprintf(cp_err, "Error: measure limited to tran or ac analysis\n");
 	        return MEASUREMENT_FAILURE;
 	}
 
@@ -1065,7 +1131,7 @@ get_measure2(
 		switch(wl_cnt)
 		{
 			case 0:
-				mType = cp_unquote(words->wl_word);
+				mAnalysis = cp_unquote(words->wl_word);
 				break;
 			case 1:
 				mName = cp_unquote(words->wl_word);
@@ -1130,7 +1196,9 @@ get_measure2(
 			MEASUREPTR measTrig, measTarg;
 			measTrig = (struct measure*)tmalloc(sizeof(struct measure));           
 	                measTarg = (struct measure*)tmalloc(sizeof(struct measure));
-									
+			
+            measTrig->m_analysis = measTarg->m_analysis = mAnalysis;
+
 			if (measure_parse_trigtarg(measTrig, words , wlTarg, "trig", errbuf)==0) {
 				measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
 				return MEASUREMENT_FAILURE;
@@ -1196,6 +1264,8 @@ get_measure2(
                         meas = (struct measure*)tmalloc(sizeof(struct measure));
 			measFind = (struct measure*)tmalloc(sizeof(struct measure));
 
+			meas->m_analysis = measFind->m_analysis = mAnalysis;
+
 			if (measure_parse_find(meas, words, wlWhen, errbuf) == 0) {
 				measure_errMessage(mName, mFunction, "FIND", errbuf, autocheck);
                                 return MEASUREMENT_FAILURE;
@@ -1255,6 +1325,8 @@ get_measure2(
                         	return MEASUREMENT_FAILURE;
 			}
 
+            meas->m_analysis = mAnalysis;
+
 			com_measure_when(meas);
 
 			if (meas->m_measured == 0.0e0) {
@@ -1284,7 +1356,7 @@ get_measure2(
                                 measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
                                 return MEASUREMENT_FAILURE;
                         }
-
+                        meas->m_analysis = mAnalysis;
                         // measure
 			measure_rms_integral(meas,mFunctionType);
 
@@ -1318,6 +1390,8 @@ get_measure2(
                                 return MEASUREMENT_FAILURE;
                         }
 
+						meas->m_analysis = mAnalysis;
+
                         // measure
                    	measure_minMaxAvg(meas, mFunctionType);
 
@@ -1328,11 +1402,12 @@ get_measure2(
                         }
 
 			if (meas->m_at == -1)
-				meas->m_at = 0.0e0;
+//				meas->m_at = 0.0;
+               meas->m_at = meas->m_from;
 
                         // print results
- 		        if( out_line ){
- 			  sprintf(out_line,"%-20s=  %e from=  %e to=  %e\n", mName, meas->m_measured, meas->m_at, meas->m_measured_at);
+ 		    if( out_line ){
+				sprintf(out_line,"%-20s=  %e from=  %e to=  %e\n", mName, meas->m_measured, meas->m_at, meas->m_measured_at);
  			} else {
  			  printf("%-20s=  %e from=  %e to=  %e\n", mName, meas->m_measured, meas->m_at, meas->m_measured_at);
  			}
@@ -1346,7 +1421,7 @@ get_measure2(
 		        // trig parameters
                         MEASUREPTR measTrig;
                         measTrig = (struct measure*)tmalloc(sizeof(struct measure));
-
+                        measTrig->m_analysis = mAnalysis;
                         if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf)==0) {
                                 measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
                                 return MEASUREMENT_FAILURE;
@@ -1385,7 +1460,7 @@ get_measure2(
                                 measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
                                 return MEASUREMENT_FAILURE;
                         }
-
+                        measTrig->m_analysis = mAnalysis;
 			// measure min
                         measure_minMaxAvg(measTrig, AT_MIN);
                         if (measTrig->m_measured == 0.0e0) {
@@ -1427,12 +1502,4 @@ get_measure2(
         }
 	return MEASUREMENT_FAILURE;
 }
-
- /* I don't know where this routine is called... I want to eliminate it. */
-/*  void com_measure2(wordlist *wl) {
-        double result ;
- 	get_measure2(wl,&result,NULL,FALSE);
-  	return;
-  }
-*/
 
