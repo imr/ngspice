@@ -25,6 +25,11 @@ R2 out gnd 1k
 .ac DEC 10 1k 10MEG
 
 .meas ac vout_at FIND v(out) AT=1MEG
+.meas ac vout_atr FIND vr(out) AT=1MEG
+.meas ac vout_ati FIND vi(out) AT=1MEG
+.meas ac vout_atm FIND vm(out) AT=1MEG
+.meas ac vout_atp FIND vp(out) AT=1MEG
+.meas ac vout_atd FIND vdb(out) AT=1MEG
 .meas ac vout_max max v(out) from=1k to=10MEG
 .meas ac freq_at when v(out)=0.1
 .meas ac vout_diff trig v(out)  val=0.1   rise=1 targ v(out) val=0.1   fall=1
@@ -40,6 +45,9 @@ R2 out gnd 1k
 run
 *rusage all
 plot v(out)
+plot ph(v(out))
+plot mag(v(out))
+plot db(v(out))
 .endc
 
 .end

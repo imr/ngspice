@@ -137,7 +137,7 @@ ft_savedotargs(void)
             some = 1;
             com_save2(w, "TRAN");	/* A hack */
          }
-      } else if (ciprefix(".measure", s)) {
+      } else if (ciprefix(".meas", s)) {
 	 status = measure_extract_variables( s ) ;
 	 if(!(status)){
 	   some = 1;

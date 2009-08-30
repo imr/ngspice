@@ -31,7 +31,9 @@ typedef struct measure
 
   char *m_vec;		// name of the output variable which determines the beginning of the measurement
   char *m_vec2;		// second output variable to measure if applicable
-  char *m_analysis; // analysis type (tran, dc or ac)
+  char *m_analysis;     // analysis type (tran, dc or ac)
+  char m_vectype;      // type of vector m_vec (vm, vi, vr, vp, vdb)
+  char m_vectype2;     // type of vector m_vec2 (vm, vi, vr, vp, vdb)
   int m_rise;		// count number of rise events
   int m_fall;		// count number of fall events
   int m_cross;		// count number of rise/fall aka cross  events
@@ -78,24 +80,91 @@ static void measure_errMessage(char *mName, char *mFunction, char *trigTarg, cha
     return;
 } /* end measure_errMessage() */
 
+
+/* If you have a vector vm(out), extract 'm' to meas->m_vectype
+   and v(out) to meas->m_vec */ 
+
+static 
+void correct_vec(MEASUREPTR meas)
+{
+   char *vec, *vecfirst, newvec[BSIZE_SP];
+   char *vec2, newvec2[BSIZE_SP];
+
+   vec = meas->m_vec;
+
+   if (*(++vec) != '(') {
+      vecfirst = copy(meas->m_vec);
+      vecfirst[1] = '\0';
+      meas->m_vectype = *vec;
+      sprintf(newvec, "%s%s", vecfirst, strstr(meas->m_vec, "("));
+      tfree(meas->m_vec);
+      tfree(vecfirst);
+      meas->m_vec = copy(newvec);
+   }
+
+   vec2 = meas->m_vec2;
+   if (vec2 && (*(++vec2) != '(')) {
+      vecfirst = copy(meas->m_vec);
+      vecfirst[1] = '\0';
+      meas->m_vectype2 = *vec2;
+      sprintf(newvec, "%s%s", vecfirst, strstr(meas->m_vec2, "("));
+      tfree(meas->m_vec2);
+      tfree(vecfirst);
+      meas->m_vec2 = copy(newvec2);           
+   }
+   return;
+};
+
+static double get_value(MEASUREPTR meas, struct dvec *values, int idx)
+{
+        double ar, bi, tt;
+
+        ar = values->v_compdata[idx].cx_real;
+        bi = values->v_compdata[idx].cx_imag;
+
+	if ((meas->m_vectype == 'm') || (meas->m_vectype == 'M'))
+	{
+		return sqrt(ar*ar + bi*bi);
+	}
+	else if ((meas->m_vectype == 'r') || (meas->m_vectype == 'R'))
+	{
+                return ar;
+	}
+	else if ((meas->m_vectype == 'i') || (meas->m_vectype == 'I'))
+	{
+                return bi;
+	}
+	else if ((meas->m_vectype == 'p') || (meas->m_vectype == 'P'))
+	{
+                return radtodeg(atan2(bi, ar));
+	}
+	else if ((meas->m_vectype == 'd') || (meas->m_vectype == 'D'))	
+	{
+                tt = sqrt(ar*ar + bi*bi);
+                return 20.0 * log10(tt);
+	}
+        else
+                return ar;
+}
+
+/* interpolate. If ac simulation, exploit vector type using complex data for y */
 static double
-measure_interpolate( struct dvec *xScale, struct dvec *values, int i, int j, double var_value, char x_or_y , char* analysis)
+measure_interpolate( struct dvec *xScale, struct dvec *values, int i, int j, double var_value, 
+                    char x_or_y , MEASUREPTR meas)
 {
   double slope;
   double yint;
   double result;
 
-		if (cieq (analysis,"ac")) {
-           slope = (values->v_compdata[j].cx_real - values->v_compdata[i].cx_real) / 
-              (xScale->v_compdata[j].cx_real - xScale->v_compdata[i].cx_real);
-
-           yint  = values->v_compdata[i].cx_real - slope*xScale->v_compdata[i].cx_real;
+		if (cieq (meas->m_analysis,"ac")) {
+                  slope = (get_value(meas, values, j)  - get_value(meas, values, i)) /
+                  (xScale->v_compdata[j].cx_real - xScale->v_compdata[i].cx_real);
+                  yint  = get_value(meas, values, i) - slope*xScale->v_compdata[i].cx_real;
 		}
 		else {
-           slope = (values->v_realdata[j] - values->v_realdata[i]) / 
-              (xScale->v_realdata[j] - xScale->v_realdata[i]);
-
-           yint  = values->v_realdata[i] - slope*xScale->v_realdata[i];
+                  slope = (values->v_realdata[j] - values->v_realdata[i]) / 
+                    (xScale->v_realdata[j] - xScale->v_realdata[i]);
+                  yint  = values->v_realdata[i] - slope*xScale->v_realdata[i];
 		}
   
   if ( x_or_y == 'x' ) result = (var_value - yint)/slope;
@@ -103,6 +172,7 @@ measure_interpolate( struct dvec *xScale, struct dvec *values, int i, int j, dou
 
   return result;
 } /* end measure_interpolate() */
+
 
 /* -----------------------------------------------------------------
  * Function: Given an operation string returns back the measure type - one of 
@@ -299,7 +369,7 @@ static void com_measure_when(
 //		timeValue = dTime->v_realdata[i];
 
 		if (cieq (meas->m_analysis,"ac")) {
-		    value = d->v_compdata[i].cx_real;
+		    value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
             timeValue = dTime->v_compdata[i].cx_real;
 		}
 		else {
@@ -414,7 +484,7 @@ static void measure_at(
 
 	for (i=0; i < d->v_length; i++) {
 			if (cieq (meas->m_analysis,"ac")) {
-			    value = d->v_compdata[i].cx_real;
+			    value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
                 svalue = dScale->v_compdata[i].cx_real;
 			}
 			else {
@@ -483,7 +553,7 @@ static void measure_minMaxAvg(
 
         for (i=0; i < d->v_length; i++) {
 			if (cieq (meas->m_analysis,"ac")) {
-			    value = d->v_compdata[i].cx_real;
+			    value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
                 svalue = dScale->v_compdata[i].cx_real;
 			}
 			else {
@@ -610,7 +680,7 @@ static void measure_rms_integral(
 	// create new set of values over interval [from, to] -- interpolate if necessary
         for (i=0; i < d->v_length; i++) {
 			if (cieq (meas->m_analysis,"ac")) {
-			    value = d->v_compdata[i].cx_real;
+			    value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
                 xvalue = xScale->v_compdata[i].cx_real;
 			}
 			else {
@@ -624,7 +694,7 @@ static void measure_rms_integral(
                 if ((meas->m_to != 0.0e0) && (xvalue > meas->m_to) ){
 		    // interpolate ending value if necessary.
 		    if (!(AlmostEqualUlps( xvalue, meas->m_to, 100))){
-		      value = measure_interpolate( xScale, d, i-1, i, meas->m_to, 'y', meas->m_analysis ); 
+		      value = measure_interpolate( xScale, d, i-1, i, meas->m_to, 'y', meas ); 
 		      xvalue = meas->m_to ;
 		    }
 		    x[xy_size] = xvalue ;
@@ -640,7 +710,7 @@ static void measure_rms_integral(
 		  if( meas->m_from != 0.0e0 && (i > 0) ){
 		    // interpolate starting value.
 		    if (!(AlmostEqualUlps( xvalue, meas->m_from, 100))){
-		      value = measure_interpolate( xScale, d, i-1, i, meas->m_from, 'y' , meas->m_analysis); 
+		      value = measure_interpolate( xScale, d, i-1, i, meas->m_from, 'y' , meas); 
 		      xvalue = meas->m_from ;
 		    }
 		  }
@@ -684,7 +754,7 @@ static void measure_rms_integral(
 	/* Now set the measurement values if not set */
 	if( toVal < 0.0 ){
 			if (cieq (meas->m_analysis,"ac")) {
-			    value = d->v_compdata[i].cx_real;
+			    value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
                 xvalue = xScale->v_compdata[i].cx_real;
                 toVal = xScale->v_compdata[d->v_length-1].cx_real;
 			}
@@ -918,6 +988,9 @@ static int measure_parse_find (
 		
 		if (pCnt == 0 ) {
 		  meas->m_vec= cp_unquote(wl->wl_word);
+                  /* correct for vectors like vm, vp etc. */
+                  if (cieq("ac", meas->m_analysis)) 
+                       correct_vec(meas);		  
 		} else if (pCnt == 1) {
 
 			pName = strtok(p, "=");
@@ -993,9 +1066,14 @@ static int measure_parse_when (
                                 return 0;
                         }
 
-                        meas->m_vec = pVar1;
-                        if (measure_valid_vector(pVar2)==1)
-                                meas->m_vec2 = pVar2;
+                        meas->m_vec = copy(pVar1);
+                        /* correct for vectors like vm, vp etc. */
+                        if (cieq("ac", meas->m_analysis)) correct_vec(meas);                        
+                        if (measure_valid_vector(pVar2)==1) {
+                                meas->m_vec2 = copy(pVar2);
+                                /* correct for vectors like vm, vp etc. */
+                                if (cieq("ac", meas->m_analysis)) correct_vec(meas);
+                        }        
                         else
                                 meas->m_val = atof(pVar2);
                 } else {
@@ -1043,6 +1121,9 @@ static int measure_parse_trigtarg (
 
                 if ((pcnt == 0) && !ciprefix("at", p)) {
 			meas->m_vec= cp_unquote(words->wl_word);
+                        /* correct for vectors like vm, vp etc. */
+                        if (cieq("ac", meas->m_analysis)) 
+                                correct_vec(meas);
                 } else if (ciprefix("at", p)) {
 			if (measure_parse_stdParams(meas, words, wlTarg, errbuf) == 0)
                                 return 0;
@@ -1111,7 +1192,7 @@ get_measure2(
 
 	if (!ciprefix("tran", plot_cur->pl_typename) && !ciprefix("ac", plot_cur->pl_typename) &&
 		!ciprefix("dc", plot_cur->pl_typename)) {
-     	   	fprintf(cp_err, "Error: measure limited to tran or ac analysis\n");
+     	   	fprintf(cp_err, "Error: measure limited to tran, dc or ac analysis\n");
 	        return MEASUREMENT_FAILURE;
 	}
 
@@ -1319,13 +1400,13 @@ get_measure2(
 		{
 			MEASUREPTR meas;
 			meas = (struct measure*)tmalloc(sizeof(struct measure));
-
+                        meas->m_analysis = mAnalysis;
 			if (measure_parse_when(meas, words, errbuf) ==0) {
                      	      	measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
                         	return MEASUREMENT_FAILURE;
 			}
 
-            meas->m_analysis = mAnalysis;
+
 
 			com_measure_when(meas);
 
@@ -1351,12 +1432,12 @@ get_measure2(
 			// trig parameters
                         MEASUREPTR meas;
                         meas = (struct measure*)tmalloc(sizeof(struct measure));
-
+                        meas->m_analysis = mAnalysis;
                         if (measure_parse_trigtarg(meas, words , NULL, "trig", errbuf)==0) {
                                 measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
                                 return MEASUREMENT_FAILURE;
                         }
-                        meas->m_analysis = mAnalysis;
+
                         // measure
 			measure_rms_integral(meas,mFunctionType);
 
@@ -1385,12 +1466,12 @@ get_measure2(
                         MEASUREPTR meas;
                         meas = (struct measure*)tmalloc(sizeof(struct measure));
 
+                        meas->m_analysis = mAnalysis;
+
                         if (measure_parse_trigtarg(meas, words , NULL, "trig", errbuf)==0) {
                                 measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
                                 return MEASUREMENT_FAILURE;
                         }
-
-						meas->m_analysis = mAnalysis;
 
                         // measure
                    	measure_minMaxAvg(meas, mFunctionType);
@@ -1455,12 +1536,12 @@ get_measure2(
 
                         MEASUREPTR measTrig;
                         measTrig = (struct measure*)tmalloc(sizeof(struct measure));
-
+                        measTrig->m_analysis = mAnalysis;
                         if (measure_parse_trigtarg(measTrig, words , NULL, "trig", errbuf)==0) {
                                 measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
                                 return MEASUREMENT_FAILURE;
                         }
-                        measTrig->m_analysis = mAnalysis;
+
 			// measure min
                         measure_minMaxAvg(measTrig, AT_MIN);
                         if (measTrig->m_measured == 0.0e0) {

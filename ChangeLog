@@ -1,4 +1,4 @@
-2009-08-23 Holger Vogt
+2009-08-29 Holger Vogt
  * measure.c, com-measure2.c, com-measure2.h: add DC and AC measurement
  * /examples/measure: example file for .measure dc, ac, and tran added.
 
