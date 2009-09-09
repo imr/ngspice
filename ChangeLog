@@ -1,4 +1,5 @@
 2009-09-09 Holger Vogt
+ * com_measure2.c: some comments added
  * windisp.c: white backgrond in plot with set color0=white, thicker
    lines with set xbrushwidth=2 (0: standard) in spinit
    

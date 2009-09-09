@@ -32,8 +32,8 @@ typedef struct measure
   char *m_vec;		// name of the output variable which determines the beginning of the measurement
   char *m_vec2;		// second output variable to measure if applicable
   char *m_analysis;     // analysis type (tran, dc or ac)
-  char m_vectype;      // type of vector m_vec (vm, vi, vr, vp, vdb)
-  char m_vectype2;     // type of vector m_vec2 (vm, vi, vr, vp, vdb)
+  char m_vectype;       // type of vector m_vec (vm, vi, vr, vp, vdb)
+  char m_vectype2;      // type of vector m_vec2 (vm, vi, vr, vp, vdb)
   int m_rise;		// count number of rise events
   int m_fall;		// count number of fall events
   int m_cross;		// count number of rise/fall aka cross  events
@@ -82,7 +82,7 @@ static void measure_errMessage(char *mName, char *mFunction, char *trigTarg, cha
 
 
 /* If you have a vector vm(out), extract 'm' to meas->m_vectype
-   and v(out) to meas->m_vec */ 
+   and v(out) to meas->m_vec (without 'm') */ 
 
 static 
 void correct_vec(MEASUREPTR meas)
@@ -115,8 +115,12 @@ void correct_vec(MEASUREPTR meas)
    return;
 };
 
-static double get_value(MEASUREPTR meas, struct dvec *values, int idx)
-{
+/* Returns a value from a complex vector *values, depending on meas->m_vectype */
+static double get_value(
+   MEASUREPTR meas,     /*in: pointer to mesurement structure */
+   struct dvec *values, /*in: vector of complex values */
+   int idx              /*in: index of vector value to be read out */
+) {
         double ar, bi, tt;
 
         ar = values->v_compdata[idx].cx_real;
@@ -124,59 +128,68 @@ static double get_value(MEASUREPTR meas, struct dvec *values, int idx)
 
 	if ((meas->m_vectype == 'm') || (meas->m_vectype == 'M'))
 	{
-		return sqrt(ar*ar + bi*bi);
+		return sqrt(ar*ar + bi*bi); /* magnitude */
 	}
 	else if ((meas->m_vectype == 'r') || (meas->m_vectype == 'R'))
 	{
-                return ar;
+                return ar;  /* real value */
 	}
 	else if ((meas->m_vectype == 'i') || (meas->m_vectype == 'I'))
 	{
-                return bi;
+                return bi;  /* imaginary value */
 	}
 	else if ((meas->m_vectype == 'p') || (meas->m_vectype == 'P'))
 	{
-                return radtodeg(atan2(bi, ar));
+                return radtodeg(atan2(bi, ar)); /* phase (in degrees) */
 	}
 	else if ((meas->m_vectype == 'd') || (meas->m_vectype == 'D'))	
 	{
-                tt = sqrt(ar*ar + bi*bi);
+                tt = sqrt(ar*ar + bi*bi);  /* dB of magnitude */
                 return 20.0 * log10(tt);
 	}
         else
-                return ar;
+                return ar;  /* default: real value */
 }
 
-/* interpolate. If ac simulation, exploit vector type using complex data for y */
+/* Returns interpolated value. If ac simulation, exploit vector type with complex data for y */
 static double
-measure_interpolate( struct dvec *xScale, struct dvec *values, int i, int j, double var_value, 
-                    char x_or_y , MEASUREPTR meas)
-{
-  double slope;
-  double yint;
-  double result;
+measure_interpolate( 
+   struct dvec *xScale, /* in: vector of independent variables, if ac: complex vector,
+                           but only real part used */
+   struct dvec *values, /* in: vector of dependent variables, if ac: complex vector */
+   int i,               /* in: index of first interpolation value */
+   int j,               /* in: index of second interpolation value */
+   double var_value,    /* in: variable, whose counterpart is sought by interpolation */
+   char x_or_y ,        /* in: if 'x', then look for y, if 'y' then look for x */
+   MEASUREPTR meas      /* pointer to measurement structure */
+) {
+   double slope;
+   double yint;
+   double result;
 
-		if (cieq (meas->m_analysis,"ac")) {
-                  slope = (get_value(meas, values, j)  - get_value(meas, values, i)) /
-                  (xScale->v_compdata[j].cx_real - xScale->v_compdata[i].cx_real);
-                  yint  = get_value(meas, values, i) - slope*xScale->v_compdata[i].cx_real;
-		}
-		else {
-                  slope = (values->v_realdata[j] - values->v_realdata[i]) / 
-                    (xScale->v_realdata[j] - xScale->v_realdata[i]);
-                  yint  = values->v_realdata[i] - slope*xScale->v_realdata[i];
-		}
+   if (cieq (meas->m_analysis,"ac")) {
+      /* get values from complex y vector according to meas->m_vectype,
+         x vector uses only real part of complex data (frequency).*/
+      slope = (get_value(meas, values, j)  - get_value(meas, values, i)) /
+         (xScale->v_compdata[j].cx_real - xScale->v_compdata[i].cx_real);
+      yint  = get_value(meas, values, i) - slope*xScale->v_compdata[i].cx_real;
+   }
+   else {
+      slope = (values->v_realdata[j] - values->v_realdata[i]) / 
+         (xScale->v_realdata[j] - xScale->v_realdata[i]);
+      yint  = values->v_realdata[i] - slope*xScale->v_realdata[i];
+   }
   
-  if ( x_or_y == 'x' ) result = (var_value - yint)/slope;
-  else                 result = slope*var_value + yint;
+   if ( x_or_y == 'x' ) result = (var_value - yint)/slope;
+   else                 result = slope*var_value + yint;
 
-  return result;
+   return result;
 } /* end measure_interpolate() */
 
 
 /* -----------------------------------------------------------------
- * Function: Given an operation string returns back the measure type - one of 
- * the enumerated type ANALSYS_TYPE_T.
+ * Function: Given an operation string returns back the measure type - 
+ * one of the enumerated type ANALSYS_TYPE_T.
  * ----------------------------------------------------------------- */
 static ANALYSIS_TYPE_T measure_function_type( char *operation )
 {
