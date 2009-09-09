@@ -1,3 +1,7 @@
+2009-09-09 Holger Vogt
+ * windisp.c: white backgrond in plot with set color0=white, thicker
+   lines with set xbrushwidth=2 (0: standard) in spinit
+   
 2009-08-29 Holger Vogt
  * measure.c, com-measure2.c, com-measure2.h: add DC and AC measurement
  * /examples/measure: example file for .measure dc, ac, and tran added.

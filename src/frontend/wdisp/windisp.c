@@ -1,8 +1,9 @@
 /*
- * Frame buffer for the IBM PC using MS Windows
+ * Frame buffer for the PC using MS Windows
  * Wolfgang Muees 27.10.97
  * Holger Vogt  07.12.01
  * Holger Vogt  05.12.07
+ $IDh$
  */
 
 #define STRICT
@@ -26,65 +27,71 @@
  */
 #undef BOOLEAN
 
+/* local definition, because inclusion of variable.h does not work under Windows */
+#define VT_NUM 1
+#define VT_STRING 3
+
 #include <windows.h>
 #include <windowsx.h>
 #include "suffix.h"
 
 /* Typen */
-typedef struct {		/* Extra window data */
-	HWND	wnd;		/* window */
-	HDC	hDC;		/* Device context of window */
-	RECT    Area;		/* plot area */
-	int	ColorIndex;	/* Index of actual color */
-	int	PaintFlag;	/* 1 with WM_PAINT */
-	int	FirstFlag;	/* 1 before first update */
+typedef struct {     /* Extra window data */
+   HWND  wnd;        /* window */
+   HDC   hDC;        /* Device context of window */
+   RECT    Area;     /* plot area */
+   int   ColorIndex; /* Index of actual color */
+   int   PaintFlag;  /* 1 with WM_PAINT */
+   int   FirstFlag;  /* 1 before first update */
 } tWindowData;
-typedef tWindowData * tpWindowData;			/* pointer to it */
+typedef tWindowData * tpWindowData;       /* pointer to it */
 #define pWindowData(g) ((tpWindowData)(g->devdep))
 
 /* forwards */
-LRESULT CALLBACK PlotWindowProc( HWND hwnd, 		/* window procedure */
-	UINT uMsg, WPARAM wParam, LPARAM lParam);
-void WPRINT_PrintInit( HWND hwnd);			/* Windows printer init */
-void WaitForIdle(void);					/* wait until no more events */
+LRESULT CALLBACK PlotWindowProc( HWND hwnd,     /* window procedure */
+UINT uMsg, WPARAM wParam, LPARAM lParam);
+void WPRINT_PrintInit( HWND hwnd);              /* Windows printer init */
+void WaitForIdle(void);                         /* wait until no more events */
 void RemoveWindow(GRAPH *pgraph);
 static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy);
-							/* get new plot size coordinates */
+                                                /* get new plot size coordinates */
 
 /* externals */
-extern HINSTANCE		hInst;			/* application instance */
-extern int			WinLineWidth;		/* width of text window */
-extern HWND 			swString;		/* string input window of main window */
+extern HINSTANCE   hInst;         /* application instance */
+extern int         WinLineWidth;  /* width of text window */
+extern HWND        swString;      /* string input window of main window */
 extern struct plot *plot_cur;
-extern int DevSwitch(char *devname);
-extern int NewViewport(GRAPH *pgraph);
+extern int         DevSwitch(char *devname);
+extern int         NewViewport(GRAPH *pgraph);
 
 /* defines */
-#define RAD_TO_DEG	(180.0 / M_PI)
+#define RAD_TO_DEG   (180.0 / M_PI)
 #ifndef M_LN10
 #define M_LN10  2.30258509299404568402
 #endif
 
 /* local variables */
-static int			IsRegistered = 0;        	/* 1 if window class is registered */
-#define NumWinColors 	23       				/* predefined colors */
-static COLORREF 		ColorTable[NumWinColors];	/* color memory */
-static char *			WindowName = "Spice Plot";  	/* window name */
-static WNDCLASS 		TheWndClass;			/* Plot-window class */
-static HFONT			PlotFont;			/* which font */
-#define 			ID_DRUCKEN 	0xEFF0		/* System Menue: print */
-#define				ID_DRUCKEINR    0xEFE0		/* System Menue: printer setup */
-static const int		ID_MASK	      = 0xFFF0;		/* System-Menue: mask */
-static char *			STR_DRUCKEN   = "Printer...";	/* System menue strings */
-static char *			STR_DRUCKEINR = "Printer setup...";
+static int           IsRegistered = 0;             /* 1 if window class is registered */
+#define NumWinColors 23                            /* predefined colors */
+static COLORREF      ColorTable[NumWinColors];     /* color memory */
+static char *        WindowName = "Spice Plot";    /* window name */
+static WNDCLASS      TheWndClass;                  /* Plot-window class */
+static HFONT         PlotFont;                     /* which font */
+#define              ID_DRUCKEN  0xEFF0            /* System Menue: print */
+#define              ID_DRUCKEINR    0xEFE0        /* System Menue: printer setup */
+static const int     ID_MASK        = 0xFFF0;      /* System-Menue: mask */
+static char *        STR_DRUCKEN   = "Printer..."; /* System menue strings */
+static char *        STR_DRUCKEINR = "Printer setup...";
+static bool          isblack = TRUE;               /* background color of plot is black */
+static int           linewidth = 0;                /* linewidth of grid and plot */
 
 /******************************************************************************
 WIN_Init() makes connection to graphics. We have to determine
 
-	dispdev->numlinestyles	(if color screen == 1)
-	dispdev->numcolors
-	dispdev->width          (preliminary window width)
-	dispdev->height         (preliminary window height)
+   dispdev->numlinestyles  (if color screen == 1)
+   dispdev->numcolors
+   dispdev->width          (preliminary window width)
+   dispdev->height         (preliminary window height)
 
 WIN_Init() returns 0, if no error ocurred.
 
@@ -93,377 +100,404 @@ WIN_Init() does not yet open a window, this happens only in WIN_NewViewport()
 
 int WIN_Init( )
 {
-	/* Initialization of display descriptor */
-	dispdev->width         = GetSystemMetrics( SM_CXSCREEN);
-	dispdev->height        = GetSystemMetrics( SM_CYSCREEN);
-	dispdev->numlinestyles = 5;	/* see implications in WinPrint! */
-	dispdev->numcolors     = NumWinColors;
+   char colorstring[BSIZE_SP];
 
-	/* only for the first time: */
-	if (!IsRegistered) {
+   /* Initialization of display descriptor */
+   dispdev->width         = GetSystemMetrics( SM_CXSCREEN);
+   dispdev->height        = GetSystemMetrics( SM_CYSCREEN);
+   dispdev->numlinestyles = 5;   /* see implications in WinPrint! */
+   dispdev->numcolors     = NumWinColors;
 
-		/* Initialize colors */
-		ColorTable[0] = RGB(  0,  0,  0);   /* black 	= background */
-		ColorTable[1] = RGB(255,255,255);   /* white 	= text and grid */
-		ColorTable[2] = RGB(  0,255,  0);   /* green	= first line */
-		ColorTable[3] = RGB(255,  0,  0);   /* red */
-		ColorTable[4] = RGB(  0,  0,255);   /* blue */
-		ColorTable[5] = RGB(255,255,  0);   /* yellow */
-		ColorTable[6] = RGB(255,  0,255);   /* violett */
-		ColorTable[7] = RGB(  0,255,255);   /* azur */
-		ColorTable[8] = RGB(255,128,  0);   /* orange */
-		ColorTable[9] = RGB(128, 64,  0);   /* brown */
-		ColorTable[10]= RGB(128,  0,255);   /* light violett */
-		ColorTable[11]= RGB(255,128,128);   /* pink */
-		/* 2. color bank (with different line style */
-		ColorTable[12]= RGB(255,255,255);   /* white */
-		ColorTable[13]= RGB(  0,255,  0);   /* green */
-		ColorTable[14]= RGB(255,  0,  0);   /* red */
-		ColorTable[15]= RGB(  0,  0,255);   /* blue */
-		ColorTable[16]= RGB(255,255,  0);   /* yellow */
-		ColorTable[17]= RGB(255,  0,255);   /* violett */
-		ColorTable[18]= RGB(  0,255,255);   /* azur */
-		ColorTable[19]= RGB(255,128,  0);   /* orange */
-		ColorTable[20]= RGB(128, 64,  0);   /* brown */
-		ColorTable[21]= RGB(128,  0,255);   /* light violett */
-		ColorTable[22]= RGB(255,128,128);   /* pink */
+   /* only for the first time: */
+   if (!IsRegistered) {
+      /* get background color information from spinit, only "white"
+         is recognized as a suitable option! */
+      if (cp_getvar("color0", VT_STRING, colorstring)) 
+         if (cieq(colorstring, "white")) isblack = FALSE;
+      /* get linewidth information from spinit */
+      if (!cp_getvar("xbrushwidth", VT_NUM, &linewidth))
+         linewidth = 0;
+      if (linewidth < 0) linewidth = 0;        
 
-		/* Ansii fixed font */
-		PlotFont = GetStockFont( ANSI_FIXED_FONT);
+      /* Initialize colors */
+      if (isblack) {
+         ColorTable[0] = RGB(  0,  0,  0);   /* black   = background */
+         ColorTable[1] = RGB(255,255,255);   /* white    = text and grid */
+      }
+      else {
+         ColorTable[0] = RGB(255,255,255);   /* white   = background */
+         ColorTable[1] = RGB(  0,  0,  0);   /* black   = text and grid */
+      }
+      ColorTable[2] = RGB(  0,255,  0);   /* green   = first line */
+      ColorTable[3] = RGB(255,  0,  0);   /* red */
+      ColorTable[4] = RGB(  0,  0,255);   /* blue */
+      ColorTable[5] = RGB(255,255,  0);   /* yellow */
+      ColorTable[6] = RGB(255,  0,255);   /* violett */
+      ColorTable[7] = RGB(  0,255,255);   /* azur */
+      ColorTable[8] = RGB(255,128,  0);   /* orange */
+      ColorTable[9] = RGB(128, 64,  0);   /* brown */
+      ColorTable[10]= RGB(128,  0,255);   /* light violett */
+      ColorTable[11]= RGB(255,128,128);   /* pink */
+      /* 2. color bank (with different line style */
+      if (isblack)
+         ColorTable[12]= RGB(255,255,255);   /* white */
+      else
+         ColorTable[12]= RGB(  0,  0,  0);   /* black */
+      ColorTable[13]= RGB(  0,255,  0);   /* green */
+      ColorTable[14]= RGB(255,  0,  0);   /* red */
+      ColorTable[15]= RGB(  0,  0,255);   /* blue */
+      ColorTable[16]= RGB(255,255,  0);   /* yellow */
+      ColorTable[17]= RGB(255,  0,255);   /* violett */
+      ColorTable[18]= RGB(  0,255,255);   /* azur */
+      ColorTable[19]= RGB(255,128,  0);   /* orange */
+      ColorTable[20]= RGB(128, 64,  0);   /* brown */
+      ColorTable[21]= RGB(128,  0,255);   /* light violett */
+      ColorTable[22]= RGB(255,128,128);   /* pink */
 
-		/* register window class */
-		TheWndClass.lpszClassName 	= WindowName;
-		TheWndClass.hInstance     	= hInst;
-		TheWndClass.lpfnWndProc   	= PlotWindowProc;
-		TheWndClass.style 		= CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-		TheWndClass.lpszMenuName  	= NULL;
-		TheWndClass.hCursor       	= LoadCursor(NULL, IDC_ARROW);
-		TheWndClass.hbrBackground	= GetStockObject( BLACK_BRUSH);
-		TheWndClass.hIcon         	= LoadIcon(hInst, MAKEINTRESOURCE(2));
-		TheWndClass.cbClsExtra    	= 0;
-		TheWndClass.cbWndExtra    	= sizeof(GRAPH *);
-		if (!RegisterClass(&TheWndClass)) return 1;
-	}
-	IsRegistered = 1;
+      /* Ansii fixed font */
+      PlotFont = GetStockFont( ANSI_FIXED_FONT);
 
-	/* ready */
-	return (0);
+      /* register window class */
+      TheWndClass.lpszClassName  = WindowName;
+      TheWndClass.hInstance      = hInst;
+      TheWndClass.lpfnWndProc    = PlotWindowProc;
+      TheWndClass.style       = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+      TheWndClass.lpszMenuName   = NULL;
+      TheWndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
+      if (isblack)
+         TheWndClass.hbrBackground  = GetStockObject( BLACK_BRUSH);
+      else
+         TheWndClass.hbrBackground  = GetStockObject( WHITE_BRUSH);
+      TheWndClass.hIcon          = LoadIcon(hInst, MAKEINTRESOURCE(2));
+      TheWndClass.cbClsExtra     = 0;
+      TheWndClass.cbWndExtra     = sizeof(GRAPH *);
+      if (!RegisterClass(&TheWndClass)) return 1;
+   }
+   IsRegistered = 1;
+
+   /* ready */
+   return (0);
 }
 
 /* get pointer to graph */
 /* (attach to window) */
 static GRAPH * pGraph( HWND hwnd)
 {
-    return (GRAPH *) GetWindowLong( hwnd, 0);
+   return (GRAPH *) GetWindowLong( hwnd, 0);
 }
 
 /* return line style for plotting */
 static int LType( int ColorIndex)
 {
-	if (ColorIndex >= 12)
-		return PS_DOT;
-	else
-		return PS_SOLID;
+   if (ColorIndex >= 12)
+      return PS_DOT;
+   else
+      return PS_SOLID;
 }
  
 /* print a plot window */
 /* called by SystemMenue / Print */
 LRESULT PrintPlot( HWND hwnd)
 {
-	GRAPH * graph;
-	GRAPH * temp;
+   GRAPH * graph;
+   GRAPH * temp;
 
-	/* get poiunter to graph */
-	graph = pGraph( hwnd);
-	if (!graph) return 0;
+   /* get pointer to graph */
+   graph = pGraph( hwnd);
+   if (!graph) return 0;
 
-	/* switch to printer */
-	/* (results in WPRINT_Init()) */
-	if (DevSwitch("WinPrint")) return 0;
+   /* switch to printer */
+   /* (results in WPRINT_Init()) */
+   if (DevSwitch("WinPrint")) return 0;
 
-	/* Cursor = wait */
-	SetCursor( LoadCursor( NULL, IDC_WAIT));
+   /* Cursor = wait */
+   SetCursor( LoadCursor( NULL, IDC_WAIT));
 
-	/* copy graph */
-	temp = CopyGraph(graph);
-	if (!temp) goto PrintEND;
+   /* copy graph */
+   temp = CopyGraph(graph);
+   if (!temp) goto PrintEND;
 
-	/* add to the copy the new printer data */
-	if (NewViewport(temp)) goto PrintEND2;
+   /* add to the copy the new printer data */
+   if (NewViewport(temp)) goto PrintEND2;
 
-	/* make correction to placement of grid (copy from gr_init) */
-	temp->viewportxoff = temp->fontwidth  * 8;
-	temp->viewportyoff = temp->fontheight * 4;
+   /* make correction to placement of grid (copy from gr_init) */
+   temp->viewportxoff = temp->fontwidth  * 8;
+   temp->viewportyoff = temp->fontheight * 4;
 
-	/* print the graph */
-	gr_resize(temp);
+   /* print the graph */
+   gr_resize(temp);
 
 PrintEND2:
-	/* delete temporary graph */
-	DestroyGraph(temp->graphid);
+   /* delete temporary graph */
+   DestroyGraph(temp->graphid);
 
 PrintEND:
-	/* switch back to screen */
-	DevSwitch(NULL);
+   /* switch back to screen */
+   DevSwitch(NULL);
 
-	/* Cursor = normal */
-	SetCursor( LoadCursor( NULL, IDC_ARROW));
+   /* Cursor = normal */
+   SetCursor( LoadCursor( NULL, IDC_ARROW));
 
-	return 0;
+   return 0;
 }
 
 /* initialze printer */
 LRESULT PrintInit( HWND hwnd)
 {
-	/* hand over to printer module */
-	WPRINT_PrintInit(hwnd);
-	return 0;
+   /* hand over to printer module */
+   WPRINT_PrintInit(hwnd);
+   return 0;
 }
 
 /* window procedure */
 LRESULT CALLBACK PlotWindowProc( HWND hwnd,
-	UINT uMsg, WPARAM wParam, LPARAM lParam)
+   UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static int x0,y0,xep,yep;
-	int xe, ye, prevmix;
-	static double fx0,fy0;
-	double fxe, fye;
-	double angle;
-	char buf[BSIZE_SP];
-	char buf2[128];
-	char *t;
-	HDC hdc;
-	HPEN OldPen;
-	HPEN NewPen;	
-	
-	switch (uMsg) {
-	case WM_SYSCOMMAND:
-		{
-			/* test command */
-			int cmd = wParam & ID_MASK;
-			switch(cmd) {
-			case ID_DRUCKEN:	return PrintPlot( hwnd);
-			case ID_DRUCKEINR:      return PrintInit( hwnd);
-			}
-		}
-		goto WIN_DEFAULT;
+   static int x0,y0,xep,yep;
+   int xe, ye, prevmix;
+   static double fx0,fy0;
+   double fxe, fye;
+   double angle;
+   char buf[BSIZE_SP];
+   char buf2[128];
+   char *t;
+   HDC hdc;
+   HPEN OldPen;
+   HPEN NewPen;   
+   
+   switch (uMsg) {
+   case WM_SYSCOMMAND:
+   {
+      /* test command */
+      int cmd = wParam & ID_MASK;
+      switch(cmd) {
+         case ID_DRUCKEN:  return PrintPlot( hwnd);
+         case ID_DRUCKEINR:      return PrintInit( hwnd);
+      }
+   }
+   goto WIN_DEFAULT;
 
-	case WM_LBUTTONDOWN:
-	        {
-		GRAPH * gr = pGraph( hwnd);                      
-                xep = x0 = LOWORD (lParam);
-                yep = y0 = HIWORD (lParam);
-		/* generate x,y data from grid coordinates */
-                WIN_ScreentoData(gr, x0, y0, &fx0, &fy0);
-                }	
-	        goto WIN_DEFAULT;	
-	
-	case WM_MOUSEMOVE:
-	        /* left mouse button: connect coordinate pair by dashed pair of x, y lines */
-	        if (wParam & MK_LBUTTON)
-	        {
-                    hdc = GetDC (hwnd) ;
-                    /* set colour mix to XOR */
-                    prevmix = SetROP2(hdc, R2_XORPEN);
-                    /* Create white dashed pen */
-                    NewPen = CreatePen( LType(12), 0, ColorTable[1] );
-		    OldPen = SelectObject(hdc, NewPen);
-		    /* draw lines with previous coodinates -> delete old line because of XOR */
-                    MoveToEx (hdc, x0, y0, NULL) ;
-		    LineTo   (hdc, x0, yep) ;
-		    LineTo   (hdc, xep, yep);
-		    /* get new end point */
-                    xe = LOWORD (lParam);
-                    ye = HIWORD (lParam);
-                    /* draw new lines */
-		    MoveToEx (hdc, x0, y0, NULL) ;
-		    LineTo   (hdc, x0, ye) ;
-		    LineTo   (hdc, xe, ye);
-		    /* restore standard color mix */
-		    SetROP2(hdc, prevmix);
-		    OldPen = SelectObject(hdc, OldPen);
-		    DeleteObject( NewPen);		
-		    ReleaseDC (hwnd, hdc) ;
-		    /* restore new to previous coordinates */
-		    yep = ye;
-		    xep = xe;
-                }
-	        /* right mouse button: create white dashed box */
-	        else if (wParam & MK_RBUTTON){
-                    hdc = GetDC (hwnd) ;
-                    /* set colour mix to XOR */
-                    prevmix = SetROP2(hdc, R2_XORPEN);
-                    /* Create white dashed pen */
-                    NewPen = CreatePen( LType(12), 0, ColorTable[1] );
-		    OldPen = SelectObject(hdc, NewPen);
-		    /* draw box with previous coodinates -> delete old lines because of XOR */
-                    MoveToEx (hdc, x0, y0, NULL) ;
-		    LineTo   (hdc, x0, yep) ;
-		    LineTo   (hdc, xep, yep);
-		    LineTo   (hdc, xep, y0) ;
-		    LineTo   (hdc, x0, y0);
-		    /* get new end point */
-                    xe = LOWORD (lParam);
-                    ye = HIWORD (lParam);
-                    /* draw new box */
-		    MoveToEx (hdc, x0, y0, NULL) ;
-		    LineTo   (hdc, x0, ye) ;
-		    LineTo   (hdc, xe, ye);
-		    LineTo   (hdc, xe, y0) ;
-		    LineTo   (hdc, x0, y0);
-		    /* restore standard color mix */
-		    SetROP2(hdc, prevmix);
-		    OldPen = SelectObject(hdc, OldPen);
-		    DeleteObject( NewPen);		
-		    ReleaseDC (hwnd, hdc) ;
-		    /* restore new to previous coordinates */
-		    yep = ye;
-		    xep = xe;
-                }
-	        goto WIN_DEFAULT;
-	        
-	/* get final coordinates upon left mouse up */
-	/* calculate and print out the data */
-	case WM_LBUTTONUP:
-		{
-		GRAPH * gr = pGraph( hwnd);  
-                InvalidateRect (hwnd, NULL, TRUE) ;
-                xe = LOWORD (lParam);
-                ye = HIWORD (lParam);
-                WIN_ScreentoData(gr, xe, ye, &fxe, &fye);
+   case WM_LBUTTONDOWN:
+   {
+      GRAPH * gr = pGraph( hwnd);                      
+      xep = x0 = LOWORD (lParam);
+      yep = y0 = HIWORD (lParam);
+      /* generate x,y data from grid coordinates */
+      WIN_ScreentoData(gr, x0, y0, &fx0, &fy0);
+   } 
+   goto WIN_DEFAULT;  
+   
+   case WM_MOUSEMOVE:
+      /* left mouse button: connect coordinate pair by dashed pair of x, y lines */
+      if (wParam & MK_LBUTTON)
+      {
+          hdc = GetDC (hwnd) ;
 
-		/* print it out */
-		if (xe == x0 && ye == y0) {     /* only one location */
-			fprintf(stdout, "\nx0 = %g, y0 = %g\n", fx0, fy0);
-			if (gr->grid.gridtype == GRID_POLAR
-			|| gr->grid.gridtype == GRID_SMITH
-			|| gr->grid.gridtype == GRID_SMITHGRID)
-			{
-				angle = RAD_TO_DEG * atan2( fy0, fx0 );
-				fprintf(stdout, "r0 = %g, a0 = %g\n",
-				sqrt( fx0*fx0 + fy0*fy0 ),
-				(angle>0)?angle:(double) 360+angle);
-			}
-		} else  {    
-			/* need to print info about two points */
-			fprintf(stdout, "\nx0 = %g, y0 = %g    x1 = %g, y1 = %g\n",
-				fx0, fy0, fxe, fye);
-			fprintf(stdout, "dx = %g, dy = %g\n", fxe-fx0, fye - fy0);
-			if (xe != x0 && ye != y0) {
-			/* add slope info if both dx and dy are zero, */
-			/* because otherwise either dy/dx or dx/dy is zero, */
-			/* which is uninteresting */
-	
-			fprintf(stdout, "dy/dx = %g    dx/dy = %g\n",
-				(fye-fy0)/(fxe-fx0), (fxe-fx0)/(fye-fy0));
-			}
-		}
-                SetFocus( swString);
-                }	
-	        goto WIN_DEFAULT;
-	        
-	/* get starting coordinates upon right mouse button down */
-	case WM_RBUTTONDOWN:
-	        {
-		GRAPH * gr = pGraph( hwnd);                      
-		x0 = xep = LOWORD (lParam);
-		y0 = yep = HIWORD (lParam);
-		WIN_ScreentoData(gr, x0, y0, &fx0, &fy0);
-                }	
-	        goto WIN_DEFAULT;	
-	/* get final coordinates upon right mouse button up */
-	/* copy xlimit, ylimit command into buf */
-	/* start plot loop with argument buf	*/
-	case WM_RBUTTONUP:
-	        {
-		GRAPH * gr = pGraph( hwnd);
-		InvalidateRect (hwnd, NULL, TRUE) ;
-		xe = LOWORD (lParam);
-		ye = HIWORD (lParam);
-		/* do nothing if mouse curser is not moved in both x and y */
-		if ((xe == x0) || (ye == y0)) {
-			SetFocus( swString);
-			goto WIN_DEFAULT;
-		}	
-		WIN_ScreentoData(gr, xe, ye, &fxe, &fye);
-		
-		strncpy(buf2, gr->plotname, sizeof(buf2));
-		if ((t = index(buf2, ':'))) /* strchr */
-			*t = 0;
+          if (isblack)
+             prevmix = SetROP2(hdc, R2_XORPEN);
+          else
+             prevmix = SetROP2(hdc, R2_NOTXORPEN);
+          /* Create white dashed pen */
+          NewPen = CreatePen( LType(12), 0, ColorTable[1] );
+          OldPen = SelectObject(hdc, NewPen);
+          /* draw lines with previous coodinates -> delete old line because of XOR */
+          MoveToEx (hdc, x0, y0, NULL) ;
+          LineTo   (hdc, x0, yep) ;
+          LineTo   (hdc, xep, yep);
+          /* get new end point */
+          xe = LOWORD (lParam);
+          ye = HIWORD (lParam);
+          /* draw new lines */
+          MoveToEx (hdc, x0, y0, NULL) ;
+          LineTo   (hdc, x0, ye) ;
+          LineTo   (hdc, xe, ye);
+          /* restore standard color mix */
+          SetROP2(hdc, prevmix);
+          OldPen = SelectObject(hdc, OldPen);
+          DeleteObject( NewPen);    
+          ReleaseDC (hwnd, hdc) ;
+          /* restore new to previous coordinates */
+          yep = ye;
+          xep = xe;
+      }
+      /* right mouse button: create white (black) dashed box */
+      else if (wParam & MK_RBUTTON){
+         hdc = GetDC (hwnd) ;
+         if (isblack)
+            prevmix = SetROP2(hdc, R2_XORPEN);
+         else
+            prevmix = SetROP2(hdc, R2_NOTXORPEN);
+         /* Create white (black) dashed pen */
+         NewPen = CreatePen( LType(12), 0, ColorTable[1] );
+         OldPen = SelectObject(hdc, NewPen);
+         /* draw box with previous coodinates -> delete old lines because of XOR */
+         MoveToEx (hdc, x0, y0, NULL) ;
+         LineTo   (hdc, x0, yep) ;
+         LineTo   (hdc, xep, yep);
+         LineTo   (hdc, xep, y0) ;
+         LineTo   (hdc, x0, y0);
+         /* get new end point */
+         xe = LOWORD (lParam);
+         ye = HIWORD (lParam);
+         /* draw new box */
+         MoveToEx (hdc, x0, y0, NULL) ;
+         LineTo   (hdc, x0, ye) ;
+         LineTo   (hdc, xe, ye);
+         LineTo   (hdc, xe, y0) ;
+         LineTo   (hdc, x0, y0);
+         /* restore standard color mix */
+         SetROP2(hdc, prevmix);
+         OldPen = SelectObject(hdc, OldPen);
+         DeleteObject( NewPen);    
+         ReleaseDC (hwnd, hdc) ;
+         /* restore new to previous coordinates */
+         yep = ye;
+         xep = xe;
+      }
+   goto WIN_DEFAULT;
+           
+   /* get final coordinates upon left mouse up */
+   /* calculate and print out the data */
+   case WM_LBUTTONUP:
+   {
+      GRAPH * gr = pGraph( hwnd);  
+      InvalidateRect (hwnd, NULL, TRUE) ;
+      xe = LOWORD (lParam);
+      ye = HIWORD (lParam);
+      WIN_ScreentoData(gr, xe, ye, &fxe, &fye);
 
-		if (!eq(plot_cur->pl_typename, buf2)) {
-			(void) sprintf(buf,
-//			"setplot %s; %s xlimit %e %e ylimit %e %e; setplot $curplot\n",
-         "setplot %s; %s xlimit %e %e ylimit %e %e\n",
-			buf2, gr->commandline, fx0, fxe, fy0, fye);
-		} else {
-			(void) sprintf(buf, "%s xlimit %e %e ylimit %e %e\n",
-			gr->commandline, fx0, fxe, fy0, fye);
-		}
-
-		(void) cp_evloop(buf);
-		SetFocus( swString);
-		}
-		goto WIN_DEFAULT;
-
-	case WM_CLOSE:	/* close window */
-		{
-			GRAPH * g = pGraph( hwnd);
-
-         if (g) {
-            /* if g equals currentgraph, set a new currentgraph. 
-            Otherwise gr_resize(g) might fail. */
-            if (g == currentgraph)
-               currentgraph = FindGraph(g->graphid - 1);
-				DestroyGraph(g->graphid);
+      /* print it out */
+      if (xe == x0 && ye == y0) {     /* only one location */
+         fprintf(stdout, "\nx0 = %g, y0 = %g\n", fx0, fy0);
+         if (gr->grid.gridtype == GRID_POLAR
+         || gr->grid.gridtype == GRID_SMITH
+         || gr->grid.gridtype == GRID_SMITHGRID)
+         {
+            angle = RAD_TO_DEG * atan2( fy0, fx0 );
+            fprintf(stdout, "r0 = %g, a0 = %g\n",
+            sqrt( fx0*fx0 + fy0*fy0 ),
+            (angle>0)?angle:(double) 360+angle);
+         }
+      } else  {    
+         /* need to print info about two points */
+         fprintf(stdout, "\nx0 = %g, y0 = %g    x1 = %g, y1 = %g\n",
+            fx0, fy0, fxe, fye);
+         fprintf(stdout, "dx = %g, dy = %g\n", fxe-fx0, fye - fy0);
+         if (xe != x0 && ye != y0) {
+         /* add slope info if both dx and dy are zero, */
+         /* because otherwise either dy/dx or dx/dy is zero, */
+         /* which is uninteresting */
+   
+         fprintf(stdout, "dy/dx = %g    dx/dy = %g\n",
+            (fye-fy0)/(fxe-fx0), (fxe-fx0)/(fye-fy0));
          }
       }
-		goto WIN_DEFAULT;
+      SetFocus( swString);
+   } 
+   goto WIN_DEFAULT;
+           
+   /* get starting coordinates upon right mouse button down */
+   case WM_RBUTTONDOWN:
+   {
+      GRAPH * gr = pGraph( hwnd);                      
+      x0 = xep = LOWORD (lParam);
+      y0 = yep = HIWORD (lParam);
+      WIN_ScreentoData(gr, x0, y0, &fx0, &fy0);
+   } 
+   goto WIN_DEFAULT;  
+   /* get final coordinates upon right mouse button up */
+   /* copy xlimit, ylimit command into buf */
+   /* start plot loop with argument buf   */
+   case WM_RBUTTONUP:
+   {
+      GRAPH * gr = pGraph( hwnd);
+      InvalidateRect (hwnd, NULL, TRUE) ;
+      xe = LOWORD (lParam);
+      ye = HIWORD (lParam);
+      /* do nothing if mouse curser is not moved in both x and y */
+      if ((xe == x0) || (ye == y0)) {
+         SetFocus( swString);
+         goto WIN_DEFAULT;
+      }  
+      WIN_ScreentoData(gr, xe, ye, &fxe, &fye);
+      
+      strncpy(buf2, gr->plotname, sizeof(buf2));
+      if ((t = index(buf2, ':'))) /* strchr */
+         *t = 0;
 
-	case WM_PAINT:	/* replot window (e.g. after Resize) */
-		{
-			PAINTSTRUCT ps;
-			GRAPH * g;
-			tpWindowData wd;
-			HDC saveDC;		/* the DC from BeginPaint is different... */
-			HDC newDC;
+      if (!eq(plot_cur->pl_typename, buf2)) {
+         (void) sprintf(buf,
+//       "setplot %s; %s xlimit %e %e ylimit %e %e; setplot $curplot\n",
+         "setplot %s; %s xlimit %e %e ylimit %e %e\n",
+         buf2, gr->commandline, fx0, fxe, fy0, fye);
+      } else {
+         (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e\n",
+         gr->commandline, fx0, fxe, fy0, fye);
+      }
 
-			/* has to happen */
-			newDC = BeginPaint( hwnd, &ps);
-			g = pGraph( hwnd);
-			if (g) {
-				wd = pWindowData(g);
-				if (wd) {
-					if (!wd->PaintFlag && !wd->FirstFlag) {
-						/* avoid recursive call */
-						wd->PaintFlag = 1;
-						/* get window sizes */
-						GetClientRect( hwnd, &(wd->Area));
-						g->absolute.width  = wd->Area.right;
-						g->absolute.height = wd->Area.bottom;
-						/* switch DC */
-						saveDC = wd->hDC;
-						wd->hDC = newDC;
-//						currentgraph = g;
+      (void) cp_evloop(buf);
+      SetFocus( swString);
+   }
+   goto WIN_DEFAULT;
+
+   case WM_CLOSE: /* close window */
+   {
+      GRAPH * g = pGraph( hwnd);
+
+      if (g) {
+         /* if g equals currentgraph, set a new currentgraph. 
+            Otherwise gr_resize(g) might fail. */
+         if (g == currentgraph)
+            currentgraph = FindGraph(g->graphid - 1);
+         DestroyGraph(g->graphid);
+      }
+   }
+   goto WIN_DEFAULT;
+
+   case WM_PAINT: /* replot window (e.g. after Resize) */
+      {
+         PAINTSTRUCT ps;
+         GRAPH * g;
+         tpWindowData wd;
+         HDC saveDC;    /* the DC from BeginPaint is different... */
+         HDC newDC;
+
+         /* has to happen */
+         newDC = BeginPaint( hwnd, &ps);
+         g = pGraph( hwnd);
+         if (g) {
+            wd = pWindowData(g);
+            if (wd) {
+               if (!wd->PaintFlag && !wd->FirstFlag) {
+                  /* avoid recursive call */
+                  wd->PaintFlag = 1;
+                  /* get window sizes */
+                  GetClientRect( hwnd, &(wd->Area));
+                  g->absolute.width  = wd->Area.right;
+                  g->absolute.height = wd->Area.bottom;
+                  /* switch DC */
+                  saveDC = wd->hDC;
+                  wd->hDC = newDC;
+//                currentgraph = g;
                   
                   /* plot anew */
-						gr_resize(g);
-						/* switch DC */
-						wd->hDC = saveDC;
-						/* ready */
-						wd->PaintFlag = 0;
-					}
-				 }
-			}
-			/* finish */
-			EndPaint( hwnd, &ps);
-		}
-		return 0;
+                  gr_resize(g);
+                  /* switch DC */
+                  wd->hDC = saveDC;
+                  /* ready */
+                  wd->PaintFlag = 0;
+               }
+             }
+         }
+         /* finish */
+         EndPaint( hwnd, &ps);
+      }
+      return 0;
 
-	default:
+   default:
 WIN_DEFAULT:
-		return DefWindowProc( hwnd, uMsg, wParam, lParam);
-	}
+      return DefWindowProc( hwnd, uMsg, wParam, lParam);
+   }
 }
 
 
@@ -476,86 +510,86 @@ WIN_DEFAULT:
 
 int WIN_NewViewport( GRAPH * graph)
 {
-	int 		i;
-	HWND 		window;
-	HDC 		dc;
-	TEXTMETRIC 	tm;
-	tpWindowData 	wd;
-	HMENU		sysmenu;
+   int      i;
+   HWND     window;
+   HDC      dc;
+   TEXTMETRIC  tm;
+   tpWindowData   wd;
+   HMENU    sysmenu;
 
-	/* test the parameters */
-	if (!graph) return 1;
+   /* test the parameters */
+   if (!graph) return 1;
 
-	/* initialize if not yet done */
-	if (WIN_Init() != 0) {
-		externalerror("Can't initialize GDI.");
-		return(1);
-	}
+   /* initialize if not yet done */
+   if (WIN_Init() != 0) {
+      externalerror("Can't initialize GDI.");
+      return(1);
+   }
 
-	/* allocate device dependency info */
-	wd = calloc(1, sizeof(tWindowData));
-	if (!wd) return 1;
-	graph->devdep = (char *)wd;
+   /* allocate device dependency info */
+   wd = calloc(1, sizeof(tWindowData));
+   if (!wd) return 1;
+   graph->devdep = (char *)wd;
 
-	/* Create the window */
-	i = GetSystemMetrics( SM_CYSCREEN) / 3;
-	window = CreateWindow( WindowName, graph->plotname, WS_OVERLAPPEDWINDOW,
-		0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
-	if (!window) return 1;
-	wd->wnd = window;
-	SetWindowLong( window, 0, (long)graph);
+   /* Create the window */
+   i = GetSystemMetrics( SM_CYSCREEN) / 3;
+   window = CreateWindow( WindowName, graph->plotname, WS_OVERLAPPEDWINDOW,
+      0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
+   if (!window) return 1;
+   wd->wnd = window;
+   SetWindowLong( window, 0, (long)graph);
 
-	/* show window */
-	ShowWindow( window, SW_SHOWNORMAL);
+   /* show window */
+   ShowWindow( window, SW_SHOWNORMAL);
 
-	/* get the mask */
-	GetClientRect( window, &(wd->Area));
+   /* get the mask */
+   GetClientRect( window, &(wd->Area));
 
-	/* get the DC */
-	dc = GetDC( window);
-	wd->hDC = dc;
+   /* get the DC */
+   dc = GetDC( window);
+   wd->hDC = dc;
 
-	/* set the Color Index */
-	wd->ColorIndex = 0;
+   /* set the Color Index */
+   wd->ColorIndex = 0;
 
-	/* still no flag */
-	wd->PaintFlag = 0;
-	wd->FirstFlag = 1;
+   /* still no flag */
+   wd->PaintFlag = 0;
+   wd->FirstFlag = 1;
 
-	/* modify system menue */
-	sysmenu = GetSystemMenu( window, FALSE);
-	AppendMenu( sysmenu, MF_SEPARATOR, 0, NULL);
-	AppendMenu( sysmenu, MF_STRING, ID_DRUCKEN,   STR_DRUCKEN);
-	AppendMenu( sysmenu, MF_STRING, ID_DRUCKEINR, STR_DRUCKEINR);
+   /* modify system menue */
+   sysmenu = GetSystemMenu( window, FALSE);
+   AppendMenu( sysmenu, MF_SEPARATOR, 0, NULL);
+   AppendMenu( sysmenu, MF_STRING, ID_DRUCKEN,   STR_DRUCKEN);
+   AppendMenu( sysmenu, MF_STRING, ID_DRUCKEINR, STR_DRUCKEINR);
 
-	/* set default parameters of DC */
-	SetBkColor( dc, ColorTable[0]);
-	SetBkMode(  dc, TRANSPARENT );
+   /* set default parameters of DC */
+   SetBkColor( dc, ColorTable[0]);
+   SetBkMode(  dc, TRANSPARENT );
 
-	/* set font */
-	SelectObject( dc, PlotFont);
+   /* set font */
+   SelectObject( dc, PlotFont);
 
-	/* query the font parameters */
-	if (GetTextMetrics( dc, &tm)) {
-		graph->fontheight = tm.tmHeight;
-		graph->fontwidth  = tm.tmAveCharWidth;
-	}
+   /* query the font parameters */
+   if (GetTextMetrics( dc, &tm)) {
+      graph->fontheight = tm.tmHeight;
+      graph->fontwidth  = tm.tmAveCharWidth;
+   }
 
-	/* set viewport parameters */
-	graph->viewport.height 	= wd->Area.bottom;
-	graph->viewport.width  	= wd->Area.right;
+   /* set viewport parameters */
+   graph->viewport.height  = wd->Area.bottom;
+   graph->viewport.width   = wd->Area.right;
 
-	/* set absolute parameters */
-	graph->absolute.xpos 	= 0;
-	graph->absolute.ypos 	= 0;
-	graph->absolute.width 	= wd->Area.right;
-	graph->absolute.height 	= wd->Area.bottom;
+   /* set absolute parameters */
+   graph->absolute.xpos    = 0;
+   graph->absolute.ypos    = 0;
+   graph->absolute.width   = wd->Area.right;
+   graph->absolute.height  = wd->Area.bottom;
 
-	/* wait until the window is really there */
-	WaitForIdle();
+   /* wait until the window is really there */
+   WaitForIdle();
 
-	/* ready */
-	return(0);
+   /* ready */
+   return(0);
 }
 
 /******************************************************************************
@@ -567,140 +601,140 @@ of the structures occurs at program termination.
 
 int WIN_Close()
 {
-	return (0);
+   return (0);
 }
 
 void RealClose(void)
 {
-	/* delete window class */
-	if (IsRegistered) {
-		if (TheWndClass.hIcon) {
-			DestroyIcon( TheWndClass.hIcon);
-			TheWndClass.hIcon = NULL;
-		}
-		UnregisterClass( WindowName, hInst);
-		IsRegistered = FALSE;
-	}
+   /* delete window class */
+   if (IsRegistered) {
+      if (TheWndClass.hIcon) {
+         DestroyIcon( TheWndClass.hIcon);
+         TheWndClass.hIcon = NULL;
+      }
+      UnregisterClass( WindowName, hInst);
+      IsRegistered = FALSE;
+   }
 }
 
 int WIN_Clear()
 {
-	tpWindowData wd;
-	if (!currentgraph) return 0;
-	wd = pWindowData(currentgraph);
-	if (!wd) return 0;
+   tpWindowData wd;
+   if (!currentgraph) return 0;
+   wd = pWindowData(currentgraph);
+   if (!wd) return 0;
 
-	/* this is done by the window itself */
-	if (!wd->PaintFlag)	/* not necessary with WM_PAINT */
-		SendMessage( wd->wnd, WM_ERASEBKGND, (WPARAM) wd->hDC, 0);
+   /* this is done by the window itself */
+   if (!wd->PaintFlag)  /* not necessary with WM_PAINT */
+      SendMessage( wd->wnd, WM_ERASEBKGND, (WPARAM) wd->hDC, 0);
 
-	return 0;
+   return 0;
 }
 
 
 int WIN_DrawLine(int x1, int y1, int x2, int y2)
 {
-	tpWindowData wd;
-	HPEN 		 OldPen;
-	HPEN    	 NewPen;
+   tpWindowData wd;
+   HPEN      OldPen;
+   HPEN      NewPen;
 
-	if (!currentgraph) return 0;
-	wd = pWindowData(currentgraph);
-	if (!wd) return 0;
+   if (!currentgraph) return 0;
+   wd = pWindowData(currentgraph);
+   if (!wd) return 0;
 
-	MoveToEx(wd->hDC, x1, wd->Area.bottom - y1, NULL);
-	NewPen = CreatePen( LType(wd->ColorIndex), 0, ColorTable[wd->ColorIndex] );
-	OldPen = SelectObject(wd->hDC, NewPen);
-	LineTo(wd->hDC, x2, wd->Area.bottom - y2);
-	OldPen = SelectObject(wd->hDC, OldPen);
-	DeleteObject( NewPen);
+   MoveToEx(wd->hDC, x1, wd->Area.bottom - y1, NULL);
+   NewPen = CreatePen( LType(wd->ColorIndex), linewidth, ColorTable[wd->ColorIndex] );
+   OldPen = SelectObject(wd->hDC, NewPen);
+   LineTo(wd->hDC, x2, wd->Area.bottom - y2);
+   OldPen = SelectObject(wd->hDC, OldPen);
+   DeleteObject( NewPen);
 
-	return (0);
+   return (0);
 }
 
 
 int WIN_Arc(int x0, int y0, int radius, double theta1, double theta2)
-	 /*
-	  * Notes:
-	  *    Draws an arc of <radius> and center at (x0,y0) beginning at
-	  *    angle theta1 (in rad) and ending at theta2
-	  */
+    /*
+     * Notes:
+     *    Draws an arc of <radius> and center at (x0,y0) beginning at
+     *    angle theta1 (in rad) and ending at theta2
+     */
 {
-	tpWindowData wd;
-	HPEN   	OldPen;
-	HPEN   	NewPen;
-	int	left, right, top, bottom;
-	int	xs, ys, xe, ye;
-	int    	yb;
-	int	direction;
-	double	temp;
-	double	r;
-	double  dx0;
-	double	dy0;
+   tpWindowData wd;
+   HPEN     OldPen;
+   HPEN     NewPen;
+   int   left, right, top, bottom;
+   int   xs, ys, xe, ye;
+   int      yb;
+   int   direction;
+   double   temp;
+   double   r;
+   double  dx0;
+   double   dy0;
 
-	if (!currentgraph) return 0;
-	wd = pWindowData(currentgraph);
-	if (!wd) return 0;
+   if (!currentgraph) return 0;
+   wd = pWindowData(currentgraph);
+   if (!wd) return 0;
 
-	direction = AD_COUNTERCLOCKWISE;
-	if (theta1 > theta2) {
-		temp   = theta1;
-		theta1 = theta2;
-		theta2 = temp;
-		direction = AD_CLOCKWISE;
-	}
-	SetArcDirection( wd->hDC, direction);
+   direction = AD_COUNTERCLOCKWISE;
+   if (theta1 > theta2) {
+      temp   = theta1;
+      theta1 = theta2;
+      theta2 = temp;
+      direction = AD_CLOCKWISE;
+   }
+   SetArcDirection( wd->hDC, direction);
 
-	/* some geometric considerations in advance */
-	yb   	= wd->Area.bottom;
-	left 	= x0 - radius;
-	right 	= x0 + radius;
-	top 	= y0 + radius;
-	bottom 	= y0 - radius;
+   /* some geometric considerations in advance */
+   yb    = wd->Area.bottom;
+   left  = x0 - radius;
+   right    = x0 + radius;
+   top   = y0 + radius;
+   bottom   = y0 - radius;
 
-	r = radius;
-	dx0 = x0;
-	dy0 = y0;
-	xs = (dx0 + (r * cos(theta1)));
-	ys = (dy0 + (r * sin(theta1)));
-	xe = (dx0 + (r * cos(theta2)));
-	ye = (dy0 + (r * sin(theta2)));
+   r = radius;
+   dx0 = x0;
+   dy0 = y0;
+   xs = (dx0 + (r * cos(theta1)));
+   ys = (dy0 + (r * sin(theta1)));
+   xe = (dx0 + (r * cos(theta2)));
+   ye = (dy0 + (r * sin(theta2)));
 
-	/* plot */
-	NewPen = CreatePen( LType(wd->ColorIndex), 0, ColorTable[wd->ColorIndex] );
-	OldPen = SelectObject(wd->hDC, NewPen);
-	Arc( wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
-	OldPen = SelectObject(wd->hDC, OldPen);
-	DeleteObject( NewPen);
+   /* plot */
+   NewPen = CreatePen( LType(wd->ColorIndex), linewidth, ColorTable[wd->ColorIndex] );
+   OldPen = SelectObject(wd->hDC, NewPen);
+   Arc( wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
+   OldPen = SelectObject(wd->hDC, OldPen);
+   DeleteObject( NewPen);
 
-	return 0;
+   return 0;
 }
 /*
 int WIN_Text_old( char * text, int x, int y, int degrees)
 {
-	tpWindowData wd;
-	if (!currentgraph) return 0;
-	wd = pWindowData(currentgraph);
-	if (!wd) return 0;
+   tpWindowData wd;
+   if (!currentgraph) return 0;
+   wd = pWindowData(currentgraph);
+   if (!wd) return 0;
 
-	SetTextColor( wd->hDC, ColorTable[wd->ColorIndex]);
-	TextOut( wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, strlen(text));
+   SetTextColor( wd->hDC, ColorTable[wd->ColorIndex]);
+   TextOut( wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, strlen(text));
 
-	return (0);
+   return (0);
 }
 */
 
 int WIN_Text( char * text, int x, int y, int CentiDegrees)
 {
-	tpWindowData wd;
+   tpWindowData wd;
    HFONT hfont;
    LOGFONT lf;
   
    CentiDegrees = 0;
 
-	if (!currentgraph) return 0;
-	wd = pWindowData(currentgraph);
-	if (!wd) return 0;
+   if (!currentgraph) return 0;
+   wd = pWindowData(currentgraph);
+   if (!wd) return 0;
 
    lf.lfHeight         = (int) (1.1 * currentgraph->fontheight) ; 
    lf.lfWidth          = 0 ;
@@ -721,102 +755,102 @@ int WIN_Text( char * text, int x, int y, int CentiDegrees)
    hfont = CreateFontIndirect (&lf);
    SelectObject(wd->hDC, hfont);
 
-	SetTextColor( wd->hDC, ColorTable[wd->ColorIndex]);
-	TextOut( wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, strlen(text));
+   SetTextColor( wd->hDC, ColorTable[wd->ColorIndex]);
+   TextOut( wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, strlen(text));
 
    DeleteObject(SelectObject(wd->hDC, GetStockObject(SYSTEM_FONT)));
 
-	return (0);
+   return (0);
 }
 
 
 int WIN_DefineColor(int red, int green, int blue, int num)
 {
-	/* nothing */
-	return (0);
+   /* nothing */
+   return (0);
 }
 
 int WIN_DefineLinestyle(int num, int mask)
 {
-	/* nothing */
-	return (0);
+   /* nothing */
+   return (0);
 }
 
 int WIN_SetLinestyle(int style)
 {
-	/* nothing */
-	return (0);
+   /* nothing */
+   return (0);
 }
 
 int WIN_SetColor( int color)
 {
-	tpWindowData wd;
-	if (!currentgraph) return 0;
-	wd = pWindowData(currentgraph);
-	if (!wd) return 0;
+   tpWindowData wd;
+   if (!currentgraph) return 0;
+   wd = pWindowData(currentgraph);
+   if (!wd) return 0;
 
-	wd->ColorIndex = color % NumWinColors;
+   wd->ColorIndex = color % NumWinColors;
 
-	return (0);
+   return (0);
 }
 
 int WIN_Update()
 {
-	tpWindowData wd;
-	if (!currentgraph) return 0;
-	wd = pWindowData(currentgraph);
-	if (!wd) return 0;
+   tpWindowData wd;
+   if (!currentgraph) return 0;
+   wd = pWindowData(currentgraph);
+   if (!wd) return 0;
 
-	/* After the first run of Update() */
-	/* FirstFlag again handles WM_PAINT messages. */
-	/* This prevents double painting during displaying the window. */
-	wd->FirstFlag = 0;
-	return 0;
+   /* After the first run of Update() */
+   /* FirstFlag again handles WM_PAINT messages. */
+   /* This prevents double painting during displaying the window. */
+   wd->FirstFlag = 0;
+   return 0;
 }
 
 int WIN_DiagramReady()
 {
-	return 0;
+   return 0;
 }
 
 void RemoveWindow(GRAPH* dgraph)
 {
    tpWindowData wd;
-	wd = pWindowData(dgraph);
-	if (wd)
-		SendMessage(wd->wnd, WM_CLOSE, (WPARAM) wd->hDC, 0);
+   wd = pWindowData(dgraph);
+   if (wd)
+      SendMessage(wd->wnd, WM_CLOSE, (WPARAM) wd->hDC, 0);
 }
 
 /* Function borrowed from x11.c */
 static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy)
 {
-	double	lmin, lmax;
+   double   lmin, lmax;
 
-	if (graph->grid.gridtype == GRID_XLOG
-		|| graph->grid.gridtype == GRID_LOGLOG)
-	{
-		lmin = log10(graph->datawindow.xmin);
-		lmax = log10(graph->datawindow.xmax);
-		*fx = exp(((x - graph->viewportxoff)
-			* (lmax - lmin) / graph->viewport.width + lmin)
-			* M_LN10);
-	} else {
-		*fx = (x - graph->viewportxoff) * graph->aspectratiox +
-			graph->datawindow.xmin;
-	}
+   if (graph->grid.gridtype == GRID_XLOG
+      || graph->grid.gridtype == GRID_LOGLOG)
+   {
+      lmin = log10(graph->datawindow.xmin);
+      lmax = log10(graph->datawindow.xmax);
+      *fx = exp(((x - graph->viewportxoff)
+         * (lmax - lmin) / graph->viewport.width + lmin)
+         * M_LN10);
+   } else {
+      *fx = (x - graph->viewportxoff) * graph->aspectratiox +
+         graph->datawindow.xmin;
+   }
 
-	if (graph->grid.gridtype == GRID_YLOG
-		|| graph->grid.gridtype == GRID_LOGLOG)
-	{
-		lmin = log10(graph->datawindow.ymin);
-		lmax = log10(graph->datawindow.ymax);
-		*fy = exp(((graph->absolute.height - y - graph->viewportxoff)
-			* (lmax - lmin) / graph->viewport.height + lmin)
-			* M_LN10);
-	} else {
-		*fy = ((graph->absolute.height - y) - graph->viewportyoff)
-			* graph->aspectratioy + graph->datawindow.ymin;
-	}
+   if (graph->grid.gridtype == GRID_YLOG
+      || graph->grid.gridtype == GRID_LOGLOG)
+   {
+      lmin = log10(graph->datawindow.ymin);
+      lmax = log10(graph->datawindow.ymax);
+      *fy = exp(((graph->absolute.height - y - graph->viewportxoff)
+         * (lmax - lmin) / graph->viewport.height + lmin)
+         * M_LN10);
+   } else {
+      *fy = ((graph->absolute.height - y) - graph->viewportyoff)
+         * graph->aspectratioy + graph->datawindow.ymin;
+   }
 
 }
 
