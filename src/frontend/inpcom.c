@@ -1613,32 +1613,34 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
 }
 
 /*-------------------------------------------------------------------------*
- *                                                                         *
+   removes  " " quotes, returns lower case letters, 
+   replaces non-printable characterss with '_'                                                                       *
  *-------------------------------------------------------------------------*/
 void
 inp_casefix(char *string)
 {
 #ifdef HAVE_CTYPE_H
-    if (string)
-	while (*string) {
-	    /* Let's make this really idiot-proof. */
+   if (string)
+      while (*string) {
 #ifdef HAS_ASCII
-	    *string = strip(*string);
+         /* ((*string) & 0177): mask off all but the first seven bits, 0177: octal */
+         *string = strip(*string);
 #endif
-	    if (*string == '"') {
-		*string++ = ' ';
-		while (*string && *string != '"')
-		    string++;
-		if (*string == '"')
-		    *string = ' ';
-	    }
-	    if (!isspace(*string) && !isprint(*string))
-		*string = '_';
-	    if (isupper(*string))
-		*string = tolower(*string);
-	    string++;
-	}
-    return;
+         if (*string == '"') {
+            *string++ = ' ';
+            while (*string && *string != '"')
+               string++;
+            if (*string== '\0') continue; /* needed if string is "something ! */
+            if (*string == '"')
+               *string = ' ';
+         }
+         if (!isspace(*string) && !isprint(*string))
+            *string = '_';
+         if (isupper(*string))
+            *string = tolower(*string);
+         string++;
+      }
+   return;
 #endif
 }
  

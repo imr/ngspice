@@ -1,4 +1,13 @@
 2009-09-09 Holger Vogt
+ * inp.c: comments added, .TEMP evaluation before numparam parsing
+ * inpcom.c: comments added, inp_casefix() bug removed
+ * winmain.c: SetAnalyse() now writes to task bar, progress in 0.0%,
+   more ouput added for different phases during start up
+   (Start, Prepare Deck, Circuit2, Device Setup, op, tran ...)
+ * acan.c, cktsetup.c, dctran.c, dctrcurv.c, inp.c, inpas2.c, spec.c:
+   SetAnalyse() modified
+
+2009-09-09 Holger Vogt
  * com_measure2.c: some comments added
  * windisp.c: white backgrond in plot with set color0=white, thicker
    lines with set xbrushwidth=2 (0: standard) in spinit

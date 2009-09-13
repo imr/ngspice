@@ -117,23 +117,20 @@ com_listing(wordlist *wl)
     return;
 }
 
-
+/* returns inp_casefix() or NULL */
 static char *
 upper(char *string)
 {
+   static char buf[BSIZE_SP];
 
-    static char buf[BSIZE_SP];
-
-    if (string) {
-	strncpy(buf, string, BSIZE_SP - 1);
-	buf[BSIZE_SP - 1] = 0;
-	inp_casefix(buf);
-    } else {
-	strcpy(buf, "<null>");
-    }
-
-    return buf;
-
+   if (string) {
+      strncpy(buf, string, BSIZE_SP - 1);
+      buf[BSIZE_SP - 1] = 0;
+      inp_casefix(buf);
+   } else {
+      strcpy(buf, "<null>");
+   }
+   return buf;
 }
 
 
@@ -329,6 +326,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     struct line *deck, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
     struct line *realdeck, *options = NULL, *curr_meas = NULL;
     char *tt = NULL, name[BSIZE_SP], *s, *t, *temperature = NULL;
+    double testemp = 0.0;
     bool nosubckts, commands = FALSE;
     wordlist *wl = NULL, *end = NULL, *wl_first = NULL;
     wordlist *controls = NULL;
@@ -399,7 +397,15 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     else {    /* must be regular deck . . . . */
         /* loop through deck and handle control cards */
         for (dd = deck->li_next; dd; dd = ld->li_next) {    
-
+            /* get temp from deck */
+            if ( ciprefix(".temp", dd->li_line) ) {
+                s = dd->li_line + 5;
+                while ( isspace(*s) ) s++;
+                if ( temperature != NULL ) {
+                    txfree(temperature);
+                }
+                temperature = strdup(s);
+            }
         /* Ignore comment lines, but not lines begining with '*#' */
             s = dd->li_line;
             while(isspace(*s)) s++;
@@ -500,13 +506,24 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
             }
       }  /* end for(dd=deck->li_next . . . .  */
 
-
+      /* set temperature if defined to a preliminary variable which may be used in numparam 
+         evaluation */
+      if ( temperature != NULL ) {
+	temperature_value = atof(temperature);
+	s = (char *) &temperature_value;
+	cp_vset("pretemp", VT_REAL, s );
+//	txfree(temperature);
+      }
+#if defined(OUTDECK)
+cp_getvar( "pretemp", VT_REAL, (double *) &testemp );
+printf("test temperature %f\n", testemp);
+#endif
       /* We are done handling the control stuff.  Now process remainder of deck.
          Go on if there is something left after the controls.*/
       if (deck->li_next) {
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
 #ifdef HAS_WINDOWS
-            SetAnalyse( "Circuit", 0);
+            SetAnalyse( "Prepare Deck", 0);
 #endif
             /* Now expand subcircuit macros and substitute numparams.*/
             if (!cp_getvar("nosubckt", VT_BOOL, (char *) &nosubckts))
@@ -538,7 +555,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       }
 
       for (dd = deck; dd; dd = dd->li_next) {
-	/* get temp after numparam run on deck */
+	/* get temp after numparam run on deck 
 	if ( ciprefix(".temp", dd->li_line) ) {
 	  s = dd->li_line + 5;
 	  while ( isspace(*s) ) s++;
@@ -546,7 +563,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 	    txfree(temperature);
 	  }
 	  temperature = strdup(s);
-	}
+	}*/
 	/*
 	   all parameter lines should be sequentially ordered and placed at
 	   beginning of deck 
@@ -581,7 +598,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
 	  dd                 = prev_card;
 	}
 	prev_card = dd;
-      }
+      }  //end of for-loop
 
       /* set temperature if defined */
       if ( temperature != NULL ) {
@@ -964,85 +981,83 @@ com_edit(wordlist *wl)
 static bool
 doedit(char *filename)
 {
-    char buf[BSIZE_SP], buf2[BSIZE_SP], *editor; 
+   char buf[BSIZE_SP], buf2[BSIZE_SP], *editor; 
 
-    if (cp_getvar("editor", VT_STRING, buf2)) {
-        editor = buf2;
-    } else {
-        if (!(editor = getenv("EDITOR"))) {
-            if (Def_Editor && *Def_Editor)
-	        editor = Def_Editor;
-	    else
-	        editor = "/usr/bin/vi";
-	}
-    }
-    sprintf(buf, "%s %s", editor, filename);
-    return (system(buf) ? FALSE : TRUE);
-
+   if (cp_getvar("editor", VT_STRING, buf2)) {
+      editor = buf2;
+   } else {
+      if (!(editor = getenv("EDITOR"))) {
+         if (Def_Editor && *Def_Editor)
+            editor = Def_Editor;
+         else
+            editor = "/usr/bin/vi";
+      }
+   }
+   sprintf(buf, "%s %s", editor, filename);
+   return (system(buf) ? FALSE : TRUE);
 }
 
 void
 com_source(wordlist *wl)
 {
-    
-    FILE *fp, *tp;
-    char buf[BSIZE_SP];
-    bool inter;
-    char *tempfile = NULL;
-    
-    wordlist *owl = wl;
-    int i;
+   FILE *fp, *tp;
+   char buf[BSIZE_SP];
+   bool inter;
+   char *tempfile = NULL;
+   
+   wordlist *owl = wl;
+   int i;
 
-    inter = cp_interactive;
-    cp_interactive = FALSE;
-    if (wl->wl_next) {
-        /* There are several files -- put them into a temp file  */
-        tempfile = smktemp("sp");
-        if (!(fp = inp_pathopen(tempfile, "w+"))) {
-            perror(tempfile);
+   inter = cp_interactive;
+   cp_interactive = FALSE;
+   if (wl->wl_next) {
+      /* There are several files -- put them into a temp file  */
+      tempfile = smktemp("sp");
+      if (!(fp = inp_pathopen(tempfile, "w+"))) {
+         perror(tempfile);
+         cp_interactive = TRUE;
+         return;
+      }
+      while (wl) {
+         if (!(tp = inp_pathopen(wl->wl_word, "r"))) {
+            perror(wl->wl_word);
+            fclose(fp);
             cp_interactive = TRUE;
+            unlink(tempfile);
             return;
-        }
-        while (wl) {
-            if (!(tp = inp_pathopen(wl->wl_word, "r"))) {
-                perror(wl->wl_word);
-                fclose(fp);
-                cp_interactive = TRUE;
-                unlink(tempfile);
-                return;
-            }
-            while ((i = fread(buf, 1, BSIZE_SP, tp)) > 0)
-                fwrite(buf, 1, i, fp);
+         }
+         while ((i = fread(buf, 1, BSIZE_SP, tp)) > 0)
+            fwrite(buf, 1, i, fp);
             fclose(tp);
             wl = wl->wl_next;
-        }
-        fseek(fp, (long) 0, 0);
-    } else
-        fp = inp_pathopen(wl->wl_word, "r");
-    if (fp == NULL) {
-        perror(wl->wl_word);
-        cp_interactive = TRUE;
-        return;
-    }
+      }
+      fseek(fp, (long) 0, 0);
+   } else
+      fp = inp_pathopen(wl->wl_word, "r");
+   if (fp == NULL) {
+      perror(wl->wl_word);
+      cp_interactive = TRUE;
+      return;
+   }
 
     /* Don't print the title if this is a spice initialisation file. */
-    if (ft_nutmeg || substring(INITSTR, owl->wl_word) || substring(ALT_INITSTR, owl->wl_word)) {
-        inp_spsource(fp, TRUE, tempfile ? (char *) NULL : wl->wl_word);
-    }
-    else {
-        inp_spsource(fp, FALSE, tempfile ? (char *) NULL : wl->wl_word);
-    }
-    cp_interactive = inter;
-    if (tempfile)
-        unlink(tempfile);
-    return;
+   if (ft_nutmeg || substring(INITSTR, owl->wl_word) || substring(ALT_INITSTR, owl->wl_word)) {
+      inp_spsource(fp, TRUE, tempfile ? (char *) NULL : wl->wl_word);
+   }
+   else {
+      inp_spsource(fp, FALSE, tempfile ? (char *) NULL : wl->wl_word);
+   }
+   cp_interactive = inter;
+   if (tempfile)
+      unlink(tempfile);
+   return;
 }
 
 void
 inp_source(char *file)
 {
-    static struct wordlist wl = { NULL, NULL, NULL } ;
-    wl.wl_word = file;
-    com_source(&wl);
-    return;
+   static struct wordlist wl = { NULL, NULL, NULL } ;
+   wl.wl_word = file;
+   com_source(&wl);
+   return;
 }

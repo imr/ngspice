@@ -258,7 +258,7 @@ com_spec(wordlist *wl)
           }
        }
 #ifdef HAS_WINDOWS
-       SetAnalyse( "spec", (int)(j * 100/ fpts));
+       SetAnalyse( "spec", (int)(j * 1000./ fpts));
 #endif          
     }
     if (startf==0) {

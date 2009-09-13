@@ -29,8 +29,11 @@
 
 #include <signal.h>
 #include <ctype.h>
-
+#include <sys/types.h>
+#include <sys/timeb.h>
 #include "bool.h"			// bool defined as unsigned char
+#include "misc/misc_time.h" /* timediff */
+
 /* Constants */
 #define TBufSize 8192			// Groesze des Textbuffers
 #define CR VK_RETURN			// Carriage Return
@@ -196,22 +199,52 @@ void SetSource( char * Name)
 
 // ------------------------------<Analyse-Fenster>-----------------------------
 
-// Neuer Text ins Analysefenster
-void SetAnalyse( char * Analyse, int Percent)
-{
+/* New progress report into analysis window.
+   Update only every DELTATIME milliseconds */
+#define DELTATIME 150
+void SetAnalyse( 
+   char * Analyse, /*in: analysis type */
+   int DecaPercent /*in: 10 times the progress [%]*/
+   /*HWND hwAnalyse, in: global handle to analysis window */   
+) {
    static int OldPercent = -2;
    static char Olds[128];
-   char s[128];
+   char s[128], t[128];
+   static struct timeb timebefore; /* previous time stamp */
+   struct timeb timenow;
+   int diffsec, diffmillisec;
 
-	if ((Percent == OldPercent) && !strcmp(Olds, Analyse)) return;
-   OldPercent = Percent;
-   strncpy(Olds, Analyse, 127);
-	if (hwAnalyse) {
-		if (Percent < 0)
+	if ((DecaPercent == OldPercent) && !strcmp(Olds, Analyse)) return;
+   /* get actual time */
+   ftime(&timenow);
+	timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
+   OldPercent = DecaPercent;
+
+	/* output only into correct window and if time elapsed is larger than
+      given value, or if analysis has changed, else return */
+   if (hwAnalyse && ((diffsec > 0) || (diffmillisec > DELTATIME) || strcmp(Olds, Analyse))) {
+		if (DecaPercent < 0) {
 			sprintf( s, "--ready--");
-		else
-			sprintf( s, "%s : %3u%%", Analyse, Percent);
+			sprintf( t, "%s", PACKAGE_STRING);
+		}	
+      else if (DecaPercent == 0) {
+         sprintf( s, "%s", Analyse);
+         sprintf( t, "%s   %s", PACKAGE_STRING, Analyse);
+      }   
+      else {
+			sprintf( s, "%s: %3.1f%%", Analyse, (double)DecaPercent/10.);
+//			sprintf( t, "%s   %s: %3.1f%%", PACKAGE_STRING, Analyse, (double)DecaPercent/10.);
+         sprintf( t, "%s   %3.1f%%", PACKAGE_STRING, (double)DecaPercent/10.);
+		}	
+         /*sprintf( s, "%s : %3u%%", Analyse, (int)(DecaPercent/10));*/
+      timebefore.dstflag = timenow.dstflag;
+      timebefore.millitm = timenow.millitm;
+      timebefore.time = timenow.time;
+      timebefore.timezone = timenow.timezone;
+      strncpy(Olds, Analyse, 127);
+      
 		SetWindowText( hwAnalyse, s);
+		SetWindowText( hwMain, t);
 		InvalidateRgn( hwAnalyse, NULL, TRUE);
       WaitForIdle();
 	}

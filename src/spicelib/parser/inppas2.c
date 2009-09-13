@@ -16,6 +16,10 @@ Author: 1985 Thomas L. Quarles
 /* gtri - end - wbk - 11/9/90 */
 #endif
 
+#ifdef HAS_WINDOWS    
+extern void SetAnalyse( char * Analyse, int Percent);
+#endif
+
 /* uncomment to trace in this file */
 /*#define TRACE*/
 
@@ -31,6 +35,7 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
     char *gname;
     void *gnode;
     int error;			/* used by the macros defined above */
+    int linecount = 0, actcount = 0;
 
 #ifdef TRACE
     /* SDB debug statement */
@@ -59,11 +64,24 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
     printf("\n");
 #endif
 
+    
+#ifdef HAS_WINDOWS
+    for (current = data; current != NULL; current = current->nextcard)
+        linecount++;
+#endif
+
     for (current = data; current != NULL; current = current->nextcard) {
 
 #ifdef TRACE
 	/* SDB debug statement */
 	printf("In INPpas2, examining card %s . . .\n", current->line);
+#endif
+
+#ifdef HAS_WINDOWS
+   if (linecount > 0) {     
+        SetAnalyse( "Circuit2", (int) (1000.*actcount/linecount));
+        actcount++;
+   }
 #endif
 
 	c = *(current->line);

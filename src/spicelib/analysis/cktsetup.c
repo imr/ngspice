@@ -22,6 +22,10 @@ Author: 1985 Thomas L. Quarles
             return(E_NOMEM);\
 }
 
+#ifdef HAS_WINDOWS    
+extern void SetAnalyse( char * Analyse, int Percent);
+#endif
+
 extern SPICEdev **DEVices;
 
 
@@ -57,6 +61,9 @@ CKTsetup(CKTcircuit *ckt)
     matrix = ckt->CKTmatrix;
 
     for (i=0;i<DEVmaxnum;i++) {
+#ifdef HAS_WINDOWS
+        SetAnalyse( "Device Setup", 0 );
+#endif
         if ( DEVices[i] && ((*DEVices[i]).DEVsetup != NULL) && (ckt->CKThead[i] != NULL) ){
             error = (*((*DEVices[i]).DEVsetup))(matrix,ckt->CKThead[i],ckt,
                     &ckt->CKTnumStates);
