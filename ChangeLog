@@ -1,3 +1,7 @@
+2009-09-15 Holger Vogt
+* winmain.c: will output the time required for the setup stages, 
+  if compiled with preprocessor flag NGDEBUG
+
 2009-09-09 Holger Vogt
  * inp.c: comments added, .TEMP evaluation before numparam parsing
  * inpcom.c: comments added, inp_casefix() bug removed
