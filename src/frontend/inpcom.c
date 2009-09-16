@@ -1308,7 +1308,9 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
          *buffer   = '*';
       }
 
-      if ( ciprefix( ".global", buffer ) ) {
+ /* removed  because code changes .global to *global before it will be
+    expanded by inp_subcktexpand() in subckt.c */
+      /*     if ( ciprefix( ".global", buffer ) ) {
          for ( s = buffer; *s && !isspace(*s); s++ );
 
          if ( global == NULL ) {
@@ -1321,7 +1323,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
          }
          *buffer = '*';
       }
-
+*/
       if ( shell_eol_continuation ) {
          char *new_buffer = tmalloc( strlen(buffer) + 2);
          sprintf( new_buffer, "+%s", buffer );
