@@ -529,7 +529,10 @@ resume:
     }
 #endif
 #ifdef HAS_WINDOWS
-	 SetAnalyse( "tran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime));
+	 if (ckt->CKTtime == 0.)
+        SetAnalyse( "tran init", 0);
+    else
+        SetAnalyse( "tran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime));
 #endif
     ckt->CKTdelta = 
             MIN(ckt->CKTdelta,ckt->CKTmaxStep);

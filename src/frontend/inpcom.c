@@ -30,13 +30,6 @@ Author: 1985 Wayne A. Christopher
  * space are also allowed.
  */
 
-/*
- * SJB 22 May 2001
- * Fixed memory leaks in inp_readall() when first(?) line of input begins with a '@'.
- * Fixed memory leaks in inp_readall() when .include lines have errors
- * Fixed crash where a NULL pointer gets freed in inp_readall()
- */
-
 #include "ngspice.h"
 
 #ifdef HAVE_LIBGEN_H /* dirname */
@@ -70,10 +63,6 @@ Author: 1985 Wayne A. Christopher
 
 /* SJB - Uncomment this line for debug tracing */
 /*#define TRACE*/
-
-/* uncomment this line for getting deck output after all
-   manipulations into debug-out.txt */
-/* #define OUTDECK */
 
 #ifdef HAS_WINDOWS
 void winmessage(char* new_msg);

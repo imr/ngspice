@@ -56,12 +56,6 @@ void line_free_x(struct line * deck, bool recurse);
 void SetAnalyse( char * Analyse, int Percent);
 #endif
 
-/* uncomment this line for getting deck output after all
-   manipulations into debug-out2.txt.
-   Used to check numpram substitution, compare to debug.out.txt
-   retrieved from inpcom.c, fcn inp_readall()*/
-/* #define OUTDECK */
-
 /* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
 void
 com_listing(wordlist *wl)
