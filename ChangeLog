@@ -3,6 +3,7 @@
    variable ngdebug added, sets ft_ngdebug, 
    used for additional debug info printing
  * dctran.c: setup info added  
+ * inpdefs.h, inpmkmod.c: try to fix bug no. 2859013
    
 2009-09-16 Holger Vogt
  * inpcom.c: .global was diabled, reinstated

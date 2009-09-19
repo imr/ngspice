@@ -9,6 +9,7 @@ Author: 1985 Thomas L. Quarles
 #include "iferrmsg.h"
 #include "inp.h"
 
+/*  global input model table.  */
 INPmodel *modtab;
 
 /*--------------------------------------------------------------

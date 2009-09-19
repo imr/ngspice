@@ -76,9 +76,6 @@ typedef struct sINPmodel{
 } INPmodel;
 
 
-/*  global input model table.  */
-extern INPmodel *modtab;
-
 
 /* listing types - used for debug listings */
 #define LOGICAL 1
