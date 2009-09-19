@@ -1,3 +1,8 @@
+2009-09-19 Holger Vogt
+ * fteext.h, inpcom.c, inp.c, options.c, winmain.c: 
+   variable ngdebug added, sets ft_ngdebug, 
+   used for additional debug info printing
+   
 2009-09-16 Holger Vogt
  * inpcom.c: .global was diabled, reinstated
  

@@ -91,6 +91,7 @@ static int HistIndex = 0;		// History-Verwaltung
 static int HistPtr   = 0;		// History-Verwaltung
 
 extern bool oflag;			// falls 1, Output ueber stdout in File umgeleitet
+extern bool ft_ngdebug; // some additional debug info printed
 extern FILE *flogp;  // siehe xmain.c, hvogt 14.6.2000
 
 // Forward-Definition von main()
@@ -241,15 +242,14 @@ void SetAnalyse(
       timebefore.time = timenow.time;
       timebefore.timezone = timenow.timezone;
       if (strcmp(OldAn, Analyse)) {
-#if NGDEBUG
-         if (strcmp(OldAn, "") )
+         if (ft_ngdebug && (strcmp(OldAn, "")))
             p_r_i_n_t_f("%s finished after %4.2f seconds.\n", OldAn, seconds());
-#endif
          strncpy(OldAn, Analyse, 127);
       }
 		SetWindowText( hwAnalyse, s);
 		SetWindowText( hwMain, t);
 		InvalidateRgn( hwAnalyse, NULL, TRUE);
+      InvalidateRgn( hwMain, NULL, TRUE);
       WaitForIdle();
 	}
 }

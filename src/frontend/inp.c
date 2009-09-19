@@ -317,295 +317,283 @@ line_free_x(struct line * deck, bool recurse) {
  * Then, we run dodeck, which parses up the deck.             */
 void
 inp_spsource(FILE *fp, bool comfile, char *filename)
-     /* arguments:
-      *  *fp = pointer to the input file
-      *  comfile = whether it is a command file.  Values are TRUE/FALSE
-      *  *filename = 
-      */
+   /* arguments:
+    *  *fp = pointer to the input file
+    *  comfile = whether it is a command file.  Values are TRUE/FALSE
+    *  *filename = 
+    */
 {
-    struct line *deck, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
-    struct line *realdeck, *options = NULL, *curr_meas = NULL;
-    char *tt = NULL, name[BSIZE_SP], *s, *t, *temperature = NULL;
-    double testemp = 0.0;
-    bool nosubckts, commands = FALSE;
-    wordlist *wl = NULL, *end = NULL, *wl_first = NULL;
-    wordlist *controls = NULL;
-    FILE *lastin, *lastout, *lasterr;
-    double temperature_value;
-    bool autostop;
+   struct line *deck, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
+   struct line *realdeck, *options = NULL, *curr_meas = NULL;
+   char *tt = NULL, name[BSIZE_SP], *s, *t, *temperature = NULL;
+   double testemp = 0.0;
+   bool nosubckts, commands = FALSE;
+   wordlist *wl = NULL, *end = NULL, *wl_first = NULL;
+   wordlist *controls = NULL;
+   FILE *lastin, *lastout, *lasterr;
+   double temperature_value;
+   bool autostop;
 
-    /* read in the deck from a file */
-    char *filename_dup = ( filename == NULL ) ? strdup(".") : strdup(filename);
-    inp_readall(fp, &deck, 0, dirname(filename_dup));
-    tfree(filename_dup);
+   /* read in the deck from a file */
+   char *filename_dup = ( filename == NULL ) ? strdup(".") : strdup(filename);
+   inp_readall(fp, &deck, 0, dirname(filename_dup));
+   tfree(filename_dup);
 
-    /* if nothing came back from inp_readall, just close fp and return to caller */
-    if (!deck) {	/* MW. We must close fp always when returning */
-        fclose(fp);
-        return;
-    }
+   /* if nothing came back from inp_readall, just close fp and return to caller */
+   if (!deck) {	/* MW. We must close fp always when returning */
+      fclose(fp);
+      return;
+   }
     
-    if (!comfile) {
-        options = inp_getopts(deck);
+   if (!comfile) {
+      options = inp_getopts(deck);
 
-        realdeck = inp_deckcopy(deck);
+      realdeck = inp_deckcopy(deck);
 
-        /* Save the title before INPgetTitle gets it. */
-        tt = copy(deck->li_line);
-        if (!deck->li_next)
-            fprintf(cp_err, "Warning: no lines in input\n");
-    }
-    fclose(fp);
+      /* Save the title before INPgetTitle gets it. */
+      tt = copy(deck->li_line);
+      if (!deck->li_next)
+         fprintf(cp_err, "Warning: no lines in input\n");
+   }
+   fclose(fp);
 
-    /* Now save the IO context and start a new control set.  After we
-     * are done with the source we'll put the old file descriptors
-     * back.  I guess we could use a FILE stack, but since this
-     * routine is recursive anyway.  */
-    lastin = cp_curin;
-    lastout = cp_curout;
-    lasterr = cp_curerr;
-    cp_curin = cp_in;
-    cp_curout = cp_out;
-    cp_curerr = cp_err;
+   /* Now save the IO context and start a new control set.  After we
+      are done with the source we'll put the old file descriptors
+      back.  I guess we could use a FILE stack, but since this
+      routine is recursive anyway.  */
+   lastin = cp_curin;
+   lastout = cp_curout;
+   lasterr = cp_curerr;
+   cp_curin = cp_in;
+   cp_curout = cp_out;
+   cp_curerr = cp_err;
 
-    cp_pushcontrol();
+   cp_pushcontrol();
 
-    /* We should now go through the deck and execute front-end
-     * commands and remove them. Front-end commands are enclosed by
-     * the cards .control and .endc, unless comfile is TRUE, in which
-     * case every line must be a front-end command.  There are too
-     * many problems with matching the first word on the line.  */
-    ld = deck;
-    if (comfile) {
-        /* This is easy. */
-        for (dd = deck; dd; dd = ld) {
-            ld = dd->li_next;
-            if ((dd->li_line[0] == '*') && (dd->li_line[1] != '#'))
-                continue;
-            if (!ciprefix(".control", dd->li_line) && !ciprefix(".endc", dd->li_line)) {
-                if (dd->li_line[0] == '*')
-                    cp_evloop(dd->li_line + 2);
-                else
-                    cp_evloop(dd->li_line);
-            }
-        }
-        /* free the control deck */
-        line_free(deck,TRUE);
+   /* We should now go through the deck and execute front-end
+    * commands and remove them. Front-end commands are enclosed by
+    * the cards .control and .endc, unless comfile is TRUE, in which
+    * case every line must be a front-end command.  There are too
+    * many problems with matching the first word on the line.  */
+   ld = deck;
+   if (comfile) {
+      /* This is easy. */
+      for (dd = deck; dd; dd = ld) {
+         ld = dd->li_next;
+         if ((dd->li_line[0] == '*') && (dd->li_line[1] != '#'))
+            continue;
+         if (!ciprefix(".control", dd->li_line) && !ciprefix(".endc", dd->li_line)) {
+            if (dd->li_line[0] == '*')
+               cp_evloop(dd->li_line + 2);
+            else
+               cp_evloop(dd->li_line);
+         }
+      }
+      /* free the control deck */
+      line_free(deck,TRUE);
 /*         printf("Command deck freed\n"); */
-    } /* end if(comfile) */ 
+   } /* end if(comfile) */ 
 
-    else {    /* must be regular deck . . . . */
-        /* loop through deck and handle control cards */
-        for (dd = deck->li_next; dd; dd = ld->li_next) {    
-            /* get temp from deck */
-            if ( ciprefix(".temp", dd->li_line) ) {
-                s = dd->li_line + 5;
-                while ( isspace(*s) ) s++;
-                if ( temperature != NULL ) {
-                    txfree(temperature);
-                }
-                temperature = strdup(s);
+   else {    /* must be regular deck . . . . */
+       /* loop through deck and handle control cards */
+      for (dd = deck->li_next; dd; dd = ld->li_next) {    
+         /* get temp from deck */
+         if ( ciprefix(".temp", dd->li_line) ) {
+            s = dd->li_line + 5;
+            while ( isspace(*s) ) s++;
+            if ( temperature != NULL ) {
+               txfree(temperature);
             }
-        /* Ignore comment lines, but not lines begining with '*#' */
-            s = dd->li_line;
-            while(isspace(*s)) s++;
-            if ( (*s == '*') && ( (s != dd->li_line) || (s[1] != '#'))) {
-                ld = dd;
-                continue;
-            }
+            temperature = strdup(s);
+         }
+         /* Ignore comment lines, but not lines begining with '*#' */
+         s = dd->li_line;
+         while(isspace(*s)) s++;
+         if ( (*s == '*') && ( (s != dd->li_line) || (s[1] != '#'))) {
+            ld = dd;
+            continue;
+         }
 	    
-            /* Put the first token from line into s */
-            strncpy(name, dd->li_line, BSIZE_SP);	    
-            for (s = name; *s && isspace(*s); s++)
-                ;
-            for (t = s; *t && !isspace(*t); t++)
-                ;
-            *t = '\0';
+         /* Put the first token from line into s */
+         strncpy(name, dd->li_line, BSIZE_SP);	    
+         for (s = name; *s && isspace(*s); s++)
+            ;
+         for (t = s; *t && !isspace(*t); t++)
+             ;
+         *t = '\0';
 
-            if (ciprefix(".control", dd->li_line)) {
-                ld->li_next = dd->li_next;
-                line_free(dd,FALSE); /* SJB - free this line's memory */
-                if (commands)
-                    fprintf(cp_err, "Warning: redundant .control card\n");
-                else
-                    commands = TRUE;
-            } else if (ciprefix(".endc", dd->li_line)) {
-                ld->li_next = dd->li_next;
-                line_free(dd,FALSE); /* SJB - free this line's memory */
-                if (commands)
-                    commands = FALSE;
-                else
-                    fprintf(cp_err, "Warning: misplaced .endc card\n");
-            } else if (commands || prefix("*#", dd->li_line)) {
-                wl = alloc(struct wordlist);
-                if (controls) {
-                    wl->wl_next = controls;
-                    controls->wl_prev = wl;
-                    controls = wl;
-                } else
-                    controls = wl;
-		/* more control lines */
-                if (prefix("*#", dd->li_line))
-                    wl->wl_word = copy(dd->li_line + 2);
-                else {
-                    wl->wl_word = dd->li_line;
-		    dd->li_line = 0; /* SJB - prevent line_free() freeing the string (now pointed at by wl->wl_word) */
-		}
-		/* Look for set or unset numparams.
-		   If either are found then we evaluate these lines immediately
-		   so they take effect before netlist parsing */
-		s = wl->wl_word;
-		while(isspace(*s)) s++;	/* step past any white space */
-		if(ciprefix("set", s)) {
-		    s+=3;
-		} else if(ciprefix("unset", s)) {
-		    s+=5;
-		}
-		if(s!=dd->li_line) {	/* one of the above must have matched */
-		    while(isspace(*s)) s++;	/* step past white space */
-		    if(ciprefix("numparams", s)) {
-			cp_evloop(wl->wl_word);
-		    }
-		}
-                ld->li_next = dd->li_next;
-		line_free(dd,FALSE); /* SJB - free this line's memory */
-            } else if (!*dd->li_line) {
-                /* So blank lines in com files don't get considered as
-                 * circuits.  */
-                ld->li_next = dd->li_next;
-		line_free(dd,FALSE); /* SJB - free this line's memory */
-            } else {
-                /* lines .width, .four, .plot, .print,. save added to wl_first, removed from deck */
-                /* lines .op, .meas, .tf added to wl_first */
-                inp_casefix(s); /* s: first token from line */
-                inp_casefix(dd->li_line);
-                if (eq(s, ".width")
-		    || ciprefix(".four", s)
-		    || eq(s, ".plot")
-		    || eq(s, ".print")
-		    || eq(s, ".save")
-		    || eq(s, ".op")
-		    || ciprefix(".meas", s)
-		    || eq(s, ".tf"))
-		{
-                    if (end) {
-                        end->wl_next = alloc(struct wordlist);
-                        end->wl_next->wl_prev = end;
-                        end = end->wl_next;
-                    } else
-                        wl_first = end = alloc(struct wordlist);
-                    end->wl_word = copy(dd->li_line);
-
-		    if (!eq(s, ".op") && !eq(s, ".tf") && !ciprefix(".meas", s)) {
-			ld->li_next = dd->li_next;
-			line_free(dd,FALSE);
-		    } else
-			ld = dd;
-                } else
-                    ld = dd;
+         if (ciprefix(".control", dd->li_line)) {
+            ld->li_next = dd->li_next;
+            line_free(dd,FALSE); /* SJB - free this line's memory */
+            if (commands)
+               fprintf(cp_err, "Warning: redundant .control card\n");
+            else
+               commands = TRUE;
+         } else if (ciprefix(".endc", dd->li_line)) {
+            ld->li_next = dd->li_next;
+            line_free(dd,FALSE); /* SJB - free this line's memory */
+            if (commands)
+               commands = FALSE;
+            else
+               fprintf(cp_err, "Warning: misplaced .endc card\n");
+         } else if (commands || prefix("*#", dd->li_line)) {
+            wl = alloc(struct wordlist);
+            if (controls) {
+               wl->wl_next = controls;
+               controls->wl_prev = wl;
+               controls = wl;
+            } else
+               controls = wl;
+		      /* more control lines */
+            if (prefix("*#", dd->li_line))
+               wl->wl_word = copy(dd->li_line + 2);
+            else {
+               wl->wl_word = dd->li_line;
+               dd->li_line = 0; /* SJB - prevent line_free() freeing the string (now pointed at by wl->wl_word) */
             }
+            /* Look for set or unset numparams.
+               If either are found then we evaluate these lines immediately
+               so they take effect before netlist parsing */
+            s = wl->wl_word;
+            while(isspace(*s)) s++;	/* step past any white space */
+            if(ciprefix("set", s)) {
+               s+=3;
+            } else if(ciprefix("unset", s)) {
+               s+=5;
+            }
+            if(s!=dd->li_line) {	/* one of the above must have matched */
+               while(isspace(*s)) s++;	/* step past white space */
+               if(ciprefix("numparams", s)) {
+                  cp_evloop(wl->wl_word);
+               }
+            }
+            ld->li_next = dd->li_next;
+            line_free(dd,FALSE);
+         } else if (!*dd->li_line) {
+            /* So blank lines in com files don't get considered as
+             * circuits.  */
+            ld->li_next = dd->li_next;
+            line_free(dd,FALSE);
+         } else {
+            /* lines .width, .four, .plot, .print,. save added to wl_first, removed from deck */
+            /* lines .op, .meas, .tf added to wl_first */
+            inp_casefix(s); /* s: first token from line */
+            inp_casefix(dd->li_line);
+            if (eq(s, ".width")
+               || ciprefix(".four", s)
+               || eq(s, ".plot")
+               || eq(s, ".print")
+               || eq(s, ".save")
+               || eq(s, ".op")
+               || ciprefix(".meas", s)
+               || eq(s, ".tf"))
+            {
+               if (end) {
+                  end->wl_next = alloc(struct wordlist);
+                  end->wl_next->wl_prev = end;
+                  end = end->wl_next;
+               } else
+                  wl_first = end = alloc(struct wordlist);
+               end->wl_word = copy(dd->li_line);
+
+               if (!eq(s, ".op") && !eq(s, ".tf") && !ciprefix(".meas", s)) {
+                  ld->li_next = dd->li_next;
+                  line_free(dd,FALSE);
+               } else
+                  ld = dd;
+            } else
+               ld = dd;
+         }
       }  /* end for(dd=deck->li_next . . . .  */
 
-      /* set temperature if defined to a preliminary variable which may be used in numparam 
-         evaluation */
+      /* set temperature if defined to a preliminary variable which may be used 
+         in numparam evaluation */
       if ( temperature != NULL ) {
-	temperature_value = atof(temperature);
-	s = (char *) &temperature_value;
-	cp_vset("pretemp", VT_REAL, s );
-//	txfree(temperature);
+         temperature_value = atof(temperature);
+         s = (char *) &temperature_value;
+         cp_vset("pretemp", VT_REAL, s );
       }
-#if defined(OUTDECK)
-cp_getvar( "pretemp", VT_REAL, (double *) &testemp );
-printf("test temperature %f\n", testemp);
-#endif
+      if (ft_ngdebug) {
+         cp_getvar( "pretemp", VT_REAL, (double *) &testemp );
+         printf("test temperature %f\n", testemp);
+      }
       /* We are done handling the control stuff.  Now process remainder of deck.
          Go on if there is something left after the controls.*/
       if (deck->li_next) {
-            fprintf(cp_out, "\nCircuit: %s\n\n", tt);
+         fprintf(cp_out, "\nCircuit: %s\n\n", tt);
 #ifdef HAS_WINDOWS
-            SetAnalyse( "Prepare Deck", 0);
+         SetAnalyse( "Prepare Deck", 0);
 #endif
-            /* Now expand subcircuit macros and substitute numparams.*/
-            if (!cp_getvar("nosubckt", VT_BOOL, (char *) &nosubckts))
-                if( (deck->li_next = inp_subcktexpand(deck->li_next)) == NULL ){
-		      line_free(realdeck,TRUE);
-		      line_free(deck->li_actual, TRUE);
-		      return;
-		}
+         /* Now expand subcircuit macros and substitute numparams.*/
+         if (!cp_getvar("nosubckt", VT_BOOL, (char *) &nosubckts))
+         if( (deck->li_next = inp_subcktexpand(deck->li_next)) == NULL ){
+            line_free(realdeck,TRUE);
+            line_free(deck->li_actual, TRUE);
+            return;
+         }
 
-	    /* Now handle translation of spice2c6 POLYs. */
+	      /* Now handle translation of spice2c6 POLYs. */
 #ifdef XSPICE
-            /* Translate all SPICE 2G6 polynomial type sources */
-            deck->li_next = ENHtranslate_poly(deck->li_next);
+         /* Translate all SPICE 2G6 polynomial type sources */
+         deck->li_next = ENHtranslate_poly(deck->li_next);
 
 #endif
 
-	    line_free(deck->li_actual,FALSE);
-            deck->li_actual = realdeck;
+         line_free(deck->li_actual,FALSE);
+         deck->li_actual = realdeck;
 
-	    /* now load deck into ft_curckt -- the current circuit. */
-            inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
+         /* now load deck into ft_curckt -- the current circuit. */
+         inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
 
       }     /*  if (deck->li_next) */
 
       /* look for and set temperature; also store param and .meas statements in circuit struct */
       if (ft_curckt) {
-          ft_curckt->ci_param = NULL;
-          ft_curckt->ci_meas  = NULL;
+         ft_curckt->ci_param = NULL;
+         ft_curckt->ci_meas  = NULL;
       }
 
       for (dd = deck; dd; dd = dd->li_next) {
-	/* get temp after numparam run on deck 
-	if ( ciprefix(".temp", dd->li_line) ) {
-	  s = dd->li_line + 5;
-	  while ( isspace(*s) ) s++;
-	  if ( temperature != NULL ) {
-	    txfree(temperature);
-	  }
-	  temperature = strdup(s);
-	}*/
-	/*
-	   all parameter lines should be sequentially ordered and placed at
-	   beginning of deck 
-	*/
-	if ( ciprefix( ".param", dd->li_line ) ) {
-	  ft_curckt->ci_param = dd;
-	  /* find end of .param statements */
-	  while ( ciprefix( ".param", dd->li_line ) ) { prev_param = dd; dd = dd->li_next; }
-	  prev_card->li_next  = dd;
-	  prev_param->li_next = NULL;
-	}
+         /* all parameter lines should be sequentially ordered and placed at
+	      beginning of deck */
+         if ( ciprefix( ".param", dd->li_line ) ) {
+            ft_curckt->ci_param = dd;
+            /* find end of .param statements */
+            while ( ciprefix( ".param", dd->li_line ) ) { prev_param = dd; dd = dd->li_next; }
+            prev_card->li_next  = dd;
+            prev_param->li_next = NULL;
+         }
 
-	if ( ciprefix( ".meas", dd->li_line ) ) {
-	  if ( cp_getvar( "autostop", VT_BOOL, (bool *) &autostop ) ) {
-	    if ( strstr( dd->li_line, " max " ) || strstr( dd->li_line, " min " ) || strstr( dd->li_line, " avg " ) ||
-		 strstr( dd->li_line, " rms " ) || strstr( dd->li_line, " integ " ) ) {
-	      printf( "Warning: .OPTION AUTOSTOP will not be effective because one of 'max|min|avg|rms|integ' is used in .meas\n" );
-	      printf( "         AUTOSTOP being disabled...\n" );
-	      cp_remvar( "autostop" );
-	    }
-	  }
+         if ( ciprefix( ".meas", dd->li_line ) ) {
+            if ( cp_getvar( "autostop", VT_BOOL, (bool *) &autostop ) ) {
+               if ( strstr( dd->li_line, " max " ) || strstr( dd->li_line, " min " ) || strstr( dd->li_line, " avg " ) ||
+                     strstr( dd->li_line, " rms " ) || strstr( dd->li_line, " integ " ) ) {
+                  printf( "Warning: .OPTION AUTOSTOP will not be effective because one of 'max|min|avg|rms|integ' is used in .meas\n" );
+                  printf( "         AUTOSTOP being disabled...\n" );
+                  cp_remvar( "autostop" );
+               }
+            }
 
-	  if ( curr_meas == NULL ) {
-	    curr_meas = ft_curckt->ci_meas = dd;
-	  }
-	  else {
-	    curr_meas->li_next = dd;
-	    curr_meas = dd;
-	  }
-	  prev_card->li_next = dd->li_next;
-	  curr_meas->li_next = NULL;
-	  dd                 = prev_card;
-	}
-	prev_card = dd;
+            if ( curr_meas == NULL ) {
+               curr_meas = ft_curckt->ci_meas = dd;
+            }
+            else {
+               curr_meas->li_next = dd;
+               curr_meas = dd;
+            }
+            prev_card->li_next = dd->li_next;
+            curr_meas->li_next = NULL;
+            dd                 = prev_card;
+         }
+         prev_card = dd;
       }  //end of for-loop
 
       /* set temperature if defined */
       if ( temperature != NULL ) {
-	temperature_value = atof(temperature);
-	s = (char *) &temperature_value;
-	cp_vset("temp", VT_REAL, s );
-	txfree(temperature);
+         temperature_value = atof(temperature);
+         s = (char *) &temperature_value;
+         cp_vset("temp", VT_REAL, s );
+         txfree(temperature);
       }
 
 #ifdef TRACE
@@ -613,48 +601,41 @@ printf("test temperature %f\n", testemp);
       printf("In inp_spsource, done with dodeck.\n");
 #endif
 
-/* print out the expanded deck into debug-out2.txt */
-#if defined(TRACE) || defined(OUTDECK)
-   {
-    FILE *fdo;
-    struct line *tmp_ptr1 = NULL;   
-   /*debug: print into file*/
-	fdo = fopen("debug-out2.txt", "w");
-    for(tmp_ptr1 = deck; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
-       fprintf(fdo, "%s\n", tmp_ptr1->li_line);        
+   /* print out the expanded deck into debug-out2.txt */
+      if (ft_ngdebug) {
+         FILE *fdo;
+         struct line *tmp_ptr1 = NULL;   
+         /*debug: print into file*/
+	      fdo = fopen("debug-out2.txt", "w");
+         for(tmp_ptr1 = deck; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
+         fprintf(fdo, "%s\n", tmp_ptr1->li_line);        
          ;
-    (void) fclose(fdo);
-   }
-#endif
-
- /*     line_free(deck, TRUE); // have to keep this to allow listing
-      printf("Real deck freed\n"); */ 
+         (void) fclose(fdo);
+      }
 
       /* Now that the deck is loaded, do the commands, if there are any */
       if (controls) {
-	for (end = wl = wl_reverse(controls); wl; wl = wl->wl_next)
-	  cp_evloop(wl->wl_word);
-
-            wl_free(end); 
+         for (end = wl = wl_reverse(controls); wl; wl = wl->wl_next)
+            cp_evloop(wl->wl_word);
+         wl_free(end); 
       }
-    }
+   }
 
-    /* Hitoshi Tanaka */
-    if(dbs) tfree(dbs);
+   if(dbs) tfree(dbs);
 
-    /*saj, to process save commands always, not just in batch mode 
+   /*saj, to process save commands always, not just in batch mode 
      *(breaks encapsulation of frontend and parsing commands slightly)*/
-    ft_dotsaves();
+   ft_dotsaves();
 
-    /* Now reset everything.  Pop the control stack, and fix up the IO
-     * as it was before the source.  */
-    cp_popcontrol();
+   /* Now reset everything.  Pop the control stack, and fix up the IO
+    * as it was before the source.  */
+   cp_popcontrol();
 
-    cp_curin = lastin;
-    cp_curout = lastout;
-    cp_curerr = lasterr;
+   cp_curin = lastin;
+   cp_curout = lastout;
+   cp_curerr = lasterr;
 
-    return;
+   return;
 }
 
 

@@ -354,6 +354,7 @@ extern struct line *inp_getopts();
 extern struct variable *cp_enqvar();
 extern struct variable *cp_uservars();
 extern int cp_userset();
+extern bool ft_ngdebug;
 
 /* parse.c */
 

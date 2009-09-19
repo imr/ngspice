@@ -51,6 +51,7 @@ Author: 1985 Wayne A. Christopher
 
 #include "cpdefs.h"
 #include "ftedefs.h"
+#include "fteext.h"
 #include "dvec.h"
 #include "fteinp.h"
 
@@ -1036,9 +1037,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
    int line_number_orig = 1, line_number_lib = 1, line_number_inc = 1;
    int no_braces = 0; /* number of '{' */
    FILE *newfp;
-#if defined(TRACE) || defined(OUTDECK)
    FILE *fdo;
-#endif    
    struct line *tmp_ptr1 = NULL;    
 
    int i, j;
@@ -1595,16 +1594,16 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
       if (no_braces <  braces_per_line) no_braces = braces_per_line;
    }
 
-#if defined(TRACE) || defined(OUTDECK)
+   if (ft_ngdebug) {
    /*debug: print into file*/
-   fdo = fopen("debug-out.txt", "w");
-   for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
-      fprintf(fdo, "%d  %d  %s\n", tmp_ptr1->li_linenum_orig, tmp_ptr1->li_linenum, tmp_ptr1->li_line);        
+      fdo = fopen("debug-out.txt", "w");
+      for(tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
+         fprintf(fdo, "%d  %d  %s\n", tmp_ptr1->li_linenum_orig, tmp_ptr1->li_linenum, tmp_ptr1->li_line);        
 
-   (void) fclose(fdo);  
-   fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n", 
-      dynLlen, no_braces, dynmaxline);
-#endif
+      (void) fclose(fdo);  
+      fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n", 
+         dynLlen, no_braces, dynmaxline);
+   }
    /* max line length increased by maximum number of parameter substitutions per line 
       times parameter string length (25) */
    dynLlen += no_braces * 25;
