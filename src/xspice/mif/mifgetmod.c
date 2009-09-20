@@ -45,18 +45,14 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
-/* #include "prefix.h" */
-
 #include "ngspice.h"
 
-
 #include <stdio.h>
-#include "inpdefs.h"  /* maschmann : kleinbuchstaben */
-#include "devdefs.h" /* maschmann : kleinbuchstaben */
-//#include "util.h"
-#include "ifsim.h"  /* maschmann : kleinbuchstaben */
-#include "cpstd.h" /* maschmann : kleinbuchstaben */
-#include "fteext.h" /* maschmann : kleinbuchstaben */
+#include "inpdefs.h"
+#include "devdefs.h"
+#include "ifsim.h"
+#include "cpstd.h"
+#include "fteext.h"
 
 #include "mifproto.h"
 #include "mifdefs.h"
@@ -64,8 +60,8 @@ NON-STANDARD FEATURES
 
 #include "suffix.h"
 
-/*  This is the table of all models known to the program.  */
-/*  It is now defined in inpdefs.h  6.19.2003 -- SDB.      */
+/*  This is the table of all models known to the program.  
+    It is now defined in inpmkmod.c.      */
 extern INPmodel *modtab;
 
 extern SPICEdev **DEVices;        /* info about all device types */
@@ -86,13 +82,11 @@ defaulted later by MIFsetup().  The function returns NULL when
 successful, and an error string on failure.
 */
 
-/*  char *MIFgetMod(ckt,name,model,tab) */   /*  former buggy calling method  */
-
 char *MIFgetMod( 
-    void   *ckt,           /* The circuit structure */
-    char      *name,          /* The name of the model to look for */
-    INPmodel  **model,        /* The model found/created */
-    INPtables *tab           /* Table of model info from first pass */
+    void   *ckt,        /* The circuit structure */
+    char      *name,    /* The name of the model to look for */
+    INPmodel  **model,  /* The model found/created */
+    INPtables *tab      /* Table of model info from first pass */
     )
 {
     INPmodel *modtmp;

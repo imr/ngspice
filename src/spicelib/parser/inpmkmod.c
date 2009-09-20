@@ -10,7 +10,7 @@ Author: 1985 Thomas L. Quarles
 #include "inp.h"
 
 /*  global input model table.  */
-INPmodel *modtab;
+INPmodel *modtab = NULL;
 
 /*--------------------------------------------------------------
  * This fcn takes the model name and looks to see if it is already 
@@ -21,35 +21,35 @@ INPmodel *modtab;
 
 int INPmakeMod(char *token, int type, card * line)
 {
-    register INPmodel **i;
+   register INPmodel **i;
 
-    /* First cycle through model table and see if model name 
-       already exists in there.  If it does, just return. */
-    for (i = &modtab; *i != (INPmodel *) NULL; i = &((*i)->INPnextModel)) {
-	if (strcmp((*i)->INPmodName, token) == 0) {
-	    return (OK);
-	}
-    }
+   /* First cycle through model table and see if model name 
+      already exists in there.  If it does, just return. */
+   for (i = &modtab; *i != (INPmodel *) NULL; i = &((*i)->INPnextModel)) {
+      if (strcmp((*i)->INPmodName, token) == 0) {
+         return (OK);
+      }
+   }
 
-    /*  Model name was not already in model table.  Therefore stick 
-	it in the model table. Then reutrn.  */
+   /* Model name was not already in model table.  Therefore stick 
+      it in the model table. Then return.  */
 
 #ifdef TRACE
-    /* debug statement */
-    printf("In INPmakeMod, about to insert new model name = %s . . .\n", token);
+   /* debug statement */
+   printf("In INPmakeMod, about to insert new model name = %s . . .\n", token);
 #endif
 
-    *i = (INPmodel *) MALLOC(sizeof(INPmodel));
-    if (*i == NULL)
-	return (E_NOMEM); 
+   *i = (INPmodel *) MALLOC(sizeof(INPmodel));
+   if (*i == NULL)
+      return (E_NOMEM); 
 
-    (*i)->INPmodName = token;                 /* model name */
-    (*i)->INPmodType = type;                  /* model type */
-    (*i)->INPnextModel = (INPmodel *) NULL;   /* pointer to next model (end of list) */
-    (*i)->INPmodUsed = 0;                     /* model is unused */
-    (*i)->INPmodLine = line;                  /* model line */
-    (*i)->INPmodfast = NULL;
-    return (OK);
+   (*i)->INPmodName = token;                 /* model name */
+   (*i)->INPmodType = type;                  /* model type */
+   (*i)->INPnextModel = (INPmodel *) NULL;   /* pointer to next model (end of list) */
+   (*i)->INPmodUsed = 0;                     /* model is unused */
+   (*i)->INPmodLine = line;                  /* model line */
+   (*i)->INPmodfast = NULL;
+   return (OK);
 }
 
 

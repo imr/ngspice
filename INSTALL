@@ -497,22 +497,14 @@ This file describes the procedures to install ngspice from sources.
  the ngspice binary distribution.
   
  There is currently no installation procedure provided, you may
- however install the executable manually as described below:
+ however install the executable manually as described in the
+ installation tree below.
  
      The directory (visualc) with its files 
  vngspice.sln (project starter) and
  vngspice.vcproj (project contents)
  allows to compile and link ngspice with MS Visual Studio 2008.
  The project is probably not compatible with Visual Studio 2005.
- 
- CIDER and XSPICE are included, but the code models for XSPICE
- (*.cm) are not (yet) made. You may however use the code models
- created with MINGW (which in fact are dlls), as e.g. found in 
- the ngspice binary distribution.
- 
- There is currently no installation procedure provided, you may
- however install the executable manually as described in the
- installation tree below.
  
  /visualc/include contains a dedicated config.h file. It contains the
  preprocessor definitions required to properly compile the code.
