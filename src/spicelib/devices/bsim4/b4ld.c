@@ -660,7 +660,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
           /* Source/drain junction diode DC model begins */
           Nvtms = model->BSIM4vtm * model->BSIM4SjctEmissionCoeff;
 	  if ((here->BSIM4Aseff <= 0.0) && (here->BSIM4Pseff <= 0.0))
-	  {   SourceSatCurrent = 1.0e-14;
+	  {   SourceSatCurrent = 0.0;
 	  }
           else
           {   SourceSatCurrent = here->BSIM4Aseff * model->BSIM4SjctTempSatCurDensity
@@ -758,7 +758,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
           Nvtmd = model->BSIM4vtm * model->BSIM4DjctEmissionCoeff;
 	  if ((here->BSIM4Adeff <= 0.0) && (here->BSIM4Pdeff <= 0.0))
-	  {   DrainSatCurrent = 1.0e-14;
+	  {   DrainSatCurrent = 0.0;
 	  }
           else
           {   DrainSatCurrent = here->BSIM4Adeff * model->BSIM4DjctTempSatCurDensity

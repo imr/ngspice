@@ -1,3 +1,7 @@
+2009-09-22: Paolo Nenzi
+ * b4ld.c, b4temp.c: Updated BSIM4 code to BSIM 4.6.5 
+   according to BSIM 4.6.5 bug report. 
+
 2009-09-20 Holger Vogt
  * inpmkmod.c: fix bug no. 2859013
  * INSTALL corrected

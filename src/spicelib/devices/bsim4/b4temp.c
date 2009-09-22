@@ -1729,12 +1729,19 @@ int Size_Not_Found, i;
               DMDGeff = model->BSIM4dmdg - model->BSIM4dmcgt;
 
 	      if (here->BSIM4sourcePerimeterGiven)
+              { if(here->BSIM4sourcePerimeter == 0.0)
+              here->BSIM4Pseff = 0.0;
+              else if (here->BSIM4sourcePerimeter < 0.0)
+              { printf("Warning: Source Perimeter is specified as negative, it is set to zero.\n");
+              here->BSIM4Pseff = 0.0;}
+              else
 	      {   if (model->BSIM4perMod == 0)
 	              here->BSIM4Pseff = here->BSIM4sourcePerimeter;
 		  else
 		      here->BSIM4Pseff = here->BSIM4sourcePerimeter 
 				       - pParam->BSIM4weffCJ * here->BSIM4nf;
 	      }
+              }
 	      else
 	          BSIM4PAeffGeo(here->BSIM4nf, here->BSIM4geoMod, here->BSIM4min, 
                                     pParam->BSIM4weffCJ, DMCGeff, DMCIeff, DMDGeff,
@@ -1745,11 +1752,18 @@ int Size_Not_Found, i;
 			  
 			  
               if (here->BSIM4drainPerimeterGiven)
+              { if(here->BSIM4drainPerimeter = 0.0)
+              here->BSIM4Pdeff = 0.0;
+              else if(here->BSIM4drainPerimeter < 0.0)
+              { printf("Warning: Drain Perimeter is specified as negative, it is set to zero\n");
+              here->BSIM4Pdeff = 0.0;}
+              else
               {   if (model->BSIM4perMod == 0)
                       here->BSIM4Pdeff = here->BSIM4drainPerimeter;
                   else
                       here->BSIM4Pdeff = here->BSIM4drainPerimeter 
 				       - pParam->BSIM4weffCJ * here->BSIM4nf;
+              }
               }
               else
                   BSIM4PAeffGeo(here->BSIM4nf, here->BSIM4geoMod, here->BSIM4min,
@@ -1840,7 +1854,7 @@ int Size_Not_Found, i;
 
               Nvtms = model->BSIM4vtm * model->BSIM4SjctEmissionCoeff;
               if ((here->BSIM4Aseff <= 0.0) && (here->BSIM4Pseff <= 0.0))
-              {   SourceSatCurrent = 1.0e-14;
+              {   SourceSatCurrent = 0.0;
               }
               else
               {   SourceSatCurrent = here->BSIM4Aseff * model->BSIM4SjctTempSatCurDensity
@@ -1899,7 +1913,7 @@ int Size_Not_Found, i;
 
               Nvtmd = model->BSIM4vtm * model->BSIM4DjctEmissionCoeff;
 	      if ((here->BSIM4Adeff <= 0.0) && (here->BSIM4Pdeff <= 0.0))
-              {   DrainSatCurrent = 1.0e-14;
+              {   DrainSatCurrent = 0.0;
               }
               else
               {   DrainSatCurrent = here->BSIM4Adeff * model->BSIM4DjctTempSatCurDensity
