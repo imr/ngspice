@@ -1,3 +1,7 @@
+2009-09-26 Holger Vogt
+ * windisp.c, compatmode.c, compatmode.h: $Id$ CVS header added
+   (still not working with compatmode)
+
 2009-09-22: Paolo Nenzi
  * b4ld.c, b4temp.c: Updated BSIM4 code to BSIM 4.6.5 
    according to BSIM 4.6.5 bug report. 
@@ -15,7 +19,7 @@
  * inpdefs.h, inpmkmod.c: try to fix bug no. 2859013
    
 2009-09-16 Holger Vogt
- * inpcom.c: .global was diabled, reinstated
+ * inpcom.c: .global was disabled, reinstated
  
 2009-09-15 Holger Vogt
  * winmain.c: will output the time required for the setup stages, 
