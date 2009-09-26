@@ -1,5 +1,5 @@
 2009-09-26 Holger Vogt
- * windisp.c, compatmode.c, compatmode.h: $Id$ CVS header added
+ * windisp.c, compatmode.c, compatmode.h: CVS header added
    (still not working with compatmode)
 
 2009-09-22: Paolo Nenzi
