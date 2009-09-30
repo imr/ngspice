@@ -62,8 +62,9 @@ libfte_la_SOURCES = \
 	com_fft.h	\
 	com_state.c	\
 	com_state.h	\
-	com_strcmp.c	\
-	com_strcmp.h	\
+	com_strcmp.c \
+	com_strcmp.h \
+	com_sysinfo.c \
 	com_unset.c	\
 	com_unset.h	\
 	com_xgraph.c	\

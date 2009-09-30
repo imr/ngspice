@@ -40,7 +40,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;OUTDECK;NGDEBUG"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -817,6 +817,10 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\commands.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\compatmode.h"
 				>
 			</File>
 			<File
@@ -4500,6 +4504,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\frontend\com_sysinfo.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\com_unset.c"
 				>
 			</File>
@@ -4509,6 +4517,10 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\commands.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\compatmode.c"
 				>
 			</File>
 			<File

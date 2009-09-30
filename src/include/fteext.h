@@ -231,6 +231,8 @@ extern void com_spec();
 /* com_fft.c */
 extern void com_fft(wordlist*);
 
+/* com_sysinfo.c */
+extern void com_sysinfo(void);
 /* ginterface.c */
 
 extern bool gi_init();
