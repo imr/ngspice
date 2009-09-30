@@ -40,6 +40,7 @@
 #define TesError int
 #define TES_FAIL 1
 #define TES_SUCCESS 0
+#define TES_INVALID_PARAMS 1
 
 /* system info */
 typedef struct TSI {
@@ -208,15 +209,8 @@ tInt searchInSet(const tInt *set, tInt size, tInt match) {
 	return 0;
 }
 
-TESAPI void TESAPIENTRY tesFreeSystemInfo(TesSystemInfo *info) {
-	if(info != NULL) {
-		free(info->cpuModelName);
-		free(info->osName);
-	}
-}
-
 /* Get system information */
-TESAPI TesError TESAPIENTRY tesCreateSystemInfo(TesSystemInfo *info) {
+TesError tesCreateSystemInfo(TesSystemInfo *info) {
 	FILE *file;
 	TesError error = TES_SUCCESS;
 	
@@ -347,17 +341,17 @@ TESAPI TesError TESAPIENTRY tesCreateSystemInfo(TesSystemInfo *info) {
 		}
 
       /* another test to get number of logical processors */
-      if {info->numLogicalProcessors == 0) {
+      if (info->numLogicalProcessors == 0) {
          char* token;
          char* cpustr = copy(inStr);
          while (cpustr)
-            if cieq(gettok(&cpustr), "processor") {
+            if (cieq(gettok(&cpustr), "processor")) {
                gettok(&cpustr);
                token = gettok(&cpustr);
             }
             
          info->numLogicalProcessors = atoi(token) + 1;
-         tfree cpustr;
+         tfree(cpustr);
       }
 		
 		free(inStr);
