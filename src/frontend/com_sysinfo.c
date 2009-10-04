@@ -116,19 +116,6 @@ void com_sysinfo()
 
 #endif
 
-/*
-Console.WriteLine("Number of CPUs: {0}", Environment.GetEnvironmentVariable _
-    ("NUMBER_OF_PROCESSORS"))
-Console.WriteLine("CPU Architecture: {0}", Environment.GetEnvironmentVariable _
-    ("PROCESSOR_ARCHITECTURE"))
-Console.WriteLine("CPU Identifier: {0}", Environment.GetEnvironmentVariable _
-    ("PROCESSOR_IDENTIFIER"))
-Console.WriteLine("CPU Level: {0}", Environment.GetEnvironmentVariable _
-    ("PROCESSOR_LEVEL"))
-Console.WriteLine("CPU Revision: {0}", Environment.GetEnvironmentVariable _
-    ("PROCESSOR_REVISION"))
-
-*/
    tesFreeSystemInfo(info);
    tfree(info);
 }
@@ -297,8 +284,9 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 			
 			/* get number of logical processors */
 			while((strPtr = strstr(strPtr, matchStrProc)) != NULL) {
-				numProcs++;
+//				numProcs++;
 				strPtr += strlen(matchStrProc);
+				if isblank(*strPtr) numProcs++;
 			}
 			info->numLogicalProcessors = numProcs;
 			physIDs = malloc(numProcs * sizeof(tInt));
@@ -340,11 +328,11 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 			free(physIDs);		
 		}
 
-      /* another test to get number of logical processors */
+      /* another test to get number of logical processors 
       if (info->numLogicalProcessors == 0) {
          char* token;
          char* cpustr = copy(inStr);
-         while (cpustr)
+         while ((cpustr) && !*cpustr)
             if (cieq(gettok(&cpustr), "processor")) {
                gettok(&cpustr);
                token = gettok(&cpustr);
@@ -352,7 +340,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
             
          info->numLogicalProcessors = atoi(token) + 1;
          tfree(cpustr);
-      }
+      }*/
 		
 		free(inStr);
 		fclose(file);
@@ -438,6 +426,9 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 		if(minor == 0) {
 			versionStr = "Windows Vista";
 		}
+		else if(minor == 1) {
+			versionStr = "Windows 7";
+		}		
 		break;
 	default:
 		break;

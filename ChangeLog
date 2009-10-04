@@ -1,3 +1,8 @@
+2009-10-04 Holger Vogt
+ * configure.in, /visualc/include/config.h, vngspice.vcproj:
+   version 20
+ * com_sysinfo.c: update for Cygwin  
+
 2009-10-04: Dietmar Warning
  * com_sysinfo.c, ftext.h: sys_memory struct w/o static type, sysinfo w/o void Parameter
  * inpcom.c, gnuplot.c, device.c, inp.c, resource.c, subckt.c, 
