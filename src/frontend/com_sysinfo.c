@@ -51,9 +51,9 @@ typedef struct TSI {
 } TesSystemInfo;
 
 /* memory info */
-static struct sys_memory {
-   unsigned long int size;    /* Total memory size */
-   unsigned long int free;    /* Free memory */
+struct sys_memory {
+   unsigned long int size_m;  /* Total memory size */
+   unsigned long int free_m;  /* Free memory */
    unsigned long int swap_t;  /* Swap total */
    unsigned long int swap_f;  /* Swap free */
 };
@@ -83,7 +83,7 @@ static void tesFreeSystemInfo(TesSystemInfo *info) {
 }
 
 /* print system info */
-void com_sysinfo(void)
+void com_sysinfo()
 {
    int errorcode;
    TesSystemInfo* info;
@@ -107,11 +107,11 @@ void com_sysinfo(void)
 	
         /* get_sysmem returns bytes */
 	fprintf(cp_out, "Total DRAM available = ");
-	fprintmem(cp_out, mem_t_act.size);
+	fprintmem(cp_out, mem_t_act.size_m);
 	fprintf(cp_out, ".\n");
 	
 	fprintf(cp_out, "DRAM currently available = ");
-	fprintmem(cp_out, mem_t_act.free);
+	fprintmem(cp_out, mem_t_act.free_m);
 	fprintf(cp_out, ".\n\n");
 
 #endif
@@ -160,13 +160,13 @@ static size_t get_sysmem(struct sys_memory *memall) {
    if (match == NULL) /* not found */
       return 0;
    sscanf (match, "MemTotal: %ld", &mem_got);
-   memall->size = mem_got*1024; /* 1MB = 1024KB */
+   memall->size_m = mem_got*1024; /* 1MB = 1024KB */
    /* Search for string "MemFree" */
    match = strstr (buffer, "MemFree");
    if (match == NULL) /* not found */
       return 0;
    sscanf (match, "MemFree: %ld", &mem_got);
-   memall->free = mem_got*1024; /* 1MB = 1024KB */  
+   memall->free_m = mem_got*1024; /* 1MB = 1024KB */  
    /* Search for string "SwapTotal" */
    match = strstr (buffer, "SwapTotal");
    if (match == NULL) /* not found */
@@ -372,16 +372,16 @@ static size_t get_sysmem(struct sys_memory *memall) {
    MEMORYSTATUSEX ms;
    ms.dwLength = sizeof(MEMORYSTATUSEX);
    GlobalMemoryStatusEx( &ms);
-   memall->size = ms.ullTotalPhys; 
-   memall->free = ms.ullAvailPhys;
+   memall->size_m = ms.ullTotalPhys; 
+   memall->free_m = ms.ullAvailPhys;
    memall->swap_t = ms.ullTotalPageFile;
    memall->swap_f = ms.ullAvailPageFile;
 #else
    MEMORYSTATUS ms;
    ms.dwLength = sizeof(MEMORYSTATUS);
    GlobalMemoryStatus( &ms);
-   memall->size = ms.dwTotalPhys; 
-   memall->free = ms.dwAvailPhys;
+   memall->size_m = ms.dwTotalPhys; 
+   memall->free_m = ms.dwAvailPhys;
    memall->swap_t = ms.dwTotalPageFile;
    memall->swap_f = ms.dwAvailPageFile;
 #endif /*_WIN32_WINNT 0x0500*/

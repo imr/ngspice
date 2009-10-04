@@ -232,7 +232,7 @@ extern void com_spec();
 extern void com_fft(wordlist*);
 
 /* com_sysinfo.c */
-extern void com_sysinfo(void);
+extern void com_sysinfo();
 /* ginterface.c */
 
 extern bool gi_init();
