@@ -1,3 +1,7 @@
+2009-10-04: Dietmar Warning
+ * b4ld.c, b4temp.c: better formatting to find the typo in 
+   b4temp.c, line 1758: needs real compare (==) instead of assignment (=)
+
 2009-10-01 Holger Vogt
  * /frontend com_sysinfo.c, commands.c, fteext.h, makefile.am:
    command sysinfo added
