@@ -1,4 +1,10 @@
 2009-10-04: Dietmar Warning
+ * com_sysinfo.c, ftext.h: sys_memory struct w/o static type, sysinfo w/o void Parameter
+ * inpcom.c, gnuplot.c, device.c, inp.c, resource.c, subckt.c, 
+   com_fft.c, com_gnuplot.c, com_xgraph.c: initialize local variables
+ * b4soild.c, line 6394: Cbg1 wrong assignment
+
+2009-10-04: Dietmar Warning
  * b4ld.c, b4temp.c: better formatting to find the typo in 
    b4temp.c, line 1758: needs real compare (==) instead of assignment (=)
 
