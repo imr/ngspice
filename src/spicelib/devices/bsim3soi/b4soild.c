@@ -6391,7 +6391,7 @@ noff = n * pParam->B4SOInoff;
 /* v3.1 */
                          if (here->B4SOIsoiMod == 2) /* v3.2 */ /* ideal FD */
                          {
-                            qbulk = Cbg1 = Cbd1 = Cbb1 = Cbg1 = Cbg12 = Cbb12 = Cbd12 = 0;
+                            qbulk = Cbg1 = Cbd1 = Cbb1 = Cbg12 = Cbb12 = Cbd12 = 0;
                          }
                          else /* soiMod = 0 or 1 */
                          {
