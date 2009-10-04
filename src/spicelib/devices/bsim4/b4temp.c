@@ -1,5 +1,5 @@
 /**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
-/**** BSIM4.6.4 Update ngspice 08/22/2009 ****/
+/**** BSIM4.6.5 Update ngspice 09/22/2009 ****/
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
  * File: b4temp.c of BSIM4.6.3.
@@ -1728,56 +1728,62 @@ int Size_Not_Found, i;
               DMCIeff = model->BSIM4dmci;
               DMDGeff = model->BSIM4dmdg - model->BSIM4dmcgt;
 
-	      if (here->BSIM4sourcePerimeterGiven)
-              { if(here->BSIM4sourcePerimeter == 0.0)
-              here->BSIM4Pseff = 0.0;
-              else if (here->BSIM4sourcePerimeter < 0.0)
-              { printf("Warning: Source Perimeter is specified as negative, it is set to zero.\n");
-              here->BSIM4Pseff = 0.0;}
-              else
-	      {   if (model->BSIM4perMod == 0)
-	              here->BSIM4Pseff = here->BSIM4sourcePerimeter;
-		  else
-		      here->BSIM4Pseff = here->BSIM4sourcePerimeter 
-				       - pParam->BSIM4weffCJ * here->BSIM4nf;
-	      }
-              }
-	      else
-	          BSIM4PAeffGeo(here->BSIM4nf, here->BSIM4geoMod, here->BSIM4min, 
-                                    pParam->BSIM4weffCJ, DMCGeff, DMCIeff, DMDGeff,
-				    &(here->BSIM4Pseff), &dumPd, &dumAs, &dumAd);
-              if (here->BSIM4Pseff < 0.0) /*4.6.2*/
-		      here->BSIM4Pseff = 0.0;
-			  
-			  
-			  
-              if (here->BSIM4drainPerimeterGiven)
-              { if(here->BSIM4drainPerimeter = 0.0)
-              here->BSIM4Pdeff = 0.0;
-              else if(here->BSIM4drainPerimeter < 0.0)
-              { printf("Warning: Drain Perimeter is specified as negative, it is set to zero\n");
-              here->BSIM4Pdeff = 0.0;}
-              else
-              {   if (model->BSIM4perMod == 0)
-                      here->BSIM4Pdeff = here->BSIM4drainPerimeter;
+              if (here->BSIM4sourcePerimeterGiven)
+              {
+                if(here->BSIM4sourcePerimeter == 0.0)
+                  here->BSIM4Pseff = 0.0;
+                else if (here->BSIM4sourcePerimeter < 0.0)
+                { 
+                  printf("Warning: Source Perimeter is specified as negative, it is set to zero.\n");
+                  here->BSIM4Pseff = 0.0;
+                }
+                else
+                { 
+                  if (model->BSIM4perMod == 0)
+                    here->BSIM4Pseff = here->BSIM4sourcePerimeter;
                   else
-                      here->BSIM4Pdeff = here->BSIM4drainPerimeter 
-				       - pParam->BSIM4weffCJ * here->BSIM4nf;
+                    here->BSIM4Pseff = here->BSIM4sourcePerimeter 
+                                       - pParam->BSIM4weffCJ * here->BSIM4nf;
+                }
               }
+              else
+                  BSIM4PAeffGeo(here->BSIM4nf, here->BSIM4geoMod, here->BSIM4min, 
+                                pParam->BSIM4weffCJ, DMCGeff, DMCIeff, DMDGeff,
+                                &(here->BSIM4Pseff), &dumPd, &dumAs, &dumAd);
+              if (here->BSIM4Pseff < 0.0) /*4.6.2*/
+                      here->BSIM4Pseff = 0.0;
+                          
+              if (here->BSIM4drainPerimeterGiven)
+              { 
+                if(here->BSIM4drainPerimeter == 0.0)
+                  here->BSIM4Pdeff = 0.0;
+                else if (here->BSIM4drainPerimeter < 0.0)
+                { 
+                  printf("Warning: Drain Perimeter is specified as negative, it is set to zero\n");
+                  here->BSIM4Pdeff = 0.0;
+                }
+                else
+                {   
+                  if (model->BSIM4perMod == 0)
+                    here->BSIM4Pdeff = here->BSIM4drainPerimeter;
+                  else
+                    here->BSIM4Pdeff = here->BSIM4drainPerimeter 
+                                       - pParam->BSIM4weffCJ * here->BSIM4nf;
+                }
               }
               else
                   BSIM4PAeffGeo(here->BSIM4nf, here->BSIM4geoMod, here->BSIM4min,
-                                    pParam->BSIM4weffCJ, DMCGeff, DMCIeff, DMDGeff,
-				    &dumPs, &(here->BSIM4Pdeff), &dumAs, &dumAd);
-               if (here->BSIM4Pdeff < 0.0) /*4.6.2*/
-		      here->BSIM4Pdeff = 0.0;
-			  
+                                pParam->BSIM4weffCJ, DMCGeff, DMCIeff, DMDGeff,
+                                &dumPs, &(here->BSIM4Pdeff), &dumAs, &dumAd);
+              if (here->BSIM4Pdeff < 0.0) /*4.6.2*/
+                      here->BSIM4Pdeff = 0.0;
+                          
               if (here->BSIM4sourceAreaGiven)
                   here->BSIM4Aseff = here->BSIM4sourceArea;
               else
                   BSIM4PAeffGeo(here->BSIM4nf, here->BSIM4geoMod, here->BSIM4min,
                                     pParam->BSIM4weffCJ, DMCGeff, DMCIeff, DMDGeff,
-				    &dumPs, &dumPd, &(here->BSIM4Aseff), &dumAd);
+                                    &dumPs, &dumPd, &(here->BSIM4Aseff), &dumAd);
 
               if (here->BSIM4drainAreaGiven)
                   here->BSIM4Adeff = here->BSIM4drainArea;
@@ -1799,7 +1805,7 @@ int Size_Not_Found, i;
                     BSIM4RdseffGeo(here->BSIM4nf, here->BSIM4geoMod,
                       here->BSIM4rgeoMod, here->BSIM4min,
                       pParam->BSIM4weffCJ, model->BSIM4sheetResistance,
-                  DMCGeff, DMCIeff, DMDGeff, 1, &(here->BSIM4sourceConductance));
+                      DMCGeff, DMCIeff, DMDGeff, 1, &(here->BSIM4sourceConductance));
                  } else
                  {
                     here->BSIM4sourceConductance = 0.0;
@@ -1830,7 +1836,7 @@ int Size_Not_Found, i;
                     BSIM4RdseffGeo(here->BSIM4nf, here->BSIM4geoMod,
                       here->BSIM4rgeoMod, here->BSIM4min,
                       pParam->BSIM4weffCJ, model->BSIM4sheetResistance,
-                  DMCGeff, DMCIeff, DMDGeff, 0, &(here->BSIM4drainConductance));
+                      DMCGeff, DMCIeff, DMDGeff, 0, &(here->BSIM4drainConductance));
                  } else
                  {
                     here->BSIM4drainConductance = 0.0;

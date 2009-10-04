@@ -1,5 +1,5 @@
 /**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008****/
-/**** BSIM4.6.4 Update ngspice 08/22/2009 ****/
+/**** BSIM4.6.5 Update ngspice 09/22/2009 ****/
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
  * File: b4ld.c of BSIM4.6.2.
