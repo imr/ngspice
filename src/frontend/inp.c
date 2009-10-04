@@ -318,7 +318,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     */
 {
    struct line *deck, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
-   struct line *realdeck, *options = NULL, *curr_meas = NULL;
+   struct line *realdeck = NULL, *options = NULL, *curr_meas = NULL;
    char *tt = NULL, name[BSIZE_SP], *s, *t, *temperature = NULL;
    double testemp = 0.0;
    bool nosubckts, commands = FALSE;
@@ -654,7 +654,7 @@ inp_dodeck(
     struct circ *ct;
     struct line *dd;
     char *ckt, *s;
-    INPtables *tab;
+    INPtables *tab = NULL;
     struct variable *eev = NULL;
     wordlist *wl;
     bool noparse, ii;

@@ -24,7 +24,7 @@ com_fft(wordlist *wl)
     double  *freq, *win, *time;
     double  delta_t, span;
     int     fpts, i, j, tlen, ngood;
-    struct dvec  *f, *vlist, *lv, *vec;
+    struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *names, *first_name;
 
     float *reald, *imagd;

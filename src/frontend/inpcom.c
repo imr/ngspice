@@ -1021,7 +1021,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
    int             ipc_len;
 #endif
    char *copys=NULL, big_buff2[5000];
-   char *global_copy = NULL, keep_char;
+/*   char *global_copy = NULL; */
+   char keep_char;
    int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
    int line_number_orig = 1, line_number_lib = 1, line_number_inc = 1;
    int no_braces = 0; /* number of '{' */

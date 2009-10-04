@@ -868,7 +868,7 @@ com_altermod(wordlist *wl)
 void
 com_alter_common(wordlist *wl, int do_model)
 {
-    wordlist *eqword, *words;
+    wordlist *eqword = NULL, *words;
     char *dev, *p;
     char *param;
     struct dvec *dv;
@@ -878,7 +878,7 @@ com_alter_common(wordlist *wl, int do_model)
     char *argument;
     char **arglist;
     int i=0, step=0, n, wlen, maxelem=3;
-    wordlist *wl2, *wlin, *wleq;
+    wordlist *wl2 = NULL, *wlin, *wleq;
     bool eqfound = FALSE, vecfound = FALSE;
 
     if (!ft_curckt) {

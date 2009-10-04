@@ -13,7 +13,7 @@
 void
 com_xgraph(wordlist *wl)
 {
-    char *fname;
+    char *fname = NULL;
     bool tempf = FALSE;
 
     if (wl) {

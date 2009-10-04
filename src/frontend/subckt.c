@@ -144,7 +144,7 @@ inp_subcktexpand(struct line *deck)
 {
     struct line *ll, *c;
     char *s;
-    int ok;
+    int ok = 0;
     char *t;
     int i;
     wordlist *wl;
@@ -320,7 +320,7 @@ inp_subcktexpand(struct line *deck)
          if (ciprefix(invoke, c->li_line)) {
             fprintf(cp_err, "Error: unknown subckt: %s\n", c->li_line);
             if ( use_numparams ) {
-               ok= ok && nupa_signal(NUPAEVALDONE, NULL);
+               ok = ok && nupa_signal(NUPAEVALDONE, NULL);
             }
             return NULL;
          }
@@ -374,7 +374,7 @@ doit(struct line *deck)
 {
     struct line *c, *last, *lc, *lcc;
     struct line *savenext;
-    struct subs *sssfree, *sss = (struct subs *) NULL, *ks;   /*  *sss and *ks temporarily hold decks to substitute  */
+    struct subs *sssfree = (struct subs *) NULL, *sss = (struct subs *) NULL, *ks;   /*  *sss and *ks temporarily hold decks to substitute  */
     char *s, *t, *scname, *subname;
     int nest, numpasses = MAXNEST, i;
     bool gotone;

@@ -26,7 +26,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 {
 
     FILE *file, *file_data;
-    struct dvec *v, *scale;
+    struct dvec *v, *scale = NULL;
     double xval, yval;
     int i, numVecs, linewidth;
     bool xlog, ylog, nogrid, markers;

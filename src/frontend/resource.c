@@ -201,7 +201,7 @@ printres(char *name)
 #endif    
     bool yy = FALSE;
     static long lastsec = 0, lastusec = 0;
-    struct variable *v, *vfree;
+    struct variable *v, *vfree = NULL;
     char   *cpu_elapsed;
 
 #ifdef XSPICE
