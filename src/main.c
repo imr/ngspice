@@ -78,7 +78,7 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
-char history_file[512];
+char history_file[512] = {'\0'};
 static char *application_name;
 #endif  /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
 
