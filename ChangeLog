@@ -1,3 +1,6 @@
+2009-10-04 Holger Vogt
+ * main.c: bug no. 2874418, initialize global variable history_file
+
 2009-10-10 Robert Larice
  * ifeval.c, inpptree.c, inpptree.h, ptfuncs.c: PWL functionality for B sources
 
