@@ -82,7 +82,9 @@ static struct func {
     { "uramp",  PTF_URAMP,  PTuramp } ,
     { "-",      PTF_UMINUS, PTuminus },
     /* MW. cif function added */
-    { "u2",	PTF_USTEP2, PTustep2}
+    { "u2",	PTF_USTEP2, PTustep2},
+    { "pwl",	PTF_PWL,    PTpwl},
+    { "pwl_derivative",	PTF_PWL_DERIVATIVE, PTpwl_derivative}
 } ;
 
 #define NUM_FUNCS (sizeof (funcs) / sizeof (struct func))
@@ -385,6 +387,15 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             arg1 = mkcon((double) - 1.0);
             break;
 
+        case PTF_PWL: /* PWL(var, x1, y1, x2, y2, ... a const list) */
+            arg1 = mkf(PTF_PWL_DERIVATIVE, p->left);
+            arg1->data = p->data;
+            break;
+
+        case PTF_PWL_DERIVATIVE: /* d/dvar PWL(var, ...) */
+            arg1 = mkcon((double) 0.0);
+            break;
+
 	default:
 	    fprintf(stderr, "Internal Error: bad function # %d\n",
 		    p->funcnum);
@@ -528,6 +539,8 @@ static INPparseNode *mkf(int type, INPparseNode * arg)
     p->function = funcs[i].funcptr;
     p->funcname = funcs[i].name;
 
+    p->data = NULL;
+
     return (p);
 }
 
@@ -551,6 +564,7 @@ static int PTcheck(INPparseNode * p)
     case PT_TIMES:
     case PT_DIVIDE:
     case PT_POWER:
+    case PT_COMMA:
 	return (PTcheck(p->left) && PTcheck(p->right));
 
     default:
@@ -574,7 +588,7 @@ static char prectable[11][11] = {
 /* * */ {G, G, G, G, G, L, L, L, G, L, G},
 /* / */ {G, G, G, G, G, L, L, L, G, L, G},
 /* ^ */ {G, G, G, G, G, L, L, L, G, L, G},
-/* u-*/ {G, G, G, G, G, G, G, L, G, L, R},
+/* u-*/ {G, G, G, G, G, G, G, L, G, L, G},
 /* ( */ {R, L, L, L, L, L, L, L, E, L, L},
 /* ) */ {G, G, G, G, G, G, G, R, G, R, G},
 /* v */ {G, G, G, G, G, G, G, G, G, R, G},
@@ -743,6 +757,89 @@ static INPparseNode *mkbnode(int opnum, INPparseNode * arg1,
     return (p);
 }
 
+/*
+ * prepare_PTF_PWL()
+ *   for the PWL(expr, points...) function
+ *     collect the given points, which are expected to be given
+ *       literal constant
+ *   strip them from the INPparseNode
+ *     and pass them as an opaque struct alongside the
+ *     INPparseNode for the PWL(expr) function call
+ *
+ * Note:
+ *  the functionINPgetTree() is missing a recursive decending simplifier
+ *  as a consequence we can meet a PTF_UMINUS->PTF_CONSTANT
+ *    instead of a plain PTF_CONSTANT here
+ *  of course this can get arbitrarily more complex
+ *    for example PTF_TIMES -> PTF_CONSTANT, PTF_CONSTANT
+ *      etc.
+ *  currently we support only PFT_CONST and PTF_UMINUS->PTF_CONST
+ */
+
+#define Breakpoint do { __asm__ __volatile__ ("int $03"); } while(0)
+
+static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
+{
+    INPparseNode *w;
+    struct pwldata { int n; double vals[0]; } *data;
+    int i;
+
+    if (p->funcnum != PTF_PWL) {
+        fprintf(stderr, "MY-INFO: %s, very unexpected\n", __FUNCTION__);
+        exit(1);
+    }
+
+    fprintf(stderr, "MY-INFO: %s  building a PTF_PWL\n", __FUNCTION__);
+
+    i = 0;
+    for(w = p->left; w->type == PT_COMMA; w = w->left)
+        i++;
+
+    if (i<2 || (i%1)) {
+        fprintf(stderr, "Error: PWL(expr, points...) needs an even and >=2 number of constant args\n");
+        return (NULL);
+    }
+
+    data = (struct pwldata *)
+        MALLOC(sizeof(struct pwldata) + i*sizeof(double));
+
+    data->n = i;
+
+    for (w = p->left ; --i >= 0 ; w = w->left)
+        if (w->right->type == PT_CONSTANT) {
+            data->vals[i] = w->right->constant;
+        } else if (w->right->type == PT_FUNCTION &&
+                   w->right->funcnum == PTF_UMINUS &&
+                   w->right->left->type == PT_CONSTANT) {
+            data->vals[i] = - w->right->left->constant;
+        } else {
+            fprintf(stderr, "MY-ERROR: %s, not a constant\n", __FUNCTION__);
+            fprintf(stderr, "   type = %d\n", w->right->type);
+            //Breakpoint;
+            fprintf(stderr, "Error: PWL(expr, points...) only *literal* points are supported\n");
+            return (NULL);
+        }
+
+    for (i = 0 ; i < data->n ; i += 2)
+        fprintf(stderr, "  (%lf %lf)\n", data->vals[i], data->vals[i+1]);
+
+    for (i = 2 ; i < data->n ; i += 2)
+        if(data->vals[i-2] >= data->vals[i]) {
+            fprintf(stderr, "Error: PWL(expr, points...) the abscissa of points must be ascending\n");
+            return (NULL);
+        }
+
+    /* strip all but the first arg,
+     *   and attach the rest as opaque data to the INPparseNode
+     */
+
+    p->left = w;
+    p->data = (void *) data;
+
+    return (p);
+}
+
+
 static INPparseNode *mkfnode(char *fname, INPparseNode * arg)
 {
     int i;
@@ -845,6 +942,10 @@ static INPparseNode *mkfnode(char *fname, INPparseNode * arg)
 	p->funcname = funcs[i].name;
 	p->funcnum = funcs[i].number;
 	p->function = funcs[i].funcptr;
+        p->data = NULL;
+
+        if(p->funcnum == PTF_PWL)
+            p = prepare_PTF_PWL(p);
     }
 
     return (p);

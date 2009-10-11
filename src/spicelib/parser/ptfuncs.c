@@ -244,3 +244,66 @@ PTuminus(double arg)
     return (- arg);
 }
 
+double
+PTpwl(double arg, void *data)
+{
+  struct pwldata { int n; double vals[0]; } *thing = data;
+
+  //  fprintf(stderr, "%s called, data=%p, n=%d\n", __FUNCTION__, data, thing->n);
+  //  for(i=0; i<thing->n; i++)
+  //    fprintf(stderr, " %lf", thing->vals[i]);
+  //  fprintf(stderr, "\n");
+
+  double y;
+
+  int k0 = 0;
+  int k1 = thing->n/2 - 1;
+
+  while(k1-k0 > 1) {
+    int k = (k0+k1)/2;
+    if(thing->vals[2*k] > arg)
+      k1 = k;
+    else
+      k0 = k;
+  }
+
+  y = thing->vals[2*k0+1] +
+    (thing->vals[2*k1+1] - thing->vals[2*k0+1]) *
+    (arg - thing->vals[2*k0]) / (thing->vals[2*k1] - thing->vals[2*k0]);
+
+  // fprintf(stderr, "foo: interval %lf %lf %lf -> %lf\n", thing->vals[2*k0], arg, thing->vals[2*k1], y);
+
+  return y;
+}
+
+double
+PTpwl_derivative(double arg, void *data)
+{
+  struct pwldata { int n; double vals[0]; } *thing = data;
+
+  //  fprintf(stderr, "%s called, data=%p, n=%d\n", __FUNCTION__, data, thing->n);
+  //  for(i=0; i<thing->n; i++)
+  //    fprintf(stderr, " %lf", thing->vals[i]);
+  //  fprintf(stderr, "\n");
+
+  double y;
+
+  int k0 = 0;
+  int k1 = thing->n/2 - 1;
+
+  while(k1-k0 > 1) {
+    int k = (k0+k1)/2;
+    if(thing->vals[2*k] > arg)
+      k1 = k;
+    else
+      k0 = k;
+  }
+
+  y =
+    (thing->vals[2*k1+1] - thing->vals[2*k0+1]) /
+    (thing->vals[2*k1]   - thing->vals[2*k0]);
+
+  // fprintf(stderr, "bar: interval %lf %lf %lf -> %lf\n", thing->vals[2*k0], arg, thing->vals[2*k1], y);
+
+  return y;
+}

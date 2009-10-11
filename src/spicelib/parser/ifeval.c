@@ -74,7 +74,10 @@ PTeval(INPparseNode * tree, double gmin, double *res, double *vals)
 	err = PTeval(tree->left, gmin, &r1, vals);
 	if (err != OK)
 	    return (err);
-	*res = (*tree->function) (r1);
+        if(tree->data == NULL)
+            *res = (*tree->function) (r1);
+        else
+            *res = (*tree->function) (r1, tree->data);
 	if (*res == HUGE) {
 	    fprintf(stderr, "Error: %g out of range for %s\n",
 		    r1, tree->funcname);

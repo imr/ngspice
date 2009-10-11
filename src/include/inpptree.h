@@ -51,6 +51,7 @@ typedef struct INPparseNode {
     char *funcname;         /* If INP_FUNCTION, name of function, */
     int funcnum;            /* ... one of PTF_*, */
     double (*function)();       /* ... and pointer to the function. */
+    void *data;                 /* private data for certain functions, currently PTF_PWL */
 } INPparseNode;
 
 /* These are the possible types of nodes we can have in the parse tree.  The
@@ -94,6 +95,8 @@ typedef struct INPparseNode {
 #define PTF_URAMP	20
 /* MW. PTF_CIF - next function */
 #define PTF_USTEP2	21
+#define PTF_PWL		22
+#define PTF_PWL_DERIVATIVE	23
 
 
 /* The following things are used by the parser -- these are the token types the
@@ -160,6 +163,8 @@ extern double PTtanh();
 extern double PTustep();
 /* MW. PTcif declaration */
 extern double PTustep2();
+extern double PTpwl();
+extern double PTpwl_derivative();
 extern double PTuramp();
 extern double PTuminus();
 
