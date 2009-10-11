@@ -25,7 +25,7 @@ typedef struct sHSM1instance {
   struct sHSM1instance *HSM1nextInstance;  /* pointer to next instance of 
                                               current model*/
   IFuid HSM1name; /* pointer to character string naming this instance */
-/*DW next is additional in spice */
+/*DW next is additional in ngspice */
   int HSM1owner;  /* number of owner process */
   int HSM1states; /* index into state table for this device */
 
