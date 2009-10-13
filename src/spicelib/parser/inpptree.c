@@ -157,8 +157,6 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 {
     INPparseNode *arg1 = NULL, *arg2, *newp;
 
-/* printf("differentiating: "); printTree(p); printf(" wrt var %d\n", varnum);*/
-
     switch (p->type) {
     case PT_CONSTANT:
 	newp = mkcon((double) 0);
@@ -415,7 +413,6 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	break;
     }
 
-/* printf("result is: "); printTree(newp); printf("\n"); */
     return (newp);
 }
 
@@ -871,7 +868,6 @@ static INPparseNode *mkfnode(char *fname, INPparseNode * arg)
 	    p = mkb(PT_MINUS, mkfnode(fname, arg->left),
 		    mkfnode(fname, arg->right));
 	} else {
-	    /* printf("getting a node called '%s'\n", name); */
 	    INPtermInsert(circuit, &name, tables, &(temp.nValue));
 	    for (i = 0; i < numvalues; i++)
 		if ((types[i] == IF_NODE) && (values[i].nValue ==
@@ -905,7 +901,6 @@ static INPparseNode *mkfnode(char *fname, INPparseNode * arg)
 	    fprintf(stderr, "Error: badly formed branch current\n");
 	    return (NULL);
 	}
-/* printf("getting a device called '%s'\n", name); */
 	INPinsert(&name, tables);
 	for (i = 0; i < numvalues; i++)
 	    if ((types[i] == IF_INSTANCE) && (values[i].uValue ==
