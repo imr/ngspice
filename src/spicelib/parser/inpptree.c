@@ -4,8 +4,6 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <ctype.h>
 #include "ifsim.h"
 #include "iferrmsg.h"
 #include "inpdefs.h"
@@ -33,7 +31,9 @@ static int numvalues;
 static void *circuit;
 static INPtables *tables;
 
-
+#if defined (_MSC_VER)
+# define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
+#endif
 
 extern IFsimulator *ft_sim;	/* XXX */
 
@@ -782,11 +782,11 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
     int i;
 
     if (p->funcnum != PTF_PWL) {
-        fprintf(stderr, "MY-INFO: %s, very unexpected\n", __FUNCTION__);
+        fprintf(stderr, "PWL-INFO: %s, very unexpected\n", __func__);
         exit(1);
     }
 
-    fprintf(stderr, "MY-INFO: %s  building a PTF_PWL\n", __FUNCTION__);
+    fprintf(stderr, "PWL-INFO: %s  building a PTF_PWL\n", __func__);
 
     i = 0;
     for(w = p->left; w->type == PT_COMMA; w = w->left)
@@ -810,7 +810,7 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
                    w->right->left->type == PT_CONSTANT) {
             data->vals[i] = - w->right->left->constant;
         } else {
-            fprintf(stderr, "MY-ERROR: %s, not a constant\n", __FUNCTION__);
+            fprintf(stderr, "PWL-ERROR: %s, not a constant\n", __func__);
             fprintf(stderr, "   type = %d\n", w->right->type);
             //Breakpoint;
             fprintf(stderr, "Error: PWL(expr, points...) only *literal* points are supported\n");
