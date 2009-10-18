@@ -30,11 +30,12 @@ int cimatch(register char *p, register char *s);
 #endif
 
 #ifndef HAVE_BCOPY
-
 void bcopy(const void *from, void *to, size_t num);
-void bzero(void *ptr, size_t num);
+#endif
 
-#endif /* HAVE_BCOPY */
+#ifndef HAVE_BZERO
+void bzero(void *ptr, size_t num);
+#endif
 
 bool isquote(char ch);
 bool is_arith_char(char c);

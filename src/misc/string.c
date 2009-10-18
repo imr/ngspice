@@ -407,7 +407,6 @@ stripWhiteSpacesInsideParens(char *str)
 
 
 #ifndef HAVE_BCOPY
-
 #ifndef bcopy
 void
 bcopy(const void *vfrom, void *vto, size_t num)
@@ -419,7 +418,9 @@ bcopy(const void *vfrom, void *vto, size_t num)
     return;
 }
 #endif
+#endif
 
+#ifndef HAVE_BZERO
 #ifndef bzero
 void
 bzero(void *vptr, size_t num)
@@ -429,7 +430,6 @@ bzero(void *vptr, size_t num)
         *ptr++ = '\0';
     return;
 }
-
 #endif
 #endif
 
