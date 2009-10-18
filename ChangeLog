@@ -1,3 +1,7 @@
+2009-10-18: Dietmar Warning
+ * inpptree.c: correct __func__ usage for different compiler
+ * string.c, stringutil.h: separate bcopy and bzero providing
+
 2009-10-18 Holger Vogt
  * main.c, winmain.c: graceful shutdown for MS Windows, "quit" button added
    conf.c, vngspice.vcproj: build date actualization modified
