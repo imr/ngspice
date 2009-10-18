@@ -4,6 +4,7 @@
 	Version="9,00"
 	Name="vngspice"
 	ProjectGUID="{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}"
+	RootNamespace="vngspice"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -23,9 +24,15 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description=""
+				CommandLine=""
+				ExcludedFromBuild="false"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description="Custom defined Build: Recompile conf.c with actual date"
+				CommandLine="del $(IntDir)\conf.obj"
+				Outputs="$(IntDir)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -111,6 +118,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description="Custom defined Build: Recompile conf.c with actual date"
+				CommandLine="del $(IntDir)\conf.obj"
+				Outputs="$(IntDir)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"

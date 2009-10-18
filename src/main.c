@@ -87,7 +87,7 @@ static char *application_name;
 
 /* Main options */
 static bool ft_servermode = FALSE;
-static bool ft_batchmode = FALSE;
+bool ft_batchmode = FALSE;
 
 /* Frontend options */
 bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. TRUE = we've been interrupted. */
@@ -95,9 +95,10 @@ bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt.
 char *ft_rawfile = "rawspice.raw";
 
 #ifdef HAS_WINDOWS
-extern void winmessage(char* new_msg); /* display a message box */
+extern void winmessage(char* new_msg); /* display a message box (defined in winmain.c)*/
+extern void SetSource( char * Name);   /* display the source file name in the source window */
 bool oflag = FALSE;         /* Output over redefined I/O functions */
-FILE *flogp;                /* log file ('-o logfile' command line option) */
+FILE *flogp = NULL;                /* log file ('-o logfile' command line option) */
 #endif /* HAS_WINDOWS */
 
 /* Frontend and circuit options */
@@ -1058,7 +1059,11 @@ bot:
             /* Copy the input file name which otherwise will be lost due to the
                temporary file */
             dname = copy(arg);
-#endif          
+#endif
+#if defined(HAS_WINDOWS)
+            /* write source file name into source window */
+            SetSource(dname);
+#endif
             append_to_stream(tempfile, tp);
             fclose(tp);
         }

@@ -1,3 +1,7 @@
+2009-10-18 Holger Vogt
+ * main.c, winmain.c: graceful shutdown for MS Windows, "quit" button added
+   conf.c, vngspice.vcproj: build date actualization modified
+
 2009-10-12 Holger Vogt
  * main.c: bug no. 2874418, initialize global variable history_file
 
