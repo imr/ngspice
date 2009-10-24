@@ -1,3 +1,6 @@
+2009-10-24: Dietmar Warning
+ * main.c: correct the command completion under X11, cooments and formatting
+
 2009-10-18: Dietmar Warning
  * inpptree.c: correct __func__ usage for different compiler
  * string.c, stringutil.h: separate bcopy and bzero providing
