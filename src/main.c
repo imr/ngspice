@@ -10,6 +10,9 @@
 
 #include "ngspice.h"
 
+#include <setjmp.h>
+#include <signal.h>
+
 #ifdef HAVE_LIBIBERTY_H /* asprintf */
 #include <libiberty.h>
 #undef AND /* obsolete macro in ansidecl.h */
@@ -21,13 +24,6 @@ extern long int random (void);
 extern void srandom (unsigned int seed);
 #endif
 
-#include <setjmp.h>
-#include <signal.h>
-#include <sys/types.h>
-
-#ifdef HAVE_PWD_H
-#include <pwd.h>
-#endif
 #ifdef HAVE_GNUREADLINE
 /* Added GNU Readline Support 11/3/97 -- Andrew Veliath <veliaa@rpi.edu> */
 /* from spice3f4 patch to ng-spice. jmr */
@@ -42,12 +38,6 @@ extern VFunction *rl_event_hook;    /* missing from editline/readline.h */
 extern int rl_catch_signals;        /* missing from editline/readline.h */
 #endif /* HAVE_BSDEDITLINE */
 
-#ifndef HAVE_GETRUSAGE
-#ifdef HAVE_FTIME
-#include <sys/timeb.h>
-#endif
-#endif
-
 #include "iferrmsg.h"
 #include "ftedefs.h"
 #include "devdefs.h"
@@ -61,7 +51,7 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 #endif
 #include "frontend/resource.h"
 #include "frontend/variable.h"
-#include "frontend/display.h"  /*  added by SDB to pick up Input() fcn  */
+#include "frontend/display.h"  /* added by SDB to pick up Input() fcn */
 #include "frontend/signal_handler.h"
 
 /* saj xspice headers */
@@ -74,7 +64,7 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 #ifdef CIDER
 #include "numenum.h"
 #include "maths/misc/accuracy.h"
-#endif 
+#endif
 
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
@@ -82,7 +72,7 @@ char history_file[512] = {'\0'};
 static char *application_name;
 #endif  /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
 
-/* Undefine this next line for dubug tracing */
+/* Undefine this next line for debug tracing */
 /* #define TRACE */
 
 /* Main options */
@@ -98,7 +88,7 @@ char *ft_rawfile = "rawspice.raw";
 extern void winmessage(char* new_msg); /* display a message box (defined in winmain.c)*/
 extern void SetSource( char * Name);   /* display the source file name in the source window */
 bool oflag = FALSE;         /* Output over redefined I/O functions */
-FILE *flogp = NULL;                /* log file ('-o logfile' command line option) */
+FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
 #endif /* HAS_WINDOWS */
 
 /* Frontend and circuit options */
@@ -115,7 +105,7 @@ char *cp_program; /* program name 'ngspice' */
 
 /* Globals definitions for Machine Accuracy Limits
  * (needed by CIDER)
- */   
+ */
 double BMin;                /* lower limit for B(x) */
 double BMax;                /* upper limit for B(x) */
 double ExpLim;              /* limit for exponential */
@@ -125,19 +115,19 @@ double Acc, MuLim, MutLim;
 #ifdef CIDER
 /* Global debug flags from CIDER, soon they will become
  * spice variables :)
- */ 
+ */
 BOOLEAN ONEacDebug   = FALSE;
 BOOLEAN ONEdcDebug   = TRUE;
 BOOLEAN ONEtranDebug = TRUE;
 BOOLEAN ONEjacDebug  = FALSE;
- 
+
 BOOLEAN TWOacDebug   = FALSE;
 BOOLEAN TWOdcDebug   = TRUE;
 BOOLEAN TWOtranDebug = TRUE;
-BOOLEAN TWOjacDebug  = FALSE; 
- 
+BOOLEAN TWOjacDebug  = FALSE;
+
 /* CIDER Global Variable Declarations */
-  
+
 int BandGapNarrowing;
 int TempDepMobility, ConcDepMobility, FieldDepMobility, TransDepMobility;
 int SurfaceMobility, MatchingMobility, MobDeriv;
@@ -145,14 +135,14 @@ int CCScattering;
 int Srh, Auger, ConcDepLifetime, AvalancheGen;
 int FreezeOut = FALSE;
 int OneCarrier;
- 
+
 int MaxIterations = 100;
 int AcAnalysisMethod = DIRECT;
- 
+
 double Temp, RelTemp, Vt;
 double RefPsi;/* potential at Infinity */
 double EpsNorm, VNorm, NNorm, LNorm, TNorm, JNorm, GNorm, ENorm;
- 
+
  /* end cider globals */
 #endif /* CIDER */
 
@@ -201,7 +191,7 @@ struct comm *cp_coms = spcp_coms;
 extern int OUTpBeginPlot(), OUTpData(), OUTwBeginPlot(), OUTwReference();
 extern int OUTwData(), OUTwEnd(), OUTendPlot(), OUTbeginDomain();
 extern int OUTendDomain(), OUTstopnow(), OUTerror(), OUTattributes();
-   
+
 IFfrontEnd nutmeginfo = {
     IFnewUid,
     IFdelUid,
@@ -288,7 +278,7 @@ if_setparam(char *ckt, char *name, char *param, struct variable *val)
 bool
 if_tranparams(struct circ *ckt, double *start, double *stop, double *step)
 {
-    return (FALSE); 
+    return (FALSE);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -339,7 +329,7 @@ struct dvec *EVTfindvec(char *node){
 
 #ifndef HAS_WINDOWS
 /* dummy of MS Windows message function */
-void winmessage(char* new_msg) { 
+void winmessage(char* new_msg) {
    return;
 }
 #endif
@@ -365,15 +355,15 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
     SIMinfo.numDevices = DEVmaxnum = num_devices();
     SIMinfo.devices = devices_ptr();
     SIMinfo.numAnalyses = spice_num_analysis();
-    SIMinfo.analyses = (IFanalysis **)spice_analysis_ptr(); /* va: we recast, because we use 
-                                                             * only the public part 
+    SIMinfo.analyses = (IFanalysis **)spice_analysis_ptr(); /* va: we recast, because we use
+                                                             * only the public part
                                  */
-                            
+
 #ifdef CIDER
 /* Evaluates limits of machine accuracy for CIDER */
     evalAccLimits();
-#endif /* CIDER */  
-                             
+#endif /* CIDER */
+
 #endif /* SIMULATOR */
 
     SPfrontEnd = frontEnd;
@@ -420,18 +410,18 @@ prompt(void)
 
     if (cp_interactive == FALSE)
         return NULL;    /* NULL means no prompt */
-    
+
     s = get_alt_prompt();
     if(s==NULL)
     s = cp_promptstring;
     if(s==NULL)
     s = "->";
-    
+
     while (*s) {
-    switch (strip(*s)) {
+      switch (strip(*s)) {
         case '!':
 #ifdef HAVE_BSDEDITLINE
-        {
+          {
             /* SJB In the present version of editline (v2.9)
               it seems that where_history() is broken.
               This is a hack that works round this problem.
@@ -441,19 +431,19 @@ prompt(void)
             HIST_ENTRY * he = current_history();
             if(he!=NULL) where = *(int*)(he->data);
             p += sprintf(p, "%d", where + 1);
-        }
+          }
 #else
-        p += sprintf(p, "%d", where_history() + 1);
+          p += sprintf(p, "%d", where_history() + 1);
 #endif  /* HAVE_BSDEDITLINE*/
-        break;
+          break;
         case '\\':
-        if (*(s + 1))
-            p += sprintf(p, "%c", strip(*++s));
-        default:
-        *p = strip(*s); ++p;
-        break;
-    }
-        s++;
+          if (*(s + 1))
+              p += sprintf(p, "%c", strip(*++s));
+          default:
+          *p = strip(*s); ++p;
+          break;
+      }
+      s++;
     }
     *p = 0;
     return pbuf;
@@ -465,7 +455,7 @@ prompt(void)
 /* Process device events in Readline's hook since there is no where
    else to do it now - AV */
 static int
-rl_event_func()  
+rl_event_func()
 /* called by GNU readline periodically to know what to do about keypresses */
 {
     static REQUEST reqst = { checkup_option, 0 };
@@ -479,7 +469,7 @@ rl_event_func()
 /* Process device events in Editline's hook.
    similar to the readline function above but returns void */
 static void
-rl_event_func()  
+rl_event_func()
 /* called by GNU readline periodically to know what to do about keypresses */
 {
     static REQUEST reqst = { checkup_option, 0 };
@@ -498,28 +488,28 @@ app_rl_readlines()
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
     /* GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
     char *line, *expanded_line;
-    
+
     /* ---  set up readline params --- */
     strcpy(history_file, getenv("HOME"));
     strcat(history_file, "/.");
     strcat(history_file, application_name);
     strcat(history_file, "_history");
-    
+
     using_history();
     read_history(history_file);
-    
+
     rl_readline_name = application_name;
     rl_instream = cp_in;
     rl_outstream = cp_out;
     rl_event_hook = rl_event_func;
     rl_catch_signals = 0;   /* disable signal handling  */
-    
+
     /* sjb - what to do for editline?
-       This variable is not supported by editline. */   
-#if defined(HAVE_GNUREADLINE) 
+       This variable is not supported by editline. */
+#if defined(HAVE_GNUREADLINE)
     rl_catch_sigwinch = 1;  /* allow readline to respond to resized windows  */
-#endif  
-    
+#endif
+
     /* note that we want some mechanism to detect ctrl-D and expand it to exit */
     while (1) {
        history_set_pos(history_length);
@@ -543,7 +533,7 @@ app_rl_readlines()
        if (line) free(line);
     }
     /* History gets written in ../fte/misccoms.c com_quit */
-    
+
 #else
     while (cp_evloop((char *) NULL) == 1) ;
 #endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
@@ -564,7 +554,7 @@ show_help(void)
        "  -n, --no-spiceinit        don't load the local or user's config file\n"
        "  -o, --output=FILE         set the outputfile\n"
        "  -q, --completion          activate command completion\n"
-       "  -r, --rawfile=FILE        set the rawfile output\n"             
+       "  -r, --rawfile=FILE        set the rawfile output\n"
        "  -s, --server              run spice as a server process\n"
        "  -t, --term=TERM           set the terminal type\n"
        "  -h, --help                display this help and exit\n"
@@ -595,7 +585,7 @@ append_to_stream(FILE *dest, FILE *source)
     int i;
 
     while ((i = fread(buf, 1, BSIZE_SP, source)) > 0)
-    fwrite(buf, i, 1, dest);
+      fwrite(buf, i, 1, dest);
 }
 #endif /* SIMULATOR */
 
@@ -613,28 +603,28 @@ read_initialisation_file(char * dir, char * name)
 #endif /* not HAVE_ASPRINTF */
     char * path;
     bool result = FALSE;
-    
+
     /* check name */
     if(name==NULL || name[0]=='\0')
         return FALSE;   /* Fail; name needed */
-    
+
     /* contruct the full path */
     if(dir == NULL || dir[0]=='\0') {
-    path = name;
+      path = name;
     } else {
 #ifdef HAVE_ASPRINTF
-    asprintf(&path, "%s" DIR_PATHSEP "%s", dir,name);
-    if(path==NULL) return FALSE;    /* memory allocation error */
+      asprintf(&path, "%s" DIR_PATHSEP "%s", dir,name);
+      if(path==NULL) return FALSE;    /* memory allocation error */
 #else /* ~ HAVE_ASPRINTF */
-    path=(char*)tmalloc(2 + strlen(dir)+strlen(name));
-    if(path==NULL) return FALSE;    /* memory allocation error */
-    sprintf(path,"%s" DIR_PATHSEP "%s",dir,name);
+      path=(char*)tmalloc(2 + strlen(dir)+strlen(name));
+      if(path==NULL) return FALSE;    /* memory allocation error */
+      sprintf(path,"%s" DIR_PATHSEP "%s",dir,name);
 #endif /* HAVE_ASPRINTF */
     }
 
     /* now access the file */
 #ifdef HAVE_UNISTD_H
-    if (access(path, R_OK) == 0) {      
+    if (access(path, R_OK) == 0) {
 #else
     if ((fp = fopen(path, "r")) != NULL) {
         (void) fclose(fp);
@@ -642,10 +632,10 @@ read_initialisation_file(char * dir, char * name)
         inp_source(path);
 #ifdef TRACE
         printf("Init file: '%s'\n",path);
-#endif /* TRACE */  
+#endif /* TRACE */
         result = TRUE;  /* loaded okay */
     }
-    
+
     /* if dir was not NULL and not empty then we allocated memory above */
     if(dir!=NULL && dir[0] !='\0')
 #ifdef HAVE_ASPRINTF
@@ -653,7 +643,7 @@ read_initialisation_file(char * dir, char * name)
 #else
     tfree(path);
 #endif /* HAVE_ASPRINTF */
-    
+
     return result;
 }
 
@@ -670,14 +660,14 @@ main(int argc, char **argv)
     int c;
     int   err;
     bool  gotone = FALSE;
-    char* copystring;/*DG*/
+    char* copystring;
     char  addctrlsect = TRUE; /* PN: for autorun */
 
 
 #ifdef SIMULATOR
     int error2;
-    
-     
+
+
 #else  /* ~ SIMULATOR */
     bool gdata = TRUE;
 #endif /* ~ SIMULATOR */
@@ -783,85 +773,85 @@ main(int argc, char **argv)
 
         switch (c) {
             case 'h':       /* Help */
-            show_help();
-            sp_shutdown (EXIT_NORMAL);
-            break;
+              show_help();
+              sp_shutdown (EXIT_NORMAL);
+              break;
 
             case 'v':       /* Version info */
-            show_version();
-            sp_shutdown (EXIT_NORMAL);
-            break;
+              show_version();
+              sp_shutdown (EXIT_NORMAL);
+              break;
 
             case 'b':       /* Batch mode */
-            ft_batchmode = TRUE;
-            addctrlsect = FALSE;
-            cp_vset("addcontrol",VT_BOOL,&addctrlsect);
-            break;
+              ft_batchmode = TRUE;
+              addctrlsect = FALSE;
+              cp_vset("addcontrol",VT_BOOL,&addctrlsect);
+              break;
 
             case 'a':           /* Add control section for autorun */
-            if (!ft_batchmode) {
-                addctrlsect = TRUE;
-                cp_vset("addcontrol",VT_BOOL, &addctrlsect);
-            }
-            break;
+              if (!ft_batchmode) {
+                  addctrlsect = TRUE;
+                  cp_vset("addcontrol",VT_BOOL, &addctrlsect);
+              }
+              break;
 
             case 'c':       /* Circuit file */
-            if (optarg) {
-                if (!(circuit_file = fopen(optarg, "r"))) {
-                   perror(optarg);
-                   sp_shutdown(EXIT_BAD);
-                }
-                istty = FALSE;
-            }
-            break;
+              if (optarg) {
+                  if (!(circuit_file = fopen(optarg, "r"))) {
+                     perror(optarg);
+                     sp_shutdown(EXIT_BAD);
+                  }
+                  istty = FALSE;
+              }
+              break;
 
             case 'i':       /* Interactive mode */
-            iflag = TRUE;
-            break;
+              iflag = TRUE;
+              break;
 
             case 'n':       /* Don't read initialisation file */
-            readinit = FALSE;
-            break;
+              readinit = FALSE;
+              break;
 
             case 'o':       /* Output file */
-            if (optarg) {
-                /* turn off buffering for stdout */
-                setbuf(stdout, NULL);
+              if (optarg) {
+                  /* turn off buffering for stdout */
+                  setbuf(stdout, NULL);
 #ifdef PARALLEL_ARCH
                 sprintf (buf, "%s%03d", optarg, ARCHme);
 #else
                 sprintf (buf, "%s", optarg);
 #endif
                 orflag = TRUE;
-            }
-            break;
+              }
+              break;
 
             case 'q':       /* Command completion */
-            qflag = TRUE;
-            break;
+              qflag = TRUE;
+              break;
 
             case 'r':       /* The raw file */
-            if (optarg) {
-                cp_vset("rawfile", VT_STRING, optarg);
-            }
-            rflag = TRUE;
-            break;
+              if (optarg) {
+                  cp_vset("rawfile", VT_STRING, optarg);
+              }
+              rflag = TRUE;
+              break;
 
             case 's':       /* Server mode */
-            ft_servermode = TRUE;
-            break;
+              ft_servermode = TRUE;
+              break;
 
             case 't':
-            if (optarg) {
-                cp_vset("term", VT_STRING, optarg);
-            }
-            break;
+              if (optarg) {
+                  cp_vset("term", VT_STRING, optarg);
+              }
+              break;
 
             case '?':
-            break;
+              break;
 
             default:
-            printf ("?? getopt returned character code 0%o ??\n", c);
+              printf ("?? getopt returned character code 0%o ??\n", c);
         }
     }  /* --- End of command line option processing (While(1)-loop) --- */
 
@@ -875,10 +865,10 @@ main(int argc, char **argv)
         /* Open the log file */
 #ifdef HAS_WINDOWS
         /* flogp used by winmain's putc which writes to file 'buf' */
-        if (!(flogp = fopen(buf, "w"))) {   
+        if (!(flogp = fopen(buf, "w"))) {
 #else
         /* Connect stdout to file buf and log stdout */
-        if (!(freopen (buf, "w", stdout))) {    
+        if (!(freopen (buf, "w", stdout))) {
 #endif
             perror (buf);
             sp_shutdown (EXIT_BAD);
@@ -893,22 +883,23 @@ main(int argc, char **argv)
     if_getparam = nutif_getparam;
 
     if (optind == argc) {
-    /* No raw file */
-    gdata = FALSE;
+      /* No raw file */
+      gdata = FALSE;
     }
 #endif
 
-
-    if ((!iflag && !istty) || ft_servermode)
+    if ((!iflag && !istty) || ft_servermode) /* (batch and file) or server operation */
         ft_batchmode = TRUE;
-    /* set command completion */
-    if ((iflag && !istty) || qflag)
-        cp_nocc = FALSE;
+
+    if ((iflag && !istty) || qflag)  /* (interactive and file) or command completion */
+        cp_nocc = TRUE;              /* set command completion */
     else
-        cp_nocc = TRUE;
-    if (ft_servermode)
+        cp_nocc = FALSE;
+
+    if (ft_servermode)              /* in server no init file */
         readinit = FALSE;
-    if (!istty || ft_batchmode)
+
+    if (!istty || ft_batchmode)     /* file or batch - no more output */
         out_moremode = FALSE;
 
     /* Get information on memory status upon startup.
@@ -916,7 +907,7 @@ main(int argc, char **argv)
        fcn is in resource.c */
     init_rlimits( );
 
-    /* Have to initialize cp now. 
+    /* Have to initialize cp now.
        fcn is in cpitf.c*/
     ft_cpinit();
 
@@ -926,7 +917,7 @@ main(int argc, char **argv)
         if (!ft_batchmode)
             goto bot;
     }
- 
+
     /* Set up signal handling */
     if (!ft_batchmode) {
         /*  Set up interrupt handler  */
@@ -957,14 +948,14 @@ main(int argc, char **argv)
     /* load user's initialisation file */
     if (readinit) {
         bool good;
-    
+
         /* Try accessing the initialisation file in the current directory */
         good = read_initialisation_file("",INITSTR);
-    
+
         /* if that fail try the alternate name */
         if(good == FALSE)
             good = read_initialisation_file("",ALT_INITSTR);
-    
+
         /* if that failed try in the user's home directory
            if their HOME environment variable is set */
         if(good == FALSE) {
@@ -1004,7 +995,6 @@ bot:
     if (SETJMP(jbuf, 1) == 1)
         goto evl;
 
-
     cp_interactive = FALSE;
     err = 0;
 
@@ -1012,7 +1002,7 @@ bot:
     if (!ft_servermode && !ft_nutmeg) {
     /* Concatenate all non-option arguments into a temporary file
        and load that file into the spice core.
-       
+
        The original routine took a special path if there was only
        one non-option argument.  In that case, it didn't create
        the temporary file but used the original file instead.  The
@@ -1023,7 +1013,7 @@ bot:
         char *tpf = NULL; /* temporary file */
         char *dname = NULL; /* directory of input file*/
         bool has_smk = FALSE;
-#endif  
+#endif
         tempfile = tmpfile();
 /*  tmpfile() returns NULL, if in MS Windows as non admin user
         then we add a tempfile in the local directory */
@@ -1034,10 +1024,10 @@ bot:
             if (tempfile == NULL) {
                 fprintf(stderr, "Could not open a temporary file to save and use optional arguments.");
                 sp_shutdown(EXIT_BAD);
-            }       
+            }
             has_smk = TRUE;
-        }   
-#endif  
+        }
+#endif
 
         if (optind == argc && !istty) {
             append_to_stream(tempfile, stdin);
@@ -1074,7 +1064,7 @@ bot:
             /* Copy the input file name for adding another file search path */
             inp_spsource(tempfile, FALSE, dname);
             tfree(dname);
-#else           
+#else
             inp_spsource(tempfile, FALSE, NULL);
 #endif
             gotone = TRUE;
@@ -1083,8 +1073,8 @@ bot:
         if (tempfile && has_smk) {
             if (remove(tpf))
                perror("Could not delete temp file");
-        } 
-#endif  
+        }
+#endif
         if (ft_batchmode && err) {
             sp_shutdown(EXIT_BAD);
         }
@@ -1135,7 +1125,7 @@ evl:
                 "no simulations run\n");
             sp_shutdown(EXIT_BAD);
         }
-    }  /* ---  if (ft_batchmode) ---  */ 
+    }  /* ---  if (ft_batchmode) ---  */
     else {
         cp_interactive = TRUE;
         app_rl_readlines();  /*  enter the command processing loop  */
@@ -1144,12 +1134,12 @@ evl:
 #else  /* ~ SIMULATOR */
 
     if (ft_nutmeg && gdata) {
-    while (optind < argc) {
-      ft_loadfile(argv[optind++]);
-      gotone = TRUE;
-    }
-        if (!gotone)
-            ft_loadfile(ft_rawfile);
+      while (optind < argc) {
+        ft_loadfile(argv[optind++]);
+        gotone = TRUE;
+      }
+      if (!gotone)
+          ft_loadfile(ft_rawfile);
     }
 
 evl:
