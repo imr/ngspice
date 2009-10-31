@@ -16,16 +16,10 @@
 #include <stdlib.h>         // exit-codes
 #include <stdarg.h>         // var. argumente
 #include <assert.h>         // assert-macro
-#include "misc/stringutil.h"        // copy
-#include <io.h>         // _read
+#include "misc/stringutil.h" // copy
+#include <io.h>             // _read
 
 #include <errno.h>
-
-#ifdef _MSC_VER
-/* Microsoft VC++ specific stuff */
-#pragma hdrstop
-#define strdup _strdup
-#endif /* _MSC_VER */
 
 #include <signal.h>
 #include <ctype.h>
@@ -221,6 +215,7 @@ void SetAnalyse(
    struct timeb timenow;           /* actual time stamp */
    int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
 
+   WaitForIdle();
    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse)) return;
    /* get actual time */
    ftime(&timenow);
@@ -264,8 +259,9 @@ void SetAnalyse(
       SetWindowText( hwMain, t);
       InvalidateRgn( hwAnalyse, NULL, TRUE);
       InvalidateRgn( hwMain, NULL, TRUE);
-      WaitForIdle();
    }
+   UpdateWindow(hwAnalyse);
+   UpdateWindow(hwMain);
 }
 
 // ------------------------------<Textfenster>---------------------------------
@@ -739,7 +735,7 @@ int MakeArgcArgv(char *cmdline,int *argc,char ***argv)
     /*  API to give the program name */
     GetModuleFileName(NULL, buffer, sizeof(buffer));
 
-    tmpargv[0] = buffer; /* add program name to argv */
+    tmpargv[0] = copy(buffer); /* add program name to argv */
 
     deli[0] = DELIMITER;
     deli[1] = '\0'; /* delimiter for strtok */
@@ -752,8 +748,8 @@ int MakeArgcArgv(char *cmdline,int *argc,char ***argv)
         if (NULL == pC1)
             pC1 = pWorkString;
 
-        if (i == 1) tmpargv[i] = strdup(strtok(pC1, deli));
-        else tmpargv[i] = strdup(strtok(NULL, deli));
+        if (i == 1) tmpargv[i] = copy(strtok(pC1, deli));
+        else tmpargv[i] = copy(strtok(NULL, deli));
     }
 
     /*  copy the working values over to the arguments */
@@ -919,6 +915,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
    status = MakeArgcArgv(lpszCmdLine,&argc,&argv);
 
+#if defined(HAS_TCLWIN)
   /* create private heap for current process */
   outheap = HeapCreate(0, 10000000, 0);
   if (!outheap) {
@@ -926,6 +923,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     winmessage("HeapCreate: Internal Error: can't allocate private output heap");
     exit(1);
   }
+#endif
 
     /* Wait until everything is settled */
     WaitForIdle();

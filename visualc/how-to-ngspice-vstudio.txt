@@ -1,7 +1,9 @@
-H. Vogt 09.11.08
+H. Vogt 31.10.09
 (Translation of some commands from German to English is required)
+Many more details of ngspice usage under Windows is described
+in how-to-use-ngspice091031.txt from the binary distribution.
 
-This this directory (visualc) with its files 
+This directory (visualc) with its files 
 vngspice.sln (project starter) and
 vngspice.vcproj (project contents)
 allows to compile and link ngspice with MS Visual Studio 2008.
