@@ -14,7 +14,8 @@ dist-hook:
 	rm -rf `find $(distdir)/icm -name CVS`
 	rm -rf `find $(distdir)/icm -name .cvsignore`
 	rm -rf `find $(distdir)/icm -name .deps`
-	
-	
+	rm -rf `find $(distdir)/icm -name *.o`
+
+
 MAINTAINERCLEANFILES = Makefile.in
 
