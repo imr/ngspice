@@ -18,6 +18,7 @@ dist-hook:
 	rm -rf `find $(distdir)/contrib -name CVS`
 	rm -rf `find $(distdir)/patches -name CVS`
 	rm -rf `find $(distdir)/examples -name CVS`
+	rm -rf `find $(distdir)/xgraph -name .cvsignore`
 
 mrproper: maintainer-clean
 	rm -f `find . -type f -name "*~" -print`
