@@ -670,7 +670,7 @@ int MakeArgcArgv(char *cmdline,int *argc,char ***argv)
     {
     /*  make a copy of the string so that we can modify it
             without messing up the original */
-        pWorkString = strdup(cmdline);
+        pWorkString = copy(cmdline);
         if (NULL == pWorkString)
             return -1; /* memory allocation error */
         /*  Now, to make sure we don't have any quoted arguments

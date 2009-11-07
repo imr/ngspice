@@ -1,3 +1,6 @@
+2009-11-07 Holger Vogt
+ * winmain.c: replace strdup()y copy()
+
 2009-10-31 Holger Vogt
  * winmain.c: windows updated more often
    how-to-ngspice-vstudio.txt: updated 
