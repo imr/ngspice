@@ -1,3 +1,7 @@
+2009-11-08 Dietmar Warning
+ * numparam/xpressn.c: allow numbers < 1e-30 in fmttype, now everything < 1e-39 is 0
+ * numparam/mystring.c: using floor and ceil from math lib for rounding and truncation
+
 2009-11-07 Holger Vogt
  * winmain.c: replace strdup()y copy()
 
