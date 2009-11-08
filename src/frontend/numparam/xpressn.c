@@ -164,7 +164,7 @@ message (tdico * dic, char *s)
    fputs (t, stderr);
    Strrem(t);
 
-   return 1 /*error! */ ;
+   return 1 /* error! */ ;
 }
 
 void
@@ -308,11 +308,11 @@ fetchnumentry (tdico * dico, char *t, unsigned char *perr)
    unsigned short k;
    double u;
    Strbig (dynLlen, s);
-   k = entrynb (dico, t);        /*no keyword */
+   k = entrynb (dico, t);        /* no keyword */
    /*dbg -- if ( k<=0 ) { ws("Dico num lookup fails. ") ;} */
 
    while ((k > 0) && (dico->dyndat[k].tp == 'P'))
-      k = dico->dyndat[k].ivl;        /*pointer chain */
+      k = dico->dyndat[k].ivl;        /* pointer chain */
 
    if (k > 0)
       if (dico->dyndat[k].tp != 'R')
@@ -349,7 +349,7 @@ attrib (tdico * dico, char *t, char op)
    i = dico->nbd + 1;
    ok = 0;
    while ((!ok) && (i > 1))
-   {                                /*search old */
+   {                                /* search old */
       i--;
       ok = steq (dico->dyndat[i].nom, t);
    }
@@ -367,7 +367,7 @@ attrib (tdico * dico, char *t, char op)
       dico->dyndat = trealloc(dico->dyndat, (i+1) * sizeof(entry));
       sini (dico->dyndat[i].nom, 100);
       scopy (dico->dyndat[i].nom, t);
-      dico->dyndat[i].tp = '?';        /*signal Unknown */
+      dico->dyndat[i].tp = '?';        /* signal Unknown */
       dico->dyndat[i].level = dico->tos;
    }
    return i;
@@ -401,7 +401,7 @@ define (tdico * dico,
    else
    {
       if (dico->dyndat[i].tp == 'P')
-         i = dico->dyndat[i].ivl; /*pointer indirection */
+         i = dico->dyndat[i].ivl; /* pointer indirection */
 
       if (i > 0)
          c = dico->dyndat[i].tp;
@@ -539,7 +539,7 @@ deffuma (                        /* define function or macro entry. */
   else
     {
       if (dico->dat[i].tp != '?')
-        {                        /*old item! */
+        {                        /* old item! */
           if (jumped)
             {
               j = dico->dat[i].ivl;
@@ -595,7 +595,7 @@ keyword (char *keys, char *t)
       if (ok)
          ok = (k == lk) || (keys[k] <= ' ');
 
-      if (!ok && (k < lk))    /*skip to next item */
+      if (!ok && (k < lk))    /* skip to next item */
          while ((k <= lk) && (keys[k - 1] > ' '))
             k++;
    } while (!(ok || (k >= lk)));
@@ -672,7 +672,7 @@ fetchid (char *s, char *t, int ls, int i)
         cadd (t, c);
 
     } while (ok);
-  return i /*return updated i */ ;
+  return i /* return updated i */ ;
 }
 
 static double
@@ -720,7 +720,7 @@ exists (tdico * d, char *s, int *pi, unsigned char *perror)
   if (!ok)
       error = message (d, " Defined() syntax");
 
-/*keep pointer on last closing ")" */
+/* keep pointer on last closing ")" */
 
   *perror = error;
   *pi = i;
@@ -737,7 +737,6 @@ fetchnumber (tdico * dico, char *s, int ls, int *pi, unsigned char *perror)
   int k, err;
   char d;
   Str (20, t);
-//  Strbig (Llen, v);
   double u;
   Strbig (dynLlen, v);
   k = i;
@@ -751,7 +750,7 @@ fetchnumber (tdico * dico, char *s, int ls, int *pi, unsigned char *perror)
     } while (!(!((d == '.') || ((d >= '0') && (d <= '9')))));
 
   if ((d == 'e') || (d == 'E'))
-    {                                /*exponent follows */
+    {                                /* exponent follows */
       k++;
       d = s[k - 1];
 
@@ -868,7 +867,7 @@ fetchoperator (tdico * dico,
     }
   if ((c == '+') || (c == '-'))
     {
-      state = 2;                /*pending operator */
+      state = 2;                /* pending operator */
       level = 4;
     }
   else if ((c == '*') || (c == '/') || (c == '%') || (c == '\\'))
@@ -931,7 +930,7 @@ opfunctkey (tdico * dico,
   unsigned char error = *perror;
 /*if kw operator keyword, c=token*/
   switch (kw)
-    {                                /*& | ~ DIV MOD  Defined */
+    {                                /* & | ~ DIV MOD  Defined */
     case 1:
       c = '&';
       state = 2;
@@ -966,7 +965,7 @@ opfunctkey (tdico * dico,
       state = 0;
       error = message (dico, " Unexpected Keyword");
       break;
-    }                                /*case */
+    }                                /* case */
 
   *pstate = state;
   *plevel = level;
@@ -986,7 +985,7 @@ operate (char op, double x, double y)
   switch (op)
     {
     case ' ':
-      x = y; /*problem here: do type conversions ?! */ ;
+      x = y; /* problem here: do type conversions ?! */ ;
       break;
     case '+':
       x = x + y;
@@ -1001,18 +1000,18 @@ operate (char op, double x, double y)
       if (absf (y) > epsi)
         x = x / y;
       break;
-    case '^':                        /*power */
+    case '^':                        /* power */
       t = absf (x);
       if (t < epsi)
         x = z;
       else
         x = exp (y * ln (t));
       break;
-    case '&':                        /*&& */
+    case '&':                        /* && */
       if (y < x)
         x = y; /*=Min*/ ;
       break;
-    case '|':                        /*|| */
+    case '|':                        /* || */
       if (y > x)
         x = y; /*=Max*/ ;
       break;
@@ -1022,7 +1021,7 @@ operate (char op, double x, double y)
       else
         x = z;
       break;
-    case '#':                        /*<> */
+    case '#':                        /* <> */
       if (x != y)
         x = u;
       else
@@ -1040,32 +1039,32 @@ operate (char op, double x, double y)
       else
         x = z;
       break;
-    case 'G':                        /*>= */
+    case 'G':                        /* >= */
       if (x >= y)
         x = u;
       else
         x = z;
       break;
-    case 'L':                        /*<= */
+    case 'L':                        /* <= */
       if (x <= y)
         x = u;
       else
         x = z;
       break;
-    case '!':                        /*! */
+    case '!':                        /* ! */
       if (y == z)
         x = u;
       else
         x = z;
       break;
-    case '%':                        /*% */
+    case '%':                        /* % */
       t = np_trunc (x / y);
       x = x - y * t;
       break;
-    case '\\':                        /*/ */
+    case '\\':                        /* / */
       x = np_trunc (absf (x / y));
       break;
-    }                                /*case */
+    }                                /* case */
   return x;
 }
 
@@ -1081,7 +1080,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
   States : 1=atom, 2=binOp, 3=unOp, 4= stop-codon.
   Allowed transitions:  1->2->(3,1) and 3->(3,1).
 */
-  typedef enum {nprece=9} _nnprece;                /*maximal nb of precedence levels */
+  typedef enum {nprece=9} _nnprece;                /* maximal nb of precedence levels */
   unsigned char error = *perror;
   unsigned char negate = 0;
   unsigned char state, oldstate, topop, ustack, level, kw, fu;
@@ -1091,7 +1090,6 @@ formula (tdico * dico, char *s, unsigned char *perror)
   char uop[nprece + 1];
   int i, k, ls, natom, arg2, arg3;
   char c, d;
-//  Strbig (Llen, t);
   unsigned char ok;
   Strbig (dynLlen, t);
 
@@ -1104,7 +1102,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
   ls = length (s);
 
   while ((ls > 0) && (s[ls - 1] <= ' '))
-    ls--;                        /*clean s */
+    ls--;                        /* clean s */
 
   state = 0;
   natom = 0;
@@ -1120,7 +1118,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
       i++;
       c = s[i - 1];
       if (c == '(')
-        {                        /*sub-formula or math function */
+        {                        /* sub-formula or math function */
           level = 1;
           /* new: must support multi-arg functions */
           k = i;
@@ -1145,7 +1143,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
                   if (arg2 == 0)
                     arg2 = k;
                   else
-                    arg3 = k;        // kludge for more than 2 args (ternary expression);
+                    arg3 = k;        /* kludge for more than 2 args (ternary expression) */
                 } /* comma list? */ ;
             }
           while (!((k > ls) || ((d == ')') && (level <= 0))));
@@ -1153,7 +1151,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
           if (k > ls)
             {
               error = message (dico, "Closing \")\" not found.");
-              natom++; /*shut up other error message */ ;
+              natom++; /* shut up other error message */ ;
             }
           else
             {
@@ -1171,7 +1169,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
                 }
               pscopy (t, s, i + 1, k - i - 1);
               u = formula (dico, t, &error);
-              state = 1;        /*atom */
+              state = 1;        /* atom */
               if (fu > 0)
                 {
                   if ((fu == 18))
@@ -1188,10 +1186,10 @@ formula (tdico * dico, char *s, unsigned char *perror)
         }
       else if (alfa (c))
         {
-          i = fetchid (s, t, ls, i);        /*user id, but sort out keywords */
+          i = fetchid (s, t, ls, i);        /* user id, but sort out keywords */
           state = 1;
           i--;
-          kw = keyword (keys, t);        /*debug ws('[',kw,']'); */
+          kw = keyword (keys, t);        /* debug ws('[',kw,']'); */
           if (kw == 0)
             {
               fu = keyword (fmath, t);        /* numeric function? */
@@ -1235,18 +1233,18 @@ formula (tdico * dico, char *s, unsigned char *perror)
           error = message (dico, " Misplaced operator");
 
       if (state == 3)
-        {                        /*push unary operator */
+        {                        /* push unary operator */
           ustack++;
           uop[ustack] = c;
         }
       else if (state == 1)
-        {                        /*atom pending */
+        {                        /* atom pending */
           natom++;
           if (i >= ls)
             {
               state = 4;
               level = topop;
-            }                        /*close all ops below */
+            }                        /* close all ops below */
           for (k = ustack; k >= 1; k--)
               u = operate (uop[k], u, u);
 
@@ -1261,7 +1259,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
             {                        /* not yet speed optimized! */
               accu[k] = operate (oper[k], accu[k], accu[k - 1]);
               accu[k - 1] = 0.0;
-              oper[k] = ' '; /*reset intermediates */ ;
+              oper[k] = ' '; /* reset intermediates */ ;
             }
           oper[level] = c;
 
@@ -1272,7 +1270,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
         {
           oldstate = state;
         }
-    } /*while */ ;
+    } /* while */ ;
   if ((natom == 0) || (oldstate != 4))
     {
       scopy (t, " Expression err: ");
@@ -1295,13 +1293,13 @@ formula (tdico * dico, char *s, unsigned char *perror)
       return 1.0;
   else
       return accu[topop];
-}                                /*formula */
+}                                /* formula */
 
 static char
 fmttype (double x)
 {
-/* I=integer, P=fixedpoint F=floatpoint*/
-/*  find out the "natural" type of format for number x*/
+/* I=integer, P=fixedpoint, F=floatpoint */
+/* find out the "natural" type of format for number x */
   double ax, dx;
   int rx;
   unsigned char isint, astronomic;
@@ -1309,17 +1307,17 @@ fmttype (double x)
   isint = 0;
   astronomic = 0;
 
-  if (ax < 1e-30)
-      isint = 1;
-  else if (ax < 32000)
-    {                                /*detect integers */
+  if (ax < 1e-39)                    /* smaller then 1e-39 is 0 */
+      isint = 1;                     /* and seen as an integer */
+  else if (ax < 64000)
+    {                                /* detect integers */
       rx = np_round (x);
       dx = (x - rx) / ax;
-      isint = (absf (dx) < 1e-6);
+      isint = (absf (dx) < 1e-06);
     }
 
   if (!isint)
-      astronomic = (ax >= 1e6) || (ax < 0.01);
+      astronomic = (ax >= 1e+06) || (ax < 0.01); /* astronomic for 10 digits */
 
   if (isint)
       return 'I';
@@ -1344,33 +1342,33 @@ evaluate (tdico * dico, char *q, char *t, unsigned char mode)
   err = 0;
 
   if (mode == 1)
-    {                                /*string? */
+    {                                /* string? */
       stupcase (t);
       k = entrynb (dico, t);
       nolookup = (k <= 0);
       while ((k > 0) && (dico->dyndat[k].tp == 'P'))
           k = dico->dyndat[k].ivl;
 
-      /*pointer chain */
+      /* pointer chain */
       if (k > 0)
           dt = dico->dyndat[k].tp;
       else
           dt = ' ';
 
-      /*data type: Real or String */
+      /* data type: Real or String */
       if (dt == 'R')
         {
           u = dico->dyndat[k].vl;
           numeric = 1;
         }
       else if (dt == 'S')
-        {                        /*suppose source text "..." at */
+        {                        /* suppose source text "..." at */
           j = dico->dyndat[k].ivl;
           lq = 0;
           do {
               j++;
               lq++;
-              dt = /*ibf->bf[j]; */ dico->dyndat[k].sbbase[j];
+              dt = /* ibf->bf[j]; */ dico->dyndat[k].sbbase[j];
 
               if (cpos ('3', dico->option) <= 0)
                   dt = upcase (dt); /* spice-2 */
@@ -1409,7 +1407,6 @@ evaluate (tdico * dico, char *q, char *t, unsigned char mode)
           stri (np_round (u), q);
       else
         {
-          //strf(u,6,-1,q);
           strf (u, 17, 10, q);
         } /* strf() arg 2 doesnt work: always >10 significant digits ! */ ;
     }
@@ -1435,7 +1432,7 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
   err = 0;
   pscopy (u, s, 1, 3);
   if ((ls > 7) && steq (u, "**&"))
-    {                                /*special Comment **&AC #... */
+    {                                /* special Comment **&AC #... */
       pscopy (r, s, 1, 7);
       i = 7;
     }
@@ -1476,7 +1473,7 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
             }
           i = k;
           if (!err)
-            {                        /*insert number */
+            {                        /* insert number */
               sadd (r, q);
             }
           else
@@ -1491,7 +1488,7 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
             i++;
           k = i;
           if (s[k - 1] == '(')
-            {                        /*sub-formula */
+            {                        /* sub-formula */
               level = 1;
               do
                 {
@@ -1526,7 +1523,7 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
               i = k;
             }
           else
-            {                        /*simple identifier may also be string */
+            {                        /* simple identifier may also be string */
               do
                 {
                   k++;
@@ -1545,7 +1542,7 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
               i = k - 1;
             }
           if (!err)
-            {                        /*insert the number */
+            {                        /* insert the number */
               sadd (r, q);
             }
           else
@@ -1554,7 +1551,7 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
             }
         }
       else if (c == Nodekey)
-        {                        /*follows: a node keyword */
+        {                        /* follows: a node keyword */
           do
             {
               i++;
@@ -1581,9 +1578,9 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
             {
               c = upcase (c);
             }
-          cadd (r, c); /*c<>Intro */ ;
+          cadd (r, c); /* c<>Intro */ ;
         }
-    }                                /*while */
+    }                                /* while */
   return err;
 }
 #endif
@@ -1733,8 +1730,6 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
 {
   int i, k, ls, level, nnest, ir;
   char c, d;
-//  Strbig (Llen, q);
-//  Strbig (Llen, t);
   Strdbig (dynLlen, q, t);
   i = 0;
   ls = length (s);
@@ -1786,7 +1781,7 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
           k = i;
 
           if (s[k - 1] == '(')
-            {                        /*sub-formula */
+            {                        /* sub-formula */
               level = 1;
               do {
                   k++;
@@ -1811,7 +1806,7 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
               i = k;
             }
           else
-            {                        /*simple identifier may also be string? */
+            {                        /* simple identifier may also be string? */
               do {
                   k++;
                   if (k > ls)
@@ -1831,7 +1826,7 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
               message (dico, "Cannot compute &(expression)");
         }
     } 
-                               /*while */
+                               /* while */
   Strdrem(q,t);
   return err;
 }
@@ -1886,7 +1881,7 @@ getexpress (char *s, char *t, int *pi)
       ia++; /*white space ? */
 
   if (s[ia - 1] == '"')
-    {                                /*string constant */
+    {                                /* string constant */
       ia++;
       i = ia;
 
@@ -1916,7 +1911,7 @@ getexpress (char *s, char *t, int *pi)
               c = s[i - 1];
 
           if (c == '(')
-            {                        /*sub-formula */
+            {                        /* sub-formula */
               level = 1;
               do {
                   i++;
@@ -1934,7 +1929,7 @@ getexpress (char *s, char *t, int *pi)
             }
           /* buggy? */ if ((c == '/') || (c == '-'))
               comment = (s[i] == c);
-        } while (!((cpos (c, ",;)}") > 0) || comment));        /*legal separators */
+        } while (!((cpos (c, ",;)}") > 0) || comment));        /* legal separators */
 
       tpe = 'R';
 
@@ -1961,8 +1956,6 @@ nupa_assignment (tdico * dico, char *s, char mode)
 */
 {
 /* s has the format: ident = expression; ident= expression ...  */
-//  Strbig (Llen, t);
-//  Strbig (Llen, u);
   int i, j, ls;
   unsigned char key;
   unsigned char error, err;
@@ -2020,7 +2013,7 @@ nupa_assignment (tdico * dico, char *s, char mode)
           else if (dtype == 'S')
               wval = i;
 
-          err = define (dico, t, mode /*was ' ' */ , dtype, rval, wval, NULL);
+          err = define (dico, t, mode /* was ' ' */ , dtype, rval, wval, NULL);
           error = error || err;
         }
 
@@ -2040,10 +2033,6 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
 */
 {
   int n, m, i, j, k, g, h, narg = 0, ls, nest;
-//  Strbig (Llen, t);
-//  Strbig (Llen, u);
-//  Strbig (Llen, v);
-//  Strbig (Llen, idlist);
   Str (80, subname);
   char *buf, *token;
   unsigned char found;
