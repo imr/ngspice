@@ -10,6 +10,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <memory.h>
+#include <math.h>
 
 #include "config.h"
 #ifdef HAS_WINDOWS
@@ -72,7 +73,7 @@ wi (long i)
 
 void
 rs (char *s)
-{				/*basic line input, limit= 80 chars */
+{				/* basic line input, limit= 80 chars */
   int max, i;
   char c;
 /*  exit (-1); */
@@ -962,8 +963,8 @@ posi (char *sub, char *s, int opt)
 /* find position of substring in s */
 {
   /* opt=0: like Turbo Pascal */
-  /*  opt=1: like Turbo Pascal Pos, but case insensitive */
-  /*  opt=2: position in space separated wordlist for scanners */
+  /* opt=1: like Turbo Pascal Pos, but case insensitive */
+  /* opt=2: position in space separated wordlist for scanners */
   int a, b, k, j;
   unsigned char ok, tstcase;
   Str (250, t);
@@ -984,7 +985,7 @@ posi (char *sub, char *s, int opt)
   k = 0;
   j = 1;
 
-  if (a > 0)			/*;} else { return 0 */
+  if (a > 0)			/* ;} else { return 0 */
     while ((k <= b) && (!ok))
       {
 	ok = match (t, s, a, k, tstcase);	/* we must start at k=0 ! */
@@ -1035,7 +1036,7 @@ void
 strf (double x, int f1, int f2, char *t)
 /* e-format if f2<0, else f2 digits after the point, total width=f1 */
 /* if f1=0, also e-format with f2 digits */
-{				/*default f1=17, f2=-1 */
+{				/* default f1=17, f2=-1 */
   Str (30, fmt);
   int n, mlt;
   mlt = maxlen (t);
@@ -1122,11 +1123,11 @@ ival (char *s, int *err)
   return z;
 }
 
-#ifndef _MATH_H
+#ifndef HAVE_LIBM
 
 long
 np_round (double x)
-/* using <math.h>, it would be simpler: floor(x+0.5) */
+/* using <math.h>, it would be simpler: floor(x+0.5), see below */
 {
   double u;
   long z;
@@ -1207,4 +1208,4 @@ intp (double x)			/* integral part */
     return ceil (x);
 }
 
-#endif /* _MATH_H */
+#endif
