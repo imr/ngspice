@@ -18,6 +18,12 @@ dist-hook:
 	rm -rf `find $(distdir)/contrib -name CVS`
 	rm -rf `find $(distdir)/patches -name CVS`
 	rm -rf `find $(distdir)/examples -name CVS`
+	rm -rf `find $(distdir)/visualc -name CVS`
+	rm -rf `find $(distdir)/visualc/include -name CVS`
+	rm -rf `find $(distdir)/xgraph -name CVS`
+	rm -rf `find $(distdir)/xgraph/bitmaps CVS`
+	rm -rf `find $(distdir)/xgraph/examples CVS`
+	rm -rf `find $(distdir)/unsupported -name CVS`
 	rm -rf `find $(distdir)/xgraph -name .cvsignore`
 
 mrproper: maintainer-clean
