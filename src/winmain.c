@@ -76,7 +76,6 @@ static WNDCLASS hwElementClass;                 /* Class definition of status di
 static LPCTSTR hwElementClassName = "ElementClass";
 static LPCTSTR hwSourceWindowName = "SourceDisplay";
 static LPCTSTR hwAnalyseWindowName = "AnalyseDisplay";
-static LPCTSTR hwQuitButtonName = "QuitButton";
 static int RowHeight = 16;             /* Height of line of text */
 static int LineHeight = 25;            /* Height of input line */
 static int VisibleRows = 10;           /* Number of visible lines in text window */
