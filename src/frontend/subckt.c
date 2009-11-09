@@ -331,12 +331,12 @@ inp_subcktexpand(struct line *deck)
       ok= ok && nupa_signal(NUPASUBDONE, NULL); 
       c= ll;
       while (c != NULL) { 
-	// 'param' .meas statements can have dependencies on measurement values
-	// need to skip evaluating here and evaluate after other .meas statements
+	/* 'param' .meas statements can have dependencies on measurement values */
+	/* need to skip evaluating here and evaluate after other .meas statements */
         if ( ciprefix( ".meas", c->li_line ) ) {
 	  if ( !strstr( c->li_line, "param" ) ) nupa_eval( c->li_line, c->li_linenum);
 	} else {
-	  //ok= ok && nupa_eval( c->li_line, c->li_linenum);
+	  /*ok = ok && nupa_eval( c->li_line, c->li_linenum);*/
 	  nupa_eval( c->li_line, c->li_linenum);
 	}
 	c= c->li_next;
@@ -350,7 +350,7 @@ inp_subcktexpand(struct line *deck)
       }
 #endif	/* TRACE */ 
 
-      //nupa_list_params(stdout);
+      /*nupa_list_params(stdout);*/
       nupa_copy_inst_dico();
       ok= ok && nupa_signal(NUPAEVALDONE, NULL);
     }
@@ -1834,6 +1834,7 @@ devmodtranslate(struct line *deck, char *subname)
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
 	    tfree(name);
             name = gettok(&t);
+
             /* Now, is this a subcircuit model? */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                 i = strlen(wlsub->wl_word);
@@ -1854,6 +1855,7 @@ devmodtranslate(struct line *deck, char *subname)
                    break;
                 }
             }
+
             if (!found)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
             (void) strcat(buffer, t);
@@ -1879,33 +1881,52 @@ devmodtranslate(struct line *deck, char *subname)
 
             /* Now, is this a subcircuit model? */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
-                if (eq(name, wlsub->wl_word)) {
-		    (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
-			    subname, name);
-		    found = TRUE;
-		    break;
+                if (eq(name, wlsub->wl_word)) { /* a three terminal bjt */
+                    (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
+                            subname, name);
+                    found = TRUE;
+                    break;
                 }
             }
-            if (!found)
+            if (!found) {
+                if (*t) { /* There is another token - perhaps a model */
+                    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	            tfree(name);
+                    name = gettok(&t);
+                    /* Now, is this a subcircuit model? */
+                    for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+                        if (eq(name, wlsub->wl_word)) { /* a four terminal bjt */
+                            (void) sprintf(buffer + strlen(buffer),
+                                    "%s:%s ", subname, name);
+                            found = TRUE;
+                            break;
+                        }
+                    }
+                }
+            }
+#ifdef ADMS
+            if (!found) {
+                if (*t) { /* There is another token - perhaps a model */
+                    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+	            tfree(name);
+                    name = gettok(&t);
+                    /* Now, is this a subcircuit model? */
+                    for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+                        if (eq(name, wlsub->wl_word)) { /* a five terminal bjt */
+                            (void) sprintf(buffer + strlen(buffer),
+                                    "%s:%s ", subname, name);
+                            found = TRUE;
+                            break;
+                        }
+                    }
+                }
+            }
+#endif
+            if (!found) /* Fallback w/o subckt name before */
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
+            tfree(name);
 
             found = FALSE;
-            if (*t) {
-                name = gettok(&t);
-                /* Now, is this a subcircuit model? */
-                for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
-                    if (eq(name, wlsub->wl_word)) {
-			(void) sprintf(buffer + strlen(buffer),
-				"%s:%s ", subname, name);
-			found = TRUE;
-			break;
-		    }
-                }
-                if (!found)
-		    (void) sprintf(buffer + strlen(buffer), "%s ", name);
-		tfree(name);
-            }
 
             (void) strcat(buffer, t);
             tfree(s->li_line);
