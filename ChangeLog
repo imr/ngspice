@@ -1,3 +1,7 @@
+2009-11-09 Dietmar Warning
+ * subckt.c: support of 5-terminal bjt's in subckt's by prepending subckt name (similar
+   things should be made for 5-7 terminal mos transistors, like soi models)
+
 2009-11-08 Dietmar Warning
  * numparam/xpressn.c: allow numbers < 1e-30 in fmttype, now everything < 1e-39 is 0
  * numparam/mystring.c: using floor and ceil from math lib for rounding and truncation
