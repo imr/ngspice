@@ -1,3 +1,4 @@
+============================ Rework-20 ==================================
 2009-11-09 Dietmar Warning
  * subckt.c: support of 5-terminal bjt's in subckt's by prepending subckt name (similar
    things should be made for 5-7 terminal mos transistors, like soi models)
