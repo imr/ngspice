@@ -1,3 +1,7 @@
+2009-11-15 Holger Vogt
+ * main.c, src/include/compatmode.h: compatibility mode flag for HSPICE and SPICE3
+   xpressn.c: compatmode removed
+   
 ============================ Rework-20 ==================================
 2009-11-09 Dietmar Warning
  * subckt.c: support of 5-terminal bjt's in subckt's by prepending subckt name (similar
@@ -8,7 +12,7 @@
  * numparam/mystring.c: using floor and ceil from math lib for rounding and truncation
 
 2009-11-07 Holger Vogt
- * winmain.c: replace strdup()y copy()
+ * winmain.c: replace strdup() by copy()
 
 2009-10-31 Holger Vogt
  * winmain.c: windows updated more often

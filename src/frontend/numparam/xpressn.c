@@ -1,7 +1,8 @@
 /*       xpressn.c                Copyright (C)  2002    Georg Post
- *
- *  This file is part of Numparam, see:  readme.txt
- *  Free software under the terms of the GNU Lesser General Public License
+ 
+   This file is part of Numparam, see:  readme.txt
+   Free software under the terms of the GNU Lesser General Public License
+   $Id$
  */
 
 #include <stdio.h>                /* for function message() only. */
@@ -9,36 +10,15 @@
 #include "general.h"
 #include "numparam.h"
 #include "ngspice.h"
-
-/* preliminary, until upload problem h_vogt is solved */
-//#include "../compatmode.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
 #include "dvec.h"
 #include "../frontend/variable.h"
-/* end preliminary */
+#include "compatmode.h"
 
 /* random numbers in /maths/misc/randnumb.c */
 extern double gauss();
-
-/* preliminary until upload problem h_vogt is solved */
-typedef enum {
-  COMPATMODE_NATIVE = 0,
-  COMPATMODE_HSPICE = 1
-} COMPATMODE_T ;
-
-
-COMPATMODE_T ngpsice_compat_mode(void)
-{
-    char behaviour[80] ;
-
-    if( cp_getvar("ngbehavior", VT_STRING, behaviour)){
-      if (strcasecmp(behaviour,"hspice")==0)
-	return( COMPATMODE_HSPICE ) ;
-    }
-    return(COMPATMODE_NATIVE) ;
-} /* end ngspice_compat_mode() */
-/* end preliminary */
+extern COMPATMODE_T ngspice_compat_mode(void) ;
 
 /************ keywords ************/
 
@@ -198,7 +178,8 @@ initdico (tdico * dico)
    dico->stack[dico->tos] = 0;        /* global data beneath */
    initkeys ();
 
-   compat_mode = ngpsice_compat_mode() ;
+   compat_mode = ngspice_compat_mode() ;
+
    if( compat_mode == COMPATMODE_HSPICE )
      dico->hspice_compatibility = 1 ;
    else 

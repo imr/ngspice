@@ -53,6 +53,7 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 #include "frontend/variable.h"
 #include "frontend/display.h"  /* added by SDB to pick up Input() fcn */
 #include "frontend/signal_handler.h"
+#include "compatmode.h"
 
 /* saj xspice headers */
 #ifdef XSPICE
@@ -188,9 +189,14 @@ bool ft_nutmeg = FALSE;
 extern struct comm spcp_coms[ ];
 struct comm *cp_coms = spcp_coms;
 
-extern int OUTpBeginPlot(), OUTpData(), OUTwBeginPlot(), OUTwReference();
-extern int OUTwData(), OUTwEnd(), OUTendPlot(), OUTbeginDomain();
-extern int OUTendDomain(), OUTstopnow(), OUTerror(), OUTattributes();
+extern int OUTpBeginPlot(void *,void *,IFuid,IFuid,int,int,IFuid *,int,void **); 
+extern int OUTpData(void *,IFvalue *,IFvalue *); 
+extern int OUTwBeginPlot(void *,void *,IFuid,IFuid,int,int,IFuid *,int,void **); 
+extern int OUTwReference(void *,IFvalue *,void **);
+extern int OUTwData(void *,int,IFvalue *,void *), OUTwEnd(void *), OUTendPlot(void *); 
+extern int OUTbeginDomain(void *,IFuid,int,IFvalue *);
+extern int OUTendDomain(void *), OUTstopnow(void), OUTerror(int,char *,IFuid *); 
+extern int OUTattributes(void *,IFuid *,int,IFvalue *);
 
 IFfrontEnd nutmeginfo = {
     IFnewUid,
@@ -345,6 +351,26 @@ double CONSTKoverQ;
 double CONSTe;
 IFfrontEnd *SPfrontEnd = NULL;
 int DEVmaxnum = 0;
+
+/* -------------------------------------------------------------------------- */
+/* Set a compatibility flag.
+   Currently available are flags for:
+   ngspice (standard)
+   HSPICE
+   Spice3
+*/
+COMPATMODE_T ngspice_compat_mode(void)
+{
+   char behaviour[80] ;
+
+   if( cp_getvar("ngbehavior", VT_STRING, behaviour)){
+      if (strcasecmp(behaviour,"hspice")==0)
+         return( COMPATMODE_HSPICE ) ;
+      if (strcasecmp(behaviour,"spice3")==0)
+         return( COMPATMODE_SPICE3 ) ;         
+   }
+   return(COMPATMODE_NATIVE) ;
+} /* end ngspice_compat_mode() */
 
 /* -------------------------------------------------------------------------- */
 int

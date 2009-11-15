@@ -24,14 +24,13 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj"
+				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
 				Outputs="$(IntDir)\conf.obj"
 			/>
 			<Tool
@@ -119,7 +118,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(IntDir)\conf.obj"
+				CommandLine="del $(IntDir)\conf.obj&#x0D;&#x0A;"
 				Outputs="$(IntDir)\conf.obj"
 			/>
 			<Tool
@@ -827,6 +826,10 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\commands.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\compatmode.h"
 				>
 			</File>
 			<File
