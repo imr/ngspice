@@ -114,7 +114,7 @@ test $TEST_TYPE $FILE || {
 }
 
 
-cp -p configure.in configure.tmp
+cp -p configure.in configure.temp
 
 if test "$ADMS" -eq 1; then
 
@@ -123,7 +123,7 @@ if test "$ADMS" -eq 1; then
                    src\/spicelib\/devices\/adms\/hicum0\/Makefile\
                    src\/spicelib\/devices\/adms\/hicum2\/Makefile\
                    src\/spicelib\/devices\/adms\/mextram\/Makefile\
-                   src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.tmp >configure.in
+                   src\/spicelib\/devices\/adms\/psp102\/Makefile/g' configure.temp >configure.in
   
   currentdir=`pwd`
   
@@ -157,7 +157,7 @@ if test "$ADMS" -eq 1; then
 
 else
 
-  sed '/${VLAMKF}/d' configure.tmp >configure.in
+  sed '/${VLAMKF}/d' configure.temp >configure.in
 
 fi
 
@@ -185,6 +185,6 @@ echo "Running autoconf"
 autoconf
 if [ $? -ne 0 ]; then  echo "autoconf failed"; exit 1 ; fi
 
-mv configure.tmp configure.in
+mv configure.temp configure.in
 
 echo "Success."
