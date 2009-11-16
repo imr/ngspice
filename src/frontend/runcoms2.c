@@ -42,107 +42,123 @@ bool resumption = FALSE;
 void
 com_resume(wordlist *wl)
 {
-    struct dbcomm *db;
-    int err;
+   struct dbcomm *db;
+   int err;
     
-    /*rawfile output saj*/
-    bool dofile = FALSE;
-    char buf[BSIZE_SP];
-    bool ascii = AsciiRawFile;
-    /*end saj*/
+   /*rawfile output saj*/
+   bool dofile = FALSE;
+   char buf[BSIZE_SP];
+   bool ascii = AsciiRawFile;
+   /*end saj*/
 
-    /*saj fix segment*/
-    if (!ft_curckt) {
+   /*saj fix segment*/
+   if (!ft_curckt) {
       fprintf(cp_err, "Error: there aren't any circuits loaded.\n");
-        return;
-    } else if (ft_curckt->ci_ckt == NULL) { /* Set noparse? */
+         return;
+   } else if (ft_curckt->ci_ckt == NULL) { /* Set noparse? */
       fprintf(cp_err, "Error: circuit not parsed.\n");
       return;
-    }
-    /*saj*/
+   }
+   /*saj*/
 
-    if (ft_curckt->ci_inprogress == FALSE) {
-        fprintf(cp_err, "Note: run starting\n");
-        com_run((wordlist *) NULL);
-        return;
-    }
-    ft_curckt->ci_inprogress = TRUE;
-    ft_setflag = TRUE;
+   if (ft_curckt->ci_inprogress == FALSE) {
+      fprintf(cp_err, "Note: run starting\n");
+      com_run((wordlist *) NULL);
+      return;
+   }
+   ft_curckt->ci_inprogress = TRUE;
+   ft_setflag = TRUE;
 
+   reset_trace( );
+   for ( db = dbs, resumption = FALSE; db; db = db->db_next )
+      if( db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL ) {
+         resumption = TRUE;
+      }
 
-
-    reset_trace( );
-    for ( db = dbs, resumption = FALSE; db; db = db->db_next )
-	if( db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL ) {
-		resumption = TRUE;
-	}
-
-    /*rawfile output saj*/
-    if (last_used_rawfile)
+   /*rawfile output saj*/
+   if (last_used_rawfile)
       dofile = TRUE;
     
-    if (cp_getvar("filetype", VT_STRING, buf)) {
+   if (cp_getvar("filetype", VT_STRING, buf)) {
       if (eq(buf, "binary"))
-	ascii = FALSE;
+         ascii = FALSE;
       else if (eq(buf, "ascii"))
-	ascii = TRUE;
+         ascii = TRUE;
       else
-	fprintf(cp_err,
-		"Warning: strange file type \"%s\" (using \"ascii\")\n",
-		buf);
-    }
+         fprintf(cp_err,
+            "Warning: strange file type \"%s\" (using \"ascii\")\n",
+            buf);
+   }
     
-    if (dofile) {
+   if (dofile) {
 #ifdef PARALLEL_ARCH
-      if (ARCHme == 0) {
+   if (ARCHme == 0) {
 #endif /* PARALLEL_ARCH */
-        if (!last_used_rawfile)
-	  rawfileFp = stdout;
-        else if (!(rawfileFp = fopen(last_used_rawfile, "a"))) {
-	  setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
-	  perror(last_used_rawfile);
-	  ft_setflag = FALSE;
-	  return;
+      if (!last_used_rawfile)
+         rawfileFp = stdout;
+#if defined(__MINGW32__) || defined(_MSC_VER)
+/* ask if binary or ASCII, open file with w or wb   hvogt 15.3.2000 */
+        else if (ascii) { 
+            if(!(rawfileFp = fopen(last_used_rawfile, "a"))) {
+               setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
+               perror(last_used_rawfile);
+               ft_setflag = FALSE;
+               return;
+            }
+        }    
+        else if (!ascii) { 
+            if(!(rawfileFp = fopen(last_used_rawfile, "ab"))) {
+               setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
+               perror(last_used_rawfile);
+               ft_setflag = FALSE;
+               return;
+            }
         }
-        rawfileBinary = !ascii;
+/*---------------------------------------------------------------------------*/
+#else
+      else if (!(rawfileFp = fopen(last_used_rawfile, "a"))) {
+         setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
+         perror(last_used_rawfile);
+         ft_setflag = FALSE;
+         return;
+      }
+#endif
 #ifdef PARALLEL_ARCH
       } else {
         rawfileFp = NULL;
       }
 #endif /* PARALLEL_ARCH */
-    } else {
+      rawfileBinary = !ascii;
+   } else {
       rawfileFp = NULL;
-    }
-    
-
-
+   } /* if dofile */
 
     /*end saj*/
 
-    err = if_run(ft_curckt->ci_ckt, "resume", (wordlist *) NULL,
+   err = if_run(ft_curckt->ci_ckt, "resume", (wordlist *) NULL,
             ft_curckt->ci_symtab); 
 
-    /*close rawfile saj*/
-    if (rawfileFp){
+   /*close rawfile saj*/
+   if (rawfileFp){
       if (ftell(rawfileFp)==0) {
-	(void) fclose(rawfileFp);
-	(void) remove(last_used_rawfile);
+         (void) fclose(rawfileFp);
+         (void) remove(last_used_rawfile);
       } else {
-	(void) fclose(rawfileFp);
+         (void) fclose(rawfileFp);
       }
-    }
-    /*end saj*/
+   }
+   /*end saj*/
 
-    if (err == 1) {
-        /* The circuit was interrupted somewhere. */
+   if (err == 1) {
+       /* The circuit was interrupted somewhere. */
 
-        fprintf(cp_err, "simulation interrupted\n");
-    } else if (err == 2) {
-        fprintf(cp_err, "simulation aborted\n");
-        ft_curckt->ci_inprogress = FALSE;
-    } else
-        ft_curckt->ci_inprogress = FALSE;
-    return;
+      fprintf(cp_err, "simulation interrupted\n");
+   } else if (err == 2) {
+      fprintf(cp_err, "simulation aborted\n");
+      ft_curckt->ci_inprogress = FALSE;
+   } else
+      ft_curckt->ci_inprogress = FALSE;
+   return;
 }
 
 /* Throw out the circuit struct and recreate it from the deck.  This command

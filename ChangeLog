@@ -1,4 +1,8 @@
 2009-11-15 Holger Vogt
+ * com_sysinfo.c: line 355 changed, allow mingw console compilation
+   runcoms2.c: cosmetics  
+ 
+2009-11-15 Holger Vogt
  * main.c, src/include/compatmode.h: compatibility mode flag for HSPICE and SPICE3
    xpressn.c: compatmode removed
    

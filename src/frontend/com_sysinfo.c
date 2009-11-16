@@ -352,7 +352,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 	return error;
 }
 
-#elif HAS_WINDOWS
+#elif defined(HAVE_WIN32)
 
 /* get memory information */
 static size_t get_sysmem(struct sys_memory *memall) {
