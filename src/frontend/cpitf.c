@@ -249,7 +249,7 @@ ft_cpinit(void)
                 cp_interactive = TRUE;
                 found = TRUE;
                 break;
-#ifdef HAS_WINDOWS
+#if defined (HAS_WINDOWS) || defined (__MINGW32__) || defined (_MSC_VER)
             /* search in local directory where ngspice.exe resides */
             } else if ((fp = fopen("./spinit", "r"))) {
                 cp_interactive = FALSE;

@@ -82,4 +82,14 @@ C:\Spice\
 				spectrum
 				spinit
 		
-		
+If spinit is not found in the directory cited above,
+vngspice.exe also searches for spinit in its own directory. If you give 
+a relative path for the codemodel directories in spinit, you may 
+determine your own directory tree.
+
+If you want to generate a console ngspice (without GUI, 
+without graphics interface, but usable in batch mode (-b)), 
+then you have to do the following before compilation:
+select console_debug or console_release from the configuration manager.
+ngspice.exe will search for spinit in the directory tree shown above, or, 
+if not found, in its own directory.

@@ -1,6 +1,9 @@
-2009-11-15 Holger Vogt
+2009-11-16 Holger Vogt
  * com_sysinfo.c: line 355 changed, allow mingw console compilation
-   runcoms2.c: cosmetics  
+   runcoms2.c: cosmetics 
+   cpitf.c, how-to-ngspice-vstudio.txt, visualc/include/config.h,
+   vngspice.sln, vngspice.vcproj: add console app to configuration
+   manager of Visual Studio 
  
 2009-11-15 Holger Vogt
  * main.c, src/include/compatmode.h: compatibility mode flag for HSPICE and SPICE3
