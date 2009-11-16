@@ -42,6 +42,11 @@ dnl --disable-debug: remove -g and -Wall  option to the compiler
 AC_ARG_ENABLE(debug,
     AS_HELP_STRING([--enable-debug],[Add -g option for compilation (default)]))
 
+dnl --enable-gprof: add -pg option to the compiler (GCC)
+AC_ARG_ENABLE(gprof,
+   AS_HELP_STRING([--enable-gprof],[Produce gprof profiling data in 'gmon.out' (GCC only).]))
+
+
 dnl --enable-checker: add --with-checker-debug  option to the compiler
 AC_ARG_ENABLE(checker,
     AS_HELP_STRING([--enable-checkergcc],[Option for compilation with checkergcc]))
@@ -219,6 +224,25 @@ else
 	fi
 fi
 
+dnl the profiling option
+if test "$enable_gprof" = "yes"; then
+    dnl Probably other compilers support -pg or something similar;
+    dnl feel free to extend this to include them.
+    if test "$GCC" = "yes"; then
+        if test "$enable_shared" = "yes" ; then
+            AC_MSG_ERROR(Can't have --enable-gprof without --disable-shared (we
+                         recommend also using --enable-all-static).)
+        fi
+        if test ! "$enable_static" = "yes" ; then
+            AC_MSG_WARN(We recommend --enable-static with --enable-gprof.)
+        fi
+        AC_MSG_NOTICE([Enabling gprof profiling data (to gmon.out).])
+        CFLAGS="$CFLAGS -pg"
+        LDFLAGS="$LDFLAGS -pg"
+    else
+            AC_MSG_ERROR(We only support --enable-gprof with GCC right now.)
+    fi
+fi
 
 dnl Not sure that this will work....
 if test "$with_checkergcc" = "yes"; then
