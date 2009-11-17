@@ -11,8 +11,6 @@ Modified: 1999 Paolo Nenzi - Now we can use a two digits level code -
      */
 
 #include "ngspice.h"
-#include <stdio.h>
-#include <string.h>
 #include "inpdefs.h"
 #include "inp.h"
 
@@ -48,7 +46,7 @@ char *INPfindLev(char *line, int *level)
 	if (*level > 99) {	/* Limit to change in the future */
 	    *level = 1;
 	    fprintf(stderr,"Illegal value for level.\n");
-	    fprintf(stderr,"Level must be <99 (Setting Level to 1)\n");
+	    fprintf(stderr,"Level must be < 99 (Setting Level to 1)\n");
 	    return (INPmkTemp
 		    (" illegal (too high) argument to level parameter - level=1 assumed"));
 	}
@@ -57,14 +55,13 @@ char *INPfindLev(char *line, int *level)
     }
 
 
-
     else {			/* no level on the line => default */
 	*level = 1;
+#ifdef TRACE			/* this is annoying for bjt's */
 	fprintf(stderr,"Warning -- Level not specified on line \"%s\"\nUsing level 1.\n", line);
+#endif
 	return ((char *) NULL);
     }
-
-
 
 
 }
