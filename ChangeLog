@@ -1,3 +1,9 @@
+2009-11-17 Dietmar Warning
+ * configure.in: add search for strings.h because AC_HEADER_STDC isn't sufficient
+ * com_measure2.c, 116: remove empty statement
+ * parser/inpfindl.c: rm the annoying bjt level warning
+ * parser/inpptree.c, ptfuncs.c: changed ancient double vector declaration in pwldata
+
 2009-11-16 Holger Vogt
  * com_sysinfo.c: line 355 changed, allow mingw console compilation
    runcoms2.c: cosmetics 
