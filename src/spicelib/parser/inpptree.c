@@ -778,7 +778,7 @@ static INPparseNode *mkbnode(int opnum, INPparseNode * arg1,
 static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
 {
     INPparseNode *w;
-    struct pwldata { int n; double vals[0]; } *data;
+    struct pwldata { int n; double *vals; } *data;
     int i;
 
     if (p->funcnum != PTF_PWL) {
