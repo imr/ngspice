@@ -34,7 +34,7 @@ static int dosim(char *what, wordlist *wl);
  * resume, stop, trace, run, end.  Op, tran, ac, and dc cause the action
  * to be performed immediately, and run causes whatever actions were
  * present in the deck to be carried out. End has the effect of stopping
- * any simulations in progress, as opposed to ending te input deck as
+ * any simulations in progress, as opposed to ending the input deck as
  * the .end line does.
  */
 
@@ -46,6 +46,7 @@ char rawfileBuf[RAWBUF_SIZE];
 char *last_used_rawfile = NULL;
 /*end saj */
 
+/* command "setcirc" */
 void
 com_scirc(wordlist *wl)
 {
@@ -165,181 +166,193 @@ com_noise(wordlist *wl)
 }
 
 static int
-dosim(char *what, wordlist *wl)
+dosim(
+   char *what, /* in: command (pz,op,dc,ac,tf,tran,sens,disto,noise,run) */
+   wordlist *wl /* in: command option */
+   /* global variables in: ft_curckt, ft_circuits, 
+                      out: ft_setflag, ft_intrpt, rawfileFp, rawfileBinary,
+                           last_used_rawfile 
+    */
+ )
 {
-    wordlist *ww = NULL;
-    bool dofile = FALSE;
-    char buf[BSIZE_SP];
-    struct circ *ct;
-    int err = 0;
-    bool ascii = AsciiRawFile;
-    if (eq(what, "run") && wl)
-        dofile = TRUE;
-    if (!dofile) {
-        ww = alloc(struct wordlist);
-        ww->wl_next = wl;
-        if (wl)
-            wl->wl_prev = ww;
-        ww->wl_word = copy(what);
-    }
+   wordlist *ww = NULL;
+   bool dofile = FALSE;
+   char buf[BSIZE_SP];
+   struct circ *ct;
+   int err = 0;
+   /* set file type to binary or to what is given by environmental 
+      variable SPICE_ASCIIRAWFILE in ivars.c */
+   bool ascii = AsciiRawFile;
+   if (eq(what, "run") && wl)
+      dofile = TRUE;
+   /* add "what" to beginning of wordlist wl, except "what" equals "run" 
+      and a rawfile name is given (in wl) */
+   if (!dofile) {
+      ww = alloc(struct wordlist);
+      ww->wl_next = wl;
+      if (wl)
+         wl->wl_prev = ww;
+      ww->wl_word = copy(what);
+   }
+   /* reset output file type according to variable given in spinit */
+   if (cp_getvar("filetype", VT_STRING, buf)) {
+      if (eq(buf, "binary"))
+         ascii = FALSE;
+      else if (eq(buf, "ascii"))
+         ascii = TRUE;
+      else {
+         fprintf(cp_err,
+            "Warning: strange file type \"%s\" (using \"ascii\")\n", buf);
+         ascii = TRUE;
+      }
+   }
 
-    if (cp_getvar("filetype", VT_STRING, buf)) {
-        if (eq(buf, "binary"))
-            ascii = FALSE;
-        else if (eq(buf, "ascii"))
-	    ascii = TRUE;
-	else
-            fprintf(cp_err,
-		    "Warning: strange file type \"%s\" (using \"ascii\")\n",
-                    buf);
-    }
+   if (!ft_curckt) {
+      fprintf(cp_err, "Error: there aren't any circuits loaded.\n");
+      return 1;
+   } else if (ft_curckt->ci_ckt == NULL) { /* Set noparse? */
+      fprintf(cp_err, "Error: circuit not parsed.\n");
+      return 1;
+   }
+   for (ct = ft_circuits; ct; ct = ct->ci_next)
+      if (ct->ci_inprogress && (ct != ft_curckt)) {
+         fprintf(cp_err, 
+            "Warning: losing old state for circuit '%s'\n",
+            ct->ci_name);
+         ct->ci_inprogress = FALSE;
+      }
+   /* "resume" will never occur in ngspice */
+   if (ft_curckt->ci_inprogress && eq(what, "resume")) {
+      ft_setflag = TRUE;  /* don't allow abort upon interrupt during run  */
+      ft_intrpt = FALSE;
+      fprintf(cp_err, "Warning: resuming run in progress.\n");
+      com_resume((wordlist *) NULL);
+      ft_setflag = FALSE;  /* Now allow aborts again  */
+      return 0;
+   }
 
-    if (!ft_curckt) {
-        fprintf(cp_err, "Error: there aren't any circuits loaded.\n");
-        return 1;
-    } else if (ft_curckt->ci_ckt == NULL) { /* Set noparse? */
-        fprintf(cp_err, "Error: circuit not parsed.\n");
-        return 1;
-    }
-    for (ct = ft_circuits; ct; ct = ct->ci_next)
-        if (ct->ci_inprogress && (ct != ft_curckt)) {
-            fprintf(cp_err, 
-                "Warning: losing old state for circuit '%s'\n",
-                ct->ci_name);
-            ct->ci_inprogress = FALSE;
-        }
-    if (ft_curckt->ci_inprogress && eq(what, "resume")) {
-        ft_setflag = TRUE;  /* don't allow abort upon interrupt during run  */
-        ft_intrpt = FALSE;
-        fprintf(cp_err, "Warning: resuming run in progress.\n");
-        com_resume((wordlist *) NULL);
-        ft_setflag = FALSE;  /* Now allow aborts again  */
-        return 0;
-    }
-
-    /* From now on until the next prompt, an interrupt will just
-     * set a flag and let spice finish up, then control will be
-     * passed back to the user.
-     */
-    ft_setflag = TRUE;  /* Don't allow abort upon interrupt during run.  */
-    ft_intrpt = FALSE;
-    if (dofile) {
+   /* From now on until the next prompt, an interrupt will just
+    * set a flag and let spice finish up, then control will be
+    * passed back to the user.
+    */
+   ft_setflag = TRUE;  /* Don't allow abort upon interrupt during run.  */
+   ft_intrpt = FALSE;
+   /* command "run" is given with rawfile name in wl */
+   if (dofile) {
 #ifdef PARALLEL_ARCH
       if (ARCHme == 0) {
 #endif /* PARALLEL_ARCH */
-        if (!*wl->wl_word)
-	    rawfileFp = stdout;
+      if (!*wl->wl_word)
+         rawfileFp = stdout;
 #if defined(__MINGW32__) || defined(_MSC_VER)
-/* ask if binary or ASCII, open file with w or wb   hvogt 15.3.2000 */
-        else if (ascii) { 
-            if(!(rawfileFp = fopen(wl->wl_word, "w"))) {
-                perror(wl->wl_word);
-                ft_setflag = FALSE;
-                return 1;
-            }
-            fprintf(cp_out,"ASCII raw file\n");
-        }    
-        else if (!ascii) { 
-            if(!(rawfileFp = fopen(wl->wl_word, "wb"))) {
-                perror(wl->wl_word);
-                ft_setflag = FALSE;
-                return 1;
-            }
-            fprintf(cp_out,"binary raw file\n");
-        }
+/* ask if binary or ASCII, open file with wb or w */
+      else if (ascii) { 
+         if(!(rawfileFp = fopen(wl->wl_word, "w"))) {
+            perror(wl->wl_word);
+            ft_setflag = FALSE;
+            return 1;
+         }
+         fprintf(cp_out,"ASCII raw file\n");
+      }    
+      else if (!ascii) { 
+         if(!(rawfileFp = fopen(wl->wl_word, "wb"))) {
+            perror(wl->wl_word);
+            ft_setflag = FALSE;
+            return 1;
+         }
+         fprintf(cp_out,"binary raw file\n");
+      }
 /*---------------------------------------------------------------------------*/
 #else	    
-        else if (!(rawfileFp = fopen(wl->wl_word, "w"))) {
-        	setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
-		perror(wl->wl_word);
-		ft_setflag = FALSE;
-		return 1;
-        }
-#endif /* __MINGW32__ */
-        rawfileBinary = !ascii;
-#ifdef PARALLEL_ARCH
-      } else {
-        rawfileFp = NULL;
+      else if (!(rawfileFp = fopen(wl->wl_word, "w"))) {
+         setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
+         perror(wl->wl_word);
+         ft_setflag = FALSE;
+         return 1;
       }
+#endif /* __MINGW32__ */
+      rawfileBinary = !ascii;
+#ifdef PARALLEL_ARCH
+   } else {
+      rawfileFp = NULL;
+   }
 #endif /* PARALLEL_ARCH */
-    } else {
-        rawfileFp = NULL;
-    }
+   } else {
+      rawfileFp = NULL;
+   }
 
-    /*save rawfile name saj*/
-    if(last_used_rawfile) 
-        tfree(last_used_rawfile);
-    if(rawfileFp){
+   /*save rawfile name */
+   if(last_used_rawfile) 
+      tfree(last_used_rawfile);
+   if(rawfileFp){
       last_used_rawfile = copy(wl->wl_word);
-    }else {
+   } else {
       last_used_rawfile = NULL;
-    }
-    /*end saj*/
- 
-    /* Spice calls wrd_init and wrd_end itself */
-    ft_curckt->ci_inprogress = TRUE;
-    if (eq(what,"sens2")) {
-       if (if_sens_run(ft_curckt->ci_ckt, ww, ft_curckt->ci_symtab) == 1) {
-        /* The circuit was interrupted somewhere. */
+   }
 
-	    fprintf(cp_err, "%s simulation interrupted\n", what);
+   ft_curckt->ci_inprogress = TRUE;
+   /* "sens2" not used in ngspice */
+   if (eq(what,"sens2")) {
+      if (if_sens_run(ft_curckt->ci_ckt, ww, ft_curckt->ci_symtab) == 1) {
+         /* The circuit was interrupted somewhere. */
+         fprintf(cp_err, "%s simulation interrupted\n", what);
 #ifdef XSPICE
   /* gtri - add - 12/12/90 - wbk - record error and return errchk */
-        g_ipc.run_error = IPC_TRUE;
-        if(g_ipc.enabled)
+         g_ipc.run_error = IPC_TRUE;
+         if(g_ipc.enabled)
             ipc_send_errchk();
         /* gtri - end - 12/12/90 */
 #endif
-        } else
-	    ft_curckt->ci_inprogress = FALSE;
-    } else {
-        err = if_run(ft_curckt->ci_ckt, what, ww, ft_curckt->ci_symtab);
-        if (err == 1) {
-	    /* The circuit was interrupted somewhere. */
-	    fprintf(cp_err, "%s simulation interrupted\n", what);
+      } else
+         ft_curckt->ci_inprogress = FALSE;
+   /* Do a run of the circuit */
+   } else {
+      err = if_run(ft_curckt->ci_ckt, what, ww, ft_curckt->ci_symtab);
+      if (err == 1) {
+         /* The circuit was interrupted somewhere. */
+         fprintf(cp_err, "%s simulation interrupted\n", what);
 #ifdef XSPICE
-    /* gtri - add - 12/12/90 - wbk - record error and return errchk */
-        g_ipc.run_error = IPC_TRUE;
-        if(g_ipc.enabled)
+         /* record error and return errchk */
+         g_ipc.run_error = IPC_TRUE;
+         if(g_ipc.enabled)
             ipc_send_errchk();
-    /* gtri - end - 12/12/90 */
+         /* gtri - end - 12/12/90 */
 #endif
-	    err = 0;
-        } else if (err == 2) {
-	    fprintf(cp_err, "%s simulation(s) aborted\n", what);
-	    ft_curckt->ci_inprogress = FALSE;
-	    err = 1;
-	} else
-	    ft_curckt->ci_inprogress = FALSE;
-    }
-
-    if (rawfileFp){
+         err = 0;
+      } else if (err == 2) {
+         fprintf(cp_err, "%s simulation(s) aborted\n", what);
+         ft_curckt->ci_inprogress = FALSE;
+         err = 1;
+      } else
+         ft_curckt->ci_inprogress = FALSE;
+   }
+   /* close the rawfile */
+   if (rawfileFp){
       if (ftell(rawfileFp)==0) {
-	    (void) fclose(rawfileFp);
-            (void) remove(wl->wl_word);
-        } else {
-	    (void) fclose(rawfileFp);
-        }
-    }
-    ft_curckt->ci_runonce = TRUE;
-    ft_setflag = FALSE;
+         (void) fclose(rawfileFp);
+         (void) remove(wl->wl_word);
+      } else {
+         (void) fclose(rawfileFp);
+      }
+   }
+   ft_curckt->ci_runonce = TRUE;
+   ft_setflag = FALSE;
 
-    /* va: garbage collection: unlink first word (inserted here) and tfree it */
-    if (!dofile) {
-    	tfree(ww->wl_word);
-        if (wl)
-            wl->wl_prev = NULL;
-        tfree(ww);
-    }
+   /* va: garbage collection: unlink first word (inserted here) and tfree it */
+   if (!dofile) {
+      tfree(ww->wl_word);
+      if (wl)
+         wl->wl_prev = NULL;
+      tfree(ww);
+   }
 
-    if ( !err && ft_curckt->ci_last_an) do_measure( ft_curckt->ci_last_an, FALSE );
+   /* execute the .measure statements */
+   if ( !err && ft_curckt->ci_last_an) do_measure( ft_curckt->ci_last_an, FALSE );
 
-    return err;
+   return err;
 }
 
-/* Usage is run [filename] Do the wrd_{open,run} and wrd_(void) close
- * here, and let the CKT stuff do wrd_init and wrd_end.
- */
+/* Usage is run [filename] */
 
 void
 com_run(wordlist *wl)
@@ -365,36 +378,12 @@ ft_dorun(char *file)
 bool
 ft_getOutReq(FILE **fpp, struct plot **plotp, bool *binp, char *name, char *title)
 {
-    /*struct plot *pl;*/
-
-/* PN: the following code prevents operating point an AC analysis 
- * dump in the rawfile -- it is still needed ?
- */
-/* #ifndef BATCH
-    if ( (strcmp(name, "Operating Point")==0) ||
-        (strcmp(name, "AC Operating Point")==0) ) {
-        return (FALSE);
-    };
-#endif */
-
-    if (rawfileFp) {
-        *fpp = rawfileFp;
-        *binp = rawfileBinary;
-        return (TRUE);
-    } else {
-/*
-        pl = plot_alloc(name);
-        pl->pl_title = copy(title);
-        pl->pl_name = copy(name);
-        pl->pl_date = copy(datestring( ));
-
-        pl->pl_next = plot_list;
-        plot_list = pl;
-        plot_cur = pl;
-
-        *plotp = pl;
-*/
-        return (FALSE);
-    }
+   if (rawfileFp) {
+       *fpp = rawfileFp;
+       *binp = rawfileBinary;
+       return (TRUE);
+   } else {
+       return (FALSE);
+   }
 }
 
