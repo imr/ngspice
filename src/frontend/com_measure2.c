@@ -113,7 +113,7 @@ void correct_vec(MEASUREPTR meas)
       meas->m_vec2 = copy(newvec2);           
    }
    return;
-};
+}
 
 /* Returns a value from a complex vector *values, depending on meas->m_vectype */
 static double get_value(
