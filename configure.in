@@ -252,6 +252,7 @@ fi
 
 dnl Checks for ANSI-C header files.
 AC_HEADER_STDC
+AC_CHECK_HEADERS(strings.h)
 
 if test "$enable_ansi" = "yes"; then
 	AC_PROG_CC()
