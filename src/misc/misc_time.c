@@ -99,7 +99,7 @@ seconds(void)
 {
 #ifdef HAVE_GETRUSAGE
     int ret;
-    struct rusage ruse = {{NULL, NULL}};
+    struct rusage ruse = {{0, 0}};
 
 #ifdef PARALLEL_ARCH
     return (TCGTIME_());
