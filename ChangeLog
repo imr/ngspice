@@ -6,7 +6,7 @@
  * com_measure2.c, 116: remove empty statement
  * parser/inpfindl.c: rm the annoying bjt level warning
  * parser/inpptree.c, ptfuncs.c: changed ancient double vector declaration in pwldata
- * misc/misc_time.c: init structure with 0 instead NULL
+ * misc/misc_time.c: init structure rusage with 0 instead NULL
 
 2009-11-16 Holger Vogt
  * com_sysinfo.c: line 355 changed, allow mingw console compilation
