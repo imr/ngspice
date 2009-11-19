@@ -1,3 +1,8 @@
+2009-11-19 Holger Vogt
+ * com_hardcopy.c, postsc.c: hardcopy set to default postscript (under Windows),
+   LINUX and others require set hcopydevtype=postscript in spinit.
+   set hcopypscolor=0 in spinit will set background color (0==black, 1==white ...) 
+
 2009-11-17 Holger Vogt
  * runcoms.c: comments added
 
