@@ -53,7 +53,11 @@ com_hardcopy(wordlist *wl)
     }
 
     if (!cp_getvar("hcopydevtype", VT_STRING, buf)) {
-        devtype = "plot5";
+#if defined (HAS_WINDOWS) || defined (__MINGW32__) || defined (_MSC_VER)
+       devtype = "postscript";
+#else
+       devtype = "plot5";
+#endif
     } else {
         devtype = buf;
     }

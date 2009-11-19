@@ -65,6 +65,7 @@ static int fontwidth  = FONTWIDTH;
 static int fontheight = FONTHEIGHT;
 static int screenflag = 0;
 static int colorflag = 0;
+static int setcolor = 0;
 static double scale;	/* Used for fine tuning */
 static int xtadj;     /* text adjustment x */
 static int ytadj;     /* text adjustment y */
@@ -88,7 +89,7 @@ PS_Init(void)
 	    scale = 1.0;
     }
 
-  if (!cp_getvar("hcopypscolor", VT_STRING, pscolor)) {
+  if (!cp_getvar("hcopypscolor", VT_NUM, &setcolor)) {
     colorflag = 0;
     dispdev->numcolors = 2;
     dispdev->numlinestyles = NUMELEMS(linestyle);
@@ -97,7 +98,7 @@ PS_Init(void)
     dispdev->numcolors = 18;   /* don't know what the maximum should be */
     dispdev->numlinestyles = 1;
   }
-  pscolor[0]='\0';
+//  pscolor[0]='\0';
 
   if (!cp_getvar("hcopywidth", VT_STRING, pswidth)) {
     dispdev->width = 7.75 * 72.0 * scale;       /* (8 1/2 - 3/4) * 72 */
@@ -198,7 +199,7 @@ PS_NewViewport(GRAPH *graph)
     fprintf(plotfile, "%g %g scale\n", 1.0 / scale, 1.0 / scale);
 
     if (colorflag == 1){            /* set the background to color0 */
-	PS_SelectColor(0);
+	PS_SelectColor(setcolor);
 	fprintf(plotfile,"%s setrgbcolor\n",pscolor);
 	fprintf(plotfile,"newpath\n");
 	fprintf(plotfile,"%d %d moveto %d %d lineto\n",x1,y1,x2,y1);
