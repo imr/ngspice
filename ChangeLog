@@ -1,3 +1,7 @@
+2009-11-20 Holger Vogt
+ * postsc.c: some cosmetics to postscript plot, hcopypstxcolor for
+   setting text color 
+
 2009-11-19 Holger Vogt
  * com_hardcopy.c, postsc.c: hardcopy set to default postscript (under Windows),
    LINUX and others require set hcopydevtype=postscript in spinit.

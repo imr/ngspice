@@ -65,7 +65,8 @@ static int fontwidth  = FONTWIDTH;
 static int fontheight = FONTHEIGHT;
 static int screenflag = 0;
 static int colorflag = 0;
-static int setcolor = 0;
+static int setbgcolor = 0;
+static int settxcolor = -1;
 static double scale;	/* Used for fine tuning */
 static int xtadj;     /* text adjustment x */
 static int ytadj;     /* text adjustment y */
@@ -76,30 +77,34 @@ void PS_LinestyleColor(int linestyleid, int colorid);
 void PS_SelectColor(int colorid);
 void PS_Stroke(void);
 
+/* Set scale, color and size of the plot */
 int
 PS_Init(void)
 {
   char pswidth[30], psheight[30];
   
     if (!cp_getvar("hcopyscale", VT_STRING, psscale)) {
-	scale = 1.0;
+        scale = 1.0;
     } else {
-	sscanf(psscale, "%lf", &scale);
-	if ((scale <= 0) || (scale > 10))
-	    scale = 1.0;
+        sscanf(psscale, "%lf", &scale);
+        if ((scale <= 0) || (scale > 10))
+        scale = 1.0;
     }
-
-  if (!cp_getvar("hcopypscolor", VT_NUM, &setcolor)) {
+  /* plot color */
+  if (!cp_getvar("hcopypscolor", VT_NUM, &setbgcolor)) {
+    /* if not set, set plot to b&w and use line styles */
     colorflag = 0;
     dispdev->numcolors = 2;
     dispdev->numlinestyles = NUMELEMS(linestyle);
   } else {
+    /* get backgroung color and set plot to color */
     colorflag = 1;
     dispdev->numcolors = 18;   /* don't know what the maximum should be */
     dispdev->numlinestyles = 1;
+    cp_getvar("hcopypstxcolor", VT_NUM, &settxcolor);
   }
-//  pscolor[0]='\0';
 
+  /* plot size */
   if (!cp_getvar("hcopywidth", VT_STRING, pswidth)) {
     dispdev->width = 7.75 * 72.0 * scale;       /* (8 1/2 - 3/4) * 72 */
   } else {
@@ -130,21 +135,21 @@ PS_Init(void)
      */
 
     if (!cp_getvar("hcopyfont", VT_STRING, psfont))
-	strcpy(psfont, "Helvetica");
+        strcpy(psfont, "Helvetica");
     if (!cp_getvar("hcopyfontsize", VT_STRING, psfontsize)) {
-	fontsize = 10;
-	fontwidth = 6;
-	fontheight = 14;
-	xtadj = XTADJ * scale;
-	ytadj = YTADJ * scale;
+        fontsize = 10;
+        fontwidth = 6;
+        fontheight = 14;
+        xtadj = XTADJ * scale;
+        ytadj = YTADJ * scale;
     } else {
-	sscanf(psfontsize, "%d", &fontsize);
-	if ((fontsize < 10) || (fontsize > 14))
-	    fontsize = 10;
-	fontwidth = 0.5 + 0.6 * fontsize;
-	fontheight = 2.5 + 1.2 * fontsize;
-	xtadj = XTADJ * scale * fontsize / 10;
-	ytadj = YTADJ * scale * fontsize / 10;
+        sscanf(psfontsize, "%d", &fontsize);
+        if ((fontsize < 10) || (fontsize > 14))
+            fontsize = 10;
+        fontwidth = 0.5 + 0.6 * fontsize;
+        fontheight = 2.5 + 1.2 * fontsize;
+        xtadj = XTADJ * scale * fontsize / 10;
+        ytadj = YTADJ * scale * fontsize / 10;
     }
 
     screenflag = 0;
@@ -155,13 +160,13 @@ PS_Init(void)
 
 }
 
-/* devdep initially contains name of output file */
+/* Plot and fill bounding box */
 int
 PS_NewViewport(GRAPH *graph)
 {
     int x1,x2,y1,y2;
     hcopygraphid = graph->graphid;
-
+    /* devdep initially contains name of output file */
     if (!(plotfile = fopen(graph->devdep, "w"))) {
       perror(graph->devdep);
       graph->devdep = (char *) NULL;
@@ -198,13 +203,14 @@ PS_NewViewport(GRAPH *graph)
 
     fprintf(plotfile, "%g %g scale\n", 1.0 / scale, 1.0 / scale);
 
-    if (colorflag == 1){            /* set the background to color0 */
-	PS_SelectColor(setcolor);
-	fprintf(plotfile,"%s setrgbcolor\n",pscolor);
-	fprintf(plotfile,"newpath\n");
-	fprintf(plotfile,"%d %d moveto %d %d lineto\n",x1,y1,x2,y1);
-	fprintf(plotfile,"%d %d lineto %d %d lineto\n",x2,y2,x1,y2);
-	fprintf(plotfile,"closepath fill\n");
+    if (colorflag == 1){            
+        /* set the background to color given in spinit (or 0) */
+        PS_SelectColor(setbgcolor);
+        fprintf(plotfile,"%s setrgbcolor\n",pscolor);
+        fprintf(plotfile,"newpath\n");
+        fprintf(plotfile,"%d %d moveto %d %d lineto\n",x1,y1,x2,y1);
+        fprintf(plotfile,"%d %d lineto %d %d lineto\n",x2,y2,x1,y2);
+        fprintf(plotfile,"closepath fill\n");
     }
 
     /* set up a reasonable font */
@@ -230,17 +236,17 @@ PS_Close(void)
     /* in case PS_Close is called as part of an abort,
             w/o having reached PS_NewViewport */
     if (plotfile) {
-    PS_Stroke();
-    fprintf(plotfile, "showpage\n%%%%EOF\n");
-	fclose(plotfile);
-	plotfile = NULL;
+        PS_Stroke();
+        fprintf(plotfile, "showpage\n%%%%EOF\n");
+        fclose(plotfile);
+        plotfile = NULL;
     }
     /* In case of hardcopy command destroy the hardcopy graph
      * and reset currentgraph to graphid 1, if possible
      */
     if (!screenflag) {
-	DestroyGraph(hcopygraphid);
-	currentgraph = FindGraph(1);
+        DestroyGraph(hcopygraphid);
+        currentgraph = FindGraph(1);
     }
     return 0;
 }
@@ -259,18 +265,18 @@ PS_DrawLine(int x1, int y1, int x2, int y2)
     /* note: this is not extendible to more than one graph
         => will have to give NewViewport a writeable graph XXX */
 
-  if (DEVDEP(currentgraph).linecount > MAX_PS_LINES
-      || DEVDEP(currentgraph).linecount == 0
-	    || x1 != DEVDEP(currentgraph).lastx
-      || y1 != DEVDEP(currentgraph).lasty){
-    PS_Stroke();
-    fprintf(plotfile, "newpath\n");
-    fprintf(plotfile, "%d %d moveto\n", x1 + xoff, y1 + yoff);
-    DEVDEP(currentgraph).linecount += 1;
+    if (DEVDEP(currentgraph).linecount > MAX_PS_LINES
+          || DEVDEP(currentgraph).linecount == 0
+	       || x1 != DEVDEP(currentgraph).lastx
+          || y1 != DEVDEP(currentgraph).lasty){
+        PS_Stroke();
+        fprintf(plotfile, "newpath\n");
+        fprintf(plotfile, "%d %d moveto\n", x1 + xoff, y1 + yoff);
+        DEVDEP(currentgraph).linecount += 1;
     }
     if (x1 != x2 || y1 != y2) {
-	fprintf(plotfile, "%d %d lineto\n", x2 + xoff, y2 + yoff);
-	DEVDEP(currentgraph).linecount += 1;
+        fprintf(plotfile, "%d %d lineto\n", x2 + xoff, y2 + yoff);
+        DEVDEP(currentgraph).linecount += 1;
     }
 
     DEVDEP(currentgraph).lastx = x2;
@@ -285,7 +291,7 @@ PS_Arc(int x0, int y0, int r, double theta1, double theta2)
     double angle1, angle2;
     PS_Stroke();
     while (theta1 >= theta2)
-	theta2 += 2 * M_PI;
+        theta2 += 2 * M_PI;
 
     angle1 = (double) (RAD_TO_DEG * theta1);
     angle2 = (double) (RAD_TO_DEG * theta2);
@@ -294,7 +300,7 @@ PS_Arc(int x0, int y0, int r, double theta1, double theta2)
 
     fprintf(plotfile, "%f %f moveto ", x1+(double)xoff, y1+(double)yoff);
     fprintf(plotfile, "%d %d %d %f %f arc\n", x0+xoff, y0+yoff, r,
-	angle1, angle2); 
+        angle1, angle2); 
     fprintf(plotfile, "stroke\n");
 
     DEVDEP(currentgraph).linecount = 0;
@@ -312,8 +318,14 @@ PS_Text(char *text, int x, int y)
     savedcolor = currentgraph->currentcolor;
 
     PS_SetLinestyle(SOLID);
-    PS_SetColor(1);
-
+    /* set text color to black if background is not white */
+    if (setbgcolor > 0)
+       PS_SetColor(0);
+    else
+       PS_SetColor(1);
+    /* if color is given by set hcopytxpscolor=settxcolor, give it a try */
+    if (settxcolor >= 0)
+       PS_SetColor(settxcolor);
     /* stroke the path if there's an open one */
     PS_Stroke();
     /* move to (x, y) */
@@ -340,15 +352,15 @@ PS_SetLinestyle(int linestyleid)
     /* special case
         get it when PS_Text restores a -1 linestyle */
     if (linestyleid == -1) {
-	currentgraph->linestyle = -1;
-	return 0;
+        currentgraph->linestyle = -1;
+        return 0;
     }
     if (linestyleid < 0 || linestyleid > dispdev->numlinestyles) {
-	internalerror("bad linestyleid inside PS_SetLinestyle");
-	return 0;
+        internalerror("bad linestyleid inside PS_SetLinestyle");
+        return 0;
     }
-  PS_LinestyleColor(linestyleid, currentgraph->currentcolor);
-  return 0;
+    PS_LinestyleColor(linestyleid, currentgraph->currentcolor);
+    return 0;
 }
 
 int
@@ -405,29 +417,29 @@ PS_SelectColor(int colorid)           /* should be replaced by PS_DefineColor */
   if (cp_getvar(colorN, VT_STRING, colorstring)){
     for (i=0; colorstring[i]; i++)
       if (colorstring[i] == '/' || colorstring[i] == ':')
-	colorstring[i] = ' ';
+        colorstring[i] = ' ';
 
     sscanf(colorstring,"%s %s %s %s",rgb, &(s_red[2]), &(s_green[2]), &(s_blue[2]));
 
     if ((strlen(s_blue) == strlen(s_red) && strlen(s_green) == strlen(s_red))
-	&& (strlen(s_blue) > 2) && (strlen(s_blue) < 7)){
+	       && (strlen(s_blue) > 2) && (strlen(s_blue) < 7)){
       sscanf(s_red,"%lx",&red);
       sscanf(s_green,"%lx",&green);
       sscanf(s_blue,"%lx",&blue);
       scale= (1 << (strlen(s_blue) - 2) * 4) - 1;
       sprintf(colorstring,"%1.3f %1.3f %1.3f",
-	      (float) red/scale, (float) green/scale, (float) blue/scale);
+	     (float) red/scale, (float) green/scale, (float) blue/scale);
       strcpy(pscolor, colorstring);
     }
   }
   if (colorid < 0 || colorid > 20) {
     internalerror("bad colorid inside PS_SelectColor");
-  }else if (scale == 1){  /* colorN is not an rgbstring, use default color */
+  } else if (scale == 1){  /* colorN is not an rgbstring, use default color */
     sprintf(colorstring,"%1.3f %1.3f %1.3f",colors[colorid].red/255.0,
 	    colors[colorid].green/255.0, colors[colorid].blue/255.0) ;
     strcpy(pscolor, colorstring);
-    }
-    }
+  }
+}
 
 void
 PS_LinestyleColor(int linestyleid, int colorid)
@@ -457,7 +469,11 @@ PS_LinestyleColor(int linestyleid, int colorid)
 
   /* change color if nessecary */
   if (colorflag == 1 && gencolor != DEVDEP(currentgraph).lastcolor){
-    PS_SelectColor(gencolor);
+    /* if background is white, set all white line colors to black */
+    if ((setbgcolor == 1) && (gencolor == 1))
+       PS_SelectColor(0);
+    else
+       PS_SelectColor(gencolor);
     PS_Stroke();
     fprintf(plotfile,"%s setrgbcolor\n",pscolor);
     DEVDEP(currentgraph).lastcolor = gencolor;
