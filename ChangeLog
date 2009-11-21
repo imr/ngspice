@@ -1,3 +1,7 @@
+2009-11-21 Holger Vogt
+ * spicelib/parser/inptree.c: memory allocation of struct pwldata->vals 
+   failed in MS Visual Studio 2008, changed.
+
 2009-11-20 Holger Vogt
  * postsc.c: some cosmetics to postscript plot, hcopypstxcolor for
    setting text color 

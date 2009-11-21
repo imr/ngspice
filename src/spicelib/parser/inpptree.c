@@ -797,8 +797,8 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
         return (NULL);
     }
 
-    data = (struct pwldata *)
-        MALLOC(sizeof(struct pwldata) + i*sizeof(double));
+    data = (struct pwldata *) MALLOC(sizeof(struct pwldata));
+    data->vals = (double*) MALLOC(i*sizeof(double));
 
     data->n = i;
 
