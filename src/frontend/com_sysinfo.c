@@ -286,7 +286,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 			while((strPtr = strstr(strPtr, matchStrProc)) != NULL) {
 //				numProcs++;
 				strPtr += strlen(matchStrProc);
-				if isblank(*strPtr) numProcs++;
+				if (isblank(*strPtr)) numProcs++;
 			}
 			info->numLogicalProcessors = numProcs;
 			physIDs = malloc(numProcs * sizeof(tInt));

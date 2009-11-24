@@ -1,3 +1,6 @@
+2009-11-24 Holger Vogt
+ * com_sysinfo.c: bugfix no. 2902374
+
 2009-11-21 Holger Vogt
  * spicelib/parser/inptree.c: memory allocation of struct pwldata->vals 
    failed in MS Visual Studio 2008, changed.
