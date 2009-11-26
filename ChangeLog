@@ -1,3 +1,7 @@
+2009-11-27 Dietmar Warning
+ * a bunch of files, most in device library: changed the declarator to new format to
+   allow safe prototype check (but stay in the original line order)
+
 2009-11-24 Holger Vogt
  * com_sysinfo.c: bugfix no. 2902374
 
