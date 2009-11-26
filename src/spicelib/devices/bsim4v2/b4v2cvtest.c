@@ -23,9 +23,9 @@
 
 
 int
-BSIM4v2convTest(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM4v2convTest(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM4v2model *model = (BSIM4v2model*)inModel;
 BSIM4v2instance *here;

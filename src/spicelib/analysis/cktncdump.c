@@ -8,8 +8,8 @@ Author: 1999 Alan Gillespie
 #include "suffix.h"
 
 void
-CKTncDump(ckt) 
-    CKTcircuit *ckt;
+CKTncDump(
+    CKTcircuit *ckt)
 {
   CKTnode *node;
   double new, old, tol;

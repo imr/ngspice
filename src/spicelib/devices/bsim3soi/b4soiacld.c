@@ -19,7 +19,9 @@
 
 
 int
-B4SOIacLoad(GENmodel *inModel, CKTcircuit *ckt)
+B4SOIacLoad(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;

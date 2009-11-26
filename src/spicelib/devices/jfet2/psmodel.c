@@ -39,18 +39,18 @@
 /*-----------
 | dc current and conductance calculation */
 double
-PSids(ckt, model, here, vgs, vgd, igs, igd, ggs, ggd, Gm, Gds)
-cref *ckt;
-modl *model;
-inst *here;
-double vgs;
-double vgd;
-double *igs;
-double *igd;
-double *ggs;
-double *ggd;
-double *Gm;
-double *Gds;
+PSids(
+cref *ckt,
+modl *model,
+inst *here,
+double vgs,
+double vgd,
+double *igs,
+double *igd,
+double *ggs,
+double *ggd,
+double *Gm,
+double *Gds)
 {
 #define FX  -10.0 /* not too small else fatal rounding error in (rpt-a_rpt) */
 #define MX  40.0  /* maximum exponential argument */

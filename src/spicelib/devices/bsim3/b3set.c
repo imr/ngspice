@@ -27,11 +27,11 @@
 #define Meter2Micron 1.0e6
 
 int
-BSIM3setup(matrix,inModel,ckt,states)
-SMPmatrix *matrix;
-GENmodel *inModel;
-CKTcircuit *ckt;
-int *states;
+BSIM3setup(
+SMPmatrix *matrix,
+GENmodel *inModel,
+CKTcircuit *ckt,
+int *states)
 {
 BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;
@@ -983,9 +983,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-BSIM3unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BSIM3unsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
     BSIM3model *model;
     BSIM3instance *here;

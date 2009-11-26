@@ -22,10 +22,10 @@
 #include "const.h"
 
 int
-BSIM4v5mParam(param,value,inMod)
-int param;
-IFvalue *value;
-GENmodel *inMod;
+BSIM4v5mParam(
+int param,
+IFvalue *value,
+GENmodel *inMod)
 {
     BSIM4v5model *mod = (BSIM4v5model*)inMod;
     switch(param)

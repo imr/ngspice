@@ -20,10 +20,10 @@
 #include "const.h"
 
 int
-BSIM4v3mParam(param,value,inMod)
-int param;
-IFvalue *value;
-GENmodel *inMod;
+BSIM4v3mParam(
+int param,
+IFvalue *value,
+GENmodel *inMod)
 {
     BSIM4v3model *mod = (BSIM4v3model*)inMod;
     switch(param)

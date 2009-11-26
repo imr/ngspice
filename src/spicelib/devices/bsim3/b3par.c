@@ -16,7 +16,11 @@
 #include "fteext.h"
 
 int
-BSIM3param (int param, IFvalue *value, GENinstance *inst, IFvalue *select)
+BSIM3param (
+int param,
+IFvalue *value,
+GENinstance *inst,
+IFvalue *select)
 {
     double scale;
 

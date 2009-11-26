@@ -70,7 +70,9 @@ return 0;
 
 
 int
-BSIM4temp(GENmodel *inModel, CKTcircuit *ckt)
+BSIM4temp(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM4model *model = (BSIM4model*) inModel;
 BSIM4instance *here;

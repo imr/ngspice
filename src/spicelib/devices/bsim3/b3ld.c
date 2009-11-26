@@ -33,9 +33,9 @@
 
 
 int
-BSIM3load(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM3load(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;

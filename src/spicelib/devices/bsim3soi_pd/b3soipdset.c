@@ -1453,9 +1453,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }  
 
 int
-B3SOIPDunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+B3SOIPDunsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
     B3SOIPDmodel *model;
     B3SOIPDinstance *here;

@@ -46,7 +46,9 @@
 
 /* ARGSUSED */
 int
-B4SOItemp(GENmodel *inModel, CKTcircuit *ckt)
+B4SOItemp(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 register B4SOImodel *model = (B4SOImodel*) inModel;
 register B4SOIinstance *here;

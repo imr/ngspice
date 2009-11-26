@@ -19,7 +19,10 @@
 
 
 int
-B4SOImParam(int param, IFvalue *value, GENmodel *inMod)
+B4SOImParam(
+int param,
+IFvalue *value,
+GENmodel *inMod)
 {
     B4SOImodel *mod = (B4SOImodel*)inMod;
     switch(param)

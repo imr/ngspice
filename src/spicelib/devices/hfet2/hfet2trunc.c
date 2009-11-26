@@ -7,10 +7,10 @@
 #include "suffix.h"
 
 
-int HFET2trunc(inModel, ckt, tiHFET2tep)
-GENmodel *inModel;
-CKTcircuit *ckt;
-double *tiHFET2tep;
+int HFET2trunc(
+GENmodel *inModel,
+CKTcircuit *ckt,
+double *tiHFET2tep)
 {
 
   HFET2model *model = (HFET2model*)inModel;

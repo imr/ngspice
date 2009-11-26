@@ -23,10 +23,10 @@
 #include "suffix.h"
 
 int
-BSIM4v4checkModel(model, here, ckt)
-BSIM4v4model *model;
-BSIM4v4instance *here;
-CKTcircuit *ckt;
+BSIM4v4checkModel(
+BSIM4v4model *model,
+BSIM4v4instance *here,
+CKTcircuit *ckt)
 {
 struct bsim4SizeDependParam *pParam;
 int Fatal_Flag = 0;

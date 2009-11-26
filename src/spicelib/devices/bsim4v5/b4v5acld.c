@@ -17,9 +17,9 @@
 
 
 int
-BSIM4v5acLoad(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM4v5acLoad(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM4v5model *model = (BSIM4v5model*)inModel;
 BSIM4v5instance *here;

@@ -11,10 +11,10 @@ Modified: Alan Gillespie
 #include "suffix.h"
 
 int
-MOS9trunc(inModel,ckt,timeStep)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
-    double *timeStep;
+MOS9trunc(
+    GENmodel *inModel,
+    CKTcircuit *ckt,
+    double *timeStep)
 {
     MOS9model *model = (MOS9model *)inModel;
     MOS9instance *here;

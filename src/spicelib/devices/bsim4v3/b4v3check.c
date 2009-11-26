@@ -23,10 +23,10 @@
 #include "devdefs.h"
 
 int
-BSIM4v3checkModel(model, here, ckt)
-BSIM4v3model *model;
-BSIM4v3instance *here;
-CKTcircuit *ckt;
+BSIM4v3checkModel(
+BSIM4v3model *model,
+BSIM4v3instance *here,
+CKTcircuit *ckt)
 {
 struct bsim4v3SizeDependParam *pParam;
 int Fatal_Flag = 0;

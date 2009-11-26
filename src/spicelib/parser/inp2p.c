@@ -13,10 +13,10 @@ Author: 1992 Charles Hough
 #include "inp.h"
 
 void
-INP2P(ckt,tab,current)
-    void *ckt;
-    INPtables *tab;
-    card *current;
+INP2P(
+    void *ckt,
+    INPtables *tab,
+    card *current)
 
 {
 

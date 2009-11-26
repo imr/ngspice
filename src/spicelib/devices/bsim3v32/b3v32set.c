@@ -1059,9 +1059,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-BSIM3v32unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BSIM3v32unsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
     BSIM3v32model *model;
     BSIM3v32instance *here;

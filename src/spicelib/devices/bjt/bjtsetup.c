@@ -262,9 +262,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-BJTunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BJTunsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
     BJTmodel *model;
     BJTinstance *here;

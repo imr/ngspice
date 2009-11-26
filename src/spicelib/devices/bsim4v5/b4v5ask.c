@@ -21,12 +21,12 @@
 #include "suffix.h"
 
 int
-BSIM4v5ask(ckt,inst,which,value,select)
-CKTcircuit *ckt;
-GENinstance *inst;
-int which;
-IFvalue *value;
-IFvalue *select;
+BSIM4v5ask(
+CKTcircuit *ckt,
+GENinstance *inst,
+int which,
+IFvalue *value,
+IFvalue *select)
 {
 BSIM4v5instance *here = (BSIM4v5instance*)inst;
 

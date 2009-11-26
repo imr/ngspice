@@ -14,10 +14,10 @@
 #include "sperror.h"
 
 int
-BSIM4v3mDelete(inModel,modname,kill)
-GENmodel **inModel;
-IFuid modname;
-GENmodel *kill;
+BSIM4v3mDelete(
+GENmodel **inModel,
+IFuid modname,
+GENmodel *kill)
 {
 BSIM4v3model **model = (BSIM4v3model**)inModel;
 BSIM4v3model *modfast = (BSIM4v3model*)kill;

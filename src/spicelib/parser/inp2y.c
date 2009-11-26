@@ -13,10 +13,10 @@ Author: 1992 Charles Hough
 #include "inp.h"
 
 void
-INP2Y(ckt,tab,current)
-    void *ckt;
-    INPtables *tab;
-    card *current;
+INP2Y(
+    void *ckt,
+    INPtables *tab,
+    card *current)
 
 {
 /* parse a txl card */

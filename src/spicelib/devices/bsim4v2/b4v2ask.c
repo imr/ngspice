@@ -21,12 +21,12 @@
 
 
 int
-BSIM4v2ask(ckt,inst,which,value,select)
-CKTcircuit *ckt;
-GENinstance *inst;
-int which;
-IFvalue *value;
-IFvalue *select;
+BSIM4v2ask(
+CKTcircuit *ckt,
+GENinstance *inst,
+int which,
+IFvalue *value,
+IFvalue *select)
 {
 BSIM4v2instance *here = (BSIM4v2instance*)inst;
 

@@ -14,10 +14,10 @@
 #include "suffix.h"
 
 int
-BSIM4v5mDelete(inModel,modname,kill)
-GENmodel **inModel;
-IFuid modname;
-GENmodel *kill;
+BSIM4v5mDelete(
+GENmodel **inModel,
+IFuid modname,
+GENmodel *kill)
 {
 BSIM4v5model **model = (BSIM4v5model**)inModel;
 BSIM4v5model *modfast = (BSIM4v5model*)kill;

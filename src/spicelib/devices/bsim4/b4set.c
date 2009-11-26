@@ -44,7 +44,11 @@ int
 BSIM4RdseffGeo(double, int, int, int, double, double, double, double, double, int, double *);
 
 int
-BSIM4setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
+BSIM4setup(
+SMPmatrix *matrix,
+GENmodel *inModel,
+CKTcircuit *ckt,
+int *states)
 {
 BSIM4model *model = (BSIM4model*)inModel;
 BSIM4instance *here;

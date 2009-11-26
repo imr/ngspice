@@ -19,7 +19,10 @@
 #include "suffix.h"
 
 int
-BSIM4pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
+BSIM4pzLoad(
+GENmodel *inModel,
+CKTcircuit *ckt,
+SPcomplex *s)
 {
 BSIM4model *model = (BSIM4model*)inModel;
 BSIM4instance *here;

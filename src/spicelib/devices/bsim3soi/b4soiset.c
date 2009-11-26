@@ -30,7 +30,11 @@
 double epsrox, toxe, epssub; 
 
 int
-B4SOIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
+B4SOIsetup(
+SMPmatrix *matrix,
+GENmodel *inModel,
+CKTcircuit *ckt,
+int *states)
 {
 register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;

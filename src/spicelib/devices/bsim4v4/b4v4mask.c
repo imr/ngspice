@@ -22,11 +22,11 @@
 #include "suffix.h"
 
 int
-BSIM4v4mAsk(ckt,inst,which,value)
-CKTcircuit *ckt;
-GENmodel *inst;
-int which;
-IFvalue *value;
+BSIM4v4mAsk(
+CKTcircuit *ckt,
+GENmodel *inst,
+int which,
+IFvalue *value)
 {
     BSIM4v4model *model = (BSIM4v4model *)inst;
     switch(which) 

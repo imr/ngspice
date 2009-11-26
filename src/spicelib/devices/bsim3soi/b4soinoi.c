@@ -47,7 +47,12 @@ extern void   NevalSrc();
 extern double Nintegrate();
 
 double
-B4SOIEval1ovFNoise(double vds, B4SOImodel *model, B4SOIinstance *here, double freq, double temp)
+B4SOIEval1ovFNoise(
+double vds,
+B4SOImodel *model,
+B4SOIinstance *here,
+double freq,
+double temp)
 {
 struct b4soiSizeDependParam *pParam;
 double cd, esat, DelClm, EffFreq, N0, Nl;
@@ -93,8 +98,12 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
 }
 
 int
-B4SOInoise (int mode, int operation, GENmodel *inModel, CKTcircuit *ckt, 
-            Ndata *data, double *OnDens)
+B4SOInoise (
+int mode, int operation,
+GENmodel *inModel,
+CKTcircuit *ckt,
+Ndata *data,
+double *OnDens)
 {
 register B4SOImodel *model = (B4SOImodel *)inModel;
 register B4SOIinstance *here;

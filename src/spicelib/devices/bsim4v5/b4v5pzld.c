@@ -17,10 +17,10 @@
 #include "suffix.h"
 
 int
-BSIM4v5pzLoad(inModel,ckt,s)
-GENmodel *inModel;
-CKTcircuit *ckt;
-SPcomplex *s;
+BSIM4v5pzLoad(
+GENmodel *inModel,
+CKTcircuit *ckt,
+SPcomplex *s)
 {
 BSIM4v5model *model = (BSIM4v5model*)inModel;
 BSIM4v5instance *here;

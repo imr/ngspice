@@ -17,10 +17,10 @@
 
 
 int
-BSIM4v3trunc(inModel,ckt,timeStep)
-GENmodel *inModel;
-CKTcircuit *ckt;
-double *timeStep;
+BSIM4v3trunc(
+GENmodel *inModel,
+CKTcircuit *ckt,
+double *timeStep)
 {
 BSIM4v3model *model = (BSIM4v3model*)inModel;
 BSIM4v3instance *here;

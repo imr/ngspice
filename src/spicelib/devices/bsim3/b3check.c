@@ -20,10 +20,10 @@
 #include "suffix.h"
 
 int
-BSIM3checkModel(model, here, ckt)
-BSIM3model *model;
-BSIM3instance *here;
-CKTcircuit *ckt;
+BSIM3checkModel(
+BSIM3model *model,
+BSIM3instance *here,
+CKTcircuit *ckt)
 {
 struct bsim3SizeDependParam *pParam;
 int Fatal_Flag = 0;

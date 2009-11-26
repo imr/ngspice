@@ -38,11 +38,11 @@ int
 BSIM4v4RdseffGeo(double, int, int, int, double, double, double, double, double, int, double *);
 
 int
-BSIM4v4setup(matrix,inModel,ckt,states)
-SMPmatrix *matrix;
-GENmodel *inModel;
-CKTcircuit *ckt;
-int *states;
+BSIM4v4setup(
+SMPmatrix *matrix,
+GENmodel *inModel,
+CKTcircuit *ckt,
+int *states)
 {
 BSIM4v4model *model = (BSIM4v4model*)inModel;
 BSIM4v4instance *here;
@@ -1882,9 +1882,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }  
 
 int
-BSIM4v4unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BSIM4v4unsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
 
     BSIM4v4model *model;

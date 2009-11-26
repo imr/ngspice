@@ -21,12 +21,12 @@
 #include "sperror.h"
 
 int
-BSIM4v3ask(ckt,inst,which,value,select)
-CKTcircuit *ckt;
-GENinstance *inst;
-int which;
-IFvalue *value;
-IFvalue *select;
+BSIM4v3ask(
+CKTcircuit *ckt,
+GENinstance *inst,
+int which,
+IFvalue *value,
+IFvalue *select)
 {
 BSIM4v3instance *here = (BSIM4v3instance*)inst;
 

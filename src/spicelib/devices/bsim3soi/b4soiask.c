@@ -20,7 +20,12 @@
 #include "suffix.h"
 
 int
-B4SOIask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
+B4SOIask(
+CKTcircuit *ckt,
+GENinstance *inst,
+int which,
+IFvalue *value,
+IFvalue *select)
 {
 B4SOIinstance *here = (B4SOIinstance*)inst;
 

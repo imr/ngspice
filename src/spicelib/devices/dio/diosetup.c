@@ -164,9 +164,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-DIOunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+DIOunsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
     DIOmodel *model;
     DIOinstance *here;

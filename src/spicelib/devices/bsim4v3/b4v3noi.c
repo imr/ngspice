@@ -30,10 +30,11 @@ extern double Nintegrate();
  */
 
 static double
-BSIM4v3Eval1ovFNoise(Vds, model, here, freq, temp)
-double Vds, freq, temp;
-BSIM4v3model *model;
-BSIM4v3instance *here;
+BSIM4v3Eval1ovFNoise(
+double Vds,
+BSIM4v3model *model,
+BSIM4v3instance *here,
+double freq, double temp)
 {
 struct bsim4v3SizeDependParam *pParam;
 double cd, esat, DelClm, EffFreq, N0, Nl;
@@ -73,12 +74,12 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
 
 
 int
-BSIM4v3noise (mode, operation, inModel, ckt, data, OnDens)
-int mode, operation;
-GENmodel *inModel;
-CKTcircuit *ckt;
-Ndata *data;
-double *OnDens;
+BSIM4v3noise (
+int mode, int operation,
+GENmodel *inModel,
+CKTcircuit *ckt,
+Ndata *data,
+double *OnDens)
 {
 BSIM4v3model *model = (BSIM4v3model *)inModel;
 BSIM4v3instance *here;

@@ -18,7 +18,11 @@
 #include "suffix.h"
 
 int
-B4SOIparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
+B4SOIparam(
+int param,
+IFvalue *value,
+GENinstance *inst,
+IFvalue *select)
 {
     B4SOIinstance *here = (B4SOIinstance*)inst;
     switch(param) 

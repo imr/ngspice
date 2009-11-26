@@ -58,10 +58,11 @@ extern double Nintegrate();
 
 
 double
-StrongInversionNoiseEval(Vds, model, here, freq, temp)
-double Vds, freq, temp;
-BSIM3model *model;
-BSIM3instance *here;
+StrongInversionNoiseEval(
+double Vds,
+BSIM3model *model,
+BSIM3instance *here,
+double freq, double temp)
 {
 struct bsim3SizeDependParam *pParam;
 double cd, esat, DelClm, EffFreq, N0, Nl, Leff, Leffsq;
@@ -102,12 +103,12 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
 }
 
 int
-BSIM3noise (mode, operation, inModel, ckt, data, OnDens)
-int mode, operation;
-GENmodel *inModel;
-CKTcircuit *ckt;
-Ndata *data;
-double *OnDens;
+BSIM3noise (
+int mode, int operation,
+GENmodel *inModel,
+CKTcircuit *ckt,
+Ndata *data,
+double *OnDens)
 {
 BSIM3model *model = (BSIM3model *)inModel;
 BSIM3instance *here;

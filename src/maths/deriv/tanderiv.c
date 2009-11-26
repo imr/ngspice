@@ -13,8 +13,8 @@ Author: 1989 Jaijeet S. Roychowdhury
  * function of three variables p, q, and r.
  */
 
-void TanDeriv(new, old)
-Dderivs *new, *old;
+void TanDeriv(
+Dderivs *new, Dderivs *old)
 {
 
 Dderivs temp;

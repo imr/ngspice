@@ -19,7 +19,10 @@
 
 
 int
-B4SOItrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
+B4SOItrunc(
+GENmodel *inModel,
+CKTcircuit *ckt,
+double *timeStep)
 {
 register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;

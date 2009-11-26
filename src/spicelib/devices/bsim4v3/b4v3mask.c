@@ -22,11 +22,11 @@
 #include "sperror.h"
 
 int
-BSIM4v3mAsk(ckt,inst,which,value)
-CKTcircuit *ckt;
-GENmodel *inst;
-int which;
-IFvalue *value;
+BSIM4v3mAsk(
+CKTcircuit *ckt,
+GENmodel *inst,
+int which,
+IFvalue *value)
 {
     BSIM4v3model *model = (BSIM4v3model *)inst;
     switch(which) 

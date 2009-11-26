@@ -139,9 +139,9 @@ strtolower(char *str)
  */
  
 int
-cinprefix(p, s, n)
-register char *p, *s;
-register int n;
+cinprefix(
+register char *p, register char *s,
+register int n)
 {
   if (!p || !s) return( 0 );
  
@@ -165,8 +165,8 @@ register int n;
  */
  
  int
-cimatch(p, s)
-register char *p, *s;
+cimatch(
+register char *p, register char *s)
 {
   register int n = 0;
  

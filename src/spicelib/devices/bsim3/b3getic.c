@@ -16,9 +16,9 @@
 
 
 int
-BSIM3getic(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM3getic(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;

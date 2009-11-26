@@ -23,9 +23,10 @@ int
 BSIM4v4RdsEndSha(double, double, double, double, double, double, int, int, double *);
 
 int
-BSIM4v4NumFingerDiff(nf, minSD, nuIntD, nuEndD, nuIntS, nuEndS)
-int minSD;
-double nf, *nuIntD, *nuEndD, *nuIntS, *nuEndS;
+BSIM4v4NumFingerDiff(
+double nf,
+int minSD,
+double *nuIntD, double *nuEndD, double *nuIntS, double *nuEndS)
 {
 int NF;
         NF = (int)nf;
@@ -52,10 +53,11 @@ return 0;
 
 
 int
-BSIM4v4PAeffGeo(nf, geo, minSD, Weffcj, DMCG, DMCI, DMDG, Ps, Pd, As, Ad)
-int geo, minSD; 
-double Weffcj, DMCG, DMCI, DMDG;
-double nf, *Ps, *Pd, *As, *Ad;
+BSIM4v4PAeffGeo(
+double nf,
+int geo, int minSD,
+double Weffcj, double DMCG, double DMCI, double DMDG,
+double *Ps, double *Pd, double *As, double *Ad)
 {
 double T0, T1, T2;
 double ADiso, ADsha, ADmer, ASiso, ASsha, ASmer;
@@ -152,10 +154,12 @@ return 0;
 
 
 int
-BSIM4v4RdseffGeo(nf, geo, rgeo, minSD, Weffcj, Rsh, DMCG, DMCI, DMDG, Type, Rtot)
-int geo, rgeo, minSD, Type;
-double nf, Weffcj, Rsh, DMCG, DMCI, DMDG;
-double *Rtot;
+BSIM4v4RdseffGeo(
+double nf,
+int geo, int rgeo, int minSD,
+double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG,
+int Type,
+double *Rtot)
 {
 double Rint=0.0, Rend = 0.0;
 double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
@@ -270,10 +274,11 @@ return 0;
 
 
 int
-BSIM4v4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, Type, Rend)
-double Weffcj, Rsh, DMCG, DMCI, DMDG;
-int rgeo, Type;
-double nuEnd, *Rend;
+BSIM4v4RdsEndIso(
+double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG,
+double nuEnd,
+int rgeo, int Type,
+double *Rend)
 {	
 	if (Type == 1)
 	{   switch(rgeo)
@@ -328,10 +333,11 @@ return 0;
 
 
 int
-BSIM4v4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, Type, Rend)
-double Weffcj, Rsh, DMCG, DMCI, DMDG;
-int rgeo, Type;
-double nuEnd, *Rend;
+BSIM4v4RdsEndSha(
+double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG,
+double nuEnd,
+int rgeo, int Type,
+double *Rend)
 {
         if (Type == 1)
         {   switch(rgeo)

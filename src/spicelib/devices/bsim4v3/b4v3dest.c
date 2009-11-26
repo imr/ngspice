@@ -13,8 +13,8 @@
 #include "bsim4v3def.h"
 
 void
-BSIM4v3destroy(inModel)
-GENmodel **inModel;
+BSIM4v3destroy(
+GENmodel **inModel)
 {
 BSIM4v3model **model = (BSIM4v3model**)inModel;
 BSIM4v3instance *here;

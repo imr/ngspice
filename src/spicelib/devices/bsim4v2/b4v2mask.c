@@ -19,11 +19,11 @@
 
 
 int
-BSIM4v2mAsk(ckt,inst,which,value)
-CKTcircuit *ckt;
-GENmodel *inst;
-int which;
-IFvalue *value;
+BSIM4v2mAsk(
+CKTcircuit *ckt,
+GENmodel *inst,
+int which,
+IFvalue *value)
 {
     BSIM4v2model *model = (BSIM4v2model *)inst;
     switch(which) 

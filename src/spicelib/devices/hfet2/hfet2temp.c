@@ -12,9 +12,9 @@ Modified: Paolo Nenzi
 #include "suffix.h"
 
 
-int HFET2temp(inModel, ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+int HFET2temp(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 
   HFET2instance *here;

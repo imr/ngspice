@@ -462,8 +462,8 @@ load:
 
 /* function qggnew  - private, used by MESload*/
 static double 
-qggnew(vgs,vgd,phib,vcap,vto,cgs,cgd,cgsnew,cgdnew)
-    double vgs,vgd,phib,vcap,vto,cgs,cgd,*cgsnew,*cgdnew;
+qggnew(
+    double vgs, double vgd, double phib, double vcap, double vto, double cgs, double cgd, double *cgsnew, double *cgdnew)
 {
     double veroot,veff1,veff2,del,vnroot,vnew1,vnew3,vmax,ext;
     double qroot,qggval,par1,cfact,cplus,cminus;

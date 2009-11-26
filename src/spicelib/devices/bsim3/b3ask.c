@@ -17,12 +17,12 @@
 #include "suffix.h"
 
 int
-BSIM3ask(ckt,inst,which,value,select)
-CKTcircuit *ckt;
-GENinstance *inst;
-int which;
-IFvalue *value;
-IFvalue *select;
+BSIM3ask(
+CKTcircuit *ckt,
+GENinstance *inst,
+int which,
+IFvalue *value,
+IFvalue *select)
 {
 BSIM3instance *here = (BSIM3instance*)inst;
 

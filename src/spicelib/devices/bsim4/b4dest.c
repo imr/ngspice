@@ -15,7 +15,8 @@
 #include "suffix.h"
 
 void
-BSIM4destroy(GENmodel **inModel)
+BSIM4destroy(
+GENmodel **inModel)
 {
 BSIM4model **model = (BSIM4model**)inModel;
 BSIM4instance *here;

@@ -36,9 +36,9 @@ int
 BSIM4v2PAeffGeo(double nf, int geo, int minSD, double Weffcj, double DMCG, double DMCI, double DMDG, double *Ps, double *Pd, double *As, double *Ad);
 
 int
-BSIM4v2DioIjthVjmEval(Nvtm, Ijth, Isb, XExpBV, Vjm)
-double Nvtm, Ijth, Isb, XExpBV;
-double *Vjm;
+BSIM4v2DioIjthVjmEval(
+double Nvtm, double Ijth, double Isb, double XExpBV,
+double *Vjm)
 {
 double Tb, Tc, EVjmovNv;
 
@@ -52,9 +52,9 @@ return 0;
 
 
 int
-BSIM4v2temp(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM4v2temp(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM4v2model *model = (BSIM4v2model*) inModel;
 BSIM4v2instance *here;

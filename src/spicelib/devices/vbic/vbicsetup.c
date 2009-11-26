@@ -533,9 +533,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }
 
 int
-VBICunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+VBICunsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
     VBICmodel *model;
     VBICinstance *here;

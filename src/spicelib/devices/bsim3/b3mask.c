@@ -17,11 +17,11 @@
 #include "suffix.h"
 
 int
-BSIM3mAsk(ckt,inst,which,value)
-CKTcircuit *ckt;
-GENmodel *inst;
-int which;
-IFvalue *value;
+BSIM3mAsk(
+CKTcircuit *ckt,
+GENmodel *inst,
+int which,
+IFvalue *value)
 {
     BSIM3model *model = (BSIM3model *)inst;
     switch(which) 

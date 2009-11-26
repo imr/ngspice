@@ -31,9 +31,9 @@
 
 /* ARGSUSED */
 int
-BSIM3temp(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM3temp(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM3model *model = (BSIM3model*) inModel;
 BSIM3instance *here;

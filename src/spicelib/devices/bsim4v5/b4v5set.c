@@ -36,11 +36,11 @@ int
 BSIM4v5RdseffGeo(double, int, int, int, double, double, double, double, double, int, double *);
 
 int
-BSIM4v5setup(matrix,inModel,ckt,states)
-SMPmatrix *matrix;
-GENmodel *inModel;
-CKTcircuit *ckt;
-int *states;
+BSIM4v5setup(
+SMPmatrix *matrix,
+GENmodel *inModel,
+CKTcircuit *ckt,
+int *states)
 {
 BSIM4v5model *model = (BSIM4v5model*)inModel;
 BSIM4v5instance *here;
@@ -2043,9 +2043,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }  
 
 int
-BSIM4v5unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BSIM4v5unsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
 #ifndef HAS_BATCHSIM
     BSIM4v5model *model;

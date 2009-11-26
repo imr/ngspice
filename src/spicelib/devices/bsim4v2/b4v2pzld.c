@@ -17,10 +17,10 @@
 #include "bsim4v2def.h"
 
 int
-BSIM4v2pzLoad(inModel,ckt,s)
-GENmodel *inModel;
-CKTcircuit *ckt;
-SPcomplex *s;
+BSIM4v2pzLoad(
+GENmodel *inModel,
+CKTcircuit *ckt,
+SPcomplex *s)
 {
 BSIM4v2model *model = (BSIM4v2model*)inModel;
 BSIM4v2instance *here;

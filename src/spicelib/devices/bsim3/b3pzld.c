@@ -16,10 +16,10 @@
 #include "suffix.h"
 
 int
-BSIM3pzLoad(inModel,ckt,s)
-GENmodel *inModel;
-CKTcircuit *ckt;
-SPcomplex *s;
+BSIM3pzLoad(
+GENmodel *inModel,
+CKTcircuit *ckt,
+SPcomplex *s)
 {
 BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;

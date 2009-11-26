@@ -234,8 +234,7 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
     return(OK);
 }
 
-int vbic_4T_it_cf_t(p,pnom,TAMB)
-double *p, *pnom, *TAMB;
+int vbic_4T_it_cf_t(double *p, double *pnom, double *TAMB)
 {
         double Tini, Tdev, Vtv, rT, dT, xvar1;
         double xvar2, xvar3, xvar4, xvar5, xvar6, psiio;

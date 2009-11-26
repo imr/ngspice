@@ -19,7 +19,10 @@
 #include "suffix.h"
 
 int
-B4SOIpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
+B4SOIpzLoad(
+GENmodel *inModel,
+CKTcircuit *ckt,
+SPcomplex *s)
 {
 register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;

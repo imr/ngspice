@@ -38,9 +38,9 @@ BSIM4v3RdseffGeo(double, int, int, int, double, double, double, double, double, 
 #define DELTA  1.0E-9
 
 int
-BSIM4v3DioIjthVjmEval(Nvtm, Ijth, Isb, XExpBV, Vjm)
-double Nvtm, Ijth, Isb, XExpBV;
-double *Vjm;
+BSIM4v3DioIjthVjmEval(
+double Nvtm, double Ijth, double Isb, double XExpBV,
+double *Vjm)
 {
 double Tb, Tc, EVjmovNv;
 
@@ -54,9 +54,9 @@ return 0;
 
 
 int
-BSIM4v3temp(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM4v3temp(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM4v3model *model = (BSIM4v3model*) inModel;
 BSIM4v3instance *here;

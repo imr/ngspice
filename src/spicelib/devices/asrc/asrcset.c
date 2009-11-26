@@ -138,9 +138,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,((CKTnode*)(second))->number))\
 }
 
 int
-ASRCunsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+ASRCunsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
     ASRCmodel *model;
     ASRCinstance *here;

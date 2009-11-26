@@ -16,10 +16,10 @@
 #include "bsim4v3def.h"
 
 int
-BSIM4v3pzLoad(inModel,ckt,s)
-GENmodel *inModel;
-CKTcircuit *ckt;
-SPcomplex *s;
+BSIM4v3pzLoad(
+GENmodel *inModel,
+CKTcircuit *ckt,
+SPcomplex *s)
 {
 BSIM4v3model *model = (BSIM4v3model*)inModel;
 BSIM4v3instance *here;

@@ -18,11 +18,11 @@ Modified: 2000 AlansFixes
 
 
 void
-INPdoOpts(ckt,anal,optCard,tab)
-    void *ckt;
-    void *anal;
-    card *optCard;
-    INPtables *tab;
+INPdoOpts(
+    void *ckt,
+    void *anal,
+    card *optCard,
+    INPtables *tab)
 {
     char *line;
     char *token;

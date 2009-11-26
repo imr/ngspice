@@ -23,11 +23,11 @@
 #include "suffix.h"
 
 int
-BSIM4v5mAsk(ckt,inst,which,value)
-CKTcircuit *ckt;
-GENmodel *inst;
-int which;
-IFvalue *value;
+BSIM4v5mAsk(
+CKTcircuit *ckt,
+GENmodel *inst,
+int which,
+IFvalue *value)
 {
     BSIM4v5model *model = (BSIM4v5model *)inst;
     switch(which) 

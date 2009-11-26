@@ -21,7 +21,10 @@
 #include "suffix.h"
 
 int
-B4SOIcheckModel(B4SOImodel *model, B4SOIinstance *here, CKTcircuit *ckt)
+B4SOIcheckModel(
+B4SOImodel *model,
+B4SOIinstance *here,
+CKTcircuit *ckt)
 {
 struct b4soiSizeDependParam *pParam;
 int Fatal_Flag = 0;

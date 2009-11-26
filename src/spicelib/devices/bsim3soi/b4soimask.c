@@ -20,7 +20,11 @@
 #include "suffix.h"
 
 int
-B4SOImAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
+B4SOImAsk(
+CKTcircuit *ckt,
+GENmodel *inst,
+int which,
+IFvalue *value)
 {
     B4SOImodel *model = (B4SOImodel *)inst;
     switch(which) 

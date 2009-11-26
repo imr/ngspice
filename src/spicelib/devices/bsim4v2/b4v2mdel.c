@@ -15,10 +15,10 @@
 
 
 int
-BSIM4v2mDelete(inModel,modname,kill)
-GENmodel **inModel;
-IFuid modname;
-GENmodel *kill;
+BSIM4v2mDelete(
+GENmodel **inModel,
+IFuid modname,
+GENmodel *kill)
 {
 BSIM4v2model **model = (BSIM4v2model**)inModel;
 BSIM4v2model *modfast = (BSIM4v2model*)kill;

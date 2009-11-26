@@ -13,8 +13,8 @@
 #include "suffix.h"
 
 void
-BSIM4v5destroy(inModel)
-GENmodel **inModel;
+BSIM4v5destroy(
+GENmodel **inModel)
 {
 BSIM4v5model **model = (BSIM4v5model**)inModel;
 BSIM4v5instance *here;

@@ -413,16 +413,16 @@ com_rspice(wordlist *wl)
 #else
 
 void
-com_aspice(wl)
-    wordlist *wl;
+com_aspice(
+    wordlist *wl)
 {
 	fprintf(cp_err, "Asynchronous spice jobs are not available.\n");
 	return;
 }
 
 void
-com_jobs(wl)
-    wordlist *wl;
+com_jobs(
+    wordlist *wl)
 {
 	fprintf(cp_err, "Asynchronous spice jobs are not available.\n");
 	return;
@@ -435,8 +435,8 @@ ft_checkkids( )
 }
 
 void
-com_rspice(wl)
-    wordlist *wl;
+com_rspice(
+    wordlist *wl)
 {
 	fprintf(cp_err, "Remote spice jobs are not available.\n");
 	return;

@@ -15,11 +15,11 @@
 #include "fteext.h"
 
 int
-BSIM4v2param(param,value,inst,select)
-int param;
-IFvalue *value;
-GENinstance *inst;
-IFvalue *select;
+BSIM4v2param(
+int param,
+IFvalue *value,
+GENinstance *inst,
+IFvalue *select)
 {
     double scale;
 

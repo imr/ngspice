@@ -570,9 +570,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }  
 
 int
-B2unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+B2unsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
     B2model *model;
     B2instance *here;

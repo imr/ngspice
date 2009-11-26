@@ -16,7 +16,8 @@
 #include "suffix.h"
 
 void
-B4SOIdestroy(GENmodel **inModel)
+B4SOIdestroy(
+GENmodel **inModel)
 {
 B4SOImodel **model = (B4SOImodel**)inModel;
 B4SOIinstance *here;

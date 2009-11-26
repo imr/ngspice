@@ -13,11 +13,11 @@ File: b3v0mask.c
 #include "suffix.h"
 
 int
-BSIM3v0mAsk(ckt,inst,which,value)
-CKTcircuit *ckt;
-GENmodel *inst;
-int which;
-IFvalue *value;
+BSIM3v0mAsk(
+CKTcircuit *ckt,
+GENmodel *inst,
+int which,
+IFvalue *value)
 {
     BSIM3v0model *model = (BSIM3v0model *)inst;
     switch(which) 

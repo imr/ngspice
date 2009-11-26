@@ -19,7 +19,9 @@
 
 
 int
-B4SOIgetic(GENmodel *inModel, CKTcircuit *ckt)
+B4SOIgetic(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 B4SOImodel *model = (B4SOImodel*)inModel;
 B4SOIinstance *here;

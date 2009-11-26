@@ -86,9 +86,9 @@ static int numeofs = 0;
 /* CDHW Debug function */
 
 static void
-pwlist_echo(wlist, name)   /*CDHW used to perform function of set echo */
-    wordlist *wlist;
-    char *name;
+pwlist_echo(   /*CDHW used to perform function of set echo */
+    wordlist *wlist,
+    char *name)
 {
     wordlist *wl;
 

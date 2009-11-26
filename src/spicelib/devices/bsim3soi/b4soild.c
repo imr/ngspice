@@ -62,7 +62,11 @@
      */
 
 double
-B4SOIlimit(double vnew, double vold, double limit, int *check)
+B4SOIlimit(
+double vnew,
+double vold,
+double limit,
+int *check)
 {
     double T0, T1;
 
@@ -88,7 +92,9 @@ B4SOIlimit(double vnew, double vold, double limit, int *check)
 
 
 int
-B4SOIload(GENmodel *inModel, CKTcircuit *ckt)
+B4SOIload(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;

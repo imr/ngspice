@@ -110,8 +110,8 @@ int GL_Init()
 }
 
 /* devdep initially contains name of output file */
-int GL_NewViewport(graph)
-GRAPH *graph;
+int GL_NewViewport(
+GRAPH *graph)
 {
 /*    double scaleps, scalex, scaley; */
 
@@ -195,8 +195,8 @@ int GL_Clear()
     return 0;
 }
 
-int GL_DrawLine(x1, y1, x2, y2)
-int x1, y1, x2, y2;
+int GL_DrawLine(
+int x1, int y1, int x2, int y2)
 {
 
     /* note: this is not extendible to more than one graph
@@ -222,9 +222,9 @@ int x1, y1, x2, y2;
 }
 
 /* ARGSUSED */
-int GL_Arc(x0, y0, r, theta1, theta2)
-int x0, y0, r;
-double theta1, theta2;
+int GL_Arc(
+int x0, int y0, int r,
+double theta1, double theta2)
 {
     double x1, y1;
     double angle1, angle2;
@@ -247,9 +247,9 @@ double theta1, theta2;
     return 0;
 }
 
-int GL_Text(text, x, y)
-char *text;
-int x, y;
+int GL_Text(
+char *text,
+int x, int y)
 {
 
 /*    int savedlstyle; */
@@ -268,8 +268,8 @@ int x, y;
 }
 
 int
-GL_SetLinestyle(linestyleid)
-int linestyleid;
+GL_SetLinestyle(
+int linestyleid)
 {
 
     /* special case
@@ -293,8 +293,8 @@ int linestyleid;
 }
 
 /* ARGSUSED */
-int GL_SetColor(colorid)
-int colorid;
+int GL_SetColor(
+int colorid)
 {
 /*va: unused:    static int flag = 0;*/        /* A hack */
 

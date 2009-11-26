@@ -16,10 +16,10 @@
 
 
 int
-BSIM3mParam(param,value,inMod)
-int param;
-IFvalue *value;
-GENmodel *inMod;
+BSIM3mParam(
+int param,
+IFvalue *value,
+GENmodel *inMod)
 {
     BSIM3model *mod = (BSIM3model*)inMod;
     switch(param)
