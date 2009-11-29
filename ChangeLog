@@ -1,3 +1,8 @@
+2009-11-29 Holger Vogt
+ * com_hardcopy.c, postsc.c, windisp.c: plotting with black or white background,
+   postscript to file with hardcopy command or menue entry from plot window
+   (still buggy with X11)
+
 2009-11-27 Dietmar Warning
  * a bunch of files, most in device library: changed the declarator to new format to
    allow safe prototype check (but stay in the original line order)

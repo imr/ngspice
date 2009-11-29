@@ -43,21 +43,17 @@ com_hardcopy(wordlist *wl)
         *device = '\0';
 
     if (wl) {
-	hc_button = 0;
+        hc_button = 0;
         fname = wl->wl_word;
         wl = wl->wl_next;
     } else {
-	hc_button = 1;
+        hc_button = 1;
         fname = smktemp("hc");
         tempf = TRUE;
     }
 
     if (!cp_getvar("hcopydevtype", VT_STRING, buf)) {
-#if defined (HAS_WINDOWS) || defined (__MINGW32__) || defined (_MSC_VER)
-       devtype = "postscript";
-#else
-       devtype = "plot5";
-#endif
+        devtype = "postscript";
     } else {
         devtype = buf;
     }
@@ -65,9 +61,33 @@ com_hardcopy(wordlist *wl)
     /* enable screen plot selection for these display types */
     foundit = 0;
 
-    /* save current graphics context, because plotit() will create a new
-     currentgraph */
-    PushGraphContext(currentgraph);
+
+//    PushGraphContext(currentgraph);
+
+#ifdef HAS_WINDOWS
+    if (!wl && hc_button) {
+        char* psfname;
+		GRAPH *tempgraph;
+	    if (DevSwitch(devtype)) return;
+        tempgraph = CopyGraph(currentgraph);
+		/* change .tmp to .ps */
+		psfname = strchr(fname, '.');
+		*(psfname + 1) = 'p';
+		*(psfname + 2) = 's';
+		*(psfname + 3) = '\0';
+	    tempgraph->devdep = fname;
+	    if (NewViewport(tempgraph)) {
+	        DevSwitch(NULL);
+	        return;
+	    }
+	    gr_resize(tempgraph);
+	    gr_redraw(tempgraph);
+	    DestroyGraph(tempgraph->graphid);
+	    DevSwitch(NULL);
+	    foundit = 1;
+    }
+#endif
+
 
 #ifndef X_DISPLAY_MISSING
     if (!wl && hc_button) {
@@ -78,98 +98,95 @@ com_hardcopy(wordlist *wl)
         
         request.option = click_option;
         Input(&request, &response);
-
         if (response.option == error_option) return;
 
-	if (response.reply.graph) {
-
-	    if (DevSwitch(devtype)) return;
-	    tempgraph = CopyGraph(response.reply.graph);
-	    tempgraph->devdep = fname;
-	    if (NewViewport(tempgraph)) {
-	      DevSwitch(NULL);
-	      return;
+        if (response.reply.graph) {
+	        if (DevSwitch(devtype)) return;
+	        tempgraph = CopyGraph(response.reply.graph);
+	        tempgraph->devdep = fname;
+	        if (NewViewport(tempgraph)) {
+	            DevSwitch(NULL);
+	            return;
+	        }
+	        gr_resize(tempgraph);
+	        gr_redraw(tempgraph);
+	        DestroyGraph(tempgraph->graphid);
+	        DevSwitch(NULL);
+	        foundit = 1;
 	    }
-	    gr_resize(tempgraph);
-	    gr_redraw(tempgraph);
-	    DestroyGraph(tempgraph->graphid);
-	    DevSwitch(NULL);
-	    foundit = 1;
-	}
     }
 
 #endif
 
+    /* save current graphics context, because plotit() will create a new
+     currentgraph */
+    PushGraphContext(currentgraph);
 
     if (!foundit) {
 
-	if (!wl) {
-	    outmenuprompt("which variable ? ");
-	    if ((buf2 = prompt(cp_in)) == (char *) -1)	/* XXXX Sick */
-		return;
-	    wl = (struct wordlist *) tmalloc(sizeof(struct wordlist));
-	    wl->wl_word = buf2;
-	    wl->wl_next = NULL;
-	    wl = process(wl);
-	}
+        if (!wl) {
+            outmenuprompt("which variable ? ");
+            if ((buf2 = prompt(cp_in)) == (char *) -1)	/* XXXX Sick */
+                return;
+            wl = (struct wordlist *) tmalloc(sizeof(struct wordlist));
+            wl->wl_word = buf2;
+            wl->wl_next = NULL;
+            wl = process(wl);
+        }
 
+        if (DevSwitch(devtype)) return;
 
+        if (!wl || !plotit(wl, fname, (char *) NULL)) {
+            printf("com_hardcopy: graph not defined\n");
+            DevSwitch(NULL);    /* remember to switch back */
+            return;
+        }
 
-	if (DevSwitch(devtype)) return;
-
-	if (!wl || !plotit(wl, fname, (char *) NULL)) {
-	    printf("com_hardcopy: graph not defined\n");
-	    DevSwitch(NULL);    /* remember to switch back */
-	    return;
-	}
-
-	DevSwitch(NULL);
-
+        DevSwitch(NULL);
     }
 
     printed = 0;
 
-
     if (*device) {
 #ifdef SYSTEM_PLOT5LPR
-      if (!strcmp(devtype, "plot5") || !strcmp(devtype, "MFB")) {
-	if (!cp_getvar("lprplot5", VT_STRING, format))
-		strcpy(format, SYSTEM_PLOT5LPR);
-        (void) sprintf(buf, format, device, fname);
-        fprintf(cp_out, "Printing %s on the %s printer.\n", fname, device);
-        (void) system(buf);
-	printed = 1;
-      }
+        if (!strcmp(devtype, "plot5") || !strcmp(devtype, "MFB")) {
+            if (!cp_getvar("lprplot5", VT_STRING, format))
+                strcpy(format, SYSTEM_PLOT5LPR);
+            (void) sprintf(buf, format, device, fname);
+            fprintf(cp_out, "Printing %s on the %s printer.\n", fname, device);
+            (void) system(buf);
+            printed = 1;
+        }
 #endif
 #ifdef SYSTEM_PSLPR
-      if (!printed && !strcmp(devtype, "postscript")) {
+        if (!printed && !strcmp(devtype, "postscript")) {
         /* note: check if that was a postscript printer XXX */
-	if (!cp_getvar("lprps", VT_STRING, format))
-		strcpy(format, SYSTEM_PSLPR);
-        (void) sprintf(buf, format, device, fname);
-        fprintf(cp_out, "Printing %s on the %s printer.\n", fname, device);
-        (void) system(buf);
-	printed = 1;
-      }
+            if (!cp_getvar("lprps", VT_STRING, format))
+                strcpy(format, SYSTEM_PSLPR);
+            (void) sprintf(buf, format, device, fname);
+            fprintf(cp_out, "Printing %s on the %s printer.\n", fname, device);
+            (void) system(buf);
+            printed = 1;
+        }
 #endif
     }
 
     if (!printed) {
-      if (!strcmp(devtype, "plot5")) {
-        fprintf(cp_out,
-	    "The file \"%s\" may be printed with the Unix \"plot\" command,\n",
+        if (!strcmp(devtype, "plot5")) {
+            fprintf(cp_out,
+                "The file \"%s\" may be printed with the Unix \"plot\" command,\n",
                 fname);
-        fprintf(cp_out,
-	    "\tor by using the '-g' flag to the Unix lpr command.\n");
-      } else if (!strcmp(devtype, "postscript")) {
-        fprintf(cp_out,
-	    "The file \"%s\" may be printed on a postscript printer.\n",
-	    fname);
-      } else if (!strcmp(devtype, "MFB")) {
-	fprintf(cp_out,
-		"The file \"%s\" may be printed on a MFB device.\n",
-		fname);
-      }
+             fprintf(cp_out,
+                "\tor by using the '-g' flag to the Unix lpr command.\n");
+        } else if (!strcmp(devtype, "postscript")) {
+            fprintf(cp_out,
+               "\nThe file \"%s\" may be printed on a postscript printer.\n",
+               fname);
+        } else if (!strcmp(devtype, "MFB")) {
+            fprintf(cp_out,
+               "The file \"%s\" may be printed on a MFB device.\n",
+               fname);
+        }
     }
 
     if (tempf && *device)
@@ -177,6 +194,5 @@ com_hardcopy(wordlist *wl)
 
     /* restore previous graphics context by retrieving the previous currentgraph */
     PopGraphContext();
-
     return;
 }

@@ -47,16 +47,16 @@ typedef struct {
 } PSdevdep;
 
 static char *linestyle[] = {
-		"[]",           /* solid */
-                "[1 2]",        /* dotted */
-                "[7 7]",        /* longdashed */
-                "[3 3]",        /* shortdashed */
-		"[7 2 2 2]",	/* longdotdashed */
-		"[3 2 1 2]",    /* shortdotdashed */
-		"[8 3 2 3]",
-		"[14 2]",
-                "[3 5 1 5]"	/* dotdashed */
-		};
+    "[]",           /* solid */
+    "[1 2]",        /* dotted */
+    "[7 7]",        /* longdashed */
+    "[3 3]",        /* shortdashed */
+    "[7 2 2 2]",	/* longdotdashed */
+    "[3 2 1 2]",    /* shortdotdashed */
+    "[8 3 2 3]",
+    "[14 2]",
+    "[3 5 1 5]"     /* dotdashed */
+};
 
 static FILE *plotfile;
 char psfont[128], psfontsize[32], psscale[32], pscolor[32];
@@ -81,7 +81,7 @@ void PS_Stroke(void);
 int
 PS_Init(void)
 {
-  char pswidth[30], psheight[30];
+    char pswidth[30], psheight[30];
   
     if (!cp_getvar("hcopyscale", VT_STRING, psscale)) {
         scale = 1.0;
@@ -90,39 +90,39 @@ PS_Init(void)
         if ((scale <= 0) || (scale > 10))
         scale = 1.0;
     }
-  /* plot color */
-  if (!cp_getvar("hcopypscolor", VT_NUM, &setbgcolor)) {
-    /* if not set, set plot to b&w and use line styles */
-    colorflag = 0;
-    dispdev->numcolors = 2;
-    dispdev->numlinestyles = NUMELEMS(linestyle);
-  } else {
-    /* get backgroung color and set plot to color */
-    colorflag = 1;
-    dispdev->numcolors = 18;   /* don't know what the maximum should be */
-    dispdev->numlinestyles = 1;
-    cp_getvar("hcopypstxcolor", VT_NUM, &settxcolor);
-  }
+    dispdev->numlinestyles = NUMELEMS(linestyle);  
+   /* plot color */
+    if (!cp_getvar("hcopypscolor", VT_NUM, &setbgcolor)) {
+        /* if not set, set plot to b&w and use line styles */
+        colorflag = 0;
+        dispdev->numcolors = 2;
 
-  /* plot size */
-  if (!cp_getvar("hcopywidth", VT_STRING, pswidth)) {
-    dispdev->width = 7.75 * 72.0 * scale;       /* (8 1/2 - 3/4) * 72 */
-  } else {
-    sscanf(pswidth, "%d", &(dispdev->width));
-    if (dispdev->width <= 100)
-      dispdev->width = 100;
-    if (dispdev->width >= 10000)
-      dispdev->width = 10000;
-  }
-  if (!cp_getvar("hcopyheight", VT_STRING, psheight)) {
-    dispdev->height = dispdev->width;
-  } else {
-    sscanf(psheight, "%d", &(dispdev->height));
-    if (dispdev->height <= 100)
-      dispdev->height = 100;
-    if (dispdev->height >= 10000)
-      dispdev->height = 10000;
-  }
+    } else {
+      /* get backgroung color and set plot to color */
+        colorflag = 1;
+        dispdev->numcolors = 21;   /* don't know what the maximum should be */
+        cp_getvar("hcopypstxcolor", VT_NUM, &settxcolor);
+    }
+
+    /* plot size */
+    if (!cp_getvar("hcopywidth", VT_STRING, pswidth)) {
+        dispdev->width = 7.75 * 72.0 * scale;       /* (8 1/2 - 3/4) * 72 */
+    } else {
+        sscanf(pswidth, "%d", &(dispdev->width));
+        if (dispdev->width <= 100)
+            dispdev->width = 100;
+        if (dispdev->width >= 10000)
+            dispdev->width = 10000;
+    }
+    if (!cp_getvar("hcopyheight", VT_STRING, psheight)) {
+        dispdev->height = dispdev->width;
+    } else {
+        sscanf(psheight, "%d", &(dispdev->height));
+        if (dispdev->height <= 100)
+            dispdev->height = 100;
+        if (dispdev->height >= 10000)
+            dispdev->height = 10000;
+    }
 
     /* The following side effects have to be considered 
      * when the printer is called by com_hardcopy !
@@ -357,6 +357,7 @@ PS_SetLinestyle(int linestyleid)
     }
     if (linestyleid < 0 || linestyleid > dispdev->numlinestyles) {
         internalerror("bad linestyleid inside PS_SetLinestyle");
+        fprintf(cp_err, "linestyleid is: %d\n", linestyleid);
         return 0;
     }
     PS_LinestyleColor(linestyleid, currentgraph->currentcolor);
@@ -463,6 +464,8 @@ PS_LinestyleColor(int linestyleid, int colorid)
   } else { /* colorflag == 0 -> mono*/
     if ((colorid == 18) || (colorid == 19))
       genstyle=DOTTED;
+    else if (linestyleid == -1)
+      genstyle=0;
     else
       genstyle=linestyleid;
   }

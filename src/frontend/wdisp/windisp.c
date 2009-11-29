@@ -39,7 +39,7 @@
 typedef struct {     /* Extra window data */
    HWND  wnd;        /* window */
    HDC   hDC;        /* Device context of window */
-   RECT    Area;     /* plot area */
+   RECT  Area;       /* plot area */
    int   ColorIndex; /* Index of actual color */
    int   PaintFlag;  /* 1 with WM_PAINT */
    int   FirstFlag;  /* 1 before first update */
@@ -54,8 +54,7 @@ void WPRINT_PrintInit( HWND hwnd);              /* Windows printer init */
 void WaitForIdle(void);                         /* wait until no more events */
 void RemoveWindow(GRAPH *pgraph);
 static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy);
-                                                /* get new plot size coordinates */
-
+static void RealClose(void);    
 /* externals */
 extern HINSTANCE   hInst;         /* application instance */
 extern int         WinLineWidth;  /* width of text window */
@@ -79,10 +78,16 @@ static WNDCLASS      TheWndClass;                  /* Plot-window class */
 static HFONT         PlotFont;                     /* which font */
 #define              ID_DRUCKEN  0xEFF0            /* System Menue: print */
 #define              ID_DRUCKEINR    0xEFE0        /* System Menue: printer setup */
+#define              ID_HARDCOPY     0xEFD0        /* System Menue: hardcopy color*/
+#define              ID_HARDCOPY_BW     0xEFB0     /* System Menue: hardcopy b&w*/
+
 static const int     ID_MASK        = 0xFFF0;      /* System-Menue: mask */
 static char *        STR_DRUCKEN   = "Printer..."; /* System menue strings */
 static char *        STR_DRUCKEINR = "Printer setup...";
+static char *        STR_HARDCOPY = "Postscript file, color";
+static char *        STR_HARDCOPY_BW = "Postscript file, b&w";
 static bool          isblack = TRUE;               /* background color of plot is black */
+static bool          isblackold = TRUE;
 static int           linewidth = 0;                /* linewidth of grid and plot */
 
 /******************************************************************************
@@ -108,12 +113,18 @@ int WIN_Init( )
    dispdev->numlinestyles = 5;   /* see implications in WinPrint! */
    dispdev->numcolors     = NumWinColors;
 
+   /* always, user may have set color0 to white */
+   /* get background color information from spinit, only "white"
+      is recognized as a suitable option! */
+   if (cp_getvar("color0", VT_STRING, colorstring)) {
+      if (cieq(colorstring, "white")) isblack = FALSE; 
+      else isblack = TRUE;	
+   }	
    /* only for the first time: */
    if (!IsRegistered) {
-      /* get background color information from spinit, only "white"
-         is recognized as a suitable option! */
-      if (cp_getvar("color0", VT_STRING, colorstring)) 
-         if (cieq(colorstring, "white")) isblack = FALSE;
+
+	  isblackold = isblack;
+	  
       /* get linewidth information from spinit */
       if (!cp_getvar("xbrushwidth", VT_NUM, &linewidth))
          linewidth = 0;
@@ -128,6 +139,7 @@ int WIN_Init( )
          ColorTable[0] = RGB(255,255,255);   /* white   = background */
          ColorTable[1] = RGB(  0,  0,  0);   /* black   = text and grid */
       }
+	  
       ColorTable[2] = RGB(  0,255,  0);   /* green   = first line */
       ColorTable[3] = RGB(255,  0,  0);   /* red */
       ColorTable[4] = RGB(  0,  0,255);   /* blue */
@@ -173,6 +185,23 @@ int WIN_Init( )
       TheWndClass.cbWndExtra     = sizeof(GRAPH *);
       if (!RegisterClass(&TheWndClass)) return 1;
    }
+    /* not first time */
+	else if (isblackold != isblack) {
+	  if (isblack) {
+         ColorTable[0] = RGB(  0,  0,  0);   /* black   = background */
+         ColorTable[1] = RGB(255,255,255);   /* white    = text and grid */
+      }
+      else {
+         ColorTable[0] = RGB(255,255,255);   /* white   = background */
+         ColorTable[1] = RGB(  0,  0,  0);   /* black   = text and grid */
+      }   
+      if (isblack)
+         ColorTable[12]= RGB(255,255,255);   /* white */
+      else
+         ColorTable[12]= RGB(  0,  0,  0);   /* black */
+		 		 
+      isblackold=isblack;
+   }	
    IsRegistered = 1;
 
    /* ready */
@@ -195,6 +224,26 @@ static int LType( int ColorIndex)
       return PS_SOLID;
 }
  
+ /* postscript hardcopy from a plot window */
+/* called by SystemMenue / Postscript hardcopy */
+LRESULT HcpyPlot( HWND hwnd)
+{
+	int colorval = isblack? 0 : 1;
+   cp_vset("hcopypscolor", VT_NUM, (char*)(&colorval));
+	com_hardcopy(NULL); 
+	return 0;
+}
+ 
+LRESULT HcpyPlotBW( HWND hwnd)
+{
+   int bgcolor;
+   if (cp_getvar("hcopypscolor", VT_NUM, &bgcolor))
+       cp_remvar("hcopypscolor");
+	com_hardcopy(NULL); 
+	return 0;
+}
+ 
+
 /* print a plot window */
 /* called by SystemMenue / Print */
 LRESULT PrintPlot( HWND hwnd)
@@ -273,6 +322,8 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
       switch(cmd) {
          case ID_DRUCKEN:  return PrintPlot( hwnd);
          case ID_DRUCKEINR:      return PrintInit( hwnd);
+         case ID_HARDCOPY: return HcpyPlot( hwnd);
+         case ID_HARDCOPY_BW: return HcpyPlotBW( hwnd);
       }
    }
    goto WIN_DEFAULT;
@@ -292,7 +343,6 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
       if (wParam & MK_LBUTTON)
       {
           hdc = GetDC (hwnd) ;
-
           if (isblack)
              prevmix = SetROP2(hdc, R2_XORPEN);
           else
@@ -536,6 +586,15 @@ int WIN_NewViewport( GRAPH * graph)
    window = CreateWindow( WindowName, graph->plotname, WS_OVERLAPPEDWINDOW,
       0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
    if (!window) return 1;
+   
+   /* change the background color of all windows (both new and already plotted) 
+      by assessing the registered window class */
+   if (isblack)
+      SetClassLong(window, GCLP_HBRBACKGROUND, (int)GetStockObject( BLACK_BRUSH));
+   else
+      SetClassLong(window, GCLP_HBRBACKGROUND, (int)GetStockObject( WHITE_BRUSH));	   
+   
+   
    wd->wnd = window;
    SetWindowLong( window, 0, (long)graph);
 
@@ -561,6 +620,8 @@ int WIN_NewViewport( GRAPH * graph)
    AppendMenu( sysmenu, MF_SEPARATOR, 0, NULL);
    AppendMenu( sysmenu, MF_STRING, ID_DRUCKEN,   STR_DRUCKEN);
    AppendMenu( sysmenu, MF_STRING, ID_DRUCKEINR, STR_DRUCKEINR);
+   AppendMenu( sysmenu, MF_STRING, ID_HARDCOPY, STR_HARDCOPY);
+   AppendMenu( sysmenu, MF_STRING, ID_HARDCOPY_BW, STR_HARDCOPY_BW);
 
    /* set default parameters of DC */
    SetBkColor( dc, ColorTable[0]);
@@ -604,7 +665,7 @@ int WIN_Close()
    return (0);
 }
 
-void RealClose(void)
+static void RealClose(void)
 {
    /* delete window class */
    if (IsRegistered) {
