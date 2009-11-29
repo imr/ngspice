@@ -297,7 +297,7 @@ double *capgd
 | call for each frequency in ac analysis */
 void
 PSacload(
-/*cref *ckt,*/
+cref *ckt,
 modl *model,
 inst *here,
 double vgs,
