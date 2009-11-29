@@ -2,6 +2,7 @@
  * com_hardcopy.c, postsc.c, windisp.c: plotting with black or white background,
    postscript to file with hardcopy command or menue entry from plot window
    (still buggy with X11)
+   psmodel.c: changed the declarator to new format
 
 2009-11-27 Dietmar Warning
  * a bunch of files, most in device library: changed the declarator to new format to

@@ -207,8 +207,21 @@ double *Gds)
 /*-----------
 | code based on Statz et. al. capacitance model,  IEEE Tran ED Feb 87 */
 static double
-qgg(vgs, vgd, gamma, pb, alpha, vto, vmax, xc, cgso, cgdo, cgs, cgd)
-double vgs, vgd, gamma, pb, alpha, vto, vmax, xc, cgso, cgdo, *cgs, *cgd;
+qgg(
+    double vgs, 
+    double vgd, 
+    double gamma, 
+    double pb, 
+    double alpha, 
+    double vto, 
+    double vmax, 
+    double xc, 
+    double cgso, 
+    double cgdo, 
+    double *cgs, 
+    double *cgd
+)
+/*vgs, vgd, gamma, pb, alpha, vto, vmax, xc, cgso, cgdo, *cgs, *cgd;*/
 {
    double qrt, ext, Cgso, cpm, cplus, cminus;
    double vds   = vgs-vgd;
@@ -238,14 +251,15 @@ double vgs, vgd, gamma, pb, alpha, vto, vmax, xc, cgso, cgdo, *cgs, *cgd;
 /*-----------
 | call during ac analysis initialisation or during transient analysis */
 void
-PScharge(ckt, model, here, vgs, vgd, capgs, capgd)
-cref *ckt;
-modl *model;
-inst *here;
-double vgs;
-double vgd;
-double *capgs;
-double *capgd;
+PScharge(
+cref *ckt,
+modl *model,
+inst *here,
+double vgs,
+double vgd,
+double *capgs,
+double *capgd
+)
 {
 #define QGG(a,b,c,d) qgg(a,b,gac,phib,alpha,vto,vmax,xc,czgs,czgd,c,d)
 /*  double qgg(); */
@@ -282,18 +296,19 @@ double *capgd;
 /*-----------
 | call for each frequency in ac analysis */
 void
-PSacload(ckt, model, here, vgs, vgd, ids, omega, Gm, xGm, Gds, xGds)
-cref *ckt;
-modl *model;
-inst *here;
-double vgs;
-double vgd;
-double ids;
-double omega;
-double *Gm;
-double *xGm;
-double *Gds;
-double *xGds;
+PSacload(
+/*cref *ckt,*/
+modl *model,
+inst *here,
+double vgs,
+double vgd,
+double ids,
+double omega,
+double *Gm,
+double *xGm,
+double *Gds,
+double *xGds
+)
 {
     double arg;
     double vds = vgs - vgd;
@@ -343,9 +358,10 @@ double *xGds;
 
 
 void    /* call when temperature changes */
-PSinstanceinit(model, here)
-modl *model;
-inst *here;
+PSinstanceinit(
+   modl *model,
+   inst *here 
+)
 {
 #ifndef PARAM_CAST     /* allow casting to parameter type */
 #define PARAM_CAST     /* if not specified then don't cast */
