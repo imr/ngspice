@@ -2994,7 +2994,7 @@ static void
 inp_sort_params( struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c )
 {
   char *param_name = NULL, *param_str = NULL, *param_ptr = NULL;
-  int  i, j, num_params = 0, ind = 0, max_level = 0, num_terminals = 0;
+  int  i, j, num_params = 0, ind = 0, max_level = 0, num_terminals = 0, ioff = 1;
   bool in_control = FALSE;
 
   bool found_in_list = FALSE;
@@ -3012,7 +3012,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
   char ***depends_on;
   struct line **ptr_array;
   struct line **ptr_array_ordered;
-  
+
   if ( start_card == NULL ) return;    
 
   /* determine the number of lines with .param */
@@ -3080,31 +3080,34 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
 
       param_name = param_names[i];
       for ( j = 0; j < num_params; j++ )
-	{
-	  if ( j == i ) continue;
+        {
+          if ( j == i ) continue;
 
-	  param_str = param_strs[j];
+          param_str = param_strs[j];
 
-	  while ( ( param_ptr = strstr( param_str, param_name ) ) )
-	    {
-	      if ( !isalnum( *(param_ptr-1) )                  && *(param_ptr-1) != '_'     &&
-		   !isalnum( *(param_ptr+strlen(param_name)) ) && *(param_ptr+strlen(param_name)) != '_' )
-		{
-		  ind = 0;
-		  found_in_list = FALSE;
-		  while ( depends_on[j][ind] != NULL ) {
-		    if ( strcmp( param_name, depends_on[j][ind] ) == 0 ) { found_in_list = TRUE; break; }
-		    ind++;
-		  }
-		  if ( !found_in_list ) {
-		    depends_on[j][ind++] = param_name;
-		    depends_on[j][ind]   = NULL;
-		  }
-		  break;
-		}
-	      param_str = param_ptr + strlen(param_name);
-	    }
-	}
+          while ( ( param_ptr = strstr( param_str, param_name ) ) )
+          {  
+            ioff = (strstr(param_ptr, "}") > 0 ? 1 : 0);  /* want prevent wrong memory access below */
+            /* looking for curly braces or other string limiter */
+            if ( ( !isalnum( *(param_ptr-ioff) )               && *(param_ptr-ioff) != '_'         &&
+                   !isalnum( *(param_ptr+strlen(param_name)) ) && *(param_ptr+strlen(param_name)) != '_' )
+                 || strcmp( param_ptr, param_name ) == 0) /* this are cases without curly braces */
+              {
+                ind = 0;
+                found_in_list = FALSE;
+                while ( depends_on[j][ind] != NULL ) {
+                  if ( strcmp( param_name, depends_on[j][ind] ) == 0 ) { found_in_list = TRUE; break; }
+                  ind++;
+                }
+                if ( !found_in_list ) {
+                  depends_on[j][ind++] = param_name;
+                  depends_on[j][ind]   = NULL;
+                }
+                break;
+              }
+              param_str = param_ptr + strlen(param_name);
+            }
+        }
     }
 
   for ( i = 0; i < num_params; i++ )
