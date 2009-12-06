@@ -1,3 +1,7 @@
+2009-12-05: Dietmar Warning
+ * inpcom.c, line 3090: allow parameter without curly braces in subckt definition
+   (e.g.: as1=as), there was a wrong memory access before
+
 2009-11-29 Holger Vogt
  * com_hardcopy.c, postsc.c, windisp.c: plotting with black or white background,
    postscript to file with hardcopy command or menue entry from plot window
