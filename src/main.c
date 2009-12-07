@@ -579,6 +579,7 @@ show_help(void)
        "  -i, --interactive         run in interactive mode\n"
        "  -n, --no-spiceinit        don't load the local or user's config file\n"
        "  -o, --output=FILE         set the outputfile\n"
+       "  -p, --pipe		            run in I/O pipe mode\n"
        "  -q, --completion          activate command completion\n"
        "  -r, --rawfile=FILE        set the rawfile output\n"
        "  -s, --server              run spice as a server process\n"
@@ -785,6 +786,7 @@ main(int argc, char **argv)
             {"interactive", 0, 0, 'i'},
             {"no-spiceinit", 0, 0, 'n'},
             {"output", 1, 0, 'o'},
+            {"pipe", 0, 0, 'p'},
             {"completion", 0, 0, 'q'},
             {"rawfile", 1, 0, 'r'},
             {"server", 0, 0, 's'},
@@ -792,7 +794,7 @@ main(int argc, char **argv)
             {0, 0, 0, 0}
         };
 
-        c = getopt_long (argc, argv, "hvbac:ihno:qr:st:",
+        c = getopt_long (argc, argv, "hvbac:ihno:pqr:st:",
              long_options, &option_index);
         if (c == -1)
             break;
@@ -850,6 +852,11 @@ main(int argc, char **argv)
 #endif
                 orflag = TRUE;
               }
+              break;
+
+            case 'p':       /* Run in pipe mode */
+              iflag = TRUE;
+              istty = TRUE;
               break;
 
             case 'q':       /* Command completion */
