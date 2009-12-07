@@ -120,15 +120,20 @@ int WIN_Init( )
       if (cieq(colorstring, "white")) isblack = FALSE; 
       else isblack = TRUE;	
    }	
+      /* get linewidth information from spinit */
+      if (!cp_getvar("xbrushwidth", VT_NUM, &linewidth))
+         linewidth = 0;
+      if (linewidth < 0) linewidth = 0;  
+
    /* only for the first time: */
    if (!IsRegistered) {
 
 	  isblackold = isblack;
 	  
-      /* get linewidth information from spinit */
+      /* get linewidth information from spinit 
       if (!cp_getvar("xbrushwidth", VT_NUM, &linewidth))
          linewidth = 0;
-      if (linewidth < 0) linewidth = 0;        
+      if (linewidth < 0) linewidth = 0;        */
 
       /* Initialize colors */
       if (isblack) {

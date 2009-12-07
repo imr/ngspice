@@ -1,3 +1,6 @@
+2009-12-07 Holger Vogt
+ * windisp.c: allow aeeting of linewidth by keyboard entry
+
 2009-12-05: Dietmar Warning
  * inpcom.c, line 3090: allow parameter without curly braces in subckt definition
    (e.g.: as1=as), there was a wrong memory access before
