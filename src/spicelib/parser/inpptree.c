@@ -786,8 +786,9 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
         exit(1);
     }
 
+#ifdef TRACE
     fprintf(stderr, "PWL-INFO: %s  building a PTF_PWL\n", __func__);
-
+#endif
     i = 0;
     for(w = p->left; w->type == PT_COMMA; w = w->left)
         i++;
@@ -817,8 +818,10 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
             return (NULL);
         }
 
+#ifdef TRACE
     for (i = 0 ; i < data->n ; i += 2)
         fprintf(stderr, "  (%lf %lf)\n", data->vals[i], data->vals[i+1]);
+#endif
 
     for (i = 2 ; i < data->n ; i += 2)
         if(data->vals[i-2] >= data->vals[i]) {
@@ -1033,7 +1036,7 @@ static PTelement *PTlexer(char **line)
     char *sbuf, *s;
 
     sbuf = *line;
-#ifdef notdef
+#ifdef TRACE
     printf("entering lexer, sbuf = '%s', lastoken = %d, lasttype = %d\n", 
         sbuf, lasttoken, lasttype);
 #endif
@@ -1122,9 +1125,10 @@ static PTelement *PTlexer(char **line)
 
     *line = sbuf;
 
-/* printf("PTlexer: token = %d, type = %d, left = '%s'\n", 
+#ifdef TRACE
+    printf("PTlexer: token = %d, type = %d, left = '%s'\n", 
         el.token, el.type, sbuf); */
-
+#endif
     return (&el);
 }
 
