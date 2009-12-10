@@ -1,3 +1,6 @@
+2009-12-10 Dietmar Warning
+ * spicelib/parser/inptree.c: omit some debug printf's  
+
 2009-12-07 Holger Vogt
  * windisp.c: allow setting of linewidth by keyboard "set xbrushwidth=3"
  * main.c: option -p "run in pipe mode" added (patch 1465202)
