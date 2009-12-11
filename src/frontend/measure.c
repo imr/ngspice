@@ -30,7 +30,7 @@ static bool just_chk_meas;   /* TRUE: only check if measurement can be done succ
                              no output generated (if option autostop is set)*/
 static bool measures_passed; /* TRUE: stop simulation (if option autostop is set)*/
 
-
+extern bool ft_batchmode;
 
 static bool
 chkAnalysisType( char *an_type ) {
@@ -43,6 +43,7 @@ chkAnalysisType( char *an_type ) {
   if ( strcmp( an_type, "tran" ) != 0 && strcmp( an_type, "ac" ) != 0 &&
 	  strcmp( an_type, "dc"   ) != 0)
     return FALSE;
+//  else if (ft_batchmode == TRUE) return FALSE;
   else return TRUE;
 }
 
@@ -113,6 +114,13 @@ do_measure(
   an_name = strdup( what ); /* analysis type, e.g. "tran" */
   strtolower( an_name );
   measure_word_list = NULL ;
+
+  /* don't allow .meas if batchmode is set by -b */
+  if (ft_batchmode) {
+     fprintf(cp_err, "\nNo .measure possible in batch mode (-b)!\n");
+     fprintf(cp_err, "Select interactive mode (optionally with .control section) instead.\n\n");
+     return;
+  }
 
   /* Evaluating the linked list of .meas cards, assembled from the input deck
      by fcn inp_spsource() in inp.c:575.
