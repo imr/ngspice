@@ -1,3 +1,6 @@
+2009-12-11 Holger Vogt
+ * bug 2909730, patch for parsing expressions applied
+
 2009-12-10 Dietmar Warning
  * spicelib/parser/inptree.c: omit some debug printf's  
 

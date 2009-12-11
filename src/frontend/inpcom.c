@@ -2418,12 +2418,15 @@ inp_do_macro_param_replace( int fcn_number, char *params[] )
     while ( ( param_ptr = strstr( search_ptr, func_params[fcn_number][i] ) ) ) {
 
       /* make sure actually have the parameter name */
-      before = *(param_ptr-1);
+      if (param_ptr == search_ptr) /* no valid 'before' */
+         before = '\0';
+      else
+         before = *(param_ptr-1);
       after  = *(param_ptr+strlen(func_params[fcn_number][i]));
       if ( !(is_arith_char(before) || isspace(before) || before == ',' || before == '=' || (param_ptr-1) < curr_ptr ) ||
 	   !(is_arith_char(after)  || isspace(after)  || after  == ',' || after  == '=' || after  == '\0' ) ) {
-	search_ptr = param_ptr + 1;
-	continue;
+         search_ptr = param_ptr + 1;
+         continue;
       }
 
       keep       = *param_ptr;
@@ -2470,120 +2473,127 @@ inp_do_macro_param_replace( int fcn_number, char *params[] )
 static char*
 inp_expand_macro_in_str( char *str )
 {
-  int  i;
-  char *c;
-  char *open_paren_ptr, *close_paren_ptr, *fcn_name, *comma_ptr, *params[1000];
-  char *curr_ptr, *new_str, *macro_str, *curr_str = NULL;
-  int  num_parens, num_params;
-  char *orig_ptr = str, *search_ptr = str, *orig_str = strdup(str);
-  char keep;
+   int  i;
+   char *c;
+   char *open_paren_ptr, *close_paren_ptr, *fcn_name, *comma_ptr, *params[1000];
+   char *curr_ptr, *new_str, *macro_str, *curr_str = NULL;
+   int  num_parens, num_params;
+   char *orig_ptr = str, *search_ptr = str, *orig_str = strdup(str);
+   char keep;
 
-  while ( ( open_paren_ptr = strstr( search_ptr, "(" ) ) ) {
-    fcn_name = open_paren_ptr - 1;
-    while ( fcn_name != search_ptr && (isalnum(*fcn_name) || *fcn_name == '_') ) fcn_name--;
-    if ( fcn_name != search_ptr ) fcn_name++;
+   while ( ( open_paren_ptr = strstr( search_ptr, "(" ) ) ) {
+      fcn_name = open_paren_ptr;
+      if ( open_paren_ptr != search_ptr) {
+         while ( --fcn_name != search_ptr && (isalnum(*fcn_name) || *fcn_name == '_') );
+         if ( !isalnum(*fcn_name) && *fcn_name != '_' ) fcn_name++;
+      }
 
-    *open_paren_ptr = '\0';
-    close_paren_ptr = NULL;
+      *open_paren_ptr = '\0';
+      close_paren_ptr = NULL;
+      search_ptr = open_paren_ptr + 1;
+      if ( open_paren_ptr != fcn_name ) {
+         for ( i = 0; i < num_functions; i++ ) {
+            if ( strcmp( func_names[i], fcn_name ) == 0 ) {
 
-    if ( open_paren_ptr != fcn_name ) {
-      for ( i = 0; i < num_functions; i++ ) {
-	if ( strcmp( func_names[i], fcn_name ) == 0 ) {
-
-	  /* find the closing paren */
-	  close_paren_ptr = NULL;
-	  num_parens      = 0;
-	  for ( c = open_paren_ptr + 1; *c && *c != '\0'; c++ ) {
-	    if ( *c == '(' ) num_parens++;
-	    if ( *c == ')' ) {
-	      if ( num_parens != 0 ) num_parens--;
-	      else {
-		close_paren_ptr = c;
-		break;
-	      }
-	    }
-	  }
-	  if ( close_paren_ptr == NULL ) {
-	    fprintf( stderr, "ERROR: did not find closing parenthesis for function call in str: %s\n", orig_str );
+               /* find the closing paren */
+               close_paren_ptr = NULL;
+               num_parens = 0;
+               for ( c = open_paren_ptr + 1; *c && *c != '\0'; c++ ) {
+                  if ( *c == '(' ) num_parens++;
+                  if ( *c == ')' ) {
+                     if ( num_parens != 0 ) num_parens--;
+                     else {
+                        close_paren_ptr = c;
+                        break;
+                     }
+                  }
+               }
+               if ( close_paren_ptr == NULL ) {
+                  fprintf( stderr, "ERROR: did not find closing parenthesis for function call in str: %s\n", orig_str );
 #ifdef HAS_WINDOWS
-	    winmessage("Fatal error in SPICE");
+                  winmessage("Fatal error in SPICE");
 #endif
-	    exit( -1 );
-	  }
-	  *close_paren_ptr = '\0';
+                  exit( -1 );
+               }
+               *close_paren_ptr = '\0';
 	  
-	  /* get the parameters */
-	  curr_ptr   = open_paren_ptr+1;
-	  while ( isspace(*curr_ptr) ) curr_ptr++;
-	  num_params = 0;
-	  if ( ciprefix( "v(", curr_ptr ) ) {
-	    // look for any commas and change to ' '
-	    char *str_ptr = curr_ptr;
-	    while ( *str_ptr != '\0' && *str_ptr != ')' ) { if ( *str_ptr == ',' || *str_ptr == '(' ) *str_ptr = ' '; str_ptr++; }
-	    if ( *str_ptr == ')' ) *str_ptr = ' ';
-	  }
-	  while ( ( comma_ptr = strstr( curr_ptr, "," ) ) ) {
-	    while ( isspace(*curr_ptr) ) curr_ptr++;
-	    *comma_ptr = '\0';
-	    params[num_params++] = inp_expand_macro_in_str( strdup( curr_ptr ) );
-	    *comma_ptr = ',';
-	    curr_ptr = comma_ptr+1;
-	  }
-	  while ( isspace(*curr_ptr) ) curr_ptr++;
-	  /* get the last parameter */
-	  params[num_params++] = inp_expand_macro_in_str( strdup( curr_ptr ) );
-	  
-	  if ( num_parameters[i] != num_params ) {
-	    fprintf( stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_ptr );
+               /* get the parameters */
+               curr_ptr = open_paren_ptr+1;
+               while ( isspace(*curr_ptr) ) curr_ptr++;
+               num_params = 0;
+               if ( ciprefix( "v(", curr_ptr ) ) {
+                  // look for any commas and change to ' '
+                  char *str_ptr = curr_ptr;
+                  while ( *str_ptr != '\0' && *str_ptr != ')' ) { 
+                     if ( *str_ptr == ',' || *str_ptr == '(' ) *str_ptr = ' '; str_ptr++; }
+                     if ( *str_ptr == ')' ) *str_ptr = ' ';
+               }
+               num_parens = 0;
+               for (comma_ptr = curr_ptr; *comma_ptr && *comma_ptr != '\0'; comma_ptr++) {
+                  if (*comma_ptr == ',' && num_parens == 0) {
+                     while ( isspace(*curr_ptr) ) curr_ptr++;
+                     *comma_ptr = '\0';
+                     params[num_params++] = inp_expand_macro_in_str( strdup( curr_ptr ) );
+                     *comma_ptr = ',';
+                     curr_ptr = comma_ptr+1;
+                  } 
+                  if ( *comma_ptr == '(' ) num_parens++;
+                  if ( *comma_ptr == ')' ) num_parens--;
+               }
+               while ( isspace(*curr_ptr) ) curr_ptr++;
+               /* get the last parameter */
+               params[num_params++] = inp_expand_macro_in_str( strdup( curr_ptr ) );
+
+               if ( num_parameters[i] != num_params ) {
+                  fprintf( stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_ptr );
 #ifdef HAS_WINDOWS
-	    winmessage("Fatal error in SPICE");
+                  winmessage("Fatal error in SPICE");
 #endif
-	    exit( -1 );
-	  }
+                  exit( -1 );
+               }
 
-	  macro_str = inp_do_macro_param_replace( i, params );
-	  keep      = *fcn_name;
-	  *fcn_name = '\0';
+               macro_str = inp_do_macro_param_replace( i, params );
+               keep  = *fcn_name;
+               *fcn_name = '\0';
+               if ( curr_str == NULL ) {
+                  new_str = tmalloc( strlen(str) + strlen(macro_str) + strlen(close_paren_ptr+1) + 3 );
+                  sprintf( new_str, "%s(%s)", str, macro_str ); 
+                  curr_str = new_str;
+               } else {
+                  new_str = tmalloc( strlen(curr_str) + strlen(str) + strlen(macro_str) + strlen(close_paren_ptr+1) + 3 );
+                  sprintf( new_str, "%s%s(%s)", curr_str, str, macro_str ); 
+                  tfree(curr_str);
+                  curr_str = new_str;
+               }
+ 
+               *fcn_name        = keep;
+               *close_paren_ptr = ')';
 
-	  if ( curr_str == NULL ) {
-	    new_str = tmalloc( strlen(str) + strlen(macro_str) + strlen(close_paren_ptr+1) + 3 );
-	    sprintf( new_str, "%s(%s)", str, macro_str ); 
-	    curr_str = new_str;
-	  } else {
-	    new_str = tmalloc( strlen(curr_str) + strlen(str) + strlen(macro_str) + strlen(close_paren_ptr+1) + 3 );
-	    sprintf( new_str, "%s%s(%s)", curr_str, str, macro_str ); 
-	    tfree(curr_str);
-	    curr_str = new_str;
-	  }
+               search_ptr = str = close_paren_ptr+1;
+               break;
+            } /* if strcmp */
+         } /* for loop over function names */
+      } 
+      *open_paren_ptr = '(';
 
-	  *fcn_name        = keep;
-	  *close_paren_ptr = ')';
+   }
 
-	  search_ptr = str = close_paren_ptr+1;
-	  break;
-	} /* if strcmp */
-      } /* for loop over function names */
-    } 
-    *open_paren_ptr = '(';
-    search_ptr = open_paren_ptr + 1;
-  }
+   if ( curr_str == NULL ) {
+      curr_str = orig_ptr;
+   }
+   else {
+      if ( str != NULL ) {
+         new_str = tmalloc( strlen(curr_str) + strlen(str) + 1 );
+         sprintf( new_str, "%s%s", curr_str, str );
+         tfree(curr_str);
+         curr_str = new_str;
+      }
+      tfree(orig_ptr);
+   }
 
-  if ( curr_str == NULL ) {
-    curr_str = orig_ptr;
-  }
-  else {
-    if ( str != NULL ) {
-      new_str = tmalloc( strlen(curr_str) + strlen(str) + 1 );
-      sprintf( new_str, "%s%s", curr_str, str );
-      tfree(curr_str);
-      curr_str = new_str;
-    }
-    tfree(orig_ptr);
-  }
+   tfree(orig_str);
 
-  tfree(orig_str);
-
-  return curr_str;
+   return curr_str;
 }
 
 static void
