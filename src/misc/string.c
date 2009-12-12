@@ -444,7 +444,7 @@ bool
 is_arith_char( char c )
 {
   if ( c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == '<' ||
-       c == '>' || c == '?' || c == '|' || c == '&' )
+       c == '>' || c == '?' || c == '|' || c == '&' || c == '^')
     return TRUE;
   else
     return FALSE;
