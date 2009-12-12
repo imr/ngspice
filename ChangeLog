@@ -1,3 +1,7 @@
+2009-12-12 Holger Vogt
+ * runcoms: evalusate measure commands only when avaialble
+ * /examples/transimpedanceamp/output.net: correct .plot statement
+ 
 2009-12-11 Holger Vogt
  * bug 2909730, patch for parsing expressions applied
  * measure.c: Proper warning that .measure is not available in batch mode with -b
