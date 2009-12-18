@@ -1,3 +1,10 @@
+2009-12-17 Dietmar Warning
+ * devices/bsim3/b3set.c: add the ngspice specific copyNodesets approach
+ * devices/bsim3v32/b3v32ld.c: reconstruct NEWCONV code, also if it is not 
+   used because macro is set in macros.h, but is now inline with UCB code
+ * inpcom.c, spicenum.c, xpressn.c: prevent int to unsigned compare
+ * tests/transmission/ibm2.cir: wrong cpl model instantiation
+
 2009-12-12 Holger Vogt
  * runcoms: evalusate measure commands only when avaialble
  * /examples/transimpedanceamp/output.net: correct .plot statement
