@@ -28,7 +28,7 @@ static Str (150, fmath);     /* all math functions */
 
 extern char *nupa_inst_name; /* see spicenum.c */
 extern long dynsubst;        /* see inpcom.c */
-extern int dynLlen;
+extern unsigned int dynLlen;
 
 static double
 ternary_fcn (int conditional, double if_value, double else_value)

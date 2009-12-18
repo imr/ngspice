@@ -88,7 +88,7 @@ static int  num_parameters[1000];
 /* number of lines in input deck */
 int dynmaxline;  /* inpcom.c 1529 */
 /* max. line length in input deck */
-int dynLlen; /* inpcom.c 1526 */
+unsigned int dynLlen; /* inpcom.c 1526 */
  /* number of lines in deck after expansion */
 int dynMaxckt = 0; /* subckt.c 307 */
 /* number of parameter substitutions */

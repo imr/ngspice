@@ -40,7 +40,7 @@ extern long dynsubst; /* spicenum.c:144 */
 extern int dynmaxline; /* inpcom.c:1529 */
 
 /* max. line length in input deck */
-int dynLlen; /* inpcom.c:1531 */
+unsigned int dynLlen; /* inpcom.c:1531 */
 
 /* Uncomment this line to allow debug tracing */
 /* #define TRACE_NUMPARAMS */
