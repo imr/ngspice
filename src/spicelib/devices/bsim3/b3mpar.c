@@ -1468,7 +1468,7 @@ GENmodel *inMod)
             break;
 
         case  BSIM3_MOD_TNOM :
-            mod->BSIM3tnom = value->rValue;
+            mod->BSIM3tnom = value->rValue + CONSTCtoK;
             mod->BSIM3tnomGiven = TRUE;
             break;
         case  BSIM3_MOD_CGSO :

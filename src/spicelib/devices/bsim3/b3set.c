@@ -723,8 +723,8 @@ IFuid tmpName;
         /* unit degree celcius */
         if (!model->BSIM3tnomGiven)  
 	    model->BSIM3tnom = ckt->CKTnomTemp; 
-        else
-            model->BSIM3tnom = model->BSIM3tnom + 273.15;    
+/*        else
+            model->BSIM3tnom = model->BSIM3tnom + 273.15; we make this transform in b3mpar.c in the first run */
         if (!model->BSIM3lintnoiGiven)
             model->BSIM3lintnoi = 0.0;  /* unit m */  
         if (!model->BSIM3LintGiven)  
