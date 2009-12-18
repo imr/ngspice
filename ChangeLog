@@ -1,5 +1,7 @@
 2009-12-17 Dietmar Warning
- * devices/bsim3/b3set.c: add the ngspice specific copyNodesets approach
+ * devices/bsim3/b3set.c: add the ngspice specific copyNodesets approach and remove
+   the tnom celsius -> kelvin transformation
+ * devices/bsim3/b3mpar.c: make the tnom celsius -> kelvin transformation in first run
  * devices/bsim3v32/b3v32ld.c: reconstruct NEWCONV code, also if it is not 
    used because macro is set in macros.h, but is now inline with UCB code
  * inpcom.c, spicenum.c, xpressn.c: prevent int to unsigned compare
