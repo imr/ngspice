@@ -758,7 +758,7 @@ IFuid tmpName;
         if (!model->BSIM3v32tnomGiven)  
             model->BSIM3v32tnom = ckt->CKTnomTemp; 
 /*        else
-            model->BSIM3v32tnom = model->BSIM3v32tnom + 273.15;    */
+            model->BSIM3v32tnom = model->BSIM3v32tnom + 273.15; we make this transform in b3v32mpar.c in the first run */
         if (!model->BSIM3v32LintGiven)  
            model->BSIM3v32Lint = 0.0;
         if (!model->BSIM3v32LlGiven)  
