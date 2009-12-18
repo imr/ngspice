@@ -38,6 +38,8 @@ BSIM3instance *here;
 int error;
 CKTnode *tmp;
 
+CKTnode *tmpNode;
+IFuid tmpName;   
 
     /*  loop through all the BSIM3 device models */
     for( ; model != NULL; model = model->BSIM3nextModel )
@@ -907,6 +909,14 @@ CKTnode *tmp;
 	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"drain");
                 if(error) return(error);
                 here->BSIM3dNodePrime = tmp->number;
+		if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                    if (tmpNode->nsGiven) {
+                      tmp->nodeset=tmpNode->nodeset; 
+                      tmp->nsGiven=tmpNode->nsGiven; 
+                    }
+                  }
+                }
             }
 	    else
 	    {   here->BSIM3dNodePrime = here->BSIM3dNode;
@@ -919,6 +929,14 @@ CKTnode *tmp;
 	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"source");
                 if(error) return(error);
                 here->BSIM3sNodePrime = tmp->number;
+		if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                    if (tmpNode->nsGiven) {
+                      tmp->nodeset=tmpNode->nodeset; 
+                      tmp->nsGiven=tmpNode->nsGiven; 
+                    }
+                  }
+                }
             }
 	    else 
 	    {   here->BSIM3sNodePrime = here->BSIM3sNode;
