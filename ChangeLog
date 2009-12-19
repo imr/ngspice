@@ -1,3 +1,7 @@
+2009-12-19 Holger Vogt
+ * main.c, inpcom.c: source file path added as additional search path for
+   opening .include files (MS Windows only).
+
 2009-12-17 Dietmar Warning
  * devices/bsim3/b3set.c: add the ngspice specific copyNodesets approach and remove
    the tnom celsius -> kelvin transformation

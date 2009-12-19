@@ -163,15 +163,38 @@ readline(FILE *fd)
 
 
 /*-------------------------------------------------------------------------*
- * Look up the variable sourcepath and try everything in the list in order *
- * if the file isn't in . and it isn't an abs path name.                   *
+  Look up the variable sourcepath and try everything in the list in order 
+  if the file isn't in . and it isn't an abs path name. 
+  For MS Windows: First try the path of the source file.                                         
  *-------------------------------------------------------------------------*/
 FILE *
 inp_pathopen(char *name, char *mode)
 {
     FILE *fp;
-    char buf[BSIZE_SP];
+    char buf[BSIZE_SP], buf2[BSIZE_SP];
     struct variable *v;
+
+#if defined(HAS_WINDOWS)
+    /* search in the path where the source (input) file has been found,
+       but only if "name" is just a file name */
+    if (!(index(name, DIR_TERM)) && cp_getvar("sourcefile", VT_STRING, buf2)) {
+       /* If pathname is found, get path. 
+       (char *dirname(const char *name) might have been used here) */
+       if (substring(DIR_PATHSEP, buf2)) {
+          int i,j=0;
+          for (i=0; i<BSIZE_SP-1; i++) {
+             if (buf2[i] == '\0') break;
+             if (buf2[i] == DIR_TERM) j=i;
+          }
+          buf2[j+1] = '\0'; /* include path separator */
+       }
+       /* add file name */
+       strcat(buf2, name);
+       /* try to open file */
+       if ((fp = fopen(buf2, mode)))
+          return (fp);
+    }
+#endif
 
     /* If this is an abs pathname, or there is no sourcepath var, just
      * do an fopen.

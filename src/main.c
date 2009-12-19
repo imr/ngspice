@@ -1044,7 +1044,7 @@ bot:
         FILE *tempfile;
 #if defined(HAS_WINDOWS) || defined(_MSC_VER) || defined(__MINGW32__)
         char *tpf = NULL; /* temporary file */
-        char *dname = NULL; /* directory of input file*/
+        char *dname = NULL; /* input file*/
         bool has_smk = FALSE;
 #endif
         tempfile = tmpfile();
@@ -1086,6 +1086,8 @@ bot:
 #if defined(HAS_WINDOWS)
             /* write source file name into source window */
             SetSource(dname);
+            /* write source file name into a variable */
+            cp_vset("sourcefile", VT_STRING, dname);
 #endif
             append_to_stream(tempfile, tp);
             fclose(tp);
