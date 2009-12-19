@@ -79,6 +79,7 @@ static char *application_name;
 /* Main options */
 static bool ft_servermode = FALSE;
 bool ft_batchmode = FALSE;
+bool rflag = FALSE; /* has rawfile */
 
 /* Frontend options */
 bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. TRUE = we've been interrupted. */
@@ -704,7 +705,7 @@ main(int argc, char **argv)
     bool istty = TRUE;
     bool iflag = FALSE;
     bool qflag = FALSE;
-    bool rflag = FALSE;
+
     FILE *fp;
     FILE *circuit_file;
     bool orflag = FALSE;
@@ -1120,12 +1121,12 @@ bot:
 
 evl:
     if (ft_batchmode) {
-        /* If we get back here in batch mode then something is wrong,
-         * so exit.  */
+
         bool st = FALSE;
 
         (void) SETJMP(jbuf, 1);
-
+        /* If we get back here in batch mode then something is wrong,
+         * so exit.  */
 
         if (st == TRUE) {
             sp_shutdown(EXIT_BAD);
@@ -1141,17 +1142,21 @@ evl:
             sp_shutdown(EXIT_NORMAL);
         }
 
-        /* If -r is specified, then we don't bother with the dot
-         * cards. Otherwise, we use wrd_run, but we are careful not to
-         * save too much.  */
+
         cp_interactive = FALSE;
         if (rflag) {
-      /* saj done already in inp_spsource ft_dotsaves();*/
+        /* If -r is specified, then dot cards (.width, .plot, .print, .op, .meas, .tf)
+           are ignored, except .save, which has been handled by ft_dotsaves()
+           from within inp_spsource (), data are put into linked list dbs.
+         */
             error2 = ft_dorun(ft_rawfile);
+            /* Execute the .whatever lines found in the deck, after we are done running. */
             if (ft_cktcoms(TRUE) || error2)
                 sp_shutdown(EXIT_BAD);
         } else if (ft_savedotargs()) {
+        /* all dot card data to be put into dbs */
             error2 = ft_dorun(NULL);
+            /* Execute the .whatever lines found in the deck, after we are done running. */
             if (ft_cktcoms(FALSE) || error2)
                 sp_shutdown(EXIT_BAD);
         } else {

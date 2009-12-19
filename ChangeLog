@@ -1,6 +1,9 @@
 2009-12-19 Holger Vogt
  * main.c, inpcom.c: source file path added as additional search path for
    opening .include files (MS Windows only).
+   measure.c: .meas only when -b and -r are not set
+   fteext.h: cleanup of unused entries
+   breakp2.c, dotcards.c, inp.c, main.c: comments added
 
 2009-12-17 Dietmar Warning
  * devices/bsim3/b3set.c: add the ngspice specific copyNodesets approach and remove
@@ -12,7 +15,7 @@
  * tests/transmission/ibm2.cir: wrong cpl model instantiation
 
 2009-12-12 Holger Vogt
- * runcoms: evalusate measure commands only when avaialble
+ * runcoms: evaluate measure commands only when avaialble
  * /examples/transimpedanceamp/output.net: correct .plot statement
  * string.c: '^' added to is_arith_char(), to allow parsing of '^' in
    .func function definitions

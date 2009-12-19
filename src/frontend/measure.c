@@ -31,6 +31,7 @@ static bool just_chk_meas;   /* TRUE: only check if measurement can be done succ
 static bool measures_passed; /* TRUE: stop simulation (if option autostop is set)*/
 
 extern bool ft_batchmode;
+extern bool rflag;
 
 static bool
 chkAnalysisType( char *an_type ) {
@@ -115,10 +116,11 @@ do_measure(
   strtolower( an_name );
   measure_word_list = NULL ;
 
-  /* don't allow .meas if batchmode is set by -b */
-  if (ft_batchmode) {
-     fprintf(cp_err, "\nNo .measure possible in batch mode (-b)!\n");
-     fprintf(cp_err, "Select interactive mode (optionally with .control section) instead.\n\n");
+  /* don't allow .meas if batchmode is set by -b and -r rawfile given */
+  if (ft_batchmode && rflag) {
+     fprintf(cp_err, "\nNo .measure possible in batch mode (-b) with -r rawfile set!\n");
+     fprintf(cp_err, "Remove rawfile and use .print or .plot or\n");
+     fprintf(cp_err, "select interactive mode (optionally with .control section) instead.\n\n");
      return;
   }
 

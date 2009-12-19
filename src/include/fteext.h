@@ -510,43 +510,9 @@ extern char *vec_basename();
 extern bool plot_prefix();
 extern void vec_transpose();
 
-/* writedata.c */
-
+/* main.c */
 extern bool ft_intrpt;
 extern bool ft_setflag;
-extern int wrd_close();
-extern int wrd_command();
-extern int wrd_cptime;
-extern int wrd_end();
-extern int wrd_init();
-extern int wrd_limpts;
-extern int wrd_open();
-extern int wrd_output();
-extern int wrd_point();
-extern int wrd_pt2();
-extern int wrd_run();
-extern int wrd_stopnow();
-extern void wrd_chtrace();
-extern void wrd_error();
-extern void wrd_version();
-extern wordlist *wrd_saves;
-
-/* xinterface.c */
-
-extern void xi_arc();
-extern bool xi_init();
-extern bool xi_dump();
-extern void xi_clearscreen();
-extern void xi_close();
-extern void xi_drawline();
-extern void xi_resetcolor();
-extern void xi_setcolor();
-extern void xi_setlinestyle();
-extern void xi_text();
-extern void xi_update();
-extern void xi_zoomdata();
-extern struct screen *screens;
-extern void com_clearplot();
 
 /* newcoms.c */
 extern void com_reshape();

@@ -16,14 +16,14 @@ $Id$
 #include "quote.h"
 #include "breakp2.h"
 
+/* global linked list to store .save data and breakpoint data */
 struct dbcomm *dbs = NULL;      /* export for iplot */
+
+/* used in breakp.c and breakp2.c */
 int debugnumber = 1;
 
-/* Set a breakpoint. Possible commands are:
- *  stop after n
- *  stop when var cond val
- *
- * If more than one is given on a command line, then this is a conjunction.
+/* Analyse the data given by the .save card or 'save' command.
+   Store the data in the global dbs struct.
  */
 
 /* Save a vector. */
@@ -35,6 +35,7 @@ com_save(wordlist *wl)
     return;
 }
 
+/* Save a vector with the analysis type given (name). */
 void
 com_save2(wordlist *wl, char *name)
 {
@@ -95,8 +96,10 @@ settrace(wordlist *wl, int what, char *name)
     return;
 }
 
+/* retrieve the save nodes from dbs into an array */
 int
 ft_getSaves(struct save_info **savesp)
+/* global variable: dbs */
 {
     struct dbcomm *d;
     int count = 0, i = 0;
@@ -105,7 +108,7 @@ ft_getSaves(struct save_info **savesp)
     for (d = dbs; d; d = d->db_next)
         if (d->db_type == DB_SAVE)
             count++;
-    
+
     if (!count)
         return (0);
     

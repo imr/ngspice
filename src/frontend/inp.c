@@ -314,7 +314,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
    /* arguments:
     *  *fp = pointer to the input file
     *  comfile = whether it is a command file.  Values are TRUE/FALSE
-    *  *filename = 
+    *  *filename = name of input file
     */
 {
    struct line *deck, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
@@ -615,6 +615,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       }
    }
 
+   /* linked list dbs is used to store the "save" or .save data (defined in breakp2.c),
+      breakpoint and iplot data, will be renewed in ft_dotsaves(). */
    if(dbs) tfree(dbs);
 
    /*saj, to process save commands always, not just in batch mode 

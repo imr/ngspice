@@ -47,6 +47,12 @@ setcplot(char *name)
 
 
 
+/* All lines with .width, .plot, .print, .save, .op, .meas, .tf
+   have been assembled into a wordlist (wl_first) in inp.c:inp_spsource(),
+   and then stored to ci_commands in inp.c:inp_dodeck().
+   The .save lines are selected, com_save will put the commands into dbs.
+*/
+
 void
 ft_dotsaves(void)
 {
