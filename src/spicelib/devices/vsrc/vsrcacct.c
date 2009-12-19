@@ -70,7 +70,15 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 #ifdef XSPICE
                     PHASE = here->VSRCfunctionOrder > 8 
 			? here->VSRCcoeffs[7] : 0.0;
-			
+#endif
+                    /* offset time by delay  and limit to zero */
+                    time = ckt->CKTtime - TD;
+#ifdef XSPICE
+                    if(time < 0.0)
+                        time = 0.0;
+#endif
+
+#ifdef XSPICE					
 		     /* normalize phase to 0 - 2PI */ 
                     phase = PHASE * M_PI / 180.0;
                     basephase = 2 * M_PI * floor(phase / (2 * M_PI));
@@ -82,7 +90,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 #endif		    
 /* gtri - end - wbk - add PHASE parameter */			
 
-                    time = ckt->CKTtime - TD;
+                 
 		   		   
                     if(time >= PER) {
                         /* repeating signal - figure out where we are */

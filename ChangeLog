@@ -1,3 +1,8 @@
+2009-12-19 Paolo Nenzi
+ * src/spicelib/devices/isrc/isrcacct.c, src/spicelib/devices/vsrc/vsrcacct.c:
+   fixed bug reported by Holger. "time" value in accept routine was incorrectly 
+   computed when xspice extensions were compiled in. 
+
 2009-12-19 Holger Vogt
  * main.c, inpcom.c: source file path added as additional search path for
    opening .include files (MS Windows only).

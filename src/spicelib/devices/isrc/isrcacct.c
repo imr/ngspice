@@ -44,7 +44,7 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 
 /* gtri - begin - wbk - add PHASE parameter */
 #ifdef XSPICE		    
-		    double      PHASE;
+		    double  PHASE;
 		    double phase;
                     double deltat;
                     double basephase;
@@ -69,7 +69,16 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 #ifdef XSPICE
                     PHASE = here->ISRCfunctionOrder > 8 
 			? here->ISRCcoeffs[7] : 0.0;
-			
+#endif
+                    /* offset time by delay  and limit to zero */
+                    time = ckt->CKTtime - TD;
+
+#ifdef XSPICE
+                    if(time < 0.0)
+                        time = 0.0;
+#endif
+
+#ifdef XSPICE			
 		     /* normalize phase to 0 - 2PI */ 
                     phase = PHASE * M_PI / 180.0;
                     basephase = 2 * M_PI * floor(phase / (2 * M_PI));
@@ -81,8 +90,7 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 #endif		    
 /* gtri - end - wbk - add PHASE parameter */
                 
-                    /* offset time by delay */
-                    time = ckt->CKTtime - TD;
+                   
 
 
 
