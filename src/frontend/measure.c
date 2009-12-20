@@ -33,6 +33,48 @@ static bool measures_passed; /* TRUE: stop simulation (if option autostop is set
 extern bool ft_batchmode;
 extern bool rflag;
 
+/* measure in interactive mode:
+   meas command inside .control ... .endc loop or manually entered.
+   meas has to be followed by the standard tokens (see measure_extract_variables()).
+   The result is put into a vector with name "result"
+*/
+
+void
+com_meas(wordlist *wl) {
+   /* wl: in, input line of meas command */
+   char *line_in, *outvar, newvec[1000];
+   wordlist * wl_count, *wl_let;
+   int fail;
+   double result = 0;
+
+   if (!wl) {
+      com_display((wordlist *) NULL);
+      return;
+   }
+   wl_count = wl;
+   line_in = wl_flatten(wl);
+
+   /* get output var name */
+   wl_count = wl_count->wl_next;
+   outvar = wl_count->wl_word;
+
+   fail = get_measure2(wl, &result, NULL, FALSE) ;
+
+   if (fail) {
+      fprintf(stdout, "meas %s failed!\n", line_in);
+      return;
+   }
+
+   sprintf(newvec, "%s = %f\0", outvar, result);
+   wl_let = alloc(struct wordlist);
+   wl_let->wl_next = NULL;
+   wl_let->wl_word = copy(newvec);
+   com_let(wl_let);
+   wl_free(wl_let);
+//   fprintf(stdout, "in: %s\n", line_in);
+}
+
+
 static bool
 chkAnalysisType( char *an_type ) {
   /*

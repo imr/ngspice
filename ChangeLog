@@ -1,5 +1,9 @@
 2009-12-20 Holger Vogt
- * fixinf the time 0 value of sine in isrc, vsrc
+ * fixing the time 0 value of sine in isrc, vsrc
+ * fteext.h, com_measure2.c, measure.c, commands.c:
+   New .meas functions min_at or max_at will return the x value (maximum at x)
+   meas command is now available in the .control ... .endc section in ngspice
+   (still not tested for all possible variations, but ...).
 
 2009-12-19 Paolo Nenzi
  * src/spicelib/devices/isrc/isrcacct.c, src/spicelib/devices/vsrc/vsrcacct.c:

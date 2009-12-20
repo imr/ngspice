@@ -89,6 +89,7 @@ c1 out gnd 220fF
 .meas tran skew4 when v(out)=skew_meas fall=LAST
 .meas tran skew5 FIND v(out) AT=2n
 .meas tran v0_min    min   i(v0) from='dfall' to='dfall+period'
+.meas tran i_v0_min  min_at i(v0) from='dfall' to='dfall+period'
 .meas tran v0_avg    avg   i(v0) from='dfall' to='dfall+period'
 .meas tran v0_integ  integ i(v0) from='dfall' to='dfall+period'
 .meas tran v0_rms    rms   i(v0) from='dfall' to='dfall+period'

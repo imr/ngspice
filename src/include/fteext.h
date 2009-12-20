@@ -233,7 +233,8 @@ extern void com_fft(wordlist*);
 
 /* com_sysinfo.c */
 extern void com_sysinfo();
-/* ginterface.c */
+
+/* ginterface.c 
 
 extern bool gi_init();
 extern bool gi_endpause;
@@ -255,6 +256,7 @@ extern void gi_resetcolor();
 extern void gi_setlinestyle();
 extern void gi_text();
 extern void gi_update();
+*/
 
 /* graf.c */
 
@@ -408,6 +410,7 @@ extern struct plot *raw_read();
 /* meas.c */
 extern void do_measure(char *what, bool chk_only);
 extern bool check_autostop(char *what);
+extern void com_meas(wordlist *wl);
 
 /* resource.c */
 
