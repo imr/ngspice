@@ -1,3 +1,6 @@
+2009-12-20 Holger Vogt
+ * fixinf the time 0 value of sine in isrc, vsrc
+
 2009-12-19 Paolo Nenzi
  * src/spicelib/devices/isrc/isrcacct.c, src/spicelib/devices/vsrc/vsrcacct.c:
    fixed bug reported by Holger. "time" value in accept routine was incorrectly 

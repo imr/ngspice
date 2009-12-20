@@ -148,13 +148,16 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 			   
                     time -= TD;
                     if (time <= 0) {
-                        value = VO;
-                    } else {
 #ifdef XSPICE
+                        value = VO + VA * sin(phase);
+                    } else {
+
                         value = VO + VA * sin(FREQ*time * 2.0 * M_PI + phase) * 
                                 exp(-time*THETA);
 #else						    
-                        value = VO + VA * sin(FREQ * time * 2.0 * M_PI) * 
+                        value = VO;
+                    } else {                        
+                       value = VO + VA * sin(FREQ * time * 2.0 * M_PI) * 
                                 exp(-(time*THETA));
 #endif
 /* gtri - end - wbk - add PHASE parameter */				

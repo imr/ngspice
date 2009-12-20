@@ -277,11 +277,15 @@ int measure_extract_variables( char *line )
    * .MEASURE {DC|AC|TRAN} result INTEG<RAL> out_variable 
    * + <TD=td> <FROM=val> <TO=val>
    *
-   * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable 
-   * + <TD=td> <FROM=val> <TO=val> <AT=val>
+   * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable AT=val
    *
-   * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable 
-   * + <TD=td> <FROM=val> <TO=val> <AT=val>
+   * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable WHEN out_variable2=val
+   * + <TD=td>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   *
+   * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable WHEN out_variable2=out_variable3
+   * + <TD=td>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
    * ----------------------------------------------------------------- */
 
     int len ;					/* length of string */
