@@ -1,0 +1,97 @@
+Mixed IO types  
+* This circuit contains a mixture of IO types, including  
+* analog, digital, user-defined (real), and 'null'. 
+*  
+* The circuit demonstrates the use of the digital and 
+* user-defined node capability to model system-level designs 
+* such as sampled-data filters. The simulated circuit 
+* contains a digital oscillator enabled after 100us. The 
+* square wave oscillator output is divided by 8 with a 
+* ripple counter. The result is passed through a digital 
+* filter to convert it to a sine wave. 
+* 
+.tran 1e-5 1e-3 
+.save all
+* 
+v1 1 0 0.0 pulse(0 1 1e-4 1e-6) 
+r1 1 0 1k 
+* 
+abridge1 [1] [enable] atod 
+.model atod adc_bridge 
+* 
+aclk [enable clk] clk nand 
+.model nand d_nand (rise_delay=1e-5 fall_delay=1e-5) 
+* 
+adiv2 div2_out clk NULL NULL NULL div2_out dff 
+adiv4 div4_out div2_out NULL NULL NULL div4_out dff
+adiv8 div8_out div4_out NULL NULL NULL div8_out dff 
+.model dff d_dff 
+* 
+abridge2 div8_out enable filt_in node_bridge2 
+.model node_bridge2 d_to_real (zero=-1 one=1) 
+* 
+xfilter filt_in clk filt_out dig_filter 
+* 
+abridge3 filt_out a_out node_bridge3 
+.model node_bridge3 real_to_v 
+* 
+rlpf1 a_out oa_minus 10k 
+* 
+xlpf 0 oa_minus lpf_out opamp 
+* 
+rlpf2 oa_minus lpf_out 10k 
+clpf lpf_out oa_minus 0.01uF 
+* 
+* 
+.subckt dig_filter filt_in clk filt_out 
+* 
+.model n0 real_gain (gain=1.0) 
+.model n1 real_gain (gain=2.0) 
+.model n2 real_gain (gain=1.0) 
+.model g1 real_gain (gain=0.125) 
+.model zm1 real_delay 
+.model d0a real_gain (gain=-0.75) 
+.model d1a real_gain (gain=0.5625) 
+.model d0b real_gain (gain=-0.3438) 
+.model d1b real_gain (gain=1.0) 
+* 
+an0a filt_in x0a n0 
+an1a filt_in x1a n1 
+an2a filt_in x2a n2 
+* 
+az0a x0a clk x1a zm1 
+az1a x1a clk x2a zm1 
+* 
+ad0a x2a x0a d0a 
+ad1a x2a x1a d1a 
+* 
+az2a x2a filt1_out g1 
+az3a filt1_out clk filt2_in zm1 
+* 
+an0b filt2_in x0b n0 
+an1b filt2_in x1b n1 
+an2b filt2_in x2b n2 
+*
+az0b x0b clk x1b zm1 
+az1b x1b clk x2b zm1 
+* 
+ad0 x2b x0b d0b 
+ad1 x2b x1b d1b 
+* 
+az2b x2b clk filt_out zm1 
+* 
+.ends dig_filter 
+* 
+* 
+.subckt opamp plus minus out 
+* 
+r1 plus minus 300k 
+a1 %vd (plus minus) outint lim 
+.model lim limit (out_lower_limit = -12 out_upper_limit = 12 
++ fraction = true limit_range = 0.2 gain=300e3) 
+r3 outint out 50.0 
+r2 out 0 1e12 
+* 
+.ends opamp
+*  
+.end

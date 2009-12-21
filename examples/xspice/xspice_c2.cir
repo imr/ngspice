@@ -1,0 +1,16 @@
+A transistor amplifier circuit  
+*  
+.tran 1e-5 2e-3  
+*  
+vin 1 0 0.0 ac 1.0 sin(0 1 1k)  
+*  
+ccouple 1 in 10uF 
+rzin in 0 19.35k  
+*  
+aamp in aout gain_block  
+.model gain_block gain (gain = -3.9 out_offset = 7.003)  
+* 
+rzout aout coll 3.9k 
+rbig coll 0 1e12 
+*  
+.end
