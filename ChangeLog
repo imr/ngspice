@@ -1,3 +1,6 @@
+2009-12-21 Holger Vogt
+ * com_measure2.com, measure.c: add vector to the meas command
+
 2009-12-20 Holger Vogt
  * fixing the time 0 value of sine in isrc, vsrc
  * fteext.h, com_measure2.c, measure.c, commands.c:

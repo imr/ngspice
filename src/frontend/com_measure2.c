@@ -91,7 +91,9 @@ void correct_vec(MEASUREPTR meas)
    char *vec2, newvec2[BSIZE_SP];
 
    vec = meas->m_vec;
-
+   /* return if not of type VM() etc */
+   if ((*vec != 'v') || (!strstr(vec, "("))) return;
+   
    if (*(++vec) != '(') {
       vecfirst = copy(meas->m_vec);
       vecfirst[1] = '\0';
@@ -275,7 +277,7 @@ int measure_extract_variables( char *line )
    * .MEASURE {DC|AC|TRAN} result FIND out_variable AT=val
    * + <FROM=val> <TO=val>
    *
-   * .MEASURE {DC|AC|TRAN} result {AVG|MIN|MAX|PP|RMS} out_variable
+   * .MEASURE {DC|AC|TRAN} result {AVG|MIN|MAX|MIN_AT|MAX_AT|PP|RMS} out_variable
    * + <TD=td> <FROM=val> <TO=val>
    *
    * .MEASURE {DC|AC|TRAN} result INTEG<RAL> out_variable
@@ -393,7 +395,10 @@ static void com_measure_when(
          timeValue = dTime->v_compdata[i].cx_real;
       }
       else if (cieq (meas->m_analysis,"sp")) {
-         value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         if (d->v_compdata)
+            value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         else
+            value = d->v_realdata[i];
          timeValue = dTime->v_realdata[i];
       }
       else {

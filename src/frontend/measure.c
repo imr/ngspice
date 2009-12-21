@@ -42,16 +42,66 @@ extern bool rflag;
 void
 com_meas(wordlist *wl) {
    /* wl: in, input line of meas command */
-   char *line_in, *outvar, newvec[1000];
-   wordlist * wl_count, *wl_let;
-   int fail;
+   char *line_in, *outvar, newvec[1000], *vec_found, *token, *equal_ptr, newval[256];
+   wordlist * wl_count, *wl_let, *wl_index;
+   int fail, err=0;
    double result = 0;
+   struct dvec *d;
 
    if (!wl) {
       com_display((wordlist *) NULL);
       return;
    }
    wl_count = wl;
+   
+   /* check each wl entry, if it contain '=' and if the following token is
+      a vector. If yes, replace this vector by its value */
+   wl_index = wl;
+   while ( wl_index) {
+	   token = wl_index->wl_word;
+      /* find the vector vec_found, next token after each '=' sign. 
+	     May be in the next wl_word */
+      if ( *(token + strlen(token) - 1) == '=' ) {
+         wl_index = wl_index->wl_next;
+         vec_found = wl_index->wl_word;
+         /* token may be already a value, maybe 'LAST', which we have to keep, or maybe a vector */
+         if (!cieq(vec_found, "LAST")) {
+            INPevaluate( &vec_found, &err, 1 );
+            /* if not a valid number */
+            if (err) {         
+               /* check if vec_found is a valid vector */	
+               d = vec_get(vec_found);
+               if (d) {
+                  /* get its value */
+                  sprintf(newval, "%f\0", d->v_realdata[0]);
+                  tfree(vec_found);
+                  wl_index->wl_word = copy(newval);
+               }
+            }
+         } 
+      } 
+	   /* may be inside the same wl_word */
+      else if ( (equal_ptr = strstr( token, "=" )) ) {
+         vec_found = equal_ptr + 1;
+         if (!cieq(vec_found, "LAST")) {
+            INPevaluate( &vec_found, &err, 1 );
+            if (err) {
+               d = vec_get(vec_found);
+               if (d) {
+                  *equal_ptr = '\0';
+                  sprintf(newval, "%s=%f\0", token, d->v_realdata[0]);
+//               memory leak with first part of vec_found ?
+                  tfree(token);
+                  wl_index->wl_word = copy(newval);
+               }
+            }
+         } 
+      } else {
+         ;// nothing
+      }
+      wl_index = wl_index->wl_next;      
+   }	  
+   
    line_in = wl_flatten(wl);
 
    /* get output var name */
