@@ -516,7 +516,10 @@ static void measure_at(
          svalue = dScale->v_compdata[i].cx_real;
       }
       else if (cieq (meas->m_analysis,"sp")) {
-         value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         if (d->v_compdata)
+            value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         else
+            value = d->v_realdata[i];      	
          svalue = dScale->v_realdata[i];
       }
       else {
@@ -589,7 +592,10 @@ static void measure_minMaxAvg(
          svalue = dScale->v_compdata[i].cx_real;
       }
       else if (cieq (meas->m_analysis,"sp")) {
-         value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         if (d->v_compdata)
+            value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
+         else
+            value = d->v_realdata[i];      	
          svalue = dScale->v_realdata[i];
       }
       else {
@@ -1072,7 +1078,7 @@ static int measure_parse_when (
     wordlist *wl,       /* in : word list to parse */
     char *errBuf        /* in/out: buffer where we write error messages */
 ) {
-   int pCnt;
+   int pCnt, err = 0;
    char *p, *pVar1, *pVar2;
    meas->m_vec = NULL;
    meas->m_vec2 = NULL;
@@ -1109,7 +1115,7 @@ static int measure_parse_when (
                correct_vec(meas);
          }
          else
-            meas->m_val = atof(pVar2);
+            meas->m_val = INPevaluate( &pVar2, &err, 1 );
       } else {
          if (measure_parse_stdParams(meas, wl, NULL, errBuf) == 0)
             return 0;

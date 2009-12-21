@@ -1012,17 +1012,24 @@ inp_fix_ternary_operator_str( char *line )
 static void
 inp_fix_ternary_operator( struct line *start_card )
 {
-  struct line *card;
-  char        *line;
+   struct line *card;
+   char        *line;
+   bool found_control = FALSE;
 
-  for ( card = start_card; card != NULL; card = card->li_next ) {
-    line = card->li_line;
+   for ( card = start_card; card != NULL; card = card->li_next ) {
+      line = card->li_line;
 
-    if ( *line == '*' ) continue;
-    if ( strstr( line, "?" ) && strstr( line, ":" ) ) {
-      card->li_line = inp_fix_ternary_operator_str( line );
-    }
-  }
+      /* exclude replacement of ternary function between .control and .endc */
+      if ( ciprefix( ".control", line ) ) found_control = TRUE;
+      if ( ciprefix( ".endc",    line ) ) found_control = FALSE; 
+      if (found_control) continue;
+
+
+      if ( *line == '*' ) continue;
+      if ( strstr( line, "?" ) && strstr( line, ":" ) ) {
+         card->li_line = inp_fix_ternary_operator_str( line );
+      }
+   }
 }
 
 /*-------------------------------------------------------------------------

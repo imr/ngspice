@@ -1,5 +1,9 @@
 2009-12-21 Holger Vogt
- * com_measure2.com, measure.c: add vector to the meas command
+ * com_measure2.com, measure.c: add vectors to the meas command.
+   inpcom.c: no parsing of ternary function in .control section (not
+   yet defined anyway).
+   /examples/measure /examples/control_structs: new or updated example
+   files.
 
 2009-12-20 Holger Vogt
  * fixing the time 0 value of sine in isrc, vsrc
