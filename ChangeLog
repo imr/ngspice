@@ -1,3 +1,6 @@
+2009-12-22 Holger Vogt
+ * measure.c: bugfix (%f replaced by %e)
+
 2009-12-21 Holger Vogt
  * com_measure2.com, measure.c: add vectors to the meas command.
    inpcom.c: no parsing of ternary function in .control section (not

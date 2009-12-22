@@ -115,7 +115,7 @@ com_meas(wordlist *wl) {
       return;
    }
 
-   sprintf(newvec, "%s = %f\0", outvar, result);
+   sprintf(newvec, "%s = %e\0", outvar, result);
    wl_let = alloc(struct wordlist);
    wl_let->wl_next = NULL;
    wl_let->wl_word = copy(newvec);
