@@ -2,6 +2,9 @@
    Entry point is function do_measure(), called by fcn dosim() 
    from runcoms.c:335, after simulation is finished.
    
+   In addition it contains the fcn com_meas(), which provide the 
+   interactive 'meas' command.
+   
    $Id$   
 */
    
@@ -127,14 +130,9 @@ com_meas(wordlist *wl) {
 
 static bool
 chkAnalysisType( char *an_type ) {
-  /*
-    if ( strcmp( an_type, "ac"    ) != 0 && strcmp( an_type, "dc"   ) != 0 &&
-       strcmp( an_type, "noise" ) != 0 && strcmp( an_type, "tran" ) != 0 &&
-       strcmp( an_type, "fft"   ) != 0 && strcmp( an_type, "four" ) != 0 )
-  */
-  /* only support tran analysis type for now */
+  /* only support tran, dc, ac, sp analysis type for now */
   if ( strcmp( an_type, "tran" ) != 0 && strcmp( an_type, "ac" ) != 0 &&
-	  strcmp( an_type, "dc"   ) != 0)
+	  strcmp( an_type, "dc"   ) != 0 && strcmp( an_type, "sp"   ) != 0)
     return FALSE;
 //  else if (ft_batchmode == TRUE) return FALSE;
   else return TRUE;

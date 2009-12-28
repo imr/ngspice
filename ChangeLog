@@ -1,4 +1,8 @@
 2009-12-22 Holger Vogt
+ * measure.c: comments, 
+   /examples/control_structs/repeat3.sp: new examples snippets included
+
+2009-12-22 Holger Vogt
  * measure.c: bugfix (%f replaced by %e)
 
 2009-12-21 Holger Vogt
