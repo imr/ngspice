@@ -32,8 +32,8 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     bool xlog, ylog, nogrid, markers;
     char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text;
 
-    char filename_data[15];
-    char filename_plt[15];
+    char filename_data[128];
+    char filename_plt[128];
 
     sprintf(filename_data, "%s.data", filename);
     sprintf(filename_plt, "%s.plt", filename);
@@ -111,7 +111,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 	fprintf( file, "set ylabel \"%s\"\n", text );
 	tfree(text);
     }
-    if (nogrid) {
+    if (!nogrid) {
 	fprintf( file, "set grid\n" );
     }
     if (xlog) {
@@ -142,8 +142,9 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     fprintf( file, "#set ytics 1\n" );
     fprintf( file, "#set y2tics 1\n" );
 
+    fprintf( file, "set style line 1 lw %d\n", linewidth );
+
 /* TODO
-    fprintf( file, "LineWidth: %d\n", linewidth );
     if (plottype == PLOT_COMB) {
 	fprintf( file, "BarGraph: True\n" );
 	fprintf( file, "NoLines: True\n" );
@@ -198,7 +199,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     (void) fclose( file_data );
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
-    (void) sprintf( buf, "wgnuplot -persist %s", filename_plt );
+    (void) sprintf( buf, "wgnuplot -persistent %s", filename_plt );
 #else
     (void) sprintf( buf, "gnuplot %s &", filename );
 #endif

@@ -1,4 +1,8 @@
-2009-12-22 Holger Vogt
+2009-12-29 Holger Vogt
+ * ngproc2mod.c: patch by R. Larice
+   gnuplot.c filename arrays enlarged
+ 
+2009-12-28 Holger Vogt
  * measure.c: comments, 
    /examples/control_structs/repeat3.sp: new examples snippets included
 
