@@ -28,9 +28,9 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     FILE *file, *file_data;
     struct dvec *v, *scale = NULL;
     double xval, yval;
-    int i, numVecs, linewidth;
+    int i, numVecs, linewidth, err;
     bool xlog, ylog, nogrid, markers;
-    char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text;
+    char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP];
 
     char filename_data[128];
     char filename_plt[128];
@@ -112,7 +112,10 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 	tfree(text);
     }
     if (!nogrid) {
-	fprintf( file, "set grid\n" );
+	   if (linewidth > 1)
+	      fprintf( file, "set grid lw %d \n" , linewidth );
+       else
+		  fprintf( file, "set grid\n" );
     }
     if (xlog) {
     	fprintf( file, "set logscale x\n" );
@@ -142,21 +145,21 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     fprintf( file, "#set ytics 1\n" );
     fprintf( file, "#set y2tics 1\n" );
 
-    fprintf( file, "set style line 1 lw %d\n", linewidth );
+    if (linewidth > 1)
+        fprintf( file, "set border lw %d\n", linewidth );
 
-/* TODO
     if (plottype == PLOT_COMB) {
-	fprintf( file, "BarGraph: True\n" );
-	fprintf( file, "NoLines: True\n" );
+	   strcpy(plotstyle, "boxes");
     } else if (plottype == PLOT_POINT) {
-	if (markers) {
-	    fprintf( file, "Markers: True\n" );
+	   if (markers) {
+//	      fprintf( file, "Markers: True\n" );
+	   } else {
+//	      fprintf( file, "LargePixels: True\n" );
+	   }
+	   strcpy(plotstyle, "points");
 	} else {
-	    fprintf( file, "LargePixels: True\n" );
+	   strcpy(plotstyle, "lines");
 	}
-	fprintf( file, "NoLines: True\n" );
-    }
-*/
 
     /* Open the output gnuplot data file. */
     if (!(file_data = fopen(filename_data, "w"))) {
@@ -173,11 +176,19 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 	if (v->v_name) {
 	    i = i + 2;
 	    if (i > 2) fprintf(file, ",\\\n");
-	    fprintf(file, "\'%s\' using %d:%d with lines title \"%s\" ", filename_data, i-1, i, v->v_name);
+	    fprintf(file, "\'%s\' using %d:%d with %s lw %d title \"%s\" ", 
+			filename_data, i-1, i, plotstyle, linewidth, v->v_name);
 	}
     }
     fprintf( file, "\n");
-    fprintf (file, "set terminal postscript eps color\nset out \'%s.eps\'\nreplot\nset term pop", filename);
+    fprintf (file, "set terminal push\n");
+	fprintf (file, "set terminal postscript eps color\n");
+	fprintf (file, "set out \'%s.eps\'\n", filename);
+	fprintf (file, "replot\n");
+	fprintf (file, "set term pop\n");
+	fprintf (file, "replot\n");
+
+    (void) fclose( file );
 
     /* Write out the data and setup arrays */
     for ( i = 0; i < scale->v_length; i++ ) {
@@ -195,15 +206,16 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
       	fprintf( file_data, "\n");
     }
 
-    (void) fclose( file );
     (void) fclose( file_data );
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
-    (void) sprintf( buf, "wgnuplot -persistent %s", filename_plt );
+//    (void) sprintf( buf, "wgnuplot %s -", filename_plt );
+    (void) sprintf( buf, "start /B wgnuplot %s -" ,  filename_plt );
+    _flushall();
 #else
-    (void) sprintf( buf, "gnuplot %s &", filename );
+    (void) sprintf( buf, "gnuplot %s - &", filename_plt );
 #endif
-    (void) system( buf );
+    err = system( buf );
 
 
     return;
