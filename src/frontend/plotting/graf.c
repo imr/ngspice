@@ -47,7 +47,7 @@ static int curlst = 0;          /* for assigning line styles */
 
 /* These are what gets plotted as points when you specify point plots */
 static char pointchars[128];
-#define DEFPOINTCHARS   "oxabcdefhgijklmnpqrstuvwyz"
+#define DEFPOINTCHARS   "ox+#*abcdefhgijklmnpqrstuvwyz"
 
 /* Buffer for ticmarks if given a list */
 static char ticbuf[1024];

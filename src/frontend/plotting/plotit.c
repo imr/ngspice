@@ -1007,7 +1007,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 #endif
 
    if (devname && eq(devname, "gnuplot")) {
-	/* Interface to XGraph-11 Plot Program */
+	/* Interface to Gnuplot Plot Program */
 	ft_gnuplot(xlims, ylims, hcopy,
 	    title ? title : vecs->v_plot->pl_title,
 	    xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
