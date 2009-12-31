@@ -953,7 +953,7 @@ static void mesa3(MESAmodel *model, MESAinstance *here, double vgs,
   {
   char buf[256];
   void far pascal OutputDebugString(char*);
-  sprintf(buf,"\n%f\t%e\0",vgs,cgc);
+  sprintf(buf,"\n%f\t%e",vgs,cgc);
   OutputDebugString(buf);  
   }
 */  

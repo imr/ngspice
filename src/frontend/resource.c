@@ -219,7 +219,8 @@ printres(char *name)
 
 #  ifdef HAVE_GETRUSAGE
         int ret;
-        struct rusage ruse = {{NULL, NULL}};
+        struct rusage ruse;
+        memset(&ruse, 0, sizeof(ruse));
         ret = getrusage(RUSAGE_SELF, &ruse);
         if(ret == -1) {
           perror("getrusage(): ");
@@ -386,7 +387,8 @@ printres(char *name)
     if (!name || eq(name, "faults")) {
 #ifdef HAVE_GETRUSAGE
         int ret;
-        struct rusage ruse = {{NULL, NULL}};
+        struct rusage ruse;
+        memset(&ruse, 0, sizeof(ruse));
         ret = getrusage(RUSAGE_SELF, &ruse);
         if(ret == -1) {
           perror("getrusage(): ");

@@ -76,7 +76,7 @@ com_meas(wordlist *wl) {
                d = vec_get(vec_found);
                if (d) {
                   /* get its value */
-                  sprintf(newval, "%e\0", d->v_realdata[0]);
+                  sprintf(newval, "%e", d->v_realdata[0]);
                   tfree(vec_found);
                   wl_index->wl_word = copy(newval);
                }
@@ -92,7 +92,7 @@ com_meas(wordlist *wl) {
                d = vec_get(vec_found);
                if (d) {
                   *equal_ptr = '\0';
-                  sprintf(newval, "%s=%e\0", token, d->v_realdata[0]);
+                  sprintf(newval, "%s=%e", token, d->v_realdata[0]);
 //               memory leak with first part of vec_found ?
                   tfree(token);
                   wl_index->wl_word = copy(newval);
@@ -118,7 +118,7 @@ com_meas(wordlist *wl) {
       return;
    }
 
-   sprintf(newvec, "%s = %e\0", outvar, result);
+   sprintf(newvec, "%s = %e", outvar, result);
    wl_let = alloc(struct wordlist);
    wl_let->wl_next = NULL;
    wl_let->wl_word = copy(newvec);

@@ -1,3 +1,6 @@
+2009-12-31 Holger Vogt
+ * measure.c, resource.c, mesaload.c: small updates by R. Larice
+
 2009-12-30 Holger Vogt
  * gnuplot.c: some additions
  
