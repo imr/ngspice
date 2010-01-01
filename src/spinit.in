@@ -3,14 +3,16 @@ alias exit quit
 alias acct rusage all
 set x11lineararcs
 *set rndseed=12
+** ascii rawfile **
 *set filetype=ascii
+** frontend debug output **
+*set ngdebug
+** no asking after quit **
+*set noaskquit
 
-*unset brief
 
 strcmp __flag $program "ngspice"
 if $__flag = 0
-
-*set numparams
 
 * For SPICE2 POLYs, edit the below line to point to the location 
 * of your codemodel.

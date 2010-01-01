@@ -1,3 +1,7 @@
+2010-01-01 Holger Vogt
+ * spinit.in: Small update
+   gnuplot.c: calling gnuplot via xterm
+
 2009-12-31 Holger Vogt
  * measure.c, resource.c, mesaload.c: small patches by R. Larice
    graf.c, plotit.c: gnuplot updates, point chars updated

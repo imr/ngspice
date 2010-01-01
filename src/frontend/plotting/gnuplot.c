@@ -209,11 +209,10 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     (void) fclose( file_data );
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
-//    (void) sprintf( buf, "wgnuplot %s -", filename_plt );
     (void) sprintf( buf, "start /B wgnuplot %s -" ,  filename_plt );
     _flushall();
 #else
-    (void) sprintf( buf, "gnuplot %s - &", filename_plt );
+    (void) sprintf( buf, "xterm -e gnuplot %s - &", filename_plt );
 #endif
     err = system( buf );
 
