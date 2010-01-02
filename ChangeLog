@@ -1,4 +1,10 @@
 2010-01-01 Holger Vogt
+ * winmain.c: internal system() no longer needed, its available
+   in mingw and MS Visual Studio.
+   gnuplot.c: small update, call to gnuplot tested up to ver. 4.2.6,
+   does not work for Windows and gnuplot 4.4.
+
+2010-01-01 Holger Vogt
  * spinit.in: Small update
    gnuplot.c: calling gnuplot via xterm
 

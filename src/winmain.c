@@ -1338,7 +1338,7 @@ size_t _memavl(void)
     sum = ms.dwAvailPhys + ms.dwAvailPageFile;
     return (size_t) sum;
 }
-*/
+
 // ---------------------<Aufruf eines anderen Programms>-----------------------
 #ifndef _MSC_VER
 int system( const char * command)
@@ -1386,7 +1386,7 @@ int system( const char * command)
     return 0;
 } // system Windows95
 #endif
-
+*/
 /* Strip leading spaces, return a copy of s */
 char* rlead(char *s)
 {

@@ -209,10 +209,13 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     (void) fclose( file_data );
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
-    (void) sprintf( buf, "start /B wgnuplot %s -" ,  filename_plt );
+    /* for external fcn system() */
+//    (void) sprintf( buf, "start /B wgnuplot %s -" ,  filename_plt );
+	(void) sprintf( buf, "start /B wgnuplot -persist %s " ,  filename_plt );	
     _flushall();
 #else
-    (void) sprintf( buf, "xterm -e gnuplot %s - &", filename_plt );
+	/* for external fcn system() from LINUX environment */
+	(void) sprintf( buf, "xterm -e gnuplot %s - &", filename_plt );
 #endif
     err = system( buf );
 
