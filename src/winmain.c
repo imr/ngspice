@@ -8,14 +8,14 @@
 #include "config.h"
 #ifdef HAS_WINDOWS
 
-#define STRICT              // strikte Typpruefung
+#define STRICT              // strict type checking
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>        // normale Windows-Aufrufe
-#include <windowsx.h>       // Win32 Message Cracker
-#include <stdio.h>          // sprintf und co
-#include <stdlib.h>         // exit-codes
-#include <stdarg.h>         // var. argumente
-#include <assert.h>         // assert-macro
+#include <windows.h>        // standard Windows calls
+#include <windowsx.h>       // Win32 message cracker
+#include <stdio.h>          // sprintf and co
+#include <stdlib.h>         // exit codes
+#include <stdarg.h>         // var. arguments
+#include <assert.h>         // assert macro
 #include "misc/stringutil.h" // copy
 #include <io.h>             // _read
 
@@ -29,13 +29,13 @@
 #include "misc/misc_time.h" /* timediff */
 
 /* Constants */
-#define TBufSize 8192           // Groesze des Textbuffers
-#define CR VK_RETURN            // Carriage Return
+#define TBufSize 8192       // size of text buffer
+#define CR VK_RETURN        // Carriage Return
 #define LF 10               // Line Feed
 #define SE 0                // String termination
-#define BorderSize 8            // Umrandung des Stringfeldes
-#define SBufSize 100            // Groesze des Stringbuffers
-#define IOBufSize 4096          // Groesze des printf-Buffers
+#define BorderSize 8        // Umrandung des Stringfeldes
+#define SBufSize 100        // Groesze des Stringbuffers
+#define IOBufSize 4096      // Groesze des printf-Buffers
 #define HistSize 20         // Zeilen History-Buffer
 #define StatusHeight 25         // Hoehe des Status Bars
 #define StatusFrame 2           // Abstand Statusbar / StatusElement
@@ -774,6 +774,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     int argc;
     char **argv;
 
+	RECT wsize; /* size of usable window */
+
     /* fill global variables */
     hInst = hInstance;
     nShowState = nCmdShow;
@@ -829,9 +831,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     if (!RegisterClass( &hwElementClass)) goto THE_END;
 
     /*Create main window */
-    iy = GetSystemMetrics( SM_CYSCREEN);
-    iyt = GetSystemMetrics( SM_CYSCREEN) / 3;
-    ix = GetSystemMetrics( SM_CXSCREEN);
+	SystemParametersInfo(SPI_GETWORKAREA, 0, &wsize, NULL);
+    iy = wsize.bottom;
+	iyt = iy / 3;
+	ix = wsize.right;
+//    iy = GetSystemMetrics( SM_CYSCREEN);
+//    iyt = GetSystemMetrics( SM_CYSCREEN) / 3;
+//    ix = GetSystemMetrics( SM_CXSCREEN);
     hwMain = CreateWindow( hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
         0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
     if (!hwMain) goto THE_END;
@@ -898,7 +904,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
       Size of windows allows display of 80 character line.
       Limit window to screen size (if only VGA). */
    if (ix < WinLineWidth) WinLineWidth = ix;
-    MoveWindow( hwMain, 0, (iyt * 2 - 22), WinLineWidth, iyt, FALSE);
+    MoveWindow( hwMain, 0, (iyt * 2), WinLineWidth, iyt, FALSE);
     ShowWindow( hwMain,   nShowState);
     ShowWindow( twText,   SW_SHOWNORMAL);
     ShowWindow( swString, SW_SHOWNORMAL);

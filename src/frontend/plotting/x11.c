@@ -410,7 +410,7 @@ X11_NewViewport(GRAPH *graph)
     XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, (XtCallbackProc) hardcopy, graph);
 
     /* set up fonts */
-    if (!cp_getvar("font", VT_STRING, fontname)) {
+    if (!cp_getvar("xfont", VT_STRING, fontname)) {
 	(void) strcpy(fontname, DEF_FONT);
     }
 

@@ -69,6 +69,8 @@ extern int         NewViewport(GRAPH *pgraph);
 #define M_LN10  2.30258509299404568402
 #endif
 
+#define DEF_FONTW "Courier"
+
 /* local variables */
 static int           IsRegistered = 0;             /* 1 if window class is registered */
 #define NumWinColors 23                            /* predefined colors */
@@ -815,8 +817,16 @@ int WIN_Text( char * text, int x, int y, int CentiDegrees)
    lf.lfClipPrecision  = 0 ;
    lf.lfQuality        = 0 ;
    lf.lfPitchAndFamily = 0 ;
+
+   /* set up fonts */
+   if (!cp_getvar("wfont", VT_STRING, lf.lfFaceName)) {
+      (void) lstrcpy(lf.lfFaceName, DEF_FONTW);
+   }
+   if (!cp_getvar("wfont_size", VT_NUM, (char *) &(lf.lfHeight))) {
+      lf.lfHeight  = (int) (1.1 * currentgraph->fontheight) ;
+   }
      
-   lstrcpy (lf.lfFaceName, "Courier"/*"Times New Roman"*/) ;
+//   lstrcpy (lf.lfFaceName, "Courier"/*"Times New Roman"*/) ;
 
    hfont = CreateFontIndirect (&lf);
    SelectObject(wd->hDC, hfont);

@@ -3,6 +3,10 @@
    in mingw and MS Visual Studio.
    gnuplot.c: small update, call to gnuplot tested up to ver. 4.2.6,
    does not work for Windows and gnuplot 4.4.
+ * x11.c: add xfont parameter
+ * windisp.c: add wfont and wfont_size parameter
+ * winmain.c: use SystemParametersInfo() to get screen size to 
+   improve placement of GUI on the screen.
 
 2010-01-01 Holger Vogt
  * spinit.in: Small update
