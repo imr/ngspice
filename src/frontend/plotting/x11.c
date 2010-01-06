@@ -410,7 +410,7 @@ X11_NewViewport(GRAPH *graph)
     XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, (XtCallbackProc) hardcopy, graph);
 
     /* set up fonts */
-    if (!cp_getvar("xfont", VT_STRING, fontname)) {
+    if (!cp_getvar("font", VT_STRING, fontname)) {
 	(void) strcpy(fontname, DEF_FONT);
     }
 
@@ -830,10 +830,25 @@ zoomin(GRAPH *graph)
 void
 hardcopy(Widget w, caddr_t client_data, caddr_t call_data)
 {
-
+    X11devdep tempdevdep;
+	Bool hasdevdep = FALSE;
+	/* com_hardcopy() -> gr_resize() -> setcolor() dirung postscript
+	printing will act on currentgraph with a DEVDEP inherited from PSdevdep.
+	But currentgraph had not changed its devdep, which was derived from
+	incompatible X11devdep, thus overwriting some variables. Here you find a
+	temporary remedy, until there will be a cleanup of graph handling. E.g.
+	CopyGraph() does not make a copy of its devdep, but just copies the pointer,
+	so keeping the old devdep. */
+    if (currentgraph->devdep) {
+        tempdevdep = DEVDEP(currentgraph);
+		hasdevdep = TRUE;
+    }
     lasthardcopy = (GRAPH *) client_data;
     com_hardcopy(NULL);
-
+    if (hasdevdep)
+	    DEVDEP(currentgraph) = tempdevdep;
+    else
+	    currentgraph->devdep = NULL;
 }
 
 void

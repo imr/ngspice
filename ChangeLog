@@ -1,4 +1,7 @@
-2010-01-01 Holger Vogt
+2010-01-02 Holger Vogt
+ * x11.c: hardcopy by button click, error removed
+
+2010-01-02 Holger Vogt
  * winmain.c: internal system() no longer needed, its available
    in mingw and MS Visual Studio.
    gnuplot.c: small update, call to gnuplot tested up to ver. 4.2.6,
