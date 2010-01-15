@@ -1,4 +1,9 @@
-2010-01-02 Holger Vogt
+2010-01-15 Holger Vogt
+ * subckt.c: patch for translate() by R. Larice, .global bug
+   removed (add null character after storing global to node[])
+   ngspice.h: _inline for _MSC_VER
+
+2010-01-06 Holger Vogt
  * x11.c: hardcopy by button click, error removed
 
 2010-01-02 Holger Vogt

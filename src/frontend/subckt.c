@@ -6,6 +6,15 @@ $Id$
 **********/
 
 /*------------------------------------------------------------------------------
+ * encapsulated string assembly in translate() and finishLine()
+ *   this string facility (bxx_buffer) mainly abstracts away buffer allocation.
+ *   this fixes a buffer overflow in finishLine, caused by lengthy descriptions
+ *   of the kind:
+ *     B1  1 2  I=v(1)+v(2)+v(3)+...
+ * Larice, 22nd Aug 2009
+ *----------------------------------------------------------------------------*/
+
+/*------------------------------------------------------------------------------
  * Added changes supplied by by H.Tanaka with some tidy up of comments, debug
  * statements, and variables. This fixes a problem with nested .subsck elements
  * that accessed .model lines. Code not ideal, but it seems to work okay.
@@ -52,6 +61,8 @@ $Id$
 #include "ftedefs.h"
 #include "fteinp.h"
 
+#include <stdarg.h>
+
 #ifdef XSPICE
 /* gtri - add - wbk - 11/9/90 - include MIF function prototypes */
 #include "mifproto.h"
@@ -70,9 +81,10 @@ extern void line_free_x(struct line * deck, bool recurse);
 static struct line * doit(struct line *deck);
 static int translate(struct line *deck, char *formal, char *actual, char *scname, 
 		     char *subname);
-static void finishLine(char *dst, char *src, char *scname);
+struct bxx_buffer;
+static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, char *actual, char *subname);
-static char * gettrans(char *name);
+static char * gettrans(const char *name, const char *name_end);
 static int numnodes(char *name);
 static int  numdevs(char *s);
 static bool modtranslate(struct line *deck, char *subname);
@@ -241,7 +253,7 @@ inp_subcktexpand(struct line *deck)
 		i=0;
 		t=s;
 		for (/*s*/; *s && !isspace(*s); s++) i++;
-		strncpy(node[numgnode],t,i);
+		strncpy(node[numgnode],t,i+1); /* i+1: include \0 character */
 		while (isspace(*s)) s++;
 		numgnode++;
 	    } /* node[] holds name of global node */
@@ -682,6 +694,141 @@ inp_deckcopy(struct line *deck)
     return (nd);
 }
 
+
+/*-------------------------------------------------------------------
+ * struct bxx_buffer,
+ *   a string assembly facility.
+ *
+ * usage:
+ *
+ *   struct bxx_buffer thing;
+ *   bxx_init(&thing);
+ *   ...
+ *   while(...) {
+ *     bxx_rewind(&thing);
+ *     ...
+ *     bxx_putc(&thing, ...)
+ *     bxx_printf(&thing, ...)
+ *     bxx_put_cstring(&thing, ...)
+ *     bxx_put_substring(&thing, ...)
+ *     ...
+ *     strcpy(bxx_buffer(&thing)
+ *   }
+ *   ..
+ *   bxx_free(&thing)
+ *
+ * main aspect:
+ *   reallocates/extends its buffer itself.
+ *
+ * note:
+ *   during asssembly the internal buffer is
+ *   not necessarily '\0' terminated.
+ *   but will be when bxx_buffer() is invoked
+ */
+
+struct bxx_buffer
+{
+    char *dst;
+    char *limit;
+    char *buffer;
+};
+
+/* must be a power of 2 */
+static const int bxx_chunksize = 1024;
+
+static void
+bxx_init(struct bxx_buffer *t)
+{
+    /* assert(0 == (bxx_chunksize & (bxx_chunksize - 1))); */
+
+    t->buffer = tmalloc(bxx_chunksize);
+
+    t->dst   = t->buffer;
+    t->limit = t->buffer + bxx_chunksize;
+}
+
+static void
+bxx_free(struct bxx_buffer *t)
+{
+    tfree(t->buffer);
+}
+
+static void
+bxx_rewind(struct bxx_buffer *t)
+{
+    t->dst = t->buffer;
+}
+
+static void
+bxx_extend(struct bxx_buffer *t, int howmuch)
+{
+    int pos = t->dst   - t->buffer;
+    int len = t->limit - t->buffer;
+
+    /* round up */
+    howmuch +=  (bxx_chunksize - 1);
+    howmuch &= ~(bxx_chunksize - 1);
+
+    t->buffer = trealloc(t->buffer, len += howmuch);
+
+    t->dst   = t->buffer + pos;
+    t->limit = t->buffer + len;
+}
+
+static void
+bxx_printf(struct bxx_buffer *t, const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+
+    while(1) {
+        int size = t->limit - t->buffer;
+        int ret  = vsnprintf(t->dst, size, fmt, ap);
+        if(ret == -1) {
+            bxx_extend(t, bxx_chunksize);
+        } else if(ret >= size) {
+            bxx_extend(t, ret - size + 1);
+        } else {
+            t->dst += ret;
+            break;
+        }
+    }
+
+    va_end(ap);
+}
+
+static inline char
+bxx_putc(struct bxx_buffer *t, char c)
+{
+    if(t->dst >= t->limit)
+        bxx_extend(t, 1);
+    return *(t->dst)++ = c;
+}
+
+static void
+bxx_put_cstring(struct bxx_buffer *t, const char *cstring)
+{
+    while(*cstring)
+        bxx_putc(t, *cstring++);
+}
+
+static void
+bxx_put_substring(struct bxx_buffer *t, const char *str, const char *end)
+{
+    while(str < end)
+        bxx_putc(t, *str++);
+}
+
+static char *
+bxx_buffer(struct bxx_buffer *t)
+{
+    if((t->dst == t->buffer) || (t->dst[-1] != '\0'))
+        bxx_putc(t, '\0');
+    return t->buffer;
+}
+
+
 /*------------------------------------------------------------------------------------------*
  * Translate all of the device names and node names in the .subckt deck. They are
  * pre-pended with subname:, unless they are in the formal list, in which case
@@ -700,10 +847,13 @@ static int
 translate(struct line *deck, char *formal, char *actual, char *scname, char *subname)
 {
     struct line *c;
-    char *buffer, *next_name, dev_type, *name, *s, *t, ch, *nametofree, *paren_ptr, *new_str;
-    int nnodes, i, dim, blen;
+    struct bxx_buffer buffer;
+    char *next_name, dev_type, *name, *s, *t, ch, *nametofree, *paren_ptr, *new_str;
+    int nnodes, i, dim;
     int rtn=0;
     
+    bxx_init(&buffer);
+
     /* settrans builds the table holding the translated netnames.  */
     i = settrans(formal, actual, subname);
     if (i < 0) {
@@ -741,7 +891,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    goto quit;
 	  }
 	  *paren_ptr = '\0';
-	  t          = gettrans(name);
+	  t          = gettrans(name, NULL);
 
 	  if (t) {
 	    new_str = tmalloc( strlen(s) + strlen(t) + strlen(paren_ptr+1) + 3 );
@@ -766,7 +916,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
         case '*': case '$':
         case '.':
             /* Just a pointer to the line into s and then break */
-	  buffer = tmalloc(2000+strlen(c->li_line));    /* DW,VA */
+	  bxx_rewind(&buffer);
 	  s = c->li_line;
 	  break;
 
@@ -785,10 +935,11 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             s = c->li_line;
             name = MIFgettok(&s);
 
+            bxx_rewind(&buffer);
+
 	    /* maschmann 
-            sprintf(buffer, "%s:%s ", name, scname);   */
-            buffer = (char *)tmalloc((strlen(scname)+strlen(name)+5)*sizeof(char));
-            sprintf(buffer, "a.%s.%s ", scname, name );  
+            bxx_printf(&buffer, "%s:%s ", name, scname);   */
+            bxx_printf(&buffer, "a.%s.%s ", scname, name );  
                    
 
 
@@ -818,48 +969,36 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
                 case '[':
                 case ']':
                 case '~':
-                    blen = strlen(buffer);
-                    buffer = (char *)trealloc(buffer, (blen+strlen(name)+2)*sizeof(char));
-                    sprintf(buffer + blen, "%s ", name);
+                    bxx_printf(&buffer, "%s ", name);
                     break;
 
                 case '%':
 
-                    blen = strlen(buffer);
-                    buffer = (char *)trealloc(buffer, (blen+2)*sizeof(char));
-                    sprintf(buffer + blen, "%%");
+                    bxx_printf(&buffer, "%%");
 
                     /* don't translate the port type identifier */
 
                     name = next_name;
                     next_name = MIFgettok(&s);
 
-                    blen = strlen(buffer);
-                    buffer = (char *)trealloc(buffer, (blen+strlen(name)+2)*sizeof(char));
-                    sprintf(buffer + blen, "%s ", name);
+                    bxx_printf(&buffer, "%s ", name);
                     break;
 
                 default:
 
                     /* must be a node name at this point, so translate it */
 
-                    t = gettrans(name);
+                    t = gettrans(name, NULL);
 
                     if (t) {
-                        blen = strlen(buffer);
-                        buffer = (char *)trealloc(buffer, (blen+strlen(t)+2)*sizeof(char));
-                        sprintf(buffer + blen, "%s ", t);
+                        bxx_printf(&buffer, "%s ", t);
                     } else {
 		      /* maschmann:  changed order 
-                        sprintf(buffer + strlen(buffer), "%s:%s ", name, scname); */
+                        bxx_printf(&buffer, "%s:%s ", name, scname); */
                       if(name[0]=='v' || name[0]=='V') {
-                        blen = strlen(buffer);
-                        buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+5)*sizeof(char));
-                        sprintf(buffer + blen, "v.%s.%s ", scname, name);
+                        bxx_printf(&buffer, "v.%s.%s ", scname, name);
                       } else { 
-                        blen = strlen(buffer);
-                        buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
-                        sprintf(buffer + blen, "%s.%s ", scname, name);
+                        bxx_printf(&buffer, "%s.%s ", scname, name);
                       }
                     }
                     break;
@@ -872,9 +1011,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
             /* copy in the last token, which is the model name */
 
             if(name) {
-                blen = strlen(buffer);
-                buffer = (char *)trealloc(buffer, (blen+strlen(name)+2)*sizeof(char));
-                sprintf(buffer + blen, "%s ", name);
+                bxx_printf(&buffer, "%s ", name);
             }
             /* Set s to null string for compatibility with code */
             /* after switch statement                           */
@@ -911,8 +1048,8 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
  */
 	  ch = *name;           /* ch identifies the type of component */
 
-	  buffer = (char *)tmalloc((strlen(scname)+strlen(name)+5)*sizeof(char));
-	  sprintf(buffer, "%c.%s.%s ", ch, scname, name);
+	  bxx_rewind(&buffer);
+	  bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
 	  tfree(t);
 	  
 
@@ -928,19 +1065,15 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    }
 	      
 	    /* call gettrans and see if netname was used in the invocation */
-	    t = gettrans(name);     
+	    t = gettrans(name, NULL);     
 	      
 	    if (t) {   /* the netname was used during the invocation; print it into the buffer */
-	      blen = strlen(buffer);
-	      buffer = (char *)trealloc(buffer, (blen+strlen(t)+2)*sizeof(char));
-	      sprintf(buffer + blen, "%s ", t);
+	      bxx_printf(&buffer, "%s ", t);
 	    }
 	    else {    /* net netname was not used during the invocation; place a 
 		       * translated name into the buffer.
 		       */
-	      blen = strlen(buffer);
-	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
-	      sprintf(buffer + blen, "%s.%s ", scname, name);
+	      bxx_printf(&buffer, "%s.%s ", scname, name);
 	    }
 	    tfree(name);
 	  }  /* while (nnodes-- . . . . */
@@ -979,9 +1112,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	      }
 
 	      /* Write POLY(dim) into buffer */
-	      blen = strlen(buffer);
-	      buffer = (char *)trealloc(buffer, (blen+17)*sizeof(char));
-	      sprintf(buffer + blen, "POLY( %d ) ", dim);
+	      bxx_printf(&buffer, "POLY( %d ) ", dim);
 	      
 
 	  } /* if ( (strcmp(next_name, "POLY") == 0) . . .  */
@@ -1013,9 +1144,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 
 	      ch = *name;         /*  ch is the first char of the token.  */
 
-	      blen = strlen(buffer);
-	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+5)*sizeof(char));
-	      sprintf(buffer + blen, "%c.%s.%s ", ch, scname, name);  
+	      bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);  
 	      /* From Vsense and Urefdes creates V:Urefdes:sense */
 	    }
 	    else {                              /* Handle netname */
@@ -1026,19 +1155,15 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 #endif
 
 	      /* call gettrans and see if netname was used in the invocation */
-	      t = gettrans(name);
+	      t = gettrans(name, NULL);
 	      
 	      if (t) {   /* the netname was used during the invocation; print it into the buffer */
-	        blen = strlen(buffer);
-	        buffer = (char *)trealloc(buffer, (blen+strlen(t)+2)*sizeof(char));
-	        sprintf(buffer + blen, "%s ", t);
+	        bxx_printf(&buffer, "%s ", t);
 	      }
 	      else {    /* net netname was not used during the invocation; place a 
 			 * translated name into the buffer.
 			 */
-	        blen = strlen(buffer);
-	        buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
-	        sprintf(buffer + blen, "%s.%s ", scname, name);
+	        bxx_printf(&buffer, "%s.%s ", scname, name);
 		/* From netname and Urefdes creates Urefdes:netname */
 	      }
 	    }
@@ -1046,9 +1171,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	  }      /* while (nnodes--. . . . */
 	  
 /* Now write out remainder of line (polynomial coeffs) */
-	  blen = strlen(buffer);
-	  buffer = (char *)trealloc(buffer, (blen+strlen(s)+strlen(scname)+1000)*sizeof(char));
-	  finishLine(buffer + blen, s, scname);
+	  finishLine(&buffer, s, scname);
 	  s = "";
 	  break;
 
@@ -1069,12 +1192,12 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
  */
 	  ch = *name;
 
+	  bxx_rewind(&buffer);
+
 	  if ( ch != 'x' ) {
-	    buffer = (char *)tmalloc((strlen(scname)+strlen(name)+5)*sizeof(char));
-	    sprintf(buffer, "%c.%s.%s ", ch, scname, name);
+	    bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
 	  } else {
-	    buffer = (char *)tmalloc((strlen(scname)+strlen(name)+3)*sizeof(char));
-	    sprintf(buffer, "%s.%s ", scname, name);
+	    bxx_printf(&buffer, "%s.%s ", scname, name);
 	  }
 
 	  tfree(nametofree);
@@ -1091,19 +1214,15 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    }
 	      
 	    /* call gettrans and see if netname was used in the invocation */
-	    t = gettrans(name);
+	    t = gettrans(name, NULL);
 	      
 	    if (t) {   /* the netname was used during the invocation; print it into the buffer */
-	      blen = strlen(buffer);
-	      buffer = (char *)trealloc(buffer, (blen+strlen(t)+2)*sizeof(char));
-	      sprintf(buffer + blen, "%s ", t);
+	      bxx_printf(&buffer, "%s ", t);
 	    }
 	    else {    /* net netname was not used during the invocation; place a 
 		       * translated name into the buffer.
 		       */
-	      blen = strlen(buffer);
-	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+3)*sizeof(char));
-	      sprintf(buffer + blen, "%s.%s ", scname, name);
+	      bxx_printf(&buffer, "%s.%s ", scname, name);
 	    }
 	    tfree(name);
 	  }  /* while (nnodes-- . . . . */
@@ -1123,13 +1242,9 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	    ch = *name;
 	    
 	    if ( ch != 'x' ) {
-	      blen = strlen(buffer);
-	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+5)*sizeof(char));
-	      sprintf(buffer + blen, "%c.%s.%s ", ch, scname, name);
+	      bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
 	    } else {
-	      blen = strlen(buffer);
-	      buffer = (char *)trealloc(buffer, (blen+strlen(scname)+strlen(name)+2)*sizeof(char));
-	      sprintf(buffer + blen, "%s ", scname);
+	      bxx_printf(&buffer, "%s ", scname);
 	    }
 
 	    tfree(t);
@@ -1140,25 +1255,20 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
  * We also scan through the line for v(something) and
  * i(something)...
  */
-	  blen = strlen(buffer);
-	  buffer = (char *)trealloc(buffer, (blen+strlen(s)+strlen(scname)+1000)*sizeof(char));
-	  finishLine(buffer + blen, s, scname);
+	  finishLine(&buffer, s, scname);
 	  s = "";
 
 	} /* switch(c->li_line . . . . */
 
-	blen = strlen(buffer);
-	buffer = (char *)trealloc(buffer, (blen+strlen(s)+1)*sizeof(char));
-	strcat(buffer, s);
+	bxx_printf(&buffer, "%s", s);
 	tfree(c->li_line);
-	c->li_line = copy(buffer);
+	c->li_line = copy(bxx_buffer(&buffer));
 
 #ifdef TRACE 
 	/* SDB debug statement */
 	printf("In translate, translated line = %s \n", c->li_line);
 #endif
 
-        tfree(buffer);
     }  /* for (c = deck . . . . */
     rtn = 1;
 quit:
@@ -1168,6 +1278,8 @@ quit:
 	FREE(table[i].t_old);
 	FREE(table[i].t_new);
     }
+
+    bxx_free(&buffer);
     return rtn;
 }
 
@@ -1179,11 +1291,10 @@ quit:
  * Changes made by SDB on 4.29.2003.
  *-------------------------------------------------------------------*/
 static void
-finishLine(char *dst, char *src, char *scname)
+finishLine(struct bxx_buffer *t, char *src, char *scname)
 {
-    char buf[4 * BSIZE_SP], which;
+    char *buf, *buf_end, which;
     char *s;
-    int i;
     int lastwasalpha;
 
     lastwasalpha = 0;
@@ -1195,37 +1306,36 @@ finishLine(char *dst, char *src, char *scname)
                 (*src != 'i') && (*src != 'I')) ||
 		lastwasalpha) {
 	    lastwasalpha = isalpha(*src);
-            *dst++ = *src++;
+            bxx_putc(t, *src++);
             continue;
         }
         for (s = src + 1; *s && isspace(*s); s++)
             ;
         if (!*s || (*s != '(')) {
 	    lastwasalpha = isalpha(*src);
-            *dst++ = *src++;
+            bxx_putc(t, *src++);
             continue;
         }
 	lastwasalpha = 0;
-        which = *dst++ = *src;
+        bxx_putc(t, which = *src);
         src = s;
-        *dst++ = *src++;
+        bxx_putc(t, *src++);
         while (isspace(*src))
             src++;
-        for (i = 0; *src && !isspace(*src) && *src != ',' && (*src != ')');
-	    i++)
+        for (buf = src; *src && !isspace(*src) && *src != ',' && (*src != ')');
+	    )
 	{
-            buf[i] = *src++;
+            src++;
 	}
-        buf[i] = '\0';
+        buf_end = src;
 
         if ((which == 'v') || (which == 'V'))
-            s = gettrans(buf);
+            s = gettrans(buf, buf_end);
         else
             s = NULL;
 
         if (s) {
-            while (*s)
-                *dst++ = *s++;
+            bxx_put_cstring(t, s);
         } 
 	else {    /* just a normal netname . . . . */
 	    /*
@@ -1233,17 +1343,15 @@ finishLine(char *dst, char *src, char *scname)
 	     */
              if ((which == 'i' || which == 'I') &&
 	        (buf[0] == 'v' || buf[0] == 'V')) {
-		*dst++ = buf[0];
-		*dst++ = '.';
+		bxx_putc(t, buf[0]);
+		bxx_putc(t, '.');
 		/*i = 1; */
 	    } /* else {
 		i = 0;
 	    } */
-            for (s = scname; *s; )
-                *dst++ = *s++;
-            *dst++ = '.';
-            for (s = buf/* + i*/; *s; )
-                *dst++ = *s++;
+            bxx_put_cstring(t, scname);
+            bxx_putc(t, '.');
+            bxx_put_substring(t, buf, buf_end);
         }
 
 	/* translate the reference node, as in the "2" in "v(4,2)" */
@@ -1253,27 +1361,20 @@ finishLine(char *dst, char *src, char *scname)
 		src++;
 	    }
 	    if (*src && *src != ')') {
-		for (i = 0; *src && !isspace(*src) && (*src != ')'); i++)
-		    buf[i] = *src++;
-		buf[i] = '\0';
-		s = gettrans(buf);
-		*dst++ = ',';
+		for (buf = src; *src && !isspace(*src) && (*src != ')'); )
+		    src++;
+		s = gettrans(buf, buf_end = src);
+		bxx_putc(t, ',');
 		if (s) {
-		    while (*s)
-			*dst++ = *s++;
+		    bxx_put_cstring(t, s);
 		} else {
-		    for (s = scname; *s; )
-			*dst++ = *s++;
-		    *dst++ = '.';
-		    for (s = buf; *s; )
-			*dst++ = *s++;
+		    bxx_put_cstring(t, scname);
+		    bxx_putc(t, '.');
+		    bxx_put_substring(t, buf, buf_end);
 		}
 	    }
 	}
     }
-
-    *dst = '\0'; /* va, append in each case '\0' */
-    return;
 }
 
 /*------------------------------------------------------------------------------*
@@ -1310,31 +1411,47 @@ settrans(char *formal, char *actual, char *subname)
     return 0;
 }
 
+/* compare a substring, with a '\0' terminated string
+ *   the substring itself is required to be free of a '\0'
+ */
+
+int
+eq_substr(const char* str, const char *end, const char *cstring)
+{
+    while(str < end)
+        if(*str++ != *cstring++)
+            return 0;
+    return (*cstring == '\0');
+}
 
 /*------------------------------------------------------------------------------*
  * gettrans returns the name of the top level net if it is in the list,
  * otherwise it returns NULL.
  *------------------------------------------------------------------------------*/
 static char *
-gettrans(char *name)
+gettrans(const char *name, const char *name_end)
 {
     int i;
 
+    if(!name_end)
+        name_end = strchr(name, '\0');
+
 #ifdef XSPICE
     /* gtri - wbk - 2/27/91 - don't translate the reserved word 'null' */
-    if (eq(name, "null"))
-      return (name);
+    if (eq_substr(name, name_end, "null"))
+      return ("null");
     /* gtri - end */
 #endif
 
 /* Added by H.Tanaka to translate global nodes */
     for(i=0;i<numgnode;i++)
-	if(eq(node[i],name)) return (name);
+	if(eq_substr(name, name_end, node[i]))
+            return (node[i]);
 
-    if (eq(name, "0"))
-        return (name);
+    if (eq_substr(name, name_end, "0"))
+        return ("0");
     for (i = 0; table[i].t_old; i++)
-        if (eq(table[i].t_old, name))
+        if (eq_substr(name, name_end, table[i].t_old))
             return (table[i].t_new);
     return (NULL);
 }
