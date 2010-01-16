@@ -218,7 +218,7 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 
 	/* Kspice addition - saj */
 	case 'P': 
-	    /* Pname <dimension> <node> ...... */
+	    /* Pname <node> <node> ... <gnd> <node> <node> ... <gnd> [<modname>] */
 	    /* R=<vector> L=<matrix> G=<vector> C=<matrix> l=<val> */
 	    INP2P(ckt, tab,current);
 	    break;
