@@ -16,24 +16,24 @@ Modified: 2004 Paolo Nenzi - (ng)spice integration
 
 
 #define VECTOR_ALLOC(vec, n) { \
-	vec = (double **) tmalloc(n * sizeof(double *)); \
+        vec = (double **) tmalloc(n * sizeof(double *)); \
 }
 
 #define MATRIX_ALLOC(mat, m, j) { \
-	int k; \
-	mat = (double ***) tmalloc(m * sizeof(double **)); \
-	for (k = 0; k < m; k++) {  \
-		VECTOR_ALLOC(mat[k], j); \
-	} \
+        int k; \
+        mat = (double ***) tmalloc(m * sizeof(double **)); \
+        for (k = 0; k < m; k++) {  \
+                VECTOR_ALLOC(mat[k], j); \
+        } \
 }
 
 #define VECTOR_FREE(vec) free(vec) 
 
 #define MATRIX_FREE(mat, m, j) { \
-	int k; \
-	for (k = 0; k < m; k++) {  \
-		free(mat[k]); \
-	} \
+        int k; \
+        for (k = 0; k < m; k++) {  \
+                free(mat[k]); \
+        } \
         free(mat); \
 }
 
@@ -86,13 +86,13 @@ static int match(int, double*, double*, double*);
 static int Gaussian_Elimination2(int, int);
 static void eval_Si_Si_1(int, double);
 static void loop_ZY(int, double);
-static void poly_matrix(); /* quale Ã¨ il prototipo ? */
+static void poly_matrix(); /* quale è il prototipo ? */
 /* static int checkW(double*, double); */
 static void poly_W(int, int);
 static void eval_frequency(int, int);
 static void store(int, int);
 static void store_SiSv_1(int, int);
-/*static int check(); quale Ã¨ il prototipo ?*/
+/*static int check(); quale è il prototipo ?*/
 static int coupled(int);
 static int generate_out(int, int);
 static int ReadCpL(CPLinstance*, CKTcircuit*);
@@ -100,7 +100,7 @@ static int ReadCpL(CPLinstance*, CKTcircuit*);
 
 /* mult */
 static void mult_p(double*, double*, double*, int, int, int);
-static void matrix_p_mult(); /* quale Ã¨ il prototipo ?*/
+static void matrix_p_mult(); /* quale è il prototipo ?*/
 static double approx_mode(double*, double*, double);
 static double eval2(double, double, double, double);
 static int get_c(double, double, double, double, double, double, double, double*, double*);
@@ -158,102 +158,102 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
 }
                     
-			noL = here->dimension;
+                        noL = here->dimension;
 
-			here->CPLposNodes = (int *) tmalloc(noL * sizeof(int));
-			here->CPLnegNodes = (int *) tmalloc(noL * sizeof(int));
-			here->CPLibr1 = (int *) tmalloc(noL * sizeof(int));
-			here->CPLibr2 = (int *) tmalloc(noL * sizeof(int));
+                        here->CPLposNodes = (int *) tmalloc(noL * sizeof(int));
+                        here->CPLnegNodes = (int *) tmalloc(noL * sizeof(int));
+                        here->CPLibr1 = (int *) tmalloc(noL * sizeof(int));
+                        here->CPLibr2 = (int *) tmalloc(noL * sizeof(int));
 
-			VECTOR_ALLOC(here->CPLibr1Ibr1, noL);
-			VECTOR_ALLOC(here->CPLibr2Ibr2, noL);
-			VECTOR_ALLOC(here->CPLposIbr1, noL);
-			VECTOR_ALLOC(here->CPLnegIbr2, noL); 
-			VECTOR_ALLOC(here->CPLposPos, noL); 
-			VECTOR_ALLOC(here->CPLnegNeg, noL);
-			VECTOR_ALLOC(here->CPLnegPos, noL); 
-			VECTOR_ALLOC(here->CPLposNeg, noL); 
+                        VECTOR_ALLOC(here->CPLibr1Ibr1, noL);
+                        VECTOR_ALLOC(here->CPLibr2Ibr2, noL);
+                        VECTOR_ALLOC(here->CPLposIbr1, noL);
+                        VECTOR_ALLOC(here->CPLnegIbr2, noL); 
+                        VECTOR_ALLOC(here->CPLposPos, noL); 
+                        VECTOR_ALLOC(here->CPLnegNeg, noL);
+                        VECTOR_ALLOC(here->CPLnegPos, noL); 
+                        VECTOR_ALLOC(here->CPLposNeg, noL); 
 
-			MATRIX_ALLOC(here->CPLibr1Pos, noL, noL);
-			MATRIX_ALLOC(here->CPLibr2Neg, noL, noL);
-			MATRIX_ALLOC(here->CPLibr1Neg, noL, noL);
-			MATRIX_ALLOC(here->CPLibr2Pos, noL, noL);
-			MATRIX_ALLOC(here->CPLibr1Ibr2, noL, noL);
-			MATRIX_ALLOC(here->CPLibr2Ibr1, noL, noL);
+                        MATRIX_ALLOC(here->CPLibr1Pos, noL, noL);
+                        MATRIX_ALLOC(here->CPLibr2Neg, noL, noL);
+                        MATRIX_ALLOC(here->CPLibr1Neg, noL, noL);
+                        MATRIX_ALLOC(here->CPLibr2Pos, noL, noL);
+                        MATRIX_ALLOC(here->CPLibr1Ibr2, noL, noL);
+                        MATRIX_ALLOC(here->CPLibr2Ibr1, noL, noL);
 
 
-			branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
-			if (! here->CPLibr1Given) {
-				for (m = 0; m < here->dimension; m++) {
-					branchname[m] = tmalloc(MAX_STRING);
-					sprintf(branchname[m], "branch1_%d", m);
-					error = 
-					CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
-					if (error) return (error);
-					here->CPLibr1[m] = tmp->number;
-				}
-				here->CPLibr1Given = 1;
-			}
-			free(branchname);
-			branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
-			if (! here->CPLibr2Given) {
-				for (m = 0; m < here->dimension; m++) {
-					branchname[m] = tmalloc(MAX_STRING);
-					sprintf(branchname[m], "branch2_%d", m);
-					error = 
-					CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
-					if (error) return (error);
-					here->CPLibr2[m] = tmp->number;
-				}
-				here->CPLibr2Given = 1;
-			}
-			free(branchname);
+                        branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
+                        if (! here->CPLibr1Given) {
+                                for (m = 0; m < here->dimension; m++) {
+                                        branchname[m] = tmalloc(MAX_STRING);
+                                        sprintf(branchname[m], "branch1_%d", m);
+                                        error = 
+                                        CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
+                                        if (error) return (error);
+                                        here->CPLibr1[m] = tmp->number;
+                                }
+                                here->CPLibr1Given = 1;
+                        }
+                        free(branchname);
+                        branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
+                        if (! here->CPLibr2Given) {
+                                for (m = 0; m < here->dimension; m++) {
+                                        branchname[m] = tmalloc(MAX_STRING);
+                                        sprintf(branchname[m], "branch2_%d", m);
+                                        error = 
+                                        CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
+                                        if (error) return (error);
+                                        here->CPLibr2[m] = tmp->number;
+                                }
+                                here->CPLibr2Given = 1;
+                        }
+                        free(branchname);
 
-			for (m = 0; m < here->dimension; m++) {
-				for (node = ckt->CKTnodes; node; node = node->next) {
-					if (strcmp(here->in_node_names[m], 
-						node->name) == 0){
-						here->CPLposNodes[m] = node->number;
-					}
-				}
-			}
-			for (m = 0; m < here->dimension; m++) {
-				for (node = ckt->CKTnodes; node; node = node->next) {
-					if (strcmp(here->out_node_names[m],
-						node->name) == 0){
-						here->CPLnegNodes[m] = node->number;
-					}
-				}
-			}
+                        for (m = 0; m < here->dimension; m++) {
+                                for (node = ckt->CKTnodes; node; node = node->next) {
+                                        if (strcmp(here->in_node_names[m], 
+                                                node->name) == 0){
+                                                here->CPLposNodes[m] = node->number;
+                                        }
+                                }
+                        }
+                        for (m = 0; m < here->dimension; m++) {
+                                for (node = ckt->CKTnodes; node; node = node->next) {
+                                        if (strcmp(here->out_node_names[m],
+                                                node->name) == 0){
+                                                here->CPLnegNodes[m] = node->number;
+                                        }
+                                }
+                        }
 
-			for (m = 0; m < here->dimension; m++) {
-				TSTALLOC(CPLibr1Ibr1[m],CPLibr1[m],CPLibr1[m]);
-				TSTALLOC(CPLibr2Ibr2[m],CPLibr2[m],CPLibr2[m]);
-				TSTALLOC(CPLposIbr1[m],CPLposNodes[m],CPLibr1[m]);
-	            TSTALLOC(CPLnegIbr2[m],CPLnegNodes[m],CPLibr2[m]);
-	            TSTALLOC(CPLposPos[m],CPLposNodes[m],CPLposNodes[m]);
-	            TSTALLOC(CPLnegNeg[m],CPLnegNodes[m],CPLnegNodes[m]);
-	            TSTALLOC(CPLnegPos[m],CPLnegNodes[m],CPLposNodes[m]);
-	            TSTALLOC(CPLposNeg[m],CPLposNodes[m],CPLnegNodes[m]);
+                        for (m = 0; m < here->dimension; m++) {
+                                TSTALLOC(CPLibr1Ibr1[m],CPLibr1[m],CPLibr1[m]);
+                                TSTALLOC(CPLibr2Ibr2[m],CPLibr2[m],CPLibr2[m]);
+                                TSTALLOC(CPLposIbr1[m],CPLposNodes[m],CPLibr1[m]);
+                                TSTALLOC(CPLnegIbr2[m],CPLnegNodes[m],CPLibr2[m]);
+                                TSTALLOC(CPLposPos[m],CPLposNodes[m],CPLposNodes[m]);
+                                TSTALLOC(CPLnegNeg[m],CPLnegNodes[m],CPLnegNodes[m]);
+                                TSTALLOC(CPLnegPos[m],CPLnegNodes[m],CPLposNodes[m]);
+                                TSTALLOC(CPLposNeg[m],CPLposNodes[m],CPLnegNodes[m]);
 
-				for (p = 0; p < here->dimension; p++) {
+                                for (p = 0; p < here->dimension; p++) {
 
-            TSTALLOC(CPLibr1Pos[m][p],CPLibr1[m],CPLposNodes[p]);
-            TSTALLOC(CPLibr2Neg[m][p],CPLibr2[m],CPLnegNodes[p]);
-            TSTALLOC(CPLibr1Neg[m][p],CPLibr1[m],CPLnegNodes[p]);
-            TSTALLOC(CPLibr2Pos[m][p],CPLibr2[m],CPLposNodes[p]);
-            TSTALLOC(CPLibr1Ibr2[m][p],CPLibr1[m],CPLibr2[p]);
-            TSTALLOC(CPLibr2Ibr1[m][p],CPLibr2[m],CPLibr1[p]);
+                                        TSTALLOC(CPLibr1Pos[m][p],CPLibr1[m],CPLposNodes[p]);
+                                        TSTALLOC(CPLibr2Neg[m][p],CPLibr2[m],CPLnegNodes[p]);
+                                        TSTALLOC(CPLibr1Neg[m][p],CPLibr1[m],CPLnegNodes[p]);
+                                        TSTALLOC(CPLibr2Pos[m][p],CPLibr2[m],CPLposNodes[p]);
+                                        TSTALLOC(CPLibr1Ibr2[m][p],CPLibr1[m],CPLibr2[p]);
+                                        TSTALLOC(CPLibr2Ibr1[m][p],CPLibr2[m],CPLibr1[p]);
 
-				}
-			}
+                                }
+                        }
 
-			ReadCpL(here, ckt);
+                        ReadCpL(here, ckt);
 
         }
     }
 
-	return(OK);
+        return(OK);
 }
 
 
@@ -267,54 +267,54 @@ CPLunsetup(GENmodel *inModel, CKTcircuit *ckt)
   int noL; 
   
   for (model = (CPLmodel *) inModel; model != NULL;
-      model = model->CPLnextModel) {
-    for (here = model->CPLinstances; here != NULL;
-        here = here->CPLnextInstance) {
-
-        noL = here->dimension;
-
-        VECTOR_FREE(here->CPLibr1Ibr1); 
-        VECTOR_FREE(here->CPLibr2Ibr2);
-        VECTOR_FREE(here->CPLposIbr1);
-        VECTOR_FREE(here->CPLnegIbr2);
-        VECTOR_FREE(here->CPLposPos);
-        VECTOR_FREE(here->CPLnegNeg); 
-        VECTOR_FREE(here->CPLnegPos);
-        VECTOR_FREE(here->CPLposNeg);
-
+    model = model->CPLnextModel) {
+      for (here = model->CPLinstances; here != NULL;
+          here = here->CPLnextInstance) {
       
-     MATRIX_FREE(here->CPLibr1Pos, noL, noL);
-     MATRIX_FREE(here->CPLibr2Neg, noL, noL);
-     MATRIX_FREE(here->CPLibr1Neg, noL, noL);
-     MATRIX_FREE(here->CPLibr2Pos, noL, noL);
-     MATRIX_FREE(here->CPLibr1Ibr2, noL, noL);
-     MATRIX_FREE(here->CPLibr2Ibr1, noL, noL);
-
+          noL = here->dimension;
       
-      for (m = 0; m < noL; m++) {
-          if (here->CPLibr1[m]) {
-               CKTdltNNum(ckt, here->CPLibr1[m]);
-               here->CPLibr1[m] = 0;
+          VECTOR_FREE(here->CPLibr1Ibr1); 
+          VECTOR_FREE(here->CPLibr2Ibr2);
+          VECTOR_FREE(here->CPLposIbr1);
+          VECTOR_FREE(here->CPLnegIbr2);
+          VECTOR_FREE(here->CPLposPos);
+          VECTOR_FREE(here->CPLnegNeg); 
+          VECTOR_FREE(here->CPLnegPos);
+          VECTOR_FREE(here->CPLposNeg);
+      
+        
+          MATRIX_FREE(here->CPLibr1Pos, noL, noL);
+          MATRIX_FREE(here->CPLibr2Neg, noL, noL);
+          MATRIX_FREE(here->CPLibr1Neg, noL, noL);
+          MATRIX_FREE(here->CPLibr2Pos, noL, noL);
+          MATRIX_FREE(here->CPLibr1Ibr2, noL, noL);
+          MATRIX_FREE(here->CPLibr2Ibr1, noL, noL);
+      
+        
+          for (m = 0; m < noL; m++) {
+              if (here->CPLibr1[m]) {
+                   CKTdltNNum(ckt, here->CPLibr1[m]);
+                   here->CPLibr1[m] = 0;
+              }
           }
-      }
-
-      for (m = 0; m < noL; m++) {
-          if (here->CPLibr2[m]) {
-               CKTdltNNum(ckt, here->CPLibr2[m]);
-               here->CPLibr2[m] = 0;
+      
+          for (m = 0; m < noL; m++) {
+              if (here->CPLibr2[m]) {
+                   CKTdltNNum(ckt, here->CPLibr2[m]);
+                   here->CPLibr2[m] = 0;
+              }
           }
+      
+          free(here->CPLposNodes);
+          free(here->CPLnegNodes);
+          free(here->CPLibr1);
+          free(here->CPLibr2);
+      
+          /* reset switches */
+          here->CPLdcGiven=0;
+          here->CPLibr1Given = 0;
+          here->CPLibr2Given = 0;
       }
-
-  free(here->CPLposNodes);
-  free(here->CPLnegNodes);
-  free(here->CPLibr1);
-  free(here->CPLibr2);
-
-  /* reset switches */
-  here->CPLdcGiven=0;
-  here->CPLibr1Given = 0;
-  here->CPLibr2Given = 0;
-    }
   }
   return OK;
 }
@@ -325,7 +325,7 @@ static int
 ReadCpL(CPLinstance *here, CKTcircuit *ckt)
 {
    int i, j, noL, counter;
-   float f;
+   double f;
    char *name;
    CPLine *c, *c2;
    ECPLine *ec;
@@ -342,7 +342,7 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
 
    for (i = 0; i < noL; i++) {
       ec = (ECPLine *) tmalloc(sizeof (ECPLine));
-	  name = here->in_node_names[i];
+      name = here->in_node_names[i];
       nd = insert_node(name);
       ec->link = nd->cplptr;
       nd->cplptr = ec;
@@ -361,7 +361,7 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
 
    for (i = 0; i < noL; i++) {
       ec = (ECPLine *) tmalloc(sizeof (ECPLine));
-	  name = here->out_node_names[i];
+      name = here->out_node_names[i];
       nd = insert_node(name);
       ec->link = nd->cplptr;
       nd->cplptr = ec;
@@ -377,28 +377,28 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
    }
 
    
-	counter = 0;
-	for (i = 0; i < noL; i++) {
-		for (j = 0; j < noL; j++) {
-			if (i > j) {
-				R_m[i][j] = R_m[j][i];
-				G_m[i][j] = G_m[j][i];
-				C_m[i][j] = C_m[j][i];
-				L_m[i][j] = L_m[j][i];
-			}
-			else {
-				f = here->CPLmodPtr->Rm[counter];
-				R_m[i][j] = here->CPLmodPtr->Rm[counter] = MAX(f, 1.0e-4);
-				G_m[i][j] = here->CPLmodPtr->Gm[counter];
-				L_m[i][j] = here->CPLmodPtr->Lm[counter];
-				C_m[i][j] = here->CPLmodPtr->Cm[counter];
-				counter++;
-			}
-		}
-	}
-	if (here->CPLlengthGiven)
-		length = here->CPLlength;
-	else length = here->CPLmodPtr->length;
+        counter = 0;
+        for (i = 0; i < noL; i++) {
+                for (j = 0; j < noL; j++) {
+                        if (i > j) {
+                                R_m[i][j] = R_m[j][i];
+                                G_m[i][j] = G_m[j][i];
+                                C_m[i][j] = C_m[j][i];
+                                L_m[i][j] = L_m[j][i];
+                        }
+                        else {
+                                f = here->CPLmodPtr->Rm[counter];
+                                R_m[i][j] = here->CPLmodPtr->Rm[counter] = MAX(f, 1.0e-4);
+                                G_m[i][j] = here->CPLmodPtr->Gm[counter];
+                                L_m[i][j] = here->CPLmodPtr->Lm[counter];
+                                C_m[i][j] = here->CPLmodPtr->Cm[counter];
+                                counter++;
+                        }
+                }
+        }
+        if (here->CPLlengthGiven)
+                length = here->CPLlength;
+        else length = here->CPLmodPtr->length;
 
    for (i = 0; i < noL; i++) 
       lines[i]->g = 1.0 / (R_m[i][i] * length);
@@ -413,26 +413,26 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
       for (j  = 0; j < noL; j++) {
          if (SIV[i][j].C_0 == 0.0)
             c->h1t[i][j] = NULL;
-	 else {
-	    c->h1t[i][j] = (TMS *) tmalloc(sizeof (TMS));
-	    d = c->h1t[i][j]->aten = SIV[i][j].C_0;
-	    c->h1t[i][j]->ifImg = (int) SIV[i][j].Poly[6] - 1.0;
-	        /* since originally 2 for img 1 for noimg */
-	    c->h1t[i][j]->tm[0].c = SIV[i][j].Poly[0] * d;
-	    c->h1t[i][j]->tm[1].c = SIV[i][j].Poly[1] * d;
-	    c->h1t[i][j]->tm[2].c = SIV[i][j].Poly[2] * d;
-	    c->h1t[i][j]->tm[0].x = SIV[i][j].Poly[3];
-	    c->h1t[i][j]->tm[1].x = SIV[i][j].Poly[4];
-	    c->h1t[i][j]->tm[2].x = SIV[i][j].Poly[5];
-	    if (c->h1t[i][j]->ifImg)
-	       c->h1C[i][j] = c->h1t[i][j]->tm[0].c + 2.0 * c->h1t[i][j]->tm[1].c;
+         else {
+            c->h1t[i][j] = (TMS *) tmalloc(sizeof (TMS));
+            d = c->h1t[i][j]->aten = SIV[i][j].C_0;
+            c->h1t[i][j]->ifImg = (int) SIV[i][j].Poly[6] - 1.0;
+                /* since originally 2 for img 1 for noimg */
+            c->h1t[i][j]->tm[0].c = SIV[i][j].Poly[0] * d;
+            c->h1t[i][j]->tm[1].c = SIV[i][j].Poly[1] * d;
+            c->h1t[i][j]->tm[2].c = SIV[i][j].Poly[2] * d;
+            c->h1t[i][j]->tm[0].x = SIV[i][j].Poly[3];
+            c->h1t[i][j]->tm[1].x = SIV[i][j].Poly[4];
+            c->h1t[i][j]->tm[2].x = SIV[i][j].Poly[5];
+            if (c->h1t[i][j]->ifImg)
+               c->h1C[i][j] = c->h1t[i][j]->tm[0].c + 2.0 * c->h1t[i][j]->tm[1].c;
             else {
-	       t = 0.0;
+               t = 0.0;
                for (k = 0; k < 3; k++)
                   t += c->h1t[i][j]->tm[k].c;
-	       c->h1C[i][j] = t;
-	    }
-	 }
+               c->h1C[i][j] = t;
+            }
+         }
 
          for (k = 0; k < noL; k++) {
             if (IWI[i][j].C_0[k] == 0.0)
@@ -448,13 +448,13 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
                c->h2t[i][j][k]->tm[0].x = IWI[i][j].Poly[k][3];
                c->h2t[i][j][k]->tm[1].x = IWI[i][j].Poly[k][4];
                c->h2t[i][j][k]->tm[2].x = IWI[i][j].Poly[k][5];
-	       if (c->h2t[i][j][k]->ifImg)
-	          c->h2C[i][j][k] = c->h2t[i][j][k]->tm[0].c + 2.0 * 
-			  c->h2t[i][j][k]->tm[1].c;
+               if (c->h2t[i][j][k]->ifImg)
+                  c->h2C[i][j][k] = c->h2t[i][j][k]->tm[0].c + 2.0 * 
+                          c->h2t[i][j][k]->tm[1].c;
                else 
-		  c->h2C[i][j][k] =  c->h2t[i][j][k]->tm[0].c +
-				     c->h2t[i][j][k]->tm[1].c +
-				     c->h2t[i][j][k]->tm[2].c;
+                  c->h2C[i][j][k] =  c->h2t[i][j][k]->tm[0].c +
+                                     c->h2t[i][j][k]->tm[1].c +
+                                     c->h2t[i][j][k]->tm[2].c;
             }
             if (IWV[i][j].C_0[k] == 0.0)
                c->h3t[i][j][k] = NULL;
@@ -469,25 +469,25 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
                c->h3t[i][j][k]->tm[0].x = IWV[i][j].Poly[k][3];
                c->h3t[i][j][k]->tm[1].x = IWV[i][j].Poly[k][4];
                c->h3t[i][j][k]->tm[2].x = IWV[i][j].Poly[k][5];
-	       if (c->h3t[i][j][k]->ifImg)
-	          c->h3C[i][j][k] = c->h3t[i][j][k]->tm[0].c + 2.0 * 
-			  c->h3t[i][j][k]->tm[1].c;
+               if (c->h3t[i][j][k]->ifImg)
+                  c->h3C[i][j][k] = c->h3t[i][j][k]->tm[0].c + 2.0 * 
+                          c->h3t[i][j][k]->tm[1].c;
                else 
-		  c->h3C[i][j][k] =  c->h3t[i][j][k]->tm[0].c +
-				     c->h3t[i][j][k]->tm[1].c +
-				     c->h3t[i][j][k]->tm[2].c;
+                  c->h3C[i][j][k] =  c->h3t[i][j][k]->tm[0].c +
+                                     c->h3t[i][j][k]->tm[1].c +
+                                     c->h3t[i][j][k]->tm[2].c;
             }
          }
       }
    }
 
    for (i = 0; i < noL; i++) {
-		if (c->taul[i] < ckt->CKTmaxStep) {
-			errMsg = tmalloc(strlen(message)+1);
-			strcpy(errMsg,message);
-			return(-1);
-		}
-	}
+                if (c->taul[i] < ckt->CKTmaxStep) {
+                        errMsg = tmalloc(strlen(message)+1);
+                        strcpy(errMsg,message);
+                        return(-1);
+                }
+        }
 
    return(1);
 }
@@ -495,7 +495,7 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
 
 /****************************************************************
      misc.c      Miscellaneous procedures for simulation of
-		 coupled transmission lines.
+                 coupled transmission lines.
  ****************************************************************/
 
 
@@ -570,8 +570,8 @@ polint(double *xa, double *ya, int n, double x, double *y, double *dy)
    d = vector(1, n);
    for (i = 1; i <= n; i++) {
       if ((dift = ABS(x - xa[i])) < dif) {
-	 ns = i;
-	 dif = dift;
+         ns = i;
+         dif = dift;
       }
       c[i] = ya[i];
       d[i] = ya[i];
@@ -579,17 +579,17 @@ polint(double *xa, double *ya, int n, double x, double *y, double *dy)
    *y = ya[ns--];
    for (m = 1; m < n; m++) {
       for (i = 1; i <= n-m; i++) {
-	 ho = xa[i]-x;
-	 hp = xa[i+m]-x;
-	 w = c[i+1]-d[i];
-	 if ((den=ho-hp) == 0.0) {
-	    fprintf(stderr, "(Error) in routine POLINT\n");
+         ho = xa[i]-x;
+         hp = xa[i+m]-x;
+         w = c[i+1]-d[i];
+         if ((den=ho-hp) == 0.0) {
+            fprintf(stderr, "(Error) in routine POLINT\n");
             fprintf(stderr, "...now exiting to system ...\n");
             exit(0);
-	 }
-	 den = w/den;
-	 d[i] = hp * den;
-	 c[i] = ho * den;
+         }
+         den = w/den;
+         d[i] = hp * den;
+         c[i] = ho * den;
       }
       *y += (*dy = (2*ns < (n-m) ? c[ns+1] : d[ns--]));
    }
@@ -620,15 +620,15 @@ match(int n, double *cof, double *xa, double *ya)
       xmin = 1.0e38;
       k = -1;
       for (i = 0; i <= n-j; i++) {
-	 if (ABS(x[i]) < xmin) {
-	    xmin = ABS(x[i]);
-	    k = i;
-	 }
-	 if (x[i]) y[i] = (y[i] - cof[j]) / x[i];
+         if (ABS(x[i]) < xmin) {
+            xmin = ABS(x[i]);
+            k = i;
+         }
+         if (x[i]) y[i] = (y[i] - cof[j]) / x[i];
       }
       for (i = k+1; i <= n-j; i++) {
-	 y[i-1] = y[i];
-	 x[i-1] = x[i];
+         y[i-1] = y[i];
+         x[i-1] = x[i];
       }
    }
    free_vector(y, 0, n);
@@ -640,7 +640,7 @@ match(int n, double *cof, double *xa, double *ya)
       xmin = xa[i];
       dy = cof[0];
       for (j = 1; j <= n; j++) {
-	 dy += xmin * cof[j];
+         dy += xmin * cof[j];
          xmin *= xa[i];
       }
       printf("*** real x = %e y = %e\n", xa[i], xx[i]);
@@ -674,7 +674,7 @@ match_x(int dim, double *Alfa, double *X, double *Y)
       f = X[i+1];
       for (j = dim-1; j >= 0; j--) {
          A[i][j] = f;
-	 f *= X[i+1];
+         f *= X[i+1];
       }
       A[i][dim] = (Y[i+1] - Y[0])*scale;
    }
@@ -689,7 +689,7 @@ match_x(int dim, double *Alfa, double *X, double *Y)
       f = X[i];
       scale = Alfa[0];
       for (j = 1; j <= dim; j++) {
-	 scale += f * Alfa[j];
+         scale += f * Alfa[j];
          f *= X[i];
       }
       printf("*** real x = %e y = %e\n", X[i], xx[i]);
@@ -707,7 +707,7 @@ match_x(int dim, double *Alfa, double *X, double *Y)
 static int 
 Gaussian_Elimination2(int dims, int type)
    /*  type = 1 : to solve a linear system  
-	     -1 : to inverse a matrix  */
+             -1 : to inverse a matrix  */
 {
    int i, j, k, dim;
    double f;
@@ -724,9 +724,9 @@ Gaussian_Elimination2(int dims, int type)
       max = ABS(A[i][i]);
       for (j = i+1; j < dim; j++)
          if (ABS(A[j][i]) > max) {
-	    imax = j;
-	    max = ABS(A[j][i]);
-	 }
+            imax = j;
+            max = ABS(A[j][i]);
+         }
       if (max < epsilon) {
          fprintf(stderr, " can not choose a pivot (misc)\n");
          exit(0);
@@ -735,22 +735,22 @@ Gaussian_Elimination2(int dims, int type)
          for (k = i; k <= dim; k++) {
             f = A[i][k];
             A[i][k] = A[imax][k];
-	    A[imax][k] = f;
-	 }
+            A[imax][k] = f;
+         }
 
       f = 1.0 / A[i][i];
       A[i][i] = 1.0;
 
       for (j = i+1; j <= dim; j++)
-	 A[i][j] *= f;
+         A[i][j] *= f;
 
       for (j = 0; j < dims ; j++) {
-	 if (i == j)
-	    continue;
-	 f = A[j][i];
-	 A[j][i] = 0.0;
-	 for (k = i+1; k <= dim; k++)
-	    A[j][k] -= f * A[i][k];
+         if (i == j)
+            continue;
+         f = A[j][i];
+         A[j][i] = 0.0;
+         for (k = i+1; k <= dim; k++)
+            A[j][k] -= f * A[i][k];
       }
    }
 
@@ -766,34 +766,34 @@ eval_Si_Si_1(int dim, double y)
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Si_1[i][j] = 0.0;
-	 for (k = 0; k < dim; k++)
-	    if (k == j)
-			Si_1[i][j] += Sv_1[i][k] *
-				(y * R_m[k][j] + Scaling_F * L_m[k][j]);
-	    else 
-			Si_1[i][j] += Sv_1[i][k] * L_m[k][j] * Scaling_F;
-			/
-			Si_1[i][j] *= Scaling_F;
-			/
+         Si_1[i][j] = 0.0;
+         for (k = 0; k < dim; k++)
+            if (k == j)
+                        Si_1[i][j] += Sv_1[i][k] *
+                                (y * R_m[k][j] + Scaling_F * L_m[k][j]);
+            else 
+                        Si_1[i][j] += Sv_1[i][k] * L_m[k][j] * Scaling_F;
+                        /
+                        Si_1[i][j] *= Scaling_F;
+                        /
       }
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++)
-	 Si_1[i][j] /= sqrt((double) D[i]);
+         Si_1[i][j] /= sqrt((double) D[i]);
 
    for (i = 0; i < dim; i++) {
       for (j = 0; j < dim; j++)
-	 A[i][j] = Si_1[i][j];
+         A[i][j] = Si_1[i][j];
       for (j = dim; j < 2* dim; j++)
-	 A[i][j] = 0.0;
+         A[i][j] = 0.0;
       A[i][i+dim] = 1.0;
    }
    Gaussian_Elimination2(dim, -1);
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++)
-	 Si[i][j] = A[i][j+dim];
+         Si[i][j] = A[i][j+dim];
 }
 
 ***/
@@ -805,32 +805,32 @@ eval_Si_Si_1(int dim, double y)
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Si_1[i][j] = 0.0;
-	 for (k = 0; k < dim; k++)
-	    Si_1[i][j] += Sv_1[i][k] * (y * R_m[k][j] + Scaling_F * L_m[k][j]);
-	       /*
-	    else 
-	       Si_1[i][j] += Sv_1[i][k] * L_m[k][j] * Scaling_F;
-	 Si_1[i][j] *= Scaling_F;
-		*/
+         Si_1[i][j] = 0.0;
+         for (k = 0; k < dim; k++)
+            Si_1[i][j] += Sv_1[i][k] * (y * R_m[k][j] + Scaling_F * L_m[k][j]);
+               /*
+            else 
+               Si_1[i][j] += Sv_1[i][k] * L_m[k][j] * Scaling_F;
+         Si_1[i][j] *= Scaling_F;
+                */
       }
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++)
-	 Si_1[i][j] /= sqrt((double) D[i]);
+         Si_1[i][j] /= sqrt((double) D[i]);
 
    for (i = 0; i < dim; i++) {
       for (j = 0; j < dim; j++)
-	 A[i][j] = Si_1[i][j];
+         A[i][j] = Si_1[i][j];
       for (j = dim; j < 2* dim; j++)
-	 A[i][j] = 0.0;
+         A[i][j] = 0.0;
       A[i][i+dim] = 1.0;
    }
    Gaussian_Elimination2(dim, -1);
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++)
-	 Si[i][j] = A[i][j+dim];
+         Si[i][j] = A[i][j+dim];
 }
 
 /***
@@ -843,15 +843,15 @@ loop_ZY(int dim, double y)
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 if (i == j) 
-	    ZY[i][j] = Scaling_F * C_m[i][i] + G_m[i] * y;
-	 else
-	    ZY[i][j] = Scaling_F * C_m[i][j];
+         if (i == j) 
+            ZY[i][j] = Scaling_F * C_m[i][i] + G_m[i] * y;
+         else
+            ZY[i][j] = Scaling_F * C_m[i][j];
    diag(dim);
    fmin = D[0];
    for (i = 1; i < dim; i++)
       if (D[i] < fmin)
-	 fmin = D[i];
+         fmin = D[i];
    if (fmin < 0) {
       fprintf(stderr, "(Error) The capacitance matrix of the multiconductor system is not positive definite.\n");
       exit(0);
@@ -863,67 +863,67 @@ loop_ZY(int dim, double y)
       D[i] = sqrt((double) D[i]);
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Y5[i][j] = D[i] * Sv[j][i];
-	 Y5_1[i][j] = Sv[j][i] / D[i];
+         Y5[i][j] = D[i] * Sv[j][i];
+         Y5_1[i][j] = Sv[j][i] / D[i];
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Sv_1[i][j] = 0.0;
-	 for (k = 0; k < dim; k++) 
-	    Sv_1[i][j] += Sv[i][k] * Y5[k][j];
+         Sv_1[i][j] = 0.0;
+         for (k = 0; k < dim; k++) 
+            Sv_1[i][j] += Sv[i][k] * Y5[k][j];
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 Y5[i][j] = Sv_1[i][j]; 
+         Y5[i][j] = Sv_1[i][j]; 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Sv_1[i][j] = 0.0;
-	 for (k = 0; k < dim; k++) 
-	    Sv_1[i][j] += Sv[i][k] * Y5_1[k][j];
+         Sv_1[i][j] = 0.0;
+         for (k = 0; k < dim; k++) 
+            Sv_1[i][j] += Sv[i][k] * Y5_1[k][j];
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 Y5_1[i][j] = Sv_1[i][j]; 
+         Y5_1[i][j] = Sv_1[i][j]; 
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 ZY[i][j] = 0.0;
-	 for (k = 0; k < dim; k++)
+         ZY[i][j] = 0.0;
+         for (k = 0; k < dim; k++)
             if (k == i) 
-	       ZY[i][j] += (Scaling_F *  L_m[i][i] + R_m[i] * y) * 
-			       Y5[k][j];
-	    else 
-	       ZY[i][j] += L_m[i][k] * Y5[k][j] * Scaling_F;
+               ZY[i][j] += (Scaling_F *  L_m[i][i] + R_m[i] * y) * 
+                               Y5[k][j];
+            else 
+               ZY[i][j] += L_m[i][k] * Y5[k][j] * Scaling_F;
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Sv_1[i][j] = 0.0;
-	 for (k = 0; k < dim; k++) 
-	    Sv_1[i][j] += Y5[i][k] * ZY[k][j];
+         Sv_1[i][j] = 0.0;
+         for (k = 0; k < dim; k++) 
+            Sv_1[i][j] += Y5[i][k] * ZY[k][j];
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 ZY[i][j] = Sv_1[i][j]; 
+         ZY[i][j] = Sv_1[i][j]; 
 
    diag(dim);
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Sv_1[i][j] = 0.0; 
-	 for (k = 0; k < dim; k++) 
-	    Sv_1[i][j] += Sv[k][i] * Y5[k][j];
-	 Sv_1[i][j] *= fmin1;
+         Sv_1[i][j] = 0.0; 
+         for (k = 0; k < dim; k++) 
+            Sv_1[i][j] += Sv[k][i] * Y5[k][j];
+         Sv_1[i][j] *= fmin1;
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 ZY[i][j] = 0.0; 
-	 for (k = 0; k < dim; k++) 
-	    ZY[i][j] += Y5_1[i][k] * Sv[k][j];
-	 ZY[i][j] *= fmin;
+         ZY[i][j] = 0.0; 
+         for (k = 0; k < dim; k++) 
+            ZY[i][j] += Y5_1[i][k] * Sv[k][j];
+         ZY[i][j] *= fmin;
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 Sv[i][j] = ZY[i][j]; 
+         Sv[i][j] = ZY[i][j]; 
 
 }
 ***/
@@ -936,16 +936,16 @@ loop_ZY(int dim, double y)
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 ZY[i][j] = Scaling_F * C_m[i][j] + G_m[i][j] * y;
-	    /*
-	 else
-	    ZY[i][j] = Scaling_F * C_m[i][j];
-	     */
+         ZY[i][j] = Scaling_F * C_m[i][j] + G_m[i][j] * y;
+            /*
+         else
+            ZY[i][j] = Scaling_F * C_m[i][j];
+             */
    diag(dim);
    fmin = D[0];
    for (i = 1; i < dim; i++)
       if (D[i] < fmin)
-	 fmin = D[i];
+         fmin = D[i];
    if (fmin < 0) {
       fprintf(stderr, "(Error) The capacitance matrix of the multiconductor system is not positive definite.\n");
       exit(0);
@@ -957,67 +957,67 @@ loop_ZY(int dim, double y)
       D[i] = sqrt((double) D[i]);
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Y5[i][j] = D[i] * Sv[j][i];
-	 Y5_1[i][j] = Sv[j][i] / D[i];
+         Y5[i][j] = D[i] * Sv[j][i];
+         Y5_1[i][j] = Sv[j][i] / D[i];
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Sv_1[i][j] = 0.0;
-	 for (k = 0; k < dim; k++) 
-	    Sv_1[i][j] += Sv[i][k] * Y5[k][j];
+         Sv_1[i][j] = 0.0;
+         for (k = 0; k < dim; k++) 
+            Sv_1[i][j] += Sv[i][k] * Y5[k][j];
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 Y5[i][j] = Sv_1[i][j]; 
+         Y5[i][j] = Sv_1[i][j]; 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Sv_1[i][j] = 0.0;
-	 for (k = 0; k < dim; k++) 
-	    Sv_1[i][j] += Sv[i][k] * Y5_1[k][j];
+         Sv_1[i][j] = 0.0;
+         for (k = 0; k < dim; k++) 
+            Sv_1[i][j] += Sv[i][k] * Y5_1[k][j];
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 Y5_1[i][j] = Sv_1[i][j]; 
+         Y5_1[i][j] = Sv_1[i][j]; 
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 ZY[i][j] = 0.0;
-	 for (k = 0; k < dim; k++)
-	    ZY[i][j] += (Scaling_F *  L_m[i][k] + R_m[i][k] * y) * Y5[k][j];
-	 /*
-	    else 
-	       ZY[i][j] += L_m[i][k] * Y5[k][j] * Scaling_F;
-	  */
+         ZY[i][j] = 0.0;
+         for (k = 0; k < dim; k++)
+            ZY[i][j] += (Scaling_F *  L_m[i][k] + R_m[i][k] * y) * Y5[k][j];
+         /*
+            else 
+               ZY[i][j] += L_m[i][k] * Y5[k][j] * Scaling_F;
+          */
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Sv_1[i][j] = 0.0;
-	 for (k = 0; k < dim; k++) 
-	    Sv_1[i][j] += Y5[i][k] * ZY[k][j];
+         Sv_1[i][j] = 0.0;
+         for (k = 0; k < dim; k++) 
+            Sv_1[i][j] += Y5[i][k] * ZY[k][j];
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 ZY[i][j] = Sv_1[i][j]; 
+         ZY[i][j] = Sv_1[i][j]; 
 
    diag(dim);
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 Sv_1[i][j] = 0.0; 
-	 for (k = 0; k < dim; k++) 
-	    Sv_1[i][j] += Sv[k][i] * Y5[k][j];
-	 Sv_1[i][j] *= fmin1;
+         Sv_1[i][j] = 0.0; 
+         for (k = 0; k < dim; k++) 
+            Sv_1[i][j] += Sv[k][i] * Y5[k][j];
+         Sv_1[i][j] *= fmin1;
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 ZY[i][j] = 0.0; 
-	 for (k = 0; k < dim; k++) 
-	    ZY[i][j] += Y5_1[i][k] * Sv[k][j];
-	 ZY[i][j] *= fmin;
+         ZY[i][j] = 0.0; 
+         for (k = 0; k < dim; k++) 
+            ZY[i][j] += Y5_1[i][k] * Sv[k][j];
+         ZY[i][j] *= fmin;
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 Sv[i][j] = ZY[i][j]; 
+         Sv[i][j] = ZY[i][j]; 
 
 }
 
@@ -1026,15 +1026,15 @@ loop_ZY(int dim, double y)
  ***/
 
 static void 
-poly_matrix(A,  dim,  deg)
-   double *A[MAX_DIM][MAX_DIM];
-   int dim, deg;
+poly_matrix(
+   double *A[MAX_DIM][MAX_DIM],
+   int dim, int deg)
 {
    int i, j;
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++)
-	 match(deg, A[i][j], frequency, A[i][j]);
+         match(deg, A[i][j], frequency, A[i][j]);
 }
 
 /***
@@ -1073,9 +1073,9 @@ poly_W(int dim, int deg)
    for (i = 0; i < dim; i++) {
       match(deg, W[i], frequency, W[i]);
       TAU[i] = approx_mode(W[i], W[i], length);
-	  /*
+          /*
       checkW(W[i], TAU[i]);
-	  */
+          */
    }
 }
 
@@ -1093,8 +1093,8 @@ eval_frequency(int dim, int deg_o)
 
    for (i = 1; i < dim; i++) 
       if (D[i] < min) {
-	 min = D[i];
-	 im = i;
+         min = D[i];
+         im = i;
       }
 
    if (min <= 0) {
@@ -1130,11 +1130,11 @@ store(int dim, int ind)
    for (i = 0; i < dim; i++) {
       for (j = 0; j < dim; j++) {
          /*  store_Sip  */
-	 Sip[i][j][ind] = Si[i][j];
+         Sip[i][j][ind] = Si[i][j];
          /*  store_Si_1p  */
-	 Si_1p[i][j][ind] = Si_1[i][j];
+         Si_1p[i][j][ind] = Si_1[i][j];
          /*  store_Sv_1p  */
-	 Sv_1p[i][j][ind] = Sv_1[i][j];
+         Sv_1p[i][j][ind] = Sv_1[i][j];
       }
       /*  store_W  */
       W[i][ind] = D[i];
@@ -1152,9 +1152,9 @@ store_SiSv_1(int dim, int ind)
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 temp = 0.0;
-	 for (k = 0; k < dim; k++)
-	   temp += Si[i][k] * Sv_1[k][j];
+         temp = 0.0;
+         for (k = 0; k < dim; k++)
+           temp += Si[i][k] * Sv_1[k][j];
       SiSv_1[i][j][ind] = temp;
    }
 }
@@ -1180,14 +1180,14 @@ check(Sip, Si_1p, Sv_1p, SiSv_1p)
    printf("Si =\n");
    for (i = 0; i < 4; i++) {
       for (j = 0; j < 4; j++) {
-	 f = Sip[i][j][0];
+         f = Sip[i][j][0];
          y = y1;
-	 f += y * Sip[i][j][1];
-	 for (k = 2; k < 8; k++) {
-	    y *= y1;
-	    f += y * Sip[i][j][k];
-	 }
-	 printf("%e ", f);
+         f += y * Sip[i][j][1];
+         for (k = 2; k < 8; k++) {
+            y *= y1;
+            f += y * Sip[i][j][k];
+         }
+         printf("%e ", f);
       }
       printf("\n");
    }
@@ -1195,14 +1195,14 @@ check(Sip, Si_1p, Sv_1p, SiSv_1p)
    printf("Si_1 =\n");
    for (i = 0; i < 4; i++) {
       for (j = 0; j < 4; j++) {
-	 f = Si_1p[i][j][0];
+         f = Si_1p[i][j][0];
          y = y1;
-	 f += y * Si_1p[i][j][1];
-	 for (k = 2; k < 8; k++) {
-	    y *= y1;
-	    f += y * Si_1p[i][j][k];
-	 }
-	 printf("%e ", f);
+         f += y * Si_1p[i][j][1];
+         for (k = 2; k < 8; k++) {
+            y *= y1;
+            f += y * Si_1p[i][j][k];
+         }
+         printf("%e ", f);
       }
       printf("\n");
    }
@@ -1210,14 +1210,14 @@ check(Sip, Si_1p, Sv_1p, SiSv_1p)
    printf("Sv_1 =\n");
    for (i = 0; i < 4; i++) {
       for (j = 0; j < 4; j++) {
-	 f = Sv_1p[i][j][0];
+         f = Sv_1p[i][j][0];
          y = y1;
-	 f += y * Sv_1p[i][j][1];
-	 for (k = 2; k < 8; k++) {
-	    y *= y1;
-	    f += y * Sv_1p[i][j][k];
-	 }
-	 printf("%e ", f);
+         f += y * Sv_1p[i][j][1];
+         for (k = 2; k < 8; k++) {
+            y *= y1;
+            f += y * Sv_1p[i][j][k];
+         }
+         printf("%e ", f);
       }
       printf("\n");
    }
@@ -1225,14 +1225,14 @@ check(Sip, Si_1p, Sv_1p, SiSv_1p)
    printf("SiSv_1 =\n");
    for (i = 0; i < 4; i++) {
       for (j = 0; j < 4; j++) {
-	 f = SiSv_1p[i][j][0];
+         f = SiSv_1p[i][j][0];
          y = y1;
-	 f += y * SiSv_1p[i][j][1];
-	 for (k = 2; k < 8; k++) {
-	    y *= y1;
-	    f += y * SiSv_1p[i][j][k];
-	 }
-	 printf("%e ", f);
+         f += y * SiSv_1p[i][j][1];
+         for (k = 2; k < 8; k++) {
+            y *= y1;
+            f += y * SiSv_1p[i][j][k];
+         }
+         printf("%e ", f);
       }
       printf("\n");
    }
@@ -1300,119 +1300,119 @@ generate_out(int dim, int deg_o)
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	 p = SiSv_1[i][j];
-	 SIV[i][j].C_0 = C = p[0];
-	 if (C == 0.0)
-	    continue;
-	 for (k = 0; k <= deg_o; k++) 
-	    p[k] /= C;
-	 if (i == j) {
-	    rtv = Pade_apx((double) sqrt((double) G_m[i][i] / R_m[i][i]) / C, 
-		  p, &c1, &c2, &c3, &x1, &x2, &x3);
-	    if (rtv == 0) {
-	       SIV[i][j].C_0 = 0.0;
-	       printf("SIV\n");
-	       continue;
-	    }
-	 } else {
-	    rtv = Pade_apx((double) 0.0, 
-		  p, &c1, &c2, &c3, &x1, &x2, &x3);
-	    if (rtv == 0) {
-	       SIV[i][j].C_0 = 0.0;
-	       printf("SIV\n");
-	       continue;
-	    }
-	 }
+         p = SiSv_1[i][j];
+         SIV[i][j].C_0 = C = p[0];
+         if (C == 0.0)
+            continue;
+         for (k = 0; k <= deg_o; k++) 
+            p[k] /= C;
+         if (i == j) {
+            rtv = Pade_apx((double) sqrt((double) G_m[i][i] / R_m[i][i]) / C, 
+                  p, &c1, &c2, &c3, &x1, &x2, &x3);
+            if (rtv == 0) {
+               SIV[i][j].C_0 = 0.0;
+               printf("SIV\n");
+               continue;
+            }
+         } else {
+            rtv = Pade_apx((double) 0.0, 
+                  p, &c1, &c2, &c3, &x1, &x2, &x3);
+            if (rtv == 0) {
+               SIV[i][j].C_0 = 0.0;
+               printf("SIV\n");
+               continue;
+            }
+         }
          p = SIV[i][j].Poly = (double *) calloc(7, sizeof(double));
-	 p[0] = c1;
-	 p[1] = c2;
-	 p[2] = c3;
-	 p[3] = x1;
-	 p[4] = x2;
-	 p[5] = x3;
-	 p[6] = (double) rtv;
+         p[0] = c1;
+         p[1] = c2;
+         p[2] = c3;
+         p[3] = x1;
+         p[4] = x2;
+         p[5] = x3;
+         p[6] = (double) rtv;
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 for (k = 0; k < dim; k++) {
-	    p = IWI[i][j].Poly[k];
-	    C = IWI[i][j].C_0[k];
-	    if (C == 0.0)
-	       continue;
-	    if (i == j && k == i) {
-	       rtv = Pade_apx((double) 
-	             exp(- sqrt((double) G_m[i][i] * R_m[i][i]) * length) / C,
-		     p, &c1, &c2, &c3, &x1, &x2, &x3);
-	       if (rtv == 0) {
-		  IWI[i][j].C_0[k] = 0.0;
-		  printf("IWI %d %d %d\n", i, j, k);
-		  continue;
-	       }
-	    } else {
-	       rtv = Pade_apx((double) 0.0, 
-		  p, &c1, &c2, &c3, &x1, &x2, &x3);
-	       if (rtv == 0) {
-		  IWI[i][j].C_0[k] = 0.0;
-		  printf("IWI %d %d %d\n", i, j, k);
-		  continue;
-	       }
-	    }
-	    p[0] = c1;
-	    p[1] = c2;
-	    p[2] = c3;
-	    p[3] = x1;
-	    p[4] = x2;
-	    p[5] = x3;
-	    p[6] = (double) rtv;
+         for (k = 0; k < dim; k++) {
+            p = IWI[i][j].Poly[k];
+            C = IWI[i][j].C_0[k];
+            if (C == 0.0)
+               continue;
+            if (i == j && k == i) {
+               rtv = Pade_apx((double) 
+                     exp(- sqrt((double) G_m[i][i] * R_m[i][i]) * length) / C,
+                     p, &c1, &c2, &c3, &x1, &x2, &x3);
+               if (rtv == 0) {
+                  IWI[i][j].C_0[k] = 0.0;
+                  printf("IWI %d %d %d\n", i, j, k);
+                  continue;
+               }
+            } else {
+               rtv = Pade_apx((double) 0.0, 
+                  p, &c1, &c2, &c3, &x1, &x2, &x3);
+               if (rtv == 0) {
+                  IWI[i][j].C_0[k] = 0.0;
+                  printf("IWI %d %d %d\n", i, j, k);
+                  continue;
+               }
+            }
+            p[0] = c1;
+            p[1] = c2;
+            p[2] = c3;
+            p[3] = x1;
+            p[4] = x2;
+            p[5] = x3;
+            p[6] = (double) rtv;
          }
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 for (k = 0; k < dim; k++) {
-	    p = IWV[i][j].Poly[k];
-	    C = IWV[i][j].C_0[k];
-	    if (C == 0.0)
-	       continue;
-	    if (i == j && k == i) {
-	       rtv = Pade_apx((double) sqrt((double) G_m[i][i] / R_m[i][i]) * 
-		     exp(- sqrt((double) G_m[i][i] * R_m[i][i]) * length) / C,
-		     p, &c1, &c2, &c3, &x1, &x2, &x3);
-	       if (rtv == 0) {
-		  IWV[i][j].C_0[k] = 0.0;
-		  printf("IWV %d %d %d\n", i, j, k);
-		  continue;
-	       }
-	    } else {
-	       rtv = Pade_apx((double) 0.0, 
-		  p, &c1, &c2, &c3, &x1, &x2, &x3);
-	       if (rtv == 0) {
-		  IWV[i][j].C_0[k] = 0.0;
-		  printf("IWV %d %d %d\n", i, j, k);
-		  continue;
-	       }
+         for (k = 0; k < dim; k++) {
+            p = IWV[i][j].Poly[k];
+            C = IWV[i][j].C_0[k];
+            if (C == 0.0)
+               continue;
+            if (i == j && k == i) {
+               rtv = Pade_apx((double) sqrt((double) G_m[i][i] / R_m[i][i]) * 
+                     exp(- sqrt((double) G_m[i][i] * R_m[i][i]) * length) / C,
+                     p, &c1, &c2, &c3, &x1, &x2, &x3);
+               if (rtv == 0) {
+                  IWV[i][j].C_0[k] = 0.0;
+                  printf("IWV %d %d %d\n", i, j, k);
+                  continue;
+               }
+            } else {
+               rtv = Pade_apx((double) 0.0, 
+                  p, &c1, &c2, &c3, &x1, &x2, &x3);
+               if (rtv == 0) {
+                  IWV[i][j].C_0[k] = 0.0;
+                  printf("IWV %d %d %d\n", i, j, k);
+                  continue;
+               }
             }
-	    p[0] = c1;
-	    p[1] = c2;
-	    p[2] = c3;
-	    p[3] = x1;
-	    p[4] = x2;
-	    p[5] = x3;
-	    p[6] = (double) rtv;
+            p[0] = c1;
+            p[1] = c2;
+            p[2] = c3;
+            p[3] = x1;
+            p[4] = x2;
+            p[5] = x3;
+            p[6] = (double) rtv;
          }
    return(1);
 }
 
 /****************************************************************
      mult.c     Multiplication for Matrix of Polynomial 
-		   X(y) = A(y) D(y) B(y),
-		   where D(y) is a diagonal matrix with each 
-		   diagonal entry of the form
-			   e^{-a_i s}d(y), for which s = 1/y
-				                 and i = 1..N.
-		   Each entry of X(y) will be of the form
-		      \sum_{i=1}^N c_i e^{-a_i s} b_i(y), where
-		      b_i(0) = 1; therefore, those
-		      b_i(y)'s will be each entry's output. 
+                   X(y) = A(y) D(y) B(y),
+                   where D(y) is a diagonal matrix with each 
+                   diagonal entry of the form
+                           e^{-a_i s}d(y), for which s = 1/y
+                                                 and i = 1..N.
+                   Each entry of X(y) will be of the form
+                      \sum_{i=1}^N c_i e^{-a_i s} b_i(y), where
+                      b_i(0) = 1; therefore, those
+                      b_i(y)'s will be each entry's output. 
  ****************************************************************/
 
 static void
@@ -1425,20 +1425,20 @@ mult_p(double *p1, double *p2, double *p3, int d1, int d2, int d3)
       p3[i] = 0.0;
    for (i = 0; i <= d1; i++)
       for (j = i, k = 0; k <= d2; j++, k++) {
-	 if (j > d3)
-	    break;
-	 p3[j] += p1[i] * p2[k];
+         if (j > d3)
+            break;
+         p3[j] += p1[i] * p2[k];
       }
 }
 
 
 static void
-matrix_p_mult(A, D, B, dim, deg, deg_o, X)
-   double  *A[MAX_DIM][MAX_DIM]; 
-   double  *D[MAX_DIM]; 
-   double  *B[MAX_DIM][MAX_DIM]; 
-   int     dim, deg, deg_o;
-   Mult_Out  X[MAX_DIM][MAX_DIM]; 
+matrix_p_mult(
+   double  *A[MAX_DIM][MAX_DIM],
+   double  *D[MAX_DIM],
+   double  *B[MAX_DIM][MAX_DIM], 
+   int dim, int deg, int deg_o,
+   Mult_Out  X[MAX_DIM][MAX_DIM]) 
 {
    int i, j, k, l;
    double *p;
@@ -1447,40 +1447,40 @@ matrix_p_mult(A, D, B, dim, deg, deg_o, X)
 
    for (i  = 0; i < dim; i++) 
       for (j = 0; j < dim; j++) {
-	 p = T[i][j] = (double *) calloc(deg_o+1, sizeof(double));
-	 mult_p(B[i][j], D[i], p, deg, deg_o, deg_o);
+         p = T[i][j] = (double *) calloc(deg_o+1, sizeof(double));
+         mult_p(B[i][j], D[i], p, deg, deg_o, deg_o);
       }
    for (i  = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
-	 for (k = 0; k < dim; k++) {
-	    p = X[i][j].Poly[k] = 
-			    (double *) calloc(deg_o+1, sizeof(double));
-	    mult_p(A[i][k], T[k][j], p, deg, deg_o, deg_o);
-	    t1 = X[i][j].C_0[k] = p[0];
-	    if (t1 != 0.0) {
-	       p[0] = 1.0;
-	       for (l = 1; l <= deg_o; l++)
-	          p[l] /= t1;
-	    }
-	 }
+         for (k = 0; k < dim; k++) {
+            p = X[i][j].Poly[k] = 
+                            (double *) calloc(deg_o+1, sizeof(double));
+            mult_p(A[i][k], T[k][j], p, deg, deg_o, deg_o);
+            t1 = X[i][j].C_0[k] = p[0];
+            if (t1 != 0.0) {
+               p[0] = 1.0;
+               for (l = 1; l <= deg_o; l++)
+                  p[l] /= t1;
+            }
+         }
       
       /**********
    for (i  = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
-	    for (k = 0; k < dim; k++) {
-	    fprintf(outFile, "(%5.3f)", X[i][j].C_0[k]);
-	    p = X[i][j].Poly[k];
-	    for (l = 0; l <= deg_o; l++)
-	       fprintf(outFile, "%5.3f ", p[l]); 
-	    fprintf(outFile, "\n");
-	 }
+            for (k = 0; k < dim; k++) {
+            fprintf(outFile, "(%5.3f)", X[i][j].C_0[k]);
+            p = X[i][j].Poly[k];
+            for (l = 0; l <= deg_o; l++)
+               fprintf(outFile, "%5.3f ", p[l]); 
+            fprintf(outFile, "\n");
+         }
          fprintf(outFile, "\n");
       }
        ***********/
 }
 
 /****************************************************************
-	          mode  approximation  
+                  mode  approximation  
 
  ****************************************************************/
 
@@ -1530,7 +1530,7 @@ approx_mode(double *X, double *b, double length)
    for (i = 2; i <= 5; i++) {
       b[i] = 0.0;
       for (j = 1; j <= i; j++)
-	 b[i] += j * a[j] * b[i-j];
+         b[i] += j * a[j] * b[i-j];
       b[i] = b[i] / (double) i;
    }
 
@@ -1578,10 +1578,10 @@ Pade_apx(double a_b, double *b, double *c1, double *c2, double *c3,
         b[0] + b[1]*y + b[2]*y^2 + ... + b[5]*y^5 + ...
       = (q3*y^3 + q2*y^2 + q1*y + 1) / (p3*y^3 + p2*y^2 + p1*y + 1)
        
-	where b[0] is always equal to 1.0 and neglected,
-	  and y = 1/s.
+        where b[0] is always equal to 1.0 and neglected,
+          and y = 1/s.
 
-	(q3*y^3 + q2*y^2 + q1*y + 1) / (p3*y^3 + p2*y^2 + p1*y + 1)
+        (q3*y^3 + q2*y^2 + q1*y + 1) / (p3*y^3 + p2*y^2 + p1*y + 1)
       = (s^3 + q1*s^2 + q2*s + q3) / (s^3 + p1*s^2 + p2*s + p3)
       = c1 / (s - x1) + c2 / (s - x2) + c3 / (s - x3) + 1.0
  */
@@ -1626,14 +1626,14 @@ Pade_apx(double a_b, double *b, double *c1, double *c2, double *c3,
       return(2);
    } else {
       /* new
-	  printf("roots are %e %e %e \n", *x1, *x2, *x3);
-	  */
+          printf("roots are %e %e %e \n", *x1, *x2, *x3);
+          */
       *c1 = eval2(q1 - p1, q2 - p2, q3 - p3, *x1) / 
-		   eval2((double) 3.0, (double) 2.0 * p1, p2, *x1);
+                   eval2((double) 3.0, (double) 2.0 * p1, p2, *x1);
       *c2 = eval2(q1 - p1, q2 - p2, q3 - p3, *x2) / 
-		   eval2((double) 3.0, (double) 2.0 * p1, p2, *x2);
+                   eval2((double) 3.0, (double) 2.0 * p1, p2, *x2);
       *c3 = eval2(q1 - p1, q2 - p2, q3 - p3, *x3) / 
-		   eval2((double) 3.0, (double) 2.0 * p1, p2, *x3);
+                   eval2((double) 3.0, (double) 2.0 * p1, p2, *x3);
       return(1);
    }
 }
@@ -1652,34 +1652,34 @@ Gaussian_Elimination(int dims)
       imax = i;
       max = ABS(At[i][i]);
       for (j = i+1; j < dim; j++)
-	 if (ABS(At[j][i]) > max) {
-	    imax = j;
-	    max = ABS(At[j][i]);
+         if (ABS(At[j][i]) > max) {
+            imax = j;
+            max = ABS(At[j][i]);
          }
       if (max < epsi_mult) {
          fprintf(stderr, " can not choose a pivot (mult)\n");
          exit(0);
       }
       if (imax != i)
-	 for (k = i; k <= dim; k++) {
-	    f = At[i][k];
-	    At[i][k] = At[imax][k];
-	    At[imax][k] = f;
-	 }
+         for (k = i; k <= dim; k++) {
+            f = At[i][k];
+            At[i][k] = At[imax][k];
+            At[imax][k] = f;
+         }
       
       f = 1.0 / At[i][i];
       At[i][i] = 1.0;
 
       for (j = i+1; j <= dim; j++)
-	 At[i][j] *= f;
+         At[i][j] *= f;
 
       for (j = 0; j < dim ; j++) {
-	 if (i == j)
-	    continue;
-	 f = At[j][i];
-	 At[j][i] = 0.0;
-	 for (k = i+1; k <= dim; k++)
-	    At[j][k] -= f * At[i][k];
+         if (i == j)
+            continue;
+         f = At[j][i];
+         At[j][i] = 0.0;
+         for (k = i+1; k <= dim; k++)
+            At[j][k] -= f * At[i][k];
       }
    }
    return(1);
@@ -1699,11 +1699,11 @@ root3(double a1, double a2, double a3, double x)
 static int 
 div3(double a1, double a2, double a3, double x, double *p1, double *p2)
 {
-	*p1 = a1 + x;
+        *p1 = a1 + x;
 
-	/* *p2 = a2 + (a1 + x) * x; */
+        /* *p2 = a2 + (a1 + x) * x; */
 
-	*p2 = - a3 / x;
+        *p2 = - a3 / x;
 
    return(1);
 }
@@ -1723,11 +1723,11 @@ find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
    t = q*q - 4.0*p;
    if (t < 0.0) {
       if (q != 0.0) {
-	 t = atan(sqrt((double)-t)/q);
-	 if (t < 0.0)
-	    t += 3.141592654;
-	 t /= 3.0;
-	 x = 2.0 * pow(p, 0.16666667) * cos(t) - a1 / 3.0;
+         t = atan(sqrt((double)-t)/q);
+         if (t < 0.0)
+            t += 3.141592654;
+         t /= 3.0;
+         x = 2.0 * pow(p, 0.16666667) * cos(t) - a1 / 3.0;
       } else {
          t /= -4.0;
          x = pow(t, 0.16666667) * 1.732 - a1 / 3.0;
@@ -1755,13 +1755,13 @@ find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
       x = -2.0*sqrt(q)*cos(t / 3.0) - a1/3.0;
    } else {
       if (p > 0.0) {
-	 t = pow(sqrt(-t)+p, (double) 1.0 / 3.0);
-	 x = -(t + q / t) - a1/3.0;
+         t = pow(sqrt(-t)+p, (double) 1.0 / 3.0);
+         x = -(t + q / t) - a1/3.0;
       } else if (p == 0.0) {
-	 x = -a1/3.0;
+         x = -a1/3.0;
       } else {
-	 t = pow(sqrt(-t)-p, (double) 1.0 / 3.0);
-	 x = (t + q / t) - a1/3.0;
+         t = pow(sqrt(-t)-p, (double) 1.0 / 3.0);
+         x = (t + q / t) - a1/3.0;
       }
    }
    /*
@@ -1772,10 +1772,10 @@ find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
       int i = 0;
    x1 = x;
    for (t = root3(a1, a2, a3, x); ABS(t-x) > 5.0e-4; 
-			    t = root3(a1, a2, a3, x)) 
+                            t = root3(a1, a2, a3, x)) 
       if (++i == 32) {
-	 x = x1;
-	 break;
+         x = x1;
+         break;
       } else 
          x = t;
    }
@@ -1800,9 +1800,9 @@ find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
    } else {
       t = sqrt(t);
       if (a1 >= 0.0)
-	 *x2 = t = -0.5 * (a1 + t);
+         *x2 = t = -0.5 * (a1 + t);
       else
-	 *x2 = t = -0.5 * (a1 - t);
+         *x2 = t = -0.5 * (a1 - t);
       *x3 = a2 / t;
       return(0);
    }
@@ -1853,13 +1853,13 @@ insert_node(char *name)
 /***
 static int divC(double ar, double ai, double br, double bi, double *cr, double *ci)
 {
-	double t;
+        double t;
 
-	t = br*br + bi*bi;
-	*cr = (ar*br + ai*bi) / t;
-	*ci = (ai*br - ar*bi) / t;
+        t = br*br + bi*bi;
+        *cr = (ar*br + ai*bi) / t;
+        *ci = (ai*br - ar*bi) / t;
 
-	return(1);
+        return(1);
 }
 ***/
 
@@ -1927,17 +1927,17 @@ ordering(void)
 {
    MAXE_PTR e;
    int i, j, m;
-   float mv;
+   double mv;
 
    for (i = 0; i < dim-1; i++) {
       m = i+1;
       mv = ABS(ZY[i][m]);
       for (j = m+1; j < dim; j++) 
-	if ((int)(ABS(ZY[i][j]) * 1e7) > (int) (1e7 *mv)) {
+        if ((int)(ABS(ZY[i][j]) * 1e7) > (int) (1e7 *mv)) {
 
-	    mv = ABS(ZY[i][j]);
-	    m = j;
-	 }
+            mv = ABS(ZY[i][j]);
+            m = j;
+         }
       e = (MAXE_PTR) tmalloc(sizeof (MAXE));
       row = sort(row, mv, i, m, e);
    }
@@ -1966,12 +1966,12 @@ reordering(int p, int q)
 {
    MAXE_PTR e;
    int j, m;
-   float mv;
+   double mv;
 
    m = p+1;
    mv = ABS(ZY[p][m]);
    for (j = m+1; j < dim; j++) 
-	if ((int)(ABS(ZY[p][j]) * 1e7) > (int) (1e7 *mv)) {
+        if ((int)(ABS(ZY[p][j]) * 1e7) > (int) (1e7 *mv)) {
          mv = ABS(ZY[p][j]);
          m = j;
       }
@@ -1982,8 +1982,8 @@ reordering(int p, int q)
    if (m != dim) {
       mv = ABS(ZY[q][m]);
       for (j = m+1; j < dim; j++)
-	if ((int)(ABS(ZY[q][j]) * 1e7) > (int) (1e7 *mv)) {
-	
+        if ((int)(ABS(ZY[q][j]) * 1e7) > (int) (1e7 *mv)) {
+        
             mv = ABS(ZY[q][j]);
             m = j;
          }
@@ -2005,10 +2005,10 @@ diag(int dims)
    fmin = fmax = ABS(ZY[0][0]);
    for (i = 0; i < dim; i++) 
       for (j = i; j < dim; j++) 
-	 if (ABS(ZY[i][j]) > fmax)
-	    fmax = ABS(ZY[i][j]);
-	 else if (ABS(ZY[i][j]) < fmin)
-	    fmin = ABS(ZY[i][j]);
+         if (ABS(ZY[i][j]) > fmax)
+            fmax = ABS(ZY[i][j]);
+         else if (ABS(ZY[i][j]) < fmin)
+            fmin = ABS(ZY[i][j]);
    fmin = 2.0 / (fmin + fmax);
    for (i = 0; i < dim; i++)
       for (j = i; j < dim; j++)
@@ -2016,24 +2016,24 @@ diag(int dims)
 
    for (i = 0; i < dim; i++) {
       for (j = 0; j < dim; j++) 
-		if (i == j)
-			Sv[i][i] = 1.0;
-		else 
-			Sv[i][j] = 0.0;
+                if (i == j)
+                        Sv[i][i] = 1.0;
+                else 
+                        Sv[i][j] = 0.0;
    }
 
    ordering();
 
    if (row)
-	   for (c = 0; row->value > epsi2; c++) {
-   		   int p, q;
+           for (c = 0; row->value > epsi2; c++) {
+                   int p, q;
 
-   		   p = row->row;
-   		   q = row->col;
+                   p = row->row;
+                   q = row->col;
 
-   		   rotate(dim, p, q);
-   		   reordering(p, q);
-   		}
+                   rotate(dim, p, q);
+                   reordering(p, q);
+           }
 
    for (i = 0; i < dim; i++)
       D[i] = ZY[i][i] / fmin;
@@ -2065,7 +2065,7 @@ rotate(int dim, int p, int q)
 
    for (j = p+1; j < dim; j++) {
       if (j == q)
-	 continue;
+         continue;
       if (j > q)
          ZY[p][j] = T[j] * co - ZY[q][j] * si;
       else
@@ -2073,17 +2073,17 @@ rotate(int dim, int p, int q)
    }
    for (j = q+1; j < dim; j++) {
       if (j == p)
-	 continue;
+         continue;
       ZY[q][j] = T[j] * si + ZY[q][j] * co;
    }
    for (j = 0; j < p; j++) {
       if (j == q)
-	 continue;
+         continue;
       ZY[j][p] = T[j] * co - ZY[j][q] * si;
    }
    for (j = 0; j < q; j++) {
       if (j == p)
-	 continue;
+         continue;
       ZY[j][q] = T[j] * si + ZY[j][q] * co;
    }
 
@@ -2103,7 +2103,7 @@ rotate(int dim, int p, int q)
 
       for (j = 0; j < dim; j++) {
          Sv[j][p] = T[j] * co - R[j] * si;
-	 Sv[j][q] = T[j] * si + R[j] * co;
+         Sv[j][q] = T[j] * si + R[j] * co;
       }
    }
 
