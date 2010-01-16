@@ -20,11 +20,13 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 
     char *modname;
     int type = -1;
-    int lev;
+    int lev, error1=0;
     char ver[100];
     char *typename;
     char *err = (char *) NULL;
     char *line;
+    char *val;
+    double rval=0, lval=0;
 
     line = image->line;
     
@@ -464,17 +466,15 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
     
     /*  --------  Check if model is a transmission line of some sort --------- */
     else if(strcmp(typename,"txl") == 0) {
-      char *val;
-      double rval=0, lval=0;
       INPgetTok(&line,&val,1);
       while (*line != '\0') {
 	if (*val == 'R' || *val == 'r') {
 	  INPgetTok(&line,&val,1);
-	  rval = atof(val);
+          rval = INPevaluate(&val, &error1, 1);
 	}
 	if ((strcmp(val,"L") == 0)  || (strcmp(val,"l") == 0)) {
 	  INPgetTok(&line,&val,1);
-	  lval = atof(val);
+          lval = INPevaluate(&val, &error1, 1);
 	}
 	INPgetTok(&line,&val,1);
       }
@@ -499,7 +499,7 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
       
     } 
 
-    /*  --------  Check if model is a ???? --------- */
+    /*  --------  Check if model is a coupled transmission line --------- */
     else if(strcmp(typename,"cpl") == 0) {
       type = INPtypelook("CplLines");
       if(type < 0) {
