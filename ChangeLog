@@ -1,3 +1,11 @@
+2010-01-16 Dietmar Warning
+ * tests/transmission: Only few tests should be easier, more examples under 
+   examples/TransmissionLine at next
+ * tests/bin/check.sh: extend codemodel word in list
+ * devices/cpl/cplsetup.c: few polishments
+ * parser/inp2p.c, inp2y.c, inpdomod.c: change atof to INPevaluate to allow 10p as 10e-12
+ * parser/inppas2.c: correct P element comment
+
 2010-01-15 Holger Vogt
  * subckt.c: patch for translate() by R. Larice, .global bug
    removed (add null character after storing global to node[])
