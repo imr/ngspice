@@ -58,6 +58,8 @@ IFsimulator SIMinfo = {
     NULL,
     0,
     NULL,
+    0,
+    NULL,	
 };
 
 #ifdef CIDER

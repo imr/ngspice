@@ -23,8 +23,8 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
  *    all of the JFET2's is summed with the variable "OnDens".
  */
 
-extern void   NevalSrc();
-extern double Nintegrate();
+extern void   NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
+extern double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 int
 JFET2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, double *OnDens)

@@ -6,7 +6,7 @@
 
 struct plot constantplot = {
     "Constant values", "Sat Aug 16 10:55:15 PDT 1986", "constants",
-    "const", NULL, NULL, NULL, NULL, NULL, NULL, TRUE
+    "const", NULL, NULL, NULL, NULL, NULL, NULL, TRUE, 0
 } ;
 
 struct plot *plot_cur = &constantplot;

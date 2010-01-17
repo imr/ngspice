@@ -453,7 +453,7 @@ typedef struct sIFfrontEnd {
                             /* start nested domain */
     int ((*OUTendDomain)(void*));    
                             /* end nested domain */
-    int ((*OUTattributes)(void *,IFuid*,int,IFvalue*));
+    int ((*OUTattributes)(void *,IFuid,int,IFvalue*));
                             /* specify output attributes of node */
 } IFfrontEnd;
 

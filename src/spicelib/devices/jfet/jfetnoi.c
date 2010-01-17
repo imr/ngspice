@@ -19,8 +19,8 @@ Author: 1987 Gary W. Ng
  *    all of the JFET's is summed with the variable "OnDens".
  */
 
-extern void   NevalSrc();
-extern double Nintegrate();
+extern void   NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
+extern double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 int
 JFETnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, 

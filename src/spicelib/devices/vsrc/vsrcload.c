@@ -268,7 +268,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 		        ? here->VSRCcoeffs[3] : 0.0;
                    TD  = here->VSRCfunctionOrder > 4 
 		       && here->VSRCcoeffs[4]
-		        ? here->VSRCcoeffs[4] : 0,0;
+		        ? here->VSRCcoeffs[4] : 0.0;
 
                     time -= TD;
                     if (time <= 0) {

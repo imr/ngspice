@@ -858,6 +858,9 @@ comment_out_unused_subckt_models( struct line *start_card )
    for ( i = 0; i < num_used_model_names;  i++ ) tfree(used_model_names[i]);
 }
 
+
+
+/* replace ternary operator ? : by fcn ternary_fcn() in .param, .func, and .meas lines */
 static char*
 inp_fix_ternary_operator_str( char *line )
 {
@@ -3127,7 +3130,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
 
           while ( ( param_ptr = strstr( param_str, param_name ) ) )
           {  
-            ioff = (strstr(param_ptr, "}") > 0 ? 1 : 0);  /* want prevent wrong memory access below */
+            ioff = (strstr(param_ptr, "}") != NULL ? 1 : 0);  /* want prevent wrong memory access below */
             /* looking for curly braces or other string limiter */
             if ( ( !isalnum( *(param_ptr-ioff) )               && *(param_ptr-ioff) != '_'         &&
                    !isalnum( *(param_ptr+strlen(param_name)) ) && *(param_ptr+strlen(param_name)) != '_' )

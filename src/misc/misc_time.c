@@ -99,11 +99,12 @@ seconds(void)
 {
 #ifdef HAVE_GETRUSAGE
     int ret;
-    struct rusage ruse = {{0, 0}};
+    struct rusage ruse;
 
 #ifdef PARALLEL_ARCH
     return (TCGTIME_());
 #else
+    memset(&ruse, 0, sizeof(ruse));
     ret = getrusage(RUSAGE_SELF, &ruse);
     if(ret == -1) {
       perror("getrusage(): ");

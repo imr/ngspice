@@ -669,7 +669,7 @@ OUTendPlot(void *plotPtr)
 
 /* ARGSUSED */ /* until some code gets written */
 int
-OUTbeginDomain(void *plotPtr, char *refName, int refType, IFvalue *outerRefValue)
+OUTbeginDomain(void *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue)
 {
     return (OK);
 }
@@ -685,7 +685,7 @@ OUTendDomain(void *plotPtr)
 
 /* ARGSUSED */ /* until some code gets written */
 int
-OUTattributes(void *plotPtr, char *varName, int param, IFvalue *value)
+OUTattributes(void *plotPtr, IFuid varName, int param, IFvalue *value)
 {
     runDesc *run = (runDesc *) plotPtr;
     struct dvec *d;

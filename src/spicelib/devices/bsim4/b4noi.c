@@ -27,8 +27,8 @@
 #include "const.h"
 
 
-extern void   NevalSrc();
-extern double Nintegrate();
+extern void   NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
+extern double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 /*
  * WDL: 1/f noise model has been smoothed out and enhanced with

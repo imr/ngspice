@@ -45,8 +45,8 @@ Modified by Paolo Nenzi 2002
     Flicker noise         = SPICE2 model
  */
 
-extern void   NevalSrc();
-extern double Nintegrate();
+extern void   NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
+extern double Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data);
 
 double
 B3SOIPDStrongInversionNoiseEval(double vgs, double vds, B3SOIPDmodel *model, 

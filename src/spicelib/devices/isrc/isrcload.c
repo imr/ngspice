@@ -257,7 +257,7 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
 		        ? here->ISRCcoeffs[3] : 0.0;
                    TD  = here->ISRCfunctionOrder > 4 
 		       && here->ISRCcoeffs[4]
-		        ? here->ISRCcoeffs[4] : 0,0;
+		        ? here->ISRCcoeffs[4] : 0.0;
 
                     time -= TD;
                     if (time <= 0) {

@@ -48,9 +48,9 @@ int OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr);
 int OUTwData(void *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr);
 int OUTwEnd(void *plotPtr);
 int OUTendPlot(void *plotPtr);
-int OUTbeginDomain(void *plotPtr, char *refName, int refType, IFvalue *outerRefValue);
+int OUTbeginDomain(void *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue);
 int OUTendDomain(void *plotPtr);
-int OUTattributes(void *plotPtr, char *varName, int param, IFvalue *value);
+int OUTattributes(void *plotPtr, IFuid varName, int param, IFvalue *value);
 int OUTstopnow(void);
 void OUTerror(int flags, char *format, IFuid *names);
 

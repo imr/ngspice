@@ -93,7 +93,7 @@ ft_savedotargs(void)
    char *name;
    char *s;
    int some = 0;
-   static wordlist all = { "all", NULL };
+   static wordlist all = { "all", NULL, NULL };
    int isaplot;
    int i;
    int status;

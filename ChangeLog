@@ -1,5 +1,7 @@
 2010-01-17 Holger Vogt
  * subckt.c: .global bug  by R. Larice
+   various files: patches by Robert (Neval, Nintegtate from Jan 3 2010 and 
+   10 patches from Jan 16, 2010
 
 2010-01-16 Dietmar Warning
  * tests/transmission: Only few tests should be easier, more examples under 

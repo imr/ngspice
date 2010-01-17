@@ -1,16 +1,16 @@
 #ifndef __CONF_H
 #define __CONF_H
 
-char Spice_Version[];
-char Spice_Notice[];
-char Spice_Build_Date[];
-char *Spice_Exec_Dir;
-char *Spice_Lib_Dir;
-char *Def_Editor;
-int AsciiRawFile;
+extern char Spice_Version[];
+extern char Spice_Notice[];
+extern char Spice_Build_Date[];
+extern char *Spice_Exec_Dir;
+extern char *Spice_Lib_Dir;
+extern char *Def_Editor;
+extern int AsciiRawFile;
 
-char *Bug_Addr;
-char *Spice_Host;
-char *Spiced_Log;
+extern char *Bug_Addr;
+extern char *Spice_Host;
+extern char *Spiced_Log;
 
 #endif

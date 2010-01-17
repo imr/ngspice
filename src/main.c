@@ -197,7 +197,7 @@ extern int OUTwReference(void *,IFvalue *,void **);
 extern int OUTwData(void *,int,IFvalue *,void *), OUTwEnd(void *), OUTendPlot(void *); 
 extern int OUTbeginDomain(void *,IFuid,int,IFvalue *);
 extern int OUTendDomain(void *), OUTstopnow(void), OUTerror(int,char *,IFuid *); 
-extern int OUTattributes(void *,IFuid *,int,IFvalue *);
+extern int OUTattributes(void *,IFuid,int,IFvalue *);
 
 IFfrontEnd nutmeginfo = {
     IFnewUid,
