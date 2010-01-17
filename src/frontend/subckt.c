@@ -245,26 +245,28 @@ inp_subcktexpand(struct line *deck)
 /* Added by H.Tanaka to find global nodes */
     for(i=0;i<128;i++) strcpy(node[i],"");/* Clear global node holder */
     for (c = deck; c; c = c->li_next) {
-	if (ciprefix(".global", c->li_line)) {
-	    s = c->li_line;
-	    txfree(gettok(&s));
-	    numgnode=0;
-	    while(*s) {
-		i=0;
-		t=s;
-		for (/*s*/; *s && !isspace(*s); s++) i++;
-		strncpy(node[numgnode],t,i+1); /* i+1: include \0 character */
-		while (isspace(*s)) s++;
-		numgnode++;
-	    } /* node[] holds name of global node */
+        if (ciprefix(".global", c->li_line)) {
+            s = c->li_line;
+            txfree(gettok(&s));
+            numgnode=0;
+            while(*s) {
+                i=0;
+                t=s;
+                for (/*s*/; *s && !isspace(*s); s++) i++;
+                strncpy(node[numgnode],t,i);
+                if(i>0 && t[i-1] != '\0')
+                node[numgnode][i] = '\0';
+                while (isspace(*s)) s++;
+                numgnode++;
+            } /* node[] holds name of global node */
 #ifdef TRACE
-	    printf("***Global node option has been found.***\n");
-	    for(i=0;i<numgnode;i++) 
-	    printf("***Global node no.%d is %s.***\n",i,node[i]);
-	    printf("\n");
+            printf("***Global node option has been found.***\n");
+            for(i=0;i<numgnode;i++) 
+            printf("***Global node no.%d is %s.***\n",i,node[i]);
+            printf("\n");
 #endif /* TRACE */
-	    c->li_line[0] = '*'; /* comment it out */
-	}/* if(ciprefix.. */
+            c->li_line[0] = '*'; /* comment it out */
+        }/* if(ciprefix.. */
     } /* for(c=deck.. */
     
     /* Let's do a few cleanup things... Get rid of ( ) around node

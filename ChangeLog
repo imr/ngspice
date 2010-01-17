@@ -1,3 +1,6 @@
+2010-01-17 Holger Vogt
+ * subckt.c: .global bug  by R. Larice
+
 2010-01-16 Dietmar Warning
  * tests/transmission: Only few tests should be easier, more examples under 
    examples/TransmissionLine at next
