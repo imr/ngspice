@@ -831,7 +831,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     if (!RegisterClass( &hwElementClass)) goto THE_END;
 
     /*Create main window */
-	SystemParametersInfo(SPI_GETWORKAREA, 0, &wsize, NULL);
+	SystemParametersInfo(SPI_GETWORKAREA, 0, &wsize, 0);
     iy = wsize.bottom;
 	iyt = iy / 3;
 	ix = wsize.right;
