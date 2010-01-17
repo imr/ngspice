@@ -5,6 +5,7 @@
  * subckt.c: .global bug  by R. Larice
    various files: patches by Robert (Neval, Nintegrate) from Jan 3 2010 and 
    10 patches from Jan 16, 2010
+ * com_hardcopy.c: switching graphics context correctly for postscript output
 
 2010-01-16 Dietmar Warning
  * tests/transmission: Only few tests should be easier, more examples under 

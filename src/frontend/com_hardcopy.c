@@ -108,10 +108,17 @@ com_hardcopy(wordlist *wl)
 	            DevSwitch(NULL);
 	            return;
 	        }
+			/* save current graphics context */
+			PushGraphContext(currentgraph);
+			currentgraph = tempgraph;
+			/* some operations in gr_resize, gr_redraw, and DevSwitch 
+			   will be done on currentgraph, not only on tempgraph */
 	        gr_resize(tempgraph);
 	        gr_redraw(tempgraph);
+	        DevSwitch(NULL);	
+			/* retrieve current graphics context */
+			PopGraphContext();
 	        DestroyGraph(tempgraph->graphid);
-	        DevSwitch(NULL);
 	        foundit = 1;
 	    }
     }
