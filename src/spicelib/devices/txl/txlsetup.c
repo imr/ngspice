@@ -71,6 +71,8 @@ static double AA[3][4];
 #define epsi 1.0e-16
 #define epsi2 1.0e-28
 
+void controlled_exit(int);
+
 /* ARGSUSED */
 int
 TXLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
@@ -237,7 +239,7 @@ ReadTxL(TXLinstance *tx, CKTcircuit *ckt)
 
    if (l == 0.0) {
 	   fprintf(stderr, "(Error) transmission line of zero length\n");
-	   exit(0);
+	   controlled_exit(0);
    }
    else {
 		if (R / L  < 5.0e+5) {
@@ -514,7 +516,7 @@ Gaussian_Elimination1(int dims)
 	 } 
       if (max < epsi) {
          fprintf(stderr, " can not choose a pivot \n");
-         exit(0);
+         controlled_exit(0);
       }
       if (imax != i)
 	 for (k = i; k <= dim; k++) {
@@ -874,7 +876,7 @@ Gaussian_Elimination2(int dims)
          }
       if (max < epsi2) {
          fprintf(stderr, " can not choose a pivot \n");
-         exit(0);
+         controlled_exit(0);
       }
       if (imax != i)
 	 for (k = i; k <= dim; k++) {

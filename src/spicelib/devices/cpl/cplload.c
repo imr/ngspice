@@ -25,6 +25,8 @@ static int divC(double, double, double, double, double*, double*);
 static void update_cnv_a(TMS*, float, double, double, double, double, double, double);
 static void copy_cp(CPLine*, CPLine*);
 
+void controlled_exit(int);
+
 /*ARGSUSED*/
 int
 CPLload(GENmodel *inModel, CKTcircuit *ckt)
@@ -759,7 +761,7 @@ get_pvs_vi(t1, t2, cp, v1_i, v2_i, i1_i, i2_i, v1_o, v2_o, i1_o, i2_o)
 errordetect:
 	fprintf(stderr, "your maximum time step is too large for tau.\n");
 	fprintf(stderr, "decrease max time step in .tran card and try again\n");
-	exit(0);
+	controlled_exit(0);
 }
 
 

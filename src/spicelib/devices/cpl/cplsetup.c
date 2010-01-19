@@ -128,6 +128,8 @@ static int rotate(int, int, int);
 #define epsi 1.0e-16
 static char *message = "tau of coupled lines is larger than max time step";
 
+void controlled_exit(int);
+
 /* ARGSUSED */
 int
 CPLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
@@ -541,7 +543,7 @@ static double
    if (!v) {
       fprintf(stderr, "Memory Allocation Error by tmalloc in vector().\n");
       fprintf(stderr, "...now exiting to system ...\n");
-      exit(0);
+      controlled_exit(0);
    }
    return v-nl;
 }
@@ -585,7 +587,7 @@ polint(double *xa, double *ya, int n, double x, double *y, double *dy)
          if ((den=ho-hp) == 0.0) {
             fprintf(stderr, "(Error) in routine POLINT\n");
             fprintf(stderr, "...now exiting to system ...\n");
-            exit(0);
+            controlled_exit(0);
          }
          den = w/den;
          d[i] = hp * den;
@@ -729,7 +731,7 @@ Gaussian_Elimination2(int dims, int type)
          }
       if (max < epsilon) {
          fprintf(stderr, " can not choose a pivot (misc)\n");
-         exit(0);
+         controlled_exit(0);
       }
       if (imax != i)
          for (k = i; k <= dim; k++) {
@@ -932,7 +934,7 @@ static void
 loop_ZY(int dim, double y)
 {
    int i, j, k;
-   double fmin, fmin1;
+   double fmin, fmin1=0.0;
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
@@ -948,7 +950,7 @@ loop_ZY(int dim, double y)
          fmin = D[i];
    if (fmin < 0) {
       fprintf(stderr, "(Error) The capacitance matrix of the multiconductor system is not positive definite.\n");
-      exit(0);
+      controlled_exit(0);
    } else {
       fmin = sqrt(fmin);
       fmin1 = 1 / fmin;
@@ -1099,7 +1101,7 @@ eval_frequency(int dim, int deg_o)
 
    if (min <= 0) {
       fprintf(stderr, "A mode frequency is not positive.  Abort!\n");
-      exit(0);
+      controlled_exit(0);
    }
 
    Scaling_F2 = 1.0 / min;
@@ -1658,7 +1660,7 @@ Gaussian_Elimination(int dims)
          }
       if (max < epsi_mult) {
          fprintf(stderr, " can not choose a pivot (mult)\n");
-         exit(0);
+         controlled_exit(0);
       }
       if (imax != i)
          for (k = i; k <= dim; k++) {
