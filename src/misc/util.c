@@ -6,6 +6,20 @@
 #include "ngspice.h"
 #include "util.h"
 
+#ifdef HAS_WINDOWS
+void winmessage(char* new_msg);
+#endif
+
+void 
+controlled_exit(int dummy)
+{
+#ifdef HAS_WINDOWS
+  winmessage("Fatal error in SPICE");
+#else
+  fprintf(stderr, "Fatal error in SPICE - Return");
+  getc(stdin);
+#endif
+}
 
 /* **************************************************************** */
 /*                                                                  */
