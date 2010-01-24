@@ -1,4 +1,4 @@
-Simple coupled transmissionline
+Simple coupled transmissionlines
 VES IN 0  PULSE (0 1 0N 1.5N 1.5N 4.5N 200N)
 R1 IN V1 50
 R2 V2 0  10
