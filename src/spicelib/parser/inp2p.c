@@ -67,7 +67,6 @@ int num, i;
     node1 = (void **) tmalloc(num * sizeof(void *));
     node2 = (void **) tmalloc(num * sizeof(void *));
 
-
     for (i = 0; i < num; i++) {
             INPgetNetTok(&line,&(nname1[i]),1);
             INPtermInsert(ckt,&(nname1[i]),tab,&(node1[i]));
@@ -82,11 +81,6 @@ int num, i;
     INPtermInsert(ckt,&ground,tab,&groundnode);
 
     INPgetTok(&line,&model,1);
-    if (strcmp(model, "len") == 0) {
-            lenval = INPevaluate(&line,&error1,1);
-            lenvalgiven = 1;
-            INPgetTok(&line,&model,1);
-    }
     if(*model) { /* token isn't null */
             INPinsert(&model,tab);
             thismodel = (INPmodel *)NULL;
@@ -108,6 +102,11 @@ int num, i;
                     mdfast = tab->defPmod;
             }
             IFC(newInstance,(ckt,mdfast,&fast,name))
+            INPgetTok(&line,&model,1);
+            if (strcmp(model, "len") == 0) {
+                lenval = INPevaluate(&line,&error1,1);
+                lenvalgiven = 1;
+            }
     } else  {
             LITERR("model name is not found")
             return;

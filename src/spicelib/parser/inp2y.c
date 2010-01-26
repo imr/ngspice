@@ -70,15 +70,15 @@ int lenvalgiven = 0;
     INPtermInsert(ckt,&ground2,tab,&gnode2);
 
     INPgetTok(&line,&model,1);
-    if (strcmp(model, "len") == 0) {
-            lenval = INPevaluate(&line,&error1,1);
-            lenvalgiven = 1;
-            INPgetTok(&line,&model,1);
-    }
     if(*model) { /* token isn't null */
             INPinsert(&model,tab);
             thismodel = (INPmodel *)NULL;
             current->error = INPgetMod(ckt,model,&thismodel,tab);
+            INPgetTok(&line,&model,1);
+            if (strcmp(model, "len") == 0) {
+               lenval = INPevaluate(&line,&error1,1);
+               lenvalgiven = 1;
+            }
             if(thismodel != NULL) {
                     if (thismodel->INPmodType == mytype2) {
                             INP2P(ckt,tab,current);
