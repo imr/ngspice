@@ -1,3 +1,7 @@
+2010-01-27 Dietmar Warning
+ * inp2y.c, inp2p.c: parsing the length instance parameter in txl and cpl
+ * subckt.c: devmodtranslation for txl and cpl in subckt's
+
 2010-01-17 Dietmar Warning
  * examples/TransmissionLines: Hopefully more meaningful transmissionline examples
  * misc/util.c: provide a simple controlled_exit function
