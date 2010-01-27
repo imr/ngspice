@@ -1724,24 +1724,22 @@ devmodtranslate(struct line *deck, char *subname)
     bool found;
     char* dot_char;
     int i, j;
-#ifdef XSPICE
     char *next_name;
-#endif /* XSPICE */
 
     for (s = deck; s; s = s->li_next) {
         t = s->li_line;
 #ifdef TRACE
-	/* SDB debug stuff */
-	printf("In devmodtranslate, examining line %s.\n", t);
+    /* SDB debug stuff */
+    printf("In devmodtranslate, examining line %s.\n", t);
 #endif
 
-	while (*t && isspace(*t))
-	    t++;
-        c = isupper(*t) ? tolower(*t) : *t;  /* set c to first char in line. . . . */
-        found = FALSE;
-        buffer = tmalloc(strlen(t) + strlen(subname) + 4);
+    while (*t && isspace(*t))
+      t++;
+    c = isupper(*t) ? tolower(*t) : *t;  /* set c to first char in line. . . . */
+    found = FALSE;
+    buffer = tmalloc(strlen(t) + strlen(subname) + 4);
 
-	switch (c) {
+    switch (c) {
 
 #ifdef XSPICE
 
@@ -1753,42 +1751,42 @@ devmodtranslate(struct line *deck, char *subname)
            */
 
 #ifdef TRACE
-         /* SDB debug statement */
-         printf("In devmodtranslate, found codemodel, line= %s\n", t);
+            /* SDB debug statement */
+            printf("In devmodtranslate, found codemodel, line= %s\n", t);
 #endif
 
-         /* first do refdes. */
-         name = gettok(&t);  /* get refdes */
-         (void) sprintf(buffer,"%s ",name);
-         tfree(name);
+            /* first do refdes. */
+            name = gettok(&t);  /* get refdes */
+            (void) sprintf(buffer,"%s ",name);
+            tfree(name);
+            
+            /* now do remainder of line. */
+            next_name = gettok(&t);
+            while(1) {
+                   name = next_name;
+                   next_name = gettok(&t);
+            
+                   if(next_name == NULL) {
+                    /* if next_name is NULL, we are at the line end.
+                     * name holds the model name.  Therefore, break */
+                    break;
+            
+                  } else {
+                    /* next_name holds something.  Write name into the buffer and continue. */
+                    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                    tfree(name);
+                  }
+            }  /* while  */
 
-         /* now do remainder of line. */
-         next_name = gettok(&t);
-         while(1) {
-                name = next_name;
-                next_name = gettok(&t);
 
-                if(next_name == NULL) {
-                 /* if next_name is NULL, we are at the line end.
-                  * name holds the model name.  Therefore, break */
-                 break;
-
-               } else {
-                 /* next_name holds something.  Write name into the buffer and continue. */
-                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
-                 tfree(name);
-               }
-         }  /* while  */
-
-
-        /* Now, is name a subcircuit model?
-         *  Note that we compare against submod = untranslated names of models.
-         */
-         for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+           /* Now, is name a subcircuit model?
+            *  Note that we compare against submod = untranslated names of models.
+            */
+            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
 
 #ifdef TRACE
-           /* SDB debug statement */
-           printf("In devmodtranslate, comparing model name against submod list item %s\n", wlsub->wl_word );
+            /* SDB debug statement */
+            printf("In devmodtranslate, comparing model name against submod list item %s\n", wlsub->wl_word );
 #endif
 
            if (eq(name, wlsub->wl_word)) {
@@ -1814,33 +1812,33 @@ devmodtranslate(struct line *deck, char *subname)
          break;
 
 #endif /* XSPICE */
-	
+  
         case 'r':
         case 'c':
-	    name = gettok(&t);  /* get refdes */
+            name = gettok(&t);  /* get refdes */
             (void) sprintf(buffer,"%s ",name);
-	    tfree(name);
+            tfree(name);
             name = gettok_node(&t);  /* get first netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
+            tfree(name);
             name = gettok_node(&t);  /* get second netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
+            tfree(name);
 
             if (*t) {    /* if there is a model, process it. . . . */
                 name = gettok(&t);
-		/* Now, is this a subcircuit model? */
-		for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+                /* Now, is this a subcircuit model? */
+                for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                     if (eq(name, wlsub->wl_word)) {
-			(void) sprintf(buffer + strlen(buffer), "%s:%s ",
-				subname, name);
-			found = TRUE;
-			break;
+                       (void) sprintf(buffer + strlen(buffer), "%s:%s ",
+                         subname, name);
+                       found = TRUE;
+                       break;
                     }
                 }
                 if (!found)
-		    (void) sprintf(buffer + strlen(buffer), "%s ", name);
-		tfree(name);
+                  (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                tfree(name);
             }
 
             found = FALSE;
@@ -1848,156 +1846,156 @@ devmodtranslate(struct line *deck, char *subname)
                 name = gettok(&t);
                 /* Now, is this a subcircuit model? */
                 for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
-		    if (eq(name, wlsub->wl_word)) {
-			(void) sprintf(buffer + strlen(buffer), "%s:%s ",
-				subname, name);
-			found = TRUE;
-			break;
-		    }
-                }
-                if (!found)
-		    (void) sprintf(buffer + strlen(buffer), "%s ", name);
-		tfree(name);
-            }
-
-            (void) strcat(buffer, t);
-            tfree(s->li_line);
-            s->li_line = buffer;
-            break;
-
-	case 'd':
-	    name = gettok(&t);  /* get refdes */
-            (void) sprintf(buffer,"%s ",name);
-	    tfree(name);
-            name = gettok_node(&t);  /* get first attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
-            name = gettok_node(&t);  /* get second attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
-            name = gettok(&t);
-
-            /* Now, is this a subcircuit model? */
-            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
-                if (eq(name, wlsub->wl_word)) {
-		    (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
-			    subname, name);
-                found = TRUE;
-                break;
-                }
-            }
-
-            if (!found)
-                (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
-            (void) strcat(buffer, t);
-            tfree(s->li_line);
-            s->li_line = buffer;
-            break;
-
-	case 'w':
-	case 'u':
-	case 'j':
-	case 'z':
-	    /* What are these devices anyway?   J = JFET, W = trans line (?), 
-	       and u = IC, but what is Z?.
-	       Also, why is 'U' here?  A 'U' element can have an arbitrary
-	       number of nodes attached. . . .   -- SDB. */
-            name = gettok(&t);
-            (void) sprintf(buffer,"%s ",name);
-            name = gettok(&t);
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
-            name = gettok(&t);
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
-            name = gettok(&t);
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
-            name = gettok(&t);
-
-            /* Now, is this a subcircuit model? */
-            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
-                if (eq(name, wlsub->wl_word)) {
-		    (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
-			    subname, name);
-		    found = TRUE;
-		    break;
-                }
-            }
-
-            if (!found)
-                (void) sprintf(buffer + strlen(buffer), "%s ", name);
-            (void) strcat(buffer, t);
-            tfree(s->li_line);
-            s->li_line = buffer;
-            break;
-
-	    /*  Changed gettok() to gettok_node() on 12.2.2003 by SDB 
-		to enable parsing lines like "S1 10 11 (80,51) SLATCH1"
-		which occur in real Analog Devices SPICE models.
-	    */
-        case 'o':    /* what is this element?  -- SDB */
-	case 's':
-	case 'm':
-	    name = gettok(&t);  /* get refdes */
-            (void) sprintf(buffer,"%s ",name);
-	    tfree(name);
-            name = gettok_node(&t);  /* get first attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
-            name = gettok_node(&t);  /* get second attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
-            name = gettok_node(&t);  /* get third attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
-            name = gettok_node(&t);  /* get fourth attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
-            name = gettok(&t);
-
-            /* Now, is this a subcircuit model? */
-            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
-                i = strlen(wlsub->wl_word);
-                j = 0; /* Now, have we a binned model? */
-                if ( (dot_char = strstr( wlsub->wl_word, "." )) ) {
-                   dot_char++; j++;
-                   while( *dot_char != '\0' ) {
-                     if ( !isdigit( *dot_char ) ) {
-                       break;
-                     }
-                     dot_char++; j++;
+                   if (eq(name, wlsub->wl_word)) {
+                      (void) sprintf(buffer + strlen(buffer), "%s:%s ",
+                        subname, name);
+                      found = TRUE;
+                      break;
                    }
                 }
-                if ( strncmp( name, wlsub->wl_word, i - j ) == 0 ) {
-                   (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
-                   subname, name);
-                   found = TRUE;
-                   break;
-                }
+                if (!found)
+                   (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                tfree(name);
             }
 
+            (void) strcat(buffer, t);
+            tfree(s->li_line);
+            s->li_line = buffer;
+            break;
+
+        case 'd':
+            name = gettok(&t);  /* get refdes */
+            (void) sprintf(buffer,"%s ",name);
+            tfree(name);
+            name = gettok_node(&t);  /* get first attached netname */
+            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            tfree(name);
+            name = gettok_node(&t);  /* get second attached netname */
+            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            tfree(name);
+            name = gettok(&t);
+            
+            /* Now, is this a subcircuit model? */
+            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+               if (eq(name, wlsub->wl_word)) {
+                  (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
+                      subname, name);
+                  found = TRUE;
+                  break;
+               }
+            }
+
+            if (!found)
+                (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            tfree(name);
+            (void) strcat(buffer, t);
+            tfree(s->li_line);
+            s->li_line = buffer;
+            break;
+
+        /* 3 terminal devices */
+        case 'w': /* current controlled switch */
+        case 'u': /* urc transmissionline */
+        case 'j': /* jfet */
+        case 'z': /* hfet, mesa */
+            name = gettok(&t);
+            (void) sprintf(buffer,"%s ",name);
+            name = gettok(&t);
+            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            name = gettok(&t);
+            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            name = gettok(&t);
+            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            name = gettok(&t);
+       
+            /* Now, is this a subcircuit model? */
+            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+                if (eq(name, wlsub->wl_word)) {
+                    (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
+                      subname, name);
+                    found = TRUE;
+                    break;
+                }
+            }
+       
             if (!found)
                 (void) sprintf(buffer + strlen(buffer), "%s ", name);
             (void) strcat(buffer, t);
             tfree(s->li_line);
             s->li_line = buffer;
-	    tfree(name);
             break;
+       
+        /* 4 terminal devices */
+        case 'm':
+        case 'o':    /* ltra */
+        case 's':    /* vc switch */
+        case 'y':    /* txl */
+           /*  Changed gettok() to gettok_node() on 12.2.2003 by SDB 
+               to enable parsing lines like "S1 10 11 (80,51) SLATCH1"
+               which occur in real Analog Devices SPICE models.
+               */
+           name = gettok(&t);  /* get refdes */
+           (void) sprintf(buffer,"%s ",name);
+           tfree(name);
+           name = gettok_node(&t);  /* get first attached netname */
+           (void) sprintf(buffer + strlen(buffer), "%s ", name);
+           tfree(name);
+           name = gettok_node(&t);  /* get second attached netname */
+           (void) sprintf(buffer + strlen(buffer), "%s ", name);
+           tfree(name);
+           name = gettok_node(&t);  /* get third attached netname */
+           (void) sprintf(buffer + strlen(buffer), "%s ", name);
+           tfree(name);
+           name = gettok_node(&t);  /* get fourth attached netname */
+           (void) sprintf(buffer + strlen(buffer), "%s ", name);
+           tfree(name);
+           name = gettok(&t);
+       
+           /* Now, is this a subcircuit model? */
+           for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+               i = strlen(wlsub->wl_word);
+               j = 0; /* Now, have we a binned model? */
+               if ( (dot_char = strstr( wlsub->wl_word, "." )) ) {
+                  dot_char++; j++;
+                  while( *dot_char != '\0' ) {
+                    if ( !isdigit( *dot_char ) ) {
+                      break;
+                    }
+                    dot_char++; j++;
+                  }
+               }
+               if ( strncmp( name, wlsub->wl_word, i - j ) == 0 ) {
+                  (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
+                  subname, name);
+                  found = TRUE;
+                  break;
+               }
+           }
+       
+           if (!found)
+               (void) sprintf(buffer + strlen(buffer), "%s ", name);
+           (void) strcat(buffer, t);
+           tfree(s->li_line);
+           s->li_line = buffer;
+           tfree(name);
+           break;
 
-	case 'q':
-	    name = gettok(&t);  /* get refdes */
+        /* 3-5 terminal devices */
+        case 'q':
+            name = gettok(&t);  /* get refdes */
             (void) sprintf(buffer,"%s ",name);
-	    tfree(name);
+            tfree(name);
             name = gettok_node(&t);  /* get first attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
+            tfree(name);
             name = gettok_node(&t);  /* get second attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
+            tfree(name);
             name = gettok_node(&t);  /* get third attached netname */
             (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	    tfree(name);
+            tfree(name);
             name = gettok_node(&t);  /* this can be either a model name or a node name. */
-
+       
             /* Now, is this a subcircuit model? */
             for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                 if (eq(name, wlsub->wl_word)) { /* a three terminal bjt */
@@ -2010,7 +2008,7 @@ devmodtranslate(struct line *deck, char *subname)
             if (!found) {
                 if (*t) { /* There is another token - perhaps a model */
                     (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	            tfree(name);
+                    tfree(name);
                     name = gettok(&t);
                     /* Now, is this a subcircuit model? */
                     for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
@@ -2027,7 +2025,7 @@ devmodtranslate(struct line *deck, char *subname)
             if (!found) {
                 if (*t) { /* There is another token - perhaps a model */
                     (void) sprintf(buffer + strlen(buffer), "%s ", name);
-	            tfree(name);
+                    tfree(name);
                     name = gettok(&t);
                     /* Now, is this a subcircuit model? */
                     for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
@@ -2052,7 +2050,48 @@ devmodtranslate(struct line *deck, char *subname)
             s->li_line = buffer;
             break;
 
-	default:
+        /* 6-10 terminal devices */
+        case 'p': /* cpl */
+            name = gettok(&t);  /* get refdes */
+            (void) sprintf(buffer,"%s ",name);
+            tfree(name);
+
+            /* now do remainder of line. */
+            next_name = gettok(&t);
+            while(1) {
+                   name = next_name;
+                   next_name = gettok(&t);
+                   if((next_name == NULL) ||
+                      (strcmp(next_name, "LEN") == 0) ||
+                      (strcmp(next_name, "len") == 0)) {
+                     /* if next_name is NULL or length, we are at the line end.
+                      * name holds the model name.  Therefore, break */
+                     break;
+                  } else {
+                     /* next_name holds something.  Write name into the buffer and continue. */
+                     (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                     tfree(name);
+                  }
+            }  /* while  */
+
+            /* Now, is this a subcircuit model? */
+            for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
+               if (eq(name, wlsub->wl_word)) {
+                  (void) sprintf(buffer + strlen(buffer), "%s:%s ", 
+                      subname, name);
+                  found = TRUE;
+                  break;
+               }
+            }
+
+            if (!found)
+                (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            (void) strcat(buffer, t);
+            tfree(s->li_line);
+            s->li_line = buffer;
+            break;
+
+        default:
             tfree(buffer);
             break;
         }
@@ -2100,13 +2139,12 @@ inp_numnodes(char c)
         case 't': return (4);
         case 'u': return (3);
         case 'v': return (2);
- /* change 3 to 2 here to fix w bug, NCF 1/31/95 */
-        case 'w': return (2);
-        case 'y': return (2);
+        case 'w': return (2); /* change 3 to 2 here to fix w bug, NCF 1/31/95 */
+        case 'y': return (4);
         case 'z': return (3);
 
         default:
-        fprintf(cp_err, "Warning: unknown device type: %c\n", c);
-            return (2);
+          fprintf(cp_err, "Warning: unknown device type: %c\n", c);
+          return (2);
     }
 }
