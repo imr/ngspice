@@ -32,7 +32,7 @@
 #define MAX_FET_SIZE          80  /* largest fet in microns */
 #define Vol_Step          1.0e-3  /* voltage resolution */
 #define SCL               1000.0  /* voltage scaler (1V/3mv) */
-#define MAX_CP_TX_LINES        4  /* max number of coupled lines in
+#define MAX_CP_TX_LINES        8  /* max number of coupled lines in
 				     a multiconductor line system  */
 
 /************************************************************
