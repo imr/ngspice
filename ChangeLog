@@ -1,4 +1,6 @@
 2010-01-27 Dietmar Warning
+ * cpl_ibm1.sp: fix the c matrix unsymmetry
+ * swec.h: set maximum cpl lines to eight
  * inp2y.c, inp2p.c: parsing the length instance parameter in txl and cpl
  * subckt.c: devmodtranslation for txl and cpl in subckt's
 
