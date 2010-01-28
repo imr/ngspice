@@ -1,4 +1,4 @@
-Multiconductor 6-line with ECL drivers (C-Matrix singular)
+6-line coupled multiconductor with ECL drivers
 vemm mm 0 DC -0.4
 vepp pp 0 DC 0.4
 vein_left  lin  0 PULSE (-0.4 0.4 0N 1N 1N 7N 200N)
@@ -25,12 +25,12 @@ c6l 6l 0 0.1P
 p1 1 2 3 4 5 6  0  7 8 9 10 11 12  0  pline
 
 .model pline cpl
-+C = 0.907067P  -0.657947P -0.0767356P -0.0536544P -0.0386514P -0.0523990P
-+                0.138873P -0.607034P  -0.0597635P -0.0258851P -0.0273442P
++C = 0.900000P  -0.657947P -0.0767356P -0.0536544P -0.0386514P -0.0523990P
++                1.388730P -0.607034P  -0.0597635P -0.0258851P -0.0273442P
 +                             1.39328P  -0.625675P -0.0425551P -0.0319791P
 +                                         1.07821P  -0.255048P -0.0715824P
 +                                                     1.06882P  -0.692091P
-+                                                                0.903603P
++                                                                0.900000P
 +L = 0.868493E-7 0.781712E-7 0.748428E-7 0.728358E-7 0.700915E-7 0.692178E-7
 +                0.866074E-7 0.780613E-7 0.748122E-7 0.711591E-7 0.701023E-7
 +                            0.865789E-7 0.781095E-7 0.725431E-7 0.711986E-7
@@ -76,7 +76,7 @@ VEN  N GND DC -3
 TRAN 0.1N 20N
 plot V(3) V(5) V(8) V(11) V(12)
 .endc
-.MODEL JCTRAN NPN BF=150 VAF=20V IS=4E-17 RB=300 RC=100 CJE=30FF CJC=30FF
-+               CJS=40FF VJE=0.6V VJC=0.6V VJS=0.6 MJE=0.5 MJC=0.5
-+               MJS=0.5 TF=16PS TR=1NS
+.MODEL JCTRAN NPN BF=150 VAF=20 IS=4E-17 RB=300 RC=100 CJE=30F CJC=30F
++               CJS=40F VJE=0.6 VJC=0.6 VJS=0.6 MJE=0.5 MJC=0.5
++               MJS=0.5 TF=16P TR=1N
 .END
