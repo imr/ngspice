@@ -71,8 +71,7 @@
 /* gtri - end - wbk - add include files */
 #endif
 
-/* FIXME: Integrate spcp_coms and nutcp_coms into one variable. */
-
+/* for the definition and decription of struct comm see cpdef.h */
 
 /* Bool fields:     stringargs, spiceonly, major */
 
@@ -162,7 +161,7 @@ struct comm spcp_coms[] = {
       (void (*)()) NULL,
       "file plotargs : Send plot to Xgraph-11." } ,
     { "gnuplot", com_gnuplot, FALSE, FALSE, TRUE,
-      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 1, LOTS,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, LOTS,
       (void (*)()) NULL,
       "file plotargs : Send plot to gnuplot." } ,
     { "hardcopy", com_hardcopy, FALSE, FALSE, TRUE,
@@ -574,7 +573,7 @@ struct comm nutcp_coms[] = {
       (void (*)()) NULL,
       "file plotargs : Send plot to Xgraph-11." } ,
     { "gnuplot", com_gnuplot, FALSE, FALSE, TRUE,
-      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 1, LOTS,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, LOTS,
       (void (*)()) NULL,
       "file plotargs : Send plot to gnuplot." } ,
     { "hardcopy", com_hardcopy, FALSE, FALSE, TRUE,

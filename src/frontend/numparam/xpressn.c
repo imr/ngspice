@@ -30,6 +30,10 @@ extern char *nupa_inst_name; /* see spicenum.c */
 extern long dynsubst;        /* see inpcom.c */
 extern unsigned int dynLlen;
 
+#define MAX_STRING_INSERT 17 /* max. string length to be inserted and replaced */
+#define ACT_CHARACTS 15      /* actual string length to be inserted and replaced */
+/* was 10, needs to be less or equal to MAX_STRING_INSERT - 2 */
+
 static double
 ternary_fcn (int conditional, double if_value, double else_value)
 {
@@ -1389,7 +1393,7 @@ evaluate (tdico * dico, char *q, char *t, unsigned char mode)
       else
         {
           strf (u, 17, 10, q);
-        } /* strf() arg 2 doesnt work: always >10 significant digits ! */ ;
+        }
     }
   Strrem(v);
   return err;
@@ -1570,7 +1574,7 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
 
 static void
 compactfloatnb (char *v)
-/* try to squeeze a floating pt format to 10 characters */
+/* try to squeeze a floating pt format to MAXCHARACTS characters */
 /* erase superfluous 000 digit streams before E */
 /* bug: truncating, no rounding */
 {
@@ -1594,7 +1598,7 @@ compactfloatnb (char *v)
     }
     k = n - 1;                /* mantissa is 0...k */
 
-    m = 17;
+    m = MAX_STRING_INSERT;
     while (v[m] != ' ')
       m--;
     m++;
@@ -1603,19 +1607,19 @@ compactfloatnb (char *v)
 
     lem = k - m;
 
-    if ((lem + lex) > 10)
-      lem = 10 - lex;
+    if ((lem + lex) > ACT_CHARACTS)
+      lem = ACT_CHARACTS - lex;
 
     pscopy (v, v, m+1, lem);
     if (cpos('.', v) > 0) {
-      while (lem < 6) {
+      while (lem < ACT_CHARACTS - 4) {
         cadd(v, '0');
         lem++;
       }
     } else {
       cadd(v, '.');
       lem++;
-      while (lem < 6) {
+      while (lem < ACT_CHARACTS - 4) {
         cadd(v, '0');
         lem++;
       }
@@ -1627,7 +1631,7 @@ compactfloatnb (char *v)
       m++;
 
     lem = length(v) - m;
-    if (lem > 10) lem = 10;
+    if (lem > ACT_CHARACTS) lem = ACT_CHARACTS;
     pscopy (v, v, m+1, lem);
   }
 }
@@ -1646,10 +1650,10 @@ insertnumber (tdico * dico, int i, char *s, char *u)
   scopy (v, u);
   compactfloatnb (v);
 
-  while (length (v) < 17)
+  while (length (v) < MAX_STRING_INSERT)
       cadd (v, ' ');
 
-  if (length (v) > 17)
+  if (length (v) > MAX_STRING_INSERT)
     {
       scopy (msg, " insertnumber fails: ");
       sadd (msg, u);
@@ -1683,12 +1687,12 @@ insertnumber (tdico * dico, int i, char *s, char *u)
     }
 
   if (found)
-    {                                /* substitute at i-1 */
-      i--;
-      for (k = 0; k < 11; k++)
+    {                                /* substitute at i-1-ACT_CHARACTS+11 */
+      for (k = 0; k < ACT_CHARACTS - 10; k++) i--;
+      for (k = 0; k < ACT_CHARACTS; k++)
         s[i + k] = v[k];
 
-      i = i + 17;
+      i = i + MAX_STRING_INSERT;
 
     }
   else
