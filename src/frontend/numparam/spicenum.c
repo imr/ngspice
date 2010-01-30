@@ -27,8 +27,9 @@ Todo:
 #include "numparam.h"
 #include "ngspice.h"
 
+#include "../error.h" /* controlled_exit() */
+
 extern void txfree (void *ptr);
-extern void winmessage(char* new_msg);
 
 char *nupa_inst_name;
 static tdico *inst_dico;
@@ -489,7 +490,7 @@ nupa_done (void)
       ws ("Numparam expansion errors: Run Spice anyway? y/n ? \n");
       rs (rep);
       if (upcase (rep[0]) != 'Y')
-	exit (-1);
+        controlled_exit(EXIT_FAILURE);
     }
 
   linecount = 0;
@@ -665,8 +666,7 @@ nupa_copy (char *s, int linenum)
   if (t == NULL)
   {
     fputs ("Fatal: String malloc crash in nupa_copy()\n", stderr);
-    winmessage("Fatal error in SPICE");
-    exit (-1);
+    controlled_exit(EXIT_FAILURE);
   }
   else
   {

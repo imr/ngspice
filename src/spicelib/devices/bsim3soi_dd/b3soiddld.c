@@ -21,6 +21,8 @@ File: b3soiddld.c          98/5/01
 #include "devdefs.h"
 #include "suffix.h"
 
+#include "../../../frontend/error.h" /* controlled_exit() */
+
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
 #define EXP_THRESHOLD 34.0
@@ -4334,7 +4336,7 @@ if (here->B3SOIDDdebugMod > 2)
                       fprintf(stderr, "Alberto says:  YOU TURKEY!  %s is NaN for instance %s at time %g!\n", nanmessage, here->B3SOIDDname, ckt->CKTtime);
                       nanfound = nandetect;
 		      fprintf(stderr, " The program exit!\n");
-		      exit(-1);
+		      controlled_exit(EXIT_FAILURE);
                    }
 
 		   if (here->B3SOIDDdebugMod > 2)

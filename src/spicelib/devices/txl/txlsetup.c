@@ -11,6 +11,8 @@ Author: 1992 Charles Hough
 #include "sperror.h"
 #include "suffix.h"
 
+#include "../../../frontend/error.h" /* controlled_exit() */
+
 static int 		ReadTxL(TXLinstance*, CKTcircuit*);
 /*static int 		multC();*/
 static int 		main_pade(double, double, double, double, double, TXLine*);
@@ -70,8 +72,6 @@ static double AA[3][4];
 
 #define epsi 1.0e-16
 #define epsi2 1.0e-28
-
-void controlled_exit(int);
 
 /* ARGSUSED */
 int
@@ -239,7 +239,7 @@ ReadTxL(TXLinstance *tx, CKTcircuit *ckt)
 
    if (l == 0.0) {
 	   fprintf(stderr, "(Error) transmission line of zero length\n");
-	   controlled_exit(0);
+	   controlled_exit(EXIT_FAILURE);
    }
    else {
 		if (R / L  < 5.0e+5) {
@@ -516,7 +516,7 @@ Gaussian_Elimination1(int dims)
 	 } 
       if (max < epsi) {
          fprintf(stderr, " can not choose a pivot \n");
-         controlled_exit(0);
+         controlled_exit(EXIT_FAILURE);
       }
       if (imax != i)
 	 for (k = i; k <= dim; k++) {
@@ -876,7 +876,7 @@ Gaussian_Elimination2(int dims)
          }
       if (max < epsi2) {
          fprintf(stderr, " can not choose a pivot \n");
-         controlled_exit(0);
+         controlled_exit(EXIT_FAILURE);
       }
       if (imax != i)
 	 for (k = i; k <= dim; k++) {
@@ -1125,7 +1125,7 @@ find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
    t = a1 * a1 - 4.0 * a2;
    if (t < 0) {
       printf("***** Two Imaginary Roots in Characteristic Admittance.\n");
-      exit(0);
+      exit(EXIT_FAILURE);
    }
 
    t *= 1.0e-18;

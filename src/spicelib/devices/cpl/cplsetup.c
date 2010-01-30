@@ -14,6 +14,8 @@ Modified: 2004 Paolo Nenzi - (ng)spice integration
 
 #include "multi_line.h"
 
+#include "../../../frontend/error.h" /* controlled_exit() */
+
 
 #define VECTOR_ALLOC(vec, n) { \
         vec = (double **) tmalloc(n * sizeof(double *)); \
@@ -127,8 +129,6 @@ static int rotate(int, int, int);
 
 #define epsi 1.0e-16
 static char *message = "tau of coupled lines is larger than max time step";
-
-void controlled_exit(int);
 
 /* ARGSUSED */
 int
@@ -543,7 +543,7 @@ static double
    if (!v) {
       fprintf(stderr, "Memory Allocation Error by tmalloc in vector().\n");
       fprintf(stderr, "...now exiting to system ...\n");
-      controlled_exit(0);
+      controlled_exit(EXIT_FAILURE);
    }
    return v-nl;
 }
@@ -587,7 +587,7 @@ polint(double *xa, double *ya, int n, double x, double *y, double *dy)
          if ((den=ho-hp) == 0.0) {
             fprintf(stderr, "(Error) in routine POLINT\n");
             fprintf(stderr, "...now exiting to system ...\n");
-            controlled_exit(0);
+            controlled_exit(EXIT_FAILURE);
          }
          den = w/den;
          d[i] = hp * den;
@@ -731,7 +731,7 @@ Gaussian_Elimination2(int dims, int type)
          }
       if (max < epsilon) {
          fprintf(stderr, " can not choose a pivot (misc)\n");
-         controlled_exit(0);
+         controlled_exit(EXIT_FAILURE);
       }
       if (imax != i)
          for (k = i; k <= dim; k++) {
@@ -950,7 +950,7 @@ loop_ZY(int dim, double y)
          fmin = D[i];
    if (fmin < 0) {
       fprintf(stderr, "(Error) The capacitance matrix of the multiconductor system is not positive definite.\n");
-      controlled_exit(0);
+      controlled_exit(EXIT_FAILURE);
    } else {
       fmin = sqrt(fmin);
       fmin1 = 1 / fmin;
@@ -1101,7 +1101,7 @@ eval_frequency(int dim, int deg_o)
 
    if (min <= 0) {
       fprintf(stderr, "A mode frequency is not positive.  Abort!\n");
-      controlled_exit(0);
+      controlled_exit(EXIT_FAILURE);
    }
 
    Scaling_F2 = 1.0 / min;
@@ -1660,7 +1660,7 @@ Gaussian_Elimination(int dims)
          }
       if (max < epsi_mult) {
          fprintf(stderr, " can not choose a pivot (mult)\n");
-         controlled_exit(0);
+         controlled_exit(EXIT_FAILURE);
       }
       if (imax != i)
          for (k = i; k <= dim; k++) {

@@ -10,6 +10,8 @@ Author: 1992 Charles Hough
 #include "sperror.h"
 #include "suffix.h"
 
+#include "../../../frontend/error.h" /* controlled_exit() */
+
 VI_list *pool_vi;
 static double ratio[MAX_CP_TX_LINES];
 static VI_list *new_vi(void);
@@ -24,8 +26,6 @@ static int expC(double, double, double, double*, double*);
 static int divC(double, double, double, double, double*, double*);
 static void update_cnv_a(TMS*, float, double, double, double, double, double, double);
 static void copy_cp(CPLine*, CPLine*);
-
-void controlled_exit(int);
 
 /*ARGSUSED*/
 int

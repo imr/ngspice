@@ -19,7 +19,7 @@
 
 #include "general.h"
 
-extern void winmessage(char* new_msg);
+#include "../error.h" /* controlled_exit() */
 
 #define Getmax(s,ls)  (((unsigned char)(s[ls+1])) << 8) + (unsigned char)(s[ls+2])
 
@@ -76,7 +76,7 @@ rs (char *s)
 {				/* basic line input, limit= 80 chars */
   int max, i;
   char c;
-/*  exit (-1); */
+
   max = maxlen (s);
   i = 0;
   sini (s, max);
@@ -140,8 +140,7 @@ stringbug (char *op, char *s, char *t, char c)
     fprintf (stderr, "{%c}\n", c);
 
   fprintf (stderr, "Aborting...\n");
-  winmessage("Fatal error in SPICE");
-  exit (1);
+  controlled_exit(EXIT_FAILURE);
 
 /* The code below cannot be reached */
 /* Remnants of old interface ?*/
@@ -149,7 +148,7 @@ stringbug (char *op, char *s, char *t, char c)
   ws (" [A]bort [I]gnore ? ");
   rep = rc ();
   if (upcase (rep) == 'A')
-    exit (1);
+    controlled_exit(EXIT_FAILURE);
 }
 
 void
@@ -774,8 +773,7 @@ new (long sz)
       if (p == NULL)
 	{			/* fatal error */
 	  ws (" new() failure. Program halted.\n");
-	  winmessage("Fatal error in SPICE");
-	  exit (1);
+          controlled_exit(EXIT_FAILURE);
 	}
       return p;
     }

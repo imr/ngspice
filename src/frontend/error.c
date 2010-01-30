@@ -19,6 +19,22 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 char ErrorMessage[1024];
 
 
+#ifdef HAS_WINDOWS
+void winmessage(char* new_msg);
+#endif
+
+void 
+controlled_exit(int status)
+{
+#ifdef HAS_WINDOWS
+  winmessage("Fatal error in NGSPICE");
+#else
+  fprintf(stderr, "Fatal error in NGSPICE - Return");
+  getc(stdin);
+#endif
+  exit(status);
+}
+
 
 void
 fperror(char *mess, int code)

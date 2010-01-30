@@ -18,12 +18,10 @@
 #include "numparam/numpaif.h"
 #include "missing_math.h"
 #include "com_measure2.h"
+
+#include "error.h" /* controlled_exit() */
  
 #define EOS  '\0'
-
-#ifdef HAS_WINDOWS
-void winmessage(char* new_msg);
-#endif
 
 static wordlist *measure_parse_line( char *line ) ;
 
@@ -300,10 +298,7 @@ do_measure(
     /* see if number of measurements exceeds fixed array size of 20,000 */
     if ( idx >= 20000 ) {
       fprintf( stderr, "ERROR: number of measurements exceeds 20,000!\nAborting...\n" );
-#ifdef HAS_WINDOWS
-      winmessage("Fatal error in SPICE");
-#endif
-      exit(-1);
+      controlled_exit(EXIT_FAILURE);
     }
 
   } /* end of for loop (first pass through .meas lines) */

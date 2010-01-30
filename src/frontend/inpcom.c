@@ -64,9 +64,7 @@ Author: 1985 Wayne A. Christopher
 /* SJB - Uncomment this line for debug tracing */
 /*#define TRACE*/
 
-#ifdef HAS_WINDOWS
-void winmessage(char* new_msg);
-#endif
+#include "error.h" /* controlled_exit() */
 
 /* globals -- wanted to avoid complicating inp_readall interface */
 static char *library_file[1000];
@@ -925,13 +923,13 @@ inp_fix_ternary_operator_str( char *line )
     }
     if ( count != 0 ) {
       fprintf(stderr, "ERROR: problem parsing 'if' of ternary string %s!\n", line);
-      exit (-1);
+      controlled_exit(EXIT_FAILURE);
     }
     colon = str_ptr2 + 1;
     while ( *colon != ':' && *colon != '\0' ) colon++;
     if ( *colon != ':' ) {
       fprintf(stderr,"ERROR: problem parsing ternary string (finding ':') %s!\n", line);
-      exit(-1);
+      controlled_exit(EXIT_FAILURE);
     }
   }
   else if ( ( colon = strstr( str_ptr, ":" ) ) ) {
@@ -940,7 +938,7 @@ inp_fix_ternary_operator_str( char *line )
   }
   else {
     fprintf(stderr,"ERROR: problem parsing ternary string (missing ':') %s!\n", line);
-    exit(-1);
+    controlled_exit(EXIT_FAILURE);
   }
   str_ptr2++; keep = *str_ptr2; *str_ptr2 = '\0';
   if_str = inp_fix_ternary_operator_str(strdup(str_ptr));
@@ -961,7 +959,7 @@ inp_fix_ternary_operator_str( char *line )
     }
     if ( found_paren && count != 0 ) {
       fprintf( stderr, "ERROR: problem parsing ternary line %s!\n", line );
-      exit(-1);
+      controlled_exit(EXIT_FAILURE);
     }
     keep = *str_ptr2;
     *str_ptr2 = '\0';
@@ -1118,7 +1116,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
             strcat(buffer, "\n");
          }
          else {  /* No good way to report this so just die */
-            exit(1);
+            controlled_exit(EXIT_FAILURE);
          }
       }
 
@@ -1429,10 +1427,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
             if ( ciprefix(".lib", buffer) ) {
                if ( found_lib_name == TRUE ) {
                   fprintf( stderr, "ERROR: .lib is missing .endl!\n" );
-#ifdef HAS_WINDOWS
-                  winmessage("Fatal error in SPICE");
-#endif
-                  exit(-1);
+                  controlled_exit(EXIT_FAILURE);
                }
 
                for   ( s = buffer; *s && !isspace(*s); s++ );            /* skip over .lib                        */
@@ -2543,10 +2538,7 @@ inp_expand_macro_in_str( char *str )
                }
                if ( close_paren_ptr == NULL ) {
                   fprintf( stderr, "ERROR: did not find closing parenthesis for function call in str: %s\n", orig_str );
-#ifdef HAS_WINDOWS
-                  winmessage("Fatal error in SPICE");
-#endif
-                  exit( -1 );
+                  controlled_exit(EXIT_FAILURE);
                }
                *close_paren_ptr = '\0';
 	  
@@ -2579,10 +2571,7 @@ inp_expand_macro_in_str( char *str )
 
                if ( num_parameters[i] != num_params ) {
                   fprintf( stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_ptr );
-#ifdef HAS_WINDOWS
-                  winmessage("Fatal error in SPICE");
-#endif
-                  exit( -1 );
+                  controlled_exit(EXIT_FAILURE);
                }
 
                macro_str = inp_do_macro_param_replace( i, params );
@@ -2877,7 +2866,7 @@ inp_fix_param_values( struct line *deck )
 static char*
 get_param_name( char *line )
 {
-  char *name, *equal_ptr, *beg;
+  char *name = NULL, *equal_ptr, *beg;
   char keep;
 
   if ( ( equal_ptr = strstr( line, "=" ) ) )
@@ -2897,10 +2886,7 @@ get_param_name( char *line )
   else
     {
       fprintf( stderr, "ERROR: could not find '=' on parameter line '%s'!\n", line );
-#ifdef HAS_WINDOWS
-      winmessage("Fatal error in SPICE");
-#endif
-      exit(-1);
+      controlled_exit(EXIT_FAILURE);
     }
   return name;
 }
@@ -2935,11 +2921,8 @@ inp_get_param_level( int param_num, char ***depends_on, char **param_names, char
       if ( index2 > total_params )
 	{
 	  fprintf( stderr, "ERROR: unable to find dependency parameter for %s!\n", param_names[param_num] );
-#ifdef HAS_WINDOWS
-	  winmessage("Fatal error in SPICE");
-#endif
-	  exit( -1 );
-	}
+          controlled_exit(EXIT_FAILURE);
+ 	}
       temp_level = inp_get_param_level( index2, depends_on, param_names, param_strs, total_params, level );
       temp_level++;
       
@@ -3236,10 +3219,7 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
   if ( ind != num_params )
     {
       fprintf( stderr, "ERROR: found wrong number of parameters during levelization ( %d instead of %d parameter s)!\n", ind, num_params );
-#ifdef HAS_WINDOWS
-      winmessage("Fatal error in SPICE");
-#endif
-      exit(-1);
+      controlled_exit(EXIT_FAILURE);
     }
 
   /* fix next ptrs */
