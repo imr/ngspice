@@ -1,7 +1,7 @@
 2010-01-30 Dietmar Warning
- * alloc.c, b3soiddld.c, b3soifdld.c, cplload.c, cplsetup.c, inpcom.c, 
-   measure.c, mystring.c, spicenum.c, txlsetup.c: using a controlled_exit
-   to see error messages in some places and get better program termination
+ * b3soiddld.c, b3soifdld.c, cplload.c, cplsetup.c, inpcom.c, measure.c, 
+   mystring.c, spicenum.c, txlsetup.c: using a controlled_exit to see error 
+   messages in some places and get better program termination
  * frontend/error.c, error.h: provide a simple controlled_exit function
  * misc/util.c, util.h: remove controlled_exit function
 
