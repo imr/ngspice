@@ -23,8 +23,6 @@ extern HANDLE outheap;
 #endif
 #endif
 
-#include "../frontend/error.h" /* controlled_exit() */
-
 /* Malloc num bytes and initialize to zero. Fatal error if the space can't
  * be tmalloc'd.   Return NULL for a request for 0 bytes.
  */
@@ -53,7 +51,7 @@ tmalloc(size_t num)
 #endif
     if (!s){
       fprintf(stderr,"malloc: Internal Error: can't allocate %ld bytes. \n",(long)num);
-      controlled_exit(EXIT_FAILURE);
+      exit(EXIT_FAILURE);
     }
     return(s);
 }
@@ -136,7 +134,7 @@ trealloc(void *ptr, size_t num)
   }
   if (!s) {
     fprintf(stderr,"realloc: Internal Error: can't allocate %ld bytes.\n", (long)num);
-    controlled_exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);
   }
   return(s);
 }
@@ -177,7 +175,7 @@ hrealloc(void *ptr, size_t num)
   }
   if (!s) {
     fprintf(stderr,"HeapReAlloc: Internal Error: can't allocate %ld bytes.\n", (long)num);
-    controlled_exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);
   }
   return(s);
 }
