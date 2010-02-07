@@ -1,3 +1,13 @@
+2010-02-07 Dietmar Warning
+ * cpl/cplload.c, cplsetup.c, /txl/txlload.c, txlsetup.c, include/swec.h, multi_line.h,
+   frontend/subckt.c, parser/inp2p.c, inppas2.c: no more float's, improve dc solution by 
+   introducing gmin deembedding, better model check, automatic maxStep adaption in tran
+   analysis, correct handling of kspice models in subckt's, kspice models are working now
+   more stable but accuracy in steady state of transient is not sufficient 
+ * examples/TransmissionLines/*.sp: ommit itl5-warning
+ * tests/transmission/*.out: adapt reference files to new code behaviour, but this is still
+   a mess
+
 2010-02-07 Holger Vogt
  * inpcom.c: bug no. 2936702
  * vngspice.sln, vngspice.vcproj: add 64 bit support
