@@ -11,6 +11,8 @@
 2010-02-07 Holger Vogt
  * inpcom.c: bug no. 2936702
  * vngspice.sln, vngspice.vcproj: add 64 bit support
+ * measure.c, numpaif.h, numparam-h, spicenum.c, xpressn.c, subckt.c:
+   Put original input deck line number into numparam error message. 
 
 2010-01-30 Dietmar Warning
  * b3soiddld.c, b3soifdld.c, cplload.c, cplsetup.c, inpcom.c, measure.c, 
