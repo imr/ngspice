@@ -915,7 +915,7 @@ inp_fix_ternary_operator_str( char *line )
   if ( *str_ptr == '(' ) {
     // find closing paren
     count    = 1;
-    str_ptr2 = str_ptr + 1;
+    str_ptr2 = str_ptr/* + 1*/;
     while ( count != 0 && *str_ptr2 != '\0' ) {
       str_ptr2++;
       if ( *str_ptr2 == '(' ) count++;

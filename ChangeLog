@@ -1,3 +1,7 @@
+2010-02-07 Holger Vogt
+ * inpcom.c: bug no. 2936702
+ * vngspice.sln, vngspice.vcproj: add 64 bit support
+
 2010-01-30 Dietmar Warning
  * b3soiddld.c, b3soifdld.c, cplload.c, cplsetup.c, inpcom.c, measure.c, 
    mystring.c, spicenum.c, txlsetup.c: using a controlled_exit to see error 
