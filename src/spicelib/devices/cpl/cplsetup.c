@@ -120,7 +120,7 @@ static NODE *node_tab;
 #define epsi_mult 1e-28
 
 /* diag */
-static MAXE_PTR sort(MAXE_PTR, float, int, int, MAXE_PTR);
+static MAXE_PTR sort(MAXE_PTR, double, int, int, MAXE_PTR);
 static void ordering(void);
 static MAXE_PTR delete_1(MAXE_PTR*, int);
 static void reordering(int, int);
@@ -145,14 +145,38 @@ CPLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     /*  loop through all the models */
     for( ; model != NULL; model = model->CPLnextModel ) {
 
+        if (!model->Rmgiven) {
+           (*(SPfrontEnd->IFerror))(ERR_FATAL, 
+               "model %s: lossy line series resistance not given", &(model->CPLmodName));
+          return(E_BADPARM);
+        }
+        if (!model->Gmgiven) {
+           (*(SPfrontEnd->IFerror))(ERR_FATAL, 
+               "model %s: lossy line parallel conductance not given", &(model->CPLmodName));
+          return(E_BADPARM);
+        }
+        if (!model->Lmgiven) {
+          (*(SPfrontEnd->IFerror)) (ERR_FATAL,
+              "model %s: lossy line series inductance not given", &(model->CPLmodName));
+          return (E_BADPARM);
+        }
+        if (!model->Cmgiven) {
+          (*(SPfrontEnd->IFerror)) (ERR_FATAL,
+              "model %s: lossy line parallel capacitance not given", &(model->CPLmodName));
+          return (E_BADPARM);
+        }
+        if (!model->lengthgiven) {
+          (*(SPfrontEnd->IFerror)) (ERR_FATAL,
+              "model %s: lossy line length must be given", &(model->CPLmodName));
+          return (E_BADPARM);
+        }
+
         /* loop through all the instances of the model */
         for (here = model->CPLinstances; here != NULL ;
                 here=here->CPLnextInstance) {
-            
 
-
-        if (!here->CPLlengthGiven)
-            here->CPLlength=0.0;
+           if (!here->CPLlengthGiven)
+               here->CPLlength=0.0;
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
@@ -160,97 +184,97 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
 }
                     
-                        noL = here->dimension;
+            noL = here->dimension;
 
-                        here->CPLposNodes = (int *) tmalloc(noL * sizeof(int));
-                        here->CPLnegNodes = (int *) tmalloc(noL * sizeof(int));
-                        here->CPLibr1 = (int *) tmalloc(noL * sizeof(int));
-                        here->CPLibr2 = (int *) tmalloc(noL * sizeof(int));
+            here->CPLposNodes = (int *) tmalloc(noL * sizeof(int));
+            here->CPLnegNodes = (int *) tmalloc(noL * sizeof(int));
+            here->CPLibr1 = (int *) tmalloc(noL * sizeof(int));
+            here->CPLibr2 = (int *) tmalloc(noL * sizeof(int));
 
-                        VECTOR_ALLOC(here->CPLibr1Ibr1, noL);
-                        VECTOR_ALLOC(here->CPLibr2Ibr2, noL);
-                        VECTOR_ALLOC(here->CPLposIbr1, noL);
-                        VECTOR_ALLOC(here->CPLnegIbr2, noL); 
-                        VECTOR_ALLOC(here->CPLposPos, noL); 
-                        VECTOR_ALLOC(here->CPLnegNeg, noL);
-                        VECTOR_ALLOC(here->CPLnegPos, noL); 
-                        VECTOR_ALLOC(here->CPLposNeg, noL); 
+            VECTOR_ALLOC(here->CPLibr1Ibr1, noL);
+            VECTOR_ALLOC(here->CPLibr2Ibr2, noL);
+            VECTOR_ALLOC(here->CPLposIbr1, noL);
+            VECTOR_ALLOC(here->CPLnegIbr2, noL); 
+            VECTOR_ALLOC(here->CPLposPos, noL); 
+            VECTOR_ALLOC(here->CPLnegNeg, noL);
+            VECTOR_ALLOC(here->CPLnegPos, noL); 
+            VECTOR_ALLOC(here->CPLposNeg, noL); 
 
-                        MATRIX_ALLOC(here->CPLibr1Pos, noL, noL);
-                        MATRIX_ALLOC(here->CPLibr2Neg, noL, noL);
-                        MATRIX_ALLOC(here->CPLibr1Neg, noL, noL);
-                        MATRIX_ALLOC(here->CPLibr2Pos, noL, noL);
-                        MATRIX_ALLOC(here->CPLibr1Ibr2, noL, noL);
-                        MATRIX_ALLOC(here->CPLibr2Ibr1, noL, noL);
+            MATRIX_ALLOC(here->CPLibr1Pos, noL, noL);
+            MATRIX_ALLOC(here->CPLibr2Neg, noL, noL);
+            MATRIX_ALLOC(here->CPLibr1Neg, noL, noL);
+            MATRIX_ALLOC(here->CPLibr2Pos, noL, noL);
+            MATRIX_ALLOC(here->CPLibr1Ibr2, noL, noL);
+            MATRIX_ALLOC(here->CPLibr2Ibr1, noL, noL);
 
 
-                        branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
-                        if (! here->CPLibr1Given) {
-                                for (m = 0; m < here->dimension; m++) {
-                                        branchname[m] = tmalloc(MAX_STRING);
-                                        sprintf(branchname[m], "branch1_%d", m);
-                                        error = 
-                                        CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
-                                        if (error) return (error);
-                                        here->CPLibr1[m] = tmp->number;
-                                }
-                                here->CPLibr1Given = 1;
-                        }
-                        free(branchname);
-                        branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
-                        if (! here->CPLibr2Given) {
-                                for (m = 0; m < here->dimension; m++) {
-                                        branchname[m] = tmalloc(MAX_STRING);
-                                        sprintf(branchname[m], "branch2_%d", m);
-                                        error = 
-                                        CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
-                                        if (error) return (error);
-                                        here->CPLibr2[m] = tmp->number;
-                                }
-                                here->CPLibr2Given = 1;
-                        }
-                        free(branchname);
+            branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
+            if (! here->CPLibr1Given) {
+                    for (m = 0; m < here->dimension; m++) {
+                            branchname[m] = tmalloc(MAX_STRING);
+                            sprintf(branchname[m], "branch1_%d", m);
+                            error = 
+                            CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
+                            if (error) return (error);
+                            here->CPLibr1[m] = tmp->number;
+                    }
+                    here->CPLibr1Given = 1;
+            }
+            free(branchname);
+            branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
+            if (! here->CPLibr2Given) {
+                    for (m = 0; m < here->dimension; m++) {
+                            branchname[m] = tmalloc(MAX_STRING);
+                            sprintf(branchname[m], "branch2_%d", m);
+                            error = 
+                            CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
+                            if (error) return (error);
+                            here->CPLibr2[m] = tmp->number;
+                    }
+                    here->CPLibr2Given = 1;
+            }
+            free(branchname);
 
-                        for (m = 0; m < here->dimension; m++) {
-                                for (node = ckt->CKTnodes; node; node = node->next) {
-                                        if (strcmp(here->in_node_names[m], 
-                                                node->name) == 0){
-                                                here->CPLposNodes[m] = node->number;
-                                        }
-                                }
-                        }
-                        for (m = 0; m < here->dimension; m++) {
-                                for (node = ckt->CKTnodes; node; node = node->next) {
-                                        if (strcmp(here->out_node_names[m],
-                                                node->name) == 0){
-                                                here->CPLnegNodes[m] = node->number;
-                                        }
-                                }
-                        }
+            for (m = 0; m < here->dimension; m++) {
+                    for (node = ckt->CKTnodes; node; node = node->next) {
+                            if (strcmp(here->in_node_names[m], 
+                                    node->name) == 0){
+                                    here->CPLposNodes[m] = node->number;
+                            }
+                    }
+            }
+            for (m = 0; m < here->dimension; m++) {
+                    for (node = ckt->CKTnodes; node; node = node->next) {
+                            if (strcmp(here->out_node_names[m],
+                                    node->name) == 0){
+                                    here->CPLnegNodes[m] = node->number;
+                            }
+                    }
+            }
 
-                        for (m = 0; m < here->dimension; m++) {
-                                TSTALLOC(CPLibr1Ibr1[m],CPLibr1[m],CPLibr1[m]);
-                                TSTALLOC(CPLibr2Ibr2[m],CPLibr2[m],CPLibr2[m]);
-                                TSTALLOC(CPLposIbr1[m],CPLposNodes[m],CPLibr1[m]);
-                                TSTALLOC(CPLnegIbr2[m],CPLnegNodes[m],CPLibr2[m]);
-                                TSTALLOC(CPLposPos[m],CPLposNodes[m],CPLposNodes[m]);
-                                TSTALLOC(CPLnegNeg[m],CPLnegNodes[m],CPLnegNodes[m]);
-                                TSTALLOC(CPLnegPos[m],CPLnegNodes[m],CPLposNodes[m]);
-                                TSTALLOC(CPLposNeg[m],CPLposNodes[m],CPLnegNodes[m]);
+            for (m = 0; m < here->dimension; m++) {
+                    TSTALLOC(CPLibr1Ibr1[m],CPLibr1[m],CPLibr1[m]);
+                    TSTALLOC(CPLibr2Ibr2[m],CPLibr2[m],CPLibr2[m]);
+                    TSTALLOC(CPLposIbr1[m],CPLposNodes[m],CPLibr1[m]);
+                    TSTALLOC(CPLnegIbr2[m],CPLnegNodes[m],CPLibr2[m]);
+                    TSTALLOC(CPLposPos[m],CPLposNodes[m],CPLposNodes[m]);
+                    TSTALLOC(CPLnegNeg[m],CPLnegNodes[m],CPLnegNodes[m]);
+                    TSTALLOC(CPLnegPos[m],CPLnegNodes[m],CPLposNodes[m]);
+                    TSTALLOC(CPLposNeg[m],CPLposNodes[m],CPLnegNodes[m]);
 
-                                for (p = 0; p < here->dimension; p++) {
+                    for (p = 0; p < here->dimension; p++) {
 
-                                        TSTALLOC(CPLibr1Pos[m][p],CPLibr1[m],CPLposNodes[p]);
-                                        TSTALLOC(CPLibr2Neg[m][p],CPLibr2[m],CPLnegNodes[p]);
-                                        TSTALLOC(CPLibr1Neg[m][p],CPLibr1[m],CPLnegNodes[p]);
-                                        TSTALLOC(CPLibr2Pos[m][p],CPLibr2[m],CPLposNodes[p]);
-                                        TSTALLOC(CPLibr1Ibr2[m][p],CPLibr1[m],CPLibr2[p]);
-                                        TSTALLOC(CPLibr2Ibr1[m][p],CPLibr2[m],CPLibr1[p]);
+                            TSTALLOC(CPLibr1Pos[m][p],CPLibr1[m],CPLposNodes[p]);
+                            TSTALLOC(CPLibr2Neg[m][p],CPLibr2[m],CPLnegNodes[p]);
+                            TSTALLOC(CPLibr1Neg[m][p],CPLibr1[m],CPLnegNodes[p]);
+                            TSTALLOC(CPLibr2Pos[m][p],CPLibr2[m],CPLposNodes[p]);
+                            TSTALLOC(CPLibr1Ibr2[m][p],CPLibr1[m],CPLibr2[p]);
+                            TSTALLOC(CPLibr2Ibr1[m][p],CPLibr2[m],CPLibr1[p]);
 
-                                }
-                        }
+                    }
+            }
 
-                        ReadCpL(here, ckt);
+            ReadCpL(here, ckt);
 
         }
     }
@@ -418,7 +442,7 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
          else {
             c->h1t[i][j] = (TMS *) tmalloc(sizeof (TMS));
             d = c->h1t[i][j]->aten = SIV[i][j].C_0;
-            c->h1t[i][j]->ifImg = (int) SIV[i][j].Poly[6] - 1.0;
+            c->h1t[i][j]->ifImg = (int) (SIV[i][j].Poly[6] - 1.0);
                 /* since originally 2 for img 1 for noimg */
             c->h1t[i][j]->tm[0].c = SIV[i][j].Poly[0] * d;
             c->h1t[i][j]->tm[1].c = SIV[i][j].Poly[1] * d;
@@ -442,7 +466,7 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
             else {
                c->h2t[i][j][k] = (TMS *) tmalloc(sizeof (TMS));
                d = c->h2t[i][j][k]->aten = IWI[i][j].C_0[k];
-               c->h2t[i][j][k]->ifImg = (int) IWI[i][j].Poly[k][6] - 1.0;
+               c->h2t[i][j][k]->ifImg = (int) (IWI[i][j].Poly[k][6] - 1.0);
                 /* since originally 2 for img 1 for noimg */
                c->h2t[i][j][k]->tm[0].c = IWI[i][j].Poly[k][0] * d;
                c->h2t[i][j][k]->tm[1].c = IWI[i][j].Poly[k][1] * d;
@@ -463,7 +487,7 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
             else {
                c->h3t[i][j][k] = (TMS *) tmalloc(sizeof (TMS));
                d = c->h3t[i][j][k]->aten = IWV[i][j].C_0[k];
-               c->h3t[i][j][k]->ifImg = (int) IWV[i][j].Poly[k][6] - 1.0;
+               c->h3t[i][j][k]->ifImg = (int) (IWV[i][j].Poly[k][6] - 1.0);
                 /* since originally 2 for img 1 for noimg */
                c->h3t[i][j][k]->tm[0].c = IWV[i][j].Poly[k][0] * d;
                c->h3t[i][j][k]->tm[1].c = IWV[i][j].Poly[k][1] * d;
@@ -618,7 +642,7 @@ match(int n, double *cof, double *xa, double *ya)
       xx[j] = y[j] = ya[j];
    }
    for (j = 0; j <= n; j++) {
-      polint(x-1, y-1, n+1-j, (double) 0.0, &cof[j], &dy);
+      polint(x-1, y-1, n+1-j, 0.0, &cof[j], &dy);
       xmin = 1.0e38;
       k = -1;
       for (i = 0; i <= n-j; i++) {
@@ -819,7 +843,7 @@ eval_Si_Si_1(int dim, double y)
 
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++)
-         Si_1[i][j] /= sqrt((double) D[i]);
+         Si_1[i][j] /= sqrt(D[i]);
 
    for (i = 0; i < dim; i++) {
       for (j = 0; j < dim; j++)
@@ -956,7 +980,7 @@ loop_ZY(int dim, double y)
       fmin1 = 1 / fmin;
    }
    for (i = 0; i < dim; i++)
-      D[i] = sqrt((double) D[i]);
+      D[i] = sqrt(D[i]);
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) {
          Y5[i][j] = D[i] * Sv[j][i];
@@ -1257,9 +1281,9 @@ coupled(int dim)
    Scaling_F = Scaling_F2 = 1.0;
 
    /***     y = 0 : ZY = LC    ***/
-   loop_ZY(dim, (double) 0.0);
+   loop_ZY(dim, 0.0);
    eval_frequency(dim, deg_o);
-   eval_Si_Si_1(dim, (double) 0.0);
+   eval_Si_Si_1(dim, 0.0);
    store_SiSv_1(dim, (int) 0);
    store(dim, (int) 0);
 
@@ -1309,7 +1333,7 @@ generate_out(int dim, int deg_o)
          for (k = 0; k <= deg_o; k++) 
             p[k] /= C;
          if (i == j) {
-            rtv = Pade_apx((double) sqrt((double) G_m[i][i] / R_m[i][i]) / C, 
+            rtv = Pade_apx(sqrt(G_m[i][i] / R_m[i][i]) / C, 
                   p, &c1, &c2, &c3, &x1, &x2, &x3);
             if (rtv == 0) {
                SIV[i][j].C_0 = 0.0;
@@ -1317,7 +1341,7 @@ generate_out(int dim, int deg_o)
                continue;
             }
          } else {
-            rtv = Pade_apx((double) 0.0, 
+            rtv = Pade_apx(0.0, 
                   p, &c1, &c2, &c3, &x1, &x2, &x3);
             if (rtv == 0) {
                SIV[i][j].C_0 = 0.0;
@@ -1332,7 +1356,7 @@ generate_out(int dim, int deg_o)
          p[3] = x1;
          p[4] = x2;
          p[5] = x3;
-         p[6] = (double) rtv;
+         p[6] = rtv;
       }
    for (i = 0; i < dim; i++)
       for (j = 0; j < dim; j++) 
@@ -1342,8 +1366,8 @@ generate_out(int dim, int deg_o)
             if (C == 0.0)
                continue;
             if (i == j && k == i) {
-               rtv = Pade_apx((double) 
-                     exp(- sqrt((double) G_m[i][i] * R_m[i][i]) * length) / C,
+               rtv = Pade_apx(
+                     exp(- sqrt(G_m[i][i] * R_m[i][i]) * length) / C,
                      p, &c1, &c2, &c3, &x1, &x2, &x3);
                if (rtv == 0) {
                   IWI[i][j].C_0[k] = 0.0;
@@ -1351,7 +1375,7 @@ generate_out(int dim, int deg_o)
                   continue;
                }
             } else {
-               rtv = Pade_apx((double) 0.0, 
+               rtv = Pade_apx(0.0, 
                   p, &c1, &c2, &c3, &x1, &x2, &x3);
                if (rtv == 0) {
                   IWI[i][j].C_0[k] = 0.0;
@@ -1365,7 +1389,7 @@ generate_out(int dim, int deg_o)
             p[3] = x1;
             p[4] = x2;
             p[5] = x3;
-            p[6] = (double) rtv;
+            p[6] = rtv;
          }
 
    for (i = 0; i < dim; i++)
@@ -1376,8 +1400,8 @@ generate_out(int dim, int deg_o)
             if (C == 0.0)
                continue;
             if (i == j && k == i) {
-               rtv = Pade_apx((double) sqrt((double) G_m[i][i] / R_m[i][i]) * 
-                     exp(- sqrt((double) G_m[i][i] * R_m[i][i]) * length) / C,
+               rtv = Pade_apx(sqrt(G_m[i][i] / R_m[i][i]) * 
+                     exp(- sqrt(G_m[i][i] * R_m[i][i]) * length) / C,
                      p, &c1, &c2, &c3, &x1, &x2, &x3);
                if (rtv == 0) {
                   IWV[i][j].C_0[k] = 0.0;
@@ -1385,7 +1409,7 @@ generate_out(int dim, int deg_o)
                   continue;
                }
             } else {
-               rtv = Pade_apx((double) 0.0, 
+               rtv = Pade_apx(0.0, 
                   p, &c1, &c2, &c3, &x1, &x2, &x3);
                if (rtv == 0) {
                   IWV[i][j].C_0[k] = 0.0;
@@ -1399,7 +1423,7 @@ generate_out(int dim, int deg_o)
             p[3] = x1;
             p[4] = x2;
             p[5] = x3;
-            p[6] = (double) rtv;
+            p[6] = rtv;
          }
    return(1);
 }
@@ -1513,7 +1537,7 @@ approx_mode(double *X, double *b, double length)
    y6 = -10.0 * y3 * y3 - 15.0 * y2 * y4 - 6.0 * y1 * y5;
 
    delay = sqrt(w0) * length / Scaling_F;
-   atten = exp((double) - delay * y1);
+   atten = exp(- delay * y1);
 
    a[1] = y2 / 2.0;
    a[2] = y3 / 6.0;
@@ -1623,7 +1647,7 @@ Pade_apx(double a_b, double *b, double *c1, double *c2, double *c3,
       printf("complex roots : %e %e %e \n", *x1, *x2, *x3);
        */
       *c1 = eval2(q1 - p1, q2 - p2, q3 - p3, *x1) /
-                   eval2((double) 3.0, (double) 2.0 * p1, p2, *x1);
+                   eval2(3.0, 2.0 * p1, p2, *x1);
       get_c(q1 - p1, q2 - p2, q3 - p3, p1, p2, *x2, *x3, c2, c3);
       return(2);
    } else {
@@ -1631,11 +1655,11 @@ Pade_apx(double a_b, double *b, double *c1, double *c2, double *c3,
           printf("roots are %e %e %e \n", *x1, *x2, *x3);
           */
       *c1 = eval2(q1 - p1, q2 - p2, q3 - p3, *x1) / 
-                   eval2((double) 3.0, (double) 2.0 * p1, p2, *x1);
+                   eval2(3.0, 2.0 * p1, p2, *x1);
       *c2 = eval2(q1 - p1, q2 - p2, q3 - p3, *x2) / 
-                   eval2((double) 3.0, (double) 2.0 * p1, p2, *x2);
+                   eval2(3.0, 2.0 * p1, p2, *x2);
       *c3 = eval2(q1 - p1, q2 - p2, q3 - p3, *x3) / 
-                   eval2((double) 3.0, (double) 2.0 * p1, p2, *x3);
+                   eval2(3.0, 2.0 * p1, p2, *x3);
       return(1);
    }
 }
@@ -1753,16 +1777,16 @@ find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
    p = (2.0*a1*a1*a1-9.0*a1*a2+27.0*a3) / 54.0;
    t = q*q*q - p*p;
    if (t >= 0.0) {
-      t = acos((double) p /(q * sqrt(q)));
+      t = acos(p /(q * sqrt(q)));
       x = -2.0*sqrt(q)*cos(t / 3.0) - a1/3.0;
    } else {
       if (p > 0.0) {
-         t = pow(sqrt(-t)+p, (double) 1.0 / 3.0);
+         t = pow(sqrt(-t)+p, 1.0 / 3.0);
          x = -(t + q / t) - a1/3.0;
       } else if (p == 0.0) {
          x = -a1/3.0;
       } else {
-         t = pow(sqrt(-t)-p, (double) 1.0 / 3.0);
+         t = pow(sqrt(-t)-p, 1.0 / 3.0);
          x = (t + q / t) - a1/3.0;
       }
    }
@@ -1909,7 +1933,7 @@ static  int         dim;
 static  MAXE_PTR    row;
 
 static MAXE_PTR 
-sort(MAXE_PTR list, float val, int r, int c, MAXE_PTR e)
+sort(MAXE_PTR list, double val, int r, int c, MAXE_PTR e)
 {
    if (list == NULL || list->value < val) {
       e->row = r;
@@ -2056,8 +2080,8 @@ rotate(int dim, int p, int q)
 
    ld = - ZY[p][q];
    mu = 0.5 * (ZY[p][p] - ZY[q][q]);
-   ve = sqrt((double) ld*ld + mu*mu);
-   co = sqrt((double) (ve + ABS(mu)) / (2.0 * ve));
+   ve = sqrt(ld*ld + mu*mu);
+   co = sqrt((ve + ABS(mu)) / (2.0 * ve));
    si = SGN(mu) * ld / (2.0 * ve * co);
 
    for (j = p+1; j < dim; j++)

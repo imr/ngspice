@@ -1527,7 +1527,7 @@ numnodes(char *name)
 
     n = inp_numnodes(c);
     
-    /* Added this code for variable number of nodes on BSIM3SOI devices  */
+    /* Added this code for variable number of nodes on BSIM3SOI/CPL devices  */
     /* The consequence of this code is that the value returned by the    */
     /* inp_numnodes(c) call must be regarded as "maximum number of nodes */
     /* for a given device type.                                          */
@@ -1535,33 +1535,32 @@ numnodes(char *name)
     
     /* I hope that works, this code is very very untested */
     
-	if (c=='m') {		     /* IF this is a mos */
-		
-	        i = 0;
-		s = buf;
-		gotit = 0;
-		txfree(gettok(&s));	     /* Skip component name */
-		while ((i < n) && (*s) && !gotit) {
-		  t = gettok_node(&s);       /* get nodenames . . .  */
-		  for (wl = modnames; wl; wl = wl->wl_next) {
-		    /* also need to check if binnable device model */
-		    if (eq(t, wl->wl_word) || model_bin_match( t, wl->wl_word ) ) 
-		      gotit = 1;
-		  }
-		  i++;
-		  tfree(t);
-		} /* while . . . . */
-		
-		/* Note: node checks must be done on #_of_node-1 because the */
-		/* "while" cycle increments the counter even when a model is */
-		/* recognized. This code may be better!                      */
-	 		
-		if (i < 5) {
-		  fprintf(cp_err, "Error: too few nodes for MOS: %s\n", name);
-		  return(0);
-		}
-		return(i-1); /* compensate the unnecessary increment in the while cycle */
-    	} /* if (c=='m' . . .  */
+    if ((c=='m') || (c=='p')) {		     /* IF this is a mos or cpl */
+    	i = 0;
+    	s = buf;
+    	gotit = 0;
+    	txfree(gettok(&s));	     /* Skip component name */
+    	while ((i < n) && (*s) && !gotit) {
+    	  t = gettok_node(&s);       /* get nodenames . . .  */
+    	  for (wl = modnames; wl; wl = wl->wl_next) {
+    	    /* also need to check if binnable device mos model */
+    	    if (eq(t, wl->wl_word) || model_bin_match( t, wl->wl_word ) ) 
+    	      gotit = 1;
+    	  }
+    	  i++;
+    	  tfree(t);
+    	} /* while . . . . */
+    	
+    	/* Note: node checks must be done on #_of_node-1 because the */
+    	/* "while" cycle increments the counter even when a model is */
+    	/* recognized. This code may be better!                      */
+    	
+    	if (i < 5) {
+    	  fprintf(cp_err, "Error: too few nodes for MOS or CPL: %s\n", name);
+    	  return(0);
+    	}
+    	return(i-1); /* compensate the unnecessary increment in the while cycle */
+    } /* if (c=='m' . . .  */
     
     if (nobjthack || (c != 'q'))
         return (n);
@@ -2049,7 +2048,7 @@ devmodtranslate(struct line *deck, char *subname)
             s->li_line = buffer;
             break;
 
-        /* 6-10 terminal devices */
+        /* 4-18 terminal devices */
         case 'p': /* cpl */
             name = gettok(&t);  /* get refdes */
             (void) sprintf(buffer,"%s ",name);
@@ -2061,9 +2060,8 @@ devmodtranslate(struct line *deck, char *subname)
                    name = next_name;
                    next_name = gettok(&t);
                    if((next_name == NULL) ||
-                      (strcmp(next_name, "LEN") == 0) ||
-                      (strcmp(next_name, "len") == 0)) {
-                     /* if next_name is NULL or length, we are at the line end.
+                      (strstr(next_name, "len") != NULL)) {
+                     /* if next_name is NULL or len or length, we are at the line end.
                       * name holds the model name.  Therefore, break */
                      break;
                   } else {
@@ -2131,7 +2129,7 @@ inp_numnodes(char c)
         case 'l': return (2);
         case 'm': return (7); /* This means that 7 is the maximun number of nodes */
         case 'o': return (4);
-        case 'p': return (0);
+        case 'p': return (18);/* 16 lines + 2 gnd is the maximum number of nodes for CPL */
         case 'q': return (5);
         case 'r': return (2);
         case 's': return (4);

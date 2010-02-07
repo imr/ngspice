@@ -52,7 +52,7 @@
 typedef struct linked_list_of_max_entry{
    struct linked_list_of_max_entry  *next;
    int    row, col;
-   float  value;
+   double  value;
 } MAXE, *MAXE_PTR;
 
 typedef struct {

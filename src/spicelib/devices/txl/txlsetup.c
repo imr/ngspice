@@ -28,7 +28,7 @@ static int 		find_roots(double, double, double, double*, double*, double*);
 /*static int 		expC();*/
 /*static double 	exp_approx1();*/
 /*static double 	exp_approx2();*/
-static int 		exp_pade(float, float, float, float, float, TXLine*);
+static int 		exp_pade(double, double, double, double, double, TXLine*);
 /*static int 		exp_div3();*/
 static int 		exp_find_roots(double, double, double, double*, double*, double* );
 static double		eval2(double, double, double, double);
@@ -36,7 +36,7 @@ static int 		get_c(double, double, double, double, double, double, double, doubl
 static int 		get_h3(TXLine*);
 static int 		Gaussian_Elimination2(int);
 static int 		Gaussian_Elimination1(int);
-static int 		pade(float);
+static int 		pade(double);
 static int 		update_h1C_c(TXLine *);
 static void		y_pade(double, double, double, double, TXLine*);
 static double		root3(double, double, double, double);
@@ -85,6 +85,32 @@ TXLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
     /*  loop through all the models */
     for( ; model != NULL; model = model->TXLnextModel ) {
 
+        if (!model->Rgiven) {
+           (*(SPfrontEnd->IFerror))(ERR_FATAL, 
+               "model %s: lossy line series resistance not given", &(model->TXLmodName));
+          return(E_BADPARM);
+        }
+        if (!model->Ggiven) {
+           (*(SPfrontEnd->IFerror))(ERR_FATAL, 
+               "model %s: lossy line parallel conductance not given", &(model->TXLmodName));
+          return(E_BADPARM);
+        }
+        if (!model->Lgiven) {
+          (*(SPfrontEnd->IFerror)) (ERR_FATAL,
+              "model %s: lossy line series inductance not given", &(model->TXLmodName));
+          return (E_BADPARM);
+        }
+        if (!model->Cgiven) {
+          (*(SPfrontEnd->IFerror)) (ERR_FATAL,
+              "model %s: lossy line parallel capacitance not given", &(model->TXLmodName));
+          return (E_BADPARM);
+        }
+        if (!model->lengthgiven) {
+          (*(SPfrontEnd->IFerror)) (ERR_FATAL,
+              "model %s: lossy line length must be given", &(model->TXLmodName));
+          return (E_BADPARM);
+        }
+
         /* loop through all the instances of the model */
         for (here = model->TXLinstances; here != NULL ;
                 here=here->TXLnextInstance) {
@@ -95,16 +121,16 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
 }
 
-			if (! here->TXLibr1Given) {
-				error = CKTmkCur(ckt, &tmp, here->TXLname, "branch1");
-				if (error) return (error);
-				here->TXLibr1 = tmp->number;
-			}
-			if (! here->TXLibr2Given) {
-				error = CKTmkCur(ckt, &tmp, here->TXLname, "branch2");
-				if (error) return (error);
-				here->TXLibr2 = tmp->number;
-			}
+            if (! here->TXLibr1Given) {
+                    error = CKTmkCur(ckt, &tmp, here->TXLname, "branch1");
+                    if (error) return (error);
+                    here->TXLibr1 = tmp->number;
+            }
+            if (! here->TXLibr2Given) {
+                    error = CKTmkCur(ckt, &tmp, here->TXLname, "branch2");
+                    if (error) return (error);
+                    here->TXLibr2 = tmp->number;
+            }
 
             TSTALLOC(TXLposPosptr, TXLposNode, TXLposNode);
             TSTALLOC(TXLposNegptr, TXLposNode, TXLnegNode);
@@ -246,8 +272,8 @@ ReadTxL(TXLinstance *tx, CKTcircuit *ckt)
 			line->g = 1.0e+2;
 			if (G < 1.0e-2) {
 				t->lsl = 1;  /* lossless line */
-				t->taul = sqrt((double) C * L) * l * 1.0e12;
-				t->h3_aten = t->sqtCdL = sqrt((double) C / L);
+				t->taul = sqrt(C * L) * l * 1.0e12;
+				t->h3_aten = t->sqtCdL = sqrt(C / L);
 				t->h2_aten = 1.0;
 				t->h1C = 0.0;
 			}
@@ -447,13 +473,13 @@ y_pade(double R, double L, double G, double C, TXLine *h)
    /* float RdL, GdC; */
    double RdL, GdC; 
 
-   sqtCdL = sqrt((double) C / L);
+   sqtCdL = sqrt(C / L);
    RdL = R / L;
    GdC = G / C;
 
    mac(GdC, RdL, &b1, &b2, &b3, &b4, &b5);
 
-   A[0][0] = 1.0 - sqrt((double) (GdC / RdL));
+   A[0][0] = 1.0 - sqrt(GdC / RdL);
    A[0][1] = b1;
    A[0][2] = b2;
    A[0][3] = -b3;
@@ -476,15 +502,15 @@ y_pade(double R, double L, double G, double C, TXLine *h)
 
    q1 = p1 + b1;
    q2 = b1 * p1 + p2 + b2;
-   q3 = p3 * sqrt((double) (GdC / RdL));
+   q3 = p3 * sqrt(GdC / RdL);
 
    find_roots(p1, p2, p3, &x1, &x2, &x3);
    c1 = eval2(q1 - p1, q2 - p2, q3 - p3, x1) / 
-		   eval2((double) 3.0, (double) 2.0 * p1, p2, x1);
+		   eval2(3.0, 2.0 * p1, p2, x1);
    c2 = eval2(q1 - p1, q2 - p2, q3 - p3, x2) / 
-		   eval2((double) 3.0, (double) 2.0 * p1, p2, x2);
+		   eval2(3.0, 2.0 * p1, p2, x2);
    c3 = eval2(q1 - p1, q2 - p2, q3 - p3, x3) / 
-		   eval2((double) 3.0, (double) 2.0 * p1, p2, x3);
+		   eval2(3.0, 2.0 * p1, p2, x3);
 
    h->sqtCdL = sqtCdL;
    h->h1_term[0].c = c1;
@@ -705,10 +731,10 @@ static double exp_approx2(double st)
 ***/
 
 static int 
-exp_pade(float R, float L, float G, float C, float l, TXLine *h)
+exp_pade(double R, double L, double G, double C, double l, TXLine *h)
 {
   
-   tau = sqrt((double) L*C);
+   tau = sqrt(L*C);
    RdL = R / L;
    GdC = G / C;
    RG  = R * G;
@@ -783,7 +809,7 @@ exp_pade(float R, float L, float G, float C, float l, TXLine *h)
    return(ifImg);
 }
 
-static int pade(float l)
+static int pade(double l)
 {
    int i, j;
    double a[6];
@@ -804,7 +830,7 @@ static int pade(float l)
       b[i] = b[i] / (double) i;
    }
 
-   AA[0][0] = 1.0 - exp((double) a0 - l * sqrt(RG));
+   AA[0][0] = 1.0 - exp(a0 - l * sqrt(RG));
    AA[0][1] = b[1];
    AA[0][2] = b[2];
    AA[0][3] = -b[3];
@@ -827,7 +853,7 @@ static int pade(float l)
 
    eq1 = ep1 + b[1];
    eq2 = b[1] * ep1 + ep2 + b[2];
-   eq3 = ep3 * exp((double) a0 - l * sqrt(RG));
+   eq3 = ep3 * exp(a0 - l * sqrt(RG));
 
    ep3 = ep3 / (tau*tau*tau);
    ep2 = ep2 / (tau*tau);
@@ -844,14 +870,14 @@ static int pade(float l)
    printf("roots are %e %e %e \n", ex1, ex2, ex3);
      */
    ec1 = eval2(eq1 - ep1, eq2 - ep2, eq3 - ep3, ex1) / 
-		   eval2((double) 3.0, (double) 2.0 * ep1, ep2, ex1);
+		   eval2(3.0, 2.0 * ep1, ep2, ex1);
    if (ifImg) 
       get_c(eq1 - ep1, eq2 - ep2, eq3 - ep3, ep1, ep2, ex2, ex3, &ec2, &ec3);
    else {
       ec2 = eval2(eq1 - ep1, eq2 - ep2, eq3 - ep3, ex2) / 
-		   eval2((double) 3.0, (double) 2.0 * ep1, ep2, ex2);
+		   eval2(3.0, 2.0 * ep1, ep2, ex2);
       ec3 = eval2(eq1 - ep1, eq2 - ep2, eq3 - ep3, ex3) / 
-		   eval2((double) 3.0, (double) 2.0 * ep1, ep2, ex3);
+		   eval2(3.0, 2.0 * ep1, ep2, ex3);
    }
    return (1);
 }
@@ -928,16 +954,16 @@ exp_find_roots(double a1, double a2, double a3, double *ex1, double *ex2, double
    p = (2.0*a1*a1*a1-9.0*a1*a2+27.0*a3) / 54.0;
    t = q*q*q - p*p;
    if (t >= 0.0) {
-      t = acos((double) p /(q * sqrt(q)));
+      t = acos(p /(q * sqrt(q)));
       x = -2.0*sqrt(q)*cos(t / 3.0) - a1/3.0;
    } else {
       if (p > 0.0) {
-         t = pow(sqrt(-t)+p, (double) 1.0 / 3.0);
+         t = pow(sqrt(-t)+p, 1.0 / 3.0);
          x = -(t + q / t) - a1/3.0;
       } else if (p == 0.0) {
          x = -a1/3.0;
       } else {
-         t = pow(sqrt(-t)-p, (double) 1.0 / 3.0);
+         t = pow(sqrt(-t)-p, 1.0 / 3.0);
          x = (t + q / t) - a1/3.0;
       }
    }
@@ -1076,16 +1102,16 @@ find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
    p = (2.0*a1*a1*a1-9.0*a1*a2+27.0*a3) / 54.0;
    t = q*q*q - p*p;
    if (t >= 0.0) {
-      t = acos((double) p /(q * sqrt(q)));
+      t = acos(p /(q * sqrt(q)));
       x = -2.0*sqrt(q)*cos(t / 3.0) - a1/3.0;
    } else {
       if (p > 0.0) {
-	 t = pow(sqrt(-t)+p, (double) 1.0 / 3.0);
+	 t = pow(sqrt(-t)+p, 1.0 / 3.0);
          x = -(t + q / t) - a1/3.0;
       } else if (p == 0.0) {
 	 x = -a1/3.0;
       } else {
- 	 t = pow(sqrt(-t)-p, (double) 1.0 / 3.0);
+ 	 t = pow(sqrt(-t)-p, 1.0 / 3.0);
 	 x = (t + q / t) - a1/3.0;
       }
    }

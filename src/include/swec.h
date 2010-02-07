@@ -210,7 +210,7 @@ struct node {
    */
    double	 V;
    double    dv;
-   float     CL;       /*  grounded capacitance in F  */
+   double    CL;       /*  grounded capacitance in F  */
    double    gsum;     /*^ sum of the equivalent conductance */
    double    cgsum;    /*^ sum of the constant conductance */
    double    is;       /*^ equivalent Is */
@@ -273,7 +273,7 @@ struct resistor {
 struct rline {
    NODE         *in_node;
    NODE         *out_node;
-   float        g;   /* conductance */ 
+   double        g;   /* conductance */ 
    RLINE        *nx;
 };
 
@@ -293,8 +293,8 @@ typedef struct linked_lists_of_vi{
    struct linked_lists_of_vi *next;
    struct linked_lists_of_vi *pool;
    int time;
-   float v_i[MAX_CP_TX_LINES], v_o[MAX_CP_TX_LINES];
-   float i_i[MAX_CP_TX_LINES], i_o[MAX_CP_TX_LINES];  
+   double v_i[MAX_CP_TX_LINES], v_o[MAX_CP_TX_LINES];
+   double i_i[MAX_CP_TX_LINES], i_o[MAX_CP_TX_LINES];  
 } VI_list;
 
 typedef struct {
@@ -311,8 +311,8 @@ typedef struct {
 struct cpline {
    int       noL;
    int       ext;
-   float     ratio[MAX_CP_TX_LINES];
-   float     taul[MAX_CP_TX_LINES];
+   double     ratio[MAX_CP_TX_LINES];
+   double     taul[MAX_CP_TX_LINES];
    TMS       *h1t[MAX_CP_TX_LINES][MAX_CP_TX_LINES];
    TMS       *h2t[MAX_CP_TX_LINES][MAX_CP_TX_LINES][MAX_CP_TX_LINES];
    TMS       *h3t[MAX_CP_TX_LINES][MAX_CP_TX_LINES][MAX_CP_TX_LINES];
@@ -326,14 +326,14 @@ struct cpline {
    CPLine    *nx;
    struct linked_lists_of_vi *vi_head;
    struct linked_lists_of_vi *vi_tail;
-   float     dc1[MAX_CP_TX_LINES], dc2[MAX_CP_TX_LINES];
+   double     dc1[MAX_CP_TX_LINES], dc2[MAX_CP_TX_LINES];
 };
 
 struct txline {
    int       lsl;  /*  1 if the line is lossless, otherwise 0  */
    int       ext;  /*  a flag, set if time step is greater than tau  */
-   float     ratio;
-   float     taul;
+   double    ratio;
+   double    taul;
    double    sqtCdL;
    double    h2_aten;
    double    h3_aten;
@@ -349,8 +349,8 @@ struct txline {
    TXLine    *nx; 
    struct linked_lists_of_vi_txl *vi_head;
    struct linked_lists_of_vi_txl *vi_tail;
-   float     dc1, dc2;
-   int		 newtp; /* flag indicating new time point */
+   double    dc1, dc2;
+   int	     newtp; /* flag indicating new time point */
 };
 
 struct evccs {

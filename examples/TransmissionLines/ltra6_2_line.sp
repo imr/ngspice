@@ -72,7 +72,7 @@ rt2 5 0 50
 
 .model diod2 d(tt=0.5ns vj=0.3 rs=100 bv=10)
 
-.options itl5=0 acct reltol=1e-3 abstol=1e-12
+.options acct reltol=1e-3 abstol=1e-12
 .control
 tran 0.1ns 60ns
 plot v(2) v(4) v(5)

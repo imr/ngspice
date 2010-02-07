@@ -219,12 +219,12 @@ void INPpas2(void *ckt, card * data, INPtables * tab, void *task)
 	/* Kspice addition - saj */
 	case 'P': 
 	    /* Pname <node> <node> ... <gnd> <node> <node> ... <gnd> [<modname>] */
-	    /* R=<vector> L=<matrix> G=<vector> C=<matrix> l=<val> */
-	    INP2P(ckt, tab,current);
+	    /* R=<vector> L=<matrix> G=<vector> C=<matrix> len=<val> */
+	    INP2P(ckt, tab, current);
 	    break;
 	case 'Y':   
-	    /* Yname <node> <node> R=<val> L=<val> G=<val> C=<val> l=<val> */
-	    INP2Y(ckt, tab,current);
+	    /* Yname <node> <node> R=<val> L=<val> G=<val> C=<val> len=<val> */
+	    INP2Y(ckt, tab, current);
 	    break;
 	/* end Kspice */
 			

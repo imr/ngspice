@@ -55,7 +55,7 @@ int num, i;
     /* first pass to determine the dimension */
     while (*line != '\0') {
             INPgetTok(&line, &tempname,1);
-            if (strcmp(tempname, "len") == 0) break;
+            if ((strcmp(tempname, "length") == 0) || (strcmp(tempname, "len") == 0)) break;
             num ++;
     }
     num = (num - 2) / 2;
@@ -103,7 +103,7 @@ int num, i;
             }
             IFC(newInstance,(ckt,mdfast,&fast,name))
             INPgetTok(&line,&model,1);
-            if (strcmp(model, "len") == 0) {
+            if ((strcmp(model, "length") == 0) || (strcmp(model, "len") == 0)) {
                 lenval = INPevaluate(&line,&error1,1);
                 lenvalgiven = 1;
             }
