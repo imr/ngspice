@@ -348,10 +348,9 @@ inp_subcktexpand(struct line *deck)
 	/* 'param' .meas statements can have dependencies on measurement values */
 	/* need to skip evaluating here and evaluate after other .meas statements */
         if ( ciprefix( ".meas", c->li_line ) ) {
-	  if ( !strstr( c->li_line, "param" ) ) nupa_eval( c->li_line, c->li_linenum);
+	  if ( !strstr( c->li_line, "param" ) ) nupa_eval( c->li_line, c->li_linenum, c->li_linenum_orig);
 	} else {
-	  /*ok = ok && nupa_eval( c->li_line, c->li_linenum);*/
-	  nupa_eval( c->li_line, c->li_linenum);
+	  nupa_eval( c->li_line, c->li_linenum, c->li_linenum_orig);
 	}
 	c= c->li_next;
       }

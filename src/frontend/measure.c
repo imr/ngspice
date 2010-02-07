@@ -343,7 +343,7 @@ do_measure(
     if ( just_chk_meas != TRUE ) fprintf( stdout, "%-20s=", resname );
 
     if ( just_chk_meas != TRUE ) {
-      ok = nupa_eval( meas_card->li_line, meas_card->li_linenum );
+      ok = nupa_eval( meas_card->li_line, meas_card->li_linenum, meas_card->li_linenum_orig );
 
       if ( ok ) {
         str_ptr = strstr( meas_card->li_line, meastype );

@@ -60,7 +60,7 @@ initkeys (void)
             "and or not div mod if else end while macro funct defined"
             " include for to downto is var");
   scopy_up (fmath,
-            "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh tanh ternary_fcn agauss");
+            "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh tanh ternary_fcn v agauss");
 }
 
 static double
@@ -140,8 +140,11 @@ message (tdico * dic, char *s)
    }
    if (dic->srcline >= 0)
    {
+      sadd (t, "Original line no.: ");
+      nadd (t, dic->oldline);
+      sadd (t, ", new internal line no.: ");
       nadd (t, dic->srcline);
-      sadd (t, ": ");
+      sadd (t, ":\n");
    }
    sadd (t, s);
    cadd (t, '\n');

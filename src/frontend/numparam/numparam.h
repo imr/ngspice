@@ -53,6 +53,7 @@ typedef struct _ttdico {
 /* the input scanner data structure */
   str80   srcfile; /* last piece of source file name */
   int   srcline;
+  int oldline;
   int   errcount;
 //  entry   dat[Maxdico+1];
   entry* dyndat;

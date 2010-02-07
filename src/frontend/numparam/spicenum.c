@@ -680,7 +680,7 @@ nupa_copy (char *s, int linenum)
 }
 
 int
-nupa_eval (char *s, int linenum)
+nupa_eval (char *s, int linenum, int orig_linenum)
 /* s points to a partially transformed line.
    compute variables if linenum points to a & or .param line.
    if ( the original is an X line,  compute actual params.;
@@ -695,14 +695,17 @@ nupa_eval (char *s, int linenum)
   unsigned char err = 1;
 
   dico->srcline = linenum;
+  dico->oldline = orig_linenum;
   c = dico->dyncategory[linenum];
 #ifdef TRACE_NUMPARAMS
   fprintf (stderr, "** SJB - in nupa_eval()\n");
   fprintf (stderr, "** SJB - processing line %3d: %s\n", linenum, s);
   fprintf (stderr, "** SJB - category '%c'\n", c);
 #endif /* TRACE_NUMPARAMS */
-  if (c == 'P')			/* evaluate parameters */
+  if (c == 'P')	{		/* evaluate parameters */
+//    err = nupa_substitute (dico, dico->dynrefptr[linenum], s, 0);
     nupa_assignment (dico, dico->dynrefptr[linenum], 'N');
+  }
   else if (c == 'B')		/* substitute braces line */
     err = nupa_substitute (dico, dico->dynrefptr[linenum], s, 0);
   else if (c == 'X')
