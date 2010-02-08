@@ -52,10 +52,10 @@ typedef struct TSI {
 
 /* memory info */
 struct sys_memory {
-   unsigned long int size_m;  /* Total memory size */
-   unsigned long int free_m;  /* Free memory */
-   unsigned long int swap_t;  /* Swap total */
-   unsigned long int swap_f;  /* Swap free */
+   long long size_m;  /* Total memory size */
+   long long free_m;  /* Free memory */
+   long long swap_t;  /* Swap total */
+   long long swap_f;  /* Swap free */
 };
 
 static struct sys_memory mem_t_act; 
@@ -65,7 +65,7 @@ static size_t get_sysmem(struct sys_memory *memall);
 
 /* Print to stream the given memory size in a human friendly format */
 static void
-fprintmem(FILE* stream, unsigned long int memory) {
+fprintmem(FILE* stream, long long memory) {
     if (memory > 1048576)
       fprintf(stream, "%8.6f MB", memory/1048576.);
     else if (memory > 1024) 
@@ -129,7 +129,7 @@ static size_t get_sysmem(struct sys_memory *memall) {
    char buffer[2048];
    size_t bytes_read;
    char *match;
-   long mem_got;
+   long long mem_got;
 
    if((fp = fopen("/proc/meminfo", "r")) == NULL) {
       perror("fopen(\"/proc/meminfo\")");
