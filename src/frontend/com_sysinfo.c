@@ -129,7 +129,7 @@ static size_t get_sysmem(struct sys_memory *memall) {
    char buffer[2048];
    size_t bytes_read;
    char *match;
-   int64 mem_got;
+   unsigned long mem_got;
 
    if((fp = fopen("/proc/meminfo", "r")) == NULL) {
       perror("fopen(\"/proc/meminfo\")");
