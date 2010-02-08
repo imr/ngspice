@@ -65,13 +65,13 @@ static size_t get_sysmem(struct sys_memory *memall);
 
 /* Print to stream the given memory size in a human friendly format */
 static void
-fprintmem(FILE* stream, long long memory) {
+fprintmem(FILE* stream, unsigned long long memory) {
     if (memory > 1048576)
       fprintf(stream, "%8.6f MB", memory/1048576.);
     else if (memory > 1024) 
       fprintf(stream, "%5.3f kB", memory/1024.);
     else
-      fprintf(stream, "%lu bytes", memory);
+      fprintf(stream, "%lu bytes", (unsigned long)memory);
 }
 
 
@@ -129,7 +129,7 @@ static size_t get_sysmem(struct sys_memory *memall) {
    char buffer[2048];
    size_t bytes_read;
    char *match;
-   long long mem_got;
+   int64 mem_got;
 
    if((fp = fopen("/proc/meminfo", "r")) == NULL) {
       perror("fopen(\"/proc/meminfo\")");
