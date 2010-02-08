@@ -1,5 +1,7 @@
 2010-02-08 Holger Vogt
  * com_sysinfo.c: 64 bit support enabled
+ * terminal.c, terminal.h, cpextern.h, ngsconvert.c, inpgmod.c, ipcsockets.c: patches by
+   R. Larice from Feb. 8th, 2010
 
 2010-02-07 Dietmar Warning
  * cpl/cplload.c, cplsetup.c, /txl/txlload.c, txlsetup.c, include/swec.h, multi_line.h,

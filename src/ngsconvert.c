@@ -442,7 +442,7 @@ int cp_evloop(char *s) { return (0); }
 void cp_ccon(bool o) { }
 char *if_errstring(int c) { return ("error"); }
 #ifndef out_printf
-void out_printf(char *fmt, int args) { }
+void out_printf(char *fmt, ...) { }
 #endif
 void out_send(char *string) {}
 struct variable * cp_enqvar(char *word) { return (NULL); }

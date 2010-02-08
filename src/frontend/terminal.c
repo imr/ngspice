@@ -9,7 +9,10 @@ $Id$
  * dependencies in here, and it isn't clear that versions of this stuff
  * can be written for every possible machine...
  */
+#include "ngspice.h"
 #include "config.h"
+
+#include <stdarg.h>
 
 #ifdef HAVE_SGTTY_H
 #include <sgtty.h>
@@ -248,18 +251,27 @@ out_send(char *string)
 /* Printf some stuff using more mode. */
 
 void
-out_printf(char *fmt, char *s1, char *s2, char *s3, char *s4, char *s5, char *s6, char *s7, char *s8, char *s9, char *s10)
+out_printf(char *fmt, ...)
 {
 #if defined(HAVE_ASPRINTF) /* seems the best solution */
     char * tbuf;
-    asprintf(&tbuf, fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+    va_list ap;
+    va_start (ap, fmt);
+    vasprintf(&tbuf, fmt, ap);
+    va_end (ap);
     out_send(tbuf);
     FREE(tbuf);
 #elif defined(HAVE_SNPRINTF) /* the second best */
-    snprintf(out_pbuf, sizeof(out_pbuf), fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+    va_list ap;
+    va_start (ap, fmt);
+    vsnprintf(out_pbuf, sizeof(out_pbuf), fmt, ap);
+    va_end (ap);
     out_send(out_pbuf);
 #else /* guaranteed a bug for long messages */
-    sprintf(out_pbuf, fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+    va_list ap;
+    va_start (ap, fmt);
+    vsprintf(out_pbuf, fmt, ap);
+    va_end (ap);
     out_send(out_pbuf);
 #endif
     return;
@@ -363,9 +375,12 @@ void tcap_init(void) {}
 void out_send(char *string) {fprintf(cp_out,string);}
 
 void
-out_printf(char *fmt, char *s1, char *s2, char *s3, char *s4, char *s5, 
-		char *s6, char *s7, char *s8, char *s9, char *s10) {
-	fprintf(cp_out,fmt, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10);
+out_printf(char *fmt, ...)
+{
+  va_list ap;
+  va_start (ap, fmt);
+  vfprintf(cp_out, fmt, ap);
+  va_end (ap);
 }
 
 #endif /* TCL_MODULE */

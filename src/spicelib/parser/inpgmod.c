@@ -367,7 +367,7 @@ INPparseNumMod( void* ckt, INPmodel *model, INPtables *tab, char **errMessage )
 		    if (cardType >= 0) {
 		        /* Add card structure to model */
 			info = INPcardTab[cardType];
-			error = (*(info->newCard))( (void *)&tmpCard,
+			error = (*(info->newCard))( (void **)&tmpCard,
 			        model->INPmodfast );
 			if (error) return(error);
 		    /* Handle parameter-less cards */

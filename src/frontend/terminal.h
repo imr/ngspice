@@ -7,9 +7,13 @@ void out_init(void);
 void outbufputc(void);
 void promptreturn(void);
 void out_send(char *string);
-void out_printf(char *fmt, char *s1, char *s2, char *s3,
-		char *s4, char *s5, char *s6, 
-		char *s7, char *s8, char *s9, char *s10);
+
+#ifdef __GNUC__
+extern void out_printf(char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+#else
+extern void out_printf(char *fmt, ...);
+#endif
+
 void  term_clear(void);
 void  term_home(void);
 void  term_cleol(void);

@@ -576,7 +576,7 @@ Ipc_Status_t ipc_transport_get_line (str, len, wait)
   /* we must get the body.                                                 */
 
   *len = message_length;
-  count = read_sock (msg_stream, str, message_length);
+  count = read_sock (msg_stream, str, message_length, IPC_WAIT, 0);
   if (count == 0) {
     /* EOF, will this ever happen? */
     /* fprintf (stderr,                                                    */
