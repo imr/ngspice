@@ -9,7 +9,13 @@ void promptreturn(void);
 void out_send(char *string);
 
 #ifdef __GNUC__
+#ifdef HAS_WINDOWS
+#undef printf
+#endif
 extern void out_printf(char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+#ifdef HAS_WINDOWS
+#define printf		p_r_i_n_t_f
+#endif
 #else
 extern void out_printf(char *fmt, ...);
 #endif
