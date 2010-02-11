@@ -134,13 +134,7 @@ extern void out_init();
 #ifndef out_printf
 /* don't want to declare it if we have #define'ed it */
 #ifdef __GNUC__
-#ifdef HAS_WINDOWS
-#undef printf
-#endif
-extern void out_printf(char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
-#ifdef HAS_WINDOWS
-#define printf		p_r_i_n_t_f
-#endif
+extern void out_printf(char *fmt, ...) __attribute__ ((format (__printf__, 1, 2)));
 #else
 extern void out_printf(char *fmt, ...);
 #endif
