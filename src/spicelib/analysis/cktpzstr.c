@@ -210,7 +210,7 @@ CKTpzFindZeros(CKTcircuit *ckt, PZtrial **rootinfo, int *rootcount)
 	clear_trials(ISAROOT);
 	*rootinfo = NULL;
 	*rootcount = 0;
-	ERROR(E_SHORT, "The input signal is shorted on the way to the output");
+	MERROR(E_SHORT, "The input signal is shorted on the way to the output");
     } else
 	clear_trials(0);
 
@@ -396,7 +396,7 @@ PZeval(int strat, PZtrial **set, PZtrial **new_trial_p)
 	break;
 
     default:
-	ERROR(E_PANIC, "Step type unkown");
+	MERROR(E_PANIC, "Step type unkown");
 	break;
     }
 

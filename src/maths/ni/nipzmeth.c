@@ -406,7 +406,7 @@ NIpzSym2(PZtrial **set, PZtrial *new)
 			new->s.real = (set[1]->s.real + b) / 2.0;
 		    }
 		} else
-		    ERROR(E_PANIC,"Lost numerical stability");
+		    MERROR(E_PANIC,"Lost numerical stability");
 	    } else {
 #ifdef PZDEBUG
 		DEBUG(1) fprintf(stderr, "@@@ take second (c)\n");

@@ -43,7 +43,7 @@
 #define NIL(type) ((type *)0) 
 #define ABORT() fflush(stderr);fflush(stdout);abort();
 
-#define ERROR(CODE,MESSAGE)	{			      \
+#define MERROR(CODE,MESSAGE)	{			      \
 	errMsg = (char *) tmalloc(strlen(MESSAGE) + 1);     \
 	strcpy(errMsg, (MESSAGE));			      \
 	return (CODE);					      \

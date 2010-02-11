@@ -1,5 +1,7 @@
 2010-02-11 Holger Vogt
  * terminal.h, cpextern.h: use format (__printf__, 1, 2)
+ * pzan.c, nipzmeth.c, cktpzstr.c, macros.h: remove conflicting macro definition
+  (MS Visual Studio) ERROR -> MERROR 
  
 2010-02-08 Holger Vogt
  * com_sysinfo.c: 64 bit support enabled
