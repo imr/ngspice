@@ -11,12 +11,12 @@
 #define BUG_ADDRESS		"ngspice-bugs@lists.sourceforge.net"
 #endif
 
-char	*Spice_Version = PACKAGE_VERSION;
-char	*Spice_Notice = "Please submit bug-reports to: " BUG_ADDRESS;
+char	Spice_Version[] = PACKAGE_VERSION;
+char	Spice_Notice[] = "Please submit bug-reports to: " BUG_ADDRESS;
 #ifndef _MSC_VER
-char	*Spice_Build_Date = NGSPICEBUILDDATE;
+char	Spice_Build_Date[] = NGSPICEBUILDDATE;
 #else
-char	*Spice_Build_Date = __DATE__"   "__TIME__;
+char	Spice_Build_Date[] = __DATE__"   "__TIME__;
 #endif
 
 char	*Spice_Exec_Dir	= NGSPICEBINDIR;
