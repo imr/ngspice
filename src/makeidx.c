@@ -14,9 +14,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #define BSIZE_SP  512
 
 int
-main(argc, argv)
-int argc;
-char *argv[];
+main(int argc, char **argv)
 {
 
     FILE *fp;

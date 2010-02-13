@@ -302,10 +302,8 @@ main(void) {
 }
 
 void
-getdata(vals,count,width) 
-    double vals[];
-    int count;
-    int width; /* maximum number of values to accept per line */
+getdata(double *vals, int count, int width) 
+ /* width: maximum number of values to accept per line */
 {
     int i;
     int error;

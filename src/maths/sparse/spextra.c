@@ -29,9 +29,7 @@
 
 
 void
-spConstMult(matrix, constant)
-	MatrixPtr	matrix;
-	double		constant;
+spConstMult(MatrixPtr matrix, double constant)
 {
 	ElementPtr	e;
 	int		i;

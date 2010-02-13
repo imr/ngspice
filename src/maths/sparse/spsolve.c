@@ -258,10 +258,7 @@ spSolve(void *eMatrix, RealVector RHS, RealVector Solution,
  */
 
 static void
-SolveComplexMatrix( Matrix, RHS, Solution , iRHS, iSolution )
-
-MatrixPtr  Matrix;
-RealVector  RHS, Solution , iRHS, iSolution;
+SolveComplexMatrix( MatrixPtr Matrix, RealVector RHS, RealVector Solution , RealVector iRHS, RealVector iSolution )
 {
     ElementPtr  pElement;
     ComplexVector  Intermediate;
@@ -537,10 +534,7 @@ spSolveTransposed(void *eMatrix, RealVector RHS, RealVector Solution,
  */
 
 static void
-SolveComplexTransposedMatrix(Matrix, RHS, Solution , iRHS, iSolution )
-
-MatrixPtr  Matrix;
-RealVector  RHS, Solution , iRHS, iSolution;
+SolveComplexTransposedMatrix(MatrixPtr Matrix, RealVector RHS, RealVector Solution , RealVector iRHS, RealVector iSolution )
 {
     ElementPtr  pElement;
     ComplexVector  Intermediate;

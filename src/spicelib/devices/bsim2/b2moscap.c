@@ -13,56 +13,44 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
  */
 
 void
-B2mosCap(ckt,vgd,vgs,vgb,
-	args,
-	/*
-	GateDrainOverlapCap,GateSourceOverlapCap, GateBulkOverlapCap,
-	capbd,capbs,
-        cggb,cgdb,cgsb,
-	*/
-	cbgb,cbdb,cbsb,cdgb,cddb,cdsb,
-        gcggbPointer,gcgdbPointer,gcgsbPointer,gcbgbPointer,gcbdbPointer,
-        gcbsbPointer,gcdgbPointer,gcddbPointer,gcdsbPointer,
-        gcsgbPointer,gcsdbPointer,gcssbPointer,qGatePointer,qBulkPointer,
-        qDrainPointer,qSourcePointer)
-    CKTcircuit *ckt;
-    double vgd;
-    double vgs;
-    double vgb;
-    double args[8];
-    /*
-    double GateDrainOverlapCap;
-    double GateSourceOverlapCap;
-    double GateBulkOverlapCap;
-    double capbd;
-    double capbs;
-    double cggb;
-    double cgdb;
-    double cgsb;
-    */
-    double cbgb;
-    double cbdb;
-    double cbsb;
-    double cdgb;
-    double cddb;
-    double cdsb;
-    double *gcggbPointer;
-    double *gcgdbPointer;
-    double *gcgsbPointer;
-    double *gcbgbPointer;
-    double *gcbdbPointer;
-    double *gcbsbPointer;
-    double *gcdgbPointer;
-    double *gcddbPointer;
-    double *gcdsbPointer;
-    double *gcsgbPointer;
-    double *gcsdbPointer;
-    double *gcssbPointer;
-    double *qGatePointer;
-    double *qBulkPointer;
-    double *qDrainPointer;
-    double *qSourcePointer;
-
+B2mosCap(
+    CKTcircuit *ckt,
+    double vgd,
+    double vgs,
+    double vgb,
+    double args[8],
+     /*
+    double GateDrainOverlapCap,
+    double GateSourceOverlapCap,
+    double GateBulkOverlapCap,
+    double capbd,
+    double capbs,
+    double cggb,
+    double cgdb,
+    double cgsb,
+     */
+    double cbgb,
+    double cbdb,
+    double cbsb,
+    double cdgb,
+    double cddb,
+    double cdsb,
+    double *gcggbPointer,
+    double *gcgdbPointer,
+    double *gcgsbPointer,
+    double *gcbgbPointer,
+    double *gcbdbPointer,
+    double *gcbsbPointer,
+    double *gcdgbPointer,
+    double *gcddbPointer,
+    double *gcdsbPointer,
+    double *gcsgbPointer,
+    double *gcsdbPointer,
+    double *gcssbPointer,
+    double *qGatePointer,
+    double *qBulkPointer,
+    double *qDrainPointer,
+    double *qSourcePointer)
 {
     double qgd;
     double qgs;

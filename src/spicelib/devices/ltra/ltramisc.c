@@ -21,9 +21,7 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 
 int
-LTRAquadInterp(t, t1, t2, t3, c1, c2, c3)
-  double t, t1, t2, t3;
-  double *c1, *c2, *c3;
+LTRAquadInterp(double t, double t1, double t2, double t3, double *c1, double *c2, double *c3)
 {
   double f1, f2, f3;
 
@@ -84,10 +82,7 @@ LTRAquadInterp(t, t1, t2, t3, c1, c2, c3)
 /* linear interpolation */
 
 int
-LTRAlinInterp(t, t1, t2, c1, c2)
-  double t, t1, t2;
-  double *c1, *c2;
-
+LTRAlinInterp(double t, double t1, double t2, double *c1, double *c2)
 {
   double temp;
 
@@ -117,8 +112,7 @@ LTRAlinInterp(t, t1, t2, c1, c2)
  */
 
 double
-intlinfunc(lolimit, hilimit, lovalue, hivalue, t1, t2)
-  double lolimit, hilimit, lovalue, hivalue, t1, t2;
+intlinfunc(double lolimit, double hilimit, double lovalue, double hivalue, double t1, double t2)
 {
   double width, m;
 
@@ -141,8 +135,7 @@ intlinfunc(lolimit, hilimit, lovalue, hivalue, t1, t2)
  */
 
 double
-twiceintlinfunc(lolimit, hilimit, otherlolimit, lovalue, hivalue, t1, t2)
-  double lolimit, hilimit, lovalue, hivalue, t1, t2, otherlolimit;
+twiceintlinfunc(double lolimit, double hilimit, double otherlolimit, double lovalue, double hivalue, double t1, double t2)
 {
   double width, m, dummy;
   double temp1, temp2, temp3;
@@ -171,9 +164,7 @@ twiceintlinfunc(lolimit, hilimit, otherlolimit, lovalue, hivalue, t1, t2)
  */
 
 double
-thriceintlinfunc(lolimit, hilimit, secondlolimit, thirdlolimit, lovalue,
-    hivalue, t1, t2)
-  double lolimit, hilimit, lovalue, hivalue, t1, t2, secondlolimit, thirdlolimit;
+thriceintlinfunc(double lolimit, double hilimit, double secondlolimit, double thirdlolimit, double lovalue, double hivalue, double t1, double t2)
 {
   double width, m, dummy;
   double temp1, temp2, temp3, temp4;
@@ -210,8 +201,7 @@ thriceintlinfunc(lolimit, hilimit, secondlolimit, thirdlolimit, lovalue,
  */
 
 double
-bessI0(x)
-  double x;
+bessI0(double x)
 {
   double ax, ans;
   double y;
@@ -232,8 +222,7 @@ bessI0(x)
 }
 
 double
-bessI1(x)
-  double x;
+bessI1(double x)
 {
   double ax, ans;
   double y;
@@ -255,8 +244,7 @@ bessI1(x)
 }
 
 double
-bessI1xOverX(x)
-  double x;
+bessI1xOverX(double x)
 {
   double ax, ans;
   double y;
@@ -280,9 +268,7 @@ bessI1xOverX(x)
 /* LTRArlcH1dashFunc - the first impulse response function */
 
 double
-LTRArlcH1dashFunc(time, T, alpha, beta)
-  double time, T, alpha, beta;
-
+LTRArlcH1dashFunc(double time, double T, double alpha, double beta)
 {
   double besselarg, exparg, returnval;
   /* T is not used in this function */
@@ -302,9 +288,7 @@ LTRArlcH1dashFunc(time, T, alpha, beta)
 }
 
 double
-LTRArlcH2Func(time, T, alpha, beta)
-  double time, T, alpha, beta;
-
+LTRArlcH2Func(double time, double T, double alpha, double beta)
 {
   double besselarg, exparg, returnval;
 
@@ -330,9 +314,7 @@ LTRArlcH2Func(time, T, alpha, beta)
 }
 
 double
-LTRArlcH3dashFunc(time, T, alpha, beta)
-  double time, T, alpha, beta;
-
+LTRArlcH3dashFunc(double time, double T, double alpha, double beta)
 {
   double exparg, besselarg, returnval;
 
@@ -364,8 +346,7 @@ LTRArlcH3dashFunc(time, T, alpha, beta)
  */
 
 double
-LTRArlcH1dashTwiceIntFunc(time, beta)
-  double time, beta;
+LTRArlcH1dashTwiceIntFunc(double time, double beta)
 {
   double arg, returnval;
 
@@ -390,9 +371,7 @@ LTRArlcH1dashTwiceIntFunc(time, beta)
  */
 
 double
-LTRArlcH3dashIntFunc(time, T, beta)
-  double time, T, beta;
-
+LTRArlcH3dashIntFunc(double time, double T, double beta)
 {
   double exparg, besselarg;
   double returnval;
@@ -409,8 +388,7 @@ LTRArlcH3dashIntFunc(time, T, beta)
 
 
 double
-LTRArcH1dashTwiceIntFunc(time, cbyr)
-  double time, cbyr;
+LTRArcH1dashTwiceIntFunc(double time, double cbyr)
 {
 
   return (sqrt(4 * cbyr * time / M_PI));
@@ -420,8 +398,7 @@ LTRArcH1dashTwiceIntFunc(time, cbyr)
 
 
 double
-LTRArcH2TwiceIntFunc(time, rclsqr)
-  double time, rclsqr;
+LTRArcH2TwiceIntFunc(double time, double rclsqr)
 {
   double temp;
 
@@ -436,8 +413,7 @@ LTRArcH2TwiceIntFunc(time, rclsqr)
 
 
 double
-LTRArcH3dashTwiceIntFunc(time, cbyr, rclsqr)
-  double time, cbyr, rclsqr;
+LTRArcH3dashTwiceIntFunc(double time, double cbyr, double rclsqr)
 {
   double temp;
 
@@ -457,12 +433,9 @@ LTRArcH3dashTwiceIntFunc(time, cbyr, rclsqr)
  */
 
 void
-LTRArcCoeffsSetup(h1dashfirstcoeff, h2firstcoeff, h3dashfirstcoeff, h1dashcoeffs, h2coeffs, h3dashcoeffs, listsize, cbyr, rclsqr, curtime, timelist, timeindex, reltol)
-  double *h1dashcoeffs, *h2coeffs, *h3dashcoeffs, *timelist;
-  int listsize, timeindex;
-  double cbyr, rclsqr, curtime, *h1dashfirstcoeff, *h2firstcoeff, *h3dashfirstcoeff;
-  double reltol;
-
+LTRArcCoeffsSetup(double *h1dashfirstcoeff, double *h2firstcoeff, double *h3dashfirstcoeff, double *h1dashcoeffs,
+                  double *h2coeffs, double *h3dashcoeffs, int listsize, double cbyr,
+                  double rclsqr, double curtime, double *timelist, int timeindex, double reltol)
 {
   double delta1, delta2;
   double h1dummy1, h1dummy2;
@@ -593,11 +566,9 @@ LTRArcCoeffsSetup(h1dashfirstcoeff, h2firstcoeff, h3dashfirstcoeff, h1dashcoeffs
 }
 
 void
-LTRArlcCoeffsSetup(h1dashfirstcoeff, h2firstcoeff, h3dashfirstcoeff, h1dashcoeffs, h2coeffs, h3dashcoeffs, listsize, T, alpha, beta, curtime, timelist, timeindex, reltol, auxindexptr)
-  double *h1dashfirstcoeff, *h2firstcoeff, *h3dashfirstcoeff;
-  double *h1dashcoeffs, *h2coeffs, *h3dashcoeffs, *timelist;
-  double T, alpha, beta, curtime, reltol;
-  int listsize, timeindex, *auxindexptr;
+LTRArlcCoeffsSetup(double *h1dashfirstcoeff, double *h2firstcoeff, double *h3dashfirstcoeff, double *h1dashcoeffs, double *h2coeffs,
+                   double *h3dashcoeffs, int listsize, double T, double alpha, double beta, double curtime, double *timelist, int timeindex, double reltol, int *auxindexptr)
+
 {
   unsigned exact;
   double lolimit1, lolimit2 = 0.0, hilimit1, hilimit2 = 0.0;
@@ -803,9 +774,7 @@ LTRArlcCoeffsSetup(h1dashfirstcoeff, h2firstcoeff, h3dashfirstcoeff, h1dashcoeff
  */
 
 int
-LTRAstraightLineCheck(x1, y1, x2, y2, x3, y3, reltol, abstol)
-  double x1, y1, x2, y2, x3, y3, reltol, abstol;
-
+LTRAstraightLineCheck(double x1, double y1, double x2, double y2, double x3, double y3, double reltol, double abstol)
 {
   /*
    * double asqr, bsqr, csqr, c, c1sqr; double htsqr;
@@ -854,11 +823,7 @@ LTRAstraightLineCheck(x1, y1, x2, y2, x3, y3, reltol, abstol)
 
 
 double
-LTRAlteCalculate(ckt, genmodel, geninstance, curtime)
-  CKTcircuit *ckt;
-  GENmodel *genmodel;
-  GENinstance *geninstance;
-  double curtime;
+LTRAlteCalculate(CKTcircuit *ckt, GENmodel *genmodel, GENinstance *geninstance, double curtime)
 {
   LTRAmodel *model = (LTRAmodel *) genmodel;
   LTRAinstance *instance = (LTRAinstance *) geninstance;

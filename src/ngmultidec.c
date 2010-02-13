@@ -22,9 +22,7 @@ extern double phi();
 extern void spErrorMessage(char*, FILE*, char*);
 
 int
- main (argc, argv)
- int argc;
- char **argv;
+main (int argc, char **argv)
 {
   int ch;
   int errflg=0,i,j;
@@ -343,8 +341,7 @@ int
 }
 
 void
-usage(argv)
-char **argv;
+usage(char **argv)
 {
 
 fprintf(stderr,"Purpose: make subckt. for coupled lines using uncoupled simple lossy lines\n");
@@ -362,10 +359,7 @@ fflush(stderr);
 }
 
 void
-comments(r,l,g,c,ctot,cm,lm,k,name,num,len)
-double r,l,g,c,ctot,cm,lm,k,len;
-char *name;
-int num;
+comments(double r,double l,double g,double c,double ctot,double cm,double lm,double k,char *name,int num, double len)
 {
 
 fprintf(stdout,"* Subcircuit %s\n",name);
@@ -401,9 +395,7 @@ fflush(stdout);
 }
 
 double 
-phi(i,arg)
-	int i;
-	double arg;
+phi(int i, double arg)
 {
 	double	rval;
 

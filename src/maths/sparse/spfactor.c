@@ -453,9 +453,7 @@ spFactor(void *eMatrix)
  */
 
 static int
-FactorComplexMatrix( Matrix )
-
-MatrixPtr  Matrix;
+FactorComplexMatrix( MatrixPtr Matrix )
 {
      ElementPtr  pElement;
      ElementPtr  pColumn;
@@ -737,9 +735,7 @@ spPartition(void *eMatrix, int Mode)
  */
 
 void
-spcCreateInternalVectors( Matrix )
-
-MatrixPtr  Matrix;
+spcCreateInternalVectors( MatrixPtr Matrix )
 {
     int  Size;
 
@@ -923,7 +919,7 @@ MarkowitzProducts(MatrixPtr Matrix, int Step)
             if (fProduct >= LARGEST_LONG_INTEGER)
                 *pMarkowitzProduct++ = LARGEST_LONG_INTEGER;
             else
-                *pMarkowitzProduct++ = fProduct;
+                *pMarkowitzProduct++ = (long)fProduct;
         } else {
 	    Product = *pMarkowitzRow++ * *pMarkowitzCol++;
             if ((*pMarkowitzProduct++ = Product) == 0)
@@ -983,10 +979,7 @@ MarkowitzProducts(MatrixPtr Matrix, int Step)
  */
 
 static ElementPtr
-SearchForPivot( Matrix, Step, DiagPivoting )
-
-MatrixPtr Matrix;
-int Step, DiagPivoting;
+SearchForPivot( MatrixPtr Matrix, int Step, int DiagPivoting )
 {
 ElementPtr  ChosenPivot;
 ElementPtr  SearchForSingleton();
@@ -1088,10 +1081,7 @@ ElementPtr  SearchEntireMatrix();
  */
 
 static ElementPtr
-SearchForSingleton( Matrix, Step )
-
-MatrixPtr Matrix;
-int Step;
+SearchForSingleton( MatrixPtr Matrix, int Step )
 {
  ElementPtr  ChosenPivot;
  int  I;
@@ -1318,10 +1308,7 @@ RealNumber  PivotMag, FindBiggestInColExclude();
  */
 
 static ElementPtr
-QuicklySearchDiagonal( Matrix, Step )
-
-MatrixPtr Matrix;
-int Step;
+QuicklySearchDiagonal( MatrixPtr Matrix, int Step )
 {
 long  MinMarkowitzProduct, *pMarkowitzProduct;
  ElementPtr  pDiag, pOtherInRow, pOtherInCol;
@@ -1527,10 +1514,7 @@ RealNumber  FindBiggestInColExclude();
  */
 
 static ElementPtr
-QuicklySearchDiagonal( Matrix, Step )
-
-MatrixPtr Matrix;
-int Step;
+QuicklySearchDiagonal( MatrixPtr Matrix, int Step )
 {
 long  MinMarkowitzProduct, *pMarkowitzProduct;
  ElementPtr  pDiag;
@@ -1700,10 +1684,7 @@ RealNumber  FindBiggestInColExclude();
  */
 
 static ElementPtr
-SearchDiagonal( Matrix, Step )
-
-MatrixPtr Matrix;
-int Step;
+SearchDiagonal( MatrixPtr Matrix, int Step )
 {
     int  J;
     long  MinMarkowitzProduct, *pMarkowitzProduct;
@@ -1835,10 +1816,7 @@ int Step;
  */
 
 static ElementPtr
-SearchEntireMatrix( Matrix, Step )
-
-MatrixPtr Matrix;
-int Step;
+SearchEntireMatrix( MatrixPtr Matrix, int Step )
 {
     int  I, Size = Matrix->Size;
     ElementPtr  pElement;
@@ -1967,9 +1945,7 @@ int Step;
  *      The magnitude of the currently active element.  */
 
 static RealNumber
-FindLargestInCol( pElement )
-
- ElementPtr  pElement;
+FindLargestInCol( ElementPtr pElement )
 {
     RealNumber  Magnitude, Largest = 0.0;
 
@@ -2034,11 +2010,7 @@ FindLargestInCol( pElement )
  */
 
 static RealNumber
-FindBiggestInColExclude( Matrix, pElement, Step )
-
-MatrixPtr Matrix;
- ElementPtr  pElement;
- int Step;
+FindBiggestInColExclude( MatrixPtr Matrix, ElementPtr pElement, int Step )
 {
  int  Row;
 int  Col;
@@ -2113,11 +2085,7 @@ RealNumber  Largest, Magnitude;
  */
 
 static void
-ExchangeRowsAndCols( Matrix, pPivot, Step )
-
-MatrixPtr Matrix;
-ElementPtr  pPivot;
-int Step;
+ExchangeRowsAndCols( MatrixPtr Matrix, ElementPtr pPivot, int Step )
 {
  int   Row, Col;
 long  OldMarkowitzProd_Step, OldMarkowitzProd_Row, OldMarkowitzProd_Col;
@@ -2250,10 +2218,7 @@ ElementPtr spcFindElementInCol();
  */
 
 void
-spcRowExchange( Matrix, Row1, Row2 )
-
-MatrixPtr Matrix;
-int  Row1, Row2;
+spcRowExchange( MatrixPtr Matrix, int Row1, int Row2 )
 {
  ElementPtr  Row1Ptr, Row2Ptr;
 int  Column;
@@ -2357,10 +2322,7 @@ ElementPtr  Element1, Element2;
  */
 
 void
-spcColExchange( Matrix, Col1, Col2 )
-
-MatrixPtr Matrix;
-int  Col1, Col2;
+spcColExchange( MatrixPtr Matrix, int Col1, int Col2 )
 {
  ElementPtr  Col1Ptr, Col2Ptr;
 int  Row;
@@ -2469,11 +2431,7 @@ ElementPtr  Element1, Element2;
  */
 
 static void
-ExchangeColElements( Matrix, Row1, Element1, Row2, Element2, Column )
-
-MatrixPtr Matrix;
- ElementPtr  Element1, Element2;
-int  Row1, Row2, Column;
+ExchangeColElements( MatrixPtr Matrix, int Row1, ElementPtr Element1, int Row2, ElementPtr Element2, int Column )
 {
 ElementPtr  *ElementAboveRow1, *ElementAboveRow2;
 ElementPtr  ElementBelowRow1, ElementBelowRow2;
@@ -2617,11 +2575,7 @@ ElementPtr  ElementBelowRow1, ElementBelowRow2;
  */
 
 static void
-ExchangeRowElements( Matrix, Col1, Element1, Col2, Element2, Row )
-
-MatrixPtr Matrix;
-int  Col1, Col2, Row;
-ElementPtr  Element1, Element2;
+ExchangeRowElements( MatrixPtr Matrix, int Col1, ElementPtr Element1, int Col2, ElementPtr Element2, int Row )
 {
 ElementPtr  *ElementLeftOfCol1, *ElementLeftOfCol2;
 ElementPtr  ElementRightOfCol1, ElementRightOfCol2;
@@ -2758,10 +2712,7 @@ ElementPtr  ElementRightOfCol1, ElementRightOfCol2;
  */
 
 static void
-RealRowColElimination( Matrix, pPivot )
-
-MatrixPtr Matrix;
- ElementPtr  pPivot;
+RealRowColElimination( MatrixPtr Matrix, ElementPtr pPivot )
 {
     ElementPtr  pSub;
     int  Row;
@@ -2849,10 +2800,7 @@ MatrixPtr Matrix;
  */
 
 static void
-ComplexRowColElimination( Matrix, pPivot )
-
-MatrixPtr Matrix;
- ElementPtr  pPivot;
+ComplexRowColElimination( MatrixPtr Matrix, ElementPtr pPivot )
 {
     ElementPtr  pSub;
     int  Row;
@@ -2935,10 +2883,7 @@ MatrixPtr Matrix;
  */
 
 static void
-UpdateMarkowitzNumbers( Matrix, pPivot )
-
-MatrixPtr Matrix;
-ElementPtr  pPivot;
+UpdateMarkowitzNumbers( MatrixPtr Matrix, ElementPtr pPivot )
 {
     int  Row, Col;
     ElementPtr  ColPtr, RowPtr;
@@ -2962,7 +2907,7 @@ ElementPtr  pPivot;
             if (Product >= LARGEST_LONG_INTEGER)
                 Matrix->MarkowitzProd[Row] = LARGEST_LONG_INTEGER;
             else
-                Matrix->MarkowitzProd[Row] = Product;
+                Matrix->MarkowitzProd[Row] = (long)Product;
         }
         else Matrix->MarkowitzProd[Row] = MarkoRow[Row] * MarkoCol[Row];
         if (MarkoRow[Row] == 0)
@@ -2982,7 +2927,7 @@ ElementPtr  pPivot;
             if (Product >= LARGEST_LONG_INTEGER)
                 Matrix->MarkowitzProd[Col] = LARGEST_LONG_INTEGER;
             else
-                Matrix->MarkowitzProd[Col] = Product;
+                Matrix->MarkowitzProd[Col] = (long)Product;
         }
         else Matrix->MarkowitzProd[Col] = MarkoRow[Col] * MarkoCol[Col];
         if ((MarkoCol[Col] == 0) && (MarkoRow[Col] != 0))
@@ -3028,11 +2973,7 @@ ElementPtr  pPivot;
  */
 
 static ElementPtr
-CreateFillin( Matrix, Row, Col )
-
-MatrixPtr Matrix;
-int  Row;
-int  Col;
+CreateFillin( MatrixPtr Matrix, int Row, int Col )
 {
  ElementPtr  pElement, *ppElementAbove;
 ElementPtr  spcCreateElement();
@@ -3092,10 +3033,7 @@ ElementPtr  spcCreateElement();
  */
 
 static int
-MatrixIsSingular( Matrix, Step )
-
-MatrixPtr  Matrix;
-int  Step;
+MatrixIsSingular( MatrixPtr Matrix, int Step )
 {
  /* Begin `MatrixIsSingular'. */
 
@@ -3106,10 +3044,7 @@ int  Step;
 
 
 static int
-ZeroPivot( Matrix, Step )
-
-MatrixPtr  Matrix;
-int  Step;
+ZeroPivot( MatrixPtr Matrix, int Step )
 {
  /* Begin `ZeroPivot'. */
 
@@ -3133,10 +3068,7 @@ int  Step;
  */
 
 static void
-WriteStatus( Matrix, Step )
-
-MatrixPtr Matrix;
-int Step;
+WriteStatus( MatrixPtr Matrix, int Step )
 {
 int  I;
 

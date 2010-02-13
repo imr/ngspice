@@ -75,7 +75,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     double ibcphat;
     double iccphat;
     double ceq, geq, rhs_current;
-    int icheck;
+    int icheck = 0;
     int ichk1, ichk2, ichk3, ichk4, ichk5;
     int error;
     int SenCond=0;
@@ -1260,30 +1260,19 @@ c           Stamp element: Rs
     return(OK);
 }
 
-int vbic_4T_it_cf_fj(p
-	,Vbei,Vbex,Vbci,Vbep,Vbcp,Vrcx
-	,Vbcx,Vrci,Vrbx,Vrbi,Vre,Vrbp,Vrs
-	,Vbe,Vbc,Ibe,Ibe_Vbei,Ibex,Ibex_Vbex,Itzf
-	,Itzf_Vbei,Itzf_Vbci,Itzr,Itzr_Vbci,Itzr_Vbei,Ibc,Ibc_Vbci
-	,Ibc_Vbei,Ibep,Ibep_Vbep,Ircx,Ircx_Vrcx,Irci,Irci_Vrci
-	,Irci_Vbci,Irci_Vbcx,Irbx,Irbx_Vrbx,Irbi,Irbi_Vrbi,Irbi_Vbei
-	,Irbi_Vbci,Ire,Ire_Vre,Irbp,Irbp_Vrbp,Irbp_Vbep,Irbp_Vbci
-	,Qbe,Qbe_Vbei,Qbe_Vbci,Qbex,Qbex_Vbex,Qbc,Qbc_Vbci
-	,Qbcx,Qbcx_Vbcx,Qbep,Qbep_Vbep,Qbep_Vbci,Qbeo,Qbeo_Vbe
-	,Qbco,Qbco_Vbc,Ibcp,Ibcp_Vbcp,Iccp,Iccp_Vbep,Iccp_Vbci
-	,Iccp_Vbcp,Irs,Irs_Vrs,Qbcp,Qbcp_Vbcp,SCALE)
-double *p
-	,*Vbei,*Vbex,*Vbci,*Vbep,*Vbcp,*Vrcx
-	,*Vbcx,*Vrci,*Vrbx,*Vrbi,*Vre,*Vrbp,*Vrs
-	,*Vbe,*Vbc,*Ibe,*Ibe_Vbei,*Ibex,*Ibex_Vbex,*Itzf
-	,*Itzf_Vbei,*Itzf_Vbci,*Itzr,*Itzr_Vbci,*Itzr_Vbei,*Ibc,*Ibc_Vbci
-	,*Ibc_Vbei,*Ibep,*Ibep_Vbep,*Ircx,*Ircx_Vrcx,*Irci,*Irci_Vrci
-	,*Irci_Vbci,*Irci_Vbcx,*Irbx,*Irbx_Vrbx,*Irbi,*Irbi_Vrbi,*Irbi_Vbei
-	,*Irbi_Vbci,*Ire,*Ire_Vre,*Irbp,*Irbp_Vrbp,*Irbp_Vbep,*Irbp_Vbci
-	,*Qbe,*Qbe_Vbei,*Qbe_Vbci,*Qbex,*Qbex_Vbex,*Qbc,*Qbc_Vbci
-	,*Qbcx,*Qbcx_Vbcx,*Qbep,*Qbep_Vbep,*Qbep_Vbci,*Qbeo,*Qbeo_Vbe
-	,*Qbco,*Qbco_Vbc,*Ibcp,*Ibcp_Vbcp,*Iccp,*Iccp_Vbep,*Iccp_Vbci
-	,*Iccp_Vbcp,*Irs,*Irs_Vrs,*Qbcp,*Qbcp_Vbcp,*SCALE;
+int vbic_4T_it_cf_fj(
+        double *p
+	, double *Vbei, double *Vbex, double *Vbci, double *Vbep, double *Vbcp, double *Vrcx
+	, double *Vbcx, double *Vrci, double *Vrbx, double *Vrbi, double *Vre, double *Vrbp, double *Vrs
+	, double *Vbe, double *Vbc, double *Ibe, double *Ibe_Vbei, double *Ibex, double *Ibex_Vbex, double *Itzf
+	, double *Itzf_Vbei, double *Itzf_Vbci, double *Itzr, double *Itzr_Vbci, double *Itzr_Vbei, double *Ibc, double *Ibc_Vbci
+	, double *Ibc_Vbei, double *Ibep, double *Ibep_Vbep, double *Ircx, double *Ircx_Vrcx, double *Irci, double *Irci_Vrci
+	, double *Irci_Vbci, double *Irci_Vbcx, double *Irbx, double *Irbx_Vrbx, double *Irbi, double *Irbi_Vrbi, double *Irbi_Vbei
+	, double *Irbi_Vbci, double *Ire, double *Ire_Vre, double *Irbp, double *Irbp_Vrbp, double *Irbp_Vbep, double *Irbp_Vbci
+	, double *Qbe, double *Qbe_Vbei, double *Qbe_Vbci, double *Qbex, double *Qbex_Vbex, double *Qbc, double *Qbc_Vbci
+	, double *Qbcx, double *Qbcx_Vbcx, double *Qbep, double *Qbep_Vbep, double *Qbep_Vbci, double *Qbeo, double *Qbeo_Vbe
+	, double *Qbco, double *Qbco_Vbc, double *Ibcp, double *Ibcp_Vbcp, double *Iccp, double *Iccp_Vbep, double *Iccp_Vbci
+    , double *Iccp_Vbcp, double *Irs, double *Irs_Vrs, double *Qbcp, double *Qbcp_Vbcp, double *SCALE)
 {
 double	Vtv,IVEF,IVER,IIKF,IIKR,IIKP,IVO;
 double	IHRCF,IVTF,IITF,slTF,dv0,dvh,dvh_Vbei;

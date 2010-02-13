@@ -658,17 +658,16 @@ add_new_vi(CPLinstance *here, CKTcircuit *ckt, int time)
 
 
 static int
-get_pvs_vi(t1, t2, cp, v1_i, v2_i, i1_i, i2_i, v1_o, v2_o, i1_o, i2_o)
-   CPLine *cp;
-   int t1, t2;
-   double v1_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES];
-   double v2_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES];
-   double i1_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES];
-   double i2_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES];
-   double v1_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES];
-   double v2_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES];
-   double i1_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES];
-   double i2_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES];
+get_pvs_vi(int t1, int t2,
+   CPLine *cp,
+   double v1_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+   double v2_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+   double i1_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+   double i2_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+   double v1_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+   double v2_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+   double i1_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+   double i2_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES])
 {
    double ta[MAX_CP_TX_LINES], tb[MAX_CP_TX_LINES];
    VI_list *vi,	*vi1;

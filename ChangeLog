@@ -1,7 +1,8 @@
 2010-02-13 Holger Vogt
  * icm/dllmain.c, evtload.c, ngspice.h, terminal.c, evaluate.c, twomesh.c, 
    tclspice.c, conf.h, conf.c: patches by R. Larice 100213
-   
+ * K&R -> ANSI patches by R. Larice 100103
+ 
 2010-02-11 Holger Vogt
  * terminal.h, cpextern.h: use format (__printf__, 1, 2)
  * pzan.c, nipzmeth.c, cktpzstr.c, macros.h: remove conflicting macro definition

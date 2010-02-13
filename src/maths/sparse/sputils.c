@@ -242,11 +242,7 @@ spMNA_Preorder(void *eMatrix)
  */
 
 static int
-CountTwins( Matrix, Col, ppTwin1, ppTwin2 )
-
-MatrixPtr Matrix;
-int Col;
-ElementPtr *ppTwin1, *ppTwin2;
+CountTwins( MatrixPtr Matrix, int Col, ElementPtr *ppTwin1, ElementPtr *ppTwin2 )
 {
     int Row, Twins = 0;
     ElementPtr pTwin1, pTwin2;
@@ -286,10 +282,7 @@ ElementPtr *ppTwin1, *ppTwin2;
  */
 
 static void
-SwapCols( Matrix, pTwin1, pTwin2 )
-
-MatrixPtr Matrix;
-ElementPtr pTwin1, pTwin2;
+SwapCols( MatrixPtr Matrix, ElementPtr pTwin1, ElementPtr pTwin2 )
 {
     int Col1 = pTwin1->Col, Col2 = pTwin2->Col;
 
@@ -657,10 +650,7 @@ spMultiply(void *eMatrix, RealVector RHS, RealVector Solution,
  */
 
 static void
-ComplexMatrixMultiply( Matrix, RHS, Solution , iRHS, iSolution )
-
-MatrixPtr  Matrix;
-RealVector RHS, Solution , iRHS, iSolution;
+ComplexMatrixMultiply( MatrixPtr Matrix, RealVector RHS, RealVector Solution , RealVector iRHS, RealVector iSolution )
 {
     ElementPtr  pElement;
     ComplexVector  Vector;
@@ -805,10 +795,7 @@ spMultTransposed(void *eMatrix, RealVector RHS, RealVector Solution,
  */
 
 static void
-ComplexTransposedMatrixMultiply( Matrix, RHS, Solution , iRHS, iSolution )
-
-MatrixPtr  Matrix;
-RealVector RHS, Solution , iRHS, iSolution;
+ComplexTransposedMatrixMultiply( MatrixPtr Matrix, RealVector RHS, RealVector Solution , RealVector iRHS, RealVector iSolution )
 {
     ElementPtr  pElement;
     ComplexVector  Vector;
@@ -2176,10 +2163,7 @@ RealNumber Rho;
  */
 
 void
-spErrorMessage( eMatrix, Stream, Originator )
-
-char *eMatrix, *Originator;
-FILE *Stream;
+spErrorMessage( char *eMatrix, FILE *Stream, char *Originator )
 {
     int Row, Col, Error;
 
