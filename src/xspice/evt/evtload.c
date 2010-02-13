@@ -325,17 +325,12 @@ static void EVTcreate_state(
     CKTcircuit  *ckt,         /* The circuit structure */
     int         inst_index)   /* The instance to create state for */
 {
-    int                 i;
     int                 total_size;
 
     Evt_State_Data_t    *state_data;
 
     Evt_State_t         *new_state;
     Evt_State_t         *prev_state;
-
-    char                *from;
-    char                *to;
-
 
     /* Get variables for fast access */
     state_data = ckt->evt->data.state;
@@ -369,10 +364,7 @@ static void EVTcreate_state(
     state_data->tail[inst_index] = &(prev_state->next);
 
     /* Copy the old state to the new state and set the step */
-    from = prev_state->block;
-    to = new_state->block;
-    for(i = 0; i < total_size; i++)
-        to[i] = from[i];
+    memcpy(new_state->block, prev_state->block, total_size);
     new_state->step = g_mif_info.circuit.evt_step;
 
     /* Mark that the state data on the instance has been modified */

@@ -41,7 +41,6 @@ $Id$
 #include <ncurses/termcap.h>
 #endif
 
-#include "ngspice.h"
 #include <cpdefs.h>
 
 #include "variable.h"

@@ -369,14 +369,14 @@ void free_pj(void *ptr) {
 	(coreitf->dllitf_free_pj)(ptr);
 }
 
-char * tmalloc(int s) {
+void * tmalloc(size_t s) {
 	return (coreitf->dllitf_tmalloc)(s);
 }
 
-char * trealloc(char *ptr, int s) {
+void * trealloc(void *ptr, size_t s) {
 	return (coreitf->dllitf_trealloc)(ptr,s);
 }
 
-void txfree(char *ptr) {
+void txfree(void *ptr) {
 	(coreitf->dllitf_txfree)(ptr);
 }

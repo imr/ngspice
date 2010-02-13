@@ -101,34 +101,34 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
 	interiorNode = TRUE;
 	if (xIndex > 1) {
 	  pNode1 = nodeArray[xIndex - 1][yIndex];
-	  if (pNode1->nodeType != NULL
+	  if (pNode1->nodeType != 0
 	      && pNode1->nodeType != CONTACT) {
 	    interiorNode = FALSE;
 	  }
 	}
 	if (interiorNode && xIndex < numXNodes) {
 	  pNode1 = nodeArray[xIndex + 1][yIndex];
-	  if (pNode1->nodeType != NULL
+	  if (pNode1->nodeType != 0
 	      && pNode1->nodeType != CONTACT) {
 	    interiorNode = FALSE;
 	  }
 	}
 	if (interiorNode && yIndex > 1) {
 	  pNode1 = nodeArray[xIndex][yIndex - 1];
-	  if (pNode1->nodeType != NULL
+	  if (pNode1->nodeType != 0
 	      && pNode1->nodeType != CONTACT) {
 	    interiorNode = FALSE;
 	  }
 	}
 	if (interiorNode && yIndex < numYNodes) {
 	  pNode1 = nodeArray[xIndex][yIndex + 1];
-	  if (pNode1->nodeType != NULL
+	  if (pNode1->nodeType != 0
 	      && pNode1->nodeType != CONTACT) {
 	    interiorNode = FALSE;
 	  }
 	}
 	if (interiorNode) {
-	  pNode->nodeType = NULL;
+	  pNode->nodeType = 0;
 	}
       }
     }
@@ -139,7 +139,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   for (yIndex = 1; yIndex <= numYNodes; yIndex++) {
     for (xIndex = 1; xIndex <= numXNodes; xIndex++) {
       pNode = nodeArray[xIndex][yIndex];
-      if (pNode->nodeType == NULL) {
+      if (pNode->nodeType == 0) {
 	/* This node doesn't belong to a domain so delete it. */
 	nodeArray[xIndex][yIndex] = NIL(TWOnode);
 	FREE(pNode);

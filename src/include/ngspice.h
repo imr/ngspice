@@ -13,7 +13,9 @@
  * This file will eventually replace spice.h and lots of other 
  * files in src/include
  */
-#define _GNU_SOURCE
+#ifndef _GNU_SOURCE
+#  define _GNU_SOURCE
+#endif
 
 #include "config.h"
 #include <stddef.h>

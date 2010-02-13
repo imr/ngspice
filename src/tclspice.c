@@ -86,8 +86,6 @@ typedef pthread_t threadId_t;
     #include <unistd.h> /* usleep */
 #endif /* __MINGW32__ */
 
-#define _GNU_SOURCE
-
 #include <iferrmsg.h>
 #include <ftedefs.h>
 #include <devdefs.h>
