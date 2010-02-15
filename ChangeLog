@@ -1,3 +1,8 @@
+2010-02-15 Holger Vogt
+ * getopt_bsd.h, resask.c, optionssc.c: LF line endings
+ * evttermi.c: #include <strings.h> removed (is in ngspice.h)
+ * wdisp/makedefs, visualc/include/strings.h: removed
+
 2010-02-13 Holger Vogt
  * icm/dllmain.c, evtload.c, ngspice.h, terminal.c, evaluate.c, twomesh.c, 
    tclspice.c, conf.h, conf.c: patches by R. Larice 100213
