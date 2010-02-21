@@ -1,4 +1,5 @@
-/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
+/***  B4SOI 12/31/2009 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2009 Regents of the University of California.  All rights reserved.
@@ -9,6 +10,8 @@
  * File: b4soipar.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
+ * Modified by Tanvir Morshed 09/22/2009
+ * Modified by Tanvir Morshed 12/31/2009
  **********/
 
 #include "ngspice.h"
@@ -208,15 +211,19 @@ IFvalue *select)
                 case 5:
                     here->B4SOIicVPS = *(value->v.vec.rVec+4);
                     here->B4SOIicVPSGiven = TRUE;
+					break; /* v4.2 bugfix */
                 case 4:
                     here->B4SOIicVES = *(value->v.vec.rVec+3);
                     here->B4SOIicVESGiven = TRUE;
+					break; /* v4.2 bugfix */
                 case 3:
                     here->B4SOIicVBS = *(value->v.vec.rVec+2);
                     here->B4SOIicVBSGiven = TRUE;
+					break; /* v4.2 bugfix */
                 case 2:
                     here->B4SOIicVGS = *(value->v.vec.rVec+1);
                     here->B4SOIicVGSGiven = TRUE;
+					break; /* v4.2 bugfix */
                 case 1:
                     here->B4SOIicVDS = *(value->v.vec.rVec);
                     here->B4SOIicVDSGiven = TRUE;

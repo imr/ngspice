@@ -1,4 +1,5 @@
-/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
+/***  B4SOI 12/31/2009 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2009 Regents of the University of California.  All rights reserved.
@@ -9,6 +10,8 @@
  * File: b4soiset.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
+ * Modified by Tanvir Morshed 09/22/2009
+ * Modified by Tanvir Morshed 12/31/2009
  **********/
 
 #include "ngspice.h"
@@ -61,11 +64,14 @@ double Vbs0t, Qsi;
             model->B4SOIparamChk = 0;
         if (!model->B4SOIcapModGiven) 
             model->B4SOIcapMod = 2;
+		if (!model->B4SOIiiiModGiven) 					/* Bug fix #7 Jun 09 'iiimod' with default value added */
+            model->B4SOIiiiMod = 0;	
 			
 		if (!model->B4SOImtrlModGiven)
             model->B4SOImtrlMod = 0; /*4.1*/
 		if (!model->B4SOIvgstcvModGiven)
-            model->B4SOIvgstcvMod = 0; 
+            /*model->B4SOIvgstcvMod = 0;				v4.2 Bugfix */
+			model->B4SOIvgstcvMod = 1;			
 		if (!model->B4SOIgidlModGiven)
             model->B4SOIgidlMod = 0;			
 		if (!model->B4SOIeotGiven)
@@ -307,7 +313,8 @@ double Vbs0t, Qsi;
 		 if (!model->B4SOIwudGiven)
 		    model->B4SOIwud = 0.0;
          if (!model->B4SOIpudGiven)
-		    model->B4SOIpud1 = 0.0;
+		  /*  model->B4SOIpud1 = 0.0; */ /*Bug fix # 33 Jul 09 */
+		    model->B4SOIpud = 0.0;
          if (!model->B4SOIud1Given)
 		    model->B4SOIud1 = 0.0;
 		 if (!model->B4SOIlud1Given)
@@ -422,7 +429,7 @@ double Vbs0t, Qsi;
         if (!model->B4SOIbgidlGiven)  
             model->B4SOIbgidl = 2.3e9; 	/* v4.0 */
         if (!model->B4SOIcgidlGiven)  	/* v4.0 */
-            model->B4SOIcgidl = 0.0;
+            model->B4SOIcgidl = 0.5;	/* v4.2 default value changed from 0 to 0.5 */
 		if (!model->B4SOIrgidlGiven)  	/* v4.1 */
             model->B4SOIrgidl = 1.0;
 	    if (!model->B4SOIkgidlGiven)  	/* v4.1 */
@@ -2041,8 +2048,7 @@ double Vbs0t, Qsi;
             model->B4SOIvsce = 0.0; 
         if (!model->B4SOIcdsbsGiven)
             model->B4SOIcdsbs = 0.0;
-	
-       if (!model->B4SOIminvcvGiven)     /* v4.1 for Vgsteffcv */
+	    if (!model->B4SOIminvcvGiven)     /* v4.1 for Vgsteffcv */
             model->B4SOIminvcv = 0.0;
         if (!model->B4SOIlminvcvGiven)    /* v4.1 for Vgsteffcv */
             model->B4SOIlminvcv = 0.0;
@@ -2051,7 +2057,8 @@ double Vbs0t, Qsi;
         if (!model->B4SOIpminvcvGiven)    /* v4.1 for Vgsteffcv */
             model->B4SOIpminvcv = 0.0;
         if (!model->B4SOIvoffcvGiven)
-            model->B4SOIvoffcv = -0.08;
+			/*model->B4SOIvoffcv = -0.08;	v4.2 */
+            model->B4SOIvoffcv = 0.0;		
         if (!model->B4SOIlvoffcvGiven)
             model->B4SOIlvoffcv = 0.0;
         if (!model->B4SOIwvoffcvGiven)
@@ -2103,10 +2110,8 @@ double Vbs0t, Qsi;
                 here->B4SOIsourceSquares = 1;
             if (!here->B4SOIwGiven)
                 here->B4SOIw = 5e-6;
-
             if (!here->B4SOImGiven)
-                here->B4SOIm = 1;
-
+                here->B4SOIm = 1;  
 /* v2.0 release */
             if (!here->B4SOInbcGiven)
                 here->B4SOInbc = 0;
@@ -2657,7 +2662,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 }  
 
 int
-B4SOIunsetup(GENmodel *inModel, CKTcircuit *ckt)
+B4SOIunsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
 #ifndef HAS_BATCHSIM
     B4SOImodel *model;

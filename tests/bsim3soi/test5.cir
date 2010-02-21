@@ -14,7 +14,7 @@ vs s 0 		0.0
 vp p 0 		0.0
 
 .dc vd 0 -1.2 -0.02 vg -0.4 -1.2 -0.1 
-.include ./pmos4p1.mod
+.include ./pmos4p3.mod
 .print dc i(vd)
 .end
 

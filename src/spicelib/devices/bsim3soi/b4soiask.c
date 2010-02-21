@@ -1,4 +1,5 @@
-/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
+/***  B4SOI 12/31/2009 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2009 Regents of the University of California.  All rights reserved.
@@ -9,6 +10,8 @@
  * File: b4soiask.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
+ * Modified by Tanvir Morshed 09/22/2009
+ * Modified by Tanvir Morshed 12/31/2009
  **********/
 
 #include "ngspice.h"
@@ -180,7 +183,7 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
         case B4SOI_AGBCP:
             value->rValue = here->B4SOIagbcp;
             return(OK);
-        case B4SOI_AGBCP2:
+     case B4SOI_AGBCP2:
             value->rValue = here->B4SOIagbcp2;
             return(OK);         /* v4.1 for BC improvement */
         case B4SOI_AGBCPD:	/* v4.0 */
@@ -280,7 +283,7 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
         case B4SOI_IGIDL:
             value->rValue = here->B4SOIigidl;
             return(OK);
-        case B4SOI_IGISL:
+		case B4SOI_IGISL:
             value->rValue = here->B4SOIigisl;
             return(OK);
         case B4SOI_IGS:

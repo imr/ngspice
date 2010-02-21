@@ -1,4 +1,5 @@
-/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
+/***  B4SOI 12/31/2009 Released by Tanvir Morshed    ***/
+
 
 /**********
  * Copyright 2009 Regents of the University of California.  All rights reserved.
@@ -9,6 +10,8 @@
  * File: b4soimpar.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
+ * Modified by Tanvir Morshed 09/22/2009
+ * Modified by Tanvir Morshed 12/31/2009
  **********/
 
 #include "ngspice.h"
@@ -217,20 +220,21 @@ GENmodel *inMod)
         case B4SOI_MOD_NPEAK:
             mod->B4SOInpeak = value->rValue;
             mod->B4SOInpeakGiven = TRUE;
-	    if (mod->B4SOInpeak > 1.0e20)
-		mod->B4SOInpeak *= 1.0e-6;
+	/* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
+	    /* if (mod->B4SOInpeak > 1.0e20)					
+		mod->B4SOInpeak *= 1.0e-6; */
             break;
         case B4SOI_MOD_NSD:
             mod->B4SOInsd = value->rValue;
             mod->B4SOInsdGiven = TRUE;
-            if (mod->B4SOInsd > 1.0e23)
-                mod->B4SOInsd *= 1.0e-6;
+           /* if (mod->B4SOInsd > 1.0e23)
+                mod->B4SOInsd *= 1.0e-6;  */	/* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
             break;
         case B4SOI_MOD_NGATE:
             mod->B4SOIngate = value->rValue;
             mod->B4SOIngateGiven = TRUE;
-	    if (mod->B4SOIngate > 1.0e23)
-		mod->B4SOIngate *= 1.0e-6;
+	    /* if (mod->B4SOIngate > 1.0e23)
+		mod->B4SOIngate *= 1.0e-6; */	/* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
             break;
         case B4SOI_MOD_GAMMA1:
             mod->B4SOIgamma1 = value->rValue;
@@ -428,6 +432,7 @@ case B4SOI_MOD_UD:
 		case B4SOI_MOD_PUCS:
             mod->B4SOIpucs = value->rValue;
             mod->B4SOIpucsGiven = TRUE;
+			break; /* Bug fix # 31 Jul09 */	
 		case B4SOI_MOD_UCSTE:
             mod->B4SOIucste = value->rValue;
             mod->B4SOIucsteGiven = TRUE;
@@ -659,8 +664,9 @@ case B4SOI_MOD_UD:
             mod->B4SOIfgislGiven = TRUE;
             break;
         case  B4SOI_MOD_FDMOD :
-            mod->B4SOIfdMod = value->rValue;
-            mod->B4SOIfdModGiven = TRUE;
+           /* mod->B4SOIfdMod = value->rValue;  v4.2 */
+            mod->B4SOIfdMod = value->iValue;
+			mod->B4SOIfdModGiven = TRUE;
             break; 
         case  B4SOI_MOD_VSCE :
             mod->B4SOIvsce = value->rValue;
@@ -1167,7 +1173,8 @@ case B4SOI_MOD_UD:
         case  B4SOI_MOD_RBDB :
             mod->B4SOIrbdb = value->rValue;
             mod->B4SOIrbdbGiven = TRUE;
-        case  B4SOI_MOD_RBSB :
+            break; /* Bug fix # 31 Jul 09 */		 
+	 case  B4SOI_MOD_RBSB :
             mod->B4SOIrbsb = value->rValue;
             mod->B4SOIrbsbGiven = TRUE;
             break;
@@ -1402,7 +1409,8 @@ case B4SOI_MOD_UD:
         case  B4SOI_MOD_LODK2 :
             mod->B4SOIlodk2 = value->rValue;
             mod->B4SOIlodk2Given = TRUE;
-        case  B4SOI_MOD_STETA0 :
+       		break; /* Bug fix # 31 Jul 09*/ 
+	case  B4SOI_MOD_STETA0 :
             mod->B4SOIsteta0 = value->rValue;
             mod->B4SOIsteta0Given = TRUE;
             break;

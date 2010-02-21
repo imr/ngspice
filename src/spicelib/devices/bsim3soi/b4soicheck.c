@@ -1,4 +1,5 @@
-/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
+/***  B4SOI 12/31/2009 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2009 Regents of the University of California.  All rights reserved.
@@ -9,6 +10,8 @@
  * File: b4soicheck.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
+ * Modified by Tanvir Morshed 09/22/2009
+ * Modified by Tanvir Morshed 12/31/2009
  **********/
 
 #include "ngspice.h"
@@ -29,7 +32,7 @@ CKTcircuit *ckt)
 struct b4soiSizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
-    
+
     if ((fplog = fopen("b4soiv1check.log", "w")) != NULL)
     {   pParam = here->pParam;
 	fprintf(fplog, "B4SOIV3 Parameter Check\n");
@@ -45,7 +48,7 @@ FILE *fplog;
         }
 
         if((here->B4SOIsa > 0.0) && (here->B4SOIsb > 0.0) &&
-        ((here->B4SOInf == 1.0) || ((here->B4SOInf > 1.0) && 
+        ((here->B4SOInf == 1.0) || ((here->B4SOInf > 1.0) &&
 	(here->B4SOIsd > 0.0))) )
         {   if (model->B4SOIsaref <= 0.0)
             {   fprintf(fplog, "Fatal: SAref = %g is not positive.\n",
@@ -175,23 +178,23 @@ FILE *fplog;
 
 	if (pParam->B4SOIdvt1 < 0.0)
 	{   fprintf(fplog, "Fatal: Dvt1 = %g is negative.\n",
-		    pParam->B4SOIdvt1);   
-	    printf("Fatal: Dvt1 = %g is negative.\n", pParam->B4SOIdvt1);   
+		    pParam->B4SOIdvt1);
+	    printf("Fatal: Dvt1 = %g is negative.\n", pParam->B4SOIdvt1);
 	    Fatal_Flag = 1;
 	}
-	    
+	
 	if (pParam->B4SOIdvt1w < 0.0)
 	{   fprintf(fplog, "Fatal: Dvt1w = %g is negative.\n",
 		    pParam->B4SOIdvt1w);
 	    printf("Fatal: Dvt1w = %g is negative.\n", pParam->B4SOIdvt1w);
 	    Fatal_Flag = 1;
 	}
-	    
+	
 	if (pParam->B4SOIw0 == -pParam->B4SOIweff)
 	{   fprintf(fplog, "Fatal: (W0 + Weff) = 0 cauing divided-by-zero.\n");
 	    printf("Fatal: (W0 + Weff) = 0 cauing divided-by-zero.\n");
 	    Fatal_Flag = 1;
-        }   
+        }
 
 	if (pParam->B4SOIdsub < 0.0)
 	{   fprintf(fplog, "Fatal: Dsub = %g is negative.\n", pParam->B4SOIdsub);
@@ -202,21 +205,21 @@ FILE *fplog;
 	{   fprintf(fplog, "Fatal: (B1 + Weff) = 0 causing divided-by-zero.\n");
 	    printf("Fatal: (B1 + Weff) = 0 causing divided-by-zero.\n");
 	    Fatal_Flag = 1;
-        }  
+        }
         if (pParam->B4SOIu0temp <= 0.0)
 	{   fprintf(fplog, "Fatal: u0 at current temperature = %g is not positive.\n", pParam->B4SOIu0temp);
 	    printf("Fatal: u0 at current temperature = %g is not positive.\n",
 		   pParam->B4SOIu0temp);
 	    Fatal_Flag = 1;
         }
-    
-/* Check delta parameter */      
+
+/* Check delta parameter */
         if (pParam->B4SOIdelta < 0.0)
 	{   fprintf(fplog, "Fatal: Delta = %g is less than zero.\n",
 		    pParam->B4SOIdelta);
 	    printf("Fatal: Delta = %g is less than zero.\n", pParam->B4SOIdelta);
 	    Fatal_Flag = 1;
-        }      
+        }
 
 	if (pParam->B4SOIvsattemp <= 0.0)
 	{   fprintf(fplog, "Fatal: Vsat at current temperature = %g is not positive.\n", pParam->B4SOIvsattemp);
@@ -243,7 +246,7 @@ FILE *fplog;
 		    here->B4SOIdrainPerimeter);
 	   printf("Warning: Pd = %g is less than W.\n",
 		    here->B4SOIdrainPerimeter);
-            here->B4SOIdrainPerimeter =pParam->B4SOIweff; 
+            here->B4SOIdrainPerimeter =pParam->B4SOIweff;
 	}
       }
       if ( model->B4SOIunitLengthGateSidewallJctCapS > 0.0)	/* v4.0 */
@@ -261,7 +264,7 @@ FILE *fplog;
 	{   fprintf(fplog, "Fatal: Clc = %g is negative.\n", pParam->B4SOIclc);
 	    printf("Fatal: Clc = %g is negative.\n", pParam->B4SOIclc);
 	    Fatal_Flag = 1;
-        } 
+        }
 
 
 /* v3.2 */
@@ -279,8 +282,8 @@ FILE *fplog;
 /* added for stress */
 
 /* Check stress effect parameters */
-        if( (here->B4SOIsa > 0.0) && (here->B4SOIsb > 0.0) && 
-        ((here->B4SOInf == 1.0) || ((here->B4SOInf > 1.0) && 
+        if( (here->B4SOIsa > 0.0) && (here->B4SOIsb > 0.0) &&
+        ((here->B4SOInf == 1.0) || ((here->B4SOInf > 1.0) &&
 	(here->B4SOIsd > 0.0))) )
         {   if (model->B4SOIlodk2 <= 0.0)
             {   fprintf(fplog, "Warning: LODK2 = %g is not positive.\n",model->B4SOIlodk2);
@@ -328,38 +331,77 @@ FILE *fplog;
                     	    pParam->B4SOIacde);
 		}
 	}
-/* v2.2.3 */
-     
+
+/* v4.2 always perform Fatal checks */
+      if (pParam->B4SOInigc <= 0.0)
+      {   fprintf(fplog, "Fatal: nigc = %g is non-positive.\n",
+                  pParam->B4SOInigc);
+          printf("Fatal: nigc = %g is non-positive.\n", pParam->B4SOInigc);
+          Fatal_Flag = 1;
+      }
+      if (pParam->B4SOIpoxedge <= 0.0)
+      {   fprintf(fplog, "Fatal: poxedge = %g is non-positive.\n",
+                  pParam->B4SOIpoxedge);
+          printf("Fatal: poxedge = %g is non-positive.\n", pParam->B4SOIpoxedge);
+          Fatal_Flag = 1;
+      }
+      if (pParam->B4SOIpigcd <= 0.0)
+      {   fprintf(fplog, "Fatal: pigcd = %g is non-positive.\n",
+                  pParam->B4SOIpigcd);
+          printf("Fatal: pigcd = %g is non-positive.\n", pParam->B4SOIpigcd);
+          Fatal_Flag = 1;
+      }
+
+      if (model->B4SOItoxref < 0.0)
+      {   fprintf(fplog, "Warning: TOXREF = %g is negative.\n",
+                  model->B4SOItoxref);
+          printf("Warning:  Toxref = %g is negative.\n", model->B4SOItoxref);
+          Fatal_Flag = 1;
+      }
+
+      if (model->B4SOItoxqm <= 0.0)
+      {   fprintf(fplog, "Fatal: Toxqm = %g is not positive.\n",
+                  model->B4SOItoxqm);
+          printf("Fatal: Toxqm = %g is not positive.\n", model->B4SOItoxqm);
+          Fatal_Flag = 1;
+      }
+
+      if (model->B4SOIdeltavox <= 0.0)
+      {   fprintf(fplog, "Fatal: Deltavox = %g is not positive.\n",
+                  model->B4SOIdeltavox);
+          printf("Fatal: Deltavox = %g is not positive.\n", model->B4SOIdeltavox);
+      }
+
       if (model->B4SOIparamChk ==1)
       {
-/* Check L and W parameters */ 
+/* Check L and W parameters */
 	if (pParam->B4SOIleff <= 5.0e-8)
 	{   fprintf(fplog, "Warning: Leff = %g may be too small.\n",
 	            pParam->B4SOIleff);
 	    printf("Warning: Leff = %g may be too small.\n",
 		    pParam->B4SOIleff);
-	}    
+	}
 	
 	if (pParam->B4SOIleffCV <= 5.0e-8)
 	{   fprintf(fplog, "Warning: Leff for CV = %g may be too small.\n",
 		    pParam->B4SOIleffCV);
 	    printf("Warning: Leff for CV = %g may be too small.\n",
 		   pParam->B4SOIleffCV);
-	}  
+	}
 	
         if (pParam->B4SOIweff <= 1.0e-7)
 	{   fprintf(fplog, "Warning: Weff = %g may be too small.\n",
 		    pParam->B4SOIweff);
 	    printf("Warning: Weff = %g may be too small.\n",
 		   pParam->B4SOIweff);
-	}             
+	}
 	
 	if (pParam->B4SOIweffCV <= 1.0e-7)
 	{   fprintf(fplog, "Warning: Weff for CV = %g may be too small.\n",
 		    pParam->B4SOIweffCV);
 	    printf("Warning: Weff for CV = %g may be too small.\n",
 		   pParam->B4SOIweffCV);
-	}        
+	}
 	
 /* Check threshold voltage parameters */
 	if (pParam->B4SOIlpe0 < 0.0)
@@ -399,18 +441,33 @@ FILE *fplog;
 	    printf("Warning: Ngate = %g is less than 1.E18cm^-3.\n",
 	           pParam->B4SOIngate);
 	}
-       
+
         if (pParam->B4SOIdvt0 < 0.0)
 	{   fprintf(fplog, "Warning: Dvt0 = %g is negative.\n",
-		    pParam->B4SOIdvt0);   
-	    printf("Warning: Dvt0 = %g is negative.\n", pParam->B4SOIdvt0);   
+		    pParam->B4SOIdvt0);
+	    printf("Warning: Dvt0 = %g is negative.\n", pParam->B4SOIdvt0);
 	}
-	    
+	
 	if (fabs(1.0e-6 / (pParam->B4SOIw0 + pParam->B4SOIweff)) > 10.0)
 	{   fprintf(fplog, "Warning: (W0 + Weff) may be too small.\n");
 	    printf("Warning: (W0 + Weff) may be too small.\n");
         }
-
+/* Check Nsd, Ngate and Npeak parameters*/	/* Bug Fix # 22 Jul09*/
+if (model->B4SOInsd > 1.0e23)
+	{   fprintf(fplog, "Warning: Nsd = %g is too large, should be specified in cm^-3.\n",
+		    model->B4SOInsd);
+	    printf("Warning: Nsd = %g is too large, should be specified in cm^-3.\n", model->B4SOInsd);
+	}
+if (model->B4SOIngate > 1.0e23)
+	{   fprintf(fplog, "Warning: Ngate = %g is too large, should be specified in cm^-3.\n",
+		    model->B4SOIngate);
+	    printf("Warning: Ngate = %g is too large, should be specified in cm^-3.\n", model->B4SOIngate);
+	}	
+if (model->B4SOInpeak > 1.0e20)
+	{   fprintf(fplog, "Warning: Npeak = %g is too large, should be less than 1.0e20, specified in cm^-3.\n",
+		    model->B4SOInpeak);
+	    printf("Warning: Npeak = %g is too large, should be less than 1.0e20, specified in cm^-3.\n", model->B4SOInpeak);
+	}
 /* Check subthreshold parameters */
 	if (pParam->B4SOInfactor < 0.0)
 	{   fprintf(fplog, "Warning: Nfactor = %g is negative.\n",
@@ -430,15 +487,15 @@ FILE *fplog;
 /* Check DIBL parameters */
 	if (pParam->B4SOIeta0 < 0.0)
 	{   fprintf(fplog, "Warning: Eta0 = %g is negative.\n",
-		    pParam->B4SOIeta0); 
-	    printf("Warning: Eta0 = %g is negative.\n", pParam->B4SOIeta0); 
+		    pParam->B4SOIeta0);
+	    printf("Warning: Eta0 = %g is negative.\n", pParam->B4SOIeta0);
 	}
-	      
-/* Check Abulk parameters */	    
+	
+/* Check Abulk parameters */	
         if (fabs(1.0e-6 / (pParam->B4SOIb1 + pParam->B4SOIweff)) > 10.0)
        	{   fprintf(fplog, "Warning: (B1 + Weff) may be too small.\n");
        	    printf("Warning: (B1 + Weff) may be too small.\n");
-        }    
+        }
 
 /* Check Saturation parameters */
      	if (pParam->B4SOIa2 < 0.01)
@@ -492,12 +549,12 @@ FILE *fplog;
 	{   fprintf(fplog, "Warning: cgdo = %g is negative. Set to zero.\n", model->B4SOIcgdo);
 	    printf("Warning: cgdo = %g is negative. Set to zero.\n", model->B4SOIcgdo);
 	    model->B4SOIcgdo = 0.0;
-        }      
+        }
         if (model->B4SOIcgso < 0.0)
 	{   fprintf(fplog, "Warning: cgso = %g is negative. Set to zero.\n", model->B4SOIcgso);
 	    printf("Warning: cgso = %g is negative. Set to zero.\n", model->B4SOIcgso);
 	    model->B4SOIcgso = 0.0;
-        }      
+        }
         if (model->B4SOIcgeo < 0.0)
 	{   fprintf(fplog, "Warning: cgeo = %g is negative. Set to zero.\n", model->B4SOIcgeo);
 	    printf("Warning: cgeo = %g is negative. Set to zero.\n", model->B4SOIcgeo);
@@ -506,32 +563,32 @@ FILE *fplog;
 
 	if (model->B4SOIntun < 0.0)
 	{   fprintf(fplog, "Warning: Ntuns = %g is negative.\n",
-		    model->B4SOIntun); 
-	    printf("Warning: Ntuns = %g is negative.\n", model->B4SOIntun); 
+		    model->B4SOIntun);
+	    printf("Warning: Ntuns = %g is negative.\n", model->B4SOIntun);
 	}
 
 	if (model->B4SOIntund < 0.0)
 	{   fprintf(fplog, "Warning: Ntund = %g is negative.\n",
-		    model->B4SOIntund); 
-	    printf("Warning: Ntund = %g is negative.\n", model->B4SOIntund); 
+		    model->B4SOIntund);
+	    printf("Warning: Ntund = %g is negative.\n", model->B4SOIntund);
 	}
 
 	if (model->B4SOIndiode < 0.0)
 	{   fprintf(fplog, "Warning: Ndiode = %g is negative.\n",
-		    model->B4SOIndiode); 
+		    model->B4SOIndiode);
 	    printf("Warning: Ndiode = %g is negative.\n", model->B4SOIndiode);
 	}
 
 	if (model->B4SOIndioded < 0.0)
 	{   fprintf(fplog, "Warning: Ndioded = %g is negative.\n",
-		    model->B4SOIndioded); 
+		    model->B4SOIndioded);
 	    printf("Warning: Ndioded = %g is negative.\n", model->B4SOIndioded);
 	}
 
 	if (model->B4SOIisbjt < 0.0)
 	{   fprintf(fplog, "Warning: Isbjt = %g is negative.\n",
-		    model->B4SOIisbjt); 
-	    printf("Warning: Isbjt = %g is negative.\n", model->B4SOIisbjt); 
+		    model->B4SOIisbjt);
+	    printf("Warning: Isbjt = %g is negative.\n", model->B4SOIisbjt);
 	}
         if (model->B4SOIidbjt < 0.0)
         {   fprintf(fplog, "Warning: Idbjt = %g is negative.\n",
@@ -541,8 +598,8 @@ FILE *fplog;
 
 	if (model->B4SOIisdif < 0.0)
 	{   fprintf(fplog, "Warning: Isdif = %g is negative.\n",
-		    model->B4SOIisdif); 
-	    printf("Warning: Isdif = %g is negative.\n", model->B4SOIisdif); 
+		    model->B4SOIisdif);
+	    printf("Warning: Isdif = %g is negative.\n", model->B4SOIisdif);
 	}
         if (model->B4SOIiddif < 0.0)
         {   fprintf(fplog, "Warning: Iddif = %g is negative.\n",
@@ -552,8 +609,8 @@ FILE *fplog;
 
 	if (model->B4SOIisrec < 0.0)
 	{   fprintf(fplog, "Warning: Isrec = %g is negative.\n",
-		    model->B4SOIisrec); 
-	    printf("Warning: Isrec = %g is negative.\n", model->B4SOIisrec); 
+		    model->B4SOIisrec);
+	    printf("Warning: Isrec = %g is negative.\n", model->B4SOIisrec);
 	}
         if (model->B4SOIidrec < 0.0)
         {   fprintf(fplog, "Warning: Idrec = %g is negative.\n",
@@ -563,8 +620,8 @@ FILE *fplog;
 
 	if (model->B4SOIistun < 0.0)
 	{   fprintf(fplog, "Warning: Istun = %g is negative.\n",
-		    model->B4SOIistun); 
-	    printf("Warning: Istun = %g is negative.\n", model->B4SOIistun); 
+		    model->B4SOIistun);
+	    printf("Warning: Istun = %g is negative.\n", model->B4SOIistun);
 	}
         if (model->B4SOIidtun < 0.0)
         {   fprintf(fplog, "Warning: Idtun = %g is negative.\n",
@@ -574,72 +631,51 @@ FILE *fplog;
 
 	if (model->B4SOItt < 0.0)
 	{   fprintf(fplog, "Warning: Tt = %g is negative.\n",
-		    model->B4SOItt); 
-	    printf("Warning: Tt = %g is negative.\n", model->B4SOItt); 
+		    model->B4SOItt);
+	    printf("Warning: Tt = %g is negative.\n", model->B4SOItt);
 	}
 
 	if (model->B4SOIcsdmin < 0.0)
 	{   fprintf(fplog, "Warning: Csdmin = %g is negative.\n",
-		    model->B4SOIcsdmin); 
-	    printf("Warning: Csdmin = %g is negative.\n", model->B4SOIcsdmin); 
+		    model->B4SOIcsdmin);
+	    printf("Warning: Csdmin = %g is negative.\n", model->B4SOIcsdmin);
 	}
 
 	if (model->B4SOIcsdesw < 0.0)
 	{   fprintf(fplog, "Warning: Csdesw = %g is negative.\n",
-		    model->B4SOIcsdesw); 
-	    printf("Warning: Csdesw = %g is negative.\n", model->B4SOIcsdesw); 
+		    model->B4SOIcsdesw);
+	    printf("Warning: Csdesw = %g is negative.\n", model->B4SOIcsdesw);
 	}
 
 	if (model->B4SOIasd < 0.0)
 	{   fprintf(fplog, "Warning: Asd = %g should be within (0, 1).\n",
-		    model->B4SOIasd); 
-	    printf("Warning: Asd = %g should be within (0, 1).\n", model->B4SOIasd); 
+		    model->B4SOIasd);
+	    printf("Warning: Asd = %g should be within (0, 1).\n", model->B4SOIasd);
 	}
 
 	if (model->B4SOIrth0 < 0.0)
 	{   fprintf(fplog, "Warning: Rth0 = %g is negative.\n",
-		    model->B4SOIrth0); 
-	    printf("Warning: Rth0 = %g is negative.\n", model->B4SOIrth0); 
+		    model->B4SOIrth0);
+	    printf("Warning: Rth0 = %g is negative.\n", model->B4SOIrth0);
 	}
 
 	if (model->B4SOIcth0 < 0.0)
 	{   fprintf(fplog, "Warning: Cth0 = %g is negative.\n",
-		    model->B4SOIcth0); 
-	    printf("Warning: Cth0 = %g is negative.\n", model->B4SOIcth0); 
+		    model->B4SOIcth0);
+	    printf("Warning: Cth0 = %g is negative.\n", model->B4SOIcth0);
 	}
 
 	if (model->B4SOIrbody < 0.0)
 	{   fprintf(fplog, "Warning: Rbody = %g is negative.\n",
-		    model->B4SOIrbody); 
-	    printf("Warning: Rbody = %g is negative.\n", model->B4SOIrbody); 
+		    model->B4SOIrbody);
+	    printf("Warning: Rbody = %g is negative.\n", model->B4SOIrbody);
 	}
 
 	if (model->B4SOIrbsh < 0.0)
 	{   fprintf(fplog, "Warning: Rbsh = %g is negative.\n",
-		    model->B4SOIrbsh); 
-	    printf("Warning: Rbsh = %g is negative.\n", model->B4SOIrbsh); 
+		    model->B4SOIrbsh);
+	    printf("Warning: Rbsh = %g is negative.\n", model->B4SOIrbsh);
 	}
-
-
-/* v3.0 */
-        if (pParam->B4SOInigc <= 0.0)
-        {   fprintf(fplog, "Fatal: nigc = %g is non-positive.\n",
-                    pParam->B4SOInigc);
-            printf("Fatal: nigc = %g is non-positive.\n", pParam->B4SOInigc);
-            Fatal_Flag = 1;
-        }
-        if (pParam->B4SOIpoxedge <= 0.0)
-        {   fprintf(fplog, "Fatal: poxedge = %g is non-positive.\n",
-                    pParam->B4SOIpoxedge);
-            printf("Fatal: poxedge = %g is non-positive.\n", pParam->B4SOIpoxedge);
-            Fatal_Flag = 1;
-        }
-        if (pParam->B4SOIpigcd <= 0.0)
-        {   fprintf(fplog, "Fatal: pigcd = %g is non-positive.\n",
-                    pParam->B4SOIpigcd);
-            printf("Fatal: pigcd = %g is non-positive.\n", pParam->B4SOIpigcd);
-            Fatal_Flag = 1;
-        }
 
 
 /* v2.2 release */
@@ -657,12 +693,6 @@ FILE *fplog;
         {   fprintf(fplog, "Warning: NTOX = %g is negative.\n",
                     model->B4SOIntox);
             printf("Warning:  Ntox = %g is negative.\n", model->B4SOIntox);
-        }
-        if (model->B4SOItoxref < 0.0)
-        {   fprintf(fplog, "Warning: TOXREF = %g is negative.\n",
-                    model->B4SOItoxref);
-            printf("Warning:  Toxref = %g is negative.\n", model->B4SOItoxref);
-            Fatal_Flag = 1;
         }
         if (model->B4SOIebg < 0.0)
         {   fprintf(fplog, "Warning: EBG = %g is negative.\n",
@@ -709,26 +739,14 @@ FILE *fplog;
                     model->B4SOIvgb2);
             printf("Warning:  Vgb2 = %g is negative.\n", model->B4SOIvgb2);
         }
-        if (model->B4SOItoxqm <= 0.0)
-        {   fprintf(fplog, "Fatal: Toxqm = %g is not positive.\n",
-                    model->B4SOItoxqm);
-            printf("Fatal: Toxqm = %g is not positive.\n", model->B4SOItoxqm);
-            Fatal_Flag = 1;
-        }
         if (model->B4SOIvoxh < 0.0)
         {   fprintf(fplog, "Warning: Voxh = %g is negative.\n",
                     model->B4SOIvoxh);
             printf("Warning:  Voxh = %g is negative.\n", model->B4SOIvoxh);
         }
-        if (model->B4SOIdeltavox <= 0.0)
-        {   fprintf(fplog, "Fatal: Deltavox = %g is not positive.\n",
-                    model->B4SOIdeltavox);
-            printf("Fatal: Deltavox = %g is not positive.\n", model->B4SOIdeltavox);
-        }
-
 
 /* v2.0 release */
-        if (model->B4SOIk1w1 < 0.0)                    
+        if (model->B4SOIk1w1 < 0.0)
         {   fprintf(fplog, "Warning: K1W1 = %g is negative.\n",
                     model->B4SOIk1w1);
             printf("Warning:  K1w1 = %g is negative.\n", model->B4SOIk1w1);
@@ -779,7 +797,7 @@ FILE *fplog;
             printf("Warning:  Sii1 = %g is negative.\n", model->B4SOIsii1);
         }
         if (model->B4SOIsii2 < 0.0)
-        {   fprintf(fplog, "Warning: SII2 = %g is negative.\n", 
+        {   fprintf(fplog, "Warning: SII2 = %g is negative.\n",
                     model->B4SOIsii2);
             printf("Warning:  Sii2 = %g is negative.\n", model->B4SOIsii1);
         }
@@ -843,7 +861,7 @@ FILE *fplog;
                     model->B4SOIrbsh);
             printf("Warning:  Rbsh = %g is negative.\n", model->B4SOIrbsh);
         }
-        if (pParam->B4SOIntrecf < 0.0)
+ /*       if (pParam->B4SOIntrecf < 0.0)
         {   fprintf(fplog, "Warning: NTRECF = %g is negative.\n",
                     pParam->B4SOIntrecf);
             printf("Warning:  Ntrecf = %g is negative.\n", pParam->B4SOIntrecf);
@@ -852,7 +870,7 @@ FILE *fplog;
         {   fprintf(fplog, "Warning: NTRECR = %g is negative.\n",
                     pParam->B4SOIntrecr);
             printf("Warning:  Ntrecr = %g is negative.\n", pParam->B4SOIntrecr);
-        }
+        } v4.2 bugfix: QA Test uses negative temp co-efficients*/
 
 /* v3.0 bug fix */
 /*
@@ -863,7 +881,7 @@ FILE *fplog;
         }
 */
 
-        if (model->B4SOItcjswg < 0.0)
+/*        if (model->B4SOItcjswg < 0.0)
         {   fprintf(fplog, "Warning: TCJSWGS = %g is negative.\n",
                     model->B4SOItcjswg);
             printf("Warning:  Tcjswg = %g is negative.\n", model->B4SOItcjswg);
@@ -882,7 +900,7 @@ FILE *fplog;
         {   fprintf(fplog, "Warning: TPBSWGD = %g is negative.\n",
                     model->B4SOItpbswgd);
             printf("Warning:  Tpbswgd = %g is negative.\n", model->B4SOItpbswgd);
-       }
+       }   v4.2 bugfix: QA Test uses negative temp co-efficients*/
         if ((model->B4SOIacde < 0.1) || (model->B4SOIacde > 1.6))
         {   fprintf(fplog, "Warning: ACDE = %g is out of range.\n",
                     model->B4SOIacde);
@@ -913,7 +931,7 @@ FILE *fplog;
         if (fabs(model->B4SOIcgidl) < 1e-9)
         {   fprintf(fplog, "Warning: CGIDL = %g is smaller than 1e-9.\n",
                     model->B4SOIcgidl);
-            printf("Warning:  Cgidl = %g is smaller than 1e-9.\n", 
+            printf("Warning:  Cgidl = %g is smaller than 1e-9.\n",
 		    model->B4SOIcgidl);
         }
         if (model->B4SOIegidl < 0.0)
@@ -935,7 +953,7 @@ FILE *fplog;
         if (fabs(model->B4SOIcgisl) < 1e-9)
         {   fprintf(fplog, "Warning: CGISL = %g is smaller than 1e-9.\n",
                     model->B4SOIcgisl);
-            printf("Warning:  Cgisl = %g is smaller than 1e-9.\n", 
+            printf("Warning:  Cgisl = %g is smaller than 1e-9.\n",
 		    model->B4SOIcgisl);
         }
         if (model->B4SOIegisl < 0.0)
@@ -949,22 +967,28 @@ FILE *fplog;
                     model->B4SOIesatii);
             printf("Warning: Esatii = %g should be within (0, 1).\n", model->B4SOIesatii);
         }
-		       
-
-
+		
+		if (!model->B4SOIvgstcvModGiven)
+        {   fprintf(fplog, "Warning: The default vgstcvMod is changed in v4.2 from '0' to '1'.\n");
+            printf("Warning: The default vgstcvMod is changed in v4.2 from '0' to '1'.\n");
+        }
 	if (pParam->B4SOIxj > model->B4SOItsi)
 	{   fprintf(fplog, "Warning: Xj = %g is thicker than Tsi = %g.\n",
-		    pParam->B4SOIxj, model->B4SOItsi); 
-	    printf("Warning: Xj = %g is thicker than Tsi = %g.\n", 
-		    pParam->B4SOIxj, model->B4SOItsi); 
+		    pParam->B4SOIxj, model->B4SOItsi);
+	    printf("Warning: Xj = %g is thicker than Tsi = %g.\n",
+		    pParam->B4SOIxj, model->B4SOItsi);
 	}
 
         if (model->B4SOIcapMod < 2)
 	{   fprintf(fplog, "Warning: capMod < 2 is not supported by BSIM3SOI.\n");
 	    printf("Warning: Warning: capMod < 2 is not supported by BSIM3SOI.\n");
 	}
+	    if (model->B4SOIcapMod > 3)
+	{   fprintf(fplog, "Warning: capMod > 3 is not supported by BSIMSOI4.2.\n");
+	    printf("Warning: Warning: capMod > 3 is not supported by BSIMSOI4.2.\n");
+	}
 
-     }/* loop for the parameter check for warning messages */      
+     }/* loop for the parameter check for warning messages */
 	fclose(fplog);
     }
     else

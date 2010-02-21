@@ -1,4 +1,5 @@
-/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
+/***  B4SOI 12/31/2009 Released by Tanvir Morshed  ***/
+
 
 /**********
  * Copyright 2009 Regents of the University of California.  All rights reserved.
@@ -9,6 +10,8 @@
  * File: b4soimask.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
+ * Modified by Tanvir Morshed 09/22/2009
+ * Modified by Tanvir Morshed 12/31/2009
  **********/
 
 #include "ngspice.h"
@@ -1229,10 +1232,10 @@ IFvalue *value)
             value->iValue = model->B4SOIrgateMod;
             return(OK);
         case B4SOI_MOD_XRCRG1:
-            value->iValue = model->B4SOIxrcrg1;
+            value->rValue = model->B4SOIxrcrg1;
             return(OK);
         case B4SOI_MOD_XRCRG2:
-            value->iValue = model->B4SOIxrcrg2;
+            value->rValue = model->B4SOIxrcrg2;
             return(OK);
         case B4SOI_MOD_RSHG:
             value->rValue = model->B4SOIrshg;

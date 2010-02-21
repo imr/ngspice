@@ -1,4 +1,5 @@
-/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
+/***  B4SOI 12/31/2009 Released by Tanvir Morshed  ***/
+
 
 /**********
  * Copyright 2009 Regents of the University of California.  All rights reserved.
@@ -9,6 +10,8 @@
  * File: b4soinoi.c
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
+ * Modified by Tanvir Morshed 09/22/2009
+ * Modified by Tanvir Morshed 12/31/2009
  **********/
 
 #include "ngspice.h"
@@ -60,7 +63,7 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
 
     pParam = here->pParam;
     cd = fabs(here->B4SOIcd);
-    esat = 2.0 * pParam->B4SOIvsattemp / here->B4SOIueff;
+    esat = 2.0 * here->B4SOIvsattemp / here->B4SOIueff;
 /* v2.2.3 bug fix */
     if(model->B4SOIem<=0.0) DelClm = 0.0;
     else {
@@ -78,7 +81,6 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, Ssi;
     N0 = model->B4SOIcox * here->B4SOIVgsteff / CHARGE; 
     Nl = model->B4SOIcox * here->B4SOIVgsteff
          * (1.0 - here->B4SOIAbovVgst2Vtm * here->B4SOIVdseff) / CHARGE; 
-
 
     T3 = model->B4SOIoxideTrapDensityA
        * log(MAX(((N0 + here->B4SOInstar) / (Nl + here->B4SOInstar)), N_MINLOG));
@@ -122,6 +124,7 @@ double Ssi, Swi;
 double npart_theta, npart_beta, igsquare, esat;
 /* v3.2 end */
 double gspr, gdpr;
+double tempRatioSH, Vdseffovcd; /* v4.2 bugfix */
 
 int i;
 
@@ -218,8 +221,22 @@ int i;
 	         case N_CALC:
 		      switch (mode)
 		      {  case N_DENS:
-			      if (model->B4SOItnoiMod == 0) /* v4.0 */
-                              {   if (model->B4SOIrdsMod == 0)
+                              /*v4.2 implementing SH temp */ 
+                              if ((model->B4SOIshMod == 1) && (here->B4SOIrth0 != 0.0))  
+                                  tempRatioSH = here->B4SOITempSH / ckt->CKTtemp;
+                              else
+                                  tempRatioSH = 1.0;
+							  /*v4.2 implementing limit on Vdseffovcd*/
+							  if (here->B4SOIcd != 0)
+							  {
+							      Vdseffovcd = here->B4SOIVdseff / here->B4SOIcd;
+							      if (Vdseffovcd >= 1.0e9) Vdseffovcd = 1.0e9 ;
+							  }
+							  else
+							      Vdseffovcd = 1.0e9;
+			     /* if (model->B4SOItnoiMod == 0) */ /* v4.0 */ /* v4.2 bugfix: consider tnoiMod = 2*/
+					if (model->B4SOItnoiMod != 1)				
+						  {   if (model->B4SOIrdsMod == 0)
                                   {   gspr = here->B4SOIsourceConductance;
                                       gdpr = here->B4SOIdrainConductance;
                                   }
@@ -230,8 +247,8 @@ int i;
                               }
                               else
                               {  
-				esat = 2.0 * pParam->B4SOIvsattemp / here->B4SOIueff;
-				T5 = here->B4SOIVgsteff / esat
+							  esat = 2.0 * here->B4SOIvsattemp / here->B4SOIueff;
+							  T5 = here->B4SOIVgsteff / esat
 				     / pParam->B4SOIleff;
 				  T5 *= T5;
 				  npart_beta = model->B4SOIrnoia * (1.0 +
@@ -241,6 +258,13 @@ int i;
 						  T5 * model->B4SOItnoib *
 						  pParam->B4SOIleff);
 
+						  /* v4.2 bugfix: implement bugfix from bsim4.6.2 */
+                                  if(npart_theta > 0.9)
+                                     npart_theta = 0.9;
+                                  if(npart_theta > 0.9 * npart_beta)
+                                     npart_theta = 0.9 * npart_beta;
+
+						  
                                   if (model->B4SOIrdsMod == 0)
                                   {   gspr = here->B4SOIsourceConductance;
                                       gdpr = here->B4SOIdrainConductance;
@@ -263,27 +287,39 @@ int i;
 		              NevalSrc(&noizDens[B4SOIRDNOIZ],
 				       &lnNdens[B4SOIRDNOIZ], ckt, THERMNOISE,
 				       here->B4SOIdNodePrime, here->B4SOIdNode,
-				       gdpr * here->B4SOIm);
+				       gdpr * tempRatioSH * here->B4SOIm); /* v4.2 self-heating temp */
 
 		              NevalSrc(&noizDens[B4SOIRSNOIZ],
 				       &lnNdens[B4SOIRSNOIZ], ckt, THERMNOISE,
 				       here->B4SOIsNodePrime, here->B4SOIsNode,
-				       gspr * here->B4SOIm);
+				       gspr * tempRatioSH * here->B4SOIm); /* v4.2 self-heating temp */
 
-                              if ((here->B4SOIrgateMod == 1) ||
-				  (here->B4SOIrgateMod == 2))
+			/* v4.2 bugfix: implement correct thermal noise model (bsim4.6.0)*/
+                            /*  if ((here->B4SOIrgateMod == 1) ||
+				  (here->B4SOIrgateMod == 2)) */ 
+				if (here->B4SOIrgateMod == 1)
                               {   NevalSrc(&noizDens[B4SOIRGNOIZ],
                                        &lnNdens[B4SOIRGNOIZ], ckt, THERMNOISE,
                                        here->B4SOIgNode,
 				       here->B4SOIgNodeExt,
-				       here->B4SOIgrgeltd);
+				       here->B4SOIgrgeltd * tempRatioSH * here->B4SOIm); /* v4.2 self-heating temp */
+                              }
+				else if (here->B4SOIrgateMod == 2)	/*v4.2*/
+                              {
+                                T0 = 1.0 + here->B4SOIgrgeltd/here->B4SOIgcrg;
+                                T1 = T0 * T0;
+                                  NevalSrc(&noizDens[B4SOIRGNOIZ],
+                                       &lnNdens[B4SOIRGNOIZ], ckt, THERMNOISE,
+                                       here->B4SOIgNode,
+				       here->B4SOIgNodeExt,
+				       here->B4SOIgrgeltd/T1 * tempRatioSH * here->B4SOIm);				/*v4.2*/
                               }
                               else if (here->B4SOIrgateMod == 3)
                               {   NevalSrc(&noizDens[B4SOIRGNOIZ],
                                        &lnNdens[B4SOIRGNOIZ], ckt, THERMNOISE,
                                        here->B4SOIgNodeMid,
 				       here->B4SOIgNodeExt,
-				       here->B4SOIgrgeltd);
+				       here->B4SOIgrgeltd * tempRatioSH * here->B4SOIm); /* v4.2 self-heating temp */
                               }
                               else
                               {    noizDens[B4SOIRGNOIZ] = 0.0;
@@ -297,11 +333,11 @@ int i;
 			 	 NevalSrc(&noizDens[B4SOIRBSBNOIZ],
                                       &lnNdens[B4SOIRBSBNOIZ], ckt, THERMNOISE,
                                       here->B4SOIbNode, here->B4SOIsbNode,
-                                      here->B4SOIgrbsb);
+                                      here->B4SOIgrbsb * here->B4SOIm);
                                  NevalSrc(&noizDens[B4SOIRBDBNOIZ],
                                       &lnNdens[B4SOIRBDBNOIZ], ckt, THERMNOISE,
                                       here->B4SOIbNode, here->B4SOIdbNode,
-                                      here->B4SOIgrbdb);
+                                      here->B4SOIgrbdb * tempRatioSH * here->B4SOIm); /* v4.2 self-heating temp */
 			      }
                               else
                               {    noizDens[B4SOIRBSBNOIZ] = 0.0;
@@ -317,15 +353,15 @@ int i;
 			 	 NevalSrc(&noizDens[B4SOIRBODYNOIZ],
                                       &lnNdens[B4SOIRBODYNOIZ], ckt, THERMNOISE,
                                       here->B4SOIbNode, here->B4SOIpNode,
-                                      1/ (here->B4SOIrbodyext + 
-				       pParam->B4SOIrbody));
+                                      tempRatioSH / (here->B4SOIrbodyext + /* v4.2 self-heating temp */
+				       pParam->B4SOIrbody) * here->B4SOIm);
 			      }
                               else
                               {    noizDens[B4SOIRBODYNOIZ] = 0.0;
                                    lnNdens[B4SOIRBODYNOIZ] =
                                    log(MAX(noizDens[B4SOIRBODYNOIZ], N_MINLOG));
 			      }
-
+ 
                               switch( model->B4SOItnoiMod )
 			      {  
 				 case 0:
@@ -341,7 +377,8 @@ int i;
                                                + here->B4SOIueff*fabs
                                                  (here->B4SOIqinv)
                                                *  here->B4SOIrds)))
-                                               * model->B4SOIntnoi );
+                                               * tempRatioSH /* v4.2 self-heating temp */
+                                               * model->B4SOIntnoi * here->B4SOIm);
 				      break;
 
 /* v2.2.3 bug fix */
@@ -349,7 +386,7 @@ int i;
 				      T0 = here->B4SOIgm + here->B4SOIgmbs +
 					   here->B4SOIgds;
 				      T0 *= T0;
-				      esat = 2.0 * pParam->B4SOIvsattemp /
+				      esat = 2.0 * here->B4SOIvsattemp /
 					     here->B4SOIueff;
 				      T5 = here->B4SOIVgsteff / esat /
 					   pParam->B4SOIleff;
@@ -360,20 +397,20 @@ int i;
                                       npart_theta = model->B4SOIrnoib * (1.0 +
 						  T5 * model->B4SOItnoib *
 						  pParam->B4SOIleff);
-				      igsquare = npart_theta * npart_theta *
- 						 T0 * here->B4SOIVdseff / 
-						 here->B4SOIcd;
+				      /*igsquare = npart_theta * npart_theta *
+ 						 T0 * here->B4SOIVdseff / here->B4SOIcd;	v4.2 implementing limit on Vdseffovcd*/
+						 igsquare = npart_theta * npart_theta * T0 * Vdseffovcd;
                                       T1 = npart_beta * (here->B4SOIgm
                                          + here->B4SOIgmbs) + here->B4SOIgds;
-                                      T2 = T1 * T1 * here->B4SOIVdseff / 
-					   here->B4SOIcd;
-
+                                      /*T2 = T1 * T1 * here->B4SOIVdseff / here->B4SOIcd; v4.2 implementing limit on Vdseffovcd*/
+										T2 = T1 * T1 * Vdseffovcd;
                                       NevalSrc(&noizDens[B4SOIIDNOIZ],
                                                &lnNdens[B4SOIIDNOIZ], ckt,
                                                THERMNOISE,
                                                here->B4SOIdNodePrime,
                                                here->B4SOIsNodePrime, 
-					       (T2 - igsquare));
+					       /* (T2 - igsquare)); */
+                                               (T2 - igsquare) * tempRatioSH * here->B4SOIm); /* v4.2 self-heating temp */
 				      break;
 
                                  case 2:
@@ -383,9 +420,10 @@ int i;
                                                here->B4SOIdNodePrime,
                                                here->B4SOIsNodePrime,
 					       model->B4SOIntnoi *
+                                               tempRatioSH * /* v4.2 self-heating temp */
                                                (2.0 / 3.0 * fabs(here->B4SOIgm
                                                + here->B4SOIgds
-                                               + here->B4SOIgmbs)));
+                                               + here->B4SOIgmbs)) * here->B4SOIm);
                                       break;
 			      }
 
@@ -423,13 +461,23 @@ int i;
 			              {   vds = -vds;
 				          vgs = vgs + vds;
 			              }
-
-			              Ssi = B4SOIEval1ovFNoise(vds, model, here,
-					    data->freq, ckt->CKTtemp);
-				      
-				      T10 = model->B4SOIoxideTrapDensityA
-					    * CONSTboltz * ckt->CKTtemp;
-		                      T11 = pParam->B4SOIweff * here->B4SOInf 
+						 /*v4.2 implementing SH temp */ 
+						if ((model->B4SOIshMod == 1) && (here->B4SOIrth0 != 0.0))  
+						  Ssi = B4SOIEval1ovFNoise(vds, model, here,
+					    data->freq, here->B4SOITempSH);
+			            else 
+						  Ssi = B4SOIEval1ovFNoise(vds, model, here,
+					    data->freq, ckt->CKTtemp); /*v4.2 implementing SH temp */
+			             
+						 /*v4.2 implementing SH temp */
+						if ((model->B4SOIshMod == 1) && (here->B4SOIrth0 != 0.0))  
+						T10 = model->B4SOIoxideTrapDensityA
+					    * CONSTboltz * here->B4SOITempSH;
+						else
+						T10 = model->B4SOIoxideTrapDensityA
+					    * CONSTboltz * ckt->CKTtemp; /*v4.2 implementing SH temp */
+				     
+					 T11 = pParam->B4SOIweff * here->B4SOInf 
 					    * pParam->B4SOIleff
 				            * pow(data->freq, model->B4SOIef)
 				            * 1.0e10 * here->B4SOInstar
@@ -476,12 +524,17 @@ int i;
 			      here->B4SOIsNodePrime, here->B4SOIbNode, 
                               model->B4SOInoif * here->B4SOIibs * here->B4SOIm); 
 
-		              NevalSrc(&noizDens[B4SOIFB_IBDNOIZ], 
+		             /* NevalSrc(&noizDens[B4SOIFB_IBDNOIZ], 
 			      &lnNdens[B4SOIFB_IBDNOIZ], ckt, SHOTNOISE, 
 			      here->B4SOIdNodePrime, here->B4SOIbNode, 
-                              model->B4SOInoif * fabs(here->B4SOIibd) * here->B4SOIm); 
+                              model->B4SOInoif * fabs(here->B4SOIibd)); */ /*v4.2*/
 
-		              noizDens[B4SOITOTNOIZ] = noizDens[B4SOIRDNOIZ]
+			      NevalSrc(&noizDens[B4SOIFB_IBDNOIZ], 
+			      &lnNdens[B4SOIFB_IBDNOIZ], ckt, SHOTNOISE, 
+			      here->B4SOIdNodePrime, here->B4SOIbNode, 
+			      model->B4SOInoif * (here->B4SOIibd) * here->B4SOIm); 	/*v4.2 extra fabs()removed */						  
+		          
+ 				  noizDens[B4SOITOTNOIZ] = noizDens[B4SOIRDNOIZ]
 						     + noizDens[B4SOIRSNOIZ]
 						     + noizDens[B4SOIRGNOIZ]
 						     + noizDens[B4SOIIDNOIZ]

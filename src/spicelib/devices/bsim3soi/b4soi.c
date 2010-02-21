@@ -1,4 +1,6 @@
-/***  B4SOI 03/06/2009 Wenwei Yang Release   ***/
+
+/***  B4SOI 12/31/2009 Released by Tanvir Morshed   ***/
+
 
 /**********
  * Copyright 2009 Regents of the University of California.  All rights reserved.
@@ -9,8 +11,9 @@
  * File: b4soi.c          
  * Modified by Hui Wan, Xuemei Xi 11/30/2005 
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
+ * Modified by Tanvir Morshed 09/22/2009
+ * Modified by Tanvir Morshed 12/31/2009
  **********/
-
 
 #include "ngspice.h"
 #include "devdefs.h"
@@ -76,7 +79,7 @@ OP( "debug3",      B4SOI_DEBUG3,     IF_REAL,    "DebugOut3"),
 #endif
 
 IOP( "bjtoff", B4SOI_BJTOFF,	      IF_INTEGER, "BJT on/off flag"),
-IOP( "debug", B4SOI_DEBUG,	      IF_INTEGER, "BJT on/off flag"),
+IOP( "debug", B4SOI_DEBUG,	      IF_INTEGER, "DEBUG on/off flag"),
 IOP( "rth0", B4SOI_RTH0,  IF_REAL,    "Instance Thermal Resistance"),
 IOP( "cth0", B4SOI_CTH0,  IF_REAL,    "Instance Thermal Capacitance"),
 IOP( "nrb", B4SOI_NRB,    IF_REAL,    "Number of squares in body"),
@@ -226,7 +229,7 @@ IOP( "pdiblcb", B4SOI_MOD_PDIBLB, IF_REAL, "Body-effect on drain-induced barrier
 IOP( "pvag", B4SOI_MOD_PVAG, IF_REAL, "Gate dependence of output resistance parameter"),   
 
 IOP( "shmod", B4SOI_MOD_SHMOD, IF_INTEGER, "Self heating mode selector"),
-IOP( "ddmod", B4SOI_MOD_DDMOD, IF_INTEGER, "Dynamic depletion mode selector"),
+/* IOP( "ddmod", B4SOI_MOD_DDMOD, IF_INTEGER, "Dynamic depletion mode selector"), */ /*v4.2 soiMod = 1 now has the functionality */
 IOP( "tbox", B4SOI_MOD_TBOX, IF_REAL, "Back gate oxide thickness in meters"),   
 IOP( "tsi", B4SOI_MOD_TSI, IF_REAL, "Silicon-on-insulator thickness in meters"), 
 IOP( "etsi", B4SOI_MOD_ETSI, IF_REAL, "Effective Silicon-on-insulator thickness in meters"),  
@@ -621,7 +624,10 @@ IOP( "lu0",  B4SOI_MOD_LU0, IF_REAL, "Length dependence of u0"),
 IOP( "leu",  B4SOI_MOD_LEU, IF_REAL, " Length dependence of eu"),
 IOP( "lua",  B4SOI_MOD_LUA, IF_REAL, "Length dependence of ua"),
 IOP( "lub", B4SOI_MOD_LUB, IF_REAL, "Length dependence of ub"),
-IOP( "luc",  B4SOI_MOD_LUC, IF_REAL, "Length dependence of uc"),
+IOP( "luc",  B4SOI_MOD_LUC, IF_REAL, "Length dependence of uc"), 
+IOP( "lud",  B4SOI_MOD_LUD, IF_REAL, "Length dependence of ud"), /* Bug fix # 32 Jul 09 */ 
+IOP( "lud1",  B4SOI_MOD_LUD1, IF_REAL, "Length dependence of ud1"), 
+ /* Bug fix # 32 Jul 09 */ 
 IOP( "lucste", B4SOI_MOD_LUCSTE, IF_REAL, "Length dependence of ucste"),
 IOP( "lucs",  B4SOI_MOD_LUCS, IF_REAL, "Length dependence of lucs"),
 IOP( "lvsat", B4SOI_MOD_LVSAT, IF_REAL, "Length dependence of vsat"),
@@ -659,6 +665,11 @@ IOP( "lpvag", B4SOI_MOD_LPVAG, IF_REAL, "Length dependence of pvag"),
 IOP( "ldelta", B4SOI_MOD_LDELTA, IF_REAL, "Length dependence of delta"),
 IOP( "lalpha0", B4SOI_MOD_LALPHA0, IF_REAL, "Length dependence of alpha0"),
 IOP( "lfbjtii", B4SOI_MOD_LFBJTII, IF_REAL, "Length dependence of fbjtii"),
+IOP( "labjtii", B4SOI_MOD_LABJTII, IF_REAL, "Length dependence of abjtii"), /*Bug fix # 32 Jul 09*/
+IOP( "lcbjtii", B4SOI_MOD_LCBJTII, IF_REAL, "Length dependence of cbjtii"), /*Bug fix # 32 Jul 09*/
+IOP( "lebjtii", B4SOI_MOD_LEBJTII, IF_REAL, "Length dependence of ebjtii"), /*Bug fix # 32 Jul 09*/
+IOP( "lmbjtii", B4SOI_MOD_LMBJTII, IF_REAL, "Length dependence of mbjtii"), /*Bug fix # 32 Jul 09*/
+IOP( "lvbci", B4SOI_MOD_LVBCI, IF_REAL, "Length dependence of vbci"), /*Bug fix # 32 Jul 09*/
 IOP( "lbeta0", B4SOI_MOD_LBETA0, IF_REAL, "Length dependence of beta0"),
 IOP( "lbeta1", B4SOI_MOD_LBETA1, IF_REAL, "Length dependence of beta1"),
 IOP( "lbeta2", B4SOI_MOD_LBETA2, IF_REAL, "Length dependence of beta2"),
@@ -713,7 +724,7 @@ IOP( "lvsdfb", B4SOI_MOD_LVSDFB, IF_REAL, "Length dependence of vsdfb"),
 IOP( "lvsdth", B4SOI_MOD_LVSDTH, IF_REAL, "Length dependence of vsdth"),
 IOP( "ldelvt", B4SOI_MOD_LDELVT, IF_REAL, "Length dependence of delvt"),
 IOP( "lacde", B4SOI_MOD_LACDE, IF_REAL, "Length dependence of acde"),
-IOP( "lmoin", B4SOI_MOD_LMOIN, IF_REAL, "Length dependence of amoin"),
+IOP( "lmoin", B4SOI_MOD_LMOIN, IF_REAL, "Length dependence of moin"),
 IOP( "lnoff", B4SOI_MOD_LNOFF, IF_REAL, "Length dependence of noff"), /* v3.2 */
 
 /* v3.1 added for RF */
@@ -764,7 +775,6 @@ IOP( "wcigsd", B4SOI_MOD_WCIGSD, IF_REAL, "Width dependence of cigsd"),
 IOP( "wnigc", B4SOI_MOD_WNIGC, IF_REAL, "Width dependence of nigc"),
 IOP( "wpigcd", B4SOI_MOD_WPIGCD, IF_REAL, "Width dependence for pigcd"),
 IOP( "wpoxedge", B4SOI_MOD_WPOXEDGE, IF_REAL, "Width dependence for poxedge"),
-
 IOP( "wnch",  B4SOI_MOD_WNPEAK, IF_REAL, "Width dependence of nch"),
 IOP( "wnsub", B4SOI_MOD_WNSUB, IF_REAL, "Width dependence of nsub"),
 IOP( "wngate", B4SOI_MOD_WNGATE, IF_REAL, "Width dependence of ngate"),
@@ -792,6 +802,8 @@ IOP( "weu",  B4SOI_MOD_WEU, IF_REAL, "Width dependence of eu"),
 IOP( "wua",  B4SOI_MOD_WUA, IF_REAL, "Width dependence of ua"),
 IOP( "wub", B4SOI_MOD_WUB, IF_REAL, "Width dependence of ub"),
 IOP( "wuc",  B4SOI_MOD_WUC, IF_REAL, "Width dependence of uc"),
+IOP( "wud",  B4SOI_MOD_WUD, IF_REAL, "Width dependence of ud"), /* Bug fix # 32 Jul 09 */
+IOP( "wud1",  B4SOI_MOD_WUD1, IF_REAL, "Width dependence of ud1"), /* Bug fix # 32 Jul 09 */
 IOP( "wucste", B4SOI_MOD_WUCSTE, IF_REAL, "Width dependence of ucste"),
 IOP( "wucs",  B4SOI_MOD_WUCS, IF_REAL, "Width dependence of ucs"),
 IOP( "wvsat", B4SOI_MOD_WVSAT, IF_REAL, "Width dependence of vsat"),
@@ -829,6 +841,11 @@ IOP( "wpvag", B4SOI_MOD_WPVAG, IF_REAL, "Width dependence of pvag"),
 IOP( "wdelta", B4SOI_MOD_WDELTA, IF_REAL, "Width dependence of delta"),
 IOP( "walpha0", B4SOI_MOD_WALPHA0, IF_REAL, "Width dependence of alpha0"),
 IOP( "wfbjtii", B4SOI_MOD_WFBJTII, IF_REAL, "Width dependence of fbjtii"),
+IOP( "wabjtii", B4SOI_MOD_WABJTII, IF_REAL, "Width dependence of abjtii"), /*Bug fix # 32 Jul 09 */
+IOP( "wcbjtii", B4SOI_MOD_WCBJTII, IF_REAL, "Width dependence of cbjtii"), /*Bug fix # 32 Jul 09 */
+IOP( "webjtii", B4SOI_MOD_WEBJTII, IF_REAL, "Width dependence of ebjtii"), /*Bug fix # 32 Jul 09 */
+IOP( "wmbjtii", B4SOI_MOD_WMBJTII, IF_REAL, "Width dependence of mbjtii"), /*Bug fix # 32 Jul 09 */
+IOP( "wvbci", B4SOI_MOD_WVBCI, IF_REAL, "Width dependence of vbci"), /*Bug fix # 32 Jul 09*/
 IOP( "wbeta0", B4SOI_MOD_WBETA0, IF_REAL, "Width dependence of beta0"),
 IOP( "wbeta1", B4SOI_MOD_WBETA1, IF_REAL, "Width dependence of beta1"),
 IOP( "wbeta2", B4SOI_MOD_WBETA2, IF_REAL, "Width dependence of beta2"),
@@ -883,12 +900,13 @@ IOP( "wvsdfb", B4SOI_MOD_WVSDFB, IF_REAL, "Width dependence of vsdfb"),
 IOP( "wvsdth", B4SOI_MOD_WVSDTH, IF_REAL, "Width dependence of vsdth"),
 IOP( "wdelvt", B4SOI_MOD_WDELVT, IF_REAL, "Width dependence of delvt"),
 IOP( "wacde", B4SOI_MOD_WACDE, IF_REAL, "Width dependence of acde"),
-IOP( "wmoin", B4SOI_MOD_WMOIN, IF_REAL, "Width dependence of amoin"),
+IOP( "wmoin", B4SOI_MOD_WMOIN, IF_REAL, "Width dependence of moin"),
 IOP( "wnoff", B4SOI_MOD_WNOFF, IF_REAL, "Width dependence of noff"), /* v3.2 */
 
 /* v3.1 added for RF */
 IOP("wxrcrg1", B4SOI_MOD_WXRCRG1, IF_REAL, "Width dependence of xrcrg1"),
-IOP("Wxrcrg2", B4SOI_MOD_WXRCRG2, IF_REAL, "Width dependence of xrcrg2"),
+/* IOP("Wxrcrg2", B4SOI_MOD_WXRCRG2, IF_REAL, "Width dependence of xrcrg2") *//*Bug fix # 32 Jul 09 */
+IOP("wxrcrg2", B4SOI_MOD_WXRCRG2, IF_REAL, "Width dependence of xrcrg2"),
 /* added for RF model end*/
 
 
@@ -963,6 +981,8 @@ IOP( "peu",  B4SOI_MOD_PEU, IF_REAL, "Cross-term dependence of eu"),
 IOP( "pua",  B4SOI_MOD_PUA, IF_REAL, "Cross-term dependence of ua"),
 IOP( "pub", B4SOI_MOD_PUB, IF_REAL, "Cross-term dependence of ub"),
 IOP( "puc",  B4SOI_MOD_PUC, IF_REAL, "Cross-term dependence of uc"),
+IOP( "pud",  B4SOI_MOD_PUD, IF_REAL, "Cross-term dependence of ud"), /*Bug fix # 32 Jul 09 */
+IOP( "pud1",  B4SOI_MOD_PUD1, IF_REAL, "Cross-term dependence of ud1"), /*Bug fix # 32 Jul 09 */
 IOP( "pucste", B4SOI_MOD_PUCSTE, IF_REAL, "Cross-term dependence of ucste"),
 IOP( "pucs",  B4SOI_MOD_PUCS, IF_REAL, "Cross-term dependence of ucs"),
 IOP( "pvsat", B4SOI_MOD_PVSAT, IF_REAL, "Cross-term dependence of vsat"),
@@ -1000,6 +1020,11 @@ IOP( "ppvag", B4SOI_MOD_PPVAG, IF_REAL, "Cross-term dependence of pvag"),
 IOP( "pdelta", B4SOI_MOD_PDELTA, IF_REAL, "Cross-term dependence of delta"),
 IOP( "palpha0", B4SOI_MOD_PALPHA0, IF_REAL, "Cross-term dependence of alpha0"),
 IOP( "pfbjtii", B4SOI_MOD_PFBJTII, IF_REAL, "Cross-term dependence of fbjtii"),
+IOP( "pabjtii", B4SOI_MOD_PABJTII, IF_REAL, "Cross-term dependence of abjtii"), /* Bug fix # 32 Jul 09 */
+IOP( "pcbjtii", B4SOI_MOD_PCBJTII, IF_REAL, "Cross-term dependence of cbjtii"), /* Bug fix # 32 Jul 09 */
+IOP( "pebjtii", B4SOI_MOD_PEBJTII, IF_REAL, "Cross-term dependence of ebjtii"), /* Bug fix # 32 Jul 09 */
+IOP( "pmbjtii", B4SOI_MOD_PMBJTII, IF_REAL, "Cross-term dependence of mbjtii"), /* Bug fix # 32 Jul 09 */
+IOP( "pvbci", B4SOI_MOD_PVBCI, IF_REAL, "Cross-term dependence of vbci"), /* Bug fix # 32 Jul 09 */
 IOP( "pbeta0", B4SOI_MOD_PBETA0, IF_REAL, "Cross-term dependence of beta0"),
 IOP( "pbeta1", B4SOI_MOD_PBETA1, IF_REAL, "Cross-term dependence of beta1"),
 IOP( "pbeta2", B4SOI_MOD_PBETA2, IF_REAL, "Cross-term dependence of beta2"),
@@ -1054,7 +1079,7 @@ IOP( "pvsdfb", B4SOI_MOD_PVSDFB, IF_REAL, "Cross-term dependence of vsdfb"),
 IOP( "pvsdth", B4SOI_MOD_PVSDTH, IF_REAL, "Cross-term dependence of vsdth"),
 IOP( "pdelvt", B4SOI_MOD_PDELVT, IF_REAL, "Cross-term dependence of delvt"),
 IOP( "pacde", B4SOI_MOD_PACDE, IF_REAL, "Cross-term dependence of acde"),
-IOP( "pmoin", B4SOI_MOD_PMOIN, IF_REAL, "Cross-term dependence of amoin"),
+IOP( "pmoin", B4SOI_MOD_PMOIN, IF_REAL, "Cross-term dependence of moin"),
 IOP( "pnoff", B4SOI_MOD_PNOFF, IF_REAL, "Cross-term dependence of noff"), /* v3.2 */
 
 /* v3.1 added for RF */
@@ -1083,7 +1108,7 @@ char *B4SOInames[] = {
    "Gate",
    "Source",
    "Backgate",
-   "Body_ext",
+   "",
    "Body",
    "Temp",
    "Charge",

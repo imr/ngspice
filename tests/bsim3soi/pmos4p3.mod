@@ -1,4 +1,4 @@
-*BSIMSOI4.1 example modelcard
+*BSIMSOI4.3 example modelcard
 .Model P1 PMOS Level= 10
 
 +MOBMOD  = 2             SHMOD     =  0         CAPMOD   = 2

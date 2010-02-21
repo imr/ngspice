@@ -1,4 +1,4 @@
-* BSIMSOI4.1 example modelcard
+* BSIMSOI4.3 example modelcard
 .Model N1 NMOS Level= 10 
 
 +MOBMOD  = 2             SHMOD    =  0          CAPMOD   = 2

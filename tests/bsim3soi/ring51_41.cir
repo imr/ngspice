@@ -16,8 +16,8 @@ cout  buf ss 1pF
 *.option itl1=1000 itl4=20 temp=85 gmin=1e-15 abstol=1e-12 reltol=1e-4
 .tran 0.2n 10n
 .print tran v(out25) v(out50)
-.include nmos4p1.mod
-.include pmos4p1.mod
+.include nmos4p3.mod
+.include pmos4p3.mod
 
 
 .subckt inv1 dd ss sub in out
