@@ -1,3 +1,6 @@
+2010-02-21 Dietmar Warning
+ * /devices/bsim3soi/*.*: bsimsoi update to Berkeley Version 4.3
+
 2010-02-15 Holger Vogt
  * getopt_bsd.h, resask.c, optionssc.c: LF line endings
  * evttermi.c: #include <strings.h> removed (is in ngspice.h)
