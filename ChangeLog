@@ -1,3 +1,7 @@
+2010-02-22 Dietmar Warning
+ * xpressn.c, spicenum.c: more characters for real number insertion (up to 15) by 
+   introducing a long long placeholder
+
 2010-02-21 Dietmar Warning
  * /devices/bsim3soi/*.*: bsimsoi update to Berkeley Version 4.3
 
