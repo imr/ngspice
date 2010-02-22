@@ -61,12 +61,12 @@ unsigned int dynLlen; /* inpcom.c:1531 */
   overwrite any line pointers, or we start a new set after each sig=0 ?
   Anyway, we neutralize all & and .param lines  (category[] array!)
   and we substitute all {} &() and &id placeholders by dummy numbers. 
-  The placeholders are long integers 1000000000+n (10 digits, n small).
+  The placeholders are long long integers 100000000000000+n (15 digits, n small).
 
 */
 /**********  string handling ***********/
 
-#define PlaceHold 1000000000L
+#define PlaceHold 100000000000000LL
 static long placeholder = 0;
 
 
@@ -123,11 +123,8 @@ stripbraces (char *s)
          if (t[i - 1] > ' ')
             cadd (t, ' ');
 
-         cadd (t, ' ');  /* add extra character to increase number significant digits for evaluated numbers */
          cadd (t, ' ');
-         cadd (t, ' ');
-         cadd (t, ' ');
-         nadd (t, PlaceHold + placeholder);
+         naddll (t, PlaceHold + placeholder); /* placeholder has 15 digits */
          cadd (t, ' ');
 
          if (s[j] >= ' ')

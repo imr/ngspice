@@ -574,6 +574,60 @@ nadd (char *s, long n)
   return ok;
 }
 
+unsigned char
+naddll (char *s, long long n)
+/* append a decimal integer to a string */
+{
+  int d[25];
+  int j, k, ls, len;
+  char sg;			/* the sign */
+  unsigned char ok;
+  k = 0;
+  len = maxlen (s);
+
+  if (n < 0)
+    {
+      n = -n;
+      sg = '-';
+    }
+  else
+    sg = '+';
+
+  while (n > 0)
+    {
+      d[k] = n % 10;
+      k++;
+      n = n / 10;
+    }
+
+  if (k == 0)
+    ok = cadd (s, '0');
+  else
+    {
+      ls = length (s);
+      ok = (len - ls) > k;
+      if (ok)
+	{
+	  if (sg == '-')
+	    {
+	      s[ls] = sg;
+	      ls++;
+	    }
+	  for (j = k - 1; j >= 0; j--)
+	    {
+	      s[ls] = d[j] + '0';
+	      ls++;
+	    }
+	  sfix (s, ls, len);
+	}
+    }
+
+  if (!ok)
+    stringbug ("naddll", s, NULL, sg);
+
+  return ok;
+}
+
 void
 stri (long n, char *s)
 /* convert integer to string */

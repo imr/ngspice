@@ -62,6 +62,7 @@ unsigned char scopy_up( char * a, char * b);
 unsigned char ccopy( char * a, char c);
 unsigned char sadd( char * s, char * t);
 unsigned char nadd( char * s, long n);
+unsigned char naddll( char * s, long long n);
 unsigned char cadd( char * s, char c);
 unsigned char sins( char * s, char * t);
 unsigned char cins( char * s, char c);

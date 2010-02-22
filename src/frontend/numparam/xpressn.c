@@ -32,7 +32,7 @@ extern unsigned int dynLlen;
 
 #define MAX_STRING_INSERT 17 /* max. string length to be inserted and replaced */
 #define ACT_CHARACTS 15      /* actual string length to be inserted and replaced */
-/* was 10, needs to be less or equal to MAX_STRING_INSERT - 2 */
+                             /* was 10, needs to be less or equal to MAX_STRING_INSERT - 2 */
 
 static double
 ternary_fcn (int conditional, double if_value, double else_value)
@@ -1577,7 +1577,7 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
 
 static void
 compactfloatnb (char *v)
-/* try to squeeze a floating pt format to MAXCHARACTS characters */
+/* try to squeeze a floating pt format to ACT_CHARACTS characters */
 /* erase superfluous 000 digit streams before E */
 /* bug: truncating, no rounding */
 {
@@ -1647,7 +1647,7 @@ insertnumber (tdico * dico, int i, char *s, char *u)
   Str (80, msg);
   unsigned char found;
   int ls, k;
-  long accu;
+  long long accu;
   ls = length (s);
 
   scopy (v, u);
@@ -1671,8 +1671,8 @@ insertnumber (tdico * dico, int i, char *s, char *u)
       k = 0;
       accu = 0;
 
-      while (found && (k < 10))
-        {                        /* parse a 10-digit number */
+      while (found && (k < 15))
+        {                        /* parse a 15-digit number */
           found = num (s[i + k]);
 
           if (found)
@@ -1683,15 +1683,15 @@ insertnumber (tdico * dico, int i, char *s, char *u)
 
       if (found)
         {
-          accu = accu - 1000000000L;        /* plausibility test */
+          accu = accu - 100000000000000LL;        /* plausibility test */
           found = (accu > 0) && (accu < dynsubst + 1); /* dynsubst numbers have been allocated */
         }
       i++;
     }
 
   if (found)
-    {                                /* substitute at i-1-ACT_CHARACTS+11 */
-      for (k = 0; k < ACT_CHARACTS - 10; k++) i--;
+    {                                /* substitute at i-1 ongoing */
+      i--;
       for (k = 0; k < ACT_CHARACTS; k++)
         s[i + k] = v[k];
 
