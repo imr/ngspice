@@ -1786,7 +1786,7 @@ inp_fix_subckt( char *s )
 
     head = alloc(struct line);
     /* create list of parameters that need to get sorted */
-    while ( ( ptr1 = strstr( beg, "=" ) ) ) {
+    while ( *beg && (ptr1 = strstr( beg, "=" ) ) ) {
       ptr2 = ptr1+1;
       ptr1--;
       while ( isspace(*ptr1)  ) ptr1--;
@@ -1797,8 +1797,16 @@ inp_fix_subckt( char *s )
       while ( *ptr2 && !isspace(*ptr2) ) ptr2++; /* ptr2 points to end of parameter       */
 
       keep  = *ptr2;
-      *ptr2 = '\0';
-      beg   = ptr2+1;
+      if( keep == '\0' ){
+	/* End of string - don't go over end.  This needed to change because
+	 * strings don't store line size here anymore since we use dynamic
+	 * strings.  Previously, we could step on string size which was stored
+	 * at string[length+2] and string[length+2] */
+	beg = ptr2 ; 
+      } else {
+	*ptr2 = '\0' ;
+	beg   = ptr2+1 ;
+      }
 
       newcard = alloc(struct line);
       str     = strdup(ptr1);

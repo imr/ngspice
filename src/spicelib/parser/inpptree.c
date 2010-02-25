@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group 
 **********/
+// #define TRACE
 
 #include "ngspice.h"
 #include "ifsim.h"
@@ -227,6 +228,31 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 
 	}
 	break;
+ 
+    case PT_TERN: /* ternary_fcn(cond,exp1,exp2) */
+      // naive:
+      //   d/d ternary_fcn(cond,exp1,exp2) --> ternary_fcn(cond, d/d exp1, d/d exp2)
+      {
+	INPparseNode *arg1 = p->left;
+	INPparseNode *arg2 = p->right->left;
+	INPparseNode *arg3 = p->right->right;
+
+//	extern void printTree(INPparseNode *);
+//
+//	printf("debug: %s, PT_TERN: ", __func__);
+//	printTree(p);
+//	printf("\n");
+
+	newp = mkb(PT_TERN, arg1, mkb(PT_COMMA,
+				      PTdifferentiate(arg2, varnum),
+				      PTdifferentiate(arg3, varnum)));
+
+//	printf("debug, %s, returns; ", __func__);
+//	printTree(newp);
+//	printf("\n");
+
+	return (newp);
+      }
 
     case PT_FUNCTION:
 	/* Many cases.  Set arg1 to the derivative of the function,
@@ -491,11 +517,28 @@ static INPparseNode *mkb(int type, INPparseNode * left,
 		return (left);
 	}
 	break;
+
+    case PT_TERN:
+	if (left->type == PT_CONSTANT)
+	    /*FIXME > 0.0, >= 0.5, != 0.0 or what ? */
+	    return ((left->constant != 0.0) ? right->left : right->right);
+	if((right->left->type == PT_CONSTANT) &&
+	   (right->right->type == PT_CONSTANT) &&
+	   (right->left->constant == right->right->constant))
+	    return (right->left);
+	break;
+     }
+ 
+     p->type = type;
+     p->left = left;
+     p->right = right;
+ 
+    if(type == PT_TERN) {
+	p->function = NULL;
+	p->funcname = NULL;
+	return (p);
     }
 
-    p->type = type;
-    p->left = left;
-    p->right = right;
 
     for (i = 0; i < NUM_OPS; i++)
 	if (ops[i].number == type)
@@ -563,6 +606,8 @@ static int PTcheck(INPparseNode * p)
     case PT_POWER:
     case PT_COMMA:
 	return (PTcheck(p->left) && PTcheck(p->right));
+    case PT_TERN:
+	return (PTcheck(p->left) && PTcheck(p->right->left) && PTcheck(p->right->right));
 
     default:
 	fprintf(stderr, "Internal error: bad node type %d\n", p->type);
@@ -925,6 +970,29 @@ static INPparseNode *mkfnode(char *fname, INPparseNode * arg)
 	}
 	p->valueIndex = i;
 	p->type = PT_VAR;
+
+    } else if(!strcmp("ternary_fcn", buf)) {
+
+//	extern void printTree(INPparseNode *);
+//
+//	printf("debug: %s ternary_fcn: ", __func__);
+//	printTree(arg);
+//	printf("\n");
+
+	if(arg->type != PT_COMMA || arg->left->type != PT_COMMA) {
+	    fprintf(stderr, "Error: bogus ternary_fcn form\n");
+	    return (NULL);
+	} else {
+	    INPparseNode *arg1 = arg->left->left;
+	    INPparseNode *arg2 = arg->left->right;
+	    INPparseNode *arg3 = arg->right;
+
+	    p->type = PT_TERN;
+	    p->left = arg1;
+	    p->right = mkb(PT_COMMA, arg2, arg3);
+	}
+
+
     } else {
 	for (i = 0; i < NUM_FUNCS; i++)
 	    if (!strcmp(funcs[i].name, buf))
@@ -1127,7 +1195,7 @@ static PTelement *PTlexer(char **line)
 
 #ifdef TRACE
     printf("PTlexer: token = %d, type = %d, left = '%s'\n", 
-        el.token, el.type, sbuf); */
+        el.token, el.type, sbuf);
 #endif
     return (&el);
 }
@@ -1204,9 +1272,26 @@ void printTree(INPparseNode * pt)
 	printf(")");
 	break;
 
+ 
+    case PT_COMMA:
+	printf("(");
+	printTree(pt->left);
+	printf(") , (");
+	printTree(pt->right);
+	printf(")");
+	break;
+
     case PT_FUNCTION:
 	printf("%s (", pt->funcname);
 	printTree(pt->left);
+	printf(")");
+	break;
+ 
+    case PT_TERN:
+	printf("ternary_fcn (");
+	printTree(pt->left);
+	printf(") , (");
+	printTree(pt->right);
 	printf(")");
 	break;
 

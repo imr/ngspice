@@ -85,6 +85,25 @@ PTeval(INPparseNode * tree, double gmin, double *res, double *vals)
 	}
 	break;
 
+    case PT_TERN:
+      {
+        INPparseNode *arg1 = tree->left;
+        INPparseNode *arg2 = tree->right->left;
+        INPparseNode *arg3 = tree->right->right;
+
+        err = PTeval(arg1, gmin, &r1, vals);
+        if (err != OK)
+          return (err);
+
+        /*FIXME > 0.0, >= 0.5, != 0.0 or what ? */
+        err = PTeval((r1 != 0.0) ? arg2 : arg3, gmin, &r2, vals);
+        if (err != OK)
+           return (err);
+
+        *res = r2;
+        break;
+      }
+
     case PT_PLUS:
     case PT_MINUS:
     case PT_TIMES:

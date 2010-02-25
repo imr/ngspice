@@ -781,12 +781,13 @@ bxx_printf(struct bxx_buffer *t, const char *fmt, ...)
 {
     va_list ap;
 
-    va_start(ap, fmt);
-
     while(1) {
-        int size = t->limit - t->buffer;
-        int ret  = vsnprintf(t->dst, size, fmt, ap);
-        if(ret == -1) {
+        int ret;
+        int size = t->limit - t->dst;
+		va_start(ap, fmt);
+        ret  = vsnprintf(t->dst, size, fmt, ap);
+        va_end(ap);
+		if(ret == -1) {
             bxx_extend(t, bxx_chunksize);
         } else if(ret >= size) {
             bxx_extend(t, ret - size + 1);

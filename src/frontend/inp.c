@@ -704,6 +704,7 @@ inp_dodeck(
                 eev->va_next = cp_setparse(wl);
             else
                 ct->ci_vars = eev = cp_setparse(wl);
+            wl_free(wl);
             while (eev->va_next)
                 eev = eev->va_next;
         }

@@ -69,6 +69,7 @@ typedef struct INPparseNode {
 #define PT_CONSTANT 7
 #define PT_VAR      8
 #define PT_COMMA    10
+#define PT_TERN     11
 
 /* These are the functions that we support. */
 

@@ -1,3 +1,13 @@
+2010-02-25 Holger Vogt
+ * inpcom.c, general.h, mystring.c, numparam.h, spicenum.c, xpressn.c, 
+   include/makefile.am, misc/makefile.am, hash.c, hash.h:
+   major bug-fix on numparam by Bill Swartz
+ * subckt.c: bugfix on bxx_printf()
+ * inp.c memory leak, line 707 wl_free(wl); added
+ * ifeval.c, inpptree.c, inpptree.h: first try of ternary fcn in B source
+   by Robert Larice
+ * vngspice.sln, vngspice.vcproj: new files hash.c, .h added to project
+
 2010-02-22 Dietmar Warning
  * xpressn.c, spicenum.c: more characters for real number insertion (up to 15) by 
    introducing a long long placeholder

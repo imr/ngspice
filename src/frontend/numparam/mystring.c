@@ -11,6 +11,7 @@
 #include <string.h>
 #include <memory.h>
 #include <math.h>
+#include <stdarg.h>
 
 #include "config.h"
 #ifdef HAS_WINDOWS
@@ -21,7 +22,7 @@
 
 #include "../error.h" /* controlled_exit() */
 
-#define Getmax(s,ls)  (((unsigned char)(s[ls+1])) << 8) + (unsigned char)(s[ls+2])
+#define EOS  '\0'
 
 /***** primitive input-output ***/
 
@@ -66,31 +67,24 @@ ws (char *s)
 void
 wi (long i)
 {
-  Str (16, s);
-  nadd (s, i);
-  ws (s);
+  SPICE_DSTRING s ;
+  spice_dstring_init(&s) ;
+  nadd (&s, i);
+  ws ( spice_dstring_value(&s)) ;
+  spice_dstring_free(&s) ;
 }
 
 void
-rs (char *s)
+rs ( SPICE_DSTRINGPTR dstr_p)
 {				/* basic line input, limit= 80 chars */
-  int max, i;
   char c;
 
-  max = maxlen (s);
-  i = 0;
-  sini (s, max);
-  if (max > 80)
-    max = 80;
 
+  spice_dstring_reinit(dstr_p) ;
   do
     {
       c = fgetc (stdin);
-      if ((i < max) && (c >= ' '))
-	{
-	  cadd (s, c);
-	  i++;
-	}
+      cadd (dstr_p, c);
     }
   while (!((c == Cr) || (c == '\n')));
   /* return i */ ;
@@ -100,13 +94,21 @@ char
 rc (void)
 {
   int ls;
-  Str (80, s);
-  rs (s);
-  ls = length (s);
-  if (ls > 0)
-    return s[ls - 1];
-  else
-    return 0;
+  char val ;
+  char *s_p ;
+  SPICE_DSTRING dstr ;
+
+  spice_dstring_init(&dstr) ;
+  rs (&dstr);
+  ls = spice_dstring_length (&dstr);
+  if (ls > 0){
+    s_p = spice_dstring_value(&dstr) ;
+    val = s_p[ls - 1] ;
+  } else {
+    val = 0 ;
+  }
+  spice_dstring_free(&dstr) ;
+  return val ;
 
 }
 
@@ -123,91 +125,28 @@ rc (void)
  *
  *    the 'killer idea' is the following:
  *    on string overflow and/or on heap allocation failure, a program
- *    MUST die. 
+ *    MUST die.   Now we only die on a heap failure as with dynamic
+ *    string we cannot have a string overflow.
  */
 
-static void
-stringbug (char *op, char *s, char *t, char c)
-/* we brutally stop the program on string overflow */
-{
-  char rep = ' ';
-  fprintf (stderr, " STRING overflow %s\n", op);
-  fprintf (stderr, " Operand1: %s\n", s);
-  if (t != NULL)
-    fprintf (stderr, " Operand2: %s\n", t);
-
-  if (c != 0)
-    fprintf (stderr, "{%c}\n", c);
-
-  fprintf (stderr, "Aborting...\n");
-  controlled_exit(EXIT_FAILURE);
-
-/* The code below cannot be reached */
-/* Remnants of old interface ?*/
-
-  ws (" [A]bort [I]gnore ? ");
-  rep = rc ();
-  if (upcase (rep) == 'A')
-    controlled_exit(EXIT_FAILURE);
-}
-
 void
-sini (char *s, int max)		/* suppose s is allocated */
-{
-  if (max < 1)
-    max = 1;
-  else if (max > Maxstr)
-    max = Maxstr;
-
-  s[0] = 0;
-  s[1] = Hi (max);
-  s[2] = Lo (max);
-}
-
-void
-sfix (char *s, int i, int max)
+sfix ( SPICE_DSTRINGPTR dstr_p, int len)
 /* suppose s is allocated and filled with non-zero stuff */
 {
+  /* This function will now eliminate the max field.   The length of
+   * the string is going to be i-1 and a null is going to be added
+   * at the ith position to be compatible with old codel.  Also no
+   * null characters will be present in the string leading up to the
+   * NULL so this will make it a valid string. */
   int j;
-  if (max < 1)
-    max = 1;
-  else if (max > Maxstr)
-    max = Maxstr;
+  char *s ;
 
-  if (i > max)
-    i = max;
-  else if (i < 0)
-    i = 0;
-
-  s[i] = 0;
-  s[i + 1] = Hi (max);
-  s[i + 2] = Lo (max);
-
-  for (j = 0; j < i; j++)	/* eliminate null characters ! */
+  spice_dstring_setlength( dstr_p, len ) ;
+  s = spice_dstring_value( dstr_p ) ;
+  for (j = 0; j < len; j++)	/* eliminate null characters ! */
     if (s[j] == 0)
       s[j] = 1;
 
-}
-
-static void
-inistring (char *s, char c, int max)
-/* suppose s is allocated. empty it if c is zero ! */
-{
-  int i = 0;
-  s[i] = c;
-  if (c != 0)
-    {
-      i++;
-      s[i] = 0;
-    }
-
-  if (max < 1)
-    max = 1;
-  else if (max > Maxstr)
-    max = Maxstr;
-
-  s[i + 1] = Hi (max);
-  s[i + 2] = Lo (max);
 }
 
 int
@@ -221,107 +160,77 @@ length (char *s)
   return lg;
 }
 
-int
-maxlen (char *s)
+/* -----------------------------------------------------------------
+ * Function: add string t to dynamic string dstr_p.
+ * ----------------------------------------------------------------- */
+unsigned char
+sadd ( SPICE_DSTRINGPTR dstr_p, char *t)
 {
-  int ls = length (s);
-
-  return Getmax (s, ls);
+  spice_dstring_append( dstr_p, t, -1 ) ;
+  return 1 ;
 }
 
+/* -----------------------------------------------------------------
+ * Function: add character c to dynamic string dstr_p.
+ * ----------------------------------------------------------------- */
 unsigned char
-sadd (char *s, char *t)
+cadd ( SPICE_DSTRINGPTR dstr_p, char c)
 {
-  unsigned char ok;
-  int i = 0, max, ls = length (s);
-  max = Getmax (s, ls);
-
-  while ((t[i] != 0) && (ls < max))
-    {
-      s[ls] = t[i];
-      i++;
-      ls++;
-    }
-
-  s[ls] = 0;
-  s[ls + 1] = Hi (max);
-  s[ls + 2] = Lo (max);
-  ok = (t[i] == 0);		/* end of t is reached */
-
-  if (!ok)
-    stringbug ("sadd", s, t, 0);
-
-  return ok;
+  char tmp_str[2] ;
+  tmp_str[0] = c ;
+  tmp_str[1] = 0 ;
+  spice_dstring_append( dstr_p, tmp_str, -1 ) ;
+  return 1 ;
 }
 
+/* -----------------------------------------------------------------
+ * Function: insert character c at front of dynamic string dstr_p
+ * ----------------------------------------------------------------- */
 unsigned char
-cadd (char *s, char c)
+cins ( SPICE_DSTRINGPTR dstr_p, char c)
 {
-  int max, ls = length (s);
-  unsigned char ok;
-  max = Getmax (s, ls);
-  ok = (ls < max);
-  if (ok)
-    {
-      s[ls + 3] = s[ls + 2];
-      s[ls + 2] = s[ls + 1];
-      s[ls + 1] = 0;
-      s[ls] = c;
-    }
-  if (!ok)
-    stringbug ("cadd", s, NULL, c);
-
-  return ok;
+  int i ;
+  int ls ;
+  char *s_p ;
+  
+  ls = spice_dstring_length(dstr_p) ;
+  spice_dstring_setlength(dstr_p,ls+2) ; /* make sure we have space for char + EOS */
+  s_p = spice_dstring_value(dstr_p) ;
+  for (i = ls + 1; i >= 0; i--)
+    s_p[i + 1] = s_p[i];
+  s_p[0] = c;
+  return 1 ;
 }
 
+/* -----------------------------------------------------------------
+ * Function: insert string t at front of dynamic string dstr_p
+ * ----------------------------------------------------------------- */
 unsigned char
-cins (char *s, char c)
+sins ( SPICE_DSTRINGPTR dstr_p, char *t)
 {
-  int i, max, ls = length (s);
-  unsigned char ok;
-  max = Getmax (s, ls);
-  ok = (ls < max);
+  int i ;
+  int ls ;
+  int lt ;
+  char *s_p ;
+  
+  ls = spice_dstring_length(dstr_p) ;
+  lt = length (t) ;
+  spice_dstring_setlength(dstr_p,ls+lt+1) ; /* make sure we have space for string + EOS */
+  s_p = spice_dstring_value(dstr_p) ;
+  for (i = ls + 1; i >= 0; i--)
+    s_p[i + lt] = s_p[i];
 
-  if (ok)
-    {
-      for (i = ls + 2; i >= 0; i--)
-	s[i + 1] = s[i];
-      s[0] = c;
-    }
+  for (i = 0; i < lt; i++)
+    s_p[i] = t[i];
+  return 1 ;
 
-  if (!ok)
-    stringbug ("cins", s, NULL, c);
-
-  return ok;
-}
-
-unsigned char
-sins (char *s, char *t)
-{
-  int i, max, ls = length (s), lt = length (t);
-  unsigned char ok;
-  max = Getmax (s, ls);
-  ok = ((ls + lt) < max);
-
-  if (ok)
-    {
-      for (i = ls + 2; i >= 0; i--)
-	s[i + lt] = s[i];
-
-      for (i = 0; i < lt; i++)
-	s[i] = t[i];
-    }
-
-  if (!ok)
-    stringbug ("sins", s, t, 0);
-
-  return ok;
 }
 
 int
 cpos (char c, char *s)
 /* return position of c in s, or 0 if not found.
  * BUG, Pascal inherited: first char is at 1, not 0 !
+ * No longer!  Now position is C-based to make life easier.
  */
 {
   int i = 0;
@@ -329,9 +238,9 @@ cpos (char c, char *s)
     i++;
 
   if (s[i] == c)
-    return (i + 1);
+    return i ;
   else
-    return 0;
+    return -1 ;
 }
 
 char
@@ -343,163 +252,132 @@ upcase (char c)
     return c;
 }
 
+/* -----------------------------------------------------------------
+ * Create copy of the dynamic string.  Dynamic strings are always NULL
+ * terminated.
+ * ----------------------------------------------------------------- */
 unsigned char
-scopy (char *s, char *t)	/* returns success flag */
+scopyd(SPICE_DSTRINGPTR s, SPICE_DSTRINGPTR t)	/* returns success flag */
 {
-  unsigned char ok;
-  int i, max, ls = length (s);
-  max = Getmax (s, ls);
-  i = 0;
+  spice_dstring_reinit( s ) ;
+  spice_dstring_append( s, spice_dstring_value(t), -1 ) ;
+  return 1 ; /* Dstrings expand to any length */
+}
 
-  while ((t[i] != 0) && (i < max))
-    {
-      s[i] = t[i];
-      i++;
-    }
+/* -----------------------------------------------------------------
+ * Create copy of the string in the dynamic string.  Dynamic strings 
+ * are always NULLterminated.
+ * ----------------------------------------------------------------- */
+unsigned char
+scopys(SPICE_DSTRINGPTR s, char *t)	/* returns success flag */
+{
+  spice_dstring_reinit( s ) ;
+  spice_dstring_append( s, t, -1 ) ;
+  return 1 ; /* Dstrings expand to any length */
+}
 
-  s[i] = 0;
-  s[i + 1] = Hi (max);
-  s[i + 2] = Lo (max);
-  ok = (t[i] == 0);		/* end of t is reached */
+/* -----------------------------------------------------------------
+ * Create an upper case copy of a string and store it in a dynamic string.
+ * Dynamic strings are always NULL * terminated.
+ * ----------------------------------------------------------------- */
+unsigned char
+scopy_up (SPICE_DSTRINGPTR dstr_p, char *str)	/* returns success flag */
+{
+  char up[2] ;			/* short string */
+  char *ptr ;			/* position in string */
 
-  if (!ok)
-    stringbug ("scopy", s, t, 0);
+  spice_dstring_reinit( dstr_p ) ;
+  up[1] = 0 ;
+  for( ptr = str ; ptr && *ptr ; ptr++ ){
+    up[0] = upcase ( *ptr );
+    spice_dstring_append( dstr_p, up, 1 ) ;
+  }
+  return 1 ; /* Dstrings expand to any length */
+}
 
-  return ok;
+/* -----------------------------------------------------------------
+ * Create a lower case copy of a string and store it in a dynamic string.
+ * Dynamic strings are always NULL * terminated.
+ * ----------------------------------------------------------------- */
+unsigned char
+scopy_lower (SPICE_DSTRINGPTR dstr_p, char *str)	/* returns success flag */
+{
+  char low[2] ;			/* short string */
+  char *ptr ;			/* position in string */
+
+  spice_dstring_reinit( dstr_p ) ;
+  low[1] = 0 ;
+  for( ptr = str ; ptr && *ptr ; ptr++ ){
+    low[0] = lowcase ( *ptr );
+    spice_dstring_append( dstr_p, low, 1 ) ;
+  }
+  return 1 ; /* Dstrings expand to any length */
 }
 
 unsigned char
-scopy_up (char *s, char *t)	/* returns success flag */
+ccopy ( SPICE_DSTRINGPTR dstr_p, char c)	/* returns success flag */
 {
-  unsigned char ok;
-  int i, max, ls = length (s);
-  max = Getmax (s, ls);
-  i = 0;
-  while ((t[i] != 0) && (i < max))
-    {
-      s[i] = upcase (t[i]);
-      i++;
-    }
+  char *s_p ;			/* current string */
 
-  s[i] = 0;
-  s[i + 1] = Hi (max);
-  s[i + 2] = Lo (max);
-  ok = (t[i] == 0);		/* end of t is reached */
-
-  if (!ok)
-    stringbug ("scopy_up", s, t, 0);
-
-  return ok;
-}
-
-unsigned char
-ccopy (char *s, char c)		/* returns success flag */
-{
-  int max, ls = length (s);
-  unsigned char ok = 0;
-  max = Getmax (s, ls);
-
-  if (max > 0)
-    {
-      s[0] = c;
-      sfix (s, 1, max);
-      ok = 1;
-    }
-
-  if (!ok)
-    stringbug ("ccopy", s, NULL, c);
-
-  return ok;
+  sfix ( dstr_p, 1);
+  s_p = spice_dstring_value(dstr_p) ;
+  s_p[0] = c ;
+  return 1 ;
 }
 
 char *
-pscopy (char *s, char *t, int start, int leng)
-/* partial string copy, with Turbo Pascal convention for "start" */
-/* BUG: position count starts at 1, not 0 ! */
+pscopy (SPICE_DSTRINGPTR dstr_p, char *t, int start, int leng)
+/* partial string copy, with C-based start - Because we now have a 0 based
+ * start and string may copy outselves, we may need to restore the first
+ * character of the original dstring because resetting string will wipe
+ * out first character. */
 {
-  int max = maxlen (s);		/* keep it for later */
-  int stop = length (t);
-  int i;
-  unsigned char ok = (max >= 0) && (max <= Maxstr);
+  int i;					/* counter */
+  int stop ;					/* stop value */
+  char *s_p ;					/* value of dynamic string */
 
-  if (!ok)
-    stringbug ("copy target non-init", s, t, 0);
+  stop = length(t) ;
 
-  if (leng > max)
-    {
-      leng = max;
-      ok = 0;
+  if (start < stop) {				/* nothing! */
+    if ((start + leng - 1) > stop) {
+//      leng = stop - start + 1;
+      leng = stop - start ;
     }
-
-  if (start > stop)
-    {				/* nothing! */
-      ok = 0;
-      inistring (s, 0, max);
-    }
-  else
-    {
-      if ((start + leng - 1) > stop)
-	{
-	  leng = stop - start + 1;
-	  ok = 0;
-	}
-      for (i = 0; i < leng; i++)
-	s[i] = t[start + i - 1];
-
-      i = leng;
-      s[i] = 0;
-      s[i + 1] = Hi (max);
-      s[i + 2] = Lo (max);
-    }
-  /* if ( ! ok ) { stringbug("copy",s, t, 0) ;} */
-  /* if ( ok ) { return s ;} else { return NULL ;} */
-  ok = ok;
-  return s;
+    _spice_dstring_setlength(dstr_p,leng) ;
+    s_p = spice_dstring_value(dstr_p) ;
+    for (i = 0; i < leng; i++)
+      s_p[i] = t[start + i];
+    s_p[leng] = EOS ;
+  } else {
+    s_p = spice_dstring_reinit(dstr_p) ;
+  }
+  return s_p ;
 }
 
 char *
-pscopy_up (char *s, char *t, int start, int leng)
-/* partial string copy, with Turbo Pascal convention for "start" */
-/* BUG: position count starts at 1, not 0 ! */
+pscopy_up (SPICE_DSTRINGPTR dstr_p, char *t, int start, int leng)
+/* partial string copy to upper case, with C convention for start. */
 {
-  int max = maxlen (s);		/* keep it for later */
-  int stop = length (t);
-  int i;
-  unsigned char ok = (max >= 0) && (max <= Maxstr);
+  int i;					/* counter */
+  int stop ;					/* stop value */
+  char *s_p ;					/* value of dynamic string */
 
-  if (!ok)
-    stringbug ("copy target non-init", s, t, 0);
+  stop = length(t) ;
 
-  if (leng > max)
-    {
-      leng = max;
-      ok = 0;
+  if (start < stop) {				/* nothing! */
+    if ((start + leng - 1) > stop) {
+//      leng = stop - start + 1;
+      leng = stop - start ;
     }
-
-  if (start > stop)
-    {				/* nothing! */
-      ok = 0;
-      inistring (s, 0, max);
-    }
-  else
-    {
-      if ((start + leng - 1) > stop)
-	{
-	  leng = stop - start + 1;
-	  ok = 0;
-	}
-      for (i = 0; i < leng; i++)
-	s[i] = upcase (t[start + i - 1]);
-
-      i = leng;
-      s[i] = 0;
-      s[i + 1] = Hi (max);
-      s[i + 2] = Lo (max);
-    }
-  /* if ( ! ok ) { stringbug("copy",s, t, 0) ;} */
-  /* if ( ok ) { return s ;} else { return NULL ;} */
-  ok = ok;
-  return s;
+    _spice_dstring_setlength(dstr_p,leng) ;
+    s_p = spice_dstring_value(dstr_p) ;
+    for (i = 0; i < leng; i++)
+      s_p[i] = upcase ( t[start + i] ) ;
+    s_p[leng] = EOS ;
+  } else {
+    s_p = spice_dstring_reinit(dstr_p) ;
+  }
+  return s_p ;
 }
 
 int
@@ -521,15 +399,14 @@ succ (int i)
 }
 
 unsigned char
-nadd (char *s, long n)
+nadd ( SPICE_DSTRINGPTR dstr_p, long n)
 /* append a decimal integer to a string */
 {
   int d[25];
-  int j, k, ls, len;
+  int j, k ;
   char sg;			/* the sign */
-  unsigned char ok;
+  char load_str[2] ;		/* used to load dstring */
   k = 0;
-  len = maxlen (s);
 
   if (n < 0)
     {
@@ -547,43 +424,32 @@ nadd (char *s, long n)
     }
 
   if (k == 0)
-    ok = cadd (s, '0');
-  else
-    {
-      ls = length (s);
-      ok = (len - ls) > k;
-      if (ok)
+    cadd (dstr_p, '0');
+  else {
+      load_str[1] = 0 ;
+      if (sg == '-')
 	{
-	  if (sg == '-')
-	    {
-	      s[ls] = sg;
-	      ls++;
-	    }
-	  for (j = k - 1; j >= 0; j--)
-	    {
-	      s[ls] = d[j] + '0';
-	      ls++;
-	    }
-	  sfix (s, ls, len);
+	  load_str[0] = sg ;
+	  spice_dstring_append( dstr_p, load_str, 1 ) ;
 	}
+      for (j = k - 1; j >= 0; j--) {
+	  load_str[0] = d[j] + '0';
+	  spice_dstring_append( dstr_p, load_str, 1 ) ;
+      }
     }
 
-  if (!ok)
-    stringbug ("nadd", s, NULL, sg);
-
-  return ok;
+  return 1 ;
 }
 
 unsigned char
-naddll (char *s, long long n)
-/* append a decimal integer to a string */
+naddll (SPICE_DSTRINGPTR dstr_p, long long n)
+/* append a decimal integer (but a long long) to a string */
 {
   int d[25];
-  int j, k, ls, len;
+  int j, k ;
   char sg;			/* the sign */
-  unsigned char ok;
+  char load_str[2] ;		/* used to load dstring */
   k = 0;
-  len = maxlen (s);
 
   if (n < 0)
     {
@@ -601,39 +467,29 @@ naddll (char *s, long long n)
     }
 
   if (k == 0)
-    ok = cadd (s, '0');
-  else
-    {
-      ls = length (s);
-      ok = (len - ls) > k;
-      if (ok)
+    cadd (dstr_p, '0');
+  else {
+      load_str[1] = 0 ;
+      if (sg == '-')
 	{
-	  if (sg == '-')
-	    {
-	      s[ls] = sg;
-	      ls++;
-	    }
-	  for (j = k - 1; j >= 0; j--)
-	    {
-	      s[ls] = d[j] + '0';
-	      ls++;
-	    }
-	  sfix (s, ls, len);
+	  load_str[0] = sg ;
+	  spice_dstring_append( dstr_p, load_str, 1 ) ;
 	}
+      for (j = k - 1; j >= 0; j--) {
+	  load_str[0] = d[j] + '0';
+	  spice_dstring_append( dstr_p, load_str, 1 ) ;
+      }
     }
 
-  if (!ok)
-    stringbug ("naddll", s, NULL, sg);
-
-  return ok;
+  return 1 ;
 }
 
 void
-stri (long n, char *s)
+stri (long n, SPICE_DSTRINGPTR dstr_p)
 /* convert integer to string */
 {
-  sini (s, maxlen (s));
-  nadd (s, n);
+  spice_dstring_reinit( dstr_p ) ;
+  nadd (dstr_p, n) ;
 }
 
 void
@@ -723,33 +579,32 @@ alfanum (char c)
 }
 
 int
-freadstr (FILE * f, char *s, int max)
+freadstr (FILE * f, SPICE_DSTRINGPTR dstr_p)
 /* read a line from a file. 
-   BUG: long lines truncated without warning, ctrl chars are dumped.
+   was BUG: long lines truncated without warning, ctrl chars are dumped.
+   Bug no more as we can only run out of memory.  Removed max argument.
 */
 {
   char c;
-  int i = 0, mxlen = maxlen (s);
+  char str_load[2] ;
+  int len = 0 ;
 
-  if (mxlen < max)
-    max = mxlen;
-
+  str_load[0] = 0 ;
+  str_load[1] = 0 ;
+  spice_dstring_reinit(dstr_p) ;
   do
     {
       c = fgetc (f);		/*  tab is the only control char accepted */
-      if (((c >= ' ') || (c < 0) || (c == Tab)) && (i < max))
+      if (((c >= ' ') || (c < 0) || (c == Tab)))
 	{
-	  s[i] = c;
-	  i++;
+	  str_load[0] = c;
+	  spice_dstring_append( dstr_p, str_load, 1 ) ;
 	}
     }
   while (!(feof (f) || (c == '\n')));
 
-  s[i] = 0;
-  s[i + 1] = Hi (mxlen);
-  s[i + 2] = Lo (mxlen);
 
-  return i;
+  return len ;
 }
 
 char
@@ -833,15 +688,6 @@ new (long sz)
     }
 }
 
-char *
-newstring (int n)
-{
-  char *s = (char *) new (n + 4);
-
-  sini (s, n);
-  return s;
-}
-
 /***** elementary math *******/
 
 double
@@ -869,14 +715,14 @@ absi (long i)
 }
 
 void
-strif (long i, int f, char *s)
+strif (long i, int f, SPICE_DSTRINGPTR dstr_p)
 /* formatting like str(i:f,s) in Turbo Pascal */
 {
-  int j, k, n, max;
+  int j, k ;
   char cs;
   char t[32];
+  char load_str[2] ;			/* load dstring */
   k = 0;
-  max = maxlen (s);
 
   if (i < 0)
     {
@@ -912,22 +758,22 @@ strif (long i, int f, char *s)
     t[k + j] = t[k - j];	/* mirror image */
 
   t[2 * k + 1] = 0;		/* null termination */
-  n = 0;
+  load_str[1] = 0 ;		/* not really needed */
+  spice_dstring_reinit(dstr_p) ;
 
   if ((f > k) && (f < 40))
     {				/* reasonable format */
       for (j = k + 2; j <= f; j++)
 	{
-	  s[n] = ' ';
-	  n++;
+	  load_str[0] = ' ';
+	  spice_dstring_append( dstr_p, load_str, 1 ) ;
 	}
     }
 
-  for (j = 0; j <= k + 1; j++)
-    s[n + j] = t[k + j];	/* shift t down */
-
-  k = length (s);
-  sfix (s, k, max);
+  for (j = 0; j <= k + 1; j++){
+    load_str[0] = t[k + j];	/* shift t down */
+    spice_dstring_append( dstr_p, load_str, 1 ) ;
+  }
 }
 
 unsigned char
@@ -1019,20 +865,22 @@ posi (char *sub, char *s, int opt)
   /* opt=2: position in space separated wordlist for scanners */
   int a, b, k, j;
   unsigned char ok, tstcase;
-  Str (250, t);
+  SPICE_DSTRING tstr ;
+
   ok = 0;
+  spice_dstring_init(&tstr) ;
   tstcase = (opt == 0);
 
   if (opt <= 1)
-    scopy (t, sub);
+    scopys (&tstr, sub);
   else
     {
-      cadd (t, ' ');
-      sadd (t, sub);
-      cadd (t, ' ');
+      cadd (&tstr, ' ');
+      sadd (&tstr, sub);
+      cadd (&tstr, ' ');
     }
 
-  a = length (t);
+  a = spice_dstring_length(&tstr) ;
   b = (int) (length (s) - a);
   k = 0;
   j = 1;
@@ -1040,7 +888,7 @@ posi (char *sub, char *s, int opt)
   if (a > 0)			/* ;} else { return 0 */
     while ((k <= b) && (!ok))
       {
-	ok = match (t, s, a, k, tstcase);	/* we must start at k=0 ! */
+	ok = match ( spice_dstring_value(&tstr), s, a, k, tstcase);	/* we must start at k=0 ! */
 	k++;
 	if (s[k] == ' ')
 	  j++; /* word counter */ ;
@@ -1057,7 +905,7 @@ posi (char *sub, char *s, int opt)
 }
 
 int
-spos (char *sub, char *s)
+spos_(char *sub, char *s)
 /* equivalent to Turbo Pascal pos().
    BUG: counts 1 ... length(s), not from 0 like C  
 */
@@ -1065,9 +913,9 @@ spos (char *sub, char *s)
   char *ptr;
 
   if ((ptr = strstr (s, sub)))
-    return strlen (s) - strlen (ptr) + 1;
+    return strlen (s) - strlen (ptr) ;
   else
-    return 0;
+    return -1 ;
 
 }
 
@@ -1085,34 +933,44 @@ valr (char *s, double *r)
 }
 
 void
-strf (double x, int f1, int f2, char *t)
+strf (double x, int f1, int f2, SPICE_DSTRINGPTR dstr_p)
 /* e-format if f2<0, else f2 digits after the point, total width=f1 */
 /* if f1=0, also e-format with f2 digits */
 {				/* default f1=17, f2=-1 */
-  Str (30, fmt);
-  int n, mlt;
-  mlt = maxlen (t);
-  cadd (fmt, '%');
+  int dlen ;			/* length of digits */
+  char *dbuf_p ;		/* beginning of sprintf buffer */
+  SPICE_DSTRING fmt ;		/* format string */
+  SPICE_DSTRING dformat ;	/* format float */
+
+  spice_dstring_init(&fmt) ;
+  spice_dstring_init(&dformat) ;
+  cadd (&fmt, '%');
   if (f1 > 0)
     {
-      nadd (fmt, f1);		/* f1 is the total width */
+      nadd (&fmt, f1);		/* f1 is the total width */
       if (f2 < 0)
-	sadd (fmt, "lE");	/* exponent format */
+	sadd (&fmt, "lE");	/* exponent format */
       else
 	{
-	  cadd (fmt, '.');
-	  nadd (fmt, f2);
-	  sadd (fmt, "lg");
+	  cadd (&fmt, '.');
+	  nadd (&fmt, f2);
+	  sadd (&fmt, "lg");
 	}
     }
   else
     {
-      cadd (fmt, '.');
-      nadd (fmt, absi (f2 - 6));	/* note the 6 surplus positions */
-      cadd (fmt, 'e');
+      cadd (&fmt, '.');
+      nadd (&fmt, absi (f2 - 6));	/* note the 6 surplus positions */
+      cadd (&fmt, 'e');
     }
-  n = sprintf (t, fmt, x);
-  sfix (t, n, mlt);
+
+  dlen = 2 * (f1 + f2) + 1 ;   /* be conservative */
+  dbuf_p = spice_dstring_setlength(&dformat, dlen)  ;
+  sprintf (dbuf_p, spice_dstring_value(&fmt), x);
+  scopys( dstr_p, dbuf_p ) ;
+
+  spice_dstring_free(&fmt) ;
+  spice_dstring_free(&dformat) ;
 }
 
 double
@@ -1261,3 +1119,328 @@ intp (double x)			/* integral part */
 }
 
 #endif
+
+/* -----------------------------------------------------------------
+ * Dynamic string utilities.
+ * ----------------------------------------------------------------- */
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * spice_dstring_init --
+ *
+ *	Initializes a dynamic string, discarding any previous contents
+ *	of the string (spice_dstring_free should have been called already
+ *	if the dynamic string was previously in use).
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	The dynamic string is initialized to be empty.
+ *
+ *----------------------------------------------------------------------
+ */
+
+void spice_dstring_init(SPICE_DSTRINGPTR dsPtr)
+{
+    dsPtr->string = dsPtr->staticSpace ;
+    dsPtr->length = 0 ;
+    dsPtr->spaceAvl = SPICE_DSTRING_STATIC_SIZE ;
+    dsPtr->staticSpace[0] = EOS;
+} /* end spice_dstring_init() */
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * spice_dstring_append --
+ *
+ *	Append more characters to the current value of a dynamic string.
+ *
+ * Results:
+ *	The return value is a pointer to the dynamic string's new value.
+ *
+ * Side effects:
+ *	Length bytes from string (or all of string if length is less
+ *	than zero) are added to the current value of the string. Memory
+ *	gets reallocated if needed to accomodate the string's new size.
+ *  
+ * Notes: char *string;    String to append.  If length is -1 then
+ *                         this must be null-terminated.
+ *        INT length;	   Number of characters from string to append.  
+ *                         If < 0, then append all of string, up to null at end.
+ *
+ *----------------------------------------------------------------------
+ */
+char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr,char *string,int length)
+{
+    int newSize ;			/* needed size */
+    char *newString ;			/* newly allocated string buffer */
+    char *dst ;				/* destination */
+    char *end ;				/* end of string */
+
+    if( length < 0){
+	length = strlen(string) ;
+    }
+    newSize = length + dsPtr->length ;
+
+    /* -----------------------------------------------------------------
+     * Allocate a larger buffer for the string if the current one isn't
+     * large enough. Allocate extra space in the new buffer so that there
+     * will be room to grow before we have to allocate again.
+     ----------------------------------------------------------------- */
+    if (newSize >= dsPtr->spaceAvl) {
+	dsPtr->spaceAvl = 2 * newSize ;
+	newString = new( dsPtr->spaceAvl * sizeof(char) ) ;
+	memcpy((void *) newString, (void *) dsPtr->string, (size_t) dsPtr->length) ;
+	if (dsPtr->string != dsPtr->staticSpace) {
+	    dispose(dsPtr->string) ;
+	}
+	dsPtr->string = newString;
+    }
+
+    /* -----------------------------------------------------------------
+     * Copy the new string into the buffer at the end of the old
+     * one.
+     ----------------------------------------------------------------- */
+    for( dst = dsPtr->string + dsPtr->length, end = string+length;
+	    string < end; string++, dst++) {
+	*dst = *string ;
+    }
+    *dst = EOS ;
+    dsPtr->length += length ;
+
+    return(dsPtr->string) ;
+
+} /* end spice_dstring_append() */
+
+
+static int spice_format_length( va_list args, char *fmt )
+{
+    int i ;					/* integer */
+    int len ;					/* length of format */
+    int size_format ;				/* width of field */
+    int found_special ;				/* look for special characters */
+    char *s ;					/* string */
+    char c ;					/* character */
+
+    /* -----------------------------------------------------------------
+     * First find length of buffer.
+    ----------------------------------------------------------------- */
+    len = 0 ;
+    while(fmt && *fmt){
+      if( *fmt == '%' ){
+	fmt++ ;
+	if( *fmt == '%' ){
+	  len++ ;
+	} else {
+	  /* -----------------------------------------------------------------
+	   * We have a real formatting character, loop until we get a special
+	   * character.
+	  ----------------------------------------------------------------- */
+	  if( *fmt == '.' || *fmt == '-' ){
+	    fmt++ ; /* skip over these characters */
+	  }
+	  size_format = atoi(fmt) ;
+	  if( size_format > 0 ){
+	    len += size_format ;
+	  }
+	  found_special = FALSE ;
+	  for( ; fmt && *fmt ; fmt++ ){
+	    switch( *fmt ){
+	      case 's':
+		s = va_arg(args, char *) ;
+		if( s ){
+		  len += strlen(s) ;
+		}
+		found_special = TRUE ;
+		break ;
+	      case 'i':
+	      case 'd':
+	      case 'o':
+	      case 'x':
+	      case 'X':
+	      case 'u':
+		i = va_arg(args, int) ;
+		len += 10 ;
+		found_special = TRUE ;
+		break ;
+	      case 'c':
+		c = va_arg(args, int) ;
+		len++ ;
+		found_special = TRUE ;
+		break ;
+	      case 'f':
+	      case 'e':
+	      case 'F':
+	      case 'g':
+	      case 'G':
+		c = va_arg(args, double) ;
+		len += 35 ;
+		found_special = TRUE ;
+		break ;
+	      default:
+		;
+	    } /* end switch() */
+
+	    if( found_special ){
+	      break ;
+	    }
+	  }
+	}
+      } else {
+	len++ ;
+      }
+      fmt++ ;
+    } /* end while() */
+    va_end(args) ;
+
+    return(len) ;
+
+} /* end Ymessage_format_length() */
+
+
+char *spice_dstring_print( SPICE_DSTRINGPTR dsPtr,char *format, ... )
+{
+    va_list args ;
+    int format_len ;				/* length of format */
+    int length ;				/* new length */
+    int orig_length ;				/* original length of buffer */
+    char *buffer ;				/* proper length of buffer */
+
+    /* -----------------------------------------------------------------
+     * First get the length of the buffer needed.
+    ----------------------------------------------------------------- */
+    va_start( args, format ) ;
+    format_len = spice_format_length(args,format) ;
+
+    /* -----------------------------------------------------------------
+     * Next allocate the proper buffer size.
+    ----------------------------------------------------------------- */
+    orig_length = dsPtr->length ;
+    length = orig_length + format_len + 1 ;
+    buffer = spice_dstring_setlength( dsPtr, length) ;
+
+    /* -----------------------------------------------------------------
+     * Convert the format.
+    ----------------------------------------------------------------- */
+    va_start( args, format ) ;
+    if( format ){
+      vsprintf( buffer + orig_length, format, args ) ;
+      dsPtr->length = strlen( buffer ) ;
+    } else {
+      buffer = NULL ;
+    }
+    va_end(args) ;
+    return( buffer ) ;
+
+} /* end spice_dstring_print() */
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * _spice_dstring_setlength --
+ *
+ *	Change the length of a dynamic string.  This can cause the
+ *	string to either grow or shrink, depending on the value of
+ *	length.
+ *
+ * Results:
+ *	Returns the current string buffer.
+ *
+ * Side effects:
+ *	The length of dsPtr is changed to length but a null byte is not
+ *	stored at that position in the string.  Use spice_dstring_setlength
+ *	for that function.   If length is larger
+ *	than the space allocated for dsPtr, then a panic occurs.
+ *
+ *----------------------------------------------------------------------
+ */
+
+char *_spice_dstring_setlength(SPICE_DSTRINGPTR dsPtr,int length)
+{
+    char *newString ;
+
+    if (length < 0) {
+	length = 0 ;
+    }
+    if (length >= dsPtr->spaceAvl) {
+
+	dsPtr->spaceAvl = length+1;
+	newString = new( dsPtr->spaceAvl * sizeof(char) ) ;
+	/* -----------------------------------------------------------------
+	 * SPECIAL NOTE: must use memcpy, not strcpy, to copy the string
+	 * to a larger buffer, since there may be embedded NULLs in the
+	 * string in some cases.
+	----------------------------------------------------------------- */
+	memcpy((void *) newString, (void *) dsPtr->string, (size_t) dsPtr->length) ;
+	if( dsPtr->string != dsPtr->staticSpace ) {
+	    dispose(dsPtr->string) ;
+	}
+	dsPtr->string = newString ;
+    }
+    dsPtr->length = length ;
+    return(dsPtr->string) ;
+
+} /* end _spice_dstring_setlength() */
+
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * spice_dstring_setlength --
+ *
+ *	Change the length of a dynamic string.  This can cause the
+ *	string to either grow or shrink, depending on the value of
+ *	length.
+ *
+ * Results:
+ *	Returns the current string buffer.
+ *
+ * Side effects:
+ *	The length of dsPtr is changed to length and a null byte is
+ *	stored at that position in the string.  If length is larger
+ *	than the space allocated for dsPtr, then a panic occurs.
+ *
+ *----------------------------------------------------------------------
+ */
+
+char *spice_dstring_setlength(SPICE_DSTRINGPTR dsPtr,int length)
+{
+    char *str_p ;			/* newly create string */
+
+    str_p = _spice_dstring_setlength( dsPtr,length) ;
+    str_p[length] = EOS ;
+    return( str_p ) ;
+
+} /* end spice_dstring_setlength() */
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * spice_dstring_free --
+ *
+ *	Frees up any memory allocated for the dynamic string and
+ *	reinitializes the string to an empty state.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	The previous contents of the dynamic string are lost, and
+ *	the new value is an empty string.
+ *
+ *----------------------------------------------------------------------
+ */
+
+void spice_dstring_free(SPICE_DSTRINGPTR dsPtr)
+{
+    if (dsPtr->string != dsPtr->staticSpace) {
+	dispose(dsPtr->string) ;
+    }
+    dsPtr->string = dsPtr->staticSpace ;
+    dsPtr->length = 0 ;
+    dsPtr->spaceAvl = SPICE_DSTRING_STATIC_SIZE;
+    dsPtr->staticSpace[0] = EOS ;
+
+} /* end spice_dstring_free() */

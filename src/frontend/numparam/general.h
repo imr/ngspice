@@ -9,40 +9,39 @@
 #define Use(x)  x=0;x=x
 #define Uses(s) s=s 
 #define Usep(x) x=x
-#define Hi(x) (((x) >> 8) & 0xff)
-#define Lo(x) ((x) & 0xff)
 
-//#define Strbig(n,a)   char a[n+4]={0, (char)Hi(n), (char)Lo(n)}
-#define Strbig(n,a)   char*(a)=(char*)tmalloc((n+4)*sizeof(char)); \
-                      (a)[0]=0; (a)[1]=(char)Hi(n); (a)[2]=(char)Lo(n)
-#define Strdbig(n,a,b)   char*(a); char*(b); \
-                      (a)=(char*)tmalloc((n+4)*sizeof(char)); \
-                      (a)[0]=0; (a)[1]=(char)Hi(n); (a)[2]=(char)Lo(n);\
-                      (b)=(char*)tmalloc((n+4)*sizeof(char)); \
-                      (b)[0]=0; (b)[1]=(char)Hi(n); (b)[2]=(char)Lo(n)
+/* -----------------------------------------------------------------
+ * This structure is modified from Tcl.   We do this to avoid a
+ * conflict and later add a conditional compile to just use the Tcl
+ * code if desired.
+----------------------------------------------------------------- */
+#define SPICE_DSTRING_STATIC_SIZE 200
+typedef struct spice_dstring {
+  char *string ;               /* Points to beginning of string:  either
+			        * staticSpace below or a malloced array. */
+  int length ;                 /* Number of non-NULL characters in the
+				* string. */
+  int spaceAvl ;               /* Total number of bytes available for the
+			        * string and its terminating NULL char. */
+  char staticSpace[SPICE_DSTRING_STATIC_SIZE] ;
+			       /* Space to use in common case where string
+				* is small. */
+} SPICE_DSTRING, *SPICE_DSTRINGPTR ;
 
-#define Strfbig(n,a,b,c,d)   char*(a); char*(b); char*(c); char*(d);\
-                      (a)=(char*)tmalloc((n+4)*sizeof(char)); \
-                      (a)[0]=0; (a)[1]=(char)Hi(n); (a)[2]=(char)Lo(n);\
-                      (b)=(char*)tmalloc((n+4)*sizeof(char)); \
-                      (b)[0]=0; (b)[1]=(char)Hi(n); (b)[2]=(char)Lo(n);\
-                      (c)=(char*)tmalloc((n+4)*sizeof(char)); \
-                      (c)[0]=0; (c)[1]=(char)Hi(n); (c)[2]=(char)Lo(n);\
-                      (d)=(char*)tmalloc((n+4)*sizeof(char)); \
-                      (d)[0]=0; (d)[1]=(char)Hi(n); (d)[2]=(char)Lo(n)
+/* -----------------------------------------------------------------
+ * spice_dstring_xxxx routines.  Used to manipulate dynamic strings.
+----------------------------------------------------------------- */
+extern void spice_dstring_init(SPICE_DSTRINGPTR dsPtr) ;
+extern char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr,char *string,int length) ;
+extern char *spice_dstring_print(SPICE_DSTRINGPTR dsPtr,char *format, ... ) ;
+extern char *spice_dstring_setlength(SPICE_DSTRINGPTR dsPtr,int length) ;
+extern char *_spice_dstring_setlength(SPICE_DSTRINGPTR dsPtr,int length) ;
+extern void spice_dstring_free(SPICE_DSTRINGPTR dsPtr) ;
+#define spice_dstring_reinit(x_xz) spice_dstring_setlength(x_xz,0) ;
+#define spice_dstring_value(x_xz) ((x_xz)->string)
+#define spice_dstring_space(x_xz) ((x_xz)->spaceAvl)
+#define spice_dstring_length(x_xz) ((x_xz)->length)
 
-#define Strrem(a)     tfree(a)
-#define Strdrem(a,b)  tfree(a); tfree(b)
-#define Strfrem(a,b,c,d)  tfree(a); tfree(b); tfree(c); tfree(d)
-
-#define Str(n,a)      char a[n+3]={0,0,(char)n}  /* n<255 ! */
-#define Sini(s)       sini(s,sizeof(s)-4)
-
-
-/* was 255, then 15000, string maxlen, 40000 to catch really big 
-   macros in .model lines, now just a big number, a line length
-   which never should be exceeded, may be removed later*/
-typedef enum {Maxstr=4000000} _nMaxstr;  
 typedef enum {Esc=27} _nEsc;
 typedef enum {Tab=9} _nTab;
 typedef enum {Bs=8} _nBs;
@@ -52,22 +51,22 @@ typedef enum {Cr=13} _nCr;
 typedef char string[258];
 
 
-void sini( char * s, int i);
-void sfix(char * s, int i, int max);
-int maxlen(char * s);
-char * pscopy( char * s, char * a, int i,int j);
-char * pscopy_up( char * s, char * a, int i,int j);
-unsigned char scopy( char * a, char * b);
-unsigned char scopy_up( char * a, char * b);
-unsigned char ccopy( char * a, char c);
-unsigned char sadd( char * s, char * t);
-unsigned char nadd( char * s, long n);
-unsigned char naddll( char * s, long long n);
-unsigned char cadd( char * s, char c);
-unsigned char sins( char * s, char * t);
-unsigned char cins( char * s, char c);
-int cpos( char c, char * s);
-int spos( char * sub, char * s);
+void sfix( SPICE_DSTRINGPTR dstr_p, int len) ;
+char * pscopy( SPICE_DSTRINGPTR s, char * a, int i,int j);
+char * pscopy_up( SPICE_DSTRINGPTR s, char * a, int i,int j);
+unsigned char scopyd( SPICE_DSTRINGPTR a, SPICE_DSTRINGPTR b);
+unsigned char scopys( SPICE_DSTRINGPTR a, char *b);
+unsigned char scopy_up( SPICE_DSTRINGPTR a, char *str) ;
+unsigned char scopy_lower( SPICE_DSTRINGPTR a, char *str) ;
+unsigned char ccopy( SPICE_DSTRINGPTR a, char c);
+unsigned char sadd( SPICE_DSTRINGPTR s, char * t);
+unsigned char nadd( SPICE_DSTRINGPTR s, long n);
+unsigned char cadd( SPICE_DSTRINGPTR s, char c);
+unsigned char naddll( SPICE_DSTRINGPTR s, long long n);
+unsigned char cins( SPICE_DSTRINGPTR s, char c);
+unsigned char sins( SPICE_DSTRINGPTR s, char * t);
+int cpos( char c, char *s);
+int spos_( char * sub, char * s);
 int ci_prefix( register char *p, register char *s );
 int length(char * s);
 unsigned char steq(char * s, char * t);
@@ -76,9 +75,9 @@ int scompare(char * a, char * b);
 int ord(char c);
 int pred(int i);
 int succ(int i);
-void stri(long n, char * s);
-void strif(long n, int f, char * s);
-void strf(double x, int a, int b, char * s); /* float -> string */
+void stri(long n, SPICE_DSTRINGPTR s);
+void strif(long n, int f, SPICE_DSTRINGPTR dstr_p);
+void strf(double x, int a, int b, SPICE_DSTRINGPTR dstr_p); /* float -> string */
 long   ival(char * s, int *err);
 double rval(char * s, int *err);
 
@@ -97,10 +96,10 @@ void wc(char c);
 void wln(void);
 void ws( char * s);
 void wi(long i);
-void rs( char * s);
+void rs( SPICE_DSTRINGPTR s);
 char rc(void);
 
-int freadstr(FILE * f, char * s, int max);
+int freadstr(FILE * f, SPICE_DSTRINGPTR dstr_p);
 char freadc(FILE * f);
 long freadi(FILE * f);
 
@@ -116,4 +115,3 @@ unsigned char rewrite(FILE * f);
 void rawcopy(void * a, void * b, int la, int lb);
 void * new(long sz);
 void dispose(void * p);
-char * newstring(int n);

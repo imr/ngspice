@@ -23,8 +23,8 @@ extern COMPATMODE_T ngspice_compat_mode(void) ;
 /************ keywords ************/
 
 /* SJB - 150 chars is ample for this - see initkeys() */
-static Str (150, keys);      /* all my keywords */
-static Str (150, fmath);     /* all math functions */
+static SPICE_DSTRING keyS ;      /* all my keywords */
+static SPICE_DSTRING fmathS ;     /* all math functions */
 
 extern char *nupa_inst_name; /* see spicenum.c */
 extern long dynsubst;        /* see inpcom.c */
@@ -56,10 +56,11 @@ static void
 initkeys (void)
 /* the list of reserved words */
 {
-  scopy_up (keys,
+  spice_dstring_init(&keyS) ;
+  scopy_up (&keyS,
             "and or not div mod if else end while macro funct defined"
             " include for to downto is var");
-  scopy_up (fmath,
+  scopy_up (&fmathS,
             "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh tanh ternary_fcn v agauss");
 }
 
@@ -131,25 +132,29 @@ static unsigned char
 message (tdico * dic, char *s)
 /* record 'dic' should know about source file and line */
 {
-   Strbig (dynLlen, t);
+   char *srcfile ;			/* src file name */
+   SPICE_DSTRING t ;			/* temp dstring */	
+
+   spice_dstring_init(&t) ;
    dic->errcount++;
-   if ((dic->srcfile != NULL) && dic->srcfile[0])
+   srcfile = spice_dstring_value( &(dic->srcfile) ) ;
+   if ((srcfile != NULL) && srcfile[0])
    {
-      scopy (t, dic->srcfile);
-      cadd (t, ':');
+      scopyd(&t, &(dic->srcfile)) ;
+      cadd (&t, ':');
    }
    if (dic->srcline >= 0)
    {
-      sadd (t, "Original line no.: ");
-      nadd (t, dic->oldline);
-      sadd (t, ", new internal line no.: ");
-      nadd (t, dic->srcline);
-      sadd (t, ":\n");
+      sadd (&t, "Original line no.: ");
+      nadd (&t, dic->oldline);
+      sadd (&t, ", new internal line no.: ");
+      nadd (&t, dic->srcline);
+      sadd (&t, ":\n");
    }
-   sadd (t, s);
-   cadd (t, '\n');
-   fputs (t, stderr);
-   Strrem(t);
+   sadd (&t, s);
+   cadd (&t, '\n');
+   fputs ( spice_dstring_value(&t), stderr);
+   spice_dstring_free(&t) ;
 
    return 1 /* error! */ ;
 }
@@ -167,20 +172,19 @@ debugwarn (tdico * d, char *s)
 void
 initdico (tdico * dico)
 {
-   int i;
    COMPATMODE_T compat_mode;
 
    dico->nbd = 0;
-   sini(dico->option,sizeof(dico->option)-4);
-   sini(dico->srcfile,sizeof(dico->srcfile)-4);
+   spice_dstring_init( &(dico->option) ) ;
+   spice_dstring_init( &(dico->srcfile) ) ;
+   
    dico->srcline = -1;
    dico->errcount = 0;
 
-   dico->dyndat = (entry*)tmalloc(3 * sizeof(entry));
+   dico->symbol_table = nghash_init( NGHASH_MIN_SIZE ) ;
+   nghash_unique( dico->symbol_table, FALSE ) ;
+   spice_dstring_init( &(dico->lookup_buf) ) ;
   
-   for (i = 0; i < 3; i++)
-      sini (dico->dyndat[i].nom, 100);
-
    dico->tos = 0;
    dico->stack[dico->tos] = 0;        /* global data beneath */
    initkeys ();
@@ -191,6 +195,41 @@ initdico (tdico * dico)
      dico->hspice_compatibility = 1 ;
    else 
      dico->hspice_compatibility = 0 ;
+}
+
+static void dico_free_entry( entry *entry_p )
+{
+    if( entry_p->symbol ){
+      txfree(entry_p->symbol ) ;
+    }
+    txfree(entry_p) ;
+} /* end dico_free_entry() */
+
+static
+entry **dico_rebuild_symbol_array( tdico * dico, int *num_entries_ret )
+{
+    int i ;				/* counter */
+    int size ;				/* number of entries in symbol table */
+    entry *entry_p ;			/* current entry */
+   NGHASHITER iter ;			/* hash iterator - thread safe */
+
+    size = *num_entries_ret = nghash_get_size( dico->symbol_table ) ;
+    if( dico->num_symbols == size ){
+      /* no work to do up to date */
+      return( dico->symbol_array ) ;
+    }
+    if( size <= 0 ){
+      size = 1 ;
+    }
+    dico->symbol_array = trealloc( dico->symbol_array, (size+1) * sizeof(entry *) ) ;
+    i = 0 ;
+    for (entry_p = nghash_enumerateRE(dico->symbol_table,NGHASH_FIRST(&iter)) ;
+	 entry_p ;
+	 entry_p = nghash_enumerateRE(dico->symbol_table,&iter)){
+      dico->symbol_array[i++] = entry_p ;
+    }
+    dico->num_symbols = *num_entries_ret ;
+    return dico->symbol_array ;
 }
 
 /*  local semantics for parameters inside a subckt */
@@ -207,8 +246,12 @@ static void
 dicostack (tdico * dico, char op)
 /* push or pop operation for nested subcircuit locals */
 {
-   char *param_name, *inst_name;
+   char *param_p, *inst_name;
    int i, current_stack_size, old_stack_size;
+   int num_entries ;				/* number of entries */
+   entry **entry_array ;			/* entry array */
+   entry *entry_p ;				/* current entry */
+   SPICE_DSTRING param_name ;
 
    if (op == Push)
    {
@@ -228,16 +271,24 @@ dicostack (tdico * dico, char op)
          current_stack_size = dico->nbd;
          old_stack_size = dico->stack[dico->tos];
          inst_name = dico->inst_name[dico->tos];
+	 spice_dstring_init(&param_name) ;
+	 entry_array = dico_rebuild_symbol_array( dico, &num_entries ) ;
 
          for (i = old_stack_size + 1; i <= current_stack_size; i++)
          {
-            param_name =
-               tmalloc (strlen (inst_name) + strlen (dico->dyndat[i].nom) + 2);
-            sprintf (param_name, "%s.%s", inst_name, dico->dyndat[i].nom);
-            nupa_add_inst_param (param_name, dico->dyndat[i].vl); 
-            tfree (param_name);
+	    spice_dstring_reinit(&param_name) ;
+	    if( i < num_entries ){
+	      entry_p = entry_array[i] ;
+	      param_p = spice_dstring_print( &param_name,  "%s.%s", 
+						inst_name, 
+						entry_p->symbol ) ;
+	      nupa_add_inst_param (param_p, entry_p->vl); 
+	      nghash_deleteItem( dico->symbol_table, entry_p->symbol, entry_p ) ;
+	      dico_free_entry( entry_p ) ;
+	    }
          }
          tfree (inst_name);
+	 spice_dstring_free(&param_name) ;
 
          dico->nbd = dico->stack[dico->tos];        /* simply kill all local items */
          dico->tos--;
@@ -256,109 +307,99 @@ donedico (tdico * dico)
    return sze;
 }
 
-static int
+/* FIXME : WPS this should be a hash table */
+static entry *
 entrynb (tdico * d, char *s)
 /* symbol lookup from end to start,  for stacked local symbols .*/
 /* bug: sometimes we need access to same-name symbol, at lower level? */
 {
-   int i;
-   unsigned char ok;
-   ok = 0;
-   i = d->nbd + 1;
+   entry *entry_p ;			/* search hash table */
 
-   while ((!ok) && (i > 1))
-   {
-      i--;
-      ok = steq (d->dyndat[i].nom, s);
-   }
-   if (!ok)
-      return 0;
-   else
-      return i;
+   entry_p = nghash_find( d->symbol_table, s ) ;
+   return( entry_p ) ;
 }
 
 char
 getidtype (tdico * d, char *s)
-/* test if identifier s is known. Answer its type, or '?' if not in list */
+/* test if identifier s is known. Answer its type, or '?' if not in table */
 {
+   entry *entry_p ;		  /* hash table entry */
    char itp = '?';                /* assume unknown */
-   int i = entrynb (d, s);
 
-   if (i > 0)
-      itp = d->dyndat[i].tp;
-   return itp;
+   entry_p = entrynb (d, s) ;
+   if( entry_p ){
+      itp = entry_p->tp ;
+   }
+   return (itp) ;
 }
 
 static double
 fetchnumentry (tdico * dico, char *t, unsigned char *perr)
 {
    unsigned char err = *perr;
-   unsigned short k;
    double u;
-   Strbig (dynLlen, s);
-   k = entrynb (dico, t);        /* no keyword */
+   entry *entry_p ;			/* hash table entry */
+   SPICE_DSTRING s ;			/* dynamic string */
+
+   spice_dstring_init(&s) ;
+   entry_p = entrynb (dico, t);        /* no keyword */
    /*dbg -- if ( k<=0 ) { ws("Dico num lookup fails. ") ;} */
 
-   while ((k > 0) && (dico->dyndat[k].tp == 'P'))
-      k = dico->dyndat[k].ivl;        /* pointer chain */
+   while ( entry_p && (entry_p->tp == 'P') ){
+      entry_p = entry_p->pointer ;
+   }
 
-   if (k > 0)
-      if (dico->dyndat[k].tp != 'R')
-         k = 0;
+   if ( entry_p )
+      if (entry_p->tp != 'R')
+         entry_p = NULL ;
 
-   if (k > 0)
-      u = dico->dyndat[k].vl;
+   if ( entry_p )
+      u = entry_p->vl ;
    else
    {
       u = 0.0;
-      scopy (s, "Undefined number [");
-      sadd (s, t);
-      cadd (s, ']');
-      err = message (dico, s);
+      scopys(&s, "Undefined number [") ;
+      sadd (&s, t);
+      cadd (&s, ']');
+      err = message (dico, spice_dstring_value(&s) ) ;
    }
 
    *perr = err;
 
-   Strrem(s);
+   spice_dstring_free(&s) ;
 
    return u;
 }
 
 /*******  writing dictionary entries *********/
 
-int
+entry *
 attrib (tdico * dico, char *t, char op)
 {
 /* seek or attribute dico entry number for string t.
    Option  op='N' : force a new entry, if tos>level and old is  valid.
 */
    int i;
-   unsigned char ok;
-   i = dico->nbd + 1;
-   ok = 0;
-   while ((!ok) && (i > 1))
-   {                                /* search old */
-      i--;
-      ok = steq (dico->dyndat[i].nom, t);
-   }
+   entry *entry_p ;			/* symbol table entry */
 
-   if (ok && (op == 'N')
-     && (dico->dyndat[i].level < dico->tos) && (dico->dyndat[i].tp != '?'))
+   entry_p = nghash_find( dico->symbol_table, t ) ;
+   if ( entry_p && (op == 'N')
+     && ( entry_p->level < dico->tos) && ( entry_p->tp != '?'))
    {
-      ok = 0;
+      entry_p = NULL ;
    }
 
-   if (!ok)
+   if (!(entry_p))
    {
       dico->nbd++;
       i = dico->nbd;
-      dico->dyndat = trealloc(dico->dyndat, (i+1) * sizeof(entry));
-      sini (dico->dyndat[i].nom, 100);
-      scopy (dico->dyndat[i].nom, t);
-      dico->dyndat[i].tp = '?';        /* signal Unknown */
-      dico->dyndat[i].level = dico->tos;
+      entry_p = tmalloc( sizeof(entry) ) ;
+      entry_p->symbol = strdup( t ) ;
+      entry_p->tp = '?';        /* signal Unknown */
+      entry_p->level = dico->tos ;
+      nghash_insert( dico->symbol_table, t, entry_p ) ;
    }
-   return i;
+   return entry_p ;
 }
 
 static unsigned char
@@ -368,6 +409,7 @@ define (tdico * dico,
         char tpe,       /* type marker */
         double z,       /* float value if any */
         int w,          /* integer value if any */
+	entry *pval,    /* pointer value if any */
         char *base)     /* string pointer if any */
 {
 /*define t as real or integer,
@@ -378,48 +420,50 @@ define (tdico * dico,
       we already make symbol entries which are dummy globals !
       we mark each id with its subckt level, and warn if write at higher one.
 */
-   int i;
    char c;
    unsigned char err, warn;
-   Strbig (dynLlen, v);
-   i = attrib (dico, t, op);
+   entry *entry_p ;			/* spice table entry */
+   SPICE_DSTRING vartemp ;		/* vairable temp */
+
+   spice_dstring_init(&vartemp) ;
+   entry_p = attrib (dico, t, op);
    err = 0;
-   if (i <= 0)
+   if (!(entry_p))
       err = message (dico, " Symbol table overflow");
    else
    {
-      if (dico->dyndat[i].tp == 'P')
-         i = dico->dyndat[i].ivl; /* pointer indirection */
+      if ( entry_p->tp == 'P')
+         entry_p = entry_p->pointer ; /* pointer indirection */
 
-      if (i > 0)
-         c = dico->dyndat[i].tp;
+      if (entry_p)
+         c = entry_p->tp ;
       else
          c = ' ';
 
       if ((c == 'R') || (c == 'S') || (c == '?'))
       {
-         dico->dyndat[i].vl = z;
-         dico->dyndat[i].tp = tpe;
-         dico->dyndat[i].ivl = w;
-         dico->dyndat[i].sbbase = base;
+         entry_p->vl = z;
+         entry_p->tp = tpe;
+         entry_p->ivl = w ;
+         entry_p->sbbase = base ;
          /* if ( (c !='?') && (i<= dico->stack[dico->tos]) ) {  */
          if (c == '?')
-            dico->dyndat[i].level = dico->tos; /* promote! */
+            entry_p->level = dico->tos; /* promote! */
 
-         if (dico->dyndat[i].level < dico->tos)
+         if ( entry_p->level < dico->tos)
          {
             /* warn about re-write to a global scope! */
-            scopy (v, t);
-            cadd (v, ':');
-            nadd (v, dico->dyndat[i].level);
-            sadd (v, " overwritten.");
-            warn = message (dico, v);
+            scopys(&vartemp, t) ;
+            cadd (&vartemp, ':');
+            nadd (&vartemp, entry_p->level);
+            sadd (&vartemp, " overwritten.");
+            warn = message (dico, spice_dstring_value(&vartemp));
          }
       }
       else
       {
-         scopy (v, t);
-         sadd (v, ": cannot redefine");
+ 	 scopys( &vartemp, t) ;
+         sadd ( &vartemp, ": cannot redefine");
          /* suppress error message, resulting from multiple definition of
          symbols (devices) in .model lines with same name, but in different subcircuits.
          Subcircuit expansion is o.k., we have to deal with this numparam
@@ -428,7 +472,7 @@ define (tdico * dico,
          /*err = message (dico, v);*/
       }
    }
-   Strrem(v);
+   spice_dstring_free(&vartemp) ;
    return err;
 }
 
@@ -438,7 +482,7 @@ defsubckt (tdico * dico, char *s, int w, char categ)
    to enter subcircuit (categ=U) and model (categ=O) names
 */
 {
-   Str (80, u);
+   SPICE_DSTRING ustr ;			/* temp user string */
    unsigned char err;
    int i, j, ls;
    ls = length (s);
@@ -460,8 +504,10 @@ defsubckt (tdico * dico, char *s, int w, char categ)
 
    if ((j > i))
    {
-      pscopy_up (u, s, i + 1, j - i);
-      err = define (dico, u, ' ', categ, 0.0, w, NULL);
+      spice_dstring_init(&ustr) ;
+      pscopy_up ( &ustr, s, i, j - i) ;
+      err = define (dico, spice_dstring_value(&ustr), ' ', categ, 0.0, w, NULL, NULL);
+      spice_dstring_free(&ustr) ;
    }
    else
       err = message (dico, "Subcircuit or Model without name.");
@@ -470,13 +516,16 @@ defsubckt (tdico * dico, char *s, int w, char categ)
 }
 
 int
-findsubckt (tdico * dico, char *s, char *subname)
+findsubckt (tdico * dico, char *s, SPICE_DSTRINGPTR subname)
 /* input: s is a subcircuit invocation line.
    returns 0 if not found, else the stored definition line number value
    and the name in string subname  */
 {
-   Str (80, u);                        /* u= subckt name is last token in string s */
-   int i, j, k;
+   entry *entry_p ;		      /* symbol table entry */
+   SPICE_DSTRING ustr ;		      /* u= subckt name is last token in string s */
+   int j, k;
+   int line ;			      /* stored line number */
+   spice_dstring_init(&ustr) ;
    k = length (s);
 
    while ((k >= 0) && (s[k] <= ' '))
@@ -487,22 +536,22 @@ findsubckt (tdico * dico, char *s, char *subname)
    while ((k >= 0) && (s[k] > ' '))
       k--;
 
-   pscopy_up (u, s, k + 2, j - k);
-   i = entrynb (dico, u);
+   pscopy_up ( &ustr, s, k + 1, j - k) ;
+   entry_p = entrynb (dico, spice_dstring_value(&ustr) ) ;
 
-   if ((i > 0) && (dico->dyndat[i].tp == 'U'))
+   if ((entry_p) && ( entry_p->tp == 'U'))
    {
-      i = dico->dyndat[i].ivl;
-      scopy (subname, u);
+      line = entry_p->ivl;
+      scopyd ( subname, &ustr ) ;
    }
    else
    {
-      i = 0;
-      scopy (subname, "");
+      line = 0;
+      spice_dstring_reinit(subname);
       message (dico, "Cannot find subcircuit.");
    }
 
-   return i;
+   return line ;
 }
 
 #if 0                                /* unused, from the full macro language... */
@@ -558,14 +607,18 @@ deffuma (                        /* define function or macro entry. */
 /************ input scanner stuff **************/
 
 static unsigned char
-keyword (char *keys, char *t)
+keyword ( SPICE_DSTRINGPTR keys_p, SPICE_DSTRINGPTR tstr_p)
 {
 /* return 0 if t not found in list keys, else the ordinal number */
    unsigned char i, j, k;
    int lt, lk;
    unsigned char ok;
-   lt = length (t);
-   lk = length (keys);
+   char *t ;
+   char *keys ;
+   lt = spice_dstring_length(tstr_p) ;
+   t = spice_dstring_value(tstr_p) ;
+   lk = spice_dstring_length (keys_p);
+   keys = spice_dstring_value(keys_p);
    k = 0;
    j = 0;
 
@@ -599,12 +652,14 @@ parseunit (double x, char *s)
 /* the Spice suffixes */
 {
   double u = 0;
-  Str (20, t);
+  SPICE_DSTRING t ;
   unsigned char isunit;
   isunit = 1;
-  pscopy (t, s, 1, 3);
+  spice_dstring_init(&t) ;
 
-  if (steq (t, "MEG"))
+  pscopy (&t, s, 0, 3);
+
+  if (steq ( spice_dstring_value(&t), "MEG"))
       u = 1e6;
   else if (s[0] == 'G')
       u = 1e9;
@@ -626,11 +681,13 @@ parseunit (double x, char *s)
   if (isunit)
     x = x * u;
 
+  spice_dstring_free(&t) ;
+
   return x;
 }
 
 static int
-fetchid (char *s, char *t, int ls, int i)
+fetchid (char *s, SPICE_DSTRINGPTR t, int ls, int i)
 /* copy next identifier from s into t, advance and return scan index i */
 {
   char c;
@@ -643,7 +700,7 @@ fetchid (char *s, char *t, int ls, int i)
       c = s[i - 1];
     }
 
-  scopy (t, "");
+  spice_dstring_reinit(t) ;
   cadd (t, upcase (c));
 
   do {
@@ -673,8 +730,10 @@ exists (tdico * d, char *s, int *pi, unsigned char *perror)
   int ls;
   char c;
   unsigned char ok;
-  Strbig (dynLlen, t);
+  SPICE_DSTRING t ;
+
   ls = length (s);
+  spice_dstring_init(&t) ;
   x = 0.0;
 
   do {
@@ -689,9 +748,9 @@ exists (tdico * d, char *s, int *pi, unsigned char *perror)
 
   if (ok)
     {
-      i = fetchid (s, t, ls, i);
+      i = fetchid (s, &t, ls, i);
       i--;
-      if (entrynb (d, t) > 0)
+      if (entrynb (d, spice_dstring_value(&t)) > 0)
         x = 1.0;
 
       do {
@@ -712,7 +771,7 @@ exists (tdico * d, char *s, int *pi, unsigned char *perror)
 
   *perror = error;
   *pi = i;
-  Strrem(t);
+  spice_dstring_free(&t) ;
   return x;
 }
 
@@ -724,9 +783,12 @@ fetchnumber (tdico * dico, char *s, int ls, int *pi, unsigned char *perror)
   int i = *pi;
   int k, err;
   char d;
-  Str (20, t);
+  char *t ;
+  SPICE_DSTRING tstr ;
+  SPICE_DSTRING vstr ;
   double u;
-  Strbig (dynLlen, v);
+  spice_dstring_init(&tstr) ;
+  spice_dstring_init(&vstr) ;
   k = i;
 
   do {
@@ -754,27 +816,29 @@ fetchnumber (tdico * dico, char *s, int ls, int *pi, unsigned char *perror)
         } while (!(!((d >= '0') && (d <= '9'))));
     }
 
-  pscopy (t, s, i, k - i);
+  pscopy (&tstr, s, i-1, k - i) ;
 
+  t = spice_dstring_value(&tstr) ;
   if (t[0] == '.')
-      cins (t, '0');
+      cins ( &tstr, '0');
   else if (t[length (t) - 1] == '.')
-      cadd (t, '0');
+      cadd (&tstr, '0');
 
-  u = rval (t, &err);
+  t = spice_dstring_value(&tstr) ;
+  u = rval (t, &err);  /* extract real value from string here */
 
   if (err != 0)
     {
-      scopy (v, "Number format error: ");
-      sadd (v, t);
-      error = message (dico, v);
+      scopys(&vstr, "Number format error: ") ;
+      sadd (&vstr, t);
+      error = message (dico, spice_dstring_value(&vstr)) ;
     }
   else
     {
-      scopy (t, "");
+      spice_dstring_reinit(&tstr);
       while (alfa (d))
         {
-          cadd (t, upcase (d));
+          cadd (&tstr, upcase (d));
           k++;
 
           if (k > ls)
@@ -783,13 +847,15 @@ fetchnumber (tdico * dico, char *s, int ls, int *pi, unsigned char *perror)
               d = s[k - 1];
         }
 
+      t = spice_dstring_value(&tstr) ;
       u = parseunit (u, t);
     }
 
   i = k - 1;
   *perror = error;
   *pi = i;
-  Strrem(v);
+  spice_dstring_free(&tstr) ;
+  spice_dstring_free(&vstr) ;
   return u;
 }
 
@@ -808,8 +874,9 @@ fetchoperator (tdico * dico,
   unsigned char level = *plevel;
   unsigned char error = *perror;
   char c, d;
-  Strbig (dynLlen, v);
+  SPICE_DSTRING vstr ;
   c = s[i - 1];
+  spice_dstring_init(&vstr) ;
 
   if (i < ls)
       d = s[i];
@@ -892,17 +959,17 @@ fetchoperator (tdico * dico,
       state = 0;
       if (c > ' ')
         {
-          scopy (v, "Syntax error: letter [");
-          cadd (v, c);
-          cadd (v, ']');
-          error = message (dico, v);
+          spice_dstring_append(&vstr, "Syntax error: letter [", -1 );
+          cadd (&vstr, c);
+          cadd (&vstr, ']');
+          error = message (dico, spice_dstring_value(&vstr) );
         }
     }
   *pi = i;
   *pstate = state;
   *plevel = level;
   *perror = error;
-  Strrem(v);
+  spice_dstring_free(&vstr) ;
   return c;
 }
 
@@ -1079,8 +1146,9 @@ formula (tdico * dico, char *s, unsigned char *perror)
   int i, k, ls, natom, arg2, arg3;
   char c, d;
   unsigned char ok;
-  Strbig (dynLlen, t);
+  SPICE_DSTRING tstr ;
 
+  spice_dstring_init(&tstr) ;
   for (i = 0; i <= nprece; i++)
     {
       accu[i] = 0.0;
@@ -1145,18 +1213,18 @@ formula (tdico * dico, char *s, unsigned char *perror)
             {
               if (arg2 > i)
                 {
-                  pscopy (t, s, i + 1, arg2 - i - 1);
-                  v = formula (dico, t, &error);
+                  pscopy (&tstr, s, i, arg2 - i - 1);
+                  v = formula (dico, spice_dstring_value(&tstr), &error);
                   i = arg2;
                 }
               if (arg3 > i)
                 {
-                  pscopy (t, s, i + 1, arg3 - i - 1);
-                  w = formula (dico, t, &error);
+                  pscopy (&tstr, s, i, arg3 - i - 1);
+                  w = formula (dico, spice_dstring_value(&tstr), &error);
                   i = arg3;
                 }
-              pscopy (t, s, i + 1, k - i - 1);
-              u = formula (dico, t, &error);
+              pscopy (&tstr, s, i, k - i - 1);
+              u = formula (dico, spice_dstring_value(&tstr), &error);
               state = 1;        /* atom */
               if (fu > 0)
                 {
@@ -1174,15 +1242,15 @@ formula (tdico * dico, char *s, unsigned char *perror)
         }
       else if (alfa (c))
         {
-          i = fetchid (s, t, ls, i);        /* user id, but sort out keywords */
+          i = fetchid (s, &tstr, ls, i);   /* user id, but sort out keywords */
           state = 1;
           i--;
-          kw = keyword (keys, t);        /* debug ws('[',kw,']'); */
+          kw = keyword (&keyS, &tstr);            /* debug ws('[',kw,']'); */
           if (kw == 0)
             {
-              fu = keyword (fmath, t);        /* numeric function? */
+              fu = keyword (&fmathS, &tstr);      /* numeric function? */
               if (fu == 0)
-                  u = fetchnumentry (dico, t, &error);
+                  u = fetchnumentry (dico, spice_dstring_value(&tstr), &error);
               else
                   state = 0; /* state==0 means: ignore for the moment */
             }
@@ -1261,9 +1329,10 @@ formula (tdico * dico, char *s, unsigned char *perror)
     } /* while */ ;
   if ((natom == 0) || (oldstate != 4))
     {
-      scopy (t, " Expression err: ");
-      sadd (t, s);
-      error = message (dico, t);
+      spice_dstring_reinit(&tstr) ;
+      sadd( &tstr, " Expression err: ");
+      sadd (&tstr, s);
+      error = message (dico, spice_dstring_value(&tstr));
     }
 
   if (negate == 1)
@@ -1275,7 +1344,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
 
   *perror = error;
 
-  Strrem(t);
+  spice_dstring_free(&tstr) ;
 
   if (error)
       return 1.0;
@@ -1316,71 +1385,73 @@ fmttype (double x)
 }
 
 static unsigned char
-evaluate (tdico * dico, char *q, char *t, unsigned char mode)
+evaluate (tdico * dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 {
 /* transform t to result q. mode 0: expression, mode 1: simple variable */
   double u = 0.0;
-  int k, j, lq;
+  int j, lq;
   char dt, fmt;
+  entry *entry_p ;
   unsigned char numeric, done, nolookup;
   unsigned char err;
-  Strbig (dynLlen, v);
-  scopy (q, "");
+  SPICE_DSTRING vstr ;
+
+  spice_dstring_init(&vstr) ;
+  spice_dstring_reinit(qstr_p) ;
   numeric = 0;
   err = 0;
 
   if (mode == 1)
     {                                /* string? */
       stupcase (t);
-      k = entrynb (dico, t);
-      nolookup = (k <= 0);
-      while ((k > 0) && (dico->dyndat[k].tp == 'P'))
-          k = dico->dyndat[k].ivl;
+      entry_p = entrynb (dico, t);
+      nolookup = (!(entry_p));
+      while ((entry_p) && (entry_p->tp == 'P')){
+          entry_p = entry_p->pointer ;		/* follow pointer chain */
+      }
 
       /* pointer chain */
-      if (k > 0)
-          dt = dico->dyndat[k].tp;
+      if (entry_p)
+          dt = entry_p->tp;
       else
           dt = ' ';
 
       /* data type: Real or String */
       if (dt == 'R')
         {
-          u = dico->dyndat[k].vl;
+          u = entry_p->vl;
           numeric = 1;
         }
       else if (dt == 'S')
         {                        /* suppose source text "..." at */
-          j = dico->dyndat[k].ivl;
+          j = entry_p->ivl;
           lq = 0;
           do {
               j++;
               lq++;
-              dt = /* ibf->bf[j]; */ dico->dyndat[k].sbbase[j];
+              dt = /* ibf->bf[j]; */ entry_p->sbbase[j];
 
-              if (cpos ('3', dico->option) <= 0)
+              if (cpos ('3', spice_dstring_value(&dico->option)) <= 0)
                   dt = upcase (dt); /* spice-2 */
 
               done = (dt == '\"') || (dt < ' ') || (lq > 99);
 
               if (!done)
-                  cadd (q, dt);
+                  cadd (qstr_p, dt);
             } while (!(done));
         }
-      else
-        k = 0;
 
-      if (k <= 0)
+      if (!(entry_p))
         {
-          scopy (v, "");
-          cadd (v, '\"');
-          sadd (v, t);
-          sadd (v, "\" not evaluated. ");
+          spice_dstring_reinit(&vstr) ;
+          cadd (&vstr, '\"');
+          sadd (&vstr, t);
+          sadd (&vstr, "\" not evaluated. ");
 
           if (nolookup)
-              sadd (v, "Lookup failure.");
+              sadd (&vstr, "Lookup failure.");
 
-          err = message (dico, v);
+          err = message (dico, spice_dstring_value(&vstr));
         }
     }
   else
@@ -1392,13 +1463,13 @@ evaluate (tdico * dico, char *q, char *t, unsigned char mode)
     {
       fmt = fmttype (u);
       if (fmt == 'I')
-          stri (np_round (u), q);
+          stri (np_round (u), qstr_p);
       else
         {
-          strf (u, 17, 10, q);
+          strf (u, 17, 10, qstr_p);
         }
     }
-  Strrem(v);
+  spice_dstring_free(&vstr) ;
   return err;
 }
 
@@ -1576,36 +1647,53 @@ scanline (tdico * dico, char *s, char *r, unsigned char err)
 /********* interface functions for spice3f5 extension ***********/
 
 static void
-compactfloatnb (char *v)
+compactfloatnb (SPICE_DSTRINGPTR vstr_p)
 /* try to squeeze a floating pt format to ACT_CHARACTS characters */
 /* erase superfluous 000 digit streams before E */
 /* bug: truncating, no rounding */
 {
   int n, k, m, lex, lem;
-  Str (20, expo);
-  Str (10, expn);
-  n = cpos ('E', v);            /* if too long, try to delete digits */
-  if (n==0) n = cpos ('e', v);
+  char *expov ;
+  char *expnv ;
+  char *v_p ;
+  SPICE_DSTRING expo_str ;
+  SPICE_DSTRING expn_str ;
 
-  if (n > 0) {
-    pscopy (expo, v, n, length (v));
-    lex = length (expo);
+  spice_dstring_init(&expo_str) ;
+  spice_dstring_init(&expn_str) ;
+  n = cpos ('E', spice_dstring_value(vstr_p)) ; /* if too long, try to delete digits */
+  if (n<0) n = cpos ('e', spice_dstring_value(vstr_p));
+
+  if (n >= 0) {
+    pscopy (&expo_str, spice_dstring_value(vstr_p), n, 
+	    spice_dstring_length(vstr_p));
+    lex = spice_dstring_length (&expo_str) ;
     if (lex > 4) {            /* exponent only 2 digits */
-      pscopy (expn, expo, 2, 4);
-      if (atoi(expn) < -99) scopy(expo, "e-099"); /* brutal */
-      if (atoi(expn) > +99) scopy(expo, "e+099");
-      expo[2] = expo[3];
-      expo[3] = expo[4];
-      expo[4] = '\0';
+      pscopy (&expn_str, spice_dstring_value(&expo_str), 1, 4);
+      expnv = spice_dstring_value(&expn_str) ;
+      if (atoi(expnv) < -99){
+	spice_dstring_reinit(&expo_str) ;
+	sadd(&expo_str, "e-099"); /* brutal */
+      }
+      if (atoi(expnv) > +99){
+	spice_dstring_reinit(&expo_str) ;
+	sadd(&expo_str, "e+099");
+      }
+      expov = spice_dstring_value(&expo_str) ;
+      expov[2] = expov[3];
+      expov[3] = expov[4];
+      expov[4] = '\0';
+      spice_dstring_setlength(&expo_str,4) ;
       lex = 4;
     }
-    k = n - 1;                /* mantissa is 0...k */
+    k = n ;                /* mantissa is 0...k */
 
     m = MAX_STRING_INSERT;
-    while (v[m] != ' ')
+    v_p = spice_dstring_value(vstr_p) ;
+    while (v_p[m] != ' ')
       m--;
     m++;
-    while ((v[k] == '0') && (v[k - 1] == '0'))
+    while ((v_p[k] == '0') && (v_p[k - 1] == '0'))
       k--;
 
     lem = k - m;
@@ -1613,54 +1701,58 @@ compactfloatnb (char *v)
     if ((lem + lex) > ACT_CHARACTS)
       lem = ACT_CHARACTS - lex;
 
-    pscopy (v, v, m+1, lem);
-    if (cpos('.', v) > 0) {
+    pscopy (vstr_p, spice_dstring_value(vstr_p), m, lem);
+    if (cpos('.', spice_dstring_value(vstr_p)) >= 0) {
       while (lem < ACT_CHARACTS - 4) {
-        cadd(v, '0');
+        cadd(vstr_p, '0');
         lem++;
       }
     } else {
-      cadd(v, '.');
+      cadd(vstr_p, '.');
       lem++;
       while (lem < ACT_CHARACTS - 4) {
-        cadd(v, '0');
+        cadd(vstr_p, '0');
         lem++;
       }
     }
-    sadd (v, expo);
+    sadd (vstr_p, spice_dstring_value(&expo_str) );
   } else {
     m = 0;
-    while (v[m] == ' ')
+    v_p = spice_dstring_value(vstr_p) ;
+    while (v_p[m] == ' ')
       m++;
 
-    lem = length(v) - m;
+    lem = spice_dstring_length(vstr_p) - m;
     if (lem > ACT_CHARACTS) lem = ACT_CHARACTS;
-    pscopy (v, v, m+1, lem);
+    pscopy (vstr_p, spice_dstring_value(vstr_p), m, lem);
   }
 }
 
 static int
-insertnumber (tdico * dico, int i, char *s, char *u)
+insertnumber (tdico * dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
 /* insert u in string s in place of the next placeholder number */
 {
-  Str (40, v);
-  Str (80, msg);
+  SPICE_DSTRING vstr ;			/* dynamic string */
+  SPICE_DSTRING mstr ;			/* dynamic string */
+  char *v_p ;				/* value of vstr dyna string */
   unsigned char found;
   int ls, k;
   long long accu;
   ls = length (s);
 
-  scopy (v, u);
-  compactfloatnb (v);
+  spice_dstring_init(&vstr) ;
+  spice_dstring_init(&mstr) ;
+  scopyd (&vstr, ustr_p) ;
+  compactfloatnb (&vstr) ;
 
-  while (length (v) < MAX_STRING_INSERT)
-      cadd (v, ' ');
+  while ( spice_dstring_length (&vstr) < MAX_STRING_INSERT)
+      cadd (&vstr, ' ');
 
-  if (length (v) > MAX_STRING_INSERT)
+  if ( spice_dstring_length (&vstr) > MAX_STRING_INSERT)
     {
-      scopy (msg, " insertnumber fails: ");
-      sadd (msg, u);
-      message (dico, msg);
+      spice_dstring_append( &mstr, " insertnumber fails: ", -1);
+      sadd (&mstr, spice_dstring_value(ustr_p));
+      message (dico, spice_dstring_value(&mstr)) ;
     }
 
   found = 0;
@@ -1672,7 +1764,7 @@ insertnumber (tdico * dico, int i, char *s, char *u)
       accu = 0;
 
       while (found && (k < 15))
-        {                        /* parse a 15-digit number */
+        {                        	/* parse a 15-digit number */
           found = num (s[i + k]);
 
           if (found)
@@ -1683,7 +1775,8 @@ insertnumber (tdico * dico, int i, char *s, char *u)
 
       if (found)
         {
-          accu = accu - 100000000000000LL;        /* plausibility test */
+	  accu = accu - 100000000000000LL;	/* plausibility test */
+
           found = (accu > 0) && (accu < dynsubst + 1); /* dynsubst numbers have been allocated */
         }
       i++;
@@ -1692,8 +1785,9 @@ insertnumber (tdico * dico, int i, char *s, char *u)
   if (found)
     {                                /* substitute at i-1 ongoing */
       i--;
+      v_p = spice_dstring_value(&vstr) ;
       for (k = 0; k < ACT_CHARACTS; k++)
-        s[i + k] = v[k];
+        s[i + k] = v_p[k];
 
       i = i + MAX_STRING_INSERT;
 
@@ -1702,12 +1796,11 @@ insertnumber (tdico * dico, int i, char *s, char *u)
     {
       i = ls;
       fprintf (stderr, "xpressn.c--insertnumber:  i=%d  s=%s  u=%s\n", i, s,
-               u);
+               spice_dstring_value(ustr_p)) ;
       message (dico, "insertnumber: missing slot ");
     }
   return i;
 }
-
 unsigned char
 nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
 /* s: pointer to original source line.
@@ -1718,7 +1811,11 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
 {
   int i, k, ls, level, nnest, ir;
   char c, d;
-  Strdbig (dynLlen, q, t);
+  SPICE_DSTRING qstr ;			/* temp result dynamic string */
+  SPICE_DSTRING tstr ;			/* temp dynamic string */
+
+  spice_dstring_init(&qstr) ;
+  spice_dstring_init(&tstr) ;
   i = 0;
   ls = length (s);
   err = 0;
@@ -1745,18 +1842,19 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
               err = message (dico, "Closing \"}\" not found.");
           else
             {
-              pscopy (t, s, i + 1, k - i - 1);
+              pscopy (&tstr, s, i , k - i - 1);
               /* exeption made for .meas */
-              if( strcasecmp(t,"LAST")==0) {
-                 strcpy(q,"last") ;
+              if( strcasecmp( spice_dstring_value(&tstr),"LAST")==0) {
+                 spice_dstring_reinit(&qstr) ;
+		 sadd(&qstr,"last") ;
                  err=0;
               } else 
-		err = evaluate (dico, q, t, 0);
+		err = evaluate (dico, &qstr, spice_dstring_value(&tstr), 0);
           }
 
           i = k;
           if (!err)
-              ir = insertnumber (dico, ir, r, q);
+              ir = insertnumber (dico, ir, r, &qstr) ;
           else
               err = message (dico, "Cannot compute substitute");
         }
@@ -1788,8 +1886,8 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
                   err = message (dico, "Closing \")\" not found.");
               else
                 {
-                  pscopy (t, s, i + 1, k - i - 1);
-                  err = evaluate (dico, q, t, 0);
+                  pscopy (&tstr, s, i, k - i - 1);
+                  err = evaluate (dico, &qstr, spice_dstring_value(&tstr), 0);
                 }
               i = k;
             }
@@ -1803,29 +1901,31 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
                       d = s[k - 1];
                 } while (!((k > ls) || (d <= ' ')));
 
-              pscopy (t, s, i, k - i);
-              err = evaluate (dico, q, t, 1);
+              pscopy (&tstr, s, i-1, k - i);
+              err = evaluate (dico, &qstr, spice_dstring_value(&tstr), 1);
               i = k - 1;
             }
 
           if (!err)
-              ir = insertnumber (dico, ir, r, q);
+              ir = insertnumber (dico, ir, r, &qstr);
           else
               message (dico, "Cannot compute &(expression)");
         }
     } 
                                /* while */
-  Strdrem(q,t);
+  spice_dstring_free(&qstr) ;
+  spice_dstring_free(&tstr) ;
   return err;
 }
 
 static unsigned char
-getword (char *s, char *t, int after, int *pi)
+getword (char *s, SPICE_DSTRINGPTR tstr_p, int after, int *pi)
 /* isolate a word from s after position "after". return i= last read+1 */
 {
   int i = *pi;
   int ls;
   unsigned char key;
+  char *t_p ;
   i = after;
   ls = length (s);
 
@@ -1834,16 +1934,17 @@ getword (char *s, char *t, int after, int *pi)
       i++;
     } while (!((i >= ls) || alfa (s[i - 1])));
 
-  scopy (t, "");
+  spice_dstring_reinit(tstr_p) ;
 
   while ((i <= ls) && (alfa (s[i - 1]) || num (s[i - 1])))
     {
-      cadd (t, upcase (s[i - 1]));
+      cadd (tstr_p, upcase (s[i - 1]));
       i++;
     }
 
-  if (t[0])
-      key = keyword (keys, t);
+  t_p = spice_dstring_value(tstr_p) ;
+  if (t_p[0])
+      key = keyword (&keyS, tstr_p);
   else
       key = 0;
 
@@ -1852,7 +1953,7 @@ getword (char *s, char *t, int after, int *pi)
 }
 
 static char
-getexpress (char *s, char *t, int *pi)
+getexpress (char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
 /* returns expression-like string until next separator
  Input  i=position before expr, output  i=just after expr, on separator.
  returns tpe=='R' if ( numeric, 'S' if ( string only
@@ -1917,13 +2018,13 @@ getexpress (char *s, char *t, int *pi)
             }
           /* buggy? */ if ((c == '/') || (c == '-'))
               comment = (s[i] == c);
-        } while (!((cpos (c, ",;)}") > 0) || comment));        /* legal separators */
+        } while (!((cpos (c, ",;)}") >= 0) || comment));        /* legal separators */
 
       tpe = 'R';
 
     }
 
-  pscopy (t, s, ia, i - ia);
+  pscopy (tstr_p, s, ia-1, i - ia);
 
   if (s[i - 1] == '}')
     i++;
@@ -1950,14 +2051,18 @@ nupa_assignment (tdico * dico, char *s, char mode)
   char dtype;
   int wval = 0;
   double rval = 0.0;
-  Strdbig (dynLlen, t, u);
+  char *t_p ;					/* dstring contents value */
+  SPICE_DSTRING tstr ;				/* temporary dstring */
+  SPICE_DSTRING ustr ;				/* temporary dstring */
+  spice_dstring_init(&tstr) ;
+  spice_dstring_init(&ustr) ;
   ls = length (s);
   error = 0;
   i = 0;
-  j = spos ("//", s);                /* stop before comment if any */
+  j = spos_ ("//", s);                /* stop before comment if any */
 
-  if (j > 0)
-    ls = j - 1;
+  if (j >= 0)
+    ls = j ;
   /* bug: doesnt work. need to  revise getexpress ... !!! */
   i = 0;
 
@@ -1975,8 +2080,9 @@ nupa_assignment (tdico * dico, char *s, char mode)
 
   while ((i < ls) && (!error))
     {
-      key = getword (s, t, i, &i);
-      if ((t[0] == 0) || (key > 0))
+      key = getword (s, &tstr, i, &i);
+      t_p = spice_dstring_value(&tstr) ;
+      if ((t_p[0] == 0) || (key > 0))
           error = message (dico, " Identifier expected");
 
       if (!error)
@@ -1987,11 +2093,11 @@ nupa_assignment (tdico * dico, char *s, char mode)
           if (i > ls)
               error = message (dico, " = sign expected .");
 
-          dtype = getexpress (s, u, &i);
+          dtype = getexpress (s, &ustr, &i);
 
           if (dtype == 'R')
             {
-              rval = formula (dico, u, &error);
+              rval = formula (dico, spice_dstring_value(&ustr), &error);
               if (error)
                 {
                   message (dico, " Formula() error.");
@@ -2001,7 +2107,8 @@ nupa_assignment (tdico * dico, char *s, char mode)
           else if (dtype == 'S')
               wval = i;
 
-          err = define (dico, t, mode /* was ' ' */ , dtype, rval, wval, NULL);
+          err = define (dico, spice_dstring_value(&tstr), mode /* was ' ' */ , 
+	                dtype, rval, wval, NULL, NULL);
           error = error || err;
         }
 
@@ -2010,7 +2117,8 @@ nupa_assignment (tdico * dico, char *s, char mode)
       else
         /* i++ */;
     }
-  Strdrem(t,u);
+  spice_dstring_free(&tstr) ;
+  spice_dstring_free(&ustr) ;
   return error;
 }
 
@@ -2021,10 +2129,21 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
 */
 {
   int n, m, i, j, k, g, h, narg = 0, ls, nest;
-  Str (80, subname);
+  SPICE_DSTRING subname ;
+  SPICE_DSTRING tstr ;
+  SPICE_DSTRING ustr ;
+  SPICE_DSTRING vstr ;
+  SPICE_DSTRING idlist ;
+  SPICE_DSTRING parsebuf ;
   char *buf, *token;
+  char *t_p ;
+  char *u_p ;
   unsigned char found;
-  Strfbig (dynLlen, t, u, v, idlist);
+  spice_dstring_init(&subname) ;
+  spice_dstring_init(&tstr) ;
+  spice_dstring_init(&ustr) ;
+  spice_dstring_init(&vstr) ;
+  spice_dstring_init(&idlist) ;
   /*
      skip over instance name -- fixes bug where instance 'x1' is
      same name as subckt 'x1'
@@ -2035,164 +2154,172 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
   /***** first, analyze the subckt definition line */
   n = 0;                        /* number of parameters if any */
   ls = length (s);
-  j = spos ("//", s);
+  j = spos_ ("//", s);
 
-  if (j > 0)
-    pscopy_up (t, s, 1, j - 1);
+  if (j >= 0)
+    pscopy_up (&tstr, s, 0, j );
   else
-    scopy_up (t, s);
+    scopy_up (&tstr, s);
 
-  j = spos ("SUBCKT", t);
+  j = spos_ ("SUBCKT", spice_dstring_value(&tstr) ) ;
 
-  if (j > 0)
+  if (j >= 0)
     {
-      j = j + 6;                /* fetch its name */
-      while ((j < ls) && (t[j] <= ' '))
+      j = j + 6;                /* fetch its name - skip subckt */
+      t_p = spice_dstring_value(&tstr) ;
+      while ((j < ls) && (t_p[j] <= ' '))
         j++;
 
-      while (t[j] != ' ')
+      while (t_p[j] != ' ')
         {
-          cadd (subname, t[j]);
+          cadd (&subname, t_p[j]);
           j++;
         }
     }
   else
     err = message (dico, " ! a subckt line!");
 
-  i = spos ("PARAMS:", t);
+  i = spos_ ("PARAMS:", spice_dstring_value(&tstr));
 
-  if (i > 0)
+  if (i >= 0)
     {
-      pscopy (t, t, i + 7, length (t));
-      while (j = cpos ('=', t), j > 0)
+      pscopy (&tstr, spice_dstring_value(&tstr), i + 7, spice_dstring_length (&tstr));
+      while (j = cpos ('=', spice_dstring_value(&tstr)), j >= 0)
         {                        /* isolate idents to the left of =-signs */
-          k = j - 2;
-          while ((k >= 0) && (t[k] <= ' '))
+          k = j - 1;
+	  t_p = spice_dstring_value(&tstr) ;
+          while ((k >= 0) && (t_p[k] <= ' '))
             k--;
 
           h = k;
 
-          while ((h >= 0) && alfanum (t[h]))
+          while ((h >= 0) && alfanum (t_p[h]))
             h--;
 
-          if (alfa (t[h + 1]) && (k > h))
+          if (alfa (t_p[h + 1]) && (k > h))
             {                        /* we have some id */
               for (m = (h + 1); m <= k; m++)
-                cadd (idlist, t[m]);
+                cadd (&idlist, t_p[m]);
 
-              sadd (idlist, "=$;");
+              sadd (&idlist, "=$;");
               n++;
             }
           else
             message (dico, "identifier expected.");
 
-          pscopy (t, t, j + 1, length (t));
+	  /* It is j+1 to skip over the '=' */
+          pscopy (&tstr, spice_dstring_value(&tstr), j+1, spice_dstring_length (&tstr));
         }
     }
   /***** next, analyze the circuit call line */
   if (!err)
     {
       narg = 0;
-      j = spos ("//", x);
+      j = spos_ ("//", x);
 
-      if (j > 0)
-        pscopy_up (t, x, 1, j - 1);
-      else
-        scopy_up (t, x);
+      if (j >= 0)
+        pscopy_up ( &tstr, x, 0, j );
+      else {
+        scopy_up (&tstr, x);
+	j = 0 ;
+      }
 
-      ls = length (t);
+      ls = spice_dstring_length (&tstr);
 
-      buf = (char*) tmalloc(strlen(t) + 1);
-      strcpy(buf, t);
+      spice_dstring_init(&parsebuf) ;
+      scopyd(&parsebuf, &tstr) ;
+      buf = spice_dstring_value(&parsebuf) ;
 
       found = 0;
       token = strtok(buf, " ");       /* a bit more exact - but not sufficient everytime */
       j = j + strlen(token) + 1;
-      if (strcmp(token, subname)) {
+      if (strcmp(token, spice_dstring_value(&subname))) {
         while ((token = strtok(NULL, " "))) {
-          if (!strcmp(token, subname)) {
+          if (!strcmp(token, spice_dstring_value(&subname))) {
             found = 1;
             break;
           }
           j = j + strlen(token) + 1;
         }
       }
-      free(buf);
+      spice_dstring_free(&parsebuf) ;
 
       /*  make sure that subname followed by space */
       if (found)
         {
-          j = j + length (subname) + 1;        /* 1st position of arglist: j */
+          j = j + spice_dstring_length (&subname) + 1;        /* 1st position of arglist: j */
 
-          while ((j < ls) && ((t[j] <= ' ') || (t[j] == ',')))
+	  t_p = spice_dstring_value(&tstr) ;
+          while ((j < ls) && ((t_p[j] <= ' ') || (t_p[j] == ',')))
             j++;
 
           while (j < ls)
             {                        /* try to fetch valid arguments */
               k = j;
-              scopy (u, "");
-              if ((t[k] == Intro))
+              spice_dstring_reinit(&ustr) ;
+              if ((t_p[k] == Intro))
                 {                /* handle historical syntax... */
-                  if (alfa (t[k + 1]))
+                  if (alfa (t_p[k + 1]))
                       k++;
-                  else if (t[k + 1] == '(')
+                  else if (t_p[k + 1] == '(')
                     {                /* transform to braces... */
                       k++;
-                      t[k] = '{';
+                      t_p[k] = '{';
                       g = k;
                       nest = 1;
                       while ((nest > 0) && (g < ls))
                         {
                           g++;
-                          if (t[g] == '(')
+                          if (t_p[g] == '(')
                             nest++;
-                          else if (t[g] == ')')
+                          else if (t_p[g] == ')')
                             nest--;
                         }
 
                       if ((g < ls) && (nest == 0))
-                        t[g] = '}';
+                        t_p[g] = '}';
                     }
                 }
 
-              if (alfanum (t[k]) || t[k] == '.')
+              if (alfanum (t_p[k]) || t_p[k] == '.')
                 {                /* number, identifier */
                   h = k;
-                  while (t[k] > ' ')
+                  while (t_p[k] > ' ')
                     k++;
 
-                  pscopy (u, t, h + 1, k - h);
+                  pscopy (&ustr, spice_dstring_value(&tstr), h, k - h);
                   j = k;
                 }
-              else if (t[k] == '{')
+              else if (t_p[k] == '{')
                 {
-                  getexpress (t, u, &j);
+                  getexpress ( spice_dstring_value(&tstr), &ustr, &j);
                   j--; /* confusion: j was in Turbo Pascal convention */ ;
                 }
               else
                 {
                   j++;
-                  if (t[k] > ' ')
+                  if (t_p[k] > ' ')
                     {
-                      scopy (v, "Subckt call, symbol ");
-                      cadd (v, t[k]);
-                      sadd (v, " not understood");
-                      message (dico, v);
+                      spice_dstring_append(&vstr, "Subckt call, symbol ",-1) ;
+                      cadd (&vstr, t_p[k]);
+                      sadd (&vstr, " not understood");
+                      message (dico, spice_dstring_value(&vstr) ) ;
                     }
                 }
 
-              if (u[0])
+	      u_p = spice_dstring_value(&ustr) ;
+              if (u_p[0])
                 {
                   narg++;
-                  k = cpos ('$', idlist);
+                  k = cpos ('$', spice_dstring_value(&idlist)) ;
 
-                  if (k > 0)
+                  if (k >= 0)
                     {                /* replace dollar with expression string u */
-                      pscopy (v, idlist, 1, k - 1);
-                      sadd (v, u);
-                      pscopy (u, idlist, k + 1, length (idlist));
-                      scopy (idlist, v);
-                      sadd (idlist, u);
+                      pscopy (&vstr, spice_dstring_value(&idlist), 0, k);
+                      sadd ( &vstr, spice_dstring_value(&ustr)) ;
+                      pscopy (&ustr, spice_dstring_value(&idlist), k+1, spice_dstring_length (&idlist));
+                      scopyd (&idlist, &vstr);
+                      sadd (&idlist, spice_dstring_value(&ustr));
                     }
                 }
             }
@@ -2204,17 +2331,22 @@ nupa_subcktcall (tdico * dico, char *s, char *x, unsigned char err)
   dicostack (dico, Push);        /* create local symbol scope */
   if (narg != n)
     {
-      scopy (t, " Mismatch: ");
-      nadd (t, n);
-      sadd (t, "  formal but ");
-      nadd (t, narg);
-      sadd (t, " actual params.");
-      err = message (dico, t);
-      message (dico, idlist);
+      scopys(&tstr, " Mismatch: ");
+      nadd (&tstr, n);
+      sadd (&tstr, "  formal but ");
+      nadd (&tstr, narg);
+      sadd (&tstr, " actual params.");
+      err = message (dico, spice_dstring_value(&tstr));
+      message (dico, spice_dstring_value(&idlist));
       /* ;} else { debugwarn(dico, idlist) */ ;
     }
-  err = nupa_assignment (dico, idlist, 'N');
-  Strfrem(t,u,v,idlist);
+  err = nupa_assignment (dico, spice_dstring_value(&idlist), 'N');
+
+  spice_dstring_free(&subname) ;
+  spice_dstring_free(&tstr) ;
+  spice_dstring_free(&ustr) ;
+  spice_dstring_free(&vstr) ;
+  spice_dstring_free(&idlist) ;
   return err;
 }
 

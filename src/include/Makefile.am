@@ -46,6 +46,7 @@ noinst_HEADERS = 	\
 	gendev.h	\
 	graph.h 	\
 	grid.h 		\
+	hash.h 		\
 	hlpdefs.h 	\
 	iferrmsg.h 	\
 	ifsim.h 	\

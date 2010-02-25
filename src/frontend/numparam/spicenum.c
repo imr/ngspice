@@ -32,7 +32,7 @@ Todo:
 extern void txfree (void *ptr);
 
 char *nupa_inst_name;
-static tdico *inst_dico;
+static tdico *inst_dicoS ;
 
 /* number of parameter substitutions, available only after the substitution */
 extern long dynsubst; /* spicenum.c:144 */
@@ -41,7 +41,7 @@ extern long dynsubst; /* spicenum.c:144 */
 extern int dynmaxline; /* inpcom.c:1529 */
 
 /* max. line length in input deck */
-unsigned int dynLlen; /* inpcom.c:1531 */
+/* unsigned int dynLlen; No longer needed with d strings */ /* inpcom.c:1531 */
 
 /* Uncomment this line to allow debug tracing */
 /* #define TRACE_NUMPARAMS */
@@ -71,34 +71,43 @@ static long placeholder = 0;
 
 
 static void
-stripsomespace (char *s, unsigned char incontrol)
+stripsomespace (SPICE_DSTRINGPTR dstr_p, unsigned char incontrol)
 {
 /* if s starts with one of some markers, strip leading space */
-  Str (12, markers);
   int i, ls;
-  scopy (markers, "*.&+#$");
+  char *sstr ;				/* string contained in s */
+  SPICE_DSTRING markers ;
+
+  spice_dstring_init( &markers ) ;
+  scopys( &markers, "*.&+#$") ;
 
   if (!incontrol)
-    sadd (markers, "xX");
+    sadd ( &markers, "xX");
 
-  ls = length (s);
+  sstr = spice_dstring_value(dstr_p) ;
+  ls = spice_dstring_length (dstr_p);
   i = 0;
-  while ((i < ls) && (s[i] <= ' '))
+  while ((i < ls) && (sstr[i] <= ' '))
     i++;
 
-  if ((i > 0) && (i < ls) && (cpos (s[i], markers) > 0))
-    pscopy (s, s, i + 1, ls);
+  if ((i > 0) && (i < ls) && (cpos (sstr[i], spice_dstring_value(&markers)) >= 0))
+    pscopy (dstr_p, sstr, i, ls);
 
 }
 
 static int
-stripbraces (char *s)
+stripbraces (SPICE_DSTRINGPTR dstr_p)
 /* puts the funny placeholders. returns the number of {...} substitutions */
 {
    int n, i, nest, ls, j;
-   Strbig (dynLlen, t);
+   char *s ;				/* value of dynamic string */
+   char *t_p ;				/* value of t dynamic string */
+   SPICE_DSTRING tstr ;			/* temporary dynamic string */
+
    n = 0;
-   ls = length (s);
+   spice_dstring_init( &tstr ) ;
+   s = spice_dstring_value( dstr_p ) ;
+   ls = spice_dstring_length (dstr_p);
    i = 0;
 
    while (i < ls)
@@ -117,47 +126,54 @@ stripbraces (char *s)
                nest--;
             j++;
          }
-         pscopy (t, s, 1, i);
+         pscopy (&tstr, s, 0, i);
 	      placeholder++;
 
-         if (t[i - 1] > ' ')
-            cadd (t, ' ');
+	 t_p = spice_dstring_value(&tstr) ;
 
-         cadd (t, ' ');
-         naddll (t, PlaceHold + placeholder); /* placeholder has 15 digits */
-         cadd (t, ' ');
+         if (t_p[i - 1] > ' ')
+            cadd (&tstr, ' ');
+
+         cadd ( &tstr, ' ');
+         naddll( &tstr, PlaceHold + placeholder); /* placeholder has 15 digits */
+         cadd ( &tstr, ' ');
 
          if (s[j] >= ' ')
-            cadd (t, ' ');
+            cadd ( &tstr, ' ');
 
-         i = length (t);
-         pscopy (s, s, j + 1, ls);
-         sadd (t, s);
-         scopy (s, t);
+         i = spice_dstring_length (&tstr);
+         pscopy (dstr_p, s, j, ls);
+         sadd ( &tstr, s);
+         scopyd ( dstr_p, &tstr);
+	 s = spice_dstring_value( dstr_p ) ;
+	 ls = spice_dstring_length( dstr_p ) ;
       }
       else
          i++;
 
-      ls = length (s);
    }
    dynsubst = placeholder;
-   Strrem(t);
+   spice_dstring_free(&tstr);
    return n;
 }
 
 static int
-findsubname (tdico * dico, char *s)
+findsubname (tdico * dico, SPICE_DSTRINGPTR dstr_p)
 /* truncate the parameterized subckt call to regular old Spice */
 /* scan a string from the end, skipping non-idents and {expressions} */
 /* then truncate s after the last subckt(?) identifier */
 {
-  Str (80, name);
+  SPICE_DSTRING name ;			/* extract a name */
+  char *s ;				/* current dstring */
   int h, j, k, nest, ls;
   unsigned char found;
   h = 0;
-  ls = length (s);
-  k = ls;
+
+  ls = spice_dstring_length (dstr_p) ;
+  s = spice_dstring_value (dstr_p) ;
+  k = ls - 1 ; /* now a C - string */
   found = 0;
+  spice_dstring_init( &name ) ;
 
   while ((k >= 0) && (!found))
     {				/* skip space, then non-space */
@@ -191,32 +207,37 @@ findsubname (tdico * dico, char *s)
       found = (k >= 0) && alfanum (s[k + 1]);	/* suppose an identifier */
       if (found)
 	{			/* check for known subckt name */
-	  scopy (name, "");
+	  spice_dstring_reinit( &name ) ;
 	  j = k + 1;
 	  while (alfanum (s[j]))
 	    {
-	      cadd (name, upcase (s[j]));
+	      cadd ( &name, upcase (s[j]));
 	      j++;
 	    }
-	  found = (getidtype (dico, name) == 'U');
+	  found = (getidtype (dico, spice_dstring_value(&name) ) == 'U');
 	}
     }
   if (found && (h < ls))
-    pscopy (s, s, 1, h);
+    pscopy (dstr_p, s, 0, h);
 
   return h;
 }
 
 static void
-modernizeex (char *s)
+modernizeex (SPICE_DSTRINGPTR dstr_p)
 /* old style expressions &(..) and &id --> new style with braces. */
 {
   int i, state, ls;
   char c, d;
-  Strbig (dynLlen, t);
+  char *s ;				/* current string */
+  SPICE_DSTRING t ;			/* temporary dyna string */
+
   i = 0;
   state = 0;
-  ls = length (s);
+  ls = spice_dstring_length (dstr_p);
+  s = spice_dstring_value( dstr_p ) ;
+  spice_dstring_init( &t ) ;
+
 
   while (i < ls)
     {
@@ -232,11 +253,11 @@ modernizeex (char *s)
 	    }
 	  else if (alfa (d))
 	    {
-	      cadd (t, '{');
+	      cadd (&t, '{');
 	      i++;
 	      while (alfanum (s[i]))
 		{
-		  cadd (t, s[i]);
+		  cadd (&t, s[i]);
 		  i++;
 		}
 	      c = '}';
@@ -255,15 +276,16 @@ modernizeex (char *s)
 
 	}
 
-      cadd (t, c);
+      cadd (&t, c);
       i++;
     }
-  scopy (s, t);
-  Strrem(t);
+  scopyd (dstr_p, &t);
+  spice_dstring_free(&t) ;
 }
 
 static char
-transform (tdico * dico, char *s, unsigned char nostripping, char *u)
+transform (tdico * dico, SPICE_DSTRINGPTR dstr_p, unsigned char nostripping, 
+           SPICE_DSTRINGPTR u_p)
 /*         line s is categorized and crippled down to basic Spice
  *         returns in u control word following dot, if any 
  * 
@@ -288,21 +310,27 @@ transform (tdico * dico, char *s, unsigned char nostripping, char *u)
  *   'B'  netlist (or .model ?) line that had Braces killed 
  */
 {
-   char category;
    int i, k, a, n;
-   Strbig (dynLlen, t);
-   stripsomespace (s, nostripping);
-   modernizeex (s);		/* required for stripbraces count */
-   scopy (u, "");
+   char *s ;				/* dstring value of dstr_p */
+   char *t ;				/* dstring value of tstr */
+   char category;
+   SPICE_DSTRING tstr ;			/* temporary string */
 
+   spice_dstring_init(&tstr) ;
+   spice_dstring_reinit(u_p) ;
+   stripsomespace (dstr_p, nostripping);
+   modernizeex (dstr_p);		/* required for stripbraces count */
+
+   s = spice_dstring_value(dstr_p) ;
    if (s[0] == '.')
    {				/* check Pspice parameter format */
-      scopy_up (t, s);
+      scopy_up (&tstr, spice_dstring_value(dstr_p) ) ;
       k = 1;
 
+      t = spice_dstring_value(&tstr) ;
       while (t[k] > ' ')
       {
-         cadd (u, t[k]);
+         cadd (u_p, t[k]);
          k++;
       }
 
@@ -313,9 +341,9 @@ transform (tdico * dico, char *s, unsigned char nostripping, char *u)
       }
       else if (ci_prefix (".SUBCKT", t) == 1)
       {   /* split off any "params" tail */
-         a = spos ("PARAMS:", t);
-         if (a > 0)
-         pscopy (s, s, 1, a - 1);
+         a = spos_ ("PARAMS:", t);
+         if (a >= 0)
+         pscopy (dstr_p, s, 0, a );
          category = 'S';
       }
       else if (ci_prefix (".CONTROL", t) == 1)
@@ -327,7 +355,7 @@ transform (tdico * dico, char *s, unsigned char nostripping, char *u)
       else
       {
          category = '.';
-         n = stripbraces (s);
+         n = stripbraces (dstr_p);
          if (n > 0)
          category = 'B';	/* priority category ! */
       }
@@ -339,14 +367,14 @@ transform (tdico * dico, char *s, unsigned char nostripping, char *u)
    }
    else if (upcase (s[0]) == 'X')
    {				/* strip actual parameters */
-      i = findsubname (dico, s);	/* i= index following last identifier in s */
+      i = findsubname (dico, dstr_p) ;	/* i= index following last identifier in s */
       category = 'X';
    }
    else if (s[0] == '+')		/* continuation line */
       category = '+';
-   else if (cpos (s[0], "*$#") <= 0)
+   else if (cpos (s[0], "*$#") < 0)
    {				/* not a comment line! */
-      n = stripbraces (s);
+      n = stripbraces (dstr_p);
       if (n > 0)
          category = 'B';		/* line that uses braces */
       else
@@ -355,7 +383,7 @@ transform (tdico * dico, char *s, unsigned char nostripping, char *u)
    else
       category = '*';
 
-   Strrem(t);
+   spice_dstring_free(&tstr) ;
    return category;
 }
 
@@ -363,21 +391,21 @@ transform (tdico * dico, char *s, unsigned char nostripping, char *u)
 
 /* some day, all these nasty globals will go into the tdico structure
    and everything will get hidden behind some "handle" ...
+   For the time being we will rename this variable to end in S so we know
+   they are statics within this file for easier reading of the code.
 */
 
-static int linecount = 0;	/* global: number of lines received via nupa_copy */
-static int evalcount = 0;	/* number of lines through nupa_eval() */
-static int nblog = 0;		/* serial number of (debug) logfile */
-static unsigned char inexpansion = 0;	/* flag subckt expansion phase */
-static unsigned char incontrol = 0;	/* flag control code sections */
-static unsigned char dologfile = 0;	/* for debugging */
-static unsigned char firstsignal = 1;
-static FILE *logfile = NULL;
-static tdico *dico = NULL;
+static int linecountS = 0;	/* global: number of lines received via nupa_copy */
+static int evalcountS = 0;	/* number of lines through nupa_eval() */
+static int nblogS = 0;		/* serial number of (debug) logfile */
+static unsigned char inexpansionS = 0;	/* flag subckt expansion phase */
+static unsigned char incontrolS = 0;	/* flag control code sections */
+static unsigned char dologfileS = 0;	/* for debugging */
+static unsigned char firstsignalS = 1;
+static FILE *logfileS = NULL;
+static tdico *dicoS = NULL;
 
 /*  already part of dico : */
-/*  Str(80, srcfile);   source file */
-
 /*
    Open ouput to a log file.
    takes no action if logging is disabled.
@@ -386,30 +414,34 @@ static tdico *dico = NULL;
 static void
 putlogfile (char c, int num, char *t)
 {
-   Str (20, fname);
-   Strbig (dynLlen, u);
-   if (dologfile)
+   SPICE_DSTRING fname ;		/* file name */
+   SPICE_DSTRING u ;			/* temp dynamic variable */
+   
+   spice_dstring_init( &fname ) ;
+   spice_dstring_init( &u ) ;
+   if (dologfileS)
    {
-      if ((logfile == NULL))
+      if ((logfileS == NULL))
       {
-         scopy (fname, "logfile.");
-         nblog++;
-         nadd (fname, nblog);
-         logfile = fopen (fname, "w");
+         scopys(&fname, "logfile.") ;
+         nblogS++;
+         nadd (&fname, nblogS) ;
+         logfileS = fopen ( spice_dstring_value(&fname), "w");
       }
 
-      if ((logfile != NULL))
+      if ((logfileS != NULL))
       {
-         cadd (u, c);
-         nadd (u, num);
-         cadd (u, ':');
-         cadd (u, ' ');
-         sadd (u, t);
-         cadd (u, '\n');
-         fputs (u, logfile);
+         cadd (&u, c);
+         nadd (&u, num);
+         cadd (&u, ':');
+         cadd (&u, ' ');
+         sadd (&u, t);
+         cadd (&u, '\n');
+         fputs ( spice_dstring_value(&u), logfileS);
       }
    }
-   Strrem(u);
+   spice_dstring_free(&u) ;
+   spice_dstring_free(&fname) ;
 }
 
 static void
@@ -417,42 +449,44 @@ nupa_init (char *srcfile)
 {
   int i;
   /* init the symbol table and so on, before the first  nupa_copy. */
-  evalcount = 0;
-  linecount = 0;
-  incontrol = 0;
+  evalcountS = 0;
+  linecountS = 0;
+  incontrolS = 0;
   placeholder = 0;
-  dico = (tdico *)new(sizeof(tdico));
-  inst_dico = (tdico *)new(sizeof(tdico));
-  initdico (dico);
-  initdico (inst_dico);
+  dicoS = (tdico *)new(sizeof(tdico));
+  inst_dicoS = (tdico *)new(sizeof(tdico));
+  initdico (dicoS);
+  initdico (inst_dicoS);
 
-  dico->dynrefptr = (char**)tmalloc((dynmaxline + 1)*sizeof(char*));
-  dico->dyncategory = (char*)tmalloc((dynmaxline + 1)*sizeof(char));
+  dicoS->dynrefptr = (char**)tmalloc((dynmaxline + 1)*sizeof(char*));
+  dicoS->dyncategory = (char*)tmalloc((dynmaxline + 1)*sizeof(char));
 
   for (i = 0; i <= dynmaxline; i++)
     {
-      dico->dynrefptr[i] = NULL;
-      dico->dyncategory[i] = '?';
+      dicoS->dynrefptr[i] = NULL;
+      dicoS->dyncategory[i] = '?';
     }
 
   if (srcfile != NULL)
-    scopy (dico->srcfile, srcfile);
+    scopys(&dicoS->srcfile, srcfile ) ;
 }
 
 static void
 nupa_done (void)
 {
   /* int i; not needed so far, see below */
-  Str (80, rep);
+  char *reply ;				/* user reply */
+  SPICE_DSTRING rep ;			/* dynamic report */
   int dictsize, nerrors;
 
-  if (logfile != NULL)
+  spice_dstring_init(&rep) ;
+  if (logfileS != NULL)
     {
-      fclose (logfile);
-      logfile = NULL;
+      fclose (logfileS);
+      logfileS = NULL;
     }
-  nerrors = dico->errcount;
-  dictsize = donedico (dico);
+  nerrors = dicoS->errcount;
+  dictsize = donedico (dicoS);
   /* We cannot remove dico here because numparam is usedby
   the .measure statement, which is invoked only after the 
   simulation has finished */
@@ -472,26 +506,28 @@ nupa_done (void)
   if (nerrors)
     {
       /* debug: ask if spice run really wanted */
-      scopy (rep, " Copies=");
-      nadd (rep, linecount);
-      sadd (rep, " Evals=");
-      nadd (rep, evalcount);
-      sadd (rep, " Placeholders=");
-      nadd (rep, placeholder);
-      sadd (rep, " Symbols=");
-      nadd (rep, dictsize);
-      sadd (rep, " Errors=");
-      nadd (rep, nerrors);
-      cadd (rep, '\n');
-      ws (rep);
+      sadd (&rep, " Copies=");
+      nadd (&rep, linecountS);
+      sadd (&rep, " Evals=");
+      nadd (&rep, evalcountS);
+      sadd (&rep, " Placeholders=");
+      nadd (&rep, placeholder);
+      sadd (&rep, " Symbols=");
+      nadd (&rep, dictsize);
+      sadd (&rep, " Errors=");
+      nadd (&rep, nerrors);
+      cadd (&rep, '\n');
+      ws ( spice_dstring_value(&rep) ) ;
       ws ("Numparam expansion errors: Run Spice anyway? y/n ? \n");
-      rs (rep);
-      if (upcase (rep[0]) != 'Y')
+      spice_dstring_reinit(&rep) ;
+      rs (&rep);
+      reply = spice_dstring_value(&rep) ;
+      if (upcase (reply[0]) != 'Y')
         controlled_exit(EXIT_FAILURE);
     }
 
-  linecount = 0;
-  evalcount = 0;
+  linecountS = 0;
+  evalcountS = 0;
   placeholder = 0;
   /* release symbol table data */ ;
 }
@@ -502,110 +538,126 @@ nupa_scan (char *s, int linenum, int is_subckt)
 {
 
   if (is_subckt)
-    defsubckt (dico, s, linenum, 'U');
+    defsubckt (dicoS, s, linenum, 'U');
   else
-    defsubckt (dico, s, linenum, 'O');
+    defsubckt (dicoS, s, linenum, 'O');
 
 }
 
-static char *
-lower_str (char *str)
-{
-  char *s;
-
-  for (s = str; *s; s++)
-    *s = tolower (*s);
-
-  return str;
-}
-
-static char *
-upper_str (char *str)
-{
-  char *s;
-
-  for (s = str; *s; s++)
-    *s = toupper (*s);
-
-  return str;
-}
-
+/* -----------------------------------------------------------------
+ * Dump the contents of the symbol table.
+ * ----------------------------------------------------------------- */
 void
 nupa_list_params (FILE * cp_out)
 {
-   char *name;
-   int i;
+   char *name;				/* current symbol */
+   entry *entry_p ;			/* current entry */
+   tdico *dico_p ;			/* local copy for speed */
+   NGHASHITER iter ;			/* hash iterator - thread safe */
 
+   dico_p = dicoS ;
    fprintf (cp_out, "\n\n");
-   for (i = 1; i <= dico->nbd; i++)
+   for (entry_p = nghash_enumerateRE(dico_p->symbol_table,NGHASH_FIRST(&iter)) ;
+        entry_p ;
+        entry_p = nghash_enumerateRE(dico_p->symbol_table,&iter))
    {
-      if (dico->dyndat[i].tp == 'R')
+      if (entry_p->tp == 'R')
       {
-         name = lower_str (strdup (dico->dyndat[i].nom));
-         fprintf (cp_out, "       ---> %s = %g\n", name, dico->dyndat[i].vl);
-         txfree (name);
+	 spice_dstring_reinit( & dico_p->lookup_buf ) ;
+	 scopy_lower( & dico_p->lookup_buf, entry_p->symbol ) ;
+         name = spice_dstring_value( & dico_p->lookup_buf ) ;
+         fprintf (cp_out, "       ---> %s = %g\n", name, entry_p->vl) ;
+	 spice_dstring_free( & dico_p->lookup_buf ) ;
       }
    }
 }
 
+/* -----------------------------------------------------------------
+ * Lookup a parameter value in the symbol table.
+ * ----------------------------------------------------------------- */
 double
 nupa_get_param (char *param_name, int *found)
 {
-   char *name = upper_str (strdup (param_name));
-   double result = 0;
-   int i;
+   char *up_name;			/* current parameter upper case */
+   entry *entry_p ;			/* current entry */
+   tdico *dico_p ;			/* local copy for speed */
+   double result = 0;			/* parameter value */
+
+   dico_p = dicoS ;
+   spice_dstring_reinit( & dico_p->lookup_buf ) ;
+   scopy_up( & dico_p->lookup_buf, param_name ) ;
+   up_name = spice_dstring_value( & dico_p->lookup_buf ) ;
 
    *found = 0;
-
-   for (i = 1; i <= dico->nbd + 1; i++)
-   {
-      if (strcmp (dico->dyndat[i].nom, name) == 0)
-      {
-         result = dico->dyndat[i].vl;
-         *found = 1;
-         break;
-      } 
+   entry_p = nghash_find( dico_p->symbol_table, up_name ) ;
+   if( entry_p ){
+     result = entry_p->vl ;
+     *found = 1;
    }
-
-   txfree (name);
+   spice_dstring_free( & dico_p->lookup_buf ) ;
    return result;
 }
 
 void
 nupa_add_param (char *param_name, double value)
 {
-  char *up_name = upper_str (strdup (param_name));
-  int i = attrib (dico, up_name, 'N');
+   char *up_name;			/* current parameter upper case */
+   entry *entry_p ;			/* current entry */
+   tdico *dico_p ;			/* local copy for speed */
 
-  dico->dyndat[i].vl = value;
-  dico->dyndat[i].tp = 'R';
-  dico->dyndat[i].ivl = 0;
-  dico->dyndat[i].sbbase = NULL;
-  txfree (up_name);
+   dico_p = dicoS ;
+   /* -----------------------------------------------------------------
+    * We use a dynamic string here because most of the time we will
+    * be using short names and no memory allocation will occur.
+    * ----------------------------------------------------------------- */
+   spice_dstring_reinit( & dico_p->lookup_buf ) ;
+   scopy_up( & dico_p->lookup_buf, param_name ) ;
+   up_name = spice_dstring_value( & dico_p->lookup_buf ) ;
+
+   entry_p = attrib (dicoS, up_name, 'N');
+   if( entry_p ){
+     entry_p->vl = value;
+     entry_p->tp = 'R';
+     entry_p->ivl = 0;
+     entry_p->sbbase = NULL;
+   }
+   spice_dstring_free( & dico_p->lookup_buf ) ;
 }
 
 void
 nupa_add_inst_param (char *param_name, double value)
 {
-  char *up_name = upper_str (strdup (param_name));
-  int i = attrib (inst_dico, up_name, 'N');
+   char *up_name;			/* current parameter upper case */
+   entry *entry_p ;			/* current entry */
+   tdico *dico_p ;			/* local copy for speed */
 
-  inst_dico->dyndat[i].vl = value;
-  inst_dico->dyndat[i].tp = 'R';
-  inst_dico->dyndat[i].ivl = 0;
-  inst_dico->dyndat[i].sbbase = NULL;
+   dico_p = inst_dicoS ;
+   spice_dstring_reinit( & dico_p->lookup_buf ) ;
+   scopy_up( & dico_p->lookup_buf, param_name ) ;
+   up_name = spice_dstring_value( & dico_p->lookup_buf ) ;
 
-
-  txfree (up_name);
+   entry_p = attrib (dicoS, up_name, 'N');
+   if( entry_p ){
+     entry_p->vl = value;
+     entry_p->tp = 'R';
+     entry_p->ivl = 0;
+     entry_p->sbbase = NULL;
+   }
+   spice_dstring_free( & dico_p->lookup_buf ) ;
 }
 
 void
 nupa_copy_inst_dico ()
 {
-  int i;
+   tdico *idico_p ;			/* local copy for speed */
+   entry *entry_p ;			/* current entry */
+   NGHASHITER iter ;			/* hash iterator - thread safe */
 
-  for (i = 1; i <= inst_dico->nbd; i++)
-     nupa_add_param (inst_dico->dyndat[i].nom, inst_dico->dyndat[i].vl);
+   idico_p = inst_dicoS ;
+   for (entry_p = nghash_enumerateRE(idico_p->symbol_table,NGHASH_FIRST(&iter)) ;
+        entry_p ;
+        entry_p = nghash_enumerateRE(idico_p->symbol_table,&iter))
+     nupa_add_param ( entry_p->symbol, entry_p->vl) ;
 }
 
 char *
@@ -626,39 +678,43 @@ nupa_copy (char *s, int linenum)
   char *t;
   int ls;
   char c, d;
-  Strdbig (dynLlen, u, keywd);
+  SPICE_DSTRING u ;
+  SPICE_DSTRING keywd ;
+
+  spice_dstring_init(&u) ;
+  spice_dstring_init(&keywd) ;
   ls = length (s);
 
   while ((ls > 0) && (s[ls - 1] <= ' '))
     ls--;
 
-  pscopy (u, s, 1, ls);		/* strip trailing space, CrLf and so on */
-  dico->srcline = linenum;
+  pscopy (&u, s, 0, ls);		/* strip trailing space, CrLf and so on */
+  dicoS->srcline = linenum;
 
-  if ((!inexpansion) && (linenum >= 0) && (linenum <= dynmaxline))
+  if ((!inexpansionS) && (linenum >= 0) && (linenum <= dynmaxline))
   {
-    linecount++;
-    dico->dynrefptr[linenum] = s;
-    c = transform (dico, u, incontrol, keywd);
+    linecountS++;
+    dicoS->dynrefptr[linenum] = s;
+    c = transform (dicoS, &u, incontrolS, &keywd);
     if (c == 'C')
-      incontrol = 1;
+      incontrolS = 1;
     else if (c == 'E')
-      incontrol = 0;
+      incontrolS = 0;
 
-    if (incontrol)
+    if (incontrolS)
       c = 'C';  /* force it */
 
-    d = dico->dyncategory[linenum];	/* warning if already some strategic line! */
+    d = dicoS->dyncategory[linenum];	/* warning if already some strategic line! */
 
     if ((d == 'P') || (d == 'S') || (d == 'X'))
       fprintf (stderr,
 		  " Numparam warning: overwriting P,S or X line (linenum == %d).\n",
 		  linenum);
-    dico->dyncategory[linenum] = c;
+    dicoS->dyncategory[linenum] = c;
   }				/* keep a local copy and mangle the string */
 
-  ls = length (u);
-  t = strdup (u);
+  ls = spice_dstring_length (&u);
+  t = strdup ( spice_dstring_value(&u) );
 
   if (t == NULL)
   {
@@ -667,12 +723,12 @@ nupa_copy (char *s, int linenum)
   }
   else
   {
-    if (!inexpansion)
+    if (!inexpansionS)
     {
-       putlogfile (dico->dyncategory[linenum], linenum, t);
+       putlogfile (dicoS->dyncategory[linenum], linenum, t);
     };
   }
-  Strdrem(u, keywd);
+  spice_dstring_free(&u) ;
   return t;
 }
 
@@ -688,12 +744,13 @@ nupa_eval (char *s, int linenum, int orig_linenum)
   int idef;			/* subckt definition line */
   char c, keep, *ptr;
   unsigned int i;
-  Str (80, subname);
+  SPICE_DSTRING subname ;	/* dynamic string for subcircuit name */
   unsigned char err = 1;
 
-  dico->srcline = linenum;
-  dico->oldline = orig_linenum;
-  c = dico->dyncategory[linenum];
+  spice_dstring_init(&subname) ;
+  dicoS->srcline = linenum;
+  dicoS->oldline = orig_linenum;
+  c = dicoS->dyncategory[linenum];
 #ifdef TRACE_NUMPARAMS
   fprintf (stderr, "** SJB - in nupa_eval()\n");
   fprintf (stderr, "** SJB - processing line %3d: %s\n", linenum, s);
@@ -701,10 +758,10 @@ nupa_eval (char *s, int linenum, int orig_linenum)
 #endif /* TRACE_NUMPARAMS */
   if (c == 'P')	{		/* evaluate parameters */
 //    err = nupa_substitute (dico, dico->dynrefptr[linenum], s, 0);
-    nupa_assignment (dico, dico->dynrefptr[linenum], 'N');
+    nupa_assignment (dicoS, dicoS->dynrefptr[linenum], 'N');
   }
   else if (c == 'B')		/* substitute braces line */
-    err = nupa_substitute (dico, dico->dynrefptr[linenum], s, 0);
+    err = nupa_substitute (dicoS, dicoS->dynrefptr[linenum], s, 0);
   else if (c == 'X')
     {				/* compute args of subcircuit, if required */
       ptr = s;
@@ -719,17 +776,17 @@ nupa_eval (char *s, int linenum, int orig_linenum)
       for (i = 0; i < strlen (nupa_inst_name); i++)
 	nupa_inst_name[i] = toupper (nupa_inst_name[i]);
 
-      idef = findsubckt (dico, s, subname);
+      idef = findsubckt (dicoS, s, &subname);
       if (idef > 0)
-	nupa_subcktcall (dico, dico->dynrefptr[idef], dico->dynrefptr[linenum], 0);
+	nupa_subcktcall (dicoS, dicoS->dynrefptr[idef], dicoS->dynrefptr[linenum], 0);
       else
 	putlogfile ('?', linenum, "  illegal subckt call.");
     }
   else if (c == 'U')		/*  release local symbols = parameters */
-    nupa_subcktexit (dico);
+    nupa_subcktexit (dicoS);
 
   putlogfile ('e', linenum, s);
-  evalcount++;
+  evalcountS++;
 #ifdef TRACE_NUMPARAMS
   fprintf (stderr, "** SJB - leaving nupa_eval(): %s   %d\n", s, err);
   ws ("** SJB -                  --> ");
@@ -753,23 +810,23 @@ nupa_signal (int sig, char *info)
   putlogfile ('!', sig, " Nupa Signal");
   if (sig == NUPADECKCOPY)
     {
-      if (firstsignal)
+      if (firstsignalS)
 	{
 	  nupa_init (info);
-	  firstsignal = 0;
+	  firstsignalS = 0;
 	}
     }
   else if (sig == NUPASUBSTART)
-    inexpansion = 1;
+    inexpansionS = 1;
   else if (sig == NUPASUBDONE)
     {
-      inexpansion = 0;
+      inexpansionS = 0;
       nupa_inst_name = NULL;
     }
   else if (sig == NUPAEVALDONE)
     {
       nupa_done ();
-      firstsignal = 1;
+      firstsignalS = 1;
     }
   return 1;
 }
@@ -782,3 +839,19 @@ nupa_fetchinstance (void)
   return dico;
 }
 #endif /* USING_NUPATEST */
+
+static void dump_symbols( tdico *dico_p )
+{
+   char *name_p ;			/* current symbol */
+   entry *entry_p ;			/* current entry */
+   void *key ;				/* return key */
+   NGHASHITER iter ;			/* hash iterator - thread safe */
+
+   fprintf (stderr, "Symbol table\n");
+   for (entry_p = nghash_enumeratekRE(dico_p->symbol_table,&key,NGHASH_FIRST(&iter)) ;
+        entry_p ;
+        entry_p = nghash_enumeratekRE(dico_p->symbol_table,&key,&iter)) {
+     name_p = (char *) key ;
+     fprintf (stderr, "       ---> %s = %g\n", name_p, entry_p->vl) ;
+   }
+}
