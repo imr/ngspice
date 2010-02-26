@@ -289,8 +289,19 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 		}
 		break;
                 case PWL: {
-                    int i = 0, num_repeat = 0;
-                    double foo, repeat_time = 0, end_time, breakpt_time;
+                    int i = 0, num_repeat = 0, ii = 0;
+                    double foo, repeat_time = 0, end_time, breakpt_time, itime;
+
+                    time -= here->VSRCrdelay;
+//                    if(time > PER) {
+                        /* repeating signal - figure out where we are */
+                        /* in period */
+//                        basetime = PER * floor(time/PER);
+//                        time -= basetime;
+//                    }
+
+
+
                     if(time < *(here->VSRCcoeffs)) {
                         foo = *(here->VSRCcoeffs + 1) ;
                         value = foo;
@@ -298,19 +309,20 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                     }
 
 		    do {
-		      for( ; i<(here->VSRCfunctionOrder/2)-1; i++ ) {
-
-                        if ( fabs( (*(here->VSRCcoeffs+2*i)+repeat_time) - time ) < 1e-20 ) {
-			  foo   = *(here->VSRCcoeffs+2*i+1);
-			  value = foo;
-			  goto loadDone;
-                        } else if ( (*(here->VSRCcoeffs+2*i)+repeat_time < time) && (*(here->VSRCcoeffs+2*(i+1))+repeat_time > time) ) {
-			  foo   = *(here->VSRCcoeffs+2*i+1) + (((time-(*(here->VSRCcoeffs+2*i)+repeat_time))/
+		      for(i=ii ; i<(here->VSRCfunctionOrder/2)-1; i++ ) {
+                  itime = *(here->VSRCcoeffs+2*i);
+                  if (  AlmostEqualUlps(itime+repeat_time, time, 3 )) {
+//                  if ( fabs( (*(here->VSRCcoeffs+2*i)+repeat_time) - time ) < 1e-20 ) {
+                      foo   = *(here->VSRCcoeffs+2*i+1);
+                      value = foo;
+                      goto loadDone;
+                   } else if ( (*(here->VSRCcoeffs+2*i)+repeat_time < time) && (*(here->VSRCcoeffs+2*(i+1))+repeat_time > time) ) {
+                       foo   = *(here->VSRCcoeffs+2*i+1) + (((time-(*(here->VSRCcoeffs+2*i)+repeat_time))/
 								(*(here->VSRCcoeffs+2*(i+1)) - *(here->VSRCcoeffs+2*i))) *
 							       (*(here->VSRCcoeffs+2*i+3)    - *(here->VSRCcoeffs+2*i+1)));
-			  value = foo;
-			  goto loadDone;
-                        }
+                       value = foo;
+                       goto loadDone;
+                   }
 		      }
 		      foo = *(here->VSRCcoeffs+ here->VSRCfunctionOrder-1) ;
 		      value = foo;
@@ -320,7 +332,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 		      end_time     = *(here->VSRCcoeffs + here->VSRCfunctionOrder-2);
 		      breakpt_time = *(here->VSRCcoeffs + here->VSRCrBreakpt);
 		      repeat_time  = end_time + (end_time - breakpt_time)*num_repeat++ - breakpt_time;
-		      i            = here->VSRCrBreakpt - 1;
+		      ii            = here->VSRCrBreakpt/2;
 		    } while ( here->VSRCrGiven );
                     break;
                 }

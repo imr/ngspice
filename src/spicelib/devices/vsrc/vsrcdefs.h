@@ -50,6 +50,7 @@ typedef struct sVSRCinstance {
     double VSRCdF2phase; /* distortion f2 phase */
 
     double VSRCr;           /* pwl repeat */
+    double VSRCrdelay;     /* pwl delay period */
     double *VSRCposIbrptr;  /* pointer to sparse matrix element at 
                              * (positive node, branch equation) */
     double *VSRCnegIbrptr;  /* pointer to sparse matrix element at 
@@ -119,6 +120,7 @@ typedef struct sVSRCmodel {
 
 #define VSRC_AM 22
 #define VSRC_R 23
+#define VSRC_TD 24
 
 /* model parameters */
 

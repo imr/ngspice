@@ -1,3 +1,8 @@
+2010-02-26 Holger Vogt
+ * vsrc.c, vsrcacct.c, vsrcask.c, vsrcdefs.h, vsrcload.c, vsrcpar.c:
+   PWL source now has a repeat parameter (r=value) and a delay parameter
+   (td=value)
+
 2010-02-25 Holger Vogt
  * inpcom.c, general.h, mystring.c, numparam.h, spicenum.c, xpressn.c, 
    include/makefile.am, misc/makefile.am, hash.c, hash.h:

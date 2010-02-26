@@ -86,7 +86,11 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             }
             
             break;
-        case VSRC_R:
+        case VSRC_TD:
+            here->VSRCrdelay = value->rValue;
+            break;
+        case VSRC_R: {
+            double end_time;
             here->VSRCr = value->rValue;
             here->VSRCrGiven = TRUE;
 	    
@@ -94,13 +98,19 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 	      here->VSRCrBreakpt = i;
               if ( here->VSRCr == *(here->VSRCcoeffs+i) ) break;
 	    }
-
-	    if ( here->VSRCr != *(here->VSRCcoeffs+here->VSRCrBreakpt) ) {
-	      fprintf(stderr, "ERROR: repeat value %g for pwl voltage source does not match breakpoint!\n", here->VSRCr );
+		
+        end_time     = *(here->VSRCcoeffs + here->VSRCfunctionOrder-2);
+	    if ( here->VSRCr > end_time ) {
+	      fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source must be smaller than final time point given!\n", here->VSRCr );
 	      return ( E_PARMVAL );
 	    }
 
-            break;
+	    if ( here->VSRCr != *(here->VSRCcoeffs+here->VSRCrBreakpt) ) {
+	      fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source does not match any time point given!\n", here->VSRCr );
+	      return ( E_PARMVAL );
+	    }
+
+        break; }
         case VSRC_SFFM:
             here->VSRCfunctionType = SFFM;
             here->VSRCfuncTGiven = TRUE;

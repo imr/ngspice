@@ -34,7 +34,8 @@ OPU ("pos_node",VSRC_POS_NODE,  IF_INTEGER,"Positive node of source"),
  OP ("p",       VSRC_POWER,     IF_REAL,   "Instantaneous power"),
  IP ("distof1", VSRC_D_F1,      IF_REALVEC,"f1 input for distortion"),
  IP ("distof2", VSRC_D_F2,      IF_REALVEC,"f2 input for distortion"),
- IP ("r",       VSRC_R,         IF_REAL,   "pwl repeat value")
+ IP ("r",       VSRC_R,         IF_REAL,   "pwl repeat value"),
+ IP ("td",       VSRC_TD,        IF_REAL,   "pwl delay value")
 };
 
 char *VSRCnames[] = {

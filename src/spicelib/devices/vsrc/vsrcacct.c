@@ -162,7 +162,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     /* no  breakpoints (yet) */
                 }
                 break;
-		case AM:{
+                case AM:{
                     /* no  breakpoints (yet) */
                 }
                 break;
@@ -177,11 +177,11 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     for(i=0;i<(here->VSRCfunctionOrder/2)-1;i++) {
 /*		      if((*(here->VSRCcoeffs+2*i)==ckt->CKTtime)) {
 		           if(ckt->CKTbreak) {*/
-		      if ( ckt->CKTbreak && AlmostEqualUlps(*(here->VSRCcoeffs+2*i), ckt->CKTtime, 3 ) ) {
-			error = CKTsetBreak(ckt, *(here->VSRCcoeffs+2*i+2));
-			if(error) return(error);
-			goto bkptset;
-		      } 
+                        if ( ckt->CKTbreak && AlmostEqualUlps(*(here->VSRCcoeffs+2*i), ckt->CKTtime, 3 ) ) {
+                            error = CKTsetBreak(ckt, *(here->VSRCcoeffs+2*i+2));
+                            if(error) return(error);
+                            goto bkptset;
+                        } 
                     }
                     break;
                 }
