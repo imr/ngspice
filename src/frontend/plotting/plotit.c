@@ -1017,6 +1017,17 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 	goto quit;
     }
 
+   if (devname && eq(devname, "writesimple")) {
+	/* Interface to simple write output */
+	ft_writesimple(xlims, ylims, hcopy,
+	    title ? title : vecs->v_plot->pl_title,
+	    xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
+	    ylabel ? ylabel : ft_typabbrev(j),
+	    gtype, ptype, vecs);
+	rtn = TRUE;
+	goto quit;
+    }
+
 #ifdef TCL_MODULE
     if (devname && eq(devname, "blt")) {
     /* Just send the pairs to Tcl/Tk */

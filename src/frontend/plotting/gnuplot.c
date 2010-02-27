@@ -172,13 +172,13 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 
     /* Write out the gnuplot command */
     for ( v = vecs; v; v = v->v_link2 ) {
-	scale = v->v_scale;
-	if (v->v_name) {
-	    i = i + 2;
-	    if (i > 2) fprintf(file, ",\\\n");
-	    fprintf(file, "\'%s\' using %d:%d with %s lw %d title \"%s\" ", 
-			filename_data, i-1, i, plotstyle, linewidth, v->v_name);
-	}
+        scale = v->v_scale;
+        if (v->v_name) {
+            i = i + 2;
+            if (i > 2) fprintf(file, ",\\\n");
+            fprintf(file, "\'%s\' using %d:%d with %s lw %d title \"%s\" ", 
+               filename_data, i-1, i, plotstyle, linewidth, v->v_name);
+        }
     }
     fprintf( file, "\n");
     fprintf (file, "set terminal push\n");
@@ -219,6 +219,62 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 #endif
     err = system( buf );
 
+
+    return;
+}
+
+/* simple printout of data into a file, similar to data table in ft_gnuplot 
+   command: wrsimple file vecs
+ */
+void
+ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *xlabel, char *ylabel, GRIDTYPE gridtype, PLOTTYPE plottype, struct dvec *vecs)
+{
+
+    FILE *file_data;
+    struct dvec *v, *scale = NULL;
+    double xval, yval;
+    int i, numVecs;
+
+    char filename_data[128];
+
+    sprintf(filename_data, "%s.data", filename);
+
+    /* Sanity checking. */
+    for ( v = vecs, numVecs = 0; v; v = v->v_link2 ) {
+	numVecs++;
+    }
+    if (numVecs == 0) {
+	return;
+    }
+
+    /* Open the output data file. */
+    if (!(file_data = fopen(filename_data, "w"))) {
+	perror(filename);
+	return;
+    }
+
+    i = 0;
+    for ( v = vecs; v; v = v->v_link2 ) {
+        scale = v->v_scale; 
+    }
+
+    /* Write out the data as simple arrays */
+    for ( i = 0; i < scale->v_length; i++ ) {
+        for ( v = vecs; v; v = v->v_link2 ) {
+        	scale = v->v_scale;
+
+	        xval = isreal(scale) ?
+	        scale->v_realdata[i] : realpart(&scale->v_compdata[i]);
+
+	        yval = isreal(v) ?
+	        v->v_realdata[i] : realpart(&v->v_compdata[i]);
+
+        	fprintf( file_data, "% e % e ", xval, yval );
+      	}
+      	fprintf( file_data, "\n");
+    }
+
+    (void) fclose( file_data );
 
     return;
 }

@@ -30,12 +30,41 @@ com_gnuplot(wordlist *wl)
 
     (void) plotit(wl, fname, "gnuplot");
 
-#if 0
     /* Leave temp file sitting around so gnuplot can grab it from
        background. */
-    if (tempf)
-        (void) unlink(fname);
-#endif
+    if (tempf) {
+        tfree(fname);
+    }
+
+    return;
+}
+
+/* data printout to file plotargs */
+void
+com_write_simple(wordlist *wl)
+{
+    char *fname = NULL;
+    bool tempf = FALSE;
+
+    if (wl) {
+        fname = wl->wl_word;
+        wl = wl->wl_next;
+    }
+    if (!wl) {
+	return;
+    }
+    if (cieq(fname, "temp") || cieq(fname, "tmp")) {
+        fname = smktemp("gp"); /* Is this the correct name ? */
+        tempf = TRUE;
+    }
+
+    (void) plotit(wl, fname, "writesimple");
+
+    /* Leave temp file sitting around so gnuplot can grab it from
+       background. */
+    if (tempf) {
+        tfree(fname);
+    }
 
     return;
 }
