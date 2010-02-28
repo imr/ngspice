@@ -1026,6 +1026,7 @@ inp_fix_ternary_operator( struct line *start_card )
       if (found_control) continue;
 
 
+      if ( *line == 'B' || *line == 'b' ) continue;
       if ( *line == '*' ) continue;
       if ( strstr( line, "?" ) && strstr( line, ":" ) ) {
          card->li_line = inp_fix_ternary_operator_str( line );

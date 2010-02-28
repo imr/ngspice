@@ -1,3 +1,8 @@
+2010-02-28 Holger Vogt
+ * inpcom.c, xpressn.c, inpptree.h, spicelib/parser/makefile.am, inpptree.c, 
+   ptfuncs.c, inpptree-parser.y: replace parser for B source with BISON generated one.
+   Patch 2 from R. Larice
+   
 2010-02-27 Holger Vogt
  * command.c, gnuplot.c, gnuplot.h, com_gnuplot.c, com_gnuplot.h, plotit.c:
    new command 'wrdata file vecs' for simple tabular printout of data

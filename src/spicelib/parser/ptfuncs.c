@@ -162,6 +162,41 @@ PTustep2(double arg)
 	return 1.0;
 }
 
+double
+PTeq0(double arg)
+{
+    return (arg == 0.0) ? 1.0 : 0.0;
+}
+
+double
+PTne0(double arg)
+{
+    return (arg != 0.0) ? 1.0 : 0.0;
+}
+
+double
+PTgt0(double arg)
+{
+    return (arg > 0.0) ? 1.0 : 0.0;
+}
+
+double
+PTlt0(double arg)
+{
+    return (arg < 0.0) ? 1.0 : 0.0;
+}
+
+double
+PTge0(double arg)
+{
+    return (arg >= 0.0) ? 1.0 : 0.0;
+}
+
+double
+PTle0(double arg)
+{
+    return (arg <= 0.0) ? 1.0 : 0.0;
+}
 
 double
 PTuramp(double arg)

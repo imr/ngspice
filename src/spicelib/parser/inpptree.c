@@ -16,15 +16,14 @@ static INPparseNode *mkb(int type, INPparseNode * left,
 			 INPparseNode * right);
 static INPparseNode *mkf(int type, INPparseNode * arg);
 static int PTcheck(INPparseNode * p);
-static INPparseNode *PTparse(char **line);
-static INPparseNode *makepnode(PTelement * elem);
-static INPparseNode *mkbnode(int opnum, INPparseNode * arg1,
+static INPparseNode *mkbnode(const char *opstr, INPparseNode * arg1,
 			     INPparseNode * arg2);
-static INPparseNode *mkfnode(char *fname, INPparseNode * arg);
+static INPparseNode *mkfnode(const char *fname, INPparseNode * arg);
 static INPparseNode *mknnode(double number);
-static INPparseNode *mksnode(char *string);
+static INPparseNode *mksnode(const char *string);
 static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum);
-static PTelement *PTlexer(char **line);
+
+#include "inpptree-parser.c"
 
 static IFvalue *values = NULL;
 static int *types;
@@ -85,7 +84,13 @@ static struct func {
     /* MW. cif function added */
     { "u2",	PTF_USTEP2, PTustep2},
     { "pwl",	PTF_PWL,    PTpwl},
-    { "pwl_derivative",	PTF_PWL_DERIVATIVE, PTpwl_derivative}
+    { "pwl_derivative",	PTF_PWL_DERIVATIVE, PTpwl_derivative},
+    { "eq0",    PTF_EQ0,    PTeq0},
+    { "ne0",    PTF_NE0,    PTne0},
+    { "gt0",    PTF_GT0,    PTgt0},
+    { "lt0",    PTF_LT0,    PTlt0},
+    { "ge0",    PTF_GE0,    PTge0},
+    { "le0",    PTF_LE0,    PTle0},
 } ;
 
 #define NUM_FUNCS (sizeof (funcs) / sizeof (struct func))
@@ -112,7 +117,7 @@ void
 INPgetTree(char **line, INPparseTree ** pt, void *ckt, INPtables * tab)
 {
     INPparseNode *p;
-    int i;
+    int i, rv;
 
     values = NULL;
     types = NULL;
@@ -121,9 +126,13 @@ INPgetTree(char **line, INPparseTree ** pt, void *ckt, INPtables * tab)
     circuit = ckt;
     tables = tab;
 
-    p = PTparse(line);
+#ifdef TRACE
+    fprintf(stderr,"%s, line = \"%s\"\n", __func__, *line);
+#endif
 
-    if (!p || !PTcheck(p)) {
+    rv = PTparse(line, &p);
+
+    if (rv || !PTcheck(p)) {
 	*pt = NULL;
 	return;
     }
@@ -390,6 +399,12 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 	    break;
 
 	case PTF_USTEP:
+	case PTF_EQ0:
+	case PTF_NE0:
+	case PTF_GT0:
+	case PTF_LT0:
+	case PTF_GE0:
+	case PTF_LE0:
 	    arg1 = mkcon((double) 0.0);
 	    break;
 
@@ -615,182 +630,25 @@ static int PTcheck(INPparseNode * p)
     }
 }
 
-/* The operator-precedence table for the parser. */
-
-#define G 1			/* Greater than. */
-#define L 2			/* Less than. */
-#define E 3			/* Equal. */
-#define R 4			/* Error. */
-
-static char prectable[11][11] = {
-    /* $  +  -  *  /  ^  u- (  )  v  , */
-/* $ */ {R, L, L, L, L, L, L, L, R, L, R},
-/* + */ {G, G, G, L, L, L, L, L, G, L, G},
-/* - */ {G, G, G, L, L, L, L, L, G, L, G},
-/* * */ {G, G, G, G, G, L, L, L, G, L, G},
-/* / */ {G, G, G, G, G, L, L, L, G, L, G},
-/* ^ */ {G, G, G, G, G, L, L, L, G, L, G},
-/* u-*/ {G, G, G, G, G, G, G, L, G, L, G},
-/* ( */ {R, L, L, L, L, L, L, L, E, L, L},
-/* ) */ {G, G, G, G, G, G, G, R, G, R, G},
-/* v */ {G, G, G, G, G, G, G, G, G, R, G},
-/* , */ {G, L, L, L, L, L, L, L, G, L, G}
-
-};
-
-/* Return an expr. */
-
-static INPparseNode *PTparse(char **line)
-{
-    PTelement stack[PT_STACKSIZE];
-    int sp = 0, st, i;
-    PTelement *top, *next;
-    INPparseNode *pn, *lpn, *rpn;
-
-    stack[0].token = TOK_END;
-    next = PTlexer(line);
-
-    while ((sp > 1) || (next->token != TOK_END)) {
-	/* Find the top-most terminal. */
-	i = sp;
-	do {
-	    top = &stack[i--];
-	} while (top->token == TOK_VALUE);
-
-
-	switch (prectable[top->token][next->token]) {
-	case L:
-	case E:
-	    /* Push the token read. */
-	    if (sp == (PT_STACKSIZE - 1)) {
-		fprintf(stderr, "Error: stack overflow\n");
-		return (NULL);
-	    }
-	    bcopy((char *) next, (char *) &stack[++sp], sizeof(PTelement));
-	    next = PTlexer(line);
-	    continue;
-
-	case R:
-	    fprintf(stderr, "Syntax error.\n");
-	    return (NULL);
-
-	case G:
-	    /* Reduce. Make st and sp point to the elts on the
-	     * stack at the end and beginning of the junk to
-	     * reduce, then try and do some stuff. When scanning
-	     * back for a <, ignore VALUES.
-	     */
-	    st = sp;
-	    if (stack[sp].token == TOK_VALUE)
-		sp--;
-	    while (sp > 0) {
-		if (stack[sp - 1].token == TOK_VALUE)
-		    i = 2;	/* No 2 pnodes together... */
-		else
-		    i = 1;
-		if (prectable[stack[sp - i].token]
-		    [stack[sp].token] == L)
-		    break;
-		else
-		    sp = sp - i;
-	    }
-	    if (stack[sp - 1].token == TOK_VALUE)
-		sp--;
-	    /* Now try and see what we can make of this.
-	     * The possibilities are: - node
-	     *            node op node
-	     *            ( node )
-	     *            func ( node )
-	     *            func ( node, node, node, ... )        <- new
-	     *            node
-	     */
-	    if (st == sp) {
-		pn = makepnode(&stack[st]);
-		if (pn == NULL)
-		    goto err;
-	    } else if ((stack[sp].token == TOK_UMINUS) && (st == sp + 1)) {
-		lpn = makepnode(&stack[st]);
-		if (lpn == NULL)
-		    goto err;
-		pn = mkfnode("-", lpn);
-	    } else if ((stack[sp].token == TOK_LPAREN) &&
-		       (stack[st].token == TOK_RPAREN)) {
-		pn = makepnode(&stack[sp + 1]);
-		if (pn == NULL)
-		    goto err;
-	    } else if ((stack[sp + 1].token == TOK_LPAREN) &&
-		       (stack[st].token == TOK_RPAREN)) {
-		lpn = makepnode(&stack[sp + 2]);
-		if ((lpn == NULL) || (stack[sp].type != TYP_STRING))
-		    goto err;
-		if (!(pn = mkfnode(stack[sp].value.string, lpn)))
-		    return (NULL);
-	    } else {		/* node op node */
-		lpn = makepnode(&stack[sp]);
-		rpn = makepnode(&stack[st]);
-		if ((lpn == NULL) || (rpn == NULL))
-		    goto err;
-		pn = mkbnode(stack[sp + 1].token, lpn, rpn);
-	    }
-	    stack[sp].token = TOK_VALUE;
-	    stack[sp].type = TYP_PNODE;
-	    stack[sp].value.pnode = pn;
-	    continue;
-	}
-    }
-    pn = makepnode(&stack[1]);
-    if (pn)
-	return (pn);
-  err:
-    fprintf(stderr, "Syntax error.\n");
-    return (NULL);
-}
-
-/* Given a pointer to an element, make a pnode out of it (if it already
- * is one, return a pointer to it). If it isn't of type VALUE, then return
- * NULL.
- */
-
-static INPparseNode *makepnode(PTelement * elem)
-{
-    if (elem->token != TOK_VALUE)
-	return (NULL);
-
-    switch (elem->type) {
-    case TYP_STRING:
-	return (mksnode(elem->value.string));
-
-    case TYP_NUM:
-	return (mknnode(elem->value.real));
-
-    case TYP_PNODE:
-	return (elem->value.pnode);
-
-    default:
-	fprintf(stderr, "Internal Error: bad token type\n");
-	return (NULL);
-    }
-}
-
 /* Binop node. */
 
-static INPparseNode *mkbnode(int opnum, INPparseNode * arg1,
+static INPparseNode *mkbnode(const char *opstr, INPparseNode * arg1,
 			     INPparseNode * arg2)
 {
     INPparseNode *p;
     int i;
 
     for (i = 0; i < NUM_OPS; i++)
-	if (ops[i].number == opnum)
+	if (!strcmp(ops[i].name, opstr))
 	    break;
 
     if (i == NUM_OPS) {
-	fprintf(stderr, "Internal Error: no such op num %d\n", opnum);
+	fprintf(stderr, "Internal Error: no such op num %s\n", opstr);
 	return (NULL);
     }
     p = (INPparseNode *) MALLOC(sizeof(INPparseNode));
 
-    p->type = opnum;
+    p->type = ops[i].number;
     p->funcname = ops[i].name;
     p->function = ops[i].funcptr;
     p->left = arg1;
@@ -885,7 +743,7 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
 }
 
 
-static INPparseNode *mkfnode(char *fname, INPparseNode * arg)
+static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 {
     int i;
     INPparseNode *p;
@@ -1033,7 +891,7 @@ static INPparseNode *mknnode(double number)
 
 /* String node. */
 
-static INPparseNode *mksnode(char *string)
+static INPparseNode *mksnode(const char *string)
 {
     int i, j;
     char buf[128], *s;
@@ -1083,7 +941,7 @@ static INPparseNode *mksnode(char *string)
     if (i == NUM_CONSTANTS) {
 	/* We'd better save this in case it's part of i(something). */
 	p->type = PT_PLACEHOLDER;
-	p->funcname = string;
+	p->funcname = (/*nonconst*/ char *) string;
     } else {
 	p->type = PT_CONSTANT;
 	p->constant = constants[i].value;
@@ -1094,110 +952,142 @@ static INPparseNode *mksnode(char *string)
 
 /* The lexical analysis routine. */
 
-static PTelement *PTlexer(char **line)
+int PTlex (YYSTYPE *lvalp, char **line)
 {
     double td;
     int err;
-    static PTelement el;
     static char *specials = " \t()^+-*/,";
-    static int lasttoken = TOK_END, lasttype;
     char *sbuf, *s;
+    int token;
 
     sbuf = *line;
 #ifdef TRACE
-    printf("entering lexer, sbuf = '%s', lastoken = %d, lasttype = %d\n", 
-        sbuf, lasttoken, lasttype);
+//    printf("entering lexer, sbuf = '%s', lastoken = %d, lasttype = %d\n", 
+//        sbuf, lasttoken, lasttype);
 #endif
-    while ((*sbuf == ' ') || (*sbuf == '\t') || (*sbuf == '='))
+    while ((*sbuf == ' ') || (*sbuf == '\t'))
 	sbuf++;
 
     switch (*sbuf) {
     case '\0':
-	el.token = TOK_END;
+	token = 0;
 	break;
 
+    case '?':
+    case ':':
     case ',':
-	el.token = TOK_COMMA;
-	sbuf++;
-	break;
-
     case '-':
-	if ((lasttoken == TOK_VALUE) || (lasttoken == TOK_RPAREN))
-	    el.token = TOK_MINUS;
-	else
-	    el.token = TOK_UMINUS;
-	sbuf++;
-	break;
-
     case '+':
-	el.token = TOK_PLUS;
-	sbuf++;
+    case '/':
+    case '^':
+    case '(':
+    case ')':
+	token = *sbuf++;
 	break;
 
     case '*':
-	el.token = TOK_TIMES;
-	sbuf++;
-	break;
+      if(sbuf[1] == '*') {
+        sbuf += 2;
+        token = '^';            /* `**' is exponentiation */
+        break;
+      } else {
+        token = *sbuf++;
+        break;
+      }
 
-    case '/':
-	el.token = TOK_DIVIDE;
-	sbuf++;
-	break;
+    case '&':
+      if(sbuf[1] == '&') {
+        sbuf += 2;
+        token = TOK_AND;
+        break;
+      } else {
+        token = *sbuf++;
+        break;
+      }
 
-    case '^':
-	el.token = TOK_POWER;
-	sbuf++;
-	break;
+    case '|':
+      if(sbuf[1] == '|') {
+        sbuf += 2;
+        token = TOK_OR;
+        break;
+      } else {
+        token = *sbuf++;
+        break;
+      }
 
-    case '(':
-	if (((lasttoken == TOK_VALUE) && ((lasttype == TYP_NUM))) ||
-	    (lasttoken == TOK_RPAREN)) {
-	    el.token = TOK_END;
-	} else {
-	    el.token = TOK_LPAREN;
-	    sbuf++;
-	}
-	break;
+    case '=':
+      if(sbuf[1] == '=') {
+        sbuf += 2;
+        token = TOK_EQ;
+        break;
+      } else {
+        token = *sbuf++;
+        break;
+      }
 
-    case ')':
-	el.token = TOK_RPAREN;
-	sbuf++;
-	break;
+    case '!':
+      if(sbuf[1] == '=') {
+        sbuf += 2;
+        token = TOK_NE;
+        break;
+      } else {
+        token = *sbuf++;
+        break;
+      }
+
+    case '>':
+      if(sbuf[1] == '=') {
+        sbuf += 2;
+        token = TOK_GE;
+        break;
+      } else {
+        sbuf += 1;
+        token = TOK_GT;
+        break;
+      }
+
+    case '<':
+      if(sbuf[1] == '>') {
+        sbuf += 2;
+        token = TOK_NE;
+        break;
+      }
+      else if(sbuf[1] == '=') {
+        sbuf += 2;
+        token = TOK_LE;
+        break;
+      } else {
+        sbuf += 1;
+        token = TOK_LT;
+        break;
+      }
 
     default:
-	if ((lasttoken == TOK_VALUE) || (lasttoken == TOK_RPAREN)) {
-	    el.token = TOK_END;
-	    break;
-	}
-
 	td = INPevaluate(&sbuf, &err, 1);
 	if (err == OK) {
-	    el.token = TOK_VALUE;
-	    el.type = TYP_NUM;
-	    el.value.real = td;
+	    token = TOK_NUM;
+	    lvalp->num = td;
 	} else {
-	    el.token = TOK_VALUE;
-	    el.type = TYP_STRING;
+        char *tmp;
+	    token = TOK_STR;
 	    for (s = sbuf; *s; s++)
 		if (index(specials, *s))
 		    break;
-	    el.value.string = MALLOC(s - sbuf + 1);
-	    strncpy(el.value.string, sbuf, s - sbuf);
-	    el.value.string[s - sbuf] = '\0';
+	    tmp = MALLOC(s - sbuf + 1);
+	    strncpy(tmp, sbuf, s - sbuf);
+	    tmp[s - sbuf] = '\0';
+	    lvalp->str = tmp;
 	    sbuf = s;
 	}
     }
 
-    lasttoken = el.token;
-    lasttype = el.type;
-
     *line = sbuf;
 
 #ifdef TRACE
-    printf("PTlexer: token = %d, type = %d, left = '%s'\n", 
-        el.token, el.type, sbuf);
+//    printf("PTlexer: token = %d, type = %d, left = '%s'\n", 
+//        el.token, el.type, sbuf); */
 #endif
-    return (&el);
+    return (token);
 }
 
 #ifdef TRACE

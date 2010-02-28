@@ -1825,6 +1825,7 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
     {
       i++;
       c = s[i - 1];
+
       if (c == Pspice)
         {                        /* try pspice expression syntax */
           k = i;
@@ -1860,7 +1861,13 @@ nupa_substitute (tdico * dico, char *s, char *r, unsigned char err)
         }
       else if (c == Intro)
         {
-          i++;
+        /* skip "&&" which may occur in B source */
+            if ((i + 1 < ls) && (s[i] == Intro)) {
+                i++;
+                continue;
+            }
+
+        i++;
           while ((i < ls) && (s[i - 1] <= ' '))
             i++;
 

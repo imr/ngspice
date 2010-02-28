@@ -98,6 +98,12 @@ typedef struct INPparseNode {
 #define PTF_USTEP2	21
 #define PTF_PWL		22
 #define PTF_PWL_DERIVATIVE	23
+#define PTF_EQ0	24
+#define PTF_NE0	25
+#define PTF_GT0	26
+#define PTF_LT0	27
+#define PTF_GE0	28
+#define PTF_LE0	29
 
 
 /* The following things are used by the parser -- these are the token types the
@@ -168,6 +174,12 @@ extern double PTpwl();
 extern double PTpwl_derivative();
 extern double PTuramp();
 extern double PTuminus();
+extern double PTeq0(double arg);
+extern double PTne0(double arg);
+extern double PTgt0(double arg);
+extern double PTlt0(double arg);
+extern double PTge0(double arg);
+extern double PTle0(double arg);
 
 /* And in IFeval.c */
 

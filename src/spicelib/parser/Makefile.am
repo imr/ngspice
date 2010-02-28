@@ -65,6 +65,9 @@ libinp_la_SOURCES = \
 		sperror.c	\
 		inp.h
 
+inpptree.c : inpptree-parser.c
+inpptree-parser.c inpptree-parser.h : inpptree-parser.y
+	bison $<
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend
 
