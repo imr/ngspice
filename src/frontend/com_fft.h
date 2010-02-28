@@ -10,6 +10,6 @@ extern void free_pnode_o(struct pnode *t);
 
 void com_fft(wordlist *wl);
 
-static void fftext(float*, float*, long int, int);
+static void fftext(double*, double*, long int, long int, int);
 
 #endif
