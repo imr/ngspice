@@ -477,14 +477,14 @@ extern struct variable *if_getstat();
 extern struct line *inp_deckcopy();
 extern struct line *inp_subcktexpand();
 
-/* types.c */
+/* typesdef.c */
 
-extern void com_dftype();
-extern void com_stype();
-extern char *ft_typabbrev();
-extern char *ft_typenames();
-extern char *ft_plotabbrev();
-extern int ft_typnum();
+extern void com_dftype(wordlist *);
+extern void com_stype(wordlist *);
+extern char *ft_typabbrev(int);
+extern char *ft_typenames(int);
+extern char *ft_plotabbrev(char *);
+extern int ft_typnum(char *);
 
 /* vectors.c */
 
