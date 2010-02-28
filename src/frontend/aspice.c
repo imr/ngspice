@@ -177,15 +177,11 @@ sigchild(void)
  * whether the exit was normal or not.
  */
 
-#if defined(__NetBSD__)
-    pid_t status;
-#elif defined(__FreeBSD__) || defined(__APPLE__) || defined(SOLARIS)
-    int status;    
-#else
-    union wait status;
-#endif
-
-
+/*
+ * On posix systems, wait() is:
+ * pid_t wait(int *status);
+ */
+int status;
 
 void
 ft_checkkids(void)
