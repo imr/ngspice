@@ -750,7 +750,7 @@ exists (tdico * d, char *s, int *pi, unsigned char *perror)
     {
       i = fetchid (s, &t, ls, i);
       i--;
-      if (entrynb (d, spice_dstring_value(&t)) > 0)
+      if (entrynb(d, spice_dstring_value(&t)))
         x = 1.0;
 
       do {
