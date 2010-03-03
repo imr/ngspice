@@ -110,7 +110,7 @@ static int Pade_apx(double, double*, double*, double*, double*, double*, double*
 static int Gaussian_Elimination(int);
 static double root3(double, double, double, double);
 static int div3(double, double, double, double, double*, double*);
-static int find_roots(double, double, double, double*, double*,double*);
+static int find_roots(double, double, double, double*, double*, double*);
 
 static NODE* insert_node(char*);
 static NDnamePt insert_ND(char*, NDnamePt*);
@@ -1111,16 +1111,14 @@ poly_W(int dim, int deg)
 static void
 eval_frequency(int dim, int deg_o)
 {
-   int i, im;
+   int i;
    double min;
 
    min = D[0];
-   im = 0;
 
    for (i = 1; i < dim; i++) 
       if (D[i] < min) {
          min = D[i];
-         im = i;
       }
 
    if (min <= 0) {
@@ -1794,8 +1792,8 @@ find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
    fprintf(stderr, "..1.. %e\n", x*x*x+a1*x*x+a2*x+a3);
     */
    { 
-      double x1;
-      int i = 0;
+   double x1;
+   int i = 0;
    x1 = x;
    for (t = root3(a1, a2, a3, x); ABS(t-x) > 5.0e-4; 
                             t = root3(a1, a2, a3, x)) 

@@ -34,14 +34,15 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 	CPLmodel *model	= (CPLmodel *)inModel;
 	CPLinstance *here;
 	CPLine *cp, *cp2;
-	int *k,	*l;
+	int *k_p, *l_p;
 	int time, time2;
 	double h, h1, f;
-	int hint;
+/*	int hint; never used */
 	double hf;
 	NODE *nd;
 	double v, v1, g;
-	int cond1, i;
+	int i, j, k, l;
+	int cond1;
 	int noL, m, p, q;
 	CKTnode	*node;
 	VI_list	*vi, *vi_before;
@@ -53,7 +54,7 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 	h = ckt->CKTdelta;
 	h1 = 0.5 * h;
 	time2 =	(int) (ckt->CKTtime * 1e12);
-	hint = (int)(h * 1e12);
+/*	hint = (int)(h * 1e12); never used */
 	hf = h * 1e12;
 	time = (int) ((ckt->CKTtime - ckt->CKTdelta) * 1e12);
 
@@ -81,7 +82,7 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 
 			if (cp->vi_tail->time >	time) {
 				time = cp->vi_tail->time;
-				hint = time2 - time;
+/*				hint = time2 - time; never used */
 			}
 
 			before = cp->vi_tail->time;
@@ -186,7 +187,6 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 				vi = new_vi();
 				vi->time = 0;
 				{
-				int i, j, k, l;
 				for (i = 0; i <	cp->noL; i++) {
 					for (j = 0; j <	cp->noL; j++) {
 						TMS *tms;
@@ -277,12 +277,12 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 				}
 			}
 
-			k = here->CPLibr1;
-			l = here->CPLibr2;
+			k_p = here->CPLibr1;
+			l_p = here->CPLibr2;
 
 			copy_cp(cp2, cp);
 
-			if (right_consts(here,cp2, time,time2,h,h1,k,l,ckt)) {
+			if (right_consts(here,cp2, time,time2,h,h1,k_p,l_p,ckt)) {
 				cp2->ext = 1;
 				for (q = 0; q <	noL; q++) {
 					cp->ratio[q] = ratio[q];
@@ -772,9 +772,10 @@ get_pvs_vi(int t1, int t2,
    return(ext);
 
 errordetect:
-	fprintf(stderr,	"your maximum time step	is too large for tau.\n");
-	fprintf(stderr,	"decrease max time step	in .tran card and try again\n");
-	controlled_exit(0);
+   fprintf(stderr,	"your maximum time step	is too large for tau.\n");
+   fprintf(stderr,	"decrease max time step	in .tran card and try again\n");
+   controlled_exit(0);
+   return(0);
 }
 
 
