@@ -3,6 +3,7 @@
  * fteext.h: complete prototypes for typesdef.c
  * com_fft.c, com_fft.h: improve amplitude accuracy by considering zero padded vectors
    correct the gaussian window, add the flattop window, precise the FFT information, clean-up
+ * cplsetup.c, cplload.c: omit complains from icc
 
 2010-02-28 Holger Vogt
  * inpcom.c, xpressn.c, inpptree.h, spicelib/parser/makefile.am, inpptree.c, 
