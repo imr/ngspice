@@ -368,7 +368,7 @@ x3 6 3 rlctwoinch
 +            5.45e-12
 +length=20
 
-.model yconvtwoinch txl r=0.2 l=9.13e-9 c=3.65e-12 length=2.0
+.model yconvtwoinch txl r=0.2 g=0 l=9.13e-9 c=3.65e-12 length=2.0
 .subckt conv2wetcmodel 1 2 3 4
 y1 1 0 5 0 yconvtwoinch
 p2 5 2 0 6 4 0 plines
