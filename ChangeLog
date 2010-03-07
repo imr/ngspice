@@ -1,6 +1,9 @@
 2010-03-07 Holger Vogt
  * inpcom.c: test for .end improved (comments are now allowed in .end line)
  * xpressn.c: adding fcn sgn() to numparam function lib
+ * inpptree.h,asrcacld.c,asrcload.c,asrcpzld.c,asrcset.c,ifeval.c,inpptree-parser.c,
+   inpptree-parser.h,inpptree-parser.y,inpptree.c: patch R. Larice, add time and temper
+   variables to B source
 
 2010-03-07 Dietmar Warning
  * analysis/ninteg.c: limiting exp() in noise integration to prevent overflow and NAN 

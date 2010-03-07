@@ -4,9 +4,9 @@
   #include "inpptree-parser.h"
 
   extern int PTlex (YYSTYPE *lvalp, char **line);
-  extern int PTparse (char **line, struct INPparseNode **retval);
+  extern int PTparse (char **line, struct INPparseNode **retval, void *ckt);
 
-  static void PTerror (char **line, struct INPparseNode **retval, char const *);
+  static void PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *);
 
   #if defined (_MSC_VER)
   # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
@@ -25,6 +25,7 @@
 %lex-param   {char **line}
 
 %parse-param {struct INPparseNode **retval}
+%parse-param {void *ckt}
 
 %union {
   double num;
@@ -59,7 +60,7 @@ expression:
 
 exp:
     TOK_NUM                           { $$ = mknnode($1); }
-  | TOK_STR                           { $$ = mksnode($1); }
+  | TOK_STR                           { $$ = mksnode($1, ckt); }
 
   | exp '+' exp                       { $$ = mkbnode("+", $1, $3); }
   | exp '-' exp                       { $$ = mkbnode("-", $1, $3); }
@@ -106,7 +107,7 @@ nonempty_arglist:
 
 /* Called by yyparse on error.  */
 static void
-PTerror (char **line, struct INPparseNode **retval, char const *s)
+PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *s)
 {
   fprintf (stderr, "%s: %s\n", __func__, s);
 }

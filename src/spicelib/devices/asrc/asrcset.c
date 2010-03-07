@@ -62,6 +62,16 @@ if((here->ptr = SMPmakeElt(matrix,here->first,((CKTnode*)(second))->number))\
             in the vector of the positions of the SMP */
             if (!here->ASRCtree)
 		return E_PARMVAL;
+
+	    if( here->ASRCtype == ASRC_VOLTAGE) {
+            	here->ASRCposptr = (double **)
+            	  REALLOC(here->ASRCposptr, (sizeof(double *)*(j+5)));
+            	TSTALLOC(ASRCposptr[j++],ASRCposNode,ASRCbranch);
+            	TSTALLOC(ASRCposptr[j++],ASRCnegNode,ASRCbranch);
+            	TSTALLOC(ASRCposptr[j++],ASRCbranch,ASRCnegNode);
+            	TSTALLOC(ASRCposptr[j++],ASRCbranch,ASRCposNode);
+	    }
+                
             for( i=0; i < here->ASRCtree->numVars; i++){
                 switch(here->ASRCtree->varTypes[i]){
                 case IF_INSTANCE:
@@ -78,12 +88,6 @@ if((here->ptr = SMPmakeElt(matrix,here->first,((CKTnode*)(second))->number))\
                     if( here->ASRCtype == ASRC_VOLTAGE){
                         /* CCVS */
                         if(v_first){
-                            here->ASRCposptr = (double **)
-                            REALLOC(here->ASRCposptr, (sizeof(double *)*(j+5)));
-                            TSTALLOC(ASRCposptr[j++],ASRCposNode,ASRCbranch);
-                            TSTALLOC(ASRCposptr[j++],ASRCnegNode,ASRCbranch);
-                            TSTALLOC(ASRCposptr[j++],ASRCbranch,ASRCnegNode);
-                            TSTALLOC(ASRCposptr[j++],ASRCbranch,ASRCposNode);
                             TSTALLOC(ASRCposptr[j++],ASRCbranch,ASRCcont_br);
                             v_first = 0;
                         } else{
@@ -105,12 +109,6 @@ if((here->ptr = SMPmakeElt(matrix,here->first,((CKTnode*)(second))->number))\
                     if( here->ASRCtype == ASRC_VOLTAGE){
                         /* VCVS */
                         if(v_first){
-                            here->ASRCposptr = (double **)
-                        REALLOC(here->ASRCposptr, (sizeof(double *) * (j+5)));
-                            TSTALLOC(ASRCposptr[j++],ASRCposNode,ASRCbranch);
-                            TSTALLOC(ASRCposptr[j++],ASRCnegNode,ASRCbranch);
-                            TSTALLOC(ASRCposptr[j++],ASRCbranch,ASRCnegNode);
-                            TSTALLOC(ASRCposptr[j++],ASRCbranch,ASRCposNode);
         MY_TSTALLOC(ASRCposptr[j++],ASRCbranch,here->ASRCtree->vars[i].nValue);
                             v_first = 0;
                         } else{

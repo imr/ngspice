@@ -20,7 +20,7 @@ static INPparseNode *mkbnode(const char *opstr, INPparseNode * arg1,
 			     INPparseNode * arg2);
 static INPparseNode *mkfnode(const char *fname, INPparseNode * arg);
 static INPparseNode *mknnode(double number);
-static INPparseNode *mksnode(const char *string);
+static INPparseNode *mksnode(const char *string, void *ckt);
 static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum);
 
 #include "inpptree-parser.c"
@@ -130,7 +130,7 @@ INPgetTree(char **line, INPparseTree ** pt, void *ckt, INPtables * tab)
     fprintf(stderr,"%s, line = \"%s\"\n", __func__, *line);
 #endif
 
-    rv = PTparse(line, &p);
+    rv = PTparse(line, &p, ckt);
 
     if (rv || !PTcheck(p)) {
 	*pt = NULL;
@@ -168,6 +168,9 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
     INPparseNode *arg1 = NULL, *arg2, *newp;
 
     switch (p->type) {
+    case PT_TIME:
+    case PT_TEMPERATURE:
+    case PT_FREQUENCY:
     case PT_CONSTANT:
 	newp = mkcon((double) 0);
 	break;
@@ -607,6 +610,9 @@ static int PTcheck(INPparseNode * p)
     case PT_PLACEHOLDER:
 	return (0);
 
+    case PT_TIME:
+    case PT_TEMPERATURE:
+    case PT_FREQUENCY:
     case PT_CONSTANT:
     case PT_VAR:
 	return (1);
@@ -891,7 +897,7 @@ static INPparseNode *mknnode(double number)
 
 /* String node. */
 
-static INPparseNode *mksnode(const char *string)
+static INPparseNode *mksnode(const char *string, void *ckt)
 {
     int i, j;
     char buf[128], *s;
@@ -904,6 +910,24 @@ static INPparseNode *mksnode(const char *string)
 	    *s = tolower(*s);
 
     p = (INPparseNode *) MALLOC(sizeof(INPparseNode));
+
+    if(!strcmp("time", buf)) {
+        p->type = PT_TIME;
+        p->data = ckt;
+        return p;
+    }
+
+    if(!strcmp("temper", buf)) {
+        p->type = PT_TEMPERATURE;
+        p->data = ckt;
+        return p;
+    }
+
+    if(!strcmp("hertz", buf)) {
+        p->type = PT_FREQUENCY;
+        p->data = ckt;
+        return p;
+    }
 
     /* First see if it's something special. */
     for (i = 0; i < ft_sim->numSpecSigs; i++)
@@ -1114,6 +1138,18 @@ void INPptPrint(char *str, IFparseTree * ptree)
 void printTree(INPparseNode * pt)
 {
     switch (pt->type) {
+    case PT_TIME:
+        printf("time(ckt = %p)", pt->data);
+	break;
+
+    case PT_TEMPERATURE:
+        printf("temperature(ckt = %p)", pt->data);
+	break;
+
+    case PT_FREQUENCY:
+        printf("frequency(ckt = %p)", pt->data);
+	break;
+
     case PT_CONSTANT:
 	printf("%g", pt->constant);
 	break;

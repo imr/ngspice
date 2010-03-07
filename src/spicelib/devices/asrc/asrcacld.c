@@ -19,14 +19,14 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
 
     /*
-     * Actually load the current voltage value into the 
+     * Actually load the current voltage value into the
      * sparse matrix previously provided. The values have
      * been precomputed and stored with the instance model.
      */
 
-    ASRCmodel *model = (ASRCmodel*)inModel;
+    ASRCmodel *model = (ASRCmodel*) inModel;
     ASRCinstance *here;
-    int i, v_first, j;
+    int i, j;
     double *derivs;
     double rhs;
 
@@ -36,32 +36,33 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->ASRCinstances; here != NULL ;
 	     here = here->ASRCnextInstance) {
-	    if (here->ASRCowner != ARCHme) continue;
-            
+
+	    if (here->ASRCowner != ARCHme)
+                continue;
+
 	    /*
 	     * Get the function and its derivatives from the
-	     * field in the instance structure. The field is 
+	     * field in the instance structure. The field is
 	     * an array of doubles holding the rhs, and the
 	     * entries of the jacobian.
 	     */
 
-	    v_first = 1;
 	    j=0;
 	    derivs = here->ASRCacValues;
 	    rhs = (here->ASRCacValues)[here->ASRCtree->numVars];
 
-	    for(i=0; i < here->ASRCtree->numVars; i++){
-		switch(here->ASRCtree->varTypes[i]){
+            if( here->ASRCtype == ASRC_VOLTAGE) {
+                *(here->ASRCposptr[j++]) += 1.0;
+                *(here->ASRCposptr[j++]) -= 1.0;
+                *(here->ASRCposptr[j++]) -= 1.0;
+                *(here->ASRCposptr[j++]) += 1.0;
+            }
+
+	    for(i=0; i < here->ASRCtree->numVars; i++) {
+		switch(here->ASRCtree->varTypes[i]) {
 		case IF_INSTANCE:
-		    if( here->ASRCtype == ASRC_VOLTAGE){
+		    if( here->ASRCtype == ASRC_VOLTAGE) {
 			/* CCVS */
-			if(v_first){
-			    *(here->ASRCposptr[j++]) += 1.0;
-			    *(here->ASRCposptr[j++]) -= 1.0;
-			    *(here->ASRCposptr[j++]) -= 1.0;
-			    *(here->ASRCposptr[j++]) += 1.0;
-			    v_first = 0;
-			}
 			*(here->ASRCposptr[j++]) -= derivs[i];
 		    } else{
 			/* CCCS */
@@ -70,15 +71,8 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 		    }
 		    break;
 		case IF_NODE:
-		    if(here->ASRCtype == ASRC_VOLTAGE){
+		    if(here->ASRCtype == ASRC_VOLTAGE) {
 			/* VCVS */
-			if( v_first){
-			    *(here->ASRCposptr[j++]) += 1.0;
-			    *(here->ASRCposptr[j++]) -= 1.0;
-			    *(here->ASRCposptr[j++]) -= 1.0;
-			    *(here->ASRCposptr[j++]) += 1.0;
-			    v_first = 0;
-			}
 			*(here->ASRCposptr[j++]) -= derivs[i];
 		    } else {
 			/*VCCS*/
@@ -92,5 +86,6 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 	    }
 	}
     }
+
     return(OK);
 }

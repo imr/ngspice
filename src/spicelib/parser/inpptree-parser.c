@@ -83,9 +83,9 @@
   #include "inpptree-parser.h"
 
   extern int PTlex (YYSTYPE *lvalp, char **line);
-  extern int PTparse (char **line, struct INPparseNode **retval);
+  extern int PTparse (char **line, struct INPparseNode **retval, void *ckt);
 
-  static void PTerror (char **line, struct INPparseNode **retval, char const *);
+  static void PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *);
 
   #if defined (_MSC_VER)
   # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
@@ -142,7 +142,7 @@ typedef union YYSTYPE
 {
 
 /* Line 222 of yacc.c  */
-#line 29 "inpptree-parser.y"
+#line 30 "inpptree-parser.y"
 
   double num;
   const char  *str;
@@ -455,9 +455,9 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    57,    57,    61,    62,    64,    65,    66,    67,    68,
-      70,    72,    74,    76,    81,    82,    83,    84,    85,    86,
-      88,    92,    96,   101,   102
+       0,    58,    58,    62,    63,    65,    66,    67,    68,    69,
+      71,    73,    75,    77,    82,    83,    84,    85,    86,    87,
+      89,    93,    97,   102,   103
 };
 #endif
 
@@ -618,7 +618,7 @@ do								\
     }								\
   else								\
     {								\
-      yyerror (line, retval, YY_("syntax error: cannot back up")); \
+      yyerror (line, retval, ckt, YY_("syntax error: cannot back up")); \
       YYERROR;							\
     }								\
 while (YYID (0))
@@ -698,7 +698,7 @@ do {									  \
     {									  \
       YYFPRINTF (stderr, "%s ", Title);					  \
       yy_symbol_print (stderr,						  \
-		  Type, Value, line, retval); \
+		  Type, Value, line, retval, ckt); \
       YYFPRINTF (stderr, "\n");						  \
     }									  \
 } while (YYID (0))
@@ -712,21 +712,23 @@ do {									  \
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, char **line, struct INPparseNode **retval)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, char **line, struct INPparseNode **retval, void *ckt)
 #else
 static void
-yy_symbol_value_print (yyoutput, yytype, yyvaluep, line, retval)
+yy_symbol_value_print (yyoutput, yytype, yyvaluep, line, retval, ckt)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
     char **line;
     struct INPparseNode **retval;
+    void *ckt;
 #endif
 {
   if (!yyvaluep)
     return;
   YYUSE (line);
   YYUSE (retval);
+  YYUSE (ckt);
 # ifdef YYPRINT
   if (yytype < YYNTOKENS)
     YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
@@ -748,15 +750,16 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, line, retval)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, char **line, struct INPparseNode **retval)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, char **line, struct INPparseNode **retval, void *ckt)
 #else
 static void
-yy_symbol_print (yyoutput, yytype, yyvaluep, line, retval)
+yy_symbol_print (yyoutput, yytype, yyvaluep, line, retval, ckt)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
     char **line;
     struct INPparseNode **retval;
+    void *ckt;
 #endif
 {
   if (yytype < YYNTOKENS)
@@ -764,7 +767,7 @@ yy_symbol_print (yyoutput, yytype, yyvaluep, line, retval)
   else
     YYFPRINTF (yyoutput, "nterm %s (", yytname[yytype]);
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep, line, retval);
+  yy_symbol_value_print (yyoutput, yytype, yyvaluep, line, retval, ckt);
   YYFPRINTF (yyoutput, ")");
 }
 
@@ -807,14 +810,15 @@ do {								\
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_reduce_print (YYSTYPE *yyvsp, int yyrule, char **line, struct INPparseNode **retval)
+yy_reduce_print (YYSTYPE *yyvsp, int yyrule, char **line, struct INPparseNode **retval, void *ckt)
 #else
 static void
-yy_reduce_print (yyvsp, yyrule, line, retval)
+yy_reduce_print (yyvsp, yyrule, line, retval, ckt)
     YYSTYPE *yyvsp;
     int yyrule;
     char **line;
     struct INPparseNode **retval;
+    void *ckt;
 #endif
 {
   int yynrhs = yyr2[yyrule];
@@ -828,7 +832,7 @@ yy_reduce_print (yyvsp, yyrule, line, retval)
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr, yyrhs[yyprhs[yyrule] + yyi],
 		       &(yyvsp[(yyi + 1) - (yynrhs)])
-		       		       , line, retval);
+		       		       , line, retval, ckt);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -836,7 +840,7 @@ yy_reduce_print (yyvsp, yyrule, line, retval)
 # define YY_REDUCE_PRINT(Rule)		\
 do {					\
   if (yydebug)				\
-    yy_reduce_print (yyvsp, Rule, line, retval); \
+    yy_reduce_print (yyvsp, Rule, line, retval, ckt); \
 } while (YYID (0))
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1087,20 +1091,22 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, char **line, struct INPparseNode **retval)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, char **line, struct INPparseNode **retval, void *ckt)
 #else
 static void
-yydestruct (yymsg, yytype, yyvaluep, line, retval)
+yydestruct (yymsg, yytype, yyvaluep, line, retval, ckt)
     const char *yymsg;
     int yytype;
     YYSTYPE *yyvaluep;
     char **line;
     struct INPparseNode **retval;
+    void *ckt;
 #endif
 {
   YYUSE (yyvaluep);
   YYUSE (line);
   YYUSE (retval);
+  YYUSE (ckt);
 
   if (!yymsg)
     yymsg = "Deleting";
@@ -1123,7 +1129,7 @@ int yyparse ();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int yyparse (char **line, struct INPparseNode **retval);
+int yyparse (char **line, struct INPparseNode **retval, void *ckt);
 #else
 int yyparse ();
 #endif
@@ -1151,12 +1157,13 @@ yyparse (YYPARSE_PARAM)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 int
-yyparse (char **line, struct INPparseNode **retval)
+yyparse (char **line, struct INPparseNode **retval, void *ckt)
 #else
 int
-yyparse (line, retval)
+yyparse (line, retval, ckt)
     char **line;
     struct INPparseNode **retval;
+    void *ckt;
 #endif
 #endif
 {
@@ -1411,84 +1418,84 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 57 "inpptree-parser.y"
+#line 58 "inpptree-parser.y"
     { *retval = (yyvsp[(1) - (1)].pnode); ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 61 "inpptree-parser.y"
+#line 62 "inpptree-parser.y"
     { (yyval.pnode) = mknnode((yyvsp[(1) - (1)].num)); ;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 62 "inpptree-parser.y"
-    { (yyval.pnode) = mksnode((yyvsp[(1) - (1)].str)); ;}
+#line 63 "inpptree-parser.y"
+    { (yyval.pnode) = mksnode((yyvsp[(1) - (1)].str), ckt); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 64 "inpptree-parser.y"
+#line 65 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("+", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 65 "inpptree-parser.y"
+#line 66 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("-", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 66 "inpptree-parser.y"
+#line 67 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("*", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 67 "inpptree-parser.y"
+#line 68 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("/", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 68 "inpptree-parser.y"
+#line 69 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("^", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 70 "inpptree-parser.y"
+#line 71 "inpptree-parser.y"
     { (yyval.pnode) = (yyvsp[(2) - (3)].pnode); ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 72 "inpptree-parser.y"
+#line 73 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("-",(yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 74 "inpptree-parser.y"
+#line 75 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].pnode)); ;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 76 "inpptree-parser.y"
+#line 77 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ternary_fcn",
                                                mkbnode(",",
                                                  mkbnode(",", (yyvsp[(1) - (5)].pnode), (yyvsp[(3) - (5)].pnode)),
@@ -1498,49 +1505,49 @@ yyreduce:
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 81 "inpptree-parser.y"
+#line 82 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 82 "inpptree-parser.y"
+#line 83 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ne0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 83 "inpptree-parser.y"
+#line 84 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("gt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 84 "inpptree-parser.y"
+#line 85 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("lt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 85 "inpptree-parser.y"
+#line 86 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ge0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 86 "inpptree-parser.y"
+#line 87 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("le0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 88 "inpptree-parser.y"
+#line 89 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ne0",
                                                mkbnode("+",
                                                  mkfnode("ne0", (yyvsp[(1) - (3)].pnode)),
@@ -1550,7 +1557,7 @@ yyreduce:
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 92 "inpptree-parser.y"
+#line 93 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0",
                                                mkbnode("+",
                                                  mkfnode("eq0", (yyvsp[(1) - (3)].pnode)),
@@ -1560,21 +1567,21 @@ yyreduce:
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 96 "inpptree-parser.y"
+#line 97 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0", (yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 102 "inpptree-parser.y"
+#line 103 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode(",", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1578 "inpptree-parser.c"
+#line 1585 "inpptree-parser.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1609,7 +1616,7 @@ yyerrlab:
     {
       ++yynerrs;
 #if ! YYERROR_VERBOSE
-      yyerror (line, retval, YY_("syntax error"));
+      yyerror (line, retval, ckt, YY_("syntax error"));
 #else
       {
 	YYSIZE_T yysize = yysyntax_error (0, yystate, yychar);
@@ -1633,11 +1640,11 @@ yyerrlab:
 	if (0 < yysize && yysize <= yymsg_alloc)
 	  {
 	    (void) yysyntax_error (yymsg, yystate, yychar);
-	    yyerror (line, retval, yymsg);
+	    yyerror (line, retval, ckt, yymsg);
 	  }
 	else
 	  {
-	    yyerror (line, retval, YY_("syntax error"));
+	    yyerror (line, retval, ckt, YY_("syntax error"));
 	    if (yysize != 0)
 	      goto yyexhaustedlab;
 	  }
@@ -1661,7 +1668,7 @@ yyerrlab:
       else
 	{
 	  yydestruct ("Error: discarding",
-		      yytoken, &yylval, line, retval);
+		      yytoken, &yylval, line, retval, ckt);
 	  yychar = YYEMPTY;
 	}
     }
@@ -1717,7 +1724,7 @@ yyerrlab1:
 
 
       yydestruct ("Error: popping",
-		  yystos[yystate], yyvsp, line, retval);
+		  yystos[yystate], yyvsp, line, retval, ckt);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1752,7 +1759,7 @@ yyabortlab:
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (line, retval, YY_("memory exhausted"));
+  yyerror (line, retval, ckt, YY_("memory exhausted"));
   yyresult = 2;
   /* Fall through.  */
 #endif
@@ -1760,7 +1767,7 @@ yyexhaustedlab:
 yyreturn:
   if (yychar != YYEMPTY)
      yydestruct ("Cleanup: discarding lookahead",
-		 yytoken, &yylval, line, retval);
+		 yytoken, &yylval, line, retval, ckt);
   /* Do not reclaim the symbols of the rule which action triggered
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
@@ -1768,7 +1775,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-		  yystos[*yyssp], yyvsp, line, retval);
+		  yystos[*yyssp], yyvsp, line, retval, ckt);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -1786,13 +1793,13 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 104 "inpptree-parser.y"
+#line 105 "inpptree-parser.y"
 
 
 
 /* Called by yyparse on error.  */
 static void
-PTerror (char **line, struct INPparseNode **retval, char const *s)
+PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *s)
 {
   fprintf (stderr, "%s: %s\n", __func__, s);
 }
