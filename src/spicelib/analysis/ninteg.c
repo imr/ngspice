@@ -21,6 +21,7 @@ Author: 1987 Gary W. Ng
 #include "ngspice.h"
 #include "noisedef.h"
 
+#define limexp(x) (x > 700 ? exp(700.0)*(1.0+x-700.0) : exp(x))
 
 double
 Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data)
@@ -32,7 +33,7 @@ Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data)
     if ( fabs(exponent) < N_INTFTHRESH ) {
 	return (noizDens * data->delFreq);
     } else {
-	a = exp(lnNdens - exponent*data->lnFreq);
+	a = limexp(lnNdens - exponent*data->lnFreq);
 	exponent += 1.0;
 	if (fabs(exponent) < N_INTUSELOG) {
 	    return (a * (data->lnFreq - data->lnLastFreq));
