@@ -61,7 +61,7 @@ initkeys (void)
             "and or not div mod if else end while macro funct defined"
             " include for to downto is var");
   scopy_up (&fmathS,
-            "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh tanh ternary_fcn v agauss");
+            "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh tanh ternary_fcn v agauss sgn");
 }
 
 static double
@@ -120,6 +120,11 @@ mathfunction (int f, double z, double x)
         break;
     case 17: 
         y=sinh(x)/cosh(x);
+        break;
+    case 21:
+        if (x>0) y=1.;
+        else if (x == 0) y=0.;
+        else y = -1.; 
         break;
     default:
         y = x;

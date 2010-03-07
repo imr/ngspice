@@ -1324,9 +1324,12 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
             *(s-1) = '\0';
       }
 
-      if (ciprefix(".end", buffer) && strlen(buffer) == 4 ) {
-         found_end = TRUE;
-         *buffer   = '*';
+/*      find the true .end command out of .endc, .ends, .endl, .end (comments may follow) */
+      if (ciprefix(".end", buffer)) {
+          if ((*(buffer+4) == '\0') || ( isspace(*(buffer+4))))  {
+             found_end = TRUE;
+             *buffer   = '*';
+          }
       }
 
  /* removed  because code changes .global to *global before it will be

@@ -1,3 +1,7 @@
+2010-03-14 Holger Vogt
+ * inpcom.c: test for .end improved (comments are now allowed in .end line)
+ * xpressn.c: adding fcn sgn() to numparam function lib
+
 2010-03-07 Dietmar Warning
  * analysis/ninteg.c: limiting exp() in noise integration to prevent overflow and NAN 
   (ID: 2950943).
