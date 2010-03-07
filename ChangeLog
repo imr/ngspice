@@ -1,4 +1,4 @@
-2010-03-14 Holger Vogt
+2010-03-07 Holger Vogt
  * inpcom.c: test for .end improved (comments are now allowed in .end line)
  * xpressn.c: adding fcn sgn() to numparam function lib
 
