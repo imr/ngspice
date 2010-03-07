@@ -1,5 +1,6 @@
 2010-03-07 Dietmar Warning
- * analysis/ninteg.c: limiting exp() to prevent overflow and NAN.
+ * analysis/ninteg.c: limiting exp() in noise integration to prevent overflow and NAN 
+  (ID: 2950943).
 
 2010-02-28 Dietmar Warning
  * com_gnuplot.c, gnuplot.c: cosmetics - missing LF on end
