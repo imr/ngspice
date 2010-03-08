@@ -1,6 +1,7 @@
 %{
 
   #include <stdio.h>
+  #include <stdlib.h>
   #include "inpptree-parser.h"
 
   extern int PTlex (YYSTYPE *lvalp, char **line);
@@ -12,6 +13,7 @@
   # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
   #endif
 
+  #define U(x)  (void)x
 %}
 
 %name-prefix="PT"
@@ -109,5 +111,6 @@ nonempty_arglist:
 static void
 PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *s)
 {
+  U(line); U(retval); U(ckt);
   fprintf (stderr, "%s: %s\n", __func__, s);
 }

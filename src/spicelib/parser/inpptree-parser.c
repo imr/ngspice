@@ -80,6 +80,7 @@
 
 
   #include <stdio.h>
+  #include <stdlib.h>
   #include "inpptree-parser.h"
 
   extern int PTlex (YYSTYPE *lvalp, char **line);
@@ -91,10 +92,11 @@
   # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
   #endif
 
+  #define U(x)  (void)x
 
 
 /* Line 189 of yacc.c  */
-#line 98 "inpptree-parser.c"
+#line 100 "inpptree-parser.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -142,7 +144,7 @@ typedef union YYSTYPE
 {
 
 /* Line 222 of yacc.c  */
-#line 30 "inpptree-parser.y"
+#line 32 "inpptree-parser.y"
 
   double num;
   const char  *str;
@@ -151,7 +153,7 @@ typedef union YYSTYPE
 
 
 /* Line 222 of yacc.c  */
-#line 155 "inpptree-parser.c"
+#line 157 "inpptree-parser.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -163,7 +165,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 167 "inpptree-parser.c"
+#line 169 "inpptree-parser.c"
 
 #ifdef short
 # undef short
@@ -455,9 +457,9 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    58,    58,    62,    63,    65,    66,    67,    68,    69,
-      71,    73,    75,    77,    82,    83,    84,    85,    86,    87,
-      89,    93,    97,   102,   103
+       0,    60,    60,    64,    65,    67,    68,    69,    70,    71,
+      73,    75,    77,    79,    84,    85,    86,    87,    88,    89,
+      91,    95,    99,   104,   105
 };
 #endif
 
@@ -1418,84 +1420,84 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 58 "inpptree-parser.y"
+#line 60 "inpptree-parser.y"
     { *retval = (yyvsp[(1) - (1)].pnode); ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 62 "inpptree-parser.y"
+#line 64 "inpptree-parser.y"
     { (yyval.pnode) = mknnode((yyvsp[(1) - (1)].num)); ;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 63 "inpptree-parser.y"
+#line 65 "inpptree-parser.y"
     { (yyval.pnode) = mksnode((yyvsp[(1) - (1)].str), ckt); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 65 "inpptree-parser.y"
+#line 67 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("+", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 66 "inpptree-parser.y"
+#line 68 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("-", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 67 "inpptree-parser.y"
+#line 69 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("*", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 68 "inpptree-parser.y"
+#line 70 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("/", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 69 "inpptree-parser.y"
+#line 71 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode("^", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 71 "inpptree-parser.y"
+#line 73 "inpptree-parser.y"
     { (yyval.pnode) = (yyvsp[(2) - (3)].pnode); ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 73 "inpptree-parser.y"
+#line 75 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("-",(yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 75 "inpptree-parser.y"
+#line 77 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].pnode)); ;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 77 "inpptree-parser.y"
+#line 79 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ternary_fcn",
                                                mkbnode(",",
                                                  mkbnode(",", (yyvsp[(1) - (5)].pnode), (yyvsp[(3) - (5)].pnode)),
@@ -1505,49 +1507,49 @@ yyreduce:
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 82 "inpptree-parser.y"
+#line 84 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 83 "inpptree-parser.y"
+#line 85 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ne0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 84 "inpptree-parser.y"
+#line 86 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("gt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 85 "inpptree-parser.y"
+#line 87 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("lt0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 86 "inpptree-parser.y"
+#line 88 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ge0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 87 "inpptree-parser.y"
+#line 89 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("le0", mkbnode("-",(yyvsp[(1) - (3)].pnode),(yyvsp[(3) - (3)].pnode))); ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 89 "inpptree-parser.y"
+#line 91 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("ne0",
                                                mkbnode("+",
                                                  mkfnode("ne0", (yyvsp[(1) - (3)].pnode)),
@@ -1557,7 +1559,7 @@ yyreduce:
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 93 "inpptree-parser.y"
+#line 95 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0",
                                                mkbnode("+",
                                                  mkfnode("eq0", (yyvsp[(1) - (3)].pnode)),
@@ -1567,21 +1569,21 @@ yyreduce:
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 97 "inpptree-parser.y"
+#line 99 "inpptree-parser.y"
     { (yyval.pnode) = mkfnode("eq0", (yyvsp[(2) - (2)].pnode)); ;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 103 "inpptree-parser.y"
+#line 105 "inpptree-parser.y"
     { (yyval.pnode) = mkbnode(",", (yyvsp[(1) - (3)].pnode), (yyvsp[(3) - (3)].pnode)); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1585 "inpptree-parser.c"
+#line 1587 "inpptree-parser.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1793,7 +1795,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 105 "inpptree-parser.y"
+#line 107 "inpptree-parser.y"
 
 
 
@@ -1801,6 +1803,7 @@ yyreturn:
 static void
 PTerror (char **line, struct INPparseNode **retval, void *ckt, char const *s)
 {
+  U(line); U(retval); U(ckt);
   fprintf (stderr, "%s: %s\n", __func__, s);
 }
 

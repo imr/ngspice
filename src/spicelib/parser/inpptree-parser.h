@@ -60,7 +60,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1740 of yacc.c  */
-#line 30 "inpptree-parser.y"
+#line 32 "inpptree-parser.y"
 
   double num;
   const char  *str;

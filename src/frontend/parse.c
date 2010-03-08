@@ -52,21 +52,23 @@ ft_getpnames(wordlist *wl, bool check)
     thisone = sbuf;
     while (*sbuf != '\0') {
         if (!(p = parse())) {
-	    tfree(xsbuf);
-            return (NULL);
-	}
+            tfree(xsbuf);
+                return (NULL);
+        }
 
         /* Now snag the name... Much trouble... */
         while (isspace(*thisone))
             thisone++;
         for (s = buf; thisone < sbuf; s++, thisone++)
             *s = *thisone;
-        *s = '\0';
+        while(--s>=buf && isspace(*s))
+            ;
+        s[1] = '\0';
         p->pn_name = copy(buf);
 
         if (pn) {
             lpn->pn_next = p;
-	    pn->pn_next->pn_use++;
+            p->pn_use++;
             lpn = p;
         } else
             pn = lpn = p;

@@ -53,7 +53,7 @@ static struct op {
     PT_POWER, "^", PTpower}
 };
 
-#define NUM_OPS (sizeof (ops) / sizeof (struct op))
+#define NUM_OPS (int)(sizeof (ops) / sizeof (struct op))
 
 static struct func {
     char *name;
@@ -93,7 +93,7 @@ static struct func {
     { "le0",    PTF_LE0,    PTle0},
 } ;
 
-#define NUM_FUNCS (sizeof (funcs) / sizeof (struct func))
+#define NUM_FUNCS (int)(sizeof (funcs) / sizeof (struct func))
 
 /* These are all the constants any sane person needs. */
 
@@ -106,7 +106,7 @@ static struct constant {
     "pi", M_PI}
 };
 
-#define NUM_CONSTANTS (sizeof (constants) / sizeof (struct constant))
+#define NUM_CONSTANTS (int)(sizeof (constants) / sizeof (struct constant))
 
 /* Parse the expression in *line as far as possible, and return the parse
  * tree obtained.  If there is an error, *pt will be set to NULL and an error
@@ -754,7 +754,7 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
     int i;
     INPparseNode *p;
     char buf[128], *name, *s;
-    IFvalue temp;
+    IFnode temp;
 
     /* Make sure the case is ok. */
     (void) strcpy(buf, fname);
@@ -780,10 +780,10 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 	    p = mkb(PT_MINUS, mkfnode(fname, arg->left),
 		    mkfnode(fname, arg->right));
 	} else {
-	    INPtermInsert(circuit, &name, tables, &(temp.nValue));
+	    INPtermInsert(circuit, &name, tables, &temp);
 	    for (i = 0; i < numvalues; i++)
-		if ((types[i] == IF_NODE) && (values[i].nValue ==
-					      temp.nValue)) break;
+	 	if ((types[i] == IF_NODE) && (values[i].nValue == temp))
+		     break;
 	    if (i == numvalues) {
 		if (numvalues) {
 		    values = (IFvalue *)
@@ -796,7 +796,7 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 		    values = (IFvalue *) MALLOC(sizeof(IFvalue));
 		    types = (int *) MALLOC(sizeof(int));
 		}
-		values[i] = temp;
+		values[i].nValue = temp;
 		types[i] = IF_NODE;
 		numvalues++;
 	    }
@@ -815,8 +815,8 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 	}
 	INPinsert(&name, tables);
 	for (i = 0; i < numvalues; i++)
-	    if ((types[i] == IF_INSTANCE) && (values[i].uValue ==
-					      temp.uValue)) break;
+	    if ((types[i] == IF_INSTANCE) && (values[i].uValue == name))
+		break;
 	if (i == numvalues) {
 	    if (numvalues) {
 		values = (IFvalue *)
