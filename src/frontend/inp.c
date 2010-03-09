@@ -763,10 +763,14 @@ inp_dodeck(
 		    *q = 0;
 
 		if (p == dd->li_error)
-		    out_printf("Error on line %d : %s\n\t%s\n",
+                    if (strstr(dd->li_line, ".model"))
+		      out_printf("Model issue on line %d : %.*s ...\n%s\n",
+			dd->li_linenum_orig, 56, dd->li_line, dd->li_error);
+                    else
+		       out_printf("Error on line %d : %s\n%s\n",
 			dd->li_linenum_orig, dd->li_line, dd->li_error);
 		else
-		    out_printf("\t%s\n", p);
+		    out_printf("%s\n", p);
 
 		if (q)
 		    *q++ = '\n';
