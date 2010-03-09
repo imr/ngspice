@@ -1,3 +1,9 @@
+2010-03-09 Dietmar Warning
+ * analysis/cktop.c: remove the CR in some printf's, need some tests with different terminals
+ * frontend/inp.c: cut the ouput message if wrong parameter warning to have a chance 
+   to read it
+ * parser/inpgmod.c: want only the parameter names in output - not the values
+
 2010-03-08 Holger Vogt
  * parse.c, inpptree.c, inpptree-parser.y, inpptree-parser.c, inpptree-parser.h: 
    patches by R. Larice
