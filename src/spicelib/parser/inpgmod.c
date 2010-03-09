@@ -11,6 +11,7 @@ $Id$
 #include "cpstd.h"
 #include "fteext.h"
 #include "inp.h"
+#include <errno.h>
 
 #ifdef CIDER
 /* begin Cider Integration */
@@ -46,6 +47,7 @@ create_model( void* ckt, INPmodel* modtmp, INPtables* tab )
   char*    temp;
   int      error = 0;
   int      j;
+  char *endptr; double dval;
 
   /* not already defined, so create & give parameters */
   error = (*(ft_sim->newModel))(ckt, (modtmp)->INPmodType, &((modtmp)->INPmodfast), (modtmp)->INPmodName);
@@ -113,13 +115,21 @@ create_model( void* ckt, INPmodel* modtmp, INPtables* tab )
 		 (*
 		  (*(ft_sim->devices)
 		   [(modtmp)->INPmodType]).numModelParms)) {
-	temp =
-	  (char *) MALLOC((40 + strlen(parm)) *
-			  sizeof(char));
-	(void) sprintf(temp,
-		       "unrecognized parameter (%s) - ignored\n",
-		       parm);
-	err = INPerrCat(err, temp);
+
+	/* want only the parameter names in output - not the values */
+        errno = 0;    /* To distinguish success/failure after call */
+        dval = strtod(parm, &endptr);
+        /* Check for various possible errors */
+        if ((errno == ERANGE && dval == HUGE_VAL) || errno != 0) {
+            perror("strtod");
+            exit(EXIT_FAILURE);
+        }
+        if (endptr == parm) { /* it was no number - it is really a string */
+          temp = (char *) MALLOC((40 + strlen(parm)) * sizeof(char));
+          (void) sprintf(temp,
+                       "unrecognized parameter (%s) - ignored", parm);
+          err = INPerrCat(err, temp);
+        }
       }
       FREE(parm);
     }
