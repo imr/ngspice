@@ -3,6 +3,8 @@
  * frontend/inp.c: cut the ouput message if wrong parameter warning to have a chance 
    to read it
  * parser/inpgmod.c: want only the parameter names in output - not the values
+ * devices/vbic/vbic.c: correct a typo of eais/eaic model parameter leading in wrong 
+   temperature model
 
 2010-03-08 Holger Vogt
  * parse.c, inpptree.c, inpptree-parser.y, inpptree-parser.c, inpptree-parser.h: 
