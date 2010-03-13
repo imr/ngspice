@@ -149,7 +149,7 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOP("xvo",   VBIC_MOD_XVO,   IF_REAL, "Temperature exponent of VO"),
  IOP("ea",    VBIC_MOD_EA,    IF_REAL, "Activation energy for IS"),
  IOP("eaie",  VBIC_MOD_EAIE,  IF_REAL, "Activation energy for IBEI"),
- IOP("eaic",  VBIC_MOD_EAIS,  IF_REAL, "Activation energy for IBCI/IBEIP"),
+ IOP("eaic",  VBIC_MOD_EAIC,  IF_REAL, "Activation energy for IBCI/IBEIP"),
  IOP("eais",  VBIC_MOD_EAIS,  IF_REAL, "Activation energy for IBCIP"),
  IOP("eane",  VBIC_MOD_EANE,  IF_REAL, "Activation energy for IBEN"),
  IOP("eanc",  VBIC_MOD_EANC,  IF_REAL, "Activation energy for IBCN/IBENP"),
