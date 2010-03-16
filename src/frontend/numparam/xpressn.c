@@ -288,8 +288,8 @@ dicostack (tdico * dico, char op)
 						inst_name, 
 						entry_p->symbol ) ;
 	      nupa_add_inst_param (param_p, entry_p->vl); 
-	      nghash_deleteItem( dico->symbol_table, entry_p->symbol, entry_p ) ;
-	      dico_free_entry( entry_p ) ;
+/*	      nghash_deleteItem( dico->symbol_table, entry_p->symbol, entry_p ) ;
+	      dico_free_entry( entry_p ) ; */
 	    }
          }
          tfree (inst_name);
