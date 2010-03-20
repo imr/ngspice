@@ -66,15 +66,15 @@ dimxpand(struct dvec *v, int *newdims, double *data)
  *  start       The value at which the vector should start.
  *  stop        The value at which the vector should end.
  *  step        The difference between sucessive elements.
- *  lin     The number of points, linearly spaced.
- *  log     The number of points, logarithmically spaced.
- *  dec     The number of points per decade, logarithmically spaced.
+ *  lin         The number of points, linearly spaced.
+ *  log         The number of points, logarithmically spaced.
+ *  dec         The number of points per decade, logarithmically spaced.
  *  center      Where to center the range of points.
  *  span        The size of the range of points.
  *  unif        ??
  *  gauss       The number of points in the gaussian distribution.
- *  mean        The mean value for the gass. dist.
- *  sd      The standard deviation for the gauss. dist.
+ *  mean        The mean value for the gaussian dist.
+ *  sd          The standard deviation for the gauss. dist.
  *  random      The number of randomly selected points.
  *  pool        The name of a vector (must be already defined) to get
  *              random values -- default is 'unitvec(npoints)'
