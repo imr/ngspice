@@ -220,10 +220,8 @@ ACan(CKTcircuit *ckt, int restart)
     startcTime = ckt->CKTstat->STATcombineTime;
     startkTime = ckt->CKTstat->STATsyncTime;
 
-
     /* main loop through all scheduled frequencies */
     while(freq <= ((ACAN*)ckt->CKTcurJob)->ACstopFreq+freqTol) {
-
         if( (*(SPfrontEnd->IFpauseTest))() ) { 
             /* user asked us to pause via an interrupt */
             ((ACAN*)ckt->CKTcurJob)->ACsaveFreq = freq;
@@ -231,63 +229,55 @@ ACan(CKTcircuit *ckt, int restart)
         }
         ckt->CKTomega = 2.0 * M_PI *freq;
 
-
-
-
-#define NEWOP
-#ifdef NEWOP
-        /* this is a test! Update opertating point, if variable 'hertz' is given */
+        /* Update opertating point, if variable 'hertz' is given */
         if (ckt->CKTmode & MODEINITHERTZ) {
 #ifdef XSPICE
-/* Call EVTop if event-driven instances exist */
+            /* Call EVTop if event-driven instances exist */
 
-        if(ckt->evt->counts.num_insts != 0) {
-            error = EVTop(ckt,
-                        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
-                        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
-                        ckt->CKTdcMaxIter,
-                        MIF_TRUE);
-            EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
-            EVTop_save(ckt, MIF_TRUE, 0.0);
-        }
-        else 
+            if(ckt->evt->counts.num_insts != 0) {
+                error = EVTop(ckt,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+                    ckt->CKTdcMaxIter,
+                    MIF_TRUE);
+                EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
+                EVTop_save(ckt, MIF_TRUE, 0.0);
+            }
+            else 
 #endif 
 // If no event-driven instances, do what SPICE normally does
-            error = CKTop(ckt,
-                (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
-                (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
-                ckt->CKTdcMaxIter);
+                error = CKTop(ckt,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+                    ckt->CKTdcMaxIter);
 
-        if(error){
-        	 fprintf(stdout,"\nAC operating point failed -\n");
-           CKTncDump(ckt);
-           return(error);
-        	} 
+            if(error){
+                fprintf(stdout,"\nAC operating point failed -\n");
+                CKTncDump(ckt);
+                return(error);
+            } 
         }
-                ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
-                error = CKTload(ckt);
-                if(error) return(error);
-
-        /* end of test */
-#endif
+        ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
+        error = CKTload(ckt);
+        if(error) return(error);
 
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODEAC;
         error = NIacIter(ckt);
         if (error) {
-	    ckt->CKTcurrentAnalysis = DOING_AC;
-	    ckt->CKTstat->STATacTime += SPfrontEnd->IFseconds() - startTime;
-	    ckt->CKTstat->STATacDecompTime += ckt->CKTstat->STATdecompTime -
-		    startdTime;
-	    ckt->CKTstat->STATacSolveTime += ckt->CKTstat->STATsolveTime -
- 	    startsTime;
-	    ckt->CKTstat->STATacLoadTime += ckt->CKTstat->STATloadTime -
-		    startlTime;
- 	    ckt->CKTstat->STATacCombTime += ckt->CKTstat->STATcombineTime -
- 		    startcTime;
-	    ckt->CKTstat->STATacSyncTime += ckt->CKTstat->STATsyncTime -
-		    startkTime;
-	    return(error);
-	}
+            ckt->CKTcurrentAnalysis = DOING_AC;
+            ckt->CKTstat->STATacTime += SPfrontEnd->IFseconds() - startTime;
+            ckt->CKTstat->STATacDecompTime += ckt->CKTstat->STATdecompTime -
+                startdTime;
+            ckt->CKTstat->STATacSolveTime += ckt->CKTstat->STATsolveTime -
+                startsTime;
+            ckt->CKTstat->STATacLoadTime += ckt->CKTstat->STATloadTime -
+                startlTime;
+            ckt->CKTstat->STATacCombTime += ckt->CKTstat->STATcombineTime -
+                startcTime;
+            ckt->CKTstat->STATacSyncTime += ckt->CKTstat->STATsyncTime -
+                startkTime;
+            return(error);
+        }
 
 #ifdef WANT_SENSE2
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode&ACSEN) ){
@@ -347,18 +337,17 @@ ACan(CKTcircuit *ckt, int restart)
 
 /* inserted again 14.12.2001  */
 #ifdef HAS_WINDOWS
-			 {
-				 double endfreq   = ((ACAN*)ckt->CKTcurJob)->ACstopFreq;
-				 double startfreq = ((ACAN*)ckt->CKTcurJob)->ACstartFreq;
-/*				 double step      = ((ACAN*)ckt->CKTcurJob)->ACfreqDelta; */
-				 endfreq   = log(endfreq);
-				 if (startfreq == 0.0)
-					startfreq = 1e-12;
-				 startfreq = log(startfreq);
+            {
+                double endfreq   = ((ACAN*)ckt->CKTcurJob)->ACstopFreq;
+                double startfreq = ((ACAN*)ckt->CKTcurJob)->ACstartFreq;
+                endfreq   = log(endfreq);
+                if (startfreq == 0.0)
+                    startfreq = 1e-12;
+                startfreq = log(startfreq);
 
-				 if (freq > 0.0)
-					 SetAnalyse( "ac", (log(freq)-startfreq) * 1000.0 / (endfreq-startfreq));
-			 }
+                if (freq > 0.0)
+                    SetAnalyse( "ac", (log(freq)-startfreq) * 1000.0 / (endfreq-startfreq));
+            }
 #endif
 
             freq *= ((ACAN*)ckt->CKTcurJob)->ACfreqDelta;
