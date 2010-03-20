@@ -178,6 +178,8 @@ typedef struct {
 #define MODEINITTRAN 0x1000
 #define MODEINITPRED 0x2000
 
+#define MODEINITHERTZ 0x4000
+
 /* old 'nosolv' paramater */
 #define MODEUIC 0x10000l
 

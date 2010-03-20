@@ -1,3 +1,8 @@
+2010-03-20 Holger Vogt
+ * com_compose.c: comment corrected
+ * subckt.c, cktdefs.h, acan.c, ifeval.c, inp2b.c, inpptree.c:
+   Variable HERTZ added to B source
+
 2010-03-16 Holger Vogt
  * xpressn.c: remove lines 291,292
 

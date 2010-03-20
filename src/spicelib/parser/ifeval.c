@@ -133,9 +133,6 @@ PTeval(INPparseNode * tree, double gmin, double *res, double *vals)
 	break;
 	
     case PT_FREQUENCY:
-        /*((ACAN*)ckt->CKTcurJob)->ACsaveFreq;*/
-//        *res = ((ACAN*)((CKTcircuit*) tree->data)->CKTcurJob)->ACsaveFreq;
-        /*ckt->CKTomega = 2.0 * M_PI *freq;*/
         *res = (((CKTcircuit*) tree->data) -> CKTomega)/2./M_PI;
 	break;
 	

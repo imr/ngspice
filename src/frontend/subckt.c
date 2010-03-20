@@ -55,7 +55,7 @@ $Id$
  * nodes. On top of that, we have to know how many args BJT's have,
  * so we have to keep track of model names.
  *======================================================================*/
-
+/*#define TRACE*/
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"

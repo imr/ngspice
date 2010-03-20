@@ -10,6 +10,7 @@ Author: 1988 Thomas L. Quarles
 #include "inpmacs.h"
 #include "fteext.h"
 #include "inp.h"
+#include "cktdefs.h"
 
 void INP2B(void *ckt, INPtables * tab, card * current)
 {
@@ -29,13 +30,19 @@ void INP2B(void *ckt, INPtables * tab, card * current)
     double leadval;		/* actual value of unlabeled number */
     IFuid uid;			/* uid for default model name */
 
+    CKTcircuit* inckt = (CKTcircuit*) ckt; /* get circuit struct for hertz-flag */
+
     /* Arbitrary source. */
     type = INPtypelook("ASRC");
     if (type < 0) {
-	LITERR("Device type Asource not supported by this binary\n");
-	return;
+        LITERR("Device type Asource not supported by this binary\n");
+        return;
     }
 
+    /* if we find 'hertz' variable, set flag to actual circuit */
+    if(strstr(current->line, "hertz"))
+        inckt->CKTmode = MODEINITHERTZ;
+        
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
@@ -47,9 +54,9 @@ void INP2B(void *ckt, INPtables * tab, card * current)
     error = INPtermInsert(ckt, &nname2, tab, &node2);
 
     if (!tab->defBmod) {
-	/* create default B model */
-	IFnewUid(ckt, &uid, (IFuid) NULL, "B", UID_MODEL, (void **) NULL);
-	IFC(newModel, (ckt, type, &(tab->defBmod), uid));
+        /* create default B model */
+        IFnewUid(ckt, &uid, (IFuid) NULL, "B", UID_MODEL, (void **) NULL);
+        IFC(newModel, (ckt, type, &(tab->defBmod), uid));
     }
     IFC(newInstance, (ckt, tab->defBmod, &fast, name));
     IFC(bindNode, (ckt, fast, 1, node1));

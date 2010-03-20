@@ -22,7 +22,6 @@ Modified 2001: AlansFixes
 void SetAnalyse( char * Analyse, int Percent);
 #endif
 
-
 int
 ACan(CKTcircuit *ckt, int restart)
 {
@@ -56,95 +55,91 @@ ACan(CKTcircuit *ckt, int restart)
 /* gtri - end - wbk */
 #endif
 
-
+    /* start at beginning */
     if(((ACAN*)ckt->CKTcurJob)->ACsaveFreq == 0 || restart) { 
-        /* start at beginning */
-
-	if (((ACAN*)ckt->CKTcurJob)->ACnumberSteps < 1)
-	    ((ACAN*)ckt->CKTcurJob)->ACnumberSteps = 1;
+        if (((ACAN*)ckt->CKTcurJob)->ACnumberSteps < 1)
+            ((ACAN*)ckt->CKTcurJob)->ACnumberSteps = 1;
 
         switch(((ACAN*)ckt->CKTcurJob)->ACstepType) {
 
         case DECADE:
             ((ACAN*)ckt->CKTcurJob)->ACfreqDelta =
-                    exp(log(10.0)/((ACAN*)ckt->CKTcurJob)->ACnumberSteps);
+                exp(log(10.0)/((ACAN*)ckt->CKTcurJob)->ACnumberSteps);
             break;
         case OCTAVE:
             ((ACAN*)ckt->CKTcurJob)->ACfreqDelta =
-                    exp(log(2.0)/((ACAN*)ckt->CKTcurJob)->ACnumberSteps);
+                exp(log(2.0)/((ACAN*)ckt->CKTcurJob)->ACnumberSteps);
             break;
         case LINEAR:
-	    if (((ACAN*)ckt->CKTcurJob)->ACnumberSteps-1 > 1)
-		((ACAN*)ckt->CKTcurJob)->ACfreqDelta =
+            if (((ACAN*)ckt->CKTcurJob)->ACnumberSteps-1 > 1)
+                ((ACAN*)ckt->CKTcurJob)->ACfreqDelta =
                     (((ACAN*)ckt->CKTcurJob)->ACstopFreq -
                     ((ACAN*)ckt->CKTcurJob)->ACstartFreq)/
                     (((ACAN*)ckt->CKTcurJob)->ACnumberSteps-1);
-	    else
-		/* Patch from: Richard McRoberts
-		 * This patch is for a rather pathological case:
-		 * a linear step with only one point */
-		((ACAN*)ckt->CKTcurJob)->ACfreqDelta = 0; 
+            else
+            /* Patch from: Richard McRoberts
+            * This patch is for a rather pathological case:
+            * a linear step with only one point */
+                ((ACAN*)ckt->CKTcurJob)->ACfreqDelta = 0; 
             break;
         default:
             return(E_BADPARM);
-        }
+    }
 #ifdef XSPICE
 /* gtri - begin - wbk - Call EVTop if event-driven instances exist */
 
-        if(ckt->evt->counts.num_insts != 0) {
-            error = EVTop(ckt,
-                        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
-                        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
-                        ckt->CKTdcMaxIter,
-                        MIF_TRUE);
-            EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
-            EVTop_save(ckt, MIF_TRUE, 0.0);
-        }
-        else 
+    if(ckt->evt->counts.num_insts != 0) {
+        error = EVTop(ckt,
+            (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+            (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+            ckt->CKTdcMaxIter,
+            MIF_TRUE);
+        EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
+        EVTop_save(ckt, MIF_TRUE, 0.0);
+    }
+    else 
 #endif 
 /* If no event-driven instances, do what SPICE normally does */
+    error = CKTop(ckt,
+        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+        ckt->CKTdcMaxIter);
 
-            error = CKTop(ckt,
-                (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
-                (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
-                ckt->CKTdcMaxIter);
-
-        if(error){
-        	 fprintf(stdout,"\nAC operating point failed -\n");
-           CKTncDump(ckt);
-           return(error);
-        	} 
+    if(error){
+        fprintf(stdout,"\nAC operating point failed -\n");
+        CKTncDump(ckt);
+        return(error);
+    } 
 		
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add IPC stuff */
 
-        /* Send the operating point results for Mspice compatibility */
-        if(g_ipc.enabled) 
-		{
-            /* Call CKTnames to get names of nodes/branches used by 
-               BeginPlot */
-            /* Probably should free nameList after this block since 
-               called again... */
-            error = CKTnames(ckt,&numNames,&nameList);
-            if(error) return(error);
+    /* Send the operating point results for Mspice compatibility */
+    if(g_ipc.enabled) 
+    {
+        /* Call CKTnames to get names of nodes/branches used by 
+            BeginPlot */
+        /* Probably should free nameList after this block since 
+            called again... */
+        error = CKTnames(ckt,&numNames,&nameList);
+        if(error) return(error);
 
-            /* We have to do a beginPlot here since the data to return is
-             * different for the DCOP than it is for the AC analysis.  
-             * Moreover the begin plot has not even been done yet at this 
-             * point... 
-             */
-            (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,(void*)ckt->CKTcurJob,
-                ckt->CKTcurJob->JOBname,(IFuid)NULL,IF_REAL,numNames,nameList,
-                IF_REAL,&acPlot);
-	    tfree(nameList);
+        /* We have to do a beginPlot here since the data to return is
+         * different for the DCOP than it is for the AC analysis.  
+         * Moreover the begin plot has not even been done yet at this 
+         * point... 
+         */
+        (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,(void*)ckt->CKTcurJob,
+            ckt->CKTcurJob->JOBname,(IFuid)NULL,IF_REAL,numNames,nameList,
+            IF_REAL,&acPlot);
+        tfree(nameList);
 
-            ipc_send_dcop_prefix();
-            CKTdump(ckt,(double)0,acPlot);
-            ipc_send_dcop_suffix();
+        ipc_send_dcop_prefix();
+        CKTdump(ckt,(double)0,acPlot);
+        ipc_send_dcop_suffix();
 
-            (*(SPfrontEnd->OUTendPlot))(acPlot);
-        }
-
+        (*(SPfrontEnd->OUTendPlot))(acPlot);
+    }
 /* gtri - end - wbk */
 #endif
 
@@ -224,6 +219,9 @@ ACan(CKTcircuit *ckt, int restart)
     startlTime = ckt->CKTstat->STATloadTime;
     startcTime = ckt->CKTstat->STATcombineTime;
     startkTime = ckt->CKTstat->STATsyncTime;
+
+
+    /* main loop through all scheduled frequencies */
     while(freq <= ((ACAN*)ckt->CKTcurJob)->ACstopFreq+freqTol) {
 
         if( (*(SPfrontEnd->IFpauseTest))() ) { 
@@ -232,8 +230,48 @@ ACan(CKTcircuit *ckt, int restart)
             return(E_PAUSE);
         }
         ckt->CKTomega = 2.0 * M_PI *freq;
-        ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODEAC;
 
+
+
+
+#define NEWOP
+#ifdef NEWOP
+        /* this is a test! Update opertating point, if variable 'hertz' is given */
+        if (ckt->CKTmode & MODEINITHERTZ) {
+#ifdef XSPICE
+/* Call EVTop if event-driven instances exist */
+
+        if(ckt->evt->counts.num_insts != 0) {
+            error = EVTop(ckt,
+                        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+                        (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+                        ckt->CKTdcMaxIter,
+                        MIF_TRUE);
+            EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
+            EVTop_save(ckt, MIF_TRUE, 0.0);
+        }
+        else 
+#endif 
+// If no event-driven instances, do what SPICE normally does
+            error = CKTop(ckt,
+                (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+                (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+                ckt->CKTdcMaxIter);
+
+        if(error){
+        	 fprintf(stdout,"\nAC operating point failed -\n");
+           CKTncDump(ckt);
+           return(error);
+        	} 
+        }
+                ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
+                error = CKTload(ckt);
+                if(error) return(error);
+
+        /* end of test */
+#endif
+
+        ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODEAC;
         error = NIacIter(ckt);
         if (error) {
 	    ckt->CKTcurrentAnalysis = DOING_AC;
@@ -250,8 +288,6 @@ ACan(CKTcircuit *ckt, int restart)
 		    startkTime;
 	    return(error);
 	}
-  
-
 
 #ifdef WANT_SENSE2
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode&ACSEN) ){
@@ -343,7 +379,9 @@ ACan(CKTcircuit *ckt, int restart)
             break;
         default:
             return(E_INTERN);
+    
         }
+
     }
 endsweep:
     (*(SPfrontEnd->OUTendPlot))(acPlot);
