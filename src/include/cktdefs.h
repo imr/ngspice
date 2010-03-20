@@ -178,8 +178,6 @@ typedef struct {
 #define MODEINITTRAN 0x1000
 #define MODEINITPRED 0x2000
 
-#define MODEINITHERTZ 0x4000
-
 /* old 'nosolv' paramater */
 #define MODEUIC 0x10000l
 
@@ -255,7 +253,7 @@ typedef struct {
     double CKTrelDv;		/* rel limit for iter-iter voltage change */
     int CKTtroubleNode;		/* Non-convergent node number */
     GENinstance *CKTtroubleElt;	/* Non-convergent device instance */
-
+    int CKTvarHertz; /* variable HERTZ in B source */
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 #ifdef XSPICE
     Evt_Ckt_Data_t *evt;  /* all data about event driven stuff */

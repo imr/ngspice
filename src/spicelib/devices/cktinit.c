@@ -81,6 +81,7 @@ CKTinit(void **ckt)		/* new circuit to create */
     sckt->CKTnodeDamping = 0;
     sckt->CKTabsDv = 0.5;
     sckt->CKTrelDv = 2.0;
+    sckt->CKTvarHertz = 0;
 
 #ifdef XSPICE
 /* gtri - begin - wbk - allocate/initialize substructs */

@@ -230,7 +230,7 @@ ACan(CKTcircuit *ckt, int restart)
         ckt->CKTomega = 2.0 * M_PI *freq;
 
         /* Update opertating point, if variable 'hertz' is given */
-        if (ckt->CKTmode & MODEINITHERTZ) {
+        if (ckt->CKTvarHertz) {
 #ifdef XSPICE
             /* Call EVTop if event-driven instances exist */
 
@@ -256,10 +256,10 @@ ACan(CKTcircuit *ckt, int restart)
                 CKTncDump(ckt);
                 return(error);
             } 
+            ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
+            error = CKTload(ckt);
+            if(error) return(error);
         }
-        ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
-        error = CKTload(ckt);
-        if(error) return(error);
 
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODEAC;
         error = NIacIter(ckt);
@@ -352,7 +352,7 @@ ACan(CKTcircuit *ckt, int restart)
 
             freq *= ((ACAN*)ckt->CKTcurJob)->ACfreqDelta;
             if(((ACAN*)ckt->CKTcurJob)->ACfreqDelta==1) goto endsweep;
-            break;
+        break;
         case LINEAR:
 
 #ifdef HAS_WINDOWS

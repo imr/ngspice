@@ -41,7 +41,7 @@ void INP2B(void *ckt, INPtables * tab, card * current)
 
     /* if we find 'hertz' variable, set flag to actual circuit */
     if(strstr(current->line, "hertz"))
-        inckt->CKTmode = MODEINITHERTZ;
+        inckt->CKTvarHertz = 1;
         
     line = current->line;
     INPgetTok(&line, &name, 1);
