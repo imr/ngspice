@@ -1,4 +1,8 @@
 2010-03-20 Holger Vogt
+ * variable.c:450 prevent ngspice from crashing after command 'unset zzz', 
+   when zzz is not defined
+
+2010-03-20 Holger Vogt
  * com_compose.c: comment corrected
  * subckt.c, cktdefs.h, acan.c, ifeval.c, inp2b.c, inpptree.c, cktinit.c:
    Variable HERTZ added to B source

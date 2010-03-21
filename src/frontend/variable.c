@@ -447,7 +447,7 @@ cp_remvar(char *varname)
         /* Gotta make up a var struct for cp_usrset()... */
         v = alloc(struct variable);
 	ZERO(v, struct variable);
-        v->va_name = varname;
+        v->va_name = copy(varname);
         v->va_type = VT_NUM;
         v->va_bool = 0;
         found = FALSE;
