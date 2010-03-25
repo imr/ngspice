@@ -1671,6 +1671,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\include\dstring.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\misc\dup2.h"
 				>
 			</File>
@@ -5556,6 +5560,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\analysis\dsetparm.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\dstring.c"
 				>
 			</File>
 			<File
