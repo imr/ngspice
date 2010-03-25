@@ -32,7 +32,6 @@ Todo:
 extern void txfree (void *ptr);
 
 char *nupa_inst_name;
-static tdico *inst_dicoS ;
 
 /* number of parameter substitutions, available only after the substitution */
 extern long dynsubst; /* spicenum.c:144 */
@@ -166,7 +165,7 @@ findsubname (tdico * dico, SPICE_DSTRINGPTR dstr_p)
   SPICE_DSTRING name ;			/* extract a name */
   char *s ;				/* current dstring */
   int h, j, k, nest, ls;
-  unsigned char found;
+  int found ;
   h = 0;
 
   ls = spice_dstring_length (dstr_p) ;
@@ -310,7 +309,7 @@ transform (tdico * dico, SPICE_DSTRINGPTR dstr_p, unsigned char nostripping,
  *   'B'  netlist (or .model ?) line that had Braces killed 
  */
 {
-   int i, k, a, n;
+   int k, a, n;
    char *s ;				/* dstring value of dstr_p */
    char *t ;				/* dstring value of tstr */
    char category;
@@ -367,7 +366,7 @@ transform (tdico * dico, SPICE_DSTRINGPTR dstr_p, unsigned char nostripping,
    }
    else if (upcase (s[0]) == 'X')
    {				/* strip actual parameters */
-      i = findsubname (dico, dstr_p) ;	/* i= index following last identifier in s */
+      findsubname (dico, dstr_p) ;/* i= index following last identifier in s */
       category = 'X';
    }
    else if (s[0] == '+')		/* continuation line */
@@ -454,9 +453,7 @@ nupa_init (char *srcfile)
   incontrolS = 0;
   placeholder = 0;
   dicoS = (tdico *)new(sizeof(tdico));
-  inst_dicoS = (tdico *)new(sizeof(tdico));
   initdico (dicoS);
-  initdico (inst_dicoS);
 
   dicoS->dynrefptr = (char**)tmalloc((dynmaxline + 1)*sizeof(char*));
   dicoS->dyncategory = (char*)tmalloc((dynmaxline + 1)*sizeof(char));
@@ -545,21 +542,19 @@ nupa_scan (char *s, int linenum, int is_subckt)
 }
 
 /* -----------------------------------------------------------------
- * Dump the contents of the symbol table.
+ * Dump the contents of a symbol table.
  * ----------------------------------------------------------------- */
-void
-nupa_list_params (FILE * cp_out)
+static void
+dump_symbol_table( tdico *dico_p, NGHASHPTR htable_p, FILE * cp_out)
 {
    char *name;				/* current symbol */
    entry *entry_p ;			/* current entry */
-   tdico *dico_p ;			/* local copy for speed */
    NGHASHITER iter ;			/* hash iterator - thread safe */
 
-   dico_p = dicoS ;
-   fprintf (cp_out, "\n\n");
-   for (entry_p = nghash_enumerateRE(dico_p->symbol_table,NGHASH_FIRST(&iter)) ;
+   NGHASH_FIRST(&iter) ;
+   for (entry_p = nghash_enumerateRE( htable_p,&iter) ;
         entry_p ;
-        entry_p = nghash_enumerateRE(dico_p->symbol_table,&iter))
+        entry_p = nghash_enumerateRE( htable_p,&iter))
    {
       if (entry_p->tp == 'R')
       {
@@ -570,17 +565,58 @@ nupa_list_params (FILE * cp_out)
 	 spice_dstring_free( & dico_p->lookup_buf ) ;
       }
    }
+} /* end dump_symbol_table() */
+
+
+/* -----------------------------------------------------------------
+ * Dump the contents of the symbol table.
+ * ----------------------------------------------------------------- */
+void
+nupa_list_params (FILE * cp_out)
+{
+   int depth ;				/* nested subcircit depth */
+   tdico *dico_p ;			/* local copy for speed */
+   NGHASHPTR htable_p ;			/* current hash table */
+
+   dico_p = dicoS ;
+   fprintf (cp_out, "\n\n");
+
+   /* -----------------------------------------------------------------
+    * Print out the locally defined symbols from highest to lowest priority.
+    * If there are no parameters, the hash table will not be allocated as
+    * we use lazy allocation to save memory.
+    * ----------------------------------------------------------------- */
+   for( depth = dico_p->stack_depth ; depth > 0 ; depth-- ){
+     htable_p = dico_p->local_symbols[depth] ;
+     if( htable_p ){
+       fprintf (cp_out, " local symbol definitions for:%s\n", dico_p->inst_name[depth]) ;
+       dump_symbol_table( dico_p, htable_p, cp_out ) ;
+     }
+   }
+
+   /* -----------------------------------------------------------------
+    * Finally dump the global symbols.
+    * ----------------------------------------------------------------- */
+   fprintf (cp_out, " global symbol definitions:\n") ;
+   dump_symbol_table( dico_p, dico_p->global_symbols, cp_out ) ;
 }
 
 /* -----------------------------------------------------------------
- * Lookup a parameter value in the symbol table.
+ * Lookup a parameter value in the symbol tables.   This involves
+ * multiple lookups in various hash tables in order to get the scope
+ * correct.  Each subcircuit instance will have its own local hash
+ * table if it has parameters.   We can return whenever we get a hit.
+ * Otherwise, we have to exhaust all of the tables including the global
+ * table.
  * ----------------------------------------------------------------- */
 double
 nupa_get_param (char *param_name, int *found)
 {
+   int depth ;				/* nested subcircit depth */
    char *up_name;			/* current parameter upper case */
    entry *entry_p ;			/* current entry */
    tdico *dico_p ;			/* local copy for speed */
+   NGHASHPTR htable_p ;			/* current hash table */
    double result = 0;			/* parameter value */
 
    dico_p = dicoS ;
@@ -589,11 +625,27 @@ nupa_get_param (char *param_name, int *found)
    up_name = spice_dstring_value( & dico_p->lookup_buf ) ;
 
    *found = 0;
-   entry_p = nghash_find( dico_p->symbol_table, up_name ) ;
-   if( entry_p ){
-     result = entry_p->vl ;
-     *found = 1;
+   for( depth = dico_p->stack_depth ; depth > 0 ; depth-- ){
+     htable_p = dico_p->local_symbols[depth] ;
+     if( htable_p ){
+       entry_p = nghash_find( htable_p, up_name ) ;
+       if( entry_p ){
+	 result = entry_p->vl ;
+	 *found = 1;
+	 break ;
+       }
+     }
    }
+
+   if(!(*found)){
+     /* No luck.  Try the global table. */
+     entry_p = nghash_find( dico_p->global_symbols, up_name ) ;
+     if( entry_p ){
+       result = entry_p->vl ;
+       *found = 1;
+     }
+   }
+
    spice_dstring_free( & dico_p->lookup_buf ) ;
    return result;
 }
@@ -604,6 +656,7 @@ nupa_add_param (char *param_name, double value)
    char *up_name;			/* current parameter upper case */
    entry *entry_p ;			/* current entry */
    tdico *dico_p ;			/* local copy for speed */
+   NGHASHPTR htable_p ;			/* hash table of interest */
 
    dico_p = dicoS ;
    /* -----------------------------------------------------------------
@@ -614,7 +667,18 @@ nupa_add_param (char *param_name, double value)
    scopy_up( & dico_p->lookup_buf, param_name ) ;
    up_name = spice_dstring_value( & dico_p->lookup_buf ) ;
 
-   entry_p = attrib (dicoS, up_name, 'N');
+   if( dico_p->stack_depth > 0 ){
+     /* can't be lazy anymore */
+     if(!(dico_p->local_symbols[dico_p->stack_depth])){
+       dico_p->local_symbols[dico_p->stack_depth] = nghash_init( NGHASH_MIN_SIZE ) ;
+     }
+     htable_p = dico_p->local_symbols[dico_p->stack_depth] ;
+   } else {
+     /* global symbol */
+     htable_p = dico_p->global_symbols ;
+   }
+
+   entry_p = attrib ( dico_p, htable_p, up_name, 'N');
    if( entry_p ){
      entry_p->vl = value;
      entry_p->tp = 'R';
@@ -631,12 +695,16 @@ nupa_add_inst_param (char *param_name, double value)
    entry *entry_p ;			/* current entry */
    tdico *dico_p ;			/* local copy for speed */
 
-   dico_p = inst_dicoS ;
+   dico_p = dicoS ;
    spice_dstring_reinit( & dico_p->lookup_buf ) ;
    scopy_up( & dico_p->lookup_buf, param_name ) ;
    up_name = spice_dstring_value( & dico_p->lookup_buf ) ;
 
-   entry_p = attrib (dicoS, up_name, 'N');
+   if(!(dico_p->inst_symbols)){
+     dico_p->inst_symbols = nghash_init( NGHASH_MIN_SIZE ) ;
+   }
+
+   entry_p = attrib ( dico_p, dico_p->inst_symbols, up_name, 'N');
    if( entry_p ){
      entry_p->vl = value;
      entry_p->tp = 'R';
@@ -646,18 +714,35 @@ nupa_add_inst_param (char *param_name, double value)
    spice_dstring_free( & dico_p->lookup_buf ) ;
 }
 
+/* -----------------------------------------------------------------
+ * This function copies any definitions in the inst_symbols hash
+ * table which are qualified symbols and makes them available at
+ * the global level.  Afterwards, the inst_symbols table is freed.
+ * ----------------------------------------------------------------- */
 void
 nupa_copy_inst_dico ()
 {
-   tdico *idico_p ;			/* local copy for speed */
    entry *entry_p ;			/* current entry */
+   tdico *dico_p ;			/* local copy for speed */
    NGHASHITER iter ;			/* hash iterator - thread safe */
 
-   idico_p = inst_dicoS ;
-   for (entry_p = nghash_enumerateRE(idico_p->symbol_table,NGHASH_FIRST(&iter)) ;
-        entry_p ;
-        entry_p = nghash_enumerateRE(idico_p->symbol_table,&iter))
-     nupa_add_param ( entry_p->symbol, entry_p->vl) ;
+   dico_p = dicoS ;
+   if( dico_p->inst_symbols ){
+     /* We we perform this operation we should be in global scope */
+     if( dico_p->stack_depth > 0 ){
+       fprintf( stderr, "stack depth should be zero.\n" ) ;
+     }
+     NGHASH_FIRST(&iter)  ;
+     for (entry_p = nghash_enumerateRE(dico_p->inst_symbols,&iter ) ;
+	  entry_p ;
+	  entry_p = nghash_enumerateRE(dico_p->inst_symbols,&iter)){
+       nupa_add_param ( entry_p->symbol, entry_p->vl) ;
+       dico_free_entry( entry_p ) ;
+     }
+
+     nghash_free( dico_p->inst_symbols, NULL, NULL ) ;
+     dico_p->inst_symbols = NULL ;
+   }
 }
 
 char *
@@ -840,18 +925,9 @@ nupa_fetchinstance (void)
 }
 #endif /* USING_NUPATEST */
 
-static void dump_symbols( tdico *dico_p )
+void dump_symbols( tdico *dico_p )
 {
-   char *name_p ;			/* current symbol */
-   entry *entry_p ;			/* current entry */
-   void *key ;				/* return key */
-   NGHASHITER iter ;			/* hash iterator - thread safe */
 
    fprintf (stderr, "Symbol table\n");
-   for (entry_p = nghash_enumeratekRE(dico_p->symbol_table,&key,NGHASH_FIRST(&iter)) ;
-        entry_p ;
-        entry_p = nghash_enumeratekRE(dico_p->symbol_table,&key,&iter)) {
-     name_p = (char *) key ;
-     fprintf (stderr, "       ---> %s = %g\n", name_p, entry_p->vl) ;
-   }
+   nupa_list_params ( stderr ) ;
 }

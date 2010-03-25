@@ -177,21 +177,26 @@ debugwarn (tdico * d, char *s)
 void
 initdico (tdico * dico)
 {
+   int asize ;				/* default allocation size */
    COMPATMODE_T compat_mode;
 
-   dico->nbd = 0;
    spice_dstring_init( &(dico->option) ) ;
    spice_dstring_init( &(dico->srcfile) ) ;
    
    dico->srcline = -1;
    dico->errcount = 0;
 
-   dico->symbol_table = nghash_init( NGHASH_MIN_SIZE ) ;
-   nghash_unique( dico->symbol_table, FALSE ) ;
+   dico->global_symbols = nghash_init( NGHASH_MIN_SIZE ) ;
+   nghash_unique( dico->global_symbols, TRUE ) ; /* no rewrite of global symbols */
    spice_dstring_init( &(dico->lookup_buf) ) ;
   
-   dico->tos = 0;
-   dico->stack[dico->tos] = 0;        /* global data beneath */
+   dico->stack_depth = 0 ;		/* top of the stack */
+   asize = dico->symbol_stack_alloc = 10 ;/* expected stack depth - no longer limited */
+   asize++ ;				/* account for zero */
+   dico->local_symbols = tmalloc( asize * sizeof(NGHASHPTR) ) ;
+   dico->inst_name = tmalloc( asize * sizeof(char *) ) ;
+   dico->inst_symbols = NULL ;		/* instance qualified are lazily allocated */
+
    initkeys ();
 
    compat_mode = ngspice_compat_mode() ;
@@ -202,7 +207,7 @@ initdico (tdico * dico)
      dico->hspice_compatibility = 0 ;
 }
 
-static void dico_free_entry( entry *entry_p )
+void dico_free_entry( entry *entry_p )
 {
     if( entry_p->symbol ){
       txfree(entry_p->symbol ) ;
@@ -210,32 +215,6 @@ static void dico_free_entry( entry *entry_p )
     txfree(entry_p) ;
 } /* end dico_free_entry() */
 
-static
-entry **dico_rebuild_symbol_array( tdico * dico, int *num_entries_ret )
-{
-    int i ;				/* counter */
-    int size ;				/* number of entries in symbol table */
-    entry *entry_p ;			/* current entry */
-   NGHASHITER iter ;			/* hash iterator - thread safe */
-
-    size = *num_entries_ret = nghash_get_size( dico->symbol_table ) ;
-    if( dico->num_symbols == size ){
-      /* no work to do up to date */
-      return( dico->symbol_array ) ;
-    }
-    if( size <= 0 ){
-      size = 1 ;
-    }
-    dico->symbol_array = trealloc( dico->symbol_array, (size+1) * sizeof(entry *) ) ;
-    i = 0 ;
-    for (entry_p = nghash_enumerateRE(dico->symbol_table,NGHASH_FIRST(&iter)) ;
-	 entry_p ;
-	 entry_p = nghash_enumerateRE(dico->symbol_table,&iter)){
-      dico->symbol_array[i++] = entry_p ;
-    }
-    dico->num_symbols = *num_entries_ret ;
-    return dico->symbol_array ;
-}
 
 /*  local semantics for parameters inside a subckt */
 /*  arguments as wll as .param expressions  */
@@ -251,52 +230,61 @@ static void
 dicostack (tdico * dico, char op)
 /* push or pop operation for nested subcircuit locals */
 {
-   char *param_p, *inst_name;
-   int i, current_stack_size, old_stack_size;
-   int num_entries ;				/* number of entries */
-   entry **entry_array ;			/* entry array */
+   int asize ;					/* allocation size */
+   char *inst_name ;				/* name of subcircuit instance */
+   char *param_p ;				/* qualified inst parameter name */
    entry *entry_p ;				/* current entry */
-   SPICE_DSTRING param_name ;
+   NGHASHPTR htable_p ;				/* current hash table */
+   NGHASHITER iter ;				/* hash iterator - thread safe */
 
    if (op == Push)
    {
-      if (dico->tos < (20 - 1))
-         dico->tos++;
-      else
-         message (dico, " Subckt Stack overflow");
-
-      dico->stack[dico->tos] = dico->nbd;
-      dico->inst_name[dico->tos] = nupa_inst_name;
+      dico->stack_depth++;
+      if ( dico->stack_depth > dico->symbol_stack_alloc ){
+	/* Just double the stack alloc */
+	dico->symbol_stack_alloc *= 2 ;
+	asize = dico->symbol_stack_alloc + 1 ; /* account for zero */
+	dico->local_symbols = trealloc( dico->local_symbols, asize * sizeof(NGHASHPTR) ) ;
+	dico->inst_name = trealloc( dico->inst_name, asize * sizeof(char *) ) ;
+      }
+      /* lazy allocation - don't allocate space if we can help it */
+      dico->local_symbols[dico->stack_depth] = NULL ; 
+      dico->inst_name[dico->stack_depth] = nupa_inst_name ;
    }
    else if (op == Pop)
    {
-      if (dico->tos > 0)
+      if (dico->stack_depth > 0)
       {
-         /* keep instance parameters around */
-         current_stack_size = dico->nbd;
-         old_stack_size = dico->stack[dico->tos];
-         inst_name = dico->inst_name[dico->tos];
-	 spice_dstring_init(&param_name) ;
-	 entry_array = dico_rebuild_symbol_array( dico, &num_entries ) ;
+	 /* -----------------------------------------------------------------
+	  * Keep instance parameters around by transferring current local
+	  * scope variables to an instance qualified hash table.
+	  * ----------------------------------------------------------------- */
+	 inst_name = dico->inst_name[dico->stack_depth] ;
+	 htable_p = dico->local_symbols[dico->stack_depth] ;
+	 if( htable_p ){
+	   SPICE_DSTRING param_name ;			/* build a qualified name */
+	   spice_dstring_init(&param_name) ;
 
-         for (i = old_stack_size + 1; i <= current_stack_size; i++)
-         {
-	    spice_dstring_reinit(&param_name) ;
-	    if( i < num_entries ){
-	      entry_p = entry_array[i] ;
-	      param_p = spice_dstring_print( &param_name,  "%s.%s", 
-						inst_name, 
-						entry_p->symbol ) ;
+	   NGHASH_FIRST(&iter) ;
+	   for (entry_p = nghash_enumerateRE( htable_p,&iter ) ;
+		entry_p ;
+		entry_p = nghash_enumerateRE( htable_p,&iter))
+	   {
+	     spice_dstring_reinit(&param_name) ;
+	     param_p = spice_dstring_print( &param_name,  "%s.%s", 
+					    inst_name, 
+					    entry_p->symbol ) ;
 	      nupa_add_inst_param (param_p, entry_p->vl); 
-/*	      nghash_deleteItem( dico->symbol_table, entry_p->symbol, entry_p ) ;
-	      dico_free_entry( entry_p ) ; */
+	      dico_free_entry( entry_p ) ;
 	    }
+	    nghash_free( htable_p, NULL, NULL ) ;
+	   spice_dstring_free(&param_name) ;
          }
          tfree (inst_name);
-	 spice_dstring_free(&param_name) ;
 
-         dico->nbd = dico->stack[dico->tos];        /* simply kill all local items */
-         dico->tos--;
+         dico->inst_name[dico->stack_depth] = NULL ;
+         dico->local_symbols[dico->stack_depth] = NULL ;
+         dico->stack_depth--;
       }
       else
       {
@@ -308,21 +296,37 @@ dicostack (tdico * dico, char op)
 int
 donedico (tdico * dico)
 {
-   int sze = dico->nbd;
+   int sze = nghash_get_size( dico->global_symbols ) ;
    return sze;
 }
 
-/* FIXME : WPS this should be a hash table */
+/* -----------------------------------------------------------------
+ * Now entryb works on the given hash table hierarchy.   First
+ * look thru the stack of local symbols and then look at the global
+ * symbols in that order.
+ * ----------------------------------------------------------------- */
 static entry *
-entrynb (tdico * d, char *s)
-/* symbol lookup from end to start,  for stacked local symbols .*/
-/* bug: sometimes we need access to same-name symbol, at lower level? */
+entrynb ( tdico *d, char *s)
 {
+   int depth ;				/* stack depth */
    entry *entry_p ;			/* search hash table */
+   NGHASHPTR htable_p ;			/* hash table */
 
-   entry_p = nghash_find( d->symbol_table, s ) ;
-   return( entry_p ) ;
-}
+   /* look at the current scope and then backup the stack */
+   for( depth = d->stack_depth ; depth > 0 ; depth-- ){
+     htable_p = d->local_symbols[depth] ;
+     if( htable_p ){
+       entry_p = nghash_find( htable_p, s ) ;
+       if( entry_p ){
+	 return( entry_p ) ;
+       }
+    }
+  }
+  /* No local symbols - try the global table */
+  entry_p = nghash_find( d->global_symbols, s ) ;
+  return( entry_p ) ;
+
+} /* end entrynb() */
 
 char
 getidtype (tdico * d, char *s)
@@ -331,11 +335,11 @@ getidtype (tdico * d, char *s)
    entry *entry_p ;		  /* hash table entry */
    char itp = '?';                /* assume unknown */
 
-   entry_p = entrynb (d, s) ;
-   if( entry_p ){
-      itp = entry_p->tp ;
-   }
-   return (itp) ;
+   entry_p = entrynb( d, s ) ;
+  if( entry_p )
+    itp = entry_p->tp ;
+
+  return (itp) ;
 }
 
 static double
@@ -379,30 +383,27 @@ fetchnumentry (tdico * dico, char *t, unsigned char *perr)
 /*******  writing dictionary entries *********/
 
 entry *
-attrib (tdico * dico, char *t, char op)
+attrib (tdico *dico_p, NGHASHPTR htable_p, char *t, char op)
 {
 /* seek or attribute dico entry number for string t.
    Option  op='N' : force a new entry, if tos>level and old is  valid.
 */
-   int i;
    entry *entry_p ;			/* symbol table entry */
 
-   entry_p = nghash_find( dico->symbol_table, t ) ;
+   entry_p = nghash_find( htable_p, t ) ;
    if ( entry_p && (op == 'N')
-     && ( entry_p->level < dico->tos) && ( entry_p->tp != '?'))
+     && ( entry_p->level < dico_p->stack_depth) && ( entry_p->tp != '?'))
    {
       entry_p = NULL ;
    }
 
    if (!(entry_p))
    {
-      dico->nbd++;
-      i = dico->nbd;
       entry_p = tmalloc( sizeof(entry) ) ;
       entry_p->symbol = strdup( t ) ;
       entry_p->tp = '?';        /* signal Unknown */
-      entry_p->level = dico->tos ;
-      nghash_insert( dico->symbol_table, t, entry_p ) ;
+      entry_p->level = dico_p->stack_depth ;
+      nghash_insert( htable_p, t, entry_p ) ;
    }
    return entry_p ;
 }
@@ -429,9 +430,21 @@ define (tdico * dico,
    unsigned char err, warn;
    entry *entry_p ;			/* spice table entry */
    SPICE_DSTRING vartemp ;		/* vairable temp */
+   NGHASHPTR htable_p ;			/* hash table */
 
    spice_dstring_init(&vartemp) ;
-   entry_p = attrib (dico, t, op);
+
+   if( dico->stack_depth > 0 ){
+     /* can't be lazy anymore */
+     if(!(dico->local_symbols[dico->stack_depth])){
+       dico->local_symbols[dico->stack_depth] = nghash_init( NGHASH_MIN_SIZE ) ;
+     }
+     htable_p = dico->local_symbols[dico->stack_depth] ;
+   } else {
+     /* global symbol */
+     htable_p = dico->global_symbols ;
+   }
+   entry_p = attrib (dico, htable_p, t, op);
    err = 0;
    if (!(entry_p))
       err = message (dico, " Symbol table overflow");
@@ -453,9 +466,9 @@ define (tdico * dico,
          entry_p->sbbase = base ;
          /* if ( (c !='?') && (i<= dico->stack[dico->tos]) ) {  */
          if (c == '?')
-            entry_p->level = dico->tos; /* promote! */
+            entry_p->level = dico->stack_depth ; /* promote! */
 
-         if ( entry_p->level < dico->tos)
+         if ( entry_p->level < dico->stack_depth)
          {
             /* warn about re-write to a global scope! */
             scopys(&vartemp, t) ;

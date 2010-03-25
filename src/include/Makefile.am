@@ -28,6 +28,7 @@ noinst_HEADERS = 	\
 	dllitf.h	\
 	domndefs.h	\
 	dopdefs.h	\
+	dstring.h	\
 	dvec.h 		\
 	elctdefs.h	\
 	enh.h		\

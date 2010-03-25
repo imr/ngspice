@@ -39,11 +39,11 @@ typedef struct nghashbox {
     NGTABLEPTR searchPtr ;	/* used for find again mechanism */
     void *compare_func ;	/* the comparison function */
     void *hash_func ;		/* the hash function */
+    double growth_factor ;	/* how much to grow table by */
     int size ;			/* the size of the table */
     int max_density ;		/* maximum number of entries before growth */
     int num_entries ;		/* current number of entries in table */
     int need_resize ;		/* amount before we need a resize */
-    float growth_factor ;	/* how much to grow table by */
     long access ;		/* used for statistics */
     long collision ; 		/* collision times */
     unsigned int  power_of_two : 8 ; /* build table as a power of two */
@@ -51,29 +51,40 @@ typedef struct nghashbox {
     unsigned int  unique : 16 ;	/* true if only one unique item in col. list */
 } NGHASHBOX, *NGHASHPTR ;
 
+/* -----------------------------------------------------------------
+ * This enumerated type is used to control the base hash function types
+ * as well as hash table attributes such as uniqueness and power of 2.
+ * The negative definitions for the function are used so we catch a
+ * segfault immediately if the hash table is used incorrectly.  Notice
+ * that the default function string is zero.  Because there definitions
+ * can be cast into functions, they are defined as longs so it will work
+ * on all architecture types include 64bits.
+ * ----------------------------------------------------------------- */
 typedef enum {
-  NGHASH_NONUNIQUE 	= 0,
-  NGHASH_UNIQUE 	= 1L,
-  NGHASH_POWER_OF_TWO 	= (1L<<1)
+  NGHASH_FUNC_NUM	= -2L,
+  NGHASH_FUNC_PTR	= -1L,
+  NGHASH_FUNC_STR 	=  0L,
+  NGHASH_UNIQUE 	=  1L,
+  NGHASH_POWER_OF_TWO 	=  (1L<<1),
+  NGHASH_UNIQUE_TWO 	= NGHASH_UNIQUE | NGHASH_POWER_OF_TWO
 } NGHASHFLAGS_T ;
 
 typedef unsigned int (*nghash_func)(NGHASHPTR,void *) ;
 
-/* the default hashing functions */
-typedef enum {
-  NGHASH_FUNC_STR 	=	0,
-  NGHASH_FUNC_PTR	=       -1,
-  NGHASH_FUNC_NUM	=	-2
-} NGHASH_FUNC_T ;
 
 typedef struct nghash_iter_rec {
   struct ngtable_rec *position ;
 } NGHASHITER, *NGHASHITERPTR ;
+
 /* -----------------------------------------------------------------
  * macro definition for enumeration.  Strange looking but compiler
  * will optimize.  x_yz->position = 0 and x_yz will be returned.
------------------------------------------------------------------ */
 #define NGHASH_FIRST(x_yz)		( ((x_yz)->position = NULL) ? (x_yz) : (x_yz) )
+No longer use this trick and now explicitly write out both lines because
+some compilers complain about unintentional assignment.  Unfortunately,
+we want to intentionally assign it.  The compiler is warning unnecessarily.
+----------------------------------------------------------------- */
+#define NGHASH_FIRST(x_yz)		( (x_yz)->position = NULL ) ;
 #define NGHASH_ITER_EQUAL(x_yz,y_yz)	( (x_yz)->position == (y_yz)->position )
 
 #define NGHASH_DEF_HASH_STR	NGHASH_FUNC_STR

@@ -138,7 +138,7 @@ NGHASHPTR nghash_init_pointer(int num_entries)
     return( nghash_init_with_parms( NGHASH_DEF_CMP_PTR, NGHASH_DEF_HASH_PTR,
 				   num_entries, NGHASH_DEF_MAX_DENSITY,
 				   NGHASH_DEF_GROW_FACTOR, 
-				   NGHASH_UNIQUE|NGHASH_POWER_OF_TWO) ) ;
+				   NGHASH_UNIQUE_TWO) ) ;
 } /* end nghash_init_pointer() */
 
 NGHASHPTR nghash_init_integer(int num_entries)
@@ -146,7 +146,7 @@ NGHASHPTR nghash_init_integer(int num_entries)
     return( nghash_init_with_parms( NGHASH_DEF_CMP_NUM, NGHASH_DEF_HASH_NUM,
 				   num_entries, NGHASH_DEF_MAX_DENSITY,
 				   NGHASH_DEF_GROW_FACTOR,
-				   NGHASH_UNIQUE|NGHASH_POWER_OF_TWO) ) ;
+				   NGHASH_UNIQUE_TWO) ) ;
 } /* end nghash_init_integer() */
 
 int nghash_table_get(NGHASHPTR hashtable)
@@ -166,19 +166,9 @@ int nghash_max_density(NGHASHPTR hashtable,int max_density)
 void nghash_empty(NGHASHPTR hashtable, void (*delete_data) (void *), 
   void (*delete_key) (void *))
 {
-    long old_size ;			/* old size of hash table */
-    long new_size ;			/* new size of hash table */
     NGTABLEPTR *table, hptr , zapptr ;
 
     nghash_reset_stat(hashtable);
-
-    old_size = MAX( NGHASH_MIN_SIZE, hashtable->num_entries ) ;
-    if( hashtable->power_of_two ){
-      new_size = nghash_table_size2( old_size ) ;
-    } else {
-      /* prime size */
-      new_size = nghash_table_size( old_size ) ;
-    }
 
     table = hashtable->hash_table ;
     if( table ){
@@ -316,10 +306,8 @@ void * _nghash_find_again(NGHASHPTR hashtable, void * user_key,BOOL *status)
     int  ret_code ;		/* comparison return code */
     NGTABLEPTR curPtr ;		/* current hashtable entry */
     COMPARE_FUNC compare_func ;	/* user defined comparison function */
-    NGTABLEPTR *table ;		/* hash table array */
 
     /* initialization */
-    table = hashtable->hash_table ;
     DS(hashtable->access++;) ;
 
     if( hashtable->searchPtr ){

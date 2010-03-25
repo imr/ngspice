@@ -60,15 +60,14 @@ typedef struct _ttdico {
   int   srcline;
   int oldline;
   int   errcount;
-  int   num_symbols ;		/* number of symbols in entry array */
-  entry **symbol_array ;	/* symbol entries in array format for stack ops */
-  NGHASHPTR symbol_table ;	/* hash table of symbols for quick lookup */
-  int     nbd;                  /* number of data entries */
+  int symbol_stack_alloc ;	/* stack allocation */
+  int stack_depth ;		/* current depth of the symbol stack */
+  NGHASHPTR global_symbols ;	/* hash table of globally defined symbols for quick lookup */
+  NGHASHPTR *local_symbols ;	/* stack of locally defined symbols */
+  NGHASHPTR inst_symbols ;	/* instance qualified symbols - after a pop */
+  char **inst_name ;		/* name of subcircuit */
   fumas   fms[101];
   int   nfms;   /* number of functions & macros */
-  int   stack[20];
-  char    *inst_name[20];
-  int   tos;    /* top of stack index for symbol mark/release mechanics */
   auxtable nodetab;
 //  char * refptr[Maxline]; /* pointers to source code lines */
   char **dynrefptr;
@@ -79,6 +78,7 @@ typedef struct _ttdico {
 
 void initdico(tdico * dico);
 int donedico(tdico * dico);
+void dico_free_entry( entry *entry_p ) ;
 unsigned char defsubckt( tdico *dico, char * s, int w, char categ);
 int findsubckt( tdico *dico, char * s, SPICE_DSTRINGPTR subname);  
 unsigned char nupa_substitute( tdico *dico, char * s, char * r, unsigned char err);
@@ -87,4 +87,4 @@ unsigned char nupa_subcktcall( tdico *dico, char * s, char * x, unsigned char er
 void nupa_subcktexit( tdico *dico);
 tdico * nupa_fetchinstance(void);
 char getidtype( tdico *d, char * s);
-entry *attrib( tdico *dico, char * t, char op );
+entry *attrib( tdico *d, NGHASHPTR htable, char * t, char op );

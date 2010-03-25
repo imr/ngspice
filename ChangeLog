@@ -1,3 +1,9 @@
+2010-03-25 Dietmar Warning
+ * Bill Swartz patch:
+ * numparam/*.c, *.h, *.txt, misc/hash.c, string.c: local and global hash lists for subckts
+ * misc/dstring.c, include/dstring.h, Makefile.am: dynamic string feature
+ * analysis/cktop.c: remove the CR in some printf's
+ 
 2010-03-20 Holger Vogt
  * variable.c:450 prevent ngspice from crashing after command 'unset zzz', 
    when zzz is not defined

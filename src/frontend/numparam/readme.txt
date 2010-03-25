@@ -295,7 +295,7 @@ In the syntax description,
    symbols and any .param assignments are considered local: they mask any
    global identical names, until the .ends line is encountered.
    You cannot reassign to a global number inside a .subckt, a local copy is
-   created instead. Scope nesting works up to a level of 10. For example,
+   created instead. Scope nesting now works up to any level. For example,
    if the main circuit calls A which has a formal parameter xx, A calls B
    which has a param. xx, and B calls C which also has a formal param. xx,
    there will be three versions of 'xx' in the symbol table but only the most

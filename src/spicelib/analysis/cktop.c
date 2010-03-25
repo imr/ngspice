@@ -419,7 +419,7 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
 
 /*  First, try a straight solution with all sources at zero */
 
-  fprintf (stderr, "\rSupplies reduced to %8.4f%% ", ckt->CKTsrcFact * 100);
+  fprintf (stderr, "Supplies reduced to %8.4f%% ", ckt->CKTsrcFact * 100);
   converged = NIiter (ckt, ckt->CKTdcTrcvMaxIter);
 
 /*  If this doesn't work, try gmin stepping as well for the first solution */
@@ -490,7 +490,7 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
   if (converged == 0)
     do {
 	fprintf (stderr,
-		 "\rSupplies reduced to %8.4f%% ", ckt->CKTsrcFact * 100);
+		 "Supplies reduced to %8.4f%% ", ckt->CKTsrcFact * 100);
 
 	iters = ckt->CKTstat->STATnumIter;
 

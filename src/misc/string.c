@@ -8,6 +8,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 #include "ngspice.h"
 #include "stringutil.h"
+#include "dstring.h"
 
 int
 prefix(register char *p, register char *s)
@@ -195,16 +196,17 @@ register char *p, register char *s)
 char *
 gettok(char **s)
 {
-    char buf[BSIZE_SP];
-    int i = 0;
     char c;
     int paren;
+    char *token ;				/* return token */
+    SPICE_DSTRING buf ;				/* allow any length string */
 
     paren = 0;
     while (isspace(**s))
         (*s)++;
     if (!**s)
         return (NULL);
+    spice_dstring_init(&buf) ;
     while ((c = **s) && !isspace(c)) {
 	if (c == '('/*)*/)
 	    paren += 1;
@@ -212,12 +214,13 @@ gettok(char **s)
 	    paren -= 1;
 	else if (c == ',' && paren < 1)
 	    break;
-        buf[i++] = *(*s)++;
+        spice_dstring_append_char( &buf, *(*s)++ ) ;
     }
-    buf[i] = '\0';
     while (isspace(**s) || **s == ',')
         (*s)++;
-    return (copy(buf));
+    token = copy( spice_dstring_value(&buf) ) ;
+    spice_dstring_free(&buf) ;
+    return ( token ) ;
 }
 
 /*-------------------------------------------------------------------------*
@@ -230,9 +233,9 @@ gettok(char **s)
 char *
 gettok_noparens(char **s)
 {
-    char buf[BSIZE_SP];
-    int i = 0;
     char c;
+    char *token ;				/* return token */
+    SPICE_DSTRING buf ;				/* allow any length string */
 
     while ( isspace(**s) )
         (*s)++;   /* iterate over whitespace */
@@ -240,29 +243,31 @@ gettok_noparens(char **s)
     if (!**s)
         return (NULL);  /* return NULL if we come to end of line */
 
+    spice_dstring_init(&buf) ;
     while ((c = **s) && 
 	   !isspace(c) && 
 	   ( **s != '(' ) &&
 	   ( **s != ')' ) &&
 	   ( **s != ',') 
 	  )  {
-        buf[i++] = *(*s)++;
+        spice_dstring_append_char( &buf, *(*s)++ ) ;
     }
-    buf[i] = '\0';
 
     /* Now iterate up to next non-whitespace char */
     while ( isspace(**s) )
         (*s)++;  
 
-    return (copy(buf));
+    token = copy( spice_dstring_value(&buf) ) ;
+    spice_dstring_free(&buf) ;
+    return ( token ) ;
 }
 
 char *
 gettok_instance(char **s)
 {
-    char buf[BSIZE_SP];
-    int i = 0;
     char c;
+    char *token ;				/* return token */
+    SPICE_DSTRING buf ;				/* allow any length string */
 
     while ( isspace(**s) )
         (*s)++;   /* iterate over whitespace */
@@ -270,20 +275,22 @@ gettok_instance(char **s)
     if (!**s)
         return (NULL);  /* return NULL if we come to end of line */
 
+    spice_dstring_init(&buf) ;
     while ((c = **s) && 
          !isspace(c) && 
          ( **s != '(' ) &&
          ( **s != ')' )
         )  {
-        buf[i++] = *(*s)++;
+        spice_dstring_append_char( &buf, *(*s)++ ) ;
     }
-    buf[i] = '\0';
 
     /* Now iterate up to next non-whitespace char */
     while ( isspace(**s) )
         (*s)++;  
 
-    return (copy(buf));
+    token = copy( spice_dstring_value(&buf) ) ;
+    spice_dstring_free(&buf) ;
+    return ( token ) ;
 }
 
 /*-------------------------------------------------------------------------*
@@ -295,9 +302,9 @@ gettok_instance(char **s)
 char *
 gettok_node(char **s)
 {
-    char buf[BSIZE_SP];
-    int i = 0;
     char c;
+    char *token ;				/* return token */
+    SPICE_DSTRING buf ;				/* allow any length string */
 
     while (isspace(**s) ||
            ( **s == '(' ) ||
@@ -309,15 +316,15 @@ gettok_node(char **s)
     if (!**s)
         return (NULL);  /* return NULL if we come to end of line */
 
+    spice_dstring_init(&buf) ;
     while ((c = **s) && 
 	   !isspace(c) && 
 	   ( **s != '(' ) &&
 	   ( **s != ')' ) &&
 	   ( **s != ',') 
 	   )  {           /* collect chars until whitespace or ( , ) */
-        buf[i++] = *(*s)++;
+        spice_dstring_append_char( &buf, *(*s)++ ) ;
     }
-    buf[i] = '\0';
 
     /* Now iterate up to next non-whitespace char */
     while (isspace(**s) ||
@@ -327,7 +334,9 @@ gettok_node(char **s)
           )
         (*s)++;   /* iterate over whitespace and ( , ) */
 
-    return (copy(buf));
+    token = copy( spice_dstring_value(&buf) ) ;
+    spice_dstring_free(&buf) ;
+    return ( token ) ;
 }
 
 /*-------------------------------------------------------------------------*
@@ -383,26 +392,29 @@ get_r_paren(char **s)
 char *
 stripWhiteSpacesInsideParens(char *str)
 {
-    char buf[BSIZE_SP];
-    int i = 0, j = 0;
+    char *token ;				/* return token */
+    SPICE_DSTRING buf ;				/* allow any length string */
+    int i = 0 ;					/* index into string */
 
     while ( (str[i] == ' ') || (str[i] == '\t') )
         i++;
 
+    spice_dstring_init(&buf) ;
     for(i=i; str[i]!='\0'; i++) 
     {
         if ( str[i] != '(' ) {
-            buf[j++] = str[i];
+	    spice_dstring_append_char( &buf, str[i] ) ;
         } else {
-            buf[j++] = str[i];
+	    spice_dstring_append_char( &buf, str[i] ) ;
             while ( (str[i++] != ')') ) {
-                if ( str[i] != ' ' ) buf[j++] = str[i];
+                if ( str[i] != ' ' ) spice_dstring_append_char( &buf, str[i] ) ;
             }
             i--;
         }
     }
-    buf[j] = '\0';
-    return copy(buf);
+    token = copy( spice_dstring_value(&buf) ) ;
+    spice_dstring_free(&buf) ;
+    return ( token ) ;
 }
 
 
@@ -477,4 +489,3 @@ get_comma_separated_values( char *values[], char *str ) {
   values[count++] = strdup(str);
   return count;
 }
-
