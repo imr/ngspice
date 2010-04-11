@@ -1,5 +1,6 @@
 2010-04-11 Dietmar Warning
- * Robert Larice patch to allow ternary operation in control blocks:
+ * Robert Larice patch to allow new operations in control blocks:
+ * examples/new-check-3.sp, new-check-4.sp
  * src/include/fteparse.h, ngspice.h
  * src/frontend/parse*.*, evaluate.c, Makefile.am, src/misc/string.c, stringutil.h
 
