@@ -214,7 +214,7 @@ extern char *absolute_pathname(char *str, char *dot_path);
 
 extern char *smktemp(char *id);
 
-extern char *copy(char *str);
+extern char *copy(const char *str);
 extern int prefix(char *p, char *str);
 extern int substring(char *sub, char *str);
 extern void cp_printword(char *str, FILE *fp);

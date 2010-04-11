@@ -20,65 +20,45 @@ $Id$
 
 /* static declarations */
 static bool checkvalid(struct pnode *pn);
-static struct element * lexer(void);
-static struct pnode * parse(void);
-static struct pnode * makepnode(struct element *elem);
 static struct pnode * mkbnode(int opnum, struct pnode *arg1, struct pnode *arg2);
 static struct pnode * mkunode(int op, struct pnode *arg);
-static struct pnode * mkfnode(char *func, struct pnode *arg);
+static struct pnode * mkfnode(const char *func, struct pnode *arg);
 static struct pnode * mknnode(double number);
-static struct pnode * mksnode(char *string);
-/*static void   print_elem(struct element *elem); / va: for debugging /
-static char * get_token_name(int e_token); / va, for debugging */
+static struct pnode * mksnode(const char *string);
+
+#include "parse-bison.c"
+
+char * db_print_pnode_tree(struct pnode *p, char *print);
 
 
-static int lasttoken = END, lasttype;
-static char *sbuf;
 
 struct pnode *
 ft_getpnames(wordlist *wl, bool check)
 {
-    struct pnode *pn = NULL, *lpn = NULL, *p;
-    char *xsbuf;
-    char buf[BSIZE_SP], *thisone, *s;
+    struct pnode *pn;
+    char *xsbuf, *sbuf;
+    int rv;
 
     if (!wl) {
         fprintf(cp_err, "Warning: NULL arithmetic expression\n");
         return (NULL);
     }
 
-    lasttoken = END;
     xsbuf = sbuf = wl_flatten(wl);
-    thisone = sbuf;
-    while (*sbuf != '\0') {
-        if (!(p = parse())) {
-            tfree(xsbuf);
-                return (NULL);
-        }
 
-        /* Now snag the name... Much trouble... */
-        while (isspace(*thisone))
-            thisone++;
-        for (s = buf; thisone < sbuf; s++, thisone++)
-            *s = *thisone;
-        while(--s>=buf && isspace(*s))
-            ;
-        s[1] = '\0';
-        p->pn_name = copy(buf);
+    rv = PPparse (&sbuf, &pn);
 
-        if (pn) {
-            lpn->pn_next = p;
-            p->pn_use++;
-            lpn = p;
-        } else
-            pn = lpn = p;
-    }
     tfree(xsbuf);
-    if (check)
-        if (!checkvalid(pn))
-            return (NULL);
+
+    if(rv)
+        return (NULL);
+
+    if (check && !checkvalid(pn))
+        return (NULL);
+
     return (pn);
 }
+
 
 /* See if there are any variables around which have length 0 and are
  * not named 'list'. There should really be another flag for this...
@@ -118,526 +98,6 @@ checkvalid(struct pnode *pn)
     return (TRUE);
 }
 
-/* Everything else is a string or a number. Quoted strings are kept in 
- * the form "string", and the lexer strips off the quotes...
- */
-/* va: the structure returned is static, e_string is a copy 
-       (in case of e_token==VALUE,e_type==STRING) */
-static struct element *
-lexer(void)
-{
-    double *td;
-    int j = 0;
-    static struct element el;
-    static struct element end = { END };
-    static char *specials = " \t%()-^+*,/|&<>~=";
-    static bool bracflag = FALSE;
-    char *ss, *s;
-    int atsign;
-
-    if (bracflag) {
-        bracflag = FALSE;
-        el.e_token = LPAREN;
-        goto done;
-    }
-
-    el.e_token = END;
-    while ((*sbuf == ' ') || (*sbuf == '\t'))
-        sbuf++;
-    if (*sbuf == '\0')
-        goto done;
-
-    switch (*sbuf) {
-
-        case '-':
-        if ((lasttoken == VALUE) || (lasttoken == RPAREN))
-            el.e_token = MINUS;
-        else
-            el.e_token = UMINUS;
-        sbuf++;
-        break;
-
-        case '+':
-        el.e_token = PLUS; 
-        sbuf++;
-        break;
-
-        case ',':
-        el.e_token = COMMA;
-        sbuf++;
-        break;
-
-        case '*':
-        el.e_token = TIMES; 
-        sbuf++;
-        break;
-
-        case '%':
-        el.e_token = MOD; 
-        sbuf++;
-        break;
-
-        case '/':
-        el.e_token = DIVIDE; 
-        sbuf++;
-        break;
-
-        case '^':
-        el.e_token = POWER; 
-        sbuf++;
-        break;
-
-        case '[':
-        if (sbuf[1] == '[') {
-            el.e_token = RANGE;
-            sbuf += 2;
-        } else {
-            el.e_token = INDX;
-            sbuf++;
-        }
-        bracflag = TRUE;
-        break;
-
-        case '(':
-        if (((lasttoken == VALUE) && ((lasttype == NUM))) || (lasttoken
-                == RPAREN)) {
-            el = end;
-            goto done;
-        } else {
-            el.e_token = LPAREN; 
-            sbuf++;
-            break;
-        }
-
-        case ']':
-        el.e_token = RPAREN; 
-        if (sbuf[1] == ']')
-            sbuf += 2;
-        else
-            sbuf++;
-        break;
-
-        case ')':
-        el.e_token = RPAREN; 
-        sbuf++;
-        break;
-
-        case '=':
-        el.e_token = EQ;
-        sbuf++;
-        break;
-
-        case '>':
-        case '<':
-        for (j = 0; isspace(sbuf[j]); j++)
-            ; /* The lexer makes <> into < > */
-        if (((sbuf[j] == '<') || (sbuf[j] == '>')) &&
-                (sbuf[0] != sbuf[j])) {
-            /* Allow both <> and >< for NE. */
-            el.e_token = NE;
-            sbuf += 2 + j;
-        } else if (sbuf[1] == '=') {
-            if (sbuf[0] == '>')
-                el.e_token = GE;
-            else
-                el.e_token = LE;
-            sbuf += 2;
-        } else {
-            if (sbuf[0] == '>')
-                el.e_token = GT;
-            else
-                el.e_token = LT;
-            sbuf++;
-        }
-        break;
-
-        case '&':
-        el.e_token = AND;
-        sbuf++;
-        break;
-
-        case '|':
-        el.e_token = OR;
-        sbuf++;
-        break;
-
-        case '~':
-        el.e_token = NOT;
-        sbuf++;
-        break;
-
-        case '"':
-        if ((lasttoken == VALUE) || (lasttoken == RPAREN)) {
-            el = end;
-            goto done;
-        }
-        el.e_token = VALUE;
-        el.e_type = STRING;
-        el.e_string = copy(++sbuf);
-        for (s = el.e_string; *s && (*s != '"'); s++, sbuf++)
-            ;
-        *s = '\0';
-        sbuf++;
-        break;
-    }
-
-    if (el.e_token != END)
-        goto done;
-
-    ss = sbuf;
-    td = ft_numparse(&ss, FALSE);
-    if ((!ss || *ss != ':') && td) {
-        if ((lasttoken == VALUE) || (lasttoken == RPAREN)) {
-            el = end;
-            goto done;
-        }
-        el.e_double = *td;
-        el.e_type = NUM;
-        el.e_token = VALUE;
-        sbuf = ss;
-        if (ft_parsedb)
-            fprintf(stderr, "lexer: double %G\n",
-                    el.e_double);
-    } else {
-        /* First, let's check for eq, ne, and so on. */
-        if ((sbuf[0] == 'g') && (sbuf[1] == 't') && 
-               strchr(specials, sbuf[2])) {
-            el.e_token = GT;
-            sbuf += 2;
-        } else if ((sbuf[0] == 'l') && (sbuf[1] == 't') && 
-               strchr(specials, sbuf[2])) {
-            el.e_token = LT;
-            sbuf += 2;
-        } else if ((sbuf[0] == 'g') && (sbuf[1] == 'e') && 
-               strchr(specials, sbuf[2])) {
-            el.e_token = GE;
-            sbuf += 2;
-        } else if ((sbuf[0] == 'l') && (sbuf[1] == 'e') && 
-               strchr(specials, sbuf[2])) {
-            el.e_token = LE;
-            sbuf += 2;
-        } else if ((sbuf[0] == 'n') && (sbuf[1] == 'e') && 
-               strchr(specials, sbuf[2])) {
-            el.e_token = NE;
-            sbuf += 2;
-        } else if ((sbuf[0] == 'e') && (sbuf[1] == 'q') && 
-               strchr(specials, sbuf[2])) {
-            el.e_token = EQ;
-            sbuf += 2;
-        } else if ((sbuf[0] == 'o') && (sbuf[1] == 'r') && 
-               strchr(specials, sbuf[2])) {
-            el.e_token = OR;
-            sbuf += 2;
-        } else if ((sbuf[0] == 'a') && (sbuf[1] == 'n') && 
-                (sbuf[2] == 'd') &&strchr(specials, sbuf[3])) {
-            el.e_token = AND;
-            sbuf += 3;
-        } else if ((sbuf[0] == 'n') && (sbuf[1] == 'o') && 
-                (sbuf[2] == 't') &&strchr(specials, sbuf[3])) {
-            el.e_token = NOT;
-            sbuf += 3;
-        } else {
-            if ((lasttoken == VALUE) || (lasttoken == RPAREN)) {
-                el = end;
-                goto done;
-            }
-            el.e_string = copy(sbuf);	/* XXXX !!!! */
-            /* It is bad how we have to recognise '[' -- sometimes
-             * it is part of a word, when it defines a parameter
-             * name, and otherwise it isn't.
-	     * va, ']' too
-             */
-	    atsign = 0;
-            for (s = el.e_string; *s && !index(specials, *s); s++, sbuf++) {
-                if (*s == '@')
-		    atsign = 1;
-                else if (!atsign && ( *s == '[' || *s == ']' ) )
-                    break;
-	    }
-            if (*s)
-                *s = '\0';
-            el.e_type = STRING;
-            el.e_token = VALUE;
-            if (ft_parsedb)
-                fprintf(stderr, "lexer: string %s\n",
-                        el.e_string);
-        }
-    }
-done:
-    lasttoken = el.e_token;
-    lasttype = el.e_type;
-    if (ft_parsedb)
-        fprintf(stderr, "lexer: token %d\n", el.e_token);
-    return (&el);
-}
-
-/* The operator-precedence parser. */
-
-#define G 1 /* Greater than. */
-#define L 2 /* Less than. */
-#define E 3 /* Equal. */
-#define R 4 /* Error. */
-
-#define STACKSIZE 200
-
-static char prectable[23][23] = {
-       /* $  +  -  *  %  /  ^  u- (  )  ,  v  =  >  <  >= <= <> &  |  ~ IDX R */
-/* $ */ { R, L, L, L, L, L, L, L, L, R, L, L, L, L, L, L, L, L, L, L, L, L, L },
-/* + */ { G, G, G, L, L, L, L, L, L, G, G, L, G, G, G, G, G, G, G, G, G, L, L },
-/* - */ { G, G, G, L, L, L, L, L, L, G, G, L, G, G, G, G, G, G, G, G, G, L, L },
-/* * */ { G, G, G, G, G, G, L, L, L, G, G, L, G, G, G, G, G, G, G, G, G, L, L },
-/* % */ { G, G, G, G, G, G, L, L, L, G, G, L, G, G, G, G, G, G, G, G, G, L, L },
-/* / */ { G, G, G, G, G, G, L, L, L, G, G, L, G, G, G, G, G, G, G, G, G, L, L },
-/* ^ */ { G, G, G, G, G, G, L, L, L, G, G, L, G, G, G, G, G, G, G, G, G, L, L },
-/* u-*/ { G, G, G, G, G, G, G, G, L, G, G, L, G, G, G, G, G, G, G, G, G, L, L },
-/* ( */ { R, L, L, L, L, L, L, L, L, E, L, L, L, L, L, L, L, L, L, L, L, L, L },
-/* ) */ { G, G, G, G, G, G, G, G, R, G, G, R, G, G, G, G, G, G, G, G, G, G, G },
-/* , */ { G, L, L, L, L, L, L, L, L, G, L, L, G, G, G, G, G, G, G, G, G, L, L },
-/* v */ { G, G, G, G, G, G, G, G, G, G, G, R, G, G, G, G, G, G, G, G, G, G, G },
-/* = */ { G, L, L, L, L, L, L, L, L, G, L, L, G, G, G, G, G, G, G, G, L, L, L },
-/* > */ { G, L, L, L, L, L, L, L, L, G, L, L, G, G, G, G, G, G, G, G, L, L, L },
-/* < */ { G, L, L, L, L, L, L, L, L, G, L, L, G, G, G, G, G, G, G, G, L, L, L },
-/* >=*/ { G, L, L, L, L, L, L, L, L, G, L, L, G, G, G, G, G, G, G, G, L, L, L },
-/* <=*/ { G, L, L, L, L, L, L, L, L, G, L, L, G, G, G, G, G, G, G, G, L, L, L },
-/* <>*/ { G, L, L, L, L, L, L, L, L, G, L, L, G, G, G, G, G, G, G, G, L, L, L },
-/* & */ { G, L, L, L, L, L, L, L, L, G, L, L, L, L, L, L, L, L, G, G, L, L, L },
-/* | */ { G, L, L, L, L, L, L, L, L, G, L, L, L, L, L, L, L, L, L, G, L, L, L },
-/* ~ */ { G, L, L, L, L, L, L, L, L, G, L, L, G, G, G, G, G, G, G, G, G, L, L },
-/*INDX*/{ G, G, G, G, G, G, G, G, L, G, G, L, G, G, G, G, G, G, G, G, G, G, L },
-/*RAN*/ { G, G, G, G, G, G, G, G, L, G, G, L, G, G, G, G, G, G, G, G, G, G, G }
-} ;
-
-/* Return an expr. */
-static struct pnode *
-parse(void)
-{
-    struct element stack[STACKSIZE];
-    int sp = 0, st, i, spmax=0; /* va: spmax = maximal used stack */
-    struct element *top, *next;
-    struct pnode *pn, *lpn, *rpn;
-    char rel;
-    char * parse_string=sbuf; /* va, duplicate sbuf's pointer for error message only, no tfree */
-
-    stack[0].e_token = END;
-    next = lexer();
-
-    while ((sp > 1) || (next->e_token != END)) {
-        /* Find the top-most terminal. */
-        /* va: no stack understepping, because stack[0].e_token==END */
-        i = sp;
-        do {
-            top = &stack[i--];
-        } while (top->e_token == VALUE && i>=0); /* va: do not understep stack */
-        if (top->e_token == VALUE) {
-            fprintf(cp_err, "Error: in parse.c(parse) stack understep.\n");
-            return (NULL);
-        }
-/*for (i=0; i<=sp; i++) print_elem(stack+i); printf("next: "); print_elem(next); printf("\n");*/ 
-
-        rel = prectable[top->e_token][next->e_token];
-        switch (rel) {
-            case L:
-            case E:
-            /* Push the token read. */
-            if (sp == (STACKSIZE - 1)) {
-                fprintf(cp_err, "Error: stack overflow\n");
-                return (NULL);
-            }
-            bcopy((char *) next, (char *) &stack[++sp],
-                    sizeof (struct element));
-            if (spmax<sp) spmax=sp; /* va: maximal used stack increased */
-            next = lexer();
-            continue;
-
-            case R:
-            fprintf(cp_err, "Syntax error: parsing expression '%s'.\n", parse_string);
-            return (NULL);
-
-            case G:
-            /* Reduce. Make st and sp point to the elts on the
-             * stack at the end and beginning of the junk to
-             * reduce, then try and do some stuff. When scanning
-             * back for a <, ignore VALUES.
-             */
-
-            st = sp;
-            if (stack[sp].e_token == VALUE)
-                sp--;
-            while (sp > 0) {
-                if (stack[sp - 1].e_token == VALUE)
-                    i = 2;  /* No 2 pnodes together... */
-                else
-                    i = 1;
-                if (prectable[stack[sp - i].e_token]
-                         [stack[sp].e_token] == L)
-                    break;
-                else
-                    sp = sp - i;
-            }
-            if (stack[sp - 1].e_token == VALUE)
-                sp--;
-            /* Now try and see what we can make of this.
-             * The possibilities are: unop node
-             *            node op node
-             *            ( node )
-             *            func ( node )
-             *            node
-             *  node [ node ] is considered node op node.
-             */
-            if (st == sp) {
-                pn = makepnode(&stack[st]);
-                if (pn == NULL)
-                    goto err;
-            } else if (((stack[sp].e_token == UMINUS) ||
-                    (stack[sp].e_token == NOT)) && 
-                    (st == sp + 1)) {
-                lpn = makepnode(&stack[st]);
-                if (lpn == NULL)
-                        goto err;
-                pn = mkunode(stack[sp].e_token, lpn);
-            } else if ((stack[sp].e_token == LPAREN) &&
-                       (stack[st].e_token == RPAREN)) {
-                pn = makepnode(&stack[sp + 1]);
-                if (pn == NULL)
-                    goto err;
-            } else if ((stack[sp + 1].e_token == LPAREN) &&
-                       (stack[st].e_token == RPAREN)) {
-                lpn = makepnode(&stack[sp + 2]);
-                if ((lpn == NULL) || (stack[sp].e_type !=
-                        STRING))
-                    goto err;
-                if (!(pn = mkfnode(stack[sp].e_string, lpn)))
-                    return (NULL);
-                /* va: avoid memory leakage: 
-                   in case of variablenames (i.e. i(vd)) mkfnode makes in 
-                   reality a snode, the old lpn (and its plotless vector) is 
-                   then a memory leak */
-                if (pn->pn_func==NULL && pn->pn_value!=NULL) /* a snode */
-                {
-                   if (lpn->pn_value && lpn->pn_value->v_plot==NULL)
-                   {
-                       tfree(lpn->pn_value->v_name);
-                       tfree(lpn->pn_value);
-                   }
-                   free_pnode(lpn);
-                }
-            } else { /* node op node */
-                lpn = makepnode(&stack[sp]);
-                rpn = makepnode(&stack[st]);
-                if ((lpn == NULL) || (rpn == NULL))
-                    goto err;
-                pn = mkbnode(stack[sp + 1].e_token, 
-                    lpn, rpn);
-            }
-            /* va: avoid memory leakage: tfree all old strings on stack,
-                   copied up to now within lexer */
-            for (i=sp; i<=spmax; i++) {
-                if (stack[i].e_token==VALUE && stack[i].e_type==STRING) {
-                    tfree(stack[i].e_string);
-                }
-            }
-            spmax=sp; /* up to there stack is now clean */
-
-            stack[sp].e_token = VALUE;
-            stack[sp].e_type = PNODE;
-            stack[sp].e_pnode = pn;
-            continue;
-        }
-    }
-    pn = makepnode(&stack[1]);
-
-    /* va: avoid memory leakage: tfree all remaining strings,
-       copied within lexer */
-    for (i=0; i<=spmax; i++) {
-        if (stack[i].e_token == VALUE && stack[i].e_type == STRING) {
-            tfree(stack[i].e_string);
-        }
-    }
-    if (next->e_token == VALUE && next->e_type == STRING) {
-        tfree(next->e_string);
-    }
-
-    if (pn)
-        return (pn);
-err:
-    fprintf(cp_err, "Syntax error: expression not understood '%s'.\n", parse_string);
-    return (NULL);
-}
-
-/* Given a pointer to an element, make a pnode out of it (if it already
- * is one, return a pointer to it). If it isn't of type VALUE, then return
- * NULL.
- */
-
-static struct pnode *
-makepnode(struct element *elem)
-{
-    if (elem->e_token != VALUE)
-        return (NULL);
-    switch (elem->e_type) {
-        case STRING:
-            return (mksnode(elem->e_string));
-        case NUM:
-            return (mknnode(elem->e_double));
-        case PNODE:
-            return (elem->e_pnode);
-        default:
-            return (NULL);
-    }   
-}
-
-/*
-static char * get_token_name(int e_token)
-{
-  / see include/fteparse.h /
-    switch (e_token) {
-    case   0: return "END   ";
-    case   1: return "PLUS  ";
-    case   2: return "MINUS ";
-    case   3: return "TIMES ";
-    case   4: return "MOD   ";
-    case   5: return "DIVIDE";
-    case   6: return "POWER ";
-    case   7: return "UMINUS";
-    case   8: return "LPAREN";
-    case   9: return "RPAREN";
-    case  10: return "COMMA ";
-    case  11: return "VALUE ";
-    case  12: return "EQ    ";
-    case  13: return "GT    ";
-    case  14: return "LT    ";
-    case  15: return "GE    ";
-    case  16: return "LE    ";
-    case  17: return "NE    ";
-    case  18: return "AND   ";
-    case  19: return "OR    ";
-    case  20: return "NOT   ";
-    case  21: return "INDX  ";
-    case  22: return "RANGE ";
-    default : return "UNKNOWN";
-    }
-}
-
-static void print_elem(struct element *elem)
-{
-    printf("e_token = %d(%s)", elem->e_token, get_token_name(elem->e_token)); 
-    if (elem->e_token == VALUE) {
-        printf(", e_type  = %d", elem->e_type); 
-        switch (elem->e_type) {
-            case STRING:
-                printf(", e_string = %s(%p)", elem->e_string,elem->e_string); 
-                break; 
-            case NUM:
-                printf(", e_double = %g", elem->e_double); break; 
-            case PNODE:
-                printf(", e_pnode  = %p", elem->e_pnode);  break; 
-            default:
-                break;
-        }
-    }   
-    printf("\n");
-}
-*/
 
 
 /* Some auxiliary functions for building the parse tree. */
@@ -661,6 +121,7 @@ struct op ops[] = {
         { OR, "|", 2, op_or } ,
         { INDX, "[", 2, op_ind } ,
         { RANGE, "[[", 2, op_range } ,
+        { TERNARY, "?:", 2, NULL } ,
         { 0, NULL, 0, NULL }
 } ;
 
@@ -700,8 +161,8 @@ struct func ft_funcs[] = {
         { "rnd",    cx_rnd } ,
         { "pos",    cx_pos } ,
         { "mean",   cx_mean } ,
-        { "avg",   cx_avg } ,     //A.Rroldan 03/06/05 incremental average  new function
-        { "group_delay",  cx_group_delay } , //A.Rroldan 10/06/05 group delay new function
+        { "avg",   cx_avg } ,                /* A.Roldan 03/06/05 incremental average new function */
+        { "group_delay",  cx_group_delay } , /* A.Roldan 10/06/05 group delay new function */
         { "vector", cx_vector } ,
         { "unitvec",    cx_unitvec } ,
         { "length", cx_length } ,
@@ -784,7 +245,7 @@ mkunode(int op, struct pnode *arg)
  */
 
 static struct pnode *
-mkfnode(char *func, struct pnode *arg)
+mkfnode(const char *func, struct pnode *arg)
 {
     struct func *f;
     struct pnode *p, *q;
@@ -884,7 +345,7 @@ mknnode(double number)
 /* String node. */
 
 static struct pnode *
-mksnode(char *string)
+mksnode(const char *string)
 {
     struct dvec *v, *nv, *vs, *newv = NULL, *end = NULL;
     struct pnode *p;
@@ -973,3 +434,256 @@ free_pnode_o(struct pnode *t)
 
 
 
+static void
+db_print_func(FILE *fdst, struct func *f)
+{
+    if(!f) {
+        fprintf(fdst,"nil");
+        return;
+    }
+
+    fprintf(fdst,"(func :fu_name %s :fu_func %p)", f->fu_name, f->fu_func);
+}
+
+
+static void
+db_print_op(FILE *fdst, struct op *op)
+{
+    if(!op) {
+        fprintf(fdst,"nil");
+        return;
+    }
+
+    fprintf(fdst,"(op :op_num %d :op_name %s :op_arity %d :op_func %p)",
+           op->op_num, op->op_name, op->op_arity, op->op_func);
+}
+
+
+static void
+db_print_dvec(FILE *fdst, struct dvec *d)
+{
+    if(!d) {
+        fprintf(fdst,"nil");
+        return;
+    }
+
+    fprintf(fdst,"(dvec :v_name %s :v_type %d :v_flags %d :v_length %d ...)",
+           d->v_name, d->v_type, d->v_flags, d->v_length);
+}
+
+
+static void
+db_print_pnode(FILE *fdst, struct pnode *p)
+{
+    if(!p) {
+        fprintf(fdst,"nil\n");
+        return;
+    }
+
+    if(!p->pn_name && p->pn_value && !p->pn_func && !p->pn_op
+       && !p->pn_left && !p->pn_right && !p->pn_next) {
+        fprintf(fdst,"(pnode-value :pn_use %d", p->pn_use);
+        fprintf(fdst," :pn_value "); db_print_dvec(fdst, p->pn_value);
+        fprintf(fdst,")\n");
+        return;
+    }
+
+    if (!p->pn_name && !p->pn_value && p->pn_func && !p->pn_op
+        && !p->pn_right && !p->pn_next) {
+        fprintf(fdst,"(pnode-func :pn_use %d", p->pn_use);
+        fprintf(fdst,"\n :pn_func "); db_print_func(fdst, p->pn_func);
+        fprintf(fdst,"\n :pn_left "); db_print_pnode(fdst, p->pn_left);
+        fprintf(fdst,")\n");
+        return;
+    }
+
+    if (!p->pn_name && !p->pn_value && !p->pn_func && p->pn_op
+        && !p->pn_next) {
+        fprintf(fdst,"(pnode-op :pn_use %d", p->pn_use);
+        fprintf(fdst,"\n :pn_op "); db_print_op(fdst, p->pn_op);
+        fprintf(fdst,"\n :pn_left "); db_print_pnode(fdst, p->pn_left);
+        fprintf(fdst,"\n :pn_right "); db_print_pnode(fdst, p->pn_right);
+        fprintf(fdst,")\n");
+        return;
+    }
+
+    fprintf(fdst,"(pnode :pn_name \"%s\" pn_use %d", p->pn_name, p->pn_use);
+    fprintf(fdst,"\n :pn_value "); db_print_dvec(fdst, p->pn_value);
+    fprintf(fdst,"\n :pn_func "); db_print_func(fdst, p->pn_func);
+    fprintf(fdst,"\n :pn_op "); db_print_op(fdst, p->pn_op);
+    fprintf(fdst,"\n :pn_left "); db_print_pnode(fdst, p->pn_left);
+    fprintf(fdst,"\n :pn_right "); db_print_pnode(fdst, p->pn_right);
+    fprintf(fdst,"\n :pn_next "); db_print_pnode(fdst, p->pn_next);
+    fprintf(fdst,"\n)\n");
+}
+
+
+char *
+db_print_pnode_tree(struct pnode *p, char *print)
+{
+#if 1
+    db_print_pnode(stdout, p);
+    return NULL;
+#else
+    char *buf;
+    size_t  buf_size;
+    FILE *db_stream = open_memstream (&buf, &buf_size);
+    db_print_pnode(db_stream, p);
+    fclose(db_stream);
+    if(print)
+        printf("%s:%d: %s {%s}\n%s\n", __FILE__, __LINE__, __func__, print, buf);
+    return buf;
+#endif
+}
+
+
+int
+PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line)
+{
+    static char *specials = " \t%()-^+*,/|&<>~=";
+    char  *sbuf = *line;
+    int token;
+
+    while ((*sbuf == ' ') || (*sbuf == '\t'))
+        sbuf++;
+
+    llocp->start = sbuf;
+
+#define lexer_return(token_, length) \
+    do { token = token_; sbuf += length; goto done; } while(0)
+
+    if ((sbuf[0] == 'g') && (sbuf[1] == 't') &&
+        strchr(specials, sbuf[2])) {
+        lexer_return('>', 2);
+    } else if ((sbuf[0] == 'l') && (sbuf[1] == 't') &&
+               strchr(specials, sbuf[2])) {
+        lexer_return('<', 2);
+    } else if ((sbuf[0] == 'g') && (sbuf[1] == 'e') &&
+               strchr(specials, sbuf[2])) {
+        lexer_return(TOK_GE, 2);
+    } else if ((sbuf[0] == 'l') && (sbuf[1] == 'e') &&
+               strchr(specials, sbuf[2])) {
+        lexer_return(TOK_LE, 2);
+    } else if ((sbuf[0] == 'n') && (sbuf[1] == 'e') &&
+               strchr(specials, sbuf[2])) {
+        lexer_return(TOK_NE, 2);
+    } else if ((sbuf[0] == 'e') && (sbuf[1] == 'q') &&
+               strchr(specials, sbuf[2])) {
+        lexer_return('=', 2);
+    } else if ((sbuf[0] == 'o') && (sbuf[1] == 'r') &&
+               strchr(specials, sbuf[2])) {
+        lexer_return('|', 2);
+    } else if ((sbuf[0] == 'a') && (sbuf[1] == 'n') &&
+               (sbuf[2] == 'd') && strchr(specials, sbuf[3])) {
+        lexer_return('&', 3);
+    } else if ((sbuf[0] == 'n') && (sbuf[1] == 'o') &&
+               (sbuf[2] == 't') && strchr(specials, sbuf[3])) {
+        lexer_return('~', 3);
+    }
+
+    switch (*sbuf) {
+
+    case '[':
+        if (sbuf[1] == '[') {
+            lexer_return(TOK_LRANGE, 2);
+        } else {
+            lexer_return(*sbuf, 1);
+        }
+
+    case ']':
+        if (sbuf[1] == ']') {
+            lexer_return(TOK_RRANGE, 2);
+        } else {
+            lexer_return(*sbuf, 1);
+        }
+
+    case '>':
+    case '<':
+        {
+            /* Workaround, The Frontend makes "<>" into "< >" */
+            int j = 1;
+            while (isspace(sbuf[j]))
+                j++;
+            if (((sbuf[j] == '<') || (sbuf[j] == '>')) && (sbuf[0] != sbuf[j])) {
+                /* Allow both <> and >< for NE. */
+                lexer_return(TOK_NE, j+1);
+            } else if (sbuf[1] == '=') {
+                lexer_return((sbuf[0] == '>') ? TOK_GE : TOK_LE, 2);
+            } else {
+                lexer_return(*sbuf, 1);
+            }
+        }
+
+    case '?':
+    case ':':
+    case ',':
+    case '+':
+    case '-':
+    case '*':
+    case '%':
+    case '/':
+    case '^':
+    case '(':
+    case ')':
+    case '=':
+    case '&':
+    case '|':
+    case '~':
+        lexer_return(*sbuf, 1);
+
+    case '\0':
+        lexer_return(*sbuf, 0);
+
+    case '"':
+        {
+            char *start = ++sbuf;
+            while(*sbuf && (*sbuf != '"'))
+                sbuf++;
+            lvalp->str = copy_substring(start, sbuf);
+            if(*sbuf)
+                sbuf++;
+            lexer_return(TOK_STR, 0);
+        }
+
+    default:
+        {
+            char *s = sbuf;
+            double *td = ft_numparse(&s, FALSE);
+            if ((!s || *s != ':') && td) {
+                sbuf = s;
+                lvalp->num = *td;
+                lexer_return(TOK_NUM, 0);
+            } else {
+                int atsign = 0;
+                char *start = sbuf;
+                /* It is bad how we have to recognise '[' -- sometimes
+                 * it is part of a word, when it defines a parameter
+                 * name, and otherwise it isn't.
+                 * va, ']' too
+                 */
+                for (; *sbuf && !index(specials, *sbuf); sbuf++)
+                    if (*sbuf == '@')
+                        atsign = 1;
+                    else if (!atsign && ( *sbuf == '[' || *sbuf == ']' ))
+                        break;
+
+                lvalp->str = copy_substring(start, sbuf);   /* XXXX !!!! */
+                lexer_return(TOK_STR, 0);
+            }
+        }
+    }
+
+done:
+    if (ft_parsedb) {
+        if(token == TOK_STR)
+            fprintf(stderr, "lexer: TOK_STR, \"%s\"\n", lvalp->str);
+        else if(token == TOK_NUM)
+            fprintf(stderr, "lexer: TOK_NUM, %G\n", lvalp->num);
+        else
+            fprintf(stderr, "lexer: token %d\n", token);
+    }
+
+    *line = sbuf;
+    llocp->stop = sbuf;
+    return (token);
+}

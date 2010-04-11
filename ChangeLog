@@ -1,3 +1,8 @@
+2010-04-11 Dietmar Warning
+ * Robert Larice patch to allow ternary operation in control blocks:
+ * src/include/fteparse.h, ngspice.h
+ * src/frontend/parse*.*, evaluate.c, Makefile.am, src/misc/string.c, stringutil.h
+
 2010-03-25 Dietmar Warning
  * Bill Swartz patch:
  * numparam/*.c, *.h, *.txt, misc/hash.c, string.c: local and global hash lists for subckts

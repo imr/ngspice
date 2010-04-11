@@ -97,6 +97,7 @@ struct element {
 #define NOT   20
 #define INDX 21
 #define RANGE   22
+#define TERNARY   23
 
 #define NUM 1
 #define STRING  2

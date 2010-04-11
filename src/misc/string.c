@@ -24,12 +24,25 @@ prefix(register char *p, register char *s)
 /* Create a copy of a string. */
 
 char *
-copy(char *str)
+copy(const char *str)
 {
     char *p;
     
     if ((p = tmalloc(strlen(str) + 1)))
 	    (void) strcpy(p, str);
+    return(p);
+}
+
+char *
+copy_substring(const char *str, const char *end)
+{
+    int n = end - str;
+    char *p;
+
+    if ((p = tmalloc(n + 1))) {
+        (void) strncpy(p, str, n);
+        p[n] = '\0';
+    }
     return(p);
 }
 

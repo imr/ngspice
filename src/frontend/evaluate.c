@@ -22,6 +22,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* static declarations */
 static RETSIGTYPE sig_matherr(void);
 static struct dvec * apply_func(struct func *func, struct pnode *arg);
+static struct dvec *ft_ternary(struct pnode *node);
 static char * mkcname(char what, char *v1, char *v2);
 
 
@@ -60,8 +61,10 @@ ft_evaluate(struct pnode *node)
             d = (struct dvec *)
                 ((*node->pn_op->op_func) (node->pn_left));
         else if (node->pn_op->op_arity == 2) {
-            d = (struct dvec *) ((*node->pn_op->op_func)
-                (node->pn_left, node->pn_right));
+            if(node->pn_op->op_num == TERNARY)
+                d = ft_ternary(node);
+            else
+                d = (*node->pn_op->op_func) (node->pn_left, node->pn_right);
         }
     } else {
         fprintf(cp_err, "ft_evaluate: Internal Error: bad node\n");
@@ -83,6 +86,60 @@ ft_evaluate(struct pnode *node)
         return (NULL);
     } else
         return (d);
+}
+
+
+static struct dvec *
+ft_ternary(struct pnode *node)
+{
+    struct dvec *v, *d, *cond;
+    struct pnode *arg;
+    int c;
+
+    if(!node->pn_right->pn_op || node->pn_right->pn_op->op_func != op_comma)
+    {
+        fprintf(cp_err, "Error: ft_ternary(), daemons ...\n");
+        return NULL;
+    }
+
+    cond = ft_evaluate(node->pn_left);
+
+    if(cond->v_link2) {
+        fprintf(cp_err, "Error: ft_ternary(), whats that ?\n");
+        return NULL;
+    }
+
+    if(cond->v_numdims != 1) {
+        fprintf(cp_err, "Error: ft_ternary(), condition must be scalar, but numdims=%d\n",
+            cond->v_numdims);
+        return NULL;
+    }
+
+    if(cond->v_length != 1) {
+        fprintf(cp_err, "Error: ft_ternary(), condition must be scalar, but length=%d\n",
+            cond->v_length);
+        return NULL;
+    }
+
+    c = isreal(cond)
+        ? (cond->v_realdata[0] != 0.0)
+        : ((realpart(cond->v_compdata) != 0.0) ||
+           (imagpart(cond->v_compdata) != 0.0) );
+
+    arg = c
+        ? node->pn_right->pn_left
+        : node->pn_right->pn_right;
+
+    v = ft_evaluate(arg);
+    d = vec_copy(v);
+    vec_new(d);
+
+    if (!arg->pn_value && v)
+        vec_free(v);
+    if (!node->pn_left->pn_value && cond)
+        vec_free(cond);
+
+    return d;
 }
 
 

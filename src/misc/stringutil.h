@@ -10,7 +10,8 @@
 #define STRING_H_INCLUDED
 
 int prefix(register char *p, register char *s);
-char * copy(char *str);
+char * copy(const char *str);
+char * copy_substring(const char *str, const char *end);
 int substring(register char *sub, register char *str);
 void appendc(char *s, char c);
 int scannum(char *str);
