@@ -85,6 +85,18 @@ PTpower(double arg1, double arg2)
 }
 
 double
+PTmin(double arg1, double arg2)
+{
+    return arg1 > arg2 ? arg2 : arg1;
+}
+
+double
+PTmax(double arg1, double arg2)
+{
+    return arg1 > arg2 ? arg1 : arg2;
+}
+
+double
 PTacos(double arg)
 {
     return (acos(arg));

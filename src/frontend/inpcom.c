@@ -47,6 +47,7 @@ Author: 1985 Wayne A. Christopher
 #include "fteext.h"
 #include "dvec.h"
 #include "fteinp.h"
+#include "compatmode.h"
 
 #include "inpcom.h"
 #include "variable.h"
@@ -81,6 +82,7 @@ static char *func_params[1000][1000];
 static char *func_macro[5000];
 static int  num_functions;
 static int  num_parameters[1000];
+static COMPATMODE_T inp_compat_mode;
 
 /* Collect information for dynamic allocation of numparam arrays */
 /* number of lines in input deck */
@@ -91,6 +93,8 @@ unsigned int dynLlen; /* inpcom.c 1526 */
 int dynMaxckt = 0; /* subckt.c 307 */
 /* number of parameter substitutions */
 long dynsubst; /* spicenum.c 221 */
+
+extern COMPATMODE_T ngspice_compat_mode(void) ;
 
 /* static declarations */
 static char * readline(FILE *fd);
@@ -110,6 +114,8 @@ static void inp_reorder_params( struct line *deck, struct line *list_head, struc
 static int  inp_split_multi_param_lines( struct line *deck, int line_number );
 static void inp_sort_params( struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c );
 static char* inp_remove_ws( char *s );
+static void inp_compat(struct line *deck);
+static void inp_bsource_compat(struct line *deck);
 
 /*-------------------------------------------------------------------------*
  *  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF' *
@@ -465,29 +471,29 @@ inp_fix_macro_param_func_paren_io( struct line *begin_card ) {
   for ( card = begin_card; card != NULL; card = card->li_next ) {
 
     if ( *card->li_line == '*' ) continue;
-
+/*
     // zero out any voltage node references on .param lines
     if ( ciprefix( ".param", card->li_line ) ) {
       search_ptr = card->li_line;
       while( ( open_paren_ptr = strstr( search_ptr, "(" ) ) ) {
-	fcn_name = open_paren_ptr - 1;
-	while ( *fcn_name != '\0' && fcn_name != search_ptr && (isalnum(*fcn_name) || *fcn_name == '_' ) ) fcn_name--;
-	if ( fcn_name != search_ptr ) fcn_name++;
-	*open_paren_ptr = '\0';
-	if ( strcmp( fcn_name, "v" ) == 0 ) {
-	  *open_paren_ptr = ' ';
-	  *fcn_name       = '0';
-	  fcn_name++;
-	  while ( *fcn_name != ')' ) { *fcn_name = ' '; fcn_name++; }
-	  *fcn_name = ' ';
-	}
-	else {
-	  *open_paren_ptr = '(';
-	}
-	search_ptr = open_paren_ptr + 1;
+        fcn_name = open_paren_ptr - 1;
+        while ( *fcn_name != '\0' && fcn_name != search_ptr && (isalnum(*fcn_name) || *fcn_name == '_' ) ) fcn_name--;
+        if ( fcn_name != search_ptr ) fcn_name++;
+        *open_paren_ptr = '\0';
+        if ( strcmp( fcn_name, "v" ) == 0 ) {
+          *open_paren_ptr = ' ';
+          *fcn_name       = '0';
+          fcn_name++;
+          while ( *fcn_name != ')' ) { *fcn_name = ' '; fcn_name++; }
+          *fcn_name = ' ';
+        }
+        else {
+          *open_paren_ptr = '(';
+        }
+        search_ptr = open_paren_ptr + 1;
       }
     }
-
+*/
     if ( ciprefix( ".macro", card->li_line ) || ciprefix( ".eom", card->li_line ) ) {
       str_ptr = card->li_line;
       while( !isspace(*str_ptr) ) str_ptr++;
@@ -897,6 +903,7 @@ inp_fix_ternary_operator_str( char *line )
       *str_ptr = keep;
     }
   }
+  else  return line; // hvogt
 
   // get conditional
   str_ptr2 = question = strstr( str_ptr, "?" );
@@ -1592,7 +1599,19 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
 
       if (cp_getvar("addcontrol", VT_BOOL, (char *) &v))
          inp_add_control_section(working, &line_number);
+      inp_compat_mode = ngspice_compat_mode() ;
+      if (inp_compat_mode == COMPATMODE_ALL) {
+          /* Do all the compatibility stuff here */
+          working = cc->li_next;
+          /* E, G, L, R, C compatibility transformations */
+          inp_compat(working);
+          working = cc->li_next;
+          /* B source numparam compatibility transformation */
+          inp_bsource_compat(working);
+      }
    }
+
+   /* save the return value (via **data) */
    *data = cc;
     
    /* get max. line length and number of lines in input deck,
@@ -2200,6 +2219,9 @@ inp_fix_subckt_multiplier( struct line *subckt_card,
   for ( card = subckt_card->li_next;
 	card != NULL && !ciprefix( ".ends", card->li_line );
 	card = card->li_next ) {
+    /* no 'm' for B line or comment line */
+    if ((*(card->li_line) == '*') || (*(card->li_line) == 'b')) 
+        continue;
     new_str = tmalloc( strlen( card->li_line ) + 7 );
     sprintf( new_str, "%s m={m}", card->li_line );
     
@@ -2558,13 +2580,13 @@ inp_expand_macro_in_str( char *str )
                curr_ptr = open_paren_ptr+1;
                while ( isspace(*curr_ptr) ) curr_ptr++;
                num_params = 0;
-               if ( ciprefix( "v(", curr_ptr ) ) {
+/*               if ( ciprefix( "v(", curr_ptr ) ) {
                   // look for any commas and change to ' '
                   char *str_ptr = curr_ptr;
                   while ( *str_ptr != '\0' && *str_ptr != ')' ) { 
                      if ( *str_ptr == ',' || *str_ptr == '(' ) *str_ptr = ' '; str_ptr++; }
                      if ( *str_ptr == ')' ) *str_ptr = ' ';
-               }
+               }*/
                num_parens = 0;
                for (comma_ptr = curr_ptr; *comma_ptr && *comma_ptr != '\0'; comma_ptr++) {
                   if (*comma_ptr == ',' && num_parens == 0) {
@@ -3458,4 +3480,454 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
       prev          = param_end;
     }
   return line_num;
+}
+
+
+/* compatibility:
+   Exxx n1 n2 VCVS n3 n4 gain --> Exxx n1 n2 n3 n4 gain
+   Gxxx n1 n2 VCCS n3 n4 tr --> Exxx n1 n2 n3 n4 tr
+   Exxx n1 n2 VOL = {equation} --> BExxx n1 n2 V = {equation}
+   Gxxx n1 n2 CUR = {equation} --> BGxxx n1 n2 I = {equation}
+
+   Do the following transformations only if {equation} contains 
+   simulation output like v(node), v(node1, node2), i(branch).
+   Otherwise let do numparam the substitutions (R=const is handled
+   in inp2r.c).
+   
+   Rxxx n1 n2 R = {equation} or Rxxx n1 n2 {equation}
+   -->   
+   BRxxx n1 n2 I = V(n1,n2)/{equation}
+   
+   Unfortunately the capability for ac noise calculation of 
+   resistance may be lost.
+
+   Cxxx n1 n2 C = {equation} or Cxxx n1 n2 {equation}
+      -->
+      Cxxx  n1 n2-aux  1
+      Vxxx  n2-aux n2  DC=0
+      Bxxx  n1 n2   I = ((equation) - 1) * Vxxx#branch
+   
+   Lxxx n1 n2 L = {equation} or Lxxx n1 n2 {equation}
+      -->
+      Lxxx  n1 int  1
+      Bxxx  int n2   V = ((equation) - 1) * V(n1, int)
+     */
+static void inp_compat(struct line *deck)
+{
+    char *curr_line, *str_ptr, *cut_line, *title_tok, *node1, *node2;
+    char *xline, *linline, *amline, *fline, *eqline;
+    size_t xlen, i;
+    char *ckt_array[4];
+    struct line *new_line, *tmp_ptr;
+
+    struct line  *param_end = NULL, *param_beg = NULL;
+    struct line *card = deck;
+
+    while ( card != NULL )
+    {
+        curr_line = card->li_line;
+        if ( *curr_line == '*' ) { card = card->li_next; continue; }
+        if ( *curr_line == 'e' ) {
+            /*    Exxx n1 n2 VCVS n3 n4 gain --> Exxx n1 n2 n3 n4 gain
+                  remove vcvs */
+            if (str_ptr = strstr( curr_line, "vcvs" ) ) {
+                *str_ptr = ' '; *(str_ptr + 1) = ' ';
+                *(str_ptr + 2) = ' '; *(str_ptr + 3) = ' ';
+            }
+            /* Exxx n1 n2 VOL = {equation} --> BExxx n1 n2 V = {equation} */
+            if (str_ptr = strstr( curr_line, "vol" ) ) {
+                *(str_ptr + 2) = ' ';
+                while (str_ptr > curr_line) {
+                    *(str_ptr + 1) = *str_ptr;
+                    str_ptr--;
+                }
+                *(str_ptr + 1) = *str_ptr;
+                *str_ptr = 'b';
+            }
+        }
+        else if ( *curr_line == 'g' ) {
+            /* Gxxx n1 n2 VCCS n3 n4 tr --> Exxx n1 n2 n3 n4 tr
+               remove vccs */
+            if (str_ptr = strstr( curr_line, "vccs" ) ) {
+                *str_ptr = ' '; *(str_ptr + 1) = ' ';
+                *(str_ptr + 2) = ' '; *(str_ptr + 3) = ' ';
+            }
+            /* Gxxx n1 n2 CUR = {equation} --> BGxxx n1 n2 I = {equation} */
+            if (str_ptr = strstr( curr_line, "cur" ) ) {
+                *(str_ptr + 2) = ' '; *str_ptr = 'i';
+                while (str_ptr > curr_line) {
+                    *(str_ptr + 1) = *str_ptr;
+                    str_ptr--;
+                }
+                *(str_ptr + 1) = *str_ptr;
+                *str_ptr = 'b';
+            }
+        }
+   /* Rxxx n1 n2 R = {equation} or Rxxx n1 n2 {equation}
+      -->   
+      BRxxx pos neg I = V(pos, neg)/{equation}
+   */
+        else if ( *curr_line == 'r' ) {
+            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
+                { card = card->li_next; continue; }
+            cut_line = curr_line;
+            /* make BRxxx pos neg I = V(pos, neg)/{equation}*/
+            title_tok = gettok(&cut_line);
+            node1 =  gettok(&cut_line);
+            node2 =  gettok(&cut_line);
+            /* Find equation, starts with '{', till end of line */
+            str_ptr = strstr(cut_line, "{");
+            xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
+                   strlen(node1) + strlen(node2) + strlen(str_ptr)  + 15;
+            xline = (char*)tmalloc(xlen);
+            sprintf(xline, "b%s %s %s I = v(%s, %s)/%s", title_tok, node1, node2,  
+                node1, node2, str_ptr);
+            new_line = alloc(struct line);
+	        new_line->li_next    = NULL;
+	        new_line->li_error   = NULL;
+	        new_line->li_actual  = NULL;
+	        new_line->li_line    = xline;
+	        new_line->li_linenum = 0;
+	        // comment out current old R line
+	        *(card->li_line)   = '*';
+	        // insert new B source line immediately after current line
+	        tmp_ptr           = card->li_next;
+	        card->li_next     = new_line;
+	        new_line->li_next = tmp_ptr;
+	        // point 'card' pointer to the new line
+	        card              = new_line;
+        }
+   /* Cxxx n1 n2 C = {equation} or Cxxx n1 n2 {equation}
+      -->
+      Cxxx  n1 n2-aux  1
+      Vxxx  n2-aux n2  DC=0
+      Bxxx  n1 n2   I = ((equation) - 1) * Vxxx#branch
+    */
+        else if ( *curr_line == 'c' ) {
+            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
+                { card = card->li_next; continue; }
+            cut_line = curr_line;
+            /* title and nodes */
+            title_tok = gettok(&cut_line);
+            node1 =  gettok(&cut_line);
+            node2 =  gettok(&cut_line);
+            /* Find equation, starts with '{', till end of line */
+            str_ptr = strstr(cut_line, "{");
+
+            //  Bxxx  n1 n2   I = ((equation) - 1) * i(Vxxx)
+            xlen = 2*strlen(title_tok) + strlen(str_ptr) + strlen(node1) 
+                + strlen(node2) + 25;
+            eqline = (char*)tmalloc(xlen);
+            sprintf(eqline, "b%s %s %s i = ((%s) - 1) * i(Vx%s)", 
+                title_tok, node1, node2, str_ptr, title_tok);
+            // CCxxx node1 Cxxx2 1
+            xlen = 2*strlen(title_tok) + strlen(node1) + 11;
+            linline = (char*)tmalloc(xlen);
+            sprintf(linline, "c%s %s %s_int2 1", title_tok, node1, title_tok);
+            // VCxxx Cxxx2 node2 DC 0
+            xlen = 2*strlen(title_tok) + strlen(node2) + 16;
+            amline = (char*)tmalloc(xlen);
+            sprintf(amline, "vx%s %s_int2 %s dc 0", title_tok, title_tok, node2);
+
+            ckt_array[0] = eqline;
+            ckt_array[1] = linline;
+            ckt_array[2] = amline;
+            // insert new B source line immediately after current line
+	        tmp_ptr = card->li_next;
+	        for ( i = 0; i < 3; i++ )
+            {
+                if ( param_end )
+                {
+                    param_end->li_next = alloc(struct line);
+                    param_end          = param_end->li_next;
+                }
+                else
+                {
+                    param_end = param_beg = alloc(struct line);
+                }
+                param_end->li_next    = NULL;
+                param_end->li_error   = NULL;
+                param_end->li_actual  = NULL;
+                param_end->li_line    = ckt_array[i];
+                param_end->li_linenum = 0;
+            }
+            // comment out current variable capacitor line
+            *(card->li_line)   = '*';
+            // insert new param lines immediately after current line
+            tmp_ptr            = card->li_next;
+            card->li_next      = param_beg;
+            param_end->li_next = tmp_ptr;
+            // point 'card' pointer to last in scalar list
+            card               = param_end;
+
+            param_beg = param_end = NULL;
+        }
+
+   /* Lxxx n1 n2 L = {equation} or Lxxx n1 n2 {equation}
+      -->
+      Lxxx  n1 int  1
+      Bxxx  int n2   V = ((equation) - 1) * V(n1, int)
+    */
+        else if ( *curr_line == 'l' ) {
+            if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
+                { card = card->li_next; continue; }
+            cut_line = curr_line;
+            /* title and nodes */
+            title_tok = gettok(&cut_line);
+            node1 =  gettok(&cut_line);
+            node2 =  gettok(&cut_line);
+            /* Find equation, starts with '{', till end of line */
+            str_ptr = strstr(cut_line, "{");
+
+            //  Bxxx  int1 n2   V = (expression(v(somehting)) - 1) * v(n1, int1)
+            xlen = 3*strlen(title_tok) + strlen(str_ptr) + strlen(node1) 
+                + strlen(node2) + 34;
+            eqline = (char*)tmalloc(xlen);
+            sprintf(eqline, "b%s %s_int1 %s v = ((%s) - 1) * v(%s,%s_int1)", 
+                title_tok, title_tok, node2, str_ptr, node1, title_tok);
+            // LLxxx n1 int1 1
+            xlen = 2*strlen(title_tok) + strlen(node1) + 11;
+            linline = (char*)tmalloc(xlen);
+            sprintf(linline, "l%s %s %s_int1 1", title_tok, node1, title_tok);
+
+            ckt_array[0] = eqline;
+            ckt_array[1] = linline;
+            // insert new B source line immediately after current line
+	        tmp_ptr = card->li_next;
+	        for ( i = 0; i < 2; i++ )
+            {
+                if ( param_end )
+                {
+                    param_end->li_next = alloc(struct line);
+                    param_end          = param_end->li_next;
+                }
+                else
+                {
+                    param_end = param_beg = alloc(struct line);
+                }
+                param_end->li_next    = NULL;
+                param_end->li_error   = NULL;
+                param_end->li_actual  = NULL;
+                param_end->li_line    = ckt_array[i];
+                param_end->li_linenum = 0;
+            }
+            // comment out current variable capacitor line
+            *(card->li_line)   = '*';
+            // insert new param lines immediately after current line
+            tmp_ptr            = card->li_next;
+            card->li_next      = param_beg;
+            param_end->li_next = tmp_ptr;
+            // point 'card' pointer to last in scalar list
+            card               = param_end;
+
+            param_beg = param_end = NULL;
+        }
+        card = card->li_next;
+    }
+}
+/* lines for B sources: no parsing in numparam code, just replacement of parameters.
+   Parsing done in B source parser.
+   To achive this, do the following:
+   Remove all '{' and '}' --> no parsing of equations in numparam
+   Place '{' and '}' directly around all potential parameters, 
+   thus skip function names like exp (search for exp( to detect fcn name), 
+   functions containing nodes like v(node), v(node1, node2), i(branch)
+   and other keywords. --> Only parameter replacement in numparam
+
+*/
+
+static void inp_bsource_compat(struct line *deck)
+{
+    char *curr_line, *equal_ptr, *str_ptr, *tmp_char, *new_str, *final_str;
+    char actchar, prevchar = ' ';
+    struct line *card = deck, *new_line, *tmp_ptr;
+    wordlist *wl = NULL, *wlist = NULL, *cwl;
+    char buf[512];
+    size_t i, xlen, ustate = 0;
+
+    while ( card != NULL )
+    {
+        curr_line = card->li_line;
+        if ( *curr_line == 'b' ) {
+            /* store starting point for later parsing, beginning of {expression} */
+            equal_ptr = strstr(curr_line, "=");
+            /* find the m={m} token and remove it */
+            if(str_ptr = strstr(curr_line, "m={m}"))
+                *str_ptr = '\0'; 
+            /* scan the line and remove all '{' and '}' */
+            str_ptr = curr_line;
+            while (*str_ptr) {
+                if ((*str_ptr == '{') || (*str_ptr == '}'))
+                    *str_ptr = ' ';
+                str_ptr++;
+            }
+            /* scan the expression */
+            str_ptr = equal_ptr + 1;
+            while (*str_ptr != '\0') {
+                while ((*str_ptr != '\0') && isspace(*str_ptr))
+                    str_ptr++;
+                if (*str_ptr == '\0') break;
+                actchar = *str_ptr;
+                cwl = alloc(struct wordlist);
+                cwl->wl_prev = wl;
+                if (wl)
+                    wl->wl_next = cwl;
+                else {
+                    wlist = cwl;
+                    cwl->wl_next = NULL;
+                }
+                if ((actchar == ',') || (actchar == '(') || (actchar == ')')
+                    || (actchar == '*') || (actchar == '/') || (actchar == '^')
+                    || (actchar == '+') || (actchar == '?') || (actchar == ':'))
+                {                    
+                    if ((actchar == '*') && (*(str_ptr+1) == '*')) {
+                        actchar = '^';
+                        str_ptr++;
+                    }
+                    buf[0] = actchar;
+                    buf[1] = '\0';
+                    cwl->wl_word = copy(buf);
+                    str_ptr++;
+                    if (actchar == ')') ustate = 0;
+                    else ustate = 1; /* we have an operator */
+                }
+                else if ((actchar == '>') || (actchar == '<')
+                    || (actchar == '!') || (actchar == '=') )
+                {                    
+                    /* >=, <=, !=, == */
+                    if ((*(str_ptr+1) == '=')) {
+                        buf[0] = actchar;
+                        buf[1] = '=';
+                        buf[2] = '\0';
+                        str_ptr++;
+                    }
+                    else {
+                        buf[0] = actchar;
+                        buf[1] = '\0';
+                    }
+                    cwl->wl_word = copy(buf);
+                    str_ptr++;
+                    ustate = 1; /* we have an operator */
+                }
+                else if ((actchar == '-') && (ustate == 0)) {
+                    buf[0] = actchar;
+                    buf[1] = '\0';
+                    cwl->wl_word = copy(buf);
+                    str_ptr++;
+                    ustate = 1; /* we have an operator */
+                }
+                else if ((actchar == '-') && (ustate == 1)) {
+                    cwl->wl_word = copy("");
+                    str_ptr++;
+                    ustate = 2; /* place a '-' in front of token */
+                }
+                else if (isalpha(actchar))
+                {
+                    /* unary -, change sign */
+                    if (ustate == 2) {
+                        i = 1;
+                        buf[0] = '-';
+                    }
+                    else i = 0;
+
+                    if (((actchar == 'v') || (actchar == 'i')) && (*(str_ptr+1) == '(')) {
+                        while (*str_ptr != ')') {
+                            buf[i] = *str_ptr;
+                            i++;
+                            str_ptr++;
+                        }
+                        buf[i] = *str_ptr;
+                        buf[i+1] = '\0'; 
+                        cwl->wl_word = copy(buf);
+                        str_ptr++;
+                    }
+                    else {
+                        while (isalnum(*str_ptr) || (*str_ptr == '!') || (*str_ptr == '#') 
+                            || (*str_ptr == '$')|| (*str_ptr == '%')|| (*str_ptr == '_') 
+                            || (*str_ptr == '[')|| (*str_ptr == ']')) {
+                            buf[i] = *str_ptr;
+                            i++;
+                            str_ptr++;
+                        }
+                        buf[i] = '\0'; 
+                        if ((*str_ptr == '(') || cieq(buf, "hertz")  || cieq(buf, "temper") 
+                            || cieq(buf, "time"))
+                        {
+                            cwl->wl_word = copy(buf);
+                        }
+                        else {
+                            xlen = strlen(buf);
+                            tmp_char = tmalloc(xlen + 3);
+                            sprintf(tmp_char, "{%s}", buf);
+                            cwl->wl_word = tmp_char;
+                        }
+                    }
+                    ustate = 0; /* we have a number */
+                }
+                else if (isdigit(actchar))
+                {
+                    /* unary -, change sign */
+                    if (ustate == 2) {
+                        i = 1;
+                        buf[0] = '-';
+                    }
+                    else i = 0;
+                    while (isdigit(*str_ptr) || (*str_ptr == '.') || (*str_ptr == 'e') 
+                            || (*str_ptr == '+')|| (*str_ptr == '-')) 
+                    {
+                        if (((*str_ptr == '+')|| (*str_ptr == '-')) && (*(str_ptr-1) != 'e'))
+                            break;
+                        buf[i] = *str_ptr;
+                        i++;
+                        str_ptr++;
+                    }
+                    buf[i] = '\0';
+                    cwl->wl_word = copy(buf);
+                    ustate = 0; /* we have a number */
+                }
+                else  /* strange char */
+                {
+                    printf("Preparing B line for numparam\nWhat is this?\n%s\n", str_ptr);
+                    buf[0] = *str_ptr;
+                    buf[1] = '\0';
+                    cwl->wl_word = copy(buf);
+                    str_ptr++;
+                }
+                wl = cwl;
+                prevchar = actchar;
+            }
+
+            new_str = wl_flatten(wlist);
+            wl_free(wlist);
+            wl = NULL;
+
+	        tmp_char = copy(curr_line);
+            equal_ptr = strstr(tmp_char, "=");
+            /* cut the tmp_char after the equal sign */
+            *(equal_ptr + 1) = '\0';  
+            xlen = strlen(tmp_char) + strlen(new_str) + 2;
+            final_str = tmalloc(xlen);
+            sprintf(final_str, "%s %s", tmp_char, new_str);
+
+            new_line = alloc(struct line);
+	        new_line->li_next    = NULL;
+	        new_line->li_error   = NULL;
+	        new_line->li_actual  = NULL;
+	        new_line->li_line    = final_str;
+	        new_line->li_linenum = 0;
+	        // comment out current old R line
+	        *(card->li_line)   = '*';
+	        // insert new B source line immediately after current line
+	        tmp_ptr           = card->li_next;
+	        card->li_next     = new_line;
+	        new_line->li_next = tmp_ptr;
+	        // point 'card' pointer to the new line
+	        card              = new_line;
+
+            tfree(new_str);
+            tfree(tmp_char);
+        } /* end of if 'b' */
+
+        card = card->li_next;
+    }
 }

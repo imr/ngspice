@@ -91,6 +91,9 @@ static struct func {
     { "lt0",    PTF_LT0,    PTlt0},
     { "ge0",    PTF_GE0,    PTge0},
     { "le0",    PTF_LE0,    PTle0},
+    { "pow",    PTF_POW,    PTpower},  
+    { "min",    PTF_MIN,    PTmin},
+    { "max",    PTF_MAX,    PTmax},
 } ;
 
 #define NUM_FUNCS (int)(sizeof (funcs) / sizeof (struct func))
@@ -437,6 +440,57 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
         case PTF_PWL_DERIVATIVE: /* d/dvar PWL(var, ...) */
             arg1 = mkcon((double) 0.0);
             break;
+
+        case PTF_MIN:
+        /*
+        min(a,b)
+        p->left: ','    p->left->left: a       p->left->right: b 
+        */	        
+            newp = mkcon((double) 0);
+	        return (newp);
+
+        case PTF_MAX:
+            newp = mkcon((double) 0);
+	        return (newp);
+
+        case PTF_POW:
+        {
+        /*
+        pow(a,b)
+        p->left: ','    p->left->left: a       p->left->right: b 
+        */
+
+        /* Two cases...
+           The power is constant 
+        */
+            if (p->left->right->type == PT_CONSTANT) {
+                arg1 = PTdifferentiate(p->left->left, varnum);
+
+                newp = mkb(PT_TIMES, mkb(PT_TIMES,
+				     mkcon(p->left->right->constant),
+				     mkb(PT_POWER, p->left->left,
+					 mkcon(p->left->right->constant - 1))),
+		             arg1);
+            } else {
+            /* This is complicated.  f(x) ^ g(x) ->
+               exp(y(x) * ln(f(x)) ...
+             */
+             arg1 = PTdifferentiate(p->left->left, varnum);
+             arg2 = PTdifferentiate(p->left->right, varnum);
+             newp = mkb(PT_TIMES, mkf(PTF_EXP, mkb(PT_TIMES,
+						p->left->right, mkf(PTF_LN,
+						p->left->left))),
+		                mkb(PT_PLUS,
+			            mkb(PT_TIMES, p->left->right,
+			            mkb(PT_DIVIDE, arg1, p->left->left)),
+			            mkb(PT_TIMES, arg2, mkf(PTF_LN, /*arg1*/p->left->left))));
+		                                        /*changed by HT, '05/06/29*/
+
+            }
+            arg2 = PTdifferentiate(p->left->left, varnum);
+            newp = mkb(PT_TIMES, arg1, arg2);
+            return (newp);
+        }
 
 	default:
 	    fprintf(stderr, "Internal Error: bad function # %d\n",

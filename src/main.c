@@ -365,6 +365,8 @@ COMPATMODE_T ngspice_compat_mode(void)
    char behaviour[80] ;
 
    if( cp_getvar("ngbehavior", VT_STRING, behaviour)){
+      if (strcasecmp(behaviour,"all")==0)
+         return( COMPATMODE_ALL ) ;
       if (strcasecmp(behaviour,"hspice")==0)
          return( COMPATMODE_HSPICE ) ;
       if (strcasecmp(behaviour,"spice3")==0)

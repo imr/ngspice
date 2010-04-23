@@ -536,6 +536,18 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
          line_free(deck->li_actual,FALSE);
          deck->li_actual = realdeck;
 
+   /* print out the expanded deck into debug-out2.txt */
+      if (ft_ngdebug) {
+         FILE *fdo;
+         struct line *tmp_ptr1 = NULL;   
+         /*debug: print into file*/
+	      fdo = fopen("debug-out2.txt", "w");
+         for(tmp_ptr1 = deck; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
+         fprintf(fdo, "%s\n", tmp_ptr1->li_line);        
+         ;
+         (void) fclose(fdo);
+      }
+
          /* now load deck into ft_curckt -- the current circuit. */
          inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
 
@@ -595,12 +607,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       printf("In inp_spsource, done with dodeck.\n");
 #endif
 
-   /* print out the expanded deck into debug-out2.txt */
+   /* print out the expanded deck into debug-out3.txt */
       if (ft_ngdebug) {
          FILE *fdo;
          struct line *tmp_ptr1 = NULL;   
          /*debug: print into file*/
-	      fdo = fopen("debug-out2.txt", "w");
+	     fdo = fopen("debug-out3.txt", "w");
          for(tmp_ptr1 = deck; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next)
          fprintf(fdo, "%s\n", tmp_ptr1->li_line);        
          ;

@@ -1248,7 +1248,7 @@ formula (tdico * dico, char *s, unsigned char *perror)
                 {
                   if ((fu == 18))
                       u = ternary_fcn ((int) v, w, u);
-                  else if ((fu == 19))
+                  else if ((fu == 20))
                       u = agauss (v, w, u);
                   else
                       u = mathfunction (fu, v, u);

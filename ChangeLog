@@ -1,3 +1,8 @@
+2010-04-23 Holger Vogt
+ * xpressn.c: agauss is no. 20
+   main.c, inp.c, inpcom.c, compatmode.h, inpptree.h, ifeval.c, inpptree.c, ptfuncs.c:
+   ngspice compatibility mode with various functions
+
 2010-04-11 Dietmar Warning
  * Robert Larice patch to allow new operations in control blocks:
  * examples/new-check-3.sp, new-check-4.sp

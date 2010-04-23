@@ -72,18 +72,40 @@ PTeval(INPparseNode * tree, double gmin, double *res, double *vals)
 	break;
 
     case PT_FUNCTION:
-	err = PTeval(tree->left, gmin, &r1, vals);
-	if (err != OK)
-	    return (err);
-        if(tree->data == NULL)
-            *res = (*tree->function) (r1);
-        else
-            *res = (*tree->function) (r1, tree->data);
-	if (*res == HUGE) {
-	    fprintf(stderr, "Error: %g out of range for %s\n",
-		    r1, tree->funcname);
-	    return (E_PARMVAL);
-	}
+        switch(tree->funcnum) {
+       
+        case PTF_POW:
+        case PTF_MIN:
+        case PTF_MAX:
+            err = PTeval(tree->left->left, gmin, &r1, vals);
+            if (err != OK)
+                return (err);
+            err = PTeval(tree->left->right, gmin, &r2, vals);
+            if (err != OK)
+                return (err);
+            *res = (*tree->function) (r1, r2);
+            if (*res == HUGE) {
+                fprintf(stderr, "Error: %g, %g out of range for %s\n",
+                r1, r2, tree->funcname);
+                return (E_PARMVAL);
+            }
+        break;
+        /* fcns with single argument */
+        default:
+            err = PTeval(tree->left, gmin, &r1, vals);
+            if (err != OK)
+                return (err);
+            if(tree->data == NULL)
+                *res = (*tree->function) (r1);
+            else
+                *res = (*tree->function) (r1, tree->data);
+            if (*res == HUGE) {
+                fprintf(stderr, "Error: %g out of range for %s\n",
+                r1, tree->funcname);
+                return (E_PARMVAL);
+            }
+        break;
+        }
 	break;
 
     case PT_TERN:

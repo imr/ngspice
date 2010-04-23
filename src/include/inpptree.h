@@ -107,7 +107,9 @@ typedef struct INPparseNode {
 #define PTF_LT0	27
 #define PTF_GE0	28
 #define PTF_LE0	29
-
+#define PTF_POW	30
+#define PTF_MIN	31
+#define PTF_MAX	32
 
 /* The following things are used by the parser -- these are the token types the
  * lexer returns.
@@ -177,6 +179,8 @@ extern double PTpwl();
 extern double PTpwl_derivative();
 extern double PTuramp();
 extern double PTuminus();
+extern double PTmin();
+extern double PTmax();
 extern double PTeq0(double arg);
 extern double PTne0(double arg);
 extern double PTgt0(double arg);
