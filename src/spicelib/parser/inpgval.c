@@ -23,7 +23,8 @@ IFvalue *INPgetValue(void *ckt, char **line, int type, INPtables * tab)
     /* make sure we get rid of extra bits in type */
     type &= IF_VARTYPES;
     if (type == IF_INTEGER) {
-	temp.iValue = INPevaluate(line, &error, 1);
+	tmp = INPevaluate(line, &error, 1);
+	temp.iValue = (int) floor(0.5 + tmp);
 	/*printf(" returning integer value %d\n",temp.iValue); */
     } else if (type == IF_REAL) {
 	temp.rValue = INPevaluate(line, &error, 1);

@@ -1,3 +1,7 @@
+2010-04-26 Dietmar Warning
+ * parser/inpgval.c: correct parsing of integer model parameter given as double 
+   (e.g. capmod=3.000e+00)
+
 2010-04-23 Holger Vogt
  * xpressn.c: agauss is no. 20
    main.c, inp.c, inpcom.c, compatmode.h, inpptree.h, ifeval.c, inpptree.c, ptfuncs.c:
