@@ -53,7 +53,7 @@ IFvalue *INPgetValue(void *ckt, char **line, int type, INPtables * tab)
 	    ilist =
 		(int *) REALLOC((char *) ilist,
 				temp.v.numValue * sizeof(int));
-	    *(ilist + temp.v.numValue - 1) = tmp;
+	    *(ilist + temp.v.numValue - 1) = (int) floor(0.5 + tmp);
 	    tmp = INPevaluate(line, &error, 1);
 	}
 	temp.v.vec.iVec = ilist;
