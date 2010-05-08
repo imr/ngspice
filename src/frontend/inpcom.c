@@ -3486,8 +3486,18 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
 /* compatibility:
    Exxx n1 n2 VCVS n3 n4 gain --> Exxx n1 n2 n3 n4 gain
    Gxxx n1 n2 VCCS n3 n4 tr --> Exxx n1 n2 n3 n4 tr
-   Exxx n1 n2 VOL = {equation} --> BExxx n1 n2 V = {equation}
-   Gxxx n1 n2 CUR = {equation} --> BGxxx n1 n2 I = {equation}
+
+   Two step approach to keep the original names for reuse, 
+   i.e. for current measurements like i(Exxx):
+   Exxx n1 n2 VOL = {equation} 
+   -->
+   Exxx n1 n2 int1 0 1
+   BExxx int1 0 V = {equation}
+
+   Gxxx n1 n2 CUR = {equation} 
+   --> 
+   Gxxx n1 n2 int1 0 1
+   BGxxx int1 0 V = {equation}
 
    Do the following transformations only if {equation} contains 
    simulation output like v(node), v(node1, node2), i(branch).
@@ -3530,6 +3540,7 @@ static void inp_compat(struct line *deck)
 
         char *curr_line = card->li_line;
 
+        /* exclude any command inside .control ... .endc */
         if ( ciprefix(".control", curr_line) ) {
             skip_control ++;
             continue;
@@ -3550,33 +3561,130 @@ static void inp_compat(struct line *deck)
                 *str_ptr = ' '; *(str_ptr + 1) = ' ';
                 *(str_ptr + 2) = ' '; *(str_ptr + 3) = ' ';
             }
-            /* Exxx n1 n2 VOL = {equation} --> BExxx n1 n2 V = {equation} */
+
+            /* Exxx n1 n2 VOL = {equation} 
+               -->
+               Exxx n1 n2 int1 0 1
+               BExxx int1 0 V = {equation}
+            */
             if (str_ptr = strstr( curr_line, "vol" ) ) {
-                *(str_ptr + 2) = ' ';
-                while (str_ptr > curr_line) {
-                    *(str_ptr + 1) = *str_ptr;
-                    str_ptr--;
+                cut_line = curr_line;
+                /* title and nodes */
+                title_tok = gettok(&cut_line);
+                node1 =  gettok(&cut_line);
+                node2 =  gettok(&cut_line);
+                /* Find equation, starts with '{', till end of line */
+                str_ptr = strstr(cut_line, "{");
+
+                // Exxx  n1 n2 int1 0 1
+                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
+                    + 12;
+                ckt_array[0] = (char*)tmalloc(xlen);
+                sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
+                    title_tok, node1, node2, title_tok);
+                // BExxx int1 0 V = {equation} 
+                xlen = 2*strlen(title_tok) + strlen(str_ptr)
+                    + 15;
+                ckt_array[1] = (char*)tmalloc(xlen);
+                sprintf(ckt_array[1], "b%s %s_int1 0 v = %s",
+                    title_tok, title_tok, str_ptr);
+
+                // insert new B source line immediately after current line
+	            tmp_ptr = card->li_next;
+	            for ( i = 0; i < 2; i++ )
+                {
+                    if ( param_end )
+                    {
+                        param_end->li_next = alloc(struct line);
+                        param_end          = param_end->li_next;
+                    }
+                    else
+                    {
+                        param_end = param_beg = alloc(struct line);
+                    }
+                    param_end->li_next    = NULL;
+                    param_end->li_error   = NULL;
+                    param_end->li_actual  = NULL;
+                    param_end->li_line    = ckt_array[i];
+                    param_end->li_linenum = 0;
                 }
-                *(str_ptr + 1) = *str_ptr;
-                *str_ptr = 'b';
+                // comment out current variable e line
+                *(card->li_line)   = '*';
+                // insert new param lines immediately after current line
+                tmp_ptr            = card->li_next;
+                card->li_next      = param_beg;
+                param_end->li_next = tmp_ptr;
+                // point 'card' pointer to last in scalar list
+                card               = param_end;
+
+                param_beg = param_end = NULL;
             }
         }
         else if ( *curr_line == 'g' ) {
-            /* Gxxx n1 n2 VCCS n3 n4 tr --> Exxx n1 n2 n3 n4 tr
+            /* Gxxx n1 n2 VCCS n3 n4 tr --> Gxxx n1 n2 n3 n4 tr
                remove vccs */
             if (str_ptr = strstr( curr_line, "vccs" ) ) {
                 *str_ptr = ' '; *(str_ptr + 1) = ' ';
                 *(str_ptr + 2) = ' '; *(str_ptr + 3) = ' ';
             }
-            /* Gxxx n1 n2 CUR = {equation} --> BGxxx n1 n2 I = {equation} */
+
+            /*
+               Gxxx n1 n2 CUR = {equation} 
+               --> 
+               Gxxx n1 n2 int1 0 1
+               BGxxx int1 0 V = {equation}
+            */
             if (str_ptr = strstr( curr_line, "cur" ) ) {
-                *(str_ptr + 2) = ' '; *str_ptr = 'i';
-                while (str_ptr > curr_line) {
-                    *(str_ptr + 1) = *str_ptr;
-                    str_ptr--;
+                cut_line = curr_line;
+                /* title and nodes */
+                title_tok = gettok(&cut_line);
+                node1 =  gettok(&cut_line);
+                node2 =  gettok(&cut_line);
+                /* Find equation, starts with '{', till end of line */
+                str_ptr = strstr(cut_line, "{");
+
+                // Gxxx  n1 n2 int1 0 1
+                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
+                    + 12;
+                ckt_array[0] = (char*)tmalloc(xlen);
+                sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
+                    title_tok, node1, node2, title_tok);
+                // BGxxx int1 0 V = {equation} 
+                xlen = 2*strlen(title_tok) + strlen(str_ptr)
+                    + 15;
+                ckt_array[1] = (char*)tmalloc(xlen);
+                sprintf(ckt_array[1], "b%s %s_int1 0 v = %s",
+                    title_tok, title_tok, str_ptr);
+
+                // insert new B source line immediately after current line
+	            tmp_ptr = card->li_next;
+	            for ( i = 0; i < 2; i++ )
+                {
+                    if ( param_end )
+                    {
+                        param_end->li_next = alloc(struct line);
+                        param_end          = param_end->li_next;
+                    }
+                    else
+                    {
+                        param_end = param_beg = alloc(struct line);
+                    }
+                    param_end->li_next    = NULL;
+                    param_end->li_error   = NULL;
+                    param_end->li_actual  = NULL;
+                    param_end->li_line    = ckt_array[i];
+                    param_end->li_linenum = 0;
                 }
-                *(str_ptr + 1) = *str_ptr;
-                *str_ptr = 'b';
+                // comment out current variable g line
+                *(card->li_line)   = '*';
+                // insert new param lines immediately after current line
+                tmp_ptr            = card->li_next;
+                card->li_next      = param_beg;
+                param_end->li_next = tmp_ptr;
+                // point 'card' pointer to last in scalar list
+                card               = param_end;
+
+                param_beg = param_end = NULL;
             }
         }
    /* Rxxx n1 n2 R = {equation} or Rxxx n1 n2 {equation}
