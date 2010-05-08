@@ -3702,9 +3702,9 @@ static void inp_compat(struct line *deck)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strstr(cut_line, "{");
             xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
-                   strlen(node1) + strlen(node2) + strlen(str_ptr)  + 15;
+                   strlen(node1) + strlen(node2) + strlen(str_ptr)  + 17;
             xline = (char*)tmalloc(xlen);
-            sprintf(xline, "b%s %s %s I = v(%s, %s)/%s", title_tok, node1, node2,  
+            sprintf(xline, "b%s %s %s I = v(%s, %s)/(%s)", title_tok, node1, node2,  
                 node1, node2, str_ptr);
             new_line = alloc(struct line);
 	        new_line->li_next    = NULL;

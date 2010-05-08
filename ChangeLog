@@ -1,6 +1,7 @@
 2010-05-08 Holger Vogt
  * inpcom.c: patch 20/05/10 by Robert: avoid substraction from a builtin 1.0
  * inpcom.c: update to E, G sources with expressions
+ * inpcom.c, line 3707: put expression for dependent resistor in brackets
 
 2010-04-26 Dietmar Warning
  * parser/inpgval.c: correct parsing of integer model parameter given as double 
