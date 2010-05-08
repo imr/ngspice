@@ -3503,30 +3503,46 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
 
    Cxxx n1 n2 C = {equation} or Cxxx n1 n2 {equation}
       -->
-      Cxxx  n1 n2-aux  1
-      Vxxx  n2-aux n2  DC=0
-      Bxxx  n1 n2   I = ((equation) - 1) * Vxxx#branch
+      Exxx  n-aux 0  n1 n2  1
+      Cxxx  n-aux 0         1
+      Bxxx  n2 n1  I = i(Exxx) * equation
    
    Lxxx n1 n2 L = {equation} or Lxxx n1 n2 {equation}
       -->
-      Lxxx  n1 int  1
-      Bxxx  int n2   V = ((equation) - 1) * V(n1, int)
+      Fxxx n-aux 0  Bxxx -1
+      Lxxx n-aux 0      1
+      Bxxx n1 n2 V = v(n-aux) * 1e-16
+
      */
 static void inp_compat(struct line *deck)
 {
-    char *curr_line, *str_ptr, *cut_line, *title_tok, *node1, *node2;
-    char *xline, *linline, *amline, *fline, *eqline;
+    char *str_ptr, *cut_line, *title_tok, *node1, *node2;
+    char *xline;
     size_t xlen, i;
     char *ckt_array[4];
     struct line *new_line, *tmp_ptr;
 
     struct line  *param_end = NULL, *param_beg = NULL;
-    struct line *card = deck;
+    struct line *card;
+    int skip_control = 0;
 
-    while ( card != NULL )
-    {
-        curr_line = card->li_line;
-        if ( *curr_line == '*' ) { card = card->li_next; continue; }
+    for (card = deck; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        if ( ciprefix(".control", curr_line) ) {
+            skip_control ++;
+            continue;
+        } else if( ciprefix(".endc", curr_line) ) {
+            skip_control --;
+            continue;
+        } else if(skip_control > 0) {
+            continue;
+        }
+
+        if ( *curr_line == '*' )
+            continue;
+
         if ( *curr_line == 'e' ) {
             /*    Exxx n1 n2 VCVS n3 n4 gain --> Exxx n1 n2 n3 n4 gain
                   remove vcvs */
@@ -3569,7 +3585,7 @@ static void inp_compat(struct line *deck)
    */
         else if ( *curr_line == 'r' ) {
             if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
-                { card = card->li_next; continue; }
+                continue;
             cut_line = curr_line;
             /* make BRxxx pos neg I = V(pos, neg)/{equation}*/
             title_tok = gettok(&cut_line);
@@ -3599,13 +3615,13 @@ static void inp_compat(struct line *deck)
         }
    /* Cxxx n1 n2 C = {equation} or Cxxx n1 n2 {equation}
       -->
-      Cxxx  n1 n2-aux  1
-      Vxxx  n2-aux n2  DC=0
-      Bxxx  n1 n2   I = ((equation) - 1) * Vxxx#branch
+      Exxx  n-aux 0  n1 n2  1
+      Cxxx  n-aux 0         1
+      Bxxx  n2 n1  I = i(Exxx) * equation
     */
         else if ( *curr_line == 'c' ) {
             if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
-                { card = card->li_next; continue; }
+                continue;
             cut_line = curr_line;
             /* title and nodes */
             title_tok = gettok(&cut_line);
@@ -3614,24 +3630,24 @@ static void inp_compat(struct line *deck)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strstr(cut_line, "{");
 
-            //  Bxxx  n1 n2   I = ((equation) - 1) * i(Vxxx)
-            xlen = 2*strlen(title_tok) + strlen(str_ptr) + strlen(node1) 
-                + strlen(node2) + 25;
-            eqline = (char*)tmalloc(xlen);
-            sprintf(eqline, "b%s %s %s i = ((%s) - 1) * i(Vx%s)", 
-                title_tok, node1, node2, str_ptr, title_tok);
-            // CCxxx node1 Cxxx2 1
-            xlen = 2*strlen(title_tok) + strlen(node1) + 11;
-            linline = (char*)tmalloc(xlen);
-            sprintf(linline, "c%s %s %s_int2 1", title_tok, node1, title_tok);
-            // VCxxx Cxxx2 node2 DC 0
-            xlen = 2*strlen(title_tok) + strlen(node2) + 16;
-            amline = (char*)tmalloc(xlen);
-            sprintf(amline, "vx%s %s_int2 %s dc 0", title_tok, title_tok, node2);
+            // Exxx  n-aux 0  n1 n2  1
+            xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
+                + 21 - 4*2 + 1;
+            ckt_array[0] = (char*)tmalloc(xlen);
+            sprintf(ckt_array[0], "e%s %s_int2 0 %s %s 1",
+                    title_tok, title_tok, node1, node2);
+            // Cxxx  n-aux 0  1
+            xlen = 2*strlen(title_tok)
+                + 15 - 2*2 + 1;
+            ckt_array[1] = (char*)tmalloc(xlen);
+            sprintf(ckt_array[1], "c%s %s_int2 0 1", title_tok, title_tok);
+            // Bxxx  n2 n1  I = i(Exxx) * equation
+            xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
+                + strlen(str_ptr) + 27 - 2*5 + 1;
+            ckt_array[2] = (char*)tmalloc(xlen);
+            sprintf(ckt_array[2], "b%s %s %s i = i(e%s) * (%s)",
+                    title_tok, node2, node1, title_tok, str_ptr);
 
-            ckt_array[0] = eqline;
-            ckt_array[1] = linline;
-            ckt_array[2] = amline;
             // insert new B source line immediately after current line
 	        tmp_ptr = card->li_next;
 	        for ( i = 0; i < 3; i++ )
@@ -3665,12 +3681,13 @@ static void inp_compat(struct line *deck)
 
    /* Lxxx n1 n2 L = {equation} or Lxxx n1 n2 {equation}
       -->
-      Lxxx  n1 int  1
-      Bxxx  int n2   V = ((equation) - 1) * V(n1, int)
+      Fxxx n-aux 0  Bxxx -1
+      Lxxx n-aux 0      1
+      Bxxx n1 n2 V = v(n-aux) * equation
     */
         else if ( *curr_line == 'l' ) {
             if ((!strstr(curr_line, "v(")) &&  (!strstr(curr_line, "i(")))
-                { card = card->li_next; continue; }
+                continue;
             cut_line = curr_line;
             /* title and nodes */
             title_tok = gettok(&cut_line);
@@ -3679,22 +3696,27 @@ static void inp_compat(struct line *deck)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strstr(cut_line, "{");
 
-            //  Bxxx  int1 n2   V = (expression(v(somehting)) - 1) * v(n1, int1)
-            xlen = 3*strlen(title_tok) + strlen(str_ptr) + strlen(node1) 
-                + strlen(node2) + 34;
-            eqline = (char*)tmalloc(xlen);
-            sprintf(eqline, "b%s %s_int1 %s v = ((%s) - 1) * v(%s,%s_int1)", 
-                title_tok, title_tok, node2, str_ptr, node1, title_tok);
-            // LLxxx n1 int1 1
-            xlen = 2*strlen(title_tok) + strlen(node1) + 11;
-            linline = (char*)tmalloc(xlen);
-            sprintf(linline, "l%s %s %s_int1 1", title_tok, node1, title_tok);
+            // Fxxx  n-aux 0  Bxxx  1
+            xlen = 3*strlen(title_tok)
+                + 20 - 3*2 + 1;
+            ckt_array[0] = (char*)tmalloc(xlen);
+            sprintf(ckt_array[0], "f%s %s_int2 0 b%s -1",
+                    title_tok, title_tok, title_tok);
+            // Lxxx  n-aux 0  1
+            xlen = 2*strlen(title_tok)
+                + 15 - 2*2 + 1;
+            ckt_array[1] = (char*)tmalloc(xlen);
+            sprintf(ckt_array[1], "l%s %s_int2 0 1", title_tok, title_tok);
+            // Bxxx  n1 n2  V = v(n-aux) * equation
+            xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
+                + strlen(str_ptr) + 31 - 2*5 + 1;
+            ckt_array[2] = (char*)tmalloc(xlen);
+            sprintf(ckt_array[2], "b%s %s %s v = v(%s_int2) * (%s)",
+                    title_tok, node1, node2, title_tok, str_ptr);
 
-            ckt_array[0] = eqline;
-            ckt_array[1] = linline;
             // insert new B source line immediately after current line
 	        tmp_ptr = card->li_next;
-	        for ( i = 0; i < 2; i++ )
+	        for ( i = 0; i < 3; i++ )
             {
                 if ( param_end )
                 {
@@ -3722,7 +3744,6 @@ static void inp_compat(struct line *deck)
 
             param_beg = param_end = NULL;
         }
-        card = card->li_next;
     }
 }
 /* lines for B sources: no parsing in numparam code, just replacement of parameters.
