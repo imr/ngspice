@@ -1032,7 +1032,7 @@ inp_fix_ternary_operator( struct line *start_card )
       if ( ciprefix( ".endc",    line ) ) found_control = FALSE; 
       if (found_control) continue;
 
-
+      /* ternary operator for B source done elsewhere */
       if ( *line == 'B' || *line == 'b' ) continue;
       if ( *line == '*' ) continue;
       if ( strstr( line, "?" ) && strstr( line, ":" ) ) {
@@ -2691,6 +2691,13 @@ inp_expand_macros_in_deck( struct line *deck )
   }
 }
 
+/* Put {} around tokens for handling in numparam.
+   Searches for the next '=' in the line to become active.
+   Several exceptions (eg. no 'set' or 'b' lines, no .cmodel lines, 
+   no lines between .control and .endc, no .option lines).
+   .cmodel instead of .model to allow skipping {} in model line, may be obsolete.
+   Special handling of vectors with [] and complex values with < >
+*/
 static void
 inp_fix_param_values( struct line *deck )
 {
@@ -2806,15 +2813,15 @@ inp_fix_param_values( struct line *deck )
         newvec = wl_flatten(nwl);
         wl_free(nwl);
         /* insert new vector into actual line */
-	*equal_ptr  = '\0';	
-	new_str = tmalloc( strlen(c->li_line) + strlen(newvec) + strlen(end_of_str+1) + 5 );
-	sprintf( new_str, "%s=[%s] %s", c->li_line, newvec, end_of_str+1 );        
+        *equal_ptr  = '\0';	
+        new_str = tmalloc( strlen(c->li_line) + strlen(newvec) + strlen(end_of_str+1) + 5 );
+        sprintf( new_str, "%s=[%s] %s", c->li_line, newvec, end_of_str+1 );        
         tfree(newvec);
         
-	old_str    = c->li_line;
-	c->li_line = new_str;
-	line = new_str + strlen(old_str) + 1;
-	tfree(old_str);
+        old_str    = c->li_line;
+        c->li_line = new_str;
+        line = new_str + strlen(old_str) + 1;
+        tfree(old_str);
       } else if (*beg_of_str == '<') {
       	/* A complex value following the '=' token: code to put curly brackets around all params 
       	inside a pair < > */
