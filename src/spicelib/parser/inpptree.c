@@ -2,7 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group 
 **********/
-/*#define TRACE*/
+//#define TRACE
 
 #include "ngspice.h"
 #include "ifsim.h"
@@ -441,17 +441,42 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             arg1 = mkcon((double) 0.0);
             break;
 
-        case PTF_MIN:
-        /*
-        min(a,b)
-        p->left: ','    p->left->left: a       p->left->right: b 
-        */	        
-            newp = mkcon((double) 0);
-	        return (newp);
+    case PTF_MIN:
+    case PTF_MAX:
+        /* min(a,b) -->   (a<b)       ? a : b
+        *           -->   ((a-b) < 0) ? a : b
+        */
+        {
+            INPparseNode *a = p->left->left;
+            INPparseNode *b = p->left->right;
+            int comparison = (p->funcnum == PTF_MIN) ? PTF_LT0 : PTF_GT0;
+#ifdef TRACE
+            extern void printTree(INPparseNode *);
 
-        case PTF_MAX:
-            newp = mkcon((double) 0);
-	        return (newp);
+            printf("debug: %s, PTF_MIN: ", __func__);
+            printTree(p);
+            printf("\n");
+            printf("debug: %s, PTF_MIN, a: ", __func__);
+            printTree(a);
+            printf("\n");
+            printf("debug: %s, PTF_MIN, b: ", __func__);
+            printTree(b);
+            printf("\n");
+#endif
+            newp = mkb(PT_TERN,
+                       mkf(comparison, mkb(PT_MINUS, a, b)),
+                       mkb(PT_COMMA,
+                           PTdifferentiate(a, varnum),
+                           PTdifferentiate(b, varnum)));
+#ifdef TRACE
+            printf("debug, %s, returns; ", __func__);
+            printTree(newp);
+            printf("\n");
+#endif
+            return (newp);
+        }
+
+        break;
 
         case PTF_POW:
         {
