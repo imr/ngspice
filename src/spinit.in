@@ -8,8 +8,9 @@ set x11lineararcs
 ** frontend debug output **
 *set ngdebug
 ** no asking after quit **
-*set noaskquit
-
+set noaskquit
+** set the compatibility mode to allow some hspice constructs
+set ngbehavior=all
 
 strcmp __flag $program "ngspice"
 if $__flag = 0

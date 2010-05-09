@@ -1,5 +1,6 @@
 2010-05-09 Holger Vogt
  * inpcom.c: patch 09/05/10 by Robert
+ * spinit.in: add ngbehavior
 
 2010-05-08 Holger Vogt
  * inpcom.c: patch 02/05/10 by Robert: avoid subtraction from a builtin 1.0
