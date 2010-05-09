@@ -3578,13 +3578,13 @@ static void inp_compat(struct line *deck)
 
                 // Exxx  n1 n2 int1 0 1
                 xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                    + 12;
+                    + 20 - 4*2 + 1;
                 ckt_array[0] = (char*)tmalloc(xlen);
                 sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
                     title_tok, node1, node2, title_tok);
                 // BExxx int1 0 V = {equation} 
                 xlen = 2*strlen(title_tok) + strlen(str_ptr)
-                    + 15;
+                    + 20 - 3*2 + 1;
                 ckt_array[1] = (char*)tmalloc(xlen);
                 sprintf(ckt_array[1], "b%s %s_int1 0 v = %s",
                     title_tok, title_tok, str_ptr);
@@ -3645,13 +3645,13 @@ static void inp_compat(struct line *deck)
 
                 // Gxxx  n1 n2 int1 0 1
                 xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                    + 12;
+                    + 20 - 4*2 + 1;
                 ckt_array[0] = (char*)tmalloc(xlen);
                 sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
                     title_tok, node1, node2, title_tok);
                 // BGxxx int1 0 V = {equation} 
                 xlen = 2*strlen(title_tok) + strlen(str_ptr)
-                    + 15;
+                    + 20 - 3*2 + 1;
                 ckt_array[1] = (char*)tmalloc(xlen);
                 sprintf(ckt_array[1], "b%s %s_int1 0 v = %s",
                     title_tok, title_tok, str_ptr);
@@ -3702,9 +3702,10 @@ static void inp_compat(struct line *deck)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strstr(cut_line, "{");
             xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
-                   strlen(node1) + strlen(node2) + strlen(str_ptr)  + 17;
+                   strlen(node1) + strlen(node2) + strlen(str_ptr)  +
+                   28 - 6*2 + 1;
             xline = (char*)tmalloc(xlen);
-            sprintf(xline, "b%s %s %s I = v(%s, %s)/(%s)", title_tok, node1, node2,  
+            sprintf(xline, "b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2,  
                 node1, node2, str_ptr);
             new_line = alloc(struct line);
 	        new_line->li_next    = NULL;
