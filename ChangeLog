@@ -1,3 +1,7 @@
+2010-05-10 Holger Vogt
+ * subckt.c:1349: fcn finishLine: add e. and h. to net name
+   inside i(...).
+
 2010-05-09 Holger Vogt
  * inpcom.c: patch 09/05/10 by Robert
  * spinit.in: add ngbehavior
