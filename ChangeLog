@@ -1,3 +1,8 @@
+2010-05-11 Holger Vogt
+ * inpcom.c: new fcn inp_fix_gnd_name: 'gnd' replaced by ' 0 ', if delimiters
+   are '(' or ' ' or ',' on the left and ')' or ' ' or ',' on the right.
+   fcn inp_bsource_compat: 'm={m}' replaced by '     '   
+
 2010-05-10 Holger Vogt
  * subckt.c:1349: fcn finishLine: add e. and h. to net name
    inside i(...).

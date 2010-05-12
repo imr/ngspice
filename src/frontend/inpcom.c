@@ -230,6 +230,7 @@ inp_pathopen(char *name, char *mode)
 
 /* replace " gnd " by " 0   " 
    and then remove excessive white spaces */
+/*
 static void
 inp_fix_gnd_name( struct line *deck ) {
   struct line *c = deck;
@@ -239,7 +240,7 @@ inp_fix_gnd_name( struct line *deck ) {
   while ( c != NULL ) {
     gnd = c->li_line;
     if ( *gnd == '*' ) { c = c->li_next; continue; }
-    /* replace " gnd " by " 0   " */
+    // replace " gnd " by " 0   "
 	while ( (gnd = strstr( gnd, "gnd " ) ) ) {
       if ( isspace(*(gnd-1)) ) {
         memcpy( gnd, "0   ", 4 );
@@ -247,11 +248,35 @@ inp_fix_gnd_name( struct line *deck ) {
       gnd += 4;
 	  found_gnd = TRUE;
     }
-	/* remove white spaces after replacement, retain " 0 " */
+	// remove white spaces after replacement, retain " 0 "
 	if (found_gnd) 
       c->li_line = inp_remove_ws(c->li_line);
     c = c->li_next;
 	found_gnd = FALSE;
+  }
+}
+*/
+
+/* replace "gnd" by " 0 " 
+   Delimiters of gnd may be ' ' or ',' or '(' or ')' */
+static void
+inp_fix_gnd_name( struct line *deck ) {
+  struct line *c = deck;
+  char *gnd;
+
+  while ( c != NULL ) {
+    gnd = c->li_line;
+    if ( *gnd == '*' ) { c = c->li_next; continue; }
+    // replace "§gnd§" by "§ 0 §", § being a ' '  ','  '('  ')'.
+	while ( (gnd = strstr( gnd, "gnd" ) ) ) {
+      if (( isspace(*(gnd-1)) || *(gnd-1) == '(' || *(gnd-1) == ','  ) &&
+         ( isspace(*(gnd+3)) || *(gnd+3) == ')' || *(gnd+3) == ','  ))
+      {
+        memcpy( gnd, " 0 ", 3 );
+      }
+      gnd += 3;
+    }
+    c = c->li_next;
   }
 }
 
@@ -3890,7 +3915,7 @@ static void inp_bsource_compat(struct line *deck)
             equal_ptr = strstr(curr_line, "=");
             /* find the m={m} token and remove it */
             if(str_ptr = strstr(curr_line, "m={m}"))
-                *str_ptr = '\0'; 
+                memcpy( str_ptr, "     ", 5 ); 
             /* scan the line and remove all '{' and '}' */
             str_ptr = curr_line;
             while (*str_ptr) {
