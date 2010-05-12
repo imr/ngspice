@@ -490,35 +490,13 @@ chk_for_line_continuation( char *line ) {
 static void
 inp_fix_macro_param_func_paren_io( struct line *begin_card ) {
   struct line *card;
-  char        *str_ptr, *new_str, *open_paren_ptr, *search_ptr, *fcn_name;
+  char        *str_ptr, *new_str;
   bool        is_func = FALSE;
 
   for ( card = begin_card; card != NULL; card = card->li_next ) {
 
     if ( *card->li_line == '*' ) continue;
-/*
-    // zero out any voltage node references on .param lines
-    if ( ciprefix( ".param", card->li_line ) ) {
-      search_ptr = card->li_line;
-      while( ( open_paren_ptr = strstr( search_ptr, "(" ) ) ) {
-        fcn_name = open_paren_ptr - 1;
-        while ( *fcn_name != '\0' && fcn_name != search_ptr && (isalnum(*fcn_name) || *fcn_name == '_' ) ) fcn_name--;
-        if ( fcn_name != search_ptr ) fcn_name++;
-        *open_paren_ptr = '\0';
-        if ( strcmp( fcn_name, "v" ) == 0 ) {
-          *open_paren_ptr = ' ';
-          *fcn_name       = '0';
-          fcn_name++;
-          while ( *fcn_name != ')' ) { *fcn_name = ' '; fcn_name++; }
-          *fcn_name = ' ';
-        }
-        else {
-          *open_paren_ptr = '(';
-        }
-        search_ptr = open_paren_ptr + 1;
-      }
-    }
-*/
+
     if ( ciprefix( ".macro", card->li_line ) || ciprefix( ".eom", card->li_line ) ) {
       str_ptr = card->li_line;
       while( !isspace(*str_ptr) ) str_ptr++;
