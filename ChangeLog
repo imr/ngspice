@@ -1,7 +1,8 @@
 2010-05-14 Holger Vogt
  * dllitf.h, cplsetup.c, cmexport.c, int/udnfunc.c, real/udnfunc.c, xspice.c:
    tmalloc patch by R Larice
-   vngspice.sln, vngspice.proj: 64 bit support   
+   vngspice.sln, vngspice.proj: 64 bit support 
+   inpcom.c: exclude .control ... .endc lines from fcn inp_bsource_compat   
 
 2010-05-11 Holger Vogt
  * inpcom.c: new fcn inp_fix_gnd_name: 'gnd' replaced by ' 0 ', if delimiters

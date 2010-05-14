@@ -3878,16 +3878,29 @@ static void inp_compat(struct line *deck)
 
 static void inp_bsource_compat(struct line *deck)
 {
-    char *curr_line, *equal_ptr, *str_ptr, *tmp_char, *new_str, *final_str;
+    char *equal_ptr, *str_ptr, *tmp_char, *new_str, *final_str;
     char actchar, prevchar = ' ';
-    struct line *card = deck, *new_line, *tmp_ptr;
+    struct line *card, *new_line, *tmp_ptr;
     wordlist *wl = NULL, *wlist = NULL, *cwl;
     char buf[512];
     size_t i, xlen, ustate = 0;
+    int skip_control = 0;
 
-    while ( card != NULL )
-    {
-        curr_line = card->li_line;
+    for (card = deck; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        /* exclude any command inside .control ... .endc */
+        if ( ciprefix(".control", curr_line) ) {
+            skip_control ++;
+            continue;
+        } else if( ciprefix(".endc", curr_line) ) {
+            skip_control --;
+            continue;
+        } else if(skip_control > 0) {
+            continue;
+        }
+
         if ( *curr_line == 'b' ) {
             /* store starting point for later parsing, beginning of {expression} */
             equal_ptr = strstr(curr_line, "=");
@@ -3990,11 +4003,14 @@ static void inp_bsource_compat(struct line *deck)
                             str_ptr++;
                         }
                         buf[i] = '\0'; 
+                        /* no parens {} around time, hertz, temper and the constants
+                           pi and e which are defined in inpptree.c */
                         if ((*str_ptr == '(') || cieq(buf, "hertz")  || cieq(buf, "temper") 
-                            || cieq(buf, "time"))
+                            || cieq(buf, "time") || cieq(buf, "pi") || cieq(buf, "e"))
                         {
                             cwl->wl_word = copy(buf);
                         }
+                        /* {} around all other tokens */
                         else {
                             xlen = strlen(buf);
                             tmp_char = tmalloc(xlen + 3);
@@ -4055,7 +4071,7 @@ static void inp_bsource_compat(struct line *deck)
 	        new_line->li_actual  = NULL;
 	        new_line->li_line    = final_str;
 	        new_line->li_linenum = 0;
-	        // comment out current old R line
+	        // comment out current old B line
 	        *(card->li_line)   = '*';
 	        // insert new B source line immediately after current line
 	        tmp_ptr           = card->li_next;
@@ -4067,7 +4083,5 @@ static void inp_bsource_compat(struct line *deck)
             tfree(new_str);
             tfree(tmp_char);
         } /* end of if 'b' */
-
-        card = card->li_next;
-    }
+    } /* end of for loop */
 }
