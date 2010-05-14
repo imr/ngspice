@@ -3,13 +3,18 @@
 #include <cm.h>
 #include <dllitf.h>
 
+#define U(x)  (void)x
 
 /*how annoying!, needed for structure below*/
-static void *tcalloc(size_t a, size_t b){
-  return tmalloc(a*b);
+static void *tcalloc(size_t a, size_t b) {
+  return tmalloc(a*b);          /* FIXME, tcalloc must zero !?!? */
 }
 
-static void *empty(void){
+static void no_free(void *p) {
+  U(p);
+}
+
+static FILE * no_file(void) {
   return NULL;
 }
 
@@ -58,24 +63,24 @@ struct coreInfo_t  coreInfo =
   cm_complex_subtract,
   cm_complex_multiply,
   cm_complex_divide,
-  (FILE *(*)(void))empty,
-  (FILE *(*)(void))empty,
-  (FILE *(*)(void))empty,
+  no_file,
+  no_file,
+  no_file,
 #ifndef HAVE_LIBGC
   tmalloc,
   tcalloc,
   trealloc,
   txfree,
-  (char *(*)(int))tmalloc,
-  (char *(*)(char *,int))trealloc,
-  (void (*)(char *))txfree
+  tmalloc,
+  trealloc,
+  txfree
 #else
   GC_malloc,
   tcalloc,
   GC_realloc,
-  (void (*)(void *))empty,
-  (char *(*)(int))GC_malloc,
-  (char *(*)(char *,int))GC_realloc,
-  (void (*)(char *))empty      
+  no_free,
+  GC_malloc,
+  GC_realloc,
+  no_free
 #endif
 };

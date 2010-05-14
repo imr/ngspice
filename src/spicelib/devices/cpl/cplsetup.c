@@ -1890,9 +1890,6 @@ static int divC(double ar, double ai, double br, double bi, double *cr, double *
 static NODE
 *NEW_node(void)
 {
-   /*
-   char *tmalloc();
-    */
    NODE *n;
 
    n = (NODE *) tmalloc (sizeof (NODE));

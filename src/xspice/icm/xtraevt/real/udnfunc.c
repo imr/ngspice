@@ -44,7 +44,7 @@ NON-STANDARD FEATURES
 
 #include "evtudn.h"
 
-void *tmalloc(unsigned);
+void *tmalloc(size_t);
 
 
 

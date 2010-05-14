@@ -72,9 +72,9 @@ struct coreInfo_t {
 	void *    ((*dllitf_calloc_pj)(size_t, size_t));
 	void *    ((*dllitf_realloc_pj)(void *, size_t));
 	void      ((*dllitf_free_pj)(void *));
-	char *    ((*dllitf_tmalloc)(int));
-	char *    ((*dllitf_trealloc)(char *, int));
-	void      ((*dllitf_txfree)(char *));
+	void *    ((*dllitf_tmalloc)(size_t));
+	void *    ((*dllitf_trealloc)(void *, size_t));
+	void      ((*dllitf_txfree)(void *));
 };
 
 #endif

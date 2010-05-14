@@ -842,7 +842,7 @@
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR,PSAPI_VERSION=1"
 				WarningLevel="3"
 				CompileAs="1"
 			/>
@@ -857,6 +857,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="Psapi.lib"
+				LinkTimeCodeGeneration="1"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -1803,11 +1805,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\grid.h"
+				RelativePath="..\src\frontend\plotting\grid.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\grid.h"
+				RelativePath="..\src\include\grid.h"
 				>
 			</File>
 			<File
@@ -1915,11 +1917,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\inp.h"
+				RelativePath="..\src\spicelib\parser\inp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp.h"
+				RelativePath="..\src\frontend\inp.h"
 				>
 			</File>
 			<File
@@ -1944,6 +1946,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\parser\inppas3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpptree-parser.h"
 				>
 			</File>
 			<File

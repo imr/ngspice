@@ -1,3 +1,8 @@
+2010-05-14 Holger Vogt
+ * dllitf.h, cplsetup.c, cmexport.c, int/udnfunc.c, real/udnfunc.c, xspice.c:
+   tmalloc patch by R Larice
+   vngspice.sln, vngspice.proj: 64 bit support   
+
 2010-05-11 Holger Vogt
  * inpcom.c: new fcn inp_fix_gnd_name: 'gnd' replaced by ' 0 ', if delimiters
    are '(' or ' ' or ',' on the left and ')' or ' ' or ',' on the right.
