@@ -156,7 +156,7 @@ inp_subcktexpand(struct line *deck)
 {
     struct line *ll, *c;
     char *s;
-    int ok = 0;
+    int ok = 0, skip_control = 0;
     char *t;
     int i;
     wordlist *wl;
@@ -269,43 +269,58 @@ inp_subcktexpand(struct line *deck)
         }/* if(ciprefix.. */
     } /* for(c=deck.. */
     
-    /* Let's do a few cleanup things... Get rid of ( ) around node
-     * lists...
-     */
-    for (c = deck; c; c = c->li_next) {    /* iterate on lines in deck */
-      if (ciprefix(start, c->li_line)) {   /* if we find .subckt . . . */
+    /* Let's do a few cleanup things... Get rid of ( ) around node lists... */
+   for (c = deck; c; c = c->li_next) {    /* iterate on lines in deck */
+        /* exclude any line inside .control ... .endc */
+        if ( ciprefix(".control", c->li_line) ) {
+            skip_control ++;
+            continue;
+        } else if( ciprefix(".endc", c->li_line) ) {
+            skip_control --;
+            continue;
+        } else if(skip_control > 0) {
+            continue;
+        }
+
+        if (ciprefix(start, c->li_line)) {   /* if we find .subckt . . . */
 #ifdef TRACE
-	/* SDB debug statement */
-	printf("In inp_subcktexpand, found a .subckt: %s\n", c->li_line);
+        /* SDB debug statement */
+        printf("In inp_subcktexpand, found a .subckt: %s\n", c->li_line);
 #endif /* TRACE */
-	for (s = c->li_line; *s && (*s != '('); s++)    /* Iterate charwise along line until ( is found */
-	  ;
-	if (*s) {
-	  while (s[0] && (s[1] != ')')) {
-	    s[0] = s[1];
-	    s++;
-	  }
-	  while (s[1]) {
-	    s[0] = s[2];
-	    s++;
-	  }
-	}  /* if (*s)  . . . */
-      } else {
-	for (s = c->li_line; *s && !isspace(*s); s++)    /* Iterate charwise along line until space is found */
-	  ;
-	while (isspace(*s))
-	  s++;
-	if (*s == '(') {
-	  while (s[0] && (s[1] != ')')) {
-	    s[0] = s[1];
-	    s++;
-	  }
-	  while (s[1]) {
-	    s[0] = s[2];
-	    s++;
-	  } /* while */
-	} /* if (*s == '(' . . . */
-      }
+            for (s = c->li_line; *s && (*s != '('); s++)    /* Iterate charwise along line until ( is found */
+                ;
+            if (*s) {
+                while (s[0] && (s[1] != ')')) {
+                    s[0] = s[1];
+                    s++;
+                }
+                while (s[1]) {
+                    s[0] = s[2];
+                    s++;
+                }
+            }  /* if (*s)  . . . */
+        } 
+        else if ((*(c->li_line)=='*') || (*(c->li_line)=='.')) {
+            continue;
+        } 
+        else {                     /* any other line . . . */
+            /* Iterate charwise along line until first space is found */
+            for (s = c->li_line; *s && !isspace(*s); s++)    
+                ;
+            while (isspace(*s))
+                s++;
+            /* continure here only if '(' follows after the first space */
+            if (*s == '(') {
+                while (s[0] && (s[1] != ')')) {
+                    s[0] = s[1];
+                    s++;
+                }
+                while (s[1]) {
+                    s[0] = s[2];
+                    s++;
+                } /* while */
+            } /* if (*s == '(' . . . */
+        } /* any other line */
     }   /*  for (c = deck . . . */
     
 

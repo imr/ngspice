@@ -1,3 +1,8 @@
+2010-05-15 Holger Vogt
+ * inpcom.c exclude comment lines from stripping EOL comments
+   subckt.c: exclude *, . and .control ... .endc lines from processing to
+   getting rid of ( ) around node lists
+
 2010-05-14 Holger Vogt
  * dllitf.h, cplsetup.c, cmexport.c, int/udnfunc.c, real/udnfunc.c, xspice.c:
    tmalloc patch by R Larice

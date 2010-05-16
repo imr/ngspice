@@ -1712,8 +1712,8 @@ inp_stripcomments_line(char * s)
 {
     char c = ' '; /* anything other than a comment character */
     char * d = s;
-    if(*s=='\0') return;	/* empty line */
-    
+    if(*s=='\0') return;  /* empty line */
+    if(*s=='*') return;	  /* line is already a comment */    
     /* look for comments */
     while((c=*d)!='\0') {
 	d++;
@@ -4055,6 +4055,7 @@ static void inp_bsource_compat(struct line *deck)
 
             new_str = wl_flatten(wlist);
             wl_free(wlist);
+            wlist = NULL;
             wl = NULL;
 
 	        tmp_char = copy(curr_line);
