@@ -271,58 +271,58 @@ inp_subcktexpand(struct line *deck)
     
     /* Let's do a few cleanup things... Get rid of ( ) around node lists... */
    for (c = deck; c; c = c->li_next) {    /* iterate on lines in deck */
-        /* exclude any line inside .control ... .endc */
-        if ( ciprefix(".control", c->li_line) ) {
-            skip_control ++;
-            continue;
-        } else if( ciprefix(".endc", c->li_line) ) {
-            skip_control --;
-            continue;
-        } else if(skip_control > 0) {
-            continue;
-        }
 
-        if (ciprefix(start, c->li_line)) {   /* if we find .subckt . . . */
-#ifdef TRACE
-        /* SDB debug statement */
-        printf("In inp_subcktexpand, found a .subckt: %s\n", c->li_line);
-#endif /* TRACE */
-            for (s = c->li_line; *s && (*s != '('); s++)    /* Iterate charwise along line until ( is found */
-                ;
-            if (*s) {
-                while (s[0] && (s[1] != ')')) {
-                    s[0] = s[1];
-                    s++;
-                }
-                while (s[1]) {
-                    s[0] = s[2];
-                    s++;
-                }
-            }  /* if (*s)  . . . */
-        } 
-        else if ((*(c->li_line)=='*') || (*(c->li_line)=='.')) {
+        char *s = c->li_line;
+
+        if(*s == '*')           /* skip comment */
             continue;
-        } 
-        else {                     /* any other line . . . */
-            /* Iterate charwise along line until first space is found */
-            for (s = c->li_line; *s && !isspace(*s); s++)    
-                ;
-            while (isspace(*s))
+
+        if (ciprefix(start, s)) {   /* if we find .subckt . . . */
+#ifdef TRACE
+            /* SDB debug statement */
+            printf("In inp_subcktexpand, found a .subckt: %s\n", s);
+#endif
+            while (*s && *s != '(') /* search opening paren */
                 s++;
-            /* continure here only if '(' follows after the first space */
+
             if (*s == '(') {
-                while (s[0] && (s[1] != ')')) {
-                    s[0] = s[1];
-                    s++;
-                }
-                while (s[1]) {
-                    s[0] = s[2];
-                    s++;
-                } /* while */
+                int level = 0;
+                do {
+                    /* strip outer parens '(' ')', just the first pair */
+                    if(*s == '('  &&  level++ == 0) {
+                        *s = ' ';
+                    }
+                    if(*s == ')'  &&  --level == 0) {
+                        *s = ' ';
+                        break;
+                    }
+                }  while(*s++);
+            }
+        }
+        else if  (*s=='.') {
+            continue;   /* skip .commands */
+        } 
+        else {          /* any other line . . . */
+            while (*s && !isspace(*s)) /* skip first token */
+                s++;
+            while (*s && isspace(*s)) /* skip whitespace */
+                s++;
+
+            if (*s == '(') {
+                int level = 0;
+                do {
+                    /* strip outer parens '(' ')', just the first pair, why ? */
+                    if(*s == '('  &&  level++ == 0) {
+                        *s = ' ';
+                    }
+                    if(*s == ')'  &&  --level == 0) {
+                        *s = ' ';
+                        break;
+                    }
+                }  while(*s++);
             } /* if (*s == '(' . . . */
         } /* any other line */
     }   /*  for (c = deck . . . */
-    
 
     /* doit does the actual splicing in of the .subckt . . .  */
 #ifdef TRACE

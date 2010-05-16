@@ -1242,7 +1242,8 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
          if (!*s) {                                /* if at end of line, error */
             fprintf(cp_err,  "Error: .include filename missing\n");
             tfree(buffer);		/* was allocated by readline() */
-            continue;
+            controlled_exit(EXIT_FAILURE);
+//            continue;
          }                           /* Now s points to first char after .include */
          for (t = s; *t && !isspace(*t) && !isquote(*t); t++)     /* now advance past non-space chars */
             ;
@@ -1266,8 +1267,10 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
                if(copys) {
                   tfree(copys);	/* allocated by the cp_tildexpand() above */
                }
+               fprintf(cp_err,  "Error: .include statement failed.\n");
                tfree(buffer);		/* allocated by readline() above */
-               continue;
+               controlled_exit(EXIT_FAILURE);
+//               continue;
             }
          }
 	    

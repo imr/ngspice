@@ -1,6 +1,7 @@
 2010-05-15 Holger Vogt
- * inpcom.c exclude comment lines from stripping EOL comments
-   subckt.c: exclude *, . and .control ... .endc lines from processing to
+ * inpcom.c: exclude comment lines from stripping EOL comments,
+   make ngspice abort if .inc <file> fails.
+   subckt.c: exclude *, and .  lines from processing to
    getting rid of ( ) around node lists
 
 2010-05-14 Holger Vogt
