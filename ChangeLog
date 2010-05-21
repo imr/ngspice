@@ -1,3 +1,6 @@
+2010-05-21 Holger Vogt
+ * inpcom.c: bugfix 2936702 correct handling of ternary fcn in numparam
+
 2010-05-15 Holger Vogt
  * inpcom.c: exclude comment lines from stripping EOL comments,
    make ngspice abort if .inc <file> fails.

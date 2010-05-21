@@ -892,18 +892,7 @@ inp_fix_ternary_operator_str( char *line )
     paren_ptr = strstr( str_ptr, "(" );
 
     if ( paren_ptr != NULL && paren_ptr < question ) {
-      str_ptr = question;
-      while ( *str_ptr != '(' ) str_ptr--;
-      *str_ptr = '\0';
-      beg_str = strdup(line);
-      *str_ptr = '(';
-      str_ptr++;
       paren_ptr = NULL;
-    }
-    else {
-      keep = *str_ptr; *str_ptr = '\0';
-      beg_str = strdup(line);
-      *str_ptr = keep;
     }
   }
   else  return line; // hvogt
@@ -913,11 +902,22 @@ inp_fix_ternary_operator_str( char *line )
   str_ptr2--;
   while ( isspace(*str_ptr2) ) str_ptr2--;
   if ( *str_ptr2 == ')' ) {
-    while ( *str_ptr != '(' ) str_ptr--;
+    count = 1;
+    str_ptr = str_ptr2;
+    while ( (count != 0) && (str_ptr != line) ){
+      str_ptr--;
+      if ( *str_ptr == '(' ) count--;
+      if ( *str_ptr == ')' ) count++;
+    }
   }
   str_ptr2++; keep = *str_ptr2; *str_ptr2 = '\0';
   conditional = strdup(str_ptr);
   *str_ptr2 = keep;
+
+  // get beginning (whatever is left before the conditional)
+  keep = *str_ptr; *str_ptr = '\0';
+  beg_str = strdup(line);
+  *str_ptr = keep;
 
   // get if
   str_ptr = question + 1;
@@ -941,6 +941,8 @@ inp_fix_ternary_operator_str( char *line )
       fprintf(stderr,"ERROR: problem parsing ternary string (finding ':') %s!\n", line);
       controlled_exit(EXIT_FAILURE);
     }
+    str_ptr2 = colon - 1;
+    while ( isspace(*str_ptr2) ) str_ptr2--;	
   }
   else if ( ( colon = strstr( str_ptr, ":" ) ) ) {
     str_ptr2 = colon - 1;
