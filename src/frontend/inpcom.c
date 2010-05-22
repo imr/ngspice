@@ -227,36 +227,6 @@ inp_pathopen(char *name, char *mode)
     return (NULL);
 }
 
-
-/* replace " gnd " by " 0   " 
-   and then remove excessive white spaces */
-/*
-static void
-inp_fix_gnd_name( struct line *deck ) {
-  struct line *c = deck;
-  char *gnd;
-  bool found_gnd = FALSE;
-
-  while ( c != NULL ) {
-    gnd = c->li_line;
-    if ( *gnd == '*' ) { c = c->li_next; continue; }
-    // replace " gnd " by " 0   "
-	while ( (gnd = strstr( gnd, "gnd " ) ) ) {
-      if ( isspace(*(gnd-1)) ) {
-        memcpy( gnd, "0   ", 4 );
-      }
-      gnd += 4;
-	  found_gnd = TRUE;
-    }
-	// remove white spaces after replacement, retain " 0 "
-	if (found_gnd) 
-      c->li_line = inp_remove_ws(c->li_line);
-    c = c->li_next;
-	found_gnd = FALSE;
-  }
-}
-*/
-
 /* replace "gnd" by " 0 " 
    Delimiters of gnd may be ' ' or ',' or '(' or ')' */
 static void
@@ -1347,22 +1317,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
           }
       }
 
- /* removed  because code changes .global to *global before it will be
-    expanded by inp_subcktexpand() in subckt.c */
-      /*     if ( ciprefix( ".global", buffer ) ) {
-         for ( s = buffer; *s && !isspace(*s); s++ );
-
-         if ( global == NULL ) {
-            global = strdup(buffer);
-         } else {
-            global_copy = tmalloc( strlen(global) + strlen(s) + 1 );
-            sprintf( global_copy, "%s%s", global, s );
-            tfree(global);
-            global = global_copy;
-         }
-         *buffer = '*';
-      }
-*/
       if ( shell_eol_continuation ) {
          char *new_buffer = tmalloc( strlen(buffer) + 2);
          sprintf( new_buffer, "+%s", buffer );

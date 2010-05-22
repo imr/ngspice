@@ -1,3 +1,7 @@
+2010-05-22 Holger Vogt
+ * inpfindl.c: bugfix 3004317 allow level value number given by scientific
+   notation
+
 2010-05-21 Holger Vogt
  * inpcom.c: bugfix 2936702 correct handling of ternary fcn in numparam
 
