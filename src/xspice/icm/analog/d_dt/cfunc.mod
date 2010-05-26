@@ -171,17 +171,15 @@ void cm_d_dt(ARGS)
                         /* Also, calculate roughly where the current output    */
                         /* will be and use this value to define current state. */
     
-            in = cm_analog_alloc(TRUE,sizeof(double));   
-            in_old = cm_analog_get_ptr(TRUE,1);
+            cm_analog_alloc(TRUE,sizeof(double));   
     
         }
-        else {          /* Allocation not necessary...retrieve previous values */
+        /* retrieve previous values */
     
             in = cm_analog_get_ptr(TRUE,0);  /* Set out pointer to current 
                                                                 time storage */    
             in_old = cm_analog_get_ptr(TRUE,1);  /* Set old-output-state pointer 
                                                        to previous time storage */    
-        }
 
 
         if ( 0.0 == TIME ) {              /*** Test to see if this is the first ***/

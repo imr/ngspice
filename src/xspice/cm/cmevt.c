@@ -61,7 +61,7 @@ timesteps.
 */
 
 
-void *cm_event_alloc(
+void cm_event_alloc(
     int tag,           /* The user-specified tag for the memory block */
     int bytes)         /* The number of bytes to be allocated */
 {
@@ -90,7 +90,7 @@ void *cm_event_alloc(
     if(here->initialized) {
         g_mif_info.errmsg =
         "ERROR - cm_event_alloc() - Cannot alloc when not initialization pass\n";
-        return(NULL);
+        return;
     }
 
 
@@ -108,7 +108,7 @@ void *cm_event_alloc(
         if(desc->tag == tag) {
             g_mif_info.errmsg =
             "ERROR - cm_event_alloc() - Duplicate tag\n";
-            return(NULL);
+            return;
         }
         desc_ptr = &(desc->next);
         desc = *desc_ptr;
@@ -139,11 +139,6 @@ void *cm_event_alloc(
                              state_data->total_size[inst_index]);
 
     state->step = g_mif_info.circuit.evt_step;
-
-
-    /* Return allocated memory */
-    ptr = ((char *)state->block) + desc->offset;
-    return(ptr);
 }
 
 

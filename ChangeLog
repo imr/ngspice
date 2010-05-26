@@ -1,3 +1,52 @@
+2010-05-26 Holger Vogt
+ * xspice api update: cmcm_analog_alloc() and cm_event_alloc()
+    ng-spice-rework/src/include/cmproto.h
+ ng-spice-rework/src/include/dllitf.h
+ ng-spice-rework/src/xspice/cm/cm.c
+ ng-spice-rework/src/xspice/cm/cmevt.c
+ ng-spice-rework/src/xspice/examples/nco/cfunc.mod
+ .../src/xspice/examples/real_delay/cfunc.mod
+ .../src/xspice/examples/real_to_v/cfunc.mod
+ .../src/xspice/icm/analog/d_dt/cfunc.mod
+ .../src/xspice/icm/analog/hyst/cfunc.mod
+ .../src/xspice/icm/analog/int/cfunc.mod
+ .../src/xspice/icm/analog/oneshot/cfunc.mod
+ .../src/xspice/icm/analog/s_xfer/cfunc.mod
+ .../src/xspice/icm/analog/sine/cfunc.mod
+ .../src/xspice/icm/analog/slew/cfunc.mod
+ .../src/xspice/icm/analog/square/cfunc.mod
+ .../src/xspice/icm/analog/triangle/cfunc.mod
+ .../src/xspice/icm/digital/adc_bridge/cfunc.mod
+ .../src/xspice/icm/digital/d_and/cfunc.mod
+ .../src/xspice/icm/digital/d_buffer/cfunc.mod
+ .../src/xspice/icm/digital/d_dff/cfunc.mod
+ .../src/xspice/icm/digital/d_dlatch/cfunc.mod
+ .../src/xspice/icm/digital/d_fdiv/cfunc.mod
+ .../src/xspice/icm/digital/d_inverter/cfunc.mod
+ .../src/xspice/icm/digital/d_jkff/cfunc.mod
+ .../src/xspice/icm/digital/d_nand/cfunc.mod
+ .../src/xspice/icm/digital/d_nor/cfunc.mod
+ .../src/xspice/icm/digital/d_open_c/cfunc.mod
+ .../src/xspice/icm/digital/d_open_e/cfunc.mod
+ .../src/xspice/icm/digital/d_or/cfunc.mod
+ .../src/xspice/icm/digital/d_osc/cfunc.mod
+ .../src/xspice/icm/digital/d_ram/cfunc.mod
+ .../src/xspice/icm/digital/d_source/cfunc.mod
+ .../src/xspice/icm/digital/d_srff/cfunc.mod
+ .../src/xspice/icm/digital/d_srlatch/cfunc.mod
+ .../src/xspice/icm/digital/d_state/cfunc.mod
+ .../src/xspice/icm/digital/d_tff/cfunc.mod
+ .../src/xspice/icm/digital/d_xnor/cfunc.mod
+ .../src/xspice/icm/digital/d_xor/cfunc.mod
+ .../src/xspice/icm/digital/dac_bridge/cfunc.mod
+ ng-spice-rework/src/xspice/icm/dlmain.c
+ .../src/xspice/icm/xtradev/capacitor/cfunc.mod
+ .../src/xspice/icm/xtradev/core/cfunc.mod
+ .../src/xspice/icm/xtradev/inductor/cfunc.mod
+ .../src/xspice/icm/xtradev/lcouple/cfunc.mod
+ .../src/xspice/icm/xtraevt/real_delay/cfunc.mod
+ .../src/xspice/icm/xtraevt/real_to_v/cfunc.mod
+
 2010-05-22 Holger Vogt
  * inpfindl.c: bugfix 3004317 allow level value number given by scientific
    notation

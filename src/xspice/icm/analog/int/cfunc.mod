@@ -163,14 +163,13 @@ void cm_int(ARGS)  /* structure holding parms,
 
         if (INIT==1) {  /* First pass...allocate storage for previous value.   */
     
-            in = cm_analog_alloc(INT1,sizeof(double));   
-            out = cm_analog_alloc(INT2,sizeof(double));   
+            cm_analog_alloc(INT1,sizeof(double));   
+            cm_analog_alloc(INT2,sizeof(double));   
         }
-        else {          /* Allocation not necessary...retrieve previous value */
+        /* retrieve previous value */
     
             in = cm_analog_get_ptr(INT1,0);  /* Set out pointer to input storage location */
             out = cm_analog_get_ptr(INT2,0);  /* Set out pointer to output storage location */
-        }
                                   
 
         /*** Read input value for current time, and calculate pseudo-input ***/

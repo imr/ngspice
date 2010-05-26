@@ -169,27 +169,21 @@ void cm_lcouple(ARGS)  /* structure holding parms,
                         /* Also, calculate roughly where the current output    */
                         /* will be and use this value to define current state. */
     
-            in_flux = cm_analog_alloc(1,sizeof(double));   
-            in_flux_old = cm_analog_get_ptr(1,1);
-
-            /* assign fake input and output values for truncation
-               error checking   */
-            in_flux_fake = cm_analog_alloc(2,sizeof(double));   
-            output_voltage_fake = cm_analog_alloc(3,sizeof(double));   
-        
+            cm_analog_alloc(1,sizeof(double));   
+            cm_analog_alloc(2,sizeof(double));   
+            cm_analog_alloc(3,sizeof(double));   
         }
-        else {          /* Allocation not necessary...retrieve previous values */
+        /* Allocation not necessary...retrieve previous values */
        
-            in_flux = cm_analog_get_ptr(TRUE,0);  /* Set out pointer to current 
+            in_flux = cm_analog_get_ptr(1,0);  /* Set out pointer to current 
                                                                 time storage */    
-            in_flux_old = cm_analog_get_ptr(TRUE,1);  /* Set old-output-state pointer 
+            in_flux_old = cm_analog_get_ptr(1,1);  /* Set old-output-state pointer 
                                                        to previous time storage */    
 
             /* retrieve fake input and output values for truncation
                error checking   */
             in_flux_fake = cm_analog_get_ptr(2,0);   
             output_voltage_fake = cm_analog_get_ptr(3,0);   
-        }
       
     
 

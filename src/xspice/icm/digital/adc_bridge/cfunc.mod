@@ -175,12 +175,10 @@ void cm_adc_bridge(ARGS)
 
 
         /* Allocate storage for inputs */
-
-        in = in_old = cm_analog_alloc(0,size * sizeof(double));
-			         
+        cm_analog_alloc(0,size * sizeof(double));
                       
         /* Allocate storage for outputs */
-        out = out_old = (Digital_State_t *) cm_event_alloc(1,size * sizeof(Digital_State_t));
+        cm_event_alloc(1,size * sizeof(Digital_State_t));
 
         /* Get analog addresses */        
         in = in_old = cm_analog_get_ptr(0,0);

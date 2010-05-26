@@ -28,8 +28,10 @@ void ucm_nco (ARGS)
     if(INIT) {
 
         /* Setup storage for the toggled output state */
-        output_state = (int *) cm_event_alloc(OUT_STATE, sizeof(int));
-        next_time = (double *) cm_event_alloc(NXT_TIME, sizeof(double));
+        cm_event_alloc(OUT_STATE, sizeof(int));
+        cm_event_alloc(NXT_TIME, sizeof(double));
+        output_state = (int *) cm_event_get_ptr(OUT_STATE, 0);
+        next_time = (double *) cm_event_get_ptr(NXT_TIME, 0);
 
         /* Allocate storage for frequencies */
         STATIC_VAR(freq) = malloc(NUM_NOTES * sizeof(double));

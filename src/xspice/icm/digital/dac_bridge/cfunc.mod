@@ -206,7 +206,7 @@ void cm_dac_bridge(ARGS)
 
 
         /* Allocate storage for inputs */
-        in = in_old = (Digital_State_t *) cm_event_alloc(0,size * sizeof(Digital_State_t));
+        cm_event_alloc(0, size * sizeof(Digital_State_t));
 
                       
         /* Allocate storage for outputs */
@@ -215,8 +215,8 @@ void cm_dac_bridge(ARGS)
         /* allocate storage for analog output values.       */
                                     
         /* allocate output space and obtain adresses */
-        out = out_old = cm_analog_alloc(0,size * sizeof(double));
-        breakpoint = cm_analog_alloc(1,sizeof(double));
+        cm_analog_alloc(0, size * sizeof(double));
+        cm_analog_alloc(1, sizeof(double));
         
         /* assign discrete addresses */
         in = in_old = (Digital_State_t *) cm_event_get_ptr(0,0);

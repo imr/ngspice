@@ -15,7 +15,8 @@ void ucm_real_delay (ARGS)
 
 
     if(INIT) {
-        state = (void *) cm_event_alloc(CLK_STATE, sizeof(Digital_State_t));
+        cm_event_alloc(CLK_STATE, sizeof(Digital_State_t));
+        state = (void *) cm_event_get_ptr(CLK_STATE, 0);
         old_state = state;
         *state = INPUT_STATE(clk);
     }

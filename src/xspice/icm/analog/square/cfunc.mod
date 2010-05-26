@@ -200,11 +200,11 @@ void cm_square(ARGS)  /* structure holding parms,
 
    /* First time throught allocate memory */
   if(INIT==1){
-		phase = cm_analog_alloc(INT1,sizeof(double));
-		t1 = cm_analog_alloc(T1,sizeof(double));
-		t2 = cm_analog_alloc(T2,sizeof(double));
-		t3 = cm_analog_alloc(T3,sizeof(double));
-		t4 = cm_analog_alloc(T4,sizeof(double));
+		cm_analog_alloc(INT1,sizeof(double));
+		cm_analog_alloc(T1,sizeof(double));
+		cm_analog_alloc(T2,sizeof(double));
+		cm_analog_alloc(T3,sizeof(double));
+		cm_analog_alloc(T4,sizeof(double));
 
 	}
 

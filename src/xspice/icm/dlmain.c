@@ -261,8 +261,8 @@ double cm_analog_ramp_factor(void) {
 	return (coreitf->dllitf_cm_analog_ramp_factor)();
 }
 
-void *cm_analog_alloc(int tag, int bytes) {
-	return (coreitf->dllitf_cm_analog_alloc)(tag,bytes);
+void cm_analog_alloc(int tag, int bytes) {
+	(coreitf->dllitf_cm_analog_alloc)(tag,bytes);
 }
 
 void *cm_analog_get_ptr(int tag, int timepoint) {
@@ -293,8 +293,8 @@ void cm_analog_auto_partial(void) {
 	(coreitf->dllitf_cm_analog_auto_partial)();
 }
 
-void *cm_event_alloc(int tag, int bytes){
-	return (coreitf->dllitf_cm_event_alloc)(tag,bytes);
+void cm_event_alloc(int tag, int bytes){
+	(coreitf->dllitf_cm_event_alloc)(tag,bytes);
 }
 
 void *cm_event_get_ptr(int tag, int timepoint) {

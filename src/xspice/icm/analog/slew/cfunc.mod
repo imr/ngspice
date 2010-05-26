@@ -147,10 +147,10 @@ void cm_slew(ARGS)
 
 		/* First pass...allocate storage for previous state.   */
     
-        ins = cm_analog_alloc(INT1,sizeof(double));   
-		outs = cm_analog_alloc(INT4,sizeof(double));
-		out_old = cm_analog_alloc(INT2,sizeof(double));
-		in_old = cm_analog_alloc(INT3,sizeof(double));
+		cm_analog_alloc(INT1,sizeof(double));   
+		cm_analog_alloc(INT4,sizeof(double));
+		cm_analog_alloc(INT2,sizeof(double));
+		cm_analog_alloc(INT3,sizeof(double));
 
     }
 

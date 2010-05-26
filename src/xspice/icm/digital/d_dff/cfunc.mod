@@ -219,13 +219,10 @@ void cm_d_dff(ARGS)
     if(INIT) {  /* initial pass */ 
 
         /* allocate storage */
-        clk = clk_old = (Digital_State_t *) cm_event_alloc(0,sizeof(Digital_State_t));
-
-        set = set_old = (Digital_State_t *) cm_event_alloc(1,sizeof(Digital_State_t));
-
-        reset = reset_old = (Digital_State_t *) cm_event_alloc(2,sizeof(Digital_State_t));
-
-        out = out_old = (Digital_State_t *) cm_event_alloc(3,sizeof(Digital_State_t));
+        cm_event_alloc(0,sizeof(Digital_State_t));
+        cm_event_alloc(1,sizeof(Digital_State_t));
+        cm_event_alloc(2,sizeof(Digital_State_t));
+        cm_event_alloc(3,sizeof(Digital_State_t));
 
         /* declare load values */
         LOAD(data) = PARAM(data_load);

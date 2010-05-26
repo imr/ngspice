@@ -313,12 +313,12 @@ void cm_d_srlatch(ARGS)
     if(INIT) {  /* initial pass */ 
 
         /* allocate storage */
-        s = s_old = (Digital_State_t *) cm_event_alloc(0,sizeof(Digital_State_t));
-        r = r_old = (Digital_State_t *) cm_event_alloc(1,sizeof(Digital_State_t));
-        enable = enable_old = (Digital_State_t *) cm_event_alloc(2,sizeof(Digital_State_t));
-        set = set_old = (Digital_State_t *) cm_event_alloc(3,sizeof(Digital_State_t));
-        reset = reset_old = (Digital_State_t *) cm_event_alloc(4,sizeof(Digital_State_t));
-        out = out_old = (Digital_State_t *) cm_event_alloc(5,sizeof(Digital_State_t));
+        cm_event_alloc(0,sizeof(Digital_State_t));
+        cm_event_alloc(1,sizeof(Digital_State_t));
+        cm_event_alloc(2,sizeof(Digital_State_t));
+        cm_event_alloc(3,sizeof(Digital_State_t));
+        cm_event_alloc(4,sizeof(Digital_State_t));
+        cm_event_alloc(5,sizeof(Digital_State_t));
 
         /* declare load values */
         LOAD(s) = PARAM(sr_load);

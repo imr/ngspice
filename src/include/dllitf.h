@@ -44,7 +44,7 @@ struct coreInfo_t {
 		                                         double *, double *));
 	double    ((*dllitf_cm_smooth_pwl)(double, double *, double *, int, double, double *));
 	double    ((*dllitf_cm_analog_ramp_factor)(void));
-	void *    ((*dllitf_cm_analog_alloc)(int, int));
+	void      ((*dllitf_cm_analog_alloc)(int, int));
 	void *    ((*dllitf_cm_analog_get_ptr)(int, int));
 	int       ((*dllitf_cm_analog_integrate)(double, double *, double *));
 	int       ((*dllitf_cm_analog_converge)(double *));
@@ -52,7 +52,7 @@ struct coreInfo_t {
     int       ((*dllitf_cm_analog_set_perm_bkpt)(double));
     void      ((*dllitf_cm_analog_not_converged)(void));
     void      ((*dllitf_cm_analog_auto_partial)(void));
-	void *    ((*dllitf_cm_event_alloc)(int, int));
+	void      ((*dllitf_cm_event_alloc)(int, int));
 	void *    ((*dllitf_cm_event_get_ptr)(int, int));
 	int       ((*dllitf_cm_event_queue)(double));
 	char *    ((*dllitf_cm_message_get_errmsg)(void));

@@ -226,15 +226,15 @@ void cm_oneshot(ARGS)  /* structure holding parms,
 
   if(INIT == 1){  /* first time through, allocate memory */
 
-		t1 = cm_analog_alloc(T1,sizeof(double));
-		t2 = cm_analog_alloc(T2,sizeof(double));
-		t3 = cm_analog_alloc(T3,sizeof(double));
-		t4 = cm_analog_alloc(T4,sizeof(double));
-        set = cm_analog_alloc(SET,sizeof(int));
-        state = cm_analog_alloc(STATE,sizeof(int));
-        clock = cm_analog_alloc(CLOCK,sizeof(double));
-		locked = cm_analog_alloc(LOCKED,sizeof(int));
-        output_old = cm_analog_alloc(OUTPUT_OLD,sizeof(double));
+		cm_analog_alloc(T1,sizeof(double));
+		cm_analog_alloc(T2,sizeof(double));
+		cm_analog_alloc(T3,sizeof(double));
+		cm_analog_alloc(T4,sizeof(double));
+        cm_analog_alloc(SET,sizeof(int));
+        cm_analog_alloc(STATE,sizeof(int));
+        cm_analog_alloc(CLOCK,sizeof(double));
+		cm_analog_alloc(LOCKED,sizeof(int));
+        cm_analog_alloc(OUTPUT_OLD,sizeof(double));
 
   } 
 

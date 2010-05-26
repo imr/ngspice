@@ -160,7 +160,7 @@ void cm_sine(ARGS)  /* structure holding parms,
 
   if(INIT == 1){
 
-	phase = cm_analog_alloc(INT1,sizeof(double));
+	cm_analog_alloc(INT1,sizeof(double));
 
   }
   if(ANALYSIS == MIF_DC){

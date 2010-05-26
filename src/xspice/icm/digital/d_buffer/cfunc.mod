@@ -137,7 +137,7 @@ void cm_d_buffer(ARGS)
     if(INIT) {  /* initial pass */ 
 
         /* allocate storage for the outputs */
-        out = out_old = (Digital_State_t *) cm_event_alloc(0,sizeof(Digital_State_t));
+        cm_event_alloc(0,sizeof(Digital_State_t));
 
         /* define input loading... */
         LOAD(in) = PARAM(input_load);

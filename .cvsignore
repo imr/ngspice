@@ -20,3 +20,8 @@ Makefile
 depcomp
 ylwrap
 *.tar.gz
+autogen-new.log
+make.log
+distrib
+visualc
+vs-dll

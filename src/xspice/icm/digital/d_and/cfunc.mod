@@ -148,7 +148,7 @@ void cm_d_and(ARGS)
     if(INIT) {  /* initial pass */ 
 
         /* allocate storage for the outputs */
-        out = out_old = (Digital_State_t *) cm_event_alloc(0,sizeof(Digital_State_t));
+        cm_event_alloc(0,sizeof(Digital_State_t));
                   
         /* set loading for inputs */
         for (i=0; i<size; i++) LOAD(in[i]) = PARAM(input_load);

@@ -76,7 +76,7 @@ of the state storage area can be found by cm_analog_get_ptr().
 
 */
 
-void *cm_analog_alloc(
+void cm_analog_alloc(
     int tag,            /* The user-specified tag for this block of memory */
     int bytes)          /* The number of bytes to allocate */
 {
@@ -97,7 +97,7 @@ void *cm_analog_alloc(
     for(i = 0; i < here->num_state; i++) {
         if(tag == here->state[i].tag) {
             g_mif_info.errmsg = "ERROR - cm_analog_alloc() - Tag already used in previous call\n";
-            return(NULL);
+            return;
         }
     }
 
@@ -132,10 +132,6 @@ void *cm_analog_alloc(
             ckt->CKTstates[i] = (double *) REALLOC(ckt->CKTstates[i],
                                             ckt->CKTnumStates * sizeof(double));
     }
-
-    /* Return pointer to the allocated space in state 0 */
-    return( (void *) (ckt->CKTstates[0] + (ckt->CKTnumStates - doubles_needed)));
-
 }
 
 

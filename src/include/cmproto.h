@@ -67,7 +67,7 @@ double cm_smooth_pwl(double x_input, double *x, double *y, int size,
                double input_domain, double *dout_din);
 
 double cm_analog_ramp_factor(void);
-void *cm_analog_alloc(int tag, int bytes);
+void  cm_analog_alloc(int tag, int bytes);
 void *cm_analog_get_ptr(int tag, int timepoint);
 int  cm_analog_integrate(double integrand, double *integral, double *partial);
 int  cm_analog_converge(double *state);
@@ -76,7 +76,7 @@ int  cm_analog_set_perm_bkpt(double time);
 void cm_analog_not_converged(void);
 void cm_analog_auto_partial(void);
 
-void *cm_event_alloc(int tag, int bytes);
+void cm_event_alloc(int tag, int bytes);
 void *cm_event_get_ptr(int tag, int timepoint);
 int  cm_event_queue(double time);
 

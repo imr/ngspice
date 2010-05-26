@@ -1936,7 +1936,8 @@ void cm_d_state(ARGS)
 
         /*** allocate storage for *states... ***/
 
-        states = states_old = (State_Table_t *) cm_event_alloc(0,sizeof(State_Table_t));
+        cm_event_alloc(0,sizeof(State_Table_t));
+        states = states_old = (State_Table_t *) cm_event_get_ptr(0,0);
 
         /* Store depth value */
         states->depth = i;
@@ -1964,10 +1965,11 @@ void cm_d_state(ARGS)
                                                              
 
         /*** allocate storage for *clk, *clk_old, *reset & *reset_old... ***/
-        clk = clk_old = (Digital_State_t *) cm_event_alloc(1,sizeof(Digital_State_t));
+        cm_event_alloc(1,sizeof(Digital_State_t));
 
-        reset = reset_old = (Digital_State_t *) cm_event_alloc(2,sizeof(Digital_State_t));
+        cm_event_alloc(2,sizeof(Digital_State_t));
 
+        /* fetch states again, it might have moved per realloc */
         states = states_old = (State_Table_t *) cm_event_get_ptr(0,0);
         clk = clk_old = (Digital_State_t *) cm_event_get_ptr(1,0);
         reset = reset_old = (Digital_State_t *) cm_event_get_ptr(2,0);

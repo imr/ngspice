@@ -1088,7 +1088,6 @@ void cm_d_source(ARGS)
 
         /*** allocate storage for *index, *bits & *timepoints ***/
 
-        info = info_old = (Source_Table_Info_t *) 
                           cm_event_alloc(0,sizeof(Source_Table_Info_t));
         
 
@@ -1096,9 +1095,8 @@ void cm_d_source(ARGS)
         modf( (PORT_SIZE(out) * i / 4), &double_dummy );
         dummy = double_dummy + 1;
 
-        bits = bits_old = (short *) cm_event_alloc(1,(dummy * sizeof(short)));
+        cm_event_alloc(1,(dummy * sizeof(short)));
                          
-        timepoints = timepoints_old = (double *) 
                      cm_event_alloc(2,i * sizeof(double));
                                        
 

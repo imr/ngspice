@@ -244,7 +244,9 @@ void cm_hyst(ARGS)  /* structure holding parms,
                     /* Also, calculate roughly where the current output    */
                     /* will be and use this value to define current state. */
 
-        hyst_state = cm_analog_alloc(TRUE,sizeof(Boolean_t));   
+        cm_analog_alloc(TRUE,sizeof(Boolean_t));   
+
+        hyst_state     = cm_analog_get_ptr(TRUE,0);
         old_hyst_state = cm_analog_get_ptr(TRUE,1);
 
         if (in < x_rise_zero + input_domain) { /* Set state to X_RISING */

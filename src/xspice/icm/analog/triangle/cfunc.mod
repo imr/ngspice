@@ -193,10 +193,10 @@ void cm_triangle(ARGS)  /* structure holding parms,
    /* Allocate memory */
 
   if(INIT==1){
-		phase = cm_analog_alloc(INT1,sizeof(double));
-		t1 = cm_analog_alloc(T1,sizeof(double));
-		t2 = cm_analog_alloc(T2,sizeof(double));
-		t_end = cm_analog_alloc(T3,sizeof(double));
+		cm_analog_alloc(INT1,sizeof(double));
+		cm_analog_alloc(T1,sizeof(double));
+		cm_analog_alloc(T2,sizeof(double));
+		cm_analog_alloc(T3,sizeof(double));
 
 	}
 

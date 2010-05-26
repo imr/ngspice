@@ -209,11 +209,9 @@ void cm_d_osc(ARGS)
 
 
         /* Allocate storage for internal variables */
-        phase = phase_old = cm_analog_alloc(0,sizeof(double));
-
-        t1 = cm_analog_alloc(1,sizeof(double));
-
-        t3 = cm_analog_alloc(2,sizeof(double));
+        cm_analog_alloc(0, sizeof(double));
+        cm_analog_alloc(1, sizeof(double));
+        cm_analog_alloc(2, sizeof(double));
 
         /* assign internal variables */
         phase = phase_old = cm_analog_get_ptr(0,0);

@@ -147,9 +147,9 @@ void cm_d_fdiv(ARGS)
     if(INIT) {  /* initial pass */ 
 
         /* allocate storage */
-        freq_in = freq_in_old = (Digital_State_t *) cm_event_alloc(0,sizeof(Digital_State_t));
-        freq_out = freq_out_old = (Digital_State_t *) cm_event_alloc(1,sizeof(Digital_State_t));
-        count = count_old = (Digital_State_t *) cm_event_alloc(2,sizeof(Digital_State_t));
+        cm_event_alloc(0,sizeof(Digital_State_t));
+        cm_event_alloc(1,sizeof(Digital_State_t));
+        cm_event_alloc(2,sizeof(Digital_State_t));
 
         /* declare load values */
         LOAD(freq_in) = PARAM(freq_in_load);
