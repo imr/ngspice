@@ -3852,7 +3852,7 @@ static void inp_bsource_compat(struct line *deck)
     char actchar, prevchar = ' ';
     struct line *card, *new_line, *tmp_ptr;
     wordlist *wl = NULL, *wlist = NULL, *cwl;
-    char buf[512], pwl_buf[512];
+    char buf[512];
     size_t i, xlen, ustate = 0;
     int skip_control = 0;
     char *cvalue;
