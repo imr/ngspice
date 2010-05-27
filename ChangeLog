@@ -1,3 +1,6 @@
+2010-05-27 Holger Vogt
+ * inpcom.c: update B source pwl function handling
+
 2010-05-26 Holger Vogt
  * xspice api update: cmcm_analog_alloc() and cm_event_alloc()
     ng-spice-rework/src/include/cmproto.h

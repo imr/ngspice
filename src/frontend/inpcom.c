@@ -3451,8 +3451,19 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
   return line_num;
 }
 
+/* pspice compatibility:
+   ECOMP 3 0 TABLE {V(1,2)} = (-1MV 0V) (1MV, 10V)
+   -->
+   ECOMP 3 0 int3 int0 1
+   BECOMP int3 int0 V = pwl(V(1,2), -1MV, 0 , 1MV, 10V)
 
-/* compatibility:
+   GD16 16 1 TABLE {V(16,1)} ((-100V,-1pV)(0,0)(1m,1u)(2m,1m))
+   -->
+   GD16 16 1 int_16 int_1 1
+   BGD16 int_16 int_1 V = pwl (v(16,1) , -100V , -1pV , 0 , 0 , 1m , 1u , 2m , 1m )
+*/
+
+/* hspice compatibility:
    Exxx n1 n2 VCVS n3 n4 gain --> Exxx n1 n2 n3 n4 gain
    Gxxx n1 n2 VCCS n3 n4 tr --> Exxx n1 n2 n3 n4 tr
 
@@ -3841,9 +3852,12 @@ static void inp_bsource_compat(struct line *deck)
     char actchar, prevchar = ' ';
     struct line *card, *new_line, *tmp_ptr;
     wordlist *wl = NULL, *wlist = NULL, *cwl;
-    char buf[512];
+    char buf[512], pwl_buf[512];
     size_t i, xlen, ustate = 0;
     int skip_control = 0;
+    char *cvalue;
+    double dvalue;
+    int error1;
 
     for (card = deck; card; card = card->li_next) {
 
@@ -3861,6 +3875,9 @@ static void inp_bsource_compat(struct line *deck)
         }
 
         if ( *curr_line == 'b' ) {
+            /* remove white spaces of everything inside {}*/
+            card->li_line = inp_remove_ws(card->li_line);
+            curr_line = card->li_line;
             /* store starting point for later parsing, beginning of {expression} */
             equal_ptr = strstr(curr_line, "=");
             /* find the m={m} token and remove it */
@@ -3962,11 +3979,66 @@ static void inp_bsource_compat(struct line *deck)
                             str_ptr++;
                         }
                         buf[i] = '\0'; 
-                        /* no parens {} around time, hertz, temper and the constants
-                           pi and e which are defined in inpptree.c */
+                        /* no parens {} around time, hertz, temper, the constants
+                           pi and e which are defined in inpptree.c and around pwl */
                         if ((*str_ptr == '(') || cieq(buf, "hertz")  || cieq(buf, "temper") 
-                            || cieq(buf, "time") || cieq(buf, "pi") || cieq(buf, "e"))
+                            || cieq(buf, "time") || cieq(buf, "pi") || cieq(buf, "e")
+                            || cieq(buf, "pwl"))
                         {
+                            /* special handling of pwl lines:
+                               Put braces around tokens and around expressions, use ','
+                               as separator like:
+                               pwl(i(Vin), {x0-1},{y0}, 
+                                  {x0},{y0},{x1},{y1}, {x2},{y2},{x3},{y3}, 
+                                  {x3+1},{y3})
+                            */
+/*
+                            if (cieq(buf, "pwl")) {
+                                // go past i(Vin)
+                                i = 3;
+                                while (*str_ptr != ')') {
+                                    buf[i] = *str_ptr;
+                                    i++;
+                                    str_ptr++;
+                                }
+                                buf[i] = *str_ptr;
+                                i++;
+                                str_ptr++;
+                                // find first ',' 
+                                while (*str_ptr != ',') {
+                                    buf[i] = *str_ptr;
+                                    i++;
+                                    str_ptr++;
+                                }
+                                buf[i] = *str_ptr;
+                                i++;
+                                buf[i] = '{';
+                                i++;
+                                str_ptr++;
+                                while (*str_ptr != ')') {
+                                    if (*str_ptr == ',') {
+                                        buf[i] = '}';
+                                        i++;
+                                        buf[i] = ',';
+                                        i++;
+                                        buf[i] = '{';
+                                        i++;
+                                        str_ptr++;
+                                    }
+                                    else {
+                                        buf[i] = *str_ptr;
+                                        i++;
+                                        str_ptr++;
+                                    }
+                                }
+                                buf[i] = '}';
+                                i++;
+                                buf[i] = *str_ptr;
+                                i++;
+                                buf[i] = '\0';
+                                str_ptr++;
+                            }
+*/
                             cwl->wl_word = copy(buf);
                         }
                         /* {} around all other tokens */
@@ -3981,23 +4053,15 @@ static void inp_bsource_compat(struct line *deck)
                 }
                 else if (isdigit(actchar))
                 {
+                    /* allow 100p, 5MEG etc. */
+                    dvalue = INPevaluate(&str_ptr, &error1, 1);
+                    cvalue = tmalloc(19);
+                    sprintf(cvalue,"%18.10e", dvalue);
                     /* unary -, change sign */
                     if (ustate == 2) {
-                        i = 1;
-                        buf[0] = '-';
+                        cvalue[0] = '-';
                     }
-                    else i = 0;
-                    while (isdigit(*str_ptr) || (*str_ptr == '.') || (*str_ptr == 'e') 
-                            || (*str_ptr == '+')|| (*str_ptr == '-')) 
-                    {
-                        if (((*str_ptr == '+')|| (*str_ptr == '-')) && (*(str_ptr-1) != 'e'))
-                            break;
-                        buf[i] = *str_ptr;
-                        i++;
-                        str_ptr++;
-                    }
-                    buf[i] = '\0';
-                    cwl->wl_word = copy(buf);
+                    cwl->wl_word = copy(cvalue);
                     ustate = 0; /* we have a number */
                 }
                 else  /* strange char */
