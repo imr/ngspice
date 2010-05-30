@@ -1,6 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
 EXTRA_DIST = inpptree-parser.y
+## For Windows with Visual Studio
+EXTRA_DIST += inpptree-parser.c inpptree-parser.h
 
 noinst_LTLIBRARIES = libinp.la
 
