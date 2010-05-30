@@ -671,13 +671,13 @@ int
 printvals_old(dgen *dg, IFparm *p, int i)
 {
     IFvalue     val;
-    int         n;
+    int         n, error;
 
     if (dg->flags & DGEN_INSTANCE)
-        (*ft_sim->askInstanceQuest)(ft_curckt->ci_ckt, dg->instance,
+        error = (*ft_sim->askInstanceQuest)(ft_curckt->ci_ckt, dg->instance,
             p->id, &val, &val);
     else
-        (*ft_sim->askModelQuest)(ft_curckt->ci_ckt, dg->model,
+        error = (*ft_sim->askModelQuest)(ft_curckt->ci_ckt, dg->model,
             p->id, &val, &val);
 
     if (p->dataType & IF_VECTOR)
@@ -696,6 +696,9 @@ printvals_old(dgen *dg, IFparm *p, int i)
         return 0;
     }
 
+    if(error) {
+        fprintf(cp_out," <<NAN, error = %d>>", error);
+    } else
     if (p->dataType & IF_VECTOR) {
         /* va: ' ' is no flag for %s */
         switch ((p->dataType & IF_VARTYPES) & ~IF_VECTOR) {

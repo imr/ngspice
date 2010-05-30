@@ -203,6 +203,9 @@ BSIM4v5instance *here = (BSIM4v5instance*)inst;
         case BSIM4v5_CSUB:
             value->rValue = here->BSIM4v5csub; 
             return(OK);
+        case BSIM4v5_QINV:
+            value->rValue = here-> BSIM4v5qinv; 
+            return(OK);
         case BSIM4v5_IGIDL:
             value->rValue = here->BSIM4v5Igidl; 
             return(OK);

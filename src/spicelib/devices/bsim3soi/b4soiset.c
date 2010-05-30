@@ -112,7 +112,7 @@ double Vbs0t, Qsi;
         if (!model->B4SOIshModGiven) 
             model->B4SOIshMod = 0;
         if (!model->B4SOIversionGiven) 
-            model->B4SOIversion = 4.00;
+            model->B4SOIversion = 4.3;
         if (!model->B4SOItoxGiven)
             model->B4SOItox = 100.0e-10;
        /*model->B4SOIcox = 3.453133e-11 / model->B4SOItox;*/

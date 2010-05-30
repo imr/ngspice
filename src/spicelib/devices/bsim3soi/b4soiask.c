@@ -82,6 +82,9 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
         case B4SOI_QB:
             value->rValue = here->B4SOIqbulk;
             return(OK);
+        case B4SOI_QG:
+            value->rValue = here->B4SOIqgate;
+            return(OK);
         case B4SOI_QD:
             value->rValue = here->B4SOIqdrn;
             return(OK);
@@ -345,6 +348,9 @@ B4SOIinstance *here = (B4SOIinstance*)inst;
             return(OK);
         case B4SOI_QBD:
             value->rValue = *(ckt->CKTstate0 + here->B4SOIqbd); 
+            return(OK);
+        case B4SOI_DEBUG:
+            value->iValue = here->B4SOIdebugMod; 
             return(OK);
 #ifdef B4SOI_DEBUG_OUT
         case B4SOI_DEBUG1:

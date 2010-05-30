@@ -71,10 +71,18 @@ com_hardcopy(wordlist *wl)
 	    if (DevSwitch(devtype)) return;
         tempgraph = CopyGraph(currentgraph);
 		/* change .tmp to .ps */
-		psfname = strchr(fname, '.');
-		*(psfname + 1) = 'p';
-		*(psfname + 2) = 's';
-		*(psfname + 3) = '\0';
+        psfname = strchr(fname, '.');
+        if(psfname)
+        {
+            *(psfname + 1) = 'p';
+  	        *(psfname + 2) = 's';
+	        *(psfname + 3) = '\0';
+        }
+        else
+        {
+            fname=realloc(fname,strlen(fname)+4);
+            strcat(fname,".ps");
+        }
 	    tempgraph->devdep = fname;
 	    if (NewViewport(tempgraph)) {
 	        DevSwitch(NULL);
