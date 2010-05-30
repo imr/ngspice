@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+EXTRA_DIST = inpptree-parser.y
+
 noinst_LTLIBRARIES = libinp.la
 
 libinp_la_SOURCES = \

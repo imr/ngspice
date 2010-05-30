@@ -15,6 +15,7 @@ noinst_HEADERS = 	\
 	cm.h		\
 	cmproto.h	\
 	cmtypes.h	\
+	compatmode.h	\
 	complex.h 	\
 	const.h 	\
 	contdefs.h	\

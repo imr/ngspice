@@ -1,13 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = @XGRAPHDIR@ doc src man tests
-DIST_SUBDIRS = @XGRAPHDIR@ doc src man tests
+SUBDIRS = @XGRAPHDIR@ src man tests
+DIST_SUBDIRS = @XGRAPHDIR@ src man tests
 
 EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		ANALYSES BUGS AUTHORS ChangeLog \
 		DEVICES NEWS README README.tcl \
 		README.adms contrib \
-		examples visualc @NOTXGRAPH@
+		examples visualc manual @NOTXGRAPH@
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 			config.h.in config.sub configure install-sh \
@@ -21,10 +21,11 @@ dist-hook:
 	rm -rf `find $(distdir)/visualc -name CVS`
 	rm -rf `find $(distdir)/visualc/include -name CVS`
 	rm -rf `find $(distdir)/xgraph -name CVS`
-	rm -rf `find $(distdir)/xgraph/bitmaps CVS`
-	rm -rf `find $(distdir)/xgraph/examples CVS`
+	rm -rf `find $(distdir)/xgraph/bitmaps -name CVS`
+	rm -rf `find $(distdir)/xgraph/examples -name CVS`
 	rm -rf `find $(distdir)/unsupported -name CVS`
 	rm -rf `find $(distdir)/xgraph -name .cvsignore`
+	rm -rf `find $(distdir)/xgraph -name .deps`
 
 mrproper: maintainer-clean
 	rm -f `find . -type f -name "*~" -print`
