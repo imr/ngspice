@@ -4,6 +4,10 @@
    spicelib/parser/Makefile.am, tests/bsim3soi/Makefile.am
    configure.in:
    updates to allow 'make dist'
+ * com_hardcopy.c: allow filename without '.'
+ * device.c, b4soiask.c, b4soiset.c, b4ask.c, b4v2ask.c,
+   b4v3ask.c, b4v4ask.c, b4v5ask.c: add error handling and add
+   questions for 'show all'
 
 2010-05-27 Holger Vogt
  * inpcom.c: update B source pwl function handling
