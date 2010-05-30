@@ -1022,16 +1022,14 @@ dnl Output Files
 dnl ------------
 
 AC_CONFIG_FILES([Makefile
-                 doc/Makefile
                  man/Makefile
-                 man/man1/Makefile
+				 man/man1/Makefile
                  src/Makefile
                  src/spinit
                  src/tclspinit
                  src/spicelib/Makefile
                  src/spicelib/analysis/Makefile
                  src/spicelib/devices/Makefile
-                 ${VLAMKF}
                  src/spicelib/devices/asrc/Makefile
                  src/spicelib/devices/bjt/Makefile
                  src/spicelib/devices/bjt2/Makefile

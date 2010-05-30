@@ -1,7 +1,8 @@
 2010-05-30 Holger Vogt
  * xgraph/dialog.c: fcn getline renamed to getline_xgraph
  * Makefile.am, frontend/Makefile.am include/Makefile.am 
-   spicelib/parser/Makefile.am, tests/bsim3soi/Makefile.am:
+   spicelib/parser/Makefile.am, tests/bsim3soi/Makefile.am
+   configure.in:
    updates to allow 'make dist'
 
 2010-05-27 Holger Vogt
