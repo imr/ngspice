@@ -8,7 +8,7 @@
 
 SPICEdev B4SOIinfo = {
     {   "B4SOI",
-        "Berkeley SOI MOSFET model version 4.3",
+        "Berkeley SOI MOSFET  model version 4.3.1",
 
         &B4SOInSize,
         &B4SOInSize,

@@ -1,8 +1,9 @@
-/***  B4SOI 12/31/2009 Released by Tanvir Morshed  ***/
+/**  B4SOI 04/27/2010 Released by Tanvir Morshed  ***/
 
+static char rcsid[] = "$Id$";
 
 /**********
- * Copyright 2009 Regents of the University of California.  All rights reserved.
+ * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soimask.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
@@ -1232,10 +1233,10 @@ IFvalue *value)
             value->iValue = model->B4SOIrgateMod;
             return(OK);
         case B4SOI_MOD_XRCRG1:
-            value->rValue = model->B4SOIxrcrg1;
+            value->iValue = model->B4SOIxrcrg1; /* FIXME rValue to iValue ? */
             return(OK);
         case B4SOI_MOD_XRCRG2:
-            value->rValue = model->B4SOIxrcrg2;
+            value->iValue = model->B4SOIxrcrg2; /* FIXME rValue to iValue ? */
             return(OK);
         case B4SOI_MOD_RSHG:
             value->rValue = model->B4SOIrshg;

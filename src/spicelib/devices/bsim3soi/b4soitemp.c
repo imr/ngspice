@@ -1,8 +1,9 @@
-/***  B4SOI 12/31/2009 Released by Tanvir Morshed  ***/
+/***  B4SOI 05/14/2010 Released by Tanvir Morshed  ***/
 
+static char rcsid[] = "$Id$";
 
 /**********
- * Copyright 2009 Regents of the University of California.  All rights reserved.
+ * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soitemp.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
@@ -12,6 +13,7 @@
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  * Modified by Tanvir Morshed 09/22/2009
  * Modified by Tanvir Morshed 12/31/2009
+ * Modified by Tanvir Morshed 05/14/2010 
  **********/
 
 /* Lmin, Lmax, Wmin, Wmax */
@@ -46,8 +48,8 @@
 	B = exp(A);                                                       \
     }                                                                     \
 }
-				       /* ARGSUSED */
-    int
+
+int
 B4SOItemp(
     GENmodel *inModel,
     CKTcircuit *ckt)
@@ -72,12 +74,14 @@ B4SOItemp(
     double Theta0,Delt_vth,DeltVthw;
     double niter,toxpf,toxpi, Tcen;
     double n0;
-
+    double eggdep, agbc2n, agbc2p, bgbc2n, bgbc2p, sqrt2qeps; /* v4.3.1 bugfix for mtrlMod=1 -Tanvir */
+	
 
     /* v2.0 release */
     double tmp3, T7;
     /*4.1*/
     double epsrox, toxe, epssub;
+    
 
     /*  loop through all the B4SOI device models */
     for (; model != NULL; model = model->B4SOInextModel)
@@ -97,14 +101,26 @@ B4SOItemp(
 	    epsrox = 3.9;
 	    toxe = model->B4SOIeot;
 	    epssub = EPS0 * model->B4SOIepsrsub;
-
+          sqrt2qeps = sqrt(2.0 * 1.0e6 * Charge_q * epssub);	/* bugfix 4.3.1 */
+          /* bugfix v4.3.1 following constants should be replaced with model params -Tanvir */
+	    agbc2n = 3.42537e-7;		
+	    agbc2p = 4.97232e-7;
+	    bgbc2n = 1.16645e12;
+	    bgbc2p = 7.45669e11;
+	    eggdep = 1.12;
 	}
 	else
 	{
 	    epsrox = model->B4SOIepsrox;
 	    toxe = model->B4SOItox;
 	    epssub = EPSSI;
-
+          sqrt2qeps = 5.753e-12; /* constant from v4.3.0 and earlier */
+          /* bugfix v4.3.1 following constants are valid for mtrlMod=0 -Tanvir */
+	    agbc2n = 3.42537e-7;		
+	    agbc2p = 4.97232e-7;
+	    bgbc2n = 1.16645e12;
+	    bgbc2p = 7.45669e11;
+	    eggdep = 1.12;
 	}
 
 
@@ -1253,8 +1269,8 @@ B4SOItemp(
 
 	    /* Phi  & Gamma */
 	    SDphi = 2.0*model->B4SOIvtm*log(fabs(pParam->B4SOInsub) / ni);
-	    SDgamma = 5.753e-12 * sqrt(fabs(pParam->B4SOInsub))
-		/ model->B4SOIcbox;
+	    SDgamma = sqrt2qeps * sqrt(fabs(pParam->B4SOInsub))
+		/ model->B4SOIcbox; /* bugfix v4.3.1*/
 
 	    if (!model->B4SOIvsdthGiven)
 	    {
@@ -1330,8 +1346,10 @@ B4SOItemp(
 			/ (model->B4SOItoxqm * pParam->B4SOIpoxedge)))
 		/ model->B4SOItoxqm / model->B4SOItoxqm
 		/ pParam->B4SOIpoxedge / pParam->B4SOIpoxedge;
-	    pParam->B4SOIAechvb = (model->B4SOItype == NMOS) ? 4.97232e-7 : 3.42537e-7;
-	    pParam->B4SOIBechvb = (model->B4SOItype == NMOS) ? 7.45669e11 : 1.16645e12;
+	/*    pParam->B4SOIAechvb = (model->B4SOItype == NMOS) ? 4.97232e-7 : 3.42537e-7;
+	    pParam->B4SOIBechvb = (model->B4SOItype == NMOS) ? 7.45669e11 : 1.16645e12;  */ 
+		pParam->B4SOIAechvb = (model->B4SOItype == NMOS) ? agbc2p : agbc2n;			/* bugfix 4.3.1 -Tanvir */
+	    pParam->B4SOIBechvb = (model->B4SOItype == NMOS) ? bgbc2p : bgbc2n;			/* bugfix v4.3.1 -Tanvir */
 // The edge should have a contribution from psbcp & pdbcp.  Need s & d terms.
 // There is no NF correction because psbcp & pdbcp are "per finger" in manual.
             pParam->B4SOIAechvbEdges = pParam->B4SOIAechvb
@@ -1376,23 +1394,27 @@ B4SOItemp(
 		    fprintf(stdout, "Warning: gamma2 is ignored because k1 or k2 is given.\n");
 	    }
 	    else
-	    {   if (!model->B4SOIvbxGiven)
-		pParam->B4SOIvbx = pParam->B4SOIphi - 7.7348e-4
+	    {   if (!model->B4SOIvbxGiven){
+		if (model->B4SOImtrlMod)
+		T0 = Charge_q / 2.0 / epssub * 1.0e6; 
+		else
+		T0 = 7.7348e-4;
+		pParam->B4SOIvbx = pParam->B4SOIphi - T0
 		    * pParam->B4SOInpeak
-		    * pParam->B4SOIxt * pParam->B4SOIxt;
+		    * pParam->B4SOIxt * pParam->B4SOIxt;} /* bugfix 4.3.1 */
 		if (pParam->B4SOIvbx > 0.0)
 		    pParam->B4SOIvbx = -pParam->B4SOIvbx;
 		if (pParam->B4SOIvbm > 0.0)
 		    pParam->B4SOIvbm = -pParam->B4SOIvbm;
 
 		if (!model->B4SOIgamma1Given)
-		    pParam->B4SOIgamma1 = 5.753e-12
+		    pParam->B4SOIgamma1 = sqrt2qeps
 			* sqrt(pParam->B4SOInpeak)
-			/ model->B4SOIcox;
+			/ model->B4SOIcox;			/* bugfix 4.3.1 */
 		if (!model->B4SOIgamma2Given)
-		    pParam->B4SOIgamma2 = 5.753e-12
+		    pParam->B4SOIgamma2 = sqrt2qeps
 			* sqrt(pParam->B4SOInsub)
-			/ model->B4SOIcox;
+			/ model->B4SOIcox;			/* bugfix 4.3.1 */
 
 		T0 = pParam->B4SOIgamma1 - pParam->B4SOIgamma2;
 		T1 = sqrt(pParam->B4SOIphi - pParam->B4SOIvbx)
@@ -1697,9 +1719,11 @@ B4SOItemp(
 		    T4 = sqrt(1.0 + 2.0 * (vddeot - T0) / T1);
 		    T2 = T1 * (T4 - 1.0);
 		    T3 = 0.5 * T2 * T2 / T1; /* T3 = Vpoly */
-		    T7 = 1.12 - T3 - 0.05;
+		    /* T7 = 1.12 - T3 - 0.05; */
+			T7 = eggdep - T3 - 0.05;		/* bugfix v4.3.1 -Tanvir */
 		    T6 = sqrt(T7 * T7 + 0.224);
-		    T5 = 1.12 - 0.5 * (T7 + T6);
+		    /* T5 = 1.12 - 0.5 * (T7 + T6); */
+			T5 = eggdep - 0.5 * (T7 + T6);	/* bugfix v4.3.1 -Tanvir */
 		    Vgs_eff = vddeot - T5;
 
 		}

@@ -1,5 +1,5 @@
 /**********
-Copyright 2009 Regents of the University of California.  All rights reserved.
+Copyright 2010 Regents of the University of California.  All rights reserved.
 Author: 1998 Samuel Fung
 authors:1999-2004 Pin Su, Hui Wan b3soidef.h
 Authors:2005-  Hui Wan, Jane Xi
@@ -363,8 +363,8 @@ typedef struct sB4SOIinstance
 
     unsigned B4SOIlGiven :1;
     unsigned B4SOIwGiven :1;
-    unsigned B4SOImGiven :1;
 
+    unsigned B4SOImGiven :1;
     unsigned B4SOIdrainAreaGiven :1;
     unsigned B4SOIsourceAreaGiven    :1;
     unsigned B4SOIdrainSquaresGiven  :1;
@@ -1110,7 +1110,7 @@ typedef struct sB4SOImodel
 	double B4SOIegisl;
     double B4SOIagisl;
     double B4SOIbgisl;
-    double B4SOIcgisl; 	
+    double B4SOIcgisl;
 	double B4SOIrgisl;
 	double B4SOIkgisl;
 	double B4SOIfgisl;

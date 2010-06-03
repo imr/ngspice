@@ -1,8 +1,9 @@
-/***  B4SOI 12/31/2009 Released by Tanvir Morshed   ***/
+/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
 
+static char rcsid[] = "$Id$";
 
 /**********
- * Copyright 2009 Regents of the University of California.  All rights reserved.
+ * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soicvtest.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
@@ -15,6 +16,7 @@
  **********/
 
 #include "ngspice.h"
+
 #include "cktdefs.h"
 #include "b4soidef.h"
 #include "trandefs.h"
@@ -25,9 +27,8 @@
 
 
 int
-B4SOIconvTest(
-GENmodel *inModel,
-CKTcircuit *ckt)
+B4SOIconvTest(GENmodel *inModel, CKTcircuit *ckt)
+
 {
 register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;
@@ -39,10 +40,7 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
     {    /* loop through all the instances of the model */
          for (here = model->B4SOIinstances; here != NULL ;
               here=here->B4SOInextInstance) 
-	 {    
-	      if (here->B4SOIowner != ARCHme)
-                      continue;
-              vbs = model->B4SOItype 
+	 {    vbs = model->B4SOItype 
 		  * (*(ckt->CKTrhsOld+here->B4SOIbNode) 
 		  - *(ckt->CKTrhsOld+here->B4SOIsNodePrime));
               vgs = model->B4SOItype

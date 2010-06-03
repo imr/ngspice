@@ -1,8 +1,9 @@
-/***  B4SOI 12/31/2009 Released by Tanvir Morshed    ***/
+/***  B4SOI 04/27/2010 Released by Tanvir Morshed    ***/
 
+static char rcsid[] = "$Id$";
 
 /**********
- * Copyright 2009 Regents of the University of California.  All rights reserved.
+ * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soimpar.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
@@ -15,6 +16,7 @@
  **********/
 
 #include "ngspice.h"
+
 #include "b4soidef.h"
 #include "ifsim.h"
 #include "sperror.h"
@@ -228,13 +230,13 @@ GENmodel *inMod)
             mod->B4SOInsd = value->rValue;
             mod->B4SOInsdGiven = TRUE;
            /* if (mod->B4SOInsd > 1.0e23)
-                mod->B4SOInsd *= 1.0e-6;  */	/* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
+                mod->B4SOInsd *= 1.0e-6;  */					/* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
             break;
         case B4SOI_MOD_NGATE:
             mod->B4SOIngate = value->rValue;
             mod->B4SOIngateGiven = TRUE;
 	    /* if (mod->B4SOIngate > 1.0e23)
-		mod->B4SOIngate *= 1.0e-6; */	/* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
+		mod->B4SOIngate *= 1.0e-6; 			*/					/* Bug # 22 Jul09 Proper limiting conditions are specified in the B4SOIcheck.c file*/
             break;
         case B4SOI_MOD_GAMMA1:
             mod->B4SOIgamma1 = value->rValue;

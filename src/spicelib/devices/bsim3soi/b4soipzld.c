@@ -1,8 +1,9 @@
-/***  B4SOI  12/31/2009 Released by Tanvir Morshed  ***/
+/***  B4SOI  04/27/2010 Released by Tanvir Morshed  ***/
 
+static char rcsid[] = "$Id$";
 
 /**********
- * Copyright 2009 Regents of the University of California.  All rights reserved.
+ * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soipzld.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
@@ -24,8 +25,8 @@
 int
 B4SOIpzLoad(
 GENmodel *inModel,
-CKTcircuit *ckt,
-SPcomplex *s)
+register CKTcircuit *ckt,
+register SPcomplex *s)
 {
 register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;
@@ -36,18 +37,12 @@ double GSoverlapCap, GDoverlapCap, GBoverlapCap=0.0;
 double FwdSum, RevSum, Gm, Gmbs;
 
 double m;
-
     for (; model != NULL; model = model->B4SOInextModel) 
     {    for (here = model->B4SOIinstances; here!= NULL;
               here = here->B4SOInextInstance) 
 	 {
             if (here->B4SOImode >= 0) 
-            {   
-
-                if (here->B4SOIowner != ARCHme)
-                    continue;
-
-                Gm = here->B4SOIgm;
+	    {   Gm = here->B4SOIgm;
 		Gmbs = here->B4SOIgmbs;
 		FwdSum = Gm + Gmbs;
 		RevSum = 0.0;

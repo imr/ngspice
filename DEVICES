@@ -752,7 +752,7 @@ will be updated every time the device specific code is altered or changed to ref
 
  12.4 BSIMSOI - Berkeley SOI model (partially/full depleted devices)
                
-      Ver:    4.3
+      Ver:    4.3.1
       Class:  M
       Level:  10 & 58
       Dir:    devices/bsim3soi

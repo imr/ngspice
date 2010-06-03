@@ -1,8 +1,9 @@
-/***  B4SOI 12/31/2009 Released by Tanvir Morshed  ***/
+/**  B4SOI 04/27/2010 Released by Tanvir Morshed  ***/
 
+static char rcsid[] = "$Id$";
 
 /**********
- * Copyright 2009 Regents of the University of California.  All rights reserved.
+ * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soinoi.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
@@ -153,10 +154,7 @@ int i;
     for (; model != NULL; model = model->B4SOInextModel)
     {    for (here = model->B4SOIinstances; here != NULL;
 	      here = here->B4SOInextInstance)
-	 {    
-	      if (here->B4SOIowner != ARCHme)
-	              continue;
-              pParam = here->pParam;
+	 {    pParam = here->pParam;
 	      switch (operation)
 	      {  case N_OPEN:
 		     /* see if we have to to produce a summary report */
@@ -294,17 +292,17 @@ int i;
 				       here->B4SOIsNodePrime, here->B4SOIsNode,
 				       gspr * tempRatioSH * here->B4SOIm); /* v4.2 self-heating temp */
 
-			/* v4.2 bugfix: implement correct thermal noise model (bsim4.6.0)*/
+					   /* v4.2 bugfix: implement correct thermal noise model (bsim4.6.0)*/
                             /*  if ((here->B4SOIrgateMod == 1) ||
 				  (here->B4SOIrgateMod == 2)) */ 
-				if (here->B4SOIrgateMod == 1)
+								if (here->B4SOIrgateMod == 1)
                               {   NevalSrc(&noizDens[B4SOIRGNOIZ],
                                        &lnNdens[B4SOIRGNOIZ], ckt, THERMNOISE,
                                        here->B4SOIgNode,
 				       here->B4SOIgNodeExt,
 				       here->B4SOIgrgeltd * tempRatioSH * here->B4SOIm); /* v4.2 self-heating temp */
                               }
-				else if (here->B4SOIrgateMod == 2)	/*v4.2*/
+							  else if (here->B4SOIrgateMod == 2)	/*v4.2*/
                               {
                                 T0 = 1.0 + here->B4SOIgrgeltd/here->B4SOIgcrg;
                                 T1 = T0 * T0;
@@ -529,10 +527,11 @@ int i;
 			      here->B4SOIdNodePrime, here->B4SOIbNode, 
                               model->B4SOInoif * fabs(here->B4SOIibd)); */ /*v4.2*/
 
-			      NevalSrc(&noizDens[B4SOIFB_IBDNOIZ], 
+					  NevalSrc(&noizDens[B4SOIFB_IBDNOIZ], 
 			      &lnNdens[B4SOIFB_IBDNOIZ], ckt, SHOTNOISE, 
 			      here->B4SOIdNodePrime, here->B4SOIbNode, 
-			      model->B4SOInoif * (here->B4SOIibd) * here->B4SOIm); 	/*v4.2 extra fabs()removed */						  
+
+				               model->B4SOInoif * (here->B4SOIibd) * here->B4SOIm); 	/*v4.2 extra fabs()removed */						  
 		          
  				  noizDens[B4SOITOTNOIZ] = noizDens[B4SOIRDNOIZ]
 						     + noizDens[B4SOIRSNOIZ]

@@ -1,8 +1,10 @@
-/***  B4SOI 12/31/2009 Released by Tanvir Morshed   ***/
+/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
 
+
+static char rcsid[] = "$Id$";
 
 /**********
- * Copyright 2009 Regents of the University of California.  All rights reserved.
+ * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soiset.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
@@ -12,6 +14,7 @@
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  * Modified by Tanvir Morshed 09/22/2009
  * Modified by Tanvir Morshed 12/31/2009
+ * Modified by Tanvir Morshed 04/27/2010
  **********/
 
 #include "ngspice.h"
@@ -43,7 +46,6 @@ register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;
 int error;
 CKTnode *tmp;
-
 double Cboxt;
 
 /* v3.2 */
@@ -112,7 +114,7 @@ double Vbs0t, Qsi;
         if (!model->B4SOIshModGiven) 
             model->B4SOIshMod = 0;
         if (!model->B4SOIversionGiven) 
-            model->B4SOIversion = 4.3;
+            model->B4SOIversion = 4.31;
         if (!model->B4SOItoxGiven)
             model->B4SOItox = 100.0e-10;
        /*model->B4SOIcox = 3.453133e-11 / model->B4SOItox;*/
@@ -2192,14 +2194,15 @@ double Vbs0t, Qsi;
                 printf("Warning: soiMod has been set to its global value %d.\n", model->B4SOIsoiMod);
             }
 
-            if (here->B4SOIsoiMod == 3) { /* auto selection */
+            if (here->B4SOIsoiMod == 3) {/* auto selection */
                if (Vbs0t > model->B4SOIvbs0fd)
                   here->B4SOIsoiMod = 2; /* ideal FD mode */
-               else
+               else {
                   if (Vbs0t < model->B4SOIvbs0pd)
                      here->B4SOIsoiMod = 0; /* BSIMPD */
                   else
                      here->B4SOIsoiMod = 1;
+               }
             }
 
             here->B4SOIfloat = 0;

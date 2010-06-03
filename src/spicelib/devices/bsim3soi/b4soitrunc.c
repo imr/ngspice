@@ -1,8 +1,9 @@
-/***  B4SOI 12/31/2009 Released by Tanvir Morshed   ***/
+/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
 
+static char rcsid[] = "$Id$";
 
 /**********
- * Copyright 2009 Regents of the University of California.  All rights reserved.
+ * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soitrunc.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
@@ -24,7 +25,7 @@
 int
 B4SOItrunc(
 GENmodel *inModel,
-CKTcircuit *ckt,
+register CKTcircuit *ckt,
 double *timeStep)
 {
 register B4SOImodel *model = (B4SOImodel*)inModel;
@@ -38,8 +39,6 @@ register B4SOIinstance *here;
     {    for (here = model->B4SOIinstances; here != NULL;
 	      here = here->B4SOInextInstance)
 	 {
-            if (here->B4SOIowner != ARCHme)
-                    continue;
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
 #endif /* STEPDEBUG */

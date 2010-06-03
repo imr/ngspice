@@ -1,8 +1,9 @@
-/***  B4SOI 12/31/2009 Released by Tanvir Morshed   ***/
+/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
 
+static char rcsid[] = "$Id$";
 
 /**********
- * Copyright 2009 Regents of the University of California.  All rights reserved.
+ * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soigetic.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
@@ -15,6 +16,7 @@
  **********/
 
 #include "ngspice.h"
+
 #include "cktdefs.h"
 #include "b4soidef.h"
 #include "sperror.h"
@@ -22,19 +24,15 @@
 
 
 int
-B4SOIgetic(
-GENmodel *inModel,
-CKTcircuit *ckt)
+B4SOIgetic(GENmodel *inModel, CKTcircuit *ckt)
+
 {
 B4SOImodel *model = (B4SOImodel*)inModel;
 B4SOIinstance *here;
 
     for (; model ; model = model->B4SOInextModel) 
     {    for (here = model->B4SOIinstances; here; here = here->B4SOInextInstance)
-	 {    
-              if (here->B4SOIowner != ARCHme)
-                      continue;
-              if(!here->B4SOIicVBSGiven) 
+	 {    if(!here->B4SOIicVBSGiven) 
 	      {  here->B4SOIicVBS = *(ckt->CKTrhs + here->B4SOIbNode) 
 				  - *(ckt->CKTrhs + here->B4SOIsNode);
               }

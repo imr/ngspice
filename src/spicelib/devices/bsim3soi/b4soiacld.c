@@ -1,8 +1,9 @@
-/***  B4SOI 12/31/2009 Released by Tanvir Morshed  ***/
+/***  B4SOI 04/27/2010 Released by Tanvir Morshed  ***/
 
+static char rcsid[] = "$Id$";
 
 /**********
- * Copyright 2009 Regents of the University of California.  All rights reserved.
+ * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soiacld.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
@@ -11,10 +12,10 @@
  * Modified by Hui Wan, Xuemei Xi 11/30/2005
  * Modified by Wenwei Yang, Chung-Hsun Lin, Darsen Lu 03/06/2009
  * Modified by Tanvir Morshed 09/22/2009
- * Modified by Tanvir Morshed 12/31/2009
  **********/
 
 #include "ngspice.h"
+
 #include "cktdefs.h"
 #include "b4soidef.h"
 #include "sperror.h"
@@ -22,9 +23,7 @@
 
 
 int
-B4SOIacLoad(
-GENmodel *inModel,
-CKTcircuit *ckt)
+B4SOIacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
 register B4SOImodel *model = (B4SOImodel*)inModel;
 register B4SOIinstance *here;
@@ -59,7 +58,7 @@ double gcrgd, gcrgg, gcrgs, gcrgb, gcrg;
 double xcgmgmb, xcgmdb, xcgmsb, xcgmeb, xcdgmb, xcsgmb, xcegmb;
 double geltd;
 double gigg, gigd, gigs, gigb, gige, gigT;
-double gigpg=0.0, gigpp=0.0;
+double gigpg, gigpp;
 
 /* v3.1.1 bug fix */
 double gIstotg, gIstotd, gIstotb, gIstots;
@@ -80,9 +79,6 @@ double m;
       for (here = model->B4SOIinstances; here!= NULL;
               here = here->B4SOInextInstance) 
 	 {    
-	      if (here->B4SOIowner != ARCHme)
-                      continue;
-
               selfheat = (model->B4SOIshMod == 1) && (here->B4SOIrth0 != 0.0);
               if (here->B4SOImode >= 0) 
 	      {   Gm = here->B4SOIgm;
@@ -273,6 +269,9 @@ double m;
                   gigd = here->B4SOIgigs; /* v3.1.1 bug fix */
                   gigT = model->B4SOItype * here->B4SOIgigT;
 
+                  gigpg = here->B4SOIgigpg;/* bugfix_snps for setting gigpg gigpp*/
+                  gigpp = here->B4SOIgigpp; 
+		  
                   gbbg  = -here->B4SOIgbgs;
                   gbbb  = -here->B4SOIgbbs;
                   gbbp  = -here->B4SOIgbps;
@@ -556,19 +555,19 @@ double m;
               geltd = here->B4SOIgrgeltd;
               if (here->B4SOIrgateMod == 1)
               {  
-		*(here->B4SOIGEgePtr) += m * geltd;
+				*(here->B4SOIGEgePtr) += m * geltd;
                 *(here->B4SOIGgePtr) -= m * geltd;
                 *(here->B4SOIGEgPtr) -= m * geltd;
                 *(here->B4SOIGgPtr) += m * (geltd + gigg + gIgtotg); /* v3.1.1 bug fix */
                 *(here->B4SOIGdpPtr) += m * (gigd + gIgtotd); /* v3.1.1 bug fix */
                 *(here->B4SOIGspPtr) += m * (gigs + gIgtots); /* v3.1.1 bug fix */
-		if (here->B4SOIsoiMod != 2) /* v3.2 */
-                *(here->B4SOIGbPtr) -= m * (-gigb - gIgtotb); /* v3.1.1 bug fix */
+                if (here->B4SOIsoiMod != 2) /* v3.2 */
+                    *(here->B4SOIGbPtr) -= m * (-gigb - gIgtotb); /* v3.1.1 bug fix */
               }
 
               else if (here->B4SOIrgateMod == 2)
               {   
-		*(here->B4SOIGEgePtr) += m * gcrg;
+                *(here->B4SOIGEgePtr) += m * gcrg;
                 *(here->B4SOIGEgPtr) += m * gcrgg;
                 *(here->B4SOIGEdpPtr) += m * gcrgd;
                 *(here->B4SOIGEspPtr) += m * gcrgs;
@@ -585,7 +584,7 @@ double m;
 
               else if (here->B4SOIrgateMod == 3)
               {   
-		*(here->B4SOIGEgePtr) += m * geltd;
+                *(here->B4SOIGEgePtr) += m * geltd;
                 *(here->B4SOIGEgmPtr) -= m * geltd;
                 *(here->B4SOIGMgePtr) -= m * geltd;
                 *(here->B4SOIGMgmPtr) += m * (geltd + gcrg);
@@ -666,7 +665,7 @@ double m;
 /*		 *(here->B4SOIDPbPtr +1) -= xcdgb + xcddb + xcdsb + xcdeb; 
 					  + xcdgmb; */
 
-		 *(here->B4SOIDPbPtr +1) -= m * -xcdbb; /* v4.0 */
+                 *(here->B4SOIDPbPtr +1) -= m * -xcdbb; /* v4.0 */
 
 /*                 *(here->B4SOISPbPtr +1) -= xcsgb + xcsdb + xcssb + xcseb
 					    + xcsgmb; */
@@ -725,7 +724,7 @@ double m;
                  *(here->B4SOIBgPtr)  += m * (gbbg - gigg); /* v3.1 bug fix */
                  *(here->B4SOIBdpPtr) += m * (gbbdp - gigd); /* v3.1 bug fix */
                  *(here->B4SOIBspPtr) += m * (gbbsp - gigs); /* v3.1 bug fix */
-	         *(here->B4SOIBbPtr) += m * (gbbb - gigb); /* v3.1 bug fix */
+                 *(here->B4SOIBbPtr) += m * (gbbb - gigb); /* v3.1 bug fix */
                  *(here->B4SOISPbPtr) -= m * (Gmbs - gsspb + gIstotb + gstotb); 
 					/* v4.0 */
                  *(here->B4SOIDPbPtr) -= m * ((-gddpb - Gmbs) + gIdtotb + gdtotb); 
@@ -778,6 +777,7 @@ double m;
                   (*(here->B4SOIBgPtr) -= m * gigpg);
                   (*(here->B4SOIGbPtr) += m * gigpp);
               }
+
 
 
 	      /* v4.0 */

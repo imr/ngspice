@@ -1,8 +1,9 @@
-/***  B4SOI 12/31/2009 Released by Tanvir Morshed   ***/
+/***  B4SOI 04/27/2010 Released by Tanvir Morshed   ***/
 
+static char rcsid[] = "$Id$";
 
 /**********
- * Copyright 2009 Regents of the University of California.  All rights reserved.
+ * Copyright 2010 Regents of the University of California.  All rights reserved.
  * Authors: 1998 Samuel Fung, Dennis Sinitsky and Stephen Tang
  * Authors: 1999-2004 Pin Su, Hui Wan, Wei Jin, b3soidest.c
  * Authors: 2005- Hui Wan, Xuemei Xi, Ali Niknejad, Chenming Hu.
@@ -15,12 +16,13 @@
  **********/
 
 #include "ngspice.h"
+
 #include "b4soidef.h"
 #include "suffix.h"
 
 void
-B4SOIdestroy(
-GENmodel **inModel)
+B4SOIdestroy(GENmodel **inModel)
+
 {
 B4SOImodel **model = (B4SOImodel**)inModel;
 B4SOIinstance *here;

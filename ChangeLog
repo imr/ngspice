@@ -1,3 +1,12 @@
+2010-06-03 Holger Vogt
+ * src\spicelib\devices\bsim3soi
+   b4soi.c b4soiacld.c b4soiask.c b4soicheck.c b4soicvtest.c
+   b4soidef.h b4soidel.c b4soidest.c b4soiext.h b4soigetic.c
+   b4soiinit.c b4soiinit.h b4soiitf.h b4soild.c b4soimask.c
+   b4soimdel.c b4soimpar.c b4soinoi.c b4soipar.c b4soipzld.c
+   b4soiset.c b4soitemp.c b4soitrunc.c:
+   update to BSIM4SOI vers. 4.3.1
+
 2010-05-30 Holger Vogt
  * xgraph/dialog.c: fcn getline renamed to getline_xgraph
  * Makefile.am, frontend/Makefile.am include/Makefile.am 
