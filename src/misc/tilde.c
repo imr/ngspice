@@ -83,5 +83,6 @@ tildexpand(char *string)
        return copy(string);
     }
 #endif
+	return NULL;
 }
 

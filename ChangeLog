@@ -6,6 +6,7 @@
    b4soimdel.c b4soimpar.c b4soinoi.c b4soipar.c b4soipzld.c
    b4soiset.c b4soitemp.c b4soitrunc.c:
    update to BSIM4SOI vers. 4.3.1
+ * misc/tilde.c: return path NULL added  
 
 2010-05-30 Holger Vogt
  * xgraph/dialog.c: fcn getline renamed to getline_xgraph
