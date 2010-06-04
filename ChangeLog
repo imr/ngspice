@@ -1,3 +1,8 @@
+2010-06-04 Holger Vogt
+ * inpcom.c: bug report 3008000, overflow of fixed array of 
+   used_subckt_names, used_model_names in fcn comment_out_unused_subckt_models
+   removed by dynamic memory allocation 
+
 2010-06-03 Holger Vogt
  * src\spicelib\devices\bsim3soi
    b4soi.c b4soiacld.c b4soiask.c b4soicheck.c b4soicvtest.c

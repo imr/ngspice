@@ -726,12 +726,16 @@ model_bin_match( char* token, char* model_name )
   also comment out .param lines with no parameters defined
  */
 static void
-comment_out_unused_subckt_models( struct line *start_card )
+comment_out_unused_subckt_models( struct line *start_card , int no_of_lines)
 {
    struct line *card;
-   char *used_subckt_names[1000], *used_model_names[1000], *line = NULL, *subckt_name, *model_name;
+   char **used_subckt_names, **used_model_names, *line = NULL, *subckt_name, *model_name;
    int  num_used_subckt_names = 0, num_used_model_names = 0, i = 0, num_terminals = 0, tmp_cnt = 0;
    bool processing_subckt = FALSE, found_subckt = FALSE, remove_subckt = FALSE, found_model = FALSE, has_models = FALSE;
+
+   /* generate arrays of *char for subckt or model names */
+   used_subckt_names = (char**)tmalloc(no_of_lines);
+   used_model_names = (char**)tmalloc(no_of_lines);
 
    for ( card = start_card; card != NULL; card = card->li_next ) {
       if ( ciprefix( ".model", card->li_line ) ) has_models = TRUE;
@@ -833,6 +837,8 @@ comment_out_unused_subckt_models( struct line *start_card )
    }
    for ( i = 0; i < num_used_subckt_names; i++ ) tfree(used_subckt_names[i]);
    for ( i = 0; i < num_used_model_names;  i++ ) tfree(used_model_names[i]);
+   tfree(used_subckt_names);
+   tfree(used_model_names);
 }
 
 
@@ -1537,7 +1543,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
    inp_remove_excess_ws(working);
 
    if ( call_depth == 0 ) {
-      comment_out_unused_subckt_models(working);
+      comment_out_unused_subckt_models(working, line_number);
 
       line_number = inp_split_multi_param_lines(working, line_number);
 
