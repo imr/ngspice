@@ -733,7 +733,9 @@ comment_out_unused_subckt_models( struct line *start_card , int no_of_lines)
    int  num_used_subckt_names = 0, num_used_model_names = 0, i = 0, num_terminals = 0, tmp_cnt = 0;
    bool processing_subckt = FALSE, found_subckt = FALSE, remove_subckt = FALSE, found_model = FALSE, has_models = FALSE;
 
-   /* generate arrays of *char for subckt or model names */
+   /* generate arrays of *char for subckt or model names. Start
+   with 1000, but increase, if number of lines in deck is larger */
+   if (no_of_lines < 1000) no_of_lines = 1000;
    used_subckt_names = (char**)tmalloc(no_of_lines);
    used_model_names = (char**)tmalloc(no_of_lines);
 
