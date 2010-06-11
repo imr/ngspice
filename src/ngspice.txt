@@ -3,6 +3,14 @@ TITLE: Table of Contents
 TEXT: H
 TEXT: H
 TEXT: H
+TEXT: H                    Important Notice:
+TEXT: H This manual is describing the original Spice3 code.  It does     
+TEXT: H not contain all the updates which have been added to ngspice
+TEXT: H over the last 10 years! Even if most of its content is still
+TEXT: H valid, it may be considered outdated.
+TEXT: H
+TEXT: H    For updated information, please have a look at the actual
+TEXT: H ngspicexx-manual.pdf.
 TEXT: H
 TEXT: H
 TEXT: H
