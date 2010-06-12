@@ -647,7 +647,7 @@ will be updated every time the device specific code is altered or changed to ref
        Ver:    3.2.4 - 3.3.0
        Class:  M
        Level:  8 & 49, version = 3.2.2, 3.2.3, 3.2.4, 3.3.0
-       Dir:    devices/bsim3
+       Dir:    devices/bsim3 (level 3.3.0)
        Status: TO BE TESTED
 
        This is the actual BSIM3 model from Berkeley Device Group.
@@ -665,10 +665,10 @@ will be updated every time the device specific code is altered or changed to ref
 
  11.13 BSIM4 - BSIM model level 4
  
-       Ver:    4.2.0 - 4.6.4
+       Ver:    4.2.0 - 4.6.5
        Class:  M
        Level:  14 & 54, version = 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6
-       Dir:    devices/bsim4
+       Dir:    devices/bsim4 (level 4.6.5)
        Status:
 
        This is the actual BSIM4 model from Berkeley Device Group.
