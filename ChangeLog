@@ -1,3 +1,6 @@
+2010-06-12 Holger Vogt
+ * /visualc/include/config.h: update to version 21
+ 
 2010-06-11 Holger Vogt
  * DEVICES: update 4.6.5
    /man/man1/ngnutmeg.1 ngspice.1: updated with link to actual
