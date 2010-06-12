@@ -1,5 +1,7 @@
 2010-06-11 Holger Vogt
  * DEVICES: update 4.6.5
+   /man/man1/ngnutmeg.1 ngspice.1: updated with link to actual
+   ngspice documentation
 
 2010-06-11 Holger Vogt
  * ngspice.txt: notice to users: help file outdated
