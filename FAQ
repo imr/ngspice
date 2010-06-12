@@ -1,6 +1,6 @@
-  Ngspice F.A.Q.Version 1.5 (rework-18 release)
-  Maintained by Paolo Nenzi
-  Last update: 5-11-2008
+  Ngspice F.A.Q.Version 1.6 (rework-21 release)
+  Maintained by Paolo Nenzi, Holger Vogt
+  Last update: 12-06-2010
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -213,9 +213,13 @@
   best way is to point to your preferred search engine. Some interesting
   sites are:
   
+  Pages on ngspice
+  http://ngspice.sourceforge.net/docs.html
+  
   Pages on Spice:
    http://bwrc.eecs.berkeley.edu/Classes/IcBook/SPICE/
    http://embedded.eecs.berkeley.edu/pubs/downloads/spice/index.htm
+   http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/index.html#toc
   
   Xspice Page:
    http://users.ece.gatech.edu/~mrichard/Xspice
@@ -232,7 +236,7 @@
 
   The latest version released is: 
   
-  * ngspice-rework-18 (released on 1/12/2008)
+  * ngspice-rework-21 (released on 13/06/2010)
   
 
  2.2.  What are the latest features in the current release?
@@ -240,14 +244,18 @@
   New features:
 
 
-    + Support for .lib and .param statements
-    + Improved netlisting capabilites to support more complex model cards
-    + Global net names
-    + Mosfet model binning
+    + BSIM 4.6.5, BSIMSOI 4.3.1
+    + Compatibility: C, L, R, devices and E, G sources with expressions 
+	  Variables HERTZ, TIME, TEMPER added
+    + E, G sources with TABLE function
+    + New manual
+	+ Plotting with Gnuplot, wrdata for simple table output
+	+ .measure vastly improved
+	+ transmission line models improved
 
   Bug fixes:
 
-    + Fixes in the control language
+    + Many small bugs, memory leaks, memory overflow
 
 
 
@@ -293,10 +301,9 @@
 
   Ngspice is written in C, and uses some GNU extensions, then you need
   a GNU C compiler and a UNIX environment to compile it. Ngspice can
-  be compiled under Windows using  the mingw or cigwin environment.
+  be compiled under Windows using  the mingw or cygwin environment as
+  well as MS Visual Studio.
   
-  In the future a compatibility table will be written.
-
 
  3.2.  I get errors when I try to compile the source code, why?
   
