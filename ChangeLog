@@ -1,3 +1,7 @@
+2010-06-12  Robert Larice
+ * man/man1/ngnutmeg.1, man/man1/ngspice.1:   smaller cleanup
+ * man/man1/Makefile.am:: reintroduce those two man pages
+
 2010-06-12 Holger Vogt
  * /visualc/include/config.h: update to version 21
  * configure.in: version 21
