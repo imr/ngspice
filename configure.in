@@ -12,7 +12,7 @@ dnl Initialisation
 dnl ---------------
 
 dnl Initialisation of configure
-AC_INIT(ngspice,20plus,ngspice-bugs@lists.sourceforge.net)
+AC_INIT(ngspice,21,ngspice-bugs@lists.sourceforge.net)
 
 dnl Unique file in the source directory
 AC_CONFIG_SRCDIR([src/ngspice.c])
