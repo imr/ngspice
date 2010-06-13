@@ -1,3 +1,6 @@
+2010-06-13 Holger Vogt
+ * NEWS updated
+
 2010-06-12  Robert Larice
  * man/man1/ngnutmeg.1, man/man1/ngspice.1:   smaller cleanup
  * man/man1/Makefile.am:: reintroduce those two man pages

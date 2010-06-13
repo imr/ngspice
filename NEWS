@@ -1,3 +1,50 @@
+Ng-spice-rework-21, Jun3, 13th 2010
+============
+
+- Updated Devices: BSIMSOI 4.3.1
+	
+- New features:	
+    + Compatibility: C, L, R, devices and E, G sources with expressions 
+	  Variables HERTZ, TIME, TEMPER added
+    + E, G sources with pwl function
+    + New manual
+	+ Plotting with Gnuplot, 
+	+ Writing wrdata for simple text table to file
+	+ .measure improved
+	+ transmission line models improved
+
+- Bug fixes:
+    + Many small bugs, memory leaks, memory overflows
+
+Ng-spice-rework-20, November, 16th 2009
+============
+
+Ngspice release 20 is the second release of the simulator in 2009.
+
+- Fixes: model names starting with a number (1n4001) are now correctly parsed. 
+  The .global command has been reinstated (it was previously disabled) and 
+  error messages now display the corresponding line numberin the input deck.
+- New Features: .measure command for transient, ac and dc analyses (still not 
+  complete, e.g. DERIV is missing).
+- Devices: Updated BISM4 model to revision 4.6.5. Added PWL (PieceWise Linear) 
+  functionality for B (arbitrary generator) sources.
+
+	
+Ng-spice-rework-19, April, 23rd 2009
+============
+
+Ngspice release 19 came early after release 18. It reveals an important work 
+in compile scripts, many bug fixes in memory management, interface, and work in device models.
+
+- Compile scripts: tclspice and ADMS compiling fixes. Architecture compiling 
+  fixes for SunOS, MS Visual Studio, MINGW, Cygwin.
+- Memory management: fixed memory leaks, modifies memory management for 
+  MS Windows, integration of espice bugfixes and enhancements, bug fixes in 
+  plots and cli interface.
+- Rework of BSim models, integration of EPFL-EKV model V2.63, ADMS models 
+  mextram, hicum0, hicum2. 
+
+
 Ng-spice-rework-18
 ============
 
@@ -19,8 +66,10 @@ into the simulator.
 - BSIM model binning.
 - new multi-input gate VCVS using XSPICE extensions.
 
+
 Ng-spice-rework-17
 ============
+
 This is a bug fix release. Previous release tarball did not included 
 an include file necessary for compiling numparam library.
 
