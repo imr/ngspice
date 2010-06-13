@@ -1,13 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = @XGRAPHDIR@ src man tests
-DIST_SUBDIRS = @XGRAPHDIR@ src man tests
+SUBDIRS = @XGRAPHDIR@ src man tests manual
+DIST_SUBDIRS = @XGRAPHDIR@ src man tests manual
 
 EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		ANALYSES BUGS AUTHORS ChangeLog \
 		DEVICES NEWS README README.tcl \
 		README.adms contrib \
-		examples visualc manual @NOTXGRAPH@
+		examples visualc @NOTXGRAPH@
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 			config.h.in config.sub configure install-sh \

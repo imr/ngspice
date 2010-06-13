@@ -1,3 +1,10 @@
+2010-06-13  Robert Larice
+ * Makefile.am, configure.in, manual/Makefile.am:
+   make dist, shall compile manual.pdf from the lyx manual
+     and include it in the 'dist' tar ball
+   It is required to have checked out the CVS ng-spice-manuals module
+     side by side with the CVS ng-spice-rework module
+
 2010-06-13 Holger Vogt
  * NEWS updated
 
