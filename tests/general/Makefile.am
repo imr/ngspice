@@ -7,7 +7,9 @@ TESTS = \
 	rc.cir			\
 	rca3040.cir		\
 	rtlinv.cir		\
-	schmitt.cir
+	schmitt.cir		\
+	diffpair.cir	\
+	fourbitadder.cir
 
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 

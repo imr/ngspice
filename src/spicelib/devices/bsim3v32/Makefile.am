@@ -32,3 +32,5 @@ libbsim3v32_la_SOURCES = 	\
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in
+
+EXTRA_DIST = B3TERMS_OF_USE

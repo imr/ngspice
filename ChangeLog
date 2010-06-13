@@ -1,4 +1,22 @@
 2010-06-13  Robert Larice
+ * src/ciderlib/support/Makefile.am:
+	add `readme' to `make dist'
+ * src/spicelib/devices/bsim3/Makefile.am,
+ * src/spicelib/devices/bsim3soi/Makefile.am,
+ * src/spicelib/devices/bsim3soi_dd/Makefile.am,
+ * src/spicelib/devices/bsim3soi_fd/Makefile.am,
+ * src/spicelib/devices/bsim3soi_pd/Makefile.am,
+ * src/spicelib/devices/bsim3v32/Makefile.am,
+ * src/spicelib/devices/bsim4/Makefile.am,
+ * src/spicelib/devices/bsim4v2/Makefile.am,
+ * src/spicelib/devices/bsim4v3/Makefile.am,
+ * src/spicelib/devices/bsim4v4/Makefile.am,
+ * src/spicelib/devices/bsim4v5/Makefile.am:
+	add some license files to `make dist'
+ * tests/general/Makefile.am:
+	add two tests, diffpair.cir and fourbitadder.cir, to `make dist'
+
+2010-06-13  Robert Larice
  * Makefile.am, configure.in, manual/Makefile.am:
    make dist, shall compile manual.pdf from the lyx manual
      and include it in the 'dist' tar ball
@@ -3803,3 +3821,4 @@ Spaghetti:
   - first attempt at autoconf/automake support
 
   - based on spice3f5-chili, hardly anything touched on it.
+<

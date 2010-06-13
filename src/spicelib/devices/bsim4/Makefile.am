@@ -33,3 +33,5 @@ libbsim4_la_SOURCES = 	\
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
 MAINTAINERCLEANFILES = Makefile.in
+
+EXTRA_DIST = B4TERMS_OF_USE

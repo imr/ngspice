@@ -15,7 +15,9 @@ libcidersuprt_la_SOURCES = 	\
 		mobil.c		\
 		recomb.c	\
 		suprem.c	\
-		suprmitf.c	
+		suprmitf.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 MAINTAINERCLEANFILES = Makefile.in
+
+EXTRA_DIST = readme
