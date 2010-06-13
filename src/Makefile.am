@@ -6,7 +6,7 @@ DIST_SUBDIRS = misc maths frontend spicelib include xspice ciderlib
 
 if !TCL_MODULE
 bin_PROGRAMS =  ngspice ngnutmeg ngmakeidx
-	        	        
+
 if !WINDOWS
 bin_PROGRAMS += ngsconvert ngproc2mod ngmultidec
 endif
@@ -16,7 +16,7 @@ bin_PROGRAMS += nghelp
 endif
 endif
 
-EXTRA_DIST = ngspice.txt ngspice.idx setplot spectrum \
+EXTRA_DIST = ngspice.txt setplot spectrum \
 	     devload devaxis ciderinit winmain.c unsupported \
 	     tclspice.c tclspice.map pkgIndex.tcl.in tclspinit.in
 
@@ -84,15 +84,15 @@ DYNAMIC_DEVICELIBS = 					\
 	@NDEV_LIB@					\
 	@VLADEV@		\
 	@NUMDEV@
-	
-	
+
+
 ## Build ngspice first:
 
 ngspice_SOURCES = \
 	conf.c \
 	conf.h \
 	ngspice.c
-	
+
 if WINDOWS
 ngspice_SOURCES += winmain.c
 endif
@@ -121,7 +121,7 @@ ngspice_LDADD = \
 	misc/libmisc.la
 if !NO_X
 ngspice_LDADD += \
-	frontend/help/libhlp.la 
+	frontend/help/libhlp.la
 endif
 
 winmain.o: winmain.c
@@ -156,7 +156,7 @@ ngnutmeg_LDADD = \
 	spicelib/parser/libinp.la
 if !NO_X
 ngnutmeg_LDADD += \
-	frontend/help/libhlp.la 
+	frontend/help/libhlp.la
 endif
 
 ## help:
@@ -176,13 +176,13 @@ nghelp_LDADD = \
 	misc/libmisc.la
 if !NO_X
 nghelp_LDADD += \
-	frontend/help/libhlp.la 
+	frontend/help/libhlp.la
 endif
 endif
 
 ## These programs currently fail to build on Windows
-if !WINDOWS 
-	
+if !WINDOWS
+
 ## sconvert:
 
 ngsconvert_SOURCES =  ngsconvert.c
@@ -193,7 +193,7 @@ ngsconvert_LDADD =  \
 	frontend/parser/libparser.la \
 	maths/misc/libmathmisc.la \
 	misc/libmisc.la
-	
+
 ## proc2mod:
 
 ngproc2mod_SOURCES = ngproc2mod.c
@@ -201,7 +201,7 @@ ngproc2mod_SOURCES = ngproc2mod.c
 ngproc2mod_LDADD =  \
 	frontend/parser/libparser.la \
 	spicelib/parser/libinp.la \
-	misc/libmisc.la 
+	misc/libmisc.la
 
 
 ## multidec:
@@ -210,8 +210,8 @@ ngmultidec_SOURCES = ngmultidec.c
 
 ngmultidec_LDADD =  \
 	maths/sparse/libsparse.la \
-	misc/libmisc.la 
-	
+	misc/libmisc.la
+
 endif !WINDOWS
 
 ## ngmakeidx:
@@ -270,9 +270,9 @@ libspice_la_LIBADD = ngspice.lo conf.lo \
 	maths/ni/libni.la \
 	maths/sparse/libsparse.la \
 	misc/libmisc.la \
-	tclspice.lo $(LIBS) 
+	tclspice.lo $(LIBS)
 libspice_la_CFLAGS = $(AM_CFLAGS)
-libspice_la_LDFLAGS =  -shared -Wl,--version-script=tclspice.map 
+libspice_la_LDFLAGS =  -shared -Wl,--version-script=tclspice.map
 if TCLWIN
 libspice_la_LDFLAGS +=  -no-undefined
 libspice_la_LDFLAGS += --def spice.def @TCL_LIB_SPEC@
@@ -293,16 +293,16 @@ pkgIndex.tcl: pkgIndex.tcl.in
 	sed -e 's;%LIB_DIR%;$(DESTDIR)$(libdir);g' $< | \
 	sed -e 's;%VERSION%;$(TCLSPICE_VERSION);g' > $@
 
-all: $(TCL_FILES) 
+all: $(TCL_FILES)
 
 install-tcl-recursive:
 	list='$(SUBDIRS)'; for subdir in $$list; do \
 	  echo "Making $$target in $$subdir"; \
 	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) install) \
 	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done; 
+	done;
 
-install-tclspice: 
+install-tclspice:
 	$(mkinstalldirs) $(DESTDIR)$(libdir)/spice
 	$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(libdir)/spice
 
@@ -311,3 +311,5 @@ tclspice.lo: tclspice.c
 	mv -f $(DEPDIR)/tclspice.Tpo $(DEPDIR)/tclspice.Plo
 
 endif
+
+EXTRA_DIST += spice.def
