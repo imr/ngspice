@@ -7,8 +7,7 @@ EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		ANALYSES BUGS AUTHORS ChangeLog \
 		DEVICES NEWS README README.tcl \
 		README.adms contrib \
-		examples visualc @NOTXGRAPH@ \
-		libtool
+		examples visualc @NOTXGRAPH@
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 			config.h.in config.sub configure install-sh \

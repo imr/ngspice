@@ -1,3 +1,11 @@
+2010-06-14  Robert Larice
+ * Makefile.am:
+	exclude libtool from `make dist', revert its recent inclusion
+ * src/xspice/Makefile.am:
+	exclude the compiled codemodels from `make dist'
+ * src/xspice/cmpp/Makefile.am:
+	eliminate an automake warning
+
 2010-06-13  Robert Larice
  * Makefile.am, src/Makefile.am:
 	add `libtool' to `make dist'

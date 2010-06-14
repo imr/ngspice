@@ -14,10 +14,9 @@ bin_PROGRAMS = cmpp
 cmpp_SOURCES = cmpp.h main.c pp_ifs.c pp_lst.c pp_mod.c read_ifs.c util.c \
 	writ_ifs.c ifs_yacc_y.h ifs_yacc.y ifs_lex.c mod_yacc_y.h mod_yacc.y \
 	mod_lex.c
-	
-%.c : %.l
-	$(LEX)  -P$(*:lex=)yy $< > $@
-	
+
+mod_lex.c : mod_lex.l
+	$(LEX)  -Pmod_yy $< > $@
+
 ifs_lex.c : ifs_lex.l
-	$(LEX)  -i -P$(*:lex=)yy $< > $@
-	
+	$(LEX)  -i -Pifs_yy $< > $@
