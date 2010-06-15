@@ -1,3 +1,7 @@
+2010-06-16 Holger Vogt
+ * src/Makefile.am: for WINDOWS all of help files and
+   related files excluded
+
 2010-06-14  Robert Larice
  * Makefile.am:
 	exclude libtool from `make dist', revert its recent inclusion

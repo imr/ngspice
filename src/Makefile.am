@@ -5,24 +5,22 @@ SUBDIRS = misc maths frontend spicelib include @XSPICEDIR@ @CIDERDIR@
 DIST_SUBDIRS = misc maths frontend spicelib include xspice ciderlib
 
 if !TCL_MODULE
-bin_PROGRAMS =  ngspice ngnutmeg ngmakeidx
+bin_PROGRAMS =  ngspice ngnutmeg
 
 if !WINDOWS
-bin_PROGRAMS += ngsconvert ngproc2mod ngmultidec
-endif
-
+bin_PROGRAMS += ngsconvert ngproc2mod ngmultidec ngmakeidx
+helpdatadir = $(pkgdatadir)/helpdir
+helpdata_DATA = ngspice.txt ngspice.idx
 if !NO_HELP
 bin_PROGRAMS += nghelp
-endif
-endif
+endif !NO_HELP
+endif !WINDOWS
+endif !TCL_MODULE
 
 EXTRA_DIST = ngspice.txt setplot spectrum \
 	     devload devaxis ciderinit winmain.c unsupported \
 	     tclspice.c tclspice.map pkgIndex.tcl.in tclspinit.in
 
-helpdatadir = $(pkgdatadir)/helpdir
-
-helpdata_DATA = ngspice.txt ngspice.idx
 
 initdatadir = $(pkgdatadir)/scripts
 
@@ -119,15 +117,17 @@ ngspice_LDADD = \
 	maths/ni/libni.la \
 	maths/sparse/libsparse.la \
 	misc/libmisc.la
+
+if !WINDOWS
 if !NO_X
-ngspice_LDADD += \
-	frontend/help/libhlp.la
+ngspice_LDADD += frontend/help/libhlp.la
+endif
 endif
 
-winmain.o: winmain.c
+winmain.o: winmain.c ../config.h
 	$(COMPILE) -DSIMULATOR -o winmain.o  -c $(srcdir)/winmain.c
 
-spice.lo: main.c
+spice.lo: main.c ../config.h
 	$(LTCOMPILE) -DSIMULATOR -c -o spice.o $<
 
 
@@ -154,20 +154,22 @@ ngnutmeg_LDADD = \
 	maths/poly/libpoly.la \
 	misc/libmisc.la \
 	spicelib/parser/libinp.la
+
+
+## These programs are not required on Windows
+if !WINDOWS
+
 if !NO_X
 ngnutmeg_LDADD += \
 	frontend/help/libhlp.la
-endif
+endif !NO_X
 
 ## help:
 
 nghelp_SOURCES = conf.c nghelp.c
 
-if !NO_HELP
-if WINDOWS
-nghelp_SOURCES += winmain.c
-endif
 
+if !NO_HELP
 # We keep the libraries to a minimum here and link against terminal.o
 # rather than the full front-end library libfte.a to avoid link errors that
 # that would otherwise occur (thanks to Andreas Unger for this fix).
@@ -177,16 +179,13 @@ nghelp_LDADD = \
 if !NO_X
 nghelp_LDADD += \
 	frontend/help/libhlp.la
-endif
-endif
+endif !NO_X
+endif !NO_HELP
 
-## These programs currently fail to build on Windows
-if !WINDOWS
 
 ## sconvert:
 
 ngsconvert_SOURCES =  ngsconvert.c
-
 
 ngsconvert_LDADD =  \
 	frontend/libfte.la \
@@ -194,6 +193,7 @@ ngsconvert_LDADD =  \
 	maths/misc/libmathmisc.la \
 	misc/libmisc.la
 
+	
 ## proc2mod:
 
 ngproc2mod_SOURCES = ngproc2mod.c
@@ -212,7 +212,6 @@ ngmultidec_LDADD =  \
 	maths/sparse/libsparse.la \
 	misc/libmisc.la
 
-endif !WINDOWS
 
 ## ngmakeidx:
 
@@ -223,9 +222,11 @@ ngmakeidx_SOURCES = makeidx.c
 ngspice.idx: ngmakeidx
 	./ngmakeidx $(srcdir)/ngspice.txt
 
+endif !WINDOWS
+
+
 
 ## General Includes and libraries:
-
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices @X_CFLAGS@
 
@@ -236,6 +237,8 @@ LIBS += -lpsapi
 endif
 
 MAINTAINERCLEANFILES = Makefile.in ngspice.idx
+
+## Tcl:
 
 if TCL_MODULE
 lib_LTLIBRARIES = libspice.la
@@ -284,9 +287,7 @@ TCL_PKG_PATH = @TCL_PACKAGE_PATH@
 
 TCLSPICE_VERSION = @VERSION@
 
-
 TCL_FILES = libspice.la  pkgIndex.tcl
-
 
 pkgIndex.tcl: pkgIndex.tcl.in
 	rm -f $@
@@ -310,6 +311,6 @@ tclspice.lo: tclspice.c
 	$(LTCOMPILE) -DTCLSPICE_version="\"$(TCLSPICE_VERSION)\"" -MT tclspice.lo -MD -MP -MF $(DEPDIR)/tclspice.Tpo -c -o tclspice.o $<
 	mv -f $(DEPDIR)/tclspice.Tpo $(DEPDIR)/tclspice.Plo
 
-endif
+endif TCL_MODULE
 
 EXTRA_DIST += spice.def
