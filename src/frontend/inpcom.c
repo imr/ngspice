@@ -236,7 +236,8 @@ inp_fix_gnd_name( struct line *deck ) {
 
   while ( c != NULL ) {
     gnd = c->li_line;
-    if ( *gnd == '*' ) { c = c->li_next; continue; }
+    // if there is a comment or no gnd, go to next line
+    if (( *gnd == '*' ) || (strstr( gnd, "gnd" ) == NULL)) { c = c->li_next; continue; }
     // replace "§gnd§" by "§ 0 §", § being a ' '  ','  '('  ')'.
 	while ( (gnd = strstr( gnd, "gnd" ) ) ) {
       if (( isspace(*(gnd-1)) || *(gnd-1) == '(' || *(gnd-1) == ','  ) &&
@@ -246,6 +247,8 @@ inp_fix_gnd_name( struct line *deck ) {
       }
       gnd += 3;
     }
+    // now remove the extra white spaces around 0
+    c->li_line = inp_remove_ws(c->li_line); 
     c = c->li_next;
   }
 }

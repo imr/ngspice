@@ -1,3 +1,7 @@
+2010-06-17 Holger Vogt
+ * inpcom.c: in inp_fix_gnd_name() remove excessive white spaces 
+   around 0 after replacing "gnd" by " 0 "
+
 2010-06-16 Holger Vogt
  * src/Makefile.am: for WINDOWS all of help files and
    related files excluded
