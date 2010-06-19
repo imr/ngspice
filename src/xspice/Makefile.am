@@ -16,7 +16,15 @@ dist-hook:
 	rm -rf `find $(distdir)/icm -name .deps`
 	rm -rf `find $(distdir)/icm -name *.o`
 	rm -rf `find $(distdir)/icm -name *.cm`
-
+	for sub in analog digital spice2poly xtradev xtraevt ; do \
+	    rm -rf `find $(distdir)/icm/$$sub -name cmextrn.h`; \
+	    rm -rf `find $(distdir)/icm/$$sub -name cminfo.h`; \
+	    rm -rf `find $(distdir)/icm/$$sub -name udnextrn.h`; \
+	    rm -rf `find $(distdir)/icm/$$sub -name udninfo.h`; \
+	    rm -rf `find $(distdir)/icm/$$sub -name ifspec.c`; \
+	    rm -rf `find $(distdir)/icm/$$sub -name cfunc.c`; \
+	    rm -rf `find $(distdir)/icm/$$sub -name dlmain.c`; \
+	    rm -rf `find $(distdir)/icm/$$sub -name objects.inc`; \
+	done
 
 MAINTAINERCLEANFILES = Makefile.in
-

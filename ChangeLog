@@ -1,3 +1,13 @@
+2010-06-19  Robert Larice
+ * ng-spice-rework/src/xspice/Makefile.am:
+	exclude some junk from `make dist'
+	  `make dist' and `make ; make dist'
+	should yield the same tar-ball know
+ * ng-spice-rework/src/xspice/cmpp/Makefile.am:
+	fix missing dependencies to compute ifs_yacc.h and mod_yacc.h
+	to avoid ylwrap, and because bison is neccessairy somewhere else anyway,
+	  switched from $(YACC) to $(BISON)
+
 2010-06-17 Holger Vogt
  * inpcom.c: in inp_fix_gnd_name() remove excessive white spaces 
    around 0 after replacing "gnd" by " 0 "
