@@ -1413,7 +1413,7 @@ get_measure2(
                return MEASUREMENT_FAILURE;
             }
 
-            measure_at(measFind, measFind->m_measured);
+            measure_at(meas, measFind->m_measured);
             meas->m_measured = measFind->m_measured;
 
          } else {

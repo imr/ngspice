@@ -1,3 +1,7 @@
+2010-06-19 Holger Vogt
+ * subckt.c: line indentations
+   com_measure2.c: remove bug, see support tracker no. 3013968
+
 2010-06-19  Robert Larice
  * ng-spice-rework/src/xspice/Makefile.am:
 	exclude some junk from `make dist'

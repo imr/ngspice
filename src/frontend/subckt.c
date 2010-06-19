@@ -360,14 +360,15 @@ inp_subcktexpand(struct line *deck)
       ok= ok && nupa_signal(NUPASUBDONE, NULL); 
       c= ll;
       while (c != NULL) { 
-	/* 'param' .meas statements can have dependencies on measurement values */
-	/* need to skip evaluating here and evaluate after other .meas statements */
-        if ( ciprefix( ".meas", c->li_line ) ) {
-	  if ( !strstr( c->li_line, "param" ) ) nupa_eval( c->li_line, c->li_linenum, c->li_linenum_orig);
-	} else {
-	  nupa_eval( c->li_line, c->li_linenum, c->li_linenum_orig);
-	}
-	c= c->li_next;
+      /* 'param' .meas statements can have dependencies on measurement values */
+      /* need to skip evaluating here and evaluate after other .meas statements */
+         if ( ciprefix( ".meas", c->li_line ) ) {
+            if ( !strstr( c->li_line, "param" ) ) 
+               nupa_eval( c->li_line, c->li_linenum, c->li_linenum_orig);
+         } else {
+            nupa_eval( c->li_line, c->li_linenum, c->li_linenum_orig);
+         }
+         c= c->li_next;
       }
 #ifdef TRACE
       fprintf(stderr,"Numparams converted deck:\n");
