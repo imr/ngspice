@@ -2675,7 +2675,7 @@ static void
 inp_fix_param_values( struct line *deck )
 {
   struct line *c = deck;
-  char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
+  char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str, *tmp_str;
   char *vec_str, *natok, *buffer, *newvec, *whereisgt;
   bool control_section = FALSE, has_paren = FALSE;
   int n = 0;
@@ -2711,6 +2711,16 @@ inp_fix_param_values( struct line *deck )
 
     while ( ( equal_ptr = strstr( line, "=" ) ) ) {
 
+      // special case: .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=out_variable3
+      // no braces around out_variable3. out_variable3 may be v(...) or i(...) 
+      if ( ciprefix( ".meas", line ))
+         if ((( *(equal_ptr+1) == 'v' ) || ( *(equal_ptr+1) == 'i' )) && ( *(equal_ptr+2) == '(' )) {
+            // find closing ')' and skip token v(...) or i(...)
+            while (( equal_ptr) && *equal_ptr != ')') equal_ptr++;
+            line = equal_ptr + 1;
+            continue;
+         }
+      
       // skip over equality '=='
       if ( *(equal_ptr+1) == '=' ) { line += 2; continue; }
       // check for '!=', '<=', '>='
