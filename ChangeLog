@@ -1,3 +1,6 @@
+2010-06-20 Holger Vogt
+ * AUTHORS, INSTALL, COPYING, README: update to version 21
+
 2010-06-19 Holger Vogt
  * inpdomod.c: refernces to not existing MOS levels 60, 61 deleted.
  

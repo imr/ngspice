@@ -74,8 +74,13 @@ This file describes the procedures to install ngspice from sources.
 	
  See the section titled 'Advanced Install' for instructions about arguments 
  that can be passed to ./configure to customise the build and installation.
+  
+ Preferred arguments to ./configure to obtain a comfortably working ngspice may be
+ --with-editline=yes (if not available, --with-readline=yes will work, but has
+ a licensing issue) and --disable-debug (for smaller and speed optimized
+ executable). 
 
-     If a problem is found with the build proccess, please submit a report to 
+ If a problem is found with the build proccess, please submit a report to 
  the Ngspice development team. Please provide information about your system 
  and any ./configure arguments you are using, together with any error 
  messages.  Ideally you would have tried to fix the problem yourself first.
@@ -103,6 +108,11 @@ This file describes the procedures to install ngspice from sources.
 
  See the section titled 'Advanced Install' for instructions about arguments 
  that can be passed to ./configure to customise the build and installation.
+ 
+ Preferred arguments to ./configure to obtain a comfortably working ngspice may be
+ --with-editline=yes (if not available, --with-readline=yes will work, but has
+ a licensing issue) and --disable-debug (for smaller and speed optimized
+ executable). 
 
 
 1.4 Advanced Install
