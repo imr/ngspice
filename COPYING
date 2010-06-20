@@ -12,8 +12,8 @@ The *spices (generic name for its forks) are heterogeneous in many points due
 to the work of researchers, electronic designers, software editors, etc.
 The Ngspice team tries to collect work from the different sources and 
 contribute new functionalities. Thus, the material we manipulate is 
-heterogeneous in licenses. Keeping the licenses as is, or re-licensing is a 
-constant debate at ngspice. For release 18, we choose not to relicense.
+heterogeneous in licenses. Keeping the licenses as is, is the way to live with
+that diversity. For release 21 as well, we choose not to relicense.
 
 Copyleft is a fundamental question in FOSS development. The choice of a 
 copylefted contribution, or a non copylefted contribution is an important
