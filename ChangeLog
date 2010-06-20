@@ -1,4 +1,7 @@
 2010-06-19 Holger Vogt
+ * inpdomod.c: refernces to not existing MOS levels 60, 61 deleted.
+ 
+2010-06-19 Holger Vogt
  * subckt.c: line indentations
    com_measure2.c: remove bug, see support tracker no. 3013968
    inpcom.c: no braces around out_variable3 in

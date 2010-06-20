@@ -396,29 +396,13 @@ char *INPdomodel(void *ckt, card * image, INPtables * tab)
 		    ("Device type B4SOI V4.0 not available in this binary\n");
 	    }
 	    break;  	    
-	case 60:
-	    type = INPtypelook("SOI");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Device type SOI not available in this binary (internal STAG release)\n");
-	    }
-	    break;	 
-	case 61:
-	    type = INPtypelook("SOI2");
-	    if (type < 0) {
-		err =
-		    INPmkTemp
-		    ("Device type SOI2 not available in this binary (internal STAG release)\n");
-	    }
-	    break;    
 	
 	case 62:
 	    type = INPtypelook("SOI3");
 	    if (type < 0) {
 		err =
 		    INPmkTemp
-		    ("Device type SOI3 not available in this binary (internal STAG release)\n");
+		    ("Device type SOI3 not available in this binary (STAG release)\n");
 	    }
 	    break;
 	case 64:
