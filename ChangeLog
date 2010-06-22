@@ -1,5 +1,6 @@
 2010-06-22 Holger Vogt
  * b4soild.c: line 7598 double assignment of Cbg1 removed
+ * configure.in, /visaulc/include/config.h: version 21plus
 
 ============================ Rework-21 ==================================
 2010-06-20 Holger Vogt

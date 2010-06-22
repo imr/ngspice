@@ -472,13 +472,13 @@
 #define PACKAGE_NAME "ngspice"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "ngspice 21"
+#define PACKAGE_STRING "ngspice 21plus"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "ngspice"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "21"
+#define PACKAGE_VERSION "21plus"
 
 /* Define if we want predictor algorithm */
 /* #undef PREDICTOR */
