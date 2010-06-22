@@ -7595,7 +7595,7 @@ B4SOIload(
                     dqbulk_dT = 0;       /* new line Wagner */
                     if (here->B4SOIsoiMod == 2) /* v3.2 */ /* ideal FD */
                     {
-                        qbulk = Cbg1 = Cbd1 = Cbb1 = Cbg1 = Cbg12 = Cbb12 = Cbd12 = 0;
+                        qbulk = Cbd1 = Cbb1 = Cbg1 = Cbg12 = Cbb12 = Cbd12 = 0;
                     }
                     else /* soiMod = 0 or 1 */
                     {
