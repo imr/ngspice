@@ -28,7 +28,7 @@ double gauss(void);
    This will override the call to srand in main.c.
    Checkseed should be put in front of any call to random or rand.
 */
-void checkseed()
+void checkseed(void)
 {
    int newseed;
    static int oldseed;
@@ -45,7 +45,7 @@ void checkseed()
 }
 
 /* uniform random number generator, interval -1 .. +1 */
-double drand()
+double drand(void)
 {
    checkseed();
    return ( 2.0*((double) (RR_MAX-abs(random())) / (double)RR_MAX-0.5));
@@ -54,7 +54,7 @@ double drand()
 
 /***  gauss  ***/
 
-double gauss()
+double gauss(void)
 {
   static bool gliset = TRUE;
   static double glgset = 0.0;

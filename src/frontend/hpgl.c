@@ -84,7 +84,7 @@ static double tocm = 0.0025;
 static double scale;    /* Used for fine tuning */
 static int hcopygraphid;
 
-int GL_Init()
+int GL_Init(void)
 {
     if (!cp_getvar("hcopyscale", VT_STRING, psscale)) {
         scale = 1.0;
@@ -163,7 +163,7 @@ GRAPH *graph)
     return 0;
 }
 
-int GL_Close()
+int GL_Close(void)
 {
 
     /* in case GL_Close is called as part of an abort,
@@ -186,7 +186,7 @@ int GL_Close()
     return 0;
 }
 
-int GL_Clear()
+int GL_Clear(void)
 {
 
     /* do nothing */
@@ -303,7 +303,7 @@ int colorid)
     return 0;
 }
 
-int GL_Update()
+int GL_Update(void)
 {
 
     fflush(plotfile);

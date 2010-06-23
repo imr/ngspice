@@ -720,7 +720,7 @@ nupa_add_inst_param (char *param_name, double value)
  * the global level.  Afterwards, the inst_symbols table is freed.
  * ----------------------------------------------------------------- */
 void
-nupa_copy_inst_dico ()
+nupa_copy_inst_dico (void)
 {
    entry *entry_p ;			/* current entry */
    tdico *dico_p ;			/* local copy for speed */

@@ -847,25 +847,25 @@ static void measure_integ(
 }
 
 /* still some more work to do.... */
-void measure_deriv( ) {
+void measure_deriv(void) {
     // DERIVATIVE DERIV
    return;
 }
 
 // ERR Equations
-void measure_ERR( ) {
+void measure_ERR(void) {
    return;
 }
 
-void measure_ERR1( ) {
+void measure_ERR1(void) {
    return;
 }
 
-void measure_ERR2( ) {
+void measure_ERR2(void) {
    return;
 }
 
-void measure_ERR3( ) {
+void measure_ERR3(void) {
    return;
 }
 

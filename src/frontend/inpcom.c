@@ -2001,7 +2001,7 @@ inp_determine_libraries( struct line *deck, char *lib_name )
 }
 
 static void
-inp_init_lib_data()
+inp_init_lib_data(void)
 {
   int i;
 
@@ -2626,7 +2626,7 @@ inp_expand_macro_in_str( char *str )
 }
 
 static void
-inp_expand_macros_in_func()
+inp_expand_macros_in_func(void)
 {
   int  i;
 

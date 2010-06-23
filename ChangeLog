@@ -1,4 +1,13 @@
 2010-06-23  Robert Larice
+ * src/main.c,
+ * src/frontend/com_measure2.c,
+ * src/frontend/hpgl.c,
+ * src/frontend/inpcom.c,
+ * src/frontend/numparam/spicenum.c,
+ * src/maths/misc/randnumb.c :
+ ansi function definitions, type foo() {} --> type foo(void) {}
+
+2010-06-23  Robert Larice
  * src/frontend/breakp.c,
  * src/frontend/com_let.c,
  * src/frontend/com_measure2.c,

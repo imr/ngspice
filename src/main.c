@@ -512,7 +512,7 @@ rl_event_func()
    case it falls back to repeatable calling cp_evloop()
    SJB 26th April 2005 */
 static void
-app_rl_readlines()
+app_rl_readlines(void)
 {
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
     /* GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
