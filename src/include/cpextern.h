@@ -29,7 +29,7 @@ extern wordlist *cp_doalias(wordlist *wlist);
 /* backquote.c */
 
 extern char cp_back;
-extern wordlist *cp_bquote();
+extern wordlist *cp_bquote(wordlist *wlist);
 
 /* complete.c */
 
@@ -63,8 +63,8 @@ extern void com_strcmp(wordlist *wl);
 extern void com_rehash(wordlist *wl);
 extern void com_shell(wordlist *wl);
 extern void cp_ioreset(void);
-extern wordlist *cp_redirect();
-extern wordlist *cp_parse();
+extern wordlist *cp_redirect(wordlist *wlist);
+extern wordlist *cp_parse(char *string);
 
 /* control.c */
 
@@ -104,9 +104,9 @@ extern char cp_hat;
 extern int cp_maxhistlength;
 extern struct histent *cp_lastone;
 extern void com_history(wordlist *wl);
-extern void cp_addhistent();
+extern void cp_addhistent(int event, wordlist *wlist);
 void cp_hprint(int eventhi, int eventlo, bool rev);
-extern wordlist *cp_histsubst();
+extern wordlist *cp_histsubst(wordlist *wlist);
 
 /* lexical.c */
 
@@ -130,7 +130,7 @@ extern void cp_init(void);
 extern char out_pbuf[];
 extern bool out_moremode;
 extern bool out_isatty;
-extern void out_init();
+extern void out_init(void);
 #ifndef out_printf
 /* don't want to declare it if we have #define'ed it */
 #ifdef __GNUC__
@@ -140,7 +140,7 @@ extern void out_printf(char *fmt, ...);
 #endif
 
 #endif
-extern void out_send();
+extern void out_send(char *string);
 
 /* quote.c */
 
@@ -154,8 +154,8 @@ extern void cp_printword(char *string, FILE *fp);
 
 /* unixcom.c */
 
-extern bool cp_unixcom();
-extern void cp_hstat();
+extern bool cp_unixcom(wordlist *wlist);
+extern void cp_hstat(void);
 void cp_rehash(char *pathlist, bool docc);
 
 /* variable.c */
@@ -189,16 +189,16 @@ extern bool cp_getvar(char *name, int type, void *retval);
 /* cpinterface.c etc -- stuff CP needs from FTE */
 
 extern bool cp_istrue(wordlist *wl);
-extern bool cp_oddcomm();
-extern void cp_doquit();
-extern void cp_periodic();
-extern void ft_cpinit();
+extern bool cp_oddcomm(char *s, wordlist *wlist);
+extern void cp_doquit(void);
+extern void cp_periodic(void);
+extern void ft_cpinit(void);
 extern struct comm *cp_coms;
 extern char *cp_program;
 extern bool ft_nutmeg;
-extern struct variable *cp_enqvar();
-extern void cp_usrvars();
+extern struct variable *cp_enqvar(char *word);
+extern void cp_usrvars(struct variable **v1, struct variable **v2);
 int cp_usrset(struct variable *var, bool isset);
-extern void fatal();
+extern void fatal(void);
 
 #endif

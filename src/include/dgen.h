@@ -26,6 +26,6 @@ struct st_dgen {
 #define	DGEN_DEFPARAMS	0x001
 #define	DGEN_ALLPARAMS	0x002
 
-extern	dgen	*dgen_init( );
+extern dgen	*dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model);
 
 #endif /* DGEN_H */

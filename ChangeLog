@@ -1,4 +1,25 @@
 2010-06-23  Robert Larice
+ * src/ngmultidec.c,
+ * src/frontend/inpcom.c,
+ * src/frontend/help/help.c,
+ * src/frontend/numparam/numpaif.h,
+ * src/frontend/numparam/xpressn.c,
+ * src/include/cpextern.h,
+ * src/include/cpstd.h,
+ * src/include/dgen.h,
+ * src/include/ftedbgra.h,
+ * src/include/fteext.h,
+ * src/include/hlpdefs.h,
+ * src/include/inpptree.h,
+ * src/include/sensgen.h,
+ * src/include/tfdefs.h,
+ * src/maths/cmaths/cmath2.c,
+ * src/maths/ni/niniter.c,
+ * src/spicelib/devices/cpl/cplload.c,
+ * src/spicelib/devices/cpl/cplsetup.c :
+ ansi function declarations (prototypes)
+
+2010-06-23  Robert Larice
  * src/main.c,
  * src/frontend/com_measure2.c,
  * src/frontend/hpgl.c,

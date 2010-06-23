@@ -16,7 +16,16 @@ VI_list	*pool_vi;
 static double ratio[MAX_CP_TX_LINES];
 static VI_list *new_vi(void);
 static void free_vi(VI_list*);
-static int get_pvs_vi();
+static int get_pvs_vi(int t1, int t2,
+                      CPLine *cp,
+                      double  v1_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+                      double  v2_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+                      double  i1_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+                      double  i2_i[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+                      double  v1_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+                      double  v2_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+                      double  i1_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES],
+                      double  i2_o[MAX_CP_TX_LINES][MAX_CP_TX_LINES]);
 static int update_cnv(CPLine*, double);
 static int add_new_vi(CPLinstance*, CKTcircuit*, int);
 static int right_consts(CPLinstance*, CPLine*, int, int, double, double, int*, int*, CKTcircuit*);

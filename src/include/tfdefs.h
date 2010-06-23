@@ -32,6 +32,6 @@ typedef struct {
 #define TF_OUTSRC 3
 #define TF_INSRC 4
 #define TF_OUTNAME 5
-extern int TFsetParm();
-extern int TFaskQuest();
+extern int TFsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value);
+extern int TFaskQuest(CKTcircuit *ckt, void *anal, int which, IFvalue *value);
 #endif	/*TF*/

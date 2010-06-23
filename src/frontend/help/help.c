@@ -136,7 +136,7 @@ hlp_pathfix(char *buf)
 {
     char *s, *t, *u, bufx[1025];
     char *dir_pathsep;
-    extern char *cp_tildexpand( );
+    extern char *cp_tildexpand(char *string);
 
     dir_pathsep = DIR_PATHSEP;
 

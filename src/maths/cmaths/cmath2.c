@@ -30,7 +30,7 @@ extern long int random (void);
 extern void srandom (unsigned int seed);
 #endif
 
-extern void checkseed(); /* seed random or set by 'set rndseed=value'*/
+extern void checkseed(void); /* seed random or set by 'set rndseed=value'*/
 
 static double *
 d_tan(double *dd, int length)

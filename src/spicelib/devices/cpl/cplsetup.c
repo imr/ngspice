@@ -88,7 +88,7 @@ static int match(int, double*, double*, double*);
 static int Gaussian_Elimination2(int, int);
 static void eval_Si_Si_1(int, double);
 static void loop_ZY(int, double);
-static void poly_matrix(); /* quale è il prototipo ? */
+static void poly_matrix(double *A[MAX_DIM][MAX_DIM], int dim, int deg);
 /* static int checkW(double*, double); */
 static void poly_W(int, int);
 static void eval_frequency(int, int);
@@ -102,7 +102,11 @@ static int ReadCpL(CPLinstance*, CKTcircuit*);
 
 /* mult */
 static void mult_p(double*, double*, double*, int, int, int);
-static void matrix_p_mult(); /* quale è il prototipo ?*/
+static void matrix_p_mult(double  *A[MAX_DIM][MAX_DIM],
+                          double  *D[MAX_DIM],
+                          double  *B[MAX_DIM][MAX_DIM],
+                          int     dim, int deg, int deg_o,
+                          Mult_Out  X[MAX_DIM][MAX_DIM]);
 static double approx_mode(double*, double*, double);
 static double eval2(double, double, double, double);
 static int get_c(double, double, double, double, double, double, double, double*, double*);

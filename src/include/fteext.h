@@ -23,20 +23,20 @@ Modified: 1999 Paolo Nenzi - 2000 AlansFixes
 
 /* arg.c */
 
-extern void arg_plot();
-extern void arg_display();
-extern void arg_print();
-extern void arg_let();
-extern void arg_load();
-extern void arg_set();
-extern void outmenuprompt();
+extern void arg_plot(wordlist *wl, struct comm *command);
+extern void arg_display(void);
+extern void arg_print(wordlist *wl, struct comm *command);
+extern void arg_let(wordlist *wl, struct comm *command);
+extern void arg_load(wordlist *wl, struct comm *command);
+extern void arg_set(wordlist *wl, struct comm *command);
+extern void outmenuprompt(char *string);
 
 /* aspice.c */
 
 extern void com_aspice(wordlist *wl);
 extern void com_jobs(wordlist *wl);
 extern void com_rspice(wordlist *wl);
-extern void ft_checkkids();
+extern void ft_checkkids(void);
 
 /* binary.c */
 
@@ -45,7 +45,7 @@ extern struct plot *braw_read();
 
 /* breakpoint.c */
 
-extern bool ft_bpcheck();
+extern bool ft_bpcheck(struct plot *runplot, int iteration);
 extern void com_delete(wordlist *wl);
 extern void com_iplot(wordlist *wl);
 extern void com_save(wordlist *wl);
@@ -54,7 +54,7 @@ extern void com_step(wordlist *wl);
 extern void com_stop(wordlist *wl);
 extern void com_sttus(wordlist *wl);
 extern void com_trce(wordlist *wl);
-extern void ft_trquery();
+extern void ft_trquery(void);
 extern void dbfree( );
 
 
@@ -68,12 +68,12 @@ extern int ft_getSaves(struct save_info **);
 extern struct circ *ft_curckt;
 extern struct circ *ft_circuits;
 extern struct subcirc *ft_subcircuits;
-extern void ft_newcirc();
+extern void ft_newcirc(struct circ *ckt);
 
 /* clip.c */
 
-extern bool clip_line();
-extern bool clip_to_circle();
+extern bool clip_line(int *pX1, int *pY1, int *pX2, int *pY2, int l, int b, int r, int t);
+extern bool clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad);
 
 /* cmath1.c */
 
@@ -154,10 +154,10 @@ extern void com_state(wordlist *wl);
 
 /* define.c */
 
-extern struct pnode *ft_substdef();
+extern struct pnode *ft_substdef(char *name, struct pnode *args);
 extern void com_define(wordlist *wl);
 extern void com_undefine(wordlist *wl);
-extern void ft_pnode();
+extern void ft_pnode(struct pnode *pn);
 
 /* device.c */
 
@@ -188,14 +188,14 @@ extern bool ft_nomod;
 extern bool ft_nodesprint;
 extern bool ft_optsprint;
 extern int ft_cktcoms(bool terse);
-extern void ft_dotsaves();
-extern int ft_savedotargs();
+extern void ft_dotsaves(void);
+extern int ft_savedotargs(void);
 
 /* error.c */
 
-extern void fatal();
-extern void fperror();
-extern void ft_sperror();
+extern void fatal(void);
+extern void fperror(char *mess, int code);
+extern void ft_sperror(int code, char *mess);
 extern char ErrorMessage[];
 extern void internalerror(char *); 
 extern void externalerror(char *); 
@@ -204,26 +204,26 @@ extern void externalerror(char *);
 
 /* evaluate.c */
 
-extern struct dvec *op_and();
-extern struct dvec *op_comma();
-extern struct dvec *op_divide();
-extern struct dvec *op_eq();
-extern struct dvec *ft_evaluate();
-extern struct dvec *op_ge();
-extern struct dvec *op_gt();
-extern struct dvec *op_le();
-extern struct dvec *op_lt();
-extern struct dvec *op_minus();
-extern struct dvec *op_mod();
-extern struct dvec *op_ne();
-extern struct dvec *op_not();
-extern struct dvec *op_or();
-extern struct dvec *op_ind();
-extern struct dvec *op_plus();
-extern struct dvec *op_power();
-extern struct dvec *op_times();
-extern struct dvec *op_uminus();
-extern struct dvec *op_range();
+extern struct dvec *op_and(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_comma(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_divide(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_eq(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *ft_evaluate(struct pnode *node);
+extern struct dvec *op_ge(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_gt(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_le(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_lt(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_minus(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_mod(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_ne(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_not(struct pnode *arg);
+extern struct dvec *op_or(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_ind(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_plus(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_power(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_times(struct pnode *arg1, struct pnode *arg2);
+extern struct dvec *op_uminus(struct pnode *arg);
+extern struct dvec *op_range(struct pnode *arg1, struct pnode *arg2);
 
 /* spec.c */
 extern void com_spec(wordlist *wl);
@@ -262,13 +262,13 @@ extern void gi_update();
 
 extern bool gr_gmode;
 extern bool gr_hmode;
-extern void gr_clean();
-extern void gr_end();
-extern void gr_iplot();
+extern void gr_clean(void);
+extern void gr_end(struct dvec *dv);
+extern void gr_iplot(struct plot *plot);
 extern void gr_iplot_end();
-extern void gr_pmsg();
-extern void gr_point();
-extern void gr_start();
+extern void gr_pmsg(char *text);
+extern void gr_point(struct dvec *dv, double newx, double newy, double oldx, double oldy, int np);
+extern void gr_start(struct dvec *dv);
 extern double gr_xrange[2];
 extern double gr_yrange[2];
 extern int gr_xmargin;
@@ -289,12 +289,12 @@ extern void com_listing(wordlist *wl);
 extern void com_source(wordlist *wl);
 void inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, 
 		struct line *options, char *filename);
-extern void inp_source();
+extern void inp_source(char *file);
 void inp_spsource(FILE *fp, bool comfile, char *filename);
-extern void inp_casefix();
-extern void inp_list();
-extern void inp_readall();
-extern FILE *inp_pathopen();
+extern void inp_casefix(char *string);
+extern void inp_list(FILE *file, struct line *deck, struct line *extras, int type);
+extern void inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name);
+extern FILE *inp_pathopen(char *name, char *mode);
 
 /* nutinp.c */
 
@@ -305,10 +305,10 @@ extern void nutcom_source(wordlist *wl);
 
 /* interpolate.c */
 
-extern bool ft_interpolate();
-extern bool ft_polyfit();
-extern double ft_peval();
-extern void ft_polyderiv( );
+extern bool ft_interpolate(double *data, double *ndata, double *oscale, int olen, double *nscale, int nlen, int degree);
+extern bool ft_polyfit(double *xdata, double *ydata, double *result, int degree, double *scratch);
+extern double ft_peval(double x, double *coeffs, int degree);
+extern void ft_polyderiv(double *coeffs, int degree);
 extern void com_linearize(wordlist *wl);
 
 /* mfbinterface.c */
@@ -332,7 +332,7 @@ extern void com_ghelp(wordlist *wl);
 extern void com_help(wordlist *wl);
 extern void com_quit(wordlist *wl);
 extern void com_version(wordlist *wl);
-extern int  hcomp();
+extern int  hcomp(const void *a, const void *b);
 extern void com_where(wordlist *wl);
 
 /* mw_coms.c */
@@ -354,8 +354,8 @@ extern bool ft_gidb;
 extern bool ft_controldb;
 extern bool ft_asyncdb;
 extern char *ft_setkwords[];
-extern struct line *inp_getopts();
-extern struct variable *cp_enqvar();
+extern struct line *inp_getopts(struct line *deck);
+extern struct variable *cp_enqvar(char *word);
 extern struct variable *cp_uservars();
 extern int cp_userset();
 extern bool ft_ngdebug;
@@ -367,7 +367,7 @@ extern struct func func_not;
 extern struct func func_uminus;
 extern struct pnode * ft_getpnames(wordlist *wl, bool check);
 #define free_pnode(ptr)  free_pnode_x(ptr); ptr=NULL
-extern void free_pnode_x();
+extern void free_pnode_x(struct pnode *t);
 
 /* plotcurve.c */
 
@@ -405,7 +405,7 @@ extern void com_transpose(wordlist *wl);
 /* rawfile.c */
 extern int raw_prec;
 extern void raw_write(char *name, struct plot *pl, bool app, bool binary);
-extern struct plot *raw_read();
+extern struct plot *raw_read(char *name);
 
 /* meas.c */
 extern void do_measure(char *what, bool chk_only);
@@ -415,8 +415,8 @@ extern void com_meas(wordlist *wl);
 /* resource.c */
 
 extern void com_rusage(wordlist *wl);
-extern void ft_ckspace();
-extern void init_rlimits();
+extern void ft_ckspace(void);
+extern void init_rlimits(void);
 
 /* runcoms.c */
 
@@ -433,7 +433,7 @@ extern void com_tf(wordlist *wl);
 extern void com_scirc(wordlist *wl);
 extern void com_disto(wordlist *wl);
 extern void com_noise(wordlist *wl);
-extern int ft_dorun();
+extern int ft_dorun(char *file);
 
 extern bool ft_getOutReq(FILE **, struct plot **, bool *, char *, char *);
 
@@ -443,26 +443,26 @@ extern bool ft_nutmeg;
 extern IFsimulator *ft_sim;
 extern char *ft_rawfile;
 extern char *cp_program;
-extern RETSIGTYPE ft_sigintr();
-extern RETSIGTYPE sigfloat();
-extern RETSIGTYPE sigstop();
+extern RETSIGTYPE ft_sigintr(void);
+extern RETSIGTYPE sigfloat(int sig, int code);
+extern RETSIGTYPE sigstop(void);
 extern RETSIGTYPE sigquit();
 extern RETSIGTYPE sigill();
 extern RETSIGTYPE sigbus();
 extern RETSIGTYPE sigsegv();
 extern RETSIGTYPE sig_sys();
-extern int main();
+extern int main(int argc, char **argv);
 
 /* spiceif.c & nutmegif.c */
 
 extern bool if_tranparams();
-extern char *if_errstring();
+extern char *if_errstring(int code);
 extern char *if_inpdeck();
 extern int if_run();
 extern int if_sens_run();
 extern struct variable *(*if_getparam)();
 extern struct variable *nutif_getparam();
-extern struct variable *spif_getparam();
+extern struct variable *spif_getparam(void *ckt, char **name, char *param, int ind, int do_model);
 extern struct variable *spif_getparam_special();
 extern void if_cktfree();
 extern void if_dump();
@@ -474,8 +474,8 @@ extern struct variable *if_getstat();
 
 /* subckt.c */
 
-extern struct line *inp_deckcopy();
-extern struct line *inp_subcktexpand();
+extern struct line *inp_deckcopy(struct line *deck);
+extern struct line *inp_subcktexpand(struct line *deck);
 
 /* typesdef.c */
 
@@ -488,30 +488,30 @@ extern int ft_typnum(char *);
 
 /* vectors.c */
 
-extern bool vec_eq();
+extern bool vec_eq(struct dvec *v1, struct dvec *v2);
 extern int plot_num;
-extern struct dvec *vec_fromplot();
-extern struct dvec *vec_copy();
-extern struct dvec *vec_get();
-extern struct dvec *vec_mkfamily();
+extern struct dvec *vec_fromplot(char *word, struct plot *plot);
+extern struct dvec *vec_copy(struct dvec *v);
+extern struct dvec *vec_get(char *word);
+extern struct dvec *vec_mkfamily(struct dvec *v);
 extern struct plot *plot_cur;
-extern struct plot *plot_alloc();
+extern struct plot *plot_alloc(char *name);
 extern struct plot *plot_list;
 extern int plotl_changed;
-extern void plot_add();
+extern void plot_add(struct plot *pl);
 #define vec_free(ptr)  vec_free_x(ptr); ptr=NULL
-extern void vec_free_x();
-extern void vec_gc();
-extern void ft_loadfile();
-extern void vec_new();
-extern void plot_docoms();
-extern void vec_remove();
+extern void vec_free_x(struct dvec *v);
+extern void vec_gc(void);
+extern void ft_loadfile(char *file);
+extern void vec_new(struct dvec *d);
+extern void plot_docoms(wordlist *wl);
+extern void vec_remove(char *name);
 extern void ft_sdatafree();
-extern void plot_setcur();
-extern void plot_new();
-extern char *vec_basename();
-extern bool plot_prefix();
-extern void vec_transpose();
+extern void plot_setcur(char *name);
+extern void plot_new(struct plot *pl);
+extern char *vec_basename(struct dvec *v);
+extern bool plot_prefix(char *pre, char *str);
+extern void vec_transpose(struct dvec *v);
 
 /* main.c */
 extern bool ft_intrpt;
@@ -521,9 +521,9 @@ extern bool ft_setflag;
 extern void com_reshape(wordlist *wl);
 
 /* dimens.c */
-extern void dimstring();
-extern int atodims();
-extern void indexstring();
-extern int incindex( );
+extern void dimstring(int *data, int length, char *retstring);
+extern int atodims(char *p, int *data, int *outlength);
+extern void indexstring(int *data, int length, char *retstring);
+extern int incindex(int *counts, int numcounts, int *dims, int numdims);
 
 #endif /* FTEext_h */

@@ -16,9 +16,9 @@ Author: 1990 Jaijeet Roychowdury
 
 /* `-u' option showing the usage help is changed to `-h'. -- ro */
 
-extern void usage();
-extern void comments();
-extern double phi();
+extern void usage(char **argv);
+extern void comments(double r,double l,double g,double c,double ctot,double cm,double lm,double k,char *name,int num, double len);
+extern double phi(int i, double arg);
 extern void spErrorMessage(char*, FILE*, char*);
 
 int

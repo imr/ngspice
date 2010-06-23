@@ -11,8 +11,8 @@ Author: 1987 Jeffrey M. Hsu
 
 extern GRAPH *currentgraph;
 
-extern GRAPH *NewGraph();
+extern GRAPH *NewGraph(void);
 
-extern GRAPH *FindGraph();
+extern GRAPH *FindGraph(int id);
 
-extern GRAPH *CopyGraph();
+extern GRAPH *CopyGraph(GRAPH *graph);
