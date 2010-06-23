@@ -6,7 +6,7 @@
 #ifndef WHERE_H_INCLUDED
 #define WHERE_H_INCLUDED
 
-void com_where(void);
+void com_where(wordlist *wl);
 
 
 #endif

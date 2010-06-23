@@ -14,7 +14,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "where.h"
 
 void
-com_where(void)
+com_where(wordlist *wl)
 {
 	char	*msg;
 

@@ -33,9 +33,9 @@ extern void outmenuprompt();
 
 /* aspice.c */
 
-extern void com_aspice();
-extern void com_jobs();
-extern void com_rspice();
+extern void com_aspice(wordlist *wl);
+extern void com_jobs(wordlist *wl);
+extern void com_rspice(wordlist *wl);
 extern void ft_checkkids();
 
 /* binary.c */
@@ -46,14 +46,14 @@ extern struct plot *braw_read();
 /* breakpoint.c */
 
 extern bool ft_bpcheck();
-extern void com_delete();
-extern void com_iplot();
-extern void com_save();
-extern void com_save2(wordlist *, char *);
-extern void com_step();
-extern void com_stop();
-extern void com_sttus();
-extern void com_trce();
+extern void com_delete(wordlist *wl);
+extern void com_iplot(wordlist *wl);
+extern void com_save(wordlist *wl);
+extern void com_save2(wordlist *wl, char *name);
+extern void com_step(wordlist *wl);
+extern void com_stop(wordlist *wl);
+extern void com_sttus(wordlist *wl);
+extern void com_trce(wordlist *wl);
 extern void ft_trquery();
 extern void dbfree( );
 
@@ -143,39 +143,39 @@ extern struct comm *cp_coms;
 
 /* compose.c */
 
-extern void com_compose();
+extern void com_compose(wordlist *wl);
 
 /* cpinterface.c symbols declared in CPextern.h */
 
 /* debugcoms.c */
 
-extern void com_dump();
-extern void com_state();
+extern void com_dump(wordlist *wl);
+extern void com_state(wordlist *wl);
 
 /* define.c */
 
 extern struct pnode *ft_substdef();
-extern void com_define();
-extern void com_undefine();
+extern void com_define(wordlist *wl);
+extern void com_undefine(wordlist *wl);
 extern void ft_pnode();
 
 /* device.c */
 
-extern void com_show();
-extern void com_showmod();
-extern void com_alter();
-extern void com_altermod();
+extern void com_show(wordlist *wl);
+extern void com_showmod(wordlist *wl);
+extern void com_alter(wordlist *wl);
+extern void com_altermod(wordlist *wl);
 
 /* diff.c */
 
-extern void com_diff();
+extern void com_diff(wordlist *wl);
 
 /* doplot.c */
 
-extern void com_asciiplot();
-extern void com_hardcopy();
-extern void com_plot();
-extern void com_xgraph();
+extern void com_asciiplot(wordlist *wl);
+extern void com_hardcopy(wordlist *wl);
+extern void com_plot(wordlist *wl);
+extern void com_xgraph(wordlist *wl);
 
 /* dotcards.c */
 
@@ -226,13 +226,13 @@ extern struct dvec *op_uminus();
 extern struct dvec *op_range();
 
 /* spec.c */
-extern void com_spec();
+extern void com_spec(wordlist *wl);
 
 /* com_fft.c */
 extern void com_fft(wordlist*);
 
 /* com_sysinfo.c */
-extern void com_sysinfo();
+extern void com_sysinfo(wordlist *wl);
 
 /* ginterface.c 
 
@@ -284,9 +284,9 @@ extern void gr_fixgrid();
 
 /* inp.c */
 
-extern void com_edit();
-extern void com_listing();
-extern void com_source();
+extern void com_edit(wordlist *wl);
+extern void com_listing(wordlist *wl);
+extern void com_source(wordlist *wl);
 void inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, 
 		struct line *options, char *filename);
 extern void inp_source();
@@ -301,7 +301,7 @@ extern FILE *inp_pathopen();
 void inp_nutsource(FILE *fp, bool comfile, char *filename);
 void nutinp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, 
 		   struct line *options, char *filename);
-extern void nutcom_source();
+extern void nutcom_source(wordlist *wl);
 
 /* interpolate.c */
 
@@ -309,7 +309,7 @@ extern bool ft_interpolate();
 extern bool ft_polyfit();
 extern double ft_peval();
 extern void ft_polyderiv( );
-extern void com_linearize();
+extern void com_linearize(wordlist *wl);
 
 /* mfbinterface.c */
 
@@ -326,17 +326,17 @@ extern void mi_update();
 
 /* misccoms.c */
 
-extern void com_bug();
-extern void com_ahelp();
-extern void com_ghelp();
-extern void com_help();
-extern void com_quit();
-extern void com_version();
+extern void com_bug(wordlist *wl);
+extern void com_ahelp(wordlist *wl);
+extern void com_ghelp(wordlist *wl);
+extern void com_help(wordlist *wl);
+extern void com_quit(wordlist *wl);
+extern void com_version(wordlist *wl);
 extern int  hcomp();
-extern void com_where();
+extern void com_where(wordlist *wl);
 
 /* mw_coms.c */
-extern void com_removecirc();
+extern void com_removecirc(wordlist *wl);
 
 /* numparse.c */
 
@@ -390,17 +390,17 @@ extern void pi_update();
 
 /* postcoms.c */
 
-extern void com_cross();
-extern void com_display();
-extern void com_let();
-extern void com_unlet();
-extern void com_load();
-extern void com_print();
-extern void com_write();
-extern void com_destroy();
-extern void com_splot();
-extern void com_setscale();
-extern void com_transpose();
+extern void com_cross(wordlist *wl);
+extern void com_display(wordlist *wl);
+extern void com_let(wordlist *wl);
+extern void com_unlet(wordlist *wl);
+extern void com_load(wordlist *wl);
+extern void com_print(wordlist *wl);
+extern void com_write(wordlist *wl);
+extern void com_destroy(wordlist *wl);
+extern void com_splot(wordlist *wl);
+extern void com_setscale(wordlist *wl);
+extern void com_transpose(wordlist *wl);
 
 /* rawfile.c */
 extern int raw_prec;
@@ -414,25 +414,25 @@ extern void com_meas(wordlist *wl);
 
 /* resource.c */
 
-extern void com_rusage();
+extern void com_rusage(wordlist *wl);
 extern void ft_ckspace();
 extern void init_rlimits();
 
 /* runcoms.c */
 
-extern void com_ac();
-extern void com_dc();
-extern void com_op();
-extern void com_pz();
-extern void com_sens();
-extern void com_rset();
-extern void com_resume();
-extern void com_run();
-extern void com_tran();
-extern void com_tf();
-extern void com_scirc();
-extern void com_disto();
-extern void com_noise();
+extern void com_ac(wordlist *wl);
+extern void com_dc(wordlist *wl);
+extern void com_op(wordlist *wl);
+extern void com_pz(wordlist *wl);
+extern void com_sens(wordlist *wl);
+extern void com_rset(wordlist *wl);
+extern void com_resume(wordlist *wl);
+extern void com_run(wordlist *wl);
+extern void com_tran(wordlist *wl);
+extern void com_tf(wordlist *wl);
+extern void com_scirc(wordlist *wl);
+extern void com_disto(wordlist *wl);
+extern void com_noise(wordlist *wl);
 extern int ft_dorun();
 
 extern bool ft_getOutReq(FILE **, struct plot **, bool *, char *, char *);
@@ -518,7 +518,7 @@ extern bool ft_intrpt;
 extern bool ft_setflag;
 
 /* newcoms.c */
-extern void com_reshape();
+extern void com_reshape(wordlist *wl);
 
 /* dimens.c */
 extern void dimstring();

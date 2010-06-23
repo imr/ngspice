@@ -226,7 +226,7 @@ dosim(
       ft_setflag = TRUE;  /* don't allow abort upon interrupt during run  */
       ft_intrpt = FALSE;
       fprintf(cp_err, "Warning: resuming run in progress.\n");
-      com_resume((wordlist *) NULL);
+      com_resume(NULL);
       ft_setflag = FALSE;  /* Now allow aborts again  */
       return 0;
    }

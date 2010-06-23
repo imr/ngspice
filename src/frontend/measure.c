@@ -50,7 +50,7 @@ com_meas(wordlist *wl) {
    struct dvec *d;
 
    if (!wl) {
-      com_display((wordlist *) NULL);
+      com_display(NULL);
       return;
    }
    wl_count = wl;

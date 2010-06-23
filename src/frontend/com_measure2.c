@@ -869,7 +869,7 @@ void measure_ERR3( ) {
    return;
 }
 
-void com_dotmeasure( ) {
+void com_dotmeasure(wordlist *wl) {
 /* simulation info */
 //      printf("*%s\n", plot_cur->pl_title);
 //      printf("\t %s, %s\n", plot_cur->pl_name, plot_cur->pl_date); // missing temp

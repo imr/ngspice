@@ -186,7 +186,7 @@ com_step(wordlist *wl)
         steps = howmanysteps = atoi(wl->wl_word);
     else
         steps = howmanysteps = 1;
-    com_resume((wordlist *) NULL);
+    com_resume(NULL);
     return;
 }
 

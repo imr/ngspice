@@ -328,7 +328,7 @@ cp_periodic(void)
 void
 cp_doquit(void)
 {
-    com_quit((wordlist *) NULL);
+    com_quit(NULL);
     return;
 }
 

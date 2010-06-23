@@ -1,3 +1,23 @@
+2010-06-23  Robert Larice
+ * src/frontend/breakp.c,
+ * src/frontend/com_let.c,
+ * src/frontend/com_measure2.c,
+ * src/frontend/com_sysinfo.c,
+ * src/frontend/cpitf.c,
+ * src/frontend/dotcards.c,
+ * src/frontend/measure.c,
+ * src/frontend/mw_coms.c,
+ * src/frontend/mw_coms.h,
+ * src/frontend/runcoms.c,
+ * src/frontend/runcoms2.c,
+ * src/frontend/where.c,
+ * src/frontend/where.h,
+ * src/include/cpextern.h,
+ * src/include/fteext.h :
+ ansi function definitions and declarations for the com_*() functions.
+ remove some casts to NULL.
+ several com_*() functions don't use their argument, add unused attribute later.
+
 2010-06-22 Holger Vogt
  * b4soild.c: line 7598 double assignment of Cbg1 removed
  * configure.in, /visualc/include/config.h: version 21plus

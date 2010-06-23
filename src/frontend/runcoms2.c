@@ -63,7 +63,7 @@ com_resume(wordlist *wl)
 
    if (ft_curckt->ci_inprogress == FALSE) {
       fprintf(cp_err, "Note: run starting\n");
-      com_run((wordlist *) NULL);
+      com_run(NULL);
       return;
    }
    ft_curckt->ci_inprogress = TRUE;

@@ -83,7 +83,7 @@ static void tesFreeSystemInfo(TesSystemInfo *info) {
 }
 
 /* print system info */
-void com_sysinfo()
+void com_sysinfo(wordlist *wl)
 {
    int errorcode;
    TesSystemInfo* info;

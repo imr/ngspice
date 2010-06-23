@@ -29,7 +29,7 @@ com_let(wordlist *wl)
     fake_wl.wl_next = NULL;
 
     if (!wl) {
-        com_display((wordlist *) NULL);
+        com_display(NULL);
         return;
     }
 

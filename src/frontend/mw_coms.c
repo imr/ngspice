@@ -17,7 +17,7 @@
 /* Clears ckt and removes current circ. form database */
  
 void
-com_removecirc()
+com_removecirc(wordlist *wl)
 {
     struct variable *v, *next;
     struct circ *ct;
