@@ -644,11 +644,32 @@ will be updated every time the device specific code is altered or changed to ref
 
  11.12 BSIM3 - BSIM model level 3
 
-       Ver:    3.2.4 - 3.3.0
+       Ver:    3.2.4
        Class:  M
-       Level:  8 & 49, version = 3.2.2, 3.2.3, 3.2.4, 3.3.0
+       Level:  8 & 49, version = 3.2.2, 3.2.3, 3.2.4
+       Dir:    devices/bsim3v32 (level 3.2.4)
+       Status: o.k.
+
+       This is another BSIM3 model from Berkeley Device Group.
+       You can find some test netlists with results for this model
+       on its web site.
+
+       Web site: http://www-device.eecs.berkeley.edu/~bsim3
+
+       Enhancements over the original model:
+        - Parallel Multiplier
+        - ACM Area Calculation Method
+        - Multirevision code (supports all 3v3.2 minor revisions)
+        - NodesetFix
+
+		
+ 11.12 BSIM3 - BSIM model level 3
+
+       Ver:    3.3.0
+       Class:  M
+       Level:  8 & 49, version = 3.3.0
        Dir:    devices/bsim3 (level 3.3.0)
-       Status: TO BE TESTED
+       Status: o.k.
 
        This is the actual BSIM3 model from Berkeley Device Group.
        You can find some test netlists with results for this model
@@ -661,6 +682,7 @@ will be updated every time the device specific code is altered or changed to ref
         - ACM Area Calculation Method
         - Multirevision code (supports all 3v3.2 minor revisions)
         - NodesetFix
+		- Support for Multi-core processors using OpenMP
 
 
  11.13 BSIM4 - BSIM model level 4

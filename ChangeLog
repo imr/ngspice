@@ -1,5 +1,5 @@
 2010-06-23  Holger Vogt
- * configure.in, INSTALL, bsim3/b3ld.c, bsim3/b3set.c, bsim3/bsim3def.f,
+ * configure.in, INSTALL, DEVICES, bsim3/b3ld.c, bsim3/b3set.c, bsim3/bsim3def.f,
    spinit.in: Multi-core support with OpenMP for BSIM3 vers. 3.3.0
 
 2010-06-23  Robert Larice
