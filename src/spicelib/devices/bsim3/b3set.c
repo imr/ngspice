@@ -15,6 +15,11 @@
 #include "const.h"
 #include "sperror.h"
 #include "suffix.h"
+#ifdef USE_OMP
+int nthreads;
+extern bool cp_getvar(char *name, int type, void *retval);
+#define VT_NUM 1
+#endif
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
@@ -37,9 +42,15 @@ BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;
 int error;
 CKTnode *tmp;
-
 CKTnode *tmpNode;
-IFuid tmpName;   
+IFuid tmpName;
+
+#ifdef USE_OMP
+unsigned int idx, InstCount;
+BSIM3instance **InstArray;
+int nthreads;
+#endif
+
 
     /*  loop through all the BSIM3 device models */
     for( ; model != NULL; model = model->BSIM3nextModel )
@@ -955,6 +966,7 @@ IFuid tmpName;
 
         /* set Sparse Matrix Pointers */
 
+
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
@@ -997,6 +1009,47 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 
         }
     }
+#ifdef USE_OMP
+    if (!cp_getvar("num_threads", VT_NUM, (char *) &nthreads))   
+        nthreads = 4;
+
+    omp_set_num_threads(nthreads);
+    if (nthreads == 1)
+      printf("OpenMP: %d thread is requested in BSIM3\n", nthreads);
+    else
+      printf("OpenMP: %d threads are requested in BSIM3\n", nthreads);
+    InstCount = 0;
+    model = (BSIM3model*)inModel;
+    /* loop through all the BSIM3 device models 
+       to count the number of instances */
+    
+    for( ; model != NULL; model = model->BSIM3nextModel )
+    {
+        /* loop through all the instances of the model */
+        for (here = model->BSIM3instances; here != NULL ;
+             here=here->BSIM3nextInstance) 
+        { 
+            InstCount++;
+        }
+    }
+    InstArray = (BSIM3instance**)tmalloc(InstCount*sizeof(BSIM3instance**));
+    model = (BSIM3model*)inModel;
+    idx = 0;
+    for( ; model != NULL; model = model->BSIM3nextModel )
+    {
+        /* loop through all the instances of the model */
+        for (here = model->BSIM3instances; here != NULL ;
+             here=here->BSIM3nextInstance) 
+        { 
+            InstArray[idx] = here;
+            idx++;
+        }
+        /* set the array pointer and instance count into each model */
+        model->BSIM3InstCount = InstCount;
+        model->BSIM3InstanceArray = InstArray;		
+    }
+
+#endif
     return(OK);
 }
 

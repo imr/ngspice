@@ -31,14 +31,44 @@
 #define DELTA_3 0.02
 #define DELTA_4 0.02
 
+#ifdef USE_OMP
+int BSIM3LoadOMP(BSIM3instance *here, CKTcircuit *ckt);
+void BSIM3LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt);
+extern int nthreads;
+#endif
+
 
 int
 BSIM3load(
 GENmodel *inModel,
 CKTcircuit *ckt)
 {
+#ifdef USE_OMP
+    int idx;
+    BSIM3model *model = (BSIM3model*)inModel;
+    int good = 0;
+    BSIM3instance *here;
+    BSIM3instance **InstArray;
+    InstArray = model->BSIM3InstanceArray;
+
+#pragma omp parallel for num_threads(nthreads) private(here)
+    for (idx = 0; idx < model->BSIM3InstCount; idx++) {
+        here = InstArray[idx];
+        good = BSIM3LoadOMP(here, ckt);
+    }
+
+    BSIM3LoadRhsMat(inModel, ckt);
+    
+    return good;
+}
+
+
+int BSIM3LoadOMP(BSIM3instance *here, CKTcircuit *ckt) {
+BSIM3model *model;
+#else
 BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;
+#endif
 double SourceSatCurrent, DrainSatCurrent;
 double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
 double cdrain, cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
@@ -136,18 +166,23 @@ struct bsim3SizeDependParam *pParam;
 int ByPass, Check, ChargeComputationNeeded, error;
 /* double junk[50]; */
 
+#ifdef USE_OMP
+model = here->BSIM3modPtr;
+#endif
+
 ScalingFactor = 1.0e-9;
 ChargeComputationNeeded =  
                  ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
                  ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
                  ? 1 : 0;
-
+#ifndef USE_OMP
 for (; model != NULL; model = model->BSIM3nextModel)
 {    for (here = model->BSIM3instances; here != NULL; 
           here = here->BSIM3nextInstance)
-     {    
+          {    
 	  if (here->BSIM3owner != ARCHme)
 	    continue;
+#endif
           Check = 1;
           ByPass = 0;
 	  pParam = here->pParam;
@@ -2890,7 +2925,15 @@ line900:
 	   }
 
            m = here->BSIM3m;
-
+#ifdef USE_OMP
+           here->BSIM3rhsG = m * ceqqg;
+           here->BSIM3rhsB = m * (ceqbs + ceqbd + ceqqb);
+           here->BSIM3rhsD = m * (ceqbd - cdreq - ceqqd);
+           here->BSIM3rhsS = m * (cdreq + ceqbs + ceqqg
+						    + ceqqb + ceqqd);
+           if (here->BSIM3nqsMod)
+           here->BSIM3rhsQ = m * (cqcheq - cqdef);
+#else
            (*(ckt->CKTrhs + here->BSIM3gNode) -= m * ceqqg);
            (*(ckt->CKTrhs + here->BSIM3bNode) -= m * (ceqbs + ceqbd + ceqqb));
            (*(ckt->CKTrhs + here->BSIM3dNodePrime) += m * (ceqbd - cdreq - ceqqd));
@@ -2898,12 +2941,64 @@ line900:
 						    + ceqqb + ceqqd));
            if (here->BSIM3nqsMod)
            *(ckt->CKTrhs + here->BSIM3qNode) += m * (cqcheq - cqdef);
-
+#endif
            /*
             *  load y matrix
             */
 
 	   T1 = qdef * here->BSIM3gtau;
+#ifdef USE_OMP
+           here->BSIM3DdPt = m * here->BSIM3drainConductance;
+           here->BSIM3GgPt = m * (gcggb - ggtg);
+           here->BSIM3SsPt = m * here->BSIM3sourceConductance;
+           here->BSIM3BbPt = m * (here->BSIM3gbd + here->BSIM3gbs
+                                - gcbgb - gcbdb - gcbsb - here->BSIM3gbbs);
+           here->BSIM3DPdpPt = m * (here->BSIM3drainConductance
+                                  + here->BSIM3gds + here->BSIM3gbd
+                                  + RevSum + gcddb + dxpart * ggtd 
+				  + T1 * ddxpart_dVd + gbdpdp);
+           here->BSIM3SPspPt = m * (here->BSIM3sourceConductance
+                                  + here->BSIM3gds + here->BSIM3gbs
+                                  + FwdSum + gcssb + sxpart * ggts
+				  + T1 * dsxpart_dVs + gbspsp);
+           here->BSIM3DdpPt = m * here->BSIM3drainConductance;
+           here->BSIM3GbPt = m * (gcggb + gcgdb + gcgsb + ggtb);
+           here->BSIM3GdpPt = m * (gcgdb - ggtd);
+           here->BSIM3GspPt = m * (gcgsb - ggts);
+           here->BSIM3SspPt = m * here->BSIM3sourceConductance;
+           here->BSIM3BgPt = m * (gcbgb - here->BSIM3gbgs);
+           here->BSIM3BdpPt = m * (gcbdb - here->BSIM3gbd + gbbdp);
+           here->BSIM3BspPt = m * (gcbsb - here->BSIM3gbs + gbbsp);
+           here->BSIM3DPdPt = m * here->BSIM3drainConductance;
+           here->BSIM3DPgPt = m * (Gm + gcdgb + dxpart * ggtg 
+				 + T1 * ddxpart_dVg + gbdpg);
+           here->BSIM3DPbPt = m * (here->BSIM3gbd - Gmbs + gcdgb + gcddb
+                                 + gcdsb - dxpart * ggtb
+				 - T1 * ddxpart_dVb - gbdpb);
+           here->BSIM3DPspPt = m * (here->BSIM3gds + FwdSum - gcdsb
+				  - dxpart * ggts - T1 * ddxpart_dVs - gbdpsp);
+           here->BSIM3SPgPt = m * (gcsgb - Gm + sxpart * ggtg 
+				 + T1 * dsxpart_dVg + gbspg);
+           here->BSIM3SPsPt = m * here->BSIM3sourceConductance;
+           here->BSIM3SPbPt = m * (here->BSIM3gbs + Gmbs + gcsgb + gcsdb
+                                 + gcssb - sxpart * ggtb
+				 - T1 * dsxpart_dVb - gbspb);
+           here->BSIM3SPdpPt = m * (here->BSIM3gds + RevSum - gcsdb
+                                  - sxpart * ggtd - T1 * dsxpart_dVd - gbspdp);
+
+           if (here->BSIM3nqsMod)
+           {   here->BSIM3QqPt = m * (gqdef + here->BSIM3gtau);
+
+               here->BSIM3DPqPt = m * (dxpart * here->BSIM3gtau);
+               here->BSIM3SPqPt = m * (sxpart * here->BSIM3gtau);
+               here->BSIM3GqPt = m * here->BSIM3gtau;
+
+               here->BSIM3QgPt = m * (ggtg - gcqgb);
+               here->BSIM3QdpPt = m * (ggtd - gcqdb);
+               here->BSIM3QspPt = m * (ggts - gcqsb);
+               here->BSIM3QbPt = m * (ggtb - gcqbb);
+           }
+#else
            (*(here->BSIM3DdPtr) += m * here->BSIM3drainConductance);
            (*(here->BSIM3GgPtr) += m * (gcggb - ggtg));
            (*(here->BSIM3SsPtr) += m * here->BSIM3sourceConductance);
@@ -2954,12 +3049,73 @@ line900:
                *(here->BSIM3QspPtr) += m * (ggts - gcqsb);
                *(here->BSIM3QbPtr) += m * (ggtb - gcqbb);
            }
-
+#endif
 line1000:  ;
-
+#ifndef USE_OMP
      }  /* End of Mosfet Instance */
 }   /* End of Model Instance */
-
+#endif
 return(OK);
 }
 
+#ifdef USE_OMP
+void BSIM3LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
+{
+    unsigned int InstCount, idx;
+    BSIM3instance **InstArray;
+    BSIM3instance *here;
+    BSIM3model *model = (BSIM3model*)inModel;
+
+    InstArray = model->BSIM3InstanceArray;
+    InstCount = model->BSIM3InstCount;
+
+    for(idx = 0; idx < InstCount; idx++) {
+       here = InstArray[idx];
+        /* Update b for Ax = b */
+       (*(ckt->CKTrhs + here->BSIM3gNode) -= here->BSIM3rhsG);
+       (*(ckt->CKTrhs + here->BSIM3bNode) -= here->BSIM3rhsB);
+       (*(ckt->CKTrhs + here->BSIM3dNodePrime) += here->BSIM3rhsD);
+       (*(ckt->CKTrhs + here->BSIM3sNodePrime) += here->BSIM3rhsS);
+       if (here->BSIM3nqsMod)
+           (*(ckt->CKTrhs + here->BSIM3qNode) += here->BSIM3rhsQ);
+
+        /* Update A for Ax = b */
+           (*(here->BSIM3DdPtr) += here->BSIM3DdPt);
+           (*(here->BSIM3GgPtr) += here->BSIM3GgPt);
+           (*(here->BSIM3SsPtr) += here->BSIM3SsPt);
+           (*(here->BSIM3BbPtr) += here->BSIM3BbPt);
+           (*(here->BSIM3DPdpPtr) += here->BSIM3DPdpPt);
+           (*(here->BSIM3SPspPtr) += here->BSIM3SPspPt);
+           (*(here->BSIM3DdpPtr) -= here->BSIM3DdpPt);
+           (*(here->BSIM3GbPtr) -= here->BSIM3GbPt);
+           (*(here->BSIM3GdpPtr) += here->BSIM3GdpPt);
+           (*(here->BSIM3GspPtr) += here->BSIM3GspPt);
+           (*(here->BSIM3SspPtr) -= here->BSIM3SspPt);
+           (*(here->BSIM3BgPtr) += here->BSIM3BgPt);
+           (*(here->BSIM3BdpPtr) += here->BSIM3BdpPt);
+           (*(here->BSIM3BspPtr) += here->BSIM3BspPt);
+           (*(here->BSIM3DPdPtr) -= here->BSIM3DPdPt);
+           (*(here->BSIM3DPgPtr) += here->BSIM3DPgPt);
+           (*(here->BSIM3DPbPtr) -= here->BSIM3DPbPt);
+           (*(here->BSIM3DPspPtr) -= here->BSIM3DPspPt);
+           (*(here->BSIM3SPgPtr) += here->BSIM3SPgPt);
+           (*(here->BSIM3SPsPtr) -= here->BSIM3SPsPt);
+           (*(here->BSIM3SPbPtr) -= here->BSIM3SPbPt);
+           (*(here->BSIM3SPdpPtr) -= here->BSIM3SPdpPt);
+
+           if (here->BSIM3nqsMod)
+           {   *(here->BSIM3QqPtr) += here->BSIM3QqPt;
+
+               *(here->BSIM3DPqPtr) += here->BSIM3DPqPt;
+               *(here->BSIM3SPqPtr) += here->BSIM3SPqPt;
+               *(here->BSIM3GqPtr) -= here->BSIM3GqPt;
+
+               *(here->BSIM3QgPtr) += here->BSIM3QgPt;
+               *(here->BSIM3QdpPtr) += here->BSIM3QdpPt;
+               *(here->BSIM3QspPtr) += here->BSIM3QspPt;
+               *(here->BSIM3QbPtr) += here->BSIM3QbPt;
+           }
+
+    }
+}
+#endif

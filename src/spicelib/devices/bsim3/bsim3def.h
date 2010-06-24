@@ -15,6 +15,12 @@ File: bsim3def.h
 #include "complex.h"
 #include "noisedef.h"         
 
+//#define USE_OMP
+
+#ifdef USE_OMP
+#include <omp.h>
+#endif
+
 typedef struct sBSIM3instance
 {
     struct sBSIM3model *BSIM3modPtr;
@@ -162,6 +168,48 @@ typedef struct sBSIM3instance
     double *BSIM3GqPtr;
     double *BSIM3SPqPtr;
     double *BSIM3BqPtr;
+
+#ifdef USE_OMP
+    /* per instance storage of results, to update matrix at a later stge */
+    double BSIM3rhsG;
+    double BSIM3rhsB;
+    double BSIM3rhsD;
+    double BSIM3rhsS;
+    double BSIM3rhsQ;
+
+    double BSIM3DdPt;
+    double BSIM3GgPt;
+    double BSIM3SsPt;
+    double BSIM3BbPt;
+    double BSIM3DPdpPt;
+    double BSIM3SPspPt;
+    double BSIM3DdpPt;
+    double BSIM3GbPt;
+    double BSIM3GdpPt;
+    double BSIM3GspPt;
+    double BSIM3SspPt;
+    double BSIM3BdpPt;
+    double BSIM3BspPt;
+    double BSIM3DPspPt;
+    double BSIM3DPdPt;
+    double BSIM3BgPt;
+    double BSIM3DPgPt;
+    double BSIM3SPgPt;
+    double BSIM3SPsPt;
+    double BSIM3DPbPt;
+    double BSIM3SPbPt;
+    double BSIM3SPdpPt;
+
+    double BSIM3QqPt;
+    double BSIM3QdpPt;
+    double BSIM3QgPt;
+    double BSIM3QspPt;
+    double BSIM3QbPt;
+    double BSIM3DPqPt;
+    double BSIM3GqPt;
+    double BSIM3SPqPt;
+    double BSIM3BqPt;
+#endif
 
 #define BSIM3vbd BSIM3states+ 0
 #define BSIM3vbs BSIM3states+ 1
@@ -794,6 +842,12 @@ typedef struct sBSIM3model
     double BSIM3lintnoi;  /* lint offset for noise calculation  */
 
     struct bsim3SizeDependParam *pSizeDependParamKnot;
+
+    
+#ifdef USE_OMP
+    int BSIM3InstCount;
+    struct sBSIM3instance **BSIM3InstanceArray;
+#endif
 
     /* Flags */
     unsigned  BSIM3mobModGiven :1;
