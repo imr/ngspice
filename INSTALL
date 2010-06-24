@@ -217,9 +217,13 @@ This file describes the procedures to install ngspice from sources.
 		is discouraged.
  
  --with-tcl=tcldir
-                When configured with this option the tcl module 
-                "tclspice" is compiled and installed instead of
-                plain ngspice.
+        When configured with this option the tcl module 
+        "tclspice" is compiled and installed instead of
+        plain ngspice.
+				
+ --enable-openmp 
+        Compile ngspice for multi-core processors. 
+		Parallelization is done by OpenMP 				
 
 
 1.4.2 Options Useful for Debugging Ngspice
