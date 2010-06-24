@@ -308,11 +308,11 @@ void com_savesnap(wordlist *wl) { return; }
 /* saj to get nutmeg to compile, not nice but necessary */
 Ipc_Tiein_t  g_ipc;
 Ipc_Status_t ipc_send_errchk(void ) {
-  Ipc_Status_t x=0;
+  Ipc_Status_t x = IPC_STATUS_OK;
   return(x);
 }
 Ipc_Status_t ipc_get_line(char *str , int *len , Ipc_Wait_t wait ){
-  Ipc_Status_t x=0;
+  Ipc_Status_t x = IPC_STATUS_OK;
   return(x);
 }
 struct line *ENHtranslate_poly(struct line *deck){

@@ -191,7 +191,7 @@ void cm_d_fdiv(ARGS)
            bounds, set to "zero" equivalent */
         *count = PARAM(i_count);
         if ( (div_factor <= *count) || (0 > *count) ) {
-            *count = 0;
+            *count = ZERO;
             OUTPUT_STATE(freq_out) = *freq_out = *freq_out_old = ZERO; 
         }
 
@@ -216,7 +216,7 @@ void cm_d_fdiv(ARGS)
             /* If new count value is equal to the div_factor+1 value,
                need to normalize count to "1", and raise output */
             if ( ((div_factor+1) == *count)||(1 == *count) ) {
-                *count = 1;                                     
+                *count = ONE;                                     
                 OUTPUT_STATE(freq_out) = *freq_out = ONE;
                 OUTPUT_DELAY(freq_out) = PARAM(rise_delay);
             }

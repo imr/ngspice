@@ -169,7 +169,7 @@ void cm_d_and(ARGS)
 
     /*** Calculate new output value based on inputs ***/
 
-    *out = 1;
+    *out = ONE;
     for (i=0; i<size; i++) {
 
         /* make sure this input isn't floating... */
@@ -212,12 +212,12 @@ void cm_d_and(ARGS)
             switch ( *out ) {
                                                  
             /* fall to zero value */
-            case 0: OUTPUT_STATE(out) = 0;
+            case 0: OUTPUT_STATE(out) = ZERO;
                     OUTPUT_DELAY(out) = PARAM(fall_delay);
                     break;
     
             /* rise to one value */
-            case 1: OUTPUT_STATE(out) = 1;
+            case 1: OUTPUT_STATE(out) = ONE;
                     OUTPUT_DELAY(out) = PARAM(rise_delay);
                     break;
                                     

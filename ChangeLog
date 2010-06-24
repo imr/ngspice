@@ -1,3 +1,19 @@
+2010-06-24  Robert Larice
+ * src/main.c :
+	make use of allready defined enumerate Ipc_Status_t (IPC_STATUS_OK)
+ * src/xspice/icm/digital/d_and/cfunc.mod,
+ * src/xspice/icm/digital/d_buffer/cfunc.mod,
+ * src/xspice/icm/digital/d_fdiv/cfunc.mod,
+ * src/xspice/icm/digital/d_inverter/cfunc.mod,
+ * src/xspice/icm/digital/d_nand/cfunc.mod,,
+ * src/xspice/icm/digital/d_nor/cfunc.mod,
+ * src/xspice/icm/digital/d_open_c/cfunc.mod,
+ * src/xspice/icm/digital/d_open_e/cfunc.mod,
+ * src/xspice/icm/digital/d_or/cfunc.mod,,
+ * src/xspice/icm/digital/d_xnor/cfunc.mod,
+ * src/xspice/icm/digital/d_xor/cfunc.mod :
+	make use of allready defined enumerate Digital_State_t (ONE,ZERO)
+
 2010-06-23  Holger Vogt
  * configure.in, INSTALL, DEVICES, bsim3/b3ld.c, bsim3/b3set.c, bsim3/bsim3def.f,
    spinit.in: Multi-core support with OpenMP for BSIM3 vers. 3.3.0

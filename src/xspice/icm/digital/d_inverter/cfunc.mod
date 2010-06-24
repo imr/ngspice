@@ -182,12 +182,12 @@ void cm_d_inverter(ARGS)
         switch ( INPUT_STATE(in) ) {
                                                  
         /* fall to zero value */
-        case 1: OUTPUT_STATE(out) = *out = 0;
+        case 1: OUTPUT_STATE(out) = *out = ZERO;
                 OUTPUT_DELAY(out) = PARAM(fall_delay);
                 break;
 
         /* rise to one value */
-        case 0: OUTPUT_STATE(out) = *out = 1;
+        case 0: OUTPUT_STATE(out) = *out = ONE;
                 OUTPUT_DELAY(out) = PARAM(rise_delay);
                 break;
                                 

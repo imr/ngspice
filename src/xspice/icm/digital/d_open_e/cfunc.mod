@@ -177,13 +177,13 @@ void cm_d_open_e(ARGS)
         switch ( INPUT_STATE(in) ) {
                                                  
         /* fall to zero value */
-        case 0: OUTPUT_STATE(out) = *out = 0;
+        case 0: OUTPUT_STATE(out) = *out = ZERO;
                 OUTPUT_STRENGTH(out) = HI_IMPEDANCE;
                 OUTPUT_DELAY(out) = PARAM(open_delay);
                 break;
 
         /* rise to one value */
-        case 1: OUTPUT_STATE(out) = *out = 1;
+        case 1: OUTPUT_STATE(out) = *out = ONE;
                 OUTPUT_STRENGTH(out) = STRONG;
                 OUTPUT_DELAY(out) = PARAM(rise_delay);
                 break;
