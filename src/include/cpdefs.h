@@ -67,7 +67,7 @@ struct histent {
 
 
 
-/* The values returned by cp_userset(). */
+/* The values returned by cp_usrset(). */
 
 #define US_OK       1   /* Either not relevant or nothing special. */
 #define US_READONLY 2   /* Complain and don't set this var. */

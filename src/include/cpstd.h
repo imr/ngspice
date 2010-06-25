@@ -28,8 +28,6 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 /* Externs defined in std.c */
 
-extern char *getusername();
-extern char *gethome();
 extern char *tildexpand(char *string);
 extern void printnum(char *buf, double num);
 extern int cp_numdgt;

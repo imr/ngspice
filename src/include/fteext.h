@@ -38,11 +38,6 @@ extern void com_jobs(wordlist *wl);
 extern void com_rspice(wordlist *wl);
 extern void ft_checkkids(void);
 
-/* binary.c */
-
-extern void braw_write();
-extern struct plot *braw_read();
-
 /* breakpoint.c */
 
 extern bool ft_bpcheck(struct plot *runplot, int iteration);
@@ -265,7 +260,6 @@ extern bool gr_hmode;
 extern void gr_clean(void);
 extern void gr_end(struct dvec *dv);
 extern void gr_iplot(struct plot *plot);
-extern void gr_iplot_end();
 extern void gr_pmsg(char *text);
 extern void gr_point(struct dvec *dv, double newx, double newy, double oldx, double oldy, int np);
 extern void gr_start(struct dvec *dv);
@@ -311,19 +305,6 @@ extern double ft_peval(double x, double *coeffs, int degree);
 extern void ft_polyderiv(double *coeffs, int degree);
 extern void com_linearize(wordlist *wl);
 
-/* mfbinterface.c */
-
-extern void mi_arc();
-extern bool mi_init();
-extern void mi_clearscreen();
-extern void mi_close();
-extern void mi_drawline();
-extern void mi_resetcolor();
-extern void mi_setcolor();
-extern void mi_setlinestyle();
-extern void mi_text();
-extern void mi_update();
-
 /* misccoms.c */
 
 extern void com_bug(wordlist *wl);
@@ -356,8 +337,6 @@ extern bool ft_asyncdb;
 extern char *ft_setkwords[];
 extern struct line *inp_getopts(struct line *deck);
 extern struct variable *cp_enqvar(char *word);
-extern struct variable *cp_uservars();
-extern int cp_userset();
 extern bool ft_ngdebug;
 
 /* parse.c */
@@ -374,19 +353,6 @@ extern void free_pnode_x(struct pnode *t);
 extern int ft_findpoint(double pt, double *lims, int maxp, int minp, bool islog);
 extern double * ft_minmax(struct dvec *v, bool real);
 extern void ft_graf(struct dvec *v, struct dvec *xs, bool nostart);
-
-/* plotinterface.c */
-
-extern void pi_arc();
-extern bool pi_init();
-extern void pi_clearscreen();
-extern void pi_close();
-extern void pi_drawline();
-extern void pi_resetcolor();
-extern void pi_setcolor();
-extern void pi_setlinestyle();
-extern void pi_text();
-extern void pi_update();
 
 /* postcoms.c */
 
@@ -446,7 +412,6 @@ extern char *cp_program;
 extern RETSIGTYPE ft_sigintr(void);
 extern RETSIGTYPE sigfloat(int sig, int code);
 extern RETSIGTYPE sigstop(void);
-extern RETSIGTYPE sigquit();
 extern RETSIGTYPE sigill();
 extern RETSIGTYPE sigbus();
 extern RETSIGTYPE sigsegv();
@@ -506,7 +471,6 @@ extern void ft_loadfile(char *file);
 extern void vec_new(struct dvec *d);
 extern void plot_docoms(wordlist *wl);
 extern void vec_remove(char *name);
-extern void ft_sdatafree();
 extern void plot_setcur(char *name);
 extern void plot_new(struct plot *pl);
 extern char *vec_basename(struct dvec *v);

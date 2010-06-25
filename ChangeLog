@@ -1,3 +1,11 @@
+2010-06-25  Robert Larice
+ * src/frontend/hpgl.h,
+ * src/frontend/parser/glob.c,
+ * src/include/cpdefs.h,
+ * src/include/cpstd.h,
+ * src/include/fteext.h ;
+	remove abandoned / nowhere-to-be-found non-ansi prototypes
+
 2010-06-24  Robert Larice
  * src/main.c :
 	make use of allready defined enumerate Ipc_Status_t (IPC_STATUS_OK)

@@ -33,8 +33,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 
 
-bool noglobs();
-
 char cp_comma = ',';
 char cp_til = '~';
 
