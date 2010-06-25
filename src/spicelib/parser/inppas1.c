@@ -17,7 +17,6 @@ Author: 1985 Thomas L. Quarles
 void INPpas1(void *ckt, card * deck, INPtables * tab)
 {
     card *current;
-    char *INPdomodel(void *ckt, card * image, INPtables * tab);
     char *temp, *thisline;
 
     for (current = deck; current != NULL; current = current->nextcard) {

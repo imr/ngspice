@@ -195,8 +195,7 @@ spOrderAndFactor(void *eMatrix, RealNumber RHS[], RealNumber RelThreshold,
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
     ElementPtr  pPivot;
     int  Step, Size, ReorderingRequired;
-    ElementPtr SearchForPivot();
-    RealNumber LargestInCol, FindLargestInCol();
+    RealNumber LargestInCol;
 
     /* Begin `spOrderAndFactor'. */
     assert( IS_VALID(Matrix) && !Matrix->Factored);
@@ -982,10 +981,6 @@ static ElementPtr
 SearchForPivot( MatrixPtr Matrix, int Step, int DiagPivoting )
 {
 ElementPtr  ChosenPivot;
-ElementPtr  SearchForSingleton();
-ElementPtr  QuicklySearchDiagonal();
-ElementPtr  SearchDiagonal();
-ElementPtr  SearchEntireMatrix();
 
  /* Begin `SearchForPivot'. */
 
@@ -1087,7 +1082,7 @@ SearchForSingleton( MatrixPtr Matrix, int Step )
  int  I;
  long  *pMarkowitzProduct;
 int  Singletons;
-RealNumber  PivotMag, FindBiggestInColExclude();
+RealNumber  PivotMag;
 
  /* Begin `SearchForSingleton'. */
  /* Initialize pointer that is to scan through MarkowitzProduct vector. */
@@ -1521,7 +1516,6 @@ long  MinMarkowitzProduct, *pMarkowitzProduct;
 int  I;
 ElementPtr  ChosenPivot, pOtherInRow, pOtherInCol;
 RealNumber  Magnitude, LargestInCol, LargestOffDiagonal;
-RealNumber  FindBiggestInColExclude();
 
  /* Begin `QuicklySearchDiagonal'. */
     ChosenPivot = NULL;
@@ -1697,7 +1691,6 @@ SearchDiagonal( MatrixPtr Matrix, int Step )
     RealNumber  Magnitude, Ratio; 
     RealNumber  RatioOfAccepted = 0;
     RealNumber  LargestInCol;
-    RealNumber  FindBiggestInColExclude();
 
     /* Begin `SearchDiagonal'. */
     ChosenPivot = NULL;
@@ -1827,7 +1820,6 @@ SearchEntireMatrix( MatrixPtr Matrix, int Step )
     RealNumber  Magnitude, LargestElementMag, Ratio;
     RealNumber  RatioOfAccepted = 0;
     RealNumber  LargestInCol;
-    RealNumber  FindLargestInCol();
 
     /* Begin `SearchEntireMatrix'. */
     ChosenPivot = NULL;
@@ -2089,7 +2081,6 @@ ExchangeRowsAndCols( MatrixPtr Matrix, ElementPtr pPivot, int Step )
 {
  int   Row, Col;
 long  OldMarkowitzProd_Step, OldMarkowitzProd_Row, OldMarkowitzProd_Col;
-ElementPtr spcFindElementInCol();
 
  /* Begin `ExchangeRowsAndCols'. */
     Row = pPivot->Row;
@@ -2717,7 +2708,6 @@ RealRowColElimination( MatrixPtr Matrix, ElementPtr pPivot )
     ElementPtr  pSub;
     int  Row;
     ElementPtr  pLower, pUpper;
-    extern ElementPtr  CreateFillin();
 
     /* Begin `RealRowColElimination'. */
 
@@ -2805,7 +2795,6 @@ ComplexRowColElimination( MatrixPtr Matrix, ElementPtr pPivot )
     ElementPtr  pSub;
     int  Row;
     ElementPtr  pLower, pUpper;
-    ElementPtr  CreateFillin();
 
     /* Begin `ComplexRowColElimination'. */
 
@@ -2976,7 +2965,6 @@ static ElementPtr
 CreateFillin( MatrixPtr Matrix, int Row, int Col )
 {
  ElementPtr  pElement, *ppElementAbove;
-ElementPtr  spcCreateElement();
 
  /* Begin `CreateFillin'. */
 

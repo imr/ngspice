@@ -185,8 +185,6 @@ spFindElement( void *eMatrix, int Row, int Col )
 {
 MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 RealNumber  *pElement;
-ElementPtr spcFindElementInCol();
-void  Translate();
 
 /* Begin `spFindElement'. */
     assert( IS_SPARSE( Matrix ) AND Row >= 0 AND Col >= 0 );
@@ -270,8 +268,6 @@ spGetElement(void *eMatrix, int Row, int Col)
 {
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
     RealNumber  *pElement;
-    ElementPtr spcFindElementInCol();
-    void  Translate();
 
     /* Begin `spGetElement'. */
     assert( IS_SPARSE( Matrix ) && Row >= 0 && Col >= 0 );
@@ -371,7 +367,6 @@ spcFindElementInCol(MatrixPtr Matrix, ElementPtr *LastAddr,
 		    int  Row, int  Col, int  CreateIfMissing)
 {
     ElementPtr  pElement;
-    ElementPtr  spcCreateElement();
 
     /* Begin `spcFindElementInCol'. */
     pElement = *LastAddr;
@@ -777,7 +772,7 @@ spcCreateElement(MatrixPtr Matrix, int  Row, int  Col,
 		 ElementPtr  *LastAddr, int Fillin)
 {
     ElementPtr  pElement, pLastElement;
-    ElementPtr  pCreatedElement, spcGetElement(), spcGetFillin();
+    ElementPtr  pCreatedElement;
 
     /* Begin `spcCreateElement'. */
 

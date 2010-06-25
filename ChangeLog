@@ -1,4 +1,16 @@
 2010-06-25  Robert Larice
+ * src/frontend/com_hardcopy.c,
+ * src/maths/sparse/spbuild.c,
+ * src/maths/sparse/spfactor.c,
+ * src/maths/sparse/spoutput.c,
+ * src/maths/sparse/spsolve.c,
+ * src/maths/sparse/sputils.c,
+ * src/spicelib/analysis/dcop.c,
+ * src/spicelib/parser/inppas1.c,
+ * src/xspice/ipc/ipcsockets.c :
+	remove redundant nested function declarations
+	
+2010-06-25  Robert Larice
  * src/frontend/hpgl.h,
  * src/frontend/parser/glob.c,
  * src/include/cpdefs.h,

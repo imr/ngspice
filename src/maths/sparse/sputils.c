@@ -582,7 +582,6 @@ spMultiply(void *eMatrix, RealVector RHS, RealVector Solution,
     RealNumber  Sum;
     int  I, *pExtOrder;
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
-    extern void ComplexMatrixMultiply();
 
     /* Begin `spMultiply'. */
     assert( IS_SPARSE( Matrix ) && !Matrix->Factored );
@@ -729,7 +728,6 @@ spMultTransposed(void *eMatrix, RealVector RHS, RealVector Solution,
     RealNumber  Sum;
     int  I, *pExtOrder;
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
-    extern void ComplexTransposedMatrixMultiply();
 
     /* Begin `spMultTransposed'. */
     assert( IS_SPARSE( Matrix ) && !Matrix->Factored );

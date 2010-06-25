@@ -21,7 +21,6 @@ Modified: 2000  AlansFixes
 int
 DCop(CKTcircuit *ckt, int notused)
 {
-    int CKTload(CKTcircuit *ckt);
     int converged;
     int error;
     IFuid *nameList; /* va: tmalloc'ed list */

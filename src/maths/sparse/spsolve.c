@@ -133,7 +133,6 @@ spSolve(void *eMatrix, RealVector RHS, RealVector Solution,
     RealNumber  Temp;
     int  I, *pExtOrder, Size;
     ElementPtr  pPivot;
-    void SolveComplexMatrix();
 
     /* Begin `spSolve'. */
     assert( IS_VALID(Matrix) && IS_FACTORED(Matrix) );
@@ -410,7 +409,6 @@ spSolveTransposed(void *eMatrix, RealVector RHS, RealVector Solution,
     int  I, *pExtOrder, Size;
     ElementPtr  pPivot;
     RealNumber  Temp;
-    void SolveComplexTransposedMatrix();
 
     /* Begin `spSolveTransposed'. */
     assert( IS_VALID(Matrix) && IS_FACTORED(Matrix) );

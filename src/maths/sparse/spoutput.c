@@ -599,7 +599,6 @@ spFileVector(void *eMatrix, char *File, RealVector RHS, RealVector iRHS)
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
     int  I, Size, Err;
     FILE  *pMatrixFile;
-    FILE  *fopen();
 
     /* Begin `spFileVector'. */
     assert( IS_SPARSE( Matrix ) && RHS != NULL);
@@ -688,7 +687,7 @@ spFileStats(void *eMatrix, char *File, char *Label)
     ElementPtr  pElement;
     int NumberOfElements;
     RealNumber  Data, LargestElement, SmallestElement;
-    FILE  *pStatsFile, *fopen();
+    FILE  *pStatsFile;
 
     /* Begin `spFileStats'. */
     assert( IS_SPARSE( Matrix ) );

@@ -27,7 +27,6 @@ void
 com_hardcopy(wordlist *wl)
 {
     char *buf2;
-    wordlist *process(wordlist *wlist);
     char *fname;
     char buf[BSIZE_SP], device[BSIZE_SP];
     bool tempf = FALSE;
