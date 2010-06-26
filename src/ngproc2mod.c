@@ -6,11 +6,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include <config.h>
 #include "ngspice.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include "inpdefs.h"
 #include "suffix.h"
 
-
-void exit();
 
 #ifdef __STDC__
 void getdata(double*,int,int);

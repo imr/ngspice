@@ -8,6 +8,7 @@ Author: 1985 Thomas L. Quarles
 #define TRAN
 
 
+#include "cktdefs.h"
 #include "jobdefs.h"
 #include "tskdefs.h"
     /*
@@ -31,6 +32,6 @@ typedef struct {
 #define TRAN_TSTEP 3
 #define TRAN_TMAX 4
 #define TRAN_UIC 5
-extern int TRANsetParm();
-extern int TRANaskQuest();
+extern int TRANsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value);
+extern int TRANaskQuest(CKTcircuit *ckt, void *anal, int which,IFvalue *value);
 #endif /*TRAN*/

@@ -1,4 +1,11 @@
 2010-06-26  Robert Larice
+ * src/include/opdefs.h,
+ * src/include/trandefs.h :
+	ansi function declarations (prototypes)
+ * src/ngproc2mod.c:
+	exit() lives in <stdlib.h>
+
+2010-06-26  Robert Larice
  * src/frontend/commands.c:
 	NULL needs no cast
 

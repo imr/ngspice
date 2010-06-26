@@ -7,6 +7,7 @@ Author: 1985 Thomas L. Quarles
 #define DCOP
 
 
+#include "cktdefs.h"
 #include "jobdefs.h"
 #include "tskdefs.h"
     /*
@@ -20,6 +21,6 @@ typedef struct {
     char *JOBname;
 } OP;
 
-extern int DCOsetParm();
-extern int DCOaskQuest();
+extern int DCOsetParm(CKTcircuit *ckt, void *anal, int which, IFvalue *value);
+extern int DCOaskQuest(CKTcircuit *ckt, void *anal, int which, IFvalue *value);
 #endif /*DCOP*/
