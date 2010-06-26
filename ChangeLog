@@ -1,3 +1,9 @@
+2010-06-26  Robert Larice
+ * src/include/inpptree.h,
+ * src/spicelib/parser/ifeval.c,
+ * src/spicelib/parser/inpptree.c :
+	 avoid function pointer warnings
+
 2010-06-25  Robert Larice
  * src/frontend/com_hardcopy.c,
  * src/maths/sparse/spbuild.c,

@@ -83,7 +83,7 @@ PTeval(INPparseNode * tree, double gmin, double *res, double *vals)
             err = PTeval(tree->left->right, gmin, &r2, vals);
             if (err != OK)
                 return (err);
-            *res = (*tree->function) (r1, r2);
+            *res = PTbinary(tree -> function) (r1, r2);
             if (*res == HUGE) {
                 fprintf(stderr, "Error: %g, %g out of range for %s\n",
                 r1, r2, tree->funcname);
@@ -96,9 +96,9 @@ PTeval(INPparseNode * tree, double gmin, double *res, double *vals)
             if (err != OK)
                 return (err);
             if(tree->data == NULL)
-                *res = (*tree->function) (r1);
+                *res = PTunary(tree -> function) (r1);
             else
-                *res = (*tree->function) (r1, tree->data);
+                *res = PTunary_with_private(tree -> function) (r1, tree->data);
             if (*res == HUGE) {
                 fprintf(stderr, "Error: %g out of range for %s\n",
                 r1, tree->funcname);
@@ -138,7 +138,7 @@ PTeval(INPparseNode * tree, double gmin, double *res, double *vals)
 	err = PTeval(tree->right, gmin, &r2, vals);
 	if (err != OK)
 	    return (err);
-	*res = (*tree->function) (r1, r2);
+	*res = PTbinary(tree -> function) (r1, r2);
 	if (*res == HUGE) {
 	    fprintf(stderr, "Error: %g, %g out of range for %s\n",
 		    r1, r2, tree->funcname);

@@ -50,9 +50,21 @@ typedef struct INPparseNode {
     int valueIndex;         /* If INP_VAR, index into vars array. */
     char *funcname;         /* If INP_FUNCTION, name of function, */
     int funcnum;            /* ... one of PTF_*, */
-    double (*function)();       /* ... and pointer to the function. */
+    void *function;         /* ... and pointer to the function. */
     void *data;                 /* private data for certain functions, currently PTF_PWL */
 } INPparseNode;
+
+
+/* FIXME, less public
+ *   and replace with static inline functions for better type check
+ */
+
+#define PTunary(node_ptr) \
+    ((double(*)(double)) (node_ptr))
+#define PTbinary(node_ptr) \
+    ((double(*)(double, double)) (node_ptr))
+#define PTunary_with_private(node_ptr) \
+    ((double(*)(double, void*)) (node_ptr))
 
 /* These are the possible types of nodes we can have in the parse tree.  The
  * numbers for the ops 1 - 5 have to be the same as the token numbers,

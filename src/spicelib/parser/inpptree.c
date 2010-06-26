@@ -42,7 +42,7 @@ extern IFsimulator *ft_sim;	/* XXX */
 static struct op {
     int number;
     char *name;
-    double (*funcptr) ();
+    void *funcptr;
 } ops[] = {
     {
     PT_COMMA, ",", NULL}, {
@@ -58,7 +58,7 @@ static struct op {
 static struct func {
     char *name;
     int number;
-    double (*funcptr) ();
+    void *funcptr;
 } funcs[] = {
     { "abs",    PTF_ABS,    PTabs } ,
     { "acos",   PTF_ACOS,   PTacos } ,
@@ -665,7 +665,7 @@ static INPparseNode *mkf(int type, INPparseNode * arg)
     }
 
     if (arg->type == PT_CONSTANT) {
-	constval = ((*funcs[i].funcptr) (arg->constant));
+	constval = PTunary(funcs[i].funcptr) (arg->constant);
 	return (mkcon(constval));
     }
 
