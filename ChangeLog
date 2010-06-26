@@ -1,4 +1,8 @@
 2010-06-26  Robert Larice
+ * src/frontend/commands.c:
+	NULL needs no cast
+
+2010-06-26  Robert Larice
  * src/include/inpptree.h,
  * src/spicelib/parser/ifeval.c,
  * src/spicelib/parser/inpptree.c :
