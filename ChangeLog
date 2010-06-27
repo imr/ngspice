@@ -1,4 +1,13 @@
 2010-06-27  Robert Larice
+ * src/frontend/arg.c,
+ * src/frontend/arg.h,
+ * src/include/fteext.h :
+	function arg_display()
+	  change the arguments from none, to two unused args.
+	  as to fit with struct comm.co_argfn function pointer
+	add unused attribute later.
+
+2010-06-27  Robert Larice
  * src/include/ipcproto.h,
  * src/xspice/cmpp/ifs_yacc.y,
  * src/xspice/cmpp/mod_yacc.y,

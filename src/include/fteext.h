@@ -24,7 +24,7 @@ Modified: 1999 Paolo Nenzi - 2000 AlansFixes
 /* arg.c */
 
 extern void arg_plot(wordlist *wl, struct comm *command);
-extern void arg_display(void);
+extern void arg_display(wordlist *wl, struct comm *command);
 extern void arg_print(wordlist *wl, struct comm *command);
 extern void arg_let(wordlist *wl, struct comm *command);
 extern void arg_load(wordlist *wl, struct comm *command);

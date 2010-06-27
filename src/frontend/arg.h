@@ -14,7 +14,7 @@ void arg_plot(wordlist *wl, struct comm *command);
 void arg_load(wordlist *wl, struct comm *command);
 void arg_let(wordlist *wl, struct comm *command);
 void arg_set(wordlist *wl, struct comm *command);
-void arg_display(void);
+void arg_display(wordlist *wl, struct comm *command);
 void outmenuprompt(char *string);
 
 
