@@ -148,11 +148,10 @@ and error checks are performed.
 -------------------------------------------------------------------------*/
 
 void
-MIF_INP2A(ckt,tab,current)
-
-void         *ckt;      /* circuit structure to put mod/inst structs in */
-INPtables    *tab;      /* symbol table for node names, etc.            */
-card         *current;  /* the card we are to parse                     */
+MIF_INP2A (
+void         *ckt,      /* circuit structure to put mod/inst structs in */
+INPtables    *tab,      /* symbol table for node names, etc.            */
+card         *current ) /* the card we are to parse                     */
                         /* Must be called "current" for compatibility   */
                         /* with macros                                  */
 {

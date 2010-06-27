@@ -281,7 +281,7 @@ IPC channel.  These streams were previously redirected to temporary
 files during the simulation.
 */
 
-Ipc_Status_t ipc_send_std_files()
+Ipc_Status_t ipc_send_std_files(void)
 {
     ipc_send_stdout();
     ipc_send_stderr();

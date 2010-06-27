@@ -114,9 +114,8 @@ static int              batch_fd;
 static char fmt_buffer [FMT_BUFFER_SIZE];
 
 /*---------------------------------------------------------------------------*/
-Ipc_Boolean_t kw_match (keyword, str)
-     char *keyword;
-     char *str;
+Ipc_Boolean_t
+kw_match (char *keyword, char *str)
      /*
       * returns IPC_TRUE if the first `strlen(keyword)' characters of `str' match
       * the ones in `keyword' - case sensitive
@@ -152,10 +151,11 @@ server mailbox or socket.
 */
 
 
-Ipc_Status_t ipc_initialize_server (server_name, m, p)
-     char               *server_name;  /* Mailbox path or host/portnumber pair */
-     Ipc_Mode_t         m;             /* Interactive or batch */
-     Ipc_Protocol_t     p;             /* Type of IPC protocol */
+Ipc_Status_t
+ipc_initialize_server (
+     char               *server_name,  /* Mailbox path or host/portnumber pair */
+     Ipc_Mode_t         m,             /* Interactive or batch */
+     Ipc_Protocol_t     p )            /* Type of IPC protocol */
      /*
       * For mailboxes, `server_name' would be the mailbox pathname; for
       * sockets, this needs to be a host/portnumber pair. Maybe this should be
@@ -203,9 +203,10 @@ This function deallocates the interprocess communication channel
 mailbox or socket.
 */
 
-Ipc_Status_t ipc_transport_terminate_server ();
+Ipc_Status_t ipc_transport_terminate_server (void);
 
-Ipc_Status_t ipc_terminate_server ()
+Ipc_Status_t
+ipc_terminate_server (void)
 {
    return ipc_transport_terminate_server ();
 }
@@ -221,10 +222,11 @@ beginning with a ``>'' or ``#'' character are processed internally by
 this function and not returned to SPICE.
 */
 
-Ipc_Status_t ipc_get_line (str, len, wait)
-     char               *str;   /* Text retrieved from IPC channel */
-     int                *len;   /* Length of text string */
-     Ipc_Wait_t         wait;   /* Select blocking or non-blocking */
+Ipc_Status_t
+ipc_get_line (
+     char               *str,   /* Text retrieved from IPC channel */
+     int                *len,   /* Length of text string */
+     Ipc_Wait_t         wait )  /* Select blocking or non-blocking */
      /*
       * Reads one SPICE line from the connection. Strips any control lines
       * which cannot be interpretted by the simulator (e.g. >INQCON) and
@@ -371,7 +373,8 @@ This function flushes the interprocess communication channel
 buffer contents.
 */
 
-Ipc_Status_t ipc_flush ()
+Ipc_Status_t
+ipc_flush (void)
      /*
       * Flush all buffered messages out the connection.
       */
@@ -429,9 +432,10 @@ Ipc_Status_t ipc_flush ()
 }
 
 /*---------------------------------------------------------------------------*/
-Ipc_Status_t ipc_send_line_binary (str, len)
-     char *str;
-     int  len;
+Ipc_Status_t
+ipc_send_line_binary (
+     char *str,
+     int  len )
      /*
       * Same as `ipc_send_line' except does not expect the str to be null
       * terminated. Sends exactly `len' characters. Use this for binary data
@@ -490,8 +494,8 @@ communication channel.
 */
 
 
-Ipc_Status_t ipc_send_line (str)
-     char               *str;     /* The text to send */
+Ipc_Status_t
+ipc_send_line (char *str )     /* The text to send */
 { 
    int len;
    int send_len;
@@ -536,8 +540,8 @@ communication channel to signal that this is the beginning of a
 results dump for the current analysis point.
 */
 
-Ipc_Status_t ipc_send_data_prefix (time)
-     double             time;    /* The analysis point for this data set */
+Ipc_Status_t
+ipc_send_data_prefix (double time )    /* The analysis point for this data set */
 {
    char buffer[40];
 
@@ -556,7 +560,8 @@ dump from a particular analysis point.
 */
 
 
-Ipc_Status_t ipc_send_data_suffix ()
+Ipc_Status_t
+ipc_send_data_suffix (void)
 {
    Ipc_Status_t  status;
 
@@ -578,7 +583,8 @@ communication channel to signal that this is the beginning of a
 results dump from a DC operating point analysis.
 */
 
-Ipc_Status_t ipc_send_dcop_prefix ()
+Ipc_Status_t
+ipc_send_dcop_prefix (void)
 {
    return ipc_send_line (">DCOPB");
 }
@@ -594,7 +600,8 @@ dump from a particular analysis point.
 */
 
 
-Ipc_Status_t ipc_send_dcop_suffix ()
+Ipc_Status_t
+ipc_send_dcop_suffix (void)
 {
    Ipc_Status_t  status;
 
@@ -620,7 +627,8 @@ The line is sent only if the IPC is configured
 for UNIX sockets, indicating use with the V2 ATESSE SI process.
 */
 
-Ipc_Status_t ipc_send_evtdict_prefix ()
+Ipc_Status_t
+ipc_send_evtdict_prefix (void)
 {
 #ifdef IPC_AEGIS_MAILBOXES
    return IPC_STATUS_OK;
@@ -643,7 +651,8 @@ for UNIX sockets, indicating use with the V2 ATESSE SI process.
 */
 
 
-Ipc_Status_t ipc_send_evtdict_suffix ()
+Ipc_Status_t
+ipc_send_evtdict_suffix (void)
 {
 #ifdef IPC_AEGIS_MAILBOXES
    return IPC_STATUS_OK;
@@ -673,7 +682,8 @@ The line is sent only if the IPC is configured
 for UNIX sockets, indicating use with the V2 ATESSE SI process.
 */
 
-Ipc_Status_t ipc_send_evtdata_prefix ()
+Ipc_Status_t
+ipc_send_evtdata_prefix (void)
 {
 #ifdef IPC_AEGIS_MAILBOXES
    return IPC_STATUS_OK;
@@ -696,7 +706,8 @@ for UNIX sockets, indicating use with the V2 ATESSE SI process.
 */
 
 
-Ipc_Status_t ipc_send_evtdata_suffix ()
+Ipc_Status_t
+ipc_send_evtdata_suffix (void)
 {
 #ifdef IPC_AEGIS_MAILBOXES
    return IPC_STATUS_OK;
@@ -725,7 +736,8 @@ whether or not errors were detected.
 */
 
 
-Ipc_Status_t ipc_send_errchk()
+Ipc_Status_t
+ipc_send_errchk(void)
 {
     char str[IPC_MAX_LINE_LEN+1];
     Ipc_Status_t  status;
@@ -759,7 +771,8 @@ completed normally.
 */
 
 
-Ipc_Status_t ipc_send_end()
+Ipc_Status_t
+ipc_send_end(void)
 {
     char str[IPC_MAX_LINE_LEN+1];
     Ipc_Status_t  status;
@@ -778,11 +791,12 @@ Ipc_Status_t ipc_send_end()
 
 
 /*---------------------------------------------------------------------------*/
-int stuff_binary_v1 (d1, d2, n, buf, pos)
-     double     d1, d2;         /* doubles to be stuffed                */
-     int        n;              /* how many of d1, d2 ( 1 <= n <= 2 )   */
-     char       *buf;           /* buffer to stuff to                   */
-     int        pos;            /* index at which to stuff              */
+int
+stuff_binary_v1 (
+     double     d1, double d2,  /* doubles to be stuffed                */
+     int        n,              /* how many of d1, d2 ( 1 <= n <= 2 )   */
+     char       *buf,           /* buffer to stuff to                   */
+     int        pos )           /* index at which to stuff              */
 {
    union {
       float float_val[2];
@@ -817,9 +831,10 @@ communication channel preceded by a character string that
 identifies the simulation variable.
 */
 
-Ipc_Status_t ipc_send_double (tag, value)
-     char               *tag;    /* The node or instance */
-     double             value;   /* The data value to send */
+Ipc_Status_t
+ipc_send_double (
+     char               *tag,    /* The node or instance */
+     double             value )  /* The data value to send */
 {
    int i;
    int len = 0;
@@ -857,9 +872,10 @@ identifies the simulation variable.
 */
 
 
-Ipc_Status_t ipc_send_complex (tag, value)
-     char               *tag;    /* The node or instance */
-     Ipc_Complex_t      value;   /* The data value to send */
+Ipc_Status_t
+ipc_send_complex (
+     char               *tag,    /* The node or instance */
+     Ipc_Complex_t      value )  /* The data value to send */
 {
    int i;
    int len=0;
@@ -898,13 +914,14 @@ for UNIX sockets, indicating use with the V2 ATESSE SI process.
 */
 
 
-Ipc_Status_t ipc_send_event(ipc_index, step, plot_val, print_val, ipc_val, len)
-    int         ipc_index;      /* Index used in EVTDICT */
-    double      step;           /* Analysis point or timestep (0.0 for DC) */
-    double      plot_val;       /* The value for plotting purposes */
-    char        *print_val;     /* The value for printing purposes */
-    void        *ipc_val;       /* The binary representation of the node data */
-    int         len;            /* The length of the binary representation */
+Ipc_Status_t
+ipc_send_event (
+    int         ipc_index,      /* Index used in EVTDICT */
+    double      step,           /* Analysis point or timestep (0.0 for DC) */
+    double      plot_val,       /* The value for plotting purposes */
+    char        *print_val,     /* The value for printing purposes */
+    void        *ipc_val,       /* The binary representation of the node data */
+    int         len )           /* The length of the binary representation */
 {
 #ifdef IPC_AEGIS_MAILBOXES
    return IPC_STATUS_OK;

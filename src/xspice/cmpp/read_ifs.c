@@ -166,8 +166,8 @@ static Status_t read_ifs_table(
 }
 
 /*---------------------------------------------------------------------------*/
-int ifs_yyerror (str)
-     char *str;
+int
+ifs_yyerror (char *str)
 {
    extern int ifs_yylineno;
    extern char *ifs_yytext;

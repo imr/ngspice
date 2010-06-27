@@ -484,7 +484,7 @@ prompt(void)
 /* Process device events in Readline's hook since there is no where
    else to do it now - AV */
 static int
-rl_event_func()
+rl_event_func(void)
 /* called by GNU readline periodically to know what to do about keypresses */
 {
     static REQUEST reqst = { checkup_option, 0 };

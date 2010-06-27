@@ -51,27 +51,27 @@ struct coreInfo_t *coreitf;
 #endif
 
 // This one returns the device table
-CM_EXPORT void *CMdevs() {
+CM_EXPORT void *CMdevs(void) {
 	return (void *)cmDEVices;
 }
 
 // This one returns the device count
-CM_EXPORT void *CMdevNum() {
+CM_EXPORT void *CMdevNum(void) {
 	return (void *)&cmDEVicesCNT;
 }
 
 // This one returns the UDN table
-CM_EXPORT void *CMudns() {
+CM_EXPORT void *CMudns(void) {
 	return (void *)cmEVTudns;
 }
 
 // This one returns the UDN count
-CM_EXPORT void *CMudnNum() {
+CM_EXPORT void *CMudnNum(void) {
 	return (void *)&cmEVTudnCNT;
 }
 
 // This one returns the pointer to the pointer to the core interface structure
-CM_EXPORT void *CMgetCoreItfPtr() {
+CM_EXPORT void *CMgetCoreItfPtr(void) {
 	return (void *)(&coreitf);
 }
 

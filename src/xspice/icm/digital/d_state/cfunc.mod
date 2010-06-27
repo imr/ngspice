@@ -392,10 +392,9 @@ deck and returns a floating point equivalent value.
 */
 
 
-static int cnv_get_spice_value(str,p_value)
-
-char    *str;        /* IN - The value text e.g. 1.2K */
-float   *p_value;    /* OUT - The numerical value     */
+static int cnv_get_spice_value(
+char    *str,        /* IN - The value text e.g. 1.2K */
+float   *p_value )   /* OUT - The numerical value     */
 {
 
 

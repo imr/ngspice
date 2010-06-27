@@ -174,8 +174,8 @@ void preprocess_mod_file (
 }
 
 /*---------------------------------------------------------------------------*/
-int mod_yyerror (str)
-     char *str;
+int
+mod_yyerror (char *str)
 {
    extern int mod_yylineno;
    extern char *mod_yytext;

@@ -1,3 +1,22 @@
+2010-06-27  Robert Larice
+ * src/main.c,
+ * src/spicelib/devices/dev.c,
+ * src/xspice/cm/cmmeters.c,
+ * src/xspice/cmpp/ifs_lex.l,
+ * src/xspice/cmpp/ifs_yacc.y,
+ * src/xspice/cmpp/mod_yacc.y,
+ * src/xspice/cmpp/pp_mod.c,
+ * src/xspice/cmpp/read_ifs.c,
+ * src/xspice/icm/digital/d_source/cfunc.mod,
+ * src/xspice/icm/digital/d_state/cfunc.mod,
+ * src/xspice/icm/dlmain.c,
+ * src/xspice/ipc/ipc.c,
+ * src/xspice/ipc/ipcsockets.c,
+ * src/xspice/ipc/ipctiein.c,
+ * src/xspice/mif/mif_inp2.c,
+ * src/xspice/mif/mifgetvalue.c :
+	convert K&R function definitions to ansi style
+
 2010-06-26  Robert Larice
  * src/include/opdefs.h,
  * src/include/trandefs.h :

@@ -158,12 +158,12 @@ NON-STANDARD FEATURES
      
 =============================================================================*/
 
-Ipc_Status_t ipc_transport_initialize_server (server_name, mode, protocol,
-                                              batch_filename)
-     char               *server_name;     /* not used                      */
-     Ipc_Mode_t         mode;             /* not used                      */
-     Ipc_Protocol_t     protocol;         /* IN - only used in assert      */
-     char               *batch_filename;  /* OUT - returns a value         */
+Ipc_Status_t
+ipc_transport_initialize_server (
+     char               *server_name,     /* not used                      */
+     Ipc_Mode_t         mode,             /* not used                      */
+     Ipc_Protocol_t     protocol,         /* IN - only used in assert      */
+     char               *batch_filename ) /* OUT - returns a value         */
      /* Note that unused parameters are required to maintain compatibility */
      /* with version 1 (mailboxes) functions of the same names.            */
 {
@@ -279,9 +279,10 @@ NON-STANDARD FEATURES
      
 =============================================================================*/
 
-static u_long bytes_to_integer (str, start)
-     char   *str;	/* IN - string that contains the bytes to convert  */
-     int    start;	/* IN - index into string where bytes are          */
+static u_long
+bytes_to_integer (
+     char   *str,	/* IN - string that contains the bytes to convert  */
+     int    start )	/* IN - index into string where bytes are          */
 {
   u_long u;             /* Value to be returned                            */
   char   buff[4];       /* Transfer str into buff to word align reqd data  */
@@ -341,7 +342,8 @@ NON-STANDARD FEATURES
 =============================================================================*/
 
 
-static Ipc_Status_t handle_socket_eof ()
+static Ipc_Status_t
+handle_socket_eof (void)
 {
   close (msg_stream);
   close (sock_desc);
@@ -390,12 +392,13 @@ NON-STANDARD FEATURES
 =============================================================================*/
 
 
-static int read_sock (stream, buffer, length, wait, flags)
-     int          stream;   /* IN - Socket stream                          */
-     char         *buffer;  /* OUT - buffer to store incoming data         */
-     int          length;   /* IN - Number of bytes to be read             */
-     Ipc_Wait_t   wait;     /* IN - type of read operation                 */
-     int          flags;    /* IN - Original socket flags for blocking read */
+static int
+read_sock (
+     int          stream,   /* IN - Socket stream                          */
+     char         *buffer,  /* OUT - buffer to store incoming data         */
+     int          length,   /* IN - Number of bytes to be read             */
+     Ipc_Wait_t   wait,     /* IN - type of read operation                 */
+     int          flags )   /* IN - Original socket flags for blocking read */
 {
   int   count;			/* Number of bytes read with last `read`    */
   int   totalcount;		/* total number of bytes read               */
@@ -475,10 +478,11 @@ NON-STANDARD FEATURES
 =============================================================================*/
 
 
-Ipc_Status_t ipc_transport_get_line (str, len, wait)
-     char               *str;    /* returns the result, null terminated    */
-     int                *len;    /* length of str passed IN and passed OUT */
-     Ipc_Wait_t         wait;    /* IN - wait or dont wait on incoming msg */
+Ipc_Status_t
+ipc_transport_get_line (
+     char               *str,    /* returns the result, null terminated    */
+     int                *len,    /* length of str passed IN and passed OUT */
+     Ipc_Wait_t         wait )   /* IN - wait or dont wait on incoming msg */
 {
   int count = 0;                     /* number of bytes read                   */
   int message_length;            /* extracted from message header          */
@@ -635,9 +639,10 @@ NON-STANDARD FEATURES
 =============================================================================*/
 
 
-Ipc_Status_t ipc_transport_send_line (str, len)
-     char *str;           /* IN - String to write                          */
-     int len;             /* IN - Number of characters out of STR to write */
+Ipc_Status_t
+ipc_transport_send_line (
+     char *str,           /* IN - String to write                          */
+     int len )            /* IN - Number of characters out of STR to write */
 {
   int count;              /* Counts how many bytes were actually written   */
   u_long u;               /* 32-bit placeholder for transmission of LEN    */
@@ -717,7 +722,8 @@ NON-STANDARD FEATURES
 =============================================================================*/
 
 
-Ipc_Status_t ipc_transport_terminate_server ()
+Ipc_Status_t
+ipc_transport_terminate_server (void)
 {
    char buffer[17000];		/* temp buffer for incoming data           */
    int len;			/* placeholder var to as arg to function   */

@@ -61,7 +61,7 @@ model.  It returns the parallel combination of the capacitance
 connected to the first port on the instance.
 */
 
-double cm_netlist_get_c()
+double cm_netlist_get_c(void)
 {
     CKTcircuit          *ckt;
     
@@ -192,7 +192,7 @@ connected to the first port on the instance.
 */
 
 
-double cm_netlist_get_l()
+double cm_netlist_get_l(void)
 {
     CKTcircuit          *ckt;
     

@@ -122,9 +122,8 @@ static char *subscript (Sub_Id_t sub_id)
 }
 
 /*--------------------------------------------------------------------------*/
-int local_strcmpi(s, t)
-     char *s;
-     char *t;
+int
+local_strcmpi(char *s, char *t)
      /* string compare -  case insensitive */
 {
    for (; *s && t && tolower(*s) == tolower(*t); s++, t++);
@@ -306,7 +305,7 @@ static int valid_subid (Sub_Id_t sub_id, Id_Kind_t kind)
 }
 
 /*---------------------------------------------------------------------------*/
-static void init_buffer ()
+static void init_buffer (void)
 {
    buf_len = 0;
    buffer[0] = '\0';

@@ -354,7 +354,7 @@ void load_alldevs(void){
 #include "fteext.h"  /* for ft_sim */
 #include "cktdefs.h" /* for DEVmaxnum */
 
-static void relink() {
+static void relink(void) {
   /*  added by SDB; DEVmaxnum is an external int defined in cktdefs.h  */
   extern int DEVmaxnum;
 

@@ -176,8 +176,8 @@ static void fatal (char *str)
 }
 
 /*---------------------------------------------------------------------------*/
-static int find_conn_ref (name)
-     char *name;
+static int
+find_conn_ref (char *name)
 {
    int i;
    char str[130];
@@ -268,9 +268,8 @@ static void check_default_type (Conn_Info_t conn)
 }
 
 /*---------------------------------------------------------------------------*/
-static void assign_ctype_list (conn, ctype_list)
-     Conn_Info_t  *conn;
-     Ctype_List_t *ctype_list;
+static void
+assign_ctype_list (Conn_Info_t  *conn, Ctype_List_t *ctype_list )
 {
    int i;
    Ctype_List_t *p;
@@ -302,10 +301,8 @@ static void assign_ctype_list (conn, ctype_list)
 }
 
 /*---------------------------------------------------------------------------*/
-static void assign_value (type, dest_value, src_value)
-   Data_Type_t	type;
-   Value_t	*dest_value;
-   My_Value_t	src_value;
+static void
+assign_value (Data_Type_t type, Value_t *dest_value, My_Value_t src_value)
 {
    char str[200];
    if ((type == REAL) && (src_value.kind == INTEGER)) {
@@ -339,10 +336,8 @@ static void assign_value (type, dest_value, src_value)
 }   
 
 /*---------------------------------------------------------------------------*/
-static void assign_limits (type, param, range)
-     Data_Type_t	type;
-     Param_Info_t	*param;
-     Range_t		range;
+static void
+assign_limits (Data_Type_t type, Param_Info_t *param, Range_t range)
 {
    if (range.is_named) {
       yyerror ("Named range not allowed for limits");
@@ -358,7 +353,8 @@ static void assign_limits (type, param, range)
 }
 
 /*---------------------------------------------------------------------------*/
-static void check_item_num ()
+static void
+check_item_num (void)
 {
    if (item-item_offset >= ITEM_BUFFER_SIZE) {
       fatal ("Too many items in table - split into sub-tables");
@@ -400,7 +396,8 @@ static void check_item_num ()
 }
 
 /*---------------------------------------------------------------------------*/
-static void check_end_item_num ()
+static void
+check_end_item_num (void)
 {
    if (num_items_fixed) {
       if (item != num_items) {

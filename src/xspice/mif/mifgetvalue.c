@@ -83,12 +83,12 @@ the number of elements found.
 
 
 IFvalue *
-MIFgetValue(ckt,line,type,tab,err)
-    void   *ckt;       /* The circuit structure */
-    char      **line;     /* The text line to read value from */
-    int       type;       /* The type of data to read */
-    INPtables *tab;       /* Unused */
-    char      **err;      /* Error string text */
+MIFgetValue (
+    void   *ckt,       /* The circuit structure */
+    char      **line,     /* The text line to read value from */
+    int       type,       /* The type of data to read */
+    INPtables *tab,       /* Unused */
+    char      **err )     /* Error string text */
 {
     static IFvalue val;
 

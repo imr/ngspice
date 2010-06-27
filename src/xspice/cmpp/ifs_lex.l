@@ -174,7 +174,7 @@ false				{return TOK_BOOL_NO;}
 %%
 
 /*--------------------------------------------------------------------------*/
-void reset_lex_context ()
+void reset_lex_context (void)
 {
    BEGIN 0;
 }
