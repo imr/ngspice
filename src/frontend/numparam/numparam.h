@@ -18,7 +18,6 @@ typedef enum {Nodekey='#'} _nNodekey;   /* Introduces node symbol */
 typedef enum {Intro='&'} _nIntro;       /* Introduces preprocessor tokens */
 typedef enum {Comment='*'} _nComment;   /* Spice Comment lines*/
 typedef enum {Pspice='{'} _nPspice;     /* Pspice expression */
-//typedef enum {Maxdico=40000} _nMaxdico; /* Size of symbol table*/
 typedef enum {Defd=15} _nDefd; /* serial numb. of 'defined' keyword. The others are not used (yet) */
 
 /* Composite line length
@@ -26,12 +25,6 @@ typedef enum {Defd=15} _nDefd; /* serial numb. of 'defined' keyword. The others 
    .model line, especially when spread over several continuation 
    lines with much white space.  Set to 40000 to catch really big
    macros in .model lines. Will add 100k of memory compared to previous 25004*/
-//typedef enum {Llen=40000} _nLlen;
-
-
-//typedef enum {Maxline=70000} _nMaxline; /* Size of initial unexpanded circuit code */
-//typedef enum {Maxckt=40000} _nMaxckt;   /* Size of expanded circuit code */
-
 
 typedef char * auxtable; /* dummy */
 
@@ -43,13 +36,13 @@ typedef struct _tentry {
   char *symbol ;
   int  level; /* subckt nesting level */
   double vl;    /* float value if defined */
-  unsigned short   ivl;   /*int value or string buffer index*/
+  unsigned  ivl;   /*int value or string buffer index*/
   char *  sbbase; /* string buffer base address if any */
   struct _tentry *pointer ;	/* pointer chain */
 } entry;
 
 typedef struct _tfumas { /*function,macro,string*/
-   unsigned short   start /*,stop*/ ; /*buffer index or location */
+   unsigned start /*,stop*/ ; /*buffer index or location */
 } fumas;
 
 typedef struct _ttdico {
@@ -69,9 +62,7 @@ typedef struct _ttdico {
   fumas   fms[101];
   int   nfms;   /* number of functions & macros */
   auxtable nodetab;
-//  char * refptr[Maxline]; /* pointers to source code lines */
   char **dynrefptr;
-//  char category[Maxline]; /* category of each line */
   char *dyncategory;
   int hspice_compatibility;	/* allow hspice keywords */
 } tdico;

@@ -1,3 +1,7 @@
+
+2010-06-23  Holger Vogt
+ * numparam.h: short replaced by int
+
 2010-06-27  Robert Larice
  * src/frontend/arg.c,
  * src/frontend/arg.h,
