@@ -20,12 +20,6 @@ typedef enum {Comment='*'} _nComment;   /* Spice Comment lines*/
 typedef enum {Pspice='{'} _nPspice;     /* Pspice expression */
 typedef enum {Defd=15} _nDefd; /* serial numb. of 'defined' keyword. The others are not used (yet) */
 
-/* Composite line length
-   This used to be 250 characters, but this is too easy to exceed with a
-   .model line, especially when spread over several continuation 
-   lines with much white space.  Set to 40000 to catch really big
-   macros in .model lines. Will add 100k of memory compared to previous 25004*/
-
 typedef char * auxtable; /* dummy */
 
 /* -----------------------------------------------------------------
