@@ -24,10 +24,10 @@ Ipc_Status_t ipc_send_double_array (char *tag , int array_len , double *value );
 Ipc_Status_t ipc_send_complex_array (char *tag , int array_len , Ipc_Complex_t *value );
 Ipc_Status_t ipc_send_boolean_array (char *tag , int array_len , Ipc_Boolean_t *value );
 Ipc_Status_t ipc_send_string_array (char *tag , int array_len , char **value );
-Ipc_Status_t ipc_send_evtdict_prefix ();
-Ipc_Status_t ipc_send_evtdict_suffix ();
-Ipc_Status_t ipc_send_evtdata_prefix ();
-Ipc_Status_t ipc_send_evtdata_suffix ();
+Ipc_Status_t ipc_send_evtdict_prefix (void );
+Ipc_Status_t ipc_send_evtdict_suffix (void );
+Ipc_Status_t ipc_send_evtdata_prefix (void );
+Ipc_Status_t ipc_send_evtdata_suffix (void );
 Ipc_Status_t ipc_send_event(int, double, double, char *, void *, int);
 
 /* IPCtiein.c */

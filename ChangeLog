@@ -1,4 +1,12 @@
 2010-06-27  Robert Larice
+ * src/include/ipcproto.h,
+ * src/xspice/cmpp/ifs_yacc.y,
+ * src/xspice/cmpp/mod_yacc.y,
+ * src/xspice/cmpp/pp_mod.c,
+ * src/xspice/cmpp/read_ifs.c :
+	ansi function declarations (prototypes)
+
+2010-06-27  Robert Larice
  * src/main.c,
  * src/spicelib/devices/dev.c,
  * src/xspice/cm/cmmeters.c,
@@ -45,7 +53,7 @@
  * src/spicelib/parser/inppas1.c,
  * src/xspice/ipc/ipcsockets.c :
 	remove redundant nested function declarations
-	
+
 2010-06-25  Robert Larice
  * src/frontend/hpgl.h,
  * src/frontend/parser/glob.c,

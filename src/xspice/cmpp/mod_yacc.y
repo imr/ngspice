@@ -53,6 +53,8 @@ NON-STANDARD FEATURES
 #include <stdlib.h>
 #include "mod_yacc_y.h"
 
+extern int mod_yylex(void);
+
 #define	yymaxdepth mod_yymaxdepth
 #define	yyparse	mod_yyparse
 #define	yylex	mod_yylex

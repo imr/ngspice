@@ -51,7 +51,7 @@ NON-STANDARD FEATURES
 #include  "cmpp.h"
 
 extern char *prog_name;
-extern int ifs_yyparse ();
+extern int ifs_yyparse (void);
 extern void ifs_yyrestart (FILE*);
 
 void  *malloc(unsigned size);

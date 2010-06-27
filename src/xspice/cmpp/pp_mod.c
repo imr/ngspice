@@ -60,7 +60,7 @@ NON-STANDARD FEATURES
 #include <unistd.h>
 #include  "cmpp.h"
 
-extern int mod_yyparse();
+extern int mod_yyparse(void);
 extern void mod_yyrestart (FILE*);
 
 /*---------------------------------------------------------------------------*/
