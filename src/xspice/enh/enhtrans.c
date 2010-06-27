@@ -319,8 +319,8 @@ static char *two2three_translate(
       printf("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
       printf("ERROR  while parsing: %s\n", orig_card);
       errmsg = copy("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
-      *inst_card = (void *)copy(" * ERROR Argument to poly() is not an integer");
-      *mod_card  = (void *)copy(" * ERROR Argument to poly() is not an integer");
+      *inst_card = copy(" * ERROR Argument to poly() is not an integer");
+      *mod_card  = copy(" * ERROR Argument to poly() is not an integer");
       return errmsg;
    }
 
@@ -354,8 +354,8 @@ static char *two2three_translate(
       printf("ERROR - Number of connections differs from poly dimension\n");
       printf("ERROR  while parsing: %s\n", orig_card);
       errmsg = copy("ERROR in two2three_translate -- Argument to poly() is not an integer\n");
-      *inst_card = (void *)copy("* ERROR - Number of connections differs from poly dimension\n");
-      *mod_card  = (void *)copy(" * ERROR - Number of connections differs from poly dimension\n");
+      *inst_card = copy("* ERROR - Number of connections differs from poly dimension\n");
+      *mod_card  = copy(" * ERROR - Number of connections differs from poly dimension\n");
       return(errmsg);
 }
    /* Split card into name, output connections, input connections, */
