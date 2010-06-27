@@ -212,10 +212,10 @@ com_let(wordlist *wl)
 	    n->v_flags &= ~VF_PERMANENT;
 	goto quit;
     } else if (isreal(t)) {
-	bcopy((char *) t->v_realdata, (char *) (n->v_realdata + offset),
+	bcopy(t->v_realdata, n->v_realdata + offset,
 		length * sizeof (double));
     } else {
-	bcopy((char *) t->v_compdata, (char *) (n->v_compdata + offset),
+	bcopy(t->v_compdata, n->v_compdata + offset,
 		length * sizeof (complex));
     }
 

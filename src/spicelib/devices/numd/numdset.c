@@ -196,7 +196,7 @@ NUMDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	    pMaterial = pMaterial->next;
 	  }
 	  /* Copy everything, then fix the incorrect pointer. */
-	  bcopy((void *) pM, (void *) pMaterial, sizeof(ONEmaterial));
+	  bcopy(pM, pMaterial, sizeof(ONEmaterial));
 	  pMaterial->next = NIL(ONEmaterial);
 	}
 
@@ -210,7 +210,7 @@ NUMDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
       ONEgetStatePointers(inst->NUMDpDevice, states);
 
       /* Wipe out statistics from previous runs (if any). */
-      bzero((void *) inst->NUMDpDevice->pStats, sizeof(ONEstats));
+      bzero(inst->NUMDpDevice->pStats, sizeof(ONEstats));
 
       inst->NUMDpDevice->pStats->totalTime[STAT_SETUP] +=
 	  SPfrontEnd->IFseconds() - startTime;

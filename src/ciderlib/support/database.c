@@ -40,7 +40,7 @@ int lengthWanted;
 
   data = (double *) tmalloc(sizeof (double) * v->v_length);
   if (isreal(v)) {
-    bcopy((char *) v->v_realdata, (char *) data, sizeof (double) * v->v_length);
+    bcopy(v->v_realdata, data, sizeof (double) * v->v_length);
   } else {
     for (i=0; i < v->v_length; i++) {
       data[i] = realpart(&v->v_compdata[i]);

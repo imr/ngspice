@@ -205,7 +205,7 @@ NBJTsetup(matrix, inModel, ckt, states)
 	    pMaterial = pMaterial->next;
 	  }
 	  /* Copy everything, then fix the incorrect pointer. */
-	  bcopy((char *) pM, (char *) pMaterial, sizeof(ONEmaterial));
+	  bcopy(pM, pMaterial, sizeof(ONEmaterial));
 	  pMaterial->next = NIL(ONEmaterial);
 	}
 
@@ -225,7 +225,7 @@ NBJTsetup(matrix, inModel, ckt, states)
       ONEgetStatePointers(inst->NBJTpDevice, states);
 
       /* Wipe out statistics from previous runs (if any). */
-      bzero((char *) inst->NBJTpDevice->pStats, sizeof(ONEstats));
+      bzero(inst->NBJTpDevice->pStats, sizeof(ONEstats));
 
       inst->NBJTpDevice->pStats->totalTime[STAT_SETUP] +=
 	  SPfrontEnd->IFseconds() - startTime;

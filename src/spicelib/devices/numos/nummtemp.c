@@ -85,7 +85,7 @@ NUMOStemp(inModel, ckt)
 
 	/* Copy everything, then fix the incorrect pointer. */
 	pNextMaterial = pMaterial->next;
-	bcopy((char *) pM, (char *) pMaterial, sizeof(TWOmaterial));
+	bcopy(pM, pMaterial, sizeof(TWOmaterial));
 	pMaterial->next = pNextMaterial;
 
 	/* Now do the temperature dependence. */

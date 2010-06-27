@@ -109,7 +109,7 @@ GRAPH *CopyGraph(GRAPH *graph)
     struct dveclist *link, *newlink;
 
     ret = NewGraph();
-    bcopy((void *)graph, (void *)ret, sizeof(GRAPH)); /* va: compatible pointer types */
+    bcopy(graph, ret, sizeof(GRAPH)); /* va: compatible pointer types */
 
     ret->graphid = RunningId - 1;   /* restore id */
 

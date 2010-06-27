@@ -584,14 +584,14 @@ vec_copy(struct dvec *v)
     if (isreal(v)) {
         nv->v_realdata = (double *) tmalloc(sizeof (double) *
                 v->v_length);
-        bcopy((char *) v->v_realdata, (char *) nv->v_realdata, 
+        bcopy(v->v_realdata, nv->v_realdata, 
                 sizeof (double) * v->v_length);
         nv->v_compdata = NULL;
     } else {
         nv->v_realdata = NULL;
         nv->v_compdata = (complex *) tmalloc(sizeof (complex) *
                 v->v_length);
-        bcopy((char *) v->v_compdata, (char *) nv->v_compdata, 
+        bcopy(v->v_compdata, nv->v_compdata, 
                 sizeof (complex) * v->v_length);
     }
 

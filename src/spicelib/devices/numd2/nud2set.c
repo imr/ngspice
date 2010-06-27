@@ -227,7 +227,7 @@ NUMD2setup(matrix, inModel, ckt, states)
 	    pMaterial = pMaterial->next;
 	  }
 	  /* Copy everything, then fix the incorrect pointer. */
-	  bcopy((char *) pM, (char *) pMaterial, sizeof(TWOmaterial));
+	  bcopy(pM, pMaterial, sizeof(TWOmaterial));
 	  pMaterial->next = NIL(TWOmaterial);
 	}
 
@@ -241,7 +241,7 @@ NUMD2setup(matrix, inModel, ckt, states)
       TWOgetStatePointers(inst->NUMD2pDevice, states);
 
       /* Wipe out statistics from previous runs (if any). */
-      bzero((char *) inst->NUMD2pDevice->pStats, sizeof(TWOstats));
+      bzero(inst->NUMD2pDevice->pStats, sizeof(TWOstats));
 
       inst->NUMD2pDevice->pStats->totalTime[STAT_SETUP] +=
 	  SPfrontEnd->IFseconds() - startTime;

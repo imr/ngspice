@@ -479,7 +479,7 @@ resume:
 
         if(firstTime) {
             firstTime=0;
-            bcopy((char *)ckt->CKTstate0,(char *)ckt->CKTstate1,
+            bcopy(ckt->CKTstate0, ckt->CKTstate1,
                     ckt->CKTnumStates*sizeof(double));
         }
 

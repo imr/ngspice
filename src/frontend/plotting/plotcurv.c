@@ -220,13 +220,13 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
 
     /* Plot the first degree segments... */
     if (isreal(v))
-        bcopy((char *) v->v_realdata, (char *) ydata, 
+        bcopy(v->v_realdata, ydata, 
                 (degree + 1) * sizeof (double));
     else
         for (i = 0; i <= degree; i++)
             ydata[i] = realpart(&v->v_compdata[i]);
     if (isreal(xs))
-        bcopy((char *) xs->v_realdata, (char *) xdata, 
+        bcopy(xs->v_realdata, xdata, 
                 (degree + 1) * sizeof (double));
     else
         for (i = 0; i <= degree; i++)

@@ -449,7 +449,7 @@ com_write(wordlist *wl)
         tpl = vecs->v_plot;
         tpl->pl_written = TRUE;
         end = NULL;
-        bcopy((char *) tpl, (char *) &newplot, sizeof (struct plot));
+        bcopy(tpl, &newplot, sizeof (struct plot));
         scalefound = FALSE;
 
         /* Figure out how many vectors are in this plot. Also look

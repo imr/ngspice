@@ -226,7 +226,7 @@ NUMOSsetup(matrix, inModel, ckt, states)
 	    pMaterial = pMaterial->next;
 	  }
 	  /* Copy everything, then fix the incorrect pointer. */
-	  bcopy((char *) pM, (char *) pMaterial, sizeof(TWOmaterial));
+	  bcopy(pM, pMaterial, sizeof(TWOmaterial));
 	  pMaterial->next = NIL(TWOmaterial);
 	}
 
@@ -240,7 +240,7 @@ NUMOSsetup(matrix, inModel, ckt, states)
       TWOgetStatePointers(inst->NUMOSpDevice, states);
 
       /* Wipe out statistics from previous runs (if any). */
-      bzero((char *) inst->NUMOSpDevice->pStats, sizeof(TWOstats));
+      bzero(inst->NUMOSpDevice->pStats, sizeof(TWOstats));
 
       inst->NUMOSpDevice->pStats->totalTime[STAT_SETUP] +=
 	  SPfrontEnd->IFseconds() - startTime;

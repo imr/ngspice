@@ -150,13 +150,11 @@ compress(struct dvec *d, double *xcomp, double *xind)
             dd = (double *) tmalloc(newlen * sz);
             cc = (complex *) dd;
             if (isreal(d)) {
-                bcopy((char *) (d->v_realdata + ilo),
-                        (char *) dd, newlen * sz);
+                bcopy(d->v_realdata + ilo, dd, newlen * sz);
                 tfree(d->v_realdata);
                 d->v_realdata = dd;
             } else {
-                bcopy((char *) (d->v_compdata + ilo),
-                        (char *) cc, newlen * sz);
+                bcopy(d->v_compdata + ilo, cc, newlen * sz);
                 tfree(d->v_compdata);
                 d->v_compdata = cc;
             }

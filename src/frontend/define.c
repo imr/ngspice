@@ -165,14 +165,14 @@ savetree(struct pnode *pn)
             if (isreal(d)) {
                 pn->pn_value->v_realdata = (double *) 
                     tmalloc(sizeof (double) * d->v_length);
-                bcopy((char *) d->v_realdata,
-                    (char *) pn->pn_value->v_realdata,
+                bcopy(d->v_realdata,
+                    pn->pn_value->v_realdata,
                     sizeof (double) * d->v_length);
             } else {
                 pn->pn_value->v_compdata = (complex *) 
                     tmalloc(sizeof (complex) * d->v_length);
-                bcopy((char *) d->v_compdata,
-                    (char *) pn->pn_value->v_compdata,
+                bcopy(d->v_compdata,
+                    pn->pn_value->v_compdata,
                     sizeof (complex) * d->v_length);
             }
         }

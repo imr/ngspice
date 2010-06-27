@@ -3,6 +3,36 @@
  * numparam.h: short replaced by int
 
 2010-06-27  Robert Larice
+ * src/ciderlib/support/database.c,
+ * src/frontend/com_let.c,
+ * src/frontend/define.c,
+ * src/frontend/gens.c,
+ * src/frontend/plotting/graphdb.c,
+ * src/frontend/plotting/plotcurv.c,
+ * src/frontend/plotting/plotit.c,
+ * src/frontend/postcoms.c,
+ * src/frontend/vectors.c,
+ * src/maths/poly/interpolate.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/analysis/dctrcurv.c,
+ * src/spicelib/devices/nbjt/nbjtset.c,
+ * src/spicelib/devices/nbjt/nbjttemp.c,
+ * src/spicelib/devices/nbjt2/nbt2set.c,
+ * src/spicelib/devices/nbjt2/nbt2temp.c,
+ * src/spicelib/devices/numd/numdset.c,
+ * src/spicelib/devices/numd/numdtemp.c,
+ * src/spicelib/devices/numd2/nud2set.c,
+ * src/spicelib/devices/numd2/nud2temp.c,
+ * src/spicelib/devices/numos/nummset.c,
+ * src/spicelib/devices/numos/nummtemp.c :
+	drop the casts for pointer arguments of bcopy() and bzero()
+	  their arguments are declared to be void pointers.
+	FIXME, src/frontend/vectors.c vec_mkfamily()
+	  ugly and propably simply incorrect pointer bistromatic,
+	  allocating v_realdata, but copying to v_compdata
+	  I left that one untouched, to be fixed later.
+
+2010-06-27  Robert Larice
  * src/frontend/arg.c,
  * src/frontend/arg.h,
  * src/include/fteext.h :

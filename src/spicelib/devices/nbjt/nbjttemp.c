@@ -81,7 +81,7 @@ NBJTtemp(inModel, ckt)
 
 	/* Copy the original values, then fix the incorrect pointer. */
 	pNextMaterial = pMaterial->next;
-	bcopy((char *) pM, (char *) pMaterial, sizeof(ONEmaterial));
+	bcopy(pM, pMaterial, sizeof(ONEmaterial));
 	pMaterial->next = pNextMaterial;
 
 	/* Now do the temperature dependence. */
