@@ -3,6 +3,7 @@ Copyright 2004 Regents of the University of California.  All rights reserved.
 Author: 1995 Min-Chie Jeng and Mansun Chan.
 Author: 1997-1999 Weidong Liu.
 Author: 2001- Xuemei Xi
+**** OpenMP support for ngspice by Holger Vogt 06/28/2010 ****
 File: bsim3def.h
 **********/
 
@@ -15,9 +16,11 @@ File: bsim3def.h
 #include "complex.h"
 #include "noisedef.h"         
 
-//#define USE_OMP
-
 #ifdef USE_OMP
+#define USE_OMP3
+#endif
+
+#ifdef USE_OMP3
 #include <omp.h>
 #endif
 
@@ -169,7 +172,7 @@ typedef struct sBSIM3instance
     double *BSIM3SPqPtr;
     double *BSIM3BqPtr;
 
-#ifdef USE_OMP
+#ifdef USE_OMP3
     /* per instance storage of results, to update matrix at a later stge */
     double BSIM3rhsG;
     double BSIM3rhsB;
@@ -844,7 +847,7 @@ typedef struct sBSIM3model
     struct bsim3SizeDependParam *pSizeDependParamKnot;
 
     
-#ifdef USE_OMP
+#ifdef USE_OMP3
     int BSIM3InstCount;
     struct sBSIM3instance **BSIM3InstanceArray;
 #endif

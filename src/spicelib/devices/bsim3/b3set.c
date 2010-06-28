@@ -1,4 +1,5 @@
 /**** BSIM3v3.3.0, Released by Xuemei Xi 07/29/2005 ****/
+/**** OpenMP support for ngspice by Holger Vogt 06/28/2010 ****/
 
 /**********
  * Copyright 2004 Regents of the University of California. All rights reserved.
@@ -15,7 +16,7 @@
 #include "const.h"
 #include "sperror.h"
 #include "suffix.h"
-#ifdef USE_OMP
+#ifdef USE_OMP3
 int nthreads;
 extern bool cp_getvar(char *name, int type, void *retval);
 #define VT_NUM 1
@@ -45,7 +46,7 @@ CKTnode *tmp;
 CKTnode *tmpNode;
 IFuid tmpName;
 
-#ifdef USE_OMP
+#ifdef USE_OMP3
 unsigned int idx, InstCount;
 BSIM3instance **InstArray;
 int nthreads;
@@ -1009,9 +1010,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 
         }
     }
-#ifdef USE_OMP
+#ifdef USE_OMP3
     if (!cp_getvar("num_threads", VT_NUM, (char *) &nthreads))   
-        nthreads = 4;
+        nthreads = 2;
 
     omp_set_num_threads(nthreads);
     if (nthreads == 1)

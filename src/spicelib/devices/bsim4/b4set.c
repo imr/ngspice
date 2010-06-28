@@ -1,5 +1,6 @@
 /**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
 /**** BSIM4.6.4 Update ngspice 08/22/2009 ****/
+/**** OpenMP support ngspice 06/28/2010 ****/
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
  * File: b4set.c of BSIM4.6.2.
@@ -30,6 +31,12 @@
 #include "sperror.h"
 #include "suffix.h"
 
+#ifdef USE_OMP4
+int nthreads;
+extern bool cp_getvar(char *name, int type, void *retval);
+#define VT_NUM 1
+#endif
+
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
 #define EXP_THRESHOLD 34.0
@@ -57,6 +64,13 @@ CKTnode *tmp;
 int    noiseAnalGiven = 0, createNode;  /* Criteria for new node creation */
 double Rtot, DMCGeff, DMCIeff, DMDGeff;
 JOB   *job;
+
+
+#ifdef USE_OMP4
+unsigned int idx, InstCount;
+BSIM4instance **InstArray;
+int nthreads;
+#endif
 
     /* Search for a noise analysis request */
     for (job = ((TSKtask *)ft_curckt->ci_curTask)->jobs;job;job = job->JOBnextJob) {
@@ -2325,9 +2339,9 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             {   TSTALLOC(BSIM4GEgePtr, BSIM4gNodeExt, BSIM4gNodeExt)
                 TSTALLOC(BSIM4GEgpPtr, BSIM4gNodeExt, BSIM4gNodePrime)
                 TSTALLOC(BSIM4GPgePtr, BSIM4gNodePrime, BSIM4gNodeExt)
-		TSTALLOC(BSIM4GEdpPtr, BSIM4gNodeExt, BSIM4dNodePrime)
-		TSTALLOC(BSIM4GEspPtr, BSIM4gNodeExt, BSIM4sNodePrime)
-		TSTALLOC(BSIM4GEbpPtr, BSIM4gNodeExt, BSIM4bNodePrime)
+                TSTALLOC(BSIM4GEdpPtr, BSIM4gNodeExt, BSIM4dNodePrime)
+                TSTALLOC(BSIM4GEspPtr, BSIM4gNodeExt, BSIM4sNodePrime)
+                TSTALLOC(BSIM4GEbpPtr, BSIM4gNodeExt, BSIM4bNodePrime)
 
                 TSTALLOC(BSIM4GMdpPtr, BSIM4gNodeMid, BSIM4dNodePrime)
                 TSTALLOC(BSIM4GMgpPtr, BSIM4gNodeMid, BSIM4gNodePrime)
@@ -2363,19 +2377,61 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
                 TSTALLOC(BSIM4BdbPtr, BSIM4bNode, BSIM4dbNode)
                 TSTALLOC(BSIM4BbpPtr, BSIM4bNode, BSIM4bNodePrime)
                 TSTALLOC(BSIM4BsbPtr, BSIM4bNode, BSIM4sbNode)
-	        TSTALLOC(BSIM4BbPtr, BSIM4bNode, BSIM4bNode)
-	    }
+                TSTALLOC(BSIM4BbPtr, BSIM4bNode, BSIM4bNode)
+            }
 
             if (model->BSIM4rdsMod)
             {   TSTALLOC(BSIM4DgpPtr, BSIM4dNode, BSIM4gNodePrime)
-		TSTALLOC(BSIM4DspPtr, BSIM4dNode, BSIM4sNodePrime)
+                TSTALLOC(BSIM4DspPtr, BSIM4dNode, BSIM4sNodePrime)
                 TSTALLOC(BSIM4DbpPtr, BSIM4dNode, BSIM4bNodePrime)
                 TSTALLOC(BSIM4SdpPtr, BSIM4sNode, BSIM4dNodePrime)
                 TSTALLOC(BSIM4SgpPtr, BSIM4sNode, BSIM4gNodePrime)
                 TSTALLOC(BSIM4SbpPtr, BSIM4sNode, BSIM4bNodePrime)
             }
         }
+    } /*  end of loop through all the BSIM4 device models */
+
+#ifdef USE_OMP4
+    if (!cp_getvar("num_threads", VT_NUM, (char *) &nthreads))   
+        nthreads = 2;
+
+    omp_set_num_threads(nthreads);
+    if (nthreads == 1)
+        printf("OpenMP: %d thread is requested in BSIM4\n", nthreads);
+    else
+        printf("OpenMP: %d threads are requested in BSIM4\n", nthreads);
+    InstCount = 0;
+    model = (BSIM4model*)inModel;
+    /* loop through all the BSIM4 device models 
+       to count the number of instances */
+    
+    for( ; model != NULL; model = model->BSIM4nextModel )
+    {
+        /* loop through all the instances of the model */
+        for (here = model->BSIM4instances; here != NULL ;
+             here=here->BSIM4nextInstance) 
+        { 
+            InstCount++;
+        }
     }
+    InstArray = (BSIM4instance**)tmalloc(InstCount*sizeof(BSIM4instance**));
+    model = (BSIM4model*)inModel;
+    idx = 0;
+    for( ; model != NULL; model = model->BSIM4nextModel )
+    {
+        /* loop through all the instances of the model */
+        for (here = model->BSIM4instances; here != NULL ;
+             here=here->BSIM4nextInstance) 
+        { 
+            InstArray[idx] = here;
+            idx++;
+        }
+        /* set the array pointer and instance count into each model */
+        model->BSIM4InstCount = InstCount;
+        model->BSIM4InstanceArray = InstArray;		
+    }
+#endif
+
     return(OK);
 }  
 

@@ -1,5 +1,5 @@
 /**** BSIM4.6.2 Released by Wenwei Yang 07/31/2008 ****/
-
+/**** OpenMP support for ngspice by Holger Vogt 06/28/2010 ****/
 /**********
 Copyright 2006 Regents of the University of California.  All rights reserved.
 File: bsim4def.h
@@ -26,6 +26,15 @@ Modified by Wenwei Yang, 07/31/2008.
 #include "cktdefs.h"
 #include "complex.h"
 #include "noisedef.h"         
+
+#ifdef USE_OMP
+#define USE_OMP4
+#endif
+
+
+#ifdef USE_OMP4
+#include <omp.h>
+#endif
 
 typedef struct sBSIM4instance
 {
@@ -386,6 +395,125 @@ typedef struct sBSIM4instance
     double *BSIM4GPqPtr;
     double *BSIM4SPqPtr;
 
+#ifdef USE_OMP4
+    /* per instance storage of results, to update matrix at a later stge */
+    double BSIM4rhsdPrime;
+    double BSIM4rhsgPrime;
+    double BSIM4rhsgExt;
+    double BSIM4grhsMid;
+    double BSIM4rhsbPrime;
+    double BSIM4rhssPrime;
+    double BSIM4rhsdb;
+    double BSIM4rhssb;
+    double BSIM4rhsd;
+    double BSIM4rhss;
+    double BSIM4rhsq;
+
+    double BSIM4_1;
+    double BSIM4_2;
+    double BSIM4_3;
+    double BSIM4_4;
+    double BSIM4_5;
+    double BSIM4_6;
+    double BSIM4_7;
+    double BSIM4_8;
+    double BSIM4_9;
+    double BSIM4_10;
+    double BSIM4_11;
+    double BSIM4_12;
+    double BSIM4_13;
+    double BSIM4_14;
+    double BSIM4_15;
+    double BSIM4_16;
+    double BSIM4_17;
+    double BSIM4_18;
+    double BSIM4_19;
+    double BSIM4_20;
+    double BSIM4_21;
+    double BSIM4_22;
+    double BSIM4_23;
+    double BSIM4_24;
+    double BSIM4_25;
+    double BSIM4_26;
+    double BSIM4_27;
+    double BSIM4_28;
+    double BSIM4_29;
+    double BSIM4_30;
+    double BSIM4_31;
+    double BSIM4_32;
+    double BSIM4_33;
+    double BSIM4_34;
+    double BSIM4_35;
+    double BSIM4_36;
+    double BSIM4_37;
+    double BSIM4_38;
+    double BSIM4_39;
+    double BSIM4_40;
+    double BSIM4_41;
+    double BSIM4_42;
+    double BSIM4_43;
+    double BSIM4_44;
+    double BSIM4_45;
+    double BSIM4_46;
+    double BSIM4_47;
+    double BSIM4_48;
+    double BSIM4_49;
+    double BSIM4_50;
+    double BSIM4_51;
+    double BSIM4_52;
+    double BSIM4_53;
+    double BSIM4_54;
+    double BSIM4_55;
+    double BSIM4_56;
+    double BSIM4_57;
+    double BSIM4_58;
+    double BSIM4_59;
+    double BSIM4_60;
+    double BSIM4_61;
+    double BSIM4_62;
+    double BSIM4_63;
+    double BSIM4_64;
+    double BSIM4_65;
+    double BSIM4_66;
+    double BSIM4_67;
+    double BSIM4_68;
+    double BSIM4_69;
+    double BSIM4_70;
+    double BSIM4_71;
+    double BSIM4_72;
+    double BSIM4_73;
+    double BSIM4_74;
+    double BSIM4_75;
+    double BSIM4_76;
+    double BSIM4_77;
+    double BSIM4_78;
+    double BSIM4_79;
+    double BSIM4_80;
+    double BSIM4_81;
+    double BSIM4_82;
+    double BSIM4_83;
+    double BSIM4_84;
+    double BSIM4_85;
+    double BSIM4_86;
+    double BSIM4_87;
+    double BSIM4_88;
+    double BSIM4_89;
+    double BSIM4_90;
+    double BSIM4_91;
+    double BSIM4_92;
+    double BSIM4_93;
+    double BSIM4_94;
+    double BSIM4_95;
+    double BSIM4_96;
+    double BSIM4_97;
+    double BSIM4_98;
+    double BSIM4_99;
+    double BSIM4_100;
+    double BSIM4_101;
+    double BSIM4_102;
+    double BSIM4_103;
+
+#endif
 
 #define BSIM4vbd BSIM4states+ 0
 #define BSIM4vbs BSIM4states+ 1
@@ -1574,6 +1702,12 @@ typedef struct sBSIM4model
     double BSIM4kf;  
 
     struct bsim4SizeDependParam *pSizeDependParamKnot;
+
+    
+#ifdef USE_OMP4
+    int BSIM4InstCount;
+    struct sBSIM4instance **BSIM4InstanceArray;
+#endif
 
     /* Flags */
     unsigned  BSIM4mobModGiven :1;
