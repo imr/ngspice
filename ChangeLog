@@ -1,4 +1,11 @@
-
+2010-06-29  Holger Vogt
+ * inpcom.c lines 743, 744 correct malloc for 64 bit LINUX
+ * inpcom.c, inpcom.h, nutinp.c, inp.c, fteext.h:
+   Command files spinit and .spiceinit (comfile==TRUE) will not be
+   treated by numparam processing.
+   Comment_out_unused_subckt() will no longer process lines inside 
+   control section.
+ 
 2010-06-28  Holger Vogt
  * bsim3/b3set.c b3ld.c bsim3def.h: new preproc flag USE_OMP3
  * bsim4/b4set.c b4ld.c bsim4def.h: OpenMP support for BSIM4 model

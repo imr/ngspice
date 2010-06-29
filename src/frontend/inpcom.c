@@ -735,12 +735,13 @@ comment_out_unused_subckt_models( struct line *start_card , int no_of_lines)
    char **used_subckt_names, **used_model_names, *line = NULL, *subckt_name, *model_name;
    int  num_used_subckt_names = 0, num_used_model_names = 0, i = 0, num_terminals = 0, tmp_cnt = 0;
    bool processing_subckt = FALSE, found_subckt = FALSE, remove_subckt = FALSE, found_model = FALSE, has_models = FALSE;
+   int skip_control = 0;
 
    /* generate arrays of *char for subckt or model names. Start
    with 1000, but increase, if number of lines in deck is larger */
    if (no_of_lines < 1000) no_of_lines = 1000;
-   used_subckt_names = (char**)tmalloc(no_of_lines);
-   used_model_names = (char**)tmalloc(no_of_lines);
+   used_subckt_names = (char**)tmalloc(no_of_lines*sizeof(char*));
+   used_model_names = (char**)tmalloc(no_of_lines*sizeof(char*));
 
    for ( card = start_card; card != NULL; card = card->li_next ) {
       if ( ciprefix( ".model", card->li_line ) ) has_models = TRUE;
@@ -752,6 +753,17 @@ comment_out_unused_subckt_models( struct line *start_card , int no_of_lines)
       line = card->li_line;
 
       if ( *line == '*' ) continue;
+
+      /* there is no .subckt, .model or .param inside .control ... .endc */
+      if ( ciprefix(".control", line) ) {
+         skip_control ++;
+         continue;
+      } else if( ciprefix(".endc", line) ) {
+         skip_control --;
+         continue;
+      } else if(skip_control > 0) {
+         continue;
+      }
 
       if ( ciprefix( ".subckt", line ) || ciprefix( ".macro", line ) ) processing_subckt = TRUE;
       if ( ciprefix( ".ends",   line ) || ciprefix( ".eom",   line ) ) processing_subckt = FALSE;
@@ -1033,7 +1045,13 @@ inp_fix_ternary_operator( struct line *start_card )
  * *data.
  *-------------------------------------------------------------------------*/
 void
-inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
+inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool comfile)
+/* fp: in, pointer to file to be read, 
+   data: out, linked list of cards
+   call_depth: in, nested call to fcn
+   dir_name: in, name of directory of file to be read
+   comfile: in, TRUE if coammnd file (e.g. spinit, .spiceinit
+*/
 {
    struct line *end = NULL, *cc = NULL, *prev = NULL, *working, *newcard, *start_lib, *global_card, *tmp_ptr = NULL, *tmp_ptr2 = NULL;
    char *buffer = NULL, *s, *t, *y, *z, c;
@@ -1200,11 +1218,11 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
 
                if ( dir_name_flag == FALSE ) {
                   char *s_dup = strdup(s);
-                  inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dirname(s_dup));
+                  inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dirname(s_dup), FALSE);
                   tfree(s_dup);
                }
                else
-                  inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dir_name);
+                  inp_readall(newfp, &libraries[num_libraries-1], call_depth+1, dir_name, FALSE);
             
                fclose(newfp);
             }
@@ -1253,7 +1271,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
                fprintf(cp_err,  "Error: .include statement failed.\n");
                tfree(buffer);		/* allocated by readline() above */
                controlled_exit(EXIT_FAILURE);
-//               continue;
             }
          }
 	    
@@ -1263,11 +1280,11 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
 
          if ( dir_name_flag == FALSE ) {
             char *s_dup = strdup(s);
-            inp_readall(newfp, &newcard, call_depth+1, dirname(s_dup));  /* read stuff in include file into netlist */
+            inp_readall(newfp, &newcard, call_depth+1, dirname(s_dup), FALSE);  /* read stuff in include file into netlist */
             tfree(s_dup);
          }
          else
-            inp_readall(newfp, &newcard, call_depth+1, dir_name);  /* read stuff in include file into netlist */
+            inp_readall(newfp, &newcard, call_depth+1, dir_name, FALSE);  /* read stuff in include file into netlist */
 
          (void) fclose(newfp);
 
@@ -1540,6 +1557,14 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name)
             working = working->li_next;
             break;
       }
+   }
+
+   /* The following processing of an input file is not required for command files
+      like spinit or .spiceinit, so return command files here. */ 
+   if (comfile) {
+      /* save the return value (via **data) */
+      *data = cc;
+      return;
    }
 
    working = cc->li_next;
@@ -2675,7 +2700,7 @@ static void
 inp_fix_param_values( struct line *deck )
 {
   struct line *c = deck;
-  char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str, *tmp_str;
+  char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
   char *vec_str, *natok, *buffer, *newvec, *whereisgt;
   bool control_section = FALSE, has_paren = FALSE;
   int n = 0;
