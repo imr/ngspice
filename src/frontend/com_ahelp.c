@@ -62,7 +62,7 @@ com_ahelp(wordlist *wl)
 	"description of \"command\", type \"help command\".\n");
 
     /* sort the commands */
-    for (n = 0; cp_coms[n].co_func != (void (*)()) NULL; n++) {
+    for (n = 0; cp_coms[n].co_func != NULL; n++) {
 	cc[n] = &cp_coms[n];
     }
     qsort((char *) cc, n, sizeof(struct comm *), hcomp);

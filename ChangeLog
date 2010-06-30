@@ -1,3 +1,9 @@
+2010-06-30  Robert Larice
+  * src/frontend/com_ahelp.c : drop NULL casting
+  * src/frontend/com_measure2.c : dont mix enum with integer
+  * src/include/inpptree.h : add parameter-names to a prototype
+  * src/spicelib/parser/ptfuncs.c : add casts to anonymous data
+
 2010-06-30  Holger Vogt
  * inpcom.c: no braces in let, set commands inside control loop
  * glob.c: reinstate {$var} expansion (patch by R. Larice)

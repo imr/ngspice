@@ -294,7 +294,7 @@ PTuminus(double arg)
 double
 PTpwl(double arg, void *data)
 {
-  struct pwldata { int n; double *vals; } *thing = data;
+  struct pwldata { int n; double *vals; } *thing = (struct pwldata *) data;
 
   double y;
 
@@ -319,7 +319,7 @@ PTpwl(double arg, void *data)
 double
 PTpwl_derivative(double arg, void *data)
 {
-  struct pwldata { int n; double *vals; } *thing = data;
+  struct pwldata { int n; double *vals; } *thing = (struct pwldata *) data;
 
   double y;
 

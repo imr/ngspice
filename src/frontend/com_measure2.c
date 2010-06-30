@@ -1213,10 +1213,10 @@ get_measure2(
    char *mName = NULL;             // name given to the measured output
    char *mFunction = NULL;
    int precision;          // measurement precision
-   int mFunctionType, wl_cnt;
+   ANALYSIS_TYPE_T mFunctionType = AT_UNKNOWN;
+   int wl_cnt;
    char *p;
 
-   mFunctionType = -1;
    *result = 0.0e0;        /* default result */
 
    if (!wl) {

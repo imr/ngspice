@@ -203,7 +203,7 @@ extern double PTle0(double arg);
 /* And in IFeval.c */
 
 #ifdef __STDC__
-extern int IFeval(IFparseTree *, double, double*, double*, double*);
+extern int IFeval(IFparseTree *tree, double gmin, double *result, double *vals, double *derivs);
 #else /* stdc */
 extern int IFeval();
 #endif /* stdc */
