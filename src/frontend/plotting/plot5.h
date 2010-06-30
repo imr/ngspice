@@ -7,15 +7,15 @@
 #ifndef PLOT5_H_INCLUDED
 #define PLOT5_H_INCLUDED
 
-int Plt5_Init(void);
-int Plt5_NewViewport(GRAPH *graph);
-int Plt5_Close(void);
-int Plt5_Clear(void);
-int Plt5_DrawLine(int x1, int y1, int x2, int y2);
-int Plt5_Arc(int x0, int y0, int radius, double theta1, double theta2);
-int Plt5_Text(char *text, int x, int y);
-int Plt5_SetLinestyle(int linestyleid);
-int Plt5_SetColor(int colorid);
-int Plt5_Update(void);
+disp_fn_Init_t             Plt5_Init;
+disp_fn_NewViewport_t      Plt5_NewViewport;
+disp_fn_Close_t            Plt5_Close;
+disp_fn_Clear_t            Plt5_Clear;
+disp_fn_DrawLine_t         Plt5_DrawLine;
+disp_fn_Arc_t              Plt5_Arc;
+disp_fn_Text_t             Plt5_Text;
+disp_fn_SetLinestyle_t     Plt5_SetLinestyle;
+disp_fn_SetColor_t         Plt5_SetColor;
+disp_fn_Update_t           Plt5_Update;
 
 #endif /* PLOT5_H_INCLUDED */

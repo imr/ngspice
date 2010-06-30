@@ -421,7 +421,7 @@ int WPRINT_Text( char * text, int x, int y, int degrees)
 }
 
 
-int WPRINT_DefineColor(int red, int green, int blue, int num)
+int WPRINT_DefineColor(int colorid, double red, double green, double blue)
 {
 	/* nix */
 	return (0);

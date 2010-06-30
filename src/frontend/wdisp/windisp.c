@@ -792,13 +792,13 @@ int WIN_Text_old( char * text, int x, int y, int degrees)
 }
 */
 
-int WIN_Text( char * text, int x, int y, int CentiDegrees)
+int WIN_Text( char * text, int x, int y)
 {
    tpWindowData wd;
    HFONT hfont;
    LOGFONT lf;
   
-   CentiDegrees = 0;
+   int CentiDegrees = 0;
 
    if (!currentgraph) return 0;
    wd = pWindowData(currentgraph);
@@ -840,7 +840,7 @@ int WIN_Text( char * text, int x, int y, int CentiDegrees)
 }
 
 
-int WIN_DefineColor(int red, int green, int blue, int num)
+int WIN_DefineColor(int colorid, double red, double green, double blue)
 {
    /* nothing */
    return (0);

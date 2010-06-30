@@ -1,3 +1,27 @@
+2010-06-30  Robert Larice  <Robert.Larice@t-online.de>
+ * src/include/ftedev.h :
+		ansi prototypes for the function pointers in struct DISPDEVICE
+		typedef for those functions
+
+ * src/frontend/hpgl.h ,
+ * src/frontend/plotting/plot5.h ,
+ * src/frontend/plotting/x11.c ,
+ * src/frontend/plotting/x11.h ,
+ * src/frontend/postsc.h ,
+ * src/frontend/wdisp/windisp.h ,
+ * src/frontend/wdisp/winprint.h ,
+ * src/include/tclspice.h :
+		ansi prototypes, make use of the new typedefs
+
+ * src/frontend/display.c :
+		cast nodev and nop to the proper function type
+
+ * src/frontend/wdisp/windisp.c ,
+ * src/frontend/wdisp/winprint.c :
+		fix the type signature for the more or less unused _DefineColor() functions
+		fix the type signature for the WIN_Text() function, drop unused CentiDegrees
+		  argument, which doesn't fit to struct DISPDEVICE
+
 2010-06-29  Holger Vogt
  * inpcom.c lines 743, 744 correct malloc for 64 bit LINUX
  * inpcom.c, inpcom.h, nutinp.c, inp.c, fteext.h:

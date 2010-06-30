@@ -6,16 +6,15 @@
 #ifndef POSTSC_H_INCLUDED
 #define POSTSC_H_INCLUDED
 
-int PS_Init(void);
-int PS_NewViewport(GRAPH *graph);
-int PS_Close(void);
-int PS_Clear(void);
-int PS_DrawLine(int x1, int y1, int x2, int y2);
-int PS_Arc(int x0, int y0, int r, double theta1, double theta2);
-int PS_Text(char *text, int x, int y);
-int PS_SetLinestyle(int linestyleid);
-int PS_SetColor(int colorid);
-int PS_Update(void);
-
+disp_fn_Init_t             PS_Init;
+disp_fn_NewViewport_t      PS_NewViewport;
+disp_fn_Close_t            PS_Close;
+disp_fn_Clear_t            PS_Clear;
+disp_fn_DrawLine_t         PS_DrawLine;
+disp_fn_Arc_t              PS_Arc;
+disp_fn_Text_t             PS_Text;
+disp_fn_SetLinestyle_t     PS_SetLinestyle;
+disp_fn_SetColor_t         PS_SetColor;
+disp_fn_Update_t           PS_Update;
 
 #endif

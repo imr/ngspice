@@ -41,19 +41,19 @@ static int nodev(void);
 
 DISPDEVICE device[] = {
 
-    {"error", 0, 0, 0, 0, 0, 0, nop, nop,
-    nop, nop,
-    nop, nop, nop, nop, nop,
-    nop, nop, nop,
-    nop, nop, nop, gen_Input,
-    (void*)nop,},
+    {"error", 0, 0, 0, 0, 0, 0, (disp_fn_Init_t *) nop,  (disp_fn_NewViewport_t *) nop,
+    (disp_fn_Close_t *) nop, (disp_fn_Clear_t *) nop,
+    (disp_fn_DrawLine_t *) nop, (disp_fn_Arc_t *) nop, (disp_fn_Text_t *) nop, (disp_fn_DefineColor_t *) nop, (disp_fn_DefineLinestyle_t *) nop,
+    (disp_fn_SetLinestyle_t *) nop, (disp_fn_SetColor_t *) nop, (disp_fn_Update_t *) nop,
+    (disp_fn_Track_t *) nop, (disp_fn_MakeMenu_t *) nop, (disp_fn_MakeDialog_t *) nop, gen_Input,
+    (disp_fn_DatatoScreen_t *) nop,},
 
 #ifndef X_DISPLAY_MISSING
     {"X11", 0, 0, 1024, 864, 0, 0, X11_Init, X11_NewViewport,
     X11_Close, X11_Clear,
     X11_DrawLine, X11_Arc, X11_Text, X11_DefineColor, X11_DefineLinestyle,
     X11_SetLinestyle, X11_SetColor, X11_Update,
-    nodev, nodev, nodev, X11_Input,
+    (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, X11_Input,
     gen_DatatoScreen,},
 #endif
 
@@ -62,7 +62,7 @@ DISPDEVICE device[] = {
     WIN_Close, WIN_Clear,
     WIN_DrawLine, WIN_Arc, WIN_Text, WIN_DefineColor, WIN_DefineLinestyle,
     WIN_SetLinestyle, WIN_SetColor, WIN_Update,
-    nodev, nodev, nodev, gen_Input,
+    (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, gen_Input,
     gen_DatatoScreen,}, /* WIN_DiagramReady */
 
     /* Warning: name "WinPrint" do not change! */
@@ -70,7 +70,7 @@ DISPDEVICE device[] = {
     WPRINT_Close, WPRINT_Clear,
     WPRINT_DrawLine, WPRINT_Arc, WPRINT_Text, WPRINT_DefineColor, WPRINT_DefineLinestyle,
     WPRINT_SetLinestyle, WPRINT_SetColor, WPRINT_Update,
-    nodev, nodev, nodev, nodev,
+    (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, (disp_fn_Input_t *) nodev,
     gen_DatatoScreen,}, /* WPRINT_DiagramReady */
 #endif
 
@@ -79,37 +79,37 @@ DISPDEVICE device[] = {
     sp_Tk_Close, sp_Tk_Clear,
     sp_Tk_DrawLine, sp_Tk_Arc, sp_Tk_Text, sp_Tk_DefineColor, sp_Tk_DefineLinestyle,
     sp_Tk_SetLinestyle, sp_Tk_SetColor, sp_Tk_Update,
-    nodev, nodev, nodev, nodev,
+    (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, (disp_fn_Input_t *) nodev,
     gen_DatatoScreen,},
 #endif
 
     {"plot5", 0, 0, 1000, 1000, 0, 0, Plt5_Init, Plt5_NewViewport,
     Plt5_Close, Plt5_Clear,
-    Plt5_DrawLine, Plt5_Arc, Plt5_Text, (void*)nodev, (void*)nodev,
+    Plt5_DrawLine, Plt5_Arc, Plt5_Text, (disp_fn_DefineColor_t *) nodev, (disp_fn_DefineLinestyle_t *) nodev,
     Plt5_SetLinestyle, Plt5_SetColor, Plt5_Update,
-    nodev, nodev, nodev, nodev,
+    (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, (disp_fn_Input_t *) nodev,
     gen_DatatoScreen,},
 
     {"postscript", 0, 0, 1000, 1000, 0, 0, PS_Init, PS_NewViewport,
     PS_Close, PS_Clear,
-    PS_DrawLine, PS_Arc, PS_Text, (void*)nodev, (void*)nodev,
+    PS_DrawLine, PS_Arc, PS_Text, (disp_fn_DefineColor_t *) nodev, (disp_fn_DefineLinestyle_t *) nodev,
     PS_SetLinestyle, PS_SetColor, PS_Update,
-    nodev, nodev, nodev, (void*)nodev,
+    (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, (disp_fn_Input_t *) nodev,
     gen_DatatoScreen,},
 
     {"hpgl", 0, 0, 1000, 1000, 0, 0, GL_Init, GL_NewViewport,
     GL_Close, GL_Clear,
-    GL_DrawLine, GL_Arc, GL_Text, (void*)nodev, (void*)nodev,
+    GL_DrawLine, GL_Arc, GL_Text, (disp_fn_DefineColor_t *) nodev, (disp_fn_DefineLinestyle_t *) nodev,
     GL_SetLinestyle, GL_SetColor, GL_Update,
-    nodev, nodev, nodev, (void*)nodev,
+    (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, (disp_fn_Input_t *) nodev,
     gen_DatatoScreen,},
 
-    {"printf", 0, 0, 24, 80, 0, 0, nodev, nodev,
-    nodev, nodev,
-    nodev, nodev, nodev, nodev, nodev,
-    nodev, nodev, nodev,
-    nodev, nodev, nodev, gen_Input,
-    (void *)nodev,},
+    {"printf", 0, 0, 24, 80, 0, 0, (disp_fn_Init_t *) nodev, (disp_fn_NewViewport_t *)  nodev,
+    (disp_fn_Close_t *) nodev, (disp_fn_Clear_t *) nodev,
+    (disp_fn_DrawLine_t *) nodev, (disp_fn_Arc_t *) nodev, (disp_fn_Text_t *) nodev, (disp_fn_DefineColor_t *) nodev, (disp_fn_DefineLinestyle_t *) nodev,
+    (disp_fn_SetLinestyle_t *) nodev, (disp_fn_SetColor_t *) nodev, (disp_fn_Update_t *) nodev,
+    (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, gen_Input,
+    (disp_fn_DatatoScreen_t *) nodev,},
 
 };
 
