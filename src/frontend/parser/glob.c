@@ -34,7 +34,14 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 
 char cp_comma = ',';
+char cp_ocurl = '{';
+char cp_ccurl = '}';
 char cp_til = '~';
+
+static wordlist *bracexpand(char *string);
+static wordlist *brac1(char *string);
+static wordlist *brac2(char *string);
+
 
 /* For each word, go through two steps: expand the {}'s, and then do ?*[]
  * globbing in them. Sort after the second phase but not the first...
@@ -48,6 +55,19 @@ cp_doglob(wordlist *wlist)
   wordlist *wl;
     char *s;
 
+    /* Expand {a,b,c} */
+
+    for (wl = wlist; wl; wl = wl->wl_next) {
+        wordlist *nwl, *w = bracexpand(wl->wl_word);
+        if (!w) {
+            wlist->wl_word = NULL; /* XXX */
+            return (wlist);
+        }
+        nwl = wl_splice(wl, w);
+        if (wlist == wl)
+            wlist = w;
+        wl = nwl;
+    }
 
     /* Do tilde expansion. */
 
@@ -62,6 +82,123 @@ cp_doglob(wordlist *wlist)
         }
 
     return (wlist);
+}
+
+static wordlist *
+bracexpand(char *string)
+{
+    wordlist *wl, *w;
+    char *s;
+
+    if (!string)
+        return (NULL);
+    wl = brac1(string);
+    if (!wl)
+        return (NULL);
+    for (w = wl; w; w = w->wl_next) {
+        s = w->wl_word;
+        w->wl_word = copy(s);
+        tfree(s);
+    }
+    return (wl);
+}
+
+/* Given a string, returns a wordlist of all the {} expansions. This is
+ * called recursively by cp_brac2(). All the words here will be of size
+ * BSIZE_SP, so it is a good idea to copy() and free() the old words.
+ */
+
+static wordlist *
+brac1(char *string)
+{
+    wordlist *words, *wl, *w, *nw, *nwl, *newwl;
+    char *s;
+    int nb;
+
+    words = alloc(struct wordlist);
+    words->wl_word = tmalloc(BSIZE_SP);
+    words->wl_word[0] = 0;
+    words->wl_next = NULL;
+    words->wl_prev = NULL;
+    for (s = string; *s; s++) {
+        if (*s == cp_ocurl) {
+            nwl = brac2(s);
+            nb = 0;
+            for (;;) {
+                if (*s == cp_ocurl)
+                    nb++;
+                if (*s == cp_ccurl)
+                    nb--;
+                if (*s == '\0') {   /* { */
+                    fprintf(cp_err, "Error: missing }.\n");
+                    return (NULL);
+                }
+                if (nb == 0)
+                    break;
+                s++;
+            }
+            /* Add nwl to the rest of the strings in words. */
+            newwl = NULL;
+            for (wl = words; wl; wl = wl->wl_next)
+                for (w = nwl; w; w = w->wl_next) {
+                    nw = alloc(struct wordlist);
+		    nw->wl_next = NULL;
+		    nw->wl_prev = NULL;
+                    nw->wl_word = tmalloc(BSIZE_SP);
+                    (void) strcpy(nw->wl_word, wl->wl_word);
+                    (void) strcat(nw->wl_word, w->wl_word);
+                    newwl = wl_append(newwl, nw);
+                }
+            wl_free(words);
+            words = newwl;
+        } else
+            for (wl = words; wl; wl = wl->wl_next)
+                appendc(wl->wl_word, *s);
+    }
+    return (words);
+}
+
+/* Given a string starting with a {, return a wordlist of the expansions
+ * for the text until the matching }.
+ */
+
+static wordlist *
+brac2(char *string)
+{
+    wordlist *wlist = NULL, *nwl;
+    char buf[BSIZE_SP], *s;
+    int nb;
+    bool eflag = FALSE;
+
+    string++;   /* Get past the first open brace... */
+    for (;;) {
+        (void) strcpy(buf, string);
+        nb = 0;
+        s = buf;
+        for (;;) {
+            if ((*s == cp_ccurl) && (nb == 0)) {
+                eflag = TRUE;
+                break;
+            }
+            if ((*s == cp_comma) && (nb == 0))
+                break;
+            if (*s == cp_ocurl)
+                nb++;
+            if (*s == cp_ccurl)
+                nb--;
+            if (*s == '\0') {       /* { */
+                fprintf(cp_err, "Error: missing }.\n");
+                return (NULL);
+            }
+            s++;
+        }
+        *s = '\0';
+        nwl = brac1(buf);
+        wlist = wl_append(wlist, nwl);
+        string += s - buf + 1;
+        if (eflag)
+            return (wlist);
+    }
 }
 
 /* Expand tildes. */

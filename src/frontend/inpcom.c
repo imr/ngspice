@@ -1931,10 +1931,11 @@ inp_fix_for_numparam(struct line *deck)
          continue;
       }
  
-      /* exclude plot line between .control and .endc from getting quotes changed */
+      /* exclude echo, let, set, plot line between .control and .endc from getting quotes changed */
       if ( ciprefix( ".control", c->li_line ) ) found_control = TRUE;
       if ( ciprefix( ".endc",    c->li_line ) ) found_control = FALSE; 
-      if ((found_control) && (ciprefix( "plot", c->li_line ))) {
+      if ((found_control) && ((ciprefix( "plot", c->li_line )) || (ciprefix( "echo", c->li_line ))
+          || (ciprefix( "let", c->li_line )) || (ciprefix( "set", c->li_line )))) {
          c = c->li_next;
          continue;
       }      	 

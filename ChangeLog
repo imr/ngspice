@@ -1,4 +1,8 @@
-2010-06-30  Robert Larice  <Robert.Larice@t-online.de>
+2010-06-30  Holger Vogt
+ * inpcom.c: no braces in let, set commands inside control loop
+ * glob.c: reinstate {$var} expansion (patch by R. Larice)
+
+2010-06-30  Robert Larice
  * src/include/ftedev.h :
 		ansi prototypes for the function pointers in struct DISPDEVICE
 		typedef for those functions
