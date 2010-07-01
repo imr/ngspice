@@ -3584,7 +3584,7 @@ static void inp_compat(struct line *deck)
         if ( *curr_line == 'e' ) {
             /*    Exxx n1 n2 VCVS n3 n4 gain --> Exxx n1 n2 n3 n4 gain
                   remove vcvs */
-            if (str_ptr = strstr( curr_line, "vcvs" ) ) {
+            if ((str_ptr = strstr( curr_line, "vcvs" )) != NULL) {
                 *str_ptr = ' '; *(str_ptr + 1) = ' ';
                 *(str_ptr + 2) = ' '; *(str_ptr + 3) = ' ';
             }
@@ -3594,7 +3594,7 @@ static void inp_compat(struct line *deck)
                Exxx n1 n2 int1 0 1
                BExxx int1 0 V = {equation}
             */
-            if (str_ptr = strstr( curr_line, "vol" ) ) {
+            if ((str_ptr = strstr( curr_line, "vol" )) != NULL) {
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
@@ -3650,7 +3650,7 @@ static void inp_compat(struct line *deck)
         else if ( *curr_line == 'g' ) {
             /* Gxxx n1 n2 VCCS n3 n4 tr --> Gxxx n1 n2 n3 n4 tr
                remove vccs */
-            if (str_ptr = strstr( curr_line, "vccs" ) ) {
+            if ((str_ptr = strstr( curr_line, "vccs" )) != NULL) {
                 *str_ptr = ' '; *(str_ptr + 1) = ' ';
                 *(str_ptr + 2) = ' '; *(str_ptr + 3) = ' ';
             }
@@ -3661,7 +3661,7 @@ static void inp_compat(struct line *deck)
                Gxxx n1 n2 int1 0 1
                BGxxx int1 0 V = {equation}
             */
-            if (str_ptr = strstr( curr_line, "cur" ) ) {
+            if ((str_ptr = strstr( curr_line, "cur" )) != NULL) {
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
@@ -3928,7 +3928,7 @@ static void inp_bsource_compat(struct line *deck)
             /* store starting point for later parsing, beginning of {expression} */
             equal_ptr = strstr(curr_line, "=");
             /* find the m={m} token and remove it */
-            if(str_ptr = strstr(curr_line, "m={m}"))
+            if((str_ptr = strstr(curr_line, "m={m}")) != NULL)
                 memcpy( str_ptr, "     ", 5 ); 
             /* scan the line and remove all '{' and '}' */
             str_ptr = curr_line;
