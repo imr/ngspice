@@ -627,7 +627,7 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
                 place->cc_sibling->cc_ysibling = place;
                 place->cc_sibling->cc_parent = place->cc_parent;
                 place = place->cc_sibling;
-                place->cc_name = tmalloc(ind + 2);
+                place->cc_name = (char*) tmalloc(ind + 2);
                 for (i = 0; i < ind + 1; i++)
                     place->cc_name[i] = word[i];
                 place->cc_name[ind + 1] = '\0';
@@ -651,7 +651,7 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
                     tmpc->cc_parent->cc_child = tmpc;
                 else
                     *dd = place;
-                place->cc_name = tmalloc(ind + 2);
+                place->cc_name = (char*) tmalloc(ind + 2);
                 for (i = 0; i < ind + 1; i++)
                     place->cc_name[i] = word[i];
                 place->cc_name[ind + 1] = '\0';
@@ -673,7 +673,7 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
                     tmpc->cc_parent = place;
                     place->cc_child = tmpc;
                     place = tmpc;
-                    place->cc_name = tmalloc(ind + 3);
+                    place->cc_name = (char*) tmalloc(ind + 3);
                     for (i = 0; i < ind + 2; i++)
                         place->cc_name[i] = word[i];
                     place->cc_name[ind + 2] = '\0';

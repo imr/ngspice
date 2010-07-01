@@ -98,7 +98,7 @@ MESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
             return (OK);
         case MES_CS :
              if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                 errMsg = MALLOC(strlen(msg)+1);
+                 errMsg = (char*) MALLOC(strlen(msg)+1);
                  errRtn = "MESask";
                  strcpy(errMsg,msg);
                  return(E_ASKCURRENT);
@@ -110,7 +110,7 @@ MESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
              return(OK);
         case MES_POWER :
              if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                 errMsg = MALLOC(strlen(msg)+1);
+                 errMsg = (char*) MALLOC(strlen(msg)+1);
                  errRtn = "MESask";
                  strcpy(errMsg,msg);
                  return(E_ASKPOWER);

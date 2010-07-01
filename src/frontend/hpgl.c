@@ -153,7 +153,7 @@ GRAPH *graph)
     if (!screenflag)
 #endif
 
-    graph->devdep = tmalloc(sizeof(GLdevdep));
+    graph->devdep = (char*) tmalloc(sizeof(GLdevdep));
     DEVDEP(graph).lastlinestyle = -1;
     DEVDEP(graph).lastx = -1;
     DEVDEP(graph).lasty = -1;

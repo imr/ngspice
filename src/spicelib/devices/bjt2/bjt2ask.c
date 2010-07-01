@@ -241,7 +241,7 @@ BJT2ask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value,
         return(OK);
         case BJT2_QUEST_CS :  
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "BJT2ask";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -259,7 +259,7 @@ BJT2ask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value,
             return(OK);
         case BJT2_QUEST_CE :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "BJT2ask";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -278,7 +278,7 @@ BJT2ask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value,
             return(OK);
         case BJT2_QUEST_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "BJT2ask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

@@ -53,7 +53,7 @@ NOISEan (CKTcircuit *ckt, int restart)
         error = CKTfndDev((void *)ckt,&code,(void **)&inst,
                 job->input, (void *)NULL, (IFuid)NULL);
 	if (!error && !((VSRCinstance *)inst)->VSRCacGiven) {
-	    errMsg = MALLOC(strlen(noacinput)+1);
+	    errMsg = (char*) MALLOC(strlen(noacinput)+1);
 	    strcpy(errMsg,noacinput);
 	    return (E_NOACINPUT);
 	}
@@ -71,7 +71,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 		return (E_NOTFOUND);
 	    }
 	if (!((ISRCinstance *)inst)->ISRCacGiven) {
-	    errMsg = MALLOC(strlen(noacinput)+1);
+	    errMsg = (char*) MALLOC(strlen(noacinput)+1);
 	    strcpy(errMsg,noacinput);
 	    return (E_NOACINPUT);
 	}

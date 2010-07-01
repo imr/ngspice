@@ -4,7 +4,10 @@ DESCRIPTION:This file contains the routines for manipulating dynamic strings.
 CONTENTS:   
 DATE:	    Wed Mar 24 18:38:28 CDT 2010
 REVISIONS:  $Log$
-REVISIONS:  Revision 1.1  2010-03-25 22:44:38  dwarning
+REVISIONS:  Revision 1.2  2010-07-01 19:52:26  rlar
+REVISIONS:  cast the return values of malloc() function calls
+REVISIONS:
+REVISIONS:  Revision 1.1  2010/03/25 22:44:38  dwarning
 REVISIONS:  Bill Swartz patch
 REVISIONS:
 ----------------------------------------------------------------- */
@@ -84,7 +87,7 @@ char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr,char *string,int length)
      ----------------------------------------------------------------- */
     if (newSize >= dsPtr->spaceAvl) {
 	dsPtr->spaceAvl = 2 * newSize ;
-	newString = tmalloc( dsPtr->spaceAvl * sizeof(char) ) ;
+	newString = (char*) tmalloc( dsPtr->spaceAvl * sizeof(char) ) ;
 	memcpy((void *) newString, (void *) dsPtr->string, (size_t) dsPtr->length) ;
 	if (dsPtr->string != dsPtr->staticSpace) {
 	    txfree(dsPtr->string) ;
@@ -273,7 +276,7 @@ char *_spice_dstring_setlength(SPICE_DSTRINGPTR dsPtr,int length)
     if (length >= dsPtr->spaceAvl) {
 
 	dsPtr->spaceAvl = length+1;
-	newString = tmalloc( dsPtr->spaceAvl * sizeof(char) ) ;
+	newString = (char*) tmalloc( dsPtr->spaceAvl * sizeof(char) ) ;
 	/* -----------------------------------------------------------------
 	 * SPECIAL NOTE: must use memcpy, not strcpy, to copy the string
 	 * to a larger buffer, since there may be embedded NULLs in the

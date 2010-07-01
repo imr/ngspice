@@ -193,8 +193,8 @@ initdico (tdico * dico)
    dico->stack_depth = 0 ;		/* top of the stack */
    asize = dico->symbol_stack_alloc = 10 ;/* expected stack depth - no longer limited */
    asize++ ;				/* account for zero */
-   dico->local_symbols = tmalloc( asize * sizeof(NGHASHPTR) ) ;
-   dico->inst_name = tmalloc( asize * sizeof(char *) ) ;
+   dico->local_symbols = (NGHASHPTR*) tmalloc( asize * sizeof(NGHASHPTR) ) ;
+   dico->inst_name = (char**) tmalloc( asize * sizeof(char *) ) ;
    dico->inst_symbols = NULL ;		/* instance qualified are lazily allocated */
 
    initkeys ();
@@ -244,8 +244,8 @@ dicostack (tdico * dico, char op)
 	/* Just double the stack alloc */
 	dico->symbol_stack_alloc *= 2 ;
 	asize = dico->symbol_stack_alloc + 1 ; /* account for zero */
-	dico->local_symbols = trealloc( dico->local_symbols, asize * sizeof(NGHASHPTR) ) ;
-	dico->inst_name = trealloc( dico->inst_name, asize * sizeof(char *) ) ;
+	dico->local_symbols = (NGHASHPTR*) trealloc( dico->local_symbols, asize * sizeof(NGHASHPTR) ) ;
+	dico->inst_name = (char**) trealloc( dico->inst_name, asize * sizeof(char *) ) ;
       }
       /* lazy allocation - don't allocate space if we can help it */
       dico->local_symbols[dico->stack_depth] = NULL ; 
@@ -399,7 +399,7 @@ attrib (tdico *dico_p, NGHASHPTR htable_p, char *t, char op)
 
    if (!(entry_p))
    {
-      entry_p = tmalloc( sizeof(entry) ) ;
+      entry_p = (entry*) tmalloc( sizeof(entry) ) ;
       entry_p->symbol = strdup( t ) ;
       entry_p->tp = '?';        /* signal Unknown */
       entry_p->level = dico_p->stack_depth ;

@@ -76,7 +76,7 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return(OK);
         case ISRC_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "ISRCask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

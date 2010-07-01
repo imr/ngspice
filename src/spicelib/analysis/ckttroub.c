@@ -91,7 +91,7 @@ CKTtrouble(void *cktp, char *optmsg)
 	sprintf(msg_p, "cause unrecorded.\n");
     }
 
-    emsg = MALLOC(strlen(msg_buf)+1);
+    emsg = (char*) MALLOC(strlen(msg_buf)+1);
     strcpy(emsg,msg_buf);
 
     return emsg;

@@ -123,7 +123,7 @@ hlp_xdisplay(topic *top)
             top->titlewidget, buttonargs, XtNumber(buttonargs));
     XtAddCallback(buttonwidget, XtNcallback, (XtCallbackProc) delete, top);
 
-    buf = tmalloc(80 * top->numlines + 100);
+    buf = (char*) tmalloc(80 * top->numlines + 100);
     buf[0] = '\0';
     for (wl = top->text; wl; wl = wl->wl_next) {
       sputline(buf, wl->wl_word);

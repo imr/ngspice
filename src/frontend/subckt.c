@@ -758,7 +758,7 @@ bxx_init(struct bxx_buffer *t)
 {
     /* assert(0 == (bxx_chunksize & (bxx_chunksize - 1))); */
 
-    t->buffer = tmalloc(bxx_chunksize);
+    t->buffer = (char*) tmalloc(bxx_chunksize);
 
     t->dst   = t->buffer;
     t->limit = t->buffer + bxx_chunksize;
@@ -786,7 +786,7 @@ bxx_extend(struct bxx_buffer *t, int howmuch)
     howmuch +=  (bxx_chunksize - 1);
     howmuch &= ~(bxx_chunksize - 1);
 
-    t->buffer = trealloc(t->buffer, len += howmuch);
+    t->buffer = (char*) trealloc(t->buffer, len += howmuch);
 
     t->dst   = t->buffer + pos;
     t->limit = t->buffer + len;
@@ -912,10 +912,10 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
 	  t          = gettrans(name, NULL);
 
 	  if (t) {
-	    new_str = tmalloc( strlen(s) + strlen(t) + strlen(paren_ptr+1) + 3 );
+	    new_str = (char*) tmalloc( strlen(s) + strlen(t) + strlen(paren_ptr+1) + 3 );
 	    sprintf( new_str, "%s(%s)%s", s, t, paren_ptr+1 ); 
 	  } else {
-	    new_str = tmalloc( strlen(s) + strlen(scname) + strlen(name) + strlen(paren_ptr+1) + 4 );
+	    new_str = (char*) tmalloc( strlen(s) + strlen(scname) + strlen(name) + strlen(paren_ptr+1) + 4 );
 	    sprintf( new_str, "%s(%s.%s)%s", s, scname, name, paren_ptr+1 );
 	  }
 
@@ -1674,7 +1674,7 @@ modtranslate(struct line *deck, char *subname)
 #endif
 	    
             name = gettok(&t);     /* at this point, name = .model */
-            buffer = tmalloc(strlen(name) + strlen(t) +
+            buffer = (char*) tmalloc(strlen(name) + strlen(t) +
                     strlen(subname) + 4);
             (void) sprintf(buffer, "%s ",name);    /* at this point, buffer = ".model " */
             tfree(name);
@@ -1754,7 +1754,7 @@ devmodtranslate(struct line *deck, char *subname)
       t++;
     c = isupper(*t) ? tolower(*t) : *t;  /* set c to first char in line. . . . */
     found = FALSE;
-    buffer = tmalloc(strlen(t) + strlen(subname) + 4);
+    buffer = (char*) tmalloc(strlen(t) + strlen(subname) + 4);
 
     switch (c) {
 

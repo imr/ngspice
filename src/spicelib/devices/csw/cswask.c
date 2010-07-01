@@ -37,7 +37,7 @@ CSWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
             return (OK);
         case CSW_CURRENT:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "CSWask";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -49,7 +49,7 @@ CSWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
             return(OK);
         case CSW_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "CSWask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

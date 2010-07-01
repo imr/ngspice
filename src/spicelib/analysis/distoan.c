@@ -428,7 +428,7 @@ printf("Time outside D_2F1MF2: %g seconds \n", time);
 		}
 	else 
 	{
-        errMsg = MALLOC(strlen(nof2src)+1);
+        errMsg = (char*) MALLOC(strlen(nof2src)+1);
         strcpy(errMsg,nof2src);
 	return(E_NOF2SRC);
 	}

@@ -112,7 +112,7 @@ JFETask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case JFET_CS :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "JFETask";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -124,7 +124,7 @@ JFETask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case JFET_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "JFETask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

@@ -188,7 +188,7 @@ static toplink *getsubtoplink(char **ss)
     if ((tmp =strchr(s, ':'))) {
       tl->place = alloc(fplace);
       tl->place->filename = strncpy(
-            tmalloc((unsigned) (sizeof (char) * (tmp - s + 1))),
+            (char*) tmalloc((unsigned) (sizeof (char) * (tmp - s + 1))),
             s, (tmp - s));
       tl->place->filename[tmp - s] = '\0';
       strtolower(tl->place->filename);

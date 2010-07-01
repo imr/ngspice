@@ -137,7 +137,7 @@ readline(FILE *fd)
    strptr = NULL;
    strlen = 0;
    memlen = STRGROW; 
-   strptr = tmalloc(memlen);
+   strptr = (char*) tmalloc(memlen);
    memlen -= 1;          /* Save constant -1's in while loop */
    while((c = getc(fd)) != EOF) {
       if (strlen == 0 && (c == '\t' || c == ' ')) /* Leading spaces away */
@@ -146,7 +146,7 @@ readline(FILE *fd)
       strlen++;
       if( strlen >= memlen ) {
          memlen += STRGROW;
-         if( !(strptr = trealloc(strptr, memlen + 1))) {
+         if( !(strptr = (char*) trealloc(strptr, memlen + 1))) {
             return (NULL);
          }
       }
@@ -160,7 +160,7 @@ readline(FILE *fd)
    }
 //   strptr[strlen] = '\0'; 
    /* Trim the string */
-   strptr = trealloc(strptr, strlen + 1);
+   strptr = (char*) trealloc(strptr, strlen + 1);
    strptr[strlen] = '\0'; 
    return (strptr);
 }
@@ -389,7 +389,7 @@ inp_add_control_section( struct line *deck, int *line_number ) {
 	found_run          = TRUE;
       }
       if ( cp_getvar( "rawfile", VT_STRING, rawfile ) ) {
-	line = tmalloc( strlen("write") + strlen(rawfile) + 2 );
+	line = (char*) tmalloc( strlen("write") + strlen(rawfile) + 2 );
 	sprintf(line, "write %s", rawfile);
 	newcard            = create_new_card( line, line_number );
 	prev_card->li_next = newcard;
@@ -408,7 +408,7 @@ inp_add_control_section( struct line *deck, int *line_number ) {
     newcard->li_next = prev_card;
 
     if ( cp_getvar( "rawfile", VT_STRING, rawfile ) ) {
-      line = tmalloc( strlen("write") + strlen(rawfile) + 2 );
+      line = (char*) tmalloc( strlen("write") + strlen(rawfile) + 2 );
       sprintf(line, "write %s", rawfile);
       prev_card        = deck->li_next;
       newcard          = create_new_card( line, line_number );
@@ -475,10 +475,10 @@ inp_fix_macro_param_func_paren_io( struct line *begin_card ) {
       while( !isspace(*str_ptr) ) str_ptr++;
 
       if ( ciprefix( ".macro", card->li_line ) ) {
-	new_str = tmalloc( strlen(".subckt") + strlen(str_ptr) + 1 );
+	new_str = (char*) tmalloc( strlen(".subckt") + strlen(str_ptr) + 1 );
 	sprintf( new_str, ".subckt%s", str_ptr );
       } else {
-	new_str = tmalloc( strlen(".ends") + strlen(str_ptr) + 1 );
+	new_str = (char*) tmalloc( strlen(".ends") + strlen(str_ptr) + 1 );
 	sprintf( new_str, ".ends%s", str_ptr );
       }
 
@@ -990,19 +990,19 @@ inp_fix_ternary_operator_str( char *line )
 
   if ( end_str != NULL ) {
     if ( beg_str != NULL ) {
-      new_str = tmalloc( strlen(beg_str) + strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + strlen(end_str) + 5 );
+      new_str = (char*) tmalloc( strlen(beg_str) + strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + strlen(end_str) + 5 );
       sprintf( new_str, "%sternary_fcn(%s,%s,%s)%s", beg_str, conditional, if_str, else_str, end_str );
     } else {
-      new_str = tmalloc( strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + strlen(end_str) + 5 );
+      new_str = (char*) tmalloc( strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + strlen(end_str) + 5 );
       sprintf( new_str, "ternary_fcn(%s,%s,%s)%s", conditional, if_str, else_str, end_str );
     }
   }
   else {
     if ( beg_str != NULL ) {
-      new_str = tmalloc( strlen(beg_str) + strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + 5 );
+      new_str = (char*) tmalloc( strlen(beg_str) + strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + 5 );
       sprintf( new_str, "%sternary_fcn(%s,%s,%s)", beg_str, conditional, if_str, else_str );
     } else {
-      new_str = tmalloc( strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + 5 );
+      new_str = (char*) tmalloc( strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + 5 );
       sprintf( new_str, "ternary_fcn(%s,%s,%s)", conditional, if_str, else_str );
     }
   }
@@ -1101,7 +1101,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
          if ( call_depth == 0 && line_count == 0 ) {
             line_count++;
             if ( fgets( big_buff, 5000, fp ) ) {
-/*               buffer = tmalloc( strlen(big_buff) + 1 ); 
+/*               buffer = (char*) tmalloc( strlen(big_buff) + 1 ); 
                strcpy(buffer, big_buff); */
                buffer = copy(big_buff);
             }
@@ -1346,7 +1346,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
       }
 
       if ( shell_eol_continuation ) {
-         char *new_buffer = tmalloc( strlen(buffer) + 2);
+         char *new_buffer = (char*) tmalloc( strlen(buffer) + 2);
          sprintf( new_buffer, "+%s", buffer );
 
          tfree(buffer);
@@ -1381,7 +1381,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
 
    if ( call_depth == 0 && found_end == TRUE) {
       if ( global == NULL ) {
-         global = tmalloc( strlen(".global gnd") + 1 );
+         global = (char*) tmalloc( strlen(".global gnd") + 1 );
          sprintf( global, ".global gnd" );
       }
       global_card = alloc(struct line);
@@ -1476,7 +1476,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
          end->li_next = alloc(struct line);    /* create next card */
          end = end->li_next;                   /* point to next card */
   
-         buffer = tmalloc( strlen( ".end" ) + 1 );
+         buffer = (char*) tmalloc( strlen( ".end" ) + 1 );
          sprintf( buffer, ".end" );
 
          /* now put buffer into li */
@@ -1528,7 +1528,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
             }
 
             /* create buffer and write last and current line into it. */
-            buffer = tmalloc(strlen(prev->li_line) + strlen(s) + 2);
+            buffer = (char*) tmalloc(strlen(prev->li_line) + strlen(s) + 2);
             (void) sprintf(buffer, "%s %s", prev->li_line, s + 1); 
 
             s = prev->li_line;
@@ -1852,7 +1852,7 @@ inp_fix_subckt( char *s )
       if ( new_str == NULL ) new_str = strdup(c->li_line);
       else {
 	str     = new_str;
-	new_str = tmalloc( strlen(str) + strlen(c->li_line) + 2 );
+	new_str = (char*) tmalloc( strlen(str) + strlen(c->li_line) + 2 );
 	sprintf( new_str, "%s %s", str, c->li_line );
 	tfree(str);
       }
@@ -1863,7 +1863,7 @@ inp_fix_subckt( char *s )
     }
 
     /* create buffer and insert params: */ 
-    buffer = tmalloc( strlen(s) + 9 + strlen(new_str) + 1 );
+    buffer = (char*) tmalloc( strlen(s) + 9 + strlen(new_str) + 1 );
     sprintf( buffer, "%s params: %s", s, new_str );
 
     tfree(s); tfree(new_str);
@@ -1881,7 +1881,7 @@ inp_remove_ws( char *s )
    char *buffer, *curr;
    bool is_expression = FALSE;
   
-   big_buff = tmalloc( strlen(s) + 1 );
+   big_buff = (char*) tmalloc( strlen(s) + 1 );
    curr = s;
 
    while ( *curr != '\0' ) {
@@ -2158,7 +2158,7 @@ inp_fix_inst_line( char *inst_line,
   }
 
   for ( i = 0; i < num_subckt_params; i++ ) {
-    new_line = tmalloc( strlen( curr_line ) + strlen( subckt_param_values[i] ) + 2 );
+    new_line = (char*) tmalloc( strlen( curr_line ) + strlen( subckt_param_values[i] ) + 2 );
     sprintf( new_line, "%s %s", curr_line, subckt_param_values[i] );
 
     tfree( curr_line );
@@ -2204,11 +2204,11 @@ inp_fix_subckt_multiplier( struct line *subckt_card,
   num_subckt_params = num_subckt_params + 1;
 
   if ( !strstr( subckt_card->li_line, "params:" ) ) {
-    new_str = tmalloc( strlen( subckt_card->li_line ) + 13 );
+    new_str = (char*) tmalloc( strlen( subckt_card->li_line ) + 13 );
     sprintf( new_str, "%s params: m=1", subckt_card->li_line );
     subckt_w_params[num_subckt_w_params++] = get_subckt_model_name( subckt_card->li_line );
   } else {
-    new_str = tmalloc( strlen( subckt_card->li_line ) + 5 );
+    new_str = (char*) tmalloc( strlen( subckt_card->li_line ) + 5 );
     sprintf( new_str, "%s m=1", subckt_card->li_line );
   }
 
@@ -2221,7 +2221,7 @@ inp_fix_subckt_multiplier( struct line *subckt_card,
     /* no 'm' for B line or comment line */
     if ((*(card->li_line) == '*') || (*(card->li_line) == 'b')) 
         continue;
-    new_str = tmalloc( strlen( card->li_line ) + 7 );
+    new_str = (char*) tmalloc( strlen( card->li_line ) + 7 );
     sprintf( new_str, "%s m={m}", card->li_line );
     
     tfree( card->li_line );
@@ -2495,20 +2495,20 @@ inp_do_macro_param_replace( int fcn_number, char *params[] )
 
       if ( curr_str != NULL ) {
 	if ( str_has_arith_char( params[i] ) ) {
-	  new_str = tmalloc( strlen(curr_str) + strlen(curr_ptr) + strlen(params[i]) + 3 );
+	  new_str = (char*) tmalloc( strlen(curr_str) + strlen(curr_ptr) + strlen(params[i]) + 3 );
 	  sprintf( new_str, "%s%s(%s)", curr_str, curr_ptr, params[i] );
 	} else {
-	  new_str = tmalloc( strlen(curr_str) + strlen(curr_ptr) + strlen(params[i]) + 1 );
+	  new_str = (char*) tmalloc( strlen(curr_str) + strlen(curr_ptr) + strlen(params[i]) + 1 );
 	  sprintf( new_str, "%s%s%s", curr_str, curr_ptr, params[i] );
 	}
 
 	tfree( curr_str );
       } else {
 	if ( str_has_arith_char( params[i] ) ) {
-	  new_str = tmalloc( strlen(curr_ptr) + strlen(params[i]) + 3 );
+	  new_str = (char*) tmalloc( strlen(curr_ptr) + strlen(params[i]) + 3 );
 	  sprintf( new_str, "%s(%s)", curr_ptr, params[i] );
 	} else {
-	  new_str = tmalloc( strlen(curr_ptr) + strlen(params[i]) + 1 );
+	  new_str = (char*) tmalloc( strlen(curr_ptr) + strlen(params[i]) + 1 );
 	  sprintf( new_str, "%s%s", curr_ptr, params[i] );
 	}
       }
@@ -2521,7 +2521,7 @@ inp_do_macro_param_replace( int fcn_number, char *params[] )
       if ( curr_str == NULL ) {
 	curr_str = curr_ptr;
       } else {
-	new_str = tmalloc( strlen(curr_str) + strlen(curr_ptr) + 1 );
+	new_str = (char*) tmalloc( strlen(curr_str) + strlen(curr_ptr) + 1 );
 	sprintf( new_str, "%s%s", curr_str, curr_ptr );
 	tfree(curr_str);
 	curr_str = new_str;
@@ -2611,11 +2611,11 @@ inp_expand_macro_in_str( char *str )
                keep  = *fcn_name;
                *fcn_name = '\0';
                if ( curr_str == NULL ) {
-                  new_str = tmalloc( strlen(str) + strlen(macro_str) + strlen(close_paren_ptr+1) + 3 );
+                  new_str = (char*) tmalloc( strlen(str) + strlen(macro_str) + strlen(close_paren_ptr+1) + 3 );
                   sprintf( new_str, "%s(%s)", str, macro_str ); 
                   curr_str = new_str;
                } else {
-                  new_str = tmalloc( strlen(curr_str) + strlen(str) + strlen(macro_str) + strlen(close_paren_ptr+1) + 3 );
+                  new_str = (char*) tmalloc( strlen(curr_str) + strlen(str) + strlen(macro_str) + strlen(close_paren_ptr+1) + 3 );
                   sprintf( new_str, "%s%s(%s)", curr_str, str, macro_str ); 
                   tfree(curr_str);
                   curr_str = new_str;
@@ -2638,7 +2638,7 @@ inp_expand_macro_in_str( char *str )
    }
    else {
       if ( str != NULL ) {
-         new_str = tmalloc( strlen(curr_str) + strlen(str) + 1 );
+         new_str = (char*) tmalloc( strlen(curr_str) + strlen(str) + 1 );
          sprintf( new_str, "%s%s", curr_str, str );
          tfree(curr_str);
          curr_str = new_str;
@@ -2768,7 +2768,7 @@ inp_fix_param_values( struct line *deck )
       	  end_of_str++;
           n++;
         }     
-      	vec_str = tmalloc(n); /* string xx yyy from vector [xx yyy] */
+      	vec_str = (char*) tmalloc(n); /* string xx yyy from vector [xx yyy] */
       	*vec_str = '\0';
       	strncat(vec_str, beg_of_str + 1, n - 1);
 
@@ -2779,7 +2779,7 @@ inp_fix_param_values( struct line *deck )
            if (!natok) break;
            wl = alloc(struct wordlist);
 
-           buffer = tmalloc(strlen(natok) + 4);  
+           buffer = (char*) tmalloc(strlen(natok) + 4);  
            if ( isdigit(*natok) || *natok == '{' || *natok == '.' ||
             *natok == '"' || ( *natok == '-' && isdigit(*(natok+1)) ) ||
             ciprefix("true", natok) || ciprefix("false", natok) ||
@@ -2823,7 +2823,7 @@ inp_fix_param_values( struct line *deck )
         wl_free(nwl);
         /* insert new vector into actual line */
         *equal_ptr  = '\0';	
-        new_str = tmalloc( strlen(c->li_line) + strlen(newvec) + strlen(end_of_str+1) + 5 );
+        new_str = (char*) tmalloc( strlen(c->li_line) + strlen(newvec) + strlen(end_of_str+1) + 5 );
         sprintf( new_str, "%s=[%s] %s", c->li_line, newvec, end_of_str+1 );        
         tfree(newvec);
         
@@ -2840,7 +2840,7 @@ inp_fix_param_values( struct line *deck )
       	  end_of_str++;
           n++;
         }     
-      	vec_str = tmalloc(n); /* string xx yyy from vector [xx yyy] */
+      	vec_str = (char*) tmalloc(n); /* string xx yyy from vector [xx yyy] */
       	*vec_str = '\0';
       	strncat(vec_str, beg_of_str + 1, n - 1);
 
@@ -2851,7 +2851,7 @@ inp_fix_param_values( struct line *deck )
            if (!natok) break;
            wl = alloc(struct wordlist);
 
-           buffer = tmalloc(strlen(natok) + 4);  
+           buffer = (char*) tmalloc(strlen(natok) + 4);  
            if ( isdigit(*natok) || *natok == '{' || *natok == '.' ||
             *natok == '"' || ( *natok == '-' && isdigit(*(natok+1)) ) ||
             ciprefix("true", natok) || ciprefix("false", natok)) {
@@ -2873,7 +2873,7 @@ inp_fix_param_values( struct line *deck )
         wl_free(nwl);
         /* insert new complex value into actual line */
 	*equal_ptr  = '\0';	
-	new_str = tmalloc( strlen(c->li_line) + strlen(newvec) + strlen(end_of_str+1) + 5 );
+	new_str = (char*) tmalloc( strlen(c->li_line) + strlen(newvec) + strlen(end_of_str+1) + 5 );
 	sprintf( new_str, "%s=<%s> %s", c->li_line, newvec, end_of_str+1 );        
         tfree(newvec);
         
@@ -2893,13 +2893,13 @@ inp_fix_param_values( struct line *deck )
 	*equal_ptr  = '\0';
 
 	if ( *end_of_str == '\0' ) {
-	  new_str = tmalloc( strlen(c->li_line) + strlen(beg_of_str) + 4 );
+	  new_str = (char*) tmalloc( strlen(c->li_line) + strlen(beg_of_str) + 4 );
 	  sprintf( new_str, "%s={%s}", c->li_line, beg_of_str );
 
 	} else {
 	  *end_of_str = '\0';
 	
-	  new_str = tmalloc( strlen(c->li_line) + strlen(beg_of_str) + strlen(end_of_str+1) + 5 );
+	  new_str = (char*) tmalloc( strlen(c->li_line) + strlen(beg_of_str) + strlen(end_of_str+1) + 5 );
 	  sprintf( new_str, "%s={%s} %s", c->li_line, beg_of_str, end_of_str+1 );
 	}
 	old_str    = c->li_line;
@@ -3235,12 +3235,12 @@ inp_sort_params( struct line *start_card, struct line *end_card, struct line *ca
 		  *str_ptr = '\0';
 		  if ( *end != '\0' )
 		    {
-		      new_str = tmalloc( strlen(curr_line) + strlen(param_names[i]) + strlen(end) + 3 );
+		      new_str = (char*) tmalloc( strlen(curr_line) + strlen(param_names[i]) + strlen(end) + 3 );
 		      sprintf( new_str, "%s{%s}%s", curr_line, param_names[i], end );
 		    }
 		  else
 		    {
-		      new_str = tmalloc( strlen(curr_line) + strlen(param_names[i]) + 3 );
+		      new_str = (char*) tmalloc( strlen(curr_line) + strlen(param_names[i]) + 3 );
 		      sprintf( new_str, "%s{%s}", curr_line, param_names[i] );
 		    }
 		  str_ptr = new_str + strlen(curr_line) + strlen(param_names[i]);
@@ -3314,7 +3314,7 @@ inp_add_params_to_subckt( struct line *subckt_card )
     while ( isspace(*param_ptr) ) param_ptr++;
 
     if ( !strstr( subckt_line, "params:" ) ) {
-      new_line = tmalloc( strlen(subckt_line) + strlen("params: ") + strlen(param_ptr) + 2 );
+      new_line = (char*) tmalloc( strlen(subckt_line) + strlen("params: ") + strlen(param_ptr) + 2 );
       sprintf( new_line, "%s params: %s", subckt_line, param_ptr );
 
       subckt_name = subckt_card->li_line;
@@ -3327,7 +3327,7 @@ inp_add_params_to_subckt( struct line *subckt_card )
       subckt_w_params[num_subckt_w_params++] = strdup(subckt_name);
       *end_ptr = keep;
     } else {
-      new_line = tmalloc( strlen(subckt_line) + strlen(param_ptr) + 2 );
+      new_line = (char*) tmalloc( strlen(subckt_line) + strlen(param_ptr) + 2 );
       sprintf( new_line, "%s %s", subckt_line, param_ptr );
     }
 
@@ -3452,7 +3452,7 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
 	      beg_param++;
 	      keep       = *end_param;
 	      *end_param = '\0';
-	      new_line   = tmalloc( strlen(".param ") + strlen(beg_param) + 1 );
+	      new_line   = (char*) tmalloc( strlen(".param ") + strlen(beg_param) + 1 );
 	      sprintf( new_line, ".param %s", beg_param );
 	      array[counter++] = new_line;
 	      *end_param = keep;
@@ -4091,7 +4091,7 @@ static void inp_bsource_compat(struct line *deck)
                         /* {} around all other tokens */
                         else {
                             xlen = strlen(buf);
-                            tmp_char = tmalloc(xlen + 3);
+                            tmp_char = (char*) tmalloc(xlen + 3);
                             sprintf(tmp_char, "{%s}", buf);
                             cwl->wl_word = tmp_char;
                         }
@@ -4133,7 +4133,7 @@ static void inp_bsource_compat(struct line *deck)
             /* cut the tmp_char after the equal sign */
             *(equal_ptr + 1) = '\0';  
             xlen = strlen(tmp_char) + strlen(new_str) + 2;
-            final_str = tmalloc(xlen);
+            final_str = (char*) tmalloc(xlen);
             sprintf(final_str, "%s %s", tmp_char, new_str);
 
             new_line = alloc(struct line);

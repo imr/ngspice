@@ -363,7 +363,7 @@ void SaveText(GRAPH *graph, char *text, int x, int y)
       graph->keyed = keyed;
     }
 
-    keyed->text = tmalloc(strlen(text) + 1);
+    keyed->text = (char*) tmalloc(strlen(text) + 1);
     strcpy(keyed->text, text);
 
     keyed->x = x;

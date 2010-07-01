@@ -114,7 +114,7 @@ HFETAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue 
             return (OK);
         case HFETA_CS :
              if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                 errMsg = MALLOC(strlen(msg)+1);
+                 errMsg = (char*) MALLOC(strlen(msg)+1);
                  errRtn = "HFETAask";
                  strcpy(errMsg,msg);
                  return(E_ASKCURRENT);
@@ -126,7 +126,7 @@ HFETAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue 
              return(OK);
         case HFETA_POWER :
              if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                 errMsg = MALLOC(strlen(msg)+1);
+                 errMsg = (char*) MALLOC(strlen(msg)+1);
                  errRtn = "HFETAask";
                  strcpy(errMsg,msg);
                  return(E_ASKPOWER);

@@ -109,7 +109,7 @@ HFET2ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return (OK);
         case HFET2_CS :
              if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                 errMsg = MALLOC(strlen(msg)+1);
+                 errMsg = (char*) MALLOC(strlen(msg)+1);
                  errRtn = "HFET2ask";
                  strcpy(errMsg,msg);
                  return(E_ASKCURRENT);
@@ -121,7 +121,7 @@ HFET2ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
              return(OK);
         case HFET2_POWER :
              if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                 errMsg = MALLOC(strlen(msg)+1);
+                 errMsg = (char*) MALLOC(strlen(msg)+1);
                  errRtn = "HFET2ask";
                  strcpy(errMsg,msg);
                  return(E_ASKPOWER);

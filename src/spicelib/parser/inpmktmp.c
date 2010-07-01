@@ -17,7 +17,7 @@ char *INPmkTemp(char *string)
     char *temp;
 
     len = strlen(string);
-    temp = MALLOC(len + 1);
+    temp = (char*) MALLOC(len + 1);
     if (temp != (char *) NULL)
 	(void) strcpy(temp, string);
     return (temp);

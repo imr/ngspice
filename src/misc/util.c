@@ -126,7 +126,7 @@ char * absolute_pathname(char *string, char *dot_path)
       result = copy(string);
   else {
       if (dot_path && dot_path[0]) {
-         result = tmalloc(2 + strlen(dot_path) + strlen(string));
+         result = (char*) tmalloc(2 + strlen(dot_path) + strlen(string));
          strcpy(result, dot_path);
          result_len = strlen(result);
          if (result[result_len - 1] != '/') {
@@ -134,7 +134,7 @@ char * absolute_pathname(char *string, char *dot_path)
              result[result_len] = '\0';
          }
       } else {
-         result = tmalloc(3 + strlen (string));
+         result = (char*) tmalloc(3 + strlen (string));
          result[0] = '.'; result[1] = '/'; result[2] = '\0';
          result_len = 2;
       }

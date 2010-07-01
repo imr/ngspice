@@ -171,7 +171,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                           model->DIObreakdownVoltage/vt) {
                     cbv=here->DIOtSatCur*here->DIOarea*here->DIOm * 
                         model->DIObreakdownVoltage/vt;
-                    emsg = MALLOC(100);
+                    emsg = (char*) MALLOC(100);
                     if(emsg == (char *)NULL) return(E_NOMEM);
                     (void)sprintf(emsg,
                     "%%s: breakdown current increased to %g to resolve",
@@ -193,7 +193,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                              (exp((model->DIObreakdownVoltage-xbv)/vt)-1+xbv/vt);
                         if (fabs(xcbv-cbv) <= tol) goto matched;
                     }
-                    emsg = MALLOC(100);
+                    emsg = (char*) MALLOC(100);
                     if(emsg == (char *)NULL) return(E_NOMEM);
                     (void)sprintf(emsg,
                     "%%s: unable to match forward and reverse diode regions: bv = %g, ibv = %g",

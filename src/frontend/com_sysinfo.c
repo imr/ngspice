@@ -220,7 +220,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 			buf = fgetc(file);
 		}
 
-		info->osName = malloc((size) * sizeof(char));
+		info->osName = (char*) malloc((size) * sizeof(char));
 		rewind(file);
 		fread(info->osName, sizeof(char), size, file);
 		fclose(file);
@@ -244,7 +244,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 			buf = fgetc(file);
 		}
 		/* get complete string */
-		inStr = malloc((size+1) * sizeof(char));
+		inStr = (char*) malloc((size+1) * sizeof(char));
 		rewind(file);
 		fread(inStr, sizeof(char), size, file); 
 		inStr[size] = '\0';
@@ -262,7 +262,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 					if(numToEOL > 2) {
                   /* skip ": "*/
 						numToEOL-=2;
-						info->cpuModelName = malloc(numToEOL+1);
+						info->cpuModelName = (char*) malloc(numToEOL+1);
 						memcpy(info->cpuModelName, modelPtr+2, numToEOL);
 						info->cpuModelName[numToEOL] = '\0';					
 					} 
@@ -289,7 +289,7 @@ TesError tesCreateSystemInfo(TesSystemInfo *info) {
 				if (isblank(*strPtr)) numProcs++;
 			}
 			info->numLogicalProcessors = numProcs;
-			physIDs = malloc(numProcs * sizeof(tInt));
+			physIDs = (tInt*) malloc(numProcs * sizeof(tInt));
 						
 			/* get number of physical CPUs */
 			numProcs = 0;

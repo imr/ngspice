@@ -358,7 +358,7 @@ MOS3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case MOS3_CB :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "MOS3ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -369,7 +369,7 @@ MOS3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case MOS3_CG :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "MOS3ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -386,7 +386,7 @@ MOS3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case MOS3_CS :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "MOS3ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -404,7 +404,7 @@ MOS3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case MOS3_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "MOS3ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

@@ -844,7 +844,7 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
     p = (INPparseNode *) MALLOC(sizeof(INPparseNode));
 
     if (!strcmp(buf, "v")) {
-	name = MALLOC(128);
+	name = (char*) MALLOC(128);
 	if (arg->type == PT_PLACEHOLDER) {
 	    strcpy(name, arg->funcname);
 	} else if (arg->type == PT_CONSTANT) {
@@ -883,7 +883,7 @@ static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
 	    p->type = PT_VAR;
 	}
     } else if (!strcmp(buf, "i")) {
-	name = MALLOC(128);
+	name = (char*) MALLOC(128);
 	if (arg->type == PT_PLACEHOLDER)
 	    strcpy(name, arg->funcname);
 	else if (arg->type == PT_CONSTANT)
@@ -1027,7 +1027,7 @@ static INPparseNode *mksnode(const char *string, void *ckt)
 		values = (IFvalue *) MALLOC(sizeof(IFvalue));
 		types = (int *) MALLOC(sizeof(int));
 	    }
-	    values[i].sValue = MALLOC(strlen(buf) + 1);
+	    values[i].sValue = (char*) MALLOC(strlen(buf) + 1);
 	    strcpy(values[i].sValue, buf);
 	    types[i] = IF_STRING;
 	    numvalues++;
@@ -1176,7 +1176,7 @@ int PTlex (YYSTYPE *lvalp, char **line)
 	    for (s = sbuf; *s; s++)
 		if (index(specials, *s))
 		    break;
-	    tmp = MALLOC(s - sbuf + 1);
+	    tmp = (char*) MALLOC(s - sbuf + 1);
 	    strncpy(tmp, sbuf, s - sbuf);
 	    tmp[s - sbuf] = '\0';
 	    lvalp->str = tmp;

@@ -120,7 +120,7 @@ MESAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return (OK);
         case MESA_CS :
              if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                 errMsg = MALLOC(strlen(msg)+1);
+                 errMsg = (char*) MALLOC(strlen(msg)+1);
                  errRtn = "MESAask";
                  strcpy(errMsg,msg);
                  return(E_ASKCURRENT);
@@ -132,7 +132,7 @@ MESAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
              return(OK);
         case MESA_POWER :
              if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                 errMsg = MALLOC(strlen(msg)+1);
+                 errMsg = (char*) MALLOC(strlen(msg)+1);
                  errRtn = "MESAask";
                  strcpy(errMsg,msg);
                  return(E_ASKPOWER);

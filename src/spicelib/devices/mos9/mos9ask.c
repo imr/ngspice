@@ -355,7 +355,7 @@ MOS9ask(CKTcircuit *ckt, GENinstance *inst, int which,
             return(OK);
         case MOS9_CB :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "MOS9ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -366,7 +366,7 @@ MOS9ask(CKTcircuit *ckt, GENinstance *inst, int which,
             return(OK);
         case MOS9_CG :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "MOS9ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -383,7 +383,7 @@ MOS9ask(CKTcircuit *ckt, GENinstance *inst, int which,
             return(OK);
         case MOS9_CS :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "MOS9ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -401,7 +401,7 @@ MOS9ask(CKTcircuit *ckt, GENinstance *inst, int which,
             return(OK);
         case MOS9_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "MOS9ask.c";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

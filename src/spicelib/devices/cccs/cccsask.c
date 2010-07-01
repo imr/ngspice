@@ -47,7 +47,7 @@ CCCSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return (OK);
         case CCCS_CURRENT :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "CCCSask";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -62,7 +62,7 @@ CCCSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return(OK);
         case CCCS_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "CCCSask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

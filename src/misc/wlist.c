@@ -197,7 +197,7 @@ wl_flatten(wordlist *wl)
 
     for (tw = wl; tw; tw = tw->wl_next)
         i += strlen(tw->wl_word) + 1;
-    buf = tmalloc(i + 1);
+    buf = (char*) tmalloc(i + 1);
     *buf = 0;
 
     while (wl != NULL) {

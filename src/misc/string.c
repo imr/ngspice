@@ -28,7 +28,7 @@ copy(const char *str)
 {
     char *p;
     
-    if ((p = tmalloc(strlen(str) + 1)))
+    if ((p = (char*) tmalloc(strlen(str) + 1)))
 	    (void) strcpy(p, str);
     return(p);
 }
@@ -39,7 +39,7 @@ copy_substring(const char *str, const char *end)
     int n = end - str;
     char *p;
 
-    if ((p = tmalloc(n + 1))) {
+    if ((p = (char*) tmalloc(n + 1))) {
         (void) strncpy(p, str, n);
         p[n] = '\0';
     }

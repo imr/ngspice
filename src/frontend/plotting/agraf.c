@@ -95,9 +95,9 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
         v->v_linestyle = (PCHARS[i] ? PCHARS[i++] : '#');
     }
     /* Now allocate the field and stuff. */
-    field = tmalloc((maxy + 1) * (maxx + 1));
-    line1 = tmalloc(maxy + margin + FUDGE + 1);
-    line2 = tmalloc(maxy + margin + FUDGE + 1);
+    field = (char*) tmalloc((maxy + 1) * (maxx + 1));
+    line1 = (char*) tmalloc(maxy + margin + FUDGE + 1);
+    line2 = (char*) tmalloc(maxy + margin + FUDGE + 1);
     if (!novalue)
         values = (double *) tmalloc(maxx * sizeof (double));
     

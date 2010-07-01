@@ -215,7 +215,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
             if (! here->CPLibr1Given) {
                     for (m = 0; m < here->dimension; m++) {
-                            branchname[m] = tmalloc(MAX_STRING);
+                            branchname[m] = (char*) tmalloc(MAX_STRING);
                             sprintf(branchname[m], "branch1_%d", m);
                             error = 
                             CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
@@ -228,7 +228,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             branchname = (char **) tmalloc(sizeof(char *) * here->dimension);
             if (! here->CPLibr2Given) {
                     for (m = 0; m < here->dimension; m++) {
-                            branchname[m] = tmalloc(MAX_STRING);
+                            branchname[m] = (char*) tmalloc(MAX_STRING);
                             sprintf(branchname[m], "branch2_%d", m);
                             error = 
                             CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
@@ -513,7 +513,7 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
 
    for (i = 0; i < noL; i++) {
                 if (c->taul[i] < ckt->CKTmaxStep) {
-                        errMsg = tmalloc(strlen(message)+1);
+                        errMsg = (char*) tmalloc(strlen(message)+1);
                         strcpy(errMsg,message);
                         return(-1);
                 }

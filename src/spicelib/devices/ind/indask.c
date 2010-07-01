@@ -52,7 +52,7 @@ INDask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);	        	    	       
         case IND_CURRENT :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "INDask";
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
@@ -62,7 +62,7 @@ INDask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case IND_POWER :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
-                errMsg = MALLOC(strlen(msg)+1);
+                errMsg = (char*) MALLOC(strlen(msg)+1);
                 errRtn = "INDask";
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);

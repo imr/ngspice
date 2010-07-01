@@ -79,7 +79,7 @@ char *INPdevParse(char **line, void *ckt, int dev, void *fast,
 	    }
 	}
 	if (i == (*(*(ft_sim->devices)[dev]).numInstanceParms)) {
-	    errbuf = MALLOC(strlen(parm) + 25);
+	    errbuf = (char*) MALLOC(strlen(parm) + 25);
 	    (void) sprintf(errbuf, " unknown parameter (%s) \n", parm);
 	    rtn = (errbuf);
 	    goto quit;
