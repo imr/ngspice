@@ -1955,6 +1955,7 @@ static void
 inp_remove_excess_ws(struct line *deck )
 {
   struct line *c = deck;
+  bool found_control = FALSE;
   while ( c != NULL ) {
     if ( *c->li_line == '*' ) { c = c->li_next; continue; }
  
