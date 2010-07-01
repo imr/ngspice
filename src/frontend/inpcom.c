@@ -1123,7 +1123,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
             break;
          }
          else if(ipc_status == IPC_STATUS_OK) {
-            buffer = (void *) tmalloc(strlen(ipc_buffer) + 3);
+            buffer = (char *) tmalloc(strlen(ipc_buffer) + 3);
             strcpy(buffer, ipc_buffer);
             strcat(buffer, "\n");
          }

@@ -1,4 +1,9 @@
 2010-07-01  Robert Larice
+ * src/frontend/inpcom.c,
+ * src/spicelib/devices/cktinit.c :
+	fix some typecasts to *malloc() return values
+
+2010-07-01  Robert Larice
  * src/frontend/inpcom.c :  explicit compare with NULL
 
 2010-06-30  Robert Larice

@@ -87,7 +87,7 @@ CKTinit(void **ckt)		/* new circuit to create */
 /* gtri - begin - wbk - allocate/initialize substructs */
 
     /* Allocate evt data structure */
-    (sckt)->evt = (void *) MALLOC(sizeof(Evt_Ckt_Data_t));
+    (sckt)->evt = (Evt_Ckt_Data_t *) MALLOC(sizeof(Evt_Ckt_Data_t));
     if(! (sckt)->evt)
         return(E_NOMEM);
 
@@ -95,7 +95,7 @@ CKTinit(void **ckt)		/* new circuit to create */
     (sckt)->evt->options.op_alternate = MIF_TRUE;
 
     /* Allocate enh data structure */
-    (sckt)->enh = (void *) MALLOC(sizeof(Enh_Ckt_Data_t));
+    (sckt)->enh = (Enh_Ckt_Data_t *) MALLOC(sizeof(Enh_Ckt_Data_t));
     if(! (sckt)->enh)
         return(E_NOMEM);
 
