@@ -1957,6 +1957,14 @@ inp_remove_excess_ws(struct line *deck )
   struct line *c = deck;
   while ( c != NULL ) {
     if ( *c->li_line == '*' ) { c = c->li_next; continue; }
+ 
+    /* exclude echo lines between .control and .endc from removing white spaces */
+    if ( ciprefix( ".control", c->li_line ) ) found_control = TRUE;
+    if ( ciprefix( ".endc",    c->li_line ) ) found_control = FALSE; 
+    if ((found_control) && (ciprefix( "echo", c->li_line ))) {
+        c = c->li_next;
+        continue;
+    } 
     c->li_line = inp_remove_ws(c->li_line); /* freed in fcn */
     c = c->li_next;
   }
@@ -4102,7 +4110,7 @@ static void inp_bsource_compat(struct line *deck)
                 {
                     /* allow 100p, 5MEG etc. */
                     dvalue = INPevaluate(&str_ptr, &error1, 1);
-                    cvalue = tmalloc(19);
+                    cvalue = (char*) tmalloc(19);
                     sprintf(cvalue,"%18.10e", dvalue);
                     /* unary -, change sign */
                     if (ustate == 2) {

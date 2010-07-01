@@ -1,3 +1,7 @@
+2010-07-01  Holger Vogt
+ * src/frontend/inpcom.c :  no removal of white spaces in echo lines
+   inside a control section
+
 2010-07-01  Robert Larice
  * src/frontend/com_sysinfo.c ,
  * src/frontend/display.c ,
