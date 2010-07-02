@@ -68,7 +68,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	double		*output_values;
 	IFcomplex	*output_cvalues;
 	double		delta_var;
-	int		(*fn)( );
+	int             (*fn) (SMPmatrix *, GENmodel *, CKTcircuit *, int *);
 	static int	is_dc;
 	int		k, j, n;
 	int		num_vars, branch_eq=0;
@@ -680,7 +680,7 @@ count_steps(int type, double low, double high, int steps, double *stepsize)
 static int
 sens_load(sgen *sg, CKTcircuit *ckt, int is_dc)
 {
-	int	(*fn)( );
+ 	int	(*fn) (GENmodel *, CKTcircuit *);
 
 	error = 0;
 
@@ -701,7 +701,7 @@ sens_load(sgen *sg, CKTcircuit *ckt, int is_dc)
 static int
 sens_temp(sgen *sg, CKTcircuit *ckt)
 {
-	int	(*fn)( );
+	int	(*fn) (GENmodel *, CKTcircuit *);
 
 	error = 0;
 
@@ -762,12 +762,12 @@ sens_getp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 int
 sens_setp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 {
-	int	(*fn)( );
 	int	pid;
 
 	error = 0;
 
 	if (sg->is_instparam) {
+		int (*fn) (int, IFvalue *, GENinstance *, IFvalue *);
 		fn = DEVices[sg->dev]->DEVparam;
 		pid = DEVices[sg->dev]->DEVpublic.instanceParms[sg->param].id;
 		if (fn)
@@ -775,6 +775,7 @@ sens_setp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 		else
 			return 1;
 	} else {
+		int (*fn) (int, IFvalue *, GENmodel *);
 		fn = DEVices[sg->dev]->DEVmodParam;
 		pid = DEVices[sg->dev]->DEVpublic.modelParms[sg->param].id;
 		if (fn)

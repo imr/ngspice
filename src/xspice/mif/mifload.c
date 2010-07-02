@@ -71,7 +71,7 @@ extern SPICEdev **DEVices;        /* info about all device types */
 
 static void MIFauto_partial(
     MIFinstance     *here,
-    void            (*cm_func)(),
+    void            (*cm_func) (Mif_Private_t *),
     Mif_Private_t   *cm_data
 );
 
@@ -692,7 +692,7 @@ are then computed by divided differences.
 
 static void MIFauto_partial(
     MIFinstance     *here,         /* The instance structure */
-    void            (*cm_func)(),  /* The code model function to be called */
+    void            (*cm_func) (Mif_Private_t *),  /* The code model function to be called */
     Mif_Private_t   *cm_data)      /* The data to be passed to the code model */
 {
 

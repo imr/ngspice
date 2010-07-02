@@ -1,3 +1,8 @@
+2010-07-02  Robert Larice
+ * src/spicelib/analysis/cktsens.c ,
+ * src/xspice/mif/mifload.c :
+		ansi style function args for some function pointers
+
 2010-07-02  Holger Vogt
  * src/frontend/inpcom.c :  .TITLE line added
  * /bsim3soi/b4soild.c, b4soiset., b4soidef.h, DEVICES: OpenMP support for
