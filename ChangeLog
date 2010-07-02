@@ -1,6 +1,6 @@
 2010-07-02  Holger Vogt
  * src/frontend/inpcom.c :  .TITLE line added
- * /bsim3soi/b4soild.c, b4soiset., b4soidef.h: OpenMP support for
+ * /bsim3soi/b4soild.c, b4soiset., b4soidef.h, DEVICES: OpenMP support for
    SOI model B4SOI, version 4.3.1.
 
 2010-07-01  Holger Vogt
