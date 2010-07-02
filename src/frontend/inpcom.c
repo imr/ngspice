@@ -1064,7 +1064,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
    int             ipc_len;
 #endif
    char *copys=NULL, big_buff2[5000];
-/*   char *global_copy = NULL; */
+   char *new_title = NULL;
    char keep_char;
    int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
    int line_number_orig = 1, line_number_lib = 1, line_number_inc = 1;
@@ -1158,6 +1158,17 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
       if (*buffer == '@') {
          tfree(buffer);		/* was allocated by readline() */
          break;
+      }
+
+      /* now handle .title statement */
+      if (ciprefix(".title", buffer)) {
+         for   ( s = buffer; *s && !isspace(*s); s++ ); /* skip over .title */
+         while ( isspace(*s) ) s++;             /* advance past space chars */
+
+         /* only the last title line remains valid */
+          if (new_title != NULL) tfree(new_title);
+          new_title = copy(s);
+          *buffer = '*';             /* change .TITLE line to comment line */
       }
 
       /* now handle .lib statements */
@@ -1487,6 +1498,12 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
          end->li_linenum = end->li_linenum_orig = line_number++;
          end->li_linenum_orig = line_number_orig++;
       }
+   }
+
+   /* Replace first line with the new title, if available */
+   if (new_title != NULL) {
+       if (cc->li_line) tfree(cc->li_line);
+       cc->li_line = new_title;
    }
 
    /* Now clean up li: remove comments & stitch together continuation lines. */
