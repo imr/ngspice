@@ -25,6 +25,12 @@ static char rcsid[] = "$Id$";
 #include "sperror.h"
 #include "suffix.h"
 
+#ifdef USE_OMP4SOI
+int nthreads;
+extern bool cp_getvar(char *name, int type, void *retval);
+#define VT_NUM 1
+#endif
+
 #define SMOOTHFACTOR 0.1
 #define EPSOX 3.453133e-11
 #define EPSSI 1.03594e-10
@@ -50,6 +56,12 @@ double Cboxt;
 
 /* v3.2 */
 double Vbs0t, Qsi;
+
+#ifdef USE_OMP4SOI
+unsigned int idx, InstCount;
+B4SOIinstance **InstArray;
+int nthreads;
+#endif
 
     /*  loop through all the B4SOI device models */
     for( ; model != NULL; model = model->B4SOInextModel )
@@ -2661,6 +2673,48 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 
         }
     }
+
+#ifdef USE_OMP4SOI
+    if (!cp_getvar("num_threads", VT_NUM, (char *) &nthreads))   
+        nthreads = 2;
+
+    omp_set_num_threads(nthreads);
+    if (nthreads == 1)
+        printf("OpenMP: %d thread is requested in B4SOI\n", nthreads);
+    else
+        printf("OpenMP: %d threads are requested in B4SOI\n", nthreads);
+    InstCount = 0;
+    model = (B4SOImodel*)inModel;
+    /* loop through all the B4SOI device models 
+       to count the number of instances */
+    
+    for( ; model != NULL; model = model->B4SOInextModel )
+    {
+        /* loop through all the instances of the model */
+        for (here = model->B4SOIinstances; here != NULL ;
+             here=here->B4SOInextInstance) 
+        { 
+            InstCount++;
+        }
+    }
+    InstArray = (B4SOIinstance**)tmalloc(InstCount*sizeof(B4SOIinstance**));
+    model = (B4SOImodel*)inModel;
+    idx = 0;
+    for( ; model != NULL; model = model->B4SOInextModel )
+    {
+        /* loop through all the instances of the model */
+        for (here = model->B4SOIinstances; here != NULL ;
+             here=here->B4SOInextInstance) 
+        { 
+            InstArray[idx] = here;
+            idx++;
+        }
+        /* set the array pointer and instance count into each model */
+        model->B4SOIInstCount = InstCount;
+        model->B4SOIInstanceArray = InstArray;		
+    }
+#endif
+
     return(OK);
 }  
 

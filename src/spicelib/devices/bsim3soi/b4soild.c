@@ -62,6 +62,12 @@ static char rcsid[] = "$Id$";
 #define FLOG(A)  fabs(A) + 1e-14
 
 
+#ifdef USE_OMP4SOI
+int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt);
+void B4SOILoadRhsMat(GENmodel *inModel, CKTcircuit *ckt);
+extern int nthreads;
+#endif
+
 /* B4SOIlimit(vnew,vold)
  *  limits the per-iteration change of any absolute voltage value
  */
@@ -100,8 +106,32 @@ B4SOIload(
     GENmodel *inModel,
     CKTcircuit *ckt)
 {
+#ifdef USE_OMP4SOI
+    int idx;
+    B4SOImodel *model = (B4SOImodel*)inModel;
+    int good = 0;
+    B4SOIinstance *here;
+    B4SOIinstance **InstArray;
+    InstArray = model->B4SOIInstanceArray;
+
+#pragma omp parallel for num_threads(nthreads) private(here)
+    for (idx = 0; idx < model->B4SOIInstCount; idx++) {
+        here = InstArray[idx];
+        good = B4SOILoadOMP(here, ckt);
+    }
+
+    B4SOILoadRhsMat(inModel, ckt);
+    
+    return good;
+}
+
+int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
+    B4SOImodel *model;
+#else
     register B4SOImodel *model = (B4SOImodel*)inModel;
     register B4SOIinstance *here;
+#endif
+
     register int selfheat;
 
     double Gmin;
@@ -447,10 +477,17 @@ B4SOIload(
     double eggbcp2, eggdep, agb1, bgb1, agb2, bgb2, agbc2n, agbc2p, bgbc2n, bgbc2p, Vtm00; /* v4.3.1 bugfix for mtrlMod=1 -Tanvir */
     double m;
 
+#ifdef USE_OMP4SOI
+    model = here->B4SOImodPtr;
+#endif
+
+#ifndef USE_OMP4SOI
     for (; model != NULL; model = model->B4SOInextModel)
     {    for (here = model->B4SOIinstances; here != NULL;
             here = here->B4SOInextInstance)
-    {    Check = 0;
+         {    
+#endif        
+        Check = 0;
         ByPass = 0;
         selfheat = (model->B4SOIshMod == 1) && (here->B4SOIrth0 != 0.0);
         pParam = here->pParam;
@@ -9277,6 +9314,64 @@ line900:
             }
 
             m = here->B4SOIm;
+
+#ifdef USE_OMP4SOI
+            /* v3.1 */
+
+            /* v3.1 added ceqgcrg for RF */
+            here->B4SOINode_1 = m * ((ceqgate + ceqqg)
+             + Igtoteq - ceqgcrg);
+            /* v3.1 added ceqgcrg for RF end */
+
+            here->B4SOINode_2 = m * ((ceqbd - cdreq 
+                                                        - ceqqd) + Idtoteq
+             /* v4.0 */                     + ceqgdtot);
+            if (!here->B4SOIrbodyMod) {
+                here->B4SOINode_3 = m * ((cdreq + ceqbs
+                                                            + ceqqg + ceqqb + ceqqd + ceqqe) + Istoteq
+                 + ceqqgmid - ceqgstot); /* v4.0 */
+            }
+            else { /* v4.0 */
+                here->B4SOINode_4 = m * ((cdreq + ceqbs
+                                                            + ceqqg + ceqqb + ceqqd + ceqqe) + Istoteq
+                 + ceqqgmid + ceqqjd + ceqqjs - ceqgstot);
+            }
+
+            here->B4SOINode_5 = m * ceqqe;
+
+            if (here->B4SOIrgateMod == 2)
+                here->B4SOINode_6 = m * ceqgcrg;
+            else if (here->B4SOIrgateMod == 3)
+                here->B4SOINode_7 = m * (ceqqgmid
+                 + ceqgcrg);
+
+            if (here->B4SOIbodyMod == 1) {
+                here->B4SOINode_8 = m * ceqbodcon;
+            }
+
+            if ( here->B4SOIsoiMod != 2 )
+            {if (!here->B4SOIrbodyMod)
+                here->B4SOINode_9 = m * (ceqbody + ceqqb);
+            else /* v4.0 */ {
+                here->B4SOINode_10 = m * (cdbdp + ceqqjd);
+                here->B4SOINode_11 = m * (ceqbody + ceqqb);
+                here->B4SOINode_12 = m * (csbsp + ceqqjs);
+                }
+            }
+            here->B4SOINode_sh = selfheat;
+
+            if (selfheat) {
+                here->B4SOINode_13 = m * (ceqth + ceqqth);
+            }
+
+            if (model->B4SOIrdsMod)
+            {   here->B4SOINode_14 = m * ceqgdtot;
+                here->B4SOINode_15 = m * ceqgstot;
+            }
+#else
+
+
+
             /* v3.1 */
 
             /* v3.1 added ceqgcrg for RF */
@@ -9353,6 +9448,8 @@ line900:
 
             }
 
+#endif
+
             if (!model->B4SOIrdsMod)
             {   gdpr = here->B4SOIdrainConductance;
                 gspr = here->B4SOIsourceConductance;
@@ -9367,6 +9464,241 @@ line900:
 
             /* v3.1 added for RF */
             geltd = here->B4SOIgrgeltd;
+
+#ifdef USE_OMP4SOI
+
+            if (here->B4SOIrgateMod == 1)
+            {
+                here->B4SOI_1 = m * geltd;
+                here->B4SOI_2 = m * geltd;
+                here->B4SOI_3 = m * geltd;
+            }
+            else if (here->B4SOIrgateMod == 2)
+            {
+                here->B4SOI_4 = m * gcrg;
+                here->B4SOI_5 = m * gcrgg;
+                here->B4SOI_6 = m * gcrgd;
+                here->B4SOI_7 = m * gcrgs;
+                here->B4SOI_8 = m * gcrg;
+                if (here->B4SOIsoiMod !=2) /* v3.2 */
+                    here->B4SOI_9 = m * gcrgb;
+            }
+            else if (here->B4SOIrgateMod == 3)
+            {
+                here->B4SOI_10 = m * geltd;
+                here->B4SOI_11 = m * geltd;
+                here->B4SOI_12 = m * geltd;
+                here->B4SOI_13 = m * (geltd + gcrg + gcgmgmb);
+
+                here->B4SOI_14 = m * (gcrgd + gcgmdb);
+                here->B4SOI_15 = m * gcrgg;
+                here->B4SOI_16 = m * (gcrgs + gcgmsb);
+                here->B4SOI_17 = m * gcgmeb;
+                if (here->B4SOIsoiMod !=2) /* v3.2 */
+                    here->B4SOI_18 = m * gcrgb;
+
+                here->B4SOI_19 = m * gcdgmb;
+                here->B4SOI_20 = m * gcrg;
+                here->B4SOI_21 = m * gcsgmb;
+                here->B4SOI_22 = m * gcegmb;
+            }
+            /* v3.1 added for RF end*/
+
+
+            /* v3.0 */
+            if (here->B4SOIsoiMod != 0) /* v3.2 */
+            {
+                here->B4SOI_23 = m * (Gme + gddpe);
+                here->B4SOI_24 = m * (gsspe - Gme);
+
+                if (here->B4SOIsoiMod != 2) /* v3.2 */
+                {
+                    here->B4SOI_25 = m * gige;
+                    here->B4SOI_26 = m * gige;
+                }
+            }
+
+            here->B4SOI_27 = m * gcedb;
+            here->B4SOI_28 = m * gcesb;
+            here->B4SOI_29 = m * gcdeb;
+            here->B4SOI_30 = m * gcseb;
+            here->B4SOI_31 = m * gcegb;
+            here->B4SOI_32 = m * gcgeb;
+
+            /* v3.1 */
+            if (here->B4SOIsoiMod != 2) /* v3.2 */
+            {
+                here->B4SOI_33 = m * (gcegb + gcedb + gcesb + gceeb + gcegmb); /* 3.2 bug fix */
+
+                /* v3.1 changed GbPtr for RF */
+                if ((here->B4SOIrgateMod == 0) || (here->B4SOIrgateMod == 1))
+                    (here->B4SOI_34 = m * (-gigb + gcggb + gcgdb + gcgsb
+                     + gcgeb - gIgtotb));
+                else /* v3.1 for rgateMod = 2 or 3 */
+                    here->B4SOI_35 = m * (gigb + gcgbb +gIgtotb - gcrgb);
+
+
+                here->B4SOI_36 = m * (-gddpb - Gmbs - gcdbb + gdtotb
+                 + gIdtotb ); /* v4.0 */
+
+                /*                      (*(here->B4SOIDPbPtr) -= (-gddpb - Gmbs + gcdgb + gcddb
+                                        + gcdeb + gcdsb) + gcdgmb
+                                        + gIdtotb );
+                                        */
+
+                (here->B4SOI_37 = m * (-gsspb + Gmbs - gcsbb + gstotb
+                 + Gmin + gIstotb)); /* v4.0 */
+
+                /*                      (*(here->B4SOISPbPtr) -= (-gsspb + Gmbs + gcsgb + gcsdb
+                                        + gcseb + gcssb) + gcsgmb
+                                        + Gmin + gIstotb);
+                                        */
+                (here->B4SOI_38 = m * (gbbe + gcbeb)); /* v3.0 */
+                (here->B4SOI_39 = m * (-gigg + gcbgb + gbbg));
+                (here->B4SOI_40 = m * (-gigd + gcbdb + gbbdp));
+
+                (here->B4SOI_41 = m * (gcbsb + gbbsp - Gmin
+                 - gigs));
+                /*                    if (!here->B4SOIrbodyMod)
+                */
+                (here->B4SOI_42 = m * (-gigb + gbbb - gcbgb - gcbdb
+                 - gcbsb - gcbeb + Gmin));
+                /*                    else
+                              (*(here->B4SOIBbPtr) += -gigb - (Giib - Gbpbs) - gcbgb
+                              - gcbdb - gcbsb - gcbeb + Gmin) ;
+                              */
+                /* v4.0 */
+                if (here->B4SOIrbodyMod) {
+                    (here->B4SOI_43 = m * (-gcjdbdp - GGjdb));
+                    (here->B4SOI_44 = m * (-gcjsbsp - GGjsb));
+                    (here->B4SOI_45 = m * (-gcjdbdp - GGjdb));
+                    (here->B4SOI_46 = m * (gcjdbdp + GGjdb
+                     + here->B4SOIgrbdb));
+                    (here->B4SOI_47 = m * here->B4SOIgrbdb);
+                    (here->B4SOI_48 = m * (-gcjsbsp - GGjsb));
+                    (here->B4SOI_49 = m * here->B4SOIgrbsb);
+                    (here->B4SOI_50 = m * (gcjsbsp + GGjsb
+                     + here->B4SOIgrbsb));
+                    (here->B4SOI_51 = m * here->B4SOIgrbdb);
+                    (here->B4SOI_52 = m * here->B4SOIgrbsb);
+                    (here->B4SOI_53 = m * (here->B4SOIgrbsb
+                     + here->B4SOIgrbdb));
+                }
+                if (model->B4SOIrdsMod)
+                {
+                    (here->B4SOI_54 = m * gdtotb);
+                    (here->B4SOI_55 = m * gstotb);
+                }
+
+            }
+            /* v3.1 */
+            if (model->B4SOIrdsMod)
+            {   (here->B4SOI_56 = m * gdtotg);
+                (here->B4SOI_57 = m * gdtots);
+                (here->B4SOI_58 = m * gstotd);
+                (here->B4SOI_59 = m * gstotg);
+            }
+
+            (here->B4SOI_60 = m * gceeb);
+
+            if (here->B4SOIrgateMod == 0)
+            {
+                (here->B4SOI_61 = m * (gigg + gcggb + Gmin
+                 + gIgtotg));
+                (here->B4SOI_62 =m * ( gigd + gcgdb - Gmin
+                 + gIgtotd));
+                (here->B4SOI_63 = m * (gcgsb + gigs + gIgtots));
+            }
+            else if (here->B4SOIrgateMod == 1) /* v3.1 for RF */
+            {
+                here->B4SOI_64 = m * (gigg + gcggb + Gmin
+                    + gIgtotg + geltd);
+                here->B4SOI_65 = m * (gigd + gcgdb - Gmin
+                    + gIgtotd);
+                here->B4SOI_66 = m * (gcgsb + gigs + gIgtots);
+            }
+            else /* v3.1 for RF rgateMod == 2 or 3 */
+            {
+                here->B4SOI_67 = m * (gigg + gcggb + Gmin
+                    + gIgtotg - gcrgg);
+                here->B4SOI_68 = m * (gigd + gcgdb - Gmin
+                    + gIgtotd - gcrgd);
+                here->B4SOI_69 = m * (gcgsb + gigs + gIgtots - gcrgs);
+            }
+
+
+            (here->B4SOI_70 = m * ((Gm + gcdgb) + gddpg - Gmin
+             - gIdtotg - gdtotg)); /* v4.0 */
+            (here->B4SOI_71 = m * ((gdpr + here->B4SOIgds + gddpdp
+                                       + RevSum + gcddb) + Gmin
+             - gIdtotd - gdtotd)); /* v4.0 */
+            (here->B4SOI_72 = m * ((-gddpsp + here->B4SOIgds + FwdSum
+                                       - gcdsb) + gIdtots + gdtots));
+
+            (here->B4SOI_73 = m * (gdpr + gdtot));
+
+            (here->B4SOI_74 = m * (gcsgb - Gm + gsspg - gIstotg
+             - gstotg)); /* v4.0 */
+            (here->B4SOI_75 = m * ((here->B4SOIgds - gsspdp + RevSum
+                                       - gcsdb + gIstotd) + gstotd)); /* v4.0 */
+
+            (here->B4SOI_76 = m * ((gspr - gstots
+                                       + here->B4SOIgds + gsspsp
+                                       + FwdSum + gcssb)
+             + Gmin - gIstots)); /* v4.0 */
+
+            (here->B4SOI_77 = m * (gspr + gstot));
+
+
+            (here->B4SOI_78 = m * (gdpr + gdtot));
+            (here->B4SOI_79 = m * (gdpr - gdtotd));
+
+
+            (here->B4SOI_80 = m * (gspr + gstot));
+            (here->B4SOI_81 = m * (gspr - gstots));
+
+
+            if (here->B4SOIbodyMod == 1)  {
+                (here->B4SOI_82 = m * gppp);
+                (here->B4SOI_83 = m * gppb);
+                (here->B4SOI_84 = m * gppp);
+            }
+
+            /* v4.1  Ig_agbcp2 stamping */
+            (here->B4SOI_85 = m * gigpg); /* FIXME m or not m ?? h_vogt */
+            if (here->B4SOIbodyMod == 1)  {
+                (here->B4SOI_86 = m * gigpp);
+                (here->B4SOI_87 = m * gigpg);
+                (here->B4SOI_88 = m * gigpp);
+            }
+            else if(here->B4SOIbodyMod == 2)
+            {
+                (here->B4SOI_89 = m * gigpp);
+                (here->B4SOI_90 = m * gigpg);
+                (here->B4SOI_91 = m * gigpp);
+            }
+
+
+            if (selfheat)
+            {
+                (here->B4SOI_92 = m * (GmT + gddpT + gcdT));
+                (here->B4SOI_93 = m * (-GmT + gsspT + gcsT));
+                (here->B4SOI_94 = m * (gbbT + gcbT - gigT));
+                (here->B4SOI_95 = m * gceT);
+                (here->B4SOI_96 = m * (gcgT + gigT));
+                (here->B4SOI_97 = m * (gTtt  + 1/pParam->B4SOIrth + gcTt));
+                (here->B4SOI_98 = m * gTtg);
+                (here->B4SOI_99 = m * gTtb);
+                (here->B4SOI_100 = m * gTtdp);
+                (here->B4SOI_101 = m * gTtsp);
+
+                /* v3.0 */
+                if (here->B4SOIsoiMod != 0) /* v3.2 */
+                    (here->B4SOI_102 = m * gTte);
+
+            }
+#else
+
             if (here->B4SOIrgateMod == 1)
             {
                 *(here->B4SOIGEgePtr) += m * geltd;
@@ -9620,13 +9952,338 @@ line900:
                 *(here->B4SOIQjsPtr) += 1;
                 *(here->B4SOIQjdPtr) += 1;
             }
+#endif
 
 line1000: ;
 
-
+#ifndef USE_OMP4SOI
     }  /* End of Mosfet Instance */
     }   /* End of Model Instance */
-
+#endif
 
     return(OK);
 }
+
+#ifdef USE_OMP4SOI
+void B4SOILoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
+{
+    unsigned int InstCount, idx;
+    B4SOIinstance **InstArray;
+    B4SOIinstance *here;
+    B4SOImodel *model = (B4SOImodel*)inModel;
+
+    InstArray = model->B4SOIInstanceArray;
+    InstCount = model->B4SOIInstCount;
+
+    for(idx = 0; idx < InstCount; idx++) {
+       here = InstArray[idx];
+        /* Update b for Ax = b */
+
+
+
+            /* v3.1 */
+
+            /* v3.1 added ceqgcrg for RF */
+            (*(ckt->CKTrhs + here->B4SOIgNode) -= here->B4SOINode_1);
+            /* v3.1 added ceqgcrg for RF end */
+
+            (*(ckt->CKTrhs + here->B4SOIdNodePrime) += here->B4SOINode_2);
+            if (!here->B4SOIrbodyMod) {
+                (*(ckt->CKTrhs + here->B4SOIsNodePrime) += here->B4SOINode_3); /* v4.0 */
+            }
+            else { /* v4.0 */
+                (*(ckt->CKTrhs + here->B4SOIsNodePrime) += here->B4SOINode_4);
+            }
+
+            (*(ckt->CKTrhs + here->B4SOIeNode) -= here->B4SOINode_5);
+
+            if (here->B4SOIrgateMod == 2)
+                (*(ckt->CKTrhs + here->B4SOIgNodeExt) -= here->B4SOINode_6);
+            else if (here->B4SOIrgateMod == 3)
+                (*(ckt->CKTrhs + here->B4SOIgNodeMid) -= here->B4SOINode_7);
+
+            if (here->B4SOIbodyMod == 1) {
+                (*(ckt->CKTrhs + here->B4SOIpNode) += here->B4SOINode_8);
+            }
+
+            if ( here->B4SOIsoiMod != 2 )
+            {if (!here->B4SOIrbodyMod)
+                (*(ckt->CKTrhs + here->B4SOIbNode) -= here->B4SOINode_9);
+                else /* v4.0 */
+                { (*(ckt->CKTrhs + here->B4SOIdbNode) -= here->B4SOINode_10);
+                    (*(ckt->CKTrhs + here->B4SOIbNode) -= here->B4SOINode_11);
+                    (*(ckt->CKTrhs + here->B4SOIsbNode) -= here->B4SOINode_12);
+                }
+            }
+            
+            if (here->B4SOINode_sh) {
+                (*(ckt->CKTrhs + here->B4SOItempNode) -= here->B4SOINode_13);
+            }
+
+            if (model->B4SOIrdsMod)
+            {   (*(ckt->CKTrhs + here->B4SOIdNode) -= here->B4SOINode_14);
+                (*(ckt->CKTrhs + here->B4SOIsNode) += here->B4SOINode_15);
+            }
+
+
+            if (here->B4SOIdebugMod != 0)
+            {
+                *(ckt->CKTrhs + here->B4SOIvbsNode) = here->B4SOIvbseff;
+                *(ckt->CKTrhs + here->B4SOIidsNode) = FLOG(here->B4SOIids);
+                *(ckt->CKTrhs + here->B4SOIicNode) = FLOG(here->B4SOIic);
+                *(ckt->CKTrhs + here->B4SOIibsNode) = FLOG(here->B4SOIibs);
+                *(ckt->CKTrhs + here->B4SOIibdNode) = FLOG(here->B4SOIibd);
+                *(ckt->CKTrhs + here->B4SOIiiiNode) = FLOG(here->B4SOIiii);
+                *(ckt->CKTrhs + here->B4SOIigNode) = here->B4SOIig;
+                *(ckt->CKTrhs + here->B4SOIgiggNode) = here->B4SOIgigg;
+                *(ckt->CKTrhs + here->B4SOIgigdNode) = here->B4SOIgigd;
+                *(ckt->CKTrhs + here->B4SOIgigbNode) = here->B4SOIgigb;
+                *(ckt->CKTrhs + here->B4SOIigidlNode) = here->B4SOIigidl;
+                *(ckt->CKTrhs + here->B4SOIitunNode) = here->B4SOIitun;
+                *(ckt->CKTrhs + here->B4SOIibpNode) = here->B4SOIibp;
+                *(ckt->CKTrhs + here->B4SOIcbbNode) = here->B4SOIcbb;
+                *(ckt->CKTrhs + here->B4SOIcbdNode) = here->B4SOIcbd;
+                *(ckt->CKTrhs + here->B4SOIcbgNode) = here->B4SOIcbg;
+                *(ckt->CKTrhs + here->B4SOIqbfNode) = here->B4SOIqbf;
+                *(ckt->CKTrhs + here->B4SOIqjsNode) = here->B4SOIqjs;
+                *(ckt->CKTrhs + here->B4SOIqjdNode) = here->B4SOIqjd;
+
+            }
+
+
+            if (here->B4SOIrgateMod == 1)
+            {
+                *(here->B4SOIGEgePtr) += here->B4SOI_1;
+                *(here->B4SOIGgePtr) -= here->B4SOI_2;
+                *(here->B4SOIGEgPtr) -= here->B4SOI_3;
+            }
+            else if (here->B4SOIrgateMod == 2)
+            {
+                *(here->B4SOIGEgePtr) += here->B4SOI_4;
+                *(here->B4SOIGEgPtr) += here->B4SOI_5;
+                *(here->B4SOIGEdpPtr) += here->B4SOI_6;
+                *(here->B4SOIGEspPtr) += here->B4SOI_7;
+                *(here->B4SOIGgePtr) -= here->B4SOI_8;
+                if (here->B4SOIsoiMod !=2) /* v3.2 */
+                    *(here->B4SOIGEbPtr) += here->B4SOI_9;
+            }
+            else if (here->B4SOIrgateMod == 3)
+            {
+                *(here->B4SOIGEgePtr) += here->B4SOI_10;
+                *(here->B4SOIGEgmPtr) -= here->B4SOI_11;
+                *(here->B4SOIGMgePtr) -= here->B4SOI_12;
+                *(here->B4SOIGMgmPtr) += here->B4SOI_13;
+
+                *(here->B4SOIGMdpPtr) += here->B4SOI_14;
+                *(here->B4SOIGMgPtr) += here->B4SOI_15;
+                *(here->B4SOIGMspPtr) += here->B4SOI_16;
+                *(here->B4SOIGMePtr) += here->B4SOI_17;
+                if (here->B4SOIsoiMod !=2) /* v3.2 */
+                    *(here->B4SOIGMbPtr) += here->B4SOI_18;
+
+                *(here->B4SOIDPgmPtr) += here->B4SOI_19;
+                *(here->B4SOIGgmPtr) -= here->B4SOI_20;
+                *(here->B4SOISPgmPtr) += here->B4SOI_21;
+                *(here->B4SOIEgmPtr) += here->B4SOI_22;
+            }
+            /* v3.1 added for RF end*/
+
+
+            /* v3.0 */
+            if (here->B4SOIsoiMod != 0) /* v3.2 */
+            {
+                (*(here->B4SOIDPePtr) += here->B4SOI_23);
+                (*(here->B4SOISPePtr) += here->B4SOI_24);
+
+                if (here->B4SOIsoiMod != 2) /* v3.2 */
+                {
+                    *(here->B4SOIGePtr) += here->B4SOI_25;
+                    *(here->B4SOIBePtr) -= here->B4SOI_26;
+                }
+            }
+
+            *(here->B4SOIEdpPtr) += here->B4SOI_27;
+            *(here->B4SOIEspPtr) += here->B4SOI_28;
+            *(here->B4SOIDPePtr) += here->B4SOI_29;
+            *(here->B4SOISPePtr) += here->B4SOI_30;
+            *(here->B4SOIEgPtr) += here->B4SOI_31;
+            *(here->B4SOIGePtr) += here->B4SOI_32;
+
+            /* v3.1 */
+            if (here->B4SOIsoiMod != 2) /* v3.2 */
+            {
+                (*(here->B4SOIEbPtr) -= here->B4SOI_33); /* 3.2 bug fix */
+
+                /* v3.1 changed GbPtr for RF */
+                if ((here->B4SOIrgateMod == 0) || (here->B4SOIrgateMod == 1))
+                    (*(here->B4SOIGbPtr) -= here->B4SOI_34);
+                else /* v3.1 for rgateMod = 2 or 3 */
+                    *(here->B4SOIGbPtr) += here->B4SOI_35;
+
+
+                (*(here->B4SOIDPbPtr) -= here->B4SOI_36); /* v4.0 */
+
+                /*                      (*(here->B4SOIDPbPtr) -= (-gddpb - Gmbs + gcdgb + gcddb
+                                        + gcdeb + gcdsb) + gcdgmb
+                                        + gIdtotb );
+                                        */
+
+                (*(here->B4SOISPbPtr) -= here->B4SOI_37); /* v4.0 */
+
+                /*                      (*(here->B4SOISPbPtr) -= (-gsspb + Gmbs + gcsgb + gcsdb
+                                        + gcseb + gcssb) + gcsgmb
+                                        + Gmin + gIstotb);
+                                        */
+                (*(here->B4SOIBePtr) += here->B4SOI_38); /* v3.0 */
+                (*(here->B4SOIBgPtr) += here->B4SOI_39);
+                (*(here->B4SOIBdpPtr) += here->B4SOI_40);
+
+                (*(here->B4SOIBspPtr) += here->B4SOI_41);
+                /*                    if (!here->B4SOIrbodyMod)
+                */
+                (*(here->B4SOIBbPtr) += here->B4SOI_42);
+                /*                    else
+                              (*(here->B4SOIBbPtr) += -gigb - (Giib - Gbpbs) - gcbgb
+                              - gcbdb - gcbsb - gcbeb + Gmin) ;
+                              */
+                /* v4.0 */
+                if (here->B4SOIrbodyMod) {
+                    (*(here->B4SOIDPdbPtr) += here->B4SOI_43);
+                    (*(here->B4SOISPsbPtr) += here->B4SOI_44);
+                    (*(here->B4SOIDBdpPtr) += here->B4SOI_45);
+                    (*(here->B4SOIDBdbPtr) += here->B4SOI_46);
+                    (*(here->B4SOIDBbPtr) -= here->B4SOI_47);
+                    (*(here->B4SOISBspPtr) += here->B4SOI_48);
+                    (*(here->B4SOISBbPtr) -= here->B4SOI_49);
+                    (*(here->B4SOISBsbPtr) += here->B4SOI_50);
+                    (*(here->B4SOIBdbPtr) -= here->B4SOI_51);
+                    (*(here->B4SOIBsbPtr) -= here->B4SOI_52);
+                    (*(here->B4SOIBbPtr) += here->B4SOI_53);
+                }
+                if (model->B4SOIrdsMod)
+                {
+                    (*(here->B4SOIDbPtr) += here->B4SOI_54);
+                    (*(here->B4SOISbPtr) += here->B4SOI_55);
+                }
+
+            }
+            /* v3.1 */
+            if (model->B4SOIrdsMod)
+            {   (*(here->B4SOIDgPtr) += here->B4SOI_56);
+                (*(here->B4SOIDspPtr) += here->B4SOI_57);
+                (*(here->B4SOISdpPtr) += here->B4SOI_58);
+                (*(here->B4SOISgPtr) += here->B4SOI_59);
+            }
+
+            (*(here->B4SOIEePtr) += here->B4SOI_60);
+
+            if (here->B4SOIrgateMod == 0)
+            {
+                (*(here->B4SOIGgPtr) += here->B4SOI_61);
+                (*(here->B4SOIGdpPtr) += here->B4SOI_62);
+                (*(here->B4SOIGspPtr) += here->B4SOI_63);
+            }
+            else if (here->B4SOIrgateMod == 1) /* v3.1 for RF */
+            {
+                *(here->B4SOIGgPtr) += here->B4SOI_64;
+                *(here->B4SOIGdpPtr) += here->B4SOI_65;
+                *(here->B4SOIGspPtr) += here->B4SOI_66;
+            }
+            else /* v3.1 for RF rgateMod == 2 or 3 */
+            {
+                *(here->B4SOIGgPtr) += here->B4SOI_67;
+                *(here->B4SOIGdpPtr) += here->B4SOI_68;
+                *(here->B4SOIGspPtr) += here->B4SOI_69;
+            }
+
+
+            (*(here->B4SOIDPgPtr) += here->B4SOI_70); /* v4.0 */
+            (*(here->B4SOIDPdpPtr) += here->B4SOI_71); /* v4.0 */
+            (*(here->B4SOIDPspPtr) -= here->B4SOI_72);
+
+            (*(here->B4SOIDPdPtr) -= here->B4SOI_73);
+
+            (*(here->B4SOISPgPtr) += here->B4SOI_74); /* v4.0 */
+            (*(here->B4SOISPdpPtr) -= here->B4SOI_75); /* v4.0 */
+
+            (*(here->B4SOISPspPtr) += here->B4SOI_76); /* v4.0 */
+
+            (*(here->B4SOISPsPtr) -= here->B4SOI_77);
+
+
+            (*(here->B4SOIDdPtr) += here->B4SOI_78);
+            (*(here->B4SOIDdpPtr) -= here->B4SOI_79);
+
+
+            (*(here->B4SOISsPtr) += here->B4SOI_80);
+            (*(here->B4SOISspPtr) -= here->B4SOI_81);
+
+
+            if (here->B4SOIbodyMod == 1)  {
+                (*(here->B4SOIBpPtr) -= here->B4SOI_82);
+                (*(here->B4SOIPbPtr) += here->B4SOI_83);
+                (*(here->B4SOIPpPtr) += here->B4SOI_84);
+            }
+
+            /* v4.1  Ig_agbcp2 stamping */
+            (*(here->B4SOIGgPtr) += here->B4SOI_85); /* FIXME m or not m ?? h_vogt */
+            if (here->B4SOIbodyMod == 1)  {
+                (*(here->B4SOIPpPtr) -= here->B4SOI_86);
+                (*(here->B4SOIPgPtr) -= here->B4SOI_87);
+                (*(here->B4SOIGpPtr) += here->B4SOI_88);
+            }
+            else if(here->B4SOIbodyMod == 2)
+            {
+                (*(here->B4SOIBbPtr) -= here->B4SOI_89);
+                (*(here->B4SOIBgPtr) -= here->B4SOI_90);
+                (*(here->B4SOIGbPtr) += here->B4SOI_91);
+            }
+
+
+            if (here->B4SOINode_sh) /* selfheat */
+            {
+                (*(here->B4SOIDPtempPtr) += here->B4SOI_92);
+                (*(here->B4SOISPtempPtr) += here->B4SOI_93);
+                (*(here->B4SOIBtempPtr) += here->B4SOI_94);
+                (*(here->B4SOIEtempPtr) +=here->B4SOI_95);
+                (*(here->B4SOIGtempPtr) += here->B4SOI_96);
+                (*(here->B4SOITemptempPtr) += here->B4SOI_97);
+                (*(here->B4SOITempgPtr) += here->B4SOI_98);
+                (*(here->B4SOITempbPtr) += here->B4SOI_99);
+                (*(here->B4SOITempdpPtr) += here->B4SOI_100);
+                (*(here->B4SOITempspPtr) += here->B4SOI_101);
+
+                /* v3.0 */
+                if (here->B4SOIsoiMod != 0) /* v3.2 */
+                    (*(here->B4SOITempePtr) += here->B4SOI_102);
+
+            }
+
+
+
+            if (here->B4SOIdebugMod != 0)
+            {
+                *(here->B4SOIVbsPtr) += 1;
+                *(here->B4SOIIdsPtr) += 1;
+                *(here->B4SOIIcPtr) += 1;
+                *(here->B4SOIIbsPtr) += 1;
+                *(here->B4SOIIbdPtr) += 1;
+                *(here->B4SOIIiiPtr) += 1;
+                *(here->B4SOIIgPtr) += 1;
+                *(here->B4SOIGiggPtr) += 1;
+                *(here->B4SOIGigdPtr) += 1;
+                *(here->B4SOIGigbPtr) += 1;
+                *(here->B4SOIIgidlPtr) += 1;
+                *(here->B4SOIItunPtr) += 1;
+                *(here->B4SOIIbpPtr) += 1;
+                *(here->B4SOICbgPtr) += 1;
+                *(here->B4SOICbbPtr) += 1;
+                *(here->B4SOICbdPtr) += 1;
+                *(here->B4SOIQbfPtr) += 1;
+                *(here->B4SOIQjsPtr) += 1;
+                *(here->B4SOIQjdPtr) += 1;
+            }
+    }
+}
+
+#endif

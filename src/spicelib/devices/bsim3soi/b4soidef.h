@@ -23,6 +23,16 @@ File: b4soidef.h
 #include "complex.h"
 #include "noisedef.h"
 
+
+#ifdef USE_OMP
+#define USE_OMP4SOI
+#endif
+
+
+#ifdef USE_OMP4SOI
+#include <omp.h>
+#endif
+
 typedef struct sB4SOIinstance
 {
     struct sB4SOImodel *B4SOImodPtr;
@@ -532,6 +542,128 @@ typedef struct sB4SOIinstance
     double *B4SOIQjsPtr;
     double *B4SOIQjdPtr;
 
+#ifdef USE_OMP4SOI
+    /* per instance storage of results, to update matrix at a later stge */
+    int B4SOINode_sh;
+    double B4SOINode_1;
+    double B4SOINode_2;
+    double B4SOINode_3;
+    double B4SOINode_4;
+    double B4SOINode_5;
+    double B4SOINode_6;
+    double B4SOINode_7;
+    double B4SOINode_8;
+    double B4SOINode_9;
+    double B4SOINode_10;
+    double B4SOINode_11;
+    double B4SOINode_12;
+    double B4SOINode_13;
+    double B4SOINode_14;
+    double B4SOINode_15;
+
+    double B4SOI_1;
+    double B4SOI_2;
+    double B4SOI_3;
+    double B4SOI_4;
+    double B4SOI_5;
+    double B4SOI_6;
+    double B4SOI_7;
+    double B4SOI_8;
+    double B4SOI_9;
+    double B4SOI_10;
+    double B4SOI_11;
+    double B4SOI_12;
+    double B4SOI_13;
+    double B4SOI_14;
+    double B4SOI_15;
+    double B4SOI_16;
+    double B4SOI_17;
+    double B4SOI_18;
+    double B4SOI_19;
+    double B4SOI_20;
+    double B4SOI_21;
+    double B4SOI_22;
+    double B4SOI_23;
+    double B4SOI_24;
+    double B4SOI_25;
+    double B4SOI_26;
+    double B4SOI_27;
+    double B4SOI_28;
+    double B4SOI_29;
+    double B4SOI_30;
+    double B4SOI_31;
+    double B4SOI_32;
+    double B4SOI_33;
+    double B4SOI_34;
+    double B4SOI_35;
+    double B4SOI_36;
+    double B4SOI_37;
+    double B4SOI_38;
+    double B4SOI_39;
+    double B4SOI_40;
+    double B4SOI_41;
+    double B4SOI_42;
+    double B4SOI_43;
+    double B4SOI_44;
+    double B4SOI_45;
+    double B4SOI_46;
+    double B4SOI_47;
+    double B4SOI_48;
+    double B4SOI_49;
+    double B4SOI_50;
+    double B4SOI_51;
+    double B4SOI_52;
+    double B4SOI_53;
+    double B4SOI_54;
+    double B4SOI_55;
+    double B4SOI_56;
+    double B4SOI_57;
+    double B4SOI_58;
+    double B4SOI_59;
+    double B4SOI_60;
+    double B4SOI_61;
+    double B4SOI_62;
+    double B4SOI_63;
+    double B4SOI_64;
+    double B4SOI_65;
+    double B4SOI_66;
+    double B4SOI_67;
+    double B4SOI_68;
+    double B4SOI_69;
+    double B4SOI_70;
+    double B4SOI_71;
+    double B4SOI_72;
+    double B4SOI_73;
+    double B4SOI_74;
+    double B4SOI_75;
+    double B4SOI_76;
+    double B4SOI_77;
+    double B4SOI_78;
+    double B4SOI_79;
+    double B4SOI_80;
+    double B4SOI_81;
+    double B4SOI_82;
+    double B4SOI_83;
+    double B4SOI_84;
+    double B4SOI_85;
+    double B4SOI_86;
+    double B4SOI_87;
+    double B4SOI_88;
+    double B4SOI_89;
+    double B4SOI_90;
+    double B4SOI_91;
+    double B4SOI_92;
+    double B4SOI_93;
+    double B4SOI_94;
+    double B4SOI_95;
+    double B4SOI_96;
+    double B4SOI_97;
+    double B4SOI_98;
+    double B4SOI_99;
+    double B4SOI_100;
+    double B4SOI_101;
+    double B4SOI_102;
+#endif
 
 #define B4SOIvbd B4SOIstates+ 0
 #define B4SOIvbs B4SOIstates+ 1
@@ -1982,6 +2114,12 @@ typedef struct sB4SOImodel
     unsigned  B4SOIpngidlGiven   :1;
 
     struct b4soiSizeDependParam *pSizeDependParamKnot;
+
+    
+#ifdef USE_OMP4SOI
+    int B4SOIInstCount;
+    struct sB4SOIinstance **B4SOIInstanceArray;
+#endif
 
     /* Flags */
 	unsigned B4SOIepsrgateGiven:1;
