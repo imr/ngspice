@@ -14,11 +14,15 @@ Author: 1988 Jeffrey M. Hsu
 #include "plot.h"
 #include "dvec.h"            /* for struct dvec */
 
+typedef struct graph GRAPH;
+struct _keyed;
+
+
 /* Device-independent data structure for plots. */
 
 #define NUMCOLORS 20
 
-typedef struct graph {
+struct graph {
     int graphid;
     struct dveclist *plotdata;  /* normalized data */
     char *plotname;         /* name of plot this graph is in */
@@ -114,12 +118,7 @@ typedef struct graph {
 
     /* characters the user typed on graph */
 /* note: think up better names */
-    struct _keyed {
-      char *text;
-      int x, y;
-      int colorindex;       /* index into colors array */
-      struct _keyed *next;
-    } *keyed;
+    struct _keyed *keyed;
 
     /* for zoomin */
     char *commandline;
@@ -129,7 +128,19 @@ typedef struct graph {
     */
     char *devdep;
 
-} GRAPH;
+};
+
+
+/* characters the user typed on graph */
+/* note: think up better names */
+
+struct _keyed {
+    char *text;
+    int x, y;
+    int colorindex;       /* index into colors array */
+    struct _keyed *next;
+};
+
 
 #define NEWGRAPH (GRAPH *) tmalloc(sizeof(GRAPH))
 

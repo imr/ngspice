@@ -14,6 +14,16 @@ Author: 1986 Thomas L. Quarles
 /* gtri - end - wbk - 10/11/90 */
 
 
+typedef struct IFparm IFparm;
+typedef union  IFvalue IFvalue;
+typedef struct IFparseTree IFparseTree;
+typedef struct IFcomplex IFcomplex;
+typedef struct IFdevice IFdevice;
+typedef struct IFanalysis IFanalysis;
+typedef struct IFsimulator IFsimulator;
+typedef struct IFfrontEnd IFfrontEnd;
+
+
 /* 
  * structure:   IFparm
  *
@@ -38,12 +48,12 @@ Author: 1986 Thomas L. Quarles
  *    used for.
  */
 
-typedef struct sIFparm {
+struct IFparm {
     char *keyword;
     int id;
     int dataType;
     char *description;
-} IFparm;
+};
 
 /*
  *
@@ -156,16 +166,16 @@ typedef char *IFuid;
  *
  */
 
-typedef struct sIFparseTree {
+struct IFparseTree {
     int numVars;            /* number of variables used */
     int *varTypes;          /* array of types of variables */
-    union uIFvalue * vars;  /* array of structures describing values */
+    IFvalue * vars;  /* array of structures describing values */
 #ifdef __STDC__
-    int ((*IFeval)(struct sIFparseTree*,double,double*,double*,double*));
+    int ((*IFeval)(IFparseTree*,double,double*,double*,double*));
 #else
     int ((*IFeval)());      /* function to call to get evaluated */
 #endif /* STDC */
-} IFparseTree;
+};
 
 
 /*
@@ -217,13 +227,13 @@ typedef void * IFnode;
 /*
  * and of course, the standard complex data type 
  */
-typedef struct sIFcomplex {
+struct IFcomplex {
     double real;
     double imag;
-} IFcomplex;
+};
 
 
-typedef union uIFvalue {
+union IFvalue {
     int iValue;             /* integer or flag valued data */
     double rValue;          /* real valued data */
     IFcomplex cValue;       /* complex valued data */
@@ -242,7 +252,7 @@ typedef union uIFvalue {
             IFnode *nVec;   /* pointer to node vector */
         }vec;
     }v;
-} IFvalue;
+};
 
 
 /*
@@ -261,7 +271,7 @@ typedef union uIFvalue {
  *
  */
 
-typedef struct sIFdevice {
+struct IFdevice {
     char *name;                 /* name of this type of device */
     char *description;          /* description of this type of device */
 
@@ -293,7 +303,7 @@ typedef struct sIFdevice {
 #endif
     int	flags;			/* DEV_ */
 
-} IFdevice;
+};
 
 
 /*
@@ -310,14 +320,14 @@ typedef struct sIFdevice {
  *
  */
 
-typedef struct sIFanalysis {
+struct IFanalysis {
     char *name;                 /* name of this analysis type */
     char *description;          /* description of this type of analysis */
 
     int numParms;               /* number of analysis parameter descriptors */
     IFparm *analysisParms;      /* array  of analysis parameter descriptors */
 
-} IFanalysis;
+};
 
 
 /*
@@ -331,7 +341,7 @@ typedef struct sIFanalysis {
  *
  */
 
-typedef struct sIFsimulator {
+struct IFsimulator {
     char *simulator;                /* the simulator's name */
     char *description;              /* description of this simulator */
     char *version;                  /* version or revision level of simulator*/
@@ -410,7 +420,7 @@ typedef struct sIFsimulator {
     int numSpecSigs;        /* number of special signals legal in parse trees */
     char **specSigs;        /* names of special signals legal in parse trees */
 
-} IFsimulator;
+};
 
 /*
  * Structure: IFfrontEnd
@@ -422,7 +432,7 @@ typedef struct sIFsimulator {
  *
  */
 
-typedef struct sIFfrontEnd {
+struct IFfrontEnd {
     int ((*IFnewUid)(void*,IFuid*,IFuid,char*,int,void**));    
                             /* create a new UID in the circuit */
     int ((*IFdelUid)(void*,IFuid,int));
@@ -455,7 +465,7 @@ typedef struct sIFfrontEnd {
                             /* end nested domain */
     int ((*OUTattributes)(void *,IFuid,int,IFvalue*));
                             /* specify output attributes of node */
-} IFfrontEnd;
+};
 
 /* flags for the first argument to IFerror */
 #define ERR_WARNING 0x1

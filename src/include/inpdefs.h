@@ -13,6 +13,11 @@ Modified: 2000 AlansFixes
 #include "gendefs.h"
 #include "inpptree.h"
 
+typedef struct INPtables INPtables;
+typedef struct card card;
+typedef struct INPmodel INPmodel;
+
+
 struct INPtab {
     char *t_ent;
     struct INPtab *t_next;
@@ -24,7 +29,7 @@ struct INPnTab {
     struct INPnTab *t_next;
 };
 
-typedef struct sINPtables{
+struct INPtables{
     struct INPtab **INPsymtab;
     struct INPnTab **INPtermsymtab;
     int INPsize;
@@ -54,26 +59,26 @@ typedef struct sINPtables{
     void *defWmod;
     void *defYmod;
     void *defZmod;
-} INPtables;
+};
 
-typedef struct card{
+struct card{
     int linenum;
     int linenum_orig;    
     char *line;
     char *error;
-    struct card *nextcard;
-    struct card *actualLine;
-} card;
+    card *nextcard;
+    card *actualLine;
+};
 
 /* structure used to save models in after they are read during pass 1 */
-typedef struct sINPmodel{
+struct INPmodel{
     IFuid INPmodName;   /* uid of model */
     int INPmodType;     /* type index of device type */
-    struct sINPmodel *INPnextModel;  /* link to next model */
+    INPmodel *INPnextModel;  /* link to next model */
     int INPmodUsed;     /* flag to indicate it has already been used */
     card *INPmodLine;   /* pointer to line describing model */
     void *INPmodfast;   /* high speed pointer to model for access */
-} INPmodel;
+};
 
 
 

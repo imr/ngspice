@@ -10,9 +10,12 @@ Author: 1985 Thomas L. Quarles
 #include "tskdefs.h"
 #include "cktdefs.h"
 
+typedef struct TFan TFan;
+
+
     /* TFdefs.h - defs for transfer function analyses */
 
-typedef struct {
+struct TFan {
     int JOBtype;
     JOB *JOBnextJob;
     IFuid JOBname;
@@ -25,7 +28,7 @@ typedef struct {
     unsigned int TFoutIsI :1;
     unsigned int TFinIsV :1;
     unsigned int TFinIsI :1;
-} TFan;
+};
 
 #define TF_OUTPOS 1
 #define TF_OUTNEG 2

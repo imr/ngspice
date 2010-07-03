@@ -30,8 +30,10 @@ extern int DEVmaxnum;	/* Not sure if still used */
 #include "pzdefs.h"
 #include "noisedef.h"
 
+typedef struct CKTnode CKTnode;
+typedef struct CKTcircuit CKTcircuit;
 
-typedef struct sCKTnode {
+struct CKTnode {
     IFuid name;
     int type;
 
@@ -44,10 +46,10 @@ typedef struct sCKTnode {
     double ic;			/* Value of the initial condition */
     double nodeset;		/* Value of the .nodeset option */
     double *ptr;		/* ??? */
-    struct sCKTnode *next;	/* pointer to the next node */
+    CKTnode *next;	    /* pointer to the next node */
     unsigned int icGiven:1;	/* FLAG ic given */
     unsigned int nsGiven:1;	/* FLAG nodeset given */ 
-} CKTnode;
+};
 
 /* defines for node parameters */
 #define PARM_NS 1
@@ -56,7 +58,7 @@ typedef struct sCKTnode {
 
 
 
-typedef struct {
+struct CKTcircuit {
 
 /* gtri - begin - wbk - change declaration to allow dynamic sizing */
 
@@ -261,7 +263,7 @@ typedef struct {
 #endif
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 
-} CKTcircuit;
+};
 
 /* Now function prottypes */
 

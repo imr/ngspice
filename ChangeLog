@@ -1,7 +1,16 @@
+2010-07-03  Robert Larice
+ * src/include/cktdefs.h ,
+ * src/include/gendefs.h ,
+ * src/include/graph.h ,
+ * src/include/ifsim.h ,
+ * src/include/inpdefs.h ,
+ * src/include/tfdefs.h :
+  forward declaration of structs, unions and typedefs
+
 2010-07-02  Robert Larice
  * src/spicelib/analysis/cktsens.c ,
  * src/xspice/mif/mifload.c :
-		ansi style function args for some function pointers
+  ansi style function args for some function pointers
 
 2010-07-02  Holger Vogt
  * src/frontend/inpcom.c :  .TITLE line added
