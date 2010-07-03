@@ -1,4 +1,11 @@
 2010-07-03  Robert Larice
+ * src/frontend/subckt.c :  drop unsued variable.
+ * src/include/ngspice.h :  add a missing extern
+ * src/xspice/cmpp/ifs_lex.l :  atof() and atoi() live in <stdlib.h>
+ * src/frontend/parser/glob.c :
+        cast the return values of malloc() function calls
+
+2010-07-03  Robert Larice
  * src/include/cktdefs.h ,
  * src/include/gendefs.h ,
  * src/include/graph.h ,

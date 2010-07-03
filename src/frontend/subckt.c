@@ -156,7 +156,7 @@ inp_subcktexpand(struct line *deck)
 {
     struct line *ll, *c;
     char *s;
-    int ok = 0, skip_control = 0;
+    int ok = 0;
     char *t;
     int i;
     wordlist *wl;

@@ -116,7 +116,7 @@ brac1(char *string)
     int nb;
 
     words = alloc(struct wordlist);
-    words->wl_word = tmalloc(BSIZE_SP);
+    words->wl_word = (char*) tmalloc(BSIZE_SP);
     words->wl_word[0] = 0;
     words->wl_next = NULL;
     words->wl_prev = NULL;
@@ -144,7 +144,7 @@ brac1(char *string)
                     nw = alloc(struct wordlist);
 		    nw->wl_next = NULL;
 		    nw->wl_prev = NULL;
-                    nw->wl_word = tmalloc(BSIZE_SP);
+                    nw->wl_word = (char*) tmalloc(BSIZE_SP);
                     (void) strcpy(nw->wl_word, wl->wl_word);
                     (void) strcat(nw->wl_word, w->wl_word);
                     newwl = wl_append(newwl, nw);

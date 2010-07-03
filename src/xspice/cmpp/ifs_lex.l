@@ -42,13 +42,13 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
+#include <stdlib.h>
+
 #include "ifs_yacc_y.h"
 #include "ifs_yacc.h"
 
 int yyival;
 double yydval;
-extern int atoi();
-extern double atof();
 extern void ifs_yyerror (char*);
 
 /*
