@@ -24,7 +24,7 @@ typedef struct IFsimulator IFsimulator;
 typedef struct IFfrontEnd IFfrontEnd;
 
 
-/* 
+/*
  * structure:   IFparm
  *
  *
@@ -55,8 +55,8 @@ struct IFparm {
     char *description;
 };
 
+
 /*
- *
  * datatype: IFuid
  *
  * unique identifier for all name-type data in the simulator.
@@ -68,7 +68,8 @@ struct IFparm {
 
 typedef char *IFuid;
 
-/* 
+
+/*
  *
  * types for IFnewUid
  *
@@ -82,12 +83,12 @@ typedef char *IFuid;
 #define UID_OTHER 0x20
 
 
-/* 
+/*
  * dataType values:
  *
  * Note:  These structures are put together by ORing together the
  *    appropriate bits from the fields below as is shown for the vector
- *    types.  
+ *    types.
  * IF_REQUIRED indicates that the parameter must be specified.
  *    The front end does not NEED to check for this, but can to save time,
  *    since failure to do so will cause the simulator to fail.
@@ -133,24 +134,25 @@ typedef char *IFuid;
 #define IF_ASK 0x1000
 
 /* If you AND with IF_UNIMP_MASK and get 0, it is recognized, but not
- * implemented 
+ * implemented
  */
 #define IF_UNIMP_MASK (~0xfff)
 
 /* Used by sensetivity to check if a parameter is or is not useful */
-#define IF_REDUNDANT	0x0010000
-#define IF_PRINCIPAL	0x0020000
-#define IF_AC		0x0040000
-#define IF_AC_ONLY	0x0080000
-#define IF_NOISE	0x0100000
-#define IF_NONSENSE	0x0200000
+#define IF_REDUNDANT      0x0010000
+#define IF_PRINCIPAL      0x0020000
+#define IF_AC             0x0040000
+#define IF_AC_ONLY        0x0080000
+#define IF_NOISE          0x0100000
+#define IF_NONSENSE       0x0200000
 
-#define IF_SETQUERY	0x0400000
-#define IF_ORQUERY	0x0800000
-#define IF_CHKQUERY	0x1000000
+#define IF_SETQUERY       0x0400000
+#define IF_ORQUERY        0x0800000
+#define IF_CHKQUERY       0x1000000
 
 /* For "show" command: do not print value in a table by default */
-#define IF_UNINTERESTING 0x2000000
+#define IF_UNINTERESTING  0x2000000
+
 
 /* Structure:   IFparseTree
  *
@@ -160,7 +162,7 @@ typedef char *IFuid;
  * It is expected that the front end will have a more extensive
  * structure which this structure will be a prefix of.
  *
- * Note that the function pointer is provided as a hook for 
+ * Note that the function pointer is provided as a hook for
  * versions which may want to compile code for the parse trees
  * if they are used heavily.
  *
@@ -169,11 +171,11 @@ typedef char *IFuid;
 struct IFparseTree {
     int numVars;            /* number of variables used */
     int *varTypes;          /* array of types of variables */
-    IFvalue * vars;  /* array of structures describing values */
+    IFvalue *vars;          /* array of structures describing values */
 #ifdef __STDC__
-    int ((*IFeval)(IFparseTree*,double,double*,double*,double*));
+    int (*IFeval) (IFparseTree *, double, double *, double *, double *);
 #else
-    int ((*IFeval)());      /* function to call to get evaluated */
+    int (*IFeval) ();      /* function to call to get evaluated */
 #endif /* STDC */
 };
 
@@ -190,8 +192,8 @@ struct IFparseTree {
  * should arrange to free it when appropriate.
  *
  * The responsibilities of the data supplier are:
- * Any vectors referenced by the structure are to be tmalloc()'d 
- * and are assumed to have been turned over to the recipient and 
+ * Any vectors referenced by the structure are to be tmalloc()'d
+ * and are assumed to have been turned over to the recipient and
  * thus should not be re-used or tfree()'d.
  *
  * The responsibilities of the data recipient are:
@@ -200,7 +202,7 @@ struct IFparseTree {
  * and must be tfree()'d when no longer needed.
  *
  * Character strings are a special case:  Since it is assumed
- * that all character strings are directly descended from input 
+ * that all character strings are directly descended from input
  * tokens, it is assumed that they are static, thus nobody
  * frees them until the circuit is deleted, when the front end
  * may do so.
@@ -215,18 +217,19 @@ struct IFparseTree {
 /*
  * Some preliminary definitions:
  *
- * IFnode's are returned by the simulator, thus we don't really 
+ * IFnode's are returned by the simulator, thus we don't really
  * know what they look like, just that we get to carry pointers
  * to them around all the time, and will need to save them occasionally
  *
  */
 
+typedef void *IFnode;
 
-typedef void * IFnode;
 
 /*
- * and of course, the standard complex data type 
+ * and of course, the standard complex data type
  */
+
 struct IFcomplex {
     double real;
     double imag;
@@ -250,8 +253,8 @@ union IFvalue {
             char **sVec;    /* pointer to string vector */
             IFuid *uVec;    /* pointer to UID vector */
             IFnode *nVec;   /* pointer to node vector */
-        }vec;
-    }v;
+        } vec;
+    } v;
 };
 
 
@@ -289,10 +292,10 @@ struct IFdevice {
 /* gtri - modify - wbk - 10/11/90 - add entries to hold data required */
 /*                                  by new parser                     */
 #ifdef XSPICE
-    void ((*cm_func)(Mif_Private_t *));  /* pointer to code model function */
+    void (*cm_func) (Mif_Private_t *);  /* pointer to code model function */
 
     int num_conn;               /* number of code model connections */
-    Mif_Conn_Info_t  *conn;     /* array of connection info for mif parser */
+    Mif_Conn_Info_t *conn;      /* array of connection info for mif parser */
 
     int num_param;              /* number of parameters = numModelParms */
     Mif_Param_Info_t *param;    /* array of parameter info for mif parser */
@@ -301,8 +304,8 @@ struct IFdevice {
     Mif_Inst_Var_Info_t *inst_var; /* array of instance var info for mif parser */
 /* gtri - end - wbk - 10/11/90 */
 #endif
-    int	flags;			/* DEV_ */
 
+    int flags;          /* DEV_ */
 };
 
 
@@ -311,7 +314,7 @@ struct IFdevice {
  *
  * This structure contains all the information available to the
  * front end about a particular analysis type.  The simulator will
- * present the front end with an array of pointers to these structures 
+ * present the front end with an array of pointers to these structures
  * which it will use to determine legal analysis types and parameters.
  *
  * Note to simulators:  As for IFdevice above, you pass an array of pointers
@@ -326,7 +329,6 @@ struct IFanalysis {
 
     int numParms;               /* number of analysis parameter descriptors */
     IFparm *analysisParms;      /* array  of analysis parameter descriptors */
-
 };
 
 
@@ -346,67 +348,67 @@ struct IFsimulator {
     char *description;              /* description of this simulator */
     char *version;                  /* version or revision level of simulator*/
 
-    int ((*newCircuit)(void **));  
+    int (*newCircuit) (void **);
                                     /* create new circuit */
-    int ((*deleteCircuit)(void *));
+    int (*deleteCircuit) (void *);
                                     /* destroy old circuit's data structures*/
 
-    int ((*newNode)(void *,void**,IFuid));
+    int (*newNode) (void *, void **, IFuid);
                                     /* create new node */
-    int ((*groundNode)(void*,void**,IFuid)); 
+    int (*groundNode) (void *, void **, IFuid);
                                     /* create ground node */
-    int ((*bindNode)(void *,void*,int,void*));
+    int (*bindNode) (void *, void *, int, void *);
                                     /* bind a node to a terminal */
-    int ((*findNode)(void *,void**,IFuid));           
+    int (*findNode) (void *, void **, IFuid);
                                     /* find a node by name */
-    int ((*instToNode)(void *,void *,int,void **,IFuid *));          
+    int (*instToNode) (void *, void *, int, void **, IFuid *);
                                     /* find the node attached to a terminal */
-    int ((*setNodeParm)(void*,void*,int,IFvalue*,IFvalue*));         
+    int (*setNodeParm) (void *, void *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on a node */
-    int ((*askNodeQuest)(void*,void*,int,IFvalue*,IFvalue*));        
+    int (*askNodeQuest) (void *, void *, int, IFvalue *, IFvalue *);
                                     /* ask a question about a node */
-    int ((*deleteNode)(void*,void*));          
+    int (*deleteNode) (void *, void *);
                                     /* delete a node from the circuit */
 
-    int ((*newInstance)(void*,void*,void**,IFuid));         
+    int (*newInstance) (void *, void *, void **, IFuid);
                                     /* create new instance */
-    int ((*setInstanceParm)(void*,void*,int,IFvalue*,IFvalue*));     
+    int (*setInstanceParm) (void *, void *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on an instance */
-    int ((*askInstanceQuest)(void*,void*,int,IFvalue*,IFvalue*));    
+    int (*askInstanceQuest) (void *, void *, int, IFvalue *, IFvalue *);
                                     /* ask a question about an instance */
-    int ((*findInstance)(void*,int*,void**,IFuid,void*,IFuid));        
+    int (*findInstance) (void *, int *, void **, IFuid, void *, IFuid);
                                     /* find a specific instance */
-    int ((*deleteInstance)(void*,void*));      
+    int (*deleteInstance) (void *, void *);
                                     /* delete an instance from the circuit */
 
-    int ((*newModel)(void*,int,void**,IFuid));            
+    int (*newModel) (void *, int, void **, IFuid);
                                     /* create new model */
-    int ((*setModelParm)(void*,void*,int,IFvalue*,IFvalue*));        
+    int (*setModelParm) (void *, void *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on a model */
-    int ((*askModelQuest)(void*,void*,int,IFvalue*,IFvalue*));       
+    int (*askModelQuest) (void *, void *, int, IFvalue *, IFvalue *);
                                     /* ask a questions about a model */
-    int ((*findModel)(void*,int*,void**,IFuid));           
+    int (*findModel) (void *, int *, void **, IFuid);
                                     /* find a specific model */
-    int ((*deleteModel)(void*,void*));         
+    int (*deleteModel) (void *, void *);
                                     /* delete a model from the circuit*/
 
-    int ((*newTask)(void*,void**,IFuid, void**)); /*CDHW*/             
+    int (*newTask) (void *, void **, IFuid, void **); /*CDHW*/
                                     /* create a new task */
-    int ((*newAnalysis)(void*,int,IFuid,void**,void*));         
+    int (*newAnalysis) (void *, int, IFuid, void **, void *);
                                     /* create new analysis within a task */
-    int ((*setAnalysisParm)(void*,void*,int,IFvalue*,IFvalue*));     
+    int (*setAnalysisParm) (void *, void *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on an analysis  */
-    int ((*askAnalysisQuest)(void*,void*,int,IFvalue*,IFvalue*));    
+    int (*askAnalysisQuest) (void *, void *, int, IFvalue *, IFvalue *);
                                     /* ask a question about an analysis */
-    int ((*findAnalysis)(void*,int*,void**,IFuid,void*,IFuid));        
+    int (*findAnalysis) (void *, int *, void **, IFuid, void *, IFuid);
                                     /* find a specific analysis */
-    int ((*findTask)(void*,void**,IFuid));            
+    int (*findTask) (void *, void **, IFuid);
                                     /* find a specific task */
-    int ((*deleteTask)(void*,void*));          
+    int (*deleteTask) (void *, void *);
                                     /* delete a task */
 
-    int ((*doAnalyses)(void*,int,void*));          
-    char *((*nonconvErr)(void*,char *)); /* return nonconvergence error */
+    int (*doAnalyses) (void *, int, void *);
+    char *(*nonconvErr) (void *, char *); /* return nonconvergence error */
 
     int numDevices;                 /* number of device types supported */
     IFdevice **devices;             /* array of device type descriptors */
@@ -419,8 +421,8 @@ struct IFsimulator {
 
     int numSpecSigs;        /* number of special signals legal in parse trees */
     char **specSigs;        /* names of special signals legal in parse trees */
-
 };
+
 
 /*
  * Structure: IFfrontEnd
@@ -433,39 +435,40 @@ struct IFsimulator {
  */
 
 struct IFfrontEnd {
-    int ((*IFnewUid)(void*,IFuid*,IFuid,char*,int,void**));    
+    int (*IFnewUid) (void *, IFuid *, IFuid, char *, int, void **);
                             /* create a new UID in the circuit */
-    int ((*IFdelUid)(void*,IFuid,int));
-			    /* create a new UID in the circuit */
-    int ((*IFpauseTest)(void)); 
+    int (*IFdelUid) (void *, IFuid, int);
+                            /* create a new UID in the circuit */
+    int (*IFpauseTest) (void);
                             /* should we stop now? */
-    double ((*IFseconds)(void));   
+    double (*IFseconds) (void);
                             /* what time is it? */
-    int ((*IFerror)(int,char*,IFuid*));     
+    int (*IFerror) (int, char *, IFuid *);
                             /* output an error or warning message */
-    int ((*OUTpBeginPlot)(void*,void*,IFuid,IFuid,int,
-            int,IFuid*,int,void**));   
+    int (*OUTpBeginPlot) (void *, void *, IFuid, IFuid, int,
+            int, IFuid *, int, void **);
                             /* start pointwise output plot */
-    int ((*OUTpData)(void*,IFvalue*,IFvalue*));        
+    int (*OUTpData) (void *, IFvalue *, IFvalue *);
                             /* data for pointwise plot */
-    int ((*OUTwBeginPlot)(void*,void*,IFuid,IFuid,int,
-            int,IFuid*,int,void**));   
+    int (*OUTwBeginPlot) (void *, void *, IFuid, IFuid, int,
+            int, IFuid *, int, void **);
                             /* start windowed output plot */
-    int ((*OUTwReference)(void*,IFvalue*,void**));   
+    int (*OUTwReference) (void *, IFvalue *, void **);
                             /* independent vector for windowed plot */
-    int ((*OUTwData)(void*,int,IFvalue*,void*));        
+    int (*OUTwData) (void *, int, IFvalue *, void *);
                             /* data for windowed plot */
-    int ((*OUTwEnd)(void*)); 
+    int (*OUTwEnd) (void *);
                             /* signal end of windows */
-    int ((*OUTendPlot)(void*));      
+    int (*OUTendPlot) (void *);
                             /* end of plot */
-    int ((*OUTbeginDomain)(void*,IFuid,int,IFvalue*));  
+    int (*OUTbeginDomain) (void *, IFuid, int, IFvalue *);
                             /* start nested domain */
-    int ((*OUTendDomain)(void*));    
+    int (*OUTendDomain) (void *);
                             /* end nested domain */
-    int ((*OUTattributes)(void *,IFuid,int,IFvalue*));
+    int (*OUTattributes) (void *, IFuid, int, IFvalue *);
                             /* specify output attributes of node */
 };
+
 
 /* flags for the first argument to IFerror */
 #define ERR_WARNING 0x1

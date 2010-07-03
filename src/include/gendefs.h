@@ -18,8 +18,8 @@ typedef struct GENmodel GENmodel;
 
 struct GENinstance {
     GENmodel *GENmodPtr;    /* backpointer to model */
-    GENinstance *GENnextInstance;   /* pointer to next instance of 
-                                             * current model*/
+    GENinstance *GENnextInstance;   /* pointer to next instance of
+                                     * current model*/
     IFuid GENname;  /* pointer to character string naming this instance */
     int GENowner;   /* number of owner process */
     int GENstate;   /* state index number */
@@ -37,15 +37,16 @@ struct GENinstance {
 
 typedef void GENcircuit;
 
+
 /* per model data */
 
 struct GENmodel {       /* model structure for a resistor */
-    int GENmodType; /* type index of this device type */
-    GENmodel *GENnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    GENinstance * GENinstances; /* pointer to list of instances that have this
+    int GENmodType;             /* type index of this device type */
+    GENmodel *GENnextModel;     /* pointer to next possible model in
+                                 * linked list */
+    GENinstance *GENinstances;  /* pointer to list of instances that have this
                                  * model */
-    IFuid GENmodName;       /* pointer to character string naming this model */
+    IFuid GENmodName;           /* pointer to character string naming this model */
 };
 
 #endif /*GEN*/

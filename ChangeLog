@@ -5,6 +5,15 @@
  * src/include/ifsim.h ,
  * src/include/inpdefs.h ,
  * src/include/tfdefs.h :
+  whitespace change, cleanup, untabify
+
+2010-07-03  Robert Larice
+ * src/include/cktdefs.h ,
+ * src/include/gendefs.h ,
+ * src/include/graph.h ,
+ * src/include/ifsim.h ,
+ * src/include/inpdefs.h ,
+ * src/include/tfdefs.h :
   forward declaration of structs, unions and typedefs
 
 2010-07-02  Robert Larice

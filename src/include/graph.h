@@ -27,8 +27,8 @@ struct graph {
     struct dveclist *plotdata;  /* normalized data */
     char *plotname;         /* name of plot this graph is in */
     int onevalue;           /* boolean variable,
-                       true if plotting one value
-                       against itself (real vs imaginary) */
+                                 true if plotting one value
+                                 against itself (real vs imaginary) */
     int degree;     /* degree of polynomial interpretation */
 
     int currentcolor;
@@ -73,26 +73,26 @@ struct graph {
       int circular;         /* TRUE if circular plot area */
       union {
         struct {
-	        char units[16];     /* unit labels */
-		int	spacing, numspace;
-		double	distance, lowlimit, highlimit;
-		int	mult;
-		int	onedec;     /* a boolean */
-		int	hacked;     /* true if hi - lo already hacked up */
-		double	tenpowmag;
-		double	tenpowmagx;
-		int	digits;
+                char units[16];     /* unit labels */
+                int     spacing, numspace;
+                double  distance, lowlimit, highlimit;
+                int     mult;
+                int     onedec;     /* a boolean */
+                int     hacked;     /* true if hi - lo already hacked up */
+                double  tenpowmag;
+                double  tenpowmagx;
+                int     digits;
         } lin;
         struct {
-	        char units[16];     /* unit labels */
-		int hmt, lmt, decsp, subs, pp;
+                char units[16];     /* unit labels */
+                int hmt, lmt, decsp, subs, pp;
         } log;
         struct {
-	        char units[16];     /* unit labels */
-		int radius, center;
-		double mrad;
-		int lmt;
-		int hmt, mag; /* added, p.w.h. */
+                char units[16];     /* unit labels */
+                int radius, center;
+                double mrad;
+                int lmt;
+                int hmt, mag; /* added, p.w.h. */
         } circular;     /* bogus, rework when write polar grids, etc */
       } xaxis, yaxis;
       int xdatatype, ydatatype;
@@ -117,7 +117,7 @@ struct graph {
     int messageyoff;
 
     /* characters the user typed on graph */
-/* note: think up better names */
+    /* note: think up better names */
     struct _keyed *keyed;
 
     /* for zoomin */
