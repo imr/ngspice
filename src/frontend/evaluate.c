@@ -58,13 +58,12 @@ ft_evaluate(struct pnode *node)
         d = apply_func(node->pn_func, node->pn_left);
     else if (node->pn_op) {
         if (node->pn_op->op_arity == 1)
-            d = (struct dvec *)
-                ((*node->pn_op->op_func) (node->pn_left));
+            d = ((*node->pn_op->op_func.unary) (node->pn_left));
         else if (node->pn_op->op_arity == 2) {
             if(node->pn_op->op_num == TERNARY)
                 d = ft_ternary(node);
             else
-                d = (*node->pn_op->op_func) (node->pn_left, node->pn_right);
+                d = (*node->pn_op->op_func.binary) (node->pn_left, node->pn_right);
         }
     } else {
         fprintf(cp_err, "ft_evaluate: Internal Error: bad node\n");
@@ -96,7 +95,7 @@ ft_ternary(struct pnode *node)
     struct pnode *arg;
     int c;
 
-    if(!node->pn_right->pn_op || node->pn_right->pn_op->op_func != op_comma)
+    if(!node->pn_right->pn_op || node->pn_right->pn_op->op_func.binary != op_comma)
     {
         fprintf(cp_err, "Error: ft_ternary(), daemons ...\n");
         return NULL;

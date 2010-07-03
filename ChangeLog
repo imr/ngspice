@@ -1,4 +1,9 @@
 2010-07-03  Robert Larice
+ * src/frontend/evaluate.c ,
+ * src/include/fteparse.h :
+        ansi style function args for some function pointers
+
+2010-07-03  Robert Larice
  * src/ciderlib/support/database.c ,
  * src/ciderlib/support/logfile.c ,
  * src/ciderlib/support/suprem.c ,

@@ -28,7 +28,10 @@ struct op {
     int op_num;			/* From parser #defines. */
     char *op_name;		/* Printing name. */
     char op_arity;		/* One or two. */
-    struct dvec *(*op_func)();  /* The function to do the work. */
+    union {
+        struct dvec *(*unary)(struct pnode *);
+        struct dvec *(*binary)(struct pnode *, struct pnode *);
+    } op_func;  /* The function to do the work. */
 } ;
 
 /* The functions that are available. */
