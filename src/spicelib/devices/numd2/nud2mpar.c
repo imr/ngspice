@@ -15,10 +15,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NUMD2mParam(param, value, inModel)
-  int param;
-  IFvalue *value;
-  GENmodel *inModel;
+NUMD2mParam(int param, IFvalue *value, GENmodel *inModel)
 {
   switch (param) {
   case NUMD2_MOD_NUMD:

@@ -19,12 +19,7 @@ extern int NBJT2initSmSig(NBJT2instance *);
 
 /* ARGSUSED */
 int
-NBJT2ask(ckt, inInst, which, value, select)
-  CKTcircuit *ckt;
-  GENinstance *inInst;
-  int which;
-  IFvalue *value;
-  IFvalue *select;
+NBJT2ask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalue *select)
 {
   NBJT2instance *inst = (NBJT2instance *) inInst;
   switch (which) {

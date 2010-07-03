@@ -27,9 +27,7 @@ static int state_numDC = 0;
 static int state_numTR = 0;
 
 void
-NBJT2dump(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NBJT2dump(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NBJT2model *model = (NBJT2model *) inModel;
   register NBJT2instance *inst;
@@ -93,10 +91,7 @@ NBJT2dump(inModel, ckt)
 
 static
 void 
-NBJT2putHeader(file, ckt, inst)
-  FILE *file;
-  CKTcircuit *ckt;
-  NBJT2instance *inst;
+NBJT2putHeader(FILE *file, CKTcircuit *ckt, NBJT2instance *inst)
 {
   char *reference;
   double refVal = 0.0;
@@ -154,10 +149,7 @@ NBJT2putHeader(file, ckt, inst)
 }
 
 void
-NBJT2acct(inModel, ckt, file)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-  FILE *file;
+NBJT2acct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
 {
   register NBJT2model *model = (NBJT2model *) inModel;
   register NBJT2instance *inst;

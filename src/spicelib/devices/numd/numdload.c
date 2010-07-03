@@ -27,9 +27,7 @@ extern int ONEacDebug;
 
 
 int
-NUMDload(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NUMDload(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NUMDmodel *model = (NUMDmodel *) inModel;
   register NUMDinstance *inst;
@@ -377,8 +375,7 @@ NUMDload(inModel, ckt)
 }
 
 int
-NUMDinitSmSig(inst)
-  NUMDinstance *inst;
+NUMDinitSmSig(NUMDinstance *inst)
 {
   SPcomplex yd;
   double omega = inst->NUMDmodPtr->NUMDmethods->METHomega;

@@ -15,8 +15,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 void
-NUMDdestroy(inModel)
-  GENmodel **inModel;
+NUMDdestroy(GENmodel **inModel)
 {
 
   NUMDmodel **model = (NUMDmodel **) inModel;

@@ -14,11 +14,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NUMDtrunc(inModel, ckt, timeStep)
-  GENmodel *inModel;
-  register CKTcircuit *ckt;
-  double *timeStep;
-
+NUMDtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
   register NUMDmodel *model = (NUMDmodel *) inModel;
   register NUMDinstance *inst;

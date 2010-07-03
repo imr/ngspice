@@ -15,9 +15,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 void
-NBJTdestroy(inModel)
-  GENmodel **inModel;
-
+NBJTdestroy(GENmodel **inModel)
 {
 
   NBJTmodel **model = (NBJTmodel **) inModel;

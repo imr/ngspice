@@ -27,9 +27,7 @@ static int state_numDC = 0;
 static int state_numTR = 0;
 
 void
-NUMOSdump(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NUMOSdump(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NUMOSmodel *model = (NUMOSmodel *) inModel;
   register NUMOSinstance *inst;
@@ -93,10 +91,7 @@ NUMOSdump(inModel, ckt)
 
 static
 void
-NUMOSputHeader(file, ckt, inst)
-  FILE *file;
-  CKTcircuit *ckt;
-  NUMOSinstance *inst;
+NUMOSputHeader(FILE *file, CKTcircuit *ckt, NUMOSinstance *inst)
 {
   char *reference;
   double refVal = 0.0;
@@ -155,10 +150,7 @@ NUMOSputHeader(file, ckt, inst)
 }
 
 void
-NUMOSacct(inModel, ckt, file)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-  FILE *file;
+NUMOSacct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
 {
   register NUMOSmodel *model = (NUMOSmodel *) inModel;
   register NUMOSinstance *inst;

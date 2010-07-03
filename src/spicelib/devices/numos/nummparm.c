@@ -15,11 +15,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NUMOSparam(param, value, inInst, select)
-  int param;
-  IFvalue *value;
-  GENinstance *inInst;
-  IFvalue *select;
+NUMOSparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   register NUMOSinstance *inst = (NUMOSinstance *) inInst;
   switch (param) {

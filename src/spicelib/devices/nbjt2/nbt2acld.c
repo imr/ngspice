@@ -22,10 +22,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 extern int TWOacDebug;
 
 int
-NBJT2acLoad(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-
+NBJT2acLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NBJT2model *model = (NBJT2model *) inModel;
   register NBJT2instance *inst;

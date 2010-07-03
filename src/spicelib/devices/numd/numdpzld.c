@@ -16,10 +16,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 extern int ONEacDebug;
 
 int
-NUMDpzLoad(inModel, ckt, s)
-  GENmodel *inModel;
-  register CKTcircuit *ckt;
-  SPcomplex *s;
+NUMDpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
   register NUMDmodel *model = (NUMDmodel *) inModel;
   register NUMDinstance *inst;

@@ -22,10 +22,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 extern int ONEacDebug;
 
 int
-NBJTacLoad(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-
+NBJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NBJTmodel *model = (NBJTmodel *) inModel;
   register NBJTinstance *inst;

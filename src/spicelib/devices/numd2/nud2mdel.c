@@ -9,11 +9,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NUMD2mDelete(inModel, modname, kill)
-  GENmodel **inModel;
-  IFuid modname;
-  GENmodel *kill;
-
+NUMD2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
   NUMD2model **model = (NUMD2model **) inModel;
   NUMD2model *modfast = (NUMD2model *) kill;

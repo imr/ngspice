@@ -22,9 +22,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 extern int TWOacDebug;
 
 int
-NUMOSacLoad(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NUMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NUMOSmodel *model = (NUMOSmodel *) inModel;
   register NUMOSinstance *inst;

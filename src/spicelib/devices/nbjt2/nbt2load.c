@@ -31,9 +31,7 @@ extern int TWOacDebug;
 
 
 int
-NBJT2load(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NBJT2load(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NBJT2model *model = (NBJT2model *) inModel;
   register NBJT2instance *inst;
@@ -482,8 +480,7 @@ NBJT2load(inModel, ckt)
 }
 
 int
-NBJT2initSmSig(inst)
-  NBJT2instance *inst;
+NBJT2initSmSig(NBJT2instance *inst)
 {
   SPcomplex yIeVce, yIeVbe;
   SPcomplex yIcVce, yIcVbe;

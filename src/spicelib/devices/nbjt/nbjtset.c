@@ -22,11 +22,7 @@ if (size && (!(var =(type *)calloc(1, (unsigned)(size)*sizeof(type))))) {\
 }
 
 int 
-NBJTsetup(matrix, inModel, ckt, states)
-  register SMPmatrix *matrix;
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-  int *states;
+NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 /*
  * load the diode structure with those pointers needed later for fast matrix
  * loading

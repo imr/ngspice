@@ -15,11 +15,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NBJT2param(param, value, inInst, select)
-  int param;
-  IFvalue *value;
-  GENinstance *inInst;
-  IFvalue *select;
+NBJT2param(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   register NBJT2instance *inst = (NBJT2instance *) inInst;
   switch (param) {

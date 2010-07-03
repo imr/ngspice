@@ -110,11 +110,7 @@ readAsciiData( char *fileName, int impType, DOPtable **ppTable )
 
 
 void
-readSupremData( fileName, fileType, impType, ppTable )
-char *fileName;
-int fileType;
-int impType;
-DOPtable **ppTable;
+readSupremData(char *fileName, int fileType, int impType, DOPtable **ppTable)
 {
 #define MAX_GRID 500
     float x[ MAX_GRID ], conc[ MAX_GRID ];

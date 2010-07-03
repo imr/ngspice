@@ -19,10 +19,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NUMOStrunc(inModel, ckt, timeStep)
-  GENmodel *inModel;
-  register CKTcircuit *ckt;
-  double *timeStep;
+NUMOStrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
   register NUMOSmodel *model = (NUMOSmodel *) inModel;
   register NUMOSinstance *inst;

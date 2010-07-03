@@ -31,9 +31,7 @@ extern int TWOacDebug;
 int NUMOSinitSmSig(NUMOSinstance *inst);
 
 int
-NUMOSload(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NUMOSload(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NUMOSmodel *model = (NUMOSmodel *) inModel;
   register NUMOSinstance *inst;
@@ -599,8 +597,7 @@ NUMOSload(inModel, ckt)
 }
 
 int
-NUMOSinitSmSig(inst)
-  NUMOSinstance *inst;
+NUMOSinitSmSig(NUMOSinstance *inst)
 {
   struct mosAdmittances yAc;
   double omega = inst->NUMOSmodPtr->NUMOSmethods->METHomega;

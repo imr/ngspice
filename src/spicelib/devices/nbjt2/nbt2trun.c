@@ -19,11 +19,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NBJT2trunc(inModel, ckt, timeStep)
-  GENmodel *inModel;
-  register CKTcircuit *ckt;
-  double *timeStep;
-
+NBJT2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
   register NBJT2model *model = (NBJT2model *) inModel;
   register NBJT2instance *inst;

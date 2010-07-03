@@ -18,11 +18,7 @@ extern int TWOacDebug;
 
 
 int
-NUMOSpzLoad(inModel, ckt, s)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-  SPcomplex *s;
-
+NUMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
   register NUMOSmodel *model = (NUMOSmodel *) inModel;
   register NUMOSinstance *inst;

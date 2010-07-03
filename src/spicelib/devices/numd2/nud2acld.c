@@ -23,9 +23,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 extern int TWOacDebug;
 
 int
-NUMD2acLoad(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NUMD2acLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NUMD2model *model = (NUMD2model *) inModel;
   register NUMD2instance *inst;

@@ -19,9 +19,7 @@ extern int ONEdcDebug;
 extern double LNorm;
 
 int 
-NBJTtemp(inModel, ckt)
-  GENmodel *inModel;
-  register CKTcircuit *ckt;
+NBJTtemp(GENmodel *inModel, CKTcircuit *ckt)
 /*
  * perform the temperature update to the bjt
  */

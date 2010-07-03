@@ -20,12 +20,7 @@ extern int NUMDinitSmSig(NUMDinstance *);
 
 /* ARGSUSED */
 int
-NUMDask(ckt, inInst, which, value, select)
-  CKTcircuit *ckt;
-  GENinstance *inInst;
-  int which;
-  IFvalue *value;
-  IFvalue *select;
+NUMDask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalue *select)
 {
   NUMDinstance *inst = (NUMDinstance *) inInst;
 

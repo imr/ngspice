@@ -17,12 +17,7 @@ extern int NUMOSinitSmSig(NUMOSinstance *);
 
 /* ARGSUSED */
 int
-NUMOSask(ckt, inInst, which, value, select)
-  CKTcircuit *ckt;
-  GENinstance *inInst;
-  int which;
-  IFvalue *value;
-  IFvalue *select;
+NUMOSask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalue *select)
 {
   NUMOSinstance *inst = (NUMOSinstance *) inInst;
   switch (which) {

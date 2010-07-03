@@ -19,12 +19,7 @@ extern int NUMD2initSmSig(NUMD2instance *);
 
 /* ARGSUSED */
 int
-NUMD2ask(ckt, inInst, which, value, select)
-  CKTcircuit *ckt;
-  GENinstance *inInst;
-  int which;
-  IFvalue *value;
-  IFvalue *select;
+NUMD2ask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalue *select)
 {
   NUMD2instance *inst = (NUMD2instance *) inInst;
   switch (which) {

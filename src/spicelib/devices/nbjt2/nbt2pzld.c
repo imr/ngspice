@@ -17,10 +17,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 extern int TWOacDebug;
 
 int
-NBJT2pzLoad(inModel, ckt, s)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-  SPcomplex *s;
+NBJT2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
   register NBJT2model *model = (NBJT2model *) inModel;
   register NBJT2instance *inst;

@@ -21,11 +21,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 extern int ONEacDebug;
 
 int
-NBJTpzLoad(inModel, ckt, s)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-  SPcomplex *s;
-
+NBJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
   register NBJTmodel *model = (NBJTmodel *) inModel;
   register NBJTinstance *inst;

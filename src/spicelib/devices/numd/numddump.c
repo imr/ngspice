@@ -26,9 +26,7 @@ static int state_numDC = 0;
 static int state_numTR = 0;
 
 void
-NUMDdump(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NUMDdump(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NUMDmodel *model = (NUMDmodel *) inModel;
   register NUMDinstance *inst;
@@ -92,10 +90,7 @@ NUMDdump(inModel, ckt)
 
 static
 void 
-NUMDputHeader(file, ckt, inst)
-  FILE *file;
-  CKTcircuit *ckt;
-  NUMDinstance *inst;
+NUMDputHeader(FILE *file, CKTcircuit *ckt, NUMDinstance *inst)
 {
   char *reference;
   double refVal = 0.0;
@@ -140,10 +135,7 @@ NUMDputHeader(file, ckt, inst)
 }
 
 void
-NUMDacct(inModel, ckt, file)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-  FILE *file;
+NUMDacct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
 {
   register NUMDmodel *model = (NUMDmodel *) inModel;
   register NUMDinstance *inst;

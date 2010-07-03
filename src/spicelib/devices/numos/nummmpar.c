@@ -15,10 +15,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NUMOSmParam(param, value, inModel)
-  int param;
-  IFvalue *value;
-  GENmodel *inModel;
+NUMOSmParam(int param, IFvalue *value, GENmodel *inModel)
 {
   switch (param) {
   case NUMOS_MOD_NUMOS:

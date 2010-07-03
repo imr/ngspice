@@ -14,11 +14,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NBJTmDelete(inModel, modname, kill)
-  GENmodel **inModel;
-  IFuid modname;
-  GENmodel *kill;
-
+NBJTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
 
   NBJTmodel **model = (NBJTmodel **) inModel;

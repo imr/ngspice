@@ -24,10 +24,7 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #define DEBUG	if (0)
 
 void
-SUPbinRead( inFile, x, conc, impId, numNod )
-char *inFile;
-float *x, *conc;
-int *impId, *numNod;
+SUPbinRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
 {
   int idata, recordMark;
   int ldata;
@@ -223,10 +220,7 @@ int *impId, *numNod;
 }
 
 void
-SUPascRead( inFile, x, conc, impId, numNod )
-char *inFile;
-float *x, *conc;
-int *impId, *numNod;
+SUPascRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
 {
   int idata;
   int i, j;

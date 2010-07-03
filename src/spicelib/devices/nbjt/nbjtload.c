@@ -29,9 +29,7 @@ extern int ONEacDebug;
 
 
 int
-NBJTload(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NBJTload(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NBJTmodel *model = (NBJTmodel *) inModel;
   register NBJTinstance *inst;
@@ -491,8 +489,7 @@ NBJTload(inModel, ckt)
 }
 
 int
-NBJTinitSmSig(inst)
-  NBJTinstance *inst;
+NBJTinitSmSig(NBJTinstance *inst)
 {
   SPcomplex yIeVce, yIeVbe;
   SPcomplex yIcVce, yIcVbe;

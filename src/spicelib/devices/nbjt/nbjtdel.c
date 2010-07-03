@@ -14,11 +14,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NBJTdelete(inModel, name, kill)
-  GENmodel *inModel;
-  IFuid name;
-  GENinstance **kill;
-
+NBJTdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
   NBJTmodel *model = (NBJTmodel *) inModel;
   NBJTinstance **fast = (NBJTinstance **) kill;

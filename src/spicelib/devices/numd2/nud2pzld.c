@@ -17,10 +17,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 extern int TWOacDebug;
 
 int
-NUMD2pzLoad(inModel, ckt, s)
-  GENmodel *inModel;
-  register CKTcircuit *ckt;
-  SPcomplex *s;
+NUMD2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
   register NUMD2model *model = (NUMD2model *) inModel;
   register NUMD2instance *inst;

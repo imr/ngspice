@@ -8,7 +8,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 /* #include "ftedata.h" */
 
 struct plot *
-DBread( fileName )
+DBread( char *fileName )
 {
   struct plot *plot;
 
@@ -18,10 +18,7 @@ DBread( fileName )
 }
 
 double *
-DBgetData( plot, name, lengthWanted )
-struct plot *plot;
-char *name;
-int lengthWanted;
+DBgetData(struct plot *plot, char *name, int lengthWanted)
 {
   struct dvec *v;
   double *data;
@@ -50,8 +47,7 @@ int lengthWanted;
 }
 
 void
-DBfree( plot )
-struct plot *plot;
+DBfree(struct plot *plot)
 {
   struct dvec *v, *nextv;
   struct plot *pl, *nextpl;

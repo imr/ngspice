@@ -14,11 +14,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NUMOSmDelete(inModel, modname, kill)
-  GENmodel **inModel;
-  IFuid modname;
-  GENmodel *kill;
-
+NUMOSmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
 
   NUMOSmodel **model = (NUMOSmodel **) inModel;

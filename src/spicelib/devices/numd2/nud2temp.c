@@ -18,9 +18,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 #define NIL(type)   ((type *)0)
 
 int
-NUMD2temp(inModel, ckt)
-  GENmodel *inModel;
-  register CKTcircuit *ckt;
+NUMD2temp(GENmodel *inModel, CKTcircuit *ckt)
 /*
  * perform the temperature update
  */

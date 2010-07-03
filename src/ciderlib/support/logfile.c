@@ -9,9 +9,7 @@ static char *LogFileName = "cider.log";
 static int LogError = 0;
 
 void
-LOGmakeEntry(name, description)
-  char *name;
-  char *description;
+LOGmakeEntry(char *name, char *description)
 {
   int procStamp;
   FILE *fpLog;

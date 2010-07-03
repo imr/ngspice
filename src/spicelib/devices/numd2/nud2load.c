@@ -30,10 +30,7 @@ extern int TWOtranDebug;
 extern int TWOacDebug;
 
 int
-NUMD2load(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-
+NUMD2load(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NUMD2model *model = (NUMD2model *) inModel;
   register NUMD2instance *inst;
@@ -392,8 +389,7 @@ NUMD2load(inModel, ckt)
 }
 
 int
-NUMD2initSmSig(inst)
-  NUMD2instance *inst;
+NUMD2initSmSig(NUMD2instance *inst)
 {
   SPcomplex yd;
   double omega = inst->NUMD2modPtr->NUMD2methods->METHomega;

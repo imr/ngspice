@@ -11,11 +11,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NUMDparam(param, value, inInst, select)
-  int param;
-  IFvalue *value;
-  GENinstance *inInst;
-  IFvalue *select;
+NUMDparam(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   NUMDinstance *inst = (NUMDinstance *) inInst;
   switch (param) {

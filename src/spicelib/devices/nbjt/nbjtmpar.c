@@ -15,10 +15,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NBJTmParam(param, value, inModel)
-  int param;
-  IFvalue *value;
-  GENmodel *inModel;
+NBJTmParam(int param, IFvalue *value, GENmodel *inModel)
 {
   switch (param) {
   case NBJT_MOD_NBJT:

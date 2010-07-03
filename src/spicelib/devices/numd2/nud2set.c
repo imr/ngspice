@@ -25,11 +25,7 @@ if (size && (!(var =(type *)calloc(1, (unsigned)(size)*sizeof(type))))) {\
 }
 
 int
-NUMD2setup(matrix, inModel, ckt, states)
-  register SMPmatrix *matrix;
-  GENmodel *inModel;
-  CKTcircuit *ckt;
-  int *states;
+NUMD2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 /*
  * load the structure with those pointers needed later for fast matrix
  * loading

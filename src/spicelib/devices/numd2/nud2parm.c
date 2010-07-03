@@ -11,11 +11,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NUMD2param(param, value, inInst, select)
-  int param;
-  IFvalue *value;
-  GENinstance *inInst;
-  IFvalue *select;
+NUMD2param(int param, IFvalue *value, GENinstance *inInst, IFvalue *select)
 {
   NUMD2instance *inst = (NUMD2instance *) inInst;
   switch (param) {

@@ -141,11 +141,8 @@ void TWOsetup(TWOdevice *pDevice)
 }
 
 /* Transfer BC info from card to nodes and edges. */
-static void TWOcopyBCinfo( pDevice, pElem, card, index )
-     TWOdevice *pDevice;
-     TWOelem *pElem;
-     BDRYcard *card;
-     int index;
+static void
+TWOcopyBCinfo(TWOdevice *pDevice, TWOelem *pElem, BDRYcard *card, int index )
 {
   TWOnode *pNode;
   TWOelem *pNElem;

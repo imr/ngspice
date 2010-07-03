@@ -13,10 +13,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "cidersupt.h"
 
 int
-NUMD2trunc(inModel, ckt, timeStep)
-  GENmodel *inModel;
-  register CKTcircuit *ckt;
-  double *timeStep;
+NUMD2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
   register NUMD2model *model = (NUMD2model *) inModel;
   register NUMD2instance *inst;

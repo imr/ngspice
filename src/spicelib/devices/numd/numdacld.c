@@ -22,9 +22,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 extern int ONEacDebug; 
 
 int
-NUMDacLoad(inModel, ckt)
-  GENmodel *inModel;
-  CKTcircuit *ckt;
+NUMDacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
   register NUMDmodel *model = (NUMDmodel *) inModel;
   register NUMDinstance *inst;

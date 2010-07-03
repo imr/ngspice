@@ -15,9 +15,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 void
-NUMOSdestroy(inModel)
-  GENmodel **inModel;
-
+NUMOSdestroy(GENmodel **inModel)
 {
 
   NUMOSmodel **model = (NUMOSmodel **) inModel;

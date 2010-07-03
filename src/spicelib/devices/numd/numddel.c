@@ -9,11 +9,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "suffix.h"
 
 int
-NUMDdelete(inModel, name, kill)
-  GENmodel *inModel;
-  IFuid name;
-  GENinstance **kill;
-
+NUMDdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
 
   NUMDmodel *model = (NUMDmodel *) inModel;
