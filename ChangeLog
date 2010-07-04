@@ -1,3 +1,11 @@
+2010-07-04  Robert Larice
+ * src/include/defines.h :
+		for non MSC: use sighandler_t from <signal.h>
+		FIXME, should work for MSC as well, please check
+
+ * src/include/fteext.h :
+        ansi function declarations (prototypes) for some signal functions
+
 2010-07-03  Robert Larice
  * src/frontend/evaluate.c ,
  * src/include/fteparse.h :

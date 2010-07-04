@@ -115,7 +115,7 @@
 #if defined(_MSC_VER)
 #  define SIGNAL_FUNCTION RETSIGTYPE (*)(int)
 #else
-#  define SIGNAL_FUNCTION RETSIGTYPE (*)( )
+#  define SIGNAL_FUNCTION sighandler_t
 #endif
 #endif
 

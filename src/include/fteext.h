@@ -412,10 +412,10 @@ extern char *cp_program;
 extern RETSIGTYPE ft_sigintr(void);
 extern RETSIGTYPE sigfloat(int sig, int code);
 extern RETSIGTYPE sigstop(void);
-extern RETSIGTYPE sigill();
-extern RETSIGTYPE sigbus();
-extern RETSIGTYPE sigsegv();
-extern RETSIGTYPE sig_sys();
+extern RETSIGTYPE sigill(void);
+extern RETSIGTYPE sigbus(void);
+extern RETSIGTYPE sigsegv(void);
+extern RETSIGTYPE sig_sys(void);
 extern int main(int argc, char **argv);
 
 /* spiceif.c & nutmegif.c */
