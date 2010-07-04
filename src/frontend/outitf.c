@@ -460,7 +460,7 @@ OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
     if (run->writeOut) {
 	if (run->pointCount == 1)
-	    fileInit_pass2(plotPtr);
+	    fileInit_pass2(run);
         fileStartPoint(run->fp, run->binary, run->pointCount);
 
         if (run->refIndex != -1) {
@@ -689,7 +689,7 @@ OUTattributes(void *plotPtr, IFuid varName, int param, IFvalue *value)
 {
     runDesc *run = (runDesc *) plotPtr;
     struct dvec *d;
-    int type;
+    GRIDTYPE type;
     int i;
 
     if (param == OUT_SCALE_LIN)

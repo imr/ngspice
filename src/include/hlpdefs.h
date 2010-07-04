@@ -39,7 +39,7 @@ typedef struct toplink {
     char *description;          /* really the subject */
     fplace *place;
     struct toplink *next;
-    button button;
+    struct button button;
 } toplink;
 
 typedef struct topic {

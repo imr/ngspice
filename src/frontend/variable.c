@@ -583,7 +583,7 @@ cp_getvar(char *name, int type, void *retval)
                 char *s;
                 s = cp_unquote(v->va_string);
                 cp_wstrip(s);
-                (void) strcpy(retval, s);
+                (void) strcpy((char*) retval, s);
                 tfree(s);/*DG*/
                 break;
             }
@@ -617,11 +617,11 @@ cp_getvar(char *name, int type, void *retval)
             free_struct_variable(uv1); 
             return (TRUE);
         } else if ((type == VT_STRING) && (v->va_type == VT_NUM)) {
-            (void) sprintf(retval, "%d", v->va_num);
+            (void) sprintf((char*) retval, "%d", v->va_num);
             free_struct_variable(uv1); 
             return (TRUE);
         } else if ((type == VT_STRING) && (v->va_type == VT_REAL)) {
-            (void) sprintf(retval, "%f", v->va_real);
+            (void) sprintf((char*) retval, "%f", v->va_real);
             free_struct_variable(uv1); 
             return (TRUE);
         }

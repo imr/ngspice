@@ -8,7 +8,7 @@
 typedef struct dataDesc {
     char *name;     /* The name of the vector. */
     int type;       /* The type. */
-    int	gtype;		/* default plot scale */
+    GRIDTYPE gtype;		/* default plot scale */
     bool regular;       /* Is this given to us? */
     int outIndex;       /* If regular then the index. */
     char *specName;     /* The device name if special. */

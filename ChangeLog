@@ -1,4 +1,12 @@
 2010-07-04  Robert Larice
+ * src/frontend/evaluate.c : use void* instead of char* for anonymous data
+ * src/frontend/outitf.c : use a rescasted parameter
+ * src/frontend/outitf.h : make use of the existing enum GRIDTYPE
+ * src/frontend/variable.c : add missing casts
+ * src/spicelib/analysis/ckti2nod.c : drop an useless cast
+ * src/include/hlpdefs.h : use the struct name instead of the typedef name
+
+2010-07-04  Robert Larice
  * src/maths/sparse/spdefs.h :
         fix the type of an ancient anonymous pointer from char* to void*
 

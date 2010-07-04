@@ -803,7 +803,8 @@ apply_func(struct func *func, struct pnode *arg)
     struct dvec *v, *t, *newv = NULL, *end = NULL;
     int len, i;
     short type;
-    char *data, buf[BSIZE_SP];
+    void *data;
+    char buf[BSIZE_SP];
 
     /* Special case. This is not good -- happens when vm(), etc are used
      * and it gets caught as a user-definable function.  Usually v()

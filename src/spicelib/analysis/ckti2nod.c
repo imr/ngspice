@@ -59,7 +59,7 @@ CKTinst2Node(void *ckt, void *instPtr, int terminal, CKTnode **node, IFuid *node
         for(here = ((CKTcircuit*)ckt)->CKTnodes;here;here = here->next) {
             if(here->number == nodenum) {
                 /* found it */
-                *node = (void*) here;
+                *node = here;
                 *nodeName = here->name;
                 return(OK);
             }
