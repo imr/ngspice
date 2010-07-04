@@ -471,7 +471,7 @@ typedef  ElementPtr  *ArrayOfElementPtrs;
  *  linked list so that it can grow without a priori bounds.
  *
  *  >>> Structure fields:
- *  AllocatedPtr  (char *)
+ *  AllocatedPtr  (void *)
  *      Pointer to chunk of memory that has been allocated for the matrix.
  *  NextRecord  (struct  AllocationRecord *)
  *      Pointer to the next allocation record.
@@ -480,7 +480,7 @@ typedef  ElementPtr  *ArrayOfElementPtrs;
 /* Begin `AllocationRecord'. */
 struct AllocationRecord
 {
-    char  *AllocatedPtr;
+    void  *AllocatedPtr;
     struct  AllocationRecord  *NextRecord;
 };
 
