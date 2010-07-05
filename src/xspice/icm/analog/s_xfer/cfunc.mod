@@ -304,24 +304,24 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 		// Retrieve pointers
         
         for (i=0; i<den_size; i++) {
-            integrator[i]     = cm_analog_get_ptr(i,0);
-            old_integrator[i] = cm_analog_get_ptr(i,0);
+            integrator[i]     = (double *) cm_analog_get_ptr(i,0);
+            old_integrator[i] = (double *) cm_analog_get_ptr(i,0);
         }
 
         for(i=den_size;i<2*den_size;i++) {
-            den_coefficient[i-den_size]     = cm_analog_get_ptr(i,0);
-            old_den_coefficient[i-den_size] = cm_analog_get_ptr(i,0);
+            den_coefficient[i-den_size]     = (double *) cm_analog_get_ptr(i,0);
+            old_den_coefficient[i-den_size] = (double *) cm_analog_get_ptr(i,0);
         }
 
         for(i=2*den_size;i<2*den_size+num_size;i++) {
-            num_coefficient[i-2*den_size]     = cm_analog_get_ptr(i,0);
-            old_num_coefficient[i-2*den_size] = cm_analog_get_ptr(i,0);
+            num_coefficient[i-2*den_size]     = (double *) cm_analog_get_ptr(i,0);
+            old_num_coefficient[i-2*den_size] = (double *) cm_analog_get_ptr(i,0);
         }
 
-        out = cm_analog_get_ptr(2*den_size+num_size, 0);
-        in  = cm_analog_get_ptr(2*den_size+num_size+1, 0);
+        out = (double *) cm_analog_get_ptr(2*den_size+num_size, 0);
+        in  = (double *) cm_analog_get_ptr(2*den_size+num_size+1, 0);
 
-        gain = cm_analog_get_ptr(2*den_size+num_size+2,0);
+        gain = (double *) cm_analog_get_ptr(2*den_size+num_size+2,0);
 
     }else { /* Allocation was not necessary...retrieve previous values */
     
@@ -331,12 +331,12 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         old_integrator = (double **) calloc(den_size,sizeof(double *));
 
         for (i=0; i<den_size; i++) {
-            integrator[i] = cm_analog_get_ptr(i,0);
-            old_integrator[i] = cm_analog_get_ptr(i,1);
+            integrator[i] = (double *) cm_analog_get_ptr(i,0);
+            old_integrator[i] = (double *) cm_analog_get_ptr(i,1);
 
         }
-        out = cm_analog_get_ptr(2*den_size+num_size,0);   
-        in = cm_analog_get_ptr(2*den_size+num_size+1,0);   
+        out = (double *) cm_analog_get_ptr(2*den_size+num_size,0);   
+        in = (double *) cm_analog_get_ptr(2*den_size+num_size+1,0);   
     
     
         /* Set den_coefficient & gain pointers to ITP values */
@@ -346,8 +346,8 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         den_coefficient = (double **) calloc(den_size,sizeof(double));  
 
 		for(i=den_size;i<2*den_size;i++){
-            old_den_coefficient[i-den_size] = cm_analog_get_ptr(i,1);
-		    den_coefficient[i-den_size] = cm_analog_get_ptr(i,0);
+            old_den_coefficient[i-den_size] = (double *) cm_analog_get_ptr(i,1);
+		    den_coefficient[i-den_size] = (double *) cm_analog_get_ptr(i,0);
             *(den_coefficient[i-den_size]) = *(old_den_coefficient[i-den_size]);
 		} 
 
@@ -355,8 +355,8 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 		old_num_coefficient = (double **) calloc(num_size,sizeof(double));  
 
 		for(i=2*den_size;i<2*den_size+num_size;i++){
-		    old_num_coefficient[i-2*den_size] = cm_analog_get_ptr(i,1);
-			num_coefficient[i-2*den_size] = cm_analog_get_ptr(i,0);
+		    old_num_coefficient[i-2*den_size] = (double *) cm_analog_get_ptr(i,1);
+			num_coefficient[i-2*den_size] = (double *) cm_analog_get_ptr(i,0);
 			*(num_coefficient[i-2*den_size]) = *(old_num_coefficient[i-2*den_size]);
 		} 
 
@@ -364,8 +364,8 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 		   if the highest order denominator coefficient isn't zero.  This
 		   is a hack until the ITP variables work */
 
-        old_gain = cm_analog_get_ptr(2*den_size+num_size+2,1);  
-        gain = cm_analog_get_ptr(2*den_size+num_size+2,0);  
+        old_gain = (double *) cm_analog_get_ptr(2*den_size+num_size+2,1);  
+        gain = (double *) cm_analog_get_ptr(2*den_size+num_size+2,0);  
 
 		*gain = *old_gain;
 

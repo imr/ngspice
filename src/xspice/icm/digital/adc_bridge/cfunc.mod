@@ -181,7 +181,7 @@ void cm_adc_bridge(ARGS)
         cm_event_alloc(1,size * sizeof(Digital_State_t));
 
         /* Get analog addresses */        
-        in = in_old = cm_analog_get_ptr(0,0);
+        in = in_old = (double *) cm_analog_get_ptr(0,0);
 
         /* Get discrete addresses */
         out = out_old = (Digital_State_t *) cm_event_get_ptr(1,0);
@@ -194,8 +194,8 @@ void cm_adc_bridge(ARGS)
         /** Retrieve previous values... **/
 
         /* assign discrete addresses */
-        in = cm_analog_get_ptr(0,0);
-        in_old = cm_analog_get_ptr(0,1);
+        in = (double *) cm_analog_get_ptr(0,0);
+        in_old = (double *) cm_analog_get_ptr(0,1);
 
         /* assign analog addresses */
         out = (Digital_State_t *) cm_event_get_ptr(1,0);

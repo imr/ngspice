@@ -158,10 +158,10 @@ void cm_slew(ARGS)
 
     /* DC analysis, get old values */ 
 
-            ins= cm_analog_get_ptr(INT1,0);
-			outs= cm_analog_get_ptr(INT4,0);
-            in_old = cm_analog_get_ptr(INT1,0);
-			out_old = cm_analog_get_ptr(INT4,0);
+            ins= (double *) cm_analog_get_ptr(INT1,0);
+			outs= (double *) cm_analog_get_ptr(INT4,0);
+            in_old = (double *) cm_analog_get_ptr(INT1,0);
+			out_old = (double *) cm_analog_get_ptr(INT4,0);
 
             *ins = *in_old = INPUT(in);   
             *outs = *out_old = *ins;
@@ -183,11 +183,11 @@ void cm_slew(ARGS)
 
         /* Allocation not necessary...retrieve previous values */
 
-         ins = cm_analog_get_ptr(INT1,0);   /* Set out pointer to current 
+         ins = (double *) cm_analog_get_ptr(INT1,0);   /* Set out pointer to current 
                                                             time storage */    
-         in_old = cm_analog_get_ptr(INT1,1);  /*  Set old-output-state pointer */
-		 outs = cm_analog_get_ptr(INT4,0);
-         out_old = cm_analog_get_ptr(INT4,1);   /* Set old-output-state pointer 
+         in_old = (double *) cm_analog_get_ptr(INT1,1);  /*  Set old-output-state pointer */
+		 outs = (double *) cm_analog_get_ptr(INT4,0);
+         out_old = (double *) cm_analog_get_ptr(INT4,1);   /* Set old-output-state pointer 
                                               previous time storage */    
        
 

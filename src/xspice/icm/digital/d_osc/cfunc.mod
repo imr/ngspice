@@ -214,11 +214,11 @@ void cm_d_osc(ARGS)
         cm_analog_alloc(2, sizeof(double));
 
         /* assign internal variables */
-        phase = phase_old = cm_analog_get_ptr(0,0);
+        phase = phase_old = (double *) cm_analog_get_ptr(0,0);
 
-        t1 = cm_analog_get_ptr(1,0);
+        t1 = (double *) cm_analog_get_ptr(1,0);
                           
-        t3 = cm_analog_get_ptr(2,0);
+        t3 = (double *) cm_analog_get_ptr(2,0);
 
     }
 
@@ -230,12 +230,12 @@ void cm_d_osc(ARGS)
 
 
         /* assign internal variables */
-        phase = cm_analog_get_ptr(0,0);
-        phase_old = cm_analog_get_ptr(0,1);
+        phase = (double *) cm_analog_get_ptr(0,0);
+        phase_old = (double *) cm_analog_get_ptr(0,1);
 
-        t1 = cm_analog_get_ptr(1,0);
+        t1 = (double *) cm_analog_get_ptr(1,0);
                           
-        t3 = cm_analog_get_ptr(2,0);
+        t3 = (double *) cm_analog_get_ptr(2,0);
 
     }
 

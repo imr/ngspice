@@ -168,8 +168,8 @@ void cm_int(ARGS)  /* structure holding parms,
         }
         /* retrieve previous value */
     
-            in = cm_analog_get_ptr(INT1,0);  /* Set out pointer to input storage location */
-            out = cm_analog_get_ptr(INT2,0);  /* Set out pointer to output storage location */
+            in = (double *) cm_analog_get_ptr(INT1,0);  /* Set out pointer to input storage location */
+            out = (double *) cm_analog_get_ptr(INT2,0);  /* Set out pointer to output storage location */
                                   
 
         /*** Read input value for current time, and calculate pseudo-input ***/

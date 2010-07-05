@@ -242,14 +242,14 @@ void cm_oneshot(ARGS)  /* structure holding parms,
 
     /* for DC, initialize values and set the output = output_low */
 
-		t1 = cm_analog_get_ptr(T1,0);
-		t2 = cm_analog_get_ptr(T2,0);
-		t3 = cm_analog_get_ptr(T3,0);
-		t4 = cm_analog_get_ptr(T4,0);
-		set = cm_analog_get_ptr(SET,0);
-		state = cm_analog_get_ptr(STATE,0);
-		locked = cm_analog_get_ptr(LOCKED,0);
-		output_old = cm_analog_get_ptr(OUTPUT_OLD,0);
+		t1 = (double *) cm_analog_get_ptr(T1,0);
+		t2 = (double *) cm_analog_get_ptr(T2,0);
+		t3 = (double *) cm_analog_get_ptr(T3,0);
+		t4 = (double *) cm_analog_get_ptr(T4,0);
+		set = (int *) cm_analog_get_ptr(SET,0);
+		state = (int *) cm_analog_get_ptr(STATE,0);
+		locked = (int *) cm_analog_get_ptr(LOCKED,0);
+		output_old = (double *) cm_analog_get_ptr(OUTPUT_OLD,0);
 
 		/* initialize time and state values */
 		*t1 = -1;
@@ -279,16 +279,16 @@ void cm_oneshot(ARGS)  /* structure holding parms,
    other variables because the previous values can't change- 
    can't rewrite the old values */
 
-	t1 = cm_analog_get_ptr(T1,1);
-	t2 = cm_analog_get_ptr(T2,1);
-	t3 = cm_analog_get_ptr(T3,1);
-	t4 = cm_analog_get_ptr(T4,1);
-	set = cm_analog_get_ptr(SET,1);
-	state = cm_analog_get_ptr(STATE,1);
-	locked = cm_analog_get_ptr(LOCKED,1);
-    clock = cm_analog_get_ptr(CLOCK,0);
-    old_clock = cm_analog_get_ptr(CLOCK,1);
-    output_old = cm_analog_get_ptr(OUTPUT_OLD,1);
+	t1 = (double *) cm_analog_get_ptr(T1,1);
+	t2 = (double *) cm_analog_get_ptr(T2,1);
+	t3 = (double *) cm_analog_get_ptr(T3,1);
+	t4 = (double *) cm_analog_get_ptr(T4,1);
+	set = (int*) cm_analog_get_ptr(SET,1);
+	state = (int *) cm_analog_get_ptr(STATE,1);
+	locked = (int *) cm_analog_get_ptr(LOCKED,1);
+    clock = (double *) cm_analog_get_ptr(CLOCK,0);
+    old_clock = (double *) cm_analog_get_ptr(CLOCK,1);
+    output_old = (double *) cm_analog_get_ptr(OUTPUT_OLD,1);
 
 	time1 = *t1;
     time2 = *t2;
@@ -532,14 +532,14 @@ if(trig_pos_edge){  /* for a positive edge trigger */
 
     /* set the variables which need to be stored for the next iteration */
  }
-	t1 = cm_analog_get_ptr(T1,0);
-	t2 = cm_analog_get_ptr(T2,0);
-	t3 = cm_analog_get_ptr(T3,0);
-	t4 = cm_analog_get_ptr(T4,0);
-	set = cm_analog_get_ptr(SET,0);
-	locked = cm_analog_get_ptr(LOCKED,0);
-	state = cm_analog_get_ptr(STATE,0);
-	output_old = cm_analog_get_ptr(OUTPUT_OLD,0);
+	t1 = (double *) cm_analog_get_ptr(T1,0);
+	t2 = (double *) cm_analog_get_ptr(T2,0);
+	t3 = (double *) cm_analog_get_ptr(T3,0);
+	t4 = (double *) cm_analog_get_ptr(T4,0);
+	set = (int *) cm_analog_get_ptr(SET,0);
+	locked = (int *) cm_analog_get_ptr(LOCKED,0);
+	state = (int *) cm_analog_get_ptr(STATE,0);
+	output_old = (double *) cm_analog_get_ptr(OUTPUT_OLD,0);
 
 	*t1 = time1;
     *t2 = time2;

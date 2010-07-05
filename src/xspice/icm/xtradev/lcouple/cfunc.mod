@@ -175,15 +175,15 @@ void cm_lcouple(ARGS)  /* structure holding parms,
         }
         /* Allocation not necessary...retrieve previous values */
        
-            in_flux = cm_analog_get_ptr(1,0);  /* Set out pointer to current 
+            in_flux = (double *) cm_analog_get_ptr(1,0);  /* Set out pointer to current 
                                                                 time storage */    
-            in_flux_old = cm_analog_get_ptr(1,1);  /* Set old-output-state pointer 
+            in_flux_old = (double *) cm_analog_get_ptr(1,1);  /* Set old-output-state pointer 
                                                        to previous time storage */    
 
             /* retrieve fake input and output values for truncation
                error checking   */
-            in_flux_fake = cm_analog_get_ptr(2,0);   
-            output_voltage_fake = cm_analog_get_ptr(3,0);   
+            in_flux_fake = (double *) cm_analog_get_ptr(2,0);   
+            output_voltage_fake = (double *) cm_analog_get_ptr(3,0);   
       
     
 

@@ -211,10 +211,10 @@ void cm_square(ARGS)  /* structure holding parms,
     if(ANALYSIS == MIF_DC){
 
 	/* initialize time values */
-	t1 = cm_analog_get_ptr(T1,0);
-	t2 = cm_analog_get_ptr(T2,0);
-	t3 = cm_analog_get_ptr(T3,0);
-	t4 = cm_analog_get_ptr(T4,0);
+	t1 = (double *) cm_analog_get_ptr(T1,0);
+	t2 = (double *) cm_analog_get_ptr(T2,0);
+	t3 = (double *) cm_analog_get_ptr(T3,0);
+	t4 = (double *) cm_analog_get_ptr(T4,0);
 
 	*t1 = -1;
 	*t2 = -1;
@@ -230,12 +230,12 @@ void cm_square(ARGS)  /* structure holding parms,
 
   if(ANALYSIS == MIF_TRAN){
 
-	phase = cm_analog_get_ptr(INT1,0);
-	phase1 = cm_analog_get_ptr(INT1,1);
-	t1 = cm_analog_get_ptr(T1,1);
-	t2 = cm_analog_get_ptr(T2,1);
-	t3 = cm_analog_get_ptr(T3,1);
-	t4 = cm_analog_get_ptr(T4,1);
+	phase = (double *) cm_analog_get_ptr(INT1,0);
+	phase1 = (double *) cm_analog_get_ptr(INT1,1);
+	t1 = (double *) cm_analog_get_ptr(T1,1);
+	t2 = (double *) cm_analog_get_ptr(T2,1);
+	t3 = (double *) cm_analog_get_ptr(T3,1);
+	t4 = (double *) cm_analog_get_ptr(T4,1);
 
 	time1 = *t1;
 	time2 = *t2;
@@ -391,10 +391,10 @@ void cm_square(ARGS)  /* structure holding parms,
 
      /* set the time values for storage */
 
-	t1 = cm_analog_get_ptr(T1,0);
-	t2 = cm_analog_get_ptr(T2,0);
-	t3 = cm_analog_get_ptr(T3,0);
-	t4 = cm_analog_get_ptr(T4,0);
+	t1 = (double *) cm_analog_get_ptr(T1,0);
+	t2 = (double *) cm_analog_get_ptr(T2,0);
+	t3 = (double *) cm_analog_get_ptr(T3,0);
+	t4 = (double *) cm_analog_get_ptr(T4,0);
 
 	*t1 = time1;
 	*t2 = time2; 

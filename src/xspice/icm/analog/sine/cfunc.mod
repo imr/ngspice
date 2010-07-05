@@ -167,15 +167,15 @@ void cm_sine(ARGS)  /* structure holding parms,
 
 		OUTPUT(out) = (output_hi + output_low)/2;
 		PARTIAL(out,cntl_in) = 0; 
-		phase = cm_analog_get_ptr(INT1,0);
+		phase = (double *) cm_analog_get_ptr(INT1,0);
 		*phase = 0;
 
   }else
 
   if(ANALYSIS == MIF_TRAN){
 
-	phase = cm_analog_get_ptr(INT1,0);
-	phase1 = cm_analog_get_ptr(INT1,1);
+	phase = (double *) cm_analog_get_ptr(INT1,0);
+	phase1 = (double *) cm_analog_get_ptr(INT1,1);
 
     /* Allocate storage for breakpoint domain & freq. range values */
     x = (double *) calloc(cntl_size, sizeof(double));

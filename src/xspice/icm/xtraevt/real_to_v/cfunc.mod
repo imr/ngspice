@@ -19,16 +19,16 @@ void ucm_real_to_v (ARGS)
     if(INIT) {
         cm_event_alloc(TS, 2 * sizeof(double));
         cm_event_alloc(VS, 2 * sizeof(double));
-        t = (void *) cm_event_get_ptr(TS, 0);
-        v = (void *) cm_event_get_ptr(VS, 0);
+        t = (double *) cm_event_get_ptr(TS, 0);
+        v = (double *) cm_event_get_ptr(VS, 0);
         t[0] = -2.0;
         t[1] = -1.0;
         v[0] = *in;
         v[1] = *in;
     }
     else {
-        t = (void *) cm_event_get_ptr(TS, 0);
-        v = (void *) cm_event_get_ptr(VS, 0);
+        t = (double *) cm_event_get_ptr(TS, 0);
+        v = (double *) cm_event_get_ptr(VS, 0);
     }
 
     switch(CALL_TYPE) {

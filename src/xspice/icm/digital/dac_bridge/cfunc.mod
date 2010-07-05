@@ -222,8 +222,8 @@ void cm_dac_bridge(ARGS)
         in = in_old = (Digital_State_t *) cm_event_get_ptr(0,0);
 
         /* assign analog addresses */
-        out = out_old = cm_analog_get_ptr(0,0);
-        breakpoint = cm_analog_get_ptr(1,0);
+        out = out_old = (double *) cm_analog_get_ptr(0,0);
+        breakpoint = (double *) cm_analog_get_ptr(1,0);
 
 
         /* read current input values */
@@ -274,9 +274,9 @@ void cm_dac_bridge(ARGS)
 
 
         /* assign analog addresses */
-        out = cm_analog_get_ptr(0,0);
-        out_old = cm_analog_get_ptr(0,1);
-        breakpoint = cm_analog_get_ptr(1,0);
+        out = (double *) cm_analog_get_ptr(0,0);
+        out_old = (double *) cm_analog_get_ptr(0,1);
+        breakpoint = (double *) cm_analog_get_ptr(1,0);
 
 
         /* read current input values */

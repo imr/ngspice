@@ -456,8 +456,8 @@ void cm_core(ARGS)  /* structure holding parms,
     
             cm_analog_alloc(TRUE,sizeof(Boolean_t));   
 
-            hyst_state     = cm_analog_get_ptr(TRUE,0);
-            old_hyst_state = cm_analog_get_ptr(TRUE,1);
+            hyst_state     = (Boolean_t *) cm_analog_get_ptr(TRUE,0);
+            old_hyst_state = (Boolean_t *) cm_analog_get_ptr(TRUE,1);
     
             if (in < x_rise_zero + input_domain) { /* Set state to X_RISING */
                 *old_hyst_state = X_RISING;   
@@ -468,9 +468,9 @@ void cm_core(ARGS)  /* structure holding parms,
         }
         else {   /* Allocation not necessary...retrieve previous values */
 
-            hyst_state = cm_analog_get_ptr(TRUE,0);  /* Set out pointer to current 
+            hyst_state = (Boolean_t *) cm_analog_get_ptr(TRUE,0);  /* Set out pointer to current 
                                                          time storage */    
-            old_hyst_state = cm_analog_get_ptr(TRUE,1);  /* Set old-output-state pointer 
+            old_hyst_state = (Boolean_t *) cm_analog_get_ptr(TRUE,1);  /* Set old-output-state pointer 
                                                 to previous time storage */    
         }
 

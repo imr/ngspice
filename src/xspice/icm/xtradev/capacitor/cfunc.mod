@@ -58,11 +58,11 @@ void cm_capacitor (ARGS)
     /* Initialize/access instance specific storage for capacitor voltage */
     if(INIT) {
         cm_analog_alloc(VC, sizeof(double));
-        vc = cm_analog_get_ptr(VC, 0);
+        vc = (double *) cm_analog_get_ptr(VC, 0);
         *vc = PARAM(ic) * cm_analog_ramp_factor();
     }
     else {
-        vc = cm_analog_get_ptr(VC, 0);
+        vc = (double *) cm_analog_get_ptr(VC, 0);
     }
 
     /* Compute the output */

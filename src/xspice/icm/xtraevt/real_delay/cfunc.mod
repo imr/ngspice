@@ -16,13 +16,13 @@ void ucm_real_delay (ARGS)
 
     if(INIT) {
         cm_event_alloc(CLK_STATE, sizeof(Digital_State_t));
-        state = (void *) cm_event_get_ptr(CLK_STATE, 0);
+        state = (Digital_State_t *) cm_event_get_ptr(CLK_STATE, 0);
         old_state = state;
         *state = INPUT_STATE(clk);
     }
     else {
-        state = (void *) cm_event_get_ptr(CLK_STATE, 0);
-        old_state = (void *) cm_event_get_ptr(CLK_STATE, 1);
+        state = (Digital_State_t *) cm_event_get_ptr(CLK_STATE, 0);
+        old_state = (Digital_State_t *) cm_event_get_ptr(CLK_STATE, 1);
     }
 
     if(ANALYSIS != TRANSIENT)

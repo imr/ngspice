@@ -1,3 +1,25 @@
+2010-07-05  Robert Larice  <Robert.Larice@t-online.de>
+ * src/xspice/icm/analog/d_dt/cfunc.mod ,
+ * src/xspice/icm/analog/hyst/cfunc.mod ,
+ * src/xspice/icm/analog/int/cfunc.mod ,
+ * src/xspice/icm/analog/oneshot/cfunc.mod ,
+ * src/xspice/icm/analog/s_xfer/cfunc.mod ,
+ * src/xspice/icm/analog/sine/cfunc.mod ,
+ * src/xspice/icm/analog/slew/cfunc.mod ,
+ * src/xspice/icm/analog/square/cfunc.mod ,
+ * src/xspice/icm/analog/triangle/cfunc.mod ,
+ * src/xspice/icm/digital/adc_bridge/cfunc.mod ,
+ * src/xspice/icm/digital/d_osc/cfunc.mod ,
+ * src/xspice/icm/digital/dac_bridge/cfunc.mod ,
+ * src/xspice/icm/xtradev/capacitor/cfunc.mod ,
+ * src/xspice/icm/xtradev/core/cfunc.mod ,
+ * src/xspice/icm/xtradev/inductor/cfunc.mod ,
+ * src/xspice/icm/xtradev/lcouple/cfunc.mod ,
+ * src/xspice/icm/xtraevt/real_delay/cfunc.mod ,
+ * src/xspice/icm/xtraevt/real_to_v/cfunc.mod :
+        cast the return values of the void* returning functions
+          cm_event_get_ptr() and cm_analog_get_ptr()
+
 2010-07-04  Robert Larice
  * src/frontend/evaluate.c : use void* instead of char* for anonymous data
  * src/frontend/outitf.c : use a rescasted parameter

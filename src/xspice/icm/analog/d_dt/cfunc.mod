@@ -176,9 +176,9 @@ void cm_d_dt(ARGS)
         }
         /* retrieve previous values */
     
-            in = cm_analog_get_ptr(TRUE,0);  /* Set out pointer to current 
+            in = (double *) cm_analog_get_ptr(TRUE,0);  /* Set out pointer to current 
                                                                 time storage */    
-            in_old = cm_analog_get_ptr(TRUE,1);  /* Set old-output-state pointer 
+            in_old = (double *) cm_analog_get_ptr(TRUE,1);  /* Set old-output-state pointer 
                                                        to previous time storage */    
 
 
