@@ -911,6 +911,7 @@ static void  write_SPICEdev(
         fprintf(fp, "      MIFinst_varTable,\n");
     else
         fprintf(fp, "      NULL,\n");
+    fprintf(fp, "      0,         /* flags */\n");
 
     fprintf(fp, "    },\n");
 

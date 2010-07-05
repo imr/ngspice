@@ -1,4 +1,10 @@
-2010-07-05  Robert Larice  <Robert.Larice@t-online.de>
+2010-07-05  Robert Larice
+ * src/xspice/cmpp/writ_ifs.c :
+        add initialization of the struct IFdevice.flags element to the
+        generated code.  We initialize to 0, which is what the C compiler
+        used as default so far.
+
+2010-07-05  Robert Larice
  * src/xspice/icm/analog/d_dt/cfunc.mod ,
  * src/xspice/icm/analog/hyst/cfunc.mod ,
  * src/xspice/icm/analog/int/cfunc.mod ,
