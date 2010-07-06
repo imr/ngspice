@@ -1,14 +1,26 @@
 * Fourier Series Function for SPICE
+* This script is offered here for learning purposes, even if it is outdated
+* and superseeded by the spec function and especially by the much faster fft function.
+* You may use this script in conjunction with e.g. a ringoscillator output (see
+* the ngspice manual, chapter 17).
+
 .control
   begin
+
+* Variable argc delivers the number of command line parameters given by the user 
+* after the 'spectrum' command  
    if ($argc lt 4)
- 	 echo	Error: Too few arguments.
-	 echo	'      'Spectrum produces a plot containing a fourier series transformation of 
+ 	 echo   Error: Too few arguments.
+	 echo   '      'Spectrum produces a plot containing a fourier series transformation of 
 	 echo   '      'the specified vectors
 	 echo   usage: spectrum startfreq stop step vec [[vec] ...]
 	 goto bottom
    end
-   
+
+* Check if vectors 'time' and any input vector(s) are available
+* argv[n] delivers the command line entries after the 'spectrum' command,
+* starting with argv[1]. $argv[4-len] delivers the value of all tokens, 
+* starting with postion 4 till the end of the command line    
    if ( time eq time ) 
       foreach vec $argv[4-len]
          if ( $vec eq $vec )
@@ -20,64 +32,134 @@
       echo '       'Spectrum can not work without a time vector from a transient analysis.
       goto bottom
    end
-   
+
+   * generate a new plot entitled 'scratch', which will hold intermediate
+   * results and will be discarded after their evaluation.   
    set dt=$curplot
    set title=$curplottitle
    set curplot=new
    set scratch=$curplot
+
+   * A vector 'span' is created in the 'scratch' plot to hold the time difference
+   * of the transient simulation. {$dt}.time allows to access the 'time' vector
+   * from the dt plot (which is normally named 'tranx' with x a consecutoive
+   * integer number, depending on the amount of transient simulations already run
+   * in the present job.   
    let span={$dt}.time[length({$dt}.time)-1]-{$dt}.time[0]
+
+* Calculate the number of steps in all of the spectra to be evaluated below
    if ($argv[3] gt 0.999/span)
        let fpoints= ( $argv[2] - $argv[1] ) / $argv[3] +1
 	   if (fpoints < 2)
 	       echo frequency start stop or step not correctly specified
-		   goto cleanup
+		   goto reset
 	   end
    else
        echo   Error: time span is not long enough for a step frequency of $argv[3] Hz
-	   goto cleanup
+	   goto reset
    end
    let lent = length({$dt}.time)
    set lent = "$&lent"
    let nyquist = {$lent}/2/span
    if ($argv[2] gt nyquist)
        echo   Error: The nyquist limit is exceeded, try a frequency less than "$&nyquist" Hz
-	   goto cleanup
+	   goto reset
    end
    set fpoints="$&fpoints"
+
+   * generate a new plot to hold the spectra   
    set curplot=new
    set spec=$curplot
    set curplottitle=$title
    set curplotname='Spectrum Analysis'
+   
+* argv[3] is the third agrgument from the input line 
+* spectrum 1 1000MEG 10MEG v(out25) 
+* that is the delta frequency
+* The fcn vector(n) creates a vector of length n, its elements have
+* the values 0, 1, 2, 3, ..., n-2, n-1. Each element then is multiplied 
+* with the frequency step value. 
    let frequency=vector( $fpoints )*$argv[3]
+
+* Add an frequency offset to each element of vector 'frequency'
+* to suppress the (typically) large dc component.
    dowhile frequency[1] < ( $argv[1] + 1e-9 )
        let frequency = frequency + $argv[3]
    end
+
+* For each input vector given on the command line,
+* create a new vector for complex numbers   
    foreach vec $argv[4-len]
        let $vec = vector( $fpoints ) + j(vector( $fpoints ))
 	   reshape $vec [{$fpoints}]
    end
+
+* $scratch is a plot for intermediate results, will be destroyed during cleanup
+* $dt is the plot with the original data
+* $spec is a plot for storing the spectrum   
    set curplot=$scratch
+
+   * some test   
    let npers=1
    let test = span-2/$argv[3] + 1e-9
    while test > 0
        let npers = npers + 1
        let test = test-1/$argv[3]
    end
+
+   * Do the spectrum calculations  
    let ircle = 2*pi*max(-1,({$dt}.time-{$dt}.time[{$lent}-1])*{$argv[3]}/npers)
    let win = 1 - cos(ircle)
    let ircle = npers*ircle
    let circle = ircle * ({$spec}.frequency[0]/$argv[3] - 1)
    let k=vector( $fpoints ) 
-   foreach k "$&k"
+   foreach k $&k
       let circle = circle + ircle 
       foreach vec $argv[4-len]
-	  let tmp = win*{$dt}.{$vec}
+	      let tmp = win*{$dt}.{$vec}
           let {$spec}.{$vec}[{$k}] = 2*(mean(cos(circle)*tmp),mean(sin(circle)*tmp))
       end
    end
+
+* plot (and write) the generated spectrum   
+   set curplot = $spec
+   settype frequency frequency
+   foreach vec $argv[4-len]
+      let spectrum = mag({$vec})
+      plot spectrum
+      write specout.out spectrum
+   end
    
+* If you have an oscillator, fimd its frequency 
+* as maximum of vector spectrum or goto end (uncomment next line)
+*  goto cleanup
+   set curplot=$scratch  
+   let counter = 0
+   let contents = 0
+   let freqmax = 0
+   let spectrum = {$spec}.spectrum
+ 
+   foreach spectrum $&spectrum
+       if counter > 4
+         if ( contents < $spectrum )
+            let contents = $spectrum
+			set count = "$&counter"
+			let freqmax = {$spec}.frequency[{$count}]
+         end
+      end
+	  let counter = counter + 1
+   end
+   
+   echo   
+   echo Osc. frequency at "$&freqmax" Hz   
+   echo
+   goto cleanup
+   
+   label reset
+   set curplot=$dt   
    label cleanup
    destroy $scratch
    unset fpoints dt scratch spec vec k title lent
    label bottom
+
  end

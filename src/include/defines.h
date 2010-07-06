@@ -112,7 +112,7 @@
 
 
 #ifndef SIGNAL_FUNCTION
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__CYGWIN__)
 #  define SIGNAL_FUNCTION RETSIGTYPE (*)(int)
 #else
 #  define SIGNAL_FUNCTION sighandler_t

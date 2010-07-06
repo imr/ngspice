@@ -1,3 +1,8 @@
+2010-07-06 Holger Vogt
+ * defines.h: void fcn prototype instead of sighandler_t 
+   for MINGW, CYGWIN and MSC
+ * src/spectrum: update of script with explanations
+
 2010-07-05  Robert Larice
  * src/xspice/cmpp/writ_ifs.c :
         add initialization of the struct IFdevice.flags element to the
