@@ -7,6 +7,9 @@
 #ifndef CKT
 #define CKT "CKTdefs.h $Revision$  on $Date$ "
 
+#include "typedefs.h"
+
+
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 #ifdef XSPICE
 #include "evt.h"
@@ -30,8 +33,6 @@ extern int DEVmaxnum;   /* Not sure if still used */
 #include "pzdefs.h"
 #include "noisedef.h"
 
-typedef struct CKTnode CKTnode;
-typedef struct CKTcircuit CKTcircuit;
 
 
 struct CKTnode {

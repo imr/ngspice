@@ -1,3 +1,15 @@
+2010-07-06  Robert Larice
+ * src/include/typedefs.h :
+        new include file for struct forward declarations and for typedefs
+ * src/include/cktdefs.h ,
+ * src/include/gendefs.h ,
+ * src/include/graph.h ,
+ * src/include/ifsim.h ,
+ * src/include/mifcmdat.h ,
+ * src/include/ngspice.h ,
+ * src/include/tfdefs.h :
+        make use of the new include file.
+
 2010-07-06 Holger Vogt
  * defines.h: void fcn prototype instead of sighandler_t 
    for MINGW, CYGWIN and MSC

@@ -32,6 +32,7 @@
 #include "macros.h"
 #include "bool.h"
 #include "complex.h"
+#include "typedefs.h"
 
 #include <math.h>
 #include <stdio.h>

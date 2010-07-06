@@ -10,11 +10,11 @@ Author: 1988 Jeffrey M. Hsu
 #ifndef _GRAPH_H
 #define _GRAPH_H
 
+#include "typedefs.h"
 #include "grid.h"
 #include "plot.h"
 #include "dvec.h"            /* for struct dvec */
 
-typedef struct graph GRAPH;
 struct _keyed;
 
 

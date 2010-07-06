@@ -6,10 +6,9 @@ Author: 1985 Thomas L. Quarles
 #ifndef GEN
 #define GEN
 
+#include "typedefs.h"
 #include "ifsim.h"
 
-typedef struct GENinstance GENinstance ;
-typedef struct GENmodel GENmodel;
 
 
         /* definitions used to describe generic devices */

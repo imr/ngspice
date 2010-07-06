@@ -6,6 +6,9 @@ Author: 1986 Thomas L. Quarles
 #ifndef IFSIMULATOR
 #define IFSIMULATOR
 
+#include "typedefs.h"
+
+
 /* gtri - add - wbk - 10/11/90 - for structs referenced in IFdevice */
 #ifdef XSPICE
 #include "mifparse.h"
@@ -14,14 +17,6 @@ Author: 1986 Thomas L. Quarles
 /* gtri - end - wbk - 10/11/90 */
 
 
-typedef struct IFparm IFparm;
-typedef union  IFvalue IFvalue;
-typedef struct IFparseTree IFparseTree;
-typedef struct IFcomplex IFcomplex;
-typedef struct IFdevice IFdevice;
-typedef struct IFanalysis IFanalysis;
-typedef struct IFsimulator IFsimulator;
-typedef struct IFfrontEnd IFfrontEnd;
 
 
 /*
@@ -66,7 +61,9 @@ struct IFparm {
  *
  */
 
-typedef char *IFuid;
+/* moved to "typedefs.h"
+ *   typedef char *IFuid;
+ */
 
 
 /*

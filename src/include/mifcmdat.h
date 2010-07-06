@@ -45,6 +45,7 @@ NON-STANDARD FEATURES
 =========================================================================== */
 
 
+#include "typedefs.h"
 #include  "miftypes.h"
 
 
