@@ -9319,6 +9319,12 @@ line900:
             /* v3.1 */
 
             /* v3.1 added ceqgcrg for RF */
+
+            /* OpenMP parallelization: 
+            Temporary storage of right hand side values into instance storage space.
+            Update to matrix will be done by function B4SOILoadRhsMat() only when all
+            instances have their values stored. */
+
             here->B4SOINode_1 = m * ((ceqgate + ceqqg)
              + Igtoteq - ceqgcrg);
             /* v3.1 added ceqgcrg for RF end */
@@ -9466,6 +9472,10 @@ line900:
             geltd = here->B4SOIgrgeltd;
 
 #ifdef USE_OMP4SOI
+            /* OpenMP parallelization: 
+            Temporary storage of matrix values into instance storage space.
+            Update to matrix will be done by function B4SOILoadRhsMat() only when all
+            instances have their values stored. */
 
             if (here->B4SOIrgateMod == 1)
             {
@@ -9965,6 +9975,13 @@ line1000: ;
 }
 
 #ifdef USE_OMP4SOI
+
+/* OpenMP parallelization: 
+Update of right hand side and matrix values from instance temporary storage.
+Update to matrix will be done  only when all instances of this model  
+have their values calculated and stored. Thus there is no further 
+synchronisation required.*/
+
 void B4SOILoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 {
     unsigned int InstCount, idx;
