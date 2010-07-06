@@ -6,7 +6,7 @@
 #ifndef NUTMEGIF_H_INCLUDED
 #define NUTMEGIF_H_INCLUDED
 
-struct variable * nutif_getparam(char *ckt, char **name, char *param, int ind, int do_model);
+struct variable * nutif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model);
 
 
 #endif

@@ -25,7 +25,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 
 int
-if_sens_run(char *t, wordlist *args, INPtables *tab)
+if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
 {
     void *ckt = (void *) t;
     void *senseJob;

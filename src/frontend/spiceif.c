@@ -75,18 +75,18 @@ CDHW*/
 static struct variable * parmtovar(IFvalue *pv, IFparm *opt);
 static IFparm * parmlookup(IFdevice *dev, GENinstance **inptr, char *param, 
 			   int do_model, int inout);
-static IFvalue * doask(void *ckt, int typecode, GENinstance *dev, GENmodel *mod, 
+static IFvalue * doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, 
 		       IFparm *opt, int ind);
-static int doset(void *ckt, int typecode, GENinstance *dev, GENmodel *mod, 
+static int doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, 
 		 IFparm *opt, struct dvec *val);
-static int finddev(void *ck, char *name, void **devptr, void **modptr);
+static int finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr);
 
 /*espice fix integration */
-static int finddev_special(char *ck, char *name, void **devptr, void **modptr, int *device_or_model);
+static int finddev_special(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr, int *device_or_model);
 
 /* Input a single deck, and return a pointer to the circuit. */
 
-char *
+CKTcircuit *
 if_inpdeck(struct line *deck, INPtables **tab)
 {
     void *ckt;
@@ -195,7 +195,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
  * typed at the keyboard, error in the simulation, etc). args should
  * be the entire command line, e.g. "tran 1 10 20 uic" */
 int
-if_run(char *t, char *what, wordlist *args, char *tab)
+if_run(CKTcircuit *t, char *what, wordlist *args, INPtables *tab)
 {
     void *ckt = (void *) t;
     int err;
@@ -382,7 +382,7 @@ static char *obsolete[] = {
 } ;
 
 int
-if_option(void *ckt, char *name, int type, char *value)
+if_option(CKTcircuit *ckt, char *name, int type, char *value)
 {
     IFvalue pval;
     int err, i;
@@ -529,7 +529,7 @@ fputs("\t(Note that you must use an = to separate option name and value.)\n",
 
 
 void
-if_dump(void *ckt, FILE *file)
+if_dump(CKTcircuit *ckt, FILE *file)
 {
     /*void *cc = (void *) ckt;*/
 
@@ -538,7 +538,7 @@ if_dump(void *ckt, FILE *file)
 }
 
 void
-if_cktfree(void *ckt, char *tab)
+if_cktfree(CKTcircuit *ckt, INPtables *tab)
 {
     void *cc = (void *) ckt;
 
@@ -569,10 +569,10 @@ if_errstring(int code)
  */
 static int 
 finddev_special(
-    char *ck,
+    CKTcircuit *ck,
     char *name,
-    void **devptr,
-    void **modptr,
+    GENinstance **devptr,
+    GENmodel **modptr,
     int *device_or_model)
 {
     int err;
@@ -603,7 +603,7 @@ finddev_special(
  * A.Roldan (espice)
  */
 struct variable *
-spif_getparam_special(void *ckt,char **name,char *param,int ind,int do_model)    
+spif_getparam_special(CKTcircuit *ckt,char **name,char *param,int ind,int do_model)    
 {
     struct variable *vv = NULL, *tv;
     IFvalue *pv;
@@ -739,7 +739,7 @@ spif_getparam_special(void *ckt,char **name,char *param,int ind,int do_model)
  */
 
 struct variable *
-spif_getparam(void *ckt, char **name, char *param, int ind, int do_model)
+spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
 {
     struct variable *vv = NULL, *tv;
     IFvalue *pv;
@@ -810,7 +810,7 @@ spif_getparam(void *ckt, char **name, char *param, int ind, int do_model)
 
 /* 9/26/03 PJB : function to allow setting model of device */
 void
-if_setparam_model( void *ckt, char **name, char *val )
+if_setparam_model(CKTcircuit *ckt, char **name, char *val )
 {
   GENinstance *dev     = (GENinstance *)NULL;
   GENinstance *prevDev = (GENinstance *)NULL;
@@ -890,7 +890,7 @@ if_setparam_model( void *ckt, char **name, char *val )
 }
 
 void
-if_setparam(void *ckt, char **name, char *param, struct dvec *val, int do_model)
+if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_model)
 {
     IFparm *opt;
     IFdevice *device;
@@ -1042,7 +1042,7 @@ parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int in
 
 
 static IFvalue *
-doask(void *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *opt, int ind)
+doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *opt, int ind)
 {
     static IFvalue pv;
     int err;
@@ -1071,7 +1071,7 @@ doask(void *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *opt, int
 
 
 static int
-doset(void *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *opt, struct dvec *val)
+doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *opt, struct dvec *val)
 {
     IFvalue nval;
     int err;
@@ -1151,7 +1151,7 @@ doset(void *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *opt, str
  */
 
 static int
-finddev(void *ck, char *name, void **devptr, void **modptr)
+finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr)
 {
     int err;
     int type = -1;
@@ -1169,7 +1169,7 @@ finddev(void *ck, char *name, void **devptr, void **modptr)
 /* get an analysis parameter by name instead of id */
 
 int 
-if_analQbyName(void *ckt, int which, void *anal, char *name, IFvalue *parm)
+if_analQbyName(CKTcircuit *ckt, int which, void *anal, char *name, IFvalue *parm)
 {
     int i;
     for(i=0;i<ft_sim->analyses[which]->numParms;i++) {
@@ -1228,7 +1228,7 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
  */
 
 struct variable *
-if_getstat(void *ckt, char *name)
+if_getstat(CKTcircuit *ckt, char *name)
 {
     int i;
     struct variable *v, *vars;

@@ -148,7 +148,7 @@ double EpsNorm, VNorm, NNorm, LNorm, TNorm, JNorm, GNorm, ENorm;
  /* end cider globals */
 #endif /* CIDER */
 
-struct variable *(*if_getparam)( );
+struct variable *(*if_getparam)(CKTcircuit *ckt, char** name, char* param, int ind, int do_model);
 
 static int started = FALSE;
 
@@ -226,39 +226,39 @@ IFfrontEnd nutmeginfo;
 
 /* -------------------------------------------------------------------------- */
 int
-if_run(char *t, char *w, wordlist *s, char *b)
+if_run(CKTcircuit *t, char *w, wordlist *s, INPtables *b)
 {
     return (0);
 }
 
 /* -------------------------------------------------------------------------- */
 int
-if_sens_run(char *t, char *w, wordlist *s, char *b)
+if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
 {
     return (0);
 }
 
 /* -------------------------------------------------------------------------- */
 void
-if_dump(char *ckt, FILE *fp)
+if_dump(CKTcircuit *ckt, FILE *fp)
 {}
 
 /* -------------------------------------------------------------------------- */
-char *
-if_inpdeck(struct line *deck, char **tab)
+CKTcircuit *
+if_inpdeck(struct line *deck, INPtables **tab)
 {
-    return ((char *) 0);
+    return NULL;
 }
 
 /* -------------------------------------------------------------------------- */
 int
-if_option(char *ckt, char *name, int type, char *value)
+if_option(CKTcircuit *ckt, char *name, int type, char *value)
 {
     return 0;
 }
 
 /* -------------------------------------------------------------------------- */
-void if_cktfree(char *ckt, char *tab)
+void if_cktfree(CKTcircuit *ckt, INPtables *tab)
 {}
 
 /* -------------------------------------------------------------------------- */
@@ -274,11 +274,11 @@ if_errstring(int code)
 
 /* -------------------------------------------------------------------------- */
 void
-if_setparam_model(char *ckt, char *name, struct variable *val)
+if_setparam_model(CKTcircuit *ckt, char **name, char *val)
 {}
 
 void
-if_setparam(char *ckt, char *name, char *param, struct variable *val)
+if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_model)
 {}
 
 /* -------------------------------------------------------------------------- */
@@ -290,7 +290,7 @@ if_tranparams(struct circ *ckt, double *start, double *stop, double *step)
 
 /* -------------------------------------------------------------------------- */
 struct variable *
-if_getstat(char *n, char *c)
+if_getstat(CKTcircuit *ckt, char *name)
 {
     return (NULL);
 }

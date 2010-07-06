@@ -1,4 +1,17 @@
 2010-07-06  Robert Larice
+ * src/main.c ,
+ * src/frontend/nutmegif.c ,
+ * src/frontend/nutmegif.h ,
+ * src/frontend/shyu.c ,
+ * src/frontend/shyu.h ,
+ * src/frontend/spiceif.c ,
+ * src/frontend/spiceif.h ,
+ * src/include/fteext.h :
+        fix the type signature of the if_*() family of functions.
+        some incompatible pointer passing warnings will pop up,
+          and will be fixed later.
+
+2010-07-06  Robert Larice
  * src/include/typedefs.h :
         new include file for struct forward declarations and for typedefs
  * src/include/cktdefs.h ,

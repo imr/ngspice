@@ -13,7 +13,7 @@
 #include "nutmegif.h"
 
 
-struct variable * nutif_getparam(char *ckt, char **name, char *param, int ind, int do_model)
+struct variable * nutif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
 { return ((struct variable *) NULL); }
 
 

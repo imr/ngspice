@@ -6,7 +6,7 @@
 #ifndef SHYU_H_INCLUDED
 #define SHYU_H_INCLUDED
 
-int if_sens_run(char *t, wordlist *args, INPtables *tab);
+int if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab);
 
 
 #endif
