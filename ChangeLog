@@ -2,6 +2,7 @@
  * defines.h: void fcn prototype instead of sighandler_t 
    for MINGW, CYGWIN and MSC
  * src/spectrum: update of script with explanations
+ * b4soild.c: debug warnings removed 
 
 2010-07-05  Robert Larice
  * src/xspice/cmpp/writ_ifs.c :

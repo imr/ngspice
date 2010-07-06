@@ -1169,7 +1169,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
           /*dcep0_dT = cdep0 * sqrtPhi * (-1.0) / phi * dsqrtPhi_dT; */
             dcdep0_dT = cdep0 * sqrtPhi * (-1.0) / phi * dsqrtPhi_dT;
 
-            /* T1 = sqrt(EPSSI / (model->B4SOIepsrox * EPSOX / 3.9)                     /* Bug fix #3 Jun 09 Body type is generalized for mtrlMod 1*/
+            /* T1 = sqrt(EPSSI / (model->B4SOIepsrox * EPSOX / 3.9)   */                  /* Bug fix #3 Jun 09 Body type is generalized for mtrlMod 1*/
             /*  * model->B4SOItox * Xdep0); */
             T1 = sqrt(epssub / (epsrox * EPS0)                                                          /* Fix */
                     * toxe * Xdep0);
@@ -1934,7 +1934,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dDelt_vth_dVb = pParam->B4SOIdvt0 * dTheta0_dVb * V0;
             if (selfheat)
                 /*dDelt_vth_dT = here->B4SOIthetavth * dvbi_dT;*/
-                /*dDelt_vth_dT = here->B4SOIthetavth * (dvbi_dT - dphi_dT); /* v4.1 */
+                /*dDelt_vth_dT = here->B4SOIthetavth * (dvbi_dT - dphi_dT);*/ /* v4.1 */
                 dDelt_vth_dT = pParam->B4SOIdvt0 * (dTheta0_dT * V0 + Theta0 * (dvbi_dT - dphi_dT)); /* v4.2 bugfix temp deriv */
             else  dDelt_vth_dT = 0.0;
             T0 = -0.5 * pParam->B4SOIdvt1w * pParam->B4SOIweff * Leff / ltw;
@@ -1956,7 +1956,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dDeltVthw_dVb = pParam->B4SOIdvt0w * dT2_dVb * V0;
             if (selfheat)
                 /* dDeltVthw_dT = T0 * dvbi_dT; */
-                /* dDeltVthw_dT = T0 * (dvbi_dT - dphi_dT); /* v4.1 */ /* v4.2 bugfix temp deriv */
+                /* dDeltVthw_dT = T0 * (dvbi_dT - dphi_dT);*/ /* v4.1 */ /* v4.2 bugfix temp deriv */
                 dDeltVthw_dT = T0 * (dvbi_dT - dphi_dT) + pParam->B4SOIdvt0w * dT2_dT * V0; /* v4.2 bugfix temp deriv */
             else   dDeltVthw_dT = 0.0;
 
@@ -1973,7 +1973,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             if (selfheat)
                 /*  dDeltVthtemp_dT = T1 / model->B4SOItnom;  */
                 /* dDeltVthtemp_dT = pParam->B4SOIk1ox * (T0 - 1.0) * dsqrtPhi_dT
-                   + T1 / model->B4SOItnom;  /* v4.1 */ /* v4.2 bugfix temp deriv */
+                   + T1 / model->B4SOItnom;*/  /* v4.1 */ /* v4.2 bugfix temp deriv */
                 dDeltVthtemp_dT = pParam->B4SOIk1ox * (T0 - 1.0) * dsqrtPhi_dT
                     + T1 / model-> B4SOItnom+ pParam->B4SOIkt2 * dVbs0mos_dT* TempRatioMinus1;/* v4.2 bugfix temp deriv */
             else
@@ -2490,7 +2490,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
         }
         /* DIBL_Sft = T3 * pParam->B4SOItheta0vb0 * Vds;
            dDIBL_Sft_dVd = pParam->B4SOItheta0vb0 * T3;
-           dDIBL_Sft_dVb = pParam->B4SOItheta0vb0 * Vds * dT3_dVb; /* v4.2 bugfix */
+           dDIBL_Sft_dVb = pParam->B4SOItheta0vb0 * Vds * dT3_dVb;*/ /* v4.2 bugfix */
         DIBL_Sft = T3 * theta0vb0 * Vds;
         dDIBL_Sft_dVd = theta0vb0 * T3;
         dDIBL_Sft_dVb = theta0vb0 * Vds * dT3_dVb;
@@ -2609,7 +2609,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 + DeltVthtempzb;
             dVthzb_dT = dDeltVthtempzb_dT - dDelt_vthzb_dT - dDeltVthwzb_dT;
             dVthzb_dT = model->B4SOItype * dvth0_dT - dDelt_vthzb_dT - dDeltVthwzb_dT + pParam->B4SOIk3 * dtmp2_dT + dDeltVthtempzb_dT; /* v4.2 bugfix temp deriv */
-            /* Vthzb2 = Vthzb + 1.12; /* v4.1 */ /* v4.2 never used */
+            /* Vthzb2 = Vthzb + 1.12;*/ /* v4.1 */ /* v4.2 never used */
         }
         /* Effective Vgst (Vgsteff) Calculation */
 
@@ -2676,7 +2676,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             /* enhance next if-then-else block - Wagner*/
             if (selfheat) {
                 /* dVgsteff_dT = -T3 * (dVth_dT + T0 * dVtm_dT * n)
-                   + Vgsteff / Temp+ T1 * dVbseff_dT; /* v3.0 */ /* v4.2 temp deriv*/
+                   + Vgsteff / Temp+ T1 * dVbseff_dT;*/ /* v3.0 */ /* v4.2 temp deriv*/
                 dVgsteff_dT = -T3 * (-dVgst_dT + T0 * dVtm_dT * n + Vtm * dn_dT)
                             + Vgsteff / Temp+ T1 * dVbseff_dT; /*v4.2 temp deriv*/
                 dTL0_dT = (dVgst_dT - T0 * (dn_dT * Vtm + n * dVtm_dT)) / (n * Vtm);
@@ -2831,7 +2831,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                 else  dRds_dT = 0.0;
 
             }
-            /* here->B4SOIrds = Rds; /* v2.2.3 bug fix */ /* v4.2 bugfix # 39 */
+            /* here->B4SOIrds = Rds;*/ /* v2.2.3 bug fix */ /* v4.2 bugfix # 39 */
         }
         here->B4SOIrds = Rds; /* v4.2 bugfix # 39 */
         /* Calculate Abulk */
@@ -4518,7 +4518,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                         dIbd4_dVb = 0;
                         dIbd4_dVd = 0;
                         if (selfheat)
-                            /* dIbs4_dT = (1 - T1) * WsTsi * djtuns_dT; /* Bug fix #8 Jun 09 'typo's corrected for Drain side */
+                            /* dIbs4_dT = (1 - T1) * WsTsi * djtuns_dT;*/ /* Bug fix #8 Jun 09 'typo's corrected for Drain side */
                             /* else   dIbs4_dT = 0;     */
                             dIbd4_dT = (1 - T1) * WdTsi * djtund_dT;            /* Fix */
                         else   dIbd4_dT = 0;
@@ -5372,10 +5372,10 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                     /*Idsmosfet part*/
                     if (pParam->B4SOIalpha0 <= 0.0) {
                         /* Giig = Giib = Giid = GiiT = 0.0;
-                           Giie = 0; /* v3.0 */
+                           Giie = 0;*/ /* v3.0 */
                         /* here->B4SOIiii = Iii = 0.0; */ /* v4.2 bugfix # 38 */
                         /* Idsmosfet = 0.0; */                          /*v 4.2 bugfix #38 */
-                        /*dIiibjt_dVb = 0.0;                            /* v4.2 bugfix # 38 */
+                        /*dIiibjt_dVb = 0.0; */                           /* v4.2 bugfix # 38 */
                         /*dIiibjt_dVd = 0.0;
                           dIiibjt_dT  = 0.0; */
                         Ratio = 0;                                                      /* v4.2 bugfix # 38 */
@@ -6251,7 +6251,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
                             dT1_dT = 0.0;
 
                         /* dT2_dVg = -model->B4SOIcox / (Vtm * pParam->B4SOIcdep0)
-                         * exp(ExpArg) * (1 - pParam->B4SOImstarcv); /* v4.2 bug fix */
+                         * exp(ExpArg) * (1 - pParam->B4SOImstarcv);*/ /* v4.2 bug fix */
                         dT2_dVg = -model->B4SOIcox / (Vtm * cdep0)
                             * exp(ExpArg) * (1 - pParam->B4SOImstarcv); /* v4.2 bug fix */
                         T2 = pParam->B4SOImstarcv - T10 * dT2_dVg
