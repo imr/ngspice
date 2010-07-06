@@ -1,4 +1,8 @@
 2010-07-06  Robert Larice
+ * src/include/fteext.h :
+        ansi function declarations (prototypes) for some functions
+
+2010-07-06  Robert Larice
  * src/main.c ,
  * src/frontend/nutmegif.c ,
  * src/frontend/nutmegif.h ,

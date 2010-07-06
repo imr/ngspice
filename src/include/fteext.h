@@ -14,6 +14,7 @@ Modified: 1999 Paolo Nenzi - 2000 AlansFixes
 #include <config.h>
 
 /* needed to find out what the interface structures look like */
+#include "typedefs.h"
 #include "ifsim.h"
 #include "dvec.h"
 #include "plot.h"
@@ -50,7 +51,7 @@ extern void com_stop(wordlist *wl);
 extern void com_sttus(wordlist *wl);
 extern void com_trce(wordlist *wl);
 extern void ft_trquery(void);
-extern void dbfree( );
+extern void dbfree(struct dbcomm *db);
 
 
 /* breakp2.c */
@@ -274,7 +275,7 @@ extern bool gr_circular;
 
 /* grid.c */
 
-extern void gr_fixgrid();
+extern void gr_fixgrid(GRAPH *graph, double xdelta, double ydelta, int xtype, int ytype);
 
 /* inp.c */
 
