@@ -1,4 +1,12 @@
 2010-07-07  Robert Larice
+ * src/include/cktdefs.h ,
+ * src/include/ifsim.h ,
+ * src/spicelib/analysis/ckt.h ,
+ * src/spicelib/analysis/cktaskaq.c :
+        the second of a series of four patches, which will change the code
+        to use the CKTcircuit type instead of the current mixed void*/char*
+
+2010-07-07  Robert Larice
  * src/tclspice.c ,
  * src/frontend/com_option.c ,
  * src/frontend/inp.c ,

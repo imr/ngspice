@@ -16,10 +16,10 @@ extern SPICEanalysis *analInfo[];
 
 /* ARGSUSED */
 int
-CKTaskAnalQ(void *ckt, void *analPtr, int parm, IFvalue *value, IFvalue *selector)
+CKTaskAnalQ(CKTcircuit *ckt, void *analPtr, int parm, IFvalue *value, IFvalue *selector)
 {
     int type = ((JOB *)analPtr)->JOBtype;
 
     if((analInfo[type]->askQuest) == NULL) return(E_BADPARM);
-    return( (*(analInfo[type]->askQuest))((CKTcircuit*)ckt,analPtr,parm,value));
+    return( (*(analInfo[type]->askQuest))(ckt,analPtr,parm,value));
 }

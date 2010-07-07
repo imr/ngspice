@@ -19,7 +19,7 @@ int CKTacLoad( CKTcircuit *);
 int CKTaccept( CKTcircuit *);
 int CKTacct( CKTcircuit *, void *, int , IFvalue *);
 int CKTask( void *, void *, int , IFvalue *, IFvalue *);
-int CKTaskAnalQ( void *, void *, int , IFvalue *, IFvalue *);
+int CKTaskAnalQ( CKTcircuit *, void *, int , IFvalue *, IFvalue *);
 int CKTaskNodQst( void *, void *, int , IFvalue *, IFvalue *);
 int CKTbindNode( void *, void *, int , void *);
 void CKTbreakDump( CKTcircuit *);

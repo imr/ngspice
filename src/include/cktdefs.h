@@ -277,7 +277,7 @@ extern int CKTacLoad(CKTcircuit *);
 extern int CKTaccept(CKTcircuit *);
 extern int CKTacct(CKTcircuit *, void *, int , IFvalue *);
 extern int CKTask(void *, void *, int , IFvalue *, IFvalue *);
-extern int CKTaskAnalQ(void *, void *, int , IFvalue *, IFvalue *);
+extern int CKTaskAnalQ(CKTcircuit *, void *, int , IFvalue *, IFvalue *);
 extern int CKTaskNodQst(void *, void *, int , IFvalue *, IFvalue *);
 extern int CKTbindNode(void *, void *, int , void *);
 extern void CKTbreakDump(CKTcircuit *);

@@ -395,7 +395,7 @@ struct IFsimulator {
                                     /* create new analysis within a task */
     int (*setAnalysisParm) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on an analysis  */
-    int (*askAnalysisQuest) (void *, void *, int, IFvalue *, IFvalue *);
+    int (*askAnalysisQuest) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* ask a question about an analysis */
     int (*findAnalysis) (void *, int *, void **, IFuid, void *, IFuid);
                                     /* find a specific analysis */
