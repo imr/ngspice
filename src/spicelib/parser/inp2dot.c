@@ -15,7 +15,7 @@ Modified: 2000 AlansFixes
 
 
 static int
-dot_noise(char *line, void *ckt, INPtables *tab, card *current,
+dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	  void *task, void *gnode, void *foo)
 {
     int which;			/* which analysis we are performing */
@@ -148,7 +148,7 @@ dot_op(char *line, void *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_disto(char *line, void *ckt, INPtables *tab, card *current,
+dot_disto(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	  void *task, void *gnode, void *foo)
 {
     int which;			/* which analysis we are performing */
@@ -189,7 +189,7 @@ dot_disto(char *line, void *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_ac(char *line, void *ckt, INPtables *tab, card *current,
+dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
        void *task, void *gnode, void *foo)
 {
     int error;			/* error code temporary */
@@ -226,7 +226,7 @@ dot_ac(char *line, void *ckt, INPtables *tab, card *current,
 }
 
 static int
-dot_pz(char *line, void *ckt, INPtables *tab, card *current,
+dot_pz(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
        void *task, void *gnode, void *foo)
 {
     int error;			/* error code temporary */
@@ -268,7 +268,7 @@ dot_pz(char *line, void *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_dc(char *line, void *ckt, INPtables *tab, card *current,
+dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
        void *task, void *gnode, void *foo)
 {
     char *name;			/* the resistor's name */
@@ -319,7 +319,7 @@ dot_dc(char *line, void *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_tf(char *line, void *ckt, INPtables *tab, card *current,
+dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
        void *task, void *gnode, void *foo)
 {
     char *name;			/* the resistor's name */
@@ -392,7 +392,7 @@ dot_tf(char *line, void *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_tran(char *line, void *ckt, INPtables *tab, card *current,
+dot_tran(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	 void *task, void *gnode, void *foo)
 {
     int error;			/* error code temporary */
@@ -446,7 +446,7 @@ dot_tran(char *line, void *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_sens(char *line, void *ckt, INPtables *tab, card *current,
+dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	 void *task, void *gnode, void *foo)
 {
     char *name;			/* the resistor's name */
@@ -620,7 +620,7 @@ dot_sens2(char *line, void *ckt, INPtables *tab, card *current,
 #endif
 
 static int
-dot_options(char *line, void *ckt, INPtables *tab, card *current,
+dot_options(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	  void *task, void *gnode, void *foo)
 {
 	/* .option - specify program options - rather complicated */
@@ -633,7 +633,7 @@ dot_options(char *line, void *ckt, INPtables *tab, card *current,
 
 
 int
-INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
+INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, void *task, void *gnode)
 {
 
     /* .<something> Many possibilities */
@@ -721,7 +721,7 @@ INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode)
     else if ((strcmp(token, ".options") == 0)||
             (strcmp(token,".option")==0) ||
             (strcmp(token,".opt")==0)) {
-	rtn = dot_options(line, ckt, tab, current, task, gnode, foo);
+	rtn = dot_options(line, (CKTcircuit * /*fixme*/) ckt, tab, current, task, gnode, foo);
 	goto quit;
     }
     /* Added by H.Tanaka to find .global option */

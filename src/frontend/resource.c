@@ -442,7 +442,7 @@ printres(char *name)
         /* begin cider integration */
         /* Now print out interesting stuff about numerical devices. */
 	    if (!name || eq(name, "devices")) {
-	       (void) NDEVacct((CKTcircuit*)ft_curckt->ci_ckt, cp_out);
+	       (void) NDEVacct(ft_curckt->ci_ckt, cp_out);
 	        yy = TRUE;
 	} 
 	/* end cider integration */

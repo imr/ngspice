@@ -14,7 +14,7 @@ Author: 1985 Thomas L. Quarles
  * The first pass of the circuit parser just looks for '.model' lines
  */
 
-void INPpas1(void *ckt, card * deck, INPtables * tab)
+void INPpas1(CKTcircuit *ckt, card * deck, INPtables * tab)
 {
     card *current;
     char *temp, *thisline;

@@ -1289,10 +1289,10 @@ static int delta TCL_CMDPROCARGS(clientData,interp,argc,argv) {
   }
     
   if(argc == 2) {
-    ((CKTcircuit *)ft_curckt->ci_ckt)->CKTdelta = atof(argv[1]); 
+    (ft_curckt->ci_ckt)->CKTdelta = atof(argv[1]); 
   }
   /*Ok, as log as string less than 200 chars*/
-  sprintf(interp->result,"%G",((CKTcircuit *)ft_curckt->ci_ckt)->CKTdelta);
+  sprintf(interp->result,"%G",(ft_curckt->ci_ckt)->CKTdelta);
   return TCL_OK;
 }
 
@@ -1311,7 +1311,7 @@ static int maxstep TCL_CMDPROCARGS(clientData,interp,argc,argv) {
     return TCL_ERROR;
   } 
     
-  job = (TRANan*)((CKTcircuit *)ft_curckt->ci_ckt)->CKTcurJob;
+  job = (TRANan*)(ft_curckt->ci_ckt)->CKTcurJob;
   if(argc == 2) {
     job->TRANmaxStep = atof(argv[1]);
   }

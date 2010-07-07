@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
-int INPgetTitle(void **ckt, card ** data)
+int INPgetTitle(CKTcircuit **ckt, card ** data)
 {
     int error;
 

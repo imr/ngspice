@@ -345,7 +345,7 @@ struct IFsimulator {
     char *description;              /* description of this simulator */
     char *version;                  /* version or revision level of simulator*/
 
-    int (*newCircuit) (void **);
+    int (*newCircuit) (CKTcircuit **);
                                     /* create new circuit */
     int (*deleteCircuit) (void *);
                                     /* destroy old circuit's data structures*/
@@ -393,7 +393,7 @@ struct IFsimulator {
                                     /* create a new task */
     int (*newAnalysis) (void *, int, IFuid, void **, void *);
                                     /* create new analysis within a task */
-    int (*setAnalysisParm) (void *, void *, int, IFvalue *, IFvalue *);
+    int (*setAnalysisParm) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on an analysis  */
     int (*askAnalysisQuest) (void *, void *, int, IFvalue *, IFvalue *);
                                     /* ask a question about an analysis */

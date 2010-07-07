@@ -42,16 +42,16 @@ void INP2V(void *ckt, INPtables *tab, card *current);
 void INP2W(void *ckt, INPtables *tab, card *current);
 void INP2Y(void *ckt, INPtables *tab, card *current);
 void INP2Z(void *ckt, INPtables *tab, card *current);
-int INP2dot(void *ckt, INPtables *tab, card *current, void *task, void *gnode);
+int INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, void *task, void *gnode);
 
 /* inpxxxx.c */
 
 int INPaName(char *parm, IFvalue *val, void *ckt, int *dev, char *devnam, 
 	     void **fast, IFsimulator *sim, int *dataType, IFvalue *selector);
-int INPapName(void *ckt, int type, void *analPtr, char *parmname, IFvalue *value);
+int INPapName(CKTcircuit *ckt, int type, void *analPtr, char *parmname, IFvalue *value);
 void INPcaseFix(register char *string);
 char * INPdomodel(void *ckt, card *image, INPtables *tab);
-void INPdoOpts(void *ckt, void *anal, card *optCard, INPtables *tab);
+void INPdoOpts(CKTcircuit *ckt, void *anal, card *optCard, INPtables *tab);
 char * INPdevParse(char **line, void *ckt, int dev, void *fast, double *leading, 
 		   int *waslead, INPtables *tab);
 char * INPerrCat(char *a, char *b);
@@ -61,7 +61,7 @@ char * INPfindLev(char *line, int *level);
 char * INPfindVer(char *line, char *version);
 char * INPgetMod(void *ckt, char *name, INPmodel **model, INPtables *tab);
 int INPgetStr(char **line, char **token, int gobble);
-int INPgetTitle(void **ckt, card **data);
+int INPgetTitle(CKTcircuit **ckt, card **data);
 int INPgetTok(char **line, char **token, int gobble);
 int INPgetUTok(char **line, char **token, int gobble);
 IFvalue * INPgetValue(void *ckt, char **line, int type, INPtables *tab);
@@ -70,8 +70,8 @@ void INPlist(FILE *file, card *deck, int type);
 int INPlookMod(char *name);
 int INPmakeMod(char *token, int type, card *line);
 char * INPmkTemp(char *string);
-void INPpas1(void *ckt, card *deck, INPtables *tab);
-void INPpas2(void *ckt, card *data, INPtables *tab, void *task);
+void INPpas1(CKTcircuit *ckt, card *deck, INPtables *tab);
+void INPpas2(CKTcircuit *ckt, card *data, INPtables *tab, void *task);
 int INPpName(char *parm, IFvalue *val, void *ckt, int dev, void *fast);
 
 /* inpptree.c */

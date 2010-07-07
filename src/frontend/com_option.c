@@ -25,7 +25,7 @@ struct variable *vars;
          return;
     }
     
-    circuit = (CKTcircuit *)(ft_curckt->ci_ckt);
+    circuit = (ft_curckt->ci_ckt);
     
 
     if (wl == NULL) {

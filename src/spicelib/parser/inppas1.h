@@ -3,6 +3,6 @@
 
 #include <inpdefs.h>
 
-void INPpas1(void *ckt, card *deck, INPtables *tab);
+void INPpas1(CKTcircuit *ckt, card *deck, INPtables *tab);
 
 #endif

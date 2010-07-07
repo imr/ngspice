@@ -12,7 +12,7 @@ Author: 1985 Thomas L. Quarles
 #include "inp.h"
 
 int
-INPapName(void *ckt, int type, void *analPtr, char *parmname,
+INPapName(CKTcircuit *ckt, int type, void *analPtr, char *parmname,
 	  IFvalue * value)
 {
     int i;

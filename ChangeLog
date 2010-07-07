@@ -1,3 +1,29 @@
+2010-07-07  Robert Larice
+ * src/tclspice.c ,
+ * src/frontend/com_option.c ,
+ * src/frontend/inp.c ,
+ * src/frontend/resource.c ,
+ * src/frontend/shyu.c ,
+ * src/frontend/spiceif.c ,
+ * src/include/cktdefs.h ,
+ * src/include/ftedefs.h ,
+ * src/include/ifsim.h ,
+ * src/include/inpdefs.h ,
+ * src/spicelib/analysis/ckt.h ,
+ * src/spicelib/analysis/cktsetap.c ,
+ * src/spicelib/devices/cktinit.c ,
+ * src/spicelib/parser/inp.h ,
+ * src/spicelib/parser/inp2dot.c ,
+ * src/spicelib/parser/inpapnam.c ,
+ * src/spicelib/parser/inpdoopt.c ,
+ * src/spicelib/parser/inpgtitl.c ,
+ * src/spicelib/parser/inppas1.c ,
+ * src/spicelib/parser/inppas1.h ,
+ * src/spicelib/parser/inppas2.c ,
+ * src/spicelib/parser/inppas2.h :
+        the first of a series of four patches, which will change the code
+        to use the CKTcircuit type instead of the current mixed void*/char*
+
 2010-07-06  Robert Larice
  * src/include/fteext.h :
         ansi function declarations (prototypes) for some functions

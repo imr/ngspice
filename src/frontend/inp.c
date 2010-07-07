@@ -667,7 +667,7 @@ inp_dodeck(
 ) {
     struct circ *ct;
     struct line *dd;
-    char *ckt, *s;
+    CKTcircuit *ckt; char *s;
     INPtables *tab = NULL;
     struct variable *eev = NULL;
     wordlist *wl;

@@ -89,7 +89,7 @@ static int finddev_special(CKTcircuit *ck, char *name, GENinstance **devptr, GEN
 CKTcircuit *
 if_inpdeck(struct line *deck, INPtables **tab)
 {
-    void *ckt;
+    CKTcircuit *ckt;
     int err, i, j;
     struct line *ll;
     IFuid taskUid;
@@ -161,8 +161,8 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
     ft_curckt->ci_curTask = ft_curckt->ci_defTask;
     
-    INPpas1((void *) ckt, (card *) deck->li_next,(INPtables *)*tab);
-    INPpas2((void *) ckt, (card *) deck->li_next,
+    INPpas1( ckt, (card *) deck->li_next,(INPtables *)*tab);
+    INPpas2( ckt, (card *) deck->li_next,
             (INPtables *) *tab,ft_curckt->ci_defTask);
     INPkillMods();
 
@@ -197,7 +197,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
 int
 if_run(CKTcircuit *t, char *what, wordlist *args, INPtables *tab)
 {
-    void *ckt = (void *) t;
+    CKTcircuit *ckt = (CKTcircuit *) t;
     int err;
     struct line deck;
     char buf[BSIZE_SP];
@@ -386,7 +386,7 @@ if_option(CKTcircuit *ckt, char *name, int type, char *value)
 {
     IFvalue pval;
     int err, i;
-    void *cc = (void *) ckt;
+    CKTcircuit *cc = (CKTcircuit * /*fixme*/) ckt;
     char **vv;
     int which = -1;
 
@@ -1326,9 +1326,9 @@ void com_loadsnap(wordlist *wl) {
   
   /* allocate all the vectors, with luck!  */
   if (!error)
-    error = CKTsetup((CKTcircuit *)ft_curckt->ci_ckt);
+    error = CKTsetup(ft_curckt->ci_ckt);
   if (!error)
-    error = CKTtemp((CKTcircuit *)ft_curckt->ci_ckt);
+    error = CKTtemp(ft_curckt->ci_ckt);
   
   if(error) {
     fprintf(cp_err,"Some error in the CKT setup fncts!\n");
@@ -1342,7 +1342,7 @@ void com_loadsnap(wordlist *wl) {
   /* now load the binary file */
   
     
-  ckt = (CKTcircuit *)ft_curckt->ci_ckt;
+  ckt = ft_curckt->ci_ckt;
 
   file = fopen(wl->wl_next->wl_word,"rb");
     
@@ -1557,7 +1557,7 @@ void com_savesnap(wordlist *wl) {
 
   /* save the data */
   
-  ckt = (CKTcircuit *)ft_curckt->ci_ckt;
+  ckt = ft_curckt->ci_ckt;
     
   task = (TSKtask *)ft_curckt->ci_curTask;
 

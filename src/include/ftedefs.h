@@ -26,7 +26,7 @@ struct save_info {
 
 struct circ {
     char *ci_name;    /* What the circuit can be called. */
-    char *ci_ckt;      /* The CKTcircuit structure. */
+    CKTcircuit *ci_ckt;      /* The CKTcircuit structure. */
     INPtables *ci_symtab;    /* The INP symbol table. */
     struct line *ci_deck;   /* The input deck. */
     struct line *ci_origdeck;/* The input deck, before subckt expansion. */

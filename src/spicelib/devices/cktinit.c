@@ -21,12 +21,12 @@ Modifed: 2000 AlansFixes
 #endif
 
 int
-CKTinit(void **ckt)		/* new circuit to create */
+CKTinit(CKTcircuit **ckt)		/* new circuit to create */
 {
     int i;
     CKTcircuit *sckt;
-    *ckt = (void *) tmalloc(sizeof(CKTcircuit));
-    sckt = (CKTcircuit *)(*ckt);
+    *ckt = (CKTcircuit *) tmalloc(sizeof(CKTcircuit));
+    sckt = (CKTcircuit * /*fixme*/)(*ckt);
     if (sckt == NULL)
 	return(E_NOMEM);
 /* gtri - begin - dynamically allocate the array of model lists */
