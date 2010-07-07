@@ -11,7 +11,7 @@ Author: 1988 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
-void INP2U(void *ckt, INPtables * tab, card * current)
+void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
 {
 
     /* Uname <node> <node> <model> [l=<val>] [n=<val>] */

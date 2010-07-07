@@ -22,7 +22,7 @@ typedef struct dataDesc {
 
 typedef struct runDesc {
     void *analysis;
-    void *circuit;
+    CKTcircuit *circuit;
     char *name;
     char *type;
     int numData;
@@ -39,9 +39,9 @@ typedef struct runDesc {
     int windowCount;
 } runDesc;
 
-int OUTpBeginPlot(void *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, 
+int OUTpBeginPlot(CKTcircuit *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, 
 		  int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr);
-int OUTwBeginPlot(void *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, 
+int OUTwBeginPlot(CKTcircuit *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, 
 		  int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr);
 int OUTpData(void *plotPtr, IFvalue *refValue, IFvalue *valuePtr);
 int OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr);

@@ -11,7 +11,7 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "fteext.h"
 #include "inp.h"
 
-void INP2Q(void *ckt, INPtables * tab, card * current, void *gnode)
+void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, void *gnode)
 {
 
     /* Qname <node> <node> <node> [<node>] <model> [<val>] [OFF]

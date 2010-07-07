@@ -13,7 +13,7 @@ Author: 1992 Charles Hough
 
 void
 INP2P(
-    void *ckt,
+    CKTcircuit *ckt,
     INPtables *tab,
     card *current)
 

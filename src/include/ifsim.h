@@ -347,65 +347,65 @@ struct IFsimulator {
 
     int (*newCircuit) (CKTcircuit **);
                                     /* create new circuit */
-    int (*deleteCircuit) (void *);
+    int (*deleteCircuit) (CKTcircuit *);
                                     /* destroy old circuit's data structures*/
 
-    int (*newNode) (void *, void **, IFuid);
+    int (*newNode) (CKTcircuit *, void **, IFuid);
                                     /* create new node */
-    int (*groundNode) (void *, void **, IFuid);
+    int (*groundNode) (CKTcircuit *, void **, IFuid);
                                     /* create ground node */
-    int (*bindNode) (void *, void *, int, void *);
+    int (*bindNode) (CKTcircuit *, void *, int, void *);
                                     /* bind a node to a terminal */
-    int (*findNode) (void *, void **, IFuid);
+    int (*findNode) (CKTcircuit *, void **, IFuid);
                                     /* find a node by name */
-    int (*instToNode) (void *, void *, int, void **, IFuid *);
+    int (*instToNode) (CKTcircuit *, void *, int, void **, IFuid *);
                                     /* find the node attached to a terminal */
-    int (*setNodeParm) (void *, void *, int, IFvalue *, IFvalue *);
+    int (*setNodeParm) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on a node */
-    int (*askNodeQuest) (void *, void *, int, IFvalue *, IFvalue *);
+    int (*askNodeQuest) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* ask a question about a node */
-    int (*deleteNode) (void *, void *);
+    int (*deleteNode) (CKTcircuit *, void *);
                                     /* delete a node from the circuit */
 
-    int (*newInstance) (void *, void *, void **, IFuid);
+    int (*newInstance) (CKTcircuit *, void *, void **, IFuid);
                                     /* create new instance */
-    int (*setInstanceParm) (void *, void *, int, IFvalue *, IFvalue *);
+    int (*setInstanceParm) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on an instance */
-    int (*askInstanceQuest) (void *, void *, int, IFvalue *, IFvalue *);
+    int (*askInstanceQuest) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* ask a question about an instance */
-    int (*findInstance) (void *, int *, void **, IFuid, void *, IFuid);
+    int (*findInstance) (CKTcircuit *, int *, void **, IFuid, void *, IFuid);
                                     /* find a specific instance */
-    int (*deleteInstance) (void *, void *);
+    int (*deleteInstance) (CKTcircuit *, void *);
                                     /* delete an instance from the circuit */
 
-    int (*newModel) (void *, int, void **, IFuid);
+    int (*newModel) (CKTcircuit *, int, void **, IFuid);
                                     /* create new model */
-    int (*setModelParm) (void *, void *, int, IFvalue *, IFvalue *);
+    int (*setModelParm) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on a model */
-    int (*askModelQuest) (void *, void *, int, IFvalue *, IFvalue *);
+    int (*askModelQuest) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* ask a questions about a model */
-    int (*findModel) (void *, int *, void **, IFuid);
+    int (*findModel) (CKTcircuit *, int *, void **, IFuid);
                                     /* find a specific model */
-    int (*deleteModel) (void *, void *);
+    int (*deleteModel) (CKTcircuit *, void *);
                                     /* delete a model from the circuit*/
 
-    int (*newTask) (void *, void **, IFuid, void **); /*CDHW*/
+    int (*newTask) (CKTcircuit *, void **, IFuid, void **); /*CDHW*/
                                     /* create a new task */
-    int (*newAnalysis) (void *, int, IFuid, void **, void *);
+    int (*newAnalysis) (CKTcircuit *, int, IFuid, void **, void *);
                                     /* create new analysis within a task */
     int (*setAnalysisParm) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on an analysis  */
     int (*askAnalysisQuest) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* ask a question about an analysis */
-    int (*findAnalysis) (void *, int *, void **, IFuid, void *, IFuid);
+    int (*findAnalysis) (CKTcircuit *, int *, void **, IFuid, void *, IFuid);
                                     /* find a specific analysis */
-    int (*findTask) (void *, void **, IFuid);
+    int (*findTask) (CKTcircuit *, void **, IFuid);
                                     /* find a specific task */
-    int (*deleteTask) (void *, void *);
+    int (*deleteTask) (CKTcircuit *, void *);
                                     /* delete a task */
 
-    int (*doAnalyses) (void *, int, void *);
-    char *(*nonconvErr) (void *, char *); /* return nonconvergence error */
+    int (*doAnalyses) (CKTcircuit *, int, void *);
+    char *(*nonconvErr) (CKTcircuit *, char *); /* return nonconvergence error */
 
     int numDevices;                 /* number of device types supported */
     IFdevice **devices;             /* array of device type descriptors */
@@ -432,9 +432,9 @@ struct IFsimulator {
  */
 
 struct IFfrontEnd {
-    int (*IFnewUid) (void *, IFuid *, IFuid, char *, int, void **);
+    int (*IFnewUid) (CKTcircuit *, IFuid *, IFuid, char *, int, void **);
                             /* create a new UID in the circuit */
-    int (*IFdelUid) (void *, IFuid, int);
+    int (*IFdelUid) (CKTcircuit *, IFuid, int);
                             /* create a new UID in the circuit */
     int (*IFpauseTest) (void);
                             /* should we stop now? */
@@ -442,12 +442,12 @@ struct IFfrontEnd {
                             /* what time is it? */
     int (*IFerror) (int, char *, IFuid *);
                             /* output an error or warning message */
-    int (*OUTpBeginPlot) (void *, void *, IFuid, IFuid, int,
+    int (*OUTpBeginPlot) (CKTcircuit *, void *, IFuid, IFuid, int,
             int, IFuid *, int, void **);
                             /* start pointwise output plot */
     int (*OUTpData) (void *, IFvalue *, IFvalue *);
                             /* data for pointwise plot */
-    int (*OUTwBeginPlot) (void *, void *, IFuid, IFuid, int,
+    int (*OUTwBeginPlot) (CKTcircuit *, void *, IFuid, IFuid, int,
             int, IFuid *, int, void **);
                             /* start windowed output plot */
     int (*OUTwReference) (void *, IFvalue *, void **);

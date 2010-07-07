@@ -50,7 +50,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     inst = NULL;
     code = CKTtypelook("Vsource");
     if (code != -1) {
-        error = CKTfndDev((void *)ckt,&code,(void **)&inst,
+        error = CKTfndDev(ckt,&code,(void **)&inst,
                 job->input, (void *)NULL, (IFuid)NULL);
 	if (!error && !((VSRCinstance *)inst)->VSRCacGiven) {
 	    errMsg = (char*) MALLOC(strlen(noacinput)+1);
@@ -61,7 +61,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 
     code = CKTtypelook("Isource");
     if (code != -1 && inst==NULL) {
-        error = CKTfndDev((void *)ckt,&code, (void **)&inst,
+        error = CKTfndDev(ckt,&code, (void **)&inst,
                 job->input, (void *)NULL,(IFuid)NULL);
         if (error) {
 	    /* XXX ??? */
@@ -122,7 +122,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	/* the current front-end needs the namelist to be fully
 		declared before an OUTpBeginplot */
 
-	(*(SPfrontEnd->IFnewUid))((void *)ckt,&freqUid,(IFuid)NULL,
+	(*(SPfrontEnd->IFnewUid))(ckt,&freqUid,(IFuid)NULL,
 		"frequency", UID_OTHER,(void **)NULL);
 
 	data->numPlots = 0;                /* we don't have any plots  yet */

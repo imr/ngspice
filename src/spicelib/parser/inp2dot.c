@@ -123,7 +123,7 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_op(char *line, void *ckt, INPtables *tab, card *current,
+dot_op(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
        void *task, void *gnode, void *foo)
 {
     int which;			/* which analysis we are performing */
@@ -548,7 +548,7 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 #ifdef WANT_SENSE2
 static int
-dot_sens2(char *line, void *ckt, INPtables *tab, card *current,
+dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	  void *task, void *gnode, void *foo)
 {
     int error;			/* error code temporary */
@@ -721,7 +721,7 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, void *task, void *gnode)
     else if ((strcmp(token, ".options") == 0)||
             (strcmp(token,".option")==0) ||
             (strcmp(token,".opt")==0)) {
-	rtn = dot_options(line, (CKTcircuit * /*fixme*/) ckt, tab, current, task, gnode, foo);
+	rtn = dot_options(line, ckt, tab, current, task, gnode, foo);
 	goto quit;
     }
     /* Added by H.Tanaka to find .global option */

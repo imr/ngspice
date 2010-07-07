@@ -48,7 +48,7 @@ TFanal(CKTcircuit *ckt, int restart)
     Itype = CKTtypelook("Isource");
     Vtype = CKTtypelook("Vsource");
     if(Itype != -1) {
-        error = CKTfndDev((void*)ckt,&Itype,&ptr,
+        error = CKTfndDev(ckt,&Itype,&ptr,
                 ((TFan*)ckt->CKTcurJob)->TFinSrc, (void *)NULL,(IFuid)NULL);
         if(error ==0) {
             ((TFan*)ckt->CKTcurJob)->TFinIsI = 1;
@@ -59,7 +59,7 @@ TFanal(CKTcircuit *ckt, int restart)
     }
 
     if( (Vtype != -1) && (ptr==NULL) ) {
-        error = CKTfndDev((void*)ckt,&Vtype,&ptr,
+        error = CKTfndDev(ckt,&Vtype,&ptr,
                 ((TFan*)ckt->CKTcurJob)->TFinSrc, (void *)NULL,
                 (IFuid)NULL);
         ((TFan*)ckt->CKTcurJob)->TFinIsV = 1;

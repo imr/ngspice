@@ -17,25 +17,25 @@ Author: 1985 Thomas L. Quarles
 
 
 
-/* ARGSUSED */
+/* ARGSUSED *//* fixme abandoned */
 int
-CKTmapNode(void *ckt, void **node, IFuid name)
+CKTmapNode(CKTcircuit *ckt, void **node, IFuid name)
 {
     CKTnode *here;
     int error;
     IFuid uid;
     CKTnode *mynode;
 
-    for (here = ((CKTcircuit *)ckt)->CKTnodes; here; here = here->next)  {
+    for (here = ckt->CKTnodes; here; here = here->next)  {
         if(here->name == name) {
             if(node) *node = (char *)here;
             return(E_EXISTS);
         }
     }
     /* not found, so must be a new one */
-    error = CKTmkNode((CKTcircuit*)ckt,&mynode); /*allocate the node*/
+    error = CKTmkNode(ckt,&mynode); /*allocate the node*/
     if(error) return(error);
-    error = (*(SPfrontEnd->IFnewUid))((void *)ckt,
+    error = (*(SPfrontEnd->IFnewUid))(ckt,
 				      &uid,
 				      (IFuid) NULL,
 				      name,
@@ -44,7 +44,7 @@ CKTmapNode(void *ckt, void **node, IFuid name)
     if(error) return(error);
     mynode->name = uid;     /* set the info we have */
     mynode->type = SP_VOLTAGE;
-    error = CKTlinkEq((CKTcircuit*)ckt,mynode); /* and link it in */
+    error = CKTlinkEq(ckt,mynode); /* and link it in */
     if(node) *node = (void *)mynode; /* and finally, return it */
     return(OK);
 }

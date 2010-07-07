@@ -10,7 +10,7 @@ Author: 1988 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
-void INP2L(void *ckt, INPtables * tab, card * current)
+void INP2L(CKTcircuit *ckt, INPtables * tab, card * current)
 {
 
 /* parse an inductor card */

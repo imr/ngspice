@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 #include "dev.h"
 
 int
-CKTbindNode(void *ckt, void *fast, int term, void *node)
+CKTbindNode(CKTcircuit *ckt, void *fast, int term, void *node)
 {
     int mappednode;
     SPICEdev **devs;

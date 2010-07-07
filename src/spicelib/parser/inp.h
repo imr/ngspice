@@ -13,58 +13,58 @@ int IFeval(IFparseTree *tree, double gmin, double *result, double *vals,
 
 /* ifnewuid.c */
 
-int IFnewUid(void *ckt, IFuid *newuid, IFuid olduid, char *suffix, int type, 
+int IFnewUid(CKTcircuit *ckt, IFuid *newuid, IFuid olduid, char *suffix, int type, 
 	     void **nodedata);
-int IFdelUid(void *ckt, IFuid uid, int type);
+int IFdelUid(CKTcircuit *ckt, IFuid uid, int type);
 
 /* inp2xx.c */
 
-void INP2B(void *ckt, INPtables *tab, card *current);
-void INP2C(void *ckt, INPtables *tab, card *current);
-void INP2D(void *ckt, INPtables *tab, card *current);
-void INP2E(void *ckt, INPtables *tab, card *current);
-void INP2F(void *ckt, INPtables *tab, card *current);
-void INP2G(void *ckt, INPtables *tab, card *current);
-void INP2H(void *ckt, INPtables *tab, card *current);
-void INP2I(void *ckt, INPtables *tab, card *current);
-void INP2J(void *ckt, INPtables *tab, card *current);
-void INP2K(void *ckt, INPtables *tab, card *current);
-void INP2L(void *ckt, INPtables *tab, card *current);
-void INP2M(void *ckt, INPtables *tab, card *current);
-void INP2O(void *ckt, INPtables *tab, card *current);
-void INP2P(void *ckt, INPtables *tab, card *current);
-void INP2Q(void *ckt, INPtables *tab, card *current, void *gnode);
-void INP2R(void *ckt, INPtables *tab, card *current);
-void INP2S(void *ckt, INPtables *tab, card *current);
-void INP2T(void *ckt, INPtables *tab, card *current);
-void INP2U(void *ckt, INPtables *tab, card *current);
-void INP2V(void *ckt, INPtables *tab, card *current);
-void INP2W(void *ckt, INPtables *tab, card *current);
-void INP2Y(void *ckt, INPtables *tab, card *current);
-void INP2Z(void *ckt, INPtables *tab, card *current);
+void INP2B(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2C(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2D(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2E(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2F(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2G(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2H(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2I(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2J(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2K(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2L(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2M(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2O(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2P(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2Q(CKTcircuit *ckt, INPtables *tab, card *current, void *gnode);
+void INP2R(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2S(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2T(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2U(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2V(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2W(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2Y(CKTcircuit *ckt, INPtables *tab, card *current);
+void INP2Z(CKTcircuit *ckt, INPtables *tab, card *current);
 int INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, void *task, void *gnode);
 
 /* inpxxxx.c */
 
-int INPaName(char *parm, IFvalue *val, void *ckt, int *dev, char *devnam, 
+int INPaName(char *parm, IFvalue *val, CKTcircuit *ckt, int *dev, char *devnam, 
 	     void **fast, IFsimulator *sim, int *dataType, IFvalue *selector);
 int INPapName(CKTcircuit *ckt, int type, void *analPtr, char *parmname, IFvalue *value);
 void INPcaseFix(register char *string);
-char * INPdomodel(void *ckt, card *image, INPtables *tab);
+char * INPdomodel(CKTcircuit *ckt, card *image, INPtables *tab);
 void INPdoOpts(CKTcircuit *ckt, void *anal, card *optCard, INPtables *tab);
-char * INPdevParse(char **line, void *ckt, int dev, void *fast, double *leading, 
+char * INPdevParse(char **line, CKTcircuit *ckt, int dev, void *fast, double *leading, 
 		   int *waslead, INPtables *tab);
 char * INPerrCat(char *a, char *b);
 char * INPerror(int type);
 double INPevaluate(char **line, int *error, int gobble);
 char * INPfindLev(char *line, int *level);
 char * INPfindVer(char *line, char *version);
-char * INPgetMod(void *ckt, char *name, INPmodel **model, INPtables *tab);
+char * INPgetMod(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab);
 int INPgetStr(char **line, char **token, int gobble);
 int INPgetTitle(CKTcircuit **ckt, card **data);
 int INPgetTok(char **line, char **token, int gobble);
 int INPgetUTok(char **line, char **token, int gobble);
-IFvalue * INPgetValue(void *ckt, char **line, int type, INPtables *tab);
+IFvalue * INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab);
 void INPkillMods(void);
 void INPlist(FILE *file, card *deck, int type);
 int INPlookMod(char *name);
@@ -72,19 +72,19 @@ int INPmakeMod(char *token, int type, card *line);
 char * INPmkTemp(char *string);
 void INPpas1(CKTcircuit *ckt, card *deck, INPtables *tab);
 void INPpas2(CKTcircuit *ckt, card *data, INPtables *tab, void *task);
-int INPpName(char *parm, IFvalue *val, void *ckt, int dev, void *fast);
+int INPpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, void *fast);
 
 /* inpptree.c */
 
-void INPgetTree(char **line, INPparseTree **pt, void *ckt, INPtables *tab);
+void INPgetTree(char **line, INPparseTree **pt, CKTcircuit *ckt, INPtables *tab);
 
 
 /* inpsymt.c */
 
 INPtables * INPtabInit(int numlines);
-int INPtermInsert(void *ckt, char **token, INPtables *tab, void **node);
-int INPmkTerm(void *ckt, char **token, INPtables *tab, void **node);
-int INPgndInsert(void *ckt, char **token, INPtables *tab, void **node);
+int INPtermInsert(CKTcircuit *ckt, char **token, INPtables *tab, void **node);
+int INPmkTerm(CKTcircuit *ckt, char **token, INPtables *tab, void **node);
+int INPgndInsert(CKTcircuit *ckt, char **token, INPtables *tab, void **node);
 int INPretrieve(char **token, INPtables *tab);
 int INPinsert(char **token, INPtables *tab);
 int INPinsertNofree(char **token, INPtables *tab);

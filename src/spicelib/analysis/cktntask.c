@@ -16,10 +16,10 @@ Modified: 2000 AlansFixes
 /* ARGSUSED */
 /*
 int
-CKTnewTask(void *ckt, void **taskPtr, IFuid taskName)
+CKTnewTask(CKTcircuit *ckt, void **taskPtr, IFuid taskName)
  */
 int
-CKTnewTask(void *ckt, void **taskPtr, IFuid taskName, void **defPtr)
+CKTnewTask(CKTcircuit *ckt, void **taskPtr, IFuid taskName, void **defPtr)
 /*CDHW See notes in spiceif.c for an explanation of these fixes CDHW*/
 {
     TSKtask *tsk, *def=NULL;

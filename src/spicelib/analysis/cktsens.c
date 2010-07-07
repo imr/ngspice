@@ -168,7 +168,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 					sg->ptable[sg->param].keyword);
 			}
 
-			(*SPfrontEnd->IFnewUid)((void *) ckt,
+			(*SPfrontEnd->IFnewUid)(ckt,
 				output_names + k, NULL,
 				namebuf, UID_OTHER, NULL);
 			k += 1;
@@ -179,12 +179,12 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			freq_name = NULL;
 		} else {
 			type = IF_COMPLEX;
-			(*SPfrontEnd->IFnewUid)((void *) ckt,
+			(*SPfrontEnd->IFnewUid)(ckt,
 				&freq_name, NULL,
 				"frequency", UID_OTHER, NULL);
 		}
 
-		error = (*SPfrontEnd->OUTpBeginPlot)((void *) ckt,
+		error = (*SPfrontEnd->OUTpBeginPlot)(ckt,
 			(void *) ckt->CKTcurJob,
 			ckt->CKTcurJob->JOBname, freq_name, IF_REAL, num_vars,
 			output_names, type, (void **) &sen_data);

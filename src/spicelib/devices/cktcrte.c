@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 #include "memory.h"
 
 int
-CKTcrtElt(void *ckt, void *inModPtr, void **inInstPtr, IFuid name)
+CKTcrtElt(CKTcircuit *ckt, void *inModPtr, void **inInstPtr, IFuid name)
 {
   GENinstance *instPtr = NULL;             /* instPtr points to the data struct for per-instance data */
   GENmodel *modPtr = (GENmodel*)inModPtr;  /* modPtr points to the data struct for per-model data */

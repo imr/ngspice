@@ -17,9 +17,9 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTground(void *inCkt, void **node, IFuid name)
+CKTground(CKTcircuit *inCkt, void **node, IFuid name)
 {
-    CKTcircuit *ckt = (CKTcircuit *)inCkt;
+    CKTcircuit *ckt = /* fixme, drop that */ inCkt;
 
     if(ckt->CKTnodes) {
         if(ckt->CKTnodes->name) {

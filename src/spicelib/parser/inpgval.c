@@ -10,7 +10,7 @@ Author: 1985 Thomas L. Quarles
 #include "inpptree.h"
 #include "inp.h"
 
-IFvalue *INPgetValue(void *ckt, char **line, int type, INPtables * tab)
+IFvalue *INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables * tab)
 {
     double *list;
     int *ilist;

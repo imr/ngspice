@@ -17,7 +17,7 @@ University of Science and Technology of China
 #include "fteext.h"
 #include "inp.h"
 
-void INP2N(void *ckt, INPtables * tab, card * current)
+void INP2N(CKTcircuit *ckt, INPtables * tab, card * current)
 {
 /* parse a numerical device  card */
 /* Nname <node> <node> [<node> ...] [<mname>] */

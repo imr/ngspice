@@ -376,7 +376,7 @@ determines what instances will have data returned over the IPC channel.
 
 
 int ipc_get_devices(
-    void        *circuit,     /* The circuit structure */
+    CKTcircuit  *circuit,     /* The circuit structure */
     char        *device,      /* The device name as it appears in the info struct */
     char        ***names,     /* Array of name strings to be built */
     double      **modtypes)   /* Array of types to be built */
@@ -397,7 +397,7 @@ int ipc_get_devices(
     MOS3model        *MOS3mod;
 
     /* Initialize local variables */
-    ckt = (CKTcircuit *) circuit;
+    ckt = /* fixme, drop that */ circuit;
     num_instances = 0;
 
     /* Get the index into the circuit structure linked list of models */

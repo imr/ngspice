@@ -19,7 +19,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTaskNodQst(void *ckt, void *node, int parm, IFvalue *value, IFvalue *selector)
+CKTaskNodQst(CKTcircuit *ckt, void *node, int parm, IFvalue *value, IFvalue *selector)
 {
     if(!node) return(E_BADPARM);
     switch(parm) {

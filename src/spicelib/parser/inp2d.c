@@ -12,7 +12,7 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "fteext.h"
 #include "inp.h"
 
-void INP2D(void *ckt, INPtables * tab, card * current)
+void INP2D(CKTcircuit *ckt, INPtables * tab, card * current)
 {
 
 /* Dname <node> <node> <model> [<val>] [OFF] [IC=<val>] */

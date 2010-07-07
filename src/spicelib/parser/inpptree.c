@@ -28,7 +28,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum);
 static IFvalue *values = NULL;
 static int *types;
 static int numvalues;
-static void *circuit;
+static CKTcircuit *circuit;
 static INPtables *tables;
 
 #if defined (_MSC_VER)
@@ -117,7 +117,7 @@ static struct constant {
  */
 
 void
-INPgetTree(char **line, INPparseTree ** pt, void *ckt, INPtables * tab)
+INPgetTree(char **line, INPparseTree ** pt, CKTcircuit *ckt, INPtables * tab)
 {
     INPparseNode *p;
     int i, rv;

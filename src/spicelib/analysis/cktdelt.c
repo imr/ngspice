@@ -12,7 +12,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTdelTask(void *ckt, void *task)
+CKTdelTask(CKTcircuit *ckt, void *task)
 {
     JOB *job;
     JOB *old=NULL;

@@ -21,7 +21,7 @@ extern SPICEdev **DEVices;
 
 /* ARGSUSED */
 int
-CKTmodParam(void *ckt, void *modfast, int param, IFvalue *val, IFvalue *selector)
+CKTmodParam(CKTcircuit *ckt, void *modfast, int param, IFvalue *val, IFvalue *selector)
 {
     int type = ((GENmodel *)modfast)->GENmodType;
 

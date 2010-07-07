@@ -13,7 +13,7 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "inp.h"
 
 void
-INP2M (void *ckt, INPtables * tab, card * current)
+INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 {
 
   /* Mname <node> <node> <node> <node> <model> [L=<val>]

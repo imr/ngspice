@@ -20,7 +20,7 @@ extern SPICEdev **DEVices;
 
 /* ARGSUSED */
 int
-CKTparam(void *ckt, void *fast, int param, IFvalue *val, IFvalue *selector)
+CKTparam(CKTcircuit *ckt, void *fast, int param, IFvalue *val, IFvalue *selector)
 {
     int type;
     GENinstance *myfast = (GENinstance *)fast;

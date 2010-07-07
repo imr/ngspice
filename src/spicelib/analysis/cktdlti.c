@@ -18,7 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTdltInst(void *ckt, void *instance)
+CKTdltInst(CKTcircuit *ckt, void *instance)
 {
     return(E_UNSUPP);
 }

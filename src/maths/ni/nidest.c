@@ -28,9 +28,9 @@ NIdestroy(CKTcircuit *ckt)
     if(ckt->CKTirhsSpare)   FREE(ckt->CKTirhsSpare);
 #ifdef WANT_SENSE2
     if(ckt->CKTsenInfo){
-        if(ckt->CKTrhsOp) FREE(((CKTcircuit *)ckt)->CKTrhsOp);
-        if(ckt->CKTsenRhs) FREE(((CKTcircuit *)ckt)->CKTsenRhs);
-        if(ckt->CKTseniRhs) FREE(((CKTcircuit *)ckt)->CKTseniRhs);
+        if(ckt->CKTrhsOp) FREE(ckt->CKTrhsOp);
+        if(ckt->CKTsenRhs) FREE(ckt->CKTsenRhs);
+        if(ckt->CKTseniRhs) FREE(ckt->CKTseniRhs);
         SENdestroy(ckt->CKTsenInfo);
     }
 #endif

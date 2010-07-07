@@ -24,9 +24,9 @@ Modified: 2000 AlansFixes
 extern SPICEanalysis *analInfo[];
 
 int
-CKTdoJob(void *inCkt, int reset, void *inTask)
+CKTdoJob(CKTcircuit *inCkt, int reset, void *inTask)
 {
-    CKTcircuit	*ckt = (CKTcircuit *)inCkt;
+    CKTcircuit	*ckt = /* fixme, drop that */ inCkt;
     TSKtask	*task = (TSKtask *)inTask;
     JOB		*job;
     double	startTime;

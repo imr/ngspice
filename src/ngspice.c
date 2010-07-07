@@ -39,7 +39,7 @@ IFsimulator SIMinfo = {
     CKTground,			/* groundNode function */
     CKTbindNode,		/* bindNode function */
     CKTfndNode,			/* findNode function */
-    (int(*)(void *,void *,int,void **,IFuid *)) /* va, type cast for CKTinst2Node */      
+    (int(*)(CKTcircuit *,void *,int,void **,IFuid *)) /* va, type cast for CKTinst2Node */      
     CKTinst2Node,		/* instToNode function */
     CKTsetNodPm,		/* setNodeParm function */
     CKTaskNodQst,		/* askNodeQuest function */

@@ -43,7 +43,7 @@ PZan(CKTcircuit *ckt, int reset)
 	/* Dump operating point. */
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
+	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
 	    (void*)ckt->CKTcurJob, "Distortion Operating Point",
 	    (IFuid)NULL,IF_REAL,numNames,nameList, IF_REAL,&plot);
 	if(error) return(error);

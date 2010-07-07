@@ -67,7 +67,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         /* continuing */
         i = cv->TRCVnestState;
         /* resume to work? saj*/
-        error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
+        error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
            (void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
            varUid,IF_REAL,666,nameList, 666,&plot);	
         goto resume;
@@ -191,32 +191,32 @@ found:;
     
     
     if (cv->TRCVvType[i]==vcode)
-         (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+         (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
             "v-sweep", UID_OTHER, (void **)NULL);
         
     else {
         if (cv->TRCVvType[i]==icode)
-            (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+            (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
                  "i-sweep", UID_OTHER, (void **)NULL);
                      
         else {
             if (cv->TRCVvType[i]==TEMP_CODE)
-                (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+                (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
                    "temp-sweep", UID_OTHER, (void **)NULL);
        
             else {
                 if (cv->TRCVvType[i]==rcode)
-                    (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+                    (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
                         "res-sweep", UID_OTHER, (void **)NULL);
                                 
                 else
-                    (*(SPfrontEnd->IFnewUid))((void *)ckt,&varUid,(IFuid )NULL,
+                    (*(SPfrontEnd->IFnewUid))(ckt,&varUid,(IFuid )NULL,
                         "?-sweep", UID_OTHER, (void **)NULL);	    
             } /* icode */
         } /* TEMP_CODE */
     } /* rcode*/
     
-    error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
+    error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
         (void*)ckt->CKTcurJob, ckt->CKTcurJob->JOBname,
         varUid,IF_REAL,numNames,nameList, IF_REAL,&plot);
     

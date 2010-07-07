@@ -24,7 +24,7 @@ Author: 1988 Thomas L. Quarles
 
 /* va: we should use tmalloc, whith also makes failure test */
 int
-IFnewUid(void *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
+IFnewUid(CKTcircuit *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
 	 void **nodedata)
 {
     char *newname;
@@ -75,7 +75,7 @@ IFnewUid(void *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
     return (OK);
 }
 
-int IFdelUid(void *ckt, IFuid uid, int type)
+int IFdelUid(CKTcircuit *ckt, IFuid uid, int type)
 {
     int error;
 

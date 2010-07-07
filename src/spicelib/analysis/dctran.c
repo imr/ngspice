@@ -138,9 +138,9 @@ DCtran(CKTcircuit *ckt,
 #endif
         error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
-        (*(SPfrontEnd->IFnewUid))((void *)ckt,&timeUid,(IFuid)NULL,
+        (*(SPfrontEnd->IFnewUid))(ckt,&timeUid,(IFuid)NULL,
                 "time", UID_OTHER, (void **)NULL);
-        error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
+        error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
 		(void*)ckt->CKTcurJob,
                 ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,
                 IF_REAL,&(((TRANan*)ckt->CKTcurJob)->TRANplot));
@@ -331,9 +331,9 @@ DCtran(CKTcircuit *ckt,
 		error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
 		/* get timeUiD again */
-        (*(SPfrontEnd->IFnewUid))((void *)ckt,&timeUid,(IFuid)NULL,
+        (*(SPfrontEnd->IFnewUid))(ckt,&timeUid,(IFuid)NULL,
                 "time", UID_OTHER, (void **)NULL);        
-	error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt, (void*)ckt->CKTcurJob,
+	error = (*(SPfrontEnd->OUTpBeginPlot))(ckt, (void*)ckt->CKTcurJob,
 					       ckt->CKTcurJob->JOBname,timeUid,IF_REAL,666,nameList,
 					       666,&(((TRANan*)ckt->CKTcurJob)->TRANplot));/*magic 666 nums as flags */
 	tfree(nameList);
@@ -960,7 +960,7 @@ resume:
 			ckt->CKTstat->STATcombineTime - startcTime;
 		ckt->CKTstat->STATtranSyncTime +=
 			ckt->CKTstat->STATsyncTime - startkTime;
-		errMsg = CKTtrouble((void *) ckt, "Timestep too small");
+		errMsg = CKTtrouble(ckt, "Timestep too small");
                 return(E_TIMESTEP);
             }
         }

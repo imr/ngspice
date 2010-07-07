@@ -11,7 +11,7 @@ Author: 1988 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
-void INP2J(void *ckt, INPtables * tab, card * current)
+void INP2J(CKTcircuit *ckt, INPtables * tab, card * current)
 {
 
     /* Jname <node> <node> <node> <model> [<val>] [OFF] [IC=<val>,<val>] */

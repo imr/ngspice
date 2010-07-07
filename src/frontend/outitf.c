@@ -37,7 +37,7 @@ extern char *spice_analysis_get_description(int index);
 
 
 /* static declarations */
-static int beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, 
+static int beginPlot(void *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName, 
 		     char *refName, int refType, int numNames, char **dataNames, int dataType, 
 		     bool windowed, runDesc **runp);
 static int addDataDesc(runDesc *run, char *name, int type, int ind);
@@ -88,7 +88,7 @@ static bool printinfo = FALSE;	/* Print informational "error messages". */
 /* The two "begin plot" routines share all their internals... */
 
 int
-OUTpBeginPlot(void *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
+OUTpBeginPlot(CKTcircuit *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
 {
   char *name;   
 
@@ -109,7 +109,7 @@ if (ARCHme != 0) return(OK);
 }
 
 int
-OUTwBeginPlot(void *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
+OUTwBeginPlot(CKTcircuit *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName, int refType, int numNames, IFuid *dataNames, int dataType, void **plotPtr)
 {
 #ifdef PARALLEL_ARCH
     if (ARCHme != 0) return(OK);
@@ -122,7 +122,7 @@ OUTwBeginPlot(void *circuitPtr, void *analysisPtr, IFuid analName, IFuid refName
 }
 
 static int
-beginPlot(void *analysisPtr, void *circuitPtr, char *cktName, char *analName, char *refName, int refType, int numNames, char **dataNames, int dataType, bool windowed, runDesc **runp)
+beginPlot(void *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName, char *refName, int refType, int numNames, char **dataNames, int dataType, bool windowed, runDesc **runp)
 {
     runDesc *run;
     struct save_info *saves;

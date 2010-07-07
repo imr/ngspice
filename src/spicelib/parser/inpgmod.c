@@ -25,7 +25,7 @@ extern int INPnumCards;
 #define E_MISSING	-1
 #define E_AMBIGUOUS	-2
 
-static int INPparseNumMod( void* ckt, INPmodel *model, INPtables *tab, char **errMessage );
+static int INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMessage );
 static int INPfindCard( char *name, IFcardInfo *table[], int numCards );
 static int INPfindParm( char *name, IFparm *table, int numParms );
 
@@ -38,7 +38,7 @@ extern INPmodel *modtab;
   code moved from INPgetMod
  */
 static int
-create_model( void* ckt, INPmodel* modtmp, INPtables* tab )
+create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 {
   IFvalue* val;
   char*    err = NULL;
@@ -193,7 +193,7 @@ in_range( double value, double min, double max )
 }
 
 char*
-INPgetModBin( void* ckt, char* name, INPmodel** model, INPtables* tab, char* line )
+INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, char* line )
 {
   INPmodel*    modtmp;
   double       l, w, lmin, lmax, wmin, wmax;
@@ -240,7 +240,7 @@ INPgetModBin( void* ckt, char* name, INPmodel** model, INPtables* tab, char* lin
   return NULL;
 }
 
-char *INPgetMod(void *ckt, char *name, INPmodel ** model, INPtables * tab)
+char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
 {
   INPmodel *modtmp;
   char *err = NULL;
@@ -310,7 +310,7 @@ char *INPgetMod(void *ckt, char *name, INPmodel ** model, INPtables * tab)
  *    other = new card
  */
 static int
-INPparseNumMod( void* ckt, INPmodel *model, INPtables *tab, char **errMessage )
+INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMessage )
 {
     card *txtCard;	/* Text description of a card */
     GENcard *tmpCard;	/* Processed description of a card */

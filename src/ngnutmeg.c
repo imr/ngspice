@@ -65,7 +65,7 @@ IFsimulator SIMinfo = {
 #ifdef CIDER
 /* An ugly hack */
 void
-NDEVacct(void *ckt, FILE *file)
+NDEVacct(CKTcircuit *ckt, FILE *file)
 {
 fprintf(file, "Ouch, you have called NDEV from ngnutmeg\n");
 }

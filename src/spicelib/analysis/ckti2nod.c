@@ -22,7 +22,7 @@ Author: 1985 Thomas L. Quarles
 extern SPICEdev **DEVices;
 
 int
-CKTinst2Node(void *ckt, void *instPtr, int terminal, CKTnode **node, IFuid *nodeName)
+CKTinst2Node(CKTcircuit *ckt, void *instPtr, int terminal, CKTnode **node, IFuid *nodeName)
 {
     int nodenum;
     int type;
@@ -56,7 +56,7 @@ CKTinst2Node(void *ckt, void *instPtr, int terminal, CKTnode **node, IFuid *node
                 break;	
         }
         /* ok, now we know its number, so we just have to find it.*/
-        for(here = ((CKTcircuit*)ckt)->CKTnodes;here;here = here->next) {
+        for(here = ckt->CKTnodes;here;here = here->next) {
             if(here->number == nodenum) {
                 /* found it */
                 *node = here;

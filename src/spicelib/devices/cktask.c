@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTask(void *ckt, void *fast, int which, IFvalue *value, IFvalue *selector)
+CKTask(CKTcircuit *ckt, void *fast, int which, IFvalue *value, IFvalue *selector)
 {
     GENinstance *instance = (GENinstance *) fast;
     int type = instance->GENmodPtr->GENmodType;
@@ -28,7 +28,7 @@ CKTask(void *ckt, void *fast, int which, IFvalue *value, IFvalue *selector)
 
     DEVices = devices();
     if((*DEVices[type]).DEVask) {
-        error = DEVices[type]->DEVask((CKTcircuit *)ckt,
+        error = DEVices[type]->DEVask(ckt,
                 (GENinstance *)fast,which,value,selector);
     } else {
 	error = E_BADPARM;

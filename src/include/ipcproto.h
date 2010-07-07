@@ -39,7 +39,7 @@ void ipc_send_stdout (void );
 void ipc_send_stderr (void );
 Ipc_Status_t ipc_send_std_files (void );
 Ipc_Boolean_t ipc_screen_name (char *name , char *mapped_name );
-int ipc_get_devices (void *circuit , char *device , char ***names , double **modtypes );
+int ipc_get_devices (CKTcircuit *circuit , char *device , char ***names , double **modtypes );
 void ipc_free_devices (int num_items , char **names , double *modtypes );
 void ipc_check_pause_stop (void );
 

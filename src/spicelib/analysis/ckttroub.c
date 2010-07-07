@@ -18,9 +18,9 @@ extern SPICEdev **DEVices;
 extern SPICEanalysis *analInfo[];
 
 char *
-CKTtrouble(void *cktp, char *optmsg)
+CKTtrouble(CKTcircuit *cktp, char *optmsg)
 {
-    CKTcircuit	*ckt = (CKTcircuit *) cktp;
+    CKTcircuit	*ckt = /* fixme, drop that */ cktp;
     char	msg_buf[513];
     char	*emsg;
     TRCV	*cv;

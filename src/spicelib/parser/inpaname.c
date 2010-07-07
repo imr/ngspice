@@ -20,7 +20,7 @@ Author: 1985 Thomas L. Quarles
 #include "inp.h"
 
 int
-INPaName(char *parm, IFvalue * val, void *ckt, int *dev, char *devnam,
+INPaName(char *parm, IFvalue * val, CKTcircuit *ckt, int *dev, char *devnam,
 	 void **fast, IFsimulator * sim, int *dataType, IFvalue * selector)
 		    /* the name of the parameter to set */
 		    /* the parameter union containing the value to set */

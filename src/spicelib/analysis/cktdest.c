@@ -22,9 +22,9 @@ extern SPICEdev **DEVices;
 
 
 int
-CKTdestroy(void *inCkt)
+CKTdestroy(CKTcircuit *inCkt)
 {
-    CKTcircuit *ckt = (CKTcircuit *)inCkt;
+    CKTcircuit *ckt = /* fixme, drop that */ inCkt;
     int i;
     CKTnode *node;
     CKTnode *nnode;

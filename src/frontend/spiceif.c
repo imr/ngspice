@@ -170,13 +170,13 @@ if_inpdeck(struct line *deck, INPtables **tab)
      * cards. These are left till INPpas3 so that we can check for
      * nodeset/ic of non-existant nodes.  */
 
-    INPpas3((void *) ckt, (card *) deck->li_next,
+    INPpas3(ckt, (card *) deck->li_next,
             (INPtables *) *tab,ft_curckt->ci_defTask, ft_sim->nodeParms,
 	    ft_sim->numNodeParms);
 
 #ifdef XSPICE
 /* gtri - begin - wbk - 6/6/91 - Finish initialization of event driven structures */
-    err = EVTinit((void *) ckt);
+    err = EVTinit(ckt);
     if(err) {
         ft_sperror(err,"EVTinit");
         return(NULL);
@@ -197,7 +197,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
 int
 if_run(CKTcircuit *t, char *what, wordlist *args, INPtables *tab)
 {
-    CKTcircuit *ckt = (CKTcircuit *) t;
+    CKTcircuit *ckt = /* fixme, drop that */ t;
     int err;
     struct line deck;
     char buf[BSIZE_SP];
@@ -386,7 +386,7 @@ if_option(CKTcircuit *ckt, char *name, int type, char *value)
 {
     IFvalue pval;
     int err, i;
-    CKTcircuit *cc = (CKTcircuit * /*fixme*/) ckt;
+    CKTcircuit *cc = /* fixme, drop that */ ckt;
     char **vv;
     int which = -1;
 
@@ -540,7 +540,7 @@ if_dump(CKTcircuit *ckt, FILE *file)
 void
 if_cktfree(CKTcircuit *ckt, INPtables *tab)
 {
-    void *cc = (void *) ckt;
+    CKTcircuit *cc = /* fixme, drop that */ ckt;
 
     (*(ft_sim->deleteCircuit))(cc);
     INPtabEnd((INPtables *) tab);
@@ -578,7 +578,7 @@ finddev_special(
     int err;
     int type = -1;
 
-    err = (*(ft_sim->findInstance))((void *)ck,&type,devptr,name,NULL,NULL);
+    err = (*(ft_sim->findInstance))(ck,&type,devptr,name,NULL,NULL);
     if(err == OK)
     {
      *device_or_model=0;
@@ -586,7 +586,7 @@ finddev_special(
     }
     type = -1;
     *devptr = (void *)NULL;
-    err = (*(ft_sim->findModel))((void *)ck,&type,modptr,name);
+    err = (*(ft_sim->findModel))(ck,&type,modptr,name);
     if(err == OK)
     {
      *device_or_model=1;
@@ -871,11 +871,11 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val )
   /* see if any devices remaining that reference current model */
   if ( curMod->GENinstances == NULL ) {
     prevMod = NULL;
-    for( mods = ((CKTcircuit *)ckt)->CKThead[typecode]; mods != NULL; mods = mods->GENnextModel ) {
+    for( mods = ckt->CKThead[typecode]; mods != NULL; mods = mods->GENnextModel ) {
       if ( mods->GENmodName == curMod->GENmodName ) {
 
 	/* see if at beginning of linked list */
-	if ( prevMod == NULL ) ((CKTcircuit *)ckt)->CKThead[typecode] = mods->GENnextModel;
+	if ( prevMod == NULL ) ckt->CKThead[typecode] = mods->GENnextModel;
 	else 	               prevMod->GENnextModel                  = mods->GENnextModel;
 
 	INPgetMod( ckt, (char *)mods->GENmodName, &inpmod, (INPtables *)ft_curckt->ci_symtab );
@@ -1052,10 +1052,10 @@ doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
     /* fprintf(cp_err, "Calling doask(%d, %x, %x, %x)\n", 
             typecode, dev, mod, opt); */
     if (dev)
-        err = (*(ft_sim->askInstanceQuest))((void *)ckt, (void *)dev, 
+        err = (*(ft_sim->askInstanceQuest))(ckt, (void *)dev, 
                 opt->id, &pv, (IFvalue *)NULL);
     else
-        err = (*(ft_sim->askModelQuest))((void*)ckt, (void *) mod, 
+        err = (*(ft_sim->askModelQuest))(ckt, (void *) mod, 
                 opt->id, &pv, (IFvalue *)NULL);
     if (err != OK) {
         ft_sperror(err, "if_getparam");
@@ -1135,10 +1135,10 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
             typecode, dev, mod, opt); */
 
     if (dev)
-        err = (*(ft_sim->setInstanceParm))((void *)ckt, (void *)dev, 
+        err = (*(ft_sim->setInstanceParm))(ckt, (void *)dev, 
                 opt->id, &nval, (IFvalue *)NULL);
     else
-        err = (*(ft_sim->setModelParm))((void*)ckt, (void *) mod, 
+        err = (*(ft_sim->setModelParm))(ckt, (void *) mod, 
                 opt->id, &nval, (IFvalue *)NULL);
 
     return err;
@@ -1156,11 +1156,11 @@ finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr)
     int err;
     int type = -1;
 
-    err = (*(ft_sim->findInstance))((void *)ck,&type,devptr,name,NULL,NULL);
+    err = (*(ft_sim->findInstance))(ck,&type,devptr,name,NULL,NULL);
     if(err == OK) return(type);
     type = -1;
     *devptr = (void *)NULL;
-    err = (*(ft_sim->findModel))((void *)ck,&type,modptr,name);
+    err = (*(ft_sim->findModel))(ck,&type,modptr,name);
     if(err == OK) return(type);
     *modptr = (void *)NULL;
     return(-1);
@@ -1524,9 +1524,9 @@ do {\
 	fprintf(cp_err,"error in CKTnames\n");
 	return;
       }
-      (*(SPfrontEnd->IFnewUid))((void *)ckt,&timeUid,(IFuid)NULL,
+      (*(SPfrontEnd->IFnewUid))(ckt,&timeUid,(IFuid)NULL,
 				"time", UID_OTHER, (void **)NULL);
-      error = (*(SPfrontEnd->OUTpBeginPlot))((void *)ckt,
+      error = (*(SPfrontEnd->OUTpBeginPlot))(ckt,
 	     (void*)ckt->CKTcurJob,
 	     ckt->CKTcurJob->JOBname,timeUid,IF_REAL,numNames,nameList,
 	     IF_REAL,&(((TRANan*)ckt->CKTcurJob)->TRANplot));

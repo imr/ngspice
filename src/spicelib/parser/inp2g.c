@@ -11,7 +11,7 @@ Author: 1988 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
-void INP2G(void *ckt, INPtables * tab, card * current)
+void INP2G(CKTcircuit *ckt, INPtables * tab, card * current)
 {
 
 /* Gname <node> <node> <node> <node> <val> */

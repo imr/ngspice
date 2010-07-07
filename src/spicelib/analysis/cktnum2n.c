@@ -22,7 +22,7 @@ CKTnum2nod(CKTcircuit *ckt, int node)
 {
     CKTnode *here;
 
-    for (here = ((CKTcircuit *)ckt)->CKTnodes; here; here = here->next)  {
+    for (here = ckt->CKTnodes; here; here = here->next)  {
         if(here->number == node) {
             return(here);
         }

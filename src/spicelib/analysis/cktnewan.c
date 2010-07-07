@@ -16,7 +16,7 @@ extern SPICEanalysis *analInfo[];
 
 /* ARGSUSED */
 int
-CKTnewAnal(void *ckt, int type, IFuid name, void **analPtr, void *taskPtr)
+CKTnewAnal(CKTcircuit *ckt, int type, IFuid name, void **analPtr, void *taskPtr)
 {
     if(type==0) {
         /* special case for analysis type 0 == option card */

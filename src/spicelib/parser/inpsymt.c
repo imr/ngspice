@@ -43,7 +43,7 @@ INPtables *INPtabInit(int numlines)
 /* insert 'token' into the terminal symbol table */
 /* create a NEW NODE and return a pointer to it in *node */
 
-int INPtermInsert(void *ckt, char **token, INPtables * tab, void **node)
+int INPtermInsert(CKTcircuit *ckt, char **token, INPtables * tab, void **node)
 {
     int key;
     int error;
@@ -79,7 +79,7 @@ int INPtermInsert(void *ckt, char **token, INPtables * tab, void **node)
 /* USE node as the node pointer */
 
 
-int INPmkTerm(void *ckt, char **token, INPtables * tab, void **node)
+int INPmkTerm(CKTcircuit *ckt, char **token, INPtables * tab, void **node)
 {
     int key;
     struct INPnTab *t;
@@ -107,7 +107,7 @@ int INPmkTerm(void *ckt, char **token, INPtables * tab, void **node)
 
 /* insert 'token' into the terminal symbol table as a name for ground*/
 
-int INPgndInsert(void *ckt, char **token, INPtables * tab, void **node)
+int INPgndInsert(CKTcircuit *ckt, char **token, INPtables * tab, void **node)
 {
     int key;
     int error;

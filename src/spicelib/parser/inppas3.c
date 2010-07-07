@@ -21,7 +21,7 @@ extern IFsimulator *ft_sim;
  * warning.  */
 
 void
-INPpas3(void *ckt, card *data, INPtables *tab, void *task,
+INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, void *task,
 	IFparm *nodeParms, int numNodeParms)
 {
 

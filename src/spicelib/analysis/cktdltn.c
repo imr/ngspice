@@ -10,19 +10,19 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 #include "ifsim.h"
 #include "sperror.h"
 
-int CKTdltNNum(void *cktp, int num);
+int CKTdltNNum(CKTcircuit *cktp, int num);
 
 /* ARGSUSED */
 int
-CKTdltNod(void *ckt, void *node)
+CKTdltNod(CKTcircuit *ckt, void *node)
 {
     return CKTdltNNum(ckt, ((CKTnode *) node)->number);
 }
 
 int
-CKTdltNNum(void *cktp, int num)
+CKTdltNNum(CKTcircuit *cktp, int num)
 {
-    CKTcircuit *ckt = (CKTcircuit *) cktp;
+    CKTcircuit *ckt = /* fixme, drop that */  cktp;
     CKTnode *n, *prev, *node, *sprev;
     int	error;
 
@@ -51,7 +51,7 @@ CKTdltNNum(void *cktp, int num)
     if (node == ckt->CKTlastNode)
 	ckt->CKTlastNode = sprev;
 
-    error = (*(SPfrontEnd->IFdelUid))((void *)ckt,node->name, UID_SIGNAL);
+    error = (*(SPfrontEnd->IFdelUid))(ckt,node->name, UID_SIGNAL);
     tfree(node);
 
     return error;

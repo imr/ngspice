@@ -11,7 +11,7 @@ Author: 1988 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
-void INP2K(void *ckt, INPtables * tab, card * current)
+void INP2K(CKTcircuit *ckt, INPtables * tab, card * current)
 {
 
 /* Kname Lname Lname <val> */

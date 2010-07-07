@@ -10,7 +10,7 @@ Author: 1988 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
-void INP2C(void *ckt, INPtables * tab, card * current)
+void INP2C(CKTcircuit *ckt, INPtables * tab, card * current)
 {
 
 /* parse a capacitor card */

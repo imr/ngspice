@@ -16,9 +16,9 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTdltMod(void *cktp, void *modPtr)
+CKTdltMod(CKTcircuit *cktp, void *modPtr)
 {
-    CKTcircuit *ckt = (CKTcircuit *) cktp;
+    CKTcircuit *ckt = /* fixme, drop that */ cktp;
     GENmodel *m = (GENmodel *) modPtr, *mod, **prevp;
     GENinstance *h, *next_i;
     int	error;
@@ -34,11 +34,11 @@ CKTdltMod(void *cktp, void *modPtr)
 
     for (h = m->GENinstances; h; h = next_i) {
 	    next_i = h->GENnextInstance;
-	    error = (*(SPfrontEnd->IFdelUid))((void *)ckt,h->GENname,
+	    error = (*(SPfrontEnd->IFdelUid))(ckt,h->GENname,
 		    UID_INSTANCE);
 	    tfree(h);
     }
-    error = (*(SPfrontEnd->IFdelUid))((void *)ckt,m->GENmodName, UID_MODEL);
+    error = (*(SPfrontEnd->IFdelUid))(ckt,m->GENmodName, UID_MODEL);
     tfree(m);
     return(OK);
 }

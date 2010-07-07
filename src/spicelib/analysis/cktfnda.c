@@ -20,7 +20,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTfndAnal(void *ckt, int *analIndex, void **anal, IFuid name, void *inTask, IFuid taskName)
+CKTfndAnal(CKTcircuit *ckt, int *analIndex, void **anal, IFuid name, void *inTask, IFuid taskName)
 {
     TSKtask *task = (TSKtask *)inTask;
     JOB *here;

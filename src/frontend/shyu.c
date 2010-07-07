@@ -27,7 +27,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 int
 if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
 {
-    CKTcircuit *ckt = (CKTcircuit * /*fixme*/) t;
+    CKTcircuit *ckt = /* fixme, drop that */ t;
     void *senseJob;
     void *acJob;
     void *opJob;

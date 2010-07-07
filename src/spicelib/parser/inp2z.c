@@ -18,7 +18,7 @@ Author: 1988 Thomas L. Quarles
 #include "fteext.h"
 #include "inp.h"
 
-void INP2Z(void *ckt, INPtables * tab, card * current)
+void INP2Z(CKTcircuit *ckt, INPtables * tab, card * current)
 {
 
     /* Zname <node> <node> <node> <model> [<val>] [OFF] [IC=<val>,<val>] */

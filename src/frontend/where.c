@@ -26,7 +26,7 @@ com_where(wordlist *wl)
        fprintf(cp_err, "No unconverged node found.\n");
 	   return;
 	}
-	msg = (*ft_sim->nonconvErr)((void *) (ft_curckt->ci_ckt), 0);
+	msg = (*ft_sim->nonconvErr)(ft_curckt->ci_ckt, 0);
 
 	printf("%s", msg);
 

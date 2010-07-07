@@ -18,7 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTmodCrt(void *ckt, int type, void **modfast, IFuid name)
+CKTmodCrt(CKTcircuit *ckt, int type, void **modfast, IFuid name)
 {
     extern SPICEdev **DEVices;
     GENmodel *mymodfast = NULL;
@@ -30,8 +30,8 @@ CKTmodCrt(void *ckt, int type, void **modfast, IFuid name)
         if(mymodfast == (GENmodel *)NULL) return(E_NOMEM);
         mymodfast->GENmodType = type;
         mymodfast->GENmodName = name;
-        mymodfast->GENnextModel =(GENmodel *)((CKTcircuit *)ckt)->CKThead[type];
-        ((CKTcircuit *)ckt)->CKThead[type]=(GENmodel *)mymodfast;
+        mymodfast->GENnextModel =(GENmodel *)(ckt->CKThead[type]);
+        ckt->CKThead[type]=(GENmodel *)mymodfast;
         if(modfast) *modfast=(void *)mymodfast;
         return(OK);
     } else if (error==0) {

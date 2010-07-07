@@ -18,7 +18,7 @@ Author: 1985 Thomas L. Quarles
 
 /* ARGSUSED */
 int
-CKTsetNodPm(void *ckt, void *node, int parm, IFvalue *value, IFvalue *selector)
+CKTsetNodPm(CKTcircuit *ckt, void *node, int parm, IFvalue *value, IFvalue *selector)
 {
     if(!node) return(E_BADPARM);
     switch(parm) {
