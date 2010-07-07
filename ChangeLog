@@ -1,4 +1,14 @@
 2010-07-07  Robert Larice
+ * src/include/dllitf.h ,
+ * src/include/mifproto.h ,
+ * src/xspice/icm/dlmain.c ,
+ * src/xspice/mif/mif_inp2.c ,
+ * src/xspice/mif/mifgetmod.c ,
+ * src/xspice/mif/mifgetvalue.c :
+        the fourth of a series of four patches, which will change the code
+        to use the CKTcircuit type instead of the current mixed void*/char*
+
+2010-07-07  Robert Larice
  * src/main.c ,
  * src/ngnutmeg.c ,
  * src/ngspice.c ,

@@ -70,7 +70,7 @@ extern  int       DEVmaxnum;    /* size of DEVices array       */
 static void  MIFinit_inst(MIFmodel *mdfast, MIFinstance *fast);
 
 static void  MIFget_port_type(
-    void          *ckt,      /* circuit structure to put mod/inst structs in */
+    CKTcircuit       *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables        *tab,      /* symbol table for node names, etc.            */
     card             *current,  /* MUST be named 'current' for spice macros     */
     char             **line,
@@ -83,7 +83,7 @@ static void  MIFget_port_type(
 
 
 static void MIFget_port(
-    void          *ckt,      /* circuit structure to put mod/inst structs in */
+    CKTcircuit       *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables        *tab,      /* symbol table for node names, etc.            */
     card             *current,  /* MUST be named 'current' for spice macros     */
     MIFinstance      *fast,     /* pointer to instance struct */
@@ -149,7 +149,7 @@ and error checks are performed.
 
 void
 MIF_INP2A (
-void         *ckt,      /* circuit structure to put mod/inst structs in */
+CKTcircuit   *ckt,      /* circuit structure to put mod/inst structs in */
 INPtables    *tab,      /* symbol table for node names, etc.            */
 card         *current ) /* the card we are to parse                     */
                         /* Must be called "current" for compatibility   */
@@ -652,7 +652,7 @@ port type (i.e. the thing after vnam, v, vd, id, etc).
 
 static void
 MIFget_port_type(
-    void             *ckt,      /* circuit structure to put mod/inst structs in */
+    CKTcircuit       *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables        *tab,      /* symbol table for node names, etc.            */
     card             *current,  /* MUST be named 'current' for spice macros     */
     char             **line,
@@ -746,7 +746,7 @@ netname processed.
 
 static void
 MIFget_port(
-    void             *ckt,      /* circuit structure to put mod/inst structs in */
+    CKTcircuit       *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables        *tab,      /* symbol table for node names, etc.            */
     card             *current,  /* MUST be named 'current' for spice macros     */
     MIFinstance      *fast,     /* pointer to instance struct */

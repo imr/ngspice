@@ -82,7 +82,7 @@ CM_EXPORT void *CMgetCoreItfPtr(void) {
 // pointers in coreitf structure.
 //////////////////////////////////////////////////////////////////////////////
 void MIF_INP2A(
-    void      *ckt,      /* circuit structure to put mod/inst structs in */
+    CKTcircuit   *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables    *tab,      /* symbol table for node names, etc.            */
     card         *current   /* the card we are to parse                     */
 	) {
@@ -90,7 +90,7 @@ void MIF_INP2A(
 }
 
 char * MIFgetMod(
-    void   *ckt,
+    CKTcircuit *ckt,
     char      *name,
     INPmodel  **model,
     INPtables *tab 
@@ -99,7 +99,7 @@ char * MIFgetMod(
 }
 
 IFvalue * MIFgetValue(
-    void   *ckt,
+    CKTcircuit *ckt,
     char      **line,
     int       type,
     INPtables *tab,

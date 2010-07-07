@@ -84,7 +84,7 @@ the number of elements found.
 
 IFvalue *
 MIFgetValue (
-    void   *ckt,       /* The circuit structure */
+    CKTcircuit *ckt,       /* The circuit structure */
     char      **line,     /* The text line to read value from */
     int       type,       /* The type of data to read */
     INPtables *tab,       /* Unused */

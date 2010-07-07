@@ -51,14 +51,14 @@ NON-STANDARD FEATURES
 
 
 extern void MIF_INP2A(
-    void         *ckt,      /* circuit structure to put mod/inst structs in */
+    CKTcircuit   *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables    *tab,      /* symbol table for node names, etc.            */
     card         *current   /* the card we are to parse                     */
 );
 
 
 extern char * MIFgetMod(
-    void   *ckt,
+    CKTcircuit *ckt,
     char      *name,
     INPmodel  **model,
     INPtables *tab 
@@ -66,7 +66,7 @@ extern char * MIFgetMod(
 
 
 extern IFvalue * MIFgetValue(
-    void   *ckt,
+    CKTcircuit *ckt,
     char      **line,
     int       type,
     INPtables *tab,
