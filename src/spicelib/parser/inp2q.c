@@ -36,13 +36,13 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, void *gnode)
 #endif
     int error;                  /* error code temporary */
     int nodeflag;               /* flag indicating 4 or 5 nodes */
-    void *fast;                 /* pointer to the actual instance */
+    GENinstance *fast;          /* pointer to the actual instance */
     IFvalue ptemp;              /* a value structure to package resistance into */
     int waslead;                /* flag to indicate that funny unlabeled number was found */
     double leadval;             /* actual value of unlabeled number */
     char *model;                /* the name of the model */
     INPmodel *thismodel;        /* pointer to model description for user's model */
-    void *mdfast;               /* pointer to the actual model */
+    GENmodel *mdfast;           /* pointer to the actual model */
     IFuid uid;                  /* uid of default model */
 
 #ifdef TRACE

@@ -40,10 +40,10 @@ void *gnode1, *gnode2, *inode1, *inode2;
 int error;      /* error code temporary */
 int error1=0;   /* secondary error code temporary */
 INPmodel *thismodel;    /* pointer to model structure describing our model */
-void *mdfast;    /* pointer to the actual model */
-void *fast;  /* pointer to the actual instance */
-void *mdfast2, *mdfast3, *mdfast4, *mdfast5, *mdfast6;
-void *fast2, *fast3, *fast4, *fast5, *fast6;
+GENmodel *mdfast;    /* pointer to the actual model */
+GENinstance *fast;  /* pointer to the actual instance */
+GENmodel *mdfast2, *mdfast3, *mdfast4, *mdfast5, *mdfast6;
+GENinstance *fast2, *fast3, *fast4, *fast5, *fast6;
 IFuid uid;      /* uid for default model */
 GENinstance *txl;
 IFvalue ptemp;  /* a value structure to package into */

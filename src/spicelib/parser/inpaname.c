@@ -21,7 +21,7 @@ Author: 1985 Thomas L. Quarles
 
 int
 INPaName(char *parm, IFvalue * val, CKTcircuit *ckt, int *dev, char *devnam,
-	 void **fast, IFsimulator * sim, int *dataType, IFvalue * selector)
+	 GENinstance **fast, IFsimulator * sim, int *dataType, IFvalue * selector)
 		    /* the name of the parameter to set */
 		    /* the parameter union containing the value to set */
 		    /* the circuit this device is a member of */

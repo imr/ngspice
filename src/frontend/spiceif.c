@@ -618,7 +618,7 @@ spif_getparam_special(CKTcircuit *ckt,char **name,char *param,int ind,int do_mod
     if (!param || (param && eq(param, "all")))
      {
         INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
-        typecode = finddev_special(ckt, *name, (void**)&dev, (void**)&mod,&modelo_dispositivo);
+        typecode = finddev_special(ckt, *name, &dev, &mod, &modelo_dispositivo);
         if (typecode == -1)
         {
             fprintf(cp_err,"Error: no such device or model name %s\n",*name);
@@ -710,7 +710,7 @@ spif_getparam_special(CKTcircuit *ckt,char **name,char *param,int ind,int do_mod
     else if (param)
     {
         INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
-        typecode = finddev_special(ckt, *name, (void**)&dev, (void**)&mod,&modelo_dispositivo);
+        typecode = finddev_special(ckt, *name, &dev, &mod, &modelo_dispositivo);
         if (typecode == -1)
         {
             fprintf(cp_err,"Error: no such device or model name %s\n",*name);
@@ -756,7 +756,7 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
     	/* MW. My "special routine here" */
         INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
         
-        typecode = finddev(ckt, *name,(void**) &dev,(void **) &mod);
+        typecode = finddev(ckt, *name, &dev, &mod);
         if (typecode == -1) {
             fprintf(cp_err,
                 "Error: no such device or model name %s\n",
@@ -786,7 +786,7 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
     
     	/* MW.  */
         INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
-        typecode = finddev(ckt, *name, (void**)&dev, (void **)&mod);
+        typecode = finddev(ckt, *name, &dev, &mod);
         if (typecode == -1) {
             fprintf(cp_err,
                 "Error: no such device or model name %s\n",
@@ -824,7 +824,7 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val )
   /* retrieve device name from symbol table */
   INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
   /* find the specified device */
-  typecode = finddev(ckt, *name, (void**)&dev, (void **)&curMod);
+  typecode = finddev(ckt, *name, &dev, &curMod);
   if (typecode == -1) {
     fprintf(cp_err, "Error: no such device or model name %s\n", *name);
     return;
@@ -900,7 +900,7 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
 
 	/* PN  */
     INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
-    typecode = finddev(ckt, *name, (void**)&dev, (void **)&mod);
+    typecode = finddev(ckt, *name, &dev, &mod);
     if (typecode == -1) {
 	fprintf(cp_err, "Error: no such device or model name %s\n", *name);
 	return;
@@ -1052,10 +1052,10 @@ doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
     /* fprintf(cp_err, "Calling doask(%d, %x, %x, %x)\n", 
             typecode, dev, mod, opt); */
     if (dev)
-        err = (*(ft_sim->askInstanceQuest))(ckt, (void *)dev, 
+        err = (*(ft_sim->askInstanceQuest))(ckt, dev, 
                 opt->id, &pv, (IFvalue *)NULL);
     else
-        err = (*(ft_sim->askModelQuest))(ckt, (void *) mod, 
+        err = (*(ft_sim->askModelQuest))(ckt, mod, 
                 opt->id, &pv, (IFvalue *)NULL);
     if (err != OK) {
         ft_sperror(err, "if_getparam");
@@ -1135,10 +1135,10 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
             typecode, dev, mod, opt); */
 
     if (dev)
-        err = (*(ft_sim->setInstanceParm))(ckt, (void *)dev, 
+        err = (*(ft_sim->setInstanceParm))(ckt, dev, 
                 opt->id, &nval, (IFvalue *)NULL);
     else
-        err = (*(ft_sim->setModelParm))(ckt, (void *) mod, 
+        err = (*(ft_sim->setModelParm))(ckt, mod, 
                 opt->id, &nval, (IFvalue *)NULL);
 
     return err;

@@ -26,13 +26,13 @@ void INP2J(CKTcircuit *ckt, INPtables * tab, card * current)
     void *node2;		/* the second node's node pointer */
     void *node3;		/* the third node's node pointer */
     int error;			/* error code temporary */
-    void *fast;			/* pointer to the actual instance */
+    GENinstance *fast;		/* pointer to the actual instance */
     IFvalue ptemp;		/* a value structure to package resistance into */
     int waslead;		/* flag to indicate that funny unlabeled number was found */
     double leadval;		/* actual value of unlabeled number */
     char *model;		/* the name of the model */
     INPmodel *thismodel;	/* pointer to model description for user's model */
-    void *mdfast;		/* pointer to the actual model */
+    GENmodel *mdfast;		/* pointer to the actual model */
     IFuid uid;			/* uid of default model */
 
     line = current->line;

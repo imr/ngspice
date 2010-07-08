@@ -29,12 +29,12 @@ void INP2O(CKTcircuit *ckt, INPtables * tab, card * current)
     void *node3;		/* the third node's node pointer */
     void *node4;		/* the fourth node's node pointer */
     int error;			/* error code temporary */
-    void *fast;			/* pointer to the actual instance */
+    GENinstance *fast;		/* pointer to the actual instance */
     int waslead;		/* flag to indicate that funny unlabeled number was found */
     double leadval;		/* actual value of unlabeled number */
     char *model;		/* the name of the model */
     INPmodel *thismodel;	/* pointer to model description for user's model */
-    void *mdfast;		/* pointer to the actual model */
+    GENmodel *mdfast;		/* pointer to the actual model */
     IFuid uid;			/* uid for default model */
 
 

@@ -41,7 +41,7 @@ void INP2N(CKTcircuit *ckt, INPtables * tab, card * current)
     int i;            
     INPmodel *thismodel;	/* pointer to model structure describing our model */
     void *mdfast = NULL;	/* pointer to the actual model */
-    void *fast;			/* pointer to the actual instance */
+    GENinstance *fast;		/* pointer to the actual instance */
     NDEVinstance *pinst;
     IFvalue ptemp;		/* a value structure to package resistance into */
     int waslead;		/* flag to indicate that funny unlabeled number was found */

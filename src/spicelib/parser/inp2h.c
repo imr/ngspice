@@ -24,7 +24,7 @@ void INP2H(CKTcircuit *ckt, INPtables * tab, card * current)
     void *node1;		/* the first node's node pointer */
     void *node2;		/* the second node's node pointer */
     int error;			/* error code temporary */
-    void *fast;			/* pointer to the actual instance */
+    GENinstance *fast;		/* pointer to the actual instance */
     IFvalue ptemp;		/* a value structure to package resistance into */
     IFvalue *parm;		/* pointer to a value structure for functions which return one */
     int waslead;		/* flag to indicate that funny unlabeled number was found */

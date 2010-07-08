@@ -32,8 +32,8 @@ void INP2S(CKTcircuit *ckt, INPtables * tab, card * current)
     void *node4;		/* the fourth node's node pointer */
     int error;			/* error code temporary */
     INPmodel *thismodel;	/* pointer to model structure describing our model */
-    void *mdfast;		/* pointer to the actual model */
-    void *fast;			/* pointer to the actual instance */
+    GENmodel *mdfast;		/* pointer to the actual model */
+    GENinstance *fast;		/* pointer to the actual instance */
     int waslead;		/* flag to indicate that funny unlabeled number was found */
     double leadval;		/* actual value of unlabeled number */
     IFuid uid;			/* uid of default model */

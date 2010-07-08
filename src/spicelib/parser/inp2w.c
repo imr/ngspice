@@ -28,8 +28,8 @@ void INP2W(CKTcircuit *ckt, INPtables * tab, card * current)
     void *node2;		/* the second node's node pointer */
     int error;			/* error code temporary */
     INPmodel *thismodel;	/* pointer to model structure describing our model */
-    void *mdfast;		/* pointer to the actual model */
-    void *fast;			/* pointer to the actual instance */
+    GENmodel *mdfast;		/* pointer to the actual model */
+    GENinstance *fast;		/* pointer to the actual instance */
     IFvalue ptemp;		/* a value structure to package resistance into */
     IFvalue *parm;		/* pointer to a value structure for functions to return */
     int waslead;		/* flag to indicate that funny unlabeled number was found */

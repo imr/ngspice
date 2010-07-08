@@ -367,24 +367,24 @@ struct IFsimulator {
     int (*deleteNode) (CKTcircuit *, void *);
                                     /* delete a node from the circuit */
 
-    int (*newInstance) (CKTcircuit *, void *, void **, IFuid);
+    int (*newInstance) (CKTcircuit *, GENmodel *, GENinstance **, IFuid);
                                     /* create new instance */
     int (*setInstanceParm) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on an instance */
-    int (*askInstanceQuest) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
+    int (*askInstanceQuest) (CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
                                     /* ask a question about an instance */
-    int (*findInstance) (CKTcircuit *, int *, void **, IFuid, void *, IFuid);
+    int (*findInstance) (CKTcircuit *, int *, GENinstance **, IFuid, GENmodel *, IFuid);
                                     /* find a specific instance */
     int (*deleteInstance) (CKTcircuit *, void *);
                                     /* delete an instance from the circuit */
 
-    int (*newModel) (CKTcircuit *, int, void **, IFuid);
+    int (*newModel) (CKTcircuit *, int, GENmodel **, IFuid);
                                     /* create new model */
-    int (*setModelParm) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
+    int (*setModelParm) (CKTcircuit *, GENmodel *, int, IFvalue *, IFvalue *);
                                     /* set a parameter on a model */
-    int (*askModelQuest) (CKTcircuit *, void *, int, IFvalue *, IFvalue *);
+    int (*askModelQuest) (CKTcircuit *, GENmodel *, int, IFvalue *, IFvalue *);
                                     /* ask a questions about a model */
-    int (*findModel) (CKTcircuit *, int *, void **, IFuid);
+    int (*findModel) (CKTcircuit *, int *, GENmodel **, IFuid);
                                     /* find a specific model */
     int (*deleteModel) (CKTcircuit *, void *);
                                     /* delete a model from the circuit*/

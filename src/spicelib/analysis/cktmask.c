@@ -20,7 +20,7 @@ extern SPICEdev **DEVices;
 
 /* ARGSUSED */
 int
-CKTmodAsk(CKTcircuit *ckt, void *modfast, int which, IFvalue *value, IFvalue *selector)
+CKTmodAsk(CKTcircuit *ckt, GENmodel *modfast, int which, IFvalue *value, IFvalue *selector)
 {
     int type = ((GENmodel *)modfast)->GENmodType;
     if((*DEVices[type]).DEVmodAsk) {

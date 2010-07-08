@@ -47,7 +47,7 @@ int INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, void *task, void *gn
 /* inpxxxx.c */
 
 int INPaName(char *parm, IFvalue *val, CKTcircuit *ckt, int *dev, char *devnam, 
-	     void **fast, IFsimulator *sim, int *dataType, IFvalue *selector);
+	     GENinstance **fast, IFsimulator *sim, int *dataType, IFvalue *selector);
 int INPapName(CKTcircuit *ckt, int type, void *analPtr, char *parmname, IFvalue *value);
 void INPcaseFix(register char *string);
 char * INPdomodel(CKTcircuit *ckt, card *image, INPtables *tab);
@@ -72,7 +72,7 @@ int INPmakeMod(char *token, int type, card *line);
 char * INPmkTemp(char *string);
 void INPpas1(CKTcircuit *ckt, card *deck, INPtables *tab);
 void INPpas2(CKTcircuit *ckt, card *data, INPtables *tab, void *task);
-int INPpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, void *fast);
+int INPpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, GENinstance *fast);
 
 /* inpptree.c */
 

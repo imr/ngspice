@@ -13,13 +13,13 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTfndMod(CKTcircuit *ckt, int *type, void **modfast, IFuid modname)
+CKTfndMod(CKTcircuit *ckt, int *type, GENmodel **modfast, IFuid modname)
 {
     GENmodel *mods;
 
-    if(modfast != NULL && *(GENmodel **)modfast != NULL) {
+    if(modfast != NULL && *modfast != NULL) {
         /* already have  modfast, so nothing to do */
-        if(type) *type = (*(GENmodel **)modfast)->GENmodType;
+        if(type) *type = (*modfast)->GENmodType;
         return(OK);
     } 
     if(*type >=0 && *type < DEVmaxnum) {
@@ -28,7 +28,7 @@ CKTfndMod(CKTcircuit *ckt, int *type, void **modfast, IFuid modname)
         for(mods=ckt->CKThead[*type]; mods != NULL ; 
                 mods = mods->GENnextModel) {
             if(mods->GENmodName == modname) {
-                *modfast = (char *)mods;
+                *modfast = mods;
                 return(OK);
             }
         }
@@ -41,7 +41,7 @@ CKTfndMod(CKTcircuit *ckt, int *type, void **modfast, IFuid modname)
             for(mods=ckt->CKThead[*type];mods!=NULL;
                     mods = mods->GENnextModel) {
                 if(mods->GENmodName == modname) {
-                    *modfast = (char *)mods;
+                    *modfast = mods;
                     return(OK);
                 }
             }

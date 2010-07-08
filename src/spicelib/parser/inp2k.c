@@ -20,7 +20,7 @@ void INP2K(CKTcircuit *ckt, INPtables * tab, card * current)
     char *line;			/* the part of the current line left to parse */
     char *name;			/* the resistor's name */
     int error;			/* error code temporary */
-    void *fast;			/* pointer to the actual instance */
+    GENinstance *fast;		/* pointer to the actual instance */
     IFvalue ptemp;		/* a value structure to package resistance into */
     IFvalue *parm;		/* ptr to a value structure for function return values */
     int waslead;		/* flag to indicate that funny unlabeled number was found */

@@ -15,7 +15,7 @@ typedef struct dataDesc {
     char *specParamName;    /* The parameter name if special. */
     int specIndex;      /* For sensitivity, if special. */
     int specType;
-    void *specFast;
+    GENinstance *specFast;
     int refIndex;       /* The index of our ref vector. */
     struct dvec *vec;
 } dataDesc;

@@ -37,7 +37,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     int code;
     int step;
     IFuid freqUid;
-    char *inst;  
+    GENinstance *inst;  
     double freqTol; /* tolerence parameter for finding final frequency; hack */
 
     NOISEAN *job = (NOISEAN*) (ckt->CKTcurJob);
@@ -50,8 +50,8 @@ NOISEan (CKTcircuit *ckt, int restart)
     inst = NULL;
     code = CKTtypelook("Vsource");
     if (code != -1) {
-        error = CKTfndDev(ckt,&code,(void **)&inst,
-                job->input, (void *)NULL, (IFuid)NULL);
+        error = CKTfndDev(ckt, &code, &inst,
+                job->input, (GENmodel *)NULL, (IFuid)NULL);
 	if (!error && !((VSRCinstance *)inst)->VSRCacGiven) {
 	    errMsg = (char*) MALLOC(strlen(noacinput)+1);
 	    strcpy(errMsg,noacinput);
@@ -61,8 +61,8 @@ NOISEan (CKTcircuit *ckt, int restart)
 
     code = CKTtypelook("Isource");
     if (code != -1 && inst==NULL) {
-        error = CKTfndDev(ckt,&code, (void **)&inst,
-                job->input, (void *)NULL,(IFuid)NULL);
+        error = CKTfndDev(ckt, &code, &inst,
+                job->input, (GENmodel *)NULL, (IFuid)NULL);
         if (error) {
 	    /* XXX ??? */
             (*(SPfrontEnd->IFerror))(ERR_WARNING,

@@ -30,8 +30,8 @@ void INP2C(CKTcircuit *ckt, INPtables * tab, card * current)
     int error;           /* error code temporary */
     int error1;          /* secondary error code temporary */
     INPmodel *thismodel; /* pointer to model structure describing our model */
-    void *mdfast = NULL; /* pointer to the actual model */
-    void *fast;          /* pointer to the actual instance */
+    GENmodel *mdfast = NULL; /* pointer to the actual model */
+    GENinstance *fast;   /* pointer to the actual instance */
     IFvalue ptemp;       /* a value structure to package resistance into */
     int waslead;         /* flag to indicate that funny unlabeled number was found */
     double leadval;      /* actual value of unlabeled number */

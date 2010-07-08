@@ -17,7 +17,7 @@ Author: 1985 Thomas L. Quarles
 #include "iferrmsg.h"
 #include "inp.h"
 
-int INPpName(char *parm, IFvalue * val, CKTcircuit *ckt, int dev, void *fast)
+int INPpName(char *parm, IFvalue * val, CKTcircuit *ckt, int dev, GENinstance *fast)
 		    /* the name of the parameter to set */
 		    /* the parameter union containing the value to set */
 		    /* the circuit this device is a member of */

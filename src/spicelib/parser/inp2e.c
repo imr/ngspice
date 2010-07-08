@@ -28,7 +28,7 @@ void INP2E(CKTcircuit *ckt, INPtables * tab, card * current)
     void *node3;		/* the third node's node pointer */
     void *node4;		/* the fourth node's node pointer */
     int error;			/* error code temporary */
-    void *fast;			/* pointer to the actual instance */
+    GENinstance *fast;		/* pointer to the actual instance */
     IFvalue ptemp;		/* a value structure to package resistance into */
     int waslead;		/* flag to indicate that funny unlabeled number was found */
     double leadval;		/* actual value of unlabeled number */

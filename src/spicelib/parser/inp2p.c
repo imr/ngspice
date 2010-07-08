@@ -33,8 +33,8 @@ void *groundnode;
 int error;      /* error code temporary */
 int error1=0;   /* secondary error code temporary */
 INPmodel *thismodel;    /* pointer to model structure describing our model */
-void *mdfast;    /* pointer to the actual model */
-void *fast;  /* pointer to the actual instance */
+GENmodel *mdfast;    /* pointer to the actual model */
+GENinstance *fast;  /* pointer to the actual instance */
 IFvalue ptemp;  /* a value structure to package cpl into */
 IFuid uid;      /* uid for default model */
 double lenval = 0;

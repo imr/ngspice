@@ -1255,10 +1255,10 @@ int get_mod_param TCL_CMDPROCARGS(clientData,interp,argc,argv) {
       found=TRUE;
     } else if (strcmp(paramname,opt->keyword)==0) {
       if (devptr)
-        err = (*(ft_sim->askInstanceQuest))(ft_curckt->ci_ckt, devptr, 
+        err = (*(ft_sim->askInstanceQuest))(ft_curckt->ci_ckt, (GENinstance*) devptr, 
                 opt->id, &pv, (IFvalue *)NULL);
       else
-        err = (*(ft_sim->askModelQuest))(ft_curckt->ci_ckt, modptr, 
+        err = (*(ft_sim->askModelQuest))(ft_curckt->ci_ckt, (GENmodel*) modptr, 
                 opt->id, &pv, (IFvalue *)NULL);
       if (err==OK) {
       	sprintf(buf,"%g",pv.rValue); /* dataType is here always real */

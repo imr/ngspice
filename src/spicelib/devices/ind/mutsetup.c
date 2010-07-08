@@ -41,8 +41,8 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 return(E_INTERN);
             }
 
-            error = CKTfndDev(ckt,&ktype,(void **)&(here->MUTind1),
-                    here->MUTindName1, (void *)NULL,(char *)NULL);
+            error = CKTfndDev(ckt,&ktype,(GENinstance **)&(here->MUTind1),
+                              here->MUTindName1, (GENmodel *)NULL, (char *)NULL);
             if(error && error!= E_NODEV && error != E_NOMOD) return(error);
             if(error) {
                 IFuid namarray[2];
@@ -52,8 +52,8 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     "%s: coupling to non-existant inductor %s.",
                     namarray);
             }
-            error = CKTfndDev(ckt,&ktype,(void **)&(here->MUTind2),
-                    here->MUTindName2,(void *)NULL,(char *)NULL);
+            error = CKTfndDev(ckt,&ktype,(GENinstance **)&(here->MUTind2),
+                    here->MUTindName2, (GENmodel *)NULL, (char *)NULL);
             if(error && error!= E_NODEV && error != E_NOMOD) return(error);
             if(error) {
                 IFuid namarray[2];

@@ -18,13 +18,13 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTmodCrt(CKTcircuit *ckt, int type, void **modfast, IFuid name)
+CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
 {
     extern SPICEdev **DEVices;
     GENmodel *mymodfast = NULL;
     int error;
 
-    error = CKTfndMod(ckt,&type,(void**)&mymodfast,name);
+    error = CKTfndMod(ckt, &type, &mymodfast, name);
     if(error == E_NOMOD) {
         mymodfast = (GENmodel *)MALLOC(*(DEVices[type]->DEVmodSize));
         if(mymodfast == (GENmodel *)NULL) return(E_NOMEM);
@@ -32,10 +32,10 @@ CKTmodCrt(CKTcircuit *ckt, int type, void **modfast, IFuid name)
         mymodfast->GENmodName = name;
         mymodfast->GENnextModel =(GENmodel *)(ckt->CKThead[type]);
         ckt->CKThead[type]=(GENmodel *)mymodfast;
-        if(modfast) *modfast=(void *)mymodfast;
+        if(modfast) *modfast=mymodfast;
         return(OK);
     } else if (error==0) {
-        if(modfast) *modfast=(void *)mymodfast;
+        if(modfast) *modfast=mymodfast;
         return(E_EXISTS);
     } else {
         return(error);

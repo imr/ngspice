@@ -34,31 +34,31 @@ struct INPtables{
     struct INPnTab **INPtermsymtab;
     int INPsize;
     int INPtermsize;
-    void *defAmod;
-    void *defBmod;
-    void *defCmod;
-    void *defDmod;
-    void *defEmod;
-    void *defFmod;
-    void *defGmod;
-    void *defHmod;
-    void *defImod;
-    void *defJmod;
-    void *defKmod;
-    void *defLmod;
-    void *defMmod;
-    void *defNmod;
-    void *defOmod;
-    void *defPmod;
-    void *defQmod;
-    void *defRmod;
-    void *defSmod;
-    void *defTmod;
-    void *defUmod;
-    void *defVmod;
-    void *defWmod;
-    void *defYmod;
-    void *defZmod;
+    GENmodel *defAmod;
+    GENmodel *defBmod;
+    GENmodel *defCmod;
+    GENmodel *defDmod;
+    GENmodel *defEmod;
+    GENmodel *defFmod;
+    GENmodel *defGmod;
+    GENmodel *defHmod;
+    GENmodel *defImod;
+    GENmodel *defJmod;
+    GENmodel *defKmod;
+    GENmodel *defLmod;
+    GENmodel *defMmod;
+    GENmodel *defNmod;
+    GENmodel *defOmod;
+    GENmodel *defPmod;
+    GENmodel *defQmod;
+    GENmodel *defRmod;
+    GENmodel *defSmod;
+    GENmodel *defTmod;
+    GENmodel *defUmod;
+    GENmodel *defVmod;
+    GENmodel *defWmod;
+    GENmodel *defYmod;
+    GENmodel *defZmod;
 };
 
 struct card{
@@ -77,7 +77,7 @@ struct INPmodel{
     INPmodel *INPnextModel;  /* link to next model */
     int INPmodUsed;     /* flag to indicate it has already been used */
     card *INPmodLine;   /* pointer to line describing model */
-    void *INPmodfast;   /* high speed pointer to model for access */
+    GENmodel *INPmodfast;   /* high speed pointer to model for access */
 };
 
 
@@ -88,7 +88,7 @@ struct INPmodel{
 
 int IFnewUid(CKTcircuit *, IFuid *, IFuid, char *, int, void **);
 int IFdelUid(CKTcircuit *, IFuid, int);
-int INPaName(char *, IFvalue *, CKTcircuit *, int *, char *, void **, IFsimulator *, int *,
+int INPaName(char *, IFvalue *, CKTcircuit *, int *, char *, GENinstance **, IFsimulator *, int *,
         IFvalue *);
 int INPapName(CKTcircuit *, int, void *, char *, IFvalue *);
 void INPcaseFix(char *);
@@ -116,7 +116,7 @@ char *INPmkTemp(char *);
 void INPpas1(CKTcircuit *, card *, INPtables *);
 void INPpas2(CKTcircuit *, card *, INPtables *, void *);
 void INPpas3(CKTcircuit *, card *, INPtables *, void *, IFparm *, int);
-int INPpName(char *, IFvalue *, CKTcircuit *, int, void *);
+int INPpName(char *, IFvalue *, CKTcircuit *, int, GENinstance *);
 int INPtermInsert(CKTcircuit *, char **, INPtables *, void **);
 int INPmkTerm(CKTcircuit *, char **, INPtables *, void **);
 int INPtypelook(char *);

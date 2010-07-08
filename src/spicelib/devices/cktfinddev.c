@@ -10,28 +10,28 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTfndDev(CKTcircuit *Ckt, int *type, void **fast, IFuid name, void *modfast, IFuid modname)
+CKTfndDev(CKTcircuit *Ckt, int *type, GENinstance **fast, IFuid name, GENmodel *modfast, IFuid modname)
 {
     CKTcircuit *ckt= /* fixme, drop that */ Ckt;
    GENinstance *here;
    GENmodel *mods;
 
-   if((GENinstance **)fast != (GENinstance **)NULL && 
-      *(GENinstance **)fast != (GENinstance *)NULL) 
+   if(fast != NULL && 
+      *fast != NULL) 
    {
    /* already have fast, so nothing much to do just get & set type */
       if (type)
-         *type = (*((GENinstance**)fast))->GENmodPtr->GENmodType;
+         *type = (*fast)->GENmodPtr->GENmodType;
       return(OK);
    }
 
    if(modfast) {
       /* have model, just need device */
-      mods = (GENmodel*)modfast;
+      mods = modfast;
       for (here = mods->GENinstances; here != NULL; here = here->GENnextInstance) {
          if (here->GENname == name) {
             if (fast != NULL)
-               *(GENinstance **)fast = here;
+               *fast = here;
 
             if (type)
                *type = mods->GENmodType;
@@ -57,7 +57,7 @@ CKTfndDev(CKTcircuit *Ckt, int *type, void **fast, IFuid name, void *modfast, IF
             {
                if (here->GENname == name) {
                   if (fast != 0)
-                     *(GENinstance **)fast = here;
+                     *fast = here;
                   return OK;
                }
             }
@@ -83,7 +83,7 @@ CKTfndDev(CKTcircuit *Ckt, int *type, void **fast, IFuid name, void *modfast, IF
                {
                   if (here->GENname == name) {
                      if(fast != 0)
-                        *(GENinstance **)fast = here;
+                        *fast = here;
                      return OK;
                   }
                }

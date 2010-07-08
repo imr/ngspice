@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTask(CKTcircuit *ckt, void *fast, int which, IFvalue *value, IFvalue *selector)
+CKTask(CKTcircuit *ckt, GENinstance *fast, int which, IFvalue *value, IFvalue *selector)
 {
     GENinstance *instance = (GENinstance *) fast;
     int type = instance->GENmodPtr->GENmodType;

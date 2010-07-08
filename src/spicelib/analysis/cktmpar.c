@@ -21,13 +21,13 @@ extern SPICEdev **DEVices;
 
 /* ARGSUSED */
 int
-CKTmodParam(CKTcircuit *ckt, void *modfast, int param, IFvalue *val, IFvalue *selector)
+CKTmodParam(CKTcircuit *ckt, GENmodel *modfast, int param, IFvalue *val, IFvalue *selector)
 {
-    int type = ((GENmodel *)modfast)->GENmodType;
+    int type = modfast->GENmodType;
 
     if (((*DEVices[type]).DEVmodParam)) {
         return(((*((*DEVices[type]).DEVmodParam)) (param,val,
-                (GENmodel *)modfast)));
+                modfast)));
     } else {
         return(E_BADPARM);
     }

@@ -36,7 +36,7 @@ CKTpModName(char *parm, IFvalue *val, CKTcircuit *ckt, int type, IFuid name, GEN
 
     for(i=0;i<(*(*DEVices[type]).DEVpublic.numModelParms);i++) {
         if(strcmp(parm,((*DEVices[type]).DEVpublic.modelParms[i].keyword))==0){
-            error = CKTmodParam(ckt,(void *)*modfast,
+            error = CKTmodParam(ckt, *modfast,
                     (*DEVices[type]).DEVpublic.modelParms[i].id,val,
                     (IFvalue*)NULL);
             if(error) return(error);

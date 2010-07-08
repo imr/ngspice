@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 #include "memory.h"
 
 int
-CKTcrtElt(CKTcircuit *ckt, void *inModPtr, void **inInstPtr, IFuid name)
+CKTcrtElt(CKTcircuit *ckt, GENmodel *inModPtr, GENinstance **inInstPtr, IFuid name)
 {
   GENinstance *instPtr = NULL;             /* instPtr points to the data struct for per-instance data */
   GENmodel *modPtr = (GENmodel*)inModPtr;  /* modPtr points to the data struct for per-model data */
@@ -32,11 +32,11 @@ CKTcrtElt(CKTcircuit *ckt, void *inModPtr, void **inInstPtr, IFuid name)
 
     type = ((GENmodel*)modPtr)->GENmodType; 
 
-    error = CKTfndDev(ckt, &type, (void**)&instPtr, name, inModPtr,
+    error = CKTfndDev(ckt, &type, &instPtr, name, inModPtr,
 		      (char *)NULL );
     if (error == OK) { 
         if (inInstPtr)
-	    *inInstPtr=(void *)instPtr;
+	    *inInstPtr = instPtr;
         return E_EXISTS;
     } else if (error != E_NODEV)
 	return error;
@@ -59,7 +59,7 @@ CKTcrtElt(CKTcircuit *ckt, void *inModPtr, void **inInstPtr, IFuid name)
     modPtr->GENinstances = instPtr;
 
     if(inInstPtr != NULL)
-	*inInstPtr = (void *)instPtr;
+	*inInstPtr = instPtr;
 
     return OK;
 }
