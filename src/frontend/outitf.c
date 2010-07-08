@@ -426,7 +426,7 @@ addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
     unique = copy(devname);
     
     /* MW. My "special" routine here */
-    INPinsertNofree(&unique, (INPtables *) ft_curckt->ci_symtab);
+    INPinsertNofree(&unique, ft_curckt->ci_symtab);
     data->specName = unique;
 
     data->specParamName = copy(param);

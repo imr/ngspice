@@ -161,7 +161,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
     ft_curckt->ci_curTask = ft_curckt->ci_defTask;
     
-    INPpas1( ckt, (card *) deck->li_next,(INPtables *)*tab);
+    INPpas1( ckt, (card *) deck->li_next, *tab);
     INPpas2( ckt, (card *) deck->li_next,
             (INPtables *) *tab,ft_curckt->ci_defTask);
     INPkillMods();
@@ -617,7 +617,7 @@ spif_getparam_special(CKTcircuit *ckt,char **name,char *param,int ind,int do_mod
 
     if (!param || (param && eq(param, "all")))
      {
-        INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
+        INPretrieve(name, ft_curckt->ci_symtab);
         typecode = finddev_special(ckt, *name, &dev, &mod, &modelo_dispositivo);
         if (typecode == -1)
         {
@@ -709,7 +709,7 @@ spif_getparam_special(CKTcircuit *ckt,char **name,char *param,int ind,int do_mod
     }
     else if (param)
     {
-        INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
+        INPretrieve(name, ft_curckt->ci_symtab);
         typecode = finddev_special(ckt, *name, &dev, &mod, &modelo_dispositivo);
         if (typecode == -1)
         {
@@ -754,7 +754,7 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
     if (param && eq(param, "all")) {
     
     	/* MW. My "special routine here" */
-        INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
+        INPretrieve(name, ft_curckt->ci_symtab);
         
         typecode = finddev(ckt, *name, &dev, &mod);
         if (typecode == -1) {
@@ -785,7 +785,7 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
     } else if (param) {
     
     	/* MW.  */
-        INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
+        INPretrieve(name, ft_curckt->ci_symtab);
         typecode = finddev(ckt, *name, &dev, &mod);
         if (typecode == -1) {
             fprintf(cp_err,
@@ -822,7 +822,7 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val )
   int         typecode;
 
   /* retrieve device name from symbol table */
-  INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
+  INPretrieve(name, ft_curckt->ci_symtab);
   /* find the specified device */
   typecode = finddev(ckt, *name, &dev, &curMod);
   if (typecode == -1) {
@@ -834,7 +834,7 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val )
      retrieve the model from the global model table; also add the model to 'ckt'
      and indicate model is being used
   */
-  INPgetMod( ckt, val, &inpmod, (INPtables *)ft_curckt->ci_symtab );
+  INPgetMod( ckt, val, &inpmod, ft_curckt->ci_symtab );
   if ( inpmod == NULL ) {
     fprintf(cp_err, "Error: no such model %s.\n", val);
     return;
@@ -878,7 +878,7 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val )
 	if ( prevMod == NULL ) ckt->CKThead[typecode] = mods->GENnextModel;
 	else 	               prevMod->GENnextModel                  = mods->GENnextModel;
 
-	INPgetMod( ckt, (char *)mods->GENmodName, &inpmod, (INPtables *)ft_curckt->ci_symtab );
+	INPgetMod( ckt, (char *)mods->GENmodName, &inpmod, ft_curckt->ci_symtab );
 	inpmod->INPmodUsed = 0;
 	FREE(mods);
 
@@ -899,7 +899,7 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
     int typecode;
 
 	/* PN  */
-    INPretrieve(name,(INPtables *)ft_curckt->ci_symtab);
+    INPretrieve(name, ft_curckt->ci_symtab);
     typecode = finddev(ckt, *name, &dev, &mod);
     if (typecode == -1) {
 	fprintf(cp_err, "Error: no such device or model name %s\n", *name);

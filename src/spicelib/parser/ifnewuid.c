@@ -55,7 +55,7 @@ IFnewUid(CKTcircuit *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
     case UID_INSTANCE:
     case UID_OTHER:
     case UID_MODEL:
-	error = INPinsert(&newname, (INPtables *) ft_curckt->ci_symtab);
+	error = INPinsert(&newname, ft_curckt->ci_symtab);
 	if (error && error != E_EXISTS)
 	    return (error);
 	*newuid = (IFuid) newname;
@@ -85,13 +85,13 @@ int IFdelUid(CKTcircuit *ckt, IFuid uid, int type)
     case UID_INSTANCE:
     case UID_OTHER:
     case UID_MODEL:
-	error = INPremove(uid, (INPtables *) ft_curckt->ci_symtab);
+	error = INPremove(uid, ft_curckt->ci_symtab);
 	if (error && error != E_EXISTS)
 	    return (error);
 	break;
 
     case UID_SIGNAL:
-	error = INPremTerm(uid, (INPtables *) ft_curckt->ci_symtab);
+	error = INPremTerm(uid, ft_curckt->ci_symtab);
 	if (error && error != E_EXISTS)
 	    return (error);
 	break;

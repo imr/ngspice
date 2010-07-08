@@ -1,5 +1,12 @@
 2010-07-08  Robert Larice
  * src/tclspice.c ,
+ * src/frontend/outitf.c ,
+ * src/frontend/spiceif.c ,
+ * src/spicelib/parser/ifnewuid.c :
+        INPtables, remove some casts, which are no longer necessary
+
+2010-07-08  Robert Larice
+ * src/tclspice.c ,
  * src/frontend/outitf.h ,
  * src/frontend/spiceif.c ,
  * src/include/cktdefs.h ,
