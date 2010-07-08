@@ -169,7 +169,7 @@ char *MIFgetMod(
                     return(INPerror(error));
 
                 /* gtri modification: allocate and initialize MIF specific model struct items */
-                mdfast = modtmp->INPmodfast;
+                mdfast = (MIFmodel*) modtmp->INPmodfast;
                 mdfast->num_param = DEVices[modtmp->INPmodType]->DEVpublic.num_param;
                 mdfast->param = (void *) tmalloc(mdfast->num_param * sizeof(void *));
                 for(i = 0; i < mdfast->num_param; i++) {

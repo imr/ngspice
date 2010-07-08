@@ -1,4 +1,10 @@
 2010-07-08  Robert Larice
+ * src/xspice/ipc/ipc.c ,
+ * src/xspice/mif/mif_inp2.c ,
+ * src/xspice/mif/mifgetmod.c :
+        fix some few casts.
+
+2010-07-08  Robert Larice
  * src/tclspice.c ,
  * src/frontend/outitf.c ,
  * src/frontend/spiceif.c ,

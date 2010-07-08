@@ -224,8 +224,8 @@ card         *current ) /* the card we are to parse                     */
     }
 
     /* create a new structure for this instance in ckt */
-    mdfast = thismodel->INPmodfast;
-    IFC(newInstance, (ckt, mdfast,(void **)fast, name))
+    mdfast = (MIFmodel*) thismodel->INPmodfast;
+    IFC(newInstance, (ckt, (GENmodel*)mdfast, (GENinstance **)fast, name))
 
 
     /* initialize the code model specific elements of the inst struct */

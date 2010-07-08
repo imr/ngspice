@@ -974,7 +974,7 @@ ipc_send_event (
    }
 
    /* Put the binary representation bytes in last */
-   temp_ptr = ipc_val;
+   temp_ptr = (char*) ipc_val;
    for(i = 0; i < len; i++)
       buff_ptr[i] = temp_ptr[i];
    buff_ptr += len;
