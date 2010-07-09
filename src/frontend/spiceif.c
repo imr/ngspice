@@ -585,14 +585,14 @@ finddev_special(
      return(type);
     }
     type = -1;
-    *devptr = (void *)NULL;
+    *devptr = (GENinstance *)NULL;
     err = (*(ft_sim->findModel))(ck,&type,modptr,name);
     if(err == OK)
     {
      *device_or_model=1;
      return(type);
     }
-    *modptr = (void *)NULL;
+    *modptr = (GENmodel *)NULL;
     *device_or_model=2;
     return(-1);
 
@@ -1159,10 +1159,10 @@ finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr)
     err = (*(ft_sim->findInstance))(ck,&type,devptr,name,NULL,NULL);
     if(err == OK) return(type);
     type = -1;
-    *devptr = (void *)NULL;
+    *devptr = (GENinstance *)NULL;
     err = (*(ft_sim->findModel))(ck,&type,modptr,name);
     if(err == OK) return(type);
-    *modptr = (void *)NULL;
+    *modptr = (GENmodel *)NULL;
     return(-1);
 }
 

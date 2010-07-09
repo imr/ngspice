@@ -1,4 +1,10 @@
 2010-07-09  Robert Larice
+ * src/frontend/spiceif.c ,
+ * src/spicelib/analysis/tfanal.c ,
+ * src/spicelib/parser/inpaname.c :
+        upgrade some casts from void* to more specific type
+
+2010-07-09  Robert Larice
  * src/xspice/cm/cm.c ,
  * src/xspice/cm/cmevt.c ,
  * src/xspice/cmpp/pp_lst.c ,
