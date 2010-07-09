@@ -204,7 +204,7 @@ void EVTqueue_inst(
         inst_queue->free[inst_index] = new_event->next;
     }
     else {
-        new_event = (void *) MALLOC(sizeof(Evt_Inst_Event_t));
+        new_event = (Evt_Inst_Event_t *) MALLOC(sizeof(Evt_Inst_Event_t));
     }
     new_event->event_time = event_time;
     new_event->posted_time = posted_time;

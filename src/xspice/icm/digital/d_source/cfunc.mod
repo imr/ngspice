@@ -154,7 +154,7 @@ static char  *CNVgettok(char **s)
 
     /* allocate space big enough for the whole string */
 
-    buf = (void *) malloc(strlen(*s) + 1);
+    buf = (char *) malloc(strlen(*s) + 1);
 
     /* skip over any white space */
 
@@ -197,7 +197,7 @@ static char  *CNVgettok(char **s)
     /* make a copy using only the space needed by the string length */
 
 
-    ret_str = (void *) malloc(strlen(buf) + 1);
+    ret_str = (char *) malloc(strlen(buf) + 1);
     ret_str = strcpy(ret_str,buf);
 
     if(buf) free(buf);

@@ -100,7 +100,7 @@ void spice2poly (ARGS)
     /* array */
 
     if(INIT) {
-        acgains = malloc(num_inputs * sizeof(double));
+        acgains = (double *) malloc(num_inputs * sizeof(double));
         for(i = 0; i < num_inputs; i++)
             acgains[i] = 0.0;
         STATIC_VAR(acgains) = acgains;
@@ -122,19 +122,19 @@ void spice2poly (ARGS)
 
     /* Get input values and coefficients to local storage for faster access */
 
-    in = malloc(num_inputs * sizeof(double));
+    in = (double *) malloc(num_inputs * sizeof(double));
     for(i = 0; i < num_inputs; i++)
         in[i] = INPUT(in[i]);
 
     num_coefs = PARAM_SIZE(coef);
 
-    coef = malloc(num_coefs * sizeof(double));
+    coef = (double *) malloc(num_coefs * sizeof(double));
     for(i = 0; i < num_coefs; i++)
         coef[i] = PARAM(coef[i]);
 
 
     /* Allocate the array of exponents used in computing the poly terms */
-    exp = malloc(num_inputs * sizeof(int));
+    exp = (int *) malloc(num_inputs * sizeof(int));
 
     /* Initialize the exponents to zeros */
     for(i = 0; i < num_inputs; i++)

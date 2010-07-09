@@ -178,7 +178,7 @@ int EVTop(
                 "Too many analog/event-driven solution alternations",
                 (IFuid *) NULL);
 
-            err_msg = MALLOC(10000);
+            err_msg = (char *) MALLOC(10000);
             output_queue = &(ckt->evt->queue.output);
             output_table = ckt->evt->info.output_table;
             port_table = ckt->evt->info.port_table;

@@ -107,11 +107,11 @@ void cm_analog_alloc(
     /* Allocate space in instance struct for this state descriptor */
     if(here->num_state == 0) {
         here->num_state = 1;
-        here->state = (void *) MALLOC(sizeof(Mif_State_t));
+        here->state = (Mif_State_t *) MALLOC(sizeof(Mif_State_t));
     }
     else {
         here->num_state++;
-        here->state = (void *) REALLOC(here->state,
+        here->state = (Mif_State_t *) REALLOC(here->state,
                                        here->num_state * sizeof(Mif_State_t));
     }
 
@@ -279,11 +279,11 @@ int  cm_analog_integrate(
     if(! got_index) {
         if(here->num_intgr == 0) {
             here->num_intgr = 1;
-            here->intgr = (void *) MALLOC(sizeof(Mif_Intgr_t));
+            here->intgr = (Mif_Intgr_t *) MALLOC(sizeof(Mif_Intgr_t));
         }
         else {
             here->num_intgr++;
-            here->intgr = (void *) REALLOC(here->intgr,
+            here->intgr = (Mif_Intgr_t *) REALLOC(here->intgr,
                                            here->num_intgr * sizeof(Mif_Intgr_t));
         }
         intgr = &(here->intgr[here->num_intgr - 1]);
@@ -361,11 +361,11 @@ int  cm_analog_converge(
     /* Allocate space in instance struct for this conv descriptor */
     if(here->num_conv == 0) {
         here->num_conv = 1;
-        here->conv = (void *) MALLOC(sizeof(Mif_Conv_t));
+        here->conv = (Mif_Conv_t *) MALLOC(sizeof(Mif_Conv_t));
     }
     else {
         here->num_conv++;
-        here->conv = (void *) REALLOC(here->conv,
+        here->conv = (Mif_Conv_t *) REALLOC(here->conv,
                                        here->num_conv * sizeof(Mif_Conv_t));
     }
 

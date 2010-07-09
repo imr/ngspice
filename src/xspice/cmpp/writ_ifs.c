@@ -980,7 +980,7 @@ static char  *data_type_to_str(Data_Type_t type)
     static char *str = NULL;
 
     if(str == NULL)
-        str = malloc(BASE_STR_LEN+1);
+        str = (char *) malloc(BASE_STR_LEN+1);
 
     switch(type) {
 
@@ -1023,7 +1023,7 @@ static char  *port_type_to_str(Port_Type_t port)
     static char *str = NULL;
 
     if(str == NULL)
-        str = malloc(BASE_STR_LEN+1);
+        str = (char *) malloc(BASE_STR_LEN+1);
 
     switch(port) {
 
@@ -1086,7 +1086,7 @@ static char  *gen_port_type_str(Port_Type_t port)
     static char *str = NULL;
 
     if(str == NULL)
-        str = malloc(BASE_STR_LEN+1);
+        str = (char *) malloc(BASE_STR_LEN+1);
 
     switch(port) {
 
@@ -1150,7 +1150,7 @@ static char  *dir_to_str(Dir_t dir)
     static char *str = NULL;
 
     if(str == NULL)
-        str = malloc(BASE_STR_LEN+1);
+        str = (char *) malloc(BASE_STR_LEN+1);
 
     switch(dir) {
 
@@ -1187,7 +1187,7 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
 
 
     if(str == NULL) {
-        str = malloc(2 * BASE_STR_LEN + 1);
+        str = (char *) malloc(2 * BASE_STR_LEN + 1);
         max_len = 2 * BASE_STR_LEN;
     }
 
@@ -1215,7 +1215,7 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
             /* be careful, the string could conceivably be very long... */
             str_len = strlen(value.svalue);
             if((str_len + BASE_STR_LEN) > max_len) {
-                str = realloc(str, (max_len + str_len +1));
+                str = (char *) realloc(str, (max_len + str_len +1));
                 max_len += str_len;
             }
             sprintf(str, "{MIF_FALSE, 0, 0.0, {0.0, 0.0}, \"%s\"}", value.svalue);
@@ -1237,7 +1237,7 @@ static char  *boolean_to_str(Boolean_t value)
     static char *str = NULL;
 
     if(str == NULL)
-        str = malloc(BASE_STR_LEN+1);
+        str = (char *) malloc(BASE_STR_LEN+1);
 
     switch(value) {
 
@@ -1267,7 +1267,7 @@ static char  *integer_to_str(int value)
     static char *str = NULL;
 
     if(str == NULL) {
-        str = malloc(BASE_STR_LEN + 1);
+        str = (char *) malloc(BASE_STR_LEN + 1);
     }
 
     sprintf(str, "%d", value);
@@ -1283,7 +1283,7 @@ static char  *no_value_to_str(void)
     static char *str = NULL;
 
     if(str == NULL) {
-        str = malloc(BASE_STR_LEN + 1);
+        str = (char *) malloc(BASE_STR_LEN + 1);
     }
 
     sprintf(str, "{MIF_FALSE, 0, 0.0, {0.0, 0.0}, NULL}");

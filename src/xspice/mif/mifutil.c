@@ -76,7 +76,7 @@ char  *MIFgettok(char **s)
 
     /* allocate space big enough for the whole string */
 
-    buf = (void *) MALLOC(strlen(*s) + 1);
+    buf = (char *) MALLOC(strlen(*s) + 1);
 
     /* skip over any white space */
 

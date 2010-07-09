@@ -296,9 +296,9 @@ static Status_t read_modpath(
 
         /* Allocate and initialize a new model info structure */
         if(n == 0)
-            model = (void *) malloc(sizeof(Model_Info_t));
+            model = (Model_Info_t *) malloc(sizeof(Model_Info_t));
         else
-            model = (void *) realloc(model, (n + 1) * sizeof(Model_Info_t));
+            model = (Model_Info_t *) realloc(model, (n + 1) * sizeof(Model_Info_t));
         model[n].path_name = NULL;
         model[n].spice_name = NULL;
         model[n].cfunc_name = NULL;
@@ -306,7 +306,7 @@ static Status_t read_modpath(
         model[n].cfunc_unique = TRUE;
 
         /* Put pathname into info structure */
-        model[n].path_name = malloc(len+1);
+        model[n].path_name = (char *) malloc(len+1);
         strcpy(model[n].path_name, path);
 
         /* Increment count of paths read */
@@ -417,15 +417,15 @@ static Status_t read_udnpath(
 
         /* Allocate and initialize a new node info structure */
         if(n == 0)
-            node = (void *) malloc(sizeof(Node_Info_t));
+            node = (Node_Info_t *) malloc(sizeof(Node_Info_t));
         else
-            node = (void *) realloc(node, (n + 1) * sizeof(Node_Info_t));
+            node = (Node_Info_t *) realloc(node, (n + 1) * sizeof(Node_Info_t));
         node[n].path_name = NULL;
         node[n].node_name = NULL;
         node[n].unique = TRUE;
 
         /* Put pathname into info structure */
-        node[n].path_name = malloc(len+1);
+        node[n].path_name = (char *) malloc(len+1);
         strcpy(node[n].path_name, path);
 
         /* Increment count of paths read */
@@ -1075,7 +1075,7 @@ static Status_t read_udn_type_name(
     fclose(fp);
 
     if(found) {
-        *node_name = malloc(strlen(name) + 1);
+        *node_name = (char *) malloc(strlen(name) + 1);
         strcpy(*node_name, name);
         return(OK);
     }

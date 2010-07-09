@@ -159,8 +159,8 @@ void ipc_handle_vtrans(
 
     if(g_ipc.vtrans.size == 0) {
         g_ipc.vtrans.size = 1;
-        g_ipc.vtrans.vsrc_name = (void *) MALLOC(sizeof(char *));
-        g_ipc.vtrans.device_name = (void *) MALLOC(sizeof(char *));
+        g_ipc.vtrans.vsrc_name = (char **) MALLOC(sizeof(char *));
+        g_ipc.vtrans.device_name = (char **) MALLOC(sizeof(char *));
         g_ipc.vtrans.vsrc_name[0] = MIFcopy(vsrc);
         g_ipc.vtrans.device_name[0] = MIFcopy(dev);
     }
@@ -170,9 +170,9 @@ void ipc_handle_vtrans(
         size = g_ipc.vtrans.size;
         i = g_ipc.vtrans.size - 1;
 
-        g_ipc.vtrans.vsrc_name = (void *) REALLOC(g_ipc.vtrans.vsrc_name,
+        g_ipc.vtrans.vsrc_name = (char **) REALLOC(g_ipc.vtrans.vsrc_name,
                                                   size * sizeof(char *));
-        g_ipc.vtrans.device_name = (void *) REALLOC(g_ipc.vtrans.device_name,
+        g_ipc.vtrans.device_name = (char **) REALLOC(g_ipc.vtrans.device_name,
                                                     size * sizeof(char *));
         g_ipc.vtrans.vsrc_name[i] = MIFcopy(vsrc);
         g_ipc.vtrans.device_name[i] = MIFcopy(dev);

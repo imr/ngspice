@@ -561,10 +561,10 @@ static void  MIFinit_inst(
     /* allocate code model connector data in instance struct */
 
     fast->num_conn = DEVices[mod_type]->DEVpublic.num_conn;
-    fast->conn = (void *) tmalloc(fast->num_conn * sizeof(void *));
+    fast->conn = (Mif_Conn_Data_t **) tmalloc(fast->num_conn * sizeof(Mif_Conn_Data_t *));
 
     for(i = 0; i < fast->num_conn; i++)
-        fast->conn[i] = (void *) tmalloc(sizeof(Mif_Conn_Data_t));
+        fast->conn[i] = (Mif_Conn_Data_t *) tmalloc(sizeof(Mif_Conn_Data_t));
 
     /* initialize code model connector data */
     for(i = 0; i < fast->num_conn; i++) {
@@ -597,11 +597,11 @@ static void  MIFinit_inst(
     /* allocate and copy instance variable data to the instance */
 
     fast->num_inst_var = DEVices[mod_type]->DEVpublic.num_inst_var;
-    fast->inst_var = (void *) tmalloc(fast->num_inst_var * sizeof(void *));
+    fast->inst_var = (Mif_Inst_Var_Data_t **) tmalloc(fast->num_inst_var * sizeof(Mif_Inst_Var_Data_t *));
 
     for(i = 0; i < fast->num_inst_var; i++) {
 
-        fast->inst_var[i] = (void *) tmalloc(sizeof(Mif_Inst_Var_Data_t));
+        fast->inst_var[i] = (Mif_Inst_Var_Data_t *) tmalloc(sizeof(Mif_Inst_Var_Data_t));
 
         if(DEVices[mod_type]->DEVpublic.inst_var[i].is_array) {
             fast->inst_var[i]->size = 0;
@@ -610,7 +610,7 @@ static void  MIFinit_inst(
         }
         else {
             fast->inst_var[i]->size = 1;
-            fast->inst_var[i]->element = (void *) tmalloc(sizeof(Mif_Value_t));
+            fast->inst_var[i]->element = (Mif_Value_t *) tmalloc(sizeof(Mif_Value_t));
         }
     }
 
@@ -771,14 +771,14 @@ MIFget_port(
 
     /* allocate space in the instance data struct for this port */
     if(port_num == 0) {
-        fast->conn[conn_num]->port = (void *) tmalloc(sizeof(void *));
-        fast->conn[conn_num]->port[0] = (void *) tmalloc(sizeof(Mif_Port_Data_t));
+        fast->conn[conn_num]->port = (Mif_Port_Data_t **) tmalloc(sizeof(Mif_Port_Data_t *));
+        fast->conn[conn_num]->port[0] = (Mif_Port_Data_t *) tmalloc(sizeof(Mif_Port_Data_t));
     }
     else {
-        fast->conn[conn_num]->port = (void *) REALLOC(
+        fast->conn[conn_num]->port = (Mif_Port_Data_t **) REALLOC(
                fast->conn[conn_num]->port,
-               ((port_num + 1) * sizeof(void *)) );
-        fast->conn[conn_num]->port[port_num] = (void *) tmalloc(sizeof(Mif_Port_Data_t));
+               ((port_num + 1) * sizeof(Mif_Port_Data_t *)) );
+        fast->conn[conn_num]->port[port_num] = (Mif_Port_Data_t *) tmalloc(sizeof(Mif_Port_Data_t));
     }
 
 

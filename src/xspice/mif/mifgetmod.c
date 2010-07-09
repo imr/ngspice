@@ -171,9 +171,9 @@ char *MIFgetMod(
                 /* gtri modification: allocate and initialize MIF specific model struct items */
                 mdfast = (MIFmodel*) modtmp->INPmodfast;
                 mdfast->num_param = DEVices[modtmp->INPmodType]->DEVpublic.num_param;
-                mdfast->param = (void *) tmalloc(mdfast->num_param * sizeof(void *));
+                mdfast->param = (Mif_Param_Data_t **) tmalloc(mdfast->num_param * sizeof(Mif_Param_Data_t *));
                 for(i = 0; i < mdfast->num_param; i++) {
-                    mdfast->param[i] = (void *) tmalloc(sizeof(Mif_Param_Data_t));
+                    mdfast->param[i] = (Mif_Param_Data_t *) tmalloc(sizeof(Mif_Param_Data_t));
                     mdfast->param[i]->is_null = MIF_TRUE;
                     mdfast->param[i]->size = 0;
                     mdfast->param[i]->element = NULL;
@@ -201,7 +201,7 @@ char *MIFgetMod(
                                     INPmodType ]).modelParms[j].
                                     dataType),tab,&err1);
                             if(err1) {
-                                err2 = (void *) tmalloc(25 + strlen(name) + strlen(err1));
+                                err2 = (char *) tmalloc(25 + strlen(name) + strlen(err1));
                                 sprintf(err2, "MIF-ERROR - model: %s - %s\n", name, err1);
                                 return(err2);
                             }

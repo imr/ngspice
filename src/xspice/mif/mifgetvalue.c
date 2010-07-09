@@ -120,7 +120,7 @@ MIFgetValue (
             return(NULL);
         }
         val.v.numValue = 0;
-        val.v.vec.iVec = (void *) MALLOC(1);   /* just so that realloc doesn't bomb */
+        val.v.vec.iVec = (int *) MALLOC(1);   /* just so that realloc doesn't bomb */
     }
 
 
@@ -171,7 +171,7 @@ MIFgetValue (
 
         case  IF_FLAGVEC:
             btemp = MIFget_boolean(token, err);
-            val.v.vec.iVec = (void *) REALLOC(val.v.vec.iVec,
+            val.v.vec.iVec = (int *) REALLOC(val.v.vec.iVec,
                                      (val.v.numValue + 1) * sizeof(int));
             val.v.vec.iVec[val.v.numValue] = btemp;
             val.v.numValue++;
@@ -179,7 +179,7 @@ MIFgetValue (
 
         case  IF_INTVEC:
             itemp = MIFget_integer(token, err);
-            val.v.vec.iVec = (void *) REALLOC(val.v.vec.iVec,
+            val.v.vec.iVec = (int *) REALLOC(val.v.vec.iVec,
                                      (val.v.numValue + 1) * sizeof(int));
             val.v.vec.iVec[val.v.numValue] = itemp;
             val.v.numValue++;
@@ -187,7 +187,7 @@ MIFgetValue (
 
         case  IF_REALVEC:
             rtemp = MIFget_real(token, err);
-            val.v.vec.rVec = (void *) REALLOC(val.v.vec.rVec,
+            val.v.vec.rVec = (double *) REALLOC(val.v.vec.rVec,
                                      (val.v.numValue + 1) * sizeof(double));
             val.v.vec.rVec[val.v.numValue] = rtemp;
             val.v.numValue++;
@@ -195,7 +195,7 @@ MIFgetValue (
 
         case  IF_STRINGVEC:
             stemp = MIFget_string(token, err);
-            val.v.vec.sVec = (void *) REALLOC(val.v.vec.sVec,
+            val.v.vec.sVec = (char **) REALLOC(val.v.vec.sVec,
                                      (val.v.numValue + 1) * sizeof(char *));
             val.v.vec.sVec[val.v.numValue] = stemp;
             val.v.numValue++;
@@ -203,7 +203,7 @@ MIFgetValue (
 
         case  IF_CPLXVEC:
             ctemp = MIFget_complex(token, token_type, line, err);
-            val.v.vec.cVec = (void *) REALLOC(val.v.vec.cVec,
+            val.v.vec.cVec = (IFcomplex *) REALLOC(val.v.vec.cVec,
                                      (val.v.numValue + 1) * sizeof(IFcomplex));
             val.v.vec.cVec[val.v.numValue] = ctemp;
             val.v.numValue++;

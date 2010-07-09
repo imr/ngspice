@@ -63,7 +63,7 @@ static int EVTinit_limits(CKTcircuit *ckt);
 /* Adapted from SPICE 3C1 code in CKTsetup.c */
 #define CKALLOC(var,size,type) \
     if(size) { \
-        if(!(var = (void *) MALLOC((size) * sizeof(type)))) \
+        if(!(var = (type *) MALLOC((size) * sizeof(type)))) \
             return(E_NOMEM); \
     }
 
@@ -219,7 +219,7 @@ static int EVTcheck_nodes(
         analog_node = ckt->CKTnodes;
         while(analog_node) {
             if(strcmp(event_node->name, analog_node->name) == 0) {
-                errMsg = MALLOC(strlen(err_prefix) + strlen(event_node->name) +
+                errMsg = (char *) MALLOC(strlen(err_prefix) + strlen(event_node->name) +
                                 strlen(err_collide) + 1);
                 sprintf(errMsg, "%s%s%s", err_prefix,
                                           event_node->name,
@@ -279,7 +279,7 @@ static int EVTinit_info(
 
     /* Allocate and initialize table of inst pointers */
     num_insts = ckt->evt->counts.num_insts;
-    CKALLOC(inst_table, num_insts, void *)
+    CKALLOC(inst_table, num_insts, Evt_Inst_Info_t *)
     inst = ckt->evt->info.inst_list;
     for(i = 0; i < num_insts; i++) {
         inst_table[i] = inst;
@@ -289,7 +289,7 @@ static int EVTinit_info(
 
     /* Allocate and initialize table of node pointers */
     num_nodes = ckt->evt->counts.num_nodes;
-    CKALLOC(node_table, num_nodes, void *)
+    CKALLOC(node_table, num_nodes, Evt_Node_Info_t *)
     node = ckt->evt->info.node_list;
     for(i = 0; i < num_nodes; i++) {
         node_table[i] = node;
@@ -299,7 +299,7 @@ static int EVTinit_info(
 
     /* Allocate and initialize table of port pointers */
     num_ports = ckt->evt->counts.num_ports;
-    CKALLOC(port_table, num_ports, void *)
+    CKALLOC(port_table, num_ports, Evt_Port_Info_t *)
     port = ckt->evt->info.port_list;
     for(i = 0; i < num_ports; i++) {
         port_table[i] = port;
@@ -309,7 +309,7 @@ static int EVTinit_info(
 
     /* Allocate and initialize table of output pointers */
     num_outputs = ckt->evt->counts.num_outputs;
-    CKALLOC(output_table, num_outputs, void *)
+    CKALLOC(output_table, num_outputs, Evt_Output_Info_t *)
     output = ckt->evt->info.output_list;
     for(i = 0; i < num_outputs; i++) {
         output_table[i] = output;
@@ -359,10 +359,10 @@ static int EVTinit_queue(
     num_insts = ckt->evt->counts.num_insts;
     inst_queue = &(ckt->evt->queue.inst);
 
-    CKALLOC(inst_queue->head, num_insts, void *)
-    CKALLOC(inst_queue->current, num_insts, void *)
-    CKALLOC(inst_queue->last_step, num_insts, void *)
-    CKALLOC(inst_queue->free, num_insts, void *)
+    CKALLOC(inst_queue->head, num_insts, Evt_Inst_Event_t *)
+    CKALLOC(inst_queue->current, num_insts, Evt_Inst_Event_t **)
+    CKALLOC(inst_queue->last_step, num_insts, Evt_Inst_Event_t **)
+    CKALLOC(inst_queue->free, num_insts, Evt_Inst_Event_t *)
     CKALLOC(inst_queue->modified_index, num_insts, int)
     CKALLOC(inst_queue->modified, num_insts, Mif_Boolean_t)
     CKALLOC(inst_queue->pending_index, num_insts, int)
@@ -387,10 +387,10 @@ static int EVTinit_queue(
     num_outputs = ckt->evt->counts.num_outputs;
     output_queue = &(ckt->evt->queue.output);
 
-    CKALLOC(output_queue->head, num_outputs, void *)
-    CKALLOC(output_queue->current, num_outputs, void *)
-    CKALLOC(output_queue->last_step, num_outputs, void *)
-    CKALLOC(output_queue->free, num_outputs, void *)
+    CKALLOC(output_queue->head, num_outputs, Evt_Output_Event_t *)
+    CKALLOC(output_queue->current, num_outputs, Evt_Output_Event_t **)
+    CKALLOC(output_queue->last_step, num_outputs, Evt_Output_Event_t **)
+    CKALLOC(output_queue->free, num_outputs, Evt_Output_Event_t *)
     CKALLOC(output_queue->modified_index, num_outputs, int)
     CKALLOC(output_queue->modified, num_outputs, Mif_Boolean_t)
     CKALLOC(output_queue->pending_index, num_outputs, int)

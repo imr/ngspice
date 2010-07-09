@@ -118,12 +118,12 @@ int MIFmParam(
     model->param[param_index]->is_null = MIF_FALSE;
     if(is_array) {
         model->param[param_index]->size = value->v.numValue;
-        model->param[param_index]->element = (void *) MALLOC(value->v.numValue *
+        model->param[param_index]->element = (Mif_Value_t *) MALLOC(value->v.numValue *
                                                    sizeof(Mif_Value_t));
     }
     else {
         model->param[param_index]->size = 1;
-        model->param[param_index]->element = (void *) MALLOC(sizeof(Mif_Value_t));
+        model->param[param_index]->element = (Mif_Value_t *) MALLOC(sizeof(Mif_Value_t));
     }
 
 
@@ -150,7 +150,7 @@ int MIFmParam(
         case  IF_STRING:
             /* we don't trust the caller to keep the string alive, so copy it */
             model->param[param_index]->element[0].svalue =
-                                       (void *) MALLOC(1 + strlen(value->sValue));
+                                       (char *) MALLOC(1 + strlen(value->sValue));
             strcpy(model->param[param_index]->element[0].svalue, value->sValue);
             break;
 
@@ -187,7 +187,7 @@ int MIFmParam(
             case  IF_STRINGVEC:
                 /* we don't trust the caller to keep the string alive, so copy it */
                 model->param[param_index]->element[i].svalue =
-                                           (void *) MALLOC(1 + strlen(value->v.vec.sVec[i]));
+                                           (char *) MALLOC(1 + strlen(value->v.vec.sVec[i]));
                 strcpy(model->param[param_index]->element[i].svalue, value->v.vec.sVec[i]);
                 break;
 

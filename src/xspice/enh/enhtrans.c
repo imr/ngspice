@@ -137,7 +137,7 @@ struct line * ENHtranslate_poly(
      d->li_error = two2three_translate(d->li_line, &(l1->li_line), &(l2->li_line));
      
      /* Comment out the original line */
-     card = (void *) MALLOC(strlen(d->li_line) + 2);
+     card = (char *) MALLOC(strlen(d->li_line) + 2);
      strcpy(card,"*");
      strcat(card, d->li_line);
      d->li_line = card;
@@ -365,7 +365,7 @@ static char *two2three_translate(
    name = MIFgettok(&card);
 
    /* Get output connections (2 netnames) */
-   out_conn = (void *) MALLOC(2 * sizeof(char *));
+   out_conn = (char **) MALLOC(2 * sizeof(char *));
    for(i = 0; i < 2; i++)
       out_conn[i] = MIFgettok(&card);
 
@@ -383,12 +383,12 @@ static char *two2three_translate(
 
 
    /* Get input connections (2 netnames per dimension) */
-   in_conn = (void *) MALLOC(num_conns * sizeof(char *));
+   in_conn = (char **) MALLOC(num_conns * sizeof(char *));
    for(i = 0; i < num_conns; i++)
       in_conn[i] = MIFgettok(&card);
 
    /* The remainder of the line are the poly coeffs. */
-   coef = (void *) MALLOC(num_coefs * sizeof(char *));
+   coef = (char **) MALLOC(num_coefs * sizeof(char *));
    for(i = 0; i < num_coefs; i++)
       coef[i] = MIFgettok(&card);
 
@@ -411,8 +411,8 @@ static char *two2three_translate(
 
    /* Allocate space for the cards and write them into the strings */
 
-   *inst_card = (void *) MALLOC(inst_card_len);
-   *mod_card = (void *) MALLOC(mod_card_len);
+   *inst_card = (char *) MALLOC(inst_card_len);
+   *mod_card = (char *) MALLOC(mod_card_len);
 
    strcpy(*inst_card, "a$poly$");
    sprintf(*inst_card + strlen(*inst_card), "%s ", name);

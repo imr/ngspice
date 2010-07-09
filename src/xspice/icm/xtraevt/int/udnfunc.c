@@ -152,7 +152,7 @@ void udn_int_print_val(PRINT_VAL_ARGS)
     int   *int_struct = STRUCT_PTR;
 
     /* Allocate space for the printed value */
-    PRINT_VAL = tmalloc(30);
+    PRINT_VAL = (char *) tmalloc(30);
 
     /* Print the value into the string */
     sprintf(PRINT_VAL, "%8d", *int_struct);

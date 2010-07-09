@@ -155,7 +155,7 @@ void udn_real_print_val(PRINT_VAL_ARGS)
 
 
     /* Allocate space for the printed value */
-    PRINT_VAL = tmalloc(30);
+    PRINT_VAL = (char *) tmalloc(30);
 
     /* Print the value into the string */
     sprintf(PRINT_VAL, "%15.6e", *real_struct);

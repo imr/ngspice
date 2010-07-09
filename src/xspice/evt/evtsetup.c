@@ -72,16 +72,16 @@ static int EVTsetup_load_ptrs(CKTcircuit *ckt);
 
 #define CKALLOC(var,size,type) \
     if(size) { \
-        if(!(var = (void *) MALLOC((size) * sizeof(type)))) \
+        if(!(var = (type *) MALLOC((size) * sizeof(type)))) \
             return(E_NOMEM); \
     }
 
 #define CKREALLOC(var,size,type) \
     if((size) == 1) { \
-        if(!(var = (void *) MALLOC((size) * sizeof(type)))) \
+        if(!(var = (type *) MALLOC((size) * sizeof(type)))) \
             return(E_NOMEM); \
     } else if((size) > 1) { \
-        if(!(var = (void *) REALLOC((void *) (var), (size) * sizeof(type)))) \
+        if(!(var = (type *) REALLOC((void *) (var), (size) * sizeof(type)))) \
             return(E_NOMEM); \
     }
 
@@ -320,10 +320,10 @@ static int EVTsetup_data(
     num_nodes = ckt->evt->counts.num_nodes;
     node_data = data->node;
 
-    CKALLOC(node_data->head, num_nodes, void *)
-    CKALLOC(node_data->tail, num_nodes, void *)
-    CKALLOC(node_data->last_step, num_nodes, void *)
-    CKALLOC(node_data->free, num_nodes, void *)
+    CKALLOC(node_data->head, num_nodes, Evt_Node_t *)
+    CKALLOC(node_data->tail, num_nodes, Evt_Node_t **)
+    CKALLOC(node_data->last_step, num_nodes, Evt_Node_t **)
+    CKALLOC(node_data->free, num_nodes, Evt_Node_t *)
     CKALLOC(node_data->modified_index, num_nodes, int)
     CKALLOC(node_data->modified, num_nodes, Mif_Boolean_t)
     CKALLOC(node_data->rhs, num_nodes, Evt_Node_t)
@@ -382,14 +382,14 @@ static int EVTsetup_data(
     num_insts = ckt->evt->counts.num_insts;
     state_data = data->state;
 
-    CKALLOC(state_data->head, num_insts, void *)
-    CKALLOC(state_data->tail, num_insts, void *)
-    CKALLOC(state_data->last_step, num_insts, void *)
-    CKALLOC(state_data->free, num_insts, void *)
+    CKALLOC(state_data->head, num_insts, Evt_State_t *)
+    CKALLOC(state_data->tail, num_insts, Evt_State_t **)
+    CKALLOC(state_data->last_step, num_insts, Evt_State_t **)
+    CKALLOC(state_data->free, num_insts, Evt_State_t *)
     CKALLOC(state_data->modified_index, num_insts, int)
     CKALLOC(state_data->modified, num_insts, Mif_Boolean_t)
     CKALLOC(state_data->total_size, num_insts, int)
-    CKALLOC(state_data->desc, num_insts, void *)
+    CKALLOC(state_data->desc, num_insts, Evt_State_Desc_t *)
 
     for(i = 0; i < num_insts; i++) {
         state_data->tail[i] = &(state_data->head[i]);
@@ -402,10 +402,10 @@ static int EVTsetup_data(
     num_ports = ckt->evt->counts.num_ports;
     msg_data = data->msg;
 
-    CKALLOC(msg_data->head, num_ports, void *)
-    CKALLOC(msg_data->tail, num_ports, void *)
-    CKALLOC(msg_data->last_step, num_ports, void *)
-    CKALLOC(msg_data->free, num_ports, void *)
+    CKALLOC(msg_data->head, num_ports, Evt_Msg_t *)
+    CKALLOC(msg_data->tail, num_ports, Evt_Msg_t **)
+    CKALLOC(msg_data->last_step, num_ports, Evt_Msg_t **)
+    CKALLOC(msg_data->free, num_ports, Evt_Msg_t *)
     CKALLOC(msg_data->modified_index, num_ports, int)
     CKALLOC(msg_data->modified, num_ports, Mif_Boolean_t)
 
@@ -448,11 +448,11 @@ static int EVTsetup_jobs(
     num_jobs = ++(jobs->num_jobs);
 
     /* Allocate/reallocate necessary pointers */
-    CKREALLOC(jobs->job_name, num_jobs, void *)
-    CKREALLOC(jobs->node_data, num_jobs, void *)
-    CKREALLOC(jobs->state_data, num_jobs, void *)
-    CKREALLOC(jobs->msg_data, num_jobs, void *)
-    CKREALLOC(jobs->statistics, num_jobs, void *)
+    CKREALLOC(jobs->job_name, num_jobs, char *)
+    CKREALLOC(jobs->node_data, num_jobs, Evt_Node_Data_t *)
+    CKREALLOC(jobs->state_data, num_jobs, Evt_State_Data_t *)
+    CKREALLOC(jobs->msg_data, num_jobs, Evt_Msg_Data_t *)
+    CKREALLOC(jobs->statistics, num_jobs, Evt_Statistic_t *)
 
     /* Fill in the pointers, etc. for this new job */
     i = num_jobs - 1;
