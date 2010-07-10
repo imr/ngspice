@@ -369,6 +369,8 @@ static void com_measure_when(
    int section = -1;
    int measurement_pending;
    int init_measured_value;
+   bool ac_check ;
+   bool sp_check ;
    double value, prevValue;
    double timeValue, prevTimeValue;
 
@@ -396,16 +398,31 @@ static void com_measure_when(
    measurement_pending=0;
    init_measured_value=1;
 
+  
+    /* -----------------------------------------------------------------
+     * Take the string tests outside of the loop for speed.
+     * ----------------------------------------------------------------- */
+    if (cieq (meas->m_analysis,"ac")) {
+      ac_check = TRUE ;
+    } else {
+      ac_check = FALSE ;
+    }
+    if (cieq (meas->m_analysis,"sp")) {
+      sp_check = TRUE ;
+    } else {
+      sp_check = FALSE ;
+    }
+ 
    for (i=0; i < d->v_length; i++) {
 
 //      value = d->v_realdata[i];
 //      timeValue = dTime->v_realdata[i];
 
-      if (cieq (meas->m_analysis,"ac")) {
+      if (ac_check) {
          value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          timeValue = dTime->v_compdata[i].cx_real;
       }
-      else if (cieq (meas->m_analysis,"sp")) {
+      else if (sp_check) {
          if (d->v_compdata)
             value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          else
@@ -505,6 +522,8 @@ static void measure_at(
 
    int i;
    double value, pvalue, svalue, psvalue;
+   bool ac_check ;
+   bool sp_check ;
    struct dvec *d, *dScale;
 
    psvalue = pvalue = 0;
@@ -520,13 +539,27 @@ static void measure_at(
       fprintf(cp_err, "Error: no such vector time, frequency or dc.\n");
       return;
    }
-
+  
+    /* -----------------------------------------------------------------
+     * Take the string tests outside of the loop for speed.
+     * ----------------------------------------------------------------- */
+   if (cieq (meas->m_analysis,"ac")) {
+     ac_check = TRUE ;
+   } else {
+     ac_check = FALSE ;
+   }
+   if (cieq (meas->m_analysis,"sp")) {
+     sp_check = TRUE ;
+   } else {
+     sp_check = FALSE ;
+   }
+ 
    for (i=0; i < d->v_length; i++) {
-      if (cieq (meas->m_analysis,"ac")) {
+      if (ac_check) {
          value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          svalue = dScale->v_compdata[i].cx_real;
       }
-      else if (cieq (meas->m_analysis,"sp")) {
+      else if (sp_check) {
          if (d->v_compdata)
             value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          else
@@ -568,6 +601,8 @@ static void measure_minMaxAvg(
    struct dvec *d, *dScale;
    double value, svalue, mValue, mValueAt;
    int first;
+   bool ac_check ;
+   bool sp_check ;
 
    mValue =0;
    mValueAt = svalue =0;
@@ -596,13 +631,27 @@ static void measure_minMaxAvg(
       fprintf(cp_err, "Error: no such vector as time, frquency or dc.\n");
       return;
    }
-
+  
+    /* -----------------------------------------------------------------
+     * Take the string tests outside of the loop for speed.
+     * ----------------------------------------------------------------- */
+   if (cieq (meas->m_analysis,"ac")) {
+     ac_check = TRUE ;
+   } else {
+     ac_check = FALSE ;
+   }
+   if (cieq (meas->m_analysis,"sp")) {
+     sp_check = TRUE ;
+   } else {
+     sp_check = FALSE ;
+   }
+ 
    for (i=0; i < d->v_length; i++) {
-      if (cieq (meas->m_analysis,"ac")) {
+      if (ac_check) {
          value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          svalue = dScale->v_compdata[i].cx_real;
       }
-      else if (cieq (meas->m_analysis,"sp")) {
+      else if (sp_check) {
          if (d->v_compdata)
             value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
          else
