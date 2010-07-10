@@ -1,3 +1,10 @@
+2010-07-10  Robert Larice
+ * src/include/spmatrix.h ,
+ * src/maths/sparse/spbuild.c :
+        ansi style function args for a function pointer arg of spInitialize()
+        NOTE: split personality, user interface talks about `spREAL'
+              which is internally refered to as `RealNumber'
+
 2010-07-10 Holger Vogt
  * com_measure2.c: patch by Bill Swartz from 2010-07-04
 

@@ -270,7 +270,7 @@ extern  char    *spGetInitInfo( spREAL* );
 extern  int      spGetOnes( void *, int, int, int, struct spTemplate* );
 extern  int      spGetQuad( void *, int, int, int, int, struct spTemplate* );
 extern  int      spGetSize( void *, int );
-extern  int      spInitialize( void *, int (*)() );
+extern  int      spInitialize( void *, int (*pInit)(spREAL*, char *InitInfo, int, int Col));
 extern  void     spInstallInitInfo( spREAL*, void * );
 extern  spREAL   spLargestElement( void * );
 extern  void     spMNA_Preorder( void * );

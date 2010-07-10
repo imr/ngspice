@@ -1146,7 +1146,7 @@ spGetInitInfo(RealNumber *pElement)
 
 
 int
-spInitialize(void *eMatrix, int (*pInit)())
+spInitialize(void *eMatrix, int (*pInit)(RealNumber*, char *InitInfo, int , int Col))
 {
     MatrixPtr Matrix = (MatrixPtr)eMatrix;
     ElementPtr pElement;
