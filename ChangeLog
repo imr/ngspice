@@ -1,3 +1,8 @@
+2010-07-10 Holger Vogt
+ * com_measure2.c: allow variables v(n1)=v(n2) 
+ * inpcom.c: par('expression') in .four, .plot, .print, .meas, .save
+ * string.c, ngspice.h: new fcn gettok_iv()
+ 
 2010-07-09  Robert Larice
  * src/frontend/spiceif.c ,
  * src/spicelib/analysis/tfanal.c ,

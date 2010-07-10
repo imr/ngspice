@@ -299,7 +299,7 @@ int measure_extract_variables( char *line )
    char *item ;                /* parsing item */
    char *measure ;             /* measure keyword */
    char *analysis ;                /* analysis option */
-   char *variable ;                /* variable to trace */
+   char *variable, *variable2 ;                /* variable to trace */
    wordlist *measure_var ;         /* wordlist of measurable */
    ANALYSIS_TYPE_T op ;            /* measure function type */
 
@@ -326,15 +326,26 @@ int measure_extract_variables( char *line )
          op = measure_function_type(item) ;
          if( op != AT_UNKNOWN ){
             /* We have a variable/complex variable coming next */
-            variable = gettok(&line) ;
+            variable = gettok_iv(&line) ;
+            variable2 = NULL;
+            if (*line == '=') variable2 = gettok_iv(&line) ;
             if( variable ){
                len = strlen(item) ;
                if( item[len-1] == '=' ){
                } else {
+                   /* We may have something like V(n1)=1 
+                   or v(n1)=2 , same with i() */
                   measure_var = gettoks(variable) ;
                   com_save2(measure_var, analysis);
                   status = FALSE;
                }
+            }
+            if( variable2 ){
+                /* We may have something like  v(n1)=v(n2)
+                v(n2) is handled here, same with i() */
+               measure_var = gettoks(variable2) ;
+               com_save2(measure_var, analysis);
+               status = FALSE;
             }
          }
       }

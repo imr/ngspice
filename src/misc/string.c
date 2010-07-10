@@ -237,6 +237,48 @@ gettok(char **s)
 }
 
 /*-------------------------------------------------------------------------*
+ * gettok skips over whitespaces or '=' and returns the next token found, 
+ * if the token is something like i(xxx), v(yyy), or v(xxx,yyy)
+ *   -- h_vogt 10.07.2010.
+ *-------------------------------------------------------------------------*/
+char *
+gettok_iv(char **s)
+{
+    char c;
+    int paren;
+    char *token ;             /* return token */
+    SPICE_DSTRING buf ;	      /* allow any length string */
+
+    paren = 0;
+    while ((isspace(**s)) || (**s=='='))
+        (*s)++;
+    if ((!**s) || ((**s != 'v') && (**s != 'i') && (**s != 'V') && (**s != 'I')))
+        return (NULL);
+    // initialize string
+    spice_dstring_init(&buf);
+    // add v or i to buf
+    spice_dstring_append_char( &buf, *(*s)++ ) ;
+    while (c = **s) {
+        if (c == '('/*)*/)
+            paren += 1;
+        else if (c == /*(*/')')
+            paren -= 1;
+        if (isspace(c)) 
+            *(*s)++;
+        else {
+            spice_dstring_append_char( &buf, *(*s)++ ) ;
+            if (paren == 0) break;
+        }
+    }
+    while (isspace(**s) || **s == ',')
+        (*s)++;
+    token = copy( spice_dstring_value(&buf) ) ;
+    spice_dstring_free(&buf) ;
+    return ( token ) ;
+}
+
+
+/*-------------------------------------------------------------------------*
  * gettok_noparens was added by SDB on 4.21.2003.
  * It acts like gettok, except that it treats parens and commas like
  * whitespace while looking for the POLY token.  That is, it stops 

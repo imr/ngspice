@@ -3580,9 +3580,10 @@ inp_split_multi_param_lines( struct line *deck, int line_num )
 static void inp_compat(struct line *deck)
 {
     char *str_ptr, *cut_line, *title_tok, *node1, *node2;
+    char *out_ptr, *exp_ptr, *beg_ptr, *end_ptr, *copy_ptr, *del_ptr;
     char *xline;
-    size_t xlen, i;
-    char *ckt_array[4];
+    size_t xlen, i, pai=0, paui=0, ii;
+    char *ckt_array[100];
     struct line *new_line, *tmp_ptr;
 
     struct line  *param_end = NULL, *param_beg = NULL;
@@ -3906,6 +3907,295 @@ static void inp_compat(struct line *deck)
 
             param_beg = param_end = NULL;
         }
+     /* .probe -> .save
+        .print, .plot, .save, .four, 
+        An ouput vector may be replaced by the following:
+        myoutput=par('expression')
+        .meas
+        A vector out_variable may be replaced by 
+        par('expression')
+     */
+        else if ( *curr_line == '.' ) {
+            // replace .probe by .save
+            if(str_ptr = strstr(curr_line, ".probe"))
+                memcpy(str_ptr, ".save ", 6);
+
+  /* Various formats for measure statement:
+   * .MEASURE {DC|AC|TRAN} result WHEN out_variable=val
+   * + <TD=td> <FROM=val> <TO=val>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   *
+   * .MEASURE {DC|AC|TRAN} result WHEN out_variable=out_variable2
+   * + <TD=td> <FROM=val> <TO=val>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   *
+   * .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=val
+   * + <TD=td> <FROM=val> <TO=val>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   *
+   * .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=out_variable3
+   * + <TD=td>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   *
+   * .MEASURE {DC|AC|TRAN} result FIND out_variable AT=val
+   * + <FROM=val> <TO=val>
+   *
+   * .MEASURE {DC|AC|TRAN} result {AVG|MIN|MAX|MIN_AT|MAX_AT|PP|RMS} out_variable
+   * + <TD=td> <FROM=val> <TO=val>
+   *
+   * .MEASURE {DC|AC|TRAN} result INTEG<RAL> out_variable
+   * + <TD=td> <FROM=val> <TO=val>
+   *
+   * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable AT=val
+   *
+   * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable WHEN out_variable2=val
+   * + <TD=td>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+   *
+   * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable WHEN out_variable2=out_variable3
+   * + <TD=td>
+   * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
+
+   The user may set any out_variable to par(' expr ').
+   We have to teplace this by v(pa_xx) and generate a B source line.
+
+   * ----------------------------------------------------------------- */
+            if ( ciprefix(".meas", curr_line) ) {
+                if (strstr(curr_line, "par") == NULL) continue;
+                 cut_line = curr_line;
+                 // search for 'par'
+                 while(str_ptr = strstr(cut_line, "par")) {
+                     if (i > 99) {
+                         fprintf(stderr, "ERROR: No more than 99 'par' per input file\n", 
+                             curr_line);
+                         controlled_exit(EXIT_FAILURE);
+                     }
+
+                     // we have ' par({ ... })', the right delimeter is a ' ' or '='
+                     if ( ciprefix(" par({", (str_ptr-1)) ) {
+                         // find expression
+                         beg_ptr = end_ptr = str_ptr + 5;
+                         while ((*end_ptr != ' ') && (*end_ptr != '=') && (*end_ptr != '\0'))
+                             end_ptr++;
+                         exp_ptr = copy_substring(beg_ptr, end_ptr-2);
+                         cut_line = str_ptr;
+                         // generate node
+                         out_ptr = (char*)tmalloc(6);
+                         sprintf(out_ptr, "pa_%02d", pai);
+                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
+                         xlen = 2*strlen(out_ptr) + strlen(exp_ptr )+ 15 - 2*3 + 1;
+                         ckt_array[pai] = (char*)tmalloc(xlen);
+                         sprintf(ckt_array[pai], "b%s %s 0 v = %s",
+                         out_ptr, out_ptr, exp_ptr);
+                         ckt_array[++pai] = NULL;
+                         // length of the replacement V(out_ptr)
+                         xlen = strlen(out_ptr) + 4;
+                         del_ptr = copy_ptr = (char*)tmalloc(xlen);
+                         sprintf(copy_ptr, "v(%s)", out_ptr);
+                         // length of the replacement part in original line
+                         xlen = strlen(exp_ptr) + 7;
+                         // copy the replacement without trailing '\0'
+                         for (ii = 0; ii < xlen; ii++)
+                             if (*copy_ptr)
+                                *cut_line++ = *copy_ptr++;
+                             else 
+                                 *cut_line++ = ' ';
+
+                         tfree(del_ptr); tfree(exp_ptr); tfree(out_ptr);
+                     }
+                     // or we have '={par({ ... })}', the right delimeter is a ' '
+                     else if ( ciprefix("={par({", (str_ptr-2)) ) {
+                         // find expression
+                         beg_ptr = end_ptr = str_ptr + 5;
+                         while ((*end_ptr != ' ') && (*end_ptr != '\0'))
+                             end_ptr++;
+                         exp_ptr = copy_substring(beg_ptr, end_ptr-3);
+                         // generate node
+                         out_ptr = (char*)tmalloc(6);
+                         sprintf(out_ptr, "pa_%02d", pai);
+                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
+                         xlen = 2*strlen(out_ptr) + strlen(exp_ptr )+ 15 - 2*3 + 1;
+                         ckt_array[pai] = (char*)tmalloc(xlen);
+                         sprintf(ckt_array[pai], "b%s %s 0 v = %s",
+                         out_ptr, out_ptr, exp_ptr);
+                         ckt_array[++pai] = NULL;
+                         // length of the replacement V(out_ptr)
+                         xlen = strlen(out_ptr) + 4;
+                         del_ptr = copy_ptr = (char*)tmalloc(xlen);
+                         sprintf(copy_ptr, "v(%s)", out_ptr);
+                         // length of the replacement part in original line
+                         xlen = strlen(exp_ptr) + 9;
+                         // skip '='
+                         cut_line++;
+                         // copy the replacement without trailing '\0'
+                         for (ii = 0; ii < xlen; ii++)
+                             if (*copy_ptr)
+                                *cut_line++ = *copy_ptr++;
+                             else *cut_line++ = ' ';
+
+                         tfree(del_ptr); tfree(exp_ptr); tfree(out_ptr);
+                     }
+                     // nothing to replace
+                     else {
+                         cut_line = str_ptr + 1;
+                         continue;
+                     }
+
+                 } // while 'par'
+                 // no replacement done, go to next line
+                 if (pai == paui) continue;
+                 // remove white spaces
+                 card->li_line = inp_remove_ws(curr_line);
+                 // insert new B source line immediately after current line
+	             tmp_ptr = card->li_next;
+	             for ( ii = paui; ii < pai; ii++ )
+                 {
+                     if ( param_end )
+                     {
+                         param_end->li_next = alloc(struct line);
+                         param_end          = param_end->li_next;
+                     }
+                     else
+                     {
+                         param_end = param_beg = alloc(struct line);
+                     }
+                     param_end->li_next    = NULL;
+                     param_end->li_error   = NULL;
+                     param_end->li_actual  = NULL;
+                     param_end->li_line    = ckt_array[ii];
+                     param_end->li_linenum = 0;
+                }
+
+                // insert new param lines immediately after current line
+                tmp_ptr            = card->li_next;
+                card->li_next      = param_beg;
+                param_end->li_next = tmp_ptr;
+                // point 'card' pointer to last in scalar list
+                card               = param_end;
+
+                param_beg = param_end = NULL;
+                paui = pai;
+            }
+            else if (( ciprefix(".save", curr_line) ) || ( ciprefix(".four", curr_line) )
+             || ( ciprefix(".print", curr_line) ) || ( ciprefix(".plot", curr_line) )) {
+                if (strstr(curr_line, "par") == NULL) continue;
+                 cut_line = curr_line;
+                 // search for 'par'
+                 while(str_ptr = strstr(cut_line, "par")) {
+                     if (pai > 99) {
+                         fprintf(stderr, "ERROR: No more than 99 'par' per input file!\n", 
+                             curr_line);
+                         controlled_exit(EXIT_FAILURE);
+                     }
+
+                     // we have ' par({ ... })'
+                      if ( ciprefix(" par({", (str_ptr-1)) ) {
+
+                         // find expression
+                         beg_ptr = end_ptr = str_ptr + 5;
+                         while ((*end_ptr != ' ') && (*end_ptr != '\0'))
+                             end_ptr++;
+                         exp_ptr = copy_substring(beg_ptr, end_ptr-2);
+                         cut_line = str_ptr;
+                         // generate node
+                         out_ptr = (char*)tmalloc(6);
+                         sprintf(out_ptr, "pa_%02d", pai);
+                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
+                         xlen = 2*strlen(out_ptr) + strlen(exp_ptr )+ 15 - 2*3 + 1;
+                         ckt_array[pai] = (char*)tmalloc(xlen);
+                         sprintf(ckt_array[pai], "b%s %s 0 v = %s",
+                         out_ptr, out_ptr, exp_ptr);
+                         ckt_array[++pai] = NULL;
+                         // length of the replacement V(out_ptr)
+                         xlen = strlen(out_ptr) + 1;
+                         del_ptr = copy_ptr = (char*)tmalloc(xlen);
+                         sprintf(copy_ptr, "%s", out_ptr);
+                         // length of the replacement part in original line
+                         xlen = strlen(exp_ptr) + 7;
+                         // copy the replacement without trailing '\0'
+                         for (ii = 0; ii < xlen; ii++)
+                             if (*copy_ptr)
+                                *cut_line++ = *copy_ptr++;
+                             else 
+                                 *cut_line++ = ' ';
+
+                         tfree(del_ptr); tfree(exp_ptr); tfree(out_ptr);
+                     }
+                     // or we have '={par({ ... })}'
+                     else if ( ciprefix("={par({", (str_ptr-2)) ) {
+
+                         // find myoutput
+                         beg_ptr = end_ptr = str_ptr - 2;
+                         while (*beg_ptr != ' ')
+                             beg_ptr--;
+                         out_ptr = copy_substring(beg_ptr + 1, end_ptr);
+                         cut_line = beg_ptr + 1;
+                         // find expression
+                         beg_ptr = end_ptr = str_ptr + 5;
+                         while ((*end_ptr != ' ') && (*end_ptr != '\0'))
+                             end_ptr++;
+                         exp_ptr = copy_substring(beg_ptr, end_ptr-3);
+                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
+                         xlen = 2*strlen(out_ptr) + strlen(exp_ptr )+ 15 - 2*3 + 1;
+                         ckt_array[pai] = (char*)tmalloc(xlen);
+                         sprintf(ckt_array[pai], "b%s %s 0 v = %s",
+                         out_ptr, out_ptr, exp_ptr);
+                         ckt_array[++pai] = NULL;
+                         // length of the replacement V(out_ptr)
+                         xlen = strlen(out_ptr) + 1;
+                         del_ptr = copy_ptr = (char*)tmalloc(xlen);
+                         sprintf(copy_ptr, "%s", out_ptr);
+                         // length of the replacement part in original line
+                         xlen = strlen(out_ptr) + strlen(exp_ptr) + 10;
+                         // copy the replacement without trailing '\0'
+                         for (ii = 0; ii < xlen; ii++)
+                             if (*copy_ptr)
+                                *cut_line++ = *copy_ptr++;
+                             else *cut_line++ = ' ';
+
+                         tfree(del_ptr); tfree(exp_ptr); tfree(out_ptr);
+                     }
+                     // nothing to replace
+                     else
+                         cut_line = str_ptr + 1;
+                 } // while 'par'
+                 // no replacement done, go to next line
+                 if (pai == paui) continue;
+                 // remove white spaces
+                 card->li_line = inp_remove_ws(curr_line);
+                 // insert new B source line immediately after current line
+	             tmp_ptr = card->li_next;
+	             for ( ii = paui; ii < pai; ii++ )
+                 {
+                     if ( param_end )
+                     {
+                         param_end->li_next = alloc(struct line);
+                         param_end          = param_end->li_next;
+                     }
+                     else
+                     {
+                         param_end = param_beg = alloc(struct line);
+                     }
+                     param_end->li_next    = NULL;
+                     param_end->li_error   = NULL;
+                     param_end->li_actual  = NULL;
+                     param_end->li_line    = ckt_array[ii];
+                     param_end->li_linenum = 0;
+                }
+                // comment out current variable capacitor line
+//                *(ckt_array[0])   = '*';
+                // insert new param lines immediately after current line
+                tmp_ptr            = card->li_next;
+                card->li_next      = param_beg;
+                param_end->li_next = tmp_ptr;
+                // point 'card' pointer to last in scalar list
+                card               = param_end;
+
+                param_beg = param_end = NULL;
+                paui = pai;
+ //                continue;
+            } // if .print etc.
+        } // if('.')
     }
 }
 /* lines for B sources: no parsing in numparam code, just replacement of parameters.
