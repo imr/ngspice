@@ -1,4 +1,10 @@
 2010-07-10  Robert Larice
+ * src/include/lsort.h :
+	ansi function declaration and definition for SORT() and SORT1()
+ * src/xspice/cmpp/read_ifs.c :
+	bool used, Boolean_t wanted.
+
+2010-07-10  Robert Larice
  * src/include/miftypes.h ,
  * src/xspice/mif/mifload.c ,
  * src/xspice/mif/mifsetup.c ,

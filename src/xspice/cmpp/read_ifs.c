@@ -153,7 +153,7 @@ static Status_t read_ifs_table(
 
    ifs_yylineno = 1;
    ifs_yyin = fp;
-   parser_just_names = (mode == GET_IFS_NAME);
+   parser_just_names = (mode == GET_IFS_NAME) ? TRUE : FALSE;
    parser_ifs_table = ifs_table;
 
    if (ifs_yyparse()) {

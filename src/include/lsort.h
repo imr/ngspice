@@ -50,14 +50,12 @@
 #define DECL_SORT static
 #endif
 
-DECL_SORT TYPE *SORT();
+DECL_SORT TYPE *SORT(TYPE *list_in, int (*compare)(TYPE*, TYPE*), long cnt );
 
 
 #ifdef SORT1
 
-DECL_SORT1 TYPE *SORT1(list_in, compare)
-TYPE *list_in;
-int (*compare)();
+DECL_SORT1 TYPE *SORT1(TYPE *list_in, int (*compare)(TYPE*, TYPE*) )
 {
     register long cnt;
     register TYPE *p;
@@ -71,10 +69,7 @@ int (*compare)();
 #endif
 
 
-DECL_SORT TYPE *SORT(list_in, compare, cnt)
-TYPE *list_in;
-int (*compare)();
-long cnt;
+DECL_SORT TYPE *SORT(TYPE *list_in, int (*compare)(TYPE*, TYPE*), long cnt )
 {
     register TYPE *p, **plast, *list1, *list2;
     register long i;
