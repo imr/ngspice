@@ -1,3 +1,11 @@
+2010-07-10  Robert Larice
+ * src/include/miftypes.h ,
+ * src/xspice/mif/mifload.c ,
+ * src/xspice/mif/mifsetup.c ,
+ * src/xspice/mif/mifutil.c :
+        extend the Mif_Cntl_Src_Type_t enum, to avoid mixed use with integer -1.
+        FIXME, the switch() in mifsetup.c looks suspicious.
+
 2010-07-10 Holger Vogt
  * com_measure2.c: allow variables v(n1)=v(n2) 
  * inpcom.c: par('expression') in .four, .plot, .print, .meas, .save,

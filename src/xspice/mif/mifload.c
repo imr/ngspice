@@ -660,6 +660,8 @@ MIFload(
                                    rhs[smp_data_out->branch] -= partial * cntl_input;
                                 }
                                 break;
+                            case MIF_minus_one:
+                                break;
                             } /* end switch on controlled source type */
                         } /* end for number of input ports */
                     } /* end for number of input connections */

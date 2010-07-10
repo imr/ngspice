@@ -168,6 +168,7 @@ typedef enum {
     MIF_VCIS,
     MIF_ICVS,
     MIF_ICIS,
+    MIF_minus_one,
 } Mif_Cntl_Src_Type_t;
 
 

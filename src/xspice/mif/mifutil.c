@@ -302,7 +302,7 @@ Mif_Cntl_Src_Type_t MIFget_cntl_src_type(
 
     }
 
-    return(-1);
+    return(MIF_minus_one);
 }
 
 

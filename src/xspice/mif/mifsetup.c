@@ -435,6 +435,8 @@ MIFsetup(
                             case MIF_ICVS:
                                 CTSTALLOC(h.branch_ibranchcntl, branch, ibranch);
                                 break;
+                            case MIF_minus_one:
+                                break;
                             } /* end switch on controlled source type */
                         } /* end for number of input ports */
                     } /* end for number of input connections */
@@ -507,7 +509,7 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
                     case MIF_ICVS:
                     case MIF_VCIS:
                     case MIF_ICIS:
-                    case -1:
+                    case MIF_minus_one: /* FIXME, really ? */
                       if(smp_data_out->branch)
                       {
                         CKTdltNNum(ckt, smp_data_out->branch);
