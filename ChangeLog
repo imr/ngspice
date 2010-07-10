@@ -1,4 +1,10 @@
 2010-07-10  Robert Larice
+ * src/xspice/icm/spice2poly/icm_spice2poly/cfunc.mod ,
+ * src/xspice/icm/xtradev/capacitor/cfunc.mod ,
+ * src/xspice/icm/xtradev/inductor/cfunc.mod :
+        drop some malloc prototypes, use <stdlib.h>
+
+2010-07-10  Robert Larice
  * src/include/lsort.h :
 	ansi function declaration and definition for SORT() and SORT1()
  * src/xspice/cmpp/read_ifs.c :

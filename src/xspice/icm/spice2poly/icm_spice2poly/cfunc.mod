@@ -62,8 +62,7 @@ and function nxtpwr() performs the function of subroutine NXTPWR.
 
 
 
-void *malloc(int);
-void  free(void *);
+#include <stdlib.h>
 
 /* SPICE 2G6 type utility functions */
 static double evterm(double x, int n);

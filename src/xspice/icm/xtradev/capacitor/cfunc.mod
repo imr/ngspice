@@ -37,9 +37,6 @@ NON-STANDARD FEATURES
 
 =========================================================================== */
 
-void *malloc(int);
-void  free(void *);
-
 
 #define VC  0
 
