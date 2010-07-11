@@ -46,11 +46,11 @@ static struct op {
 } ops[] = {
     {
     PT_COMMA, ",", NULL}, {
-    PT_PLUS, "+", PTplus}, {
-    PT_MINUS, "-", PTminus}, {
-    PT_TIMES, "*", PTtimes}, {
-    PT_DIVIDE, "/", PTdivide}, {
-    PT_POWER, "^", PTpower}
+    PT_PLUS, "+", (void*) PTplus}, {
+    PT_MINUS, "-", (void*) PTminus}, {
+    PT_TIMES, "*", (void*) PTtimes}, {
+    PT_DIVIDE, "/", (void*) PTdivide}, {
+    PT_POWER, "^", (void*) PTpower}
 };
 
 #define NUM_OPS (int)(sizeof (ops) / sizeof (struct op))
@@ -60,40 +60,40 @@ static struct func {
     int number;
     void *funcptr;
 } funcs[] = {
-    { "abs",    PTF_ABS,    PTabs } ,
-    { "acos",   PTF_ACOS,   PTacos } ,
-    { "acosh",  PTF_ACOSH,  PTacosh } ,
-    { "asin",   PTF_ASIN,   PTasin } ,
-    { "asinh",  PTF_ASINH,  PTasinh } ,
-    { "atan",   PTF_ATAN,   PTatan } ,
-    { "atanh",  PTF_ATANH,  PTatanh } ,
-    { "cos",    PTF_COS,    PTcos } ,
-    { "cosh",   PTF_COSH,   PTcosh } ,
-    { "exp",    PTF_EXP,    PTexp } ,
-    { "ln",     PTF_LN,     PTln } ,
-    { "log",    PTF_LOG,    PTlog } ,
-    { "sgn",    PTF_SGN,    PTsgn } ,
-    { "sin",    PTF_SIN,    PTsin } ,
-    { "sinh",   PTF_SINH,   PTsinh } ,
-    { "sqrt",   PTF_SQRT,   PTsqrt } ,
-    { "tan",    PTF_TAN,    PTtan } ,
-    { "tanh",   PTF_TANH,   PTtanh } ,
-    { "u",   	PTF_USTEP,  PTustep } ,
-    { "uramp",  PTF_URAMP,  PTuramp } ,
-    { "-",      PTF_UMINUS, PTuminus },
+    { "abs",    PTF_ABS,    (void*) PTabs } ,
+    { "acos",   PTF_ACOS,   (void*) PTacos } ,
+    { "acosh",  PTF_ACOSH,  (void*) PTacosh } ,
+    { "asin",   PTF_ASIN,   (void*) PTasin } ,
+    { "asinh",  PTF_ASINH,  (void*) PTasinh } ,
+    { "atan",   PTF_ATAN,   (void*) PTatan } ,
+    { "atanh",  PTF_ATANH,  (void*) PTatanh } ,
+    { "cos",    PTF_COS,    (void*) PTcos } ,
+    { "cosh",   PTF_COSH,   (void*) PTcosh } ,
+    { "exp",    PTF_EXP,    (void*) PTexp } ,
+    { "ln",     PTF_LN,     (void*) PTln } ,
+    { "log",    PTF_LOG,    (void*) PTlog } ,
+    { "sgn",    PTF_SGN,    (void*) PTsgn } ,
+    { "sin",    PTF_SIN,    (void*) PTsin } ,
+    { "sinh",   PTF_SINH,   (void*) PTsinh } ,
+    { "sqrt",   PTF_SQRT,   (void*) PTsqrt } ,
+    { "tan",    PTF_TAN,    (void*) PTtan } ,
+    { "tanh",   PTF_TANH,   (void*) PTtanh } ,
+    { "u",   	PTF_USTEP,  (void*) PTustep } ,
+    { "uramp",  PTF_URAMP,  (void*) PTuramp } ,
+    { "-",      PTF_UMINUS, (void*) PTuminus },
     /* MW. cif function added */
-    { "u2",	PTF_USTEP2, PTustep2},
-    { "pwl",	PTF_PWL,    PTpwl},
-    { "pwl_derivative",	PTF_PWL_DERIVATIVE, PTpwl_derivative},
-    { "eq0",    PTF_EQ0,    PTeq0},
-    { "ne0",    PTF_NE0,    PTne0},
-    { "gt0",    PTF_GT0,    PTgt0},
-    { "lt0",    PTF_LT0,    PTlt0},
-    { "ge0",    PTF_GE0,    PTge0},
-    { "le0",    PTF_LE0,    PTle0},
-    { "pow",    PTF_POW,    PTpower},  
-    { "min",    PTF_MIN,    PTmin},
-    { "max",    PTF_MAX,    PTmax},
+    { "u2",	PTF_USTEP2, (void*) PTustep2},
+    { "pwl",	PTF_PWL,    (void*) PTpwl},
+    { "pwl_derivative",	PTF_PWL_DERIVATIVE, (void*) PTpwl_derivative},
+    { "eq0",    PTF_EQ0,    (void*) PTeq0},
+    { "ne0",    PTF_NE0,    (void*) PTne0},
+    { "gt0",    PTF_GT0,    (void*) PTgt0},
+    { "lt0",    PTF_LT0,    (void*) PTlt0},
+    { "ge0",    PTF_GE0,    (void*) PTge0},
+    { "le0",    PTF_LE0,    (void*) PTle0},
+    { "pow",    PTF_POW,    (void*) PTpower},
+    { "min",    PTF_MIN,    (void*) PTmin},
+    { "max",    PTF_MAX,    (void*) PTmax},
 } ;
 
 #define NUM_FUNCS (int)(sizeof (funcs) / sizeof (struct func))
