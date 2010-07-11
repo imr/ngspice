@@ -719,12 +719,12 @@ sens_temp(sgen *sg, CKTcircuit *ckt)
 int
 sens_getp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 {
-	int	(*fn)( );
 	int	pid;
 
 	error = 0;
 
 	if (sg->is_instparam) {
+		int (*fn) (CKTcircuit*, GENinstance*, int, IFvalue*, IFvalue*);
 		fn = DEVices[sg->dev]->DEVask;
 		pid = DEVices[sg->dev]->DEVpublic.instanceParms[sg->param].id;
 		if (fn)
@@ -732,10 +732,11 @@ sens_getp(sgen *sg, CKTcircuit *ckt, IFvalue *val)
 		else
 			return 1;
 	} else {
+		int (*fn) (CKTcircuit*, GENmodel*, int, IFvalue*);
 		fn = DEVices[sg->dev]->DEVmodAsk;
 		pid = DEVices[sg->dev]->DEVpublic.modelParms[sg->param].id;
 		if (fn)
-			error = (*fn)(ckt, sg->model, pid, val, NULL);
+			error = (*fn)(ckt, sg->model, pid, val);
 		else
 			return 1;
 	}

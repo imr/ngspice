@@ -1,4 +1,8 @@
 2010-07-11  Robert Larice
+ * src/spicelib/analysis/cktsens.c :
+        fix type and usage of some function pointers
+
+2010-07-11  Robert Larice
  * src/spicelib/devices/dev.c :
         fix some function pointer casts
 
