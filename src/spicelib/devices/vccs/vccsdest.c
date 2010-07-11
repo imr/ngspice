@@ -8,6 +8,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice.h"
 #include "vccsdefs.h"
 #include "suffix.h"
+#include "vccsext.h"
 
 
 void

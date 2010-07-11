@@ -9,6 +9,7 @@ Author: 1985 Thomas L. Quarles
 #include "vccsdefs.h"
 #include "sperror.h"
 #include "suffix.h"
+#include "vccsext.h"
 
 
 int

@@ -11,6 +11,7 @@ Author: 1985 Thomas L. Quarles
 #include "sperror.h"
 #include "vccsdefs.h"
 #include "suffix.h"
+#include "vccsext.h"
 
 
 /*ARGSUSED*/

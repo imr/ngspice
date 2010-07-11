@@ -1,4 +1,19 @@
 2010-07-11  Robert Larice
+ * src/spicelib/devices/vccs/vccsask.c ,
+ * src/spicelib/devices/vccs/vccsdel.c ,
+ * src/spicelib/devices/vccs/vccsdest.c ,
+ * src/spicelib/devices/vccs/vccsload.c ,
+ * src/spicelib/devices/vccs/vccsmdel.c ,
+ * src/spicelib/devices/vccs/vccspar.c ,
+ * src/spicelib/devices/vccs/vccspzld.c ,
+ * src/spicelib/devices/vccs/vccssacl.c ,
+ * src/spicelib/devices/vccs/vccsset.c ,
+ * src/spicelib/devices/vccs/vccssld.c ,
+ * src/spicelib/devices/vccs/vccssprt.c ,
+ * src/spicelib/devices/vccs/vccssset.c :
+	#include "vccsext.h" to make the function declarations visible to their function definitions
+
+2010-07-11  Robert Larice
  * src/xspice/icm/xtraevt/int/udnfunc.c ,
  * src/xspice/icm/xtraevt/real/udnfunc.c :
         cast the udn*() function args
