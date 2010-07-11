@@ -1,4 +1,9 @@
 2010-07-11  Robert Larice
+ * src/frontend/parse.c ,
+ * src/include/fteparse.h :
+        fix function pointer initialization
+
+2010-07-11  Robert Larice
  * src/frontend/numparam/spicenum.c ,
  * src/frontend/numparam/xpressn.c ,
  * src/misc/hash.c :

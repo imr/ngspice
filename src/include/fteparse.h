@@ -29,6 +29,7 @@ struct op {
     char *op_name;		/* Printing name. */
     char op_arity;		/* One or two. */
     union {
+        void *anonymous;
         struct dvec *(*unary)(struct pnode *);
         struct dvec *(*binary)(struct pnode *, struct pnode *);
     } op_func;  /* The function to do the work. */

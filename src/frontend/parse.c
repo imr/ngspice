@@ -104,32 +104,32 @@ checkvalid(struct pnode *pn)
 
 static
 struct op ops[] = { 
-        { PLUS, "+", 2, op_plus } ,
-        { MINUS, "-", 2, op_minus } ,
-        { TIMES, "*", 2, op_times } ,
-        { MOD, "%", 2, op_mod } ,
-        { DIVIDE, "/", 2, op_divide } ,
-        { COMMA, ",", 2, op_comma } ,
-        { POWER, "^", 2, op_power } ,
-        { EQ, "=", 2, op_eq } ,
-        { GT, ">", 2, op_gt } ,
-        { LT, "<", 2, op_lt } ,
-        { GE, ">=", 2, op_ge } ,
-        { LE, "<=", 2, op_le } ,
-        { NE, "<>", 2, op_ne } ,
-        { AND, "&", 2, op_and } ,
-        { OR, "|", 2, op_or } ,
-        { INDX, "[", 2, op_ind } ,
-        { RANGE, "[[", 2, op_range } ,
-        { TERNARY, "?:", 2, NULL } ,
-        { 0, NULL, 0, NULL }
+        { PLUS,     "+",   2, {(void*) op_plus} } ,
+        { MINUS,    "-",   2, {(void*) op_minus} } ,
+        { TIMES,    "*",   2, {(void*) op_times} } ,
+        { MOD,      "%",   2, {(void*) op_mod} } ,
+        { DIVIDE,   "/",   2, {(void*) op_divide} } ,
+        { COMMA,    ",",   2, {(void*) op_comma} } ,
+        { POWER,    "^",   2, {(void*) op_power} } ,
+        { EQ,       "=",   2, {(void*) op_eq} } ,
+        { GT,       ">",   2, {(void*) op_gt} } ,
+        { LT,       "<",   2, {(void*) op_lt} } ,
+        { GE,       ">=",  2, {(void*) op_ge} } ,
+        { LE,       "<=",  2, {(void*) op_le} } ,
+        { NE,       "<>",  2, {(void*) op_ne} } ,
+        { AND,       "&",  2, {(void*) op_and} } ,
+        { OR,       "|",   2, {(void*) op_or} } ,
+        { INDX,     "[",   2, {(void*) op_ind} } ,
+        { RANGE,    "[[",  2, {(void*) op_range} } ,
+        { TERNARY,  "?:",  2, {NULL} } ,
+        { 0,         NULL, 0, {NULL} }
 } ;
 
 static
 struct op uops[] = {
-    { UMINUS, "-", 1, op_uminus } ,
-    { NOT, "~", 1, op_not } ,
-    { 0, NULL, 0, NULL }
+    { UMINUS, "-",  1, {(void*) op_uminus} } ,
+    { NOT,    "~",  1, {(void*) op_not} } ,
+    { 0,      NULL, 0, {NULL} }
 } ;
 
 /* We have 'v' declared as a function, because if we don't then the defines
@@ -455,7 +455,7 @@ db_print_op(FILE *fdst, struct op *op)
     }
 
     fprintf(fdst,"(op :op_num %d :op_name %s :op_arity %d :op_func %p)",
-           op->op_num, op->op_name, op->op_arity, op->op_func);
+           op->op_num, op->op_name, op->op_arity, op->op_func.anonymous);
 }
 
 
