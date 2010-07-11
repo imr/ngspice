@@ -413,7 +413,7 @@ int load_opus(char *name){
   struct coreInfo_t **core;
   SPICEdev **devs;
   Evt_Udn_Info_t  **udns;
-  void *(*fetch)(void)=NULL;
+  void *fetch = NULL;
 
   lib = dlopen(name,RTLD_NOW);
   if(!lib){
@@ -424,7 +424,7 @@ int load_opus(char *name){
   
   fetch = dlsym(lib,"CMdevNum");
   if(fetch){
-    num = (int *)(*fetch)();
+    num = ((int * (*)(void)) fetch) ();
 #ifdef TRACE
     printf("Got %u devices.\n",*num);
 #endif
@@ -437,7 +437,7 @@ int load_opus(char *name){
 
   fetch = dlsym(lib,"CMdevs");
   if(fetch){
-    devs = (SPICEdev **)(*fetch)();
+    devs = ((SPICEdev ** (*)(void)) fetch) ();
     fetch = NULL;
   }else{
     msg = dlerror();
@@ -447,7 +447,7 @@ int load_opus(char *name){
 
   fetch = dlsym(lib,"CMgetCoreItfPtr");
   if(fetch){
-    core = (struct coreInfo_t **)(*fetch)();
+    core = ((struct coreInfo_t ** (*)(void)) fetch) ();
     *core = &coreInfo;
     fetch = NULL;
   }else{
@@ -459,7 +459,7 @@ int load_opus(char *name){
 
   fetch = dlsym(lib,"CMudnNum");
   if(fetch){
-    num = (int *)(*fetch)();
+    num = ((int * (*)(void)) fetch) ();
 #ifdef TRACE
     printf("Got %u udns.\n",*num);
 #endif
@@ -472,7 +472,7 @@ int load_opus(char *name){
 
   fetch = dlsym(lib,"CMudns");
   if(fetch){
-    udns = (Evt_Udn_Info_t  **)(*fetch)();
+    udns = ((Evt_Udn_Info_t  ** (*)(void)) fetch) ();
     fetch = NULL;
   }else{
     msg = dlerror();

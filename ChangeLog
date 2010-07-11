@@ -1,4 +1,8 @@
 2010-07-11  Robert Larice
+ * src/spicelib/devices/dev.c :
+        fix some function pointer casts
+
+2010-07-11  Robert Larice
  * src/xspice/idn/idndig.c :
         missing casts
 
