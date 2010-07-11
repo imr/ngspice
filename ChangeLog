@@ -1,4 +1,10 @@
 2010-07-11  Robert Larice
+ * src/frontend/numparam/spicenum.c ,
+ * src/frontend/numparam/xpressn.c ,
+ * src/misc/hash.c :
+        add casts for void* returning functions
+
+2010-07-11  Robert Larice
  * src/xspice/cmpp/mod_lex.l :
         for c++, lex input() function is named yyinput()
 

@@ -552,9 +552,9 @@ dump_symbol_table( tdico *dico_p, NGHASHPTR htable_p, FILE * cp_out)
    NGHASHITER iter ;			/* hash iterator - thread safe */
 
    NGHASH_FIRST(&iter) ;
-   for (entry_p = nghash_enumerateRE( htable_p,&iter) ;
+   for (entry_p = (entry *) nghash_enumerateRE( htable_p,&iter) ;
         entry_p ;
-        entry_p = nghash_enumerateRE( htable_p,&iter))
+        entry_p = (entry *) nghash_enumerateRE( htable_p,&iter))
    {
       if (entry_p->tp == 'R')
       {
@@ -628,7 +628,7 @@ nupa_get_param (char *param_name, int *found)
    for( depth = dico_p->stack_depth ; depth > 0 ; depth-- ){
      htable_p = dico_p->local_symbols[depth] ;
      if( htable_p ){
-       entry_p = nghash_find( htable_p, up_name ) ;
+       entry_p = (entry *) nghash_find( htable_p, up_name ) ;
        if( entry_p ){
 	 result = entry_p->vl ;
 	 *found = 1;
@@ -639,7 +639,7 @@ nupa_get_param (char *param_name, int *found)
 
    if(!(*found)){
      /* No luck.  Try the global table. */
-     entry_p = nghash_find( dico_p->global_symbols, up_name ) ;
+     entry_p = (entry *) nghash_find( dico_p->global_symbols, up_name ) ;
      if( entry_p ){
        result = entry_p->vl ;
        *found = 1;
@@ -733,9 +733,9 @@ nupa_copy_inst_dico (void)
        fprintf( stderr, "stack depth should be zero.\n" ) ;
      }
      NGHASH_FIRST(&iter)  ;
-     for (entry_p = nghash_enumerateRE(dico_p->inst_symbols,&iter ) ;
+     for (entry_p = (entry *) nghash_enumerateRE(dico_p->inst_symbols,&iter ) ;
 	  entry_p ;
-	  entry_p = nghash_enumerateRE(dico_p->inst_symbols,&iter)){
+	  entry_p = (entry *) nghash_enumerateRE(dico_p->inst_symbols,&iter)){
        nupa_add_param ( entry_p->symbol, entry_p->vl) ;
        dico_free_entry( entry_p ) ;
      }

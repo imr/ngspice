@@ -266,9 +266,9 @@ dicostack (tdico * dico, char op)
 	   spice_dstring_init(&param_name) ;
 
 	   NGHASH_FIRST(&iter) ;
-	   for (entry_p = nghash_enumerateRE( htable_p,&iter ) ;
+	   for (entry_p = (entry *) nghash_enumerateRE( htable_p,&iter ) ;
 		entry_p ;
-		entry_p = nghash_enumerateRE( htable_p,&iter))
+		entry_p = (entry *) nghash_enumerateRE( htable_p,&iter))
 	   {
 	     spice_dstring_reinit(&param_name) ;
 	     param_p = spice_dstring_print( &param_name,  "%s.%s", 
@@ -316,14 +316,14 @@ entrynb ( tdico *d, char *s)
    for( depth = d->stack_depth ; depth > 0 ; depth-- ){
      htable_p = d->local_symbols[depth] ;
      if( htable_p ){
-       entry_p = nghash_find( htable_p, s ) ;
+       entry_p = (entry *) nghash_find( htable_p, s ) ;
        if( entry_p ){
 	 return( entry_p ) ;
        }
     }
   }
   /* No local symbols - try the global table */
-  entry_p = nghash_find( d->global_symbols, s ) ;
+  entry_p = (entry *) nghash_find( d->global_symbols, s ) ;
   return( entry_p ) ;
 
 } /* end entrynb() */
@@ -390,7 +390,7 @@ attrib (tdico *dico_p, NGHASHPTR htable_p, char *t, char op)
 */
    entry *entry_p ;			/* symbol table entry */
 
-   entry_p = nghash_find( htable_p, t ) ;
+   entry_p = (entry *) nghash_find( htable_p, t ) ;
    if ( entry_p && (op == 'N')
      && ( entry_p->level < dico_p->stack_depth) && ( entry_p->tp != '?'))
    {
