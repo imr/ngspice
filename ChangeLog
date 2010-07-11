@@ -1,4 +1,8 @@
 2010-07-11  Robert Larice
+ * src/xspice/cmpp/mod_lex.l :
+        for c++, lex input() function is named yyinput()
+
+2010-07-11  Robert Larice
  * src/spicelib/parser/inpptree.c :
         missing (void*) casts
 

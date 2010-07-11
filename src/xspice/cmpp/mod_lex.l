@@ -57,7 +57,11 @@ Z	[0-9A-Za-z_]
 			 ch = '\0';
 			 do {
 			    last_ch = ch;
+#ifdef __cplusplus
+			    ch = yyinput();
+#else
 			    ch = input();
+#endif
 			    fputc(ch,mod_yyout);
 			 } while (ch && !((last_ch == '*') && (ch == '/')));
 		         if (!ch) {mod_yyerror ("Unterminated comment");}}
