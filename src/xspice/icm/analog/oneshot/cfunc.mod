@@ -316,13 +316,13 @@ if((PORT_NULL(clear) != 1) && (INPUT(clear) > trig_clk)){
     /* Allocate storage for breakpoint domain & freq. range values */
 
     x = (double *) calloc(cntl_size, sizeof(double));
-    if (x == '\0') {
+    if (!x) {
         cm_message_send(oneshot_allocation_error); 
         return;
     }
 
     y = (double *) calloc(pw_size, sizeof(double));
-    if (y == '\0') {
+    if (!y) {
         cm_message_send(oneshot_allocation_error);  
         return;
     }

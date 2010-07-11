@@ -234,13 +234,13 @@ void cm_triangle(ARGS)  /* structure holding parms,
     /* Allocate storage for breakpoint domain & freq. range values */
 
     x = (double *) calloc(cntl_size, sizeof(double));
-    if (x == '\0') {
+    if (!x) {
         cm_message_send(triangle_allocation_error); 
         return;
     }
 
     y = (double *) calloc(freq_size, sizeof(double));
-    if (y == '\0') {
+    if (!y) {
         cm_message_send(triangle_allocation_error);  
         return;
     }

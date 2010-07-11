@@ -272,13 +272,13 @@ void cm_pwl(ARGS)  /* structure holding parms,
         /* Allocate storage for breakpoint domain & range values */
         STATIC_VAR(x) = (double *) calloc(size, sizeof(double));
         x = STATIC_VAR(x);
-        if (x == '\0') {
+        if (!x) {
             cm_message_send(allocation_error); 
         }
 
         STATIC_VAR(y) = (double *) calloc(size, sizeof(double));
         y = STATIC_VAR(y);
-        if (y == '\0') {
+        if (!y) {
             cm_message_send(allocation_error);  
         }
 

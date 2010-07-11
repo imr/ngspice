@@ -1,4 +1,14 @@
 2010-07-11  Robert Larice
+ * src/xspice/icm/analog/oneshot/cfunc.mod ,
+ * src/xspice/icm/analog/pwl/cfunc.mod ,
+ * src/xspice/icm/analog/sine/cfunc.mod ,
+ * src/xspice/icm/analog/square/cfunc.mod ,
+ * src/xspice/icm/analog/triangle/cfunc.mod ,
+ * src/xspice/icm/digital/d_osc/cfunc.mod ,
+ * src/xspice/icm/xtradev/core/cfunc.mod :
+        dont compare with '\0' when NULL was meant
+
+2010-07-11  Robert Larice
  * src/spicelib/devices/vccs/vccsask.c ,
  * src/spicelib/devices/vccs/vccsdel.c ,
  * src/spicelib/devices/vccs/vccsdest.c ,

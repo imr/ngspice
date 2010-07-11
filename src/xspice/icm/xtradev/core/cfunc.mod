@@ -274,12 +274,12 @@ void cm_core(ARGS)  /* structure holding parms,
 
         /* Allocate storage for breakpoint domain & range values */
         H = (double *) calloc(size, sizeof(double));
-        if (H == '\0') {
+        if (!H) {
             cm_message_send(allocation_error); 
             return;
         }
         B = (double *) calloc(size, sizeof(double));
-        if (B == '\0') {
+        if (!B) {
             cm_message_send(allocation_error);  
             return;
         }
