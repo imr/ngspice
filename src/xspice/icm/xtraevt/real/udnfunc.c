@@ -69,7 +69,7 @@ void udn_real_dismantle(DISMANTLE_ARGS)
 
 void udn_real_initialize(INITIALIZE_ARGS)
 {
-    double  *real_struct = STRUCT_PTR;
+    double  *real_struct = (double *) STRUCT_PTR;
 
 
     /* Initialize to zero */
@@ -81,7 +81,7 @@ void udn_real_initialize(INITIALIZE_ARGS)
 
 void udn_real_invert(INVERT_ARGS)
 {
-    double      *real_struct = STRUCT_PTR;
+    double      *real_struct = (double *) STRUCT_PTR;
 
 
     /* Invert the state */
@@ -94,7 +94,7 @@ void udn_real_invert(INVERT_ARGS)
 void udn_real_resolve(RESOLVE_ARGS)
 {
     double **array    = (double**)INPUT_STRUCT_PTR_ARRAY;
-    double *out       = OUTPUT_STRUCT_PTR;
+    double *out       = (double *) OUTPUT_STRUCT_PTR;
     int    num_struct = INPUT_STRUCT_PTR_ARRAY_SIZE;
 
     double      sum;
@@ -112,8 +112,8 @@ void udn_real_resolve(RESOLVE_ARGS)
 
 void udn_real_copy(COPY_ARGS)
 {
-    double  *real_from_struct = INPUT_STRUCT_PTR;
-    double  *real_to_struct   = OUTPUT_STRUCT_PTR;
+    double  *real_from_struct = (double *) INPUT_STRUCT_PTR;
+    double  *real_to_struct   = (double *) OUTPUT_STRUCT_PTR;
 
     /* Copy the structure */
     *real_to_struct = *real_from_struct;
@@ -124,8 +124,8 @@ void udn_real_copy(COPY_ARGS)
 
 void udn_real_compare(COMPARE_ARGS)
 {
-    double  *real_struct1 = STRUCT_PTR_1;
-    double  *real_struct2 = STRUCT_PTR_2;
+    double  *real_struct1 = (double *) STRUCT_PTR_1;
+    double  *real_struct2 = (double *) STRUCT_PTR_2;
 
     /* Compare the structures */
     if((*real_struct1) == (*real_struct2))
@@ -139,7 +139,7 @@ void udn_real_compare(COMPARE_ARGS)
 
 void udn_real_plot_val(PLOT_VAL_ARGS)
 {
-    double   *real_struct = STRUCT_PTR;
+    double   *real_struct = (double *) STRUCT_PTR;
 
 
     /* Output a value for the real struct */
@@ -151,7 +151,7 @@ void udn_real_plot_val(PLOT_VAL_ARGS)
 
 void udn_real_print_val(PRINT_VAL_ARGS)
 {
-    double   *real_struct = STRUCT_PTR;
+    double   *real_struct = (double *) STRUCT_PTR;
 
 
     /* Allocate space for the printed value */

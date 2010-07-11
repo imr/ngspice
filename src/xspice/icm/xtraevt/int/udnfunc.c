@@ -69,7 +69,7 @@ void udn_int_dismantle(DISMANTLE_ARGS)
 
 void udn_int_initialize(INITIALIZE_ARGS)
 {
-    int  *int_struct = STRUCT_PTR;
+    int  *int_struct = (int *) STRUCT_PTR;
 
 
     /* Initialize to zero */
@@ -81,7 +81,7 @@ void udn_int_initialize(INITIALIZE_ARGS)
 
 void udn_int_invert(INVERT_ARGS)
 {
-    int      *int_struct = STRUCT_PTR;
+    int      *int_struct = (int *) STRUCT_PTR;
 
 
     /* Invert the state */
@@ -93,8 +93,8 @@ void udn_int_invert(INVERT_ARGS)
 
 void udn_int_copy(COPY_ARGS)
 {
-    int  *int_from_struct = INPUT_STRUCT_PTR;
-    int  *int_to_struct   = OUTPUT_STRUCT_PTR;
+    int  *int_from_struct = (int *) INPUT_STRUCT_PTR;
+    int  *int_to_struct   = (int *) OUTPUT_STRUCT_PTR;
 
     /* Copy the structure */
     *int_to_struct = *int_from_struct;
@@ -105,7 +105,7 @@ void udn_int_copy(COPY_ARGS)
 void udn_int_resolve(RESOLVE_ARGS)
 {
     int **array    = (int**)INPUT_STRUCT_PTR_ARRAY;
-    int *out       = OUTPUT_STRUCT_PTR;
+    int *out       = (int *) OUTPUT_STRUCT_PTR;
     int num_struct = INPUT_STRUCT_PTR_ARRAY_SIZE;
 
     int         sum;
@@ -123,8 +123,8 @@ void udn_int_resolve(RESOLVE_ARGS)
 
 void udn_int_compare(COMPARE_ARGS)
 {
-    int  *int_struct1 = STRUCT_PTR_1;
-    int  *int_struct2 = STRUCT_PTR_2;
+    int  *int_struct1 = (int *) STRUCT_PTR_1;
+    int  *int_struct2 = (int *) STRUCT_PTR_2;
 
     /* Compare the structures */
     if((*int_struct1) == (*int_struct2))
@@ -138,7 +138,7 @@ void udn_int_compare(COMPARE_ARGS)
 
 void udn_int_plot_val(PLOT_VAL_ARGS)
 {
-    int   *int_struct = STRUCT_PTR;
+    int   *int_struct = (int *) STRUCT_PTR;
 
     /* Output a value for the int struct */
     PLOT_VAL = *int_struct;
@@ -149,7 +149,7 @@ void udn_int_plot_val(PLOT_VAL_ARGS)
 
 void udn_int_print_val(PRINT_VAL_ARGS)
 {
-    int   *int_struct = STRUCT_PTR;
+    int   *int_struct = (int *) STRUCT_PTR;
 
     /* Allocate space for the printed value */
     PRINT_VAL = (char *) tmalloc(30);
