@@ -1,4 +1,9 @@
 2010-07-11  Robert Larice
+ * src/ngmultidec.c ,
+ * src/frontend/resource.c :
+        tiny, fix two casts
+
+2010-07-11  Robert Larice
  * src/xspice/icm/analog/oneshot/cfunc.mod ,
  * src/xspice/icm/analog/pwl/cfunc.mod ,
  * src/xspice/icm/analog/sine/cfunc.mod ,

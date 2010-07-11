@@ -315,7 +315,7 @@ printres(char *name)
 
         getrlimit(RLIMIT_DATA, &rld);
 	limit = rld.rlim_cur - (enddata - startdata);
-        hi = sbrk(0);
+        hi = (char*) sbrk(0);
 	usage = (unsigned long int) (hi - enddata);
 #  else /* HAVE_GETRLIMIT */
 #    ifdef HAVE_ULIMIT

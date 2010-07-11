@@ -208,7 +208,7 @@ main (int argc, char **argv)
     solution = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
     isolution = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
 
-    othermatrix = spCreate(num,0,&errflg);
+    othermatrix = (char*) spCreate(num,0,&errflg);
 
     for (i=1;i<=num;i++) {
       for (j=1; j<=num; j++) {
