@@ -67,7 +67,7 @@ void idn_digital_dismantle(void *evt_struct)
 
 void idn_digital_initialize(void *evt_struct)
 {
-    Digital_t  *dig_struct = evt_struct;
+    Digital_t  *dig_struct = (Digital_t *) evt_struct;
 
 
     /* Initialize to unknown state and strength */
@@ -80,7 +80,7 @@ void idn_digital_initialize(void *evt_struct)
 
 void idn_digital_invert(void *evt_struct)
 {
-    Digital_t  *dig_struct = evt_struct;
+    Digital_t  *dig_struct = (Digital_t *) evt_struct;
 
 
     /* Invert the state */
@@ -105,8 +105,8 @@ void idn_digital_invert(void *evt_struct)
 
 void idn_digital_copy(void *evt_from_struct, void *evt_to_struct)
 {
-    Digital_t  *dig_from_struct = evt_from_struct;
-    Digital_t  *dig_to_struct   = evt_to_struct;
+    Digital_t  *dig_from_struct = (Digital_t *) evt_from_struct;
+    Digital_t  *dig_to_struct   = (Digital_t *) evt_to_struct;
 
     /* Copy the structure */
     dig_to_struct->state = dig_from_struct->state;
@@ -142,7 +142,7 @@ void idn_digital_resolve(int num_struct,
     int index2;
 
     /* Cast the input void pointers to pointers of the digital type */
-    dig_struct = evt_struct;
+    dig_struct = (Digital_t *) evt_struct;
     dig_struct_array = (Digital_t   **)evt_struct_array;
 
     /* Copy the first member of the array directly to the output */
@@ -165,8 +165,8 @@ void idn_digital_resolve(int num_struct,
     }
 
     /* Convert result back to state and strength */
-    dig_struct->state = index1 % 3;
-    dig_struct->strength = index1 / 3;
+    dig_struct->state = (Digital_State_t) (index1 % 3);
+    dig_struct->strength = (Digital_Strength_t) (index1 / 3);
 }
 
 
@@ -175,8 +175,8 @@ void idn_digital_resolve(int num_struct,
 void idn_digital_compare(void *evt_struct1, void *evt_struct2,
     Boolean_t *equal)
 {
-    Digital_t  *dig_struct1 = evt_struct1;
-    Digital_t  *dig_struct2 = evt_struct2;
+    Digital_t  *dig_struct1 = (Digital_t *) evt_struct1;
+    Digital_t  *dig_struct2 = (Digital_t *) evt_struct2;
 
     /* Compare the structures in order of most likely differences */
     if(dig_struct1->state != dig_struct2->state)
@@ -192,7 +192,7 @@ void idn_digital_compare(void *evt_struct1, void *evt_struct2,
 
 void idn_digital_plot_val(void *evt_struct, char *member, double *val)
 {
-    Digital_t   *dig_struct = evt_struct;
+    Digital_t   *dig_struct = (Digital_t *) evt_struct;
 
 
     /* Output a value for the requested member of the digital struct */
@@ -244,7 +244,7 @@ void idn_digital_plot_val(void *evt_struct, char *member, double *val)
 
 void idn_digital_print_val(void *evt_struct, char *member, char **val)
 {
-    Digital_t   *dig_struct = evt_struct;
+    Digital_t   *dig_struct = (Digital_t *) evt_struct;
 
     int         index;
 
