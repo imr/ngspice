@@ -8,7 +8,7 @@
 
 #include "dgen.h"
 
-void wl_forall(wordlist *wl, void (*fn)(/* ??? */), void *data);
+void wl_forall(wordlist *wl, void (*fn)(wordlist*, dgen*), dgen *data);
 dgen * dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model);
 int dgen_for_n(dgen *dg, int n, int (*fn) (/* ??? */), void *data, int subindex);
 void dgen_nth_next(dgen **dg, int n);

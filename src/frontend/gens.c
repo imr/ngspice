@@ -16,7 +16,7 @@ static void dgen_next(dgen **dgx);
 
 
 void
-wl_forall(wordlist *wl, void (*fn) (/* ??? */), void *data)
+wl_forall(wordlist *wl, void (*fn)(wordlist*, dgen*), dgen *data)
 {
 	while (wl) {
 		(*fn)(wl, data);
