@@ -195,7 +195,7 @@ all_show(wordlist *wl, int mode)
                 i = 0;
                 do {
                   fprintf(cp_out,"%*s", LEFT_WIDTH, "model");
-                  j = dgen_for_n(dg, count, printstr, "m", i);
+                  j = dgen_for_n(dg, count, printstr_m, NULL, i);
                   i += 1;
                   fprintf(cp_out,"\n");
                 } while (j);
@@ -341,7 +341,7 @@ all_show_old(wordlist *wl, int mode)
                 i = 0;
                 do {
                   fprintf(cp_out,"%*s", LEFT_WIDTH, "device");
-                  j = dgen_for_n(dg, count, printstr, "n", i);
+                  j = dgen_for_n(dg, count, printstr_n, NULL, i);
                   i += 1;
                   fprintf(cp_out,"\n");
                 } while (j);
@@ -350,7 +350,7 @@ all_show_old(wordlist *wl, int mode)
                         i = 0;
                         do {
                                 fprintf(cp_out,"%*s", LEFT_WIDTH, "model");
-                                j = dgen_for_n(dg, count, printstr, "m", i);
+                                j = dgen_for_n(dg, count, printstr_m, NULL, i);
                                 i += 1;
                                 fprintf(cp_out,"\n");
                         } while (j);
@@ -373,7 +373,7 @@ all_show_old(wordlist *wl, int mode)
                 i = 0;
                 do {
                   fprintf(cp_out,"%*s", LEFT_WIDTH, "model");
-                  j = dgen_for_n(dg, count, printstr, "m", i);
+                  j = dgen_for_n(dg, count, printstr_m, NULL, i);
                   i += 1;
                   fprintf(cp_out,"\n");
                 } while (j);
@@ -404,22 +404,22 @@ all_show_old(wordlist *wl, int mode)
 }
 
 int
-printstr(dgen *dg, char *name)
+printstr_n(dgen *dg)
 {
-    /* va: ' ' is no flag for %s; \? avoids trigraph warning */
-    if (*name == 'n') {
-        if (dg->instance)
-          fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, dg->instance->GENname);
-        else
-          fprintf(cp_out," %*s", DEV_WIDTH, "<\?\?\?\?\?\?\?>");
-    } else if (*name == 'm') {
-        if (dg->model)
-          fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, dg->model->GENmodName);
-        else
-          fprintf(cp_out," %*s", DEV_WIDTH, "<\?\?\?\?\?\?\?>");
-    } else
-      fprintf(cp_out," %*s", DEV_WIDTH, "<error>");
+    if (dg->instance)
+        fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, dg->instance->GENname);
+    else
+        fprintf(cp_out," %*s", DEV_WIDTH, "<\?\?\?\?\?\?\?>");
+    return 0;
+}
 
+int
+printstr_m(dgen *dg)
+{
+    if (dg->model)
+        fprintf(cp_out," %*.*s", DEV_WIDTH, DEV_WIDTH, dg->model->GENmodName);
+    else
+        fprintf(cp_out," %*s", DEV_WIDTH, "<\?\?\?\?\?\?\?>");
     return 0;
 }
 

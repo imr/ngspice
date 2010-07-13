@@ -12,7 +12,8 @@
 
 void com_showmod(wordlist *wl);
 void com_show(wordlist *wl);
-int printstr(dgen *dg, char *name);
+int printstr_n(dgen *dg);
+int printstr_m(dgen *dg);
 void  param_forall(dgen *dg, int flags);
 void  param_forall_old(dgen *dg, int flags);
 void  listparam(wordlist *p, dgen *dg);

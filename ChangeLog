@@ -1,4 +1,12 @@
 2010-07-13  Robert Larice
+ * src/frontend/device.c ,
+ * src/frontend/device.h :
+        split the function printstr() into printstr_n() and printstr_m()
+        printstr() is exclusively used as argument
+          to the map function dgen_for_n()
+        and misused a parameter to distinguish two separate functionalities.
+
+2010-07-13  Robert Larice
  * src/frontend/gens.c ,
  * src/frontend/gens.h :
         fix the type of the function pointer argument of wl_forall()
