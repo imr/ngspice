@@ -1,5 +1,14 @@
 2010-07-13  Robert Larice
  * src/frontend/device.c ,
+ * src/frontend/device.h ,
+ * src/frontend/gens.c ,
+ * src/frontend/gens.h *
+        fix the argument types of the functions
+          printstr_n printstr_m bogus1 and bogus2
+        to fit the type signature expected by the iterator dgen_for_n()
+
+2010-07-13  Robert Larice
+ * src/frontend/device.c ,
  * src/frontend/device.h :
         split the function printstr() into printstr_n() and printstr_m()
         printstr() is exclusively used as argument

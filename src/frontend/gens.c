@@ -59,7 +59,7 @@ dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
 }
 
 int
-dgen_for_n(dgen *dg, int n, int (*fn) (/* ??? */), void *data, int subindex)
+dgen_for_n(dgen *dg, int n, int (*fn) (dgen*, IFparm*, int), IFparm *data, int subindex)
 {
 	dgen	dgx, *dgxp;
 	int	dnum, i, j, k;
