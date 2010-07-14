@@ -24,9 +24,6 @@ struct comm {
     /* The function that handles the command. */
     void (*co_func) (wordlist *wl);
 
-    /* Collapse the arguments into a string. */
-    bool co_stringargs;
-
     /* These can't be used from nutmeg. */
     bool co_spiceonly;
 

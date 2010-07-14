@@ -123,7 +123,6 @@ static void
 docommand(wordlist *wlist)
 {
     char *r, *s, *t;
-    char *lcom;
     int nargs;
     int i;
     struct comm *command;
@@ -223,10 +222,7 @@ docommand(wordlist *wlist)
         nargs = 0;
         for (wl = wlist->wl_next; wl; wl = wl->wl_next)
             nargs++;
-        if (command->co_stringargs) {
-            lcom = wl_flatten(wlist->wl_next); /*CDHW lcom will need freeing CDHW*/
-            (*command->co_func) ((void *)(lcom));
-        } else {
+        {
             if (nargs < command->co_minargs) {
 		if (command->co_argfn) {
 		    (*command->co_argfn) (wlist->wl_next, command);
