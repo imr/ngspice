@@ -206,6 +206,32 @@ inp_getopts(struct line *deck)
     return (opts);
 }
 
+/* Extract the option lines from a comfile (spinit, .spiceinit) */
+struct line *
+inp_getoptsc(char *in_line, struct line *com_options)
+{
+    struct line *next = NULL;
+    char* line;
+
+    line = (char*)tmalloc(strlen(in_line) + 3);
+    /* option -> .options */
+    /* skip option */
+    gettok(&in_line);
+    sprintf(line, ".options %s", in_line);
+    
+    next = (struct line*)tmalloc(sizeof(struct line));
+    next->li_line    = line;
+    next->li_linenum = 0;
+    next->li_error   = NULL;
+    next->li_actual  = NULL;
+    /* put new line in front */
+    if (com_options != NULL)
+        next->li_next = com_options;
+
+    return next;
+}
+
+
 static void setdb(char *str);
 
 /* The one variable that we consider read-only so far is plots.  The ones

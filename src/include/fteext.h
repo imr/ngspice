@@ -337,6 +337,7 @@ extern bool ft_controldb;
 extern bool ft_asyncdb;
 extern char *ft_setkwords[];
 extern struct line *inp_getopts(struct line *deck);
+extern struct line *inp_getoptsc(char *in_line, struct line *com_options);
 extern struct variable *cp_enqvar(char *word);
 extern bool ft_ngdebug;
 
@@ -375,7 +376,7 @@ extern void raw_write(char *name, struct plot *pl, bool app, bool binary);
 extern struct plot *raw_read(char *name);
 
 /* meas.c */
-extern void do_measure(char *what, bool chk_only);
+extern bool do_measure(char *what, bool chk_only);
 extern bool check_autostop(char *what);
 extern void com_meas(wordlist *wl);
 

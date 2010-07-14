@@ -49,6 +49,7 @@ $Id$
 /* static declarations */
 static char * upper(register char *string);
 static bool doedit(char *filename);
+static struct line *com_options = NULL;
 
 void line_free_x(struct line * deck, bool recurse);
 
@@ -371,7 +372,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
     * many problems with matching the first word on the line.  */
    ld = deck;
    if (comfile) {
-      /* This is easy. */
+      /* Process each command, except 'option' which is assembled
+         in a list and ingnored here */
       for (dd = deck; dd; dd = ld) {
          ld = dd->li_next;
          if ((dd->li_line[0] == '*') && (dd->li_line[1] != '#'))
@@ -379,6 +381,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
          if (!ciprefix(".control", dd->li_line) && !ciprefix(".endc", dd->li_line)) {
             if (dd->li_line[0] == '*')
                cp_evloop(dd->li_line + 2);
+            /* option line stored but not processed */
+            else if (ciprefix("option", dd->li_line))
+            {
+               com_options = inp_getoptsc(dd->li_line, com_options);
+            }
             else
                cp_evloop(dd->li_line);
          }
@@ -548,6 +555,26 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
          (void) fclose(fdo);
       }
 
+         /*merge the two option line structs*/
+         if (!options && com_options)
+             options = com_options;
+         else if (options && com_options) {
+         /* move to end of options 
+             struct line* tmp_options = options;
+             while (tmp_options) {
+                if (!tmp_options->li_next) break;
+                tmp_options = tmp_options->li_next;
+             }
+             tmp_options->li_next = com_options;*/
+         /* move to end of com_options */
+             struct line* tmp_options = com_options;
+             while (tmp_options) {
+                if (!tmp_options->li_next) break;
+                tmp_options = tmp_options->li_next;
+             }
+             tmp_options->li_next = options;
+         }
+
          /* now load deck into ft_curckt -- the current circuit. */
          inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
 
@@ -702,6 +729,7 @@ inp_dodeck(
    is needed because we need the scale info BEFORE building the circuit
    and seems there is no other way to do this. */
      if (!noparse) {
+        struct line* opt_beg = options;
         for (; options; options = options->li_next) {
             for (s = options->li_line; *s && !isspace(*s); s++)
                 ;
@@ -723,19 +751,20 @@ inp_dodeck(
         for (eev = ct->ci_vars; eev; eev = eev->va_next) {
             switch (eev->va_type) {
                 case VT_BOOL:
-		  break;
+                    break;
                 case VT_NUM:
-		  break;
+                    break;
                 case VT_REAL:
                     if ( strcmp("scale",eev->va_name)==0 ){
                     cp_vset("scale", VT_REAL, (char*) &eev->va_real );
                     printf("Scale set\n");
                     }
-		  break;
+                    break;
                 case VT_STRING:
-		  break;
-	    } /* switch  . . . */
+                    break;
+            } /* switch  . . . */
         }
+        options = opt_beg; // back to the beginning
     } /* if (!noparse)  . . . */
    
     /*----------------------------------------------------
@@ -751,7 +780,7 @@ inp_dodeck(
     out_init();
     
     /*----------------------------------------------------
-     * Now run throuh the deck and look to see if there are
+     * Now run through the deck and look to see if there are
      * errors on any line.
      *---------------------------------------------------*/
     for (dd = deck; dd; dd = dd->li_next) {
@@ -838,7 +867,7 @@ inp_dodeck(
         ct->ci_filename = NULL;
 
     if (!noparse) {
-        for (; options; options = options->li_next) {
+/*        for (; options; options = options->li_next) {
             for (s = options->li_line; *s && !isspace(*s); s++)
                 ;
 
@@ -855,6 +884,7 @@ inp_dodeck(
             while (eev->va_next)
                 eev = eev->va_next;
         }
+*/
         for (eev = ct->ci_vars; eev; eev = eev->va_next) {
 	    one = 1;
             switch (eev->va_type) {
@@ -874,9 +904,9 @@ inp_dodeck(
 		  if_option(ct->ci_ckt, eev->va_name, 
 			    eev->va_type, eev->va_string);
 		  break;
-	    } /* switch  . . . */
+	    } // switch  . . . 
         }
-    } /* if (!noparse)  . . . */
+    } // if (!noparse)  . . .
 
     /* add title of deck to data base */
     cp_addkword(CT_CKTNAMES, tt);

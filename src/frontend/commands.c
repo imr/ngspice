@@ -71,9 +71,29 @@
 /* gtri - end - wbk - add include files */
 #endif
 
-/* for the definition and decription of struct comm see cpdef.h */
+/* Information about spice commands (strucct comm). */
+    /* The name of the command. */
+//    char *co_comname;
+    /* The function that handles the command. */
+//    void (*co_func) (wordlist *wl);
+    /* These can't be used from nutmeg. */
+//    bool co_spiceonly;
+    /* Is this a "major" command? */
+//    bool co_major;
+    /* Bitmasks for command completion. */
+//    long co_cctypes[4];
+    /* print help message on this environment mask */
+//    unsigned int co_env;
+    /* minimum number of arguments required */
+//    int co_minargs;
+    /* maximum number of arguments allowed */
+//    int co_maxargs;
+    /* The fn that prompts the user. */
+//    void (*co_argfn) (wordlist *wl, struct comm *command);
+    /* When these are printed, printf(string, av[0]) .. */
+//    char *co_help;  
 
-/* Bool fields:     stringargs, spiceonly, major */
+/* Bool fields: spiceonly, major */
 
 struct comm spcp_coms[] = {
     { "let", com_let, FALSE, TRUE,
@@ -93,12 +113,13 @@ struct comm spcp_coms[] = {
       arg_set,
       "[option] [option = value] ... : Set a variable." } ,
 
-#ifdef EXPERIMENTAL_CODE
+
 /* PN support for altering options in interactive mode */    
     { "option", com_option, TRUE, TRUE,
       { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
       arg_set,
       "[option] [option = value] ... : Set a simulator option." } ,
+#ifdef EXPERIMENTAL_CODE
     { "savesnap", com_savesnap, FALSE, TRUE,
       { 1, 040000, 040000, 040000 }, E_DEFHMASK, 1, 1,
       NULL,
@@ -499,7 +520,7 @@ struct comm spcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 3, 3,
       NULL,
       "varname s1 s2 : Set $varname to strcmp(s1, s2)." } ,
-    { "linearize", com_linearize, TRUE, FALSE,
+    { "linearize", com_linearize, FALSE, FALSE,
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
       NULL,
       " [ vec ... ] : Convert plot into one with linear scale." } ,
@@ -509,7 +530,7 @@ struct comm spcp_coms[] = {
 };
 
 
-/* Bool fields:     stringargs, spiceonly, major */
+/* Bool fields:    spiceonly, major */
 struct comm nutcp_coms[] = {
     { "let", com_let, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
@@ -664,10 +685,18 @@ struct comm nutcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
       NULL,
       ": Print a dump of the current circuit." } ,
+    { "fft", com_fft, FALSE, TRUE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 1, LOTS,
+      NULL,
+      "vector ... : Create a frequency domain plot with FFT." } ,      
     { "fourier", com_fourier, FALSE, TRUE,
       { 0, 040000, 040000, 040000 }, E_DEFHMASK, 1, LOTS,
       NULL,
       "fund_freq vector ... : Do a fourier analysis of some data." } ,
+    { "spec", com_spec, FALSE, TRUE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 4, LOTS,
+      NULL,
+      "start_freq stop_freq step_freq vector ... : Create a frequency domain plot." } ,
     { "show", NULL, TRUE, FALSE,
       { 040, 040, 040, 040 }, E_DEFHMASK, 0, LOTS,
       NULL,
@@ -857,7 +886,7 @@ struct comm nutcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 3, 3,
       NULL,
       "varname s1 s2 : Set $varname to strcmp(s1, s2)." } ,
-    { "linearize", NULL, TRUE, FALSE,
+    { "linearize", NULL, FALSE, FALSE,
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
       NULL,
       " [ vec ... ] : Convert plot into one with linear scale." } ,
