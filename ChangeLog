@@ -1,4 +1,9 @@
 2010-07-14  Robert Larice
+ * src/frontend/commands.c :
+        remove leftover /*FALSE,*/ comments from the last commit, which where left
+          for the single purpose of better visualization in a diff tool.
+
+2010-07-14  Robert Larice
  * src/frontend/commands.c ,
  * src/frontend/control.c ,
  * src/include/cpdefs.h :
