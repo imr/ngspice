@@ -376,7 +376,7 @@ extern void raw_write(char *name, struct plot *pl, bool app, bool binary);
 extern struct plot *raw_read(char *name);
 
 /* meas.c */
-extern bool do_measure(char *what, bool chk_only);
+extern void do_measure(char *what, bool chk_only);
 extern bool check_autostop(char *what);
 extern void com_meas(wordlist *wl);
 
