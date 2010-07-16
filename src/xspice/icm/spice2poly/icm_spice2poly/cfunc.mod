@@ -105,14 +105,14 @@ void spice2poly (ARGS)
         STATIC_VAR(acgains) = acgains;
     }
     else
-        acgains = STATIC_VAR(acgains);
+        acgains = (double *) STATIC_VAR(acgains);
 
     /* If analysis type is AC, use the previously computed DC partials */
     /* for the AC gains */
 
     if(ANALYSIS == MIF_AC) {
         for(i = 0; i < num_inputs; i++) {
-            acgains = STATIC_VAR(acgains);
+            acgains = (double *) STATIC_VAR(acgains);
             AC_GAIN(out,in[i]).real = acgains[i];
             AC_GAIN(out,in[i]).imag = 0.0;
         }

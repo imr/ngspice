@@ -176,7 +176,7 @@ void cm_zener(ARGS)  /* structure holding parms,
 
         /* Allocate storage for frequencies */
         STATIC_VAR(previous_voltage) = (double *) malloc(sizeof(double));
-        previous_voltage = STATIC_VAR(previous_voltage);
+        previous_voltage = (double *) STATIC_VAR(previous_voltage);
 
         /* Set previous_voltage value to zero... */
         *previous_voltage = 0.0;
@@ -184,7 +184,7 @@ void cm_zener(ARGS)  /* structure holding parms,
     }  
     else {
 
-        previous_voltage = STATIC_VAR(previous_voltage);
+        previous_voltage = (double *) STATIC_VAR(previous_voltage);
 
     }
                        

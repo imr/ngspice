@@ -1,3 +1,9 @@
+2010-07-16  Robert Larice
+ * src/xspice/icm/analog/pwl/cfunc.mod ,
+ * src/xspice/icm/spice2poly/icm_spice2poly/cfunc.mod ,
+ * src/xspice/icm/xtradev/zener/cfunc.mod :
+        xspice, cast so called `STATIC_VAR' pointers to their concrete type
+
 2010-07-14  Robert Larice
  * src/frontend/commands.c :
         remove leftover /*FALSE,*/ comments from the last commit, which where left

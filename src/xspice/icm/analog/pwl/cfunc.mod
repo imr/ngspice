@@ -267,17 +267,17 @@ void cm_pwl(ARGS)  /* structure holding parms,
 
         /* Allocate storage for last_x_value */
         STATIC_VAR(last_x_value) = (double *) malloc(sizeof(double));
-        last_x_value = STATIC_VAR(last_x_value);
+        last_x_value = (double *) STATIC_VAR(last_x_value);
 
         /* Allocate storage for breakpoint domain & range values */
         STATIC_VAR(x) = (double *) calloc(size, sizeof(double));
-        x = STATIC_VAR(x);
+        x = (double *) STATIC_VAR(x);
         if (!x) {
             cm_message_send(allocation_error); 
         }
 
         STATIC_VAR(y) = (double *) calloc(size, sizeof(double));
-        y = STATIC_VAR(y);
+        y = (double *) STATIC_VAR(y);
         if (!y) {
             cm_message_send(allocation_error);  
         }
@@ -291,11 +291,11 @@ void cm_pwl(ARGS)  /* structure holding parms,
     }  
     else {
 
-        last_x_value = STATIC_VAR(last_x_value);
+        last_x_value = (double *) STATIC_VAR(last_x_value);
 
-        x = STATIC_VAR(x);
+        x = (double *) STATIC_VAR(x);
 
-        y = STATIC_VAR(y);
+        y = (double *) STATIC_VAR(y);
 
     }
 
