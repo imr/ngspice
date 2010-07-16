@@ -5,6 +5,7 @@
  * src/frontend/vectors.c ,
  * src/frontend/vectors.h ,
  * src/include/fteext.h :
+        `const' qualifier for char* arguments of vec_get() and ft_substdef()
 
 2010-07-16  Robert Larice
  * src/xspice/icm/xtraevt/d_to_real/cfunc.mod ,
