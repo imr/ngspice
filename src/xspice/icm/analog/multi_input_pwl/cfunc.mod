@@ -173,7 +173,7 @@ get_output( ARGS, double x )
 void
 cm_multi_input_pwl(ARGS) 
 {
-  char*  model = ( PARAM_NULL(model) == 1 ) ? "and" : PARAM(model);
+  const char*  model = ( PARAM_NULL(model) == 1 ) ? "and" : PARAM(model);
   double output;
 
   if ( ANALYSIS == TRANSIENT || ANALYSIS == DC )
