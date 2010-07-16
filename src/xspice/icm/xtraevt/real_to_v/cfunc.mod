@@ -14,7 +14,7 @@ void ucm_real_to_v (ARGS)
     /*double out;*/
 
 
-    in = INPUT(in);
+    in = (double *) INPUT(in);
 
     if(INIT) {
         cm_event_alloc(TS, 2 * sizeof(double));

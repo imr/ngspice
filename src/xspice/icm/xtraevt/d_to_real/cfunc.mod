@@ -19,7 +19,7 @@ void ucm_d_to_real (ARGS)
         ena = 1.0;
     else
         ena = 0.0;
-    out = OUTPUT(out);
+    out = (double *) OUTPUT(out);
 
     zero  = PARAM(zero);
     one   = PARAM(one);

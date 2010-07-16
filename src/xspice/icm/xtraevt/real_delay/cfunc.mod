@@ -34,8 +34,8 @@ void ucm_real_delay (ARGS)
         else if(*state != ONE)
             OUTPUT_CHANGED(out) = FALSE;
         else {
-            in = INPUT(in);
-            out = OUTPUT(out);
+            in = (double *) INPUT(in);
+            out = (double *) OUTPUT(out);
             *out = *in;
             OUTPUT_DELAY(out) = PARAM(delay);
         }

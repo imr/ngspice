@@ -1,4 +1,13 @@
 2010-07-16  Robert Larice
+ * src/xspice/icm/xtraevt/d_to_real/cfunc.mod ,
+ * src/xspice/icm/xtraevt/real_delay/cfunc.mod ,
+ * src/xspice/icm/xtraevt/real_gain/cfunc.mod ,
+ * src/xspice/icm/xtraevt/real_to_v/cfunc.mod :
+        xspice, xtraevt/*real*, add casts to `INPUT' and `OUTPUT'
+          the *.ifs files specify this to be `real'
+          yet the *.mod translator seems to be incomplete, and delivers void *
+
+2010-07-16  Robert Larice
  * src/xspice/icm/analog/multi_input_pwl/cfunc.mod :
         add a missing `const' qualifier
 

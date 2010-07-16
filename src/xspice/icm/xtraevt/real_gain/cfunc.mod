@@ -13,8 +13,8 @@ void ucm_real_gain (ARGS)
 
 
     /* Get the input and output pointers */
-    in = INPUT(in);
-    out = OUTPUT(out);
+    in = (double *) INPUT(in);
+    out = (double *) OUTPUT(out);
 
     /* Get the parameters */
     in_offset  = PARAM(in_offset);
