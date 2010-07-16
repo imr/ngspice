@@ -1,4 +1,9 @@
 2010-07-16  Robert Larice
+ * src/xspice/icm/digital/d_fdiv/cfunc.mod :
+        xspice, digital/d_fdiv, fix the type of counter and counter_old
+          from Digital_State_t to int
+
+2010-07-16  Robert Larice
  * src/xspice/icm/digital/d_dff/cfunc.mod ,
  * src/xspice/icm/digital/d_dlatch/cfunc.mod ,
  * src/xspice/icm/digital/d_jkff/cfunc.mod ,

@@ -135,9 +135,9 @@ void cm_d_fdiv(ARGS)
     Digital_State_t     *freq_in,       /* freq_in clock value      */
                     *freq_in_old,       /* previous freq_in value   */
                        *freq_out,       /* current output for fdiv  */
-                   *freq_out_old,       /* previous output for fdiv */                            
+                   *freq_out_old;       /* previous output for fdiv */                            
 
-                          *count,       /* counter value    */
+    int                   *count,       /* counter value    */
                       *count_old;       /* previous counter value    */
 
 
@@ -149,7 +149,7 @@ void cm_d_fdiv(ARGS)
         /* allocate storage */
         cm_event_alloc(0,sizeof(Digital_State_t));
         cm_event_alloc(1,sizeof(Digital_State_t));
-        cm_event_alloc(2,sizeof(Digital_State_t));
+        cm_event_alloc(2,sizeof(int));
 
         /* declare load values */
         LOAD(freq_in) = PARAM(freq_in_load);
@@ -157,7 +157,7 @@ void cm_d_fdiv(ARGS)
         /* retrieve storage for the outputs */
         freq_in = freq_in_old = (Digital_State_t *) cm_event_get_ptr(0,0);
         freq_out = freq_out_old = (Digital_State_t *) cm_event_get_ptr(1,0);
-        count = count_old = (Digital_State_t *) cm_event_get_ptr(2,0);
+        count = count_old = (int *) cm_event_get_ptr(2,0);
 
     }
     else {      /* Retrieve previous values */
@@ -167,8 +167,8 @@ void cm_d_fdiv(ARGS)
         freq_in_old = (Digital_State_t *) cm_event_get_ptr(0,1);
         freq_out = (Digital_State_t *) cm_event_get_ptr(1,0);
         freq_out_old = (Digital_State_t *) cm_event_get_ptr(1,1);
-        count = (Digital_State_t *) cm_event_get_ptr(2,0);
-        count_old = (Digital_State_t *) cm_event_get_ptr(2,1);
+        count = (int *) cm_event_get_ptr(2,0);
+        count_old = (int *) cm_event_get_ptr(2,1);
 
     }
 
@@ -191,7 +191,7 @@ void cm_d_fdiv(ARGS)
            bounds, set to "zero" equivalent */
         *count = PARAM(i_count);
         if ( (div_factor <= *count) || (0 > *count) ) {
-            *count = ZERO;
+            *count = 0;
             OUTPUT_STATE(freq_out) = *freq_out = *freq_out_old = ZERO; 
         }
 
@@ -216,7 +216,7 @@ void cm_d_fdiv(ARGS)
             /* If new count value is equal to the div_factor+1 value,
                need to normalize count to "1", and raise output */
             if ( ((div_factor+1) == *count)||(1 == *count) ) {
-                *count = ONE;                                     
+                *count = 1;                                     
                 OUTPUT_STATE(freq_out) = *freq_out = ONE;
                 OUTPUT_DELAY(freq_out) = PARAM(rise_delay);
             }
