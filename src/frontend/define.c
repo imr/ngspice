@@ -262,7 +262,7 @@ prtree1(struct pnode *pn, FILE *fp)
 }
 
 struct pnode *
-ft_substdef(char *name, struct pnode *args)
+ft_substdef(const char *name, struct pnode *args)
 {
     struct udfunc *udf;
     struct pnode *tp;

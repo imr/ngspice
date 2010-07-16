@@ -11,7 +11,7 @@ void ft_loadfile(char *file);
 void plot_add(struct plot *pl);
 void vec_remove(char *name);
 struct dvec * vec_fromplot(char *word, struct plot *plot);
-struct dvec * vec_get(char *word);
+struct dvec * vec_get(const char *word);
 void plot_docoms(wordlist *wl);
 struct dvec * vec_copy(struct dvec *v);
 struct plot * plot_alloc(char *name);

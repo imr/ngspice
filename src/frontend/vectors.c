@@ -303,15 +303,15 @@ vec_fromplot(char *word, struct plot *plot)
 #define SPECCHAR '@'
 
 struct dvec *
-vec_get(char *word)
+vec_get(const char *vec_name)
 {
     struct dvec *d, *end = NULL, *newv = NULL;
     struct plot *pl;
-    char buf[BSIZE_SP], *s, *wd, *whole, *name = NULL, *param;
+    char buf[BSIZE_SP], *s, *wd, *word, *whole, *name = NULL, *param;
     int i = 0;
     struct variable *vv;
 
-    wd = word = copy(word);     /* Gets mangled below... */
+    wd = word = copy(vec_name);   /* Gets mangled below... */
 
     if (index(word, '.')) {
         /* Snag the plot... */

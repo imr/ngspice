@@ -7,7 +7,7 @@
 #define DEFINE_H_INCLUDED
 
 void com_define(wordlist *wlist);
-struct pnode * ft_substdef(char *name, struct pnode *args);
+struct pnode * ft_substdef(const char *name, struct pnode *args);
 void com_undefine(wordlist *wlist);
 
 

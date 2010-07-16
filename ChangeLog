@@ -1,4 +1,12 @@
 2010-07-16  Robert Larice
+ * src/ngsconvert.c ,
+ * src/frontend/define.c ,
+ * src/frontend/define.h ,
+ * src/frontend/vectors.c ,
+ * src/frontend/vectors.h ,
+ * src/include/fteext.h :
+
+2010-07-16  Robert Larice
  * src/xspice/icm/xtraevt/d_to_real/cfunc.mod ,
  * src/xspice/icm/xtraevt/real_delay/cfunc.mod ,
  * src/xspice/icm/xtraevt/real_gain/cfunc.mod ,

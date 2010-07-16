@@ -150,7 +150,7 @@ extern void com_state(wordlist *wl);
 
 /* define.c */
 
-extern struct pnode *ft_substdef(char *name, struct pnode *args);
+extern struct pnode *ft_substdef(const char *name, struct pnode *args);
 extern void com_define(wordlist *wl);
 extern void com_undefine(wordlist *wl);
 extern void ft_pnode(struct pnode *pn);
@@ -459,7 +459,7 @@ extern bool vec_eq(struct dvec *v1, struct dvec *v2);
 extern int plot_num;
 extern struct dvec *vec_fromplot(char *word, struct plot *plot);
 extern struct dvec *vec_copy(struct dvec *v);
-extern struct dvec *vec_get(char *word);
+extern struct dvec *vec_get(const char *word);
 extern struct dvec *vec_mkfamily(struct dvec *v);
 extern struct plot *plot_cur;
 extern struct plot *plot_alloc(char *name);

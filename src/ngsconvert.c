@@ -446,7 +446,7 @@ void out_printf(char *fmt, ...) { }
 #endif
 void out_send(char *string) {}
 struct variable * cp_enqvar(char *word) { return (NULL); }
-struct dvec *vec_get(char *word) { return (NULL); }
+struct dvec *vec_get(const char *word) { return (NULL); }
 void cp_ccom(wordlist *w, char *b, bool e) { return; }
 int cp_usrset(struct variable *v, bool i) { return(US_OK); }
 
