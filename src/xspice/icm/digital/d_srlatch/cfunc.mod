@@ -384,7 +384,7 @@ void cm_d_srlatch(ARGS)
 
     if (0.0 == TIME) {   /****** DC analysis...output w/o delays ******/
                                                                
-        temp = PARAM(ic);
+        temp = (Digital_State_t) PARAM(ic);
 
         /** Modify output if set or reset lines are active **/
         if ( (*enable==ONE) && (*s==ONE) && (*r==ZERO) ) temp = ONE; 

@@ -370,7 +370,7 @@ void cm_d_srff(ARGS)
 
     if (0.0 == TIME) {   /****** DC analysis...output w/o delays ******/
                                                             
-        temp = PARAM(ic);
+        temp = (Digital_State_t) PARAM(ic);
 
         /** Modify output if set or reset lines are active **/
         if ( (*set==ONE) && (*reset==ZERO) ) temp = ONE;

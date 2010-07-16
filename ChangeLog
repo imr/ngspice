@@ -1,4 +1,17 @@
 2010-07-16  Robert Larice
+ * src/xspice/icm/digital/d_dff/cfunc.mod ,
+ * src/xspice/icm/digital/d_dlatch/cfunc.mod ,
+ * src/xspice/icm/digital/d_jkff/cfunc.mod ,
+ * src/xspice/icm/digital/d_srff/cfunc.mod ,
+ * src/xspice/icm/digital/d_srlatch/cfunc.mod ,
+ * src/xspice/icm/digital/d_tff/cfunc.mod :
+        xspice, flip-flops, cast the `ic' PARAM to Digitial_State_t
+          the *.ifs file claims this parameter to be an integer in range 0..2
+          meant to represent ZERO, ONE and UNKNOWN
+ * src/xspice/icm/digital/d_ram/cfunc.mod :
+        xspice, the same fix for `ram'
+
+2010-07-16  Robert Larice
  * src/xspice/icm/analog/pwl/cfunc.mod ,
  * src/xspice/icm/spice2poly/icm_spice2poly/cfunc.mod ,
  * src/xspice/icm/xtradev/zener/cfunc.mod :

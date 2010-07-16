@@ -1046,7 +1046,7 @@ void cm_d_ram(ARGS)
                                   
         /** initialize ram to ic value **/
 
-        out = PARAM(ic);
+        out = (Digital_State_t) PARAM(ic);
         for (i=0; i<word_width; i++) {
             for (j=0; j<ram_size; j++) {
                 cm_initialize_ram(out,word_width,i,j,ram);
@@ -1056,7 +1056,7 @@ void cm_d_ram(ARGS)
         if ( (ONE==*select) && (ZERO==*write_en) ) {
             /* output STRONG initial conditions */
             for (i=0; i<word_width; i++) {
-                OUTPUT_STATE(data_out[i]) = PARAM(ic);
+                OUTPUT_STATE(data_out[i]) = (Digital_State_t) PARAM(ic);
                 OUTPUT_STRENGTH(data_out[i]) = STRONG;
             }
         }
