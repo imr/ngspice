@@ -243,7 +243,8 @@ int
 cp_usrset(struct variable *var, bool isset)
 {
     char val[BSIZE_SP];
-    char *vv, *s;
+    void *vv;
+    char *s;
     struct variable *tv;
     int iv;
     double dv;
@@ -375,11 +376,11 @@ cp_usrset(struct variable *var, bool isset)
             if (var->va_bool) {
                 /*val[0] = '\0';*/
                 bv = TRUE;
-                vv = (char *) &bv;
+                vv = &bv;
                 /*break;*/
             } else {
                 bv = FALSE;
-                vv = (char *) &bv;
+                vv = &bv;
             }
 	    break;
         case CP_STRING:
@@ -389,12 +390,12 @@ cp_usrset(struct variable *var, bool isset)
         case CP_NUM:
             /*(void) sprintf(val, "%d", var->va_num);*/
             iv = var->va_num;
-            vv = (char *) &iv;
+            vv = &iv;
             break;
         case CP_REAL:
             /*(void) strcpy(val, printnum(var->va_real));*/
             dv = var->va_real;
-            vv = (char *) &dv;
+            vv = &dv;
             break;
         case CP_LIST:
             /* if_option can't handle lists anyway. */

@@ -433,7 +433,7 @@ extern struct variable *spif_getparam(CKTcircuit *ckt, char **name, char *param,
 extern struct variable *spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do_model);
 extern void if_cktfree(CKTcircuit *ckt, INPtables *tab);
 extern void if_dump(CKTcircuit *ckt, FILE *file);
-extern int if_option(CKTcircuit *ckt, char *name, int type, char *value);
+extern int if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value);
 extern void if_setndnames(char *line);
 extern void if_setparam_model(CKTcircuit *ckt, char **name, char *val );
 extern void if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_model);

@@ -382,7 +382,7 @@ static char *obsolete[] = {
 } ;
 
 int
-if_option(CKTcircuit *ckt, char *name, int type, char *value)
+if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
 {
     IFvalue pval;
     int err, i;
@@ -467,7 +467,7 @@ if_option(CKTcircuit *ckt, char *name, int type, char *value)
             break;
         case IF_STRING:
             if (type == CP_STRING)
-                pval.sValue = copy(value);
+                pval.sValue = copy((char*) value);
             else
                 goto badtype;
             break;

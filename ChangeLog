@@ -1,4 +1,14 @@
 2010-07-17  Robert Larice
+ * src/main.c ,
+ * src/frontend/inp.c ,
+ * src/frontend/options.c ,
+ * src/frontend/spiceif.c ,
+ * src/frontend/spiceif.h ,
+ * src/include/fteext.h :
+    use type void* to pass anonymous data to function if_option()
+      indicate its actual type with an enum cp_types argument
+
+2010-07-17  Robert Larice
  * src/frontend/variable.c ,
  * src/frontend/variable.h ,
  * src/frontend/vectors.c ,

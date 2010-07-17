@@ -9,7 +9,7 @@
 
 CKTcircuit * if_inpdeck(struct line *deck, INPtables **tab);
 int if_run(CKTcircuit *t, char *what, wordlist *args, INPtables *tab);
-int if_option(CKTcircuit *ckt, char *name, int type, char *value);
+int if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value);
 void if_dump(CKTcircuit *ckt, FILE *file);
 void if_cktfree(CKTcircuit *ckt, INPtables *tab);
 char * if_errstring(int code);

@@ -252,7 +252,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
 /* -------------------------------------------------------------------------- */
 int
-if_option(CKTcircuit *ckt, char *name, int type, char *value)
+if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
 {
     return 0;
 }

@@ -894,11 +894,11 @@ inp_dodeck(
 		  break;
                 case CP_NUM:
 		  if_option(ct->ci_ckt, eev->va_name, 
-			    eev->va_type, (char *) &eev->va_num);
+			    eev->va_type, &eev->va_num);
 		  break;
                 case CP_REAL:
 		  if_option(ct->ci_ckt, eev->va_name, 
-			    eev->va_type, (char *) &eev->va_real);
+			    eev->va_type, &eev->va_real);
 		  break;
                 case CP_STRING:
 		  if_option(ct->ci_ckt, eev->va_name, 
