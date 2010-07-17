@@ -82,8 +82,8 @@ struct plotab plotabs[NUMPLOTTYPES] = {
     { "spect", "spect" },
 } ;
 
-int notypes = 15 ;/* change 14 to 15 by H.T*/
-int noplotabs = 20;/* change 18 to 20 by H.T*/
+int notypes = 19 ;
+int noplotabs = 21;
 
 /* A command to define types for vectors and plots.  This will generally
  * be used in the Command: field of the rawfile.

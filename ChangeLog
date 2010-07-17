@@ -1,3 +1,6 @@
+2010-07-17  Holger Vogt
+ * typesdef.c: correct the number of available types and plots
+
 2010-07-16  Robert Larice
  * src/ngsconvert.c ,
  * src/frontend/define.c ,
@@ -43,6 +46,10 @@
  * src/xspice/icm/spice2poly/icm_spice2poly/cfunc.mod ,
  * src/xspice/icm/xtradev/zener/cfunc.mod :
         xspice, cast so called `STATIC_VAR' pointers to their concrete type
+		
+2010-07-14  Holger Vogt
+ * commands.c, options.c, fteext.h, inp.c: option command in spinit or
+   control section as enhancement to .options command		
 
 2010-07-14  Robert Larice
  * src/frontend/commands.c :
