@@ -36,7 +36,7 @@ com_shift(wordlist *wl)
         fprintf(cp_err, "Error: %s: no such variable\n", n);
         return;
     }
-    if (v->va_type != VT_LIST) {
+    if (v->va_type != CP_LIST) {
         fprintf(cp_err, "Error: %s not of type list\n", n);
         return;
     }

@@ -83,7 +83,7 @@ PS_Init(void)
 {
     char pswidth[30], psheight[30];
   
-    if (!cp_getvar("hcopyscale", VT_STRING, psscale)) {
+    if (!cp_getvar("hcopyscale", CP_STRING, psscale)) {
         scale = 1.0;
     } else {
         sscanf(psscale, "%lf", &scale);
@@ -92,7 +92,7 @@ PS_Init(void)
     }
     dispdev->numlinestyles = NUMELEMS(linestyle);  
    /* plot color */
-    if (!cp_getvar("hcopypscolor", VT_NUM, &setbgcolor)) {
+    if (!cp_getvar("hcopypscolor", CP_NUM, &setbgcolor)) {
         /* if not set, set plot to b&w and use line styles */
         colorflag = 0;
         dispdev->numcolors = 2;
@@ -101,11 +101,11 @@ PS_Init(void)
       /* get backgroung color and set plot to color */
         colorflag = 1;
         dispdev->numcolors = 21;   /* don't know what the maximum should be */
-        cp_getvar("hcopypstxcolor", VT_NUM, &settxcolor);
+        cp_getvar("hcopypstxcolor", CP_NUM, &settxcolor);
     }
 
     /* plot size */
-    if (!cp_getvar("hcopywidth", VT_STRING, pswidth)) {
+    if (!cp_getvar("hcopywidth", CP_STRING, pswidth)) {
         dispdev->width = 7.75 * 72.0 * scale;       /* (8 1/2 - 3/4) * 72 */
     } else {
         sscanf(pswidth, "%d", &(dispdev->width));
@@ -114,7 +114,7 @@ PS_Init(void)
         if (dispdev->width >= 10000)
             dispdev->width = 10000;
     }
-    if (!cp_getvar("hcopyheight", VT_STRING, psheight)) {
+    if (!cp_getvar("hcopyheight", CP_STRING, psheight)) {
         dispdev->height = dispdev->width;
     } else {
         sscanf(psheight, "%d", &(dispdev->height));
@@ -134,9 +134,9 @@ PS_Init(void)
      * viewport.height = absolute.height - 2 * viewportyoff
      */
 
-    if (!cp_getvar("hcopyfont", VT_STRING, psfont))
+    if (!cp_getvar("hcopyfont", CP_STRING, psfont))
         strcpy(psfont, "Helvetica");
-    if (!cp_getvar("hcopyfontsize", VT_STRING, psfontsize)) {
+    if (!cp_getvar("hcopyfontsize", CP_STRING, psfontsize)) {
         fontsize = 10;
         fontwidth = 6;
         fontheight = 14;
@@ -415,7 +415,7 @@ PS_SelectColor(int colorid)           /* should be replaced by PS_DefineColor */
 
   /* Extract the rgbcolor, format is: "rgb:<red>/<green>/<blue>" */
   sprintf(colorN, "color%d",colorid);
-  if (cp_getvar(colorN, VT_STRING, colorstring)){
+  if (cp_getvar(colorN, CP_STRING, colorstring)){
     for (i=0; colorstring[i]; i++)
       if (colorstring[i] == '/' || colorstring[i] == ':')
         colorstring[i] = ' ';

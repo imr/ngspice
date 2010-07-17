@@ -445,16 +445,16 @@ vec_get(const char *vec_name)
     *#define va_string   va_V.vV_string
     *#define va_vlist     va_V.vV_list
     *enum vt_types {
-    *  VT_BOOL,
-    *  VT_NUM,
-    *  VT_REAL,
-    *  VT_STRING,
-    *  VT_LIST
+    *  CP_BOOL,
+    *  CP_NUM,
+    *  CP_REAL,
+    *  CP_STRING,
+    *  CP_LIST
     ° };
     */
 
    /* The variable is a vector */
-    if (vv->va_type == VT_LIST)
+    if (vv->va_type == CP_LIST)
     {
      /* Compute the length of the vector, 
       * used with the parameters of isrc and vsrc
@@ -480,11 +480,11 @@ vec_get(const char *vec_name)
       */
      d->v_dims[1]=1;
     }
-    else if (vv->va_type == VT_NUM)   /* Variable is an integer */
+    else if (vv->va_type == CP_NUM)   /* Variable is an integer */
     {
      *d->v_realdata =  (double) vv->va_num;
     }
-    else if (vv->va_type == VT_REAL)  /* Variable is a real */
+    else if (vv->va_type == CP_REAL)  /* Variable is a real */
     {
      if (!(vv->va_next))
      { 
@@ -510,13 +510,13 @@ vec_get(const char *vec_name)
        {
 	switch(nv->va_type)
 	{
-		case  VT_REAL:
+		case  CP_REAL:
 			fprintf(stdout,"%s=%g\n",nv->va_name,nv->va_real);
 			break;
-		case  VT_STRING:
+		case  CP_STRING:
 			fprintf(stdout,"%s=%s\n",nv->va_name,nv->va_string);
 			break;	
-		case  VT_NUM:
+		case  CP_NUM:
 			fprintf(stdout,"%s=%d\n",nv->va_name,nv->va_num);
 			break;	
 	}

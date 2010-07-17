@@ -114,12 +114,12 @@ int WIN_Init( )
    /* always, user may have set color0 to white */
    /* get background color information from spinit, only "white"
       is recognized as a suitable option! */
-   if (cp_getvar("color0", VT_STRING, colorstring)) {
+   if (cp_getvar("color0", CP_STRING, colorstring)) {
       if (cieq(colorstring, "white")) isblack = FALSE; 
       else isblack = TRUE;	
    }	
       /* get linewidth information from spinit */
-      if (!cp_getvar("xbrushwidth", VT_NUM, &linewidth))
+      if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
          linewidth = 0;
       if (linewidth < 0) linewidth = 0;  
 
@@ -129,7 +129,7 @@ int WIN_Init( )
 	  isblackold = isblack;
 	  
       /* get linewidth information from spinit 
-      if (!cp_getvar("xbrushwidth", VT_NUM, &linewidth))
+      if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
          linewidth = 0;
       if (linewidth < 0) linewidth = 0;        */
 
@@ -232,7 +232,7 @@ static int LType( int ColorIndex)
 LRESULT HcpyPlot( HWND hwnd)
 {
 	int colorval = isblack? 0 : 1;
-   cp_vset("hcopypscolor", VT_NUM, (char*)(&colorval));
+   cp_vset("hcopypscolor", CP_NUM, (char*)(&colorval));
 	com_hardcopy(NULL); 
 	return 0;
 }
@@ -240,7 +240,7 @@ LRESULT HcpyPlot( HWND hwnd)
 LRESULT HcpyPlotBW( HWND hwnd)
 {
    int bgcolor;
-   if (cp_getvar("hcopypscolor", VT_NUM, &bgcolor))
+   if (cp_getvar("hcopypscolor", CP_NUM, &bgcolor))
        cp_remvar("hcopypscolor");
 	com_hardcopy(NULL); 
 	return 0;
@@ -815,10 +815,10 @@ int WIN_Text( char * text, int x, int y)
    lf.lfPitchAndFamily = 0 ;
 
    /* set up fonts */
-   if (!cp_getvar("wfont", VT_STRING, lf.lfFaceName)) {
+   if (!cp_getvar("wfont", CP_STRING, lf.lfFaceName)) {
       (void) lstrcpy(lf.lfFaceName, DEF_FONTW);
    }
-   if (!cp_getvar("wfont_size", VT_NUM, (char *) &(lf.lfHeight))) {
+   if (!cp_getvar("wfont_size", CP_NUM, (char *) &(lf.lfHeight))) {
       lf.lfHeight  = (int) (1.1 * currentgraph->fontheight) ;
    }
      

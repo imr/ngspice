@@ -51,7 +51,7 @@ cp_enqvar(char *word)
                 vv = alloc(struct variable);
                 vv->va_name = copy(word);
                 vv->va_next = NULL;
-                vv->va_type = VT_REAL;
+                vv->va_type = CP_REAL;
                 if (isreal(d)) {
                     vv->va_real = d->v_realdata[0];
                 } else {
@@ -62,11 +62,11 @@ cp_enqvar(char *word)
                 vv = alloc(struct variable);
                 vv->va_next = NULL;
                 vv->va_name = copy(word);
-                vv->va_type = VT_LIST;
+                vv->va_type = CP_LIST;
                 vv->va_vlist = NULL;
                 for (i = d->v_length - 1; i >= 0; i--) {
                     tv = alloc(struct variable);
-                    tv->va_type = VT_REAL;
+                    tv->va_type = CP_REAL;
                     if (isreal(d)) {
                         tv->va_real = d->v_realdata[i];
                     } else {
@@ -94,36 +94,36 @@ cp_enqvar(char *word)
             vv = alloc(struct variable);
 	    vv->va_next = NULL;
             vv->va_name = word;
-            vv->va_type = VT_STRING;
+            vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_name);
         } else if (eq(word, "curplottitle")) {
             vv = alloc(struct variable);
 	    vv->va_next = NULL;
             vv->va_name = word;
-            vv->va_type = VT_STRING;
+            vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_title);
         } else if (eq(word, "curplotdate")) {
             vv = alloc(struct variable);
 	    vv->va_next = NULL;
             vv->va_name = word;
-            vv->va_type = VT_STRING;
+            vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_date);
         } else if (eq(word, "curplot")) {
             vv = alloc(struct variable);
 	    vv->va_next = NULL;
             vv->va_name = word;
-            vv->va_type = VT_STRING;
+            vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_typename);
         } else if (eq(word, "plots")) {
             vv = alloc(struct variable);
 	    vv->va_next = NULL;
 	    vv->va_vlist = NULL;
             vv->va_name = word;
-            vv->va_type = VT_LIST;
+            vv->va_type = CP_LIST;
 	    vv->va_vlist = NULL;
             for (pl = plot_list; pl; pl = pl->pl_next) {
                 tv = alloc(struct variable);
-                tv->va_type = VT_STRING;
+                tv->va_type = CP_STRING;
                 tv->va_string = copy(pl->pl_typename);
                 tv->va_next = vv->va_vlist;
                 vv->va_vlist = tv;
@@ -250,17 +250,17 @@ cp_usrset(struct variable *var, bool isset)
     bool bv;
 
     if (eq(var->va_name, "debug")) {
-        if (var->va_type == VT_BOOL) {
+        if (var->va_type == CP_BOOL) {
             cp_debug = ft_simdb = ft_parsedb = ft_evdb = ft_vecdb =
                 ft_grdb = ft_gidb = ft_controldb = isset;
-        } else if (var->va_type == VT_LIST) {
+        } else if (var->va_type == CP_LIST) {
             for (tv = var->va_vlist; tv; tv = tv->va_next)
-                if (var->va_type != VT_STRING)
+                if (var->va_type != CP_STRING)
                     fprintf(cp_err,
                     "Error: bad type for debug var\n");
                 else
                     setdb(tv->va_string);
-        } else if (var->va_type == VT_STRING) {
+        } else if (var->va_type == CP_STRING) {
             setdb(var->va_string);
         } else
             fprintf(cp_err, "Error: bad type for debug var\n");
@@ -293,20 +293,20 @@ cp_usrset(struct variable *var, bool isset)
     } else if (eq(var->va_name, "strictnumparse")) {
         ft_strictnumparse = isset;
     } else if (eq(var->va_name, "rawfileprec")) {
-        if ((var->va_type == VT_BOOL) && (isset == FALSE))
+        if ((var->va_type == CP_BOOL) && (isset == FALSE))
             raw_prec = -1;
-        else if (var->va_type == VT_REAL)
+        else if (var->va_type == CP_REAL)
             raw_prec = var->va_real;
-        else if (var->va_type == VT_NUM)
+        else if (var->va_type == CP_NUM)
             raw_prec = var->va_num;
         else
             fprintf(cp_err, "Bad 'rawfileprec' \"%s\"\n", var->va_name);
     } else if (eq(var->va_name, "numdgt")) {
-        if ((var->va_type == VT_BOOL) && (isset == FALSE))
+        if ((var->va_type == CP_BOOL) && (isset == FALSE))
             cp_numdgt = -1;
-        else if (var->va_type == VT_REAL)
+        else if (var->va_type == CP_REAL)
             cp_numdgt = var->va_real;
-        else if (var->va_type == VT_NUM)
+        else if (var->va_type == CP_NUM)
             cp_numdgt = var->va_num;
         else
             fprintf(cp_err, "Excuse me??\n");
@@ -321,32 +321,32 @@ cp_usrset(struct variable *var, bool isset)
                 fprintf(cp_err, "Warning: no PATH in environment.\n");
         }
 
-    } else if (eq(var->va_name, "units") && (var->va_type == VT_STRING)) {
+    } else if (eq(var->va_name, "units") && (var->va_type == CP_STRING)) {
         if (isset && ((*var->va_string == 'd') ||
                 (*var->va_string == 'D')))
             cx_degrees = TRUE;
         else
             cx_degrees = FALSE;
     } else if (eq(var->va_name, "curplot")) {
-        if (var->va_type == VT_STRING)
+        if (var->va_type == CP_STRING)
             plot_setcur(var->va_string);
         else
             fprintf(cp_err, "Error: plot name not a string\n");
         return (US_DONTRECORD);
     } else if (eq(var->va_name, "curplotname")) {
-        if (plot_cur && (var->va_type == VT_STRING))
+        if (plot_cur && (var->va_type == CP_STRING))
             plot_cur->pl_name = copy(var->va_string);
         else
             fprintf(cp_err, "Error: can't set plot name\n");
         return (US_DONTRECORD);
     } else if (eq(var->va_name, "curplottitle")) {
-        if (plot_cur && (var->va_type == VT_STRING))
+        if (plot_cur && (var->va_type == CP_STRING))
             plot_cur->pl_title = copy(var->va_string);
         else
             fprintf(cp_err, "Error: can't set plot title\n");
         return (US_DONTRECORD);
     } else if (eq(var->va_name, "curplotdate")) {
-        if (plot_cur && (var->va_type == VT_STRING))
+        if (plot_cur && (var->va_type == CP_STRING))
             plot_cur->pl_date = copy(var->va_string);
         else
             fprintf(cp_err, "Error: can't set plot date\n");
@@ -371,7 +371,7 @@ cp_usrset(struct variable *var, bool isset)
 
     /* Now call the interface option routine. */
     switch (var->va_type) {
-        case VT_BOOL:
+        case CP_BOOL:
             if (var->va_bool) {
                 /*val[0] = '\0';*/
                 bv = TRUE;
@@ -382,21 +382,21 @@ cp_usrset(struct variable *var, bool isset)
                 vv = (char *) &bv;
             }
 	    break;
-        case VT_STRING:
+        case CP_STRING:
             (void) strcpy(val, var->va_string);
             vv = val;
             break;
-        case VT_NUM:
+        case CP_NUM:
             /*(void) sprintf(val, "%d", var->va_num);*/
             iv = var->va_num;
             vv = (char *) &iv;
             break;
-        case VT_REAL:
+        case CP_REAL:
             /*(void) strcpy(val, printnum(var->va_real));*/
             dv = var->va_real;
             vv = (char *) &dv;
             break;
-        case VT_LIST:
+        case CP_LIST:
             /* if_option can't handle lists anyway. */
 	    vv = NULL;
             break;

@@ -450,23 +450,23 @@ if_option(CKTcircuit *ckt, char *name, int type, char *value)
 
     switch (ft_sim->analyses[which]->analysisParms[i].dataType & IF_VARTYPES) {
         case IF_REAL:
-            if (type == VT_REAL)
+            if (type == CP_REAL)
                 pval.rValue = *((double *) value);
-            else if (type == VT_NUM)
+            else if (type == CP_NUM)
                 pval.rValue = *((int *) value);
             else
                 goto badtype;
             break;
         case IF_INTEGER:
-            if (type == VT_NUM)
+            if (type == CP_NUM)
                 pval.iValue = *((int *) value);
-            else if (type == VT_REAL)
+            else if (type == CP_REAL)
                 pval.iValue = *((double *) value);
             else
                 goto badtype;
             break;
         case IF_STRING:
-            if (type == VT_STRING)
+            if (type == CP_STRING)
                 pval.sValue = copy(value);
             else
                 goto badtype;
@@ -506,11 +506,11 @@ badtype:
     fprintf(cp_err, "Error: bad type given for option %s --\n", name);
     fprintf(cp_err, "\ttype given was ");
     switch (type) {
-        case VT_BOOL:   fputs("boolean", cp_err); break;
-        case VT_NUM:    fputs("integer", cp_err); break;
-        case VT_REAL:   fputs("real", cp_err); break;
-        case VT_STRING: fputs("string", cp_err); break;
-        case VT_LIST:   fputs("list", cp_err); break;
+        case CP_BOOL:   fputs("boolean", cp_err); break;
+        case CP_NUM:    fputs("integer", cp_err); break;
+        case CP_REAL:   fputs("real", cp_err); break;
+        case CP_STRING: fputs("string", cp_err); break;
+        case CP_LIST:   fputs("list", cp_err); break;
         default:    fputs("something strange", cp_err); break;
     }
     fprintf(cp_err, ", type expected was ");
@@ -521,7 +521,7 @@ badtype:
         case IF_FLAG:   fputs("flag.\n", cp_err); break;
         default:    fputs("something strange.\n", cp_err); break;
     }
-    if (type == VT_BOOL)
+    if (type == CP_BOOL)
 fputs("\t(Note that you must use an = to separate option name and value.)\n", 
                     cp_err); 
     return 0;
@@ -930,30 +930,30 @@ parmtovar(IFvalue *pv, IFparm *opt)
 
     switch (opt->dataType & IF_VARTYPES) {
         case IF_INTEGER:
-            vv->va_type = VT_NUM;
+            vv->va_type = CP_NUM;
             vv->va_num = pv->iValue;
             break;
         case IF_REAL:
         case IF_COMPLEX:
-            vv->va_type = VT_REAL;
+            vv->va_type = CP_REAL;
             vv->va_real = pv->rValue;
             break;
         case IF_STRING:
-            vv->va_type = VT_STRING;
+            vv->va_type = CP_STRING;
             vv->va_string = pv->sValue;
             break;
         case IF_FLAG:
-            vv->va_type = VT_BOOL;
+            vv->va_type = CP_BOOL;
             vv->va_bool = pv->iValue ? TRUE : FALSE;
             break;
         case IF_REALVEC:
-            vv->va_type = VT_LIST;
+            vv->va_type = CP_LIST;
             for (i = 0; i < pv->v.numValue; i++) 
        {
                 nv = alloc(struct variable);
                 nv->va_next = vv->va_vlist;
                 vv->va_vlist = nv;
-                nv->va_type = VT_REAL;
+                nv->va_type = CP_REAL;
                 /* Change this so that the values are printed in order and
                  * not in inverted order as happens in the conversion process.
                  * Originally was  nv->va_real = pv->v.vec.rVec[i];

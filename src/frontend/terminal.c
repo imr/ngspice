@@ -84,7 +84,7 @@ out_init(void)
 
     noprint = nopause = FALSE;
 
-    if (cp_getvar("nomoremode", VT_BOOL, (char *) &moremode))
+    if (cp_getvar("nomoremode", CP_BOOL, (char *) &moremode))
         out_moremode = FALSE;
     else
     out_moremode = TRUE;
@@ -109,9 +109,9 @@ out_init(void)
 #endif
 
     if (!xsize)
-        (void) cp_getvar("width", VT_NUM, (char *) &xsize);
+        (void) cp_getvar("width", CP_NUM, (char *) &xsize);
     if (!ysize)
-        (void) cp_getvar("height", VT_NUM, (char *) &ysize);
+        (void) cp_getvar("height", CP_NUM, (char *) &ysize);
 
     if (!xsize)
         xsize = DEF_SCRWIDTH;

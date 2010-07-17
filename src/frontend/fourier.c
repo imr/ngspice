@@ -62,12 +62,12 @@ fourier(wordlist *wl, struct plot *current_plot)
         return 1;
     }
 
-    if ((!cp_getvar("nfreqs", VT_NUM, (char *) &nfreqs)) || (nfreqs < 1))
+    if ((!cp_getvar("nfreqs", CP_NUM, (char *) &nfreqs)) || (nfreqs < 1))
         nfreqs = 10;
-    if ((!cp_getvar("polydegree", VT_NUM, (char *) &polydegree)) ||
+    if ((!cp_getvar("polydegree", CP_NUM, (char *) &polydegree)) ||
             (polydegree < 0))
         polydegree = 1;
-    if ((!cp_getvar("fourgridsize", VT_NUM, (char *) &fourgridsize)) ||
+    if ((!cp_getvar("fourgridsize", CP_NUM, (char *) &fourgridsize)) ||
             (fourgridsize < 1))
         fourgridsize = DEF_FOURGRIDSIZE;
 

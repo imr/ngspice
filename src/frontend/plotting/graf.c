@@ -105,17 +105,17 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     plotno = 0;
 
     /* note: should do only once, maybe in gr_init_once */
-    if (!cp_getvar("pointchars", VT_STRING, pointchars))
+    if (!cp_getvar("pointchars", CP_STRING, pointchars))
           (void) strcpy(pointchars, DEFPOINTCHARS);
 
-    if (!cp_getvar("ticmarks", VT_NUM, (char *) &graph->ticmarks)) {
-      if (cp_getvar("ticmarks", VT_BOOL, (char *) &b))
+    if (!cp_getvar("ticmarks", CP_NUM, (char *) &graph->ticmarks)) {
+      if (cp_getvar("ticmarks", CP_BOOL, (char *) &b))
         graph->ticmarks = 10;
       else
         graph->ticmarks = 0;
     }
 
-    if (cp_getvar("ticlist", VT_LIST, ticlist)) {
+    if (cp_getvar("ticlist", CP_LIST, ticlist)) {
 	wl = (wordlist *)vareval("ticlist");
 	ticlist = (char *)wl_flatten(wl);
 	graph->ticdata = (double *) readtics(ticlist);
@@ -457,7 +457,7 @@ gr_pmsg(char *text)
 
     Update();
 
-    if (cp_getvar("device", VT_STRING, buf)
+    if (cp_getvar("device", CP_STRING, buf)
 	    && !(strcmp("/dev/tty", buf) == 0))
 	fprintf(cp_err, "%s", text);
     else

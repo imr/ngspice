@@ -47,7 +47,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     char buf[BSIZE_SP];
     char *branch;
 
-    if (!cp_getvar("nopadding", VT_BOOL, (char *) &raw_padding))
+    if (!cp_getvar("nopadding", CP_BOOL, (char *) &raw_padding))
         raw_padding = FALSE;
     /* Invert since we want to know if we should pad. */
     raw_padding = !raw_padding;
@@ -131,14 +131,14 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 
     for (vv = pl->pl_env; vv; vv = vv->va_next) {
         wl = cp_varwl(vv);
-        if (vv->va_type == VT_BOOL) {
+        if (vv->va_type == CP_BOOL) {
             fprintf(fp, "Option: %s\n", vv->va_name);
         } else {
             fprintf(fp, "Option: %s = ", vv->va_name);
-            if (vv->va_type == VT_LIST)
+            if (vv->va_type == CP_LIST)
                 fprintf(fp, "( ");
             wl_print(wl, fp);
-            if (vv->va_type == VT_LIST)
+            if (vv->va_type == CP_LIST)
                 fprintf(fp, " )");
             (void) putc('\n', fp);
         }

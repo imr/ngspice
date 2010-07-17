@@ -58,7 +58,7 @@ com_fft(wordlist *wl)
     {
        char   window[BSIZE_SP];
        double maxt = time[tlen-1];
-       if (!cp_getvar("specwindow", VT_STRING, window))
+       if (!cp_getvar("specwindow", CP_STRING, window))
            strcpy(window,"blackman");
        if (eq(window, "none"))
           for(i=0; i<tlen; i++) {
@@ -119,7 +119,7 @@ com_fft(wordlist *wl)
              }
           }
        else if (eq(window, "gaussian")) {
-          if (!cp_getvar("specwindoworder", VT_NUM, &order)) order = 2;
+          if (!cp_getvar("specwindoworder", CP_NUM, &order)) order = 2;
           if (order < 2) order = 2;
           sigma=1.0/order;
           scale=0.83/sigma;

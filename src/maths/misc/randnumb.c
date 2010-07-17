@@ -32,7 +32,7 @@ void checkseed(void)
    int newseed;
    static int oldseed;
 /*   printf("Enter checkseed()\n"); */
-   if (cp_getvar("rndseed", VT_NUM, &newseed)) {
+   if (cp_getvar("rndseed", CP_NUM, &newseed)) {
       if ((newseed > 0) && (oldseed != newseed)) {
          srandom(newseed);
          oldseed = newseed;

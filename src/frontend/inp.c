@@ -150,7 +150,7 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
 
     if (useout)
         out_init();
-    cp_getvar("renumber", VT_BOOL, (char *) &renumber);
+    cp_getvar("renumber", CP_BOOL, (char *) &renumber);
     if (type == LS_LOGICAL) {
 top1:
 	for (here = deck; here; here = here->li_next) {
@@ -512,10 +512,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       if ( temperature != NULL ) {
          temperature_value = atof(temperature);
          s = (char *) &temperature_value;
-         cp_vset("pretemp", VT_REAL, s );
+         cp_vset("pretemp", CP_REAL, s );
       }
       if (ft_ngdebug) {
-         cp_getvar( "pretemp", VT_REAL, (double *) &testemp );
+         cp_getvar( "pretemp", CP_REAL, (double *) &testemp );
          printf("test temperature %f\n", testemp);
       }
       /* We are done handling the control stuff.  Now process remainder of deck.
@@ -526,7 +526,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
          SetAnalyse( "Prepare Deck", 0);
 #endif
          /* Now expand subcircuit macros and substitute numparams.*/
-         if (!cp_getvar("nosubckt", VT_BOOL, (char *) &nosubckts))
+         if (!cp_getvar("nosubckt", CP_BOOL, (char *) &nosubckts))
          if( (deck->li_next = inp_subcktexpand(deck->li_next)) == NULL ){
             line_free(realdeck,TRUE);
             line_free(deck->li_actual, TRUE);
@@ -598,7 +598,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
          }
 
          if ( ciprefix( ".meas", dd->li_line ) ) {
-            if ( cp_getvar( "autostop", VT_BOOL, (bool *) &autostop ) ) {
+            if ( cp_getvar( "autostop", CP_BOOL, (bool *) &autostop ) ) {
                if ( strstr( dd->li_line, " max " ) || strstr( dd->li_line, " min " ) || strstr( dd->li_line, " avg " ) ||
                      strstr( dd->li_line, " rms " ) || strstr( dd->li_line, " integ " ) ) {
                   printf( "Warning: .OPTION AUTOSTOP will not be effective because one of 'max|min|avg|rms|integ' is used in .meas\n" );
@@ -625,7 +625,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       if ( temperature != NULL ) {
          temperature_value = atof(temperature);
          s = (char *) &temperature_value;
-         cp_vset("temp", VT_REAL, s );
+         cp_vset("temp", CP_REAL, s );
          txfree(temperature);
       }
 
@@ -722,7 +722,7 @@ inp_dodeck(
         }
         ft_curckt = ct = alloc(struct circ);
     }
-    cp_getvar("noparse", VT_BOOL, (char *) &noparse);
+    cp_getvar("noparse", CP_BOOL, (char *) &noparse);
 
 
 /* We check preliminary for the scale option. This special processing
@@ -750,17 +750,17 @@ inp_dodeck(
         }
         for (eev = ct->ci_vars; eev; eev = eev->va_next) {
             switch (eev->va_type) {
-                case VT_BOOL:
+                case CP_BOOL:
                     break;
-                case VT_NUM:
+                case CP_NUM:
                     break;
-                case VT_REAL:
+                case CP_REAL:
                     if ( strcmp("scale",eev->va_name)==0 ){
-                    cp_vset("scale", VT_REAL, (char*) &eev->va_real );
+                    cp_vset("scale", CP_REAL, (char*) &eev->va_real );
                     printf("Scale set\n");
                     }
                     break;
-                case VT_STRING:
+                case CP_STRING:
                     break;
             } /* switch  . . . */
         }
@@ -822,7 +822,7 @@ inp_dodeck(
     }   /* for (dd = deck; dd; dd = dd->li_next) */
 
     /* Only print out netlist if brief is FALSE */
-    cp_getvar( "brief", VT_BOOL, (bool *) &brief );
+    cp_getvar( "brief", CP_BOOL, (bool *) &brief );
     if(brief==FALSE) {
       /* output deck */
       out_printf( "\nProcessed Netlist\n" );
@@ -888,19 +888,19 @@ inp_dodeck(
         for (eev = ct->ci_vars; eev; eev = eev->va_next) {
 	    one = 1;
             switch (eev->va_type) {
-                case VT_BOOL:
+                case CP_BOOL:
 		  if_option(ct->ci_ckt, eev->va_name, 
 			    eev->va_type, &one);
 		  break;
-                case VT_NUM:
+                case CP_NUM:
 		  if_option(ct->ci_ckt, eev->va_name, 
 			    eev->va_type, (char *) &eev->va_num);
 		  break;
-                case VT_REAL:
+                case CP_REAL:
 		  if_option(ct->ci_ckt, eev->va_name, 
 			    eev->va_type, (char *) &eev->va_real);
 		  break;
-                case VT_STRING:
+                case CP_STRING:
 		  if_option(ct->ci_ckt, eev->va_name, 
 			    eev->va_type, eev->va_string);
 		  break;
@@ -1007,7 +1007,7 @@ doedit(char *filename)
 {
    char buf[BSIZE_SP], buf2[BSIZE_SP], *editor; 
 
-   if (cp_getvar("editor", VT_STRING, buf2)) {
+   if (cp_getvar("editor", CP_STRING, buf2)) {
       editor = buf2;
    } else {
       if (!(editor = getenv("EDITOR"))) {

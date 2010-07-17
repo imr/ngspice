@@ -44,7 +44,7 @@ com_showmod(wordlist *wl)
 {
     bool showmode;
 
-    if (cp_getvar("altshow", VT_BOOL, (char *) &showmode))
+    if (cp_getvar("altshow", CP_BOOL, (char *) &showmode))
         all_show(wl, 1);
         else
         all_show_old(wl, 1);
@@ -55,7 +55,7 @@ com_show(wordlist *wl)
 {
     bool showmode;
 
-    if (cp_getvar("altshow", VT_BOOL, (char *) &showmode))
+    if (cp_getvar("altshow", CP_BOOL, (char *) &showmode))
         all_show(wl, 0);
         else
         all_show_old(wl, 0);
@@ -82,7 +82,7 @@ all_show(wordlist *wl, int mode)
         return;
     }
 
-    if (!cp_getvar("width", VT_NUM, (char *) &screen_width))
+    if (!cp_getvar("width", CP_NUM, (char *) &screen_width))
             screen_width = DEF_WIDTH;
     count = (screen_width - LEFT_WIDTH) / (DEV_WIDTH + 1);
     count = 1;
@@ -246,7 +246,7 @@ all_show_old(wordlist *wl, int mode)
         return;
     }
 
-    if (!cp_getvar("width", VT_NUM, (char *) &screen_width))
+    if (!cp_getvar("width", CP_NUM, (char *) &screen_width))
             screen_width = DEF_WIDTH;
     count = (screen_width - LEFT_WIDTH) / (DEV_WIDTH + 1);
 

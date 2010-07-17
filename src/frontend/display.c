@@ -8,7 +8,7 @@ $Id$
 #include <graph.h>
 #include <ftedev.h>
 #include <fteinput.h>
-#include <cpdefs.h>     /* for VT_STRING */
+#include <cpdefs.h>     /* for CP_STRING */
 #include <ftedefs.h>        /* for mylog() */
 
 #ifdef TCL_MODULE
@@ -152,7 +152,7 @@ DevInit(void)
 
 #ifndef X_DISPLAY_MISSING
     /* determine display type */
-    if (getenv("DISPLAY") || cp_getvar("display", VT_STRING, buf)) {
+    if (getenv("DISPLAY") || cp_getvar("display", CP_STRING, buf)) {
        dispdev = FindDev("X11");
     }
 #endif

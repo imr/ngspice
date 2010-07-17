@@ -146,7 +146,7 @@ beginPlot(void *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNa
     /*end saj*/
 
     /* Check to see if we want to print informational data. */
-    if (cp_getvar("printinfo", VT_BOOL, (char *) &printinfo))
+    if (cp_getvar("printinfo", CP_BOOL, (char *) &printinfo))
 	fprintf(cp_err, "(debug printing enabled)\n");
 
     *runp = run = alloc(struct runDesc);
@@ -1104,11 +1104,11 @@ getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
     } else if ((vv = if_getstat(run->circuit, &desc->name[1]))) {
 						/* skip @ sign */
       desc->type = IF_REAL;
-      if (vv->va_type == VT_REAL)
+      if (vv->va_type == CP_REAL)
 	val->rValue = vv->va_real;
-      else if (vv->va_type == VT_NUM)
+      else if (vv->va_type == CP_NUM)
 	val->rValue = vv->va_num;
-      else if (vv->va_type == VT_BOOL)
+      else if (vv->va_type == CP_BOOL)
 	val->rValue = (vv->va_bool ? 1.0 : 0.0);
       else {
 	return FALSE; /* not a real */
@@ -1171,7 +1171,7 @@ OUTerror(int flags, char *format, IFuid *names)
     char buf[BSIZE_SP], *s, *bptr;
     int nindex = 0;
 
-    if ((flags == ERR_INFO) && cp_getvar("printinfo", VT_BOOL,
+    if ((flags == ERR_INFO) && cp_getvar("printinfo", CP_BOOL,
 	    (char *) &printinfo))
 	return;
 

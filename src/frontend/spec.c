@@ -83,7 +83,7 @@ com_spec(wordlist *wl)
     {
        char   window[BSIZE_SP];
        double maxt = time[tlen-1];
-       if (!cp_getvar("specwindow", VT_STRING, window)) 
+       if (!cp_getvar("specwindow", CP_STRING, window)) 
            strcpy(window,"hanning");
        if (eq(window, "none"))
           for(i=0; i<tlen; i++) {
@@ -123,7 +123,7 @@ com_spec(wordlist *wl)
           }
        else if (eq(window, "blackman")) {
           int order;
-          if (!cp_getvar("specwindoworder", VT_NUM, &order)) order = 2;
+          if (!cp_getvar("specwindoworder", CP_NUM, &order)) order = 2;
           if (order < 2) order = 2;  /* only order 2 supported here */
           for(i=0; i<tlen; i++) {
              if (maxt-time[i] > span) {
@@ -137,7 +137,7 @@ com_spec(wordlist *wl)
        } else if (eq(window, "gaussian")) {
           int order;
           double scale;
-          if (!cp_getvar("specwindoworder", VT_NUM, &order)) order = 2;
+          if (!cp_getvar("specwindoworder", CP_NUM, &order)) order = 2;
           if (order < 2) order = 2;
           scale = pow(2*M_PI/order,0.5)*(0.5-erfc(pow(order,0.5)));
           for(i=0; i<tlen; i++) {
@@ -237,7 +237,7 @@ com_spec(wordlist *wl)
 	      dc[i] += tdvec[i][k]*amp;
        }
     }
-    cp_getvar("spectrace", VT_BOOL, &trace);
+    cp_getvar("spectrace", CP_BOOL, &trace);
     for (j = (startf==0 ? 1 : 0); j<fpts; j++) {
        freq[j] = startf + j*stepf;
        if(trace) fprintf(cp_err, "spec: %e Hz: \r",freq[j]);

@@ -162,19 +162,19 @@ inp_subcktexpand(struct line *deck)
     wordlist *wl;
     modnames = NULL;
 
-    if(!cp_getvar("substart", VT_STRING, start))
+    if(!cp_getvar("substart", CP_STRING, start))
         (void) strcpy(start, ".subckt");
-    if(!cp_getvar("subend", VT_STRING, sbend))
+    if(!cp_getvar("subend", CP_STRING, sbend))
         (void) strcpy(sbend, ".ends");
-    if(!cp_getvar("subinvoke", VT_STRING, invoke))
+    if(!cp_getvar("subinvoke", CP_STRING, invoke))
         (void) strcpy(invoke, "x");
-    if(!cp_getvar("modelcard", VT_STRING, model))
+    if(!cp_getvar("modelcard", CP_STRING, model))
         (void) strcpy(model, ".model");
-    if(!cp_getvar("modelline", VT_STRING, model))
+    if(!cp_getvar("modelline", CP_STRING, model))
         (void) strcpy(model, ".model");
-    (void) cp_getvar("nobjthack", VT_BOOL, (char *) &nobjthack);
+    (void) cp_getvar("nobjthack", CP_BOOL, (char *) &nobjthack);
     
-    (void) cp_getvar("numparams", VT_BOOL, (char *) &use_numparams);
+    (void) cp_getvar("numparams", CP_BOOL, (char *) &use_numparams);
 
     use_numparams = TRUE;
 

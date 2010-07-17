@@ -89,19 +89,19 @@ struct variable *vars;
     /* This is sort of a hassle... */
     while (vars) { 
         switch (vars->va_type) {
-	case VT_BOOL:
+	case CP_BOOL:
             s = (char *) &vars->va_bool;
             break;
-	case VT_NUM:
+	case CP_NUM:
             s = (char *) &vars->va_num;
             break;
-	case VT_REAL:
+	case CP_REAL:
             s = (char *) &vars->va_real;
             break;
-	case VT_STRING:
+	case CP_STRING:
             s = vars->va_string;
             break;
-	case VT_LIST:
+	case CP_LIST:
             s = (char *) vars->va_vlist;
             break;
 	default:

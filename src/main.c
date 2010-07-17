@@ -364,7 +364,7 @@ COMPATMODE_T ngspice_compat_mode(void)
 {
    char behaviour[80] ;
 
-   if( cp_getvar("ngbehavior", VT_STRING, behaviour)){
+   if( cp_getvar("ngbehavior", CP_STRING, behaviour)){
       if (strcasecmp(behaviour,"all")==0)
          return( COMPATMODE_ALL ) ;
       if (strcasecmp(behaviour,"hspice")==0)
@@ -816,13 +816,13 @@ main(int argc, char **argv)
             case 'b':       /* Batch mode */
               ft_batchmode = TRUE;
               addctrlsect = FALSE;
-              cp_vset("addcontrol",VT_BOOL,&addctrlsect);
+              cp_vset("addcontrol",CP_BOOL,&addctrlsect);
               break;
 
             case 'a':           /* Add control section for autorun */
               if (!ft_batchmode) {
                   addctrlsect = TRUE;
-                  cp_vset("addcontrol",VT_BOOL, &addctrlsect);
+                  cp_vset("addcontrol",CP_BOOL, &addctrlsect);
               }
               break;
 
@@ -868,7 +868,7 @@ main(int argc, char **argv)
 
             case 'r':       /* The raw file */
               if (optarg) {
-                  cp_vset("rawfile", VT_STRING, optarg);
+                  cp_vset("rawfile", CP_STRING, optarg);
               }
               rflag = TRUE;
               break;
@@ -879,7 +879,7 @@ main(int argc, char **argv)
 
             case 't':
               if (optarg) {
-                  cp_vset("term", VT_STRING, optarg);
+                  cp_vset("term", CP_STRING, optarg);
               }
               break;
 
@@ -1090,7 +1090,7 @@ bot:
             /* write source file name into source window */
             SetSource(dname);
             /* write source file name into a variable */
-            cp_vset("sourcefile", VT_STRING, dname);
+            cp_vset("sourcefile", CP_STRING, dname);
 #endif
             append_to_stream(tempfile, tp);
             fclose(tp);

@@ -384,7 +384,7 @@ check_autostop( char* what ) {
   bool autostop;
 
   measures_passed = TRUE;
-  if ( cp_getvar( "autostop", VT_BOOL, (bool *) &autostop ) ) {
+  if ( cp_getvar( "autostop", CP_BOOL, (bool *) &autostop ) ) {
     do_measure( what, TRUE );
 
     if ( measures_passed == TRUE ) flag = TRUE;

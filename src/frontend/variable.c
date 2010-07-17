@@ -40,25 +40,25 @@ cp_varwl(struct variable *var)
     struct variable *vt;
 
     switch(var->va_type) {
-    case VT_BOOL:
+    case CP_BOOL:
 	/* Can't ever be FALSE. */
 	sprintf(buf, "%s", var->va_bool ? "TRUE" : "FALSE");
 	break;
-    case VT_NUM:
+    case CP_NUM:
 	sprintf(buf, "%d", var->va_num);
 	break;
-    case VT_REAL:
+    case CP_REAL:
 	/* This is a case where printnum isn't too good... */
 	sprintf(buf, "%G", var->va_real);
 	break;
-    case VT_STRING:
+    case CP_STRING:
 	/*strcpy(buf, cp_unquote(var->va_string)); DG: memory leak here*/
         copystring= cp_unquote(var->va_string);/*DG*/
         strcpy(buf,copystring);
         tfree(copystring);
 
 	break;
-    case VT_LIST:   /* The tricky case. */
+    case CP_LIST:   /* The tricky case. */
 	for (vt = var->va_vlist; vt; vt = vt->va_next) {
 	    w = cp_varwl(vt);
 	    if (wl == NULL)
@@ -112,7 +112,7 @@ cp_vset(char *varname, enum vt_types type, char *value)
         v_free = TRUE;
     }
     switch (type) {
-    case VT_BOOL:
+    case CP_BOOL:
         if (* ((bool *) value) == FALSE) {
             cp_remvar(copyvarname);
             if(v_free) {
@@ -124,19 +124,19 @@ cp_vset(char *varname, enum vt_types type, char *value)
             v->va_bool = TRUE;
         break;
 
-    case VT_NUM:
+    case CP_NUM:
         v->va_num = * (int *) value;
         break;
 
-    case VT_REAL:
+    case CP_REAL:
         v->va_real = * (double *) value;
         break;
 
-    case VT_STRING:
+    case CP_STRING:
         v->va_string = copy(value);
         break;
 
-    case VT_LIST:
+    case CP_LIST:
         v->va_vlist = (struct variable *) value;
         break;
 
@@ -156,15 +156,15 @@ cp_vset(char *varname, enum vt_types type, char *value)
         cp_noglob = TRUE;
     else if (eq(copyvarname, "nonomatch"))
         cp_nonomatch = TRUE;
-    else if (eq(copyvarname, "history") && (type == VT_NUM))
+    else if (eq(copyvarname, "history") && (type == CP_NUM))
         cp_maxhistlength = v->va_num;
-    else if (eq(copyvarname, "history") && (type == VT_REAL))
+    else if (eq(copyvarname, "history") && (type == CP_REAL))
         cp_maxhistlength = v->va_real;
     else if (eq(copyvarname, "noclobber"))
         cp_noclobber = TRUE;
     else if (eq(varname, "echo"))   /*CDHW*/
         cp_echo = TRUE;             /*CDHW*/    
-    else if (eq(copyvarname, "prompt") && (type == VT_STRING))
+    else if (eq(copyvarname, "prompt") && (type == CP_STRING))
         cp_promptstring = copy(v->va_string);
     else if (eq(copyvarname, "ignoreeof"))
         cp_ignoreeof = TRUE;
@@ -224,8 +224,8 @@ cp_vset(char *varname, enum vt_types type, char *value)
 		ft_curckt->ci_vars = v;
 	    } else {
                 /* va: avoid memory leak within bcopy */
-                if (u->va_type==VT_STRING) tfree(u->va_string);
-                else if (u->va_type==VT_LIST) tfree(u->va_vlist);
+                if (u->va_type==CP_STRING) tfree(u->va_string);
+                else if (u->va_type==CP_LIST) tfree(u->va_vlist);
                 u->va_V = v->va_V;
                 /* va_name is the same string */
                 u->va_type = v->va_type;
@@ -279,7 +279,7 @@ cp_setparse(wordlist *wl)
                strchr(name, '=') == NULL) {
             vv = alloc(struct variable);
             vv->va_name = copy(name);
-            vv->va_type = VT_BOOL;
+            vv->va_type = CP_BOOL;
             vv->va_bool = TRUE;
             vv->va_next = vars;
             vars = vv;
@@ -337,10 +337,10 @@ cp_setparse(wordlist *wl)
                 copyval = ss = cp_unquote(wl->wl_word);
                 td = ft_numparse(&ss, FALSE);
                 if (td) {
-                    vv->va_type = VT_REAL;
+                    vv->va_type = CP_REAL;
                     vv->va_real = *td;
                 } else {
-                    vv->va_type = VT_STRING;
+                    vv->va_type = CP_STRING;
                     vv->va_string = copy(ss);
                 }
                  tfree(copyval);/*DG: must free ss any way to avoid cp_unquote memory leak*/
@@ -359,7 +359,7 @@ cp_setparse(wordlist *wl)
             
             vv = alloc(struct variable);
             vv->va_name = copy(name);
-            vv->va_type = VT_LIST;
+            vv->va_type = CP_LIST;
             vv->va_vlist = listv;
             vv->va_next = vars;
             vars = vv;
@@ -375,11 +375,11 @@ cp_setparse(wordlist *wl)
         vv->va_next = vars;
         vars = vv;
         if (td) {
-            /*** We should try to get VT_NUM's... */
-            vv->va_type = VT_REAL;
+            /*** We should try to get CP_NUM's... */
+            vv->va_type = CP_REAL;
             vv->va_real = *td;
         } else {
-            vv->va_type = VT_STRING;
+            vv->va_type = CP_STRING;
             vv->va_string = copy(val);
         }
         tfree(copyval);/*DG: must free ss any way to avoid cp_unquote memory leak */
@@ -401,8 +401,8 @@ free_struct_variable(struct variable *v)
    tv = v;
    while(tv) {
       tvv = tv->va_next;
-      if(tv->va_type == VT_LIST) free_struct_variable(tv->va_vlist);
-      if(tv->va_type == VT_STRING) tfree(tv->va_string);
+      if(tv->va_type == CP_LIST) free_struct_variable(tv->va_vlist);
+      if(tv->va_type == CP_STRING) tfree(tv->va_string);
       tfree(tv);
       tv = tvv;
    }
@@ -448,7 +448,7 @@ cp_remvar(char *varname)
         v = alloc(struct variable);
 	ZERO(v, struct variable);
         v->va_name = copy(varname);
-        v->va_type = VT_NUM;
+        v->va_type = CP_NUM;
         v->va_bool = 0;
         found = FALSE;
     }
@@ -557,29 +557,29 @@ cp_getvar(char *name, enum vt_types type, void *retval)
     if (v == NULL) for (v = uv2; v && !eq(name, v->va_name); v = v->va_next);
 
     if (v == NULL) {
-        if (type == VT_BOOL)
+        if (type == CP_BOOL)
             * (bool *) retval = FALSE; 
         free_struct_variable(uv1);
         return (FALSE);
     }
     if (v->va_type == type) {
         switch (type) {
-            case VT_BOOL:
+            case CP_BOOL:
                 * (bool *) retval = TRUE; 
                 break;
-            case VT_NUM: {
+            case CP_NUM: {
                 int *i;
                 i = (int *) retval;
                 *i = v->va_num;
                 break;
             }
-            case VT_REAL: {
+            case CP_REAL: {
                 double *d;
                 d = (double *) retval;
                 *d = v->va_real;
                 break;
             }
-            case VT_STRING: { /* Gotta be careful to have room. */
+            case CP_STRING: { /* Gotta be careful to have room. */
                 char *s;
                 s = cp_unquote(v->va_string);
                 cp_wstrip(s);
@@ -587,7 +587,7 @@ cp_getvar(char *name, enum vt_types type, void *retval)
                 tfree(s);/*DG*/
                 break;
             }
-            case VT_LIST: { /* Funny case... */
+            case CP_LIST: { /* Funny case... */
                 struct variable **tv;
                 tv = (struct variable **) retval;
                 *tv = v->va_vlist;
@@ -604,23 +604,23 @@ cp_getvar(char *name, enum vt_types type, void *retval)
         return (TRUE);
     } else {
         /* Try to coerce it.. */
-        if ((type == VT_NUM) && (v->va_type == VT_REAL)) {
+        if ((type == CP_NUM) && (v->va_type == CP_REAL)) {
             int *i;
             i = (int *) retval;
             *i = (int) v->va_real;
             free_struct_variable(uv1); 
             return (TRUE);
-        } else if ((type == VT_REAL) && (v->va_type == VT_NUM)) {
+        } else if ((type == CP_REAL) && (v->va_type == CP_NUM)) {
             double *d;
             d = (double *) retval;
             *d = (double) v->va_num;
             free_struct_variable(uv1); 
             return (TRUE);
-        } else if ((type == VT_STRING) && (v->va_type == VT_NUM)) {
+        } else if ((type == CP_STRING) && (v->va_type == CP_NUM)) {
             (void) sprintf((char*) retval, "%d", v->va_num);
             free_struct_variable(uv1); 
             return (TRUE);
-        } else if ((type == VT_STRING) && (v->va_type == VT_REAL)) {
+        } else if ((type == CP_STRING) && (v->va_type == CP_REAL)) {
             (void) sprintf((char*) retval, "%f", v->va_real);
             free_struct_variable(uv1); 
             return (TRUE);
@@ -788,11 +788,11 @@ vareval(char *string)
             tfree(oldstring);
             return (NULL);
         }
-        if (v->va_type == VT_LIST)
+        if (v->va_type == CP_LIST)
             for (v = v->va_vlist, i = 0; v; v = v->va_next)
                 i++;
         else
-            i = (v->va_type != VT_BOOL);
+            i = (v->va_type != CP_BOOL);
         (void) sprintf(buf, "%d", i);
         wl->wl_word = copy(buf);
         tfree(oldstring);
@@ -913,7 +913,7 @@ cp_vprint(void)
         if (j && eq(vars[j].x_v->va_name, vars[j - 1].x_v->va_name))
             continue;
         v = vars[j].x_v;
-        if (v->va_type == VT_BOOL) {
+        if (v->va_type == CP_BOOL) {
 /*             out_printf("%c %s\n", vars[j].x_char, v->va_name); */
              sprintf(out_pbuf, "%c %s\n", vars[j].x_char, v->va_name);
          out_send(out_pbuf);
@@ -921,7 +921,7 @@ cp_vprint(void)
             out_printf("%c %s\t", vars[j].x_char, v->va_name);
             wl = vareval(v->va_name);
             s = wl_flatten(wl);
-            if (v->va_type == VT_LIST) {
+            if (v->va_type == CP_LIST) {
                 out_printf("( %s )\n", s);
             } else
                 out_printf("%s\n", s);

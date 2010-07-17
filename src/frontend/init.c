@@ -32,7 +32,7 @@ cp_init(void)
         /* break word to right or left of characters <>;&*/
         cp_chars[(int) *s] = (CPC_BRR | CPC_BRL);
 
-    cp_vset("history", VT_NUM, (char *) &cp_maxhistlength);
+    cp_vset("history", CP_NUM, (char *) &cp_maxhistlength);
 
     cp_curin = stdin;
     cp_curout = stdout;

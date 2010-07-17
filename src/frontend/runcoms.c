@@ -195,7 +195,7 @@ dosim(
       ww->wl_word = copy(what);
    }
    /* reset output file type according to variable given in spinit */
-   if (cp_getvar("filetype", VT_STRING, buf)) {
+   if (cp_getvar("filetype", CP_STRING, buf)) {
       if (eq(buf, "binary"))
          ascii = FALSE;
       else if (eq(buf, "ascii"))

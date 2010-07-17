@@ -451,7 +451,7 @@ doblock(struct control *bl, int *num)
         for (wl = cp_variablesubst(cp_bquote(cp_doglob(wl_copy(bl->co_text))));
 	     wl;
 	     wl = wl->wl_next) {
-            cp_vset(bl->co_foreachvar, VT_STRING, wl->wl_word);
+            cp_vset(bl->co_foreachvar, CP_STRING, wl->wl_word);
             for (ch = bl->co_children; ch; ch = cn) {
                 cn = ch->co_next;
                 i = doblock(ch, &nn);

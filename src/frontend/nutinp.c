@@ -168,7 +168,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
              * fix the case before we do this but after we 
              * deal with the commands.
              */
-            if (!cp_getvar("nosubckt", VT_BOOL, (char *) 
+            if (!cp_getvar("nosubckt", CP_BOOL, (char *) 
                     &nosubckts))
                 deck->li_next = inp_subcktexpand(deck->
                         li_next);

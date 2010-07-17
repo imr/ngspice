@@ -181,7 +181,7 @@ inp_pathopen(char *name, char *mode)
 #if defined(HAS_WINDOWS)
     /* search in the path where the source (input) file has been found,
        but only if "name" is just a file name */
-    if (!(index(name, DIR_TERM)) && cp_getvar("sourcefile", VT_STRING, buf2)) {
+    if (!(index(name, DIR_TERM)) && cp_getvar("sourcefile", CP_STRING, buf2)) {
        /* If pathname is found, get path. 
        (char *dirname(const char *name) might have been used here) */
        if (substring(DIR_PATHSEP, buf2)) {
@@ -204,19 +204,19 @@ inp_pathopen(char *name, char *mode)
      * do an fopen.
      */
     if (index(name, DIR_TERM)
-	    || !cp_getvar("sourcepath", VT_LIST, (char *) &v))
+	    || !cp_getvar("sourcepath", CP_LIST, (char *) &v))
         return (fopen(name, mode));
 
     while (v) {
         switch (v->va_type) {
-            case VT_STRING:
+            case CP_STRING:
 		cp_wstrip(v->va_string);
 		(void) sprintf(buf, "%s%s%s", v->va_string, DIR_PATHSEP, name);
 		break;
-            case VT_NUM:
+            case CP_NUM:
 		(void) sprintf(buf, "%d%s%s", v->va_num, DIR_PATHSEP, name);
 		break;
-            case VT_REAL:   /* This is foolish */
+            case CP_REAL:   /* This is foolish */
 		(void) sprintf(buf, "%g%s%s", v->va_real, DIR_PATHSEP, name);
 		break;
         }
@@ -388,7 +388,7 @@ inp_add_control_section( struct line *deck, int *line_number ) {
 	prev_card          = newcard;
 	found_run          = TRUE;
       }
-      if ( cp_getvar( "rawfile", VT_STRING, rawfile ) ) {
+      if ( cp_getvar( "rawfile", CP_STRING, rawfile ) ) {
 	line = (char*) tmalloc( strlen("write") + strlen(rawfile) + 2 );
 	sprintf(line, "write %s", rawfile);
 	newcard            = create_new_card( line, line_number );
@@ -407,7 +407,7 @@ inp_add_control_section( struct line *deck, int *line_number ) {
     deck->li_next    = newcard;
     newcard->li_next = prev_card;
 
-    if ( cp_getvar( "rawfile", VT_STRING, rawfile ) ) {
+    if ( cp_getvar( "rawfile", CP_STRING, rawfile ) ) {
       line = (char*) tmalloc( strlen("write") + strlen(rawfile) + 2 );
       sprintf(line, "write %s", rawfile);
       prev_card        = deck->li_next;
@@ -1612,7 +1612,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
       inp_fix_gnd_name(working);
       inp_chk_for_multi_in_vcvs(working, &line_number);
 
-      if (cp_getvar("addcontrol", VT_BOOL, (char *) &v))
+      if (cp_getvar("addcontrol", CP_BOOL, (char *) &v))
          inp_add_control_section(working, &line_number);
       inp_compat_mode = ngspice_compat_mode() ;
       if (inp_compat_mode == COMPATMODE_ALL) {

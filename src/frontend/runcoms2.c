@@ -79,7 +79,7 @@ com_resume(wordlist *wl)
    if (last_used_rawfile)
       dofile = TRUE;
     
-   if (cp_getvar("filetype", VT_STRING, buf)) {
+   if (cp_getvar("filetype", CP_STRING, buf)) {
       if (eq(buf, "binary"))
          ascii = FALSE;
       else if (eq(buf, "ascii"))

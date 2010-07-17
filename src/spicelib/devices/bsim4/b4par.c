@@ -32,7 +32,7 @@ IFvalue *select)
 
     BSIM4instance *here = (BSIM4instance*)inst;
 
-    if ( !cp_getvar( "scale", VT_REAL, (double*) &scale ) ) scale = 1;
+    if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
 
     switch(param) 
     {   case BSIM4_W:

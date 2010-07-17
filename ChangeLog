@@ -1,4 +1,13 @@
 2010-07-17  Robert Larice
+ * src/* :
+    textual replacement VT_* to CP_*
+      these are the enum constans of `enum vp_types' .
+      VT_* is allready used in the windows world.
+      lets use CP_* to avoid conflicts.
+      replacement was done mechanical, with:
+        perl -pi -e 's/VT_(BOOL|NUM|REAL|STRING|LIST)/CP_\1/g' $(git grep -le '\bVT_')
+
+2010-07-17  Robert Larice
  * src/frontend/variable.c ,
  * src/frontend/variable.h ,
  * src/frontend/plotting/agraf.c ,

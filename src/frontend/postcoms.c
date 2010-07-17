@@ -226,19 +226,19 @@ com_print(wordlist *wl)
 	   }  //end  if (v->v_rlength == 1)
         }
     } else {    /* Print in columns. */
-        if (cp_getvar("width", VT_NUM, (char *) &i))
+        if (cp_getvar("width", CP_NUM, (char *) &i))
             width = i;
         if (width < 40)
             width = 40;
-        if (cp_getvar("height", VT_NUM, (char *) &i))
+        if (cp_getvar("height", CP_NUM, (char *) &i))
             height = i;
         if (height < 20)
             height = 20;
-        if (!cp_getvar("nobreak", VT_BOOL, (char *) &nobreak) && !ft_nopage)
+        if (!cp_getvar("nobreak", CP_BOOL, (char *) &nobreak) && !ft_nopage)
             nobreak = FALSE;
 	else
 	    nobreak = TRUE;
-        (void) cp_getvar("noprintscale", VT_BOOL, (char *) 
+        (void) cp_getvar("noprintscale", CP_BOOL, (char *) 
                 &noprintscale);
         bv = vecs;
 nextpage:
@@ -415,7 +415,7 @@ com_write(wordlist *wl)
         wl = wl->wl_next;
     } else
         file = ft_rawfile;
-    if (cp_getvar("filetype", VT_STRING, buf)) {
+    if (cp_getvar("filetype", CP_STRING, buf)) {
         if (eq(buf, "binary"))
             ascii = FALSE;
         else if (eq(buf, "ascii"))
@@ -423,7 +423,7 @@ com_write(wordlist *wl)
 	else
             fprintf(cp_err, "Warning: strange file type %s\n", buf);
     }
-    (void) cp_getvar("appendwrite", VT_BOOL, (char *) &appendwrite);
+    (void) cp_getvar("appendwrite", CP_BOOL, (char *) &appendwrite);
 
     if (wl)
         names = ft_getpnames(wl, TRUE);

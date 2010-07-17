@@ -161,11 +161,11 @@ void cp_rehash(char *pathlist, bool docc);
 /* variable.c */
 
 enum vt_types {
-  VT_BOOL,
-  VT_NUM,
-  VT_REAL,
-  VT_STRING,
-  VT_LIST
+  CP_BOOL,
+  CP_NUM,
+  CP_REAL,
+  CP_STRING,
+  CP_LIST
 };
 
 extern bool cp_ignoreeof;

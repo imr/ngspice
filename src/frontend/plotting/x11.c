@@ -118,7 +118,7 @@ X11_Init(void)
     char *argv[2];
     int argc = 2;
 
-    if (cp_getvar("display", VT_STRING, buf)) {
+    if (cp_getvar("display", CP_STRING, buf)) {
       displayname = buf;
     } else if (!(displayname = getenv("DISPLAY"))) {
       internalerror("Can't open X display.");
@@ -222,7 +222,7 @@ initcolors(GRAPH *graph)
 
 	for (i = 0; i < xmaxcolors; i++) {
 	    (void) sprintf(buf, "color%d", i);
-	    if (!cp_getvar(buf, VT_STRING, colorstring))
+	    if (!cp_getvar(buf, CP_STRING, colorstring))
 	    (void) strcpy(colorstring, colornames[i]);
 	    if (!XAllocNamedColor(display,
 		    DefaultColormap(display, DefaultScreen(display)),
@@ -410,7 +410,7 @@ X11_NewViewport(GRAPH *graph)
     XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, (XtCallbackProc) hardcopy, graph);
 
     /* set up fonts */
-    if (!cp_getvar("font", VT_STRING, fontname)) {
+    if (!cp_getvar("font", CP_STRING, fontname)) {
 	(void) strcpy(fontname, DEF_FONT);
     }
 
@@ -508,7 +508,7 @@ X11_Arc(int x0, int y0, int radius, double theta1, double theta2)
 
     int	t1, t2;
 
-    if (!cp_getvar("x11lineararcs", VT_BOOL, (char *) &t1)) {
+    if (!cp_getvar("x11lineararcs", CP_BOOL, (char *) &t1)) {
 	linear_arc(x0, y0, radius, theta1, theta2);
     }
 
@@ -816,7 +816,7 @@ zoomin(GRAPH *graph)
 	
 	/* hack for Gordon Jacobs */
 	/* add to history list if plothistory is set */
-	if (cp_getvar("plothistory", VT_BOOL, (char *) &dummy)) {
+	if (cp_getvar("plothistory", CP_BOOL, (char *) &dummy)) {
 	  wl = cp_parse(buf);
 	  (void) cp_addhistent(cp_event++, wl);
 	}

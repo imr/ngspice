@@ -146,7 +146,7 @@ ft_cpinit(void)
         }
     }
 
-    cp_vset("program", VT_STRING, cp_program);
+    cp_vset("program", CP_STRING, cp_program);
 
     /* Make the prompt use only the last component of the path... */
 
@@ -166,9 +166,9 @@ ft_cpinit(void)
     } else
 	(void) sprintf(buf, "%s ! -> ", cp_program);
 
-    cp_vset("prompt", VT_STRING, buf);
-    cp_vset("noglob", VT_BOOL, (char *) &t);
-    cp_vset("brief", VT_BOOL, (char *) &t);
+    cp_vset("prompt", CP_STRING, buf);
+    cp_vset("noglob", CP_BOOL, (char *) &t);
+    cp_vset("brief", CP_BOOL, (char *) &t);
 
     /* Make vectors from values in predefs[] for the current plot. 
      Define functions from entries in udfs[] (like user defined functions).

@@ -9,7 +9,7 @@
 #include "cpextern.h"
 
 /* Variables that are accessible to the parser via $varname
- * expansions.  If the type is VT_LIST the value is a pointer to a
+ * expansions.  If the type is CP_LIST the value is a pointer to a
  * list of the elements.  */
 struct variable {
     enum vt_types va_type;

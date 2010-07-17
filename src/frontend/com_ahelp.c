@@ -39,7 +39,7 @@ com_ahelp(wordlist *wl)
     }
 
     /* determine level */
-    if (cp_getvar("level", VT_STRING, slevel)) {
+    if (cp_getvar("level", CP_STRING, slevel)) {
 	switch (*slevel) {
         case 'b':   level = 1;
             break;

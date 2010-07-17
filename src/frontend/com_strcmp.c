@@ -23,6 +23,6 @@ com_strcmp(wordlist *wl)
     i = strcmp(s1, s2);
     tfree(s1);/*DG  cp_unquote memory leak*/
     tfree(s2);
-    cp_vset(var, VT_NUM, (char *) &i);
+    cp_vset(var, CP_NUM, (char *) &i);
     return;
 }
