@@ -444,7 +444,7 @@ vec_get(const char *vec_name)
     *#define va_real  va_V.vV_real
     *#define va_string   va_V.vV_string
     *#define va_vlist     va_V.vV_list
-    *enum vt_types {
+    *enum cp_types {
     *  CP_BOOL,
     *  CP_NUM,
     *  CP_REAL,

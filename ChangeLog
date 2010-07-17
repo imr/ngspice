@@ -1,4 +1,16 @@
 2010-07-17  Robert Larice
+ * src/frontend/variable.c ,
+ * src/frontend/variable.h ,
+ * src/frontend/vectors.c ,
+ * src/frontend/plotting/graf.c :
+    replace vt_types -> cp_types
+      to complete the last change, lets rename the enum itself as well
+      replacement was done mechanical, with
+        perl -pi -e 's/vt_types/cp_types/g' $(git grep -le '\bvt_types' | grep -v ChangeLog)
+ * src/include/cpextern.h :
+    fix a comment, reflecting the VT_ -> CP_ change
+
+2010-07-17  Robert Larice
  * src/* :
     textual replacement VT_* to CP_*
       these are the enum constans of `enum vp_types' .

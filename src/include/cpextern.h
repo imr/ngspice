@@ -160,7 +160,7 @@ void cp_rehash(char *pathlist, bool docc);
 
 /* variable.c */
 
-enum vt_types {
+enum cp_types {
   CP_BOOL,
   CP_NUM,
   CP_REAL,
@@ -174,7 +174,7 @@ extern bool cp_noglob;
 extern bool cp_nonomatch;
 extern char cp_dol;
 extern void cp_remvar(char *varname);
-extern void cp_vset(char *varname, enum vt_types type, char *value);
+extern void cp_vset(char *varname, enum cp_types type, char *value);
 extern struct variable *cp_setparse(wordlist *wl);
 extern wordlist *vareval(char *string);
 
@@ -185,7 +185,7 @@ extern void com_option(wordlist *wl);
 extern void com_state(wordlist *wl);
 extern void com_unset(wordlist *wl);
 extern void com_shift(wordlist *wl);
-extern bool cp_getvar(char *name, enum vt_types type, void *retval);
+extern bool cp_getvar(char *name, enum cp_types type, void *retval);
 
 /* cpinterface.c etc -- stuff CP needs from FTE */
 

@@ -11,7 +11,7 @@ $Id$
  */
 
 #include <ngspice.h>
-#include "cpdefs.h"		/* for VT_ */
+#include "cpdefs.h"		/* for CP_ */
 #include "cpextern.h"
 #include <plot.h>
 #include "ftedebug.h"		/* for iplot */
