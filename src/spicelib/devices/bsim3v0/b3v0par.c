@@ -18,7 +18,7 @@ BSIM3v0param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     BSIM3v0instance *here = (BSIM3v0instance*)inst;
 
-    if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
+    if ( !cp_getvar( "scale", VT_REAL, (double*) &scale ) ) scale = 1;
 
     switch(param) 
     {   case BSIM3v0_W:

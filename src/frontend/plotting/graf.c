@@ -22,7 +22,6 @@ $Id$
 #include "ftedbgra.h"
 #include "ftedev.h"
 #include <terminal.h>
-#include <variable.h>
 #include "graf.h"
 #include "graphdb.h"
 #include "grid.h"

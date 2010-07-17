@@ -26,9 +26,8 @@ static char rcsid[] = "$Id$";
 #include "suffix.h"
 
 #ifdef USE_OMP4SOI
+#include "cpextern.h"
 int nthreads;
-extern bool cp_getvar(char *name, int type, void *retval);
-#define VT_NUM 1
 #endif
 
 #define SMOOTHFACTOR 0.1

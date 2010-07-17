@@ -13,7 +13,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <dvec.h>
 #include <graph.h>
 #include <ftedbgra.h>
-#include <variable.h>
 
 #include "plotcurv.h"
 

@@ -32,9 +32,8 @@
 #include "suffix.h"
 
 #ifdef USE_OMP4
+#include "cpextern.h"
 int nthreads;
-extern bool cp_getvar(char *name, int type, void *retval);
-#define VT_NUM 1
 #endif
 
 #define MAX_EXP 5.834617425e14

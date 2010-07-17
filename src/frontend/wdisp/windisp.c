@@ -27,10 +27,6 @@
  */
 #undef BOOLEAN
 
-/* local definition, because inclusion of variable.h does not work under Windows */
-#define VT_NUM 1
-#define VT_STRING 3
-
 #include <windows.h>
 #include <windowsx.h>
 #include "suffix.h"

@@ -204,7 +204,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
   int          error;
   double       scale;
 
-  if ( !cp_getvar( "scale", CP_REAL, (double*) &scale ) ) scale = 1;
+  if ( !cp_getvar( "scale", VT_REAL, (double*) &scale ) ) scale = 1;
 
   *model = NULL;
 

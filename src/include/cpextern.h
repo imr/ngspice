@@ -160,6 +160,13 @@ void cp_rehash(char *pathlist, bool docc);
 
 /* variable.c */
 
+enum vt_types {
+  VT_BOOL,
+  VT_NUM,
+  VT_REAL,
+  VT_STRING,
+  VT_LIST
+};
 
 extern bool cp_ignoreeof;
 extern bool cp_noclobber;
@@ -167,24 +174,18 @@ extern bool cp_noglob;
 extern bool cp_nonomatch;
 extern char cp_dol;
 extern void cp_remvar(char *varname);
-extern void cp_vset(char *varname, char type, char *value);
+extern void cp_vset(char *varname, enum vt_types type, char *value);
 extern struct variable *cp_setparse(wordlist *wl);
+extern wordlist *vareval(char *string);
 
 /* var2.c */
-enum cp_types {
-  CP_BOOL,
-  CP_NUM,
-  CP_REAL,
-  CP_STRING,
-  CP_LIST
-};
 extern void cp_vprint(void);
 extern void com_set(wordlist *wl);
 extern void com_option(wordlist *wl);
 extern void com_state(wordlist *wl);
 extern void com_unset(wordlist *wl);
 extern void com_shift(wordlist *wl);
-extern bool cp_getvar(char *name, int type, void *retval);
+extern bool cp_getvar(char *name, enum vt_types type, void *retval);
 
 /* cpinterface.c etc -- stuff CP needs from FTE */
 

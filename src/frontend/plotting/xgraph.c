@@ -14,7 +14,6 @@ Author: 1992 David A. Gates, U. C. Berkeley CAD Group
 #include "fteparse.h"
 #include "xgraph.h"
 
-#include <variable.h>
 
 #define XG_MAXVECTORS 64
 

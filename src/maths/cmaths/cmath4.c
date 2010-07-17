@@ -30,7 +30,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "sim.h" /* To get SV_TIME */
 
-#include "../../frontend/variable.h" /* for VT_NUM in cx_interpolate */
 extern bool cx_degrees;
 
 void *

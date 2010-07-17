@@ -17,7 +17,6 @@
 #include "fteparse.h"
 #include "gnuplot.h"
 
-#include "variable.h"
 
 #define GP_MAXVECTORS 64
 

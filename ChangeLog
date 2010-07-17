@@ -1,3 +1,37 @@
+2010-07-17  Robert Larice
+ * src/frontend/variable.c ,
+ * src/frontend/variable.h ,
+ * src/frontend/plotting/agraf.c ,
+ * src/frontend/plotting/gnuplot.c ,
+ * src/frontend/plotting/graf.c ,
+ * src/frontend/plotting/plotcurv.c ,
+ * src/frontend/plotting/plotit.c ,
+ * src/frontend/plotting/xgraph.c ,
+ * src/frontend/wdisp/windisp.c ,
+ * src/include/cpextern.h ,
+ * src/maths/cmaths/cmath4.c ,
+ * src/maths/misc/randnumb.c ,
+ * src/spicelib/devices/bsim3/b3par.c ,
+ * src/spicelib/devices/bsim3/b3set.c ,
+ * src/spicelib/devices/bsim3soi/b4soiset.c ,
+ * src/spicelib/devices/bsim3v0/b3v0par.c ,
+ * src/spicelib/devices/bsim3v1/b3v1par.c ,
+ * src/spicelib/devices/bsim3v1a/b3v1apar.c ,
+ * src/spicelib/devices/bsim3v1s/b3v1spar.c ,
+ * src/spicelib/devices/bsim3v32/b3v32par.c ,
+ * src/spicelib/devices/bsim4/b4par.c ,
+ * src/spicelib/devices/bsim4/b4set.c ,
+ * src/spicelib/devices/bsim4v2/b4v2par.c ,
+ * src/spicelib/devices/bsim4v3/b4v3par.c ,
+ * src/spicelib/devices/bsim4v4/b4v4par.c ,
+ * src/spicelib/devices/bsim4v5/b4v5par.c ,
+ * src/spicelib/parser/inpgmod.c :
+     consolidate enum cp_types and enum vt_types .
+     use this enum for some function arguments and struct members .
+     drop some include "variable.h" which are no longer needed ,
+       propably many more could be droped .
+     drop #define VT_* which have been used as workaround for the type mess .
+
 2010-07-17  Holger Vogt
  * typesdef.c: correct the number of available types and plots
 

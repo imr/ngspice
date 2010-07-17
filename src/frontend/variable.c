@@ -85,7 +85,7 @@ cp_varwl(struct variable *var)
 
 /* Set a variable. */
 void
-cp_vset(char *varname, char type, char *value)
+cp_vset(char *varname, enum vt_types type, char *value)
 {
     struct variable *v, *u, *w;
     int i;
@@ -540,7 +540,7 @@ cp_remvar(char *varname)
 /* Determine the value of a variable.  Fail if the variable is unset,
  * and if the type doesn't match, try and make it work...  */
 bool
-cp_getvar(char *name, int type, void *retval)
+cp_getvar(char *name, enum vt_types type, void *retval)
 {
     struct variable *v;
     struct variable *uv1, *uv2;

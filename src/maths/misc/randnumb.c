@@ -9,7 +9,6 @@ Copyright 2008 Holger Vogt
 #include "ngspice.h"
 #include "cpdefs.h"
 #include "ftedefs.h"
-#include "../frontend/variable.h"
 
 
 /* MINGW: random, srandom in libiberty.a, but not in libiberty.h */

@@ -10,7 +10,6 @@
 #include <fteext.h>
 
 #include <circuits.h>
-#include <variable.h>
 
 #include "plotit.h"
 #include "agraf.h"
