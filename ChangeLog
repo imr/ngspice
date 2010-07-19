@@ -1,4 +1,7 @@
-2010-07-17  Robert Larice
+2010-07-19  Holger Vogt
+ * b4ld.c: correct typo which led to non-convergence of ro_17.cir
+ 
+ 2010-07-17  Robert Larice
  * src/main.c ,
  * src/frontend/inp.c ,
  * src/frontend/options.c ,

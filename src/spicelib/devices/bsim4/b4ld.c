@@ -5053,7 +5053,7 @@ line900:
                (*(here->BSIM4SbpPtr) += m * gstotb);
 	   }
 
-           (*(here->BSIM4DPdpPtr) = m * (gdpr + here->BSIM4gds + here->BSIM4gbd + T1 * ddxpart_dVd
+           (*(here->BSIM4DPdpPtr) += m * (gdpr + here->BSIM4gds + here->BSIM4gbd + T1 * ddxpart_dVd
                                    - gdtotd + RevSum + gcddb + gbdpdp + dxpart * ggtd - gIdtotd));
            (*(here->BSIM4DPdPtr) -= m * (gdpr + gdtot));
            (*(here->BSIM4DPgpPtr) += m * (Gm + gcdgb - gdtotg + gbdpg - gIdtotg
