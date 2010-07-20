@@ -1,4 +1,8 @@
 2010-07-20  Robert Larice
+ * src/tclspice.c :
+    drop #include <frontend/variable.h>, (even for non MSC_VER)
+
+2010-07-20  Robert Larice
  * src/main.c :
     fix an incorrect type, (&char versus &bool)
 
@@ -27,7 +31,7 @@
     allow cp_getvar(,CP_BOOL,NULL) to avoid insane usage
       The third parameter is a pointer to the result value.
       Frequently only the function return value is used,
-        (presence of nonpresence of the variable)
+        (presence or nonpresence of the variable)
         and the third parameter points to an unused variable.
       Even worse, in several cases a dummy variable of incorrect type is used
         for that purpose.

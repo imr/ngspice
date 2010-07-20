@@ -94,9 +94,7 @@ typedef pthread_t threadId_t;
 #include <misc/ivars.h>
 #include <frontend/resource.h>
 #include <frontend/com_measure2.h>
-#ifndef _MSC_VER /* avoid second definition of CP_BOOL */
-#include <frontend/variable.h>
-#else
+#ifdef _MSC_VER
 #include <stdio.h>
 #define snprintf _snprintf
 #endif
