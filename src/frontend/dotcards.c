@@ -284,7 +284,7 @@ ft_cktcoms(bool terse)
                     continue;
                 }
                 i = atoi(++s);
-                cp_vset("width", CP_NUM, (char *) &i);
+                cp_vset("width", CP_NUM, &i);
             }
         } else if (eq(command->wl_word, ".print")) {
             if (terse) {

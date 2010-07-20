@@ -510,8 +510,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
          in numparam evaluation */
       if ( temperature != NULL ) {
          temperature_value = atof(temperature);
-         s = (char *) &temperature_value;
-         cp_vset("pretemp", CP_REAL, s );
+         cp_vset("pretemp", CP_REAL, &temperature_value );
       }
       if (ft_ngdebug) {
          cp_getvar( "pretemp", CP_REAL, (double *) &testemp );
@@ -623,8 +622,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
       /* set temperature if defined */
       if ( temperature != NULL ) {
          temperature_value = atof(temperature);
-         s = (char *) &temperature_value;
-         cp_vset("temp", CP_REAL, s );
+         cp_vset("temp", CP_REAL, &temperature_value );
          txfree(temperature);
       }
 
@@ -754,7 +752,7 @@ inp_dodeck(
                     break;
                 case CP_REAL:
                     if ( strcmp("scale",eev->va_name)==0 ){
-                    cp_vset("scale", CP_REAL, (char*) &eev->va_real );
+                    cp_vset("scale", CP_REAL, &eev->va_real );
                     printf("Scale set\n");
                     }
                     break;

@@ -167,8 +167,8 @@ ft_cpinit(void)
 	(void) sprintf(buf, "%s ! -> ", cp_program);
 
     cp_vset("prompt", CP_STRING, buf);
-    cp_vset("noglob", CP_BOOL, (char *) &t);
-    cp_vset("brief", CP_BOOL, (char *) &t);
+    cp_vset("noglob", CP_BOOL, &t);
+    cp_vset("brief", CP_BOOL, &t);
 
     /* Make vectors from values in predefs[] for the current plot. 
      Define functions from entries in udfs[] (like user defined functions).

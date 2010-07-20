@@ -232,7 +232,7 @@ static int LType( int ColorIndex)
 LRESULT HcpyPlot( HWND hwnd)
 {
 	int colorval = isblack? 0 : 1;
-   cp_vset("hcopypscolor", CP_NUM, (char*)(&colorval));
+   cp_vset("hcopypscolor", CP_NUM, &colorval);
 	com_hardcopy(NULL); 
 	return 0;
 }

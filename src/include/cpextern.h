@@ -174,7 +174,7 @@ extern bool cp_noglob;
 extern bool cp_nonomatch;
 extern char cp_dol;
 extern void cp_remvar(char *varname);
-extern void cp_vset(char *varname, enum cp_types type, char *value);
+extern void cp_vset(char *varname, enum cp_types type, void *value);
 extern struct variable *cp_setparse(wordlist *wl);
 extern wordlist *vareval(char *string);
 

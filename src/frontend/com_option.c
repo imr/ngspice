@@ -16,7 +16,6 @@ com_option(wordlist *wl)
 {
 
 struct variable *vars;
-    char *s;
     
     CKTcircuit *circuit = NULL;
 	
@@ -88,24 +87,25 @@ struct variable *vars;
 
     /* This is sort of a hassle... */
     while (vars) { 
+        void *s;
         switch (vars->va_type) {
 	case CP_BOOL:
-            s = (char *) &vars->va_bool;
+            s = &vars->va_bool;
             break;
 	case CP_NUM:
-            s = (char *) &vars->va_num;
+            s = &vars->va_num;
             break;
 	case CP_REAL:
-            s = (char *) &vars->va_real;
+            s = &vars->va_real;
             break;
 	case CP_STRING:
             s = vars->va_string;
             break;
 	case CP_LIST:
-            s = (char *) vars->va_vlist;
+            s = vars->va_vlist;
             break;
 	default:
-	    s = (char *) NULL;
+	    s = NULL;
         }
         
         /* qui deve settare le opzioni di simulazione */

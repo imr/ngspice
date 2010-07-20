@@ -1,4 +1,19 @@
 2010-07-20  Robert Larice
+ * src/frontend/com_option.c ,
+ * src/frontend/com_set.c ,
+ * src/frontend/com_strcmp.c ,
+ * src/frontend/cpitf.c ,
+ * src/frontend/dotcards.c ,
+ * src/frontend/init.c ,
+ * src/frontend/inp.c ,
+ * src/frontend/variable.c ,
+ * src/frontend/variable.h ,
+ * src/frontend/wdisp/windisp.c ,
+ * src/include/cpextern.h :
+    use a void * for the third argument (&value) of the cp_vset() function
+      (polymorphic, has been claimed to be char *)
+
+2010-07-20  Robert Larice
  * src/tclspice.c :
     drop #include <frontend/variable.h>, (even for non MSC_VER)
 

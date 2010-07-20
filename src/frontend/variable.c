@@ -85,7 +85,7 @@ cp_varwl(struct variable *var)
 
 /* Set a variable. */
 void
-cp_vset(char *varname, enum cp_types type, char *value)
+cp_vset(char *varname, enum cp_types type, void *value)
 {
     struct variable *v, *u, *w;
     int i;
@@ -133,7 +133,7 @@ cp_vset(char *varname, enum cp_types type, char *value)
         break;
 
     case CP_STRING:
-        v->va_string = copy(value);
+        v->va_string = copy((char*) value);
         break;
 
     case CP_LIST:

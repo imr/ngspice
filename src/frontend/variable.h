@@ -45,7 +45,7 @@ extern bool cp_echo;
 
 /* extern struct variable *variables; */
 wordlist * cp_varwl(struct variable *var);
-void cp_vset(char *varname, enum cp_types type, char *value);
+void cp_vset(char *varname, enum cp_types type, void *value);
 struct variable * cp_setparse(wordlist *wl);
 void cp_remvar(char *varname);
 bool cp_getvar(char *name, enum cp_types type, void *retval);
