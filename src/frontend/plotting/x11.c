@@ -508,7 +508,7 @@ X11_Arc(int x0, int y0, int radius, double theta1, double theta2)
 
     int	t1, t2;
 
-    if (!cp_getvar("x11lineararcs", CP_BOOL, (char *) &t1)) {
+    if (!cp_getvar("x11lineararcs", CP_BOOL, NULL)) {
 	linear_arc(x0, y0, radius, theta1, theta2);
     }
 
@@ -812,11 +812,10 @@ zoomin(GRAPH *graph)
 #if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
     {
 	wordlist *wl;
-	int dummy;
 	
 	/* hack for Gordon Jacobs */
 	/* add to history list if plothistory is set */
-	if (cp_getvar("plothistory", CP_BOOL, (char *) &dummy)) {
+	if (cp_getvar("plothistory", CP_BOOL, NULL)) {
 	  wl = cp_parse(buf);
 	  (void) cp_addhistent(cp_event++, wl);
 	}

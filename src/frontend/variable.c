@@ -557,7 +557,7 @@ cp_getvar(char *name, enum cp_types type, void *retval)
     if (v == NULL) for (v = uv2; v && !eq(name, v->va_name); v = v->va_next);
 
     if (v == NULL) {
-        if (type == CP_BOOL)
+        if (type == CP_BOOL && retval)
             * (bool *) retval = FALSE; 
         free_struct_variable(uv1);
         return (FALSE);
@@ -565,7 +565,8 @@ cp_getvar(char *name, enum cp_types type, void *retval)
     if (v->va_type == type) {
         switch (type) {
             case CP_BOOL:
-                * (bool *) retval = TRUE; 
+                if(retval)
+                    * (bool *) retval = TRUE;
                 break;
             case CP_NUM: {
                 int *i;

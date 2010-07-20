@@ -1077,7 +1077,6 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
    bool found_library, found_lib_name, found_end = FALSE, shell_eol_continuation = FALSE;
    bool dir_name_flag = FALSE;
 
-   struct variable *v;
    char *s_ptr, *s_lower;
 
    /*   Must set this to NULL or non-tilde includes segfault. -- Tim Molteno   */
@@ -1612,7 +1611,7 @@ inp_readall(FILE *fp, struct line **data, int call_depth, char *dir_name, bool c
       inp_fix_gnd_name(working);
       inp_chk_for_multi_in_vcvs(working, &line_number);
 
-      if (cp_getvar("addcontrol", CP_BOOL, (char *) &v))
+      if (cp_getvar("addcontrol", CP_BOOL, NULL))
          inp_add_control_section(working, &line_number);
       inp_compat_mode = ngspice_compat_mode() ;
       if (inp_compat_mode == COMPATMODE_ALL) {

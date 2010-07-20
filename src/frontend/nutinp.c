@@ -28,7 +28,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
     struct line *deck, *dd, *ld;
     struct line *realdeck, *options = NULL;
     char *tt = NULL, name[BSIZE_SP], *s, *t;
-    bool nosubckts, commands = FALSE;
+    bool commands = FALSE;
     wordlist *wl = NULL, *end = NULL;
     wordlist *controls = NULL;
     FILE *lastin, *lastout, *lasterr;
@@ -168,8 +168,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
              * fix the case before we do this but after we 
              * deal with the commands.
              */
-            if (!cp_getvar("nosubckt", CP_BOOL, (char *) 
-                    &nosubckts))
+            if (!cp_getvar("nosubckt", CP_BOOL, NULL))
                 deck->li_next = inp_subcktexpand(deck->
                         li_next);
             deck->li_actual = realdeck;

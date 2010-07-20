@@ -42,9 +42,7 @@ static  int     count;
 void
 com_showmod(wordlist *wl)
 {
-    bool showmode;
-
-    if (cp_getvar("altshow", CP_BOOL, (char *) &showmode))
+    if (cp_getvar("altshow", CP_BOOL, NULL))
         all_show(wl, 1);
         else
         all_show_old(wl, 1);
@@ -53,9 +51,7 @@ com_showmod(wordlist *wl)
 void
 com_show(wordlist *wl)
 {
-    bool showmode;
-
-    if (cp_getvar("altshow", CP_BOOL, (char *) &showmode))
+    if (cp_getvar("altshow", CP_BOOL, NULL))
         all_show(wl, 0);
         else
         all_show_old(wl, 0);

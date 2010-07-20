@@ -81,7 +81,6 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
 {
 
     GRAPH *graph;
-    int b;
     wordlist *wl;
     char *comb_title;
 
@@ -109,7 +108,7 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
           (void) strcpy(pointchars, DEFPOINTCHARS);
 
     if (!cp_getvar("ticmarks", CP_NUM, (char *) &graph->ticmarks)) {
-      if (cp_getvar("ticmarks", CP_BOOL, (char *) &b))
+      if (cp_getvar("ticmarks", CP_BOOL, NULL))
         graph->ticmarks = 10;
       else
         graph->ticmarks = 0;

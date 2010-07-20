@@ -1,3 +1,25 @@
+2010-07-20  Robert Larice
+ * src/frontend/com_display.c ,
+ * src/frontend/device.c ,
+ * src/frontend/inp.c ,
+ * src/frontend/inpcom.c ,
+ * src/frontend/measure.c ,
+ * src/frontend/nutinp.c ,
+ * src/frontend/outitf.c ,
+ * src/frontend/terminal.c ,
+ * src/frontend/variable.c ,
+ * src/frontend/plotting/graf.c ,
+ * src/frontend/plotting/x11.c :
+    allow cp_getvar(,CP_BOOL,NULL) to avoid insane usage
+      The third parameter is a pointer to the result value.
+      Frequently only the function return value is used,
+        (presence of nonpresence of the variable)
+        and the third parameter points to an unused variable.
+      Even worse, in several cases a dummy variable of incorrect type is used
+        for that purpose.
+      Thus,
+         allow the third parameter to be NULL, and kill those dummy variables.
+
 2010-07-19  Holger Vogt
  * b4ld.c: correct typo which led to non-convergence of ro_17.cir
  

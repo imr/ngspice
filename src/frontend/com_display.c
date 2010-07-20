@@ -32,7 +32,6 @@ com_display(wordlist *wl)
     struct dvec *d;
     struct dvec **dvs;
     int len = 0, i = 0;
-    bool b;
     char *s;
 
     /* Maybe he wants to know about just a few vectors. */
@@ -65,7 +64,7 @@ com_display(wordlist *wl)
     dvs = (struct dvec **) tmalloc(len * (sizeof (struct dvec *)));
     for (d = plot_cur->pl_dvecs, i = 0; d; d = d->v_next, i++)
         dvs[i] = d;
-    if (!cp_getvar("nosort", CP_BOOL, (char *) &b))
+    if (!cp_getvar("nosort", CP_BOOL, NULL))
         qsort((char *) dvs, len, sizeof (struct dvec *), dcomp);
 
     out_printf("Title: %s\n",  plot_cur->pl_title);

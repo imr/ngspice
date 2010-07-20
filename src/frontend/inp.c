@@ -322,12 +322,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
    struct line *realdeck = NULL, *options = NULL, *curr_meas = NULL;
    char *tt = NULL, name[BSIZE_SP], *s, *t, *temperature = NULL;
    double testemp = 0.0;
-   bool nosubckts, commands = FALSE;
+   bool commands = FALSE;
    wordlist *wl = NULL, *end = NULL, *wl_first = NULL;
    wordlist *controls = NULL;
    FILE *lastin, *lastout, *lasterr;
    double temperature_value;
-   bool autostop;
 
    /* read in the deck from a file */
    char *filename_dup = ( filename == NULL ) ? strdup(".") : strdup(filename);
@@ -526,7 +525,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
          SetAnalyse( "Prepare Deck", 0);
 #endif
          /* Now expand subcircuit macros and substitute numparams.*/
-         if (!cp_getvar("nosubckt", CP_BOOL, (char *) &nosubckts))
+         if (!cp_getvar("nosubckt", CP_BOOL, NULL))
          if( (deck->li_next = inp_subcktexpand(deck->li_next)) == NULL ){
             line_free(realdeck,TRUE);
             line_free(deck->li_actual, TRUE);
@@ -598,7 +597,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename)
          }
 
          if ( ciprefix( ".meas", dd->li_line ) ) {
-            if ( cp_getvar( "autostop", CP_BOOL, (bool *) &autostop ) ) {
+            if ( cp_getvar( "autostop", CP_BOOL, NULL) ) {
                if ( strstr( dd->li_line, " max " ) || strstr( dd->li_line, " min " ) || strstr( dd->li_line, " avg " ) ||
                      strstr( dd->li_line, " rms " ) || strstr( dd->li_line, " integ " ) ) {
                   printf( "Warning: .OPTION AUTOSTOP will not be effective because one of 'max|min|avg|rms|integ' is used in .meas\n" );

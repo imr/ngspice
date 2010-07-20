@@ -82,7 +82,6 @@ static double *rowbuf;
 static int column, rowbuflen;
 
 static bool shouldstop = FALSE; /* Tell simulator to stop next time it asks. */
-static bool printinfo = FALSE;	/* Print informational "error messages". */
 
 
 /* The two "begin plot" routines share all their internals... */
@@ -146,7 +145,7 @@ beginPlot(void *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNa
     /*end saj*/
 
     /* Check to see if we want to print informational data. */
-    if (cp_getvar("printinfo", CP_BOOL, (char *) &printinfo))
+    if (cp_getvar("printinfo", CP_BOOL, NULL))
 	fprintf(cp_err, "(debug printing enabled)\n");
 
     *runp = run = alloc(struct runDesc);
@@ -1171,8 +1170,7 @@ OUTerror(int flags, char *format, IFuid *names)
     char buf[BSIZE_SP], *s, *bptr;
     int nindex = 0;
 
-    if ((flags == ERR_INFO) && cp_getvar("printinfo", CP_BOOL,
-	    (char *) &printinfo))
+    if ((flags == ERR_INFO) && cp_getvar("printinfo", CP_BOOL, NULL))
 	return;
 
     for (m = msgs; m->flag; m++)

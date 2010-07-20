@@ -80,11 +80,10 @@ out_init(void)
 #ifdef TIOCGWINSZ
     struct winsize ws;
 #endif
-    bool moremode;
 
     noprint = nopause = FALSE;
 
-    if (cp_getvar("nomoremode", CP_BOOL, (char *) &moremode))
+    if (cp_getvar("nomoremode", CP_BOOL, NULL))
         out_moremode = FALSE;
     else
     out_moremode = TRUE;
