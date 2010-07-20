@@ -1,4 +1,8 @@
 2010-07-20  Robert Larice
+ * src/main.c :
+    fix an incorrect type, (&char versus &bool)
+
+2010-07-20  Robert Larice
  * src/frontend/inp.c ,
  * src/frontend/misccoms.c ,
  * src/frontend/postcoms.c ,

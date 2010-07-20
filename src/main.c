@@ -691,7 +691,7 @@ main(int argc, char **argv)
     int   err;
     bool  gotone = FALSE;
     char* copystring;
-    char  addctrlsect = TRUE; /* PN: for autorun */
+    bool  addctrlsect = TRUE; /* PN: for autorun */
 
 
 #ifdef SIMULATOR
