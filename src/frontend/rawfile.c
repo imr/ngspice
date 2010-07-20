@@ -47,10 +47,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     char buf[BSIZE_SP];
     char *branch;
 
-    if (!cp_getvar("nopadding", CP_BOOL, (char *) &raw_padding))
-        raw_padding = FALSE;
-    /* Invert since we want to know if we should pad. */
-    raw_padding = !raw_padding;
+    raw_padding = !cp_getvar("nopadding", CP_BOOL, NULL);
 
     /* Why bother printing out an empty plot? */
     if (!pl->pl_dvecs) {

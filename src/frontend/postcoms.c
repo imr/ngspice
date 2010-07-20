@@ -234,12 +234,12 @@ com_print(wordlist *wl)
             height = i;
         if (height < 20)
             height = 20;
-        if (!cp_getvar("nobreak", CP_BOOL, (char *) &nobreak) && !ft_nopage)
+        nobreak = cp_getvar("nobreak", CP_BOOL, NULL);
+        if (!nobreak && !ft_nopage)
             nobreak = FALSE;
 	else
 	    nobreak = TRUE;
-        (void) cp_getvar("noprintscale", CP_BOOL, (char *) 
-                &noprintscale);
+        noprintscale = cp_getvar("noprintscale", CP_BOOL, NULL);
         bv = vecs;
 nextpage:
         /* Make the first vector of every page be the scale... */
@@ -423,7 +423,7 @@ com_write(wordlist *wl)
 	else
             fprintf(cp_err, "Warning: strange file type %s\n", buf);
     }
-    (void) cp_getvar("appendwrite", CP_BOOL, (char *) &appendwrite);
+    appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL);
 
     if (wl)
         names = ft_getpnames(wl, TRUE);

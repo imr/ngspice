@@ -150,7 +150,7 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
 
     if (useout)
         out_init();
-    cp_getvar("renumber", CP_BOOL, (char *) &renumber);
+    renumber = cp_getvar("renumber", CP_BOOL, NULL);
     if (type == LS_LOGICAL) {
 top1:
 	for (here = deck; here; here = here->li_next) {
@@ -698,7 +698,6 @@ inp_dodeck(
     struct variable *eev = NULL;
     wordlist *wl;
     bool noparse, ii;
-    bool brief;
     int print_listing;
     static int one;
 
@@ -721,7 +720,7 @@ inp_dodeck(
         }
         ft_curckt = ct = alloc(struct circ);
     }
-    cp_getvar("noparse", CP_BOOL, (char *) &noparse);
+    noparse = cp_getvar("noparse", CP_BOOL, NULL);
 
 
 /* We check preliminary for the scale option. This special processing
@@ -821,8 +820,8 @@ inp_dodeck(
     }   /* for (dd = deck; dd; dd = dd->li_next) */
 
     /* Only print out netlist if brief is FALSE */
-    cp_getvar( "brief", CP_BOOL, (bool *) &brief );
-    if(brief==FALSE) {
+    
+    if(!cp_getvar( "brief", CP_BOOL, NULL )) {
       /* output deck */
       out_printf( "\nProcessed Netlist\n" );
       out_printf( "=================\n" );

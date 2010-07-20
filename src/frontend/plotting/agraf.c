@@ -55,7 +55,8 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
 
     /* Make sure the margin is correct */
     omargin = margin;
-    if (!cp_getvar("noasciiplotvalue", CP_BOOL, (char *) &novalue) &&
+    novalue = cp_getvar("noasciiplotvalue", CP_BOOL, NULL);
+    if (!novalue &&
             !vec_eq(xscale, vecs)) {
         margin *= 2;
     } else
@@ -71,7 +72,7 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     if (ft_nopage)
 	nobreakp = TRUE;
     else
-   	cp_getvar("nobreak", CP_BOOL, (char *) &nobreakp);
+   	nobreakp = cp_getvar("nobreak", CP_BOOL, NULL);
     maxy -= (margin + FUDGE);
     maxx = xscale->v_length;
     xrange[0] = xlims[0];

@@ -1,4 +1,14 @@
 2010-07-20  Robert Larice
+ * src/frontend/inp.c ,
+ * src/frontend/misccoms.c ,
+ * src/frontend/postcoms.c ,
+ * src/frontend/rawfile.c ,
+ * src/frontend/spec.c ,
+ * src/frontend/subckt.c ,
+ * src/frontend/plotting/agraf.c :
+    Change remaining code to use the new usage pattern cp_getvar(,CP_BOOL,NULL)
+
+2010-07-20  Robert Larice
  * src/frontend/com_display.c ,
  * src/frontend/device.c ,
  * src/frontend/inp.c ,

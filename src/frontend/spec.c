@@ -237,7 +237,7 @@ com_spec(wordlist *wl)
 	      dc[i] += tdvec[i][k]*amp;
        }
     }
-    cp_getvar("spectrace", CP_BOOL, &trace);
+    trace = cp_getvar("spectrace", CP_BOOL, NULL);
     for (j = (startf==0 ? 1 : 0); j<fpts; j++) {
        freq[j] = startf + j*stepf;
        if(trace) fprintf(cp_err, "spec: %e Hz: \r",freq[j]);

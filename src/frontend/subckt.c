@@ -172,9 +172,9 @@ inp_subcktexpand(struct line *deck)
         (void) strcpy(model, ".model");
     if(!cp_getvar("modelline", CP_STRING, model))
         (void) strcpy(model, ".model");
-    (void) cp_getvar("nobjthack", CP_BOOL, (char *) &nobjthack);
+    nobjthack = cp_getvar("nobjthack", CP_BOOL, NULL);
     
-    (void) cp_getvar("numparams", CP_BOOL, (char *) &use_numparams);
+    use_numparams = cp_getvar("numparams", CP_BOOL, NULL);
 
     use_numparams = TRUE;
 

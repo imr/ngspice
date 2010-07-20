@@ -35,7 +35,7 @@ com_quit(wordlist *wl)
     char buf[64];
     bool noask;
 
-    (void) cp_getvar("noaskquit", CP_BOOL, (char *) &noask);
+    noask = cp_getvar("noaskquit", CP_BOOL, NULL);
     gr_clean();
     cp_ccon(FALSE);
     if(wl)
