@@ -286,6 +286,7 @@ extern  void     spSetComplex( MatrixPtr );
 extern  void     spSetReal( MatrixPtr );
 extern  void     spStripFills( MatrixPtr );
 extern  void     spWhereSingular(MatrixPtr, int*, int* );
+extern  void     spConstMult(MatrixPtr, double);
 
 /* Functions with argument lists that are dependent on options. */
 

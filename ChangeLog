@@ -1,4 +1,9 @@
 2010-07-23  Robert Larice
+  * src/include/smpdefs.h ,
+  * src/include/spmatrix.h :
+    better place for the prototype of spConstMult()
+
+2010-07-23  Robert Larice
  * src/ciderlib/oned/onecont.c ,
  * src/ciderlib/oned/onepoiss.c ,
  * src/ciderlib/twod/twocont.c ,
