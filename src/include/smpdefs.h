@@ -1,7 +1,7 @@
 #ifndef SMP
 #define SMP
 
-typedef  void SMPmatrix;
+typedef  struct MatrixFrame     SMPmatrix;
 typedef  struct MatrixElement  *SMPelement;
 
 /**********

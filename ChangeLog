@@ -1,4 +1,25 @@
 2010-07-23  Robert Larice
+ * src/ngmultidec.c ,
+ * src/include/onedev.h ,
+ * src/include/smpdefs.h ,
+ * src/include/spmatrix.h ,
+ * src/include/twodev.h ,
+ * src/maths/sparse/spalloc.c ,
+ * src/maths/sparse/spbuild.c ,
+ * src/maths/sparse/spdefs.h ,
+ * src/maths/sparse/spfactor.c ,
+ * src/maths/sparse/spoutput.c ,
+ * src/maths/sparse/spsmp.c ,
+ * src/maths/sparse/spsolve.c ,
+ * src/maths/sparse/sputils.c ,
+ * src/spicelib/analysis/cktacct.c :
+    use the types MatrixPtr and SMPmatrix instead of void and char *
+      both are the same thing,
+        MatrixPtr is used inside the sparse/* domain,
+        SMPmatrix is used in the rest of spice
+    remove casts, which are no longer necessary
+
+2010-07-23  Robert Larice
  * src/include/spmatrix.h ,
  * src/maths/sparse/spbuild.c ,
  * src/maths/sparse/spdefs.h :

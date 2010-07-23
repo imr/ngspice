@@ -23,7 +23,7 @@ typedef struct sTWOdevice
     double *copiedSolution;            /* copy of the solution vector */
     double *rhs;                       /* rhs vector */
     double *rhsImag;                   /* imaginary part of rhs vector */
-    char *matrix;                      /* matrix for device equations */
+    SMPmatrix *matrix;                 /* matrix for device equations */
     int solverType;                    /* what is matrix set up to do */
     int dimEquil;                      /* dimension in equilibrium */
     int numOrigEquil;                  /* orig number of nz's in equilibrium */

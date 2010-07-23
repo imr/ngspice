@@ -31,21 +31,21 @@ CKTacct(CKTcircuit *ckt, void *anal, int which, IFvalue *val)
         break;
     case OPT_ORIGNZ:
 	if ( ckt->CKTmatrix != NULL ) {
-	    val->iValue = spOriginalCount((char *)ckt->CKTmatrix);
+	    val->iValue = spOriginalCount(ckt->CKTmatrix);
 	} else {
 	    val->iValue = 0;
 	}
         break;
     case OPT_FILLNZ:
 	if ( ckt->CKTmatrix != NULL ) {
-	    val->iValue = spFillinCount((char *)ckt->CKTmatrix);
+	    val->iValue = spFillinCount(ckt->CKTmatrix);
 	} else {
 	    val->iValue = 0;
 	}
         break;
     case OPT_TOTALNZ:
 	if ( ckt->CKTmatrix != NULL ) {
-	    val->iValue = spElementCount((char *)ckt->CKTmatrix);
+	    val->iValue = spElementCount(ckt->CKTmatrix);
 	} else {
 	    val->iValue = 0;
 	}

@@ -132,9 +132,9 @@ int Printer_Width = PRINTER_WIDTH;
  */
 
 void
-spPrint(void *eMatrix, int PrintReordered, int Data, int Header)
+spPrint(MatrixPtr eMatrix, int PrintReordered, int Data, int Header)
 {
-    MatrixPtr  Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr  Matrix = eMatrix;
     int  J = 0;
     int I, Row, Col, Size, Top;
     int StartCol = 1, StopCol, Columns, ElementCount = 0;
@@ -435,10 +435,10 @@ spPrint(void *eMatrix, int PrintReordered, int Data, int Header)
  */
 
 int
-spFileMatrix(void *eMatrix, char *File, char *Label, int Reordered,
+spFileMatrix(MatrixPtr eMatrix, char *File, char *Label, int Reordered,
 	     int Data, int Header)
 {
-    MatrixPtr  Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr  Matrix = eMatrix;
     int  I, Size;
     ElementPtr  pElement;
     int  Row, Col, Err;
@@ -594,9 +594,9 @@ spFileMatrix(void *eMatrix, char *File, char *Label, int Reordered,
  */
 
 int
-spFileVector(void *eMatrix, char *File, RealVector RHS, RealVector iRHS)
+spFileVector(MatrixPtr eMatrix, char *File, RealVector RHS, RealVector iRHS)
 {
-    MatrixPtr  Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr  Matrix = eMatrix;
     int  I, Size, Err;
     FILE  *pMatrixFile;
 
@@ -680,9 +680,9 @@ spFileVector(void *eMatrix, char *File, RealVector RHS, RealVector iRHS)
  */
 
 int
-spFileStats(void *eMatrix, char *File, char *Label)
+spFileStats(MatrixPtr eMatrix, char *File, char *Label)
 {
-    MatrixPtr  Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr  Matrix = eMatrix;
     int  Size, I;
     ElementPtr  pElement;
     int NumberOfElements;

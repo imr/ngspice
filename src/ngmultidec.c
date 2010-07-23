@@ -19,7 +19,7 @@ Author: 1990 Jaijeet Roychowdury
 extern void usage(char **argv);
 extern void comments(double r,double l,double g,double c,double ctot,double cm,double lm,double k,char *name,int num, double len);
 extern double phi(int i, double arg);
-extern void spErrorMessage(char*, FILE*, char*);
+extern void spErrorMessage(MatrixPtr, FILE*, char*);
 
 int
 main (int argc, char **argv)
@@ -197,7 +197,7 @@ main (int argc, char **argv)
   /* matrix = M set up */
 
   {
-    char *othermatrix;
+    MatrixPtr othermatrix;
     double *rhs, *solution;
     double *irhs, *isolution;
     int errflg, err, singular_row, singular_col;
@@ -208,7 +208,7 @@ main (int argc, char **argv)
     solution = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
     isolution = (double *) tmalloc((unsigned) (sizeof(double)*(num+1)));
 
-    othermatrix = (char*) spCreate(num,0,&errflg);
+    othermatrix = spCreate(num,0,&errflg);
 
     for (i=1;i<=num;i++) {
       for (j=1; j<=num; j++) {

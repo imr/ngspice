@@ -786,9 +786,6 @@ struct  MatrixFrame
     struct FillinListNodeStruct *FirstFillinListNode;
     struct FillinListNodeStruct *LastFillinListNode;
 };
-typedef  struct MatrixFrame  *MatrixPtr;
-
-
 
 
 /*

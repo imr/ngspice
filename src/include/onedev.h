@@ -23,7 +23,7 @@ typedef struct sONEdevice
     double *copiedSolution;            /* copy of the solution vector */
     double *rhs;                       /* rhs vector */
     double *rhsImag;                   /* imaginary part of rhs vector */
-    char *matrix;                      /* matrix for device equations */
+    SMPmatrix *matrix;                 /* matrix for device equations */
     int solverType;                    /* type of equations matrix can solve */
     int dimEquil;                      /* dimension in equilibrium */
     int numOrigEquil;                  /* orig number of nz's in equilibrium */

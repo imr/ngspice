@@ -94,9 +94,9 @@ static void ExpandTranslationArrays( MatrixPtr, int );
  */
 
 void
-spClear(void *eMatrix )
+spClear(MatrixPtr eMatrix)
 {
-    MatrixPtr  Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr  Matrix = eMatrix;
      ElementPtr  pElement;
      int  I;
 
@@ -181,9 +181,9 @@ spClear(void *eMatrix )
  */
 
 RealNumber *
-spFindElement( void *eMatrix, int Row, int Col )
+spFindElement(MatrixPtr eMatrix, int Row, int Col)
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
+MatrixPtr  Matrix = eMatrix;
 RealNumber  *pElement;
 
 /* Begin `spFindElement'. */
@@ -264,9 +264,9 @@ RealNumber  *pElement;
  */
 
 RealNumber *
-spGetElement(void *eMatrix, int Row, int Col)
+spGetElement(MatrixPtr eMatrix, int Row, int Col)
 {
-    MatrixPtr  Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr  Matrix = eMatrix;
     RealNumber  *pElement;
 
     /* Begin `spGetElement'. */
@@ -548,7 +548,7 @@ Translate(MatrixPtr Matrix, int  *Row, int *Col)
  */
 
 int
-spGetAdmittance(void *Matrix, int  Node1, int Node2,
+spGetAdmittance(MatrixPtr Matrix, int  Node1, int Node2,
 		struct  spTemplate  *Template)
 {
     /* Begin `spGetAdmittance'. */
@@ -631,7 +631,7 @@ spGetAdmittance(void *Matrix, int  Node1, int Node2,
  */
 
 int
-spGetQuad(void *Matrix, int  Row1, int Row2, int Col1, int Col2,
+spGetQuad(MatrixPtr Matrix, int  Row1, int Row2, int Col1, int Col2,
 	  struct  spTemplate  *Template)
 {
  /* Begin `spGetQuad'. */
@@ -702,7 +702,7 @@ spGetQuad(void *Matrix, int  Row1, int Row2, int Col1, int Col2,
  */
 
 int
-spGetOnes(void *Matrix, int  Pos, int Neg, int Eqn,
+spGetOnes(MatrixPtr Matrix, int  Pos, int Neg, int Eqn,
 	  struct  spTemplate  *Template)
 {
     /* Begin `spGetOnes'. */
@@ -1146,9 +1146,9 @@ spGetInitInfo(RealNumber *pElement)
 
 
 int
-spInitialize(void *eMatrix, int (*pInit)(RealNumber*, void *InitInfo, int , int Col))
+spInitialize(MatrixPtr eMatrix, int (*pInit)(RealNumber*, void *InitInfo, int , int Col))
 {
-    MatrixPtr Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr Matrix = eMatrix;
     ElementPtr pElement;
     int J, Error, Col;
 

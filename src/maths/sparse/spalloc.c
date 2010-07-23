@@ -118,7 +118,7 @@ static void AllocateBlockOfAllocationList( MatrixPtr );
  *  Error is cleared in this routine.
  */
 
-void *
+MatrixPtr
 spCreate(int Size, int Complex, int *pError)
 {
     unsigned  SizePlusOne;
@@ -262,14 +262,14 @@ spCreate(int Size, int Complex, int *pError)
     if (Matrix->Error == spNO_MEMORY)
         goto MemoryError;
 
-    return (void *)Matrix;
+    return Matrix;
 
  MemoryError:
 
     /* Deallocate matrix and return no pointer to matrix if there is not enough
        memory. */
     *pError = spNO_MEMORY;
-    spDestroy( (void *)Matrix);
+    spDestroy(Matrix);
     return NULL;
 }
 
@@ -650,9 +650,9 @@ AllocateBlockOfAllocationList(MatrixPtr Matrix)
  */
 
 void
-spDestroy(void *eMatrix)
+spDestroy(MatrixPtr eMatrix)
 {
-    MatrixPtr Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr Matrix = eMatrix;
     AllocationListPtr  ListPtr, NextListPtr;
 
 
@@ -708,13 +708,13 @@ spDestroy(void *eMatrix)
  *  eMatrix  <input>  (void *)
  *      The matrix for which the error status is desired.  */
 int
-spError(void *eMatrix )
+spError(MatrixPtr eMatrix )
 {
     /* Begin `spError'. */
 
     if (eMatrix != NULL) {
-	assert(((MatrixPtr)eMatrix)->ID == SPARSE_ID);
-        return ((MatrixPtr)eMatrix)->Error;
+	assert(eMatrix->ID == SPARSE_ID);
+        return eMatrix->Error;
     } else {
 	/* This error may actually be spPANIC, no way to tell. */
 	return spNO_MEMORY;
@@ -745,9 +745,9 @@ spError(void *eMatrix )
  */
 
 void
-spWhereSingular(void *eMatrix, int *pRow, int *pCol)
+spWhereSingular(MatrixPtr eMatrix, int *pRow, int *pCol)
 {
-    MatrixPtr Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr Matrix = eMatrix;
 
     /* Begin `spWhereSingular'. */
     assert( IS_SPARSE( Matrix ) );
@@ -783,9 +783,9 @@ spWhereSingular(void *eMatrix, int *pRow, int *pCol)
  */
 
 int
-spGetSize(void *eMatrix, int External)
+spGetSize(MatrixPtr eMatrix, int External)
 {
-    MatrixPtr Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr Matrix = eMatrix;
 
     /* Begin `spGetSize'. */
     assert( IS_SPARSE( Matrix ) );
@@ -818,23 +818,23 @@ spGetSize(void *eMatrix, int External)
  */
 
 void
-spSetReal(void *eMatrix)
+spSetReal(MatrixPtr eMatrix)
 {
     /* Begin `spSetReal'. */
 
-    assert( IS_SPARSE( (MatrixPtr)eMatrix ));
-    ((MatrixPtr)eMatrix)->Complex = NO;
+    assert( IS_SPARSE( eMatrix ));
+    eMatrix->Complex = NO;
     return;
 }
 
 
 void
-spSetComplex(void *eMatrix)
+spSetComplex(MatrixPtr eMatrix)
 {
     /* Begin `spSetComplex'. */
 
-    assert( IS_SPARSE( (MatrixPtr)eMatrix ));
-    ((MatrixPtr)eMatrix)->Complex = YES;
+    assert( IS_SPARSE( eMatrix ));
+    eMatrix->Complex = YES;
     return;
 }
 
@@ -859,29 +859,29 @@ spSetComplex(void *eMatrix)
  */
 
 int
-spFillinCount(void *eMatrix)
+spFillinCount(MatrixPtr eMatrix)
 {
     /* Begin `spFillinCount'. */
 
-    assert( IS_SPARSE( (MatrixPtr)eMatrix ) );
-    return ((MatrixPtr)eMatrix)->Fillins;
+    assert( IS_SPARSE( eMatrix ) );
+    return eMatrix->Fillins;
 }
 
 
 int
-spElementCount(void *eMatrix)
+spElementCount(MatrixPtr eMatrix)
 {
     /* Begin `spElementCount'. */
 
-    assert( IS_SPARSE( (MatrixPtr)eMatrix ) );
-    return ((MatrixPtr)eMatrix)->Elements;
+    assert( IS_SPARSE( eMatrix ) );
+    return eMatrix->Elements;
 }
 
 int
-spOriginalCount(void *eMatrix)
+spOriginalCount(MatrixPtr eMatrix)
 {
     /* Begin `spOriginalCount'. */
 
-    assert( IS_SPARSE( (MatrixPtr)eMatrix ) );
-    return ((MatrixPtr)eMatrix)->Originals;
+    assert( IS_SPARSE( eMatrix ) );
+    return eMatrix->Originals;
 }

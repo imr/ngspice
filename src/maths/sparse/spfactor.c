@@ -189,10 +189,10 @@ static int  ZeroPivot( MatrixPtr, int );
  */
 
 int
-spOrderAndFactor(void *eMatrix, RealNumber RHS[], RealNumber RelThreshold,
+spOrderAndFactor(MatrixPtr eMatrix, RealNumber RHS[], RealNumber RelThreshold,
 		 RealNumber AbsThreshold, int DiagPivoting)
 {
-    MatrixPtr  Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr  Matrix = eMatrix;
     ElementPtr  pPivot;
     int  Step, Size, ReorderingRequired;
     RealNumber LargestInCol;
@@ -329,9 +329,9 @@ spOrderAndFactor(void *eMatrix, RealNumber RHS[], RealNumber RelThreshold,
  *  Error is cleared in this function.  */
 
 int
-spFactor(void *eMatrix)
+spFactor(MatrixPtr eMatrix)
 {
-    MatrixPtr  Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr  Matrix = eMatrix;
     ElementPtr  pElement;
     ElementPtr  pColumn;
     int  Step, Size;
@@ -598,9 +598,9 @@ FactorComplexMatrix( MatrixPtr Matrix )
  *      spINDIRECT_PARTITION, or spAUTO_PARTITION.  */
 
 void
-spPartition(void *eMatrix, int Mode)
+spPartition(MatrixPtr eMatrix, int Mode)
 {
-    MatrixPtr  Matrix = (MatrixPtr)eMatrix;
+    MatrixPtr  Matrix = eMatrix;
     ElementPtr  pElement, pColumn;
     int  Step, Size;
     int  *Nc, *No, *Nm;

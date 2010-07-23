@@ -241,7 +241,7 @@ struct  spTemplate
 };
 
 
-
+typedef struct MatrixFrame *MatrixPtr;
 
 
 /*
@@ -252,48 +252,48 @@ struct  spTemplate
 
 /* Begin function declarations. */
 
-extern  void     spClear( void * );
-extern  spREAL   spCondition( void *, spREAL, int* );
-extern  void     *spCreate( int, int, int* );
-extern  void     spDeleteRowAndCol( void *, int, int );
-extern  void     spDestroy(void *);
-extern  int      spElementCount( void * );
-extern  int      spError( void * );
-extern  int      spFactor( void * );
-extern  int      spFileMatrix( void *, char *, char *, int, int, int );
-extern  int      spFileStats( void *, char *, char * );
-extern  int      spFillinCount( void * );
-extern  int      spGetAdmittance( void *, int, int, struct spTemplate* );
-extern  spREAL  *spFindElement( void *eMatrix, int Row, int Col );
-extern  spREAL  *spGetElement( void *, int, int );
+extern  void     spClear( MatrixPtr );
+extern  spREAL   spCondition( MatrixPtr, spREAL, int* );
+extern  MatrixPtr spCreate( int, int, int* );
+extern  void     spDeleteRowAndCol( MatrixPtr, int, int );
+extern  void     spDestroy( MatrixPtr);
+extern  int      spElementCount( MatrixPtr );
+extern  int      spError( MatrixPtr );
+extern  int      spFactor( MatrixPtr );
+extern  int      spFileMatrix( MatrixPtr, char *, char *, int, int, int );
+extern  int      spFileStats( MatrixPtr, char *, char * );
+extern  int      spFillinCount( MatrixPtr );
+extern  int      spGetAdmittance( MatrixPtr, int, int, struct spTemplate* );
+extern  spREAL  *spFindElement(MatrixPtr eMatrix, int Row, int Col );
+extern  spREAL  *spGetElement(MatrixPtr, int, int );
 extern  void    *spGetInitInfo( spREAL* );
-extern  int      spGetOnes( void *, int, int, int, struct spTemplate* );
-extern  int      spGetQuad( void *, int, int, int, int, struct spTemplate* );
-extern  int      spGetSize( void *, int );
-extern  int      spInitialize( void *, int (*pInit)(spREAL*, void *InitInfo, int, int Col));
+extern  int      spGetOnes( MatrixPtr, int, int, int, struct spTemplate* );
+extern  int      spGetQuad( MatrixPtr, int, int, int, int, struct spTemplate* );
+extern  int      spGetSize( MatrixPtr, int );
+extern  int      spInitialize(MatrixPtr, int (*pInit)(spREAL*, void *InitInfo, int, int Col));
 extern  void     spInstallInitInfo( spREAL*, void * );
-extern  spREAL   spLargestElement( void * );
-extern  void     spMNA_Preorder( void * );
-extern  spREAL   spNorm( void * );
-extern  int      spOrderAndFactor( void *, spREAL*, spREAL, spREAL, int );
-extern  int      spOriginalCount( void *);
-extern  void     spPartition( void *, int );
-extern  void     spPrint( void *, int, int, int );
-extern  spREAL   spPseudoCondition( void * );
-extern  spREAL   spRoundoff( void *, spREAL );
-extern  void     spScale( void *, spREAL*, spREAL* );
-extern  void     spSetComplex( void * );
-extern  void     spSetReal( void * );
-extern  void     spStripFills( void * );
-extern  void     spWhereSingular( void *, int*, int* );
+extern  spREAL   spLargestElement( MatrixPtr );
+extern  void     spMNA_Preorder( MatrixPtr );
+extern  spREAL   spNorm( MatrixPtr );
+extern  int      spOrderAndFactor(MatrixPtr, spREAL*, spREAL, spREAL, int );
+extern  int      spOriginalCount( MatrixPtr);
+extern  void     spPartition( MatrixPtr, int );
+extern  void     spPrint(MatrixPtr, int, int, int );
+extern  spREAL   spPseudoCondition( MatrixPtr );
+extern  spREAL   spRoundoff( MatrixPtr, spREAL );
+extern  void     spScale( MatrixPtr, spREAL*, spREAL* );
+extern  void     spSetComplex( MatrixPtr );
+extern  void     spSetReal( MatrixPtr );
+extern  void     spStripFills( MatrixPtr );
+extern  void     spWhereSingular(MatrixPtr, int*, int* );
 
 /* Functions with argument lists that are dependent on options. */
 
-extern  void     spDeterminant ( void *, int*, spREAL*, spREAL* );
-extern  int      spFileVector( void *, char * , spREAL*, spREAL*);
-extern  void     spMultiply( void *, spREAL*, spREAL*, spREAL*, spREAL* );
-extern  void     spMultTransposed(void *,spREAL*,spREAL*,spREAL*,spREAL*);
-extern  void     spSolve( void *, spREAL*, spREAL*, spREAL*, spREAL* );
-extern  void     spSolveTransposed(void *,spREAL*,spREAL*,spREAL*,spREAL*);
+extern  void     spDeterminant ( MatrixPtr, int*, spREAL*, spREAL* );
+extern  int      spFileVector( MatrixPtr, char * , spREAL*, spREAL*);
+extern  void     spMultiply( MatrixPtr, spREAL*, spREAL*, spREAL*, spREAL* );
+extern  void     spMultTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
+extern  void     spSolve( MatrixPtr, spREAL*, spREAL*, spREAL*, spREAL* );
+extern  void     spSolveTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
 
 #endif  /* spOKAY */
