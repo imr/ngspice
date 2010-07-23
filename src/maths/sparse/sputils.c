@@ -368,10 +368,7 @@ SwapCols( MatrixPtr Matrix, ElementPtr pTwin1, ElementPtr pTwin2 )
  */
 
 void
-spScale( eMatrix, RHS_ScaleFactors, SolutionScaleFactors )
-
-char *eMatrix;
- RealVector  RHS_ScaleFactors, SolutionScaleFactors;
+spScale(char *eMatrix, RealVector RHS_ScaleFactors, RealVector SolutionScaleFactors)
 {
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
     ElementPtr  pElement;
@@ -1040,9 +1037,7 @@ spDeterminant(void *eMatrix, int *pExponent, RealNumber *pDeterminant,
  */
 
 void
-spStripFills( eMatrix )
-
-char *eMatrix;
+spStripFills(char *eMatrix)
 {
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
     struct FillinListNodeStruct  *pListNode;
@@ -1114,9 +1109,7 @@ char *eMatrix;
  * frame.  This assumes that the matrix will be replaced with one of
  * the same size.  */
 void
-spStripMatrix( eMatrix )
-
-char *eMatrix;
+spStripMatrix(char *eMatrix)
 {
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 
@@ -1408,11 +1401,7 @@ spPseudoCondition(char *eMatrix)
  *  spNO_MEMORY */
 
 RealNumber
-spCondition( eMatrix, NormOfMatrix, pError )
-
-char *eMatrix;
-RealNumber NormOfMatrix;
-int *pError;
+spCondition(char *eMatrix, RealNumber NormOfMatrix, int *pError)
 {
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
     ElementPtr pElement;
@@ -1840,9 +1829,7 @@ int *pError;
  */
 
 RealNumber
-spNorm( eMatrix )
-
-char *eMatrix;
+spNorm(char *eMatrix)
 {
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
     ElementPtr pElement;
@@ -1960,9 +1947,7 @@ char *eMatrix;
  */
 
 RealNumber
-spLargestElement( eMatrix )
-
-char *eMatrix;
+spLargestElement(char *eMatrix)
 {
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
     int I;
@@ -2091,10 +2076,7 @@ char *eMatrix;
  */
 
 RealNumber
-spRoundoff( eMatrix, Rho )
-
-char *eMatrix;
-RealNumber Rho;
+spRoundoff(char *eMatrix, RealNumber Rho)
 {
     MatrixPtr  Matrix = (MatrixPtr)eMatrix;
     ElementPtr pElement;

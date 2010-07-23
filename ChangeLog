@@ -1,3 +1,7 @@
+2010-07-23  Robert Larice
+ * src/maths/sparse/sputils.c :
+    convert K&R function definitions to ansi style
+
 2010-07-20  Robert Larice
  * src/frontend/com_option.c ,
  * src/frontend/com_set.c ,
