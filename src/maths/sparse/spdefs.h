@@ -424,7 +424,7 @@ extern void * trealloc(void *, size_t);
  *      NextInCol contains a pointer to the next element in the column below
  *      this element.  If this element is the last nonzero in the column then
  *      NextInCol contains NULL.
- *  pInitInfo  (char *)
+ *  pInitInfo  (void *)
  *      Pointer to user data used for initialization of the matrix element.
  *      Initialized to NULL.
  *
@@ -447,7 +447,7 @@ struct  MatrixElement
     struct MatrixElement  *NextInRow;
     struct MatrixElement  *NextInCol;
 #if INITIALIZE
-    char        *pInitInfo;
+    void        *pInitInfo;
 #endif
 };
 

@@ -1126,7 +1126,7 @@ ExpandTranslationArrays(MatrixPtr Matrix, int  NewSize)
  */
 
 void
-spInstallInitInfo(RealNumber *pElement, char *pInitInfo)
+spInstallInitInfo(RealNumber *pElement, void *pInitInfo)
 {
     /* Begin `spInstallInitInfo'. */
     assert(pElement != NULL);
@@ -1135,18 +1135,18 @@ spInstallInitInfo(RealNumber *pElement, char *pInitInfo)
 }
 
 
-char *
+void *
 spGetInitInfo(RealNumber *pElement)
 {
     /* Begin `spGetInitInfo'. */
     assert(pElement != NULL);
 
-    return (char *)((ElementPtr)pElement)->pInitInfo;
+    return ((ElementPtr)pElement)->pInitInfo;
 }
 
 
 int
-spInitialize(void *eMatrix, int (*pInit)(RealNumber*, char *InitInfo, int , int Col))
+spInitialize(void *eMatrix, int (*pInit)(RealNumber*, void *InitInfo, int , int Col))
 {
     MatrixPtr Matrix = (MatrixPtr)eMatrix;
     ElementPtr pElement;

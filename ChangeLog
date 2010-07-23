@@ -1,4 +1,10 @@
 2010-07-23  Robert Larice
+ * src/include/spmatrix.h ,
+ * src/maths/sparse/spbuild.c ,
+ * src/maths/sparse/spdefs.h :
+    use a void* instead of a char* for anonymous `InitInfo' in src/sparse/*.c
+
+2010-07-23  Robert Larice
  * src/maths/sparse/sputils.c :
     convert K&R function definitions to ansi style
 
